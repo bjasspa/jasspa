@@ -49,11 +49,11 @@
 /*--- Local variable definitions */
 
 static meUByte notFoundStr[] ="[Not Found]";
-static int  exactFlag = 1;              /* Use to cache EXACT mode state */
-meUByte  srchPat [mePATBUF_SIZE_MAX]="";                /* Search pattern array */
-meUByte  srchRPat[mePATBUF_SIZE_MAX]="";                /* Reversed pattern array */
-int    srchLastState=meFALSE;              /* status of last search */
-meUByte *srchLastMatch=NULL;               /* pointer to the last match string */
+static int exactFlag = 1;                   /* Use to cache EXACT mode state */
+meUByte  srchPat [mePATBUF_SIZE_MAX]="";    /* Search pattern array */
+meUByte  srchRPat[mePATBUF_SIZE_MAX]="";    /* Reversed pattern array */
+int      srchLastState=meFALSE;             /* status of last search */
+meUByte *srchLastMatch=NULL;                /* pointer to the last match string */
 
 /*
  * boundry -- Return information depending on whether we may search no
@@ -193,7 +193,7 @@ mere_scanner(int direct, int beg_or_end, int *n, SCANNERPOS *sp)
         jj = kk - ii ;
         mereNewlBufSzCheck(jj) ;
         memcpy(mereNewlBuf,meLineGetText(lp)+ii,jj) ;
-        srchLastMatch = (char *) mereNewlBuf ;
+        srchLastMatch = mereNewlBuf ;
     }
     else if(mereNumNewl == 0)
     {
@@ -237,7 +237,7 @@ mere_scanner(int direct, int beg_or_end, int *n, SCANNERPOS *sp)
         jj = kk - ii ;
         mereNewlBufSzCheck(jj) ;
         memcpy(mereNewlBuf,meLineGetText(lp)+ii,jj) ;
-        srchLastMatch = (char *) mereNewlBuf ;
+        srchLastMatch = mereNewlBuf ;
     }
     else if(--count == 0)
         return meFALSE ;
@@ -391,7 +391,7 @@ mere_scanner(int direct, int beg_or_end, int *n, SCANNERPOS *sp)
                 return meFALSE ;
         }
         kk = mereRegs.end[0] ;
-        srchLastMatch = (char *) mereNewlBuf+ii ;
+        srchLastMatch = mereNewlBuf+ii ;
         while(ii > meLineGetLength(lp))
         {
             jj = meLineGetLength(lp)+1 ;
@@ -1051,7 +1051,7 @@ readpattern(meUByte *prompt, int defnum)
      * Then, if it's the search string, make a reversed pattern.
      * *Then*, make the meta-pattern, if we are defined that way.
      */
-    if((status = meGetString(prompt,MLSEARCH,defnum,srchPat,mePATBUF_SIZE_MAX)) == meTRUE)
+    if((status = meGetString(prompt,MLSEARCH,defnum,srchPat,mePATBUF_SIZE_MAX)) > 0)
     {
         exactFlag = (meModeTest(frameCur->bufferCur->mode,MDEXACT) == 0);
 #if MEOPT_MAGIC
@@ -1144,8 +1144,8 @@ replaces(int kind, int ff, int nn)
             
             if ((status = readpattern
                  ((kind == meFALSE ? (meUByte *)"Replace":(meUByte *)"Query replace"), 
-                  1+lastReplace)) != meTRUE)
-		return (status);		/* Aborted out - Exit */
+                  1+lastReplace)) <= 0)
+		return status ;		/* Aborted out - Exit */
             
             slength = meStrlen (srchPat);	/* Get length of search string */
             
@@ -1166,10 +1166,10 @@ replaces(int kind, int ff, int nn)
             i = expandexp(-1,srchPat, mePATBUF_SIZE_MAX-17, 9, tpat, -1, NULL, 0) ;
             meStrcpy(tpat+i,"] with");
             
-            if ((status=meGetString(tpat,MLSEARCH,0,rpat,mePATBUF_SIZE_MAX)) != meTRUE)
+            if ((status=meGetString(tpat,MLSEARCH,0,rpat,mePATBUF_SIZE_MAX)) <= 0)
             {
                 lastReplace = 0 ;
-                return (status);
+                return status ;
             }	/* End of 'if' */
             
             rlength = meStrlen(rpat);	/* Get length of replace string. */
@@ -1306,23 +1306,13 @@ replaces(int kind, int ff, int nn)
                     return mlwrite(MWABORT,(meUByte *)"[ERROR while deleting]");
                 
 		/* And put in the old one. */
-                
-                for (i = 0; i < slength; i++)
-                {
-                    tmpc = dpat[i];
-                    status = ((tmpc == meNLCHAR) ? lnewline(): linsert(1, tmpc));
-                    
-                    /* Insertion error? */
-                    
-                    if (!status)
-                        return mlwrite(MWABORT,(meUByte *)"[Out of memory while inserting]");
-                
-                }	/* End of 'for' */
+                if((i = bufferInsertText(dpat)) < 0)
+                    return meABORT ;
 #if MEOPT_UNDO
-                meUndoAddReplaceEnd(slength) ;
+                meUndoAddReplaceEnd(i) ;
 #endif
-		/* Record one less substitution, backup, and reprompt. */
-                
+		
+                /* Record one less substitution, backup, and reprompt. */
 		--numsub;
                 lastoff = frameCur->windowCur->dotOffset ;
                 lastlno = frameCur->windowCur->dotLineNo ;
@@ -1347,8 +1337,31 @@ replaces(int kind, int ff, int nn)
              */
         case SL_SUBSTITUTE:			/* Substitute the string */
             
-            if(bchange() != meTRUE)               /* Check we can change the buffer */
+            if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
                 return meABORT ;
+#if MEOPT_EXTENDED
+            /* check that this replace is legal */
+            i = slength + frameCur->windowCur->dotOffset ;
+            if(i > meLineGetLength(frameCur->windowCur->dotLine))
+            {
+                meLine *lp ;
+                lp = frameCur->windowCur->dotLine ;
+                for(;;)
+                {
+                    if(meLineGetFlag(lp) & meLINE_PROTECT)
+                        return mlwrite(MWABORT,(meUByte *)"[Protected line in matched string!]") ;
+#if MEOPT_NARROW
+                    if((lp != frameCur->windowCur->dotLine) &&
+                       (meLineGetFlag(lp) & meLINE_ANCHOR_NARROW))
+                        return mlwrite(MWABORT,(meUByte *)"[Narrow in matched string!]") ;
+#endif
+                    i -= meLineGetLength(lp) + 1 ;
+                    if(i < 0)
+                        break ;
+                    lp = meLineGetNext(lp) ;
+                }
+            }
+#endif
 #if MEOPT_MAGIC
             /* only set the new regex slength here as if the user is doing a query replace
              * and does an undo, the slength must be correct for the last insertion */
@@ -1365,6 +1378,7 @@ replaces(int kind, int ff, int nn)
                     return meFALSE ;
                 }
             }
+            /* ZZZZ - protected line & narrow? */
             if(mldelete(slength,dpat) != 0)
                 return mlwrite(MWABORT,(meUByte *)"[ERROR while deleting]") ;
             ilength = 0 ;
@@ -1396,14 +1410,17 @@ replaces(int kind, int ff, int nn)
                         if((j=mereRegexGroupStart(tmpc)) >= 0)
                         {
                             for(k=mereRegexGroupEnd(tmpc) ;
-                                ((j < k) && (status != meFALSE)); ilength++)
+                                ((j < k) && (status > 0)); ilength++)
                             {
                                 if ((tmpc=dpat[j++]) != meNLCHAR)
-                                    status = linsert(1, tmpc);
+                                    status = lineInsertChar(1, tmpc);
                                 else
-                                    status = lnewline ();
+                                    status = lineInsertNewline(meFALSE);
                             }
                         }
+                        /* subtract one from insert length as one is added at
+                         * the end of the for loop */
+                        ilength-- ;
                     }
                     else
                     {
@@ -1414,29 +1431,30 @@ replaces(int kind, int ff, int nn)
                         else if(tmpc == 't')
                             tmpc = '\t' ;
                         if (tmpc != meNLCHAR)
-                            status = linsert(1, tmpc);
+                            status = lineInsertChar(1, tmpc);
                         else
-                            status = lnewline ();
-                        ilength++;
+                            status = lineInsertNewline(meFALSE);
                     }
                 }
                 else
 #endif
                 {
                     if (tmpc != meNLCHAR)
-                        status = linsert(1, tmpc);
+                        status = lineInsertChar(1, tmpc);
                     else
-                        status = lnewline ();
-                    ilength++;
+                        status = lineInsertNewline(meFALSE);
                 }
                 /* Insertion error ? */
-                
-                if (!status) 
-                    return mlwrite(MWABORT,(meUByte *)"[Out of memory while inserting]"); 
+                if (status <= 0) 
+                    break ;
+                /* insertion succeeded increment length */
+                ilength++;
             }	/* End of 'for' */
 #if MEOPT_UNDO
             meUndoAddReplace(dpat,ilength) ;
 #endif
+            if (status <= 0) 
+                return meABORT ;
             
             if (kind) 
             {			/* Save position for undo. */
@@ -1507,7 +1525,7 @@ searchForw(int f, int n)
      * response is meTRUE (responses other than meFALSE are
      * possible), search for the pattern.
      */
-    if ((status = readpattern((meUByte *)"Search", 1+lastReplace)) == meTRUE)
+    if ((status = readpattern((meUByte *)"Search", 1+lastReplace)) > 0)
     {
         lastReplace = 0 ;
         do
@@ -1554,7 +1572,7 @@ searchBack(int f, int n)
      * response is meTRUE (responses other than meFALSE are
      * possible), search for the pattern.
      */
-    if ((status = readpattern((meUByte *)"Reverse search", 1+lastReplace)) == meTRUE)
+    if ((status = readpattern((meUByte *)"Reverse search", 1+lastReplace)) > 0)
     {
         lastReplace = 0 ;
         do

@@ -259,7 +259,6 @@ add-file-hook ".info dir"                                     fhook-info
 add-file-hook ".diff .dif *diff*"                             fhook-diff
 add-file-hook ".xml"                                          fhook-xml
 add-file-hook ".ex .exw .exu .e .ew .eu"                      fhook-euphor
-add-file-hook ".pls"                                          fhook-pls
 ; Add magic hooks
  1 add-file-hook "^#![ \t]*/.*sh"                fhook-shell  ; UNIX shell files
  1 add-file-hook "^#![ \t]*/.*perl"              fhook-perl   ; UNIX perl script
@@ -275,10 +274,9 @@ add-file-hook ".pls"                                          fhook-pls
 -1 add-file-hook "-[*!]-[ \t]*c\\+\\+.*-[*!]-"   fhook-cpp    ; -*- C++ -*-
 -1 add-file-hook "-[*!]-[ \t]*f.*-[*!]-"         fhook-f90    ; -*- f -*-
 -1 add-file-hook "-[*!]-[ \t]*perl.*-[*!]-"      fhook-perl   ; -*- perl -*-
--1 add-file-hook "-[*!]-[ \t]*texinfo.*-[*!]-"   fhook-texi   ; -*- texinfo -*-
+-1 add-file-hook "-[*]-[ \t]*texinfo.*-[*]-"     fhook-texi   ; -*- texinfo -*-
 -1 add-file-hook "-[*!]-[ \t]*nroff.*-[*!]-"     fhook-nroff  ; -*- nroff -*-
 -1 add-file-hook "-[*!]-[ \t]*cobol.*-[*!]-"     fhook-cobol  ; -*- cobol -*-
--1 add-file-hook "-[*!]-[ \t]*pl/?sq?l?.*-[*!]-" fhook-pls    ; -*- pl/sql -*- or -*- pls -*-
 -1 add-file-hook "-!-[ \t]*mhg.*-!-"             fhook-mhg    ; -!- mhg -!-
 -1 add-file-hook "-!-[ \t]*shell.*-!-"           fhook-shell  ; -!- shell -!-
 -1 add-file-hook "-!-[ \t]*msdos.*-!-"           fhook-dos    ; -!- msdos -!-
@@ -287,7 +285,7 @@ add-file-hook ".pls"                                          fhook-pls
 -1 add-file-hook "-!-[ \t]*jst*-!-"              fhook-jst    ; -!- jst -!-
 -1 add-file-hook "-!-[ \t]*fvwm.*-!-"            fhook-fvwm   ; -!- fvwm -!-
 -1 add-file-hook "-!-[ \t]*erf.*-!-"             fhook-erf    ; -!- erf -!-
--1 add-file-hook "-!-[ \t]*fold:.*-!-"           fhook-fold   ; -!- fold:... -!-
+;-1 add-file-hook "-!-[ \t]*fold:.*-!-"           fhook-fold   ; -!- fold:... -!-
 -1 add-file-hook "-!-[ \t]*asn\\.1.*-!-"         fhook-asn1   ; -!- asn.1... -!-
 -1 add-file-hook "-!-[ \t]*asmx86.*-!-"          fhook-asmx86 ; -!- asmx86 -!-
 -1 add-file-hook "-!-[ \t]*text.*-!-"            fhook-txt    ; -!- text -!-

@@ -18,10 +18,11 @@ set-variable .fhook-erf.setup &reg "/history" "fhook/erf" "dfghiopx"
 set-variable .fhook-erf.setup-mask "adefghikmoptux"
 set-variable .fhook-erf.comment "|;||;|; | ;||"
 
-; setup erf folding support
-set-variable .fhook-erf.fold-open  "^\".*{$"
-set-variable .fhook-erf.fold-close "^}"
-set-variable .fhook-erf.fold-mopen "1"
+; setup erf collapse support
+set-variable .fhook-erf.collapse-open  "^\".*{$"
+set-variable .fhook-erf.collapse-close "^}"
+set-variable .fhook-erf.collapse-mclose "1"
+set-variable .fhook-erf.collapse-mnext "-1"
 
 !if &not &exist .hilight.erf
     set-variable .hilight.erf &pinc .hilight.next 1

@@ -75,11 +75,9 @@ set-variable .fhook-jst.item-list-s4 "^[ \t]*Appendix \\([[:alpha:]].*\\)"
 set-variable .fhook-jst.item-list-r4 "Appx \ecB\\1\ecA"
 
 !if &sin "f" .fhook-jst.setup
-    ; Define the folding definitions.
-    set-variable .fhook-jst.fold-open  "^[ \t]*\\(Appendix[ \t]+[[:alpha:]]\\|[0-9]\\.[0-9.]*\\)[ \t]+\\w"
-    set-variable .fhook-jst.fold-close "^[ \t]*\\(Appendix[ \t]+[[:alpha:]]\\|[0-9]\\.[0-9.]*\\)[ \t]+\\w"
-    set-variable .fhook-jst.fold-mopen "1"
-    set-variable .fhook-jst.fold-mnext "-1"
+    set-variable .fhook-jst.collapse-open  "^[ \t]*\\(Appendix[ \t]+[[:alpha:]]\\|[0-9]\\.[0-9.]*\\)[ \t]+\\w"
+    set-variable .fhook-jst.collapse-close "^[ \t]*\\(Appendix[ \t]+[[:alpha:]]\\|[0-9]\\.[0-9.]*\\)[ \t]+\\w\\|\\'"
+    set-variable .fhook-jst.collapse-mnext "-1"
 !endif
 
 !if &and &sin "h" .fhook-jst.setup &band .hilight.flags 0x02 

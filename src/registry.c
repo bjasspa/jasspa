@@ -370,7 +370,7 @@ regSave (meRegNode *rnp, meUByte *fname)
         flags |= meRWFLAG_CRYPT ;
     }
     /* Open the file */
-    if((ss=ffWriteFileOpen(fname,flags,NULL)) == meTRUE)
+    if((ss=ffWriteFileOpen(fname,flags,NULL)) > 0)
     {
         meRegNode *rr ;
         
@@ -380,7 +380,7 @@ regSave (meRegNode *rnp, meUByte *fname)
 
         /* Recurse the children of the node and write to file */
         rr = rnp->child ;
-        while ((ss == meTRUE) && (rr != NULL))
+        while ((ss > 0) && (rr != NULL))
         {
             meUByte buff[4096] ;
             int  len ;
@@ -410,7 +410,7 @@ regSave (meRegNode *rnp, meUByte *fname)
                 buff[len++] = ' ' ;
                 buff[len++] = '{' ;
             }
-            if((ss = ffWriteFileWrite(len,buff,1)) != meTRUE)
+            if((ss = ffWriteFileWrite(len,buff,1)) <= 0)
                 break ;
             
             /* Descend child */
@@ -442,13 +442,13 @@ regSave (meRegNode *rnp, meUByte *fname)
                      * number of chars in buffer must be ' 's so just splat in the '}'
                      */
                     buff[level] = '}' ;
-                    if((ss = ffWriteFileWrite(level+1,buff,1)) != meTRUE)
+                    if((ss = ffWriteFileWrite(level+1,buff,1)) <= 0)
                         break ;
                 }
             }
         }
         ffWriteFileClose(fname,meRWFLAG_WRITE,NULL) ;
-        if(ss == meTRUE)
+        if(ss > 0)
         {
             rnp->mode &= ~meREGMODE_CHANGE;
             return meTRUE ;
@@ -611,7 +611,7 @@ int
 regDelete (meRegNode *sroot)
 {
     /* Test and save first as user may abort */
-    if(regTestSave(sroot,1) != meTRUE)
+    if(regTestSave(sroot,1) <= 0)
         return meABORT ;
     /* Unlink the node */
     if (sroot->parent != NULL)
@@ -719,7 +719,7 @@ regRead (meUByte *rname, meUByte *fname, int mode)
     }
     /* Now parse the registry file */
     parseFile (rnp, lp) ;
-    freeLineLoop(lp,0) ;
+    meLineLoopFree(lp,0) ;
 
 finished:
     rnp->mode |= mode & meREGMODE_STORE_MASK ;
@@ -922,7 +922,7 @@ saveRegistry (int f, int n)
         {
             /* we don't what to save the history this way */
             if(meStrcmp(rnp->name,"history") &&
-               ((f=regTestSave(rnp,n)) != meTRUE))
+               ((f=regTestSave(rnp,n)) <= 0))
                     return f ;
             rnp = rnp->next ;
         }
@@ -943,7 +943,7 @@ saveRegistry (int f, int n)
         filebuf[0] = '\0' ;
     
     /* Get the filename */
-    if(meGetString((meUByte *)"Registry file",MLFILECASE|MLFILECASE, 0, filebuf, meFILEBUF_SIZE_MAX) != meTRUE)
+    if(meGetString((meUByte *)"Registry file",MLFILECASE|MLFILECASE, 0, filebuf, meFILEBUF_SIZE_MAX) <= 0)
         return meFALSE ;
     return regSave (rnp, filebuf);
 }

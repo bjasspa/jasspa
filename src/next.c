@@ -84,7 +84,7 @@ flNextFind(meUByte *str, meUByte **curFilePtr, meInt *curLine)
         return mlwrite(MWABORT,(meUByte *)"[Search string to long]") ;
     pat[soff] = '\0' ;
 
-    if(iscanner(pat,1,ISCANNER_PTBEG|ISCANNER_MAGIC|ISCANNER_EXACT,NULL) != meTRUE)
+    if(iscanner(pat,1,ISCANNER_PTBEG|ISCANNER_MAGIC|ISCANNER_EXACT,NULL) <= 0)
         return 0 ;
 
     /* Found it, is it an ignore line? if so return -1 else fill in the slots and return 1. */
@@ -226,10 +226,10 @@ getNextLine(int f,int n)
                         return meFALSE ;
                     }
                     nextFile[ii-1] = '*' ;
-                    if(swbuffer(frameCur->windowCur,bp) != meTRUE)
+                    if(swbuffer(frameCur->windowCur,bp) <= 0)
                         return meFALSE ;
                 }
-                else if(findSwapFileList(nextFile,(BFND_CREAT|BFND_MKNAM),0) != meTRUE)
+                else if(findSwapFileList(nextFile,(BFND_CREAT|BFND_MKNAM),0) <= 0)
                     return meFALSE ;
                 if(curLine < 0)
                     return mlwrite(MWABORT,(meUByte *)"[No Line number]") ;
@@ -238,11 +238,7 @@ getNextLine(int f,int n)
                  * BUT the file name will be null! catch this and just use the buffer name */ 
                 mlwrite(0,(meUByte *)"File %s, line %d",
                         (frameCur->bufferCur->fileName == NULL) ? frameCur->bufferCur->name:frameCur->bufferCur->fileName,curLine) ;
-#if MEOPT_NARROW
                 return windowGotoAbsLine(curLine) ;
-#else
-                return windowGotoLine(1,curLine) ;
-#endif
             }
         }
     }
@@ -257,7 +253,7 @@ addNextLine(int f, int n)
     meUByte name[meBUF_SIZE_MAX], line[meBUF_SIZE_MAX] ;
     int no, cnt ;
     
-    if(meGetString((meUByte *)"next name",0,0,name,meBUF_SIZE_MAX) != meTRUE)
+    if(meGetString((meUByte *)"next name",0,0,name,meBUF_SIZE_MAX) <= 0)
         return meFALSE ;
     for(no=0 ; no<noNextLine ; no++)
         if(!meStrcmp(nextName[no],name))
@@ -274,7 +270,7 @@ addNextLine(int f, int n)
         return meTRUE ;
     }
     line[0] = (n < 0) ? '0':'1' ;
-    if(meGetString((meUByte *)"next line",0,0,line+1,meBUF_SIZE_MAX) != meTRUE)
+    if(meGetString((meUByte *)"next line",0,0,line+1,meBUF_SIZE_MAX) <= 0)
         return meFALSE ;
     if(no == noNextLine)
     {
@@ -366,7 +362,7 @@ doRcsCommand(meUByte *fname, register meUByte *comStr)
             }
             else
             {
-                if(meGetString((meUByte *)"Enter message",0,0,pat+ii,meBUF_SIZE_MAX-ii) != meTRUE)
+                if(meGetString((meUByte *)"Enter message",0,0,pat+ii,meBUF_SIZE_MAX-ii) <= 0)
                     return meFALSE ;
                 ii = meStrlen(pat) ;
             }
@@ -403,7 +399,7 @@ rcsCiCoFile(int f, int n)
             /* already read-only, no changes to undo, return */
             return meTRUE ;
             
-        if(ss != meTRUE)
+        if(ss <= 0)
         {
 #ifdef _DOS
             frameCur->bufferCur->stats.stmode &= ~0x01 ;
@@ -426,13 +422,13 @@ rcsCiCoFile(int f, int n)
         if(n < 0)
         {
             /* unedit changes */
-            if(ss != meTRUE)
+            if(ss <= 0)
                 return mlwrite(MWABORT,(meUByte *)"[rcs file not found - cannot unedit]") ;
             str = rcsUeStr ;
         }
         else
         {
-            if(ss == meTRUE)
+            if(ss > 0)
                 str = rcsCiStr ;
             else
                 str = rcsCiFStr ;
@@ -440,16 +436,16 @@ rcsCiCoFile(int f, int n)
         if(str == NULL)
             return mlwrite(MWABORT,(meUByte *)"[rcs ci or cif command not set]") ;
         if((n >= 0) && meModeTest(frameCur->bufferCur->mode,MDEDIT) &&
-           ((ss=saveBuffer(meTRUE,meTRUE)) != meTRUE))
+           ((ss=saveBuffer(meTRUE,meTRUE)) <= 0))
             return ss ;
     }
     lineno = frameCur->windowCur->dotLineNo ;
     curcol = frameCur->windowCur->dotOffset ;
     /* must execute the command and then reload, reload taken from swbuffer */
-    if((doRcsCommand(frameCur->bufferCur->fileName,str) != meTRUE) ||
-       (bclear(frameCur->bufferCur) != meTRUE) ||
+    if((doRcsCommand(frameCur->bufferCur->fileName,str) <= 0) ||
+       (bclear(frameCur->bufferCur) <= 0) ||
        ((frameCur->bufferCur->intFlag |= BIFFILE),(frameCur->bufferCur->dotLineNo = lineno+1),
-        (swbuffer(frameCur->windowCur,frameCur->bufferCur) != meTRUE)))
+        (swbuffer(frameCur->windowCur,frameCur->bufferCur) <= 0)))
         return meFALSE ;
     if(curcol > meLineGetLength(frameCur->windowCur->dotLine))
         frameCur->windowCur->dotOffset = meLineGetLength(frameCur->windowCur->dotLine) ;

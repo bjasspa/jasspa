@@ -20,10 +20,11 @@ set-variable .fhook-mhg.setup &reg "/history" "fhook/mhg" "fghinopx"
 set-variable .fhook-mhg.setup-mask "aefghikmnoptux"
 set-variable .fhook-mhg.comment "|//||/|// | //||"
 
-; Set up the folds for 'mheg'
-set-variable .fhook-mhg.fold-open  "^{"
-set-variable .fhook-mhg.fold-close "^}"
-set-variable .fhook-mhg.fold-mopen "1"
+; Set up the collapses for 'mheg'
+set-variable .fhook-mhg.collapse-open  "^{"
+set-variable .fhook-mhg.collapse-close "^}"
+set-variable .fhook-mhg.collapse-mclose "1"
+set-variable .fhook-mhg.collapse-mnext "-1"
 
 !if &and &sin "h" .fhook-mhg.setup &band .hilight.flags 0x02 
     ; Hi-light M-HEG Mode

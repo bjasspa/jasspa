@@ -59,7 +59,6 @@ meRealloc(void *r, size_t s)
     return r ;
 }
 
-
 /* case insensitive str compare
  * done by simply turning all letters to lower case
  */
@@ -210,7 +209,7 @@ sortLines(int f, int n)
     
     if((noL=frameCur->windowCur->dotLineNo-frameCur->windowCur->markLineNo) == 0)
         return meTRUE ;
-    if((ii=bchange()) != meTRUE)               /* Check we can change the buffer */
+    if((ii=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
         return ii ;
     if(noL < 0)
     {
@@ -249,6 +248,10 @@ sortLines(int f, int n)
     frameCur->windowCur->dotOffset = 0 ;
 #if MEOPT_UNDO
     meUndoAddDelChars(len) ;
+#endif
+    frameCur->windowCur->dotLine = eL ;
+    frameCur->windowCur->dotLineNo = sln+noL ;
+#if MEOPT_UNDO
     meUndoAddReplaceEnd(len) ;
 #endif
     
@@ -285,8 +288,6 @@ sortLines(int f, int n)
     frameCur->windowCur->markLine = *list ;
     frameCur->windowCur->markOffset = 0 ;
     frameCur->windowCur->markLineNo = sln ;
-    frameCur->windowCur->dotLine  = eL ;
-    frameCur->windowCur->dotLineNo = sln+noL ;
     
     meFree(list) ;
     frameCur->windowCur->updateFlags |= WFMOVEL|WFMAIN ;
@@ -517,10 +518,10 @@ transChars(int f, int n)
     }
     cr = meLineGetChar(dotp, frameCur->windowCur->dotOffset) ;
     frameCur->windowCur->dotOffset-- ;
-    if(bchange() != meTRUE)               /* Check we can change the buffer */
+    if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
         return meABORT ;
     cl = meLineGetChar(dotp, frameCur->windowCur->dotOffset);
-    lchange(WFMAIN);
+    lineSetChanged(WFMAIN);
 #if MEOPT_UNDO
     meUndoAddRepChar() ;
     meLineSetChar(dotp, frameCur->windowCur->dotOffset, cr);
@@ -543,16 +544,17 @@ transChars(int f, int n)
 int
 transLines(int f, int n)
 {
-    register meLine   *ln1, *ln2 ;
-    register int    i, len ;
+    register meLine *ln1, *ln2 ;
+    register int i, j, len ;
     
-    if((n<0) && (windowBackwardLine(meTRUE, 1) != meTRUE))
+    if((n<0) && (windowBackwardLine(meTRUE, 1) <= 0))
         return meFALSE ;
-    if((i=bchange()) != meTRUE)               /* Check we can change the buffer */
+    if((i=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
         return i ;
-    lchange(WFMAIN|WFMOVEL);
+    lineSetChanged(WFMAIN|WFMOVEL);
     frameCur->windowCur->dotOffset = 0 ;
-    for(i=0 ; i<abs(n) ; i++)
+    
+    for(i=0,j=abs(n) ; i<j ; i++)
     {
         if(((ln1 = frameCur->windowCur->dotLine) == meLineGetPrev(frameCur->bufferCur->baseLine)) ||
            ((ln2 = meLineGetNext(ln1)) == frameCur->bufferCur->baseLine))
@@ -560,7 +562,10 @@ transLines(int f, int n)
 #if MEOPT_UNDO
         len = meLineGetLength(ln1) + meLineGetLength(ln2) + 2 ;
         meUndoAddDelChars(len) ;
+        /* ZZZZ - yuck */
+        frameCur->windowCur->dotLineNo += 2 ;
         meUndoAddReplaceEnd(len) ;
+        frameCur->windowCur->dotLineNo -= 2 ;
 #endif
         meLineGetPrev(meLineGetNext(ln2)) = ln1 ;
         meLineGetNext(meLineGetPrev(ln1)) = ln2 ;
@@ -569,11 +574,11 @@ transLines(int f, int n)
         meLineGetPrev(ln1) = ln2 ;
         meLineGetNext(ln2) = ln1 ;
         frameCur->windowCur->dotLineNo++ ;
-        if((n<0) && (windowBackwardLine(meTRUE, 2) != meTRUE))  
+        if((n<0) && (windowBackwardLine(meTRUE, 2) <= 0))  
             /* move back over one swapped aswell */
             return meFALSE ;
     }
-    if(n<0) 
+    if(n < 0) 
         windowForwardLine(meTRUE, 1) ;
     update(meFALSE) ;
     return (meTRUE);
@@ -639,14 +644,14 @@ quote(int f, int n)
         return (meTRUE);
     if((c = mlCharReply((meUByte *)"Quote: ",mlCR_QUOTE_CHAR,NULL, NULL)) < 0)
         return mlwrite(MWABORT,(meUByte *)"[Cannot quote this key]") ;
-    if((s=bchange()) != meTRUE)               /* Check we can change the buffer */
+    if((s=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
         return s ;
     if(c == meNLCHAR)
     {
         f = n ;
         do 
-            s = lnewline();
-        while((s==meTRUE) && --n);
+            s = lineInsertNewline(meFALSE);
+        while((s > 0) && --n);
 #if MEOPT_UNDO
         meUndoAddInsChars(f-n) ;
 #endif
@@ -687,7 +692,7 @@ meTab(int f, int n)
            return doCindent(&ii) ;
 #endif
     }
-    if((ii=bchange()) != meTRUE)               /* Check we can change the buffer */
+    if((ii=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
         return ii ;
     
 #if MEOPT_WORDPRO
@@ -709,8 +714,8 @@ meTab(int f, int n)
         int ss = (tabsize*(n-1)) + (tabsize - (getccol()%tabsize)) - n ;
         /* insert the required number of TABs as spaces first - this handles over mode
          * The extra spaces required are inserted next */
-        if(((ii = insertChar(' ',n)) == meTRUE) && ss &&
-           ((ii = linsert(ss,' ')) == meTRUE))
+        if(((ii = insertChar(' ',n)) > 0) && ss &&
+           ((ii = lineInsertChar(ss,' ')) > 0))
         {
 #if MEOPT_UNDO
             meUndoAddInsChars(ss) ;
@@ -742,7 +747,7 @@ meBacktab(int f, int n)
         ((doto = frameCur->windowCur->dotOffset-1) < 0))	/* At start of line ?? */
         return (meFALSE);			/* Yes - quit out */
     
-    if(bchange() != meTRUE)               /* Check we can change the buffer */
+    if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
         return meABORT ;
     
     /* Delete the tabular space. */
@@ -800,31 +805,6 @@ meBacktab(int f, int n)
     return (meFALSE);		/* Nothing to remove !!! */
 }
 
-/*
- * Open up some blank space. The basic plan is to insert a bunch of newlines,
- * and then back up over them. Everything is done by the subcommand
- * procerssors. They even handle the looping. Normally this is bound to "C-O".
- */
-int
-insLine(int f, int n)
-{
-    register int    i;
-    register int    s;
-    
-    if (n <= 0)
-        return meTRUE ;
-    if((s=bchange()) != meTRUE)               /* Check we can change the buffer */
-        return s ;
-    i = n;                                  /* Insert newlines.     */
-    do 
-        s = lnewline();
-    while((s==meTRUE) && --i);
-#if MEOPT_UNDO
-    meUndoAddInsChars(n-i) ;
-#endif
-    return (s);
-}
-
 #if MEOPT_WORDPRO
 int
 winsert(void)	/* insert a newline and indentation for Wrap indent mode */
@@ -853,18 +833,17 @@ winsert(void)	/* insert a newline and indentation for Wrap indent mode */
         i++ ;
     }
     /* put in the newline */
-    if (lnewline() == meFALSE)
-        return(meFALSE);
+    if (lineInsertNewline(meFALSE) <= 0)
+        return meFALSE ;
     
     if(i && (i != tptr))
     {
         /* and the saved indentation */
-        lsinsert(i, ichar) ;
+        if(lineInsertString(i, ichar) <= 0)
+            return meFALSE ;
 #if MEOPT_UNDO
         meUndoAddInsChars(i+1) ;
 #endif
-        /*        if(meModeTest(frameCur->bufferCur->mode,MDTAB) && cptr[tptr] == ' ')*/
-        /*            meBacktab(meFALSE, 1);*/
     }
 #if MEOPT_UNDO
     else
@@ -875,18 +854,18 @@ winsert(void)	/* insert a newline and indentation for Wrap indent mode */
 #endif
 
 #if MEOPT_HILIGHT
+/* insert a newline and indentation for current buffers indent scheme */
 static int
 indentInsert(void)
-/* insert a newline and indentation for current buffers indent scheme */
 {
     indentLine() ;
     
     /* put in the newline */
+    if (lineInsertNewline(meFALSE) <= 0)
+        return meFALSE ;
 #if MEOPT_UNDO
     meUndoAddInsChar() ;
 #endif
-    if (lnewline() == meFALSE)
-        return meFALSE ;
     return indentLine() ;
 }
 #endif
@@ -895,7 +874,7 @@ int
 meLineSetIndent(int curInd, int newInd, int undo)
 {
     register int ss, curOff ;
-    if((ss=bchange()) != meTRUE)               /* Check we can change the buffer */
+    if((ss=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
         return ss ;
     curOff = frameCur->windowCur->dotOffset ;
     frameCur->windowCur->dotOffset = 0 ;
@@ -907,9 +886,9 @@ meLineSetIndent(int curInd, int newInd, int undo)
     {
         ss = newInd / tabwidth ;
         newInd -= ss * tabwidth ;
-        linsert(ss,'\t') ;
+        lineInsertChar(ss,'\t') ;
     }
-    linsert(newInd,' ') ;
+    lineInsertChar(newInd,' ') ;
     ss += newInd ;
     curOff += ss ;
 #if MEOPT_UNDO
@@ -917,7 +896,6 @@ meLineSetIndent(int curInd, int newInd, int undo)
     {
         meUndoAddReplaceEnd(ss) ;
         frameCur->bufferCur->undoHead->doto = ss ;
-        frameCur->bufferCur->undoHead->type |= meUNDO_REVS ;
     }
 #endif
     frameCur->windowCur->dotOffset = curOff ;
@@ -937,7 +915,7 @@ meNewline(int f, int n)
         return meTRUE ;
     if (n < 0)
         return meFALSE ;
-    if((s=bchange()) != meTRUE)               /* Check we can change the buffer */
+    if((s=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
         return s ;
     
 #if MEOPT_WORDPRO
@@ -973,12 +951,13 @@ meNewline(int f, int n)
         else
 #endif
         {
+            s = lineInsertNewline(meFALSE) ;
 #if MEOPT_UNDO
-            meUndoAddInsChar() ;
+            if (s > 0)
+                meUndoAddInsChar() ;
 #endif
-            s = lnewline() ;
         }
-        if (s != meTRUE)
+        if (s <= 0)
             return s ;
 #if MEOPT_WORDPRO
         if(f)
@@ -1008,20 +987,18 @@ backDelChar(int f, int n)
         return meTRUE ;
     if (n < 0)
         return (forwDelChar(f, -n));
-    if((s=bchange()) != meTRUE)               /* Check we can change the buffer */
+    if((s=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
         return s ;
     
+    /* Always make ldelete save the deleted stuff in a kill buffer
+     * unless only one character and not in letter kill mode. */
     if((f != meFALSE) || meModeTest(frameCur->bufferCur->mode,MDLETTR))
         keep = 3 ;                      /* Save in kill */
     else
         keep = 2 ;
     
-    if((s = meWindowBackwardChar(frameCur->windowCur, n)) == meTRUE)
-        /*
-         * Always make ldelete save the deleted stuff in a kill buffer
-         * unless only one character and in letter kill mode.
-         */
-        s = ldelete((meInt)n, keep);
+    if((s = meWindowBackwardChar(frameCur->windowCur, n)) > 0)
+        s = ldelete(n,keep);
     
     return s ;
 }
@@ -1054,7 +1031,7 @@ deblank(int f, int n)
         ++nld;
     if (nld == 0)
         return (meTRUE);
-    if(bchange() != meTRUE)               /* Check we can change the buffer */
+    if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
         return meABORT ;
     frameCur->windowCur->dotLine = meLineGetNext(lp1);
     frameCur->windowCur->dotOffset = 0;
@@ -1079,7 +1056,7 @@ forwDelChar(int f, int n)
         return meTRUE ;
     if (n < 0)
         return (backDelChar(f, -n));
-    if((s=bchange()) != meTRUE)               /* Check we can change the buffer */
+    if((s=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
         return s ;
     
     if((f != meFALSE) || meModeTest(frameCur->bufferCur->mode,MDLETTR))
@@ -1115,7 +1092,7 @@ killLine(int f, int n)
     if((del=(n < 0)))
         n = -n ;
     
-    if((s=bchange()) != meTRUE)               /* Check we can change the buffer */
+    if((s=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
         return s ;
     if(frameCur->windowCur->dotLine == frameCur->bufferCur->baseLine)
         chunk = 0 ;
@@ -1166,13 +1143,13 @@ mlWrite(int f, int n)
     register int status;
     meUByte buf[meBUF_SIZE_MAX];	/* buffer to recieve message into */
     
-    if ((status = meGetString((meUByte *)"Message", 0, 0, buf, meBUF_SIZE_MAX)) != meTRUE)
-        return(status);
+    if ((status = meGetString((meUByte *)"Message", 0, 0, buf, meBUF_SIZE_MAX)) <= 0)
+        return status ;
     
     mlwrite(MWSPEC,buf);
-    if((f==meTRUE) && (n>0))
+    if((f == meTRUE) && (n > 0))
         TTsleep(n,0);
-    return(meTRUE);
+    return meTRUE ;
 }
 
 #if MEOPT_CFENCE
@@ -1253,7 +1230,7 @@ moveToNonWhite(meUByte forwFlag, meUByte *flags)
                              */
                             frameCur->windowCur->dotOffset = ((size_t) ss - (size_t) lp->text) - 1 ;
                             do {
-                                if(findfence('#',forwFlag) != meTRUE)
+                                if(findfence('#',forwFlag) <= 0)
                                     return 0 ;
                             } while(meLineGetChar(frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset+2) != 'n') ;
                         }
@@ -1349,7 +1326,7 @@ hash_skip:
                             if((ss[0] == 'e') && (ss[1] == 'l'))
                             {
                                 frameCur->windowCur->dotOffset = ((size_t) ss - (size_t) lp->text) - 1 ;
-                                if(findfence('#',forwFlag) != meTRUE)
+                                if(findfence('#',forwFlag) <= 0)
                                     return 0 ;
                             }
                             /* skip the hash line itself */
@@ -1468,7 +1445,7 @@ hash_skip:
                     register meUByte c2 = meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset+1) ;
                     if(c2 == '*')
                     {   /* c comment, go to the end of it */
-                        if(findfence('*',forwFlag) != meTRUE)
+                        if(findfence('*',forwFlag) <= 0)
                             return 0 ;
                         frameCur->windowCur->dotOffset++ ;
                         continue ;
@@ -1490,7 +1467,7 @@ hash_skip:
                     {
                         /* must move back one into the comment */
                         frameCur->windowCur->dotOffset-- ;
-                        if(findfence('/',forwFlag) != meTRUE)
+                        if(findfence('/',forwFlag) <= 0)
                             return 0 ;
                         /* ZZZZ - note that at this point we should check for
                          * a # at the start of the line and do the right
@@ -1658,7 +1635,7 @@ findfence(meUByte ch, meUByte forwFlag)
                     else if((ss[0] == 'i') && (ss[1] == 'f'))
                     {
                         do {
-                            if(findfence('#',forwFlag) != meTRUE)
+                            if(findfence('#',forwFlag) <= 0)
                                 return meFALSE ;
                             /* findfence can only succeed with a line containing
                              * #e[nl]
@@ -1695,7 +1672,7 @@ findfence(meUByte ch, meUByte forwFlag)
                     if((ss[0] == 'i') && (ss[1] == 'f'))
                         break ;
                     else if((ss[0] == 'e') && (ss[1] == 'n') &&
-                            (findfence('#',forwFlag) != meTRUE))
+                            (findfence('#',forwFlag) <= 0))
                         return meFALSE ;
                     lp = frameCur->windowCur->dotLine ;
                     ii = 0 ;
@@ -1737,7 +1714,7 @@ findfence(meUByte ch, meUByte forwFlag)
                  * assume the latter.
                  */
                 return 2 ;
-            if(findfence('*',forwFlag) != meTRUE)
+            if(findfence('*',forwFlag) <= 0)
                 break ;
         }
         else if(cc == '*')
@@ -1752,7 +1729,7 @@ findfence(meUByte ch, meUByte forwFlag)
             if(forwFlag)
                 /* we've found a double comment, try to report the error */
                 break ;
-            if(findfence('/',forwFlag) != meTRUE)
+            if(findfence('/',forwFlag) <= 0)
                 break ;
         }
         else if(ch == cc)
@@ -1781,7 +1758,7 @@ findfence(meUByte ch, meUByte forwFlag)
                 /* This is a same direction bracket - i.e. a '(' when going forward
                  * If so find the other side of the bracket (using findfence)
                  */
-                if((ii=findfence(fenceString[ii^1],forwFlag)) != meTRUE)
+                if((ii=findfence(fenceString[ii^1],forwFlag)) <= 0)
                 {
                     if(!inAps)
                         inAps = ii ;
@@ -1849,11 +1826,17 @@ gotoFence(int f, int n)
                     /* a #endif, go backwards */
                     forwFlag = 0 ;
                 else if(meLineGetChar(oldlp, oldoff+2) != 'l')
-                    goto invalid_fence ;
+                {
+                    ret = meFALSE ;
+                    goto exit_fence ;
+                }
             }
             else if((meLineGetChar(oldlp, oldoff+1) != 'i') ||
                     (meLineGetChar(oldlp, oldoff+2) != 'f'))
-                goto invalid_fence ;
+            {
+                ret = meFALSE ;
+                goto exit_fence ;
+            }
         }
         else
         {
@@ -1864,7 +1847,7 @@ gotoFence(int f, int n)
             ch = fenceString[forwFlag^1] ;
             forwFlag &= 1 ;
         }
-        if((ret = findfence(ch,forwFlag)) == meTRUE)
+        if((ret = findfence(ch,forwFlag)) > 0)
         {
             frameCur->windowCur->updateFlags |= WFMOVEL;
             /* if 2nd bit not set then we want to stay here so simply
@@ -1889,11 +1872,11 @@ gotoFence(int f, int n)
         frameCur->windowCur->vertScroll = oldtln ;
     }
     else
-invalid_fence:
-    ret = meFALSE ;
+        ret = meFALSE ;
+exit_fence:
     if((ret == meFALSE) && (n & 1))
         TTbell();
-    return (ret == meTRUE) ;
+    return ret ;
 }
 
 
@@ -2342,11 +2325,11 @@ cinsert(void)
     doCindent(&inComment) ;
     
     /* put in the newline */
+    if (lineInsertNewline(meFALSE) <= 0)
+        return meFALSE ;
 #if MEOPT_UNDO
     meUndoAddInsChar() ;
 #endif
-    if (lnewline() == meFALSE)
-        return meFALSE ;
     doCindent(&inComment) ;
     if(inComment && (commentCont[0] != '\0'))
     {    
@@ -2357,11 +2340,11 @@ cinsert(void)
             frameCur->windowCur->dotOffset = doto ;
             if((newInd = getccol() - 3) < 0)
                 newInd = 0 ;
-            if(meLineSetIndent(doto,newInd,1) != meTRUE)
+            if(meLineSetIndent(doto,newInd,1) <= 0)
                 return meFALSE ;
             str = commentCont ;
             while(*str != '\0')
-                linsert(1, *str++) ;
+                lineInsertChar(1, *str++) ;
             if((doto=((size_t) str) - ((size_t) commentCont)) > 0)
             {
 #if MEOPT_UNDO
@@ -2378,46 +2361,45 @@ cinsert(void)
 #endif /* MEOPT_CFENCE */
 
 int
-insString(int f, int n)	/* ask for and insert a string into the current
-                           buffer at the current point */
+meAnchorDelete(meBuffer *bp, meInt name)
 {
-    register meUByte cc, *tp;	        /* pointer into string to add */
-    meUByte tstring[meBUF_SIZE_MAX];              /* string to add */
-    register int status;		/* status return code */
-    register int count=0;		/* char insert count */
+    meAnchor *pp=NULL, *aa=bp->anchorList;
+    meLineFlag flag ;
     
-    /* ask for string to insert */
-    if((status=meGetString((meUByte *)"String", 0, 0,tstring, meBUF_SIZE_MAX)) != meTRUE)
-        return status ;
-    if((status=bchange()) != meTRUE)               /* Check we can change the buffer */
-        return status ;
-    
-    /* insert it */
-    for(; n>0 ; n--)
+    while((aa != NULL) && (meAnchorGetName(aa) != name))
     {
-        tp = &tstring[0];
-        while ((cc=*tp++) != '\0')
-        {
-            if(cc == 0x0a)
-                status = lnewline();
-            else
-                status = linsert(1,cc);
-            if(status != meTRUE)
-                return status ;
-            count++ ;
-        }
+        pp = aa ;
+        aa = meAnchorGetNext(aa) ;
     }
-#if MEOPT_UNDO
-    meUndoAddInsChars(count) ;
-#endif
+    if(aa == NULL)
+        return meFALSE ;
+    /* Remove aa from the anchor list */
+    if(pp == NULL)
+        bp->anchorList = meAnchorGetNext(aa) ;
+    else
+        pp->next = meAnchorGetNext(aa) ;
+    
+    flag = meAnchorGetLineFlag(aa) ;
+    meAssert(aa->line->flag & flag) ;
+    
+    /* see if we can remove the anchor flag from the old line */
+    pp = bp->anchorList ;
+    while(pp != NULL)
+    {
+        if((pp->line == aa->line) && (meAnchorGetLineFlag(pp) == flag))
+            break ;
+        pp = meAnchorGetNext(pp) ;
+    }
+    if(pp == NULL)
+        aa->line->flag ^= flag ;
+    meFree(aa) ;
     return meTRUE ;
 }
 
-
 int
-alphaMarkGet(meBuffer *bp, meUShort name)
+meAnchorGet(meBuffer *bp, meInt name)
 {
-    meAMark *p = bp->amarkList;
+    meAnchor *p = bp->anchorList;
     
     while(p != NULL)
     {
@@ -2456,7 +2438,7 @@ try_again:
                         {
                             /* We've found the mark in this narrow, remove the
                              * narrow and try again */
-                            removeNarrow(bp,nrrw,0) ;
+                            meBufferRemoveNarrow(bp,nrrw,0,NULL) ;
                             goto try_again ;
                         }
                         if(lp == nrrw->elp)
@@ -2478,28 +2460,47 @@ try_again:
 }
 
 int
-alphaMarkSet(meBuffer *bp, meUShort name, meLine *lp,
-             meUShort off, int silent)
+meAnchorSet(meBuffer *bp, meInt name, 
+            meLine *lp, meUShort off, int silent)
 {
-    meAMark *p = bp->amarkList;
+    meAnchor *p = bp->anchorList;
     
     while((p != NULL) && (p->name != name))
         p = p->next;
     
     if(p == NULL)
     {
-        if((p = (meAMark*) meMalloc(sizeof(meAMark))) == NULL)
+        if((p = (meAnchor*) meMalloc(sizeof(meAnchor))) == NULL)
             return meFALSE ;
-        p->next = bp->amarkList ;
-        bp->amarkList = p ;
+        p->next = bp->anchorList ;
+        bp->anchorList = p ;
     }
-    else if(!silent)
-        mlwrite(MWCLEXEC,(meUByte *)"[overwriting existing mark]");
-    
+    else
+    {
+        /* see if we can remove the anchor flag from the old line */
+        if(p->line != lp)
+        {
+            meAnchor *q = bp->anchorList;
+            meLineFlag flag = meAnchorGetLineFlag(p) ;
+            
+            meAssert(p->line->flag & flag) ;
+            while(q != NULL)
+            {
+                if((q != p) && (q->line == p->line) && (meAnchorGetLineFlag(q) == flag))
+                    break ;
+                q = q->next ;
+            }
+            if(q == NULL)
+                p->line->flag ^= flag ;
+        }
+        if(!silent)
+            mlwrite(MWCLEXEC,(meUByte *)"[overwriting existing mark]");
+    }    
     p->name = name ;
     p->line = lp ;
     p->offs = off ;
-    lp->flag |= meLINE_AMARK ;		/* mark the line as marked */
+    /* mark the line as having an anchor */
+    lp->flag |= meAnchorGetLineFlag(p) ;
     return meTRUE ;
 }
 
@@ -2511,7 +2512,7 @@ setAlphaMark(int f, int n)
      * searching down the mark list and tacking a new mark list element on
      * the end.
      */
-    int   cc ;
+    meInt   cc ;
     
     if((cc = mlCharReply((meUByte *)"Place mark: ",mlCR_QUIT_ON_USER,NULL,NULL)) == -2)
         cc = mlCharReply((meUByte *)"Place mark: ",mlCR_ALPHANUM_CHAR,NULL,NULL) ;
@@ -2519,7 +2520,7 @@ setAlphaMark(int f, int n)
     if(cc < 0)
         return ctrlg(meFALSE,1) ;
     
-    return alphaMarkSet(frameCur->bufferCur,(meUShort) cc,frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset,0) ;
+    return meAnchorSet(frameCur->bufferCur,cc,frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset,0) ;
 }
 
 int
@@ -2530,7 +2531,7 @@ gotoAlphaMark(int f, int n)
      * current offset equal to the line and offset stored in the mark
      * element with the required name).
      */
-    int	   cc ;
+    meInt cc ;
     
     if((cc = mlCharReply((meUByte *)"Goto mark: ",mlCR_QUIT_ON_USER,NULL,NULL)) == -2)
         cc = mlCharReply((meUByte *)"Goto mark: ",mlCR_ALPHANUM_CHAR,NULL,NULL) ;
@@ -2538,9 +2539,9 @@ gotoAlphaMark(int f, int n)
     if(cc < 0)
         return ctrlg(meFALSE,1) ;
     
-    if(alphaMarkGet(frameCur->bufferCur,(meUShort) cc) != meTRUE)
+    if(meAnchorGet(frameCur->bufferCur,cc) <= 0)
     {
-        meAMark *p = frameCur->bufferCur->amarkList;
+        meAnchor *p = frameCur->bufferCur->anchorList;
         meUByte  allmarks[256]; 	/* record of the marks	*/
         int      ii = 0;
         
@@ -2591,12 +2592,12 @@ insFileName(int f, int n)
     
     if((n <= 0) || (frameCur->bufferCur->fileName == NULL))
         return meTRUE ;
-    if((s=bchange()) == meTRUE)               /* Check we can change the buffer */
+    if((s=bufferSetEdit()) > 0)               /* Check we can change the buffer */
     {
         while(n--)
         {
             p=frameCur->bufferCur->fileName ;
-            while(((cc = *p++) != 0) && ((s = linsert(1,cc)) == meTRUE))
+            while(((cc = *p++) != 0) && ((s = lineInsertChar(1,cc)) > 0))
                 count++ ;
         }
 #if MEOPT_UNDO
@@ -2678,7 +2679,7 @@ cmpBuffers(int f, int n)
              * in the buffer. if the current character is a space then advance
              * to the next non-white character in the buffer. */
             wp = swp ;
-            if (((moreData = meWindowForwardChar(wp,1)) == meTRUE) && (cc == ' '))
+            if (((moreData = meWindowForwardChar(wp,1)) > 0) && (cc == ' '))
             {
                 do
                 {
@@ -2686,7 +2687,7 @@ cmpBuffers(int f, int n)
                     if (!isSpace (tmpc) && (tmpc != ' '))
                         break;
                 }
-                while ((moreData = meWindowForwardChar(wp,1)) == meTRUE);
+                while ((moreData = meWindowForwardChar(wp,1)) > 0);
             }
             
             /* Advance the rest of the windows. */
@@ -2694,7 +2695,7 @@ cmpBuffers(int f, int n)
             {
                 if((wp->flags & meWINDOW_NO_CMP) == 0)
                 {
-                    if(((winData = meWindowForwardChar(wp,1)) == meTRUE) && (cc == ' '))
+                    if(((winData = meWindowForwardChar(wp,1)) > 0) && (cc == ' '))
                     {
                         do
                         {
@@ -2702,7 +2703,7 @@ cmpBuffers(int f, int n)
                             if (!isSpace (tmpc) && (tmpc != ' '))
                                 break;
                         }
-                        while ((winData = meWindowForwardChar(wp,1)) == meTRUE);
+                        while ((winData = meWindowForwardChar(wp,1)) > 0);
                     }
                 
                     if(winData != moreData)
@@ -2880,7 +2881,7 @@ setCursorToMouse(int f, int n)
         if (f == meTRUE)
         {
             mouse_pos = MIERROR;        /* Set bad status */
-            return (meTRUE);
+            return meTRUE ;
         }
         meWindowMakeCurrent(wp) ;               /* No - make it so */
     }

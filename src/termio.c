@@ -728,7 +728,7 @@ translateKey(int f, int n)
 #endif
     {
         meStrcpy(tnkyPrompt+19,"code") ;
-        if((meGetString(tnkyPrompt,0,0,buf,128) != meTRUE) ||
+        if((meGetString(tnkyPrompt,0,0,buf,128) <= 0) ||
            ((ii=keyListToShorts(c_from,buf)) <= 0))
             return meFALSE ;
 
@@ -739,7 +739,7 @@ translateKey(int f, int n)
             if(f == meFALSE)
                 n = TTtransKey.time ;
             meStrcpy(tnkyPrompt+19,"to") ;
-            if((meGetString(tnkyPrompt,0,0,buf,128) != meTRUE) ||
+            if((meGetString(tnkyPrompt,0,0,buf,128) <= 0) ||
                ((f=keyListToShorts(c_to,buf)) < 0))
                 return meFALSE ;
             if(f == 0)

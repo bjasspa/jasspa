@@ -186,7 +186,7 @@ extern int iscanner (meUByte *apat, int n, int flags, SCANNERPOS *sp);
 extern meUByte  srchPat[] ;             /* current search string          */
 extern meUByte  srchRPat[] ;            /* reverse current search string  */
 /* the following variables store info on the last match - for @s# support     */
-extern int    srchLastState;            /* status of last search          */
+extern int      srchLastState;          /* status of last search          */
 extern meUByte *srchLastMatch;          /* pointer to the last match string */
 #if MEOPT_MAGIC
 extern int    srchLastMagic;            /* last search was a magic        */

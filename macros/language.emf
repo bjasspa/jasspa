@@ -12,7 +12,7 @@
 ;
 !if &les @# 1
     ; if executed with an argument of 0 or less, return the list
-    set-variable %language-names "|Default|American|British|Deutsch|Espanol|Finnish|Francais|Italiano|Polish|Portugues|"
+    set-variable %language-names "|Default|American|British|Deutsch|Espanol|Francais|Italiano|Polish|Portugues|"
     !return
 !endif
 
@@ -43,10 +43,6 @@ set-variable #l0 &reg "/history" "language" ""
     set-char-mask "a" "ÁáÉéÍíÑñÓóÚúÜüAaEeIiNnOoUu"
     set-variable .set-char-mask.rm-chars "ÁáÉéÍíÑñÓóÚúÜü"
     set-variable .spell.language "eses"
-!elif &seq #l0 "Finnish"
-    set-char-mask "a" "ÅåÄäÖöAaOo"
-    set-variable .set-char-mask.rm-chars "ÅåÄäÖö"
-    set-variable .spell.language "fifi"
 !elif &seq #l0 "Francais"
     set-char-mask "a" "ÀàÂâÁáÇçÈèÊêÉéËëÎîÍíÏïÑñÒòÔôÓóÖöÙùÛûÚúÜüAaCcEeIiNnOoUu"
     set-variable .set-char-mask.rm-chars "ÀàÂâÁáÇçÈèÊêÉéËëÎîÍíÏïÑñÒòÔôÓóÖöÙùÛûÚúÜü"

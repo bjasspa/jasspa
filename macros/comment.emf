@@ -258,14 +258,14 @@ define-macro comment-end
     ; get to the first comment start
     beginning-of-line
     !force -1 search-forward #p8
-    set-alpha-mark "0x80"
+    set-alpha-mark "\x80"
     ; try moving forward line by line
     beginning-of-line
     forward-line
     !tjump &seq &lef &trl @wl &len #p8 #p8 -1
     set-mark
     ; now go back to the start and go backwards
-    goto-alpha-mark "0x80"
+    goto-alpha-mark "\x80"
     beginning-of-line
     !force backward-line
     !if $status

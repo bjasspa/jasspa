@@ -46,7 +46,7 @@
 ;         >
 ;         > Author:       My Self
 ;         > Created:      11/11/97
-;         > Modified:     <020301.2325>
+;         > Modified:     <021101.1409>
 ;         > Location:     /xx/yy/zz.doc
 ; *
 ;         All lines commencing with '*' are assumed to be bullet lists. Bullet
@@ -315,8 +315,7 @@ set-variable &ind &spr ".fhook-%s.command-kbind" #l1 "|C-c C-h|C-c C-s||C-c o|||
 set-variable &ind &spr ".fhook-%s.command-desc"  #l1 "|&Show Current Settings|Spell Check Buffer|Convert to JST|Fill Paragraph for WP Export||To format current paragraph:||Justify Both Margins|Justify Center|Justify Left|Justify Gutter (on left margin)|Justify Right|Format Paragraph in Current Mode|Intelligently Format Paragraph||To change justification mode:||Change to auto justification [DEFAULT]|Change to both justification|Change to center justification|Change to left justification|Change to none justification|Change to right justification|"
 !if &sin "f" #l0
     ; Define the folding definitions.
-    set-variable &ind &spr ".fhook-%s.fold-open" #l1  "^[ \t]*\\(Appendix[ \t]+[A-Z][0-9.]*\\|[0-9]\\.[0-9.]*\\)[ \t]+\\w"
-    set-variable &ind &spr ".fhook-%s.fold-close" #l1 "^[ \t]*\\(Appendix[ \t]+[A-Z][0-9.]*\\|[0-9]\\.[0-9.]*\\)[ \t]+\\w"
-    set-variable &ind &spr ".fhook-%s.fold-mopen" #l1 "1"
-    set-variable &ind &spr ".fhook-%s.fold-mnext" #l1 "-1"
+    set-variable &ind &spr ".fhook-%s.collapse-open" #l1  "^[ \t]*\\(Appendix[ \t]+[A-Z][0-9.]*\\|[0-9]\\.[0-9.]*\\)[ \t]+\\w"
+    set-variable &ind &spr ".fhook-%s.collapse-close" #l1 "^[ \t]*\\(Appendix[ \t]+[A-Z][0-9.]*\\|[0-9]\\.[0-9.]*\\)[ \t]+\\w"
+    set-variable &ind &spr ".fhook-%s.collapse-mnext" #l1 "-1"
 !endif

@@ -143,7 +143,7 @@ execString(int f, int n)
 {
     meUByte sbuf[meBUF_SIZE_MAX] ;
     
-    if(meGetString((meUByte *)"Enter string", MLFFZERO, 0, sbuf, meBUF_SIZE_MAX) != meTRUE)
+    if(meGetString((meUByte *)"Enter string", MLFFZERO, 0, sbuf, meBUF_SIZE_MAX) <= 0)
         return 0 ;
     return stringExec(f,n,sbuf) ;
 }
@@ -158,10 +158,10 @@ createMacro(meUByte *name)
     
     /* If the macro name has not been give then try and get one */
     if((name == NULL) && 
-       (meGetString((meUByte *)"Enter macro name", MLCOMMAND, 0, buff, meBUF_SIZE_MAX) == meTRUE) && (buff[0] != '\0'))
+       (meGetString((meUByte *)"Enter macro name", MLCOMMAND, 0, buff, meBUF_SIZE_MAX) > 0) && (buff[0] != '\0'))
         name = buff ;
     
-    if((name == NULL) || ((hlp = lalloc(0)) == NULL))
+    if((name == NULL) || ((hlp = meLineMalloc(0,0)) == NULL))
         return NULL ;
     
     /* if it already exists */
@@ -182,7 +182,7 @@ createMacro(meUByte *name)
                 if(meNullFree(mac->fname))
                     mac->fname = NULL ;
             }
-            freeLineLoop(mac->hlp,1) ;
+            meLineLoopFree(mac->hlp,1) ;
         }
     }
     else
@@ -266,7 +266,7 @@ macroFileDefine(int f, int n)
     meUByte fname[meBUF_SIZE_MAX] ;
     int ii=0 ;
     
-    if(meGetString((meUByte *)"Enter file", MLCOMMAND, 0, fname, meBUF_SIZE_MAX) != meTRUE)
+    if(meGetString((meUByte *)"Enter file", MLCOMMAND, 0, fname, meBUF_SIZE_MAX) <= 0)
         return meFALSE ;
     while((mac=createMacro(NULL)) != NULL)
     {
@@ -573,7 +573,7 @@ help(int f, int n)
     {
         meBuffer *hbp ;
         if(((hbp=helpBufferFind()) == NULL) ||
-           (helpBufferLoad(hbp) != meTRUE))
+           (helpBufferLoad(hbp) <= 0))
             return meABORT ;
         return swbuffer(frameCur->windowCur,hbp);
     }
@@ -585,7 +585,7 @@ helpItem(int f, int n)
 {
     meUByte buf[meBUF_SIZE_MAX] ;
     
-    if(meGetString((meUByte *)"Help on item", 0, 0, buf, meBUF_SIZE_MAX-10) != meTRUE)
+    if(meGetString((meUByte *)"Help on item", 0, 0, buf, meBUF_SIZE_MAX-10) <= 0)
         return meFALSE ;
     return findHelpItem(buf,0) ;
 }
@@ -595,11 +595,11 @@ helpCommand(int f, int n)
 {
     meUByte *ss, buf[meBUF_SIZE_MAX] ;
               
-    if(meGetString((meUByte *)"Help on command", MLCOMMAND, 0, buf, meBUF_SIZE_MAX-10) != meTRUE)
+    if(meGetString((meUByte *)"Help on command", MLCOMMAND, 0, buf, meBUF_SIZE_MAX-10) <= 0)
         return meFALSE ;
     ss = buf + meStrlen(buf) ;
     meStrcpy(ss,"(2)") ;
-    if(findHelpItem(buf,1) == meTRUE)
+    if(findHelpItem(buf,1) > 0)
         return meTRUE ;
     meStrcpy(ss,"(3)") ;
     return findHelpItem(buf,0) ;
@@ -610,7 +610,7 @@ helpVariable(int f, int n)
 {
     meUByte buf[meBUF_SIZE_MAX] ;
 
-    if(meGetString((meUByte *)"Help on variable", MLVARBL, 0, buf, meBUF_SIZE_MAX-10) != meTRUE)
+    if(meGetString((meUByte *)"Help on variable", MLVARBL, 0, buf, meBUF_SIZE_MAX-10) <= 0)
         return meFALSE ;
     meStrcat(buf,"(5)") ;
     return findHelpItem(buf,0) ;
@@ -627,7 +627,7 @@ macroHelpDefine(int f, int n)
     
     if((lpStoreBp=helpBufferFind()) == NULL)
         return meABORT ;
-    if(meGetString((meUByte *)"Enter name", MLCOMMAND, 0, name+4, meBUF_SIZE_MAX-4) != meTRUE)
+    if(meGetString((meUByte *)"Enter name", MLCOMMAND, 0, name+4, meBUF_SIZE_MAX-4) <= 0)
         return meFALSE ;
     sect[0] = '\0' ;
     if(meGetString((meUByte *)"Enter section", 0, 0, sect, 20) == meABORT)
@@ -662,7 +662,7 @@ nameKbdMacro(int f, int n)
         return mlwrite(MWABORT,(meUByte *)"Macro already active!");
     if(lkbdlen <= 0)
         return mlwrite(MWABORT,(meUByte *)"No macro defined!") ;
-    if((ss=macroDefine(meFALSE, meTRUE)) == meTRUE)
+    if((ss=macroDefine(meFALSE, meTRUE)) > 0)
     {
         meStrcpy(buf,"execute-string \"") ;
         n = expandexp(lkbdlen,lkbdptr,meBUF_SIZE_MAX-2,16,buf,-1,NULL,meEXPAND_BACKSLASH|meEXPAND_FFZERO|meEXPAND_PRINTABLE) ;
@@ -679,7 +679,7 @@ userGetMacro(meUByte *buf, int len)
 {
     register int idx ;
     
-    if(meGetString((meUByte *)"Enter macro name ", MLCOMMAND,2,buf,len) == meTRUE)
+    if(meGetString((meUByte *)"Enter macro name ", MLCOMMAND,2,buf,len) > 0)
     {        
         if((idx = decode_fncname(buf,0)) < 0)
             mlwrite(MWABORT,(meUByte *)"%s not defined",buf) ;
@@ -705,7 +705,7 @@ insMacro(int f, int n)
     if((mac=userGetMacro(buf+13, meBUF_SIZE_MAX-13)) == NULL)
         return meFALSE ;
     
-    if((ii=bchange()) != meTRUE)               /* Check we can change the buffer */
+    if((ii=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
         return ii ;
     frameCur->windowCur->dotOffset = 0 ;
     slp = frameCur->windowCur->dotLine ;
@@ -722,8 +722,7 @@ insMacro(int f, int n)
     nol += addLine(slp,(meUByte *)"!emacro") ;
     frameCur->bufferCur->lineCount += nol ;
 #if MEOPT_UNDO
-    if(meModeTest(frameCur->bufferCur->mode,MDUNDO))
-        meUndoAddInsChars(len) ;
+    meUndoAddInsChars(len) ;
 #endif
     meFrameLoopBegin() ;
     for (wp=loopFrame->windowList; wp!=NULL; wp=wp->next)

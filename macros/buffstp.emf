@@ -86,6 +86,22 @@
         !endif
     !endif
 !emacro
+0 define-macro buffer-setup-fmark
+    set-variable #l0 &spr "fhook/%s-f%smark" &rig $buffer-fhook 6 &lget "|o|c|" &abs @#
+    set-variable #l1 &reg "/history" #l0 ""
+    !if &les @# 0
+        set-variable #l2 @ml2 "" #l1
+        !if &not &seq #l2 #l1
+            !if &seq #l2 ""
+                !force delete-registry &cat "/history" #l0
+            !else
+                set-registry "/history" #l0 #l2
+            !endif
+        !endif
+    !else
+        set-variable $result #l1
+    !endif
+!emacro
 0 define-macro buffer-setup-save
     !if &not &seq .buffer-setup.nsetup .buffer-setup.osetup
         set-registry "/history" &cat "fhook/" &rig $buffer-fhook 6 .buffer-setup.nsetup
@@ -116,7 +132,7 @@ define-macro buffer-setup
         set-variable #l9 &cat &sup &mid $buffer-fhook 6 1 &rig $buffer-fhook 7
     !endif
     -1 osd .osd.buffstp
-    osd .osd.buffstp 0 "batcdHs" 9 3 47 10 -1 -1 930 .scheme.osd-title &cat #l9 " Buffer Setup"
+    osd .osd.buffstp 0 "batcdHs" 9 3 47 10 -1 -1 970 .scheme.osd-title &cat #l9 " Buffer Setup"
     osd .osd.buffstp 5 ""
     set-variable #l0 1
     set-variable #l1 0
@@ -167,10 +183,17 @@ define-macro buffer-setup
             set-variable #l1 0
         !endif
     !until &seq &lget .flags &inc #l0 1 ""
-    osd .osd.buffstp 900 ""
-    osd .osd.buffstp 910 "BtcfHhx" 910 .scheme.osd-ebtt " &Save " 1 buffer-setup-save
-    osd .osd.buffstp 920 "BtcfHh"  920 .scheme.osd-ebtt " &Current " 2 buffer-setup-save
-    osd .osd.buffstp 930 "BtcfH"   930 .scheme.osd-ebtt " E&xit " f void
+    !if &not &seq &lget &ind &spr ".%s.comment" $buffer-fhook 1 ""
+        osd .osd.buffstp 900 "Sfh" "      Fold Open&/Close: " 910
+        osd .osd.buffstp 910 "EtRxHfh" 910 .scheme.osd-entry "##########" 1 buffer-setup-fmark
+        osd .osd.buffstp 915 "hf" "   "
+        osd .osd.buffstp 920 "EtRxHf"  920 .scheme.osd-entry "##########" 2 buffer-setup-fmark
+        osd .osd.buffstp 930 ""
+    !endif        
+    osd .osd.buffstp 940 ""
+    osd .osd.buffstp 950 "BtcfHhx" 950 .scheme.osd-ebtt " &Save " 1 buffer-setup-save
+    osd .osd.buffstp 960 "BtcfHh"  960 .scheme.osd-ebtt " &Current " 2 buffer-setup-save
+    osd .osd.buffstp 970 "BtcfH"   970 .scheme.osd-ebtt " E&xit " f void
     set-variable .nsetup .osetup
     .osd.buffstp osd
 !emacro
@@ -254,8 +277,8 @@ define-macro buffer-help
     !endif
     !if &sin "f" #l0
         buffer-help-add-item "" "" ""
-        buffer-help-add-item "fold-current" "" "Open/Close Current Fold"
-        buffer-help-add-item "fold-all" "" "Open/Close All Folds"
+        buffer-help-add-item "collapse-current" "" "Open/Close Current Collapse"
+        buffer-help-add-item "collapse-all" "" "Open/Close All Collapses"
     !endif
     !if &sin "s" #l0
         buffer-help-add-item "" "" ""
@@ -368,8 +391,8 @@ define-macro buffer-help
     !endif
     !if &sin "f" #l0
         buffer-tool-add-item "" "" "" #l8
-        buffer-tool-add-item "fold-current" "" "Open/Close Current Fold" #l8
-        buffer-tool-add-item "fold-all" "" "Open/Close All Folds" #l8
+        buffer-tool-add-item "collapse-current" "" "Open/Close Current Collapse" #l8
+        buffer-tool-add-item "collapse-all" "" "Open/Close All Collapses" #l8
     !endif
     !if &sin "s" #l0
         buffer-tool-add-item "" "" "" #l8

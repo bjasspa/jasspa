@@ -91,9 +91,9 @@ addFileHook(int f, int n)
             fileHookCount=0 ;
             return meFALSE ;
         }
-        if((meGetString((meUByte *)"File id",0,0,buff,meBUF_SIZE_MAX) != meTRUE) ||
+        if((meGetString((meUByte *)"File id",0,0,buff,meBUF_SIZE_MAX) <= 0) ||
            ((fileHookExt[fileHookCount] = meStrdup(buff)) == NULL) ||
-           (meGetString((meUByte *)"Hook func",0,0,buff,meBUF_SIZE_MAX) != meTRUE) ||
+           (meGetString((meUByte *)"Hook func",0,0,buff,meBUF_SIZE_MAX) <= 0) ||
            ((fileHookFunc[fileHookCount] = meStrdup(buff)) == NULL))
             return meFALSE ;
         if(f == meFALSE)
@@ -458,8 +458,8 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
 	{
             lineno = bp->dotLineNo ;
             update(meTRUE) ;
-            if((mlyesno((meUByte *)"File changed on disk, reload") == meTRUE) &&
-               (bclear(bp) == meTRUE))
+            if((mlyesno((meUByte *)"File changed on disk, reload") > 0) &&
+               (bclear(bp) > 0))
             {
                 /* achieve cheekily by calling itself as the bclear make it inactive,
                  * This ensures the re-evaluation of the hooks etc.
@@ -490,7 +490,7 @@ findBuffer(int f, int n)
     register int    s;
     meUByte           bufn[meBUF_SIZE_MAX];
 
-    if((s = getBufferName((meUByte *)"Find buffer",0,2,bufn)) != meTRUE)
+    if((s = getBufferName((meUByte *)"Find buffer",0,2,bufn)) <= 0)
 	return s ;
     if(n > 0)
 	f = BFND_CREAT ;
@@ -517,7 +517,7 @@ nextWndFindBuf(int f, int n)
     register int    s;
     meUByte           bufn[meBUF_SIZE_MAX];
     
-    if((s = getBufferName((meUByte *)"Use buffer", 0, 2, bufn)) != meTRUE)
+    if((s = getBufferName((meUByte *)"Use buffer", 0, 2, bufn)) <= 0)
 	return(s);
     if(n)
 	n = BFND_CREAT ;
@@ -662,7 +662,7 @@ HideBuffer(meBuffer *bp, int forceAll)
                             /* this is true if only *scratch* is left */
                             return meFALSE ;
                         
-                        if(swbuffer(wp, bp1) != meTRUE)
+                        if(swbuffer(wp, bp1) <= 0)
                             return meFALSE ;
                     }
                 }
@@ -713,7 +713,7 @@ int
 bclear(register meBuffer *bp)
 {
     meMode bmode ;
-    register meAMark *mk, *nmk ;
+    register meAnchor *mk, *nmk ;
     register meLine    *lp ;
     register int      s;
     
@@ -723,7 +723,7 @@ bclear(register meBuffer *bp)
 	meIPipe *ipipe ;
 	
 	if(!(bp->intFlag & BIFBLOW) &&
-	   ((s=mlyesno((meUByte *)"Kill active process")) != meTRUE))
+	   ((s=mlyesno((meUByte *)"Kill active process")) <= 0))
 	    return s ;
 	
         /* while waiting for a Yes from the user, the process may
@@ -750,7 +750,7 @@ bclear(register meBuffer *bp)
 	    meStrcpy(prompt,bp->name) ;
         meStrcat(prompt,": Discard changes") ;
 	s = mlyesno(prompt) ;
-	if(s != meTRUE)
+	if(s <= 0)
 	    return(s);
         autowriteremove(bp) ;
     }
@@ -793,7 +793,7 @@ bclear(register meBuffer *bp)
         meModeSet(bp->mode,MDDEL) ;
     bp->intFlag &= ~(BIFLOAD|BIFBLOW|BIFLOCK) ;
     lp = bp->baseLine ;
-    freeLineLoop(lp,0) ;
+    meLineLoopFree(lp,0) ;
     lp->flag  = 0 ;
     bp->dotLine  = lp ;
     bp->vertScroll = 0 ;
@@ -824,14 +824,14 @@ bclear(register meBuffer *bp)
 	bp->varList.head = NULL ;
 	bp->varList.count = 0 ;
     }
-    mk = bp->amarkList;
+    mk = bp->anchorList;
     while(mk != NULL)
     {
 	nmk = mk->next ;
 	meFree(mk) ;
 	mk = nmk ;
     }
-    bp->amarkList = NULL ;
+    bp->anchorList = NULL ;
 #if MEOPT_LOCALBIND
     if(bp->bindList != NULL)
 	meFree(bp->bindList) ;
@@ -849,7 +849,7 @@ bclear(register meBuffer *bp)
             nnw = nw->next ;
             /* Create the loop for freeing */
             nw->elp->next = nw->slp ;
-            freeLineLoop(nw->slp,1) ;
+            meLineLoopFree(nw->slp,1) ;
             meFree(nw) ;
         } while(nnw != NULL) ;
         bp->narrow = NULL ;
@@ -919,7 +919,7 @@ zotbuf(register meBuffer *bp, int silent) /* kill the buffer pointed to by bp */
     register int     s ;
     
     /* Blow text away. last chance for user to abort so do first */
-    if ((s=bclear(bp)) != meTRUE)
+    if ((s=bclear(bp)) <= 0)
 	return (s);
     /* if this is the scratch and the only buffer then don't delete */
     
@@ -931,7 +931,7 @@ zotbuf(register meBuffer *bp, int silent) /* kill the buffer pointed to by bp */
     /* This must really be the frameCur->windowCur, ie frameCur->bufferCur must be bp otherwise
     ** swbuffer fucks up big time.
     */
-    if(HideBuffer(bp,1) != meTRUE)
+    if(HideBuffer(bp,1) <= 0)
 	/* only scratch left */
 	return meTRUE ;
     
@@ -967,7 +967,7 @@ delBuffer(int f, int n)
     register int s;
     meUByte bufn[meBUF_SIZE_MAX];
 
-    if((s = getBufferName((meUByte *)"Delete buffer", MLNOSTORE,1,bufn)) != meTRUE)
+    if((s = getBufferName((meUByte *)"Delete buffer", MLNOSTORE,1,bufn)) <= 0)
 	return(s);
     
     if((bp=bfind(bufn, 0)) == NULL) 
@@ -998,14 +998,14 @@ delSomeBuffers(int f, int n)
 	{
 	    if(!(n & 0x01) ||
 	       ((sprintf((char *)prompt,"Delete buffer [%s] ",bp->name)),
-		((s=mlyesno(prompt)) == meTRUE)))
+		((s=mlyesno(prompt)) > 0)))
 	    {
                 if(!(n & 0x01))
                     bp->intFlag |= BIFBLOW ;
-		if(zotbuf(bp,clexec) != meTRUE)
+		if(zotbuf(bp,clexec) <= 0)
 		    return meABORT ;
 	    }
-	    else if(s == meABORT)
+	    else if(s < 0)
 		return meABORT ;
 	}
 	bp = nbp ;
@@ -1020,7 +1020,7 @@ changeBufName(int f, int n)     /*      Rename the current buffer       */
     register int s ;
     
     /* prompt for and get the new buffer name */
-    if((s = getBufferName((meUByte *)"New buffer name", 0, 0, bufn)) != meTRUE)
+    if((s = getBufferName((meUByte *)"New buffer name", 0, 0, bufn)) <= 0)
 	return s ;
 
     unlinkBuffer(frameCur->bufferCur) ;
@@ -1069,8 +1069,8 @@ addLine(register meLine *ilp, meUByte *text)
     register meUByte *ss ;
     
     ntext = meStrlen(text);
-    if ((lp=lalloc(ntext)) == NULL)
-	return 0 ;
+    if ((lp=meLineMalloc(ntext,0)) == NULL)
+	return meFALSE ;
     
     ss = lp->text ;
     while((*ss++ = *text++))
@@ -1080,7 +1080,7 @@ addLine(register meLine *ilp, meUByte *text)
     lp->prev = ilp->prev;
     ilp->prev = lp;
     lp->next = ilp ;
-    return 1 ;
+    return meTRUE ;
 }
 
 /*
@@ -1161,16 +1161,16 @@ makelist(meBuffer *blistp, int verb)
 #if MEOPT_UNDO
 	    meUndoNode *nn ;
 #endif
-	    meLine   *ll ;
-	    int     jj ;
+	    meLine *ll ;
+	    int jj ;
 	    
 	    ii = 0 ;
 	    jj = 0 ;
 	    ll = bp->baseLine ;
 	    do
 	    {
-		ii += meLineGetLength(ll)+1 ;
-		jj += ll->size ;
+		ii += meLineGetLength(ll) + 1 ;
+		jj += meLineGetMaxLength(ll) ;
 		ll = meLineGetNext(ll) ;
 	    } while(ll != bp->baseLine) ;
 	    *cp1++ = ' ';
@@ -1180,7 +1180,7 @@ makelist(meBuffer *blistp, int verb)
 	    ff = line + 45 - cp1 ;
 	    while(ff-- > 0)
 		*cp1++ = ' ' ;
-	    jj += (sizeof(meLine)*(bp->lineCount+1)) + sizeof(meBuffer) ;
+	    jj += (meLINE_SIZE*(bp->lineCount+1)) + sizeof(meBuffer) ;
 	    cp2 = meItoa(jj) ;
 	    while((cc = *cp2++) != '\0')
 		*cp1++ = cc ;
@@ -1192,11 +1192,18 @@ makelist(meBuffer *blistp, int verb)
 	    nn = bp->undoHead ;
 	    while(nn != NULL)
 	    {
-		ii += sizeof(meUndoNode) ;
-		if(nn->type & meUNDO_MDEL)
-		    ii += meStrlen(nn->str) ;
-		if(nn->type & meUNDO_REPL)
-		    ii += sizeof(meUndoCoord)*nn->doto ;
+#if MEOPT_NARROW
+		if(meUndoIsNarrow(nn))
+                    ii += sizeof(meUndoNarrow) ;
+                else
+#endif
+                {
+                    ii += sizeof(meUndoNode) ;
+                    if(nn->type & meUNDO_DELETE)
+                        ii += meStrlen(nn->str) ;
+                    if(meUndoIsReplace(nn))
+                        ii += sizeof(meUndoCoord)*nn->doto ;
+                }
 		nn = nn->next ;
 	    }
 	    cp2 = meItoa(ii) ;
@@ -1294,7 +1301,7 @@ createBuffer(register meUByte *bname)
 
     if((bp=(meBuffer *)meMalloc(sizeof(meBuffer))) == NULL)
 	return NULL ;
-    if((lp=lalloc(0)) == NULL)
+    if((lp=meLineMalloc(0,0)) == NULL)
     {
 	meFree(bp);
 	return NULL ;
@@ -1514,15 +1521,15 @@ adjustMode(meBuffer *bp, int nn)  /* change the editor mode status */
 		storeWindBSet(tbp,frameCur->windowCur) ;
 		swbuffer(frameCur->windowCur,bp) ;
 		
-		nn = bchange() ;
+		nn = bufferSetEdit() ;
 		
 		swbuffer(frameCur->windowCur,tbp) ;
 		restoreWindBSet(frameCur->windowCur,tbp) ;
 	    }
 	    else
-		nn = bchange() ;
+		nn = bufferSetEdit() ;
             
-            if(nn != meTRUE)
+            if(nn <= 0)
                 return nn ;
 	}
         if((func == 0) && !clexec)
@@ -1624,7 +1631,7 @@ namedBufferMode(int f, int n)   /* prompt and set an editor mode */
     register int s;
     meUByte bufn[meBUF_SIZE_MAX];
     
-    if((s = getBufferName((meUByte *)"Buffer name", MLNOSTORE,1,bufn)) != meTRUE)
+    if((s = getBufferName((meUByte *)"Buffer name", MLNOSTORE,1,bufn)) <= 0)
 	return s ;
     
     if((bp=bfind(bufn, 0)) == NULL) 

@@ -25,10 +25,11 @@ set-variable .fhook-emf.command-nbind "||||||"
 set-variable .fhook-emf.command-kbind "||A-q|C-c C-q|esc q|esc o|"
 set-variable .fhook-emf.command-desc  "|Complete co&mmand|&Quote command||||"
 
-; setup emf folding
-set-variable .fhook-emf.fold-open  "^0? ?define-macro"
-set-variable .fhook-emf.fold-close "^!emacro"
-set-variable .fhook-emf.fold-mopen "1"
+; setup emf collapsing
+set-variable .fhook-emf.collapse-open  "^0? ?define-macro"
+set-variable .fhook-emf.collapse-close "^!emacro"
+set-variable .fhook-emf.collapse-mclose "1"
+set-variable .fhook-emf.collapse-mnext "-1"
 
 ; setup item-list
 set-variable .fhook-emf.item-list-s1 "^[ \t]*[0-9]*[ \t]*define-macro[ \t]+\\(\\w+\\)"

@@ -127,7 +127,7 @@ windowBackwardChar(int f, register int n)
 {
     if (n < 0)
         return (windowForwardChar(f, -n));
-    if(meWindowBackwardChar(frameCur->windowCur,n) != meTRUE)
+    if(meWindowBackwardChar(frameCur->windowCur,n) <= 0)
         return meErrorBob() ;
     return meTRUE ;
 }
@@ -143,7 +143,7 @@ windowForwardChar(int f, register int n)
 {
     if (n < 0)
         return (windowBackwardChar(f, -n));
-    if(meWindowForwardChar(frameCur->windowCur,n) != meTRUE)
+    if(meWindowForwardChar(frameCur->windowCur,n) <= 0)
         return meErrorEob() ;
     return meTRUE ;
 }
@@ -282,7 +282,7 @@ windowGotoLine(int f, int n)
     /* get an argument if one doesnt exist */
     if ((f == meFALSE) || (n == 0))
     {
-        if ((status = meGetString((meUByte *)"Goto line", 0, 0, arg, meSBUF_SIZE_MAX)) != meTRUE) 
+        if ((status = meGetString((meUByte *)"Goto line", 0, 0, arg, meSBUF_SIZE_MAX)) <= 0) 
             return(status);
         
         /*---	Skip white space */
@@ -343,7 +343,6 @@ windowGotoLine(int f, int n)
         frameCur->windowCur->dotLineNo = frameCur->bufferCur->lineCount ;
         frameCur->windowCur->updateFlags |= WFMOVEL ;
     }
-    frameCur->windowCur->dotOffset  = 0 ;
     nlno -= frameCur->windowCur->dotLineNo ;
     /* force the $scroll variable to no smooth so if the line is off the screen
      * the reframe will center the line */
@@ -358,7 +357,7 @@ windowGotoLine(int f, int n)
     return n ;
 }
 
-#if MEOPT_NARROW
+#if MEOPT_EXTENDED || MEOPT_NARROW
 /* windowGotoAbsLine
  * 
  * Goto absolute line is similar to windowGotoLine except it considers narrowed out
@@ -366,39 +365,87 @@ windowGotoLine(int f, int n)
 int	
 windowGotoAbsLine(meInt line)
 {
+    meLine *lp ;
     int rr ;
     
+    if (line == 0)		/* if a bogus argument...then leave */
+        return meFALSE ;
+#if MEOPT_NARROW
     if(frameCur->bufferCur->narrow != NULL)
         /* There are narrows - first unnarrow buffer */
-        unnarrowBuffer(frameCur->bufferCur) ;
+        meBufferExpandNarrowAll(frameCur->bufferCur) ;
+#endif
     if(line < 0)
     {
         rr = frameCur->windowCur->dotLineNo ;
+#if MEOPT_EXTENDED
+        if(frameCur->windowCur->dotLine->flag & meLINE_MARKUP)
+            rr = -1 ;
+        else
+        {
+            lp = meLineGetNext(frameCur->bufferCur->baseLine) ;
+            while(lp != frameCur->windowCur->dotLine)
+            {
+                if(lp->flag & meLINE_MARKUP)
+                    rr-- ;
+                lp = meLineGetNext(lp) ;
+            }
+        }
+#endif
+#if MEOPT_NARROW
         if(frameCur->bufferCur->narrow != NULL)
-            redoNarrowInfo(frameCur->bufferCur) ;
+            meBufferCollapseNarrowAll(frameCur->bufferCur) ;
+#endif
         return rr ;
     }
     /* now move to the required line */
-    rr = windowGotoLine(meTRUE,line) ;
+    if(line >= frameCur->bufferCur->lineCount)
+    {
+        frameCur->windowCur->dotLine = frameCur->bufferCur->baseLine ;
+        frameCur->windowCur->dotLineNo = frameCur->bufferCur->lineCount ;
+        rr = (line == frameCur->bufferCur->lineCount) ;
+    }
+    else
+    {
+        frameCur->windowCur->dotLineNo = 0 ;
+        lp = meLineGetNext(frameCur->bufferCur->baseLine) ;
+        while(((lp->flag & meLINE_MARKUP) || (--line > 0)) &&
+              (lp != frameCur->bufferCur->baseLine))
+        {
+            lp = meLineGetNext(lp) ;
+            frameCur->windowCur->dotLineNo++ ;
+        }
+        frameCur->windowCur->dotLine = lp ;
+        rr = (line == 0) ;
+    }
+    /* set column to left hand edge and reset the goal column */
+    frameCur->windowCur->dotOffset = 0 ;
+    curgoal = 0 ;
+    frameCur->windowCur->updateFlags |= WFMOVEL ;
     
+#if MEOPT_NARROW
     if(frameCur->bufferCur->narrow != NULL)
     {
         /* To ensure we get back to the right line (could be
          * currently narrowed out), drop an alpha mark.
          */
-        if(rr == meTRUE)
-            rr = alphaMarkSet(frameCur->bufferCur,meAM_ABSLINE,frameCur->windowCur->dotLine,0,1) ;
-        redoNarrowInfo(frameCur->bufferCur) ;
-        if((rr == meTRUE) &&
-           ((rr = alphaMarkGet(frameCur->bufferCur,meAM_ABSLINE)) == meTRUE))
+        if(rr > 0)
+            rr = meAnchorSet(frameCur->bufferCur,meANCHOR_ABS_LINE,frameCur->windowCur->dotLine,0,1) ;
+        meBufferCollapseNarrowAll(frameCur->bufferCur) ;
+        if(rr > 0) 
         {
-            /* do the buisness */
-            frameCur->windowCur->dotLine = frameCur->bufferCur->dotLine ;
-            frameCur->windowCur->dotOffset = frameCur->bufferCur->dotOffset ;
-            frameCur->windowCur->dotLineNo = frameCur->bufferCur->dotLineNo ;
-            frameCur->windowCur->updateFlags |= WFMOVEL ;
+            if((rr = meAnchorGet(frameCur->bufferCur,meANCHOR_ABS_LINE)) > 0)
+            {
+                /* do the buisness */
+                frameCur->windowCur->dotLine = frameCur->bufferCur->dotLine ;
+                frameCur->windowCur->dotOffset = frameCur->bufferCur->dotOffset ;
+                frameCur->windowCur->dotLineNo = frameCur->bufferCur->dotLineNo ;
+                frameCur->windowCur->updateFlags |= WFMOVEL ;
+            }
+            meAnchorDelete(frameCur->bufferCur,meANCHOR_ABS_LINE) ;
         }
     }
+#endif
     return rr ;
 }
 #endif
@@ -456,7 +503,7 @@ windowBackwardParagraph(int f, int n)
         
         /* first scan back until we are in a word */
         do
-            if(meWindowBackwardChar(frameCur->windowCur, 1) != meTRUE)
+            if(meWindowBackwardChar(frameCur->windowCur, 1) <= 0)
                 return meErrorBob() ;
         while(!inPWord()) ;
         
@@ -485,7 +532,7 @@ windowBackwardParagraph(int f, int n)
                 }
             }	/* End of 'for' */
         }
-        while (suc != meTRUE);
+        while (suc <= 0);
         
         /* and then forward until we are in a word */
         while (suc && !inPWord())
@@ -516,7 +563,7 @@ windowForwardParagraph(int f, int n)
 
         /*---	First scan forward until we are in a word */
         while(!inPWord())
-            if(meWindowForwardChar(frameCur->windowCur, 1) != meTRUE)
+            if(meWindowForwardChar(frameCur->windowCur, 1) <= 0)
                 return meErrorEob() ;
         
         frameCur->windowCur->dotOffset = 0;	/* and go to the B-O-Line */
@@ -545,7 +592,7 @@ windowForwardParagraph(int f, int n)
                     break;
                 }
             }	/* End of 'for' */
-        } while (suc != meTRUE);
+        } while (suc <= 0);
 		
 	/*---	Then backward until we are in a word */
 

@@ -60,6 +60,7 @@ print-scheme .scheme.dir-uknown 0 1 0
 ; Line Schemes
 print-scheme .scheme.hide 0 1 0
 print-scheme .scheme.fold 0 1 0
+print-scheme .scheme.fold-open 0 1 0
 print-scheme .scheme.trace 0 1 0
 print-scheme .scheme.hlwhite 0 1 0
 print-scheme .scheme.hlblack 0 1 0

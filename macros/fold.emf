@@ -1,205 +1,429 @@
-; -!- emf -!-
-; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
-; See the file me.emf for copying and conditions.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
-; Created:     Thu Jan 14 1999
-; Synopsis:    Generic file folding.
-; Authors:     Steven Phillips & Jon Green
+;  Author        : $Author: jon $
+;  Created By    : Steven Phillips
+;  Created       : Wed Oct 30 10:02:33 2002
+;  Last Modified : <021121.2319>
 ;
-; History:
+;  Description
 ;
-; Steven Phillips - 14th Jan 1999 - Generic file folding.
-; 
-; Took Jon's version and made it generic, also hacked at the notes below to
-; make them more applicable.
+;  Notes
 ;
-; Jon Green - 8th Jan 1999 - Folding a 'C' file.
+;  History
 ;
-; The following functions provide a generic folding function for files
-; with well defined sections (e.g. 'C' function etc). This code was based
-; on Steve's hkfold.emf which does a grand job. A foldable region is a
-; region that is enclosed within the predefined start and end search strings
-;
-; We relax the strict fold checking of hkfold.emf and provide little
-; or no error checking when we find the folds. This basically means
-; that if we find a valid enclosure (e.g. for C '^{' ... '^}')
-; then the region is eligible for folding. This technique allows most
-; 'c' files to be folded, there may be a few sections where the '{' is
-; on the end of the line and we have not identified it, but we will
-; skip this and find the next valid enclosure without aborting our search.
-; The user can elect to re-style their code if they want a unidentified
-; region to be correctly folded.
-;
-; By default we do not fold on loading the file, the user has to explicity
-; request the folds to be set up. We only export 2 macro functions into the
-; command space 'fold-current' and 'fold-all'. Both of these perform a toggle
-; function as follows:-
-;
-; fold-current - Acts as a toggle to fold/unfold a region.
-;
-;              If we are in a valid '^{...^}' enclosure then it is rolled
-;              up and the screen is marked with the start and end line
-;              hilighting.
-;
-;              If we are on (or within 3 lines of) a folded line then we
-;              unfold it and remove our fold hilighting markers.
-;
-;
-; fold-all   - Acts as a toggle to fold/unfold the whole file
-;
-;              If the file is already folded, then unfold it - all
-;              enclosures
-;
-;              If the file is unfolded, then fold it. All enclosures.
-;
-;
-; The key mappings that we have used in the context of the buffer are
-; defined as follows:-
-;
-;   'f2'        fold-current - Fold/Unfold the current section.
-;   'f3'        fold-all     - Fold/unfold the whole file.
-;   'C-mouse-1  fold-current - Fold/unfold the current section. 
-;
-; Notes:
-;       The 'fold-current' and 'fold-all' have no equivelent macros in hkfold.emf
-;       so we map these to different keys. Probably the case that 'fold-current'
-;       and 'fold-all' should' be supported in hkfold.emf and be bound to the
-;       above keys for consistancy.
-;
-;       The mouse binding is useful because we can browse the file with 
-;       the mouse and open and close at our lesiure. I was considering 
-;       simply binding the left-mouse-drop to unfold - a simple check in the
-;       mouse code for $line-scheme being a fold scheme color would tell 
-;       us to unfold. Unfortunatly re-perfoming the fold is a little more
-;       difficult as there is nothing to tell us that the user was moving 
-;       the cursor to a new position or requesting a fold operation. 
-;       Hence for consistency I simply use C-mouse-1 which always means
-;       toggle the fold state.
-;
-0 define-macro fold-get-vars
-    set-variable #l0 &spr ".%s." $buffer-fhook
-    set-variable #p9 &ind &cat #l0 "fold-open"
-    set-variable #p8 &ind &cat #l0 "fold-close"
-    set-variable #p7 &ind &cat #l0 "fold-mopen"
-    set-variable #p6 &ind &cat #l0 "fold-mclose"
-    set-variable #p5 &ind &cat #l0 "fold-mnext"
-    !if &or &seq #p9 "ERROR" &seq #p8 "ERROR"
-        ml-write "[Fold environment not setup]"
-        !abort
-    !endif
-!emacro
+;  Copyright (c) 2002 PTC.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; Close all the folds
-0 define-macro fold-close-all
-    fold-get-vars
-    ; Remove any narrows
-    !if &bmod "narrow"
-        !force 1 narrow-buffer
-    !endif
-    beginning-of-buffer
-    !force regex-forward #p9
-    !while $status
-        #p7 forward-line
-        end-of-line
-        set-mark
-        !force regex-forward #p8
-        !if $status
-            #p6 forward-line
-            4 narrow-buffer
-            #p5 forward-line
-            set-variable $line-scheme .scheme.fold
-            end-of-line
-            !force regex-forward #p9
+
+0 define-macro fold-init
+    !if &exi :fold
+        !return
+    !elif &not @#
+        ml-write "[Folding editor has not been configured]"
+        !abort
+    !elif &not &exi &spr ".%s.fold" $buffer-fhook
+        !if &seq &set #l2 &reg "/history" &spr "fhook/%s-fomark" &rig $buffer-fhook 6 "" ""
+            set-variable &ind &spr ".%s.fold" $buffer-fhook ""
+            !abort
         !endif
-    !done
-    set-variable :folded 1
-    beginning-of-buffer
-    ml-write "[Folded all lines]"
-!emacro
-
-; Open all the folds
-0 define-macro fold-open-all
-    set-alpha-mark "t"
-    ; Remove narrows
-    !if &bmod "narrow"
-        !force 1 narrow-buffer
-    !endif
-    ; Remove all of the hilighting
-    beginning-of-buffer
-    !force regex-forward #p8
-    !while $status
-        set-variable $line-scheme -1
-        !force regex-forward #p8
-    !done
-    set-variable :folded 0
-    !force goto-alpha-mark "t"
-    ml-write "[Unfolded all lines]"
-!emacro
-
-; PUBLIC:: Toggle a fold open/shut
-define-macro fold-current
-    set-variable #l1 &sub $window-line $window-y-scroll
-    fold-get-vars
-    beginning-of-line
-    #l5 backward-line
-    !force regex-forward #l8
-    !if &not $status
+        set-variable #l3 &reg "/history" &spr "fhook/%s-fcmark" &rig $buffer-fhook 6 ""
+        !if &seq &set #l1 &lget &ind &spr ".%s.comment" $buffer-fhook 1 ""
+            set-variable &ind &spr ".%s.fold" $buffer-fhook ""
+            !abort
+        !endif
+        set-variable #l0 &spr "\b%s %s\b%s %s\b%s\b" #l1 #l2 #l1 #l3 &lget &ind &spr ".%s.comment" $buffer-fhook 2
+        str-to-regex #l1
+        str-to-regex #l2
+        str-to-regex #l3
+        set-variable #l0 &spr "%s%s[ \t]*%s\b%s[ \t]*%s\b" #l0 #l1 #l2 #l1 #l3
+        set-variable &ind &spr ".%s.fold" $buffer-fhook #l0
+    !elif &seq &set #l0 &ind &spr ".%s.fold" $buffer-fhook ""
         !abort
     !endif
-    #l6 forward-line
-    set-variable #l0 $window-line
-    !force 2 narrow-buffer
-    !if $status
-        !if &les #l5 0
+    ; check for a buffer override
+    beginning-of-buffer
+    !if &xse @wl ".*-!-.*fold-open:[ \t]*\\(\"[^\"]*\"\\|[^ \t;]*\\)[ \\t]*;[ \\t]*fold-close:[ \t]*\\(\"[^\"]*\"\\|[^ \t;]*\\)[ \\t]*;.*-!-.*"
+        set-variable #l2 @s1
+        set-variable #l3 @s2
+        !if &seq &lef #l2 1 "\""
+            execute-line &cat "set-variable #l2 " #l2
+        !endif
+        !if &seq &lef #l3 1 "\""
+            execute-line &cat "set-variable #l3 " #l3
+        !endif
+        set-variable #l0 &lset #l0 1 #l2
+        set-variable #l0 &lset #l0 2 #l3
+        str-to-regex #l2
+        str-to-regex #l3
+        set-variable #l0 &lset #l0 4 #l2
+        set-variable #l0 &lset #l0 5 #l3
+    !endif
+    set-variable :fold #l0
+!emacro
+
+0 define-macro fold-find-close
+    set-variable #l1 $window-line
+    set-variable #l9 &lget :fold 4
+    set-variable #l8 &lget :fold 5
+    end-of-line
+    set-variable #l0 1
+    !repeat
+        !force search-forward &spr "^[ \t]*\\(\\(%s\\)\\|%s\\)" #l9 #l8
+        !if &not $status
+            set-variable $window-line #l1
+            ml-write &spr "[Missing close for fold on line %d]" $window-aline
+            !abort
+        !elif &seq @s2 ""
+            ; the fold open regex closure is empty so this is a close 
+            !if &not &dec #l0 1
+                beginning-of-line
+                !return
+            !endif
+        !else
+            set-variable #l0 &add #l0 1
+        !endif
+    !until 0
+!emacro
+
+0 define-macro fold-markup
+    set-variable #l0 &lget :fold 4
+    set-variable #l1 &xrep @wl #l0 "..."
+    !if &not &seq &set #l0 &lget :fold 3 ""
+        str-to-regex #l0
+        set-variable #l1 &xrep #l1 #l0 ""
+    !endif
+    !if &gre @# 0
+        set-variable $result #l1
+    !elif &seq $result #l1
+        !abort
+    !else
+        ; markup line has been modified - generate the new line
+        set-variable #l2 &trb &rig $result &add &sin "..." $result 2
+        set-variable $result &spr "%s %s%s" &lget :fold 1 #l2 &lget :fold 3
+    !endif
+!emacro
+
+0 define-macro fold-markup-enter
+    !if &les @# 0
+        ; no markup line modificaton
+        !abort
+    !elif &equ @# 2
+        set-variable $result "{{{"
+    !else
+        set-variable $result "}}}"
+    !endif
+!emacro
+
+define-macro fold-open
+    0 fold-init
+    ; init didn't abort - setup
+    !if &equ &band $line-flags 0x44 0x44
+        !if &equ $line-scheme .scheme.fold
+            set-variable #l0 $window-line
+            !force 2 narrow-buffer
+            backward-line
+            set-variable $line-flags &bor $line-flags 0x40
+            set-variable $line-scheme .scheme.fold-open
             set-variable $window-line #l0
+            set-variable $line-flags &bor $line-flags 0x40
+            set-variable $line-scheme .scheme.fold-open
+            forward-line
+            !return
         !endif
-        #l5 forward-line
-        set-variable $line-scheme -1
-        set-variable $window-line #l0
-        set-variable $window-y-scroll &sub $window-line #l1
+    !endif
+    ml-write "[Current line is not a fold]"
+    !abort
+!emacro
+
+define-macro fold-close
+    0 fold-init
+    ; init didn't abort - setup
+    set-position "\x89"
+    set-variable #l0 &bmod "magic"
+    1 buffer-mode "magic"
+    end-of-line
+    set-variable #l2 $window-line
+    !force search-backward &cat "^[ \t]*" &lget :fold 4
+    !if $status
+        set-mark
+        !force fold-find-close
+        !if $status 
+            forward-line
+            !if &gre $window-line #l2
+                0x34 narrow-buffer .scheme.fold fold-markup
+                backward-line
+                &cond #l0 1 -1 buffer-mode "magic"
+                !return
+            !endif
+        !endif
+    !endif
+    goto-position "\x89"
+    &cond #l0 1 -1 buffer-mode "magic"
+    ml-write "[Current line is not within a fold]"
+!emacro
+
+define-macro fold-enter
+    0 fold-init
+    ; init didn't abort - setup
+    !if &equ &band $line-flags 0x44 0x44
+        !if &equ $line-scheme .scheme.fold
+            set-variable #l0 $window-line
+            !force 2 narrow-buffer
+            !if $status
+                backward-line
+                set-mark
+                set-variable $window-line &add #l0 1
+                0x33 narrow-buffer .scheme.fold-open fold-markup-enter
+                forward-line
+                !return
+            !endif
+        !endif
+    !endif
+    ml-write "[Current line is not a fold]"
+    !abort
+!emacro
+
+define-macro fold-exit
+    0 fold-init
+    ; init didn't abort - setup
+    set-position "\x89"
+    end-of-buffer
+    backward-line
+    !if &equ &band $line-flags 0x44 0x44
+        !if &equ $line-scheme .scheme.fold-open
+            beginning-of-buffer
+            !if &equ &band $line-flags 0x44 0x44
+                !if &equ $line-scheme .scheme.fold-open
+                    !force 2 narrow-buffer
+                    set-variable #l0 $window-line
+                    end-of-buffer
+                    backward-line
+                    !force 2 narrow-buffer
+                    set-variable $window-line #l0
+                    fold-close
+                    !return
+                !endif
+            !endif
+        !endif
+    !endif
+    goto-position "\x89"
+    ml-write "[Not within an entered fold]"
+    !abort
+!emacro
+
+define-macro fold-exit-all
+    0 fold-init
+    ; init didn't abort - setup
+*next
+    set-variable #l0 $window-line
+    end-of-buffer
+    backward-line
+    !if &equ &band $line-flags 0x44 0x44
+        !if &equ $line-scheme .scheme.fold-open
+            beginning-of-buffer
+            !if &equ &band $line-flags 0x44 0x44
+                !if &equ $line-scheme .scheme.fold-open
+                    !force 2 narrow-buffer
+                    set-variable #l0 $window-line
+                    end-of-buffer
+                    backward-line
+                    !force 2 narrow-buffer
+                    set-variable $window-line #l0
+                    fold-close
+                    !goto next
+                !endif
+            !endif
+        !endif
+    !endif
+    set-variable $window-line #l0
+!emacro
+
+define-macro fold-kill
+    0 fold-init
+    ; init didn't abort - setup
+    !if &equ &band $line-flags 0x44 0x44
+        !if &equ $line-scheme .scheme.fold
+            beginning-of-line
+            set-mark
+            forward-line
+            kill-region
+            !return
+        !endif
+    !endif
+    ml-write "[Current line is not a fold]"
+    !abort
+!emacro
+
+define-macro fold-create
+    !force 0 fold-init
+    !if &not $status
+        fold-setup
+    !endif
+    ; init didn't abort - setup
+    set-variable #l0 $window-line
+    !force exchange-point-and-mark
+    !if &not &equ #l0 $window-line
+        !if &gre #l0 $window-line
+            exchange-point-and-mark
+        !endif
+        beginning-of-line
+        insert-string &spr "%s %s\n" &lget :fold 2 &lget :fold 3
+        backward-line
+        set-variable $line-flags &bor $line-flags 0x40
+        set-variable $line-scheme .scheme.fold-open
+        exchange-point-and-mark
+        beginning-of-line
+        insert-string &spr "%s %s\n" &lget :fold 1 &lget :fold 3
+        backward-line
+        set-variable $line-flags &bor $line-flags 0x40
+        set-variable $line-scheme .scheme.fold-open
+        fold-close
+        end-of-line
         !return
     !endif
-    beginning-of-line
-    set-mark
-    !force regex-backward #l9
-    !if &not $status
-        ml-write "[Fold not found]"
-        !abort
-    !endif
-    #l7 forward-line
-    4 narrow-buffer
-    #l5 forward-line
-    set-variable $line-scheme .scheme.fold
-    set-variable $window-y-scroll &sub $window-line #l1
+    ml-write "[Region must enclose at least 1 line]"
+    !abort
 !emacro
 
-; PUBLIC:: Toggle all of the folds open/shut
-define-macro fold-all
-    fold-get-vars
-    set-variable #l0 &sub $window-line $window-y-scroll
-    set-alpha-mark "t"
-    !if :folded
-        fold-open-all
-    !else
-        fold-close-all
-        ; go back to the starting point, if this opens a fold then
-        ; remove the hilight - use the number of lines to determine this.
-        end-of-buffer
-        set-variable #l1 $window-line
-        goto-alpha-mark "t"
-        end-of-buffer
-        !if &gre $window-line #l1
-            ; if more lines must have unfolded something to return.
-            goto-alpha-mark "t"
-            ; use fold-current to properly close then open the fold
-            fold-current
-            fold-current
+define-macro fold-remove
+    0 fold-init
+    ; init didn't abort - setup
+    !if &equ &band $line-flags 0x44 0x44
+        !if &equ $line-scheme .scheme.fold
+            set-variable #l0 $window-line
+            !force 2 narrow-buffer
+            set-mark
+            backward-line
+            -1 kill-region
+            set-variable $window-line #l0
+            set-mark
+            forward-line
+            -1 kill-region
+            !return
         !endif
     !endif
-    goto-alpha-mark "t"
-    set-variable $window-y-scroll &sub $window-line #l0
+    ml-write "[Current line is not a fold]"
+    !abort
 !emacro
 
 
+0 define-macro fold-region
+    0 fold-init
+    0x13f set-position "\x89"
+    set-variable #l1 $window-line
+    set-variable #l4 $window-y-scroll
+    exchange-point-and-mark
+    !if &equ $window-line #l1
+        goto-position "\x89"
+        !return
+    !elif &set #l2 &les $window-line #l1
+        set-variable #l1 $window-line
+        exchange-point-and-mark
+    !endif
+    !if &not &set #l3 $window-col
+        set-variable #l1 &sub #l1 1
+    !endif
+    set-variable #l0 &bmod "magic"
+    1 buffer-mode "magic"
+    !force &sub #l1 $window-line search-backward &cat "^[ \t]*" &lget :fold 4
+    !while $status
+        set-variable $line-flags &bor $line-flags 0x40
+        set-variable $line-scheme .scheme.fold-open
+        set-mark
+        !force fold-find-close
+        !if $status
+            set-variable $line-flags &bor $line-flags 0x40
+            set-variable $line-scheme .scheme.fold-open
+            forward-line
+            0x34 narrow-buffer .scheme.fold fold-markup
+            backward-line
+        !endif
+        !force &sub #l1 $window-line search-backward &cat "^[ \t]*" &lget :fold 4
+    !done
+    &cond #l0 1 -1 buffer-mode "magic"
+    !if &or &not #l2 #l3 
+        0x500 goto-position "\x89"
+        exchange-point-and-mark
+    !else
+        set-variable $window-line &add #l1 1
+    !endif
+    set-mark
+    -3 show-region
+    !if &or #l2 #l3 
+        0x0bf goto-position "\x89"
+    !else
+        set-variable $window-line &add #l1 1
+    !endif
+    !if &gre #l4 $window-line
+        set-variable $window-y-scroll 0
+    !endif
+    3 show-region
+    1 show-region
+!emacro
 
+0 define-macro fold-idle
+    !if &lfind "|yank|reyank|" @cl
+        fold-region
+        2 screen-update
+    !endif
+    !if &exi :fold-idle
+        execute-line :fold-idle
+    !endif
+!emacro
+
+0 define-macro fold-setup
+    fold-init
+    ; init didn't abort - if given an argument of 0 then only setup if a fold exists in the 1st 200 lines
+    set-position "\x89"
+    set-variable #l0 &bmod "magic"
+    1 buffer-mode "magic"
+    !if &not @#
+        !force -200 search-forward &cat "^[ \t]*" &lget :fold 4
+        !if &not $status
+            goto-position "\x89"
+            &cond #l0 1 -1 buffer-mode "magic"
+            unset-variable :fold
+            !abort
+        !endif
+    !endif
+    !if &bmod "narrow"
+        1 narrow-buffer
+    !endif
+    end-of-buffer
+    !force search-backward &cat "^[ \t]*" &lget :fold 4
+    !while $status
+        set-variable $line-flags &bor $line-flags 0x40
+        set-variable $line-scheme .scheme.fold-open
+        set-mark
+        !force fold-find-close
+        !if $status
+            set-variable $line-flags &bor $line-flags 0x40
+            set-variable $line-scheme .scheme.fold-open
+            forward-line
+            0x34 narrow-buffer .scheme.fold fold-markup
+            backward-line
+        !endif
+        !force search-backward &cat "^[ \t]*" &lget :fold 4
+    !done
+    goto-position "\x89"
+    end-of-line
+    !force -1 search-backward &cat "^[ \t]*" &lget :fold 4
+    !if $status
+        fold-close
+    !else
+        goto-position "\x89"
+    !endif
+    &cond #l0 1 -1 buffer-mode "magic"
+    buffer-bind-create "bo" "f2"       "" fold-open
+    buffer-bind-create "bo" "esc f2"   "" fold-close
+    buffer-bind-create "bo" "C-f2"     "" fold-create
+    buffer-bind-create "bo" "esc C-f2" "" fold-remove
+    buffer-bind-create "bo" "f3"       "" fold-enter
+    buffer-bind-create "bo" "esc f3"   "" fold-exit
+    buffer-bind-create "bo" "esc C-f3" "" fold-exit-all
+    buffer-bind-create "bo" "C-x C-k"  "" fold-kill
+    !if &not &seq &cbin "idle-pick" "ERROR"
+        set-variable :fold-idle &spr "%s %s" &nbin "idle-pick" &cbin "idle-pick"
+    !endif
+    buffer-bind-key fold-idle "idle-pick"
+!emacro

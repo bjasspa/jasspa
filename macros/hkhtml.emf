@@ -763,7 +763,7 @@ define-macro html-insert-attrib
     !if &not $status
         set-variable #l0 @ml "HTML Attribute"
     !endif
-    0x5bf set-position "\x81"
+    0x13f set-position "\x81"
     !force html-backward-tag
     !if &not &and $status &seq @wc "<"
         0x0bf goto-position "\x81"
@@ -798,7 +798,7 @@ define-macro html-insert-attrib
         !endif
         -1 yank
     !endif
-    0x500 goto-position "\x81"
+    0x100 goto-position "\x81"
     !if &not $window-col
     !elif &not &seq &mid @wl &sub $window-col 1 1 " "
         insert-space

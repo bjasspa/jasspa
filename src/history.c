@@ -87,7 +87,7 @@ readHistory(int f, int n)
     }
     else
     {
-        if (meGetString((meUByte *)"Read history", MLFILECASE,0,filename,meFILEBUF_SIZE_MAX) != meTRUE)
+        if (meGetString((meUByte *)"Read history", MLFILECASE,0,filename,meFILEBUF_SIZE_MAX) <= 0)
             return meABORT ;
         fname = filename ;
     }
@@ -239,7 +239,7 @@ saveHistory(int f, int n)
     else
     {
         meUByte tmp[meFILEBUF_SIZE_MAX] ;	/* Filename */
-        if(meGetString((meUByte *)"Save history",MLFILECASE,0,tmp,meFILEBUF_SIZE_MAX) != meTRUE)
+        if(meGetString((meUByte *)"Save history",MLFILECASE,0,tmp,meFILEBUF_SIZE_MAX) <= 0)
             return meFALSE ;
         if(!fileLookup(tmp,(meUByte *)".erf",meFL_CHECKDOT|meFL_USESRCHPATH,filename))
             meStrcpy(filename,tmp) ;

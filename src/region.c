@@ -107,13 +107,13 @@ killRegion(int f, int n)
     
     if(n == 0)
         return meTRUE ;
-    if(getregion(&region) != meTRUE)
+    if(getregion(&region) <= 0)
         return meFALSE ;
-    if(bchange() != meTRUE)               /* Check we can change the buffer */
+    if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
         return meFALSE ;
-    frameCur->windowCur->dotLine   = region.line ;
-    frameCur->windowCur->dotOffset   = region.offset ;   
-    frameCur->windowCur->dotLineNo  = region.lineNo ;
+    frameCur->windowCur->dotLine = region.line ;
+    frameCur->windowCur->dotLineNo = region.lineNo ;
+    frameCur->windowCur->dotOffset = region.offset ;   
     
     return ldelete(region.size,(n > 0) ? 3:2);
 }
@@ -130,21 +130,111 @@ copyRegion(int f, int n)
     meRegion region ;
     meLine *line;
     meUByte  *ss, *dd ;
-    int left, ii ;
+    int left, ii, ret ;
+#if MEOPT_NARROW
+    meUShort markOffset, dotOffset ;
+    meLine *markLine, *dotLine ;
+    meInt markLineNo, dotLineNo, expandNarrows=meFALSE ; ;
+#endif
     
-    if((ii=getregion(&region)) != meTRUE)
-        return ii ;
+    if(getregion(&region) <= 0)
+        return meFALSE ;
+#if MEOPT_NARROW
+    if((n & 0x01) && (frameCur->bufferCur->narrow != NULL) &&
+       (frameCur->windowCur->dotLine != frameCur->windowCur->markLine))
+    {
+        /* expand narrows, this can get messy so check the operation is legal first.
+         * take the easy option, the dot and mark points move with the narrow expansion,
+         * but anchor points dont so drop anchors for the dot and mark to maintain the
+         * region and if the offset of these change (i.e. set to 0 due to being on a
+         * narrow markup line) then fail the copy */
+        if(frameCur->windowCur->dotLineNo > frameCur->windowCur->markLineNo)
+        {
+            line = frameCur->windowCur->markLine ;
+            ii = frameCur->windowCur->dotLineNo - frameCur->windowCur->markLineNo ;
+        }
+        else
+        {
+            line = frameCur->windowCur->dotLine ;
+            ii = frameCur->windowCur->markLineNo - frameCur->windowCur->dotLineNo ;
+        }
+        do {
+            if(line->flag & meLINE_ANCHOR_NARROW)
+                break ;
+            line = meLineGetNext(line) ;
+        } while(--ii >= 0) ;
+        if(ii >= 0)
+        {
+            expandNarrows = meTRUE ;
+            dotLine = frameCur->windowCur->dotLine ;
+            dotLineNo = frameCur->windowCur->dotLineNo ;
+            dotOffset = frameCur->windowCur->dotOffset ;
+            markLine = frameCur->windowCur->markLine ;
+            markLineNo = frameCur->windowCur->markLineNo ;
+            markOffset = frameCur->windowCur->markOffset ;
+            meBufferExpandNarrowAll(frameCur->bufferCur) ;
+            if(((frameCur->windowCur->dotLine != dotLine) && dotOffset) ||
+               ((frameCur->windowCur->markLine != markLine) && markOffset))
+            {
+                ret = mlwrite(MWABORT,(meUByte *)"[Bad region definition]") ;
+                goto copy_region_exit ;
+            }
+            if(frameCur->windowCur->dotLine != dotLine)
+            {
+                /* dot was at the start of a narrow markup line, find the narrow */
+                meNarrow *nn ;
+                nn = frameCur->bufferCur->narrow ;
+                while(nn->markupLine != dotLine)
+                {
+                    nn = nn->next ;
+                    meAssert(nn != NULL) ;
+                }
+                line = frameCur->windowCur->dotLine ;
+                while(line != nn->slp)
+                {
+                    line = meLineGetPrev(line) ;
+                    frameCur->windowCur->dotLineNo-- ;
+                }
+                meAssert(frameCur->windowCur->dotLineNo >= 0) ;
+                frameCur->windowCur->dotLine = line ;
+            }
+            if(frameCur->windowCur->markLine != markLine)
+            {
+                /* mark was at the start of a narrow markup line, find the narrow */
+                meNarrow *nn ;
+                nn = frameCur->bufferCur->narrow ;
+                while(nn->markupLine != markLine)
+                {
+                    nn = nn->next ;
+                    meAssert(nn != NULL) ;
+                }
+                line = frameCur->windowCur->markLine ;
+                while(line != nn->slp)
+                {
+                    line = meLineGetPrev(line) ;
+                    frameCur->windowCur->markLineNo-- ;
+                }
+                meAssert(frameCur->windowCur->markLineNo >= 0) ;
+                frameCur->windowCur->markLine = line ;
+            }
+            getregion(&region) ;
+        }
+    }
+#endif
     if(lastflag != meCFKILL)                /* Kill type command.   */
-        ksave();
+        killSave();
     if((left=region.size) == 0)
     {
         thisflag = meCFKILL ;
-        return meTRUE ;
+        ret =  meTRUE ;
+        goto copy_region_exit ;
     }
     
-    if((dd = kaddblock(left)) == NULL)
-        return meFALSE ;
-    
+    if((dd = killAddNode(left)) == NULL)
+    {
+        ret = meFALSE ;
+        goto copy_region_exit ;
+    }
     line = region.line;                 /* Current line.        */
     if((ii = region.offset) == meLineGetLength(line))
         goto add_newline ;                 /* Current offset.      */
@@ -175,14 +265,30 @@ add_newline:
         }
     }
     thisflag = meCFKILL ;
-    return meTRUE ;
+    ret = meTRUE ;
+
+copy_region_exit:
+
+#if MEOPT_NARROW
+    if(expandNarrows)
+    {
+        meBufferCollapseNarrowAll(frameCur->bufferCur) ;
+        frameCur->windowCur->dotLine = dotLine ;
+        frameCur->windowCur->dotLineNo = dotLineNo ;
+        frameCur->windowCur->dotOffset = dotOffset ;
+        frameCur->windowCur->markLine = markLine ;
+        frameCur->windowCur->markLineNo = markLineNo ;
+        frameCur->windowCur->markOffset = markOffset ;
+    }
+#endif
+    return ret ;
 }
 
 /*
  * Lower case region. Zap all of the upper
  * case characters in the region to lower case. Use
  * the region code to set the limits. Scan the buffer,
- * doing the changes. Call "lchange" to ensure that
+ * doing the changes. Call "lineSetChanged" to ensure that
  * redisplay is done in all buffers. Bound to
  * "C-X C-L".
  */
@@ -196,9 +302,9 @@ lowerRegion(int f, int n)
     register int   s;
     meRegion  region;
     
-    if((s=getregion(&region)) != meTRUE)
+    if((s=getregion(&region)) <= 0)
         return (s);
-    if((s=bchange()) != meTRUE)               /* Check we can change the buffer */
+    if((s=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
         return s ;
     line = frameCur->windowCur->dotLine ;
     loffs = frameCur->windowCur->dotOffset ;
@@ -218,7 +324,7 @@ lowerRegion(int f, int n)
         {
             if(isUpper(c))
             {
-                lchange(WFMAIN);
+                lineSetChanged(WFMAIN);
 #if MEOPT_UNDO
                 meUndoAddRepChar() ;
 #endif
@@ -238,7 +344,7 @@ lowerRegion(int f, int n)
  * Upper case region. Zap all of the lower
  * case characters in the region to upper case. Use
  * the region code to set the limits. Scan the buffer,
- * doing the changes. Call "lchange" to ensure that
+ * doing the changes. Call "lineSetChanged" to ensure that
  * redisplay is done in all buffers. Bound to
  * "C-X C-U".
  */
@@ -252,9 +358,9 @@ upperRegion(int f, int n)
     register int   s;
     meRegion         region;
     
-    if((s=getregion(&region)) != meTRUE)
+    if((s=getregion(&region)) <= 0)
         return (s);
-    if((s=bchange()) != meTRUE)               /* Check we can change the buffer */
+    if((s=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
         return s ;
     line = frameCur->windowCur->dotLine ;
     loffs = frameCur->windowCur->dotOffset ;
@@ -274,7 +380,7 @@ upperRegion(int f, int n)
         {
             if(isLower(c))
             {
-                lchange(WFMAIN);
+                lineSetChanged(WFMAIN);
 #if MEOPT_UNDO
                 meUndoAddRepChar() ;
 #endif
@@ -302,7 +408,7 @@ killRectangle(int f, int n)
         return noMarkSet() ;
     if(frameCur->windowCur->dotLine == frameCur->windowCur->markLine)
         return killRegion(f,n) ;
-    if(bchange() != meTRUE)               /* Check we can change the buffer */
+    if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
         return meFALSE ;
     
     eoff = getcwcol() ;
@@ -325,8 +431,8 @@ killRectangle(int f, int n)
     
     /* sort out the kill buffer */
     if((lastflag != meCFKILL) && (thisflag != meCFKILL))
-        ksave();
-    if((kstr = kaddblock(size)) == NULL)
+        killSave();
+    if((kstr = killAddNode(size)) == NULL)
         return meFALSE ;
     thisflag = meCFKILL;
     for(;;)
@@ -412,7 +518,7 @@ killRectangle(int f, int n)
         }
         if(lspc)
         {
-            if(linsert(lspc,' ') != meTRUE)
+            if(lineInsertChar(lspc,' ') <= 0)
             {
                 *kstr = '\0' ;
                 return meFALSE ;
@@ -480,9 +586,9 @@ yankRectangleKill(struct meKill *pklist, int soff, int notLast)
             linsc = ii + lsspc + lespc - ldel ;
             frameCur->windowCur->dotOffset = jj ;
             /* Make space for the characters */
-            if((dd = lmakespace(linsc)) == NULL)
+            if((dd = lineMakeSpace(linsc)) == NULL)
                 return meABORT ;
-            lchange(WFMOVEC|WFMAIN) ;
+            lineSetChanged(WFMOVEC|WFMAIN) ;
 #if MEOPT_UNDO
             if(ldel > 0)
             {
@@ -534,7 +640,7 @@ yankRectangle(int f, int n)
     if(klhead == NULL)
         return mlwrite(MWABORT,(meUByte *)"[nothing to yank]");
     /* Check we can change the buffer */
-    if(bchange() != meTRUE)
+    if(bufferSetEdit() <= 0)
         return meABORT ;
     
     /* get the current column */
@@ -545,7 +651,7 @@ yankRectangle(int f, int n)
     
     /* for each time.... */
     while(--n >= 0)
-        if(yankRectangleKill(klhead,col,n) != meTRUE)
+        if(yankRectangleKill(klhead,col,n) <= 0)
             return meABORT ;
     return meTRUE ;
 }

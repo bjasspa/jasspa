@@ -120,6 +120,9 @@ DEFVAR ("home",                EVHOMEDIR)       /* Home directory */
 DEFVAR ("idle-time",           EVIDLETIME)      /* idle-time time period (msec)*/
 #endif
 DEFVAR ("kept-versions",       EVKEPTVERS)      /* Number of backup files */
+#if MEOPT_EXTENDED
+DEFVAR ("line-flags",          EVLINEFLAGS)     /* current line flags */
+#endif
 #if MEOPT_HILIGHT
 DEFVAR ("line-scheme",         EVLINESCHM)      /* Current line color scheme */
 #endif

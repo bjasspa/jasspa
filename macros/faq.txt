@@ -276,7 +276,7 @@ ANSWER
 
      Remember  if  you  have  enabled  wide  scroll  bars,  under  windows,  or
      X-Windows, you  may  want  to  change your  start-up  screen  width  to 82
-     characters rather than 80 - see change-frame-width(2). 
+     characters rather than 80 - see change-screen-width(2). 
 
      [FAQ Index]. 
 
@@ -932,3 +932,4 @@ ANSWER
 
      [FAQ Index]. 
 
+

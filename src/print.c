@@ -257,7 +257,7 @@ printGetParams (void)
     /* silent printing may be required, don't know yet - so don't mlwrite yet */
     /* mlwrite(0,(meUByte *)"[Configuring printer ...]");*/
 	
-    if(dofile((meUByte *)"print",0,1) != meTRUE)
+    if(dofile((meUByte *)"print",0,1) <= 0)
         return meABORT ;
     
     /* Get the registry directory & the name of the driver out of the registry */
@@ -537,7 +537,7 @@ printInit (int f, int n)
     extern int printSetup(int n);
 #endif
     /* Get the parameters out of the registry. */
-    if (printGetParams () != meTRUE)
+    if (printGetParams () <= 0)
         return meFALSE;
     
     /* if the line numbers aren't required then set printer.pLineNumDigits to zero
@@ -549,11 +549,11 @@ printInit (int f, int n)
     /* On windows call printSetup to handle the windows printer initialization
      * and the setup dialog if required.
      */
-    if (printer.pInternal && (printSetup(n) != meTRUE))
+    if (printer.pInternal && (printSetup(n) <= 0))
         return meFALSE;
 #endif
     
-    if (printComputePageSetup (f) != meTRUE)
+    if (printComputePageSetup (f) <= 0)
         return meFALSE;
     
     if(n < 0)
@@ -578,7 +578,7 @@ addComposedLine (meLine **head, meLine **tail, meUByte *buf, int len)
 {
     meLine *nline;                        /* New line */
 
-    nline = lalloc (len);               /* Get the new line */
+    nline = meLineMalloc(len,0);               /* Get the new line */
     if (len > 0)                        /* Copy in the data */
         memcpy (nline->text, buf, len);
     meLineGetNext (nline) = NULL;
@@ -1138,7 +1138,7 @@ dumpToBuffer (meBuffer *bp, meLine *lp)
             }
             
             /* Construct a new line for the buffer and translate out any 0's */
-            nlp = lalloc (len);
+            nlp = meLineMalloc(len,0);
             for (p = (char *) &tlp->text[kk], q = (char *) nlp->text; --len >= 0; /* NULL */)
             {
                 if ((cc = *p++) == '\0')
@@ -1251,7 +1251,7 @@ printAddLine (meBuffer *bp, meLine *lp)
         ll += getTranslationLen (disLineBuff+len,kk) - kk;
 
         /* Construct a new composition line */
-        if ((nlp=lalloc (ll)) == NULL)
+        if ((nlp=meLineMalloc(ll,0)) == NULL)
             return (meFALSE);
         printLinkLine (bp,nlp,ii++);
 
@@ -1353,7 +1353,7 @@ printSection (meWindow *wp, long sLineNo, long numLines, meLine *sLine, meLine *
         numLines /= 10;
 
     /* Initialise the printer. */
-    if (printInit (meTRUE, nn) != meTRUE)
+    if (printInit (meTRUE, nn) <= 0)
         return meABORT;
     if(nn < 0)
         return meTRUE ;
@@ -1450,9 +1450,9 @@ printSection (meWindow *wp, long sLineNo, long numLines, meLine *sLine, meLine *
         {
 #if MEOPT_HILIGHT
             vps[0].line = sLine;
-            if (printAddLine (bp,sLine,vps) != meTRUE)
+            if (printAddLine (bp,sLine,vps) <= 0)
 #else
-            if (printAddLine (bp,sLine) != meTRUE)
+            if (printAddLine (bp,sLine) <= 0)
 #endif
             {
                 status = mlwrite(MWABORT,(meUByte *)"Internal error: Cannot add new prin line");
@@ -1570,9 +1570,9 @@ printSection (meWindow *wp, long sLineNo, long numLines, meLine *sLine, meLine *
              * used cause its return value is correctly evaluated and
              * on unix a " </dev/null" safety arg is added to the cmdLine
              */
-            if((status=doShellCommand(cmdLine)) == meTRUE)
+            if((status=doShellCommand(cmdLine)) > 0)
                 status = (resultStr[0] == '0') ? meTRUE:meFALSE ;
-            if(status != meTRUE)
+            if(status <= 0)
                 mlwrite(MWABORT,(meUByte *)"[Failed to print file %s]",fname);
             break;
         
@@ -1616,7 +1616,7 @@ quitEarly:
               ((charMaskTbl1[ii] & CHRMSK_PRINTABLE) ? CHRMSK_DISPLAYABLE:0) ;
 
     /* Put out end of file indicator. */
-    if ((status == meTRUE) &&
+    if ((status > 0) &&
         ((printer.param [mePI_FLAGS].l & PFLAG_SILENT) == 0))
         mlwrite(0,(meUByte *)"Printing - Done. %d page(s).", printer.pPageNo);
     return status;

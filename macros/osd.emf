@@ -320,6 +320,17 @@ set-variable #l1 0
     !endif
 !emacro
 set-variable .undo.count 0
+0 define-macro narrow-markup
+    !if &les @# 0
+        !abort
+    !elif &equ @# 1
+        set-variable $result &cat &lef @wl 40 " ..."
+    !elif &equ @# 2
+        set-variable $result "{{{"
+    !else
+        set-variable $result "}}}"
+    !endif
+!emacro
 osd 2  0   "b"
 osd 2  10  ""  "&Undo       C-x u"         1 osd-undo      ; Undo the last command
 osd 2  20  ""  "Redo"                                      ; Re-do the last osd-undo
@@ -330,8 +341,8 @@ osd 2  50  ""  "Cu&t        C-w"           f kill-region   ; Kill off the region
 osd 2  60  ""  "&Copy       esc w"         f copy-region   ; Copy the region
 osd 2  70  ""  "&Paste      C-y"           f yank          ; Paste text
 osd 2  80  "-"
-osd 2  90  ""  "Narrow &Out"               4 narrow-buffer
-osd 2  100 ""  "&Narrow To"                3 narrow-buffer
+osd 2  90  "i"  "Narrow &Out"              f "0x34 narrow-buffer .scheme.fold narrow-markup"
+osd 2  100 "i"  "&Narrow To"               f "0x33 narrow-buffer .scheme.fold narrow-markup"
 osd 2  110 ""  "Remove S&ingle Narrow"     2 narrow-buffer
 osd 2  120 ""  "Remove A&ll Narrows"       1 narrow-buffer
 ;

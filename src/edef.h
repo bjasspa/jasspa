@@ -41,7 +41,7 @@ extern  meInt      styleTableSize;      /* Size of the colour table     */
 extern  meStyle   *styleTable;          /* Highlighting colour table    */
 extern  meStyle    defaultScheme[] ;    /* Default colour scheme        */
 #if MEOPT_ABBREV
-extern  meAbbrev  *globalAbrev ;        /* Global Abreviation file      */
+extern  meAbbrev  *globalAbbrevFile ;   /* Global Abreviation file      */
 #endif
 #if MEOPT_POSITION
 extern  mePosition *position ;          /* Position stack head          */
@@ -450,7 +450,7 @@ meStyle defaultScheme[meSCHEME_STYLES*2] = /* Default colour scheme     */
     meSTYLE_RDEFAULT,meSTYLE_NDEFAULT,            /* Current region style */
 };
 #if MEOPT_ABBREV
-meAbbrev *globalAbrev = NULL;           /* Global Abreviation file      */
+meAbbrev *globalAbbrevFile = NULL ;     /* Global Abreviation file      */
 #endif
 #if MEOPT_POSITION
 mePosition *position=NULL ;             /* Position stack head          */

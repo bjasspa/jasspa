@@ -591,7 +591,7 @@ TTopenClientServer (void)
             bp->dotLine = meLineGetPrev(bp->baseLine) ;
             bp->dotOffset = 0 ;
             bp->dotLineNo = bp->lineCount-1 ;
-            alphaMarkSet(bp,'I',bp->dotLine,bp->dotOffset,1) ;
+            meAnchorSet(bp,'I',bp->dotLine,bp->dotOffset,1) ;
         }
         /* Set up the window dimensions - default to having auto wrap */
         ipipe->flag = 0 ;
@@ -1914,9 +1914,9 @@ TTgetClipboard(void)
             (klhead->kill->next != NULL) ||
             (meStrcmp (klhead->kill->data,tmpbuf)))
         {
-            /* Always ksave, don't want to glue them together */
-            ksave ();
-            if ((dd = kaddblock (len+1)) != NULL)
+            /* Always killSave, don't want to glue them together */
+            killSave();
+            if ((dd = killAddNode (len+1)) != NULL)
                 memcpy (dd, tmpbuf, len+1);
             thisflag = meCFKILL ;
         }
@@ -3973,13 +3973,13 @@ changeFont(int f, int n)
             return (meFALSE);
         if (fontName[0] == '\0')
             status = TTchangeFont (NULL, -1, 0, 0, 0);
-        else if ((meGetString ("Font Type [ANSI=0]", 0, 0, buff, FONTBUFSIZ) == meTRUE) &&
+        else if ((meGetString ("Font Type [ANSI=0]", 0, 0, buff, FONTBUFSIZ) > 0) &&
                  ((fontType = meAtoi(buff)),
-                  (meGetString ("Font Weight [1-9; 0=don't care]", 0, 0, buff, FONTBUFSIZ) == meTRUE)) &&
+                  (meGetString ("Font Weight [1-9; 0=don't care]", 0, 0, buff, FONTBUFSIZ) > 0)) &&
                  ((fontWeight = meAtoi(buff)),
-                  (meGetString ("Font Width", 0, 0, buff, FONTBUFSIZ) == meTRUE)) &&
+                  (meGetString ("Font Width", 0, 0, buff, FONTBUFSIZ) > 0)) &&
                  ((fontWidth = meAtoi(buff)),
-                  (meGetString ("Font Height", 0, 0, buff, FONTBUFSIZ) == meTRUE)))
+                  (meGetString ("Font Height", 0, 0, buff, FONTBUFSIZ) > 0)))
         {
             fontHeight = meAtoi (buff);
             status = TTchangeFont (fontName, fontType,
@@ -6034,7 +6034,7 @@ do_window_resize:
         if((frame = meMessageGetFrame(hWnd)) != NULL)
         {
 #if MEOPT_MWFRAME
-            if(meFrameDelete(frame,6) == meTRUE)
+            if(meFrameDelete(frame,6) > 0)
                 return meFALSE ;
 #endif
             if (ttThreadId != GetCurrentThreadId ())
