@@ -797,7 +797,6 @@ extern	int	yankRectangle(int f, int n);
 #if MEOPT_REGISTRY
 extern int deleteRegistry(int f, int n);
 extern int findRegistry(int f, int n);
-extern int getRegistry(int f, int n);
 extern int listRegistry(int f, int n);
 extern int markRegistry(int f, int n);
 extern int readRegistry(int f, int n);
@@ -823,7 +822,6 @@ extern int  anyChangedRegistry(void);
 #else
 #define deleteRegistry notAvailable
 #define findRegistry notAvailable
-#define getRegistry notAvailable
 #define listRegistry notAvailable
 #define markRegistry notAvailable
 #define readRegistry notAvailable

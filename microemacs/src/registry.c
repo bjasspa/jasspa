@@ -1110,38 +1110,6 @@ setRegistry (int f, int n)
 }
 
 /*
- * getRegistry
- * Retrieve a value from the registry. Return the value in
- * $result.
- */
-
-int
-getRegistry (int f, int n)
-{
-    meUByte rootbuf [meBUF_SIZE_MAX];
-    meUByte skeybuf [meBUF_SIZE_MAX];
-    meRegNode *rnp;
-
-    resultStr [0] = '\0';
-    /* Get the arguments */
-    if ((meGetString((meUByte *)"Registry Path", 0, 0, rootbuf, meBUF_SIZE_MAX) == meABORT) ||
-        (meGetString((meUByte *)"Sub key", 0, 0, skeybuf, meBUF_SIZE_MAX) == meABORT))
-        return meABORT;
-
-    /* Assigns the new value */
-    if (((rnp = regFind (&root, rootbuf)) == NULL) ||
-        ((rnp = regFind (rnp, skeybuf)) == NULL))
-        return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Cannot find node %s/%s]",rootbuf,skeybuf);
-    
-    if (rnp->value != NULL)
-    {
-        meStrncpy (resultStr, rnp->value, meBUF_SIZE_MAX-1);
-        resultStr [meBUF_SIZE_MAX-1] = '\0';
-    }
-    return meTRUE;
-}
-
-/*
  * findRegistry
  * Find a key in the registry by indexing
  */

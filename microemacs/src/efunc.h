@@ -178,7 +178,7 @@ meCommand  *cmdHash[cmdHashSize] =
     &__cmdArray[CK_DELTAB],     &__cmdArray[CK_OSDBIND],    NULL,                       NULL,                       &__cmdArray[CK_WRTBUF],
     NULL,                       NULL,                       &__cmdArray[CK_LCLUNBD],    NULL,                       &__cmdArray[CK_DELDICT],
     NULL,                       &__cmdArray[CK_BINDKEY],    &__cmdArray[CK_FILTBUF],    NULL,                       NULL,
-    NULL,                       NULL,                       &__cmdArray[CK_OSD],        NULL,                       &__cmdArray[CK_GETREGY],
+    NULL,                       NULL,                       &__cmdArray[CK_OSD],        NULL,                       NULL,
     &__cmdArray[CK_FORLIN],     NULL,                       NULL,                       &__cmdArray[CK_HILIGHT],    &__cmdArray[CK_SORTLNS],
     NULL,                       NULL,                       NULL,                       &__cmdArray[CK_KILRECT],    NULL,
     &__cmdArray[CK_KILREG],     NULL,                       NULL,                       NULL,                       NULL,
