@@ -274,6 +274,9 @@ TTdump(meBuffer *bp)
 int
 meGetFileAttributes(meUByte *fname)
 {
+#ifdef __DJGPP2__
+    return _chmod(fname,0,0) ;
+#else
     union REGS reg ;		/* cpu register for use of DOS calls */
     meUByte fn[meBUF_SIZE_MAX] ;
     meInt len ;
@@ -295,17 +298,22 @@ meGetFileAttributes(meUByte *fname)
     if(reg.x.cflag)
         return -1 ;
     return reg.x.ax ;
+#endif
 }
 
 void
 _meChmod(meUByte *fn, meUShort attr)
 {
+#ifdef __DJGPP2__
+    _chmod(fn,1,attr) ;
+#else
     union REGS reg ;		/* cpu register for use of DOS calls */
 
     reg.x.ax = 0x4301 ;
     reg.x.cx = attr ;
     reg.x.dx = ((unsigned long) fn) ;
     intdos(&reg, &reg);
+#endif
 }
 
 #if 0
@@ -984,6 +992,3 @@ TTahead(void)
     return TTnoKeys ;
 }
 #endif
-
-
-
