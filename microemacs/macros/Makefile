@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040221.1602>
+# Last Modified: <20040223.2119>
 #
 ##############################################################################
 
@@ -64,7 +64,7 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		\
 	me.emf		melogo.emf	meme3_8.emf	menedit.emf	\
 	meserver.emf	metris.emf	misc.emf	mouse.emf	\
 	mouseosd.emf	msshift.emf	\
-	newuser.emf	ntags.emf	\
+	narrow.emf	newuser.emf	ntags.emf	\
 	openbsd.emf	openstep.emf	organiza.emf	organizd.emf	\
 	organize.emf	organizi.emf	organizl.emf	organizm.emf	\
 	organizt.emf	organizw.emf	osd.emf		osdhelp.emf	\

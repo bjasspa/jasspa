@@ -355,7 +355,7 @@ osd .osd.orga-o 660 "f" " "
         set-variable .org.addr "0"
         set-variable .org.iaddr &cond &gre .org.iaddr -1 0 -1
     !endif
-    set-variable #l2 &lget .org.addr-reg .org.addr-ffld
+    set-variable #l2 &lget .org.addr-reg .org.addr-ffld 
     !repeat
         set-variable #l3 .org.addr
         !if &les @# 0
@@ -565,7 +565,7 @@ osd .osd.orga-f 660 "f" " "
 !emacro
 
 -1 osd .osd.orga-h
-osd .osd.orga-h   0 "s" 62 15 -1 -1
+osd .osd.orga-h   0 "s" 62 15 -1 -1 
 ;osd .osd.orga-h  10 ""
 osd .osd.orga-h  20 "Shf" " Partner  " 30
 osd .osd.orga-h  30 "EtxfhH" 1 .scheme.osd-entry "###############" 7 org-addr-set-entry
@@ -577,7 +577,7 @@ osd .osd.orga-h  40 "hf" " "
 !else
     osd .osd.orga-h  50 "EtxfH" 2 .scheme.osd-entry "####################" 8 org-addr-set-entry
 !endif
-osd .osd.orga-h  59 ""
+osd .osd.orga-h  59 "" 
 osd .osd.orga-h  60 "Shf" " \HAddress  " 70
 !if &band .org.aflag 0x100
     osd .osd.orga-h 70 "EtNxfhHzh" 4 .scheme.osd-entry 40 5 "" 9 org-addr-set-entry
@@ -586,7 +586,7 @@ osd .osd.orga-h  60 "Shf" " \HAddress  " 70
 !else
     osd .osd.orga-h 70 "EtNxfhHz" 4 .scheme.osd-entry 40 5 "" 9 org-addr-set-entry
 !endif
-osd .osd.orga-h  80 ""
+osd .osd.orga-h  80 "" 
 osd .osd.orga-h  90 "Shf" " \HTel      " 100
 !if &band .org.aflag 0x100
     osd .osd.orga-h 100 "EtxfHh" 5 .scheme.osd-entry "#########################" 10 org-addr-set-entry
@@ -617,7 +617,7 @@ osd .osd.orga-h 130 "Shf" " Mobile   " 140
 !else
     osd .osd.orga-h 140 "EtxfH" 11 .scheme.osd-entry "#########################" 12 org-addr-set-entry
 !endif
-osd .osd.orga-h 150 ""
+osd .osd.orga-h 150 "" 
 osd .osd.orga-h 160 "Shf" " \HE-Mail   " 170
 osd .osd.orga-h 170 "EtxfH" 14 .scheme.osd-entry "########################################" 13 org-addr-set-entry
 osd .osd.orga-h 180 "Shf" " \HWWW      " 190
@@ -626,21 +626,21 @@ osd .osd.orga-h 200 "Shf" " FT\HP      " 210
 osd .osd.orga-h 210 "EtxfH" 16 .scheme.osd-entry "########################################" 15 org-addr-set-entry
 
 -1 osd .osd.orga-w
-osd .osd.orga-w   0 "s" 62 15 -1 -1
+osd .osd.orga-w   0 "s" 62 15 -1 -1 
 ;osd .osd.orga-w  10 ""
 osd .osd.orga-w  20 "Shf" " \HCompany  " 30
 osd .osd.orga-w  30 "EtxfHz" 1 .scheme.osd-entry 40 1 "" 16 org-addr-set-entry
-osd .osd.orga-w  59 ""
+osd .osd.orga-w  59 "" 
 osd .osd.orga-w  60 "Shf" " \HAddress  " 70
 osd .osd.orga-w  70 "EtNxfHz" 3 .scheme.osd-entry 40 5 "" 17 org-addr-set-entry
-osd .osd.orga-w  80 ""
+osd .osd.orga-w  80 "" 
 osd .osd.orga-w  90 "Shf" " \HTel      " 100
 osd .osd.orga-w 100 "EtxfH" 4 .scheme.osd-entry "#########################" 18 org-addr-set-entry
 osd .osd.orga-w 110 "Shf" " Fax      " 120
 osd .osd.orga-w 120 "EtxfH" 5 .scheme.osd-entry "#########################" 19 org-addr-set-entry
 osd .osd.orga-w 130 "Shf" " Mobile   " 140
 osd .osd.orga-w 140 "EtxfH" 6 .scheme.osd-entry "#########################" 20 org-addr-set-entry
-osd .osd.orga-w 150 ""
+osd .osd.orga-w 150 "" 
 osd .osd.orga-w 160 "Shf" " \HE-Mail   " 170
 osd .osd.orga-w 170 "EtxfH" 7 .scheme.osd-entry "########################################" 21 org-addr-set-entry
 osd .osd.orga-w 180 "Shf" " \HWWW      " 190
@@ -684,17 +684,18 @@ osd .osd.orga 130 "Shf" "  N\Hickname  " 140
 osd .osd.orga 140 "EtxfhH" 10 .scheme.osd-entry "##############" 4 org-addr-set-entry
 osd .osd.orga 143 "hf" "                       "
 osd .osd.orga 145 "Cfx" "^  *^^Se\Hlect" 5 org-addr-set-check
-osd .osd.orga 150 ""
+osd .osd.orga 150 "" 
 osd .osd.orga 160 "Itc" 11 .osd.orga-n
-osd .osd.orga 170 ""
-osd .osd.orga 180 ""
+osd .osd.orga 170 "" 
+osd .osd.orga 180 "" 
 osd .osd.orga 190 "Sf" "  \HNotes" 160
 osd .osd.orga 200 "EtNcxHfz" 12 .scheme.osd-entry 60 5 "" 6 org-addr-set-entry
-osd .osd.orga 210 ""
-osd .osd.orga 220 ""
+osd .osd.orga 210 "" 
+osd .osd.orga 220 "" 
 osd .osd.orga 605 "hf" " "
 osd .osd.orga 610 "BtxhcfH" 13 .scheme.osd-ebtt " \HSave " f organizer-save
 osd .osd.orga 613 "BtxhcfHR" 14 .scheme.osd-ebtt " D\Hup " f org-addr-dup
 osd .osd.orga 615 "BtxhcfHR" 15 .scheme.osd-ebtt " \HDelete "  f org-addr-del
 osd .osd.orga 620 "BtxhcfH" 16 .scheme.osd-ebtt " Addr to \HBuffer "  f org-addr-buffer
 osd .osd.orga 630 "BtcfH" 17 .scheme.osd-ebtt " E\Hxit "    1 void
+

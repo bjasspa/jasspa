@@ -18,6 +18,9 @@ add-file-hook ".C" fhook-cpp
         ; no color - change the window chars so osd is more usable
         set-variable $window-chars &cat &lef $window-chars 47 "=x*[]"
     !endif
+    ; create bindings to open the osd menus as 'f1' is likely to not work
+    0xa0000 global-bind-key osd "esc ="
+    global-bind-key context-menu "esc +"
 !else
     !if &not &seq &set #l0 &reg "/history" &cat $platform "/font" "" ""
         change-font #l0

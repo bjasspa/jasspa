@@ -442,11 +442,24 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                 idletime = 10;
             break;
 #endif
-#if MEOPT_MOUSE
+            /* always allow the user to set the mouse position as termcap
+             * does not support the mouse but context menus need to be positioned sensibly */
         case EVMOUSE:
             meMouseCfg = meAtoi(vvalue) ;
+#if MEOPT_MOUSE
             TTinitMouse() ;
+#endif
             break;
+        case EVMOUSEPOS:
+            mouse_pos = meAtoi(vvalue) ;
+            break;
+        case EVMOUSEX:
+            mouse_X = meAtoi(vvalue) ;
+            break;
+        case EVMOUSEY:
+            mouse_Y = meAtoi(vvalue) ;
+            break;
+#if MEOPT_MOUSE
         case EVDELAYTIME:
             delaytime = (meUInt) meAtoi(vvalue);
             if (delaytime < 10)
@@ -991,7 +1004,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                 break ;
             }
         default:
-            /* default includes EVUSERNAME EVCBUFBACKUP EVMOUSEX EVMOUSEY EVSTATUS EVMACHINE 
+            /* default includes EVUSERNAME EVCBUFBACKUP EVSTATUS EVMACHINE 
              * EVSYSRET EVUSEX, EVVERSION, EVWMDLINE, EVEOBLINE or system dependant vars
              * where this isn't the system (e.g. use-x) which cant be set
              */
@@ -1034,12 +1047,10 @@ gtenv(meUByte *vname)   /* vname   name of environment variable to retrieve */
     case EVPROGNM:      return meProgName ;
     case EVCURSORX:     return meItoa(frameCur->mainColumn);
     case EVCURSORY:     return meItoa(frameCur->mainRow);
-#if MEOPT_MOUSE
     case EVMOUSE:       return meItoa(meMouseCfg);
     case EVMOUSEPOS:    return meItoa(mouse_pos);
     case EVMOUSEX:      return meItoa(mouse_X);
     case EVMOUSEY:      return meItoa(mouse_Y);
-#endif
     case EVSYSTEM:      return meItoa(meSystemCfg);
 #if MEOPT_WORDPRO
     case EVFILLBULLET:  return fillbullet;

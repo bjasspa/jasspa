@@ -2788,6 +2788,8 @@ WinMouse(HWND hwnd, UINT message, UINT wParam, LONG lParam)
 
             /* Mouse buttons are the same - handle as a move mouse */
 
+            /* fprintf(logfp,"Mouse button %x %08x %08x\n",message, wParam, lParam) ;*/
+            /* fflush(logfp) ;*/
             /* Convert the mouse coordinates to cell space. Compute
              * the fractional bits which are 1/128ths */
             mousePosUpdate(lParam) ;
@@ -2834,6 +2836,8 @@ WinMouse(HWND hwnd, UINT message, UINT wParam, LONG lParam)
         {
             int mouseCode, ii ;
 
+            /* fprintf(logfp,"Mouse button %x %08x %08x\n",message, wParam, lParam) ;*/
+            /* fflush(logfp) ;*/
             mouseButs = wParam ;
             mousePosUpdate(lParam) ;
             mouseCode = 0;
@@ -2889,8 +2893,15 @@ WinMouse(HWND hwnd, UINT message, UINT wParam, LONG lParam)
         {
             meUShort cc ;
 
-/*            mlwrite(0,"%x %x %x",(int) message,wParam,(int) lParam) ;*/
-            mousePosUpdate(lParam) ;
+            /* fprintf(logfp,"Mouse wheel  %x %08x %08x\n",message, wParam, lParam) ;*/
+            /* fflush(logfp) ;*/
+            /* unlike mouse move or button events the lParam mouse position is
+             * absolute, not the position within the window, we should therefore
+             * subtract the top left point of the window from the position to get
+             * an ME mouse position, but that can lead to negative numbers which is
+             * probably why windows is inconsistent in this area so let the other
+             * mouse events set the position
+            mousePosUpdate(lParam) ;*/
             if(wParam & 0x80000000)
                 cc = ME_SPECIAL|SKEY_mouse_wdown ;
             else

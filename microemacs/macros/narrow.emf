@@ -1,0 +1,93 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2004 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     Thu Feb 5 2004
+; Synopsis:    Narrow macros
+; Authors:     Steven Phillips
+;
+; narrow-search-forward - search forward from the current point for a given
+; string, search through all narrowed text as well. Command should behave in
+; an identical fashion to the main search-forward command (numeric argument
+; etc) except for its ability to search through narrowed out text.
+; 
+; Utilizes a feature of MEs undo which restores narrows, the command 'edits'
+; the current buffer, expands all narrows, searches for string - if found
+; stores location, then undoes initial 'edit' thereby restoring the narrows.
+; If the string was found it returns to the location but setting the
+; absolution line number which will expand a narrow containing the line 
+define-macro narrow-search-forward
+    !force set-variable #l0 @1
+    !if &not $status
+        set-variable #l0 @ml15 "NSearch" @h4 0
+    !endif
+    !if &not &bmod "narrow"
+        @# search-forward #l0 @nma
+        !return
+    !endif
+    set-variable #l1 &bmod "view" 
+    set-variable #l2 &bmod "edit" 
+    set-variable #l3 &bmod "undo" 
+    -1 buffer-mode view 
+    1 buffer-mode undo 
+    insert-string ""
+    1 narrow-buffer
+    !force !force search-forward #l0 @nma
+    !if &set #l4 $status
+        -2 show-region
+        set-variable #l5 $window-aline
+        set-variable #l6 $window-col
+    !endif
+    undo
+    &cond #l3 1 -1 buffer-mode "undo" 
+    &cond #l2 1 -1 buffer-mode "edit" 
+    &cond #l1 1 -1 buffer-mode "view" 
+    !if #l4
+        set-variable $window-aline #l5
+        set-variable $window-col #l6
+        !force !force -1 search-forward #l0 @nma
+        !return
+    !endif
+    ml-write "[Not Found]"
+    !bell
+    !abort
+!emacro
+
+; narrow-search-backward - as with narrow-search-forward, see above.
+define-macro narrow-search-backward
+    !force set-variable #l0 @1
+    !if &not $status
+        set-variable #l0 @ml15 "Reverse NSearch" @h4 0
+    !endif
+    !if &not &bmod "narrow"
+        @# search-backward #l0 @nma
+        !return
+    !endif
+    set-variable #l1 &bmod "view" 
+    set-variable #l2 &bmod "edit" 
+    set-variable #l3 &bmod "undo" 
+    -1 buffer-mode view 
+    1 buffer-mode undo 
+    insert-string ""
+    1 narrow-buffer
+    !force !force search-backward #l0 @nma
+    !if &set #l4 $status
+        2 show-region
+        set-variable #l5 $window-aline
+        set-variable #l6 $window-col
+    !endif
+    undo
+    &cond #l3 1 -1 buffer-mode "undo" 
+    &cond #l2 1 -1 buffer-mode "edit" 
+    &cond #l1 1 -1 buffer-mode "view" 
+    !if #l4
+        set-variable $window-aline #l5
+        set-variable $window-col #l6
+        !force !force -1 search-backward #l0 @nma
+        !return
+    !endif
+    ml-write "[Not Found]"
+    !bell
+    !abort
+!emacro

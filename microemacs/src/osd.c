@@ -3103,13 +3103,8 @@ menuPosition(osdDISPLAY *md, int redraw)
             /* Previous menu not present */
             if (mcp == NULL)
             {
-#if MEOPT_MOUSE
                 md->x = mouse_X;                /* Position at the mouse */
                 md->y = mouse_Y;
-#else
-                md->x = 0 ;
-                md->y = 0 ;
-#endif
             }
             else
             {

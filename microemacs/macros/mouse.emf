@@ -484,6 +484,51 @@
     !endif
 !emacro
 
+0 define-macro mouse-wup-scroll
+    !if @?
+        !force @# scroll-up
+    !else
+        !force scroll-up
+    !endif
+    set-variable #l1 $window-id
+    !force 1 goto-position "\x82"
+    !if &not &equ #l1 $window-id
+        ; if we were scrolling in the current window then don't retore the old position
+        !force goto-position "\x82"
+    !endif
+!emacro
+0 define-macro mouse-wdown-scroll
+    !if @?
+        !force @# scroll-down
+    !else
+        !force scroll-down
+    !endif
+    set-variable #l1 $window-id
+    !force 1 goto-position "\x82"
+    !if &not &equ #l1 $window-id
+        ; if we were scrolling in the current window then don't retore the old position
+        !force goto-position "\x82"
+    !endif
+!emacro
+0 define-macro mouse-wleft-scroll
+    !force @# scroll-left
+    set-variable #l1 $window-id
+    !force 1 goto-position "\x82"
+    !if &not &equ #l1 $window-id
+        ; if we were scrolling in the current window then don't retore the old position
+        !force goto-position "\x82"
+    !endif
+!emacro
+0 define-macro mouse-wright-scroll
+    !force @# scroll-right
+    set-variable #l1 $window-id
+    !force 1 goto-position "\x82"
+    !if &not &equ #l1 $window-id
+        ; if we were scrolling in the current window then don't retore the old position
+        !force goto-position "\x82"
+    !endif
+!emacro
+
 0 define-macro mouse-void
     0 show-region
     set-variable #l2 $result
@@ -664,6 +709,10 @@ set-variable .mouse-event.mask "mouse-%s-1"
 
 0 define-macro mouse-wheel-event
     set-variable #l1 @cck
+    set-variable .mouse-event.x $mouse-x
+    set-variable .mouse-event.y $mouse-y
+    0x21 set-position "\x82"
+    1 set-cursor-to-mouse
     !if &not &seq &set #l0 &ind &cat ":" #l1 "ERROR"
         execute-line #l0
     !elif &not &seq &set #l0 &reg "/history" &cat "mouse/" #l1 "" ""

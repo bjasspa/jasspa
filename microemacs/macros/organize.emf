@@ -137,14 +137,13 @@
     set-variable #l3 &sub 0 &mid #l2 4 3
     set-variable #l4 &lef #l2 4
     !if &les .org.year #l4
-        !while &les .org.year #l4
-            #l4 org-leap-year
-            set-variable #l3 &sub #l3 &add #l9 365
+        !repeat
             !if &not &dec #l4 1
                 set-variable #l4 &sub #l4 1
             !endif
-        !done
-        set-variable #l3 &sub #l3 #l0
+            #l4 org-leap-year
+            set-variable #l3 &sub #l3 &add #l9 365
+        !until &equ .org.year #l4
     !elif &gre .org.year #l4
         !while &gre .org.year #l4
             #l4 org-leap-year

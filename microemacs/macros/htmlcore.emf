@@ -39,10 +39,11 @@ set-variable &ind &cat #l9 ".item-list-r4" "H4+  \ecB\\2\ecA"
     !force exec-file "hkjs"
 !endif
 
-!if &not &exist &set #l1 &ind &cat ".hilight." #l0
-    set-variable &ind &cat ".hilight." #l0 &set #l1 &pinc .hilight.next 1
+!if &not &exist &ind &cat ".hilight." #l0
+    set-variable &ind &cat ".hilight." #l0 &pinc .hilight.next 1
     set-variable &ind &spr ".hilight.%stag" #l0 &pinc .hilight.next 1
 !endif
+set-variable #l1 &ind &cat ".hilight." #l0
 set-variable #l2 &ind &spr ".hilight.%stag" #l0
 !if &and &sin "h" &ind &cat #l9 ".setup" &band .hilight.flags 0x02 
     0 hilight #l1 3 200                      $global-scheme

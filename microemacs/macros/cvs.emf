@@ -26,14 +26,16 @@ set-variable .cvs.message ""
 !if &band .hilight.flags 0x02
     ; fix the *files* buffer hilighting for cvs additions
     hilight .hilight.dirlst 0x012 "[0-9][0-9]:[0-9][0-9] [0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9] [0-9][0-9]:[0-9][0-9] \\{" .scheme.file
-    hilight .hilight.dirlst 0x112 "*[?AMCRLU]" .scheme.select
-    hilight .hilight.dirlst 0x112 " \\?"     .scheme.keyword
-    hilight .hilight.dirlst 0x112 " A"       .scheme.type
-    hilight .hilight.dirlst 0x112 " M"       .scheme.operator
-    hilight .hilight.dirlst 0x112 " C"       .scheme.error
-    hilight .hilight.dirlst 0x112 " R"       .scheme.error
-    hilight .hilight.dirlst 0x112 " L"       .scheme.error
-    hilight .hilight.dirlst 0x112 " U"       .scheme.variable
+    hilight .hilight.dirlst 0x112 " d\\?"     .scheme.keyword
+    hilight .hilight.dirlst 0x112 " dA"       .scheme.type
+    hilight .hilight.dirlst 0x112 " dL"       .scheme.error
+    hilight .hilight.dirlst 0x112 " -\\?"     .scheme.keyword
+    hilight .hilight.dirlst 0x112 " -A"       .scheme.type
+    hilight .hilight.dirlst 0x112 " -M"       .scheme.operator
+    hilight .hilight.dirlst 0x112 " -C"       .scheme.error
+    hilight .hilight.dirlst 0x112 " -R"       .scheme.error
+    hilight .hilight.dirlst 0x112 " -L"       .scheme.error
+    hilight .hilight.dirlst 0x112 " -U"       .scheme.variable
     !if &not &exi .hilight.diff
         !force execute-file "hkdiff"
     !endif
@@ -252,12 +254,7 @@ define-macro cvs-log-list
     !abort
 !emacro
 
-define-macro cvs-resolve-conflicts
-    !if &seq $buffer-fname ""
-        ml-write "[Current buffer has no file name]"
-        !abort
-    !endif
-    set-position "\x82"
+0 define-macro cvs-resolve-conflictsi
     beginning-of-buffer
     1 buffer-mode "magic"
     !force search-forward "^=======$"
@@ -267,13 +264,8 @@ define-macro cvs-resolve-conflicts
         !return
     !endif
     !if &bmod "edit"
-        goto-position "\x82"
-        !if &iseq @mc1 "Save buffer first [y/n]? " "nNyY" "y"
-            save-buffer
-        !else
-            ml-write "[Must save changes first]"
-            !abort
-        !endif
+        ml-write "[Must save changes first]"
+        !abort
     !endif
     set-variable #l0 $buffer-fname
     !force 1 cvs-resolve-ver
@@ -572,14 +564,14 @@ define-macro cvs-resolve-conflicts
     set-variable #l3 &bxor 1 &band #l1 1
     osd .osd.cvsosd &inc #l2 1 "" ""
     !if &gre #l1 2
-        osd .osd.cvsosd &inc #l2 1 "Sfh" &spr "        %s %s" &cond &gre #l1 4 "1st" "CVS" &cond #l3 "D\Hate: " "Revision/T\Hag: " &add #l2 1
+        osd .osd.cvsosd &inc #l2 1 "Sfh" &spr "        %s %s" &cond &gre #l1 4 "\H1st" "CVS" &cond #l3 "Date: " "Revision/Tag: " &add #l2 1
         osd .osd.cvsosd &inc #l2 1 "EtxHf" #l2 .scheme.osd-entry "################" &add 1 #l3 cvs-osd-rec
     !else
         osd .osd.cvsosd &inc #l2 1 "" ""
         osd .osd.cvsosd &inc #l2 1 "D"
     !endif
     !if &gre #l1 4
-        osd .osd.cvsosd &inc #l2 1 "fh" &cat "        2nd " &cond #l3 "Date: " "Revision/Tag: "
+        osd .osd.cvsosd &inc #l2 1 "fh" &cat "        \H2nd " &cond #l3 "Date: " "Revision/Tag: "
         osd .osd.cvsosd &inc #l2 1 "EtxHf" #l2 .scheme.osd-entry "################" &add 3 #l3 cvs-osd-rec
     !else
         osd .osd.cvsosd &inc #l2 1 "" ""
@@ -644,54 +636,61 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
 
 0 define-macro cvs-osd
     set-position "\x82"
-    ; if bit 256 is set then this is called from the file-browser, if not then its a standalone command
-    set-variable #l9 &band @# 255
     !if &seq $buffer-fname ""
         osd-dialog &cat "CVS - " &lget .names #l9 "    Current buffer has no file name!    " "  \HAbort  "
         !abort
     !endif
     set-variable .cwd &lef $buffer-fname &rsin "/" $buffer-fname
     !if &not &seq &stat "t" .cwd "D"
-        osd-dialog &cat "CVS - " &lget .names #l9 "    Current buffer is not located in a directory!    " "  \HAbort  "
+        osd-dialog &cat "CVS - " &lget .names @# "    Current buffer is not located in a directory!    " "  \HAbort  "
         !abort
     !endif
-    !if &not &band @# 256
-        !if &seq &rig $buffer-fname &sub &len $buffer-fname 1 "/"
-            set-variable .find-file.file-count 0
-            set-variable .find-file.file1 ""
-        !else
-            !if &sin "S" &lget .flags #l9
-                !if &bmod "edit"
-                    set-variable #l0 @mc1 "Save buffer first [y/n]? " "nNyY"
-                    !if &iseq #l0 "y"
-                        save-buffer @mna
-                    !endif
+    !if &set #l9 &seq $buffer-fhook "fhook-dirlst"
+        dirlst-tag-list
+        goto-position "\x82"
+    !else
+        !if &sin "S" &lget .flags @#
+            !if &bmod "edit"
+                set-variable #l0 @mc1 "Save buffer first [y/n]? " "nNyY"
+                !if &iseq #l0 "y"
+                    save-buffer @mna
                 !endif
             !endif
-            set-variable .find-file.file-count 1
-            set-variable .find-file.file1 &rig $buffer-fname &rsin "/" $buffer-fname
         !endif
+        set-variable .find-file.file-count 1
+        set-variable .find-file.file1 &rig $buffer-fname &rsin "/" $buffer-fname
     !endif
-    !if &seq &lget .cmds #l9 "gdiff"
+    !if &sin "s" &lget .flags @#
         !if &not &equ .find-file.file-count 1
-            osd-dialog &cat "CVS - " &lget .names #l9 "    GDiff can only opperate on one specific file at a time!    " "  \HAbort  "
+            osd-dialog &cat "CVS - " &lget .names @# "    This tool can only opperate on one specific file at a time!    " "  \HAbort  "
+        !endif
+        !if &seq &lget .cmds @# "res-conf"
+            cvs-resolve-conflictsi            
         !endif
     !endif
-    !if &seq &lget .cmds #l9 "remove"
-        !if &band @# 256
-            set-variable #l0 &spr "  CVS Remove will remove %d file%s from the repository.  " .find-file.file-count &cond &equ .find-file.file-count 1 "" "s"
+    !if &seq &lget .cmds @# "remove"
+        !if &not #l9
+            set-variable #l0 &spr "  cvs-remove will first delete the file \"%s\"  \n     and then remove it from the repository.  " .find-file.file1
         !elif &equ .find-file.file-count 0
             osd-dialog "CVS - Remove" "    Removing a directory is not currently supported!    " "  \HAbort  "
             !abort
         !else
-            set-variable #l0 &spr "  cvs-remove will first delete the file \"%s\"  \n     and then remove it from the repository.  " .find-file.file1
+            ; check that all the selected files have been 'lost' (deleted locally) first
+            set-variable $window-line 5
+            !force regex-forward "^\\*.[^L]"
+            !if $status
+                beginning-of-line
+                osd-dialog "CVS - Remove" "     All files to be removed must be deleted first!  " "  \HAbort  "
+                !abort
+            !endif
+            set-variable #l0 &spr "  CVS Remove will remove %d file%s from the repository.  " .find-file.file-count &cond &equ .find-file.file-count 1 "" "s"
         !endif
         set-variable #l0 &cat #l0 "\n  Use commit in cvs browser to make removal permanent.  \n\n      Are you sure you wish to Continue?"
-        osd-xdialog &cat "CVS - " &lget .names #l9 #l0 1 "  \HYes  " "  \HNo  "
+        osd-xdialog &cat "CVS - " &lget .names @# #l0 1 "  \HYes  " "  \HNo  "
         !if &equ $result 2
             !abort
         !endif
-        !if &not &band @# 256
+        !if &not #l9
             ; delete the buffer and the file
             delete-buffer $buffer-bname @mna
             0x20 file-op &cat .cwd .find-file.file1
@@ -700,11 +699,11 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
         !goto no-gui
     !endif
     -1 osd .osd.cvsosd
-    osd .osd.cvsosd 0 "batcdHs" 9 3 47 4 -1 -1 2020 .scheme.osd-title &cat "CVS " &lget .names #l9
+    osd .osd.cvsosd 0 "batcdHs" 9 3 47 4 -1 -1 2020 .scheme.osd-title &cat "CVS " &lget .names @#
     set-variable #l0 0
     !repeat
         set-variable #l1 &mid .options #l0 1
-        !if &sin #l1 &lget .flags #l9
+        !if &sin #l1 &lget .flags @#
             set-variable #l2 &add &mul #l0 100 100
             osd .osd.cvsosd  &inc #l2 1 ""
             !if &seq #l1 "D"
@@ -788,7 +787,7 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
     !endif
 *no-gui
     ; gdiffs are a little different
-    !if &seq &lget .cmds #l9 "gdiff"
+    !if &seq &lget .cmds @# "gdiff"
         cvs-exec-gdiff .cwd
         !return
     !endif
@@ -798,17 +797,17 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
     set-variable #l0 0
     !repeat
         set-variable #l1 &mid .options #l0 1
-        !if &sin #l1 &lget .flags #l9
+        !if &sin #l1 &lget .flags @#
             set-variable #l2 &mid .values #l0 1
             !if &seq #l1 "D"
             !elif &seq #l1 "f"
                 !if &seq .find-file.file1 ""
-                    osd-dialog &cat "CVS - " &lget .names #l9 "    A file or module must be given!    " "  \HAbort  "
+                    osd-dialog &cat "CVS - " &lget .names @# "    A file or module must be given!    " "  \HAbort  "
                     !abort
                 !endif
             !elif &seq #l1 "t"
                 !if &seq .tag ""
-                    osd-dialog &cat "CVS - " &lget .names #l9 "    A tag name must be given!    " "  \HAbort  "
+                    osd-dialog &cat "CVS - " &lget .names @# "    A tag name must be given!    " "  \HAbort  "
                     !abort
                 !endif
                 set-variable #l7 &spr "%s \"%s\"" #l7 &rep &rep .tag "\\" "\\\\" "\"" "\\\""
@@ -848,19 +847,19 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
             !endif
         !endif
     !until &seq &mid .options &inc #l0 1 1 ""
-    set-variable #l8 &spr "%s %s%s%s" %cvs-com &lget .cmds #l9 #l8 #l7
+    set-variable #l8 &spr "%s %s%s%s" %cvs-com &lget .cmds @# #l8 #l7
     ; get the output buffer name
     set-variable #l2 0
-    !if &and &band @# 256 &sin "*" &lget .flags #l9
+    !if &and #l9 &sin "*" &lget .flags @#
         set-variable #l2 1
         set-variable #l6 "*cvs-console*"
     !else
-        set-variable #l6 &spr "*cvs-%s*" &slow &lget .names #l9
+        set-variable #l6 &spr "*cvs-%s*" &slow &lget .names @#
         !force 0 delete-buffer #l6
     !endif
     set-variable #l5 $mouse
     set-variable $mouse &bor 0x50000 &band 0xffff #l5
-    !if &seq &lget .names #l9 "Add"
+    !if &seq &lget .names @# "Add"
         ; if adding the current buffer which is a directory the file-count
         ; will be 0 and .cwd has the dir we want to add - fix this
         !if &not .find-file.file-count
@@ -924,14 +923,23 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
     !if &not &equ #l2 4
         end-of-buffer
         insert-string &spr "\n*****CVS exited with code %d*****\n" #l7
+        -1 recenter
     !endif
     !if &not &seq #l6 "*cvs-console*"
         beginning-of-buffer
-        !if &seq &lget .names #l9 "Diff"
+        !if &seq &lget .names @# "Diff"
             set-variable $buffer-hilight .hilight.diff
         !endif
     !endif
     !force goto-position "\x82"
+    !if &and #l9 &lfind "|11|3|1|7|2|" @#
+        ; if update, commit remove or add then refresh or drop tags
+        !if &band .find-file.flags 1
+            dirlst-refresh
+        !else
+            dirlst-tag-remove
+        !endif
+    !endif
     set-variable $mouse #l5
 !emacro
 
@@ -939,9 +947,9 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
 ; resolve conflicts
 ; remove command - to prompt & del the file or prompt and cvs remove
 
-set-variable .cvs-osd.names "|Add|Checkout|Commit|Diff|Graphical Diff|Log|Remove|State|Status|Tag|Update|Annotate|"
-set-variable .cvs-osd.cmds  "|add|checkout|commit|diff|gdiff|log|remove|-nq update|status|tag|update|annotate|"
-set-variable .cvs-osd.flags "|kRS*|DfvRP*|mZRS*|OZRScw|OS|ZR|*|ZSR|ZR|tZRbrF*|ZSdRPC*|vZR|"
+set-variable .cvs-osd.names "|Add|Checkout|Commit|Diff|Graphical Diff|Log|Remove|State|Status|Tag|Update|Annotate|Resolve Conflicts|"
+set-variable .cvs-osd.cmds  "|add|checkout|commit|diff|gdiff|log|remove|-nq update|status|tag|update|annotate|res-conf|"
+set-variable .cvs-osd.flags "|kRS*|DfvRP*|mZRS*|OZRScw|OSs|ZR|*|ZSR|ZR|tZRbrF*|ZSdRPC*|vZR|Ss|"
 set-variable .cvs-osd.options "mDftvOZkdRPCcwbrF"
 set-variable .cvs-osd.values  " 0  1110010011000"
 set-variable .cvs-osd.revs "|||||"
@@ -983,87 +991,131 @@ define-macro cvs-update
 define-macro cvs-annotate
     12 cvs-osd
 !emacro
+define-macro cvs-resolve-conflicts
+    13 cvs-osd
+!emacro
 
-0 define-macro osd-cvs-file-menu-cmd
+0 define-macro cvs-clear-console
     set-position "\x82"
-    !if &gre @# 100
-        !if &equ @# 101
-            find-buffer "*cvs-console*"
-            beginning-of-buffer
-            set-mark
-            end-of-buffer
-            -1 kill-region
-            -1 buffer-mode "edit"
-            goto-position "\x82"
-        !elif &equ @# 102
-            ; load the file in
-            dirlst-tag-list
-            find-file .find-file.file1
-            cvs-resolve-conflicts
-            cvs
-        !endif
-        !return
-    !endif
-    dirlst-tag-list
-    !if &seq @# 7
-        ; check that all the selected files have been 'lost' (deleted locally) first
-        set-variable $window-line 5
-        !force regex-forward "^\\*[^L]"
-        !if $status
-            beginning-of-line
-            osd-dialog "CVS - Remove" "     All files to be removed must be deleted first!  " "  \HAbort  "
-            !abort
-        !endif
-    !endif
+    find-buffer "*cvs-console*"
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    -1 kill-region
+    -1 buffer-mode "edit"
     goto-position "\x82"
-    &bor @# 256 cvs-osd
-    !if &lfind "|11|3|1|7|2|" @#
-        ; if update, commit remove or add then refresh or drop tags
-        !if &band .find-file.flags 1
-            dirlst-refresh
-        !else
-            dirlst-tag-remove
-        !endif
-    !endif
 !emacro
 
 0 define-macro osd-cvs-file-menu
     -1 osd .osd.tmp
     osd .osd.tmp 0 "b"
-    osd .osd.tmp 1  "" "Current \HState"     8 osd-cvs-file-menu-cmd
-    osd .osd.tmp 5  "" "Check\Hout files"    2 osd-cvs-file-menu-cmd
-    osd .osd.tmp 10 "" "\HUpdate files"     11 osd-cvs-file-menu-cmd
-    osd .osd.tmp 30 "" "\HDiff files"        4 osd-cvs-file-menu-cmd
-    osd .osd.tmp 20 "" "\HCommit files"      3 osd-cvs-file-menu-cmd
-    osd .osd.tmp 40 "" "\HLog files"         6 osd-cvs-file-menu-cmd
-    osd .osd.tmp 50 "" "Status \Hfiles"      9 osd-cvs-file-menu-cmd
-    osd .osd.tmp 55 "" "A\Hnnotate files"   12 osd-cvs-file-menu-cmd
-    osd .osd.tmp 60 "" "\HTag files"        10 osd-cvs-file-menu-cmd
+    osd .osd.tmp 1  "" "Current \HState"     8 cvs-osd
+    osd .osd.tmp 5  "" "Check\Hout files"    2 cvs-osd
+    osd .osd.tmp 10 "" "\HUpdate files"     11 cvs-osd
+    osd .osd.tmp 30 "" "\HDiff files"        4 cvs-osd
+    osd .osd.tmp 20 "" "\HCommit files"      3 cvs-osd
+    osd .osd.tmp 40 "" "\HLog files"         6 cvs-osd
+    osd .osd.tmp 50 "" "Status \Hfiles"      9 cvs-osd
+    osd .osd.tmp 55 "" "A\Hnnotate files"   12 cvs-osd
+    osd .osd.tmp 60 "" "\HTag files"        10 cvs-osd
     !if :tag-count
-        osd .osd.tmp 70 "" "\HAdd files"     1 osd-cvs-file-menu-cmd
-        osd .osd.tmp 80 "" "Remove files"    7 osd-cvs-file-menu-cmd
+        osd .osd.tmp 70 "" "\HAdd files"     1 cvs-osd
+        osd .osd.tmp 80 "" "Re\Hmove files"    7 cvs-osd
     !else
         osd .osd.tmp 70 "" "Add files"
         osd .osd.tmp 80 "" "Remove files"
     !endif
     osd .osd.tmp 100 "-"
     !if &equ :tag-count 1
-        osd .osd.tmp 110 "" "\HGraphical diff"      5 osd-cvs-file-menu-cmd
-        osd .osd.tmp 120 "" "\HResolve conflicts" 102 osd-cvs-file-menu-cmd
+        osd .osd.tmp 110 "" "\HGraphical diff"      5 cvs-osd
+        osd .osd.tmp 120 "" "\HResolve conflicts"  13 cvs-osd
     !else
         osd .osd.tmp 110 "" "Graphical diff"
         osd .osd.tmp 120 "" "Resolve conflicts"
     !endif
     osd .osd.tmp 150 "-"
     osd .osd.tmp 155 "" "Generate Log List"         f cvs-log-list
-    osd .osd.tmp 160 "" "Clear c\Hvs console"     101 osd-cvs-file-menu-cmd
+    osd .osd.tmp 160 "" "Clear c\Hvs console"       f cvs-clear-console
 !emacro
 
-0 define-macro cvs-get-entries-info
+0 define-macro cvs-read-entries
+    set-variable #l1 @1
+    set-variable #l2 @2
+    !force 0 delete-buffer #l2
+    find-buffer #l2
+    !force insert-file &cat #l1 "CVS/Entries"
+    !if &not $status
+        ; not a cvs directory
+        !force 0 delete-buffer #l2
+        !abort
+    !endif
+    1 buffer-mode "magic"
+    set-variable #l3 $window-line
+    !force insert-file &cat #l1 "CVS/Entries.Log"
+    !if $status
+        ; merge in the Enrties.Log
+        set-variable $window-line #l3
+        !while &not &seq @wc ""
+            !if &xseq @wl "[AR] D/\\([^/\n]*\\)/.*"
+                set-variable #l5 @wc
+                set-variable #l4 @s1
+                str-to-regex #l4
+                set-variable #l3 $window-line
+                backward-char
+                !force search-backward &spr "^D/%s/" #l4
+                !if &seq #l5 "A"
+                    !if $status
+                        set-variable $window-line #l3
+                        1000 ml-write &spr "[Warning: found unexpected A Entries.Log line \"%s\"]" @wl
+                        !goto rm-line
+                    !endif
+                    set-variable $window-line #l3
+                    forward-delete-char
+                    forward-delete-char
+                    forward-line
+                !else
+                    !if $status
+                        beginning-of-line
+                        set-mark
+                        forward-line
+                        -1 kill-region
+                        set-variable $window-line &sub #l3 1
+                    !else
+                        set-variable $window-line #l3
+                        1000 ml-write &spr "[Warning: found unexpected R Entries.Log line \"%s\"]" @wl
+                    !endif
+                    !goto rm-line
+                !endif
+            !else
+                !if &sin @wc "AR"
+                    1000 ml-write &spr "[Warning: found unexpected Entries.Log line \"%s\"]" @wl
+                !endif
+*rm-line
+                set-mark
+                forward-line
+                -1 kill-region
+            !endif
+        !done
+    !endif
+!emacro
+0 define-macro cvs-get-dir-entries-info
     find-buffer @1
     set-variable #l2 @2
     beginning-of-buffer
-    search-forward &spr "^/%s/\\([^/]*\\)/\\(\\(Result of merge\\+\\)?\\w+ +\\(\\w+\\) +\\([0-9]+\\) +\\([0-9]+:[0-9]+\\):[0-9]+ +\\([0-9]+\\)\\|Initial +%s\\|dummy timestamp\\)/" #l2 #l2
+    search-forward &spr "^D/%s////" #l2
+    set-variable #p8 "        "
+    set-variable #p9 "                "
+    beginning-of-line
+    set-mark
+    forward-line
+    -1 kill-region
+!emacro
+
+0 define-macro cvs-get-file-entries-info
+    find-buffer @1
+    set-variable #l2 @2
+    beginning-of-buffer
+    search-forward &spr "^/%s/\\([^/]*\\)/\\(\\(Result of merge\\+\\)?\\w+ +\\(\\w+\\) +\\([0-9]+\\) +\\([0-9]+:[0-9]+\\):[0-9]+ +\\([0-9]+\\)\\|Initial +%s\\|dummy timestamp\\)/\\([^/\n]*/\\)" #l2 #l2
     ; get the version
     !if &gre &len @s1 7
         set-variable #p8 &cat "<" &rig @s1 &sub &len @s1 6
@@ -1078,6 +1130,9 @@ define-macro cvs-annotate
         ; get the date in YYYY/MM/DD HH:MM form
         set-variable #p9 &spr "%s/%02d/%02d %s" @s7 &lfind "|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|" @s4 @s5 @s6
     !endif
+    !if &set #l3 &sin "-k" @s8
+        set-variable #p7 &cat &lef #p7 1 &mid @s8 &add #l3 1 1
+    !endif
     beginning-of-line
     set-mark
     forward-line
@@ -1086,10 +1141,13 @@ define-macro cvs-annotate
 
 0 define-macro cvs-get-status-info
     find-buffer @1
+    1 buffer-mode "magic"
     beginning-of-buffer
-    search-forward &spr "^\\([^ \t\n]\\) %s$" @2
-    ; get the status
-    set-variable #p9 @s1
+    !force search-forward &spr "^\\([^ \t\n]\\) %s$" @2
+    !if $status
+        ; store the status
+        set-variable #p7 &cat @s1 &rig #p7 1
+    !endif
 !emacro
 
 0 define-macro cvs-dir-conv
@@ -1105,12 +1163,9 @@ define-macro cvs-annotate
     set-position "\x83"
     set-variable #l1 $buffer-bname
     set-variable #l2 $buffer-fname
-    !force 0 delete-buffer "*cvs-temp2*"
-    find-buffer "*cvs-temp2*"
-    !force insert-file &cat #l2 "CVS/Entries"
+    !force cvs-read-entries #l2 "*cvs-temp2*"
     !if &not $status
         ; not a cvs directory
-        !force 0 delete-buffer "*cvs-temp2*"
         goto-position "\x83"
         !return
     !endif
@@ -1128,47 +1183,43 @@ define-macro cvs-annotate
     set-variable $window-col 15
     insert-string "Repository Date  "
     set-variable $window-col 6
-    insert-string "Revis'n "
+    insert-string "  Revis'n "
     beginning-of-line
     forward-line
     !while &not &seq @wl ""
-        !if &seq &mid @wl 1 1 "-"
-            set-variable #l3 &rig @wl 32
-            !if &sin " -> " #l3
-                !goto pad-line
-            !else
-                filemask-to-regex #l3
-                !force cvs-get-status-info "*cvs-temp*" #l3
-                set-variable #l4 $status
-                !if #l4
-                    ; save the status
-                    set-variable #l6 #l9
-                !endif
-                !force cvs-get-entries-info "*cvs-temp2*" #l3
-                set-variable #l5 $status
-                find-buffer #l1
-                !if #l4
-                    forward-char
-                    forward-delete-char
-                    insert-string #l6
-                !endif
-                !if #l5
-                    set-variable $window-col 15
-                    insert-string &cat #l9 " "
-                    set-variable $window-col 6
-                    insert-string &spr "%s%n" #l8 &sub 8 &len #l8 " " 
-                !elif #l4
-                    !goto pad-line
-                !else
-                    !goto rmv-line
-                !endif
-                beginning-of-line
-                forward-line
-            !endif
-        !elif &seq &mid @wl 1 1 "d"
-            !if &not &seq &rig @wl 32 "CVS/"
+        set-variable #l7 "--"
+        set-variable #l3 &rig @wl 32
+        !if &sin " -> " #l3
+            !goto pad-line
+        !elif &set #l4 &seq &rig #l3 &sub &len #l3 1 "/"
+            !if &seq #l3 "CVS/"
+                !goto rmv-line
+            !elif &seq #l3 "./"
+                !goto rmv-line
+            !elif &seq #l3 "../"
                 !goto pad-line
             !endif
+            set-variable #l3 &lef #l3 &sub &len #l3 1
+        !endif
+        filemask-to-regex #l3
+        !force cvs-get-status-info "*cvs-temp*" #l3
+        !if #l4
+            !force cvs-get-dir-entries-info "*cvs-temp2*" #l3
+        !else
+            !force cvs-get-file-entries-info "*cvs-temp2*" #l3
+        !endif
+        set-variable #l5 $status
+        find-buffer #l1
+        !if #l5
+            2 forward-char
+            insert-string #l7
+            set-variable $window-col 17
+            insert-string &cat #l9 " "
+            set-variable $window-col 8
+            insert-string &spr "%s%n" #l8 &sub 8 &len #l8 " " 
+            beginning-of-line
+            forward-line
+        !elif &seq #l7 "--"
 *rmv-line
             !if &not .cvs.filter
                 !gote pad-line
@@ -1179,9 +1230,11 @@ define-macro cvs-annotate
             -1 kill-region
         !else
 *pad-line
-            set-variable $window-col 15
+            2 forward-char
+            insert-string #l7
+            set-variable $window-col 17
             insert-string "                 "
-            set-variable $window-col 6
+            set-variable $window-col 8
             insert-string "        "
             beginning-of-line
             forward-line
@@ -1199,20 +1252,21 @@ define-macro cvs-annotate
         beginning-of-buffer
         !force search-forward &spr "^\\(.\\) %s$" #l3
         !if &not $status
-            set-variable #l6 "?"
+            set-variable #l7 "?"
         !elif &seq @s1 "U"
-            set-variable #l6 "L"
+            set-variable #l7 "L"
         !else
-            set-variable #l6 @s1
+            set-variable #l7 @s1
         !endif
+        set-variable #l7 &cat #l7 "-"
         ; this really should work, if not then we are likely to spin!
-        !force cvs-get-entries-info "*cvs-temp2*" #l3
+        !force cvs-get-file-entries-info "*cvs-temp2*" #l3
         set-variable #l5 $status
         find-buffer #l1
         !if #l5
-            insert-string &spr " %s--- %s%n      -  %s                  %s" #l6 #l8 &sub 8 &len #l8 " " #l9 #l4
+            insert-string &spr " -%s--- %s%n      -  %s                  %s" #l7 #l8 &sub 8 &len #l8 " " #l9 #l4
         !else
-            insert-string &spr " %s--- CVS Error - status failure on this file:           %s" #l6 #l4
+            insert-string &spr " -%s--- CVS Error - status failure on this file:           %s" #l7 #l4
             !goto del-break-out
         !endif
         beginning-of-line
@@ -1221,12 +1275,49 @@ define-macro cvs-annotate
         beginning-of-buffer
         !force search-forward "^/\\([^/\n]+\\)/"
     !done
+    ; find any cvs or locally deleted dirs
+    find-buffer #l1
+    5 goto-line
+    find-buffer "*cvs-temp2*"
+    beginning-of-buffer
+    !force search-forward "^D/\\([^/\n]+\\)/"
+    !while $status
+        set-variable #l3 @s1
+        set-variable #l4 #l3
+        filemask-to-regex #l3
+        find-buffer "*cvs-temp*"
+        beginning-of-buffer
+        !force search-forward &spr "^\\(.\\) %s$" #l3
+        !if &not $status
+            set-variable #l7 "L"
+        !elif &seq @s1 "U"
+            set-variable #l7 "L"
+        !else
+            set-variable #l7 @s1
+        !endif
+        set-variable #l7 &cat #l7 "-"
+        ; this really should work, if not then we are likely to spin!
+        !force cvs-get-dir-entries-info "*cvs-temp2*" #l3
+        set-variable #l5 $status
+        find-buffer #l1
+        !if #l5
+            insert-string &spr " d%s--- %s%n      -  %s                  %s/\n" #l7 #l8 &sub 8 &len #l8 " " #l9 #l4
+        !else
+            insert-string &spr " d%s--- CVS Error - status failure on this dir:            %s/\n" #l7 #l4
+            !goto del-break-out
+        !endif
+        beginning-of-line
+        forward-line
+        find-buffer "*cvs-temp2*"
+        beginning-of-buffer
+        !force search-forward "^D/\\([^/\n]+\\)/"
+    !done
 *del-break-out
     !force 0 delete-buffer "*cvs-temp*"
     !force 0 delete-buffer "*cvs-temp2*"
     goto-position "\x83"
     -1 buffer-mode "edit"
-    set-variable :fmpf 57
+    set-variable :fmpf 59
 !emacro
 
 define-macro cvs

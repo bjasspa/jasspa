@@ -752,7 +752,8 @@ windowScrollRight (int f, int n)
             scroll = frameCur->windowCur->horzScroll ;
         if((scroll == 0) && (n < 0))
             return meTRUE ;
-        scroll += n ;
+        if((scroll += n) < 0)
+            scroll = 0 ;
         ii = scroll ;
         doto = 0 ;
         off = frameCur->windowCur->dotCharOffset->text ;
@@ -1568,7 +1569,30 @@ windowChangeDepth(int f, int n)
         meWindowGetAdjacentList (bwlist, WINDOW_NEXT, twlist[0]);
     }
     else
-        meWindowGetAdjacentList (twlist, WINDOW_PREV, bwlist[0]);
+    {
+        /* there's one gotcha, if the bottom windows have a depth lock and the
+         * top ones dn't then we should use the top ones in preference */
+        for (ii = 0; (wp = bwlist[ii]) != NULL ; ii++)
+            if(wp->flags & meWINDOW_LOCK_DEPTH)
+                break ;
+        if((wp != NULL) && (meWindowGetAdjacentList (twlist, WINDOW_PREV, frameCur->windowCur) != NULL))
+        {
+            for (ii = 0; (wp = twlist[ii]) != NULL ; ii++)
+                if(wp->flags & meWINDOW_LOCK_DEPTH)
+                    break ;
+            ii = (wp == NULL) ;
+        }
+        else
+            ii = 0 ;
+        if(ii)
+        {
+            /* there is a lock on the next and none on the prev so use the prev */
+            n = 0 - n;
+            meWindowGetAdjacentList (bwlist, WINDOW_NEXT, twlist[0]);
+        }
+        else
+            meWindowGetAdjacentList (twlist, WINDOW_PREV, bwlist[0]);
+    }
 #else
     if (frameCur->windowList->next == NULL)
         return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Only one window]");
@@ -1675,7 +1699,30 @@ windowChangeWidth(int f, int n)
         meWindowGetAdjacentList (rwlist, WINDOW_RIGHT, lwlist[0]);
     }
     else
-        meWindowGetAdjacentList (lwlist, WINDOW_LEFT, rwlist[0]);
+    {
+        /* there's one gotcha, if the right windows have a width lock and the
+         * left ones don't then we should use the left in preference */
+        for (ii = 0; (wp = rwlist[ii]) != NULL ; ii++)
+            if(wp->flags & meWINDOW_LOCK_WIDTH)
+                break ;
+        if((wp != NULL) && (meWindowGetAdjacentList (lwlist, WINDOW_LEFT, frameCur->windowCur) != NULL))
+        {
+            for (ii = 0; (wp = lwlist[ii]) != NULL ; ii++)
+                if(wp->flags & meWINDOW_LOCK_WIDTH)
+                    break ;
+            ii = (wp == NULL) ;
+        }
+        else
+            ii = 0 ;
+        if(ii)
+        {
+            /* there is a lock on the next and none on the prev so use the prev */
+            n = 0 - n;
+            meWindowGetAdjacentList(rwlist, WINDOW_RIGHT, lwlist[0]) ;
+        }
+        else
+            meWindowGetAdjacentList(lwlist, WINDOW_LEFT, rwlist[0]) ;
+    }
 
     meAssert (rwlist[0] != NULL);
     meAssert (lwlist[0] != NULL);

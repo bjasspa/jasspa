@@ -142,12 +142,10 @@ DEFVAR ("mode-line-scheme",    EVMDLNSCHM)      /* Mode line colour */
 #if MEOPT_EXTENDED
 DEFVAR ("mode-names",          EVMNAMES)        /* mode names access variable */
 #endif
-#if MEOPT_MOUSE
 DEFVAR ("mouse",               EVMOUSE)         /* mouse config variable */
 DEFVAR ("mouse-pos",           EVMOUSEPOS)      /* decoded last mouse position */
 DEFVAR ("mouse-x",             EVMOUSEX)        /* last mouse x position */
 DEFVAR ("mouse-y",             EVMOUSEY)        /* last mouse y position */
-#endif
 #if MEOPT_COLOR && MEOPT_OSD
 DEFVAR ("osd-scheme",          EVOSDSCHM)       /* Main osd color scheme */
 #endif

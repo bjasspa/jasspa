@@ -2949,6 +2949,9 @@ setCursorToMouse(int f, int n)
     int      odoto;                     /* Old doto */
     meLine    *odotp;                     /* Old dotp */ 
     
+    if(!f)
+        n = 3 ;
+    
     /* Handle the message line */
     row = mouse_Y ;
     if(row >= frameCur->depth)
@@ -2985,7 +2988,7 @@ setCursorToMouse(int f, int n)
     
     if(wp != frameCur->windowCur)                     /* Current window ?? */
     {
-        if (f == meTRUE)
+        if((n & 0x01) == 0)
         {
             mouse_pos = MIERROR;        /* Set bad status */
             return meTRUE ;
@@ -3024,14 +3027,17 @@ setCursorToMouse(int f, int n)
         return (meTRUE);                  /* And done */
     }
     
-    /* Must be in the text area !!
-     * Work out the new postion of the cursor in the buffer.
+    /* Must be in the text area !! should we move the cursor */
+    mouse_pos = MITEXT;
+    if((n & 2) == 0)
+        return meTRUE ;
+    
+    /* Work out the new postion of the cursor in the buffer.
      * Save the old position so that we can later check if we
      * have moved. */
     odoto = wp->dotOffset;
     odotp = wp->dotLine;
     
-    mouse_pos = MITEXT;
     ln = wp->dotLine ;
     ii = row - (wp->dotLineNo - wp->vertScroll) ;
     if(ii > 0)

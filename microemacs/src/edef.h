@@ -152,8 +152,10 @@ extern  meUInt meMouseCfg;              /* ME mouse config variable     */
 extern  meUByte mouse_pos;              /* mouse virtual position       */
 extern  meShort mouse_X;                /* mouse X pos at last event    */
 extern  meShort mouse_Y;                /* mouse X pos at last event    */
+#if MEOPT_MOUSE
 extern  meShort mouse_dX;               /* mouse delta X last event pos */
 extern  meShort mouse_dY;               /* mouse delta X last event pos */
+#endif
 
 #if MEOPT_UNDO
 extern  meUInt undoContFlag;            /* continuation of an undo      */
@@ -632,11 +634,11 @@ meUInt    meSYSTEM_MASK=                /* ME system mask - dependant on win32 f
 ) ;
 #endif
 
-#if MEOPT_MOUSE
 meUInt    meMouseCfg=(3|meMOUSE_ENBLE); /* ME mouse config variable    */
 meUByte   mouse_pos=0xff;               /* mouse virtual position       */
 meShort   mouse_X = 0;                  /* mouse X pos at last event    */
 meShort   mouse_Y = 0;                  /* mouse X pos at last event    */
+#if MEOPT_MOUSE
 meShort   mouse_dX = 0;                 /* mouse delta X last event pos */
 meShort   mouse_dY = 0;                 /* mouse delta X last event pos */
 #endif
