@@ -306,7 +306,7 @@ forwDelWord(int f, int n)
      frameCur->windowCur->dotLine = dotp;
      frameCur->windowCur->dotOffset = doto;
      frameCur->windowCur->dotLineNo = lineno ;
-     return (ldelete(size,(f) ? 2:3));
+     return ldelete(size,3) ;
 }
 
 /*
@@ -346,7 +346,7 @@ backDelWord(int f, int n)
     }
     if (moveForw && (meWindowForwardChar(frameCur->windowCur, 1) == meFALSE))
         return (meFALSE);
-    return (ldelete(size,(f) ? 2:3));
+    return ldelete(size,3) ;
 }
 
 #if MEOPT_WORDPRO
