@@ -87,7 +87,7 @@
     ; Scroll the screen if we are marking.
     set-variable .mouse-event.scroll $scroll
     set-variable $scroll 3
-    global-bind-key mouse-rectangle-mark &spr .mouse-event.mask "time"
+    global-bind-key mouse-rectangle-mark &spr .mouse-event.mask "move"
 !emacro
 
 0 define-macro mouse-drop-rectangle
