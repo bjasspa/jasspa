@@ -1946,7 +1946,7 @@ TTgetClipboard(void)
     /* Get the data from the clipboard */
     if ((hmem = GetClipboardData ((ttlogfont.lfCharSet == OEM_CHARSET) ? CF_OEMTEXT : CF_TEXT)) != NULL)
     {
-        int len;
+        int len, ll ;
         meUByte *tmpbuf;
         
         bufp = GlobalLock (hmem);       /* Lock global buffer */
@@ -1956,17 +1956,30 @@ TTgetClipboard(void)
          * a stripped down copy of the string excluding the
          * '\r' characters
          */
-        if ((tmpbuf = (meUByte *) meMalloc (len+1)) == NULL)
+        if ((tmpbuf = (meUByte *) meMalloc(len+1+(len>>15))) == NULL)
             goto do_unlock;             /* Failed memory allocation */
         
         tp = tmpbuf;                    /* Start of the temporary buffer */
         dd = bufp;                      /* Start of clipboard data */
+        ll = 0 ;
         while ((cc = *dd++) !='\0')
         {
             if ((cc == '\r') && (*dd == '\n'))
-                len--;
+                len-- ;
             else
+            {
+                if(cc == '\n')
+                    ll = 0 ;
+                else if(ll == 0xfff0)
+                {
+                    *tp++ = '\n' ;
+                    len++ ;
+                    ll = 1 ;
+                }
+                else
+                    ll++ ;
                 *tp++ = cc;
+            }
         }
         *tp = '\0';
         
