@@ -3,12 +3,12 @@
 #  System        : MicroEmacs
 #  Module        : Package Build script.
 #  Object Name   : $RCSfile: opt_depot_11.sh,v $
-#  Revision      : $Revision: 1.3 $
-#  Date          : $Date: 2004-03-17 21:31:58 $
+#  Revision      : $Revision: 1.4 $
+#  Date          : $Date: 2004-03-27 13:18:06 $
 #  Author        : $Author: jon $
 #  Created By    : <unknown>
 #  Created       : Sun Aug 17 12:58:23 2003
-#  Last Modified : <040317.2131>
+#  Last Modified : <040326.2229>
 #
 # Rules to build the HPUX 11.xx depot file. We build the executable only.
 #
@@ -16,7 +16,7 @@ MKDIR=mkdir
 SEARCH_PATH="/opt/jasspa/company:/opt/jasspa/macros:/opt/jasspa/spelling"
 BASEDIR=.
 METREE=jasspa-metree-20040301.tar.gz
-MEBIN=jasspa-me-hpux-pa-11-20040301.gz
+MEBIN=jasspa-me-hpux-pa-11.00-20040301.gz
 BASEFILESET="${METREE} ${MEBIN}"
 # Set to "mak" for native or "gmk" for GCC
 PLATFORM=`uname`
