@@ -30,9 +30,9 @@ set-variable .fhook-java.fold-close "^}"
 
 ; setup item-list
 set-variable .fhook-java.item-list-s1 "^\\s *\\([a-zA-Z0-9_ \t]*\\s \\)?\\([a-zA-Z0-9_]+\\)\\s *([a-zA-Z0-9_,\t]*)\\s *{"
-set-variable .fhook-java.item-list-r1 "Func  \ecB\\2\ecA"
+set-variable .fhook-java.item-list-r1 "Func \ecB\\2\ecA"
 set-variable .fhook-java.item-list-s2 "^\\s *\\(public\\s +\\|private\\s +\\)?class\\s \\(\\w+\\)"
-set-variable .fhook-java.item-list-r2 "Class \ecB\\2\ecA"
+set-variable .fhook-java.item-list-r2 "Clss \ecB\\2\ecA"
 
 !if &and &sin "h" .fhook-java.setup &band .hilight.flags 0x02 
     ; High-light Java Mode

@@ -307,6 +307,128 @@
     !done
 !emacro
 
+0 define-macro jst-prepare-fonts
+    ; Note that the searching for bold and other section should reflect the hilight
+    ; change bold *....* to easily found labels
+    beginning-of-buffer
+    !force search-forward "^>\\|<<\\|\\*\\S [^*\n]*\\*"
+    !while $status
+        !if &seq @s0 ">"
+            end-of-line
+        !elif &seq @s0 "<<"
+            !force search-forward ">>"
+        !else
+            set-variable #l0 &len @s0
+            #l0 backward-char
+            forward-delete-char
+            insert-string "\bFB"
+            &sub #l0 1 forward-char
+            backward-delete-char
+            insert-string "\bfB"
+        !endif
+        !force search-forward "^>\\|<<\\|\\*\\S [^*\n]*\\*"
+    !done
+    beginning-of-buffer
+    replace-string "<<fb>>" "\bFB"
+    beginning-of-buffer
+    replace-string "<</fb>>" "\bfB"
+    beginning-of-buffer
+    replace-string "^>fb:?[ \t]*$" "\n\bLI\bFB\n"
+    beginning-of-buffer
+    replace-string "^>/fb:?[ \t]*$" "\n\bLI\bfB\n"
+    ; change italic ~....~ & <<fi>>....<</fi>> to easily found labels
+    beginning-of-buffer
+    !force search-forward "^>\\|<<\\|~\\S [^~\n]*~"
+    !while $status
+        !if &seq @s0 ">"
+            end-of-line
+        !elif &seq @s0 "<<"
+            !force search-forward ">>"
+        !else
+            set-variable #l0 &len @s0
+            #l0 backward-char
+            forward-delete-char
+            insert-string "\bFI"
+            &sub #l0 1 forward-char
+            backward-delete-char
+            insert-string "\bfI"
+        !endif
+        !force search-forward "^>\\|<<\\|~\\S [^~\n]*~"
+    !done
+    beginning-of-buffer
+    replace-string "<<fi>>" "\bFI"
+    beginning-of-buffer
+    replace-string "<</fi>>" "\bfI"
+    beginning-of-buffer
+    replace-string "^>fi:?[ \t]*$" "\n\bLI\bFI\n"
+    beginning-of-buffer
+    replace-string "^>/fi:?[ \t]*$" "\n\bLI\bfI\n"
+    ; change underline _...._ to easily found labels
+    beginning-of-buffer
+    !force search-forward "^>\\|<<\\|_\\S [^_\n]*_"
+    !while $status
+        !if &seq @s0 ">"
+            end-of-line
+        !elif &seq @s0 "<<"
+            !force search-forward ">>"
+        !else
+            set-variable #l0 &len @s0
+            #l0 backward-char
+            forward-delete-char
+            insert-string "\bFU"
+            &sub #l0 1 forward-char
+            backward-delete-char
+            insert-string "\bfU"
+        !endif
+        !force search-forward "^>\\|<<\\|_\\S [^_\n]*_"
+    !done
+    beginning-of-buffer
+    replace-string "<<fu>>" "\bFU"
+    beginning-of-buffer
+    replace-string "<</fu>>" "\bfU"
+    beginning-of-buffer
+    replace-string "^>fu:?[ \t]*$" "\n\bLI\bFUM\n"
+    beginning-of-buffer
+    replace-string "^>/fu:?[ \t]*$" "\n\bLI\bfU\n"
+    ; change courier @....@ to easily found labels
+    beginning-of-buffer
+    !force search-forward "^>\\|<<\\|@\\S [^@\n]*@"
+    !while $status
+        !if &seq @s0 ">"
+            end-of-line
+        !elif &seq @s0 "<<"
+            !force search-forward ">>"
+        !else
+            set-variable #l0 &len @s0
+            #l0 backward-char
+            forward-delete-char
+            insert-string "\bFB"
+            &sub #l0 1 forward-char
+            backward-delete-char
+            insert-string "\bfB"
+        !endif
+        !force search-forward "^>\\|<<\\|@\\S [^@\n]*@"
+    !done
+    beginning-of-buffer
+    replace-string "<<fm>>" "\bFM"
+    beginning-of-buffer
+    replace-string "<</fm>>" "\bfM"
+    beginning-of-buffer
+    replace-string "^>fm:?[ \t]*$" "\n\bLI\bFM\n"
+    beginning-of-buffer
+    replace-string "^>/fm:?[ \t]*$" "\n\bLI\bfM\n"
+    ; change hilight `....' to easily found labels
+    beginning-of-buffer
+    replace-string "`\\([^']*\\)'" "\bFE\\1\bfE"
+    beginning-of-buffer
+    replace-string "<<fe>>" "\bFE"
+    beginning-of-buffer
+    replace-string "<</fe>>" "\bfE"
+    beginning-of-buffer
+    replace-string "^>[ \t]*fe:?[ \t]*$" "\n\bLI\bFE\n"
+    beginning-of-buffer
+    replace-string "^>[ \t]*/[ \t]*fe:?[ \t]*$" "\n\bLI\bfE\n"
+!emacro
 0 define-macro jst-prepare-quote-tags
     beginning-of-buffer
     !force search-forward "<<\\(.\\)>>"
@@ -560,62 +682,7 @@ define-macro jst-prepare-doc
     replace-string "^\n---+\n\n?" "\n\bLL\n\n"
     beginning-of-buffer
     replace-string "^\n\x0c\n\n?" "\n\bLP\n\n"
-    ; Note that the searching for bold and other section should reflect the hilight
-    ; change bold *....* to easily found labels
-    beginning-of-buffer
-    replace-string "\\*\\(\\S [^*\n]*\\)\\*" "\bFB\\1\bfB"
-    beginning-of-buffer
-    replace-string "<<fb>>" "\bFB"
-    beginning-of-buffer
-    replace-string "<</fb>>" "\bfB"
-    beginning-of-buffer
-    replace-string "^>[ \t]*fb:?[ \t]*$" "\n\bLI\bFB\n"
-    beginning-of-buffer
-    replace-string "^>[ \t]*/[ \t]*fb:?[ \t]*$" "\n\bLI\bfB\n"
-    ; change italic ~....~ & <<fi>>....<</fi>> to easily found labels
-    beginning-of-buffer
-    replace-string "~\\(\\S [^~\n]*\\)~" "\bFI\\1\bfI"
-    beginning-of-buffer
-    replace-string "<<fi>>" "\bFI"
-    beginning-of-buffer
-    replace-string "<</fi>>" "\bfI"
-    beginning-of-buffer
-    replace-string "^>[ \t]*fi:?[ \t]*$" "\n\bLI\bFI\n"
-    beginning-of-buffer
-    replace-string "^>[ \t]*/[ \t]*fi:?[ \t]*$" "\n\bLI\bfI\n"
-    ; change underline _...._ to easily found labels
-    beginning-of-buffer
-    replace-string "_\\(\\S [^_\n]*\\)_" "\bFU\\1\bfU"
-    beginning-of-buffer
-    replace-string "<<fu>>" "\bFU"
-    beginning-of-buffer
-    replace-string "<</fu>>" "\bfU"
-    beginning-of-buffer
-    replace-string "^>[ \t]*fu:?[ \t]*$" "\n\bLI\bFUM\n"
-    beginning-of-buffer
-    replace-string "^>[ \t]*/[ \t]*fu:?[ \t]*$" "\n\bLI\bfU\n"
-    ; change courier @....@ to easily found labels
-    beginning-of-buffer
-    replace-string "@\\(\\S [^@\n]*\\)@" "\bFM\\1\bfM"
-    beginning-of-buffer
-    replace-string "<<fm>>" "\bFM"
-    beginning-of-buffer
-    replace-string "<</fm>>" "\bfM"
-    beginning-of-buffer
-    replace-string "^>[ \t]*fm:?[ \t]*$" "\n\bLI\bFM\n"
-    beginning-of-buffer
-    replace-string "^>[ \t]*/[ \t]*fm:?[ \t]*$" "\n\bLI\bfM\n"
-    ; change hilight `....' to easily found labels
-    beginning-of-buffer
-    replace-string "`\\([^']*\\)'" "\bFH\\1\bfH"
-    beginning-of-buffer
-    replace-string "<<fh>>" "\bFH"
-    beginning-of-buffer
-    replace-string "<</fh>>" "\bfH"
-    beginning-of-buffer
-    replace-string "^>[ \t]*fh:?[ \t]*$" "\n\bLI\bFH\n"
-    beginning-of-buffer
-    replace-string "^>[ \t]*/[ \t]*fh:?[ \t]*$" "\n\bLI\bfH\n"
+    jst-prepare-fonts    
     ; sort out targets and links
     beginning-of-buffer
     replace-string "<<hname:[ \t]*\\(\\([^>]\\|>[^>]\\)*\\)>>" "\bHT\\1\bhT"
@@ -822,9 +889,9 @@ define-macro jst-to-html
     beginning-of-buffer
     replace-string "\bfU" "</U>"
     beginning-of-buffer
-    replace-string "\bFH" "<B><I>"
+    replace-string "\bFE" "<B><I>"
     beginning-of-buffer
-    replace-string "\bfH" "</I></B>"
+    replace-string "\bfE" "</I></B>"
     beginning-of-buffer
     replace-string "\bFM" "<FONT FACE=\"Courier New\">"
     beginning-of-buffer
@@ -1034,9 +1101,9 @@ define-macro jst-to-rtf
     beginning-of-buffer
     replace-string "\bfU" "}"
     beginning-of-buffer
-    replace-string "\bFH" "{\\\\b\\\\i "
+    replace-string "\bFE" "{\\\\b\\\\i "
     beginning-of-buffer
-    replace-string "\bfH" "}"
+    replace-string "\bfE" "}"
     beginning-of-buffer
     replace-string "\bFM" "{\\\\f1 "
     beginning-of-buffer
@@ -1176,9 +1243,9 @@ define-macro jst-to-latex
     beginning-of-buffer
     replace-string "\bfU" "}"
     beginning-of-buffer
-    replace-string "\bFH" "{\\\\bf {\\\\it "
+    replace-string "\bFE" "{\\\\bf {\\\\it "
     beginning-of-buffer
-    replace-string "\bfH" "}}"
+    replace-string "\bfE" "}}"
     beginning-of-buffer
     replace-string "\bFM" "{\\\\tt "
     beginning-of-buffer

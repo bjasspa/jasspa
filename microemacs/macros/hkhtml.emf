@@ -33,13 +33,13 @@ set-variable .fhook-html.command-desc  "|Html Browser Mode||&Goto Link||Html Aut
 
 ; setup item-list
 set-variable .fhook-html.item-list-s1 "<[hH]1>\\(<[^>]*>[ \t\n]*\\)*\\([^<]+\\)"
-set-variable .fhook-html.item-list-r1 "H1    \ecB\\2\ecA"
+set-variable .fhook-html.item-list-r1 "H1   \ecB\\2\ecA"
 set-variable .fhook-html.item-list-s2 "<[hH]2>\\(<[^>]*>[ \t\n]*\\)*\\([^<]+\\)"
-set-variable .fhook-html.item-list-r2 "H2    \ecB\\2\ecA"
+set-variable .fhook-html.item-list-r2 "H2   \ecB\\2\ecA"
 set-variable .fhook-html.item-list-s3 "<[hH]3>\\(<[^>]*>[ \t\n]*\\)*\\([^<]+\\)"
-set-variable .fhook-html.item-list-r3 "H3    \ecB\\2\ecA"
+set-variable .fhook-html.item-list-r3 "H3   \ecB\\2\ecA"
 set-variable .fhook-html.item-list-s4 "<[hH][4-9]>\\(<[^>]*>[ \t\n]*\\)*\\([^<]+\\)"
-set-variable .fhook-html.item-list-r4 "H4+   \ecB\\2\ecA"
+set-variable .fhook-html.item-list-r4 "H4+  \ecB\\2\ecA"
 
 !if &and &sin "h" .fhook-html.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.html
