@@ -93,7 +93,7 @@ readHistory(int f, int n)
     }
     
     /* Write the strings into the registry */
-    if ((regRoot = regRead((meUByte *)"history", fname, meREGMODE_RELOAD|meREGMODE_BACKUP)) == NULL)
+    if ((regRoot = regRead((meUByte *)"history", fname, meREGMODE_FROOT|meREGMODE_RELOAD|meREGMODE_BACKUP)) == NULL)
         return meABORT ;
     
     if((f == meTRUE) && (n != 0))
@@ -245,15 +245,15 @@ saveHistory(int f, int n)
         fname = filename ;
     }
     /* Write the strings into the registry */
-    if ((regRoot = regRead((meUByte *)"history", NULL, meREGMODE_BACKUP)) == NULL)
+    if ((regRoot = regRead((meUByte *)"history", NULL, meREGMODE_FROOT|meREGMODE_BACKUP)) == NULL)
         return mlwrite (MWABORT|MWPAUSE,(meUByte *)"Cannot write history");
     
     /* Delete any other history information */
-    if((regHistory = regFind (regRoot,(meUByte *)"history")) != NULL)
-        regDelete (regHistory);
+    if((regHistory = regFind(regRoot,(meUByte *)"history")) != NULL)
+        regDelete(regHistory) ;
     
     /* Construct a new history entry */
-    if ((regHistory = regSet (regRoot,(meUByte *)"history",(meUByte *)"")) != 0)
+    if((regHistory = regSet(regRoot,(meUByte *)"history",(meUByte *)"")) != 0)
     {
         meRegNode *regSection;
         
@@ -330,7 +330,7 @@ saveHistory(int f, int n)
     }
     
     /* Save the history to file. */
-    if (regSave (regRoot, fname))
+    if(regSave(regRoot,fname,regRoot->mode))
     {
         mlwrite(MWCLEXEC,(meUByte *)"[History written in %s]", fname) ;
         return meTRUE ;

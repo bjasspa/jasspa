@@ -1252,18 +1252,19 @@ typedef struct {
  * the variable meRegModeList defined in registry.c */
 #define meREGMODE_INTERNAL   0x0001             /* Internal registry - hidden */
 #define meREGMODE_HIDDEN     0x0002             /* Node is hidden */
-#define meREGMODE_FROOT      0x0004             /* File root */
-#define meREGMODE_CHANGE     0x0008             /* Tree has changed */
-#define meREGMODE_BACKUP     0x0010             /* Perform a backup of the file */
-#define meREGMODE_AUTO       0x0020             /* Automatic save */
-#define meREGMODE_DISCARD    0x0040             /* Discardable entry (memory only) */
-#define meREGMODE_CRYPT      0x0080             /* crypt the registry file */
-#define meREGMODE_MERGE      0x0100             /* Merge a loaded registry */
-#define meREGMODE_RELOAD     0x0200             /* Reload existing registry */
-#define meREGMODE_CREATE     0x0400             /* Create if does not exist */
-#define meREGMODE_QUERY      0x0800             /* Query the current node */
-#define meREGMODE_GETMODE    0x1000             /* Return modes set in $result */
-#define meREGMODE_STORE_MASK 0x00ff             /* Bits actually worth storing */
+#define meREGMODE_INVISIBLE  0x0004             /* Node is hidden */
+#define meREGMODE_FROOT      0x0008             /* File root */
+#define meREGMODE_CHANGE     0x0010             /* Tree has changed */
+#define meREGMODE_BACKUP     0x0020             /* Perform a backup of the file */
+#define meREGMODE_AUTO       0x0040             /* Automatic save */
+#define meREGMODE_DISCARD    0x0080             /* Discardable entry (memory only) */
+#define meREGMODE_CRYPT      0x0100             /* crypt the registry file */
+#define meREGMODE_MERGE      0x0200             /* Merge a loaded registry */
+#define meREGMODE_RELOAD     0x0400             /* Reload existing registry */
+#define meREGMODE_CREATE     0x0800             /* Create if does not exist */
+#define meREGMODE_QUERY      0x1000             /* Query the current node */
+#define meREGMODE_GETMODE    0x2000             /* Return modes set in $result */
+#define meREGMODE_STORE_MASK 0x01ff             /* Bits actually worth storing */
 /*
  * meRegNode
  * Data structure to hold a hierarchy node
@@ -1274,7 +1275,7 @@ typedef struct meRegNode
     struct meRegNode  *parent;                  /* Pointer to the parent */
     struct meRegNode  *child;                   /* Pointer to the child node */
     struct meRegNode  *next;                    /* Pointer to the sibling node */
-    meUByte            mode;                    /* Mode flag */
+    meUShort           mode;                    /* Mode flag */
     meUByte            name[1];                 /* The name of the node */
 } meRegNode;
 

@@ -69,13 +69,13 @@ rnodeNew (meUByte *name)
     int len;                            /* Length of the string */
 
     /* Get the length of the node name */
-    len = ((name == NULL) ? -1 : meStrlen (name));
+    len = meStrlen(name) ;
 
     /* Allocate space for the node and copy in the node name */
-    if ((np = (meRegNode *) malloc (sizeof (meRegNode) + len)) == NULL)
+    if ((np = (meRegNode *) meMalloc(sizeof(meRegNode) + len)) == NULL)
         return NULL;
-    memset (np, 0, sizeof (meRegNode));
-    meStrcpy (np->name, name);
+    memset(np, 0, sizeof(meRegNode));
+    meStrcpy(np->name,name) ;
     return (np);
 }
 
@@ -331,128 +331,173 @@ parseFile (meRegNode *rnp, meLine *hlp)
  * Save the registry back to file
  */
 int
-regSave (meRegNode *rnp, meUByte *fname)
+regSave(meRegNode *rnp, meUByte *fname, int mode)
 {
-    
-    int ss, level=0 ;
+    meRegNode *rr ;
+    meInt ss=meTRUE, level=0, lineCount, charCount ;
     meUInt flags ;
 
-    /* Check the root pointer */
-    if (rnp == NULL)
-        return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Registry: No node specified on export");
-
-    /* Find the filename */
-    if ((fname == NULL) || (fname[0] == '\0'))
+    if(mode & meREGMODE_FROOT)
     {
-        fname = NULL;
-        if (rnp->mode & meREGMODE_FROOT)
-            fname = rnp->value;        /* Use the default file name */
-        if (fname == NULL)
-            return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Registry: No file name specified on save");
-    }
-    flags = meRWFLAG_WRITE ;
-    if(rnp->mode & meREGMODE_BACKUP)
-        flags |= meRWFLAG_BACKUP ;
-    if(rnp->mode & meREGMODE_CRYPT)
-    {
-        meUByte s1[meBUF_SIZE_MAX], *s2 ;
-        int len ;
-        meCrypt(NULL,0);
-        meStrcpy(s1,getFileBaseName(fname)) ;
-        len = meStrlen(s1) + 1 ;
-        meCrypt(s1,len) ;
-        if((s2=meUserName) == NULL)
-            s2 = (meUByte *) "" ;
-        meStrcpy(s1+len,s2) ;
-        meCrypt(s1,len+meStrlen(s1+len)+1) ;
-        flags |= meRWFLAG_CRYPT ;
-    }
-    /* Open the file */
-    if(ffWriteFileOpen(fname,flags,NULL) > 0)
-    {
-        meRegNode *rr ;
+        /* Find the filename */
+        if ((fname == NULL) || (fname[0] == '\0'))
+        {
+            fname = NULL;
+            if(rnp->mode & meREGMODE_FROOT)
+                fname = rnp->value;        /* Use the default file name */
+            if(fname == NULL)
+                return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Registry: No file name specified on save");
+        }
+        flags = meRWFLAG_WRITE ;
+        if(mode & meREGMODE_BACKUP)
+            flags |= meRWFLAG_BACKUP ;
+        if(mode & meREGMODE_CRYPT)
+        {
+            meUByte s1[meBUF_SIZE_MAX], *s2 ;
+            int len ;
+            meCrypt(NULL,0);
+            meStrcpy(s1,getFileBaseName(fname)) ;
+            len = meStrlen(s1) + 1 ;
+            meCrypt(s1,len) ;
+            if((s2=meUserName) == NULL)
+                s2 = (meUByte *) "" ;
+            meStrcpy(s1+len,s2) ;
+            meCrypt(s1,len+meStrlen(s1+len)+1) ;
+            flags |= meRWFLAG_CRYPT ;
+        }
+        /* Open the file */
+        if(ffWriteFileOpen(fname,flags,NULL) <= 0)
+            return meABORT ;
         
         /* Add a recognition string to the header */
-        if(!(rnp->mode & meREGMODE_CRYPT))
+        if(!(mode & meREGMODE_CRYPT))
             ss = ffWriteFileWrite(12,(meUByte *) ";-!- erf -!-",1) ;
-
-        /* Recurse the children of the node and write to file */
-        rr = rnp->child ;
-        while ((ss > 0) && (rr != NULL))
+    }
+    else
+    {
+        mode &= ~meREGMODE_CRYPT ;
+        lineCount = 0 ;
+        charCount = 0 ;
+    }
+    
+    /* Recurse the children of the node and write to file */
+    rr = rnp->child ;
+    while((ss > 0) && (rr != NULL))
+    {
+        meUByte buff[4096] ;
+        int  len ;
+        /* Print the node */
+        if((len = level) != 0)
+            memset(buff,' ',len) ;
+        buff[len++] = '"' ;
+        len = expandexp(-1,rr->name,4096-11,len,buff,-1,NULL,meEXPAND_BACKSLASH|meEXPAND_FFZERO|meEXPAND_PRINTABLE) ;
+        buff[len++] = '"' ;
+        if (rr->mode & (meREGMODE_HIDDEN|meREGMODE_INTERNAL))
         {
-            meUByte buff[4096] ;
-            int  len ;
-            /* Print the node */
-            if((len = level) != 0)
-                memset(buff,' ',len) ;
-            buff[len++] = '"' ;
-            len = expandexp(-1,rr->name,4096-11,len,buff,-1,NULL,meEXPAND_BACKSLASH|meEXPAND_FFZERO|meEXPAND_PRINTABLE) ;
-            buff[len++] = '"' ;
-            if (rr->mode & (meREGMODE_HIDDEN|meREGMODE_INTERNAL))
-            {
-                buff[len++] = ' ' ;
-                buff[len++] = '0' + (rr->mode & (meREGMODE_HIDDEN|meREGMODE_INTERNAL)) ;
-            }
-            if (rr->value != NULL)
-            {
-                buff[len++] = ' ' ;
-                buff[len++] = '=' ;
-                buff[len++] = ' ' ;
-                buff[len++] = '"' ;
-                len = expandexp(-1,rr->value,4096-4,len,buff,-1,NULL,meEXPAND_BACKSLASH|meEXPAND_FFZERO|meEXPAND_PRINTABLE) ;
-                buff[len++] = '"' ;
-            }
-            /* write open '{' if it has children */
-            if (rr->child != NULL)
-            {
-                buff[len++] = ' ' ;
-                buff[len++] = '{' ;
-            }
-            if((ss = ffWriteFileWrite(len,buff,1)) <= 0)
-                break ;
-            
-            /* Descend child */
-            if (rr->child != NULL)
-            {
-                rr = rr->child;
-                level++;
-                continue;
-            }
-            /* Ascend the tree */
-            for (;;)
-            {
-                /* Move to sibling */
-                if (rr->next != NULL)
-                {
-                    rr = rr->next;
-                        break;
-                }
-                
-                if (rr->parent != NULL)
-                {
-                    if (--level < 0)
-                    {
-                        rr = NULL;
-                        break;
-                    }
-                    rr = rr->parent;
-                    /* as we are assending the tree, at least the first 'level'
-                     * number of chars in buffer must be ' 's so just splat in the '}'
-                     */
-                    buff[level] = '}' ;
-                    if((ss = ffWriteFileWrite(level+1,buff,1)) <= 0)
-                        break ;
-                }
-            }
+            buff[len++] = ' ' ;
+            buff[len++] = '0' + (rr->mode & (meREGMODE_HIDDEN|meREGMODE_INTERNAL)) ;
         }
-        
-        if(ffWriteFileClose(fname,meRWFLAG_WRITE,NULL) > 0)
+        if (rr->value != NULL)
         {
-            rnp->mode &= ~meREGMODE_CHANGE;
-            return meTRUE ;
+            buff[len++] = ' ' ;
+            buff[len++] = '=' ;
+            buff[len++] = ' ' ;
+            buff[len++] = '"' ;
+            len = expandexp(-1,rr->value,4096-4,len,buff,-1,NULL,meEXPAND_BACKSLASH|meEXPAND_FFZERO|meEXPAND_PRINTABLE) ;
+            buff[len++] = '"' ;
+        }
+        /* write open '{' if it has children */
+        if (rr->child != NULL)
+        {
+            buff[len++] = ' ' ;
+            buff[len++] = '{' ;
+        }
+        if((mode & meREGMODE_FROOT) == 0)
+        {
+            buff[len] = '\0' ;
+            if((ss = addLine(frameCur->windowCur->dotLine,buff)) <= 0)
+                break ;
+            lineCount += ss ;
+            charCount += len + 1 ;
+        }
+        else if((ss = ffWriteFileWrite(len,buff,1)) <= 0)
+            break ;
+        /* Descend child */
+        if (rr->child != NULL)
+        {
+            rr = rr->child;
+            level++;
+            continue;
+        }
+        /* Ascend the tree */
+        for (;;)
+        {
+            /* Move to sibling */
+            if (rr->next != NULL)
+            {
+                rr = rr->next;
+                break;
+            }
+            
+            if (rr->parent != NULL)
+            {
+                if (--level < 0)
+                {
+                    rr = NULL;
+                    break;
+                }
+                rr = rr->parent;
+                /* as we are assending the tree, at least the first 'level'
+                 * number of chars in buffer must be ' 's so just splat in the '}'
+                 */
+                len = level ;
+                buff[len++] = '}' ;
+                if((mode & meREGMODE_FROOT) == 0)
+                {
+                    buff[len] = '\0' ;
+                    if((ss = addLine(frameCur->windowCur->dotLine,buff)) <= 0)
+                        break ;
+                    lineCount += ss ;
+                    charCount += len + 1 ;
+                }
+                else if((ss = ffWriteFileWrite(len,buff,1)) <= 0)
+                    break ;
+            }
         }
     }
-    return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to write registry %s]",fname) ;
+    
+    if(mode & meREGMODE_FROOT)
+    {
+        if(ffWriteFileClose(fname,meRWFLAG_WRITE,NULL) <= 0)
+            return meABORT ;
+        rnp->mode &= ~meREGMODE_CHANGE;
+    }
+    else
+    {
+        meWindow *wp ;
+        level = frameCur->windowCur->dotLineNo ;
+        frameCur->bufferCur->lineCount += lineCount ;
+        meFrameLoopBegin() ;
+        for(wp=loopFrame->windowList; wp!=NULL; wp=wp->next)
+        {
+            if (wp->buffer == frameCur->bufferCur)
+            {
+                if(wp->dotLineNo >= level)
+                    wp->dotLineNo += lineCount ;
+                if(wp->markLineNo >= level)
+                    wp->markLineNo += lineCount ;
+                wp->updateFlags |= WFMAIN|WFMOVEL ;
+            }
+        }
+        meFrameLoopEnd() ;
+        frameCur->windowCur->dotOffset = 0 ;
+#if MEOPT_UNDO
+        meUndoAddInsChars(charCount) ;
+#endif
+        if(ss <= 0)
+            return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to write registry %s]",fname) ;
+    }
+    return meTRUE ;
 }
 
 /*
@@ -598,7 +643,7 @@ regTestSave(meRegNode *sroot, int flags)
         if(ret == meFALSE)
             return meTRUE ;
     }
-    return regSave (sroot, NULL);
+    return regSave(sroot,NULL,sroot->mode) ;
 }
 
 /*
@@ -628,7 +673,7 @@ regDelete (meRegNode *sroot)
  * meREGMODE_MERGE  - Merge the existing file.
  */
 meRegNode *
-regRead (meUByte *rname, meUByte *fname, int mode)
+regRead(meUByte *rname, meUByte *fname, int mode)
 {
     meLine hlp, *lp ;
     meUByte *fn ;
@@ -646,49 +691,54 @@ regRead (meUByte *rname, meUByte *fname, int mode)
     else
         fn = NULL ;
     
-    /* find the registry file */
-    /* have we been given a valid file name ? */
-    if ((fname != NULL) && (fname [0] != '\0'))
+    if(mode & meREGMODE_FROOT)
     {
-        meUByte filename[meBUF_SIZE_MAX] ;	/* Filename */
-        if(fileLookup(fname,(meUByte *)".erf",meFL_CHECKDOT|meFL_USESRCHPATH,filename))
-            fn = meStrdup(filename) ;
-        else
-            fn = meStrdup(fname) ;
-    }
-    /* else use the old file name (if there is one) else fail */
-    else if(fn == NULL)
-    {
-        mlwrite(MWABORT|MWWAIT,(meUByte *)"[No file name given to load]") ;
-        return NULL ;
-    }
+        /* find the registry file */
+        /* have we been given a valid file name ? */
+        if ((fname != NULL) && (fname [0] != '\0'))
+        {
+            meUByte filename[meBUF_SIZE_MAX] ;	/* Filename */
+            if(fileLookup(fname,(meUByte *)".erf",meFL_CHECKDOT|meFL_USESRCHPATH,filename))
+                fn = meStrdup(filename) ;
+            else
+                fn = meStrdup(fname) ;
+        }
+        /* else use the old file name (if there is one) else fail */
+        else if(fn == NULL)
+        {
+            mlwrite(MWABORT|MWWAIT,(meUByte *)"[No file name given to load]") ;
+            return NULL ;
+        }
     
-    /* Load in the registry file */
-    flags = meRWFLAG_SILENT ;
-    hlp.next = &hlp ;
-    hlp.prev = &hlp ;
-    if(mode & meREGMODE_CRYPT)
-    {
-        meUByte s1[meBUF_SIZE_MAX], *s2 ;
-        int len ;
-        meCrypt(NULL,0);
-        meStrcpy(s1,getFileBaseName(fn)) ;
-        len = meStrlen(s1) + 1 ;
-        meCrypt(s1,len) ;
-        if((s2=meUserName) == NULL)
-            s2 = (meUByte *) "" ;
-        meStrcpy(s1+len,s2) ;
-        meCrypt(s1,len+meStrlen(s1+len)+1) ;
-        flags |= meRWFLAG_CRYPT ;
+        /* Load in the registry file */
+        flags = meRWFLAG_SILENT ;
+        hlp.next = &hlp ;
+        hlp.prev = &hlp ;
+        if(mode & meREGMODE_CRYPT)
+        {
+            meUByte s1[meBUF_SIZE_MAX], *s2 ;
+            int len ;
+            meCrypt(NULL,0);
+            meStrcpy(s1,getFileBaseName(fn)) ;
+            len = meStrlen(s1) + 1 ;
+            meCrypt(s1,len) ;
+            if((s2=meUserName) == NULL)
+                s2 = (meUByte *) "" ;
+            meStrcpy(s1+len,s2) ;
+            meCrypt(s1,len+meStrlen(s1+len)+1) ;
+            flags |= meRWFLAG_CRYPT ;
+        }
+        if((ffReadFile(fn,flags,NULL,&hlp,0,0) == meABORT) &&
+           !(mode & meREGMODE_CREATE))
+        {
+            mlwrite (MWABORT|MWWAIT,(meUByte *)"[Cannot load registry file %s]", fname);
+            return NULL ;
+        }
+        lp = &hlp ;
     }
-    if((ffReadFile(fn,flags,NULL,&hlp,0,0) == meABORT) &&
-       !(mode & meREGMODE_CREATE))
-    {
-        mlwrite (MWABORT|MWWAIT,(meUByte *)"[Cannot load registry file %s]", fname);
-        return NULL ;
-    }
-    lp = &hlp ;
-
+    else
+        lp = frameCur->bufferCur->baseLine ;
+    
     if ((rnp != NULL) && (mode & meREGMODE_RELOAD))
     {
         /* Want to replace with new one. so delete old */
@@ -706,9 +756,6 @@ regRead (meUByte *rname, meUByte *fname, int mode)
             return NULL ;
         rnp->mode = 0;
     }
-    /* Set the node to be a file root node */
-    rnp->mode |= meREGMODE_FROOT;
-    
     /* set the new file name */
     if(rnp->value != fn)
     {
@@ -717,7 +764,9 @@ regRead (meUByte *rname, meUByte *fname, int mode)
     }
     /* Now parse the registry file */
     parseFile (rnp, lp) ;
-    meLineLoopFree(lp,0) ;
+    
+    if(mode & meREGMODE_FROOT)
+        meLineLoopFree(lp,0) ;
 
 finished:
     rnp->mode |= mode & meREGMODE_STORE_MASK ;
@@ -734,7 +783,7 @@ finished:
  * regDecodeMode
  * Decode the registry mode.
  */
-static meUByte meRegModeList[]="!hfubadymrc?g" ;
+static meUByte meRegModeList[]="!hifubadymrc?g" ;
 static int
 regDecodeMode (int *modep, meUByte *modeStr)
 {
@@ -765,7 +814,7 @@ regDecodeMode (int *modep, meUByte *modeStr)
  * Read a file into the registry.
  */
 int
-readRegistry (int f, int n)
+readRegistry(int f, int n)
 {
     meUByte filebuf [meBUF_SIZE_MAX];
     meUByte rootbuf [32];
@@ -774,16 +823,21 @@ readRegistry (int f, int n)
 
     /* Get the input from the command line */
     if ((meGetString((meUByte *)"Read registry root",0, 0, rootbuf, 32) == meABORT) ||
-        (meGetString((meUByte *)"Registry file",MLFILECASE, 0, filebuf, meBUF_SIZE_MAX) == meABORT) ||
+        (((n & 4) == 0) &&
+         (meGetString((meUByte *)"Registry file",MLFILECASE, 0, filebuf, meBUF_SIZE_MAX) == meABORT)) ||
         (meGetString((meUByte *)"File Mode", 0, 0, modebuf, 10) == meABORT))
         return meABORT;
-
+    
     /* Get the mode out */
     if (regDecodeMode (&mode, modebuf) == meABORT)
         return meABORT;
 
+    mode &= ~meREGMODE_FROOT ;
+    if((n & 4) == 0)
+        mode |= meREGMODE_FROOT ;
+    
     /* Read the file */
-    if (regRead (rootbuf, filebuf, mode) == NULL)
+    if(regRead(rootbuf, filebuf, mode) == NULL)
         return meFALSE;
     return meTRUE;
 }
@@ -836,41 +890,37 @@ markRegistry (int f, int n)
     /* Find the integer offset if there is one. */
     if (f)
     {
-        meRegNode *tnp;
-        int level = 0;
+        meRegNode *tnp, *nnp;
 
         tnp = rnp;
         f = n ;
-        while (--n >= 0)
+        while((--n >= 0) && (tnp != NULL))
         {
-            if ((tnp->mode & (meREGMODE_HIDDEN|meREGMODE_INTERNAL)) || (tnp->child == NULL))
+            if(!(tnp->mode & (meREGMODE_HIDDEN|meREGMODE_INTERNAL)) &&
+               ((nnp = tnp->child) != NULL))
+                tnp = nnp ;
+            else
+                nnp = tnp->next ;
+            
+            while((tnp != NULL) && ((nnp == NULL) || (nnp->mode & meREGMODE_INVISIBLE)))
             {
-                for (;;)
+                if(nnp == NULL)
                 {
                     /* Make sure we are not back at the root */
-                    if (tnp == rnp)
+                    if((tnp = tnp->parent) == rnp)
                         tnp = NULL;
-                    else if (tnp->next != NULL)
-                        tnp = tnp->next;
                     else
-                    {
-                        tnp = tnp->parent;
-                        level--;
-                        continue;
-                    }
-                    break;
+                        nnp = tnp->next ;
                 }
+                else
+                    nnp = nnp->next ;
             }
-            else
-            {
-                tnp = tnp->child;
-                level++;
-            }
+            tnp = nnp ;
         }
 
         /* tnp is the current node. Change the node */
         if ((rnp = tnp) == NULL)
-            mlwrite (MWCLEXEC|MWABORT,(meUByte *)"[Cannot locate node %d]", f);
+            return mlwrite (MWCLEXEC|MWABORT,(meUByte *)"[Cannot locate node %d]", f);
     }
 
     /* Get the mode out */
@@ -912,6 +962,7 @@ saveRegistry (int f, int n)
     meUByte filebuf [meBUF_SIZE_MAX];
     meUByte rootbuf [128];
     meRegNode *rnp;
+    meInt mode ;
     
     if(n & 0x2)
     {
@@ -928,22 +979,27 @@ saveRegistry (int f, int n)
     }
     
     /* Get the input from the command line */
-    if (meGetString((meUByte *)"Save registry root",0, 0, rootbuf, 128) == meABORT)
+    if(meGetString((meUByte *)"Save registry root",0, 0, rootbuf, 128) == meABORT)
         return meFALSE;
     
     /* Find the root */
-    if ((rnp = regFind (&root, rootbuf)) == NULL)
+    if((rnp = regFind (&root, rootbuf)) == NULL)
         return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Cannot find node %s]",rootbuf);
     
-    if (rnp->mode & meREGMODE_FROOT)
-        meStrcpy(filebuf,rnp->value) ;
-    else
-        filebuf[0] = '\0' ;
+    mode = rnp->mode & ~meREGMODE_FROOT ;
+    if((n & 4) == 0)
+    {
+        if(rnp->mode & meREGMODE_FROOT)
+            meStrcpy(filebuf,rnp->value) ;
+        else
+            filebuf[0] = '\0' ;
     
-    /* Get the filename */
-    if(meGetString((meUByte *)"Registry file",MLFILECASE|MLFILECASE, 0, filebuf, meBUF_SIZE_MAX) <= 0)
-        return meFALSE ;
-    return regSave (rnp, filebuf);
+        /* Get the filename */
+        if(meGetString((meUByte *)"Registry file",MLFILECASE|MLFILECASE, 0, filebuf, meBUF_SIZE_MAX) <= 0)
+            return meFALSE ;
+        mode |= meREGMODE_FROOT ;
+    }
+    return regSave(rnp,filebuf,mode) ;
 }
 
 /* returns true if any registry node needs saving */
@@ -989,22 +1045,67 @@ deleteRegistry (int f, int n)
 int
 setRegistry (int f, int n)
 {
-    meUByte rootbuf [meBUF_SIZE_MAX];
-    meUByte valbuf [meBUF_SIZE_MAX];
-    meUByte skeybuf [meBUF_SIZE_MAX];
-    meRegNode *rnp;
+    meUByte buf1[meBUF_SIZE_MAX], *name ;
+    meUByte buf2[meBUF_SIZE_MAX] ;
+    meRegNode *rnp, *pnp, *nnp ;
 
     /* Get the arguments */
-    if ((meGetString((meUByte *)"Registry Path", 0, 0, rootbuf, meBUF_SIZE_MAX) == meABORT) ||
-        (meGetString((meUByte *)"Sub key", 0, 0, skeybuf, meBUF_SIZE_MAX) == meABORT) ||
-        (meGetString((meUByte *)"Value", 0, 0, valbuf, meBUF_SIZE_MAX) == meABORT))
+    if(meGetString((meUByte *)"Registry Path", 0, 0, buf1, meBUF_SIZE_MAX) == meABORT)
         return meABORT;
+    if((rnp = regFind(&root,buf1)) == NULL)
+        return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Cannot find node %s]",buf1);
+    if(n & 0x02)
+    {
+        /* setting the name of the node, not the value */
+        if(meGetString((meUByte *)"name", 0, 0, buf2, meBUF_SIZE_MAX) == meABORT)
+            return meABORT;
+        if(((name=meStrrchr(buf2,'/')) != NULL) && (name[1] == '\0'))
+        {
+            *name = '\0' ;
+            name = meStrrchr(buf2,'/') ;
+        }
+        if(name != NULL)
+        {
+            *name++ = '\0' ;
+            pnp = regFind(&root,buf2) ;
+        }
+        else
+        {
+            name = buf2 ;
+            pnp = rnp->parent ;
+        }
+        if(pnp == NULL)
+            return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Cannot find node %s]",buf2) ;
+        if((pnp != rnp->parent) || meStrcmp(name,rnp->name))
+        {
+            if((name[0] == '\0') || (regFind(pnp,name) != NULL))
+                return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Cannot set registry node]");
+            if((nnp = rnodeNew(name)) == NULL)
+                return meABORT;
+            rnodeUnlink(rnp) ;
+            nnp->value = rnp->value ;
+            nnp->child = rnp->child ;
+            nnp->mode = rnp->mode ;
+            meFree(rnp) ;
+            rnodeLink(pnp,nnp) ;
+            rnp = nnp->child ;
+            while(rnp != NULL)
+            {
+                rnp->parent = nnp ;
+                rnp = rnp->next ;
+            }
+        }
+    }
+    else
+    {
+        if((meGetString((meUByte *)"Sub key", 0, 0, buf1, meBUF_SIZE_MAX) == meABORT) ||
+           (meGetString((meUByte *)"Value", 0, 0, buf2, meBUF_SIZE_MAX) == meABORT))
+            return meABORT;
 
-    /* Assigns the new value */
-    if ((rnp = regFind (&root, rootbuf)) == NULL)
-        return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Cannot find node %s]",rootbuf);
-    if (regSet (rnp, skeybuf, valbuf) == NULL)
-        return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Cannot set registry node]");
+        /* Assigns the new value */
+        if(regSet(rnp,buf1,buf2) == NULL)
+            return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Cannot set registry node]");
+    }
     return meTRUE;
 }
 
@@ -1051,7 +1152,7 @@ findRegistry (int f, int n)
     meUByte valbuf [12];
     meUByte skeybuf [meBUF_SIZE_MAX];
     int index;
-    meRegNode *rnp;
+    meRegNode *rnp ;
 
     /* Get the arguments */
     if ((meGetString((meUByte *)"Registry Path", 0, 0, rootbuf, meBUF_SIZE_MAX) == meABORT) ||
@@ -1073,11 +1174,8 @@ findRegistry (int f, int n)
         resultStr [0] ='\0';
         return mlwrite (MWCLEXEC|MWABORT,(meUByte *)"Cannot find node at index %d", index);
     }
-    else
-    {
-        meStrncpy (resultStr, rnp->name, meBUF_SIZE_MAX-1);
-        resultStr [meBUF_SIZE_MAX-1] = '\0';
-    }
+    meStrncpy(resultStr, rnp->name, meBUF_SIZE_MAX-1);
+    resultStr[meBUF_SIZE_MAX-1] = '\0';
     return meTRUE;
 }
 
@@ -1090,47 +1188,77 @@ listRegistry (int f, int n)
 {
     meBuffer *bp;                         /* Buffer pointer */
     meWindow *wp;                         /* Window associated with buffer */
-    meRegNode *rnp;                         /* Draw the nodes */
-    meUByte vstrbuf [meBUF_SIZE_MAX];             /* Vertical string buffer */
-    meUByte buf[meBUF_SIZE_MAX*2];                /* Working line buffer */
-    int level = 0;                      /* Depth in the registry */
-    int len;                            /* Length of the string */
+    meRegNode *rnp, *cnp, *nnp ;          /* Draw the nodes */
+    meUByte vstrbuf [meBUF_SIZE_MAX];     /* Vertical string buffer */
+    meUByte *bn, buf[meBUF_SIZE_MAX*2];   /* Working line buffer */
+    int level = 0;                        /* Depth in the registry */
+    int len;                              /* Length of the string */
 
+    rnp = &root;
+    if((n & 0x02) != 0)
+    {
+        if(meGetString((meUByte *)"Registry node",0, 0, buf, meBUF_SIZE_MAX) == meABORT)
+            return meABORT;
+
+        /* Find the node */
+        if((rnp = regFind(rnp,buf)) == NULL)
+            return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Cannot find node %s]",buf);
+    }
+    
+    if((n & 0x01) == 0)
+    {
+        /* prompt for and get the new buffer name */
+        if((len = getBufferName((meUByte *) "Buffer", 0, 0, buf)) <= 0)
+            return len ;
+        bn = buf ;
+    }
+    else
+        bn = BregistryN ;
+    
     /* Find the buffer and vapour the old one */
-    if((wp = meWindowPopup(BregistryN,BFND_CREAT|BFND_CLEAR|WPOP_USESTR,NULL)) == NULL)
+    if((wp = meWindowPopup(bn,BFND_CREAT|BFND_CLEAR|WPOP_USESTR,NULL)) == NULL)
         return meFALSE;
     bp = wp->buffer ;                   /* Point to the buffer */
 
     /* Recurse the children of the node and write to file */
-    rnp = &root;
     do
     {
+        /* get the current node's first drawn child */
+        cnp = rnp->child ;
+        while((cnp != NULL) && (cnp->mode & meREGMODE_INVISIBLE))
+            cnp = cnp->next ;
+
+        /* get the current node's next drawn sibling */
+        nnp = rnp->next ;
+        while((nnp != NULL) && (nnp->mode & meREGMODE_INVISIBLE))
+            nnp = nnp->next ;
+
         /* Add continuation bars if we are at a child level */
-        if ((len = level) != 0)
+        if((len = level) != 0)
             meStrncpy (buf, vstrbuf, len);
-
+        
         /* Add connection bars for siblings */
-        if (rnp->next == NULL)
-            buf [len++] = boxChars[BCNE];
-        else
+        if(level && (nnp != NULL))
             buf [len++] = boxChars[BCNES] ;
-
+        else
+            buf [len++] = boxChars[BCNE];
+        
         /* Add continuation barss for children */
         if (rnp->mode & meREGMODE_INTERNAL)
             buf[len++] = '!';
-        else if (rnp->child == NULL)
+        else if (cnp == NULL)
             buf[len++] = boxChars[BCEW];
         else if (rnp->mode & meREGMODE_HIDDEN)
             buf[len++] = '+';
         else
             buf[len++] = '-';
         buf[len++] = ' ';
-
+        
         /* Add the name of the node */
         buf[len++] = '"';
         len = expandexp(-1,rnp->name,(meBUF_SIZE_MAX*2)-7,len,buf,-1,NULL,meEXPAND_BACKSLASH|meEXPAND_FFZERO) ;
         buf[len++] = '"';
-
+        
         /* Add the value */
         if ((rnp->value != NULL) && !(rnp->mode & meREGMODE_INTERNAL))
         {
@@ -1144,32 +1272,24 @@ listRegistry (int f, int n)
         /* Add the string to the print buffer */
         buf[len] = '\0';
         addLineToEob(bp,buf);
-
         /* Descend child */
-        if ((rnp->child != NULL) && !(rnp->mode & (meREGMODE_HIDDEN|meREGMODE_INTERNAL)))
+        if((cnp != NULL) && !(rnp->mode & (meREGMODE_HIDDEN|meREGMODE_INTERNAL)))
         {
-            vstrbuf[level++] = (rnp->next != NULL) ? boxChars[BCNS] : ' ' ;
-            rnp = rnp->child;
-            continue;
+            vstrbuf[level++] = (level && (nnp != NULL)) ? boxChars[BCNS] : ' ' ;
+            rnp = cnp ;
+            continue ;
         }
-
+        
         /* Ascend the tree */
-        for (;;)
+        while((nnp == NULL) && (--level >= 0) && ((rnp = rnp->parent) != NULL))
         {
-            /* Move to sibling */
-            if (rnp->next != NULL)
-            {
-                rnp = rnp->next;
-                break;
-            }
-
-            --level;
-            if ((rnp = rnp->parent) == NULL)
-                break;
+            /* Move to next drawn sibling */
+            nnp = rnp->next ;
+            while((nnp != NULL) && (nnp->mode & meREGMODE_INVISIBLE))
+                nnp = nnp->next ;
         }
-
-    }
-    while (rnp != NULL);
+        rnp = nnp ;
+    } while((level > 0) && (rnp != NULL)) ;
 
     /* Set up the buffer for display */
     bp->dotLine = meLineGetNext(bp->baseLine);

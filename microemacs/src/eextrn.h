@@ -812,7 +812,7 @@ extern meRegNode *regRead(meUByte *rname, meUByte *fname, int mode);
 extern meRegNode *regSet(meRegNode *root, meUByte *subkey, meUByte *value);
 extern meRegNode *vregFind(meRegNode *root, meUByte *fmt, ...);
 extern int  regDelete(meRegNode *root);
-extern int  regSave(meRegNode *root, meUByte *fname);
+extern int  regSave(meRegNode *root, meUByte *fname, int mode);
 extern int  anyChangedRegistry(void);
 #define regGetName(reg)       (reg->name)
 #define regGetValue(reg)      (reg->value)
