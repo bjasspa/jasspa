@@ -177,10 +177,20 @@ define-macro cygpipe-break
 ; Set the cygwin directory, passed in #p3
 ; We take the name from the BASH shell.
 0 define-macro cygwin-setdir
-    set-variable #l1 &rep #p3 "\x1a" ""
+    set-variable .cygwin.raw #p3
+    set-variable #l1 &xrep #p3 "^[^\x1a]*\x1a" ""
     !if &not &seq "//cygdrive/" &lef #l1 11
-        ; This must be a local path name, convert to drive.
-        set-variable #l1 &cat .cygwin.root &rig #l1 1
+        ; See if this is a DOS directory.
+        !if &xseq #l1 "^[a-zA-Z]:.*"
+            ; This is a DOS path. 
+            set-variable .cygwin.dosdir #l1
+            set-variable .cygwin.cygdir #l1
+            set-variable $buffer-fname
+            !return
+        !else
+            ; This must be a local path name, convert to drive.
+            set-variable #l1 &cat .cygwin.root &rig #l1 1
+        !endif
     !endif
     ; Change the cygname into a DOS name.
     set-variable #l2 &rig #l1 11
@@ -290,44 +300,6 @@ define-macro cygpipe-break
                 !endif
             !endif
             set-variable #l2 #l3
-            !if &xise #l3 "[ \t]*cdd?[ \t]*\\S .*"
-                set-variable #l4 &trb &xirep #l3 "[ \t]*cdd?\\(.*\\)" "\\1"
-                !if &xise #l4 "[a-z]:\\([^\\/].*\\)?"
-                    !if &not &exi &ind &cat ":dir-" &slo &lef #l4 1
-                        set-variable &ind &cat ":dir-" &slo &lef #l4 1 &stat "a" &lef #l4 2
-                    !endif
-                    set-variable #l4 &stat "a" &cat &ind &cat ":dir-" &slo &lef #l4 1 &rig #l4 2
-                    goto-position "\x83"
-                !else
-                    goto-position "\x83"
-                    set-variable #l4 &stat "a" &cat $buffer-fname #l4
-                !endif
-                !if &seq &stat "t" #l4 "D"
-                    set-variable #l5 $buffer-fname
-                    set-variable $buffer-fname #l4
-                    !force find-buffer &cat #l0 "-cmd"
-                    set-variable $buffer-fname #l5
-                    !if &band $system 0x100
-                        ; must set the old one as well - the starting path is not 
-                        ; automatically stored
-                        !if &seq &mid #l5 1 1 ":"
-                            set-variable &ind &cat ":dir-" &slo &lef #l5 1 #l5
-                        !endif
-                        !if &seq &mid #l4 1 1 ":"
-                            set-variable &ind &cat ":dir-" &slo &lef #l4 1 #l4
-                        !endif
-                        ; ensure '/' are '\\'
-                        set-variable #l4 &rep #l4 "\\" "/"
-                        set-variable #l2 &cat "cd " #l4
-                        set-variable #l3 #l2
-                        !if &and &seq &mid #l4 1 1 ":" &not &seq &lef #l4 1 &lef #l5 1
-                            ; we're changing drives as well! force this as some shell
-                            ; use cdd to do this automatically - inconsistent
-                            set-variable #l3 &spr "%s\CM%s" &lef #l4 2 #l3
-                        !endif
-                    !endif
-                !endif
-            !endif
             !if &not &seq #l2 ""
                 !force find-buffer &cat #l0 "-hist"
                 end-of-buffer
