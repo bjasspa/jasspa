@@ -1014,7 +1014,7 @@ define-macro cvs-annotate
     !endif
     goto-position "\x82"
     &bor @# 256 cvs-osd
-    !if &lfind "|11|3|1|7|" @#
+    !if &lfind "|11|3|1|7|2|" @#
         ; if update, commit remove or add then refresh or drop tags
         !if &band .find-file.flags 1
             dirlst-refresh

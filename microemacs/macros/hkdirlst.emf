@@ -128,6 +128,7 @@ set-variable .fhook-dirlst.cvs-enable &sin "c" .fhook-dirlst.setup
         set-variable .hilight.dirlst &pinc .hilight.next 1
     !endif
     0 hilight .hilight.dirlst 0                           $global-scheme
+    hilight .hilight.dirlst 0x102 "Directory listing of: \\{" .scheme.link
     hilight .hilight.dirlst 0x002 " Attr"                 .scheme.header
     hilight .hilight.dirlst 0x112 " d"                    .scheme.dir
     hilight .hilight.dirlst 0x112 " -"                    $global-scheme

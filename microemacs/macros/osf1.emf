@@ -3,7 +3,7 @@
 ; Copyright (C) 1999-2004 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
-; Synopsis:    Setup file for FreeBSD boxes
+; Synopsis:    Setup file for OSF1 boxes
 ; Authors:     Steven Phillips
 ;
 ; Load up common unix stuff

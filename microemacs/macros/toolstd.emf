@@ -272,7 +272,8 @@
         !elif &seq "" &set #l0 &lef #l0 &rsin "/" #l0
             set-variable #l0 &stat "a" "."
         !endif
-        0x0f directory-tree #l0
+        !force 0x0f directory-tree #l0
     !endif
+    1 buffer-mode "hide"
     goto-position "\x86"
 !emacro
