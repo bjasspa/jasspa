@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Jun 13 10:25:33 1998
-;  Last Modified : <000719.0012>
+;  Last Modified : <010216.1155>
 ;
 ;  Description
 ;
@@ -258,7 +258,42 @@ define-macro ehf-process-all
     !force replace-string "esc backslash" "esc \\\\"
     ml-write "[Fixing http: links]" 
     beginning-of-buffer
-    !force replace-string " \\(\ec.\\)http:" "\\1 http:"
+    ; Move the http and email address curior hilighting start string (\ecG) out
+    ; of the way so cut and paste gets the right thing
+    !force replace-string " \ecGhttp:" "\ecG http:"
+    !force replace-string " \ecDEmail:\ecA\ecGjasspa" "\ecG Email:jasspa"
+    !force replace-string " \ecGjasspa-subscribe@" "\ecG jasspa-subscribe@"
+    !force replace-string " \ecGjasspa-unsubscribe@" "\ecG jasspa-unsubscribe@"
+    ; find and fix all split underlines
+    !force search-forward "\ecB[^\e]*\n"
+    !while $status
+        2 backward-char
+        !if &seq @wc " "
+            forward-delete-char
+        !else
+            forward-char
+        !endif
+        insert-string "\ecA"
+        forward-char
+        !force search-forward " *"
+        insert-string "\ecB"
+        !force search-forward "\ecB[^\e]*\n"
+    !done
+    ; find and fix all split links
+    !force search-forward "\elm[^\e]*\n"
+    !while $status
+        2 backward-char
+        !if &seq @wc " "
+            forward-delete-char
+        !else
+            forward-char
+        !endif
+        insert-string "\eln"
+        forward-char
+        !force search-forward " *"
+        insert-string "\eln"
+        !force search-forward "\elm[^\e]*\n"
+    !done
 !emacro
 
 ; don't advertise the definition of start-up

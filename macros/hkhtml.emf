@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Mon Sep 21 18:10:34 1998
-;  Last Modified : <010119.1518>
+;  Last Modified : <010215.2316>
 ;
 ;  Description : Visual Basic Hook File
 ;
@@ -61,13 +61,14 @@ set-variable #l1 "acdehikmopstux"
 !if &and &sin "h" #l0 &band .hilight.flags 0x01 
     0 hilight .hilight.htmlN 0                          $global-scheme
     hilight .hilight.htmlN 0x44 "\ecA" "" "\\}\e" "" "" $global-scheme
-    hilight .hilight.htmlN 0x44 "\ecB" "" "\\}\e" "" "" .scheme.under  ; underline
-    hilight .hilight.htmlN 0x44 "\ecC" "" "\\}\e" "" "" .scheme.italic ; italic
-    hilight .hilight.htmlN 0x44 "\ecD" "" "\\}\e" "" "" .scheme.bold   ; bold
-    hilight .hilight.htmlN 0x44 "\ecE" "" "\\}\e" "" "" .scheme.header ; Header
+    hilight .hilight.htmlN 0x44 "\ecB" "" "\\}\e" "" "" .scheme.under    ; underline
+    hilight .hilight.htmlN 0x44 "\ecC" "" "\\}\e" "" "" .scheme.italic   ; italic
+    hilight .hilight.htmlN 0x44 "\ecD" "" "\\}\e" "" "" .scheme.bold     ; bold
+    hilight .hilight.htmlN 0x44 "\ecE" "" "\\}\e" "" "" .scheme.header   ; Header
     hilight .hilight.htmlN 0x44 "\ecF" "" "\\}\e" "" "" .scheme.comment  ; image
+    hilight .hilight.htmlN 0x44 "\ecG" "" "\\}\e" "" "" .scheme.type     ; TT (curior)
     hilight .hilight.htmlN 0xc0 "\els" "" .hilight.htmlNL $global-scheme ; link start
-    hilight .hilight.htmlN 0x44 "\elm" "" "\ele" "" ""  .scheme.link   ; link name
+    hilight .hilight.htmlN 0x44 "\elm" "" "\ele" "" ""  .scheme.link     ; link name
     
     0 hilight .hilight.htmlNL 0                         $global-scheme
     hilight .hilight.htmlNL 0x80 "\\}\elm" .hilight.htmlN $global-scheme
