@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd068.2,v 2.9 2004-01-17 22:27:28 jon Exp $
+.Id $Id: m2cmd068.2,v 2.10 2004-01-18 23:34:47 jon Exp $
 .Im MicroEmacs command|buffer
 .so me.tni
 .TH narrow-buffer 2
@@ -18,8 +18,11 @@ narrow-buffer \- Hide buffer lines
 .br
 n
 .B narrow-buffer
-.I line-scheme
-"\|\fImarkup-command\fR\|"
+[\|\fIline-scheme\fR\|]
+["\|\fIout-markup-line\fR\|" |
+.br
+\ \ \ \ \ "\|\fIto-top-markup-line\|\fR" "\|\fIto-bottom-markup-line\|\fR"] 
+["\|\fImarkup-command\fR\|"]
 .ad
 .SH DESCRIPTION
 The
@@ -119,7 +122,7 @@ Narrow out region. Hides the lines of test in the current buffer from the
 position to the current cursor position, opposite to argument \fB3\fR.
 .BE 0
 .PP
-The second form of the command takes up to two arguments  which are determined
+The second form of the command takes up to four arguments which are determined
 by the value of \fIn\fR when bits in the range \fC0x0ff0\fR are defined. These
 bits are  interpreted  as a  bit-mask  and  determine  how the narrow is to be
 visually displayed to the user. When these bits are set then a mark-up line is
@@ -133,9 +136,16 @@ color  scheme  to be  used on the  narrow  line  when it is an open or  closed
 narrow.  The  scheme   colors  used  are  defined  by  the  scheme   variables
 \fCscheme.fold-open\fR and \fCscheme.fold-closed\fR.
 .TP
-\fC0x0020\fR \- "\|\fImarkup-command\fR\|"
+\fC0x0020\fR \- "\|\fIout-markup-line\fR\|" | "\|\fIto-top-markup-line\|\fR" "\|\fIto-bottom-markup-line\|\fR" 
 .\"
-Bit  \fC0x0020\fR  specifies  that a mark-up  line is to be used to  represent
+Bit  \fC0x0020\fR  specifies  that a mark-up is used and the text to insert
+into the mark-up line is passed into the call. The number of arguments to pass
+is  determined  by the type of markup  operation  (to/out). The  arguments are
+placed on the mark-up lines.
+.TP
+\fC0x0040\fR \- "\|\fImarkup-command\fR\|"
+.\"
+Bit  \fC0x0040\fR  specifies  that a mark-up  line is to be used to  represent
 the narrow region. When the narrow region is created then the
 .I markup-command
 macro is executed to annotate  the narrowed  region. The macro is invoked when

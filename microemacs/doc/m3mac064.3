@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac064.3,v 1.7 2004-01-17 22:27:28 jon Exp $
+.Id $Id: m3mac064.3,v 1.8 2004-01-18 23:34:47 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH buffer-init 3
@@ -905,6 +905,61 @@ The collapsed version of the same section appears as:-
 proc tixControl:InitWidgetRec {w} { ... }
 .CE 0
 .RE
+Where folding is required using 
+.Ht fold-open 3 
+then the  collapse  methods  above are not  enacted  when  folding is enabled.
+Folding may be enabled as defined by the 
+.Hl "File Hooks" fileHooks 2 ,
+alternatively  the  folding  may be  explicitly  defined  using  the  variable
+\fI.fhook-XXX.fold\fR. The \fI.fhook-XXX.fold\fR  variable argument is defined
+as "\fB|\fR
+.I "<literal-open>"
+.B |
+.I "<literal-close>"
+.B |
+.I "<comment-termination>"
+.B |
+.I "<regex-find-open>"
+.B |
+.I "<regex-find-close>"
+.BR | .
+Where the fields are defined as follows:-
+.TP
+\fI<literal-open>\fR
+.\"
+The literal fold open string.
+.TP
+\fI<literal-close>\fR
+.\"
+The literal fold close string.
+.TP
+\fI<comment-termination>\fR
+.\"
+The comment termination string.
+.TP
+\fI<regex-find-open>\fR
+.\"
+The regular expression to find an open fold.
+.TP
+\fI<regex-find-close>\fR
+.\" 
+The regular expression to find a close string.
+.LP
+As an  example,  a  language  may  have  the  following  syntax  for  defining
+folds:-
+.CS
+/* {{{ This is an example fold. */
+This is 
+the body
+of the fold
+/* }}} */
+.CE
+The fold is defined as follows:-
+.Me $emf-scheme
+.CS
+set-variable fhook-XXX.fold "|/\\\\* {{{|/\\\\* }}}|\\\\*/|/\\\\*[ \\t]*{{{|/\\\\*[ \\t]*}}}|"
+.CE 0
+.Me $ehf-scheme
 .SS "Item Lists"
 .Hl "Item Lists" item-list 3
 perform  a regular  expression  search of a buffer,  presenting  a list of the
