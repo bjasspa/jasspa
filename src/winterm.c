@@ -5,7 +5,7 @@
  * Synopsis      : Win32 platform support
  * Created By    : Jon Green
  * Created       : 21/12/1996
- * Last Modified : <001013.0911>
+ * Last Modified : <001016.1433>
  *
  * Description
  *
@@ -1926,8 +1926,8 @@ WinLaunchProgram (uint8 *cmd, int flags, uint8 *inFile, uint8 *outFile,
 #endif
                   int *sysRet)
 {
-    static PROCESS_INFORMATION mePInfo = {0} ;
-    static STARTUPINFO meSuInfo = {0} ;
+    PROCESS_INFORMATION mePInfo ;
+    STARTUPINFO meSuInfo ;
     uint8  cmdLine[MAXBUF+102], *cp ;          /* Buffer for the command line */
     uint8  dummyInFile[FILEBUF] ;              /* Dummy input file */
     uint8  pipeOutFile[FILEBUF] ;              /* Pipe output file */
@@ -2043,8 +2043,11 @@ WinLaunchProgram (uint8 *cmd, int flags, uint8 *inFile, uint8 *outFile,
         if((platformId == VER_PLATFORM_WIN32_NT) &&
            ((flags & LAUNCH_NOCOMSPEC) == 0))
             strcat (dd,"\"");
-        meSuInfo.wShowWindow = SW_HIDE;
-        meSuInfo.dwFlags |= STARTF_USESHOWWINDOW ;
+        if ((flags & LAUNCH_SHOWWINDOW) == 0)
+        {
+            meSuInfo.wShowWindow = SW_HIDE;
+            meSuInfo.dwFlags |= STARTF_USESHOWWINDOW ;
+        }
 
         /* Only a shell needs to be visible, so hide the rest */
         meSuInfo.lpTitle = cmd;
@@ -2611,10 +2614,15 @@ WinShutdown (void)
     /* Close & delete the client file */
     TTkillClientServer ();
 #endif
+#if 0
+    /* SWP 16/10/2000 - found that this disables all me32's from accepting drag 'n' drop
+     * events, e.g. start an me32 and it drag 'n' drops okay, now start another and exit
+     * it. Now try and drag 'n' drop in the first again, it fails! taken out this code */
 #ifdef _DRAGNDROP
     /* Disable drag and drop handling */
     if (ttHwnd)
         DragAcceptFiles (ttHwnd, FALSE);
+#endif
 #endif
     /* Free off the fonts - (not loaded if console version) */
     if(fontAdded && (RemoveFontResource (fontFile) == TRUE))

@@ -1,7 +1,7 @@
 /****************************************************************************
  * External function definitions
  *
- * Last Modified:       <001012.1740>
+ * Last Modified:       <001015.1646>
  * 
  ****************************************************************************
  * 
@@ -756,11 +756,13 @@ extern	int	queryReplaceStr APRAM((int f, int n));
  * spawn.c
  */
 #if !(defined __SPAWNC) || (defined _ANSI_C)		/* SPAWN.C Externals */
-#define LAUNCH_BUFFERNM      0x0001      /* Do not use the comspec */
-#define LAUNCH_SILENT        0x0002      /* Do not use the comspec */
-#define LAUNCH_NOCOMSPEC     0x0004      /* Do not use the comspec */
-#define LAUNCH_DETACHED      0x0008      /* Detached process launch */
+#define LAUNCH_BUFFERNM      0x0001      /* Do not use the comspec    */
+#define LAUNCH_SILENT        0x0002      /* Do not use the comspec    */
+#define LAUNCH_NOCOMSPEC     0x0004      /* Do not use the comspec    */
+#define LAUNCH_DETACHED      0x0008      /* Detached process launch   */
 #define LAUNCH_LEAVENAMES    0x0010      /* Leave the names untouched */
+#define LAUNCH_SHOWWINDOW    0x0020      /* Dont hide the new window  */
+#define LAUNCH_USER_FLAGS    0x002F      /* User flags bitmask        */
 #define LAUNCH_SHELL         0x0100
 #define LAUNCH_SYSTEM        0x0200
 #define LAUNCH_FILTER        0x0400

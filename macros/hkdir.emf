@@ -4,7 +4,7 @@
 ;       Author          : Jon Green
 ;       Created         : 19th February 1997
 ;
-;       Last Modified   : <001002.1234>
+;       Last Modified   : <001025.1221>
 ;
 ;       Comment         :
 !if &not &exist .osd.dir-help
@@ -439,7 +439,7 @@ define-macro file-browser
 
 0 define-macro files-tag-delete
     0 files-tag-list "Delete Files"
-    osd-xdialog "Delete Files" &spr "  Delete %d files?  " .find-file.file-count 2 "&Yes" "&No"
+    osd-xdialog "Delete Files" &spr "  Delete %d files?  " .find-file.file-count 2 " &Yes " " &No "
     !if &equ $result 2
         !abort
     !endif
@@ -447,6 +447,31 @@ define-macro file-browser
     !while &les &pinc #l0 1 .find-file.file-count
         4 copy-file &cat .find-file.file-dir &ind &cat ".find-file.file" #l0 @mna
     !done
+    !if &band .find-file.flags 1
+        files-refresh
+    !else
+        files-tag-remove
+    !endif
+!emacro
+
+0 define-macro files-tag-rename
+    0 files-tag-list "Rename File"
+    !if &not &equ .find-file.file-count 1
+        ml-write "[Rename file: something strange happend - abort]"
+        !abort
+    !endif
+    set-variable #l0 ""
+    osd-entry "Rename File" "&New Name : " #l0 20
+    !if &seq &set #l1 &stat "t" &cat .find-file.file-dir #l0 "R"
+        osd-xdialog "Rename File" &spr "  %s already exists, replace?  " #l0 2 " &Yes " " &No "
+        !if &equ $result 2
+            !abort
+        !endif
+    !elif &not &seq #l1 "X"
+        osd-dialog "Rename File" "  Illegal filename entered!  " " &Cancel "
+        !abort
+    !endif
+    8 copy-file &cat .find-file.file-dir &ind &cat ".find-file.file" 1 &cat .find-file.file-dir #l0 @mna
     !if &band .find-file.flags 1
         files-refresh
     !else
@@ -500,9 +525,9 @@ define-macro file-browser
 osd .osd.file-menu 0   b
 osd .osd.file-menu 40  "-"
 osd .osd.file-menu 60  "-"
-osd .osd.file-menu 85  ""  "&New Folder"        f files-new-folder
-osd .osd.file-menu 90  ""  "&Refresh"           f files-refresh
-osd .osd.file-menu 100 ""  "&Auto-Refresh: on " f files-auto-refresh
+osd .osd.file-menu 85  ""  "&New Folder"          f files-new-folder
+osd .osd.file-menu 90  ""  "Re&fresh"             f files-refresh
+osd .osd.file-menu 100 ""  "&Auto-Refresh: on "   f files-auto-refresh
 
 0 define-macro files-mouse-drop-3
     !if :tag-count
@@ -520,8 +545,13 @@ osd .osd.file-menu 100 ""  "&Auto-Refresh: on " f files-auto-refresh
         osd .osd.file-menu 70 ""  "Execute"
         osd .osd.file-menu 80 ""  "Deselect All"
     !endif
+    !if &equ :tag-count 1
+        osd .osd.file-menu 35 ""  "&Rename"       f files-tag-rename
+    !else
+        osd .osd.file-menu 35 ""  "Rename"
+    !endif
     !if &band .find-file.flags 2
-        osd .osd.file-menu 50 ""  "&Paste"       f files-tag-paste
+        osd .osd.file-menu 50 ""  "&Paste"        f files-tag-paste
     !else
         osd .osd.file-menu 50 ""  "Paste"
     !endif

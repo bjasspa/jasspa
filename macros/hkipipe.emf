@@ -138,7 +138,14 @@
                 forward-line
             !endif
             goto-position "\x83"
-            !if &not #l1
+            !if .ishell.noecho
+                !if &not #l1
+                    end-of-line
+                !else
+                    insert-string #l3
+                !endif
+                insert-newline
+            !elif &not #l1
                 set-variable $window-col .ishell.mode
                 set-mark
                 end-of-line

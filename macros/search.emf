@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Jul 18 14:55:16 1998
-;  Last Modified : <001002.1231>
+;  Last Modified : <001017.1347>
 ;
 ;  Description   : Macros used for searching and replacing 
 ;
@@ -735,7 +735,13 @@ define-macro replace-all-pairs
             !abort
         !endif
         set-variable #l2 &lef #l6 &sub #l7 1
-        0 replace-all-string #l1 #l2 #l0 
+        set-variable #l6 &rig #l6 #l7
+        !if &not &set #l7 &sin #l5 #l6
+            set-variable #l3 #l1
+        !else
+            set-variable #l3 &lef #l6 &sub #l7 1
+        !endif
+        2 replace-all-string #l1 #l2 #l0 #l3
         find-buffer #l4
         forward-line
     !done

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Jon Green
 ;  Created       : Wed Sep 30 23:16:34 1998
-;  Last Modified : <000719.0012>
+;  Last Modified : <001015.1653>
 ;
 ;  Description   : This file contains the necessary hooks to run a Cygnus
 ;                  window inside the MicroEmacs editor. The user variable
@@ -127,7 +127,7 @@ set-variable .cygnus.cygpath &cat #l0 "\\bin;"
 ; Macros to control the shell window.
 ;
 define-macro cygpipe-break
-    ipipe-write "\CC"
+    2 ipipe-kill
     ml-write "cygnus break"
 !emacro
 

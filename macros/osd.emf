@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Jon Green
 ;  Created       : Sat Jul 26 10:23:04 1997
-;  Last Modified : <000925.1140>
+;  Last Modified : <001025.1220>
 ;
 ;  Description   : OSD - On Screen Display macros.
 ;                  Controls the set up of the menus and screen overlays.
@@ -481,7 +481,7 @@ set-variable #l0 0
         !else
             set-variable #l4 &add #l4 &add &len #l1 &cond &sin "&" #l1 3 4
             set-variable #l3 &cat "set-variable $result " #l0
-            osd .osd.tmp &mul #l0 10 "BcfhHi" .scheme.osd-ebtt #l1 f #l3
+            osd .osd.tmp &mul #l0 10 "BtcfhHi" #l0 .scheme.osd-ebtt #l1 f #l3
             set-variable #l0 &add #l0 1
         !endif
     !done
@@ -525,11 +525,11 @@ set-variable #l0 0
     osd .osd.tmp 1 ""
     osd .osd.tmp 2 "fh" "  "
     osd .osd.tmp 3 "Sfh" @2 4
-    osd .osd.tmp 4 "ExHRfhz" .scheme.osd-entry #l0 1 "" f osd-entry-value
+    osd .osd.tmp 4 "EtxHRfhz" 4 .scheme.osd-entry #l0 1 "" f osd-entry-value
     osd .osd.tmp 5 "f" "  "
     osd .osd.tmp 6 ""
-    osd .osd.tmp 7 "BcfHh" .scheme.osd-ebtt " &Okay "   f void
-    osd .osd.tmp 8 "BcfH"  .scheme.osd-ebtt " &Cancel " 0 void
+    osd .osd.tmp 7 "BtcfHh" 7 .scheme.osd-ebtt " &Okay "   f void
+    osd .osd.tmp 8 "BtcfH"  8 .scheme.osd-ebtt " &Cancel " 0 void
     .osd.tmp osd
     set-variable @3 .value
 !emacro
