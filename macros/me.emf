@@ -2,7 +2,7 @@
 ; JASSPA MicroEmacs - www.jasspa.com
 ; me.emf - Startup file for JASSPA MicroEmacs Distribution
 ;
-; Copyright (C) 1988-2004 JASSPA (www.jasspa.com)
+; Copyright (C) 1988-2005 JASSPA (www.jasspa.com)
 ;
 ; This program is free software; you can redistribute it and/or modify it
 ; under the terms of the GNU General Public License as published by the Free
@@ -21,7 +21,7 @@
 ; Authors:     Steven Phillips & Jon Green
 ;
 ; Is this macro release compatible with the binary?
-!if &les $version "20041001"
+!if &les $version "20050101"
     5000 ml-write "[Warning: The MicroEmacs executable is not compatible with this macro release]"
 !endif
 ; If <$user-name>.erf registry file isn't found then this is a new user
