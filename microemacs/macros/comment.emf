@@ -96,7 +96,7 @@ define-macro comment-start
         ml-write "[Comments not setup for this buffer]"
         !abort
     !endif
-    ; check we can edit the buffer
+    ; check we can edit the buffer 
     1 buffer-mode "edit" @mna
     set-variable #l1 $window-acol
     set-variable #l2 $buffer-bname
@@ -136,7 +136,7 @@ define-macro comment-end
         !elif &sin "H" &lget :comment 6
             !if &not &sin #l8 " "
                 set-variable #l2 &add $fill-col &sub &len #l0 &len &lget :comment 1
-                &div #l2 &len #l1 insert-string #l1
+                &div #l2 &len #l8 insert-string #l8
             !endif
         !endif
         insert-newline
@@ -215,7 +215,7 @@ define-macro comment-end
     beginning-of-buffer
     set-mark
     end-of-buffer
-    :column insert-space
+    set-variable #l1 :column
     copy-region
     set-variable #l0 :buffer-name
     set-variable $fill-col :fill-col
@@ -223,5 +223,183 @@ define-macro comment-end
     find-buffer #l0
     yank
     -1 yank
+    !if &seq @wl ""
+        #l1 insert-space
+    !endif
+!emacro
+
+0 define-macro comment-restyle-get-s
+    ; get to the first comment start
+    beginning-of-line
+    !force -1 search-forward #p8
+    set-alpha-mark "0x80"
+    ; try moving forward line by line
+    beginning-of-line
+    forward-line
+    !tjump &seq &lef &trl @wl &len #p8 #p8 -1
+    set-mark
+    ; now go back to the start and go backwards
+    goto-alpha-mark "0x80"
+    beginning-of-line
+    !force backward-line
+    !if $status
+        !tjump &seq &lef &trl @wl &len #p8 #p8 -2
+        forward-line
+    !endif
+    -1 search-forward #p8
+    -2 show-region
+    kill-region @mna
+    set-variable #p0 $window-acol
+    set-variable #p1 $buffer-bname
+    find-buffer "*comment-restyle*"
+    yank
+    -1 yank
+    backward-delete-char
+    beginning-of-buffer
+!emacro
+0 define-macro comment-restyle-get-e
+    search-forward #p7
+    !if &seq &trl &rig @wl $window-col ""
+        beginning-of-line
+        forward-line
+    !endif
+    set-mark
+    search-backward #p8
+    kill-region @mna
+    set-variable #p0 $window-acol
+    set-variable #p1 $buffer-bname
+    find-buffer "*comment-restyle*"
+    yank
+    -1 yank
+    set-mark
+    search-backward #p7
+    kill-region
+    -1 yank
+    beginning-of-buffer
+    &len #p8 forward-delete-char
+    -1 yank
+    set-variable #l0 &lget #p9 4
+    set-variable #l0 &rig #l0 &len #p8
+    !if &seq &lef @wl &len #l0 #l0
+        &len #l0 forward-delete-char
+        -1 yank
+    !endif
+!emacro
+
+0 define-macro comment-restyle-i
+    set-variable #l9 #p9
+    set-variable #l8 &lget #l9 1
+    set-variable #l7 &lget #l9 2
+    !force 0 delete-buffer "*comment-restyle*"
+    !if &seq #l7 ""
+        comment-restyle-get-s
+    !else
+        comment-restyle-get-e
+    !endif
+    1 buffer-mode "indent"
+    1 buffer-mode "wrap"
+    1 buffer-mode "magic"
+    1 buffer-mode "justify"
+    set-variable :column #l0
+    set-variable :buffer-name #l1
+    set-variable :fill-col $fill-col
+    set-variable $fill-col &sub $fill-col &sub #l0 &len &lget #l9 4
+    set-variable #l2 &lget #l9 4
+    set-variable #l1 &trb #l2
+    set-variable #l2 &rig #l2 &len #l8
+    str-to-regex #l1
+    str-to-regex #l2
+    set-variable #l0 &spr "^\\s *%s\\(%s\\)?" #l1 #l2
+    !force 1 replace-string #l0 ""
+    !if $status
+        forward-char
+        !jump -3
+    !endif
+    end-of-buffer
+    backward-line
+    set-variable #l4 &seq &trl @wl ""
+    beginning-of-buffer
+    set-variable #l2 &trb &lget #l9 5
+    str-to-regex #l2
+    set-variable #l0 &spr "\\s *%s\\s *$" #l2
+    set-variable #l1 0
+    !force 1 replace-string #l0 ""
+    !if $status
+        set-variable #l1 &add #l1 1
+        !jump -3
+    !endif
+    clean
+    set-variable #l3 &lget #l9 6
+    set-variable #l2 &lget #l9 3
+    str-to-regex #l2
+    set-variable #l0 &spr "^%s%s%s\\(\\(%s\\)*\\)$" #l2 #l2 #l2 #l2
+    ; check for a header line
+    beginning-of-buffer
+    !force -1 search-forward #l0
+    !if $status
+        ; got a filled header line
+        beginning-of-line
+        set-mark
+        forward-line
+        kill-region
+        -1 yank
+        set-variable #l3 &cat #l3 "Hh"
+        set-variable #l1 &sub #l1 1
+    !elif &seq @wl ""
+        ; got an empty header line
+        forward-delete-char
+        set-variable #l3 &cat #l3 "h"
+    !endif
+    ; check for a footer line
+    !if #l4
+        set-variable #l3 &cat #l3 "f"
+    !else
+        end-of-buffer
+        backward-line
+        !force -1 search-forward #l0
+        !if $status
+            ; got a filled footer line
+            beginning-of-line
+            set-mark
+            forward-line
+            kill-region
+            -1 yank
+            set-variable #l3 &cat #l3 "Ff"
+            set-variable #l1 &sub #l1 1
+        !endif
+    !endif
+    ; find any dividing lines
+    beginning-of-buffer
+    !force search-forward #l0
+    !if $status
+        &len @s1 backward-delete-char
+        -1 yank
+        set-variable #l1 &sub #l1 1
+        !jump -5
+    !endif
+    !if &gre #l1 0
+        set-variable #l3 &cat #l3 "b"
+        set-variable $fill-col &sub $fill-col &len &lget #l9 5
+    !endif
+    set-variable :comment &lset #l9 6 #l3
+    !if &les $fill-col 20
+        set-variable $fill-col 20
+    !endif
+    beginning-of-buffer
+    !force 30000 ifill-paragraph
+    comment-end
+!emacro
+
+define-macro comment-restyle
+    set-variable #l9 &ind &spr ".%s.comment"  $buffer-fhook
+    !if &seq &lget #l9 1 ""
+        ml-write "[Comments not setup for this buffer]"
+        !abort
+    !endif
+    set-variable #l3 &bmod "magic"
+    -1 buffer-mode "magic"
+    !force !force comment-restyle-i
+    ; restore magic mode
+    &cond #l3 1 -1 buffer-mode "magic"
 !emacro
 

@@ -2,7 +2,7 @@
  * 
  *	SCCS:		%W%		%G%		%U%
  *
- *	Last Modified :	<001012.1819>
+ *	Last Modified :	<010521.1012>
  *
  *	ESTRUCT:	Structure and preprocesser defined for
  *			MicroEMACS 3.7
@@ -950,6 +950,7 @@ typedef struct UNDOND {
 typedef struct meREGISTERS {
     struct meREGISTERS *prev ;
     meVARLIST *varList ;
+    uint8 *commandName ;
     uint8 *execstr ;
     int   f, n ;
     int   force ;

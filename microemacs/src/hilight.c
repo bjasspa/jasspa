@@ -5,7 +5,7 @@
  *  Synopsis      : Token based hilighting routines
  *  Created By    : Steven Phillips
  *  Created       : 21/12/94
- *  Last Modified : <010430.0841>
+ *  Last Modified : <010420.2204>
  *
  *  Description
  *

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips & Jon Green
 ;  Created       : Sat Jul 18 15:11:54 1998
-;  Last Modified : <010314.2045>
+;  Last Modified : <010520.2303>
 ;
 ;  Description   : Contains buffer formating commands, namely:
 ;                  clean sort-lines-ignore-case tabs-to-spaces restyle-region
@@ -62,8 +62,10 @@ define-macro clean
     !if #l1
         -1 buffer-mode "magic"
     !endif
-    screen-update
-    ml-write "[Cleaned up buffer]"
+    !if &seq @p ""
+        screen-update
+        ml-write "[Cleaned up buffer]"
+    !endif
 !emacro
 ;
 ; Insert a normal none c-mode/indent tab (still effected by tab mode)

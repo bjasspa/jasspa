@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Thu May 7 20:18:08 1998
-;  Last Modified : <000719.0012>
+;  Last Modified : <010520.2314>
 ;
 ;  Description   : Configure ME for the users language
 ;
@@ -54,9 +54,9 @@ define-macro set-language
     set-variable #l0 &lfind %language-names #l0
     !if &seq &set #l1 &lget %language-val #l0 ""
         set-variable %language &lget %language-names 1
-        define-macro spell-rules-init
+        0 define-macro spell-rules-init
         !emacro
-        define-macro language-tidy
+        0 define-macro language-tidy
         !emacro
         ; default private dictionary is Your logname
         set-variable #l0 &reg "/history/spell" "default" $MENAME

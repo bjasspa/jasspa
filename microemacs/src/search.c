@@ -12,7 +12,7 @@
  *
  *	Creation Date:		07/05/85 08:19		
  *
- *	Modification date:	<010305.0749>
+ *	Modification date:	<010520.2013>
  *
  *	Current rev:		10.1
  *
@@ -1179,6 +1179,7 @@ replaces(int kind, int ff, int nn)
     int32        lastlno;       /* line no (for 'u' query option) */
     int	onemore =FALSE;		/* only do one more replace */
     int	ilength = 0;		/* Last insert length */
+    int	numline;		/* Number of lines to search over */
     int	state_mc;		/* State machine */
     
     int 	cc;		/* input char for query */
@@ -1188,17 +1189,17 @@ replaces(int kind, int ff, int nn)
     /* Determine if we are  in the correct viewing  mode, and if the number
        of repetitions is correct. */
 
-    if (ff)
+    if(ff == 0)
+        /* as many can over rest of buffer */
+        nn = -1;
+    else if (nn < 0)
     {
-        if (nn < 0) {           /* Check for negative repetitions. */
-            ff = -nn;           /* Force line counting */
-            nn = -1;            /* Force to be 0 - do as many as can */
-        }
-        else
-            ff = 0;
+        /* Check for negative repetitions. */
+        ff = -nn;           /* Force line counting */
+        nn = -1;            /* Force to be 0 - do as many as can */
     }
     else
-        nn = -1;
+        ff = 0;
     
     /*--- Execute a state machine  to get around  the replace mechanism.  This
       is  not  super  efficient  in  terms  of  speed,  but  is  good  for
@@ -1532,10 +1533,7 @@ replaces(int kind, int ff, int nn)
     }   /* End of 'for' */
     
     /*---	And report the results. */
-    
-    mlwrite(MWCLEXEC,(uint8 *)"%d substitutions", numsub);
-    return (TRUE);
-    
+    return mlwrite(((nn < 0) || (numsub == nn)) ? MWCLEXEC:(MWABORT|MWCLEXEC),(uint8 *)"%d substitutions", numsub);
 }	/* End of 'replaces' */
 
 /*

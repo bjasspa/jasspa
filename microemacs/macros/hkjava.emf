@@ -22,11 +22,11 @@ set-variable .fhook-java.setup &reg "/history" "fhook/java" "bdfhnopx"
 set-variable .fhook-java.setup-mask "abdefhikmnoptux>"
 set-variable .fhook-java.tags "javatags"
 set-variable .fhook-java.comment "|/*|*/|*| * | * |f|"
-set-variable .fhook-java.command-flag  "|thbo|bo|"
-set-variable .fhook-java.command-name  "|c-box|c-box|"
+set-variable .fhook-java.command-flag  "|bo|bo|"
+set-variable .fhook-java.command-name  "|comment-restyle|comment-restyle|"
 set-variable .fhook-java.command-nbind "|||"
 set-variable .fhook-java.command-kbind "|esc q|esc o|"
-set-variable .fhook-java.command-desc  "|Restyle c&omment||"
+set-variable .fhook-java.command-desc  "|||"
 
 ; Set up the folding of functions
 set-variable .fhook-java.fold-open  "^[a-zA-Z].*{$"
@@ -122,11 +122,6 @@ set-variable .fhook-java.fold-close "^}"
     hilight   .hilight.java 1 "virtual"      .scheme.type
 !endif
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Bunch of Java macros we may need.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; use C's commenting commands
-define-macro-file cbox c-box
-
 ; Begin hook - entering the buffer - save the current fill-ignore characters
 define-macro bhook-java
     !if &exi .fhook-java.fill-ignore

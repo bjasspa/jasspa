@@ -10,7 +10,7 @@
  *
  *       Author:                 Danial Lawrence
  *
- *       Creation Date:          14/05/86 12:37          <010314.2157>
+ *       Creation Date:          14/05/86 12:37          <010521.1013>
  *
  *       Modification date:      %G% : %U%
  *
@@ -613,8 +613,20 @@ cpy_str:
         execlevel = 0 ;
         return TRUE ;
     }
-    if((cc == 'd') && !meStrncmp(cline, getCommandName(CK_DEFMAC),12))
-        execlevel++ ;
+    else
+    {
+        uint8 *ss = cline ;
+        if(isDigit(cc))
+        {
+            do
+                cc = *++ss ;
+            while(isDigit(cc)) ;
+            while((cc == ' ') || (cc == '\t'))
+                cc = *++ss ;
+        }
+        if((cc == 'd') && !meStrncmp(ss, getCommandName(CK_DEFMAC),12))
+            execlevel++ ;
+    }
     return addLine(lpStore,cline) ;
 #endif
 }
@@ -812,7 +824,6 @@ elif_jump:
 /*      dobuf:  execute the contents of the buffer pointed to
    by the passed BP                                */
 /* bp - buffer to execute */
-uint8 *curFuncName=errorm ;
 static uint8 __dobufStr1[]="(^G)Abort, (^L)redraw, (V)ariable, (!)Continue, (S)tep, <any>=next ?" ;
 static LINE *errorLine=NULL ;
 
@@ -858,7 +869,7 @@ dobuf(LINE *hlp)
                     lno++ ;
                 while ((tlp=lforw(tlp)) != lp)
                     ;
-                sprintf((char *)outline,"%s:%d:%d [%s] ?",curFuncName,lno,execlevel,tline) ;
+                sprintf((char *)outline,"%s:%d:%d [%s] ?",meRegCurr->commandName,lno,execlevel,tline) ;
 loop_round2:
                 mlwrite(MWSPEC,outline);        /* Write out the debug line */
                 /* Cannot do update as if this calls a macro then
@@ -1073,7 +1084,7 @@ dobuf_exit:
 
 
 static int
-donbuf(LINE *hlp, meVARLIST *varList, int f, int n)
+donbuf(LINE *hlp, meVARLIST *varList, uint8 *commandName, int f, int n)
 {
     meREGISTERS  rp ;
     uint8 oldcle ;
@@ -1084,6 +1095,7 @@ donbuf(LINE *hlp, meVARLIST *varList, int f, int n)
     oldexec = execlevel ;
     /* Setup these argument and move the register stack */
     rp.prev = meRegCurr ;
+    rp.commandName = commandName ;
     rp.execstr = execstr ;
     rp.varList = varList ;
     rp.f = f ;
@@ -1171,7 +1183,6 @@ execFunc(int index, int f, int n)
     else
     {
         meMACRO *mac ;
-        uint8 *oldFuncName ;
         uint8 firstExec ;                    /* set if this is first */
         LINE *hlp ;
         
@@ -1195,12 +1206,7 @@ execFunc(int index, int f, int n)
         else
             firstExec = 0 ;
         
-        oldFuncName = curFuncName ;
-        curFuncName = mac->name ;
-        
-        status = donbuf(hlp,&mac->varList,f,n) ;
-        
-        curFuncName = oldFuncName ;
+        status = donbuf(hlp,&mac->varList,mac->name,f,n) ;
         
         if(firstExec)
         {
@@ -1360,7 +1366,6 @@ execBuffer(int f, int n)
     register BUFFER *bp;                /* ptr to buffer to execute */
     register int s;                     /* status return */
     meVARLIST varList={NULL,0} ;
-    uint8 *oldFuncName ;
     uint8  bufn[MAXBUF];                /* name of buffer to execute */
     int32  ln ;
     
@@ -1372,11 +1377,8 @@ execBuffer(int f, int n)
     if ((bp=bfind(bufn, 0)) == NULL)
         return mlwrite(MWABORT,(uint8 *)"No such buffer");
     
-    oldFuncName = curFuncName ;
-    curFuncName = bp->b_bname ;
-    
     /* and now execute it as asked */
-    if(((s = donbuf(bp->b_linep,&varList,f,n)) != TRUE) &&
+    if(((s = donbuf(bp->b_linep,&varList,bp->b_bname,f,n)) != TRUE) &&
        ((ln = macroPrintError(bp->b_linep,bufn)) >= 0))
     {
         /* the execution failed lets go to the line that caused the grief */
@@ -1403,7 +1405,6 @@ execBuffer(int f, int n)
             }
         }
     }
-    curFuncName = oldFuncName ;
     /* free off any command variables */
     if(varList.head != NULL)
     {
@@ -1429,7 +1430,6 @@ dofile(uint8 *fname, int f, int n)
 {
     meVARLIST     varList={NULL,0} ;
     uint8         fn[FILEBUF] ;
-    uint8        *oldFuncName ;
     LINE          hlp ;
     register int  status ;      /* results of various calls */
     
@@ -1441,13 +1441,10 @@ dofile(uint8 *fname, int f, int n)
         return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[Failed to load file %s]", fname);
     
     /* go execute it! */
-    oldFuncName = curFuncName ;
-    curFuncName = fname ;
-    if((status = donbuf(&hlp,&varList,f,n)) != TRUE)
+    if((status = donbuf(&hlp,&varList,fname,f,n)) != TRUE)
         /* the execution failed lets go to the line that caused the grief */
         macroPrintError(&hlp,fname) ;
     freeLineLoop(&hlp,0) ;
-    curFuncName = oldFuncName ;
     /* free off any command variables */
     if(varList.head != NULL)
     {

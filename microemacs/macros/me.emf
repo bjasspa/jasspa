@@ -33,11 +33,11 @@
 0 define-macro-file utils ascii-time regex-forward regex-backward var-str-sub str-to-regex filemask-to-regex copy-registry
 define-macro-file format clean sort-lines-ignore-case normal-tab tabs-to-spaces paragraph-to-line delete-indentation restyle-region restyle-buffer ifill-paragraph
 define-macro-file cvs cvs cvs-state cvs-update cvs-commit cvs-log cvs-diff cvs-add cvs-remove cvs-resolve-conflicts
+define-macro-file comment comment-line uncomment-line comment-to-end-of-line comment-start comment-restyle
 define-macro-file abbrev expand-abbrev-handle spell-complete-word iso-accents-mode iso-accents-expand
 define-macro-file misc symbol check-line-length alarm time compare-windows-exact display-white-chars
 define-macro-file search replace-all-string query-replace-all-string replace-all-pairs line-scheme
 define-macro-file tools compile grep rgrep which diff diff-changes execute-tool uniq reread-file
-define-macro-file comment comment-line uncomment-line comment-to-end-of-line comment-start
 define-macro-file hkdirlst file-browser file-browser-close file-browser-swap-buffers
 define-macro-file spell spell-word spell-buffer spell-edit-word find-word
 define-macro-file games Metris Patience Triangle Mahjongg Match-It

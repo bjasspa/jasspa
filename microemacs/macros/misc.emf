@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips & Jon Green
 ;  Created       : Sat Jul 18 15:11:54 1998
-;  Last Modified : <000719.0012>
+;  Last Modified : <010520.2314>
 ;
 ;  Description   : Miscellaneous macros, namely
 ;                  symbol, check-line-length, alarm, time etc
@@ -76,7 +76,7 @@ define-macro alarm
         set-variable #l1 @2
     !endif
     set-variable #l1 &mul 60000 &add &mul 60 #l1 #l2
-    define-macro #l0
+    0 define-macro #l0
         !bell
         set-variable #l0 &add &len &ind @0 10
         osd .osd.alarm 0 "bat" 9 3
