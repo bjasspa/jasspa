@@ -2530,11 +2530,21 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
                     /* Got a xxxx//yyyyy -> /yyyyy */
                     p = p1 ;
             }
-            else if((homedir != NULL) && (p1[0] == '~'))
+            else if(p1[0] == '~')
             {
-                /* Got a home,  xxxx/~yyyyy  -> ~yyyyy - remove ftp:// or //yyyy/... */
-                flag = 0 ;
-                p = p1 ;
+                /* Got a home, xxx/~/yyy -> ~/yyy, xxx/~yyy  -> ~yyy, ftp://.../xxx/~/yyy -> ftp://.../~/yyy */
+                if(flag == 3)
+                {
+                    if(p1[1] == '/')
+                    {
+                        /* for ftp ~/ only, allow ftp://.../~/../../../yyy */
+                        p = p1-1 ;
+                        while(!meStrncmp(p1+2,"../",3))
+                            p1 = p1+3 ;
+                    }
+                }
+                else if(homedir != NULL)
+                    p = p1 ;
             }
 #ifdef _DRV_CHAR
             else if(isAlpha(p1[0]) && (p1[1] == _DRV_CHAR))
@@ -2567,7 +2577,7 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
             *p1++ = DIR_CHAR ;
             *p1 = '\0' ;
         }
-        else if((homedir != NULL) && (p[0] == '~'))
+        else if((flag == 0) && (homedir != NULL) && (p[0] == '~'))
         {
             meStrcpy(p1,homedir) ;
             p1 += meStrlen(p1) - 1 ;
@@ -2622,6 +2632,13 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
     {
         p = NULL ;
         p1 = urle ;
+        if((flag == 3) && !meStrncmp(p1,"/~/",3))
+        {
+            /* for ftp ~/ only, allow ftp://xxx/~/../../../yyy */
+            p1 += 2 ;
+            while(!meStrncmp(p1+1,"../",3))
+                p1 = p1+3 ;
+        }
         while((p1=meStrchr(p1,DIR_CHAR)) != NULL)
         {
             if((p1[1] == '.') && (p1[2] == '.') &&         /* got /../YYYY */
@@ -2731,18 +2748,78 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
 #ifdef _UNIX
     struct stat statbuf;
     meFiletime stmtime ;
-
-    if(!stat((char *)pathName,&statbuf))
-        stmtime = statbuf.st_mtime ;
-    else
-        meFiletimeInit(stmtime) ;
 #endif
 #ifdef _WIN32
     meFiletime stmtime ;
     WIN32_FIND_DATA fd;
     HANDLE *handle;
     int len ;
+#endif
     
+    if(isUrlLink(pathName))
+    {
+        if(dirList->path != NULL)
+        {
+            if(!meStrcmp(dirList->path,pathName))
+                return ;
+            meNullFree(dirList->path) ;
+            freeFileList(dirList->size,dirList->list) ;
+        }
+        dirList->path = NULL ;
+        dirList->size = 0 ;
+        dirList->list = NULL ;
+#if MEOPT_SOCKET
+        if(pathName[0] == 'f')
+        {
+            meLine hlp, *lp ; 
+            hlp.next = &hlp ;
+            hlp.prev = &hlp ;
+            if(ffReadFile(pathName,meRWFLAG_SILENT|meRWFLAG_FTPNLST,NULL,&hlp,0,0) >= 0)
+            {
+                noFiles = 0 ;
+                lp = hlp.next;
+                while (lp != &hlp)
+                {
+                    noFiles++ ;         
+                    lp = lp->next;
+                }
+                if(noFiles &&
+                   ((fls = meMalloc(sizeof(meUByte *) * noFiles)) != NULL))
+                {
+                    noFiles = 0 ;
+                    lp = hlp.next;
+                    while (lp != &hlp)
+                    {
+                        if((fls[noFiles++] = meStrdup(lp->text)) == NULL)
+                            break ;
+                        lp = lp->next;
+                    }
+                    if(lp == &hlp)
+                    {
+                        dirList->size = noFiles ;
+                        dirList->list = fls ;
+#ifdef _INSENSE_CASE
+                        sortStrings(noFiles,fls,0,meStridif) ;
+#else
+                        sortStrings(noFiles,fls,0,(meIFuncSS) strcmp) ;
+#endif
+                    }
+                }
+                meLineLoopFree(&hlp,0) ;
+            }
+            dirList->path = meStrdup(pathName) ;
+        }
+#endif
+        return ;
+    }
+    
+#ifdef _UNIX
+    if(!stat((char *)pathName,&statbuf))
+        stmtime = statbuf.st_mtime ;
+    else
+        meFiletimeInit(stmtime) ;
+#endif
+#ifdef _WIN32
     meFiletimeInit(stmtime) ;
     len = strlen(pathName) ;
     if((len > 0) && (pathName[len-1] == DIR_CHAR))
