@@ -1,90 +1,60 @@
-/* -*- c -*- ****************************************************************
+/* -*- c -*-
  *
- *			Copyright 1994-2001 JASSPA.
- *			      All Rights Reserved
+ * JASSPA MicroEmacs - www.jasspa.com
+ * eterm.h - Terminal interface definitions.
  *
- *  System        : MicroEmacs Jasspa Distribution
- *  Module        : Terminal I/O
- *  Object Name   : eterm.h
- *  Created By    : Steven Phillips and Jon Green
- *  Create Date   : Some time in 1994
- *  Last Modified : <20011217.1302>
+ * Copyright (C) 1994-2002 JASSPA (www.jasspa.com)
  *
- *  Description	  : Terminal I/O definitions.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  Notes
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
  *
- *  History
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     1994
+ * Synopsis:    Terminal interface definitions.
+ * Authors:     Steven Phillips & Jon Green
+ * Notes:
+ *     every system must provide the following variables / constants
  *
- ****************************************************************************
+ *        TTmrow    - maximum number of rows
+ *        TTnrow    - current number of rows
+ *        TTmcol    - maximum number of columns
+ *        TTncol    - current number of columns
+ *        TTmargin  - minimum margin for extended lines
+ *        TTscrsiz  - size of scroll region
+ *        TTpause   - # times thru update to pause
  *
- * Copyright (c) 1994-2001 JASSPA.
+ *     every system must provide the following functions
  *
- * The MicroEmacs Jasspa distribution can be copied and distributed freely for
- * any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
- * incorporated into commercial software with the expressed permission of
- * JASSPA.
+ *        TTstart   - Creates the terminal (called once at start)
+ *        TTend     - Destroyes the terminal (called once at end)
+ *        TTopen    - opens the terminal called after any shell call.
+ *        TTclose   - closes the terminal called before any shell call.
+ *        TTwaitForChar - gets a character
+ *        TTflush   - flushes the output terminal
+ *        TTmove    - most the cursor to a given position
+ *        TThideCur - hide the cursor
+ *        TTshowCur - show the cursor
+ *        TTNbell   - Do a noisy beep
  *
- ****************************************************************************/
-
-/* terminal io include file
+ *     The following must be provided if TYPEAH=TRUE
  *
- * every system must provide the following variables / constants
+ *        TTahead   - any characters waiting ?
  *
- *    TTmrow    - maximum number of rows
- *    TTnrow    - current number of rows
- *    TTmcol    - maximum number of columns
- *    TTncol    - current number of columns
- *    TTmargin  - minimum margin for extended lines
- *    TTscrsiz  - size of scroll region
- *    TTpause   - # times thru update to pause
- *
- * every system must provide the following functions
- *
- *    TTstart   - Creates the terminal (called once at start)
- *    TTend     - Destroyes the terminal (called once at end)
- *    TTopen    - opens the terminal called after any shell call.
- *    TTclose   - closes the terminal called before any shell call.
- *    TTwaitForChar - gets a character
- *    TTflush   - flushes the output terminal
- *    TTmove    - most the cursor to a given position
- *    TThideCur - hide the cursor
- *    TTshowCur - show the cursor
- *    TTNbell   - Do a noisy beep
- *
- * The following must be provided if TYPEAH=TRUE
- *
- *    TTahead   - any characters waiting ?
- *
- * The following must be provided if _TCAPFONT is true
- *
- *    addFont   - adds a user font to the list
- *    TCAPfontSetScheme - Sets the fonts for the given colour
- *
- * following must be provided if COLOR=TRUE & CSWITCH=FALSE
- *
- *    TTwrite  - writes a string given the length and the colour
- *
- * the following are the prototypes for them
- *
- * int  TTopen(void) ;
- * int  TTclose(void) ;
- * void TTwaitForChar(void) ;
- * void TTflush(void) ;
- * void TTmove(int, int) ;
- * void TTclear(void) ;
- * void TTshowCur(void) ;
- * void TTNbell(void) ;
- * int  TTahead(void) ;
- *
- * int  addFont(int f, int n) ;
- * void TCAPfontReset(void) ;
- * void TCAPfontSetScheme(uint16 col) ;
- *
- * TTbreakTest(n) - Test for a break from the keyboard. The numeric argument
- * 'n' is set to 1 if the break test may include 'display update' messages,
- * or 0 if it is only allowed to collect user input. Note that not all platforms
- * support this argument.
+ *     TTbreakTest(n) - Test for a break from the keyboard. The numeric argument
+ *     'n' is set to 1 if the break test may include 'display update' messages,
+ *     or 0 if it is only allowed to collect user input. Note that not all platforms
+ *     support this argument.
  */
 #ifndef __TERMIOH
 #define __TERMIOH

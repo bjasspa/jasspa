@@ -1,45 +1,38 @@
-/*****************************************************************************
-*
-*	Title:		%M%
-*
-*	Synopsis:	Key and name table porcessing.
-*
-******************************************************************************
-*
-*	Filename:		%P%
-*
-*	Author:			Jon Green
-*
-*	Creation Date:		02/12/91
-*
-*	Modification date:	%G%		<000723.1912>
-*
-*	Current rev:		%I%
-*
-*	Compilation Flags:	
-*
-*	Contents Description:	
-*
-******************************************************************************
-*                                                                            
-* Copyright (C) 1991 - 1999, JASSPA 
-* 
-* The MicroEmacs Jasspa distribution can be copied and distributed freely for
-* any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
-* incorporated into commercial software with the expressed permission of
-* JASSPA.
-* 
-****************************************************************************/
+/* -*- c -*-
+ *
+ * JASSPA MicroEmacs - www.jasspa.com
+ * key.c - Key and name table porcessing.
+ *
+ * Copyright (C) 1991-2002 JASSPA (www.jasspa.com)
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     02/12/91
+ * Synopsis:    Key and name table porcessing.
+ * Authors:     Jon Green & Steven Phillips
+ */
 
 #define	__KEYC			/* Define the filename */
 
-/*---	Include files */
 #include "emain.h"
 #include "efunc.h"
 
-/* Counts the size of the key table and stores it in the global variable
-** keyTableSize
-*/
+/* Counts the size of the key table and stores it in the global variable *
+ * keyTableSize
+ */
 void
 count_key_table(void)
 {

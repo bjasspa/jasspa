@@ -1,29 +1,35 @@
-/****************************************************************************
+/* -*- c -*-
  *
- *			Copyright 2000 Jasspa
+ * JASSPA MicroEmacs - www.jasspa.com
+ * emode.h - Define interface to the modes.
  *
- *  System        : MicroEmacs Jasspa Distribution
- *  Object Name   : emode.h
- *  Created By    : Steven Phillips
- *  Created       : Thu Jan 15 20:16:54 2000
- *  Last Modified : <011114.1151>
+ * Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
  *
- *  Description
- *       Define interface to the modes
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  Notes
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
  *
- *  History
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     Thu Jan 15 1998
+ * Synopsis:    Define interface to the modes.
+ * Authors:     Steven Phillips
+ * Description:
+ *      Includes emode.def to create an ordered list of global/buffer modes.
  *
- ****************************************************************************
- *
- * Copyright (C) 1998 - 2000, JASSPA
- * The MicroEmacs Jasspa distribution can be copied and distributed freely for
- * any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
- * incorporated into commercial software with the expressed permission of
- * JASSPA.
- *
- ****************************************************************************/
+ * Notes:
+ *      The modes were originally defined in edef.h.
+ *      The list MUST be ordered for the message-line auto-complete to work.
+ */
 
 #ifndef __EMODE_H
 #define __EMODE_H

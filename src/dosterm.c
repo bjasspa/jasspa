@@ -1,19 +1,33 @@
-/* -*- C -*- ****************************************************************
+/* -*- c -*-
  *
- *  System        : MicroEmacs Jasspa Distribution
- *  Module        : dosterm.c
- *  Synopsis      : Dos terminal support routines
- *  Created By    : Steven Phillips
- *  Created       : 1994
- *  Last Modified : <011126.2108>
+ * JASSPA MicroEmacs - www.jasspa.com
+ * dosterm.c - Dos terminal support routines.
  *
- *  Description
+ * Copyright (C) 1994-2001 Steven Phillips
+ * Copyright (C) 2002 JASSPA (www.jasspa.com)
  *
- *  Notes
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     1994
+ * Synopsis:    Dos terminal support routines.
+ * Authors:     Steven Phillips
  * 
  ****************************************************************************
  * 
- * Copyright (c) 1994-2000 Steven Phillips    
+ * Copyright (c) 1994-2001 Steven Phillips    
  *    
  * This software is provided 'as-is', without any express or implied warranty.
  * In no event will the  authors be held liable for any damages  arising  from

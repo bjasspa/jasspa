@@ -1,14 +1,29 @@
-# -!- makefile -!- ###########################################################
+# -!- makefile -!-
 #
-#			MicroEmacs Jasspa Distribution 1999.
+# JASSPA MicroEmacs - www.jasspa.com
+# dosdj2.mak - Make file for Dos using djgpp v2.0
 #
-#  System        : MicroEmacs
-#  Description	 : Make file for Dos using djgpp v2.0
-#  Created       : Sat Jan 24 00:01:40 1998
+# Copyright (C) 2001-2002 JASSPA (www.jasspa.com)
 #
-#  Last Modified : <000420.0745>
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation; either version 2 of the License, or (at your option)
+# any later version.
 #
-#  Notes
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+# more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+##############################################################################
+#
+# Created:     Sat Jan 24 1998
+# Synopsis:    Make file for Dos using djgpp v2.0
+# Notes:
 #	DJDIR must be setup to point to your DJGPP installation (normally
 #		done in djgpp.env)
 #
@@ -17,8 +32,6 @@
 #
 #	Run "make -f dosdj1.mak clean"      to clean source directory
 #	Run "make -f dosdj1.mak spotless"   to clean source directory even more
-#
-#  History
 #
 ##############################################################################
 #

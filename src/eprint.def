@@ -1,40 +1,36 @@
-/* -*- C -*- ****************************************************************
+/* -*- c -*-
  *
- *  			Copyright 1998 Jasspa
+ * JASSPA MicroEmacs - www.jasspa.com
+ * eprint.def - Define the printer registry names and associated values.
  *
- *  System        : MicroEmacs Jasspa Distribution
- *  Object Name   : eprint.def
- *  Created By    : Jon Green
- *  Created       : Mon Mar 9 23:50:56 1998
- *  Last Modified : <000718.2343>
+ * Copyright (C) JASSPA 1998-2002
  *
- *  Description	
- *       Define the printer registry names and associated values.
- *  Notes
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  History
- *	
- ****************************************************************************
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
  *
- * Copyright (C) 1998, JASSPA 
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     Mon Mar 9 1998
+ * Synopsis:    Define the printer registry names and associated values.
+ * Authors:     Jon Green
+ * Description:
+ *      Included by eprint.h to create a list of used printer registry values.
  *
- * The MicroEmacs Jasspa distribution can be copied and distributed freely for
- * any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
- * incorporated into commercial software with the expressed permission of
- * JASSPA.
- *  
- ****************************************************************************/
-/* Local printer types include
- * mePD_STR   0x00     String data
- * mePD_INT   0x01     Integer data
- * mePD_WIN   0x02     Auto context save in windows.
- * 
- * Search order is defined as:-
- * 
- * Usr + Platform
- * Usr
- * Printer + Platform
- * Printer
+ * Notes:
+ *     Local printer types include
+ *         mePD_STR   0x00     String data
+ *         mePD_INT   0x01     Integer data
+ *         mePD_WIN   0x02     Auto context save in windows.
  */
 
 /* In user context only */

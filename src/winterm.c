@@ -1,17 +1,36 @@
-/* -*- C -*- ****************************************************************
+/* -*- c -*-
  *
- * System        : MicroEmacs Jasspa Distribution
- * Module        : winterm.c
- * Synopsis      : Win32 platform support
- * Created By    : Jon Green
- * Created       : 21/12/1996
+ * JASSPA MicroEmacs - www.jasspa.com
+ * winterm.c - Win32 platform support.
  *
- * Description
+ * Copyright (C) 1996-2001 Jon Green
+ * Copyright (C) 2002 JASSPA (www.jasspa.com)
  *
- * This is the windows terminal driver for the WIN32 build for Microsoft
- * windows environments.  This file contains the display and terminal input
- * functions for collecting and displaying data.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     21/12/1996
+ * Synopsis:    Win32 platform support.
+ * Authors:     Jon Green, Matthew Robinson & Steven Phillips
+ * Description:
+ *     This is the windows terminal driver for the WIN32 build for Microsoft
+ *     windows environments.  This file contains the display and terminal input
+ *     functions for collecting and displaying data.
+ *
+ * Notes:
+ * 
  * SCREEN
  * ======
  * This differs from most of the other EMACS screen drivers in that a memory
@@ -48,50 +67,8 @@
  * !!!! WARNING WARNING WARNING !!!!
  *
  * Unless you know what you are doing DO NOT MESS with the event mechanism.
- * A sure indication that you have messed something up is the caret not
- * flashing - it might work but it will not be correct.
- *
- * History
- *
- * JG 150198 V1.7 Fixed the event handling following SP optimisations.
- * SP 100198 V1.6 Optimised the windows code.
- * JG 210697 V1.5 Fixed the character cell painting such that all paints now
- *                extend to the extremities of the screen. The screen edges
- *                were not being filled properly in previous versions.
- * JG 030497 V1.4 Added idle time key codes.
- * JG 210397 V1.3 Added idle mouse functionality for scroll bars.
- * JG 210197 V1.2 Screen sizing. Added new sizing policy for the window. Picked
- *                up the maximizing information to allow the screen to be placed
- *                correctly especially when the Windows '95 task bar is showing.
- * JG 200197 V1.1 Palette Fix. Added new palette management.
- * JG 211296 V1.0 Original Created.
- *
- ****************************************************************************
- *
- * Copyright (c) 1996-2000 Jon Green
- *
- * This software is provided 'as-is', without any express or implied warranty.
- * In no event will the  authors be held liable for any damages  arising  from
- * the use of this software.
- *
- * This software was generated as part of the MicroEmacs JASSPA  distribution,
- * (http://www.jasspa.com) but is excluded from those licensing restrictions.
- *
- * Permission  is  granted  to anyone to use this  software  for any  purpose,
- * including  commercial  applications,  and to alter it and  redistribute  it
- * freely, subject to the following restrictions:
- *
- *  1. The origin of this software must not be misrepresented; you must not
- *     claim that you wrote the original software. If you use this software
- *     in a product, an acknowledgment in the product documentation would be
- *     appreciated but is not required.
- *  2. Altered source versions must be plainly marked as such, and must not be
- *     misrepresented as being the original software.
- *  3. This notice may not be removed or altered from any source distribution.
- *
- * Jon Green         jon@jasspa.com
- *
- ****************************************************************************/
+ * It might work but it may not be correct.
+ */
 
 #include <string.h>                     /* String functions */
 #include <time.h>                       /* Time definitions */
@@ -3382,8 +3359,8 @@ done_syschar:
                 break;                    /* This is C-m */
             }
 #else
-#if 0
             /* Distinguish between the Number Pad and standard enter */
+#if 0
             cc = ((lParam & 0x01000000) ? SKEY_kp_enter : SKEY_return) ;
             goto return_spec;
 #else
@@ -4587,7 +4564,15 @@ TTahead (void)
     {
         DWORD dwCount;
         INPUT_RECORD ir;
-        for (;;)
+        /* If TTnoKeys == KEYBUFSIZ then one of 2 things has happend,
+         * 1) The user is running a big command (execute macro 3 billion times) and
+         *    has carried on typing 128+ chars (without pressing the abort key)
+         * 2) Pasting in a dos window using the window paste results in lots of keys
+         *    all at once, the clipboard must contain 128+ chars.
+         * (1) is unlikely compared to the (2) so rather than lose the extra chars,
+         * keep them there until there enough room in the input key buffer to store
+         * them. */
+        while(TTnoKeys != KEYBUFSIZ)
         {
             if ((PeekConsoleInput(hInput, &ir, 1, &dwCount) == TRUE) && (dwCount > 0))
             {

@@ -1,21 +1,36 @@
-/****************************************************************************
- * External function definitions
+/* -*- c -*-
  *
- * Last Modified:       <011025.2328>
- * 
- ****************************************************************************
- * 
- * Modifications to the original file by Jasspa. 
- * 
- * Copyright (C) 1988 - 1999, JASSPA 
- * The MicroEmacs Jasspa distribution can be copied and distributed freely for
- * any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
- * incoportated into commercial software with the expressed permission of
- * JASSPA.
- * 
- ****************************************************************************/
-#if	!(defined __ABREVC) || (defined _ANSI_C)		/* ABREV.C externals */
-#if ABREV
+ * JASSPA MicroEmacs - www.jasspa.com
+ * eextrn.h - External function definitions.
+ *
+ * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     Unknown
+ * Synopsis:    External function definitions.
+ * Authors:     Jon Green & Steven Phillips
+ * Notes:
+ *     The external command function declarations were part of efunc.h,
+ *     these have all been moved to this header file and all other
+ *     exeternally used functions have also been added.
+ */
+
+#if	!(defined __ABBREVC) || (defined _ANSI_C)		/* ABBREV.C externals */
+#if ABBREV
 extern	int	bufferAbbrev APRAM((int f, int n));
 extern	int	globalAbbrev APRAM((int f, int n));
 extern	int	expandAbbrev APRAM((int f, int n));
@@ -139,7 +154,7 @@ extern  int     getBufferInfo APRAM((int32 *,int32 *,int32 *,int32 *)) ;
  * crypt.c
  */
 #if !(defined __CRYPTC) || (defined _ANSI_C)				/* CRYPT.C Externals */
-#if	CRYPT
+#if CRYPT
 extern  int	setBufferCryptKey APRAM((BUFFER *bp, uint8 *key)) ;
 extern	int	setCryptKey APRAM((int f, int n));
 extern	int	meCrypt APRAM((uint8 *bptr, uint32 len));
@@ -160,8 +175,13 @@ extern int directoryTree APRAM((int f, int n));
 #if !(defined __DISPLAYC) || (defined _ANSI_C)		/* DISPLAY.C Externals */
 extern	void	vtinit APRAM((void));
 extern	void	vttidy APRAM((void));
-extern int	addColor APRAM((int f, int n)) ;
+#if COLOR
+extern  int	addColor APRAM((int f, int n)) ;
 extern	int	addColorScheme APRAM((int f, int n));
+#else
+#define addColor notAvailable
+#define addColorScheme notAvailable
+#endif
 extern  int     convertUserScheme APRAM((int n, int defaultScheme));
 extern  uint8   assessModeLine APRAM((uint8 *ml)) ;
 extern  void    windCurLineOffsetEval APRAM((WINDOW *wp)) ;

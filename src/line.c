@@ -1,67 +1,44 @@
-/*****************************************************************************
+/* -*- c -*-
  *
- *	Title:		%M%
+ * JASSPA MicroEmacs - www.jasspa.com
+ * line.c - Line handling operations.
  *
- *	Synopsis:	Line handling operations.
+ * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
  *
- ******************************************************************************
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *	Filename:		%P%
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
  *
- *	Author:			Unknown
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     Unknown
+ * Synopsis:    Line handling operations.
+ * Authors:     Unknown, Jon Green & Steven Phillips
+ * Description:
+ *     The functions in this file are a general set of line management utilities.
+ *     They are the only routines that touch the text. They also touch the buffer
+ *     and window structures, to make sure that the necessary updating gets done.
+ *     There are routines in this file that handle the kill buffer too. It isn't
+ *     here for any good reason.
  *
- *	Creation Date:		29/04/91 09:13
- *
- *	Modification date:	%G% : %U%	<011031.1810>
- *
- *	Current rev:		%I%
- *
- *	Jon Green 05/12/90
- *	Added "lmakespace", and simplified linsert(). Created lsinsert() for
- *	the insertion of strings instead of callinf linsert() multiple times.
- *
- *	Special Comments:
- *
- *	Contents Description:
- *
- * The functions in this file are a general set of line management utilities.
- * They are the only routines that touch the text. They also touch the buffer
- * and window structures, to make sure that the necessary updating gets done.
- * There are routines in this file that handle the kill buffer too. It isn't
- * here for any good reason.
- *
- * Note that this code only updates the dot and mark values in the window list.
- * Since all the code acts on the current window, the buffer that we are
- * editing must be being displayed, which means that "b_nwnd" is non zero,
- * which means that the dot and mark values in the buffer headers are nonsense.
- *
- * July 90. Jon Green.
- *
- * Magic required a ldelete() that returned the characters just killed off.
- * Since we do not require the characters to up-date the kill buffer then
- * copied the old 'ldelete()' function and scrubbed the kill buffer replacing
- * with a kill string - forming 'mldelete()'. Not the best job in the world,
- * but since I have not got much time then that will have to do. If you've got
- * more time then "Is there a better way ??" (of course not !! - arrogance
- * rules OK).
- *
- ******************************************************************************
- * 
- * Modifications to the original file by Jasspa. 
- * 
- * Copyright (C) 1988 - 1999, JASSPA 
- * The MicroEmacs Jasspa distribution can be copied and distributed freely for
- * any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
- * incorporated into commercial software with the expressed permission of
- * JASSPA.
- * 
- ****************************************************************************/
-
-/*---	Include defintions */
+ * Notes:
+ *     This code only updates the dot and mark values in the window list.
+ *     Since all the code acts on the current window, the buffer that we are
+ *     editing must be being displayed, which means that "b_nwnd" is non zero,
+ *     which means that the dot and mark values in the buffer headers are nonsense.
+ */
 
 #define	__LINEC				/* Define filename */
 
-/*---	Include files */
 #include "emain.h"
 #include "efunc.h"
 
@@ -73,7 +50,6 @@
 #endif
 #endif
 
-/*---	Local varia$ e definitions */
 static KILL **currkill=NULL ;	/* current kill buffer */
 static KLIST *reyankLastYank=NULL;
 

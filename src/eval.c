@@ -1,53 +1,31 @@
-/*****************************************************************************
+/* -*- c -*-
  *
- *  Title:      %M%
+ * JASSPA MicroEmacs - www.jasspa.com
+ * eval.c - Expresion evaluation functions.
  *
- *  Synopsis:   Expresion evaluation functions for MicroEMACS
+ * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
  *
- ******************************************************************************
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  Filename:       %P%
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
  *
- *  Author:         Danial Lawrence
- *
- *  Creation Date:      14/05/86 12:37      <011120.1315>
- *
- *  Modification date:  %G% : %U%
- *
- *  Current rev:        %I%
- *
- *  Special Comments:   
- *
- *  Contents Description:   
- *
- *  Ammendments :   Jon Green of Akebia Ltd.
- *
- *          Token evaluation not performed correctly. Trying
- *          to read from the keyboard, line not terminated by
- *          a carridge return. Invoked from 'getval()' on
- *          TKARG condition.
- *
- * Jon Green    17-05-91
- * Added suffix modes so that the suffix defintions may be defined in the 
- * start up file.
- * 
- *****************************************************************************
- * 
- * Modifications to the original file by Jasspa. 
- * 
- * Copyright (C) 1988 - 1999, JASSPA 
- * The MicroEmacs Jasspa distribution can be copied and distributed freely for
- * any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
- * incorporated into commercial software with the expressed permission of
- * JASSPA.
- * 
- ****************************************************************************/
-
-/*---   Include defintions */
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     1986
+ * Synopsis:    Expresion evaluation functions.
+ * Authors:     Daniel Lawrence, Jon Green & Steven Phillips
+ */ 
 
 #define __EVALC 1       /* Define program name */
-
-/*---   Include files */
 
 #include "emain.h"
 #include "evar.h"
@@ -70,19 +48,11 @@
 uint8 evalResult[TOKENBUF];    /* resulting string */
 static uint8 machineName[]=meSYSTEM_NAME;    /* resulting string */
 
-/*---   Local macro definitions */
-
-/*---   External references */
-
 #if TIMSTMP
 extern uint8 time_stamp[];   /* Time stamp string */
 #endif
 
-/*---   Local type definitions */
-
-/*---   Local variable definitions */
 static time_t timeOffset=0 ;            /* Time offset in seconds */
-
 
 #ifdef _INSENSE_CASE
 meNAMESVAR buffNames={0,0} ;
@@ -2404,6 +2374,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
             evalResult[dlen] = '\0' ;
             return evalResult ;
         }
+#if MAGIC
     case UFXREP:
     case UFXIREP:
         {
@@ -2483,6 +2454,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
             evalResult[dlen] = '\0' ;
             return evalResult ;
         }
+#endif
     case UFNBMODE:
         {
             BUFFER *bp ;
@@ -2507,8 +2479,10 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
     case UFSGREAT:     return(meLtoa(meStrcmp(arg1,arg2) > 0));
     case UFINWORD:     return(meLtoa(isWord(arg1[0])));
     case UFISEQUAL:    return(meLtoa(meStricmp(arg1,arg2) == 0));
+#if MAGIC
     case UFXSEQ:       return(meLtoa(regexStrCmp(arg1,arg2,1) == 1));
     case UFXISEQ:      return(meLtoa(regexStrCmp(arg1,arg2,0) == 1));
+#endif
     case UFLDEL:
         {
             int  index=meAtoi(arg2) ;

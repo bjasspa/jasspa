@@ -1,27 +1,32 @@
+/* -*- c -*-
+ *
+ * JASSPA MicroEmacs - www.jasspa.com
+ * esearch.h - Searching definitions.
+ *
+ * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 /*
- *	SCCS:		%W%		%G%		%U%
- *
- *	Last Modified :	<991230.1945>
- *
- * ESEARCH.H
- *
- * Defines, typdefs, and global variables that are of use for the
- * routines in search.c and isearch.c.
- *
- * July 1990. Jon Green.
- * Added the Auto Repeat structure for Magic search/replace importing.
- * 
- ****************************************************************************
- * 
- * Modifications to the original file by Jasspa. 
- * 
- * Copyright (C) 1988 - 1999, JASSPA 
- * The MicroEmacs Jasspa distribution can be copied and distributed freely for
- * any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
- * incoportated into commercial software with the expressed permission of
- * JASSPA.
- * 
- ****************************************************************************/
+ * Created:     Unknown
+ * Synopsis:    Searching definitions.
+ * Authors:     Unknown, Jon Green & Steven Phillips
+ * Description:
+ *     Defines, typdefs, and global variables that are of use for the
+ *     routines in search.c and isearch.c.
+ */
 
 /*
  * PTBEG, PTEND, FORWARD, and REVERSE are all toggle-able values for

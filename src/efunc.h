@@ -1,32 +1,48 @@
+/* -*- c -*-
+ *
+ * JASSPA MicroEmacs - www.jasspa.com
+ * efunc.h - Command name defintions.
+ *
+ * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 /*
- *      SCCS:           %W%             %G%             %U%
- *
- *      Last Modified : <010902.1151>
- *
- *      EFUNC.H:        MicroEMACS function declarations and names
- *
- *      This file list all the C code functions used by MicroEMACS
- *      and the names to use to bind keys to them. To add functions,
- *      declare it here in both the extern function list and the name
- *      binding table.
+ * Created:     Unknown
+ * Synopsis:    Command name defintions.
+ * Authors:     Unknown, Jon Green & Steven Phillips
+ * Description:
+ *     Includes efunc.def to create a list of built in MicroEmacs commands
+ *     within a structure which stores command variables and flags on how
+ *     the command effects things like the display and region etc.
+ *     A hash table is also created & initialized which is used for rapid
+ *     command-name -> function lookups.
  * 
- ****************************************************************************
+ * Notes:
+ *     Adding a new command requires:
+ *       * Adding external declaration to eextern.h
+ *       * adding new entry to the table given in efunc.def giving the
+ *         command name (1st column), function (3rd) & ebind label (4th)
+ *       * Determining the command flag (2nd column)
+ *       * Correcting the table list pointers (5th Column)
+ *       * Adding the command to the built in hash table (see below & 6th)
+ *     To check this has been done correctly set KEY_TEST to 1 in exec.c
+ *     and execute the !test macro directive.
  * 
- * Modifications to the original file by Jasspa. 
- * 
- * Copyright (C) 1988 - 1999, JASSPA 
- * The MicroEmacs Jasspa distribution can be copied and distributed freely for
- * any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
- * incoportated into commercial software with the expressed permission of
- * JASSPA.
- * 
- ****************************************************************************/
-
-/*      Name to function binding table.
-        This table gives the names of all the bindable functions end their C
-        function address.  These are used for the bind-to-key function. */
-
-/*---   Set up the values of the functions */
+ *     The generated list of commands MUST be alphabetically ordered.
+ */
 
 #define DEFFUNC(s,t,f,r,v,n,h)  r,
 
@@ -107,6 +123,10 @@ meCMD *__cmdTable[CMDTABLEINITSIZE] =
 };
 #undef  DEFFUNC
 
+/* initialize the command name lookup hash table.
+ * This is horrid but greatly improves macro language performance without
+ * increasing start-up time.
+ */
 meCMD **cmdTable = __cmdTable ;
 meCMD  *cmdHead = &__meFunc_ABTCMD ;
 meCMD  *cmdHash[cmdHashSize] = 
@@ -161,7 +181,7 @@ meCMD  *cmdHash[cmdHashSize] =
     NULL,                 NULL,                 NULL,                 NULL,                 NULL,
     &__meFunc_PRTCOL,     &__meFunc_UNSET,      &__meFunc_SCLPRV,     NULL,                 NULL,
     &__meFunc_BAKWRD,     NULL,                 NULL,                 NULL,                 NULL,
-    NULL,                 NULL,                 &__meFunc_BUFABREV,   NULL,                 NULL,
+    NULL,                 NULL,                 &__meFunc_BUFABBREV,  NULL,                 NULL,
     NULL,                 &__meFunc_FORSRCH,    NULL,                 NULL,                 &__meFunc_ENGHORZWIN,
     NULL,                 &__meFunc_EXECMD,     NULL,                 NULL,                 NULL,
     &__meFunc_ADDCOLSCHM, NULL,                 NULL,                 NULL,                 NULL,
@@ -202,7 +222,7 @@ meCMD  *cmdHash[cmdHashSize] =
     &__meFunc_OPNLIN,     NULL,                 NULL,                 NULL,                 &__meFunc_DELBUF,
     NULL,                 NULL,                 &__meFunc_MOVRWND,    NULL,                 NULL,
     NULL,                 NULL,                 NULL,                 NULL,                 NULL,
-    &__meFunc_INSSTR,     NULL,                 &__meFunc_EXABREV,    NULL,                 &__meFunc_EXEBUF,
+    &__meFunc_INSSTR,     NULL,                 &__meFunc_EXABBREV,   NULL,                 &__meFunc_EXEBUF,
     NULL,                 NULL,                 &__meFunc_DEFMAC,     &__meFunc_MLBIND,     NULL,
     &__meFunc_ADNXTLN,    NULL,                 NULL,                 NULL,                 &__meFunc_CHGFIL,
     NULL,                 NULL,                 NULL,                 &__meFunc_VIWFIL,     NULL,

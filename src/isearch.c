@@ -1,46 +1,35 @@
+/* -*- c -*-
+ *
+ * JASSPA MicroEmacs - www.jasspa.com
+ * isearch.c - incremental search routines.
+ *
+ * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 /*
- * Last Modified : <011025.2328>
- * 
- * The functions in this file implement commands that perform incremental
- * searches in the forward and backward directions.  This "ISearch" command
- * is intended to emulate the same command from the original EMACS 
- * implementation (ITS).  Contains references to routines internal to
- * SEARCH.C.
- *
- * REVISION HISTORY:
- *
- *      D. R. Banks 9-May-86
- *      - added ITS EMACSlike ISearch
- *
- *      John M. Gamble 5-Oct-86
- *      - Made iterative search use search.c's scanner() routine.
- *        This allowed the elimination of bakscan().
- *      - Put isearch constants into esearch.h
- *      - Eliminated the passing of 'status' to scanmore() and
- *        checknext(), since there were no circumstances where
- *        it ever equalled FALSE.
- *
- *  Steven W. Phillips 29-Apr-94
- *  - Made it work!
- *  - It now exits search on all other commands except ^R,^S,^Q
- *  - uses TTbell like the rest
- *  - doesnt bell all the time, only on first failure
- *  - searching again (^R,^S) when already fails sets the starting
- *    position to the top or bottom.
- *  - the first backspace after failed search resets the search
- *    string to its last successful string.
- *  - created ^W function which takes the next word in as a search string 
- * 
- *****************************************************************************
- * Modifications to the original file by Jasspa. 
- * 
- * Copyright (C) 1988 - 1999, JASSPA 
- * The MicroEmacs Jasspa distribution can be copied and distributed freely for
- * any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
- * incorporated into commercial software with the expressed permission of
- * JASSPA.
- * 
- ****************************************************************************/
+ * Created:     9-May-86
+ * Synopsis:    incremental search routines.
+ * Authors:     D. R. Banks, John M. Gamble & Steven Phillips
+ * Description:
+ *     The functions in this file implement commands that perform incremental
+ *     searches in the forward and backward directions.  This "ISearch" command
+ *     is intended to emulate the same command from the original EMACS 
+ *     implementation (ITS).  Contains references to routines internal to
+ *     search.c.
+ */
 
 
 #define __ISEARCHC                   /* Define the filename */

@@ -1,27 +1,35 @@
-/****************************************************************************
+/* -*- c -*-
  *
- *  			Copyright 1998 Jasspa
+ * JASSPA MicroEmacs - www.jasspa.com
+ * emode.def - Definition of the modes.
  *
- *  System        : MicroEmacs Jasspa Distribution
- *  Object Name   : emode.def
- *  Author        : Steve Philips
- *  Created       : Thu Jan 15 20:06:23 1998
- *  Last Modified : <011114.0921>
+ * Copyright (C) JASSPA 1998-2002
  *
- *  Description	
- *       Definition of the modes.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  History
- *	
- ****************************************************************************
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
  *
- * Copyright (C) 1998, JASSPA 
- * The MicroEmacs Jasspa distribution can be copied and distributed freely for
- * any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
- * incorporated into commercial software with the expressed permission of
- * JASSPA.
- *  
- ****************************************************************************/
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     Thu Jan 15 1998
+ * Synopsis:    Definition of the modes.
+ * Authors:     Steve Philips
+ * Description:
+ *      Included by emode.h to create an ordered list of global/buffer modes.
+ *
+ * Notes:
+ *      The modes were originally defined in edef.h.
+ *      The list MUST be ordered for the message-line auto-complete to work.
+ */
 
 DEFMODE(MDAUTO, "auto",   'A', MDAUTO_MASK, 0x01)        /* Auto-file type detection     */
 DEFMODE(MDATSV, "autosv", 'a', MDATSV_MASK, 0x02)        /* Auto-save the buffer         */

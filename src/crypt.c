@@ -1,62 +1,39 @@
-/*****************************************************************************
-*
-*	Title:		%M%
-*
-*	Synopsis:	Encryption Routines
-*
-******************************************************************************
-*
-*	Filename:		%P%
-*
-*	Author:			Dana Hoggatt and Daniel Lawrence
-*
-*	Creation Date:		14/05/86 12:37		<011025.2304>
-*
-*	Modification date:	%G% : %U%
-*
-*	Current rev:		%I%
-*
-*	Special Comments:	
-*  
-*       The CRYPT encoding for MicroEMACS has been modified in V3.12 this 
-*       encoding has been applied to the 3.8 source files for compatibility.
-*       
-*       Jon Green 24/03/97.
-* 
-*       SWP 8/97 - Changed the CRYPT algorithm, found the current one
-*       was far from secure and the non-encryption of white spaces leads
-*       to easy decoding.
-* 
-*	Contents Description:	
-*
-*****************************************************************************
-* 
-* (C)opyright 1987 by Daniel M. Lawrence
-* MicroEMACS 3.8 can be copied and distributed freely for any
-* non-commercial purposes. MicroEMACS 3.8 can only be incorporated
-* into commercial software with the permission of the current author.
-* 
-* Modifications to the original file by Jasspa. 
-* 
-* Copyright (C) 1988 - 1999, JASSPA 
-* The MicroEmacs Jasspa distribution can be copied and distributed freely for
-* any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
-* incorporated into commercial software with the expressed permission of
-* JASSPA.
-* 
-****************************************************************************/
-
-/*---	Include defintions */
+/* -*- c -*-
+ *
+ * JASSPA MicroEmacs - www.jasspa.com
+ * crypt.c - Encryption Routines.
+ *
+ * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     Unknown
+ * Synopsis:    Encryption Routines.
+ * Authors:     Dana Hoggatt, Daniel Lawrence & Steven Phillips
+ * Notes:	
+ *     Changed the CRYPT algorithm in JASSPA release, found the current one
+ *     was far from secure and the non-encryption of white spaces leads
+ *     to easy decoding.
+ */
 
 #define	__CRYPTC		/* Define file */
-
-/*---	Include files */
 
 #include "emain.h"
 
 #if	CRYPT
-
-/*---	Local macro definitions */
 
 #define USE_OLD_CRYPT 0                 /* 0 = me3.8; 1 = me3.12 */
 

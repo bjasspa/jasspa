@@ -1,29 +1,31 @@
+/* -*- c -*-
+ *
+ * JASSPA MicroEmacs - www.jasspa.com
+ * edef.h - Global variable definitions.
+ *
+ * Originally written by Dave G. Conroy for MicroEmacs
+ * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 /*
- *      SCCS:           %W%             %G%             %U%
- *
- *      Last Modified : <011209.1317>
- *
- *      EDEF:           Global variable definitions for
- *                      MicroEMACS 3.2
- *
- *                      written by Dave G. Conroy
- *                      modified by Steve Wilhite, George Jones
- *                      greatly modified by Daniel Lawrence
- *                      greatly modified again by JASSPA.
- *
- ****************************************************************************
- *
- * Modifications to the original file by Jasspa.
- *
- * Copyright (C) 1988 - 2000, JASSPA
- * The MicroEmacs Jasspa distribution can be copied and distributed freely for
- * any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
- * incoportated into commercial software with the expressed permission of
- * JASSPA.
- *
- ****************************************************************************/
-
-/* initialized global external declarations */
+ * Created:     For MicroEMACS 3.2
+ * Synopsis:    Global variable definitions.
+ * Authors:     Dave G. Conroy, Steve Wilhite, George Jones, Daniel Lawrence,
+ *          Jon Green & Steven Phillips
+ */
 
 extern  meDIRLIST       curDirList ;
 extern  struct osdDIALOG  *osdDialogHd; /* Root of the on screen displays */
@@ -35,8 +37,8 @@ extern  HILBLOCK       *hilBlock;       /* Hilighting colour changes    */
 extern  meCOLOR         noColors ;      /* No defined colours           */
 extern  int             styleTableSize; /* Size of the colour table     */
 extern  meSTYLE        *styleTable;     /* Highlighting colour table    */
-#if ABREV
-extern  meABREV        *globalAbrev ;   /* Global Abreviation file      */
+#if ABBREV
+extern  meABBREV       *globalAbrev ;   /* Global Abreviation file      */
 #endif
 extern  mePOS  *mePosition ;            /* Position stack head          */
 extern  uint16  mePositionMark ;        /* Position next alpha mark name*/
@@ -219,23 +221,22 @@ extern  uint16  breakc;                 /* current abort-command char*/
 #define CLIP_RECVED  0x10               /* Clipboard has been obtained  */
 extern  uint8   clipState;              /* clipboard status flag        */
 #endif
-extern  uint32  cursorBlink ;           /* cursor-blink blink time      */
-extern  int     blinkState ;            /* cursor blink state           */
-#if COLOR
-extern  meCOLOR cursorColor;            /* cursor-color scheme          */
+extern  uint32   cursorBlink;           /* cursor-blink blink time      */
+extern  int      blinkState;            /* cursor blink state           */
+extern  meCOLOR  cursorColor;           /* cursor-color scheme          */
 extern  meSCHEME osdScheme;             /* Menu line color scheme       */
 extern  meSCHEME mlScheme;              /* Message line color scheme    */
 extern  meSCHEME mdLnScheme;            /* Mode line color scheme       */
 extern  meSCHEME sbarScheme;            /* Scroll bar color scheme      */
 extern  meSCHEME globScheme;            /* Global color scheme          */
 extern  meSCHEME trncScheme;            /* truncate color scheme        */
+
 extern  int     gsbarmode;              /* global scroll bar mode       */
 extern  uint8   boxChars [];            /* Array of box characters      */
 extern  uint8   windowChars [];         /* Array of window characters   */
 extern  uint8   displayTab;             /* tab \t display character */
 extern  uint8   displayNewLine;         /* new-line \n display character */
 extern  uint8   displaySpace;           /* space ' ' display character */
-#endif
 
 extern  uint8  *envars[];               /* list of recognized env. vars */
 extern  uint8  *derNames[];             /* name list of directives      */
@@ -339,15 +340,15 @@ extern KEYTAB *mlBinds;                 /* pointer to ml local bindings */
 #endif
 
 /* uninitialized global external declarations */
-extern  uint8   resultStr[MAXBUF] ;     /* $result variable             */
-extern  uint8   evalResult[TOKENBUF] ;  /* Result string from functions */
-extern  int     curgoal;                /* Goal for C-P, C-N            */
-extern  int16   numWindows;             /* Current number of windows    */
-extern  WINDOW  *curwp;                 /* Current window               */
-extern  BUFFER  *curbp;                 /* Current buffer               */
-extern  WINDOW  *wheadp;                /* Head of list of windows      */
-extern  BUFFER  *bheadp;                /* Head of list of buffers      */
-extern  meABREV *aheadp;                /* Head of list of abrev files  */
+extern  uint8    resultStr[MAXBUF] ;    /* $result variable             */
+extern  uint8    evalResult[TOKENBUF] ; /* Result string from functions */
+extern  int      curgoal;               /* Goal for C-P, C-N            */
+extern  int16    numWindows;            /* Current number of windows    */
+extern  WINDOW   *curwp;                /* Current window               */
+extern  BUFFER   *curbp;                /* Current buffer               */
+extern  WINDOW   *wheadp;               /* Head of list of windows      */
+extern  BUFFER   *bheadp;               /* Head of list of buffers      */
+extern  meABBREV *aheadp;               /* Head of list of abrev files  */
 
 extern  struct  KLIST* klhead;          /* Head of klist                */
 
@@ -415,8 +416,8 @@ meREGISTERS *meRegCurr=NULL ;           /* The current register set     */
 SELHILIGHT selhilight={1,0} ;           /* Selection hilight            */
 uint16   hilBlockS=20 ;                 /* Hilight - HilBlock array siz */
 meSTYLE *styleTable = NULL;             /* Highlighting colour table    */
-#if ABREV
-meABREV *globalAbrev = NULL;            /* Global Abreviation file      */
+#if ABBREV
+meABBREV *globalAbrev = NULL;           /* Global Abreviation file      */
 #endif
 mePOS *mePosition=NULL ;                /* Position stack head          */
 meCOLOR noColors=0 ;                    /* No defined colours           */
@@ -463,17 +464,15 @@ FILE   *ffwp;                           /* File write pointer, all func.*/
 #endif
 uint16  thiskey ;                       /* the current key              */
 uint8   hexdigits[] = "0123456789ABCDEF";
-uint32  cursorBlink = 0 ;               /* cursor-blink blink time      */
-int     blinkState=1 ;                  /* cursor blink state           */
-#if COLOR
-meCOLOR cursorColor=meCOLOR_FDEFAULT;   /* cursor color                 */
+uint32   cursorBlink = 0;               /* cursor-blink blink time      */
+int      blinkState=1;                  /* cursor blink state           */
+meCOLOR  cursorColor=meCOLOR_FDEFAULT;  /* cursor color                 */
 meSCHEME osdScheme =meSCHEME_NDEFAULT;  /* Menu line color scheme       */
 meSCHEME mlScheme  =meSCHEME_NDEFAULT;  /* Message line color scheme    */
 meSCHEME mdLnScheme=meSCHEME_RDEFAULT;  /* Mode line color scheme       */
 meSCHEME sbarScheme=meSCHEME_RDEFAULT;  /* Scroll bar color scheme      */
 meSCHEME globScheme=meSCHEME_NDEFAULT;  /* Global color scheme          */
 meSCHEME trncScheme=meSCHEME_NDEFAULT;  /* Truncate color scheme        */
-#endif
 int     gsbarmode = (WMUP |             /* Has upper end cap            */
                      WMDOWN |           /* Has lower end cap            */
                      WMBOTTM |          /* Has a mode line character    */
@@ -741,7 +740,7 @@ WINDOW  *curwp;                         /* Current window               */
 BUFFER  *curbp;                         /* Current buffer               */
 WINDOW  *wheadp;                        /* Head of list of windows      */
 BUFFER  *bheadp;                        /* Head of list of buffers      */
-meABREV *aheadp=NULL;                   /* Head of list of abrev files  */
+meABBREV *aheadp=NULL;                  /* Head of list of abrev files  */
 
 uint16  keyTableSize;                   /* The current size of the key table */
 uint8   resultStr [MAXBUF];             /* Result string from commands  */

@@ -1,49 +1,40 @@
-/* -*- C -*- ****************************************************************
+/* -*- c -*-
  *
- *  System        : MicroEmacs Jasspa Distribution
- *  Module        : narrow.c
- *  Synopsis      : Narrow out regions of a buffer
- *  Created By    : Steven Phillips
- *  Created       : 01/01/99
- *  Last Modified : <010915.2102>
+ * JASSPA MicroEmacs - www.jasspa.com
+ * narrow.c - Narrow out regions of a buffer.
  *
- *  Description
+ * Copyright (C) 1999-2001 Steven Phillips
+ * Copyright (C) 2002 JASSPA (www.jasspa.com)
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     01/01/99
+ * Synopsis:    Narrow out regions of a buffer.
+ * Authors:     Steven Phillips
+ * Description:
  *     Narrow can narrow out or narrow to a region of text, a buffer can have
  *     multiple narrows which can be removed one at a time or all at once.
  *     goto-line can go to the absolute line (i.e. ignore narrows) or with
  *     the narrowed out lines.
  *
- *  Notes
+ * Notes:
  *     A narrow drops an alpha mark on the next line, this line can be moved
  *     around and the alpha mark may or may not move with it depending on the
  *     may its moved. This can lead to confusion and a mixed up file ordering.
- * 
- ****************************************************************************
- * 
- * Copyright (c) 1999-2000 Steven Phillips    
- *    
- * This software is provided 'as-is', without any express or implied warranty.
- * In no event will the  authors be held liable for any damages  arising  from
- * the use of this software.
- *     
- * This software was generated as part of the MicroEmacs JASSPA  distribution,
- * (http://www.jasspa.com) but is excluded from those licensing restrictions.
- *
- * Permission  is  granted  to anyone to use this  software  for any  purpose,
- * including  commercial  applications,  and to alter it and  redistribute  it
- * freely, subject to the following restrictions:
- *
- *  1. The origin of this software must not be misrepresented; you must not
- *     claim that you wrote the original software. If you use this software
- *     in a product, an acknowledgment in the product documentation would be
- *     appreciated but is not required.
- *  2. Altered source versions must be plainly marked as such, and must not be
- *     misrepresented as being the original software.
- *  3. This notice may not be removed or altered from any source distribution.
- *
- * Steven Phillips         bill@jasspa.com
- *
- ****************************************************************************/
+ */
 
 #define	__NARROWC				/* Define filename */
 

@@ -1,98 +1,80 @@
-/*****************************************************************************
+/* -*- c -*-
  *
- *	Title:		%M%
+ * JASSPA MicroEmacs - www.jasspa.com
+ * word.c - Word processing routines.
  *
- *	Synopsis:	Word processing routines
+ * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
  *
- ******************************************************************************
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *	Filename:		%P%
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
  *
- *	Author:			Danial Lawrence
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     Unknown
+ * Synopsis:    Word processing routines.
+ * Authors:     Unknown, Jon Green & Steven Phillips
+ * Description:
+ *     The routines in this file implement commands that work word or a
+ *     paragraph at a time. There are all sorts of word mode commands.
+ *     If I do any sentence mode commands, they are likely to be put in
+ *     this file. 
  *
- *	Creation Date:		10/05/91 08:27		<010807.0804>
- *
- *	Modification date:	%G% : %U%
- *
- *	Current rev:		%I%
- *
- *	Special Comments:	
- *
- *	Contents Description:	The routines in this file implement commands
- *				that work word or a paragraph at a time.  There
- *				are all sorts of word mode commands.  If I
- *				do any sentence mode commands, they are likely
- *				to be put in this file. 
- *
- * Jon Green	13th July 1990.
- * Allowed CMODE & INDENT with WRAP. In 'C' mode will perform the auto
- * indentation when wrap is performed.
+ * Notes:
  * 
- * 
+ *     Jon: 99/07/09
  *
- *****************************************************************************
- * 
- * Modifications to the original file by Jasspa. 
- * 
- * Copyright (C) 1988 - 1999, JASSPA 
- * The MicroEmacs Jasspa distribution can be copied and distributed freely for
- * any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
- * incorporated into commercial software with the expressed permission of
- * JASSPA.
- * 
- ****************************************************************************/
-
-/**************************************************************************
-* NOTICE; Jon; 99/07/09                                                   *
-*                                                                         *
-* I have just added the new Anchor routines in here to preserve the       *
-* character position of point and mark on fill paragraph. This was a      *
-* fairly quick modification that disturbed as little of the code as       *
-* possible, thereby maintaining the integrity of the release.             *
-*                                                                         *
-* The anchor routines are written ready for export because I think that   *
-* they might be useful, although they have not actually been exported yet *
-* because with misuse they will crash editor. So I'm in two minds about   *
-* this.                                                                   *
-*                                                                         *
-* The fill paragraph is now in need of a severe overhaul to reduce the    *
-* amount of work that it performs. It currently performs a destructive    *
-* justification process which is deeply unpleasant. In addition it must   *
-* scan through the source copying it multiple times - very un-nice.       *
-*                                                                         *
-* I have started to prototype a replacement which is not ready yet. This  *
-* will overcome all of the above. In addition I want to add a new Flow    *
-* mode, this will allow MicroEmacs to act more like a word processor and  *
-* throw words during the editing process onto the next line, and then     *
-* automatically re-format the remaining part of the paragraph. Obviously  *
-* handling left/right/centre correctly.                                   *
-*                                                                         *
-* On top of all of that. I want to change the paragraph recognition       *
-* markers to be a buffer dependent regexp, thereby allowing the different *
-* paragraph types to be recognised and handled correctly. And finally,    *
-* allow for text leaders (i.e. typically programming language comment     *
-* delimiters) and correctly handle text wrapping with leader insertion.   *
-*                                                                         *
-* One could argue that some of the above belongs in ifill-paragraph       *
-* (macro wrapper around fill-paragraph). However for smatter flow control *
-* I do not think that this is the case and would like to pursue a generic *
-* method that handles a multitude of cases, given the minimal amount of   *
-* setup information in the buffer                                         *
-*                                                                         *
-* All of the above is possible, it just takes a little time for some of   *
-* these things to come together - a commodity I've not got much of at the *
-* moment.                                                                 *
-**************************************************************************/
-
-/*---	Include definitions */
+ *     I have just added the new Anchor routines in here to preserve the
+ *     character position of point and mark on fill paragraph. This was a
+ *     fairly quick modification that disturbed as little of the code as
+ *     possible, thereby maintaining the integrity of the release.
+ *    
+ *     The anchor routines are written ready for export because I think that
+ *     they might be useful, although they have not actually been exported yet
+ *     because with misuse they will crash editor. So I'm in two minds about
+ *     this.
+ *    
+ *     The fill paragraph is now in need of a severe overhaul to reduce the
+ *     amount of work that it performs. It currently performs a destructive
+ *     justification process which is deeply unpleasant. In addition it must
+ *     scan through the source copying it multiple times - very un-nice.
+ *    
+ *     I have started to prototype a replacement which is not ready yet. This
+ *     will overcome all of the above. In addition I want to add a new Flow
+ *     mode, this will allow MicroEmacs to act more like a word processor and
+ *     throw words during the editing process onto the next line, and then
+ *     automatically re-format the remaining part of the paragraph. Obviously
+ *     handling left/right/centre correctly.
+ *    
+ *     On top of all of that. I want to change the paragraph recognition
+ *     markers to be a buffer dependent regexp, thereby allowing the different
+ *     paragraph types to be recognised and handled correctly. And finally,
+ *     allow for text leaders (i.e. typically programming language comment
+ *     delimiters) and correctly handle text wrapping with leader insertion.
+ *    
+ *     One could argue that some of the above belongs in ifill-paragraph
+ *     (macro wrapper around fill-paragraph). However for smatter flow control
+ *     I do not think that this is the case and would like to pursue a generic
+ *     method that handles a multitude of cases, given the minimal amount of
+ *     setup information in the buffer
+ *    
+ *     All of the above is possible, it just takes a little time for some of
+ *     these things to come together - a commodity I've not got much of at the
+ *     moment.
+ */
 
 #define	__WORDC			/* Define filename */
 
-/*---	Include files */
-
 #include "emain.h"
-
-/*---	Local macro definitions */
 
 /*
  * Move the cursor backward by "n" words. All of the details of motion are

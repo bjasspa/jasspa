@@ -1,53 +1,36 @@
-/*****************************************************************************
-*
-*	Title:		%M%
-*
-*	Synopsis:	Display routines.
-*
-******************************************************************************
-*
-*	Filename:		%P%
-*
-*	Author:			Danial Lawrence
-*
-*	Creation Date:		29/04/91 09:13
-*
-*	Modification date:	%G% : %U%	<011021.2037>
-*
-*	Current rev:		%I%
-*
-*	Special Comments:
-*
-*	Contents Description:
-*
-*
-* The functions in this file handle redisplay. There are two halves, the
-* ones that update the virtual display screen, and the ones that make the
-* physical display screen the same as the virtual display screen. These
-* functions use hints that are left in the windows by the commands.
-*
-******************************************************************************
-*
-* (C)opyright 1987 by Daniel M. Lawrence
-* MicroEMACS 3.8 can be copied and distributed freely for any
-* non-commercial purposes. MicroEMACS 3.8 can only be incorporated
-* into commercial software with the permission of the current author.
-*
-* Modifications to the original file by Jasspa.
-*
-* Copyright (C) 1988 - 1999, JASSPA
-* The MicroEmacs Jasspa distribution can be copied and distributed freely for
-* any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
-* incorporated into commercial software with the expressed permission of
-* JASSPA.
-*
-****************************************************************************/
-
-/*---	Include defintions */
+/* -*- c -*-
+ *
+ * JASSPA MicroEmacs - www.jasspa.com
+ * display.c - Display routines.
+ *
+ * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     Unknown
+ * Synopsis:    Display routines.
+ * Authors:     Unknown, Jon Green & Steven Phillips
+ * Description:
+ *     The functions in this file handle redisplay. There are two halves, the
+ *     ones that update the virtual display screen, and the ones that make the
+ *     physical display screen the same as the virtual display screen. These
+ *     functions use hints that are left in the windows by the commands.
+ */
 
 #define	__DISPLAYC				/* Name file */
-
-/*---	Include files */
 
 #include "emain.h"
 #include "eskeys.h"		/* External Defintions */
@@ -65,18 +48,11 @@
 #include <pc.h>
 #endif
 
-/*---	Local macro definitions */
-
-/*---	External references */
-
-/*---	Local type definitions */
-
 /*
  * Set the virtual cursor to the specified row and column on the virtual
  * screen. There is no checking for nonsense values; this might be a good
  * idea during the early stages.
  */
-/*---	Local variable definitions */
 
 VVIDEO        vvideo;                   /* Head of the virtual video list */
 LINE          *mline;                   /* message line. */
@@ -478,11 +454,13 @@ windCurLineOffsetEval(WINDOW *wp)
     }
     /* store dotp as the last line done */
     wp->curLineOff->l_fp = wp->w_dotp ;
+#if COLOR
 #if HILIGHT
     if((wp->w_bufp->hiLight != 0) &&
        (hilights[wp->w_bufp->hiLight]->type & HFRPLCDIFF))
         hilightCurLineOffsetEval(wp) ;
     else
+#endif
 #endif
     {
         register uint8 cc, *ss, *off ;
@@ -708,6 +686,7 @@ updateline(register int row, register VIDEO *vp1, WINDOW *window)
     if((flag = vp1->flag) & VFMAINL)
     {
         meSCHEME scheme;
+#if COLOR
         if(vp1->line->l_flag & LNSMASK)
         {
             scheme = window->w_bufp->lscheme[vp1->line->l_flag & LNSMASK] ;
@@ -744,11 +723,16 @@ updateline(register int row, register VIDEO *vp1, WINDOW *window)
         }
 #endif
         else
+#endif
         {
             uint16 lineLen;
 
+#if COLOR
             scheme = window->w_bufp->scheme;
 hideLineJump:
+#else
+            scheme = globScheme;
+#endif
             blkp = hilBlock + 1 ;
             lineLen = vp1->line->l_used;
 
@@ -1297,6 +1281,7 @@ updateWindow(WINDOW *wp)
         while(--ii >= 0)
             lp = lback(lp) ;
     }
+#if COLOR
 #if HILIGHT
     if(bp->hiLight)
     {
@@ -1313,6 +1298,7 @@ updateWindow(WINDOW *wp)
             wp->w_flag &= ~WFLOOKBK ;
         }
     }
+#endif
 #endif
 #ifdef _WIN32
 #ifdef _WINCON
@@ -1344,9 +1330,11 @@ updateWindow(WINDOW *wp)
                 vptr->endp = wp->numTxtCols ;
             vptr->wind = wp ;
             vptr->line = lp ;
+#if COLOR
 #if HILIGHT
             vptr[1].hilno = bp->hiLight ;
             vptr[1].bracket = NULL ;
+#endif
 #endif
         }
         else if((lp->l_flag & LNCHNG) ||
@@ -2907,6 +2895,7 @@ mlerase(int flag)
 }
 
 
+#if COLOR
 /*
  * addColor
  * Add a new colour palett entry, or modify existing colour
@@ -3052,6 +3041,7 @@ addColorScheme(int f, int n)
         TTsetBgcol() ;
     return TRUE;
 }
+#endif
 
 
 /************************** VIRTUAL VIDEO INTERFACES **************************
