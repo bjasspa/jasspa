@@ -427,7 +427,8 @@ osd 7  100 "-"
 osd 7  110 ""  "\HOrganizer"                       f organizer
 osd 7  120 "i" "\HMail"                            f "mail"
 osd 7  130 "i" "\HView Mail"                       f "vm"
-osd 7  140 "-"
+osd 7  140 "i" "\HNotes"                           f "notes"
+osd 7  150 "-"
 osd 7  300 "M" "More..."                         22
 ;
 ; MENU #8 - WINDOW sub-menu
