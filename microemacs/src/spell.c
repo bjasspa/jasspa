@@ -2003,7 +2003,7 @@ spellWord(int f, int n)
             if(wordCheck(wd) > 0)
             {
                 lineInsertString(0,wd) ;
-                lineInsertNewline(meTRUE) ;
+                lineInsertNewline(meFALSE) ;
             }
             for(ii=0 ; ii<NOSPELLRULES ; ii++)
             {
@@ -2023,7 +2023,7 @@ spellWord(int f, int n)
                         if(wordCheck(word) > 0)
                         {
                             lineInsertString(0,nwd) ;
-                            lineInsertNewline(meTRUE) ;
+                            lineInsertNewline(meFALSE) ;
                             if(meRuleFlags[ii] == (RULE_PREFIX|RULE_MIXABLE))
                             {
                                 meSpellRule  *sr ;
@@ -2042,7 +2042,7 @@ spellWord(int f, int n)
                                                 if(wordCheck(word) > 0)
                                                 {
                                                     lineInsertString(0,nwd) ;
-                                                    lineInsertNewline(meTRUE) ;
+                                                    lineInsertNewline(meFALSE) ;
                                                 }
                                                 wordSuffixRuleRemove(swd,sr) ;
                                             }

@@ -970,8 +970,7 @@ replaces(int kind, int ff, int nn)
                     return mlwrite(MWABORT,(meUByte *)"[ERROR while deleting]");
                 
 		/* And put in the old one. */
-                if((i = bufferInsertText(dpat)) < 0)
-                    return meABORT ;
+                i = bufferInsertText(dpat,meFALSE) ;
 #if MEOPT_UNDO
                 meUndoAddReplaceEnd(i) ;
 #endif
@@ -1475,7 +1474,11 @@ searchBuffer(int f, int n)
 void srchFreeMemory(void)
 {
 #if MEOPT_MAGIC
+    void meRegexFree(meRegex *regex) ;
+
     meRegexFree(&mereRegex) ;
+    meRegexFree(&meRegexStrCmp) ;
+    meNullFree(mereNewlBuf) ;
 #endif
 }
 #endif

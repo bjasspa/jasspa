@@ -555,8 +555,8 @@ extern	void	lineSetChanged(int flag);
 extern  meUByte *lineMakeSpace(int n);
 extern	int	lineInsertChar(int n, int c);
 extern	int	lineInsertString(int n, meUByte *cp);
-extern	int	lineInsertNewline(int ignoreProtect);
-extern	int     bufferInsertText(meUByte *str) ;
+extern	int	lineInsertNewline(meInt undoCall);
+extern	int     bufferInsertText(meUByte *str, meInt undoCall) ;
 extern	int	bufferInsertSpace(int f, int n);
 extern	int	bufferInsertTab(int f, int n);
 extern	int	bufferInsertString(int f, int n);
@@ -639,9 +639,9 @@ extern  void    _meAssert(char *file, int line);
 #if MEOPT_NARROW
 extern meNarrow *
 meBufferCreateNarrow(meBuffer *bp, meLine *slp, meLine *elp, meInt sln, meInt eln,
-                     meInt name, meScheme scheme, meUByte *markupLine, meInt markupCmd) ;
+                     meInt name, meScheme scheme, meUByte *markupLine, meInt markupCmd, meInt undoCall) ;
 extern void
-meBufferRemoveNarrow(meBuffer *bp, register meNarrow *nrrw, int useDot, meUByte *firstLine) ;
+meBufferRemoveNarrow(meBuffer *bp, register meNarrow *nrrw, meUByte *firstLine, meInt undoCall) ;
 extern void meBufferExpandNarrowAll(meBuffer *bp) ;
 extern void meBufferCollapseNarrowAll(meBuffer *bp) ;
 extern int  meLineRemoveNarrow(meBuffer *bp, meLine *lp) ;
@@ -710,9 +710,15 @@ extern  int     WinPrint(meUByte *name, meLine *phead);
 #endif /* PRINT */
 
 /* random.c externals */
+#ifdef _ME_WIN32_FULL_DEBUG
+#define meMalloc  malloc
+#define meRealloc realloc
+#define meStrdup  strdup
+#else
 extern  void   *meMalloc(size_t s) ;
 extern  void   *meRealloc(void *, size_t s) ;
 extern  void   *meStrdup(const meUByte *s) ;
+#endif
 extern  void    meStrrep(meUByte **d, const meUByte *s) ;
 extern  int     meStricmp(const meUByte *str1, const meUByte *str2) ;
 extern  int     meStrnicmp(const meUByte *str1, const meUByte *str2, size_t nn) ;
