@@ -1,0 +1,98 @@
+> -!- document; fill-mode:both; fill-column:65; -!-
+>  Copyright 2003 Jasspa.
+
+THE JASSPA CDROM
+
+Introduction
+
+    The JASSPA  CD-ROM is a collection  of all of the software on
+    www.jasspa.com  bundled onto a single CD-ROM. The  motivation
+    for doing this was to be able to move  between  machines  and
+    still be able to run JASSPA's MicroEmacs without having to do
+    a complete installation.
+
+    Having  discovered  "cdrecord"  and  "mkisofs"  on UNIX  then
+    putting  together  a  single  media  source  for any  machine
+    becomes  feasible. Now one can build a complete hybrid CD-ROM
+    to be read on any platform using a "make" script the likes of
+    Roxio "Easy CD Creator"  are history and writing  CD-ROMs can
+    become automated, repeatable and easily maintained.
+
+CD-ROM
+
+    The CD-ROM's have been prepared as a hybrid ISO9660 image for
+    any system,  supporting  Microsoft  Joliet,  UNIX High Sierra
+    with Rock Ridge extensions and Apple HFS file systems.
+
+    Any   duplication  of  the  CDs  may  result  in  a  loss  of
+    information   without  the  appropriate   master  disk  image
+    (jasspa0212.iso).
+
+CD Labels
+
+    Labels for the CD-ROM are included in the CD-ROM  image, burn
+    the CD-ROM and then print the labels from the CD-ROM.
+
+    The source labels  generated  with  SureThing  CD/DVD Labeler
+    http://www.surething.com/ST/
+
+Full Disk Contents
+
+    The full disk contents are as follows:-
+
+    archive - All of the ZIP and tarball archives from www.jasspa.com
+              (source, macros, spelling, executables)
+
+    cdlabels    - The CD Labels for the disk.
+
+    doc     - Browsable documentation formats
+              (HTML, PDF, Windows CHM, Windows Help).
+
+    experimental - The latest  pre-release  source code, provided
+                   in source form. This is not a formal  release,
+                   but is  provided  for those early  adopters to
+                   trial.  Limited   pre-build   executables  are
+                   provided.
+
+    macros - A browsable macros directory.
+
+    me     - A live version of JASSPA's  MicroEmacs, includes all
+             of the  executables  and macros  that allow the full
+             version of  JASSPA's  MicroEmacs  to be run from the
+             CD-ROM without installation.
+
+    ne     - A live  version of  JASSPA's  NanoEmacs  that allows
+             nanoEmacs   to  be  run  from  the  CD-ROM   without
+             installation.
+
+    packages - Contains JASSPA MicroEmacs in package or installer
+               format for various platforms.
+
+    src    - A browasble source directory.
+
+    submissions - Directory containing submissions from users.
+
+Exec Disk Contents
+
+    The   executable   disk   is  a  small   disk   with  a  live
+    version of MicroEmacs and NanoEmacs, with source.
+
+    The executable disk contents include:-
+
+    archive -  Limited  number of  archives  (source  and  macros
+               only).
+
+    cdlabels - The CD Labels for the disk.
+
+    me     - A live version of JASSPA's  MicroEmacs, includes all
+             of the  executables  and macros  that allow the full
+             version of  JASSPA's  MicroEmacs  to be run from the
+             CD-ROM without installation.
+
+    ne     - A live  version of  JASSPA's  NanoEmacs  that allows
+             nanoEmacs   to  be  run  from  the  CD-ROM   without
+             installation.
+
+Prepared by JASSPA
+Copyright (c) 2003 JASSPA
+10th August 2003
