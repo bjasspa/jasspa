@@ -1,0 +1,21 @@
+LIBRARY	     utsamp16	    ; Library's module name
+DESCRIPTION  'Sample Win32s Universal Thunk Application'
+EXETYPE      WINDOWS 3.1    ; required for all Windows applications
+STUB         'C:\MSVC\BIN\WINSTUB.EXE' ; Generates error message if application
+			   ; is run without Windows
+
+;CODE can be moved in memory and discarded/reloaded
+CODE  PRELOAD MOVEABLE DISCARDABLE
+
+DATA  PRELOAD MOVEABLE SHARED
+
+HEAPSIZE     MAXVAL
+
+; Export all callback and externally available functions
+EXPORTS
+	WEP	@1 RESIDENTNAME
+	UTINIT	@2
+	UTPROC	@3
+
+IMPORTS
+	USER.WNETGETUSER
