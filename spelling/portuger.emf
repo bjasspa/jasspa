@@ -1,0 +1,887 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : $Author: jon $
+;  Created By    : Steven Phillips
+;  Created       : Thu May 27 09:17:09 1999
+;  Last Modified : <010699.2200>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;      Rules must be given in standard Latin font
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+0 define-macro spell-rules-init
+!emacro
+
+set-variable .spell.rules "ABCDEFIKMORSUXYZabcdefghijmnpstvwxyz"
+
+; reset the spell rules
+0 add-spell-rule
+
+; disable hyphen
+  add-spell-rule "-" "n"
+  
+; Now add the Portugues spell rules
+; prefixes
+
+;flag *A:                   # anti
+-2 add-spell-rule "A" "" "" "anti"            ; "FSEM=anti"       # ex. venenoso -> antivenenoso
+;flag *B:                   # -anti
+-2 add-spell-rule "B" "" "" "anti-"           ; "FSEM=anti"       # ex. semita -> anti-semita
+
+;flag *S:                   # des
+-2 add-spell-rule "S" "[^h]" "" "des"         ; "FSEM=not"       # ex. amarrar -> desamarrar
+-2 add-spell-rule "S" "h" "h" "des"           ; "FSEM=not"       # ex. habitar -> desabitar
+
+;flag *I:                   #in
+-2 add-spell-rule "I" "[^plmr]" "" "in"       ; "FSEM=not"    # ex. finito -> infinito
+-2 add-spell-rule "I" "p" "" "im"             ; "FSEM=not"    # ex. paciente -> impaciente
+-2 add-spell-rule "I" "[lm]" "" "i"           ; "FSEM=not"    # ex. material -> imaterial
+-2 add-spell-rule "I" "r" "" "ir"             ; "FSEM=not"    # ex. real -> irreal
+
+;flag *R:                   #re
+-2 add-spell-rule "R" "[^s]" "" "re"          ; "FSEM=outra"     # ex. encontrar -> reencontrar
+-2 add-spell-rule "R" "s" "" "res"            ; "FSEM=outra"     # ex. surgir -> ressurgir
+
+;flag *E:                   #pre
+-2 add-spell-rule "E" "" "" "pré-"            ; "FSEM=pre"       # ex. escolar -> pré-escolar
+
+;flag *O:                   #pos
+-2 add-spell-rule "O" "" "" "pós-"            ; "FSEM=pos"       # ex. guerra -> pós-guerra
+
+;flag *U:                   #sub
+-2 add-spell-rule "U" "" "" "sub-"            ; "FSEM=sub"       # ex. problema -> sub-problema
+
+;suffixes
+
+;-----------------------------------------
+;plurais - os mais habituais
+;flag *p:         # "CAT=a_nc,N=s"      #plurais
+ 2 add-spell-rule "p" "[^ã][^lsmrnzx]" "" "s" ; "N=p"         # -> s         ex. pato, patos
+ 2 add-spell-rule "p" "ãe" "" "s"             ; "N=p"         # ãe -> ães    ex. mãe, mães
+ 2 add-spell-rule "p" "ão" "ão" "ões"         ; "N=p"         # ão -> ões    ex. leão, leões
+ 2 add-spell-rule "p" "al" "l" "is"           ; "N=p"         # al -> ais    ex. animal, animais
+ 2 add-spell-rule "p" "ol" "ol" "óis"         ; "N=p"         # ol -> óis    ex. anzol, anzóis
+ 2 add-spell-rule "p" "[^v]el" "el" "éis"     ; "N=p"         # el -> éis    ex. papel, papéis
+ 2 add-spell-rule "p" "[áéíóú]vel" "l" "is"   ; "N=p"         # el -> eis    ex. afável, afáveis
+ 2 add-spell-rule "p" "il" "l" "s"            ; "N=p"         # il -> is     ex. funil, funis
+ 2 add-spell-rule "p" "[^áéê]s" "" "es"       ; "N=p"         # -> es        ex. deus, deuses
+ 2 add-spell-rule "p" "ás" "ás" "ases"        ; "N=p"         # ás -> ases   ex. gás, gases
+ 2 add-spell-rule "p" "és" "és" "eses"        ; "N=p"         # és -> eses   ex. revés,reveses
+ 2 add-spell-rule "p" "ês" "ês" "eses"        ; "N=p"         # ês -> eses   ex. japonês,japoneses
+ 2 add-spell-rule "p" "m" "m" "ns"            ; "N=p"         # m -> ns      ex. jovem, jovens
+ 2 add-spell-rule "p" "[rnzx]" "" "es"        ; "N=p"         # -> es        ex. cantor, cantores
+
+;flag *a:         # "CAT=a_nc,N=s"      #plurais
+ 2 add-spell-rule "a" "ão" "" "s"             ; "N=p"         # ão -> ãos     ex. mão, mãos
+ 2 add-spell-rule "a" "il" "il" "eis"         ; "N=p"         # il -> eis     ex. ágil, ágeis  # deve ser posto em todos os que têm acento e acabam em il
+
+;flag *e:         # "CAT=a_nc,N=s"      #plurais
+ 2 add-spell-rule "e" "ão" "o" "es"           ; "N=p"         # ão -> ães     ex. pão, pães
+
+;-----------------------------------------
+; femininos - os mais habituais
+;flag *f:         # "CAT=a_nc,G=m,N=s"  #femininos
+ 2 add-spell-rule "f" "[^ã]o" "o" "a"         ; "G=f"         # o -> a     ex. pato -> pata
+ 2 add-spell-rule "f" "[^ã]o" "o" "as"        ; "G=f,N=p"
+ 2 add-spell-rule "f" "[^aeiouscn]" "" "a"    ; "G=f"         # -> a       ex. cantor -> cantora
+ 2 add-spell-rule "f" "[^aeiouscn]" "" "as"   ; "G=f,N=p"
+ 2 add-spell-rule "f" "[^ê]s" "" "a"          ; "G=f"         # -> a       ex. deus   -> deusa
+ 2 add-spell-rule "f" "[^ê]s" "" "as"         ; "G=f,N=p"
+ 2 add-spell-rule "f" "ês" "ês" "esa"         ; "G=f"         # ês -> esa   ex. japonês -> japonesa
+ 2 add-spell-rule "f" "ês" "ês" "esas"        ; "G=f,N=p"    # ês -> esas  ex. japonês -> japonesas
+ 2 add-spell-rule "f" "ão" "ão" "ona"         ; "G=f"         # ão -> ona   ex. burlão -> burlona
+ 2 add-spell-rule "f" "ão" "ão" "onas"        ; "G=f,N=p"
+ 2 add-spell-rule "f" "e" "e" "a"             ; "G=f"         # e -> a     ex. ele -> ela
+ 2 add-spell-rule "f" "e" "e" "as"            ; "G=f,N=p"    # e -> a     ex. ele -> elas
+
+;flag *b:         # "CAT=a_nc,G=m,N=s"  #femininos
+ 2 add-spell-rule "b" "ão" "o" ""             ; "G=f"         # ão -> ã     ex. alemão -> alemã
+ 2 add-spell-rule "b" "ão" "o" "s"            ; "G=f,N=p"    # ão -> ãs
+
+;flag *g:         # "CAT=a_nc,G=m,N=s"  #femininos
+ 2 add-spell-rule "g" "ão" "ão" "oa"          ; "G=f"         # ão -> oa     ex. patrão -> patroa
+ 2 add-spell-rule "g" "ão" "ãos" "oas"        ; "G=f,N=p"    # ão -> oas
+
+;----------------------------------------
+; mente
+;flag *m:         # "CAT=adj,N=s"       #mente
+ 2 add-spell-rule "m" "o" "o" "amente"        ; "CAT=adv"      # aberto->abertamente
+ 2 add-spell-rule "m" "[^v][^n~][^o]" "" "mente" ; "CAT=adv"      # anterior->anteriormente  N~-means any char
+ 2 add-spell-rule "m" "ável" "ável" "avelmente" ; "CAT=adv"      # amável->amavelmente
+ 2 add-spell-rule "m" "ível" "ível" "ivelmente" ; "CAT=adv"      # horrível->horrivelmente
+
+;----------------------------------------
+; íssimo
+;flag *s:         # "CAT=adj,N=s"       #issimo
+ 2 add-spell-rule "s" "[^cçg]o" "o" "íssimo"  ; "GR=sup"       # alto->altíssimo
+ 2 add-spell-rule "s" "co" "co" "quíssimo"    ; "GR=sup"       # pouco->pouquíssimo
+ 2 add-spell-rule "s" "ço" "ço" "císsimo"     ; "GR=sup"       # vivac,o->vivacíssimo
+ 2 add-spell-rule "s" "go" "go" "guíssimo"    ; "GR=sup"       # meigo->meiguíssimo
+ 2 add-spell-rule "s" "e" "e" "íssimo"        ; "GR=sup"       # leve->levíssimo
+ 2 add-spell-rule "s" "[lr]" "" "íssimo"      ; "GR=sup"       # normal->normalíssimo
+ 2 add-spell-rule "s" "ês" "ês" "esíssimo"    ; "GR=sup"       # burguês->burguesíssimo
+ 2 add-spell-rule "s" "z" "z" "císsimo"       ; "GR=sup"       # feliz->felicíssimo
+
+ 2 add-spell-rule "s" "[^cçg]o" "o" "íssima"  ; "GR=sup,G=f"       # alto->altíssima
+ 2 add-spell-rule "s" "co" "co" "quíssima"    ; "GR=sup,G=f"       # pouco->pouquíssima
+ 2 add-spell-rule "s" "ço" "ço" "císsima"     ; "GR=sup,G=f"       # vivac,o->vivacíssima
+ 2 add-spell-rule "s" "go" "go" "guíssima"    ; "GR=sup,G=f"       # meigo->meiguíssima
+ 2 add-spell-rule "s" "e" "e" "íssima"        ; "GR=sup,G=f"       # leve->levíssima
+ 2 add-spell-rule "s" "[lr]" "" "íssima"      ; "GR=sup,G=f"       # normal->normalíssima
+ 2 add-spell-rule "s" "ês" "ês" "esíssima"    ; "GR=sup,G=f"       #
+ 2 add-spell-rule "s" "z" "z" "císsima"       ; "GR=sup,G=f"       # feliz->felicíssima
+
+ 2 add-spell-rule "s" "[^cçg]o" "o" "íssimos" ; "GR=sup,N=p"       # alto->altíssimos
+ 2 add-spell-rule "s" "co" "co" "quíssimos"   ; "GR=sup,N=p"       # pouco->pouquíssimos
+ 2 add-spell-rule "s" "ço" "ço" "císsimos"    ; "GR=sup,N=p"       # vivac,o->vivacíssimos
+ 2 add-spell-rule "s" "go" "go" "guíssimos"   ; "GR=sup,N=p"       # meigo->meiguíssimos
+ 2 add-spell-rule "s" "e" "e" "íssimos"       ; "GR=sup,N=p"       # leve->levíssimos
+ 2 add-spell-rule "s" "[lr]" "" "íssimos"     ; "GR=sup,N=p"       # normal->normalíssimos
+ 2 add-spell-rule "s" "ês" "ês" "esíssimos"   ; "GR=sup,N=p"       # burguês->burguesíssimos
+ 2 add-spell-rule "s" "z" "z" "císsimos"      ; "GR=sup,N=p"       # feliz->felicíssimos
+
+ 2 add-spell-rule "s" "[^cçg]o" "o" "íssimas" ; "GR=sup,G=f,N=p"   # alto->altíssimas
+ 2 add-spell-rule "s" "co" "co" "quíssimas"   ; "GR=sup,G=f,N=p"   # pouco->pouquíssimas
+ 2 add-spell-rule "s" "ço" "ço" "císsimas"    ; "GR=sup,G=f,N=p"   # vivac,o->vivacíssimas
+ 2 add-spell-rule "s" "go" "go" "guíssimas"   ; "GR=sup,G=f,N=p"   # meigo->meiguíssimas
+ 2 add-spell-rule "s" "e" "e" "íssimas"       ; "GR=sup,G=f,N=p"   # leve->levíssimas
+ 2 add-spell-rule "s" "[lr]" "" "íssimas"     ; "GR=sup,G=f,N=p"   # normal->normalíssimas
+ 2 add-spell-rule "s" "ês" "ês" "esíssimas"   ; "GR=sup,G=f,N=p"   #
+ 2 add-spell-rule "s" "z" "z" "císsimas"      ; "GR=sup,G=f,N=p"   # feliz->felicíssimas
+
+;-----------------------------------------
+; idade
+;flag *d:         # "CAT=adj,N=s"       #idade
+ 2 add-spell-rule "d" "[^çg]o" "o" "idade"    ; "CAT=nc,G=f,FSEM=dd" # activo->actividade
+ 2 add-spell-rule "d" "ço" "ço" "cidade"      ; "CAT=nc,G=f,FSEM=dd" # castic,o->casticidade
+ 2 add-spell-rule "d" "go" "go" "guidade"     ; "CAT=nc,G=f,FSEM=dd" # antigo->antiguidade
+ 2 add-spell-rule "d" "e" "e" "idade"         ; "CAT=nc,G=f,FSEM=dd" # breve->brevidade
+ 2 add-spell-rule "d" "r" "" "idade"          ; "CAT=nc,G=f,FSEM=dd" # angular->angularidade
+ 2 add-spell-rule "d" "[^v][^n~]l" "" "idade" ; "CAT=nc,G=f,FSEM=dd" # amoral->amoralidade
+ 2 add-spell-rule "d" "[^áí]vel" "vel" "bilidade" ; "CAT=nc,G=f,FSEM=dd" #
+ 2 add-spell-rule "d" "ável" "ável" "abilidade" ; "CAT=nc,G=f,FSEM=dd" # amável->amabilidade
+ 2 add-spell-rule "d" "ível" "ível" "ibilidade" ; "CAT=nc,G=f,FSEM=dd" # amovível->amovibilidade
+ 2 add-spell-rule "d" "z" "z" "cidade"        ; "CAT=nc,G=f,FSEM=dd" # feroz->ferocidade
+
+ 2 add-spell-rule "d" "[^çg]o" "o" "idades"   ; "CAT=nc,G=f,N=p,FSEM=dd" # activo->actividades
+ 2 add-spell-rule "d" "go" "go" "guidades"    ; "CAT=nc,G=f,N=p,FSEM=dd" # antigo->antiguidades
+ 2 add-spell-rule "d" "[^v][^n~]l" "" "idades" ; "CAT=nc,G=f,N=p,FSEM=dd" # funcional->funcionalidades
+
+;-----------------------------------------
+; ismo
+;flag *i:         # "CAT=nc,N=s"   #ismo
+ 2 add-spell-rule "i" "[^cçã]o" "o" "ismo"    ; "FSEM=ismo"   # activo->activismo
+ 2 add-spell-rule "i" "co" "co" "quismo"      ; "FSEM=ismo"   # barroco->barroquismo
+ 2 add-spell-rule "i" "ço" "ço" "cismo"       ; "FSEM=ismo"   # castic,o->casticismo
+ 2 add-spell-rule "i" "ção" "ção" "cionismo"  ; "FSEM=ismo"   # abolic,ão->abolicionismo
+ 2 add-spell-rule "i" "[^icg]a" "a" "ismo"    ; "FSEM=ismo"   # buda->budismo
+ 2 add-spell-rule "i" "ia" "a" "smo"          ; "FSEM=ismo"   # academia->academismo
+ 2 add-spell-rule "i" "ca" "ca" "quismo"      ; "FSEM=ismo"   # benfica->benfiquismo
+ 2 add-spell-rule "i" "ga" "ga" "guismo"      ; "FSEM=ismo"   # colega->coleguismo
+ 2 add-spell-rule "i" "e" "e" "ismo"          ; "FSEM=ismo"   # brilhante->brilhantismo
+ 2 add-spell-rule "i" "[lr]" "" "ismo"        ; "FSEM=ismo"   # actual->actualismo
+ 2 add-spell-rule "i" "ês" "ês" "esismo"      ; "FSEM=ismo"   # chinês->chinesismo
+
+;-----------------------------------------
+; ista
+;flag *t:          # "CAT=nc,N=s"      #ista
+ 2 add-spell-rule "t" "[^cçã]o" "o" "ista"    ; "FSEM=ista"  # porto->portista
+ 2 add-spell-rule "t" "co" "co" "quista"      ; "FSEM=ista"  # bloco->bloquista
+ 2 add-spell-rule "t" "ço" "ço" "cista"       ; "FSEM=ista"  # aderec,o->aderecista
+ 2 add-spell-rule "t" "ção" "ção" "cionista"  ; "FSEM=ista"  # abolic,ão->abolicionista
+ 2 add-spell-rule "t" "[^içg]a" "a" "ista"    ; "FSEM=ista"  # bomba->bombista
+ 2 add-spell-rule "t" "ia" "a" "sta"          ; "FSEM=ista"  # anarquia->anarquista
+ 2 add-spell-rule "t" "ça" "ça" "cista"       ; "FSEM=ista"  # cobranc,a->cobrancista
+ 2 add-spell-rule "t" "ga" "a" "uista"        ; "FSEM=ista"  # borga->borguista
+ 2 add-spell-rule "t" "e" "e" "ista"          ; "FSEM=ista"  # alarme->alarmista
+ 2 add-spell-rule "t" "[lr]" "" "ista"        ; "FSEM=ista"  # flor->florista
+
+ 2 add-spell-rule "t" "[^cçã]o" "o" "istas"   ; "N=p,FSEM=ista"  # porto->portistas
+ 2 add-spell-rule "t" "co" "co" "quistas"     ; "N=p,FSEM=ista"  # bloco->bloquistas
+ 2 add-spell-rule "t" "ço" "ço" "cistas"      ; "N=p,FSEM=ista"  # aderec,o->aderecistas
+ 2 add-spell-rule "t" "ção" "ção" "cionistas" ; "N=p,FSEM=ista"  # abolic,ão->abolicionistas
+ 2 add-spell-rule "t" "[^içg]a" "a" "istas"   ; "N=p,FSEM=ista"  # bomba->bombistas
+ 2 add-spell-rule "t" "ia" "a" "stas"         ; "N=p,FSEM=ista"  # anarquia->anarquistas
+ 2 add-spell-rule "t" "ça" "ça" "cistas"      ; "N=p,FSEM=ista"  # cobranc,a->cobrancistas
+ 2 add-spell-rule "t" "ga" "a" "uistas"       ; "N=p,FSEM=ista"  # borga->borguistas
+ 2 add-spell-rule "t" "e" "e" "istas"         ; "N=p,FSEM=ista"  # alarme->alarmistas
+ 2 add-spell-rule "t" "[lr]" "" "istas"       ; "N=p,FSEM=ista"  # flor->floristas
+
+;-----------------------------------------
+; inho
+;flag *h:            # "CAT=a_nc,N=s"      #inho
+ 2 add-spell-rule "h" "[^cgçãi]o" "o" "inho"  ; "GR=dim"  # beijo->beijinho
+ 2 add-spell-rule "h" "co" "co" "quinho"      ; "GR=dim"  # porco->porquinho
+ 2 add-spell-rule "h" "ço" "ço" "cinho"       ; "GR=dim"  # mac,o->macinho
+ 2 add-spell-rule "h" "go" "o" "uinho"        ; "GR=dim"  # antigo->antiguinho
+ 2 add-spell-rule "h" "ão" "" "zinho"         ; "GR=dim"  # cão->cãozinho
+ 2 add-spell-rule "h" "e" "e" "inho"          ; "GR=dim"  # bigode->bigodinho
+ 2 add-spell-rule "h" "[^ê][sz]" "" "inho"    ; "GR=dim"  # arroz->arrozinho
+ 2 add-spell-rule "h" "ês" "ês" "esinho"      ; "GR=dim"  # chinês->chinesinho
+ 2 add-spell-rule "h" "[irun]" "" "zinho"     ; "GR=dim"  # bar->barzinho
+ 2 add-spell-rule "h" "ó" "ó" "ozinho"        ; "GR=dim"  # pó->pozinho
+ 2 add-spell-rule "h" "ô" "ô" "ozinho"        ; "GR=dim"  # avô->avozinho
+ 2 add-spell-rule "h" "é" "é" "ezinho"        ; "GR=dim"  # pé->pezinho
+ 2 add-spell-rule "h" "ú" "ú" "uzinho"        ; "GR=dim"  # baú->bauzinho
+ 2 add-spell-rule "h" "m" "m" "nzinho"        ; "GR=dim"  # homem->homenzinho
+ 2 add-spell-rule "h" "l" "" "zinho"          ; "GR=dim"  # anel->anelzinho
+
+ 2 add-spell-rule "h" "[^cgçãi]o" "o" "inhos" ; "N=p,GR=dim"  # beijo->beijinhos
+ 2 add-spell-rule "h" "co" "co" "quinhos"     ; "N=p,GR=dim"  # porco->porquinhos
+ 2 add-spell-rule "h" "ço" "ço" "cinhos"      ; "N=p,GR=dim"  # maço->macinhos
+ 2 add-spell-rule "h" "go" "o" "uinhos"       ; "N=p,GR=dim"  # antigo->antiguinhos
+ 2 add-spell-rule "h" "ão" "" "zinhos"        ; "N=p,GR=dim"  # cão->cãozinhos
+ 2 add-spell-rule "h" "e" "e" "inhos"         ; "N=p,GR=dim"  # bigode->bigodinhos
+ 2 add-spell-rule "h" "[^ê][sz]" "" "inhos"   ; "N=p,GR=dim"  # arroz->arrozinhos
+ 2 add-spell-rule "h" "ês" "ês" "esinhos"     ; "N=p,GR=dim"  # chinês->chinesinhos
+ 2 add-spell-rule "h" "[irun]" "" "zinhos"    ; "N=p,GR=dim"  # bar->barzinhos
+ 2 add-spell-rule "h" "ó" "ó" "ozinhos"       ; "N=p,GR=dim"  # pó->pozinhos
+ 2 add-spell-rule "h" "ô" "ô" "ozinhos"       ; "N=p,GR=dim"  # avô->avozinhos
+ 2 add-spell-rule "h" "é" "é" "ezinhos"       ; "N=p,GR=dim"  # pé->pezinhos
+ 2 add-spell-rule "h" "ú" "ú" "uzinhos"       ; "N=p,GR=dim"  # baú->bauzinhos
+ 2 add-spell-rule "h" "m" "m" "nzinhos"       ; "N=p,GR=dim"  # homem->homenzinhos
+ 2 add-spell-rule "h" "l" "" "zinhos"         ; "N=p,GR=dim"  # anel->anelzinhos
+
+ 2 add-spell-rule "h" "[^çg]a" "a" "inha"     ; "GR=dim"  # depressa->depressinha
+ 2 add-spell-rule "h" "ca" "ca" "quinha"      ; "GR=dim"  # vaca->vaquinha
+ 2 add-spell-rule "h" "ça" "ça" "cinha"       ; "GR=dim"  # cabeça->cabecinha
+ 2 add-spell-rule "h" "ga" "a" "uinha"        ; "GR=dim"  # carga->carguinha
+ 2 add-spell-rule "h" "á" "á" "azinha"        ; "GR=dim"  # pá->pazinha
+ 2 add-spell-rule "h" "ã" "ã" "azinha"        ; "GR=dim"  # mamã->mamazinha
+
+ 2 add-spell-rule "h" "[^çg]a" "a" "inhas"    ; "N=p,GR=dim"  # depressa->depressinhas
+ 2 add-spell-rule "h" "ca" "ca" "quinhas"     ; "GR=dim"      # vaca->vaquinhas
+ 2 add-spell-rule "h" "ça" "ça" "cinhas"      ; "N=p,GR=dim"  # cabeça->cabecinhas
+ 2 add-spell-rule "h" "ga" "a" "uinhas"       ; "N=p,GR=dim"  # carga->carguinhas
+ 2 add-spell-rule "h" "á" "á" "azinhas"       ; "N=p,GR=dim"  # pá->pazinhas
+ 2 add-spell-rule "h" "ã" "ã" "azinhas"       ; "N=p,GR=dim"  # mamã->mamazinhas
+
+;flag z:                               #inho
+ 1 add-spell-rule "z" "[^ã][eo]" "" "zinho"   ; "GR=dim"  # pobre->pobrezinho
+ 1 add-spell-rule "z" "l" "" "inho"           ; "GR=dim"  # casal->casalinho
+
+ 1 add-spell-rule "z" "[^ã][eo]" "" "zinhos"  ; "N=p,GR=dim"  # pobre->pobrezinhos
+ 1 add-spell-rule "z" "l" "" "inhos"          ; "N=p,GR=dim"  # casal->casalinhos
+
+;---------------------------------------
+; ção
+;flag *c:                 # "CAT=v,T=inf"      # çao
+ 2 add-spell-rule "c" "[ae]r" "r" "ção"       ; "CAT=nc,G=f,N=s,FSEM=cao"  # inalar->inalac,ão
+ 2 add-spell-rule "c" "[^zg]ir" "r" "ção"     ; "CAT=nc,G=f,N=s,FSEM=cao"  # abolir->abolic,ão
+ 2 add-spell-rule "c" "zir" "zir" "ção"       ; "CAT=nc,G=f,N=s,FSEM=cao"  # seduzir->seduc,ão
+ 2 add-spell-rule "c" "por" "r" "sição"       ; "CAT=nc,G=f,N=s,FSEM=cao"  # expor->exposic,ão
+
+ 2 add-spell-rule "c" "[ae]r" "r" "ções"      ; "CAT=nc,G=f,N=p,FSEM=cao"  # inalar->inalac,ões
+ 2 add-spell-rule "c" "[^zg]ir" "r" "ções"    ; "CAT=nc,G=f,N=p,FSEM=cao"  # abolir->abolic,ões
+ 2 add-spell-rule "c" "zir" "zir" "ções"      ; "CAT=nc,G=f,N=p,FSEM=cao"  # seduzir->seduc,ões
+ 2 add-spell-rule "c" "por" "r" "sições"      ; "CAT=nc,G=f,N=p,FSEM=cao"  # expor->exposic,ões
+
+;flag *C:                 # "CAT=v,T=inf" #cao
+ 2 add-spell-rule "C" "tar" "tar" "ção"       ; "CAT=nc,G=f,N=s,FSEM=cao"  # cantar->canc,ão
+ 2 add-spell-rule "C" "cionar" "ionar" "ção"  ; "CAT=nc,G=f,N=s,FSEM=cao"  # adicionar->adic,ão
+ 2 add-spell-rule "C" "air" "ir" "cção"       ; "CAT=nc,G=f,N=s,FSEM=cao"  # atrair->atracc,ão
+ 2 add-spell-rule "C" "uir" "ir" "ção"        ; "CAT=nc,G=f,N=s,FSEM=cao"  # evoluir->evoluc,ão
+
+ 2 add-spell-rule "C" "tar" "tar" "ções"      ; "CAT=nc,G=f,N=p,FSEM=cao"  # cantar->canc,ões
+ 2 add-spell-rule "C" "cionar" "ionar" "ções" ; "CAT=nc,G=f,N=p,FSEM=cao"  # adicionar->adic,ões
+ 2 add-spell-rule "C" "air" "ir" "cções"      ; "CAT=nc,G=f,N=p,FSEM=cao"  # atrair->atracc,ões
+ 2 add-spell-rule "C" "uir" "ir" "ções"       ; "CAT=nc,G=f,N=p,FSEM=cao"  # evoluir->evoluc,ões
+
+;---------------------------------------
+; mento
+;flag *M:                 # "CAT=v,T=inf"      #mento
+ 2 add-spell-rule "M" "[ai]r" "r" "mento"     ;"CAT=nc,G=m,N=s,FSEM=mento" # acumular->acumulamento
+ 2 add-spell-rule "M" "er" "er" "imento"      ;"CAT=nc,G=m,N=s,FSEM=mento" # sofrer->sofrimento
+
+ 2 add-spell-rule "M" "[ai]r" "r" "mentos"    ;"CAT=nc,G=m,N=p,FSEM=mento" # acumular->acumulamentos
+ 2 add-spell-rule "M" "er" "er" "imentos"     ;"CAT=nc,G=m,N=p,FSEM=mento" # sofrer->sofrimentos
+
+;---------------------------------------
+; nte
+;flag *n:                # "CAT=v,T=inf"       #ente
+ 2 add-spell-rule "n" "[ae]r" "r" "nte"       ; "CAT=adj,G=_,N=s,FSEM=nte"  # lavar->lavante
+ 2 add-spell-rule "n" "ir" "ir" "ente"        ; "CAT=adj,G=_,N=s,FSEM=nte"  # aderir->aderente
+ 2 add-spell-rule "n" "or" "r" "nente"        ; "CAT=adj,G=_,N=s,FSEM=nte"  # opor->oponente
+
+ 2 add-spell-rule "n" "[ae]r" "r" "ntes"      ; "CAT=adj,G=_,N=p,FSEM=nte"  # lavar->lavantes
+ 2 add-spell-rule "n" "ir" "ir" "entes"       ; "CAT=adj,G=_,N=p,FSEM=nte"  # aderir->aderentes
+ 2 add-spell-rule "n" "or" "r" "nentes"       ; "CAT=adj,G=_,N=p,FSEM=nte"  # opor->oponentes
+
+;---------------------------------------
+; *dor
+;flag *D:                 # "CAT=v,T=inf"     #dor
+ 2 add-spell-rule "D" "[aei]r" "r" "dor"      ; "CAT=a_nc,G=m,N=s,FSEM=dor" # lavrar->lavrador
+ 2 add-spell-rule "D" "[aei]r" "r" "dora"     ; "CAT=a_nc,G=f,N=s,FSEM=dor" # lavrar->lavradora
+ 2 add-spell-rule "D" "[aei]r" "r" "dores"    ; "CAT=a_nc,G=m,N=p,FSEM=dor" # lavrar->lavradores
+ 2 add-spell-rule "D" "[aei]r" "r" "doras"    ; "CAT=a_nc,G=f,N=p,FSEM=dor" # lavrar->lavradoras
+
+;---------------------------------------
+; ível, ável           verb2adj
+;flag *v:                  # "CAT=v,T=inf"    #ável
+ 2 add-spell-rule "v" "ar" "ar" "ável"        ; "CAT=adj,G=_,N=s,FSEM=vel"  # lavar->lavável
+ 2 add-spell-rule "v" "er" "er" "ível"        ; "CAT=adj,G=_,N=s,FSEM=vel"  # amover->amovível
+ 2 add-spell-rule "v" "ir" "ir" "ível"        ; "CAT=adj,G=_,N=s,FSEM=vel"  # auferir->auferível
+
+ 2 add-spell-rule "v" "ar" "ar" "áveis"       ; "CAT=adj,G=_,N=p,FSEM=vel"  # lavar->laváveis
+ 2 add-spell-rule "v" "er" "er" "íveis"       ; "CAT=adj,G=_,N=p,FSEM=vel"  # amover->amovíveis
+ 2 add-spell-rule "v" "ir" "ir" "íveis"       ; "CAT=adj,G=_,N=p,FSEM=vel"  # auferir->auferíveis
+
+;---------------------------------------------
+; para já ponho só excepc,ões muito frequentes
+; erir ZY, uir K, ear ZY, air K, arar ZY, uzir ZY, por K, fazer K, dizer
+; [^\-] é posto para evitar a gerac,ão de hipóteses parvas
+
+;flag *X:                # "CAT=v,T=inf" # deve ser posta nos verbos regulares
+
+ 2 add-spell-rule "X" "[^\-]ar" "ar" "o"      ; "P=1,N=s,T=p"
+ 2 add-spell-rule "X" "ar" "r" "s"            ; "P=2,N=s,T=p"
+ 2 add-spell-rule "X" "[^\-]ar" "ar" "a"      ; "P=3,N=s,T=p"
+ 2 add-spell-rule "X" "ar" "r" "mos"          ; "P=1,N=p,T=p"
+ 2 add-spell-rule "X" "ar" "r" "is"           ; "P=2,N=p,T=p"
+ 2 add-spell-rule "X" "ar" "r" "m"            ; "P=3,N=p,T=p"
+ 2 add-spell-rule "X" "[^cgç]ar" "ar" "e"     ; "P=1_3,N=s,T=pc"
+ 2 add-spell-rule "X" "car" "car" "que"       ; "P=1_3,N=s,T=pc"
+ 2 add-spell-rule "X" "gar" "gar" "gue"       ; "P=1_3,N=s,T=pc"
+ 2 add-spell-rule "X" "çar" "çar" "ce"        ; "P=1_3,N=s,T=pc"
+ 2 add-spell-rule "X" "[^cgç]ar" "ar" "es"    ; "P=2,N=s,T=pc"
+ 2 add-spell-rule "X" "car" "car" "ques"      ; "P=2,N=s,T=pc"
+ 2 add-spell-rule "X" "gar" "gar" "gues"      ; "P=2,N=s,T=pc"
+ 2 add-spell-rule "X" "çar" "çar" "ces"       ; "P=2,N=s,T=pc"
+ 2 add-spell-rule "X" "[^cgç]ar" "ar" "emos"  ; "P=1,N=p,T=pc"
+ 2 add-spell-rule "X" "car" "car" "quemos"    ; "P=1,N=p,T=pc"
+ 2 add-spell-rule "X" "gar" "gar" "guemos"    ; "P=1,N=p,T=pc"
+ 2 add-spell-rule "X" "çar" "çar" "cemos"     ; "P=1,N=p,T=pc"
+ 2 add-spell-rule "X" "[^cgç]ar" "ar" "eis"   ; "P=2,N=p,T=pc"
+ 2 add-spell-rule "X" "car" "car" "queis"     ; "P=2,N=p,T=pc"
+ 2 add-spell-rule "X" "gar" "gar" "gueis"     ; "P=2,N=p,T=pc"
+ 2 add-spell-rule "X" "çar" "çar" "ceis"      ; "P=2,N=p,T=pc"
+ 2 add-spell-rule "X" "[^cgç]ar" "ar" "em"    ; "P=3,N=p,T=pc"
+ 2 add-spell-rule "X" "car" "car" "quem"      ; "P=3,N=p,T=pc"
+ 2 add-spell-rule "X" "gar" "gar" "guem"      ; "P=3,N=p,T=pc"
+ 2 add-spell-rule "X" "çar" "çar" "cem"       ; "P=3,N=p,T=pc"
+ 2 add-spell-rule "X" "ar" "r" "i"            ; "P=2,N=p,T=i" 
+
+ 2 add-spell-rule "X" "[^cug\-]er" "er" "o"   ; "P=1,N=s,T=p"
+ 2 add-spell-rule "X" "cer" "cer" "ço"        ; "P=1,N=s,T=p"
+ 2 add-spell-rule "X" "ger" "ger" "jo"        ; "P=1,N=s,T=p"
+ 2 add-spell-rule "X" "guer" "guer" "go"      ; "P=1,N=s,T=p"
+ 2 add-spell-rule "X" "er" "r" "s"            ; "P=2,N=s,T=p"
+ 2 add-spell-rule "X" "er" "er" "e"           ; "P=3,N=s,T=p"
+ 2 add-spell-rule "X" "er" "r" "mos"          ; "P=1,N=p,T=p"
+ 2 add-spell-rule "X" "er" "r" "is"           ; "P=2,N=p,T=p"
+ 2 add-spell-rule "X" "er" "r" "m"            ; "P=3,N=p,T=p"
+ 2 add-spell-rule "X" "[^cug\-]er" "er" "a"   ; "P=1_3,N=s,T=pc"
+ 2 add-spell-rule "X" "cer" "cer" "ça"        ; "P=1_3,N=s,T=pc"
+ 2 add-spell-rule "X" "ger" "ger" "ja"        ; "P=1_3,N=s,T=pc"
+ 2 add-spell-rule "X" "guer" "guer" "ga"      ; "P=1_3,N=s,T=pc"
+ 2 add-spell-rule "X" "[^cug]er" "er" "as"    ; "P=2,N=s,T=pc"
+ 2 add-spell-rule "X" "cer" "cer" "ças"       ; "P=2,N=s,T=pc"
+ 2 add-spell-rule "X" "ger" "ger" "jas"       ; "P=2,N=s,T=pc"
+ 2 add-spell-rule "X" "guer" "guer" "gas"     ; "P=2,N=s,T=pc"
+ 2 add-spell-rule "X" "[^cug]er" "er" "amos"  ; "P=1,N=p,T=pc"
+ 2 add-spell-rule "X" "cer" "cer" "çamos"     ; "P=1,N=p,T=pc"
+ 2 add-spell-rule "X" "ger" "ger" "jamos"     ; "P=1,N=p,T=pc"
+ 2 add-spell-rule "X" "guer" "guer" "gamos"   ; "P=1,N=p,T=pc"
+ 2 add-spell-rule "X" "[^cug]er" "er" "ais"   ; "P=2,N=p,T=pc"
+ 2 add-spell-rule "X" "cer" "cer" "çais"      ; "P=2,N=p,T=pc"
+ 2 add-spell-rule "X" "ger" "ger" "jais"      ; "P=2,N=p,T=pc"
+ 2 add-spell-rule "X" "guer" "guer" "gais"    ; "P=2,N=p,T=pc"
+ 2 add-spell-rule "X" "[^cug]er" "er" "am"    ; "P=3,N=p,T=pc"
+ 2 add-spell-rule "X" "cer" "cer" "çam"       ; "P=3,N=p,T=pc"
+ 2 add-spell-rule "X" "ger" "ger" "jam"       ; "P=3,N=p,T=pc"
+ 2 add-spell-rule "X" "guer" "guer" "gam"     ; "P=3,N=p,T=pc"
+ 2 add-spell-rule "X" "er" "r" "i"            ; "P=2,N=p,T=i" 
+
+ 2 add-spell-rule "X" "[^cug\-]ir" "ir" "o"   ; "P=1,N=s,T=p"
+ 2 add-spell-rule "X" "cir" "cir" "ço"        ; "P=1,N=s,T=p"
+ 2 add-spell-rule "X" "gir" "gir" "jo"        ; "P=1,N=s,T=p"
+ 2 add-spell-rule "X" "quir" "quir" "co"      ; "P=1,N=s,T=p"
+ 2 add-spell-rule "X" "guir" "uir" "o"        ; "P=1,N=s,T=p"
+ 2 add-spell-rule "X" "ir" "ir" "es"          ; "P=2,N=s,T=p"
+ 2 add-spell-rule "X" "ir" "ir" "e"           ; "P=3,N=s,T=p"
+ 2 add-spell-rule "X" "ir" "r" "mos"          ; "P=1,N=p,T=p"
+ 2 add-spell-rule "X" "ir" "r" "s"            ; "P=2,N=p,T=p"
+ 2 add-spell-rule "X" "ir" "ir" "em"          ; "P=3,N=p,T=p"
+ 2 add-spell-rule "X" "[^cug\-]ir" "ir" "a"   ; "P=1_3,N=s,T=pc"
+ 2 add-spell-rule "X" "cir" "cir" "ça"        ; "P=1_3,N=s,T=pc"
+ 2 add-spell-rule "X" "gir" "gir" "ja"        ; "P=1_3,N=s,T=pc"
+ 2 add-spell-rule "X" "quir" "quir" "ca"      ; "P=1_3,N=s,T=pc"
+ 2 add-spell-rule "X" "guir" "uir" "a"        ; "P=1_3,N=s,T=pc"
+ 2 add-spell-rule "X" "[^cug]ir" "ir" "as"    ; "P=2,N=s,T=pc"
+ 2 add-spell-rule "X" "cir" "cir" "ças"       ; "P=2,N=s,T=pc"
+ 2 add-spell-rule "X" "gir" "gir" "jas"       ; "P=2,N=s,T=pc"
+ 2 add-spell-rule "X" "quir" "quir" "cas"     ; "P=2,N=s,T=pc"
+ 2 add-spell-rule "X" "guir" "uir" "as"       ; "P=2,N=s,T=pc"
+ 2 add-spell-rule "X" "[^cug]ir" "ir" "amos"  ; "P=1,N=p,T=pc"
+ 2 add-spell-rule "X" "cir" "cir" "çamos"     ; "P=1,N=p,T=pc"
+ 2 add-spell-rule "X" "gir" "gir" "jamos"     ; "P=1,N=p,T=pc"
+ 2 add-spell-rule "X" "quir" "quir" "camos"   ; "P=1,N=p,T=pc"
+ 2 add-spell-rule "X" "guir" "uir" "amos"     ; "P=1,N=p,T=pc"
+ 2 add-spell-rule "X" "[^cug]ir" "ir" "ais"   ; "P=2,N=p,T=pc"
+ 2 add-spell-rule "X" "cir" "cir" "çais"      ; "P=2,N=p,T=pc"
+ 2 add-spell-rule "X" "gir" "gir" "jais"      ; "P=2,N=p,T=pc"
+ 2 add-spell-rule "X" "quir" "quir" "cais"    ; "P=2,N=p,T=pc"
+ 2 add-spell-rule "X" "guir" "uir" "ais"      ; "P=2,N=p,T=pc"
+ 2 add-spell-rule "X" "[^cug]ir" "ir" "am"    ; "P=3,N=p,T=pc"
+ 2 add-spell-rule "X" "cir" "cir" "çam"       ; "P=3,N=p,T=pc"
+ 2 add-spell-rule "X" "gir" "gir" "jam"       ; "P=3,N=p,T=pc"
+ 2 add-spell-rule "X" "quir" "quir" "cam"     ; "P=3,N=p,T=pc"
+ 2 add-spell-rule "X" "guir" "uir" "am"       ; "P=3,N=p,T=pc"
+ 2 add-spell-rule "X" "ar" "ar" "á"           ;
+ 2 add-spell-rule "X" "er" "er" "ê"           ;
+
+;flag *Y:              # "CAT=v,T=inf"  # Deve ser posta nos verbos regulares
+
+ 2 add-spell-rule "Y" "ar" "r" "va"           ; "P=1_3,N=s,T=pi"
+ 2 add-spell-rule "Y" "ar" "r" "vas"          ; "P=2,N=s,T=pi"
+ 2 add-spell-rule "Y" "ar" "ar" "ávamos"      ; "P=1,N=p,T=pi"
+ 2 add-spell-rule "Y" "ar" "ar" "áveis"       ; "P=2,N=p,T=pi"
+ 2 add-spell-rule "Y" "ar" "r" "vam"          ; "P=3,N=p,T=pi"
+ 2 add-spell-rule "Y" "[^cçg]ar" "ar" "ei"    ; "P=1,N=s,T=pp"
+ 2 add-spell-rule "Y" "car" "car" "quei"      ; "P=1,N=s,T=pp"
+ 2 add-spell-rule "Y" "gar" "gar" "guei"      ; "P=1,N=s,T=pp"
+ 2 add-spell-rule "Y" "çar" "çar" "cei"       ; "P=1,N=s,T=pp"
+ 2 add-spell-rule "Y" "ar" "r" "ste"          ; "P=2,N=s,T=pp"
+ 2 add-spell-rule "Y" "ar" "ar" "ou"          ; "P=3,N=s,T=pp"
+ 2 add-spell-rule "Y" "ar" "ar" "ámos"        ; "P=1,N=p,T=pp"
+ 2 add-spell-rule "Y" "ar" "r" "stes"         ; "P=2,N=p,T=pp"
+ 2 add-spell-rule "Y" "ar" "" "am"            ; "P=3,N=p,T=pp"
+ 2 add-spell-rule "Y" "ar" "" "a"             ; "P=1_3,N=s,T=pmp"
+ 2 add-spell-rule "Y" "ar" "" "as"            ; "P=2,N=s,T=pmp"
+ 2 add-spell-rule "Y" "ar" "ar" "áramos"      ; "P=1,N=p,T=pmp"
+ 2 add-spell-rule "Y" "ar" "ar" "áreis"       ; "P=2,N=p,T=pmp"
+ 2 add-spell-rule "Y" "ar" "" "ei"            ; "P=1,N=s,T=f"
+ 2 add-spell-rule "Y" "ar" "" "ás"            ; "P=2,N=s,T=f"
+ 2 add-spell-rule "Y" "ar" "" "á"             ; "P=3,N=s,T=f"
+ 2 add-spell-rule "Y" "ar" "" "emos"          ; "P=1,N=p,T=f"
+ 2 add-spell-rule "Y" "ar" "" "eis"           ; "P=2,N=p,T=f"
+ 2 add-spell-rule "Y" "ar" "" "ão"            ; "P=3,N=p,T=f"
+ 2 add-spell-rule "Y" "ar" "r" "sse"          ; "P=1_3,N=s,T=pic"
+ 2 add-spell-rule "Y" "ar" "r" "sses"         ; "P=2,N=s,T=pic"
+ 2 add-spell-rule "Y" "ar" "ar" "ássemos"     ; "P=1,N=p,T=pic"
+ 2 add-spell-rule "Y" "ar" "ar" "ásseis"      ; "P=2,N=p,T=pic"
+ 2 add-spell-rule "Y" "ar" "r" "ssem"         ; "P=3,N=p,T=pic"
+ 2 add-spell-rule "Y" "ar" "" "es"            ; "P=2,N=s,T=fc"
+ 2 add-spell-rule "Y" "ar" "" "mos"           ; "P=1,N=p,T=fc"
+ 2 add-spell-rule "Y" "ar" "" "des"           ; "P=2,N=p,T=fc"
+ 2 add-spell-rule "Y" "ar" "" "em"            ; "P=3,N=p,T=fc"
+ 2 add-spell-rule "Y" "ar" "" "ia"            ; "P=1_3,N=s,T=c"
+ 2 add-spell-rule "Y" "ar" "" "ias"           ; "P=2,N=s,T=c"
+ 2 add-spell-rule "Y" "ar" "" "íamos"         ; "P=1,N=p,T=c"
+ 2 add-spell-rule "Y" "ar" "" "íeis"          ; "P=2,N=p,T=c"
+ 2 add-spell-rule "Y" "ar" "" "iam"           ; "P=3,N=p,T=c"
+ 2 add-spell-rule "Y" "ar" "r" "ndo"          ; "T=g"
+ 2 add-spell-rule "Y" "ar" "r" "do"           ; "G=m,N=s,T=ppa"
+ 2 add-spell-rule "Y" "ar" "r" "da"           ; "G=f,N=s,T=ppa"
+ 2 add-spell-rule "Y" "ar" "r" "dos"          ; "G=m,N=p,T=ppa"
+ 2 add-spell-rule "Y" "ar" "r" "das"          ; "G=f,N=p,T=ppa"
+
+ 2 add-spell-rule "Y" "er" "er" "ia"          ; "P=1_3,N=s,T=pi"
+ 2 add-spell-rule "Y" "er" "er" "ias"         ; "P=2,N=s,T=pi"
+ 2 add-spell-rule "Y" "er" "er" "íamos"       ; "P=1,N=p,T=pi"
+ 2 add-spell-rule "Y" "er" "er" "íeis"        ; "P=2,N=p,T=pi"
+ 2 add-spell-rule "Y" "er" "er" "iam"         ; "P=3,N=p,T=pi"
+ 2 add-spell-rule "Y" "er" "er" "i"           ; "P=1,N=s,T=pp"
+ 2 add-spell-rule "Y" "er" "r" "ste"          ; "P=2,N=s,T=pp"
+ 2 add-spell-rule "Y" "er" "r" "u"            ; "P=3,N=s,T=pp"
+ 2 add-spell-rule "Y" "er" "r" "mos"          ; "P=1,N=p,T=pp"
+ 2 add-spell-rule "Y" "er" "r" "stes"         ; "P=2,N=p,T=pp"
+ 2 add-spell-rule "Y" "er" "" "am"            ; "P=3,N=p,T=pp"
+ 2 add-spell-rule "Y" "er" "" "a"             ; "P=1_3,N=s,T=pmp"
+ 2 add-spell-rule "Y" "er" "" "as"            ; "P=2,N=s,T=pmp"
+ 2 add-spell-rule "Y" "er" "er" "êramos"      ; "P=1,N=p,T=pmp"
+ 2 add-spell-rule "Y" "er" "er" "êreis"       ; "P=2,N=p,T=pmp"
+ 2 add-spell-rule "Y" "er" "" "ei"            ; "P=1,N=s,T=f"
+ 2 add-spell-rule "Y" "er" "" "ás"            ; "P=2,N=s,T=f"
+ 2 add-spell-rule "Y" "er" "" "á"             ; "P=3,N=s,T=f"
+ 2 add-spell-rule "Y" "er" "" "emos"          ; "P=1,N=p,T=f"
+ 2 add-spell-rule "Y" "er" "" "eis"           ; "P=2,N=p,T=f"
+ 2 add-spell-rule "Y" "er" "" "ão"            ; "P=3,N=p,T=f"
+ 2 add-spell-rule "Y" "er" "r" "sse"          ; "P=1_3,N=s,T=pic"
+ 2 add-spell-rule "Y" "er" "r" "sses"         ; "P=2,N=s,T=pic"
+ 2 add-spell-rule "Y" "er" "er" "êssemos"     ; "P=1,N=p,T=pic"
+ 2 add-spell-rule "Y" "er" "er" "êsseis"      ; "P=2,N=p,T=pic"
+ 2 add-spell-rule "Y" "er" "r" "ssem"         ; "P=3,N=p,T=pic"
+ 2 add-spell-rule "Y" "er" "" "es"            ; "P=2,N=s,T=fc"
+ 2 add-spell-rule "Y" "er" "" "mos"           ; "P=1,N=p,T=fc"
+ 2 add-spell-rule "Y" "er" "" "des"           ; "P=2,N=p,T=fc"
+ 2 add-spell-rule "Y" "er" "" "em"            ; "P=3,N=p,T=fc"
+ 2 add-spell-rule "Y" "er" "" "ia"            ; "P=1_3,N=s,T=c"
+ 2 add-spell-rule "Y" "er" "" "ias"           ; "P=2,N=s,T=c"
+ 2 add-spell-rule "Y" "er" "" "íamos"         ; "P=1,N=p,T=c"
+ 2 add-spell-rule "Y" "er" "" "íeis"          ; "P=2,N=p,T=c"
+ 2 add-spell-rule "Y" "er" "" "iam"           ; "P=3,N=p,T=c"
+ 2 add-spell-rule "Y" "er" "r" "ndo"          ; "T=g"
+ 2 add-spell-rule "Y" "er" "er" "ido"         ; "G=m,N=s,T=ppa"
+ 2 add-spell-rule "Y" "er" "er" "ida"         ; "G=f,N=s,T=ppa"
+ 2 add-spell-rule "Y" "er" "er" "idos"        ; "G=m,N=p,T=ppa"
+ 2 add-spell-rule "Y" "er" "er" "idas"        ; "G=f,N=p,T=ppa"
+
+ 2 add-spell-rule "Y" "ir" "r" "a"            ; "P=1_3,N=s,T=pi"
+ 2 add-spell-rule "Y" "ir" "r" "as"           ; "P=2,N=s,T=pi"
+ 2 add-spell-rule "Y" "ir" "ir" "íamos"       ; "P=1,N=p,T=pi"
+ 2 add-spell-rule "Y" "ir" "ir" "íeis"        ; "P=2,N=p,T=pi"
+ 2 add-spell-rule "Y" "ir" "r" "am"           ; "P=3,N=p,T=pi"
+ 2 add-spell-rule "Y" "ir" "ir" "i"           ; "P=1,N=s,T=pp"
+ 2 add-spell-rule "Y" "ir" "r" "ste"          ; "P=2,N=s,T=pp"
+ 2 add-spell-rule "Y" "ir" "r" "u"            ; "P=3,N=s,T=pp"
+ 2 add-spell-rule "Y" "ir" "r" "mos"          ; "P=1,N=p,T=pp"
+ 2 add-spell-rule "Y" "ir" "r" "stes"         ; "P=2,N=p,T=pp"
+ 2 add-spell-rule "Y" "ir" "" "am"            ; "P=3,N=p,T=pp"
+ 2 add-spell-rule "Y" "ir" "" "a"             ; "P=1_3,N=s,T=pmp"
+ 2 add-spell-rule "Y" "ir" "" "as"            ; "P=2,N=s,T=pmp"
+ 2 add-spell-rule "Y" "ir" "ir" "íramos"      ; "P=1,N=p,T=pmp"
+ 2 add-spell-rule "Y" "ir" "ir" "íreis"       ; "P=2,N=p,T=pmp"
+ 2 add-spell-rule "Y" "ir" "" "ei"            ; "P=1,N=s,T=f"
+ 2 add-spell-rule "Y" "ir" "" "ás"            ; "P=2,N=s,T=f"
+ 2 add-spell-rule "Y" "ir" "" "á"             ; "P=3,N=s,T=f"
+ 2 add-spell-rule "Y" "ir" "" "emos"          ; "P=1,N=p,T=f"
+ 2 add-spell-rule "Y" "ir" "" "eis"           ; "P=2,N=p,T=f"
+ 2 add-spell-rule "Y" "ir" "" "ão"            ; "P=3,N=p,T=f"
+ 2 add-spell-rule "Y" "ir" "r" "sse"          ; "P=1_3,N=s,T=pic"
+ 2 add-spell-rule "Y" "ir" "r" "sses"         ; "P=2,N=s,T=pic"
+ 2 add-spell-rule "Y" "ir" "ir" "íssemos"     ; "P=1,N=p,T=pic"
+ 2 add-spell-rule "Y" "ir" "ir" "ísseis"      ; "P=2,N=p,T=pic"
+ 2 add-spell-rule "Y" "ir" "r" "ssem"         ; "P=3,N=p,T=pic"
+ 2 add-spell-rule "Y" "ir" "" "es"            ; "P=2,N=s,T=fc"
+ 2 add-spell-rule "Y" "ir" "" "mos"           ; "P=1,N=p,T=fc"
+ 2 add-spell-rule "Y" "ir" "" "des"           ; "P=2,N=p,T=fc"
+ 2 add-spell-rule "Y" "ir" "" "em"            ; "P=3,N=p,T=fc"
+ 2 add-spell-rule "Y" "ir" "" "ia"            ; "P=1_3,N=s,T=c"
+ 2 add-spell-rule "Y" "ir" "" "ias"           ; "P=2,N=s,T=c"
+ 2 add-spell-rule "Y" "ir" "" "íamos"         ; "P=1,N=p,T=c"
+ 2 add-spell-rule "Y" "ir" "" "íeis"          ; "P=2,N=p,T=c"
+ 2 add-spell-rule "Y" "ir" "" "iam"           ; "P=3,N=p,T=c"
+ 2 add-spell-rule "Y" "ir" "r" "ndo"          ; "T=g"
+ 2 add-spell-rule "Y" "ir" "r" "do"           ; "G=m,N=s,T=ppa"
+ 2 add-spell-rule "Y" "ir" "r" "da"           ; "G=f,N=s,T=ppa"
+ 2 add-spell-rule "Y" "ir" "r" "dos"          ; "G=m,N=p,T=ppa"
+ 2 add-spell-rule "Y" "ir" "r" "das"          ; "G=f,N=p,T=ppa"
+ 2 add-spell-rule "Y" "ar" "ar" "á"           ;
+ 2 add-spell-rule "Y" "er" "er" "ê"           ;
+
+
+
+;flag *Z:                # "CAT=v,T=inf" #(p,Pc,I) Irregulares (frequente erir)
+
+ 2 add-spell-rule "Z" "erir" "erir" "iro"     ; "P=1,N=s,T=p"
+ 2 add-spell-rule "Z" "erir" "ir" "es"        ; "P=2,N=s,T=p"   #REG.
+ 2 add-spell-rule "Z" "erir" "ir" "e"         ; "P=3,N=s,T=p"   #REG.
+ 2 add-spell-rule "Z" "erir" "r" "mos"        ; "P=1,N=p,T=p"   #REG.
+ 2 add-spell-rule "Z" "erir" "r" "s"          ; "P=2,N=p,T=p"   #REG.
+ 2 add-spell-rule "Z" "erir" "ir" "em"        ; "P=3,N=p,T=p"   #REG.
+ 2 add-spell-rule "Z" "erir" "erir" "ira"     ; "P=1_3,N=s,T=pc"
+ 2 add-spell-rule "Z" "erir" "erir" "iras"    ; "P=2,N=s,T=pc"
+ 2 add-spell-rule "Z" "erir" "erir" "iramos"  ; "P=1,N=p,T=pc"
+ 2 add-spell-rule "Z" "erir" "erir" "irais"   ; "P=2,N=p,T=pc"
+ 2 add-spell-rule "Z" "erir" "erir" "iram"    ; "P=3,N=p,T=pc"
+
+ 2 add-spell-rule "Z" "ear" "ar" "io"         ; "P=1,N=s,T=p"
+ 2 add-spell-rule "Z" "ear" "ar" "ias"        ; "P=2,N=s,T=p"
+ 2 add-spell-rule "Z" "ear" "ar" "ia"         ; "P=3,N=s,T=p"
+ 2 add-spell-rule "Z" "ear" "r" "mos"         ; "P=1,N=p,T=p"   #REG.
+ 2 add-spell-rule "Z" "ear" "r" "is"          ; "P=2,N=p,T=p"   #REG.
+ 2 add-spell-rule "Z" "ear" "ar" "iam"        ; "P=3,N=p,T=p"
+ 2 add-spell-rule "Z" "ear" "ar" "ie"         ; "P=1_3,N=s,T=pc"
+ 2 add-spell-rule "Z" "ear" "ar" "ies"        ; "P=2,N=s,T=pc"
+ 2 add-spell-rule "Z" "ear" "ar" "emos"       ; "P=1,N=p,T=pc"   #REG.
+ 2 add-spell-rule "Z" "ear" "ar" "eis"        ; "P=2,N=p,T=pc"   #REG.
+ 2 add-spell-rule "Z" "ear" "ar" "iem"        ; "P=3,N=p,T=pc"
+ 2 add-spell-rule "Z" "ear" "ar" "ai"         ; "P=2,N=p,T=i"   #REG.
+ 2 add-spell-rule "Z" "ear" "ar" "iem"        ; "P=3,N=p,T=i"
+
+ 2 add-spell-rule "Z" "uzir" "ir" "o"         ; "P=1,N=s,T=p"   #REG.
+ 2 add-spell-rule "Z" "uzir" "ir" "es"        ; "P=2,N=s,T=p"   #REG.
+ 2 add-spell-rule "Z" "uzir" "zir" "z"        ; "P=3,N=s,T=p"
+ 2 add-spell-rule "Z" "uzir" "r" "mos"        ; "P=1,N=p,T=p"   #REG.
+ 2 add-spell-rule "Z" "uzir" "r" "s"          ; "P=2,N=p,T=p"   #REG.
+ 2 add-spell-rule "Z" "uzir" "ir" "em"        ; "P=3,N=p,T=p"   #REG.
+ 2 add-spell-rule "Z" "uzir" "ir" "a"         ; "P=1_3,N=s,T=pc"   #REG.
+ 2 add-spell-rule "Z" "uzir" "ir" "as"        ; "P=2,N=s,T=pc"   #REG.
+ 2 add-spell-rule "Z" "uzir" "ir" "amos"      ; "P=1,N=p,T=pc"   #REG.
+ 2 add-spell-rule "Z" "uzir" "ir" "ais"       ; "P=2,N=p,T=pc"   #REG.
+ 2 add-spell-rule "Z" "uzir" "ir" "am"        ; "P=3,N=p,T=pc"   #REG.
+ 2 add-spell-rule "Z" "uzir" "ir" "i"         ; "P=2,N=p,T=i"   #REG.
+ 2 add-spell-rule "Z" "ar" "ar" "á"           ;
+ 2 add-spell-rule "Z" "er" "er" "ê"           ;
+
+
+;flag *K:                # "CAT=v,T=inf"   # Todos Irregulares (frequente [au]ir)
+; Excepto guir
+ 2 add-spell-rule "K" "uir" "ir" "o"          ; "P=1,N=s,T=p"
+ 2 add-spell-rule "K" "air" "r" "o"           ; "P=1,N=s,T=p"
+ 2 add-spell-rule "K" "[ua]ir" "r" "s"        ; "P=2,N=s,T=p"
+ 2 add-spell-rule "K" "[ua]ir" "ir" "i"       ; "P=3,N=s,T=p"
+ 2 add-spell-rule "K" "[ua]ir" "ir" "ímos"    ; "P=1,N=p,T=p"
+ 2 add-spell-rule "K" "[ua]ir" "ir" "ís"      ; "P=2,N=p,T=p"
+ 2 add-spell-rule "K" "[ua]ir" "ir" "em"      ; "P=3,N=p,T=p"
+ 2 add-spell-rule "K" "[ua]ir" "ir" "ía"      ; "P=1_3,N=s,T=pi"
+ 2 add-spell-rule "K" "[ua]ir" "ir" "ías"     ; "P=2,N=s,T=pi"
+ 2 add-spell-rule "K" "[ua]ir" "ir" "íamos"   ; "P=1,N=p,T=pi"  # REG.
+ 2 add-spell-rule "K" "[ua]ir" "ir" "íeis"    ; "P=2,N=p,T=pi"  # REG.
+ 2 add-spell-rule "K" "[ua]ir" "ir" "íam"     ; "P=3,N=p,T=pi"
+ 2 add-spell-rule "K" "[ua]ir" "ir" "í"       ; "P=1,N=s,T=pp"
+ 2 add-spell-rule "K" "[ua]ir" "ir" "íste"    ; "P=2,N=s,T=pp"
+ 2 add-spell-rule "K" "[ua]ir" "r" "u"        ; "P=3,N=s,T=pp"
+ 2 add-spell-rule "K" "[ua]ir" "ir" "ímos"    ; "P=1,N=p,T=pp"
+ 2 add-spell-rule "K" "[ua]ir" "ir" "ístes"   ; "P=2,N=p,T=pp"
+ 2 add-spell-rule "K" "[ua]ir" "ir" "íram"    ; "P=3,N=p,T=pp"
+ 2 add-spell-rule "K" "[ua]ir" "ir" "íra"     ; "P=1_3,N=s,T=pmp"
+ 2 add-spell-rule "K" "[ua]ir" "ir" "íras"    ; "P=2,N=s,T=pmp"
+ 2 add-spell-rule "K" "[ua]ir" "ir" "íramos"  ; "P=1,N=p,T=pmp"  # REG.
+ 2 add-spell-rule "K" "[ua]ir" "ir" "íreis"   ; "P=2,N=p,T=pmp"  # REG.
+ 2 add-spell-rule "K" "[ua]ir" "" "ei"        ; "P=1,N=s,T=f"    # REG.
+ 2 add-spell-rule "K" "[ua]ir" "" "ás"        ; "P=2,N=s,T=f"    # REG.
+ 2 add-spell-rule "K" "[ua]ir" "" "á"         ; "P=3,N=s,T=f"    # REG.
+ 2 add-spell-rule "K" "[ua]ir" "" "emos"      ; "P=1,N=p,T=f"    # REG.
+ 2 add-spell-rule "K" "[ua]ir" "" "eis"       ; "P=2,N=p,T=f"    # REG.
+ 2 add-spell-rule "K" "[ua]ir" "" "ão"        ; "P=3,N=p,T=f"    # REG.
+ 2 add-spell-rule "K" "[ua]ir" "r" "a"        ; "P=1_3,N=s,T=pc"
+ 2 add-spell-rule "K" "[ua]ir" "r" "as"       ; "P=2,N=s,T=pc"
+ 2 add-spell-rule "K" "[ua]ir" "r" "amos"     ; "P=1,N=p,T=pc"
+ 2 add-spell-rule "K" "[ua]ir" "r" "ais"      ; "P=2,N=p,T=pc"
+ 2 add-spell-rule "K" "[ua]ir" "r" "am"       ; "P=3,N=p,T=pc"
+ 2 add-spell-rule "K" "[ua]ir" "ir" "ísse"    ; "P=1_3,N=s,T=pic"
+ 2 add-spell-rule "K" "[ua]ir" "ir" "ísses"   ; "P=2,N=s,T=pic"
+ 2 add-spell-rule "K" "[ua]ir" "ir" "íssemos" ; "P=1,N=p,T=pic"  # REG.
+ 2 add-spell-rule "K" "[ua]ir" "ir" "ísseis"  ; "P=2,N=p,T=pic"  # REG.
+ 2 add-spell-rule "K" "[ua]ir" "ir" "íssem"   ; "P=3,N=p,T=pic"
+ 2 add-spell-rule "K" "[ua]ir" "ir" "íres"    ; "P=2,N=s,T=fc"
+ 2 add-spell-rule "K" "[ua]ir" "" "mos"       ; "P=1,N=p,T=fc"
+ 2 add-spell-rule "K" "[ua]ir" "ir" "írdes"   ; "P=2,N=p,T=fc"
+ 2 add-spell-rule "K" "[ua]ir" "ir" "írem"    ; "P=3,N=p,T=fc"
+ 2 add-spell-rule "K" "[ua]ir" "" "ia"        ; "P=1_3,N=s,T=c"    # REG
+ 2 add-spell-rule "K" "[ua]ir" "" "ias"       ; "P=2,N=s,T=c"    # REG.
+ 2 add-spell-rule "K" "[ua]ir" "" "íamos"     ; "P=1,N=p,T=c"    # REG.
+ 2 add-spell-rule "K" "[ua]ir" "" "íeis"      ; "P=2,N=p,T=c"    # REG.
+ 2 add-spell-rule "K" "[ua]ir" "" "iam"       ; "P=3,N=p,T=c"    # REG.
+ 2 add-spell-rule "K" "[ua]ir" "ir" "í"       ; "P=2,N=p,T=i"  
+ 2 add-spell-rule "K" "[ua]ir" "r" "ndo"      ; "T=g"        # REG.
+ 2 add-spell-rule "K" "[ua]ir" "ir" "ído"     ; "G=m,N=s,T=ppa"
+ 2 add-spell-rule "K" "[ua]ir" "ir" "ída"     ; "G=f,N=s,T=ppa"
+ 2 add-spell-rule "K" "[ua]ir" "ir" "ídos"    ; "G=m,N=p,T=ppa"
+ 2 add-spell-rule "K" "[ua]ir" "ir" "ídas"    ; "G=f,N=p,T=ppa"
+
+
+ 2 add-spell-rule "K" "por" "r" "nho"         ; "P=1,N=s,T=p"
+ 2 add-spell-rule "K" "por" "or" "ões"        ; "P=2,N=s,T=p"
+ 2 add-spell-rule "K" "por" "or" "õe"         ; "P=3,N=s,T=p"
+ 2 add-spell-rule "K" "por" "r" "mos"         ; "P=1,N=p,T=p"
+ 2 add-spell-rule "K" "por" "r" "ndes"        ; "P=2,N=p,T=p"
+ 2 add-spell-rule "K" "por" "or" "õem"        ; "P=3,N=p,T=p"
+ 2 add-spell-rule "K" "por" "or" "unha"       ; "P=1_3,N=s,T=pi"
+ 2 add-spell-rule "K" "por" "or" "unhas"      ; "P=2,N=s,T=pi"
+ 2 add-spell-rule "K" "por" "or" "únhamos"    ; "P=1,N=p,T=pi"
+ 2 add-spell-rule "K" "por" "or" "únheis"     ; "P=2,N=p,T=pi"
+ 2 add-spell-rule "K" "por" "or" "unham"      ; "P=3,N=p,T=pi"
+ 2 add-spell-rule "K" "por" "or" "us"         ; "P=1,N=s,T=pp"
+ 2 add-spell-rule "K" "por" "or" "useste"     ; "P=2,N=s,T=pp"
+ 2 add-spell-rule "K" "por" "or" "ôs"         ; "P=3,N=s,T=pp"
+ 2 add-spell-rule "K" "por" "or" "usemos"     ; "P=1,N=p,T=pp"
+ 2 add-spell-rule "K" "por" "or" "usestes"    ; "P=2,N=p,T=pp"
+ 2 add-spell-rule "K" "por" "or" "useram"     ; "P=3,N=p,T=pp"
+ 2 add-spell-rule "K" "por" "or" "usera"      ; "P=1_3,N=s,T=pmp"
+ 2 add-spell-rule "K" "por" "or" "useras"     ; "P=2,N=s,T=pmp"
+ 2 add-spell-rule "K" "por" "or" "uséramos"   ; "P=1,N=p,T=pmp"
+ 2 add-spell-rule "K" "por" "or" "uséreis"    ; "P=2,N=p,T=pmp"
+ 2 add-spell-rule "K" "por" "" "ei"           ; "P=1,N=s,T=f"
+ 2 add-spell-rule "K" "por" "" "ás"           ; "P=2,N=s,T=f"
+ 2 add-spell-rule "K" "por" "" "á"            ; "P=3,N=s,T=f"
+ 2 add-spell-rule "K" "por" "" "emos"         ; "P=1,N=p,T=f"
+ 2 add-spell-rule "K" "por" "" "eis"          ; "P=2,N=p,T=f"
+ 2 add-spell-rule "K" "por" "" "ão"           ; "P=3,N=p,T=f"
+ 2 add-spell-rule "K" "por" "r" "nha"         ; "P=1_3,N=s,T=pc"
+ 2 add-spell-rule "K" "por" "r" "nhas"        ; "P=2,N=s,T=pc"
+ 2 add-spell-rule "K" "por" "r" "nhamos"      ; "P=1,N=p,T=pc"
+ 2 add-spell-rule "K" "por" "r" "nhais"       ; "P=2,N=p,T=pc"
+ 2 add-spell-rule "K" "por" "r" "nham"        ; "P=3,N=p,T=pc"
+ 2 add-spell-rule "K" "por" "or" "usesse"     ; "P=1_3,N=s,T=pic"
+ 2 add-spell-rule "K" "por" "or" "usesses"    ; "P=2,N=s,T=pic"
+ 2 add-spell-rule "K" "por" "or" "uséssemos"  ; "P=1,N=p,T=pic"
+ 2 add-spell-rule "K" "por" "or" "usésseis"   ; "P=2,N=p,T=pic"
+ 2 add-spell-rule "K" "por" "or" "usessem"    ; "P=3,N=p,T=pic"
+ 2 add-spell-rule "K" "por" "or" "user"       ; "P=1,N=s,T=fc"
+ 2 add-spell-rule "K" "por" "or" "useres"     ; "P=2,N=s,T=fc"
+ 2 add-spell-rule "K" "por" "or" "user"       ; "P=3,N=s,T=fc"
+ 2 add-spell-rule "K" "por" "or" "usermos"    ; "P=1,N=p,T=fc"
+ 2 add-spell-rule "K" "por" "or" "userdes"    ; "P=2,N=p,T=fc"
+ 2 add-spell-rule "K" "por" "or" "userem"     ; "P=3,N=p,T=fc"
+ 2 add-spell-rule "K" "por" "" "ia"           ; "P=1_3,N=s,T=c"
+ 2 add-spell-rule "K" "por" "" "ias"          ; "P=2,N=s,T=c"
+ 2 add-spell-rule "K" "por" "" "íamos"        ; "P=1,N=p,T=c"
+ 2 add-spell-rule "K" "por" "" "íeis"         ; "P=2,N=p,T=c"
+ 2 add-spell-rule "K" "por" "" "iam"          ; "P=3,N=p,T=c"
+ 2 add-spell-rule "K" "por" "r" "nde"         ; "P=2,N=p,T=i"    
+ 2 add-spell-rule "K" "por" "r" "ndo"         ; "T=g"
+ 2 add-spell-rule "K" "por" "r" "sto"         ; "G=m,N=s,T=ppa"
+ 2 add-spell-rule "K" "por" "r" "sta"         ; "G=f,N=s,T=ppa"
+ 2 add-spell-rule "K" "por" "r" "stos"        ; "G=m,N=p,T=ppa"
+ 2 add-spell-rule "K" "por" "r" "stas"        ; "G=f,N=p,T=ppa"
+ 2 add-spell-rule "K" "por" "" "es"           ; "P=2,N=s,T=ip"
+ 2 add-spell-rule "K" "por" "" "mos"          ; "P=1,N=p,T=ip"
+ 2 add-spell-rule "K" "por" "" "des"          ; "P=2,N=p,T=ip"
+ 2 add-spell-rule "K" "por" "" "em"           ; "P=3,N=p,T=ip"
+
+ 2 add-spell-rule "K" "fazer" "zer" "ço"      ; "P=1,N=s,T=p"
+ 2 add-spell-rule "K" "fazer" "r" "s"         ; "P=2,N=s,T=p"
+ 2 add-spell-rule "K" "fazer" "zer" "z"       ; "P=3,N=s,T=p"
+ 2 add-spell-rule "K" "fazer" "r" "mos"       ; "P=1,N=p,T=p"
+ 2 add-spell-rule "K" "fazer" "r" "is"        ; "P=2,N=p,T=p"
+ 2 add-spell-rule "K" "fazer" "r" "m"         ; "P=3,N=p,T=p"
+ 2 add-spell-rule "K" "fazer" "er" "ia"       ; "P=1_3,N=s,T=pi"
+ 2 add-spell-rule "K" "fazer" "er" "ias"      ; "P=2,N=s,T=pi"
+ 2 add-spell-rule "K" "fazer" "er" "íamos"    ; "P=1,N=p,T=pi"
+ 2 add-spell-rule "K" "fazer" "er" "íeis"     ; "P=2,N=p,T=pi"
+ 2 add-spell-rule "K" "fazer" "er" "iam"      ; "P=3,N=p,T=pi"
+ 2 add-spell-rule "K" "fazer" "azer" "iz"     ; "P=1,N=s,T=pp"
+ 2 add-spell-rule "K" "fazer" "azer" "izeste" ; "P=2,N=s,T=pp"
+ 2 add-spell-rule "K" "fazer" "azer" "ez"     ; "P=3,N=s,T=pp"
+ 2 add-spell-rule "K" "fazer" "azer" "izemos" ; "P=1,N=p,T=pp"
+ 2 add-spell-rule "K" "fazer" "azer" "izestes" ; "P=2,N=p,T=pp"
+ 2 add-spell-rule "K" "fazer" "azer" "izeram" ; "P=3,N=p,T=pp"
+ 2 add-spell-rule "K" "fazer" "azer" "izera"  ; "P=1_3,N=s,T=pmp"
+ 2 add-spell-rule "K" "fazer" "azer" "izeras" ; "P=2,N=s,T=pmp"
+ 2 add-spell-rule "K" "fazer" "azer" "izéramos" ; "P=1,N=p,T=pmp"
+ 2 add-spell-rule "K" "fazer" "azer" "izéreis" ; "P=2,N=p,T=pmp"
+ 2 add-spell-rule "K" "fazer" "zer" "rei"     ; "P=1,N=s,T=f"
+ 2 add-spell-rule "K" "fazer" "zer" "rás"     ; "P=2,N=s,T=f"
+ 2 add-spell-rule "K" "fazer" "zer" "rá"      ; "P=3,N=s,T=f"
+ 2 add-spell-rule "K" "fazer" "zer" "remos"   ; "P=1,N=p,T=f"
+ 2 add-spell-rule "K" "fazer" "zer" "reis"    ; "P=2,N=p,T=f"
+ 2 add-spell-rule "K" "fazer" "zer" "rão"     ; "P=3,N=p,T=f"
+ 2 add-spell-rule "K" "fazer" "zer" "ça"      ; "P=1_3,N=s,T=pc"
+ 2 add-spell-rule "K" "fazer" "zer" "ças"     ; "P=2,N=s,T=pc"
+ 2 add-spell-rule "K" "fazer" "zer" "çamos"   ; "P=1,N=p,T=pc"
+ 2 add-spell-rule "K" "fazer" "zer" "çais"    ; "P=2,N=p,T=pc"
+ 2 add-spell-rule "K" "fazer" "zer" "çam"     ; "P=3,N=p,T=pc"
+ 2 add-spell-rule "K" "fazer" "azer" "izesse" ; "P=1_3,N=s,T=pic"
+ 2 add-spell-rule "K" "fazer" "azer" "izesses" ; "P=2,N=s,T=pic"
+ 2 add-spell-rule "K" "fazer" "azer" "izéssemos" ; "P=1,N=p,T=pic"
+ 2 add-spell-rule "K" "fazer" "azer" "izésseis" ; "P=2,N=p,T=pic"
+ 2 add-spell-rule "K" "fazer" "azer" "izessem" ; "P=3,N=p,T=pic"
+ 2 add-spell-rule "K" "fazer" "azer" "izer"   ; "P=1,N=s,T=fc"
+ 2 add-spell-rule "K" "fazer" "azer" "izeres" ; "P=2,N=s,T=fc"
+ 2 add-spell-rule "K" "fazer" "azer" "izer"   ; "P=3,N=s,T=fc"
+ 2 add-spell-rule "K" "fazer" "azer" "izermos" ; "P=1,N=p,T=fc"
+ 2 add-spell-rule "K" "fazer" "azer" "izerdes" ; "P=2,N=p,T=fc"
+ 2 add-spell-rule "K" "fazer" "azer" "izerem" ; "P=3,N=p,T=fc"
+ 2 add-spell-rule "K" "fazer" "zer" "ria"     ; "P=1_3,N=s,T=c"
+ 2 add-spell-rule "K" "fazer" "zer" "rias"    ; "P=2,N=s,T=c"
+ 2 add-spell-rule "K" "fazer" "zer" "ríamos"  ; "P=1,N=p,T=c"
+ 2 add-spell-rule "K" "fazer" "zer" "ríeis"   ; "P=2,N=p,T=c"
+ 2 add-spell-rule "K" "fazer" "zer" "riam"    ; "P=3,N=p,T=c"
+ 2 add-spell-rule "K" "fazer" "r" "i"         ; "P=2,N=p,T=i"
+ 2 add-spell-rule "K" "fazer" "r" "ndo"       ; "T=g"
+ 2 add-spell-rule "K" "fazer" "zer" "eito"    ; "G=m,N=s,T=ppa"
+ 2 add-spell-rule "K" "fazer" "zer" "eita"    ; "G=f,N=s,T=ppa"
+ 2 add-spell-rule "K" "fazer" "zer" "eitos"   ; "G=m,N=p,T=ppa"
+ 2 add-spell-rule "K" "fazer" "zer" "eitas"   ; "G=f,N=p,T=ppa"
+ 2 add-spell-rule "K" "fazer" "" "es"         ; "P=2,N=s,T=ip"
+ 2 add-spell-rule "K" "fazer" "" "ermos"      ; "P=1,N=p,T=ip"
+ 2 add-spell-rule "K" "fazer" "" "erdes"      ; "P=2,N=p,T=ip"
+ 2 add-spell-rule "K" "fazer" "" "em"         ; "P=3,N=p,T=ip"
+
+ 2 add-spell-rule "K" "dizer" "zer" "go"      ; "P=1,N=s,T=p"
+ 2 add-spell-rule "K" "dizer" "r" "s"         ; "P=2,N=s,T=p"
+ 2 add-spell-rule "K" "dizer" "zer" "z"       ; "P=3,N=s,T=p"
+ 2 add-spell-rule "K" "dizer" "r" "mos"       ; "P=1,N=p,T=p"
+ 2 add-spell-rule "K" "dizer" "r" "is"        ; "P=2,N=p,T=p"
+ 2 add-spell-rule "K" "dizer" "r" "m"         ; "P=3,N=p,T=p"
+ 2 add-spell-rule "K" "dizer" "er" "ia"       ; "P=1_3,N=s,T=pi"
+ 2 add-spell-rule "K" "dizer" "er" "ias"      ; "P=2,N=s,T=pi"
+ 2 add-spell-rule "K" "dizer" "er" "íamos"    ; "P=1,N=p,T=pi"
+ 2 add-spell-rule "K" "dizer" "er" "íeis"     ; "P=2,N=p,T=pi"
+ 2 add-spell-rule "K" "dizer" "er" "iam"      ; "P=3,N=p,T=pi"
+ 2 add-spell-rule "K" "dizer" "zer" "sse"     ; "P=1,N=s,T=pp"
+ 2 add-spell-rule "K" "dizer" "zer" "sseste"  ; "P=2,N=s,T=pp"
+ 2 add-spell-rule "K" "dizer" "zer" "sse"     ; "P=3,N=s,T=pp"
+ 2 add-spell-rule "K" "dizer" "zer" "ssemos"  ; "P=1,N=p,T=pp"
+ 2 add-spell-rule "K" "dizer" "zer" "ssestes" ; "P=2,N=p,T=pp"
+ 2 add-spell-rule "K" "dizer" "zer" "sseram"  ; "P=3,N=p,T=pp"
+ 2 add-spell-rule "K" "dizer" "zer" "ssera"   ; "P=1_3,N=s,T=pmp"
+ 2 add-spell-rule "K" "dizer" "zer" "sseras"  ; "P=2,N=s,T=pmp"
+ 2 add-spell-rule "K" "dizer" "zer" "sséramos" ; "P=1,N=p,T=pmp"
+ 2 add-spell-rule "K" "dizer" "zer" "sséreis" ; "P=2,N=p,T=pmp"
+ 2 add-spell-rule "K" "dizer" "zer" "rei"     ; "P=1,N=s,T=f"
+ 2 add-spell-rule "K" "dizer" "zer" "rás"     ; "P=2,N=s,T=f"
+ 2 add-spell-rule "K" "dizer" "zer" "rá"      ; "P=3,N=s,T=f"
+ 2 add-spell-rule "K" "dizer" "zer" "remos"   ; "P=1,N=p,T=f"
+ 2 add-spell-rule "K" "dizer" "zer" "reis"    ; "P=2,N=p,T=f"
+ 2 add-spell-rule "K" "dizer" "zer" "rão"     ; "P=3,N=p,T=f"
+ 2 add-spell-rule "K" "dizer" "zer" "ga"      ; "P=1_3,N=s,T=pc"
+ 2 add-spell-rule "K" "dizer" "zer" "gas"     ; "P=2,N=s,T=pc"
+ 2 add-spell-rule "K" "dizer" "zer" "gamos"   ; "P=1,N=p,T=pc"
+ 2 add-spell-rule "K" "dizer" "zer" "gais"    ; "P=2,N=p,T=pc"
+ 2 add-spell-rule "K" "dizer" "zer" "gam"     ; "P=3,N=p,T=pc"
+ 2 add-spell-rule "K" "dizer" "zer" "ssesse"  ; "P=1_3,N=s,T=pic"
+ 2 add-spell-rule "K" "dizer" "zer" "ssesses" ; "P=2,N=s,T=pic"
+ 2 add-spell-rule "K" "dizer" "zer" "sséssemos" ; "P=1,N=p,T=pic"
+ 2 add-spell-rule "K" "dizer" "zer" "ssésseis" ; "P=2,N=p,T=pic"
+ 2 add-spell-rule "K" "dizer" "zer" "ssessem" ; "P=3,N=p,T=pic"
+ 2 add-spell-rule "K" "dizer" "zer" "sser"    ; "P=1,N=s,T=fc"
+ 2 add-spell-rule "K" "dizer" "zer" "sseres"  ; "P=2,N=s,T=fc"
+ 2 add-spell-rule "K" "dizer" "zer" "sser"    ; "P=3,N=s,T=fc"
+ 2 add-spell-rule "K" "dizer" "zer" "ssermos" ; "P=1,N=p,T=fc"
+ 2 add-spell-rule "K" "dizer" "zer" "sserdes" ; "P=2,N=p,T=fc"
+ 2 add-spell-rule "K" "dizer" "zer" "sserem"  ; "P=3,N=p,T=fc"
+ 2 add-spell-rule "K" "dizer" "zer" "ria"     ; "P=1_3,N=s,T=c"
+ 2 add-spell-rule "K" "dizer" "zer" "rias"    ; "P=2,N=s,T=c"
+ 2 add-spell-rule "K" "dizer" "zer" "ríamos"  ; "P=1,N=p,T=c"
+ 2 add-spell-rule "K" "dizer" "zer" "ríeis"   ; "P=2,N=p,T=c"
+ 2 add-spell-rule "K" "dizer" "zer" "riam"    ; "P=3,N=p,T=c"
+ 2 add-spell-rule "K" "dizer" "r" "i"         ; "P=2,N=p,T=i" 
+ 2 add-spell-rule "K" "dizer" "r" "ndo"       ; "T=g"
+ 2 add-spell-rule "K" "dizer" "zer" "to"      ; "G=m,N=s,T=ppa"
+ 2 add-spell-rule "K" "dizer" "zer" "ta"      ; "G=f,N=s,T=ppa"
+ 2 add-spell-rule "K" "dizer" "zer" "tos"     ; "G=m,N=p,T=ppa"
+ 2 add-spell-rule "K" "dizer" "zer" "tas"     ; "G=f,N=p,T=ppa"
+ 2 add-spell-rule "K" "dizer" "" "es"         ; "P=2,N=s,T=ip"
+ 2 add-spell-rule "K" "dizer" "" "mos"        ; "P=1,N=p,T=ip"
+ 2 add-spell-rule "K" "dizer" "" "des"        ; "P=2,N=p,T=ip"
+ 2 add-spell-rule "K" "dizer" "" "em"         ; "P=3,N=p,T=ip"
+ 2 add-spell-rule "K" "ar" "ar" "á"           ;
+ 2 add-spell-rule "K" "er" "er" "ê"           ;
+
+;flag *x: # "CAT=v,T=inf" # dela
+ 2 add-spell-rule "x" "[ai]r" "r" "dela"      ; "CAT=nc,G=f,N=s,FSEM=dela"
+ 2 add-spell-rule "x" "[ai]r" "r" "delas"     ; "CAT=nc,G=f,N=p,FSEM=dela"
+ 2 add-spell-rule "x" "er" "er" "idela"       ; "CAT=nc,G=f,N=s,FSEM=dela"
+ 2 add-spell-rule "x" "er" "er" "idelas"      ; "CAT=nc,G=f,N=p,FSEM=dela"
+
+;flag *y: # "CAT=nc"            # eira
+ 2 add-spell-rule "y" "o" "o" "eiro"          ; "FSEM=eiro"     # marmelo marmeleiro
+ 2 add-spell-rule "y" "o" "o" "eiros"         ; "FSEM=eiro"     # marmelo marmeleiros
+ 2 add-spell-rule "y" "a" "a" "eira"          ; "FSEM=eiro"     # banana bananeira
+ 2 add-spell-rule "y" "a" "a" "eiras"         ; "FSEM=eiro"     # banana bananeiras
+
+;flag *w: # "CAT=nc"            # oso
+ 2 add-spell-rule "w" "o" "" "so"             ; "CAT=a,G=m,N=s,FSEM=oso"     # 
+ 2 add-spell-rule "w" "o" "" "sa"             ; "CAT=a,G=f,N=s,FSEM=oso"     # 
+ 2 add-spell-rule "w" "o" "" "sos"            ; "CAT=a,G=m,N=p,FSEM=oso"     # 
+ 2 add-spell-rule "w" "o" "" "sas"            ; "CAT=a,G=f,N=p,FSEM=oso"     # 
+ 2 add-spell-rule "w" "a" "a" "oso"           ; "CAT=a,G=m,N=s,FSEM=oso"     # 
+ 2 add-spell-rule "w" "a" "a" "osa"           ; "CAT=a,G=f,N=s,FSEM=oso"     # 
+ 2 add-spell-rule "w" "a" "a" "osos"          ; "CAT=a,G=m,N=p,FSEM=oso"     # 
+ 2 add-spell-rule "w" "a" "a" "osas"          ; "CAT=a,G=f,N=p,FSEM=oso"     # 
+ 2 add-spell-rule "w" "ção" "ção" "cioso"     ; "CAT=a,G=m,N=s,FSEM=oso"     # 
+ 2 add-spell-rule "w" "ção" "ção" "ciosa"     ; "CAT=a,G=f,N=s,FSEM=oso"     # 
+ 2 add-spell-rule "w" "ção" "ção" "ciosos"    ; "CAT=a,G=m,N=p,FSEM=oso"     # 
+ 2 add-spell-rule "w" "ção" "ção" "ciosas"    ; "CAT=a,G=f,N=p,FSEM=oso"     # 
+ 2 add-spell-rule "w" "e" "e" "oso"           ; "CAT=a,G=m,N=s,FSEM=oso"     # 
+ 2 add-spell-rule "w" "e" "e" "osa"           ; "CAT=a,G=f,N=s,FSEM=oso"     # 
+ 2 add-spell-rule "w" "e" "e" "osos"          ; "CAT=a,G=m,N=p,FSEM=oso"     # 
+ 2 add-spell-rule "w" "e" "e" "osas"          ; "CAT=a,G=f,N=p,FSEM=oso"     # 
+ 2 add-spell-rule "w" "[^aeiou]" "" "oso"     ; "CAT=a,G=m,N=s,FSEM=oso"     # 
+ 2 add-spell-rule "w" "[^aeiou]" "" "osa"     ; "CAT=a,G=f,N=s,FSEM=oso"     # 
+ 2 add-spell-rule "w" "[^aeiou]" "" "osos"    ; "CAT=a,G=m,N=p,FSEM=oso"     # 
+ 2 add-spell-rule "w" "[^aeiou]" "" "osas"    ; "CAT=a,G=f,N=p,FSEM=oso"     # 
+
+;flag *j:  # "CAT=adj"          #izar  ....?
+ 2 add-spell-rule "j" "l" "" "izar"           ; "CAT=v,T=inf"
+ 2 add-spell-rule "j" "o" "o" "izar"          ; "CAT=v,T=inf"
+ 2 add-spell-rule "j" "ia" "a" "zar"          ; "CAT=v,T=inf"
