@@ -1,0 +1,14 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2004 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Synopsis:    setup file for OpenBSD boxes
+; Authors:     Jon Green
+;
+; Load up common unix stuff
+!force exec-file "unixterm"
+;
+; Compile stuff
+0 add-next-line "*compile*"
+add-next-line "*compile*" "%f:%l:"

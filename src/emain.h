@@ -3,7 +3,7 @@
  * JASSPA MicroEmacs - www.jasspa.com
  * emain.h - Encapsulate all platform definitions.
  *
- * Copyright (C) 1997-2002 JASSPA (www.jasspa.com)
+ * Copyright (C) 1997-2004 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -146,6 +146,25 @@
 **************************************************************************/
 #ifdef _FREEBSD
 #define meSYSTEM_NAME  "freebsd"        /* Identity name of the system   */
+#define _UNIX          1                /* This is a UNIX system         */
+#define _USG           1                /* UNIX system V                 */
+#define _DIRENT        1                /* Use <dirent.h> for directory  */
+#define _TERMIOS       1                /* Use termios, not termio       */
+#define _XTERM         1                /* Use Xlib                      */
+#define _TCAP          1                /* Use TERMCAP                   */
+#define _TCAPFONT      1                /* Use TERMCAP fonts to color    */
+#define _CLIENTSERVER  1                /* Client server support         */
+#define _SOCKET        1                /* Supports url reading          */
+#define _IPIPES        1                /* platform supports Inc. pipes  */
+#define _POSIX_SIGNALS 1                /* use POSIX signals             */
+#endif
+
+/**************************************************************************
+* UNIX : OpenBSD                                                          *
+**************************************************************************/
+#ifdef _OPENBSD
+#define _FREEBSD       1                /* Use the FreeBSD cond. build   */
+#define meSYSTEM_NAME  "openbsd"        /* Identity name of the system   */
 #define _UNIX          1                /* This is a UNIX system         */
 #define _USG           1                /* UNIX system V                 */
 #define _DIRENT        1                /* Use <dirent.h> for directory  */
