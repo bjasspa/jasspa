@@ -1,0 +1,130 @@
+/* -*- c -*- ****************************************************************
+ *
+ *			Copyright 2000 JASSPA.
+ *			 All Rights Reserved
+ *
+ *  System        : JASSPA's MicroEmacs
+ *  Module        : UNIX Termcap
+ *
+ *  Object Name   : etermcap.h
+ *  Created By    : Jon Green
+ *  Create Date   : Mon Mar 6 21:19:27 2000
+ *  Last Modified : <20000718.2345>
+ *
+ *  Description   : Define all of the TERMCAP codes that we use in the 
+ *                  system in the following table. We retreive the codes
+ *                  during initialisation. This table enables us to read
+ *                  them all in. 
+ *
+ *  Notes
+ *
+ *  History
+ *
+ ****************************************************************************
+ *
+ * Copyright (c) 2000 JASSPA.
+ *
+ * All Rights Reserved.
+ *
+ * This software is provided 'as-is', without any express or implied warranty.
+ * In no event will the  authors be held liable for any damages  arising  from
+ * the use of this software.
+ *
+ * This software was generated as part of the MicroEmacs JASSPA  distribution,
+ * (http://www.jasspa.com) but is excluded from those licensing restrictions.
+ *
+ * Permission  is  granted  to anyone to use this  software  for any  purpose,
+ * including  commercial  applications,  and to alter it and  redistribute  it
+ * freely, subject to the following restrictions:
+ *
+ *  1. The origin of this software must not be misrepresented; you must not
+ *     claim that you wrote the original software. If you use this software
+ *     in a product, an acknowledgment in the product documentation would be
+ *     appreciated but is not required.
+ *  2. Altered source versions must be plainly marked as such, and must not be
+ *     misrepresented as being the original software.
+ *  3. This notice may not be removed or altered from any source distribution.
+ *
+ * Jon Green         jon@jasspa.com
+ *
+ ****************************************************************************/
+
+/* auto_left_margin/am/am/Terminal has automatic margins */
+TCAP_BOOLN(TCAPam, 'a','m','\0')
+
+/* eat_newline_glitch/xenl/xn/Newline ignored after 80 columns (Concept) */
+TCAP_BOOLN(TCAPxenl,'x','n','\0')
+
+/* columns/cols/co/Number of columns in a line */
+TCAP_DIGIT(TCAPcols, 'c','o','\0')
+
+/* lines/lines/li/Number of lines on a screen or a page */
+TCAP_DIGIT(TCAPlines, 'l','i','\0')
+
+/* move_standout_mode/msgr/ms/Safe to move in standout modes */
+TCAP_BOOLN(TCAPmsgr, 'm','s','\0')
+
+/* clear_screen/clear/cl/Clear screen and home cursor */
+TCAP_STRING(TCAPclear, 'c','l','\0')
+
+/* cursor_address/cup/cm/Move to row #1 col #2 */
+TCAP_STRING(TCAPcup, 'c','m','\0')
+
+/* exit_standout_mode/rmso/se/End standout mode */
+TCAP_STRING(TCAPrmso, 's','e','\0')
+
+/* enter_standout_mode/smso/so/Begin standout mode */
+TCAP_STRING(TCAPsmso, 's','o','\0')
+
+/* cursor_invisible/civis/vi/Make cursor invisible */
+TCAP_STRING(TCAPcivis, 'v','i','\0')
+
+/* cursor_normal/cnorm/ve/Make cursor appear normal (undo vs/vi) */
+TCAP_STRING(TCAPcnorm, 'v','e','\0')
+
+/* exit_attribute_mode/srg0/me/Turn off all attributes */
+TCAP_STRING(TCAPsgr0, 'm','e','\0')
+
+#ifdef _TCAPFONT
+/* enter_bold_mode/bold/md/Turn on bold (extra bright) mode */
+TCAP_STRING(TCAPbold, 'm','d','\0')
+
+/* enter_italics_mode/sitm/ZH/Enable italics */
+TCAP_STRING(TCAPsitm, 'Z','H','\0')
+
+/* exit_italics_mode/ritm/ZR/Disable italics */
+TCAP_STRING(TCAPritm, 'Z','R','\0')
+
+/* enter_dim_mode/dim/mh/Turn on half-bright mode */
+TCAP_STRING(TCAPdim, 'm','h','\0')
+
+/* enter_reverse_mode/rev/mr/Turn on reverse video mode */
+TCAP_STRING(TCAPrev, 'm','r','\0')
+
+/* enter_underline_mode/smul/us/Start underscore mode */
+TCAP_STRING(TCAPsmul, 'u','s','\0')
+
+/* exit_underline_mode/rmul/ue/End underscore mode */
+TCAP_STRING(TCAPrmul, 'u','e','\0')
+#endif
+
+#if COLOR
+#ifndef _NOTPARM
+/* set_a_background/setab/AB/Set background color using ANSI escape */
+TCAP_STRING(TCAPsetab, 'A','B','\0')
+
+/* set_a_foreground/setaf/AF/Set foreground color using ANSI escape */
+TCAP_STRING(TCAPsetaf, 'A','F','\0')
+#endif
+/* orig_pair/op/op/Set default color-pair to the original one */
+TCAP_STRING(TCAPop, 'o','p','\0')
+
+/* orig_colors/oc/oc/Set all color(-pair)s to the original ones */
+TCAP_STRING(TCAPoc, 'o','c','\0')
+#endif
+
+/* exit_am_mode/rmam/RA/Turn off automatic margins */
+TCAP_STRING(TCAPrmam,'R','A','\0')
+
+/* enter_am_mode/smam/SA/Turn on automatic margins */
+TCAP_STRING(TCAPsmam,'S','A','\0')

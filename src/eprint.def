@@ -1,0 +1,82 @@
+/* -*- C -*- ****************************************************************
+ *
+ *  			Copyright 1998 Jasspa
+ *
+ *  System        : MicroEmacs Jasspa Distribution
+ *  Object Name   : eprint.def
+ *  Created By    : Jon Green
+ *  Created       : Mon Mar 9 23:50:56 1998
+ *  Last Modified : <000718.2343>
+ *
+ *  Description	
+ *       Define the printer registry names and associated values.
+ *  Notes
+ *
+ *  History
+ *	
+ ****************************************************************************
+ *
+ * Copyright (C) 1998, JASSPA 
+ *
+ * The MicroEmacs Jasspa distribution can be copied and distributed freely for
+ * any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
+ * incorporated into commercial software with the expressed permission of
+ * JASSPA.
+ *  
+ ****************************************************************************/
+/* Local printer types include
+ * mePD_STR   0x00     String data
+ * mePD_INT   0x01     Integer data
+ * mePD_WIN   0x02     Auto context save in windows.
+ * 
+ * Search order is defined as:-
+ * 
+ * Usr + Platform
+ * Usr
+ * Printer + Platform
+ * Printer
+ */
+
+/* In user context only */
+DEFPRINT("flags",         mePD_WIN|mePD_INT, mePI_FLAGS)     /* Setup flags (dest,header,footer,lineno,'\\') */
+DEFPRINT("header",        mePD_STR,        mePS_HEADER)      /* Header string */
+DEFPRINT("footer",        mePD_STR,        mePS_FOOTER)      /* Footer string */
+DEFPRINT("page-x",        mePD_WIN|mePD_INT, mePI_PAGEX)     /* Logical page width */
+DEFPRINT("page-y",        mePD_WIN|mePD_INT, mePI_PAGEY)     /* Logical page depth */
+DEFPRINT("port",          mePD_INT,        mePI_PORT)        /* Printer port identity */
+DEFPRINT("rows",          mePD_WIN|mePD_INT, mePI_ROWS)      /* Number Locigal rows */
+DEFPRINT("cols",          mePD_WIN|mePD_INT, mePI_COLS)      /* Columns per page */
+DEFPRINT("buffer",        mePD_STR,        mePS_BUFFER)      /* Name of the destination buffer */
+DEFPRINT("file",          mePD_STR,        mePS_FILE)        /* Name of the destination file */
+DEFPRINT("strip",         mePD_INT,        mePI_STRIP)       /* Strip spaces from eol */
+DEFPRINT("device",        mePD_STR,        mePS_DEV)         /* Device name */
+DEFPRINT("eof",           mePD_STR,        mePS_EOF)         /* End of file code */
+DEFPRINT("eol",           mePD_STR,        mePS_EOL)         /* End of line code */
+DEFPRINT("eop",           mePD_STR,        mePS_EOP)         /* End of page code */
+DEFPRINT("sof",           mePD_STR,        mePS_SOF)         /* Start of file code */
+DEFPRINT("sol",           mePD_STR,        mePS_SOL)         /* Start of line code */
+DEFPRINT("sop",           mePD_STR,        mePS_SOP)         /* Start of page code */
+DEFPRINT("bg-color",      mePD_STR,        mePS_BGCOL)       /* Set the global bg-color */
+DEFPRINT("paper-x",       mePD_WIN|mePD_INT, mePI_PAPERX)    /* Paper page width */
+DEFPRINT("paper-y",       mePD_WIN|mePD_INT, mePI_PAPERY)    /* Paper page depth */
+DEFPRINT("command-line",  mePD_STR,        mePS_CMD)         /* Print command */
+DEFPRINT("mtop",          mePD_INT,        mePI_MTOP)        /* Top margin in lines */
+DEFPRINT("mbottom",       mePD_INT,        mePI_MBOTTOM)     /* Bottom margin in lines */
+DEFPRINT("mleft",         mePD_INT,        mePI_MLEFT)       /* Left margin in chars */
+DEFPRINT("mright",        mePD_INT,        mePI_MRIGHT)      /* Right margin in chars */
+DEFPRINT("scont",         mePD_STR,        mePS_SCONT)       /* Start of row continuation */
+DEFPRINT("econt",         mePD_STR,        mePS_ECONT)       /* End line continuation character */
+DEFPRINT("hsep",          mePD_STR,        mePS_HSEP)        /* Horizontal separator character */
+DEFPRINT("vsep",          mePD_STR,        mePS_VSEP)        /* Vertical separator code */
+DEFPRINT("wsep",          mePD_INT,        mePI_WSEP)        /* Width of vertical separator */
+DEFPRINT("xsep",          mePD_STR,        mePS_XSEP)        /* Horizontal separator */
+#ifdef _WIN32
+DEFPRINT("specifier-x",   mePD_WIN|mePD_INT, mePI_SPECX)     /* Windows specifier in X */
+DEFPRINT("specifier-y",   mePD_WIN|mePD_INT, mePI_SPECY)     /* Windows specifier in Y */
+DEFPRINT("font-face",     mePD_STR,        mePI_FONTFACE)    /* Name of the font face */
+/* These are auto-saved in windows, but not through the autosave mechanism */
+DEFPRINT("win-driver",    mePD_STR,        mePI_WINDRIVER)   /* Name of the windows driver */
+DEFPRINT("win-device",    mePD_STR,        mePI_WINDEVICE)   /* Name of the windows device */
+DEFPRINT("win-port",      mePD_STR,        mePI_WINPORT)     /* Name of the windows port */
+DEFPRINT("win-default",   mePD_INT,        mePI_WINDEFAULT)  /* Default device flag */
+#endif

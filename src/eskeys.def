@@ -1,0 +1,106 @@
+/****************************************************************************
+ *
+ *  			Copyright 1997 Jasspa
+ *
+ *  System        : MicroEmacs Jasspa Distribution
+ *  Object Name   : eskeys.def
+ *  Author        : Steve Philips
+ *  Created       : Thu Sep 18 15:32:46 1997
+ *  Last Modified : <000718.2344>
+ *
+ *  Description	
+ *       Extended key definitions.
+ *
+ *  History
+ *	
+ ****************************************************************************
+ *
+ * Copyright (C) 1997-1998, JASSPA 
+ * The MicroEmacs Jasspa distribution can be copied and distributed freely for
+ * any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
+ * incorporated into commercial software with the expressed permission of
+ * JASSPA.
+ *  
+ ****************************************************************************/
+
+DEFSKEY ("",             NULL, NULL,      SKEY_error ) /* Don't want a key with value 0x00 */
+DEFSKEY ("backspace",    "kb", "\010",    SKEY_backspace )
+DEFSKEY ("bell",         NULL, NULL,      SKEY_bell )
+DEFSKEY ("callback",     NULL, NULL,      SKEY_callback )
+DEFSKEY ("delete",       "kD", "\177",    SKEY_delete )
+DEFSKEY ("down",         "kd", "\033[B",  SKEY_down )
+DEFSKEY ("drop",         NULL, NULL,      SKEY_drop )
+DEFSKEY ("end",          "@7", "\033[4~", SKEY_end )
+DEFSKEY ("esc",          NULL, "\033",    SKEY_esc )
+DEFSKEY ("f1",           "k1", "\033[11~",SKEY_f1 )
+DEFSKEY ("f10",          "k;", "\033[21~",SKEY_f10 )
+DEFSKEY ("f11",          "F1", "\033[23~",SKEY_f11 )
+DEFSKEY ("f12",          "F2", NULL,      SKEY_f12 )
+DEFSKEY ("f13",          "F3", NULL,      SKEY_f13 )
+DEFSKEY ("f14",          "F4", NULL,      SKEY_f14 )
+DEFSKEY ("f15",          "F5", NULL,      SKEY_f15 )
+DEFSKEY ("f16",          "F6", NULL,      SKEY_f16 )
+DEFSKEY ("f17",          "F7", NULL,      SKEY_f17 )
+DEFSKEY ("f18",          "F8", NULL,      SKEY_f18 )
+DEFSKEY ("f19",          "F9", NULL,      SKEY_f19 )
+DEFSKEY ("f2",           "k2", "\033[12~",SKEY_f2 )
+DEFSKEY ("f20",          "FA", NULL,      SKEY_f20 )
+DEFSKEY ("f3",           "k3", "\033[13~",SKEY_f3 )
+DEFSKEY ("f4",           "k4", "\033[14~",SKEY_f4 )
+DEFSKEY ("f5",           "k5", "\033[15~",SKEY_f5 )
+DEFSKEY ("f6",           "k6", "\033[17~",SKEY_f6 )
+DEFSKEY ("f7",           "k7", "\033[18~",SKEY_f7 )
+DEFSKEY ("f8",           "k8", "\033[19~",SKEY_f8 )
+DEFSKEY ("f9",           "k9", "\033[20~",SKEY_f9 )
+DEFSKEY ("home",         "kh", "\033[3~", SKEY_home )
+DEFSKEY ("idle-drop",    NULL, NULL,      SKEY_idle_drop )
+DEFSKEY ("idle-pick",    NULL, NULL,      SKEY_idle_pick )
+DEFSKEY ("idle-time",    NULL, NULL,      SKEY_idle_time )
+DEFSKEY ("insert",       "kI", "\033[2~", SKEY_insert )
+DEFSKEY ("kp-begin",     "K2", NULL,      SKEY_kp_begin )
+DEFSKEY ("kp-delete",    NULL, NULL,      SKEY_kp_delete )
+DEFSKEY ("kp-down",      NULL, NULL,      SKEY_kp_down )
+DEFSKEY ("kp-end",       "K4", NULL,      SKEY_kp_end )
+DEFSKEY ("kp-home",      "K1", NULL,      SKEY_kp_home )
+DEFSKEY ("kp-insert",    NULL, NULL,      SKEY_kp_insert )
+DEFSKEY ("kp-left",      NULL, NULL,      SKEY_kp_left )
+DEFSKEY ("kp-page-down", "K5", NULL,      SKEY_kp_page_down )
+DEFSKEY ("kp-page-up",   "K3", NULL,      SKEY_kp_page_up )
+DEFSKEY ("kp-right",     NULL, NULL,      SKEY_kp_right )
+DEFSKEY ("kp-up",        NULL, NULL,      SKEY_kp_up )
+DEFSKEY ("left",         "kl", "\033[D",  SKEY_left )
+/* Windows 105 keyboard; application button */
+DEFSKEY ("menu",         NULL, NULL,      SKEY_menu )
+DEFSKEY ("mouse-drop-1", NULL, NULL,      SKEY_mouse_drop_1 )
+DEFSKEY ("mouse-drop-2", NULL, NULL,      SKEY_mouse_drop_2 )
+DEFSKEY ("mouse-drop-3", NULL, NULL,      SKEY_mouse_drop_3 )
+DEFSKEY ("mouse-drop-4", NULL, NULL,      SKEY_mouse_drop_4 )
+DEFSKEY ("mouse-drop-5", NULL, NULL,      SKEY_mouse_drop_5 )
+DEFSKEY ("mouse-move",   NULL, NULL,      SKEY_mouse_move )
+DEFSKEY ("mouse-move-1", NULL, NULL,      SKEY_mouse_move_1 )
+DEFSKEY ("mouse-move-2", NULL, NULL,      SKEY_mouse_move_2 )
+DEFSKEY ("mouse-move-3", NULL, NULL,      SKEY_mouse_move_3 )
+DEFSKEY ("mouse-move-4", NULL, NULL,      SKEY_mouse_move_4 )
+DEFSKEY ("mouse-move-5", NULL, NULL,      SKEY_mouse_move_5 )
+DEFSKEY ("mouse-pick-1", NULL, NULL,      SKEY_mouse_pick_1 )
+DEFSKEY ("mouse-pick-2", NULL, NULL,      SKEY_mouse_pick_2 )
+DEFSKEY ("mouse-pick-3", NULL, NULL,      SKEY_mouse_pick_3 )
+DEFSKEY ("mouse-pick-4", NULL, NULL,      SKEY_mouse_pick_4 )
+DEFSKEY ("mouse-pick-5", NULL, NULL,      SKEY_mouse_pick_5 )
+DEFSKEY ("mouse-time",   NULL, NULL,      SKEY_mouse_time )
+DEFSKEY ("mouse-time-1", NULL, NULL,      SKEY_mouse_time_1 )
+DEFSKEY ("mouse-time-2", NULL, NULL,      SKEY_mouse_time_2 )
+DEFSKEY ("mouse-time-3", NULL, NULL,      SKEY_mouse_time_3 )
+DEFSKEY ("mouse-time-4", NULL, NULL,      SKEY_mouse_time_4 )
+DEFSKEY ("mouse-time-5", NULL, NULL,      SKEY_mouse_time_5 )
+DEFSKEY ("mouse-wdown",  NULL, NULL,      SKEY_mouse_wdown )
+DEFSKEY ("mouse-wup",    NULL, NULL,      SKEY_mouse_wup )
+DEFSKEY ("page-down",    "%5", "\033[6~", SKEY_page_down )
+DEFSKEY ("page-up",      "%8", "\033[5~", SKEY_page_up )
+DEFSKEY ("pick",         NULL, NULL,      SKEY_pick )
+DEFSKEY ("redraw",       NULL, NULL,      SKEY_redraw )
+DEFSKEY ("return",       NULL, "\015",    SKEY_return )
+DEFSKEY ("right",        "kr", "\033[C",  SKEY_right )
+DEFSKEY ("space",        NULL, NULL,      SKEY_space )
+DEFSKEY ("tab",          NULL, NULL,      SKEY_tab )
+DEFSKEY ("up",           "ku", "\033[A",  SKEY_up )

@@ -1,0 +1,64 @@
+/****************************************************************************
+ *
+ *  			Copyright 1998 Jasspa
+ *
+ *  System        : MicroEmacs Jasspa Distribution
+ *  Object Name   : emode.def
+ *  Author        : Steve Philips
+ *  Created       : Thu Jan 15 20:06:23 1998
+ *  Last Modified : <000718.2342>
+ *
+ *  Description	
+ *       Definition of the modes.
+ *
+ *  History
+ *	
+ ****************************************************************************
+ *
+ * Copyright (C) 1998, JASSPA 
+ * The MicroEmacs Jasspa distribution can be copied and distributed freely for
+ * any non-commercial purposes. The MicroEmacs Jasspa Distribution can only be
+ * incorporated into commercial software with the expressed permission of
+ * JASSPA.
+ *  
+ ****************************************************************************/
+
+DEFMODE(MDAUTO, "auto",   'A')              /* Auto-file type detection     */
+DEFMODE(MDATSV, "autosv", 'a')              /* Auto-save the buffer         */
+DEFMODE(MDBACK, "backup", 'B')              /* Do file backup               */
+DEFMODE(MDBINRY,"binary", 'b')              /* Do file backup               */
+DEFMODE(MDCMOD, "cmode",  'C')              /* C indentation and fence match*/
+DEFMODE(MDCRLF, "crlf",   'c')              /* Save \r's on end of line     */
+DEFMODE(MDCRYPT,"crypt",  'Y')              /* encrytion mode active        */
+DEFMODE(MDCTRLZ,"ctrlz",  'z')              /* Save \CZ at end of file      */
+DEFMODE(MDDEL,  "del",    'd')              /* Flag buffer to be deleted    */
+DEFMODE(MDDIR,  "dir",    'D')              /* Buffer is of a directory     */
+DEFMODE(MDEDIT, "edit",   'e')              /* Changed since last write     */
+DEFMODE(MDEXACT,"exact",  'E')              /* Exact matching for searches  */
+DEFMODE(MDHIDE, "hide",   'H')              /* Buffer is hidden             */
+DEFMODE(MDINDEN,"indent", 'I')              /* indent mode                  */
+DEFMODE(MDJUST, "justify",'J')              /* indent mode                  */
+DEFMODE(MDLETTR,"letter", 'l')              /* letter mode                  */
+DEFMODE(MDLINE, "line",   'L')              /* line mode                    */
+DEFMODE(MDLOCK, "lock",   'k')              /* Ipipe buffer with reframe    */
+DEFMODE(MDMAGIC,"magic",  'M')              /* regular expresions in search */
+DEFMODE(MDNACT, "nact",   'n')              /* Buffer is not active         */
+DEFMODE(MDNRRW, "narrow", 'N')              /* Buffer has a narrowing       */
+DEFMODE(MDOVER, "over",   'O')              /* overwrite mode               */
+DEFMODE(MDPIPE, "pipe",   'P')              /* Buffer is an ipipe buffer    */
+DEFMODE(MDQUIET,"quiet",  'Q')              /* Quiet bell mode, global only */
+DEFMODE(MDSAVE, "save",   'S')              /* Flag buffer to be saved      */
+DEFMODE(MDTAB,  "tab",    'T')              /* Virtual tabs                 */
+DEFMODE(MDTIME, "time",   't')              /* Time stamping mode           */
+DEFMODE(MDUNDO, "undo",   'U')              /* Undo enabled                 */
+DEFMODE(MDUSR1, "usr1",   '1')              /* user 1                       */
+DEFMODE(MDUSR2, "usr2",   '2')              /* user 2                       */
+DEFMODE(MDUSR3, "usr3",   '3')              /* user 3                       */
+DEFMODE(MDUSR4, "usr4",   '4')              /* user 4                       */
+DEFMODE(MDUSR5, "usr5",   '5')              /* user 5                       */
+DEFMODE(MDUSR6, "usr6",   '6')              /* user 6                       */
+DEFMODE(MDUSR7, "usr7",   '7')              /* user 7                       */
+DEFMODE(MDUSR8, "usr8",   '8')              /* user 8                       */
+DEFMODE(MDVIEW, "view",   'V')              /* read-only buffer             */
+DEFMODE(MDWRAP, "wrap",   'W')              /* word wrap                    */
+
