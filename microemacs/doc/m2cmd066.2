@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jul 16 23:13:14 1998
 .\"
-.Id $Id: m2cmd066.2,v 2.8 2004-01-11 01:11:17 jon Exp $
+.Id $Id: m2cmd066.2,v 2.9 2004-11-26 23:49:21 bill Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH osd 2
@@ -45,7 +45,6 @@ osd \- Manage the On-Screen Display
 ["\fIinit-command\fR"]
 .br
 \fBosd\fR \fIn\fR \fIi\fR \fIflags\fR
-["\fItab-no\fR"]
 ["\fIitem-scheme\fR"]
 ["\fIwidth\fR"\ "\fIdepth\fR"]
 ["\fItext\fR"]
@@ -278,7 +277,6 @@ is not currently being displayed.
 .SS "Dialog Item Creation and Redefinition"
 .na
 \fBosd\fR \fIn\fR \fIi\fR \fIflags\fR
-["\fItab-no\fR"]
 ["\fIitem-scheme\fR"]
 ["\fIwidth\fR"\ "\fIdepth\fR"]
 ["\fItext\fR"]
@@ -434,7 +432,7 @@ Center the text for the item in the middle of the dialog.
 .IP \fBr\fR
 Right hand justify the text for the item.
 .IP \fBt\fR
-Set the items tab order in the dialog.
+Set the item to be in the tab order in the dialog.
 .IP \fBb\fR
 Child inclusion is a scroll box type. By default a child inclusion
 simply draws the whole child dialog at the  position. If this flag
