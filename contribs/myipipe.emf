@@ -1,0 +1,16 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2004 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Synopsis:    Over-riding the ipipe behaviour
+; Authors:     Steve Phillips
+;
+
+; Macro to redefine the wrapping behavior of the *compile* buffer and disable
+; word wrapping. 
+0 define-macro my-fhook-ipipe
+    !if &seq $buffer-bname "*compile*"
+        -1 buffer-mode "wrap"
+    !endif
+!emacro
