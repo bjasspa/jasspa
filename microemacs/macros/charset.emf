@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Tue Feb 16 09:37:57 1999
-;  Last Modified : <010915.2316>
+;  Last Modified : <011124.2343>
 ;
 ;  Description   : Sets up the chatacter translations for the different 
 ;                  char sets. The internal default is ISO-8859 (1-...).
@@ -12,12 +12,13 @@
 ;
 ;  History
 ;
-;  Copyright (c) 1999-2000 JASSPA.
+;  Copyright (c) 1999-2001 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 !if &les @# 1
     ; if executed with an argument of 0 or less, return the list
     set-variable %charset-names  "|ISO-8859|ISO-8859 with box chars|Windows ANSI|Windows OEM|Windows Greek|Windows Turkish|Windows Central Europe|Windows Cyrillic|PC Code Page 437|PC Code Page 850|Cyrillic koi8-r|Plain Text|"
     set-variable %charset-value  "||ISO-box|Win-ANSI|Win-OEM|Win-GREEK|Win-TURK|Win-CENTEUR|Win-CYR|PC-437|PC-850|koi8-r|plain-text|"
+    ; the windows font type
     set-variable %charset-types  "|||0|255|161|162|238|204|||||"
     !return
 !endif
@@ -50,11 +51,12 @@ set-variable .change-font.type 0
 !elif &seq #l0 "Win-TURK" ; ISO-3
     set-char-mask "M" ""
     set-variable .change-font.type 162
-!elif &seq #l0 "Win-CENTEUR" ; cp1250
+!elif &seq #l0 "Win-CENTEUR"
     ; map iso8859-2 -> win32 cp1250
     set-char-mask "M" "\xA1\xA5\xA5\xBC\xA6\x8C\xA9\x8A\xAB\x8D\xAC\x8F\xAE\x8E\xB1\xB9\xB5\xBE\xB6\x9C\xB7\xA1\xB9\x9A\xBB\x9D\xBC\x9F\xBE\x9E"
     set-variable .change-font.type 238
-!elif &seq #l0 "Win-CYR" ; ISO-5
+!elif &seq #l0 "Win-CYR"
+    ; map ISO8859-5 -> win32 cp1251
     set-char-mask "M" "°À±Á²Â³Ã´ÄµÅ¶Æ·Ç¸È¹ÉºÊ»Ë¼Ì½Í¾Î¿ÏÀĞÁÑÂÒÃÓÄÔÅÕÆÖÇ×ÈØÉÙÊÚËÛÌÜÍİÎŞÏß¡¨ĞàÑáÒâÓãÔäÕåÖæ×çØèÙéÚêÛëÜìİíŞîßïàğáñâòãóäôåõæöç÷èøéùêúëûìüíıîşïÿñ¸"
     set-variable .change-font.type 204
 !elif &seq #l0 "PC-437"

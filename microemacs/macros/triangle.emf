@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips & Jon Green
 ;  Created       : Sat Jul 18 15:11:54 1998
-;  Last Modified : <010805.0021>
+;  Last Modified : <011215.2336>
 ;
 ;  Description   : Triangle playing card patience game
 ;
@@ -260,7 +260,7 @@
 !emacro
 
 0 define-macro tri-draw
-    !if &not @#
+    !if &not &equ @# 1
         !return
     !endif
     delete-other-windows

@@ -1,6 +1,6 @@
 ;       Silly Metris game
 ;
-;   Last Modified : <011010.0756>
+;   Last Modified : <011216.1312>
 ;
 set-variable %met-file    &find "metris" ".emf"
 set-variable %met-hiscore "2379 by jk the invincible"
@@ -496,7 +496,7 @@ set-variable %met-level   6
 !emacro
 
 0 define-macro met-redraw
-    !if &not @#
+    !if &not &equ @# 1
         !return
     !endif
     !if &bmod "usr2"

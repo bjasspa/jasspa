@@ -110,11 +110,12 @@ set-variable .fhook-c.item-list-r4 "Type  \ecB\\1\ecA"
     ; Add some system types
     hilight .hilight.c    1 "FILE"         .scheme.type
     ; Pre-processor directives
-    hilight .hilight.c    0 "__DATE__"     .scheme.prepro
-    hilight .hilight.c    0 "__FILE__"     .scheme.prepro
-    hilight .hilight.c    0 "__LINE__"     .scheme.prepro
-    hilight .hilight.c    0 "__STDC__"     .scheme.prepro
-    hilight .hilight.c    0 "__TIME__"     .scheme.prepro
+    hilight .hilight.c    1 "__DATE__"     .scheme.prepro
+    hilight .hilight.c    1 "__FILE__"     .scheme.prepro
+    hilight .hilight.c    1 "__LINE__"     .scheme.prepro
+    hilight .hilight.c    1 "__STDC__"     .scheme.prepro
+    hilight .hilight.c    1 "__TIME__"     .scheme.prepro
+    hilight .hilight.c    1 "NULL"         .scheme.prepro
     !if &band .hilight.flags 0x08
         ; hilight constants, e.g. numbers
         hilight .hilight.c 1 "[[:digit:]]+"       .scheme.constant

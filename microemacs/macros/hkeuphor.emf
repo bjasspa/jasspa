@@ -1,0 +1,75 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  Author        : Rodolfo Valeiras
+;  Created       : Tue, 11 Dec 2001
+;  Description   : Euphoria language support
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro fhook-euphor
+    set-variable $buffer-mask "luh1"
+    buffer-initialize
+    buffer-initialize-hooks
+!emacro
+
+; buffer-initialize variables
+set-variable .fhook-euphor.name "Euphoria"
+set-variable .fhook-euphor.setup &reg "/history" "fhook/euphor" "ghiopx"
+set-variable .fhook-euphor.setup-mask "aeghikmoptux"
+set-variable .fhook-euphor.comment "|--||--|-- | --||"
+
+; setup item-list
+set-variable .fhook-euphor.item-list-s1 "^\\(global\\s +\\)?function\\s +\\(\\w+\\)"
+set-variable .fhook-euphor.item-list-r1 "Func  \ecB\\2\ecA"
+set-variable .fhook-euphor.item-list-s2 "^\\(global\\s +\\)?type\\s +\\(\\w+\\)"
+set-variable .fhook-euphor.item-list-r2 "Type  \ecB\\2\ecA"
+set-variable .fhook-euphor.item-list-s3 "^\\(global\\s +\\)?constant\\s +\\(\\w+\\)"
+set-variable .fhook-euphor.item-list-r3 "Const \ecB\\2\ecA"
+set-variable .fhook-euphor.item-list-s4 "^\\(global\\s +\\)?procedure\\s +\\(\\w+\\)"
+set-variable .fhook-euphor.item-list-r4 "Proc  \ecB\\2\ecA"
+
+!if &and &sin "h" .fhook-euphor.setup &band .hilight.flags 0x02 
+    !if &not &exist .hilight.euphor
+        set-variable .hilight.euphor &pinc .hilight.next 1
+    !endif
+    0 hilight .hilight.euphor 1 $global-scheme
+    
+    hilight .hilight.euphor 2 "--"           .scheme.comment
+    
+    hilight .hilight.euphor 1 "and"          .scheme.keyword
+    hilight .hilight.euphor 1 "by"           .scheme.keyword
+    hilight .hilight.euphor 1 "constant"     .scheme.keyword
+    hilight .hilight.euphor 1 "do"           .scheme.keyword
+    hilight .hilight.euphor 1 "else"         .scheme.keyword
+    hilight .hilight.euphor 1 "elsif"        .scheme.keyword
+    hilight .hilight.euphor 1 "end"          .scheme.keyword
+    hilight .hilight.euphor 1 "exit"         .scheme.keyword
+    hilight .hilight.euphor 1 "for"          .scheme.keyword
+    hilight .hilight.euphor 1 "function"     .scheme.keyword
+    hilight .hilight.euphor 1 "global"       .scheme.keyword
+    hilight .hilight.euphor 1 "if"           .scheme.keyword
+    hilight .hilight.euphor 1 "include"      .scheme.keyword
+    hilight .hilight.euphor 1 "not"          .scheme.keyword
+    hilight .hilight.euphor 1 "or"           .scheme.keyword
+    hilight .hilight.euphor 1 "procedure"    .scheme.keyword
+    hilight .hilight.euphor 1 "return"       .scheme.keyword
+    hilight .hilight.euphor 1 "then"         .scheme.keyword
+    hilight .hilight.euphor 1 "to"           .scheme.keyword
+    hilight .hilight.euphor 1 "type"         .scheme.keyword
+    hilight .hilight.euphor 1 "while"        .scheme.keyword
+    hilight .hilight.euphor 1 "else"         .scheme.keyword
+    hilight .hilight.euphor 1 "with"         .scheme.keyword
+    hilight .hilight.euphor 1 "without"      .scheme.keyword
+    hilight .hilight.euphor 1 "xor"          .scheme.keyword
+    
+    hilight .hilight.euphor 1 "object"       .scheme.type
+    hilight .hilight.euphor 1 "sequence"     .scheme.type
+    hilight .hilight.euphor 1 "atom"         .scheme.type
+    hilight .hilight.euphor 1 "integer"      .scheme.type
+    
+    hilight .hilight.euphor 4 "\"" "\"" "\\" .scheme.string
+    hilight .hilight.euphor 4 "'" "'" "\\"   .scheme.string
+!endif
+
+ml-write "[MicroEmacs Euphoria file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "myeuphor"

@@ -11,7 +11,7 @@
 
 0 define-macro spell-rules-init
     !if &not &exi .spell.language
-        set-variable #l0 &spr "Language \"%s\" not supported!" &reg "/history" "language" "Default"
+        set-variable #l0 &spr "  Language \"%s\" not supported!  " &reg "/history" "language" "Default"
         osd-dialog "Spelling Checker" #l0 "  &Ok  "
         !abort
     !endif

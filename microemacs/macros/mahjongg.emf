@@ -2,7 +2,7 @@
 ;
 ; Author:           Jon Green
 ; Created:          05th June 1997
-; Last Modified:    <010805.0021>
+; Last Modified:    <011216.1312>
 ;
 ; History:
 ;
@@ -547,7 +547,7 @@
 ; Draw all of the mahjong tiles.
 ;
 0 define-macro mjg-draw
-    !if &not @#
+    !if &not &equ @# 1
         !return
     !endif
     delete-other-windows

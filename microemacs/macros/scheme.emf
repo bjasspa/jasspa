@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Thu Feb 18 10:42:53 1999
-;  Last Modified : <010305.0806>
+;  Last Modified : <011216.2144>
 ;
 ;  Description
 ;
@@ -26,7 +26,7 @@
     ; defined.
     ; Define the last color as a default color of white, the next macro
     ; to define a new color will trash this one !!
-    add-color-scheme &set .scheme.next 71 0 1 0 1 1 0 1 0
+    add-color-scheme &set .scheme.next 72 0 1 0 1 1 0 1 0
     set-variable .hilight.next 1
 !endif
 ; Hilight flags: 0x01=Reformating enabled, 0x2=hilighting enabled, 0x4=function name hilighting, 0x8=constants hilighting
@@ -125,19 +125,21 @@ set-variable .scheme.no1        47
 ; .scheme.no2 -- Secondary color 2
 set-variable .scheme.no2        48
 ;
+set-variable .scheme.dmf        49
+
 ; FileBrower color schemes
 ; .scheme.dir -- This is the color to display directory components.
-set-variable .scheme.dir        49
+set-variable .scheme.dir        50
 ; .scheme.dir-tree -- This is the color used to display the dir tree lines
-set-variable .scheme.dir-tree   50
+set-variable .scheme.dir-tree   51
 ; .scheme.dir-slink -- This is the color of the symbolic links.
-set-variable .scheme.dir-slink  51
+set-variable .scheme.dir-slink  52
 ; .scheme.dir-select -- This is the directory selection color
-set-variable .scheme.dir-select 52
+set-variable .scheme.dir-select 53
 ; .scheme.file -- This is the color of file names
-set-variable .scheme.file       53
+set-variable .scheme.file       54
 ; .scheme.select -- This is the file selection color
-set-variable .scheme.select     54
+set-variable .scheme.select     55
 ;
 ; Formatted Text Orientated Buffers
 ; =================================
@@ -145,41 +147,41 @@ set-variable .scheme.select     54
 ; is supposed to be rendered in a bold or italic etc.
 ;
 ; .scheme.header -- Heading scheme
-set-variable .scheme.header     55
+set-variable .scheme.header     56
 ; .scheme.link -- Scheme used for hyperlinks i.e. HTML and Help
-set-variable .scheme.link       56
+set-variable .scheme.link       57
 ; .scheme.bold -- Bold scheme
-set-variable .scheme.bold       57
+set-variable .scheme.bold       58
 ; .scheme.italic -- Italic scheme
-set-variable .scheme.italic     58
+set-variable .scheme.italic     59
 ; .scheme.under -- Underline scheme
-set-variable .scheme.under      59
+set-variable .scheme.under      60
 ; .scheme.bold -- Bold italic scheme
-set-variable .scheme.bold-italic 60
+set-variable .scheme.bold-italic 61
 ; .scheme.bold -- Bold italic scheme
-set-variable .scheme.bold-under  61
+set-variable .scheme.bold-under  62
 ; .scheme.bold -- Bold italic scheme
-set-variable .scheme.italic-under 62
+set-variable .scheme.italic-under 63
 ; .scheme.bold -- Bold italic scheme
-set-variable .scheme.bold-italic-under 63
+set-variable .scheme.bold-italic-under 64
 ;
 ; Gdiff line schemes
 ; ==================
 ;
 ; .scheme.gdfchange -- For ! lines
-set-variable .scheme.gdfchange  64
+set-variable .scheme.gdfchange  65
 ; .scheme.gdfadd -- For + lines
-set-variable .scheme.gdfadd     65
+set-variable .scheme.gdfadd     66
 ; .scheme.gdfpad -- For padded lines
-set-variable .scheme.gdfpad     66
+set-variable .scheme.gdfpad     67
 ; .scheme.gdfsel -- For selected ! or + lines
-set-variable .scheme.gdfsel     67
+set-variable .scheme.gdfsel     68
 ; .scheme.gdfselpad -- For selected padded lines
-set-variable .scheme.gdfselpad  68
+set-variable .scheme.gdfselpad  69
 ; .scheme.gdfrej -- For rejected ! or + lines
-set-variable .scheme.gdfrej     69
+set-variable .scheme.gdfrej     70
 ; .scheme.gdfrejpad -- For rejected padded lines
-set-variable .scheme.gdfrejpad  70
+set-variable .scheme.gdfrejpad  71
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;>>> NOTICE: Add your last color above this line and then go back and   <<<;
 ;>>>         change the .scheme.next variable to your "lastColorNumber+1".   <<<;

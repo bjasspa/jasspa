@@ -1,6 +1,6 @@
 ; Auto-created color scheme file for MicroEmacs
 ; Description: Default White on Black
-; Last Modified : <010718.1711>
+; Last Modified : <011216.2238>
 ; Copyright (c) 1999 JASSPA Ltd.
 set-variable .hilight.flags 7
 ; Create the colors first
@@ -30,6 +30,7 @@ add-color-scheme $ml-scheme .col0 .col1 .col8 .col1 .col0 .col16 .col8 .col16 0 
 add-color-scheme $mode-line-scheme .col0 .col2 .col10 .col8 .col0 .col2 .col8 .col10 8 0 8 0 0 8 0 8
 add-color-scheme $scroll-bar-scheme .col9 .col0 .col9 .col8 .col9 .col0 .col9 .col8 8 0 8 0 0 8 0 8
 add-color-scheme $trunc-scheme .col4 .col1 .col12 .col1 .col4 .col16 .col12 .col16 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.dmf .col8 .col9 .col8 .col9 .col8 .col10 .col8 .col16 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.no1 .col7 .col1 .col15 .col1 .col7 .col16 .col15 .col16 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.no2 .col3 .col1 .col11 .col1 .col3 .col16 .col11 .col16 0 8 0 8 0 8 0 8
 ; OSD
