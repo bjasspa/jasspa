@@ -16,14 +16,15 @@ define-macro newuser
         delete-buffer "*newuser*"
         delete-window
     !endif
-    1 screen-update
+    2 screen-update
     !return
 !emacro
 
 0 define-macro newuser-wizard
     next-window-find-buffer "*newuser*"
-    insert-string "Welcome to MicroEmacs '04\n"
-    insert-string "-------------------------\n"
+    insert-string "\n"
+    insert-string "                Welcome to MicroEmacs '04\n"
+    insert-string "                -------------------------\n"
     insert-string "\n"
     insert-string "We will now guide you  quickly  through the setup of  MicroEmacs.\n"
     insert-string "This process is very quick, we will ask you a number of questions\n"
@@ -46,9 +47,13 @@ define-macro newuser
     insert-string " [y]\n"
     ;
     ; Test if the user has a logon
-    set-variable #l2 $login-name
-    !if &seq #l2 "ERROR"
-        set-variable #l2 ""
+    !if &and &not &seq %mename ERROR &not &seq $login-name %mename
+        insert-string &spr "WARNING: $MENAME=\"%s\" detected, using this as user name.\n" %mename
+        set-variable .newuser.user $login-name
+    !elif &not &seq $login-name ERROR 
+        set-variable .newuser.user $login-name
+    !else
+        set-variable .newuser.user ""
     !endif
 
     set-variable #l3 $login-home
@@ -56,20 +61,20 @@ define-macro newuser
         set-variable #l3 ""
     !endif
 
-    insert-string &spr "Login Name: \"%s\"\n" #l2
+    insert-string &spr "Login Name: \"%s\"\n" .newuser.user
     insert-string &spr "Home Dir  : \"%s\"\n" #l3
     -1 recenter
     2 screen-update
-    !if &seq $login-name "ERROR"
+    !if &seq .newuser.user "ERROR"
         insert-string "ERROR: You do not seem to have a login name !\n"
-        insert-string "I guess I should use $MENAME but I will do that later\n"
-        0 newuser-wizard-exit
+        insert-string "ERROR: Create a proper logon or use the environment variable $MENAME to set name.\n"
+        1 newuser-wizard-exit
         !return
     !endif
     !if &seq $login-home "ERROR"
         insert-string "ERROR: You do not seem to have a home directory name !"
         insert-string "I guess I should use something but I will do that later\n"
-        0 newuser-wizard-exit
+        1 newuser-wizard-exit
         !return
     !endif
     ; Set up a new directory.
@@ -128,7 +133,7 @@ define-macro newuser
     -1 recenter
     2 screen-update
     
-    set-variable .newuser.registry &spr "%s/%s.%s" .newuser.homedir $login-name "erf"
+    set-variable .newuser.registry &spr "%s/%s.%s" .newuser.homedir .newuser.user "erf"
     set-variable #l0 &stat "t" .newuser.registry
     !if &seq #l0 "X"
         insert-string &spr "Saving a new registry \"%s\" [" .newuser.registry
@@ -151,21 +156,21 @@ define-macro newuser
     ;
     ; Create the file user.emf
     ;
-    insert-string &spr "Looking for user file \"%s.emf\" " $login-name
+    insert-string &spr "Looking for user file \"%s.emf\" " .newuser.user
     -1 recenter
     2 screen-update
-    !if &not &seq &set #l0 &find $login-name ".emf" "ERROR"
+    !if &not &seq &set #l0 &find .newuser.user ".emf" "ERROR"
         insert-string "[found]\n"
     !else
         insert-string "[not found]\n"
         
-        set-variable .newuser.emf &spr "%s/%s.%s" .newuser.homedir $login-name "emf"
+        set-variable .newuser.emf &spr "%s/%s.%s" .newuser.homedir .newuser.user "emf"
         insert-string &spr "Creating file \"%s\"" .newuser.emf
         !if &not &seq &set #l0 &find "newuser" ".etf" "ERROR"
             !force 0x080 file-op #l0 .newuser.emf
             !if $status
                 insert-string " [done]\n"
-                set-registry "/history" "setup-file" $login-name
+                set-registry "/history" "setup-file" .newuser.user
                 !goto done-user
             !endif
         !endif
@@ -188,7 +193,7 @@ define-macro newuser
             insert-string ";"
             0 save-buffer
             !force 0 delete-buffer #l0
-            set-registry "/history" "setup-file" $login-name
+            set-registry "/history" "setup-file" .newuser.user
             insert-string " [done]\n"
         !else
             insert-string " [failed]\n"
