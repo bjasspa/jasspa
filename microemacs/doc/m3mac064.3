@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac064.3,v 1.12 2005-01-23 15:28:55 jon Exp $
+.Id $Id: m3mac064.3,v 1.13 2005-02-06 14:32:23 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH buffer-init 3
@@ -85,6 +85,9 @@ set-variable .fhook-XXX.command-name  "||"
 set-variable .fhook-XXX.command-nbind "||"
 set-variable .fhook-XXX.command-kbind "||"
 set-variable .fhook-XXX.command-desc  "||"
+; Define additional buffer setup menu items -- omit if not defined
+set-variable .fhook-c.setup-flags   "|c|l|"
+set-variable .fhook-c.setup-labels  "|Option 1|Option 2|"
 ; Set up collapse or folding for XXX -- omit if not defined
 set-variable .fhook-XXX.collapse-open  "^{"
 set-variable .fhook-XXX.collapse-close "^}"
@@ -144,7 +147,7 @@ call  this  macro   invokes   any  user   defined   file  hooks  of  the  form
 \fBmy-fhook-XXX\fR. User defined \fBmy-bhook-XXX\fR and \fBmy-ehook-XXX\fR are
 configured into the buffer space ready for execution.
 .PP
-.B buffer-init-hooks 
+.B buffer-init-hooks
 must be placed in all \fBfhook-XXX\fR  macros to correctly initialize the file
 hooks. If this is not added then the "\fCmy-*hook-always\fR" macros may not be
 called correctly for buffers where the \fBfhook-XXX\fR has not been configured
@@ -338,8 +341,9 @@ A special internal flag indicating that hilighting is used
 for reformatting purposes, i.e. to make readable and hide control text.
 .TP
 \fC#\fR \- Commenting
-Special flag used to indicate commenting is supported. The comment format
-should be defined with the \fI.fhook-XXX.comment\fR variable within the
+.\"
+Special flag used to indicate  commenting  is  supported.  The comment  format
+should  be  defined  with the  \fI.fhook-XXX.comment\fR  variable  within  the
 template.
 .LP
 \fB.fhook-XXX.setup\fR is the current set-up, this is normally defined to take
@@ -358,7 +362,7 @@ is tested  against  the mask, if the mask  allows it then the mode is enabled.
 .PP
 .Ht buffer-setup 3
 operates   with   the   values   defined   by    \fB.fhook-XXX.setup\fR    and
-\fB.fhook-XXX.setup-mask\fR.  The initialization of  \fB.fhook-XXX.setup\fR  is
+\fB.fhook-XXX.setup-mask\fR.  The initialization of  \fB.fhook-XXX.setup\fR is
 performed using the registry as follows:-
 .Me $emf-scheme
 .CS
@@ -393,17 +397,17 @@ set-variable .fhook-c.tags "!ctags *.c *.h"
 When the value  starts with a '\fC!\fR'  then rest of the line is spawned as a
 process, no additional interface is provided to the command.
 .PP
-Some language templates include a macro \fItags\fR  facility to generate a tags file
-(See
+Some language templates include a macro \fItags\fR facility to generate a tags
+file (See
 .Ht emftags 3f
 \- \fCemftags.emf\fR,
 .Ht ctags 3f
 \- \fCctags.emf\fR,
 .Ht ntags 3f
-\- \fCntags.emf\fR).
-\fB.fhook-XXX.tags\fR  may be  defined  to use an internal macro  based  tags  generator
-rather than an external command. Without the '\fC!\fR' character the
-command line is assumed to be an \*(mS macro based and runs the command
+\- \fCntags.emf\fR).  \fB.fhook-XXX.tags\fR  may be defined to use an internal
+macro  based tags  generator  rather  than an  external  command.  Without the
+\'\fC!\fR'  character  the command  line is assumed to be an \*(mS macro based
+and runs the command
 .CS
 me @<.tags-var-value> -v%tag-options=<options>
 .CE
@@ -416,6 +420,70 @@ set-variable .fhook-c.tags "ctags"
 The  presence  of a  tags  generator  is  not  flagged  in  the  setup  flags,
 declaration  of the  \fB.fhook-XXX.tags\fR  variable is  sufficient to declare
 that a tags generator exists.
+.SS "Private Configuration Extensions"
+The  \fB.fhook-XXX.setup\fR  may be  extended to include  local  configuration
+items that are private to a specific buffer. The extensions are added to the
+.Ht buffer-setup 3
+menu and provide an on/off  check-box  control to enable and disable  specific
+buffer  features.   Feature  examples   include:  Enable  or  disable  Doxygen
+highlighting  in a buffer,  control  hidden file names in a directory  listing
+etc.
+.PP
+The configuration  extensions are defined using two additional hook variables,
+these  variables are normally  omitted and only defined if the  extensions are
+required.
+.IP "\fB.fhook-XXX.setup-flags\fR"
+Defines the alphabetic [\fCa-z\fR] setup characters that are used to enable or
+disable a feature. These are defined as \*(mS list variables (see
+.Ht &lfind 4 ,
+.Ht &lget 4 ,
+etc. for the full  syntax  definition).  The  characters  that may be used are
+those that are not used by buffer setup i.e. "\fCclqrvyz\fR"
+.IP "\fB.fhook-XXX.setup-labels\fR"
+Defines  the text  labels  that are  added to the  setup  menu,  the  label is
+associated with the enable button.
+.LP
+To add a new feature switch then the the character flags to hold the state are
+are      defined      with      the      \fB.fhook-XXX.setup-flags\fR      and
+\fB.fhook-XXX.setup-labels\fR.     The    characters    defined    with    the
+\fBsetup-flags\fR  should  be  added  to  \fB.fhook-XXX.setup-mask\fR.  If the
+option is to be enabled by default  then the  enabling  character  is added to
+\fB.fhook-XXX.setup\fR.
+.PP
+To enable/disable the features then
+.Ht buffer-setup 3
+when  invoked  modifies the state of the variable  \fB.fhook-XXX.setup\fR  and
+then  executes the buffer hook again causing the new state to be processed and
+applied.  The  modified  \fB.fhook-XXX.setup\fR  value is  stored  in the user
+registry and is applied thereafter when the specified buffer type is loaded.
+.PP
+Within  the  template  definition  then the  additional  flags are  checked by
+testing the state of the \fB.fhook-XXX.setup\fR  variable. An example is shown
+below.
+.ne 20
+.Me $emf-scheme
+.CS
+; Add the extra variable to the buffer-init variables
+; Option 1 is disabled and Option 2 is enabled by default here.
+set-variable .fhook-XXX.setup &reg "/history/fhook/XXX" "bdfghnopxl"
+set-variable .fhook-XXX.setup-mask "abdefghikmnoptuxcl"
+
+; Define the additional options.
+set-variable .fhook-XXX.setup-flags   "|c|l|"
+set-variable .fhook-XXX.setup-labels  "|Option 1|Option 2|"
+
+; Test for the Option 1 being enabled.
+!if &sin "c" .fhook-XXX.setup
+    ; Do Option 1 configuration.
+!endif
+
+; Test for the Option 2 being enabled.
+!if &sin "l" .fhook-XXX.setup
+    ; Do Option 2 configuration.
+!endif
+.CE
+The templates  \fChkc.emf\fR,  \fChkcpp.emf\fR  and  \fChkjava.emf\fR  include
+private extensions which may be used as examples.
 .SS Comments
 The  format  of   comments   may  be  defined  in  the   template   using  the
 \fB.fhook-XXX.comment\fR  variable.  Definition of the comment form allows the
@@ -449,14 +517,13 @@ The    default    comment    format    is    defined    with   the    variable
 .I "<mid-box-right>"
 .B |
 .I "<comment-flags>"
-\fB|\fR".
-Where a language supports multiple comment types, or styles, then additional
-comment styles may be specified with a comment definition of the form
-\fB.fhook-XXX.comment-N\fR where \fBN\fR is an integer from \fC1\fR to
-\fCn\fR. Each definition defines an different comment style. Additional
+\fB|\fR". Where a language  supports  multiple  comment types, or styles, then
+additional  comment  styles may be specified with a comment  definition of the
+form  \fB.fhook-XXX.comment-N\fR  where  \fBN\fR is an integer from \fC1\fR to
+\fCn\fR.  Each  definition  defines an  different  comment  style.  Additional
 comment definitions should be ordered such that the longest or most definitive
-comment definition appears before other comment definitions which have less
-definitive features. The comment matching searches each of the comment
+comment  definition  appears before other comment  definitions which have less
+definitive  features.  The  comment  matching  searches  each  of the  comment
 definitions in the order \fC1\fR to \fCn\fR to determine the comment style, as
 soon as a positive match is located then the comment is used without searching
 the remaining comments.
@@ -1074,6 +1141,9 @@ The Electric-C indentation previously flagged as \fC>\fR was removed, as was
 Indentation configuration for C mode is now performed by the
 .Ht indent 2
 command.
+.BU
+Private  template   configuration   using   \fB.fhook-XXX.setup-flags\fR   and
+\fB.fhook-XXX.setup-labels\fR.
 .BE 0
 .SH "SEE ALSO"
 .na
