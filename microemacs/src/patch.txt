@@ -7,8 +7,8 @@ Patching(1)                       microemacs                        Patching(1)
 
 
 PATCHING 
-     This page describes  how to  patch a MicroEmacs  '04 with  a later release
-     without re-installing. 
+     This page describes  how to patch  a MicroEmacs installation  with a later
+     release without re-installing. 
 
   Windows 
      Windows requires  careful patching  in order  not to  disturb the registry
