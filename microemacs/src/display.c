@@ -2741,22 +2741,7 @@ mlwrite(int flags, meUByte *fmt, int arg)
     {
         /* an mlwrite at this stage is fatal - usually a malloc failure,
          * print message and exit */
-#ifdef _WIN32
-#ifdef _ME_WINDOW
-#ifdef _ME_CONSOLE
-        if(!(meSystemCfg & meSYSTEM_CONSOLE))
-#endif /* _ME_CONSOLE */
-            MessageBox(NULL,(char *) fmt,ME_FULLNAME " '" meVERSION,MB_OK);
-#ifdef _ME_CONSOLE
-        else
-#endif /* _ME_CONSOLE */
-#endif /* _ME_WINDOW */
-#ifdef _ME_CONSOLE
-            printf("%s\n",fmt) ;
-#endif /* _ME_CONSOLE */
-#else
-        printf("%s\n",fmt) ;
-#endif
+        mePrintMessage(fmt,flags) ;
         meExit(1) ;
     }
     if((alarmState & meALARM_PIPED_QUIET) && ((flags & MWSTDALLWRT) == 0))

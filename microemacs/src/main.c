@@ -66,6 +66,13 @@ static char meHelpPage[]=
 #if MEOPT_EXTENDED
 "  -       : Read input from stdin into *stdin* buffer\n"
 #endif
+#ifdef _NANOEMACS
+"  -a      : Enable auto-saving\n"
+"  -B      : Enable back-up file creation\n"
+#else
+"  -a      : Disable auto-saving\n"
+"  -B      : Disable back-up file creation\n"
+#endif
 "  -b      : Load next file as a binary file\n"
 "  -c      : Continuation mode (last edit, must have history setup)\n"
 #if MEOPT_DEBUGM
@@ -109,12 +116,6 @@ static char meHelpPage[]=
 "  -y      : Load next file as a reduced binary file\n"
 "\n"
 ;
-
-#ifdef _WIN32
-#define mePrintHelpMessage(mm) MessageBox(NULL,(char *) mm,ME_FULLNAME " '" meVERSION,MB_OK);
-#else
-#define mePrintHelpMessage(mm) write(2,mm,meStrlen(mm))
-#endif
 
 /*
  * Initialize the data structures used by the display code. The edge vectors
@@ -1327,6 +1328,14 @@ mesetup(int argc, char *argv[])
         {
             switch (argv[carg][1])
             {
+            case 'a':
+                meModeToggle(globMode,MDATSV) ;
+                break ;
+
+            case 'B':
+                meModeToggle(globMode,MDBACK) ;
+                break ;
+
 #if MEOPT_EXTENDED
             case 0:      /* -  get input from stdin */
 #endif                
@@ -1350,7 +1359,7 @@ mesetup(int argc, char *argv[])
 #endif
 
             case 'h':
-                mePrintHelpMessage(meHelpPage) ;
+                mePrintMessage(meHelpPage,argc) ;
                 meExit(0) ;
 #ifdef _DOS
             case 'i':
@@ -1369,7 +1378,7 @@ mesetup(int argc, char *argv[])
 missing_arg:
                         sprintf((char *)evalResult,"%s Error: Argument expected with option %s\nOption -h gives further help\n",
                                 argv[0],argv[carg]);
-                        mePrintHelpMessage(evalResult) ;
+                        mePrintMessage(evalResult,argc) ;
                         meExit(1);
                     }
                     argv[rarg++] = argv[++carg] ;
@@ -1410,7 +1419,7 @@ missing_arg:
 #endif
 
             case 'r':
-                meModeSet(globMode,MDVIEW) ;
+                meModeToggle(globMode,MDVIEW) ;
                 break ;
 
             case 's':    /* -s for initial search string */
@@ -1446,7 +1455,7 @@ missing_arg:
                          ME_NANOEMACS_FULLNAME,
 #endif                         
                          meVERSION, meDATE, meSYSTEM_NAME) ;
-                mePrintHelpMessage(evalResult) ;
+                mePrintMessage(evalResult,argc) ;
                 meExit(0) ;
                 
             case 'v':
@@ -1463,7 +1472,7 @@ missing_arg:
                     if((tt = strchr(ss,'=')) == NULL)
                     {
                         sprintf((char *)evalResult,"%s Error: Mal-formed -v option\n",argv[0]) ;
-                        mePrintHelpMessage(evalResult) ;
+                        mePrintMessage(evalResult,argc) ;
                         meExit(1) ;
                     }
                     
@@ -1472,7 +1481,7 @@ missing_arg:
                     {
                         *tt = '\0' ;
                         sprintf((char *)evalResult,"%s Error: Cannot set variable [%s] from the command-line\n",argv[0],ss) ;
-                        mePrintHelpMessage(evalResult) ;
+                        mePrintMessage(evalResult,argc) ;
                         meExit(1) ;
                     }
                     if((tt = strchr(ss,'=')) != NULL)
@@ -1481,7 +1490,7 @@ missing_arg:
                         if(setVar((meUByte *)ss,(meUByte *)tt,meRegCurr) <= 0)  /* set a variable */
                         {
                             sprintf((char *)evalResult,"%s Error: Unable to set variable [%s]\n",argv[0],ss) ;
-                            mePrintHelpMessage(evalResult) ;
+                            mePrintMessage(evalResult,argc) ;
                             meExit(1) ;
                         }
                         execstr = NULL ;
@@ -1498,7 +1507,7 @@ missing_arg:
             default:
                 {
                     sprintf((char *)evalResult,"%s Error: Unknown option %s\nOption -h gives further help\n",argv[0],argv[carg]) ;
-                    mePrintHelpMessage(evalResult) ;
+                    mePrintMessage(evalResult,argc) ;
                     meExit(1) ;
                 }
             }
@@ -1592,7 +1601,7 @@ missing_arg:
     else if(userClientServer && clientMessage)
     {
         sprintf((char *)evalResult,"%s Error: Unable to connect to server\n",argv[0]) ;
-        mePrintHelpMessage(evalResult) ;
+        mePrintMessage(evalResult,argc) ;
         meExit(1) ;
     }
 #endif

@@ -234,6 +234,15 @@ extern  int     doRedrawEvent(void);
 #define MWSTDALLWRT 0x600
 
 extern  int     mlwrite(int flags, meUByte *fmt, ...) ;
+#ifdef _WIN32
+#ifdef _ME_WINDOW
+#define mePrintMessage(mm,dummyInt) MessageBox(NULL,(char *) mm,ME_FULLNAME " '" meVERSION,MB_OK);
+#else
+#define mePrintMessage(mm,dummyInt) WriteFile(GetStdHandle(STD_ERROR_HANDLE),mm,meStrlen(mm),&dummyInt,NULL)
+#endif
+#else
+#define mePrintMessage(mm,dummyInt) write(2,mm,meStrlen(mm))
+#endif
 
 /* eval.c externals */
 #define meRSTRCMP_ICASE      0x01
