@@ -2,14 +2,15 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Jun 13 18:01:56 1998
-;  Last Modified : <000719.0012>
+;  Last Modified : <000719.1219>
 ;
-;  Description
+;  Description     Defines mouse opened dialogs
 ;
-;  Notes         : Defines mouse opened dialogs
+;  Notes
 ;
 ;  History
 ;
+;  Copyright (c) 1999-2000 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; define some external macros which are used first.
 define-macro-file osd osd-1-buffer osd-close
@@ -92,11 +93,21 @@ osd 25 2 "" "&Wide"     1 osd-25-scroll-bars
 ;
 ; MENU 27 - EDIT POPUP - Generic popup sub-menu
 ;
+0 define-macro osd-mouse-yank
+    !if .mouse-event.msshift
+        -1 yank
+        kill-region
+        -1 yank
+    !endif
+    yank @mna
+    set-variable @cc yank
+!emacro
+
 ; NOTE Any item number changes may effect mouse-osd-multi
-osd 27 0  b
-osd 27 1  ""   "Cu&t"              f kill-region ; Kill off the region
-osd 27 2  ""   "&Copy"             f copy-region ; Copy the region
-osd 27 3  ""   "&Paste"            1 yank        ; Paste text
+osd 27 0  "bB"
+osd 27 1  ""   "Cu&t"              f kill-region    ; Kill off the region
+osd 27 2  ""   "&Copy"             f copy-region    ; Copy the region
+osd 27 3  ""   "&Paste"            f osd-mouse-yank ; Paste text
 osd 27 4  "-"
 osd 27 5  "i"  "&Find tag"         1 "3 find-tag @y"
 osd 27 6  ""   "Find &help"        f osd-find-help
