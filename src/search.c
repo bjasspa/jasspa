@@ -1438,7 +1438,7 @@ iscanner(meUByte *apat, int n, int flags, SCANNERPOS *sp)
 int
 searchBuffer(int f, int n)
 {
-    char flagsStr[20] ;
+    meUByte flagsStr[20] ;
     int flags, rr ;
     
     if(((rr=meGetString((meUByte *)"Search Flags",0,0,flagsStr,20)) > 0) &&
