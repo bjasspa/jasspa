@@ -351,8 +351,8 @@ set-variable .user-setup.path ""
 !emacro
     
 0 define-macro user-set-cpfcheckbox
-    set-variable #l2 &cat %platform &lget "|/font-dbl|/ext-char-set|" &abs @#
-    set-variable #l0 &lget "|0|0|" &abs @#
+    set-variable #l2 &cat %platform &lget "|/font-dbl|/ext-char-set|/toolbar|" &abs @#
+    set-variable #l0 &lget "|0|0|0|" &abs @#
     set-variable #l0 &reg "/history" #l2 #l0
     !if &les @# 0
         set-variable #l0 &bxor #l0 1
@@ -388,8 +388,8 @@ set-variable .user-setup.path ""
 !emacro
 
 0 define-macro user-set-checkbox
-    set-variable #l2 &lget "|main-menu|spell/autosave|html-author|exact|magic|auto|backup|quiet|tab|undo|spell/autospell|msshift|edituser|expaccent|explookbk|expword|" &abs @#
-    set-variable #l0 &lget "|1|0|1|1|1|1|1|1|1|1|0|0|1|0|0|0|" &abs @#
+    set-variable #l2 &lget "|main-menu|spell/autosave|html-author|exact|magic|auto|backup|quiet|tab|undo|spell/autospell|msshift|edituser|expaccent|explookbk|expword|find-buffer|" &abs @#
+    set-variable #l0 &lget "|1|0|1|1|1|1|1|1|1|1|0|0|1|0|0|0|0|" &abs @#
     set-variable #l0 &reg "/history" #l2 #l0
     !if &les @# 0
         set-variable #l0 &bxor #l0 1
@@ -653,9 +653,9 @@ set-variable %user-mouse-S ""
 set-variable %user-mouse-C ""
 set-variable %user-mouse-A ""
 
-set-variable %user-mouse-bname "|Not bound|Drag region|Select Word|Default Pan|MS Pan|Find Tag|Find ME Help|Undo|No move yank|Replace yank|Move to yank|Reyank|Fold Current|Fold All|Main menu|Multi-Menu|"
-set-variable %user-mouse-bpick "||mouse-pick-type1|mouse-pick-type1|mouse-pan-pick|mouse-mspan-pick|void|void|mouse-keepcl|||void|mouse-keepcl|void|void|||"
-set-variable %user-mouse-bdrop "||mouse-drop-type1|mouse-drop-type2|mouse-pan-drop|mouse-mspan-drop|!nma find-tag|mouse-emacs-help|mouse-undo|mouse-no-move-yank|mouse-no-move-replace-yank|mouse-move-yank|mouse-reyank|fold-current|fold-all|mouse-osd|mouse-osd-multi|"
+set-variable %user-mouse-bname "|Not bound|Drag region|Select Word|Default Pan|MS Pan|Find Buffer|Find Tag|Find ME Help|Undo|No move yank|Replace yank|Move to yank|Reyank|Fold Current|Fold All|Main menu|Multi-Menu|"
+set-variable %user-mouse-bpick "||mouse-pick-type1|mouse-pick-type1|mouse-pan-pick|mouse-mspan-pick|void|void|void|mouse-keepcl|||void|mouse-keepcl|void|void|||"
+set-variable %user-mouse-bdrop "||mouse-drop-type1|mouse-drop-type2|mouse-pan-drop|mouse-mspan-drop|0 osd-find-buffer|!nma find-tag|mouse-emacs-help|mouse-undo|mouse-no-move-yank|mouse-no-move-replace-yank|mouse-move-yank|mouse-reyank|fold-current|fold-all|mouse-osd|mouse-osd-multi|"
 set-variable %user-mouse-wname "|Not bound|Scroll Up 1 Line|Scroll Up 5 Lines|Scroll Up 10 Line|Scroll Up 1 Page|Scroll Down 1 Line|Scroll Down 5 Lines|Scroll Down 10 Line|Scroll Down 1 Page|"
 set-variable %user-mouse-wheel "||1 scroll-up|5 scroll-up|10 scroll-up|scroll-up|1 scroll-down|5 scroll-down|10 scroll-down|scroll-down|"
 
@@ -1059,6 +1059,8 @@ osd .osd.user-plat 300 "Sfh" "   &Display Char Set : " 310
 osd .osd.user-plat 400 "Sfh" "  Draw &White Spaces : " 410
 osd .osd.user-plat 410 "Ctfx" 41 "^^NY^^" 0x80000 user-set-system
 osd .osd.user-plat 499 ""
+osd .osd.user-plat 500 "Sfh" "     Enable Toolbar : " 501
+osd .osd.user-plat 501 "Cfhtx" 50 "^^NY^^" 3 user-set-cpfcheckbox
 osd .osd.user-plat 600 "Sfh" "       &Ignore Files : " 610
 osd .osd.user-plat 610 "EtxHf" 61 .scheme.osd-entry "###############################" 5 user-set-cpfentry
 osd .osd.user-plat 700 ""
@@ -1081,9 +1083,10 @@ osd .osd.user-plat 820 "MtxmsfH" 82 .scheme.osd-entry "" .osd.user-sub user-setu
     osd .osd.user-plat 60 "EtxHf" 6 .scheme.osd-entry "####" 1 user-set-cpfentry
     osd .osd.user-plat 70 "fh"  "       Double Lines : "
     osd .osd.user-plat 80 "Ctxf" 8 "^^NY^^" 1 user-set-cpfcheckbox
+    osd .osd.user-plat 509 ""
 !elif &seq $platform "win32"
     osd .osd.user-plat 410 "Ctfxh" 41 "^^NY^^" 0x80000 user-set-system
-    osd .osd.user-plat 500 "Sfh" "      Client Server : " 510
+    osd .osd.user-plat 509 "Sfh" "         Client Server : " 510
     osd .osd.user-plat 510 "Ctfx" 51 "^^NY^^" 0x20000 user-set-system
     osd .osd.user-plat 520 "Sfh" "     DOS File Names : " 530
     osd .osd.user-plat 530 "Ctfxh" 53 "^^NY^^" 0x400 user-set-system
@@ -1112,7 +1115,7 @@ osd .osd.user-plat 820 "MtxmsfH" 82 .scheme.osd-entry "" .osd.user-sub user-setu
     !endif
 !else
     ; unix system
-    osd .osd.user-plat 500 "Sfh" "      Client Server : " 510
+    osd .osd.user-plat 509 "Sfh" "         Client Server : " 510
     osd .osd.user-plat 510 "Ctfx" 51 "^^NY^^" 0x20000 user-set-system
     osd .osd.user-plat 520 "Sfh" "     DOS File Names : " 530
     osd .osd.user-plat 530 "Ctfxh" 53 "^^NY^^" 0x400 user-set-system
@@ -1212,7 +1215,9 @@ osd .osd.user-gener 270 "Sfh" "          Main Menu : "  280
 osd .osd.user-gener 280 "Ctfhx" 280 "^^NY^^" 1 user-set-checkbox
 osd .osd.user-gener 290 "Sfh" "      Alt &-> Main Menu : " 300
 osd .osd.user-gener 300 "Ctfx" 300 "^^NY^^" 0x2000 user-set-system
-osd .osd.user-gener 310 "Sfh" "                             Alt -&> Esc Prefx : " 320
+osd .osd.user-gener 304 "Sfh" "  F-Type Buffer Sel : " 306
+osd .osd.user-gener 306 "Ctfhx" 306 "^^NY^^" 17 user-set-checkbox
+osd .osd.user-gener 310 "Sfh" "      Alt -&> Esc Prefx : " 320
 osd .osd.user-gener 320 "Ctfx" 320 "^^NY^^" 0x4000 user-set-system
 osd .osd.user-gener 321 ""
 osd .osd.user-gener 322 "Sfh" "   Abbrev Expansion : "

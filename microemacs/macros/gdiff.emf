@@ -450,6 +450,10 @@ define-macro gdiff
     set-variable .fnnew-name .fnnew
     !force set-variable .fnold-name @3
     !force set-variable .fnnew-name @4
+    !if &band $window-flags 0x1000
+        ; if this is a toolbar window move to the next normal window
+        !force next-window
+    !endif
     !force 0 find-file .fnold
     !if &not $status
         ml-write &spr "[Failed to load %s]" .fnold

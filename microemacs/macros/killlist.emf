@@ -1,0 +1,128 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     Mon Jun 24 2002
+; Synopsis:    Kill list for the toolbar
+; Authors:     Steven Phillips
+;
+0 define-macro kill-list-command
+    set-variable #l0 &sub $window-line 1
+    !if &equ @# 1
+        find-buffer &cat "*kill-list*" #l0
+        beginning-of-buffer
+        set-mark
+        end-of-buffer
+        -1 kill-region
+        !force yank
+        -1 buffer-mode "edit"
+        1 buffer-mode "hide"
+        !if &equ #l0 .kill-list-create.count
+            set-variable .kill-list-create.count &add .kill-list-create.count 1
+        !endif
+        find-buffer "*kill-list*"
+    !elif &equ @# 2
+        !force 0 find-buffer &cat "*kill-list*" #l0
+        !if $status
+            beginning-of-buffer
+            set-mark
+            end-of-buffer
+            backward-char
+            copy-region
+            find-buffer "*kill-list*"
+        !endif
+        !return
+    !elif &equ @# 3
+        !return
+    !elif &equ @# 4
+        !force 0 delete-buffer &cat "*kill-list*" #l0
+    !elif &equ @# 5
+        set-variable .kill-list-create.count &add .kill-list-create.count 1
+    !endif
+    goto-position "\x82"
+    ; force an update of list
+    set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x002
+!emacro
+
+0 define-macro kill-list-mouse-pick-1
+    set-variable .buffer-list-create.line $window-line
+    goto-position "\x82"
+!emacro
+
+0 define-macro kill-list-mouse-drop-1
+    set-variable #l0 $window-line
+    goto-position "\x82"
+    !if &equ .buffer-list-create.line #l0
+        set-position "\x86"
+        !force 0 find-buffer &cat "*kill-list*" &sub #l0 1
+        !if $status
+            beginning-of-buffer
+            set-mark
+            end-of-buffer
+            backward-char
+            copy-region
+            goto-position "\x86"
+            !force !force yank @mna
+            -1 yank
+            !return
+        !endif
+    !endif
+!emacro
+
+0 define-macro kill-list-mouse-drop-3
+    !if &equ $window-line 1
+    !elif &gre $window-line &add .kill-list-create.count 1
+    !else
+        -1 osd .osd.tmp
+        osd .osd.tmp 0 b
+        osd .osd.tmp 10 "" "&Store current kill"   1 kill-list-command
+        osd .osd.tmp 20 "" "Make &current kill"    2 kill-list-command
+        osd .osd.tmp 30 "" "&Paste"                3 kill-list-command
+        osd .osd.tmp 40 "" "&Delete"               4 kill-list-command
+        osd .osd.tmp 50 "-"
+        osd .osd.tmp 60 "" "&Add another"          5 kill-list-command
+        !force !force .osd.tmp osd
+    !endif
+    goto-position "\x82"
+!emacro
+
+0 define-macro kill-list-create
+    set-position "\x86"
+    find-buffer "*kill-list*" 
+    -1 buffer-mode "undo"
+    -1 buffer-mode "view"
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    -1 kill-region
+    insert-string "Kill List\n"
+    set-variable #l0 0
+    !while &les &pinc #l0 1 .count
+        !force 0 find-buffer &cat "*kill-list*" #l0
+        !if $status
+            beginning-of-buffer
+            set-mark
+            !force 30 forward-char
+            copy-region
+            set-variable #l1 &rep &trb @y "\n" " "
+            find-buffer "*kill-list*"
+            set-variable $window-line &add #l0 1
+        !else
+            set-variable #l1 "Not set"
+            set-variable $line-scheme .scheme.hide
+        !endif
+        insert-string &spr "%2d %s\n" #l0 #l1
+    !done
+    backward-delete-char
+    beginning-of-buffer
+    set-variable $line-scheme .scheme.header
+    set-variable :mouse-pick-1 kill-list-mouse-pick-1
+    set-variable :mouse-drop-1 kill-list-mouse-drop-1
+    set-variable :mouse-pick-3 void
+    set-variable :mouse-drop-3 kill-list-mouse-drop-3
+    -1 buffer-mode "edit"
+    1 buffer-mode "view"
+    goto-position "\x86"
+!emacro
+set-variable .kill-list-create.count 20

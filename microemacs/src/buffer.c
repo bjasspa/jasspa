@@ -220,28 +220,12 @@ assignHooks (meBuffer *bp, meUByte *hooknm)
 static void
 setBufferContext(meBuffer *bp)
 {
-    register meBuffer *tbp ;
-    meUInt flag;
-    meInt vertScroll ;
     int ii ;
     
 #if MEOPT_COLOR
     /* First setup the global scheme - this can be missed by buffers loaded with -c */
     bp->scheme = globScheme;
 #endif
-    /* must do this to do the hook properly */
-    if((tbp = frameCur->bufferCur) != bp)
-    {
-	storeWindBSet(tbp,frameCur->windowCur) ;
-        flag = frameCur->windowCur->updateFlags ;
-        vertScroll = frameCur->windowCur->vertScroll ;
-        tbp->windowCount-- ;
-	frameCur->bufferCur = frameCur->windowCur->buffer = bp ;
-        bp->windowCount++ ;
-    }
-    /* must do this to do the hook properly */
-    restoreWindBSet(frameCur->windowCur,bp) ;
-    isWordMask = bp->isWordMask ;
     
     /* Search the buffer for alternative hook information */
     if ((bp->intFlag & BIFFILE) && !meModeTest(bp->mode,MDBINRY) &&
@@ -249,40 +233,38 @@ setBufferContext(meBuffer *bp)
         ((ii = fileHookCount) > 0))
     {
 	meUByte *pp, cc ;
-	meLine *lp ;
+	meLine *lp, *tlp ;
 	int nn ;
 	
-	for(lp=frameCur->windowCur->dotLine ; lp!=bp->baseLine ; lp = meLineGetNext(lp))
+        /* search for the first non-blank line */
+	for(lp=meLineGetNext(bp->baseLine) ; lp != bp->baseLine ; lp = meLineGetNext(lp))
 	{
 	    for (pp = lp->text; (cc=*pp++) != '\0' ; )
-		if (!(isSpace (cc)))
-		    break ;
-	    if(cc)
-	    {
-		frameCur->windowCur->dotLine = lp ;
-		while(--ii >= 0)
-		{
-		    if((nn=fileHookArg[ii]) != 0)
-		    {
-			int flags = ISCANNER_MAGIC|ISCANNER_QUIET ;
-			if(nn < 0)
-			    nn = -nn ;
-			else
-			    flags |= ISCANNER_EXACT ;
-			if(iscanner(fileHookExt[ii],nn,flags,NULL) == meTRUE)
-			{
-			    /* Must set the region flag to zero or it will
-			     * be displayed
-			     */
-			    selhilight.flags = 0 ;
-			    assignHooks(bp,fileHookFunc[ii]) ;
-			    break ;
-			}
-		    }
-		}
-		restoreWindBSet(frameCur->windowCur,bp) ;
-		break ;
-	    }
+            {
+                if(!isSpace(cc))
+                {
+                    while(--ii >= 0)
+                    {
+                        if(((nn=fileHookArg[ii]) != 0) &&
+                           (meRegexComp(&meRegexStrCmp,fileHookExt[ii],(nn < 0) ? meREGEX_ICASE:0) == meREGEX_OKAY))
+                        {
+                            if(nn < 0)
+                                nn = -nn ;
+                            tlp = lp ;
+                            do {
+                                if(meRegexMatch(&meRegexStrCmp,meLineGetText(tlp),
+                                                meLineGetLength(tlp),0,meLineGetLength(tlp),0))
+                                {
+                                    assignHooks(bp,fileHookFunc[ii]) ;
+                                    ii = 0 ;
+                                    break ;
+                                }
+                            } while((--nn > 0) && ((tlp=meLineGetNext(tlp)) != bp->baseLine)) ; 
+                        }
+                    }
+                    break ;
+                }
+            }
 	}
     }
     if(bp->fhook < 0)
@@ -357,18 +339,6 @@ setBufferContext(meBuffer *bp)
     }
     if(bp->fhook >= 0)
         execBufferFunc(bp,bp->fhook,meEBF_ARG_GIVEN,(bp->intFlag & BIFFILE)) ;
-    storeWindBSet(bp,frameCur->windowCur) ;
-    if(tbp != frameCur->bufferCur)
-    {
-        frameCur->bufferCur->windowCount-- ;
-	frameCur->bufferCur = frameCur->windowCur->buffer = tbp ;
-        tbp->windowCount++ ;
-        frameCur->windowCur->vertScroll = vertScroll ;
-        frameCur->windowCur->updateFlags |= flag ;
-	restoreWindBSet(frameCur->windowCur,tbp) ;
-	isWordMask = tbp->isWordMask ;
-    }    
-    resetBufferWindows(bp) ;
 }
 #endif
 
@@ -379,6 +349,21 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
     register meBuffer *tbp ;
     long             lineno=0 ;
     
+    if(meModeTest(bp->mode,MDNACT))
+    {   
+	/* buffer not active yet */
+	if(bp->intFlag & BIFFILE)
+	{
+	    /* The buffer is linked to a file, load it in */
+	    lineno = bp->dotLineNo ;
+	    readin(bp,bp->fileName);
+	}
+	meModeClear(bp->mode,MDNACT) ;
+#if MEOPT_FILEHOOK
+	/* Now set the buffer context */
+	setBufferContext(bp) ;
+#endif
+    }
     tbp = wp->buffer ;
 #if MEOPT_FILEHOOK
     if((wp == frameCur->windowCur) && (frameCur->bufferCur->ehook >= 0))
@@ -396,21 +381,6 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
         }
         else
             storeWindBSet(tbp,wp) ;
-    }
-    if(meModeTest(bp->mode,MDNACT))
-    {   
-	/* buffer not active yet */
-	if(bp->intFlag & BIFFILE)
-	{
-	    /* The buffer is linked to a file, load it in */
-	    lineno = bp->dotLineNo ;
-	    readin(bp,bp->fileName);
-	}
-	meModeClear(bp->mode,MDNACT) ;
-#if MEOPT_FILEHOOK
-	/* Now set the buffer context */
-	setBufferContext(bp) ;
-#endif
     }
     
     /* Switch. reset any scroll */
@@ -521,7 +491,7 @@ findBuffer(int f, int n)
     if((bp=bfind(bufn,f)) == NULL)
 	return meFALSE ;
     if(n < 0)
-	return HideBuffer(bp) ;
+	return HideBuffer(bp,(n < -1) ? 1:0) ;
     return swbuffer(frameCur->windowCur, bp) ;
 }
 
@@ -657,12 +627,12 @@ replacebuffer(meBuffer *oldbuf)
 
 
 int
-HideBuffer(meBuffer *bp)
+HideBuffer(meBuffer *bp, int forceAll)
 {
-    register meBuffer *bp1 ;
-    meWindow          *wp ;
+    meBuffer *bp1 ;
+    meWindow *wp ;
     
-    while(bp->windowCount > 0)
+    if(bp->windowCount > 0)
     {
 #if MEOPT_FRAME
         meFrame *fc=frameCur ;
@@ -673,14 +643,20 @@ HideBuffer(meBuffer *bp)
             {
                 if(wp->buffer == bp)
                 {
-                    /* find a replacement buffer */
-                    /* if its the same then can't replace so return */
-                    if((bp1 = replacebuffer(bp)) == bp)
-                        /* this is true if only *scratch* is left */
-                        return meFALSE ;
-		    
-                    if(swbuffer(wp, bp1) != meTRUE)
-                        return meFALSE ;
+                    
+#if MEOPT_EXTENDED
+                    if(forceAll || ((wp->flags & meWINDOW_LOCK_BUFFER) == 0))
+#endif
+                    {
+                        /* find a replacement buffer */
+                        /* if its the same then can't replace so return */
+                        if((bp1 = replacebuffer(bp)) == bp)
+                            /* this is true if only *scratch* is left */
+                            return meFALSE ;
+                        
+                        if(swbuffer(wp, bp1) != meTRUE)
+                            return meFALSE ;
+                    }
                 }
             }
 #if MEOPT_FRAME
@@ -947,7 +923,7 @@ zotbuf(register meBuffer *bp, int silent) /* kill the buffer pointed to by bp */
     /* This must really be the frameCur->windowCur, ie frameCur->bufferCur must be bp otherwise
     ** swbuffer fucks up big time.
     */
-    if(HideBuffer(bp) != meTRUE)
+    if(HideBuffer(bp,1) != meTRUE)
 	/* only scratch left */
 	return meTRUE ;
     

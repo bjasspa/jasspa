@@ -36,6 +36,20 @@ set-variable .fhook-cpp.command-desc  "|Slashify region|Deslashify region||&Set 
 set-variable .fhook-cpp.fold-open  "^{"
 set-variable .fhook-cpp.fold-close "^}"
 
+; setup item-list
+set-variable .fhook-cpp.item-list-s1 "^\\(static[ \t]+\\|extern[ \t]+\\)?\\(const[ \t]+\\)?\\(union[ \t]+\\)?\\(struct[ \t]+\\)?\\(\\w+[\\* \\t]+\\)?\\(\\w+\\(::~?\\w+\\)?\\)[ \t]*("
+set-variable .fhook-cpp.item-list-r1 "Func \ecB\\6\ecA"
+set-variable .fhook-cpp.item-list-s2 "^[ \t]*#[ \t]*define[ \t]+\\(\\w+\\)"
+set-variable .fhook-cpp.item-list-r2 "Defn \ecB\\1\ecA"
+set-variable .fhook-cpp.item-list-s3 "^[ \t]*typedef[ \t]+\\w+[ \t]+\\(\\w+\\)[ \t];"
+set-variable .fhook-cpp.item-list-r3 "Type \ecB\\1\ecA"
+set-variable .fhook-cpp.item-list-s4 "^[ \t]*typedef[ \t]+struct[ \t]+\\(\\w+\\)[ \t]*{"
+set-variable .fhook-cpp.item-list-r4 "Type \ecB\\1\ecA"
+set-variable .fhook-cpp.item-list-s5 "^}[ \t]*\\(\\w+\\)\\([ \t]*,.*\\)?[ \t]*;"
+set-variable .fhook-cpp.item-list-r5 "Type \ecB\\1\ecA"
+set-variable .fhook-cpp.item-list-s6 "^[ \t]*class[ \t]+\\(\\w+\\)\\([ \t]+:\\|[ \t]*{\\|[ \t]*$\\)"
+set-variable .fhook-cpp.item-list-r6 "Clss \ecB\\1\ecA"
+
 !if &and &sin "h" .fhook-cpp.setup &band .hilight.flags 0x02 
     ; High-light C++ Mode
     !if &not &exist .hilight.cpp

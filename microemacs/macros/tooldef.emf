@@ -1,0 +1,28 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     Fri May 24 2002
+; Synopsis:    Default dummy toolbar tools
+; Authors:     Steven Phillips
+;
+0 define-macro toolbar-default
+    set-position "\x86"
+    set-variable #l0 &lget "|Left|Top|Right|Bottom|" @#
+    set-variable #l1 &cond &band @# 1 "\n" " "
+    find-buffer &spr "*toolbar-%s*" &slo #l0 
+    -1 buffer-mode "undo"
+    -1 buffer-mode "view"
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    -1 kill-region
+    insert-string &cat #l0 " Toolbar\n\n"
+    insert-string &spr "The %s toolbar%shas not yet been%sconfigured.\n\nUse mode-line right%smouse button pop-up%smenu to set-up." #l0 #l1 #l1 #l1 #l1
+    beginning-of-buffer
+    set-variable $line-scheme .scheme.header
+    -1 buffer-mode "edit"
+    1 buffer-mode "view"
+    goto-position "\x86"
+!emacro

@@ -933,7 +933,7 @@ buildlist(int type, int n, meUByte *mstring)
     {
         /*---	If we are  executing an  apropos command  and current string
         doesn't include the search string */
-        if ((type == meFALSE) && !regexStrCmp(cmd->name,mstring,1))
+        if ((type == meFALSE) && !regexStrCmp(cmd->name,mstring,meRSTRCMP_WHOLE))
             continue;		/* Do next loop */
         /*---	Add in the command name */
         meStrcpy(outseq, cmd->name);

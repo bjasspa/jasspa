@@ -12,12 +12,11 @@
 !endif
 
 define-macro ftp
-    set-variable .fhook-dirlst.file-process ""
-    osd .osd.dirlst 140 "" "FTP Logout" 0x10 file-op
+    !if &band $window-flags 0x1000
+        ; if this is a toolbar window move to the next normal window
+        !force next-window
+    !endif
     ftp-create-layout
-    screen-update
-    ftp-data-entry-setup
-    .osd.ftp osd
 !emacro
 
 !if &not &exi .osd.ftp
@@ -26,18 +25,39 @@ define-macro ftp
     set-variable %ftp-flags &reg  "/" "url/ftp-flags" "csp"
 !endif
 
-0 define-macro ftp-create-layout
-    !if .toolbar.open
-        toolbar-close
+define-macro ftp-connect
+    ftp-data-entry-setup
+    .osd.ftp osd
+!emacro
+
+0 define-macro ftp-rename-buffer
+    set-variable #l0 &len $buffer-fname
+    !if &equ #l0 0
+        delete-buffer $buffer-bname
+    !else
+        1 buffer-mode "hide"
+        !if &seq &rig $buffer-fname &sub #l0 1 "/"
+            set-variable #l1 &rig $buffer-fname &rsin "/" &lef $buffer-fname &sub #l0 1
+        !else
+            set-variable #l1 &rig $buffer-fname &rsin "/" $buffer-fname
+        !endif
+        set-variable $buffer-names #l1
+        !if &not &seq $buffer-names ""
+            set-variable #l0 0
+            set-variable #l2 &cat #l1 "<%d>"
+            !repeat
+                set-variable #l1 &spr #l2 &inc #l0 1
+                set-variable $buffer-names #l1
+            !until &seq $buffer-names ""
+        !endif
+        change-buffer-name #l1
     !endif
-    3 delete-other-windows
-    set-variable $window-flags 0
-    !if &sin "s" %ftp-flags
-        2 split-window-vertically
-        15 resize-window-vertically
-        find-buffer "*ftp-console*"
-        buffer-bind-create "bio" "delete" "" file-browser-close
-        previous-window
+!emacro
+
+0 define-macro ftp-create-layout
+    !if &band $window-flags 0x1000
+        ; if this is a toolbar window move to the next normal window
+        !force next-window
     !endif
     !if &seq &lef $buffer-fname 6 "ftp://"
         set-variable #l0 ""
@@ -51,36 +71,91 @@ define-macro ftp
         !else
             set-variable #l0 ""
         !endif
-        !if &exi .find-file.fcwd
-            set-variable #l1 .find-file.fcwd
-        !else
-            set-variable #l1 ""
-        !endif
+        set-variable #l1 ""
     !endif
     !if &seq #l0 ""
-        !if &exi .find-file.lcwd
-            set-variable #l0 .find-file.lcwd
+        set-variable #l0 &stat "a" "."
+    !endif
+    1 set-position "\x81"
+    !if &sin "s" %ftp-flags
+        !if .toolbar.open
+            !force toolbar-make-tool-visible "*ftp-console*"
+            !tjump &not $status 2
         !else
-            !force set-variable #l0 &stat "a" "file:~/"
+            !force 0 popup-window "*ftp-console*"
             !if &not $status
-                !force set-variable #l0 &stat "a" "file:/"
+                delete-other-windows
+                2 split-window-vertically
+                change-window-depth 15
+                set-variable $window-flags 6
+                find-buffer "*ftp-console*"
+                buffer-bind-create "bio" "delete" "" file-browser-close
+                3 previous-window
+                1 set-position "\x81"
+            !else
+                goto-position "\x81"
             !endif
         !endif
     !endif
-    !force 0 find-buffer "*files*"
-    !if &not &and $status &seq $buffer-fname #l0
-        !force 0 delete-buffer "*files*"
-        find-file &cat "file:" #l0 
+    ; setup the local *files* directory
+    !if .toolbar.open
+        !force toolbar-make-tool-visible "*files*"
+    !endif
+    !force 0 popup-window "*files*"
+    find-buffer "*files*"
+    !if &not &and &seq #l0 $buffer-fname &seq .fhook-dirlst.file-process :file-process
+        read-file #l0
+        !if &not &seq .fhook-dirlst.file-process :file-process
+            ; old buffer with the wrong processing - refresh
+            !force 0 delete-buffer $buffer-bname
+            find-file #l0
+        !endif
         change-buffer-name "*files*"
+    !endif
+    !if &not &band $window-flags 0x1000
         buffer-bind-create "bio" "delete" "" file-browser-close
     !endif
-    2 split-window-horizontally
-    !if &seq #l1 ""
-        find-buffer "*ftp*"
-    !else
-        find-file #l1 
+    buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
+    goto-position "\x81"
+    ; setup the ftp *ftp-files* directory
+    !if .toolbar.open
+        !force toolbar-make-tool-visible "*ftp-files*"
     !endif
-    buffer-bind-create "bio" "delete" "" file-browser-close
+    !force 0 popup-window "*ftp-files*"
+    !if &not $status
+        !if &seq $buffer-bname "*files*"
+            2 split-window-horizontally
+        !endif
+        find-buffer "*ftp-files*"
+    !endif
+    !if &seq #l1 $buffer-fname
+        !if &seq #l1 ""
+            set-variable :mouse-pick-1 void
+            set-variable :mouse-drop-1 void
+            set-variable :mouse-pick-3 void
+            set-variable :mouse-drop-3 ftp-connect
+        !endif
+    !elif &not &seq #l1 ""
+        ftp-rename-buffer
+        read-file #l1
+        change-buffer-name "*ftp-files*"
+    !endif
+    !if &not &band $window-flags 0x1000
+        buffer-bind-create "bio" "delete" "" file-browser-close
+    !endif
+    buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
+!emacro
+
+0 define-macro toolbar-ftp-file-list-create
+    set-position "\x86"
+    find-buffer "*ftp-files*"
+    !if &seq $buffer-fname ""
+        set-variable :mouse-pick-1 void
+        set-variable :mouse-drop-1 void
+        set-variable :mouse-pick-3 void
+        set-variable :mouse-drop-3 ftp-connect
+    !endif
+    goto-position "\x86"
 !emacro
 
 0 define-macro ftp-regfile-entry
@@ -306,13 +381,23 @@ define-macro ftp
     !endif
 !emacro
 
-0 define-macro ftp-connect
+0 define-macro ftp-do-connect
     !if &seq .ftp.name ""
         !abort
     !endif
     set-variable #l0 &reg "/url/ftp" &cat .ftp.name "/path" "/"
     find-file &spr "ftp://%s%s" .ftp.name #l0 @mna
+    !if &not &seq $buffer-bname "*ftp-files*"
+        set-variable #l1 $buffer-bname
+        !force 0 find-buffer "*ftp-files*"
+        !if $status
+            ftp-rename-buffer
+        !endif
+        find-buffer #l1
+        !force change-buffer-name "*ftp-files*"
+    !endif
     buffer-bind-create "bio" "delete" "" file-browser-close
+    buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
 !emacro
 
 -1 osd .osd.ftp
@@ -337,6 +422,6 @@ osd .osd.ftp 120 "hf" "    "
 osd .osd.ftp 145 "hf" "    "
 osd .osd.ftp 600 ""
 osd .osd.ftp 610 ""
-osd .osd.ftp 620 "BthcfH" 62 .scheme.osd-ebtt " &Connect " f ftp-connect
+osd .osd.ftp 620 "BthcfH" 62 .scheme.osd-ebtt " &Connect " f ftp-do-connect
 osd .osd.ftp 630 "BtcfH"  63 .scheme.osd-ebtt " E&xit  "   f void
 ftp-site-name-set ""

@@ -35,6 +35,9 @@
     set-variable $window-line #l1
     set-variable $window-y-scroll #l2
     set-variable $window-col #l3
+    !if .toolbar-favorites.update
+        toolbar-favorites
+    !endif
 !emacro
 
 0 define-macro osd-favorites-edit
@@ -58,7 +61,7 @@
     !endif
 !emacro
 
-0 define-macro osd-favorites-set
+0 define-macro favorites-load
     !if &not &exi .osd-favorites.fname
         !if &seq &set .osd-favorites.fname &find $MENAME ".eff" "ERROR"
             set-variable #l0 &sin &cond &band $system 0x200 ";" ":" $search-path
@@ -78,6 +81,68 @@
     !endif
     1 buffer-mode "hide"
     beginning-of-buffer
+!emacro
+
+0 define-macro toolbar-favorites-pick
+    set-variable .toolbar-favorites-drop.line $window-line
+    goto-position "\x82"
+!emacro
+
+0 define-macro toolbar-favorites-drop
+    !if &equ .line $window-line
+        !if &not &seq @wl ""
+            set-variable #l0 $window-line
+            goto-position "\x82"
+            #l0 osd-favorites-sel
+            !return
+        !endif
+    !endif
+    goto-position "\x82"
+!emacro
+
+0 define-macro toolbar-favorites
+    set-position "\x86"
+    !force !force favorites-load
+    !if &not $status
+        goto-position "\x86"
+        !return
+    !endif
+    set-variable #l0 $buffer-bname
+    find-buffer "*favorites*" 
+    -1 buffer-mode "undo"
+    -1 buffer-mode "view"
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    -1 kill-region
+    find-buffer #l0
+    !while &not &seq @wc ""
+        !if &not &seq &trl @wl ""
+            !if &seq @wl "-"
+                set-variable #l1 "\n"
+            !else
+                set-variable #l1 &xre @wl "[&\\\\]\\(.\\)" "\\1"
+                forward-line
+            !endif
+            find-buffer "*favorites*"
+            end-of-buffer
+            insert-string #l1
+            find-buffer #l0
+        !endif
+        forward-line
+    !done
+    find-buffer "*favorites*" 
+    beginning-of-buffer
+    set-variable :mouse-pick-1 toolbar-favorites-pick
+    set-variable :mouse-drop-1 toolbar-favorites-drop
+    -1 buffer-mode "edit"
+    1 buffer-mode "view"
+    goto-position "\x86"
+    set-variable .update 1
+!emacro
+
+0 define-macro osd-favorites-set
+    favorites-load
     -1 osd @#
     osd @# 0 "bo" 0 -3
     !if &or &seq &lef $buffer-bname 1 "*" &seq $buffer-fname ""

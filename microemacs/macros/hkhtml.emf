@@ -32,13 +32,13 @@ set-variable .fhook-html.command-kbind "|||||||C-c C-h|C-c C-i|"
 set-variable .fhook-html.command-desc  "|Html Browser Mode||&Goto Link||Html Author Mode||Process Current Buffer|Toggle Indent To VB Mode|"
 
 ; setup item-list
-set-variable .fhook-html.item-list-s1 "<[hH]1>\\(<[^>]*>[ \t\n]*\\)*\\([^<]+\\)"
+set-variable .fhook-html.item-list-s1 "<[hH]1>\\(\\s *<[^>]*>\\)*\\s *\\([^<]+\\)"
 set-variable .fhook-html.item-list-r1 "H1   \ecB\\2\ecA"
-set-variable .fhook-html.item-list-s2 "<[hH]2>\\(<[^>]*>[ \t\n]*\\)*\\([^<]+\\)"
+set-variable .fhook-html.item-list-s2 "<[hH]2>\\(\\s *<[^>]*>\\)*\\s *\\([^<]+\\)"
 set-variable .fhook-html.item-list-r2 "H2   \ecB\\2\ecA"
-set-variable .fhook-html.item-list-s3 "<[hH]3>\\(<[^>]*>[ \t\n]*\\)*\\([^<]+\\)"
+set-variable .fhook-html.item-list-s3 "<[hH]3>\\(\\s *<[^>]*>\\)*\\s *\\([^<]+\\)"
 set-variable .fhook-html.item-list-r3 "H3   \ecB\\2\ecA"
-set-variable .fhook-html.item-list-s4 "<[hH][4-9]>\\(<[^>]*>[ \t\n]*\\)*\\([^<]+\\)"
+set-variable .fhook-html.item-list-s4 "<[hH][4-9]>\\(\\s *<[^>]*>\\)*\\s *\\([^<]+\\)"
 set-variable .fhook-html.item-list-r4 "H4+  \ecB\\2\ecA"
 
 !if &and &sin "h" .fhook-html.setup &band .hilight.flags 0x02 
@@ -47,18 +47,206 @@ set-variable .fhook-html.item-list-r4 "H4+  \ecB\\2\ecA"
         set-variable .hilight.htmlT  &pinc .hilight.next 1
     !endif
     0 hilight .hilight.html 3 200                      $global-scheme
-    hilight .hilight.html 0x80 "<" .hilight.htmlT      .scheme.keyword
+    hilight .hilight.html 0x80 "<\\w*" .hilight.htmlT  .scheme.keyword
     hilight .hilight.html 4 "</" ">" ""                .scheme.keyword
     hilight .hilight.html 4 "<!" ">" ""                .scheme.comment
-    hilight .hilight.html 0 "&\\w\\w;"                 .scheme.operator
-    hilight .hilight.html 0 "&\\w\\w\\w;"              .scheme.operator
-    hilight .hilight.html 0 "&\\w\\w\\w\\w;"           .scheme.operator
+    hilight .hilight.html 0 "&\\w\\w;"                 .scheme.variable
+    hilight .hilight.html 0 "&\\w\\w\\w;"              .scheme.variable
+    hilight .hilight.html 0 "&\\w\\w\\w\\w;"           .scheme.variable
+    hilight .hilight.html 0 "&\\w\\w\\w\\w\\w;"        .scheme.variable
+    hilight .hilight.html 0 "&\\w\\w\\w\\w\\w;"        .scheme.variable
     hilight .hilight.html 0x804 "\"" "\"" "\\"         .scheme.string
     hilight .hilight.html 4 "<script" "</script>" ""   .scheme.keyword
     hilight .hilight.html 4 "<%" "%>" ""               .scheme.keyword
     
-    0 hilight .hilight.htmlT 0                         .scheme.keyword
-    hilight .hilight.htmlT 4  "\"" "\"" "\\"           .scheme.string
+    0 hilight .hilight.htmlT 1                         $global-scheme
+    hilight .hilight.htmlT 4  "=\\{\"" "\"" "\\"       .scheme.string
+    hilight .hilight.htmlT 4  "=\\{" "\\}[ \t\n>]" ""  .scheme.string
+    hilight .hilight.htmlT 1  "abbr"                   .scheme.operator
+    hilight .hilight.htmlT 1  "above"                  .scheme.operator
+    hilight .hilight.htmlT 1  "accept-charset"         .scheme.operator
+    hilight .hilight.htmlT 1  "accesskey"              .scheme.operator
+    hilight .hilight.htmlT 1  "action"                 .scheme.operator
+    hilight .hilight.htmlT 1  "align"                  .scheme.operator
+    hilight .hilight.htmlT 1  "alink"                  .scheme.operator
+    hilight .hilight.htmlT 1  "alt"                    .scheme.operator
+    hilight .hilight.htmlT 1  "archive"                .scheme.operator
+    hilight .hilight.htmlT 1  "axis"                   .scheme.operator
+    hilight .hilight.htmlT 1  "background"             .scheme.operator
+    hilight .hilight.htmlT 1  "balance"                .scheme.operator
+    hilight .hilight.htmlT 1  "behavior"               .scheme.operator
+    hilight .hilight.htmlT 1  "behaviour"              .scheme.operator
+    hilight .hilight.htmlT 1  "below"                  .scheme.operator
+    hilight .hilight.htmlT 1  "bgcolor"                .scheme.operator
+    hilight .hilight.htmlT 1  "bgproperties"           .scheme.operator
+    hilight .hilight.htmlT 1  "border"                 .scheme.operator
+    hilight .hilight.htmlT 1  "bordercolor"            .scheme.operator
+    hilight .hilight.htmlT 1  "bordercolordark"        .scheme.operator
+    hilight .hilight.htmlT 1  "bordercolorlight"       .scheme.operator
+    hilight .hilight.htmlT 1  "bottommargin"           .scheme.operator
+    hilight .hilight.htmlT 1  "cellpadding"            .scheme.operator
+    hilight .hilight.htmlT 1  "cellspacing"            .scheme.operator
+    hilight .hilight.htmlT 1  "challenge"              .scheme.operator
+    hilight .hilight.htmlT 1  "char"                   .scheme.operator
+    hilight .hilight.htmlT 1  "charoff"                .scheme.operator
+    hilight .hilight.htmlT 1  "charset"                .scheme.operator
+    hilight .hilight.htmlT 1  "checked"                .scheme.operator
+    hilight .hilight.htmlT 1  "cite"                   .scheme.operator
+    hilight .hilight.htmlT 1  "class"                  .scheme.operator
+    hilight .hilight.htmlT 1  "classid"                .scheme.operator
+    hilight .hilight.htmlT 1  "clear"                  .scheme.operator
+    hilight .hilight.htmlT 1  "clip"                   .scheme.operator
+    hilight .hilight.htmlT 1  "code"                   .scheme.operator
+    hilight .hilight.htmlT 1  "codebase"               .scheme.operator
+    hilight .hilight.htmlT 1  "codetype"               .scheme.operator
+    hilight .hilight.htmlT 1  "color"                  .scheme.operator
+    hilight .hilight.htmlT 1  "cols"                   .scheme.operator
+    hilight .hilight.htmlT 1  "colspan"                .scheme.operator
+    hilight .hilight.htmlT 1  "compact"                .scheme.operator
+    hilight .hilight.htmlT 1  "content"                .scheme.operator
+    hilight .hilight.htmlT 1  "coords"                 .scheme.operator
+    hilight .hilight.htmlT 1  "data"                   .scheme.operator
+    hilight .hilight.htmlT 1  "datafld"                .scheme.operator
+    hilight .hilight.htmlT 1  "dataformatas"           .scheme.operator
+    hilight .hilight.htmlT 1  "datapagesize"           .scheme.operator
+    hilight .hilight.htmlT 1  "datasrc"                .scheme.operator
+    hilight .hilight.htmlT 1  "datetime"               .scheme.operator
+    hilight .hilight.htmlT 1  "declare"                .scheme.operator
+    hilight .hilight.htmlT 1  "dir"                    .scheme.operator
+    hilight .hilight.htmlT 1  "direction"              .scheme.operator
+    hilight .hilight.htmlT 1  "disabled"               .scheme.operator
+    hilight .hilight.htmlT 1  "dynsrc"                 .scheme.operator
+    hilight .hilight.htmlT 1  "enctype"                .scheme.operator
+    hilight .hilight.htmlT 1  "face"                   .scheme.operator
+    hilight .hilight.htmlT 1  "for"                    .scheme.operator
+    hilight .hilight.htmlT 1  "frame"                  .scheme.operator
+    hilight .hilight.htmlT 1  "frameborder"            .scheme.operator
+    hilight .hilight.htmlT 1  "framespacing"           .scheme.operator
+    hilight .hilight.htmlT 1  "gutter"                 .scheme.operator
+    hilight .hilight.htmlT 1  "headers"                .scheme.operator
+    hilight .hilight.htmlT 1  "height"                 .scheme.operator
+    hilight .hilight.htmlT 1  "hidden"                 .scheme.operator
+    hilight .hilight.htmlT 1  "href"                   .scheme.operator
+    hilight .hilight.htmlT 1  "hreflang"               .scheme.operator
+    hilight .hilight.htmlT 1  "hspace"                 .scheme.operator
+    hilight .hilight.htmlT 1  "http-equiv"             .scheme.operator
+    hilight .hilight.htmlT 1  "id"                     .scheme.operator
+    hilight .hilight.htmlT 1  "ismap"                  .scheme.operator
+    hilight .hilight.htmlT 1  "label"                  .scheme.operator
+    hilight .hilight.htmlT 1  "lang"                   .scheme.operator
+    hilight .hilight.htmlT 1  "language"               .scheme.operator
+    hilight .hilight.htmlT 1  "left"                   .scheme.operator
+    hilight .hilight.htmlT 1  "leftmargin"             .scheme.operator
+    hilight .hilight.htmlT 1  "link"                   .scheme.operator
+    hilight .hilight.htmlT 1  "longdesc"               .scheme.operator
+    hilight .hilight.htmlT 1  "loop"                   .scheme.operator
+    hilight .hilight.htmlT 1  "lowsrc"                 .scheme.operator
+    hilight .hilight.htmlT 1  "marginheight"           .scheme.operator
+    hilight .hilight.htmlT 1  "marginwidth"            .scheme.operator
+    hilight .hilight.htmlT 1  "maxlength"              .scheme.operator
+    hilight .hilight.htmlT 1  "mayscript"              .scheme.operator
+    hilight .hilight.htmlT 1  "media"                  .scheme.operator
+    hilight .hilight.htmlT 1  "method"                 .scheme.operator
+    hilight .hilight.htmlT 1  "methods"                .scheme.operator
+    hilight .hilight.htmlT 1  "multiple"               .scheme.operator
+    hilight .hilight.htmlT 1  "name"                   .scheme.operator
+    hilight .hilight.htmlT 1  "noShade"                .scheme.operator
+    hilight .hilight.htmlT 1  "nohref"                 .scheme.operator
+    hilight .hilight.htmlT 1  "noresize"               .scheme.operator
+    hilight .hilight.htmlT 1  "nowrap"                 .scheme.operator
+    hilight .hilight.htmlT 1  "object"                 .scheme.operator
+    hilight .hilight.htmlT 1  "onabort"                .scheme.operator
+    hilight .hilight.htmlT 1  "onafterupdate"          .scheme.operator
+    hilight .hilight.htmlT 1  "onbeforeunload"         .scheme.operator
+    hilight .hilight.htmlT 1  "onbeforeupdate"         .scheme.operator
+    hilight .hilight.htmlT 1  "onblur"                 .scheme.operator
+    hilight .hilight.htmlT 1  "onchange"               .scheme.operator
+    hilight .hilight.htmlT 1  "onclick"                .scheme.operator
+    hilight .hilight.htmlT 1  "ondataavailable"        .scheme.operator
+    hilight .hilight.htmlT 1  "ondatasetchanged"       .scheme.operator
+    hilight .hilight.htmlT 1  "ondatasetcomplete"      .scheme.operator
+    hilight .hilight.htmlT 1  "ondblclick"             .scheme.operator
+    hilight .hilight.htmlT 1  "ondragdrop"             .scheme.operator
+    hilight .hilight.htmlT 1  "ondragstart"            .scheme.operator
+    hilight .hilight.htmlT 1  "onerror"                .scheme.operator
+    hilight .hilight.htmlT 1  "onerrorupdate"          .scheme.operator
+    hilight .hilight.htmlT 1  "onfilterchange"         .scheme.operator
+    hilight .hilight.htmlT 1  "onfocus"                .scheme.operator
+    hilight .hilight.htmlT 1  "onhelp"                 .scheme.operator
+    hilight .hilight.htmlT 1  "onkeydown"              .scheme.operator
+    hilight .hilight.htmlT 1  "onkeypress"             .scheme.operator
+    hilight .hilight.htmlT 1  "onkeyup"                .scheme.operator
+    hilight .hilight.htmlT 1  "onload"                 .scheme.operator
+    hilight .hilight.htmlT 1  "onmousedown"            .scheme.operator
+    hilight .hilight.htmlT 1  "onmousemove"            .scheme.operator
+    hilight .hilight.htmlT 1  "onmouseout"             .scheme.operator
+    hilight .hilight.htmlT 1  "onmouseover"            .scheme.operator
+    hilight .hilight.htmlT 1  "onmouseup"              .scheme.operator
+    hilight .hilight.htmlT 1  "onmove"                 .scheme.operator
+    hilight .hilight.htmlT 1  "onreadystatechange"     .scheme.operator
+    hilight .hilight.htmlT 1  "onreset"                .scheme.operator
+    hilight .hilight.htmlT 1  "onresize"               .scheme.operator
+    hilight .hilight.htmlT 1  "onrowenter"             .scheme.operator
+    hilight .hilight.htmlT 1  "onrowexit"              .scheme.operator
+    hilight .hilight.htmlT 1  "onscroll"               .scheme.operator
+    hilight .hilight.htmlT 1  "onselect"               .scheme.operator
+    hilight .hilight.htmlT 1  "onselectstart"          .scheme.operator
+    hilight .hilight.htmlT 1  "onsubmit"               .scheme.operator
+    hilight .hilight.htmlT 1  "onunload"               .scheme.operator
+    hilight .hilight.htmlT 1  "pagex"                  .scheme.operator
+    hilight .hilight.htmlT 1  "pagey"                  .scheme.operator
+    hilight .hilight.htmlT 1  "palette"                .scheme.operator
+    hilight .hilight.htmlT 1  "pluginspage"            .scheme.operator
+    hilight .hilight.htmlT 1  "pluginurl"              .scheme.operator
+    hilight .hilight.htmlT 1  "point-size"             .scheme.operator
+    hilight .hilight.htmlT 1  "profile"                .scheme.operator
+    hilight .hilight.htmlT 1  "prompt"                 .scheme.operator
+    hilight .hilight.htmlT 1  "readonly"               .scheme.operator
+    hilight .hilight.htmlT 1  "rel"                    .scheme.operator
+    hilight .hilight.htmlT 1  "rev"                    .scheme.operator
+    hilight .hilight.htmlT 1  "rightmargin"            .scheme.operator
+    hilight .hilight.htmlT 1  "rows"                   .scheme.operator
+    hilight .hilight.htmlT 1  "rowspan"                .scheme.operator
+    hilight .hilight.htmlT 1  "rules"                  .scheme.operator
+    hilight .hilight.htmlT 1  "runat"                  .scheme.operator
+    hilight .hilight.htmlT 1  "scheme"                 .scheme.operator
+    hilight .hilight.htmlT 1  "scope"                  .scheme.operator
+    hilight .hilight.htmlT 1  "scrollamount"           .scheme.operator
+    hilight .hilight.htmlT 1  "scrolldelay"            .scheme.operator
+    hilight .hilight.htmlT 1  "scrolling"              .scheme.operator
+    hilight .hilight.htmlT 1  "selected"               .scheme.operator
+    hilight .hilight.htmlT 1  "shape"                  .scheme.operator
+    hilight .hilight.htmlT 1  "shapes"                 .scheme.operator
+    hilight .hilight.htmlT 1  "size"                   .scheme.operator
+    hilight .hilight.htmlT 1  "span"                   .scheme.operator
+    hilight .hilight.htmlT 1  "src"                    .scheme.operator
+    hilight .hilight.htmlT 1  "standby"                .scheme.operator
+    hilight .hilight.htmlT 1  "start"                  .scheme.operator
+    hilight .hilight.htmlT 1  "style"                  .scheme.operator
+    hilight .hilight.htmlT 1  "summary"                .scheme.operator
+    hilight .hilight.htmlT 1  "tabindex"               .scheme.operator
+    hilight .hilight.htmlT 1  "target"                 .scheme.operator
+    hilight .hilight.htmlT 1  "text"                   .scheme.operator
+    hilight .hilight.htmlT 1  "title"                  .scheme.operator
+    hilight .hilight.htmlT 1  "top"                    .scheme.operator
+    hilight .hilight.htmlT 1  "topmargin"              .scheme.operator
+    hilight .hilight.htmlT 1  "truespeed"              .scheme.operator
+    hilight .hilight.htmlT 1  "type"                   .scheme.operator
+    hilight .hilight.htmlT 1  "urn"                    .scheme.operator
+    hilight .hilight.htmlT 1  "usemap"                 .scheme.operator
+    hilight .hilight.htmlT 1  "valign"                 .scheme.operator
+    hilight .hilight.htmlT 1  "value"                  .scheme.operator
+    hilight .hilight.htmlT 1  "valuetype"              .scheme.operator
+    hilight .hilight.htmlT 1  "version"                .scheme.operator
+    hilight .hilight.htmlT 1  "visibility"             .scheme.operator
+    hilight .hilight.htmlT 1  "vlink"                  .scheme.operator
+    hilight .hilight.htmlT 1  "volume"                 .scheme.operator
+    hilight .hilight.htmlT 1  "vspace"                 .scheme.operator
+    hilight .hilight.htmlT 1  "weight"                 .scheme.operator
+    hilight .hilight.htmlT 1  "width"                  .scheme.operator
+    hilight .hilight.htmlT 1  "wrap"                   .scheme.operator
+    hilight .hilight.htmlT 1  "z-index"                .scheme.operator
+    hilight .hilight.htmlT 0  "\\w+"                   .scheme.error
     hilight .hilight.htmlT 0x80 ">" .hilight.html      .scheme.keyword
     
     !force exec-file "hkvb"
@@ -264,6 +452,201 @@ define-macro html-process-buffer
             :auto-spell auto-spell
         !endif
     !endif
+!emacro
+
+define-macro html-forward-tag
+    forward-char
+    set-variable #l9 &bmod "magic"
+    1 buffer-mode "magic"
+    !force search-forward "[<>]"
+    !if &not $status
+        end-of-buffer
+        !force backward-char
+    !else
+        backward-char
+        !if &seq @s0 ">"
+            forward-char
+        !endif
+    !endif
+    &cond #l9 1 -1 buffer-mode "magic"
+!emacro
+
+define-macro html-backward-tag
+    backward-char
+    set-variable #l9 &bmod "magic"
+    1 buffer-mode "magic"
+    !force search-backward "[<>]"
+    !if &not $status
+        beginning-of-buffer
+    !else
+        forward-char
+        !if &seq @s0 "<"
+            backward-char
+        !endif
+    !endif
+    &cond #l9 1 -1 buffer-mode "magic"
+!emacro
+
+; n html-insert-tag <name>
+; n is a bitwise flag where:
+;      0x01  insert </<name>> end tag
+define-macro html-insert-tag
+    !force set-variable #l0 @1
+    !if &not $status
+        set-variable #l0 @ml "HTML Tag"
+    !endif
+    set-position "\x81"
+    !force forward-char
+    !force html-backward-tag
+    !if &not $status
+        goto-position "\x81"
+    !elif &seq @wc "<"
+        !force html-forward-tag
+    !else
+        goto-position "\x81"
+    !endif
+    insert-string &spr "<%s>" #l0
+    !if &band @# 1
+        set-variable #l1 $window-col
+        insert-string &spr "</%s>" #l0
+        set-variable $window-col #l1
+    !endif
+!emacro
+
+; n html-insert-attrib <name>
+; n is a bitwise flag where:
+;      0x01  search for existing value
+;      0x02  insert an =
+;      0x04  insert an =""
+define-macro html-insert-attrib
+    !force set-variable #l0 @1
+    !if &not $status
+        set-variable #l0 @ml "HTML Attribute"
+    !endif
+    set-position "\x81"
+    !force html-backward-tag
+    !if &not &and $status &seq @wc "<"
+        goto-position "\x81"
+        ml-write "[Error: Not in a tag]"
+        !abort
+    !endif
+    !force html-forward-tag
+    !if &not $status
+        !jump 3
+    !elif &seq @wc "<"
+        backward-char
+        search-backward "\\S "
+        forward-char
+        !if &seq @wc " "
+            forward-char
+        !endif
+    !else
+        backward-char
+        !if &not &seq @wc ">"
+            forward-char
+        !endif
+    !endif
+    !if &not $window-col
+    !elif &not &seq &mid @wl &sub $window-col 1 1 " "
+        insert-space
+    !endif
+    insert-string #l0
+    !if &band @# 2
+        insert-string "="
+    !elif &band @# 4
+        insert-string "=\"\""
+        backward-char
+    !endif
+!emacro
+
+define-macro html-create-table
+    !force set-variable #l1 @2
+    !if $status
+        set-variable #l0 @1
+    !else
+        set-variable #l0 @ml1 "Number of Columns" 2
+        set-variable #l1 @ml1 "Number of Rows" 2
+    !endif
+    set-variable #l2 $window-col
+    set-variable #l4 0
+    insert-string "<TABLE>\n" @mna
+    !while &gre &pdec #l1 1 0
+        !if $buffer-indent
+            tab
+        !else
+            &add #l2 2 insert-space
+        !endif
+        insert-string "<TR>\n"
+        !if &not #l4
+            set-variable #l4 $window-line
+        !endif
+        set-variable #l3 #l0
+        !if &gre &pdec #l3 1 0
+            !if $buffer-indent
+                tab
+            !else
+                &add #l2 4 insert-space
+            !endif
+            insert-string "<TD></TD>\n"
+            !jump -7
+        !endif
+        !if $buffer-indent
+            insert-string "</TR>"
+            newline
+        !else
+            insert-string &spr "%n</TR>\n" &add #l2 2 " "
+        !endif
+    !done
+    !if $buffer-indent
+        insert-string "</TABLE>"
+        tab
+    !else
+        insert-string &spr "%n</TABLE>" #l2 " "
+    !endif
+    !if #l4
+        set-variable $window-line #l4
+        end-of-line
+        5 backward-char
+    !endif
+!emacro
+
+0 define-macro html-view-launch
+    !if &seq $buffer-fname ""
+        ml-write "[Current buffer has no file name]"
+        !abort
+    !endif
+    !if &bmod "edit"
+        !if &iseq @mc1 "Save buffer first [y/n]? " "nNyY" "y"
+            save-buffer
+        !endif
+    !endif
+    set-variable #l1 $buffer-fname
+    !if &band $system 0x100
+        set-variable #l1 &rep #l1 "/" "\\"
+    !endif
+    set-variable #l0 &rep @1 "%%" "\b"
+    set-variable #l0 &rep #l0 "%f" #l1
+    set-variable #l0 &rep #l0 "\b" "%"
+    2 ipipe-shell-command #l0 "*html-viewer*" @mna
+!emacro
+define-macro html-view-iexplorer
+    set-variable #l0 &reg "/history" &cat $platform "/html-iexplorer" "iexplore file:%s"
+    html-view-launch #l0
+!emacro
+define-macro html-view-netscape
+    set-variable #l0 &reg "/history" &cat $platform "/html-netscape" "netscape file:%s"
+    html-view-launch #l0
+!emacro
+
+define-macro html-config-iexplorer
+    set-variable #l0 &reg "/history" &cat $platform "/html-iexplorer" "iexplore file:%s"
+    set-variable #l0 @ml2 "IExplorer Command-line" #l0
+    set-registry "/history" &cat $platform "/html-iexplorer" #l0
+!emacro
+define-macro html-config-netscape
+    set-variable #l0 &reg "/history" &cat $platform "/html-netscape" "netscape file:%s"
+    set-variable #l0 @ml2 "Netscape Command-line" #l0
+    set-registry "/history" &cat $platform "/html-netscape" #l0
 !emacro
 
 ml-write "[HTML file hook loaded]"

@@ -16,7 +16,6 @@ define-macro cvs
 set-variable .cvs.filter &cond &exi .cvs.filter .cvs.filter 1
 set-variable .cvs.diff-c &cond &exi .cvs.diff-c .cvs.diff-c 1
 set-variable .cvs.diff-w &cond &exi .cvs.diff-w .cvs.diff-w 1
-set-variable .cvs.console-hilight "|||||||"
 set-variable .cvs.message ""
 
 !if &band .hilight.flags 0x02
@@ -29,22 +28,9 @@ set-variable .cvs.message ""
     hilight .hilight.dirlst 0x112 " C"       .scheme.error
     hilight .hilight.dirlst 0x112 " R"       .scheme.error
     hilight .hilight.dirlst 0x112 " U"       .scheme.variable
-    !if &not &exist .hilight.cvs
-        set-variable .hilight.cvs &pinc .hilight.next 1
-    !endif
-    0 hilight .hilight.cvs 2 100           $global-scheme
-    hilight .hilight.cvs 0x40 "^>cvs-" ""  $global-scheme
     !if &not &exi .hilight.diff
         !force execute-file "hkdiff"
     !endif
-    ; If the hilighting mode is loaded then modify it.
-    !if &and &sin "h" .fhook-emf.setup &band .hilight.flags 0x02 
-        hilight .hilight.cvs  0xc0 "^>diff-" "" .hilight.diff $global-scheme
-        hilight .hilight.diff 0x40 "^>diff-" ""               $global-scheme
-        hilight .hilight.diff 0xc0 "^>cvs-"  "" .hilight.cvs  $global-scheme
-        set-variable .cvs.console-hilight &lset .cvs.console-hilight 3 ">diff-"
-    !endif
-    
 !endif
 
 0 define-macro cvs-command-init
@@ -171,7 +157,7 @@ define-macro cvs-diff
     !endif
     set-variable #l2 &spr "cvs diff %s%s%s" &cond .cvs.diff-c "-c " "" &cond .cvs.diff-w "-w " "" #l3
     4 ipipe-shell-command #l2 "*cvs-diff*"
-    !if &not &seq &lget .cvs.console-hilight 3 ""
+    !if &exi .hilight.diff
         set-position "\x82"
         find-buffer "*cvs-diff*"
         set-variable $buffer-hilight .hilight.diff
@@ -456,7 +442,7 @@ define-macro cvs-resolve-conflicts
     end-of-buffer
     copy-region
     -1 find-buffer "*cvs-temp*"
-    find-buffer "*cvs-console*"
+    find-buffer @3
     end-of-buffer
     yank
     -1 yank
@@ -471,14 +457,6 @@ define-macro cvs-resolve-conflicts
         !done
         forward-line
     !until &seq @wl ""
-    !if &not &seq &set #l0 &lget .cvs.console-hilight @2 ""
-        !repeat
-            insert-string #l0
-            beginning-of-line
-            !force 100 forward-line
-        !until &not $status
-        set-variable $buffer-hilight .hilight.cvs
-    !endif
     -1 buffer-mode "edit"
     0x10 goto-position "\x82"
 !emacro
@@ -525,7 +503,13 @@ define-macro cvs-resolve-conflicts
     !elif &seq @# 3
         set-variable #l2 &spr "cvs diff %s%s" &cond .cvs.diff-c "-c " "" &cond .cvs.diff-w "-w " ""
     !else
-        set-variable #l2 &spr "cvs %s" &lget "|update|commit|diff|log|status -v|add|||add -kb|" @#
+        set-variable #l2 &spr "cvs %s" &lget "|update|commit||log|status -v|add|||add -kb|" @#
+    !endif
+    set-variable #l6 &lget "|||*cvs-diff*|*cvs-log*|*cvs-status*|||||" @#
+    !if &seq #l6 ""
+        set-variable #l6 "*cvs-console*"
+    !else
+        !force 0 delete-buffer #l6
     !endif
     set-variable #l5 $mouse
     set-variable $mouse &bor 0x50000 &band 0xffff #l5
@@ -544,17 +528,22 @@ define-macro cvs-resolve-conflicts
             set-variable #l4 &cat &cat "\"" #l4 "\""
         !endif
         !if &gre &add #l3 &len #l4 1020
-            cvs-exec-file-menu-cmd #l1 @# 
+            cvs-exec-file-menu-cmd #l1 @# #l6
             set-variable #l1 #l2
             set-variable #l3 &len #l2
         !endif
         set-variable #l1 &cat #l1 &cat " " #l4
         set-variable #l3 &add #l3 &add &len #l4 1
     !done
-    cvs-exec-file-menu-cmd #l1 @# 
-    !force 0 popup-window "*cvs-console*"
-    !if $status
+    cvs-exec-file-menu-cmd #l1 @# #l6
+    popup-window #l6
+    !if &seq #l6 "*cvs-console*"
         end-of-buffer
+    !else
+        beginning-of-buffer
+        !if &seq #l6 "*cvs-diff*"
+            set-variable $buffer-hilight .hilight.diff
+        !endif
     !endif
     goto-position "\x82"
     set-variable $mouse #l5
@@ -605,13 +594,28 @@ define-macro cvs-resolve-conflicts
 
 define-macro cvs
     set-variable .fhook-dirlst.file-process "cvs-dir-conv"
-    osd .osd.dirlst  11 "Md" "C&VS" .osd.tmp osd-cvs-file-menu
-    delete-other-windows
-    2 split-window-vertically
-    15 resize-window-vertically
-    find-buffer "*cvs-console*"
-    buffer-bind-create "bio" "delete" "" file-browser-close
-    3 previous-window
+    !if &band $window-flags 0x1000
+        ; if this is a toolbar window move to the next normal window
+        !force next-window
+    !endif
+    !if .toolbar.open
+        !force toolbar-make-tool-visible "*ftp-console*"
+        !tjump &not $status 2
+    !else
+        1 set-position "\x81"
+        !force 0 popup-window "*cvs-console*"
+        !if &not $status
+            delete-other-windows
+            2 split-window-vertically
+            change-window-depth 15
+            set-variable $window-flags 6
+            find-buffer "*cvs-console*"
+            buffer-bind-create "bio" "delete" "" file-browser-close
+            3 previous-window
+        !else
+            goto-position "\x81"
+        !endif
+    !endif
     file-browser-init
 !emacro
 

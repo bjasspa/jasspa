@@ -157,7 +157,7 @@ do {                                                                         \
 #ifdef _SINGLE_TIMER
 
 #ifdef _UNIX
-static struct itimerval itv={{0},{0}} ;           /* itimer interval                */
+static struct itimerval itv ;             /* itimer interval                */
 #define meSetSingleTimer(tim)                                                \
 ((itv.it_value.tv_sec=tim/1000),(itv.it_value.tv_usec=(tim%1000)*1000),setitimer(ITIMER_REAL,&itv,0))
 #define meKillSingleTimer()                                                  \

@@ -123,12 +123,13 @@ extern  meUInt  meSystemCfg;            /* ME system config variable    */
 #define meSYSTEM_HIDEBCKUP  0x100000    /* Hide backup files            */
 #define meSYSTEM_TABINDFST  0x200000    /* Tab key indents first col pos*/
 #define meSYSTEM_NOEMPTYANK 0x400000    /* Don't allow empty yank (ext) */
+#define meSYSTEM_NOCLIPBRD  0x800000    /* Don't use the sys clip-board */
 
 #ifdef _UNIX
 #if MEOPT_CLIENTSERVER
-#define meSYSTEM_MASK (meSYSTEM_ANSICOLOR|meSYSTEM_FONTS|meSYSTEM_DOSFNAMES|meSYSTEM_IPIPES|meSYSTEM_TABINDANY|meSYSTEM_ALTMENU|meSYSTEM_ALTPRFX1|meSYSTEM_KEEPUNDO|meSYSTEM_FONTFIX|meSYSTEM_CLNTSRVR|meSYSTEM_SHOWWHITE|meSYSTEM_HIDEBCKUP|meSYSTEM_TABINDFST|meSYSTEM_NOEMPTYANK)
+#define meSYSTEM_MASK (meSYSTEM_ANSICOLOR|meSYSTEM_FONTS|meSYSTEM_DOSFNAMES|meSYSTEM_IPIPES|meSYSTEM_TABINDANY|meSYSTEM_ALTMENU|meSYSTEM_ALTPRFX1|meSYSTEM_KEEPUNDO|meSYSTEM_FONTFIX|meSYSTEM_CLNTSRVR|meSYSTEM_SHOWWHITE|meSYSTEM_HIDEBCKUP|meSYSTEM_TABINDFST|meSYSTEM_NOEMPTYANK|meSYSTEM_NOCLIPBRD)
 #else
-#define meSYSTEM_MASK (meSYSTEM_ANSICOLOR|meSYSTEM_FONTS|meSYSTEM_DOSFNAMES|meSYSTEM_IPIPES|meSYSTEM_TABINDANY|meSYSTEM_ALTMENU|meSYSTEM_ALTPRFX1|meSYSTEM_KEEPUNDO|meSYSTEM_FONTFIX|meSYSTEM_SHOWWHITE|meSYSTEM_HIDEBCKUP|meSYSTEM_TABINDFST|meSYSTEM_NOEMPTYANK)
+#define meSYSTEM_MASK (meSYSTEM_ANSICOLOR|meSYSTEM_FONTS|meSYSTEM_DOSFNAMES|meSYSTEM_IPIPES|meSYSTEM_TABINDANY|meSYSTEM_ALTMENU|meSYSTEM_ALTPRFX1|meSYSTEM_KEEPUNDO|meSYSTEM_FONTFIX|meSYSTEM_SHOWWHITE|meSYSTEM_HIDEBCKUP|meSYSTEM_TABINDFST|meSYSTEM_NOEMPTYANK|meSYSTEM_NOCLIPBRD)
 #endif
 #endif
 #ifdef _DOS
@@ -421,9 +422,9 @@ extern int        osdRow ;              /* The osd current row */
 
 /* initialized global definitions */
 #ifdef _INSENSE_CASE
-meDirList curDirList={0,0} ;
+meDirList curDirList={0,0,NULL,NULL,0,NULL,0} ;
 #else
-meDirList curDirList={1,0} ;
+meDirList curDirList={1,0,NULL,NULL,0,NULL,0} ;
 #endif
 #if MEOPT_OSD
 struct osdDIALOG  *osdDialogHd = NULL;  /* Root of the on screen displays */
@@ -571,6 +572,9 @@ meUByte   windowChars[WCLEN+1] =        /* Set of window characters     */
     '>',                                /* tab \t display character */
     '\\',                               /* new-line \n display character */
     '.',                                /* space ' ' display character */
+    '$',                                /* text off screen to the left */
+    '$',                                /* text off screen to the right */
+    '\\',                               /* split line char (ipipe) */
     0
 } ;
 meUByte   displayTab=' ';               /* tab \t display character */
@@ -608,7 +612,7 @@ meUInt    meSystemCfg=                  /* ME system config variable    */
 #endif
 #ifdef _WIN32
 meUInt    meSYSTEM_MASK=                /* ME system mask - dependant on win32 flavour */
-(meSYSTEM_FONTS|meSYSTEM_TABINDANY|meSYSTEM_ALTMENU|meSYSTEM_ALTPRFX1|meSYSTEM_KEEPUNDO|meSYSTEM_FONTFIX|meSYSTEM_CTCHASPC|meSYSTEM_SHOWWHITE|meSYSTEM_HIDEBCKUP|meSYSTEM_TABINDFST|meSYSTEM_NOEMPTYANK
+(meSYSTEM_FONTS|meSYSTEM_TABINDANY|meSYSTEM_ALTMENU|meSYSTEM_ALTPRFX1|meSYSTEM_KEEPUNDO|meSYSTEM_FONTFIX|meSYSTEM_CTCHASPC|meSYSTEM_SHOWWHITE|meSYSTEM_HIDEBCKUP|meSYSTEM_TABINDFST|meSYSTEM_NOEMPTYANK|meSYSTEM_NOCLIPBRD
 #if !defined (_WIN32s)
 |meSYSTEM_CLNTSRVR
 #endif
@@ -693,7 +697,7 @@ int       kbdoff=0;                     /* current offset of macro         */
 int       kbdrep=0;                     /* number of repetitions           */
 meUByte   emptym[]  = "";               /* empty literal                   */
 meUByte   errorm[]  = "ERROR";          /* error literal                   */
-meUByte   abortm[]  = "meABORT";          /* abort literal                   */
+meUByte   abortm[]  = "ABORT";          /* abort literal                   */
 meUByte   truem[]   = "1";              /* true literal            */
 meUByte   falsem[]  = "0";              /* false litereal                  */
 meVarList usrVarList={NULL,0} ;         /* user variables list             */

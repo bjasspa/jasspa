@@ -23,7 +23,7 @@
  * Created:     07/05/85
  * Synopsis:    Search routines.
  * Authors:     Unknown, John M. Gamble, Jon Green & Steven Phillips
- * Description:	
+ * Description:
  *     The functions in this file implement commands that search in the forward
  *     and backward directions.  There are no special characters in the search
  *     strings.  Probably should have a regular expression search, or something
@@ -33,24 +33,20 @@
  *     The search engine now uses the regex routines defined in regex.c.
  */
 
-/*---	Include defintions */
+/*--- Include defintions */
 
 #define	__SEARCHC			/* Define filename */
 
-/*---	Include files */
+/*--- Include files */
 
 #include "emain.h"
 #include "esearch.h"
 
-/*---	Local macro definitions */
+/*--- Local macro definitions */
 
 #define notFound() (mlwrite(MWABORT|MWCLEXEC,notFoundStr))
 
-/*---	External references */
-
-/*---	Local type definitions */
-
-/*---	Local variable definitions */
+/*--- Local variable definitions */
 
 static meUByte notFoundStr[] ="[Not Found]";
 static int  exactFlag = 1;              /* Use to cache EXACT mode state */
@@ -61,10 +57,10 @@ meUByte *srchLastMatch=NULL;               /* pointer to the last match string *
 
 /*
  * boundry -- Return information depending on whether we may search no
- *	further.  Beginning of file and end of file are the obvious
- *	cases, but we may want to add further optional boundry restrictions
- *	in future, a la VMS EDT.  At the moment, just return meTRUE or
- *	meFALSE depending on if a boundry is hit (ouch).
+ *      further.  Beginning of file and end of file are the obvious
+ *      cases, but we may want to add further optional boundry restrictions
+ *      in future, a la VMS EDT.  At the moment, just return meTRUE or
+ *      meFALSE depending on if a boundry is hit (ouch).
  */
 #define boundry(curline,curoff,dir)                                          \
 (((dir) == meFORWARD) ?                                                        \
@@ -488,10 +484,10 @@ mere_scanner(int direct, int beg_or_end, int *n, SCANNERPOS *sp)
             ctrlg(meFALSE,1) ;
             return meFALSE ;
         }
-		flags = (lp == frameCur->bufferCur->baseLine) ? meREGEX_ENDBUFF:0 ;
+        flags = (lp == frameCur->bufferCur->baseLine) ? meREGEX_ENDBUFF:0 ;
         if(lnno == 0)
             flags |= meREGEX_BEGBUFF ;
-		jj = meLineGetLength(lp) ;
+        jj = meLineGetLength(lp) ;
         if(direct == meFORWARD)
         {
             if((lp == frameCur->bufferCur->baseLine) &&
@@ -507,7 +503,7 @@ mere_scanner(int direct, int beg_or_end, int *n, SCANNERPOS *sp)
             /* when searching backward, we must not match the current position
              * forwrds, always the char before and onwards. if ii == 0 then its now -1! */
             kk = ii - 1 ;
-			ii = 0 ;
+            ii = 0 ;
         }
         if((kk < 0) || ((ii=meRegexMatch(&mereRegex,meLineGetText(lp),jj,ii,kk,flags)) == 0))
         {
@@ -629,30 +625,32 @@ mere_scanner(int direct, int beg_or_end, int *n, SCANNERPOS *sp)
             mereNewlBuf[jj] = '\0' ;
             
             if(direct != meFORWARD)
-				flags |= meREGEX_BACKWARD ;
-			ii = meRegexMatch(&mereRegex,mereNewlBuf,jj,offs,offe,flags) ;
+                flags |= meREGEX_BACKWARD ;
+            ii = meRegexMatch(&mereRegex,mereNewlBuf,jj,offs,offe,flags) ;
             if(ii)
                 break ;
             
             if(direct == meFORWARD)
             {
-                if(flags & meREGEX_ENDBUFF)
+                if(lp == frameCur->bufferCur->baseLine)
                     break ;
                 lp = meLineGetNext(lp) ;
-				lnno++ ;
+                lnno++ ;
             }
             else
             {
                 if(flags & meREGEX_BEGBUFF)
                     break ;
                 lp = meLineGetPrev(lp) ;
-				lnno-- ;
+                lnno-- ;
             }
-			offs = 0 ;
-			offe = meLineGetLength(lp)+1 ;
+            offs = 0 ;
+            offe = meLineGetLength(lp)+1 ;
         } while(--count != 0) ;
+        
         if(!ii)
             return meFALSE ;
+        
         ii = mereRegex.group[0].start ;
         kk = mereRegex.group[0].end ;
         srchLastMatch = mereNewlBuf+ii ;
@@ -753,14 +751,14 @@ static int
 scanner(meUByte *patrn, int direct, int beg_or_end, int *count,
         SCANNERPOS *sp)
 {
-    register meUByte cc, aa, bb ;	        /* character at current position */
-    register meUByte *patptr;	        /* pointer into pattern */
-    register meUByte *curptr;	        /* pointer into pattern */
-    register meLine *curline;		/* current line during scan */
-    register int curoff;		/* position within current line */
-    register meUByte *matchptr;	        /* pointer into pattern */
-    register meLine *matchline;		/* current line during matching */
-    register int matchoff;		/* position in matching line */
+    register meUByte cc, aa, bb ;       /* character at current position */
+    register meUByte *patptr;           /* pointer into pattern */
+    register meUByte *curptr;           /* pointer into pattern */
+    register meLine *curline;           /* current line during scan */
+    register int curoff;                /* position within current line */
+    register meUByte *matchptr;         /* pointer into pattern */
+    register meLine *matchline;         /* current line during matching */
+    register int matchoff;              /* position in matching line */
     register meInt curlnno, matchlnno ;
     
     srchLastState = meFALSE ;
@@ -774,7 +772,7 @@ scanner(meUByte *patrn, int direct, int beg_or_end, int *count,
     curlnno = frameCur->windowCur->dotLineNo;
     if (direct == meFORWARD)
         curptr = curline->text+frameCur->windowCur->dotOffset ;
-    else			/* Reverse.*/
+    else /* Reverse.*/
         curoff = frameCur->windowCur->dotOffset;
     
     /* Scan each character until we hit the head link record. */
@@ -789,14 +787,14 @@ scanner(meUByte *patrn, int direct, int beg_or_end, int *count,
          */
         if (direct == meFORWARD)
         {
-            if((cc=*curptr++) == '\0')		/* if at EOL */
+            if((cc=*curptr++) == '\0')    /* if at EOL */
             {
                 if(curline != frameCur->bufferCur->baseLine)
                 {
-                    curline = meLineGetNext(curline) ;	/* skip to next line */
+                    curline = meLineGetNext(curline) ;  /* skip to next line */
                     curlnno++ ;
                     curptr = curline->text ;
-                    cc = meNLCHAR;		/* and return a <NL> */
+                    cc = meNLCHAR;        /* and return a <NL> */
                     if((*count > 0) && (--(*count) == 0) &&
                        ((patrn[0] != meNLCHAR) || (patrn[1] != '\0')))
                         /* must check that the pattern isn't "\n" */
@@ -804,7 +802,7 @@ scanner(meUByte *patrn, int direct, int beg_or_end, int *count,
                 }
             }
         }
-        else			/* Reverse.*/
+        else /* Reverse.*/
         {
             if (curoff == 0)
             {
@@ -825,7 +823,7 @@ scanner(meUByte *patrn, int direct, int beg_or_end, int *count,
         if(cc == '\0')
             break ;
         
-        if(cEq(cc,aa))	/* if we find it..*/
+        if(cEq(cc,aa)) /* if we find it..*/
         {
             /* Setup match pointers.
             */
@@ -841,18 +839,18 @@ scanner(meUByte *patrn, int direct, int beg_or_end, int *count,
             {
                 if (direct == meFORWARD)
                 {
-                    if((cc=*matchptr++) == '\0')		/* if at EOL */
+                    if((cc=*matchptr++) == '\0')    /* if at EOL */
                     {
                         if(matchline != frameCur->bufferCur->baseLine)
                         {
-                            matchline = meLineGetNext(matchline) ;	/* skip to next line */
+                            matchline = meLineGetNext(matchline) ; /* skip to next line */
                             matchlnno++ ;
                             matchptr = matchline->text ;
-                            cc = meNLCHAR;			/* and return a <NL> */
+                            cc = meNLCHAR;          /* and return a <NL> */
                         }
                     }
                 }
-                else			/* Reverse.*/
+                else /* Reverse.*/
                 {
                     if (matchoff == 0)
                     {
@@ -892,16 +890,16 @@ scanner(meUByte *patrn, int direct, int beg_or_end, int *count,
                     curoff = ((size_t) curptr) - ((size_t) curline->text) - 1 ;
                 matchoff = ((size_t) matchptr) - ((size_t) matchline->text) ;
             }
-            else			/* Reverse.*/
+            else /* Reverse.*/
             {
-                if(curoff == meLineGetLength(curline))		/* if at EOL */
+                if(curoff == meLineGetLength(curline))  /* if at EOL */
                 {
-                    curline = meLineGetNext(curline) ;	/* skip to next line */
+                    curline = meLineGetNext(curline) ;  /* skip to next line */
                     curlnno++ ;
                     curoff = 0;
                 }
                 else
-                    curoff++ ;	/* get the char */
+                    curoff++ ;  /* get the char */
             }
         
             
@@ -915,13 +913,13 @@ scanner(meUByte *patrn, int direct, int beg_or_end, int *count,
                 sp->endline_no = matchlnno ;
             }
             setShowRegion(frameCur->bufferCur,curlnno,curoff,matchlnno,matchoff) ;
-            if (beg_or_end == PTEND)	/* at end of string */
+            if (beg_or_end == PTEND) /* at end of string */
             {
                 frameCur->windowCur->dotLine = matchline ;
                 frameCur->windowCur->dotOffset = matchoff ;
                 frameCur->windowCur->dotLineNo = matchlnno ;
             }
-            else		/* at beginning of string */
+            else /* at beginning of string */
             {
                 frameCur->windowCur->dotLine = curline;
                 frameCur->windowCur->dotOffset = curoff;
@@ -934,7 +932,7 @@ scanner(meUByte *patrn, int direct, int beg_or_end, int *count,
             return meTRUE;
             
         }
-fail:			/* continue to search */
+fail:   /* continue to search */
         if(TTbreakTest(1))
         {
             ctrlg(meFALSE,1) ;
@@ -946,7 +944,7 @@ fail:			/* continue to search */
         /* Quit when we have done our work !! */
     }
     
-    return meFALSE;	/* We could not find a match */
+    return meFALSE;  /* We could not find a match */
 }
 
 int
@@ -961,16 +959,16 @@ expandchar(int c, meUByte *d, int flags)
             *d = '\\';
             d[doff++] = c;
         }
-        else			/* any other character */
+        else /* any other character */
             *d = c;
     }
-    else if(c < 0x20)		/* control character */
+    else if(c < 0x20) /* control character */
     {   /* 0 -> \C@ this may not be okay */
         *d = '\\';
         d[doff++] = 'C' ;
         d[doff++] = c ^ 0x40;
     }
-    else        		/* its a nasty character */
+    else /* its a nasty character */
     {
         *d = '\\';
         d[doff++] = 'x';
@@ -1007,7 +1005,7 @@ expandexp(int slen, meUByte *s, int dlen, int doff, meUByte *d,
             ii++ ;
         }
         doff += expandchar( ((int) cc) & 0xff, d+doff, flags) ;
-    }	/* End of 'while' */
+    }
     d[doff] = '\0' ;
     return doff ;
 }

@@ -134,10 +134,10 @@ define-macro file-name-insert
     @# insert-file-name
 !emacro
 define-macro grow-window
-    @# grow-window-horizontally
+    @# change-window-depth
 !emacro
 define-macro shrink-window
-    @# shrink-window-vertically
+    &neg @# change-window-depth
 !emacro
 define-macro split-current-window
     @# split-window-vertically

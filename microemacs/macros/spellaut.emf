@@ -161,8 +161,8 @@ define-macro auto-spell-ignore
     set-variable $buffer-mask "luh"
     !force !force 0 spell
     set-variable $buffer-mask #l0
+    set-variable #l1 &rig $result 1
     !if &seq &lef $result 1 "E"
-        set-variable #l1 &rig $result 1
         !if &equ @# 2
             ; add word to personal dictionary
             5 spell #l1 ""
@@ -170,20 +170,22 @@ define-macro auto-spell-ignore
             ; ignore the word
             13 spell #l1 ""
         !endif
-        ; re-hilight the word in global scheme - i.e. unhilight
-        !if &inw &rig $result &sub &len #l1 1
-            set-variable #l2 &cat #l1 "\\}[^[:sword:]]"
-        !else
-            set-variable #l2 &cat #l1 "\\}[^[:alnum:]]"
-        !endif
-        !if &inw #l2
-            !force hilight $buffer-hilight 0 &cat "[^[:sword:]]\\{" #l2  $global-scheme
-        !else
-            !force hilight $buffer-hilight 0 &cat "[^[:alnum:]]\\{" #l2  $global-scheme
-        !endif
-        ; force this line to be redrawn
-        set-variable $line-scheme $line-scheme
     !endif
+    ; else this could be just a hilighting problem so always 'unhilight
+    ; re-hilight the word in global scheme - i.e. unhilight
+    str-to-regex #l1
+    !if &inw &rig #l1 &sub &len #l1 1
+        set-variable #l2 &cat #l1 "\\}[^[:sword:]]"
+    !else
+        set-variable #l2 &cat #l1 "\\}[^[:alnum:]]"
+    !endif
+    !if &inw #l2
+        !force hilight $buffer-hilight 0 &cat "[^[:word:]]\\{" #l2  $global-scheme
+    !else
+        !force hilight $buffer-hilight 0 &cat "[^[:alnum:]]\\{" #l2  $global-scheme
+    !endif
+    ; force this line to be redrawn
+    set-variable $line-scheme $line-scheme
 !emacro
 
 define-macro auto-spell-buffer

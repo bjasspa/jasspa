@@ -748,7 +748,7 @@ hideLineJump:
                         blkp[ii].column -= scroll ;
 
                     /* set the first char to the truncate '$' and set the scheme */
-                    *s1 = '$' ;
+                    *s1 = windowChars[WCDISPTXTLFT] ;
                     blkp-- ;
                     blkp[0].column = 1 ;
                     blkp[0].scheme = scheme | (blkp[1].scheme & (meSCHEME_CURRENT|meSCHEME_SELECT)) ;
@@ -767,7 +767,7 @@ hideLineJump:
                 /* remove the fonts as these can effect the next char which will probably be the scroll bar */
                 scheme = meSchemeSetNoFont(scheme) ;
             }
-            s1[ncol-1] = '$' ;
+            s1[ncol-1] = windowChars[WCDISPTXTRIG] ;
             blkp[noColChng].column = ncol ;
             blkp[noColChng].scheme = scheme | (blkp[noColChng-1].scheme & (meSCHEME_CURRENT|meSCHEME_SELECT)) ;
             noColChng++ ;
@@ -1461,7 +1461,7 @@ updateModeLine(meWindow *wp)
                 ss = bp->fileName ;
                 if((ii=meStrlen(ss)) > lineLen)
                 {
-                    *cp++ = '$' ;
+                    *cp++ = windowChars[WCDISPTXTLFT] ;
                     if(--lineLen == 0)
                         break ;
                     ss += ii-lineLen ;
@@ -3108,8 +3108,7 @@ meVideoDetach (meWindow *wp)
                 wp->video = NULL;
                 break;
             }
-            else
-                twp = twp->videoNext;
+            twp = twp->videoNext;
         }
     }
 

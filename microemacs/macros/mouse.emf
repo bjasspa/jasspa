@@ -70,7 +70,7 @@
         !else
             ; HANDLE: Vertical window growing, resize the window.
             set-variable #l2 &sub $mouse-y $window-mode-line
-            !force #l2 grow-window-vertically
+            !force #l2 change-window-depth
             !if &and &not $status &band $scroll-bar 0x80
                 ; resizing failed, is this a request to delete the window?? Which way are we moving
                 !if &les #l2 0
@@ -126,8 +126,11 @@
         !else
             ; HANDLE: Horizontal window growing, resize the window.
             set-variable #l2 &sub $mouse-x &cond &band .mouse-event.mode 16 &add $window-scroll-bar 1 $window-scroll-bar
-            !force #l2 grow-window-horizontally
-            !if &and &not $status &band $scroll-bar 0x80
+            !force #l2 change-window-width
+            !if $status
+                ; update the toolbar mode lines
+                set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x080
+            !elif &band $scroll-bar 0x80
                 ; resizing failed, is this a request to delete the window?? Which way are we moving
                 !if &les #l2 0
                     ; making the current one smaller, one window is it too small, delete it
@@ -348,6 +351,7 @@
 !emacro
 
 0 define-macro-file mouseosd mouse-osd mouse-osd-multi
+0 define-macro-file findbuff osd-find-buffer
 
 0 define-macro mouse-keepcl
     set-variable @cc @cl
@@ -428,6 +432,7 @@
     set-variable $mouse &bor 0x40000 &band 0xffff $mouse
     set-variable $scroll 3
     global-bind-key mouse-pan-window &spr .mouse-event.mask "move"
+    goto-position "\x82"
 !emacro
 
 0 define-macro mouse-pan-drop
@@ -435,8 +440,6 @@
     set-position "\x82"
     set-variable $mouse .mouse-event.mouse
     set-variable $scroll .mouse-event.scroll
-    unset-variable %pan-system
-    unset-variable %pan-scroll
 !emacro
 
 0 define-macro mouse-mspan-window
@@ -455,6 +458,7 @@
     set-variable $mouse &bor 0x40000 &band 0xffff $mouse
     set-variable $scroll 3
     global-bind-key mouse-mspan-window &spr .mouse-event.mask "time"
+    goto-position "\x82"
 !emacro
 
 0 define-macro mouse-mspan-drop
@@ -462,8 +466,6 @@
     goto-position "\x82"
     set-variable $mouse .mouse-event.mouse
     set-variable $scroll .mouse-event.scroll
-    unset-variable %pan-system
-    unset-variable %pan-scroll
 !emacro
 
 0 define-macro mouse-scroll
@@ -481,16 +483,21 @@
         void
     !elif &equ #l0 2
         ; ml-write "Mouse on Mode line "
+        ; first check if this is a toolbar window, if so call the
+        ; mode-line handler, this may abort if it handled everything
+        ; otherwise make sure we don't split! Then do resize
         ; Check for mouse on position 0 of the mode line. If it is
         ; then construct a new horizontal window; otherwise we grow
         ; the window. We only do the window creation if the split
         ; is enabled.
-        !if &and &band $scroll-bar 0x80 &equ .mouse-event.x &sub $window-scroll-bar $window-width 
+        !if &band $window-flags 0x1000
+            toolbar-mode-line
+        !elif &and &band $scroll-bar 0x80 &equ .mouse-event.x &sub $window-scroll-bar $window-width 
             !force 1 split-window-horizontally
             !if $status
                 ; Set to the minimum size and change the mode to a 
                 ; horizontal re-size.
-                !force 4 resize-window-horizontally
+                !force change-window-width 4
                 set-variable .mouse-event.mode &bor 3 &band $mouse-pos 0x30
             !endif
         !endif
@@ -498,9 +505,11 @@
         ; The modified mode determines if this is vertical or
         ; horizontal.
         global-bind-key mouse-grow-window &spr .mouse-event.mask "move"
+        !force set-variable .toolbar.disable 1
     !elif &equ #l0 3
         ; ml-write "Mouse on divider"
         global-bind-key mouse-grow-window &spr .mouse-event.mask "move"
+        !force set-variable .toolbar.disable 1
     !elif &equ #l0 4
         ; ml-write "Mouse on split"
         ; Mouse on the buffer vertical divider. Split the window into two
@@ -508,37 +517,44 @@
         ; mode to re-size operation.
         !force 1 split-window-vertically
         !if $status
-            !force 2 resize-window-vertically 
+            !force change-window-depth 2 
             set-variable .mouse-event.mode &bor 2 &band $mouse-pos 0x30
             global-bind-key mouse-grow-window &spr .mouse-event.mask "move"
+            !force set-variable .toolbar.disable 1
         !endif
     !elif &equ #l0 5
         ; ml-write "Mouse on up-arrow"
         !force 1 scroll-up
         !if $status
             -1 global-bind-key mouse-scroll &spr .mouse-event.mask "time"
+            !force set-variable .toolbar.disable 1
         !endif
     !elif &equ #l0 6
         ; ml-write "Mouse on upper-shaft"
         scroll-up
         -10 global-bind-key mouse-scroll &spr .mouse-event.mask "time"
+        !force set-variable .toolbar.disable 1
     !elif &equ #l0 7
         ; ml-write "Mouse on box"
         1 set-scroll-with-mouse         ; Lock mouse position to scroller
         global-bind-key set-scroll-with-mouse &spr .mouse-event.mask "move"
+        !force set-variable .toolbar.disable 1
     !elif &equ #l0 8
         ;ml-write "Mouse on lower shaft"
         scroll-down
         10 global-bind-key mouse-scroll &spr .mouse-event.mask "time"
+        !force set-variable .toolbar.disable 1
     !elif &equ #l0 9
         ;ml-write "Mouse on down-arrow"
         !force 1 scroll-down
         !if $status
             1 global-bind-key mouse-scroll &spr .mouse-event.mask "time"
+            !force set-variable .toolbar.disable 1
         !endif
     !elif &equ #l0 10
         ; ml-write "Mouse on corner"
         global-bind-key mouse-grow-window &spr .mouse-event.mask "move"
+        !force set-variable .toolbar.disable 1
     !elif &equ #l0 11
         ; ml-write "Mouse on Menu"
         0 osd
@@ -564,19 +580,46 @@
     ; force the unbind of the last pick time or move - do this on pick and drop as a safety mechanism 
     !force global-unbind-key &spr .mask "time"
     !force global-unbind-key &spr .mask "move"
-    !if   &set #l0 &sin "-pick" #l1
+    !force set-variable .toolbar.disable 0
+    !if &set #l0 &sin "-pick" #l1
         ; must store the original window and cursor position
         161 set-position "\x82"
         set-cursor-to-mouse
         ; work out the mouse mask
         set-variable .mode $mouse-pos
         set-variable .mask &cat &cat &lef #l1 #l0 "%s" &rig #l1 &add #l0 4
+        ; work out the command to execute, must also get and store the
+        ; drop key command
+        set-variable #l0 "ERROR"
+        !if &band .mode 15
+            ; Not in the text window 
+            !if &reg "/history" &cat "mouse/" &spr .mask "auto" "0"
+                ; do the scroll bar stuff
+                set-variable #l0 "mouse-auto-pick-event"
+                set-variable .drop-cmd "1 goto-position \"\x82\""
+            !elif &seq &reg "/history" &cat "mouse/" &spr .mask "drop" "" "mouse-osd-multi"
+                ; the auto event on a button which does the multi menus does the multi menus
+                ; do the scroll bar stuff
+                set-variable #l0 "1 goto-position \"\x82\""
+                set-variable .drop-cmd "mouse-osd-multi"
+            !endif
+        !endif
+        !if &not &seq #l0 "ERROR"
+            ; already assigned
+        !elif &not &seq &set #l0 &ind &cat ":" #l1 "ERROR"
+            set-variable .drop-cmd &ind &cat ":" &spr .mask "drop"
+        !elif &not &seq &set #l0 :mouse-pick-all "ERROR"
+            set-variable .drop-cmd :mouse-drop-all
+        !else
+            set-variable #l0 &reg "/history" &cat "mouse/" #l1 "" ""
+            set-variable .drop-cmd &reg "/history" &cat "mouse/" &spr .mask "drop" ""
+        !endif
         set-variable .state 1
     !elif &not .state
         !return
-    !elif &set #l0 &sin "-drop" #l1
+    !elif &sin "-drop" #l1
         !force set-cursor-to-mouse
-        set-variable #l1 &spr .mask "drop"
+        set-variable #l0 .drop-cmd
         set-variable .state 0
     !else
         !return
@@ -584,21 +627,7 @@
     !if &band #l2 1
         !force show-region
     !endif
-    !if &band .mode 15
-        ; Not in the text window 
-        !if &reg "/history" &cat "mouse/" &spr .mask "auto" "0"
-            ; do the scroll bar stuff
-            !if &sin "-pick" #l1
-                mouse-auto-pick-event
-            !else
-                1 goto-position "\x82"
-            !endif
-            !return
-        !endif
-    !endif
-    !if &not &seq &set #l0 &ind &cat ":" #l1 "ERROR"
-        !jump 2
-    !elif &not &seq &set #l0 &reg "/history" &cat "mouse/" #l1 "" ""
+    !if &not &seq #l0 ""
         !force !force execute-line #l0
         set-variable #l3 $status
         0 show-region

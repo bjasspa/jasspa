@@ -33,26 +33,47 @@
 
 0 define-macro jst-prepare-images
     beginning-of-buffer
-    replace-string "^>[ \t]*image\\(-left\\)?:[ \t]*\\(.+\\)$" "\bTIL\\2\btI"
+    replace-string "^>image\\(-left\\)?:[ \t]*\\(.+\\)$" "\bTIL\\2\btI"
     beginning-of-buffer
-    replace-string "^>[ \t]*image-center:[ \t]*\\(.+\\)$" "\bTIC\\1\btI"
+    replace-string "^>image-center:[ \t]*\\(.+\\)$" "\bTIC\\1\btI"
     beginning-of-buffer
-    replace-string "^>[ \t]*image-right:[ \t]*\\(.+\\)$" "\bTIR\\1\btI"
+    replace-string "^>image-right:[ \t]*\\(.+\\)$" "\bTIR\\1\btI"
 !emacro
 
 0 define-macro jst-prepare-tables
     beginning-of-buffer
-    replace-string "^>[ \t]*table:?[ \t]*$" "\n\bLI\bTTB\bTTR\bTTC\n"
-    beginning-of-buffer
-    replace-string "^>[ \t]*/[ \t]*table:?[ \t]*$" "\n\bLI\btTC\btTR\btTB\n"
-    beginning-of-buffer
-    replace-string "^>[ \t]*tr:?[ \t]*$" "\n\bLI\btTC\btTR\bTTR\bTTC\n"
-    beginning-of-buffer
-    replace-string "<<tr>>" "\n\n\bLI\btTC\btTR\bTTR\bTTC\n\n"
-    beginning-of-buffer
-    replace-string "^>[ \t]*tc:?[ \t]*$" "\n\bLI\btTC\bTTC\n"
-    beginning-of-buffer
-    replace-string "<<tc>>" "\n\n\bLI\btTC\bTTC\n\n"
+    !force 1 replace-string "^>table:?[ \t]*\\(\\S +\\)?[ \t]*\\(\\S +\\)?[ \t]*$" "\n\bLI\bTTB\bTTR\bTTC\n"
+    !while $status
+        set-variable #l0 &add $window-line 1
+        set-variable #l1 @s1
+        set-variable #l2 @s2
+        !force 1 replace-string "^>/table:?[ \t]*$" "\bLN\bLI\btTC\btTR\btTB\n"
+        !if &not $status
+            ml-write &spr "[Error: missing end to table]"
+            !abort
+        !endif
+        set-variable #l3 &add &sub #l0 $window-line 1
+        !if &seq #l1 ""
+            set-variable #l1 "^>tc:?[ \t]*$\\|<<tc>>"
+            set-variable #l2 "^>tr:?[ \t]*$\\|<<tr>>"
+        !else
+            str-to-regex #l1
+            !if &seq #l2 ""
+                set-variable #l2 "$"
+            !else
+                str-to-regex #l2
+            !endif
+        !endif
+        set-variable $window-line #l0
+        !force #l3 replace-string #l2 "\bLN\bLI\btTC\btTR\bTTR\bTTC\bLN"
+        set-variable $window-line #l0
+        !force #l3 replace-string #l1 "\bLN\bLI\btTC\bTTC\bLN"
+        set-variable $window-line #l0
+        !force 1 replace-string "\bLN\bLI\btTC\btTR\bTTR\bTTC\bLN\\s *\\s *\\s *\bLN\bLI\btTC\btTR\btTB" "\bLN\bLI\btTC\btTR\btTB"
+        set-variable $window-line #l0
+        !force #l3 replace-string "\n?\bLN" "\n\n"
+        !force 1 replace-string "^>table:?[ \t]*\\(\\S +\\)?[ \t]*\\(\\S +\\)?[ \t]*$" "\n\bLI\bTTB\bTTR\bTTC\n"
+    !done
 !emacro
 
 0 define-macro jst-prepare-toc-content
@@ -104,7 +125,7 @@
 
 0 define-macro jst-prepare-toc
     beginning-of-buffer
-    !force search-forward "^>[ \t]*toc\\(:\\(.*\\)\\|[ \t]*\\)$"
+    !force search-forward "^>toc\\(:\\(.*\\)\\|[ \t]*\\)$"
     !while $status
         set-variable #l0 &trb @s2
         beginning-of-line
@@ -119,7 +140,7 @@
             set-variable $window-line #l1
             insert-string &spr "\bST%s\bsT\n\n\bPF" &cond &seq #l0 "" "Contents" #l0
         !endif
-        !force search-forward "^>[ \t]*toc\\(:\\(.*\\)\\|[ \t]*\\)$"
+        !force search-forward "^>toc\\(:\\(.*\\)\\|[ \t]*\\)$"
     !done
 !emacro
 
@@ -425,9 +446,9 @@
     beginning-of-buffer
     replace-string "<</fe>>" "\bfE"
     beginning-of-buffer
-    replace-string "^>[ \t]*fe:?[ \t]*$" "\n\bLI\bFE\n"
+    replace-string "^>fe:?[ \t]*$" "\n\bLI\bFE\n"
     beginning-of-buffer
-    replace-string "^>[ \t]*/[ \t]*fe:?[ \t]*$" "\n\bLI\bfE\n"
+    replace-string "^>/fe:?[ \t]*$" "\n\bLI\bfE\n"
 !emacro
 0 define-macro jst-prepare-quote-tags
     beginning-of-buffer
@@ -682,6 +703,9 @@ define-macro jst-prepare-doc
     replace-string "^\n---+\n\n?" "\n\bLL\n\n"
     beginning-of-buffer
     replace-string "^\n\x0c\n\n?" "\n\bLP\n\n"
+    ; handle no-blank-lines
+    beginning-of-buffer
+    replace-string "^>nbl:?[ \t]*$" "\n\bLI\bLB\n"
     jst-prepare-fonts    
     ; sort out targets and links
     beginning-of-buffer
@@ -773,6 +797,8 @@ define-macro jst-prepare-doc
         set-variable #l0 #l1
         set-variable $window-line #l0
     !until &seq @wc ""
+    beginning-of-buffer
+    replace-string "\n?\n?\n?\n?\bLI\bLB\\(.*\\)\n\n?\n?\n?" "\\1\n"
     beginning-of-buffer
     replace-string "\n?\n?\bLI\\(.*\\)\n\n?" "\\1"
 !emacro

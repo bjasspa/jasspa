@@ -963,7 +963,7 @@ wordTrySuffixRules(meUByte *word, int wlen, meUByte prefixRule)
                     {
                         cc = word[nlen] ;
                         wordSuffixRuleRemove(word+wlen-alen,rr) ;
-                        if((elen == 0) || (regexStrCmp(word+nlen-elen,rr->ending,1) > 0))
+                        if((elen == 0) || (regexStrCmp(word+nlen-elen,rr->ending,meRSTRCMP_WHOLE) > 0))
                         {
                             dict = dictHead ;
                             while(dict != NULL)
@@ -1049,7 +1049,7 @@ wordTryPrefixRules(meUByte *word, int wlen)
                     {
                         cc = nw[elen] ;
                         nw[elen] = '\0' ;
-                        if(regexStrCmp(nw,rr->ending,1) <= 0)
+                        if(regexStrCmp(nw,rr->ending,meRSTRCMP_WHOLE) <= 0)
                         {
                             nw[elen] = cc ;
                             wordPrefixRuleAdd(word,rr) ;
@@ -1106,7 +1106,7 @@ wordTrySpecialRules(meUByte *word, int wlen)
         word[wlen] = '\0' ;
         while(rr != NULL)
         {
-            if(regexStrCmp(word,rr->ending,1) > 0)
+            if(regexStrCmp(word,rr->ending,meRSTRCMP_WHOLE) > 0)
             {
                 word[wlen] = cc ;
                 return meTRUE ;
@@ -1279,7 +1279,7 @@ wordApplyPrefixRule(meUByte *wd, meSpellRule *rr)
     {
         cc = wd[len] ;
         wd[len] = '\0' ;
-        if(regexStrCmp(wd,rr->ending,1) <= 0)
+        if(regexStrCmp(wd,rr->ending,meRSTRCMP_WHOLE) <= 0)
         {
             wd[len] = cc ;
             return NULL ;
@@ -1299,7 +1299,7 @@ wordApplySuffixRule(meUByte *wd, int wlen, meSpellRule *rr)
     ew = wd+wlen ;
     if((len=rr->endingLen) != 0)
     {
-        if((len > wlen) || (regexStrCmp(ew-len,rr->ending,1) <= 0))
+        if((len > wlen) || (regexStrCmp(ew-len,rr->ending,meRSTRCMP_WHOLE) <= 0))
             return NULL ;
     }
     ew -= rr->removeLen ;
@@ -1313,7 +1313,7 @@ wordTestSuffixRule(meUByte *wd, int wlen, meSpellRule *rr)
     meUByte len ;
     
     if(((len=rr->endingLen) != 0) &&
-       ((len > wlen) || (regexStrCmp(wd+wlen-len,rr->ending,1) <= 0)))
+       ((len > wlen) || (regexStrCmp(wd+wlen-len,rr->ending,meRSTRCMP_WHOLE) <= 0)))
        return 0 ;
     return 1 ;
 }
@@ -2199,7 +2199,7 @@ findWordsNext(void)
                         wp[flen] = toLatinLower(ww[flen]) ;
                     wp[len] = '\0' ;
                     if((sfwFlags || (wp[0] == sfwCurMask[0])) &&
-                       (regexStrCmp(wp,sfwCurMask,1) > 0))
+                       (regexStrCmp(wp,sfwCurMask,meRSTRCMP_WHOLE) > 0))
                     {
                         spellWordToUserFont(wp,wp) ;
                         return wp ;
@@ -2221,7 +2221,7 @@ sfwJumpNotPreNotSuf:
                                     {
                                         if((swp = wordApplySuffixRule(wp,len,sfwSufRule)) != NULL)
                                         {
-                                            if(regexStrCmp(wp,sfwCurMask,1) > 0)
+                                            if(regexStrCmp(wp,sfwCurMask,meRSTRCMP_WHOLE) > 0)
                                             {
                                                 sfwSufRule->rule = sufRule ;  
                                                 spellWordToUserFont(wp,wp) ;
@@ -2246,7 +2246,7 @@ sfwJumpNotPreGotSuf:
                                        ((pwp = wordApplyPrefixRule(wp,sfwPreRule)) != NULL))
                                     {
                                         len += sfwPreRule->changeLen ;
-                                        if(regexStrCmp(pwp,sfwCurMask,1) > 0)
+                                        if(regexStrCmp(pwp,sfwCurMask,meRSTRCMP_WHOLE) > 0)
                                         {
                                             sfwPreRule->rule = preRule ;  
                                             spellWordToUserFont(pwp,pwp) ;
@@ -2271,7 +2271,7 @@ sfwJumpGotPreNotSuf:
                                                     {
                                                         if((swp = wordApplySuffixRule(pwp,len,sfwSufRule)) != NULL)
                                                         {
-                                                            if(regexStrCmp(pwp,sfwCurMask,1) > 0)
+                                                            if(regexStrCmp(pwp,sfwCurMask,meRSTRCMP_WHOLE) > 0)
                                                             {
                                                                 sfwPreRule->rule = preRule ;  
                                                                 sfwSufRule->rule = sufRule ;  

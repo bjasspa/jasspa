@@ -1,0 +1,33 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     Wed June 5 2002
+; Synopsis:    eaf hook - invoked when a MicroEmacs Abbreviation file is loaded.
+; Authors:     Steven Phillips
+;
+define-macro fhook-eaf
+    @# buffer-initialize "eaf"
+    buffer-initialize-hooks
+!emacro
+
+; buffer-initialize variables
+set-variable .fhook-eaf.name "ME Abbreviation"
+set-variable .fhook-eaf.setup &reg "/history" "fhook/eaf" "hopx"
+set-variable .fhook-eaf.setup-mask "aehkmoptux"
+
+!if &and &sin "h" .fhook-eaf.setup &band .hilight.flags 0x02 
+    !if &not &exist .hilight.eaf
+        set-variable .hilight.eaf &pinc .hilight.next 1
+    !endif
+    0 hilight  .hilight.eaf 0              $global-scheme
+    hilight .hilight.eaf 0 "^\\S +"        .scheme.keyword
+    hilight .hilight.eaf 4 "\"" "\"" "\\"  .scheme.string
+!endif
+
+ml-write "[ME Abbreviation file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "myeaf"
+

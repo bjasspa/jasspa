@@ -563,6 +563,7 @@ meRegexMatch(meRegex *regex, unsigned char *string, int len,
              int offsetS, int offsetE, int flags)
 {
     int offset ;
+    
     /* check args are valid first, if not fail */
     if(!(regex->flags & meREGEX_VALID) || (offsetS < 0) || (offsetE > len))
         return 0 ;

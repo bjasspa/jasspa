@@ -24,6 +24,8 @@ set-variable .fhook-pascal.comment "|{|}|*|* | *|f|"
     !endif
     0 hilight  .hilight.pascal 3 50            $global-scheme
     hilight .hilight.pascal 4 "{" "}" ""       .scheme.comment
+    hilight .hilight.pascal 4 "(\\*" "*)" ""   .scheme.comment
+    hilight .hilight.pascal 2 "//"             .scheme.comment
     hilight .hilight.pascal 0x1004 "'" "'" ""  .scheme.string
     
     hilight .hilight.pascal 1 "asm"            .scheme.keyword

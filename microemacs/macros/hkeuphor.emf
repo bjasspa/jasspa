@@ -20,13 +20,13 @@ set-variable .fhook-euphor.setup-mask "abdeghikmnoptux"
 set-variable .fhook-euphor.comment "|--||--|-- | --||"
 
 ; setup item-list
-set-variable .fhook-euphor.item-list-s1 "^\\(global\\s +\\)?function\\s +\\(\\w+\\)"
+set-variable .fhook-euphor.item-list-s1 "^\\(global[ \t]+\\)?function[ \t]+\\(\\w+\\)"
 set-variable .fhook-euphor.item-list-r1 "Func \ecB\\2\ecA"
-set-variable .fhook-euphor.item-list-s2 "^\\(global\\s +\\)?type\\s +\\(\\w+\\)"
+set-variable .fhook-euphor.item-list-s2 "^\\(global[ \t]+\\)?type[ \t]+\\(\\w+\\)"
 set-variable .fhook-euphor.item-list-r2 "Type \ecB\\2\ecA"
-set-variable .fhook-euphor.item-list-s3 "^\\(global\\s +\\)?constant\\s +\\(\\w+\\)"
+set-variable .fhook-euphor.item-list-s3 "^\\(global[ \t]+\\)?constant[ \t]+\\(\\w+\\)"
 set-variable .fhook-euphor.item-list-r3 "Cons \ecB\\2\ecA"
-set-variable .fhook-euphor.item-list-s4 "^\\(global\\s +\\)?procedure\\s +\\(\\w+\\)"
+set-variable .fhook-euphor.item-list-s4 "^\\(global[ \t]+\\)?procedure[ \t]+\\(\\w+\\)"
 set-variable .fhook-euphor.item-list-r4 "Proc \ecB\\2\ecA"
 
 !if &not &exist .hilight.euphor

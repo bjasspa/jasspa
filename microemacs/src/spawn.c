@@ -1041,7 +1041,7 @@ cant_handle_this:
                 meUByte bb[2] ;
                 bb[0] = p1[0] ;
                 bb[1] = p1[1] ;
-                p1[0] = '\\' ;
+                p1[0] = windowChars[WCDISPSPLTLN] ;
                 p1[1] = '\0' ;
                 ii = addLine(lp_old,buff) ;			/* Add string */
                 noLines += ii ;
@@ -1699,7 +1699,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
     ipipe->strRow = 0 ;
     ipipe->strCol = 0 ;
     ipipe->noRows = 0 ;
-    ipipe->noCols = 0 ;
+    ipipe->noCols = frameCur->windowCur->textWidth-1 ;
     ipipe->curRow = (meShort) bp->dotLineNo ;
     /* get a popup window for the command output */
     {

@@ -218,7 +218,7 @@ static meUByte *tcapSpecKeyDefs[]=
 #include <X11/cursorfont.h>
 
 /* Setup the xterm variables and things */
-meCellMetrics mecm={0} ;
+meCellMetrics mecm ;
 
 
 static int disableResize = 0;           /* Flag to disable screen resize */
@@ -760,6 +760,18 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
     {
     case 0x07:          /* Line space '.' */
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+mecm.fhwidth, y+mecm.fhdepth, x+mecm.fhwidth+1, y+mecm.fhdepth);
+        break;
+
+    case 0x08:          /* Backspace character <- */
+        ii=(mecm.fhdepth+1) >> 1 ;
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+mecm.fwidth-2, y+mecm.fhdepth, x+mecm.fhwidth, y+mecm.fhdepth);
+        points[0].x = x+mecm.fhwidth ;
+        points[0].y = y+ii ;
+        points[1].x = x+mecm.fhwidth ;
+        points[1].y = y+mecm.fdepth-ii-1;
+        points[2].x = x+1 ;
+        points[2].y = y+mecm.fhdepth ;
+        XFillPolygon(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), points, 3, Convex, CoordModeOrigin) ;
         break;
 
     case 0x09:          /* Tab character -> */
@@ -2910,7 +2922,8 @@ void
 TTsetClipboard(void)
 {
     clipState &= ~CLIP_TRY_SET ;
-    if(!(meSystemCfg & meSYSTEM_CONSOLE) && !(clipState & CLIP_OWNER))
+    
+    if(!(meSystemCfg & (meSYSTEM_CONSOLE|meSYSTEM_NOCLIPBRD)) && !(clipState & CLIP_OWNER))
     {
         XSetSelectionOwner(mecm.xdisplay,XA_PRIMARY,meFrameGetXWindow(frameCur),CurrentTime) ;
         if(XGetSelectionOwner(mecm.xdisplay,XA_PRIMARY) == meFrameGetXWindow(frameCur))
@@ -2923,7 +2936,7 @@ TTgetClipboard(void)
 {
     clipState &= ~CLIP_TRY_GET ;
 
-    if(!(meSystemCfg & meSYSTEM_CONSOLE) && !(clipState & CLIP_OWNER))
+    if(!(meSystemCfg & (meSYSTEM_CONSOLE|meSYSTEM_NOCLIPBRD)) && !(clipState & CLIP_OWNER))
     {
         /* Remove the 'Try to set selection' flag. This is really important if increment
          * copy texts are being used. If they are and this flag is set after receiving
@@ -3164,8 +3177,8 @@ TTahead(void)
         
         if(alarmState & meALARM_WINSIZE)
         {
-            frameChangeWidth(meTRUE,TTnewWid); /* Change width */
-            frameChangeDepth(meTRUE,TTnewHig); /* Change depth */
+            frameChangeWidth(meTRUE,frameCur->width-TTnewWid); /* Change width */
+            frameChangeDepth(meTRUE,frameCur->depth+1-TTnewHig); /* Change depth */
 	    alarmState &= ~meALARM_WINSIZE ;
         }
         if(TTnoKeys)
@@ -3226,7 +3239,7 @@ TTopenClientServer (void)
         ii += sizeof(cssa.sun_family);
         cssa.sun_family = AF_UNIX;
 
-        if(meTestExist((char *) cssa.sun_family) &&
+        if(meTestExist(cssa.sun_family) &&
            (connect(meCSSock,(struct sockaddr *)&cssa,ii) >= 0))
         {
             /* theres another me acting as a server, quit! */

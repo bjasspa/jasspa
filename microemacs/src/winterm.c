@@ -315,8 +315,8 @@ static LPCTSTR meCursorName[meCURSOR_COUNT]=
         mouse_X = clientToCol (LOWORD(lpos));                                \
         mouse_dX = ((((LOWORD(lpos)) - colToClient(mouse_X)) << 8) /         \
                     eCellMetrics.cell.sizeX);                                \
-        if (mouse_X > frameCur->width)                                                \
-            mouse_X = frameCur->width;                                                \
+        if (mouse_X > frameCur->width)                                       \
+            mouse_X = frameCur->width;                                       \
     }                                                                        \
     if (HIWORD(lpos) & 0x8000)        /* Dirty check for -ve */              \
         mouse_Y = 0, mouse_dY = 0;                                           \
@@ -325,8 +325,8 @@ static LPCTSTR meCursorName[meCURSOR_COUNT]=
         mouse_Y = clientToRow (HIWORD(lpos));                                \
         mouse_dY = ((((HIWORD(lpos)) - rowToClient(mouse_Y)) << 8) /         \
                     eCellMetrics.cell.sizeY);                                \
-        if (mouse_Y > frameCur->depth)                                                \
-            mouse_Y = frameCur->depth;                                                \
+        if (mouse_Y > frameCur->depth)                                       \
+            mouse_Y = frameCur->depth;                                       \
     }
 
 #ifdef _ME_CONSOLE
@@ -1119,6 +1119,18 @@ WinSpecialChar (HDC hdc, CharMetrics *cm, int x, int y, meUByte cc, COLORREF fco
         LineTo   (hdc, x + cm->midX + 1, y + cm->midY);
         break;
     
+    case 0x08:          /* Line & Poly / Backspace <- */
+        ii = ((cm->midY+1) >> 1) ;
+        MoveToEx (hdc, x + cm->sizeX - 2, y + cm->midY, NULL);
+        LineTo   (hdc, x + cm->midX - 1, y + cm->midY);
+        points [0].x = x + cm->midX - 1 ;
+        points [0].y = y + ii ;
+        points [1].x = x + cm->midX - 1 ;
+        points [1].y = y + cm->sizeY - ii - 1 ;
+        points [2].x = x ;
+        points [2].y = y + cm->midY ;
+        goto makePoly;
+
     case 0x09:          /* Line & Poly / Tab -> */
         ii = ((cm->midY+1) >> 1) ;
         MoveToEx (hdc, x, y + cm->midY, NULL);
@@ -1826,6 +1838,11 @@ void
 TTsetClipboard (void)
 {
     clipState &= ~CLIP_TRY_SET ;
+    
+    if(meSystemCfg & meSYSTEM_NOCLIPBRD)
+        /* system clipboard has been disabled - do nothing */
+        return ;
+    
     /* We aquire the clipboard and flush it under the following conditions;
      * "We do NOT own it" or "Clipboard is stale". The clipboard becomes stale
      * when we own it but another application has aquired our clipboard data.
@@ -1856,9 +1873,10 @@ TTgetClipboard(void)
 
     clipState &= ~CLIP_TRY_GET ;
 
-    /* Check the standard clipboard status */
-    if (clipState & CLIP_OWNER)
-        return;                         /* Must be already saved */
+    /* Check the standard clipboard status, if owner or it has
+     * been disabled then there's nothing to do */
+    if((clipState & CLIP_OWNER) || (meSystemCfg & meSYSTEM_NOCLIPBRD))
+        return ;
 
     /* Get the data from the clipboard */
     OpenClipboard (baseHwnd);
@@ -2695,6 +2713,7 @@ WinMouse(HWND hwnd, UINT message, UINT wParam, LONG lParam)
          */
         if(wParam == mouseButs)
         {
+            static LONG lastPos=-1 ;
             meUInt arg;           /* Decode key argument */
             meUShort cc ;
 
@@ -2709,7 +2728,15 @@ WinMouse(HWND hwnd, UINT message, UINT wParam, LONG lParam)
             /* Are we after all movements or mouse-move bound ?? */
             if((!TTallKeys && (decode_key(cc,&arg) != -1)) || (TTallKeys & 0x1))
                 addKeyToBuffer(cc) ;        /* Add key to keyboard buffer */
-            mouseShow() ;
+            if(lParam != lastPos)
+            {
+                /* Found that on NT ME continually gets MOUSEMOVE messages even though
+                 * the mouse hasn't moved! I wonder if thats why it runs so slow?
+                 * To stop the mouse cursor reappearing store the last position and
+                 * only show the mouse if it has moved. */ 
+                mouseShow() ;
+                lastPos = lParam ;
+            }
             break ;
         }
         /* Jon 00/02/12: Fault report by "Dave E" that the screen was
@@ -5050,9 +5077,9 @@ meFrameSetWindowSize(meFrame *frame)
         wWindow += wBorder;
         
         /* Re-size in place if possible */
-        if ((wWindow + wBorder + eCellMetrics.cell.sizeX - 1) > eCellMetrics.minMaxInfo.ptMaxSize.x)
+        if ((wWindow + eCellMetrics.cell.sizeX - 1) > eCellMetrics.minMaxInfo.ptMaxSize.x)
         {
-            wRect.left = eCellMetrics.minMaxInfo.ptMaxPosition.x;
+             wRect.left = eCellMetrics.minMaxInfo.ptMaxPosition.x;
             wRect.right = wRect.left + eCellMetrics.minMaxInfo.ptMaxSize.x;
         }
         else
@@ -5079,7 +5106,7 @@ meFrameSetWindowSize(meFrame *frame)
         dWindow += dBorder;
         
         /* Re-size in place if possible */
-        if ((dWindow + dBorder + eCellMetrics.cell.sizeY - 1) > eCellMetrics.minMaxInfo.ptMaxSize.y)
+        if ((dWindow + eCellMetrics.cell.sizeY - 1) > eCellMetrics.minMaxInfo.ptMaxSize.y)
         {
             wRect.top = eCellMetrics.minMaxInfo.ptMaxPosition.y;
             wRect.bottom = wRect.top + eCellMetrics.minMaxInfo.ptMaxSize.y;
@@ -5596,6 +5623,11 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
                 /* Find the window with the mouse */
                 setCursorToMouse (meFALSE, 0);
 #endif
+#if MEOPT_EXTENDED
+                /* if the current window is locked to a buffer find another */
+                if(frameCur->windowCur->flags & meWINDOW_LOCK_BUFFER)
+                    meWindowPopup(NULL,WPOP_MKCURR|WPOP_USESTR,NULL) ;
+#endif
 
                 /* Find the file into buffer */
                 findSwapFileList (dadp->fname,BFND_CREAT|BFND_MKNAM,0);
@@ -6051,12 +6083,16 @@ do_window_resize:
         }
         break;
 
-        /* Indicate to the PAINT that we must honour the next draw region and
-         * not try to optimise the painting otherwise we will not re-paint the
-         * screen fully. */
     case WM_ERASEBKGND:
         if((frame = meMessageGetFrame(hWnd)) != NULL)
+        {
+            /* Indicate to the PAINT that we must honour the next draw region and
+             * not try to optimise the painting otherwise we will not re-paint the
+             * screen fully. Must invalidate the window incase we don't get a paint
+             * message in which case the window will stop updating */
+            InvalidateRect (hWnd, NULL, meFALSE);
             meFrameGetWinPaintAll(frame) = 1 ;
+        }
         goto unhandled_message;         /* Assume unhandled */
 
     default:
