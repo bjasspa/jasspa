@@ -367,6 +367,13 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
 #if MEOPT_FILEHOOK
 	/* Now set the buffer context */
 	setBufferContext(bp) ;
+        /* the buffer's fhook could have done some really whacky things like
+         * delete the buffer. If it has avoid crashing by checking the buffer
+         * is still a buffer! */
+        tbp = bheadp ;
+        while(tbp != bp)
+            if((tbp=tbp->next) == NULL)
+                return meFALSE ;
 #endif
     }
     tbp = wp->buffer ;

@@ -459,6 +459,9 @@ meFrameInitWindow(meFrame *frame, meBuffer *buffer)
     wp->buffer = buffer ;
     wp->dotLine = buffer->baseLine ;
     wp->updateFlags = WFMODE|WFRESIZE|WFSBAR;
+#if MEOPT_EXTENDED
+    wp->id = nextWindowId++ ;
+#endif
     /* Flag buffer as displayed. */
     buffer->windowCount++ ;
     meWindowFixTextSize(wp) ;

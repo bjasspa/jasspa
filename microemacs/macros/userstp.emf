@@ -388,8 +388,8 @@ set-variable .user-setup.path ""
 !emacro
 
 0 define-macro user-set-checkbox
-    set-variable #l2 &lget "|main-menu|spell/autosave|html-author|exact|magic|auto|backup|quiet|tab|undo|spell/autospell|msshift|edituser|expaccent|explookbk|expword|find-buffer|" &abs @#
-    set-variable #l0 &lget "|1|0|1|1|1|1|1|1|1|1|0|0|1|0|0|0|0|" &abs @#
+    set-variable #l2 &lget "|main-menu|spell/autosave|html-author|exact|magic|auto|backup|quiet|tab|undo|spell/autospell|msshift|edituser|expaccent|explookbk|expword|find-buffer|mskeys|" &abs @#
+    set-variable #l0 &lget "|1|0|1|1|1|1|1|1|1|1|0|0|1|0|0|0|0|0|" &abs @#
     set-variable #l0 &reg "/history" #l2 #l0
     !if &les @# 0
         set-variable #l0 &bxor #l0 1
@@ -1274,8 +1274,10 @@ osd .osd.user-start 110 "Sfh" "       C&ompany File : " 120
 osd .osd.user-start 120 "EtxHf" 120 .scheme.osd-entry "##############" 2 user-set-entry
 osd .osd.user-start 130 "Sfh" "            &Emulate : " 140
 osd .osd.user-start 140 "MtxmsfH" 140 .scheme.osd-entry "" .osd.user-sub user-setup-emulate
-osd .osd.user-start 150 "Sfh" "    MS Shift region : "  160
-osd .osd.user-start 160 "Ctfx" 160 "^^NY^^" 12 user-set-checkbox
+osd .osd.user-start 150 "Sfh" "   MS Friendly Keys : "  160
+osd .osd.user-start 160 "Ctfhx" 160 "^^NY^^" 18 user-set-checkbox
+osd .osd.user-start 170 "Sfh" "     MS Shift Region : "  180
+osd .osd.user-start 180 "Ctfx" 180 "^^NY^^" 12 user-set-checkbox
 osd .osd.user-start 500 ""
 osd .osd.user-start 510 "c"  "Locale Setup"
 osd .osd.user-start 520 ""

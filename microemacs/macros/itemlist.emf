@@ -51,6 +51,7 @@
     hilight .hilight.list-item 0x02 "Type Item"  .scheme.header
     hilight .hilight.list-item 0x40 "^[ 0-9][ 0-9][ 0-9][ 0-9][ 0-9][ 0-9] " "" $global-scheme
     hilight .hilight.list-item 0x44 "\ecB" "" "\ecA" "" "" .scheme.function
+    hilight .hilight.list-item 0x44 "\ecC" "" "\ecA" "" "" .scheme.type
 !endif
 
 0 define-macro item-list-order
@@ -272,10 +273,10 @@ define-macro occur
     set-variable #l2 &spr "\\(%s\\)" #l1
     !if &not &seq &lef #l1 1 "^"
         set-variable #l2 &spr "\\(.\\{0,%d\\}\\)%s" #l6 #l2
-        set-variable #l3 &spr "Occur \\1\ecB\\2\ecA"
+        set-variable #l3 &spr "\ecCOccr\ecA \\1\ecB\\2\ecA"
         set-variable #l4 &add #l4 1
     !else
-        set-variable #l3 &spr "Occur \ecB\\1\ecA"
+        set-variable #l3 &spr "\ecCOccr\ecA \ecB\\1\ecA"
     !endif
     set-variable #l5 &rig #l1 &sub &len #l1 1
     !if &not &seq #l5 "$"

@@ -130,11 +130,11 @@ osd .osd.mmrg-opt 140 ""
 osd .osd.mmrg-opt 160 "BcfH"   .scheme.osd-ebtt "  &Ok  "  1 void
 
 osd .osd.mmrg-popup 0   "b"
-osd .osd.mmrg-popup 1   "Mde" "Insert &Field"       .osd.mmrg-ppfld
-osd .osd.mmrg-popup 2   ""    "&If Statement"       -1 mmrg-insert-data
-osd .osd.mmrg-popup 3   ""    "&If Else Statement"  -2 mmrg-insert-data
-osd .osd.mmrg-popup 4   ""    "&Next Record"        -3 mmrg-insert-data
-osd .osd.mmrg-popup 5   ""    "&Repeat Doc"         -4 mmrg-insert-data
+osd .osd.mmrg-popup 1   "Md" "Insert &Field"       .osd.mmrg-ppfld
+osd .osd.mmrg-popup 2   ""   "&If Statement"       -1 mmrg-insert-data
+osd .osd.mmrg-popup 3   ""   "&If Else Statement"  -2 mmrg-insert-data
+osd .osd.mmrg-popup 4   ""   "&Next Record"        -3 mmrg-insert-data
+osd .osd.mmrg-popup 5   ""   "&Repeat Doc"         -4 mmrg-insert-data
 
 define-macro mail-merge-popup 
     ; redefine the position to be next to the cursor 

@@ -1,4 +1,4 @@
- "" "<FOLD-> \ecCText Insertion\ecA"
+ "" "\ecCText Insertion\ecA"
 #i "#include <\p>\r\P" "  #include"
 #d "#define " "  #define"
 if "if(\p)\r{\r\r}\r\P" "  if()"
@@ -6,5 +6,4 @@ ef "else if(\p)\r{\r\r}\r\P" "  else if()"
 el "else\r{\r\p\r}\r\P" "  else"
 sw "switch(\p)\r{\rcase :\rdefault:\r}\r\P" "  switch()"
 wh "while(\p)\r{\r\r}\r\P" "  while()"
- "" "</FOLD>"
 

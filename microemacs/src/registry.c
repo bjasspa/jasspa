@@ -335,7 +335,9 @@ parseFile (meRegNode *rnp, meLine *hlp)
 int
 regSave (meRegNode *rnp, meUByte *fname)
 {
-    int   ss, level = 0;
+    
+    int ss, level=0 ;
+    meUInt flags ;
 
     /* Check the root pointer */
     if (rnp == NULL)
@@ -350,14 +352,31 @@ regSave (meRegNode *rnp, meUByte *fname)
         if (fname == NULL)
             return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Registry: No file name specified on save");
     }
-
+    flags = meRWFLAG_WRITE ;
+    if(rnp->mode & meREGMODE_BACKUP)
+        flags |= meRWFLAG_BACKUP ;
+    if(rnp->mode & meREGMODE_CRYPT)
+    {
+        char s1[meFILEBUF_SIZE_MAX], *s2 ;
+        int len ;
+        meCrypt(NULL,0);
+        strcpy(s1,getFileBaseName(fname)) ;
+        len = meStrlen(s1) + 1 ;
+        meCrypt(s1,len) ;
+        if((s2=meGetenv("MENAME")) == NULL)
+            s2 = "" ;
+        strcpy(s1+len,s2) ;
+        meCrypt(s1,len+meStrlen(s1+len)+1) ;
+        flags |= meRWFLAG_CRYPT ;
+    }
     /* Open the file */
-    if((ss=ffWriteFileOpen(fname,(rnp->mode & meREGMODE_BACKUP) ? (meRWFLAG_WRITE|meRWFLAG_BACKUP):meRWFLAG_WRITE,NULL)) == meTRUE)
+    if((ss=ffWriteFileOpen(fname,flags,NULL)) == meTRUE)
     {
         meRegNode *rr ;
         
         /* Add a recognition string to the header */
-        ss = ffWriteFileWrite(12,(meUByte *) ";-!- erf -!-",1) ;
+        if(!(rnp->mode & meREGMODE_CRYPT))
+            ss = ffWriteFileWrite(12,(meUByte *) ";-!- erf -!-",1) ;
 
         /* Recurse the children of the node and write to file */
         rr = rnp->child ;
@@ -616,7 +635,8 @@ regRead (meUByte *rname, meUByte *fname, int mode)
     meLine hlp, *lp ;
     meUByte *fn ;
     meRegNode *rnp;                         /* Root node pointer */
-
+    meUInt flags ;
+    
     /* Find the registry entry */
     if ((rnp = rnodeFind (&root, rname)) != NULL)
     {
@@ -646,9 +666,24 @@ regRead (meUByte *rname, meUByte *fname, int mode)
     }
     
     /* Load in the registry file */
+    flags = meRWFLAG_SILENT ;
     hlp.next = &hlp ;
     hlp.prev = &hlp ;
-    if((ffReadFile(fn,meRWFLAG_SILENT,NULL,&hlp) == meABORT) &&
+    if(mode & meREGMODE_CRYPT)
+    {
+        char s1[meFILEBUF_SIZE_MAX], *s2 ;
+        int len ;
+        meCrypt(NULL,0);
+        strcpy(s1,getFileBaseName(fn)) ;
+        len = meStrlen(s1) + 1 ;
+        meCrypt(s1,len) ;
+        if((s2=meGetenv("MENAME")) == NULL)
+            s2 = "" ;
+        strcpy(s1+len,s2) ;
+        meCrypt(s1,len+meStrlen(s1+len)+1) ;
+        flags |= meRWFLAG_CRYPT ;
+    }
+    if((ffReadFile(fn,flags,NULL,&hlp) == meABORT) &&
        !(mode & meREGMODE_CREATE))
     {
         mlwrite (MWABORT|MWWAIT,(meUByte *)"[Cannot load registry file %s]", fname);
@@ -701,7 +736,7 @@ finished:
  * regDecodeMode
  * Decode the registry mode.
  */
-static meUByte meRegModeList[]="!hfubadmrc?g" ;
+static meUByte meRegModeList[]="!hfubadymrc?g" ;
 static int
 regDecodeMode (int *modep, meUByte *modeStr)
 {

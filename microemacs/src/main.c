@@ -1573,13 +1573,28 @@ missing_arg:
     if(alarmState & meALARM_PIPED)
     {
 #ifdef _WIN32
+        DWORD type, dwCount ;
+#endif
+        
+        bp = bfind(BstdinN,BFND_CREAT);
+#ifdef _WIN32
         ffrp = GetStdHandle(STD_INPUT_HANDLE) ;
+        /* Is a file piped into stdin? Must ensure there is BEFORE we try to
+         * read it otherwise a call to ReadFile will lock up ME! */
+        if(ffrp == INVALID_HANDLE_VALUE)
+            ;
+        else if((type=GetFileType(ffrp)) == FILE_TYPE_CHAR)
+            ;
+        else if((type == FILE_TYPE_PIPE) &&
+                ((PeekNamedPipe(ffrp,NULL,0,NULL,&dwCount,NULL) == meFALSE) || (dwCount <= 0)))
+            ;
+        else
 #else
         ffrp = stdin ;
 #endif
-        bp = bfind(BstdinN,BFND_CREAT);
-        readin(bp,NULL) ;
-        
+        {
+            readin(bp,NULL) ;
+        }
 #ifdef _ME_WINDOW
 #ifdef _ME_CONSOLE
         if((meSystemCfg & meSYSTEM_CONSOLE) == 0)

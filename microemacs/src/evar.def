@@ -196,6 +196,7 @@ DEFVAR ("window-col",          EVCURCOL)        /* current column pos of cursor 
 #if MEOPT_EXTENDED
 DEFVAR ("window-depth",        EVWDEPTH)        /* Current window depth */
 DEFVAR ("window-flags",        EVWFLAGS)        /* current window flags */
+DEFVAR ("window-id",           EVWID)           /* current window id */
 #endif
 DEFVAR ("window-line",         EVCURLINE)       /* current line # in file */
 #if MEOPT_EXTENDED

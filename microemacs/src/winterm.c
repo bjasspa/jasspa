@@ -2299,6 +2299,30 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
             meSuInfo.dwFlags |= STARTF_USESTDHANDLES ;
 #endif
         }
+#ifndef _WIN32s
+        else if(platformId == VER_PLATFORM_WIN32_WINDOWS)
+        {
+            /* For some reason Win98 shell-command start-up path is incorrect
+             * unless a dummy input file is used, no idea why but doing the
+             * following (taken from above) works! */
+            mkTempName (dummyInFile, DUMMY_STDIN_FILE,NULL);
+            
+            if ((dumHdl = CreateFile(dummyInFile,GENERIC_WRITE,FILE_SHARE_WRITE,NULL,
+                                     CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL)) != INVALID_HANDLE_VALUE)
+                CloseHandle (dumHdl);
+            
+            /* Re-open the file for reading */
+            if ((dumHdl = CreateFile(dummyInFile,GENERIC_READ,FILE_SHARE_READ,NULL,
+                                     OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL)) == INVALID_HANDLE_VALUE)
+            {
+                DeleteFile(dummyInFile) ;
+                CloseHandle(meSuInfo.hStdOutput) ;
+                return meFALSE;
+            }
+            meSuInfo.hStdInput = dumHdl;
+            meSuInfo.dwFlags |= STARTF_USESTDHANDLES ;
+        }
+#endif
     }
 #ifdef _WIN32s
     {
@@ -4594,6 +4618,10 @@ TTstart (void)
          * as this needs the scroll-bar to use */
         TTwidthDefault = Console.srWindow.Right-Console.srWindow.Left+1;
         TTdepthDefault = Console.srWindow.Bottom-Console.srWindow.Top+1;
+        if(TTwidthDefault < 8)
+            TTwidthDefault = 8 ;
+        if(TTdepthDefault < 4)
+            TTdepthDefault = 4 ;
         /* now fix the window buffer size to this window size to
          * get rid of the horrid scroll bars! */
         coord.X = TTwidthDefault ;
@@ -4694,7 +4722,7 @@ TTahead (void)
          * them. */
         while(TTnoKeys != KEYBUFSIZ)
         {
-            if ((PeekConsoleInput(hInput, &ir, 1, &dwCount) == meTRUE) && (dwCount > 0))
+            if ((PeekConsoleInput(hInput, &ir, 1, &dwCount) != meFALSE) && (dwCount > 0))
             {
                 if(meGetConsoleMessage(&msg))
                 {
@@ -4828,7 +4856,7 @@ TTaheadFlush (void)
         INPUT_RECORD ir;
         for (;;)
         {
-            if ((PeekConsoleInput(hInput, &ir, 1, &dwCount) == meTRUE) && (dwCount > 0))
+            if ((PeekConsoleInput(hInput, &ir, 1, &dwCount) != meFALSE) && (dwCount > 0))
             {
                 if(meGetConsoleMessage(&msg))
                 {

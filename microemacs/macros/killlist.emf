@@ -21,7 +21,6 @@
         !if &equ #l0 .kill-list-create.count
             set-variable .kill-list-create.count &add .kill-list-create.count 1
         !endif
-        find-buffer "*kill-list*"
     !elif &equ @# 2
         !force 0 find-buffer &cat "*kill-list*" #l0
         !if $status
@@ -44,8 +43,9 @@
         set-variable .kill-list-create.count &add .kill-list-create.count 1
     !endif
     goto-position "\x82"
-    ; force an update of list
-    set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x002
+    ; force an update by deleting buffer
+    !force 0 delete-buffer "*kill-list*"
+    set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x080
 !emacro
 
 0 define-macro kill-list-mouse-pick-1

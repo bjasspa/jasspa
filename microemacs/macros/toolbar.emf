@@ -14,12 +14,12 @@
 ;     .toolbar.tool-flag - A list defining the flags of each tool
 ;           the order of the list must be the same for this and the following variables,
 ;           the flag is bitwise defined as follows:
-;           0x001 - Call the update command on toolbar creation
-;           0x002 - Call the update command on recenter
+;           0x001 - Call the update command on tool creation
+;           0x002 - Call the update command on a redraw
 ;           0x004 - Call the update command if the current buffer type changes 
 ;           0x008 - Call the update command if the current buffer changes
 ;           0x010 - Call the update command if the current buffer is modified/saved
-;           0x080 - Update the mode-lines
+;           0x080 - Perform update checks
 ;           0x100 - Lock the depth/width as well
 ;           0x200 - The tool uses a paged window
 ;           0x400 - The tool is currently hidden (not active sub-page (0x200 will also be set))
@@ -82,6 +82,59 @@
     set-variable $buffer-mode-line &spr "%s %s%n%s" #l2 &lef #l1 #l0 &sub #l0 &len #l1 " " #l3
 !emacro
 
+0 define-macro toolbar-redraw-tools
+    set-variable #l6 &band @# 0x003
+    !if &band @# 0x004
+        set-variable #l6 &bor #l6 0x10000
+    !endif
+    !if &band @# 0x008
+        set-variable #l6 &bor #l6 0x60000
+    !endif
+    set-variable #l5 $system
+    set-variable $system &bor $system 0x800000
+    set-position "\x84"
+    set-variable #l1 0
+    !while &not &seq "" &set #l2 &lget .toolbar.tool-flag &inc #l1 1
+        !if &not &band #l2 0x400
+            set-variable #l3 &lget .toolbar.tool-wid #l1
+            set-variable #l4 $window-id
+            !repeat
+                !if &equ $window-id #l3
+                    set-variable #l7 @#
+                    find-buffer &lget .toolbar.tool-buff #l1
+                    !if &not &exi :tool-width
+                        ; this buffer has not been used by the toolbar before,
+                        ; install dummy mouse handler to avoid modifying problems
+                        ; and ensure that the tool-cmd is called if required on create
+                        set-variable :mouse-pick-all "toolbar-mouse-void"
+                        set-variable :mouse-drop-all "toolbar-mouse-void"
+                        1 buffer-mode "hide"
+                        set-variable #l7 &bor @# 0x001
+                    !endif
+                    !if &band #l2 #l7
+                        0xdf set-position "\x85"
+                        1 goto-position "\x84"
+                        !force !force #l7 execute-named-command &lget .toolbar.tool-cmd #l1
+                        !force &cond &band #l2 0x100000 0xdf 1 goto-position "\x85"
+                    !endif
+                    !if &or &sub :tool-width $window-width &band #l2 #l6
+                        ; the width of the tool window has changed - update modeline
+                        #l1 toolbar-redraw-mode
+                    !endif
+                    set-variable #l4 ""
+                !else
+                    3 next-window
+                    !if &equ $window-id #l4
+                        set-variable #l4 ""
+                    !endif
+                !endif
+            !until &seq #l4 ""
+        !endif
+    !done
+    goto-position "\x84"
+    set-variable $system #l5
+!emacro
+
 0 define-macro toolbar-redraw
     !if .toolbar.disable
         @# screen-update
@@ -90,43 +143,13 @@
     !elif &band $window-flags 0x1000
         ; don't update the tools if in a tool window, but we may need to update the mode lines
         !if &band .bc 0x80
-            set-variable #l5 $system
-            set-variable $system &bor $system 0x800000
-            set-position "\x84"
-            set-variable #l1 0
-            !while &not &seq "" &set #l2 &lget .toolbar.tool-flag &inc #l1 1
-                !if &not &band #l2 0x400
-                    !force 0 popup-window &lget .toolbar.tool-buff #l1
-                    !if $status
-                        !if &not &exi :tool-width
-                            ; this buffer has not been used by the toolbar before,
-                            ; install dummy mouse handler to avoid modifying problems
-                            ; and ensure that the tool-cmd is called if required on create
-                            set-variable :mouse-pick-all "toolbar-mouse-void"
-                            set-variable :mouse-drop-all "toolbar-mouse-void"
-                            1 buffer-mode "hide"
-                            !if &band #l2 0x001
-                                0xdf set-position "\x85"
-                                1 goto-position "\x84"
-                                !force !force execute-line &lget .toolbar.tool-cmd #l1
-                                !force &cond &band #l2 0x100000 0xdf 1 goto-position "\x85"
-                            !endif
-                        !endif
-                        !if &sub :tool-width $window-width
-                            ; the width of the tool window has changed - update modeline
-                            #l1 toolbar-redraw-mode
-                        !endif
-                    !endif
-                !endif
-            !done
+            0x80 toolbar-redraw-tools
             set-variable .bc &bxor .bc 0x80
-            goto-position "\x84"
-            set-variable $system #l5
         !endif
         @# screen-update
         !return
     !elif &seq @cl "recenter"
-        set-variable .bc &bor .bc 0x002
+        set-variable .bc &bor .bc 0x080
     !elif &les @# 1
         @# screen-update
         !return
@@ -138,10 +161,8 @@
         @# screen-update
         !return
     !endif
-    set-variable #l6 &bor .bc 0x002
     !if &not &seq .bn $buffer-bname
         set-variable .bc &bor .bc 0x008
-        set-variable #l6 &bor #l6 0x60000
         set-variable .bn $buffer-bname
     !endif
     !if &bxor &bmod "edit" &bmod "usr8"
@@ -156,39 +177,8 @@
         set-variable .bc &bor .bc 0x004
         set-variable .bt $buffer-fhook
     !endif
-    set-variable #l5 $system
-    set-variable $system &bor $system 0x800000
-    set-position "\x84"
-    set-variable #l1 0
-    !while &not &seq "" &set #l2 &lget .toolbar.tool-flag &inc #l1 1
-        !if &not &band #l2 0x400
-            !force 0 popup-window &lget .toolbar.tool-buff #l1
-            !if $status
-                !if &not &exi :tool-width
-                    ; this buffer has not been used by the toolbar before,
-                    ; install dummy mouse handler to avoid modifying problems
-                    ; and ensure that the tool-cmd is called if required on create
-                    set-variable :mouse-pick-all "toolbar-mouse-void"
-                    set-variable :mouse-drop-all "toolbar-mouse-void"
-                    1 buffer-mode "hide"
-                    !tjump &band #l2 0x001 3
-                !endif
-                !if &band #l2 .bc
-                    0xdf set-position "\x85"
-                    1 goto-position "\x84"
-                    !force !force execute-line &lget .toolbar.tool-cmd #l1
-                    !force &cond &band #l2 0x100000 0xdf 1 goto-position "\x85"
-                !endif
-                !if &or &sub :tool-width $window-width &band #l2 #l6
-                    ; the width of the tool window has changed - update modeline
-                    #l1 toolbar-redraw-mode
-                !endif
-            !endif
-        !endif
-    !done
+    .bc toolbar-redraw-tools
     set-variable .bc 0
-    goto-position "\x84"
-    set-variable $system #l5
     @# screen-update
 !emacro
 
@@ -255,19 +245,27 @@
     !endif
 !emacro
 
+0 define-macro toolbar-mouse-void
+    goto-position "\x82"
+!emacro
+
 define-macro toolbar-close
     1 set-position "\x84"
     !force global-unbind-key "redraw"
-    set-variable #l0 0
-    !while &not &seq "" &set #l1 &lget .toolbar.tool-buff &inc #l0 1
-        !force 0 popup-window #l1
-        !if $status
-            delete-window
-            -1 find-buffer #l1
+    7 next-window
+    !repeat
+        !if &band $window-flags 0x1000
+            !force 2 delete-window
+        !else
+            !force 2 next-window
         !endif
-    !done
+    !until &not $status
     set-variable .toolbar.open 0
     goto-position "\x84"
+!emacro
+
+define-macro toolbar-refresh
+    set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x002
 !emacro
 
 define-macro toolbar
@@ -277,12 +275,13 @@ define-macro toolbar
     set-variable .tool-file &reg "/history" "toolbar/tool-file" "\CHtooldef\CH"
     set-variable .tool-size &reg "/history" "toolbar/tool-size" "\CH100\CH"
     set-variable .tool-flag &reg "/history" "toolbar/tool-flag" "\CH0x1001\CH"
-    set-variable .tool-cmd  &reg "/history" "toolbar/tool-cmd"  "\CH1 toolbar-default\CH"
+    set-variable .tool-cmd  &reg "/history" "toolbar/tool-cmd"  "\CHtoolbar-default\CH"
     !if &seq "" &lget .toolbar.tool-flag 1
         ml-write "[Error: No registered tools]"
         !abort
     !endif
     3 delete-other-windows
+    set-variable $window-flags 0
     set-variable .flag "||||||"
     set-variable #l9 "|||||"
     set-variable #l0 0
@@ -298,6 +297,7 @@ define-macro toolbar
             !endif
         !endif
     !done
+    set-variable .tool-wid "|"
     set-variable #l8 "|||||"
     set-variable #l7 "|||||"
     set-variable #l6 "|||||"
@@ -323,22 +323,35 @@ define-macro toolbar
                     !if &band #l2 1
                         ; vertical toolbar
                         set-variable #l4 $window-flags
+                        set-variable $window-flags 0
                         split-window-vertically
                         change-window-depth &div &mul &lget #l7 #l2 &lget #l8 #l2 &lget #l9 #l2
                         set-variable $window-flags #l4
                     !else
                         set-variable #l4 $window-flags
+                        set-variable $window-flags 0
                         split-window-horizontally
                         change-window-width &div &mul &lget #l7 #l2 &lget #l8 #l2 &lget #l9 #l2
                         set-variable $window-flags #l4
                     !endif
                     next-window
                 !endif
-                set-variable $window-flags &cond &band #l1 0x100 0x103f &sub 0x103e &band #l2 1 
+                set-variable .tool-wid &lset .tool-wid #l0 $window-id
+                set-variable $window-flags &cond &band #l1 0x100 0x11ff &sub 0x11fe &band #l2 1 
                 find-buffer &lget .toolbar.tool-buff #l0
                 set-variable #l8 &lset #l8 #l2 &lget .toolbar.tool-size #l0
                 set-variable #l6 &lset #l6 #l2 $buffer-bname
             !endif
+        !elif &band #l1 0x800
+            set-variable .tool-wid &lset .tool-wid #l0 &lget .tool-wid &sub #l0 1
+        !else
+            set-variable .tool-wid &lset .tool-wid #l0 ""
+        !endif
+    !done
+    ; fill in any missing window ids (hidden tools)
+    !while &gre &dec #l0 1 0
+        !if &seq &lget .tool-wid #l0 ""
+            set-variable .tool-wid &lset .tool-wid #l0 &lget .tool-wid &add #l0 1
         !endif
     !done
     5 next-window
@@ -350,7 +363,4 @@ define-macro toolbar
 !emacro
 set-variable .toolbar.conv "|4096|8192|16384|32768|"
 
-0 define-macro toolbar-mouse-void
-    goto-position "\x82"
-!emacro
 

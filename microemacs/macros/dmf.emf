@@ -31,7 +31,8 @@ define-macro display-matching-fence
     !else
         set-variable @# .dmf
     !endif
-    !if &not @#
+    !if &or &not @# &seq @wc ""
+        ; not enabled or at the very end of the buffer
         !return
     !endif
     set-variable #l8 &cond &band @# 2 "\x87" "\x88"
@@ -126,4 +127,3 @@ define-macro display-matching-fence
     0x20 screen-poke #l5 #l4 .scheme.dmf #l3
     #l7 screen-update
 !emacro
-

@@ -22,8 +22,8 @@ define-macro fhook-html
 !emacro
 
 ; buffer-initialize variables
-set-variable .fhook-html.setup &reg "/history" "fhook/html" "cdghiopsx"
-set-variable .fhook-html.setup-mask "acdeghikmopstux"
+set-variable .fhook-html.setup &reg "/history" "fhook/html" "cdghinopsx"
+set-variable .fhook-html.setup-mask "acdeghikmnopstux"
 set-variable .fhook-html.comment  "|<!|>|-| - | - ||"
 set-variable .fhook-html.command-flag  "|th|h|th|h|th|h|thb|thb|"
 set-variable .fhook-html.command-name  "|||html-process-link||||html-show-buffer|html-toggle-mode|"
@@ -255,7 +255,7 @@ set-variable .fhook-html.item-list-r4 "H4+  \ecB\\2\ecA"
     !if $status
         hilight .hilight.html  0x80 "<%" .hilight.vb   .scheme.prepro
         hilight .hilight.htmlT 0x80 "<%" .hilight.vb   .scheme.prepro
-        hilight .hilight.vb    0x90 "%>" 0             .scheme.prepro
+        hilight .hilight.vb    0x80 "%>" .hilight.html .scheme.prepro
         hilight .hilight.html  0x80 "<script\\s +language=VBScript[^>]*>" .hilight.vb .scheme.prepro
         hilight .hilight.vb    0x80 "</script>" 0      .scheme.prepro
         ;    indent .hilight.vb b "<" ">"
@@ -313,6 +313,11 @@ set-variable .fhook-html.item-list-r4 "H4+  \ecB\\2\ecA"
     indent .hilight.html n "<select[^>]*>" 2 
     indent .hilight.html n "<%" 2 
     indent .hilight.html o "%>" -2 
+    
+    !if &sin "d" .fhook-vb.setup
+        indent .hilight.vb n "<%" 2 
+        indent .hilight.vb o "%>" -2 
+    !endif
 !endif
 
 define-macro-file htmltool html-to-ehf
@@ -429,30 +434,27 @@ define-macro html-process-buffer
 !emacro
 
 0 define-macro html-toggle-mode
-    !if &not $buffer-indent
-        !return
-    !endif
-    !if &bmod "usr1"
+    !if &seq $buffer-fhook "fhook-html"
         set-variable :auto-spell &cond &seq $buffer-input "auto-spell-input" 1 -1
-    !endif
-    !if &equ @# 2
-        -1 buffer-mode "usr1"
-         1 buffer-mode "usr2"
-         !if &sin "d" .fhook-html.setup
-             set-variable $buffer-indent .hilight.vb
-        !endif
         !if &sin "s" .fhook-html.setup
             -1 auto-spell
         !endif
+        set-variable $buffer-fhook "fhook-vb"
+        !if &sin "d" .fhook-html.setup
+            set-variable $buffer-indent .hilight.vb
+        !endif
     !else
-         1 buffer-mode "usr1"
-        -1 buffer-mode "usr2"
+        set-variable $buffer-fhook "fhook-html"
         !if &sin "d" .fhook-html.setup
             set-variable $buffer-indent .hilight.html
         !endif
         !if &sin "s" .fhook-html.setup
             :auto-spell auto-spell
         !endif
+    !endif
+    !if .toolbar.open
+        ; flag that the buffer type has changed
+        set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x004
     !endif
 !emacro
 

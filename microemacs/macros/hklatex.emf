@@ -674,12 +674,12 @@ osd .osd.latex-popev 1   ""  "&enumerate"      1 latex-popup-environment
 osd .osd.latex-popev 2   ""  "&itemize"        2 latex-popup-environment
 
 osd .osd.latex-popup 0   "b"
-osd .osd.latex-popup 1   "Mde"  "&Header"        .osd.latex-pophd
-osd .osd.latex-popup 2   "Mde"  "&References"    .osd.latex-poprf
-osd .osd.latex-popup 3   "Mde"  "&Format"        .osd.latex-popft
-osd .osd.latex-popup 4   "Mde"  "&Environment"   .osd.latex-popev
-osd .osd.latex-popup 5   "Mde"  "&Greek"         .osd.latex-popgk
-osd .osd.latex-popup 6   "Mde"  "&Symbols"       .osd.latex-popsb
+osd .osd.latex-popup 1   "Md"  "&Header"        .osd.latex-pophd
+osd .osd.latex-popup 2   "Md"  "&References"    .osd.latex-poprf
+osd .osd.latex-popup 3   "Md"  "&Format"        .osd.latex-popft
+osd .osd.latex-popup 4   "Md"  "&Environment"   .osd.latex-popev
+osd .osd.latex-popup 5   "Md"  "&Greek"         .osd.latex-popgk
+osd .osd.latex-popup 6   "Md"  "&Symbols"       .osd.latex-popsb
 
 define-macro latex-popup 
     !if @#

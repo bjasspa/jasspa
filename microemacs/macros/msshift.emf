@@ -89,17 +89,14 @@ set-variable .msshift.state -1
 
 global-bind-key msshift-pick "S-pick"
 global-bind-key msshift "S-drop"
-global-bind-key msshift-move "S-up"
-global-bind-key msshift-move "S-up"
-global-bind-key msshift-move "S-down"
-global-bind-key msshift-move "S-left"
-global-bind-key msshift-move "S-right"
-global-bind-key msshift-move "S-home"
-global-bind-key msshift-move "S-end"
-global-bind-key msshift-move "S-page-up"
-global-bind-key msshift-move "S-page-down"
-global-bind-key msshift-move "C-S-left"
-global-bind-key msshift-move "C-S-right"
-5 global-bind-key msshift-move "C-S-up"
-5 global-bind-key msshift-move "C-S-down"
 
+set-variable #l0 0
+!while &not &seq "" &set #l1 &lget "|up|down|left|right|home|end|page-up|page-down|C-left|C-right|C-up|C-down|C-home|C-end|" &inc #l0 1
+    !if &not &seq &cbin #l1 "ERROR"
+        !if &seq &nbin #l1 ""
+            global-bind-key msshift-move &cat "S-" #l1
+        !else
+            &nbin #l1 global-bind-key msshift-move &cat "S-" #l1
+        !endif
+    !endif
+!done

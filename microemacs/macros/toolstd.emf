@@ -81,7 +81,7 @@
         ; a ftp file, &stat 'm' & 's' does not work on these files
     !elif &seq &lef #l0 7 "http://"
         ; a http file, &stat 'm' & 's' does not work on these files
-    !elif &or &not &exi :buffer-info &band .toolbar-redraw.bc 0x013
+    !elif &or &not &exi :buffer-info &band @# 0x013
         set-variable #l1 &stat "m" $buffer-fname
         set-variable #l1 &spr "%d-%02d-%02d" &lef #l1 4 &mid #l1 7 2 &mid #l1 9 2
         set-variable #l3 &stat "s" $buffer-fname
