@@ -18,8 +18,10 @@ release all:
 # Clean area.
 #
 clean:
+	$(RM) solaris/*.1
 	$(RM) solaris/*.gz
 	$(RM) solaris/*.zip
+	$(RM) redhat/*.1
 	$(RM) redhat/*.gz
 	$(RM) redhat/*.rpm
 	$(RM) hpux/*.gz
