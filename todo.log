@@ -4,7 +4,7 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <040213.1750>
+>  Last Modified : <040213.2031>
 >
 
     [040213] BS/0401-4 - Minor - TBD
@@ -81,6 +81,14 @@ ___________________________________________________________________________
         PHP script can be started with '<?' tag in a php file.
         
         Fixed SP/0401-5 04/02/13: Macro change.
+        
+    [040206] JG/0401-4 - Minor - target 0401-5
+    
+        Under Linux and SunOS then cannot "su" to another  user from an ishell
+        window.
+        
+        Fixed JG/0401-5  04/02/13: Source change unixterm.c.  "otermio" is not
+        initialized.
         
     [040210] DG/0401-4 - Major - Target 0401-5
     
