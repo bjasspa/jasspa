@@ -109,6 +109,31 @@
   Development History</font></h2>
   <h3>7th Release - January 2004</h3>
   <ul>
+    <li>[040122] Added support for Zaurus, thanks to Pierre Gaston</li>
+    <li>[040122] Fixes for Non-US keyboards under X, thanks to Pierre Gaston and Dr. Detlef Groth</li>
+    <li>[040122] Added support for OSF1, thanks to Dr. Detlef Groth</li>
+    <li>[040122] Added support for OpenBSD</li>
+    <li>[040122] ml-bind-key supports new binding for next/previous file, history search uses up/down C-p/C-n, prompted by Gabriel.</li>
+    <li>[040122] New key bindings for create-frame.</li>
+    <li>[040119] Fast exit out of fold fixed.</li>
+    <li>[040119] Added copy-rectangle and yank-rectangle-overwrite commands.</li>
+    <li>[040119] Collapse line format now includes the end token so that indent operates correctly following a fold.</li>
+    <li>[040119] narrow-buffer numeric argument and command line options extended for mark-up lines.</li>
+    <li>[040119] spawn.c compilation warnings removed.</li>
+    <li>[040119] Updated templates for Python and AsmX86 - thanks to Pedro Gomes.</li>
+    <li>[040119] Added *compile* hilighting and ENTER selects error file and line - prompted by Salman Khilji.</li>
+    <li>[040119] Fixed the c-eval-defines region hilighting problem.</li>
+    <li>[040119] Updated the Lau HTML processing tags - thanks to Jeremy Cowgar.</li>
+    <li>[040116] Latex item-list and template updated - thanks to  Dr. Detlef Groth for diagnosing problems</li>
+    <li>[040116] Perl and TCL abbreviation files  - thanks to  Dr. Detlef Groth</li> 
+    <li>[040115] open-line added for correct binding of C-o.</li> 
+    <li>[040113] restyle-buffer fix when <TAB> mode defined - thanks to Pedro Gomes.</li>
+    <li>[040113] create-frame canvas size fix on creating internal frame</li>
+    <li>[040112] Hilighting fix for toolbar Dir Files list with symbolic links</li>
+    <li>[040109] PHP template added.</li>
+    <li>[040108] Shrink line crash on SunOS and IRIX fixed</li>
+    <li>[040108] Fixed rendering anomalies of menus and pop-ups on Windows XP ClearType when anti-aliasing is enabled.</li>
+    <li>[040106] Fixed comment re-styling for single start of line comments (REM in MS-DOS)</li>
     <li>[040104] Macro execution speed-ups - Thanks Hops for analysis.</li>
     <li>[040104] Code optimisations and extensions - Thanks Peter Smith.</li>
     <li>[040104] Lua language template - Thanks Jeremy Cowgar.</li>
@@ -228,7 +253,7 @@
   <ul>
     <li>[021216] Removed .cvsignore from source release.</li>
     <li>[021216] Fixed NE UNIX build for a window build</li>
-    <li>[021216] Fixed PERL abbreviations - Thanks to Detlef.</li>
+    <li>[021216] Fixed PERL abbreviations - Thanks to Dr. Detlef Groth.</li>
     <li>[021216] Fixed $frame-width/depth macro operation on the set - Thanks to Th.</li>
     <li>[021216] Confirmed Sun Solaris 2.6 PTY operation OK.</li>
     <li>[021208] Filed build file for cygwin, pushed cygwin binaries and re-released source.</li>
@@ -317,7 +342,7 @@
     <li>[020605] Macros - broke the setup default and standard tools into
     separate files. Improved the update flags for better control.</li>
     <li>[020605] New osd-find-buffer popup menu using the user-setup file
-    types, based on Detlef's.</li>
+    types, based on Dr. Detlef Groth's.</li>
     <li>[020605] Fixed minor bug in file handling found by BC compiler.</li>
     <li>[020605] Fixed isearch so the next command will be executed in the
     correct frame.</li>
@@ -619,7 +644,7 @@
       <b>Esc C-w</b> kill-rectangle<br>
       <b>Esc C-y</b> yank-rectangle
     </ul></p>.</li>
-    <li>[000112] Enhanced info file hilighting (Thanks to Detlef for this).</li>
+    <li>[000112] Enhanced info file hilighting (Thanks to Dr. Detlef Groth for this).</li>
     <li>[000112] New <b>copy-file</b> command, typically used by the macro language for moving files around.</li>
     <li>[000112] Error reporting of bad command line arguments in Microsoft Windows environment (Thanks to Pedro Gomes for this).</li>
   </ul>
