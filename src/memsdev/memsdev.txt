@@ -1,0 +1,83 @@
+meMsdev
+=======
+
+meMsdev is a Visual  Studio Add-In that allowd  MicroEmacs to be integrated as
+the default text editor. It will be used instead of the Visual Studio built in
+editor when you double click on a file or press F4.
+
+Installation
+============
+
+1) Copy mesdev.dll into the MicroEmacs directory i.e.
+
+    c:/Program Files/JASSPA/MicroEmacs
+
+2) Edit  the  "me32.ini"  file in your  Windows  directory  and  identify  the
+   location of the  MicroEmacs  executable.  The  excutatable  name is used to
+   spawn MicroEmacs if it is not already running. The entry takes the form:-
+
+    ; Identify the location of the MicroEmacs executable so that the
+    ; Developer Studio "Add-In" can locate the executable
+    [Location]
+    exe=c:\Program Files\JASSPA\MicroEmacs\me32.exe
+
+   Change the "exe" entry to match the location and name of your executable.
+
+3) From a DOS box, register the DLL using regsvr32.exe i.e.
+
+    > cd c:/Program Files/JASSPA/MicroEmacs
+    > regsvr32 memsdev.dll
+
+4) Start Visual Studio and goto:-
+
+    Tools
+        Customize...
+            Add-Ins and Macro Files
+
+5) Click on Browse and point Visual Studio to your "memsdev.dll" file.
+
+6) Click the checkbox to indicate that you want to use the Add-In, and
+   close the Customize dialog box.
+
+7) You should notice the MicroEmacs toolbar showing the MicroEmacs Icon.
+   This invokes a dialog that allows you to attach and detach MicroEmacs
+   as the default editor.
+
+Using "meMsdev"
+===============
+
+Clicking on the  MicroEmacs  Toolbar shows the meMsdev  configuration  dialog.
+Check the boxes when  MicroEmacs edit session is required as default;  uncheck
+the boxes if you wish to revert to the built-in dialog.
+
+Use  Visual  Studio as normal,  and  MicroEmacs  should  almost  always  bring
+MicroEmacs to the  foreground to edit the document. If a MicroEmacs is already
+running then  "meMsdev"  will attach to an existing  session and will load the
+file. If  MicroEmacs is not detected then a new version is spawed off and then
+an attachment is made.
+
+Running a Debug Session
+=======================
+
+meMsdev  does not  currently  provide  any  debugging  capability  (but we are
+working  on it !!). To  start  debugging  it is  suggest  that the  Editor  is
+uncoupled (MicroEmacs Dialogue -> Uncheck Boxes) and work within the Developer
+studio.
+
+When you have finished debugging and wish to move back to an edit session then
+then re-enable  MicroEmacs  (MicroEmacs Dialogue -> Check Boxes) AND close any
+windows     that     are    open     within     the     MS-Dev     environment
+(Window->Windows...->Select  All  and  "Close  All  Windows").  Then  commence
+editing again.
+
+While  MicroEmacs  is  attached,   selecting  any  of  the  find  file  lines,
+compilation  error lines etc within the response panes will take MicroEmacs to
+the sepecified line.
+
+Problems:
+
+meMsdev  works by hooks  exposed by Visual  Studio. Most of the  functionality
+works from the  OpenDocument  (look it up in VS 5) hook. So...If a document is
+ALREADY  open in  Visual  Studio,  and you  double  click the file in the File
+Browser...Emacs  will NOT come to the foreground.  Since the document was open
+in the Visual Studio editor, the OpenDocument event never occurred.
