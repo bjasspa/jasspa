@@ -1,0 +1,104 @@
+Title:  Man page hilighting extensions for Linux
+Ref:    sub31
+Author: Jon Green
+Date:   Sun Apr 11 11:26:35 2004
+
+The manual pages in later  versions of Linux (RH 9.0) appear to use additional
+character escape sequences to represent some standard 7-bit ASCII  characters.
+The character  escape sequences need to be translated in order for the correct
+character  represenation  to be presented. I am not sure why the new character
+sequences are used unless this is some side effect of the locale.
+
+The  following  extension  is added to  myman.emf  and performs the  necessary
+translations  to  correct  the  presentation.  A  definitive  list  of  escape
+sequences  has  not  been  found,  the  sequences  presented  here  are  noted
+anomalies.
+
+The  following  extension  is added to  myman.emf  and extends the  hilighting
+scheme to perform  the  translation.  Extract  the code body to a file  called
+"myman.emf"  (or append to the end of an  existing  file) and add this to your
+private "jasspa" directory which is:-
+
+    ~/.jasspa/ on UNIX.
+    $APPDATA\jasspa on Windows.
+
+Adding Translations
+-------------------
+
+Where  further  anomalies  are  noted  then  additional  translations  may  be
+required. To determine the  translation  sequence then the following steps may
+be followed:-
+
+    1. Within the "*Man on xxx" buffer  remove the buffer  hilighting to fully
+       reveal the escape code.
+
+       esc-x set-variable $buffer-hilight 0
+
+    2. With  the  buffer  hilighting  removed  the  escape  sequences  appear.
+       Determine the escape  sequence that is causing a problem.  Translations
+       should be added to  "myman.emf"  for the 'normal',  'bold' and 'italic'
+       cases which may be  determined  from the type of escape  sequence.  The
+       general format of the 3 character escape sequences are:-
+
+       \xAA\xBB\xCC                 - Normal ($global-scheme)
+       _\CH\xAA\xBB\xCC             - Italic
+       \xAA\xBB\xCC\CH\xAA\xBB\xCC  - Bold
+
+       Where "AA", "BB" and "CC" are hexadecimal  values. "\CH" is 'control-h'
+       which may be displayed as "^H". In some instances one of the characters
+       may be rendered as a special glyph, the character hexadecimal value may
+       be determined by placing the cursor on the character and displaying the
+       hexadecimal character value using "C-x =" (or esc-x buffer-info).
+
+    3. With the  translations  added then from within the  "myman.emf"  buffer
+       execute it using "esc-x  execute-buffer".  The new translations  should
+       now be  loaded  and may be  viewed  by  restoring  the  $buffer-hilight
+       variable or deleting  the "*Man on xxx" buffer and  re-issuing  the man
+       command.
+
+==== myman.emf start =========================================================
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2004 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     Sat Mar 20 14:56:30 2004
+; Synopsis:    Extensions to the man hilighting
+; Authors:     Jon Green
+
+; Linux uses some non-ASCII characters in manual pages correct.
+!if &and &sin "h" .fhook-man.setup &band .hilight.flags 0x02
+    ; Right single quote
+    hilight .hilight.man 64 "_\CH\xe2\x80\x99" "'"            .scheme.italic
+    hilight .hilight.man 64 "\xe2\x80\x99\CH\xe2\x80\x99" "'" .scheme.bold
+    hilight .hilight.man 64 "\xe2\x80\x99"                "'" $global-scheme
+    ; Another right single quote
+    hilight .hilight.man 64 "_\CH\xc2\xb4" "'"                .scheme.italic
+    hilight .hilight.man 64 "\xc2\xb4\CH\xc2\xb4" "'"         .scheme.bold
+    hilight .hilight.man 64 "\xc2\xb4" "'"                    $global-scheme
+    ; Left single quote
+    hilight .hilight.man 64 "_\CH\xe2\x80\x98" "`"            .scheme.italic
+    hilight .hilight.man 64 "\xe2\x80\x98\CH\xe2\x80\x98" "`" .scheme.bold
+    hilight .hilight.man 64 "\xe2\x80\x98" "`"                $global-scheme
+    ; Right double quote
+    hilight .hilight.man 64 "_\CH\xe2\x80\x9C" "\""           .scheme.italic
+    hilight .hilight.man 64 "\xe2\x80\x9C\CH\xe2\x80\x9C" "\"" .scheme.bold
+    hilight .hilight.man 64 "\xe2\x80\x9C"                "\"" $global-scheme
+    ; Left double quote
+    hilight .hilight.man 64 "_\CH\xe2\x80\x9D" "\""            .scheme.italic
+    hilight .hilight.man 64 "\xe2\x80\x9D\CH\xe2\x80\x9D" "\"" .scheme.bold
+    hilight .hilight.man 64 "\xe2\x80\x9D" "\""                $global-scheme
+    ; Bullet
+    hilight .hilight.man 64 "_\CH\xc2\xb7" "*"                .scheme.italic
+    hilight .hilight.man 64 "\xc2\xb7\CH\xc2\xb7" "*"         .scheme.bold
+    hilight .hilight.man 64 "\xc2\xb7" "*"                    $global-scheme
+    ; Hyphen
+    hilight .hilight.man 64 "_\CH\xe2\x80\x94" "-"            .scheme.italic
+    hilight .hilight.man 64 "\xe2\x80\x94\CH\xe2\x80\x94" "-" .scheme.bold
+    hilight .hilight.man 64 "\xe2\x80\x94" "-"                $global-scheme
+    ; Vertical bar or pipe
+    hilight .hilight.man 64 "_\CH\xe2\x94\x82" "|"            .scheme.italic
+    hilight .hilight.man 64 "\xe2\x94\x82\CH\xe2\x94\x82" "|" .scheme.bold
+    hilight .hilight.man 64 "\xe2\x94\x82" "|"                $global-scheme
+!endif
+==== myman.emf end ===========================================================
