@@ -10,6 +10,10 @@ The content presented here may not have been validated by JASSPA, we accept no
 liability for the material posted. New  contributions may be submitted by mail
 to support@jasspa.com.
 
+sub31.txt  2004/04/11 - Jon Green
+
+    Correct Linux manual page hilighting.
+
 sub30.txt  2004/03/25  - Jon Green
 
     C Automatic indentation recognition.
