@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Tue Feb 16 09:37:57 1999
-;  Last Modified : <010610.1042>
+;  Last Modified : <010806.2031>
 ;
 ;  Description   : Sets up the chatacter translations for the different 
 ;                  char sets. The internal default is ISO-8859 (1-...).
@@ -73,10 +73,10 @@ set-variable .change-font.type 0
 !endif
 
 !if &reg "/history" &cat %platform "/ext-char-set" "0"
-    set-char-mask "dp" "\CY\CM\CL\CN\CK\CX\CU\CO\CV\CW\CR\CP\CQ\C^\C_\CG"
+    set-char-mask "dp" "\CY\CM\CL\CN\CK\CX\CU\CO\CV\CW\CR\CP\CQ\C^\C_\CG\C[\C]"
     set-char-mask "p"  "\CI\CJ"
     set-variable $box-chars "\CY\CM\CL\CN\CK\CX\CU\CO\CV\CW\CR"
-    set-variable $window-chars "=-#*%=\C^   \C_*==\C^\C^      \C_\C_**|\CQ   \CP*||\CQ\CQ      \CP\CP** x*  \t\n\CG"
+    set-variable $window-chars "=-#*%=\C^\C[ \C[\C_*==\C^\C^\C[\C[  \C[\C[\C_\C_**|\CQ\C] \C]\CP*||\CQ\CQ\C]\C]  \C]\C]\CP\CP** x*  \t\n\CG"
     set-variable $system &bor $system 0x10000
 !elif #l1
     set-variable $box-chars "|+++++++++-"
