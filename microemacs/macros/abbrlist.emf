@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Fri Aug 10 10:28:53 2001
-;  Last Modified : <020721.1612>
+;  Last Modified : <020806.0954>
 ;  Description   : Create a list of abbreviations
 ;
 ;  Notes
@@ -104,7 +104,7 @@ define-macro eaf-list-execute
     !else
         set-variable #l0 &rig @wl &add #l0 6
         goto-position "\x82"
-        !if &band #l2 1
+        !if &band #l5 1
             !force show-region
         !endif
         execute-line &spr "execute-string \"%s\"" #l0

@@ -109,14 +109,17 @@
 !emacro
 
 0 define-macro item-list-mouse-drop
-    !if &gre $window-line 1
+    !if &equ $window-line 1
+        !force 1 item-list-set-order
+    !elif &seq @wc ""
+        ml-write "[Invalid line]"
+    !else
         !if &equ .item-list.find $window-line
             set-variable .item-list.find 0
             0 item-list-find
         !endif
         !return
     !endif
-    !force 1 item-list-set-order
     goto-position "\x82"
 !emacro
 
