@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m5var047.5,v 2.3 2001-12-06 00:04:32 jon Exp $
+.Id $Id: m5var047.5,v 2.4 2001-12-18 16:52:53 jon Exp $
 .Im MicroEmacs variable|hilight|macrodevelop
 .so me.tni
 .TH $system 5
@@ -194,6 +194,13 @@ or has an
 method. The setting of this bit has no effect if bit  \fB0x1000\fR  is set. If
 this and bit  \fB0x1000\fR  are clear  then the  \fCtab\fR  will not check the
 indentation.
+.IP \fB0x400000\fR
+When this bit is set the external cut buffer (Windows & XTerm  platforms) will
+never be set to empty, if the current  yank buffer is the empty string the cut
+buffer will be set to a space (i.e. " "). This feature has been added to avoid
+problems with other software (e.g.
+.Hr exceed 1
+which can crash if given an empty cut buffer).
 .SH EXAMPLE
 The follow  example  works out the  current  buffer's  backup  file name using
 \fB$system\fR to determine the naming system being used by \*(mS:-
