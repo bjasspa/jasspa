@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Thu Feb 18 10:42:53 1999
-;  Last Modified : <000719.0012>
+;  Last Modified : <010202.1541>
 ;
 ;  Description
 ;
@@ -17,8 +17,6 @@
     ; Execute the required color scheme creator macro file:
     !force -1 exec-file &reg "/history" &cat %platform "/scheme" "schemed"
 !emacro
-set-variable .scheme.names "|Default White on Black|Black on Cream|Sandy Shores|Sherwood Forest|Blue Hue|Plain Black on Cream|Plain White on Black|Black on Grey|MS Dev-Studio Colors|Termcap (black)|"
-set-variable .scheme.files "|schemed|schemej|schemevi|schemesf|schemebh|schemepl|schemepd|schemel|schememd|schemetb|"
 ; The LAST color is set by .scheme.next below.
 !if &not &exi .scheme.next
     ; Set the last color-scheme & hilight-scheme counters.

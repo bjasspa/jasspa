@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Thu May 14 12:53:29 1998
-;  Last Modified : <001203.1640>
+;  Last Modified : <010202.1541>
 ;
 ;  Description
 ;
@@ -41,6 +41,8 @@ set-variable %scrollb-names "|Disabled|Narrow, no splitter|Narrow with splitter|
 set-variable %scrollb-value "|0|0x13e|0x1be|0x13f|0x1bf|"
 ; Get a list of display char sets
 0 exec-file "charset"
+; Get a list of schemes
+0 exec-file "schemes"
 
 set-variable .user-setup.name $MENAME
 set-variable .user-setup.path ""
@@ -72,11 +74,11 @@ set-variable .user-setup.path ""
 0 define-macro user-setup-color
     set-variable #l0 &cat %platform "/scheme"
     !if @?
-        set-variable #l1 &lget .scheme.files @#
+        set-variable #l1 &lget .scheme.scheme-files @#
         set-registry "/history" #l0 #l1
-        set-variable #l1 &lget .scheme.names @#
+        set-variable #l1 &lget .scheme.scheme-names @#
     !else
-        set-variable #l1 &lget .scheme.names &lfind .scheme.files &reg "/history" #l0 &lget .scheme.files 1
+        set-variable #l1 &lget .scheme.scheme-names &lfind .scheme.scheme-files &reg "/history" #l0 &lget .scheme.scheme-files 1
     !endif
     osd .osd.user-plat 820 "MtxmsfHz" 82 .scheme.osd-entry 31 1 #l1 .osd.user-sub user-setup-colorc
 !emacro
@@ -85,7 +87,7 @@ set-variable .user-setup.path ""
     -1 osd .osd.user-sub
     osd .osd.user-sub 0 "bs" 33 0 0 0
     set-variable #l0 0
-    !while &not &seq "" &set #l1 &lget .scheme.names &inc #l0 1
+    !while &not &seq "" &set #l1 &lget .scheme.scheme-names &inc #l0 1
         osd .osd.user-sub #l0 "" #l1 #l0 user-setup-color
     !done
 !emacro

@@ -10,7 +10,7 @@
  *
  *       Author:                 Danial Lawrence
  *
- *       Creation Date:          14/05/86 12:37          <001017.1901>
+ *       Creation Date:          14/05/86 12:37          <010203.2006>
  *
  *       Modification date:      %G% : %U%
  *
@@ -1297,8 +1297,8 @@ execBufferFunc(BUFFER *bp, int index, int flags, int n)
         
         execFunc(index,(flags & meEBF_ARG_GIVEN),n) ;
         
-        bp->b_nwnd-- ;
-        storeWindBSet(bp,curwp) ;
+        curbp->b_nwnd-- ;
+        storeWindBSet(curbp,curwp) ;
         curbp = curwp->w_bufp = tbp ;
         tbp->b_nwnd++ ;
         curwp->topLineNo = topLineNo ;

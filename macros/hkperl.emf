@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Perl hook - This file is invoked when a Perl script file is loaded.
 ;
-; Last Modified : <010119.1520>
+; Last Modified : <010205.2304>
 ; Copyright (c) 1999-2000 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; buffer-setup flags
@@ -23,7 +23,7 @@ set-variable #l1 "abdefhikmntux"
     ; Strings and things
     hilight .hilight.perl 0 "\\\\'"                $global-scheme 
     hilight .hilight.perl 0 "\\\\`"                $global-scheme 
-    hilight .hilight.perl 0x804 "'" "'" "\\"       .scheme.string
+    hilight .hilight.perl 0x804 "\\W\\{'" "'" "\\"       .scheme.string
     hilight .hilight.perl 0x80 "[^\\\\]\\{\"" .hilight.perlS .scheme.string
     ; Replace strings 
     hilight .hilight.perl 0 "=~\\{[ \t]*\\{s\\(.\\)\\S1*\\1\\S1*\\1" .scheme.string
@@ -67,7 +67,7 @@ set-variable #l1 "abdefhikmntux"
     hilight .hilight.perl 2    "^package"          .scheme.prepro
     ; Function names
     !if &band .hilight.flags 0x04
-        hilight .hilight.perl 0 "^\\s *\\{sub\\s +\\w+" .scheme.function
+        hilight .hilight.perl 0 "^\\s *\\{sub\\s +\\w[1-9A-Za-z_']*" .scheme.function
     !endif
     ; Labels
     hilight .hilight.perl 0    "^__...__"          .scheme.link
@@ -256,7 +256,7 @@ set-variable #l1 "abdefhikmntux"
     indent .hilight.perl n "{"  4
     indent .hilight.perl o "}" -4
     indent .hilight.perl e "\"" "\"" "\\"
-    indent .hilight.perl e "'" "'" "\\"
+    indent .hilight.perl e "\\W'" "'" "\\"
     indent .hilight.perl e "`" "`" "\\"
     indent .hilight.perl e "/" "/" "\\"
     indent .hilight.perl b "\\[" "]"

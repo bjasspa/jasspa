@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Wed Jun 23 19:56:49 1999
-;  Last Modified : <010124.2215>
+;  Last Modified : <010203.2215>
 ;
 ;  Description
 ;
@@ -363,6 +363,7 @@ set-variable %gdiff-com &cond &seq %gdiff-com "ERROR" "diff -c -w" %gdiff-com
     !if &not @#
         save-buffers-exit-emacs
     !endif
+    set-variable .gdiff.wait 0
 !emacro
 
 0 define-macro gdiff-input
@@ -764,6 +765,8 @@ define-macro gdiff
     !else
         ml-write "[No differences found]"
     !endif
+    set-variable .wait 1
+    command-wait
 !emacro
 
 define-macro-file search osd-search

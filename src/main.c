@@ -10,7 +10,7 @@
 *
 *	Author:			Jon Green
 *
-*	Creation Date:		03/05/91 17:19		<001011.1802>
+*	Creation Date:		03/05/91 17:19		<010203.2057>
 *
 *	Modification date:	%G% : %U%
 *
@@ -1828,6 +1828,39 @@ _meAssert (char *file, int line)
     }
 }
 #endif
+
+int
+commandWait(int f, int n)
+{
+    meVARLIST *varList=NULL ;
+    uint8 clexecSv ;
+    int execlevelSv ;
+    char *ss ;
+    
+    if((curFuncName != errorm) &&
+       ((f=decode_fncname(curFuncName,1)) >= 0))
+        varList = &(cmdTable[f]->varList) ;
+    
+    clexecSv = clexec;
+    execlevelSv = execlevel ;
+    clexec = FALSE ;
+    execlevel = 0 ;
+    do
+    {
+        doOneKey() ;
+        if(TTbreakFlag)
+        {
+            TTinflush() ;
+            if((selhilight.flags & (SELHIL_ACTIVE|SELHIL_KEEP)) == SELHIL_ACTIVE)
+                selhilight.flags &= ~SELHIL_ACTIVE ;
+            TTbreakFlag = 0 ;
+        }
+    } while((varList != NULL) && 
+            ((ss=getUsrLclCmdVar((uint8 *)"wait",varList)) != errorm) && meAtoi(ss)) ;
+    clexec = clexecSv ;
+    execlevel = execlevelSv ;
+    return TRUE ;
+}
 
 #ifndef _WIN32
 void

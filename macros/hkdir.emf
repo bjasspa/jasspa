@@ -4,7 +4,7 @@
 ;       Author          : Jon Green
 ;       Created         : 19th February 1997
 ;
-;       Last Modified   : <001025.1221>
+;       Last Modified   : <010205.1703>
 ;
 ;       Comment         :
 !if &not &exist .osd.dir-help
@@ -71,9 +71,15 @@
             !endif                
         !endif                
     !endif
+    !force 0 popup-window "*cvs-console*"
+    !if $status
+        delete-other-windows
+        -1 find-buffer "*cvs-console*"
+        osd .osd.file-menu  11 "D"
+        set-variable .fhook-dir.file-process ""
+    !endif
     !force 0 popup-window "*directory*"
     !if $status
-        -1 find-buffer $buffer-bname
         next-window
         !if &seq $buffer-bname "*files*"
             previous-window
@@ -81,6 +87,7 @@
         !else
             previous-window
         !endif
+        -1 find-buffer "*directory*"
     !endif
     !force -1 find-buffer "*files*"
     goto-position "\x81"
@@ -153,23 +160,16 @@ define-macro file-browser
 *done-search
     ; Restore window position
     goto-position "\x81"
+    set-variable #l0 &lef $buffer-fname &rsin "/" $buffer-fname
     ; file-browser is not showing. Bring up Explorer.
     !force 0 popup-window "*directory*"
     !if $status
-        set-variable #l0 $buffer-fname
         !force 0 popup-window "*files*"
         !if &not $status
             file-browser-twin
         !endif
     !else
         !force 0 popup-window "*files*"
-        !force 0 find-buffer "*directory*"
-        !if &not $status
-            set-variable #l0 &lef $buffer-fname &rsin "/" $buffer-fname
-            find-buffer "*directory*"
-            0x0f directory-tree #l0
-        !endif
-        set-variable #l0 $buffer-fname
         file-browser-twin
     !endif
     find-buffer "*files*"
@@ -177,7 +177,11 @@ define-macro file-browser
     change-buffer-name "*files*"
     buffer-bind-key file-browser-close "delete"
     buffer-bind-key dir-swap-buffers "tab"
-    popup-window "*directory*"
+    previous-window
+    find-buffer "*directory*"
+    !if &not &seq #l0 $buffer-fname
+        0x0f directory-tree #l0
+    !endif
     ml-write "MicroEmacs file-browser <delete> to exit"
 !emacro
 
@@ -239,6 +243,7 @@ define-macro file-browser
     show-region
 !emacro
 
+; files-sort-list-section <init-sort-col> <start-col> <reverse-flag>
 0 define-macro files-sort-list-section
     set-variable #l0 @1
     set-variable #l1 @2
@@ -246,6 +251,7 @@ define-macro file-browser
     !if #l2
         set-variable #l1 &sub -1 #l1
     !endif
+    ; sort of list column fir
     !if #l0
         &cond #l2 &sub -1 #l0 #l0 sort-lines
         set-variable #l3 $window-line
@@ -256,68 +262,75 @@ define-macro file-browser
             !repeat
                 goto-line &add $window-line 1
             !until &or &equ $window-line #l3 &not &seq #l4 &mid @wl #l0 1
-           #l1 sort-lines
+            !force #l1 sort-lines "y"
         !done
     !else
-        #l1 sort-lines
+        !force #l1 sort-lines "y"
     !endif
 !emacro
 0 define-macro files-sort-list
-    set-variable #l0 @1
-    set-variable #l1 @2
-    set-variable #l2 @3
-    set-variable #l3 &sub $window-line $window-y-scroll
+    set-variable #l0 &sub $window-line $window-y-scroll
     set-alpha-mark "T"
     -1 buffer-mode "view"
-    goto-line 5
+    4 goto-line
+    set-variable #l1 &lget .fhook-dir.sort 1
+    set-variable #l2 &lget .fhook-dir.col-flag #l1
+    set-variable #l3 &lget .fhook-dir.col-name #l1
+    set-variable #l4 &sub &sin #l3 @wl 1
+    !if &band #l2 4
+        set-variable #l5 #l4
+        set-variable #l4 &sub &sin "Name" @wl 1
+    !elif &band #l2 2
+        set-variable #l5 &add #l4 &len #l3
+    !else
+        set-variable #l5 0
+    !endif
+    set-variable #l6 &lget .fhook-dir.sort 2
+    forward-line
     set-mark
     !force regex-forward "^[ *][^d]"
     !if &not $status
         end-of-buffer
     !endif
-    files-sort-list-section #l0 #l1 #l2
+    files-sort-list-section #l5 #l4 #l6
     set-mark
     end-of-buffer
-    files-sort-list-section #l0 #l1 #l2
+    files-sort-list-section #l5 #l4 #l6
     -1 buffer-mode "edit"
     1 buffer-mode "view"
     goto-alpha-mark "T"
-    set-variable $window-y-scroll &sub $window-line #l3
+    set-variable $window-y-scroll &sub $window-line #l0
 !emacro
+
 0 define-macro files-get-sort-col
     set-variable #l0 0
-    forward-char
-    backward-word
-    !if &les $window-line 4
-        !abort
-    !elif &seq &mid @wl $window-col 4 "Name"
-        set-variable #l9 0
-    !elif &seq &mid @wl $window-col 4 "Size"
-        set-variable #l9 1
-        set-variable #l0 &add $window-col 4
-        3 backward-char
-        !if &seq &lef $buffer-fname 6 "ftp://"
-            backward-char
+    !while &not &seq "" &set #l1 &lget .fhook-dir.col-name &inc #l0 1
+        set-variable #l2 &sub &sin #l1 @wl 1
+        !if &and &gre &add 1 $window-col #l2 &les $window-col &add #l2 &len #l1
+            !goto got-col
         !endif
-    !elif &seq &mid @wl $window-col 8 "Modified"
+    !done
+    !abort
+*got-col
+    set-variable #l4 &lget .fhook-dir.col-flag #l0
+    ; column supported in ftp dir-listings?
+    !if &band #l4 1
         !if &seq &lef $buffer-fname 6 "ftp://"
             !abort
         !endif
-        set-variable #l9 2
-        8 backward-char
-    !else
-        !abort
     !endif
-    set-variable #l1 $window-col
     !if @#
-        set-variable #l2 &con &exi :fmpo :fmpo "|0|0|"
-        !if &equ #l9 &lget #l2 1
-            set-variable #l2 &lset #l2 2 &bxor &lget #l2 2 1
+        !if &equ #l0 &lget .fhook-dir.sort 1
+            set-variable .fhook-dir.sort &lset .fhook-dir.sort 2 &bxor &lget .fhook-dir.sort 2 1
         !else
-            set-variable #l2 &spr "|%d|0|" #l9
+            set-variable .fhook-dir.sort &spr "|%d|0|" #l0
         !endif
-        set-variable :fmpo #l2
-        files-sort-list #l0 #l1 &lget #l2 2
+        files-sort-list
+    !else
+        set-variable $window-col #l2
+        -3 show-region
+        set-variable $window-col &add #l2 &len #l1
+        3 show-region
     !endif
 !emacro
 
@@ -521,41 +534,41 @@ define-macro file-browser
 !emacro
 0 define-macro files-auto-refresh
     set-variable .find-file.flags &bxor .find-file.flags 0x01
-    osd .osd.file-menu 100 ""  &cat "&Auto-Refresh: " &cond &band .find-file.flags 1 "On " "Off" f files-auto-refresh
+    osd .osd.file-menu 130 ""  &cat "&Auto-Refresh: " &cond &band .find-file.flags 1 "On " "Off" f files-auto-refresh
 !emacro
 
 osd .osd.file-menu 0   b
-osd .osd.file-menu 40  "-"
 osd .osd.file-menu 60  "-"
-osd .osd.file-menu 85  ""  "&New Folder"          f files-new-folder
-osd .osd.file-menu 90  ""  "Re&fresh"             f files-refresh
-osd .osd.file-menu 100 ""  "&Auto-Refresh: on "   f files-auto-refresh
+osd .osd.file-menu 80  "-"
+osd .osd.file-menu 110 ""  "&New Folder"          f files-new-folder
+osd .osd.file-menu 120 ""  "Re&fresh"             f files-refresh
+osd .osd.file-menu 130 ""  "&Auto-Refresh: on "   f files-auto-refresh
 
 0 define-macro files-mouse-drop-3
     !if :tag-count
-        osd .osd.file-menu  5 ""  "&Open"         f files-tag-open
-        osd .osd.file-menu 10 ""  "Cu&t"          f files-tag-cut
-        osd .osd.file-menu 20 ""  "&Copy"         f files-tag-copy
-        osd .osd.file-menu 30 ""  "&Delete"       f files-tag-delete
-        osd .osd.file-menu 70 ""  "E&xecute"      f files-tag-execute
-        osd .osd.file-menu 80 ""  "De&select All" f files-tag-remove
+        osd .osd.file-menu  10 ""  "&Open"         f files-tag-open
+        osd .osd.file-menu  20 ""  "Cu&t"          f files-tag-cut
+        osd .osd.file-menu  30 ""  "&Copy"         f files-tag-copy
+        osd .osd.file-menu  40 ""  "&Delete"       f files-tag-delete
+        osd .osd.file-menu  90 ""  "E&xecute"      f files-tag-execute
+        osd .osd.file-menu 100 ""  "De&select All" f files-tag-remove
     !else
-        osd .osd.file-menu  5 ""  "Open"
-        osd .osd.file-menu 10 ""  "Cut"
-        osd .osd.file-menu 20 ""  "Copy"
-        osd .osd.file-menu 30 ""  "Delete"
-        osd .osd.file-menu 70 ""  "Execute"
-        osd .osd.file-menu 80 ""  "Deselect All"
+        osd .osd.file-menu  10 ""  "Open"
+        osd .osd.file-menu  20 ""  "Cut"
+        osd .osd.file-menu  30 ""  "Copy"
+        osd .osd.file-menu  40 ""  "Delete"
+        osd .osd.file-menu  90 ""  "Execute"
+        osd .osd.file-menu 100 ""  "Deselect All"
     !endif
     !if &equ :tag-count 1
-        osd .osd.file-menu 35 ""  "&Rename"       f files-tag-rename
+        osd .osd.file-menu 50 ""  "&Rename"       f files-tag-rename
     !else
-        osd .osd.file-menu 35 ""  "Rename"
+        osd .osd.file-menu 50 ""  "Rename"
     !endif
     !if &band .find-file.flags 2
-        osd .osd.file-menu 50 ""  "&Paste"        f files-tag-paste
+        osd .osd.file-menu 70 ""  "&Paste"        f files-tag-paste
     !else
-        osd .osd.file-menu 50 ""  "Paste"
+        osd .osd.file-menu 70 ""  "Paste"
     !endif
     .osd.file-menu osd
 !emacro
@@ -566,12 +579,8 @@ osd .osd.file-menu 100 ""  "&Auto-Refresh: on "   f files-auto-refresh
     !elif &equ $window-line 4
         !force 0 files-get-sort-col
         !if &not $status
-            set-cursor-to-mouse
             !return
         !endif
-        -3 show-region
-        forward-word
-        3 show-region
     !else
         set-variable :fmpl $window-line
         !if &set :fmpt &les $window-col :fmpf
@@ -679,31 +688,35 @@ define-macro dir-swap-buffers
     ; if '+', '-' or '?' tag position.
     !if &equ &sub #l1 2 #l0
         &cond @? @# 0x66 directory-tree
+        set-variable #l4 0
     !elif &les #l0 #l1
         ; hit char between the name and '+'/'-'
         !return
     !else
         ; hit the name, just select it
         0x02 directory-tree
+        set-variable #l4 1
     !endif
     ; Reframe the *directory* window:
     ; Done by going to the old line number and reframing the window
     set-variable $window-line #l2
     set-variable $window-y-scroll #l3
-    ; Set up the echo in the *files* directory.
     buffer-bind-key file-browser-close "delete"
-    set-variable #l0 $buffer-fname
-    1 set-position "\x81"
-    !force 0 popup-window "*files*"
-    !if $status
-        !if &not &seq $buffer-fname #l0
-            read-file #l0
-            change-buffer-name "*files*"
-            buffer-bind-key dir-swap-buffers "tab"
-            buffer-bind-key file-browser-close "delete"
+    !if #l4
+        ; If selected the name then setup the echo in the *files* directory.
+        set-variable #l0 $buffer-fname
+        1 set-position "\x81"
+        !force 0 popup-window "*files*"
+        !if $status
+            !if &not &seq $buffer-fname #l0
+                read-file #l0
+                change-buffer-name "*files*"
+                buffer-bind-key dir-swap-buffers "tab"
+                buffer-bind-key file-browser-close "delete"
+            !endif
         !endif
+        goto-position "\x81"
     !endif
-    goto-position "\x81"
 !emacro
 
 0 define-macro dir-mouse-drop-3
@@ -797,17 +810,21 @@ define-macro fhook-dir
             goto-line 4
             insert-string &spr " Attr%nSize     Modified Name\n" &sub :fmpf 23 " "
             backward-word
-            ; set this here to get a descending Name order
-            set-variable :fmpo "|-1|0|"
-            !force 1 files-get-sort-col
+            ; current sort column supported in ftp dir-listings?
+            !if &band 1 &lget .fhook-dir.col-flag &lget .fhook-dir.sort 1
+                ; No - set this to get a descending Name order
+                set-variable .fhook-dir.sort "|1|0|"
+            !endif
         !else
             set-variable .find-file.lcwd $buffer-fname
             3 forward-line
             set-variable :fmpf 32
             insert-string " Attr    Size          Modified Name\n"
         !endif
-        -1 buffer-mode "edit"
-         1 buffer-mode "view"
+        !if &exi .fhook-dir.file-process
+            execute-line .fhook-dir.file-process
+        !endif
+        files-sort-list
         beginning-of-buffer
         !if &band .hilight.flags 0x01
             set-variable $buffer-hilight .hilight.file
@@ -831,6 +848,11 @@ define-macro fhook-dir
         my-fhook-dir
     !endif
 !emacro
+
+set-variable .fhook-dir.col-name "|Name|Attr|    Size|        Modified|"
+set-variable .fhook-dir.col-flag "|0|4|2|1|"
+set-variable .fhook-dir.sort     "|1|0|"
+; Attr Rev        Size  Repository Date          Modified Name
 
 ; load in user extensions if found
 !force execute-file "mydir"

@@ -10,7 +10,7 @@
  *
  *  Author:         Danial Lawrence
  *
- *  Creation Date:      14/05/86 12:37      <010122.1542>
+ *  Creation Date:      14/05/86 12:37      <010203.1728>
  *
  *  Modification date:  %G% : %U%
  *
@@ -1498,7 +1498,6 @@ getval(uint8 *tkn)   /* find the value of a token */
         }
         else if(isDigit(tkn[1]))
         {
-            extern uint8 *curFuncName ;
             int index ;
             uint8 *ss ;
             

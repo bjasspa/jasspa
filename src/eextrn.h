@@ -1,7 +1,7 @@
 /****************************************************************************
  * External function definitions
  *
- * Last Modified:       <010123.1225>
+ * Last Modified:       <010203.1817>
  * 
  ****************************************************************************
  * 
@@ -538,6 +538,7 @@ extern  int     meDie APRAM((void)) ;
 #endif
 extern  void    autoSaveHandler APRAM((void)) ;
 extern  void    callBackHandler APRAM((void)) ;
+extern	int     commandWait APRAM((int f, int n)) ;
 
 #ifndef NDEBUG
 extern  void    _meAssert APRAM((char *file, int line));

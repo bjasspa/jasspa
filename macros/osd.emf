@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Jon Green
 ;  Created       : Sat Jul 26 10:23:04 1997
-;  Last Modified : <010123.1438>
+;  Last Modified : <010204.2306>
 ;
 ;  Description   : OSD - On Screen Display macros.
 ;                  Controls the set up of the menus and screen overlays.
@@ -515,12 +515,16 @@ set-variable #l0 0
 
 ; simple osd value entry
 ;
-; osd-entry "title" "prompt" "variable" ["entry-size" ["type"]]
+; osd-entry "title" "prompt" "variable" ["entry-size (WxH)" ["type"]]
 0 define-macro osd-entry
     set-variable .value @3
+    set-variable #l2 1
     !force set-variable #l0 @4
     !if &not $status
         set-variable #l0 30
+    !elif &sin "x" #l0
+        set-variable #l2 &rig #l0 &sin "x" #l0
+        set-variable #l0 &lef #l0 &sub &sin "x" #l0 1
     !endif
     set-variable #l1 ""
     !force set-variable #l1 @5
@@ -529,12 +533,18 @@ set-variable #l0 0
     osd .osd.tmp 0 "btcH" .scheme.osd-title @1
     osd .osd.tmp 1 ""
     osd .osd.tmp 2 "fh" "  "
-    osd .osd.tmp 3 "Sfh" @2 4
-    osd .osd.tmp 4 "EtxHRfhz" 4 .scheme.osd-entry #l0 1 "" f osd-entry-value
-    osd .osd.tmp 5 "f" "  "
-    osd .osd.tmp 6 ""
-    osd .osd.tmp 7 "BtcfHh" 7 .scheme.osd-ebtt " &Okay "   f void
-    osd .osd.tmp 8 "BtcfH"  8 .scheme.osd-ebtt " &Cancel " 0 void
+    !if &gre #l2 1
+        osd .osd.tmp  3 "Sf" @2 10
+        osd .osd.tmp  4 "fh" "  "
+        osd .osd.tmp 10 "EtNxHRfhz" 10 .scheme.osd-entry #l0 #l2 "" f osd-entry-value
+    !else
+        osd .osd.tmp  3 "Sfh" @2 10
+        osd .osd.tmp 10 "EtxHRfhz" 10 .scheme.osd-entry #l0 #l2 "" f osd-entry-value
+    !endif
+    osd .osd.tmp 15 "f" "  "
+    osd .osd.tmp 16 ""
+    osd .osd.tmp 17 "BtcfHh" 17 .scheme.osd-ebtt " &Okay "   f void
+    osd .osd.tmp 18 "BtcfH"  18 .scheme.osd-ebtt " &Cancel " 0 void
     .osd.tmp osd
     set-variable @3 .value
 !emacro

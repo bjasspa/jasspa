@@ -5,7 +5,7 @@
  *  Synopsis      : System directory tree display routines
  *  Created By    : Jon Green & Steven Phillips
  *  Created       : 1996
- *  Last Modified : <000718.2340>
+ *  Last Modified : <010204.2137>
  *
  *  Description
  *     This file contains routines to construct and display the system
@@ -856,7 +856,8 @@ directoryTree(int f, int n)
        ((dn->mask & DIR_UNKNOWN) || (n & LDO_FORCE)))
         evalNode(dnode,buf,n) ;
     
-    setHiddenFlag(dnode,n) ;
+    if(n & (LDO_OPEN|LDO_CLOSE|LDO_RECURSE)) 
+        setHiddenFlag(dnode,n) ;
     
     dirDrawDir(buf,n) ;
     return TRUE ;

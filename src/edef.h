@@ -1,7 +1,7 @@
 /*
  *	SCCS:		%W%		%G%		%U%
  *
- *	Last Modified :	<001011.1802>
+ *	Last Modified :	<010203.1728>
  *
  *	EDEF:		Global variable definitions for
  *			MicroEMACS 3.2
@@ -64,9 +64,10 @@ extern  uint8   fillignore[];           /* Fill Ignore character class  */
 extern  uint16	tabsize;	        /* Virtual Tab size             */
 extern  uint16	tabwidth;               /* Real TAB size                */
 extern  int16   matchlen;               /* Fence matching delay length  */
-extern  uint8	*homedir;	/* Home directory               */
-extern  uint8	*searchPath;	/* emf search path              */
-extern  uint8	*curdir;	/* current working directory    */
+extern  uint8	*homedir;               /* Home directory               */
+extern  uint8	*searchPath;            /* emf search path              */
+extern  uint8	*curdir;                /* current working directory    */
+extern  uint8   *curFuncName ;          /* Current macro command name   */
 extern	uint8	*execstr;		/* pointer to string to execute */
 extern	int	execlevel;		/* execution IF level		*/
 extern	int	bufHistNo;		/* inc buff hist numbering      */

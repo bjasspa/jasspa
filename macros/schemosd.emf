@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Mar 13 14:31:05 1999
-;  Last Modified : <000723.1631>
+;  Last Modified : <010202.1543>
 ;
 ;  Description
 ;
@@ -629,11 +629,9 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
     !if .schm-osd.type
         set-variable #l1 "printers"
         set-variable #l2 "print-setup"
-        set-variable #l3 "scheme-"
     !else
-        set-variable #l1 "scheme"
+        set-variable #l1 "schemes"
         set-variable #l2 "scheme"
-        set-variable #l3 ""
     !endif
     ; Name load in the main scheme macro file
     !force find-file &find #l1 ".emf" @mna
@@ -642,23 +640,23 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
         !abort
     !endif
     beginning-of-buffer
-    !force regex-forward &spr "set-variable *\\.%s\\.%sfiles" #l2 #l3
+    !force regex-forward &spr "set-variable *\\.%s\\.scheme-files" #l2
     !if $status
         beginning-of-line
         execute-line @wl
-        !if &not &set #l0 &lfind &ind &spr ".%s.%sfiles" #l2 #l3 .schm-osd.fname
+        !if &not &set #l0 &lfind &ind &spr ".%s.scheme-files" #l2 .schm-osd.fname
             set-variable #l0 -1
-            set-variable &ind &spr ".%s.%sfiles" #l2 #l3 &lset &ind &spr ".%s.%sfiles" #l2 #l3 #l0 .schm-osd.fname
+            set-variable &ind &spr ".%s.scheme-files" #l2 &lset &ind &spr ".%s.scheme-files" #l2 #l0 .schm-osd.fname
         !endif
-        insert-string &spr "set-variable .%s.%sfiles \"%s\"" #l2 #l3 &ind &spr ".%s.%sfiles" #l2 #l3
+        insert-string &spr "set-variable .%s.scheme-files \"%s\"" #l2 &ind &spr ".%s.scheme-files" #l2
         kill-line
         beginning-of-buffer
-        !force regex-forward &spr "set-variable *\\.%s\\.%snames" #l2 #l3
+        !force regex-forward &spr "set-variable *\\.%s\\.scheme-names" #l2
         !if $status
             beginning-of-line
             execute-line @wl
-            set-variable &ind &spr ".%s.%snames" #l2 #l3 &lset &ind &spr ".%s.%snames" #l2 #l3 #l0 .schm-osd.desc
-            insert-string &spr "set-variable .%s.%snames \"%s\"" #l2 #l3 &ind &spr ".%s.%snames" #l2 #l3
+            set-variable &ind &spr ".%s.scheme-names" #l2 &lset &ind &spr ".%s.scheme-names" #l2 #l0 .schm-osd.desc
+            insert-string &spr "set-variable .%s.scheme-names \"%s\"" #l2 &ind &spr ".%s.scheme-names" #l2
             kill-line
         !endif
         ; save changes locally
