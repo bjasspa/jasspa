@@ -290,23 +290,25 @@ forwDelWord(int f, int n)
     doto   = frameCur->windowCur->dotOffset;
     lineno = frameCur->windowCur->dotLineNo ;
     size = 0;
-    while (n--)
-    {
+    do {
         /* inWord returns 0 if not in word - BUT if in word its return
          * value is only defined as non-zero, so must test if 0
          */
         delType = (inWord() == 0) ;
-        while ((inWord() == 0) == delType) 
-        {
-            if (meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
+        do {
+            if(meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
+            {
+                n = 1 ;
                 break ;
+            }
             ++size;
-        }
-     }
-     frameCur->windowCur->dotLine = dotp;
-     frameCur->windowCur->dotOffset = doto;
-     frameCur->windowCur->dotLineNo = lineno ;
-     return ldelete(size,3) ;
+        } while((inWord() == 0) == delType) ;
+    } while(--n) ;
+
+    frameCur->windowCur->dotLine = dotp;
+    frameCur->windowCur->dotOffset = doto;
+    frameCur->windowCur->dotLineNo = lineno ;
+    return ldelete(size,3) ;
 }
 
 /*
@@ -329,23 +331,22 @@ backDelWord(int f, int n)
     if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
         return meABORT ;
     if(meWindowBackwardChar(frameCur->windowCur, 1) == meFALSE)
-        return (meFALSE);
+        return meFALSE ;
     size = 0;
-    while (n--)
-    {
+    do {
         /* inWord returns 0 if not in word - BUT if in word its return
          * value is only defined as non-zero, so must test if 0
          */
         delType = (inWord() == 0) ;
-        while ((inWord() == 0) == delType) 
-        {
+        do
             ++size;
-            if ((moveForw=meWindowBackwardChar(frameCur->windowCur, 1)) == meFALSE)
-                break ;
-        }
-    }
-    if (moveForw && (meWindowForwardChar(frameCur->windowCur, 1) == meFALSE))
-        return (meFALSE);
+        while(((moveForw=meWindowBackwardChar(frameCur->windowCur, 1)) > 0) &&
+              ((inWord() == 0) == delType)) ;
+        
+    } while((moveForw > 0) && --n) ;
+
+    if(moveForw > 0)
+        meWindowForwardChar(frameCur->windowCur, 1) ;
     return ldelete(size,3) ;
 }
 
