@@ -2695,6 +2695,9 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             meUByte  c;                            /* Current char */
             meUByte *s = arg1;                     /* String pointer */
             int   count, nn, index=0 ;          /* Count of repeat */
+            meUByte alarmStateStr=alarmState ;
+            
+            alarmState &= ~meALARM_VARIABLE ;
             
             while ((c = *s++) != '\0') 
             {
@@ -2758,6 +2761,7 @@ get_flag:
             }
             arg3[index] = '\0';                 /* make sure sting terminated */
             meStrcpy(evalResult,arg3) ;
+            alarmState = alarmStateStr ;
             return evalResult ;
         }
     case UFSTAT:
