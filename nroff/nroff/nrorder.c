@@ -7,10 +7,10 @@
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: nrorder.c,v $
- *  Revision      : $Revision: 1.2 $
- *  Date          : $Date: 2004-01-06 00:53:51 $
+ *  Revision      : $Revision: 1.3 $
+ *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040103.2006>
+ *  Last Modified : <040207.1921>
  *
  *  Description
  *
@@ -18,6 +18,7 @@
  *
  *  History
  *
+ * 1.0.0b JG 2004/02/07 Ported to HP-UX
  * 1.0.0a JG 2004/01/03 Ported to Sun Solaris 9
  * 1.0.0  JG 2000/10/21 Ported to Win32
  *
@@ -50,7 +51,7 @@
 
 #include "nroff.h"
 
-#define MODULE_VERSION  "1.0.0a"
+#define MODULE_VERSION  "1.0.0b"
 #define MODULE_NAME     "nrorder"
 
 static int  lineMode = 0;
@@ -76,8 +77,8 @@ nrTH_func (char *id, char *num, char *date, char *company, char *title)
         num = "0";
     cf = bufStr (NULL, nrfp->fileName);
     for (i = 0; cf[i]; i++)
-        if (isupper (cf[i]))
-            cf[i] = tolower (cf[i]);
+        if (isupper ((int)(cf[i])))
+            cf[i] = tolower ((int)(cf[i]));
     /*
      * If this is the initial file then force a '\001' into the name
      * to force it to the top.
@@ -93,8 +94,8 @@ nrTH_func (char *id, char *num, char *date, char *company, char *title)
     cn = bufStr (cn, id);
     if (caseMode) {
         for (i = 0; cn[i]; i++)
-        if (isupper (cn[i]))
-            cn[i] = tolower (cn[i]);
+        if (isupper ((int)(cn[i])))
+            cn[i] = tolower ((int)(cn[i]));
     }
     tp = tagAlloc (cn, num, NULL, cf, 0, NULL);
     add_tag (NULL, tp);

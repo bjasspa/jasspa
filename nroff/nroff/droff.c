@@ -7,10 +7,10 @@
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: droff.c,v $
- *  Revision      : $Revision: 1.2 $
- *  Date          : $Date: 2004-01-06 00:53:50 $
+ *  Revision      : $Revision: 1.3 $
+ *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040103.1957>
+ *  Last Modified : <040207.1916>
  *
  *  Description
  *
@@ -18,6 +18,9 @@
  *
  *  History
  * 
+ * Version 1.0.0h - 07/02/04 - JG
+ * Ported to HP-UX 11.00
+ *
  * Version 1.0.0g - 03/01/04 - JG
  * Ported to Sun Solaris 9
  *
@@ -74,7 +77,7 @@
 /*
  */
 
-#define MODULE_VERSION  "1.0.0g"
+#define MODULE_VERSION  "1.0.0h"
 #define MODULE_NAME     "droff"
 
 #define FULL_INDENT 5

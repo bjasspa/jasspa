@@ -7,10 +7,10 @@
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: nr2rtf.c,v $
- *  Revision      : $Revision: 1.2 $
- *  Date          : $Date: 2004-01-06 00:53:50 $
+ *  Revision      : $Revision: 1.3 $
+ *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040104.0033>
+ *  Last Modified : <040207.1919>
  *
  *  Description
  *
@@ -18,8 +18,10 @@
  *
  *  History
  *
+ * Version 1.1.0g  - 07/02/04 - JG
+ * Ported to HP-UX 11.00
  *
- * Version 1.1.0f  - 03/05/97 - JG
+ * Version 1.1.0f  - 03/01/04 - JG
  * Ported to Sun Solaris 9
  *
  * Version 1.1.0e  - 03/05/97 - JG
@@ -88,7 +90,7 @@
 
 /* Macro Definitions */
 
-#define MODULE_VERSION  "1.1.0f"
+#define MODULE_VERSION  "1.1.0g"
 #define MODULE_NAME     "nr2rtf"
 
 #define NORMAL_MODE     0x0000
@@ -536,7 +538,7 @@ nrIm_func (char *module, char *component)
         im_buf = bufStr (NULL, module);
     bufFree (sectionComponent);
     if ((sectionComponent = bufNStr (NULL, nrImGetFirst(component))) != NULL)
-        if (islower (sectionComponent[0]))
+        if (islower ((int)(sectionComponent[0])))
             sectionComponent[0] = toupper (sectionComponent[0]);
 
 }

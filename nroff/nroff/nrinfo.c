@@ -7,10 +7,10 @@
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: nrinfo.c,v $
- *  Revision      : $Revision: 1.3 $
- *  Date          : $Date: 2004-01-06 00:53:51 $
+ *  Revision      : $Revision: 1.4 $
+ *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040103.2000>
+ *  Last Modified : <040207.1920>
  *
  *  Description
  *
@@ -18,6 +18,7 @@
  *
  *  History
  *
+ * 1.0.0f - JG 07/02/04 Ported to HP-UX 11.0
  * 1.0.0e - JG 03/01/04 Ported to Sun Solaris 9
  * 1.0.0d - JG 03/05/97 Ported to win32.
  * 1.0.0c - JG 27/09/97 Added package support.
@@ -53,7 +54,7 @@
 #include "nroff.h"
 
 /* Macro Definitions */
-#define MODULE_VERSION  "1.0.0e"
+#define MODULE_VERSION  "1.0.0f"
 #define MODULE_NAME     "nrinfo"
 
 static char *sectionId = NULL;

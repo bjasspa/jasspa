@@ -1,20 +1,20 @@
 ##############################################################################
 #
-#  			Copyright 2004 <unknown>.
-#			      All Rights Reserved
+#                         Copyright 2004 Jon Green.
+#                             All Rights Reserved
 #
 #
-#  System        : 
-#  Module        : 
+#  System        :
+#  Module        :
 #  Object Name   : $RCSfile: Makefile,v $
-#  Revision      : $Revision: 1.2 $
-#  Date          : $Date: 2004-02-07 17:38:37 $
+#  Revision      : $Revision: 1.3 $
+#  Date          : $Date: 2004-02-07 19:29:48 $
 #  Author        : $Author: jon $
-#  Created By    : <unknown>
+#  Created By    : Jon Green
 #  Created       : Sat Feb 7 15:01:38 2004
-#  Last Modified : <040207.1701>
+#  Last Modified : <040207.1929>
 #
-#  Description	
+#  Description
 #
 #  Notes
 #
@@ -22,17 +22,17 @@
 #
 ##############################################################################
 #
-#  Copyright (c) 2004 <unknown>.
-# 
+#  Copyright (c) 2004 Jon Green.
+#
 #  All Rights Reserved.
-# 
+#
 #  This  document  may  not, in  whole  or in  part, be  copied,  photocopied,
 #  reproduced,  translated,  or  reduced to any  electronic  medium or machine
-#  readable form without prior written consent from <unknown>.
+#  readable form without prior written consent from Jon Green.
 #
 ##############################################################################
 
-TOPDIR	= .
+TOPDIR  = .
 include $(TOPDIR)/etc/makeinc
 
 install all spotless clean::
@@ -50,4 +50,3 @@ spotless::
 	$(RMDIR) $(INSTINCDIR)
 	$(RM) *~
 	$(RM) tags
-

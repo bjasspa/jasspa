@@ -7,10 +7,10 @@
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: superman.c,v $
- *  Revision      : $Revision: 1.3 $
- *  Date          : $Date: 2004-01-06 00:53:51 $
+ *  Revision      : $Revision: 1.4 $
+ *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040103.1956>
+ *  Last Modified : <040207.1922>
  *
  *  Description
  *
@@ -18,6 +18,7 @@
  *
  *  History
  *
+ * 1.0.4h - JG 07/02/04 - Ported to HP-UX 11.0.
  * 1.0.4h - JG 03/01/04 - Ported to Sun Solaris 9.
  * 1.0.4g - JG 21/10/00 - Corrected the file extension comparison.
  * 1.0.4f - JG 20/04/97 - Added base name option.
@@ -54,7 +55,7 @@
 /*
  */
 
-#define MODULE_VERSION  "1.0.4h"
+#define MODULE_VERSION  "1.0.4i"
 #define MODULE_NAME     "superman"
 
 static char *progname = MODULE_NAME;    /* Name of the module */

@@ -7,10 +7,10 @@
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: nlibrary.c,v $
- *  Revision      : $Revision: 1.4 $
- *  Date          : $Date: 2004-01-06 00:53:50 $
+ *  Revision      : $Revision: 1.5 $
+ *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040104.0029>
+ *  Last Modified : <040207.1902>
  *
  *  Description
  *
@@ -604,7 +604,7 @@ static char *
 nrXlateRefStr (char *dest, char *src)
 {
     char *p = dest;
-    char c;
+    int c;
     
     for (/* NULL */; (c = *src) != '\0'; src++)
     {
@@ -672,7 +672,6 @@ nrMakeXref (char *name, char *section)
     static char buffer [256];
     char *s;
     char *p;
-    char c;
 
     p=buffer;
     if ((s = name) != NULL)
@@ -720,7 +719,7 @@ nrResolveExternalReference (int flags, char *name, char *section,
 {
     char *module = NULL;                /* Module name */
     char *file = *pfile;                /* File name */
-    int  status;                        /* Type of package */
+    int  status = 0;                    /* Type of package */
 
     /*
      * Collect the data.

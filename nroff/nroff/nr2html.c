@@ -7,10 +7,10 @@
  *  System        : 
  *  Module        : 
  *  Object Name   : $RCSfile: nr2html.c,v $
- *  Revision      : $Revision: 1.5 $
- *  Date          : $Date: 2004-01-12 00:28:59 $
+ *  Revision      : $Revision: 1.6 $
+ *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040112.0028>
+ *  Last Modified : <040207.1918>
  *
  *  Description	
  *
@@ -18,6 +18,7 @@
  *
  *  History
  *
+ * 1.0.1k - JG 07/02/04 Ported to HP-UX 11.00
  * 1.0.1j - JG 12/01/04 Corrected the generated date.
  * 1.0.1i - JG 05/01/04 Changed logo image to .png.
  * 1.0.1h - JG 05/01/04 Corrected the HTML logo reference.
@@ -67,7 +68,7 @@
 #include "html.h"
 
 /* Macro Definitions */
-#define MODULE_VERSION  "1.0.1j"
+#define MODULE_VERSION  "1.0.1k"
 #define MODULE_NAME     "nr2html"
 
 #define NORMAL_MODE 0x0000
@@ -142,8 +143,8 @@ makeHTMLName (char *s)
 
     cb = bufNStr (NULL, s);
     for (j = 0; ((cb[j] != '\0') && (cb[j] != '.')); j++)
-        if (isupper (cb[j]))
-            cb[j] = tolower (cb[j]);
+        if (isupper ((int)(cb[j])))
+            cb[j] = tolower ((int)(cb[j]));
     cb[j] = '\0';
     cb = bufStr (cb, "&HTML&");
 
@@ -526,7 +527,7 @@ nrIm_func (char *module, char *component)
         im_buf = bufStr (NULL, module);
     bufFree (sectionComponent);
     if ((sectionComponent = bufNStr (NULL, nrImGetFirst (component))) != NULL)
-        if (islower (sectionComponent[0]))
+        if (islower ((int)(sectionComponent[0])))
             sectionComponent[0] = toupper (sectionComponent[0]);
 
 }

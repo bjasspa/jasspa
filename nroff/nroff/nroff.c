@@ -7,10 +7,10 @@
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: nroff.c,v $
- *  Revision      : $Revision: 1.2 $
- *  Date          : $Date: 2004-01-06 00:53:51 $
+ *  Revision      : $Revision: 1.3 $
+ *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040104.0036>
+ *  Last Modified : <040207.1913>
  *
  *  Description
  *
@@ -82,6 +82,10 @@
 #define PLATFORM_STRING "Linux"
 #elif defined (_SUNOS)
 #define PLATFORM_STRING "SunOS"
+#elif defined (_HPUX)
+#define PLATFORM_STRING "HP-UX"
+#elif defined (_CYGWIN)
+#define PLATFORM_STRING "Cygwin"
 #else
 #define PLATFORM_STRING "Undefined"
 #endif
@@ -142,7 +146,7 @@ static KeyType keyTab [] = {
 
 /* Local memory definitions */
 
-static const char rcsid[] = "@(#) : $Id: nroff.c,v 1.2 2004-01-06 00:53:51 jon Exp $";
+static const char rcsid[] = "@(#) : $Id: nroff.c,v 1.3 2004-02-07 19:29:49 jon Exp $";
 
 static dsRecord *dsHead = NULL;
 static char *instr;                     /* Instruction buffer */
@@ -474,7 +478,7 @@ isvalidstr (char *s)
 int
 isalnumstr (char *s)
 {
-    char    c;
+    int c;
 
 /*    if (isnullstr (s))*/
 /*        return (1);*/
@@ -630,12 +634,12 @@ char *stripBackSlash (int mode, char *s, char **next)
         case 's':                       /* Small font */
             if ((s[i+1] == '+') || (s[i+1] == '-'))
             {
-                if (isdigit (s[i+2]))
+                if (isdigit ((int)(s[i+2])))
                     strOverCopy (s, i, 3);      /* Remove the 's+n' */
                 else
                     uError ("\\s[+-]n required\n");
             }
-            else if (isdigit (s[i+1]))
+            else if (isdigit ((int)(s[i+1])))
                 strOverCopy (s, i, 2);      /* Remove the 'sn' */
             else
                 uError ("Unrecognised \\s%c option\n", s[i+1]);
@@ -1099,16 +1103,16 @@ Id_func (void)
     s = getFirstParam (&instr);         /* Get the date. */
     if (s == NULL)
         uError ("RCS Date string expected YYYY/MM/DD\n");
-    else if (!(isdigit (s[0]) &&
-               isdigit (s[1]) &&
-               isdigit (s[2]) &&
-               isdigit (s[3]) &&
+    else if (!(isdigit ((int)(s[0])) &&
+               isdigit ((int)(s[1])) &&
+               isdigit ((int)(s[2])) &&
+               isdigit ((int)(s[3])) &&
                s[4] == '/' &&
-               isdigit (s[5]) &&
-               isdigit (s[6]) &&
+               isdigit ((int)(s[5])) &&
+               isdigit ((int)(s[6])) &&
                s[7] == '/' &&
-               isdigit (s[8]) &&
-               isdigit (s[9]) &&
+               isdigit ((int)(s[8])) &&
+               isdigit ((int)(s[9])) &&
                s[10] == '\0'))
     {
         uError ("Invalid date string format [%s] expected YYYY/MM/DD\n", s);
@@ -1141,7 +1145,7 @@ Im_func (void)
     else
     {
         for (p = module; *p != '\0'; p++)
-            if (isupper (*p))
+            if (isupper ((int)(*p)))
                 *p = tolower (*p);
     }
     class = bufNStr (NULL, getFirstParam (&instr));
@@ -1368,7 +1372,7 @@ PD_func (void)
 
     i = 1;
     if ((p = getFirstParam (&instr)) != NULL) {
-        if (isdigit (*p))
+        if (isdigit ((int)(*p)))
             i = (int)(*p - '0');
     }
     if (getAllParam (&instr) != NULL)
@@ -1982,14 +1986,14 @@ BS_func (void)
     bulletLineSpace = 0;                /* Reset bullet line spacing */
     if ((p = getFirstParam (&instr)) != NULL)
     {
-        if (isdigit (*p))
+        if (isdigit ((int)(*p)))
              preSpace = (int)(*p - '0');
         else
             uError (".BS - Numeric 1st argument expected.\n");
 
         if ((p = getFirstParam (&instr)) != NULL)
         {
-            if (isdigit (*p))
+            if (isdigit ((int)(*p)))
                 bulletLineSpace = (int)(*p - '0');
             else
                 uWarn (".BS - Numeric 2nd argument expected.\n");
@@ -2037,7 +2041,7 @@ BE_func (void)
 
     i = 1;
     if ((p = getFirstParam (&instr)) != NULL) {
-        if (isdigit (*p))
+        if (isdigit ((int)(*p)))
             i = (int)(*p - '0');
         else
             uWarn (".BE - Numeric argument expected.\n");
@@ -2066,7 +2070,7 @@ CS_func (void)
 
     i = 1;
     if ((p = getFirstParam (&instr)) != NULL) {
-        if (isdigit (*p))
+        if (isdigit ((int)(*p)))
             i = (int)(*p - '0');
         else
             uWarn (".CS - Numeric argument expected.\n");
@@ -2096,7 +2100,7 @@ CE_func (void)
 
     i = 1;
     if ((p = getFirstParam (&instr)) != NULL) {
-        if (isdigit (*p))
+        if (isdigit ((int)(*p)))
             i = (int)(*p - '0');
         else
             uWarn (".CE - Numeric argument expected.\n");

@@ -7,10 +7,10 @@
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: nr2ehf.c,v $
- *  Revision      : $Revision: 1.2 $
- *  Date          : $Date: 2004-01-06 00:53:50 $
+ *  Revision      : $Revision: 1.3 $
+ *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040104.0030>
+ *  Last Modified : <040207.1918>
  *
  *  Description
  *
@@ -18,6 +18,7 @@
  *
  *  History
  *
+ * 1.0.0c JG 2004-02-07 Ported to HP-UX 11.00
  * 1.0.0b JG 2004-01-03 Ported to Sun Solaris 9
  * 1.0.0a JG 1997-05-30 Added nroffId string.
  * 1.0.0  JG 1997-05-14 Initial derived from droff.c
@@ -52,7 +53,7 @@
 
 #include "nroff.h"
 
-#define MODULE_VERSION  "1.0.0b"
+#define MODULE_VERSION  "1.0.0c"
 #define MODULE_NAME     "nr2ehf"
 
 #define FULL_INDENT 5

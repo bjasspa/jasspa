@@ -1,16 +1,16 @@
 /****************************************************************************
  *
- *  			Copyright 1996 Jon Green.
+ *  		     Copyright 1996-2004 Jon Green.
  *                         All Rights Reserved
  *
  *
  *  System        : 
  *  Module        : 
  *  Object Name   : $RCSfile: hml.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:22 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <990831.2330>
+ *  Last Modified : <040207.1926>
  *
  *  Description	
  *
@@ -19,10 +19,13 @@
  *  History
  *	
  *  $Log: not supported by cvs2svn $
+ *  Revision 1.1  2000/10/21 14:31:22  jon
+ *  Import
+ *
  *
  ****************************************************************************
  *
- *  Copyright (c) 1996 Jon Green.
+ *  Copyright (c) 1996-2004 Jon Green.
  * 
  *  All Rights Reserved.
  * 
@@ -41,7 +44,7 @@
 #include "hmldrv.h"
 #include <utils.h>
 
-static const char rcsid[] = "@(#) : $Id: hml.c,v 1.1 2000-10-21 14:31:22 jon Exp $";
+static const char rcsid[] = "@(#) : $Id: hml.c,v 1.2 2004-02-07 19:29:49 jon Exp $";
 
 /*
  * Version 1.0.0 - 03/11/95 - JG
@@ -80,7 +83,7 @@ char *hmlHomePage = NULL;               /* Home page - external link */
 char *hmlLogo = NULL;                   /* Logo - current file */
 hmldct *hmldctp;
 FILE *fpHml = NULL;                     /* HML File stream */
-static hmlFormatType = 0;               /* Current hml format */
+static int hmlFormatType = 0;           /* Current hml format */
 
 int
 hmlFormat (void)
@@ -129,8 +132,8 @@ hmlMakeFileName (char *s, char **result)
 
     cb = bufNStr (NULL, s);
     for (j = 0; ((cb[j] != '\0') && (cb[j] != '.')); j++)
-        if (isupper (cb[j]))
-            cb[j] = tolower (cb[j]);
+        if (isupper ((int)(cb[j])))
+            cb[j] = tolower ((int)(cb[j]));
     cb[j] = '\0';
     cb = bufStr (cb, ".hml");
 

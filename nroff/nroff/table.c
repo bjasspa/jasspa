@@ -7,10 +7,10 @@
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: table.c,v $
- *  Revision      : $Revision: 1.3 $
- *  Date          : $Date: 2004-01-06 00:53:51 $
+ *  Revision      : $Revision: 1.4 $
+ *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040103.2015>
+ *  Last Modified : <040207.1909>
  *
  *  Description
  *
@@ -148,7 +148,6 @@ typedef struct stDataRow {
     int numCols;                        /* Number of columns */
 } DataRow;
 
-static nrRow *rowHead = NULL;
 static DataRow *dataRowHead = NULL;
 static DataRow *dataRowTail = NULL;
 static int  tsPosition = 0;                /* margin position of table */
@@ -210,7 +209,7 @@ nrTSoptions (char *line)
 {
     char *p;
     OptionKeywords *kp;
-    int  id;
+    int  id = 0;
 
     uVerbose (0, "nrTSoptions (%s)\n", line);
     tsPosition = 0;                     /* margin position of table */
@@ -378,7 +377,6 @@ nrTSvalues (char *line)
     char *p;
     char c;
     DataRow *r;
-    DataRowItem *ri;
     int column = 0;
     int status = 0;
     int id;
@@ -388,9 +386,10 @@ nrTSvalues (char *line)
 
     r = dataRowConstruct ();
 
-    column = 0;
     while ((p = getFirstParam (&line)) != NULL)
     {
+        DataRowItem *ri = NULL;
+
         if (*p != '|')
             ri = DataRowItemAdd (r);    /* Make new row item */
 
@@ -526,7 +525,8 @@ nrTSdata (char *line)
     }
 }
 
-int main (int argc, char *argv [])
+int
+main (int argc, char *argv [])
 {
     int     ecount = 0;                 /* Error count */
     int     wcount = 0;                 /* Warn count */

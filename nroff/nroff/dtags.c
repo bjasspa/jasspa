@@ -20,7 +20,7 @@ tagAlloc (char *name, char *section, char *desc, char *file,
     if ((np = (TagP) malloc (sizeof (Tag))) == NULL)
         uFatal ("No memory\n");
 
-    if (isupper (name[0]))
+    if (isupper ((int)(name[0])))
         c = tolower (name[0]);
     else
         c = name[0];

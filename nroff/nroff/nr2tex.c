@@ -7,12 +7,12 @@
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: nr2tex.c,v $
- *  Revision      : $Revision: 1.5 $
- *  Date          : $Date: 2004-01-06 00:53:51 $
+ *  Revision      : $Revision: 1.6 $
+ *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
  *  Created By    : Jon Green
  *  Created       : Thu Mar 7 20:45:45 2002
- *  Last Modified : <040103.2012>
+ *  Last Modified : <040207.1919>
  *
  *  Description
  *
@@ -20,6 +20,7 @@
  *
  *  History
  *
+ *  1.0.0a JG 2004-02-07 Ported to HP-UX
  *  1.0.0a JG 2004-01-03 Ported to Sun Solaris 9
  *  1.0.0  JG 2002-03-07 Original
  *
@@ -53,7 +54,7 @@
 
 #include "nroff.h"
 
-#define MODULE_VERSION  "1.0.0a"
+#define MODULE_VERSION  "1.0.0b"
 #define MODULE_NAME     "nr2tex"
 
 #define FULL_INDENT 1                   /* Full indent distance. */
@@ -119,7 +120,7 @@ makeLaTeXName (char *s)
 
     cb = bufNStr (NULL, s);
     for (j = 0; ((cb[j] != '\0') && (cb[j] != '.')); j++)
-        if (isupper (cb[j]))
+        if (isupper ((int)(cb[j])))
             cb[j] = tolower (cb[j]);
     cb[j] = '\0';
     cb = bufStr (cb, "&LaTeX&");
@@ -455,7 +456,7 @@ nrIm_func (char *module, char *component)
         im_buf = bufStr (NULL, module);
     bufFree (sectionComponent);
     if ((sectionComponent = bufNStr (NULL, nrImGetFirst (component))) != NULL)
-        if (islower (sectionComponent[0]))
+        if (islower ((int)(sectionComponent[0])))
             sectionComponent[0] = toupper (sectionComponent[0]);
 
 }

@@ -7,10 +7,10 @@
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: htmlc.c,v $
- *  Revision      : $Revision: 1.3 $
- *  Date          : $Date: 2004-01-06 00:53:50 $
+ *  Revision      : $Revision: 1.4 $
+ *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040103.1954>
+ *  Last Modified : <040207.1916>
  *
  *  Description
  *
@@ -18,6 +18,7 @@
  *
  *  History
  *
+ * 1.0.4f - JG 07/02/04 - Ported to HP-UX 11.00.
  * 1.0.4e - JG 03/01/04 - Ported to Sun Solaris 9.
  * 1.0.4d - JG 05/01/95 - Added external references
  * 1.0.4c - JG 16/11/95 - Ported to UNIX world
@@ -59,7 +60,7 @@
 /*
  */
 
-#define MODULE_VERSION  "1.0.4e"
+#define MODULE_VERSION  "1.0.4f"
 #define MODULE_NAME     "htmlc"
 
 typedef struct sRefBlk {

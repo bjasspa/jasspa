@@ -7,10 +7,10 @@
  *  System        : 
  *  Module        : 
  *  Object Name   : $RCSfile: catman.c,v $
- *  Revision      : $Revision: 1.3 $
- *  Date          : $Date: 2004-01-06 00:53:50 $
+ *  Revision      : $Revision: 1.4 $
+ *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040104.0024>
+ *  Last Modified : <040207.1900>
  *
  *  Description	
  *
@@ -124,8 +124,8 @@ AddCFile (char *name, long size, long offset)
 
         strcpy (cfp->file, name);
         for (s = cfp->file; *s != '\0'; s++)
-            if (isupper (*s))
-                *s = tolower (*s);
+            if (isupper ((int)(*s)))
+                *s = (char)tolower ((int)(*s));
     }
     cfp->size = size;
     cfp->offset = offset;
@@ -171,8 +171,8 @@ AddCManList (char *name, CFile *cfp, int flags)
     /* Convert to lower case if requested */
     if (flags & CMAN_LOWER) {
         for (s = cml->cman.name; *s != '\0'; s++)
-            if (isupper (*s))
-                *s = tolower (*s);
+            if (isupper ((int)(*s)))
+                *s = (char) tolower ((int)(*s));
     }
 
     /* Add or insert into the list if requested */
@@ -483,8 +483,8 @@ char *findCatman (char *file, char *name, char *section)
         strcat (buffer, section);
 
     for (i = 0; buffer[i] != '\0'; i++)
-        if (isupper (buffer[i]))
-            buffer [i] = tolower (buffer [i]);
+        if (isupper ((int)(buffer[i])))
+            buffer [i] = (char) tolower ((int)(buffer [i]));
 
 
     /* Try openning the file */

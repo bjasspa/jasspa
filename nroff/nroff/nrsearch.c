@@ -7,10 +7,10 @@
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: nrsearch.c,v $
- *  Revision      : $Revision: 1.2 $
- *  Date          : $Date: 2004-01-06 00:53:51 $
+ *  Revision      : $Revision: 1.3 $
+ *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040103.1959>
+ *  Last Modified : <040207.1921>
  *
  *  Description
  *
@@ -18,6 +18,7 @@
  *
  *  History
  *
+ * 2.0.0c 07/02/04 JG Ported to HP-UX
  * 2.0.0b 03/01/04 JG Ported to Sun Solaris 9
  * 2.0.0a 30/05/97 JG Ported to win32.
  *
@@ -49,7 +50,7 @@
 #include <utils.h>                      /* Standard utilities */
 #include "nroff.h"                      /* Nroff definitions */
 
-#define MODULE_VERSION  "2.0.0b"
+#define MODULE_VERSION  "2.0.0c"
 #define MODULE_NAME     "nrsearch"
 
 #define WHITE_SPACE_SKIP       1
@@ -377,9 +378,9 @@ static int
 sectionCmp (char *magic, char *item)
 {
     char *p;
-    char c;
-    char c1;
-    int  skip = 0;                      /* Skip to next match */
+    int c;
+    int c1;
+    int skip = 0;                       /* Skip to next match */
     
     p = item;
     while ((c = *magic++) != '\0')
@@ -562,8 +563,8 @@ outputResponseList (char *name, char *outputFormat)
     fEntry *fe;
     fItem *fi;
     TagP tp;
-    char c = '\0';
-    char uc;
+    int c = '\0';
+    int uc;
     int newLine = 1;
     char *format;
 
@@ -951,8 +952,8 @@ processResponse (char *fileName)
     FILE *fp;                           /* Working file pointer */
     FILE *ifp = NULL;                   /* Include file pointer stack (of 1) */
     int  lineNo = 0;                    /* Working line number */
-    int  ilineNo;                       /* Include line number */
-    char *ifileName;                    /* Include file name */
+    int  ilineNo = 0;                   /* Include line number */
+    char *ifileName = NULL;             /* Include file name */
 
     int  count;                         /* Count of characters read */
     char *buffer;                       /* Character buffer pointer */
@@ -1166,7 +1167,7 @@ processResponse (char *fileName)
                 }
 
                 t2 = searchSkipWhiteSpace (t1, WHITE_SPACE_TERMINATE);
-                if ((t2 != NULL) || (strlen (t1) != 1) || !isdigit(*t1))
+                if ((t2 != NULL) || (strlen (t1) != 1) || !isdigit((int)(*t1)))
                 {
                     uError ("Unexpected \"%s\" arguments\n",
                             keyTab [index].name);

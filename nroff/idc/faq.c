@@ -7,10 +7,10 @@
  *  System        : 
  *  Module        : 
  *  Object Name   : $RCSfile: faq.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:21 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2004-02-07 19:29:48 $
  *  Author        : $Author: jon $
- *  Last Modified : <250896.1704>
+ *  Last Modified : <040207.1924>
  *
  *  Description	
  *
@@ -19,6 +19,9 @@
  *  History
  *	
  *  $Log: not supported by cvs2svn $
+ *  Revision 1.1  2000/10/21 14:31:21  jon
+ *  Import
+ *
  *
  ****************************************************************************
  *
@@ -32,7 +35,7 @@
  *
  ****************************************************************************/
 
-static const char rcsid[] = "@(#) : $Id: faq.c,v 1.1 2000-10-21 14:31:21 jon Exp $";
+static const char rcsid[] = "@(#) : $Id: faq.c,v 1.2 2004-02-07 19:29:48 jon Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -173,7 +176,7 @@ faqCheck (Faq *p)
         uWarn ("Frequently asked question must be dated\n");
     if (p->question == NULL)
         uWarn ("Frequently Asked question must have question\n");
-    else if (isalpha (p->question [0]) == 0)
+    else if (isalpha ((int)(p->question [0])) == 0)
         uError ("Question should commence with Alphabetic\n");
     if (p->description.argv == NULL)
         uWarn ("Description required\n");

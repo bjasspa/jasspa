@@ -5,7 +5,7 @@
 #include <ctype.h>
 #include <signal.h>
 
-#if ((defined _HPUX) || (defined _LINUX))
+#if ((defined _HPUX) || (defined _LINUX) || (defined _SUNOS))
 #include <unistd.h>
 #else
 #include <getopt.h>
@@ -16,12 +16,12 @@
 
 /* Macro Definitions */
 /*
- * 1.0.0a - JG 16/11/96 Integrated new utilies library.
- *
+ * 1.0.0c - JG 07/02/04 Ported to HP-UX
  * 1.0.0b - JG 05/12/95 Added bullet support.
+ * 1.0.0a - JG 16/11/96 Integrated new utilies library.
  */
 
-#define MODULE_VERSION  "1.0.0b"
+#define MODULE_VERSION  "1.0.0c"
 #define MODULE_NAME     "nrinfo"
 
 static char *sectionId = NULL;

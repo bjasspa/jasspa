@@ -7,10 +7,10 @@
  *  System        : 
  *  Module        : 
  *  Object Name   : $RCSfile: hts.c,v $
- *  Revision      : $Revision: 1.2 $
- *  Date          : $Date: 2004-01-06 00:53:50 $
+ *  Revision      : $Revision: 1.3 $
+ *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040104.0026>
+ *  Last Modified : <040207.1916>
  *
  *  Description	
  *
@@ -18,6 +18,7 @@
  *
  *  History
  *	
+ * 1.0.0b - JG 2004-02-07 Ported to HP-UX
  * 1.0.0a - JG 2004-01-03 Ported to Sun Solaris 9
  * 1.0.0  - JG 1997-05-10 Created new utility.
  * 
@@ -55,7 +56,7 @@
 
 #include <utils.h>
 
-#define MODULE_VERSION  "1.0.0a"
+#define MODULE_VERSION  "1.0.0b"
 #define MODULE_NAME     "hts"
 #define LINELEN (1024*8)                /* Maximum length of I/P line */
 
@@ -63,7 +64,6 @@
 #define HTS_BINARY   2                  /* Binary mode */
 
 static char *progname = MODULE_NAME;    /* Program name */
-static char *outPath = NULL;            /* Output path */
 static char *subDirectory = NULL;       /* SubDirectory name */
 static int  operativeMode = 0;          /* Operation mode */
 
@@ -161,7 +161,7 @@ int main (int argc, char *argv [])
     int wcount = 0;                     /* Warn count */
     int c;
     int i;
-    FILE *ofp;                          /* Output file pointer */
+    FILE *ofp = NULL;                   /* Output file pointer */
     char *appendFile = NULL;            /* Append file name */
     char *outputFile = NULL;            /* Output file name */
 

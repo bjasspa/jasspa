@@ -7,10 +7,10 @@
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: ntags.c,v $
- *  Revision      : $Revision: 1.2 $
- *  Date          : $Date: 2004-01-06 00:53:51 $
+ *  Revision      : $Revision: 1.3 $
+ *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040103.2004>
+ *  Last Modified : <040207.1921>
  *
  *  Description
  *
@@ -18,6 +18,7 @@
  *
  *  History
  *
+ * 1.0.0c 07/02/04 JG Ported to HP-UX
  * 1.0.0c 03/01/04 JG Ported to Sun Solaris 9
  * 1.0.0b 03/03/97 JG Ported towin32
  * 1.0.0a 16/08/95 JG Added -o option for output name.
@@ -47,7 +48,7 @@
 
 #include <utils.h>
 
-#define MODULE_VERSION  "1.0.0c"
+#define MODULE_VERSION  "1.0.0d"
 #define MODULE_NAME     "ntags"
 
 typedef struct tagEntry {
@@ -165,7 +166,7 @@ xi_insert (char *line, char *file, int lineno)
     char *s;
     TagP tp;
     TagP np;
-    char c;
+    int c;
 
 /*    printf ("xi_insert [%s]\n", line);*/
     for (s = &line[3]; (((c = *s) != 0) && ((c == ' ') || (c == '\t'))); s++)

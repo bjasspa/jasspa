@@ -7,10 +7,10 @@
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: nrar.c,v $
- *  Revision      : $Revision: 1.2 $
- *  Date          : $Date: 2004-01-06 00:53:51 $
+ *  Revision      : $Revision: 1.3 $
+ *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040103.2008>
+ *  Last Modified : <040207.1920>
  *
  *  Description
  *
@@ -18,6 +18,7 @@
  *
  *  History
  *
+ * 1.0.0f JG 2004-02-07 Ported to HP-UX
  * 1.0.0e JG 2004-01-03 Ported to Sun Solaris 9
  * 1.0.0d JG 1999-05-29 Fixed cross reference problem with .NH sections
  * 1.0.0c JG 1997-05-03 Ported to win32
@@ -52,7 +53,7 @@
 #include <utils.h>
 #include "nroff.h"
 
-#define MODULE_VERSION "1.0.0e"
+#define MODULE_VERSION "1.0.0f"
 #define MODULE_NAME    "nrar"
 
 typedef struct {

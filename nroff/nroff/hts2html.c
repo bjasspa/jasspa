@@ -7,10 +7,10 @@
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: hts2html.c,v $
- *  Revision      : $Revision: 1.2 $
- *  Date          : $Date: 2004-01-06 00:53:50 $
+ *  Revision      : $Revision: 1.3 $
+ *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040103.2010>
+ *  Last Modified : <040207.1917>
  *
  *  Description
  *
@@ -18,6 +18,7 @@
  *
  *  History
  *
+ * 1.0.4g JG 2004-02-07 Ported to HP-UX 11.0
  * 1.0.4f JG 2004-01-03 Ported to Sun Solaris 9
  * 1.0.4e JG 1997-05-12 Added binary entry.
  * 1.0.4d JG 1997-04-20 Added &HTML& expansion for file extension.
@@ -57,7 +58,7 @@
 
 #include <utils.h>
 
-#define MODULE_VERSION  "1.0.4f"
+#define MODULE_VERSION  "1.0.4g"
 #define MODULE_NAME     "hts2html"
 #define LINELEN (1024*8)                /* Maximum length of I/P line */
 

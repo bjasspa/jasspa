@@ -7,10 +7,10 @@
  *  System        : 
  *  Module        : 
  *  Object Name   : $RCSfile: rtf.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:24 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <990831.2338>
+ *  Last Modified : <040207.1927>
  *
  *  Description	
  *
@@ -19,6 +19,9 @@
  *  History
  *	
  *  $Log: not supported by cvs2svn $
+ *  Revision 1.1  2000/10/21 14:31:24  jon
+ *  Import
+ *
  *
  ****************************************************************************
  *
@@ -32,7 +35,7 @@
  *
  ****************************************************************************/
 
-static const char rcsid[] = "@(#) : $Id: rtf.c,v 1.1 2000-10-21 14:31:24 jon Exp $";
+static const char rcsid[] = "@(#) : $Id: rtf.c,v 1.2 2004-02-07 19:29:49 jon Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -44,7 +47,7 @@ static const char rcsid[] = "@(#) : $Id: rtf.c,v 1.1 2000-10-21 14:31:24 jon Exp
 
 extern hmldct *rtfOpen (char *logo);
 
-static paragraphMode = 0;               /* Paragraph mode */
+static int paragraphMode = 0;           /* Paragraph mode */
 static int rtfvIndent = 0;              /* Indent distance */
 static int rtfvFirstIndent = 0;         /* Indent on first line of paragraph */
 static int rtfvFont = 0;
@@ -55,7 +58,7 @@ static int rtfvPara = 0;                /* Paragraph mode */
 
 #define FULL_INDENT 360                 /* Full indent distance. */
 #define HALF_INDENT 180                 /* Half indent distance. */
-#define LINE_HIEGHT 100                  /* twips height */ 
+#define LINE_HIEGHT 100                 /* twips height */ 
 #define BULLET_INDENT 200               /* Indent of a bullet */
 
 #define PARA_DISABLE     0
@@ -588,7 +591,7 @@ rtfDescription (char *title, int level, Args *args)
     int mode = PARA_MODE_REGULAR;       /* Paragraph mode */
     int commandId;                      /* Command identifier word */
     int i;
-    int indent;
+    int indent = 0;
     char *curLine;
               
     /*

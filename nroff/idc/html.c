@@ -7,10 +7,10 @@
  *  System        : 
  *  Module        : 
  *  Object Name   : $RCSfile: html.c,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2000-10-21 14:31:22 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <990831.2338>
+ *  Last Modified : <040207.1925>
  *
  *  Description	
  *
@@ -19,6 +19,9 @@
  *  History
  *	
  *  $Log: not supported by cvs2svn $
+ *  Revision 1.1  2000/10/21 14:31:22  jon
+ *  Import
+ *
  *
  ****************************************************************************
  *
@@ -43,9 +46,9 @@
 extern hmldct *htmlOpen (char *logo);
 extern char *wwwroot;
 
-static const char rcsid[] = "@(#) : $Id: html.c,v 1.1 2000-10-21 14:31:22 jon Exp $";
+static const char rcsid[] = "@(#) : $Id: html.c,v 1.2 2004-02-07 19:29:49 jon Exp $";
 
-static paragraphMode = 0;               /* Paragraph mode */
+static int paragraphMode = 0;           /* Paragraph mode */
 
 #define ALWAYS_FLUSH    0               /* Disable flush on flie write. */
 

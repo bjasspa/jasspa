@@ -7,10 +7,10 @@
  *  System        : Utils
  *  Module        : File utilities
  *  Object Name   : $RCSfile: dir.c,v $
- *  Revision      : $Revision: 1.2 $
- *  Date          : $Date: 2004-01-06 00:52:20 $
+ *  Revision      : $Revision: 1.3 $
+ *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040104.0021>
+ *  Last Modified : <040207.1923>
  *
  *  Description     These utilities manipulate filenames.
  *
@@ -30,7 +30,7 @@
  *
  ****************************************************************************/
 
-static const char rcsid[] = "@(#) : $Id: dir.c,v 1.2 2004-01-06 00:52:20 jon Exp $";
+static const char rcsid[] = "@(#) : $Id: dir.c,v 1.3 2004-02-07 19:29:49 jon Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -135,7 +135,7 @@ splitFilename (char *fname, char **adrive, char **apath, char **abase, char **ae
      */
 
     q = drive;
-    if ((isalpha (f [0])) && (f[1] == DRV_CHAR))
+    if ((isalpha ((int)(f[0]))) && (f[1] == DRV_CHAR))
     {
         *q++ = *f;
         f = &f[2];
@@ -209,7 +209,7 @@ unifyFilename (char *afname)
 {
     static char fname [1024];
     char *p, *q;
-    char c;
+    int c;
 
     if (afname == NULL)
         return NULL;

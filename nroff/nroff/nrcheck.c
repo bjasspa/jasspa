@@ -7,10 +7,10 @@
  *  System        :
  *  Module        :
  *  Object Name   : $RCSfile: nrcheck.c,v $
- *  Revision      : $Revision: 1.2 $
- *  Date          : $Date: 2004-01-06 00:53:51 $
+ *  Revision      : $Revision: 1.3 $
+ *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040103.2002>
+ *  Last Modified : <040207.1920>
  *
  *  Description
  *
@@ -18,6 +18,7 @@
  *
  *  History
  *
+ * 1.0.0d - JG 07/02/04 Ported to HP-UX 11.00
  * 1.0.0c - JG 03/01/04 Ported to Sun Solaris 9
  * 1.0.0b - JG 05/12/95 Added bullet support.
  * 1.0.0a - JG 16/11/96 Integrated new utilies library.
@@ -51,7 +52,7 @@
 #include "nroff.h"
 
 /* Macro Definitions */
-#define MODULE_VERSION  "1.0.0c"
+#define MODULE_VERSION  "1.0.0d"
 #define MODULE_NAME     "nrcheck"
 
 #define NORMAL_MODE 0x0000
@@ -294,7 +295,7 @@ nrIm_func (char *module, char *component)
         im_buf = bufStr (NULL, module);
     bufFree (sectionComponent);
     if ((sectionComponent = bufNStr (NULL, nrImGetFirst(component))) != NULL)
-        if (islower (sectionComponent[0]))
+        if (islower ((int)(sectionComponent[0])))
             sectionComponent[0] = toupper (sectionComponent[0]);
 
 }
