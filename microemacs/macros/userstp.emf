@@ -1174,13 +1174,16 @@ osd .osd.user-gener 390 "MdtxmfH" .scheme.osd-ebtt " Sho\Hw Modes " .osd.user-mo
     !endif
 !emacro
 
+!if &gre &len &set #l0 $user-path 35
+    set-variable #l0 &cat &mid $window-chars 57 1 &rig #l0 &sub &len #l0 35
+!endif
 -1 osd .osd.user-start
 osd .osd.user-start 0   "s" 55 18 -1 -1
 osd .osd.user-start 10  ""
 osd .osd.user-start 40  "Sfh" "  User \HName:    " 50
 osd .osd.user-start 50  "tRxHf" .scheme.osd-entry &spr "%s%n" $user-name &sub 14 &len $user-name " " f user-set-logname
 osd .osd.user-start 60  "Sfh" "  User \HPath:    " 70
-osd .osd.user-start 70  "tRxHf" .scheme.osd-entry &spr "%s%n" $user-path &sub 35 &len $user-path " " f user-set-path
+osd .osd.user-start 70  "tRxHf" .scheme.osd-entry &spr "%s%n" #l0 &sub 35 &len #l0 " " f user-set-path
 osd .osd.user-start 80  ""
 osd .osd.user-start 90  "Sfh" "  Setup \HFile:   " 100
 osd .osd.user-start 100 "EtxHfh" .scheme.osd-entry "##############" 4 user-set-entry
