@@ -1865,7 +1865,8 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
     meUByte *fn ;
 
     if((sfname != NULL) &&
-       (getFileStats(dfname,0,NULL,NULL) == meFILETYPE_DIRECTORY))
+       (((s=getFileStats(dfname,0,NULL,NULL)) == meFILETYPE_DIRECTORY) ||
+        ((s == meFILETYPE_FTP) && (dfname[meStrlen(dfname)-1] == DIR_CHAR))))
     {
         s = meStrlen(dfname) ;
         if(dfname[s-1] != DIR_CHAR)
