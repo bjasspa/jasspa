@@ -66,7 +66,7 @@ set-variable .fhook-lua.collapse-mnext  "-1"
     hilight .hilight.lua 1 "while"              .scheme.keyword
     
     !if &band .hilight.flags 0x04
-        hilight .hilight.lua 0 "^\\s *\\{function\\s +\\w+" .scheme.function
+        hilight .hilight.lua 0 "^\\s*\\{function\\s+\\w+" .scheme.function
         hilight .hilight.lua 1 "\\w+\\} *= *function" .scheme.function
     !endif
     
@@ -115,7 +115,7 @@ set-variable .fhook-lua.collapse-mnext  "-1"
     indent .hilight.lua N "do"       t
     indent .hilight.lua N "if"       t
     indent .hilight.lua S "else"    -t
-    indent .hilight.lua S "else\\s *if"  -t
+    indent .hilight.lua S "else\\s*if" -t
     indent .hilight.lua O "end"     -t
     indent .hilight.lua n "{"        t
     indent .hilight.lua o "}"       -t

@@ -43,10 +43,10 @@ set-variable .fhook-asp.indent-width 2
 !if &sin "d" .fhook-asp.setup
     !if &exist .indent.vbscript
         indent .hilight.asptag t "<%" .indent.vbscript
+        indent .hilight.asptag t "[\t ]*End If$" .hilight.vbscript
+        indent .hilight.asptag t "[\t ]*End Function$" .hilight.vbscript
+        indent .hilight.asptag t "[\t ]*End Sub$" .hilight.vbscript
         indent .hilight.asptag t "%>" .hilight.asp
-        indent .hilight.asptag t "[\t ]*End If$" .hilight.asp
-        indent .hilight.asptag t "[\t ]*End Function$" .hilight.asp
-        indent .hilight.asptag t "[\t ]*End Sub$" .hilight.asp
         
         indent .hilight.asp x "^<%" 0 .indent.vbscript
         indent .hilight.asp x ".<%" t .indent.vbscript

@@ -223,7 +223,7 @@ set-variable .fhook-js.item-list-r3 "Meth \ecB\\1\ecA"
     ;
     !if &band .hilight.flags 0x04
         ; function definitions
-        hilight .hilight.js 0 "\\s \\{function\\s +\\w+\\s ?\\}(" .scheme.function
+        hilight .hilight.js 0 "\\s\\{function\\s+\\w+\\s?\\}(" .scheme.function
     !endif
     ; let html based files use the java hilight for any JavaScripts
     set-variable .hilight.javascript .hilight.js

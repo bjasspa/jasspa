@@ -26,7 +26,7 @@ set-variable .fhook-verilg.comment-1 "|/*| */|*| * | * |f|"
 !if &and &sin "h" .fhook-verilg.setup &band .hilight.flags 0x02 
     0 hilight .hilight.verilg 0                        $global-scheme
     !if &band .hilight.flags 0x04
-        hilight .hilight.verilg 0 "^module\\s +\\w+"  .scheme.function
+        hilight .hilight.verilg 0 "^module\\s+\\w+"  .scheme.function
     !endif
     hilight .hilight.verilg 18 "//"           .scheme.comment
     hilight .hilight.verilg 20 "/\\*" "*/" "" .scheme.comment

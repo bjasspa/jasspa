@@ -19,19 +19,19 @@ set-variable .fhook-apache.setup-mask "aefghkmnoptux"
 set-variable .fhook-apache.comment   "|#||#|# | #|r|"
 
 ; setup item-list
-set-variable .fhook-apache.item-list-s1 "^<IfModule\\s +mod_\\([0-9a-zA-Z_]+\\).*>"
+set-variable .fhook-apache.item-list-s1 "^<IfModule[ \t]+mod_\\([0-9a-zA-Z_]+\\).*>"
 set-variable .fhook-apache.item-list-r1 "Mod \ecB\\1\ecA"
-set-variable .fhook-apache.item-list-s2 "^<Directory\\s +\"?\\([a-zA-Z0-9_/]+\\).*>"
+set-variable .fhook-apache.item-list-s2 "^<Directory[ \t]+\"?\\([a-zA-Z0-9_/]+\\).*>"
 set-variable .fhook-apache.item-list-r2 "Dir \ecB\\1\ecA"
-set-variable .fhook-apache.item-list-s3 "^<IfDefine\\s +\\([a-zA-Z0-9_]+\\).*>"
+set-variable .fhook-apache.item-list-s3 "^<IfDefine[\t ]+\\([a-zA-Z0-9_]+\\).*>"
 set-variable .fhook-apache.item-list-r3 "IfD \ecB\\1\ecA"
-set-variable .fhook-apache.item-list-s3 "^<Location\\s +\\([/a-zA-Z0-9_]+\\).*>"
+set-variable .fhook-apache.item-list-s3 "^<Location[ \t]+\\([/a-zA-Z0-9_]+\\).*>"
 set-variable .fhook-apache.item-list-r3 "Loc \ecB\\1\ecA"
 set-variable .fhook-apache.item-list-s4 "^<\\([^/IDL]\\w+\\).*>"
 set-variable .fhook-apache.item-list-r4 "Oth \ecB\\1\ecA"
 
 ; Setup collapse
-set-variable .fhook-apache.collapse-open  "^<\\s *\\(\\S +\\).*>"
+set-variable .fhook-apache.collapse-open  "^<[ \t]*\\(\\S+\\).*>"
 set-variable .fhook-apache.collapse-close "^</"
 set-variable .fhook-apache.collapse-mclose "1"
 set-variable .fhook-apache.collapse-mnext "-1"
@@ -49,7 +49,7 @@ set-variable .fhook-apache.collapse-mnext "-1"
     ; Comments
     hilight .hilight.apache  0x2 "#" .scheme.comment
     ;
-    hilight .hilight.apache  0x2 "#\\s *todo" .scheme.error
+    hilight .hilight.apache  0x2 "#\\s*todo" .scheme.error
     ; String literals
     hilight .hilight.apache    4 "\"" "\"" "\\" .scheme.string
     ;

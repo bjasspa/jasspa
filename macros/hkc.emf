@@ -121,11 +121,11 @@ set-variable .fhook-c.item-list-r6 "Clss \ecB\\1\ecA"
     ; Hilight TODO in a comment - Examples
     ; i.e. /* TODO I need to do this */
     ; i.e. // TODO I need to do this */
-    hilight .hilight.c   20 "/\\*\\s *[tT][oO][dD][oO]" "*/" "" .scheme.error
-    hilight .hilight.c   18 "//\\s *[tT][oO][dD][oO]"           .scheme.error
+    hilight .hilight.c   20 "/\\*\\s*[tT][oO][dD][oO]" "*/" "" .scheme.error
+    hilight .hilight.c   18 "//\\s*[tT][oO][dD][oO]"           .scheme.error
     ; Function names and goto labels
     !if &band .hilight.flags 0x04
-        hilight .hilight.c    0 "^\\w+\\}\\s (" .scheme.function
+        hilight .hilight.c    0 "^\\w+\\}\\s(" .scheme.function
         hilight .hilight.c    0 "^\\w+\\}(" .scheme.function
     !endif
     hilight .hilight.c    0 "^\\w+\\}:"    .scheme.link
@@ -176,13 +176,13 @@ set-variable .fhook-c.item-list-r6 "Clss \ecB\\1\ecA"
     hilight .hilight.c    1 "NULL"         .scheme.prepro
     !if &band .hilight.flags 0x08
         ; hilight constants, e.g. numbers
-        hilight .hilight.c 1 "[[:digit:]]+"       .scheme.constant
-        hilight .hilight.c 1 "-[[:digit:]]+"      .scheme.constant
-        hilight .hilight.c 1 "0[xX][[:xdigit:]]+" .scheme.constant
-        hilight .hilight.c 1 "[[:digit:]]+\\.[[:digit:]]+"  .scheme.constant
-        hilight .hilight.c 1 "-[[:digit:]]+\\.[[:digit:]]+" .scheme.constant
-        hilight .hilight.c 1 "[[:digit:]]+\\.[[:digit:]]+f"  .scheme.constant
-        hilight .hilight.c 1 "-[[:digit:]]+\\.[[:digit:]]+f" .scheme.constant
+        hilight .hilight.c 1 "\\d+"        .scheme.constant
+        hilight .hilight.c 1 "-\\d+"       .scheme.constant
+        hilight .hilight.c 1 "0[xX]\\h+"   .scheme.constant
+        hilight .hilight.c 1 "d+\\.d+"     .scheme.constant
+        hilight .hilight.c 1 "-d+\\.d+"    .scheme.constant
+        hilight .hilight.c 1 "d+\\.d+f"    .scheme.constant
+        hilight .hilight.c 1 "-d+\\.d+f"   .scheme.constant
     !endif
 
     ; JASSPA MicroEmacs specific tokens for source editing. This is a special
@@ -402,15 +402,15 @@ set-variable .fhook-c.item-list-r6 "Clss \ecB\\1\ecA"
         ; Detect a for loop with no body - put semi-colon on next line, i.e.
         ; for (i = 1; i < 10; i++);
         ; { ... }
-        hilight .hilight.c  2 "\\s \\{for[ \t]*([^()]*)[ \t]*;" .scheme.hlred
+        hilight .hilight.c  2 "\\s\\{for[ \t]*([^()]*)[ \t]*;" .scheme.hlred
         ; Detect a for loop with no body - put semi-colon on next line, i.e.
         ; while (i == 1);
         ; { ... }
-        ; hilight .hilight.c  2 "\\s \\{while[ \t]*([^()]*)[ \t]*;" .scheme.hlred
+        ; hilight .hilight.c  2 "\\s\\{while[ \t]*([^()]*)[ \t]*;" .scheme.hlred
         ; Detect a bad 'if' statement that is terminated with ';' e.g.
         ; if (i < x);
         ; { ... }
-        hilight .hilight.c  2 "\\s \\{if[ \t]*([^()]*)[ \t]*;"  .scheme.hlred
+        hilight .hilight.c  2 "\\s\\{if[ \t]*([^()]*)[ \t]*;"  .scheme.hlred
         ; Detect a spurious '\' at the end of the line that is
         ; not a string or #define. i.e.
         ; char *d = "This is a " \

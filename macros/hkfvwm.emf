@@ -29,8 +29,8 @@ set-variable .fhook-fvwm.exact -1
     hilight .hilight.fvwm 2 "#"                      .scheme.comment
     hilight .hilight.fvwm 4 "\"" "\"" "\\"           .scheme.string
     
-    hilight .hilight.fvwm 0 "\\s \\{function" .scheme.operator
-    hilight .hilight.fvwm 0 "\\s \\{popup"    .scheme.operator
+    hilight .hilight.fvwm 0 "\\s\\{function"         .scheme.operator
+    hilight .hilight.fvwm 0 "\\s\\{popup"            .scheme.operator
     
     hilight .hilight.fvwm 1 "borderwidth"            .scheme.operator
     hilight .hilight.fvwm 1 "circulatedown"          .scheme.operator

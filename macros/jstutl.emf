@@ -42,7 +42,7 @@
 
 0 define-macro jst-prepare-tables
     beginning-of-buffer
-    !force 1 replace-string "^>table:?[ \t]*\\(\\S +\\)?[ \t]*\\(\\S +\\)?[ \t]*$" "\n\bLI\bTTB\bTTR\bTTC\n"
+    !force 1 replace-string "^>table:?[ \t]*\\(\\S+\\)?[ \t]*\\(\\S+\\)?[ \t]*$" "\n\bLI\bTTB\bTTR\bTTC\n"
     !while $status
         set-variable #l0 &add $window-line 1
         set-variable #l1 @s1
@@ -69,14 +69,14 @@
         set-variable $window-line #l0
         !force #l3 replace-string #l1 "\bLN\bLI\btTC\bTTC\bLN"
         set-variable $window-line #l0
-        !force 1 replace-string "\bLN\bLI\btTC\btTR\bTTR\bTTC\bLN\\s *\\s *\\s *\bLN\bLI\btTC\btTR\btTB" "\bLN\bLI\btTC\btTR\btTB"
+        !force 1 replace-string "\bLN\bLI\btTC\btTR\bTTR\bTTC\bLN\\s*\\s*\\s*\bLN\bLI\btTC\btTR\btTB" "\bLN\bLI\btTC\btTR\btTB"
         set-variable $window-line #l0
         !force #l3 replace-string "\n?\bLN" "\n\n"
         forward-line
         set-mark
         set-variable $window-line &sub #l0 2
         4 narrow-buffer
-        !force 1 replace-string "^>table:?[ \t]*\\(\\S +\\)?[ \t]*\\(\\S +\\)?[ \t]*$" "\n\bLI\bTTB\bTTR\bTTC\n"
+        !force 1 replace-string "^>table:?[ \t]*\\(\\S+\\)?[ \t]*\\(\\S+\\)?[ \t]*$" "\n\bLI\bTTB\bTTR\bTTC\n"
     !done
 !emacro
 
@@ -211,11 +211,11 @@
             !endif
         !endif
         set-mark
-        !force search-backward "\\S "
+        !force search-backward "\\S"
         forward-char
         insert-string "\bpM"
         set-variable $window-line #l1
-        !force search-forward "\\S "
+        !force search-forward "\\S"
         backward-char
         insert-string "\bPM"
         set-variable $window-line #l1
@@ -233,7 +233,7 @@
         set-variable #l1 $window-line
         set-variable #l2 $window-col
         set-variable #l3 &cond &sin "@" #l0 "M" "F"
-        !force search-forward "\\S "
+        !force search-forward "\\S"
         backward-char
         insert-string &cat "\bP" #l3
         !if &seq #l4 ""
@@ -288,7 +288,7 @@
 
 0 define-macro jst-prepare-lcr-paragraphs
     beginning-of-buffer
-    !force search-forward "^\n[ \t]*\\(\\S .*\\)$"
+    !force search-forward "^\n[ \t]*\\(\\S.*\\)$"
     !while $status
         set-variable #l0 &len @s1
         ; is the line is short enough to be left, centred or right
@@ -328,7 +328,7 @@
                 insert-string "\bpC"
             !endif 
         !endif
-        !force search-forward "^\n[ \t]*\\(\\S .*\\)$"
+        !force search-forward "^\n[ \t]*\\(\\S.*\\)$"
     !done
 !emacro
 
@@ -336,7 +336,7 @@
     ; Note that the searching for bold and other section should reflect the hilight
     ; change bold *....* to easily found labels
     beginning-of-buffer
-    !force search-forward "^>\\|<<\\|\\*\\S [^*\n]*\\*"
+    !force search-forward "^>\\|<<\\|\\*\\S[^*\n]*\\*"
     !while $status
         !if &seq @s0 ">"
             end-of-line
@@ -351,7 +351,7 @@
             backward-delete-char
             insert-string "\bfB"
         !endif
-        !force search-forward "^>\\|<<\\|\\*\\S [^*\n]*\\*"
+        !force search-forward "^>\\|<<\\|\\*\\S[^*\n]*\\*"
     !done
     beginning-of-buffer
     replace-string "<<fb>>" "\bFB"
@@ -363,7 +363,7 @@
     replace-string "^>/fb:?[ \t]*$" "\n\bLI\bfB\n"
     ; change italic ~....~ & <<fi>>....<</fi>> to easily found labels
     beginning-of-buffer
-    !force search-forward "^>\\|<<\\|~\\S [^~\n]*~"
+    !force search-forward "^>\\|<<\\|~\\S[^~\n]*~"
     !while $status
         !if &seq @s0 ">"
             end-of-line
@@ -378,7 +378,7 @@
             backward-delete-char
             insert-string "\bfI"
         !endif
-        !force search-forward "^>\\|<<\\|~\\S [^~\n]*~"
+        !force search-forward "^>\\|<<\\|~\\S[^~\n]*~"
     !done
     beginning-of-buffer
     replace-string "<<fi>>" "\bFI"
@@ -390,7 +390,7 @@
     replace-string "^>/fi:?[ \t]*$" "\n\bLI\bfI\n"
     ; change underline _...._ to easily found labels
     beginning-of-buffer
-    !force search-forward "^>\\|<<\\|_\\S [^_\n]*_"
+    !force search-forward "^>\\|<<\\|_\\S[^_\n]*_"
     !while $status
         !if &seq @s0 ">"
             end-of-line
@@ -405,7 +405,7 @@
             backward-delete-char
             insert-string "\bfU"
         !endif
-        !force search-forward "^>\\|<<\\|_\\S [^_\n]*_"
+        !force search-forward "^>\\|<<\\|_\\S[^_\n]*_"
     !done
     beginning-of-buffer
     replace-string "<<fu>>" "\bFU"
@@ -417,7 +417,7 @@
     replace-string "^>/fu:?[ \t]*$" "\n\bLI\bfU\n"
     ; change courier @....@ to easily found labels
     beginning-of-buffer
-    !force search-forward "^>\\|<<\\|@\\S [^@\n]*@"
+    !force search-forward "^>\\|<<\\|@\\S[^@\n]*@"
     !while $status
         !if &seq @s0 ">"
             end-of-line
@@ -432,7 +432,7 @@
             backward-delete-char
             insert-string "\bfB"
         !endif
-        !force search-forward "^>\\|<<\\|@\\S [^@\n]*@"
+        !force search-forward "^>\\|<<\\|@\\S[^@\n]*@"
     !done
     beginning-of-buffer
     replace-string "<<fm>>" "\bFM"
@@ -503,7 +503,7 @@
 
 0 define-macro jst-prepare-items
     beginning-of-buffer
-    replace-string "^\n\\([ \t]*\\)\\[\\(\\S [^]\n]*\\)][ \t]+\\(\\S \\)" "\n\\1\bBI\\2\bbI\\3"
+    replace-string "^\n\\([ \t]*\\)\\[\\(\\S[^]\n]*\\)][ \t]+\\(\\S\\)" "\n\\1\bBI\\2\bbI\\3"
     beginning-of-buffer
     !force search-forward "\bbI"
     !while $status
@@ -518,15 +518,15 @@
     ; indent tolerance
     set-variable #l9 &div $buffer-indent-width 2
     set-variable $window-line #p0
-    !force &sub $window-line #p1 search-forward "^\n[ \t]*\\(\\*\\|[0-9]+[]).]\\|[a-zA-Z][]).]\\|[ivxlc]+[]).]\\)[ \t]+\\S "
+    !force &sub $window-line #p1 search-forward "^\n[ \t]*\\(\\*\\|[0-9]+[]).]\\|[a-zA-Z][]).]\\|[ivxlc]+[]).]\\)[ \t]+\\S"
     !while $status
         set-variable #l3 @s1
         !if &seq &lef #l3 1 "*"
             set-variable #l4 "D" 
-            set-variable #l3 "^[ \t]*\\*[ \t]+\\S "
+            set-variable #l3 "^[ \t]*\\*[ \t]+\\S"
         !elif &xse &lef #l3 1 "[0-9]"
             set-variable #l4 &cat "N" &xir #l3 "[0-9]+\\(.\\).*" "\\1"
-            set-variable #l3 "^[ \t]*[0-9]+[]).][ \t]+\\S "
+            set-variable #l3 "^[ \t]*[0-9]+[]).][ \t]+\\S"
         !else
             !if &isin "i" #l3
                 ; roman numberals?
@@ -538,7 +538,7 @@
                 set-variable #l4 &slo #l4
             !endif
             set-variable #l4 &cat #l4 &xir #l3 "[A-Za-z]+\\(.\\).*" "\\1"
-            set-variable #l3 "^[ \t]*[A-Za-z]+[]).][ \t]+\\S "
+            set-variable #l3 "^[ \t]*[A-Za-z]+[]).][ \t]+\\S"
         !endif
         set-variable #l0 $window-line
         backward-char
@@ -578,7 +578,7 @@
                         jst-insert-bullet-string #l7 #l4
                         set-variable #l6 $window-line
                         beginning-of-line
-                        search-backward "\\S "
+                        search-backward "\\S"
                         forward-char
                         insert-string &cat "\bb" &lef #l4 1
                         set-variable $window-line #l6
@@ -593,13 +593,13 @@
             !endif
         !until #l2
         beginning-of-line
-        search-backward "\\S "
+        search-backward "\\S"
         forward-char
         insert-string &spr "\bb%s\bbE" &lef #l4 1
         ; find the next set of bullets
         set-variable $window-line #l0
         end-of-line
-        !force &sub $window-line #p1 search-forward "^\n[ \t]*\\(\\*\\|[0-9]+[]).]\\|[a-zA-Z][]).]\\|[ivxlc]+[]).]\\)[ \t]+\\S "
+        !force &sub $window-line #p1 search-forward "^\n[ \t]*\\(\\*\\|[0-9]+[]).]\\|[a-zA-Z][]).]\\|[ivxlc]+[]).]\\)[ \t]+\\S"
     !done
 !emacro
 
@@ -607,7 +607,7 @@
     ; find the indent of the first non-blank line (possibly a header) and use
     ; this as a base line 
     set-variable $window-line #p0
-    !force &sub $window-line #p1 search-forward "^[ \t]*\\S "
+    !force &sub $window-line #p1 search-forward "^[ \t]*\\S"
     !if $status
         backward-char
         set-variable #l3 $window-acol
@@ -635,7 +635,7 @@
             !elif &not &less &sub #l4 #l5 $buffer-indent-width
                 set-variable #l4 #l5
                 set-variable #l6 $window-line
-                search-backward "\\S "
+                search-backward "\\S"
                 forward-char
                 insert-string "\blT"
                 set-variable $window-line #l6
@@ -675,7 +675,7 @@
     !if #l2
         ; rebalance the indents
         beginning-of-line
-        search-backward "\\S "
+        search-backward "\\S"
         forward-char
         #l2 insert-string "\blT"
     !endif
@@ -726,16 +726,16 @@ define-macro jst-prepare-doc
     jst-prepare-hide-fixed-paragraphs
     ; replace any === & --- header lines with section ids
     beginning-of-buffer
-    replace-string "^\\([ \t]*\\)\\(\\S .*\\)\n===+$" "\\1\bS2\\2\bs2"
+    replace-string "^\\([ \t]*\\)\\(\\S.*\\)\n===+$" "\\1\bS2\\2\bs2"
     beginning-of-buffer
-    replace-string "^\\([ \t]*\\)\\(\\S .*\\)\n---+$" "\\1\bS3\\2\bs3"
+    replace-string "^\\([ \t]*\\)\\(\\S.*\\)\n---+$" "\\1\bS3\\2\bs3"
     ; replace any #.0 & #.#* header lines with section ids
     beginning-of-buffer
-    replace-string "^\\([ \t]*\\)\\([0-9]+\\)\\.0\\([ \t]+\\S .*\\)$" "\\1\bS2\\2\\3\bs2"
+    replace-string "^\\([ \t]*\\)\\([0-9]+\\)\\.0\\([ \t]+\\S.*\\)$" "\\1\bS2\\2\\3\bs2"
     beginning-of-buffer
-    replace-string "^\\([ \t]*\\)\\([0-9]+\\.[0-9]+\\)\\([ \t]+\\S .*\\)$" "\\1\bS3\\2\\3\bs3"
+    replace-string "^\\([ \t]*\\)\\([0-9]+\\.[0-9]+\\)\\([ \t]+\\S.*\\)$" "\\1\bS3\\2\\3\bs3"
     beginning-of-buffer
-    replace-string "^\\([ \t]*\\)\\([0-9]+\\.[0-9.]+[ \t]+\\S .*\\)$" "\\1\bS4\\2\bs4"
+    replace-string "^\\([ \t]*\\)\\([0-9]+\\.[0-9.]+[ \t]+\\S.*\\)$" "\\1\bS4\\2\bs4"
     ; replace any 'Appendix #' header lines with section ids
     beginning-of-buffer
     replace-string "^\\([ \t]*\\)\\(Appendix [[:alpha:]].*\\)$" "\\1\bS2\\2\bs2"
@@ -780,7 +780,7 @@ define-macro jst-prepare-doc
     beginning-of-buffer
     ; delete-blank-lines - doesn't work at the top of a buffer!
     set-mark
-    search-forward "\\S "
+    search-forward "\\S"
     beginning-of-line
     kill-region
     -1 yank

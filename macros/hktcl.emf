@@ -52,20 +52,20 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \ecB\\1\ecA"
 !if &and &sin "h" .fhook-tcl.setup &band .hilight.flags 0x02 
     ; High-light Tcl Mode
     0 hilight .hilight.tcl 0                     $global-scheme
-    hilight .hilight.tcl 0 "^\\s *\\{#.*"        .scheme.comment
+    hilight .hilight.tcl 0 "^\\s*\\{#.*"         .scheme.comment
     hilight .hilight.tcl 2 "^#!/"                .scheme.header
     hilight .hilight.tcl 2 ";#"                  .scheme.comment
     hilight .hilight.tcl 0 "\\\\."               $global-scheme
     hilight .hilight.tcl 4 "\"" "\"" "\\"        .scheme.string
     hilight .hilight.tcl 4 "\\$" "\\}\\W" ""     .scheme.variable
     !if &band .hilight.flags 0x04
-        hilight .hilight.tcl 0x20 "proc\\s +[-A-Za-z:_][-0-9A-Z:a-z_.']*" .scheme.function
-        hilight .hilight.tcl 0x20 "namespace\\s +eval\\s +[-A-Za-z:_][-0-9A-Z:a-z_.']*" .scheme.function
-        hilight .hilight.tcl 0x20 "\\w+\\s +proc\\s +[-A-Za-z:_][-0-9A-Z:a-z_.']*" .scheme.function
-        hilight .hilight.tcl 0x20 "\\w+\\s +instproc\\s +[-A-Za-z:_][-0-9A-Z:a-z_.']*" .scheme.function
+        hilight .hilight.tcl 0x20 "proc\\s+[-A-Za-z:_][-0-9A-Z:a-z_.']*" .scheme.function
+        hilight .hilight.tcl 0x20 "namespace\\s+eval\\s+[-A-Za-z:_][-0-9A-Z:a-z_.']*" .scheme.function
+        hilight .hilight.tcl 0x20 "\\w+\\s+proc\\s+[-A-Za-z:_][-0-9A-Z:a-z_.']*" .scheme.function
+        hilight .hilight.tcl 0x20 "\\w+\\s+instproc\\s+[-A-Za-z:_][-0-9A-Z:a-z_.']*" .scheme.function
     !endif
     !if &band .hilight.flags 0x04
-        hilight .hilight.tcl 0 "^\\s *\\{proc\\s +\\w+" .scheme.function
+        hilight .hilight.tcl 0 "^\\s*\\{proc\\s+\\w+" .scheme.function
     !endif
     ;
     hilight .hilight.tcl 2 "^package"            .scheme.prepro
@@ -366,7 +366,7 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \ecB\\1\ecA"
     indent .hilight.tcl e "\"" "\"" "\\"
     indent .hilight.tcl b "\\[" "]"
     indent .hilight.tcl b "(" ")"
-    indent .hilight.tcl c "\\\\\\s " 3/2t
+    indent .hilight.tcl c "\\\\\\s" 3/2t
     indent .hilight.tcl i "#"  
 !endif
 

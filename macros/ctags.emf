@@ -63,7 +63,7 @@ set-char-mask "1" ":~"
 !emacro
 
 0 define-macro ctags-move-to-next
-    set-variable #l0 &cat @1 "\\|//\\|/\\*\\|^\\s-*#\\|^\\s-*#if\\s-+0"
+    set-variable #l0 &cat @1 "\\|//\\|/\\*\\|^\\s*#\\|^\\s*#if\\s+0"
     set-variable #l9 #p9
     !repeat
         search-forward #l0
@@ -212,7 +212,7 @@ set-char-mask "1" ":~"
     set-variable #l6 ""
     beginning-of-buffer
     !while 1
-        !force 0 ctags-move-to-next "['\"=,;({]\\|\\<enum\\s-+\\(\\w+\\)?\\s-*{\\|\\<typedef\\>\\|\\<struct\\s-+\\(\\w+\\)?\\s-*[{;]\\|\\<class\\s-+\\w+"
+        !force 0 ctags-move-to-next "['\"=,;({]\\|\\<enum\\s+\\(\\w+\\)?\\s*{\\|\\<typedef\\>\\|\\<struct\\s+\\(\\w+\\)?\\s*[{;]\\|\\<class\\s+\\w+"
         !if &not $status
             !return
         !elif &sin @s0 "'\""
@@ -294,7 +294,7 @@ set-char-mask "1" ":~"
                 set-alpha-mark "t"
                 set-variable $window-line #l1
                 !if &less $window-line #l2
-                    !force &sub $window-line #l2 search-forward "^\\s-*#\\s-*define\\>"
+                    !force &sub $window-line #l2 search-forward "^\\s*#\\s*define\\>"
                     !if $status
                         ctags-add-tag
                         beginning-of-line
@@ -305,7 +305,7 @@ set-char-mask "1" ":~"
                 goto-alpha-mark "t"
             !endif
         !elif &seq @s0 "{"
-            !if &not &xse @wl "\\s-*extern\\s-*\"C\".*"
+            !if &not &xse @wl "\\s*extern\\s*\"C\".*"
                 !goto ctag-skip-brace
             !endif
         !elif &seq &lef @s0 4 "enum"
@@ -335,7 +335,7 @@ set-char-mask "1" ":~"
                 ctags-add-tag
                 search-forward ";"
             !elif &seq @s0 "enum"
-                search-forward "\\s-+\\(\\w+\\)?\\s-*{"
+                search-forward "\\s+\\(\\w+\\)?\\s*{"
                 !goto ctag-enum
             !else
                 search-forward ";"

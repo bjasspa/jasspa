@@ -150,7 +150,7 @@ set-char-mask "1" ":_~"
     set-variable #l6 ""
     beginning-of-buffer
     !while 1
-        !force 0 javatags-move-to-next "['\"=,;({]\\|\\<enum\\s-+\\(\\w+\\)?\\s-*{\\|\\<typedef\\>\\|\\<struct\\s-+\\w+\\s-*[{;]\\|\\<class\\s-+\\w+"
+        !force 0 javatags-move-to-next "['\"=,;({]\\|\\<enum\\s+\\(\\w+\\)?\\s*{\\|\\<typedef\\>\\|\\<struct\\s+\\w+\\s*[{;]\\|\\<class\\s+\\w+"
         !if &not $status
             !return
         !elif &sin @s0 "'\""
@@ -222,7 +222,7 @@ set-char-mask "1" ":_~"
                 set-alpha-mark "t"
                 set-variable $window-line #l1
                 !if &less $window-line #l2
-                    !force &sub $window-line #l2 search-forward "^\\s-*#\\s-*define\\>"
+                    !force &sub $window-line #l2 search-forward "^\\s*#\\s*define\\>"
                     !if $status
                         javatags-add-tag
                         beginning-of-line
@@ -233,7 +233,7 @@ set-char-mask "1" ":_~"
                 goto-alpha-mark "t"
             !endif
         !elif &seq @s0 "{"
-            !if &not &xse @wl "\\s-*extern\\s-*\"C\".*"
+            !if &not &xse @wl "\\s*extern\\s*\"C\".*"
                 !goto javatag-skip-brace
             !endif
         !elif &seq &lef @s0 4 "enum"
@@ -263,7 +263,7 @@ set-char-mask "1" ":_~"
                 javatags-add-tag
                 search-forward ";"
             !elif &seq @s0 "enum"
-                search-forward "\\s-+\\(\\w+\\)?\\s-*{"
+                search-forward "\\s+\\(\\w+\\)?\\s*{"
                 !goto javatag-enum
             !else
                 search-forward ";"

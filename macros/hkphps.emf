@@ -56,10 +56,10 @@ set-variable .fhook-phps.item-list-r1 "Func \ecB\\1\ecA"
     hilight .hilight.phps 20   "/\\*" "*/" ""      .scheme.comment
     hilight .hilight.phps 0x1004 "^//" "\\}\\?>" "" .scheme.comment
     hilight .hilight.phps 0x1004 ";\\{//" "\\}\\?>" "" .scheme.comment
-    hilight .hilight.phps 0x1004 "\\s \\{//" "\\}\\?>" "" .scheme.comment
+    hilight .hilight.phps 0x1004 "\\s\\{//" "\\}\\?>" "" .scheme.comment
     hilight .hilight.phps 0x1004 "^#" "\\}\\?>" "" .scheme.comment
     hilight .hilight.phps 0x1004 ";\\{#" "\\}\\?>" "" .scheme.comment
-    hilight .hilight.phps 0x1004 "\\s \\{#" "\\}\\?>" "" .scheme.comment
+    hilight .hilight.phps 0x1004 "\\s\\{#" "\\}\\?>" "" .scheme.comment
     ; Includes.
     hilight .hilight.phps 2    "^require"          .scheme.prepro
     hilight .hilight.phps 2    "^require_once"     .scheme.prepro
@@ -68,7 +68,7 @@ set-variable .fhook-phps.item-list-r1 "Func \ecB\\1\ecA"
     hilight .hilight.phps 2    "^package"          .scheme.prepro
     ; Function names
     !if &band .hilight.flags 0x04
-        hilight .hilight.phps 0 "^\\s *\\{sub\\s +\\w[1-9A-Za-z_']*" .scheme.function
+        hilight .hilight.phps 0 "^\\s*\\{sub\\s+\\w[1-9A-Za-z_']*" .scheme.function
     !endif
     ; Labels
     hilight .hilight.phps 1    "STDIN"             .scheme.prepro
@@ -81,7 +81,7 @@ set-variable .fhook-phps.item-list-r1 "Func \ecB\\1\ecA"
     hilight .hilight.phps 1    "__METHOD__"        .scheme.prepro
     hilight .hilight.phps 0    "^__...__"          .scheme.prepro
     hilight .hilight.phps 0    "^__....__"         .scheme.prepro
-    hilight .hilight.phps 0    "^\\s *\\{\\w*:"    .scheme.link
+    hilight .hilight.phps 0    "^\\s*\\{\\w*:"     .scheme.link
     ; Variables.
     hilight .hilight.phps 4    "\\$" "\\}\\W" ""   .scheme.variable
     hilight .hilight.phps 4    "@" "\\}\\W" ""     .scheme.prepro

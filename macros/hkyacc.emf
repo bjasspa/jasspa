@@ -76,7 +76,7 @@ set-variable .fhook-yacc.comment-11 "|//||/|// | //||"
     hilight .hilight.yacc    0 "'\\\\''"      .scheme.quote
     ; Function names and goto labels
     !if &band .hilight.flags 0x04
-        hilight .hilight.yacc    0 "^\\w+\\}\\s (" .scheme.function
+        hilight .hilight.yacc    0 "^\\w+\\}\\s(" .scheme.function
         hilight .hilight.yacc    0 "^\\w+\\}(" .scheme.function
     !endif
     hilight .hilight.yacc    0 "^\\w+\\}:" .scheme.link

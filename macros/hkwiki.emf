@@ -28,8 +28,8 @@ set-variable .fhook-wiki.command-nbind "||||||||0||||||||||"
 set-variable .fhook-wiki.command-kbind "|h|space|delete|backspace|return|n|p|b|g|m||tab|esc tab|l|e|C-c e||"
 set-variable .fhook-wiki.command-desc  "||Scroll down|Scroll Up||Follow hyperlink|Next node|Previous node|Go to beginning of node|Go to node by name|Popup node menu||Next link|Previous link|Last Link|Toggle edit mode||            also bound to C-c e|"
 
-set-variable .fhook-wiki.collapse-open  "^\\*+\\s *\\S "
-set-variable .fhook-wiki.collapse-close "^\\*+\\s *\\S \\|\\'"
+set-variable .fhook-wiki.collapse-open  "^\\*+[\t ]*\\S"
+set-variable .fhook-wiki.collapse-close "^\\*+[\t ]*\\S\\|\\'"
 set-variable .fhook-wiki.collapse-mnext "-1"
 
 ; Quick check to make sure that hilighting is required.
@@ -42,9 +42,9 @@ set-variable .fhook-wiki.collapse-mnext "-1"
     
     ; Non-authoring mode hilight
     0 hilight .hilight.wiki  0                        $global-scheme
-    hilight .hilight.wiki 2 "^-\\*-\\s *mode:\\s *wiki"  .scheme.hide
-    hilight .hilight.wiki 0x42 "^\\*\\s *\\}\\S " ""     .scheme.header
-    hilight .hilight.wiki 0x42 "^\\*\\*+\\s *\\}\\S " "" .scheme.no1
+    hilight .hilight.wiki 2 "^-\\*-\\s*mode:\\s*wiki"  .scheme.hide
+    hilight .hilight.wiki 0x42 "^\\*\\s*\\}\\S" ""     .scheme.header
+    hilight .hilight.wiki 0x42 "^\\*\\*+\\s*\\}\\S" "" .scheme.no1
     hilight .hilight.wiki 0xc0 ":#\\}\\w" ""          .hilight.wikiL .scheme.link
     hilight .hilight.wiki 0xc0 ":\\w[^:#]*#\\}\\w" "" .hilight.wikiL .scheme.link
     hilight .hilight.wiki 0xc0 ":\\}\\w" ""           .hilight.wikiL .scheme.link
@@ -54,8 +54,8 @@ set-variable .fhook-wiki.collapse-mnext "-1"
     
     ; authoring mode hilight
     0 hilight .hilight.wikiE  0                $global-scheme
-    hilight .hilight.wikiE 2 "^-\\*-\\s *mode:\\s *wiki" .scheme.hide
-    hilight .hilight.wikiE 0x2 "^\\*\\s *\\S " .scheme.header
+    hilight .hilight.wikiE 2 "^-\\*-\\s*mode:\\s*wiki" .scheme.hide
+    hilight .hilight.wikiE 0x2 "^\\*\\s*\\S" .scheme.header
     hilight .hilight.wikiE 0x1 ":#\\w[^:]*:"   .scheme.link
     hilight .hilight.wikiE 0x1 ":\\w[^:]*:"    .scheme.link
 !endif
@@ -131,7 +131,7 @@ define-macro wiki-forward-node
     !if #l9
         end-of-line
         !while &gre &pdec @# 1 0
-            !force search-buffer "Em" "^\\*+[ \t]*\\S "
+            !force search-buffer "Em" "^\\*+[ \t]*\\S"
             !if &not $status
                 ml-write "[Error: no more nodes]"
                 !abort
@@ -149,7 +149,7 @@ define-macro wiki-backward-node
         end-of-line
         !while &gre &pdec @# 1 0
             backward-char
-            !force search-buffer "bEm" "^\\*+[ \t]*\\S "
+            !force search-buffer "bEm" "^\\*+[ \t]*\\S"
             !if &not $status
                 ml-write "[Error: no more nodes]"
                 !abort
@@ -318,11 +318,11 @@ define-macro wiki-node-menu
         osd .osd.tmp 0 "sS" .scheme.osd-child .w .d 0 -1
         set-variable #l1 0
         beginning-of-buffer
-        !force search-buffer "Em" "^\\*\\(\\**\\)[ \t]*\\(\\S [^:#\n]*\\)"
+        !force search-buffer "Em" "^\\*\\(\\**\\)[ \t]*\\(\\S[^:#\n]*\\)"
         !while $status
             set-variable #l2 &spr "%n%s" &len @s1 "  " &trb @s2
             osd .osd.tmp &inc #l1 1 "" #l2 #l1 wiki-node-menu-sel
-            !force search-buffer "Em" "^\\*\\(\\**\\)[ \t]*\\(\\S [^:#\n]*\\)"
+            !force search-buffer "Em" "^\\*\\(\\**\\)[ \t]*\\(\\S[^:#\n]*\\)"
         !done
         goto-position "\x81"
         .osd.wikim osd

@@ -32,9 +32,9 @@ set-variable .fhook-bibtex.collapse-mnext "-1"
     !endif
     ; normal token hilighting    
     0 hilight .hilight.bibtex 0                       $global-scheme
-    hilight .hilight.bibtex 0 "^\\s-*\\{@\\w*\\}{"    .scheme.bold
-    hilight .hilight.bibtex 0 "^\\s-*\\{\\w*\\s-*\\}={*" .scheme.italic
-    hilight .hilight.bibtex 0 "^\\s-*\\{\\w*\\s-*\\}=\\s-{*" .scheme.italic
+    hilight .hilight.bibtex 0 "^\\s*\\{@\\w*\\}{"    .scheme.bold
+    hilight .hilight.bibtex 0 "^\\s*\\{\\w*\\s*\\}={*" .scheme.italic
+    hilight .hilight.bibtex 0 "^\\s*\\{\\w*\\s*\\}=\\s{*" .scheme.italic
     
     ; bibtex simulation hilighting 
     0 hilight .hilight.bibtexs 0                               $global-scheme

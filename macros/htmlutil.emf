@@ -498,7 +498,7 @@ define-macro html-insert-attrib
         !jump 3
     !elif &seq @wc "<"
         backward-char
-        search-backward "\\S "
+        search-backward "\\S"
         forward-char
         !if &seq @wc " "
             forward-char
@@ -511,7 +511,7 @@ define-macro html-insert-attrib
     !endif
     !if &band @# 1
         copy-region
-        !if &xis @y &spr ".*\\s %s%s\\(.*\\)" #l0 &cond &band @# 2 "=\"?" ""
+        !if &xis @y &spr ".*\\s%s%s\\(.*\\)" #l0 &cond &band @# 2 "=\"?" ""
             set-variable #l1 &len @s1
             #l1 backward-char
             -1 yank

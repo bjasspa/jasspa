@@ -29,9 +29,9 @@ set-variable .fhook-lisp.indent-width 2
     hilight .hilight.lisp 0x804  "\"" "\"" "\\"      .scheme.string
     hilight .hilight.lisp 20 "#|" "|#" ""            .scheme.comment
     hilight .hilight.lisp 2  ";"                     .scheme.comment
-    hilight .hilight.lisp 1  "^\\s *(\\{defvar"      .scheme.variable
-    hilight .hilight.lisp 1  "^\\s *(\\{defconst"    .scheme.variable
-    hilight .hilight.lisp 1  "^\\s *(\\{defun"       .scheme.keyword
+    hilight .hilight.lisp 1  "^\\s*(\\{defvar"       .scheme.variable
+    hilight .hilight.lisp 1  "^\\s*(\\{defconst"     .scheme.variable
+    hilight .hilight.lisp 1  "^\\s*(\\{defun"        .scheme.keyword
 !endif
 
 !if &sin "d" .fhook-lisp.setup

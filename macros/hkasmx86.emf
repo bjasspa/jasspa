@@ -41,7 +41,7 @@ set-variable .fhook-asmx86.collapse-mnext "-1"
 !if &and &sin "h" .fhook-asmx86.setup &band .hilight.flags 0x02
     ; Highlight Assembler Mode
     0 hilight .hilight.asmx86 0                $global-scheme
-    hilight   .hilight.asmx86 0 "^\\s *\\{#.*" .scheme.comment
+    hilight   .hilight.asmx86 0 "^\\s*\\{#.*" .scheme.comment
     hilight   .hilight.asmx86 0 "\\\\."        $global-scheme
     hilight   .hilight.asmx86 4 "\"" "\"" "\\" .scheme.string
     hilight   .hilight.asmx86 0 "'.'"          .scheme.quote
@@ -49,7 +49,7 @@ set-variable .fhook-asmx86.collapse-mnext "-1"
     hilight   .hilight.asmx86 0 "'\\\\'"       .scheme.error
     hilight   .hilight.asmx86 0 "'\\\\''"      .scheme.quote
     !if &band .hilight.flags 0x04
-        hilight   .hilight.asmx86 0 "^\\s *\\{proc\\s +\w+" .scheme.function
+        hilight   .hilight.asmx86 0 "^\\s*\\{proc\\s+\\w+" .scheme.function
     !endif
     hilight .hilight.asmx86   0 "^\\w+\\}:"    .scheme.link
     ; Preprocessor
@@ -247,7 +247,7 @@ set-variable .fhook-asmx86.collapse-mnext "-1"
     indent .hilight.asmx86 e "\"" "\"" "\\"
     indent .hilight.asmx86 b "\\[" "]"
     indent .hilight.asmx86 b "(" ")"
-    indent .hilight.asmx86 c "\\\\\\s " 3/2t
+    indent .hilight.asmx86 c "\\\\\\s" 3/2t
     indent .hilight.asmx86 i ";"
 !endif
 
