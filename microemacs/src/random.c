@@ -1938,8 +1938,6 @@ getCoffset(meHilight *indentDef, int onBrace, int *inComment)
         case 0:
             if(brakCont < 0)
                 return -brakCont ;
-            else if(onBrace < 0)
-                return meIndentGetStatementIndent(indentDef) ;
             return 0 ;
             
         case ')':
@@ -1965,7 +1963,7 @@ find_bracket_fence:
                 if(cc == '{')
                 {
                     ret = getccol() ;
-                    if(ret <= meIndentGetBraceIndent(indentDef))
+                    if((ret == 0) || (ret < meIndentGetBraceIndent(indentDef)))
                     {
                         if(brakCont < 0)
                             return -brakCont ;
@@ -2090,7 +2088,7 @@ find_bracket_fence:
 		    }
                 }
                 frameCur->windowCur->dotOffset = off ;
-                if(ii <= meIndentGetStatementIndent(indentDef) + meIndentGetBraceIndent(indentDef))
+                if(ii <= meIndentGetBraceIndent(indentDef))
                     indent = 1 ;
 		else if(indent < 0)
                     indent = 0 ;
@@ -2222,7 +2220,11 @@ find_bracket_fence:
         }
     }
     else if(onBrace < 0)
-        brakCont += meIndentGetStatementIndent(indentDef) ;
+        /* this is a new context brase (i.e. one not following an if or else
+         * etc. used to define a new variable in mid function. The next line
+         * should be indented by a Statement not (Brace + BraceStatement) */
+        brakCont += (meIndentGetStatementIndent(indentDef) << 1) - 
+          meIndentGetBraceIndent(indentDef) - meIndentGetBraceStatementIndent(indentDef) ;
     return brakCont ;
 }
 
@@ -2423,10 +2425,9 @@ use_contcomm:
         ind = getCoffset(indentDef,onBrace,inComment) ;
         if(*inComment)
             ind += comInd ;
-        else if((ind += addInd) < 0)
+        else if(((onBrace < 0) && (ind == 0)) ||
+                ((ind += addInd) < 0))
             ind = 0 ;
-        else if((onBrace < 0) && (ind == 0) && (curOff > 0))
-            ind = meIndentGetBraceIndent(indentDef) ;
     }
     
     frameCur->windowCur->dotLine = oldlp ;
