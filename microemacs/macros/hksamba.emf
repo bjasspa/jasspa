@@ -1,6 +1,6 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 1999-2004 JASSPA (www.jasspa.com)
+; Copyright (C) 1999-2005 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Synopsis:   Samba hook - invoked when a Samba script file is loaded,
@@ -14,14 +14,20 @@ define-macro fhook-samba
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-samba.setup &reg "/history/fhook/samba" "ghnopx"
-set-variable .fhook-samba.setup-mask "aeghkmnoptux"
+set-variable .fhook-samba.setup &reg "/history/fhook/samba" "fghnopx"
+set-variable .fhook-samba.setup-mask "aefghkmnoptux"
 set-variable .fhook-samba.comment   "|#||#|# | #|r|"
 set-variable .fhook-samba.comment-1 "|;||;|; | ;|r|"
 
 ; setup item-list
 set-variable .fhook-samba.item-list-s1 "^\\s *\\[\\s *\\([1-9A-Za-z_]*\\)\\s *\\]"
 set-variable .fhook-samba.item-list-r1 "Ext \ecB\\1\ecA"
+
+; Setup collapse
+set-variable .fhook-samba.collapse-open  "^\\[\\s *\\(\\S +\\).*\\]"
+set-variable .fhook-samba.collapse-close "\\(^\\[\\|\\'\\)"
+set-variable .fhook-samba.collapse-mclose "0"
+set-variable .fhook-samba.collapse-mnext "-1"
 
 !if &not &exist .hilight.samba
     set-variable .hilight.samba    &pinc .hilight.next 1
@@ -361,16 +367,16 @@ set-variable .fhook-samba.item-list-r1 "Ext \ecB\\1\ecA"
     hilight .hilight.samba    1 "true" .scheme.variable
     hilight .hilight.samba    1 "false" .scheme.variable
     ; TCP/IP parameters
-    hilight .hilight.samba    1 "SO_KEEPALIVE" .scheme.variable    
-    hilight .hilight.samba    1 "SO_REUSEADDR" .scheme.variable    
-    hilight .hilight.samba    1 "SO_BROADCAST" .scheme.variable    
-    hilight .hilight.samba    1 "TCP_NODELAY" .scheme.variable    
-    hilight .hilight.samba    1 "IPTOS_LOWDELAY" .scheme.variable    
-    hilight .hilight.samba    1 "IPTOS_THROUGHPUT" .scheme.variable    
-    hilight .hilight.samba    1 "SO_SNDBUF" .scheme.variable    
-    hilight .hilight.samba    1 "SO_RCVBUF" .scheme.variable    
-    hilight .hilight.samba    1 "SO_SNDLOWAT" .scheme.variable    
-    hilight .hilight.samba    1 "SO_RCVLOWAT" .scheme.variable    
+    hilight .hilight.samba    1 "SO_KEEPALIVE" .scheme.variable
+    hilight .hilight.samba    1 "SO_REUSEADDR" .scheme.variable
+    hilight .hilight.samba    1 "SO_BROADCAST" .scheme.variable
+    hilight .hilight.samba    1 "TCP_NODELAY" .scheme.variable
+    hilight .hilight.samba    1 "IPTOS_LOWDELAY" .scheme.variable
+    hilight .hilight.samba    1 "IPTOS_THROUGHPUT" .scheme.variable
+    hilight .hilight.samba    1 "SO_SNDBUF" .scheme.variable
+    hilight .hilight.samba    1 "SO_RCVBUF" .scheme.variable
+    hilight .hilight.samba    1 "SO_SNDLOWAT" .scheme.variable
+    hilight .hilight.samba    1 "SO_RCVLOWAT" .scheme.variable
     ; Special variables.
     hilight .hilight.samba    0 "%[SPugUGHvhmLMNpRdaIT]" .scheme.operator
     hilight .hilight.samba    4 "%\\$(" ")" "" .scheme.variable
@@ -385,4 +391,3 @@ set-variable .fhook-samba.item-list-r1 "Ext \ecB\\1\ecA"
 !endif
 
 buffer-init-fhook "samba"
-
