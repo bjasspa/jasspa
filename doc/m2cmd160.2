@@ -1,0 +1,30 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd160.2,v 2.0 2001-05-14 19:53:57 jon Exp $
+.Im MicroEmacs command|macrodevelop
+.so me.tni
+.TH command-wait 2
+.XI command-wait - "Conditional wait command"
+.SH NAME
+command-wait \- Conditional wait command
+.Me $a
+.SH SYNOPSIS
+.na
+.B command-wait
+.ad
+.SH DESCRIPTION
+.B command-wait
+loops  getting and  processing  events (user input, screen  updates etc) until
+either the calling commands  \fB.wait\fR  command variable is undefined or set
+to false (\fC0\fR).
+.PP
+The  command is used when a main macro must wait and  process  input  until an
+exit criteria has been met, the input is best processed by setting the
+.Ht $buffer-input 5
+variable to a second macro. The macro
+.Ht gdiff 3
+uses this command in this way.
+.SH "SEE ALSO"
+.na
+.Ht $buffer-input 5 .
+.ad
+.FH

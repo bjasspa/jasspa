@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m5var082.5,v 2.0 2001-03-08 21:30:56 jon Exp $
+.Id $Id: m5var082.5,v 2.1 2001-05-14 19:54:54 jon Exp $
 .Im MicroEmacs variable|buffer|macrodevelop
 .so me.tni
 .TH $buffer-backup 5
@@ -33,13 +33,27 @@ location  of the  backup  files,  it can also be used to  prepend  the  backup
 filename with a string. \fB$MEBACKUPPATH\fR can specify an absolute path (e.g.
 "\fCc:/temp/mebackup/\fR")  or a relative path (e.g.  "\fCmebackup/\fR"  which
 will move all backup  files into a  sub-directory  automatically  in the files
-directory).  The  trailing  '\fC/\fR' is  important as the file name is simple
-appended, i.e. is creating a backup for  "c:/foo/bar.txt" and $MEBACKUPPATH is
-set the "backup" the backup file name will be "c:/foo/backupbar.txt".
+directory).
+.PP
+The trailing  '\fC/\fR' is important as the file name is simple appended, i.e.
+is  creating  a  backup  for  "c:/foo/bar.txt"  and  $MEBACKUPPATH  is set the
+"backup" the backup file name will be "c:/foo/backupbar.txt".
+.PP
+The environment variable  \fB$MEBACKUPSUB\fR can be used to substitute strings
+within the backup filename for another. The format of the value is a list of
+.Hr sed 1
+string substitutions, i.e.
+.CS
+$MEBACKUPSUB="s/from1/to1/ s/from2/to2/ s/fr..."
+.CE
+The 3 divide  characters  do not have to be '/'s, they can be any character as
+long as they are the same, e.g.  "sXfrom1Xto1X".  When define \*(mS performs a
+simple search for string  "\fCfrom1\fR"  (i.e. no regex  support) and replaces
+any match with the string "\fCto1\fR" etc.
 .SH EXAMPLE
 The following  example  compares the  differences  between the current version
 and the bucked up version using the
-.Ht diff 5
+.Ht diff 3
 macro. The \fBdiff-changes\fR macro is defined in \fCtools.emf\fR.
 .Me $emf-scheme
 .CS
@@ -62,7 +76,12 @@ define-macro diff-changes
 .CE 0
 .Me $ehf-scheme
 .SH NOTES
-This variable can not be set, any attempt to set it will result in an error.
+The variable  \fB$buffer-backup\fR  can not be set, any attempt to set it will
+result in an error.
+.PP
+On Windows and DOS  platforms if the $MEBACKUPPATH and $MEBACKUPSUB  variables
+are used all remaining '\fC:\fR' characters are changed to '\fC/\fR's as these
+are illegal in the middle of a filename.
 .SH "SEE ALSO"
 .na
 .Ht backup 2m ,

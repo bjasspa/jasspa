@@ -7,7 +7,7 @@
 #
 # Author      : Jon Green
 # Created     : 22nd February 1997
-# Last Edited : <010314.2303>
+# Last Edited : <010513.2257>
 #
 # History     : JG  220297 Original  Constructed from emacssrc
 #
@@ -183,7 +183,7 @@ MAC3_040=	$(DOCDIR)m3mac040.3 $(DOCDIR)m3mac041.3 $(DOCDIR)m3mac042.3\
 		$(DOCDIR)m3mac049.3
 MAC3_050=	$(DOCDIR)m3mac050.3 $(DOCDIR)m3mac051.3 $(DOCDIR)m3mac052.3\
 		$(DOCDIR)m3mac053.3 $(DOCDIR)m3mac054.3 $(DOCDIR)m3mac055.3\
-		$(DOCDIR)m3mac056.3
+		$(DOCDIR)m3mac056.3 $(DOCDIR)m3mac057.3
 		
 OSD3_000=	$(DOCDIR)m3osd000.3 $(DOCDIR)m3osd001.3 $(DOCDIR)m3osd002.3\
 		$(DOCDIR)m3osd003.3 $(DOCDIR)m3osd004.3 $(DOCDIR)m3osd005.3\
