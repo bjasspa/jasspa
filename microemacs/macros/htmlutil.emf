@@ -1,19 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2003 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Author        : $Author: jon $
-;  Created By    : Steven Phillips
-;  Created       : Wed Oct 15 17:46:32 2003
-;  Last Modified : <031017.1622>
+; Created:     Wed Oct 15 2003
+; Synopsis:    HTML Utility macros (broken out of hkhtml)
+; Authors:     Steven Phillips
 ;
-;  Description
-;
-;  Notes
-;
-;  History
-;
-;  Copyright (c) 2003 PTC.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 0 define-macro html-spell-word
     ; simply skip any text in a <..> token - put a 5 line limit on it
     set-variable #l0 $window-col

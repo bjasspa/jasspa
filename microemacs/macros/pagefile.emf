@@ -418,7 +418,6 @@ define-macro page-file-search-backward
 
 0 define-macro page-file-isearch
     set-variable #l0 @#
-;    set-variable $debug 1
     !repeat
         !if &band #l0 2
             !if &band #l0 1

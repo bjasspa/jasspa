@@ -427,9 +427,9 @@ typedef struct  meWindow {
 #if MEOPT_EXTENDED
     meInt              id;                      /* $window-id                   */
 #endif
+    meShort            windowRecenter;          /* If NZ, forcing row.          */
     meUShort           dotOffset;               /* Byte offset for "."          */
     meUShort           markOffset;              /* Byte offset for "mark"       */
-    meUShort           windowRecenter;          /* If NZ, forcing row.          */
     meUShort           frameRow;                /* Window starting row          */
     meUShort           frameColumn;             /* Window starting column       */
     meUShort           width;                   /* Window number text columns   */

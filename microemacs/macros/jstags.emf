@@ -4,14 +4,14 @@
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     1998
-; Synopsis:    Command-line macro for creating a tcl tags file
+; Synopsis:    Command-line macro for creating a JavaScript tags file
 ; Authors:     Steven Phillips
 ;
 ; Usage:
-;      me "@tcltags"
-;      me "@tcltags" <files> <dirs>
-;      me "@tcltags" "-v%tag-option=rm"
-;      me "@tcltags" "-v%tag-option=r" <files> <dirs>
+;      me "@jstags"
+;      me "@jstags" <files> <dirs>
+;      me "@jstags" "-v%tag-option=rm"
+;      me "@jstags" "-v%tag-option=r" <files> <dirs>
 ;
 ; Options:
 ;      r - recurse, a - append, m - multiple links to a tag

@@ -1131,14 +1131,25 @@ makelist(meBuffer *blistp, int verb)
     register int     ii, ff ;
     meUByte line[meBUF_SIZE_MAX] ;
     
-    addLineToEob(blistp,(meUByte *)"AC    Size Buffer          File") ;
-    addLineToEob(blistp,(meUByte *)"--    ---- ------          ----") ;
+#if MEOPT_EXTENDED
+    if(verb & 0x02)
+    {
+        addLineToEob(blistp,(meUByte *)"AC    Size Buffer              File Size  Mem Size   Undo Size") ;
+        addLineToEob(blistp,(meUByte *)"--    ---- ------              ---------  --------   ---------") ;
+    }
+    else
+#endif
+    {
+        addLineToEob(blistp,(meUByte *)"AC    Size Buffer          File") ;
+        addLineToEob(blistp,(meUByte *)"--    ---- ------          ----") ;
+    }
+        
     bp = bheadp;                            /* For all buffers      */
     
     /* output the list of buffers */
     while (bp != NULL)
     {
-	if(!verb && meModeTest(bp->mode,MDHIDE))
+	if((verb & 0x01) && meModeTest(bp->mode,MDHIDE))
 	{
 	    bp = bp->next;
 	    continue;
@@ -1188,7 +1199,8 @@ makelist(meBuffer *blistp, int verb)
 	for( ; ii>0 ; ii--)
 	    *cp1++ = ' ';
 	
-	if(verb)
+#if MEOPT_EXTENDED
+	if(verb & 0x02)
 	{
 #if MEOPT_UNDO
 	    meUndoNode *nn ;
@@ -1205,12 +1217,15 @@ makelist(meBuffer *blistp, int verb)
 		jj += meLineGetMaxLength(ll) ;
 		ll = meLineGetNext(ll) ;
 	    } while(ll != bp->baseLine) ;
+	    ff = line + 30 - cp1 ;
+	    while(--ff >= 0)
+		*cp1++ = ' ' ;
 	    *cp1++ = ' ';
 	    cp2 = meItoa(ii) ;
 	    while((cc = *cp2++) != '\0')
 		*cp1++ = cc ;
-	    ff = line + 45 - cp1 ;
-	    while(ff-- > 0)
+	    ff = line + 42 - cp1 ;
+	    while(--ff >= 0)
 		*cp1++ = ' ' ;
 	    jj += (meLINE_SIZE*(bp->lineCount+1)) + sizeof(meBuffer) ;
 	    cp2 = meItoa(jj) ;
@@ -1218,14 +1233,14 @@ makelist(meBuffer *blistp, int verb)
 		*cp1++ = cc ;
 #if MEOPT_UNDO
 	    ff = line + 53 - cp1 ;
-	    while(ff-- > 0)
+	    while(--ff >= 0)
 		*cp1++ = ' ' ;
 	    ii = 0 ;
 	    nn = bp->undoHead ;
 	    while(nn != NULL)
 	    {
 		if(meUndoIsLineSort(nn))
-                    ii += sizeof(meUndoNarrow) + (sizeof(meInt) * (nn->count + 1)) ;
+                    ii += sizeof(meUndoNode) + (sizeof(meInt) * (nn->count + 1)) ;
 #if MEOPT_NARROW
 		else if(meUndoIsNarrow(nn))
                     ii += sizeof(meUndoNarrow) ;
@@ -1245,8 +1260,10 @@ makelist(meBuffer *blistp, int verb)
 		*cp1++ = cc ;
 #endif
 	}
-	else if((bp->name[0] != '*') &&
-	   ((cp2 = bp->fileName) != NULL))
+	else
+#endif
+            if((bp->name[0] != '*') &&
+               ((cp2 = bp->fileName) != NULL))
 	{
 	    if((ii=meStrlen(cp2))+(cp1-line) > frameCur->width)
 	    {
@@ -1279,7 +1296,7 @@ listBuffers (int f, int n)
     if((wp=meWindowPopup(BbuffersN,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR),NULL)) == NULL)
 	return mlwrite(MWABORT,(meUByte *)"[Failed to create list]") ;
     bp = wp->buffer ;
-    makelist(bp,f) ;
+    makelist(bp,n) ;
     
     bp->dotLine = meLineGetNext(bp->baseLine);
     bp->dotOffset = 0 ;
