@@ -1,0 +1,185 @@
+;       man pages hook (does grotty string replaces)
+;
+;   Last Modified : <000627.1520>
+;
+
+!if &band .hilight.flags 0x01
+    !if &not &exist .hilight.man "ERROR"
+        set-variable .hilight.man &pinc .hilight.next 1
+    !endif
+    
+    0 hilight  .hilight.man 0                                $global-scheme
+    ; ignore
+    hilight .hilight.man 64 ".\CH" ""                        $global-scheme
+    ; normal underline/italic
+    hilight .hilight.man 64 "_\CH\\(.\\)\\}[^\CH]" "\\1"     .scheme.italic
+    hilight .hilight.man 64 "\\(.\\)\CH_\\}[^\CH]" "\\1"     .scheme.italic
+    ; bold - first is for nroff -man
+    hilight .hilight.man 64 "\\(.\\)\CH\\1\\}[^\CH]" "\\1"   .scheme.bold
+    hilight .hilight.man 64 "_\CH_\CH_\CH_\\}[^\CH]" "_"     .scheme.header
+    hilight .hilight.man 64 "\\(.\\)\CH\\1\CH\\1\CH\\1\\}[^\CH]" "\\1" .scheme.header
+    ; bold underline
+    hilight .hilight.man 64 "_\CH_\CH_\CH_\CH_\\}[^\CH]" "_" .scheme.italic
+    hilight .hilight.man 64 "_\CH\\(.\\)\CH\\1\CH\\1\CH\\1\\}[^\CH]" "\\1" .scheme.italic
+    ; Note that we do a .^H._^H_ check first to ensure we do not mix
+    ; bold and italic.
+    hilight .hilight.man 64 "\\(.\\)\CH\\1_\CH_\\}[^\CH]" "\\1_" .scheme.bold
+!endif
+
+define-macro aman
+    !if &bmod "edit"
+        !if &iseq @mc1 "Save buffer first (y/n) :" "nNyY" "y"
+            save-buffer
+        !endif
+    !endif
+    pipe-shell-command &spr "soelim %s | tbl -TX | neqn | nroff -man | col -x" $buffer-fname
+    -1 buffer-mode "view"
+    set-mark
+    2 forward-line
+    forward-word
+    beginning-of-line
+    kill-region
+    -1 yank
+    fhook-man
+!emacro
+
+define-macro man-backward-word
+    !repeat
+        backward-char
+    !until &inw @wc
+    !repeat
+        !force backward-char
+        !if &not $status
+            !return
+        !endif
+    !until &not &or &inw @wc &sin @wc "\b_" 
+    forward-char
+!emacro
+
+define-macro man-forward-word
+    !repeat
+        forward-char
+    !until &inw @wc
+    !repeat
+        forward-char
+    !until &not &or &inw @wc &sin @wc "\b_" 
+!emacro
+
+0 define-macro man-process-link
+    set-variable #l0 $window-col
+    !while &not &inw @wc
+        !if &not &sin @wc "\b_" 
+            set-variable $window-col #l0
+            ml-write "Error! Not in a link"
+            !abort
+        !endif
+        forward-char
+    !done
+    ; Goto beginning of word and place mark
+    forward-char
+    man-backward-word
+    set-mark
+    ; Goto end of line and copy region
+    end-of-line
+    copy-region
+    set-cursor-to-mouse
+    find-buffer "*Man-tmp"
+    beginning-of-buffer
+    yank
+    -1 yank
+    !force man-clean
+    forward-word
+    set-variable #l2 $window-col
+    !if &seq @wc "("
+        forward-char
+        !if &sin @wc "123456789"
+            forward-char
+            !if &not &seq @wc ")"
+                forward-char
+            !endif
+            !if &seq @wc ")"
+                forward-char
+                set-variable #l2 $window-col
+            !endif
+        !endif
+    !endif
+    beginning-of-buffer
+    set-variable #l2 &lef @wl #l2
+    delete-buffer "*Man-tmp"
+    man #l2
+!emacro
+
+define-macro man-clean
+    -1 buffer-mode "view"
+    1 buffer-mode "magic"
+    beginning-of-buffer
+    replace-string ".\CH_\CH\(.\)\CH.\CH.\CH." "\\1"
+    beginning-of-buffer
+    replace-string ".\CH_\CH\(.\)" "\1"
+
+    beginning-of-buffer
+    replace-string "_\CH.\CH.\CH.\CH\(.\)" "\\1"
+
+    beginning-of-buffer
+    replace-string ".\CH.\CH.\CH\(.\)" "\\1"
+    beginning-of-buffer
+    replace-string "_\CH_\CH_\CH_" "_"
+
+    beginning-of-buffer
+    replace-string "\(.\)\CH_" "\\1"
+    beginning-of-buffer
+    replace-string "_\CH\(.\)" "\\1"
+
+    beginning-of-buffer
+    replace-string ".\CH" ""
+    beginning-of-buffer
+!emacro
+
+define-macro man
+    !force set-variable #l9 @1
+    !if &not $status
+        set-variable #l9 @ml "Man on"
+    !endif
+    set-variable #l0 #l9
+    set-variable #l1 ""
+    ; is there a section ? if so remove it
+    set-variable #l3 &len #l0
+    !if &equ &rsin ")" #l0 #l3
+        !if &gre &set #l2 &rsin "(" #l0 &sub #l3 5
+            set-variable #l1 &rig #l0 #l2
+            set-variable #l1 &lef #l1 &sub &len #l1 1
+            set-variable #l0 &lef #l0 &sub #l2 1
+            !if &seq $platform "sunos"
+                set-variable #l1 &cat "-s " #l1
+            !endif
+        !endif
+    !endif
+    0 pipe-shell-command &spr "man %s %s" #l1 #l0 &cat "*Man on " #l9
+    -1 buffer-mode "view"
+    set-mark
+    2 forward-line
+    forward-word
+    beginning-of-line
+    kill-region
+    -1 yank
+    fhook-man
+!emacro
+
+define-macro fhook-man
+    !if &band .hilight.flags 0x01
+        set-variable $buffer-hilight .hilight.man
+    !endif
+    buffer-bind-key man-backward-word "C-left"
+    buffer-bind-key man-forward-word "C-right"
+    set-variable :mouse-word-select man-process-link
+    1 buffer-mode "view"
+    ; execute user extensions if enabled
+    !if &exist my-fhook-man
+        my-fhook-man
+    !endif
+!emacro
+
+ml-write "[Man-page file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "myman"

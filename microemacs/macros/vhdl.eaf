@@ -1,0 +1,4 @@
+if "if \p then\rend if;\P"
+be "begin\r\p\rend\P"
+el "eleif \p then\P"
+wh "while \p loop\rend loop;\P"

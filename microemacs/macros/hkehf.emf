@@ -1,0 +1,301 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; ehf hook - This file is invoked when a MicroEmacs on-line help is loaded.
+;
+; Last Modified : <000408.0754>
+; Copyright (c) 1999 - 2000 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+set-char-mask "2" "-$&#!%:@."
+
+!if &band .hilight.flags 0x01
+    !if &not &exist .hilight.ehfA
+        set-variable .hilight.ehfA &pinc .hilight.next 1
+        set-variable .hilight.ehfB &pinc .hilight.next 1
+        set-variable .hilight.ehfL &pinc .hilight.next 1
+    !endif
+
+    0 hilight  .hilight.ehfA 2 50                      $global-scheme
+    hilight .hilight.ehfA 0x44 "\ecA" "" "\\}\e" "" "" $global-scheme
+    hilight .hilight.ehfA 0x44 "\ecB" "" "\\}\e" "" "" .scheme.under   ; underline
+    hilight .hilight.ehfA 0x44 "\ecC" "" "\\}\e" "" "" .scheme.italic  ; italic
+    hilight .hilight.ehfA 0x44 "\ecD" "" "\\}\e" "" "" .scheme.bold    ; bold
+    hilight .hilight.ehfA 0x44 "\ecE" "" "\\}\e" "" "" .scheme.header  ; Header
+    hilight .hilight.ehfA 0x44 "\ecF" "" "\\}\e" "" "" .scheme.comment ; image
+    hilight .hilight.ehfA 0xc0 "\els" "" .hilight.ehfL $global-scheme  ; link start
+    hilight .hilight.ehfA 0x44 "\elm" "" "\ele" "" ""  .scheme.link    ; link name
+    hilight .hilight.ehfA 0xc0 "\esB" "" .hilight.ehfB $global-scheme
+    hilight .hilight.ehfA 0x40 "\esA" ""               $global-scheme
+
+    0 hilight  .hilight.ehfB 2 50                      $global-scheme
+    hilight .hilight.ehfB 1  "define-help"             .scheme.keyword
+    hilight .hilight.ehfB 1  "define-macro"            .scheme.keyword
+    hilight .hilight.ehfB 1  "define-macro-file"       .scheme.keyword
+    hilight .hilight.ehfB 4  "\"" "\"" "\\"            .scheme.string
+    hilight .hilight.ehfB 2  ";"                       .scheme.comment
+    hilight .hilight.ehfB 4  "!"   "\\}\\W" ""         .scheme.keyword
+    hilight .hilight.ehfB 4  "&"   "\\}\\W" ""         .scheme.operator
+    hilight .hilight.ehfB 4  "\\." "\\}\\W" ""         .scheme.variable
+    hilight .hilight.ehfB 4  "%"   "\\}\\W" ""         .scheme.variable
+    hilight .hilight.ehfB 4  ":"   "\\}\\W" ""         .scheme.variable
+    hilight .hilight.ehfB 4  "\\$" "\\}\\W" ""         .scheme.variable
+    hilight .hilight.ehfB 4  "@"   "\\}\\W" ""         .scheme.variable
+    hilight .hilight.ehfB 1  "#[gpl][[:digit:]]"       .scheme.variable
+    hilight .hilight.ehfB 0x22 "*"                     .scheme.link
+    hilight .hilight.ehfB 0xc0 "\esA" "" .hilight.ehfA $global-scheme
+    hilight .hilight.ehfB 0x40 "\esB" ""               $global-scheme
+
+    0 hilight  .hilight.ehfL 2 50                      $global-scheme
+    hilight .hilight.ehfL 0x80 "\\}\elm" .hilight.ehfA $global-scheme
+    hilight .hilight.ehfL 0x40 "." ""                  $global-scheme
+!endif
+
+; Advance to the next link in the forward direction
+0 define-macro ehf-forward-link
+    !if &les @# 0
+        set-variable #l0 &sub 0 @#
+        #l0 ehf-backward-link
+    !endif
+    !force @# search-forward "\elm"
+    !if &not $status
+        ; Not found, force wrap, search and finish
+        beginning-of-buffer
+        search-forward "\elm"
+    !endif
+!emacro
+
+; Advance to the next link in the backward direction
+0 define-macro ehf-backward-link
+    !if &les @# 0
+        set-variable #l0 &sub 0 @#
+        #l0 ehf-forward-link
+    !endif
+    ; move back 3 chars so if we are currently on a link we do move
+    !force 3 backward-char
+    !force @# search-backward "\elm"
+    !if &not $status
+        ; Not found, force wrap, search and finish
+        end-of-buffer
+        search-backward "\elm"
+    !endif
+    ; move to the end of the \elm so the user can sensibly move forward
+    ; and so that subsequent forw/back-link moves work as expected.
+    2 show-region
+!emacro
+
+0 define-macro ehf-find-help
+    set-variable #l0 @1
+    !if &set #l4 &sin "|" #l0
+        set-variable #l0 &lef #l0 &sub #l4 1
+    !endif
+    !if &seq $buffer-bname "*help*"
+        ; get the current page item so we can add it to the prev/next history
+        beginning-of-buffer
+        set-variable #l1 &mid @wl 3 &sub &len @wl 6
+        2 forward-line
+        !force -1 search-forward "\elm\\[Prev]"
+        !if $status
+            ; this is the prev history
+            9 backward-char
+            set-mark
+            search-backward "\els"
+            3 forward-char
+            copy-region
+            set-variable #l2 @y
+            -1 yank
+        !else
+            set-variable #l2 ""
+        !endif
+        !force -1 search-forward "\elm\\[Next]"
+        !if $status
+            ; this is the next history
+            9 backward-char
+            set-mark
+            search-backward "\els"
+            3 forward-char
+            copy-region
+            set-variable #l3 @y
+            -1 yank
+        !else
+            set-variable #l3 ""
+        !endif
+    !else
+        set-variable #l1 ""
+        set-variable #l2 ""
+        set-variable #l3 ""
+    !endif
+    !force help-item #l0
+    !if $status
+        !if &seq &lef #l2 &len #l0 #l0
+            ; same as prev, remove from prev, add current to next
+            set-variable #l2 &rig #l2 &add &len #l0 1
+            set-variable #l3 &cat &cat #l1 "|" #l3
+        !else
+            set-variable #l2 &cat &cat #l1 "|" #l2
+            !if &seq &lef #l3 &len #l0 #l0
+                ; same as next, remove from next
+                set-variable #l3 &rig #l3 &add &len #l0 1
+            !else
+                ; not the same so going in different direction so del next
+                set-variable #l3 ""
+            !endif
+        !endif
+        popup-window  "*help*"
+        ; move past the [Home] line
+        2 forward-line
+        end-of-line
+        -1 buffer-mode "view"
+        !if &gre &len #l2 1
+            insert-string &spr " \els%s\elm[Prev]\ele" #l2
+        !endif
+        !if &gre &len #l3 1
+            insert-string &spr " \els%s\elm[Next]\ele" #l3
+        !endif
+        -1 buffer-mode "edit"
+        1 buffer-mode "view"
+        beginning-of-buffer
+    !else
+        set-variable $window-line #p1
+        set-variable $window-col #p0
+    !endif
+!emacro
+
+0 define-macro ehf-process-link
+    set-variable #l0 $window-col
+    set-variable #l1 $window-line
+    ; end of link must be found within 5 lines
+    !force -5 search-forward "\ele"
+    !if $status
+        !force -5 search-backward "\els"
+        !if &and $status &or &les $window-line #l1 &and &equ $window-line #l1 &not &gre $window-col #l0
+            3 forward-char
+            set-mark
+            -1 search-forward "\elm"
+            3 backward-char
+            copy-region
+            set-variable #l2 @y
+            -1 yank
+            !if &seq #l2 ""
+                3 forward-char
+                set-mark
+                -1 search-forward "\ele"
+                3 backward-char
+                copy-region
+                set-variable #l2 @y
+                -1 yank
+            !endif
+            ehf-find-help #l2
+            !return
+        !endif
+    !endif
+    set-variable $window-line #l1
+    set-variable $window-col #l0
+    !if &inw @wc
+        ; Goto beginning of word and place mark
+        forward-char
+        backward-word
+        !if &seq @wc "c"
+            backward-char
+            !if &seq @wc "\e"
+                3 forward-char
+            !else
+                forward-char
+            !endif
+        !endif
+        set-mark
+        ; Goto end of word and copy region
+        forward-word
+        copy-region
+        set-cursor-to-mouse
+        set-variable #l2 @y
+        -1 yank
+        ehf-find-help #l2
+        !return
+    !endif
+    ml-write "Error! Not in a link"
+    !abort
+!emacro
+
+0 define-macro ehf-spell-word
+    set-variable #l0 $window-col
+    set-variable #l1 0
+    -2 show-region
+    set-variable #l2 $window-col
+    !if $window-col
+        set-variable #l1 &sub #l0 $window-col
+        backward-char
+        !if &and &seq @wc "\e" &gre #l1 1
+            forward-char
+            !if &sin @wc "s"
+                forward-char
+                !if &seq @wc "A"
+                    ; miss-matched scheme change - problems
+                    set-variable $window-col #l0
+                    !abort
+                !endif
+                ; skip the emf sections
+                search-forward "\esA"
+                set-variable .spell.check-word ""
+                !return
+            !elif &sin @wc "cl"
+                ; ehf color link or scheme change
+                2 forward-char
+                set-variable #l2 $window-col
+                set-variable #l1 1
+            !endif
+        !else
+            forward-char
+        !endif
+        !if &seq &mid @wl $window-col 2 "C-"
+            2 forward-char
+            set-variable #l2 $window-col
+            set-variable #l1 1
+        !endif
+    !endif
+    2 show-region
+    backward-char
+    !if &sin @wc "!-:"
+        !repeat
+            backward-char
+        !until &not &sin @wc "!-:"
+        set-variable #p9 &sub #l0 &add $window-col 1
+        set-variable #l0 &add $window-col 1
+        set-variable #l1 1
+    !endif
+    forward-char
+    !if #l1
+        set-variable $window-col #l2
+        set-variable .spell.check-word &mid @wl $window-col &sub #l0 $window-col
+        -3 show-region
+        set-variable $window-col #l0
+        3 show-region
+        !if &and &equ &len #l1 1 &sin .spell.check-word "abcdefghijklmnopqrstuvwxyz-.0123456789"
+            set-variable .spell.check-word ""
+        !endif
+        !return
+    !endif
+    !abort
+!emacro
+
+define-macro fhook-ehf
+    set-variable $buffer-mask "luh12"
+    !if &band .hilight.flags 0x01
+        set-variable $buffer-hilight .hilight.ehfA
+    !endif
+    ; Hyperlink with the mouse.
+    set-variable :mouse-word-select ehf-process-link
+    1 buffer-mode "magic"
+    !if &seq $buffer-bname "*help*"
+        ; Hyperlink with the <RETURN> key
+        0 buffer-bind-key ehf-process-link "return"
+        ; Move between links with the <TAB> key
+        buffer-bind-key ehf-forward-link   "tab"
+        buffer-bind-key ehf-backward-link  "S-tab"
+    !endif
+    auto-spell-init
+    ; execute user extensions if enabled
+    !if &exist my-fhook-ehf
+        my-fhook-ehf
+    !endif
+!emacro
+
+; load in user extensions if found
+!force execute-file "myehf"

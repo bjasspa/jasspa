@@ -1,0 +1,97 @@
+; Auto-created printer scheme file for MicroEmacs
+; Description: Epson ESC/P Color
+; Last Modified : <000529.0736>
+; Copyright (c) 1999 JASSPA Ltd.
+set-registry "/" "print/scheme-flags" 3
+; Create the colors first
+0 print-color
+print-color 0 0 0 0
+print-color 1 255 0 255
+print-color 2 0 255 255
+print-color 3 155 155 255
+print-color 4 255 255 0
+print-color 5 255 0 0
+print-color 6 0 255 0
+print-color 7 255 255 255
+; Create the printer schemes
+0 print-scheme
+; Standard
+print-scheme $global-scheme 0 7 0
+print-scheme $ml-scheme 0 7 0
+print-scheme $mode-line-scheme 0 7 0
+print-scheme $scroll-bar-scheme 0 7 0
+print-scheme $trunc-scheme 0 7 0
+print-scheme .scheme.no1 0 7 1
+print-scheme .scheme.no2 0 7 1
+; OSD
+print-scheme $osd-scheme 0 7 0
+print-scheme .scheme.osd-entry 0 7 0
+print-scheme .scheme.osd-ebtt 0 7 0
+print-scheme .scheme.osd-dbtt 0 7 0
+print-scheme .scheme.osd-title 0 7 0
+print-scheme .scheme.osd-child 0 7 0
+print-scheme .scheme.osd-sbar 0 7 0
+; Programming Langs
+print-scheme .scheme.prepro 4 7 0
+print-scheme .scheme.function 2 7 17
+print-scheme .scheme.keyword 2 7 0
+print-scheme .scheme.type 6 7 0
+print-scheme .scheme.operator 4 7 0
+print-scheme .scheme.variable 6 7 0
+print-scheme .scheme.constant 0 7 0
+print-scheme .scheme.comment 5 7 2
+print-scheme .scheme.string 1 7 0
+print-scheme .scheme.quote 1 7 0
+print-scheme .scheme.error 5 7 1
+; Formatted Text
+print-scheme .scheme.header 0 7 17
+print-scheme .scheme.link 0 7 3
+print-scheme .scheme.bold 0 7 1
+print-scheme .scheme.italic 0 7 2
+print-scheme .scheme.under 0 7 16
+print-scheme .scheme.bold-italic 0 7 3
+print-scheme .scheme.bold-under 0 7 17
+print-scheme .scheme.italic-under 0 7 18
+print-scheme .scheme.bold-italic-under 0 7 19
+; Directory Listings
+print-scheme .scheme.file 0 7 1
+print-scheme .scheme.select 0 7 0
+print-scheme .scheme.dir 0 7 0
+print-scheme .scheme.dir-select 0 7 0
+print-scheme .scheme.dir-slink 0 7 1
+print-scheme .scheme.dir-tree 0 7 0
+print-scheme .scheme.dir-open 0 7 0
+print-scheme .scheme.dir-closed 0 7 0
+print-scheme .scheme.dir-uknown 0 7 0
+; Line Schemes
+print-scheme .scheme.hide 0 7 0
+print-scheme .scheme.fold 0 7 0
+print-scheme .scheme.trace 0 7 0
+print-scheme .scheme.hlwhite 0 7 0
+print-scheme .scheme.hlblack 0 7 0
+print-scheme .scheme.hlred 0 7 0
+print-scheme .scheme.hlgreen 0 7 0
+print-scheme .scheme.hlyellow 0 7 0
+print-scheme .scheme.hlblue 0 7 0
+print-scheme .scheme.hlmagenta 0 7 0
+print-scheme .scheme.hlcyan 0 7 0
+; Graphical Diff
+print-scheme .scheme.gdfchange 0 7 0
+print-scheme .scheme.gdfadd 0 7 0
+print-scheme .scheme.gdfpad 0 7 0
+print-scheme .scheme.gdfsel 0 7 0
+print-scheme .scheme.gdfselpad 0 7 0
+print-scheme .scheme.gdfrej 0 7 0
+print-scheme .scheme.gdfrejpad 0 7 0
+; Games
+print-scheme .scheme.cardback 0 7 0
+print-scheme .scheme.cardfore 0 7 0
+print-scheme .scheme.mjg1 0 7 0
+print-scheme .scheme.mjg2 0 7 0
+print-scheme .scheme.mi1 0 7 0
+print-scheme .scheme.mi2 0 7 0
+print-scheme .scheme.mi3 0 7 0
+print-scheme .scheme.met-back 0 7 0
+print-scheme .scheme.met-fore1 0 7 0
+print-scheme .scheme.met-fore2 0 7 0
+

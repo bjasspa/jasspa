@@ -1,0 +1,242 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Sat Feb 27 10:24:59 1999
+;  Last Modified : <000719.0012>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 1999 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+!if &sequal .hilight.spell "ERROR"
+    set-variable .hilight.spell &pinc .hilight.next 1
+!endif
+
+0 hilight .hilight.spell 0 $global-scheme
+
+; note - a lot of !forces around to ensure the macro does not exit
+; prematurely
+0 define-macro auto-spell-test
+    ; no need to test a left hand column insertion
+    !if &not &set #l0 $window-col
+        !return
+    !endif
+    !if &not &inw @wc
+        ; we are not dividing a word into 2!
+        backward-char
+        !if &not &inw @wc
+            forward-char
+            !return
+        !endif
+        set-variable @# 1
+        forward-char
+        set-variable #l1 $window-col
+        backward-word
+    !elif &not @#
+        backward-char
+        !if &not &inw @wc
+            forward-char
+            !return
+        !endif
+        forward-char
+        !force insert-string " " @mna
+        !if &not $status
+            !return
+        !endif
+        forward-word
+        set-variable #l1 $window-col
+        2 backward-word
+    !else
+        forward-word
+        set-variable #l1 $window-col
+        backward-word
+    !endif
+    set-variable $buffer-mask "luh"
+    !repeat
+        !force !force 0 spell
+        !if $status
+            ;ml-write $result
+            2 show-region
+            !if &sin &lef $result 1 "AE"
+                !if &exi &set #l2 &cat &rig $buffer-fhook 6 "-spell-word"
+                    set-variable .spell.check-word &rig $result 1
+                    !force 0 execute-named-command #l2
+                    !if &not $status
+                        !goto add-word
+                    !elif &seq .spell.check-word ""
+                    !else
+                        !force !force 1 spell .spell.check-word
+                        !if &sin &lef $result 1 "AE"
+                            !goto add-word
+                        !endif
+                    !endif
+                !else
+*add-word
+                    !if &seq &lef $result 1 "A"
+                        ; auto-correction - do it
+                        set-variable #l2 $window-col
+                        -2 show-region
+                        &sub #l2 $window-col forward-delete-char
+                        -1 yank
+                        !if &gre #l0 $window-col
+                            set-variable #l0 &sub #l0 &sub #l2 $window-col
+                            !if &les #l0 $window-col
+                                set-variable #l0 $window-col
+                            !endif
+                            set-variable #l0 &add #l0 &len &rig $result 1
+                        !endif
+                        insert-string &rig $result 1
+                        set-variable #l1 &add #l1 &sub $window-col #l2
+                    !else
+                        ; hilight the bad word - must protect . as regex any
+                        str-to-regex $result
+                        !if &inw &rig $result &sub &len $result 1
+                            set-variable #l2 &cat &rig $result 1 "\\}[^[:sword:]]"
+                        !else
+                            set-variable #l2 &cat &rig $result 1 "\\}[^[:alnum:]]"
+                        !endif
+                        !if &inw #l2
+                            !force hilight $buffer-hilight 0 &cat "[^[:sword:]]\\{" #l2  .scheme.error
+                        !else
+                            !force hilight $buffer-hilight 0 &cat "[^[:alnum:]]\\{" #l2  .scheme.error
+                        !endif
+                        ; force this line to be redrawn
+                        set-variable $line-scheme $line-scheme
+                    !endif
+                !endif
+            !endif
+        !endif
+        !if &not &les $window-col #l1
+            !jump 7
+        !endif
+        forward-char
+        !if &not &inw @wc
+            !jump -5
+        !endif
+    !until 0
+    !force set-variable $window-col #l0
+    !if &not @#
+        !force forward-delete-char
+    !endif
+!emacro
+
+0 define-macro auto-spell-input
+    !if &seq @cck "redraw"
+        ; abort to tell ME to handle the actual input
+        !abort
+    !elif &seq @cck "callback"
+        !abort
+    !endif
+    ; set the word group for spelling
+    set-variable #l0 $buffer-mask
+    set-variable $buffer-mask "luhs"
+    !if &les &len @cc 2
+        !if &inw @cc
+            ; we're typing in a char - flag the last as a word letter insertion
+            set-variable .last 1
+        !else
+            ; inserting a white space char, test (give 0 arg to indicate we may be dividing 2 chars
+            0 auto-spell-test
+            set-variable .last 0
+        !endif
+    !elif &sin "delete-char" @cc
+        ; if deleting a char put off the test till next time
+        set-variable .last 1
+    !elif .last
+        auto-spell-test
+        set-variable .last 0
+    !endif
+    ; restore the buffer word group
+    set-variable $buffer-mask #l0
+    ; reset the last command to ensure continuity is preserved
+    set-variable @cl @cl
+    !abort
+!emacro
+
+set-variable .auto-spell-input.status "0"
+
+define-macro auto-spell-buffer
+    ml-write "[auto-spelling buffer..."
+    set-variable #l0 $buffer-mask
+    set-variable $buffer-mask "luhs"
+    set-alpha-mark "t"
+    beginning-of-buffer
+    !force forward-word
+    !while $status
+        !force auto-spell-test
+        !force forward-word
+    !done
+    set-variable $buffer-mask #l0
+    goto-alpha-mark "t"
+    screen-update
+    ml-write "[auto-spelling buffer...done]"
+!emacro
+
+define-macro auto-spell-reset
+    !if &equ $buffer-hilight .hilight.spell
+        ; if using the auto-spell hilight this is a simple re-init process
+        0 hilight .hilight.spell 0 $global-scheme
+    !else
+        !if &not &seq :auto-spell-reset "ERROR"
+            !force execute-file :auto-spell-reset
+            set-variable #l0 $status
+        !elif &not &seq $buffer-fhook ""
+            ; else the only thing we can do is try to execute the hk macro
+            !force execute-file &cat "hk" &rig $buffer-fhook 6
+            set-variable #l0 $status
+        !else
+            set-variable #l0 0
+        !endif
+        !if &not #l0
+            ml-write "[Failed to reset auto-spell]"
+            !abort
+        !endif
+    !endif
+    1 screen-update
+    ml-write "[Auto-spell reset]"
+!emacro
+
+define-macro auto-spell
+    !if &not &and @? @#
+        ; toggle auto-spell
+        set-variable @# &cond &seq $buffer-input "auto-spell-input" -1 1
+        ml-write &spr "[%s auto spell check]" &cond &les @# 0 "Disabling" "Enabling"
+    !endif
+    !if &les @# 0
+        ; remove auto-spell
+        set-variable $buffer-input ""
+        !if &equ $buffer-hilight .hilight.spell
+            set-variable $buffer-hilight 0
+        !endif
+    !elif &seq $buffer-input ""
+        ; Invoke the rules to setup spell, but don't invoke to check as this 
+        ; will typically slow down start-up time 
+        spell-rules-init
+        ; install auto-spell
+        set-variable $buffer-input auto-spell-input
+        !if &not $buffer-hilight
+            set-variable $buffer-hilight .hilight.spell
+        !endif
+    !elif &not &seq $buffer-input "auto-spell-input"
+        ml-write "[Cannot install auto-spell, $buffer-input conflict]"
+        !abort
+    !endif
+!emacro
+
+; setup the auto-spell
+0 define-macro auto-spell-init
+    ; dont do anything if the current language is default
+    !if &not &seq %language "Default"
+        0 buffer-bind-unbound-key auto-spell      "f5"
+        buffer-bind-unbound-key auto-spell-buffer "S-f5"
+        buffer-bind-unbound-key auto-spell-reset  "f6"
+        !if &reg "/history" "spell/autospell" "0"
+            1 auto-spell
+        !endif
+    !endif
+!emacro

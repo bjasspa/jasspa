@@ -1,0 +1,119 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Jon Green
+;  Created       : Mon Mar 20 21:26:14 2000
+;  Last Modified : <000719.0012>
+;
+;  Description   ; This file contains simple pseudo code style tokens
+;                  which are typically used for defining pseudo code
+;                  fragments. These tokens were removed from the
+;                  documentation template following the newly adopted 
+;                  convention of splicing and swapping hilighting 
+;                  pioneered by Detlef.
+;
+;  Notes         : PSEUDO CODE
+;
+; Defined using a magic string: -!- pseudo -!-
+; Used for psuedo code fragments, typically embedded into an ASCII text
+; document.
+; The PSUDO code keywords are all defined as uppercase, and use a set
+; of basic language independent primatives, the keywords are listed below.
+; Using pseudo also includes the sectioned hilighting. e.g.
+;
+; // -!- pseudo -!-
+; // Author:       My Self
+; // Created:      11/11/97
+; // Modified:     <211197.1011>
+; // Location:     /xx/xx/zz.doc
+; //
+; //____________________________________________________________________________
+;
+; // Initialiasation
+; //
+; // Initialises the system following power-on ....
+;
+;     PROCEDURE initialisation
+;     BEGIN
+;         // Comments if required.
+;         Disable interrupts.
+;         EPROM check
+;         RAM Check
+;         Chip Check
+;         Shaddow EPROM to RAM
+;         Install exception handlers
+;         Install watchdog
+;         Enable interrupts.
+;         ..
+;         IF condition
+;         THEN
+;             text
+;         ENDIF
+;         ..
+;     END
+;
+;  History
+;
+;  Copyright (c) 2000 JASSPA
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+!if &not &exist .hilight.pseudo
+    set-variable .hilight.pseudo  &pinc .hilight.next 1
+!endif
+
+!if &band .hilight.flags 0x02
+    0 hilight .hilight.pseudo 2 50                        $global-scheme
+    hilight .hilight.pseudo 0x4  "\"" "\"" "\\"           .scheme.string
+    hilight .hilight.pseudo 0    "'.'"                    .scheme.quote
+    hilight .hilight.pseudo 0    "'\\\\.'"                .scheme.quote
+    ; Psudo code keywords
+    hilight .hilight.pseudo 1 "BEGIN"                     .scheme.keyword
+    hilight .hilight.pseudo 1 "BREAK"                     .scheme.keyword
+    hilight .hilight.pseudo 1 "CASE"                      .scheme.keyword
+    hilight .hilight.pseudo 1 "CLEAR"                     .scheme.keyword
+    hilight .hilight.pseudo 1 "CONTINUE"                  .scheme.keyword
+    hilight .hilight.pseudo 1 "DO"                        .scheme.keyword
+    hilight .hilight.pseudo 1 "DONE"                      .scheme.keyword
+    hilight .hilight.pseudo 1 "ELIF"                      .scheme.keyword
+    hilight .hilight.pseudo 1 "ELSE"                      .scheme.keyword
+    hilight .hilight.pseudo 1 "END"                       .scheme.keyword
+    hilight .hilight.pseudo 1 "ENDIF"                     .scheme.keyword
+    hilight .hilight.pseudo 1 "FOR"                       .scheme.keyword
+    hilight .hilight.pseudo 1 "FUNCTION"                  .scheme.keyword
+    hilight .hilight.pseudo 1 "GOTO"                      .scheme.keyword
+    hilight .hilight.pseudo 1 "IF"                        .scheme.keyword
+    hilight .hilight.pseudo 1 "ON"                        .scheme.keyword
+    hilight .hilight.pseudo 1 "ONEVENT"                   .scheme.keyword
+    hilight .hilight.pseudo 1 "ONINTERRUPT"               .scheme.keyword
+    hilight .hilight.pseudo 1 "PROCEDURE"                 .scheme.keyword
+    hilight .hilight.pseudo 1 "REPEAT"                    .scheme.keyword
+    hilight .hilight.pseudo 1 "RETURN"                    .scheme.keyword
+    hilight .hilight.pseudo 1 "SET"                       .scheme.keyword
+    hilight .hilight.pseudo 1 "SWITCH"                    .scheme.keyword
+    hilight .hilight.pseudo 1 "THEN"                      .scheme.keyword
+    hilight .hilight.pseudo 1 "TO"                        .scheme.keyword
+    hilight .hilight.pseudo 1 "UNTIL"                     .scheme.keyword
+    hilight .hilight.pseudo 1 "WHILE"                     .scheme.keyword
+    ; pseudo logical operators
+    hilight .hilight.pseudo 1 "AND"                       .scheme.variable
+    hilight .hilight.pseudo 1 "FALSE"                     .scheme.variable
+    hilight .hilight.pseudo 1 "MOD"                       .scheme.variable
+    hilight .hilight.pseudo 1 "NOT"                       .scheme.variable
+    hilight .hilight.pseudo 1 "OR"                        .scheme.variable
+    hilight .hilight.pseudo 1 "TRUE"                      .scheme.variable
+    hilight .hilight.pseudo 1 "XOR"                       .scheme.variable
+    ; pseudo code comment
+    hilight .hilight.pseudo 0x2  "//"                     .scheme.comment
+    hilight .hilight.pseudo 20 "/\\*" "*/" ""             .scheme.comment
+
+    !if &band .hilight.flags 0x08
+        ; hilight constants, e.g. numbers
+        hilight .hilight.pseudo 1 "[[:digit:]]+"          .scheme.constant
+        hilight .hilight.pseudo 1 "-[[:digit:]]+"         .scheme.constant
+        hilight .hilight.pseudo 1 "0[xX][[:xdigit:]]+"    .scheme.constant
+        hilight .hilight.pseudo 1 "[[:digit:]]+\\.[[:digit:]]+"  .scheme.constant
+        hilight .hilight.pseudo 1 "-[[:digit:]]+\\.[[:digit:]]+" .scheme.constant
+        hilight .hilight.pseudo 1 "[[:digit:]]+\\.[[:digit:]]+f"  .scheme.constant
+        hilight .hilight.pseudo 1 "-[[:digit:]]+\\.[[:digit:]]+f" .scheme.constant
+    !endif
+!endif
+

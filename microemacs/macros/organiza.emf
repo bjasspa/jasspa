@@ -1,0 +1,703 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Sat Jul 26 14:36:36 1997
+;  Last Modified : <000719.0012>
+;
+;  Description   : cal calendar macro
+;
+;  Notes         : One of the last remaining screen-poke based utilities.
+;                  osd cannot currently do grids.
+;
+;  History       : Jon 20/04/98 - Moved to registry based tool.
+;
+;  Copyright (c) 1998 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+!if &seq .osd.orga-n "ERROR"
+    set-variable .osd.orga-n    &pinc .osd.next 1
+    set-variable .osd.orga-h    &pinc .osd.next 1
+    set-variable .osd.orga-w    &pinc .osd.next 1
+    set-variable .osd.orga-f    &pinc .osd.next 1
+    set-variable .osd.orga-o    &pinc .osd.next 1
+    set-variable .org.addr-fstr ""
+    set-variable .org.addr-ffld 0
+    set-variable .org.addr-index1 3
+    set-variable .org.addr-index2 2
+    set-variable .org.addr-index3 0
+!endif
+set-variable .org.addr-reg  "|recno|fname|sname|nname|slct|notes|pfname|psname|home/addr|home/tel|home/fax|home/mob|home/email|home/www|home/ftp|work/comp|work/addr|work/tel|work/fax|work/mob|work/email|work/www|work/ftp|"
+set-variable .org.addr-lbl  "|Record No|First Name|Surname|Nick Name|Selected|Notes|Partner First Name|Partner Surname|Home Address|Home Telephone|Home Fax|Home Mobile|Home E-Mail|Home WWW Page|Home FTP Site|Work Company|Work Address|Work Telephone|Work Fax|Work Mobile|Work E-Mail|Work WWW Page|Work FTP Site|"
+!if &band .org.aflag 0x100
+    set-variable .org.addr-reg &cat .org.addr-reg "dob|pdob|dom|c1name|c1dob|c2name|c2dob|c3name|c3dob|"
+    set-variable .org.addr-lbl &cat .org.addr-lbl "Date-Of-Birth|Partner DOB|Date-Of-Marriage|Child1 Name|Child1 DOB|Child2 Name|Child2 DOB|Child3 Name|Child3 DOB|"
+!endif
+
+; Create the address osd dialog
+0 define-macro org-addr-init
+    set-variable .org.page 3
+    !if &seq .org.addr ""
+        set-variable .org.iaddr &cond &seq &reg "/org" "addr/i0" "" "" -1 0
+        org-addr-inc-recno
+    !endif
+!emacro
+
+0 define-macro org-addr-set-entry
+    set-variable #l2 &lget .org.addr-reg &abs @#
+    !if &les @# 0
+        set-variable #l0 &reg "/org" &spr "addr/%d/%s" .org.addr #l2 ""
+        set-variable #l1 @ml2 "" #l0
+        !if &not &seq #l1 #l0
+            !if &seq .org.addr "*"
+                set-variable .org.addr .org.naddr
+            !endif
+            !if &seq #l1 ""
+                delete-registry &spr "/org/addr/%d/%s" .org.addr #l2
+            !else
+                set-registry "/org" &spr "addr/%d/%s" .org.addr #l2 #l1
+            !endif
+            mark-registry "/org" "u"
+            !if &not &les .org.iaddr .org.naddr
+                set-variable #l3 &lset &reg "/org" &spr "addr/i%d" &div .org.iaddr 128 "|" &band .org.iaddr 127 .org.addr
+                set-registry "/org" &spr "addr/i%d" &div .org.iaddr 128 #l3
+            !endif
+            !if &not &les .org.addr .org.naddr
+                set-variable .org.naddr &add .org.addr 1
+                set-registry "/org" "addr/naddr" .org.naddr
+            !endif
+        !endif
+    !else
+        set-variable $result &reg "/org" &spr "addr/%d/%s" .org.addr #l2 ""
+    !endif
+!emacro
+
+0 define-macro org-addr-set-check
+    set-variable #l2 &lget .org.addr-reg &abs @#
+    set-variable #l0 &reg "/org" &spr "addr/%d/%s" .org.addr #l2 ""
+    !if &les @# 0
+        !if &seq #l0 ""
+            set-registry "/org" &spr "addr/%d/%s" .org.addr #l2 "*"
+        !else
+            delete-registry &spr "/org/addr/%d/%s" .org.addr #l2
+        !endif
+        mark-registry "/org" "u"
+        !if &not &les .org.iaddr .org.naddr
+            set-variable #l3 &lset &reg "/org" &spr "addr/i%d" &div .org.iaddr 128 "|" &band .org.iaddr 127 .org.addr
+            set-registry "/org" &spr "addr/i%d" &div .org.iaddr 128 #l3
+        !endif
+        !if &not &les .org.addr .org.naddr
+            set-variable .org.naddr &add .org.addr 1
+            set-registry "/org" "addr/naddr" .org.naddr
+        !endif
+    !elif &seq #l0 ""
+        !abort
+    !endif
+!emacro
+
+0 define-macro org-addr-set-recno
+    !if &les @# 0
+        set-variable .org.addr @ml2 "" .org.addr
+        !if &not &les .org.addr .org.naddr
+            set-variable .org.addr "*"
+            !if &gre .org.iaddr -1
+                set-variable .org.iaddr .org.naddr
+            !endif
+        !elif &gre .org.iaddr -1
+            set-variable #l0 0
+            !while &les &mul #l0 128 .org.naddr
+                !if &set #l1 &lfi &reg "/org" &spr "addr/i%d" "|" #l0 .org.addr
+                    set-variable .org.iaddr &add &mul #l0 128 #l1
+                    !return
+                !endif
+                set-variable #l0 &add #l0 1
+            !done
+            set-variable .org.iaddr .org.naddr
+        !endif
+    !else
+        set-variable $result .org.addr
+    !endif
+!emacro
+
+0 define-macro org-addr-dec-recno
+    !if @?
+        set-variable .org.addr "0"
+        set-variable .org.iaddr &cond &gre .org.iaddr -1 0 -1
+        org-addr-inc-recno
+    !else
+        set-variable #l0 .org.addr
+        set-variable #l1 .org.iaddr
+        !if &gre #l1 -1
+            !while &dec .org.iaddr 1
+                !if &set .org.addr &lget &reg "/org" &spr "addr/i%d" &div .org.iaddr 128 "" &band .org.iaddr 127
+                    !return
+                !endif
+            !done
+        !else
+            !if &seq .org.addr "*"
+                set-variable .org.addr .org.naddr
+            !endif
+            !while &dec .org.addr 1
+                !force find-registry "/org" &spr "addr/%d" .org.addr 0
+                !if $status
+                    !return
+                !endif
+            !done
+        !endif
+        set-variable .org.addr #l0
+        set-variable .org.iaddr #l1
+    !endif
+!emacro
+
+0 define-macro org-addr-inc-recno
+    !if &not @?
+        !if &gre .org.iaddr -1
+            !while &les &inc .org.iaddr 1 .org.naddr
+                !if &set .org.addr &lget &reg "/org" &spr "addr/i%d" &div .org.iaddr 128 "" &band .org.iaddr 127
+                    !return
+                !endif
+            !done
+        !else
+            !while &les &inc .org.addr 1 .org.naddr
+                !force find-registry "/org" &spr "addr/%d" .org.addr 0
+                !if $status
+                    !return
+                !endif
+            !done
+        !endif
+    !endif
+    set-variable .org.addr "*"
+    set-variable .org.iaddr &cond &gre .org.iaddr -1 .org.naddr -1
+!emacro
+
+0 define-macro org-addr-del
+    !if &not &seq .org.addr "*"
+        delete-registry &spr "/org/addr/%d" .org.addr
+        mark-registry "/org" "u"
+        !if &equ &add .org.addr 1 .org.naddr
+            set-variable .org.naddr .org.addr
+            set-registry "/org" "addr/naddr" .org.naddr
+        !endif
+        !if &gre .org.iaddr -1
+            set-variable #l0 &lset &reg "/org" &spr "addr/i%d" &div .org.iaddr 128 "|" &band .org.iaddr 127 ""
+            set-registry "/org" &spr "addr/i%d" &div .org.iaddr 128 #l0
+        !endif
+        org-addr-inc-recno
+    !endif
+!emacro
+
+0 define-macro org-addr-dup
+    !if &not &seq .org.addr "*"
+        copy-registry &spr "/org/addr/%d" .org.addr &spr "/org/addr/%d" .org.naddr
+        mark-registry "/org" "u"
+        set-variable .org.addr .org.naddr
+        set-variable .org.naddr &add .org.naddr 1
+        set-registry "/org" "addr/naddr" .org.naddr
+    !endif
+!emacro
+
+; Order records code ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+0 define-macro org-addr-crt-index
+    !if &and @# &not .org.addr-index1
+        osd-dialog "Sort Address" "Error: No primary key selected!" "  &OK  "
+        !return
+    !endif
+    set-variable #l0 0
+    !while &les &mul #l0 128 .org.naddr
+        !force delete-registry &spr "/org/addr/i%d" #l0
+        set-variable #l0 &add #l0 1
+    !done
+    !if &not @#
+        !goto sort-exit
+    !endif
+    !force 0 delete-buffer "*org-index-tmp*"
+    find-buffer "*org-index-tmp*"
+    set-variable #l0 0
+    !while &les &inc #l0 1 .org.naddr
+        !force find-registry "/org" &spr "addr/%d" #l0 0
+        !if $status
+            !if .org.addr-index1
+                set-variable #l1 &reg "/org" &spr "addr/%d/%s" #l0 &lget .org.addr-reg .org.addr-index1 ""
+                var-str-sub #l1 "\n" "\CM"
+                insert-string &spr "\x01%s" #l1
+            !endif
+            !if .org.addr-index2
+                set-variable #l1 &reg "/org" &spr "addr/%d/%s" #l0 &lget .org.addr-reg .org.addr-index2 ""
+                var-str-sub #l1 "\n" "\CM"
+                insert-string &spr "\x01%s" #l1
+            !endif
+            !if .org.addr-index3
+                set-variable #l1 &reg "/org" &spr "addr/%d/%s" #l0 &lget .org.addr-reg .org.addr-index3 ""
+                var-str-sub #l1 "\n" "\CM"
+                insert-string &spr "\x01%s" #l1
+            !endif
+            insert-string &spr "\x01%d\n" #l0
+        !endif
+    !done
+    forward-delete-char
+    set-mark
+    beginning-of-buffer
+    -1 buffer-mode "exact"
+    sort-lines
+    beginning-of-buffer
+    set-variable #l0 0
+    set-variable #l1 "|"
+    !while &not &seq @wc ""
+        set-variable #l0 &add #l0 1
+        end-of-line
+        search-backward "\x01"
+        forward-char
+        set-variable #l2 &rig @wl $window-col
+        set-variable #l1 &lset #l1 &band #l0 127 #l2
+        !if &equ &band #l0 127 127
+            set-registry "/org" &spr "addr/i%d" &div #l0 128 #l1
+            set-variable #l1 "|"
+        !endif
+        forward-line
+    !done
+    !force 0 delete-buffer "*org-index-tmp*"
+    !if #l0
+        set-registry "/org" &spr "addr/i%d" &div #l0 128 #l1
+        set-variable .org.iaddr 0
+    !else
+*sort-exit
+        set-variable .org.iaddr -1
+    !endif
+    mark-registry "/org" "u"
+    set-variable .org.addr 0
+    org-addr-inc-recno
+    -2 osd
+!emacro
+
+0 define-macro org-addr-sort-field-set
+    set-variable &ind &cat ".org.addr-index" .org.addr-index @#
+    set-variable #l0 &cond @# &lget .org.addr-lbl @# "None"
+    osd .osd.orga-o &mul .org.addr-index 30 "MmxsfHzi" .scheme.osd-entry 20 1 #l0 .osd.org-m &cat "org-addr-sort-field " .org.addr-index
+!emacro
+0 define-macro org-addr-sort-field
+    set-variable .org.addr-index @1
+!emacro
+
+osd .osd.orga-o 00  "btcdHs" 52 0 -1 -1 650 .scheme.osd-title "Sort Address Book"
+osd .osd.orga-o 10  ""
+osd .osd.orga-o 20  "Shf" "    &Primary Sort Field: " 30
+osd .osd.orga-o 30  "MmxsfHzi" .scheme.osd-entry 20 1 &cond .org.addr-index1 &lget .org.addr-lbl .org.addr-index1 "None" .osd.org-m "org-addr-sort-field 1"
+osd .osd.orga-o 40  ""
+osd .osd.orga-o 50  "Shf" "  &Secondary Sort Field: " 30
+osd .osd.orga-o 60  "MmxsfHzi" .scheme.osd-entry 20 1 &cond .org.addr-index2 &lget .org.addr-lbl .org.addr-index2 "None" .osd.org-m "org-addr-sort-field 2"
+osd .osd.orga-o 70  ""
+osd .osd.orga-o 80  "Shf" "   &Tertiary Sort Field: " 30
+osd .osd.orga-o 90  "MmxsfHzi" .scheme.osd-entry 20 1 &cond .org.addr-index3 &lget .org.addr-lbl .org.addr-index3 "None" .osd.org-m "org-addr-sort-field 3"
+osd .osd.orga-o 100 ""
+osd .osd.orga-o 600 ""
+osd .osd.orga-o 610 "hf" "  "
+;osd .osd.orga-o 620 "BhcfH" .scheme.osd-ebtt " &Delete "  0 org-addr-crt-index
+osd .osd.orga-o 630 "BhcfH" .scheme.osd-ebtt " S&ort  "   1 org-addr-crt-index
+osd .osd.orga-o 650 "BhcfH" .scheme.osd-ebtt " E&xit  "   1 void
+osd .osd.orga-o 660 "f" " "
+
+0 define-macro org-addr-sort
+    ; create the fields menu
+    osd .osd.org-m 0 "b"
+    osd .osd.org-m 1 "" "None" 0 org-addr-sort-field-set
+    set-variable #l0 0
+    !while &not &seq &set #l1 &lget .org.addr-lbl &inc #l0 1 ""
+        osd .osd.org-m &add #l0 1 "" #l1 #l0 org-addr-sort-field-set
+    !done
+    .osd.orga-o osd
+!emacro
+
+; Find record code ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+0 define-macro org-addr-find-set
+    !if &equ @# -1
+        set-variable .org.addr-fstr @ml25 "" .org.addr-fstr
+    !else
+        set-variable $result .org.addr-fstr
+    !endif
+!emacro
+0 define-macro org-addr-find-field
+    set-variable .org.addr-ffld @#
+    set-variable #l0 &cond @# &lget .org.addr-lbl .org.addr-ffld "All"
+    osd .osd.orga-f 60 "MmxsfHz" .scheme.osd-entry 20 1 #l0 .osd.org-m
+!emacro
+0 define-macro org-addr-find-check
+    !if &les @# 0
+        set-variable @# &abs @#
+        !if &les @# 0x10
+            set-variable .org.aflag &band .org.aflag 0xfff0
+        !endif
+        set-variable .org.aflag &bxor .org.aflag @#
+    !elif &not &band .org.aflag @#
+        !abort
+    !endif
+!emacro
+0 define-macro org-addr-find-rec
+    set-variable #l0 .org.addr-fstr
+    !if &seq #l0 ""
+        osd .osd.orga-f 70 "" "    No search string set!"
+        !bell
+        !return
+    !endif
+    !if &not &band .org.aflag 0x20
+        ; not magic, protect magic chars
+        str-to-regex #l0
+    !endif
+    !if &band .org.aflag 0x4
+        ; use "[^\r]" (i.e. not an unused char) instead of "." so \n is also matched
+        set-variable #l0 &cat "[^\r]*" #l0
+    !endif
+    !if &band .org.aflag 0x6
+        set-variable #l0 &cat #l0 "[^\r]*"
+    !endif
+    set-variable #l1 .org.addr
+    set-variable #l5 .org.iaddr
+    !if &equ @# 3
+        set-variable .org.addr "0"
+        set-variable .org.iaddr &cond &gre .org.iaddr -1 0 -1
+    !endif
+    ml-write #l0
+    set-variable #l2 &lget .org.addr-reg .org.addr-ffld 
+    !repeat
+        set-variable #l3 .org.addr
+        !if &les @# 0
+            org-addr-dec-recno
+        !else
+            org-addr-inc-recno
+        !endif
+        !if .org.addr-ffld
+            !if &not &seq &set #l4 &reg "/org" &spr "addr/%d/%s" .org.addr #l2 "" ""
+                !if &band .org.aflag 0x10
+                    set-variable #l4 &xse #l4 #l0
+                !else
+                    set-variable #l4 &xis #l4 #l0
+                !endif
+                !if #l4
+                    osd .osd.orga-f 70 "" &cat "    Found in Record " .org.addr
+                    -2 osd
+                    !return
+                !endif
+            !endif
+        !else
+            set-variable #l2 0
+            !while &not &seq &set #l4 &lget .org.addr-reg &inc #l2 1 ""
+                !if &not &seq &set #l4 &reg "/org" &spr "addr/%d/%s" .org.addr #l4 "" ""
+                    !if &band .org.aflag 0x10
+                        set-variable #l4 &xse #l4 #l0
+                    !else
+                        set-variable #l4 &xis #l4 #l0
+                    !endif
+                    !if #l4
+                        osd .osd.orga-f 70 "" &cat "    Found in Record " .org.addr
+                        -2 osd
+                        !return
+                    !endif
+                !endif
+            !done
+        !endif
+    !until &seq #l3 .org.addr
+    set-variable .org.addr #l1
+    set-variable .org.iaddr #l5
+    osd .osd.orga-f 70 "" "    Not Found!"
+    !bell
+!emacro
+
+0 define-macro org-addr-find-exec
+    osd .osd.orga-f 70 "" "    Searching..."
+    -1 osd
+    set-variable #l1 .org.addr
+    set-variable #l0 $mouse
+    set-variable $mouse &bor 0x50000 &band 0xffff #l0
+    !force !force @# org-addr-find-rec
+    !if &not $status
+        set-variable .org.addr #l1
+        osd .osd.orga-f 70 "" "    User aborted!"
+    !endif
+    set-variable $mouse #l0
+!emacro
+
+osd .osd.orga-f 00  "btcdHs" 52 0 -1 -1 650 .scheme.osd-title "Find Address"
+osd .osd.orga-f 10  ""
+osd .osd.orga-f 20  "Shf" "  &Search for: " 30
+osd .osd.orga-f 30  "ExfHz" .scheme.osd-entry 30 1 "" 1 org-addr-find-set
+osd .osd.orga-f 40  ""
+osd .osd.orga-f 50  "Shf" "  &In Field:   " 60
+osd .osd.orga-f 60  "MmxsfHz" .scheme.osd-entry 20 1 &cond .org.addr-ffld &lget .org.addr-lbl .org.addr-ffld "All" .osd.org-m
+osd .osd.orga-f 65  ""
+osd .osd.orga-f 70  ""
+osd .osd.orga-f 75  ""
+osd .osd.orga-f 80  "hf" "  Match:  "
+osd .osd.orga-f 90  "hCfxp" "^[ *] &Whole" 1 org-addr-find-check
+osd .osd.orga-f 100 "hf" "  "
+osd .osd.orga-f 110 "hCfxp" "^[ *] S&tart" 2 org-addr-find-check
+osd .osd.orga-f 120 "hf" "  "
+osd .osd.orga-f 130 "Cfxp"  "^[ *] &Any Part" 4 org-addr-find-check
+osd .osd.orga-f 140  ""
+osd .osd.orga-f 150  "hf" "    "
+osd .osd.orga-f 160  "Cfxp" "^[ *] &Case insensitive" 0x10 org-addr-find-check
+osd .osd.orga-f 170  "hf" "    "
+osd .osd.orga-f 180 "Cfxp" "^[ *] &Magic mode" 0x20 org-addr-find-check
+osd .osd.orga-f 600 ""
+osd .osd.orga-f 610 "hf" "  "
+osd .osd.orga-f 620 "BhcfxH" .scheme.osd-ebtt " &First "          3 org-addr-find-exec
+osd .osd.orga-f 630 "BhcfxH" .scheme.osd-ebtt " &Next  "          1 org-addr-find-exec
+osd .osd.orga-f 640 "BhcfxH" .scheme.osd-ebtt " &Reverse "       -1 org-addr-find-exec
+osd .osd.orga-f 650 "BhcfH"  .scheme.osd-ebtt " E&xit  "          1 void
+osd .osd.orga-f 660 "f" " "
+
+0 define-macro org-addr-find
+    ; create the fields menu
+    osd .osd.org-m 0 "b"
+    osd .osd.org-m 1 "" "All" 0 org-addr-find-field
+    set-variable #l0 0
+    !while &not &seq &set #l1 &lget .org.addr-lbl &inc #l0 1 ""
+        osd .osd.org-m &add #l0 1 "" #l1 #l0 org-addr-find-field
+    !done
+    osd .osd.orga-f 70  ""
+    .osd.orga-f osd
+!emacro
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+0 define-macro org-addr-buffer
+    !if &not &seq .org.addr "*"
+        beginning-of-line
+        set-variable #l0 &spr "addr/%d/" .org.addr
+        insert-string &spr "Record No: %d\nName:      " .org.addr
+        set-variable #l2 &reg "/org" &cat #l0 "sname" ""
+        !if &not &seq &set #l1 &reg "/org" &cat #l0 "fname" "" ""
+            insert-string #l1
+            !if &not &seq #l2 ""
+                insert-space
+            !endif
+        !endif
+        !if &not &seq #l2 ""
+            insert-string #l2
+        !endif
+        insert-newline
+        !if &not &seq &set #l1 &reg "/org" &cat #l0 "nname" "" ""
+            insert-string &spr "Nick-Name: %s\n" #l1
+        !endif
+        !if &or &not &seq &set #l1 &reg "/org" &cat #l0 "pfname" "" "" &not &seq &set #l2 &reg "/org" &cat #l0 "psname" "" ""
+            insert-string &spr "Partner:   "
+            !if &not &seq #l1 ""
+                insert-string #l1
+                !if &not &seq #l2 ""
+                    insert-space
+                !endif
+            !endif
+            !if &not &seq #l2 ""
+                insert-string #l2
+            !endif
+            insert-newline
+        !endif
+        !force find-registry "/org" &cat #l0 "home" 0
+        !if $status
+            insert-string &spr "\nHome:\n"
+            !if &not &seq &set #l1 &reg "/org" &cat #l0 "home/addr" "" ""
+                set-variable #l2 $window-line
+                insert-string &spr "  Address: %s\n" #l1
+                11 org-indent #l2
+            !endif
+            !if &not &seq &set #l1 &reg "/org" &cat #l0 "home/tel" "" ""
+                insert-string &spr "\n  Tel:     %s" #l1
+            !endif
+            !if &not &seq &set #l1 &reg "/org" &cat #l0 "home/fax" "" ""
+                insert-string &spr "\n  Fax:     %s" #l1
+            !endif
+            !if &not &seq &set #l1 &reg "/org" &cat #l0 "home/mob" "" ""
+                insert-string &spr "\n  Mobile:  %s" #l1
+            !endif
+            !if &len @wl
+                insert-newline
+            !endif
+            !if &not &seq &set #l1 &reg "/org" &cat #l0 "home/email" "" ""
+                insert-string &spr "\n  E-Mail:  %s" #l1
+            !endif
+            !if &not &seq &set #l1 &reg "/org" &cat #l0 "home/www" "" ""
+                insert-string &spr "\n  WWW:     %s" #l1
+            !endif
+            !if &not &seq &set #l1 &reg "/org" &cat #l0 "home/ftp" "" ""
+                insert-string &spr "\n  FTP:     %s" #l1
+            !endif
+            !if &len @wl
+                insert-newline
+            !endif
+        !endif
+        !force find-registry "/org" &cat #l0 "work" 0
+        !if $status
+            insert-string &spr "\nWork:\n  Company: %s\n" &reg "/org" &cat #l0 "work/comp" ""
+            !if &not &seq &set #l1 &reg "/org" &cat #l0 "work/addr" "" ""
+                set-variable #l2 $window-line
+                insert-string &spr "  Address: %s\n" #l1
+                11 org-indent #l2
+            !endif
+            !if &not &seq &set #l1 &reg "/org" &cat #l0 "work/tel" "" ""
+                insert-string &spr "\n  Tel:     %s" #l1
+            !endif
+            !if &not &seq &set #l1 &reg "/org" &cat #l0 "work/fax" "" ""
+                insert-string &spr "\n  Fax:     %s" #l1
+            !endif
+            !if &not &seq &set #l1 &reg "/org" &cat #l0 "work/mob" "" ""
+                insert-string &spr "\n  Mobile:  %s" #l1
+            !endif
+            !if &len @wl
+                insert-newline
+            !endif
+            !if &not &seq &set #l1 &reg "/org" &cat #l0 "work/email" "" ""
+                insert-string &spr "\n  E-Mail:  %s" #l1
+            !endif
+            !if &not &seq &set #l1 &reg "/org" &cat #l0 "work/www" "" ""
+                insert-string &spr "\n  WWW:     %s" #l1
+            !endif
+            !if &not &seq &set #l1 &reg "/org" &cat #l0 "work/ftp" "" ""
+                insert-string &spr "\n  FTP:     %s" #l1
+            !endif
+            !if &len @wl
+                insert-newline
+            !endif
+        !endif
+        !if &not &seq &set #l1 &reg "/org" &cat #l0 "notes" "" ""
+            set-variable #l2 &add $window-line 1
+            insert-string &spr "\nNotes:     %s\n" #l1
+            11 org-indent #l2
+        !endif
+        insert-newline
+    !endif
+    1 screen-update
+!emacro
+
+-1 osd .osd.orga-h
+osd .osd.orga-h   0 "s" 62 15 -1 -1 
+;osd .osd.orga-h  10 ""
+osd .osd.orga-h  20 "Shf" " Partner  " 30
+osd .osd.orga-h  30 "EtxfhH" 1 .scheme.osd-entry "###############" 7 org-addr-set-entry
+osd .osd.orga-h  40 "hf" " "
+!if &band .org.aflag 0x100
+    osd .osd.orga-h 50 "EtxfHh" 2 .scheme.osd-entry "####################" 8 org-addr-set-entry
+    osd .osd.orga-h 52 "hf" "  DOB "
+    osd .osd.orga-h 54 "ExfH" .scheme.osd-entry "#########" 25 org-addr-set-entry
+!else
+    osd .osd.orga-h  50 "EtxfH" 2 .scheme.osd-entry "####################" 8 org-addr-set-entry
+!endif
+osd .osd.orga-h  59 "" 
+osd .osd.orga-h  60 "Shf" " &Address  " 70
+!if &band .org.aflag 0x100
+    osd .osd.orga-h 70 "EtNxfhHzh" 4 .scheme.osd-entry 40 5 "" 9 org-addr-set-entry
+    osd .osd.orga-h 72 "hf" "  "
+    osd .osd.orga-h 74 "ExfH" .scheme.osd-entry "#########" 26 org-addr-set-entry
+!else
+    osd .osd.orga-h 70 "EtNxfhHz" 4 .scheme.osd-entry 40 5 "" 9 org-addr-set-entry
+!endif
+osd .osd.orga-h  80 "" 
+osd .osd.orga-h  90 "Shf" " &Tel      " 100
+!if &band .org.aflag 0x100
+    osd .osd.orga-h 100 "EtxfHh" 5 .scheme.osd-entry "#########################" 10 org-addr-set-entry
+    osd .osd.orga-h 102 "hf" "  Chld "
+    osd .osd.orga-h 104 "EtxfHh" 6 .scheme.osd-entry "########" 27 org-addr-set-entry
+    osd .osd.orga-h 106 "hf" "  "
+    osd .osd.orga-h 108 "ExfH" .scheme.osd-entry "#########" 28 org-addr-set-entry
+!else
+    osd .osd.orga-h 100 "EtxfH" 5 .scheme.osd-entry "#########################" 10 org-addr-set-entry
+!endif
+osd .osd.orga-h 110 "Shf" " Fax      " 120
+!if &band .org.aflag 0x100
+    osd .osd.orga-h 120 "EtxfHh" 8 .scheme.osd-entry "#########################" 11 org-addr-set-entry
+    osd .osd.orga-h 122 "hf" "  Chld "
+    osd .osd.orga-h 124 "EtxfHh" 9 .scheme.osd-entry "########" 29 org-addr-set-entry
+    osd .osd.orga-h 126 "hf" "  "
+    osd .osd.orga-h 128 "ExfH" .scheme.osd-entry "#########" 30 org-addr-set-entry
+!else
+    osd .osd.orga-h 120 "EtxfH" 8 .scheme.osd-entry "#########################" 11 org-addr-set-entry
+!endif
+osd .osd.orga-h 130 "Shf" " Mobile   " 140
+!if &band .org.aflag 0x100
+    osd .osd.orga-h 140 "EtxfHh" 11 .scheme.osd-entry "#########################" 12 org-addr-set-entry
+    osd .osd.orga-h 142 "hf" "  Chld "
+    osd .osd.orga-h 144 "EtxfHh" 12 .scheme.osd-entry "########" 31 org-addr-set-entry
+    osd .osd.orga-h 146 "hf" "  "
+    osd .osd.orga-h 148 "ExfH" .scheme.osd-entry "#########" 32 org-addr-set-entry
+!else
+    osd .osd.orga-h 140 "EtxfH" 11 .scheme.osd-entry "#########################" 12 org-addr-set-entry
+!endif
+osd .osd.orga-h 150 "" 
+osd .osd.orga-h 160 "Shf" " &E-Mail   " 170
+osd .osd.orga-h 170 "EtxfH" 14 .scheme.osd-entry "########################################" 13 org-addr-set-entry
+osd .osd.orga-h 180 "Shf" " &WWW      " 190
+osd .osd.orga-h 190 "EtxfH" 15 .scheme.osd-entry "########################################" 14 org-addr-set-entry
+osd .osd.orga-h 200 "Shf" " FT&P      " 210
+osd .osd.orga-h 210 "EtxfH" 16 .scheme.osd-entry "########################################" 15 org-addr-set-entry
+
+-1 osd .osd.orga-w
+osd .osd.orga-w   0 "s" 62 15 -1 -1 
+;osd .osd.orga-w  10 ""
+osd .osd.orga-w  20 "Shf" " &Company  " 30
+osd .osd.orga-w  30 "EtxfHz" 1 .scheme.osd-entry 40 1 "" 16 org-addr-set-entry
+osd .osd.orga-w  59 "" 
+osd .osd.orga-w  60 "Shf" " &Address  " 70
+osd .osd.orga-w  70 "EtNxfHz" 3 .scheme.osd-entry 40 5 "" 17 org-addr-set-entry
+osd .osd.orga-w  80 "" 
+osd .osd.orga-w  90 "Shf" " &Tel      " 100
+osd .osd.orga-w 100 "EtxfH" 4 .scheme.osd-entry "#########################" 18 org-addr-set-entry
+osd .osd.orga-w 110 "Shf" " Fax      " 120
+osd .osd.orga-w 120 "EtxfH" 5 .scheme.osd-entry "#########################" 19 org-addr-set-entry
+osd .osd.orga-w 130 "Shf" " Mobile   " 140
+osd .osd.orga-w 140 "EtxfH" 6 .scheme.osd-entry "#########################" 20 org-addr-set-entry
+osd .osd.orga-w 150 "" 
+osd .osd.orga-w 160 "Shf" " &E-Mail   " 170
+osd .osd.orga-w 170 "EtxfH" 7 .scheme.osd-entry "########################################" 21 org-addr-set-entry
+osd .osd.orga-w 180 "Shf" " &WWW      " 190
+osd .osd.orga-w 190 "EtxfH" 8 .scheme.osd-entry "########################################" 22 org-addr-set-entry
+osd .osd.orga-w 200 "Shf" " FT&P      " 210
+osd .osd.orga-w 210 "EtxfH" 9 .scheme.osd-entry "########################################" 23 org-addr-set-entry
+
+osd .osd.orga-n 0 "N"
+osd .osd.orga-n 1 "Ptfr" 1 " &Home " .osd.orga-h
+osd .osd.orga-n 2 "Ptfr" 2 " Wor&k " .osd.orga-w
+osd .osd.orga-n 100 "It" 3           .osd.orga-h
+
+osd .osd.orga  10 ""
+osd .osd.orga  20 "Shf" "  &Record No " 50
+osd .osd.orga  30 "RtBxhf" 1 "<<" 1 org-addr-dec-recno
+osd .osd.orga  35 "hf" " "
+osd .osd.orga  40 "RtBxhfT" 2 " &<" f org-addr-dec-recno
+osd .osd.orga  45 "hf" " "
+osd .osd.orga  50 "RtExHhf" 3 .scheme.osd-entry "####" f org-addr-set-recno
+osd .osd.orga  55 "hf" " "
+osd .osd.orga  60 "RtBxhfT" 4 "&> " f org-addr-inc-recno
+osd .osd.orga  65 "hf" " "
+osd .osd.orga  70 "RtBxhf" 5 ">>" 1 org-addr-inc-recno
+osd .osd.orga  73 "hf" "   "
+osd .osd.orga  75 "BtxfHh" 6 .scheme.osd-ebtt " &Find " f org-addr-find
+osd .osd.orga  77 "hf" "  "
+osd .osd.orga  78 "BtxfH"  7 .scheme.osd-ebtt " S&ort " f org-addr-sort
+osd .osd.orga  80 "Shf" "  Na&me      " 90
+osd .osd.orga  90 "EtxfhH" 8 .scheme.osd-entry "##############" 2 org-addr-set-entry
+osd .osd.orga 100 "hf" " "
+!if &band .org.aflag 0x100
+    osd .osd.orga 120 "EtxfHh" 9 .scheme.osd-entry "####################" 3 org-addr-set-entry
+    osd .osd.orga 122 "hf" "  DOB "
+    osd .osd.orga 124 "ExfH" .scheme.osd-entry "#########" 24 org-addr-set-entry
+!else
+    osd .osd.orga 120 "EtxfH" 9 .scheme.osd-entry "####################" 3 org-addr-set-entry
+    osd .osd.orga 122 "D"
+    osd .osd.orga 124 "D"
+!endif
+osd .osd.orga 130 "Shf" "  N&ickname  " 140
+osd .osd.orga 140 "EtxfhH" 10 .scheme.osd-entry "##############" 4 org-addr-set-entry
+osd .osd.orga 143 "hf" "                       "
+osd .osd.orga 145 "Cfx" "^  *^^Se&lect" 5 org-addr-set-check
+osd .osd.orga 150 "" 
+osd .osd.orga 160 "Itc" 11 .osd.orga-n
+osd .osd.orga 170 "" 
+osd .osd.orga 180 "" 
+osd .osd.orga 190 "Sf" "  &Notes" 160
+osd .osd.orga 200 "EtNcxHfz" 12 .scheme.osd-entry 60 5 "" 6 org-addr-set-entry
+osd .osd.orga 210 "" 
+osd .osd.orga 220 "" 
+osd .osd.orga 605 "hf" " "
+osd .osd.orga 610 "BtxhcfH" 13 .scheme.osd-ebtt " &Save " f organizer-save
+osd .osd.orga 613 "BtxhcfHR" 14 .scheme.osd-ebtt " D&up " f org-addr-dup
+osd .osd.orga 615 "BtxhcfHR" 15 .scheme.osd-ebtt " &Delete "  f org-addr-del
+osd .osd.orga 620 "BtxhcfH" 16 .scheme.osd-ebtt " Addr to &Buffer "  f org-addr-buffer
+osd .osd.orga 630 "BtcfH" 17 .scheme.osd-ebtt " E&xit "    1 void
+

@@ -1,0 +1,171 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips & Jon Green
+;  Created       : Thu Jan 14 02:13:44 1999
+;  Last Modified : <000719.0013>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 1999 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; ascii-time
+; Get the time as an ASCII string. Return in #p9,
+0 define-macro ascii-time
+    set-variable #l1 $time
+    ; Day of week.
+    set-variable #l0 &mid "SunMonTueWedThuFriSatSun" &mul &mid #l1 11 1 3 3
+    ; Month of year
+    set-variable #l0 &spr "%s %s" #l0 &mid "JanFebMarAprMayJunJulAugSepOctNovDec" &mul &sub &mid #l1 7 2 1 3 3
+    ; 'Day of Month' hh:mm:ss
+    set-variable #l0 &spr "%s %d %02d:%02d:%02d" #l0 &mid #l1 9 2 &mid #l1 12 2 &mid #l1 14 2 &mid #l1 16 2
+    ; year
+    set-variable #p9 &spr "%s %s" #l0 &lef #l1 4
+!emacro
+
+; regex-forward; Perform a regular expression search regardless of the 
+; state of the user's magic and exact modes.
+;
+; This should probably be a public function. Need the same for replace.
+; I am sure that there are some bogus macros around that corrupt the user
+; magic state for this very reason.
+;
+; These may need to be functions at the end of the day, I am not sure
+; what the backslash policy is on the macros passed as arguments ?? 
+;
+0 define-macro regex-forward
+    ; Save the user state
+    set-variable #l0 &bmod "exact"
+    set-variable #l1 &bmod "magic"
+    ; Perform a magic search
+    1 buffer-mode "exact"
+    1 buffer-mode "magic"
+    !if @?
+        !force @# search-forward @1
+    !else
+        !force search-forward @1
+    !endif
+    ; did it succeed
+    set-variable #l3 $status
+    ; Restore user state and return status.
+    &cond #l0 1 -1 buffer-mode "exact"
+    &cond #l1 1 -1 buffer-mode "magic"
+    !return #l3
+!emacro
+
+; regex-backward; Magic search backwards irrespective of user magic state
+0 define-macro regex-backward
+    ; Save the user state
+    set-variable #l0 &bmod "exact"
+    set-variable #l1 &bmod "magic"
+    ; Perform a magic search
+    1 buffer-mode "exact"
+    1 buffer-mode "magic"
+    !if @?
+        !force @# search-backward @1
+    !else
+        !force search-backward @1
+    !endif
+    ; did it succeed
+    set-variable #l3 $status
+    ; Restore user state and return status.
+    &cond #l0 1 -1 buffer-mode "exact"
+    &cond #l1 1 -1 buffer-mode "magic"
+    !return #l3
+!emacro
+
+; sub any occurrence of @2 in @1 to @3
+0 define-macro var-str-sub
+    set-variable #l9 @1
+    set-variable #l0 @2
+    set-variable #l1 @3
+    !if &not @?
+        set-variable @# 0
+    !endif
+    set-variable .count 0
+    set-variable #l2 0
+    !while &set #l3 &sin #l0 &rig #l9 #l2
+        set-variable #l3 &add #l2 &sub #l3 1
+        set-variable #l4 &cat &lef #l9 #l3 #l1
+        set-variable #l2 &len #l4
+        set-variable #l9 &cat #l4 &rig #l9 &add #l3 &len #l0
+        !if &equ &inc .count 1 @#
+            set-variable @1 #l9
+            !return
+        !endif
+    !done
+    set-variable @1 #l9
+!emacro
+
+; convert a string to a regex compliant search string
+0 define-macro str-to-regex
+    set-variable #l9 @1
+    set-variable #l2 0
+    !while &not &seq "" &set #l3 &mid #l9 #l2 1
+        !if &sin #l3 "\\[*+.?$"
+            set-variable #l9 &spr "%s\\%s" &lef #l9 #l2 &rig #l9 #l2
+            set-variable #l2 &add #l2 2
+        !else
+            set-variable #l2 &add #l2 1
+        !endif
+    !done
+    set-variable @1 #l9
+!emacro
+
+; convert a string to a regex compliant search string
+0 define-macro filemask-to-regex
+    set-variable #l9 @1
+    set-variable #l2 0
+    !while &not &seq "" &set #l3 &mid #l9 #l2 1
+        !if &seq #l3 "*"
+            set-variable #l9 &spr "%s.%s" &lef #l9 #l2 &rig #l9 #l2
+            set-variable #l2 &add #l2 2
+        !elif &seq #l3 "?"
+            set-variable #l9 &spr "%s.%s" &lef #l9 #l2 &rig #l9 &add #l2 1
+            set-variable #l2 &add #l2 1
+        !elif &seq #l3 "["
+            set-variable #l2 &add #l2 &add 2 &sin "]" &rig #l9 &add #l2 2
+        !elif &sin #l3 "\\+.$^"
+            set-variable #l9 &spr "%s\\%s" &lef #l9 #l2 &rig #l9 #l2
+            set-variable #l2 &add #l2 2
+        !else
+            set-variable #l2 &add #l2 1
+        !endif
+    !done
+    set-variable @1 #l9
+!emacro
+
+; copy-registry <from> <to>
+; copy <from> and its children to <to>
+0 define-macro copy-registry
+    set-variable #l0 @1
+    set-variable #l1 @2
+    set-variable #l2 &reg "" #l0 ""
+    set-registry "" #l1 #l2
+    mark-registry #l0 "g"
+    mark-registry #l1 $result
+    set-variable #l3 0
+    !while 1
+        !force find-registry "" #l0 &pinc #l3 1
+        !if &not $status
+            !return
+        !endif
+        set-variable #l2 $result
+        copy-registry &spr "%s/%s" #l0 #l2 &spr "%s/%s" #l1 #l2
+    !done
+!emacro
+
+; generate-tags-file "<tagtype>"
+; runs ME @<tagtype> -v%tags-option=...
+0 define-macro generate-tags-file
+    set-variable #l0 @1
+    !if &band $system 0x080
+        exec-me &spr "\"@%s\" \"-v%%tag-option=%s\"" #l0 %tag-option
+    !else
+        exec-me &spr "\"@%s\" \"-v%%%%tag-option=%s\"" #l0 %tag-option
+    !endif
+!emacro
+

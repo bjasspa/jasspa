@@ -1,0 +1,233 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Sat Jul 26 14:36:36 1997
+;  Last Modified : <000719.0012>
+;
+;  Description   : cal calendar macro
+;
+;  Notes         : One of the last remaining screen-poke based utilities.
+;                  osd cannot currently do grids.
+;
+;  History       : Jon 20/04/98 - Moved to registry based tool.
+;
+;  Copyright (c) 1998 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+0 define-macro-file organizi org-address-import org-address-export
+set-variable .org.pages  "|Month|Week|Day|Lists|Address|Setup|"
+set-variable .org.set-month 1
+set-variable .org.set-day 1
+
+0 define-macro org-setup-init
+    set-variable .org.page 4
+    org-setup-page
+    org-setup-month
+    org-setup-day
+    org-setup-1dofw
+    set-variable .org.aflag &reg "/org" "set/aflag" "0x34"
+!emacro     
+
+0 define-macro org-setup-file
+    set-variable #l1 &reg "/" "org" .org.dfile
+    !if &les @# 0
+        set-variable #l0 @ml2 "" #l1
+        !if &not &seq #l0 #l1
+            org-init #l0
+            org-setup-init
+        !endif
+    !else
+        set-variable $result #l1
+    !endif
+!emacro
+
+0 define-macro org-setup-page
+    !if @?
+        set-registry "/org" "set/initpage" &sub @# 1
+        mark-registry "/org" "u"
+    !else
+        set-variable @# &add 1 &reg "/org" "set/initpage" "0"
+    !endif
+    osd .osd.orgt 60 "MtxmsfHz" 2 .scheme.osd-entry 12 1 &lget .org.pages @# .osd.org-m org-setup-pagec
+!emacro
+
+0 define-macro org-setup-pagec
+    -1 osd .osd.org-m
+    osd .osd.org-m 0 "bs" 14 0 0 0
+    set-variable #l0 0
+    !while &not &seq "" &set #l1 &lget .org.pages &inc #l0 1
+        osd .osd.org-m #l0 "" #l1 #l0 org-setup-page
+    !done
+!emacro
+
+0 define-macro org-setup-month
+    !if @?
+        set-variable .org.set-month @#
+    !endif
+    osd .osd.orgt 120 "MhtxmsfHz" 3 .scheme.osd-entry 12 1 &lget .org.months .org.set-month .osd.org-m org-setup-monthc
+!emacro
+
+0 define-macro org-setup-monthc
+    -1 osd .osd.org-m
+    osd .osd.org-m 0 "bs" 14 0 0 0
+    set-variable #l0 0
+    !while &not &seq "" &set #l1 &lget .org.months &inc #l0 1
+        osd .osd.org-m #l0 "" #l1 #l0 org-setup-month
+    !done
+!emacro
+
+0 define-macro org-setup-monthe
+    !if &les @# 0
+        set-variable #l1 &lget .org.months .org.set-month
+        set-variable #l0 @ml2 "" #l1
+        !if &not &seq #l0 #l1
+            set-variable .org.months &lset .org.months .org.set-month #l0
+            set-registry "/org" "set/months" .org.months
+            mark-registry "/org" "u"
+            -1 osd
+        !endif
+    !else
+        set-variable $result &lget .org.months .org.set-month
+    !endif
+!emacro
+
+0 define-macro org-setup-day
+    !if @?
+        set-variable .org.set-day @#
+    !endif
+    osd .osd.orgt 160 "MhtxmsfHz" 4 .scheme.osd-entry 12 1 &lget .org.days .org.set-day .osd.org-m org-setup-dayc
+!emacro
+
+0 define-macro org-setup-dayc
+    -1 osd .osd.org-m
+    osd .osd.org-m 0 "bs" 14 0 0 0
+    set-variable #l0 0
+    !while &not &seq "" &set #l1 &lget .org.days &inc #l0 1
+        osd .osd.org-m #l0 "" #l1 #l0 org-setup-day
+    !done
+!emacro
+
+0 define-macro org-setup-daye
+    !if &les @# 0
+        set-variable #l1 &lget .org.days .org.set-day
+        set-variable #l0 @ml2 "" #l1
+        !if &not &seq #l0 #l1
+            set-variable .org.days &lset .org.days .org.set-day #l0
+            set-registry "/org" "set/days" .org.days
+            mark-registry "/org" "u"
+            -1 osd
+        !endif
+    !else
+        set-variable $result &lget .org.days .org.set-day
+    !endif
+!emacro
+
+0 define-macro org-setup-1dofw
+    !if @?
+        !if &not &equ &sub @# 1 &lef .org.set 1
+            set-registry "/org" "set/1dofw" &sub @# 1
+            mark-registry "/org" "u"
+            set-variable .org.set &spr "%1d%1d" &sub @# 1 &rig .org.set 1
+        !endif
+    !else
+        set-variable @# &add 1 &lef .org.set 1
+    !endif
+    osd .osd.orgt 210 "MtxmsfHz" 7 .scheme.osd-entry 12 1 &lget .org.days @# .osd.org-m org-setup-1dofwc
+!emacro
+
+0 define-macro org-setup-1dofwc
+    -1 osd .osd.org-m
+    osd .osd.org-m 0 "bs" 14 0 0 0
+    set-variable #l0 0
+    !while &not &seq "" &set #l1 &lget .org.days &inc #l0 1
+        osd .osd.org-m #l0 "" #l1 #l0 org-setup-1dofw
+    !done
+!emacro
+
+0 define-macro org-setup-1wofy
+    !if &les @# 0
+        set-variable #l1 &rig .org.set 1
+        set-variable #l0 @ml2 "" #l1
+        !if &les #l0 1
+            set-variable #l0 1
+        !elif &gre #l0 7
+            set-variable #l0 7
+        !endif
+        !if &not &seq #l0 #l1
+            set-registry "/org" "set/1dofw" #l0
+            mark-registry "/org" "u"
+            set-variable .org.set &spr "%1d%1d" &lef .org.set 1 #l0
+        !endif
+    !else
+        set-variable $result &rig .org.set 1
+    !endif
+!emacro
+
+0 define-macro org-setup-aflag-check
+    !if &les @# 0
+        set-variable @# &abs @#
+        !if &les @# 0x10
+            set-variable .org.aflag &band .org.aflag 0xfff0
+        !endif
+        set-variable .org.aflag &bxor .org.aflag @#
+        set-registry "/org" "set/aflag" .org.aflag
+        mark-registry "/org" "u"
+        !if &band @# 0x100
+            0 define-macro-file organiza org-addr-init
+        !endif
+    !elif &not &band .org.aflag @#
+        !abort
+    !endif
+!emacro
+
+osd .osd.orgt  5  ""
+osd .osd.orgt 10  "c" "General"
+osd .osd.orgt 15  ""
+osd .osd.orgt 20  "Shf" "  Current Organizer File " 30
+osd .osd.orgt 30  "EtxfHz" 1 .scheme.osd-entry 35 1 "" f org-setup-file
+osd .osd.orgt 40  ""
+osd .osd.orgt 50  "Shf" "  Default start-up page  " 60
+osd .osd.orgt 70  ""
+osd .osd.orgt 80  ""
+osd .osd.orgt 90  "c" "Calendar"
+osd .osd.orgt 100 ""
+osd .osd.orgt 110 "Shf" "       Change month name " 120
+osd .osd.orgt 130 "fh" " to "
+osd .osd.orgt 140 "EtxfH" 4 .scheme.osd-entry "##############" f org-setup-monthe
+osd .osd.orgt 145 ""
+osd .osd.orgt 150 "Shf" "    Change week day name " 160
+osd .osd.orgt 170 "fh" " to "
+osd .osd.orgt 180 "EtxfH" 6 .scheme.osd-entry "##############" f org-setup-daye
+osd .osd.orgt 190 ""
+osd .osd.orgt 200 "Shf" "   First day of the week " 210
+osd .osd.orgt 220 ""
+osd .osd.orgt 230 "Shf" "  Minimum days of new year in first week " 240
+osd .osd.orgt 240 "EtxfH" 8 .scheme.osd-entry "####" f org-setup-1wofy
+osd .osd.orgt 250 ""
+osd .osd.orgt 260 ""
+osd .osd.orgt 300 "c" "Address Book"
+osd .osd.orgt 310 ""
+osd .osd.orgt 312 "hf" "              "
+osd .osd.orgt 315 "Cfxp" "^[ *] Use extended address book" 0x100 org-setup-aflag-check
+osd .osd.orgt 320 ""
+osd .osd.orgt 330 "BtcfHxh" 18 .scheme.osd-ebtt " Import from file " f org-address-import
+osd .osd.orgt 340 "BtcfHx"  19 .scheme.osd-ebtt " Export to file " f org-address-export
+osd .osd.orgt 350 ""
+osd .osd.orgt 355 ""
+osd .osd.orgt 360 "c" "Default Address Find Settings"
+osd .osd.orgt 365 ""
+osd .osd.orgt 370 "hf" "              "
+osd .osd.orgt 380 "hCfxp" "^[ *] &Whole" 1 org-setup-aflag-check
+osd .osd.orgt 390 "hf" "  "
+osd .osd.orgt 400 "hCfxp" "^[ *] S&tart" 2 org-setup-aflag-check
+osd .osd.orgt 410 "hf" "  "
+osd .osd.orgt 420 "Cfxp"  "^[ *] &Any Part" 4 org-setup-aflag-check
+osd .osd.orgt 430 "hf" "              "
+osd .osd.orgt 440 "Cfxp"  "^[ *] &Case insensitive" 0x10 org-setup-aflag-check
+osd .osd.orgt 450 "hf" "              "
+osd .osd.orgt 460 "Cfxp"  "^[ *] &Magic mode" 0x20 org-setup-aflag-check
+osd .osd.orgt 600 "" 
+osd .osd.orgt 605 "" 
+osd .osd.orgt 610 "BtxhcfH" 20 .scheme.osd-ebtt " &Save " f organizer-save
+osd .osd.orgt 620 "BtcfH"   21 .scheme.osd-ebtt " E&xit " 1 void
+

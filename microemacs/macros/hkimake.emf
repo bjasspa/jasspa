@@ -1,0 +1,87 @@
+;       Imakefile hook
+;
+;   Last Modified : <991125.1029>
+;
+!if &band .hilight.flags 0x02
+    !if &not &exist .hilight.imake
+        set-variable .hilight.imake &pinc .hilight.next 1
+    !endif
+    
+    ; Make file highlighting
+    0 hilight  .hilight.imake 2  50             $global-scheme
+    hilight .hilight.imake 0  ":"               .scheme.variable       
+    hilight .hilight.imake 4  "\"" "\"" "\\"    .scheme.string
+    hilight .hilight.imake 20 "/\\*" "*/" ""    .scheme.comment
+    hilight .hilight.imake 0  "/\\*\\."         $global-scheme
+    hilight .hilight.imake 18 "#"               .scheme.prepro
+    hilight .hilight.imake 4  "\\$(" ")" ""     .scheme.variable    
+    hilight .hilight.imake 1  "\\$O"            .scheme.variable    
+    hilight .hilight.imake 1  "\\$T"            .scheme.variable    
+    hilight .hilight.imake 0  "\\.SUFFIXES"     .scheme.keyword   
+    hilight .hilight.imake 0  "\\.IGNORE"       .scheme.keyword   
+    hilight .hilight.imake 0  "\\.DEFAULT"      .scheme.keyword   
+    hilight .hilight.imake 0  "\\.PRECIOUS"     .scheme.keyword   
+    hilight .hilight.imake 1  "\\$@"            .scheme.keyword   
+    hilight .hilight.imake 1  "\\$\\$@"         .scheme.keyword   
+    hilight .hilight.imake 1  "\\$\\*"          .scheme.keyword   
+    hilight .hilight.imake 1  "\\$<"            .scheme.keyword   
+!endif
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Bunch of macros we may need.
+;
+; comment line ie xxx -> /*xxx*/
+define-macro imake-comment-line
+    !while &gre &pdec @# 1 0
+        beginning-of-line
+        insert-string "/*"
+        end-of-line
+        insert-string "*/"
+        beginning-of-line
+        forward-line
+    !done
+!emacro
+;
+; uncoment line ie /*xxx*/ -> xxx
+define-macro imake-uncomment-line
+    ; The next line store magic state and enables magic
+    &set #l0 &bmod "magic" buffer-mode "magic"
+    !while &gre &pdec @# 1 0
+        search-forward "*/"
+        search-backward "/\\*"
+        forward-delete-char
+        forward-delete-char
+        search-forward "*/"
+        backward-delete-char
+        backward-delete-char
+        beginning-of-line
+        forward-line
+    !done
+    ; restore magic mode
+    #l0 buffer-mode "magic"
+!emacro
+
+define-macro fhook-imake
+    ; if arg is 0 this is a new file so add template 
+    !if &not @#
+        etfinsrt "imake"
+    !endif
+    set-variable $buffer-mask "luh1"
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.imake
+    !endif
+    ; Normal tabs please !!!
+    -1 buffer-mode "tab"
+    1 buffer-mode "indent"
+    1 buffer-mode "time"
+    buffer-bind-unbound-key imake-comment-line   "C-c C-c"
+    buffer-bind-unbound-key imake-uncomment-line "C-c C-d"
+    ; execute user extensions if enabled
+    !if &exist my-fhook-imake
+        my-fhook-imake
+    !endif
+!emacro
+
+ml-write "[Imakemake file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "myimake"

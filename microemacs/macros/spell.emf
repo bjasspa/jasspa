@@ -1,0 +1,839 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Sat Apr 25 18:12:30 1998
+;  Last Modified : <000719.0012>
+;
+;  Description   : spell-buffer, spell-word, spell-edit-word and find-word
+;                  osd based interface to spell and $find-words.
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 1998-99 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+!if &seq .osd.spell-edit "ERROR"
+    set-variable .osd.spell-edit  &pinc .osd.next 1
+    set-variable .osd.spell-editl &pinc .osd.next 1
+    set-variable .osd.spell-editr &pinc .osd.next 1
+    set-variable .osd.spell-editd &pinc .osd.next 1
+    set-variable .osd.spell-check &pinc .osd.next 1
+    set-variable .osd.spell-chkl  &pinc .osd.next 1
+    set-variable .osd.spell-chkg  &pinc .osd.next 1
+    set-variable .osd.spell-chkr  &pinc .osd.next 1
+    set-variable .osd.spell-guess &pinc .osd.next 1
+    set-variable .osd.spell-find  &pinc .osd.next 1
+    set-variable .osd.spell-fndl  &pinc .osd.next 1
+    set-variable .osd.spell-fndr  &pinc .osd.next 1
+    set-variable .osd.spell-fndc  &pinc .osd.next 1
+!endif
+
+define-macro-file spellutl spell-add-word edit-dictionary
+
+set-variable .spell.edit-word ""
+set-variable .spell.edit-worda ""
+set-variable .spell.edit-wordr ""
+set-variable .spell.gscore 2
+
+0 define-macro spell-edit-word-setder
+    set-variable #l0 &mid .spell.rules &sub &abs @# 1 1
+    !if &les @# 0
+        !if &set #l1 &sin #l0 .spell.edit-wordr
+            set-variable .spell.edit-wordr &cat &lef .spell.edit-wordr &sub #l1 1 &rig .spell.edit-wordr #l1
+        !else
+            set-variable .spell.edit-wordr &cat .spell.edit-wordr #l0
+        !endif
+    !elif &not &sin #l0 .spell.edit-wordr
+        !abort
+    !endif
+!emacro
+
+0 define-macro spell-edit-word-setbutt
+    !if @#
+        osd .osd.spell-editr 40 "BHcf" .scheme.osd-ebtt " &Replace   " 3 spell-edit-word-add
+        osd .osd.spell-editr 60 "BHcf" .scheme.osd-ebtt " &Delete    " 1 spell-edit-word-add
+    !else
+        osd .osd.spell-editr 40 "BHcf" .scheme.osd-dbtt " &Replace   "
+        osd .osd.spell-editr 60 "BHcf" .scheme.osd-dbtt " &Delete    "
+    !endif
+    !if &equ @# 2
+        osd .osd.spell-editr 20 "BHcf" .scheme.osd-ebtt " &Add       " 2 spell-edit-word-add
+        osd .osd.spell-editr 80 "BHcf" .scheme.osd-ebtt " To &Buffer " 0 spell-edit-word-add
+    !else
+        osd .osd.spell-editr 20 "BHcf" .scheme.osd-dbtt " &Add       "
+        osd .osd.spell-editr 80 "BHcf" .scheme.osd-dbtt " To &Buffer "
+    !endif
+!emacro
+
+0 define-macro spell-edit-word-setword
+    set-variable .spell.edit-wordr ""
+    set-variable .spell.edit-worda ""
+    osd .osd.spell-editl 55 ""
+    !if .spell.edit-wordf
+        !return
+    !endif
+    !if &not &seq .spell.edit-word ""
+        257 spell .spell.edit-word
+        !if &set #l0 &sin ">" $result
+            spell-edit-word-auto
+            set-variable .spell.edit-worda &rig $result #l0
+            !return
+        !endif
+        !if &set #l0 &sin "/" $result
+            set-variable .spell.edit-wordr &rig $result &sin "/" $result
+            set-variable $result &lef $result &sub #l0 1
+            !if &set #l0 &sin "_" .spell.edit-wordr
+                set-variable .spell.edit-wordr &lef .spell.edit-wordr &sub #l0 1
+            !endif
+        !endif
+        set-variable .spell.edit-word &rig $result 1
+        !if &seq &lef $result 1 "O"
+            osd .osd.spell-editl 50 "h" "        Correct word"
+        !else
+            osd .osd.spell-editl 50 "h" "        New word"
+            osd .osd.spell-editl 55 "BHrfx" .scheme.osd-ebtt " Auto-&Correct "  f spell-edit-word-auto
+        !endif
+        -1 osd .osd.spell-editd
+        osd .osd.spell-editd 0 ""
+        set-variable #l0 0
+        set-variable #l1 &len .spell.rules
+        !while &les #l0 #l1
+            65 spell .spell.edit-word &mid .spell.rules &pinc #l0 1 1
+            !if &not &seq $result ""
+                osd .osd.spell-editd #l0 "Cfxp" &cat "^[ *] " $result #l0 spell-edit-word-setder
+            !endif
+        !done
+        osd .osd.spell-editl 70 "hf" "    "
+        osd .osd.spell-editl 80 "If" .osd.spell-editd
+        2 spell-edit-word-setbutt
+    !else
+        osd .osd.spell-editl 50 "h" "        No word set"
+        osd .osd.spell-editl 70 "D"
+        osd .osd.spell-editl 80 "D"
+        0 spell-edit-word-setbutt
+    !endif
+!emacro
+
+0 define-macro spell-edit-word-add
+    !if &seq .spell.edit-word ""
+        ml-write "[No word set]"
+        !abort
+    !endif
+    !if &not @#
+        0x141 spell .spell.edit-word
+    !endif
+    !if &band @# 0x01
+        0x201 spell .spell.edit-word
+    !endif
+    !if &band @# 0x02
+        !if .spell.edit-wordf
+            !if &seq .spell.edit-worda ""
+                ml-write "[No replacement set]"
+                !abort
+            !endif
+            0x015 spell .spell.edit-word .spell.edit-worda
+        !else
+            0x005 spell .spell.edit-word .spell.edit-wordr
+        !endif
+    !endif
+!emacro
+
+0 define-macro spell-edit-word-set
+    !if &les @# 0
+        set-variable .spell.edit-word @ml2 "" .spell.edit-word
+        set-variable .spell.edit-wordf "0"
+        spell-edit-word-setword
+    !else
+        set-variable $result .spell.edit-word
+    !endif
+!emacro
+0 define-macro spell-edit-worda-set
+    !if &les @# 0
+        set-variable .spell.edit-worda @ml2 "" .spell.edit-worda
+    !else
+        set-variable $result .spell.edit-worda
+    !endif
+!emacro
+
+0 define-macro spell-edit-word-auto
+    set-variable .spell.edit-wordf "1"
+    osd .osd.spell-editl 50 "h" "        Auto-correct"
+    osd .osd.spell-editl 55 ""
+    osd .osd.spell-editl 70 "hS" " &To   : " 80
+    osd .osd.spell-editl 80 "ExH" .scheme.osd-entry "##############################" f spell-edit-worda-set
+    1 spell-edit-word-setbutt
+!emacro
+
+osd .osd.spell-editl 0   ""
+osd .osd.spell-editl 10  ""
+osd .osd.spell-editl 20  "hS" " &Word : " 32
+osd .osd.spell-editl 30  "ExH"  .scheme.osd-entry "##############################" f spell-edit-word-set
+osd .osd.spell-editl 40  ""
+osd .osd.spell-editl 60  ""
+osd .osd.spell-editl 90  ""
+
+osd .osd.spell-editr 0   "d" 100
+osd .osd.spell-editr 10  ""
+osd .osd.spell-editr 30  ""
+osd .osd.spell-editr 50  ""
+osd .osd.spell-editr 70  ""
+osd .osd.spell-editr 90  ""
+osd .osd.spell-editr 100 "BHcf" .scheme.osd-ebtt " E&xit      " 1 void
+osd .osd.spell-editr 110 ""
+0 spell-edit-word-setbutt
+
+osd .osd.spell-edit 0  "batcdH" 9 3 20 .scheme.osd-title "Spell Edit Word"
+osd .osd.spell-edit 10 "Ih" .osd.spell-editl
+osd .osd.spell-edit 15 "h"  "  "
+osd .osd.spell-edit 20 "Ih" .osd.spell-editr
+osd .osd.spell-edit 25 ""   "  "
+
+define-macro spell-edit-word
+    spell-rules-init
+    !force set-variable .spell.edit-word @1
+    !if &not $status
+        set-variable .spell.edit-word ""
+    !endif
+    set-variable .spell.edit-wordf "0"
+    spell-edit-word-setword
+    .osd.spell-edit osd
+!emacro
+
+set-variable %find-word-width 20
+set-variable %find-word-depth 10
+
+0 define-macro find-word-set-list
+    osd .osd.spell-fndl 40  ""  " Searching..."
+    screen-update
+    -1 osd .osd.spell-fndc
+    set-variable #l0 0
+    osd .osd.spell-fndc 0 "AsS" .scheme.osd-child %find-word-width %find-word-depth -1 -1
+    !if &not &seq .spell.find-last ""
+        osd .osd.spell-fndc 1 "" .spell.find-last
+        set-variable #l0 &add #l0 1
+    !endif
+    !while &not &seq &set #l1 $find-words ""
+        !if &equ &inc #l0 1 200
+            set-variable .spell.find-last #l1
+            osd .osd.spell-fndr 10 "BHcf"  .scheme.osd-ebtt " &Insert " f void
+            osd .osd.spell-fndr 20 "BHxcf" .scheme.osd-ebtt " &Next   " f find-word-set-list
+            osd .osd.spell-fndl 40 "" " 200+ matches"
+            !return
+        !endif
+        osd .osd.spell-fndc 1 "x" #l1 f find-word-setr
+    !done
+    osd .osd.spell-fndr 10 "BHcf" .scheme.osd-ebtt " &Insert " f void
+    osd .osd.spell-fndr 20 "BHSc" .scheme.osd-dbtt " Next   "
+    !if #l0
+        osd .osd.spell-fndl 40 "" &spr " %s matches" #l0
+    !else
+        osd .osd.spell-fndc 1 "" " "
+        osd .osd.spell-fndl 40 "" " No matches found"
+    !endif
+!emacro
+
+0 define-macro find-word-setr
+    ; if the replacement word is already set to this then
+    ; its probably a double click and the user want to replace
+    !if &seq .spell.find-mask $result
+        ; We must abort to get out of osd back into the find-word
+        ; macro so set #p3 to 1 to show that this wasnt a real abort
+        set-variable #p3 1
+        !abort
+    !else
+        set-variable .spell.find-mask $result
+        set-variable .spell.find-last ""
+        osd .osd.spell-fndr 20 "BHSc" .scheme.osd-dbtt " Next   "
+    !endif
+!emacro
+
+0 define-macro find-word-set
+    !if &les @# 0
+        set-variable .spell.find-mask @ml2 "" .spell.find-mask
+        set-variable .spell.find-last ""
+        !if &seq .spell.find-mask ""
+            osd .osd.spell-fndl 40  ""  " No word mask set"
+        !else
+            set-variable $find-words .spell.find-mask
+            find-word-set-list
+        !endif
+    !else
+        set-variable $result .spell.find-mask
+    !endif
+!emacro
+
+0 define-macro find-word-resize
+    set-variable #l0 &sub &lef $result 4 16
+    set-variable #l1 &sub &mid $result 4 4 8
+    !if &les #l0 12
+        !if &les #l1 3
+            !abort
+        !endif
+        set-variable #l0 12
+    !endif
+    !if &les #l1 3
+        set-variable #l1 3
+    !endif
+    ; change the width
+    !if &band $scroll-bar 0x01
+        set-variable #l0 &sub #l0 1
+    !endif
+    !if &band $scroll-bar 0x40
+        set-variable #l1 &sub #l1 1
+    !endif
+    set-variable %find-word-width #l0
+    set-variable %find-word-depth #l1
+    osd .osd.spell-fndc 0 "sS" .scheme.osd-child #l0 #l1 -1 -1
+    osd .osd.spell-fndl 30 "ExHfc" .scheme.osd-entry &spr "%n" %find-word-width "#" f find-word-set
+    osd .osd.spell-fndl 50 "IbH" .scheme.osd-sbar #l0 #l1 .osd.spell-fndc
+!emacro
+
+osd .osd.spell-find 0  "batcHR" 9 3 .scheme.osd-title "Find Word" find-word-resize
+osd .osd.spell-find 10 "Ih" .osd.spell-fndl
+osd .osd.spell-find 15 "h"  "  "
+osd .osd.spell-find 20 "I"  .osd.spell-fndr
+
+osd .osd.spell-fndl 0   ""
+osd .osd.spell-fndl 5   ""
+osd .osd.spell-fndl 10  "S"  " &Word Mask :" 30
+osd .osd.spell-fndl 30 "ExHfc" .scheme.osd-entry &spr "%n" %find-word-width "#" f find-word-set
+osd .osd.spell-fndl 50  "IbH" .scheme.osd-sbar %find-word-width %find-word-depth .osd.spell-fndc
+
+osd .osd.spell-fndr 0  ""
+osd .osd.spell-fndr 5  ""
+osd .osd.spell-fndr 10 "BHcf" .scheme.osd-dbtt " &Insert " f void
+osd .osd.spell-fndr 15 ""
+osd .osd.spell-fndr 20 "BHSc" .scheme.osd-dbtt " Next   "
+osd .osd.spell-fndr 25 ""
+osd .osd.spell-fndr 30 "BHcf" .scheme.osd-ebtt " E&xit   " 0 abort-command
+
+define-macro find-word
+    spell-rules-init
+    !force set-variable .spell.find-mask @1
+    !if &not $status
+        set-variable .spell.find-mask ""
+    !endif
+    !if &seq .spell.find-mask ""
+        osd .osd.spell-fndl 40  ""  " No word mask set"
+    !else
+        osd .osd.spell-fndl 40  ""  " Not searched"
+    !endif
+    set-variable #l3 0
+    -1 osd .osd.spell-fndc
+    osd .osd.spell-fndc 0 "sS" .scheme.osd-child %find-word-width %find-word-depth -1 -1
+    osd .osd.spell-fndc 1 ""
+    osd .osd.spell-fndr 10 "BHcf" .scheme.osd-dbtt " &Insert " f void
+    osd .osd.spell-fndr 20 "BHSc" .scheme.osd-dbtt " Next   "
+    !force .osd.spell-find osd
+    !if &and &not $status &not #l3
+        !abort
+    !endif
+    !if @#
+        insert-string .spell.find-mask
+    !endif
+!emacro
+
+set-variable .spell.check-wordo ""
+
+0 define-macro spell-check-set-wordr
+    ; if the replacement word is already set to this then
+    ; its probably a double click and the user want to replace
+    !if &seq .spell.check-word $result
+        1 spell-check-replace
+        ; We must abort to get out of osd back into the spell control
+        ; macro so set #g3 to 1 to show that this wasnt a real abort
+        set-variable #g3 1
+        !abort
+    !else
+        set-variable .spell.check-word $result
+        osd .osd.spell-chkr 10 "BHcft" 1 .scheme.osd-ebtt " &Replace     " 1 spell-check-replace
+        osd .osd.spell-chkr 20 "BHcf"    .scheme.osd-ebtt " Re&place All " 2 spell-check-replace
+        osd .osd.spell-chkl 15 "" " Word correct"
+    !endif
+!emacro
+
+0 define-macro spell-check-set-guess
+    !if &seq .spell.check-word .spell.check-wordo
+        osd .osd.spell-chkr 10 "BcfSH" .scheme.osd-dbtt " Replace     "
+        osd .osd.spell-chkr 20 "BcfSH" .scheme.osd-dbtt " Replace All "
+    !else
+        osd .osd.spell-chkr 10 "BcfHt" 1 .scheme.osd-ebtt " &Replace     " 1 spell-check-replace
+        osd .osd.spell-chkr 20 "BcfH"    .scheme.osd-ebtt " Re&place All " 2 spell-check-replace
+    !endif
+    -1 osd .osd.spell-guess
+    osd .osd.spell-guess 0 "ksS" .scheme.osd-child 22 9 -1 -1
+    osd .osd.spell-guess 1 ""
+    !if &not &seq .spell.check-word ""
+        !if &seq &lef $result 1 "O"
+            osd .osd.spell-chkl 15 "" "Word correct"
+        !else
+            osd .osd.spell-chkl 15 "" "Creating list"
+            screen-update
+            !force !force 33 spell .spell.check-word
+            !if $status
+                set-variable #l0 0
+                !while &not &seq "" &set #l1 &lget $result &inc #l0 1
+                    osd .osd.spell-guess #l0 "x" #l1 f spell-check-set-wordr
+                !done
+            !endif
+            osd .osd.spell-chkl 15 "" "Unrecognised"
+        !endif
+    !else
+        osd .osd.spell-chkl 15 "" "No word set"
+    !endif
+!emacro
+
+0 define-macro spell-check-set-word
+    !if &les @# 0
+        set-variable .spell.check-word @ml2 "" .spell.check-word
+        1 spell .spell.check-word
+        spell-check-set-guess
+    !else
+        set-variable $result .spell.check-word
+    !endif
+!emacro
+
+0 define-macro spell-check-set-gscore
+    !if &les @# 0
+        set-variable .spell.gscore @ml2 "" .spell.gscore
+        add-spell-rule "#" &mul .spell.gscore 30
+        spell-check-set-guess
+    !else
+        set-variable $result .spell.gscore
+    !endif
+!emacro
+
+0 define-macro spell-check-undo
+    !if &not &dec #g0 1
+        osd .osd.spell-chkr 87 "BcfSH" .scheme.osd-dbtt " Undo Last   "
+    !endif
+    set-variable #l1 1
+*redo-undo
+    !if &seq @cc spell-check-undo
+        set-variable @cl undo
+    !endif
+    undo
+    backward-char
+    set-variable #l0 @wc
+    set-variable @cl undo
+    undo
+    ; must call spell here to refocus the location to here 
+    0 spell
+    !if &seq #l0 "A"
+        ; an auto fix, dec the counter and loop back
+        set-variable #g1 &dec #g1 1
+        set-variable #l1 &add #l1 1
+    !elif &seq #l0 "U"
+        ; an undo, loop back
+        set-variable #l1 &add #l1 2
+    !elif &seq #l0 "D"
+        ; Double word deletion - ensure the check is enabled
+        set-variable #g5 &dec #g5 1
+        set-variable #g4 0x82
+    !elif &seq #l0 "N"
+        ; Double word ignore - ensure the check is enabled
+        set-variable #g4 0x82
+    !elif &seq #l0 "S"
+        ; a manual replace
+        set-variable #g2 &dec #g2 1
+    !elif &seq #l0 "R"
+        ; an manual replace with auto fix, dec the counter and remove auto fix
+        set-variable #g2 &dec #g2 1
+        ; check to make sure nothing has gone wrong
+        !if &seq "A" &lef $result 1
+            0x208 spell
+        !else
+            ml-write "Auto-replace undo gone wrong - Aborting"
+            !abort
+        !endif
+    !elif &seq #l0 "G"
+        ; ignore all - remove from the ignore dictionary
+        ; check to make sure nothing has gone wrong
+        !if &seq "O" &lef $result 1
+            0x208 spell
+        !else
+            ml-write "Ignore-All undo gone wrong - Aborting"
+            !abort
+        !endif
+    !elif &seq #l0 "I"
+        ; ignore single
+    !endif
+    !if &dec #l1 1
+        !goto redo-undo
+    !endif
+    -2 undo
+    insert-string "U"
+    -2 undo
+    backward-delete-char
+    set-variable @cc spell-check-undo
+!emacro
+
+0 define-macro spell-check-insertflag
+    !if &bmod "view"
+        osd-xdialog "Spell Checker" "Buffer in view mode, remove?" 1 "  &Yes  " "  &No  "
+        !if &equ $result 2
+            !abort
+        !endif
+        -1 buffer-mode view
+    !endif
+    !if &gre #g0 -1
+        -2 undo
+        ; insert the delete/ignore flag and delete it again
+        ; this ensures the cursor position after an undo and a correct undo
+        !if &equ @# 4
+            ; double word ignore/deletion must back up a word so when we resume
+            ; after an undo the double word will be found!
+            set-alpha-mark "W"
+            backward-word
+            insert-string @1
+            -2 undo
+            backward-delete-char
+            goto-alpha-mark "W"
+        !else
+            insert-string @1
+            -2 undo
+            backward-delete-char
+        !endif
+        ; don't inc the undo count for auto corrections
+        !if &not &equ @# 3
+            !if &not &pinc #g0 1
+                osd .osd.spell-chkr 87 "BcfHt" 4 .scheme.osd-ebtt " &Undo Last   " f spell-check-undo
+            !endif
+        !endif
+        set-variable @cc spell-buffer
+    !endif
+!emacro
+
+0 define-macro spell-check-replace
+    set-variable #l0 $window-col
+    -2 show-region
+    !if &equ @# 4
+        ; Double word deletion
+        set-variable #g5 &add 1 #g5
+        set-variable #l1 "D"
+        set-variable .spell.check-word ""
+    !elif &equ @# 3
+        ; auto replacement
+        set-variable #g1 &add 1 #g1
+        set-variable #l1 "A"
+    !elif &equ @# 2
+        ; manual replacement adding an auto replace
+        0x1d spell .spell.check-wordo .spell.check-word
+        set-variable #g2 &add 1 #g2
+        set-variable #l1 "R"
+    !else
+        ; manual replacement only
+        set-variable #g2 &add 1 #g2
+        set-variable #l1 "S"
+    !endif
+    @# spell-check-insertflag #l1
+    &sub #l0 $window-col forward-delete-char
+    -1 yank
+    -3 show-region
+    insert-string .spell.check-word
+    3 show-region
+!emacro
+
+0 define-macro spell-check-ignore
+    set-variable #l0 $window-col
+    -2 show-region
+    !if &equ @# 4
+        ; Double word ignore
+        set-variable #l1 "N"
+    !elif &equ @# 2
+        ; ignore all
+        13 spell .spell.check-wordo ""
+        set-variable #l1 "G"
+    !else
+        ; singal ignore
+        set-variable #l1 "I"
+    !endif
+    @# spell-check-insertflag #l1
+    set-variable $window-col #l0
+    -3 show-region
+!emacro
+
+0 define-macro spell-check-control
+    set-variable #l9 0
+    !while 1
+        #l9 forward-char
+        set-variable #l9 0
+        #g4 spell
+        !if &seq $result "F"
+            ; Finised
+            ml-write "[All done]"
+            !return
+        !endif
+        set-variable .spell.check-word &rig $result 1
+        ; if the buffer has a word checker, e.g. nroff adjust the word
+        !if &exi &set #l0 &cat &rig $buffer-fhook 6 "-spell-word"
+            ; NOTE: buffer word adjusters should apply to these rules
+            ; If no adjustment can be made, abort leave region and cursor as found
+            ; If the word can be skipped completely (or region) move the cursor to 
+            ; the end, set .spell.check-word = "" and return. NOTE that if the argument
+            ; passed is 1, then its a spell-buffer call and skipping regions is okay,
+            ; otherwise it is a spell-word type call, the cursor must be left where it is.
+            ; If the word is ajdusted (i.e. remove characters from the front or back),
+            ; change .spell.check-word to the adjusted word, the region to enclose the
+            ; adjusted word, the cursor at the end of the new word and the number of
+            ; characters to move forward (i.e chars dropped from the end) in #l9
+            ; (i.e. #p9) and return.
+            !force 1 execute-named-command #l0
+            !if $status
+                !if &seq .spell.check-word ""
+                    !continue
+                !endif
+                0x01 spell .spell.check-word
+            !endif
+        !endif
+        ; see what the problem is
+        !if &seq &lef $result 1 "D"
+            ; Double word
+            set-variable .spell.check-wordo .spell.check-word
+            1 show-region
+            ; Alter some of the buttons to cope with the double word
+            osd .osd.spell-chkl 15 "" "Double word"
+            osd .osd.spell-chkr 10 "BHSc"     .scheme.osd-dbtt " &Replace     "
+            osd .osd.spell-chkr 20 "BHcft"  2 .scheme.osd-ebtt " &Delete 2nd  " 4 spell-check-replace
+            osd .osd.spell-chkr 40 "BHcft"  3 .scheme.osd-ebtt " &Ignore      " 4 spell-check-ignore
+            osd .osd.spell-chkr 50 "BHcfi"    .scheme.osd-ebtt " Disable &Chk " f "set-variable #g4 2"
+            osd .osd.spell-chkr 60 "BHcfS"    .scheme.osd-dbtt " Add         "
+            -1 osd .osd.spell-guess
+            osd .osd.spell-guess 0 "ksS" .scheme.osd-child 22 9 -1 -1
+            osd .osd.spell-guess 1 ""
+            .spell.recenter recenter
+            screen-update
+            !force osd
+            set-variable #l0 $status
+            ; must restore some of the buttons
+            osd .osd.spell-chkr 20 "BHcS"     .scheme.osd-dbtt " Replace All "
+            osd .osd.spell-chkr 40 "BHcft"  3 .scheme.osd-ebtt " &Ignore      " 1 spell-check-ignore
+            osd .osd.spell-chkr 50 "BHcf"     .scheme.osd-ebtt " I&gnore All  " 2 spell-check-ignore
+            osd .osd.spell-chkr 60 "BHcfi"    .scheme.osd-ebtt " &Add         " f "5 spell .spell.check-word \"\""
+            !if &not #l0
+                !if #g3
+                    ; not a real abort, just had to get out of osd
+                    set-variable #g3 0
+                !else
+                    !abort
+                !endif
+            !endif
+        !elif &seq &lef $result 1 "A"
+            ; Auto replace
+            3 spell-check-replace          
+        !elif &seq &lef $result 1 "E"
+            ; Erroneous word
+            set-variable .spell.check-wordo .spell.check-word
+            .spell.recenter recenter
+            1 show-region
+            spell-check-set-guess
+            !force osd
+            !if &not $status
+                !if #g3
+                    ; not a real abort, just had to get out of osd
+                    set-variable #g3 0
+                !else
+                    ; 1000 ml-write "osd aborted"
+                    !abort
+                !endif
+            !endif
+            ; go to the start of the problem and try again
+            ; note ignore has move the goal-post past the problem
+            !force -2 show-region
+        !elif &seq &lef $result 1 "O"
+            ; words okay, this can happen when the word is adjusted
+        !else
+            ml-write &cat "Strange flag " $result
+            !abort
+        !endif
+    !done
+!emacro
+
+0 define-macro spell-set-language
+    set-language $result
+    spell-rules-init
+    add-spell-rule "#" &mul .spell.gscore 30
+    osd .osd.spell-chkl 65 "xMsfH" .scheme.osd-entry &spr "%s%n" %language &sub 14 &len %language " " .osd.spell-chkg
+    1 spell .spell.check-word
+    spell-check-set-guess
+!emacro
+
+0 define-macro spell-check-com
+    !if &equ @# 2
+        set-variable #l0 $window-col
+        !force -2 show-region
+        !force 0 describe-word .spell.check-word
+        set-variable #l1 $status
+        ; must redefine the region
+        -3 show-region
+        set-variable $window-col #l0
+        3 show-region
+        !if &not $status
+            !return
+        !endif
+        set-variable .spell.check-word .describe-word.word
+    !elif @#
+        !force 0 find-word .spell.check-word
+        !if &not $status
+            !return
+        !endif
+        set-variable .spell.check-word .spell.find-mask
+    !else
+        !force spell-edit-word .spell.check-word
+        0x01 spell .spell.check-wordo
+        !if &not &seq &lef $result 1 "E"
+            set-variable #g3 1
+            !abort
+        !endif
+    !endif
+    1 spell .spell.check-word
+    spell-check-set-guess
+!emacro
+
+-1 osd .osd.spell-check
+osd .osd.spell-check 0  "batcHC" 9 3 .scheme.osd-title "Spell Check" spell-check-control
+osd .osd.spell-check 10 "Iht" 1 .osd.spell-chkl
+osd .osd.spell-check 20 "It"  2 .osd.spell-chkr
+
+set-language-list
+-1 osd .osd.spell-chkg
+osd .osd.spell-chkg 0 "Abs" 14 0 0 0
+set-variable #l0 0
+!while &not &seq "" &set #l1 &lget %language-names &inc #l0 1
+    osd .osd.spell-chkg 1 ""  #l1 f spell-set-language
+!done
+
+-1 osd .osd.spell-chkl
+osd .osd.spell-chkl 0  ""
+osd .osd.spell-chkl 5  ""
+osd .osd.spell-chkl 10 "Shf"  " &Word : " 30
+osd .osd.spell-chkl 15 ""  "  "
+osd .osd.spell-chkl 29 "hf" " "
+osd .osd.spell-chkl 30 "ExHf" .scheme.osd-entry "######################" f spell-check-set-word
+osd .osd.spell-chkl 32 ""
+osd .osd.spell-chkl 34 "fh" "            "
+osd .osd.spell-chkl 36 "BfHx" .scheme.osd-ebtt " &Meaning " 2 spell-check-com
+osd .osd.spell-chkl 38 ""
+osd .osd.spell-chkl 40 ""  " Suggestions :"
+osd .osd.spell-chkl 50 "IbHt" 1 .scheme.osd-sbar 22 9 .osd.spell-guess
+osd .osd.spell-chkl 55 ""
+osd .osd.spell-chkl 60 "Sh" " &Language : " 65
+
+-1 osd .osd.spell-chkr
+osd .osd.spell-chkr 0  "s" 17 18 -1 -1
+osd .osd.spell-chkr 5  ""
+osd .osd.spell-chkr 10 "BcfSH"    .scheme.osd-dbtt " Replace     "
+osd .osd.spell-chkr 15 ""
+osd .osd.spell-chkr 20 "BcfSH"    .scheme.osd-dbtt " Replace All "
+osd .osd.spell-chkr 25 ""
+osd .osd.spell-chkr 40 "BcfHt"  3 .scheme.osd-ebtt " &Ignore      " 1 spell-check-ignore
+osd .osd.spell-chkr 45 ""
+osd .osd.spell-chkr 50 "BcfH"     .scheme.osd-ebtt " I&gnore All  " 2 spell-check-ignore
+osd .osd.spell-chkr 55 ""
+osd .osd.spell-chkr 60 "BcfiH"    .scheme.osd-ebtt " &Add         " f "5 spell .spell.check-word \"\""
+osd .osd.spell-chkr 65 ""
+osd .osd.spell-chkr 70 "BcfHx"    .scheme.osd-ebtt " &Edit        " 0 spell-check-com
+osd .osd.spell-chkr 75 ""
+osd .osd.spell-chkr 80 "BcfHx"    .scheme.osd-ebtt " &Find        " 1 spell-check-com
+osd .osd.spell-chkr 85 ""
+osd .osd.spell-chkr 87 "BcfSH"    .scheme.osd-dbtt " Undo Last   "
+osd .osd.spell-chkr 88 ""
+osd .osd.spell-chkr 90 "BcfHt"  5 .scheme.osd-ebtt " E&xit        " 0 abort-command
+osd .osd.spell-chkr 92 ""
+osd .osd.spell-chkr 95 "hf" " "
+osd .osd.spell-chkr 96 "Exfh"    "###" f spell-check-set-gscore
+osd .osd.spell-chkr 98 "hf" "Guess Errors "
+
+define-macro spell-buffer
+    spell-rules-init
+    ; check that spell is setup okay - this fails if not
+    1 spell "-"
+    ; Undo last available
+    set-variable #g0 &cond &bmod "undo" 0 -1
+    set-variable #g7 0
+    ; auto replace count
+    set-variable #g1 0
+    ; manual replace count
+    set-variable #g2 0
+    ; A real quit flag
+    set-variable #g3 0
+    ; Spell call arguement, used to disable delete double
+    set-variable #g4 0x82
+    ; double delete count
+    set-variable #g5 0
+    set-variable #g6 &bmod "edit"
+    set-variable .spell.check-word ""
+    -1 osd .osd.spell-guess
+    osd .osd.spell-guess 0 "ksS" .scheme.osd-child 20 10 -1 -1
+    osd .osd.spell-guess 1 ""
+    osd .osd.spell-check 0  "batcHC" 9 3 .scheme.osd-title "Spell Check" spell-check-control
+    osd .osd.spell-chkl 65 "xMsfH" .scheme.osd-entry &spr "%s%n" %language &sub 14 &len %language " " .osd.spell-chkg
+    osd .osd.spell-chkr 87 "BcSfH" .scheme.osd-dbtt " Undo Last   "
+    -1 show-cursor
+    ; work out a window-line to recenter on for good visibility
+    set-variable #l0 &sub $window-mode-line &div $window-depth 2
+    set-variable #l0 &mul $window-depth &cond &gre #l0 &div $screen-depth 2 1 2
+    set-variable .spell.recenter &sub $window-depth &div #l0 3
+    !force !force .osd.spell-check osd
+    !force -1 show-region
+    1 show-cursor
+    ml-write &spr "[%d Manual and %d Auto corrections made%s]" #g2 #g1 &cond #g5 &spr " & %d double deletions" #g5 ""
+    !if &and &not #g6 &not &add &add #g2 #g1 #g5
+        -1 buffer-mode "edit"
+    !endif
+    set-variable @cc spell-buffer
+!emacro
+
+define-macro spell-word
+    spell-rules-init
+    ; check that spell is setup okay - this fails if not
+    1 spell "-"
+    set-variable #l0 $window-col
+    !if @?
+        !force 0 spell
+        !if $status
+            ; if the buffer has a word checker, e.g. nroff adjust the word
+            !if &exi &set #l1 &cat &rig $buffer-fhook 6 "-spell-word"
+                set-variable .spell.check-word &rig $result 1
+                2 show-region
+                !force 0 execute-named-command #l1
+                !if $status
+                    !if &seq .spell.check-word ""
+                        ml-write "Not a word"
+                        set-variable $window-col #l0 
+                        !return
+                    !endif
+                    ; re-evaluate the spelling 
+                    !force 1 spell .spell.check-word
+                !endif
+            !endif
+        !else
+            !nma 1 spell 
+        !endif
+    !else
+        !nma 1 spell 
+    !endif
+    !if &seq &lef $result 1 "O"
+        ml-write &cat &rig $result 1 " ok"
+        set-variable $window-col #l0 
+    !elif &seq &lef $result 1 "N"
+        ml-write &cat &rig $result 1 " not a word"
+        set-variable $window-col #l0 
+    !else
+        set-variable #g0 -1
+        set-variable .spell.check-word &rig $result 1
+        set-variable .spell.check-wordo .spell.check-word
+        osd .osd.spell-check 0 "batcH" 9 3 .scheme.osd-title "Spell Check Word"
+        osd .osd.spell-chkl 65 "xMsfH" .scheme.osd-entry &spr "%s%n" %language &sub 14 &len %language " " .osd.spell-chkg
+        osd .osd.spell-chkr 87 "BcfSH" .scheme.osd-dbtt " Undo Last   "
+        !force 1 show-region
+        !force 2 show-region
+        ml-write &cat &rig $result 1 " incorrect...creating list"
+        spell-check-set-guess
+        !force .osd.spell-check osd
+        !force -1 show-region
+    !endif
+!emacro
+

@@ -1,0 +1,488 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Sat Jun 13 23:21:55 1998
+;  Last Modified : <000719.0012>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; #p5 is used as a bit flag where bits have the following meaning
+; 001  - current line indent by 4
+; 002  - Text on current line
+; 004  - last char was a non-white
+; 010  - Currently in a hyper-text reference
+; 020  - in PRE mode
+; 040  - In a table line
+; 080  - Text found between <A> & </A>
+; 100  - Got an LI
+; 200  - Got an LI and a newline added - 2 added to #p1
+0 define-macro html-add-newline
+    !if &and &and &not &band #p5 0x60 #p0 &gre &add #p1 #p4 :fill-col
+        set-mark
+        set-variable $window-col #p7
+        insert-newline
+        !if #p1
+            backward-line
+            #p1 insert-space
+        !endif
+        !if &band #p5 0x100
+            set-variable #p1 &add #p1 2
+            set-variable #p5 &bxor #p5 0x300
+        !endif
+        exchange-point-and-mark
+        set-variable #p4 &sub #p4 #p0
+    !endif
+    insert-newline
+    !if #p4
+        backward-line
+        !if #p1
+            beginning-of-line
+            #p1 insert-space
+        !endif
+        forward-line
+        beginning-of-line
+    !endif
+    !if &band #p5 1
+        set-variable #p1 &sub #p1 4
+    !endif
+    !if &band #p5 0x200
+        set-variable #p1 &sub #p1 2
+    !endif
+    set-variable #p5 &band #p5 0xc38
+    set-variable #p4 0
+!emacro
+
+0 define-macro html-end-ahref
+    !if &band #p5 0x10
+        !if &band #p5 0x80
+            insert-string "\ele"
+            set-variable #p8 &band #p8 0xdf
+            !if #p8
+                insert-string &cat "\ec" &mid %html-colors #p8 1
+            !endif
+        !else
+            set-mark
+            -1 search-backward "\els"
+            kill-region
+            -1 yank
+        !endif
+        ; Remove 10 & 80 (link and text)
+        set-variable #p5 &band #p5 0xf6f
+    !endif
+!emacro
+
+; #l8 stores font number - works on a priority basis
+; 00  No font
+; 01  underline TT
+; 02  italic
+; 04  bold
+; 08  Heading line
+; 10  IMG
+; 20  HREF (no color set - done automatically to color G)
+
+set-variable %html-colors "ABCCDDDDEEEEEEEEFFFFFFFFFFFFFFFF"
+0 define-macro html-to-ehf
+    -1 buffer-mode "view"
+    -1 buffer-mode "magic"
+    -1 buffer-mode "undo"
+    -1 buffer-mode "exact"
+    set-variable #l0 0
+    set-variable #l1 0
+    set-variable #l2 0
+    set-variable #l4 0
+    set-variable #l5 0
+    set-variable #l6 0
+    set-variable #l8 0
+    !repeat
+        !if &not &sin @wc " <\n&\t"
+            set-variable #l5 &bor #l5 0x86
+            set-variable #l4 &add #l4 1
+            forward-char
+            !jump -4
+        !elif &seq @wc "\n"
+            forward-char
+            !if &seq @wc ""
+                backward-char
+                html-add-newline
+                !return
+            !endif
+            !if &not #g0
+                ml-write &cat "Processing " &mid "|/-\\" &mod $window-line 4 1
+            !endif
+            backward-delete-char
+            !if &not &band #l5 0x20
+                !jump 7
+            !endif
+            !if &not &band #l5 0x40
+                html-add-newline
+            !endif
+        !elif &sin @wc "\t "
+            forward-delete-char
+            !if &band #l5 0x24
+                !if &and &not &band #l5 0x60 &and #l0 &gre &add #l1 #l4 :fill-col
+                    set-mark
+                    set-variable $window-col #l7
+                    insert-newline
+                    !if #l1
+                        backward-line
+                        #l1 insert-space
+                    !endif
+                    !if &band #l5 0x100
+                        set-variable #l1 &add #l1 2
+                        set-variable #l5 &bxor #l5 0x300
+                    !endif
+                    exchange-point-and-mark
+                    set-variable #l4 &sub #l4 #l0
+                !endif
+                insert-space
+                set-variable #l4 &add #l4 1
+                set-variable #l0 #l4
+                set-variable #l7 $window-col
+                set-variable #l5 &band #l5 0xffb
+            !endif
+            !jump -46
+        !elif &seq @wc "&"
+            set-variable #l3 &rig @wl $window-col
+            !if &iseq &lef #l3 6 "&NBSP;"
+                6 forward-delete-char
+                !jump -26
+            !elif &iseq &lef #l3 5 "&NBSP"
+                5 forward-delete-char
+                !jump -29
+            !elif &iseq &lef #l3 4 "&GT;"
+                4 forward-delete-char
+                insert-string ">"
+            !elif &iseq &lef #l3 4 "&LT;"
+                4 forward-delete-char
+                insert-string "<"
+            !elif &iseq &lef #l3 6 "&QUOT;"
+                6 forward-delete-char
+                insert-string "\""
+            !elif &iseq &lef #l3 5 "&AMP;"
+                5 forward-delete-char
+                insert-string "&"
+            !elif &iseq &lef #l3 5 "&COPY;"
+                6 forward-delete-char
+                insert-string "(c)"
+                set-variable #l4 &add #l4 2
+            !elif &iseq &lef #l3 2 "&#"
+                2 forward-delete-char
+                insert-string &itoa &rig @wl $window-col
+                !while &sin @wc "0123456789"
+                    forward-delete-char
+                !done
+                !if &seq @wc ";"
+                    forward-delete-char
+                !endif
+            !else
+                forward-char
+            !endif
+            set-variable #l5 &bor #l5 0x86
+            set-variable #l4 &add #l4 1
+        !else
+            ; its a '<' - heavy stuff
+            forward-delete-char
+            set-mark
+            !if &seq @wc "/"
+                forward-delete-char
+                !force search-forward ">"
+                kill-region
+                set-variable #l3 @y
+                -1 yank
+                !if &isin &lef #l3 1 "ABDHIPTU"
+                    !if &iseq &lef #l3 1 "H"
+                        !if &sin &mid #l3 1 1 "1234"
+                            !if &band #l8 8
+                                set-variable #l8 &band #l8 0xf7
+                                !if &not &band #l8 0x20
+                                    insert-string &cat "\ec" &mid %html-colors #l8 1
+                                !endif
+                            !endif
+                            html-add-newline
+                            html-add-newline
+                            !if &iseq #l3 "H1>"
+                                html-add-newline
+                            !endif
+                        !endif
+                    !elif &iseq #l3 "A>"
+                        html-end-ahref
+                    !elif &iseq #l3 "ADDRESS>"
+                        html-end-ahref
+                        !if &band #l5 2
+                            html-add-newline
+                        !endif
+                    !elif &iseq #l3 "B>"
+                        !if &band #l8 4
+                            set-variable #l8 &band #l8 0xfb
+                            !if &not &band #l8 0x20
+                                insert-string &cat "\ec" &mid %html-colors #l8 1
+                            !endif
+                        !endif
+                    !elif &iseq #l3 "DL>"
+                        !if &band #l5 2
+                            html-add-newline
+                        !endif
+                        !if &gre &pdec #l6 1 1
+                            set-variable #l1 &sub #l1 4
+                        !else
+                            html-add-newline
+                            set-variable #l6 0
+                        !endif
+                    !elif &iseq #l3 "I>"
+                        !if &band #l8 2
+                            set-variable #l8 &band #l8 0xfd
+                            !if &not &band #l8 0x20
+                                insert-string &cat "\ec" &mid %html-colors #l8 1
+                            !endif
+                        !endif
+                    !elif &iseq #l3 "PRE>"
+                        !if &band #l5 2
+                            html-add-newline
+                        !endif
+                        html-add-newline
+                        set-variable #l5 &band #l5 0xfdf
+                    !elif &iseq #l3 "TT>"
+                        !if &band #l8 1
+                            set-variable #l8 &band #l8 0xfe
+                            !if &not &band #l8 0x20
+                                insert-string &cat "\ec" &mid %html-colors #l8 1
+                            !endif
+                        !endif
+                    !elif &iseq #l3 "TABLE>"
+                        !if &band #l5 2
+                            html-add-newline
+                        !endif
+                        html-add-newline
+                        set-variable #l5 &band #l5 0xf9f
+                    !elif &iseq #l3 "U>"
+                        !if &band #l8 1
+                            set-variable #l8 &band #l8 0xfe
+                            !if &not &band #l8 0x20
+                                insert-string &cat "\ec" &mid %html-colors #l8 1
+                            !endif
+                        !endif
+                    !elif &iseq #l3 "UL>"
+                        !if &band #l5 2
+                            html-add-newline
+                        !endif
+                        !if &les #l1 5
+                            html-add-newline
+                            set-variable #l1 0
+                        !else
+                            set-variable #l1 &sub #l1 4
+                        !endif
+                    !endif
+                !endif
+            !elif &seq @wc "!"
+                !force search-forward ">"
+                kill-region
+                set-variable #l3 @y
+                -1 yank
+                !if &sin "<" #l3
+                    !jump -6
+                !endif
+                !if #g0
+                    !if &seq &lef #l3 8 "!-- Me: "
+                        !if &band #l5 2
+                            html-add-newline
+                        !endif
+                        insert-string &mid #l3 8 &sub &len #l3 12
+                        insert-newline
+                    !endif
+                !endif
+            !else
+                !force search-forward ">"
+                kill-region
+                set-variable #l3 @y
+                -1 yank
+                !if &isin &lef #l3 1 "ABDHILPSTU"
+                    !if &iseq &lef #l3 1 "H"
+                        !if &sin &mid #l3 1 1 "1234"
+                            !if &band #l5 2
+                                html-add-newline
+                            !endif
+                            html-add-newline
+                            !if &iseq #l3 "H1>"
+                                html-add-newline
+                            !endif
+                            !if &not &band #l8 8
+                                set-variable #l8 &bor #l8 8
+                                !if &not &band #l8 0x20
+                                    insert-string &cat "\ec" &mid %html-colors #l8 1
+                                !endif
+                            !endif
+                        !elif &iseq #l3 "HR>"
+                            html-add-newline
+                            :fill-col insert-string &rig $box-chars 10
+                            html-add-newline
+                        !endif
+                    !elif &iseq &lef #l3 1 "D"
+                        !if &iseq #l3 "DD>"
+                            !if &not &band #l5 1
+                                !if &band #l5 2
+                                    html-add-newline
+                                !endif
+                                set-variable #l5 &bor #l5 1
+                                set-variable #l1 &add #l1 4
+                            !endif
+                        !elif &iseq #l3 "DL>"
+                            !if &band #l5 2
+                                html-add-newline
+                            !endif
+                            !if &pinc #l6 1
+                                set-variable #l1 &add #l1 4
+                            !else
+                                html-add-newline
+                            !endif
+                        !elif &iseq #l3 "DT>"
+                            !if &band #l5 2
+                                html-add-newline
+                            !elif &band #l5 1
+                                set-variable #l1 &sub #l1 4
+                            !endif
+                            set-variable #l5 &band #l5 0xffe
+                        !elif &iseq #l3 "DIV>"
+                            html-add-newline
+                        !endif
+                    !elif &iseq &lef #l3 1 "S"
+                        !if &iseq &left #l3 6 "SCRIPT"
+                            !force search-forward "</SCRIPT>"
+                            !if $status
+                                kill-region
+                                -1 yank
+                            !endif
+                        !endif
+                    !elif &iseq &lef #l3 1 "T"
+                        !if &iseq #l3 "TITLE>"
+                            !force search-forward "</TITLE>"
+                            !if $status
+                                kill-region
+                                set-variable #l3 &lef @y &sub &len @y 8
+                                -1 yank
+                                !if &len #l3
+                                    0 change-buffer-name #l3
+                                !endif
+                            !endif
+                        !elif &iseq #l3 "TT>"
+                            !if &not &band #l8 1
+                                set-variable #l8 &bor #l8 1
+                                !if &not &band #l8 0x20
+                                    insert-string &cat "\ec" &mid %html-colors #l8 1
+                                !endif
+                            !endif
+                        !elif &iseq &lef #l3 5 "TABLE"
+                            !if &band #l5 2
+                                html-add-newline
+                            !endif
+                            html-add-newline
+                        !elif &iseq &lef #l3 2 "TR"
+                            ; this may be used to terminate a <a href=...>, check, and if so do it
+                            html-end-ahref
+                            !if &band #l5 2
+                                html-add-newline
+                            !endif
+                            set-variable #l5 &bor #l5 0x60
+                        !elif &iseq &lef #l3 2 "TD"
+                            ; this may be used to terminate a <a href=...>, check, and if so do it
+                            html-end-ahref
+                            insert-string "\t"
+                        !endif
+                    !elif &iseq &lef #l3 1 "A"
+                        !if &isin "HREF=" #l3
+                            insert-string "\els"
+                            set-variable #l3 &rig #l3 &add 4 &isin "HREF=" #l3
+                            !if &seq &lef #l3 1 "\""
+                                set-variable #l3 &rig #l3 1
+                                set-variable #l3 &lef #l3 &sub &sin "\"" #l3 1
+                            !else
+                                set-variable #l3 &lef #l3 &sub &len #l3 1
+                            !endif
+                            insert-string #l3
+                            insert-string "\elm"
+                            set-variable #l5 &bor #l5 0x10
+                            set-variable #l8 &bor #l8 0x20
+                        !endif
+                    !elif &iseq #l3 "BR>"
+                        html-add-newline
+                    !elif &iseq #l3 "B>"
+                        !if &not &band #l8 4
+                            set-variable #l8 &bor #l8 4
+                            !if &not &band #l8 0x20
+                                insert-string &cat "\ec" &mid %html-colors #l8 1
+                            !endif
+                        !endif
+                    !elif &iseq #l3 "I>"
+                        !if &not &band #l8 2
+                            set-variable #l8 &bor #l8 2
+                            !if &not &band #l8 0x20
+                                insert-string &cat "\ec" &mid %html-colors #l8 1
+                            !endif
+                        !endif
+                    !elif &iseq &lef #l3 4 "IMG "
+                        !if &not &band #l8 0x20
+                            insert-string &cat "\ec" &mid %html-colors &bor #l8 16 1
+                        !endif
+                        !if &isin "ALT=" #l3
+                            set-variable #l3 &rig #l3 &add 3 &isin "ALT=" #l3
+                            !if &seq &lef #l3 1 "\""
+                                set-variable #l3 &rig #l3 1
+                                set-variable #l3 &lef #l3 &sub &sin "\"" #l3 1
+                            !else
+                                set-variable #l3 &lef #l3 &sub &len #l3 1
+                            !endif
+                            insert-string &spr "[IMG: %s]" #l3
+                            set-variable #l4 &add &add #l4 7 &len #l3
+                        !else
+                            insert-string "[IMG]"
+                            set-variable #l4 &add #l4 5
+                        !endif
+                        !if &not &band #l8 0x20
+                            insert-string &cat "\ec" &mid %html-colors #l8 1
+                        !endif
+                        set-variable #l5 &bor #l5 0x86
+                    !elif &iseq #l3 "LI>"
+                        !if &band #l5 2
+                            html-add-newline
+                        !endif
+                        insert-string "* "
+                        set-variable #l5 &bor #l5 0x100
+                        set-variable #l4 &add #l4 2
+                    !elif &or &iseq #l3 "P>" &iseq &lef #l3 2 "P "
+                        !if &band #l5 2
+                            html-add-newline
+                        !endif
+                        html-add-newline
+                    !elif &iseq #l3 "PRE>"
+                        !if &band #l5 2
+                            html-add-newline
+                        !endif
+                        html-add-newline
+                        set-variable #l5 &bor #l5 0x20
+                    !elif &iseq #l3 "U>"
+                        !if &not &band #l8 1
+                            set-variable #l8 &bor #l8 1
+                            !if &not &band #l8 0x20
+                                insert-string &cat "\ec" &mid %html-colors #l8 1
+                            !endif
+                        !endif
+                    !elif &iseq #l3 "UL>"
+                        !if &band #l5 2
+                            html-add-newline
+                        !endif
+                        !if &not #l1
+                            html-add-newline
+                        !endif
+                        set-variable #l1 &add #l1 4
+                    !endif
+                !endif
+            !endif
+        !endif
+    !until 0
+!emacro
+
+

@@ -1,0 +1,743 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips & Jon Green
+;  Created       : Sat Jul 18 15:11:54 1998
+;  Last Modified : <000719.0013>
+;
+;  Description   : Triangle playing card patience game
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 1998 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; Define positions
+;
+; void tri-decode-char (char card)
+; Decode the character
+;
+0 define-macro tri-decode-char
+    set-variable :tri-char @1
+    set-variable :tri-num &add &atoi :tri-char 1
+    set-variable #g8 &sin :tri-char :tri-pack
+    ; Determine if black or red
+    !if &gre #g8 26
+        set-variable :tri-fcol 1
+    !else
+        set-variable :tri-fcol 33
+    !endif
+    set-variable :tri-num &mod &sub #g8 1 13
+    set-variable :tri-suit &div &sub #g8 1 13
+    set-variable :tri-type &mid :tri-card-lab &mul1 :tri-suit 5 5
+    set-variable :tri-dig &mid "A23456789TJQK" :tri-num 1 1
+    ; If PC - then use graphic symbols !!
+    !if &band $system 0x100
+        set-variable :tri-sym &itoa &add :tri-suit 3
+        set-variable :tri-sym1 :tri-sym
+    !else
+        set-variable :tri-sym " "
+        set-variable :tri-sym1 &mid :tri-card-lab &mul :tri-suit 5 1
+    !endif
+    set-variable :tri-suit &add :tri-suit 1
+!emacro
+
+;
+; Check for a legal move to a column
+;
+
+0 define-macro tri-legal-col-move
+    set-variable #g8 &sub &sin @1 :tri-pack 1
+    set-variable #g9 &sub &sin @2 :tri-pack 1
+;    1000 ml-write &sprint "Legal test %s => %s ?" @1 @2
+    ; Make sure we have card on next card
+    !if &equ &add #g8 1 #g9
+        ; #g9 must no be an Ace
+        !if &mod #g9 13
+            !return
+        !endif
+    !endif
+    !abort
+!emacro
+
+;
+; Draw a card
+;
+0 define-macro tri-draw-card
+    set-variable :tri-char @1
+    set-variable :tri-draw-card-t2 #g2
+    set-variable :tri-draw-card-t3 #g3
+    set-variable :tri-draw-card-t4 #g4
+    set-variable #g2 &add 1 @2
+    set-variable #g3 @3
+    set-variable #g4 @4
+    !if &equ &len :tri-char 0
+        1 screen-poke #g2 #g3 .scheme.cardback :tri-card-top
+        !if #g4
+            set-variable #g2 &add #g2 1
+            1 screen-poke #g2 #g3 .scheme.cardback :tri-card-hld1
+            set-variable #g2 &add #g2 1
+            1 screen-poke #g2 #g3 .scheme.cardback :tri-card-hld2
+            set-variable #g2 &add #g2 1
+            1 screen-poke #g2 #g3 .scheme.cardback :tri-card-hld3
+            set-variable #g2 &add #g2 1
+            1 screen-poke #g2 #g3 .scheme.cardback :tri-card-hld2
+            set-variable #g2 &add #g2 1
+            1 screen-poke #g2 #g3 .scheme.cardback :tri-card-hld1
+            set-variable #g2 &add #g2 1
+            1 screen-poke #g2 #g3 .scheme.cardback :tri-card-bot
+       !endif
+    !elif &seq :tri-char "%"
+        1 screen-poke #g2 #g3 .scheme.cardback :tri-card-none
+        set-variable #g2 &add #g2 1
+        !if &less #g2 &sub $screen-depth 2
+            !jump -3
+        !endif
+    !elif &seq :tri-char "#"
+        97 screen-poke #g2 #g3 .scheme.cardfore :tri-card-top
+        set-variable #g2 &add #g2 1
+        !if #g4
+            97 screen-poke #g2 #g3 .scheme.cardfore :tri-card-bak1
+            set-variable #g2 &add #g2 1
+            97 screen-poke #g2 #g3 .scheme.cardfore :tri-card-bak2
+            set-variable #g2 &add #g2 1
+            97 screen-poke #g2 #g3 .scheme.cardfore :tri-card-bak1
+            set-variable #g2 &add #g2 1
+            97 screen-poke #g2 #g3 .scheme.cardfore :tri-card-bak2
+            set-variable #g2 &add #g2 1
+            97 screen-poke #g2 #g3 .scheme.cardfore :tri-card-bak1
+            set-variable #g2 &add #g2 1
+            97 screen-poke #g2 #g3 .scheme.cardfore :tri-card-bot
+        !endif
+    !else
+        tri-decode-char :tri-char
+        :tri-fcol screen-poke #g2 #g3 .scheme.cardfore :tri-card-top
+        set-variable #g2 &add #g2 1
+        :tri-fcol screen-poke #g2 #g3 .scheme.cardfore :tri-card-clr
+        :tri-fcol screen-poke #g2 &add 1 #g3 .scheme.cardfore &sprint "%s%s%s" :tri-dig :tri-sym :tri-type
+        set-variable #g2 &add #g2 1
+        !if #g4
+            !if &sin :tri-dig "JQK"
+                :tri-fcol screen-poke #g2 #g3 .scheme.cardfore :tri-card-clr
+                :tri-fcol screen-poke #g2 &add 1 #g3 .scheme.cardfore :tri-sym1
+                65 screen-poke #g2 &add 2 #g3 .scheme.cardfore "X+X+X"
+                set-variable #g2 &add #g2 1
+                :tri-fcol screen-poke #g2 #g3 .scheme.cardfore :tri-card-clr
+                65 screen-poke #g2 &add 2 #g3 .scheme.cardfore "+X+X+"
+                set-variable #g2 &add #g2 1
+                :tri-fcol screen-poke #g2 #g3 .scheme.cardfore :tri-card-clr
+                :tri-fcol screen-poke #g2 &add 1 #g3 .scheme.cardfore &sprint "      %s" :tri-sym1
+                65 screen-poke #g2 &add 2 #g3 .scheme.cardfore "X+X+X"
+            !else
+                :tri-fcol screen-poke #g2 #g3 .scheme.cardfore :tri-card-clr
+                :tri-fcol screen-poke #g2 &add 1 #g3 .scheme.cardfore :tri-sym1
+                set-variable #g2 &add #g2 1
+                :tri-fcol screen-poke #g2 #g3 .scheme.cardfore :tri-card-clr
+                set-variable #g2 &add #g2 1
+                :tri-fcol screen-poke #g2 #g3 .scheme.cardfore :tri-card-clr
+                :tri-fcol screen-poke #g2 &add 1 #g3 .scheme.cardfore &sprint "      %s" :tri-sym1
+            !endif
+            set-variable #g2 &add #g2 1
+            :tri-fcol screen-poke #g2 #g3 .scheme.cardfore :tri-card-clr
+            :tri-fcol screen-poke #g2 &add 1 #g3 .scheme.cardfore &sprint "%s%s%s" :tri-dig :tri-sym :tri-type
+            set-variable #g2 &add #g2 1
+            :tri-fcol screen-poke #g2 #g3 .scheme.cardfore :tri-card-bot
+            set-variable #g2 &add #g2 1
+        !endif
+    !endif
+    set-variable #g2 :tri-draw-card-t2
+    set-variable #g3 :tri-draw-card-t3
+    set-variable #g4 :tri-draw-card-t4
+ !emacro
+
+
+;
+; Draw the column on the screen
+;
+
+0 define-macro tri-draw-col
+    ; Get column cards
+    set-variable :tri-colup &ind &sprint "%:tri-col%dup" @1
+    set-variable :tri-coldn &ind &sprint "%:tri-col%ddn" @1
+    ; Calculate column position
+    set-variable :tri-col &add 1 &mul :tri-card-width &sub @1 1
+    set-variable :tri-row :tri-rowdnmin
+    ; Remember where we are on the row.
+    set-variable &ind &sprint "%:tri-col%dmin" @1 :tri-col
+    set-variable &ind &sprint "%:tri-col%dmax" @1 &add :tri-col 10
+    set-variable &ind &sprint "%:tri-row%dmin" @1 :tri-row
+    set-variable #g2 &sprint "%:tri-row%dmax" @1
+    set-variable &ind #g2 &add :tri-row :tri-card-hight
+    ; Draw the downward facing cards
+    set-variable #g0 :tri-coldn
+    !while &gre &len #g0 0
+        set-variable #g0 &rig #g0 1
+        set-variable #g1 &not &or &gre #g0 0 &gre &len :tri-colup 0
+        tri-draw-card "#" :tri-row :tri-col #g1
+        set-variable :tri-row &add :tri-row 1
+    !done
+    ; Draw the upward facing cards
+    set-variable #g0 :tri-colup
+    !while &gre &len #g0 0
+        set-variable :tri-char &rig #g0 &sub &len #g0 1
+        set-variable #g0 &lef #g0 &sub &len #g0 1
+        set-variable #g1 &not &len #g0
+        tri-draw-card :tri-char :tri-row :tri-col #g1
+        set-variable :tri-row &add :tri-row 2
+    !done
+    ; Draw a blank card
+    !if &and &equ &len :tri-colup 0 &equ &len :tri-coldn 0
+        tri-draw-card "" :tri-row :tri-col 1
+        set-variable :tri-row &add :tri-row 1
+    !endif
+    ; Clear to end of screen
+    !if &not &len :tri-colup
+        set-variable :tri-row &add :tri-row &sub :tri-card-hight 1
+    !else
+        set-variable :tri-row &add :tri-row &sub :tri-card-hight 2
+    !endif
+    set-variable &ind #g2 :tri-row
+    tri-draw-card "%" :tri-row :tri-col 1
+!emacro
+
+;
+; Draw the home on the screen
+;
+
+0 define-macro tri-draw-home
+    set-variable :tri-row 0
+    set-variable :tri-col &add 1 &mul 3 :tri-card-width
+    ; Draw frames for the menu options.
+    65 screen-poke &add :tri-row  1 &add :tri-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+    65 screen-poke &add :tri-row  2 &add :tri-x0 72 .scheme.cardback &sprint "%sDeal%s" &lef $box-chars 1 &lef $box-chars 1
+    65 screen-poke &add :tri-row  3 &add :tri-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+
+    65 screen-poke &add :tri-row  4 &add :tri-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+    65 screen-poke &add :tri-row  5 &add :tri-x0 72 .scheme.cardback &sprint "%sQuit%s" &lef $box-chars 1 &lef $box-chars 1
+    65 screen-poke &add :tri-row  6 &add :tri-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+
+    65 screen-poke &add :tri-row  7 &add :tri-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+    65 screen-poke &add :tri-row  8 &add :tri-x0 72 .scheme.cardback &sprint "%sHelp%s" &lef $box-chars 1 &lef $box-chars 1
+    65 screen-poke &add :tri-row  9 &add :tri-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+    ; Record the card positions
+    set-variable :tri-colhomemin :tri-col
+    set-variable :tri-colhomemax &add :tri-col &mul 4 :tri-card-width
+    ; Draw in the top right. A home location exists for each card.
+    set-variable #g9 1
+    !repeat
+        ; Draw the cards
+        set-variable :tri-colup &ind &sprint "%:tri-hom%d" #g9
+        !if &gre &len :tri-colup 0
+            set-variable :tri-char &lef :tri-colup 1
+        !else
+            set-variable :tri-char ""
+        !endif
+        set-variable #g9 &add #g9 1
+        tri-draw-card :tri-char :tri-row :tri-col 1
+        set-variable :tri-col &add :tri-col :tri-card-width
+    !until &gre #g9 4
+!emacro
+
+0 define-macro tri-draw-labels
+    set-variable :tri-col &div :tri-card-width 2
+    set-variable :tri-row :tri-rowdnmin
+    set-variable #g9 7
+    ; Draw column labels
+    !repeat
+        33 screen-poke :tri-row &add :tri-col &mul &sub #g9 1 :tri-card-width .scheme.cardback #g9
+        set-variable #g9 &sub #g9 1
+    !until &equ #g9 0
+    ; Draw home labels
+    set-variable :tri-row 0
+    set-variable :tri-col &add 5 &mul 3 :tri-card-width
+    set-variable #g9 0
+    !repeat
+        33 screen-poke :tri-row :tri-col .scheme.cardback &mid :tri-label-home #g9 1
+        set-variable :tri-col &add :tri-col :tri-card-width
+        set-variable #g9 &add #g9 1
+    !until &equ #g9 4
+!emacro
+
+0 define-macro tri-draw
+    !if &not @#
+        !return
+    !endif
+    delete-other-windows
+    screen-update
+    set-variable #g9 1
+    !repeat
+        tri-draw-col #g9
+        set-variable #g9 &add #g9 1
+    !until &equ #g9 8
+    tri-draw-home
+    tri-draw-labels
+!emacro
+
+0 define-macro tri-deal
+    ;
+    ; Shuffle the pack.
+    ;
+    1 ml-write "Dealing cards ....."
+    find-buffer "*triangle*"                ; Select the buffer
+    -1 buffer-mode "view"
+    ; Kill the buffer off
+    beginning-of-buffer
+    delete-other-windows
+    set-mark
+    end-of-buffer
+    kill-region
+    -1 yank
+    ; Shuffle by generating random key and then sorting.
+    beginning-of-buffer
+    set-variable #g1 :tri-pack
+    !repeat
+        insert-string &lef #g1 1
+        insert-string $random
+        set-variable #g1 &rig #g1 1
+        newline
+    !until &equ &len #g1 0
+    ; Sort the lines using the random column
+    beginning-of-buffer
+    set-mark
+    52 forward-line
+    1 sort-lines
+    beginning-of-buffer
+    set-variable #g9 ""              ; #g9 will be the shuffled pack
+    !repeat
+        set-variable #g1 @wl         ; Read line from buffer
+        forward-line
+;       ml-write &sprint "Line = [%s]" #g1
+        set-variable #g9 &cat #g9 &lef #g1 1
+    !until &equ &len #g9 52
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    kill-region
+    -1 yank
+    -1 buffer-mode "edit"
+     1 buffer-mode "view"
+    ;
+    ; Deal the cards to the columns
+    ;
+    set-variable :tri-dealdn #g9
+    set-variable :tri-dealup ""
+    set-variable :tri-hom1 ""
+    set-variable :tri-hom2 ""
+    set-variable :tri-hom3 ""
+    set-variable :tri-hom4 ""
+
+    set-variable #g1 1
+
+    !repeat
+        ; Deal down facing cards
+        set-variable #g0 &sub #g1 1
+        set-variable #g5 &sprint "%:tri-col%ddn" #g1
+        set-variable &ind #g5 &lef :tri-dealdn #g0
+        set-variable :tri-dealdn &right :tri-dealdn #g0
+        ; Deal up facing card
+        set-variable #g0 #g1
+        !if &gre #g1 4
+            set-variable #g0 &add #g1 1
+        !endif
+        set-variable #g5 &sprint "%:tri-col%dup" #g1
+        set-variable &ind #g5 &lef :tri-dealdn #g0
+        set-variable :tri-dealdn &right :tri-dealdn #g0
+        set-variable #g1 &add #g1 1
+    !until &gre #g1 7
+    ; redraw key call will automatically draw the screen
+    ; because of the above find-buffer
+!emacro
+
+0 define-macro tri-move-home
+    set-variable :tri-char @1
+    tri-decode-char :tri-char
+    set-variable #g1 &sprint "%:tri-hom%d" :tri-suit
+    !if &equ 0 &len &ind #g1                 ; Empty pile ??
+        !if &equ 0 :tri-num                 ; Moving card an ace ??
+            set-variable &ind #g1 :tri-char  ; Move card.
+            !return
+        !else
+            ml-write &sprint "Error: Must move Ace to home position [Card = %s. Num = %d]" :tri-char :tri-num
+        !endif
+    !else
+        !if &equ &sub &atoi :tri-char 1 &atoi &lef &ind #g1 1
+            set-variable &ind #g1 &cat :tri-char &ind #g1 ; Move card.
+            !return
+        !else
+            ml-write &sprint "Error: Invalid move to home position [Card = %s. Num = %d]" :tri-char :tri-num
+        !endif
+    !endif
+    !abort
+!emacro
+
+0 define-macro tri-move-col
+    set-variable :tri-pmc-in @1
+    set-variable :tri-pmc-col @2
+    set-variable :tri-char &rig :tri-pmc-in &sub &len :tri-pmc-in 1
+;    1000 ml-write &sprint "tri-move-col %s[%s] %s" @1 :tri-char @2
+    tri-decode-char :tri-char
+    ;
+    ; Determine the destination column
+    set-variable #g0 &sprint "%:tri-col%ddn" :tri-pmc-col
+    set-variable #g1 &sprint "%:tri-col%dup" :tri-pmc-col
+    set-variable #g2 &ind #g1
+    !if &equ :tri-num 12            ; King ??
+        !if &and &equ &len &ind #g1 0 &equ &len &ind #g0 0
+            set-variable &ind #g1 :tri-pmc-in
+            !return
+        !endif
+    !elif &len &ind #g1               ; Not empty pile ??
+        ; Dealer to end of pile.
+        set-variable #g0 &lef #g2 1
+        !force tri-legal-col-move :tri-char #g0
+        !if $status
+            ml-write "Adding card to column"
+            set-variable &ind #g1 &cat :tri-pmc-in #g2
+            !return
+        !endif
+    !endif
+    !abort
+!emacro
+
+0 define-macro tri-move-king
+    set-variable #g1 &sprint "%:tri-col%dup" :tri-inchr
+    ; is there a king, if so if only one, do it
+    set-variable #g2 &ind #g1
+    set-variable #g0 0
+    !while &not &seq #g2 ""
+        set-variable :tri-char &lef #g2 1
+        tri-decode-char :tri-char
+        !if &equ :tri-num 12            ; King ??
+            set-variable #g0 &add 1 #g0
+            set-variable #g4 :tri-suit
+        !endif
+        set-variable #g2 &rig #g2 1
+    !done
+    !if &equ #g0 0
+        ml-write "Must move a king to an empty column"
+        !return
+    !elif &equ #g0 1
+        set-variable #g2 &ind #g1
+        !while TRUE
+            set-variable :tri-char &lef #g2 1
+            tri-decode-char :tri-char
+            !if &equ :tri-num 12            ; King ??
+                set-variable #g2 &rig #g2 1
+                set-variable &ind &sprint "%:tri-col%dup" :tri-outchr &lef &ind #g1 &sub &len &ind #g1 &len #g2
+                set-variable &ind #g1 #g2
+                tri-draw-col :tri-outchr
+                tri-draw-col :tri-inchr
+                !return
+            !endif
+            set-variable #g2 &rig #g2 1
+        !done
+    !endif
+    ; Okay, messy two king problem ask the user which one
+    !force set-variable #g4 @mc1 "Which king [cdhs] ? " "cdhs"
+    !if &not $status
+        !return
+    !endif
+    set-variable #g4 &sin #g4 :tri-label-home
+    set-variable #g2 &ind #g1
+    !while  &not &seq #g2 ""
+        set-variable :tri-char &lef #g2 1
+        tri-decode-char :tri-char
+        !if &and &equ :tri-num 12 &equ :tri-suit #g4
+            set-variable #g2 &rig #g2 1
+            set-variable &ind &sprint "%:tri-col%dup" :tri-outchr &lef &ind #g1 &sub &len &ind #g1 &len #g2
+            set-variable &ind #g1 #g2
+            tri-draw-col :tri-outchr
+            tri-draw-col :tri-inchr
+            !return
+        !endif
+        set-variable #g2 &rig #g2 1
+    !done
+!emacro
+
+0 define-macro tri-move
+    !if &seq :tri-outchr ""
+        ml-write &sprint "Move %s To ?" :tri-inchr
+    !else
+        ml-write &sprint "Move %s To %s" :tri-inchr :tri-outchr
+        !if &sin :tri-inchr "1234567"
+            ; Determine destination card
+            set-variable #g4 &sprint "%:tri-col%ddn" :tri-inchr
+            set-variable #g5 &sprint "%:tri-col%dup" :tri-inchr
+            set-variable #g6 &ind #g4
+            set-variable #g7 &ind #g5
+            ; No upward card
+            !if &equ &len #g7 0
+                ; Turn card on column
+                !if &sequ :tri-inchr :tri-outchr
+                    !if &and &equ 0 &len #g7 &not &equ 0 &len #g6
+                        !if &equ 1 &len #g6
+                            set-variable &ind #g5 #g6
+                            set-variable &ind #g4 ""
+                        !else
+                            set-variable &ind #g5 &lef #g6 1
+                            set-variable &ind #g4 &rig #g6 1
+                        !endif
+                        tri-draw-col :tri-inchr
+                    !endif
+                !endif
+            !else
+                !if &seq :tri-inchr :tri-outchr
+                    set-variable :tri-outchr "0"
+                !endif
+                !if &equ 1 &len #g7
+                    set-variable #g8 #g7
+                !else
+                    set-variable #g8 &lef #g7 1 ; &rig #g7 2
+                !endif
+                ; Move the column to home.
+                !if &sin :tri-outchr "0"
+                    !force tri-move-home #g8
+                    !if $status
+                        !if &equ 1 &len #g7
+                            set-variable &ind #g5 ""
+                        !else
+                            set-variable &ind #g5 &rig #g7 1
+                        !endif
+                        tri-draw-home
+                        tri-draw-col :tri-inchr
+                    !endif
+                !else &sin :tri-outchr "1234567"
+                    ; Does kings separately
+                    !if &seq "" &ind &sprint "%:tri-col%ddn" :tri-outchr
+                        !if &seq "" &ind &sprint "%:tri-col%dup" :tri-outchr
+                            tri-move-king
+                            set-variable :tri-inchr ""
+                            set-variable :tri-outchr ""
+                            !return
+                        !endif
+                    !endif
+                    ; Try moving a column to column. We have to test up the
+                    ; stack to match destintion column.
+                    set-variable #g4 1
+                    !while &not &gre #g4 &len &ind #g5
+                        set-variable #g7 &lef &ind #g5 #g4
+; 1000 ml-write &sprint "Legal test on %s <=> %s" #g7 :tri-outchr
+                        !force tri-move-col #g7 :tri-outchr
+                        !if $status
+                            set-variable &ind #g5 &rig &ind #g5 #g4
+                            tri-draw-col :tri-outchr
+                            tri-draw-col :tri-inchr
+                            set-variable :tri-inchr ""
+                            set-variable :tri-outchr ""
+                            !return
+;                        !else
+;                            ml-write &sprint "Failed Legal test on %s <=> %s" #g7 :tri-outchr
+                        !endif
+                        set-variable #g4 &add #g4 1
+                    !done
+                !endif
+            !endif
+        !endif
+        set-variable :tri-inchr ""
+        set-variable :tri-outchr ""
+    !endif
+;    tri-draw
+!emacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; Pick up the keyboard input
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+0 define-macro tri-mouse-where
+    ;
+    ; Check the dealer down pile
+    ;
+    set-variable #g0 $mouse-x
+    set-variable #g1 $mouse-y
+
+    !if &and &not &gre #g1 :tri-rowdealdnmax &gre #g1 :tri-rowdealdnmin
+        ;
+        ; Off home bases
+        ;
+        !if &and &les #g0 :tri-colhomemax &gre #g0 :tri-colhomemin
+            set-variable :tri-mouse-chr "0"
+            !return
+        !endif
+    !elif &gre #g1 :tri-rowdnmin
+        ;
+        ; calc which column or inbetween
+        ;
+        !if &mod #g0 :tri-card-width
+            set-variable :tri-mouse-chr &add 1 &div #g0 :tri-card-width
+            !if &les :tri-mouse-chr 8
+                !return
+            !endif
+        !endif
+    !endif
+    set-variable :tri-mouse-chr "#"
+!emacro
+
+0 define-macro tri-mouse-pick-left
+    tri-mouse-where
+    set-variable :tri-inchr :tri-mouse-chr
+!emacro
+
+0 define-macro tri-mouse-drop-left
+    ; Check the menu options. Note that we check on the drop since
+    ; since this does not conflict with the regular mouse pick/drop
+    ; functions.
+    set-variable #g0 $mouse-x
+    set-variable #g1 $mouse-y
+    !if &and &gre #g0 72 &les #g0 77
+        ; In the menu area.
+        !if &equ #g1 2       ; Deal new game.
+            tri-deal
+        !elif &equ #g1 5     ; Quit game
+            tri-quit
+        !elif &equ #g1 8     ; Help on triangle.
+            tri-help
+        !endif
+        !return             ; Nothing else doing - quit now.
+    !endif
+    ; Do regular drop
+    tri-mouse-where
+    set-variable :tri-outchr :tri-mouse-chr
+    tri-move
+!emacro
+;
+; tri-help - Help information
+0 define-macro tri-help
+    !force help-command "Triangle"
+    !if $status
+        delete-window
+    !endif
+!emacro
+0 define-macro tri-quit
+    !force delete-buffer "*triangle*"
+!emacro
+0 define-macro tri-key
+    !if &seq :tri-inchr ""
+        set-variable :tri-inchr @#
+    !else
+        set-variable :tri-outchr @#
+    !endif
+    tri-move
+!emacro
+
+;
+; Keys for the home position.
+;
+0 define-macro tri-key-cr
+    !if &seq :tri-inchr ""
+        set-variable :tri-inchr "0"
+    !else
+        set-variable :tri-outchr "0"
+    !endif
+    tri-move
+!emacro
+
+0 define-macro bhook-triangle
+    -1 show-cursor                          ; Turn off the cursor
+    !force osd -1 0                         ; Turn off the menu.
+    set-variable :tri-scroll $scroll-bar    ; Save the scroll bar state
+    set-variable $scroll-bar 0              ; Disable the scroll bars.
+!emacro
+
+0 define-macro ehook-triangle
+    1 show-cursor                           ; Turn on the cursor
+    set-variable $scroll-bar :tri-scroll    ; Turn the scroll bars back on
+    !force osd -1 1                         ; Turn on the menu.
+!emacro
+;
+define-macro Triangle
+    set-variable $random 0        ; Set it so we get a new seed
+    find-buffer "*triangle*"
+    !if &seq $buffer-bhook ""
+        set-variable :tri-pack "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        set-variable :tri-time 0
+        set-variable :tri-col 1
+        set-variable :tri-row 9
+        set-variable :tri-card-hight 7
+        set-variable :tri-card-width 10
+        set-variable :tri-card-hwidth &sub :tri-card-width 3
+        set-variable :tri-rowdealdnmin 0
+        set-variable :tri-rowdealdnmax :tri-card-hight
+        set-variable :tri-rowdnmin 9
+        ;
+        ; 7 columns. Record the up/down state
+        ; Leftmost = 1; Rightmost = 7
+        ;
+        set-variable :tri-col1up ""
+        set-variable :tri-col1dn ""
+        set-variable :tri-col2up ""
+        set-variable :tri-col2dn ""
+        set-variable :tri-col3up ""
+        set-variable :tri-col3dn ""
+        set-variable :tri-col4up ""
+        set-variable :tri-col4dn ""
+        set-variable :tri-col5up ""
+        set-variable :tri-col5dn ""
+        set-variable :tri-col6up ""
+        set-variable :tri-col6dn ""
+        set-variable :tri-col7up ""
+        set-variable :tri-col7dn ""
+        ;
+        ; Define the dealer pile
+        ;
+        set-variable :tri-dealup ""
+        set-variable :tri-dealdn ""
+        ;
+        ; Define the home bases.
+        ;
+        set-variable :tri-hom1   ""
+        set-variable :tri-hom2   ""
+        set-variable :tri-hom3   ""
+        set-variable :tri-hom4   ""
+        set-variable :tri-colup  :tri-col1up
+        set-variable :tri-coldn  :tri-col1dn
+        set-variable :tri-char   ""
+        set-variable :tri-type   ""
+        ;
+        ; Define input variables
+        ;
+        set-variable :tri-outchr ""
+        set-variable :tri-inchr ""
+        ;
+        ; Define the card patterns
+        ;
+        set-variable :tri-card-top  &sprint "%s%7s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+        set-variable :tri-card-bot  &sprint "%s%7s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+        set-variable :tri-card-clr  &sprint "%s%7s%s" &lef $box-chars 1 " " &lef $box-chars 1
+        set-variable :tri-card-hld1 &sprint "%s X   X %s" &lef $box-chars 1 &lef $box-chars 1
+        set-variable :tri-card-hld2 &sprint "%s  X X  %s" &lef $box-chars 1 &lef $box-chars 1
+        set-variable :tri-card-hld3 &sprint "%s   X   %s" &lef $box-chars 1 &lef $box-chars 1
+        set-variable :tri-card-bak1 &sprint "%s+X+X+X+%s" &lef $box-chars 1 &lef $box-chars 1
+        set-variable :tri-card-bak2 &sprint "%sX+X+X+X%s" &lef $box-chars 1 &lef $box-chars 1
+        set-variable :tri-card-none "         "
+        set-variable :tri-card-lab  "HeartDimndClub Spade"
+        set-variable :tri-label-home "hdcs"
+        set-variable $buffer-scheme .scheme.cardback
+        buffer-bind-key tri-mouse-pick-left "mouse-pick-1"
+        buffer-bind-key tri-mouse-drop-left "mouse-drop-1"
+        buffer-bind-key void "mouse-pick-2"
+        buffer-bind-key void "mouse-drop-2"
+        buffer-bind-key void "mouse-pick-3"
+        buffer-bind-key void "mouse-drop-3"
+        
+        buffer-bind-key tri-deal "C-c C-c"
+        0 buffer-bind-key tri-key "return"  ; Home
+        1 buffer-bind-key tri-key "1"       ; Column 1
+        2 buffer-bind-key tri-key "2"       ; Column 2
+        3 buffer-bind-key tri-key "3"       ; Column 3
+        4 buffer-bind-key tri-key "4"       ; Column 4
+        5 buffer-bind-key tri-key "5"
+        6 buffer-bind-key tri-key "6"
+        7 buffer-bind-key tri-key "7"
+        buffer-bind-key tri-quit  "q"
+        buffer-bind-key tri-help  "esc h"   ; Help key
+        1 buffer-bind-key tri-draw "C-l"  ; Redraw the screen
+        buffer-bind-key tri-draw "redraw"
+        set-variable $buffer-bhook bhook-triangle
+        set-variable $buffer-ehook ehook-triangle
+        bhook-triangle
+    !endif
+    tri-deal                        ; Deal
+!emacro

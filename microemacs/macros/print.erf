@@ -1,0 +1,47 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : Steven Phillips
+;  Last Modified : <000602.1014>
+;
+;  Description   : Default user printer configuration file.
+;
+;  Notes         : None of the platforms are fully defined (keeps the file
+;                  small) so print-setup must be run first.
+; 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; Header & footer - common
+"header" = "Page %n. Date: %D/%M/%Y %h:%m:%s  File: %f\n"
+"footer" = "\nPage %n"
+
+; platform depenent printer setup
+"dos"
+{
+ "command-line" = "copy %f prn"
+}
+"win32"
+{
+ "command-line" = "copy %f prn"
+}
+"hpux"
+{
+ "command-line" = "lp -s %f"
+}
+"sgi"
+{
+ "command-line" = "lpr -s %f"
+}
+"sunos"
+{
+ "command-line" = "lpr -s %f"
+}
+"sysv42"
+{
+ "command-line" = "lp -s %f"
+}
+"linux"
+{
+ "command-line" = "lp -s %f"
+}
+
+

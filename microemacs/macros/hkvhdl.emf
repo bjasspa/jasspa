@@ -1,0 +1,165 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : Jon Green
+;  Created       : Thu Jul 24 18:56:17 1997
+;  Last Modified : <991125.1029>
+;
+;  Description
+;               VHDL - a hardware simulation language. 
+;
+;  Notes
+;               Keywords taken from 
+;                   A VHDL Primer - Revised Edition
+;                   J. Bhasker
+;                   Prentice Hall
+;                   ISBN 0-13-181447-8
+;
+;  History
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+!if &band .hilight.flags 0x02
+    !if &not &exist .hilight.vhdl
+        set-variable .hilight.vhdl &pinc .hilight.next 1
+    !endif
+    ;
+    ; Define the hilighting
+    ;
+    0 hilight .hilight.vhdl 1                  $global-scheme
+    hilight   .hilight.vhdl 2 "--"             .scheme.comment
+    hilight   .hilight.vhdl 4 "\"" "\"" "\\"   .scheme.string
+    hilight   .hilight.vhdl 0 "'.'"            .scheme.quote
+    
+    hilight   .hilight.vhdl 1 "abs"            .scheme.keyword
+    hilight   .hilight.vhdl 1 "access"         .scheme.keyword
+    hilight   .hilight.vhdl 1 "after"          .scheme.keyword
+    hilight   .hilight.vhdl 1 "alias"          .scheme.keyword
+    hilight   .hilight.vhdl 1 "all"            .scheme.keyword
+    hilight   .hilight.vhdl 1 "and"            .scheme.operator
+    hilight   .hilight.vhdl 1 "array"          .scheme.type
+    hilight   .hilight.vhdl 1 "architecture"   .scheme.keyword
+    hilight   .hilight.vhdl 1 "assert"         .scheme.keyword
+    hilight   .hilight.vhdl 1 "attribute"      .scheme.keyword
+    hilight   .hilight.vhdl 1 "begin"          .scheme.keyword
+    hilight   .hilight.vhdl 1 "block"          .scheme.keyword
+    hilight   .hilight.vhdl 1 "body"           .scheme.keyword
+    hilight   .hilight.vhdl 1 "buffer"         .scheme.keyword
+    hilight   .hilight.vhdl 1 "bus"            .scheme.keyword
+    hilight   .hilight.vhdl 1 "case"           .scheme.keyword
+    hilight   .hilight.vhdl 1 "component"      .scheme.keyword
+    hilight   .hilight.vhdl 1 "configuration"  .scheme.keyword
+    hilight   .hilight.vhdl 1 "constant"       .scheme.type
+    hilight   .hilight.vhdl 1 "disconnect"     .scheme.keyword
+    hilight   .hilight.vhdl 1 "downto"         .scheme.keyword
+    hilight   .hilight.vhdl 1 "else"           .scheme.keyword
+    hilight   .hilight.vhdl 1 "elsif"          .scheme.keyword
+    hilight   .hilight.vhdl 1 "end"            .scheme.keyword
+    hilight   .hilight.vhdl 1 "entity"         .scheme.keyword
+    hilight   .hilight.vhdl 1 "exit"           .scheme.keyword
+    hilight   .hilight.vhdl 1 "file"           .scheme.type
+    hilight   .hilight.vhdl 1 "for"            .scheme.keyword
+    hilight   .hilight.vhdl 1 "function"       .scheme.keyword
+    hilight   .hilight.vhdl 1 "generate"       .scheme.keyword
+    hilight   .hilight.vhdl 1 "generic"        .scheme.keyword
+    hilight   .hilight.vhdl 1 "group"          .scheme.keyword
+    hilight   .hilight.vhdl 1 "guarded"        .scheme.keyword
+    hilight   .hilight.vhdl 1 "if"             .scheme.keyword
+    hilight   .hilight.vhdl 1 "impure"         .scheme.keyword
+    hilight   .hilight.vhdl 1 "in"             .scheme.keyword
+    hilight   .hilight.vhdl 1 "inertial"       .scheme.keyword
+    hilight   .hilight.vhdl 1 "integer"        .scheme.type
+    hilight   .hilight.vhdl 1 "inout"          .scheme.keyword
+    hilight   .hilight.vhdl 1 "is"             .scheme.keyword
+    hilight   .hilight.vhdl 1 "label"          .scheme.keyword
+    hilight   .hilight.vhdl 1 "library"        .scheme.keyword
+    hilight   .hilight.vhdl 1 "linkage"        .scheme.keyword
+    hilight   .hilight.vhdl 1 "literal"        .scheme.keyword
+    hilight   .hilight.vhdl 1 "loop"           .scheme.keyword
+    hilight   .hilight.vhdl 1 "map"            .scheme.keyword
+    hilight   .hilight.vhdl 1 "mod"            .scheme.operator
+    hilight   .hilight.vhdl 1 "nand"           .scheme.operator
+    hilight   .hilight.vhdl 1 "new"            .scheme.keyword
+    hilight   .hilight.vhdl 1 "next"           .scheme.keyword
+    hilight   .hilight.vhdl 1 "nor"            .scheme.operator
+    hilight   .hilight.vhdl 1 "not"            .scheme.operator
+    hilight   .hilight.vhdl 1 "null"           .scheme.keyword
+    hilight   .hilight.vhdl 1 "of"             .scheme.keyword
+    hilight   .hilight.vhdl 1 "on"             .scheme.keyword
+    hilight   .hilight.vhdl 1 "open"           .scheme.keyword
+    hilight   .hilight.vhdl 1 "or"             .scheme.operator
+    hilight   .hilight.vhdl 1 "others"         .scheme.keyword
+    hilight   .hilight.vhdl 1 "out"            .scheme.keyword
+    hilight   .hilight.vhdl 1 "package"        .scheme.keyword
+    hilight   .hilight.vhdl 1 "port"           .scheme.keyword
+    hilight   .hilight.vhdl 1 "postponed"      .scheme.keyword
+    hilight   .hilight.vhdl 1 "procedure"      .scheme.keyword
+    hilight   .hilight.vhdl 1 "process"        .scheme.keyword
+    hilight   .hilight.vhdl 1 "pure"           .scheme.keyword
+    hilight   .hilight.vhdl 1 "random"         .scheme.keyword
+    hilight   .hilight.vhdl 1 "range"          .scheme.keyword
+    hilight   .hilight.vhdl 1 "record"         .scheme.keyword
+    hilight   .hilight.vhdl 1 "register"       .scheme.keyword
+    hilight   .hilight.vhdl 1 "reject"         .scheme.keyword
+    hilight   .hilight.vhdl 1 "rem"            .scheme.operator
+    hilight   .hilight.vhdl 1 "report"         .scheme.keyword
+    hilight   .hilight.vhdl 1 "return"         .scheme.keyword
+    hilight   .hilight.vhdl 1 "rol"            .scheme.operator
+    hilight   .hilight.vhdl 1 "ror"            .scheme.operator
+    hilight   .hilight.vhdl 1 "select"         .scheme.keyword
+    hilight   .hilight.vhdl 1 "severity"       .scheme.keyword
+    hilight   .hilight.vhdl 1 "shared"         .scheme.keyword
+    hilight   .hilight.vhdl 1 "signal"         .scheme.keyword
+    hilight   .hilight.vhdl 1 "sla"            .scheme.operator
+    hilight   .hilight.vhdl 1 "sll"            .scheme.operator
+    hilight   .hilight.vhdl 1 "sra"            .scheme.operator
+    hilight   .hilight.vhdl 1 "srl"            .scheme.operator
+    hilight   .hilight.vhdl 1 "string"         .scheme.type
+    hilight   .hilight.vhdl 1 "subtype"        .scheme.keyword
+    hilight   .hilight.vhdl 1 "std_logic"      .scheme.type
+    hilight   .hilight.vhdl 1 "std_logic_vector" .scheme.type
+    hilight   .hilight.vhdl 1 "then"           .scheme.keyword
+    hilight   .hilight.vhdl 1 "time"           .scheme.type
+    hilight   .hilight.vhdl 1 "to"             .scheme.keyword
+    hilight   .hilight.vhdl 1 "transport"      .scheme.keyword
+    hilight   .hilight.vhdl 1 "type"           .scheme.type
+    hilight   .hilight.vhdl 1 "text"           .scheme.type
+    hilight   .hilight.vhdl 1 "unaffected"     .scheme.keyword
+    hilight   .hilight.vhdl 1 "units"          .scheme.keyword
+    hilight   .hilight.vhdl 1 "until"          .scheme.keyword
+    hilight   .hilight.vhdl 1 "use"            .scheme.keyword
+    hilight   .hilight.vhdl 1 "variable"       .scheme.type
+    hilight   .hilight.vhdl 1 "wait"           .scheme.keyword
+    hilight   .hilight.vhdl 1 "when"           .scheme.keyword
+    hilight   .hilight.vhdl 1 "while"          .scheme.keyword
+    hilight   .hilight.vhdl 1 "with"           .scheme.keyword
+    hilight   .hilight.vhdl 1 "xnor"           .scheme.operator
+    hilight   .hilight.vhdl 1 "xor"            .scheme.operator
+    hilight   .hilight.vhdl 1 "false"          .scheme.type
+    hilight   .hilight.vhdl 1 "true"           .scheme.type
+    hilight   .hilight.vhdl 1 "signed"         .scheme.type
+    hilight   .hilight.vhdl 1 "unsigned"       .scheme.type
+!endif
+
+define-macro fhook-vhdl
+    ; if arg is 0 this is a new file so add template 
+    !if &not @#
+        etfinsrt "vhdl"
+    !endif
+    1 buffer-mode "time"
+    1 buffer-mode "indent"
+    buffer-abbrev-file "vhdl"
+    set-variable $buffer-mask "luh1"
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.vhdl
+    !endif
+    ; execute user extensions if enabled
+    !if &exist my-fhook-vhdl
+        my-fhook-vhdl
+    !endif
+!emacro    
+    
+ml-write "[VHDL file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "myvhdl"
+

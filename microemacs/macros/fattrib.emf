@@ -1,0 +1,113 @@
+!if &seq .osd.fattr "ERROR"
+    set-variable .osd.fattr &pinc .osd.next 1
+!endif
+
+0 define-macro fattr-type
+    !if &les @# 0
+        ; set the mode
+        !if &equ @# -3
+            1 buffer-mode "crlf"
+            1 buffer-mode "ctrlz"
+        !elif &equ @# -2
+            1 buffer-mode "crlf"
+            -1 buffer-mode "ctrlz"
+        !else
+            -1 buffer-mode "crlf"
+            -1 buffer-mode "ctrlz"
+        !endif
+    !else
+        !if &bmod "crlf"
+            !if &bmod "ctrlz"
+                set-variable #l1 "3"
+            !else
+                set-variable #l1 "2"
+            !endif
+        !else
+            !if &bmod "ctrlz"
+                set-variable #l1 "0"
+            !else
+                set-variable #l1 "1"
+            !endif
+        !endif
+        !if &not &equ @# #l1
+            !abort
+        !endif
+    !endif
+!emacro
+
+osd .osd.fattr 0  "batcdHs" 10 3 38 0 -1 -1 610 .scheme.osd-title "File attributes"
+osd .osd.fattr 10  ""
+osd .osd.fattr 40  ""
+osd .osd.fattr 50  "" "  Type : "
+osd .osd.fattr 55  "fh" "    "
+osd .osd.fattr 60  "CxfRh" " [ *]^Unix"       1 fattr-type
+osd .osd.fattr 65  "fh" "  "
+osd .osd.fattr 70  "CxfRh" " [ *]^Windows"       2 fattr-type
+osd .osd.fattr 75  "fh" "  "
+osd .osd.fattr 80  "CxfR"  " [ *]^Dos"           3 fattr-type
+osd .osd.fattr 90  ""
+osd .osd.fattr 100 ""
+
+0 define-macro fattr-attr
+    !if &les @# 0
+        ; set the mode
+        set-variable $buffer-fmod &bxor $buffer-fmod &abs @#
+    !elif &not &band $buffer-fmod @#
+        !abort
+    !endif
+!emacro
+
+!if &seq $platform "dos"
+    osd .osd.fattr 110 "" "  Attributes:"
+    osd .osd.fattr 120 "CfxR"  " [ *]^    Read-only"  1  fattr-attr
+    osd .osd.fattr 130 "CfxR"  " [ *]^    Hidden   "  2  fattr-attr
+    osd .osd.fattr 140 "CfxR"  " [ *]^    System   "  4  fattr-attr
+    osd .osd.fattr 150 "SCfxR" " [ *]^    Directory"  16 fattr-attr
+    osd .osd.fattr 160 "CfxR"  " [ *]^    Archive  "  32 fattr-attr
+!elif &seq $platform "win32"
+    osd .osd.fattr 110 "" "  Attributes:"
+    osd .osd.fattr 120 "CfxR"  " [ *]^    Read-only "    1 fattr-attr
+    osd .osd.fattr 130 "CfxR"  " [ *]^    Hidden    "    2 fattr-attr
+    osd .osd.fattr 140 "CfxR"  " [ *]^    System    "    4 fattr-attr
+    osd .osd.fattr 150 "SCfxR" " [ *]^    Directory "   16 fattr-attr
+    osd .osd.fattr 160 "CfxR"  " [ *]^    Archive   "   32 fattr-attr
+    osd .osd.fattr 170 "CfxR"  " [ *]^    Normal    "  128 fattr-attr
+    osd .osd.fattr 180 "CfxR"  " [ *]^    Temporary "  256 fattr-attr
+    osd .osd.fattr 190 "CfxR"  " [ *]^    Compressed" 2048 fattr-attr
+!else
+    osd .osd.fattr 110 "c" "File Permissions"
+    osd .osd.fattr 120 ""
+    osd .osd.fattr 130 ""  "  User :"
+    osd .osd.fattr 135 "hf" "    "
+    osd .osd.fattr 140 "CfxRh"  " [ *]^Read"    256 fattr-attr
+    osd .osd.fattr 150 "CfxRh"  " [ *]^  Write" 128 fattr-attr
+    osd .osd.fattr 160 "CfxR"   " [ *]^  Exec"   64 fattr-attr
+    osd .osd.fattr 170 ""
+    osd .osd.fattr 180 "" "  Group :"
+    osd .osd.fattr 185 "hf" "    "
+    osd .osd.fattr 190 "CfxRh"  " [ *]^Read"     32 fattr-attr
+    osd .osd.fattr 200 "CfxRh"  " [ *]^  Write"  16 fattr-attr
+    osd .osd.fattr 210 "CfxR"   " [ *]^  Exec"    8 fattr-attr
+    osd .osd.fattr 220 ""
+    osd .osd.fattr 230 "" "  Global :"
+    osd .osd.fattr 235 "hf" "    "
+    osd .osd.fattr 240 "CfxRh"  " [ *]^Read"      4 fattr-attr
+    osd .osd.fattr 250 "CfxRh"  " [ *]^  Write"   2 fattr-attr
+    osd .osd.fattr 260 "CfxR"   " [ *]^  Exec"    1 fattr-attr
+!endif
+
+osd .osd.fattr 590 ""
+osd .osd.fattr 595 ""
+osd .osd.fattr 600 "BHcfxh" .scheme.osd-ebtt " &Save changes " 0 save-buffer
+osd .osd.fattr 610 "BHcf"   .scheme.osd-ebtt "  &OK  "         1 void
+
+define-macro file-attrib
+    ; correct the main osd entry now we know the menu number
+    !force osd 1 80 "" "Att&ributes" .osd.fattr file-attrib
+    osd .osd.fattr 20  "" &cat "  Buffer : " $buffer-bname 
+    osd .osd.fattr 30  "" &cat "    " $buffer-fname
+    .osd.fattr osd
+!emacro
+
+
+

@@ -1,0 +1,52 @@
+;       Makefile hook
+;
+;   Last Modified : <000622.0923>
+;
+!if &band .hilight.flags 0x02
+    ; Make file highlighting
+    !if &not &exist .hilight.make
+        set-variable .hilight.make &pinc .hilight.next 1
+    !endif
+    
+    0 hilight  .hilight.make 0                 $global-scheme
+    hilight .hilight.make 0  ":"               .scheme.variable
+    hilight .hilight.make 4  "[^\\]\"" "\"" "\\" .scheme.string
+    hilight .hilight.make 0  "/\\*\\."         $global-scheme
+    hilight .hilight.make 2  "#"               .scheme.comment
+    hilight .hilight.make 4  "\\$(" ")" ""     .scheme.variable
+    hilight .hilight.make 1  "\\$O"            .scheme.variable
+    hilight .hilight.make 1  "\\$T"            .scheme.variable
+    hilight .hilight.make 0  "\\.SUFFIXES"     .scheme.keyword
+    hilight .hilight.make 0  "\\.IGNORE"       .scheme.keyword
+    hilight .hilight.make 0  "\\.DEFAULT"      .scheme.keyword
+    hilight .hilight.make 0  "\\.PRECIOUS"     .scheme.keyword
+    hilight .hilight.make 1  "\\$@"            .scheme.keyword
+    hilight .hilight.make 1  "\\$\\$@"         .scheme.keyword
+    hilight .hilight.make 1  "\\$\\*"          .scheme.keyword
+    hilight .hilight.make 1  "\\$^"            .scheme.keyword
+    hilight .hilight.make 1  "\\$<"            .scheme.keyword
+!endif
+
+define-macro fhook-make
+    ; if arg is 0 this is a new file so add template 
+    !if &not @#
+        etfinsrt "makefile"
+    !endif
+    set-variable $buffer-mask "luh1"
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.make
+    !endif
+    -1 buffer-mode "tab"        ; Normal tabs please !!!
+    1 buffer-mode "indent"
+    1 buffer-mode "time"
+    ; execute user extensions if enabled
+    !if &exist my-fhook-make
+        my-fhook-make
+    !endif
+!emacro
+
+ml-write "[Makefile file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "mymake"
+

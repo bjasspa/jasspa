@@ -1,0 +1,151 @@
+;       VRML mode hook
+;
+;   Last Modified : <991125.1029>
+;
+!if &not &exist .hilight.vrml
+    set-variable .hilight.vrml &pinc .hilight.next 1
+!endif
+
+!if &band .hilight.flags 0x02
+    ; High-light VRML Mode
+    0 hilight .hilight.vrml 0                              $global-scheme
+    hilight   .hilight.vrml 2  "#"                         .scheme.comment
+    hilight   .hilight.vrml 4 "\"" "\"" "\\"               .scheme.string
+    ;
+    hilight   .hilight.vrml 1 "center"                     .scheme.keyword
+    hilight   .hilight.vrml 1 "bboxCenter"                 .scheme.keyword
+    hilight   .hilight.vrml 1 "bboxSize"                   .scheme.keyword
+    hilight   .hilight.vrml 1 "translation"                .scheme.keyword
+    hilight   .hilight.vrml 1 "rotation"                   .scheme.keyword
+    hilight   .hilight.vrml 1 "scale"                      .scheme.keyword
+    hilight   .hilight.vrml 1 "scaleOrientation"           .scheme.keyword
+    hilight   .hilight.vrml 1 "Group"                      .scheme.keyword
+    hilight   .hilight.vrml 1 "appearance"                 .scheme.keyword
+    hilight   .hilight.vrml 1 "material"                   .scheme.keyword
+    hilight   .hilight.vrml 1 "geometry"                   .scheme.keyword
+    hilight   .hilight.vrml 1 "point"                      .scheme.keyword
+    hilight   .hilight.vrml 1 "coord"                      .scheme.keyword
+    hilight   .hilight.vrml 1 "coordIndex"                 .scheme.keyword
+    hilight   .hilight.vrml 1 "normal"                     .scheme.keyword
+    hilight   .hilight.vrml 1 "normalIndex"                .scheme.keyword
+    hilight   .hilight.vrml 1 "children"                   .scheme.keyword
+    hilight   .hilight.vrml 1 "Transform"                  .scheme.keyword
+    hilight   .hilight.vrml 1 "Shape"                      .scheme.keyword
+    hilight   .hilight.vrml 1 "IndexedFaceSet"             .scheme.keyword
+    hilight   .hilight.vrml 1 "Box"                        .scheme.keyword
+    hilight   .hilight.vrml 1 "Cone"                       .scheme.keyword
+    hilight   .hilight.vrml 1 "IndexedLineSet"             .scheme.keyword
+    hilight   .hilight.vrml 1 "Cylinder"                   .scheme.keyword
+    hilight   .hilight.vrml 1 "PointSet"                   .scheme.keyword
+    hilight   .hilight.vrml 1 "ElevationGrid"              .scheme.keyword
+    hilight   .hilight.vrml 1 "Sphere"                     .scheme.keyword
+    hilight   .hilight.vrml 1 "Extrusion"                  .scheme.keyword
+    hilight   .hilight.vrml 1 "Text"                       .scheme.keyword
+    hilight   .hilight.vrml 1 "texture"                    .scheme.keyword
+    hilight   .hilight.vrml 1 "textureTransform"           .scheme.keyword
+    hilight   .hilight.vrml 1 "color"                      .scheme.keyword
+    hilight   .hilight.vrml 1 "texCoord"                   .scheme.keyword
+    hilight   .hilight.vrml 1 "ccw"                        .scheme.keyword
+    hilight   .hilight.vrml 1 "colorIndex"                 .scheme.keyword
+    hilight   .hilight.vrml 1 "colorPerVertex"             .scheme.keyword
+    hilight   .hilight.vrml 1 "convex"                     .scheme.keyword
+    hilight   .hilight.vrml 1 "creaseAngle"                .scheme.keyword
+    hilight   .hilight.vrml 1 "normalPerVertex"            .scheme.keyword
+    hilight   .hilight.vrml 1 "solid"                      .scheme.keyword
+    hilight   .hilight.vrml 1 "texCoordIndex"              .scheme.keyword
+    hilight   .hilight.vrml 1 "Viewpoint"                  .scheme.keyword
+    hilight   .hilight.vrml 1 "position"                   .scheme.keyword
+    hilight   .hilight.vrml 1 "orientation"                .scheme.keyword
+    hilight   .hilight.vrml 1 "field"                      .scheme.keyword
+    hilight   .hilight.vrml 1 "fieldOfView"                .scheme.keyword
+    hilight   .hilight.vrml 1 "description"                .scheme.keyword
+    hilight   .hilight.vrml 1 "size"                       .scheme.keyword
+    hilight   .hilight.vrml 1 "bottom"                     .scheme.keyword
+    hilight   .hilight.vrml 1 "bottomRadius"               .scheme.keyword
+    hilight   .hilight.vrml 1 "height"                     .scheme.keyword
+    hilight   .hilight.vrml 1 "side"                       .scheme.keyword
+    hilight   .hilight.vrml 1 "radius"                     .scheme.keyword
+    hilight   .hilight.vrml 1 "top"                        .scheme.keyword
+    hilight   .hilight.vrml 1 "xDimension"                 .scheme.keyword
+    hilight   .hilight.vrml 1 "xSpacing"                   .scheme.keyword
+    hilight   .hilight.vrml 1 "zDimension"                 .scheme.keyword
+    hilight   .hilight.vrml 1 "zSpacing"                   .scheme.keyword
+    hilight   .hilight.vrml 1 "beginCap"                   .scheme.keyword
+    hilight   .hilight.vrml 1 "crossSection"               .scheme.keyword
+    hilight   .hilight.vrml 1 "endCap"                     .scheme.keyword
+    hilight   .hilight.vrml 1 "spine"                      .scheme.keyword
+    hilight   .hilight.vrml 1 "string"                     .scheme.keyword
+    hilight   .hilight.vrml 1 "fontStyle"                  .scheme.keyword
+    hilight   .hilight.vrml 1 "length"                     .scheme.keyword
+    hilight   .hilight.vrml 1 "maxExtent"                  .scheme.keyword
+    hilight   .hilight.vrml 1 "ambientIntensity"           .scheme.keyword
+    hilight   .hilight.vrml 1 "diffuseColor"               .scheme.keyword
+    hilight   .hilight.vrml 1 "emissiveColor"              .scheme.keyword
+    hilight   .hilight.vrml 1 "shininess"                  .scheme.keyword
+    hilight   .hilight.vrml 1 "specularColor"              .scheme.keyword
+    hilight   .hilight.vrml 1 "transparency"               .scheme.keyword
+    hilight   .hilight.vrml 1 "url"                        .scheme.keyword
+    hilight   .hilight.vrml 1 "repeatS"                    .scheme.keyword
+    hilight   .hilight.vrml 1 "repeatT"                    .scheme.keyword
+    hilight   .hilight.vrml 1 "DirectionalLight"           .scheme.keyword
+    hilight   .hilight.vrml 1 "PROTO"                      .scheme.keyword
+    hilight   .hilight.vrml 1 "DEF"                        .scheme.keyword
+    hilight   .hilight.vrml 1 "USE"                        .scheme.keyword
+    hilight   .hilight.vrml 1 "WorldInfo"                  .scheme.keyword
+    hilight   .hilight.vrml 1 "Background"                 .scheme.keyword
+    hilight   .hilight.vrml 1 "exposedField"               .scheme.keyword
+    hilight   .hilight.vrml 1 "IS"                         .scheme.keyword
+    hilight   .hilight.vrml 1 "TimeSensor"                 .scheme.keyword
+    hilight   .hilight.vrml 1 "OrientationInterpolator"    .scheme.keyword
+    hilight   .hilight.vrml 1 "PositionInterpolator"       .scheme.keyword
+    hilight   .hilight.vrml 1 "ScalarInterpolator"         .scheme.keyword
+    hilight   .hilight.vrml 1 "ROUTE"                      .scheme.keyword
+    hilight   .hilight.vrml 1 "Collision"                  .scheme.keyword
+    hilight   .hilight.vrml 1 "vector"                     .scheme.keyword
+    hilight   .hilight.vrml 1 "collide"                    .scheme.keyword
+    hilight   .hilight.vrml 1 "TouchSensor"                .scheme.keyword
+    hilight   .hilight.vrml 1 "NavigationInfo"             .scheme.keyword
+    hilight   .hilight.vrml 1 "Switch"                     .scheme.keyword
+    hilight   .hilight.vrml 1 "choice"                     .scheme.keyword
+    hilight   .hilight.vrml 1 "whichChoice"                .scheme.keyword
+    hilight   .hilight.vrml 1 "proxy"                      .scheme.keyword
+    hilight   .hilight.vrml 1 "LOD"                        .scheme.keyword
+    hilight   .hilight.vrml 1 "range"                      .scheme.keyword
+    hilight   .hilight.vrml 1 "level"                      .scheme.keyword
+    hilight   .hilight.vrml 1 "Inline"                     .scheme.keyword
+    hilight   .hilight.vrml 1 "NULL"                       .scheme.keyword
+    hilight   .hilight.vrml 1 "TRUE"                       .scheme.keyword
+    hilight   .hilight.vrml 1 "FALSE"                      .scheme.keyword
+    hilight   .hilight.vrml 1 "eventIn"                    .scheme.keyword
+    hilight   .hilight.vrml 1 "eventOut"                   .scheme.keyword
+    hilight   .hilight.vrml 1 "Script"                     .scheme.keyword
+    hilight   .hilight.vrml 1 "Anchor"                     .scheme.keyword
+    hilight   .hilight.vrml 1 "parameter"                  .scheme.keyword
+    hilight   .hilight.vrml 1 "ProximitySensor"            .scheme.keyword
+!endif
+
+0 indent  .hilight.vrml 0 20
+indent .hilight.vrml n "{"  2
+indent .hilight.vrml o "}" -2
+indent .hilight.vrml n "\\["  2
+indent .hilight.vrml o "]" -2
+indent .hilight.vrml e "\"" "\"" "\\"
+indent .hilight.vrml i "#"
+
+define-macro fhook-vrml
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.vrml
+    !endif
+    set-variable $buffer-indent  .hilight.vrml
+    buffer-bind-unbound-key restyle-region "A-C-tab"
+    ; execute user extensions if enabled
+    !if &exist my-fhook-vrml
+        my-fhook-vrml
+    !endif
+!emacro
+
+ml-write "[VRML file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "myvrml"
+

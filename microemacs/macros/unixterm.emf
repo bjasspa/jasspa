@@ -1,0 +1,37 @@
+; Common unix setup file
+; Last Modified:     <000704.0834>
+;
+define-macro-file hkman man
+define-macro-file hkipipe ishell gdb dbx
+add-file-hook ".C" fhook-cpp
+0 define-macro exec-me
+    ipipe-shell-command &spr "\"%s\" %s" $progname @1
+!emacro
+!if &band $system 0x01
+    ; Not using X - bind C-i to the tab character
+    global-bind-key tab "C-i"
+    !if &not &band $system 0x02
+        ; no color - change the window chars so osd is more usable
+        set-variable $window-chars &cat &lef $window-chars 47 "=x*[]"
+    !endif
+!else
+    !if &not &seq &set #l0 &reg "/history" &cat $platform "/font" "" ""
+        change-font #l0
+    !endif
+!endif
+;
+; setup the next-error stuff including grep and compiling
+;
+set-variable $line-template "[0-9]+"
+set-variable $file-template "[!-9;-z~]+"
+set-variable %ipipe-term "TERM=vt100-nam"
+; Grep stuff
+set-variable %grep-com "grep -n"
+add-next-line "*grep*" ""
+add-next-line "*grep*" "%f:%l:"
+; RCS stuff
+set-variable $rcs-file     "RCS/%f,v"
+set-variable $rcs-co-com   "co %f"
+set-variable $rcs-cou-com  "co -l %f"
+set-variable $rcs-ci-com   "ci -u -m\"%m\" %f"
+;set-variable $rcs-cif-com  "ci -u -m\"%m\" %f"

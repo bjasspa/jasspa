@@ -1,0 +1,570 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Fri Apr 23 13:14:46 1999
+;  Last Modified : <000719.0012>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 1999 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+!if &seq .osd.info-help "ERROR"
+    set-variable .osd.info-help &pinc .osd.next 1
+!endif
+
+; Quick check to make sure that hilighting is required.
+!if &band .hilight.flags 0x02
+    !if &not &exist .hilight.info
+        set-variable .hilight.info &pinc .hilight.next 1
+    !endif
+
+    ; Make the hilighting look back (10 lines) and case insensitive
+    0 hilight .hilight.info  3 10                  $global-scheme
+
+    ; First line of the file is the menu line always commences
+    ; with File: followed optionally with Node Next Prev Up
+    hilight .hilight.info 4 "^File:" "\\}[,\n]" "" .scheme.header
+    hilight .hilight.info 5 "Node:"  "\\}[,\n]" "" .scheme.header
+    hilight .hilight.info 5 "Next:"  "\\}[,\n]" "" .scheme.link
+    hilight .hilight.info 5 "Prev:"  "\\}[,\n]" "" .scheme.link
+    hilight .hilight.info 5 "Up:"    "\\}[,\n]" "" .scheme.link
+    ; Menus, appear at the start of the line and extend to
+    ; a colon or double colon character. *Menu is a special case
+    hilight .hilight.info 1 "^* Menu:"             .scheme.header
+    hilight .hilight.info 0 "^* \\{[^:]*\\}:"      .scheme.link
+    hilight .hilight.info 0 "^*\\{[^:]*\\}:"       .scheme.link
+    ; Notes appear embedded in text and may span multiple
+    ; lines, again these are branches.
+    hilight .hilight.info 4 "*\\{Note" "\\}:" ""   .scheme.link
+    ; Hilighted items are in a open/close quote pairs, these
+    ; can span multiple lines so use a branch.
+    hilight .hilight.info 4 "`" "'"  ""            .scheme.bold
+    ; Can use the following to hide the `..' pair.
+    ; hilight .hilight.info 0x44 "`" "" "'" ""  ""   .scheme.bold
+     ; just for headers substrikes
+    hilight .hilight.info 2   "^*\\*\\*"           .scheme.header
+    hilight .hilight.info 2   "^==="               .scheme.header
+    hilight .hilight.info 2   "^---"               .scheme.header
+    ; Hide the special characters.
+    hilight .hilight.info 64 "\x7f" " --> "              .scheme.link
+    hilight .hilight.info 64 "\x1f" "--- Page Break ---" .scheme.bold
+!endif
+
+0 define-macro info-load-indirect-file
+    set-variable #l0 @wl
+    set-mark
+    forward-line
+    kill-region
+    -1 yank
+    !if &set #l1 &sin ":" #l0
+        set-variable #l0 &lef #l0 &sub #l1 1
+    !endif
+    !force insert-file #l0
+    !if &not $status 
+        ; Try a .gz file 
+        set-variable #l9 $temp-name
+        !force shell-command &spr "gunzip -c \"%s.gz\" > %s" #l0 #l9
+        !if $result 
+            !return
+        !endif
+        !force insert-file #l9
+        !force shell-command &cat &cond &band $system 0x100 "erase " "rm " #l9
+    !endif
+    set-variable #l1 $window-line
+    exchange-point-and-mark
+    set-variable #l2 $window-line
+    set-mark
+    !force &sub #l2 #l1 search-forward "\C_\n"
+    !if $status
+        !if #l2
+            backward-line
+        !endif
+        set-variable #l1 &sub #l1 &sub $window-line #l2
+        kill-region
+        -1 yank
+    !endif
+    #l1 goto-line
+!emacro
+
+0 define-macro info-load-file
+    !force set-variable #l0 @1
+    !if &not &exi .info.path
+        !if &band $system 0x100
+            set-variable .info.path "c:/info"
+            set-variable #l1 ";"
+        !else
+            set-variable .info.path "/usr/local/info"
+            set-variable #l1 ":"
+        !endif
+        !if &not &seq $INFOPATH "ERROR"
+            set-variable .info.path &spr "%s%s%s" $INFOPATH #l1 .info.path
+        !endif
+    !endif
+    set-variable #l2 $search-path
+    set-variable #l3 ""
+    set-variable $search-path .info.path
+    !force set-variable #l1 &find #l0 ""
+    !if &seq #l1 "ERROR"
+        !force set-variable #l1 &find #l0 ".info"
+         ; Search for .gz equivelents of the files.
+         !if &seq #l1 "ERROR"
+             !force set-variable #l1 &find #l0 ".gz"
+             !if &seq #l1 "ERROR"
+                 !force set-variable #l1 &find &cat #l0 ".info" ".gz"
+             !endif
+             ; Save the .gz name in #l3, set #l1 to the non.gz name
+             !if &not &seq #l1 "ERROR"
+                 set-variable #l3 #l1
+                 set-variable #l1 &lef #l1 &sub &len #l1 3
+             !endif
+         !endif
+    !endif
+    set-variable $search-path #l2
+    !if &seq #l1 "ERROR"
+        ml-write &spr "[Failed to find info on %s]" #l0
+        !abort
+    !endif
+    ml-write &spr "[found info in %s]" #l1
+    set-variable #l0 &rig #l1 &rsin "/" #l1
+    set-variable #l2 &cat "*info " #l0
+    !force 0 find-buffer #l2
+    !if $status
+        !force narrow-buffer
+        beginning-of-buffer
+        !return
+    !endif
+    find-buffer #l2
+    -1 buffer-mode "exact"
+    -1 buffer-mode "undo"
+    1 buffer-mode "magic"
+    set-variable $buffer-fname &lef #l1 &rsin "/" #l1
+    ; Read in the file.
+    !if &seq #l3 "" 
+        insert-file #l1
+    !else
+        ; Pipe the gzip file into the buffer 
+        0x02 pipe-shell-command &cat "gunzip -c " #l3 #l2
+        -1 buffer-mode "view"
+        beginning-of-buffer
+        ; Kill off the 1st 3 lines
+        set-mark
+        3 forward-line
+        kill-region
+    !endif
+    beginning-of-buffer
+    set-mark
+    !force search-forward "\C_\n"
+    !if &not $status
+        !force 0 delete-buffer #l2
+        ml-write &spr "[%s does not appear to be an info file]" #l1
+        !abort
+    !endif
+    kill-region
+    -1 yank
+    !if &seq &lef @wl 9 "Indirect:"
+        set-mark
+        forward-line
+        kill-region
+        -1 yank
+        !while &not &seq @wc "\C_"
+            info-load-indirect-file
+        !done
+    !endif
+    -1 buffer-mode "edit"
+    1 buffer-mode "view"
+    ; Force hilighting on the buffer
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.info
+    !endif
+    beginning-of-buffer
+    buffer-bind-key info-jump-link "return"
+    1 buffer-bind-key info-jump-link "n"
+    2 buffer-bind-key info-jump-link "p"
+    3 buffer-bind-key info-jump-link "u"
+    4 buffer-bind-key info-jump-link "t"
+    5 buffer-bind-key info-jump-link "h"
+    6 buffer-bind-key info-jump-link "d"
+    buffer-bind-key info-follow-line "f"
+    buffer-bind-key info-jump-last "l"
+    buffer-bind-key info-goto-link "g"
+    buffer-bind-key info-node-menu "m"
+    buffer-bind-key scroll-down "space"
+    buffer-bind-key scroll-up "backspace"
+    buffer-bind-key scroll-up "delete"
+    buffer-bind-key beginning-of-buffer "b"
+    buffer-bind-key beginning-of-buffer "."
+    .osd.info-help buffer-bind-key osd "esc h"
+    .osd.info-help buffer-bind-key osd "?"
+    set-variable $buffer-fhook "fhook-info"
+    set-variable :mouse-pick-1 info-mouse-pick-1
+    set-variable :mouse-drop-1 info-mouse-drop-1
+    set-variable :node ""
+!emacro
+
+0 define-macro info-jump-link
+    set-variable #l0 ""
+    !if @?
+        set-variable #l1 &lget "|Next:|Prev:|Up:|Top|(info) Help|(dir)|" @#
+        set-variable #l2 &lget "|T|T|T|A|A|A|" @#
+        !if &seq #l2 "A"
+            set-variable #l0 #l1
+        !elif &seq #l2 "T"
+            beginning-of-buffer
+            !if &set #l2 &sin #l1 @wl
+                set-variable #l0 &rig @wl &add #l2 &len #l1
+                !if &set #l1 &sin "," #l0
+                    set-variable #l0 &lef #l0 &sub #l1 1
+                !endif
+            !endif
+        !endif
+    !else
+        beginning-of-line
+        !if &seq @wc "*"
+            !if &set #l1 &sin "::" @wl
+                set-variable #l0 &mid @wl 1 &sub #l1 2
+            !elif &set #l1 &sin ":" @wl
+                set-variable #l0 &rig @wl #l1
+                !if &set #l1 &sin "." #l0
+                    set-variable #l0 &lef #l0 &sub #l1 1
+                !endif
+            !endif
+        !endif
+    !endif
+    !if &seq &set #l0 &trb #l0 ""
+        ml-write "[Invalid link]"
+        !abort
+    !endif
+    info-goto-link #l0
+!emacro
+
+0 define-macro info-jump-last
+    set-variable #l0 $buffer-bname
+    !force 0 find-buffer "*info-last*"
+    !if &not $status
+        ml-write "[No last history]"
+        !abort
+    !endif
+    !force 2 backward-line
+    !if &not $status
+        !force 0 delete-buffer "*info-last*"
+        ml-write "[No last history]"
+        !abort
+    !endif
+    set-variable #l1 @wl
+    set-mark
+    end-of-buffer
+    kill-region
+    -1 yank
+    -1 find-buffer "*info-last*"
+    find-buffer #l0
+    info-goto-link #l1
+!emacro
+
+0 define-macro info-mouse-pick-1
+    set-variable #l0 $window-line
+    set-variable #l1 $window-col
+    !if &equ #l0 1
+        !force -1 search-backward ":"
+        !if $status
+            set-variable #l2 $window-col
+            !force -1 search-forward ","
+            !if $status
+                backward-char
+            !else
+                end-of-line
+            !endif
+            !if &les #l1 $window-col
+                -3 show-region
+                !if &seq &mid @wl &sub #l2 2 2 "Up"
+                    set-variable $window-col &add #l2 1
+                !elif &seq &mid @wl &sub #l2 4 4 "Next"
+                    set-variable $window-col &add #l2 1
+                !elif &seq &mid @wl &sub #l2 4 4 "Prev"
+                    set-variable $window-col &add #l2 1
+                !endif
+                !if &seq @wc " "
+                    forward-char
+                !endif
+                3 show-region
+            !endif
+        !endif
+    !else
+        !force -2 search-backward "\\*"
+        !if $status
+            !if &iseq &mid &cat @wl " " $window-col 6 "*Note "
+                !force -2 search-forward ":"
+                !if &les $window-line #l0
+                    -3 show-region
+                !elif &les $window-col #l1
+                    -3 show-region
+                !else
+                    backward-char
+                    set-alpha-mark "t"
+                    !force -2 search-backward "\\*Note"
+                    5 forward-char
+                    search-forward "[^ \t\n]"
+                    goto-alpha-mark "t"
+                    3 show-region
+                !endif
+            !elif &and &not $window-col &equ $window-line #l0
+                !if &set #l1 &sin "::" @wl
+                    set-variable #l0 &mid @wl 1 &sub #l1 2
+                !elif &set #l1 &sin ":" @wl
+                    set-variable #l0 &rig @wl #l1
+                    !if &set #l1 &sin "." #l0
+                        set-variable #l0 &lef #l0 &sub #l1 1
+                    !endif
+                !endif
+                !if &not &seq &set #l0 &trb #l0 ""
+                    forward-char
+                    !if &seq @wc " "
+                        forward-char
+                    !endif
+                    search-forward "[^:]*"
+                !endif
+            !endif
+        !endif
+    !endif
+    set-cursor-to-mouse
+    show-region
+!emacro
+
+0 define-macro info-follow-goto
+    !if &seq @wc ":"
+        backward-char
+        set-mark
+        !force -2 search-backward "\\*Note"
+        6 forward-char
+    !else
+        forward-char
+        set-mark
+        !force -2 search-forward "\\."
+        backward-char
+    !endif
+    copy-region
+    set-variable #l0 @y
+    -1 yank
+    var-str-sub #l0 "\n" " "
+    !repeat
+        set-variable #l1 &len #l0
+        var-str-sub #l0 "  " " "
+    !until &equ #l1 &len #l0
+    !if &seq &set #l0 &trb #l0 ""
+        ml-write "[Invalid link]"
+        !abort
+    !endif
+    info-goto-link #l0
+!emacro
+
+0 define-macro info-mouse-drop-1
+    set-variable #l0 $window-line
+    set-variable #l1 $window-col
+    !if &equ #l0 1
+        !force -1 search-backward ":"
+        !if $status
+            set-variable #l2 $window-col
+            !force -1 search-forward ","
+            !if $status
+                backward-char
+            !else
+                end-of-line
+            !endif
+            !if &les #l1 $window-col
+                !if &seq &mid @wl &sub #l2 2 2 "Up"
+                    3 info-jump-link
+                    !return
+                !elif &seq &mid @wl &sub #l2 4 4 "Next"
+                    1 info-jump-link
+                    !return
+                !elif &seq &mid @wl &sub #l2 4 4 "Prev"
+                    2 info-jump-link
+                    !return
+                !endif
+            !endif
+        !endif
+        ml-write "[Invalid link]"
+        !abort
+    !else
+        !force -2 search-backward "\\*"
+        !if &iseq &mid &cat @wl " " $window-col 6 "*Note "
+            !force -2 search-forward ":"
+            !if &les $window-line #l0
+                !jump 2
+            !elif &les $window-col #l1
+                ml-write "[Invalid cross reference]"
+                !abort
+            !endif
+            info-follow-goto
+        !else
+            set-cursor-to-mouse
+            info-jump-link
+        !endif
+    !endif
+!emacro
+
+0 define-macro info-follow-line
+    set-variable #l0 $window-line
+    set-variable #l1 $window-col
+    !force -2 search-backward "\\*Note[ \n]"
+    !if $status
+        !force -2 search-forward ":"
+        !if &and $status &not &les $window-line #l0
+            info-follow-goto
+            !return
+        !endif
+    !endif
+    set-variable $window-line #l0
+    !force -1 search-forward "\\*Note[ \n]"
+    !if $status
+        !force -2 search-forward ":"
+        !if $status
+            info-follow-goto
+            !return
+        !endif
+    !endif
+    set-variable $window-line #l0
+    set-variable $window-col #l1
+    ml-write "[Invalid cross reference]"
+    !abort
+!emacro
+
+0 define-macro info-node-menu
+    set-variable #l2 $buffer-bname
+    ; use -1 find-buffer to ensure only the current window will be showing it
+    -1 find-buffer #l2
+    !force 0 delete-buffer "*info-menu*"
+    find-buffer "*info-menu*"
+    -1 buffer-mode "undo"
+    find-buffer #l2
+    set-alpha-mark "t"
+    beginning-of-buffer
+    set-variable #l0 "\CJ"
+    !force search-forward "^\\*.*:."
+    !while $status
+        set-variable #l1 &mid @wl 1 &sub &sin ":" @wl 2
+        find-buffer "*info-menu*"
+        insert-string &trb #l1
+        forward-line
+        find-buffer #l2
+        !force search-forward "^\\*.*:"
+    !done
+    goto-alpha-mark "t"
+    !force set-variable #l1 @ml0a "Goto node" "*info-menu*"
+    set-variable #l0 $status
+    !force 0 delete-buffer "*info-menu*"
+    !if &not #l0
+        !abort
+    !endif
+    beginning-of-buffer
+    !force search-forward &spr "^\\*[ \t]*%s[ \t]*:" #l1
+    !if $status
+        beginning-of-line
+        info-jump-link
+    !else
+        goto-alpha-mark "t"
+        ml-write "[Failed to find link]"
+    !endif
+!emacro
+
+define-macro info-goto-link
+    !force set-variable #l0 @1
+    !if &not $status
+        set-variable #l0 @ml00 "Find info link"
+    !endif
+    set-variable #l0 &trb #l0
+    !if &seq &lef #l0 1 "("
+        !if &not &set #l1 &sin ")" #l0
+            ml-write &spr "[Missing ')' in link %s]" #l0
+            !abort
+        !endif
+        set-variable #l2 &mid #l0 1 &sub #l1 2
+        info-load-file #l2
+        set-variable #l0 &trb &rig #l0 #l1
+    !else
+        !force narrow-buffer
+        beginning-of-buffer
+    !endif
+    !if &seq #l0 ""
+        set-variable #l0 "Top"
+    !endif
+    str-to-regex #l0
+    !force search-forward &spr "^File: .* Node:[ \t]+%s[,\n]" #l0
+    !if &not $status
+        !if &seq #l0 "Top"
+        !elif &seq #l0 :node
+            set-variable #l0 "Top"
+        !else
+            info-goto-link :node
+            ml-write &spr "[Failed to find link to %s]" #l0
+            !abort
+        !endif
+    !endif
+    beginning-of-line
+    set-mark
+    !force search-forward "\C_\n"
+    !if $status
+        backward-line
+    !else
+        end-of-buffer
+    !endif
+    3 narrow-buffer
+    beginning-of-buffer
+    set-variable :node #l0
+    !if @#
+        set-variable #l1 $buffer-bname
+        find-buffer "*info-last*"
+        1 buffer-mode "hide"
+        -1 buffer-mode "undo"
+        insert-string &spr "(%s) %s\n" &rig #l1 6 #l0
+        -1 find-buffer "*info-last*"
+        find-buffer #l1
+    !endif
+!emacro
+
+define-macro info-on
+    !force set-variable #l0 @1
+    !if &not $status
+        set-variable #l0 @ml00 "Find info on"
+    !endif
+    info-goto-link &spr "(%s)" #l0
+!emacro
+
+define-macro info
+    info-on "dir"
+!emacro
+
+osd .osd.info-help 0  "batcdH" 9 3 99 .scheme.osd-title "GNU Info Mode Help"
+osd .osd.info-help 1  ""
+osd .osd.info-help 2  ""  "    ?,"
+osd .osd.info-help 3  ""  "    esc h   - View this help page"
+osd .osd.info-help 4  ""
+osd .osd.info-help 5  ""  "    space   - Page down node"
+osd .osd.info-help 6  ""  "    backspace,"
+osd .osd.info-help 7  ""  "    delete  - Page up node"
+osd .osd.info-help 8  ""  "    b, .    - Top of node"
+osd .osd.info-help 9  ""
+osd .osd.info-help 10 ""  "    g       - Goto to node"
+osd .osd.info-help 11 ""  "    l       - Last node"
+osd .osd.info-help 12 ""  "    m       - Menu of nodes"
+osd .osd.info-help 13 ""  "    n       - Next node"
+osd .osd.info-help 14 ""  "    p       - Previous node"
+osd .osd.info-help 15 ""  "    u       - Up node"
+osd .osd.info-help 16 ""  "    t       - Top node"
+osd .osd.info-help 17 ""  "    d       - Dir node"
+osd .osd.info-help 18 ""  "    f       - Follow cross reference    "
+osd .osd.info-help 19 ""
+osd .osd.info-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void
+
+0  define-macro fhook-info
+    ; Force hilighting on the buffer
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.info
+    !endif
+!emacro    
+
+; load in user extensions if found
+!force execute-file "myinfo"

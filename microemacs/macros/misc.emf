@@ -1,0 +1,122 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips & Jon Green
+;  Created       : Sat Jul 18 15:11:54 1998
+;  Last Modified : <000719.0012>
+;
+;  Description   : Miscellaneous macros, namely
+;                  symbol, check-line-length, alarm, time etc
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 1998 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+!if &seq %alarm-numb "ERROR"
+    set-variable %alarm-numb 0
+    set-variable .osd.alarm &pinc .osd.next 1
+    set-variable .osd.symbol &pinc .osd.next 1
+!endif
+;
+; symbol
+; Macro to print up the ascii table on screen using the poke and allowing
+; the user to select a code
+0 define-macro symbol-insert
+    insert-string &itoa @#
+!emacro
+
+osd .osd.symbol 0 "bknatcHsd" 2 3 75 0 -1 -1 620 .scheme.osd-title "Insert Symbol"
+osd .osd.symbol 1 ""
+osd .osd.symbol 2 "" "   D  X C   D  X C   D  X C   D  X C   D  X C   D  X C   D  X C   D  X C"
+osd .osd.symbol 3 ""
+
+set-variable #l0 255
+!repeat
+    set-variable #l1 &spr "%3d %2x %s" #l0 #l0 &itoa #l0
+    set-variable #l1 &spr "%s%n" #l1 &sub 8 &len #l1 " "
+    !if &equ &band #l0 7 7
+        osd .osd.symbol &add &mul #l0 2 11 "f"  #l1 #l0 symbol-insert
+    !else
+        osd .osd.symbol &add &mul #l0 2 11 "hf" #l1 #l0 symbol-insert
+    !endif
+    osd .osd.symbol &add &mul #l0 2 10 "hf" " "
+!until &not &pdec #l0 1
+!endif
+osd .osd.symbol 600 ""
+osd .osd.symbol 610 ""
+osd .osd.symbol 620 "BcfH" .scheme.osd-ebtt " Cancel " f void
+
+define-macro symbol
+    .osd.symbol osd
+!emacro
+
+define-macro check-line-length
+    !repeat
+        end-of-line
+        !if &gre $window-acol $fill-col
+            ml-write "[line too long]"
+            !abort
+        !endif
+        !force forward-line
+    !until &not $status
+!emacro
+
+; alarm - Create a simple alarm
+define-macro alarm
+    set-variable %alarm-numb &add %alarm-numb 1
+    set-variable #l0 &cat "%alarm-" %alarm-numb
+    !force set-variable #l2 @3
+    !if &not $status
+        set-variable &ind #l0 @ml "Message"
+        set-variable #l1 @ml "Hours"
+        set-variable #l2 @ml "Minutes"
+    !else
+        set-variable &ind #l0 @1
+        set-variable #l1 @2
+    !endif
+    set-variable #l1 &mul 60000 &add &mul 60 #l1 #l2
+    define-macro #l0
+        !bell
+        set-variable #l0 &add &len &ind @0 10
+        osd .osd.alarm 0 "bat" 9 3
+        osd .osd.alarm 1 ""
+        osd .osd.alarm 2 "c" "ALARM"
+        osd .osd.alarm 3 ""
+        osd .osd.alarm 4 "" &ind @0
+        osd .osd.alarm 5 ""
+        osd .osd.alarm 6 "Bcf" " OK " f void
+        .osd.alarm osd
+    !emacro
+    #l1 create-callback #l0
+!emacro
+
+define-macro time
+    !force set-variable #l2 @1
+    !if &not $status
+        set-variable #l2 @ml00 "Time command"
+    !endif
+    set-variable #l0 $time
+    !force execute-line #l2
+    set-variable #l1 $time
+    set-variable #l2 &add &mid #l0 16 2 &mul 60 &add &mid #l0 14 2 &mul 60 &mid #l0 12 2
+    set-variable #l3 &add &mid #l1 16 2 &mul 60 &add &mid #l1 14 2 &mul 60 &mid #l1 12 2
+    !if &les &set #l4 &sub &rig #l1 18 &rig #l0 18 0
+        set-variable #l2 &add #l2 1
+        set-variable #l4 &add 1000 #l4
+    !endif
+    set-variable .msec &add &mul &sub #l3 #l2 1000 #l4
+    ml-write &spr "Command took %d sec %d msec" &sub #l3 #l2 #l4
+!emacro
+
+; The default compare-windows ignores white space. The -exact extension checks
+; white space as well.
+define-macro compare-windows-exact
+    0 compare-windows
+!emacro
+
+; toggles the displaying of white characters
+define-macro display-white-chars
+    set-variable $system &bxor $system 0x80000
+    screen-update
+!emacro

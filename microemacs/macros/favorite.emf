@@ -1,0 +1,124 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Tue Aug 10 01:01:17 1999
+;  Last Modified : <000719.0012>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 1999 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+0 define-macro osd-favorites-add
+    set-variable #l0 $buffer-bname
+    set-variable #l1 $window-line
+    set-variable #l2 $window-y-scroll
+    set-variable #l3 $window-col
+    set-variable #l4 $buffer-fname
+    !force find-file .osd-favorites.fname
+    1 buffer-mode "magic"
+    beginning-of-buffer
+    !force search-forward "^[ \t]*$"
+    !while $status
+        beginning-of-line
+        set-mark
+        forward-line
+        kill-region
+        -1 yank
+        !force search-forward "^[ \t]*$"
+    !done
+    end-of-buffer
+    set-variable #l5 &rig #l4 &rsin "/" #l4
+    var-str-sub #l5 "\\" "\\\\"
+    var-str-sub #l5 "&" "\\&"
+    !if &les $window-line 18
+        insert-string &spr "&%d " &add 1 &div $window-line 2
+    !endif
+    insert-string &spr "%s\n%s" #l5 #l4
+    find-buffer #l0
+    set-variable $window-line #l1
+    set-variable $window-y-scroll #l2
+    set-variable $window-col #l3
+!emacro
+
+0 define-macro osd-favorites-edit
+    !force find-file .osd-favorites.fname
+    beginning-of-buffer
+!emacro
+
+0 define-macro osd-favorites-sel
+    !force find-file .osd-favorites.fname
+    !if $status
+        beginning-of-buffer
+        !while @#
+            !if &not &seq &trl @wl ""
+                !if &and &dec @# 1 &not &seq @wl "-"
+                    forward-line
+                !endif
+            !endif
+            forward-line
+        !done
+        find-file @wl
+    !endif
+!emacro
+
+0 define-macro osd-favorites-set
+    !if &not &exi .osd-favorites.fname
+        !if &seq &set .osd-favorites.fname &find $MENAME ".eff" "ERROR"
+            set-variable #l0 &sin &cond &band $system 0x200 ";" ":" $search-path
+            !if #l0
+                set-variable #l0 &lef $search-path &sub #l0 1
+            !else
+                set-variable #l0 $search-path
+            !endif
+            set-variable .osd-favorites.fname &spr "%s/%s.eff" #l0 $MENAME
+        !endif
+        set-variable .osd-favorites.fname &cat "file:" .osd-favorites.fname
+    !endif
+    !force find-file .osd-favorites.fname
+    !if &not $status
+        ml-write &spr "[Failed to load %s]" #l0
+        !abort
+    !endif
+    1 buffer-mode "hide"
+    beginning-of-buffer
+    -1 osd @#
+    osd @# 0 "bo" 0 -3
+    !if &or &seq &lef $buffer-bname 1 "*" &seq $buffer-fname ""
+        osd @# 1 "S" "Add"
+    !else
+        osd @# 1 "" "&Add" f osd-favorites-add
+    !endif
+    osd @# 2 "" "&Edit  "  f osd-favorites-edit
+    osd @# 3  "-"
+    set-variable #l0 1
+    !while &not &seq @wc ""
+        !if &not &seq &trl @wl ""
+            !if &seq @wl "-"
+                osd @# &mul &pinc #l0 1 10 "-"
+            !else
+                osd @# &mul #l0 10 "" @wl &pinc #l0 1 osd-favorites-sel
+                forward-line
+            !endif
+        !endif
+        forward-line
+    !done
+!emacro
+
+0 define-macro osd-favorites
+    set-variable #l0 $buffer-bname
+    set-variable #l1 $window-line
+    set-variable #l2 $window-y-scroll
+    set-variable #l3 $window-col
+    !force @# osd-favorites-set
+    find-buffer #l0
+    set-variable $window-line #l1
+    set-variable $window-y-scroll #l2
+    set-variable $window-col #l3
+!emacro
+
+

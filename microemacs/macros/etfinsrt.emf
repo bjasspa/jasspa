@@ -1,0 +1,66 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created       : Mon Dec 15 14:06:31 1997
+;  Last Modified : <000719.0012>
+;
+;  Description
+;      etfinsrt "etf-name"
+;      Finds, inserts & edits the magic variables in the template files.
+;
+;  Notes
+;
+;  History
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+0 define-macro etfinsrt
+    ; Insert the template file
+    !force insert-file &find @1 ".etf"
+    !if &not $status
+        ; Warn and return if the template file was not located.
+        ml-write &spr "[Could not find template file %s.etf]" @1
+        !return
+    !endif
+    ; Remember current magic mode then add it if not set
+    set-variable #l0 &bmod magic
+    1 buffer-mode "magic"
+    ; Change the user name $USER_NAME$.
+    beginning-of-buffer
+    set-variable #l1 &reg "/history" "user-name" "<unknown>"
+    !force replace-string "\\$USER_NAME\\$" #l1
+    ; Change to the company name $COMPANY_NAME$.
+    !if &not &seq %company-name "ERROR"
+        set-variable #l1 %company-name
+    !endif
+    beginning-of-buffer
+    !force replace-string "\\$COMPANY_NAME\\$" #l1
+    ; Change the year $YEAR$
+    beginning-of-buffer
+    !force replace-string "\\$YEAR\\$" &lef $time 4
+    ; Change the create date $ASCII_TIME$.
+    beginning-of-buffer
+    ; Get ascii time in #l9
+    ascii-time
+    !force replace-string "\\$ASCII_TIME\\$" #l9
+
+    ; Change the buffer name. Modify to upper case. Change all
+    ; '.'s to '_'. Insert 2x '_' at the start of the name.
+*again
+    end-of-buffer
+    !force search-backward "\\$BUFFER_NAME\\$"
+    !if $status
+        set-mark
+        -1 replace-string "\\$BUFFER_NAME\\$" $buffer-bname
+        exchange-point-and-mark
+        -1 replace-string "\\." "_"
+        backward-word
+        upper-case-word
+        backward-word
+        ; Get rid of any buffer numbering
+        -1 replace-string "<[0-9]+>" ""
+        !goto again
+    !endif
+    ; Reset magic mode if we added it, flag buffer as unedited and goto end
+    &cond #l0 1 -1 buffer-mode "magic"
+    -1 buffer-mode "edit"
+    end-of-buffer
+!emacro

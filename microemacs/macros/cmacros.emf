@@ -1,0 +1,289 @@
+;       C-macro : bunch of useful macros for writing c
+;   Last Modified : <000607.2015>
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Bunch of C macros we may need.
+;
+; comment line ie xxx -> /*xxx*/
+;
+define-macro c-comment-line
+    !while &gre &pdec @# 1 0
+        beginning-of-line
+        insert-string "/*"
+        end-of-line
+        insert-string "*/"
+        beginning-of-line
+        forward-line
+    !done
+!emacro
+;
+; uncoment line ie /*xxx*/ -> xxx
+;
+define-macro c-uncomment-line
+    ; The next line store magic state and enables magic
+    &set #l0 &bmod "magic" buffer-mode "magic"
+    !while &gre &pdec @# 1 0
+        search-forward "*/"
+        search-backward "/\\*"
+        forward-delete-char
+        forward-delete-char
+        search-forward "*/"
+        backward-delete-char
+        backward-delete-char
+        beginning-of-line
+        forward-line
+    !done
+    ; restore magic mode
+    #l0 buffer-mode "magic"
+!emacro
+;
+; fill from the current column to fill-col with '*' and a trailing '/'
+;
+define-macro c-comm-to-end
+    &sub &sub $fill-col $window-acol 2 insert-string "*"
+    insert-string "*/"
+!emacro
+;
+; Insert a normal none c-mode tab (still effected by tab mode)
+;
+define-macro c-insert-tab
+    ; Remember we have set cmode
+    set-variable #l0 &bmod cmode
+    -1 buffer-mode "cmode"
+    tab
+    &cond #l0 1 -1 buffer-mode "cmode"
+!emacro
+;
+define-macro c-slashify
+    ; check we can edit the buffer first
+    1 buffer-mode "edit" @mna
+    set-variable #l0 $window-line
+    exchange-point-and-mark
+    !if &gre $window-line #l0
+        set-variable #l0 $window-line
+        exchange-point-and-mark
+    !endif
+    !while &not &equ $window-line #l0
+        end-of-line
+        !repeat
+            backward-char
+            !if &seq @wc "\\"
+                backward-char
+            !endif
+        !until &not &sin @wc " \t"
+        forward-char
+        !repeat
+            insert-string " "
+        !until &gre $window-acol 76
+        insert-string "\\"
+        !if &not &seq @wc "\n"
+            kill-line
+        !endif
+        forward-line
+    !done
+    beginning-of-line
+!emacro
+
+define-macro c-deslashify
+    ; check we can edit the buffer first
+    1 buffer-mode "edit" @mna
+    set-variable #l0 $window-line
+    exchange-point-and-mark
+    !if &gre $window-line #l0
+        set-variable #l0 $window-line
+        exchange-point-and-mark
+    !endif
+    !while &not &equ $window-line #l0
+        end-of-line
+        !repeat
+            backward-char
+            !if &seq @wc "\\"
+                backward-char
+            !endif
+        !until &not &sin @wc " \t"
+        forward-char
+        !if &not &seq @wc "\n"
+            kill-line
+        !endif
+        forward-line
+    !done
+    beginning-of-line
+!emacro
+
+define-macro c-start-comment
+    ; check we can edit the buffer first
+    1 buffer-mode "edit" @mna
+    set-variable %c-store-fill $fill-col
+    set-variable %c-store-buf  $buffer-bname
+    set-variable $fill-col &sub &sub $fill-col $window-acol 3
+    find-buffer "*c-comment*"
+    1 buffer-mode "indent"
+    1 buffer-mode "wrap"
+    buffer-bind-unbound-key c-end-comment "C-c C-c"
+!emacro
+
+define-macro c-end-comment
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    set-variable #l0 $window-line
+    copy-region
+    0 delete-buffer $buffer-bname
+    find-buffer %c-store-buf
+    set-variable $fill-col %c-store-fill
+    set-variable %c-store-fill $window-acol
+    insert-string "/*"
+    insert-newline
+    yank
+    -1 yank
+    exchange-point-and-mark
+    !while #l0
+        %c-store-fill insert-string " "
+        insert-string " * "
+        beginning-of-line
+        forward-line
+        set-variable #l0 &sub #l0 1
+    !done
+    backward-char
+    backward-delete-char
+    insert-string "/"
+    unset-variable %c-store-fill
+    unset-variable %c-store-buf
+!emacro
+
+define-macro c-hash-set-define
+    set-variable #l0 &cat "%cd" @ml "#define name"
+    set-variable #l1 @ml "#define value"
+    set-variable &ind #l0 #l1
+!emacro
+
+define-macro c-hash-unset-define
+    set-variable #l0 &cat "%cd" @ml "#define name"
+    !force unset-variable &ind #l0
+!emacro
+
+define-macro-file calc calc-buffer
+; #l0 %cd-hide, #l1 %cd-depth, #l2 %cd-neg, #l3 %cd-def, #l4 %cd-varname, #l5 %cd-temp
+define-macro c-hash-eval
+    !if &bmod "narrow"
+        narrow-buffer
+    !endif
+    beginning-of-buffer
+    set-variable #l0 0
+    !repeat
+        !if #l0
+            !if &equ #l0 1
+                set-variable #l0 &add #l0 1
+                set-mark
+            !endif
+            set-variable $line-scheme %lblack
+            !if &seq &lef @wl 3 "#if"
+                set-variable #l0 &add #l0 2
+            !elif &seq &lef @wl 6 "#endif"
+                set-variable #l0 &sub #l0 2
+            !elif &seq &lef @wl 5 "#else"
+                !if &equ #l0 2
+                    set-variable #l0 0
+                !endif
+            !endif
+            !if &and @? &not #l0
+                4 narrow-buffer
+            !endif
+        !else
+            !if &seq &lef @wl 3 "#if"
+                set-variable $line-scheme %lblack
+                beginning-of-line
+                set-variable #l0 @wl
+                !force 0 delete-buffer "*calc*"
+                find-buffer "*calc*"
+                1 buffer-mode "hide"
+                1 buffer-mode "magic"
+                insert-string #l0
+                beginning-of-buffer
+                !force search-forward "/\\*"
+                !if $status
+                    2 backward-char
+                    set-mark
+                    !force search-forward "*/"
+                    !if $status
+                        kill-region
+                        -1 yank
+                        !jump -8
+                    !endif
+                    kill-line
+                    -1 yank
+                !endif
+                beginning-of-buffer
+                !force search-forward "//"
+                !if $status
+                    2 backward-char
+                    kill-line
+                    -1 yank
+                !endif
+                beginning-of-buffer
+                replace-string "#ifdef" "\"ERROR\" != "
+                beginning-of-buffer
+                replace-string "#ifndef" "\"ERROR\" == "
+                beginning-of-buffer
+                replace-string "#if" ""
+                beginning-of-buffer
+                replace-string "defined" "\"ERROR\" != "
+                beginning-of-buffer
+                replace-string "[ \t]\\([_A-Za-z]\\)" " %cd\\1"
+                2 calc-buffer
+                -1 find-buffer $buffer-bname
+                set-variable #l0 &cond .calc.result 0 1
+            !elif &seq &lef @wl 5 "#else"
+                set-variable $line-scheme %lblack
+                set-variable #l0 1
+            !elif &seq &lef @wl 6 "#endif"
+                set-variable $line-scheme %lblack
+            !elif &seq &lef @wl 7 "#define"
+                set-variable $line-scheme -1
+                set-variable #l5 &rig @wl 7
+                !while &sin &lef #l5 1 " \t"
+                    set-variable #l5 &rig #l5 1
+                !done
+                set-variable #l6 &len #l5
+                !if &sin " "  #l5
+                    set-variable #l6 &sub &sin " " #l5 1
+                !endif
+                set-variable #l7 &sin "\t" #l5
+                !if &and #l7 &not &gre #l7 #l6
+                    set-variable #l6 &sub #l7 1
+                !endif
+                set-variable #l4 &cat "%cd" &lef #l5 #l6
+                set-variable #l5 &rig #l5 #l6
+                !while &and &not &seq &lef #l5 1 "" &sin &lef #l5 1 " \t"
+                    set-variable #l5 &rig #l5 1
+                !done
+                !if &sin " " #l5
+                    set-variable #l5 &lef #l5 &sub &sin " " #l5 1
+                !endif
+                !if &sin "\t" #l5
+                    set-variable #l5 &lef #l5 &sub &sin "\t" #l5 1
+                !endif
+                set-variable &ind #l4 #l5
+            !else
+                set-variable $line-scheme -1
+            !endif
+        !endif
+        !force forward-line
+    !until &not $status
+    beginning-of-buffer
+    -1 show-region
+!emacro
+
+define-macro c-hash-del
+    !if &bmod "narrow"
+        narrow-buffer
+    !endif
+    beginning-of-buffer
+    !repeat
+        set-variable $line-scheme -1
+        !force forward-line
+    !until &not $status
+    beginning-of-buffer
+!emacro
+
+

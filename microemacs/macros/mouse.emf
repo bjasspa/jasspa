@@ -1,0 +1,646 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Sat Jun 13 13:00:52 1998
+;  Last Modified : <000719.0012>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; mark-window
+; Place a mark in the window and handle the hilighting.
+;
+0 define-macro mouse-mark-window
+    set-variable #l0 $mouse-x
+    set-variable #l1 $mouse-y
+    set-variable #l2 0
+    ; go to the right line first
+    !if &not &equ .mouse-event.y #l1
+        !if &les #l1 $window-mode-line
+            set-variable #l3 &sub $window-mode-line $window-depth
+            !if &and #l1 &not &les #l1 #l3
+                set-variable .mouse-event.y #l1
+            !else
+                set-variable .mouse-event.y &add #l3 1
+                !force &sub .mouse-event.y #l1 scroll-up
+            !endif
+        !else
+            set-variable .mouse-event.y &sub $window-mode-line 1
+            !force &sub #l1 .mouse-event.y scroll-down
+        !endif
+        !force &sub $mouse-y $cursor-y forward-line
+        ; always set the x as the line length may be different
+        !jump 3
+    !endif
+    !if &not &equ .mouse-event.x #l0
+        !if &gre #l0 &sub $window-scroll-bar 3
+            set-variable .mouse-event.x &sub $window-scroll-bar 2
+            !force &sub $mouse-x .mouse-event.x scroll-right
+        !else
+            set-variable #l3 &sub $window-scroll-bar $window-width
+            !if &or &gre #l0 #l3 &equ $window-acol &sub $cursor-x #l3
+                set-variable .mouse-event.x #l0
+            !else
+                set-variable .mouse-event.x &add #l3 1
+                !force &sub .mouse-event.x $mouse-x scroll-left
+            !endif
+        !endif
+        !force set-variable $window-acol &add $window-acol &sub #l0 $cursor-x
+        exchange-point-and-mark
+        -3 show-region
+        exchange-point-and-mark
+        3 show-region
+    !endif
+!emacro
+
+;
+; grow-window
+; Helper for the mouse on the window mode line, divider or corner. Grows the
+; window with the mouse.
+;
+0 define-macro mouse-grow-window
+    set-variable #l0 &band .mouse-event.mode 15
+    !if &not &equ .mouse-event.y $mouse-y
+        !if &not &or &equ #l0 10 &equ #l0 2
+            ; not resizing vertically
+        !elif &gre $window-mode-line &sub $screen-depth 3
+            ; can't resize a bottom window
+        !elif &and &gre $mouse-y .mouse-event.y &les $mouse-y $window-mode-line
+            ; this is a special case when a new window is created using split bar - ignore
+        !else
+            ; HANDLE: Vertical window growing, resize the window.
+            set-variable #l2 &sub $mouse-y $window-mode-line
+            !force #l2 grow-window-vertically
+            !if &and &not $status &band $scroll-bar 0x80
+                ; resizing failed, is this a request to delete the window?? Which way are we moving
+                !if &les #l2 0
+                    ; making the current one smaller, one window is it too small, delete it
+                    ; set #l1 to the min depth
+                    set-variable #l0 $window-mode-line
+                    set-variable #l1 &sub 1 #l2
+                    set-variable #l2 -1
+                    !repeat
+                        !if &and &equ $window-mode-line #l0 &les $window-depth #l1
+                            !force delete-window
+                        !else
+                            set-variable #l2 &add #l2 1
+                            !force 0 previous-window
+                        !endif
+                    !until &or &not $status &gre $window-mode-line #l0
+                    !while &gre &pdec #l2 1 0
+                        next-window
+                    !done
+                    !if &gre $window-mode-line #l0
+                        !force 0 previous-window
+                    !endif
+                !else
+                    ; failed to grow, one of the next windows must be too small, delete it
+                    ; set #l1 to the min depth
+                    set-variable #l0 &add $window-mode-line 1
+                    set-variable #l1 &add 1 #l2
+                    set-variable #l2 0
+                    next-window
+                    !repeat
+                        !if &and &equ &sub $window-mode-line $window-depth #l0 &les $window-depth #l1
+                            !force delete-window
+                        !else
+                            set-variable #l2 &add #l2 1
+                            !force 0 next-window
+                        !endif
+                    !until &or &not $status &les &sub $window-mode-line $window-depth #l0
+                    !while &gre &pdec #l2 1 0
+                        previous-window
+                    !done
+                !endif
+            !endif
+        !endif
+        set-variable .mouse-event.y $mouse-y
+    !endif
+    !if &not &equ .mouse-event.x $mouse-x
+        !if &not &or &equ #l0 10 &equ #l0 3
+            ; not resizing horizontally
+        !elif &gre $window-scroll-bar &sub $screen-width 3
+            ; can't resize a right hand window
+        !elif &and &gre $mouse-x .mouse-event.x &les $mouse-x $window-scroll-bar
+            ; this is a special case when a new window is created using split bar - ignore
+        !else
+            ; HANDLE: Horizontal window growing, resize the window.
+            set-variable #l2 &sub $mouse-x &cond &band .mouse-event.mode 16 &add $window-scroll-bar 1 $window-scroll-bar
+            !force #l2 grow-window-horizontally
+            !if &and &not $status &band $scroll-bar 0x80
+                ; resizing failed, is this a request to delete the window?? Which way are we moving
+                !if &les #l2 0
+                    ; making the current one smaller, one window is it too small, delete it
+                    ; set #l1 to the min width
+                    set-variable #l0 $window-scroll-bar
+                    set-variable #l1 &sub 4 #l2
+                    set-variable #l2 -1
+                    !repeat
+                        !if &and &equ $window-scroll-bar #l0 &les $window-width #l1
+                            !force delete-window
+                        !else
+                            set-variable #l2 &add #l2 1
+                            !force 0 previous-window
+                        !endif
+                    !until &or &not $status &gre $window-scroll-bar #l0
+                    !while &gre &pdec #l2 1 0
+                        next-window
+                    !done
+                    !if &gre $window-scroll-bar #l0
+                        !force 0 previous-window
+                    !endif
+                !else
+                    ; failed to grow, one of the next windows must be too small, delete it
+                    ; set #l1 to the min width
+                    set-variable #l0 &add $window-scroll-bar  &cond &band $scroll-bar 1 2 1
+                    set-variable #l1 &add 4 #l2
+                    set-variable #l2 0
+                    next-window
+                    !repeat
+                        !if &and &equ &sub $window-scroll-bar $window-width #l0 &les $window-width #l1
+                            !force delete-window
+                        !else
+                            set-variable #l2 &add #l2 1
+                            !force 0 next-window
+                        !endif
+                    !until &or &not $status &les &sub $window-scroll-bar $window-width #l0
+                    !while &gre &pdec #l2 1 0
+                        previous-window
+                    !done
+                !endif
+            !endif
+        !endif
+        set-variable .mouse-event.x $mouse-x
+    !endif
+!emacro
+
+0 define-macro mouse-pick-type1
+    set-window
+    set-mark
+    set-variable $delay-time $repeat-time
+    set-variable .mouse-drop-t1.sl $window-line
+    set-variable .mouse-drop-t1.sc $window-col
+    ; Scroll the screen if we are marking.
+    set-variable .mouse-event.scroll $scroll
+    set-variable $scroll 2
+    global-bind-key mouse-mark-window &spr .mouse-event.mask "time"
+!emacro
+
+0 define-macro mouse-drop-set-pos
+    !if &equ .mouse-drop-t1.type 1
+        set-variable #l0 &not &inw @wc
+        !if @#
+            !force forward-char
+            backward-word
+            !if #l0
+                forward-word
+            !endif
+        !else
+            !force backward-char
+            forward-word
+            !if #l0
+                backward-word
+            !endif
+        !endif
+    !elif .mouse-drop-t1.type
+        !if @#
+            beginning-of-line
+        !else
+            beginning-of-line
+            forward-line
+        !endif
+    !endif
+!emacro
+
+0 define-macro mouse-drop-t1
+    set-variable .status "1"
+    !if &seq @cck "redraw"
+        @# execute-named-command @cc
+        !return
+    !elif &seq @cck "callback"
+        !if &not &seq @cc "mouse-drop-t1"
+            execute-named-command @cc
+            !return
+        !endif
+    !endif
+    !if &seq .pick @cck
+        set-variable .type &cond &equ .type 2 .itype &add .type 1
+        !jump 2
+    !elif &seq .drop @cck
+        set-cursor-to-mouse
+        goto-window
+        !if &equ .type 1
+            !if &not &seq :mouse-word-select "ERROR"
+                !if &seq .drop @cck
+                    set-variable $buffer-input .input
+                    -1 create-callback mouse-drop-t1
+                    execute-line :mouse-word-select
+                !endif
+                !return
+            !endif
+        !endif
+        set-variable .el $window-line
+        set-variable .ec $window-col
+        !if &equ .el .sl
+            set-variable .dir &gre .sc .ec
+        !else
+            set-variable .dir &gre .sl .el
+        !endif
+    !endif
+    ; show the region
+    set-variable $window-line .sl
+    set-variable $window-col .sc
+    &bxor .dir 1 mouse-drop-set-pos
+    set-variable #l0 $window-line
+    set-variable #l1 $window-col
+    set-mark
+    -3 show-region
+    set-variable $window-line .el
+    set-variable $window-col .ec
+    .dir mouse-drop-set-pos
+    3 show-region
+    !if &seq .pick @cck
+        !jump 2
+    !elif &seq .drop @cck
+        show-region
+        300 create-callback mouse-drop-t1
+        !return
+    !endif
+    set-variable $buffer-input .input
+    -1 create-callback mouse-drop-t1
+    !if &and &equ #l0 $window-line &equ #l1 $window-col
+        !if &seq @cck "callback"
+            !return
+        !endif
+        ; abort to tell ME to handle the actual input
+        set-variable .status "0"
+        !abort
+    !endif
+    !if .msshift.state
+        set-variable .msshift.state 2
+        !if &seq @cck "callback"
+            show-region
+            msshift
+            !return
+        !endif
+        copy-region
+        set-variable .msshift.input $buffer-input
+        !force msshift-input
+        set-variable #l0 $status
+        set-variable .status .msshift-input.status
+        !return #l0
+    !endif
+    copy-region
+    ; reset the last command to the copy-region
+    set-variable @cl copy-region
+    !if &seq @cck "callback"
+        !return
+    !endif
+    ; abort to tell ME to handle the actual input
+    set-variable .status "0"
+    !abort
+!emacro
+
+0 define-macro mouse-drop-set-region
+    goto-window
+    set-variable $delay-time 500
+    set-variable $scroll .mouse-event.scroll
+    set-variable .mouse-drop-t1.type @#
+    set-variable .mouse-drop-t1.itype @#
+    set-variable .mouse-drop-t1.input $buffer-input
+    set-variable .mouse-drop-t1.pick &spr .mouse-event.mask "pick"
+    set-variable .mouse-drop-t1.drop &spr .mouse-event.mask "drop"
+    set-variable $buffer-input mouse-drop-t1
+    300 create-callback mouse-drop-t1
+    @# mouse-drop-t1
+!emacro
+
+0 define-macro mouse-drop-type1
+    0 mouse-drop-set-region
+!emacro
+
+0 define-macro mouse-drop-type2
+    1 mouse-drop-set-region
+!emacro
+
+0 define-macro mouse-emacs-help
+    !if &inw @wc
+        ; Goto beginning of word and place mark
+        forward-char
+        backward-word
+        set-mark
+        ; Goto end of word and copy region
+        forward-word
+        copy-region
+        set-variable #l0 @y
+        -1 yank
+        set-cursor-to-mouse
+        !force help-item #l0
+        show-region
+    !endif
+!emacro
+
+0 define-macro-file mouseosd mouse-osd mouse-osd-multi
+
+0 define-macro mouse-keepcl
+    set-variable @cc @cl
+!emacro
+
+0 define-macro mouse-move-yank
+    yank @mna
+    set-variable @cc yank
+!emacro
+
+0 define-macro mouse-no-move-yank
+    goto-window
+    goto-alpha-mark "T"
+    yank @mna
+    set-variable @cc yank
+!emacro
+
+0 define-macro mouse-no-move-replace-yank
+    goto-window
+    goto-alpha-mark "T"
+    0 show-region
+    set-variable #l0 &band $result 0xe
+    !force backward-char
+    !if $status
+        0 show-region
+        set-variable #l0 &add #l0 &band $result 0xe
+        forward-char
+        !if &equ #l0 20
+            kill-region
+            -2 yank
+        !endif
+    !endif
+    yank @mna
+    set-variable @cc yank
+!emacro
+
+0 define-macro mouse-reyank
+    goto-window
+    goto-alpha-mark "T"
+    set-variable @cl @cl
+    reyank @mna
+    set-variable @cc reyank
+!emacro
+
+0 define-macro mouse-undo
+    goto-window
+    goto-alpha-mark "T"
+    set-variable @cc @cl
+    undo @mna
+    set-variable @cc undo
+!emacro
+
+0 define-macro mouse-pan-window
+    set-variable #l0 $mouse-x
+    set-variable #l1 $mouse-y
+    !force &sub #l1 .mouse-event.y scroll-up
+    !force &sub #l0 .mouse-event.x scroll-left
+    set-alpha-mark "T"
+    set-variable .mouse-event.x #l0
+    set-variable .mouse-event.y #l1
+!emacro
+
+0 define-macro mouse-pan-pick
+    set-window
+    set-alpha-mark "T"
+    set-variable .mouse-event.mouse $mouse
+    set-variable .mouse-event.scroll $scroll
+    set-variable $mouse &bor 0x40000 &band 0xffff $mouse
+    set-variable $scroll 3
+    global-bind-key mouse-pan-window &spr .mouse-event.mask "move"
+!emacro
+
+0 define-macro mouse-pan-drop
+    goto-window
+    goto-alpha-mark "T"
+    set-variable $mouse .mouse-event.mouse
+    set-variable $scroll .mouse-event.scroll
+    unset-variable %pan-system
+    unset-variable %pan-scroll
+!emacro
+
+0 define-macro mouse-mspan-window
+    !if &set #l1 &sub .y $mouse-y
+        !force #l1 scroll-up
+        set-alpha-mark "T"
+    !endif
+!emacro
+
+0 define-macro mouse-mspan-pick
+    set-window
+    set-alpha-mark "T"
+    set-variable .mouse-mspan-window.y $mouse-y
+    set-variable .mouse-event.mouse $mouse
+    set-variable .mouse-event.scroll $scroll
+    set-variable $mouse &bor 0x40000 &band 0xffff $mouse
+    set-variable $scroll 3
+    global-bind-key mouse-mspan-window &spr .mouse-event.mask "time"
+!emacro
+
+0 define-macro mouse-mspan-drop
+    goto-window
+    goto-alpha-mark "T"
+    set-variable $mouse .mouse-event.mouse
+    set-variable $scroll .mouse-event.scroll
+    unset-variable %pan-system
+    unset-variable %pan-scroll
+!emacro
+
+0 define-macro mouse-auto-pick-event
+    set-variable #l0 &band .mouse-event.mode 15
+    !if &equ #l0 1
+        ; Message line
+        void
+    !elif &equ #l0 2
+        ; ml-write "Mouse on Mode line "
+        ; Check for mouse on position 0 of the mode line. If it is
+        ; then construct a new horizontal window; otherwise we grow
+        ; the window. We only do the window creation if the split
+        ; is enabled.
+        !if &and &band $scroll-bar 0x80 &equ .mouse-event.x &sub $window-scroll-bar $window-width 
+            !force 1 split-window-horizontally
+            !if $status
+                ; Set to the minimum size and change the mode to a 
+                ; horizontal re-size.
+                !force 4 resize-window-horizontally
+                set-variable .mouse-event.mode &bor 3 &band $mouse-pos 0x30
+            !endif
+        !endif
+        ; Either case; always perform a window re-szie operation.
+        ; The modified mode determines if this is vertical or
+        ; horizontal.
+        global-bind-key mouse-grow-window &spr .mouse-event.mask "move"
+    !elif &equ #l0 3
+        ; ml-write "Mouse on divider"
+        global-bind-key mouse-grow-window &spr .mouse-event.mask "move"
+    !elif &equ #l0 4
+        ; ml-write "Mouse on split"
+        ; Mouse on the buffer vertical divider. Split the window into two
+        ; and then assume a 'grow window' with the new window. Force the 
+        ; mode to re-size operation.
+        !force 1 split-window-vertically
+        !if $status
+            !force 2 resize-window-vertically 
+            set-variable .mouse-event.mode &bor 2 &band $mouse-pos 0x30
+            global-bind-key mouse-grow-window &spr .mouse-event.mask "move"
+        !endif
+    !elif &equ #l0 5
+        ; ml-write "Mouse on up-arrow"
+        1 scroll-up
+        1 global-bind-key scroll-up &spr .mouse-event.mask "time"
+    !elif &equ #l0 6
+        ; ml-write "Mouse on upper-shaft"
+        scroll-up
+        10 global-bind-key scroll-up &spr .mouse-event.mask "time"
+    !elif &equ #l0 7
+        ; ml-write "Mouse on box"
+        1 set-scroll-with-mouse         ; Lock mouse position to scroller
+        global-bind-key set-scroll-with-mouse &spr .mouse-event.mask "move"
+    !elif &equ #l0 8
+        ; ml-write "Mouse on lower shaft"
+        scroll-down
+        10 global-bind-key scroll-down &spr .mouse-event.mask "time"
+    !elif &equ #l0 9
+        ; ml-write "Mouse on down-arrow"
+        1 scroll-down
+        1 global-bind-key scroll-down &spr .mouse-event.mask "time"
+    !elif &equ #l0 10
+        ; ml-write "Mouse on corner"
+        global-bind-key mouse-grow-window &spr .mouse-event.mask "move"
+    !elif &equ #l0 11
+        ; ml-write "Mouse on Menu"
+        0 osd
+    !else
+        ml-write "Mouse-pos ERROR !!"
+    !endif
+!emacro
+
+0 define-macro mouse-event
+    set-variable #l1 @cck
+    set-variable .x $mouse-x
+    set-variable .y $mouse-y
+    ; get the current region settings
+    0 show-region
+    set-variable #l2 $result
+    !if &equ &band #l2 7 5
+        3 show-region
+    !endif
+    ; force the unbind of the last pick time or move - do this on pick and drop as a safety mechanism 
+    !force global-unbind-key &spr .mask "time"
+    !force global-unbind-key &spr .mask "move"
+    ; must store the original window and cursor position
+    !if   &set #l0 &sin "-pick" #l1
+        set-window
+        set-alpha-mark "T"
+        set-cursor-to-mouse
+        ; work out the mouse mask
+        set-variable .mode $mouse-pos
+        set-variable .mask &cat &cat &lef #l1 #l0 "%s" &rig #l1 &add #l0 4
+    !elif &set #l0 &sin "-drop" #l1
+        !force set-cursor-to-mouse
+        set-variable #l1 &spr .mask "drop"
+    !else
+        !return
+    !endif
+    !if &band #l2 1
+        !force show-region
+    !endif
+    !if &band .mode 15
+        ; Not in the text window 
+        !if &reg "/history" &cat "mouse/" &spr .mask "auto" "0"
+            ; do the scroll bar stuff
+            !if &sin "-pick" #l1
+                mouse-auto-pick-event
+            !else
+                goto-window
+            !endif
+            !return
+        !endif
+    !endif
+    !if &not &seq &set #l0 &ind &cat ":" #l1 "ERROR"
+        execute-line #l0
+    !elif &not &seq &set #l0 &reg "/history" &cat "mouse/" #l1 "" ""
+        execute-line #l0
+    !else
+        goto-window
+        goto-alpha-mark "T"
+        !force show-region
+    !endif
+!emacro
+
+0 define-macro mouse-wheel-event
+    set-variable #l1 @cck
+    !if &not &seq &set #l0 &ind &cat ":" #l1 "ERROR"
+        execute-line #l0
+    !elif &not &seq &set #l0 &reg "/history" &cat "mouse/" #l1 "" ""
+        execute-line #l0
+    !endif
+!emacro
+
+set-variable #l0 0
+set-variable #l9 &reg "/history" &cat $platform "/mouse2to3" 0
+!force find-registry "history" "mouse" &pinc #l0 1
+!while $status
+    !if &sin "-auto" $result
+    !elif &set #l2 &sin "-wup" $result
+        set-variable #l1 $result
+        global-bind-key mouse-wheel-event #l1
+        !if &seq &reg "/history" &cat "mouse/" #l1 "" "scroll-up"
+            ml-bind-key scroll-up #l1
+        !else
+            ml-bind-key backward-line #l1
+        !endif
+        ; only win32 supports the wheel keys directly, unix systems must
+        ; translate a button event to the wheel event, usually 4 or 5 
+        !if &not &seq $platform "win32"
+            set-variable #l1 &lef #l1 #l2
+            translate-key &spr "%spick-4 %sdrop-4" #l1 #l1 &cat #l1 "wup"
+        !endif
+    !elif &set #l2 &sin "-wdown" $result
+        set-variable #l1 $result
+        global-bind-key mouse-wheel-event #l1
+        !if &seq &reg "/history" &cat "mouse/" #l1 "" "scroll-down"
+            ml-bind-key scroll-down #l1
+        !else
+            ml-bind-key forward-line #l1
+        !endif
+        ; only win32 supports the wheel keys directly, unix systems must
+        ; translate a button event to the wheel event, usually 4 or 5 
+        !if &not &seq $platform "win32"
+            set-variable #l1 &lef #l1 #l2
+            translate-key &spr "%spick-5 %sdrop-5" #l1 #l1 &cat #l1 "wdown"
+        !endif
+    !else
+        set-variable #l1 $result
+        global-bind-key mouse-event #l1
+        !if &set #l2 &sin "-drop" #l1
+            set-variable #l2 &cat &cat &lef #l1 #l2 "pick" &rig #l1 &add #l2 4
+            !if &sin "yank" &reg "history/mouse" #l1 ""
+                ml-bind-key void #l2
+                ml-bind-key yank #l1
+            !else
+                ml-bind-key set-cursor-to-mouse #l2
+                ml-bind-key set-cursor-to-mouse #l1
+            !endif
+            !if #l9
+                !if &set #l3 &sin "2" #l1
+                    set-variable #l4 &lef #l2 &sub #l3 1
+                    set-variable #l3 &lef #l1 &sub #l3 1
+                    10 translate-key &spr "%s1 %s3" #l3 #l3 #l1 
+                    10 translate-key &spr "%s3 %s1" #l3 #l3 #l1 
+                    10 translate-key &spr "%s1 %s3" #l4 #l4 #l2 
+                    10 translate-key &spr "%s3 %s1" #l4 #l4 #l2 
+                !endif
+            !endif
+        !endif
+    !endif
+    !force find-registry "history" "mouse" &pinc #l0 1
+!done

@@ -1,0 +1,230 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Sat Jul 26 14:36:36 1997
+;  Last Modified : <000719.0012>
+;
+;  Description   : cal calendar macro
+;
+;  Notes         : One of the last remaining screen-poke based utilities.
+;                  osd cannot currently do grids.
+;
+;  History       : Jon 20/04/98 - Moved to registry based tool.
+;
+;  Copyright (c) 1998 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; Key binding definitions
+set-variable .org.bind-k1 "|C-left|C-right|C-up|C-down|" 
+set-variable .org.bind-c1 "|-1 org-week-inc-week|1 org-week-inc-week|-1 org-week-inc-year|1 org-week-inc-year|" 
+set-variable .org.bind-r1 "|1|1|1|1|" 
+
+; Create the current week osd dialog
+0 define-macro org-week-init
+    set-variable .org.page 1
+    !if &not .org.week
+        -1 org-inc-year
+        set-variable .org.week 53
+    !endif
+    org-cal-info
+    set-variable #l5 &lef .org.info 2
+    set-variable #l4 &mid .org.info 2 2
+    set-variable #l7 .org.month
+    !if &les #l4 1
+        !if &not &dec #l7 1
+            set-variable #l7 12
+        !endif
+        set-variable #l4 &add #l5 #l4 
+    !endif
+    osd .osd.orgw 40 "hf" &spr ": %d %s" #l4 &lget .org.months #l7
+    set-variable #l6 0
+    !repeat
+        set-variable #l1 &add 1 &mod &add &pinc #l6 1 &lef .org.set 1 7 
+        !if &and &equ #l4 .org.day &equ #l7 .org.month
+            osd .osd.orgw-c &add 100 &mul #l6 2 "GfhzHxR" .scheme.osd-entry 5 3 &spr " %s\n %2d" &lef &lget .org.days #l1 3 #l4 #l6 org-week-view-day
+        !else
+            osd .osd.orgw-c &add 100 &mul #l6 2 "GfhzxR" 5 3 &spr " %s\n %2d" &lef &lget .org.days #l1 3 #l4 #l6 org-week-view-day
+        !endif
+        osd .osd.orgw-c &add 101 &mul #l6 2 "ENGfxz" 56 3 "" #l6 org-week-set-notes
+        !if &equ #l4 #l5
+            !if &equ #l7 12
+                set-variable #l7 1
+            !else
+                set-variable #l7 &add #l7 1
+            !endif
+            set-variable #l4 1
+        !else
+            set-variable #l4 &add #l4 1
+        !endif
+    !until &equ #l6 7
+!emacro     
+
+0 define-macro org-week-inc-week
+    !if &les @# 0
+        set-variable .org.week &sub .org.week 1
+    !elif &gre &inc .org.week 1 52
+        ; must check whether this is legal
+        set-variable #l1 .org.week
+        org-cal-info
+        !if &not &equ #l1 .org.week
+            ; nope move to next year
+            1 org-inc-year
+            set-variable .org.week 1
+        !endif
+    !endif
+    set-variable .org.day 0
+    org-week-init
+!emacro
+
+0 define-macro org-week-change-week
+    !if &les @# 0
+        set-variable .org.week @ml2 "" .org.week
+        set-variable .org.day 0
+        org-week-init
+    !else
+        set-variable $result .org.week
+    !endif
+!emacro
+
+0 define-macro org-week-inc-year
+    set-variable .org.day 0
+    @# org-inc-year
+    org-week-init
+!emacro
+
+0 define-macro org-week-change-year
+    !if &les @# 0
+        set-variable #l0 @ml2 "" .org.year
+        !if &equ #l0 0
+            osd-dialog "Organizer" "Error: Invalid year!" "  &OK  "
+            !return
+        !endif
+        set-variable .org.year #l0
+        set-variable .org.day 0
+        org-week-init
+    !else
+        set-variable $result .org.year
+    !endif
+!emacro
+
+0 define-macro org-week-view-day
+    set-variable .org.day &add &mid .org.info 2 2 &sub &abs @# 1
+    !if &les .org.day 1
+        !if &not &dec .org.month 1
+            set-variable .org.month 12
+            -1 org-inc-year
+        !endif
+        set-variable .org.day &add &lget .org.dinm .org.month .org.day
+    !elif &gre .org.day &lef .org.info 2
+        set-variable .org.day &sub .org.day &lef .org.info 2
+        !if &equ .org.month 12
+            set-variable .org.month 1
+            1 org-inc-year
+        !else
+            set-variable .org.month &add .org.month 1
+        !endif
+    !endif
+    ; back-stabbing the note-book page is a bit naughty, the item must have the R flag.
+    osd .osd.org-n 100 "It" 6 .osd.orgd
+!emacro
+
+0 define-macro org-week-set-notes
+    set-variable #l2 &add &mid .org.info 2 2 &sub &abs @# 1
+    set-variable #l3 .org.month
+    set-variable #l4 .org.year
+    !if &les #l2 1
+        !if &not &dec #l3 1
+            set-variable #l4 &sub #l4 1
+            set-variable #l3 12
+        !endif
+        set-variable #l2 &add &lget .org.dinm #l3 #l2 
+    !elif &gre #l2 &lef .org.info 2
+        set-variable #l2 &sub #l2 &lef .org.info 2
+        !if &equ #l3 12
+            set-variable #l4 &add #l4 1
+            set-variable #l3 1
+        !else
+            set-variable #l3 &add #l3 1
+        !endif
+    !endif
+    !if &les @# 0
+        set-variable #l0 &reg "/org" &spr "cal/%s/%s/%s" #l4 #l3 #l2 &reg "/org" &spr "cal/*/%s/%s" #l3 #l2 ""
+        set-variable #l1 @ml2 "" #l0
+        !if &not &seq #l0 #l1
+            !if &seq #l1 &reg "/org" &spr "cal/*/%s/%s" #l3 #l2 ""
+                delete-registry &spr "/org/cal/%s/%s/%s" #l4 #l3 #l2 #l1
+            !elif &seq #l1 ""
+                set-registry "/org" &spr "cal/%s/%s/%s" #l4 #l3 #l2 " "
+            !else
+                set-registry "/org" &spr "cal/%s/%s/%s" #l4 #l3 #l2 #l1
+            !endif
+            mark-registry "/org" "u"
+        !endif
+    !else
+        set-variable $result &reg "/org" &spr "cal/%s/%s/%s" #l4 #l3 #l2 &reg "/org" &spr "cal/*/%s/%s" #l3 #l2 ""
+    !endif
+!emacro
+
+0 define-macro org-week-buffer
+    beginning-of-line
+    set-variable #l2 &mid .org.info 2 2
+    set-variable #l3 .org.month
+    set-variable #l4 .org.year
+    set-variable #l5 &lef .org.info 2
+    !if &les #l2 1
+        !if &not &dec #l3 1
+            set-variable #l4 &sub #l4 1
+            set-variable #l3 12
+        !endif
+        set-variable #l2 &add #l5 #l2 
+    !endif
+    insert-string &spr "       Week %s, %d %s %s\n\n" .org.week #l2 &lget .org.months #l3 #l4
+    set-variable #l6 0
+    !repeat
+        set-variable #l7 &reg "/org" &spr "cal/%s/%s/%s" #l4 #l3 #l2 &reg "/org" &spr "cal/*/%s/%s" #l3 #l2 ""
+        set-variable #l8 &add $window-line 1
+        set-variable #l1 &add 1 &mod &add &pinc #l6 1 &lef .org.set 1 7 
+        insert-string &spr "%2d %s %s\n" #l2 &lef &lget .org.days #l1 3 #l7
+        set-variable #l1 $window-line
+        !while &not &equ $window-line #l8
+            backward-line
+            insert-string "       "
+            beginning-of-line
+        !done
+        set-variable $window-line #l1
+        !if &equ #l2 #l5
+            !if &equ #l3 12
+                set-variable #l3 1
+                set-variable #l4 &add #l4 1
+            !else
+                set-variable #l3 &add #l3 1
+            !endif
+            set-variable #l2 1
+        !else
+            set-variable #l2 &add #l2 1
+        !endif
+    !until &equ #l6 7
+    insert-newline
+    1 screen-update
+!emacro
+
+
+-1 osd .osd.orgw-c
+osd .osd.orgw-c 0 "Gks" 62 29 -1 -1
+
+osd .osd.orgw 10 ""
+osd .osd.orgw 15 "hf" "    "
+osd .osd.orgw 20 "BtxfRhT" 1 " &<- " -1 org-week-inc-week
+osd .osd.orgw 25 "hf" "      "
+osd .osd.orgw 28 "Etxfh" 2 "#####" f org-week-change-year
+osd .osd.orgw 30 "fh" ": Week "
+osd .osd.orgw 35 "Etxfh" 3 "###" f org-week-change-week
+osd .osd.orgw 50 "BtxrfRhT" 4 " -&> "  1 org-week-inc-week
+osd .osd.orgw 55 "rf" "    "
+osd .osd.orgw 100 "" 
+osd .osd.orgw 110 "Itc" 5 .osd.orgw-c
+osd .osd.orgw 600 "" 
+osd .osd.orgw 610 "BtxhcfH" 6 .scheme.osd-ebtt " &Save "    f organizer-save
+osd .osd.orgw 620 "BtxhcfH" 7 .scheme.osd-ebtt " Week to &Buffer "  f org-week-buffer
+osd .osd.orgw 630 "BtcfH"   8 .scheme.osd-ebtt " E&xit "    1 void
+

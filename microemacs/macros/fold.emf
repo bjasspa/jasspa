@@ -1,0 +1,210 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips & Jon Green
+;  Created       : Thu Jan 14 00:51:27 1999
+;  Last Modified : <000719.0012>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 1999 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; Steven Phillips - 14th Jan 1999 - Generic file folding.
+; 
+; Took Jon's version and made it generic, also hacked at the notes below to
+; make them more applicable.
+;
+; Jon Green - 8th Jan 1999 - Folding a 'C' file.
+;
+; The following functions provide a generic folding function for files
+; with well defined sections (e.g. 'C' function etc). This code was based
+; on Steve's hkfold.emf which does a grand job. A foldable region is a
+; region that is enclosed within the predefined start and end search strings
+;
+; We relax the strict fold checking of hkfold.emf and provide little
+; or no error checking when we find the folds. This basically means
+; that if we find a valid enclosure (e.g. for C '^{' ... '^}')
+; then the region is eligible for folding. This technique allows most
+; 'c' files to be folded, there may be a few sections where the '{' is
+; on the end of the line and we have not identified it, but we will
+; skip this and find the next valid enclosure without aborting our search.
+; The user can elect to re-style their code if they want a unidentified
+; region to be correctly folded.
+;
+; By default we do not fold on loading the file, the user has to explicity
+; request the folds to be set up. We only export 2 macro functions into the
+; command space 'fold-current' and 'fold-all'. Both of these perform a toggle
+; function as follows:-
+;
+; fold-current - Acts as a toggle to fold/unfold a region.
+;
+;              If we are in a valid '^{...^}' enclosure then it is rolled
+;              up and the screen is marked with the start and end line
+;              hilighting.
+;
+;              If we are on (or within 3 lines of) a folded line then we
+;              unfold it and remove our fold hilighting markers.
+;
+;
+; fold-all   - Acts as a toggle to fold/unfold the whole file
+;
+;              If the file is already folded, then unfold it - all
+;              enclosures
+;
+;              If the file is unfolded, then fold it. All enclosures.
+;
+;
+; The key mappings that we have used in the context of the buffer are
+; defined as follows:-
+;
+; 'f2'        fold-current - Fold/Unfold the current section.
+; 'f3'        fold-all     - Fold/unfold the whole file.
+; 'C-mouse-1  fold-current - Fold/unfold the current section. 
+;
+; Note: The 'fold-current' and 'fold-all' have no equivelent macros in hkfold.emf
+;       so we map these to different keys. Probably the case that 'fold-current'
+;       and 'fold-all' should' be supported in hkfold.emf and be bound to the
+;       above keys for consistancy.
+;
+;       The mouse binding is useful because we can browse the file with 
+;       the mouse and open and close at our lesiure. I was considering 
+;       simply binding the left-mouse-drop to unfold - a simple check in the
+;       mouse code for $line-scheme being a fold scheme color would tell 
+;       us to unfold. Unfortunatly re-perfoming the fold is a little more
+;       difficult as there is nothing to tell us that the user was moving 
+;       the cursor to a new position or requesting a fold operation. 
+;       Hence for consistency I simply use C-mouse-1 which always means
+;       toggle the fold state.
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+0 define-macro fold-get-vars
+    set-variable #l0 &spr ".%s." $buffer-fhook
+    set-variable #p9 &ind &cat #l0 "fold-open"
+    set-variable #p8 &ind &cat #l0 "fold-close"
+    set-variable #p7 &ind &cat #l0 "fold-mopen"
+    set-variable #p6 &ind &cat #l0 "fold-mclose"
+    set-variable #p5 &ind &cat #l0 "fold-mnext"
+    !if &or &seq #p9 "ERROR" &seq #p8 "ERROR"
+        ml-write "[Fold environment not setup]"
+        !abort
+    !endif
+!emacro
+
+; Close all the folds
+0 define-macro fold-close-all
+    fold-get-vars
+    ; Remove any narrows
+    !if &bmod "narrow"
+        !force 1 narrow-buffer
+    !endif
+    beginning-of-buffer
+    !force regex-forward #p9
+    !while $status
+        #p7 forward-line
+        end-of-line
+        set-mark
+        !force regex-forward #p8
+        !if $status
+            #p6 forward-line
+            4 narrow-buffer
+            #p5 forward-line
+            set-variable $line-scheme .scheme.fold
+            end-of-line
+            !force regex-forward #p9
+        !endif
+    !done
+    set-variable :folded 1
+    beginning-of-buffer
+    ml-write "[Folded all lines]"
+!emacro
+
+; Open all the folds
+0 define-macro fold-open-all
+    set-alpha-mark "t"
+    ; Remove narrows
+    !if &bmod "narrow"
+        !force 1 narrow-buffer
+    !endif
+    ; Remove all of the hilighting
+    beginning-of-buffer
+    !force regex-forward #p8
+    !while $status
+        set-variable $line-scheme -1
+        !force regex-forward #p8
+    !done
+    set-variable :folded 0
+    !force goto-alpha-mark "t"
+    ml-write "[Unfolded all lines]"
+!emacro
+
+; PUBLIC:: Toggle a fold open/shut
+define-macro fold-current
+    set-variable #l1 &sub $window-line $window-y-scroll
+    fold-get-vars
+    beginning-of-line
+    #l5 backward-line
+    !force regex-forward #l8
+    !if &not $status
+        !abort
+    !endif
+    #l6 forward-line
+    set-variable #l0 $window-line
+    !force 2 narrow-buffer
+    !if $status
+        !if &les #l5 0
+            set-variable $window-line #l0
+        !endif
+        #l5 forward-line
+        set-variable $line-scheme -1
+        set-variable $window-line #l0
+        set-variable $window-y-scroll &sub $window-line #l1
+        !return
+    !endif
+    beginning-of-line
+    set-mark
+    !force regex-backward #l9
+    !if &not $status
+        ml-write "[Fold not found]"
+        !abort
+    !endif
+    #l7 forward-line
+    4 narrow-buffer
+    #l5 forward-line
+    set-variable $line-scheme .scheme.fold
+    set-variable $window-y-scroll &sub $window-line #l1
+!emacro
+
+; PUBLIC:: Toggle all of the folds open/shut
+define-macro fold-all
+    fold-get-vars
+    set-variable #l0 &sub $window-line $window-y-scroll
+    set-alpha-mark "t"
+    !if :folded
+        fold-open-all
+    !else
+        fold-close-all
+        ; go back to the starting point, if this opens a fold then
+        ; remove the hilight - use the number of lines to determine this.
+        end-of-buffer
+        set-variable #l1 $window-line
+        goto-alpha-mark "t"
+        end-of-buffer
+        !if &gre $window-line #l1
+            ; if more lines must have unfolded something to return.
+            goto-alpha-mark "t"
+            ; use fold-current to properly close then open the fold
+            fold-current
+            fold-current
+        !endif
+    !endif
+    goto-alpha-mark "t"
+    set-variable $window-y-scroll &sub $window-line #l0
+!emacro
+
+
+

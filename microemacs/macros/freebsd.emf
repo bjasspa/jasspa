@@ -1,0 +1,10 @@
+;       file for FreeBSD boxes
+;
+;   Last Modified : <990824.1052>
+;
+; Load up common unix stuff (colors, templates, grep, RCS, mail)
+!force exec-file "unixterm"
+;
+; Compile stuff
+add-next-line "*compile*" ""
+add-next-line "*compile*" "%f:%l:"

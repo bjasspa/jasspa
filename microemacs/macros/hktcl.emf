@@ -1,0 +1,302 @@
+;       TCL mode hook
+;
+;   Last Modified : <000711.1557>
+;
+set-char-mask "3" "-$."
+
+!if &not &exist .hilight.tcl
+    set-variable .hilight.tcl &pinc .hilight.next 1
+    ; set up the osd tool menu & help dialog
+    set-variable .osd.tcl-help &pinc .osd.next 1
+    set-variable .osd.tcl-tool &pinc .osd.next 1
+!endif
+!if &band .hilight.flags 0x02
+    ;
+    ; High-light Tcl Mode
+    ;
+    0 hilight    .hilight.tcl 0                    $global-scheme
+    hilight   .hilight.tcl 0 "^\\s *\\{#.*"        .scheme.comment
+    hilight   .hilight.tcl 2 "^#!/"                .scheme.header
+    hilight   .hilight.tcl 0 "\\\\."               $global-scheme
+    hilight   .hilight.tcl 4 "\"" "\"" "\\"        .scheme.string
+    !if &band .hilight.flags 0x04
+        hilight .hilight.tcl 0 "^\\s *\\{proc\\s +\\w+" .scheme.function
+    !endif
+    hilight   .hilight.tcl 1 "auto"                .scheme.operator
+    hilight   .hilight.tcl 1 "both"                .scheme.operator
+    hilight   .hilight.tcl 1 "bottom"              .scheme.operator
+    hilight   .hilight.tcl 1 "command"             .scheme.operator
+    hilight   .hilight.tcl 1 "config"              .scheme.operator
+    hilight   .hilight.tcl 1 "configure"           .scheme.operator
+    hilight   .hilight.tcl 1 "curselection"        .scheme.operator
+    hilight   .hilight.tcl 1 "disabled"            .scheme.operator
+    hilight   .hilight.tcl 1 "end"                 .scheme.operator
+    hilight   .hilight.tcl 1 "exists"              .scheme.operator
+    hilight   .hilight.tcl 1 "extended"            .scheme.operator
+    hilight   .hilight.tcl 1 "false"               .scheme.operator
+    hilight   .hilight.tcl 1 "flat"                .scheme.operator
+    hilight   .hilight.tcl 1 "geometry"            .scheme.operator
+    hilight   .hilight.tcl 1 "get"                 .scheme.operator
+    hilight   .hilight.tcl 1 "getimage"            .scheme.operator
+    hilight   .hilight.tcl 1 "groove"              .scheme.operator
+    hilight   .hilight.tcl 1 "iconname"            .scheme.operator
+    hilight   .hilight.tcl 1 "image"               .scheme.operator
+    hilight   .hilight.tcl 1 "imagetext"           .scheme.operator
+    hilight   .hilight.tcl 1 "lappend"             .scheme.operator
+    hilight   .hilight.tcl 1 "last"                .scheme.operator
+    hilight   .hilight.tcl 1 "left"                .scheme.operator
+    hilight   .hilight.tcl 1 "lindex"              .scheme.operator
+    hilight   .hilight.tcl 1 "line"                .scheme.operator
+    hilight   .hilight.tcl 1 "llength"             .scheme.operator
+    hilight   .hilight.tcl 1 "lreplace"            .scheme.operator
+    hilight   .hilight.tcl 1 "lsearch"             .scheme.operator
+    hilight   .hilight.tcl 1 "lsort"               .scheme.operator
+    hilight   .hilight.tcl 1 "message"             .scheme.operator
+    hilight   .hilight.tcl 1 "normal"              .scheme.operator
+    hilight   .hilight.tcl 1 "polygon"             .scheme.operator
+    hilight   .hilight.tcl 1 "progress"            .scheme.operator
+    hilight   .hilight.tcl 1 "radio"               .scheme.operator
+    hilight   .hilight.tcl 1 "raised"              .scheme.operator
+    hilight   .hilight.tcl 1 "right"               .scheme.operator
+    hilight   .hilight.tcl 1 "string"              .scheme.operator
+    hilight   .hilight.tcl 1 "subwidget"           .scheme.operator
+    hilight   .hilight.tcl 1 "sunken"              .scheme.operator
+    hilight   .hilight.tcl 1 "text"                .scheme.operator
+    hilight   .hilight.tcl 1 "title"               .scheme.operator
+    hilight   .hilight.tcl 1 "top"                 .scheme.operator
+    hilight   .hilight.tcl 1 "true"                .scheme.operator
+    hilight   .hilight.tcl 1 "winfo"               .scheme.operator
+    hilight   .hilight.tcl 1 "withdraw"            .scheme.operator
+    hilight   .hilight.tcl 1 "x"                   .scheme.operator
+    hilight   .hilight.tcl 1 "y"                   .scheme.operator
+    hilight   .hilight.tcl 1 "yes"                 .scheme.operator
+    
+    hilight   .hilight.tcl 1 "add"                 .scheme.keyword
+    hilight   .hilight.tcl 1 "after"               .scheme.keyword
+    hilight   .hilight.tcl 1 "bind"                .scheme.keyword
+    hilight   .hilight.tcl 1 "break"               .scheme.keyword
+    hilight   .hilight.tcl 1 "button"              .scheme.keyword
+    hilight   .hilight.tcl 1 "canvas"              .scheme.keyword
+    hilight   .hilight.tcl 1 "catch"               .scheme.keyword
+    hilight   .hilight.tcl 1 "checkbutton"         .scheme.keyword
+    hilight   .hilight.tcl 1 "close"               .scheme.keyword
+    hilight   .hilight.tcl 1 "continue"            .scheme.keyword
+    hilight   .hilight.tcl 1 "coords"              .scheme.keyword
+    hilight   .hilight.tcl 1 "create"              .scheme.keyword
+    hilight   .hilight.tcl 1 "delete"              .scheme.keyword
+    hilight   .hilight.tcl 1 "destroy"             .scheme.keyword
+    hilight   .hilight.tcl 1 "dpos"                .scheme.keyword
+    hilight   .hilight.tcl 1 "else"                .scheme.keyword
+    hilight   .hilight.tcl 1 "elseif"              .scheme.keyword
+    hilight   .hilight.tcl 1 "entry"               .scheme.keyword
+    hilight   .hilight.tcl 1 "eval"                .scheme.keyword
+    hilight   .hilight.tcl 1 "exec"                .scheme.keyword
+    hilight   .hilight.tcl 1 "flush"               .scheme.keyword
+    hilight   .hilight.tcl 1 "focus"               .scheme.keyword
+    hilight   .hilight.tcl 1 "for"                 .scheme.keyword
+    hilight   .hilight.tcl 1 "foreach"             .scheme.keyword
+    hilight   .hilight.tcl 1 "frame"               .scheme.keyword
+    hilight   .hilight.tcl 1 "gets"                .scheme.keyword
+    hilight   .hilight.tcl 1 "global"              .scheme.keyword
+    hilight   .hilight.tcl 1 "if"                  .scheme.keyword
+    hilight   .hilight.tcl 1 "incr"                .scheme.keyword
+    hilight   .hilight.tcl 1 "insert"              .scheme.keyword
+    hilight   .hilight.tcl 1 "invoke"              .scheme.keyword
+    hilight   .hilight.tcl 1 "item"                .scheme.keyword
+    hilight   .hilight.tcl 1 "label"               .scheme.keyword
+    hilight   .hilight.tcl 1 "listbox"             .scheme.keyword
+    hilight   .hilight.tcl 1 "menu"                .scheme.keyword
+    hilight   .hilight.tcl 1 "menubutton"          .scheme.keyword
+    hilight   .hilight.tcl 1 "open"                .scheme.keyword
+    hilight   .hilight.tcl 1 "pack"                .scheme.keyword
+    hilight   .hilight.tcl 1 "puts"                .scheme.keyword
+    hilight   .hilight.tcl 1 "radiobutton"         .scheme.keyword
+    hilight   .hilight.tcl 1 "return"              .scheme.keyword
+    hilight   .hilight.tcl 1 "scrollbar"           .scheme.keyword
+    hilight   .hilight.tcl 1 "see"                 .scheme.keyword
+    hilight   .hilight.tcl 1 "set"                 .scheme.keyword
+    hilight   .hilight.tcl 1 "tk_menuBar"          .scheme.keyword
+    hilight   .hilight.tcl 1 "toplevel"            .scheme.keyword
+    hilight   .hilight.tcl 1 "wm"                  .scheme.keyword
+    
+    hilight   .hilight.tcl 0x200 "-"
+    hilight   .hilight.tcl 1 "-accelerator"        .scheme.type
+    hilight   .hilight.tcl 1 "-activatecmd"        .scheme.type
+    hilight   .hilight.tcl 1 "-allowzero"          .scheme.type
+    hilight   .hilight.tcl 1 "-anchor"             .scheme.type
+    hilight   .hilight.tcl 1 "-bd"                 .scheme.type
+    hilight   .hilight.tcl 1 "-bg"                 .scheme.type
+    hilight   .hilight.tcl 1 "-border"             .scheme.type
+    hilight   .hilight.tcl 1 "-borderwidth"        .scheme.type
+    hilight   .hilight.tcl 1 "-bottom"             .scheme.type
+    hilight   .hilight.tcl 1 "-browsecmd"          .scheme.type
+    hilight   .hilight.tcl 1 "-command"            .scheme.type
+    hilight   .hilight.tcl 1 "-createcmd"          .scheme.type
+    hilight   .hilight.tcl 1 "-decreasing"         .scheme.type
+    hilight   .hilight.tcl 1 "-disable"            .scheme.type
+    hilight   .hilight.tcl 1 "-editable"           .scheme.type
+    hilight   .hilight.tcl 1 "-exact"              .scheme.type
+    hilight   .hilight.tcl 1 "-expand"             .scheme.type
+    hilight   .hilight.tcl 1 "-fill"               .scheme.type
+    hilight   .hilight.tcl 1 "-font"               .scheme.type
+    hilight   .hilight.tcl 1 "-fontset"            .scheme.type
+    hilight   .hilight.tcl 1 "-formatcmd"          .scheme.type
+    hilight   .hilight.tcl 1 "-height"             .scheme.type
+    hilight   .hilight.tcl 1 "-highlightthickness" .scheme.type
+    hilight   .hilight.tcl 1 "-histlimit"          .scheme.type
+    hilight   .hilight.tcl 1 "-image"              .scheme.type
+    hilight   .hilight.tcl 1 "-integer"            .scheme.type
+    hilight   .hilight.tcl 1 "-itemtype"           .scheme.type
+    hilight   .hilight.tcl 1 "-justify"            .scheme.type
+    hilight   .hilight.tcl 1 "-label"              .scheme.type
+    hilight   .hilight.tcl 1 "-labelside"          .scheme.type
+    hilight   .hilight.tcl 1 "-left"               .scheme.type
+    hilight   .hilight.tcl 1 "-menu"               .scheme.type
+    hilight   .hilight.tcl 1 "-msg"                .scheme.type
+    hilight   .hilight.tcl 1 "-onvalue"            .scheme.type
+    hilight   .hilight.tcl 1 "-options"            .scheme.type
+    hilight   .hilight.tcl 1 "-padx"               .scheme.type
+    hilight   .hilight.tcl 1 "-pady"               .scheme.type
+    hilight   .hilight.tcl 1 "-radio"              .scheme.type
+    hilight   .hilight.tcl 1 "-raisecmd"           .scheme.type
+    hilight   .hilight.tcl 1 "-relief"             .scheme.type
+    hilight   .hilight.tcl 1 "-right"              .scheme.type
+    hilight   .hilight.tcl 1 "-scheme"             .scheme.type
+    hilight   .hilight.tcl 1 "-selectmode"         .scheme.type
+    hilight   .hilight.tcl 1 "-side"               .scheme.type
+    hilight   .hilight.tcl 1 "-size"               .scheme.type
+    hilight   .hilight.tcl 1 "-state"              .scheme.type
+    hilight   .hilight.tcl 1 "-statusbar"          .scheme.type
+    hilight   .hilight.tcl 1 "-style"              .scheme.type
+    hilight   .hilight.tcl 1 "-tags"               .scheme.type
+    hilight   .hilight.tcl 1 "-tearoff"            .scheme.type
+    hilight   .hilight.tcl 1 "-text"               .scheme.type
+    hilight   .hilight.tcl 1 "-textvariable"       .scheme.type
+    hilight   .hilight.tcl 1 "-top"                .scheme.type
+    hilight   .hilight.tcl 1 "-under"              .scheme.type
+    hilight   .hilight.tcl 1 "-underline"          .scheme.type
+    hilight   .hilight.tcl 1 "-value"              .scheme.type
+    hilight   .hilight.tcl 1 "-variable"           .scheme.type
+    hilight   .hilight.tcl 1 "-width"              .scheme.type
+    hilight   .hilight.tcl 1 "-wrap"               .scheme.type
+    hilight   .hilight.tcl 1 "-yscrollcommand"     .scheme.type
+    ; Tix extensions
+    hilight   .hilight.tcl 1 "tix"                 .scheme.keyword
+    hilight   .hilight.tcl 1 "tixBalloon"          .scheme.keyword
+    hilight   .hilight.tcl 1 "tixCheckList"        .scheme.keyword
+    hilight   .hilight.tcl 1 "tixComboBox"         .scheme.keyword
+    hilight   .hilight.tcl 1 "tixControl"          .scheme.keyword
+    hilight   .hilight.tcl 1 "tixFileEntry"        .scheme.keyword
+    hilight   .hilight.tcl 1 "tixForm"             .scheme.keyword
+    hilight   .hilight.tcl 1 "tixGrid"             .scheme.keyword
+    hilight   .hilight.tcl 1 "tixHList"            .scheme.keyword
+    hilight   .hilight.tcl 1 "tixLabelEntry"       .scheme.keyword
+    hilight   .hilight.tcl 1 "tixLabelFrame"       .scheme.keyword
+    hilight   .hilight.tcl 1 "tixNoteBook"         .scheme.keyword
+    hilight   .hilight.tcl 1 "tixScrolledGrid"     .scheme.keyword
+    hilight   .hilight.tcl 1 "tixScrolledHList"    .scheme.keyword
+    hilight   .hilight.tcl 1 "tixScrolledListBox"  .scheme.keyword
+    hilight   .hilight.tcl 1 "tixScrolledText"     .scheme.keyword
+    hilight   .hilight.tcl 1 "tixScrolledWindow"   .scheme.keyword
+    hilight   .hilight.tcl 1 "tixSelect"           .scheme.keyword
+    hilight   .hilight.tcl 1 "tixSetSilent"        .scheme.keyword
+    !if &band .hilight.flags 0x08
+        ; hilight constants, e.g. numbers
+        hilight .hilight.tcl 1 "[[:digit:]]+"       .scheme.constant
+        hilight .hilight.tcl 1 "-[[:digit:]]+"      .scheme.constant
+        hilight .hilight.tcl 1 "0[xX][[:xdigit:]]+" .scheme.constant
+    !endif
+!endif
+
+0 indent  .hilight.tcl 0 10
+indent .hilight.tcl n "{"  4
+indent .hilight.tcl o "}" -4
+indent .hilight.tcl e "\"" "\"" "\\"
+indent .hilight.tcl b "\\[" "]"
+indent .hilight.tcl b "(" ")"
+indent .hilight.tcl c "\\\\\\s " 10
+indent .hilight.tcl i "#"  
+
+; coment line ie xxx -> #xxx
+define-macro tcl-comment-line
+    !while &gre &pdec @# 1 0
+        beginning-of-line
+        insert-string "#"
+        beginning-of-line
+        forward-line
+    !done
+!emacro
+;
+; uncoment line ie #xxx -> xxx
+define-macro tcl-uncomment-line
+    beginning-of-line
+    !while &gre &pdec @# 1 0
+        !force -1 search-forward "#"
+        !if $status
+            backward-delete-char
+        !endif
+        forward-line
+        beginning-of-line
+    !done
+!emacro
+
+osd .osd.tcl-tool 0  "b"
+osd .osd.tcl-tool 1  ""  "Tk/Tcl tool &help esc h"   .osd.tcl-help osd
+osd .osd.tcl-tool 2  ""  "&Restyle region   A-C-i"   f restyle-region
+osd .osd.tcl-tool 5  "-"
+osd .osd.tcl-tool 6  ""  "&Comment line     C-c C-c" f tcl-comment-line
+osd .osd.tcl-tool 7  ""  "&Uncomment line   C-c C-d" f tcl-uncomment-line
+osd .osd.tcl-tool 11 "-"
+osd .osd.tcl-tool 18 "i" "Create &tags file"        f "generate-tags-file tcltags"
+; Add hook to load the OSD tcl tools menu.
+0 define-macro osd-ohook-tcl
+    osd 7 1 "Md" "Tk/Tcl &Tools" .osd.tcl-tool
+    osd 7 2 "-"
+!emacro
+; Add hook to remove the OSD tcl tools menu.
+0 define-macro osd-chook-tcl
+    osd 7 1  "D"
+    osd 7 2  "D"
+!emacro
+
+osd .osd.tcl-help 0  "batcdH" 9 3 99 .scheme.osd-title "Tk/Tcl Mode Help"
+osd .osd.tcl-help 3  "" 
+osd .osd.tcl-help 4  ""  "    esc h   - View this help page"
+osd .osd.tcl-help 5  "" 
+osd .osd.tcl-help 7  ""  "    C-c C-c - Comment out current line"
+osd .osd.tcl-help 8  ""  "    C-c C-d - Uncomment current line"
+osd .osd.tcl-help 9  "" 
+osd .osd.tcl-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
+
+define-macro fhook-tcl
+    ; if arg is 0 this is a new file so add template 
+    !if &not @#
+        etfinsrt "tcl"
+    !endif
+    1 buffer-mode "time"
+    set-variable $buffer-mask "luh13"
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.tcl
+    !endif
+    set-variable $buffer-indent  .hilight.tcl
+    buffer-bind-unbound-key tcl-comment-line   "C-c C-c"
+    buffer-bind-unbound-key tcl-uncomment-line "C-c C-d"
+    ; setup tcl folds
+    buffer-bind-unbound-key fold-current "f2"
+    buffer-bind-unbound-key fold-all     "f3"
+    ; execute user extensions if enabled
+    !if &exist my-fhook-tcl
+        my-fhook-tcl
+    !endif
+!emacro
+
+; setup tcl folding support
+set-variable .fhook-tcl.fold-open  "^proc "
+set-variable .fhook-tcl.fold-close "^}"
+set-variable .fhook-tcl.fold-mopen "1"
+
+ml-write "[Tk/Tcl file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "mytcl"
+

@@ -1,0 +1,148 @@
+;       MetaPost and compatible MetaFont hook
+;
+;       Created by Pedro Gomes 99-06-08
+;
+;   Last Modified : <991125.1029>
+;
+!if &band .hilight.flags 0x02
+    !if &not &exist .hilight.meta
+        set-variable .hilight.meta &pinc .hilight.next 1
+    !endif
+    
+    0 hilight .hilight.meta 0                 $global-scheme
+    hilight   .hilight.meta 2 "%"             .scheme.comment
+    hilight   .hilight.meta 4 "\"" "\"" "\\"  .scheme.string
+    hilight   .hilight.meta 0 "'.'"           .scheme.quote
+    hilight   .hilight.meta 0 "'\\\\.'"       .scheme.quote
+    ;
+    hilight   .hilight.meta 1 "ahangle"       .scheme.variable
+    hilight   .hilight.meta 1 "ahlength"      .scheme.variable
+    hilight   .hilight.meta 1 "bboxmargin"    .scheme.variable
+    hilight   .hilight.meta 1 "charcode"      .scheme.variable
+    hilight   .hilight.meta 1 "circmargin"    .scheme.variable
+    hilight   .hilight.meta 1 "day"           .scheme.variable
+    hilight   .hilight.meta 1 "defaultdx"     .scheme.variable
+    hilight   .hilight.meta 1 "defaultdy"     .scheme.variable
+    hilight   .hilight.meta 1 "defaultpen"    .scheme.variable
+    hilight   .hilight.meta 1 "defaultscale"  .scheme.variable
+    hilight   .hilight.meta 1 "labeloffset"   .scheme.variable
+    hilight   .hilight.meta 1 "linecape"      .scheme.variable
+    hilight   .hilight.meta 1 "linejoin"      .scheme.variable
+    hilight   .hilight.meta 1 "miterlimit"    .scheme.variable
+    hilight   .hilight.meta 1 "month"         .scheme.variable
+    hilight   .hilight.meta 1 "pausing"       .scheme.variable
+    hilight   .hilight.meta 1 "prologues"     .scheme.variable
+    hilight   .hilight.meta 1 "showstopping"  .scheme.variable
+    hilight   .hilight.meta 1 "time"          .scheme.variable
+    hilight   .hilight.meta 1 "tracingcapsules" .scheme.variable
+    hilight   .hilight.meta 1 "tracingchoices" .scheme.variable
+    hilight   .hilight.meta 1 "tracingcommands" .scheme.variable
+    hilight   .hilight.meta 1 "tracingequations" .scheme.variable
+    hilight   .hilight.meta 1 "tracinglostchars" .scheme.variable
+    hilight   .hilight.meta 1 "tracingmacros" .scheme.variable
+    hilight   .hilight.meta 1 "tracingonline" .scheme.variable
+    hilight   .hilight.meta 1 "tracingoutput" .scheme.variable
+    hilight   .hilight.meta 1 "tracingrestores" .scheme.variable
+    hilight   .hilight.meta 1 "tracingspecs" .scheme.variable
+    hilight   .hilight.meta 1 "tracingstats" .scheme.variable
+    hilight   .hilight.meta 1 "tracingtitiles" .scheme.variable
+    hilight   .hilight.meta 1 "truecorners" .scheme.variable
+    hilight   .hilight.meta 1 "warningcheck" .scheme.variable
+    hilight   .hilight.meta 1 "year"       .scheme.variable
+    hilight   .hilight.meta 1 "background" .scheme.variable
+    hilight   .hilight.meta 1 "currentpen" .scheme.variable
+    hilight   .hilight.meta 1 "currentpicture" .scheme.variable
+    hilight   .hilight.meta 1 "cuttings"   .scheme.variable
+    hilight   .hilight.meta 1 "defaultfont" .scheme.variable
+    hilight   .hilight.meta 1 "extra_beginfig" .scheme.variable
+    hilight   .hilight.meta 1 "extra_endfig" .scheme.variable
+    hilight   .hilight.meta 1 "beveled"    .scheme.variable
+    hilight   .hilight.meta 1 "black"      .scheme.variable
+    hilight   .hilight.meta 1 "blue"       .scheme.variable
+    hilight   .hilight.meta 1 "bp"         .scheme.variable
+    hilight   .hilight.meta 1 "butt"       .scheme.variable
+    hilight   .hilight.meta 1 "cc"         .scheme.variable
+    hilight   .hilight.meta 1 "cm"         .scheme.variable
+    hilight   .hilight.meta 1 "dd"         .scheme.variable
+    hilight   .hilight.meta 1 "ditto"      .scheme.variable
+    hilight   .hilight.meta 1 "down"       .scheme.variable
+    hilight   .hilight.meta 1 "epsilon"    .scheme.variable
+    hilight   .hilight.meta 1 "evenly"     .scheme.variable
+    hilight   .hilight.meta 1 "false"      .scheme.variable
+    hilight   .hilight.meta 1 "fullcircle" .scheme.variable
+    hilight   .hilight.meta 1 "green"      .scheme.variable
+    hilight   .hilight.meta 1 "halfcircle" .scheme.variable
+    hilight   .hilight.meta 1 "identify"   .scheme.variable
+    hilight   .hilight.meta 1 "in"         .scheme.variable
+    hilight   .hilight.meta 1 "inifinity"  .scheme.variable
+    hilight   .hilight.meta 1 "left"       .scheme.variable
+    hilight   .hilight.meta 1 "mitered"    .scheme.variable
+    hilight   .hilight.meta 1 "defaultfont" .scheme.variable
+    hilight   .hilight.meta 1 "mm"         .scheme.variable
+    hilight   .hilight.meta 1 "nullpicture" .scheme.variable
+    hilight   .hilight.meta 1 "origin"     .scheme.variable
+    hilight   .hilight.meta 1 "pc"         .scheme.variable
+    hilight   .hilight.meta 1 "pencircle"  .scheme.variable
+    hilight   .hilight.meta 1 "pensquare"  .scheme.variable
+    hilight   .hilight.meta 1 "pt"         .scheme.variable
+    hilight   .hilight.meta 1 "quartercircle" .scheme.variable
+    hilight   .hilight.meta 1 "red"        .scheme.variable
+    hilight   .hilight.meta 1 "right"      .scheme.variable
+    hilight   .hilight.meta 1 "rounded"    .scheme.variable
+    hilight   .hilight.meta 1 "true"       .scheme.variable
+    hilight   .hilight.meta 1 "unitsquare" .scheme.variable
+    hilight   .hilight.meta 1 "up"         .scheme.variable
+    hilight   .hilight.meta 1 "white"      .scheme.variable
+    hilight   .hilight.meta 1 "withdots"   .scheme.variable
+    
+    hilight   .hilight.meta 1 "&"          .scheme.operator
+    hilight   .hilight.meta 1 "\\*"        .scheme.operator
+    hilight   .hilight.meta 1 "\\*\\*"     .scheme.operator
+    hilight   .hilight.meta 1 "+"          .scheme.operator
+    hilight   .hilight.meta 1 "+\\+"       .scheme.operator
+    hilight   .hilight.meta 1 "+-\\+"      .scheme.operator
+    hilight   .hilight.meta 1 "-"          .scheme.operator
+    hilight   .hilight.meta 1 "/"          .scheme.operator
+    hilight   .hilight.meta 1 "<"          .scheme.operator
+    hilight   .hilight.meta 1 ">"          .scheme.operator
+    hilight   .hilight.meta 1 "="          .scheme.operator
+    hilight   .hilight.meta 1 "<="         .scheme.operator
+    hilight   .hilight.meta 1 ">="         .scheme.operator
+    hilight   .hilight.meta 1 "<>"         .scheme.operator
+    hilight   .hilight.meta 1 "("          .scheme.operator
+    hilight   .hilight.meta 1 ")"          .scheme.operator
+    hilight   .hilight.meta 1 ","          .scheme.operator
+    hilight   .hilight.meta 1 "\\."        .scheme.operator
+    hilight   .hilight.meta 1 "abs"        .scheme.operator
+    hilight   .hilight.meta 1 "and"        .scheme.operator
+    hilight   .hilight.meta 1 "angle"      .scheme.operator
+    hilight   .hilight.meta 1 "arclength"  .scheme.operator
+    hilight   .hilight.meta 1 "arctime of" .scheme.operator
+    hilight   .hilight.meta 1 "ASCII"      .scheme.operator
+    hilight   .hilight.meta 1 "bbox"       .scheme.operator
+    hilight   .hilight.meta 1 "bluepart"   .scheme.operator
+    hilight   .hilight.meta 1 "boolean"    .scheme.operator
+    hilight   .hilight.meta 1 "bot"        .scheme.operator
+    hilight   .hilight.meta 1 "ceiling"    .scheme.operator
+    hilight   .hilight.meta 1 "center"     .scheme.operator
+    
+    hilight   .hilight.meta 1 "atan2"      .scheme.keyword
+!endif
+
+define-macro fhook-meta
+    1 buffer-mode "time"
+    1 buffer-mode "indent"
+    set-variable $buffer-mask "luh1"
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.meta
+    !endif
+    ; execute user extensions if enabled
+    !if &exist my-fhook-meta
+        my-fhook-meta
+    !endif
+!emacro
+
+ml-write "[MetaPost/Font file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "mymeta"

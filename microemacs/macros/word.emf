@@ -1,0 +1,215 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Tue Jan 25 17:45:45 2000
+;  Last Modified : <000719.0013>
+;
+;  Description
+;
+;  Notes
+;
+;     For each language "<languange>" the following is required
+;
+;     1)  A dictionary, with a command-line interface to finding the meaning
+;         of a word. This could simple be a text file using grep to find a
+;         word or it could be a third party program which prints the meaning
+;         of a given word to stdout.
+;
+;     2)  The variable .describe-word.<language>-command must be set to this
+;         command-line with a %s in place of the word (any other '%' characters
+;         must be doubled up, i.e. %%)
+;
+;     3)  The variable .describe-word.<language>-search must be set to the
+;         magic search string which will find the word and meaning in the
+;         resultant output the required text should be enclosed in magic 
+;         group 1. This is search for multiple times to handle multiple
+;         meanings.
+;         If the search variable is not set then describe-word assumes that
+;         it will be simply lanching another program to look-up the word.
+;
+;     For example, given a text file american.ewf containing American words
+;     with their meaning in the following form:
+;
+;          Abra (n.) A narrow pass or defile; a break in a mesa
+;          Abreaction (n.) See Catharsis, below.
+;          Acclamation (n.) In parliamentary usage, the act or ...
+;          Acclamation (n.) the election of a pope or other ecclesiastic ...
+;          Ace (n.) A single point won by a stroke, as in handball, rackets, etc.
+;          Acequia (n.) A canal or trench for irrigating land.
+;
+;    the command used could be
+;
+;          grep -i <word> american.ewf
+;
+;    The required variables could be set as follows:
+;
+;          set-variable .describe-word.american-command &cat "grep -i \"^%s (\" " &find "american" ".ewf"
+;          set-variable .describe-word.american-search  "^\\(%s (.*\\)\n"
+;
+;    Note that the grep -i handles case problems and the &find is used so that
+;    the american.ewf file can exist anywhere in the ME $search-path
+;
+;  History
+;
+;  Copyright (c) 2000 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+!if &not &exi .osd.word
+    set-variable .osd.word &pinc .osd.next 1
+    set-variable .osd.wordc &pinc .osd.next 1
+!endif
+
+define-macro describe-word-find
+    set-variable #l0 @1
+    ml-write &spr "[Searching for %s ...]" #l0
+    set-variable #l1 &spr &ind &spr ".describe-word.%s-command" .describe-word.lang #l0 #l0 #l0 #l0 #l0
+    2 pipe-shell-command #l1 "*describe-word*" @mna
+    find-buffer "*describe-word*"
+    -1 buffer-mode "exact"
+    1 buffer-mode "magic"
+    set-variable #l1 &spr &ind &spr ".describe-word.%s-search" .describe-word.lang #l0 #l0 #l0 #l0 #l0
+    set-variable .describe-word.descn 0
+    !force search-forward #l1
+    !while $status
+        set-variable #l2 @s1
+        var-str-sub #l2 "\n" " "
+        var-str-sub #l2 "\t" " "
+        set-variable #l3 ""
+        !if &gre &len #l2 60
+            set-variable #l4 &lef #l2 &rsin " " &lef #l2 60
+            set-variable #l2 &cat "    " &rig #l2 &len #l4
+            set-variable #l3 &spr "%s%s\n" #l3 #l4
+            !jump -4
+        !endif
+        set-variable #l3 &spr "%s%s\n" #l3 #l2
+        osd .osd.wordc &inc .describe-word.descn 1 "xu" #l3 f describe-word-pick
+        set-variable &ind &cat ".describe-word.desc" .describe-word.descn #l3
+        !force search-forward #l1
+    !done
+!emacro
+
+define-macro describe-word-com
+    !if &les @# 0
+        set-variable #l0 @ml2 "" .describe-word.word
+        !if &seq #l0 .describe-word.word
+            !return
+        !endif
+        set-variable .describe-word.word #l0
+    !elif &gre @# 0
+        set-variable $result .describe-word.word
+        !return
+    !endif
+    -1 osd .osd.wordc
+    osd .osd.wordc 0 "sS" .scheme.osd-child 60 10 -1 -1
+    !if &seq .describe-word.word ""
+        osd .osd.wordc 1 ""
+        !return
+    !endif
+    set-variable #l6 $buffer-bname
+    set-variable #l7 $window-line
+    set-variable #l8 $window-y-scroll
+    set-variable #l9 $window-col
+    set-variable #l5 $mouse
+    set-variable $mouse &bor 0x50000 &band 0xffff #l5
+    !force !force describe-word-find .describe-word.word
+    set-variable #l1 $status
+    !force delete-buffer "*describe-word*"
+    !if &not .describe-word.descn
+        !if #l1
+            spell-rules-init
+            257 spell .describe-word.word
+            !if &and &seq &lef $result 1 "O" &sin "/" $result
+                set-variable #l0 &rig $result 1
+                set-variable #l0 &lef #l0 &sub &sin "/" #l0 1
+                !if &not &seq #l0 .describe-word.word
+                    !force !force describe-word-find #l0
+                    set-variable #l1 $status
+                    !force delete-buffer "*describe-word*"
+                !endif
+            !endif
+        !endif    
+        !if &not .describe-word.descn
+            osd .osd.wordc 1 "" &cond #l1 "Failed to find" "Aborted"
+        !endif
+    !endif
+    set-variable $mouse #l5
+    find-buffer #l6
+    set-variable $window-line #l7
+    set-variable $window-y-scroll #l8
+    set-variable $window-col #l9
+!emacro
+
+0 define-macro describe-word-pick
+    set-variable #l0 $mouse-y
+    set-variable #l1 $mouse-x
+    !if &inw @fs #l0 #l1
+        set-variable #l2 @fs #l0 #l1
+        set-variable #l1 &sub #l1 1
+        !if &inw @fs #l0 #l1
+            set-variable #l2 &cat @fs #l0 #l1 #l2
+            !jump -3
+        !endif
+        set-variable #l1 $mouse-x
+        set-variable #l1 &add #l1 1
+        !if &inw @fs #l0 #l1
+            set-variable #l2 &cat #l2 @fs #l0 #l1
+            !jump -3
+        !endif
+        set-variable .describe-word.word #l2
+        0 describe-word-com
+    !endif
+!emacro
+
+osd .osd.word 0  "batcHsd" 9 3 66 17 -1 -1 30 .scheme.osd-title "Describe Word"
+osd .osd.word 10 ""
+osd .osd.word 15 "Shf" "  &Word : " 20
+osd .osd.word 20 "ExHfh" .scheme.osd-entry "##############################" 1 describe-word-com
+osd .osd.word 25 "BHcfh" .scheme.osd-ebtt " &Insert " f void
+osd .osd.word 30 "BHcf"  .scheme.osd-ebtt " E&xit "   0 void
+osd .osd.word 40 ""
+osd .osd.word 50 "IbHc" .scheme.osd-sbar 60 10 .osd.wordc
+
+define-macro describe-word
+    set-variable .lang &rig &lget %language-val &lfind %language-names %language 1
+    !if &not &exi &ind &spr ".%s-command" .lang
+        osd-dialog "Describe Word" "     Not setup for current language,\n  see word.emf for more information.  " "E&xit"
+        !abort
+    !endif
+    !force set-variable #l3 @1
+    !if $status
+        set-variable .word #l3
+    !elif &inw @wc
+        set-variable #l0 $window-col
+        forward-char
+        backward-word
+        set-variable #l1 $window-col
+        forward-word
+        set-variable .word &mid @wl #l1 &sub $window-col #l1
+        set-variable $window-col #l0
+    !else
+        set-variable .word ""
+    !endif
+    ; if the search variable is not set then we are simply lanching the look-up
+    !if &not &exi &ind &spr ".%s-search" .lang
+        !if &seq .word ""
+            set-variable #l0 ""
+            osd-entry "Describe Word" "&Word : " #l0 20
+            set-variable .word #l0
+        !endif
+        set-variable #l1 &spr &ind &spr ".describe-word.%s-command" .lang .word .word .word .word .word
+        2 ipipe-shell-command #l1 "*describe-word*" @mna
+        !return
+    !endif
+    0 describe-word-com
+    !force .osd.word osd
+    !if &not $status
+        !return &not @#
+    !endif
+    !if @#
+        set-variable #l0 0
+        !while &gre .descn &pinc #l0 1
+            insert-string &ind &cat ".desc" #l0
+        !done
+    !endif
+!emacro
+

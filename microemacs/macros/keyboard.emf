@@ -1,0 +1,63 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Tue June 22 16:18:08 1999
+;  Last Modified : <000719.0012>
+;
+;  Description   : Configures ME for the users keyboard
+;
+;  Notes
+;      Currently French, Belgian, Portugues and German supported - more work needed
+;      Any translate-keys are not automatically removed if set to another keyboard 
+;
+;  History
+;
+;  Copyright (c) 1999 JASSPA
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+set-variable %keyboard-names "|Default|American|British|Francais|Belgian|Deutsch|Portugues|"
+    
+!if &les @# 1
+    ; if executed with an argument of 0 or less, return the list
+    !return
+!endif
+
+; get the users keyboard - currently only French, Belgian and German on win32 do anything
+set-variable #l0 &lget "||||be|be|gr|po|" &lfind %keyboard-names &reg "/history" "keyboard" ""
+
+!if &seq #l0 "be"
+    !if &seq $platform "win32"
+        ; Belgian support - Thanks to Meyer Jean-Francois
+        ; This should also work for French keyboards
+        translate-key "A-C-9 A-C-{" "{"
+        translate-key "A-C-0 A-C-}" "}"
+        translate-key "A-C-; A-C-]" "]"
+        translate-key "A-C-] A-C-[" "["
+    !endif
+!elif &seq #l0 "po"
+    !if &seq $platform "win32"
+        ; Portugues support - Thanks to Pedro Gomes
+        translate-key "A-C-2 A-C-@" "@"
+        translate-key "A-C-7 A-C-{" "{"
+        translate-key "A-C-8 A-C-[" "[" 
+        translate-key "A-C-9 A-C-]" "]"
+        translate-key "A-C-0 A-C-}" "}"
+    !endif
+!elif &seq #l0 "gr"
+    !if &seq $platform "win32"
+        ; German support - Thanks to Detlef Groth
+        translate-key "A-C-7 A-C-{" "\x7b"
+        translate-key "A-C-9 A-C-]" "\x5d"
+        translate-key "A-C-0 A-C-}" "\x7d"
+        translate-key "A-C-[ A-C-\\" "\x5c"
+        translate-key "A-C-= A-C-~" "\x7e"
+        translate-key "A-C-m A-C-\xb5" "\xb5"
+        translate-key "A-C-8 A-C-[" "\x5b"
+        translate-key "A-C-q A-C-@" "\x40"
+        translate-key "A-C-2 A-C-²" "\xb2"
+        translate-key "A-C-b A-C-|" "\x7c"
+    !endif
+!endif
+
+
+

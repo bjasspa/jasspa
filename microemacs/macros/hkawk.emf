@@ -1,0 +1,82 @@
+;       Install Shield awk file hook
+;
+;   Last Modified : <991125.1028>
+;
+!if &band .hilight.flags 0x02
+    !if &not &exist .hilight.awk
+        set-variable .hilight.awk &pinc .hilight.next 1
+    !endif
+    0 hilight    .hilight.awk 0             $global-scheme
+    hilight   .hilight.awk 2 "#"            .scheme.comment
+    hilight   .hilight.awk 4 "\"" "\"" "\\" .scheme.string
+    hilight   .hilight.awk 0 "'.'"          .scheme.quote
+    hilight   .hilight.awk 0 "'\\\\.'"      .scheme.quote
+    ;
+    hilight   .hilight.awk 1 "ARGC"         .scheme.variable
+    hilight   .hilight.awk 1 "ARGV"         .scheme.variable
+    hilight   .hilight.awk 1 "BEGIN"        .scheme.variable
+    hilight   .hilight.awk 1 "END"          .scheme.variable
+    hilight   .hilight.awk 1 "ENVIRON"      .scheme.variable
+    hilight   .hilight.awk 1 "FS"           .scheme.variable
+    hilight   .hilight.awk 1 "IGNORECASE"   .scheme.variable
+    hilight   .hilight.awk 1 "NF"           .scheme.variable
+    hilight   .hilight.awk 1 "RLENGTH"      .scheme.variable
+    hilight   .hilight.awk 1 "RS"           .scheme.variable
+    hilight   .hilight.awk 1 "RSTART"       .scheme.variable
+    ;
+    hilight   .hilight.awk 1 "atan2"        .scheme.keyword
+    hilight   .hilight.awk 1 "break"        .scheme.keyword
+    hilight   .hilight.awk 1 "close"        .scheme.keyword
+    hilight   .hilight.awk 1 "continue"     .scheme.keyword
+    hilight   .hilight.awk 1 "cos"          .scheme.keyword
+    hilight   .hilight.awk 1 "delete"       .scheme.keyword
+    hilight   .hilight.awk 1 "do"           .scheme.keyword
+    hilight   .hilight.awk 1 "exit"         .scheme.keyword
+    hilight   .hilight.awk 1 "else"         .scheme.keyword
+    hilight   .hilight.awk 1 "exp"          .scheme.keyword
+    hilight   .hilight.awk 1 "for"          .scheme.keyword
+    hilight   .hilight.awk 1 "function"     .scheme.keyword
+    hilight   .hilight.awk 1 "getline"      .scheme.keyword
+    hilight   .hilight.awk 1 "gsub"         .scheme.keyword
+    hilight   .hilight.awk 1 "if"           .scheme.keyword
+    hilight   .hilight.awk 1 "in"           .scheme.keyword
+    hilight   .hilight.awk 1 "index"        .scheme.keyword
+    hilight   .hilight.awk 1 "int"          .scheme.keyword
+    hilight   .hilight.awk 1 "length"       .scheme.keyword
+    hilight   .hilight.awk 1 "log"          .scheme.keyword
+    hilight   .hilight.awk 1 "match"        .scheme.keyword
+    hilight   .hilight.awk 1 "next"         .scheme.keyword
+    hilight   .hilight.awk 1 "print"        .scheme.keyword
+    hilight   .hilight.awk 1 "printf"       .scheme.keyword
+    hilight   .hilight.awk 1 "rand"         .scheme.keyword
+    hilight   .hilight.awk 1 "return"       .scheme.keyword
+    hilight   .hilight.awk 1 "sin"          .scheme.keyword
+    hilight   .hilight.awk 1 "split"        .scheme.keyword
+    hilight   .hilight.awk 1 "sprintf"      .scheme.keyword
+    hilight   .hilight.awk 1 "sqrt"         .scheme.keyword
+    hilight   .hilight.awk 1 "srand"        .scheme.keyword
+    hilight   .hilight.awk 1 "sub"          .scheme.keyword
+    hilight   .hilight.awk 1 "substr"       .scheme.keyword
+    hilight   .hilight.awk 1 "system"       .scheme.keyword
+    hilight   .hilight.awk 1 "tolower"      .scheme.keyword
+    hilight   .hilight.awk 1 "toupper"      .scheme.keyword
+    hilight   .hilight.awk 1 "while"        .scheme.keyword
+!endif
+
+define-macro fhook-awk
+    1 buffer-mode "time"
+    1 buffer-mode "indent"
+    set-variable $buffer-mask "luh1"
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.awk
+    !endif
+    ; execute user extensions if enabled
+    !if &exist my-fhook-awk
+        my-fhook-awk
+    !endif
+!emacro
+
+ml-write "[AWK file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "myawk"

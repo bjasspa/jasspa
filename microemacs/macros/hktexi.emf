@@ -1,0 +1,40 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Jon Green
+;  Created       : Mon Jul 12 21:29:44 1999
+;  Last Modified : <000719.0012>
+;
+;  Description   : Quick hilight for texinfo files. 
+;
+;  Notes         : Could benifit with some tools.
+; 
+;  History
+;
+;  Copyright (c) 1999 JASSPA
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+!if &band .hilight.flags 0x02
+    !if &not &exist .hilight.texi
+        set-variable .hilight.texi  &pinc .hilight.next 1
+    !endif
+    0 hilight .hilight.texi 0                  $global-scheme
+    hilight .hilight.texi   0  "@c .*"         .scheme.comment
+    hilight .hilight.texi   4  "@" "\\}\\W" "" .scheme.keyword
+!endif
+define-macro fhook-texi
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.texi
+    !endif
+    1 buffer-mode "time"
+    1 buffer-mode "indent"
+    buffer-abbrev-file "texi"
+    ; execute user extensions if enabled
+    !if &exist my-fhook-texi
+        my-fhook-texi
+    !endif
+!emacro
+
+ml-write "[texinfo file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "mytexi"
+

@@ -1,0 +1,293 @@
+;  Startup file for MicroEmacs '99 JASSPA Distribution
+;
+;  Last Modified :  <000702.1733>
+;  Copyright (c) 1999 JASSPA
+;
+; If mename isn't set or registry file isn't found then set it to guest
+!if &seq $MENAME "ERROR"
+    !if &not &seq $LOGNAME "ERROR"
+        set-variable $MENAME $LOGNAME
+    !else
+        !force execute-file "default"
+    !endif
+!endif
+!if &seq &find $MENAME ".erf" "ERROR"
+    set-variable $MENAME "guest"
+    read-history $MENAME
+    ml-write "Welcome to MicroEmacs. ESC ? for help."
+    define-macro start-up
+        !if &seq $buffer-bname "*scratch*"
+            help
+            delete-window
+        !endif
+    !emacro
+!else
+    1 read-history $MENAME
+    ml-write &cat "Setting up for user " $MENAME
+!endif
+;
+; Define extern file macros first
+0 define-macro-file scheme scheme
+0 define-macro-file osd osd-main osd-dialog osd-xdialog osd-entry
+0 define-macro-file utils ascii-time regex-forward regex-backward var-str-sub str-to-regex filemask-to-regex copy-registry generate-tags-file
+define-macro-file format clean sort-lines-ignore-case tabs-to-spaces paragraph-to-line delete-indentation restyle-region restyle-buffer ifill-paragraph
+define-macro-file abbrev expand-abbrev-handle spell-complete-word iso-accents-mode iso-accents-expand
+define-macro-file misc symbol check-line-length alarm time compare-windows-exact display-white-chars
+define-macro-file tools compile grep rgrep which diff diff-changes execute-tool uniq reread-file
+define-macro-file search replace-all-string query-replace-all-string replace-all-pairs
+define-macro-file spell spell-word spell-buffer spell-edit-word find-word
+define-macro-file spellaut auto-spell-init auto-spell auto-spell-reset
+define-macro-file games Metris Patience Triangle Mahjongg Match-It
+define-macro-file mail mail mail-check stop-mail-check
+define-macro-file fileopen osd-file-open osd-get-file
+define-macro-file hkinfo info info-on info-goto-link
+define-macro-file zfile find-zfile zfile-setup
+define-macro-file fold fold-current fold-all
+define-macro-file schemosd scheme-editor
+define-macro-file fattrib file-attrib
+define-macro-file hkdir file-browser
+define-macro-file organize organizer
+define-macro-file printstp print-setup
+define-macro-file hkhtml fhook-hts
+define-macro-file user user-setup
+define-macro-file etfinsrt
+define-macro-file gdiff
+define-macro-file calc
+define-macro-file draw
+define-macro-file ftp
+define-macro-file vm
+; More useful than execute-file - helps in fixing problems.
+0 define-macro exec-file
+    set-variable #g0 1
+    !force @# execute-file @1
+    !if $status
+        !return
+    !endif
+    !if &band #g0 1
+        !if &seq &set #l0 &find @1 ".emf" "ERROR"
+            ml-write &spr "[Failed to find Macro file %s.emf]" @1
+        !else
+            find-file #l0
+            !force execute-buffer $buffer-bname
+            ml-write &spr "[Error found in Macro file %s, line %d]" #l0 $window-line
+        !endif
+        set-variable #g0 2
+    !endif
+    !abort
+!emacro
+; save-all - saves any changes to any buffer, registry or dictionary
+define-macro save-all
+    @# save-some-buffers @mna
+    &bor 2 @# save-registry @mna
+    &bor 2 @# save-dictionary @mna
+    !if &not @?
+        !if &iseq @mc1 "Save default history [y/n]? " "nNyY" "y"
+            0 save-history
+        !endif
+    !endif
+!emacro
+; buffer-bind-unbound-key - Conditionally bind a key if not bound
+0 define-macro buffer-bind-unbound-key
+    !if &seq &kbind @2 "ERROR"
+        !if @?
+            @# buffer-bind-key @1 @2
+        !else
+            buffer-bind-key @1 @2
+        !endif
+    !endif
+!emacro
+;
+set-variable %platform &cat $platform &cond &band $system 0x01 "c" ""
+set-variable $system &bor &band $system &bnot 0x10f000 &reg "/history" "system" 0x007000
+set-variable $system &bor &band $system &bnot 0x0e041c &reg "/history" &cat %platform "/system" 0x040010
+; setup the display char set
+!force exec-file "charset"
+set-variable $mouse &reg "/history" &cat %platform "/mouse" $mouse
+set-variable $scroll &reg "/history" &cat %platform "/scroll" $scroll
+set-variable $show-modes &reg "/history" "show-modes" $show-modes
+set-variable $cursor-blink &reg "/history" &cat %platform "/blink" $cursor-blink
+!force exec-file "keyboard"
+!force exec-file "language"
+; execute any emulation file, e.g. Emacs, Vi etc
+!if &not &seq &set #l0 &reg "/history" "emulate" "" ""
+    !force exec-file #l0
+!endif
+; execute msshift if using MS Shift style region definition
+!if &reg "/history" "msshift" "0"
+    !force exec-file msshift
+!endif
+; Setup the color scheme
+scheme
+;
+; key bindings
+0xa0000 global-bind-key osd              "f1"
+0x1 global-bind-key spell-word           "esc $"
+4 global-bind-key prefix                 "C-c"
+global-bind-key grep                     "C-c g"
+global-bind-key replace-all-string       "A-C-r"
+global-bind-key query-replace-all-string "esc A-C-r"
+global-bind-key ifill-paragraph          "esc q"
+global-bind-key delete-indentation       "esc ^"
+global-bind-key file-browser             "f10"
+global-bind-key display-white-chars      "f11"
+ml-bind-key     tab                      "esc esc"
+; setup abbreviations
+global-bind-key expand-abbrev-handle     "esc esc"
+set-variable .spell-complete-word.on 0
+;
+; Setup modes
+&cond &reg "/history" "auto"   "1" 1 -1 global-mode "auto"
+&cond &reg "/history" "backup" "1" 1 -1 global-mode "backup"
+&cond &reg "/history" "exact"  "1" 1 -1 global-mode "exact"
+&cond &reg "/history" "magic"  "1" 1 -1 global-mode "magic"
+&cond &reg "/history" "quiet"  "1" 1 -1 global-mode "quiet"
+&cond &reg "/history" "tab"    "1" 1 -1 global-mode "tab"
+&cond &reg "/history" "undo"   "1" 1 -1 global-mode "undo"
+&cond &gre &set #l0 &reg "/history" "autosv" "300" "0" 1 -1 global-mode "autosv"
+!if &gre #l0 "0"
+    set-variable $auto-time #l0
+!endif
+; Setup variables
+set-variable $kept-versions &reg "/history" &cat %platform "/kept-vers" "0"
+set-variable $mode-line     "%s%r%u%k %b %l - %h:%m %Y/%M/%D (%e) - (%f) "
+set-variable $file-ignore   &reg "/history" &cat %platform "/file-ignore" ""
+set-variable $scroll-bar    &reg "/history" &cat %platform "/scroll-bar" "0"
+set-variable %tag-file      "tags"
+set-variable %tag-template  "%[^\t]\t%[^\t]\t%[^\n]\n"
+set-variable .osd.tmp 40
+set-variable .osd.next &cond &exi .osd.next .osd.next &add .osd.tmp 1
+;
+; File hooks
+; reset the file hook list
+0 add-file-hook
+; Add file extension hooks. Files loaded in binary mode do not need hook as fixed
+add-file-hook "*help* *about* .ehf"                           fhook-ehf
+add-file-hook "*bindings* *commands* *variables*"             fhook-lists
+add-file-hook "*buffers*"                                     fhook-blist
+add-file-hook "/ *directory* *files*"                         fhook-dir
+add-file-hook "*registry*"                                    fhook-reg
+add-file-hook "*icommand* *shell*"                            fhook-ipipe
+add-file-hook ".emf"                                          fhook-emf
+add-file-hook ".doc"                                          fhook-doc
+add-file-hook ".txt"                                          fhook-txt
+add-file-hook ".tex"                                          fhook-latex
+add-file-hook ".bib"                                          fhook-bibtex
+add-file-hook ".n .1 .2 .3 .4 .5 .6 .7 .8 .9 .so .tni .sm"    fhook-nroff
+add-file-hook ".c .h .def .l .y .i"                           fhook-c
+add-file-hook ".cc .cpp .hpp .rc"                             fhook-cpp
+add-file-hook "Makefile makefile .mak"                        fhook-make
+add-file-hook "Imakefile imakefile"                           fhook-imake
+add-file-hook ".sh .ksh .csh .login .cshrc .profile .tcshrc"  fhook-shell
+add-file-hook ".ini .hpj .reg .rgy"                           fhook-ini
+add-file-hook ".htm .html .asp"                               fhook-html  
+add-file-hook ".htp .hts"                                     fhook-hts
+add-file-hook ".bas .cls"                                     fhook-vb
+add-file-hook ".cmd .bat .btm"                                fhook-dos
+add-file-hook ".tcl .tk"                                      fhook-tcl
+add-file-hook ".rul"                                          fhook-rul
+add-file-hook ".awk .nawk .gawk"                              fhook-awk
+add-file-hook ".p .pas"                                       fhook-pascal
+add-file-hook ".f .f77 .f90"                                  fhook-f90
+add-file-hook ".el"                                           fhook-lisp
+add-file-hook ".vhdl .vhd"                                    fhook-vhdl
+add-file-hook ".fvwm .fvwm2rc"                                fhook-fvwm
+add-file-hook ".java .jav"                                    fhook-java
+add-file-hook ".nsr"                                          fhook-nsr
+add-file-hook ".erf"                                          fhook-erf
+add-file-hook ".bnf"                                          fhook-bnf
+add-file-hook ".sql"                                          fhook-sql
+add-file-hook ".asn1"                                         fhook-asn1
+add-file-hook ".mhg .mhg5"                                    fhook-mhg
+add-file-hook ".cbl"                                          fhook-cobol
+add-file-hook ".x86"                                          fhook-asmx86
+add-file-hook ".py"                                           fhook-python
+add-file-hook ".scm .sch"                                     fhook-scheme
+add-file-hook ".mp .mf"                                       fhook-meta
+add-file-hook ".pl"                                           fhook-perl
+add-file-hook ".m4"                                           fhook-m4
+add-file-hook ".texi"                                         fhook-texi
+add-file-hook ".idl"                                          fhook-idl
+add-file-hook ".info dir"                                     fhook-info
+; Add magic hooks
+ 1 add-file-hook "^#![ \t]*/.*sh"                fhook-shell  ; UNIX shell files
+ 1 add-file-hook "^#![ \t]*/.*perl"              fhook-perl   ; UNIX perl script
+ 1 add-file-hook "^#![ \t]*/.*wish"              fhook-tcl    ; tcl, tk & tix files
+ 1 add-file-hook "^#![ \t]*/.*awk"               fhook-awk    ; awk scripts
+ 1 add-file-hook "^#![ \t]*/.*env[ \t]+python"   fhook-python ; Python file
+ 1 add-file-hook "^#VRML"                        fhook-vrml   ; VRML or wrl files
+ 1 add-file-hook "^#Inventor"                    fhook-vrml   ; Use the VRML hook for iv files
+ 1 add-file-hook "-!-[ \t]*jasspa.*-!-"          fhook-jasspa ; -!- jasspa -!-
+-2 add-file-hook "This is Info file"             fhook-info   ; GNU info file
+-4 add-file-hook "<html>"                        fhook-html   ; HTML files
+-1 add-file-hook "-[*!]-[ \t]*c.*-[*!]-"         fhook-c      ; -*- C -*-
+-1 add-file-hook "-[*!]-[ \t]*c\\+\\+.*-[*!]-"   fhook-cpp    ; -*- C++ -*-
+-1 add-file-hook "-[*!]-[ \t]*f.*-[*!]-"         fhook-f90    ; -*- f -*-
+-1 add-file-hook "-[*]-[ \t]*texinfo.*-[*]-"     fhook-texi   ; -*- texinfo -*-
+-1 add-file-hook "-[*!]-[ \t]*nroff.*-[*!]-"     fhook-nroff  ; -*- nroff -*-
+-1 add-file-hook "-[*!]-[ \t]*cobol.*-[*!]-"     fhook-cobol  ; -*- cobol -*-
+-1 add-file-hook "-!-[ \t]*mhg.*-!-"             fhook-mhg    ; -!- mhg -!-
+-1 add-file-hook "-!-[ \t]*shell.*-!-"           fhook-shell  ; -!- shell -!-
+-1 add-file-hook "-!-[ \t]*msdos.*-!-"           fhook-dos    ; -!- msdos -!-
+-1 add-file-hook "-!-[ \t]*makefile.*-!-"        fhook-make   ; -!- makefile -!-
+-1 add-file-hook "-!-[ \t]*document.*-!-"        fhook-doc    ; -!- document -!-
+-1 add-file-hook "-!-[ \t]*fvwm.*-!-"            fhook-fvwm   ; -!- fvwm -!-
+-1 add-file-hook "-!-[ \t]*erf.*-!-"             fhook-erf    ; -!- erf -!-
+-1 add-file-hook "-!-[ \t]*fold:.*-!-"           fhook-fold   ; -!- fold:... -!-
+-1 add-file-hook "-!-[ \t]*asn\\.1.*-!-"         fhook-asn1   ; -!- asn.1... -!-
+-1 add-file-hook "-!-[ \t]*asmx86.*-!-"          fhook-asmx86 ; -!- asmx86 -!-
+-1 add-file-hook "-!-[ \t]*pseudo.*-!-"          fhook-pseudo ; -!- pseudo -!-
+-1 add-file-hook "-!-[ \t]*text.*-!-"            fhook-txt    ; -!- text -!-
+; Initialize the top menu line
+osd 0  0  "asM" 0 0 -1 0 0 0 osd-main
+osd 0  5   "fh" " "
+osd 0  10  "Mfsh" "&File   "   1
+osd 0  15  "fh" " "
+osd 0  20  "Mfsh" "&Edit   "   2
+osd 0  25  "fh" " "
+osd 0  30  "Mfsh" "&Search  "  3
+osd 0  35  "fh" " "
+osd 0  40  "Mfsh" "&Insert  "  4
+osd 0  45  "fh" " "
+osd 0  50  "Mfsh" "F&ormat  "  5
+osd 0  55  "fh" " "
+osd 0  60  "Mfsh" "E&xecute "  6
+osd 0  65  "fh" " "
+osd 0  70  "Mfsh" "&Tools   "  7
+osd 0  75  "fh" " "
+osd 0  80  "Mfsh" "&Window  "  8
+osd 0  85  "fh" " "
+osd 0  90  "Mfsr" "&Help "     9
+osd -1 &cond &reg "/history" "main-menu" "1" "1" "-1"
+; Load in the mouse handling routines
+!force exec-file "mouse"
+; load in the platform specific stuff if found
+!force exec-file $platform
+; load ftp/http registry file
+!if &not &seq &set #l0 &reg "/history" "url-file" "" ""
+    read-registry "/url" &find #l0 ".erf" "" 
+!endif
+; execute company setup
+!if &not &seq &set #l0 &reg "/history" "company" "" ""
+    !force exec-file #l0
+!endif
+; excute own setup
+!if &not &seq &set #l0 &reg "/history" "setup-file" "" ""
+    !force exec-file #l0
+!endif
+; Setup the Client Server
+!if &band $system 0x20000
+    define-macro-file meserver server-input
+    find-buffer "*server*"
+    set-variable :last-line 2
+    set-variable :client-list ":"
+    set-variable $buffer-ipipe server-input
+    beginning-of-buffer
+    goto-alpha-mark  "I"
+    -1 find-buffer "*server*"
+!endif
+; chaeck-mail setup - delay the first check by a minute to allow for
+; initial setup to complete
+!if &reg "/history" &cat $platform "/mail-check" "0"
+    60000 create-callback mail-check
+!endif
+

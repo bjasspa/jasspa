@@ -1,0 +1,42 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; erf hook - This file is invoked when a MicroEmacs registry file is loaded.
+;
+; Last Modified : <991127.2007>
+; Copyright (c) 1999 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+!if &not &exist .hilight.erf
+    set-variable .hilight.erf &pinc .hilight.next 1
+!endif
+
+!if &band .hilight.flags 0x02
+    0 hilight  .hilight.erf 0                     $global-scheme
+    hilight .hilight.erf 4 "\"" "\"" "\\"      .scheme.keyword
+    hilight .hilight.erf 0     "="             .scheme.operator
+    hilight .hilight.erf 0x2   ";"             .scheme.comment ; Comment from SOL to EOL.
+!endif
+
+0 indent  .hilight.erf 0 10
+indent .hilight.erf n "{"  1
+indent .hilight.erf o "}" -1
+indent .hilight.erf e "\"" "\"" "\\"
+indent .hilight.erf i ";"  
+
+define-macro fhook-erf
+    set-variable $buffer-mask "luh1"
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.erf
+    !endif
+    set-variable $buffer-indent  .hilight.erf
+    1 buffer-mode "time"
+    1 buffer-mode "indent"
+    ; execute user extensions if enabled
+    !if &exist my-fhook-erf
+        my-fhook-erf
+    !endif
+!emacro
+
+ml-write "[MicroEmacs Registry file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "myerf"
+

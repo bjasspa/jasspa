@@ -1,0 +1,735 @@
+;   Highlight mode NROFF
+;
+;   Last Modified : <000623.2120>
+;
+; Copyright (c) 1993-2000 JASSPA
+;
+; Note that this file contains some JASSPA extensions for their Nroff
+; documentation.
+; 
+!if &not &exist .osd.nroff-help
+    ; set up the osd tool menu & help dialog
+    set-variable .osd.nroff-help &pinc .osd.next 1
+    set-variable .osd.nroff-tool &pinc .osd.next 1
+!endif
+
+; hilight-nroff-common; Common hilighting modifiers
+0 define-macro hilight-nroff-common
+    !if &band .hilight.flags 0x02
+        ; Get the arguments into the local registers for speed.
+        set-variable #l1 @1
+        set-variable #l2 @2
+        ; Comments
+        hilight #l1 2 "^%"                          .scheme.comment
+        ;symbols
+        hilight #l1 0x040 "\\\\\\\\"  "\\\\"        #l2
+        hilight #l1 0x040 "\\\\." "\\1"             #l2
+        hilight #l1 0x040 "\\\\&"  ""               #l2
+        hilight #l1 0x040 "\\\\|"  ""               #l2
+        hilight #l1 0x040 "\\\\s0" ""               #l2
+        hilight #l1 0x040 "\\\\ " " "               #l2
+        hilight #l1 0x040 "\\\\-" "-"               #l2
+        hilight #l1 0x040 "\\\\s[-+][[:digit:]]" "" #l2
+        hilight #l1 0     "\\\\\\*\\w"              .scheme.variable
+        hilight #l1 0     "\\\\\\*(\\w\\w"          .scheme.variable
+!emacro
+
+!if &band .hilight.flags 0x02
+    !if &not &exist .hilight.nroff
+        set-variable .hilight.nroff &pinc .hilight.next 1
+        set-variable .hilight.roffR &pinc .hilight.next 1
+        set-variable .hilight.roffB &pinc .hilight.next 1
+        set-variable .hilight.roffI &pinc .hilight.next 1
+        set-variable .hilight.roffC &pinc .hilight.next 1
+        set-variable .hilight.roffM &pinc .hilight.next 1
+    !endif
+    0 hilight  .hilight.nroff 0                        $global-scheme
+    hilight .hilight.nroff 0   "\\\\s0"                .scheme.variable
+    hilight .hilight.nroff 0   "\\\\s[-+][[:digit:]]"  .scheme.variable
+    hilight .hilight.nroff 0   "\\\\fP"                .scheme.variable
+    hilight .hilight.nroff 0   "\\\\fI"                .scheme.variable
+    hilight .hilight.nroff 0   "\\\\f2"                .scheme.variable
+    hilight .hilight.nroff 0   "\\\\fR"                .scheme.variable
+    hilight .hilight.nroff 0   "\\\\f1"                .scheme.variable
+    hilight .hilight.nroff 0   "\\\\fB"                .scheme.variable
+    hilight .hilight.nroff 0   "\\\\f3"                .scheme.variable
+    hilight .hilight.nroff 0   "\\\\fC"                .scheme.variable
+    hilight .hilight.nroff 0   "\\\\-"                 .scheme.variable
+    hilight .hilight.nroff 0   "\\\\&"                 .scheme.comment
+    hilight .hilight.nroff 0   "\\\\|"                 .scheme.comment
+    hilight .hilight.nroff 0   "\\\\\\*\\w"            .scheme.variable
+    hilight .hilight.nroff 0   "\\\\\\*(\\w\\w"        .scheme.variable
+    hilight .hilight.nroff 0x200 "[.']"
+    hilight .hilight.nroff 2   "^[.']\\\\\""           .scheme.comment
+    hilight .hilight.nroff 1   "^[.']B"                .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']BE"               .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']BI"               .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']BP"               .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']bp"               .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']BR"               .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']br"               .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']BS"               .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']BU"               .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']C"                .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']CE"               .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']CS"               .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']ds"               .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']rm"               .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']FH"               .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']ft"               .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']Hg"               .scheme.prepro
+    hilight .hilight.nroff 1   "^[.']Hh"               .scheme.prepro
+    hilight .hilight.nroff 1   "^[.']Hl"               .scheme.prepro
+    hilight .hilight.nroff 1   "^[.']Hr"               .scheme.prepro
+    hilight .hilight.nroff 1   "^[.']Ht"               .scheme.prepro
+    hilight .hilight.nroff 1   "^[.']I"                .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']IB"               .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']Id"               .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']Im"               .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']IP"               .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']IR"               .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']Kw"               .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']Le"               .scheme.prepro
+    hilight .hilight.nroff 1   "^[.']Li"               .scheme.prepro
+    hilight .hilight.nroff 1   "^[.']Lj"               .scheme.prepro
+    hilight .hilight.nroff 1   "^[.']LP"               .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']Ls"               .scheme.prepro
+    hilight .hilight.nroff 1   "^[.']PP"               .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']R"                .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']RB"               .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']RE"               .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']RI"               .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']RS"               .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']Se"               .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']Ss"               .scheme.keyword
+    hilight .hilight.nroff 1   "^[.']TP"               .scheme.keyword
+    hilight .hilight.nroff 3   "^[.']TH"               .scheme.function
+    hilight .hilight.nroff 3   "^[.']XI"               .scheme.prepro
+    hilight .hilight.nroff 3   "^[.']XJ"               .scheme.prepro
+    hilight .hilight.nroff 3   "^[.']ad"               .scheme.keyword
+    hilight .hilight.nroff 3   "^[.']fi"               .scheme.keyword
+    hilight .hilight.nroff 3   "^[.']ll"               .scheme.keyword
+    hilight .hilight.nroff 3   "^[.']na"               .scheme.keyword
+    hilight .hilight.nroff 3   "^[.']ne"               .scheme.keyword
+    hilight .hilight.nroff 3   "^[.']nf"               .scheme.keyword
+    hilight .hilight.nroff 3   "^[.']sp"               .scheme.keyword
+    hilight .hilight.nroff 3   "^[.']NH"               .scheme.prepro
+    hilight .hilight.nroff 3   "^[.']pl"               .scheme.keyword
+    hilight .hilight.nroff 3   "^[.']ps"               .scheme.keyword
+    hilight .hilight.nroff 3   "^[.']SH"               .scheme.header
+    hilight .hilight.nroff 3   "^[.']so"               .scheme.prepro
+    hilight .hilight.nroff 3   "^[.']SS"               .scheme.header
+    hilight .hilight.nroff 3   "^[.']Me"               .scheme.prepro
+    hilight .hilight.nroff 3   "^[.']vs"               .scheme.keyword
+    
+    0 hilight  .hilight.roffR 2 40                     $global-scheme
+    hilight-nroff-common                    .hilight.roffR $global-scheme
+    hilight .hilight.roffR 0x040 "\\\\fR" ""           $global-scheme
+    hilight .hilight.roffR 0x040 "\\\\f1" ""           $global-scheme
+    hilight .hilight.roffR 0x0c0 "\\\\fI" ""  .hilight.roffI  .scheme.italic
+    hilight .hilight.roffR 0x0c0 "\\\\f2" ""  .hilight.roffI  .scheme.italic
+    hilight .hilight.roffR 0x0c0 "\\\\fB" ""  .hilight.roffB  .scheme.bold
+    hilight .hilight.roffR 0x0c0 "\\\\f3" ""  .hilight.roffB  .scheme.bold
+    hilight .hilight.roffR 0x0c0 "\\\\fC" ""  .hilight.roffM  .scheme.string
+    hilight .hilight.roffR 0x0c0 "\\\\f4" ""  .hilight.roffM  .scheme.string
+    hilight .hilight.roffR 0x200 "^[.']"
+    hilight .hilight.roffR 2     "^[.']\\\\\""         .scheme.comment
+    hilight .hilight.roffR 1     "^[.']BE"             .scheme.bold
+    hilight .hilight.roffR 1     "^[.']BS"             .scheme.bold
+    hilight .hilight.roffR 1     "^[.']BU"             .scheme.bold
+    hilight .hilight.roffR 1     "^[.']CE"             .scheme.bold
+    hilight .hilight.roffR 1     "^[.']ds"             .scheme.hide
+    hilight .hilight.roffR 1     "^[.']FH"             .scheme.bold
+    hilight .hilight.roffR 1     "^[.']Hg"             .scheme.hide
+    hilight .hilight.roffR 1     "^[.']Id"             .scheme.link
+    hilight .hilight.roffR 1     "^[.']Im"             .scheme.link
+    hilight .hilight.roffR 1     "^[.']Kw"             .scheme.hide
+    hilight .hilight.roffR 1     "^[.']Le"             .scheme.hide
+    hilight .hilight.roffR 1     "^[.']Li"             .scheme.hide
+    hilight .hilight.roffR 1     "^[.']Lj"             .scheme.hide
+    hilight .hilight.roffR 1     "^[.']LP"             .scheme.bold
+    hilight .hilight.roffR 1     "^[.']Ls"             .scheme.hide
+    hilight .hilight.roffR 1     "^[.']R"              .scheme.bold
+    hilight .hilight.roffR 1     "^[.']RB"             .scheme.bold
+    hilight .hilight.roffR 1     "^[.']RE"             .scheme.bold
+    hilight .hilight.roffR 1     "^[.']RI"             .scheme.bold
+    hilight .hilight.roffR 1     "^[.']RS"             .scheme.bold
+    hilight .hilight.roffR 1     "^[.']Se"             .scheme.bold
+    hilight .hilight.roffR 1     "^[.']Ss"             .scheme.bold
+    hilight .hilight.roffR 1     "^[.']TH"             .scheme.bold
+    hilight .hilight.roffR 3     "^[.']XI"             .scheme.link
+    hilight .hilight.roffR 3     "^[.']XJ"             .scheme.link
+    hilight .hilight.roffR 3     "^[.']ad"             .scheme.hide
+    hilight .hilight.roffR 3     "^[.']bp"             .scheme.hide
+    hilight .hilight.roffR 3     "^[.']br"             .scheme.hide
+    hilight .hilight.roffR 3     "^[.']fi"             .scheme.hide
+    hilight .hilight.roffR 3     "^[.']ft"             .scheme.hide
+    hilight .hilight.roffR 3     "^[.']ll"             .scheme.hide
+    hilight .hilight.roffR 3     "^[.']na"             .scheme.hide
+    hilight .hilight.roffR 3     "^[.']nf"             .scheme.hide
+    hilight .hilight.roffR 3     "^[.']NH"             .scheme.bold
+    hilight .hilight.roffR 3     "^[.']pl"             .scheme.hide
+    hilight .hilight.roffR 3     "^[.']ps"             .scheme.hide
+    hilight .hilight.roffR 3     "^[.']so"             .scheme.bold
+    hilight .hilight.roffR 3     "^[.']vs"             .scheme.hide
+    hilight .hilight.roffR 0x42  "^[.']B "  ""         .scheme.bold
+    hilight .hilight.roffR 0x42  "^[.']BI " ""         .scheme.bold
+    hilight .hilight.roffR 0x42  "^[.']BP " "    "     .scheme.bold
+    hilight .hilight.roffR 0x42  "^[.']BR " ""         .scheme.bold
+    hilight .hilight.roffR 0x42  "^[.']C "  ""         .scheme.bold
+    hilight .hilight.roffR 0x42  "^[.']I "  ""         .scheme.italic
+    hilight .hilight.roffR 0x42  "^[.']IB " ""         .scheme.italic
+    hilight .hilight.roffR 0x42  "^[.']PP"  ""         $global-scheme
+    hilight .hilight.roffR 0x42  "^[.']IP " "    "     $global-scheme
+    hilight .hilight.roffR 0x42  "^[.']IR " ""         .scheme.italic
+    hilight .hilight.roffR 0x42  "^[.']Hh " ""         .scheme.link
+    hilight .hilight.roffR 0x42  "^[.']Hl " ""         .scheme.link
+    hilight .hilight.roffR 0x42  "^[.']Hr " ""         .scheme.link
+    hilight .hilight.roffR 0x42  "^[.']Ht " ""         .scheme.link
+    hilight .hilight.roffR 0x42  "^[.']SH " ""         .scheme.header
+    hilight .hilight.roffR 0x42  "^[.']SS " ""         .scheme.header
+    hilight .hilight.roffR 0xc3  "^[.']CS" "" .hilight.roffC .scheme.string
+    
+    0 hilight .hilight.roffB 0                             .scheme.bold
+    hilight-nroff-common                    .hilight.roffB .scheme.bold
+    hilight .hilight.roffB 0x080 "\\}\\\\f" .hilight.roffR $global-scheme
+    
+    0 hilight .hilight.roffI 0                             .scheme.italic
+    hilight-nroff-common                    .hilight.roffI .scheme.italic
+    hilight .hilight.roffI 0x080 "\\}\\\\f" .hilight.roffR $global-scheme
+    
+    0 hilight .hilight.roffM 0                             .scheme.string
+    hilight-nroff-common                    .hilight.roffM .scheme.string
+    hilight .hilight.roffM 0x080 "\\}\\\\f" .hilight.roffR $global-scheme
+    
+    0 hilight .hilight.roffC 0                              .scheme.string
+    hilight .hilight.roffC 0x040 "\\\\." "\\1"              .scheme.string
+    hilight .hilight.roffC 0x0c0 "[.']CE" "" .hilight.roffR .scheme.string
+
+    0 define-macro nroff-swap-hilight
+        !if &equal $buffer-hilight .hilight.nroff
+            set-variable $buffer-hilight .hilight.roffR
+            1 buffer-mode "view"
+        !else
+            set-variable $buffer-hilight .hilight.nroff
+            -1 buffer-mode "view"
+        !endif
+    !emacro
+!endif
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Nroff specific macros
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+0 define-macro nroff-italic
+    insert-string "\\fI"
+!emacro
+
+0 define-macro nroff-size
+    insert-string "\\s0"
+!emacro
+
+0 define-macro nroff-roman
+    insert-string "\\fR"
+!emacro
+
+0 define-macro nroff-bold
+    insert-string "\\fB"
+!emacro
+
+0 define-macro nroff-mono
+    insert-string "\\fC"
+!emacro
+
+0 define-macro nroff-prev
+    insert-string "\\fP"
+!emacro
+
+0 define-macro nroff-para
+    ; Save mark at point.
+    !if &not @?
+        set-mark
+    !endif
+    beginning-of-line
+    !while &gre &pdec @# 1 0
+        !if &not &sequal @wc "."
+            !force regex-forward "^\\."
+            !if &not $status
+                end-of-buffer
+                ; Force an ending !!
+                set-variable @# 1
+            !endif
+            beginning-of-line
+            insert-newline
+            !force regex-backward "^\\."
+            !if $status
+                forward-line
+            !else
+                beginning-of-buffer
+            !endif
+            insert-newline
+            -1 fill-paragraph
+            forward-delete-char
+            regex-backward "^\\."
+            forward-line
+            forward-delete-char
+            regex-forward "^\\."
+            beginning-of-line
+        !endif
+        forward-line
+    !done
+    ; If no arguments specified then restore the cursor position.
+    !if &not @?
+        exchange-point-and-mark
+    !endif
+!emacro
+
+0 define-macro nroff-italic-region
+    ; insert the \fR first so that if undone the cursor is in the current pos
+    exchange-point-and-mark
+    exchange-point-and-mark
+    insert-string "\\fR"
+    exchange-point-and-mark
+    insert-string "\\fI"
+    exchange-point-and-mark
+!emacro
+
+0 define-macro nroff-mono-region
+    ; insert the \fR first so that if undone the cursor is in the current pos
+    exchange-point-and-mark
+    exchange-point-and-mark
+    insert-string "\\fR"
+    exchange-point-and-mark
+    insert-string "\\fC"
+    exchange-point-and-mark
+!emacro
+
+0 define-macro nroff-bold-region
+    ; insert the \fR first so that if undone the cursor is in the current pos
+    exchange-point-and-mark
+    exchange-point-and-mark
+    insert-string "\\fR"
+    exchange-point-and-mark
+    insert-string "\\fB"
+    exchange-point-and-mark
+!emacro
+
+0 define-macro nroff-add-padding
+; #l0 - %curline
+; #l1 - %off-magic
+    set-variable #l0 $window-line        ; Remember line
+    set-variable #l1 &not &bmode "magic"
+    !if #l1
+        1 buffer-mode "magic"                ; Add magic
+    !endif
+    beginning-of-buffer
+    replace-string "\\(\\\\f[CBIRP]\\)" "\\1\\\\&"
+    beginning-of-buffer
+    replace-string "\\(\\\\s[+-]?[0-9]\\)" "\\1\\\\&"
+    goto-line #l0
+    !if #l1
+        -1 buffer-mode "magic"
+    !endif
+    screen-update
+    ml-write "Added nroff padding."
+!emacro
+
+0 define-macro nroff-remove-padding
+; #l0 - %curline
+; #l1 - %off-magic
+    set-variable #l0 $window-line        ; Remember line
+    set-variable #l1 &not &bmode "magic"
+    !if #l1
+        1 buffer-mode "magic"                ; Add magic
+    !endif
+    beginning-of-buffer
+    replace-string "\\(\\\\f[CBIRP]\\)\\\\&" "\\1"
+    beginning-of-buffer
+    replace-string "\\(\\\\s[+-]?[0-9]\\)\\\\&" "\\1"
+    goto-line #l0
+    !if #l1
+        -1 buffer-mode "magic"
+    !endif
+    screen-update
+    ml-write "Removed nroff padding."
+!emacro
+
+0 define-macro nroff-mouse-usr-mode
+    !if &and &bmod "usr1" &sequal %usr1mode "off"
+        2 ml-write "Binding nroff stuff"
+        buffer-bind-key void         "mouse-pick-1" ; Pick left
+        buffer-bind-key nroff-roman  "mouse-drop-1" ; Drop left
+        buffer-bind-key void         "mouse-pick-2" ; Pick middle
+        buffer-bind-key nroff-italic "mouse-drop-2" ; Drop middle
+        buffer-bind-key void         "mouse-pick-3" ; Pick right
+        buffer-bind-key nroff-bold   "mouse-drop-3" ; Drop right
+        set-variable %usr1mode "on"
+    !elif &and &not &bmod "usr1" &sequal %usr1mode "on"
+        2 ml-write "Unbinding nroff stuff"
+        buffer-unbind-key "mouse-pick-1" ; Pick left
+        buffer-unbind-key "mouse-drop-1" ; Drop left
+        buffer-unbind-key "mouse-pick-2" ; Pick middle
+        buffer-unbind-key "mouse-drop-2" ; Drop middle
+        buffer-unbind-key "mouse-pick-3" ; Pick right
+        buffer-unbind-key "mouse-drop-3" ; Drop right
+        set-variable %usr1mode "off"
+    !else
+        2 ml-write "nroff stuff is buggered"
+    !endif
+!emacro
+
+0 define-macro nroff-mouse-pick-left
+    !if &not &bmod "usr1"
+        set-mark
+    !endif
+!emacro
+
+0 define-macro nroff-mouse-drop-left
+    !if &not &bmod "usr1"
+        copy-region
+    !else
+        nroff-roman
+    !endif
+!emacro
+
+0 define-macro nroff-mouse-pick-right
+    !if &not &bmod "usr1"
+        yank
+    !endif
+!emacro
+
+0 define-macro nroff-mouse-drop-right
+    !if &not &bmod "usr1"
+        void
+    !else
+        nroff-bold
+    !endif
+!emacro
+
+0 define-macro nroff-mouse-pick-middle
+    !if &not &bmod "usr1"
+        set-mark
+    !else
+        nroff-italic
+    !endif
+!emacro
+
+0 define-macro nroff-mouse-drop-middle
+    !if &not &bmod "usr1"
+        kill-region
+    !endif
+!emacro
+
+;
+; Convert TEX to nroff.
+;
+define-macro tex2nr
+    ;
+    ; Prepare to clean up file.
+    ;
+    set-variable #l0 &bmod "magic"               ; Remember we have set magic
+    1 buffer-mode "magic"                       ; Add magic
+    set-variable #l1 $window-line                ; Remember line
+    ;
+    ; Get rid of trailing white space on EOL
+    ;
+    beginning-of-buffer
+    replace-string "[\t ]+$" ""
+    beginning-of-buffer
+    replace-string "[ ]+\t" "\t"
+    ;
+    ; Strip trailing blank lines.
+    ;
+    end-of-buffer
+    backward-line
+    !while &and &gre $window-line 1 &sequal @wc "\n"
+        kill-line
+        backward-line
+    !done
+    ;
+    ; Convert the comments.
+    ;
+    ml-write "Converting comments"
+    beginning-of-buffer
+    replace-string "^%" ".\\\\\" "
+    ml-write "Converting margin paragraphs"
+    beginning-of-buffer
+    replace-string "^\\\\marginpar{\\(.+\\)}" ".BP \"\\1\"\n"
+    beginning-of-buffer
+    replace-string "^\\(.+\\)\\\\marginpar{\\(.+\\)}" ".BP \"\\2\"\n\\1"
+    ml-write "Converting section headers"
+    beginning-of-buffer
+    replace-string "\\\\section{\\(.+\\)}" ".SH \"\\1\""
+    beginning-of-buffer
+    replace-string "\\\\subsection{\\(.+\\)}" ".SS \"\\1\""
+    ml-write "Converting Embedded strings"
+    beginning-of-buffer
+    replace-string "\\\\ve" "\\\\*(ve"
+    ml-write "Converting page formatting"
+    beginning-of-buffer
+    replace-string "\\\\pagebreak" ".bp"
+    ml-write "Converting character formatting"
+    beginning-of-buffer
+    replace-string "\\\\\\^{o}" "o"
+    ml-write "Converting courier character fonts"
+    beginning-of-buffer
+    replace-string "\\\\texttt{\\(.+\\)}" "\\\\fC\\1\\\\fR"
+    ml-write "Converting italic character fonts"
+    beginning-of-buffer
+    replace-string "\\\\textit{\\(.+\\)}" "\\\\fI\\1\\\\fR"
+    beginning-of-buffer
+    replace-string "{\\\\it \\(.+\\)}" "\\\\fI\\1\\\\fR"
+    ml-write "Converting bold character fonts"
+    beginning-of-buffer
+    replace-string "\\\\textbf{\\(.+\\)}" "\\\\fB\\1\\\\fR"
+    beginning-of-buffer
+    replace-string "{\\\\bf \\(.+\\)}" "\\\\fB\\1\\\\fR"
+    ml-write "Converting slash bold character fonts"
+    beginning-of-buffer
+    replace-string "\\\\textbf{\\(.+\\)}" "\\\\fB\\1\\\\fR"
+    beginning-of-buffer
+    replace-string "{\\\\ssbf \\(.+\\)}" "\\\\fB\\1\\\\fR"
+    ml-write "Converting labels and indices"
+    beginning-of-buffer
+    replace-string "\\\\label{\\(.+\\)}" ".XI \\1"
+    beginning-of-buffer
+    replace-string "\\\\index{\\(.+\\)}" ".XI \\1"
+    ml-write "Converting cross references"
+    beginning-of-buffer
+    replace-string "[sS]ection~" ""
+    beginning-of-buffer
+    replace-string "\\\\ref{\\(.+\\)}" "\n.Hl \"\\1\",\\1,-\n"
+    ml-write "Converting Coureir cross references (form2)"
+    beginning-of-buffer
+    replace-string "{\\\\tt \\(.+\\)}" "\\\\fC\\1\\\\fR"
+    ml-write "Converting bullet lists"
+    beginning-of-buffer
+    replace-string "\\\\begin{itemize}" ".BS"
+    beginning-of-buffer
+    replace-string "\\\\item" ".BU\n"
+    beginning-of-buffer
+    replace-string "\\\\end{itemize}" ".BE"
+    ml-write "Converting code blocks"
+    beginning-of-buffer
+    replace-string "\\\\begin{verbatim}" ".CS"
+    beginning-of-buffer
+    replace-string "\\\\end{verbatim}" ".CE"
+    ml-write "Converting courier code blocks (form 3)"
+    beginning-of-buffer
+    replace-string "\\\\begin{alltt}" ".C"
+    beginning-of-buffer
+    replace-string "\\\\end{alltt}" ".R"
+    ml-write "Converting tables"
+    beginning-of-buffer
+    replace-string "\\\\begin{tabular}.*" ".CS"
+    beginning-of-buffer
+    replace-string "\\\\end{tabular}" ".CE"
+    ml-write "Cleaning up the footnotes"
+    beginning-of-buffer
+    replace-string "{\\\\footnotesize" ".ps 8\n.vs 10"
+    ml-write "Converting text for verbatum"
+    beginning-of-buffer
+    replace-string "\\\\vbi{\\(.+\\)}" "\\\\fC\\1\\\\fR"
+    ml-write "Converting symbols"
+    beginning-of-buffer
+    replace-string "\\$\\^\\\\circ\\$" "\\\\(de"
+    beginning-of-buffer
+    replace-string "\\$\\^{2}\\$" "^2"
+    beginning-of-buffer
+    replace-string "\\$\\^{-1}\\$" "-1"
+    beginning-of-buffer
+    replace-string "\\$\\infty\\$" "\\\\(fi"
+    beginning-of-buffer
+    replace-string "\\\\@" ""
+    beginning-of-buffer
+    replace-string "\\\\{" "{"
+    beginning-of-buffer
+    replace-string "\\\\}" "}"
+    ;
+    ; Clean up - restore buffer modes etc.
+    ;
+    !force goto-line #l1
+    ; Remove magic as we added it
+    !if &not #l0
+        -1 buffer-mode "magic"
+    !endif
+    screen-update
+    ml-write "Cleaned up file."
+!emacro
+
+0 define-macro nroff-spell-word
+    set-variable #l0 $window-col
+    -2 show-region
+    !if $window-col
+        !if &les &set #l1 &sub #l0 $window-col 2
+            2 show-region
+            !abort
+        !endif
+        backward-char
+        !if &seq @wc "\\"
+            forward-char
+            !if &seq @wc "f"
+                ; nroff font change
+                2 forward-char
+            !elif &seq @wc "s"
+                ; nroff \s0, \s+1 command
+                forward-char
+                !if &sin @wc "+-"
+                    forward-char
+                !endif
+                forward-char
+            !else
+                2 show-region
+                !abort
+            !endif
+*ret-fix
+            set-variable .spell.check-word &mid @wl $window-col &sub #l0 $window-col
+            -3 show-region
+            set-variable $window-col #l0
+            3 show-region
+            !return
+        !elif &seq @wc "("
+            backward-char
+            !if &seq @wc "*"
+                ; nroff double letter variable name \*(mS
+                4 forward-char
+                !goto ret-fix
+            !endif
+        !elif &seq @wc "*"
+            backward-char
+            !if &seq @wc "\\"
+                ; nroff single letter variable name \*c
+                3 forward-char
+                !goto ret-fix
+            !endif
+        !elif &not $window-col
+            !if &and &seq @wc "'" &les #l0 4
+                ; this is a ^'SH type nroff command, skip all
+                set-variable $window-col #l0
+                set-variable .spell.check-word ""
+                !return
+            !endif
+        !endif
+    !elif &and &seq @wc "." &les #l0 4
+        ; this is a ^.SH type nroff command, skip all
+        set-variable $window-col #l0
+        set-variable .spell.check-word ""
+        !return
+    !endif
+    2 show-region
+    !abort
+!emacro
+
+define-macro-file hkman aman
+
+osd .osd.nroff-tool  0 "b"
+osd .osd.nroff-tool  1 ""  "Nroff tool &help   esc h" .osd.nroff-help osd
+osd .osd.nroff-tool  2 ""  "&Fill paragraph    esc q" f nroff-para
+osd .osd.nroff-tool  3 ""  "&Add Padding       C-c &" f nroff-add-padding
+osd .osd.nroff-tool  4 ""  "Remove &Padding    C-x &" f nroff-remove-padding
+osd .osd.nroff-tool  5 "-"
+osd .osd.nroff-tool  6 ""  "Change to &Bold    C-c C-b" f nroff-bold
+osd .osd.nroff-tool  7 ""  "Change to &Courier C-c C-c" f nroff-mono
+osd .osd.nroff-tool  8 ""  "Change to &Italic  C-c C-i" f nroff-italic
+osd .osd.nroff-tool  9 ""  "Change to &Roman   C-c C-r" f nroff-roman
+osd .osd.nroff-tool 10 "-"
+osd .osd.nroff-tool 11 ""  "R&egion to Bold    C-c b"   f nroff-bold-region
+osd .osd.nroff-tool 11 ""  "Re&gion to Courier C-c c"   f nroff-mono-region
+osd .osd.nroff-tool 12 ""  "Regi&on to Italic  C-c i"   f nroff-italic-region
+osd .osd.nroff-tool 13 "-"
+osd .osd.nroff-tool 14 ""  "Toggle hilighting  C-c C-h" f nroff-swap-hilight
+osd .osd.nroff-tool 15 ""  "Convert Tex to Nroff"     f tex2nr
+osd .osd.nroff-tool 16 "i" "Create &tags file"        f "generate-tags-file ntags"
+; Add hook to load the OSD Nroff tools menu.
+0 define-macro osd-ohook-nroff
+    osd 7 1 "Md" "Nroff &Tools" .osd.nroff-tool
+    osd 7 2 "-"
+!emacro
+; Add hook to remove the OSD Nroff tools menu.
+0 define-macro osd-chook-nroff
+    osd 7 1  "D"
+    osd 7 2  "D"
+!emacro
+
+osd .osd.nroff-help  0 "batcdH" 9 3 99 .scheme.osd-title "Nroff Mode Help"
+osd .osd.nroff-help  1 "" 
+osd .osd.nroff-help  2 ""  "    esc h   - View this help page"
+osd .osd.nroff-help  3 "" 
+osd .osd.nroff-help  4 ""  "    C-c C-b - Insert bold font change"
+osd .osd.nroff-help  5 ""  "    C-c C-c - Insert courier font change"
+osd .osd.nroff-help  6 ""  "    C-c C-i - Insert italic font change"
+osd .osd.nroff-help  7 ""  "    C-c C-r - Insert roman font change"
+osd .osd.nroff-help  8 "" 
+osd .osd.nroff-help  9 ""  "    C-c b   - Change region to bold font"
+osd .osd.nroff-help  9 ""  "    C-c c   - Change region to courier font  "
+osd .osd.nroff-help 10 ""  "    C-c i   - Change region to italic font"
+osd .osd.nroff-help 11 "" 
+osd .osd.nroff-help 12 ""  "    esc o"
+osd .osd.nroff-help 13 ""  "    esc q   - Reformat paragraph"
+osd .osd.nroff-help 14 ""  "    C-c \\&   - Add padding"
+osd .osd.nroff-help 15 ""  "    C-x \\&   - Remove padding"
+osd .osd.nroff-help 16 ""  "    A-C-i   - Restyle region"
+osd .osd.nroff-help 17 "" 
+osd .osd.nroff-help 18 ""  "    C-c C-h - Toggle simulated hilighting"
+osd .osd.nroff-help 96 "" 
+osd .osd.nroff-help 97 ""  " Abbreviation file is set to nroff.abr "
+osd .osd.nroff-help 98 "" 
+osd .osd.nroff-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
+
+0 define-macro bhook-nroff
+    set-variable .timestamp $timestamp
+    set-variable $timestamp "%Y/%M/%D %h:%m:%s"
+!emacro
+0 define-macro ehook-nroff
+    set-variable $timestamp .bhook-nroff.timestamp
+!emacro
+
+define-macro fhook-nroff
+    ; if arg is 0 this is a new file so add template 
+    !if &not @#
+        etfinsrt "nroff"
+    !endif
+    1 buffer-mode "indent"
+    1 buffer-mode "wrap"
+    1 buffer-mode "time"
+    1 buffer-mode "justify"
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.nroff
+        buffer-bind-unbound-key nroff-swap-hilight   "C-c C-h"
+    !endif
+    buffer-abbrev-file "nroff"
+    buffer-bind-unbound-key nroff-size           "C-c C-s"
+    buffer-bind-unbound-key nroff-roman          "C-c C-r"
+    buffer-bind-unbound-key nroff-bold           "C-c C-b"
+    buffer-bind-unbound-key nroff-italic         "C-c C-i"
+    buffer-bind-unbound-key nroff-mono           "C-c C-c"
+    buffer-bind-key nroff-para           "esc o"
+    buffer-bind-key nroff-para           "esc q"
+    buffer-bind-unbound-key nroff-bold-region    "C-c b"
+    buffer-bind-unbound-key nroff-mono-region    "C-c c"
+    buffer-bind-unbound-key nroff-italic-region  "C-c i"
+    buffer-bind-unbound-key nroff-add-padding    "C-c &"
+    buffer-bind-unbound-key nroff-remove-padding "C-x &"
+    buffer-bind-key nroff-prev           "C-c C-p"
+    .osd.nroff-help buffer-bind-key osd  "esc h"
+    set-variable %usr1mode "off"
+    ; setup emf folds
+    buffer-bind-unbound-key fold-current "f2"
+    buffer-bind-unbound-key fold-all     "f3"
+    auto-spell-init
+    ; execute user extensions if enabled
+    !if &exist my-fhook-nroff
+        my-fhook-nroff
+    !endif
+!emacro
+
+; setup nroff file folding and spell word adjuster
+set-variable .fhook-nroff.fold-open  "^\.S[SH]"
+set-variable .fhook-nroff.fold-close "^\.S[SH]"
+set-variable .fhook-nroff.fold-mopen "1"
+set-variable .fhook-nroff.fold-mnext "-1"
+
+ml-write "[Nroff file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "mynroff"
+

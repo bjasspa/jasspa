@@ -1,0 +1,140 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : 1998
+;  Last Modified : <991109.1610>
+;
+;  Description   : Command-line macro for creating a macros (emf) tags file
+;
+;  Usage
+;      me "@emftags"
+;      me "@emftags" <files> <dirs>
+;      me "@emftags" "-v%tag-option=rm"
+;      me "@emftags" "-v%tag-option=r" <files> <dirs>
+;
+;  History
+;
+;  Copyright (c) 1998-99 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; options r - recurse, a - append, m - multiple links to a tag
+set-variable %tag-option    &cond &exi %tag-option    %tag-option    ""
+set-variable %tag-filemask  &cond &exi %tag-filemask  %tag-filemask  ":*.emf:"
+set-variable %tag-ignoredir &cond &exi %tag-ignoredir %tag-ignoredir ":SCCS/:CVS/:"
+
+set-char-mask "2" "-$&#!%:@"
+
+define-macro emftags-add-file
+    set-variable $buffer-mask "luh12"
+    set-variable #l2 $buffer-fname
+    !if &seq &lef #l2 #g1 #g2
+        set-variable #l2 &rig #l2 #g1
+    !endif
+    ml-write &spr "[Parsing file %s]" #l2
+    1 buffer-mode "magic"
+    beginning-of-buffer
+    !repeat
+        !force -1 search-forward "^[ \t]*[01]?[ \t]*define-macro[ \t]"
+        !if $status
+            forward-word
+            set-variable #l1 $window-col
+            backward-word
+            set-variable #l1 &mid @wl $window-col &sub #l1 $window-col
+            set-variable #l3 @wl
+            beginning-of-line
+            next-window
+            !tjump &sin "m" %tag-option 4
+            beginning-of-buffer
+            !force search-forward &spr "^%s\t" #l1
+            !if &not $status
+                end-of-buffer
+                insert-string #l1
+                insert-string "\t"
+                insert-string #l2
+                insert-string "\t/^"
+                insert-string #l3
+                insert-string "$/"
+            !endif
+            next-window
+        !endif
+        !force forward-line
+    !until &not $status
+!emacro
+
+define-macro emftags-parse-tags
+    ml-write "All done! Parsing tags file."
+    beginning-of-buffer
+    set-mark
+    replace-string "\\\\" "\\\\\\\\"
+    end-of-buffer
+    sort-lines
+!emacro
+    
+define-macro emftags-process-buffers
+    !while &not &iseq $buffer-bname "tags"
+        !if &bmod "dir"
+            set-variable #l0 $buffer-bname
+            set-variable #l1 $buffer-fname
+            0 delete-buffer #l0
+            !if &not &lfind %tag-ignoredir #l0
+                emftags-process-directory #l1
+            !endif
+        !else
+            beginning-of-buffer
+            emftags-add-file
+            0 delete-buffer $buffer-bname
+        !endif
+    !done
+!emacro
+
+define-macro emftags-process-directory
+    set-variable #l0 @1
+    set-variable #l1 0
+    !while &not &seq &set #l2 &lget %tag-filemask &inc #l1 1 ""
+        !force find-file &cat #l0 #l2 
+        emftags-process-buffers
+    !done
+!emacro
+
+
+define-macro emftags
+    !if &seq &lget %tag-filemask 1 ""
+        ml-write "[No input file mask set!]"
+        !abort
+    !endif
+    delete-other-windows
+    split-window-vertically
+    find-buffer "*scratch*"
+    find-file "tags"
+    !force 0 delete-buffer "*scratch*"
+    set-variable #g1 &rsin "/" $buffer-fname
+    set-variable #g2 &lef $buffer-fname #g1
+    !if &not &sin "a" %tag-option
+        beginning-of-buffer
+        set-mark
+        end-of-buffer
+        kill-region
+        -1 yank
+    !else
+        end-of-buffer
+    !endif
+    !if &sin "r" %tag-option
+        set-variable %tag-filemask &lins %tag-filemask -1 "[^.]*/"
+    !endif
+    1 buffer-mode "magic"
+    1 buffer-mode "exact"
+    next-window
+    !if &iseq $buffer-bname "tags"
+        emftags-process-directory #g2
+    !else
+        emftags-process-buffers
+    !endif
+    emftags-parse-tags
+!emacro
+  
+define-macro start-up
+    emftags
+    quick-exit
+!emacro
+
+; load in user extensions if found
+!force execute-file "myemftags"

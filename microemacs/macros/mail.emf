@@ -1,0 +1,630 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Last Modified : <000719.0012>
+;
+;  Description   : Macros used for sending e-mails
+;
+;  Copyright (c) 1998-99 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+!if &seq .hilight.mail "ERROR"
+    set-variable .hilight.mail  &pinc .hilight.next 1
+    set-variable .hilight.vmh   &pinc .hilight.next 1
+    set-variable .osd.mail-help &pinc .osd.next 1
+    set-variable .osd.mail-ad   &pinc .osd.next 1
+    set-variable .osd.mail-adc  &pinc .osd.next 1
+    set-variable .osd.mail-adl  &pinc .osd.next 1
+    set-variable .osd.mail-adr  &pinc .osd.next 1
+!endif
+0 hilight  .hilight.mail 2 100       $global-scheme
+hilight .hilight.mail 258 "Status:"  .scheme.variable
+hilight .hilight.mail 256 "Date:"    .scheme.keyword
+hilight .hilight.mail 256 "From:"    .scheme.keyword
+hilight .hilight.mail 256 "To:"      .scheme.keyword
+hilight .hilight.mail 256 "Cc:"      .scheme.keyword
+hilight .hilight.mail 256 "CC:"      .scheme.keyword
+hilight .hilight.mail 258 "Subject:" .scheme.keyword
+hilight .hilight.mail 256 "Fcc:"     .scheme.keyword
+hilight .hilight.mail 258 ">"        .scheme.comment
+hilight .hilight.mail 258 "----"     .scheme.header
+hilight .hilight.mail 258 "--text follows this line--" .scheme.error
+hilight .hilight.mail 0x40 "\esA" ""                   $global-scheme
+hilight .hilight.mail 0xc0 "\esB" "" .hilight.vmh      $global-scheme
+;
+; Mail checker
+define-macro mail-check
+    !if &seq &set %vm-mail-src &reg "/history" &cat $platform "/mail-src" "" ""
+        ml-write "[Incoming mail file not setup! Use Help/User setup]"
+        !abort
+    !endif
+    ; reset the callback if its automatic
+    !if &set #l0 &reg "/history" &cat $platform "/mail-check" "0"
+        &mul #l0 1000 create-callback mail-check
+    !endif
+    ; if the user queues outgoing mail
+    !if &reg "/history" &cat $platform "/mail-queue" "0"
+        !if &seq &set %vm-mail-dir &reg "/history" &cat $platform "/mail-dir" "" ""
+            ml-write "[Mail directory not setup! Use Help/User setup]"
+            !abort
+        !endif
+        ; if theres some to go - send it
+        !if &gre &stat "s" &cat %vm-mail-dir "outgoing.box" 0
+            mail-send-queue
+        !endif
+    !endif
+    !if &seq "" &set #l0 &reg "/history" &cat $platform "/mail-get" ""
+        ml-write &spr "Checking for mail in %s..." %vm-mail-src
+    !else
+        ml-write &spr "Getting mail into %s..." %vm-mail-src
+        !force 2 pipe-shell-command #l0 "*VM get-mail*"
+    !endif
+    set-variable #l0 &cond &gre &stat "s" %vm-mail-src 0 "M" "-"
+    !if @#
+        !if &not &seq &mid $mode-line 2 1 #l0
+            set-variable #l1 &rig $mode-line &cond &seq &mid $mode-line 2 1 "%" 4 3
+            set-variable $mode-line &cat &cat &lef $mode-line 2 #l0 #l1
+            execute-named-command &kbind "redraw"
+            !if &seq #l0 "M"
+                !bell 0
+                !bell 2
+            !endif
+        !endif
+    !else
+        ; called from vm so new mail will be read..
+        set-variable #l1 &rig $mode-line &cond &seq &mid $mode-line 2 1 "%" 4 3
+        set-variable $mode-line &cat &cat &lef $mode-line 2 "-" #l1
+    !endif
+    ml-clear
+    !return &seq #l0 "M"
+!emacro
+;
+; call the following macro to stop mail checking
+define-macro stop-mail-check
+    -1 create-callback mail-check
+!emacro
+
+0 define-macro mail-data-insert
+    !if &seq &set #l9 &reg "/history/" &spr "%s/mail-insert%s" $platform @# "" ""
+        ml-write &spr "[%s/mail-insert%s is not set up]" $platform @#
+        !abort
+    !endif
+    !force set-variable #l4 @1
+    !if &not $status
+        set-variable #l4 @ml01 &spr "Insert(%d) file" @#
+    !endif
+    !if &not &sequ &stat "t" #l4 "R"
+        ml-write &spr "[%s is not a regular file]" #l4
+        !abort
+    !endif
+    set-variable #l0 $buffer-bname
+    set-variable #l3 $temp-name
+    set-variable #l6 &rig #l4 &rsin "/" #l4
+    set-variable #l8 #l4
+    !if &band $system 0x100
+        ; on win32 and dos change '/' to '\'
+        var-str-sub #l8 "/" "\\"
+    !endif
+    set-variable #l1 0
+    !while &set #l2 &sin "%" &rig #l9 #l1
+        set-variable #l2 &add #l1 #l2
+        set-variable #l5 &mid #l9 #l2 1
+        !if &seq #l5 "i"
+            set-variable #l5 #l8
+        !elif &seq #l5 "o"
+            set-variable #l5 #l3
+        !elif &seq #l5 "b"
+            set-variable #l5 #l6
+        !endif
+        set-variable #l5 &cat &lef #l9 &sub #l2 1 #l5
+        set-variable #l1 &len #l5
+        set-variable #l9 &cat #l5 &rig #l9 &add #l2 1
+    !done
+    ; set the *inbox buffer's file name to the out name so the dir of execution
+    ; will be correct
+    !force 2 pipe-shell-command #l9 "*Insert data*"
+    insert-file #l3
+    !if &band $system 0x100
+        shell-command &cat "del " #l3
+    !else
+        shell-command &cat "rm " #l3
+    !endif
+    ml-write &spr "[Inserted %s - logged to *Insert data*]" #l4
+!emacro
+
+; E-mail address insertion ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+0 define-macro-file organize organizer-init
+
+set-variable .osd.mail-adw 32
+set-variable .osd.mail-add 16
+
+0 define-macro osd-mail-addr-insert
+    !if @?
+        !if &seq $result .osd-mail-addr-set.value
+            set-variable .mail-expand-abbrev.addr .osd-mail-addr-set.value
+            !abort
+        !endif
+        set-variable .osd-mail-addr-set.value $result
+        set-variable .osd-mail-addr-abbrev.recno @#
+        set-variable .osd-mail-addr-abbrev.value &reg "/org" &spr "addr/%d/%s/emailabr" &abs @# &cond &les @# 0 "work" "home" ""
+        osd .osd.mail-adr 70  "S" "A&bbrev:" 20
+        osd .osd.mail-adr 80  "ExHf" .scheme.osd-entry "########" 1 osd-mail-addr-abbrev
+    !elif &seq .osd-mail-addr-set.value ""
+        ml-write "[No address selected]"
+    !else
+        set-variable .mail-expand-abbrev.addr .osd-mail-addr-set.value
+    !endif
+!emacro
+
+0 define-macro osd-mail-addr-abbrev
+    !if &les @# 0
+        set-variable .value @ml25 "" .value
+        set-registry "/org" &spr "addr/%d/%s/emailabr" &abs .recno &cond &les .recno 0 "work" "home" .value
+        mark-registry "/org" "u"
+    !else
+        set-variable $result .value
+    !endif
+!emacro
+
+0 define-macro osd-mail-addr-set
+    !if &les @# 0
+        set-variable .value @ml25 "" .value
+        osd .osd.mail-adr 70  "S" "Abbrev:"
+        osd .osd.mail-adr 80  "Hf" .scheme.osd-entry "        "
+    !else
+        set-variable $result .value
+    !endif
+!emacro
+
+0 define-macro osd-mail-addr-parse
+    !if &seq .org.addr-reg "ERROR"
+        execute-file "organiza"
+    !endif
+    set-variable #l6 &cond @# ".*" &spr ".*%s.*" .osd-mail-addr-set.value
+    set-variable #l0 .org.addr
+    set-variable #l1 .org.iaddr
+    set-variable #l2 0
+    -1 osd .osd.mail-adc
+    osd .osd.mail-adc 0 "fsS" .scheme.osd-child .osd.mail-adw .osd.mail-add 0 -1 
+    set-variable .org.addr "0"
+    set-variable .org.iaddr &cond &gre .org.iaddr -1 0 -1
+    !repeat
+        org-addr-inc-recno
+        !if &not &seq .org.addr "*"
+            set-variable #l3 &reg "/org" &spr "addr/%d/home/email" .org.addr "" 
+            set-variable #l4 &reg "/org" &spr "addr/%d/work/email" .org.addr "" 
+            !if &not &and &seq #l3 "" &seq #l4 ""
+                !if &seq &set #l5 &reg "/org" &spr "addr/%d/nname" .org.addr "" ""
+                    set-variable #l5 &spr "%s %s" &reg "/org" &spr "addr/%d/fname" .org.addr "" &reg "/org" &spr "addr/%d/sname" .org.addr ""
+                !endif
+                !if &not &seq #l3 ""
+                    set-variable #l3 &spr "%s%s <%s>" &trb #l5 &cond &seq #l4 "" "" " (Home)" #l3
+                    !if &xiseq #l3 #l6
+                        osd .osd.mail-adc &inc #l2 1 "Rx" #l3 .org.addr osd-mail-addr-insert
+                    !endif
+                !endif
+                !if &not &seq #l4 ""
+                    set-variable #l4 &spr "%s%s <%s>" &trb #l5 &cond &seq #l3 "" "" " (Work)" #l4
+                    !if &xiseq #l4 #l6
+                        osd .osd.mail-adc &inc #l2 1 "Rx" #l4 &sub 0 .org.addr osd-mail-addr-insert
+                    !endif
+                !endif
+            !endif
+        !endif
+    !until &seq .org.addr "*"
+    !if &not #l2
+        osd .osd.mail-adc 1 "" "<no matches>"
+    !endif
+    set-variable .org.addr #l0
+    set-variable .org.iaddr #l1
+!emacro
+
+0 define-macro osd-mail-addr-resize
+    set-variable #l0 &sub &lef $result 4 &add 18 &band $scroll-bar 0x01
+    set-variable #l1 &sub &mid $result 4 4 9
+    !if &les #l0 26
+        !if &les #l1 3
+            !abort
+        !endif
+        set-variable #l0 26
+    !endif
+    !if &les #l1 3
+        set-variable #l1 3
+    !endif
+    ; change the width
+    !if &band $scroll-bar 0x01
+        set-variable #l0 &sub #l0 1
+    !endif
+    !if &band $scroll-bar 0x40
+        set-variable #l1 &sub #l1 1
+    !endif
+    set-variable .osd.mail-adw #l0
+    set-variable .osd.mail-add #l1
+    osd .osd.mail-adc 0 "fsS" .scheme.osd-child #l0 #l1 0 -1
+    osd .osd.mail-adl 20 "ExHcfz" .scheme.osd-entry #l0 1 "" 1 osd-mail-addr-set
+    osd .osd.mail-adl 40 "IbH" .scheme.osd-sbar #l0 #l1 .osd.mail-adc
+!emacro
+
+osd .osd.mail-adl 0   ""
+osd .osd.mail-adl 10  "S" " &Address or Filter" 20
+osd .osd.mail-adl 20  "ExHcfz" .scheme.osd-entry .osd.mail-adw 1 "" 1 osd-mail-addr-set
+osd .osd.mail-adl 30  ""
+osd .osd.mail-adl 40  "IbH" .scheme.osd-sbar .osd.mail-adw .osd.mail-add .osd.mail-adc
+osd .osd.mail-adl 50  ""
+
+osd .osd.mail-adr 0   ""
+osd .osd.mail-adr 5   ""
+osd .osd.mail-adr 10  "BHRx" .scheme.osd-ebtt " &Filter "  0 osd-mail-addr-parse
+osd .osd.mail-adr 20  ""
+osd .osd.mail-adr 30  "BH" .scheme.osd-ebtt " &Insert "    f osd-mail-addr-insert
+osd .osd.mail-adr 40  ""
+osd .osd.mail-adr 50  "BH"  .scheme.osd-ebtt " &Cancel "   f void
+osd .osd.mail-adr 60  ""
+
+-1 osd .osd.mail-ad
+osd .osd.mail-ad 0  "batcdHR" 3 6 80 .scheme.osd-title "Insert E-Mail Address" osd-mail-addr-resize
+osd .osd.mail-ad 10  ""
+osd .osd.mail-ad 20  "h" " "
+osd .osd.mail-ad 30  "Iht" 1 .osd.mail-adl
+osd .osd.mail-ad 40  "h" "  "
+osd .osd.mail-ad 50  "Ih" .osd.mail-adr
+osd .osd.mail-ad 60  "" " "
+
+0 define-macro mail-expand-abbrev
+    organizer-init
+    backward-char
+    set-variable .addr ""
+    !if &set #l0 &inw @wc
+        forward-char
+        set-variable #l0 $window-col
+        backward-word
+        set-variable #l0 &sub #l0 $window-col
+        set-variable #l1 &mid @wl $window-col #l0
+        #l0 forward-char
+        ; search through the address book looking for an abbrev
+        set-variable #l2 0
+        !while &les &inc #l2 1 .org.naddr
+            !if &seq #l1 &reg "/org" &spr "addr/%d/home/emailabr" #l2 ""
+                set-variable .addr &reg "/org" &spr "addr/%d/home/email" #l2 ""
+                set-variable #l2 .org.naddr
+            !elif &seq #l1 &reg "/org" &spr "addr/%d/work/emailabr" #l2 ""
+                set-variable .addr &reg "/org" &spr "addr/%d/work/email" #l2 ""
+                set-variable #l2 .org.naddr
+            !endif
+        !done
+    !else
+        forward-char
+    !endif
+    !if &seq .addr ""
+        osd-mail-addr-parse
+        set-variable .osd-mail-addr-set.value ""
+        osd .osd.mail-adr 70  "S" "Abbrev:"
+        osd .osd.mail-adr 80  "Hf" .scheme.osd-entry "        "
+        !force .osd.mail-ad osd
+    !endif
+    !if &not &seq .addr ""
+        !if #l0
+            #l0 backward-delete-char
+            -1 yank
+        !endif
+        !if &and &set #l0 &rsin "<" .addr &set #l1 &rsin ">" .addr 
+            !if &gre #l1 #l0
+                set-variable .addr &mid .addr #l0 &sub #l1 &add #l0 1
+            !endif
+        !endif
+        insert-string .addr
+    !endif
+!emacro
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+osd .osd.mail-help 0  "batcdH" 9 3 99 .scheme.osd-title "Send Mail Help"
+osd .osd.mail-help 2  ""
+osd .osd.mail-help 3  ""  "    esc h   - View this help page"
+osd .osd.mail-help 4  ""
+osd .osd.mail-help 5  ""  "    C-c C-c - Send mail"
+osd .osd.mail-help 6  ""
+osd .osd.mail-help 7  ""  "    C-c C-i - Insert given file, method 1"
+osd .osd.mail-help 8  ""  "    C-c C-z - Insert given file, method 2"
+osd .osd.mail-help 9  ""
+osd .osd.mail-help 10 ""  " Abbreviation file is set to mail.eaf, mail also uses "
+osd .osd.mail-help 11 ""  " the organizer(3) address book"
+osd .osd.mail-help 12 ""
+osd .osd.mail-help 13 ""  " See Help/User Setup/Mail to setup the command-lines"
+osd .osd.mail-help 14 ""  " Windows mail can use postie or blat"
+osd .osd.mail-help 15 ""
+osd .osd.mail-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
+
+define-macro mail
+    !force 0 find-buffer "Mail"
+    !if $status
+        !return
+    !endif
+    !if &seq &set %vm-mail-dir &reg "/history" &cat $platform "/mail-dir" "" ""
+        ml-write "[Mail directory not setup! Use Help/User setup]"
+        !abort
+    !endif
+    find-buffer "Mail"
+    set-variable #l1 &cat %vm-mail-dir "smail.new"
+    set-variable $buffer-fname #l1
+    1 buffer-mode "backup"
+    ; save the buffer so that the previous mail is backed up
+    0 save-buffer
+    set-variable $buffer-hilight .hilight.mail
+    insert-string "To:      \n"
+    insert-string "Subject: \n"
+    !if &not &seq &set #l1 &reg "/history" "mail/fcc" "" ""
+        insert-string &spr "Fcc:     %s%s\n" %vm-mail-dir #l1
+    !endif
+    insert-string "--text follows this line--\n"
+    !if &not &seq &set #l1 &reg "/history" "mail/sig" "" ""
+        end-of-buffer
+        !force insert-file &cat %vm-mail-dir #l1
+        !if &not $status
+            ml-write &spr "[Failed to insert signature file %s]" &cat %vm-mail-dir #l1
+        !endif
+    !endif
+    beginning-of-buffer
+    end-of-line
+    fhook-mail
+!emacro
+
+0 define-macro fhook-mail
+    set-variable $buffer-fhook fhook-mail
+    -1 buffer-mode "edit"
+    1 buffer-mode "wrap"
+    1 buffer-mode "indent"
+    1 buffer-mode "justify"
+    !if &not &seq &find "mail" ".eaf" "ERROR"
+        buffer-abbrev-file "mail"
+    !endif
+    buffer-bind-key mail-send          "C-c C-c"
+    1 buffer-bind-key mail-data-insert "C-c C-i"
+    2 buffer-bind-key mail-data-insert "C-c C-z"
+    .osd.mail-help buffer-bind-key osd "esc h"
+    ; Must explictily setup the auto-spell reset and abbrev as there is no fhook
+    set-variable :auto-spell-reset   "mail"
+    auto-spell-init
+!emacro
+
+; Extracts a list of addresses from the current line
+;
+; Typically on a To: or Cc: line, returns the address list in #p9
+0 define-macro mail-get-address-list
+    set-variable #p9 ""
+    set-variable #l1 0
+    search-forward ":"
+    backward-char
+    !while &not &seq @wc "\n"
+        forward-char
+        set-variable #l2 $window-col
+        !force -1 search-forward ","
+        !if $status
+            backward-char
+        !else
+            end-of-line
+        !endif
+        set-variable #l3 &mid @wl #l2 &sub $window-col #l2
+        !if &set #l2 &sin "<" #l3
+            set-variable #l3 &rig #l3 #l2
+            !if &set #l2 &sin ">" #l3
+                set-variable #l3 &lef #l3 &sub #l2 1
+            !endif
+        !elif &set #l2 &sin "(" #l3
+            set-variable #l3 &lef #l3 &sub #l2 1
+        !endif
+        !if &set #l2 &sin " " #l3
+            set-variable #l3 &cat &lef #l3 &sub #l2 1 &rig #l3 #l2
+            !jump -2
+        !endif
+        !if &set #l2 &sin "\t" #l3
+            set-variable #l3 &cat &lef #l3 &sub #l2 1 &rig #l3 #l2
+            !jump -2
+        !endif
+        !if &not &seq #l3 ""
+            !if &not &seq #p9 ""
+                set-variable #p9 &spr "%s,%s" #p9 #l3
+            !else
+                set-variable #p9 #l3
+            !endif
+        !endif
+    !done
+!emacro
+
+0 define-macro mail-send-msg
+    !if &seq &set #l0 &reg "/history" &cat $platform "/mail-send" "" ""
+    ml-write "[Send mail command not set up! Use Help/User setup]"
+    !abort
+    !endif
+    beginning-of-buffer
+    1 buffer-mode "magic"
+    !force search-forward "^--text follows this line--"
+    !if &not $status        ; Search failed. Error & Quit.
+    ml-write "Cannot find mail-marker"
+    !abort
+    !endif
+    beginning-of-line
+    set-mark
+    forward-line
+    kill-region
+    -1 yank
+    newline
+    backward-line
+    set-alpha-mark "T"
+    -1 buffer-mode "exact"
+    !force search-backward "^Fcc:"
+    !if $status
+        4 forward-char
+        !while &sin @wc " \t"
+            forward-char
+        !done
+        set-variable #l3 &rig @wl $window-col
+        !if &not &seq #l3 ""
+            beginning-of-line
+            set-mark
+            forward-line
+            kill-region
+            -1 yank
+            beginning-of-buffer
+            ; get ascii time in #l9
+            ascii-time
+            insert-string &spr "From %s %s\n" $MENAME #l9
+            0 append-buffer #l3
+            beginning-of-buffer
+            set-mark
+            forward-line
+            kill-region
+            -1 yank
+        !endif
+    !endif
+    ; reduce ID lines to one line
+    goto-alpha-mark "T"
+    !force backward-line
+    !while $status
+        !if &sin @wc " \t"
+            !force backward-delete-char
+            !if $status
+                beginning-of-line
+            !endif
+        !else
+            !force backward-line
+        !endif
+    !done
+    goto-alpha-mark "T"
+    set-variable #l5 ""
+    set-variable #l6 ""
+    set-variable #l7 ""
+    !if &sin "%s" #l0
+        !force search-backward "^Subject:"
+        !if $status
+            !force -1 replace-string "\\\\" "\\\\"
+            beginning-of-line
+            !force -1 replace-string "\"" "\\\""
+            beginning-of-line
+            set-variable #l5 &trb &rig @wl 8
+            goto-alpha-mark "T"
+            !force search-backward "^Subject:"
+            !while $status
+                set-mark
+                forward-line
+                kill-region
+                -1 yank
+                !force search-backward "^Subject:"
+            !done
+            goto-alpha-mark "T"
+        !endif
+    !endif
+    !if &sin "%t" #l0
+        !force search-backward "^To:"
+        !while $status
+            mail-get-address-list
+            set-variable #l6 #l9
+            beginning-of-line
+            set-mark
+            forward-line
+            kill-region
+            -1 yank
+            !force search-backward "^To:"
+        !done
+        goto-alpha-mark "T"
+    !endif
+    !if &sin "%c" #l0
+        !force search-backward "^Cc:"
+        !while $status
+            mail-get-address-list
+            set-variable #l7 #l9
+            beginning-of-line
+            set-mark
+            forward-line
+            kill-region
+            -1 yank
+            !force search-backward "^Cc:"
+        !done
+        goto-alpha-mark "T"
+    !endif
+    set-variable #l8 $buffer-fname
+    2 write-buffer #l8
+    !if @#
+        delete-buffer $buffer-bname
+    !endif
+    set-variable #l1 0
+    !while &set #l2 &sin "%" &rig #l0 #l1
+        set-variable #l2 &add #l1 #l2
+        set-variable #l3 &mid #l0 #l2 1
+        !if &seq #l3 "f"
+            set-variable #l3 $MENAME
+        !elif &seq #l3 "s"
+            set-variable #l3 #l5
+        !elif &seq #l3 "t"
+            set-variable #l3 #l6
+        !elif &seq #l3 "c"
+            set-variable #l3 #l7
+        !elif &seq #l3 "o"
+            set-variable #l3 #l8
+        !endif
+        set-variable #l3 &cat &lef #l0 &sub #l2 1 #l3
+        set-variable #l1 &len #l3
+        set-variable #l0 &cat #l3 &rig #l0 &add #l2 1
+    !done
+    ; blat %o -f %f -s \"%s\" -t \"%t\" -c \"%c\""
+    ; /usr/lib/sendmail -oi -f %f -oem -odb -t < %o
+    !if @#
+        !force 2 ipipe-shell-command #l0 "*Sent Mail*"
+        ml-write "[Sent Mail - logged to *Sent Mail*]"
+    !else
+        !force 2 pipe-shell-command #l0 "*Sent Mail*"
+    !endif
+!emacro
+
+define-macro mail-send-queue
+    find-file &cat %vm-mail-dir "outgoing.box" @mna
+    !force narrow-buffer
+    beginning-of-buffer
+    -1 buffer-mode "backup"
+    1 buffer-mode "magic"
+    set-variable #l0 0
+    set-mark
+    !force search-forward "^--MicroEmacs-send-mail-end-marker--$"
+    !while $status
+        ml-write &spr "[Sending mail %d]" &inc #l0 1
+        beginning-of-line
+        3 narrow-buffer
+        0 mail-send-msg
+        beginning-of-buffer
+        set-mark
+        end-of-buffer
+        kill-region
+        -1 yank
+        !force narrow-buffer
+        beginning-of-buffer
+        set-mark
+        forward-line
+        kill-region
+        !force search-forward "^--MicroEmacs-send-mail-end-marker--$"
+    !done
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    kill-region
+    -1 yank
+    save-buffer
+    !force 0 delete-buffer $buffer-bname
+    !if #l0
+        ml-write &spr "[Sent %d mail messages]" #l0
+    !else
+        ml-write &spr "[Send mail queue is empty]" #l0
+    !endif
+!emacro
+
+define-macro mail-send
+    !if &reg "/history" &cat $platform "/mail-queue" "0"
+        end-of-buffer
+        0 write-buffer $buffer-fname
+        insert-string "--MicroEmacs-send-mail-end-marker--"
+        0 append-buffer &cat %vm-mail-dir "outgoing.box" @mna
+        !force 0 delete-buffer $buffer-bname
+        ml-write "[Added mail to queue - send using mail-send-queue]"
+    !else
+        !force narrow-buffer
+        mail-send-msg
+    !endif
+!emacro

@@ -1,0 +1,361 @@
+!if &band .hilight.flags 0x02
+    !if &not &exist .hilight.gdb
+        set-variable .hilight.gdb &pinc .hilight.next 1
+    !endif
+    0 hilight  .hilight.gdb 0           $global-scheme
+    hilight .hilight.gdb 2 "(gdb)"   .scheme.keyword
+    hilight .hilight.gdb 2 "Source file is more recent" .scheme.error
+    hilight .hilight.gdb 2 "(dbx)"   .scheme.keyword
+!endif
+define-macro ipipe-break
+    ipipe-write "\CC"
+!emacro
+
+0 define-macro ipipe-minoutput
+    set-variable #l2 @cck
+    set-variable #l3 @cc
+    !if &not &bmod "pipe"
+        set-variable $buffer-input ""
+        !if &gre &len @cc 1
+            !goto exec-lbl
+        !endif
+        insert-string @cc
+        !return
+    !elif &les &len @cc 2
+        goto-alpha-mark "I"
+        ipipe-write @cc
+    !elif &set #l0 &lfi "|tab|backward-delete-char|newline|" #l3
+        goto-alpha-mark "I"
+        ipipe-write &lget "|\t|\b|\CJ|" #l0
+    !elif &set #l0 &lfi "|backspace|" #l2
+        goto-alpha-mark "I"
+        ipipe-write &lget "|\b|" #l0
+    !elif &seq "quote-char" #l3
+        goto-alpha-mark "I"
+        ml-write "Quote: "
+        ipipe-write @cqk
+    !else
+*exec-lbl
+        !if &seq #l3 "ERROR"
+            ml-write &spr "[Key not bound \"%s\"]" #l2
+            !abort
+        !else
+            execute-line &spr "!nma %s %s" &cond @? @# "" #l3
+        !endif
+    !endif
+!emacro
+
+0 define-macro ipipe-output 
+    set-variable #l2 @cck
+    set-variable #l3 @cc
+    !if &les &len @cc 2
+        goto-alpha-mark "I"
+        ipipe-write @cc
+    !elif &and &band $system 0x100 &seq #l3 "newline" 
+        ; For Windows we need a \r\n sequence - over-ride the default.
+        ipipe-write "\CM\CJ"
+    !elif &set #l0 &lfi "|tab|backward-delete-char|newline|beginning-of-line|backward-char|forward-delete-char|end-of-line|forward-char|kill-line|recenter|forward-line|backward-line|expand-abbrev|forward-word|backward-word|" #l3
+        goto-alpha-mark "I"
+        ipipe-write &lget "|\t|\b|\CJ|\CA|\CB|\CD|\CE|\CF|\CK|\CL|\CN|\CP|\e\e|\ef|\eb|" #l0
+    !elif &set #l0 &lfi "|backspace|" #l2
+        goto-alpha-mark "I"
+        ipipe-write &lget "|\b|" #l0
+    !elif &seq "yank" #l3
+        goto-alpha-mark "I"
+        ipipe-write @y
+    !elif &seq "quote-char" #l3
+        goto-alpha-mark "I"
+        ml-write "Quote: "
+        ipipe-write @cqk
+    !elif &and &seq "mouse-event" #l3 &sin "yank" &reg "history/mouse" #l2 ""
+        goto-alpha-mark "I"
+        ipipe-write @y
+    !elif &seq #l3 "ERROR"
+        ml-write &spr "[Key not bound \"%s\"]" #l2
+        !abort
+    !else
+        execute-line &spr "!nma %s %s" &cond @? @# "" #l3
+    !endif
+!emacro 
+
+0 define-macro ipipe-mode
+    -1 buffer-mode "usr2"
+    -1 buffer-mode "usr3"
+    -1 buffer-mode "usr4"
+    !if &equ @# 1
+        set-variable $buffer-input ipipe-output
+        1 buffer-mode "lock"
+        1 buffer-mode "usr3"
+        goto-alpha-mark "I"
+    !elif &equ @# 2
+        set-variable $buffer-input ""
+        1 buffer-mode "lock"
+        1 buffer-mode "usr4"
+        goto-alpha-mark "I"
+        !repeat
+            0 screen-update
+            set-variable #l0 @cqk
+            !if &not &bmo "pipe"
+                !return
+            !elif &equ &len #l0 1
+                ipipe-write #l0
+            !elif &seq #l0 "f2"
+                0 ipipe-mode
+                !return
+            !elif &seq #l0 "f3"
+                1 ipipe-mode
+                !return
+            !endif
+        !until 0
+    !else
+        set-variable $buffer-input ""
+        -1 buffer-mode "lock"
+        1 buffer-mode "usr2"
+    !endif
+!emacro
+
+0 define-macro ipipe-input
+    !if &not @#
+        ; process has ended, clear-up
+        set-variable $buffer-input ""
+        set-variable $buffer-ipipe ""
+        buffer-unbind-key "f2"
+        buffer-unbind-key "f3"
+        buffer-unbind-key "f4"
+    !endif
+    !if &bmo "usr4"
+        0 screen-update
+    !endif
+!emacro
+
+0 define-macro ipipe-rerun
+    beginning-of-buffer
+    !if &seq &lef @wl 3 "cd "
+        forward-line
+    !endif
+    0 ipipe-shell-command @wl $buffer-bname @mna
+    popup-window $buffer-bname
+    !if &not &seq $buffer-fhook "fhook-ipipe"
+        ; gdb & dbx + others dont auto setup the hook, they do it manually
+        fhook-ipipe
+    !endif
+!emacro
+
+define-macro fhook-ipipe
+    set-variable $buffer-mask "luh1"
+    set-variable $buffer-fhook "fhook-ipipe"
+    buffer-bind-key ipipe-kill "C-c C-k"
+    buffer-bind-key ipipe-break "C-c C-c"
+    buffer-bind-key ipipe-rerun "C-return"
+    buffer-bind-key ipipe-rerun "C-j"
+    !if &seq $buffer-bname "*shell*"
+        set-variable $buffer-ipipe ipipe-input
+        2 buffer-bind-key ipipe-mode "f4"
+    !elif &seq $buffer-bname "*gdb*"
+        set-variable $buffer-dhook gdb-dbx-reset-line
+        set-variable $buffer-ipipe gdb-input
+        !if &band .hilight.flags 0x02
+            set-variable $buffer-hilight .hilight.gdb
+        !endif
+        set-variable :last-line 1
+    !elif &seq $buffer-bname "*dbx*"
+        set-variable $buffer-dhook gdb-dbx-reset-line
+        set-variable $buffer-ipipe dbx-input
+        !if &band .hilight.flags 0x02
+            set-variable $buffer-hilight .hilight.gdb
+        !endif
+        set-variable :last-line 1
+;        ipipe-write "set $showfilename=2\nset $repeatmode=1\n"
+;        ipipe-write "alias n `next`\nalias s `step`\nalias p `print`\nalias c `cont`\nalias b `stop in`\n"
+    !else
+        set-variable $buffer-input ipipe-minoutput
+        !if &seq $buffer-bname "*compile*"
+            set-variable :mouse-word-select "mouse-get-next-line"
+        !elif &seq $buffer-bname "*grep*"
+            set-variable :mouse-word-select "mouse-get-next-line"
+        !endif
+        !return
+    !endif
+    -1 buffer-mode "wrap"
+    1 buffer-mode "magic"
+    0 buffer-bind-key ipipe-mode "f2"
+    1 buffer-bind-key ipipe-mode "f3"
+    1 ipipe-mode
+    ; execute user extensions if enabled
+    !if &exi my-fhook-ipipe
+        my-fhook-ipipe
+    !endif
+!emacro
+
+
+define-macro ishell
+    set-variable #l0 $buffer-bname
+    !force 0 find-buffer "*shell*"
+    !if &and $status &bmod "pipe"
+        find-buffer #l0
+    !elif &band $system 0x100           ; is it MS-DOS type system ?
+        !if &seq $platform "win32"
+            ; For windows DOS shell in a window we need to drop the command
+            ; shell (!c!) and run a detached process (!d!). Optionally allow
+            ; the user to run a different command shell %comspec2. This 
+            ; must be a 32-bit app, so if you use a 16-bit 4DOS as the default
+            ; command shell, you will need to set %comspec2 to "command.com"
+            4 ipipe-shell-command &cond &seq $ME_ISHELL "ERROR" $COMSPEC $ME_ISHELL "*shell*"
+        !else
+            0 ipipe-shell-command $COMSPEC "*shell*"
+        !endif
+    !else
+        0 ipipe-shell-command $SHELL "*shell*"
+    !endif
+    popup-window "*shell*"
+!emacro
+
+0 define-macro gdb-dbx-reset-line
+    set-variable #l0 $buffer-bname
+    !if &not &seq %gdbdbx1 "ERROR"
+        !force 0 find-buffer %gdbdbx1
+        !if $status
+            !force 0 goto-line %gdbdbx2
+            set-variable $line-scheme -1
+            find-buffer #l0
+        !endif
+        unset-variable %gdbdbx1
+    !endif
+!emacro
+
+0 define-macro gdb-add-breakpoint
+    set-variable #l0 &spr "b %s:%s\n" &rig $buffer-fname &rsin "/" $buffer-fname $window-aline
+    set-variable #l1 $buffer-bname
+    !force popup-window "*gdb*"
+    !if &not $status
+        popup-window #l1
+        ml-write "No *gdb* running!"
+        !abort
+    !endif
+    ipipe-write #l0
+    popup-window #l1
+!emacro
+
+0 define-macro gdb-input
+    set-variable #l1 $buffer-bname
+    goto-alpha-mark "I"
+    beginning-of-line
+    set-variable #g4 #l1
+    !force &sub -1 &sub $window-line :last-line search-backward "\CZ\CZ"
+    !if $status
+        gdb-dbx-reset-line
+        2 forward-char
+        set-variable #l2 &rig @wl $window-col
+        set-variable #l3 &lef #l2 &sub &sin ":" #l2 1
+        set-variable #l2 &rig #l2 &sin ":" #l2
+        set-variable %gdbdbx2 &lef #l2 &sub &sin ":" #l2 1
+        2 backward-char
+        set-mark
+        forward-line
+        kill-region
+        1 scroll-up
+        -1 yank
+        forward-char
+        !force find-file #l3 @mna
+        !if $status
+            set-variable %gdbdbx1 $buffer-bname
+            find-buffer #l1
+            popup-window %gdbdbx1
+            !force 0 goto-line %gdbdbx2
+            !if $status
+                set-variable $line-scheme .scheme.trace
+                recenter
+            !endif
+            popup-window #l1
+        !endif
+    !else
+        forward-line
+    !endif
+    goto-alpha-mark  "I"
+    set-variable :last-line $window-line
+    !if &not @#
+        ; process has ended, clear-up
+        gdb-dbx-reset-line
+        0 ipipe-input
+    !endif
+!emacro
+
+define-macro gdb
+    set-variable #l0 $buffer-bname
+    !force 0 find-buffer "*gdb*"
+    !if $status
+        find-buffer #l0
+        popup-window  "*gdb*"
+    !else
+        set-variable #l0 @ml01 "gdb program"
+        0 ipipe-shell-command &cat "gdb -f " #l0 "*gdb*"
+        popup-window "*gdb*"
+        fhook-ipipe
+    !endif
+    global-bind-key gdb-add-breakpoint "f9"
+!emacro
+
+0 define-macro dbx-add-breakpoint
+    set-variable #l0 &spr "file %s\nstop at %s\n" &rig $buffer-fname &rsin "/" $buffer-fname $window-aline
+    set-variable #l1 $buffer-bname
+    !force popup-window "*dbx*"
+    !if &not $status
+        popup-window #l1
+        ml-write "No *dbx* running!"
+        !abort
+    !endif
+    ipipe-write #l0
+    popup-window #l1
+!emacro
+
+0 define-macro dbx-input
+    set-variable #l2 $buffer-bname
+    goto-alpha-mark "I"
+    beginning-of-line
+    !force &sub -1 &sub $window-line :last-line search-backward "stopped at"
+    !if $status
+        gdb-dbx-reset-line
+        set-variable #l0 &rig @wl $window-col
+        set-variable #l0 &rig #l0 &sin "[" #l0
+        set-variable #l1 &lef #l0 &sin " " #l0
+        set-variable %gdbdbx2 &rig #l1 &rsin ":" #l1
+        set-variable #l0 &rig #l0 &sin " " #l0
+        set-variable #l0 &rig #l0 &sin " " #l0
+        set-variable #l0 &lef #l0 &sub &sin "]" #l0 1
+        popup-window ""
+        find-file #l0 @mna
+        set-variable %gdbdbx1 $buffer-bname
+        !force 0 goto-line %gdbdbx2
+        !if $status
+            set-variable $line-scheme .scheme.trace
+            recenter
+        !endif
+        popup-window #l2
+    !endif
+    goto-alpha-mark  "I"
+    set-variable :last-line $window-line
+    !if &not @#
+        ; process has ended, clear-up
+        gdb-dbx-reset-line
+        0 ipipe-input
+    !endif
+!emacro
+
+define-macro dbx
+    set-variable #l0 $buffer-bname
+    !force 0 find-buffer "*dbx*"
+    !if $status
+        find-buffer #l0
+        popup-window  "*dbx*"
+    !else
+        set-variable #l0 @ml01 "dbx program"
+        0 ipipe-shell-command &cat "dbx " #l0 "*dbx*"
+        popup-window "*dbx*"
+        fhook-ipipe
+    !endif
+    global-bind-key dbx-add-breakpoint "f9"
+!emacro
+
+; load in user extensions if found
+!force execute-file "myipipe"
+

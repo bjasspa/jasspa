@@ -1,0 +1,73 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Mon May 22 21:45:18 2000
+;  Last Modified : <000719.0012>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 2000 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+!if &not &reg "/" "print/setup" "0"
+    ;500 ml-write "[Setting up the printer]"
+    ; get the current print scheme
+    set-variable #l9 &reg "/print" "scheme" ""
+    
+    ; get the user configuration stored in print.erf
+    !if &seq &reg "/" "print-history" "" ""
+        ;500 ml-write "[Loading print.erf]"
+        !force read-registry "print-history" &find "print" ".erf" "ab"
+        !if &not $status
+            ml-write "[Failed to find \"print.erf\"]"
+            !return
+        !endif
+    !endif
+    
+    ; load the driver - check this isn't the current one first
+    set-variable #l0 &reg "/print-history" &cat $platform "/driver" "printd"
+    !if &not &seq &reg "/" "print" "" #l0
+        ;500 ml-write &spr "[Loading %s.erf]" #l0
+        ; read the new driver
+        !force read-registry "print" &find #l0 ".erf" "r"
+        !if &not $status
+            ml-write &spr "[Failed to find print driver \"%s.erf\"]" #l0
+            !return
+        !endif
+    !endif
+    
+    ; overlay the driver layout over /print
+    set-variable #l1 &spr "%s/%s" &reg "/print-history" &cat $platform "/page-size" "" &reg "/print-history" &cat $platform "/char-size" ""
+    !if &not &seq &reg "/print" "layout" "" #l1
+        ;500 ml-write &spr "[Overlaying layout %s]" #l1
+        !force copy-registry &cat "/print/layout/" #l1 "/print"
+        !if &not $status
+            ml-write &spr "[Failed to find page layout \"%s\"]" #l1
+            !return
+        !endif
+        set-registry "/print" "layout" #l1
+    !endif
+    
+    ;500 ml-write &spr "[Overlaying print-history]"
+    set-registry "/print" "header" &reg "/print-history/" "header" "" 
+    set-registry "/print" "footer" &reg "/print-history/" "footer" "" 
+    copy-registry &cat "/print-history/" $platform "/print"
+    ; remove the file flag so /print is not written
+    mark-registry "/print" "F"
+    
+    ; load the print scheme
+    !if &not &seq &set #l1 &reg "/print" "scheme" "printd" #l9
+        ;500 ml-write &spr "[Loading print scheme %s]" #l1
+        !force exec-file #l1
+    !endif
+    
+    ; set /print and /print/setup to reflect this config
+    set-registry "/" "print" #l0
+    set-registry "/print" "setup" 1
+!endif
+
+

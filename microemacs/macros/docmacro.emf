@@ -1,0 +1,163 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Jon Green
+;  Created       : Mon Mar 20 22:36:48 2000
+;  Last Modified : <000719.0012>
+;
+;  Description   : Common document macros. 
+;
+;  Notes         : These were removed from the hkdoc template to create
+;                  a set of common macros which may be invoked from 
+;                  other templates rather than simply the doc one. 
+;
+;  History
+;
+;  Copyright (c) 2000 Samsung (SERI) Ltd.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+!if &not &exist .osd.doc-help
+    set-variable .osd.doc-help &pinc .osd.next 1
+    set-variable .osd.doc-stat &pinc .osd.next 1
+!endif
+
+-1 osd .osd.doc-stat
+osd .osd.doc-stat 0  "batcdH" 9 3 99 .scheme.osd-title "Current Mode Settings"
+osd .osd.doc-stat 3  "" 
+osd .osd.doc-stat 7  "" 
+osd .osd.doc-stat 11 "" 
+osd .osd.doc-stat 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
+
+define-macro doc-mode-state
+    osd .osd.doc-stat 4  "" &spr " Filling to column : %d " $fill-col 
+    osd .osd.doc-stat 5  "" &spr " Justification Mode: %s " $fill-mode
+    set-variable #l0 "Unknown mode, default to left:NAuto-detect All (L/R/C):OAuto-detect One for word-processor:BAuto-detect Both (R/C):LAuto-detect Left:RAuto-detect Right:CAuto-detect Center:nNone:bBoth justify (L/R):lLeft:rRight:cCenter:oOne for word-processor:"
+    set-variable #l0 &rig #l0 &add 1 &sin &cat ":" $fill-mode #l0
+    set-variable #l0 &lef #l0 &sub &sin ":" #l0 1
+    osd .osd.doc-stat 6  "" &spr "     %s " #l0
+    osd .osd.doc-stat 8  "" &spr " Ignore characters : %s " $fill-ignore
+    osd .osd.doc-stat 9  "" &spr " Bullet characters : %s " $fill-bullet
+    osd .osd.doc-stat 10 "" &spr " Bullet lookahead  : %d " $fill-bullet-len
+    .osd.doc-stat osd
+!emacro
+
+osd .osd.doc-help 0  "batcdH" 9 3 99 .scheme.osd-title "Documentation Mode Help"
+osd .osd.doc-help 1  "" 
+osd .osd.doc-help 2  ""  "    esc h   - View this help page"
+osd .osd.doc-help 3  ""  "    C-c C-h - Show current mode settings"
+osd .osd.doc-help 4  ""
+osd .osd.doc-help 5  ""  "    C-c C-s - Start spelling the buffer"
+osd .osd.doc-help 6  ""  "    C-c o   - Fill paragraph for WP export"
+osd .osd.doc-help 7  ""
+osd .osd.doc-help 8  ""
+osd .osd.doc-help 9  "c" "To format current paragraph:"
+osd .osd.doc-help 10 ""
+osd .osd.doc-help 11 ""  "    C-c C-b - Justify both margins"
+osd .osd.doc-help 12 ""  "    C-c C-c - Justify center"
+osd .osd.doc-help 13 ""  "    C-c C-l - Justify left"
+osd .osd.doc-help 14 ""  "    C-c C-g - Justify gutter (on left margin)"
+osd .osd.doc-help 15 ""  "    C-c C-r - Justify right"
+osd .osd.doc-help 16 ""  "    esc o   - To format paragraph in current mode"
+osd .osd.doc-help 17 ""
+osd .osd.doc-help 18 ""
+osd .osd.doc-help 19 "c" "To change justification mode:"
+osd .osd.doc-help 20 ""
+osd .osd.doc-help 21 ""  "    C-c a - Change to auto justification [DEFAULT]"
+osd .osd.doc-help 22 ""  "    C-c b - Change to both justification"
+osd .osd.doc-help 23 ""  "    C-c c - Change to center justification"
+osd .osd.doc-help 24 ""  "    C-c l - Change to left justification"
+osd .osd.doc-help 25 ""  "    C-c n - Change to none justification"
+osd .osd.doc-help 26 ""  "    C-c r - Change to right justification"
+osd .osd.doc-help 27 ""
+osd .osd.doc-help 28 ""
+osd .osd.doc-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
+
+0 define-macro doc-set-justify
+    set-variable $fill-mode &mid "BBCLnR" @# 1
+    doc-mode-state
+!emacro
+
+define-macro fill-paragraph-center
+    set-variable #l1 $fill-mode
+    set-variable $fill-mode "c"
+    @# fill-paragraph
+    set-variable $fill-mode #l1
+!emacro
+
+define-macro fill-paragraph-left
+    set-variable #l1 $fill-mode
+    set-variable $fill-mode "l"
+    @# fill-paragraph
+    set-variable $fill-mode #l1
+!emacro
+
+define-macro fill-paragraph-right
+    set-variable #l1 $fill-mode
+    set-variable $fill-mode "r"
+    @# fill-paragraph
+    set-variable $fill-mode #l1
+!emacro
+
+define-macro fill-paragraph-both
+    set-variable #l1 $fill-mode
+    set-variable $fill-mode "b"
+    @# fill-paragraph
+    set-variable $fill-mode #l1
+!emacro
+
+define-macro fill-paragraph-gutter
+    set-variable #l1 $fill-mode
+    set-variable $fill-mode "g"
+    @# fill-paragraph
+    set-variable $fill-mode #l1
+!emacro
+
+; Default body of a bhook.
+define-macro doc-bhook-body
+    ; Save other context; restore local context
+    set-variable :ofill-mode $fill-mode
+    set-variable $fill-mode  :fill-mode
+    set-variable :ofill-col  $fill-col
+    set-variable $fill-col   :fill-col
+!emacro
+
+; Default body of a ehook
+define-macro doc-ehook-body
+    ; Restore existing context
+    set-variable :fill-mode $fill-mode
+    set-variable $fill-mode :ofill-mode
+    set-variable :fill-col $fill-col
+    set-variable $fill-col :ofill-col
+    ;ml-write "Restored old setting !! " $fill-col
+!emacro
+
+; Defualt body of a fhook
+define-macro doc-fhook-body
+    ; Set up the standard modes
+    1 buffer-mode "indent"
+    1 buffer-mode "wrap"
+    1 buffer-mode "justify"
+    1 buffer-mode "time"
+    ; Local bindings
+    .osd.doc-help buffer-bind-key osd             "esc h"
+    buffer-bind-unbound-key doc-mode-state        "C-c C-h"
+    buffer-bind-unbound-key spell-buffer          "C-c C-s"
+    buffer-bind-unbound-key fill-paragraph-both   "C-c C-b"
+    buffer-bind-unbound-key fill-paragraph-center "C-c C-c"
+    buffer-bind-unbound-key fill-paragraph-left   "C-c C-l"
+    buffer-bind-unbound-key fill-paragraph-gutter "C-c C-g"
+    buffer-bind-unbound-key fill-paragraph-right  "C-c C-r"
+    buffer-bind-unbound-key paragraph-to-line     "C-c o"
+    0 buffer-bind-unbound-key doc-set-justify     "C-c a"
+    1 buffer-bind-unbound-key doc-set-justify     "C-c b"
+    2 buffer-bind-unbound-key doc-set-justify     "C-c c"
+    3 buffer-bind-unbound-key doc-set-justify     "C-c l"
+    4 buffer-bind-unbound-key doc-set-justify     "C-c n"
+    5 buffer-bind-unbound-key doc-set-justify     "C-c r"
+    ; Initialise the speller.
+    auto-spell-init
+    ; Set up the default constants
+    set-variable :fill-mode $fill-mode
+    set-variable :fill-col $fill-col
+    ;
+!emacro
+    

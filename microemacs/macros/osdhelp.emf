@@ -1,0 +1,450 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Mon Oct 11 20:45:28 1999
+;  Last Modified : <000719.0012>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 1999 Division Ltd.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+!if &seq .osd.ohlp "ERROR"
+    set-variable .osd.ohlp    &pinc .osd.next 1
+    set-variable .osd.ohlpn   &pinc .osd.next 1
+    set-variable .osd.ohlpc   &pinc .osd.next 1
+    set-variable .osd.ohlpcl  &pinc .osd.next 1
+    set-variable .osd.ohlpi   &pinc .osd.next 1
+    set-variable .osd.ohlpil  &pinc .osd.next 1
+    set-variable .osd.ohlpis  &pinc .osd.next 1
+    set-variable .osd.ohlps   &pinc .osd.next 1
+    set-variable .osd.ohlpsl  &pinc .osd.next 1
+    set-variable .osd.ohlpss  &pinc .osd.next 1
+!endif
+
+0 define-macro osd-help-goto
+    set-variable #l1 $result
+    !if @#
+        set-variable #l1 &trr &lef #l1 &rsin " " #l1
+    !endif
+    help-item #l1
+    screen-update
+!emacro
+
+0 define-macro osd-help-get-scope
+    set-variable @1 &lget "\b^!.\\(..\\)\\(.*\\)\b^!.\\(2m\\)\\(.*\\)\b^!.\\([23].\\)\\(.*\\)\b^!.\\(5.\\)\\(.*\\)\b^!.\\(4.\\)\\(@.*\\)\b^!.\\(4.\\)\\(!.*\\)\b^!.\\(4.\\)\\(&.*\\)\b^!.\\(9.\\)\\(.*\\)\b" @2
+!emacro
+
+0 define-macro osd-help-create-list
+    osd-help-get-scope #l9 @2
+    set-variable #l8 @1
+    set-variable #l0 $buffer-bname
+    set-variable #l1 $window-line
+    set-variable #l2 $window-y-scroll
+    set-variable #l3 $window-col
+    0 help
+    beginning-of-buffer
+    1 buffer-mode "magic"
+    -1 osd #l8
+    osd #l8 0 "AfS" .scheme.osd-child
+    set-variable #l4 0
+    !force search-forward #l9
+    !while $status
+        !if &seq "" &set #l5 &trb @s1
+            osd #l8 &inc #l4 1 "x" @s2 0 osd-help-goto
+        !else
+            osd #l8 &inc #l4 1 "x" &spr "%s(%s)" @s2 #l5 0 osd-help-goto
+        !endif
+        !force search-forward #l9
+    !done
+    find-buffer #l0
+    set-variable $window-line #l1
+    set-variable $window-y-scroll #l2
+    set-variable $window-col #l3
+!emacro
+
+0 define-macro osd-help-create-slist-setup
+    set-variable #p7 "\b"
+    set-variable #p8 "\b"
+    set-variable #l0 @1
+    set-variable #l1 0
+    set-variable #l2 0
+    set-variable #l4 0
+    !while &not &seq "" &set #l3 &mid #l0 &pinc #l1 1 1
+        !if &not &band #l4 0x01
+            !if &seq #l3 "-"
+                !if &not #l2
+                    set-variable #p7 "A -<word> cannot be first"
+                    !abort
+                !endif
+                set-variable #l5 -1
+                set-variable #l3 &mid #l0 &pinc #l1 1 1
+            !elif &set #l5 &seq #l3 "+"
+                set-variable #l3 &mid #l0 &pinc #l1 1 1
+            !endif
+            !if &seq #l3 "\""
+                set-variable #p8 &spr "%s%s\b" #p8 #l5
+                set-variable #l4 0x03
+                set-variable #l5 ""
+            !elif &not &seq #l3 " "
+                set-variable #p8 &spr "%s%s\b" #p8 #l5
+                set-variable #l4 0x01
+                set-variable #l5 #l3
+            !endif
+        !elif &band #l4 0x02
+            !if &seq #l3 "\""
+                !if &seq #l5 ""
+                    set-variable #p7 "Empty word"
+                    !abort
+                !endif
+                !if &not &band @# 2
+                    str-to-regex #l5
+                !endif
+                var-str-sub #l5 "\n\n\n\n\n" "[ \n]+"
+                set-variable #p7 &spr "%s%s\b" #p7 #l5
+                set-variable #l2 &add #l2 1
+                set-variable #l4 0x00
+            !else
+                !if &seq #l3 "\\"
+                    set-variable #l3 &mid #l0 &pinc #l1 1 1
+                    !if &seq #l3 "\""
+                        set-variable #l5 &cat #l5 #l3
+                    !elif &seq #l3 " "
+                        set-variable #l5 &cat #l5 #l3
+                    !else
+                        set-variable #l5 &cat #l5 &cat "\\" #l3
+                    !endif
+                !elif &seq #l3 " "
+                    set-variable #l5 &cat #l5 "\n\n\n\n\n"
+                !else
+                    set-variable #l5 &cat #l5 #l3
+                !endif
+            !endif
+        !else
+            !if &seq #l3 " "
+                !if &not &band @# 2
+                    str-to-regex #l5
+                !endif
+                var-str-sub #l5 "\n\n\n\n\n" "[ \n]+"
+                set-variable #p7 &spr "%s%s\b" #p7 #l5
+                set-variable #l2 &add #l2 1
+                set-variable #l4 0x00
+            !else
+                set-variable #l5 &cat #l5 #l3
+            !endif
+        !endif
+    !done
+    !if &equ #l4 0x03
+        set-variable #p7 "Closing \" missing"
+        !abort
+    !endif
+    !if &equ #l4 0x01
+        !if &not &band @# 2
+            str-to-regex #l5
+        !endif
+        var-str-sub #l5 "\n\n\n\n\n" "[ \n]+"
+        set-variable #p7 &spr "%s%s\b" #p7 #l5
+    !elif &not #l2
+        set-variable #p7 "Empty search string"
+        !abort
+    !endif
+!emacro
+
+0 define-macro osd-help-create-slist
+    osd-help-get-scope #l9 @2
+    @# osd-help-create-slist-setup @3
+    set-variable .bb $buffer-bname
+    set-variable .wl $window-line
+    set-variable .wy $window-y-scroll
+    set-variable .wc $window-col
+    !force 0 delete-buffer "*osd-help temp*"
+    0 help
+    beginning-of-buffer
+    1 buffer-mode "magic"
+    &cond &band @# 1 1 -1 buffer-mode "exact"
+    !force search-forward #l9
+    !while $status
+        set-variable #l1 $window-line
+        !if &seq "" &set #l5 &trb @s1
+            set-variable #l2 @s2
+        !else
+            set-variable #l2 &spr "%s(%s)" @s2 #l5
+        !endif
+        search-forward "^$"
+        set-variable #l3 $window-line
+        !force search-forward "^!"
+        !if &not $status
+            end-of-buffer
+        !endif
+        set-variable #l4 $window-line
+        set-variable #l0 0
+        set-variable #l6 1
+        set-variable #l5 &lget #l7 1
+        !repeat
+            #l3 goto-line
+            !force &sub $window-line #l4 search-forward #l5
+            !if $status
+                !if &equ &lget #l8 #l6 -1
+                    ; must not find this componant, therefore fail
+                    set-variable #l0 0
+                    set-variable #l6 -1
+                !else
+                    set-variable #l0 &add #l0 1
+                    !force &sub $window-line #l4 search-forward #l5
+                    !if $status
+                        set-variable #l0 &add #l0 1
+                        !jump -3
+                    !endif
+                !endif
+            !elif &equ &lget #l8 #l6 1
+                ; must find this componant, therefore fail
+                set-variable #l0 0
+                set-variable #l6 -1
+            !endif
+        !until &seq "" &set #l5 &lget #l7 &inc #l6 1
+        !if #l0
+            find-buffer "*osd-help temp*"
+            insert-string &spr "%08d%s%n %d\n" #l0 #l2 &sub 30 &len #l2 " " #l0
+            0 help
+        !endif
+        #l1 goto-line
+        end-of-line
+        !force search-forward #l9
+    !done
+    set-variable #l8 @1
+    -1 osd #l8
+    osd #l8 0 "Sf" .scheme.osd-child
+    find-buffer "*osd-help temp*"
+    !if &equ $window-line 1
+        osd #l8 1 "" "<Not Found>"
+    !else
+        set-mark
+        beginning-of-buffer
+        sort-lines
+        set-variable #l4 0
+        !while &gre $window-line 1
+            backward-line
+            osd #l8 &inc #l4 1 "x" &rig @wl 8 1 osd-help-goto
+        !done
+    !endif
+    !force 0 delete-buffer "*osd-help temp*"
+    find-buffer .bb
+    set-variable $window-line .wl
+    set-variable $window-y-scroll .wy
+    set-variable $window-col .wc
+!emacro
+
+0 define-macro osd-help-set-size
+    osd .osd.ohlp   0 "batcHdsR" 9 3 .w .d -1 -1 630 .scheme.osd-title "MicroEmacs Help" osd-help-resize
+    osd .osd.ohlpn  0 "Ns" &sub .w 2 &sub .d 2 -1 -1
+    osd .osd.ohlpc  0 "s"  &sub .w 4 &sub .d 6 -1 -1 osd-help-cont-list-crt
+    osd .osd.ohlpi  0 "s"  &sub .w 4 &sub .d 6 -1 -1 osd-help-index-list-crt
+    osd .osd.ohlps  0 "s"  &sub .w 4 &sub .d 6 -1 -1
+    osd .osd.ohlpcl 0 "sSf"  .scheme.osd-child &sub .w 8 &sub .d 10 0 -1 
+    osd .osd.ohlpil 0 "AfsS" .scheme.osd-child &sub .w 8 &sub .d 10 0 -1 
+    osd .osd.ohlpsl 0 "sSf"  .scheme.osd-child &sub .w 8 &sub .d 14 0 -1 
+    osd .osd.ohlpc 20 "IbHct" 20 .scheme.osd-sbar &sub .w 8 &sub .d 10  .osd.ohlpcl
+    osd .osd.ohlpi 60 "IbHct" 20 .scheme.osd-sbar &sub .w 8 &sub .d 10 .osd.ohlpil
+    osd .osd.ohlps 90 "IbHct" 20 .scheme.osd-sbar &sub .w 8 &sub .d 14 .osd.ohlpsl
+    osd .osd.ohlps 40 "ExHftz" 1 .scheme.osd-entry &sub .w 19 1 "" f osd-help-search-entry
+!emacro
+0 define-macro osd-help-resize
+    set-variable #l0 &lef $result 4
+    set-variable #l1 &rig $result 4
+    !if &les #l0 37
+        !if &les #l1 20
+            !abort
+        !endif
+        set-variable #l0 37
+    !endif
+    !if &les #l1 20
+        set-variable #l1 20
+    !endif
+    set-variable .osd-help-set-size.w #l0
+    set-variable .osd-help-set-size.d #l1
+    osd-help-set-size
+!emacro
+
+; The Search page ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+0 define-macro osd-help-search-scope
+    set-variable .osd-help-search-list-crt.scope @#
+    osd .osd.ohlps 15  "Mtmsxfh" 2 $result .osd.ohlpss
+!emacro
+0 define-macro osd-help-search-entry
+    !if &les @# 0
+        set-variable .osd-help-search-list-crt.search &trb @ml20 "" .osd-help-search-list-crt.search
+        !if &seq .osd-help-search-list-crt.search ""
+            osd .osd.ohlps 55 "BfSHh" .scheme.osd-dbtt " Search "
+        !else
+            osd .osd.ohlps 55 "BtfHhx" 3 .scheme.osd-ebtt " Sea&rch " f osd-help-search-list-crt
+        !endif
+    !else
+        set-variable $result .osd-help-search-list-crt.search
+    !endif
+!emacro
+0 define-macro osd-help-search-flag
+    !if &les @# 0
+        set-variable .osd-help-search-list-crt.flag &bxor .osd-help-search-list-crt.flag &abs @#
+    !elif &not &band .osd-help-search-list-crt.flag @#
+        !abort
+    !endif
+!emacro
+0 define-macro osd-help-search-list-crt
+    .flag osd-help-create-slist .osd.ohlpsl .osd-help-search-list-crt.scope .osd-help-search-list-crt.search
+    osd .osd.ohlpsl 0 "sSf" .scheme.osd-child &sub .osd-help-set-size.w 8 &sub .osd-help-set-size.d 14 0 -1 
+!emacro
+set-variable .osd-help-search-list-crt.flag   0
+set-variable .osd-help-search-list-crt.scope  1
+set-variable .osd-help-search-list-crt.search ""
+
+osd .osd.ohlpss 0 "b"
+osd .osd.ohlpss 1 "" "&All"              1 osd-help-search-scope
+osd .osd.ohlpss 2 "" "&Modes"            2 osd-help-search-scope
+osd .osd.ohlpss 3 "" "&Commands"         3 osd-help-search-scope
+osd .osd.ohlpss 4 "" "&Variables"        4 osd-help-search-scope
+osd .osd.ohlpss 5 "" "Ma&cro Variables"  5 osd-help-search-scope
+osd .osd.ohlpss 6 "" "&Directives"       6 osd-help-search-scope
+osd .osd.ohlpss 7 "" "&Functions"        7 osd-help-search-scope
+osd .osd.ohlpss 8 "" "File &Types"       8 osd-help-search-scope
+
+-1 osd .osd.ohlpsl
+osd .osd.ohlpsl 0 "Sf" .scheme.osd-child
+osd .osd.ohlpsl 1 "" ""
+
+-1 osd .osd.ohlps
+osd .osd.ohlps 0   ""
+osd .osd.ohlps 5   ""
+osd .osd.ohlps 10  "Sfh" "      S&cope : " 15
+osd .osd.ohlps 15  "Mtmsxfh" 2 "All" .osd.ohlpss
+osd .osd.ohlps 20  "BtfHhr"  4 .scheme.osd-ebtt " E&xit "  f void
+osd .osd.ohlps 25  "fr" " "
+osd .osd.ohlps 30  ""
+osd .osd.ohlps 35  "Sfh" " &Search For : " 30
+osd .osd.ohlps 45  ""
+osd .osd.ohlps 50  "fh" " "
+osd .osd.ohlps 55  "BfSHh"  .scheme.osd-dbtt " Search "
+osd .osd.ohlps 60  "hf" "  "
+osd .osd.ohlps 65  "Cfxph" "^[ *] &Exact" 1 osd-help-search-flag
+osd .osd.ohlps 70  "hf" " "
+osd .osd.ohlps 75  "Cfxp" "^[ *] &Magic" 2 osd-help-search-flag
+osd .osd.ohlps 80  ""
+osd .osd.ohlps 100 ""
+
+; The Index page ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+0 define-macro osd-help-index-list-crt
+    !if @?
+        set-variable .scope @#
+    !elif .scope
+        !return
+    !else
+        set-variable .scope 1
+        set-variable $result "All"
+    !endif
+    osd .osd.ohlpi 30  "MtmsxRfh" 1 $result .osd.ohlpis
+    osd-help-create-list .osd.ohlpil .osd-help-index-list-crt.scope
+    osd .osd.ohlpil 0 "AfsS" .scheme.osd-child &sub .osd-help-set-size.w 8 &sub .osd-help-set-size.d 10 0 -1 
+!emacro
+set-variable .osd-help-index-list-crt.scope 0
+
+osd .osd.ohlpis 0 "b"
+osd .osd.ohlpis 1 "" "&All"              1 osd-help-index-list-crt
+osd .osd.ohlpis 2 "" "&Modes"            2 osd-help-index-list-crt
+osd .osd.ohlpis 3 "" "&Commands"         3 osd-help-index-list-crt
+osd .osd.ohlpis 4 "" "&Variables"        4 osd-help-index-list-crt
+osd .osd.ohlpis 5 "" "Ma&cro Variables"  5 osd-help-index-list-crt
+osd .osd.ohlpis 6 "" "&Directives"       6 osd-help-index-list-crt
+osd .osd.ohlpis 7 "" "&Functions"        7 osd-help-index-list-crt
+osd .osd.ohlpis 8 "" "File &Types"       8 osd-help-index-list-crt
+
+osd .osd.ohlpi 0   ""
+osd .osd.ohlpi 10  ""
+osd .osd.ohlpi 20  "Sfh" " &Scope : " 30
+osd .osd.ohlpi 40  "BtrfHh" 2 .scheme.osd-ebtt " E&xit " f void
+osd .osd.ohlpi 45  "rf" " "
+osd .osd.ohlpi 50  ""
+osd .osd.ohlpi 70  ""
+
+; The Contents page ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+0 define-macro osd-help-content-goto
+    set-variable #l0 $buffer-bname
+    set-variable #l1 $window-line
+    set-variable #l2 $window-y-scroll
+    set-variable #l3 $window-col
+    0 help
+    goto-line &add .line &mul 2 &sub @# 1
+    set-variable #l9 &rig @wl 2
+    find-buffer #l0
+    set-variable $window-line #l1
+    set-variable $window-y-scroll #l2
+    set-variable $window-col #l3
+    set-variable $result #l9
+    0 osd-help-goto
+!emacro
+0 define-macro osd-help-cont-list-crt
+    !if &not &exi .done
+        set-variable #l0 $buffer-bname
+        set-variable #l1 $window-line
+        set-variable #l2 $window-y-scroll
+        set-variable #l3 $window-col
+        0 help
+        beginning-of-buffer
+        1 buffer-mode "magic"
+        set-variable #l4 0
+        -1 osd .osd.ohlpcl
+        osd .osd.ohlpcl 0 "sS" .scheme.osd-child &sub .osd-help-set-size.w 8 &sub .osd-help-set-size.d 10  0 -1 
+        !force search-forward "^!   Contents$"
+        !if $status
+            beginning-of-line
+            forward-line
+            set-variable .osd-help-content-goto.line $window-line 
+            !while &seq @wc "|"
+                set-variable #l5 &rig @wl 1
+                forward-line
+                !if &seq "" #l5
+                    osd .osd.ohlpcl &inc #l4 1 "" @wl
+                !else
+                    osd .osd.ohlpcl &inc #l4 1 "x" @wl #l4 osd-help-content-goto
+                !endif
+                forward-line
+            !done
+        !endif
+        !if &not #l4
+            osd .osd.ohlpcl 1 "" "<Contents not found>"
+        !endif
+        find-buffer #l0
+        set-variable $window-line #l1
+        set-variable $window-y-scroll #l2
+        set-variable $window-col #l3
+        set-variable .done 1
+    !endif
+!emacro
+
+osd .osd.ohlpc 0   ""
+osd .osd.ohlpc 2   ""
+osd .osd.ohlpc 4   "BtrfHh" 2 .scheme.osd-ebtt " E&xit " f void
+osd .osd.ohlpc 6   "rf" " "
+osd .osd.ohlpc 10  ""
+osd .osd.ohlpc 30  ""
+
+; The note-book ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+osd .osd.ohlpn 0  "N"
+osd .osd.ohlpn 1  "Pft" 1  "Contents" .osd.ohlpc
+osd .osd.ohlpn 2  "Pft" 2  "Index"    .osd.ohlpi
+osd .osd.ohlpn 3  "Pft" 3  "Search"   .osd.ohlps
+osd .osd.ohlpn 10 "It"  10            .osd.ohlpc
+
+; The main menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+osd .osd.ohlp 0   ""
+osd .osd.ohlp 100 "It" 1 .osd.ohlpn
+
+set-variable .osd-help-set-size.w 50
+set-variable .osd-help-set-size.d 26
+osd-help-set-size
+
+define-macro osd-help
+    .osd.ohlp osd
+!emacro

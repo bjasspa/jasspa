@@ -1,0 +1,36 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Sat Jul 18 16:00:43 1998
+;  Last Modified : <000719.0012>
+;
+;  Description   : Games wrapper file to keep me.emf small
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 1998 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro Metris
+    execute-file metris
+    Metris
+!emacro
+define-macro Patience
+    execute-file patience
+    Patience
+!emacro
+define-macro Triangle
+    execute-file triangle
+    Triangle
+!emacro
+define-macro Mahjongg
+    execute-file mahjongg
+    Mahjongg
+!emacro
+define-macro Match-It
+    execute-file matchit
+    Match-It
+!emacro
+

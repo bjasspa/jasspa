@@ -1,0 +1,112 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Thu May 27 00:17:10 1999
+;  Last Modified : <000719.0012>
+;
+;  Description
+;      Basic implementation of the MS windows shift region definition style
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 1999 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+0 define-macro msshift-pick
+    set-variable .msshift.state 1
+!emacro
+
+0 define-macro msshift-input
+    set-variable .status "0"
+    !if &seq @cck "redraw"
+        ; abort to tell ME to handle the actual input
+        !abort
+    !elif &seq @cck "callback"
+        !abort
+    !endif
+    ; restore the input function so this only gets called once!
+    set-variable $buffer-input .msshift.input
+    ; only treat delete and backspace specially
+    !if &lfi "|backward-delete-char|forward-delete-char|kill-region|" @cc
+        set-variable .status "1"
+        -1 yank
+        kill-region
+        !return
+    !elif &seq "copy-region" @cc
+        set-variable .status "1"
+        !return
+    !elif &seq "yank" @cc
+        set-variable .status "1"
+        -1 yank
+        kill-region
+        -1 yank
+        yank
+        !return
+    !elif &set #l0 &sin "mouse-pick-" @cck
+        set-variable #l0 &spr "%s-drop-%s" &lef @cck &add #l0 4 &rig @cck &add #l0 10
+        !if &seq "mouse-event" @cc
+            set-variable #l1 &sin "yank" &reg "history/mouse" #l0 ""
+        !else &not &set #l1 &sin "yank" @cc
+            set-variable #l1 &sin "yank" &kbind #l0
+        !endif
+        !if #l1
+            set-variable #l2 @cqk
+            set-variable .status "1"
+            -1 yank
+            kill-region
+            -1 yank
+            yank
+            !return
+        !endif
+    !endif
+    ; reset the last command to the copy-region
+    set-variable @cl copy-region
+    !abort
+!emacro
+
+0 define-macro msshift
+    !if &equ .state 2
+        copy-region
+        set-variable .input $buffer-input
+        set-variable $buffer-input msshift-input
+    !endif
+    set-variable .state -1
+!emacro
+
+0 define-macro msshift-move
+    !if &equ .msshift.state 1
+        set-mark
+        set-variable .msshift.state 2
+    !endif
+    set-variable #l0 @cck
+    var-str-sub #l0 "S-" ""
+    set-variable #l1 &kbind #l0
+    set-variable @cl @cl
+    !if @?
+        @# execute-named-command #l1
+    !else
+        execute-named-command #l1
+    !endif
+    set-variable @cc #l1
+!emacro
+
+set-variable .msshift.state -1
+
+global-bind-key msshift-pick "S-pick"
+global-bind-key msshift "S-drop"
+global-bind-key msshift-move "S-up"
+global-bind-key msshift-move "S-up"
+global-bind-key msshift-move "S-down"
+global-bind-key msshift-move "S-left"
+global-bind-key msshift-move "S-right"
+global-bind-key msshift-move "S-home"
+global-bind-key msshift-move "S-end"
+global-bind-key msshift-move "S-page-up"
+global-bind-key msshift-move "S-page-down"
+global-bind-key msshift-move "C-S-left"
+global-bind-key msshift-move "C-S-right"
+5 global-bind-key msshift-move "C-S-up"
+5 global-bind-key msshift-move "C-S-down"
+

@@ -1,0 +1,296 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Mon Sep 21 18:10:34 1998
+;  Last Modified : <000719.0012>
+;
+;  Description : Visual Basic Hook File
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 1998-99 JASSPA
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+!if &not &exist .hilight.html
+    set-variable .hilight.html   &pinc .hilight.next 1
+    set-variable .hilight.htmlT  &pinc .hilight.next 1
+    set-variable .hilight.htmlN  &pinc .hilight.next 1
+    set-variable .hilight.htmlNL &pinc .hilight.next 1
+    set-variable .osd.html-help  &pinc .osd.next 1
+    set-variable .osd.html-tool  &pinc .osd.next 1
+!endif
+set-variable %html-author &reg "/history" "html-author" "1"
+
+!if &band .hilight.flags 0x02
+    0 hilight .hilight.html 3 200                      $global-scheme
+    hilight .hilight.html 0x80 "<" .hilight.htmlT      .scheme.keyword
+    hilight .hilight.html 4 "</" ">" ""                .scheme.keyword
+    hilight .hilight.html 4 "<!" ">" ""                .scheme.comment
+    hilight .hilight.html 0 "&\\w\\w;"                 .scheme.operator
+    hilight .hilight.html 0 "&\\w\\w\\w;"              .scheme.operator
+    hilight .hilight.html 0 "&\\w\\w\\w\\w;"           .scheme.operator
+    hilight .hilight.html 0x804 "\"" "\"" "\\"         .scheme.string
+    hilight .hilight.html 4 "<script" "</script>" ""   .scheme.keyword
+    hilight .hilight.html 4 "<%" "%>" ""               .scheme.keyword
+    
+    0 hilight .hilight.htmlT 0                         .scheme.keyword
+    hilight .hilight.htmlT 4  "\"" "\"" "\\"           .scheme.string
+    hilight .hilight.htmlT 0x80 ">" .hilight.html      .scheme.keyword
+    
+    !force exec-file "hkvb"
+    !if $status
+        hilight .hilight.html 0x80 "<%" .hilight.vb    .scheme.prepro
+        hilight .hilight.htmlT 0x80 "<%" .hilight.vb   .scheme.prepro
+        hilight .hilight.vb   0x90 "%>" 0              .scheme.prepro
+        hilight .hilight.html 0x80 "<script\\s +language=VBScript[^>]*>" .hilight.vb .scheme.prepro
+        hilight .hilight.vb   0x80 "</script>" 0       .scheme.prepro
+        ;    indent .hilight.vb b "<" ">"
+    !endif
+    !force exec-file "hkjava"
+    !if $status
+        hilight .hilight.html 0x80 "<script\\s +language=\"javascript\"[^>]*>" .hilight.java .scheme.prepro
+        hilight .hilight.java 0x80 "</script>" 0       .scheme.prepro
+        hilight .hilight.java 0x80 "</SCRIPT>" 0       .scheme.prepro
+    !endif
+!endif
+
+; Define the indentation tokens 
+0 indent .hilight.html 1 20 
+indent .hilight.html e "\"" "\"" "\\"
+indent .hilight.html b "<" ">"
+indent .hilight.html n "<html>" 2 
+indent .hilight.html o "</html>" -2 
+indent .hilight.html n "<head>" 2 
+indent .hilight.html o "</head>" -2 
+indent .hilight.html n "<table[^>]*>" 2 
+indent .hilight.html o "</table>" -2 
+indent .hilight.html n "<tr[^>]*>" 2 
+indent .hilight.html o "</tr>" -2 
+indent .hilight.html o "</td>" -2 
+indent .hilight.html n "<td[^>]*>" 2 
+indent .hilight.html o "</select>" -2 
+indent .hilight.html n "<select[^>]*>" 2 
+indent .hilight.html n "<%" 2 
+indent .hilight.html o "%>" -2 
+    
+0 hilight .hilight.htmlN 0                          $global-scheme
+hilight .hilight.htmlN 0x44 "\ecA" "" "\\}\e" "" "" $global-scheme
+hilight .hilight.htmlN 0x44 "\ecB" "" "\\}\e" "" "" .scheme.under  ; underline
+hilight .hilight.htmlN 0x44 "\ecC" "" "\\}\e" "" "" .scheme.italic ; italic
+hilight .hilight.htmlN 0x44 "\ecD" "" "\\}\e" "" "" .scheme.bold   ; bold
+hilight .hilight.htmlN 0x44 "\ecE" "" "\\}\e" "" "" .scheme.header ; Header
+hilight .hilight.htmlN 0x44 "\ecF" "" "\\}\e" "" "" .scheme.comment  ; image
+hilight .hilight.htmlN 0xc0 "\els" "" .hilight.htmlNL $global-scheme ; link start
+hilight .hilight.htmlN 0x44 "\elm" "" "\ele" "" ""  .scheme.link   ; link name
+ 
+0 hilight .hilight.htmlNL 0                         $global-scheme
+hilight .hilight.htmlNL 0x80 "\\}\elm" .hilight.htmlN $global-scheme
+hilight .hilight.htmlNL 0x40 "." ""                 $global-scheme
+
+define-macro-file htmltool html-to-ehf
+
+0 define-macro html-process-link
+    set-variable #l0 $window-col
+    set-variable #l1 $window-line
+    ; end of link must be found within 5 lines
+    !force -5 search-forward "\ele"
+    !if $status
+        !force -5 search-backward "\els"
+        !if &and $status &or &les $window-line #l1 &and &equ $window-line #l1 &not &gre $window-col #l0
+            3 forward-char
+            set-mark
+            -1 search-forward "\elm"
+            3 backward-char
+            copy-region
+            set-variable #l0 @y
+            -1 yank
+            !if &set #l1 &sin "#" #l0
+                set-variable #l8 &rig #l0 #l1
+                set-variable #l0 &lef #l0 &sub #l1 1
+            !else
+                set-variable #l8 ""
+            !endif
+            !if &not &seq #l0 ""
+                !force find-file #l0
+                !if &not $status
+                    ml-write &spr "[Failed to find link \"%s\"]" #l0
+                    !abort
+                !endif
+            !endif
+            !if &not &seq #l8 ""
+                !force search-forward &cat #l8 "\elm"
+                beginning-of-line
+            !endif
+            !return
+        !endif
+    !endif
+    set-variable $window-line #l1
+    set-variable $window-col #l0
+    ml-write "Error! Not in a link"
+    !abort
+!emacro
+
+define-macro html-process-buffer
+    set-variable :fill-col &sub $window-width 2
+    beginning-of-buffer
+    set-variable #g0 0
+    html-to-ehf
+    beginning-of-buffer
+    !if &iseq &lef $buffer-fname 7 "http://"
+        set-variable #l0 &lef $buffer-fname &add 7 &sin "/" &rig $buffer-fname 7
+    !else
+        set-variable #l0 "file:/"
+    !endif
+    1 buffer-mode "magic"
+    replace-string "http:/\\([^/]\\)" &cat #l0 "\\1"
+    beginning-of-buffer
+    set-variable $buffer-hilight .hilight.htmlN
+    -1 buffer-mode "edit"
+    1 buffer-mode "view"
+    set-variable :mouse-word-select html-process-link
+    0 buffer-bind-key html-process-link "return"
+    ml-write "Done!"
+!emacro
+
+0 define-macro html-show-buffer
+    end-of-buffer
+    set-mark
+    beginning-of-buffer
+    copy-region
+    set-variable #l8 $buffer-fname
+    !force 0 delete-buffer &cat "*" $buffer-bname
+    find-buffer &cat "*" $buffer-bname
+    set-variable $buffer-fname &lef #l8 &rsin "/" #l8
+    yank
+    -1 yank
+    html-process-buffer
+!emacro
+
+
+0 define-macro html-spell-word
+    ; simply skip any text in a <..> token - put a 5 line limit on it
+    set-variable #l0 $window-col
+    set-variable #l1 $window-line
+    -2 show-region
+    set-variable #l2 $window-col
+    !force -5 regex-backward "[<>]"
+    !if $status
+        set-variable #l3 @wc
+        set-variable $window-line #l1
+        set-variable $window-col #l0
+        !if &seq #l3 "<"
+            ; this is a <..> token, skip all if spelling buffer (@# != 0)
+            !if @#
+                !force search-forward ">"
+                set-variable .spell.check-word ""
+            !endif
+            !return
+        !endif
+    !endif
+    ; must redefine the region as the search blows it away
+    set-variable $window-col #l2
+    -3 show-region
+    set-variable $window-col #l0
+    3 show-region
+    !abort
+!emacro
+
+0 define-macro html-toggle-author
+    set-variable %html-author &cond %html-author 0 1
+!emacro
+0 define-macro html-toggle-mode
+    !if &bmod "usr1"
+        set-variable :auto-spell &cond &seq $buffer-input "auto-spell-input" 1 -1
+    !endif
+    !if &equ @# 2
+        -1 buffer-mode "usr1"
+         1 buffer-mode "usr2"
+        set-variable $buffer-indent .hilight.vb
+        -1 auto-spell
+    !else
+         1 buffer-mode "usr1"
+        -1 buffer-mode "usr2"
+        set-variable $buffer-indent .hilight.html
+        :auto-spell auto-spell
+    !endif
+!emacro
+
+osd .osd.html-tool 0  "b"
+osd .osd.html-tool 1  ""  "HTML tool &help  esc h"   .osd.html-help osd
+osd .osd.html-tool 2  ""  "Author &toggle   C-c C-a" f html-toggle-author
+osd .osd.html-tool 3  "-"
+osd .osd.html-tool 4  "c" "Author"
+osd .osd.html-tool 5  ""  "&Process buffer  C-c C-h" f html-show-buffer
+osd .osd.html-tool 6  "-"
+osd .osd.html-tool 7  "c" "Browser"
+osd .osd.html-tool 8  ""  "&Goto link       return"  f html-process-link
+; Add hook to load the OSD html tools menu.
+0 define-macro osd-ohook-html
+    osd 7 1 "Md" "HTML &Tools" .osd.html-tool
+    osd 7 2 "-"
+!emacro
+; Add hook to remove the OSD html tools menu.
+0 define-macro osd-chook-html
+    osd 7 1  "D"
+    osd 7 2  "D"
+!emacro
+
+osd .osd.html-help 0  "batcdH" 9 3 99 .scheme.osd-title "Html help"
+osd .osd.html-help 3  ""
+osd .osd.html-help 4  ""  "    esc h   - View this help page"
+osd .osd.html-help 5  ""  "    C-c C-a - Toggle between html author & browser"
+osd .osd.html-help 6  ""
+osd .osd.html-help 7  "c" "Html Author help"
+osd .osd.html-help 8  ""
+osd .osd.html-help 9  ""  "    C-c C-h - Process current buffer to a temporary "
+osd .osd.html-help 10 ""
+osd .osd.html-help 11 "c" "Html Browser help"
+osd .osd.html-help 12 "" 
+osd .osd.html-help 13 ""  "    return  - Go to current link (can also be done"
+osd .osd.html-help 14 ""  "              by double clicking left mouse button)"
+osd .osd.html-help 15 ""
+osd .osd.html-help 16 ""  " Use Help/User setup to alter the default Author/"
+osd .osd.html-help 17 ""  " browser setting"
+osd .osd.html-help 21 ""
+osd .osd.html-help 99 "Bcf" "  &OK  " f void 
+
+define-macro fhook-html
+    !if %html-author
+        buffer-bind-unbound-key html-show-buffer "C-c C-h"
+        set-variable $buffer-mask "luh1"
+        !if &band .hilight.flags 0x02
+            set-variable $buffer-hilight .hilight.html
+        !endif
+        auto-spell-init
+        set-variable :auto-spell &cond &seq $buffer-input "auto-spell-input" 1 -1
+        ; comment the next line to switch indentation off
+        1 html-toggle-mode
+    !else
+        html-process-buffer
+    !endif
+    .osd.html-help buffer-bind-key osd "esc h"
+    buffer-bind-key html-toggle-author "C-c C-a"
+    ; execute user extensions if enabled
+    !if &exi my-fhook-html
+        my-fhook-html
+    !endif
+!emacro
+
+define-macro fhook-hts
+    set-variable $buffer-mask "luh1"
+    !if &band .hilight.flags 0x02
+        set-variable $buffer-hilight .hilight.html
+    !endif
+    set-variable $buffer-fhook fhook-html
+    ; execute user extensions if enabled
+    !if &exist my-fhook-hts
+        my-fhook-hts
+    !endif
+!emacro
+
+ml-write "[HTML file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "myhtml"
+
