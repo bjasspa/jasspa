@@ -906,8 +906,8 @@ osd .osd.user-ftype 630 "BtcfxH"  .scheme.osd-ebtt " \HDelete " 3 user-filetype-
         osd .osd.user-plat 540 "f" " "
         osd .osd.user-plat 550 "D"
     !else
-        osd .osd.user-plat 540 "Sfh" "             \H# Backups : " 550
-        osd .osd.user-plat 550 "EtxHf" .scheme.osd-entry "#####" 6 user-set-cpfentry
+        osd .osd.user-plat 540 "Sfh" "              \H# Backups: " 550
+        osd .osd.user-plat 550 "EtxHf" .scheme.osd-entry "######" 6 user-set-cpfentry
     !endif
 !emacro
 
@@ -944,90 +944,86 @@ osd .osd.user-ftype 630 "BtcfxH"  .scheme.osd-ebtt " \HDelete " 3 user-filetype-
 osd .osd.user-plat 0   "s" 55 18 -1 -1
 ; draw the common parts first
 osd .osd.user-plat 10  ""
-osd .osd.user-plat 300 "Sfh" "   \HDisplay Char Set : " 310
-osd .osd.user-plat 310 "OtxmsfhHzR" .scheme.osd-entry 30 1 "" .osd.user-sub user-setup-charset
+osd .osd.user-plat 300 "Sfh" "  \HDisplay Char Set:  " 310
+osd .osd.user-plat 310 "OtxmsfhHzR" .scheme.osd-entry 31 1 "" .osd.user-sub user-setup-charset
 osd .osd.user-plat 311 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 310
-osd .osd.user-plat 400 "Sfh" "  Draw \HWhite Spaces : " 410
-osd .osd.user-plat 410 "Ctfx" "^^NY^^" 0x80000 user-set-system
+osd .osd.user-plat 400 "fh" "    "
+osd .osd.user-plat 410 "Ctfxph" &cat .osd.checkbox-chars "\} Draw \HWhite Spaces" 0x80000 user-set-system
+osd .osd.user-plat 420 ""
 osd .osd.user-plat 499 ""
-osd .osd.user-plat 500 "Sfh" "     Enable Toolbar : " 501
-osd .osd.user-plat 501 "Cfhtx" "^^NY^^" 3 user-set-cpfcheckbox
-osd .osd.user-plat 600 "Sfh" "       \HIgnore Files : " 610
-osd .osd.user-plat 610 "EtxHf" .scheme.osd-entry "###############################" 5 user-set-cpfentry
+osd .osd.user-plat 500 "fh" "    "
+osd .osd.user-plat 501 "Cftxph" &cat .osd.checkbox-chars "\} Enable Toolbar" 3 user-set-cpfcheckbox
+osd .osd.user-plat 509 ""
+osd .osd.user-plat 600 "Sfh" "  \HIgnore Files:      " 610
+osd .osd.user-plat 610 "EtxHf" .scheme.osd-entry "################################" 5 user-set-cpfentry
 osd .osd.user-plat 700 ""
-osd .osd.user-plat 710 "Sfh" "  Cursor \HBlink Rate : " 720
+osd .osd.user-plat 710 "Sfh" "  Cursor \HBlink Rate: " 720
 osd .osd.user-plat 720 "EtxHfh" .scheme.osd-entry "#######" 1 user-set-cursorblink
 osd .osd.user-plat 730 "fh" "  "
 osd .osd.user-plat 740 "EtxHf" .scheme.osd-entry "#######" 2 user-set-cursorblink
-osd .osd.user-plat 743 "Sfh" "      Fence Display : " 747
-osd .osd.user-plat 747 "OtxmsfhHzR" .scheme.osd-entry 30 1 "" .osd.user-sub user-setup-fence
+osd .osd.user-plat 743 "Sfh" "  Fence Display:     " 747
+osd .osd.user-plat 747 "OtxmsfhHzR" .scheme.osd-entry 31 1 "" .osd.user-sub user-setup-fence
 osd .osd.user-plat 748 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 747
-osd .osd.user-plat 750 "Sfh" "        Scroll Bars : " 760
-osd .osd.user-plat 760 "OtxmsfhHzR" .scheme.osd-entry 30 1 "" .osd.user-sub user-setup-scrollb
+osd .osd.user-plat 750 "Sfh" "  Scroll Bars:       " 760
+osd .osd.user-plat 760 "OtxmsfhHzR" .scheme.osd-entry 31 1 "" .osd.user-sub user-setup-scrollb
 osd .osd.user-plat 761 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 760
-osd .osd.user-plat 770 "Sfh" "  \HHorizontal Scroll : " 780
-osd .osd.user-plat 780 "OtxmsfhHzR" .scheme.osd-entry 30 1 "" .osd.user-sub user-setup-hscroll
+osd .osd.user-plat 770 "Sfh" "  \HHorizontal Scroll: " 780
+osd .osd.user-plat 780 "OtxmsfhHzR" .scheme.osd-entry 31 1 "" .osd.user-sub user-setup-hscroll
 osd .osd.user-plat 781 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 780
-osd .osd.user-plat 790 "Sfh" "    \HVertical Scroll : " 800
-osd .osd.user-plat 800 "OtxmsfhHzR" .scheme.osd-entry 30 1 "" .osd.user-sub user-setup-vscroll
+osd .osd.user-plat 790 "Sfh" "  \HVertical Scroll:   " 800
+osd .osd.user-plat 800 "OtxmsfhHzR" .scheme.osd-entry 31 1 "" .osd.user-sub user-setup-vscroll
 osd .osd.user-plat 801 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 800
-osd .osd.user-plat 810 "Sfh" "       Colo\Hr Scheme : " 820
-osd .osd.user-plat 820 "OtxmsfhHzR" .scheme.osd-entry 30 1 "" .osd.user-sub user-setup-color
+osd .osd.user-plat 810 "Sfh" "  Colo\Hr Scheme:      " 820
+osd .osd.user-plat 820 "OtxmsfhHzR" .scheme.osd-entry 31 1 "" .osd.user-sub user-setup-color
 osd .osd.user-plat 821 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 820
 !if &seq $platform "dos"
-    osd .osd.user-plat 50 "Sfh" "     Graphic Mode \H# : " 60
-    osd .osd.user-plat 60 "EtxHf" .scheme.osd-entry "####" 1 user-set-cpfentry
-    osd .osd.user-plat 70 "fh"  "       Double Lines : "
-    osd .osd.user-plat 80 "Ctxf" "^^NY^^" 1 user-set-cpfcheckbox
-    osd .osd.user-plat 509 ""
+    osd .osd.user-plat 50  "Sfh" "  Graphic Mode \H#:    " 60
+    osd .osd.user-plat 60  "EtxHf" .scheme.osd-entry "####" 1 user-set-cpfentry
+    osd .osd.user-plat 320 "fh"  "    "
+    osd .osd.user-plat 330 "Ctxfp" &cat .osd.checkbox-chars "\} Double Lines" 1 user-set-cpfcheckbox
 !elif &seq $platform "win32"
-    osd .osd.user-plat 410 "Ctfxh" "^^NY^^" 0x80000 user-set-system
-    osd .osd.user-plat 509 "Sfh" "         Client Server : " 510
-    osd .osd.user-plat 510 "Ctfx" "^^NY^^" 0x20000 user-set-system
-    osd .osd.user-plat 520 "Sfh" "     DOS File Names : " 530
-    osd .osd.user-plat 530 "Ctfxh" "^^NY^^" 0x400 user-set-system
+    osd .osd.user-plat 509 "fh" "          "
+    osd .osd.user-plat 510 "Ctfxp" &cat .osd.checkbox-chars "\} Client Server" 0x20000 user-set-system
+    osd .osd.user-plat 520 "fh" "    "
+    osd .osd.user-plat 530 "Ctfxph" &cat .osd.checkbox-chars "\} DOS File Names" 0x400 user-set-system
     osd .osd.user-plat 540 "f" " "
-    !if &band $system 0x01
-        osd .osd.user-plat 410 "Ctfx" "^^NY^^" 0x80000 user-set-system
-        osd .osd.user-plat 420 ""
-    !else
-        osd .osd.user-plat 50  "Sfh" "          \HFont Name : " 60
-        osd .osd.user-plat 60  "EtxHf" .scheme.osd-entry "###############################" 1 user-set-cpfentry
-        osd .osd.user-plat 70  "Sfh" "      Weight & Si\Hze : " 80
+    !if &not &band $system 0x01
+        osd .osd.user-plat 50  "Sfh" "  \HFont Name:         " 60
+        osd .osd.user-plat 60  "EtxHf" .scheme.osd-entry "################################" 1 user-set-cpfentry
+        osd .osd.user-plat 70  "Sfh" "  Weight & Si\Hze:     " 80
         osd .osd.user-plat 80  "EtxHfh" .scheme.osd-entry "#####" 4 user-set-cpfentry
         osd .osd.user-plat 90  "fh" "  "
         osd .osd.user-plat 100 "EtxHfh" .scheme.osd-entry "#####" 2 user-set-cpfentry
         osd .osd.user-plat 110 "fh" " by "
         osd .osd.user-plat 120 "EtxHfh" .scheme.osd-entry "#####" 3 user-set-cpfentry
-        osd .osd.user-plat 130 "Sfh" " \HFonts : " 140
-        osd .osd.user-plat 140 "Ctfx" "^^NY^^" 0x10 user-set-system
-        osd .osd.user-plat 320 "Sfh" "    \HExtend Char Set : " 330
-        osd .osd.user-plat 330 "Ctfxh" "^^NY^^" 2 user-set-cpfcheckbox
-        osd .osd.user-plat 340 "fh"  "                 "
-        osd .osd.user-plat 350 "BdtfxHR" .scheme.osd-ebtt " Choose Font " f user-set-winfont
-        osd .osd.user-plat 410 "Ctfxh" "^^NY^^" 0x80000 user-set-system
-        osd .osd.user-plat 420 "Sfh" "     Capture Alt Space : " 430
-        osd .osd.user-plat 430 "Ctfx" "^^NY^^" 0x40000 user-set-system
+        osd .osd.user-plat 130 "fh" "  "
+        osd .osd.user-plat 140 "Ctfxp" &cat .osd.checkbox-chars "\} \HFonts" 0x10 user-set-system
+        osd .osd.user-plat 320 "fh" "    "
+        osd .osd.user-plat 330 "Ctfxph" &cat .osd.checkbox-chars "\} \HExtend Char Set" 2 user-set-cpfcheckbox
+        osd .osd.user-plat 340 "fh"  "               "
+        osd .osd.user-plat 350 "BtfxHR" .scheme.osd-ebtt " Choose Font " f user-set-winfont
+        osd .osd.user-plat 420 "fh" "       "
+        osd .osd.user-plat 430 "Ctfxp" &cat .osd.checkbox-chars "\} Capture Alt Space" 0x40000 user-set-system
     !endif
 !else
     ; unix system
-    osd .osd.user-plat 509 "Sfh" "         Client Server : " 510
-    osd .osd.user-plat 510 "Ctfx" "^^NY^^" 0x20000 user-set-system
-    osd .osd.user-plat 520 "Sfh" "     DOS File Names : " 530
-    osd .osd.user-plat 530 "Ctfxh" "^^NY^^" 0x400 user-set-system
+    osd .osd.user-plat 509 "fh" "          "
+    osd .osd.user-plat 510 "Ctfxp" &cat .osd.checkbox-chars "\} Client Server" 0x20000 user-set-system
+    osd .osd.user-plat 520 "fh" "    "
+    osd .osd.user-plat 530 "Ctfxph" &cat .osd.checkbox-chars "\} DOS File Names" 0x400 user-set-system
     osd .osd.user-plat 540 "f" " "
     !if &band $system 0x01
-        osd .osd.user-plat 50  "Sfh" "      Termca\Hp Color : " 60
-        osd .osd.user-plat 60  "Ctfx" "^^NY^^" 0x04 user-set-system
-        osd .osd.user-plat 90  "Sfh" "          Use \HFonts : " 100
-        osd .osd.user-plat 100 "Ctfx" "^^NY^^" 0x10 user-set-system
+        osd .osd.user-plat 320 "fh" "    "
+        osd .osd.user-plat 330 "Ctfxph" &cat .osd.checkbox-chars "\} Termca\Hp Color" 0x04 user-set-system
+        osd .osd.user-plat 340 "fh" "           "
+        osd .osd.user-plat 350 "Ctfxp" &cat .osd.checkbox-chars "\} Use \HFonts" 0x10 user-set-system
     !else
-        osd .osd.user-plat 50 "Sfh" "          \HFont Name : " 60
-        osd .osd.user-plat 60 "EtxHf" .scheme.osd-entry "###############################" 1 user-set-cpfentry
-        osd .osd.user-plat 320 "Sfh" "    \HExtend Char Set : " 330
-        osd .osd.user-plat 330 "Ctfhx" "^^NY^^" 2 user-set-cpfcheckbox
-        osd .osd.user-plat 340 "Sfh" "      Use \HFonts : " 350
-        osd .osd.user-plat 350 "Ctfx" "^^NY^^" 0x10 user-set-system
+        osd .osd.user-plat 50  "Sfh" "  \HFont Name:         " 60
+        osd .osd.user-plat 60  "EtxHf" .scheme.osd-entry "################################" 1 user-set-cpfentry
+        osd .osd.user-plat 320 "fh" "    "
+        osd .osd.user-plat 330 "Ctfxph" &cat .osd.checkbox-chars "\} \HExtend Char Set" 2 user-set-cpfcheckbox
+        osd .osd.user-plat 340 "fh" "         "
+        osd .osd.user-plat 350 "Ctfxp" &cat .osd.checkbox-chars "\} Use \HFonts" 0x10 user-set-system
     !endif
 !endif
 
