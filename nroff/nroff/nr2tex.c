@@ -7,12 +7,12 @@
  *  System        : 
  *  Module        : 
  *  Object Name   : $RCSfile: nr2tex.c,v $
- *  Revision      : $Revision: 1.2 $
- *  Date          : $Date: 2002-03-10 18:36:17 $
+ *  Revision      : $Revision: 1.3 $
+ *  Date          : $Date: 2002-04-02 20:26:22 $
  *  Author        : $Author: jon $
  *  Created By    : Jon Green
  *  Created       : Thu Mar 7 20:45:45 2002
- *  Last Modified : <020310.1827>
+ *  Last Modified : <020318.2209>
  *
  *  Description	
  *
@@ -21,6 +21,9 @@
  *  History
  *	
  *  $Log: not supported by cvs2svn $
+ *  Revision 1.2  2002/03/10 18:36:17  jon
+ *  New label name space for TEX
+ *
  *  Revision 1.1  2002/03/10 14:24:42  jon
  *  Tex prototype
  *
@@ -190,7 +193,8 @@ static void
 setIndentMode (void)
 {
     int cur_indent;
-
+    return;
+    
     /* Compare the current paragraph indent level with what the application
        has requested - add and remove paragraph indents as appropriate.  Note
        when they are equal - we drop through both whiles and do nothing.  */
@@ -248,8 +252,8 @@ insertPara (int pmode)
 #if 0
         latexStr ("\\par ");
 #else
-        latexEol();
-        latexEol();
+/*        latexEol();*/
+/*        latexEol();*/
 #endif        
         para_mode = PARA_NORMAL;
         para_clean = 1;
@@ -423,17 +427,6 @@ insert (char *s, int mode)
 
     if (s == NULL)
         return;
-#if 0
-    if ((mode & (PARA_FORCE|CODE_MODE)) == 0) {
-        if (para_mode == PARA_TERM)
-            insertPara (PARA_CLOSE);
-        if (para_mode == 0)
-            insertPara (PARA_NORMAL);
-    }
-#if 0
-    setParaMode (mode);                 /* Enable/Disable necessary modes */
-#endif
-#endif
     while (*s) {
         s = rightTrim(leftTrim (s));
         if (s == NULL)
@@ -595,6 +588,8 @@ static void
 nrPP_func (void)
 {
     insertPara (PARA_TERM);
+    latexStr ("\\PP");                  /* Add openners !! */
+    latexEol ();                        /* Make pretty */
     sub_indent = 0;
 }
 
@@ -793,7 +788,7 @@ nrCE_func (int i)
     mode &= ~CODE_MODE;
     mode |= JUST_MODE;
     indent -= FULL_INDENT;
-    latexStr ("\\CE ");
+    latexStr ("\\CE{%d}", i*6);
     setIndentMode ();
     latexEol ();
     while (--i >= 0)
@@ -804,13 +799,17 @@ nrCE_func (int i)
 static void
 nrRS_func (void)
 {
-    indent += FULL_INDENT;
+    latexEol ();
+    latexStr ("\\RS ");
+    latexEol ();
 }
 
 static void
 nrRE_func (void)
 {
-    indent -= FULL_INDENT;
+    latexEol ();
+    latexStr ("\\RE ");
+    latexEol ();
 }
 
 static void
@@ -874,13 +873,14 @@ nrTP_func (int i)
 {
     if (i != 0)                         /* Start of function */
     {
-        sub_indent = 0;
         insertPara (PARA_TERM);
+        latexEol ();
+        latexStr ("\\TP{");
     }
     else                                /* End of function */
     {
-        sub_indent = FULL_INDENT;
-/*        para_mode |= PARA_BREAK;*/
+        latexStr ("}");
+        latexEol ();
     }
 }
 
@@ -898,8 +898,7 @@ nrIP_func (char *s)
 static void
 nrLP_func (void)
 {
-    sub_indent = 0;
-    insertPara (PARA_TERM);
+    nrPP_func ();
 }
 
 static void
@@ -942,7 +941,6 @@ nrTextline (char *s)
     if (mode & CODE_MODE) {
         if (s != NULL)
             insert (s, mode);
-        latexStr("\\newline");
         latexEol();
     }
     else if (mode & PARA_MODE)
@@ -1011,9 +1009,6 @@ nrXJ_func (char *name, char *id, char *desc, char *comp)
 static void
 nrXP_func (char *name, char *id, char *desc, char *comp)
 {
-    if (compiling != 0)                 /* If we are compiling do not need */
-        return;
-
     if (id == NULL)
         id = sectionId;
 
