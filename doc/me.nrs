@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.25 2005-01-15 14:51:50 jon Exp $
+.Id $Id: me.nrs,v 2.26 2005-01-16 19:49:05 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -378,10 +378,8 @@ output * "%N
 .Se
 .NH Abbreviations - "Short Cuts and Abbreviations"
 .SH "SHORT CUTS"
-Automatic commands, history and automatic formatting modes such as
-.B "C-mode"
-(see
-.Ht cmode 2m ).
+Automatic commands, history and automatic formatting modes such as 
+.Ht indent 2 .
 .SS Commands
 .Ss
 search MicroEmacs 2 scuts
