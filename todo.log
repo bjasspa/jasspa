@@ -4,14 +4,8 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <040223.2145>
+>  Last Modified : <040223.2148>
 >
-
-   [040223] JG/0401-4 - Minor - TBD
-   
-        Region  hilighting is not maintained when moving the cursor backwards.
-        "set-mark"  and  then  move  up  the  page  using  "up" of  "C-p"  the
-        hilighting is only maintained for a single line.
 
    [040220] SP/0401-4 - Minor - TBD
 
