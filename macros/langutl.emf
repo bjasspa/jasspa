@@ -19,8 +19,10 @@
     !endif
     !force execute-file &cat "lsr" .spell.language
     !if &not $status
-        set-variable #l0 &spr "  Rules and dictionaries for language \"%s\"  \n     are not available, please download." &reg "/history" "language" "Default"
-        osd-dialog "Spelling Checker" #l0 "  \HOk  "
+        !if @#
+            set-variable #l0 &spr "  Rules and dictionaries for language \"%s\"  \n     are not available, please download." &reg "/history" "language" "Default"
+            osd-dialog "Spelling Checker" #l0 "  \HOk  "
+        !endif
         !abort
     !endif
     ; Add the eXtended, Main and Personal dictionaries
