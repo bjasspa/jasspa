@@ -1063,24 +1063,40 @@ replaces(int kind, int ff, int nn)
                     (tmpc == '\\') && 
                     (i+1 < rlength))                   /* Not too long ?? */
                 {
-                    tmpc = rpat[++i] ;
+                    int jj, kk, changeCase=0 ;
                     
+                    tmpc = rpat[++i] ;
+                    if((i+1 < rlength) && ((tmpc == 'l') || (tmpc == 'u') || (tmpc == 'c')))
+                    {
+                        changeCase = (tmpc == 'l') ? -1:tmpc ;
+                        tmpc = rpat[++i] ;
+                    }
                     if ((tmpc == '&') ||
                         ((tmpc >= '0') && (tmpc <= '9') && ((int)(tmpc-'0' <= mereRegexGroupNo()))))
                     {
                         /* Found auto repeat char replacement */
-                        register int j,k;	/* Local loop counter */
-                        
                         tmpc -= (tmpc == '&') ? '&':'0' ;
                         
                         /* if start offset is < 0, it was a ? auto repeat which was not found,
                            therefore replace str == "" */ 
-                        if((j=mereRegexGroupStart(tmpc)) >= 0)
+                        if((jj=mereRegexGroupStart(tmpc)) >= 0)
                         {
-                            for(k=mereRegexGroupEnd(tmpc) ;
-                                ((j < k) && (status > 0)); ilength++)
+                            for(kk=mereRegexGroupEnd(tmpc) ;
+                                ((jj < kk) && (status > 0)); ilength++)
                             {
-                                if ((tmpc=dpat[j++]) != meCHAR_NL)
+                                tmpc = dpat[jj++] ;
+                                if(changeCase)
+                                {
+                                    if(changeCase > 0)
+                                    {
+                                        tmpc = toUpper(tmpc) ;
+                                        if(changeCase == 'c')
+                                            changeCase = -1 ;
+                                    }
+                                    else
+                                        tmpc = toLower(tmpc) ;
+                                }
+                                if(tmpc != meCHAR_NL)
                                     status = lineInsertChar(1, tmpc);
                                 else
                                     status = lineInsertNewline(meFALSE);
