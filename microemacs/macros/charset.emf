@@ -31,7 +31,7 @@ set-variable .change-font.type 0
     set-char-mask "dp" "\CY\CM\CL\CN\CK\CX\CU\CO\CV\CW\CR\CP\CQ\C^\C_"
     set-char-mask "p"  "\CI\CJ"
     set-variable $box-chars "\CY\CM\CL\CN\CK\CX\CU\CO\CV\CW\CR"
-    set-variable $window-chars "=-#*%=^   v*==^^      vv**|<   >*||<<      >>** x*  >\\.$$\\"
+    set-variable $window-chars "=-#*%=^   v*==^^      vv**|<   >*||<<      >>** x* > <>\\.$$\\"
     set-variable $system &band $system &bnot 0x10000
     set-variable #l1 0
 !elif &seq #l0 "Win-ANSI"
@@ -39,7 +39,7 @@ set-variable .change-font.type 0
 !elif &seq #l0 "Win-OEM"
     set-char-mask "M" "£œª¦«®¬ª®©°§±ñ²ý³ü´îµæ¶õ·ú¸ý¹û»¯¼¬½«¾ó¿¨À·ÁÂŠÃ²ÄŽÆ’Ç€ÈÔÉÊÒËÑÌÞÍÖÎ×ÏØÐÑÑ¥ÒãÓàÔâÕåÖ™×žØÙëÚéÛêÜšÝìÞçßÿà…á âƒä„å†æ‘ç‡èŠé‚êˆë‰ìí¡îŒï‹ñ¤ò•ó¢ô“õäö”÷öø›ù—ú£û–üýìþèÿ˜"
     set-variable $box-chars "³Ú¿ÀÙÂÃÅ´ÁÄ"
-    set-variable $window-chars "=-#*%=\C^± ±\C_\CD==\C^\C^±±  ±±\C_\C_\C[\CZ|\CQ± ±\CP\CD||\CQ\CQ±±  ±±\CP\CP\C[\CZ x*  \xaf\xfb\xfa$$\\"
+    set-variable $window-chars "=-#*%=\C^± ±\C_\CD==\C^\C^±±  ±±\C_\C_\C[\CZ|\CQ± ±\CP\CD||\CQ\CQ±±  ±±\CP\CP\C[\CZ x* \CP \CQ\xaf\xfb\xfa$$\\"
     set-variable $system &band $system &bnot 0x10000
     set-variable .change-font.type 255
     set-variable #l1 0
@@ -60,13 +60,13 @@ set-variable .change-font.type 0
 !elif &seq #l0 "PC-437"
     set-char-mask "M" "£œª¦«®¬ª°ø±ñ²ýµæ·ú»¯¼¬½«¿¨ÀAÁAÂAÃAÄŽÅÆ’AAÇ€ÈEÉÊEËEEEÌIÍIÎIÏIIIÑ¥ÒOÓOÔOÕOÖ™OOÙUÚUÛUÜšUUÝYßáà…á âƒãaä„åaæ‘aaç‡èŠé‚êˆë‰ìí¡îŒï‹ñ¤ò•ó¢ô“õoö”÷öøoooù—ú£û–üuuýyÿ˜yy"
     set-variable $box-chars "³Ú¿ÀÙÂÃÅ´ÁÄ"
-    set-variable $window-chars "=-#*%=\C^± ±\C_\CD==\C^\C^±±  ±±\C_\C_\C[\CZ|\CQ± ±\CP\CD||\CQ\CQ±±  ±±\CP\CP\C[\CZ x*  >\\.$$\\"
+    set-variable $window-chars "=-#*%=\C^± ±\C_\CD==\C^\C^±±  ±±\C_\C_\C[\CZ|\CQ± ±\CP\CD||\CQ\CQ±±  ±±\CP\CP\C[\CZ x* \CP \CQ>\\.$$\\"
     set-variable $system &band $system &bnot 0x10000
     set-variable #l1 0
 !elif &seq #l0 "PC-850"
     set-char-mask "M" "£œª¦«®¬ª®©°§±ñ²ý³ü´îµæ¶õ·ú¸ý¹û»¯¼¬½«¾ó¿¨À·ÁÂŠÃ²ÄŽÆ’Ç€ÈÔÉÊÒËÑÌÞÍÖÎ×ÏØÐÑÑ¥ÒãÓàÔâÕåÖ™×žØÙëÚéÛêÜšÝìÞçßÿà…á âƒä„å†æ‘ç‡èŠé‚êˆë‰ìí¡îŒï‹ñ¤ò•ó¢ô“õäö”÷öø›ù—ú£û–üýìþèÿ˜"
     set-variable $box-chars "³Ú¿ÀÙÂÃÅ´ÁÄ"
-    set-variable $window-chars "=-#*%=\C^± ±\C_\CD==\C^\C^±±  ±±\C_\C_\C[\CZ|\CQ± ±\CP\CD||\CQ\CQ±±  ±±\CP\CP\C[\CZ x*  >\\.$$\\"
+    set-variable $window-chars "=-#*%=\C^± ±\C_\CD==\C^\C^±±  ±±\C_\C_\C[\CZ|\CQ± ±\CP\CD||\CQ\CQ±±  ±±\CP\CP\C[\CZ x* \CP \CQ>\\.$$\\"
     set-variable $system &band $system &bnot 0x10000
     set-variable #l1 0
 !elif &seq #l0 "koi8-r"
@@ -81,13 +81,13 @@ set-variable .change-font.type 0
     set-char-mask "p"  "\CA\CB\CC\CD\CH\CI\CJ\CS\CT\CZ"
     set-variable .osd.checkbox-chars "^\CA\CB\CC\CD^"
     set-variable $box-chars "\CY\CM\CL\CN\CK\CX\CU\CO\CV\CW\CR"
-    set-variable $window-chars "=-#*%=\C^\C[ \C[\C_*==\C^\C^\C[\C[  \C[\C[\C_\C_**|\CQ\C] \C]\CP*||\CQ\CQ\C]\C]  \C]\C]\CP\CP** \CT\CZ  \t\n\CG\CH\CI\\"
+    set-variable $window-chars "=-#*%=\C^\C[ \C[\C_*==\C^\C^\C[\C[  \C[\C[\C_\C_**|\CQ\C] \C]\CP*||\CQ\CQ\C]\C]  \C]\C]\CP\CP** \CT\CZ \CP \CQ\t\n\CG\CH\CI\\"
     set-variable $system &bor $system 0x10000
 !else
     set-variable .osd.checkbox-chars "^[ X]^"
     !if #l1
         set-variable $box-chars "|+++++++++-"
-        set-variable $window-chars "=-#*%=^   v*==^^      vv**|<   >*||<<      >>** x*  >\\.$$\\"
+        set-variable $window-chars "=-#*%=^   v*==^^      vv**|<   >*||<<      >>** x* > <>\\.$$\\"
         set-variable $system &band $system &bnot 0x10000
     !endif
 !endif
