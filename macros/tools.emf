@@ -112,8 +112,8 @@ define-macro diff
     !if $status
         set-variable #l0 @1
     !else
-        set-variable #l0 @ml04 "Old File"
-        set-variable #l1 @ml04 "New File"
+        set-variable #l0 @ml01 "Old File"
+        set-variable #l1 @ml01 "New File"
     !endif
     ; Winsows/DOS ONLY: If the file name ends with a '/' for a directory diff
     ; then remove it. Correct the forward slash to backslash.
