@@ -4,7 +4,7 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <040213.2031>
+>  Last Modified : <040217.2303>
 >
 
     [040213] BS/0401-4 - Minor - TBD
@@ -13,37 +13,38 @@
         a small window.
 
     [040213] SP/0401-4 - Major - Target TBD
-    
+
         CVS status of directories is not shown.
-        
+
     [040212] SP/0401-4 - Major - Target TBD
-        
+
         Executing 'me' (user-setup -> Current) breaks  auto-spell until a main
         spell command (spell-word or spell-buffer) is executed.
 
     [040212] SP/0401-4 - Enhancement - TBD
-        
-        Need some way of opening the right mouse button menu using a key. 'esc ='
-        
+
+        Need some way of opening the right mouse button menu using a key. 'esc
+        ='
+
     [040210] BS/0401-4 - Minor - TBD
 
         ME build.bat -l options do not work in standard  cmd/command  as there
-        use 4DOS '>>&' extension. 
+        use 4DOS '>>&' extension.
 
     [040210] BS/0401-4 - Minor - TBD
 
         ME can't load files within a directory with '[..]' in its name - win32
-        
+
 ___________________________________________________________________________
 
 0401-4 Release Fixes
 ___________________________________________________________________________
 
     [040213] SP/0401-4 - Major - Target 0401-5
-    
+
         Bottom  Toolbar  window grows when CVS is opened,  change-window-depth
         does not respect bit 2 of $window-flags.
-        
+
     [040210] BS/0401-4 - Major - Target 0401-5
 
         There are  several  differences  between  running  'cvs' and using the
@@ -51,18 +52,18 @@ ___________________________________________________________________________
         (e.g. use C-f10, select a couple of files and then execute cvs-commit,
         this will commit  changes to all files as it does not respect the list
         of selected  files).
-        
+
     [040129] JG/0401-1 - Major - Target 0401-5
-    
+
         From  Organizer  -> Address,  do "Find" and search  "First" for a name
         that does not exist - Organiser locks up.
 
     [040203] Gabriel/0401-3 - Font selection under XP
 
         I have downloaded unix fonts from
-        
+
             http://www.tomasek.cz/semtel/download/fonts.zip
-            
+
         and I can't  get  them to work in ME. I can get  them to work on other
         programs (such as notepad) but not on ME.
 
@@ -71,28 +72,37 @@ ___________________________________________________________________________
 
         I can  choose  the fonts from the list, but I cannot use them (it goes
         back to some other default font).
-        
+
         Same problem under RC4.
 
-> FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED 
+> FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED
+
+    [040217] SK/0401-4 - Minor - Target 0401-5
+
+        I am using the ME Server  feature  where in KDE File  Manager I double
+        click on a file and have an existing  instance of ME open the file up.
+        The  problem  is that  once  this  happens,  ME does  not  come to the
+        foreground.
+
+        Fixed JG/0401-5 04/02/17: Source change.
 
     [040213] BS/0401-4 - Major - Target 0401-5
-    
+
         PHP script can be started with '<?' tag in a php file.
-        
+
         Fixed SP/0401-5 04/02/13: Macro change.
-        
+
     [040206] JG/0401-4 - Minor - target 0401-5
-    
+
         Under Linux and SunOS then cannot "su" to another  user from an ishell
         window.
-        
+
         Fixed JG/0401-5  04/02/13: Source change unixterm.c.  "otermio" is not
         initialized.
-        
+
     [040210] DG/0401-4 - Major - Target 0401-5
-    
-        Toolbar Directory File List does not contain "../" - UNIX only. 
+
+        Toolbar Directory File List does not contain "../" - UNIX only.
 
         Fixed 0401-5 04/02/10: Source change.
 
@@ -106,7 +116,7 @@ ___________________________________________________________________________
 
         Support to recognize GNU tags for makefile "-*- Makefile -*-" and UNIX
         shell files "-*- sh -*-".
-        
+
         Fixed 0401-5 04/02/10: Macro change.
 
     [040206] JG/0401-4 - Critical - Target 0401-5
@@ -130,7 +140,7 @@ ___________________________________________________________________________
         UNIX the Copy and Paste is not  working  correctly  between  X-Windows
         applications.  Data selected in Mozilla  copies into GNU Emacs OK, but
         not into ME.
-        
+
         Fixed JG/0401-5 04/02/09: Build Solaris 8 image.
 
     [040206] JG/0401-4 - Minor - Target 0401-5
@@ -163,8 +173,17 @@ ___________________________________________________________________________
 Subsequent Release
 ___________________________________________________________________________
 
+    [040216] JG/0401-4 - Enhancement - Target TBD
+
+        Cygwin shell under  windows does not echo the command line. The cygwin
+        behavior  has changed and BASH no longer echos the command  line. This
+        means  that  ME must  supply  its own  command  line  and  completion.
+        Completion is simplified if the $TERM=EMACS and $EMACS="*term*" as the
+        bash  shell  will echo the  current  directory  before the prompt on a
+        separate line commencing ^Z to allow the caller to complete.
+
     [040211] SP/0401-4 - Enhancement - Target TBD
-    
+
         evaluation  of ~fred/ on UNIX  should use the passwd file first to get
         the correct home directory of fred.
 
@@ -172,15 +191,15 @@ ___________________________________________________________________________
 
         There are  differences  between  the output  buffer used when  running
         'cvs'  and  using  the  'cvs-*'   commands,  e.g.   *cvs-console*   or
-        *cvs-commit* buffer. Should these differences be engineered out? 
+        *cvs-commit* buffer. Should these differences be engineered out?
 
     [040210] SP/0401-4 - Enhancement - Target TBD
-    
+
         Add support for deleting  directories to file-op and to  file-browser.
-        This would also be used by upload's clean process. 
+        This would also be used by upload's clean process.
 
     [040206] SP/0401-4 - Minor - Target TBD
-    
+
         ME does not work on a HP-UX console. Probably because termcap database
         is not being used and built in definitions are being used to over-ride
         termcap. Need to revisit this.
@@ -218,15 +237,15 @@ ___________________________________________________________________________
         the printer.
 
     [040101] DG/0401-1 - Enhancement - Target TBD
-    
+
         Support hierarchical favorites.
 
     [040101] BS/0401-1 - Enhancement - Target TBD
-    
+
         New work notepad/todo list feature.
 
     [040101] JG/0401-1 - Minor - Target TBD
-    
+
         Default  printer  selection  can be wrong on windows  unless the print
         setup dialog is opened.
 
