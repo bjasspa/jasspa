@@ -21,7 +21,7 @@ define-macro fhook-perl
 set-variable .fhook-perl.setup &reg "/history" "fhook/perl" "bdfhinopx"
 set-variable .fhook-perl.setup-mask "abdefhikmnoptux"
 set-variable .fhook-perl.tags "perltags"
-set-variable .fhook-perl.comment "|#||#|# ||"
+set-variable .fhook-perl.comment "|#||#|# | #||"
 
 !if &exist perldb
     set-variable .fhook-perl.command-flag  "|t|h|"

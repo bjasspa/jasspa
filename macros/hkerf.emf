@@ -17,7 +17,7 @@ define-macro fhook-erf
 set-variable .fhook-erf.name "ME Registry"
 set-variable .fhook-erf.setup &reg "/history" "fhook/erf" "dfhiopx"
 set-variable .fhook-erf.setup-mask "adefhikmoptux"
-set-variable .fhook-erf.comment "|;||;|; ||"
+set-variable .fhook-erf.comment "|;||;|; | ;||"
 
 ; setup erf folding support
 set-variable .fhook-erf.fold-open  "^\".*{$"

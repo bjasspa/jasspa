@@ -24,7 +24,7 @@ define-macro fhook-mhg
 set-variable .fhook-mhg.name "MHEG"
 set-variable .fhook-mhg.setup &reg "/history" "fhook/mhg" "fhinopx"
 set-variable .fhook-mhg.setup-mask "aefhikmnoptux"
-set-variable .fhook-mhg.comment "|//||/|// ||"
+set-variable .fhook-mhg.comment "|//||/|// | //||"
 
 ; Set up the folds for 'mheg'
 set-variable .fhook-mhg.fold-open  "^{"

@@ -42,12 +42,14 @@ set-variable .fhook-latex.name "LaTeX"
 set-variable .fhook-latex.setup &reg "/history" "fhook/latex" "fhinopsx"
 set-variable .fhook-latex.setup-mask "aefhijkmnopstuwx"
 set-variable .fhook-latex.tags "textags"
-set-variable .fhook-latex.comment "|%||%|% ||"
+set-variable .fhook-latex.comment "|%||%|% | %||"
 set-variable .fhook-latex.command-flag  "|bo|bo|bo|bo|thb|thb|thb|thb|th|thb|thb|th|thb|th|th|thbH|"
-set-variable .fhook-latex.command-name  "|latex-para|latex-para|latex-backward-paragraph|latex-forward-paragraph|latex-ref-goto-label|latex-ref-go-back|latex-list-section|latex-list-label||latex-comment-line|latex-uncomment-line||latex-popup|latex-compile|latex-view|latex-swap-hilight|"
-set-variable .fhook-latex.command-nbind "|||||||||||||||||"
-set-variable .fhook-latex.command-kbind "|esc o|esc q|esc p|esc n|C-c r|C-c C-r|f7|f8||C-c C-c|C-c C-d||C-6|||C-c C-h|"
-set-variable .fhook-latex.command-desc  "|||||&Goto Reference Label|&Return to Reference|List &Sections|List &Labels||&Comment out Line|&Uncomment Line||&Insert Token|Com&pile Buffer|&View Buffer|T&oggle hilighting|"
+set-variable .fhook-latex.command-name  "|latex-para|latex-para|latex-backward-paragraph|latex-forward-paragraph|latex-ref-goto-label|latex-ref-go-back|latex-list-section|latex-list-label||latex-popup|latex-compile|latex-view|latex-swap-hilight|"
+set-variable .fhook-latex.command-nbind "||||||||||||||"
+set-variable .fhook-latex.command-kbind "|esc o|esc q|esc p|esc n|C-c r|C-c C-r|f7|f8||C-6|||C-c C-h|"
+set-variable .fhook-latex.command-desc  "|||||&Goto Reference Label|&Return to Reference|List &Sections|List &Labels||&Insert Token|Com&pile Buffer|&View Buffer|T&oggle hilighting|"
+
+set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|section\\|chap\\|subsec\\|label\\|begin\\|paragraph\\|subparagraph\\|end\\)\\)"
 
 !if &sin "f" .fhook-latex.setup
     ; Set up the folding tokens for LaTeX
@@ -340,32 +342,6 @@ set-variable .fhook-latex.command-desc  "|||||&Goto Reference Label|&Return to R
 ;
 ; TeX language specific macros.
 ;
-; latex-comment-line; comment line i.e. xxx -> %xxx
-define-macro latex-comment-line
-    !while &gre &pdec @# 1 0
-        beginning-of-line
-        insert-string "%%"
-        beginning-of-line
-        forward-line
-    !done
-!emacro
-; latex-uncomment-line; uncoment line i.e. %xxx -> xxx
-define-macro latex-uncomment-line
-    beginning-of-line
-    !while &gre &pdec @# 1 0
-        !force -1 search-forward "%"
-        !if $status
-            !if &or &not $window-col &not &seq "\\" &mid @wl &sub $window-col 1 1
-                backward-delete-char
-                !if &seq @wc "%"
-                    forward-delete-char
-                !endif
-            !endif
-        !endif
-        forward-line
-        beginning-of-line
-    !done
-!emacro
 ; latex-forward-paragraph; Advance to the start of the next paragraph
 ; This is a little bit different from the latex-para as we ignore
 ; comments.
@@ -374,8 +350,7 @@ define-macro latex-uncomment-line
     !while &gre &pdec @# 1 0
         forward-line
         ; Find the end of the paragraph
-        !force regex-forward "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|section\\|chap\\|subsec\\|label\\|begin\\|paragraph\\|subparagraph\\|end\\)\\)"
-;        !force regex-forward "\\(^$\\|^[ \t]*$\\|^\\\\newpag\\|^\\\\section\\|^\\\\chap\\|^\\\\subsec\\|^\\\\label\\|^\\\\begin\\|^\\\\paragraph\\|^\\\\subparagraph\\|^\\\\end\\)"
+        !force regex-forward .fhook-latex.paragraph-srch
         !if &not $status
             end-of-buffer
             !return
@@ -391,8 +366,7 @@ define-macro latex-uncomment-line
     !while &gre &pdec @# 1 0
         backward-line
         ; Find the start of the paragraph
-        !force regex-backward "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|section\\|chap\\|subsec\\|label\\|begin\\|paragraph\\|subparagraph\\|end\\)\\)"
-;        !force regex-backward "\\(^$\\|^[ \t]*$\\|^\\\\newpag\\|^\\\\section\\|^\\\\chap\\|^\\\\subsec\\|^\\\\label\\|^\\\\begin\\|^\\\\paragraph\\|^\\\\subparagraph\\|^\\\\end\\)"
+        !force regex-backward .fhook-latex.paragraph-srch
         !if &not $status
             beginning-of-buffer
             !return

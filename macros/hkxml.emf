@@ -30,7 +30,7 @@ define-macro fhook-xml
 ; buffer-initialize variables
 set-variable .fhook-xml.setup &reg "/history" "fhook/xml" "cdhiopsx"
 set-variable .fhook-xml.setup-mask "acdehikmopstux"
-set-variable .fhook-xml.comment  "|<!--|-->|--|  -- |f|"
+set-variable .fhook-xml.comment  "|<!--|-->|--|  -- | -- |f|"
 
 !if &and &sin "h" .fhook-xml.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.xml

@@ -21,7 +21,7 @@ define-macro fhook-lisp
 ; buffer-initialize variables
 set-variable .fhook-lisp.setup &reg "/history" "fhook/lisp" "dhiopx"
 set-variable .fhook-lisp.setup-mask "adehikmoptux"
-set-variable .fhook-lisp.comment "|;||;|; ||"
+set-variable .fhook-lisp.comment "|;||;|; | ;||"
 
 !if &not &exist .hilight.lisp
     set-variable .hilight.lisp &pinc .hilight.next 1
