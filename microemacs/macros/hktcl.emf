@@ -33,16 +33,17 @@ set-variable .fhook-tcl.item-list-s2 "^[\t ]*\\(itcl::\\|::itcl::\\)?class[\t ]+
 set-variable .fhook-tcl.item-list-r2 "Clss \ecB\\2\ecA"
 set-variable .fhook-tcl.item-list-s3 "^[\t ]*\\(itcl::\\)?body[\t ]+\\([-A-Za-z:_][-0-9A-Z:a-z_.']*\\)[\t ]*{"
 set-variable .fhook-tcl.item-list-r3 "Body \ecB\\2\ecA"
-set-variable .fhook-tcl.item-list-s4 "^[\t ]*method[\t ]+\\([-A-Za-z:_][-0-9A-Z:a-z_.']*\\)[\t ]*{"
-set-variable .fhook-tcl.item-list-r4 "Meth \ecB\\1\ecA"
+set-variable .fhook-tcl.item-list-s4 "^[\t ]*\\(snit::\\(type\\)?\\)?method[\t ]+\\([-A-Za-z:_]\\([-0-9A-Z:a-z_.'\t ]*[-0-9A-Z:a-z_.']\\)?\\)[\t ]*{"
+set-variable .fhook-tcl.item-list-r4 "Meth \ecB\\3\ecA"
 set-variable .fhook-tcl.item-list-s5 "^[\t ]*destructor[\t ]*{"
 set-variable .fhook-tcl.item-list-r5 "Dest destructor "
 set-variable .fhook-tcl.item-list-s6 "^[\t ]*constructor[\t ]*{\\(.+\\)}"
 set-variable .fhook-tcl.item-list-r6 "Cnst \ecB\\1\ecA"
-set-variable .fhook-tcl.item-list-s7 "^[\t ]*snit::\\(.+\\) {"
-set-variable .fhook-tcl.item-list-r7 "Snit \ecB\\1\ecA"
+set-variable .fhook-tcl.item-list-s7 "^[\t ]*snit::\\(type\\|widget\\|widgetadapter\\)[\t ]+\\([-A-Za-z:_]\\([-0-9A-Z:a-z_.'\t ]*[-0-9A-Z:a-z_.']\\)?\\)[\t ]*{"
+set-variable .fhook-tcl.item-list-r7 "Snit \ecB\\1 \\2\ecA"
 set-variable .fhook-tcl.item-list-s8 "^[\t ]*namespace[\t ]+eval[\t ]+\\([-A-Za-z:_][-0-9A-Z:a-z_.']*\\)[\t ]*{"
 set-variable .fhook-tcl.item-list-r8 "Nmsp \ecB\\1\ecA"
+
 
 
 !if &not &exist .hilight.tcl
