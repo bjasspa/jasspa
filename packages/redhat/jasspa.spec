@@ -25,7 +25,7 @@
 #  Description   : Produces RedHat RPM package for JASSPA MicroEmacs
 
 %define name            jasspa-me
-%define yymmdd_version  040701
+%define yymmdd_version  050219
 %define version 20%{yymmdd_version}
 
 %define release 1
