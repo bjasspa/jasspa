@@ -409,8 +409,7 @@ set_subdirs (int index, meUByte *path_name, meUByte *path_base)
                  * then do not add it as we do not want to search any
                  * directory unecessarily. */
                 pathtype = getFileStats(&path_name[path_index],0,NULL,NULL) ;
-                printf ("Testing %s : %d\n",
-                        &path_name[path_index], pathtype);
+/*              printf ("Testing %s : %d\n", &path_name[path_index], pathtype); */
                 if(pathtype != meFILETYPE_DIRECTORY)
                 {
                     index = last_index ;      /* Skip this path. */
@@ -681,10 +680,10 @@ set_dirs(meUByte *argv)
     if ((searchPath == NULL) && ((s1 = meGetenv("PATH")) != NULL))
         searchPath = meStrdup(s1) ;
 
-     printf ("Search path = %s\n", searchPath);
-     printf ("Prog name   = %s\n", progName);
-     printf ("Home dir    = %s\n", homedir);
-     fflush (stdout);
+/*     printf ("Search path = %s\n", searchPath);*/
+/*     printf ("Prog name   = %s\n", progName);*/
+/*     printf ("Home dir    = %s\n", homedir);*/
+/*     fflush (stdout);*/
 }   /* End of "set_dirs" () */
 
 /* Look up the existance of a file along the normal or PATH
