@@ -730,7 +730,7 @@ define-macro delete-hilight-lines
             set-variable $line-scheme -1
             set-mark
             forward-line
-            -1 kill-region
+            -1 kill-region @mna
         !endif
     !until 0
 !emacro
