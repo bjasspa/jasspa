@@ -3178,7 +3178,7 @@ do_keydown:
                 }                    
                 else if (wParam == VK_TAB)
                 {
-                    cc = SKEY_tab|ttmodif;
+                    cc = SKEY_tab;
                     goto return_spec;
                 }
                 else
@@ -3334,19 +3334,10 @@ done_syschar:
              * wParam should be 0x1d which is C-m. */
             if ((lParam & 0xff0000) == (0x1c<<16))
             {
-                cc = SKEY_return|ttmodif; /* Return */
+                cc = SKEY_return; /* Return */
                 goto return_spec;
             }
 #endif
-        case VK_CONVERT:                /* This is '#' */
-            /* Look at the scan code. 0x56000 == '\'. 0x2b0000 == '#'. This is
-             * an unconventional way of getting this, but seems to be totaly
-             * undocumented !! */
-            if ((lParam & 0xff0000) == (0x56<<16))
-                wParam = '\\';
-            else
-                wParam = '#';
-            break;
         }
 
         cc = wParam;
