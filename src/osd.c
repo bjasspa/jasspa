@@ -88,7 +88,7 @@ static meUByte osdItemFlags[]="DdmM-CxishctbrfEBpSRHIGPzNTuO" ;
 #define RF_ABSPOS   0x00000002          /* a - Menu has an absolute position */
 #define RF_ALPHA    0x00000004          /* A - Alphabetic sorted list */
 #define RF_TITLE    0x00000008          /* t - Draw a title bar */
-#define RF_DEFAULT  0x00000010          /* d - Default item to select */
+#define RF_INITITEM 0x00000010          /* I - Initial focus item */
 #define RF_CENTER   0x00000020          /* c - Center the title text */
 #define RF_RIGHT    0x00000040          /* r - push title text right */
 #define RF_TSCHEME  0x00000080          /* H - title drawn color scHeme (or Hilight) */
@@ -105,6 +105,7 @@ static meUByte osdItemFlags[]="DdmM-CxishctbrfEBpSRHIGPzNTuO" ;
 #define RF_OFFSTPOS 0x00040000          /* o - Dialog Offset position */
 #define RF_FOCALITM 0x00080000          /* F - Set the item to focus on - temporary */
 #define RF_RISLBUT  0x00100000          /* B - Right is list button */
+#define RF_DEFITEM  0x00200000          /* D - Default button to select */
 
 #define RF_CONFIG   0x08000000          /* The display is currently being configured */
 #define RF_REDRAW   0x10000000          /* The menu has been changed - redraw */
@@ -112,7 +113,7 @@ static meUByte osdItemFlags[]="DdmM-CxishctbrfEBpSRHIGPzNTuO" ;
 #define RF_DISABLE  0x40000000          /* This is a temporarily disabled */
 #define RF_NOPOP    0x80000000          /* Flag to stop the pop with a control */
 
-static meUByte osdMenuFlags[]="baAtdcrHsSRMCNGnfioFB" ;
+static meUByte osdMenuFlags[]="baAtIcrHsSRMCNGnfioFBD" ;
 
 
 #define CF_HORZADD  0x0001              /* Add to the next menu line */
@@ -123,6 +124,7 @@ static meUByte osdMenuFlags[]="baAtdcrHsSRMCNGnfioFB" ;
 #define CF_ROWMASK  0x0030              /* Item row mask */
 #define CF_NBPTOP   0x0040              /* Notebook Page on top */
 #define CF_NBPBOT   0x0080              /* Notebook Page on top */
+#define CF_UPDATE   0x0100              /* item needs updating */
 
 #define osdMOVE_LEFT      0x0001        /* item move direction */
 #define osdMOVE_DOWN      0x0002        /* item move direction */
@@ -132,6 +134,7 @@ static meUByte osdMenuFlags[]="baAtdcrHsSRMCNGnfioFB" ;
 #define osdMOVE_PAGE_DOWN 0x0022        /* item move direction */
 #define osdMOVE_TOP       0x0042        /* item move direction */
 #define osdMOVE_BOTTOM    0x0088        /* item move direction */
+#define osdMOVE_BEOD_MASK 0x00c0        /* item move direction */
 
 /* Local type definitions */
 
@@ -177,7 +180,8 @@ typedef struct osdDIALOG
     meShort  cmdIndex;                  /* Command index or string start index */
     meShort  cntIndex;                  /* Control index or string start index */
     meShort  rszIndex;                  /* Command to resize the dialog */
-    meShort  defItem ;                  /* default item number */
+    meShort  initItem;                  /* initial item number */
+    meShort  defItem;                   /* default button number */
     meShort  focalItem ;                /* item to focus on next redraw - temporary */
     meShort  x;                         /* Absolute Position x of menu */
     meShort  y;                         /* Absolute Position y of menu */
@@ -251,7 +255,8 @@ typedef struct osdDISPLAY
     meUByte   *drawnText ;              /* snap shot drawn text */
     meShort    nbpContext;              /* Context number of the current notebook page */
     meShort    curContext;              /* Current context */
-    meShort    newContext;              /* Current context */
+    meShort    defContext;              /* Default button context */
+    meShort    newContext;              /* new context */
     meShort    numContexts;             /* Number of contexts */
     meShort    multi ;                  /* Multiple colums/rows */
     meShort    x;                       /* Position x of menu */
@@ -317,6 +322,7 @@ dialogResetDisplays(osdDIALOG *rp, int type)
                 {
                     md->curContext = -1 ;
                     md->newContext = -1 ;
+                    md->defContext = -1 ;
                 }
                 else if(type == 1)
                 {
@@ -324,6 +330,8 @@ dialogResetDisplays(osdDIALOG *rp, int type)
                         md->curContext = -1 ;
                     if((md->newContext >= 0) && (md->context[md->newContext].menu->flags & (MF_DISABLE|MF_SEP)))
                         md->newContext = -1 ;
+                    if((md->defContext >= 0) && (md->context[md->defContext].menu->flags & (MF_DISABLE|MF_SEP)))
+                        md->defContext = -1 ;
                 }
                 if(md->flags & RF_CHILD)
                 {
@@ -1339,9 +1347,6 @@ initScrollBar(meSCROLLBAR *sb, int sbarLen, int flags)
 }
 
 #define osdRENDITEM_DRAW    0x01        /* draw to screen */
-#define osdRENDITEM_KEEPCUR 0x02        /* Keep the current context */
-#define osdRENDITEM_REDWALL 0x04        /* Redraw all children including end item */
-#define osdRENDITEM_FLLWNEW 0x08        /* Follow down the newContext, not the cur */
 #define osdRENDITEM_REFOCUS 0x10        /* Check child focus point */
 #define osdRENDITEM_FORCE   0x20        /* Force redraw of whole item eg scroll bars */
 
@@ -1748,27 +1753,17 @@ menuRenderItem (osdDISPLAY *md, int offset, int flags)
     osdCONTEXT *mcp;                    /* Menu context pointer */
     osdITEM *mp;                        /* Menu pointer */
     
-    mcp = &md->context [offset];
+    mcp = &md->context[offset] ;
     mp = mcp->menu ;
         
     if(mp->flags & MF_CHILD)
     {
         osdCHILD    *child;                 /* Child pointer */
         osdDISPLAY  *cmd;                   /* Child menu display pointer */
-        int ii ;
-        
-        if((offset == md->curContext) && !(flags & osdRENDITEM_KEEPCUR))
-            md->curContext = -1 ;
         
         /* Draw the child dialog to the current dialogs snapshot area */
         child = mcp->child ;
         cmd = child->display ;
-        
-        ii = (flags & osdRENDITEM_FLLWNEW) ? cmd->newContext : cmd->curContext ;
-        
-        if((ii >= 0) &&
-           ((flags & osdRENDITEM_REDWALL) || (cmd->context[ii].menu->flags & MF_CHILD)))
-            menuRenderItem(cmd,ii,(flags&0xfe)) ;
         
         if(mp->flags & MF_SCRLBOX)
         {
@@ -1839,13 +1834,8 @@ menuRenderItem (osdDISPLAY *md, int offset, int flags)
         /* Get the colour of the item */
         scheme = mp->scheme ;
         /* if the menu item is selected then use the hilight scheme */
-        if(offset == md->curContext)
-        {
-            if(!(flags & osdRENDITEM_KEEPCUR))
-                md->curContext = -1 ;
-            else if(!(mp->flags & MF_NHILIGHT))
-                scheme += meSCHEME_SELECT ;
-        }
+        if((offset == md->curContext) && !(mp->flags & MF_NHILIGHT))
+            scheme += meSCHEME_SELECT ;
         
         if(mp->flags & MF_LINEFILL)
         {
@@ -1926,7 +1916,7 @@ menuRenderItem (osdDISPLAY *md, int offset, int flags)
             maxx -= 2 ;
         else if(!(mp->flags & MF_DISPTYPE) && (mp->flags & MF_BUTTON))
         {
-            *txtp++ = windowChars[WCOSDBTTOPN] ;
+            *txtp++ = windowChars[WCOSDBTTOPN + (offset == md->defContext)] ;
             curx++ ;
             maxx-- ;
         }
@@ -1983,7 +1973,7 @@ menuRenderItem (osdDISPLAY *md, int offset, int flags)
         }
         if(!(mp->flags & MF_DISPTYPE) && (mp->flags & MF_BUTTON))
         {   
-            *txtp++ = windowChars[WCOSDBTTCLS] ;
+            *txtp++ = windowChars[WCOSDBTTCLS + (offset == md->defContext)] ;
             curx++ ;
             maxx++ ;
         }
@@ -2016,6 +2006,7 @@ menuRenderItem (osdDISPLAY *md, int offset, int flags)
     /* Draw the text region to screen if required */
     if (flags & osdRENDITEM_DRAW)
         osdDisplaySnapshotDraw(md,mcp->x,mcp->y,mcp->width,mcp->depth,1) ;
+    mcp->mcflags &= ~CF_UPDATE ;
 }
 
 void
@@ -2097,6 +2088,7 @@ osdDisp(meUByte *buf, meUByte *cont, int cpos)
         
         do {
             md = md->prev ;
+            menuRenderItem(md,md->curContext,osdRENDITEM_REFOCUS) ;
             osdRow += md->y + md->context[md->curContext].y ;
             osdCol += md->x + md->context[md->curContext].x ;
             if(md->context[md->curContext].menu->flags & MF_SCRLBOX)
@@ -2105,7 +2097,7 @@ osdDisp(meUByte *buf, meUByte *cont, int cpos)
                 osdCol++ ;
             }
         } while (md != osdCurMd) ;
-        menuRenderItem(md,md->curContext,osdRENDITEM_DRAW|osdRENDITEM_KEEPCUR|osdRENDITEM_REFOCUS) ;
+        menuRenderItem(md,md->curContext,osdRENDITEM_DRAW|osdRENDITEM_REFOCUS) ;
     }
     TTmove(osdRow,osdCol) ;
 }                
@@ -2471,7 +2463,7 @@ menuRender (osdDISPLAY *md)
                     }
                     if((mp->flags & (MF_SCRLBOX|MF_CHILD)) == (MF_SCRLBOX|MF_CHILD))
                         menuRenderChildBoarder(md,&mcp[itemNo]) ;
-                    menuRenderItem(md, itemNo, osdRENDITEM_KEEPCUR|osdRENDITEM_REDWALL|osdRENDITEM_FORCE|osdRENDITEM_REFOCUS);
+                    menuRenderItem(md, itemNo, osdRENDITEM_FORCE|osdRENDITEM_REFOCUS);
                     xpos += ll + ss ;
                 } while(mcp[itemNo++].mcflags & CF_HORZADD) ;
                 row += depth ;
@@ -2519,6 +2511,23 @@ menuRender (osdDISPLAY *md)
     }
 }
 
+static void
+osdDisplayUpdate(osdDISPLAY *md, int flags)
+{
+    int ii=0 ;
+    
+    for(ii = 0; ii < md->numContexts; ii++)
+    {
+        /* Ignore any non-state entries */
+        if(md->context[ii].mcflags & CF_UPDATE)
+        {
+            if(md->context[ii].menu->flags & MF_CHILD)
+                osdDisplayUpdate(md->context[ii].child->display,flags & ~osdRENDITEM_DRAW) ;
+            menuRenderItem(md,ii,flags) ;
+        }
+    }
+}    
+
 
 /*
  * osdDisplayPop
@@ -2555,6 +2564,73 @@ osdDisplayPop (osdDISPLAY *md)
     }
 }
 
+
+static void
+osdDisplaySetDefaultContext(osdDISPLAY *tmd)
+{
+    osdDISPLAY *md, *mdl ;
+    int ii, defNew, checkLast=1, curIsButton ;
+    
+    md = tmd ;
+    while((md->curContext >= 0) && (md->context[md->curContext].menu->flags & MF_CHILD))
+        md = md->context[md->curContext].child->display ;
+    curIsButton = ((md->curContext >= 0) && ((md->context[md->curContext].menu->flags & (MF_DISABLE|MF_DISPTYPE|MF_BUTTON)) == MF_BUTTON)) ;
+    
+    md = tmd ;
+    for(;;)
+    {
+        if(curIsButton)
+            defNew = md->curContext ;
+        else
+        {
+            /* find the default button */
+            defNew = -1 ;
+            if(md->dialog->flags & RF_DEFITEM)
+            {
+                for(ii=0 ; ii<md->numContexts ; ii++)
+                {
+                    if(md->context[ii].menu->item == md->dialog->defItem)
+                    {
+                        defNew = ii ;
+                        break ;
+                    }
+                }
+            }
+        }
+        if(checkLast && (md->defContext != defNew))
+        {
+            mdl = md ;
+            while(mdl != tmd)
+            {
+                mdl = mdl->prev ;
+                mdl->context[mdl->defContext].mcflags |= CF_UPDATE ;
+            }
+            mdl = md ;
+            while((ii=mdl->defContext) >= 0)
+            {
+                mdl->defContext = -1 ;
+                mdl->context[ii].mcflags |= CF_UPDATE ;
+                if(!(mdl->context[ii].menu->flags & MF_CHILD))
+                    break ;
+                mdl = mdl->context[ii].child->display ;
+            }
+            checkLast = 0 ;
+        }
+        if((defNew < 0) ||
+           (!(md->context[defNew].menu->flags & MF_CHILD) &&
+            (md->context[defNew].menu->flags & (MF_DISABLE|MF_DISPTYPE|MF_BUTTON)) != MF_BUTTON))
+            break ;
+        md->defContext = defNew ;
+        if(!checkLast)
+        {
+            meAssert(defNew >= 0) ;
+            md->context[defNew].mcflags |= CF_UPDATE ;
+        }
+        if(!(md->context[defNew].menu->flags & MF_CHILD))
+            break ;
+        md = md->context[defNew].child->display ;
+    }
+}
 
 /*
  * menuConfigure
@@ -2659,6 +2735,7 @@ menuConfigure(osdDIALOG *rp, osdDISPLAY *md, int child)
     md->numContexts = ii ;          /* Number of items to render */
     md->newContext = -1 ;
     md->curContext = -1 ;
+    md->defContext = -1 ;
     md->multi = 0 ;                 /* Reset column count */
     md->width = 0 ;                 /* Reset the width of the menu */
     
@@ -2847,7 +2924,6 @@ menuConfigure(osdDIALOG *rp, osdDISPLAY *md, int child)
                 }
                 child->wndWidth = width ;
                 child->wndDepth = depth ;
-                menuRender(cmd) ;
             }
             if(mp->flags & MF_HORZADD)
                 mcp->mcflags = mcflags|CF_HORZADD ;
@@ -3027,6 +3103,9 @@ menuConfigure(osdDIALOG *rp, osdDISPLAY *md, int child)
         return NULL ;
     /* safe to let dialogResetDisplays function again */
     md->flags &= ~RF_CONFIG ;
+    /* now render the dialog itself */
+    menuRender(md) ;
+
     return md ;
 }
 
@@ -3222,9 +3301,9 @@ osdDisplayPush(int id, int flags)
     osdDISPLAY *md;                       /* Menu display item */
     osdDISPLAY *lmd, *nmd;                /* Last/next menu display item */
     osdDIALOG  *rp;                       /* Pointer to the root menu */
-    int defItem ;
+    int initItem ;
     
-    defItem = (id & 0xffff0000) >> 16 ;
+    initItem = (id & 0xffff0000) >> 16 ;
     id &= 0x0ffff ;
     if ((rp = dialogFind (id)) == NULL)   /* Find the root of the menu */
     {
@@ -3259,17 +3338,18 @@ osdDisplayPush(int id, int flags)
         osdCurChild = md ;
         
         /* If theres a default selection then set it */
-        if((defItem) || (rp->flags & RF_DEFAULT))
+        if((initItem) || (rp->flags & RF_INITITEM))
         {
             int ii ;
-            if(!defItem)
-                defItem = rp->defItem ;
+            if(!initItem)
+                initItem = rp->initItem ;
             for(ii=0 ; ii<osdCurChild->numContexts ; ii++)
             {
-                if((osdCurChild->context[ii].menu->item == defItem) &&
+                if((osdCurChild->context[ii].menu->item == initItem) &&
                    !(osdCurChild->context[ii].menu->flags & MF_SEP))
                 {
                     osdCurChild->curContext = ii ;
+                    osdCurChild->context[ii].mcflags |= CF_UPDATE ;
                     /* if the default is not a child we have the default item */
                     if((osdCurChild->context[ii].menu->flags & MF_CHILD) == 0)
                     {
@@ -3279,18 +3359,19 @@ osdDisplayPush(int id, int flags)
                         break ;
                     }
                     osdCurChild = osdCurChild->context[ii].child->display ;
-                    if((osdCurChild->flags & RF_DEFAULT) == 0)
+                    if((osdCurChild->flags & RF_INITITEM) == 0)
                     {
-                        /* the child has no default, select the first item and finish */
+                        /* the child has no initial item, select the first item and finish */
                         for(ii=0 ; ii<osdCurChild->numContexts ; ii++)
                             if(!(osdCurChild->context[ii].menu->flags & MF_SEP))
                             {
                                 osdCurChild->curContext = ii ;
+                                osdCurChild->context[ii].mcflags |= CF_UPDATE ;
                                 break ;
                             }
                         break ;
                     }
-                    defItem = osdCurChild->dialog->defItem ;
+                    initItem = osdCurChild->dialog->initItem ;
                     ii = -1 ;
                 }
             }
@@ -3298,9 +3379,13 @@ osdDisplayPush(int id, int flags)
         else if((flags & meOSD_ENTER_MENU) && (md->curContext < 0))
             md->curContext = osdDisplayFindFirst(md);
     }
+    
+    osdDisplaySetDefaultContext(md) ;
+    osdDisplayUpdate(md,0) ;
+    
+          
     /* Snapshot the region occupied by the menu. */
     osdDisplaySnapshotStore(md) ;
-    menuRender(md) ;
     osdDisplaySnapshotDraw(md,0,0,md->width,md->depth,1) ;
     
     if(md->curContext >= 0)
@@ -3357,10 +3442,11 @@ osdRestoreAll(int garb)
             
             /* Position the menu */
             menuPosition(tmd,1);
+            osdDisplaySetDefaultContext(tmd) ;
+            osdDisplayUpdate(tmd,0) ;
         
             /* Snapshot the region occupied by the menu. */
             osdDisplaySnapshotStore(tmd) ;
-            menuRender (tmd) ;
         }
         else
             /* Snapshot the region occupied by the menu. */
@@ -3383,9 +3469,9 @@ osdDisplayEvaluate (void)
 {
     osdCONTEXT *mcp;                    /* Pointer to menu display contexts */
     int oldState;                       /* Last state of menu flags */
-    int ii;                             /* Local loop counter */
-    int flag=osdRENDITEM_DRAW|osdRENDITEM_KEEPCUR ;
+    int flags, update=0, ii;
     
+    flags = (osdCurChild == osdCurMd) ? osdRENDITEM_DRAW:0 ;
     for (mcp = osdCurChild->context, ii = 0; ii < osdCurChild->numContexts; ii++, mcp++)
     {
         /* Ignore any non-state entries */
@@ -3401,14 +3487,18 @@ osdDisplayEvaluate (void)
             /* Evaluate a change. Update the screen. */
             if (((mcp->mcflags ^ oldState) & CF_SET) != 0)
             {
-                if(osdCurChild != osdCurMd)
-                    flag = osdRENDITEM_KEEPCUR|osdRENDITEM_REDWALL ;
-                menuRenderItem(osdCurChild, ii, flag) ;
+                menuRenderItem(osdCurChild,ii,flags) ;
+                update = 1 ;
             }
         }
     }
-    if(flag == (osdRENDITEM_KEEPCUR|osdRENDITEM_REDWALL))
-        menuRenderItem(osdCurMd,osdCurMd->curContext,osdRENDITEM_DRAW|osdRENDITEM_KEEPCUR) ;
+    if(update && !flags)
+    {
+        osdDISPLAY *md=osdCurChild ;
+        while((md=md->prev) != osdCurMd)
+            menuRenderItem(md,md->curContext,0) ;
+        menuRenderItem(osdCurMd,md->curContext,osdRENDITEM_DRAW) ;
+    }            
 }
 
 static void
@@ -3467,48 +3557,43 @@ osdDisplaySetNewFocus(int flags)
 {
     osdDISPLAY *md ;
     
-    if((osdNewMd == osdCurMd) &&
-       (osdNewChild == osdCurChild) &&
-       (osdNewChild->curContext == osdNewChild->newContext))
+    if((osdNewMd != osdCurMd) ||
+       (osdNewChild != osdCurChild) ||
+       (osdNewChild->curContext != osdNewChild->newContext))
     {
-        if((osdNewChild->newContext < 0) || !(flags & meOSD_OPEN_MENU) ||
-           ((osdNewMd->next != NULL) && !(flags & (meOSD_ENTER_MENU|meOSD_FOCUS_MENU))))
-            return ;
-    }
-    else
-    {
-        osdDisplayPop(osdNewMd->next);
+        int ii ;
         
-        if((osdNewMd->curContext >= 0) && 
-           ((osdNewMd->curContext != osdNewMd->newContext) ||
-            (osdNewChild->curContext != osdNewChild->newContext)))
-        {
-            int flags=osdRENDITEM_REDWALL ;
-            if(osdNewMd->curContext != osdNewMd->newContext)
-                flags |= osdRENDITEM_DRAW ;
-            menuRenderItem(osdNewMd,osdNewMd->curContext,flags) ;
-        }
         osdCurMd = osdNewMd ;
         osdCurChild = osdNewChild ;
-    }
-    
-    if (osdNewChild->newContext >= 0)
-    {
-        md = osdNewMd ;
-        for(;;)
+        osdDisplayPop(osdCurMd->next);
+        
+        for(md = osdCurMd ; (ii=md->curContext) >= 0 ;)
         {
-            md->curContext = md->newContext ;
-            if(md == osdNewChild)
+            md->curContext = -1 ;
+            meAssert(ii >= 0) ;
+            md->context[ii].mcflags |= CF_UPDATE ;
+            if(!(md->context[ii].menu->flags & MF_CHILD))
+                break ;
+            md = md->context[ii].child->display ;
+        }
+        md = osdCurMd ;
+        while((md->curContext = md->newContext) >= 0)
+        {
+            meAssert(md->curContext >= 0) ;
+            md->context[md->curContext].mcflags |= CF_UPDATE ;
+            if(!(md->context[md->curContext].menu->flags & MF_CHILD))
                 break ;
             md = md->context[md->curContext].child->display ;
         }
-        menuRenderItem(osdNewMd,osdNewMd->curContext,
-                       osdRENDITEM_DRAW|osdRENDITEM_KEEPCUR|osdRENDITEM_REDWALL|osdRENDITEM_REFOCUS) ;
+        osdDisplaySetDefaultContext(osdCurMd) ;
+        osdDisplayUpdate(osdCurMd,osdRENDITEM_DRAW|osdRENDITEM_REFOCUS) ;
         /* do we need to open a sub-menu */
-        osdDisplaySub(osdNewChild,flags) ;
+        if(osdCurChild->curContext >= 0)
+            osdDisplaySub(osdCurChild,flags) ;
     }
-    else
-        osdNewMd->curContext = -1 ;
+    else if((osdCurChild->curContext >= 0) && (flags & meOSD_OPEN_MENU) &&
+            ((osdCurMd->next == NULL) || (flags & (meOSD_ENTER_MENU|meOSD_FOCUS_MENU))))
+        osdDisplaySub(osdCurChild,flags) ;
 }
 
 
@@ -3634,12 +3719,13 @@ osdDisplayResize(int dx, int dy)
                 
     /* Position the menu */
     menuPosition(md,1);
-                
+    osdDisplaySetDefaultContext(md) ;
+    osdDisplayUpdate(md,0) ;
+    
     /* Snapshot the region occupied by the menu. */
     osdDisplaySnapshotStore(md) ;
                 
     /* Render it to screen */
-    menuRender (md) ;
     osdDisplaySnapshotDraw(md,0,0,md->width,md->depth,0) ;
     if(md->width > xx)
         xx = md->width ;
@@ -4373,7 +4459,7 @@ osdDisplayFindClosest(int dir, osdDISPLAY *md, int posOffset[2],
                     ret = 1 ;
                 }
             }
-            else if(ii != md->curContext)
+            else if((ii != md->curContext) || (dir & osdMOVE_BEOD_MASK))
             {
                 if(dir & (osdMOVE_UP|osdMOVE_LEFT))
                 {
@@ -4455,6 +4541,9 @@ osdDisplayKeyMove(int dir)
     
     posBest[1] = -1 ;
     ret = osdDisplayFindClosest(dir,mdTop,NULL,posCur,posBest) ;
+    if((posBest[1] > 16384) && ((dir == osdMOVE_PAGE_UP) || (dir == osdMOVE_PAGE_DOWN)))
+        return osdDisplayKeyMove((dir == osdMOVE_PAGE_UP) ? osdMOVE_TOP:osdMOVE_BOTTOM) ;
+       
     if((ret < 0) ||
        ((dir & (osdMOVE_LEFT|osdMOVE_RIGHT)) && (posBest[1] > 0)) ||
        ((dir & osdMOVE_UP) && (posBest[1] > 16384)))
@@ -4510,7 +4599,14 @@ osdDisplayKeyMove(int dir)
         }
     }
     if(ret > 0)
+    {
+        while(mdTop != osdCurMd)
+        {
+            mdTop = mdTop->prev ;
+            mdTop->newContext = mdTop->curContext ;
+        }
         osdNewMd = osdCurMd ;
+    }
     return ret ;
 }
 
@@ -4568,10 +4664,11 @@ osdDisplayRedraw(void)
         }
         /* Position the menu */
         menuPosition(tmd,1);
+        osdDisplaySetDefaultContext(tmd) ;
+        osdDisplayUpdate(tmd,0) ;
         
         /* Snapshot the region occupied by the menu. */
         osdDisplaySnapshotStore(tmd) ;
-        menuRender (tmd) ;
         osdDisplaySnapshotDraw(tmd,0,0,tmd->width,tmd->depth,0) ;
         
         /* Now draw to screen, render an area big enough to cover both the old
@@ -4918,6 +5015,22 @@ menuInteraction (int *retState)
                 state = meOSD_QUIT_MENU;
                 break;
             case CK_NEWLIN:                 /* ^M  - Return */
+                if((osdCurMd->defContext >= 0) &&
+                   ((osdCurChild->curContext < 0) ||
+                    !(osdCurChild->context[osdCurChild->curContext].menu->flags & MF_BUTTON)))
+                {
+                    osdNewChild = osdNewMd = osdCurMd ;
+                    while(((osdNewChild->newContext = osdNewChild->defContext) >= 0) &&
+                          (osdNewChild->context[osdNewChild->newContext].menu->flags & MF_CHILD))
+                        osdNewChild = osdNewChild->context[osdNewChild->newContext].child->display ;
+                    if((osdNewChild->newContext >= 0) &&
+                       ((osdNewChild->context[osdNewChild->newContext].menu->flags & (MF_DISABLE|MF_DISPTYPE|MF_BUTTON)) == MF_BUTTON))
+                    {
+                        nit = 1 ;
+                        state = meOSD_EXECUTE_MENU|meOSD_OPEN_MENU|meOSD_FOCUS_MENU|meOSD_ENTER_MENU;
+                    }
+                    break;
+                }
 execute_item:
                 if(osdCurChild->curContext >= 0)
                 {
@@ -5290,11 +5403,17 @@ osd (int f, int n)
                     rp->depth[item] = (meShort) meAtoi(buf) ;
                 }
             }
-            if(rp->flags & RF_DEFAULT)
+            if(rp->flags & RF_DEFITEM)
             {
                 if(meGetString((meUByte *)"Default", 0, 0, buf, 16) <= 0)
                     return meABORT ;
                 rp->defItem = (meShort) meAtoi(buf) ;
+            }
+            if(rp->flags & RF_INITITEM)
+            {
+                if(meGetString((meUByte *)"Initial", 0, 0, buf, 16) <= 0)
+                    return meABORT ;
+                rp->initItem = (meShort) meAtoi(buf) ;
             }
             if(rp->flags & RF_FOCALITM)
             {
@@ -5630,7 +5749,6 @@ osdMainMenuUpdate(int force)
         
         osdMainMenuMd->x = 0 ;
         osdMainMenuMd->y = 0 ;
-        menuRender(osdMainMenuMd) ;
     }
     
     /* Optimisation here - if the top menu is currently active 
