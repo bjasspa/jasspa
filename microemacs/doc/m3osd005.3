@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Feb 1 20:28:17 1999
 .\"
-.Id $Id: m3osd005.3,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m3osd005.3,v 2.6 2004-11-27 00:04:13 bill Exp $
 .Im MicroEmacs command|osd|hilight
 .so me.tni
 .TH scheme-editor 3
@@ -62,16 +62,23 @@ created and modified. The  left-hand  side of the dialog  contains a scrolling
 window  containing  the existing  color  entries. The  right-hand  side of the
 dialog  provides  the  controls  to add and change the color  assignment.  The
 controls operate on the currently selected palette entry.
-.IP \fBAdd\fR
-Creates and adds a new color entry into the palette. The new palette  entry is
-created with a default color that may be subsequently modified.
-.IP \fBChange\fR
-Commits the current selection color to the palette.
+.IP \fBCursor\fR
+Defines the colour of the text cursor.
+.IP "\fBShow in Dialogs\fR"
+Defines  whether the cursor  should be displayed in the main OSD dialogs, this
+improves   usability  of  the  dialogs  when  limited  colors  are  available.
+Indirectly sets bit \fC0x20\fR of
+.Ht $system 5 .
 .IP "\fBRed\fR/\fBGreen\fR/\fBBlue\fR"
 The color  entries  allow the  currently  selected  palette  color entry to be
 modified. The color values may be changed by direct  numeric entry (0..255) or
 via the ^/v  controls;  the  color  is  committed  to the  palette  using  the
 \fBAdd\fR or \fBChange\fR button.
+.IP \fBChange\fR
+Commits changes to the currently selected color in the palette.
+.IP \fBAdd\fR
+Creates and adds a new color entry into the palette. The new palette  entry is
+created with a default color that may be subsequently modified.
 .SS Schemes
 The  \fBschemes\fR  tab allows the schemes to be edited. The left-hand side of
 the dialog contains a scrolling window of the available color palette (created
@@ -84,6 +91,8 @@ categories used by the editor.
 A pull-down menu containing the schemes of the selection, modifying this entry
 shows  the  variants  of  the  scheme  in  the  \fBNormal\fR,   \fBCurrent\fR,
 \fBSelect\fR and \fBSel-Cur\fR dialogs.
+.IP \fBReset\fR
+Resets the current scheme back to the default \fIStandard Text\fR scheme.
 .LP
 There are 4 variants, or styles, for a single  scheme; each style is comprised
 of a  foreground  and  background  color,  and  a  row  of  toggle  button  to
