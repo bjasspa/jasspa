@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20041128.2247>
+# Last Modified: <20050220.2130>
 #
 ##############################################################################
 
@@ -139,5 +139,6 @@ clean:
 #
 spotless: clean
 	sh ./build.sh -S
+	$(RM) *.gz
 	$(RM) tags
 	$(RM) *~
