@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var080.5,v 2.5 2002-01-11 21:58:43 jon Exp $
+.Id $Id: m5var080.5,v 2.6 2002-10-16 22:28:04 jon Exp $
 .Im MicroEmacs variable|hilight
 .so me.tni
 .TH $trunc-scheme 5
@@ -15,12 +15,13 @@ $trunc-scheme \- Truncation color scheme.
 \fB$trunc-scheme\fR \fIschemeNum\fR; Default is \fC0\fR
 .SH DESCRIPTION
 .B $trunc-scheme
-sets the  color  scheme  used  when  drawing a line  truncation  indicator  (a
-\&'\fC$\fR'  character).  A '$'  character  drawn  at the  start  of the  line
+sets the color scheme used when drawing a line truncation  indicator. The left
+truncation character (usually a '\fC$\fR' char) drawn at the start of the line
 indicates that the line has been scrolled to the right and therefore the start
-of the line has been  truncated.  A '$' at the end of the line  indicates  the
-remainder  of the line is too long to fit onto the width of the  window so the
-end has been truncated and the indicator drawn.
+of the line has been  truncated.  A right  truncation  char  (also  usually  a
+\&'\fC$\fR')  drawn at the end of the line indicates the remainder of the line
+is too long to fit onto the width of the window so the end has been  truncated
+and the indicator drawn.
 .PP
 The \fIschemeNum\fR selected must be a color scheme defined with
 .Ht add-color-scheme 2 ,
@@ -28,11 +29,16 @@ which identifies the foreground and background color schemes. A hilight scheme
 can define its own truncation color scheme, see
 .Ht hilight 2
 for more information.
+.SH "NOTES"
+The truncation characters used are set by the
+.Ht $window-chars 5
+variable.
 .SH "SEE ALSO"
 .na
 .Ht $buffer-scheme 5 ,
 .Ht $global-scheme 5 ,
 .Ht add-color-scheme 2 ,
-.Ht hilight 2 .
+.Ht hilight 2 ,
+.Ht $window-chars 5 .
 .ad
 .FH

@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var047.5,v 2.5 2002-01-11 21:58:43 jon Exp $
+.Id $Id: m5var047.5,v 2.6 2002-10-16 22:28:04 jon Exp $
 .Im MicroEmacs variable|hilight|macrodevelop
 .so me.tni
 .TH $system 5
@@ -119,6 +119,8 @@ characters,  other  characters  in the range of  \fC0x00\fR to \fC0x1f\fR  not
 listed are rendered as a space:
 .RS
 .RS
+.IP \fC0x08\fR
+Special Character; Backspace 
 .IP \fC0x09\fR
 Special Character; Tab 
 .IP \fC0x0b\fR
@@ -199,12 +201,16 @@ method. The setting of this bit has no effect if bit  \fB0x1000\fR  is set. If
 this and bit  \fB0x1000\fR  are clear  then the  \fCtab\fR  will not check the
 indentation.
 .IP \fB0x400000\fR
-When this bit is set the external cut buffer (Windows & XTerm  platforms) will
+When this bit is set the external clipboard (Windows & XTerm  platforms) will
 never be set to empty, if the current  yank buffer is the empty string the cut
 buffer will be set to a space (i.e. " "). This feature has been added to avoid
 problems with other software (e.g.
 .Hr exceed 1
 which can crash if given an empty cut buffer).
+.IP \fB0x800000\fR
+When  this  bit is set  all use of the  external  clipboard  (Windows  & XTerm
+platforms) is disabled,  this means that \*(mS will not attempt to retrieve or
+set the content of the system clipboard.
 .SH EXAMPLE
 The follow  example  works out the  current  buffer's  backup  file name using
 \fB$system\fR to determine the naming system being used by \*(mS:-

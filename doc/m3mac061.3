@@ -1,0 +1,64 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m3mac061.3,v 1.1 2002-10-16 22:30:10 jon Exp $
+.Im MicroEmacs cursor
+.so me.tni
+.TH display-matching-fence 3
+.XI display-matching-fence - "Display the matching bracket"
+.SH NAME
+display-matching-fence \- Display the matching bracket
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B display-matching-fence
+.ad
+.SH DESCRIPTION
+\fBdisplay-matching-fence\fR  draws the fence (or bracket) pairing the one the
+cursor is currently over. A fence is considered to be one of the following:
+.CS
+{...}   (...)   [...]
+.CE
+If the  matching  fence is  currently  being  drawn (i.e. it is visible)  both
+fences are drawn in the '\fINormal\fR' Matching Fence scheme (see
+.Ht scheme-editor 3 ).
+If the matching fence is not currently visible the cursor is temporarily moved
+to the match fence for
+.Ht $fmatchdelay 5
+milliseconds  before  returning  to the  starting  position,  the  fences  are
+hilighted using the Matching Fence 'Current'  scheme. The matching fence delay
+can be  interrupted  by pressing  any key. If the fence  cannot be matched the
+fence is  hilighted  using the  'Select'  scheme  which is  usually a bold red
+color.
+.PP
+The numeric  argument  \fBn\fR  passed to the command is a bitwise  flag where
+each bit is defined as follows:
+.IP \fB0x01\fR
+Display fence (if not set nothing is done).
+.IP \fB0x02\fR
+Use  set-position id '\fC\\x85\fR'  instead of '\fC\\x84\fR' (for internal use).
+.IP \fB0x04\fR
+Don't Jump when matching fence is off screen.
+.IP \fB0x08\fR
+Jump when closing a fence and its pair is off screen (for internal use).
+.IP \fB0x10\fR
+Always jump to matching fence when closing a fence (for internal use).
+.IP \fB0x20\fR
+Give preference to closing fence to left of cursor rather than character under
+the cursor (for internal use).
+.SH NOTES
+This macro is used by the \fBFence Display\fR setting of
+.Ht user-setup 3 ,
+the macro is bound to the \fCidle-pick\fR event using some of the more obscure
+numeric argument flags.
+.SH "SEE ALSO"
+.na
+.Ht goto-matching-fence 2 ,
+.Ht user-setup 3 ,
+.Ht scheme-editor 3 ,
+.Ht $fmatchdelay 5 .
+.ad
+.FH

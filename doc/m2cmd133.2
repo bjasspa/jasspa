@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd133.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd133.2,v 2.6 2002-10-16 22:28:04 jon Exp $
 .Im MicroEmacs command|bind
 .so me.tni
 .TH translate-key 2
@@ -195,7 +195,7 @@ to still be usable on its own.
 .PP
 The +ve numeric  argument  can be very useful for delaying  \*(mS as well, for
 example, the character  string "\fC'e\fR" can be converted to e-accute using
-.Ht iso-accents-expand 3 .
+.Ht expand-iso-accents 3 .
 This could be performed automatically using translate-key as follows:
 .Me $emf-scheme
 .CS
@@ -267,6 +267,7 @@ across all platforms. See manual page on
 for more information.
 .SH "SEE ALSO"
 .na
+.Ht expand-iso-accents 3 ,
 .Ht user-setup 3 ,
 .Ht describe-key 2 ,
 .Ht global-bind-key 2 ,

@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd027.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd027.2,v 2.6 2002-10-16 22:28:04 jon Exp $
 .Im MicroEmacs command|hilight
 .so me.tni
 .TH change-font 2
@@ -126,9 +126,9 @@ the user uses this at their own peril, like everything else.
 .PP
 \*(mE  attempts to  determine  the new screen width and depth  itself, in
 case this fails the commands
-.Ht change-screen-width 2
+.Ht change-frame-width 2
 and
-.Ht change-screen-depth 2
+.Ht change-frame-depth 2
 may be used to correct the problem.
 .PP
 Following are the standard \s-1MS-DOS\s0 text modes:
@@ -299,8 +299,8 @@ The  "\fBCourier  New\fR"  font is not  actually a fixed mono font as might be
 expected.
 .SH "SEE ALSO"
 .na
-.Ht change-screen-width 2 ,
-.Ht change-screen-depth 2 ,
+.Ht change-frame-width 2 ,
+.Ht change-frame-depth 2 ,
 .Ht $result 5 ,
 .Ht user-setup 3 .
 .ad

@@ -3,14 +3,18 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd152.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd152.2,v 2.6 2002-10-16 22:28:04 jon Exp $
 .Im MicroEmacs command|window
 .so me.tni
-.TH grow-window-horizontally 2
+.TH change-window-width 2
+.XI change-window-width \- "Change the width of the current window"
 .XI grow-window-horizontally \- "Enlarge current window horizontally (relative)"
 .XI shrink-window-horizontally \- "Shrink current window horizontally (relative)"
 .XI resize-window-horizontally \- "Resize current window horizontally (absolute)"
 .SH NAME
+.Me "|change-window-width"
+change-window-width \- Change the width of the current window
+.br
 .Me "|grow-window-horizontally"
 grow-window-horizontally \- Enlarge current window horizontally (relative)
 .br
@@ -22,40 +26,50 @@ resize-window-horizontally \- Resize current window horizontally (absolute)
 .Me $a
 .SH SYNOPSIS
 .na
-.I n
-.B grow-window-horizontally
+\fIn\fR \fBchange-window-width\fR [ "\fIwidth\fR" ]
+.sp
+\fIn\fR \fBgrow-window-horizontally\fR
 .br
-.I n
-.B shrink-window-horizontally
+\fIn\fR \fBshrink-window-horizontally\fR
 .br
-.I n
-.B resize-window-horizontally
+\fIn\fR \fBresize-window-horizontally\fR
 .ad
 .SH DESCRIPTION
-.B grow-window-horizontally
-enlarges  the current  window by \fIn\fR  number of columns (1 by default). If
-\fIn\fR is negative then the window is shrunk.
-.PP
-.B shrink-window-horizontally
-shrinks the current  window by \fIn\fR  number of columns (1 by  default).  If
-\fIn\fR is negative then the window is enlarged.
-.PP
-.B resize-window-horizontally
-change the size of the current  window to \fIn\fR  columns, if possible.  i.e.
-resize window is not a relative displacement.
-.PP
-Growth is performed by consuming space from the next horizontal  window to the
-right of the current window, except when the window is on the right-hand  edge
-of the screen when space is consumed from the left.
+\fBchange-window-width\fR  changes  the width of the  current  window,  if the
+numeric  argument \fIn\fR is given then the window width is changed by \fIn\fR
+characters.  If  \fIn\fR is not  specified  the user is  prompted  for the new
+\fIwidth\fR  and the window  width will be changed to this value. The  command
+aborts if the requested  size cannot be achieved (the window becomes too small
+or a neighbouring does).
 .SH EXAMPLE
-Refer to  \fCmouse.ehf\fR  for an example of window  growth using the mouse to
+Refer to  \fCmouse.emf\fR  for an example of window  growth using the mouse to
 manipulate the size of the windows.
+.SH NOTES
+Commands  \fBgrow-window-horizontally\fR,   \fBshrink-window-horizontally\fR
+and    \fBresize-window-horizontally\fR    were    replaced    by   the   new
+\fBchange-window-width\fR   command  in  April  2002.   Following   are  macro
+implementations of the old commands:
+.Me $emf-scheme
+.CS
+define-macro grow-window-horizontally
+    @# change-window-width
+!emacro
+
+define-macro shrink-window-horizontally
+    &neg @# change-window-width
+!emacro
+
+define-macro resize-window-horizontally
+    !if &not @?
+        !abort
+    !endif
+    change-window-width @#
+!emacro
+.CE 0
+.Me $ehf-scheme
 .SH "SEE ALSO"
 .na
-.Ht $mouse-pos 5 ,
-.Ht $scroll-bar 5 ,
-.Ht $window-chars 5 ,
-.Ht grow-window-vertically 2 ,
+.Ht change-window-depth 2 ,
 .Ht resize-all-windows 2 ,
 .Ht split-window-horizontally 2 .
 .ad

@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd101.2,v 2.6 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd101.2,v 2.7 2002-10-16 22:28:04 jon Exp $
 .Im MicroEmacs command|print
 .so me.tni
 .TH print-buffer 2
@@ -50,11 +50,11 @@ The configuration is stored in the "\fC/print\fR" registry.
 .IP \fB\-1\fR
 Configures  the  printer, the  configuration  is stored in the  "\fC/print\fR"
 registry.
-.IP \fB\0\fR
-Configures  the  printer  and, on win32  platforms,  opens a Windows  printing
-dialog box enabling the user to configure  the printer,  font and page layout.
-The required printing is then performed.
-.IP \fB\0\fR
+.IP \fB0\fR
+Configures  the printer and, on win32  platforms,  using the Windows  printer,
+opens a  Windows  printing  dialog  box  enabling  the user to  configure  the
+printer, font and page layout. The required printing is then performed.
+.IP \fB1\fR
 Configures  the  printer  and performs the required printing.
 .SS "Printing Process"
 When either of these commands are executed the macro file  \fCprint.emf\fR  is
@@ -77,13 +77,13 @@ The setup flags, defined as a bit mask as follows:-
 \fC0x03\fR \- To file and command line.
 .br
 .RE
-\fC0x01\fR \- Bit set, header enabled.
+\fC0x10\fR \- Bit set, header enabled.
 .br
 \fC0x20\fR \- Bit set, footer
 .br
-\fC0x04\fR \- Bit set, enable line numbers.
+\fC0x40\fR \- Bit set, enable line numbers.
 .br
-\fC0x08\fR \- Bit set, Enable truncated line character (typically \\).
+\fC0x80\fR \- Bit set, Enable truncated line character (typically \\).
 .IP "\fBpaper-x\fR (\fIinteger\fR)"
 Paper page width in character cells.
 .IP "\fBpaper-y\fR (\fIinteger\fR)"

@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd095.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd095.2,v 2.6 2002-10-16 22:28:04 jon Exp $
 .Im MicroEmacs command|window
 .ds C0 "(\fB\*(cXo\fR)\ \&
 .ds C1 "(\fB\*(cXp\fR)\ \&
@@ -25,33 +25,56 @@ previous-window \- Move the cursor to the previous window
 \fIn\fR \fBprevious-window\fR \*(C1
 .ad
 .SH DESCRIPTION
-.B next-window
-makes the next window down the current  window. A +ve argument  \fIn\fR, makes
-the \fIn\fRth window from the top current, where 1 is the first window. A \-ve
-argument  \fIn\fR  specifies the \fInth\fR  window from the bottom current. An
-argument \fIn\fR of 0, makes the next window down current, if this is the last
-window then the command fails.
+\fBnext-window\fR  makes  the next  window  down the  current  window,  if the
+current  window  is the last one in the frame the first one is  selected.  The
+numeric argument \fIn\fR can be used to modify this default behaviour, it is a
+bitwise flag where the bits are defined as follows:
+.IP \fB0x01\fR
+If there is no 'next' window  because this is the last then if this bit is set
+the search for the next window is allow to continue  with the first  window of
+the frame. As the  default  argument  \fIn\fR is \fC1\fR  this is the  default
+behaviour.
+.IP \fB0x02\fR
+When this bit is set windows whose
+.Ht $window-flags 5
+are set to be ignored by this  command  are not  skipped.  The  setting of bit
+\fC0x010\fR of a windows  \fB$window-flags\fR  will make the default action of
+this  command  skip it which  means the the command may not simply  select the
+next window but the next window without this flag set. Setting this bit of the
+numeric argument will force the command to always select the next window.
+.IP \fB0x04\fR
+When set the search for the next window starts at the first window  instead of
+the current  window, this can be used to find the first  window in the current
+frame.
 .PP
 .B previous-window
-makes the next  window up the current  window. A +ve  argument  \fIn\fR,  this
-makes the \fIn\fRth window from the bottom the current window. A \-ve argument
-\fIn\fR makes the \fInth\fR  window from the top current. An argument  \fIn\fR
-of zero makes the  previous  window  current, if this is the first window then
-the command fails.
-.PP
-When no argument is supplied  then the next (or previous)  window  becomes the
-current window. Wrapping occurs from bottom to top on  \fBnext-window\fR,  and
-top to bottom on \fBprevious-window\fR.
+makes the next  window up the  current  window. The numeric  argument  \fIn\fR
+has the same  effect  on this  command  as for  \fBnext-window\fR  except  bit
+\fB0x04\fR starts the search at the last window of the frame.
+.SH EXAMPLE
+The following  example  visits every window in the current frame  printing the
+buffer it displays with a second pause between each one:
+.Me $emf-scheme
+.CS
+; go to the first window
+!force 6 next-window
+!while $status
+    1000 ml-write $buffer-bname
+    ; go to the next window - fail if this is the last
+    !force 2 next-window
+!done
+.CE 0
+.Me $ehf-scheme
 .SH NOTES
-The \fIn=0\fR  argument is typically used to traverse the window list from top
-to  bottom,  where  the  \fCFALSE\fR  status  may be  trapped  and  used as an
-indicator that end of the windows list has been reached.
+Both commands fail if a suitable  window cannot be for, see the example on how
+this can be used.
 .SH "SEE ALSO"
 .na
 .Ht next-window-find-buffer 2 ,
 .Ht next-window-find-file 2 ,
 .Ht set-position 2 ,
-.Ht goto-position 2 .
+.Ht goto-position 2 ,
+.Ht $window-flags 5 .
 .ad
 .rm C0
 .rm C1

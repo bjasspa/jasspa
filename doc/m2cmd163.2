@@ -1,0 +1,34 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m2cmd163.2,v 1.1 2002-10-16 22:30:10 jon Exp $
+.Im MicroEmacs command|window|macrodevelop
+.so me.tni
+.TH next-frame 2
+.XI next-frame - "Change the focus to the next frame"
+.SH NAME
+next-frame \- Change the focus to the next frame
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B next-frame
+.ad
+.SH DESCRIPTION
+\fBnext-frame\fR  changes the focus to the next frame. The numerical  argument
+\fIn\fR  can be used to  select  the type of frame to  change  to, it is a bit
+based flag defined as follows:
+.IP \fB0x01\fR
+Allow the selection of an external frame.
+.IP \fB0x02\fR
+Allow the selection of an internal frame.
+The default  operation  when \fIn\fR is omitted is to allow the  selection  of
+either type of frame (equivalent to an argument of \fC3\fR).
+.SH "SEE ALSO"
+.na
+.Ht create-frame 2 ,
+.Ht delete-frame 2 .
+.ad
+.FH

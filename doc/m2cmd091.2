@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd091.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd091.2,v 2.6 2002-10-16 22:28:04 jon Exp $
 .Im MicroEmacs command|buffer
 .ds C0 "(\fB\*(cXx\fR)\ \&
 .ds C1 "(\fB\*(cXb\fR)\ \&
@@ -45,7 +45,11 @@ If a -ve argument \fIn\fR is given to  \fBfind-buffer\fR  then the buffer will
 be hidden. Any window displaying  "\fIbuffer-name\fR" will find another buffer
 to display. This functionality is often used with the
 .Ht hide 2m
-buffer mode.
+buffer mode. If a value of -1 is given then the buffer will not be hidden in a
+window whose
+.Ht $window-flags 5
+are set to lock the buffer to the  window. If a value of less than -1 is given
+then the buffer is hidden from all windows.
 .PP
 If the current buffer has an \fI$buffer-ehook\fR command set then this command
 is  executed  before  the new buffer is  switched  in. If the new buffer has a

@@ -158,8 +158,8 @@ CMD2_150=	$(DOCDIR)m2cmd150.2 $(DOCDIR)m2cmd151.2 $(DOCDIR)m2cmd152.2\
 		$(DOCDIR)m2cmd153.2 $(DOCDIR)m2cmd154.2 $(DOCDIR)m2cmd155.2\
 		$(DOCDIR)m2cmd156.2 $(DOCDIR)m2cmd157.2 $(DOCDIR)m2cmd158.2\
 		$(DOCDIR)m2cmd159.2
-CMD2_160=	$(DOCDIR)m2cmd160.2
-		
+CMD2_160=	$(DOCDIR)m2cmd160.2 $(DOCDIR)m2cmd161.2 $(DOCDIR)m2cmd162.2\
+		$(DOCDIR)m2cmd163.2
 
 CMD2_200=	$(DOCDIR)m2cmd200.2 $(DOCDIR)m2cmd201.2 $(DOCDIR)m2cmd202.2\
 		$(DOCDIR)m2cmd203.2
@@ -206,6 +206,7 @@ MAC3_050=	$(DOCDIR)m3mac050.3 $(DOCDIR)m3mac051.3 $(DOCDIR)m3mac052.3\
 		$(DOCDIR)m3mac053.3 $(DOCDIR)m3mac054.3 $(DOCDIR)m3mac055.3\
 		$(DOCDIR)m3mac056.3 $(DOCDIR)m3mac057.3 $(DOCDIR)m3mac058.3\
 		$(DOCDIR)m3mac059.3
+MAC3_060=	$(DOCDIR)m3mac060.3 $(DOCDIR)m3mac061.3 $(DOCDIR)m3mac062.3
 		
 OSD3_000=	$(DOCDIR)m3osd000.3 $(DOCDIR)m3osd001.3 $(DOCDIR)m3osd002.3\
 		$(DOCDIR)m3osd003.3 $(DOCDIR)m3osd004.3 $(DOCDIR)m3osd005.3\
@@ -233,7 +234,7 @@ FIL4_020=	$(DOCDIR)m4fil020.4 $(DOCDIR)m4fil021.4 $(DOCDIR)m4fil022.4\
 		$(DOCDIR)m4fil026.4 $(DOCDIR)m4fil027.4 $(DOCDIR)m4fil028.4\
 		$(DOCDIR)m4fil029.4
 FIL4_030=	$(DOCDIR)m4fil030.4 $(DOCDIR)m4fil031.4 $(DOCDIR)m4fil032.4\
-		$(DOCDIR)m4fil033.4 $(DOCDIR)m4fil034.4
+		$(DOCDIR)m4fil033.4 $(DOCDIR)m4fil034.4 $(DOCDIR)m4fil035.4
 
 VAR5_000=	$(DOCDIR)m5var000.5 $(DOCDIR)m5var001.5 $(DOCDIR)m5var002.5\
 		$(DOCDIR)m5var003.5 $(DOCDIR)m5var004.5 $(DOCDIR)m5var005.5\
@@ -268,7 +269,7 @@ VAR5_070=	$(DOCDIR)m5var070.5 $(DOCDIR)m5var071.5 $(DOCDIR)m5var072.5\
 		$(DOCDIR)m5var076.5 $(DOCDIR)m5var077.5 $(DOCDIR)m5var078.5\
 		$(DOCDIR)m5var079.5
 VAR5_080=	$(DOCDIR)m5var080.5 $(DOCDIR)m5var081.5 $(DOCDIR)m5var082.5\
-		$(DOCDIR)m5var083.5
+		$(DOCDIR)m5var083.5 $(DOCDIR)m5var084.5
 
 FIL8_000=	$(DOCDIR)m8fil000.8 $(DOCDIR)m8fil001.8 $(DOCDIR)m8fil002.8\
 		$(DOCDIR)m8fil003.8 $(DOCDIR)m8fil004.8 $(DOCDIR)m8fil005.8\
@@ -304,7 +305,7 @@ TEMPSMS	=	cmd2_000.sm	cmd2_010.sm	cmd2_020.sm	cmd2_030.sm \
 		nar2_000.sm \
 		mod2_000.sm	mod2_010.sm	mod2_020.sm	mod2_030.sm \
 		mac3_000.sm	mac3_010.sm	mac3_020.sm	mac3_030.sm \
-		mac3_040.sm	mac3_050.sm \
+		mac3_040.sm	mac3_050.sm	mac3_060.sm \
 		osd3_000.sm	osd3_010.sm \
 		fcl3_000.sm	fcl3_010.sm \
 		fil4_000.sm	fil4_010.sm	fil4_020.sm	fil4_030.sm \
@@ -399,6 +400,8 @@ mac3_040.sm:	$(MAC3_040)
 	$(SUPERMAN) -o $@ $(MAC3_040)
 mac3_050.sm:	$(MAC3_050)
 	$(SUPERMAN) -o $@ $(MAC3_050)
+mac3_060.sm:	$(MAC3_060)
+	$(SUPERMAN) -o $@ $(MAC3_060)
 
 osd3_000.sm:	$(OSD3_000)
 	$(SUPERMAN) -o $@ $(OSD3_000)

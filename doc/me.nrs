@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.9 2002-01-11 21:58:43 jon Exp $
+.Id $Id: me.nrs,v 2.10 2002-10-16 22:28:04 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -2364,8 +2364,11 @@ and
 Development  of  \*(mE  is an  on-going  process,  follows  is a list  of work
 items which is currently  being undertaken or planned:-
 .BS
-Integrate  the mouse  interaction,  especially  the pop-up  menus of the right
-mouse to be buffer sensitive and to deal with regions. (Macro implementation).
+Support for multiple frames.
+.BU
+Horizontal scroll bars.
+.BU
+On-line tutorial to help beginners get up and running.
 .BU
 Native printer support for the generation of postscript.
 .BU

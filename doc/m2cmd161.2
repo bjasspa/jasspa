@@ -1,0 +1,53 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m2cmd161.2,v 1.1 2002-10-16 22:30:10 jon Exp $
+.Im MicroEmacs command|window|macrodevelop
+.so me.tni
+.TH create-frame 2
+.XI create-frame - "Create a new frame"
+.SH NAME
+create-frame \- Create a new frame
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B create-frame
+.ad
+.SH DESCRIPTION
+\fBcreate-frame\fR  creates a new frame for the current \*(mS  session.  \*(mS
+support  the  creation of  'internal'  multiple  frames on all  platforms  and
+\&'external'  frames on  windowing  platforms  (such as Windows and XTerm). An
+external  frame creates a new OS window so both the existing frame and the new
+frame  are  visible,  whereas  an  internal  frame  uses the same OS window or
+console which means that the existing  frame is hidden and the new frame takes
+its place.
+.PP
+The numeric  argument  \fIn\fR can be used to define which type of frame is to
+be  created. If an  argument  of \fC1\fR is given (the  default  argument)  an
+external  frame will be created,  whereas an internal frame will be created if
+an argument of \fC0\fR is given.
+.SH NOTES
+Internal frames can only be accessed via the
+.Ht next-frame 2
+command, external frames can usually be accessed via the OS as well.
+.PP
+\*(mS is not  multi-threaded  in that  only one frame can be active at any one
+time  (the  complexity  of being  able to run a  command  in one  frame  while
+editing in another  would rapidly lead it away from the 'Micro'  status). This
+means that if a command is left active (such as a search) in one frame and the
+focus is  changed to another  the input is 'sent' to the frame with the active
+command and the message '[NOT FOCUS]' will appear in the  message-line  of the
+frame with the OS focus.
+.PP
+\fBcreate-frame\fR  may be useful in macros that rely on a window layout, this
+is because they can preserve the users  current  window layout by creating and
+new internal frame in which to run.
+.SH "SEE ALSO"
+.na
+.Ht delete-frame 2 ,
+.Ht next-frame 2 .
+.ad
+.FH

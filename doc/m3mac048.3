@@ -6,40 +6,43 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Nov 29 17:39:42 1999
 .\"
-.Id $Id: m3mac048.3,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m3mac048.3,v 2.6 2002-10-16 22:28:04 jon Exp $
 .Im MicroEmacs command|spell|scuts
 .so me.tni
-.TH spell-complete-word 3
-.XI spell-complete-word - "Complete a word by invocation of the speller"
+.TH expand-word 3
+.XI expand-word - "Complete a word by invocation of the speller"
 .SH NAME
-spell-complete-word \- Complete a word by invocation of the speller
+expand-word \- Complete a word by invocation of the speller
 .Me $a
 .SH SYNOPSIS
 .na
-.B spell-complete-word
+.B expand-word
 .ad
 .SH DESCRIPTION
-.B spell-complete-word
-presents attempts to complete the word at the current position through the use
-of the  current  language  dictionary.  The user is  presented  with a list of
-endings for the given word portion.  These may be selected  with the cursor or
-mouse.
+\fBexpand-word\fR  attempts  to  complete  the  word at the  current  position
+through the use of the current language dictionary. The user is presented with
+a list of endings for the given word portion.  These may be selected  with the
+cursor or mouse.
 .PP
-.B spell-complete-word
+.B expand-word
 is automatically invoked from the
 .Ht expand-abbrev-handle 3
-macro in  response to an  expansion  command, it is only  invoked if the macro
-variable  \fC.spell-complete-word.on\fR  is defined to be \fCTRUE\fR. Spelling
-expansion is enabled by enabling within the \fIuser\fR.emf as follows:-
+macro in  response  to an  expansion  command,  it is only  invoked if enabled
+in the 
+.Ht user-setup 3
+=> General => Abbrev Expansion => Dict'n setting is enabled.
+.SH NOTES
+.B expand-word
+is a macro implemented in \fCabbrev.emf\fR.
+.PP
+The   \fBuser-setup\fR   configuration   simply   sets  the   macro   variable
+\fC.expand-word.on\fR to TRUE, i.e.:
 .Me emf-scheme
 .CS
-set-variable .spell-complete-word.on 1
+set-variable .expand-word.on 1
 .CE
 .Me ehf-scheme
 It may be subsequently disabled by setting the variable back to 0.
-.SH NOTES
-.B spell-complete-word
-is a macro implemented in \fCattrib.emf\fR.
 .SH "SEE ALSO"
 .na
 .Ht expand-abbrev-handle 3 ,
