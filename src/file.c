@@ -270,8 +270,21 @@ gft_directory:
                     ii += jj ;
                 }
             } while(((jj=lstat((char *)lbuf, &statbuf)) == 0) && S_ISLNK(statbuf.st_mode)) ;
+            
             if(lname != NULL)
+            {
                 fileNameCorrect(lbuf,lname,NULL) ;
+                if(S_ISDIR(statbuf.st_mode))
+                {
+                    /* make sure that a link to a dir has a trailing '/' */
+                    meUByte *ss=lname+meStrlen(lname) ;
+                    if(ss[-1] != DIR_CHAR)
+                    {
+                        ss[0] = DIR_CHAR ;
+                        ss[1] = '\0' ;
+                    }
+                }
+            }
             if(jj)
             {
                 if(flag & 1)
@@ -1053,7 +1066,10 @@ readDirectory(meUByte *fname, meBuffer *bp, meLine *blp)
     if((fnode=getDirectoryInfo(fname)) == NULL)
         return meABORT ;
     meStrcpy(buf,"Directory listing of: ") ;
-    meStrcat(buf,fname) ;
+    /* use the buffer's filename in preference to the given fname as the
+     * buffer's filename is what the user asked for, fname may be what the
+     * symbolic link points to */
+    meStrcat(buf,(bp->fileName == NULL) ? fname:bp->fileName) ;
     bp->lineCount += addLine(blp,buf) ;
     fn = fnode ;
     while(fn != NULL)
