@@ -475,9 +475,9 @@ meSetupPathsAndUser(char *progname)
         ll = meStrlen(homedir) ;
         if(homedir[ll-1] != DIR_CHAR)
         {
-            homedirme = meRealloc(homedir,ll+2) ;
-            homedirme[ll++] = DIR_CHAR ;
-            homedirme[ll] = '\0' ;
+            homedir = meRealloc(homedir,ll+2) ;
+            homedir[ll++] = DIR_CHAR ;
+            homedir[ll] = '\0' ;
         }
     }
 
