@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd161.2,v 1.4 2005-01-14 00:20:31 bill Exp $
+.Id $Id: m2cmd161.2,v 1.5 2005-01-15 12:49:19 jon Exp $
 .Im MicroEmacs command|window|macrodevelop
 .ds C0 "(\fB\*(cX5\ 1\fR, \fB\*(cX5\ 2\fR)\ \&
 .so me.tni
@@ -20,19 +20,19 @@ create-frame \- Create a new frame
 .ad
 .SH INTODUCTION
 A  \fBframe\fR  in \*(mS is the screen  canvas on which all of the windows are
-attached.  \*(mS allows the  creation of new frames which  creates a new blank
-canvas which is can then be populated with new windows. Frames may be swapped
-and when swapped the window layout for a given frame is preserved until the
-frame is displayed again. There are two types of frame:
+attached.  \*(mS  allows  the  creation  of new  frames,  creating a new blank
+canvas, which may be populated with new windows. Frames may be swapped and the
+window  layout for a given  frame is  preserved  until the frame is  displayed
+again. There are two types of frame:
 .IP Internal
-An internal frame uses the same OS window or console hiding any other frames.
-This means that any existing  frame is hidden and a new frame blank takes
+An internal  frame uses the same display window (or console)  hiding any other
+frames. On creation, any existing  frame is hidden and a new frame blank takes
 its place. Internal frames are supported on all platforms.
 .IP External
-An external frame creates a new OS window allowing both the original frame and
-new  frame to be  visible  in  different  windows.  External  frames  are only
-available under windowing  platforms such as X-Windows and Microsoft  Windows.
-External frames may also be paged with internal frames.
+An external  frame  creates a new display  window  allowing  both the original
+frame and new frame to be visible in different  windows.  External  frames are
+only available on windowing platforms such as X-Windows and Microsoft Windows.
+External frames may include internal frames which are paged.
 .LP
 This is shown in the following diagram:-
 .CS
@@ -57,23 +57,23 @@ A frame may be subsequently deleted with
 .Ht delete-frame 2 .
 .SH DESCRIPTION
 \fBcreate-frame\fR  creates a new frame for the current \*(mS session, the new
-frame is assigned a unique identity 
-.Ht $frame-id 5 
+frame is assigned a unique identity
+.Ht $frame-id 5
 which exists for the life of the frame.
 .PP
-The numeric  argument  \fIn\fR  defines the type of frame to be created. If an
-argument of \fC2\fR is given an external  frame is created, an internal  frame
-is created  with an argument of \fC1\fR. When no argument is given an external
-frame is created on systems which support them, otherwise an internal frame is
-created.
+The  numeric  argument  \fIn\fR  defines  the type of frame to be  created. An
+argument of \fC2\fR  creates an external  frame, an internal  frame is created
+with an argument of \fC1\fR. Where no argument is specified an external  frame
+is created by default on systems  which  support  them  otherwise  an internal
+frame is created.
 .SH NOTES
 \*(mS is not  multi-threaded  and only one frame may be active at any one time
 (the  complexity  of being able to run a command in one frame while editing in
-another  would rapidly lead it away from the 'Micro'  status). This means that
-if a command is left  active  (such as a search) in one frame and the focus is
-changed  to  another  the input is  \fIsent\fR  to the frame  with the  active
+another  would rapidly lead it away from the 'Micro'  status).  Therefore if a
+command  is left  active  (such as a search)  in one  frame  and the  focus is
+changed to another  frame the input is \fIsent\fR to the frame with the active
 command and the message \fC[NOT  FOCUS]\fR  appears in the message-line of the
-frame with the OS focus.
+frame with the focus.
 .PP
 \fBcreate-frame\fR  is useful in macros  that rely on a window  layout, as the
 macro can preserve the users current  window layout by creating a new internal
