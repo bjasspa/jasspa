@@ -786,7 +786,7 @@ ipipeRead(meIPIPE *ipipe)
         }
         switch(cc)
         {
-        case 0:
+        case 0: /* ignore */
             break ;
         case 7:
             TTbell() ;
@@ -820,6 +820,8 @@ ipipeRead(meIPIPE *ipipe)
             p1 = buff ;
             *p1 = '\0' ;
             len = curOff = 0 ;
+            break ;
+        case 15: /* ignore */
             break ;
 #if _UNIX
         case 27:

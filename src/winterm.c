@@ -5,7 +5,6 @@
  * Synopsis      : Win32 platform support
  * Created By    : Jon Green
  * Created       : 21/12/1996
- * Last Modified : <010308.2050>
  *
  * Description
  *
@@ -2883,8 +2882,7 @@ int
 WinKeyboard (UINT message, UINT wParam, LONG lParam)
 {
     uint16 cc;                  /* Local keyboard character */
-    
-    
+
 #ifdef _WIN_KEY_DEBUGGING
     {
         FILE *fp = NULL;
@@ -3105,7 +3103,7 @@ do_keydown:
                  * Fail on most keys */
                 if ((ttmodif & ME_ALT) || ((ttmodif & ME_CONTROL) == 0))
                     return FALSE;
-                
+
                 /* The only keys we want to process here are those that do not
                  * come back to use as WM_CHAR. Fail on all of the others - we
                  * will see them later as a different message type */
@@ -3116,8 +3114,7 @@ do_keydown:
                     case 0x0c:          /* -/_ key. Scan code 0x0c */
                         if (ttmodif & ME_SHIFT)
                             return FALSE;
-                        else
-                            cc = ttmodif | '-';
+                        cc = ttmodif | '-';
                         break;
                     case 0x0d:          /* +/= key. Scan code 0x0d */
                         if (ttmodif & ME_SHIFT)
@@ -3354,7 +3351,7 @@ done_syschar:
                 goto return_spec;
             }
 #endif
-        case VK_CONVERT:                /* 0x1c - This is '#' */
+        case VK_CONVERT:                /* This is '#' */
             /* Look at the scan code. 0x56000 == '\'. 0x2b0000 == '#'. This is
              * an unconventional way of getting this, but seems to be totaly
              * undocumented !! */
