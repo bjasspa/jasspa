@@ -578,7 +578,7 @@ set-variable #l0 0
     !force set-variable #l1 &ind &cat "@" #l5
     set-variable .type &cat "@ml2" #l1
     -1 osd .osd.tmp
-    execute-line &spr "osd %d 0 \"btcH%s %d \"%s\"" .osd.tmp #l6 .scheme.osd-title @1
+    execute-line &spr "osd %d 0 \"bcdtH%s 10 %d \"%s\"" .osd.tmp #l6 .scheme.osd-title @1
     osd .osd.tmp 1 ""
     osd .osd.tmp 2 "fh" "  "
     !if &gre #l2 1
