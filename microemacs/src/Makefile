@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040313.0202>
+# Last Modified: <20040327.1659>
 #
 ##############################################################################
 
@@ -47,6 +47,7 @@ MAKEXE	=	build
 MAKSRC	=	build.bat	\
 		aix43.gmk	aix43.mak	\
 		cygwin.gmk	\
+		darwin.gmk	\
 		dosdj1.mak	dosdj2.mak	\
 		freebsd.gmk	freebsd.mak	\
 		hpux10.gmk	hpux10.mak	\
