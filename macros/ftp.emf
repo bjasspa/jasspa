@@ -256,7 +256,7 @@ define-macro ftp-connect
         !if &not $status
             set-registry "/url/ftp" ""
         !endif
-        !force find-registry &cat "/url/ftp" #l0 0
+        !force find-registry &cat "/url/ftp/" #l0 0
         !if &not $status
             set-registry &cat "/url/ftp" #l0 ""
             set-registry &spr "/url/ftp/%s/path" #l0 "/"
@@ -329,7 +329,7 @@ define-macro ftp-connect
             !if &seq #l0 ""
                 !return
             !endif
-            !force find-registry &cat "/url/ftp" #l0 0
+            !force find-registry &cat "/url/ftp/" #l0 0
             !if $status
                 ; if we already have an ftp entry of this name, simply change to it
             !elif &not &or &seq .ftp.name "" &seq .ftp.name #l0
@@ -419,4 +419,15 @@ osd .osd.ftp 600 ""
 osd .osd.ftp 610 ""
 osd .osd.ftp 620 "BthcfH" .scheme.osd-ebtt " \HConnect " f ftp-do-connect
 osd .osd.ftp 630 "BtcfH"  .scheme.osd-ebtt " E\Hxit  "   f void
+
+!if &seq &reg "/url" "" ""
+    !if &not &seq &set #l0 &reg "/history/url-file" "" ""
+        !force read-registry "/url" #l0 "y" 
+        !if &not $status
+            ; set ftp erf file is missing
+            set-registry "/url" &stat "a" &spr "%s%s.erf" $user-path #l0
+            mark-registry "/url" "fybu"
+        !endif
+    !endif
+!endif
 ftp-site-name-set ""
