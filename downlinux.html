@@ -56,13 +56,6 @@
   <h2><img src="images/miniicon.gif" width="16" height="16"/>
   <font color="#0000FF">Component Install</font></h2>
   
-  <p>Component download for the Linux platform. To install:</p>
-  <ul>
-      <li>Unpack <tt>jasspa-me-linux-i386-2.x-20050219.gz</tt> to <tt>/usr/local/bin/me</tt></li>
-      <li>Unpack <tt>jasspa-metree-20050219.tar.gz</tt> to <tt>/usr/local</tt> (forming  <tt>/usr/local/jasspa/...</tt>).</li>
-      <li>Assuming <tt>/usr/local/bin</tt> is in your path, run the editor <tt>me</tt></li>
-  </ul>
-  <p></p>
   <center><table border="1" WIDTH="100%">
     <tr>
       <td bgcolor="#0000FF">
@@ -108,6 +101,62 @@
     </tr>
   </table></center>
   
+  <h3>System Wide Component Installation</h3>
+  
+  <p>As <i>root</i>, unpack <i>metree</i> which creates a directory tree
+  called <tt>jasspa</tt> and install into a suitable directory, typically
+  <tt>/usr/share</tt> or <tt>/usr/local</tt> i.e.</p>
+  
+  <pre>
+  cd /usr/local
+  gtar zxvf /path-to-tarball/jasspa-metree-yyyymmdd.tar.gz
+  </pre>
+  
+  <p>The directory <tt>/usr/local/jasspa</tt> should now exist. Add downloaded
+  spelling dictionaries by unpacking into the <tt>/usr/local/jasspa/spell</tt>
+  subdirectory.</p>
+  
+  <p>Unpack the binary into the new directory.</p>
+  
+  <pre>
+  cd /usr/local/bin
+  gunzip -c /path-to-tarball/jasspa-me-linux_2.x-yyyymmdd.gz &gt; me
+  chmod a+rx me
+  </pre>
+  
+  <p>The installation is complete and you may now execute your favorite editor
+  <b>me</b>.</p>
+  
+  <h3>Single User Component Installation</h3>
+  
+  <p>Unpack <i>metree</i> in your home directory, this generates a directory
+  tree called <tt>jasspa</tt>. Once unpacked then rename the directory to
+  <tt>.jasspa</tt>.</p>
+  
+  <pre>
+  cd ~
+  gtar zxvf /path-to-tarball/jasspa-metree-yyyymmdd.tar.gz
+  mv jasspa .jasspa
+  </pre>
+  
+  <p>Add downloaded spelling dictionaries by unpacking into the
+  <tt>~/.jasspa/spell</tt> subdirectory.</p>
+  
+  <p>Install the binary into your local binary directory - we assume
+  <tt>~/bin</tt> i.e.</p>
+  
+  <pre>
+  cd ~/bin
+  gunzip -c /path-to-tarball/jasspa-me-linux-2.x-yyyymmdd.gz &gt; me
+  chmod a+rx me
+  </pre>
+  
+  <p>Assuming that the binary directory is already on the users path then the
+  installation is complete.</p>
+  
+  <p>Now execute your favorite editor <b>me</b> and follow the instructions on
+  setting up your environment.</p>
+  
   <!-- NanoEmacs - Package and Binary Downloads -->
 
   <HR color="#cccccc" noShade="1" SIZE="1"/>
@@ -148,6 +197,17 @@
     </tr>
   </table></center>
   
+  <h3>Installation</h3>
+  
+  <p>
+  <ul>
+    <li>Unpack using <tt>gunzip</tt></li>
+    <li>rename to <b>ne</b></li>
+    <li>Apply execute permissions <b>chmod a+rx ne</b></li>
+    <li>As <i>root</i> copy to the desired binary directory i.e. <tt>/usr/local/bin</tt>.</li>
+  </ul>
+  </p>
+     
   <HR color="#cccccc" noShade="1" SIZE="1"/>
   
   <h1>NO WARRANTY</h1>
