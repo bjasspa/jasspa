@@ -254,9 +254,11 @@
 #ifndef _NO_XTERM
 #define _XTERM         1                /* Use Xlib                      */
 #endif
+#if 0
 #define _CLIENTSERVER  1                /* Client server support         */
 #define _URLSUPP       1                /* Supports url reading          */
 #define _IPIPES        1                /* platform supports Inc. pipes  */
+#endif
 /* Under cygwin sys_errlist is defined slightly differently - redefine   */
 #define sys_errlist _sys_errlist        /* sys_errlist specially defined */
 #endif /* _CYGWIN */
