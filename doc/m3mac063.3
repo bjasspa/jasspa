@@ -1,0 +1,34 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 2004 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m3mac063.3,v 1.1 2004-01-05 00:18:24 jon Exp $
+.Im MicroEmacs command|search
+.so me.tni
+.TH string-rectangle 3
+.XI string-rectangle - "Add a string vertically"
+.SH NAME
+string-rectangle \- Add a string vertically.
+.Me $a
+.SH SYNOPSIS
+.na
+.B string-rectangle
+.ad
+.SH DESCRIPTION
+.B string-rectangle
+inserts  a string  at the same  column  position  on each  line of a  selected
+region. The command  operates on a selected  region and prompts the user for a
+string to insert at the column  position  at the start of the region. The user
+defined  string is then  inserted that the same column  position for all lines
+that exist in the region. This is  generally  used to pre-pend  lines with new
+text. 
+.PP
+The insertion column is the column at the start of the region with the
+lowest line number. (i.e. uppermost line of region).
+.SH "SEE ALSO"
+.na
+.Ht exchange-point-and-mark 2 ,
+.Ht set-mark 3 .
+.ad
+.FH

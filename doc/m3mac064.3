@@ -1,0 +1,213 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 2004 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m3mac064.3,v 1.1 2004-01-05 00:18:24 jon Exp $
+.Im MicroEmacs command|macrodevelop
+.so me.tni
+.TH buffer-init 3
+.XI buffer-init - "Initialize a buffer language template"
+.XI buffer-init-hooks - "Initialize the buffer language template hooks"
+.XI buffer-init-fhook - "Initialize the buffer file hooks"
+.SH NAME
+.Me "|buffer-init"
+buffer-init \- Initialize a buffer language template.
+.Me "|buffer-init-hooks"
+buffer-init-hooks \- Initialize the buffer language template hooks.
+.Me "|buffer-init-fhook"
+buffer-init-fhook \- Initialize the buffer file hooks.
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B buffer-init
+.I name 
+[\|\fIetf\fR\|]
+.br 
+.B buffer-init-hooks
+.br
+.B buffer-init-fhook
+.I name
+.ad
+.SH DESCRIPTION
+The 
+.B buff-init
+commands  prepare  the  operating  modes of a buffer for a language  template.
+These   commands   operate  with   variables   defined  in  the  template  and
+automatically  configure \*(mS to use the template. 
+.PP
+The commands are used in the hook files (hkxxx.emf - see 
+.Hl "File Hooks" fileHooks 2 )
+and simply the setting up of 
+.Hl "File Language Templates" languageTemplates 2 
+by automating common actions and integrating the configuration settings
+made via 
+.Ht user-setup 3 .
+.PP
+The hook file is declared from  \fCme.emf\fR or the user start up file binding
+a file extension or magic string association with the hook file. i.e.
+.RS
+.Me $emf-scheme
+.CS
+-1 add-file-hook "-[*!]-[ \\t]*foo.*-[*!]-"    fhook-foo
+ 1 add-file-hook "^#!/.*foo"                  fhook-foo
+.CE 
+.Me $ehf-scheme
+.RE
+On loading a file which matches the 
+.Ht add-file-hook 2 
+definition  then the  \fChkxxx.emf\fR  file is  executed  and the  template is
+applied to the file.
+.PP
+A basic template framework to be used with the \fBbuff-init\fR commands may be
+defined as follows for a language template called \fIfoo\fR:-
+.Me $emf-scheme
+.CS
+; File hook - initialize buffer on loading the file.
+define-macro fhook-foo
+    set-variable $buffer-mask "luh1"
+    @# buffer-init "foo"
+    buffer-init-hooks
+!emacro
+
+; buffer-init variables
+set-variable .fhook-foo.name "foo Macro"
+set-variable .fhook-foo.setup &reg "/history" "fhook/foo" "bdfghnopx"
+set-variable .fhook-foo.setup-mask "abdefghikmnoptux"
+; Commenting configuration -- omit if not defined.
+set-variable .fhook-foo.comment "|#||#|# | #||"
+; Additional commands -- omit if not defined.
+set-variable .fhook-foo.command-flag  "||"
+set-variable .fhook-foo.command-name  "||"
+set-variable .fhook-foo.command-nbind "||"
+set-variable .fhook-foo.command-kbind "||"
+set-variable .fhook-foo.command-desc  "||"
+; Set up collapse or folding for foo -- omit if not defined
+set-variable .fhook-foo.collapse-open  "^{"
+set-variable .fhook-foo.collapse-close "^}"
+set-variable .fhook-foo.collapse-mopen  "-1"
+set-variable .fhook-foo.collapse-mclose "1"
+set-variable .fhook-foo.collapse-mnext "-1"
+; setup foo item-list -- omit if not defined 
+set-variable .fhook-foo.item-list-s1 "^[ \\t]*func\\\\(\\\\w+\\\\)"
+set-variable .fhook-foo.item-list-r1 "^[ \\t]*end"
+; Set up hilighting
+!if &and &sin "h" .fhook-foo.setup &band .hilight.flags 0x02 
+    ; Hi-light foo Mode
+    !if &not &exi .hilight.foo
+        set-variable .hilight.foo &pinc .hilight.next 1
+    !endif
+
+    0 hilight .hilight.foo  2 50
+    hilight .hilight.foo 0 "#.*"          .scheme.comment
+    hilight .hilight.foo 1 "end"          .scheme.keyword
+    hilight .hilight.foo 1 "^[ \\t]*func" .scheme.function
+    ; ... more ...
+
+    ; Hilight numbers.            
+    !if &band .hilight.flags 0x08
+        ; hilight constants, e.g. numbers
+        hilight .hilight.c 1 "[[:digit:]]+"       .scheme.constant
+        hilight .hilight.c 1 "-[[:digit:]]+"      .scheme.constant
+        hilight .hilight.c 1 "0[xX][[:xdigit:]]+" .scheme.constant
+        hilight .hilight.c 1 "[[:digit:]]+\\.[[:digit:]]+"  .scheme.constant
+        hilight .hilight.c 1 "-[[:digit:]]+\\.[[:digit:]]+" .scheme.constant
+        hilight .hilight.c 1 "[[:digit:]]+\\.[[:digit:]]+f"  .scheme.constant
+        hilight .hilight.c 1 "-[[:digit:]]+\\.[[:digit:]]+f" .scheme.constant
+    !endif
+!endif
+
+; End the initialisation - call user extensions i.e. myfoo.emf
+buffer-init-fhook "foo"
+.CE
+.Me $ehf-scheme
+.B buffer-init
+is invoked from the buffer file hook 
+.Hl fhook fileHooks 2
+and is invoked with the numerical  argument  passed to the  \fIfhook\fR  macro
+(specified  as  \fC$#\fR).  The call  takes  two  arguments,  the first is the
+\fIname\fR  of the  template or hook, in the example  this is  \fIfoo\fR.  The
+second argument is the \fIetf\fR template name (see 
+.Ht etf 8 ).
+The  command  initializes  the  buffer,  using the  \fI.fhook-xxx\fR  variable
+information defined in the file. 
+.PP
+.B buffer-init-fhooks
+is invoked from the buffer file hook 
+.Hl fhook fileHooks 2
+typically following the 
+.B buffer-init
+call  this  macro   invokes   any  user   defined   file  hooks  of  the  form
+\fBmy-fhook-xx\fR. User defined  \fBmy-bhook-xxx\fR and \fBmy-ehook-xxx\fR are
+configured into the buffer space ready for execution. 
+.PP
+.B buffer-init-fhook
+is  placed at the end of the hook file  definition  and  retrieves  additional
+configuration  information  from the  registry and the user  settings, it will
+also locate and load any user additions to the template by loading the file 
+\fCmyxxx.emf\fR.
+.SS "Execution Sequence"
+It is important to understand the execution sequence of the buffer hook files.
+On identifying a new file hook then the  \fChkxxx.emf\fR  file is fetched from
+the file system and  executed.  Execution  causes all of the  variables  to be
+defined and finally, when all definitions have been made,
+.B buffer-init-fhook 
+is executed to load in any user defined extensions. At this point then 
+the macro  \fBfhook-xxx\fR  (in our example  \fIfhook-foo\fR\|)  has ONLY been
+defined it has NOT been executed. This load  operation is performed  once only
+and is performed on demand.
+.PP
+Once  all  of  the  user   information   has  been   loaded   then  the  macro
+\fBfhook-xxx\fR  is invoked,  this applies  hilighting,  buffer key  bindings,
+indentation etc. to the newly loaded buffer.
+.SS "Configuration Masks"
+Buffer   initialization  is  controlled  by  the  settings  of  the  variables
+\fB.fhook-xxx.setup\fR and \fBfhook-c.setup-mask\fR, for the 'C' language then
+this is defined as:-
+.Me $emf-scheme
+.CS
+set-variable .fhook-c.setup &reg "/history" "fhook/c" "bdfghnopx"
+set-variable .fhook-c.setup-mask "abdefghikmnoptux>"
+.CE 
+.Me $ehf-scheme
+The variables use an ASCII  configuration  string that identifies the modes of
+operation that are required.
+.TP
+\fCa\fR - Auto mode
+.\"
+Automatic 
+.Ht auto 2m
+mode for automatic source file line type detection.
+.TP
+\fCb\fR
+Abbreviation mode
+.TP
+.LP
+\fB.fhook-xxx.setup\fR is the default set-up, this is normally defined to take
+settings from the registry and provides defaults when not defined.
+.SH "SEE ALSO"
+.na
+.Ht add-file-hook 2 ,
+.Ht buffer-abbrev-file 2 ,
+.Ht $buffer-hilight 5 ,
+.Ht $buffer-indent 5 ,
+.Ht eaf 8 ,
+.Ht etf 8 ,
+.Ht etfinsrt 3 ,
+.Ht execute-buffer 2 ,
+.Ht expand-abbrev 2 ,
+.Ht global-abbrev-file 2 ,
+.Ht hilight 2 ,
+.Ht indent 2 ,
+.Ht indent 2m ,
+.Ht restyle-buffer 3 ,
+.Ht restyle-region 3 ,
+.Ht scheme-editor 3 ,
+.Ht time 2m ,
+.br
+.Hl "File Hooks" fileHooks 2 ,
+.br
+.Hl "File Language Templates" languageTemplates 2 .
+.ad
+.FH
