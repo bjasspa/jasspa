@@ -5,7 +5,7 @@
  *  Synopsis      : regex compiler and matcher.
  *  Created By    : Steven Phillips
  *  Created       : Wed Aug 11 11:35:51 1999
- *  Last Modified : <001009.2024>
+ *  Last Modified : <010605.0944>
  *
  *  Description
  *
@@ -1273,7 +1273,7 @@ meRegexComp(meRegex *regex, unsigned char *regStr, int flags)
     return meREGEX_OKAY ;
 }
 
-#ifdef _TEST_RIG
+#if (defined FREE_ALL_MEMORY) || (defined _TEST_RIG)
 
 void
 meRegexFree(meRegex *regex)
@@ -1299,6 +1299,8 @@ meRegexFree(meRegex *regex)
         regex->groupSz = 0 ;
     }
 }
+#endif
+#ifdef _TEST_RIG
 
 #include <time.h>
 

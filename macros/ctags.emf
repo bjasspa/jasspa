@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : 1998
-;  Last Modified : <010315.1320>
+;  Last Modified : <010408.1432>
 ;
 ;  Description   : Command-line macro for creating a C tags file
 ;
@@ -16,7 +16,8 @@
 ;
 ;  Copyright (c) 1998-99 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; options r - recurse, a - append, m - multiple links to a tag, e - enum, s - struct, v - static variables
+; options r - recurse, a - append, m - multiple links to a tag, e - enum,
+;         s - struct, v - static variables, p - prototypes
 set-variable %tag-option   &cond &exi %tag-option   %tag-option   ""
 set-variable %tag-filemask &cond &exi %tag-filemask %tag-filemask ":*.h:*.hpp:*.[cC]:*.cpp:*.cc:"
 set-variable %tag-ignore   &cond &exi %tag-ignore   %tag-ignore   ":SCCS/:CVS/:"

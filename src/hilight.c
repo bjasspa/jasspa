@@ -5,7 +5,7 @@
  *  Synopsis      : Token based hilighting routines
  *  Created By    : Steven Phillips
  *  Created       : 21/12/94
- *  Last Modified : <010420.2204>
+ *  Last Modified : <010605.0911>
  *
  *  Description
  *
@@ -121,7 +121,7 @@ static uint8 *meHilTestNames[meHIL_TEST_NOCLASS]={
 
 static uint8 varTable[11] ;
 
-static void
+void
 freeToken(HILNODEPTR root)
 {
     uint8 ii, top ;

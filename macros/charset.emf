@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Tue Feb 16 09:37:57 1999
-;  Last Modified : <000719.2317>
+;  Last Modified : <010610.1042>
 ;
 ;  Description   : Sets up the chatacter translations for the different 
 ;                  char sets. The internal default is ISO-8859 (1-...).
@@ -16,9 +16,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 !if &les @# 1
     ; if executed with an argument of 0 or less, return the list
-    set-variable %charset-names  "|ISO-8859|ISO-8859 with box chars|Windows ANSI|Windows OEM|Windows GREEK|Windows TURKISH|Windows RUSSIAN|PC Code Page 437|PC Code Page 850|Cyrillic koi8-r|"
-    set-variable %charset-value  "||ISO-box|Win-ANSI|Win-OEM|Win-GREEK|Win-TURK|Win-RUS|PC-437|PC-850|koi8-r|"
-    set-variable %charset-types  "|||0|255|161|162|204||||"
+    set-variable %charset-names  "|ISO-8859|ISO-8859 with box chars|Windows ANSI|Windows OEM|Windows GREEK|Windows TURKISH|Windows RUSSIAN|PC Code Page 437|PC Code Page 850|Cyrillic koi8-r|Plain Text|"
+    set-variable %charset-value  "||ISO-box|Win-ANSI|Win-OEM|Win-GREEK|Win-TURK|Win-RUS|PC-437|PC-850|koi8-r|plain-text|"
+    set-variable %charset-types  "|||0|255|161|162|204|||||"
     !return
 !endif
 ; get the users display char set
@@ -68,6 +68,8 @@ set-variable .change-font.type 0
 !elif &seq #l0 "koi8-r"
     set-char-mask "M" "°á±â²÷³ç´äµå¶ö·ú¸é¹êºë»ì¼í½î¾ï¿ğÀòÁóÂôÃõÄæÅèÆãÇşÈûÉıÊÿËùÌøÍüÎàÏñ¡³ĞÁÑÂÒ×ÓÇÔÄÕÅÖÖ×ÚØÉÙÊÚËÛÌÜÍİÎŞÏßĞàÒáÓâÔãÕäÆåÈæÃçŞèÛéİêßëÙìØíÜîÀïÑñ£"
     set-variable .change-font.type 204
+!elif &seq #l0 "plain-text"
+    set-char-mask "M" "ÀAÁAÂAÃAÄAÇCÈEÉEÊEËEÌIÍIÎIÏIÑNÒOÓOÔOÕOÖO×xØOÙUÚUÛUÜUİYßBàaáaâaäaåaçcèeéeêeëeìiíiîiïiñnòoóoôoõoöoøoùuúuûuüuıyşbÿy"
 !endif
 
 !if &reg "/history" &cat %platform "/ext-char-set" "0"

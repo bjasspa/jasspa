@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : 1998
-;  Last Modified : <000824.2156>
+;  Last Modified : <010408.1430>
 ;
 ;  Description   : Command-line macro for creating a macros (emf) tags file
 ;
@@ -16,48 +16,72 @@
 ;
 ;  Copyright (c) 1998-99 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; options r - recurse, a - append, m - multiple links to a tag
+; options r - recurse, a - append, m - multiple links to a tag, p - prototypes
 set-variable %tag-option   &cond &exi %tag-option   %tag-option   ""
 set-variable %tag-filemask &cond &exi %tag-filemask %tag-filemask ":*.emf:"
 set-variable %tag-ignore   &cond &exi %tag-ignore   %tag-ignore   ":SCCS/:CVS/:"
 
 set-char-mask "2" "-$&#!%:@"
 
+define-macro emftags-add-tag
+    forward-word
+    set-variable #l1 $window-col
+    backward-word
+    set-variable #l1 &mid @wl $window-col &sub #l1 $window-col
+    set-variable #l3 @wl
+    next-window
+    !tjump &sin "m" %tag-option 4
+    beginning-of-buffer
+    !force search-forward &spr "^%s\t" #l1
+    !if &not $status
+        end-of-buffer
+        insert-string #l1
+        insert-string "\t"
+        insert-string #p9
+        insert-string "\t/^"
+        insert-string #l3
+        insert-string "$/"
+    !endif
+    next-window
+!emacro
+        
 define-macro emftags-add-file
     set-variable $buffer-mask "luh12"
-    set-variable #l2 $buffer-fname
-    !if &seq &lef #l2 #g1 #g2
-        set-variable #l2 &rig #l2 #g1
+    set-variable #l9 $buffer-fname
+    !if &seq &lef #l9 #g1 #g2
+        set-variable #l9 &rig #l9 #g1
     !endif
-    ml-write &spr "[Parsing file %s]" #l2
+    ml-write &spr "[Parsing file %s]" #l9
     1 buffer-mode "magic"
     beginning-of-buffer
     !repeat
-        !force -1 search-forward "^[ \t]*[01]?[ \t]*define-macro[ \t]"
+        !force search-forward "^[ \t]*[01]?[ \t]*define-macro[ \t]"
         !if $status
-            forward-word
-            set-variable #l1 $window-col
-            backward-word
-            set-variable #l1 &mid @wl $window-col &sub #l1 $window-col
-            set-variable #l3 @wl
-            beginning-of-line
-            next-window
-            !tjump &sin "m" %tag-option 4
-            beginning-of-buffer
-            !force search-forward &spr "^%s\t" #l1
-            !if &not $status
-                end-of-buffer
-                insert-string #l1
-                insert-string "\t"
-                insert-string #l2
-                insert-string "\t/^"
-                insert-string #l3
-                insert-string "$/"
-            !endif
-            next-window
+            emftags-add-tag
         !endif
-        !force forward-line
     !until &not $status
+    !if &sin "p" %tag-option
+        beginning-of-buffer
+        !repeat
+            !force search-forward "^[ \t]*[01]?[ \t]*define-macro-file[ \t]"
+            !if $status
+                set-variable #l0 $window-line
+                !force 2 forward-word
+                !if &not $status
+                !elif &not &equ #l0 $window-line
+                    backward-word
+                !endif
+                backward-word
+                emftags-add-tag
+                !force 2 forward-word
+                !if &equ #l0 $window-line
+                    backward-word
+                    !jump -4
+                !endif
+                beginning-of-line
+            !endif
+        !until &not $status
+    !endif
 !emacro
 
 define-macro emftags-parse-tags

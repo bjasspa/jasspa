@@ -16,8 +16,8 @@ define-macro fhook-m4
 !emacro
 
 ; buffer-initialize variables
-set-variable .fhook-m4.setup &reg "/history" "fhook/m4" "hinx"
-set-variable .fhook-m4.setup-mask "aehikmntux"
+set-variable .fhook-m4.setup &reg "/history" "fhook/m4" "hinox"
+set-variable .fhook-m4.setup-mask "aehikmnotux"
 set-variable .fhook-m4.comment "|#||#|# | #||"
 
 !if &and &sin "h" .fhook-m4.setup &band .hilight.flags 0x02 

@@ -10,7 +10,7 @@
 *
 *	Author:			Jon Green
 *
-*	Creation Date:		03/05/91 17:19		<010520.2300>
+*	Creation Date:		03/05/91 17:19		<010605.0942>
 *
 *	Modification date:	%G% : %U%
 *
@@ -557,6 +557,8 @@ exitEmacs(int f, int n)
             /* free of everything we can */
             extern void printFreeMemory(void) ;
             extern void osdFreeMemory(void) ;
+            extern void regFreeMemory(void) ;
+            extern void srchFreeMemory(void) ;
             extern void TTfreeTranslateKey(void) ;
             extern uint8 *ffbuf ;
             extern LINE  *mline ;
@@ -605,7 +607,7 @@ exitEmacs(int f, int n)
                 meFree (vvptr->video);
                 meFree (vvptr);
             }
-            meFree(hilCol) ;
+            meFree(hilBlock) ;
             meFree(disLineBuff) ;
             meFree(mline) ;
             meFree(mlStore) ;
@@ -737,6 +739,8 @@ exitEmacs(int f, int n)
             addSpellRule(1,0) ;
             printFreeMemory() ;
             osdFreeMemory() ;
+            regFreeMemory() ;
+            srchFreeMemory() ;
             TTfreeTranslateKey() ;
 #if HILIGHT
             if(noHilights > 0)
@@ -747,6 +751,7 @@ exitEmacs(int f, int n)
                 {
                     if(hilights[hilno] != NULL)
                     {
+                        hilights[hilno]->close = NULL ;
                         hilights[hilno]->rtoken = NULL ;
                         freeToken(hilights[hilno]) ;
                     }
@@ -764,14 +769,8 @@ exitEmacs(int f, int n)
                 meFree(abrev) ;
             }
             meFree(styleTable) ;
-#ifdef _TCAPFONT
-            meFree(fntSchmTbl) ;
-#endif
             for(flp=frameStore,ii=0; ii<TTmrow; ii++, flp++)
-            {
-                meFree(flp->text) ;
-                meFree(flp->colour) ;
-            }
+                meFree(flp->scheme) ;
             meFree(frameStore) ;
         }
 #endif

@@ -53,8 +53,8 @@ if NOT "%@LOWER[A]" == "a" goto build_msvc5
 rem try to auto detect the build tools available
 set lpath=%@LOWER[%PATH%]
 set borland=%@INDEX[%lpath%,borland]
-if %borland% == -1 goto build_msvc
 set msvc=%@INDEX[%lpath%,\vc]
+if %borland% == -1 goto build_msvc
 if %msvc% == -1 goto build_borland
 
 if %borland% GT %msvc% goto build_msvc

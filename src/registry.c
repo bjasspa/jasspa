@@ -5,7 +5,7 @@
  *  Synopsis      : Internal registry support routines
  *  Created By    : Jon Green
  *  Created       : 26/03/1998
- *  Last Modified : <010305.0749>
+ *  Last Modified : <010605.0936>
  *
  *  Description
  *
@@ -1120,4 +1120,12 @@ listRegistry (int f, int n)
     resetBufferWindows(bp) ;
     return TRUE;
 }
+
+#ifdef FREE_ALL_MEMORY
+void regFreeMemory(void)
+{
+    rnodeDelete (root.chld);
+}
+#endif
+
 #endif

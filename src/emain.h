@@ -6,7 +6,7 @@
  *  Object Name   : emain.h
  *  Author        : Steve Philips
  *  Created       : Thu Nov 27 19:17:17 1997
- *  Last Modified : <000822.1932>
+ *  Last Modified : <010711.1319>
  *
  *  Description 
  *       Encapsulate all of the platform definitions into a sigle file
@@ -110,7 +110,7 @@
 /**************************************************************************
 * UNIX : HPUX                                                             *
 **************************************************************************/
-#if (defined _HPUX9) || (defined _HPUX10)
+#if (defined _HPUX9) || (defined _HPUX10) || (defined _HPUX11)
 #define meSYSTEM_NAME "hpux"            /* Identity name of the system   */
 #define _HPUX          1                /* This is a hpux box            */
 #define _UNIX          1                /* This is a UNIX system         */

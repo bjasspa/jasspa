@@ -5,7 +5,7 @@
  *  Synopsis      : Unix X-Term and Termcap support routines
  *  Created By    : Steven Phillips
  *  Created       : 1993
- *  Last Modified : <010611.2147>
+ *  Last Modified : <010612.0743>
  *
  *  Description
  *    This implementation of unix support currently only supports Unix v5 (_USG),
@@ -1576,7 +1576,7 @@ TTinitMouse(void)
  * string provided by the user (or system) and determine if there
  * are any derivatives of the font */
 static int
-XTERMsetFont (char *fontName)
+XTERMsetFont(char *fontName)
 {
     int ii;
     XFontStruct *font ;
@@ -1716,7 +1716,8 @@ XTERMstart(void)
         ss = NULL ;
 
     /* Load the font into the system */
-    if (XTERMsetFont (ss) == FALSE)
+    if((XTERMsetFont(ss) == FALSE) &&
+       ((ss == NULL) || (XTERMsetFont(NULL) == FALSE)))
         return FALSE ;
 
     /* Set the default geometry, then look for an override */
@@ -2750,7 +2751,7 @@ changeFont(int f, int n)
         return FALSE ;
 
     /* Change the font */
-    if (XTERMsetFont ((char *)buff) == FALSE)
+    if(XTERMsetFont ((char *)buff) == FALSE)
         return FALSE ;
 
     /* Set up the arguments for a resize operation. Because the
