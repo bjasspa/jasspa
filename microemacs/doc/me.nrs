@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.11 2004-01-05 00:19:24 jon Exp $
+.Id $Id: me.nrs,v 2.12 2004-01-06 00:49:36 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -208,7 +208,7 @@ for some information on using the hypertext manual pages.
 .br
 .Hl "Hilighting, Color and Screen Appearance" Hilighting -
 .br
-.Hl "Comparison and Differencing Commands" Comparison - 
+.Hl "Comparison and Differencing Commands" Comparison -
 .br
 .Hl "Short Cuts and Abbreviations" Abbreviations -
 .br
@@ -220,7 +220,7 @@ for some information on using the hypertext manual pages.
 .br
 .Hl "Registry Commands" Registry -
 .br
-.Hl "Command Line Filters" filters - 
+.Hl "Command Line Filters" filters -
 .br
 .Hl "Games" Games -
 .RE
@@ -416,7 +416,7 @@ output * "%N
 .SH "COMMAND LINE FILTERS"
 \*(mS may be  invoked  from the  command  line to  perform a  specific  set of
 filtering tasks, under control of a dedicated start up macro, see
-.Ht me 1 
+.Ht me 1
 and
 .Ht start-up 3 .
 A  number  of  standard  macros  are  provided,  most  of  which  are  invoked
@@ -873,7 +873,7 @@ output * "%N
 .RE
 .SH "SEE ALSO"
 .na
-Directives
+.Hl "Directives" MacroGlossary -
 .ad
 .NH modeLine - "Mode Line"
 .SH "MODE LINE"
@@ -1068,7 +1068,7 @@ Document support.
 Fixed PERL abbreviations.
 .IP "Mike Hopkirk"
 Macro execution speed up suggestions.
-.IP "Thomas Hundt" 
+.IP "Thomas Hundt"
 Fixed $frame-width/depth macro operation on the set.
 .br
 Fix for XML macros.
@@ -1402,7 +1402,6 @@ the "copyright" line and a pointer to where the full notice is found.
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-
 Also add information on how to contact you by electronic and paper mail.
 
 If the program is interactive, make it output a short notice like this
@@ -1445,7 +1444,6 @@ All documentation is covered by the GFDL.
  Everyone is permitted to copy and distribute verbatim copies
  of this license document, but changing it is not allowed.
 
-
 0. PREAMBLE
 
 The purpose of this License is to make a manual, textbook, or other
@@ -1468,7 +1466,6 @@ software does.  But this License is not limited to software manuals;
 it can be used for any textual work, regardless of subject matter or
 whether it is published as a printed book.  We recommend this License
 principally for works whose purpose is instruction or reference.
-
 
 1. APPLICABILITY AND DEFINITIONS
 
@@ -1530,7 +1527,6 @@ formats which do not have any title page as such, "Title Page" means
 the text near the most prominent appearance of the work's title,
 preceding the beginning of the body of the text.
 
-
 2. VERBATIM COPYING
 
 You may copy and distribute the Document in any medium, either
@@ -1545,7 +1541,6 @@ number of copies you must also follow the conditions in section 3.
 
 You may also lend copies, under the same conditions stated above, and
 you may publicly display copies.
-
 
 3. COPYING IN QUANTITY
 
@@ -1583,7 +1578,6 @@ the public.
 It is requested, but not required, that you contact the authors of the
 Document well before redistributing any large number of copies, to give
 them a chance to provide you with an updated version of the Document.
-
 
 4. MODIFICATIONS
 
@@ -1667,7 +1661,6 @@ The author(s) and publisher(s) of the Document do not by this License
 give permission to use their names for publicity for or to assert or
 imply endorsement of any Modified Version.
 
-
 5. COMBINING DOCUMENTS
 
 You may combine the Document with other documents released under this
@@ -1692,7 +1685,6 @@ in the various original documents, forming one section entitled
 and any sections entitled "Dedications".  You must delete all sections
 entitled "Endorsements."
 
-
 6. COLLECTIONS OF DOCUMENTS
 
 You may make a collection consisting of the Document and other documents
@@ -1705,7 +1697,6 @@ You may extract a single document from such a collection, and distribute
 it individually under this License, provided you insert a copy of this
 License into the extracted document, and follow this License in all
 other respects regarding verbatim copying of that document.
-
 
 7. AGGREGATION WITH INDEPENDENT WORKS
 
@@ -1724,7 +1715,6 @@ of the entire aggregate, the Document's Cover Texts may be placed on
 covers that surround only the Document within the aggregate.
 Otherwise they must appear on covers around the whole aggregate.
 
-
 8. TRANSLATION
 
 Translation is considered a kind of modification, so you may
@@ -1738,7 +1728,6 @@ original English version of this License.  In case of a disagreement
 between the translation and the original English version of this
 License, the original English version will prevail.
 
-
 9. TERMINATION
 
 You may not copy, modify, sublicense, or distribute the Document except
@@ -1748,7 +1737,6 @@ automatically terminate your rights under this License.  However,
 parties who have received copies, or rights, from you under this
 License will not have their licenses terminated so long as such
 parties remain in full compliance.
-
 
 10. FUTURE REVISIONS OF THIS LICENSE
 
@@ -1766,7 +1754,6 @@ of any later version that has been published (not as a draft) by the
 Free Software Foundation.  If the Document does not specify a version
 number of this License, you may choose any version ever published (not
 as a draft) by the Free Software Foundation.
-
 
 ADDENDUM: How to use this License for your documents
 
@@ -1798,11 +1785,11 @@ JASSPA  MicroEmacs is derived from the  MicroEmacs 3.8 source base of 1998. As
 such, all of the software has been under a commercially  restrictive  license.
 JASSPA has upheld the original  license terms laid down my the original author
 and copyright holder Daniel M Lawrence.
-.PP  
+.PP
 JASSPA is the collective  name given to the maintainers of JASSPA  MicroEmacs.
 The current  maintainers  at the 1st January 2002 are Steven  Phillips and Jon
 Green.
-.PP   
+.PP
 On Wednesday 19th January 2001 JASSPA applied for, and was granted, permission
 by Daniel M Lawrence to move to the less  restrictive  licensing terms of GPL.
 As of 1st January 2002 the JASSPA distribution of MicroEmacs shall be supplied
@@ -1916,7 +1903,7 @@ mailing lists,  \s-1JASSPA\s0  have simply  registered and E-Mail group at the
 site  and  have  not  investigated  fully  all of the  facilities  that may be
 available.
 .PP
-Please check the  
+Please check the
 .Hl "Frequently Asked Questions" faq - .
 list and the home page FAQ before you submit any  information  to JASSPA, your
 problem may have already been addressed in these pages.
@@ -2241,22 +2228,22 @@ Microsoft Windows native console support.
 .BU
 .B "2nd Release - Beta #1"
 \- May 1999.
-.BU 
+.BU
 Bug fixes with multi-language support and spelling dictionaries.
 .BU
-Fixed 
-.Ht fill-paragraph 2 
+Fixed
+.Ht fill-paragraph 2
 such that it retains the cursor position in the paragraph when invoked without
 arguments.
 .BU
 Moved to GNU regex for search/replace engine.
-.BU 
+.BU
 Enhanced \fIisearch\fR such that it operates in \fI*shell*\fR buffers (again).
 .BU
-.Ht gdiff 3 
+.Ht gdiff 3
 macro  implementation  of  a  graphical  diff  to  allow  color  annotation  of
-differences and difference selection. Uses the output of a standard 
-.Hr diff 1 
+differences and difference selection. Uses the output of a standard
+.Hr diff 1
 utility.
 .BU
 2nd port to IBM AIX.
@@ -2264,32 +2251,32 @@ utility.
 .B "2nd Release - Beta #2"
 \- November 1999
 .BU
-Enhanced the 
-.Ht latex 9 
+Enhanced the
+.Ht latex 9
 support macros following various contributions from users.
-.BU 
+.BU
 Added  \fIFavorites\fR  to the  \fIFile\fR  pull down  menu. This is a simple
 mechanism to allow the user to add a file to a favorites list.
 .BU
 Ground up implementation of the regular  expression pattern matcher, following
-licensing problems with the GNU regex. The resultant pattern matcher is now a 
+licensing problems with the GNU regex. The resultant pattern matcher is now a
 little  faster  than GNU regex and is capable of all of the  standard  regular
 expression pattern matches. The pattern matcher has diverged from GNU in that
 double  backslashes are required in the character classes  \fC[..]\fR to allow
 for escape  sequence  short cuts such as  '\fC\\n\fR'  (newline),  '\fC\\t\fR'
 (tab) etc. It was felt that this  compromise  was better  than having to quote
-the more obscure search characters.  
+the more obscure search characters.
 .BU
 Changed the hilighting and indenting syntax to be GNU regex compliant.
 .BU
-Modified 
-.Ht compare-windows 2 
-to ignore white space by default, 
-.Ht compare-windows-exact 3 
+Modified
+.Ht compare-windows 2
+to ignore white space by default,
+.Ht compare-windows-exact 3
 performs an exact character for character comparison.
 .BU
 Enhanced the tags support to handle multiple tags and recursive directory tree
-searching. 
+searching.
 .BU
 Implemented osd-help, a gui front end to the on-line help. Required changes to
 the help system which gives macros  access to the on-line help buffer,  needed
@@ -2340,11 +2327,11 @@ Added new
 which can be used to store all information about the current window and
 .Ht goto-position 2
 which will then restore them. Allowed macros to use non-letter  characters for
-alpha marks and positions so they no longer need to clobber user ones. 
+alpha marks and positions so they no longer need to clobber user ones.
 .BU
 Greatly  improved  ipipe-shell-command  efficiency on windows by introducing a
 new thread approach to listen for activity.  Implemented a shell  command-line
-in an ipiped environment so 
+in an ipiped environment so
 .Ht ishell 3
 command is now usable on Windows platforms.
 .BU
@@ -2363,7 +2350,7 @@ command  to  enable  macros  to wait for user  dependent  completion,  used in
 .BU
 Added support for new
 .Ht $buffer-backup 5
-variable for setting the back-up file location. 
+variable for setting the back-up file location.
 .BU
 Major work to enable the complete  rebinding of all keys so the user interface
 to \*(mS can be completely  changed, this allows for example a Windows feel to
@@ -2383,7 +2370,7 @@ as adding the above features.
 .Ht &cbind 4 ,
 .Ht &kbind 4
 and
-.Ht &nbind 4 .   
+.Ht &nbind 4 .
 .BU
 \fB3rd Release\fR - Minor Updates July 14th 2001 onwards. Minor buf fixes.
 .BU
@@ -2401,7 +2388,7 @@ when committing.
 .BU
 Minor update to the CVS help page for the  aforementioned  (Affected  all help
 files).
-.BU 
+.BU
 \fB4th Release\fR - August 2001. Minor bug fixes.
 .BU
 Inclusion of
@@ -2413,7 +2400,7 @@ List function for sumarising file contents (\fCF7\fR / \fCEsc-F7\fR to close).
 Rendered character for the scroll bar - improves clarity.
 .BU
 Modified the printer registry file location.
-.BU 
+.BU
 New Guest default color scheme.
 .BE 0
 .IP 2002
@@ -2424,7 +2411,7 @@ Applied GPL License to code base. Transition to GPL following  permission from
 Daniel M Lawrence.
 .BU
 Fix to comment-restyle in \fCcomment.emf\fR - stops a spin.
-.BU 
+.BU
 nroff makefile full target building the txt files. (internal).
 .BU
 Added  support  for a $CURSOR$  tag to the etf files  which  sets the  initial
@@ -3099,12 +3086,12 @@ Minor patch to MicroEmacs '98 to correct a font problem on Windows platforms.
 .IP "\fBSeptember 1998\fR"
 1st Major Release \- MicroEmacs '98.
 .IP "\fB1988\fR"
-Daniel M. Lawrence - Microemacs V3.8 distribution. 
+Daniel M. Lawrence - Microemacs V3.8 distribution.
 .IP
 Daniel  Lawrence  turned  MicroEmacs  into an editor for the masses, it is his
 work that  ultimately  made  MicroEmacs  so popular.  Daniel did a  tremendous
 amount of work, both adding features and supporting other platforms  resulting
-in the MicroEmacs v3.8 release on which JASSPA's MicroEmacs is based. 
+in the MicroEmacs v3.8 release on which JASSPA's MicroEmacs is based.
 .IP "\fBLate 1985/early 1986\fR"
 Dave Conroy, the original  author, first  developed the original code base for
 private  use. Various  people  asked Dave for a copy of the program and it was
@@ -3115,7 +3102,7 @@ The documentation is all written in \s-1UNIX\s0
 .Hr nroff 1
 and converted to HTML, Microsoft  Windows Help File format and MicroEmacs Help
 file format.
-.NH faq -  "Frequently Asked Questions" 
+.NH faq -  "Frequently Asked Questions"
 .SH "FAQ"
 This page contains  frequently asked questions submitted to JASSPA.
 .PP
