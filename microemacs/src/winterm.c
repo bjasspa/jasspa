@@ -2794,7 +2794,7 @@ WinMouse(HWND hwnd, UINT message, UINT wParam, LONG lParam)
          * button state is the same, if not treat this event as a button
          * event
          */
-        if(wParam == mouseButs)
+        if(((wParam ^ mouseButs) & (MK_LBUTTON|MK_RBUTTON|MK_MBUTTON)) == 0)
         {
             static LONG lastPos=-1 ;
             meUInt arg;           /* Decode key argument */
