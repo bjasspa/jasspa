@@ -1,0 +1,45 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m3mac069.3,v 2.1 2004-01-17 22:27:28 jon Exp $
+.Im MicroEmacs command|c
+.so me.tni
+.TH c-slashify 3
+.XI c-slashify - "C language, append backslash to end of lines of region"
+.XI c-deslashify - "C language, remove backslash to end of lines of region"
+.SH NAME
+.Me "|c-slashify"
+c-slashify \- C language, append backslash to end of lines of region
+.br
+.Me "|c-deslashify"
+c-deslashify \- C language, remove backslash to end of lines of region
+.Me $a
+.SH SYNOPSIS
+.na
+.B c-slashify
+.br
+.B c-deslashify
+.ad
+.SH DESCRIPTION
+.B c-slashify
+and 
+.B c-deslashify
+add and remove backslash characters to the ends of line(s) defined by a 
+region, respectively.
+.PP
+The commands are used with the C programming language for 
+.C #define 
+macro  editing,  allowing   backslashes  to  be  added  and  removed  quickly.
+Backslashes are typically removed with 
+.B c-deslashify
+and the macro edited before the backslashes are re-applied
+using 
+.BR c-slashify .
+.SH "SEE ALSO"
+.na
+.Ht c 9 ,
+.Ht cpp 9 .
+.ad
+.FH

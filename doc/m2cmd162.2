@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd162.2,v 1.1 2002-10-16 22:30:10 jon Exp $
+.Id $Id: m2cmd162.2,v 1.2 2004-01-17 22:27:28 jon Exp $
 .Im MicroEmacs command|window|macrodevelop
 .so me.tni
 .TH delete-frame 2
@@ -17,10 +17,12 @@ delete-frame \- Delete the current frame
 .B delete-frame
 .ad
 .SH DESCRIPTION
-\fBdelete-frame\fR  deletes the current frame.
+\fBdelete-frame\fR  deletes the current  frame and the next is  displayed.  If
+there is no next frame then the command fails.
 .SH "SEE ALSO"
 .na
 .Ht create-frame 2 ,
 .Ht next-frame 2 .
+.Ht $frame-id 5 .
 .ad
 .FH

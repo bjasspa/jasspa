@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Tue Feb 2 21:10:34 1999
 .\"
-.Id $Id: m3mac029.3,v 2.7 2004-01-11 14:50:07 jon Exp $
+.Id $Id: m3mac029.3,v 2.8 2004-01-17 22:27:28 jon Exp $
 .Im MicroEmacs command
 .ds C0 "(\fBf2\fR)\ \&
 .ds C1 "(\fBf3\fR)\ \&
@@ -28,7 +28,7 @@ collapse-all \- (Un)Fold all regions in the current buffer
 .B collapse-all
 .ad
 .SH DESCRIPTION
-\*(mE provides a generic, albeit course, folding mechanism which is applied to
+\*(mE provides a generic, albeit coarse, folding mechanism which is applied to
 some of the well known file modes. The folding  mechanism  allows parts of the
 buffer to be  scrolled  up and  hidden,  leaving a residue  hilighting  marker
 within   the   buffer   indicating   a   folded   region.   A  folded   buffer
@@ -85,6 +85,32 @@ positioned.
 .IP "\fB.fhook-\fR\|\fIXXX\fR\|\fB-collapse-mnext\fR"
 Specifies the number  of lines to advance  before the next search is continued
 on the fold operation. This is only used by \fBcollapse-all\fR.
+.SH PRESENTATION
+The presentation of a collapsed region takes the form:
+.IP
+\fI<open line string>\fR ... \fI<close line string>\fR
+.LP
+Where 
+.I "<open line string>"
+and 
+.I "<close line string>"
+are  automatically  extracted  from the  originating  buffer  using the search
+string  definition.  Existing  \fBcollapse\fR  implementations  used a simpler
+format: 
+.IP
+\fI<open line string>\fR ... 
+.LP
+In \*(mS '04 and later versions, then the 
+.I "<close line string>"
+is always appended.  Appending of the closing token is required to ensure that
+any 
+.Hl indentation indent 2
+is  maintained.  This allows the indent  processing to find both an \fIopen\fR
+and \fIclose\fR  character sequence and not introduce an unwanted indentation.
+To ensure that indentation consistency is maintained then the 
+.B .fhook-XXX.collapse-close 
+definition should minimally match the corresponding  indentation close regular
+expression. 
 .SH EXAMPLE
 The following  examples show how the collapse  variables are set up in each of
 the buffer modes.
@@ -112,7 +138,7 @@ myfunc (int a, int b)
 the folded version appears as follows:-
 .CS
 static void
-myfunc (int a, int b) ...
+myfunc (int a, int b) ... }
 .CE 0
 .SS "emf"
 MicroEmacs  macro files \fBemf\fR  support folding of macro  definitions,  the
@@ -137,7 +163,7 @@ Given a macro definition:-
 the collapsed version of the macro is defined as:-
 .Me "$emf-scheme"
 .CS
-0 define-macro mymacro ...
+0 define-macro mymacro ... !emacro
 .CE 0
 .Me "$ehf-scheme"
 .SS nroff
@@ -186,7 +212,7 @@ proc tixControl:InitWidgetRec {w} {
 .CE
 The collapsed version of the same section appears as:-
 .CS
-proc tixControl:InitWidgetRec {w} { ...
+proc tixControl:InitWidgetRec {w} { ... }
 .CE 0
 .SH NOTES
 .B collapse-current
@@ -209,6 +235,7 @@ been replaced by \fBcollapse-current\fR and \fBcollapse-all\fR respectively.
 .na
 .Hl "File Hooks" fileHooks 2 ,
 .Ht buffer-init 3 ,
+.Ht indent 2 ,
 .Ht user-setup 3 ,
 .Ht narrow-buffer 2 .
 .ad

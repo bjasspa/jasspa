@@ -1,0 +1,35 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m3mac068.3,v 2.1 2004-01-17 22:27:28 jon Exp $
+.Im MicroEmacs command|c
+.so me.tni
+.TH c-to-cpp-convert 3
+.XI c-to-cpp-convert - "Convert a C file to C++"
+.SH NAME
+c-to-cpp-convert \- Convert a C file to C++
+.SH SYNOPSIS
+.na
+.B c-to-cpp-convert
+.ad
+.SH DESCRIPTION
+.B c-to-cpp-convert
+changes the buffer type from C to C++ and loads the C++ language template
+.Ht cpp 9 .
+The  command  is only  available  once a 'C' file is loaded as the  command is
+defined within the C language template file \fChkc.emf\fR.
+.PP
+The  command is  normally  used when a new C++ file is being  created,  if the
+default  file type is C rather than C++ then the new file is  converted to C++
+by changing the magic string from
+.C "-*-\ c\ -*-"
+to \fC-*-\ c++\ -*-\fR, whenever the file is subsequently  loaded then it will
+be presented in the correct mode.
+.SH "SEE ALSO"
+.na
+.Ht c 9 ,
+.Ht cpp 9 .
+.ad
+.FH

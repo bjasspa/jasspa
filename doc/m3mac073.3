@@ -1,0 +1,162 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m3mac073.3,v 2.1 2004-01-17 22:27:28 jon Exp $
+.Im MicroEmacs command|hide
+.ds C0 "(\fB\*c\*(f2\fR)\ \&
+.ds C1 "(\fB\*c\*(f2\fR)\ \&
+.ds C2 "(\fB\*(f3\fR)\ \&
+.ds C3 "(\fB\*e\*(f3\fR)\ \&
+.ds C4 "(\fB\*e\*c\*(f3\fR)\ \&
+.ds C5 "(\fB\*(cX\*ck\fR)\ \&
+.ds C6 "(\fB\*(f2\fR)\ \&
+.ds C7 "(\fB\*e\*c\*(f3\fR)\ \&
+.so me.tni
+.TH fold-create 3
+.XI fold-create - "\*(C1Create a new fold"
+.XI fold-close - "\*(C0Close an open fold (in-line)"
+.XI fold-enter - "\*(C2Enter fold"
+.XI fold-exit - "\*(C3Exit a fold"
+.XI fold-exit-all - "\*(C4Exit all folds"
+.XI fold-kill - "\*(C5Delete the fold and all its contents" command|fold|delete
+.XI fold-open - "\*(C6Open fold (in-line)"
+.XI fold-remove - "\*(C7Remove the fold, maintaining content"
+.SH NAME
+.Me "|fold-create"
+fold-create \- Create a new fold \*(C1
+.br
+.Me "|fold-close"
+fold-close \- Close an open fold (in-line) \*(C0
+.br
+.Me "|fold-enter"
+fold-enter \- Enter fold \*(C2
+.br
+.Me "|fold-exit"
+fold-exit \- Exit a fold \*(C3
+.br
+.Me "|fold-exit-all"
+fold-exit-all \- Exit all folds \*(C4
+.br
+.Me "|fold-kill"
+fold-kill \- Delete the fold and all its contents \*(C5
+.br
+.Me "|fold-open"
+fold-open \- Open fold (in-line) \*(C6
+.br
+.Me "|fold-remove"
+fold-remove \- Remove the fold, maintaining content \*(C7
+.Me $a
+.SH SYNOPSIS
+.na
+\fBfold-create\fR \*(C1
+.br
+\fBfold-close\fR \*(C0
+.br
+\fBfold-enter\fR \*(C2
+.br
+\fBfold-exit\fR \*(C3
+.br
+\fBfold-exit-all\fR \*(C4
+.br
+\fBfold-kill\fR \*(C5
+.br
+\fBfold-open\fR \*(C6
+.br
+\fBfold-remove\fR \*(C7
+.ad
+.SH INTRODUCTION
+\*(mS  supports  folding  editor type features that allow folds to be created,
+deleted  and  traversed.  Folded regions of the file may be entered and edited
+whilst  hiding  information  in other folds. Folds may also be opened  in-line
+such that more than one fold is visible at any time.
+.PP
+The \fBfold\fR operation has different semantics than
+.Hl collapse collapse-current 3
+which  simply  hides  information  with a single  narrow and does not  provide
+features such as entering the fold.
+.SH DESCRIPTION
+.B fold-create
+creates a new fold from the text defined between the cursor and the
+.Hl set-mark set-mark 2
+position.  The text  between the mark line and the cursor line  inclusive  are
+then folded and fold markers are inserted into the buffer. The folded line may
+be commented with a fold comment. The fold may be subsequently removed with
+.B fold-remove
+which removes the fold under the cursor, deleting any fold annotations.
+.PP
+.B fold-open
+opens the fold under the  cursor, the fold is  expanded  in line such that the
+contents of the fold are visible. The fold may be subsequently closed using
+.B fold-close
+when the body of the text is hidden underneath a fold marker.
+.PP
+.B fold-enter
+enters a fold under the cursor and the  contents  of the fold are  reveled the
+rest of the buffer is narrowed  out. The  previous  fold level may be restored
+with
+.BR fold-exit .
+Where the fold nesting is deep then
+.B fold-exit-all
+may be used to return to the top level.
+.PP
+.B fold-kill
+deletes the fold under the cursor and all of the information  contained within
+the fold.
+.Ht undo 2
+will restore the fold if this was not the required action.
+.SH DEFINITION
+Any file may be folded  provided that the opening and closing fold strings are
+defined. Folding may be defined and initialized for a file type using
+.Ht buffer-init 3
+by defining the
+\fBfhopok-XXX.fold\fR variable to define the opening and closing fold markers.
+i.e.
+.Me $emf-scheme
+.CS
+set-variable .fhook-XXX.fold "<open> <close>"
+.CE
+.Me $ehf-scheme
+Where \fI<open>\fR and \fI<close>\fR are the opening and closing fold strings.
+.PP
+Folding may also be introduced on a file basis by defining the sold markers
+in the magic string by  assignment of the open and close fold strings  through
+the  variables   \fBfold-open:\fR  and   \fBfold-close:\fR.   The  macro  file
+\fCfold.emf\fR does this to fold a \*(mS macro file as follows:-
+.Me $emf-scheme
+.CS
+; -!- emf: fold-open: ";OPEN" ; fold-close: ";CLOSE" ; -!-
+
+;OPEN fold-idle
+0 define-macro fold-idle
+    !if &lfind "|yank|reyank|" @cl
+        fold-region
+        2 screen-update
+    !endif
+    !if &exi :fold-idle
+        execute-line :fold-idle
+    !endif
+!emacro
+;CLOSE
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Ht $line-flags 5 ,
+.Ht buffer-init 3 ,
+.Ht collapse-all 3 ,
+.Ht collapse-current 3 ,
+.Ht narrow 2m ,
+.Ht narrow-buffer 2 ,
+.Ht set-mark 2 .
+.ad
+.rm C0
+.rm C1
+.rm C2
+.rm C3
+.rm C4
+.rm C5
+.rm C6
+.rm C7
+.FH

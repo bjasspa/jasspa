@@ -1,16 +1,17 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var048.5,v 2.6 2002-10-16 22:28:04 jon Exp $
+.Id $Id: m5var048.5,v 2.7 2004-01-17 22:27:29 jon Exp $
 .Im MicroEmacs variable|window
 .so me.tni
 .TH $window-col 5
 .XI $window-col - "Window cursor column (no expansion)"
-.XI $window-line - "Window cursor line"
 .XI $window-acol - "Window cursor actual column"
+.XI $window-line - "Window cursor line"
 .XI $window-aline - "Window cursor actual line"
+.XI $window-eline - "Window end line"
 .XI $window-wcol - "Window cursor column (historic)"
 .XI $window-wline - "Window cursor line (historic)"
 .SH NAME
@@ -25,22 +26,29 @@ $window-acol \- Window cursor actual column (expansion)
 .br
 .Me "|$window-aline"
 $window-aline \- Window cursor actual line (ignore narrows)
+.br
+.Me "|$window-aline"
+$window-eline \- Window end line
 .Me $a
 .SH SYNOPSIS
 \fB$window-col\fR \fIinteger\fR
-.sp
+.br
 0 <= \fIinteger\fR <= 65535
-.sp 2
+.sp 
 \fB$window-line\fR \fIinteger\fR
-.sp
+.br
 1 <= \fIinteger\fR <= n
-.sp 2
+.sp 
 \fB$window-acol\fR \fIinteger\fR
-.sp
+.br
 0 <= \fIinteger\fR <= n
-.sp 2
+.sp 
 \fB$window-aline\fR \fIinteger\fR
+.br
+1 <= \fIinteger\fR <= n
 .sp
+\fB$window-eline\fR \fIinteger\fR
+.br
 1 <= \fIinteger\fR <= n
 .SH DESCRIPTION
 .B $window-col
@@ -48,6 +56,11 @@ is defined as the  current  position of the cursor in the current  line in the
 current  window.  Column  zero  is the  left  hand  edge.  This  differs  from
 \fB$window-acol\fR  in that \s-1tab\s0 and special characters only count for 1
 character. \fB$window-col\fR is valid in the range 0 - \fIn\fR.
+.PP
+.B  $window-acol
+is defined as the current  column of the cursor in the current  window. Column
+zero is the left  hand  edge.  This  differs  from  \fB$window-col\fR  in that
+\s-1tab\s0 and special characters may not count for 1 character.
 .PP
 .B $window-line
 is defined as the  current  buffer line number the cursor is on in the current
@@ -64,10 +77,10 @@ case the narrow is automatically removed. See
 .Ht narrow-buffer 2
 for more information on narrowing.
 .PP
-.B  $window-acol
-is defined as the current  column of the cursor in the current  window. Column
-zero is the left  hand  edge.  This  differs  from  \fB$window-col\fR  in that
-\s-1tab\s0 and special characters may not count for 1 character.
+\fB$window-eline\fR  is the end line of the window, that is the line number of
+the last line of the buffer  showing in the window. This is a useful value for
+mouse  operations  when the position of the mouse may be tested to ensure that
+the mouse position is within the valid text region of the buffer.
 .SH NOTES
 Variable  \fB$window-wcol\fR  was renamed to  \fB$window-acol\fR in June 2000.
 Variable   \fB$window-wline\fR   was   also   removed   and  a  new   variable

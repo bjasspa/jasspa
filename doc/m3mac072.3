@@ -1,0 +1,68 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m3mac072.3,v 2.1 2004-01-17 22:27:28 jon Exp $
+.Im MicroEmacs command|delete|region|insert
+.so me.tni
+.TH copy-rectangle 3
+.XI copy-rectangle - "Copy a rectangular region of text"
+.XI yank-rectangle-overwrite - "Insert a column of text with overwrite"
+.SH NAME
+.Me "|copy-rectangle"
+copy-rectangle \- Copy a rectangular region of text
+.br
+.Me "|yank-rectangle-overwrite"
+yank-rectangle-overwrite \- Insert a column of text with overwrite
+.Me $a
+.SH SYNOPSIS
+.na
+.B copy-rectangle
+.br
+.B yank-rectangle-overwrite
+.ad
+.SH DESCRIPTION
+.B copy-rectangle
+copies a rectangle (or column) of text defined between the cursor and the
+.Hl set-mark set-mark 2
+position.  The text  between the mark column and the cursor  column is copied
+from every line between the mark line and the cursor line inclusive and copied
+to the kill buffer. The copied text may then be extracted from the kill buffer
+using
+.Ht yank 2 ,
+.Ht yank-rectangle 2 
+or 
+.BR yank-rectangle-overwrite .
+.PP
+The mark position may be ahead or behind the current  cursor  position. If the
+rectangle column boundary divides a tab character which spans multiple columns,
+the tab character is replaced with the equivalent  number of spaces. Similarly
+if the boundary  divides an  unprintable  character  which is displayed  using
+multiple  characters  (e.g.  '\fC^A\fR'  for  character  0x01) then spaces are
+inserted before the character to move it to the right of the boundary.
+.PP
+.B yank-rectangle-overwrite
+replaces a column of text with the current kill buffer,  overwriting  existing
+text  with the  contents  of the kill  buffer. The kill buffer should  contain
+a rectangle region acquired with \fBcopy-rectangle\fR or 
+.Ht kill-rectangle 2 .
+The  current  cursor  position  identifies  the top left of the  column  to be
+written, the width of the column to be replaced is  determined by the width of
+the kill buffer text being inserted.
+.PP
+Where an overwrite is not required then use
+.Ht yank-rectangle 2 .
+.SH "SEE ALSO"
+.na
+.Ht copy-region 2 ,
+.Ht kill-rectangle 2 ,
+.Ht kill-region 2 ,
+.Ht reyank 2 ,
+.Ht set-mark 2 ,
+.Ht string-rectangle 3 , 
+.Ht undo 2 ,
+.Ht yank 2 ,
+.Ht yank-rectangle 2 .
+.ad
+.FH

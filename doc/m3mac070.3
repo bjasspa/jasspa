@@ -1,0 +1,40 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m3mac070.3,v 2.1 2004-01-17 22:27:28 jon Exp $
+.Im MicroEmacs command|hilight
+.so me.tni
+.TH delete-hilight-lines 3
+.XI delete-hilight-lines - "Delete hilight lines"
+.SH NAME
+delete-hilight-lines \- Delete hilight lines
+.SH SYNOPSIS
+.na
+.B delete-hilight-lines
+.ad
+.SH DESCRIPTION
+.B delete-hilight-lines
+deletes all lines in the buffer that are hilighted with a line color scheme 
+applied by 
+.Ht line-scheme-search 3 
+or 
+.Ht line-scheme 3 .
+Deletion is only performed on the user hilight lines, 
+.Ht collapse-current 3 
+annotation lines that use a line based hilight scheme are not removed.
+.PP
+The  line  hilighting  may be used to mark up  lines  that  are not  required,
+typically in debugging logs, and then delete those lines using 
+.BR delete-hilight-lines .
+.SH "SEE ALSO"
+.na
+.Ht collapse-all 3 ,
+.Ht collapse-current 3 ,
+.Ht hilight 2 ,
+.Ht line-scheme-search 3 ,
+.Ht line-scheme 3 ,
+.Ht $line-scheme 5 .
+.ad
+.FH

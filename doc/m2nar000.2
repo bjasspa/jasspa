@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Jul 11 13:30:15 1998
 .\"
-.Id $Id: m2nar000.2,v 2.8 2004-01-06 00:50:52 jon Exp $
+.Id $Id: m2nar000.2,v 2.9 2004-01-17 22:27:28 jon Exp $
 .Im MicroEmacs macrodevelop
 .so me.tni
 .TH languageTemplates 2
@@ -121,6 +121,10 @@ The file hook may be tested by exiting and  re-loading  \*(mE, or simply
 by executing the file containing the \fCadd-file-hook\fR  function. Once the
 file  bindings are  installed a \fIfoo\fR  file may be loaded and the
 hook message should be displayed.
+.PP
+The best way to create a new file hook is to find an  existing  file type with
+similar  support  to the new file hook you wish to create  and re-use the hook
+code to create the new one.
 .SS "Modifying an Existing file hook"
 The standard file hooks supplied with \*(mE should not be modified,  typically
 a user will want to extend the  repertoire of hi-lighting  tokens to encompass
@@ -140,6 +144,11 @@ the hook, such as a different setting of
 .Ht tab 2m
 mode, the hook function  should be copied to  \fBmy\fR\fIXXX\fR\fB.emf\fR  and
 altered appropriately.
+.PP
+Most  extensions and changes to the buffer  environment may be performed using
+\fBmy\fR\fIXXX\fR\fB.emf\fR.  If the  extension  macro  file  includes a macro
+definition   \fBmy-fhook-\fR\|\fIXXX\fR,   then  \fBmy-fhook\fR\|\fIXXX\fR  is
+automatically executed after \fBfhook\fR\|\fIXXX\fR has been run.
 .SS "Adding Hilighting definitions"
 File specific  hilighting is used to pick out key words and tokens used within
 the file type, it greatly improves  readability; the hilighting is also used
