@@ -6,7 +6,7 @@
 #  Description	 : Make file for Cygnus Cygwin v20.1
 #  Created       : Sat Jan 24 00:01:40 1998
 #
-#  Last Modified : <000309.2227>
+#  Last Modified : <011215.1339>
 #
 #  Notes
 #       The executable produced does not currently work, for some reason ME
@@ -37,15 +37,22 @@ CDEFS         = -D_CYGWIN -I.
 LIBS          = -ltermcap
 LDFLAGS       = 
 INSTALL       =	install
+XLIBS         = -L/usr/X11R6/lib -lX11
+XINCLUDE      = -I/usr/X11R6/include
+# definition for the console only build
+CCONSOLE      = -D_NO_XTERM
 #
 # Rules
 .SUFFIXES: .c .o .od
 
 .c.o:	
-	$(CC) $(COPTIMISE) $(CDEFS) $(MAKECDEFS) -c $<
+	$(CC) $(COPTIMISE) $(CDEFS) $(XINCLUDE) $(MAKECDEFS) -c $<
+
+.c.on:
+	$(CC) $(COPTIMISE) $(CDEFS) $(CCONSOLE) $(MAKECDEFS) -o $@ -c $<
 
 .c.od:	
-	$(CC) $(CDEBUG) $(CDEFS) $(MAKECDEFS) -o $@ -c $<
+	$(CC) $(CDEBUG) $(CDEFS) $(XINCLUDE) $(MAKECDEFS) -o $@ -c $<
 #
 # Source files
 STDHDR	= ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h \
@@ -65,6 +72,10 @@ STDOBJ	= $(STDSRC:.c=.o)
 PLTOBJ  = $(PLTSRC:.c=.o)
 OBJ	= $(STDOBJ) $(PLTOBJ)
 
+NSTDOBJ	= $(STDSRC:.c=.on)
+NPLTOBJ = $(PLTSRC:.c=.on)
+NOBJ	= $(NSTDOBJ) $(NPLTOBJ)
+
 DSTDOBJ	= $(STDSRC:.c=.od)	
 DPLTOBJ = $(PLTSRC:.c=.od)
 DOBJ	= $(DSTDOBJ) $(DPLTOBJ)
@@ -77,24 +88,30 @@ install: me
 	@echo "install done"
 
 clean:
-	$(RM) me med *.o *.od core
+	$(RM) me med men *.o *.od *.on core
 
 spotless: clean
 	$(RM) tags *~
 
 me:	$(OBJ)
 	$(RM) $@
-	$(LD) $(LDFLAGS) -o $@ $(OBJ) $(LIBS)
-	$(STRIP) $@
+	$(LD) $(LDFLAGS) -o $@ $(OBJ) $(XLIBS) $(LIBS)
+	$(STRIP) $@.exe
 
+men:	$(NOBJ)
+	$(RM) $@.exe
+	$(LD) $(LDFLAGS) -o $@ $(NOBJ) $(LIBS)
 
 med:	$(DOBJ)
 	$(RM) $@
-	$(LD) $(LDFLAGS) -o $@ $(DOBJ) $(LIBS)
+	$(LD) $(LDFLAGS) -o $@ $(DOBJ) $(XLIBS) $(LIBS)
 #
 # Dependancies
 $(STDOBJ): $(STDHDR)
 $(PLTOBJ): $(STDHDR) $(PLTHDR)
+
+$(NSTDOBJ): $(STDHDR)
+$(NPLTOBJ): $(STDHDR) $(PLTHDR)
 
 $(DSTDOBJ): $(STDHDR)
 $(DPLTOBJ): $(STDHDR) $(PLTHDR)

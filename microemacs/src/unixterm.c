@@ -5,7 +5,7 @@
  *  Synopsis      : Unix X-Term and Termcap support routines
  *  Created By    : Steven Phillips
  *  Created       : 1993
- *  Last Modified : <011114.2210>
+ *  Last Modified : <011215.1331>
  *
  *  Description
  *    This implementation of unix support currently only supports Unix v5 (_USG),
@@ -16,7 +16,7 @@
  *
  ****************************************************************************
  *
- * Copyright (c) 1993-2000 Steven Phillips
+ * Copyright (c) 1993-2001 Steven Phillips
  *
  * This software is provided 'as-is', without any express or implied warranty.
  * In no event will the  authors be held liable for any damages  arising  from
@@ -55,6 +55,7 @@
 #include <sys/ioctl.h>
 #ifdef _CYGWIN
 #include <sys/socket.h>
+#include <termcap.h>
 #endif
 
 #ifdef _USG                     /* System V */
@@ -85,6 +86,12 @@ int    nlwmode;                         /* New local word mode */
 static char termOutBuf [TERMOUT_BUFSIZ];
 #endif /* _BSD */
 
+#ifdef _USEPOLL
+/* stdin character polling performed with poll() */
+#include <poll.h>
+#endif
+
+#ifndef _CYGWIN
 /**************************************************************************
 * TERMCAP Definitions                                                     *
 **************************************************************************/
@@ -97,6 +104,7 @@ extern int      tgetflag(char *);
 #ifdef _USETPARM
 extern char *   tparm(char *, int p1);
 #endif
+#endif /* _CYGWIN */
 
 #define putpad(s)  tputs(s, 1, putchar)
 #define TCAPSLEN 512
@@ -2116,6 +2124,7 @@ waitForEvent(void)
         pfd++ ;
         if(select(pfd,&select_set,NULL,NULL,NULL) >= 0)
         {
+            int ii;
 #ifdef _IPIPES
             ipipe = ipipes ;
             while(ipipe != NULL)
@@ -2138,31 +2147,47 @@ waitForEvent(void)
                  * This is common when the X-window is destroyed using
                  * the window manager.
                  */
+#ifdef _USEPOLL
+                struct pollfd pfds [1];
+                
+                /* Set up the poll structure */
+                pfds[0].fd = meStdin;
+                pfds[0].events = POLLIN;
+                
+                /* As there is only one event we can rely on the return status
+                 * to tell us what has happened. */
+                ii = poll (pfds, 1, 0);
+                if ((ii < 0) ||
+                    ((ii == 1) && (pfds[0].revents & (POLLERR|POLLHUP|POLLNVAL))))
+                    ii = 0;             /* Failed */
+                else 
+                    ii = 1;             /* OK */
+#else
 #ifdef FIONREAD
                 int x;      /* holds # of pending chars */
-#endif
-                if(!
-#ifdef FIONREAD
-                   /* if ioctl fails don't die! */
-                   ((ioctl(meStdin,FIONREAD,&x) < 0) ? 1 : x)
+                ii = ioctl(meStdin,FIONREAD,&x);
+                
+                /* if ioctl fails don't die! */
+                ii = ((ii < 0) ? 1 : x);
 #else
-                   ioctl(meStdin, FIORDCHK,0)
-#endif
-                   )
+                ii = ioctl(meStdin, FIORDCHK,0);
+#endif /* FIONREAD */
+#endif /* _USEPOLL */
+                if(!ii)
                 {
-                    /* Found this test can go wrong in some strange case, which
-                     * is a real bummer as me now dies! as a fix, and I know its
-                     * a bit of a bodge, only die is this happens 3 times on the
-                     * trot
-                     */
+                    /* Found this test can go wrong in some strange case,
+                     * which is a real bummer as me now dies! as a fix, and I
+                     * know its a bit of a bodge, only die is this happens 3
+                     * times on the trot */
                     if(lost++ == 2)
-                        /* If there's nothing to read, yet select flags meStdin as
-                         * triggered then we've lost the input - Die...
-                         * Unfortunately we must be very careful on what we do, we
-                         * cannot write out to the x-window cause its gone, but
-                         * meDie takes care of this
-                         */
+                    {
+                        /* If there's nothing to read, yet select flags
+                         * meStdin as triggered then we've lost the input -
+                         * Die... Unfortunately we must be very careful on
+                         * what we do, we cannot write out to the x-window
+                         * cause its gone, but meDie takes care of this. */
                         meDie() ;
+                    }
                 }
                 else
                     lost = 0 ;
@@ -2203,7 +2228,7 @@ TTwaitForChar(void)
         doIdlePickEvent() ;
     for(;;)
     {
-#if (defined _XTERM) && (defined _LINUX)
+#if ((defined _XTERM) && ((defined _LINUX) || (defined _CYGWIN)))
         if(!(meSystemCfg & meSYSTEM_CONSOLE))
         {
             /* Make a call to XSync(). This ensures that the X-Server has
@@ -2553,23 +2578,41 @@ TTahead(void)
     else
 #endif /* _XTERM */
     {
-        uint8 cc ;
-#ifdef FIONREAD
-        int x;      /* holds # of pending chars */
-#endif /* FIONREAD */
-        /* Pasting in termcap results in lots of keys all at once
-         * rather than lose them, keep them there until there enough
-         * room in the input key buffer to store them
-         */
-        while((TTnoKeys != KEYBUFSIZ) &&
-#ifdef FIONREAD
-              ((ioctl(meStdin,FIONREAD,&x) < 0) ? 0 : x)
+#ifdef _USEPOLL
+        struct pollfd pfds [1];
+        
+        /* Set up the poll structure */
+        pfds[0].fd = meStdin;
+        pfds[0].events = POLLIN;
+#endif
+        /* Pasting in termcap results in lots of keys all at once rather than
+         * lose them, keep them there until there enough room in the input key
+         * buffer to store them. */
+        while(TTnoKeys != KEYBUFSIZ)
+        {
+            uint8 cc ;
+            int status;                 /* Status of the input check */
+            
+#ifdef _USEPOLL
+            status = poll (pfds, 1, 0);
+            if ((status != 1) || ((pfds[0].revents & (POLLIN|POLLPRI)) == 0))
+                break;                  /* No data pending */
 #else
-              (ioctl(meStdin, FIORDCHK,0))
+#ifdef FIONREAD
+            if (ioctl(meStdin,FIONREAD,&status) < 0)
+                break;                  /* ioctl failed */
+            if (status <= 0)
+                break;                  /* No data pending */
+#else
+            if (ioctl(meStdin, FIORDCHK,0) <= 0)
+                break;                  /* No data pending */
 #endif /* FIONREAD */
-              )
+#endif /* _USEPOLL */
+            /* There is some data present. Read it */
             if(read(meStdin,&cc,1) > 0)
                 addKeyToBuffer(cc) ;
+        }
+        
         if(alarmState & meALARM_WINSIZE)
         {
             changeScreenWidth(TRUE,TTnewWid); /* Change width */
