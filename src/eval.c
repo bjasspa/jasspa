@@ -1464,7 +1464,7 @@ getval(meUByte *tkn)   /* find the value of a token */
         }
         else if(tkn[1] == 'h')
         {
-            meUByte *ss, buff[meTOKENBUF_SIZE_MAX] ;
+            meUByte buff[meBUF_SIZE_MAX], *ss ;
             int ht, hn ;
             
             /* get the history type */
@@ -1474,10 +1474,9 @@ getval(meUByte *tkn)   /* find the value of a token */
                 ht = 0 ;
             
             /* Get and evaluate the next argument - this is the history number */
-            execstr = token(execstr, buff) ;
-            if((ss = getval(buff)) == abortm)
+            if(meGetString((meUByte *) "@h",0,0,buff,meBUF_SIZE_MAX) <= 0)
                 return abortm ;
-            hn = meAtoi(ss) ;
+            hn = meAtoi(buff) ;
             
             if((ss = strHist[(ht*meHISTORY_SIZE)+hn]) == NULL)
                 ss = emptym ;
@@ -1576,8 +1575,8 @@ getval(meUByte *tkn)   /* find the value of a token */
                  */
                 static meUByte **strList=NULL ;
                 static int strListSize=0 ;
-                meUByte cc, *ss, buff[meTOKENBUF_SIZE_MAX] ;
-                meUByte divChr ;
+                meUByte cc, *ss, buff[meBUF_SIZE_MAX] ;
+                meUByte comp[meBUF_SIZE_MAX], *tt, divChr ;
                 meUByte prompt[meBUF_SIZE_MAX] ;
                 int option=0 ;
                 int ret, flag, defH ;
@@ -1626,19 +1625,15 @@ getval(meUByte *tkn)   /* find the value of a token */
                     cc = 0 ;
                 
                 /* Get and evaluate the next argument - this is the prompt */
-                execstr = token(execstr, buff) ;
-                if((ss = getval(buff)) == abortm)
+                if(meGetString((meUByte *) "@ml",0,0,prompt,meBUF_SIZE_MAX) <= 0)
                     return abortm ;
-                meStrcpy(prompt,ss) ;
                 if(flag & 0x01)
                 {
                     /* Get and evaluate the next argument - this is the default
-                     * value
-                     */
-                    execstr = token(execstr, buff) ;
-                    if((ss = getval(buff)) == abortm)
+                     * value */
+                    if(meGetString((meUByte *) "@ml",0,0,buff,meBUF_SIZE_MAX) <= 0)
                         return abortm ;
-                    addHistory(option,ss) ;
+                    addHistory(option,buff) ;
                     defH = 1 ;
                 }
                 else
@@ -1646,13 +1641,9 @@ getval(meUByte *tkn)   /* find the value of a token */
                 if(flag & 0x02)
                 {
                     /* Get and evaluate the next argument - this is the ml
-                     * line init value
-                     */
-                    execstr = token(execstr, buff) ;
-                    if((ss = getval(buff)) == abortm)
+                     * line init value */
+                    if(meGetString((meUByte *) "@ml",0,0,buff,meBUF_SIZE_MAX) <= 0)
                         return abortm ;
-                    if(ss != buff)
-                        meStrcpy(buff,ss) ;
                     option |= MLNORESET ;
                 }
                 if(flag & 0x04)
@@ -1665,18 +1656,15 @@ getval(meUByte *tkn)   /* find the value of a token */
                 if(flag & 0x100)
                 {
                     /* Get and evaluate the next argument - this is the
-                     * completion list
-                     */
-                    meUByte comp[meTOKENBUF_SIZE_MAX], *tt ;
-                    execstr = token(execstr,comp) ;
-                    if((ss = getval(comp)) == abortm)
+                     * completion list */
+                    if(meGetString((meUByte *) "@ml",0,0,comp,meBUF_SIZE_MAX) <= 0)
                         return abortm ;
                     if(flag & 0x200)
                     {
                         meBuffer *bp ;
                         meLine *lp ;
                         flag &= ~0x100 ;
-                        if((bp = bfind(ss,0)) == NULL)
+                        if((bp = bfind(comp,0)) == NULL)
                             return abortm ;
                         if(bp->lineCount > strListSize)
                         {
@@ -1694,13 +1682,7 @@ getval(meUByte *tkn)   /* find the value of a token */
                     }
                     else
                     {
-                        /* if the resultant string is going to the same
-                         * location as we are getting the competion list
-                         * then we MUST not restore the list after, so remove
-                         * the flag
-                         */
-                        if((ss >= evalResult) && (ss < evalResult+meBUF_SIZE_MAX))
-                            flag &= ~0x100 ;
+                        ss = comp ;
                         divChr = *ss++ ;
                         mlgsStrListSize = 0 ;
                         while((tt = meStrchr(ss,divChr)) != NULL)
@@ -1744,21 +1726,12 @@ getval(meUByte *tkn)   /* find the value of a token */
                     meStrncpy(evalResult,buff,meBUF_SIZE_MAX) ;
                     evalResult[meBUF_SIZE_MAX-1] = '\0' ;
                 }
-                if(flag & 0x100)
-                {
-                    /* glue the completion string back together */
-                    while(--mlgsStrListSize >= 0)
-                    {
-                        meUByte *s1 = mlgsStrList[mlgsStrListSize] ;
-                        s1[meStrlen(s1)] = divChr ;
-                    }
-                }
                 if(ret < 0)
                     return abortm ;
             }
             else if(tkn[2] == 'c')
             {
-                meUByte *ss, buff[meTOKENBUF_SIZE_MAX] ;
+                meUByte *ss, buff[meBUF_SIZE_MAX] ;
                 meUByte prompt[meBUF_SIZE_MAX] ;
                 int ret ;
                 
@@ -1766,23 +1739,15 @@ getval(meUByte *tkn)   /* find the value of a token */
                     ret -= '0' ;
                 
                 /* Get and evaluate the next argument - this is the prompt */
-                execstr = token(execstr,buff) ;
-                if((ss = getval(buff)) == abortm)
+                if(meGetString((meUByte *) "@mc",0,0,prompt,meBUF_SIZE_MAX) <= 0)
                     return abortm ;
-                meStrcpy(prompt,ss) ;
                 if(ret & 0x01)
                 {
                     /* Get and evaluate the next argument - this is valid
-                     * values list
-                     */
-                    execstr = token(execstr, buff) ;
-                    if((ss = getval(buff)) == abortm)
+                     * values list */
+                    if(meGetString((meUByte *) "@mc",0,0,buff,meBUF_SIZE_MAX) <= 0)
                         return abortm ;
-                    if((ss != buff) || (ss != buff+1))
-                    {
-                        meStrcpy(buff,ss) ;
-                        ss = buff ;
-                    }
+                    ss = buff ;
                 }
                 else
                     ss = NULL ;
@@ -1810,22 +1775,17 @@ getval(meUByte *tkn)   /* find the value of a token */
         else if((tkn[1] == 'f') && (tkn[2] == 's'))
         {
             /* frame store @fs <row> <col> */
-            meUByte *ss, buff[meTOKENBUF_SIZE_MAX] ;
+            meUByte buff[meBUF_SIZE_MAX] ;
             int row, col ;
             
             /* Get and evaluate the arguments */
-            execstr = token(execstr,buff) ;
-            if((ss = getval(buff)) == abortm)
-                return abortm ;
-            row = meAtoi(ss) ;
-            execstr = token(execstr,buff) ;
-            if((ss = getval(buff)) == abortm)
-                return abortm ;
-            col = meAtoi(ss) ;
-            /* Off the screen ?? */
-            if((row < 0) || (row > frameCur->depth) ||
-               (col < 0) || (col >= frameCur->width))
+            if((meGetString((meUByte *) "@fs",0,0,buff,meBUF_SIZE_MAX) <= 0) ||
+               ((row = meAtoi(buff)) < 0) || (row > frameCur->depth) ||
+               (meGetString((meUByte *) "@fs",0,0,buff,meBUF_SIZE_MAX) <= 0) ||
+               ((col = meAtoi(buff)) < 0) || (col >= frameCur->width))
                 evalResult[0] = 0 ;
+            else if(tkn[3] == 's')
+                return meItoa((frameCur->store[row].scheme[col] & meSCHEME_STYLE)/meSCHEME_STYLES) ;
             else
             {
                 evalResult[0] = frameCur->store[row].text[col] ;
