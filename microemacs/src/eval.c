@@ -683,10 +683,12 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             break;
 #endif
         case EVTABSIZE:
-            tabsize = (meUShort) meAtoi(vvalue);
+            if((tabsize = (meUShort) meAtoi(vvalue)) <= 0)
+                tabsize = 1 ;
             break;
         case EVTABWIDTH:
-            tabwidth = (meUShort) meAtoi(vvalue);
+            if((tabwidth = (meUShort) meAtoi(vvalue)) <= 0)
+                tabwidth = 1 ;
             frameAddModeToWindows(WFRESIZE) ;
             break;
         case EVSRCHPATH:
