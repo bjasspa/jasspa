@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd134.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd134.2,v 2.6 2004-11-26 23:47:21 bill Exp $
 .Im MicroEmacs command|bind
 .so me.tni
 .TH set-char-mask 2
@@ -58,9 +58,9 @@ or
 Any character not in this set is printed in a similar fashion to \fBd\fR.
 .IP "\fBM\fR"
 Character  font Map.  Internally  \*(mS  uses  \*(sF to  configure  alphabetic
-classes  and the  spell-checker,  however  the system font being by the native
-platform may not be the same, for example a small 'e' acute is character  0xe9
-in  \*(aF  but   character   0x82  in   Windows   OEM  fonts.  To  change  the
+classes  and the  spell-checker,  however  the  system  font being used by the
+native  platform  may not be the  same,  for  example  a small  'e'  acute  is
+character 0xe9 in \*(aF but character 0x82 in Windows OEM fonts. To change the
 characteristics  of the 'e' acute  character  (such as making it an alphabetic
 character), the \*(aF character  should always be used, but a correct  mapping
 of \*(aF to the display font (such as Windows OEM) must also be supplied.
@@ -134,6 +134,22 @@ Many different file types operate better with a different word character set,
 e.g. it is preferable to include the '\fC_\fR' character when editing C files.
 See variable
 .Ht $buffer-mask 5 .
+.IP "\fBk\fR"
+Keyboard  character  map. This  flag is used to  configure  a  mapping  from a
+foreign non-latin keyboard (such as Russian) to Latin characters,  setting the
+mapping correctly can greatly improve usability in \*(mS as changing keyboards
+is required less  frequently. The mapping is used by character  input routines
+which first check the main key typed (e.g. the Cyrillic  character) and if not
+bound or invalid \*(mS uses this  keyboard  mapping to translate the character
+into a Latin  character.  This  allows  the user to  execute  binding  such as
+"\fCC-x k\fR" or responding to "\fC[y/n]\fR"  prompts without having to change
+keyboards. 
+.IP
+As with flag  \fBM\fR, this cannot be  incrementally  altered, any call to set
+this mapping  first resets the mapping  table so the mapping must be performed
+in a single call. No other set may be altered in the same call. When  setting,
+the  "\fIvalue\fR"  must  supply  pairs of  characters,  the  \*(iF  non-latin
+character followed by its latin character mapping.
 .PP
 Unless  stated  otherwise,  multiple  flags may be  specified at the same time
 returning a combined  character  set or setting  multiple  properties  for the
