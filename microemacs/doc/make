@@ -7,7 +7,7 @@
 #
 # Author      : Jon Green
 # Created     : 22nd February 1997
-# Last Edited : <011213.1850>
+# Last Edited : <011213.1907>
 #
 # History     : JG  220297 Original  Constructed from emacssrc
 #
@@ -25,6 +25,7 @@
 MEVER=		01
 
 RM	=	- erase
+RD	=	- rmdir /S /Q
 INSTALL	=	$(RUNBINDIR)\install
 MKDIR	=	mkdir
 COPY	=	copy
@@ -535,12 +536,12 @@ clean::
 spotless:: clean
 	$(RM) *.??~
 	$(RM) tags
-	rd ehf\me
-	rd ehf
-	rd htm\me
-	rd htm
-	rd html\me
-	rd html
+	$(RD) ehf\me
+	$(RD) ehf
+	$(RD) htm\me
+	$(RD) htm
+	$(RD) html\me
+	$(RD) html
 
 me.ehf: meehf.hts
 	- md ehf
