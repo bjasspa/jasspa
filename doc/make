@@ -90,8 +90,9 @@ MANLOG	=	man.log
 READTXT	=	readme.txt
 FAQTXT	=	faq.txt
 BUILDTXT=	build.txt
+PATCHTXT=	patch.txt
 
-TXTS	=	$(READTXT) $(FAQTXT) $(BUILDTXT)
+TXTS	=	$(READTXT) $(FAQTXT) $(BUILDTXT) $(PATCHTXT)
 
 MAN1	=	$(DOCDIR)m1cmd000.1 $(DOCDIR)m1cmd001.1
 
@@ -167,7 +168,8 @@ CMD2_200=	$(DOCDIR)m2cmd200.2 $(DOCDIR)m2cmd201.2 $(DOCDIR)m2cmd202.2\
 
 NAR2_000=	$(DOCDIR)m2nar000.2 $(DOCDIR)m2nar001.2	$(DOCDIR)m2nar002.2 \
 		$(DOCDIR)m2nar003.2 $(DOCDIR)m2nar004.2 $(DOCDIR)m2nar005.2 \
-		$(DOCDIR)m2nar006.2 $(DOCDIR)m2nar007.2 $(DOCDIR)m2nar008.2
+		$(DOCDIR)m2nar006.2 $(DOCDIR)m2nar007.2 $(DOCDIR)m2nar008.2 \
+		$(DOCDIR)m2nar009.2 
 
 MOD2_000=	$(DOCDIR)m2mod000.2 $(DOCDIR)m2mod001.2 $(DOCDIR)m2mod002.2\
 		$(DOCDIR)m2mod003.2 $(DOCDIR)m2mod004.2 $(DOCDIR)m2mod005.2\
@@ -328,7 +330,8 @@ $(BUILDTXT): m2nar007.2
 	    $(DROFF) -l10000 -c JASSPA -p -o $@ m2nar007.2
 $(FAQTXT):  faq.2
 	    $(DROFF) -l10000 -c JASSPA -p -o $@ faq.2
-		
+$(PATCHTXT): m2nar009.2
+	    $(DROFF) -l10000 -c JASSPA -p -o $@ m2nar009.2
 #
 # Build the local index page.
 #

@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.12 2004-01-06 00:49:36 jon Exp $
+.Id $Id: me.nrs,v 2.13 2004-01-09 00:46:53 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -165,6 +165,8 @@ for some information on using the hypertext manual pages.
 .PP
 .RS
 .Hl "Installation Information" Installation 1
+.br
+.Hl "Installation Patching Information" Patching 1
 .br
 .Hl "Setting Up A User Profile" UserProfiles 2
 .br
