@@ -1,7 +1,7 @@
 Title:  Perldoc handling functions
 Ref:    sub18
 Author: Dr. Detlef Groth
-Date:   2001-08-13
+Date:   2001-08-16
 
 In order to  simplify  the use of  perldoc a simple  mode for  handling  it is
 provided  below. The output of  multiple  perldocs is  collected  into a *pod*
@@ -60,18 +60,21 @@ hilight .hilight.pod 1 "^DESCRIPTION"         .scheme.header
 hilight .hilight.pod 1 "^SEE ALSO"            .scheme.header
 hilight .hilight.pod 1 "^BUGS"                .scheme.header
 hilight .hilight.pod 1 "[a-zA-Z]+::[a-zA-Z]+" .scheme.link
-
-; DO NOT NEED
-;
-; Add a new file hook for the *pod* buffer.
-; add-file-hook "*pod*"               fhook-pod
-;
-;define-macro fhook-pod
-;    set-variable $buffer-hilight .hilight.pod
-;    1 buffer-mode "view"
-; !emacro
-;
-; DO NOT NEED
+; next shemes are converted from hkman.emf
+hilight .hilight.pod 64 ".\CH" ""                        $global-scheme
+; normal underline/italic
+hilight .hilight.pod 64 "_\CH\\(.\\)\\}[^\CH]" "\\1"     .scheme.italic
+hilight .hilight.pod 64 "\\(.\\)\CH_\\}[^\CH]" "\\1"     .scheme.italic
+; bold - first is for nroff -man
+hilight .hilight.pod 64 "\\(.\\)\CH\\1\\}[^\CH]" "\\1"   .scheme.bold
+hilight .hilight.pod 64 "_\CH_\CH_\CH_\\}[^\CH]" "_"     .scheme.header
+hilight .hilight.pod 64 "\\(.\\)\CH\\1\CH\\1\CH\\1\\}[^\CH]" "\\1" .scheme.header
+; bold underline
+hilight .hilight.pod 64 "_\CH_\CH_\CH_\CH_\\}[^\CH]" "_" .scheme.italic
+hilight .hilight.pod 64 "_\CH\\(.\\)\CH\\1\CH\\1\CH\\1\\}[^\CH]" "\\1" .scheme.italic
+; Note that we do a .^H._^H_ check first to ensure we do not mix
+; bold and italic.
+hilight .hilight.pod 64 "\\(.\\)\CH\\1_\CH_\\}[^\CH]" "\\1_" .scheme.bold
 
 ;
 ; Perl document Macros

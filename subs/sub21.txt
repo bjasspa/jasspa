@@ -1,0 +1,180 @@
+Title:  mailsearch - Utility to search a sendmail log
+Ref:    sub21
+Author: Jon Green
+Date:   2001-09-13
+
+This  utility  uses  me to  search  a  sendmail  log  for a  'string',
+typically  a  rogue  individual,  and  then  pull  all of the  related
+sendmail  logs that are  connected  with this string out into a single
+log file.
+
+me is run in conjunction with a shell script that launches me. This is
+a Bourne shell script to interface to  MicroEmacs.  it simply kicks off
+the  script  from the  command  line.  The  script is used  from the
+command  line on the mail logs i.e.
+
+     mailsearch rogue mail mail.01 mail.02 mail.03 mail.04
+
+Where mail, mail.0x are the current and achieve mail logs.
+
+I admit  it's all a little  scruffy  and needs to be tidied  up, but I
+needed the information quickly and this does the job !
+
+==== mailsearch.sh start ==================================================
+
+#!/bin/sh
+# A few sanity checks
+if [ $# -lt 2 ]; then
+    echo "Syntax: mailsearch \<Searchstring\> files ...."
+    exit 1
+fi
+
+# Get the search string out.
+SEARCHSTRING="$1"
+shift 1
+
+# Call for a search.
+echo "Searching for \"${SEARCHSTRING}\" in $*"
+/usr/local/bin/me "@mailsearch.emf" -v%mailstring=${SEARCHSTRING} $*
+echo Done: Results in [mailsearch.out]
+
+==== mailsearch.sh end ====================================================
+
+==== mailsearch.emf start =================================================
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : $Author: jon $
+;  Created By    : Jon Green
+;  Created       : Thu Sep 13 12:30:25 2001
+;  Last Modified : <010913.1951>
+;
+;  Description   :
+;
+;  This command searches though a sendmail log for a string
+;  and pulls out all sendmail lines and their associated
+;  transaction lines into a log file.
+;
+;  Typically used to track down the mail activity of a
+;  rogue user !!
+;
+;  Notes
+;
+; Bourne shell script to interface to MicroEmacs. Simply
+; kicks off the script from the command line. The script
+; is used from the command line on the mail logs i.e.
+;
+; mailsearch rogue mail mail.01 mail.02 mail.03 mail.04
+;
+; Script follows
+;
+; -- file start::mailsearch.sh -------------------------------------------
+; #!/bin/sh
+; # A few sanity checks
+; if [ $# -lt 2 ]; then
+;     echo "Syntax: mailsearch \<Searchstring\> files ...."
+;     exit 1
+; fi
+;
+; # Get the search string out.
+; SEARCHSTRING="$1"
+; shift 1
+;
+; # Call for a search.
+; echo "Searching for \"${SEARCHSTRING}\" in $*"
+; /usr/local/bin/me "@mailsearch.emf" -v%mailstring=${SEARCHSTRING} $*
+; echo Done: Results in [mailsearch.out]
+; -- file end::mailsearch.sh ---------------------------------------------
+;
+;
+;  History
+;
+;  Copyright (c) 2001 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro mail-search-process-file
+    set-variable #l9 #g2
+    set-variable #l8 $buffer-fname
+    set-variable #l7 #l9
+    next-window
+    end-of-buffer
+    newline
+    insert-string &spr ">>>%s: Searching for [%s]" #l8 #l9
+    newline
+    next-window
+    beginning-of-buffer
+    ; Prune the unused entries from the window.
+    set-variable $buffer-fname ""
+    set-variable $buffer-bname &spr "*%s*" $buffer-bname
+    -1 buffer-mode "undo"
+    set-mark
+    !repeat
+        !force search-forward "sendmail"
+        !if $status
+            beginning-of-line
+            ; Make sure point and mark are not on same line
+            set-variable #l1 $window-line
+            exchange-point-and-mark
+            !if &not &equ #l1 $window-line
+                kill-region
+            !endif
+            !force forward-line
+            set-mark
+        !endif
+    !until &not $status
+    beginning-of-buffer
+*again
+    !force search-forward &cat "sendmail\\[[0-9]+\\]:[ \t]*\\([A-Za-z0-9]+\\):.*" #l9
+    !if $status
+        beginning-of-line
+        set-alpha-mark "t"
+        set-variable #l2 @s1
+        beginning-of-buffer
+        !repeat
+            !force search-forward &cat "sendmail\\[[0-9]+\\]:[ \t]*" #l2
+            !if $status
+                beginning-of-line
+                set-mark
+                forward-line
+                copy-region
+                next-window
+                yank
+                next-window
+            !endif
+        !until &not $status
+        goto-alpha-mark "t"
+        forward-line
+        !goto again
+    !endif
+!emacro
+
+define-macro mail-search
+    delete-other-windows
+    split-window-vertically
+    find-buffer "*scratch*"
+    find-file "mailsearch.out"
+    !force 0 delete-buffer "*scratch*"
+    set-variable #g1 $buffer-fname
+    ; Empty the buffer
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    kill-region
+    -1 yank
+    1 buffer-mode "magic"
+    1 buffer-mode "exact"
+    set-variable #g2 %mailstring
+    ; Advance the window
+    next-window
+    !repeat
+        !if &not &iseq $buffer-fname #g1
+            mail-search-process-file
+        !endif
+        next-buffer
+    !until &iseq $buffer-fname #g1
+!emacro
+
+define-macro start-up
+    mail-search
+    quick-exit
+!emacro
+==== mailsearch.emf end ===================================================

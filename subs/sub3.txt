@@ -1,7 +1,10 @@
 Title:  reread-file
 Ref:    sub3
 Author: Thomas Hundt
-Date:   2000-03-14
+Date:   2001-08-23
+
+Note that this is now  supported in the July 2001  release;  this macro may be
+used as a replacement.
 
 One  thing  I do a lot is  look at  logfiles  in ME.  It's  fast  loading  and
 searching  speed and  seemingly  limitless  capacity  (unlike vi ["window  too
@@ -24,10 +27,16 @@ define-macro reread-file
     !endif
     0 delete-buffer $buffer-bname  ; force destroy (prompting user doesn't work in macro)
     ml-write &spr "[Rereading %s]" #l2
-    read-file #l2
+    find-file #l2
     #l1 goto-line
 !emacro
 !force global-bind-key reread-file "C-x f"
 
 ==== reread_file.emf end =====================================================
+
+
+Date: 2000-03-14 
+
+Original submission. First revison of this code replaced with the above.    
+
 
