@@ -38,7 +38,7 @@
         <b><a href="about.html" style="COLOR: yellow">About</a></b></font></td>
     </tr>
   </table>
-
+  <img SRC="/cgi-bin/Count.cgi?df=jasspacom-download.html&st=1">
   <!-- Section selection -->
   <p><font size="+3" color="#0000ff"><b>Download</b></font>
   <br>
@@ -54,155 +54,142 @@
 
   <HR color=#cccccc noShade SIZE=1>
 
-  <p><font size="+1"><b>Last Upload: 1st February 2004</b></font></p>
+  <p><font size="+1"><b>Last Upload: 6th February 2004</b></font></p>
 
-  <h1>JASSPA's MicroEmacs '04<br>Release Candidate 1 (20040108-rc1)</h1>
-  
-  <p>A pre-release version of JASSPA's MicroEmacs '04 which may be used for
-  evaluation purposes. Problems with this release candidate should be reported
-  as soon as possible, via the <a href="maillist.html">Mailing Lists</a> or 
-  directly to <a href="email.html">support</a>, so that they
-  may be rectified before the final release.</p>
-  
-  <p>New installations should use the 2002-12 release and then patch
-  to 2004, the files contained here provide sufficient content to patch an
-  existing installation to the new release. A full package release shall
-  be made towards the end of this month.</p>
-  
-  <p>A limited set of binaries have been provided for convenience, 
-  most platforms should be built from source. All components are 
-  required.</p>
-  
-  <p>Refer to <a href="whatsnew.html">What's new</a> for an outline of some
-  new features and changes that existing users should be aware of. For a more
-  complete change summary refer to the <a href="history.html">History<a>.</p> 
-  
-  <h3>Informative</h3>
+  <h1>Release Candidate 4 (20040206)</h1>
   <ul>
-    <li><a href="release_040108/COPYING">COPYING</a> License Terms</li>
-    <li><a href="release_040108/build.txt">build.txt</a> Build instructions</li>
-    <li><a href="release_040108/faq.txt">faq.txt</a> Frequently asked questions</li>
-    <li><a href="release_040108/readme.txt">readme.txt</a> Install Instructions</li>
-    <li><a href="release_040108/patch.txt">patch.txt</a> Patching Instructions <b>** Important **</b></li>
-  </ul>
-  <h3>Source Images</h3>
-  <ul>
-    <li>Removed</li>
-  </ul>
-  <h3>Executable Images</h3>
-  <ul>
-    <li>Removed</li>
-  </ul>
-  
-  <h1>Release Candidate 2 (20040109-rc2)</h1>
-  
-  <p>An updated macro release to be used which includes the following. This is
-  a macro change only and should be used instead of the <b>RC1</b> macros.</p>
-  <ul>
-    <li>Fold fix</li>
-    <li>Additional language templates for <b>php</b> and <b>lua</b></li>
-    <li>Toolbar fixes</li>
-    <li>Addition of <b>string-rectangle</b> command.</li>
-  </ul>
-  <h3>Source Images</h3>
-  <ul>
-    <li>Removed</li>
-  </ul>
-  
-  <h1>Release Candidate 3 (20040119-rc3)</h1>
-  <ul>
-    <li>Fold/Collapse Fixes</li>
-    <li>Updated language templates for <b>lau</b>, <b>Asmx86</b>, <b>Python</b>, <b>tcl</b></li>
-    <li>Addition of <b>copy-rectangle</b>, <b>open-line</b> commands.</li>
-    <li><b>narrow-buffer</b>, <b>create-frame</b> fixes</li>
-    <li><b>$result</b> exit code from <b>pipe-shell-command</b></li>
-    <li>Other minor fixes</li>
-  </ul>
-  <h3>Source Images</h3>
-  <ul>
-    <li><i>jasspa-me-20040119-rc3.zip</i> Source + Macros + Help.</li>
-  </ul>
-  <ul>
-    <li>A minor fix for X-Windows key handling. Remove any
-    <b>translate-key</b> sequences added for previous '04 releases and retry
-    before re-applying.</li>
-    <li>Fixes line memory allocation on some platforms.</li>
-  </ul>    
-  <ul>
-    <li><a href="release_040108/jasspa-me-20040119a-rc3.zip">jasspa-me-20040119a-rc3.zip</a> Source + Macros + Help.</li>  
-    <li><i>Fix for non-US/UK keyboards affecting LINUX + SunOS</i></li>
-    <li><a href="release_040108/unixterm.c">unixterm.c</a> File to patch from <b>RC3-a</b> to <b>RC3-b</b>.</li>
-    <li><a href="release_040108/jasspa-me-20040119b-rc3.zip">jasspa-me-20040119b-rc3.zip</a> Source + Macros + Help.</li>  
-  </ul>
-  <h3>Executable Images</h3>
-  <ul>
-    <li><a href="release_040108/jasspa-me-win32-20040119-rc3.zip">jasspa-me-win32-20040119-rc3.zip</a> Windows executable</li>
-  </ul>
-  <h1>Release Candidate 4 (TBD)</h1>
-  <ul>
-    <p>
-    1st February 2004. A further Release Candidate of JASSPAs MicroEmacs
-    shall be made in the very near future.</p>
     
-    <p>Following an internal review of RC3 then it has been decided to
-    address the issues of user configuration prior to a full release. This
-    specifically addresses the location of user MicroEmacs configuration
-    directories and search paths. User configuration has traditionally
-    required the setting of external environment variables such as $MEPATH and
-    for the user to create a private directory to store user settings. This is
-    proving difficult for new users who just want to run the editor. RC4 and
-    subsequent releases will address these problems by determining the correct
-    location for configuration files and create the appropriate files and
-    directories under user control.</p>
+    <p>Release Candidate 4. There have been some significant changes in this
+    release with respect to the user set-up. This makes it much easier for new
+    users to set up JASSPAs MicroEmacs correctly. Existing users should review
+    their <tt>$MEPATH</TT> and <TT>$MENAME</TT> settings, most platforms will
+    now run without the need to set these environment variables.</p>
     
-    <p>The net result of these changes should significantly simplify
-    installation and setup as follows:</p>
+    <p>The packaging has changed slightly, the archive <b>metree</b> contains
+    a standard MicroEmacs macro tree, this contains the macros and help files
+    and may be directly unpacked in <tt>/usr/local</tt> (UNIX), <tt>c:\</tt>
+    (DOS) or <tt>C:\Program Files\</tt> (Windows) for the JASSPA directory.</p>
     
-    <p>
+    <p>Minimum download is:</p>
     <ul>
-      <li>All platforms will be able to run without any manual user setup or
-      the requirement for specific MicroEmacs environment variables.</li>
-      
-      <li>User defined directories and configuration files will be created 
-      under editor control on detecting a new user.</li>
-      
-      <li>Existing installations using $MEPATH will be backwards compatible
-      with the new build, although users are discouraged from continuing to
-      use this variable.</li>
-      
-      <li>All platforms now support a searching <tt>jasspa</tt> sub-directory
-      structure of <tt>company</tt> / <tt>spelling</tt> / <tt>macros</tt>.
-      This was traditionally limited to the Windows Install Shield
-      installation but has been extended across all platforms.</li>
+      <li>installation package</li>
+      <li>OR <i>metree</i> and <i>executable image</i></li>
+      <li>OR <i>metree</i> and <i>mesrc</i> to build your own image.</li>
+    </ul></p>
     
-      <li>Two new environment variables are provided for user or system
-      administrator use. $MEINSTALLPATH defines the location of the MicroEmacs
-      standard macros and allows the built in search path to be overridden.
-      $MEUSERPATH defines the location of the user private configuration
-      directory and allows the user to locate their private directory in
-      different location. In a standard install neither of these variables
-      will be required.</li>
+    <p>Please read the Installation Notes for further information</p> 
+  </ul>
+  <p>
+  <center><table border="1" WIDTH="100%">
+    <tr>
+      <td bgcolor="#0000FF">
+        <font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif" size="2">
+        <strong>Download Image</strong></font></td>
+      <td bgcolor="#0000FF">
+        <font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif" size="2">
+        <strong>Documentation</string></font></td>
+    </tr>
+    <tr>
+      <td><a href="release_040108/COPYING">COPYING</a></td>
+      <td>GNU GPL License</td>
+    </tr>
+    <tr>
+      <td><a href="release_040108/build.txt">build.txt</a></td>
+      <td>Source build instructions.</td>
+    </tr>
+    <tr>
+      <td><a href="release_040108/change.log">change.log</a></td>
+      <td>List of changes.</td>
+    </tr>
+    <tr>
+      <td><a href="release_040108/faq.txt">faq.txt</a></td>
+      <td>Frequently asked questions.</td>
+    </tr>
+    <tr>
+      <td><a href="release_040108/patch.txt">patch.txt</a></td>
+      <td>How to patch JASSPA MicroEmacs from previous install.</td>
+    </tr>
+    <tr>
+      <td><a href="release_040108/readme.txt">readme.txt</a></td>
+      <td>JASSPA MicroEmacs installation notes.</td>
+    </tr>
+    <tr>
+      <td><a href="release_040108/jasspa-mehtm-20040206.zip">jasspa-mehtm-20040206.zip</a></td>
+      <td>HTML documentation in 8.3 format.</td>
+    </tr>
+    <tr>
+      <td><a href="release_040108/jasspa-mehtml-20040206.tar.gz">jasspa-mehtml-20040206.tar.gz</a></td>
+      <td>HTML documentation (long name).</td>
+    </tr>
+    <tr>
+      <td><a href="release_040108/jasspa-mewinhelp-20040206.zip">jasspa-mewinhelp-20040206.zip</a></td>
+      <td>Microsoft Windows Help file documentation.</td>
+    </tr>
+  </table></center></p>
+  
+  <p><center><table border="1" WIDTH="100%">
+    <tr>
+      <td bgcolor="#0000FF">
+        <font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif" size="2">
+        <strong>Download Image</strong></font></td>
+      <td bgcolor="#0000FF">
+        <font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif" size="2">
+        <strong>Source Files</string></font></td>
+    </tr>
+    <tr>
+      <td><a href="release_040108/jasspa-mesrc-20040206.tar.gz">jasspa-mesrc-20040206.tar.gz</a><br>
+        <a href="release_040108/jasspa-mesrc-20040206.zip">jasspa-mesrc-20040206.zip</a></td>
+      <td>Source file bundle.</td>
+    </tr>
+    <tr>
+      <td><a href="release_040108/jasspa-memacros-20040206.tar.gz">jasspa-memacros-20040206.tar.gz</a><br>
+        <a href="release_040108/jasspa-memacros-20040206.zip">jasspa-memacros-20040206.zip</a></td>
       
-      <li>The Microsoft Windows system defined application path will be used
-      for user configuration files. This is applicable for roaming users where
-      the application directory is stored on a server.</li> 
+      <td>Macros and on-line help - no directory hierarchy. You do not require
+      the <i>memacros</i> bundle if <i>metree</i> has been downloaded.</td>
+    
+    </tr>
+  </table></center></p>
+  
+  <p><center><table border="1" WIDTH="100%">
+    <tr>
+      <td bgcolor="#0000FF">
+        <font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif" size="2">
+        <strong>Download Image</strong></font></td>
+      <td bgcolor="#0000FF">
+        <font color="#FFFF00" class=bodytext face="Ariel, Helvetica, san-serif" size="2">
+        <strong>Pre-built Installation Files</string></font></td>
+    </tr>
+    <tr>
+      <td><a href="release_040108/jasspa-meinst-win32-20040206.zip">jasspa-meinst-win32-20040206.zip</a></td>
       
-      <li>The use of the me32.ini file on MicroSoft Windows environments will
-      become depreciated and is no longer really required.</li>
+      <td><b>Package:</b> Microsoft Windows '95/'98/NT/2K/XP Install Shield packaged installer</td>
+    
+    </tr>
+    <tr>
+      <td><a href="release_040108/jasspa-metree-20040206.tar.gz">jasspa-metree-20040206.tar.gz</a><br>
+        <a href="release_040108/jasspa-metree-20040206.zip">jasspa-metree-20040206.zip</a></td>
       
-      <li>The UNIX path searching is improved. <tt>/usr/local/microemacs</tt>
-      will be depreciated and replaced with <tt>/usr/local/jasspa</tt> in
-      addition other standard path locations are supported on a per-platform
-      basis.</li>
-      
-      <li>On UNIX then the directory $HOME/.jasspa shall contain the user
-      configuration files. Optionally the <tt>company</tt> / <tt>spelling</tt>
-      / <tt>macros</tt> sub-directories may be included in this directory
-      where access to the system directory locations by the user is not
-      permitted.</li>
-      
-    </ul>
-    </p>
+      <td>Pre-built macros tree for installation, includes macros and help information. You do not
+      require the <i>memacros</i> bundle if this is downloaded.</td>
+    </tr>
+    <tr>
+      <td><a href="release_040108/jasspa-me-mew-win32-20040206.zip">jasspa-me-mew-win32-20040206.zip</a></td>
+      <td>Microsoft Windows '95/'98/NT/2K/XP pre-built executable only. ME+Window (no URL support).<br>
+      <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</i></td>
+    </tr>
+    <tr>
+      <td><a href="release_040108/jasspa-me-sun-sparc-56-20040206.gz">jasspa-me-sun-sparc-56-20040206.gz</a></td>
+      <td>Sun Solaris (sparc) 5.6/7/8/9 pre-built executable only.<br>
+      <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</td>
+    </tr>
+    <tr>
+      <td><a href="release_040108/jasspa-me-hpux-pa-11-20040206.gz">jasspa-me-hpux-pa-11-20040206.gz</a></td>
+      <td>HP HP-UX (pa-risc) 11.x pre-built executable only.<br>
+      <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</i></td>
+    </tr>
+  </table></center></p>
+  
   <h1>NO WARRANTY</h1>
 
   <p>This program is licensed free of charge, there is no warranty for the
