@@ -761,10 +761,10 @@ ehf-scheme
     lslmappend-buffer(2)le Write contents of buffer to end of named file 
     lslmchange-directory(2)le [cDC-x C-dcA] Change the current working directory 
     lslmchange-file-name(2)le (cDC-x ncA) Change the file name of the current buffer 
-    lslmcopy-file(2)le Copy, move or delete a file 
     lslmdirectory-tree(2)le Draw the file directory tree 
     lslmfile-attrib(3)le Set the current buffers system file attributes 
     lslmfile-browser(3)le (cDA-bcA) Browse the file system 
+    lslmfile-op(2)le File system operations command 
     lslmfind-bfile(2)le (cDC-x 9cA) Load a file as binary data 
     lslmfind-cfile(2)le Load a crypted file 
     lslmfind-file(2)le (cDC-x C-fcA) Load a file 
@@ -931,6 +931,7 @@ ehf-scheme
     lslmdirectory-tree(2)le Draw the file directory tree 
     lslmetfinsrt(3)le Insert template file into current buffer 
     lslmexecute-string(2)le Execute a string as a command 
+    lslmfile-op(2)le File system operations command 
     lslmfileHooks(2)le File Hooks 
     lslmgoto-position(2)le Restore a stored position 
     lslmgoto-window(2)le Restore a saved window to the current window (historic) 
@@ -1356,6 +1357,7 @@ ehf-scheme
 
         lslm&atoi(4)le ASCII to integer conversion 
         lslm&bmode(4)le Determine buffer mode 
+        lslm&cbind(4)le Return the command a key is bound to 
         lslm&cond(4)le Conditional expression operator 
         lslm&exist(4)le Test if a variable or command exists 
         lslm&find(4)le Find a file on the search path 
@@ -1364,7 +1366,8 @@ ehf-scheme
         lslm&inword(4)le Test for a word character 
         lslm&isin(4)le Case insensitive test for string in string 
         lslm&itoa(4)le Integer to ASCII conversion 
-        lslm&kbind(4)le Return command key binding 
+        lslm&kbind(4)le Return the key a command is bound to 
+        lslm&nbind(4)le Return the numerial argument of a binding 
         lslm&nbmode(4)le Determine named buffer mode 
         lslm&risin(4)le Recursive case insensitive test for string in string 
         lslm&rsin(4)le Recursively test for string in string 
@@ -1425,10 +1428,10 @@ ehf-scheme
     lslmappend-buffer(2)le Write contents of buffer to end of named file 
     lslmchange-directory(2)le [cDC-x C-dcA] Change the current working directory 
     lslmchange-file-name(2)le (cDC-x ncA) Change the file name of the current buffer 
-    lslmcopy-file(2)le Copy, move or delete a file 
     lslmdirectory-tree(2)le Draw the file directory tree 
     lslmfile-attrib(3)le Set the current buffers system file attributes 
     lslmfile-browser(3)le (cDA-bcA) Browse the file system 
+    lslmfile-op(2)le File system operations command 
     lslmfind-bfile(2)le (cDC-x 9cA) Load a file as binary data 
     lslmfind-cfile(2)le Load a crypted file 
     lslmfind-file(2)le (cDC-x C-fcA) Load a file 
@@ -1631,7 +1634,6 @@ ehf-scheme
     lslmcompare-windows(2)le Compare buffer windows, ignore whitespace 
     lslmcompare-windows-exact(3)le Compare buffer windows, with whitespace 
     lslmcompile(3)le Start a compilation process 
-    lslmcopy-file(2)le Copy, move or delete a file 
     lslmcopy-region(2)le (cDesc wcA) Copy a region of the buffer 
     lslmcount-words(2)le (cDesc C-ccA) Count the number of words in a region 
     lslmcreate-callback(2)le Create a timer callback 
@@ -1677,6 +1679,7 @@ ehf-scheme
     lslmexpand-abbrev-handle(3)le (cDesc esccA) Expand an abbreviation handler 
     lslmfile-attrib(3)le Set the current buffers system file attributes 
     lslmfile-browser(3)le (cDA-bcA) Browse the file system 
+    lslmfile-op(2)le File system operations command 
     lslmfill-paragraph(2)le (cDesc ocA) Format a paragraph 
     lslmfilter-buffer(2)le (cDC-x #cA) Filter the current buffer through an O/S command 
     lslmfind-bfile(2)le (cDC-x 9cA) Load a file as binary data 
@@ -1938,7 +1941,6 @@ ehf-scheme
     lslmcommand-apropos(2)le (cDC-h acA) List commands involving a concept 
     lslmcommand-wait(2)le Conditional wait command 
     lslmcompare-windows(2)le Compare buffer windows, ignore whitespace 
-    lslmcopy-file(2)le Copy, move or delete a file 
     lslmcopy-region(2)le (cDesc wcA) Copy a region of the buffer 
     lslmcount-words(2)le (cDesc C-ccA) Count the number of words in a region 
     lslmcreate-callback(2)le Create a timer callback 
@@ -1969,6 +1971,7 @@ ehf-scheme
     lslmexecute-string(2)le Execute a string as a command 
     lslmexit-emacs(2)le Exit MicroEmacs 
     lslmexpand-abbrev(2)le Expand an abbreviation 
+    lslmfile-op(2)le File system operations command 
     lslmfill-paragraph(2)le (cDesc ocA) Format a paragraph 
     lslmfilter-buffer(2)le (cDC-x #cA) Filter the current buffer through an O/S command 
     lslmfind-bfile(2)le (cDC-x 9cA) Load a file as binary data 
@@ -2390,6 +2393,7 @@ ehf-scheme
     lslm&bor(4)le Bitwise OR operator 
     lslm&bxor(4)le Bitwise XOR operator 
     lslm&cat(4)le Concatenate two strings together 
+    lslm&cbind(4)le Return the command a key is bound to 
     lslm&cond(4)le Conditional expression operator 
     lslm&dec(4)le Pre-decrement variable 
     lslm&divide(4)le Division of two numbers 
@@ -2404,7 +2408,7 @@ ehf-scheme
     lslm&isequal(4)le Case insensitive String equivalence operator 
     lslm&isin(4)le Case insensitive test for string in string 
     lslm&itoa(4)le Integer to ASCII conversion 
-    lslm&kbind(4)le Return command key binding 
+    lslm&kbind(4)le Return the key a command is bound to 
     lslm&ldel(4)le Delete list item 
     lslm&left(4)le Return the left most characters from a string 
     lslm&len(4)le Return the length of a string 
@@ -2416,6 +2420,7 @@ ehf-scheme
     lslm&mid(4)le Return a portion (middle) of a string 
     lslm&mod(4)le Modulus of two numbers 
     lslm&multiply(4)le Multiply two numbers 
+    lslm&nbind(4)le Return the numerial argument of a binding 
     lslm&nbmode(4)le Determine named buffer mode 
     lslm&negate(4)le Negation of two numbers 
     lslm&not(4)le Logical NOT operator 
@@ -2677,6 +2682,7 @@ ehf-scheme
     lslm&bor(4)le Bitwise OR operator 
     lslm&bxor(4)le Bitwise XOR operator 
     lslm&cat(4)le Concatenate two strings together 
+    lslm&cbind(4)le Return the command a key is bound to 
     lslm&cond(4)le Conditional expression operator 
     lslm&dec(4)le Pre-decrement variable 
     lslm&divide(4)le Division of two numbers 
@@ -2691,7 +2697,7 @@ ehf-scheme
     lslm&isequal(4)le Case insensitive String equivalence operator 
     lslm&isin(4)le Case insensitive test for string in string 
     lslm&itoa(4)le Integer to ASCII conversion 
-    lslm&kbind(4)le Return command key binding 
+    lslm&kbind(4)le Return the key a command is bound to 
     lslm&ldel(4)le Delete list item 
     lslm&left(4)le Return the left most characters from a string 
     lslm&len(4)le Return the length of a string 
@@ -2703,6 +2709,7 @@ ehf-scheme
     lslm&mid(4)le Return a portion (middle) of a string 
     lslm&mod(4)le Modulus of two numbers 
     lslm&multiply(4)le Multiply two numbers 
+    lslm&nbind(4)le Return the numerial argument of a binding 
     lslm&nbmode(4)le Determine named buffer mode 
     lslm&negate(4)le Negation of two numbers 
     lslm&not(4)le Logical NOT operator 
@@ -2841,7 +2848,6 @@ ehf-scheme
     lslmcompare-windows(2)le Compare buffer windows, ignore whitespace 
     lslmcompare-windows-exact(3)le Compare buffer windows, with whitespace 
     lslmcompile(3)le Start a compilation process 
-    lslmcopy-file(2)le Copy, move or delete a file 
     lslmcopy-region(2)le (cDesc wcA) Copy a region of the buffer 
     lslmcount-words(2)le (cDesc C-ccA) Count the number of words in a region 
     lslmcpp(9)le C++ programming language 
@@ -2915,6 +2921,7 @@ ehf-scheme
     lslmf90(9)le Fortran 90 File 
     lslmfile-attrib(3)le Set the current buffers system file attributes 
     lslmfile-browser(3)le (cDA-bcA) Browse the file system 
+    lslmfile-op(2)le File system operations command 
     lslmfileHooks(2)le File Hooks 
     lslmfill-paragraph(2)le (cDesc ocA) Format a paragraph 
     lslmfilter-buffer(2)le (cDC-x #cA) Filter the current buffer through an O/S command 
@@ -3338,7 +3345,7 @@ ehf-scheme
     The following contact point may be used to report all problems and request 
     information:- 
 
-       cG Email:jasspa@geocities.comcA 
+        cDEmail:cAcGjasspa@geocities.comcA 
 
     Also visit our web site's on the Internet:- 
 
@@ -3366,12 +3373,12 @@ ehf-scheme
     If you want to join the E-Mail reflector then mail a request, with an 
     empty message body to:- 
 
-       cG jasspa-subscribe@yahoogroups.comcA 
+        cGjasspa-subscribe@yahoogroups.comcA 
 
     This should add you to the mailing list. If you want to be subsequently 
     removed from the mailing list then mail an empty message to:- 
 
-       cG jasspa-unsubscribe@yahoogroups.comcA 
+        cGjasspa-unsubscribe@yahoogroups.comcA 
 
     and you will be removed from the lists. There are facilities on the site 
     to allow you to receive digests, rather than multiple posts to the group 
@@ -4980,8 +4987,8 @@ ehf-scheme
 
 
     This document contains frequently asked questions submitted to JASSPA. Use 
-    the E-Mail reflector and associated logs, described in the lsMicroEmacs '01 - Contact InformationlmContactln
-    lnInformationle section, alternatively questions may be submitted to:- 
+    the E-Mail reflector and associated logs, described in the lsMicroEmacs '01 - Contact InformationlmContact 
+    Informationle section, alternatively questions may be submitted to:- 
 
         cDMailto:jasspa@geocities.comcA 
 
@@ -5005,7 +5012,8 @@ ehf-scheme
     cDmecA [cCoptionscA] [cCfiles ...cA] 
 
     cDmecA [cD@cAcCstartupFilecA] [cD-bcA] [cD-ccA] [cD-dcA] [cD-hcA] [cD-icA] [cD-lcAcClineNocA] [cD-mcAcCcommandcA] [cD-ncA] 
-    [cD-0cAcCfilecA] [cD-pcA] [cD-rcA] [cD-scAcCstringcA] [cD-vcAcCvariable=stringcA] [cD-xcA] cCfiles...cA 
+    [cD-0cAcCfilecA] [cD-pcA] [cD-rcA] [cD-scAcCstringcA] [cD-ucAcCusernamecA] [cD-vcAcCvariable=stringcA] [cD-xcA] 
+    cCfiles...cA 
 
 
 cEcEDESCRIPTION cEcA
@@ -5135,6 +5143,11 @@ ehf-scheme
         starts cDMicroEmacs '01cA, loads file cGbarcA and initiates a search for cCfoocA. 
         The cursor is left at the end of the string if located, otherwise at 
         the top of the buffer. 
+
+    cD-ucAcCusernamecA 
+        Set the current user name to cCusernamecA before MicroEmacs is 
+        initialized. This is done by setting the environment variable 
+        ls$MENAME(5)lmMENAME(5)le to the given value. 
 
     cD-vcAcCvariable=stringcA 
         Assign the MicroEmacs '01 cCvariablecA with cCstringcA. The assignment is 
@@ -6061,8 +6074,8 @@ $a
     The standard file hook files cDhkcAcCXXXcAcD.emfcA should not be modified. The 
     standard file hooks may be extended with local definitions by defining a 
     file cDmycAcCXXXcAcD.emfcA, which is an extension to the hook file cDhkcAcCXXXcAcD.emfcA. This is 
-    automatically executed after cDhkcAcCXXXcAcD.emfcA. Refer to sections lslanguageTemplates(2)lmLanguageln
-    lnTemplatesle and lsfileHooks(2)lmFile Hooksle for details. 
+    automatically executed after cDhkcAcCXXXcAcD.emfcA. Refer to sections lslanguageTemplates(2)lmLanguage 
+    Templatesle and lsfileHooks(2)lmFile Hooksle for details. 
 
 
 cEFile Extensions cA
@@ -6862,6 +6875,11 @@ $a
     to the lsprefix(2)lmprefixle command, the prefix binding and any sub-bindings are 
     removed. cDglobal-bind-keycA calls cDglobal-unbind-keycA first if the key to be 
     bound is already bound to something else. 
+
+    If a -ve argument is given to cDglobal-unbind-keycA then all bindings are 
+    removed, cDcautioncA - removing all bindings interactively will render the 
+    current MicroEmacs session unusable. This can only be used within macro 
+    development where new bindings are created immediately afterwards. 
 
     The cDglobal-bind-keycA command, currently bound to cGesc kcA, prompts the user 
     for the named command and the key to which it is to be bound. This help 
@@ -8223,7 +8241,7 @@ $a
 
 
     The best example of the use of directory-tree is lslmfile-browser(3)le which can 
-    be found in hkdir.emf. 
+    be found in hkdirlst.emf. 
 
 
 cEcESEE ALSO cEcA
@@ -8251,8 +8269,8 @@ $a
 
 
     The cDindentcA command creates and manages the auto-indenting methods, the 
-    process of creating a new indentation method is best described in lslanguageTemplates(2)lmFileln
-    lnLanguage Templatesle. The command takes various forms as defined by the 
+    process of creating a new indentation method is best described in lslanguageTemplates(2)lmFile 
+    Language Templatesle. The command takes various forms as defined by the 
     arguments. Each of the argument configurations is defined as follows:- 
 
 
@@ -9877,7 +9895,7 @@ $a
     lslm$rcs-file(5)le, lslm%ftp-flags(5)le, lslm%http-flags(5)le, lslm%http-proxy-addr(5)le, 
     lslmauto(2m)le, lslmbuffer-mode(2)le, lslmfind-bfile(2)le, lslmftp(3)le, lslmnext-window-find-file(2)le, 
     lslmread-file(2)le, lslmsave-buffer(2)le, lslmtime(2m)le, lslmview(2m)le, lslmview-file(2)le, 
-    lslmwrite-buffer(2)le, lslmfile-attrib(3)le. 
+    lslmwrite-buffer(2)le, lslmfile-op(2)le, lslmfile-attrib(3)le. 
 
 ! 2 find-tag
 cEcENAME cEcA
@@ -10924,7 +10942,7 @@ $a
 cEcEEXAMPLE cEcA
 
 
-    Refer to cGosd.emfcA, cGuser.emfcA, cGsearch.emfcA, cGspell.emfcA and cGorganize.emfcA for 
+    Refer to cGosd.emfcA, cGuserstp.emfcA, cGsearch.emfcA, cGspell.emfcA and cGorganize.emfcA for 
     examples of the OSD. 
 
 
@@ -11097,8 +11115,8 @@ $a
 
 
     The cDhilightcA command creates and manages the buffer hilighting, the process 
-    of creating a new hilighting scheme is best described in lslanguageTemplates(2)lmFile Languageln
-    lnTemplatesle. The command takes various forms as defined by the arguments. 
+    of creating a new hilighting scheme is best described in lslanguageTemplates(2)lmFile Language 
+    Templatesle. The command takes various forms as defined by the arguments. 
     Each of the argument configurations is defined as follows:- 
 
 
@@ -12446,8 +12464,8 @@ $a
 cEcESYNOPSIS cEcA
 
 
-    cDbuffer-bind-keycA "cCcommandcA" "cCkeycA" 
-    cDbuffer-unbind-keycA "cCkeycA" 
+    cCncA cDbuffer-bind-keycA "cCcommandcA" "cCkeycA" 
+    cCncA cDbuffer-unbind-keycA "cCkeycA" 
 
 
 cEcEDESCRIPTION cEcA
@@ -12463,7 +12481,8 @@ $a
     bindings. 
 
     cDbuffer-unbind-keycA unbinds a user created local key binding, this command 
-    effects only the current buffer. 
+    effects only the current buffer. If a -ve argument is given to 
+    cDbuffer-unbind-keycA then all the current buffer's bindings are removed. 
 
 
 cEcENOTES cEcA
@@ -12494,8 +12513,8 @@ $a
 cEcESYNOPSIS cEcA
 
 
-    cDml-bind-keycA "cCcommandcA" "cCkeycA" 
-    cDml-unbind-keycA "cCkeycA" 
+    cCncA cDml-bind-keycA "cCcommandcA" "cCkeycA" 
+    cCncA cDml-unbind-keycA "cCkeycA" 
 
 
 cEcEDESCRIPTION cEcA
@@ -12594,7 +12613,8 @@ $a
           lscapitalize-word(2)lmlower-case-wordle (cDesc lcA) 
 
     cDml-unbind-keycA unbinds a user created message line key binding, this 
-    command effects only the message line key bindings. 
+    command effects only the message line key bindings. If a -ve argument is 
+    given to cDml-unbind-keycA then all message line bindings are removed. 
 
 
 cEcEEXAMPLE cEcA
@@ -16305,8 +16325,8 @@ $a
     the new file inherits the buffers file characteristics instead of the old 
     file's. 
 
-    On writing the file, if lslmtime(2m)le mode is enabled then the ls$timestamp(5)lmtime stampln
-    lnstringle is searched for in the file and modified if located, to reflect the 
+    On writing the file, if lslmtime(2m)le mode is enabled then the ls$timestamp(5)lmtime stamp 
+    stringle is searched for in the file and modified if located, to reflect the 
     modification date and time. 
 
     If the buffer contains a lslmnarrow(2m)le it will automatically be removed 
@@ -16541,19 +16561,21 @@ $a
 
     The following definitions are found in the cGme.emfcA start-up file:- 
 sB
-        define-macro-file search replace-all-string query-replace-all-string 
+        0 define-macro-file utils ascii-time regex-forward regex-backward 
         define-macro-file format clean sort-lines-ignore-case tabs-to-spaces ... 
-        define-macro-file misc symbol ascii-time check-line-length alarm 
+        define-macro-file cvs cvs cvs-state cvs-update cvs-commit cvs-log ... 
+        define-macro-file abbrev expand-abbrev-handle spell-complete-word ... 
+        define-macro-file misc symbol check-line-length alarm time 
+        define-macro-file search replace-all-string query-replace-all-string 
+        define-macro-file tools compile grep rgrep which diff diff-changes 
+        define-macro-file hkdirlst file-browser file-browser-close 
+        define-macro-file comment comment-line uncomment-line comment-to-end-of-line 
         define-macro-file spell spell-word spell-buffer spell-edit-word find-word 
-        define-macro-file tools compile grep diff diff-changes 
         define-macro-file games Metris Patience Triangle Mahjongg Match-It 
-        define-macro-file print print print-setup 
-        define-macro-file hkdir file-browser 
+        define-macro-file buffstp buffer-setup buffer-help buffer-tool 
         define-macro-file fattrib file-attrib 
         define-macro-file osd osd-main 
-        define-macro-file user user-setup 
-        define-macro-file addrbook address-book 
-        define-macro-file cal 
+        define-macro-file gdiff 
         define-macro-file calc 
         define-macro-file draw 
 
@@ -17227,60 +17249,65 @@ $a
 
     lslmsave-registry(2)le, lslmlist-registry(2)le, lslmmark-registry(2)le, lslmerf(8)le. 
 
-! 2 copy-file
+! 2 file-op
 cEcENAME cEcA
 
 
-    copy-file - Copy, move or delete a file 
+    file-op - File system operations command 
 $a
 
 
 cEcESYNOPSIS cEcA
 
 
-    cCncA cDcopy-filecA "cCfrom-file-namecA" [ "cCto-file-namecA" ] 
+    cCncA cDfile-opcA [ ( [ "cCfrom-filecA" "cCto-filecA" ] ) | 
+        ( ["cCdelete-filecA"] ) | ( ["cCdir-namecA"] ) ] 
 
 
 cEcEDESCRIPTION cEcA
 
 
-    cDcopy-filecA copies the source file cCfrom-file-namecA to cCto-file-namecA, the 
-    source file must be a single file, i.e. no wild-cards and not a directory. 
-    If cCto-file-namecA is a directory the base name of cCfrom-file-namecA is 
-    automatically appended. 
+    cDfile-opcA can be used to perform numerous file system operations. The given 
+    argument cCncA must be used to determine the required operation, the value is 
+    a bit based flag denoting the operation as follows: 
 
-    The argument cCncA can be used to change the default behavior of copy-file, cCncA 
-    is a bit based flag where:- 
+    cD0x010cA 
+        Log-off and close down the current ftp connect (not a file system 
+        operation but functionality was required and it had to go somewhere). 
+
+    cD0x020cA 
+        When this bit is set the command functionality is changed to 
+        delete-file, the single argument cCdelete-filecA is deleted. 
+
+    cD0x040cA 
+        When this bit is set the command functionality is changed to 
+        move-file, the specified cCfrom-filecA is moved to cCto-filecA. 
+
+    cD0x080cA 
+        When this bit is set the command functionality is changed to 
+        copy-file, the specified cCfrom-filecA is copied to cCto-filecA. 
+
+    cD0x100cA 
+        When this bit is set the command functionality is changed to making a 
+        new directory, the specified cCdir-namecA is the name of the new 
+        directory. A file or directory of the given name must not already 
+        exist. 
+
+    Only one operation can be performed per invocation. The following bits in 
+    the given argument cCncA can be used to effect the behaviour of these 
+    operations: 
 
     cD0x01cA 
-        Enables validity checks (default). These include a check that the 
-        proposed file does not already exist, if so confirmation of writing is 
-        requested from the user. Also MicroEmacs checks all other current 
-        buffers for one with the proposed file name, if found, again 
-        confirmation is requested. Without this flag the command will always 
-        succeed wherever possible. 
+        Enables validity checks, these include a check that the proposed file 
+        does not already exist, if so confirmation of writing is requested 
+        from the user. Also MicroEmacs checks all other current buffers for 
+        one with the proposed file name, if found, again confirmation is 
+        requested. Without this flag the command will always succeed wherever 
+        possible. 
 
     cD0x02cA 
-        Creates a backup of the cCto-file-namecA if it already exists. When moving 
-        or deleting the source file, the source file is also backed-up. 
-
-    cD0x04cA 
-        When this bit is set the command functionality is changed to 
-        delete-file, the specified cCfrom-file-namecA is deleted and the 
-        cCto-file-namecA argument is not required. If flag cD0x01cA is set then the 
-        user is prompted before the file is removed and if bit cD0x02cA is set a 
-        backup of the file is made first. Bit cD0x08cA is ignored. 
-
-    cD0x08cA 
-        When this bit is set the command functionality is changed to 
-        move-file, the specified cCfrom-file-namecA is moved to cCto-file-namecA. If 
-        bit cD0x02cA is set a backup of the source file is also made. 
-
-    cD0x10cA 
-        When this bit is set the command functionality is changed to making a 
-        new directory, the specified cCfrom-file-namecA is the name of the new 
-        directory and the cCto-file-namecA argument is not required. A file or 
-        directory of the given name must not already exist. 
+        Creates a backup of any file about to be deleted or over-written. Set 
+        help on lslm$buffer-backup(5)le for backup file-name generation. 
 
 
 cEcENOTES cEcA
@@ -17297,7 +17324,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmfile-browser(3)le, lslmftp(3)le, lslmfind-file(2)le, lslmwrite-buffer(2)le. 
+    lslmfile-browser(3)le, lslmftp(3)le, lslmfind-file(2)le, lslmwrite-buffer(2)le, lslm$temp-name(5)le. 
 
 ! 2 kill-rectangle
 ! 2 yank-rectangle
@@ -19773,8 +19800,8 @@ ehf-scheme
 
 
     The next step to adding a new file type is to get MicroEmacs '01 to 
-    recognize the file as the new type. Recognition is performed by the lsfileHooks(2)lmFileln
-    lnHooksle which perform recognition on the file extension and/or the file 
+    recognize the file as the new type. Recognition is performed by the lsfileHooks(2)lmFile 
+    Hooksle which perform recognition on the file extension and/or the file 
     content. The name of the file type must be determined, this is typically 
     the name of the file prepended by cGhkcA. e.g. a file with extension cCfoocA uses 
     the file cGhkfoo.emfcA for it's language specific definitions. 
@@ -20881,8 +20908,8 @@ ehf-scheme
 cEcESEE ALSO cEcA
 
 
-    lslm$MENAME(5)le, lslm$MEPATH(5)le, lsCompanyProfiles(2)lmCompany Profilesle, lsfileHooks(2)lmFile Hooksle, lslanguageTemplates(2)lmFile Languageln
-    lnTemplatesle, lsUserProfiles(2)lmUser Profilesle. 
+    lslm$MENAME(5)le, lslm$MEPATH(5)le, lsCompanyProfiles(2)lmCompany Profilesle, lsfileHooks(2)lmFile Hooksle, lslanguageTemplates(2)lmFile Language 
+    Templatesle, lsUserProfiles(2)lmUser Profilesle. 
 
 ! 2 CompanyProfiles
 cEcECOMPANY PROFILES cEcA
@@ -21250,8 +21277,8 @@ ehf-scheme
 cEcESEE ALSO cEcA
 
 
-    lslm$MEPATH(5)le, lslm$MENAME(5)le, lslmuser-setup(3)le, lsCompanyProfiles(2)lmCompany Profilesle, lsfileHooks(2)lmFile Hooksle, lslanguageTemplates(2)lmFileln
-    lnLanguage Templatesle, lsInstallation(1)lmInstallationle. 
+    lslm$MEPATH(5)le, lslm$MENAME(5)le, lslmuser-setup(3)le, lsCompanyProfiles(2)lmCompany Profilesle, lsfileHooks(2)lmFile Hooksle, lslanguageTemplates(2)lmFile 
+    Language Templatesle, lsInstallation(1)lmInstallationle. 
 
 ! 2 Interfacing
 cEcEINTERFACING cEcA
@@ -25792,9 +25819,11 @@ $a
 cEcESYNOPSIS cEcA
 
 
-    cCncA cDosd-dialogcA "cCtitlecA" "cCpromptcA" ["cCx-poscA" "cCy-poscA"] "cCbut1cA" 
-    cCncA cDosd-xdialogcA "cCtitlecA" "cCpromptcA" cCdefaultcA ["cCx-poscA" "cCy-poscA"] "cCbut1cA" "cCbut2cA" ... 
-    cDosd-entrycA "cCtitlecA" "cCpromptcA" cCvariablecA ["cCentry-sizecA" ["cCtypecA"]] 
+    cCncA cDosd-dialogcA "cCtitlecA" "cCpromptcA" [ "cCx-poscA" "cCy-poscA" ] "cCbut1cA" 
+    cCncA cDosd-xdialogcA "cCtitlecA" "cCpromptcA" cCdefaultcA [ "cCx-poscA" "cCy-poscA" ] 
+        "cCbut1cA" "cCbut2cA" ... 
+    cCncA cDosd-entrycA "cCtitlecA" "cCpromptcA" cCvariablecA [ "cCx-poscA" "cCy-poscA" ] 
+        [ [ "cCentry-xsizecA" | "cCentry-xsizecAxcCentry-ysizecA" ] [ "cCtypecA" ] ] 
 
 
 cEcEDESCRIPTION cEcA
@@ -25813,28 +25842,34 @@ $a
 
     The commands return the button pressed in the variable lslm$result(5)le. 
 
-    The argument cCncA can be used to change the default behavior of both commands 
+    cDosd-entrycA constructs a simple OSD entry dialog which prompts the user to 
+    type in a value. The value of the supplied variable is used as an initial 
+    entry value, the variable is set to the entered value when the user 
+    presses the "cGOkaycA" button but remains unchanged if the user Cancel or 
+    aborts. 
+
+    The size of the entry defaults to 30 characters if not specified by the 
+    user, when a size parameter is given it can take one of two forms, either 
+    simply "cGwcA" specifying the width, the height defaulting to 1, or "cGwcAcDxcAcGhcA" 
+    (i.e. "cG40x5cA") specifying both. The last optional argument cCtypecA sets the 
+    type of value being entered (e.g. file name, buffer name, etc) see flag cDhcA 
+    on the help page for lslm@ml(4)le for a list of entry types and the numerical 
+    value to be supplied. 
+
+    The argument cCncA can be used to change the default behavior of the commands 
     described above, cCncA is a bit based flag where:- 
 
     cD0x01cA 
-        Enables command abort (default). When enabled, if the user abort by 
-        either closing the dialog (top right button) or using the 
-        cDabort-commandcA the dialog command will also abort. If bit 0x01 is not 
-        set the command will not abort and cD$resultcA will be set to -1. 
+        Enables command abort (default), except cDosd-entrycA which ignores the 
+        setting of this bit. When enabled, if the user abort by either closing 
+        the dialog (top right button) or using the cDabort-commandcA the dialog 
+        command will also abort. If bit 0x01 is not set the command will not 
+        abort and cD$resultcA will be set to -1. 
 
     cD0x02cA 
         When set, flags that a dialog position has also been provided, extra 
         arguments cDx-poscA and cDy-poscA must also be given. By default the dialog is 
         placed under the mouse. 
-
-    cDosd-entrycA constructs a simple OSD entry dialog which prompts the user to 
-    type in a value. The value of the supplied variable is used as an initial 
-    entry value, the variable is set to the entered value when the user 
-    presses the "cGOkaycA" button. The size of the entry defaults to 30 characters 
-    if not specified by the user. The last optional argument cCtypecA sets the 
-    type of value being entered (e.g. file name, buffer name, etc) see flag cDhcA 
-    on the help page for lslm@ml(4)le for a list of entry types and the numerical 
-    value to be supplied. 
 
 
 cEcEEXAMPLE cEcA
@@ -26984,7 +27019,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslm%ftp-flags(5)le, lslmerf(8)le, lslmfind-file(2)le, lslmlist-registry(2)le. 
+    lslm%ftp-flags(5)le, lslmerf(8)le, lslmfind-file(2)le, lslmfile-op(2)le, lslmlist-registry(2)le. 
 
 ! 3 display-white-chars
 cEcENAME cEcA
@@ -28042,7 +28077,7 @@ $a
 cEcENOTES cEcA
 
 
-    cDuser-setupcA is a macro using lslmosd(2)le, defined in user.emf. 
+    cDuser-setupcA is a macro using lslmosd(2)le, defined in userstp.emf. 
 
 
 cEcESEE ALSO cEcA
@@ -32567,25 +32602,38 @@ $a
 
     lslm@mn(4)le. 
 
+!44 &cbind
 !44 &kbind
+!44 &nbind
 cEcENAME cEcA
 
 
-    &kbind - Return command key binding 
+    &cbind, &kbind, &nkind - Command/key binding operators 
 
 
 cEcESYNOPSIS cEcA
 
 
-    cD&kbindcA cCkeycA 
+    cD&cbindcA cCkeycA 
+    cD&kbindcA cCncA cCcommandcA 
+    cD&nbindcA cCkeycA 
 
 
 cEcEDESCRIPTION cEcA
 
 
-    cD&kbindcA returns the command bound to the given key sequence, cD&kbindcA can be 
+    cD&cbindcA returns the command bound to the given key sequence, cD&kbindcA can be 
     abbreviated to cD&kbicA. If the key is not bound then cD&kbindcA returns the 
     string "cCERRORcA". 
+
+    cD&nbindcA returns the numerical argument associated with the given key 
+    binding, cD&nbindcA can be abbreviated to cD&nbicA. If the key is not bound then 
+    cD&nbindcA returns the string "cCERRORcA", if the binding has no argument then an 
+    empty string (cG""cA) is returned. 
+
+    cD&kbindcA returns a key sequence bound to the given cCcommandcA with the given 
+    numerical argument cCncA. If no binding can be found then cD&kbindcA returns an 
+    empty string (cG""cA). 
 
 
 cEcEEXAMPLE cEcA
@@ -32596,9 +32644,15 @@ $a
 sB
         ml-write "Enter key: " 
         set-variable #l0 @cgk 
-        ml-write &spr "%s is bound to %s" #l0 &kbin #l0 
+        ml-write &spr "%s is bound to %s" #l0 &cbin #l0 
 
 sA
+
+cEcENOTES cEcA
+
+
+    In March 2001 cD&kbindcA was renamed cD&ckindcA and a new cD&nkindcA and cD&kbindcA added. 
+
 
 cEcESEE ALSO cEcA
 
@@ -37646,7 +37700,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmshell-command(2)le. 
+    lslmshell-command(2)le, lslmfile-op(2)le. 
 
 ! 5 $buffer-fmod
 ! 5 $global-fmod

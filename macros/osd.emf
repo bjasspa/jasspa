@@ -22,9 +22,9 @@
 ;        increment the value of .osd.next
 ;
 ; define some external macros which are used first.
-define-macro-file search   osd-find-tag osd-search osd-goto-line
-define-macro-file favorite osd-favorites
-define-macro-file insdate  osd-insert-date
+0 define-macro-file search   osd-find-tag osd-search osd-goto-line
+0 define-macro-file favorite osd-favorites
+0 define-macro-file insdate  osd-insert-date
 define-macro-file osdhelp  osd-help
 define-macro-file crosswd  cross-word
 ;
@@ -51,7 +51,9 @@ define-macro-file crosswd  cross-word
     !else
         osd 1 40 "D"
     !endif
-    !if &xse @cl "osd-[ru][en]do" 
+    !if &seq @cl "undo"
+        !jump 2
+    !elif &and &seq @cl "osd-redo" .undo.count
         osd 2 20  ""  "&Redo" f osd-redo
     !else
         osd 2 20  ""  "Redo"
@@ -93,7 +95,7 @@ define-macro-file crosswd  cross-word
 ; Handle the 'New' command. Create text documents called "newXX.txt"
 ; which will hold the new document. We assume it is a text file.
 ;
-0 define-macro osd-1-new
+0 define-macro osd-new-buffer
     set-variable #l0 1
     !repeat
         !force 0 find-buffer &spr "new%d.txt" #l0
@@ -250,7 +252,7 @@ define-macro-file crosswd  cross-word
 !emacro
 
 osd 1  0   "b"
-osd 1  10  ""   "&New"                f osd-1-new      ; Create a new document
+osd 1  10  ""   "&New"                f osd-new-buffer ; Create a new document
 osd 1  20  ""   "&Open       C-x C-f" f osd-file-open  ; Find a new file
 osd 1  30  "Md" "&Quick Open"        19
 osd 1  35  "Md" "&Favorites"         30 osd-favorites  ; Set up favorites
@@ -283,27 +285,40 @@ set-variable #l1 0
 ; MENU #2 - EDIT sub-menu
 ;
 0 define-macro osd-undo
-    !if &seq @cl "osd-undo" 
-        set-variable .osd.undo &add .osd.undo 1
+    !if &seq @cl "undo" 
+        set-variable .undo.count &add .undo.count 1
         set-variable @cl undo
     !else
-        set-variable .osd.undo 1
+        set-variable .undo.count 1
         set-variable @cl @cl
     !endif
     @# undo
-    set-variable @cc osd-undo
+    set-variable @cc undo
 !emacro
 0 define-macro osd-redo
     !if &seq @cl "osd-redo"
+        !if &not .undo.count
+            ml-write "[Nothing left to redo]"
+            !abort
+        !endif
         set-variable @cl undo
+    !elif &not &seq @cl "undo"
+        ml-write "[Undo was not the last operation]"
+        set-variable @cc void
+        !abort
+    !elif &les .undo.count 1
+        ml-write "[osd-undo must be used for osd-redo to work]"
+        set-variable @cc void
+        !abort
     !else
-        set-variable .osd.undo &sub 0 .osd.undo
+        set-variable .undo.count &sub 0 .undo.count
     !endif
     undo
-    !if &inc .osd.undo 1
+    !if &inc .undo.count 1
         set-variable @cc osd-redo
     !endif
 !emacro
+set-variable .undo.count 0
 osd 2  0   "b"
 osd 2  10  ""  "&Undo       C-x u"         1 osd-undo      ; Undo the last command
 osd 2  20  ""  "Redo"                                      ; Re-do the last osd-undo

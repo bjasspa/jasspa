@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Jon Green
 ;  Created       : Mon Sep 7 22:47:22 1998
-;  Last Modified : <010228.1017>
+;  Last Modified : <010307.1148>
 ;
 ;  Description   : Quick hack for the faq lists !!
 ;
@@ -105,6 +105,7 @@ define-macro ehf-doc-test
         !force regex-forward "^!.[2-5]"
     !done
     ml-write "[Processing Commands]"
+    find-buffer "*ehf-tmp*"
     set-variable $command-names ".*"
     !while &not &seq &set #l4 $command-names ""
         beginning-of-buffer

@@ -22,7 +22,7 @@
 ;  Copyright (c) 2001 JASSPA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-define-macro-file osd osd-1-new osd-save osd-save-as osd-close
+define-macro-file osd osd-new-buffer osd-save osd-save-as osd-close osd-undo osd-redo
 define-macro-file search osd-find-tag osd-search osd-goto-line
 define-macro-file osdhelp osd-help
 define-macro select-all
@@ -84,7 +84,7 @@ global-bind-key ifill-paragraph "C-j"
 global-bind-key lower-case-region "C-l"
 global-bind-key upper-case-region "S-C-l"
 global-bind-key set-alpha-mark "C-m"
-global-bind-key osd-1-new "C-n"
+global-bind-key osd-new-buffer "C-n"
 global-bind-key osd-file-open "C-o"
 global-bind-key print-buffer "C-p"
 global-bind-key save-buffers-exit-emacs "C-q"
@@ -95,7 +95,8 @@ global-bind-key yank "C-v"
 global-bind-key yank-rectangle "A-C-v"
 global-bind-key osd-close "C-w"
 global-bind-key kill-region "C-x"
-global-bind-key undo "C-z"
+global-bind-key osd-undo "C-z"
+global-bind-key osd-redo "A-C-z"
 global-bind-key split-window-vertically "C-+"
 global-bind-key delete-window "C--"
 

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Jun 13 18:01:56 1998
-;  Last Modified : <001002.1231>
+;  Last Modified : <010307.1143>
 ;
 ;  Description     Defines mouse opened dialogs
 ;
@@ -13,8 +13,8 @@
 ;  Copyright (c) 1999-2000 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; define some external macros which are used first.
-define-macro-file osd osd-1-buffer osd-close
-define-macro-file search osd-line-scheme
+0 define-macro-file osd osd-1-buffer osd-close
+0 define-macro-file search osd-line-scheme
 ;
 ; MENU #23 - MODE LINE pop-up menu
 ; The mode line pop-up menu is invoked when the mouse is right clicked
