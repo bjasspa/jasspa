@@ -1,4 +1,8 @@
 .\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1988-2002 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
 .Ls foo 
 .\".Li executetool3 foo
 .Le

@@ -1,5 +1,6 @@
 .\"*-*- nroff -*-
-.\" Copyright (c) 1999-2002 JASSPA.
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1999-2002 JASSPA (www.jasspa.com)
 .\"
 .\" Permission is granted to copy, distribute and/or modify this document
 .\" under the terms of the GNU Free Documentation License, Version 1.1
@@ -11,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.8 2002-01-06 19:22:16 jon Exp $
+.Id $Id: me.nrs,v 2.9 2002-01-11 21:58:43 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
