@@ -13,7 +13,6 @@
 0 define-macro mouse-mark-window
     set-variable #l0 $mouse-x
     set-variable #l1 $mouse-y
-    set-variable #l2 0
     ; go to the right line first
     !if &not &equ .mouse-event.y #l1
         !if &les #l1 $window-mode-line
