@@ -1,0 +1,316 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2003 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     Sun Jan 5 2003
+; Synopsis:    SGML Hook File
+; Authors:     Jon Green
+;
+define-macro fhook-sgml
+    set-variable $buffer-mask "luh1"
+    buffer-initialize "sgml"
+    buffer-initialize-hooks
+!emacro
+
+; buffer-initialize variables
+set-variable .fhook-sgml.setup &reg "/history" "fhook/sgml" "cdghinopsx"
+set-variable .fhook-sgml.setup-mask "acdeghikmnopstux"
+set-variable .fhook-sgml.comment  "|<!|>|-| - | - ||"
+;set-variable .fhook-sgml.command-flag  "|th|h|th|h|th|h|thb|thb|"
+;set-variable .fhook-sgml.command-name  "|||sgml-process-link||||sgml-show-buffer|sgml-toggle-mode|"
+;set-variable .fhook-sgml.command-nbind "|||||||||"
+;set-variable .fhook-sgml.command-kbind "|||||||C-c C-h|C-c C-i|"
+;set-variable .fhook-sgml.command-desc  "|Html Browser Mode||&Goto Link||Html Author Mode||Process Current Buffer|Toggle Indent To VB Mode|"
+
+!if &and &sin "h" .fhook-sgml.setup &band .hilight.flags 0x02 
+    !if &not &exist .hilight.sgml
+        set-variable .hilight.sgml   &pinc .hilight.next 1
+        set-variable .hilight.sgmlT  &pinc .hilight.next 1
+    !endif
+    0 hilight .hilight.sgml 3 200                      $global-scheme
+    hilight .hilight.sgml 0x80 "<\\w*" .hilight.sgmlT  .scheme.keyword
+    hilight .hilight.sgml 4 "</" ">" ""                .scheme.keyword
+    hilight .hilight.sgml 4 "<!--" "-->" ""            .scheme.comment
+    hilight .hilight.sgml 0 "&\\w+;"                   .scheme.variable
+    hilight .hilight.sgml 0x804 "\"" "\"" "\\"         .scheme.string
+
+    0 hilight .hilight.sgmlT 1                         $global-scheme
+    hilight .hilight.sgmlT 4  "=\\{\"" "\"" "\\"       .scheme.string
+    hilight .hilight.sgmlT 4  "=\\{" "\\}[ \t\n>]" ""  .scheme.string
+    hilight .hilight.sgmlT 0x80 ">" .hilight.sgml      .scheme.keyword
+    
+!endif
+
+!if &sin "d" .fhook-sgml.setup
+    !if &not &exist .hilight.sgml
+        set-variable .hilight.sgml   &pinc .hilight.next 1
+    !endif
+    ; Define the indentation tokens 
+    0 indent .hilight.sgml 1 20 
+    indent .hilight.sgml e "\"" "\"" "\\"
+    indent .hilight.sgml b "<" ">"
+    indent .hilight.sgml n "<variablelist>" 2 
+    indent .hilight.sgml o "</variablelist>" -2 
+    indent .hilight.sgml n "<orderedlist[^>]*>" 2 
+    indent .hilight.sgml o "</orderedlist>" -2 
+    indent .hilight.sgml n "<varlistentry>" 2 
+    indent .hilight.sgml o "</varlistentry>" -2 
+    indent .hilight.sgml n "<listitem>" 2 
+    indent .hilight.sgml o "</listitem>" -2 
+    indent .hilight.sgml n "<refsect1>" 2 
+    indent .hilight.sgml o "</refsect1>" -2 
+    indent .hilight.sgml n "<refsect2>" 2 
+    indent .hilight.sgml o "</refsect2>" -2 
+    indent .hilight.sgml n "<refmeta>" 2 
+    indent .hilight.sgml o "</refmeta>" -2 
+    indent .hilight.sgml n "<refnamediv>" 2 
+    indent .hilight.sgml o "</refnamediv>" -2 
+    indent .hilight.sgml n "<indexterm>" 2 
+    indent .hilight.sgml o "</indexterm>" -2 
+    indent .hilight.sgml n "<cmdsynopsis[^>]*>" 2 
+    indent .hilight.sgml o "</cmdsynopsis>" -2 
+    indent .hilight.sgml n "<refsynopsisdiv>" 2 
+    indent .hilight.sgml o "</refsynopsisdiv>" -2 
+    indent .hilight.sgml n "<table[^>]*>" 2 
+    indent .hilight.sgml o "</table>" -2 
+    indent .hilight.sgml n "<refentry [^>]*>" 2 
+    indent .hilight.sgml o "</refentry>" -2 
+    ; Tables
+    indent .hilight.sgml n "<table[^>]*>" 2 
+    indent .hilight.sgml o "</table>" -2 
+    indent .hilight.sgml n "<tfoot[^>]*>" 2 
+    indent .hilight.sgml o "</tfoot>" -2 
+    indent .hilight.sgml n "<thead[^>]*>" 2 
+    indent .hilight.sgml o "</tbody>" -2 
+    indent .hilight.sgml n "<tbody[^>]*>" 2 
+    indent .hilight.sgml o "</thead>" -2 
+    indent .hilight.sgml n "<tgroup[^>]*>" 2 
+    indent .hilight.sgml o "</tgroup>" -2 
+    indent .hilight.sgml n "<row[^>]*>" 2 
+    indent .hilight.sgml o "</row>" -2 
+    
+    indent .hilight.sgml o "</td>" -2 
+    indent .hilight.sgml n "<td[^>]*>" 2 
+    indent .hilight.sgml o "</select>" -2 
+    indent .hilight.sgml n "<select[^>]*>" 2 
+    indent .hilight.sgml n "<%" 2 
+    indent .hilight.sgml o "%>" -2 
+!endif
+
+0 define-macro sgml-spell-word
+    ; simply skip any text in a <..> token - put a 5 line limit on it
+    set-variable #l0 $window-col
+    set-variable #l1 $window-line
+    -2 show-region
+    set-variable #l2 $window-col
+    !force -5 regex-backward "[<>]"
+    !if $status
+        set-variable #l3 @wc
+        set-variable $window-line #l1
+        set-variable $window-col #l0
+        !if &seq #l3 "<"
+            ; this is a <..> token, skip all if spelling buffer (@# != 0)
+            !if @#
+                !force search-forward ">"
+                set-variable .spell.check-word ""
+            !endif
+            !return
+        !endif
+    !endif
+    ; must redefine the region as the search blows it away
+    set-variable $window-col #l2
+    -3 show-region
+    set-variable $window-col #l0
+    3 show-region
+    !abort
+!emacro
+
+define-macro sgml-forward-tag
+    forward-char
+    set-variable #l9 &bmod "magic"
+    1 buffer-mode "magic"
+    !force search-forward "[<>]"
+    !if &not $status
+        end-of-buffer
+        !force backward-char
+    !else
+        backward-char
+        !if &seq @s0 ">"
+            forward-char
+        !endif
+    !endif
+    &cond #l9 1 -1 buffer-mode "magic"
+!emacro
+
+define-macro sgml-backward-tag
+    backward-char
+    set-variable #l9 &bmod "magic"
+    1 buffer-mode "magic"
+    !force search-backward "[<>]"
+    !if &not $status
+        beginning-of-buffer
+    !else
+        forward-char
+        !if &seq @s0 "<"
+            backward-char
+        !endif
+    !endif
+    &cond #l9 1 -1 buffer-mode "magic"
+!emacro
+
+; n sgml-find-tag "name"
+; If n is 0 then the search starts at the top of the buffer
+define-macro sgml-find-tag
+    !force set-variable #l0 @1
+    !if &not $status
+        set-variable #l0 @ml "Find SGML Tag"
+    !endif
+    !if &not @#
+        beginning-of-buffer
+    !endif
+    set-variable #l9 &bmod "exact"
+    -1 buffer-mode "exact"
+    !force search-forward &cat "<" #l0
+    set-variable #l1 $status
+    &cond #l9 1 -1 buffer-mode "exact"
+    !if &not #l1
+        !if &seq @p ""
+            ml-write "[Tag not found]"
+        !endif
+        !abort
+    !endif
+!emacro
+
+; n sgml-insert-tag "name"
+; n is a bitwise flag where:
+;      0x01  insert </name> end tag
+;      0x02  ignore the current region
+;      0x04  leave cursor at end of start tag
+define-macro sgml-insert-tag
+    set-variable #l2 0
+    !if &not &band 0x02 @#
+        0 show-region
+        !if &equ &band $result 0x05 0x05
+            set-variable #l2 $result
+            3 show-region
+        !endif
+    !endif
+    !force set-variable #l0 @1
+    !if &not $status
+        set-variable #l0 @ml "Insert SGML Tag"
+    !endif
+    !if #l2
+        ; get the end of the current  region
+        &cond &band #l2 0x08 -2 2 show-region
+        set-variable #l3 $window-line
+        set-variable #l4 $window-col
+        &cond &band #l2 0x08 2 -2 show-region
+    !endif
+    set-position "\x81"
+    !force forward-char
+    !force sgml-backward-tag
+    !if &not $status
+        goto-position "\x81"
+    !elif &seq @wc "<"
+        !force sgml-forward-tag
+    !else
+        goto-position "\x81"
+    !endif
+    insert-string &spr "<%s>" #l0
+    !if &band @# 1
+        set-variable #l5 $window-line
+        set-variable #l6 $window-col
+        !if #l2
+            !if &equ $window-line #l3
+                set-variable $window-col &add #l4 &add &len #l0 2
+            !else
+                set-variable $window-line #l3
+                set-variable $window-col #l4
+            !endif
+            set-position "\x81"
+            !force forward-char
+            !force sgml-backward-tag
+            !if &not $status
+                goto-position "\x81"
+            !elif &seq @wc "<"
+                !force sgml-forward-tag
+            !else
+                goto-position "\x81"
+            !endif
+        !endif
+        set-variable #l1 $window-col
+        insert-string &spr "</%s>" #l0
+        !if &band @# 4
+            set-variable $window-line #l5
+            set-variable $window-col #l6
+        !else
+            set-variable $window-col #l1
+        !endif
+    !endif
+!emacro
+
+; n sgml-insert-attrib "name"
+; n is a bitwise flag where:
+;      0x01  search for existing value
+;      0x02  insert an =
+;      0x04  insert an =""
+define-macro sgml-insert-attrib
+    !force set-variable #l0 @1
+    !if &not $status
+        set-variable #l0 @ml "SGML Attribute"
+    !endif
+    0x5bf set-position "\x81"
+    !force sgml-backward-tag
+    !if &not &and $status &seq @wc "<"
+        0x0bf goto-position "\x81"
+        ml-write "[Error: Not in a tag]"
+        !abort
+    !endif
+    set-mark
+    !force sgml-forward-tag
+    !if &not $status
+        !jump 3
+    !elif &seq @wc "<"
+        backward-char
+        search-backward "\\S "
+        forward-char
+        !if &seq @wc " "
+            forward-char
+        !endif
+    !else
+        backward-char
+        !if &not &seq @wc ">"
+            forward-char
+        !endif
+    !endif
+    !if &band @# 1
+        copy-region
+        !if &xis @y &spr ".*\\s %s%s\\(.*\\)" #l0 &cond &band @# 2 "=\"?" ""
+            set-variable #l1 &len @s1
+            #l1 backward-char
+            -1 yank
+            0x500 goto-position "\x81"
+            !return
+        !endif
+        -1 yank
+    !endif
+    0x500 goto-position "\x81"
+    !if &not $window-col
+    !elif &not &seq &mid @wl &sub $window-col 1 1 " "
+        insert-space
+    !endif
+    insert-string #l0
+    !if &band @# 2
+        insert-string "="
+    !elif &band @# 4
+        insert-string "=\"\""
+        backward-char
+    !endif
+!emacro
+
+ml-write "[SGML file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "mysgml"
+    
