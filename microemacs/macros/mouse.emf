@@ -359,7 +359,7 @@
     !endif
 !emacro
 
-0 define-macro-file mouserec mouse-pick-rectangle mouse-drop-rectangle
+0 define-macro-file mouserec mouse-pick-rectangle mouse-drop-rectangle mouse-yank-rectangle
 0 define-macro-file mouseosd mouse-osd mouse-osd-multi
 0 define-macro-file findbuff osd-find-buffer
 

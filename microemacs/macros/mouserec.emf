@@ -49,13 +49,11 @@
         set-variable #l2 &sub $window-width 1
     !endif
     set-variable #l2 &add #l2 &sub $window-scroll-bar $window-width
-    !if &equ #l2 .mouse-event.x
-        !return
-    !elif &gre #l2 .mouse-event.x
-        set-variable #l3 &sub #l2 1
+    !if &gre #l2 .mouse-event.x
+        set-variable #l3 #l2
         set-variable #l2 .mouse-event.x
     !else
-        set-variable #l3 &sub .mouse-event.x 1
+        set-variable #l3 .mouse-event.x
     !endif
     !if &les &set #l0 &sub .mouse-drop-t1.sl $window-y-scroll 1
         set-variable #l0 1
@@ -94,7 +92,7 @@
     ; ensure the .mouse-event.x & .y variables are correct
     !force mouse-rectangle-mark
     set-variable #l4 &add $window-y-scroll &sub .mouse-event.y &sub &sub $window-mode-line $window-depth 1
-    set-variable #l5 &add $window-x-scroll &sub .mouse-event.x &add &sub $window-scroll-bar $window-width 1
+    set-variable #l6 &add $window-x-scroll &sub .mouse-event.x &sub $window-scroll-bar $window-width
     set-variable $delay-time 500
     set-variable $scroll .mouse-event.scroll
     !if @#
@@ -105,23 +103,29 @@
         1 buffer-mode undo
     !endif
     set-variable #l3 1
-    set-variable $window-line .mouse-drop-t1.sl
-    !force set-variable $window-acol .mouse-drop-t1.sc
-    !if &gre $window-acol .mouse-drop-t1.sc
-        backward-char
-        set-variable #l3 &add #l3 1
+    !if &les #l6 .mouse-drop-t1.sc
+        set-variable #l5 &add .mouse-drop-t1.sc 1
+    !else
+        set-variable #l5 .mouse-drop-t1.sc
+        set-variable #l6 &add #l6 1
     !endif
-    !if &les $window-acol .mouse-drop-t1.sc
-        &sub .mouse-drop-t1.sc $window-acol insert-space @mna
-    !endif
-    set-mark
-    set-variable $window-line #l4
+    !force set-variable $window-line .mouse-drop-t1.sl
     !force set-variable $window-acol #l5
     !if &gre $window-acol #l5
         backward-char
+        set-variable #l3 &add #l3 1
     !endif
     !if &les $window-acol #l5
         &sub #l5 $window-acol insert-space @mna
+    !endif
+    set-mark
+    !force set-variable $window-line #l4
+    !force set-variable $window-acol #l6
+    !if &gre $window-acol #l6
+        backward-char
+    !endif
+    !if &les $window-acol #l6
+        &sub #l6 $window-acol insert-space @mna
         set-variable #l3 &add #l3 1
     !endif
     kill-rectangle @mna
@@ -134,3 +138,9 @@
     !endif
     1 screen-update
 !emacro
+
+0 define-macro mouse-yank-rectangle
+    yank-rectangle @mna
+    set-variable @cc yank-rectangle
+!emacro
+
