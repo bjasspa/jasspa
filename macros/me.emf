@@ -41,7 +41,6 @@
 !endif
 ;
 ; Define extern file macros first
-0 define-macro-file etfinsrt
 0 define-macro-file scheme scheme
 0 define-macro-file langutl spell-rules-init
 0 define-macro-file osd osd-main osd-dialog osd-xdialog osd-entry
@@ -70,6 +69,7 @@ define-macro-file pagefile page-file page-bfile
 define-macro-file zfile find-zfile zfile-setup
 define-macro-file gentags generate-tags-file
 define-macro-file dmf display-matching-fence
+define-macro-file etfinsrt insert-template
 define-macro-file schemosd scheme-editor
 define-macro-file mouseosd context-menu
 define-macro-file printstp print-setup
@@ -262,12 +262,13 @@ add-file-hook ".psf"                                          fhook-psf
 add-file-hook ".spec"                                         fhook-spec 
 add-file-hook ".sl"                                           fhook-slang
 add-file-hook ".au3"                                          fhook-au3
+add-file-hook ".mod"                                          fhook-mod2
 ; Add magic hooks
  1 add-file-hook "^#![ \t]*/.*sh"                fhook-shell  ; UNIX shell files
  1 add-file-hook "^#![ \t]*/.*perl"              fhook-perl   ; UNIX perl script
  1 add-file-hook "^#![ \t]*/.*wish"              fhook-tcl    ; tcl, tk & tix files
  1 add-file-hook "^#![ \t]*/.*awk"               fhook-awk    ; awk scripts
- 1 add-file-hook "^#![ \t]*/.*env[ \t]+python"   fhook-python ; Python file
+ 1 add-file-hook "^#![ \t]*/.*python"            fhook-python ; Python file
  4 add-file-hook "^[ \t]*exec[ \t]*tclsh"        fhook-tcl    ; TCL shell script
  1 add-file-hook "^#VRML"                        fhook-vrml   ; VRML or wrl files
  1 add-file-hook "^#Inventor"                    fhook-vrml   ; Use the VRML hook for iv files
