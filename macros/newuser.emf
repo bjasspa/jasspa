@@ -383,8 +383,11 @@
     !endif
     insert-string "\n"
     insert-string "Use \"Help -> User Setup\" from the menu bar or \"esc x user-setup\"\n"
-    insert-string "from the command line to configure other preferences.\n"
+    insert-string "from the command line to configure other preferences. The preferences\n"
+    insert-string "include emulation modes for:\n"
     insert-string "\n"
+    insert-string "    MicroEmacs v3.8, NEdit, Windows CUA and GNUEmacs.\n"
+    insert-strinf "\n"
     insert-string "Press any key to Continue:\n"
     -1 recenter
     2 screen-update

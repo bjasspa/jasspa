@@ -1,0 +1,23 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2004 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     Sun Oct 24 12:52:06 2004
+; Synopsis:    MicroEmacs GNU Emacs emulation
+; Authors:     Jon Green
+;
+; Rebind the keys according to the GNU Emacs key binding. We cannot
+; reproduced all of the bindings literally (obviously otherwise MicroEmacs
+; will be huge) but retain the best compatibility that we can. 
+
+; Kill should kill to the end of line only, add this with "line" mode.
+add-global-mode "line"
+
+global-bind-key "S-delete" kill-region
+; All bindings to "delete" map to backspace.
+global-bind-key "delete"   backward-delete-char
+
+global-bind-key "A-left" backward-word
+global-bind-key "A-right" forward-word
+
