@@ -2,24 +2,24 @@
 #
 #  System        : MicroEmacs
 #  Module        : Package Build script.
-#  Object Name   : $RCSfile: loc_depot_11.sh,v $
+#  Object Name   : $RCSfile: loc_depot_10.sh,v $
 #  Revision      : $Revision: 1.1 $
-#  Date          : $Date: 2003-08-17 14:08:02 $
+#  Date          : $Date: 2004-02-06 23:39:20 $
 #  Author        : $Author: jon $
 #  Created By    : <unknown>
 #  Created       : Sun Aug 17 12:58:23 2003
-#  Last Modified : <030817.1441>
+#  Last Modified : <030817.1453>
 #
-# Rules to build the HPUX 11.xx depot file. We build the executable only.
+# Rules to build the HPUX 10.xx depot file. We build the executable only.
 #
 MKDIR=mkdir
 DIRECTORIES="microemacs bin"
 SEARCH_PATH="/usr/local/microemacs"
-BASEDIR="loc11"
-BASEFILESET="me.ehf.gz meicons.tar.gz memacros.tar.gz mesrc.tar.gz mehpux11.gz nehpux11.gz"
+BASEDIR="loc10"
+BASEFILESET="me.ehf.gz meicons.tar.gz memacros.tar.gz mesrc.tar.gz mehpux10.gz nehpux10.gz"
 # Set to "mak" for native or "gmk" for GCC
 PLATFORM=`uname`
-MAKEBAS=hpux11
+MAKEBAS=hpux10
 CCMAK=gmk
 #
 # Test for the starting files.
@@ -45,14 +45,14 @@ done
 # Build me
 #
 if [ ! -f ${BASEDIR}/bin/me ] ; then
-    gunzip -c mehpux11.gz > ${BASEDIR}/bin/me
+    gunzip -c mehpux10.gz > ${BASEDIR}/bin/me
     chmod 0555 ${BASEDIR}/bin/me
 fi
 #
 # Build ne
 #
 if [ ! -f ${BASEDIR}/bin/ne ] ; then
-    gunzip -c nehpux11.gz > ${BASEDIR}/bin/ne
+    gunzip -c nehpux10.gz > ${BASEDIR}/bin/ne
     chmod 0555 ${BASEDIR}/bin/ne
 fi
 #
@@ -78,11 +78,11 @@ fi
 # Build the ".prj" file.
 #
 echo "As root run the following command to build the depot"
-echo '/usr/sbin/swpackage -d "| /usr/contrib/bin/gzip -c > jasspame-loc-0212-11.00.depot.gz" -x target_type=tape -s loc_depot_11.psf'
+echo '/usr/sbin/swpackage -d "| /usr/contrib/bin/gzip -c > jasspame-loc-0212-10.20.depot.gz" -x target_type=tape -s loc_depot_10.psf'
 echo ""
 echo "To install:-"
-echo "/usr/contrib/bin/gunzip -c jasspame-loc-0212-11.00.depot.gz > jasspame-loc-0212-11.00.depot"
-echo "/usr/sbin/swinstall -s `pwd`/jasspame-loc-0212-11.00.depot jasspame"
+echo "/usr/contrib/bin/gunzip -c jasspame-loc-0212-10.20.depot.gz > jasspame-loc-0212-10.20.depot"
+echo "/usr/sbin/swinstall -s `pwd`/jasspame-loc-0212-10.20.depot jasspame"
 echo ""
 echo "To subsequently remove:-"
 echo "/usr/sbin/swremove jasspame"
