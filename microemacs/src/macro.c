@@ -45,7 +45,7 @@ startKbdMacro(int f, int n)
     kbdptr = &lkbdptr[0];
     kbdlen = 0 ;
     kbdmode = meRECORD;
-    addModeToWindows(WFMODE) ;  /* and update ALL mode lines */
+    frameAddModeToWindows(WFMODE) ;  /* and update ALL mode lines */
     return meTRUE ;
 }
 
@@ -60,7 +60,7 @@ endKbdMacro(int f, int n)
         return meTRUE ;
     if (kbdmode == meRECORD)
     {
-        addModeToWindows(WFMODE) ;  /* and update ALL mode lines */
+        frameAddModeToWindows(WFMODE) ;  /* and update ALL mode lines */
         mlwrite(0,(meUByte *)"[End macro]");
         kbdmode = meSTOP;
 
@@ -454,7 +454,7 @@ try_again:
             mlwrite(MWABORT,(meUByte *)"[Can't find help on %s%s]",item,sect);
         return meABORT ;
     }
-    if((wp = wpopup(BhelpN,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR))) == NULL)
+    if((wp = meWindowPopup(BhelpN,BFND_CREAT|BFND_CLEAR|WPOP_USESTR,NULL)) == NULL)
         return meFALSE ;
     if((sectLen == 0) && (lp->text[2] != ' '))
     {
@@ -734,7 +734,7 @@ insMacro(int f, int n)
                 wp->dotLineNo += nol ;
             if(wp->markLineNo >= lineNo)
                 wp->markLineNo += nol ;
-            wp->flag |= WFMAIN|WFMOVEL ;
+            wp->updateFlags |= WFMAIN|WFMOVEL ;
         }
     }
     meFrameLoopEnd() ;

@@ -252,7 +252,7 @@ findTagExec(int nn, meUByte tag[])
     else if(findTagSearch(tag, file, fpatt) != meTRUE)
         return meFALSE ;
     
-    if((nn & 0x01) && (wpopup(NULL,WPOP_MKCURR) == NULL))
+    if((nn & 0x01) && (meWindowPopup(NULL,WPOP_MKCURR,NULL) == NULL))
         return meFALSE ;
     if(findSwapFileList(file,(BFND_CREAT|BFND_MKNAM),0) != meTRUE)
         return mlwrite(MWABORT,(meUByte *)"[Can't find %s]", file);
@@ -267,12 +267,12 @@ findTagExec(int nn, meUByte tag[])
         if(ee == '?')
         {
             flags = ISCANNER_BACKW|ISCANNER_PTBEG|ISCANNER_MAGIC|ISCANNER_EXACT ;
-            gotoeob(meTRUE, 0);
+            windowGotoEob(meTRUE, 0);
         }            
         else
         {
             flags = ISCANNER_PTBEG|ISCANNER_MAGIC|ISCANNER_EXACT ;
-            gotobob(meTRUE, 0);
+            windowGotoBob(meTRUE, 0);
             if(ee != '/')
             {
                 ee = '\0' ;
@@ -357,10 +357,10 @@ findTag(int f, int n)
         
 	/*---	Go to the start of the word. */
 
-        while(WbackChar(frameCur->windowCur,1) != meFALSE)	/* Back up */
+        while(meWindowBackwardChar(frameCur->windowCur,1) != meFALSE)	/* Back up */
             if(inWord() == meFALSE)
             {
-                WforwChar(frameCur->windowCur, 1);		/* Back into the word */
+                meWindowForwardChar(frameCur->windowCur, 1);		/* Back into the word */
                 break ;
             }
         
@@ -375,7 +375,7 @@ findTag(int f, int n)
                 i = 0;	/* Too big !! */
                 break;	/* Break out */
             }
-            WforwChar(frameCur->windowCur, 1);
+            meWindowForwardChar(frameCur->windowCur, 1);
         }
         tag[i] = 0;			/* End of string */
         

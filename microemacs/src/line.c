@@ -121,7 +121,7 @@ bchange(void)
            (mlyesno((meUByte *)"File changed on disk, really edit") != meTRUE))
             return ctrlg(meTRUE,1) ;
         meModeSet(frameCur->bufferCur->mode,MDEDIT);
-        addModeToWindows(WFMODE) ;
+        frameAddModeToWindows(WFMODE) ;
 #if MEOPT_UNDO
         if(meModeTest(frameCur->bufferCur->mode,MDUNDO))
         {
@@ -164,13 +164,13 @@ lchange(register int flag)
         while (wp != NULL)
         {
             if(wp->buffer == frameCur->bufferCur)
-                wp->flag |= flag;
+                wp->updateFlags |= flag;
             wp = wp->next;
         }
         meFrameLoopEnd() ;
     }
     else
-        frameCur->windowCur->flag |= flag;              /* update current window */
+        frameCur->windowCur->updateFlags |= flag;              /* update current window */
 }
 
 /*
@@ -706,7 +706,7 @@ mldelete(meInt noChrs, meUByte *kstring)
                     else
                         wp->markOffset = (meUShort) ii ;
                 }
-                wp->flag |= WFMAIN ;
+                wp->updateFlags |= WFMAIN ;
             }
             wp = wp->next;
         }
@@ -901,12 +901,14 @@ mldelete(meInt noChrs, meUByte *kstring)
             fslp = felp ;
         }
     }
+    slp->flag |= meLINE_CHANGED ;
+    
     /* correct the buffers number of lines */
     frameCur->bufferCur->lineCount -= elno-slno ;
     
     /* Last thing to do is update the windows */
-    slp->flag |= meLINE_CHANGED ;
-    wp = frameCur->windowList ;
+    meFrameLoopBegin() ;
+    wp = loopFrame->windowList;
     while (wp != NULL)
     {
         if(wp->buffer == frameCur->bufferCur)
@@ -946,10 +948,12 @@ mldelete(meInt noChrs, meUByte *kstring)
                     wp->markLineNo = slno ;
                 }
             }
-            wp->flag |= WFMOVEL|WFMAIN|WFSBOX ;
+            wp->updateFlags |= WFMOVEL|WFMAIN|WFSBOX ;
         }
         wp = wp->next;
     }
+    meFrameLoopEnd() ;
+    
     /* return the number of chars left to delete, usually 0 */
     return nn ;
 }
@@ -1079,17 +1083,21 @@ yankfrom(struct meKill *pklist)
             {
                 if(ii)
                 {
+                    meAssert(meLineGetChar(frameCur->windowCur->dotLine,meLineGetLength(frameCur->windowCur->dotLine)) == '\0') ;
                     len += ii ;
                     if((dd = lmakespace(ii))==NULL)	/* Make space for the characters */
                         return -1 ;		/* Error !!! */
+                    meAssert(meLineGetChar(frameCur->windowCur->dotLine,meLineGetLength(frameCur->windowCur->dotLine)) == '\0') ;
                     lchange(WFMAIN) ;	        /* Declare editied buffer */
                     for( ; ii ; ii--)
                         *dd++ = *tt++ ;
                 }
                 if(cc == '\0')
                     break ;
+                    meAssert(meLineGetChar(frameCur->windowCur->dotLine,meLineGetLength(frameCur->windowCur->dotLine)) == '\0') ;
                 if(lnewline() != meTRUE)
                     return -1 ;
+                    meAssert(meLineGetChar(frameCur->windowCur->dotLine,meLineGetLength(frameCur->windowCur->dotLine)) == '\0') ;
                 if(cc == meNLCHAR)
                     tt++ ;
                 cutLen = 0xfff0 ;
@@ -1118,7 +1126,7 @@ yank(int f, int n)
     if(n == 0)
     {
         /* place the mark on the current line */
-        setMark(meFALSE, meFALSE);
+        windowSetMark(meFALSE, meFALSE);
         /* remember that this was a yank command */
         thisflag = meCFYANK ;
         return meTRUE ;
@@ -1157,7 +1165,7 @@ yank(int f, int n)
         return ret ;
 
     /* place the mark on the current line */
-    setMark(meFALSE, meFALSE);
+    windowSetMark(meFALSE, meFALSE);
 
     /* for each time.... */
     while(n--)
@@ -1222,7 +1230,7 @@ reyank(int f, int n)
      * Set the mark here so that we can delete the region in the next
      * reyank command.
      */
-    setMark(meFALSE, meFALSE);
+    windowSetMark(meFALSE, meFALSE);
 
     /*
      * If we've fallen off the end of the klist and there are no more

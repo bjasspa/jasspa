@@ -233,7 +233,7 @@ setBufferContext(meBuffer *bp)
     if((tbp = frameCur->bufferCur) != bp)
     {
 	storeWindBSet(tbp,frameCur->windowCur) ;
-        flag = frameCur->windowCur->flag ;
+        flag = frameCur->windowCur->updateFlags ;
         vertScroll = frameCur->windowCur->vertScroll ;
         tbp->windowCount-- ;
 	frameCur->bufferCur = frameCur->windowCur->buffer = bp ;
@@ -364,7 +364,7 @@ setBufferContext(meBuffer *bp)
 	frameCur->bufferCur = frameCur->windowCur->buffer = tbp ;
         tbp->windowCount++ ;
         frameCur->windowCur->vertScroll = vertScroll ;
-        frameCur->windowCur->flag |= flag ;
+        frameCur->windowCur->updateFlags |= flag ;
 	restoreWindBSet(frameCur->windowCur,tbp) ;
 	isWordMask = tbp->isWordMask ;
     }    
@@ -417,7 +417,7 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
     wp->buffer = bp ;
     wp->horzScrollRest = 0 ;
     wp->horzScroll = 0 ;
-    wp->flag |= WFMODE|WFMAIN|WFSBOX ;
+    wp->updateFlags |= WFMODE|WFMAIN|WFSBOX ;
 
     if(wp == frameCur->windowCur)
     {
@@ -445,7 +445,7 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
 	    wp->markLineNo = 0;
         }            
 	if(lineno > 0)
-	    gotoLine(meTRUE,lineno) ;
+	    windowGotoLine(meTRUE,lineno) ;
     }
     else
     {
@@ -528,7 +528,7 @@ findBuffer(int f, int n)
 #if MEOPT_EXTENDED
 /*
  * Find a buffer into another window. This is an alternative to mapping
- * ^X2 (ie C-x 2) onto splitWindVert().
+ * ^X2 (ie C-x 2) onto windowSplitDepth().
  *
  *                                      Tony Bamford 31/8/86 tony@root.UUCP
  */
@@ -543,7 +543,7 @@ nextWndFindBuf(int f, int n)
 	return(s);
     if(n)
 	n = BFND_CREAT ;
-    if((wpopup(NULL,WPOP_MKCURR) == NULL) ||
+    if((meWindowPopup(NULL,WPOP_MKCURR,NULL) == NULL) ||
        ((bp=bfind(bufn,n)) == NULL))
 	return meFALSE ;
     return swbuffer(frameCur->windowCur, bp) ;
@@ -607,22 +607,41 @@ meBuffer *
 replacebuffer(meBuffer *oldbuf)
 {
     meBuffer *bp, *best=NULL, *next=NULL ;
-    int     histNo=-1, nextNo=-1 ;
+    int     histNo=-1, nextNo=-1, wc ;
     
     for(bp=bheadp ; bp != NULL;bp = bp->next)
     {
 	if((bp != oldbuf) && !meModeTest(bp->mode,MDHIDE))
 	{
-	    if((bp->windowCount == 0) && (bp->histNo > histNo))
-	    {
-		histNo = bp->histNo ;
-		best = bp ;
-	    }
-	    else if(nextNo <= bp->histNo)
-	    {
-		nextNo = bp->histNo ;
-		next = bp ;
-	    }
+	    if(bp->histNo > histNo)
+            {
+                wc = bp->windowCount ;
+#if MEOPT_MWFRAME
+                if(wc)
+                {
+                    /* check that the buffer is visible on the current frame */
+                    meWindow *wp ;
+                    for(wc = 0, wp = frameCur->windowList ; wp != NULL ; wp = wp->next)
+                    {
+                        if(wp->buffer == bp)
+                        {
+                            wc = 1 ;
+                            break ;
+                        }
+                    }
+                }
+#endif
+                if(wc == 0)
+                {
+                    histNo = bp->histNo ;
+                    best = bp ;
+                }
+                else if(nextNo <= bp->histNo)
+                {
+                    nextNo = bp->histNo ;
+                    next = bp ;
+                }
+            }
 	}
     }
     /*
@@ -687,7 +706,7 @@ resetBufferWindows(meBuffer *bp)
 	if(wp->buffer == bp)
 	{
             restoreWindBSet(wp,bp) ;
-	    wp->flag |= WFMOVEL|WFREDRAW|WFSBOX ;
+	    wp->updateFlags |= WFMOVEL|WFREDRAW|WFSBOX ;
 	}
 	wp = wp->next ;
     }   
@@ -1042,7 +1061,7 @@ changeBufName(int f, int n)     /*      Rename the current buffer       */
     meStrcpy(nn,bufn);   /* copy buffer name to structure */
     meFree(frameCur->bufferCur->name) ;
     frameCur->bufferCur->name = nn ;
-    addModeToWindows(WFMODE) ;
+    frameAddModeToWindows(WFMODE) ;
     linkBuffer(frameCur->bufferCur) ;
     
     return meTRUE ;
@@ -1232,7 +1251,7 @@ listBuffers (int f, int n)
     register meWindow    *wp ;
     register meBuffer    *bp ;
     
-    if((wp=wpopup(BbuffersN,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR))) == NULL)
+    if((wp=meWindowPopup(BbuffersN,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR),NULL)) == NULL)
 	return mlwrite(MWABORT,(meUByte *)"[Failed to create list]") ;
     bp = wp->buffer ;
     makelist(bp,f) ;
@@ -1499,7 +1518,7 @@ adjustMode(meBuffer *bp, int nn)  /* change the editor mode status */
 		meUndoRemove(bp) ;
 #endif
 		meModeClear(bp->mode,MDEDIT) ;
-		addModeToWindows(WFMODE) ;
+		frameAddModeToWindows(WFMODE) ;
 	    }
 	}
 	else if(func >= 0)
@@ -1597,7 +1616,7 @@ invalid_global:
     /* display new mode line */
     if(bp != NULL)
         /* and update all buffer window mode lines */
-        addModeToBufferWindows(bp,WFMODE) ;
+        meBufferAddModeToWindows(bp,WFMODE) ;
     
     return meTRUE ;
 }

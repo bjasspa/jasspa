@@ -153,11 +153,11 @@ meFrameChangeWidth(meFrame *frame, int ww)
     {
         meFrame *fc=frameCur ;
         frameCur = loopFrame ;
-        resizeAllWnd (meTRUE, -1);        /* Resize windows horizontally */
+        frameResizeWindows (meTRUE, -1);        /* Resize windows horizontally */
         frameCur = fc ;
     }
 #else
-    resizeAllWnd (meTRUE, -1);            /* Resize windows horizontally */
+    frameResizeWindows (meTRUE, -1);            /* Resize windows horizontally */
 #endif
     
     meFrameLoopEnd() ;
@@ -237,11 +237,11 @@ meFrameChangeDepth(meFrame *frame, int dd)
     {
         meFrame *fc=frameCur ;
         frameCur = loopFrame ;
-        resizeAllWnd (meTRUE, 1);             /* Resize windows vertically */
+        frameResizeWindows (meTRUE, 1);             /* Resize windows vertically */
         frameCur = fc ;
     }
 #else
-    resizeAllWnd (meTRUE, 1);             /* Resize windows vertically */
+    frameResizeWindows (meTRUE, 1);             /* Resize windows vertically */
 #endif
     
     meFrameLoopEnd() ;
@@ -418,19 +418,21 @@ meFrameInitWindow(meFrame *frame, meBuffer *buffer)
     frame->bufferCur   = buffer ;              /* Make this current    */
     frame->windowList  = wp ;
     frame->windowCur   = wp ;
-    frame->windowCount = 1 ;                   /* Number of windows */
+    frame->windowCount = 1 ;
     memset(wp,0,sizeof(meWindow)) ;
-    wp->width  = frame->width;               /* Window # columns     */
-    wp->depth  = frame->depth;               /* Window # rows        */
-    wp->modeLine    = lp ;
-    off->next    = NULL ;
+    /* Window # columns & rows */
+    wp->width = frame->width;
+    wp->depth = frame->depth;
+    wp->modeLine = lp ;
+    off->next = NULL ;
     wp->dotCharOffset= off ;
-    wp->buffer   = buffer ;
-    wp->dotLine   = buffer->baseLine ;
-    wp->flag   = WFMODE|WFRESIZE|WFSBAR;     /* Full + resize        */
-    buffer->windowCount++ ;                         /* Displayed.           */
-    fixWindowTextSize(wp) ;                    /* Fix the text window  */
-    meVideoAttach(&(frame->video), wp) ;       /* Attach to video      */
+    wp->buffer = buffer ;
+    wp->dotLine = buffer->baseLine ;
+    wp->updateFlags = WFMODE|WFRESIZE|WFSBAR;
+    /* Flag buffer as displayed. */
+    buffer->windowCount++ ;
+    meWindowFixTextSize(wp) ;
+    meVideoAttach(&(frame->video), wp) ;
     return meTRUE ;
 }
 
@@ -601,7 +603,7 @@ frameCreate(int f, int n)
     frameCur->next = frame ;
     frameCur = frame ;
     if(menuDepth)
-        menuWindow(1) ;
+        frameSetupMenuLine(1) ;
     sgarbf = meTRUE;                      /* Garbage the screen */
     
     return meTRUE ;

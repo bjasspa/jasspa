@@ -78,7 +78,7 @@
 
 /*
  * Move the cursor backward by "n" words. All of the details of motion are
- * performed by the "backChar" and "forwChar" routines. Error if you try to
+ * performed by the "windowBackwardChar" and "windowForwardChar" routines. Error if you try to
  * move beyond the buffers.
  */
 int
@@ -86,30 +86,30 @@ backWord(int f, int n)
 {
     if (n < 0)
         return (forwWord(f, -n));
-    if (WbackChar(frameCur->windowCur, 1) == meFALSE)
+    if (meWindowBackwardChar(frameCur->windowCur, 1) == meFALSE)
         return (meFALSE);
     while (n--)
     {
         while (inWord() == meFALSE)
         {
-            if (WbackChar(frameCur->windowCur, 1) == meFALSE)
+            if (meWindowBackwardChar(frameCur->windowCur, 1) == meFALSE)
                 return (meFALSE);
         }
         while (inWord() != meFALSE)
         {
-            if (WbackChar(frameCur->windowCur, 1) == meFALSE)
+            if (meWindowBackwardChar(frameCur->windowCur, 1) == meFALSE)
                 /* We can't move back any more cos we're at the start,
                  * BUT as we have moved and we are in the buffers first word, 
                  * we should succeed */
                 return meTRUE ;
         }
     }
-    return (WforwChar(frameCur->windowCur, 1));
+    return (meWindowForwardChar(frameCur->windowCur, 1));
 }
 
 /*
  * Move the cursor forward by the specified number of words. All of the motion
- * is done by "forwChar". Error if you try and move beyond the buffer's end.
+ * is done by "windowForwardChar". Error if you try and move beyond the buffer's end.
  */
 int
 forwWord(int f, int n)
@@ -120,12 +120,12 @@ forwWord(int f, int n)
     {
         while (inWord() == meFALSE)
         {
-            if (WforwChar(frameCur->windowCur, 1) == meFALSE)
+            if (meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
                 return (meFALSE);
         }
         while (inWord() != meFALSE)
         {
-            if (WforwChar(frameCur->windowCur, 1) == meFALSE)
+            if (meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
                 return (meFALSE);
         }
     }
@@ -150,7 +150,7 @@ upperWord(int f, int n)
     {
         while (inWord() == meFALSE) 
         {
-            if(WforwChar(frameCur->windowCur, 1) == meFALSE)
+            if(meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
                 return (meFALSE);
         }
         while (inWord() != meFALSE)
@@ -165,7 +165,7 @@ upperWord(int f, int n)
                 c = toggleCase(c) ;
                 meLineSetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset, c);
             }
-            if (WforwChar(frameCur->windowCur, 1) == meFALSE)
+            if (meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
                 return (meFALSE);
         }
     }
@@ -190,7 +190,7 @@ lowerWord(int f, int n)
     {
         while (inWord() == meFALSE) 
         {
-            if (WforwChar(frameCur->windowCur, 1) == meFALSE)
+            if (meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
                 return (meFALSE);
         }
         while (inWord() != meFALSE)
@@ -205,7 +205,7 @@ lowerWord(int f, int n)
                 c = toggleCase(c) ;
                 meLineSetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset, c);
             }
-            if (WforwChar(frameCur->windowCur, 1) == meFALSE)
+            if (meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
                 return (meFALSE);
         }
     }
@@ -231,7 +231,7 @@ capWord(int f, int n)
     {
         while (inWord() == meFALSE)
         {
-            if (WforwChar(frameCur->windowCur, 1) == meFALSE)
+            if (meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
                 return (meFALSE);
         }
         if (inWord() != meFALSE) {
@@ -245,7 +245,7 @@ capWord(int f, int n)
                 c = toggleCase(c) ;
                 meLineSetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset,c);
             }
-            if (WforwChar(frameCur->windowCur, 1) == meFALSE)
+            if (meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
                 return (meFALSE);
             while (inWord() != meFALSE)
             {
@@ -259,7 +259,7 @@ capWord(int f, int n)
                     c = toggleCase(c) ;
                     meLineSetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset,c);
                 }
-                if (WforwChar(frameCur->windowCur, 1) == meFALSE)
+                if (meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
                     return (meFALSE);
             }
         }
@@ -298,7 +298,7 @@ forwDelWord(int f, int n)
         delType = (inWord() == 0) ;
         while ((inWord() == 0) == delType) 
         {
-            if (WforwChar(frameCur->windowCur, 1) == meFALSE)
+            if (meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
                 break ;
             ++size;
         }
@@ -328,7 +328,7 @@ backDelWord(int f, int n)
     
     if(bchange() != meTRUE)               /* Check we can change the buffer */
         return meABORT ;
-    if (WbackChar(frameCur->windowCur, 1) == meFALSE)
+    if (meWindowBackwardChar(frameCur->windowCur, 1) == meFALSE)
         return (meFALSE);
     size = 0;
     while (n--)
@@ -340,16 +340,35 @@ backDelWord(int f, int n)
         while ((inWord() == 0) == delType) 
         {
             ++size;
-            if ((moveForw=WbackChar(frameCur->windowCur, 1)) == meFALSE)
+            if ((moveForw=meWindowBackwardChar(frameCur->windowCur, 1)) == meFALSE)
                 break ;
         }
     }
-    if (moveForw && (WforwChar(frameCur->windowCur, 1) == meFALSE))
+    if (moveForw && (meWindowForwardChar(frameCur->windowCur, 1) == meFALSE))
         return (meFALSE);
     return (ldelete(size,(f) ? 2:3));
 }
 
 #if MEOPT_WORDPRO
+
+#define FILL_LEFT    0x0001             /* Left fill                    */
+#define FILL_RIGHT   0x0002             /* Right fill                   */
+#define FILL_BOTH    0x0004             /* Both fill                    */
+#define FILL_CENTRE  0x0008             /* Center fill                  */
+#define FILL_NONE    0x0010             /* None fill                    */
+#define FILL_TMASK   0x001f             /* Type mask for fill           */
+#define FILL_INDENT  0x0020             /* Do Indented fill             */
+#define FILL_FORCE   0x0040             /* Forced line output           */
+#define FILL_DOT     0x0080             /* Last character was a period. */
+#define FILL_EOP     0x0100             /* End of paragraph detected    */
+#define FILL_FIRST   0x0200             /* First word ? (needs no space */
+#define FILL_JUSTIFY 0x0400             /* Status of the justify flag   */
+#define FILL_AUTO    0x0800             /* Automatic fill               */
+#define FILL_LINE    0x1000             /* Fill to a line               */
+#define FILL_MARGIN  0x2000             /* Fill to margin (AUTO+LINE)   */
+#define FILL_INDALL  0x4000             /* Indent all                   */
+#define FILL_INDNVR  0x8000             /* Never indent                 */
+
 /* Definitions for the anchor types */
 #define ANCHOR_CLEAR      0x00          /* Clear anchors */
 #define ANCHOR_POINT      0x01          /* Remember point */
@@ -621,7 +640,7 @@ gotoAnchor (int f, int n)
                     frameCur->windowCur->dotOffset = lino;
                     frameCur->windowCur->dotLineNo = linl;
                     lchange(WFMOVEC|WFMAIN);/* New line has changed */
-                    frameCur->windowCur->flag |= WFMOVEL ;
+                    frameCur->windowCur->updateFlags |= WFMOVEL ;
                     if ((mm &= ~ANCHOR_POINT) == 0)
                         break;
                 }
@@ -651,9 +670,9 @@ gotoAnchor (int f, int n)
                 frameCur->windowCur->dotLine = inp;
                 frameCur->windowCur->dotOffset = ino;
                 frameCur->windowCur->dotLineNo = inl;
-                frameCur->windowCur->flag |= WFMOVEL ;
+                frameCur->windowCur->updateFlags |= WFMOVEL ;
                 lchange(WFMOVEC|WFMAIN);/* New line has changed */
-                frameCur->windowCur->flag |= WFMOVEL ;
+                frameCur->windowCur->updateFlags |= WFMOVEL ;
                 if ((mm &= ~ANCHOR_POINT) == 0)
                     break;
             }
@@ -773,55 +792,6 @@ wrapWord(int f, int n)
 }
 
 
-#if 0
-/* 
- * removeTabs
- * This is a helper function for fillPara. It strips out the tabs in the 
- * line leading up to doto and replaces them with tabs. Additionally collects
- * the continuation line leader, returning a count of the leader depth to 
- * the caller. 
- */
-
-static int
-removeTabs (meUByte *iptr, int logUndo)
-{
-    int	ilength;                        /* length of the leader. */
-    int	ii;                             /* Local loop counter */
-    
-    ilength = 0;
-    for (ii = 0; ii < frameCur->windowCur->dotOffset; ii++)
-    {
-        /* Expand TAB characters to spaces. */
-        if (TAB == meLineGetChar(frameCur->windowCur->dotLine, ii))
-        {
-            int temp_doto;
-            int jj;
-            
-            /* Get expansion width of TAB */ 
-            jj = next_tab_pos (ilength);
-            temp_doto = frameCur->windowCur->dotOffset + jj - 1;
-            
-            /* Replace the TAB with equivelent SPACE's */
-            frameCur->windowCur->dotOffset = ii;
-            ldelete (1L, logUndo);
-            linsert (jj, ' ');
-#if MEOPT_UNDO
-            if (logUndo)
-                meUndoAddInsChars(jj) ;
-#endif
-            frameCur->windowCur->dotOffset = temp_doto;
-        }
-        
-        /* Hive away the blanking for line continuation */
-        ilength++;
-        if (iptr != NULL)
-            *iptr++ = ' ';
-    }
-    if (iptr != NULL)
-        *iptr = '\0';                   /* Terminate the string */
-    return (ilength);                   /* Return the string length */
-}
-#endif
 
 static int
 countGaps(void)
@@ -1089,9 +1059,10 @@ finished:
  * TABS are also bogus here !!
  */
 
-static int
-lookahead(int autoDetect)
+static meInt
+lookahead(meInt fillState)
 {
+    int status;                         /* Status of command. */
     int	ii;                             /* Loop counter */
     int	limit;		                /* Limit */
     char c;                             /* Current character */
@@ -1099,7 +1070,7 @@ lookahead(int autoDetect)
     
     /* Nothing to do if there are no paragraph markers */
     if (fillbullet == NULL)
-        return (0);
+        return fillState ;
     limit = frameCur->windowCur->dotOffset+fillbulletlen;/* Define the limit of search */
     if (limit > meLineGetLength(frameCur->windowCur->dotLine))
         limit = meLineGetLength (frameCur->windowCur->dotLine);
@@ -1119,15 +1090,17 @@ lookahead(int autoDetect)
                     break;
             }
             
+            /* flag that we will have to prompt the user */
+            status = 1 ;
+            
             /* If we are automatically detecting then try to make a 
              * sensible decision on the paragraph indentation without
              * troubling the user */
-            if (autoDetect != 0)
+            if (fillState & FILL_AUTO)
             {
                 meLine *temp_dotp;        /* Save our current line */
                 
                 /* Move to the next line and scan it */
-                autoDetect = 0;         /* Assume a fail status */
                 temp_dotp = frameCur->windowCur->dotLine;  
                 frameCur->windowCur->dotLine = meLineGetNext (frameCur->windowCur->dotLine);
                 if (frameCur->windowCur->dotLine != frameCur->bufferCur->baseLine)	/* EOF  ?? */
@@ -1152,49 +1125,67 @@ lookahead(int autoDetect)
                         ((jj == jlen) && (meLineGetLength(temp_dotp) <= (meUShort) fillcol)))
                     {
                         frameCur->windowCur->dotOffset = ii; /* Assume position 'i' */
-                        autoDetect = 1;     /* Disable prompt */
+                        status = 0;     /* Disable prompt */
                     }
                 }
                 /* Restore previous position */
                 frameCur->windowCur->dotLine = temp_dotp;
             }
             
-            /* If auto detect is disabled then manually prompt the user
+            /* If auto detect is disabled or failed then manually prompt the user
              * for the indented position. */
-            if (autoDetect == 0)
+            if(status)
             {
                 short temp_doto;        /* Temporary character position */
-                int   status;           /* Status of command. */
                 
                 temp_doto = frameCur->windowCur->dotOffset;
                 frameCur->windowCur->dotOffset = ii;
                 
-                if((status = mlCharReply((meUByte *)"Indent to <<<<<<<<<< (yn)? ",mlCR_QUIT_ON_USER|mlCR_LOWER_CASE,(meUByte *)"yn",NULL)) == -2)
+                if(fillState & FILL_INDALL)
+                    status = 'y' ;
+                else if(fillState & FILL_INDNVR)
+                    status = 'n' ;
+                else
                 {
-                    meUByte scheme=(frameCur->bufferCur->scheme/meSCHEME_STYLES) ;
+                    if((status = mlCharReply((meUByte *)"Indent to <<<<<<<<<< ? ",mlCR_QUIT_ON_USER|mlCR_LOWER_CASE,(meUByte *)"ynav",NULL)) == -2)
+                    {
+                        meUByte scheme=(frameCur->bufferCur->scheme/meSCHEME_STYLES) ;
             
-                    /* Force an update of the screen to to ensure that the user
-                     * can see the information in the correct location */
-                    update (meTRUE);
-                    pokeScreen(0x10,frameCur->mainRow,frameCur->mainColumn,&scheme,(meUByte *)"<<<<<<<<<<") ;
-                    status = mlCharReply((meUByte *)"Indent to <<<<<<<<<< (yn)? ",mlCR_LOWER_CASE,(meUByte *)"yn",NULL) ;
-                    mlerase(0);
+                        /* Force an update of the screen to to ensure that the user
+                         * can see the information in the correct location */
+                        update (meTRUE);
+                        pokeScreen(0x10,frameCur->mainRow,frameCur->mainColumn,&scheme,(meUByte *)"<<<<<<<<<<") ;
+                        status = mlCharReply((meUByte *)"Indent to <<<<<<<<<< ? ",mlCR_LOWER_CASE,(meUByte *)"ynav",
+                                             (meUByte *)"(Y)es (N)o (A)ll Ne(v)er (^G)Abort ? ") ;
+                        mlerase(0);
+                    }
+                    if (status == -1)
+                    {
+                        frameCur->windowCur->dotOffset = temp_doto;	/* Restore */
+                        return -1 ;
+                    }
+                    if(status == 'a')
+                    {
+                        fillState |= FILL_INDALL ;
+                        status = 'y' ;
+                    }
+                    else if(status == 'v')
+                    {
+                        fillState |= FILL_INDNVR ;
+                        status = 'n' ;
+                    }
                 }
                 if(status == 'y')
                     frameCur->windowCur->dotOffset = ii;
                 else
-                {
                     frameCur->windowCur->dotOffset = temp_doto;	/* Restore */
-                    if (status == -1)
-                        return -1 ;
-                }
             }
-            return (autoDetect);        /* Automatically detected */
+            return fillState ;  /* Return potentially modified fillState */
         }
         else
             last_c = c;
     }
-    return (0);
+    return fillState ;
 }
 
 
@@ -1254,26 +1245,11 @@ fillAutoDetect (char mode)
 int
 fillPara(int f, int n)	
 {
-#define FILL_LEFT    0x0001             /* Left fill                    */
-#define FILL_RIGHT   0x0002             /* Right fill                   */
-#define FILL_BOTH    0x0004             /* Both fill                    */
-#define FILL_CENTRE  0x0008             /* Center fill                  */
-#define FILL_NONE    0x0010             /* None fill                    */
-#define FILL_TMASK   0x001f             /* Type mask for fill           */
-#define FILL_INDENT  0x0020             /* Do Indented fill             */
-#define FILL_FORCE   0x0040             /* Forced line output           */
-#define FILL_DOT     0x0080             /* Last character was a period. */
-#define FILL_EOP     0x0100             /* End of paragraph detected    */
-#define FILL_FIRST   0x0200             /* First word ? (needs no space */
-#define FILL_JUSTIFY 0x0400             /* Status of the justify flag   */
-#define FILL_AUTO    0x0800             /* Automatic fill               */
-#define FILL_LINE    0x1000             /* Fill to a line               */
-#define FILL_MARGIN  0x2000             /* Fill to margin (AUTO+meLine)   */
-    
     meLine *eopline;		        /* ptr to line just past EOP	*/
     meInt eoplno;		        /* line no of line just past EOP*/
-    meUByte ofillmode;                    /* Old justification mode       */
-    meUByte wbuf[meSBUF_SIZE_MAX];	        /* buffer for current word	*/
+    meUByte ofillmode;                  /* Old justification mode       */
+    meUByte wbuf[meSBUF_SIZE_MAX];      /* buffer for current word	*/
+    register meInt fillState;           /* State of the fill            */
     int c;			        /* current char durring scan	*/
     int clength;		        /* position on line during fill	*/
     int ccol;				/* position on line during fill	*/
@@ -1281,7 +1257,6 @@ fillPara(int f, int n)
     int wordlen;		        /* length of current word	*/
     int ilength;			/* Initial line length          */
     int icol;				/* Initial line columns         */
-    register int fillState;             /* State of the fill            */
     int fdoto;                          /* The left doto for 1st line   */
 
 #if MEOPT_UNDO
@@ -1330,7 +1305,7 @@ fillPara(int f, int n)
          * paragraph. */
         if (!f)
             return meTRUE;
-        return forwPara(meFALSE, n) ;
+        return windowForwardParagraph(meFALSE, n) ;
     }
     
     /* Record if justify mode is enabled. Record in our local context
@@ -1361,7 +1336,7 @@ fillPara(int f, int n)
          * to go to the end of the current or next paragraph, if this
          * fails we are at the end of buffer */
         frameCur->windowCur->dotOffset = 0 ;             /* Got start of current line */
-        if (forwPara(meFALSE, 1) != meTRUE)
+        if (windowForwardParagraph(meFALSE, 1) != meTRUE)
             break;
         
 	/* record the pointer to the line just past the EOP 
@@ -1370,7 +1345,7 @@ fillPara(int f, int n)
         eopline = meLineGetNext(frameCur->windowCur->dotLine);
         eoplno = frameCur->windowCur->dotLineNo + 1 ;
         setAnchor (meTRUE, ANCHOR_END);   /* End of paragraph */
-	backPara(meFALSE, 1);
+	windowBackwardParagraph(meFALSE, 1);
         
         /* Skip non-formatting paragraphs */
         if ((fillignore != NULL) &&
@@ -1424,7 +1399,7 @@ noIndent:
         /* Get the initial string from the start of the paragraph.
          * lookahead() modifies the current doto value. */
         if (((fillState & (FILL_INDENT|FILL_BOTH|FILL_LEFT)) > FILL_INDENT) &&
-            (lookahead(fillState & FILL_AUTO) == -1))
+            ((fillState=lookahead(fillState)) == -1))
         {
             fillmode = ofillmode;
             return (meABORT);
@@ -1614,8 +1589,8 @@ killPara(int f, int n)	/* delete n paragraphs starting with the current one */
     if((f=(n < 0)))
         n = -n ;
     
-    if((forwPara(meFALSE, 1) != meTRUE) ||
-       (backPara(meFALSE, 1) != meTRUE) )
+    if((windowForwardParagraph(meFALSE, 1) != meTRUE) ||
+       (windowBackwardParagraph(meFALSE, 1) != meTRUE) )
         return meFALSE ;
     frameCur->windowCur->dotOffset = 0 ;
     /* set the mark here */
@@ -1626,7 +1601,7 @@ killPara(int f, int n)	/* delete n paragraphs starting with the current one */
     if(bchange() != meTRUE)               /* Check we can change the buffer */
         return meABORT ;
         
-    ss = forwPara(meTRUE,n) ;
+    ss = windowForwardParagraph(meTRUE,n) ;
     
     frameCur->windowCur->dotLineNo++ ;
     frameCur->windowCur->dotLine = meLineGetNext(frameCur->windowCur->dotLine);

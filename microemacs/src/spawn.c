@@ -641,36 +641,36 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff)
 #define getNextCharFromPipe(ipipe,cc,rbuff,curROff,curRRead)                 \
 ((curROff < curRRead) ?                                                      \
  ((cc=rbuff[curROff++]), 1):                                                 \
- (((curRRead=readFromPipe(ipipe,meBUF_SIZE_MAX,rbuff)) > 0) ?                        \
+ (((curRRead=readFromPipe(ipipe,meBUF_SIZE_MAX,rbuff)) > 0) ?                \
   ((cc=rbuff[0]),curROff=1): 0))
 
 
 #define ipipeStoreInputPos()                                                 \
 do {                                                                         \
-    meLine *lp_new ;                                                           \
+    meLine *lp_new ;                                                         \
     noLines += addLine(lp_old,buff) ;                                        \
-    lp_new = meLineGetPrev(lp_old) ;                                                 \
-    if(lp_old != bp->baseLine)                                                \
+    lp_new = meLineGetPrev(lp_old) ;                                         \
+    if(lp_old != bp->baseLine)                                               \
     {                                                                        \
         noLines-- ;                                                          \
         lp_new->next = lp_old->next ;                                        \
         lp_old->next->prev = lp_new ;                                        \
-        if(lp_old->flag & meLINE_AMARK)                                          \
+        if(lp_old->flag & meLINE_AMARK)                                      \
             lunmarkBuffer(bp,lp_old,lp_new);                                 \
         meFree(lp_old);                                                      \
     }                                                                        \
     else                                                                     \
     {                                                                        \
-        bp->dotLineNo-- ;                                                      \
+        bp->dotLineNo-- ;                                                    \
         ipipe->curRow-- ;                                                    \
     }                                                                        \
-    bp->dotLineNo += noLines ;                                                 \
-    bp->lineCount += noLines ;                                                 \
+    bp->dotLineNo += noLines ;                                               \
+    bp->lineCount += noLines ;                                               \
     ipipe->curRow = curRow ;                                                 \
-    bp->vertScroll = bp->dotLineNo-curRow ;                                     \
-    bp->dotLine = lp_new ;                                                    \
-    bp->dotOffset = p1 - buff ;                                                 \
-    bufferPosUpdate(bp,noLines,bp->dotOffset) ;                                 \
+    bp->vertScroll = bp->dotLineNo-curRow ;                                  \
+    bp->dotLine = lp_new ;                                                   \
+    bp->dotOffset = p1 - buff ;                                              \
+    meBufferUpdateLocation(bp,noLines,bp->dotOffset) ;                       \
 } while(0)
 
 
@@ -689,7 +689,8 @@ ipipeRead(meIPipe *ipipe)
 #endif
 
     if(meModeTest(bp->mode,MDWRAP))
-        maxOff = frameCur->width - 2 ;
+        /* maxOff = frameCur->width - 2 ;*/
+        maxOff = ipipe->noCols ;
     else
         maxOff = meBUF_SIZE_MAX - 2 ;
 #ifdef _UNIX
@@ -738,7 +739,7 @@ ipipeRead(meIPipe *ipipe)
         curRow = bp->dotLineNo ;
     len = bp->dotOffset ;
     lp_old = bp->dotLine ;
-    bufferPosStore(lp_old,bp->dotOffset,bp->dotLineNo) ;
+    meBufferStoreLocation(lp_old,bp->dotOffset,bp->dotLineNo) ;
     meStrcpy(buff,lp_old->text) ;
     p1 = buff+len ;
     noLines = 0 ;
@@ -929,7 +930,7 @@ move_cursor_pos:
                             len = na ;
                             bp->dotLine = lp_old ;
                             meStrcpy(buff,lp_old->text) ;
-                            bufferPosStore(lp_old,(meUShort)len,bp->dotLineNo) ;
+                            meBufferStoreLocation(lp_old,(meUShort)len,bp->dotLineNo) ;
                             na -= meStrlen(buff) ;
                             p1 = buff+len ;
                             if(na > 0)
@@ -1180,7 +1181,7 @@ ipipeSetSize(meWindow *wp, meBuffer *bp)
                 wp->vertScroll = 0;
             else
                 wp->vertScroll = wp->dotLineNo-ipipe->curRow ;
-            wp->flag |= WFMOVEL ;
+            wp->updateFlags |= WFMOVEL ;
         }
 #ifdef _UNIX
 #if ((defined(TIOCSWINSZ)) || (defined(TIOCGWINSZ)))
@@ -1704,9 +1705,9 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
     /* get a popup window for the command output */
     {
         meWindow *wp ;
-        if((flags & LAUNCH_SILENT) || ((wp = wpopup(bufName,0)) == NULL))
+        if((flags & LAUNCH_SILENT) || ((wp = meWindowPopup(bufName,0,NULL)) == NULL))
             wp = frameCur->windowCur ;
-        /* while executing the wpopup function the ipipe could have exited so check */
+        /* while executing the meWindowPopup function the ipipe could have exited so check */
         if(ipipes == ipipe)
         {
             ipipeSetSize(wp,bp) ;
@@ -1715,7 +1716,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
                 execBufferFunc(bp,bp->ipipeFunc,(meEBF_ARG_GIVEN|meEBF_HIDDEN),1) ;
         }
     }
-    /* reset again incase there was a delay in the wpopup call */
+    /* reset again incase there was a delay in the meWindowPopup call */
     bp->dotLine = meLineGetPrev(bp->baseLine) ;
     bp->dotOffset = 0 ;
     bp->dotLineNo = bp->lineCount-1 ;
@@ -1905,7 +1906,7 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
     resetBufferWindows(bp) ;
 
     if((flags & LAUNCH_SILENT) == 0)
-        wpopup(bp->name,WPOP_MKCURR) ;
+        meWindowPopup(bp->name,WPOP_MKCURR,NULL) ;
 
 #ifndef _UNIX
     /* and get rid of the temporary file */

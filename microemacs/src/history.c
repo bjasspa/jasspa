@@ -78,6 +78,13 @@ readHistory(int f, int n)
             return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No default history file]") ;
         fname = defHistFile ;
     }
+    else if(n < 0)
+    {
+        /* ditch the default history */
+        meNullFree(defHistFile) ;
+        defHistFile = NULL ;
+        return TRUE ;
+    }
     else
     {
         if (meGetString((meUByte *)"Read history", MLFILECASE,0,filename,meFILEBUF_SIZE_MAX) != meTRUE)

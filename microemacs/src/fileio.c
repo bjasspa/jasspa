@@ -360,7 +360,7 @@ ffurlConsoleAddText(meUByte *str, int flags)
         ffurlBp->dotOffset = 0 ;
         ffurlBp->dotLineNo = ffurlBp->lineCount ;
     }
-    bufferPosStore(ffurlBp->dotLine,ffurlBp->dotOffset,ffurlBp->dotLineNo) ;
+    meBufferStoreLocation(ffurlBp->dotLine,ffurlBp->dotOffset,ffurlBp->dotLineNo) ;
     if(flags & 0x01)
     {
         meLine *olp, *nlp ;
@@ -395,7 +395,7 @@ ffurlConsoleAddText(meUByte *str, int flags)
         ffurlBp->dotOffset = 0 ;
         ffurlBp->dotLineNo = ffurlBp->lineCount ;
     }
-    bufferPosUpdate(ffurlBp,(flags & 0x01) ? 0:1,ffurlBp->dotOffset) ;
+    meBufferUpdateLocation(ffurlBp,(flags & 0x01) ? 0:1,ffurlBp->dotOffset) ;
     
     if(!(flags & 0x04) && (ffurlFlags & ffURL_SHOW_CONSOLE))
         screenUpdate(meTRUE,2-sgarbf) ;
@@ -959,7 +959,7 @@ ffUrlFileSetupFlags(int flag)
     {
         meModeClear(ffurlBp->mode,MDUNDO) ;
         if((ffurlFlags & ffURL_SHOW_CONSOLE) && !(flag & 0x01))
-            wpopup(ffurlConsoleBName[fftype-meURLTYPE_HTTP],0) ;
+            meWindowPopup(ffurlConsoleBName[fftype-meURLTYPE_HTTP],0,NULL) ;
     }
 }
 

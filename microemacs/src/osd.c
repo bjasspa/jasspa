@@ -5092,11 +5092,11 @@ osd (int f, int n)
                 return meABORT ;
             flags = meAtoi(buf) ;
             if (flags == 0)
-                return menuWindow (0) ;         /* hide the menu return whether it existed */
+                return frameSetupMenuLine (0) ;         /* hide the menu return whether it existed */
             if (flags < 0)
             {
                 /* Destruct the old line */
-                menuWindow (0);             /* Delete the existing window */
+                frameSetupMenuLine (0);             /* Delete the existing window */
                 if(osdMainMenuMd != NULL)
                 {
                     displayDestruct(osdMainMenuMd) ;
@@ -5110,7 +5110,7 @@ osd (int f, int n)
             else
             {
                 /* Allocate the menu window space for the menu line */
-                menuWindow(1);
+                frameSetupMenuLine(1);
                 /* Flag the line as changed */
                 frameCur->video.lineArray[0].flag |= VFCHNGD ;
             }
@@ -5565,7 +5565,7 @@ osdMainMenuCheckKey(int cc)
 
 #if MEOPT_LOCALBIND
 int
-osdBind(int f, int n)
+osdBindKey(int f, int n)
 {
     osdDIALOG *rp;
     meUByte buf[16];
@@ -5578,7 +5578,7 @@ osdBind(int f, int n)
     return bindkey((meUByte *)"Osd bind", f, n, &(rp->nobinds), &(rp->binds)) ;
 }
 int
-osdUnbind(int f, int n)
+osdUnbindKey(int f, int n)
 {
     osdDIALOG *rp;
     meUByte buf[16];

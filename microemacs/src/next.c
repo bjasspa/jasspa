@@ -150,7 +150,7 @@ getNextLine(int f,int n)
         return mlwrite(MWABORT,(meUByte *)"[No lines for next buffer %s]",bp->name) ;
     nextLines = nextLineStr[no] ;
     
-    wpopup(bp->name,WPOP_MKCURR) ;
+    meWindowPopup(bp->name,WPOP_MKCURR,NULL) ;
 
     if((frameCur->windowCur->dotLine == bp->baseLine) ||
        ((frameCur->windowCur->dotLine == meLineGetPrev(bp->baseLine)) &&
@@ -170,7 +170,7 @@ getNextLine(int f,int n)
             if((rr=flNextFind(nextLines[ii],&nextFile,&curLine)) == meABORT)
             {
                 frameCur->windowCur->dotOffset = 0 ;
-                frameCur->windowCur->flag |= WFMOVEL ;
+                frameCur->windowCur->updateFlags |= WFMOVEL ;
                 return meABORT ;
             }
             if(rr == -1)
@@ -180,7 +180,7 @@ getNextLine(int f,int n)
             {
                 /* matched a line */
                 frameCur->windowCur->dotOffset = 0 ;
-                frameCur->windowCur->flag |= WFMOVEL ;
+                frameCur->windowCur->updateFlags |= WFMOVEL ;
                 if(nextFile != NULL)
                 {
                     meUByte fname[meFILEBUF_SIZE_MAX], *value ;
@@ -213,7 +213,7 @@ getNextLine(int f,int n)
                     return mlwrite(MWABORT,(meUByte *)"[No File name]") ;
                 else
                     ii = meStrlen(nextFile) ;
-                if(wpopup(NULL,WPOP_MKCURR) == NULL)
+                if(meWindowPopup(NULL,WPOP_MKCURR,NULL) == NULL)
                     return meFALSE ;
                 if((nextFile[0] == '*') && (nextFile[ii-1] == '*'))
                 {
@@ -239,15 +239,15 @@ getNextLine(int f,int n)
                 mlwrite(0,(meUByte *)"File %s, line %d",
                         (frameCur->bufferCur->fileName == NULL) ? frameCur->bufferCur->name:frameCur->bufferCur->fileName,curLine) ;
 #if MEOPT_NARROW
-                return gotoAbsLine(curLine) ;
+                return windowGotoAbsLine(curLine) ;
 #else
-                return gotoLine(1,curLine) ;
+                return windowGotoLine(1,curLine) ;
 #endif
             }
         }
     }
     frameCur->windowCur->dotOffset = 0 ;
-    frameCur->windowCur->flag |= WFMOVEL ;
+    frameCur->windowCur->updateFlags |= WFMOVEL ;
     return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No more lines found]") ;
 }
 
@@ -415,7 +415,7 @@ rcsCiCoFile(int f, int n)
             frameCur->bufferCur->stats.stmode |= 00200 ;
 #endif
             meModeClear(frameCur->bufferCur->mode,MDVIEW) ;
-            frameCur->windowCur->flag |= WFMODE ;
+            frameCur->windowCur->updateFlags |= WFMODE ;
             return meTRUE ;
         }
         if((str = rcsCoUStr) == NULL)

@@ -1178,7 +1178,7 @@ execFunc(int index, int f, int n)
                         if(isComSelStop(index))
                             selhilight.flags &= ~SELHIL_ACTIVE ;
                         if(selhilight.flags & SELHIL_CHANGED)
-                            addModeToBufferWindows(selhilight.bp, WFSELHIL);
+                            meBufferAddModeToWindows(selhilight.bp, WFSELHIL);
                     }
                 }
             }
@@ -1305,7 +1305,7 @@ execBufferFunc(meBuffer *bp, int index, int flags, int n)
         meInt vertScroll ;
         
         storeWindBSet(tbp,frameCur->windowCur) ;
-        flag = frameCur->windowCur->flag ;
+        flag = frameCur->windowCur->updateFlags ;
         vertScroll = frameCur->windowCur->vertScroll ;
         
         tbp->windowCount-- ;
@@ -1324,7 +1324,7 @@ execBufferFunc(meBuffer *bp, int index, int flags, int n)
         tbp->windowCount++ ;
         frameCur->windowCur->vertScroll = vertScroll ;
         /* force a check on update, just incase the Func has done something behind our back */
-        frameCur->windowCur->flag |= (flag|WFMOVEL|WFMAIN) ;
+        frameCur->windowCur->updateFlags |= (flag|WFMOVEL|WFMAIN) ;
         restoreWindBSet(frameCur->windowCur,tbp) ;
 #if MEOPT_EXTENDED
         isWordMask = tbp->isWordMask ;
@@ -1339,7 +1339,7 @@ execBufferFunc(meBuffer *bp, int index, int flags, int n)
         frameCur->windowCur->dotLine = frameCur->bufferCur->dotLine ;
         frameCur->windowCur->dotOffset = frameCur->bufferCur->dotOffset ;
         frameCur->windowCur->dotLineNo = frameCur->bufferCur->dotLineNo ;
-        frameCur->windowCur->flag |= WFMOVEL ;
+        frameCur->windowCur->updateFlags |= WFMOVEL ;
     }
     thisflag = tf;
     lastflag = lf;
@@ -1410,7 +1410,7 @@ execBuffer(int f, int n)
                     wp->dotLine = errorLine ;
                     wp->dotOffset = 0 ;
                     wp->dotLineNo = ln ;
-                    wp->flag |= WFMOVEL ;
+                    wp->updateFlags |= WFMOVEL ;
                 }
                 wp = wp->next;
             }

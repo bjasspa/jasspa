@@ -307,7 +307,7 @@ killRectangle(int f, int n)
     
     eoff = getcwcol() ;
     /* remember we have swapped */
-    swapmark(0,1) ;
+    windowSwapDotAndMark(0,1) ;
     soff = getcwcol() ;
     if(soff > eoff)
     {
@@ -317,7 +317,7 @@ killRectangle(int f, int n)
     }
     llen = eoff - soff ;
     if((dotPos=frameCur->windowCur->dotLineNo > frameCur->windowCur->markLineNo))
-        swapmark(0,1) ;
+        windowSwapDotAndMark(0,1) ;
     slno = frameCur->windowCur->dotLineNo ;
     elno = frameCur->windowCur->markLineNo ;
     /* calculate the maximum length */
@@ -433,7 +433,7 @@ killRectangle(int f, int n)
     }
     *kstr = '\0' ;
     if(dotPos)
-        swapmark(0,1) ;
+        windowSwapDotAndMark(0,1) ;
     return meTRUE ;
 }
 
@@ -541,7 +541,7 @@ yankRectangle(int f, int n)
     col = getcwcol() ;
     
     /* place the mark on the current line */
-    setMark(meFALSE, meFALSE);
+    windowSetMark(meFALSE, meFALSE);
     
     /* for each time.... */
     while(--n >= 0)

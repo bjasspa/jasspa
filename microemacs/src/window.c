@@ -143,13 +143,13 @@
  */
 
 /*
- * getAdjacentWindowList - Helper function
+ * meWindowGetAdjacentList - Helper function
  * This function gets a list of all of the adjacent windows that are affected
  * by re-sizing/deleting of the window "wp" (usually the current window).
  */
 
 static meWindow **
-getAdjacentWindowList (meWindow **wlist, int direction, meWindow *wp)
+meWindowGetAdjacentList (meWindow **wlist, int direction, meWindow *wp)
 {
     meWindow *twp;                        /* Temporary window pointer */
     int wlen = 0;                       /* Window list length */
@@ -273,11 +273,11 @@ getAdjacentWindowList (meWindow **wlist, int direction, meWindow *wp)
 
 #if MEOPT_SCROLL
 /*
- * fixWindowScrollBox
+ * meWindowFixScrollBox
  * Fixes the positions of the window scroll box components. 
  */
 void
-fixWindowScrollBox (meWindow *wp)
+meWindowFixScrollBox (meWindow *wp)
 {
     int row;                            /* The starting row */
     int shaftLength;                    /* Length of scroll shaft */
@@ -323,7 +323,7 @@ fixWindowScrollBox (meWindow *wp)
                       wp->vertScrollBarPos [WCVSBUSHAFT - WCVSBSPLIT]))
     {
         /* Box changed size. Change upper and lower shafts and the box */
-        wp->flag |= WFSBUSHAFT|WFSBBOX|WFSBDSHAFT;
+        wp->updateFlags |= WFSBUSHAFT|WFSBBOX|WFSBDSHAFT;
         wp->vertScrollBarPos [WCVSBUSHAFT - WCVSBSPLIT] = row;
         wp->vertScrollBarPos [WCVSBBOX - WCVSBSPLIT] = row + boxLength;
     }
@@ -333,9 +333,9 @@ fixWindowScrollBox (meWindow *wp)
         if (wp->vertScrollBarPos [WCVSBUSHAFT - WCVSBSPLIT] != row)
         {
             if (wp->vertScrollBarPos [WCVSBUSHAFT - WCVSBSPLIT] < row)
-                wp->flag |= WFSBUSHAFT|WFSBBOX;
+                wp->updateFlags |= WFSBUSHAFT|WFSBBOX;
             else
-                wp->flag |= WFSBDSHAFT|WFSBBOX;
+                wp->updateFlags |= WFSBDSHAFT|WFSBBOX;
             wp->vertScrollBarPos [WCVSBUSHAFT - WCVSBSPLIT] = row;
         }
         
@@ -344,20 +344,20 @@ fixWindowScrollBox (meWindow *wp)
         if (wp->vertScrollBarPos [WCVSBBOX - WCVSBSPLIT] != row)
         {
             if (wp->vertScrollBarPos [WCVSBBOX - WCVSBSPLIT] < row)
-                wp->flag |= WFSBUSHAFT|WFSBBOX;
+                wp->updateFlags |= WFSBUSHAFT|WFSBBOX;
             else
-                wp->flag |= WFSBDSHAFT|WFSBBOX;
+                wp->updateFlags |= WFSBDSHAFT|WFSBBOX;
             wp->vertScrollBarPos [WCVSBBOX - WCVSBSPLIT] = row;
         }
     }
 }
 
 /*
- * fixWindowScrollBars
+ * meWindowFixScrollBars
  * Fixes the positions of the window scroll bar components. 
  */
 void
-fixWindowScrollBars(meWindow *wp)
+meWindowFixScrollBars(meWindow *wp)
 {
     int row;                            /* The starting row */
     int erow;                           /* The ending row */
@@ -412,18 +412,18 @@ fixWindowScrollBars(meWindow *wp)
     
     /* If we are scrolling, fix up the modes */
     if (mode & WMSCROL)
-        fixWindowScrollBox(wp);
-    wp->flag |= WFSBAR;
+        meWindowFixScrollBox(wp);
+    wp->updateFlags |= WFSBAR;
 }    
 #endif /* MEOPT_SCROLL */
 
 /*
- * fixWindowTextSize
+ * meWindowFixTextSize
  * Fix the size of the window text area size following a window
  * re-size. Re-assign the global window mode.
  */
 void
-fixWindowTextSize(meWindow *wp)
+meWindowFixTextSize(meWindow *wp)
 {
     /* Fix up the text area size */
     wp->textDepth = wp->depth - 1;
@@ -452,9 +452,9 @@ fixWindowTextSize(meWindow *wp)
      * an another window which contains a hilighted region becomes
      * part of this window, this flag is the only way to get it
      * re-evaluated. */
-    wp->flag |= WFRESIZE|WFMOVEL|WFSELDRAWN ;
+    wp->updateFlags |= WFRESIZE|WFMOVEL|WFSELDRAWN ;
 #if MEOPT_SCROLL
-    fixWindowScrollBars(wp);
+    meWindowFixScrollBars(wp);
 #endif
 #if MEOPT_IPIPES
     if(meModeTest(wp->buffer->mode,MDPIPE) &&
@@ -466,7 +466,7 @@ fixWindowTextSize(meWindow *wp)
 /* Main Window functions */
 
 void
-makeCurWind(meWindow *wp)
+meWindowMakeCurrent(meWindow *wp)
 {
 #if MEOPT_FILEHOOK
     /* Process the exit hook of the old buffer. 
@@ -474,7 +474,7 @@ makeCurWind(meWindow *wp)
     if(frameCur->bufferCur->ehook >= 0)
         execBufferFunc(frameCur->bufferCur,frameCur->bufferCur->ehook,0,1) ;
 #endif
-    frameCur->windowCur->flag |= WFMODE|WFSBAR;     /* Update scroll and mode lines */
+    frameCur->windowCur->updateFlags |= WFMODE|WFSBAR;     /* Update scroll and mode lines */
     
     /* Do the swap */
     frameCur->windowCur = wp;
@@ -494,7 +494,7 @@ makeCurWind(meWindow *wp)
     if(frameCur->bufferCur->bhook >= 0)
         execBufferFunc(frameCur->bufferCur,frameCur->bufferCur->bhook,0,1) ;
 #endif
-    frameCur->windowCur->flag |= WFMODE|WFSBAR;
+    frameCur->windowCur->updateFlags |= WFMODE|WFSBAR;
 #if MEOPT_IPIPES
     if(meModeTest(frameCur->bufferCur->mode,MDPIPE))
 	ipipeSetSize(frameCur->windowCur,frameCur->bufferCur) ;
@@ -502,11 +502,11 @@ makeCurWind(meWindow *wp)
 }
 
 /*
- * addModeToWindows
+ * frameAddModeToWindows
  * Scan through and add given modes to all windows
  */
 void
-addModeToWindows(int mode)
+frameAddModeToWindows(int mode)
 {
     register meWindow *wp ;
     
@@ -514,17 +514,17 @@ addModeToWindows(int mode)
     wp = frameCur->windowList;
     while (wp != NULL)
     {
-        wp->flag |= mode ;
+        wp->updateFlags |= mode ;
         wp = wp->next;
     }
 }
 
 /*
- * addModeToBufferWindows
+ * meBufferAddModeToWindows
  * Scan through and add given mode to all windows showing buffer.
  */
 void
-addModeToBufferWindows (meBuffer *bp, int mode)
+meBufferAddModeToWindows (meBuffer *bp, int mode)
 {
     register meWindow *wp;
     
@@ -532,7 +532,7 @@ addModeToBufferWindows (meBuffer *bp, int mode)
     for (wp = loopFrame->windowList; wp != NULL; wp = wp->next)
     {
         if (bp == wp->buffer)
-            wp->flag |= mode;
+            wp->updateFlags |= mode;
     }
     meFrameLoopEnd() ;
 }
@@ -545,12 +545,12 @@ addModeToBufferWindows (meBuffer *bp, int mode)
  * Also Refreshes the screen. Bound to "C-L".
  */
 int
-recenter(int f, int n)
+windowRecenter(int f, int n)
 {
     if (f == meFALSE)     /* default to 0 to center screen */
         n = 0;
-    frameCur->windowCur->recenter = n ;             /* Center */
-    frameCur->windowCur->flag |= WFFORCE ;
+    frameCur->windowCur->windowRecenter = n ;             /* Center */
+    frameCur->windowCur->updateFlags |= WFFORCE ;
 
     sgarbf = meTRUE;                   /* refresh */
 
@@ -568,33 +568,45 @@ recenter(int f, int n)
  */
 
 int
-nextWindow(int f, int n)
+windowGotoNext(int f, int n)
 {
-    register meWindow *wp;
-
-    if (f)
+    meWindow *wp, *ewp ;
+    
+    if(n & 0x04)
+        ewp = NULL ;
+    else
+        ewp = wp = frameCur->windowCur ;
+        
+    for(;;)
     {
-        /* If the argument is negative, it is the nth window
-         * from the bottom of the screen */
-        if (n < 0)
-            n = frameCur->windowCount + n + 1;
-
-        /* if an argument, give them that window from the top */
-        if ((n > 0) && (n <= frameCur->windowCount))
+        if(n & 0x04)
         {
-            wp = frameCur->windowList;
-            while (--n)
-                wp = wp->next;
+            wp = frameCur->windowList ;
+            /* switch off bit 1 so it won't loop and bit 4 so we don't re-init */
+            n &= ~0x05 ;
         }
-        else if ((wp = frameCur->windowCur->next) == NULL)
-            return (meFALSE);
+        else if((wp = wp->next) == NULL)
+        {
+            if((n & 0x01) == 0)
+                return meFALSE ;
+            wp = frameCur->windowList ;
+        }
+        if(wp == ewp)
+        {
+#if MEOPT_EXTENDED
+            if((wp->flags & meWINDOW_NO_NEXT) && ((n & 0x02) == 0))
+                return meFALSE ;
+#endif
+            return meTRUE ;
+        }
+#if MEOPT_EXTENDED
+        if(((wp->flags & meWINDOW_NO_NEXT) == 0) || (n & 0x02))
+#endif
+        {
+            meWindowMakeCurrent(wp) ;
+            return meTRUE ;
+        }
     }
-    else if ((wp = frameCur->windowCur->next) == NULL)
-        wp = frameCur->windowList;
-    if (frameCur->windowCur == wp)
-        return meTRUE ;
-    makeCurWind(wp) ;
-    return (meTRUE);
 }
 
 /*
@@ -603,28 +615,48 @@ nextWindow(int f, int n)
  * lot if there is 1 window.
  */
 int
-prevwind(int f, int n)
+windowGotoPrevious(int f, int n)
 {
-    meWindow *wp;
-
-    /* if we have an argument, we mean the nth window from the bottom */
-    if (f)
+    meWindow *wp, *ewp ;
+    
+    if(n & 0x04)
+        ewp = NULL ;
+    else
+        ewp = wp = frameCur->windowCur ;
+        
+    wp = frameCur->windowCur ;
+    for(;;)
     {
-        if (n == 0)
+        if(n & 0x04)
         {
-            if ((wp = frameCur->windowCur->prev) == NULL)
-                return meFALSE;
+            for (wp = frameCur->windowList; wp->next != NULL; wp = wp->next)
+                /* NULL */ ;
+            /* switch off bit 1 so it won't loop and bit 4 so we don't re-init */
+            n &= ~0x05 ;
         }
-        else    
-            return (nextWindow(f, -n));
+        else if((wp = wp->prev) == NULL)
+        {
+            if((n & 0x01) == 0)
+                return meFALSE ;
+            for (wp = frameCur->windowList; wp->next != NULL; wp = wp->next)
+                /* NULL */ ;
+        }
+        if(wp == ewp)
+        {
+#if MEOPT_EXTENDED
+            if((wp->flags & meWINDOW_NO_NEXT) && ((n & 0x02) == 0))
+                return meFALSE ;
+#endif
+            return meTRUE ;
+        }
+#if MEOPT_EXTENDED
+        if(((wp->flags & meWINDOW_NO_NEXT) == 0) || (n & 0x02))
+#endif
+        {
+            meWindowMakeCurrent(wp) ;
+            return meTRUE ;
+        }
     }
-    else if ((wp = frameCur->windowCur->prev) == NULL)
-    {
-        for (wp = frameCur->windowList; wp->next != NULL; wp = wp->next)
-            /* NULL */;
-    }
-    makeCurWind (wp);
-    return (meTRUE);
 }
 
 /*
@@ -636,24 +668,24 @@ prevwind(int f, int n)
  */
 
 int
-scrollUp(int f, int n)
+windowScrollUp(int f, int n)
 {
     register long ii ;
 
     if(f == meFALSE)
         n = frameCur->windowCur->textDepth-1 ;
     else if(n < 0)
-        return scrollDown(f, -n) ;
+        return windowScrollDown(f, -n) ;
     
     if(frameCur->windowCur->vertScroll == 0)
-        return bobError() ;
+        return meErrorBob() ;
 
     if((frameCur->windowCur->vertScroll-=n) < 0)
         frameCur->windowCur->vertScroll = 0 ;
     ii = frameCur->windowCur->dotLineNo - frameCur->windowCur->vertScroll - frameCur->windowCur->textDepth + 1 ;
     if(ii > 0)
-        backLine(meTRUE,ii) ;
-    frameCur->windowCur->flag |= (WFREDRAW|WFSBOX) ;           /* Mode line is OK. */
+        windowBackwardLine(meTRUE,ii) ;
+    frameCur->windowCur->updateFlags |= (WFREDRAW|WFSBOX) ;           /* Mode line is OK. */
     return meTRUE ;
 }
 
@@ -666,25 +698,25 @@ scrollUp(int f, int n)
  */
 
 int
-scrollDown(int f, int n)
+windowScrollDown(int f, int n)
 {
     register long ii ;
 
     if(f == meFALSE)
         n = frameCur->windowCur->textDepth-1 ;
     else if(n < 0)
-        return scrollUp(f, -n) ;
+        return windowScrollUp(f, -n) ;
     /* A quick if no lines case to make rest easier */
     if(frameCur->windowCur->vertScroll >= frameCur->bufferCur->lineCount-1)
-        return eobError() ;
+        return meErrorEob() ;
     
     if((frameCur->windowCur->vertScroll+=n) >= frameCur->bufferCur->lineCount)
         frameCur->windowCur->vertScroll = frameCur->bufferCur->lineCount - 1 ;
     
     ii = frameCur->windowCur->vertScroll - frameCur->windowCur->dotLineNo ;
     if(ii > 0)
-        forwLine(meTRUE,ii) ;
-    frameCur->windowCur->flag |= (WFREDRAW|WFSBOX) ;           /* Mode line is OK. */
+        windowForwardLine(meTRUE,ii) ;
+    frameCur->windowCur->updateFlags |= (WFREDRAW|WFSBOX) ;           /* Mode line is OK. */
     return meTRUE ;
 }
 
@@ -697,7 +729,7 @@ scrollDown(int f, int n)
  */
 
 int
-scrollRight (int f, int n)
+windowScrollRight (int f, int n)
 {
     if (f == meFALSE)                     /* No argument ?? */
         n = frameCur->windowCur->textWidth-2;          /* Scroll a whole screen width */
@@ -739,7 +771,7 @@ scrollRight (int f, int n)
         if(frameCur->windowCur->horzScroll != scroll)
         {
             frameCur->windowCur->horzScroll = scroll ;
-            frameCur->windowCur->flag |= WFDOT ;
+            frameCur->windowCur->updateFlags |= WFDOT ;
             /* Check the position of the cursor, move it if it has been 
              * scrolled off the screen.
              */
@@ -754,7 +786,7 @@ scrollRight (int f, int n)
             if(frameCur->windowCur->dotOffset != doto)
             {
                 frameCur->windowCur->dotOffset = doto ;
-                frameCur->windowCur->flag |= WFMOVEC ;
+                frameCur->windowCur->updateFlags |= WFMOVEC ;
             }
         }
         if((scrollFlag & 0x0f) == 3)
@@ -767,13 +799,13 @@ scrollRight (int f, int n)
             if(ii != frameCur->windowCur->horzScrollRest)
             {
                 frameCur->windowCur->horzScrollRest = ii ;
-                frameCur->windowCur->flag |= WFREDRAW;        /* Force complete screen refresh */
+                frameCur->windowCur->updateFlags |= WFREDRAW;        /* Force complete screen refresh */
             }
         }
         else if((scrollFlag & 0x0f) && (frameCur->windowCur->horzScrollRest != frameCur->windowCur->horzScroll))
         {
             frameCur->windowCur->horzScrollRest = frameCur->windowCur->horzScroll ;
-            frameCur->windowCur->flag |= WFREDRAW;        /* Force complete screen refresh */
+            frameCur->windowCur->updateFlags |= WFREDRAW;        /* Force complete screen refresh */
         }
     }
     return meTRUE ;
@@ -788,16 +820,16 @@ scrollRight (int f, int n)
  */
 
 int
-scrollLeft (int f, int n)
+windowScrollLeft (int f, int n)
 {
     if (f == meFALSE)                     /* No argument ?? */
         n = frameCur->windowCur->textWidth-2;          /* Scroll a whole screen width */
-    return scrollRight(meTRUE,-n) ;
+    return windowScrollRight(meTRUE,-n) ;
 }
 
 #if MEOPT_MOUSE
 /* 
- * setScrollWithMouse
+ * windowSetScrollWithMouse
  * Set the scroll with the mouse. Typically bound to the scroll box to 
  * scroll the window up or down. Useless in any other context !!
  * Scrolls "frameCur->windowCur" window only.
@@ -808,7 +840,7 @@ scrollLeft (int f, int n)
  * Fails if scroll operation fails, or scroll bars are not enabled.
  */
 int
-setScrollWithMouse (int f, int n)
+windowSetScrollWithMouse (int f, int n)
 {
     long mousePos;                      /* Curent mouse position */
     long screenTopRow;                  /* Top row of the screen */
@@ -844,7 +876,7 @@ setScrollWithMouse (int f, int n)
         if (frameCur->windowCur->textDepth >= bufferLength)
         {
             mouseRatio = -1;
-            scrollUp (meTRUE, bufferLength + frameCur->windowCur->textDepth);
+            windowScrollUp (meTRUE, bufferLength + frameCur->windowCur->textDepth);
             return meTRUE;
         }
         
@@ -856,7 +888,7 @@ setScrollWithMouse (int f, int n)
         maxTopRow = bufferLength - frameCur->windowCur->textDepth;
         if (maxTopRow < startLine)
         {
-            scrollUp(meTRUE, startLine - maxTopRow);
+            windowScrollUp(meTRUE, startLine - maxTopRow);
             startLine = maxTopRow;
         }
         
@@ -924,7 +956,7 @@ setScrollWithMouse (int f, int n)
     
     /* Go and scroll - simple signed difference of the current top line and the
      * target top line -  done when the scroll has finished - simple !! */
-    return (scrollDown (meTRUE, (int)(screenTopRow - currentTopRow)));
+    return (windowScrollDown (meTRUE, (int)(screenTopRow - currentTopRow)));
 }
 #endif
 
@@ -937,10 +969,40 @@ setScrollWithMouse (int f, int n)
  */
 
 int
-onlywind(int f, int n)
+windowDeleteOthers(int f, int n)
 {
     register meWindow *wp, *nwp ;
 
+#if MEOPT_EXTENDED
+    if((n & 2) == 0)
+    {
+        wp = frameCur->windowList ;
+        while (wp != NULL)
+        {
+            if((wp->flags & meWINDOW_NO_DELETE) && (wp != frameCur->windowCur))
+                break ;
+            wp = wp->next;
+        }
+        if(wp != NULL)
+        {
+            meWindow *cwp ;
+            cwp = frameCur->windowCur ;
+            wp = frameCur->windowList ;
+            while (wp != NULL)
+            {
+                nwp = wp->next;
+                if(((wp->flags & meWINDOW_NO_DELETE) == 0) && (wp != cwp))
+                {
+                    meWindowMakeCurrent(wp) ;
+                    windowDelete(meFALSE,1) ;
+                }
+                wp = nwp ;
+            }
+            meWindowMakeCurrent(cwp) ;
+            return meTRUE ;
+        }
+    }
+#endif
     bufHistNo++ ;
     wp = frameCur->windowList ;
     while (wp != NULL)
@@ -978,9 +1040,9 @@ onlywind(int f, int n)
     frameCur->windowCur->frameColumn = 0;
     frameCur->windowCur->depth = frameCur->depth - meFrameGetMenuDepth(frameCur);
     frameCur->windowCur->width = frameCur->width;
-    fixWindowTextSize(frameCur->windowCur);
+    meWindowFixTextSize(frameCur->windowCur);
     
-    return (meTRUE);
+    return meTRUE ;
 }
 
 /*
@@ -990,17 +1052,16 @@ onlywind(int f, int n)
 
 /* ARGSUSED */
 int
-delwind(int f, int n)
+windowDelete(int f, int n)
 {
-    meWindow*  wp;                        /* window to recieve deleted space */
-    meWindow*  pwp;                       /* Ptr to previous frameCur->windowCur window  */
-    meWindow*  nwp;                       /* Ptr to next frameCur->windowCur window  */
+    meWindow  *wp;                        /* window to recieve deleted space */
+    meWindow  *pwp;                       /* Ptr to previous window */
+    meWindow  *cwp;                       /* Ptr to current window */
+    meWindow  *nwp;                       /* Ptr to next window */
 #if MEOPT_HSPLIT
-    meWindow** wlp;                       /* Window list pointer */
-    meWindow*  wlist [meWINDOW_MAX+1];        /* The list of windows */
-    int      deleteType;                /* The deltion type */
-#else
-    meWindow*  cwp;                       /* Ptr to replacement frameCur->windowCur */
+    meWindow **wlp;                       /* Window list pointer */
+    meWindow  *wlist [meWINDOW_MAX+1];    /* The list of windows */
+    int        deleteType;                /* The deltion type */
 #endif
 
     /*
@@ -1011,9 +1072,10 @@ delwind(int f, int n)
         TTbell() ;
         return meFALSE ;
     }
-
-    nwp = frameCur->windowCur->next;
-    pwp = frameCur->windowCur->prev;
+    
+    cwp = frameCur->windowCur ;
+    nwp = cwp->next;
+    pwp = cwp->prev;
 
 #if MEOPT_HSPLIT
     /* Check the previous window. If the previous pointer is NULL or the
@@ -1027,21 +1089,54 @@ delwind(int f, int n)
      * 
      * |
      * +----------+          +---------+   OR  +---------+---------+
-     * |pwp       |          |frameCur->windowCur    |       |frameCur->windowCur    |nwp      |
+     * |pwp       |          |curWin   |       |curWin   |nwp      |
      * |          |          |         |       |         |         | 
      * +-----+----+          +---------+       +---------+---------+
-     * |frameCur->windowCur|               |nwp
+     * |curWn|               |nwp
      * |     |               |
      * +-----+
      */
     if ((pwp == NULL) ||
-        ((pwp->frameColumn+pwp->width) > (frameCur->windowCur->frameColumn+frameCur->windowCur->width)))
+        ((pwp->frameColumn+pwp->width) > (cwp->frameColumn+cwp->width)))
     {
         /* Determine if we merge the next down or right */
-        if (nwp->frameColumn == frameCur->windowCur->frameColumn)
+        if (nwp->frameColumn == cwp->frameColumn)
             deleteType = WINDOW_NEXT;
         else
             deleteType = WINDOW_RIGHT;
+    }
+    /* The end column of the previous is smaller then the current window
+     * check the next start column to determine if we merge the next sibling
+     * or the previous child.
+     * 
+     * Cases
+     * -----
+     * 
+     * nwp == NULL                    |
+     *                             pwp|
+     * +----+---------+  OR  +--------+
+     * |pwp |curWin   |      |curWin  |
+     * |    |         |      |        |
+     * +----+---------+      +--------+
+     * 
+     * nwp != NULL
+     *                 
+     * +----+-------+
+     * |pwp |curWin |
+     * |    |       |
+     * +----+-------+
+     * |nwp         |
+     * |            |
+     * +------------+
+     */
+    else if ((nwp == NULL) ||
+             (nwp->frameColumn < cwp->frameColumn))
+    {
+        /* Determine if we merge the prev up or left */
+        if ((pwp->frameColumn+pwp->width) == (cwp->frameColumn+cwp->width))
+            deleteType = WINDOW_PREV;
+        else
+            deleteType = WINDOW_LEFT;
     }
     /* If the end columns are the same as the curent window and the previous
      * window then merge the current window into the previous window
@@ -1054,81 +1149,94 @@ delwind(int f, int n)
      * |pwp       |         |    | pwp  |
      * |          |         |    |      |
      * +----------+         +----+------+
-     * |frameCur->windowCur     |         |frameCur->windowCur      |
+     * |curWin    |         |curWin     |
      * |          |         |           |
      * +----------+         +-----------+
      * |                    |
      */
-    else if ((pwp->frameColumn+pwp->width) == (frameCur->windowCur->frameColumn+frameCur->windowCur->width))
-        deleteType = WINDOW_PREV;
-    /* The end column of the previous is smaller then the current window
-     * check the next start column to determine if we merge the next sibling
-     * or the previous child.
-     * 
-     * Cases
-     * -----
-     * 
-     * nwp == NULL          Note that there is no above condition since that
-     *                      should have been detected in the previous case.
-     * +----+---------+     
-     * |pwp |frameCur->windowCur    |
-     * |    |         |
-     * +----+---------+
-     * 
-     * nwp != NULL
-     *                     OR                
-     * +----+------+-----+    +----+-------+
-     * |pwp |frameCur->windowCur |nwp  |    |pwp |frameCur->windowCur  |
-     * |    |      |     |    |    |       |
-     * +----+------+-----+    +----+-------+
-     *                        |nwp         |
-     *                        |            |
-     *                        +------------+
-     */
-    else if ((nwp == NULL) ||
-             (nwp->frameColumn < frameCur->windowCur->frameColumn))
-        deleteType = WINDOW_LEFT;
-    /*
-     * The next left column is greater than the current left colunm
-     * 
-     * Cases 
-     * -----
-     *  RIGHT CASE       OR  LEFT CASE
-     * +--------+------+    +---------+-----+
-     * |frameCur->windowCur   |nwp   |    |         | nwp |  
-     * |        |      |    |         |     | 
-     * +--------+------+    +---+-----+     |
-     *                      |   |frameCur->windowCur|     |
-     *                      +---+     |     |
-     *                      |pwp|     |     |
-     *                      +---+-----+-----+
-     */
-    else if (nwp->frameColumn > frameCur->windowCur->frameColumn)
+    else if ((pwp->frameColumn+pwp->width) == (cwp->frameColumn+cwp->width))
     {
-        if (nwp->frameRow  < frameCur->windowCur->frameRow)
-            deleteType = WINDOW_LEFT;
+#if MEOPT_EXTENDED
+        /* try to respect the prevoius windows depth lock */
+        if((pwp->flags & meWINDOW_LOCK_DEPTH) &&
+           (nwp->frameColumn == cwp->frameColumn))
+            deleteType = WINDOW_NEXT;
         else
-            deleteType = WINDOW_RIGHT;
+#endif
+            deleteType = WINDOW_PREV;
     }
     /*
-     * Default to the next window.
+     * The next left column is the same as than the current left colunm
      * 
      * Cases
      * -----
      * 
      * +-----+---------------+
-     * |pwp  | frameCur->windowCur         |
+     * |pwp  | curWin        |
      * |     |               |
      * |     +------+--------+
      * |     |nwp   |        |
      * |     |      |        |
      * +-----+------+--------+
      */
-    else
+    else if (nwp->frameColumn == cwp->frameColumn)
         deleteType = WINDOW_NEXT;
+    /* The previous and next windows must both be in different columns */
+    /*
+     * The next top row is less than the current top row
+     * 
+     * Cases 
+     * -----
+     * 
+     * +---------+-----+
+     * |         | nwp |  
+     * |         |     | 
+     * +---+-----+     |
+     * |   |curWn|     |
+     * +---+     |     |
+     * |pwp|     |     |
+     * +---+-----+-----+
+     */
+    else if (nwp->frameRow < cwp->frameRow)
+        deleteType = WINDOW_LEFT;
+    /*
+     * The prev end row is greater than the current end row
+     * 
+     * Cases 
+     * -----
+     * 
+     * +----+-----+----+
+     * | pwp|curWn| nwp|
+     * |    |     |    |
+     * |    +-----+----+
+     * |    |          |
+     * |    |          |
+     * |    |          |
+     * +----+----------+
+     */
+    else if ((pwp->frameRow+pwp->depth) > (cwp->frameRow+cwp->depth))
+        deleteType = WINDOW_RIGHT;
+    /*
+     * The default case
+     * 
+     * Cases 
+     * -----
+     *  
+     *     +--------+----
+     *     |curWin  |nwp
+     *  pwp|        |
+     * ----+--------+
+     */
+#if MEOPT_EXTENDED
+    /* try to respect the next windows width lock */
+    else if(nwp->flags & meWINDOW_LOCK_WIDTH)
+       deleteType = WINDOW_LEFT;
+    else
+#endif
+       deleteType = WINDOW_RIGHT;
 
     /* Perform the deletion window movement. */
-    wlp = getAdjacentWindowList (wlist, deleteType, frameCur->windowCur);
+    wlp = meWindowGetAdjacentList (wlist, deleteType, cwp);
     meAssert (wlp != NULL);
 
     for  (wp = *wlp; wp != NULL; wp = *++wlp)
@@ -1136,22 +1244,22 @@ delwind(int f, int n)
         switch (deleteType)
         {
         case WINDOW_NEXT:           /* Window vertically down */
-            wp->frameRow = frameCur->windowCur->frameRow ;
-            wp->depth += frameCur->windowCur->depth ;
+            wp->frameRow = cwp->frameRow ;
+            wp->depth += cwp->depth ;
             break;
         case WINDOW_RIGHT:          /* Window horizontally to right */
-            wp->frameColumn  = frameCur->windowCur->frameColumn;
-            wp->width += frameCur->windowCur->width;
+            wp->frameColumn  = cwp->frameColumn;
+            wp->width += cwp->width;
             
             /* Move virtual video frames */
             meVideoDetach (wp);
-            meVideoAttach (frameCur->windowCur->video, wp);
+            meVideoAttach (cwp->video, wp);
             break;
         case WINDOW_PREV:           /* Window vertically up */
-            wp->depth += frameCur->windowCur->depth;
+            wp->depth += cwp->depth;
             break;
         case WINDOW_LEFT:           /* Window horizontally to left */
-            wp->width += frameCur->windowCur->width;
+            wp->width += cwp->width;
             break;
         }
 
@@ -1159,26 +1267,26 @@ delwind(int f, int n)
          * mode line. This is not always strictly necessary but
          * it is not worth working out what should and should not
          * be strictly set */
-        fixWindowTextSize(wp);         /* Fix text window size */
+        meWindowFixTextSize(wp);         /* Fix text window size */
     }
 #else
     if (nwp != NULL)
     {
-        nwp->frameRow = frameCur->windowCur->frameRow ;
-        nwp->depth += frameCur->windowCur->depth ;
+        nwp->frameRow = cwp->frameRow ;
+        nwp->depth += cwp->depth ;
         cwp = nwp ;
     }
     else
     {
-        pwp->depth += frameCur->windowCur->depth;
+        pwp->depth += cwp->depth;
         cwp = pwp ;
     }
 
-    fixWindowTextSize(cwp);         /* Fix text window size */
+    meWindowFixTextSize(cwp);         /* Fix text window size */
 #endif
     
-    /* Fix up the frameCur->windowCur pointers and get ready to delete by unchaining
-     * from the window list */
+    /* Fix up the current Window pointers and get ready to delete by
+     * unchaining from the window list */
     if (pwp == NULL)
         frameCur->windowList = nwp;
     else
@@ -1201,13 +1309,13 @@ delwind(int f, int n)
     /* Determine the next window to make the current window */
 #if MEOPT_HSPLIT
     if ((deleteType == WINDOW_LEFT) || (deleteType == WINDOW_PREV))
-        makeCurWind(pwp);               /* Previous window is IT !! */
+        meWindowMakeCurrent(pwp);               /* Previous window is IT !! */
     else
-        makeCurWind(nwp);               /* Next window is IT !! */
+        meWindowMakeCurrent(nwp);               /* Next window is IT !! */
 #else
-    makeCurWind(cwp);
+    meWindowMakeCurrent(cwp);
 #endif
-    /* Must free AFTER makeCurWind as this dicks with frameCur->windowCur */
+    /* Must free AFTER meWindowMakeCurrent as this dicks with frameCur->windowCur */
     meFree(wp->modeLine);                  /* Free off the old mode line */
     meFree(wp->dotCharOffset);
     meFree(wp);                         /* and finally the window itself */
@@ -1222,7 +1330,7 @@ delwind(int f, int n)
    for the new window.  Bound to "C-X 2".
  */
 int
-splitWindVert(int f, int n)
+windowSplitDepth(int f, int n)
 {
     register meWindow *wp;
     register meLine   *lp, *off;
@@ -1240,6 +1348,11 @@ splitWindVert(int f, int n)
         meNullFree (wp);                /* Destruct created window */
         return (meFALSE);                 /* Fail */
     }
+    /* reset the window flags for both as these tend to cause more trouble
+     * than they are worth */
+#if MEOPT_EXTENDED
+    frameCur->windowCur->flags = 0 ;
+#endif
     memcpy(wp,frameCur->windowCur,sizeof(meWindow)) ;
     
     wp->modeLine = lp ;
@@ -1296,8 +1409,8 @@ splitWindVert(int f, int n)
     }
     
     wp->vertScroll = frameCur->windowCur->vertScroll ;
-    fixWindowTextSize (frameCur->windowCur);              /* Fix text window size */
-    fixWindowTextSize (wp);                 /* Fix text window size */
+    meWindowFixTextSize (frameCur->windowCur);              /* Fix text window size */
+    meWindowFixTextSize (wp);                 /* Fix text window size */
     return meTRUE ;
 }
 
@@ -1313,7 +1426,7 @@ splitWindVert(int f, int n)
  *
  */
 int
-splitWindHorz(int f, int n)
+windowSplitWidth(int f, int n)
 {
     register meWindow *wp;
     register meLine   *lp, *off;
@@ -1329,6 +1442,11 @@ splitWindHorz(int f, int n)
         meNullFree (wp);                /* Destruct window */
         return (meFALSE);                 /* and Fail */
     }
+    /* reset the window flags for both as these tend to cause more trouble
+     * than they are worth */
+#if MEOPT_EXTENDED
+    frameCur->windowCur->flags = 0 ;
+#endif
     memcpy(wp,frameCur->windowCur,sizeof(meWindow)) ;
     if (meVideoAttach (NULL, wp) == meFALSE)
     {
@@ -1356,11 +1474,11 @@ splitWindHorz(int f, int n)
     frameCur->windowCur->width /= 2;
     wp->width -= frameCur->windowCur->width;
     wp->frameColumn  = frameCur->windowCur->frameColumn + frameCur->windowCur->width;
-    fixWindowTextSize(wp);
-    fixWindowTextSize(frameCur->windowCur);
+    meWindowFixTextSize(wp);
+    meWindowFixTextSize(frameCur->windowCur);
 
     if ((f != meFALSE) && (n == 2))
-        makeCurWind(wp);               /* Next window is IT !! */
+        meWindowMakeCurrent(wp);               /* Next window is IT !! */
     return (meTRUE);
 }
 #endif
@@ -1375,7 +1493,7 @@ splitWindHorz(int f, int n)
  */
 
 int
-growWindVert(int f, int n)
+windowGrowDepth(int f, int n)
 {
     meWindow *wp;                         /* Temporary window pointer */
     meWindow **twlp;                      /* Temporary window list pointer */
@@ -1389,15 +1507,15 @@ growWindVert(int f, int n)
      * made a little more complicated by the presence of horizontal split
      * windows. In this case we have to consider other windows adjacent to
      * "frameCur->windowCur" that may undergo a change is size because of the split */
-    if (getAdjacentWindowList (bwlist, WINDOW_NEXT, frameCur->windowCur) == NULL)
+    if (meWindowGetAdjacentList (bwlist, WINDOW_NEXT, frameCur->windowCur) == NULL)
     {
         n = 0 - n;
-        if (getAdjacentWindowList (twlist, WINDOW_PREV, frameCur->windowCur) == NULL)
+        if (meWindowGetAdjacentList (twlist, WINDOW_PREV, frameCur->windowCur) == NULL)
             return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Only one vertical window]");
-        getAdjacentWindowList (bwlist, WINDOW_NEXT, twlist[0]);
+        meWindowGetAdjacentList (bwlist, WINDOW_NEXT, twlist[0]);
     }
     else
-        getAdjacentWindowList (twlist, WINDOW_PREV, bwlist[0]);
+        meWindowGetAdjacentList (twlist, WINDOW_PREV, bwlist[0]);
 #else
     if (frameCur->windowList->next == NULL)
         return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Only one window]");
@@ -1441,7 +1559,7 @@ growWindVert(int f, int n)
     for (ii = 0; (wp = twlist[ii]) != NULL; ii++)
     {
         wp->depth += n;
-        fixWindowTextSize (wp);
+        meWindowFixTextSize (wp);
     }
 
     /* Resize all of the windows */
@@ -1449,7 +1567,7 @@ growWindVert(int f, int n)
     {
         wp->frameRow += n;
         wp->depth -= n;
-        fixWindowTextSize(wp);
+        meWindowFixTextSize(wp);
     }
     return (meTRUE);
 
@@ -1461,16 +1579,16 @@ growWindVert(int f, int n)
  * "C-X C-Z".
  */
 int
-shrinkWindVert(int f, int n)
+windowShrinkDepth(int f, int n)
 {
-    return growWindVert(f,0-n) ;
+    return windowGrowDepth(f,0-n) ;
 }
 
 
 /*      Resize the current window to the requested size */
 
 int
-resizeWndVert(int f, int n)
+windowResizeDepth(int f, int n)
 {
     int clines;                         /* current # of lines in window */
 
@@ -1480,7 +1598,7 @@ resizeWndVert(int f, int n)
     if (clines == n)                    /* Already the right size? */
         return(meTRUE);                   /* Yes - quit */
 
-    return(growWindVert(meTRUE, n - clines));
+    return(windowGrowDepth(meTRUE, n - clines));
 }
 
 #if MEOPT_HSPLIT
@@ -1494,7 +1612,7 @@ resizeWndVert(int f, int n)
  */
 
 int
-growWindHorz(int f, int n)
+windowGrowWidth(int f, int n)
 {
     meWindow *wp;                         /* Temporary window pointer */
     meWindow **twlp;                      /* Temporary window list pointer */
@@ -1511,15 +1629,15 @@ growWindHorz(int f, int n)
      * made a little more complicated by the presence of horizontal split
      * windows. In this case we have to consider other windows adjacent to
      * "frameCur->windowCur" that may undergo a change is size because of the split */
-    if (getAdjacentWindowList (rwlist, WINDOW_RIGHT, frameCur->windowCur) == NULL)
+    if (meWindowGetAdjacentList (rwlist, WINDOW_RIGHT, frameCur->windowCur) == NULL)
     {
         n = 0 - n;
-        if (getAdjacentWindowList (lwlist, WINDOW_LEFT, frameCur->windowCur) == NULL)
+        if (meWindowGetAdjacentList (lwlist, WINDOW_LEFT, frameCur->windowCur) == NULL)
             goto one_window;
-        getAdjacentWindowList (rwlist, WINDOW_RIGHT, lwlist[0]);
+        meWindowGetAdjacentList (rwlist, WINDOW_RIGHT, lwlist[0]);
     }
     else
-        getAdjacentWindowList (lwlist, WINDOW_LEFT, rwlist[0]);
+        meWindowGetAdjacentList (lwlist, WINDOW_LEFT, rwlist[0]);
 
     meAssert (rwlist[0] != NULL);
     meAssert (lwlist[0] != NULL);
@@ -1545,7 +1663,7 @@ growWindHorz(int f, int n)
     for (ii = 0; (wp = lwlist[ii]) != NULL; ii++)
     {
         wp->width += n;
-        fixWindowTextSize(wp);
+        meWindowFixTextSize(wp);
     }
 
     /* Resize all of the windows to the RIGHT of frameCur->windowCur */
@@ -1553,7 +1671,7 @@ growWindHorz(int f, int n)
     {
         wp->frameColumn += n;
         wp->width -= n;
-        fixWindowTextSize(wp);
+        meWindowFixTextSize(wp);
     }
     return (meTRUE);
 
@@ -1569,14 +1687,14 @@ one_window:
  * Ask the redisplay to do all the hard work.
  * Bound to "C-X C-Z". */
 int
-shrinkWindHorz(int f, int n)
+windowShrinkWidth(int f, int n)
 {
-    return growWindHorz (f, 0-n);    /* Get enlarge to do work */
+    return windowGrowWidth (f, 0-n);    /* Get enlarge to do work */
 }
 
 /* Resize the current window - size to requested columns */
 int
-resizeWndHorz(int f, int n)
+windowResizeWidth(int f, int n)
 {
     int ccols;                           /* current # of columns in window */
 
@@ -1586,7 +1704,7 @@ resizeWndHorz(int f, int n)
     if (ccols == n)                     /* already the right size? */
         return(meTRUE);                   /* Yes - finish */
 
-    return (growWindHorz (meTRUE, n - ccols));
+    return (windowGrowWidth (meTRUE, n - ccols));
 }
 #endif
 
@@ -1597,11 +1715,13 @@ resizeWndHorz(int f, int n)
  */
 
 meWindow  *
-wpopup(meUByte *name, int flags)
+meWindowPopup(meUByte *name, int flags, meBuffer **bufferReplaced)
 {
     meWindow *wp=NULL;
     meBuffer *bp;
-
+    
+    if(bufferReplaced != NULL)
+        *bufferReplaced = NULL ;
     if(name != NULL)
     {
         if((bp=bfind(name,(flags & 0xff))) == NULL)
@@ -1638,27 +1758,76 @@ wpopup(meUByte *name, int flags)
                 wp = NULL ;
                 break ;
             }
-            if(wp->buffer->name[0] == '*')
+            if((wp->buffer->name[0] == '*')
+#if MEOPT_EXTENDED
+               && ((wp->flags & meWINDOW_LOCK_BUFFER) == 0)
+#endif
+               )
                 break ;
         }
     }
     if(wp == NULL)
     {
+#if MEOPT_EXTENDED
+        wp = frameCur->windowCur ;
+        for(;;)
+        {
+            if((wp = wp->next) == NULL)
+                wp = frameCur->windowList ;
+            if(wp == frameCur->windowCur)
+            {
+                wp = NULL ;
+                break ;
+            }
+            if((wp->flags & meWINDOW_LOCK_BUFFER) == 0)
+                    break ;
+        }
+        if(wp == NULL)
+        {
+            meUShort flags ;
+            /* maintain the current windows flags */
+            flags = frameCur->windowCur->flags ;
+            wp = frameCur->windowCur->next ;
+            windowSplitDepth(meFALSE, 0) ;
+            frameCur->windowCur->flags = flags ;
+            if(frameCur->windowCur->next == wp)
+            {
+                /* next is the same so we want the previous */
+                wp = frameCur->windowList ;
+                while(wp->next != frameCur->windowCur)
+                    wp = wp->next ;
+            }
+            else
+                wp = frameCur->windowCur->next ;
+            /* splitting a window so there is no replacement */
+            bufferReplaced = NULL ;
+        }
+#else
         if(frameCur->windowList->next == NULL)
-            splitWindVert(meFALSE, 0) ;
+        {
+            if(windowSplitDepth(meFALSE, 0) != meTRUE)
+                return NULL ;
+            /* splitting a window so there is no replacement */
+            bufferReplaced = NULL ;
+        }
         if((wp = frameCur->windowCur->next) == NULL)
             wp = frameCur->windowList ;
+#endif
     }
     if(name != NULL)
+    {
+        if(bufferReplaced != NULL)
+            *bufferReplaced = wp->buffer ;
         swbuffer(wp,bp);
+    }
     if(flags & WPOP_MKCURR)
-        makeCurWind(wp) ;
+        meWindowMakeCurrent(wp) ;
 
     return wp ;
 }
 
 int
-popupWindow(int f, int n)
+windowPopup(int f, int n)
 {
     meUByte bufn[meBUF_SIZE_MAX], *nn ;
     int s ;
@@ -1683,26 +1852,26 @@ popupWindow(int f, int n)
         if(f)
             n |= WPOP_USESTR ;
     }
-    if(wpopup(nn,n) == NULL)
+    if(meWindowPopup(nn,n,NULL) == NULL)
         return meFALSE ;
     return meTRUE ;
 }
 
 #if MEOPT_EXTENDED
 int
-scrollNextUp(int f, int n)          /* scroll the next window up (back) a page */
+windowScrollNextUp(int f, int n)          /* scroll the next window up (back) a page */
 {
-    nextWindow(meFALSE, 1);
-    scrollUp(f, n);
-    return(prevwind(meFALSE, 1));
+    windowGotoNext(meFALSE, 1);
+    windowScrollUp(f, n);
+    return(windowGotoPrevious(meFALSE, 1));
 }
 
 int
-scrollNextDown(int f, int n)          /* scroll the next window down (forward) a page */
+windowScrollNextDown(int f, int n)          /* scroll the next window down (forward) a page */
 {
-    nextWindow(meFALSE, 1);
-    scrollDown(f, n);
-    return (prevwind(meFALSE, 1));
+    windowGotoNext(meFALSE, 1);
+    windowScrollDown(f, n);
+    return (windowGotoPrevious(meFALSE, 1));
 }
 #endif
 
@@ -1711,12 +1880,12 @@ scrollNextDown(int f, int n)          /* scroll the next window down (forward) a
  */
 
 int
-resizeAllWnd (int f, int n)
+frameResizeWindows (int f, int n)
 {
-    meWindow *wp;                         /* Current window pointer */
-    meWindow *pwp;                        /* Previous window pointer */
-    int row [meWINDOW_MAX];                 /* Keep the start row number */
-    int col [meWINDOW_MAX];                 /* Keep the start col number */
+    meWindow *wp;                       /* Current window pointer */
+    meWindow *pwp;                      /* Previous window pointer */
+    int row [meWINDOW_MAX];             /* Keep the start row number */
+    int col [meWINDOW_MAX];             /* Keep the start col number */
     int maxrow = 0;                     /* Maximum number of rows */
     int maxcol = 0;                     /* Maximum number of columns */
     int colwidth;                       /* Width of a colunm */
@@ -1875,7 +2044,7 @@ resizeAllWnd (int f, int n)
     /* Make sure that the windows can be re-sized. If they fall below the
      * minimum then delete all windows with the exception of 1 */
     if ((colwidth < 6) || (rowdepth < 2))
-        return onlywind(0,0);
+        return windowDeleteOthers(0,0);
 
     /* Iterate down the list of windows determining the ending row and
      * column numbers of each */
@@ -1928,7 +2097,7 @@ resizeAllWnd (int f, int n)
         }
         
         /* Reframe - Update all of the windows to reflect the new sizes */
-        fixWindowTextSize(wp);
+        meWindowFixTextSize(wp);
         wp = wp->next;                /* Move onto the next */
     }
     sgarbf = meTRUE;                      /* Garbage the screen */
@@ -1940,7 +2109,7 @@ resizeAllWnd (int f, int n)
 
 #if MEOPT_POSITION
 int
-setPosition(int f, int n)		/* save ptr to current window */
+positionSet(int f, int n)		/* save ptr to current window */
 {
     register mePosition *pos ;
     meUShort mark ;                     /* Position alpha mark name*/
@@ -2022,7 +2191,7 @@ setPosition(int f, int n)		/* save ptr to current window */
 }
 
 int
-gotoPosition(int f, int n)		/* restore the saved screen */
+positionGoto(int f, int n)		/* restore the saved screen */
 {
     register mePosition *pos ;
     int ret=meTRUE, sflg ;
@@ -2114,7 +2283,7 @@ gotoPosition(int f, int n)		/* restore the saved screen */
             }
         }
         if(bwp != frameCur->windowCur)
-            makeCurWind(bwp) ;
+            meWindowMakeCurrent(bwp) ;
     }
     if(n & mePOS_BUFFER)
     {
@@ -2154,7 +2323,7 @@ gotoPosition(int f, int n)		/* restore the saved screen */
         meInt dotLineNo=frameCur->windowCur->dotLineNo ;
         meUShort doto=frameCur->windowCur->dotOffset ;
         
-        if((ret = gotoLine(1,pos->markLineNo+1)) == meTRUE)
+        if((ret = windowGotoLine(1,pos->markLineNo+1)) == meTRUE)
         {
             frameCur->windowCur->markLine = frameCur->windowCur->dotLine ;
             frameCur->windowCur->markLineNo = frameCur->windowCur->dotLineNo ;
@@ -2184,13 +2353,13 @@ gotoPosition(int f, int n)		/* restore the saved screen */
             frameCur->windowCur->dotLine = frameCur->bufferCur->dotLine ;
             frameCur->windowCur->dotLineNo = frameCur->bufferCur->dotLineNo ;
             frameCur->windowCur->dotOffset = 0 ;
-            frameCur->windowCur->flag |= WFMOVEL ;
+            frameCur->windowCur->updateFlags |= WFMOVEL ;
         }
         else
             /* don't restore the offset or scrolls */
             n &= (mePOS_WINDOW|mePOS_BUFFER) ;
     }
-    else if((n & mePOS_LINENO) && ((ret = gotoLine(1,pos->dotLineNo+1)) != meTRUE))
+    else if((n & mePOS_LINENO) && ((ret = windowGotoLine(1,pos->dotLineNo+1)) != meTRUE))
         /* don't restore the offset or scrolls */
         n &= (mePOS_WINDOW|mePOS_BUFFER) ;
     
@@ -2215,7 +2384,7 @@ gotoPosition(int f, int n)		/* restore the saved screen */
         if(frameCur->windowCur->vertScroll != pos->vertScroll)
         {
             frameCur->windowCur->vertScroll = pos->vertScroll ;
-            frameCur->windowCur->flag |= WFMAIN|WFSBOX|WFLOOKBK ;
+            frameCur->windowCur->updateFlags |= WFMAIN|WFSBOX|WFLOOKBK ;
             sflg = 1 ;
         }
     }
@@ -2226,7 +2395,7 @@ gotoPosition(int f, int n)		/* restore the saved screen */
         if(frameCur->windowCur->horzScroll != pos->horzScroll)
         {
             frameCur->windowCur->horzScroll = pos->horzScroll ;
-            frameCur->windowCur->flag |= WFREDRAW ;        /* Force a screen update */
+            frameCur->windowCur->updateFlags |= WFREDRAW ;        /* Force a screen update */
             sflg = 1 ;
         }
     }
@@ -2235,7 +2404,7 @@ gotoPosition(int f, int n)		/* restore the saved screen */
         if(frameCur->windowCur->horzScrollRest != pos->horzScrollRest)
         {
             frameCur->windowCur->horzScrollRest = pos->horzScrollRest ;
-            frameCur->windowCur->flag |= WFREDRAW ;        /* Force a screen update */
+            frameCur->windowCur->updateFlags |= WFREDRAW ;        /* Force a screen update */
             sflg = 1 ;
         }
     }
@@ -2251,14 +2420,14 @@ gotoPosition(int f, int n)		/* restore the saved screen */
 
 #if MEOPT_OSD
 /*
- * menuWindow.
+ * frameSetupMenuLine.
  * Change the state of the window line.
  * Shuffle windows for allow the insertion of a menu line
  * 
  * Return meTRUE if the menu line has changed visibility state.
  */
 int
-menuWindow (int newTTsrow)
+frameSetupMenuLine (int newTTsrow)
 {
     meWindow *wp;
     
@@ -2276,7 +2445,7 @@ menuWindow (int newTTsrow)
                 {
                     wp->frameRow = 0;
                     wp->depth += 1;
-                    fixWindowTextSize(wp);
+                    meWindowFixTextSize(wp);
                 }
             }
         }
@@ -2294,14 +2463,14 @@ menuWindow (int newTTsrow)
                      * give us enough roo,. */
                     if (wp->depth <= 2)
                     {
-                        onlywind(0,0);
+                        windowDeleteOthers(0,0);
                         break;
                     }
                     else
                     {
                         wp->depth -= 1;
                         wp->frameRow = frameCur->menuDepth;
-                        fixWindowTextSize(wp);
+                        meWindowFixTextSize(wp);
                     }
                 }
             }
@@ -2314,4 +2483,6 @@ menuWindow (int newTTsrow)
     return (meTRUE);                      /* Changed status     */
 }
 #endif
+
+
 

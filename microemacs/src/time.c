@@ -109,8 +109,8 @@ set_timestamp(meBuffer *bp)
     win.buffer = frameCur->bufferCur ;
     win.dotLine = meLineGetNext(frameCur->bufferCur->baseLine) ;	/* Save position */
     win.dotOffset = 0 ;
-    win.flag = 0 ;
     win.dotLineNo = 0 ;    
+    win.updateFlags = 0 ;
     
     /* create magic search string */
     createTimeStampSrch(patt,pos) ;
@@ -155,7 +155,7 @@ set_timestamp(meBuffer *bp)
     frameCur->windowCur = owp ;
     if(ii)
         /* if found flag any window displaying it to update */
-        addModeToBufferWindows(bp,WFMAIN) ;
+        meBufferAddModeToWindows(bp,WFMAIN) ;
 
     return meTRUE ;
 }

@@ -1362,7 +1362,7 @@ ifile(meBuffer *bp, meUByte *fname, meUInt flags)
                 wp->dotLineNo += nline ;
             if(wp->markLineNo >= bp->dotLineNo)
                 wp->markLineNo += nline ;
-            wp->flag |= WFMAIN|WFMOVEL ;
+            wp->updateFlags |= WFMAIN|WFMOVEL ;
         }
     }
     meFrameLoopEnd() ;
@@ -1692,7 +1692,7 @@ findFile(int f, int n)
 #if MEOPT_EXTENDED
 /*
  * Find file into other window. This is trivial since all the hard stuff is
- * done by the routines splitWindVert() and filefind().
+ * done by the routines windowSplitDepth() and filefind().
  *
  * The count is used to put the "found file" into the upper or lower window.
  *
@@ -1705,7 +1705,7 @@ nextWndFindFile(int f, int n)
 
     if(inputFileName((meUByte *)"Find file",fname,0) != meTRUE)
         return meABORT ;
-    if(wpopup(NULL,WPOP_MKCURR) == NULL)
+    if(meWindowPopup(NULL,WPOP_MKCURR,NULL) == NULL)
         return meFALSE ;
     n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN)) | BFND_MKNAM ;
     return findSwapFileList(fname,n,0) ;
@@ -2191,7 +2191,7 @@ writeBuffer(int f, int n)
         return meFALSE ;
     
     resetBufferNames(frameCur->bufferCur,fname) ;
-    addModeToWindows(WFMODE) ; /* and update ALL mode lines */
+    frameAddModeToWindows(WFMODE) ; /* and update ALL mode lines */
 
     return meTRUE ;
 }
@@ -2219,7 +2219,7 @@ saveBuffer(int f, int n)
         /* Return, no changes.  */
         return mlwrite(0,(meUByte *)"[No changes made]") ;
     if((s=writeout(frameCur->bufferCur,n,frameCur->bufferCur->fileName)) == meTRUE)
-        addModeToWindows(WFMODE) ;  /* and update ALL mode lines */
+        frameAddModeToWindows(WFMODE) ;  /* and update ALL mode lines */
     return (s);
 }
 
@@ -2291,7 +2291,7 @@ saveSomeBuffers(int f, int n)
         }
         bp = bp->next;            /* on to the next buffer */
     }
-    addModeToWindows(WFMODE) ;  /* and update ALL mode lines */
+    frameAddModeToWindows(WFMODE) ;  /* and update ALL mode lines */
     return meTRUE ;
 }
 
@@ -2333,7 +2333,7 @@ changeFileName(int f, int n)
     else
         meModeClear(frameCur->bufferCur->mode,MDVIEW) ;	/* no longer read only mode */
 #endif
-    addModeToWindows(WFMODE) ;  /* and update ALL mode lines */
+    frameAddModeToWindows(WFMODE) ;  /* and update ALL mode lines */
 
     return (meTRUE);
 }

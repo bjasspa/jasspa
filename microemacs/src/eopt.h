@@ -7,8 +7,8 @@
  *  System        : 
  *  Module        : 
  *  Object Name   : $RCSfile: eopt.h,v $
- *  Revision      : $Revision: 2.1 $
- *  Date          : $Date: 2002-04-10 22:47:16 $
+ *  Revision      : $Revision: 2.2 $
+ *  Date          : $Date: 2002-04-29 19:57:18 $
  *  Author        : $Author: jon $
  *  Created By    : Steven Phillips
  *  Created       : Sat Jan 19 00:45:54 2002
