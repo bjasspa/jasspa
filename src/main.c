@@ -1274,6 +1274,7 @@ mesetup(int argc, char *argv[])
     meRegHead->execstr = NULL ;
     meRegHead->varList = NULL ;
     meRegHead->force = 0 ;
+    meRegHead->depth = 0 ;
     meRegCurr = meRegHead ;
     /* Initialise the head as this is dumped in list-variables */
     carg = meREGISTER_MAX ;

@@ -1074,6 +1074,13 @@ donbuf(meLine *hlp, meVarList *varList, meUByte *commandName, int f, int n)
     meUByte oldcle ;
     int oldexec, status ;
     
+    if(meRegCurr->depth >= meMACRO_DEPTH_MAX)
+    {
+        /* macro recursion gone too deep, bail out.
+         * attempt to force the break out by pretending C-g was pressed */
+        TTbreakFlag = 1 ;
+        return mlwrite(MWABORT|MWWAIT,(meUByte *)"[Macro recursion gone too deep]") ;
+    }
     /* save the arguments */
     oldcle = clexec;
     oldexec = execlevel ;
@@ -1084,6 +1091,7 @@ donbuf(meLine *hlp, meVarList *varList, meUByte *commandName, int f, int n)
     rp.varList = varList ;
     rp.f = f ;
     rp.n = n ;
+    rp.depth = meRegCurr->depth + 1 ;
     meRegCurr = &rp ;
     
     status = dobuf(hlp) ;
