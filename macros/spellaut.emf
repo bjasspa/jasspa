@@ -16,6 +16,7 @@
 
 ; note - a lot of !forces around to ensure the macro does not exit
 ; prematurely
+; n = bitmask - 0x01 Do hilighting & auto corrections, 0x02 currently inserting a white char
 0 define-macro auto-spell-test
     set-variable #l0 $window-col
     !if &not &inw @wc
@@ -28,11 +29,11 @@
             forward-char
             !return
         !endif
-        set-variable @# 1
+        set-variable @# &band @# 1
         forward-char
         set-variable #l1 $window-col
         backward-word
-    !elif &not @#
+    !elif &band @# 2
         backward-char
         !if &not &inw @wc
             forward-char
@@ -72,7 +73,8 @@
                     !endif
                 !else
 *add-word
-                    !if &seq &lef $result 1 "A"
+                    !if &not &band @# 1
+                    !elif &seq &lef $result 1 "A"
                         ; auto-correction - do it
                         set-variable #l2 $window-col
                         -2 show-region
@@ -115,7 +117,7 @@
         !endif
     !until 0
     !force set-variable $window-col #l0
-    !if &not @#
+    !if &band @# 2
         !force forward-delete-char
     !endif
 !emacro
@@ -138,7 +140,7 @@
             set-variable .last 1
         !else
             ; inserting a white space char, test (give 0 arg to indicate we may be dividing 2 chars
-            0 auto-spell-test
+            3 auto-spell-test
             set-variable .last 0
         !endif
     !elif &sin "delete-char" @cc
@@ -157,6 +159,7 @@
 
 set-variable .auto-spell-input.status "0"
 
+; n=1 ignore word, n=2 add word to dictionary
 define-macro auto-spell-ignore
     set-variable #l0 $buffer-mask
     set-variable $buffer-mask "luh"
@@ -259,9 +262,10 @@ define-macro auto-spell
 
 0 define-macro auto-spell-osdrp
     set-variable #l1 &rig $result 2
-    set-variable #l0 &len .auto-spell-osd.word
+    set-variable #l2 &rig .auto-spell-osd.word 1
+    set-variable #l0 &len #l2
     goto-position "\x83"
-    !while &not &seq &mid @wl $window-col #l0 .auto-spell-osd.word
+    !while &not &seq &mid @wl $window-col #l0 #l2
         !if &not $window-col
             !abort
         !endif
@@ -282,10 +286,11 @@ define-macro auto-spell
     !elif &equ @# 3
         1 spell-word
     !elif &equ @# 4
+        set-variable #l0 &rig .auto-spell-osd.word 1
         set-variable #l1 &rig $result 2
-        0x201 spell .auto-spell-osd.word
-        0x209 spell .auto-spell-osd.word
-        0x015 spell .auto-spell-osd.word #l1
+        0x201 spell #l0
+        0x209 spell #l0
+        0x015 spell #l0 #l1
         auto-spell-test
     !endif
     goto-position "\x82"
@@ -305,7 +310,7 @@ define-macro auto-spell
         -1 osd @#
         osd @# 0 b
         osd @# 130 "" "Auto Correct"
-        !force !force 33 spell .word
+        !force !force 33 spell &rig .word 1
         !if $status
             set-variable .list &lset $result 10 ""
             set-variable #l0 0
@@ -324,11 +329,29 @@ define-macro auto-spell
             set-variable #l0 2
         !endif
         osd @# 100 "-"
-        osd @# 110 "" "\HIgnore All"   1 auto-spell-osdcmd
-        osd @# 120 "" "\HAdd"          2 auto-spell-osdcmd
-        osd @# 140 "" "\HSpell Word"   3 auto-spell-osdcmd
+        !if &sin &lef .word 1 "AE"
+            osd @# 110 "" "\HIgnore All" 1 auto-spell-osdcmd
+            osd @# 120 "" "\HAdd"        2 auto-spell-osdcmd
+        !endif
+        osd @# 140 "" "\HSpell Word"     3 auto-spell-osdcmd
+        osd @# 150 "-"
+        osd @# 160 "" "Spell \HBuffer"   f spell-buffer
+        osd @# 170 "" "A\Huto Spell Buffer" f auto-spell-buffer 
+        osd @# 180 "" "Auto Spell \HReset"  f auto-spell-reset 
         set-variable .lword .word
     !endif
 !emacro
 set-variable .auto-spell-osd.lword ""
 
+define-macro auto-spell-menu
+    !if @#
+        set-variable $mouse-x $cursor-x
+        set-variable $mouse-y $cursor-y
+    !endif
+    0 auto-spell-test
+    set-position "\x83"
+    set-variable .auto-spell-osd.word $result
+    .osd.spell-auto auto-spell-osd
+    osd .osd.spell-auto 0 "bBo" -1 1
+    .osd.spell-auto osd
+!emacro

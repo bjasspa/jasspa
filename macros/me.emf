@@ -47,7 +47,7 @@
 0 define-macro-file buffinit buffer-init buffer-init-fhook buffer-bind-create
 0 define-macro-file utils frame-handle ascii-time regex-forward regex-backward var-str-sub str-to-regex filemask-to-regex copy-registry create-file-path
 define-macro-file format clean sort-lines-ignore-case normal-tab tabs-to-spaces paragraph-to-line delete-indentation restyle-region restyle-buffer ifill-paragraph
-define-macro-file cvs cvs cvs-add cvs-annotate cvs-checkout cvs-commit cvs-diff cvs-gdiff cvs-log cvs-remove cvs-resolve-conflicts cvs-state cvs-status cvs-tag cvs-update 
+define-macro-file cvs cvs cvs-setup cvs-add cvs-annotate cvs-checkout cvs-commit cvs-diff cvs-gdiff cvs-log cvs-remove cvs-resolve-conflicts cvs-state cvs-status cvs-tag cvs-update 
 define-macro-file misc save-all open-line symbol check-line-length alarm time compare-windows-exact display-white-chars
 define-macro-file tools compile grep rgrep which diff diff-changes execute-tool uniq reread-file find-bfile find-cfile
 define-macro-file abbrev expand-abbrev-handle expand-iso-accents expand-look-back expand-word iso-accents-mode
@@ -146,9 +146,11 @@ global-bind-key ifill-paragraph          "esc q"
 global-bind-key delete-indentation       "esc ^"
 0xa0000 global-bind-key osd              "f1"
 global-bind-key context-menu             "S-f1"
-global-bind-key item-list                "f7"
-2 global-bind-key occur                  "S-f7"
-global-bind-key item-list-close          "esc f7"
+global-bind-key reread-file              "f5"
+global-bind-key item-list                "f6"
+2 global-bind-key occur                  "S-f6"
+global-bind-key item-list-close          "esc f6"
+global-bind-key spell-buffer             "f7"
 global-bind-key file-browser             "f10"
 global-bind-key ftp                      "S-f10"
 global-bind-key cvs                      "C-f10"
