@@ -1,0 +1,176 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m3mac078.3,v 2.1 2005-02-19 13:44:03 jon Exp $
+.Im MicroEmacs command|osd
+.so me.tni
+.TH notes 3
+.XI notes - "Tagged hierarchical database of notes"
+.XI notes-file - "Open a notes database file"
+.XI notes-close - "Close the notes window"
+.XI notes-import-skwyrul - "Import a Skwyrul index file (skwyrul_l.htm)"
+.XI enf 8 "Notes database file" files
+.SH NAME
+notes \- Tagged hierarchical database of notes.
+.Me $a
+.SH SYNOPSIS
+.na
+.B notes
+.br
+.B notes-file
+.br
+.B notes-close
+.ad
+.SH DESCRIPTION
+.B notes
+is a note database that allows  miscellaneous text information to be organized
+and retained in a database. Each note is has a label  associated with it which
+may be hierarchically organized into a tree of notes. 
+.PP
+Information  that a programmer  would  typically put into a notes database may
+include:- 
+.BS
+How to mount a CD-ROM on a remote \s-1UNIX\s0 system.
+.BU
+Boot strapping Linux.
+.BU
+Configuring the C compiler.
+.BU
+etc..
+.BE
+This information  would be  hierarchically  organized by system, function etc.
+The content typically represents a snippet of information from a diverse range
+of subjects that probably needs to be accessed  infrequently  but organized in
+such a way that it may be located quickly when required.
+.PP
+On running 
+.B notes
+then a new frame is created (retaining the existing window  configuration) and
+the user is  prompted to create a new notes file with their user name,  accept
+this  option  and a new  notes  file  is  created  in the  \s-1JASSPA\s0  home
+directory. The user is presented with a split view window as follows:-
+.CS
++-------------+-----------------------------------+
+| + user Pad  |Text associated with the note.     |
+|*  +- info 1 |                                   |
+|   +- info 2 |Anything may be typed in here.     |
+|             |                                   |
+|             |                                   |
+|             |                                   |
+|             |                                   |
++=User Pad====+=*User Pad: info 1* ===============+
+|                                                 |
++-------------------------------------------------+
+.CE
+The left pane  comprises a tree of note  titles, the right pane  contains  the
+text note body of the selected  note title. Free form text may be entered into
+the text body pane.
+.PP
+Notes  are add and  removed  from the notes  tree  pane. A mouse  right  click
+presents a menu of options that operate on the current node as follows:-
+.IP "\fBTidy Tree\fR - \fCt\fR/\fCRETURN\fR"
+At the current node then close the note hierarchy. \fCt\fR will close the node
+a  \s-1RETURN\s0  at the node will open or close it,  depending on the current
+state.
+.IP "\fBRename Note\fR \- \fCn\fR"
+Edit the name of the note, a dialog is  presented  and a free form labelof the
+note may be edited.
+.IP "\fBDelete Note\fR \- \fCDEL\fR"
+Delete  the note from the tree.  This  deletes  the label and the note. if the
+note has any children then all children are deleted.
+.IP "\fBCut Note\fR \- \fCx\fR"
+Delete a note,  including  any child  notes  from the tree,  allowing  the cur
+information to be pasted back to a different location in the tree. (See 
+\fBPaste\fR \fBNote\fR).
+.IP "\fBMove Note Up\fR \- \fCu\fR"
+Move a note up the tree hierarchy, at the same level.
+.IP "\fBMove Note Down\fR \- \fCd\fR"
+Move a note down the tree hierarchy, at the same level.
+.IP "\fBInsert New Note\fR \- \fCINSERT\fR"
+Insert a new note as a child of the current node. The user is prompted for the
+name of the note, the name may be  entered  and the cursor is left in the body
+pane for text entry.
+.IP "\fBSearch Forward\fR \- \fCs\fR"
+Search in a forwards direction from the current note.
+.IP "\fBSearch Backward\fR \- \fCr\fR"
+Search in a backwards direction from the current note.
+.LP
+To quit  \fBnotes\fR  then delete the buffer using \fB\*cx  \*ck\fR or run the
+command 
+.B notes-close 
+command.
+.PP
+The notes file may be saved like any other buffer using 
+.Ht save-buffer 2
+(\fC\*cx   \*cs\fR).  This  saves  the  tree  and  the  notes.   Auto-save  is
+automatically enabled.
+.PP
+.B notes-close
+closes the notes  frame and  returns the user to the  existing  windows,
+retaining  the same  screen  layout. The notes file is still  resident  in the
+editor and may be restored with a 
+.B notes 
+command.
+.PP
+.B notes-file 
+opens a new notes file, the user is  explicitly  prompted  for the name of the
+notes file. There are no restrictions on the number of notes files that may be
+created.
+.B notes-import-skwyrul
+imports a Skwyrul  index file  (\fCskwyrul_l.htm\fR)  into \*(mS notes format.
+This  command  is not  available  on  line  as it is  likely  to be used  very
+infrequently.  To load the command then load the file  \fCnotesutl.emf\fR  and
+execute the buffer 
+.Ht execute-buffer 2
+(\fC\*ex   execute-buffer\fR).   The  command  may  be  explicitly  run  using
+\fC\*ex\fR \fCnotes-import-skwyrul\fR.
+.SS "Text Hilighting"
+Blocks  of  text  within  the  notes  body  may be  highlighted.  The  special
+constructs  of  \fC>format>\fR  ...  \fC>end>\fR  located  on the left  margin
+introduce and close a highlighting style. i.e.
+.ne 8
+.CS
+>c>
+/* This is a C code insert */
+>end>
+
+>perl>
+# This is a perl insert
+>end>
+.CE
+The keywords that are supported are:-
+.IP
+\fC>emf>\fR \- \*(mS macro files.
+.br
+\fC>pseudo>\fR \- Pseudo code.
+.br
+\fC>bnf>\fR \- BNF.
+.br
+\fC>c>\fR \- C programming language
+.br
+\fC>cpp>\fR \- C++ programming language
+.br
+\fC>perl>\fR \- Perl programming language
+.br
+\fC>tcl>\fR \- TCL programming language
+.br 
+\fC>end>\fR \- Ends the highlighting block.
+.SH NOTES
+.B notes
+is a macro implemented in \fCnotes.emf\fR.  The database  information is stored
+in a single file  \fIuser\|\fB.enf\fR.  The file  comprises both the index and
+the text.
+.PP
+The implementation of \fBnotes\fR uses 
+.Ht narrow-buffer 2 
+to hide information for each note page. 
+The 
+.Hl Registry Registry -
+is used to store and display the note tree labels.
+.SH "SEE ALSO"
+.na
+.Ht line-scheme-search 3 .
+.ad
+.FH
