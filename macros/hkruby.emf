@@ -44,6 +44,7 @@ set-variable .fhook-ruby.item-list-r3 "Def \ecB\\1\ecA"
     ; String literals
     hilight .hilight.ruby    4 "\"" "\"" "\\"      .scheme.string
     hilight .hilight.ruby    4 "'" "'" "\\"        .scheme.string
+    hilight .hilight.ruby    1 "\\?#"              .scheme.constant
     ; String literals & special forms
     hilight .hilight.ruby    0 "%[qQ](\\{[^)]*\\})"           .scheme.string
     hilight .hilight.ruby    0 "%[qQ]{\\{[^}]*\\}}"           .scheme.string
@@ -59,7 +60,7 @@ set-variable .fhook-ruby.item-list-r3 "Def \ecB\\1\ecA"
     hilight .hilight.ruby    0 "%r{\\{[^}]*\\}}"         .scheme.variable
     hilight .hilight.ruby    0 "%r(\\{[^)]*\\})"         .scheme.variable
     hilight .hilight.ruby    0 "%r\\(.\\)\\{\\S1*\\}\\1" .scheme.variable
-
+    
     hilight .hilight.ruby    0x20 "include" .scheme.prepro
     ; Reserved Words
     hilight .hilight.ruby    1 "BEGIN"      .scheme.keyword
@@ -152,10 +153,20 @@ set-variable .fhook-ruby.item-list-r3 "Def \ecB\\1\ecA"
     indent .hilight.ruby N "def" 4
     ; 'if' is tricky becuase it may appear as modifier 'expr if expr'
     indent .hilight.ruby N "^[ \t]*if" 4
-    ; 'unless' is tricky becuase it may appear as modifier 'expr if expr'
+    ; 'unless' is tricky becuase it may appear as modifier 'expr unless expr'
     indent .hilight.ruby N "^[ \t]*unless" 4
     ; 'while' is tricky becuase it may appear as modifier 'expr while expr'
+    ; There is also another case of 'while expr do' where we want a single
+    ; indent to 2. 
+    indent .hilight.ruby N "^[ \t]*while.*do" 4
     indent .hilight.ruby N "^[ \t]*while" 4
+    ; 'until' is tricky becuase it may appear as modifier 'expr until expr'
+    ; There is also another case of 'until expr do' where we want a single
+    ; indent to 2. 
+    indent .hilight.ruby N "^[ \t]*until.*do" 4
+    indent .hilight.ruby N "^[ \t]*until" 4
+    ;
+    indent .hilight.ruby N "do" 4
     indent .hilight.ruby n "{" 4
     ; Closing indents.
     indent .hilight.ruby O "end" -4
@@ -175,16 +186,18 @@ set-variable .fhook-ruby.item-list-r3 "Def \ecB\\1\ecA"
     indent .hilight.ruby e "%[qQxrw](" ")" "\\"
     indent .hilight.ruby e "%[qQxrw]{" "}" "\\"
     indent .hilight.ruby e "%[qQxrw]!" "!" "\\"
+    indent .hilight.ruby e "%[qQxrw]|" "|" "\\"
     indent .hilight.ruby e "%!" "!" "\\"
     indent .hilight.ruby e "%(" ")" "\\"
     indent .hilight.ruby e "%{" "}" "\\"
+    indent .hilight.ruby e "%|" "|" "\\"
     ; Brackets
     indent .hilight.ruby b "(" ")"
     ; Continue lines
     indent .hilight.ruby c "\\\\" 4
     ; Expressions at the end of a line - try with these
-    indent .hilight.ruby c "[-+=*/,]$" 4
-    indent .hilight.ruby c "[-+=*/,][ \t]+$" 4
+    indent .hilight.ruby c "[-+=*/,<>]$" 4
+    indent .hilight.ruby c "[-+=*/,<>][ \t]+$" 4
     ; Ignore comments.
     indent .hilight.ruby i "#"
 !endif
