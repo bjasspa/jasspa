@@ -1,0 +1,100 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m3mac077.3,v 2.1 2005-02-18 20:36:34 jon Exp $
+.Im MicroEmacs command|file
+.so me.tni
+.TH watch 3
+.XI watch - "Monitor a changing file"
+.XI watch-time - "Change the watch command poll time"
+.XI watch-reset - "Reset the watch command counters"
+.SH NAME
+watch \- Watch a file
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B watch
+.br
+.I n
+.B watch-reset
+.br
+.B watch-time
+.ad
+.SH DESCRIPTION
+.B watch
+monitors  a file on the  file  system  by  periodically  polling  the file and
+reacquiring  the  contents  into a buffer. The  command is  typically  used to
+monitor  build and logging  files as their output  changes  under control of a
+background process. Any number of files may be watched simultaneously, however
+to minimize the number of file system  transfers,  only those buffers that are
+being viewed in a window are updated.
+.PP
+.B watch 
+operates in three different modes:-
+.IP "\fBMode 1 (Reload)\fR"
+On a re-fresh the existing buffer is emptied and the file contents are re-read
+in their  entirety  from the file system if the file has changed.  This is the
+default mode of operation.
+.IP "\fBMode 2 (Reload, Append)\fR"
+On  enabling  the  watch  then  the  complete  file is  re-read,  changes  are
+subsequently  read as deltas from the end of the file. This mode  ensures that
+the buffer contents are up to date before incrementally reading the file.
+.IP "\fBMode 3 (Append)\fR"
+On  enabling  the  watch  then only the end of the file that has not been read
+before is  appended  to the end of the buffer.  This method is ideal for large
+log files.
+.LP
+The  operational  mode may be selected by passing a numeric  value of \fC1\fR,
+\fC2\fR  or \fC3\fR to the  \fBwatch\fR  command.  If no numeric  argument  is
+provided then the user is prompted for the operational mode.
+.PP
+Whilst  running in an append mode (\fC2\fR or \fC3\fR) then byte offset of the
+end of the file is  retained  for the next read. On the next read then any new
+information  from the last  saved byte  offset to the end of the file is read,
+irrespective of any edits made to the buffer. Therefore if the buffer contents
+have been deleted on the next  \fIappend\fR  read then the buffer will contain
+the appended  information only and not reacquire the information that has been
+deleted. Where the complete buffer is to be re-acquired then use \fBMode 1\fR.
+.PP
+The buffer mode line is modified to show the watch state. i.e.
+.CS
+==W <buffer-name> ============== 
+.CE
+Invocation of 
+.B watch
+in a buffer  that is being  watched  disables  the watch. All  watches  may be
+removed from all buffers using \fC0 watch-reset\fR.
+.PP
+.B watch-time
+modifies  the poll time of a watch. The user is  prompted  for the time period
+which is entered in seconds.
+.PP
+.B watch-reset
+re-evaluates the watches that are on the buffers reporting the number of files
+that  are  bing  watched.  When  invoked  with a  \fC0\fR  argument  then  any
+outstanding watch commands are removed.
+.SH NOTES
+.B watch
+is a macro implemented in \fCwatch.emf\fR.
+.PP
+The commands 
+.B watch-reset 
+and 
+.B watch-time 
+are not available until a 
+.B watch
+command has been executed.
+.SH HISTORY
+.B watch 
+was developed in 2000 and appeared in \*(mS  releases  after this date however
+the comand was not exported to the user. The 
+.B watch 
+command was fully integrated in the 2005 release.
+.SH "SEE ALSO"
+.na
+.Ht line-scheme-search 3 .
+.ad
+.FH

@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.31 2005-02-13 00:50:40 jon Exp $
+.Id $Id: me.nrs,v 2.32 2005-02-18 20:36:34 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -218,7 +218,7 @@ for some information on using the hypertext manual pages.
 .br
 .Hl "Printing Commands" Printing -
 .br
-.Hl "Writing MicroEmacs Macros" macroWriting 4 
+.Hl "Writing MicroEmacs Macros" macroWriting 4
 .br
 .Hl "Macro Development Commands" MacroDevelopment -
 .br
@@ -653,8 +653,8 @@ output * "%N
 .Se
 .NH MacroDevelopment - "Macro Development Commands"
 .SH "MACRO DEVELOPMENT COMMANDS"
-\*(mS is based on a macro language which may be extended, refer to 
-.Hl "Writing MicroEmacs Macros" macroWriting 4 
+\*(mS is based on a macro language which may be extended, refer to
+.Hl "Writing MicroEmacs Macros" macroWriting 4
 to get started with the language.
 .PP
 Commands used in macro  development, and more  specialized  commands which are
@@ -992,8 +992,8 @@ output * "%N
 .Me "!9  Macro Language Glossary - \*(mS"
 .SH "MACRO LANGUAGE GLOSSARY"
 The  following is a list of all of the macro  language  commands  available in
-\fB\*(mS\fR, refer to 
-.Hl "Writing MicroEmacs Macros" macroWriting 4  
+\fB\*(mS\fR, refer to
+.Hl "Writing MicroEmacs Macros" macroWriting 4
 for information on writing macros.
 .SS "Functions"
 All functions are denoted by a \fB&\fR prefix as follows:-
@@ -2058,32 +2058,135 @@ common editor across all working platforms has been achieved!
 .\"
 .B "8th Release - March 2005"
 .BS
+[050218] Added site delete button to \fBftp-connect\fR dialog.
+.BU
+[050218] Fixed  abbreviation  and exec-string  "\fC\\\\p\fR" and "\fC\\\\P\fR"
+store and goto  position  problem when the \fCC-x\fR  \fCC-a\fR or \fCC-x\fR a
+keys   are   rebound.   Fixed   by   replacing   with    '\fBesc\fR    \fBx\fR
+\fBset-alpha-mark\fR  \fBP\fR' (where  \fBesc-x\fR is a safe internal  special
+key).
+.BU
+[050218] Updated 
+.Ht watch 3
+interface and made public. Created new 
+.Ht watch-time 3
+command and prompt user for watch type when no argument is given.
+.BU    
+[050218]  Removed the use of bit \fC0x1000\fR in Ada string hilight as this is
+unlikely to be wanted (probably copied from Pascal).
+.BU
+[050218]  Changed the registry  parser to abort on error rather than trying to
+carry on (a very painful process for a badly decrypted registry file).
+.BU
+[050218] Fixed  highlighting minor issues. 
+.Ht hilight 2
+scheme now returns back
+to EOL scheme after a bracket. A branch tag on an \s-1EOL\s0 line
+removes the \s-1EOL\s0 flag so it hilights correctly. Branch tag now
+supports the \fC0x1000\fR single line hilight. Lookback now supports
+\fC0x800\fR on a branch tag.
+.BU
+[050217]  HTML  highlighting.  Fixed some really  grizzly  scripted  html page
+highlighting issues, predominantly with php.
+.BU
+[050217]  Change ftp so it opens the  \fBftp-connect\fR  dialog if the current
+buffer is \fC*ftp-files*\fR.
+.BU
+[050217]  Fixed ftp dir list  column  detection  and  highlighting  issue with
+windows ftp servers (time given as \fC9:15\fR not \fC09:15\fR)
+.BU
+[050217] Fixed bug in
+.Ht set-variable 2
+and
+.Ht  unset-variable 2
+when
+.Ht &sprintf 4
+is used to create a variable name.
+.BU
+[050217] Watch command (watch.emf).  Improved the watch command, made '\fC0\fR
+\fCwatch\fR'  call  \fBwatch-reset\fR,  changed  \fBwatch-reset\fR  so with an
+argument of \fC0\fR it removes all watches  otherwise it resets the main watch
+counter and reports to the user which buffers are watched.  Added new '\fC2\fR
+\fCwatch\fR'  and '\fC3  watch\fR'  which  compares  the file size,  doing the
+following:
+.sp
+\fB-\fR file on disk is smaller than last watch - reloads whole file.
+.br
+\fB-\fR file size is the same - does nothing.
+.br
+\fB-\fR  file on disk is larger - appends to the end of the buffer the tail of
+the file (\fCfile_size\fR \fC-\fR \fCwatch_file_size\fR bytes)
+.sp
+This assumes that the files is always being appended (reasonable assumption in
+most  cases. The only  difference  between 2 and 3 is that 2 forces a complete
+reread of the file on the first file change  (ensuring the buffer is correct),
+3 does not which  allows  the user to trash the first  gigabyte  of the buffer
+before starting the watch.
+.BU
+[050217]  Shell  template - added local and function  keywords and fixed a few
+string highlighting problems.
+.BU
+[050216] Made the dir-listing's  (Filtered) label on line 2 pick-able, changing
+the filter status when picked Made CVS's CVS-Quick label pick-able doing a full
+reread when picked.
+.BU
+[050216] Fixed a couple of silly register bugs introduced with last
+.Ht find-registry 2
+concat  root  and  sub-key  change.  Improved  behavior  when ftp erf file is
+missing,  now  create a new one in memory  and flags as  changed  so should be
+saved on exit.
+.BU
+[050216]  Do not abort  \fCme.emf\fR  execution  if ftp erf file is missing or
+bad.
+.BU
+[050216]  Fixed by removing the  '\fCstartup\fR'  function,  the main init now
+uses dofile  directly and it checks for either a \s-1NULL\s0  or \fC""\fR as a
+filname and replaces with  "\fBme\fR" or ("\fBne\fR" and does not complain) if
+found to be empty. This means that give
+.Ht execute-file 2
+an empty string  executes  either  "\fBme\fR" or "\fBne\fR",  i.e. resets me -
+nice side effect. Changed  '\fCdofile()\fR'  to  \fCexecFile()\fR  and changed
+\fCexecFile()\fR to \fCexecuteFile()\fR (as is function for command
+.Hr execute-file 2 )
+and change the other exec command function names for consistency.
+.BU
+[050216]  Fixed an  annoyance  reported by Bruno, ne should not complain if it
+fails to find \fCne.emf\fR - fair enough.
+.BU
+[050215]  Fixed crash  caused by using  \fC-c\fR  option with all files hidden
+(comment  when  browsing  ftp dirs as cache dir lists are hidden) The  startup
+process  knows the history  created  buffers but the  replacement  was none of
+these  and due to the  toolbar  it was a buffer  without a file name and bang!
+Fixed in 2 ways, first check the  replacement  has a file name,  second do not
+put hidden files into the history - they're hidden.
+.BU
 [050210]  Improved  movement  between  items  using the  cursor in the  search
 dialog.
-.BU    
+.BU
 [050210] Fixed cvs dialog default settings.
 .BU
 [050210]   Corrected   search   path   expansion,   incorrectly   handling   a
 \fCPATH_CHAR\fR at the start of the string.
 .BU
-[050209] Up-dated  
+[050209] Up-dated
 .Ht user-setup 3
-platform  page to new style and added  
-.Ht yank-rectangle 2 
+platform  page to new style and added
+.Ht yank-rectangle 2
 binding.
 .BU
-[050209] Fixed no-color termcap 
+[050209] Fixed no-color termcap
 .Ht $window-chars 5
 variable setting
 .BU
 [050209] Fixed hot keys (were 3 'U's) in \fCosdmisc.emf\fR.
 .BU
-[050209] Added  new   BraceStatement   indent   value  to  support  GNU  C
-indentation style.
+[050209] Added new \fIBraceStatement\fR 
+.Ht indent 2
+value to support GNU C indentation style.
 .BU
 [050209]  Fixed  the  \fCosdDisp()\fR   function  required  a  \fCTTflush()\fR
 otherwise the cursor is left in the wrong position on termcap systems.
-.BU    
+.BU
 [050209] Fixed the default
 .Ht $window-chars 5
 variable setting.
@@ -2194,7 +2297,7 @@ hooks of "\fC*hook-XXX\fR" and "\fCmy-*hook-XXX\fR".
 .Ht narrow-buffer 2
 type numeric argument not processed correctly.
 .BU
-[050113] Added toolbar tool mouse select region command.
+[050113] Added tool bar tool mouse select region command.
 .BU
 [050113] Added bindings for the cvs and ftp console tools.
 .BU
@@ -2221,8 +2324,8 @@ to permit listing of specific nodes, the output buffer of the registry listing
 may be specified.  Added a invisible  flag to a registry  node which hides the
 node completely (but can be toggled).
 .BU
-[050111]  Fixed windows  server cmd file polling of up to 60 times a second by
-making the adder of the command  responsible  for 'waking'  \*(mS by sending a
+[050111] Fixed windows  server command file polling of up to 60 times a second
+by making the adder of the command responsible for 'waking' \*(mS by sending a
 \fCWM_USER\fR message. This is not a problem for \s-1UNIX\s0 as it is possible
 to wait on file input and \fCEOF\fR is not reported.
 .BU
@@ -2347,8 +2450,8 @@ interface.
 .BU
 [041210]  Created  new osd  file  "\fCosdmisc.emf\fR"  for  miscellaneous  OSD
 macros, this removes the OSD  dependency  when the  MicroEmacs  is executed in
-special start up modes with startup files. Moved search and new 
-.Ht indent-setup 3 
+special start up modes with startup files. Moved search and new
+.Ht indent-setup 3
 commands  out  of  "\fCsearch.emf\fR"   and  "\fCformat.emf\fR"   into  a  new
 "\fCosdmisc.emf\fR"  as  they  cause  problems  with  utils  that  do not  run
 "\fCme.emf\fR" (e.g. "\fCehftools.emf\fR")
@@ -2424,11 +2527,11 @@ constructively used and causes many item order problems.
 .BU
 [041119] Many improvements to OSD dialog user interface following  suggestions
 for news  group.  Updated  most of the osd  dialogs  to use the new  \fC[*]\fR
-checkbox chars. Fixed tabbing orders and moved some items over to combo-boxes.
-Added osd-cursor  visibilty support to scheme-edit. Made the displaying of the
-cursor in an osd dialog a
+check-box   chars.  Fixed  tabbing   orders  and  moved  some  items  over  to
+combo-boxes.  Added  osd-cursor  visibility  support to scheme-edit.  Made the
+displaying of the cursor in an osd dialog a
 .Ht $system 5
-bit set by the hilight scheme and fixed the position when in a child dialog.
+bit set by the highlight scheme and fixed the position when in a child dialog.
 .BU
 [041118] Added a macro  recursion  depth limit of 20 to avoid blowing up \*(mS
 when the user has created an infinitely recursive macro.
@@ -2470,7 +2573,7 @@ sets the
 .Ht exact 2m
 and
 .Ht magic 2m
-modes. The  default is to repect  buffers  exact and magic mode and flags must
+modes. The  default is to respect  buffers  exact and magic mode and flags must
 have \fCE\fR or \fCM\fR to ensure they are disabled.
 .BU
 [041104] Changed any use of
@@ -2478,7 +2581,7 @@ have \fCE\fR or \fCM\fR to ensure they are disabled.
 to "\fC1\fR  \fCkill-line\fR" as this should maintain its required behavior. A
 \fBkill-line\fR  with no  numeric  argument  kills  to the end of the line but
 excludes  the end of line  character  (\s-1GNU\s0  Emacs  compatibility).  The
-default  binding  is the  "\fC1\fR  \fCkill-line\fR"  form,  rebind the key to
+default  binding is the  "\fC1\fR  \fCkill-line\fR"  form,  re-bind the key to
 "\fCkill-line\fR" if the end of line is not to be killed.
 .BU
 [041104] Removed
@@ -2542,7 +2645,7 @@ file selection.  Keyboard file section enabled within the  "\fC*grep*\fR"  and
 [041026] Spruced up old  "\fCsmb.conf\fR"  highlighting rules, brought them up
 to date with latest keywords and added to release.
 .BU
-[041026] Fixed 
+[041026] Fixed
 .Ht indent-setup 3
 osd dialog.
 .BU
@@ -2570,7 +2673,7 @@ width independent rules. The
 .Ht indent 2
 command \'\fIindent\fR' parameter may be defined as an absolute indentation or
 using a  \'\fCt\fR'  notation.  The syntax is  "\fC[-][[indent][/indent]]t\fR"
-which  defines a vulgar  fration of  \'\fCt\fR'  which is the indent width (or
+which  defines a vulgar  fraction of \'\fCt\fR'  which is the indent width (or
 tabsize) as specified by
 .Ht $buffer-indent-width 5
 defined below.
@@ -2688,7 +2791,7 @@ page includes the century in the date (suggested by -Th).
 .BU
 [040630] Linux manual page formatting fixes.
 .BU
-[040518] Comment  definition  corrections for C, C++ and java, notable doxygen
+[040518] Comment  definition  corrections for C, C++ and java, notable Doxygen
 comment formation omitted.
 .BU
 [040518] Corrected block comment  formatting, adding an extra space at the end
@@ -2796,7 +2899,7 @@ layer for echo and completion.
 [040223] Add new buffer tab list  toolbar tool for rapid access to buffers via
 a top or bottom toolbar.
 .BU
-[040223] Add \fC<>\fR buttons to toolbar mode lines to scroll left and right.
+[040223] Add \fC<>\fR buttons to tool-bar mode lines to scroll left and right.
 .BU
 [040223]  Fixed.  Calender  day is off by one when going  backwards  to before
 2004.
@@ -2884,15 +2987,16 @@ error and an alternate fix to
 [040210] Fixed. On \s-1UNIX\s0,
 .Ht find-file 2
 of a symbolic  link which points to a directory  results in a bad dir listing.
-The list of files is correct but the stats are all wrong (found on sunos 5.8).
+The list of files is correct but the  statistics are all wrong (found on SunOS
+5.8).
 .BU
 [040210]  Fix  subtle  ftp bug with  alias ftp  addressed.  Create an ftp site
-"\fCftp://test/\fR"  say with  user name foo and  passwd  bar and then load in
+"\fCftp://test/\fR"  say with user name foo and  password bar and then load in
 "\fCftp://test/dir1/\fR"   the   buffer   file  name  is   correctly   set  as
 "\fCftp://test/dir1/\fR"  but  the  'Directory  listing  of:'  line  is set to
 "\fCftp://foo@test/dir1/\fR".  Firstly the user may wish the '\fIfoo\fR' to be
 hidden  but  secondly  with  the  introduction  of being  able to click on the
-\'\fIDirectory\fR   \fIlisting  of:\fR'  line  this  has  introduced  a  subtle
+\'\fIDirectory\fR  \fIlisting  of:\fR'  line  this  has  introduced  a  subtle
 inefficiency/bug,   if  I  click  on  the   '\fCfoo@test\fR'   ME  will   load
 "\fCftp://foo@test/\fR"  not  "\fCftp://test/\fR"  which to ME is a completely
 different  file. This can in turn lead to  "\fCftp://foo@test/dir1/\fR"  being
@@ -3075,7 +3179,7 @@ fix when mode defined - thanks to Pedro Gomes.
 .Ht create-frame 2
 canvas size fix on creating internal frame
 .BU
-[040112] Hilighting fix for toolbar Dir Files list with symbolic links
+[040112] Highlighting fix for tool-bar Dir Files list with symbolic links
 .BU
 [040109] \fBRC2 - Release Candidate 2 - MicroEmacs '04\fR
 .BU
@@ -3272,7 +3376,7 @@ words, this also help preserve the position of anchors.
 .BU
 [030608] Tools. Removed superfluous endif.
 .BU
-[030608]  Toolbar. Only update the toolbar if its the top level  command, i.e.
+[030608]  Toolbar. Only update the tool-bar if its the top level  command, i.e.
 the screen-update is not required due to spell-buffer (say).
 .BU
 [030608]  MS-Shift region. Check for
@@ -3288,7 +3392,7 @@ move command to try just moving the file first.
 .BU
 [030608] Changed the addLine  function so it always flags the line as changed,
 this avoids some  bizarre  issues when macros  delete an insert  lines of text
-(best shown by the buffer-info toolbar tool).
+(best shown by the buffer-info tool-bar tool).
 .BU
 [030608] Added new macro oriented  buffer-info  numeric argument. Fixed bug in
 the ignore white-space buffer compare.
@@ -3471,7 +3575,7 @@ me.m.pm, me.l.pm)
 .Ht @mna 4
 to all find-files incase there are problems.
 .BU
-[021013]  Broke the  toolbar  tools out of the  abbrev eaf file into there own
+[021013]  Broke the  tool-bar  tools out of the  abbrev eaf file into there own
 tool eaf file.
 .BU
 [021013] Added item-list and tag generation support to VB, fixed a few hilight
@@ -3553,7 +3657,7 @@ keys to improve eaf file read and portability.
 .BU
 [020711] Added a system clipboard interaction disable flag to
 .Ht $system 5
-so the toolbar can stop messing up the clipboard whenever it updates.
+so the tool-bar can stop messing up the clipboard whenever it updates.
 .BU
 [020711] Fixed an  uninitialized  variable  bug  breaking  the FTP  logoff
 operation of
@@ -3562,11 +3666,11 @@ operation of
 [020629] HTML Added table creation and external preview commands.
 .BU
 [020629] Fixed system clipboard being trashed problem by disabling interaction
-with it during toolbar updates.
+with it during tool-bar updates.
 .BU
 [020629] Changed the List Functions to List Items in buffer setup.
 .BU
-[020629] Added new kill list tool to the toolbar.
+[020629] Added new kill list tool to the tool-bar.
 .BU
 [020629]  Added drag and drop  support to directory  view. Can now use this to
 load and copy/move files.
@@ -3756,7 +3860,7 @@ Display).
 .BU
 [011029] hklatex.emf item-list support (hit "f7").
 .BU
-[011028] hklatex.emf has a greatly improved pseudo hilighting.
+[011028] hklatex.emf has a greatly improved pseudo highlighting.
 .BU
 [011028] Tweaked the "@fs" variable to improve its usability.
 .BU
@@ -3787,10 +3891,10 @@ return, its like saying No! .
 language changes, you need to rename your personal  dictionary to lsdpengb.edf
 for British and lsdpenus.edf for American.
 .BU
-[011016]  Hilighting  brackets/braces as requested from user base. The hilight
-braces required some other subtle changes to screen-update and show-region and
-the addition of the "rbin" mode means that this version is  incompatible  with
-the last in quite a few areas.
+[011016]  Highlighting  brackets/braces  as  requested  from  user  base.  The
+highlight  braces  required  some other subtle  changes to  screen-update  and
+show-region  and the  addition  of the "rbin" mode means that this  version is
+incompatible with the last in quite a few areas.
 .BU
 [011016]  Fixed mouse handler  (turns out that if the pick event was lost (use
 "@cg" or an error) then me would lock!).
@@ -3964,7 +4068,7 @@ the binary size by up to 37%.
 .BU
 [000322] Alpha build revision contains version information for 2000/03/22
 .BU
-[000322] Internal re-organisation of platform option selection.
+[000322] Internal reorganization of platform option selection.
 .BU
 [000322] Minor fixes X-Windows color selection.
 .BU
@@ -4010,25 +4114,25 @@ Char Set.
 [000126]  Support  for  additional  character  sets,  Windows  GREEK,  Windows
 TURKISH.
 .BU
-[000126] Line hilighting  selection with the use of the mouse and auto search.
-When using the mouse selection to set up the line hilighting when invoked from
-a  \fCright-mouse  -> Hilight  Line ->  color/remove\fR  selection;  the macro
-determines the mouse selected  region and makes an appropriate  decision as to
-how the line hilighting  scheme is to be applied. The following rules apply to
-the mouse selection:-
+[000126]  Line  highlighting  selection  with  the use of the  mouse  and auto
+search. When using the mouse  selection to set up the line  highlighting  when
+invoked from a  \fCright-mouse -> Hilight Line ->  color/remove\fR  selection;
+the  macro  determines  the mouse  selected  region  and makes an  appropriate
+decision  as to  how  the  line  highlighting  scheme  is to be  applied.  The
+following rules apply to the mouse selection:-
 .BE 0
 .RS
 .BS
-Point in line selected (i.e. mark == point) Hilight the line only.
+Point in line selected (i.e. mark == point) Highlight the line only.
 .BU
 Region in the line selected. Both point and mark are on the same line. Extract
 the  selected  text and hilight all lines that match the search  pattern.  The
 color "remove" is also pattern matched to selectively remove lines.
 .BU
 Region  selected  mark & point on  different  lines  Block up the region  with
-appropriate hilight.
+appropriate highlight.
 .BU
-Note that line hilighting may be safely used in a folded buffer.
+Note that line highlighting may be safely used in a folded buffer.
 .BE
 .RE
 .BS 0
@@ -4140,8 +4244,8 @@ directory tree searching.
 changes to the help  system  which  gives  macros  access to the on-line  help
 buffer, needed for the index and search.
 .BU
-[991101]  Over-hauled  the  hilighting  scheme files and editor to support the
-disabling of buffer hilighting.
+[991101]  Over-hauled the highlighting  scheme files and editor to support the
+disabling of buffer highlighting.
 .BU
 [991101]  Many bugs fixed on all  platforms,  in  particular  unix cutting and
 pasting (crashes exceed) and focus problems and NT exit delay.
@@ -4250,14 +4354,14 @@ bindings.
 .BU
 [990101] Port to Sun Solaris Intel platform (2.6).
 .BU
-[990101] Merged the  init-hilight  and  hilight-token  into the single hilight
+[990101] Merged the init-hilight and  hilight-token  into the single highlight
 command. Similarly for indent.
 .BU
 [990101]  Enhanced the regexp support in hilight  tokens, vastly  improving it
 capability and usability. Similarly for indent tokens.
 .BU
-[990101]  Reorganized the hilighting files.  Introduction of the scheme-editor
-and Hilight Search OSD's.
+[990101]  Reorganized the highlighting files.  Introduction of the scheme-editor
+and Highlight Search OSD's.
 .BU
 [990101]  Implemented box character  override support ($system bit 0x10000) on
 Win32 and Xterm platforms.
