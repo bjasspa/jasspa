@@ -503,13 +503,29 @@ meAbout(int f, int n)
 int
 exitEmacs(int f, int n)
 {
-    int s=meTRUE ;
-
-    /* Argument forces it.  */
-    if(f == meFALSE)
-    {
-        char buff[128] ;
+    int s, ec=0 ;
+    char buff[128] ;
         
+    if(n & 4)
+    {
+        if(meGetString((meUByte *)"Exit code", 0, 0, buff,128) <= 0)
+            return meFALSE ;
+        ec = meAtoi(buff) ;
+    }
+    if((n & 2) &&
+       ((saveSomeBuffers(f,(n & 0x01)) <= 0)
+#if MEOPT_SPELL
+        || (dictionarySave(f,2|(n & 0x01)) <= 0)
+#endif
+#if MEOPT_REGISTRY
+        || (saveRegistry(f,2|(n & 0x01)) <= meFALSE)
+#endif
+       ))
+        return meFALSE ;
+    
+    s = 1 ;
+    if(n & 1)
+    {
         if(anyChangedBuffer())
             strcpy(buff,"Modified buffer") ;
         else
@@ -835,7 +851,7 @@ exitEmacs(int f, int n)
             _CrtDumpMemoryLeaks() ;
         }
 #endif
-        meExit(0);
+        meExit(ec);
     }
     mlerase(MWCLEXEC);
 
@@ -850,16 +866,7 @@ exitEmacs(int f, int n)
 int
 saveExitEmacs(int f, int n)
 {
-    if((saveSomeBuffers(f,(n & 0x01)) > 0)
-#if MEOPT_SPELL
-       && (dictionarySave(f,2|(n & 0x01)) != meFALSE)
-#endif
-#if MEOPT_REGISTRY
-       && (saveRegistry(f,2|(n & 0x01)) != meFALSE)
-#endif
-       )
-        return exitEmacs(f, n) ;            /* conditionally quit   */
-    return meFALSE ;
+    return exitEmacs(1,n|2) ;
 }
 
 /*
@@ -869,7 +876,7 @@ saveExitEmacs(int f, int n)
 int
 quickExit(int f, int n)
 {
-    return saveExitEmacs(1,0) ;
+    return exitEmacs(1,(n & 4)|2) ;
 }
 
 /*
