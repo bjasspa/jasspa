@@ -114,3 +114,74 @@ define-macro display-white-chars
     set-variable $system &bxor $system 0x80000
     screen-update
 !emacro
+
+; string-rectangle; With a region selected across multiple lines then the user
+; is prompted for a string. The string is inserted at the same horizonatal
+; position on all lines. 
+define-macro string-rectangle
+     0 show-region
+     !if &equ &band $result 5 5
+         !if &not &band $result 2
+             3 show-region
+         !endif
+         set-position "\x81"
+         -2 show-region
+         set-variable #l1 $window-line
+         set-variable #l3 $window-col
+         2 show-region
+         set-variable #l2 $window-line
+         set-variable #l4 $window-col
+         ; If the lines are equal then quit now.
+         !if &equ #l1 #l2
+             ; Failed - Reactivate the region that is active.
+             goto-position "\x81"
+             !force 4 show-region
+             !abort
+         !endif
+         ; Compute the top line.
+         !if &gre #l1 #l2
+             ; Swap lines
+             set-variable #l0 #l2
+             set-variable #l2 #l1
+             set-variable #l1 #l0
+
+             ; Swap columns
+             set-variable #l0 #l4
+             set-variable #l4 #l3
+             set-variable #l3 #l0
+         !else
+             -2 show-region
+         !endif
+         ; Get the string to insert
+         !force set-variable #l6 @ml "String ? "
+         !if &not $status
+             ; Failed - Reactivate the region that is active.
+             goto-position "\x81"
+             !force 4 show-region
+             !abort
+         !endif
+         ; Fill all of the lines in the region from the first column. 
+         !repeat
+             ; Move to the column
+             beginning-of-line
+             !while &les $window-col #l3
+                 !if &not &seq @wc "\n"
+                     forward-char
+                 !else
+                     insert-string " "
+                 !endif
+             !done
+             ; Insert the string
+             insert-string #l6
+             !force forward-line
+             set-variable #l1 &add #l1 1
+         !until &gre #l1 #l2
+         ; Knock off all of the region stuff and resume first position. 
+         !force -3 show-region
+         !force  3 show-region
+         !force -1 show-region
+         goto-position "\x81"
+         !return
+     !endif
+     !abort
+!emacro
