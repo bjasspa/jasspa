@@ -12,14 +12,19 @@
 0 define-macro-file cvs osd-cvs-file-menu
 
 define-macro fhook-dirlst
-    -1 buffer-mode "view"
-    1 buffer-mode "magic"
+    ; note that as the hook it quite complex and in the case of CVS it can
+    ; load other files and launch processes, it can get into a strange state
+    ; where the buffer is out of date (dir already changed) and inserting text
+    ; can prompt the user 'do you really want to edit' - care is needed
     !if &seq $buffer-fname ""
         ; toolbar creates an empty *files* buffer - ignore it 
         !return
-    !elif &or &exi :tag-count &seq $buffer-fname ""
+    !elif &exi :tag-count
         ; dont process the dir twice as it changes the buffer
     !elif &seq &lef $buffer-fname 6 "ftp://"
+        -1 buffer-mode "view"
+        1 buffer-mode "magic"
+        1 buffer-mode "edit" "y"
         forward-line
         !if &iseq &lef @wl 5 "total" 
             forward-line
@@ -79,6 +84,9 @@ define-macro fhook-dirlst
             set-variable .fhook-dirlst.sort "|1|0|"
         !endif
     !else
+        -1 buffer-mode "view"
+        1 buffer-mode "magic"
+        1 buffer-mode "edit" "y"
         3 forward-line
         set-variable :fmpf 32
         insert-string " Attr    Size          Modified Name  <Order by Extension>\n"
