@@ -4702,61 +4702,65 @@ menuInteraction (int *retState)
     
     /* Hide the cursor */
     osdCursorState = cursorState ;
-    if(meSystemCfg & meSYSTEM_OSDCURSOR)
-    {
-        /* if running on termcap with no color or fonts then move the cursor
-         * to the current item else the user will have no idea what the current item is,
-         * This is now setup as part of a display scheme and a separate bit in the system var. */
-        showCursor(meFALSE,1) ;
-    }
-    else if(cursorState >= 0)
+    if(!(meSystemCfg & meSYSTEM_OSDCURSOR))
         showCursor(meTRUE,-1-cursorState) ;
     
     for(;;)
     {
-        if((meSystemCfg & meSYSTEM_OSDCURSOR) && (osdCurChild->curContext >= 0))
+        if(meSystemCfg & meSYSTEM_OSDCURSOR)
         {
-            /* Get the screen position of the current item */
+            /* if running on termcap with no color or fonts then move the
+             * cursor to the current item else the user will have no idea
+             * what the current item is, This is now setup as part of a
+             * display scheme and a separate bit in the system var. */
             osdDISPLAY *md=osdCurChild ;
             int xx, yy ;
             
-            xx = md->x + md->context[md->curContext].x ;
-            yy = md->y + md->context[md->curContext].y ;
-            while (md != osdCurMd)
+            if(osdCurChild->curContext >= 0)
             {
-                osdITEM *mp;
-                md = md->prev ;
-                mp = md->context[md->curContext].menu;
-                
-                /* If this is a scroll box then correct the cursor position.
-                 * The scroll box x,y child positions can go out side of the
-                 * window if the currently selected item is scrolled up or
-                 * down. The currently selected item is where the cursor is
-                 * placed, correct the cursor position so that it is kept
-                 * within the display window. */
-                if (mp->flags & MF_SCRLBOX)
+                ii = 0 ;
+                /* Get the screen position of the current item */
+                xx = md->x + md->context[md->curContext].x ;
+                yy = md->y + md->context[md->curContext].y ;
+                while (md != osdCurMd)
                 {
-                    /* Correct horizontal */
-                    if (xx < 0)
-                        xx = 0;
-                    else if (xx >= mp->len)
-                        xx = mp->len-1;
+                    osdITEM *mp;
+                    md = md->prev ;
+                    mp = md->context[md->curContext].menu;
                     
-                    /* Correct vertical */
-                    if (yy < 0)
-                        yy = 0;
-                    else if (yy >= mp->height)
-                        yy = mp->height-1;
-                    
-                    /* Special correction for scroll box to account for the borders */
-                    xx++ ;
-                    yy++ ;
+                    /* If this is a scroll box then correct the cursor position.
+                     * The scroll box x,y child positions can go out side of the
+                     * window if the currently selected item is scrolled up or
+                     * down, in which case the cursor must be hidden. */
+                    if (mp->flags & MF_SCRLBOX)
+                    {
+                        if((xx < 0) || (xx >= mp->len) ||
+                           (yy < 0) || (yy >= mp->height))
+                        {
+                            /* the current item is not visible in the window, hide the cursor */
+                            ii = -1 ;
+                            break ;
+                        }
+                        /* Special correction for scroll box to account for the borders */
+                        xx++ ;
+                        yy++ ;
+                    }
+                    xx += md->x + md->context[md->curContext].x ;
+                    yy += md->y + md->context[md->curContext].y ;
                 }
-                
-                xx += md->x + md->context[md->curContext].x ;
-                yy += md->y + md->context[md->curContext].y ;
+                /* only move the cursor here if the item is not scrolled off and this part of
+                 * the dialog is in a visible part of the window */
+                if((ii == 0) && 
+                   (xx >= 0) && (xx <  frameCur->width) &&
+                   (yy >= 0) && (yy <= frameCur->depth))
+                    TTmove(yy,xx) ;
+                else
+                    ii = -1 ;
             }
-            TTmove(yy,xx) ;
+            else
+                ii = -1 ;
+            if(ii != cursorState)
+                showCursor(meTRUE,ii-cursorState) ;
         }
         TTflush() ;
         osdCol = -1 ;
