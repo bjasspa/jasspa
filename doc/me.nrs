@@ -12,11 +12,11 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.27 2005-01-23 12:26:16 jon Exp $
+.Id $Id: me.nrs,v 2.28 2005-02-06 13:55:52 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
-.TH me - - - "MicroEmacs '04"
+.TH me - - - "MicroEmacs '05"
 .XI me - -
 .XI home - -
 .XI MicroEmacs - -
@@ -144,12 +144,12 @@
 description
 .Se
 .SH "MICROEMACS"
-\fB\*(mE\fR, JASSPA Distribution, is defined as follows, refer to
+\fB\*(mS\fR, JASSPA Distribution, is defined as follows, refer to
 .Ht me 1
 for a description of the command line variables.
 .PP
 The following sections describe the topics that are available
-as part of the on-line \fB\*(mE\fR manual pages.
+as part of the on-line \fB\*(mS\fR manual pages.
 .PP
 .Hl Acknowledgments Acknowledgments - ,
 .Hl Copyright Copyright - ,
@@ -274,10 +274,10 @@ The on-line manual pages are defined as follows:-
 .PP
 The components of the header are defined as follows:-
 .IP \fI[logo]\fR
-The \*(mE  Logo in the top left hand corner of the screen exists on every
+The \*(mS  Logo in the top left hand corner of the screen exists on every
 page and hides a hypertext link. Selecting this item will take you back to the
 main
-.Hl "\*(mE" MicroEmacs -
+.Hl "\*(mS" MicroEmacs -
 page (Only present on HTML and Windows help pages).
 .BP Title
 The title identifies the title of the topic that you are viewing.
@@ -490,7 +490,7 @@ Keyboard  binding allows key strokes to be associated with commands and macros
 such that when a bound key stroke  sequence is recognized  its  associated (or
 bound) command is invoked, thereby controlling the editor. A set of
 .Hl "Default Bindings" bindings 2
-exist for \*(mE which may be altered  using the  binding  commands.  There are
+exist for \*(mS which may be altered  using the  binding  commands.  There are
 three types of key bindings:
 .IP "\fBGlobal\fR"
 Associates a key-stroke  with a command for all buffers. Used to establish the
@@ -552,7 +552,7 @@ The commands that are displaced would have to be re-bound to different keys if
 required.
 .NH Buffers - "Buffer Manipulation Commands"
 .SH "BUFFER MANIPULATION COMMANDS"
-A buffer is where \*(mE stores text.  Normally text is read from a file and is
+A buffer is where \*(mS stores text.  Normally text is read from a file and is
 visible in an editing
 .Hl window  Windows - .
 The name,  associated  file and  operating  modes of the buffer, are generally
@@ -613,7 +613,7 @@ output * "%N
 .Se
 .NH EditorFiles - "Editor File Types"
 .SH "EDITOR FILE TYPES"
-Different file types used by \*(mE:
+Different file types used by \*(mS:
 .PP
 .Ss
 search MicroEmacs 8 files
@@ -685,7 +685,7 @@ output * "%N
 .SH "OPERATING MODES"
 .B Modes
 are switches (or states) that may be applied globally or on a per buffer basis
-whose settings  determine how \*(mE operates.  Modes affect  operations within
+whose settings  determine how \*(mS operates.  Modes affect  operations within
 a buffer, global modes determine the modes of newly created buffers.
 .PP
 Commands to alter the operating state:
@@ -752,7 +752,7 @@ output * "%N
 .Se
 .NH Windows - "Window Commands"
 .SH "WINDOW COMMANDS"
-\*(mE uses windows to display and allow you to edit the contents of
+\*(mS uses windows to display and allow you to edit the contents of
 .Hl buffers Buffers - .
 Multiple windows may be present on the
 .Hl screen Hilighting -
@@ -780,7 +780,7 @@ output * "%N
 .Se
 .NH Printing - "Printing Commands"
 .SH "PRINTING COMMANDS"
-Printing within \*(mE is fairly  restrictive, the following  commands are
+Printing within \*(mS is fairly  restrictive, the following  commands are
 used in conjunction with the print facility.
 .PP
 .Ss
@@ -793,7 +793,7 @@ output * "%N
 Functions can be used to manipulate  variables in various ways. Functions have
 in general one, two, or three arguments. These arguments will always be placed
 after the function on the current  command  line. For example, if we wanted to
-increase the current fill column by two, using \*(mE's
+increase the current fill column by two, using \*(mS's
 .Ht set-variable 2
 (C-x v) command, we would write:
 .CS
@@ -921,18 +921,18 @@ output * "%N
 search MicroEmacs 5 file
 output * "%N
 .Se
-.NH Games - "\*(mE \- Games"
+.NH Games - "\*(mS \- Games"
 .SH "GAMES"
-The following is a list of all of the games provided by \fB\*(mE\fR:
+The following is a list of all of the games provided by \fB\*(mS\fR:
 .PP
 .Ss
 search MicroEmacs 2 games
 search MicroEmacs 3 games
 output * "%N
 .Se
-.NH FileTypes - "\*(mE \- Supported File Types"
+.NH FileTypes - "\*(mS \- Supported File Types"
 .SH "SUPPORTED FILE TYPES"
-The file types currently supported by \*(mE are defined in the following list.
+The file types currently supported by \*(mS are defined in the following list.
 Other  file  types may be  supported  by  definition  of an  appropriate  hook
 function to handle the file, see
 .Ht fileHooks 2 .
@@ -941,12 +941,12 @@ function to handle the file, see
 search MicroEmacs 9 filetype
 output * "%N
 .Se
-.NH CommandGlossary - "\*(mE \- Command Glossary"
+.NH CommandGlossary - "\*(mS \- Command Glossary"
 .\" "Command G" is a link burnt into executable (bind.c)
-.Me "!9  Command Glossary - \*(mE"
+.Me "!9  Command Glossary - \*(mS"
 .SH "COMMAND GLOSSARY"
 The following is a list of all of the commands  (built-in and macro)  provided
-by \fB\*(mE\fR [See
+by \fB\*(mS\fR [See
 .Hl "split listing" SplitCommandGlossary - "]:"
 .PP
 .Ss
@@ -954,10 +954,10 @@ search MicroEmacs 2 command
 search MicroEmacs 3 command
 output * "%N
 .Se
-.NH SplitCommandGlossary - "\*(mE \- Split Command Glossary"
+.NH SplitCommandGlossary - "\*(mS \- Split Command Glossary"
 .SH "SPLIT COMMAND GLOSSARY"
 The  following  is a  list  of  all of the  built  in  commands  provided  by
-\fB\*(mE\fR [See
+\fB\*(mS\fR [See
 .Hl "mixed listing" CommandGlossary - "]:"
 .PP
 .Ss
@@ -965,28 +965,28 @@ search MicroEmacs 2 command
 output * "%N
 .Se
 .PP
-The following is a list of documented macro commands provided by \fB\*(mE\fR:
+The following is a list of documented macro commands provided by \fB\*(mS\fR:
 .PP
 .Ss
 search MicroEmacs 3 command
 output * "%N
 .Se
-.NH VariableGlossary - "\*(mE \- Variable Glossary"
+.NH VariableGlossary - "\*(mS \- Variable Glossary"
 .\" "Variable " is a link burnt into executable (bind.c)
-.Me "!9  Variable Glossary - \*(mE"
+.Me "!9  Variable Glossary - \*(mS"
 .SH "VARIABLE GLOSSARY"
-The following is an alphabetic list of \fB\*(mE\fR variables:-
+The following is an alphabetic list of \fB\*(mS\fR variables:-
 .PP
 .Ss
 search MicroEmacs 5 variable
 output * "%N
 .Se
-.NH MacroGlossary - "\*(mE \- Macro Language Glossary"
+.NH MacroGlossary - "\*(mS \- Macro Language Glossary"
 .\" "Macro Lan" is a link burnt into executable (bind.c)
-.Me "!9  Macro Language Glossary - \*(mE"
+.Me "!9  Macro Language Glossary - \*(mS"
 .SH "MACRO LANGUAGE GLOSSARY"
 The  following is a list of all of the macro  language  commands  available in
-\fB\*(mE\fR.
+\fB\*(mS\fR.
 .SS "Functions"
 All functions are denoted by a \fB&\fR prefix as follows:-
 .PP
@@ -1009,11 +1009,11 @@ register variable and \fB@\fR for an interactive variable as follows:-
 search MicroEmacs 4 macro;variable
 output * "%N
 .Se
-.NH Glossary - "\*(mE \- Global Glossary"
+.NH Glossary - "\*(mS \- Global Glossary"
 .\" "Global G" is a link burnt into executable (bind.c)
-.Me "!8  Global Glossary - \*(mE"
+.Me "!8  Global Glossary - \*(mS"
 .SH GLOSSARY
-The following is a list of all keywords associated with \fB\*(mE\fR:
+The following is a list of all keywords associated with \fB\*(mS\fR:
 .PP
 .Ss
 search MicroEmacs 1 *
@@ -1027,9 +1027,9 @@ search MicroEmacs 8 *
 search MicroEmacs 9 *
 output * "%N
 .Se
-.NH Acknowledgments - "\*(mE \- Acknowledgments"
+.NH Acknowledgments - "\*(mS \- Acknowledgments"
 .SH ACKNOWLEDGMENTS
-The following persons contributed to this release of \fB\*(mE\fR over the last
+The following persons contributed to this release of \fB\*(mS\fR over the last
 decade, roughly in the order of  participation.  This list represents the main
 developers:-
 .IP
@@ -1103,9 +1103,9 @@ X-Windows  environment.  The blue line  representing  the window  header color
 (that I use), the red line  representing  the MicroEmacs  mode bar; the screen
 was  typically   black  with  white  or  yellow   characters.   The  icon  was
 incrementally refined over a period of approximately six months.
-.NH Copyright - "\*(mE \- Copyright"
+.NH Copyright - "\*(mS \- Copyright"
 .\" "Copyright" is a link burnt into executable (bind.c)
-.Me "!9  Copyright - \*(mE"
+.Me "!9  Copyright - \*(mS"
 .SH COPYRIGHT
 .SS "GNU General Public License (GPL)"
 All source and macro code is covered by the GPL.
@@ -1845,7 +1845,7 @@ the permission of the current author.
 .SS "License Terms 2002 and subsequent years"
 GNU Public  License  (GPL) for all source  material.  GNU Free
 Documentation License (GFDL) for all documentation material.
-.NH Contact - "\*(mE \- Contact Information"
+.NH Contact - "\*(mS \- Contact Information"
 .\" "Contact" is a link burnt into executable (bind.c)
 .SS "Spelling Dictionary Copyrights"
 The  spelling  dictionaries  are  converted  from  \fIispell\fR  dictionaries,
@@ -1871,7 +1871,7 @@ A FAILURE OF THE  PROGRAM TO OPERATE  WITH ANY OTHER  PROGRAMS),  EVEN IF SUCH
 HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 .PP
 .B "THIS NOTICE MUST BE CARRIED IN ALL COPIES OF THE DISTRIBUTION"
-.Me "!7  Contact Information - \*(mE"
+.Me "!7  Contact Information - \*(mS"
 .SH "CONTACT INFORMATION"
 The  following  contact  point may be used to report all  problems and request
 information:-
@@ -1957,12 +1957,13 @@ Problems should be reported such that they may be reproduced,  this may not be
 that easy. The information that is required is:-
 .IP "\fBPlatform\fR"
 The host platform which is exhibiting a problem
+.ne 5
 .IP "\fBVersion\fR"
-The  version of \*(mE. Use the \fCesc x about\fR to retrieve  the  information
-e.g.
+The version of \*(mS. Use \fCesc-x  about\fR to retrieve the  information, the
+format of the date is \fCyyyy/mm/dd\fR, followed by the host system type. e.g.
 .RS
 .IP
-.C "MicroEmacs 01 - Date 01/01/01 - win32"
+.C "MicroEmacs 05 - Date 2005/01/10 - sunos"
 .RE
 .IP "\fBDescription\fR"
 A description of the problem. Try to include as much  information as possible.
@@ -2005,10 +2006,10 @@ Mail as:-
 .fi
 .ad
 .LP
-If you wish to port \*(mE to another  platform  and are  willing to  undertake
+If you wish to port \*(mS to another  platform  and are  willing to  undertake
 responsibility  for  maintenance  of that platform then we would like to here
 from you. Send us some details.
-.NH Origins - "\*(mE \- Origins"
+.NH Origins - "\*(mS \- Origins"
 .SH "ORIGINS"
 This version of  MicroEmacs is based on an early  \fIMicroEmacs\fR  release of
 3.8 in 1988, the origins of which are unknown,  except to say it was delivered
@@ -2017,17 +2018,17 @@ on a unmarked 5 1/2" floppy disk.
 The  program  was  originally  ported  to a  Motorola  MVME147  UNIX box as an
 alternative to \fBvi\fR.  Reliability of the program proved to be a problem as
 it constantly  crashed. In an attempt to rectify the problems the  development
-of \*(mE commenced.
+of \*(mS commenced.
 .PP
 Development  has continued from 1988 through to today, on the whole  oblivious
 to further developments of the existing \fBMicroEmacs\fR program. This was due
 to  no  Internet   access.  It  was  not  until  1996  the  next   version  of
 \fBMicroEmacs\fR  and \fBmewin\fR  (Microsoft Windows  (\s-2TM\s0) port of the
 same  program) was  downloaded  from the  Internet and  compared. By this time
-\*(mE was  radically  different and we were not about to mesh the two together
+\*(mS was  radically  different and we were not about to mesh the two together
 \- that would be a step backwards.
 .PP
-Development of \*(mE has been biased towards the UNIX platform, as most of the
+Development of \*(mS has been biased towards the UNIX platform, as most of the
 early  development  was performed in the \s-1UNIX\s0  domain. The first of the
 window servers was X-Windows, which in turn has shaped the  implementation  of
 the  Microsoft  Windows  port.  Latterly, we have seen the  resurgence  of the
@@ -2035,20 +2036,91 @@ IBM-PC  platform  which is now  commonplace. For the return  port to the DOS
 environment,  and  subsequent  development  of the  Microsoft  Windows port, a
 \s-1UNIX\s0  like  interface was required. Most existing users could not abide
 the primitive editors found on these machines;  Microsoft Windows was an alien
-and hostile  environment  when compared with UNIX. Hence, the \*(mE  interface
+and hostile  environment  when compared with UNIX. Hence, the \*(mS  interface
 utilizes UNIX style cut and paste across all platforms.
 .PP
-For  portability,  \*(mE  utilizes   character   rendering  on  all  platforms
+For  portability,  \*(mS  utilizes   character   rendering  on  all  platforms
 regardless of the window manager. Under  X-Windows and Microsoft  Windows, the
 display is still treated as a character  based display, the subtle  difference
 is that the display pane is re-sizable. This means that the scroll bars, fonts
 etc. are not as slick as they  could be,  certainly  under  Microsoft  Windows
-\*(mE  looks  positively  primitive!!  Regardless  of the  look, the goal of a
+\*(mS  looks  positively  primitive!!  Regardless  of the  look, the goal of a
 common editor across all working platforms has been achieved!
 .SS "Development History"
 .\"
 .B "8th Release - March 2005"
 .BS
+[050205] Password generation macros added to \fCcontrib\fR directory.
+.BU
+[050205] Added  JavaDoc  highlighting  to Java  template.  Enablement  via
+.Ht buffer-setup 3 .
+Removed the existing "\fCmy\fR" extensions from contrib.
+.BU
+[050205] Added
+.Hr Doxygen 1 ,
+\fI<stdint.h>\fR and error highlighting to C/C++ templates. Enablement via
+.Ht buffer-setup 3 .
+Removed the existing "\fCmy\fR" extensions from \fCcontrib\fR.
+.BU
+[050204] osd - Fixed problems with the
+.I "cursor shows current item"
+feature of osd caused by the cursor position going outside of the window.
+.BU
+[050202] Added an initial item number to the favorite and buffer menus.
+.BU
+[050203]  Standardized  narrow  anchor and line flag movement  behaviors  with
+respect to deleting  and  inserting  text.  Enforced to  effectively  exist at
+character  column -1 and been strict about  maintaining a protected line. Made
+undo cope with  markup  lines that are lost. These  changes may be a little to
+severe - we'll see.
+.BU
+[050202] Fixed \fBC-g\fR close osd dialog crash.
+.BU
+[050202]  Directory listing - fixed nasty bug cause by the directory  changing
+on disk before the hook has managed to do anything leading to a failure - this
+has been annoying Jon for some time!
+.BU
+[050127] \fChkemf.emf\fR - Fixed \fC!until\fR indent rule.
+.BU
+[050127] First revision of \fBnotes\fR.
+.BU
+[050127] Fixed  positional  problems with mouse rectangle  regions and added a
+mouse rectangle yank to user-setup.
+.BU
+[050127]  cvs - Set the  initial  osd dialog  item to be the first item rather
+than the Okay button (with is still the default button).
+.BU
+[050127] Fixed \fC*scratch*\fR hook  assignment  issues, initial  startup buffer
+and only buffer delete problem.
+.BU
+[050127]  Added  process  tree killing for windows,  tested on win98, 2k & XP,
+would be good to test on win95  (which  should  work) and NT which  should not
+work but hopefully will be no worse than current version.
+.sp 1
+This is a process  tree  killing  for ipipes, in win32  killing the process we
+create is simply not good enough, all child processes continue unaffected. For
+example, run compile,  kill the buffer in mid compile and it carries on behind
+your back!
+.sp 1
+For Unix we use a new group and kill the group, DOS does not support ipipe. We
+could have used the new Job concept in ME but this is only  present in win2000
+& XP and the  binaries  are  unlikely  to run on win98 etc. This should run on
+every win32 platform  although it is unlikely to do anything positive on an NT
+box (works in win2k)
+.BU
+[050126]  Changed the  location of the  \fBfhook-default\fR  macro so its only
+defined if using \fBbuffinit\fR (i.e. if running main \fCme.emf\fR)
+.BU
+[050126] Fixed osd button repeat issue when current focus is an entry.
+.BU
+[050126] Changed  \fBinsert-file-name\fR to insert buffer name if a -ve arg is
+given, bound to \fBC-x y\fR on the mode line, this replaces ml-lines \fBesc\fR
+\fBy\fR feature.
+.BU
+[050123] Fixed a crash caused by too many closed fences, the recursive  nature
+of the  \fCfindfence()\fR  function  triggers a stack crash at around 22000 on
+windows. Set limit to 256 nested fences.
+.BU
 [050122]  Fixed
 .Ht dir 2m
 mode  loss on a  directory  re-read,  this  caused  a number  of side  effects
@@ -2060,10 +2132,10 @@ had changed.
 .Ht &reg 4
 and
 .Ht set-registry 2 ).
-The registry calls used to comprise
-two arguments "\fIroot\fR" and "\fIsub-key\fR", the "\fIsub-key\fR" is really
-redundant and the same effect may be achieved by a simple string
-concatenation of the "\fIsub-key\fR" to the "\fIroot\fR".
+The  registry   calls  used  to  comprise  two  arguments   "\fIroot\fR"   and
+"\fIsub-key\fR",  the  "\fIsub-key\fR" is really redundant and the same effect
+may be achieved by a simple string concatenation of the "\fIsub-key\fR" to the
+"\fIroot\fR".
 .BU
 [050119]  Added  "\fCmy-*hook-always\fR"  macro  checks  in  the  buffer  hook
 switching of
@@ -4316,7 +4388,7 @@ distributed  without  concern for copyrights or ownership as was the custom of
 that era.
 .BE 0
 .SS "Work In Progress or Planned"
-Development  of  \*(mE  is an  on-going  process,  follows  is a list  of work
+Development  of  \*(mS  is an  on-going  process,  follows  is a list  of work
 items which is currently  being undertaken or planned:-
 .BS
 Horizontal scroll bars.
@@ -4328,6 +4400,8 @@ Native printer support for the generation of postscript.
 GNU Emacs compatibility macro file.
 .BE 0
 .SS "Release History"
+.IP "\fBMarch 2005\fR"
+8th Major Release \- MicroEmacs '05.
 .IP "\fBJanuary 2004\fR"
 7th Major Release \- MicroEmacs '04.
 .IP "\fBDecember 2002\fR"
