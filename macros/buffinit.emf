@@ -10,6 +10,7 @@
 define-macro-file spellaut auto-spell auto-spell-ignore auto-spell-buffer auto-spell-reset
 define-macro-file collapse collapse-current collapse-all
 0 define-macro-file fold fold-setup
+0 define-macro-file etfinsrt
 
 0 define-macro buffer-init-modes
     set-variable #l1 &ind &spr ".%s.setup" $buffer-fhook
