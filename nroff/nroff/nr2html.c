@@ -7,10 +7,10 @@
  *  System        : 
  *  Module        : 
  *  Object Name   : $RCSfile: nr2html.c,v $
- *  Revision      : $Revision: 1.3 $
- *  Date          : $Date: 2004-01-06 00:53:50 $
+ *  Revision      : $Revision: 1.4 $
+ *  Date          : $Date: 2004-01-12 00:27:57 $
  *  Author        : $Author: jon $
- *  Last Modified : <040106.0034>
+ *  Last Modified : <040112.0026>
  *
  *  Description	
  *
@@ -674,7 +674,7 @@ nrTH_func (char *id, char *num, char *date, char *company, char *title)
 
     htmlStr ("</TITLE></HEAD>");        /* Close title */
     htmlEol ();                         /* Make pretty */
-    htmlStr ("<!-- %s - Version %s - %s - %s - Jon Green (1995-97) -->",
+    htmlStr ("<!-- %s - Version %s - %s - %s - Jon Green (1995-2004) -->",
              MODULE_NAME, MODULE_VERSION, nroffVersion, __DATE__);
     htmlEol ();                         /* Make pretty */
 
