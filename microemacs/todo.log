@@ -6,6 +6,9 @@
 >  Created       : Fri Feb 6 11:13:34 2004
 >
 
+Source To-Do
+============
+
     [040210] BS/0401-4 - Minor - TBD
 
         ME can't load files within a directory with '[..]' in its name - win32
@@ -19,10 +22,6 @@ ___________________________________________________________________________
 
 0401-4 Release Fixes
 ___________________________________________________________________________
-
-    [040220] SP/0401-4 - Major - Target 0401-5
-    
-        Doc changes to set-cursor-to-mouse command.
 
 > FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED 
 
@@ -354,10 +353,6 @@ ___________________________________________________________________________
 
     [040206] JG/0401-4 - Enhancement - Target TBD
 
-        CVS has option not to open the dir-tree window, pain in butt.
-
-    [040206] JG/0401-4 - Enhancement - Target TBD
-
         Tags window in the tool-bar
 
     [040206] Th/0401-4 - Enhancement - Target TBD
@@ -389,6 +384,23 @@ ___________________________________________________________________________
 
 Documentation To-Do
 ===================
+
+    [040206] JG/0401-4 - Enhancement - Target TBD
+
+        CVS has option not to open the dir-tree window, pain in butt.
+        
+        SP - this is already  possible,  you just need to give cvs an argument
+        of 0, the same is true for file-browser, i.e.
+
+            0 cvs
+            0 file-browser
+
+        This needs to be documented.
+
+    [040220] SP/0401-4 - Major - Target 0401-5
+    
+        Doc changes to set-cursor-to-mouse command.
+
 
 List generated via src CVS commit
 
