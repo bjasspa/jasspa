@@ -349,6 +349,65 @@ ipipeGetChildWindow(meIPipe *ipipe)
     EnumWindows(ipipeFindChildWindow,(long) ipipe) ;
     return ipipe->childWnd ;
 }
+
+#ifdef _WIN32s
+
+#define ipipeKillProcessTree(ppid) meFALSE
+
+#else
+
+#include <tlhelp32.h>
+
+static int
+ipipeKillProcessTree(DWORD ppid)
+{
+    HANDLE procSnap, procHandle ;
+    PROCESSENTRY32 pe ;
+    DWORD *pidList ;
+    int pidCount, pidCur ;
+          
+    procSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS,0) ; 
+    if(procSnap == INVALID_HANDLE_VALUE)
+        return meFALSE ;
+    
+    if((pidList = meMalloc(64*sizeof(DWORD))) == NULL)
+    {
+        CloseHandle(procSnap) ;
+        return meFALSE ;
+    }
+    pidList[0] = ppid ;
+    pidCount = 1 ;
+    pidCur = 0 ;
+    
+    pe.dwSize = sizeof(PROCESSENTRY32) ;
+    do {
+        ppid = pidList[pidCur] ;
+        if(!Process32First(procSnap,&pe)) 
+            break ;
+        do {
+            if(pe.th32ParentProcessID == ppid)
+            {
+                if(((pidCount & 0x3f) == 0) &&
+                   ((pidList = meRealloc(pidList,(pidCount+64)*sizeof(DWORD))) == NULL))
+                {
+                    CloseHandle(procSnap) ;
+                    return meFALSE ;
+                }
+                pidList[pidCount++] = pe.th32ProcessID ;
+            }
+        } while(Process32Next(procSnap,&pe)) ;
+    } while(++pidCur != pidCount) ;
+    CloseHandle(procSnap) ;
+    
+    /* kill from the parent down */
+    for(pidCur=0 ; pidCur<pidCount ; pidCur++)
+    {
+        if((procHandle = OpenProcess(PROCESS_TERMINATE,FALSE,pidList[pidCur])) != NULL)
+            TerminateProcess(procHandle,999) ;
+    }
+    return meTRUE ;
+}
+#endif
 #endif
 
 static void
@@ -364,6 +423,7 @@ ipipeWriteString(meIPipe *ipipe, int n, meUByte *str)
 #endif
     }
 }
+
 
 static void
 ipipeKillBuf(meIPipe *ipipe, int type)
@@ -451,17 +511,11 @@ ipipeKillBuf(meIPipe *ipipe, int type)
             return ;
         }
 #ifdef _WIN32
-        /* first try to kill by sending a CLOSE message to the console */
-        if((ipipe->processId != 0) &&
-           (ipipeGetChildWindow(ipipe) != NULL))
-        {
-            PostMessage(ipipe->childWnd,WM_CLOSE,999,0) ;
-            ipipe->pid = -3 ;
-        }
         if(ipipe->pid > 0)
         {
-            /* cannot terminate via the console - we can only Terminate */
-            TerminateProcess(ipipe->process,999) ;
+            if(ipipeKillProcessTree(ipipe->processId) <= 0)
+                /* cannot terminate the tree - we can only Terminate this one */
+                TerminateProcess(ipipe->process,999) ;
             /* On windows theres no child signal, so flag as killed */
             ipipe->pid = -5 ;
         }
