@@ -49,4 +49,5 @@
 .ds rD "redraw
 .ds sF "ISO-8859-1 (Latin 1)
 .ds aF "ISO-8859-1
+.ds iF "ISO-8859
 .\" No spaces on end of file please !!
