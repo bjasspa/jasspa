@@ -301,16 +301,16 @@ osd .osd.orga 0 "s" 64 35 -1 -1 org-addr-init
 osd .osd.orgt 0 "s" 64 35 -1 -1 org-setup-init
 
 osd .osd.org-n 0 "Ns" 66 39 -1 -1
-osd .osd.org-n 1 "Ptf" 1 "Month"   .osd.orgm
-osd .osd.org-n 2 "Ptf" 2 "Week"    .osd.orgw
-osd .osd.org-n 3 "Ptf" 3 "Day"     .osd.orgd
-osd .osd.org-n 4 "Ptf" 4 "Lists"   .osd.orgl
-osd .osd.org-n 5 "Ptf" 5 "Address" .osd.orga
-osd .osd.org-n 6 "Ptf" 6 "Setup"   .osd.orgt
-osd .osd.org-n 100 "It" 7          .osd.orgm
+osd .osd.org-n 1 "Ptf" "Month"   .osd.orgm
+osd .osd.org-n 2 "Ptf" "Week"    .osd.orgw
+osd .osd.org-n 3 "Ptf" "Day"     .osd.orgd
+osd .osd.org-n 4 "Ptf" "Lists"   .osd.orgl
+osd .osd.org-n 5 "Ptf" "Address" .osd.orga
+osd .osd.org-n 6 "Ptf" "Setup"   .osd.orgt
+osd .osd.org-n 100 "It"          .osd.orgm
 
 osd .osd.org 00 "batcdHs" 6 3 68 41 -1 -1 630 .scheme.osd-title "Organizer"
-osd .osd.org 10 "It" 1 .osd.org-n
+osd .osd.org 10 "It" .osd.org-n
 
 osd-bind-key .osd.org org-key-bind "C-left"
 osd-bind-key .osd.org org-key-bind "C-right"
@@ -346,7 +346,7 @@ define-macro organizer
     !if &seq &reg "/" "org" "" ""
         org-init .org.dfile
     !endif
-    osd .osd.org-n 100 "It" 6 &add .osd.orgm &reg "/org" "set/initpage" "0"
+    osd .osd.org-n 100 "It" &add .osd.orgm &reg "/org" "set/initpage" "0"
     set-variable #l2 $time
     set-variable .org.year  &lef #l2 4
     set-variable .org.month &trb &mid #l2 7 2 

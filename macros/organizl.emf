@@ -140,21 +140,21 @@
     !if &not .org.listsize
         osd .osd.orgl-c 2 "" ""
     !endif
-    osd .osd.orgl 30 "MdtHmxszfh" 1 .scheme.osd-entry 20 1 .org.list .osd.orgl-p
-    osd .osd.orgl 100 "RBtxhcfH" 100 .scheme.osd-ebtt " \HNew " 1 org-list-item-button
+    osd .osd.orgl 30 "MdtHmxszfh" .scheme.osd-entry 20 1 .org.list .osd.orgl-p
+    osd .osd.orgl 100 "RBtxhcfH" .scheme.osd-ebtt " \HNew " 1 org-list-item-button
     !if &gre .org.listitem 1
-        osd .osd.orgl 110 "RBtxhcfH" 110 .scheme.osd-ebtt " \HUp " 2 org-list-item-button
+        osd .osd.orgl 110 "RBtxhcfH" .scheme.osd-ebtt " \HUp " 2 org-list-item-button
     !else
         osd .osd.orgl 110 "BHcfh" .scheme.osd-dbtt " Up "
     !endif
     !if &and .org.listitem &les .org.listitem .org.listsize
-        osd .osd.orgl 120 "RBtxhcfH" 120 .scheme.osd-ebtt " \HDown " 3 org-list-item-button
+        osd .osd.orgl 120 "RBtxhcfH" .scheme.osd-ebtt " \HDown " 3 org-list-item-button
     !else
         osd .osd.orgl 120 "BHcfh" .scheme.osd-dbtt " Down "
     !endif
     !if .org.listitem
-        osd .osd.orgl 130 "RBtxhcfH" 130 .scheme.osd-ebtt " \HInsert " 4 org-list-item-button
-        osd .osd.orgl 140 "RBtxcfH"  140 .scheme.osd-ebtt " D\Helete " 5 org-list-item-button
+        osd .osd.orgl 130 "RBtxhcfH" .scheme.osd-ebtt " \HInsert " 4 org-list-item-button
+        osd .osd.orgl 140 "RBtxcfH" .scheme.osd-ebtt " D\Helete " 5 org-list-item-button
     !else
         osd .osd.orgl 130 "BHcfh" .scheme.osd-dbtt " Insert "
         osd .osd.orgl 140 "BHcf"  .scheme.osd-dbtt " Delete "
@@ -194,16 +194,15 @@
 osd .osd.orgl  10 ""
 osd .osd.orgl  20 "Shf" "  \HList: " 30 
 osd .osd.orgl  34 "hf" " " 
-osd .osd.orgl  36 "BtxhfH" 35 .scheme.osd-ebtt " Ne\Hw " f org-list-new
+osd .osd.orgl  36 "BtxhfH" .scheme.osd-ebtt " Ne\Hw " f org-list-new
 osd .osd.orgl  38 "hf" " " 
-osd .osd.orgl  40 "BtxhfH" 36 .scheme.osd-ebtt " Del " f org-list-del
+osd .osd.orgl  40 "BtxhfH" .scheme.osd-ebtt " Del " f org-list-del
 osd .osd.orgl  45 "Shf" " Item Lines: " 50
-osd .osd.orgl  50 "EtxfH" 50 .scheme.osd-entry "####" f org-list-nolines
+osd .osd.orgl  50 "EtxfH" .scheme.osd-entry "####" f org-list-nolines
 osd .osd.orgl  60 "" 
 osd .osd.orgl 300 "" 
-osd .osd.orgl 310 "Ibtc" 310 60 25 .osd.orgl-c
+osd .osd.orgl 310 "Ibtc" 60 25 .osd.orgl-c
 osd .osd.orgl 600 "" 
-osd .osd.orgl 610 "BtxhcfH" 610 .scheme.osd-ebtt " \HSave "    f organizer-save
-osd .osd.orgl 620 "BtxhcfH" 620 .scheme.osd-ebtt " List to \HBuffer "  f org-list-buffer
-osd .osd.orgl 630 "BtcfH"   630 .scheme.osd-ebtt " E\Hxit "    1 void
-
+osd .osd.orgl 610 "BtxhcfH" .scheme.osd-ebtt " \HSave "    f organizer-save
+osd .osd.orgl 620 "BtxhcfH" .scheme.osd-ebtt " List to \HBuffer "  f org-list-buffer
+osd .osd.orgl 630 "BtcfH"   .scheme.osd-ebtt " E\Hxit "    1 void

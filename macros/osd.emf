@@ -527,7 +527,7 @@ set-variable #l0 0
         !else
             set-variable #l4 &add #l4 &add &len #l1 &cond &sin "\H" #l1 3 4
             set-variable #l3 &cat "set-variable $result " #l0
-            osd .osd.tmp &mul #l0 10 "BtcfhHi" #l0 .scheme.osd-ebtt #l1 f #l3
+            osd .osd.tmp &mul #l0 10 "BtcfhHi" .scheme.osd-ebtt #l1 f #l3
             set-variable #l0 &add #l0 1
         !endif
     !done
@@ -584,15 +584,15 @@ set-variable #l0 0
     !if &gre #l2 1
         osd .osd.tmp  3 "Sf" @2 10
         osd .osd.tmp  4 "fh" "  "
-        osd .osd.tmp 10 "EtNxHRfhz" 10 .scheme.osd-entry #l0 #l2 "" f osd-entry-value
+        osd .osd.tmp 10 "EtNxHRfhz" .scheme.osd-entry #l0 #l2 "" f osd-entry-value
     !else
         osd .osd.tmp  3 "Sfh" @2 10
-        osd .osd.tmp 10 "EtxHRfhz" 10 .scheme.osd-entry #l0 #l2 "" f osd-entry-value
+        osd .osd.tmp 10 "EtxHRfhz" .scheme.osd-entry #l0 #l2 "" f osd-entry-value
     !endif
     osd .osd.tmp 15 "f" "  "
     osd .osd.tmp 16 ""
-    osd .osd.tmp 17 "BtcfHh" 17 .scheme.osd-ebtt " \HOkay "   f void
-    osd .osd.tmp 18 "BtcfH"  18 .scheme.osd-ebtt " \HCancel " 0 void
+    osd .osd.tmp 17 "BtcfHh" .scheme.osd-ebtt " \HOkay " f void
+    osd .osd.tmp 18 "BtcfH" .scheme.osd-ebtt " \HCancel " 0 void
     .osd.tmp osd
     set-variable @3 .value
 !emacro
