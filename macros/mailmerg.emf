@@ -193,7 +193,7 @@ define-macro-file calc calc-buffer
 0 define-macro mail-merge-find-end
     set-variable #l0 1
     !repeat
-        !force regex-forward "\\({{\\|}}\\)"
+        !force search-buffer "em" "\\({{\\|}}\\)"
         !if &not $status
             !abort
         !endif
@@ -204,7 +204,7 @@ define-macro-file calc calc-buffer
 !emacro
 
 0 define-macro mail-merge-buffer
-    !force regex-forward "{{\\(Field: \\|If: {{\\|Next-Record}}\\|Repeat-Doc}}\\)"
+    !force search-buffer "em" "{{\\(Field: \\|If: {{\\|Next-Record}}\\|Repeat-Doc}}\\)"
     !while $status
         set-variable #l0 &lef @s1 1
         &len @s0 backward-delete-char
@@ -318,7 +318,7 @@ define-macro-file calc calc-buffer
             ml-write "[Something has gone wrong - ABORT]"
             !abort
         !endif
-        !force regex-forward "{{\\(Field: \\|If: {{\\|Next-Record}}\\|Repeat-Doc}}\\)"
+        !force search-buffer "em" "{{\\(Field: \\|If: {{\\|Next-Record}}\\|Repeat-Doc}}\\)"
     !done
 !emacro
 

@@ -227,14 +227,14 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
     1 schm-osd-set-type
     ; get the scheme description
     beginning-of-buffer
-    !force regex-forward "Description:"
+    !force search-buffer "em" "Description:"
     !if $status
         set-variable .schm-osd.desc &trb &rig @wl $window-col
     !endif
     ; get the print options
     set-variable #l0 "1"
     beginning-of-buffer
-    !force regex-forward "scheme-flags"
+    !force search-buffer "em" "scheme-flags"
     !if $status
         set-variable #l0 &band 0x07 &trb &rig @wl &add $window-col 1
     !endif
@@ -242,7 +242,7 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
     ; load all the print color definitions
     ; format of line must be: print-color col-no red green blue
     beginning-of-buffer
-    !force regex-forward "print-color \\(\\w*\\) \\(\\w*\\) \\(\\w*\\) \\(\\w*\\)"
+    !force search-buffer "em" "print-color \\(\\w*\\) \\(\\w*\\) \\(\\w*\\) \\(\\w*\\)"
     !while $status
         set-variable #l0 @s1
         set-variable #l7 @s2
@@ -252,32 +252,32 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
         !if &not &les #l0 .schm-osd.nocol
             set-variable .schm-osd.nocol &add #l0 1
         !endif
-        !force regex-forward "print-color \\(\\w*\\) \\(\\w*\\) \\(\\w*\\) \\(\\w*\\)"
+        !force search-buffer "em" "print-color \\(\\w*\\) \\(\\w*\\) \\(\\w*\\) \\(\\w*\\)"
     !done
     ; load all the print schemes
     ; format of line must be: print-scheme scheme-var fore-col back-col font
     beginning-of-buffer
-    !force regex-forward "print-scheme \\(\\w*\\) \\(\\w*\\) \\(\\w*\\) \\(\\w*\\)"
+    !force search-buffer "em" "print-scheme \\(\\w*\\) \\(\\w*\\) \\(\\w*\\) \\(\\w*\\)"
     !while $status
         set-variable #l1 &ind @s1
         set-variable #l2 @s2
         set-variable #l3 @s3
         set-variable #l4 @s4
         set-variable &ind &cat ".schm-osd.schm-" #l1 &spr "|%s|%s|%s|%s|%s|%s|%s|%s|%s|0|%s|0|%s|0|%s|0|" #l2 #l3 #l2 #l3 #l2 #l3 #l2 #l3 #l4 #l4 #l4 #l4
-        !force regex-forward "print-scheme \\(\\w*\\) \\(\\w*\\) \\(\\w*\\) \\(\\w*\\)"
+        !force search-buffer "em" "print-scheme \\(\\w*\\) \\(\\w*\\) \\(\\w*\\) \\(\\w*\\)"
     !done
 !emacro
 0 define-macro schm-osd-init-screen-scheme
     0 schm-osd-set-type
     ; get the scheme description
     beginning-of-buffer
-    !force regex-forward "Description:"
+    !force search-buffer "em" "Description:"
     !if $status
         set-variable .schm-osd.desc &trb &rig @wl $window-col
     !endif
     ; get the buffer hilight enabled flag
     beginning-of-buffer
-    !force regex-forward ".hilight.flags"
+    !force search-buffer "em" ".hilight.flags"
     !if $status
         set-variable #l0 &band 0x03 &trb &rig @wl $window-col
     !endif
@@ -285,7 +285,7 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
     ; load all the color definitions
     ; format of line must be: add-color &set var col-no red green blue
     beginning-of-buffer
-    !force regex-forward "add-color "
+    !force search-buffer "em" "add-color "
     !while $status
         3 forward-word
         backward-word
@@ -303,11 +303,11 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
         !if &not &les #l0 .schm-osd.nocol
             set-variable .schm-osd.nocol &add #l0 1
         !endif
-        !force regex-forward "add-color "
+        !force search-buffer "em" "add-color "
     !done
     ; get the cursor color out
     beginning-of-buffer
-    !force regex-forward "\\$cursor-color"
+    !force search-buffer "em" "\\$cursor-color"
     !if $status
         forward-word
         backward-word
@@ -317,7 +317,7 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
     ; load all the color schemes
     ; format of line must be: add-color-scheme scheme .col001 .col002 .col003 .... [# # # # # ..]
     beginning-of-buffer
-    !force regex-forward "add-color-scheme"
+    !force search-buffer "em" "add-color-scheme"
     !while $status
         forward-word
         set-variable #l0 $window-col
@@ -327,7 +327,7 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
         set-variable #l0 1
         !repeat
             forward-word
-            !force -1 regex-forward "[0-9]"
+            !force -1 search-buffer "em" "[0-9]"
             !if $status
                 backward-char
                 set-variable #l2 &lset #l2 #l0 &add 0 &rig @wl $window-col
@@ -336,7 +336,7 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
             !endif
         !until &equ &pinc #l0 1 16
         set-variable &ind &cat ".schm-osd.schm-" #l1 #l2
-        !force regex-forward "add-color-scheme"
+        !force search-buffer "em" "add-color-scheme"
     !done
 !emacro
 
@@ -354,7 +354,7 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
     set-variable .schm-osd.nocol 0
     ; is it a screen or print scheme and call the appropriate loader
     beginning-of-buffer
-    !force regex-forward "print-scheme"
+    !force search-buffer "em" "print-scheme"
     !if $status
         schm-osd-init-print-scheme
     !else
@@ -624,7 +624,7 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
         !abort
     !endif
     beginning-of-buffer
-    !force regex-forward &spr "set-variable *\\.%s\\.scheme-files" #l2
+    !force search-buffer "em" &spr "set-variable *\\.%s\\.scheme-files" #l2
     !if $status
         beginning-of-line
         execute-line @wl
@@ -635,7 +635,7 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
         insert-string &spr "set-variable .%s.scheme-files \"%s\"" #l2 &ind &spr ".%s.scheme-files" #l2
         1 kill-line
         beginning-of-buffer
-        !force regex-forward &spr "set-variable *\\.%s\\.scheme-names" #l2
+        !force search-buffer "em" &spr "set-variable *\\.%s\\.scheme-names" #l2
         !if $status
             beginning-of-line
             execute-line @wl

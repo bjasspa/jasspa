@@ -42,57 +42,6 @@ set-variable .frame-handle.cmd "|delete-frame|create-frame|create-frame|next-fra
     set-variable #p9 &spr "%s %s" #l0 &lef #l1 4
 !emacro
 
-; regex-forward; Perform a regular expression search regardless of the 
-; state of the user's magic and exact modes.
-;
-; This should probably be a public function. Need the same for replace.
-; I am sure that there are some bogus macros around that corrupt the user
-; magic state for this very reason.
-;
-; These may need to be functions at the end of the day, I am not sure
-; what the backslash policy is on the macros passed as arguments ?? 
-;
-0 define-macro regex-forward
-    ; Save the user state
-    set-variable #l0 &bmod "exact"
-    set-variable #l1 &bmod "magic"
-    ; Perform a magic search
-    1 buffer-mode "exact"
-    1 buffer-mode "magic"
-    !if @?
-        !force @# search-forward @1
-    !else
-        !force search-forward @1
-    !endif
-    ; did it succeed
-    set-variable #l3 $status
-    ; Restore user state and return status.
-    &cond #l0 1 -1 buffer-mode "exact"
-    &cond #l1 1 -1 buffer-mode "magic"
-    !return #l3
-!emacro
-
-; regex-backward; Magic search backwards irrespective of user magic state
-0 define-macro regex-backward
-    ; Save the user state
-    set-variable #l0 &bmod "exact"
-    set-variable #l1 &bmod "magic"
-    ; Perform a magic search
-    1 buffer-mode "exact"
-    1 buffer-mode "magic"
-    !if @?
-        !force @# search-backward @1
-    !else
-        !force search-backward @1
-    !endif
-    ; did it succeed
-    set-variable #l3 $status
-    ; Restore user state and return status.
-    &cond #l0 1 -1 buffer-mode "exact"
-    &cond #l1 1 -1 buffer-mode "magic"
-    !return #l3
-!emacro
-
 ; sub any occurrence of @2 in @1 to @3
 0 define-macro var-str-sub
     set-variable #l9 @1

@@ -381,7 +381,7 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|se
     !while &gre &pdec @# 1 0
         forward-line
         ; Find the end of the paragraph
-        !force regex-forward .fhook-latex.paragraph-srch
+        !force search-buffer "em" .fhook-latex.paragraph-srch
         !if &not $status
             end-of-buffer
             !return
@@ -397,7 +397,7 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|se
     !while &gre &pdec @# 1 0
         backward-line
         ; Find the start of the paragraph
-        !force regex-backward .fhook-latex.paragraph-srch
+        !force search-buffer "bem" .fhook-latex.paragraph-srch
         !if &not $status
             beginning-of-buffer
             !return
@@ -419,8 +419,8 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|se
     beginning-of-line
     !while &gre &pdec @# 1 0
         ; Find the end of the paragraph
-;        !force regex-forward "\\([^\n\\\\]%\\|^%\\|^$\\|^[ \t]*$\\|^\\\\newpag\\|^\\\\section\\|^\\\\chap\\|^\\\\subsec\\|^\\\\label\\|^\\\\begin\\|^\\\\paragraph\\|^\\\\subparagraph\\|^\\\\end\\)"
-        !force regex-forward "\\([^\n\\\\]%\\|^$\\|^%\\|^[ \t]*$\\|^\\\\newpag\\|^\\\\section\\|^\\\\chap\\|^\\\\subsec\\|^\\\\label\\|^\\\\begin\\|^\\\\para\\|^\\\\subpar\\|^\\\\end\\)"
+;        !force search-buffer "em" "\\([^\n\\\\]%\\|^%\\|^$\\|^[ \t]*$\\|^\\\\newpag\\|^\\\\section\\|^\\\\chap\\|^\\\\subsec\\|^\\\\label\\|^\\\\begin\\|^\\\\paragraph\\|^\\\\subparagraph\\|^\\\\end\\)"
+        !force search-buffer "em" "\\([^\n\\\\]%\\|^$\\|^%\\|^[ \t]*$\\|^\\\\newpag\\|^\\\\section\\|^\\\\chap\\|^\\\\subsec\\|^\\\\label\\|^\\\\begin\\|^\\\\para\\|^\\\\subpar\\|^\\\\end\\)"
         !if &not $status
             !abort
             end-of-buffer
@@ -432,7 +432,7 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|se
         ; Jump back line.
         backward-line
         ; Find the start of the paragraph
-        !force regex-backward "\\([^\n\\\\]%\\|^%\\|^$\\|^[ \t]*$\\|^\\\\newpag\\|^\\\\section\\|^\\\\chap\\|^\\\\subsec\\|^\\\\label\\|^\\\\begin\\|^\\\\para\\|^\\\\subpar\\|^\\\\end\\)"
+        !force search-buffer "bem" "\\([^\n\\\\]%\\|^%\\|^$\\|^[ \t]*$\\|^\\\\newpag\\|^\\\\section\\|^\\\\chap\\|^\\\\subsec\\|^\\\\label\\|^\\\\begin\\|^\\\\para\\|^\\\\subpar\\|^\\\\end\\)"
         !if $status
             end-of-line
         !else
@@ -440,9 +440,9 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|se
         !endif
         insert-newline
         -1 fill-paragraph
-        regex-backward "^$"
+        search-buffer "bem" "^$"
         forward-delete-char
-        regex-forward "^$"
+        search-buffer "em" "^$"
         beginning-of-line
         forward-delete-char
     !done
@@ -512,7 +512,7 @@ define-macro latex-goto-section
     str-to-regex #l2
     popup-window #l0
     beginning-of-buffer
-    !force regex-forward &spr "\\\\%s\\*?{\\(\\\\centerline{\\)?%s}" #l1 #l2
+    !force search-buffer "em" &spr "\\\\%s\\*?{\\(\\\\centerline{\\)?%s}" #l1 #l2
     !if &not $status
         ml-write &spr "[Failed to find section \"%s\"]" #l2
         !abort
@@ -524,7 +524,7 @@ define-macro latex-goto-section
     set-alpha-mark "R"
     ; end of link must be found within 2 lines
     end-of-line
-    !force -2 regex-backward "\\\\ref\\({[^\n}]*}\\)"
+    !force -2 search-buffer "bem" "\\\\ref\\({[^\n}]*}\\)"
     !if &not $status
         goto-alpha-mark "R"
         ml-write "[Failed to find \\ref{...}]"
@@ -533,7 +533,7 @@ define-macro latex-goto-section
     set-alpha-mark "R"
     set-variable #l0 @s1
     beginning-of-buffer
-    !force regex-forward &cat "\\\\label" #l0
+    !force search-buffer "em" &cat "\\\\label" #l0
     !if &not $status
         goto-alpha-mark "R"
         ml-write &spr "[Failed to find \\label%s]" #l0
@@ -563,7 +563,7 @@ define-macro latex-ref-go-back
                 backward-char
                 backward-word
             !done
-            regex-forward "\\w+\\(\\(\\\\-\\|[-.']\\)\\w+\\)+"
+            search-buffer "em" "\\w+\\(\\(\\\\-\\|[-.']\\)\\w+\\)+"
             set-variable .spell.check-word &rep @s0 "\\-" ""
             !return
         !endif
@@ -575,7 +575,7 @@ define-macro latex-ref-go-back
             !force forward-char
             !if &inw @wc
                 -2 show-region
-                regex-forward "\\(\\w*\\)\\\\-\\(\\w*\\)"
+                search-buffer "em" "\\(\\w*\\)\\\\-\\(\\w*\\)"
                 set-variable .spell.check-word &cat @s1 @s2
                 !return
             !endif
@@ -736,8 +736,8 @@ define-macro latex-popup
     !endif
 !emacro
 
-; Find the previous opening latex block. The macro assumes that the caller is
-; running magic mode. The state of the call is returned to the caller in #l9.
+; Find the previous opening latex block.
+; The state of the call is returned to the caller in #l9.
 ; The return information is defined as a list as follows:-
 ;
 ; |n|
@@ -760,7 +760,7 @@ define-macro latex-popup
     set-variable #l5 "o"
     !repeat
         ; Search for begin or end.
-        !force search-backward "\\\\\\(begin\\|end\\){\\([^}]+\\)}"
+        !force search-buffer "bem" "\\\\\\(begin\\|end\\){\\([^}]+\\)}"
         !if $status
             ; Save the search
             set-variable #l1 @s1
@@ -769,7 +769,7 @@ define-macro latex-popup
 
             ; Make sure we are not in a comment.
             !if &gre $window-col 0
-                !force -1 search-backward "\\(^%\\|[^\\\\]%\\)"
+                !force -1 search-buffer "bem" "\\(^%\\|[^\\\\]%\\)"
                 !if $status
                     ; Found comment, start search again.
                     set-variable #l5 "c"
@@ -823,8 +823,8 @@ define-macro latex-popup
     !until &seq #l5 "q"
 !emacro
 
-; Find the next closing latex block. The macro assumes that the caller is
-; running magic mode. The state of the call is returned to the caller in #l9.
+; Find the next closing latex block.
+; The state of the call is returned to the caller in #l9.
 ; The return information is defined as a list as follows:-
 ;
 ; |n|
@@ -848,7 +848,7 @@ define-macro latex-popup
     set-variable #l4 0
     !repeat
         ; Search for begin or end.
-        !force search-forward "\\\\\\(begin\\|end\\){\\([^}]+\\)}"
+        !force search-buffer "em" "\\\\\\(begin\\|end\\){\\([^}]+\\)}"
         ; 1 screen-update
         !if $status
             ; Save the search
@@ -861,7 +861,7 @@ define-macro latex-popup
             set-position "\x82"
             !if &gre $window-col 0
                 backward-char
-                !force -1 search-backward "\\(^%\\|[^\\\\]%\\)"
+                !force -1 search-buffer "bem" "\\(^%\\|[^\\\\]%\\)"
                 !if $status
                     ; Found comment, start search again.
                     set-variable #l5 "c"
@@ -905,10 +905,9 @@ define-macro latex-popup
     !until &seq #l5 "q"
 !emacro
 
-; Find the next closing latex block that has not been opened. The macro
-; assumes that the caller is running magic mode. The state of the call is
-; returned to the caller in #l9. The return information is defined as a list
-; as follows:-
+; Find the next closing latex block that has not been opened.
+; The state of the call is returned to the caller in #l9.
+; The return information is defined as a list as follows:-
 ;
 ; |n|
 ;     There are no containing \begin blocks open
@@ -932,7 +931,7 @@ define-macro latex-popup
     set-variable #l4 0
     !repeat
         ; Search for next significant construct
-        !force search-forward "\\(\\\\begin{\\|\\\\end{\\|[{}$\\[\\]]\\)"
+        !force search-buffer "em" "\\(\\\\begin{\\|\\\\end{\\|[{}$\\[\\]]\\)"
         !if $status
             ; Save the search
             set-variable #l1 @s1
@@ -944,7 +943,7 @@ define-macro latex-popup
             set-position "\x82"
             !if &gre $window-col 1
                 backward-char
-                !force -1 search-backward "\\(^%\\|[^\\\\]%\\)"
+                !force -1 search-buffer "bem" "\\(^%\\|[^\\\\]%\\)"
                 !if $status
                     ; Found comment, start search again.
                     set-variable #l5 "c"
@@ -965,7 +964,7 @@ define-macro latex-popup
                     forward-char
                 !done
                 !if &and &seq @wc "}" &seq #l3 "verbatim"
-                    !force search-forward "\\\\end{verbatim}"
+                    !force search-buffer "em" "\\\\end{verbatim}"
                     !if $status
                         set-variable #l5 "s"
                     !endif
@@ -1144,10 +1143,9 @@ define-macro latex-popup
     !until &seq #l5 "q"
 !emacro
 
-; Find the next opening tex block that has not been opened. The macro
-; assumes that the caller is running magic mode. The state of the call is
-; returned to the caller in #l9. The return information is defined as a list
-; as follows:-
+; Find the next opening tex block that has not been opened.
+; The state of the call is returned to the caller in #l9.
+; The return information is defined as a list as follows:-
 ;
 ; |n|
 ;     There are no containing \begin blocks open
@@ -1172,7 +1170,7 @@ define-macro latex-popup
     !repeat
         ; !force backward-char
         ; Search for next significant construct
-        !force search-backward "\\([{}$\\[\\]]\\|\\\\begin{\\|\\\\end{\\)"
+        !force search-buffer "bem" "\\([{}$\\[\\]]\\|\\\\begin{\\|\\\\end{\\)"
         !if $status
             ; Save the search
             set-variable #l1 @s1
@@ -1184,7 +1182,7 @@ define-macro latex-popup
             set-position "\x82"
             !if &gre $window-col 1
                 backward-char
-                !force -1 search-backward "\\(^%\\|[^\\\\]%\\)"
+                !force -1 search-buffer "bem" "\\(^%\\|[^\\\\]%\\)"
                 !if $status
                     ; Found comment, start search again.
                     set-variable #l5 "c"
@@ -1208,7 +1206,7 @@ define-macro latex-popup
                     forward-char
                 !done
                 !if &and &seq @wc "}" &seq #l3 "verbatim"
-                    !force search-backwards "\\\\begin{verbatim}"
+                    !force search-buffer "bem" "\\\\begin{verbatim}"
                     !if $status
                         set-variable #l5 "s"
                     !endif
@@ -1386,8 +1384,6 @@ define-macro latex-popup
 ; statement. i.e. Finds the next "\end{", "}" or "]"
 define-macro tex-find-forward
     set-position "\x81"
-    set-variable #l3 &bmod "magic"
-    1 buffer-mode "magic"
     tex-bracket-find-forward
     set-variable #l0 &lget #l9 1
     !if &seq #l0 "n"
@@ -1401,15 +1397,12 @@ define-macro tex-find-forward
     !else
         ml-write &spr "ERROR: status=%s(%s)" #l0 #l9
     !endif
-    &cond #l3 1 -1 buffer-mode "magic"
 !emacro
 
 ; Down up a level by advancing backwards to the next bracket that closes a
 ; statement. i.e. Finds the next "\begin{", "{" or "["
 define-macro tex-find-backward
     set-position "\x81"
-    set-variable #l3 &bmod "magic"
-    1 buffer-mode "magic"
     tex-bracket-find-backward
     set-variable #l0 &lget #l9 1
     !if &seq #l0 "n"
@@ -1423,14 +1416,11 @@ define-macro tex-find-backward
     !else
         ml-write &spr "ERROR: status=%s(%s)" #l0 #l9
     !endif
-    &cond #l3 1 -1 buffer-mode "magic"
 !emacro
 
 ; Find the next \begin{...} block backwards.
 define-macro latex-find-backward
     set-position "\x81"
-    set-variable #l4 &bmod "magic"
-    1 buffer-mode "magic"
     latex-block-find-backward
     set-variable #l0 &lget #l9 1
     !if &seq #l0 "n"
@@ -1444,14 +1434,11 @@ define-macro latex-find-backward
     !else
         ml-write &spr "ERROR: status=%s(%s)" #l0 #l9
     !endif
-    &cond #l4 1 -1 buffer-mode "magic"
 !emacro
 
 ; Find the next open \end{...} block forwards.
 define-macro latex-find-forward
     set-position "\x81"
-    set-variable #l4 &bmod "magic"
-    1 buffer-mode "magic"
     latex-block-find-forward
     set-variable #l0 &lget #l9 1
     !if &seq #l0 "n"
@@ -1471,15 +1458,12 @@ define-macro latex-find-forward
     !else
         ml-write &spr "ERROR: status=%s(%s)" #l0 #l9
     !endif
-    &cond #l4 1 -1 buffer-mode "magic"
 !emacro
 
 ; Goto the last unclosed latex block. i.e. moves to \begin{...} This is
 ; typically bound to C-c C-u
 define-macro tex-goto-last-unclosed-latex-block
     set-position "\x81"
-    set-variable #l8 &bmod "magic"
-    1 buffer-mode "magic"
     latex-block-find-backward
     set-variable #l0 &lget #l9 1
     !if &seq #l0 "n"
@@ -1500,15 +1484,12 @@ define-macro tex-goto-last-unclosed-latex-block
         ml-write &spr "Macro error: Status=%s(%s)" #l0 #l9
         goto-position "\x81"
     !endif
-    &cond #l8 1 -1 buffer-mode "magic"
 !emacro
 
 ; Create an \end{...} to match the last unclosed \begin{...}
 ; Typically bound to "C-c C-e"
 define-macro tex-close-latex-block
     set-position "\x81"
-    set-variable #l8 &bmod "magic"
-    1 buffer-mode "magic"
     set-variable #l1 ""
     latex-block-find-backward
     set-variable #l0 &lget #l9 1
@@ -1539,14 +1520,11 @@ define-macro tex-close-latex-block
             goto-position "\x81"
         !endif
     !endif
-    &cond #l8 1 -1 buffer-mode "magic"
 !emacro
 
 ; Verify that all of the latex blocks are closed from the current position.
 define-macro latex-verify
     set-position "\x81"
-    set-variable #l8 &bmod "magic"
-    1 buffer-mode "magic"
     ml-write "Checking for \\begin{..} .. \\end{..} pairs from current position ..."
     latex-block-find-forward
     set-variable #l0 &lget #l9 1
@@ -1572,7 +1550,6 @@ define-macro latex-verify
         ml-write &spr "Macro error: Status=%s(%s)" #l0 #l9
         goto-position "\x81"
     !endif
-    &cond #l8 1 -1 buffer-mode "magic"
 !emacro
 
 ; Handle the expansion of LaTeX abbreviations. The only one we handle here is
@@ -1584,8 +1561,6 @@ define-macro latex-verify
     !endif
     ; Set up the buffer to look for the backward tag.
     set-position "\x81"
-    set-variable #l8 &bmod "magic"
-    1 buffer-mode "magic"
     5 backward-char
     ; Find the block backwards.
     latex-block-find-backward
@@ -1594,12 +1569,10 @@ define-macro latex-verify
         ; Found a match - insert it.
         goto-position "\x81"
         insert-string &spr "%s" &lget #l9 3
-        &cond #l8 1 -1 buffer-mode "magic"
         !return
     !endif
     ; Failed. Restore position and return abort.
     goto-position "\x81"
-    &cond #l8 1 -1 buffer-mode "magic"
     !abort
 !emacro
 
@@ -1613,12 +1586,9 @@ define-macro tex-insert-quote
         set-variable #l0 "''"
         ; If we are in a verbatim environment then insert a literal.
         set-position "\x81"
-        set-variable #l8 &bmod "magic"
-        1 buffer-mode "magic"
         latex-block-find-backward
         set-variable #l1 &lget #l9 1
         goto-position "\x81"
-        &cond #l8 1 -1 buffer-mode "magic"
         ; Process.
         !if &and &seq #l1 "o" &seq "verbatim" &lget #l9 3
             ; Verbatim environment.
@@ -1652,12 +1622,9 @@ define-macro tex-insert-underscore
     !else
         ; If we are in a verbatim environment then insert a literal.
         set-position "\x81"
-        set-variable #l8 &bmod "magic"
-        1 buffer-mode "magic"
         latex-block-find-backward
         set-variable #l0 &lget #l9 1
         goto-position "\x81"
-        &cond #l8 1 -1 buffer-mode "magic"
         ; Process.
         !if &and &seq #l0 "o" &seq "verbatim" &lget #l9 3
             ; Verbatim environment.
@@ -1691,8 +1658,6 @@ define-macro tex-insert-braces
 ; n Move up 'n' levels.
 ; -n Move backwards 'n' levels
 define-macro tex-up-list
-    set-variable #l8 &bmod "magic"
-    1 buffer-mode "magic"
     ; Get numeric argument.
     !if @?
         set-variable #l1 @#
@@ -1725,7 +1690,6 @@ define-macro tex-up-list
             set-variable #l1 &sub #l1 1
         !done
     !endif
-    &cond #l8 1 -1 buffer-mode "magic"
 !emacro
 
 buffer-init-fhook "latex"

@@ -7,8 +7,9 @@
 ; Synopsis:    On-line help macros.
 ; Authors:     Steven Phillips
 ;
-0 define-macro-file utils ascii-time regex-forward regex-backward var-str-sub str-to-regex
+0 define-macro-file utils ascii-time var-str-sub str-to-regex
 define-macro-file htmltool html-to-ehf
+define-macro-file format clean
 
 define-macro ehf-process-buffer
     ; Carry on as normal
@@ -284,6 +285,8 @@ define-macro ehf-process-all
         insert-string "\eln"
         !force search-forward "\elm[^\e]*\n"
     !done
+    ; clean the buffer
+    clean
 !emacro
 
 ; don't advertise the definition of start-up

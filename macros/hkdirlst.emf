@@ -52,10 +52,10 @@ define-macro fhook-dirlst
         replace-string "^ d.*" "\\0/"
         goto-line 3
         ; try to find the column where the file names start - use the time hh:mm
-        !force regex-forward "[0-9][0-9]:[0-9][0-9] *"
+        !force search-buffer "em" "[0-9][0-9]:[0-9][0-9] *"
         !if &not $status
             ; failed, try to match the date
-            !force regex-forward "\\(Jan\\|Feb\\|Mar\\|Apr\\|May\\|Jun\\|Jul\\|\\Aug\\|Sep\\|Oct\\|Nov\\|Dec\\) *[0-9]* *[0-9]* *"
+            !force search-buffer "em" "\\(Jan\\|Feb\\|Mar\\|Apr\\|May\\|Jun\\|Jul\\|\\Aug\\|Sep\\|Oct\\|Nov\\|Dec\\) *[0-9]* *[0-9]* *"
         !endif
         !if $status
             set-variable :fmpf $window-col
@@ -65,7 +65,7 @@ define-macro fhook-dirlst
         ; if this is not the root directory and there's no ../ then add one
         !if &gre &rsin "/" &rig $buffer-fname 6 &sin "/" &rig $buffer-fname 6
             goto-line 4
-            !force regex-forward " \\.\\./$"
+            !force search-buffer "em" " \\.\\./$"
             !if &not $status
                 insert-string &spr " d---------%n-            - ../\n" &sub :fmpf 26 " "
             !endif
@@ -650,7 +650,7 @@ define-macro file-browser-swap-buffers
     set-variable #l6 &lget .fhook-dirlst.sort 2
     forward-line
     set-mark
-    !force regex-forward "^[ *][^d]"
+    !force search-buffer "em" "^[ *][^d]"
     !if &not $status
         end-of-buffer
     !endif
