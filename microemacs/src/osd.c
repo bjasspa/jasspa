@@ -5,7 +5,7 @@
  *  Synopsis      : Narrow out regions of a buffer
  *  Created By    : On-Screen Display routines
  *  Created       : 26/07/97
- *  Last Modified : <010305.0757>
+ *  Last Modified : <010605.0915>
  *
  *  Description
  *     This file contains the on screen display routines that
@@ -5584,7 +5584,7 @@ void osdFreeMemory(void)
     }
     if(osdMainMenuMd != NULL)
     {
-        meFree(osdMainMenuMd->storeText) ;
+        meFree(osdMainMenuMd->storeSchm) ;
         meFree(osdMainMenuMd) ;
     }
 }

@@ -7,7 +7,7 @@ Build(2)                          microemacs                           Build(2)
 
 
 BUILD 
-     MicroEmacs '00 may  be compiled  from the  source files  using the command
+     MicroEmacs '01 may  be compiled  from the  source files  using the command
      shell build scripts build (UNIX  Bourne Shell) or build.bat (DOS/Windows).
      A default compile sequence may be achieved with a simple: 
 
@@ -20,11 +20,11 @@ BUILD
 
      -C   Build clean. Delete all of the object files. 
 
-     -c   Build a  console version  (Windows  '95/'98/NT only),  constructs the
-          executable mec32.exe. 
+     -n   Build a  console  version (i.e.  no  window support).  Constructs the
+          executable men32.exe on Windows, men on Linux. 
 
-     -cu  Build a console  version with URL  support (Windows '95/'98/NT only),
-          constructs the executable mecu32.exe. 
+     -nu  Build a console  version with URL  support (Windows '95/'98/NT only),
+          constructs the executable menu32.exe. 
 
      -d   Build a debugging  version, the  output is  med (or  med32 for 32-bit
           Windows versions) 
@@ -43,21 +43,26 @@ BUILD
             *  dosdj1.mak Microsoft DOS build using djgpp version 1. 
             *  dosdj2.mak Microsoft DOS build using djgpp version 2. 
             *  freebsd.gmk Free BSD using GNU tools. 
-            *  hpux10.gmk HP-UX 10.x using GNU tools. 
-            *  hpux10.mak HP-UX 10.x native 
             *  hpux9.gmk HP-UX 9.x using GNU tools. 
             *  hpux9.mak HP-UX 9.x native 
+            *  hpux10.gmk HP-UX 10.x using GNU tools. 
+            *  hpux10.mak HP-UX 10.x native 
+            *  hpux11.gmk HP-UX 11.x using GNU tools. 
+            *  hpux11.mak HP-UX 11.x native 
             *  irix5.gmk Silicon Graphics IRIX 5.x using GNU tools 
             *  irix5.mak Silicon Graphics IRIX 5.x native 
             *  irix6.gmk Silicon Graphics IRIX 6.x using GNU tools 
             *  irix6.mak Silicon Graphics IRIX 6.x native 
             *  linux200.gmk Linux 2.0 using GNU tools 
+            *  openstep.mak Openstep 4.2 on NeXTstep (BSD 4.3). 
             *  sunos55.gmak Sun Solaris 5.5 using GNU tools 
             *  sunos55.mak Sun Solaris 5.5 native 
             *  sunos56.gmak Sun Solaris 5.6 using GNU tools 
             *  sunos56.mak Sun Solaris 5.6 native 
             *  sunosx86.gmk Sun Solarais 2.6 (Intel) using GNU tools. 
             *  win32bc.mak Borland C, 32-bit Windows version. 
+            *  win32b55.mak  Borland  C  5.5,   32-bit  Windows  version  (Free
+               compiler). 
             *  win32sv2.mak Microsoft Developer v2.x, Win32s (for Win 3.xx) 
             *  win32sv4.mak Microsoft Developer v4.2, Win32s (for Win 3.xx) 
             *  win32v2.mak Microsoft Developer v2.x, 32-bit Windows. 
@@ -82,9 +87,9 @@ BUILD
        *  clean - Removes intermediate files. 
        *  spotless - Removes intermediate files and any backup files. 
        *  med - Builds a debugging version. 
-       *  mec - Builds console version (Windows only). 
-       *  meu - Builds a URL version (Windows only). 
-       *  mecu - Builds console and URL version (Windows only). 
+       *  men - Builds console version (Windows only). 
+       *  men - Builds a URL version (Windows only). 
+       *  menu - Builds console and URL version (Windows only). 
 
 NOTES 
      Other UNIX  ports  should  be fairly  easy  from  the base  set  of ported

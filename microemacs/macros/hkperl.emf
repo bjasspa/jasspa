@@ -75,6 +75,9 @@ set-variable .fhook-perl.fold-mopen "1"
     hilight .hilight.perl 0x80 "=~\\{[ \t]*/" .hilight.perlX .scheme.string
     hilight .hilight.perl 0x80 "!~\\{[ \t]*/" .hilight.perlX .scheme.string
     hilight .hilight.perl 0x80 "\\W\\{/"      .hilight.perlX .scheme.string
+    ; The following causes problems for the search /'s
+    ; printf LOGFILE "Average = %f\n", ($Total / $Count); 
+    hilight .hilight.perl 0    "\\W\\{/[^/]*\\}$"            $global-scheme 
     hilight .hilight.perl 0 "=~\\{[ \t]*m\\([^st]\\)\\S1*\\1" .scheme.string
     hilight .hilight.perl 0 "!~\\{[ \t]*m\\([^st]\\)\\S1*\\1" .scheme.string
     hilight .hilight.perl 0x80 "=~\\{[ \t]*m/" .hilight.perlX .scheme.string
@@ -290,7 +293,10 @@ set-variable .fhook-perl.fold-mopen "1"
     indent .hilight.perl e "\\w'" "\\w" ""
     indent .hilight.perl e "'" "'" "\\"
     indent .hilight.perl e "`" "`" "\\"
-    indent .hilight.perl e "/" "/" "\\"
+    ; The following causes problems for the search /'s
+    ; printf LOGFILE "Average = %f\n", ($Total / $Count); 
+    ; return;   # This line formats wrongly!
+    ;indent .hilight.perl e "/" "/" "\\"
     indent .hilight.perl b "\\[" "]"
     indent .hilight.perl b "(" ")"
     indent .hilight.perl s "<[^ \t\n>]*>" 0

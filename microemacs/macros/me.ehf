@@ -246,7 +246,9 @@ Miscellaneous Information
     lslmbackward-delete-char(2)le (cDbackspacecA) Delete the previous character at the 
     cursor position 
     lslmbackward-line(2)le (cDC-pcA) Move the cursor to the previous line 
-    lslmfile-browser(3)le (cDA-bcA) Browse the file system 
+    lslmfile-browser(3)le (cDf10cA) Browse the file system 
+    lslmfile-browser-close(3)le Close the file-browser 
+    lslmfile-browser-swap-buffers(3)le Swap between file-browser windows 
     lslmforward-char(2)le (cDC-fcA) Move the cursor right 
     lslmforward-delete-char(2)le (cDC-dcA) Delete the next character at the cursor 
     position 
@@ -765,7 +767,9 @@ ehf-scheme
     lslmchange-file-name(2)le (cDC-x ncA) Change the file name of the current buffer 
     lslmdirectory-tree(2)le Draw the file directory tree 
     lslmfile-attrib(3)le Set the current buffers system file attributes 
-    lslmfile-browser(3)le (cDA-bcA) Browse the file system 
+    lslmfile-browser(3)le (cDf10cA) Browse the file system 
+    lslmfile-browser-close(3)le Close the file-browser 
+    lslmfile-browser-swap-buffers(3)le Swap between file-browser windows 
     lslmfile-op(2)le File system operations command 
     lslmfind-bfile(2)le (cDC-x 9cA) Load a file as binary data 
     lslmfind-cfile(2)le Load a crypted file 
@@ -811,6 +815,7 @@ ehf-scheme
 cECommands cA
 
 
+    lslmbuffer-help(3)le Displays help page for current buffer 
     lslmbuffer-setup(3)le Configures the current buffer settings 
     lslmdescribe-word(3)le Display a dictionary definition of a word 
     lslmfind-word(3)le Find a using spelling dictionaries 
@@ -1444,7 +1449,9 @@ ehf-scheme
     lslmchange-file-name(2)le (cDC-x ncA) Change the file name of the current buffer 
     lslmdirectory-tree(2)le Draw the file directory tree 
     lslmfile-attrib(3)le Set the current buffers system file attributes 
-    lslmfile-browser(3)le (cDA-bcA) Browse the file system 
+    lslmfile-browser(3)le (cDf10cA) Browse the file system 
+    lslmfile-browser-close(3)le Close the file-browser 
+    lslmfile-browser-swap-buffers(3)le Swap between file-browser windows 
     lslmfile-op(2)le File system operations command 
     lslmfind-bfile(2)le (cDC-x 9cA) Load a file as binary data 
     lslmfind-cfile(2)le Load a crypted file 
@@ -1620,6 +1627,7 @@ ehf-scheme
     lslmbeginning-of-line(2)le (cDC-acA) Move to beginning of line 
     lslmbuffer-abbrev-file(2)le Set buffers' abbreviation file 
     lslmbuffer-bind-key(2)le Create local key binding for current buffer 
+    lslmbuffer-help(3)le Displays help page for current buffer 
     lslmbuffer-info(2)le (cDC-x =cA) Status information on current buffer position 
     lslmbuffer-mode(2)le (cDC-x mcA) Change a local buffer mode 
     lslmbuffer-setup(3)le Configures the current buffer settings 
@@ -1701,7 +1709,9 @@ ehf-scheme
     lslmexpand-abbrev(2)le Expand an abbreviation 
     lslmexpand-abbrev-handle(3)le (cDesc esccA) Expand an abbreviation handler 
     lslmfile-attrib(3)le Set the current buffers system file attributes 
-    lslmfile-browser(3)le (cDA-bcA) Browse the file system 
+    lslmfile-browser(3)le (cDf10cA) Browse the file system 
+    lslmfile-browser-close(3)le Close the file-browser 
+    lslmfile-browser-swap-buffers(3)le Swap between file-browser windows 
     lslmfile-op(2)le File system operations command 
     lslmfill-paragraph(2)le (cDesc ocA) Format a paragraph 
     lslmfilter-buffer(2)le (cDC-x #cA) Filter the current buffer through an O/S command 
@@ -2168,6 +2178,7 @@ ehf-scheme
     lslmauto-spell(3)le Auto-spell support 
     lslmauto-spell-buffer(3)le Auto-spell whole buffer 
     lslmauto-spell-reset(3)le Auto-spell hilight reset 
+    lslmbuffer-help(3)le Displays help page for current buffer 
     lslmbuffer-setup(3)le Configures the current buffer settings 
     lslmc-hash-del(3)le Remove C/C++ #define evaluation 
     lslmc-hash-eval(3)le Evaluate C/C++ #defines 
@@ -2206,7 +2217,9 @@ ehf-scheme
     lslmexecute-tool(3)le Execute a user defined shell tool 
     lslmexpand-abbrev-handle(3)le (cDesc esccA) Expand an abbreviation handler 
     lslmfile-attrib(3)le Set the current buffers system file attributes 
-    lslmfile-browser(3)le (cDA-bcA) Browse the file system 
+    lslmfile-browser(3)le (cDf10cA) Browse the file system 
+    lslmfile-browser-close(3)le Close the file-browser 
+    lslmfile-browser-swap-buffers(3)le Swap between file-browser windows 
     lslmfind-word(3)le Find a using spelling dictionaries 
     lslmfind-zfile(3)le Compressed file support 
     lslmfold-all(3)le (cDf3cA) (Un)Fold all regions in the current buffer 
@@ -2538,6 +2551,7 @@ ehf-scheme
     lslm@mna(4)le All input from Message line as normal 
     lslm@mx(4)le Message line input by executing command 
     lslm@mxa(4)le All input from Message line by executing command 
+    lslm@p(4)le Macro arguments (calling macro name) 
     lslm@s0(4)le Last search's whole match string 
     lslm@s1(4)le Last search's first group value 
     lslm@s2(4)le Last search's second group value 
@@ -2794,6 +2808,7 @@ ehf-scheme
     lslm@mna(4)le All input from Message line as normal 
     lslm@mx(4)le Message line input by executing command 
     lslm@mxa(4)le All input from Message line by executing command 
+    lslm@p(4)le Macro arguments (calling macro name) 
     lslm@s0(4)le Last search's whole match string 
     lslm@s1(4)le Last search's first group value 
     lslm@s2(4)le Last search's second group value 
@@ -2845,6 +2860,7 @@ ehf-scheme
     lslmbtm(9)le 4-DOS Batch File 
     lslmbuffer-abbrev-file(2)le Set buffers' abbreviation file 
     lslmbuffer-bind-key(2)le Create local key binding for current buffer 
+    lslmbuffer-help(3)le Displays help page for current buffer 
     lslmbuffer-info(2)le (cDC-x =cA) Status information on current buffer position 
     lslmbuffer-mode(2)le (cDC-x mcA) Change a local buffer mode 
     lslmbuffer-setup(3)le Configures the current buffer settings 
@@ -2965,7 +2981,9 @@ ehf-scheme
     lslmf77(9)le Fortran 77 File 
     lslmf90(9)le Fortran 90 File 
     lslmfile-attrib(3)le Set the current buffers system file attributes 
-    lslmfile-browser(3)le (cDA-bcA) Browse the file system 
+    lslmfile-browser(3)le (cDf10cA) Browse the file system 
+    lslmfile-browser-close(3)le Close the file-browser 
+    lslmfile-browser-swap-buffers(3)le Swap between file-browser windows 
     lslmfile-op(2)le File system operations command 
     lslmfileHooks(2)le File Hooks 
     lslmfill-paragraph(2)le (cDesc ocA) Format a paragraph 
@@ -3728,6 +3746,59 @@ ehf-scheme
               pasting (crashes exceed) and focus problems and NT exit delay. 
             * Added tab and newline character printing in buffers. 
             * Introduced message line variables @mx and @mxa. 
+            * Added ftp support with a new ftp 'file-browser' interface to 
+              give easy to use ftp capability. 
+
+    2000 
+
+            * Fixed several millennium bugs :) 
+            * Revamped the printing interface to support colors 
+            * Started using cDCVS(1)cA at last, much better history from now on. 
+            * Got the emain #define's properly supported again so options so 
+              MicroEmacs can be successfully compiled without options like 
+              SPELL and OSD etc. This can reduce the binary size by up to 37%. 
+            * Improved the macro based tag generators to support source code 
+              trees and many new items of information, added new generation 
+              GUI. 
+            * Greatly improved the OSD based search and replace dialog, also 
+              added the line hilight into this dialog. 
+            * Added new -k and -u command-line options and improved -s option. 
+            * Greatly improved and increase the file system operations via the 
+              new lslmfile-op(2)le command, created better menus in the 
+              lslmfile-browser(3)le. 
+            * Added new lslmset-position(2)le which can be used to store all 
+              information about the current window and lslmgoto-position(2)le which 
+              will then restore them. Allowed macros to use non-letter 
+              characters for alpha marks and positions so they no longer need 
+              to clobber user ones. 
+            * Greatly improved ipipe-shell-command efficiency on windows by 
+              introducing a new thread approach to listen for activity. 
+              Implemented a shell command-line in an ipiped environment so 
+              lslmishell(3)le command is now usable on Windows platforms. 
+            * Revamped the main ftp GUI to make it work much more rationally. 
+
+    2001 
+
+            * Changed buffer variables to except the form 
+              :<buffer-name>:<variable>, like command variables. This allows 
+              macros to access variable not defined in the current buffer. 
+            * Added new lslmcommand-wait(2)le command to enable macros to wait for 
+              user dependent completion, used in cDgdiffcA. 
+            * Added support for new lslm$buffer-backup(5)le variable for setting the 
+              back-up file location. 
+            * Major work to enable the complete rebinding of all keys so the 
+              user interface to MicroEmacs can be completely changed, this 
+              allows for example a Windows feel to be created. This required 
+              many internal ghosts to be exorcised and add new macro functions 
+            * Added new generic buffer setup, menu and help macros, creating 
+              the new lslmbuffer-setup(3)le command. Ported all existing file hooks 
+              to this new interface greatly reducing the buffer hook size 
+              while increasing its functionality and consistency. 
+            * Added generic commands for the creation, deletion and 
+              reformatting of comments now used by most of the file hooks. 
+            * cD3rd ReleasecA - July 2001. Fixed many bugs in the last 12 months 
+              as well as adding the above features. lslm&cbind(4)le, lslm&kbind(4)le and 
+              lslm&nbind(4)le. 
 
 
 cEWork In Progress or Planned cA
@@ -20469,13 +20540,13 @@ ehf-scheme
         See lslmContact Informationle for full contact information. A mail archive 
         exists at:- 
 
-            http://www.egroups.com/list/jasspa/ 
+            http://groups.yahoo.com/group/jasspa/ 
 
 
         If you wish to participate in the list then you must first register by 
         sending an empty mail message body to:- 
 
-            jasspa-subscribe@egroups.com 
+            jasspa-subscribe@yahoogroups.com 
 
 
         You will then be able to mail any questions into the group. 
@@ -20491,8 +20562,8 @@ ehf-scheme
     cDComplete Installations cA
         The Microsoft '95/'98/NT platforms may be installed using the cDInstallcA 
         cDShieldcA installation utility and do not require the components 
-        specified in later sections. cGme32inst.zipcA - '95/'98/NT Install Shield 
-        Installation 
+        specified in later sections. cGjasspame.execA - '95/'98/NT Self Extracting 
+        Install Shield Installation 
 
     cDExecutable Source Code cA
         The source code release for MicroEmacs '01 contains makefiles (cG*.makcA) 
@@ -20505,11 +20576,10 @@ ehf-scheme
         cGmedos.zipcA - DOS Executable 
         cGmewin32.zipcA - Windows 32' (95/98/NT) Executable 
         cGmewin32s.zipcA - Windows win32s (Win3.1/3.11) Executable 
-        cGmeirix5.gzcA - Silicon Graphics Irix 5 Executable 
         cGmeirix6.gzcA - Silicon Graphics Irix 6 Executable 
-        cGmeaix34.gzcA - IBM's AIX 3.4 Executable 
-        cGmehpux9.gzcA - Hewlett Packard HP-UX 9 Executable 
+        cGmeaix43.gzcA - IBM's AIX 4.3 Executable 
         cGmehpux10.gzcA - Hewlett Packard HP-UX 10 Executable 
+        cGmehpux11.gzcA - Hewlett Packard HP-UX 11 Executable 
         cGmesunos55.gzcA - Sun OS 5.5 Executable 
         cGmesunos56.gzcA - Sun OS 5.5 Executable 
         cGmesolx86.gzcA - Sun Solaris 2.6 Intel Platform Executable 
@@ -22014,13 +22084,13 @@ ehf-scheme
     cD-CcA 
         Build clean. Delete all of the object files. 
 
-    cD-ccA 
-        Build a console version (Windows '95/'98/NT only), constructs the 
-        executable cGmec32.execA. 
+    cD-ncA 
+        Build a console version (i.e. no window support). Constructs the 
+        executable cGmen32.execA on Windows, cGmencA on Linux. 
 
-    cD-cucA 
+    cD-nucA 
         Build a console version with URL support (Windows '95/'98/NT only), 
-        constructs the executable cGmecu32.execA. 
+        constructs the executable cGmenu32.execA. 
 
     cD-dcA 
         Build a debugging version, the output is cGmedcA (or cGmed32cA for 32-bit 
@@ -22042,21 +22112,26 @@ ehf-scheme
                 * cGdosdj1.makcA Microsoft DOS build using djgpp version 1. 
                 * cGdosdj2.makcA Microsoft DOS build using djgpp version 2. 
                 * cGfreebsd.gmkcA Free BSD using GNU tools. 
-                * cGhpux10.gmkcA HP-UX 10.x using GNU tools. 
-                * cGhpux10.makcA HP-UX 10.x native 
                 * cGhpux9.gmkcA HP-UX 9.x using GNU tools. 
                 * cGhpux9.makcA HP-UX 9.x native 
+                * cGhpux10.gmkcA HP-UX 10.x using GNU tools. 
+                * cGhpux10.makcA HP-UX 10.x native 
+                * cGhpux11.gmkcA HP-UX 11.x using GNU tools. 
+                * cGhpux11.makcA HP-UX 11.x native 
                 * cGirix5.gmkcA Silicon Graphics IRIX 5.x using GNU tools 
                 * cGirix5.makcA Silicon Graphics IRIX 5.x native 
                 * cGirix6.gmkcA Silicon Graphics IRIX 6.x using GNU tools 
                 * cGirix6.makcA Silicon Graphics IRIX 6.x native 
                 * cGlinux200.gmkcA Linux 2.0 using GNU tools 
+                * cGopenstep.makcA Openstep 4.2 on NeXTstep (BSD 4.3). 
                 * cGsunos55.gmakcA Sun Solaris 5.5 using GNU tools 
                 * cGsunos55.makcA Sun Solaris 5.5 native 
                 * cGsunos56.gmakcA Sun Solaris 5.6 using GNU tools 
                 * cGsunos56.makcA Sun Solaris 5.6 native 
                 * cGsunosx86.gmkcA Sun Solarais 2.6 (Intel) using GNU tools. 
                 * cGwin32bc.makcA Borland C, 32-bit Windows version. 
+                * cGwin32b55.makcA Borland C 5.5, 32-bit Windows version (Free 
+                  compiler). 
                 * cGwin32sv2.makcA Microsoft Developer v2.x, Win32s (for Win 3.xx) 
                 * cGwin32sv4.makcA Microsoft Developer v4.2, Win32s (for Win 3.xx) 
                 * cGwin32v2.makcA Microsoft Developer v2.x, 32-bit Windows. 
@@ -22086,9 +22161,9 @@ ehf-scheme
         * cDcleancA - Removes intermediate files. 
         * cDspotlesscA - Removes intermediate files and any backup files. 
         * cDmedcA - Builds a debugging version. 
-        * cDmeccA - Builds console version (Windows only). 
-        * cDmeucA - Builds a URL version (Windows only). 
-        * cDmecucA - Builds console and URL version (Windows only). 
+        * cDmencA - Builds console version (Windows only). 
+        * cDmencA - Builds a URL version (Windows only). 
+        * cDmenucA - Builds console and URL version (Windows only). 
 
 
 cEcENOTES cEcA
@@ -24553,17 +24628,22 @@ $a
     lslmfill-paragraph(2)le, lslmparagraph-to-line(3)le. 
 
 ! 3 file-browser
+! 3 file-browser-close
+! 3 file-browser-swap-buffers
 cEcENAME cEcA
 
 
-    file-browser - Browse the file system 
+    file-browser - Browse the file system file-browser-close - Close the 
+    file-browser file-browser-swap-buffers - Swap between file-browser windows 
 $a
 
 
 cEcESYNOPSIS cEcA
 
 
-    cDfile-browsercA (cDA-bcA) 
+    cDfile-browsercA (cDf10cA) 
+    cDfile-browser-closecA 
+    cDfile-browser-swap-bufferscA 
 
 
 cEcEDESCRIPTION cEcA
@@ -24634,8 +24714,12 @@ $a
     cGdeletecA 
         Closes file-browser. 
 
-    If file-browser is executed again then if both windows are visible 
-    file-browser is closed, otherwise file-browser resets the windows. 
+    cDfile-browser-swap-bufferscA swaps between the cG*directory*cA and cG*file*cA 
+    windows, making the other the current window, this is usually locally 
+    bound to the cGtabcA key. 
+
+    cDfile-browser-closecA hides both the cG*directory*cA and cG*file*cA windows, closing 
+    the file-browser, this is usually locally bound to the cGdeletecA key. 
 
 
 cEcESEE ALSO cEcA
@@ -30348,7 +30432,34 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmuser-setup(3)le. lsfileHooks(2)lmFile Hooksle. 
+    lslmbuffer-help(3)le, lslmuser-setup(3)le. lsfileHooks(2)lmFile Hooksle. 
+
+! 3 buffer-help
+cEcENAME cEcA
+
+
+    buffer-help - Displays help page for current buffer 
+$a
+
+
+cEcESYNOPSIS cEcA
+
+
+    cDbuffer-helpcA 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    cDbuffer-helpcA opens a dialog giving the user a brief help page on tools 
+    available for the current buffer. The help page changes depending on the 
+    type of the current buffer. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmbuffer-setup(3)le. 
 
 ! 4 &abs
 ! 4 &add
@@ -31370,7 +31481,7 @@ $a
 
 
     cD!returncA [cCncA] 
-    cD!abortcA 
+    cD!abortcA [cCncA] 
 
 
 cEcEDESCRIPTION cEcA
@@ -31381,28 +31492,24 @@ $a
     argument cCncA is specified then the return status is determined by the value 
     of cCncA. 
 
-    cD!abortcA has the same effect as cD!returncA only returning a cGFALSEcA status, this 
-    halts the execution of any calling macros. cD!abortcA is generally used in 
-    conjunction with lslm!bell(4)le to sound an audio alarm if the user has 
-    performed an invalid action. 
+    cD!abortcA has the same effect as cD!returncA only always returning a cGFALSEcA status 
+    to halt the execution of any calling macro. If an argument cCncA is given to 
+    cD!abortcA the bell is also rung, the valid values of cGncA are the same as for 
+    the lslm!bell(4)le directive. 
 
 
 cEcEEXAMPLE cEcA
 
 
-    The following example checks the monitor type. If the monitor is 
-    monochrome then the message is displayed. If the monitor type is not mono 
-    no message is displayed. 
+    The following example checks the current language and warns if it has not 
+    be set, i.e. cGDefaultcA. 
 sB
-        ; Check the monitor type and set %mtyp 
+        ; Check the current language 
 
-        !if &not &seq $TERM "MONO" 
-            set-variable %mtyp 1 
+        !if &not &seq %language "Default" 
             !return 
-        !else 
-            set-variable %mtyp 2 
         !endif 
-        ml-write "You are on a MONOCHROME machine (if you are color blind)" 
+        ml-write "Warning - you have not setup the Language - use user-setup" 
 
 sA
     The following example is shows the logic of the cD!returncA directive:- 
@@ -31566,11 +31673,12 @@ $a
     audible warning is given, otherwise a visual warning is given to the user 
     (usually the message "cC[BELL]cA" in the bottom left hand corner). 
 
-    The optional numerical argument cCncA specifies the duration of the cCbeepcA, the 
-    default is 1 when omitted. 
+    The optional numerical argument cCncA can be used to over-ride the current 
+    setting of the cDquitecA, a value of cG0cA specifies a quite bell, cG2cA an audible 
+    one, when omitted the default is cG1cA for honoring the quite mode. 
 
-    cD!bellcA is generally used in conjunction with ls!return(4)lm!abortle the bell functions 
-    warning the user, the abort function to quit the macro. 
+    cD!bellcA is generally used in conjunction with ls!return(4)lm!abortle, the !bell function 
+    warning the user and the !abort function to quit the macro. 
 
 
 cEcEEXAMPLE cEcA
@@ -31618,23 +31726,25 @@ $a
 ! 4 @0
 ! 4 @1
 ! 4 @2
+! 4 @p
 cEcENAME cEcA
 
 
-    @?, @#, @0, @1, @2, @3, ... - Macro arguments 
+    @?, @#, @0, @1, @2, @3, ... @p - Macro arguments 
 
 
 cEcESYNOPSIS cEcA
 
 
-    cD@cAcCncA 
-
     cD@?cA - Boolean flagging if a numeric argument was supplied 
     cD@#cA - The value of the numeric argument 
+
     cD@0cA - The name of the macro 
     cD@1cA - The first argument of macro 
     cD@2cA - The second argument of macro 
-    cD@3cA ... 
+    cD@3cA ... cD@cAcCncA 
+
+    cD@pcA - The name of the calling (or parent) macro. 
 
 
 cEcEDESCRIPTION cEcA
@@ -31687,6 +31797,11 @@ $a
 
     and will set variable cG%test-varcA to "cGGoodbye WorldcA". 
 
+    The cD@pcA variable can be used to obtain the name of the macro which is 
+    executing the current macro, i.e. the value of the parent's cD@0cA variable. 
+    If the macro was executed directly by the user then there is no parent 
+    macro and the value of cD@pcA is an empty string (""). 
+
 
 cEcEDIAGNOSTICS cEcA
 
@@ -31721,6 +31836,28 @@ $a
     In this example if the 3rd argument is not given then the macro gets all 
     arguments from the user. 
 
+    The cD@pcA variable having a value of "" when a macro is called directly by 
+    the user can be useful when determining the amount of information to 
+    feed-back to the user. For example, executing the lsclean(3)lmcleanle macro is an easy 
+    way to remove surplus white characters, so it is often used by other 
+    macros as well as by the user. When called directly cDcleancA refreshes the 
+    display and prints a message of completion, but when called by other 
+    macros this would cause an unwanted screen-update and message, so clean 
+    only does this when executed by the user. This is done as follows: 
+sB
+        define-macro clean 
+            ; 
+            ; Prepare to clean up file. 
+            . 
+            . 
+            . 
+            !if &seq @p "" 
+                screen-update 
+                ml-write "[Cleaned up buffer]" 
+            !endif 
+        !emacro 
+
+sA
 
 cEcENOTES cEcA
 

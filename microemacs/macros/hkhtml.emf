@@ -101,10 +101,10 @@ set-variable .fhook-html.command-desc  "|Html Browser Mode||&Goto Link||Html Aut
     indent .hilight.html b "<" ">"
     indent .hilight.html n "<html>" 2 
     indent .hilight.html o "</html>" -2 
-    indent .hilight.html n "<ul>" 2 
-    indent .hilight.html o "</ul>" -2 
     indent .hilight.html n "<head>" 2 
     indent .hilight.html o "</head>" -2 
+    indent .hilight.html n "<ul>" 2 
+    indent .hilight.html o "</ul>" -2 
     indent .hilight.html n "<table[^>]*>" 2 
     indent .hilight.html o "</table>" -2 
     indent .hilight.html n "<tr[^>]*>" 2 

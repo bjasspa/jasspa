@@ -1,7 +1,7 @@
 /*
  *	SCCS:		%W%		%G%		%U%
  *
- *	Last Modified :	<010305.0846>
+ *	Last Modified :	<010710.2348>
  * 
  *****************************************************************************
  * 
@@ -1242,6 +1242,7 @@ createBackupName(uint8 *filename, uint8 *fn, uint8 backl, int flag)
     }
     else
 #endif
+#ifndef _DOS
     if((backupPathFlag > 0) && !isUrlLink(fn))
     {
         if(backupPathFlag == 1)
@@ -1293,6 +1294,7 @@ createBackupName(uint8 *filename, uint8 *fn, uint8 backl, int flag)
         }
     }
     else
+#endif
         meStrcpy(filename,fn) ;
     
 #ifdef _UNIX
@@ -1974,8 +1976,13 @@ ffWriteFileOpen(uint8 *fname, uint32 flags, BUFFER *bp)
                 if(CreateDirectory(fname,NULL) == 0)
                     return ABORT ;
 #else
+#ifdef _DOS
+                if(mkdir((char *)fname,0) != 0)
+                    return ABORT ;
+#else
                 if(mkdir((char *)fname,meXUmask) != 0)
                     return ABORT ;
+#endif
 #endif
             }
             return TRUE ;

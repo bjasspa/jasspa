@@ -1,7 +1,7 @@
 /****************************************************************************
  * External function definitions
  *
- * Last Modified:       <010305.0846>
+ * Last Modified:       <010710.2349>
  * 
  ****************************************************************************
  * 
@@ -807,6 +807,7 @@ extern	int	ipipeKill APRAM((int f, int n)) ;
 #else
 #define ipipeWriteString voidFunc
 #define ipipeCommand  pipeCommand
+#define ipipeWrite voidFunc
 #define ipipeKill voidFunc
 #endif
 extern	int	meFilter APRAM((int f, int n));
