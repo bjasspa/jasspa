@@ -6,7 +6,7 @@
  *  Object Name   : emain.h
  *  Author        : Steve Philips
  *  Created       : Thu Nov 27 19:17:17 1997
- *  Last Modified : <011215.1338>
+ *  Last Modified : <011215.1552>
  *
  *  Description
  *       Encapsulate all of the platform definitions into a sigle file
@@ -248,11 +248,11 @@
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
 #define _USEPOLL       1                /* use poll() for stdin polling  */
 #ifndef _NO_XTERM
+#define _XTERM         1                /* Use Xlib                      */
+#endif
 #define _CLIENTSERVER  1                /* Client server support         */
 #define _URLSUPP       1                /* Supports url reading          */
 #define _IPIPES        1                /* platform supports Inc. pipes  */
-#define _XTERM         1                /* Use Xlib                      */
-#endif
 /* Under cygwin sys_errlist is defined slightly differently - redefine   */
 #define sys_errlist _sys_errlist        /* sys_errlist specially defined */
 #endif /* _CYGWIN */

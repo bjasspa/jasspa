@@ -6,7 +6,7 @@
 #  Description	 : Make file for Cygnus Cygwin v20.1
 #  Created       : Sat Jan 24 00:01:40 1998
 #
-#  Last Modified : <011215.1339>
+#  Last Modified : <011215.1431>
 #
 #  Notes
 #       The executable produced does not currently work, for some reason ME
@@ -43,7 +43,7 @@ XINCLUDE      = -I/usr/X11R6/include
 CCONSOLE      = -D_NO_XTERM
 #
 # Rules
-.SUFFIXES: .c .o .od
+.SUFFIXES: .c .o .od .on
 
 .c.o:	
 	$(CC) $(COPTIMISE) $(CDEFS) $(XINCLUDE) $(MAKECDEFS) -c $<
