@@ -29,8 +29,6 @@
 ;         u undo
 ;         w wrap
 ;         x time mode
-;         > Special internal flag indicating that indentation is
-;           to be done by using cmode buffer mode (only add to .setup-mask).
 ;         1 Special internal flag indicating that hilighting is used
 ;           for reformatting, i.e. make readable 
 ;         # special flag used to indicate commenting is supported (set at runtime)

@@ -16,7 +16,7 @@ define-macro fhook-au3
 ; buffer-init variables
 set-variable .fhook-au3.name "AutoIt3"
 set-variable .fhook-au3.setup &reg "/history" "fhook/au3" "bdfghnopx"
-set-variable .fhook-au3.setup-mask "abdefghikmnoptux>"
+set-variable .fhook-au3.setup-mask "abdefghikmnoptux"
 set-variable .fhook-au3.comment "|;||;|; | ;|r|"
 set-variable .fhook-au3.exact -1
 
