@@ -18,6 +18,12 @@ set-variable .fhook-make.setup &reg "/history" "fhook/make" "ghinopTx"
 set-variable .fhook-make.setup-mask "aeghikmnoptux"
 set-variable .fhook-make.comment "|#||#|# | #||"
 
+set-variable .fhook-make.command-flag  "|bo|bo|"
+set-variable .fhook-make.command-name  "|comment-restyle|comment-restyle|"
+set-variable .fhook-make.command-nbind "|||"
+set-variable .fhook-make.command-kbind "|esc q|esc o|"
+set-variable .fhook-make.command-desc  "|||"
+
 !if &and &sin "h" .fhook-make.setup &band .hilight.flags 0x02 
     ; Make file highlighting
     !if &not &exist .hilight.make
