@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd161.2,v 1.3 2004-02-13 10:44:32 jon Exp $
+.Id $Id: m2cmd161.2,v 1.4 2005-01-14 00:20:31 bill Exp $
 .Im MicroEmacs command|window|macrodevelop
 .ds C0 "(\fB\*(cX5\ 1\fR, \fB\*(cX5\ 2\fR)\ \&
 .so me.tni
@@ -62,8 +62,10 @@ frame is assigned a unique identity
 which exists for the life of the frame.
 .PP
 The numeric  argument  \fIn\fR  defines the type of frame to be created. If an
-argument  of \fC1\fR is given (the  default  argument)  an  external  frame is
-created. An internal frame is created with an argument of \fC0\fR.
+argument of \fC2\fR is given an external  frame is created, an internal  frame
+is created  with an argument of \fC1\fR. When no argument is given an external
+frame is created on systems which support them, otherwise an internal frame is
+created.
 .SH NOTES
 \*(mS is not  multi-threaded  and only one frame may be active at any one time
 (the  complexity  of being able to run a command in one frame while editing in
