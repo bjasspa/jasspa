@@ -1,17 +1,17 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips
-;  Created       : Tue June 22 16:18:08 1999
-;  Description   : Configures ME for the users keyboard
+; Created:     Tue June 22 1999
+; Synopsis:    Configures ME for the users keyboard
+; Authors:     Steven Phillips
 ;
-;  Notes
-;      See the value of %keyboard-names for a list of currently supported
-;      keyboards. Note that translate-keys are not automatically removed
-;      if another keyboard is used, you may have to exit and restart ME 
+; Notes:
+;     See the value of %keyboard-names for a list of currently supported
+;     keyboards. Note that translate-keys are not automatically removed
+;     if another keyboard is used, you may have to exit and restart ME 
 ;
-;  Copyright (c) 1999-2001 JASSPA
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 !if &les @# 1
     ; if executed with an argument of 0 or less, return the list
     set-variable %keyboard-names "|Default|American|Belgian|British|Deutsch|Espanol|Francais|Polish|Portugues|"

@@ -1,17 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Jon Green
-;  Created       : Mon Sep 7 22:47:22 1998
-;  Last Modified : <010805.0021>
+; Created:     Mon Sep 7 1998
+; Synopsis:    Quick hack for the faq lists !!
+; Authors:     Jon Green
 ;
-;  Description   : Quick hack for the faq lists !!
-;
-;  Notes
-;
-;  History
-;
-;  Copyright (c) 1998 Jon Green.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 !if &band .hilight.flags 0x02
     !if &not &exist .hilight.jbug
         set-variable .hilight.jbug &pinc .hilight.next 1

@@ -1,13 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2000-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Pedro Gomes
-;  Created       : Thu Mar 8 22:15:50 2001
-;  Description   : S-Lang hook - This file is invoked when a S-Lang file is
-;                  loaded.
+; Created:     Thu Mar 8 2001
+; Synopsis:    S-Lang hook - invoked when a S-Lang file is loaded.
+; Authors:     Pedro Gomes
 ;
-;  Copyright (c) Pedro Gomes 2000-2001.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 define-macro fhook-slang
     ; Is it an include h file or a c file?
     set-variable #l0 &con &isin ".h" $buffer-bname "h" "c"

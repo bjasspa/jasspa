@@ -1,11 +1,13 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2000-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips
-;  Created       : Tue Jan 25 17:45:45 2000
-;  Description   ; Gets word definition from external word dictionary
+; Created:     Tue Jan 25 2000
+; Synopsis:    Gets word definition from external word dictionary
+; Authors:     Steven Phillips
 ;
-;  Notes
-;
+; Notes:
 ;     For each language "<languange>" the following is required
 ;
 ;     1)  A dictionary, with a command-line interface to finding the meaning
@@ -47,11 +49,6 @@
 ;    Note that the grep -i handles case problems and the &find is used so that
 ;    the american.ewf file can exist anywhere in the ME $search-path
 ;
-;  History
-;
-;  Copyright (c) 2000 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 !if &not &exi .osd.word
     set-variable .osd.word &pinc .osd.next 1
     set-variable .osd.wordc &pinc .osd.next 1

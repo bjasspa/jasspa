@@ -1,19 +1,17 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips
-;  Created       : Tue Feb 16 09:37:57 1999
-;  Last Modified : <011124.2343>
+; Created:     Tue Feb 16 1999
+; Synopsis:    Set up the chatacter translations for the different char sets.
+; Authors:     Steven Phillips
 ;
-;  Description   : Sets up the chatacter translations for the different 
-;                  char sets. The internal default is ISO-8859 (1-...).
-;                  All spelling dictionaries (to date anyway) are encoded 
-;                  with this character format and rules are required to 
-;                  translate characters into and out of this set.
+; Notes:       The internal default is ISO-8859 (1-...).
+;               All spelling dictionaries (to date anyway) are encoded 
+;               with this character format and rules are required to 
+;               translate characters into and out of this set.
 ;
-;  History
-;
-;  Copyright (c) 1999-2001 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 !if &les @# 1
     ; if executed with an argument of 0 or less, return the list
     set-variable %charset-names  "|ISO-8859|ISO-8859 with box chars|Windows ANSI|Windows OEM|Windows Greek|Windows Turkish|Windows Central Europe|Windows Cyrillic|PC Code Page 437|PC Code Page 850|Cyrillic koi8-r|Plain Text|"

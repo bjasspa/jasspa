@@ -1,18 +1,15 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1997-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-; Author:           Jon Green
-; Created:          05th June 1997
-; Last Modified:    <011216.1312>
-;
-; History:
-;
-;   97/06/05 JG Initial Version
+; Created:     05th June 1997
+; Synopsis:    Mah Jongg game.
+; Authors:     Jon Green
 ;
 ; Notes:
-;   This version of Mah Jongg was inspired by the X-Windows version of the
-;   same game.
-;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;     This version of Mah Jongg was inspired by the X-Windows version of the
+;     same game.
 ;
 ; mjg-fill <start> <number>
 ; Fill the line array with data.

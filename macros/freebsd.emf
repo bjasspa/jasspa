@@ -1,8 +1,12 @@
-;       file for FreeBSD boxes
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;   Last Modified : <990824.1052>
+; Synopsis:    setup file for FreeBSD boxes
+; Authors:     Steven Phillips
 ;
-; Load up common unix stuff (colors, templates, grep, RCS, mail)
+; Load up common unix stuff
 !force exec-file "unixterm"
 ;
 ; Compile stuff

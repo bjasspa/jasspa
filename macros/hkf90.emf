@@ -1,13 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  Created By    : Jon Green
-;  Created       : Fri Feb 5 20:40:45 1999
-;  Description   : Fortran 90 hook
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Notes         : Starting template for Fortran 77/90
+; Created:     Fri Feb 5 1999
+; Synopsis:    Fortran 77/90 hook
+; Authors:     Jon Green
 ;
-;  Copyright (c) 1999-2001 JASSPA
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 define-macro fhook-f90
     ; Is this a f77 or other fortran file ??
     set-variable #l0 &con &isin ".f90" $buffer-bname "f90" "f"

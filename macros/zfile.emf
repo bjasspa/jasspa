@@ -1,18 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips
-;  Created       : Sun Jan 10 20:57:03 1999
-;  Last Modified : <011116.2211>
+; Created:     Sun Jan 10 1999
+; Synopsis:    Compressed file/archive support.
+; Authors:     Steven Phillips
 ;
-;  Description
-;
-;  Notes
-;
-;  History
-;
-;  Copyright (c) 1999 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 0 define-macro zfile-loadfile
     !if &les :zfcol 0
         ml-write &spr "[find-zfile error: Registry entry \"/history/%s/%s-file-col\" not setup]" $platform :zftype

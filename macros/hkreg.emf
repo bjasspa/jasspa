@@ -1,9 +1,11 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; *registry* hook - This file is invoked when MicroEmacs's registry is displayed
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-; Copyright (c) 1999-2001 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+; Synopsis:    *registry* hook - invoked when MicroEmacs's registry is displayed
+; Authors:     Jon Green
+;
 define-macro fhook-reg
     set-variable $buffer-mask "luh1"
     @# buffer-initialize "reg"

@@ -1,9 +1,11 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Perl hook - This file is invoked when a Perl script file is loaded.
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-; Copyright (c) 1999-2000 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+; Synopsis:    Perl hook - invoked when a Perl script file is loaded.
+; Authors:     Steven Phillips, Bruno Sabin & Jon Green
+;
 define-macro fhook-perl
     set-variable $buffer-mask "luh1"
     @# buffer-initialize "perl"

@@ -1,21 +1,18 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips
-;  Created       : Wed Jan 21 17:45:14 1998
-;  Last Modified : <001002.1212>
+; Created:     Wed Jan 21 1998
+; Synopsis:    calc - Simple message line integer calculator
+; Authors:     Steven Phillips
 ;
-;  Description   : calc - Simple message line integer calculator
+; Notes:
+;    This is used by hkbinary to calc the move forward amount
+;    It is also used by c-hash-eval to evaluate a #if value
+;    A question hangs over whether this is the best implementation,
+;    who cares? It works (I think).
 ;
-;  Notes         : This is used by hkbinary to calc the move forward amount
-;                  It is also used by c-hash-eval to evaluate a #if value
-;                  A question hangs over whether this is the best implementation,
-;                  who cares? It works (I think).
-;
-;  History
-;
-;  Copyright (c) 1998 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 0 define-macro calc-order-command
     end-of-buffer
     !force search-backward @1

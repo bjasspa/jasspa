@@ -1,10 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;       ASSEMBLER X86 mode hook
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;       Pedro Gomes
-;       Created on 99/03/28
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+; Created:     99/03/28
+; Synopsis:    ASSEMBLER X86 mode hook
+; Authors:     Pedro Gomes
+;
 define-macro fhook-asmx86
     set-variable $buffer-mask "luh1"
     @# buffer-initialize "asmx86"

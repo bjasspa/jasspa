@@ -1,9 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  Author        : Rodolfo Valeiras
-;  Created       : Tue, 11 Dec 2001
-;  Description   : Euphoria language support
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2001-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     Tue, 11 Dec 2001
+; Synopsis:    Euphoria language support
+; Authors:     Rodolfo Valeiras & Steven Phillips
+;
 define-macro fhook-euphor
     set-variable $buffer-mask "luh1"
     @# buffer-initialize "euphor"
@@ -12,8 +15,8 @@ define-macro fhook-euphor
 
 ; buffer-initialize variables
 set-variable .fhook-euphor.name "Euphoria"
-set-variable .fhook-euphor.setup &reg "/history" "fhook/euphor" "ghiopx"
-set-variable .fhook-euphor.setup-mask "aeghikmoptux"
+set-variable .fhook-euphor.setup &reg "/history" "fhook/euphor" "bdghinopx"
+set-variable .fhook-euphor.setup-mask "abdeghikmnoptux"
 set-variable .fhook-euphor.comment "|--||--|-- | --||"
 
 ; setup item-list
@@ -26,10 +29,10 @@ set-variable .fhook-euphor.item-list-r3 "Const \ecB\\2\ecA"
 set-variable .fhook-euphor.item-list-s4 "^\\(global\\s +\\)?procedure\\s +\\(\\w+\\)"
 set-variable .fhook-euphor.item-list-r4 "Proc  \ecB\\2\ecA"
 
+!if &not &exist .hilight.euphor
+    set-variable .hilight.euphor &pinc .hilight.next 1
+!endif
 !if &and &sin "h" .fhook-euphor.setup &band .hilight.flags 0x02 
-    !if &not &exist .hilight.euphor
-        set-variable .hilight.euphor &pinc .hilight.next 1
-    !endif
     0 hilight .hilight.euphor 1 $global-scheme
     
     hilight .hilight.euphor 2 "--"           .scheme.comment
@@ -67,6 +70,24 @@ set-variable .fhook-euphor.item-list-r4 "Proc  \ecB\\2\ecA"
     
     hilight .hilight.euphor 4 "\"" "\"" "\\" .scheme.string
     hilight .hilight.euphor 4 "'" "'" "\\"   .scheme.string
+!endif
+
+!if &sin "d" .fhook-euphor.setup
+    0 indent .hilight.euphor 2 10
+
+    indent .hilight.euphor N "function"      3
+    indent .hilight.euphor O "end function" -3
+    indent .hilight.euphor N "type"          3
+    indent .hilight.euphor O "end type"     -3
+    indent .hilight.euphor N "for"           3
+    indent .hilight.euphor O "end for"      -3
+    indent .hilight.euphor N "while"         3
+    indent .hilight.euphor O "end while"    -3
+    indent .hilight.euphor N "if"            3
+    indent .hilight.euphor S "else"         -3
+    indent .hilight.euphor S "elsif"        -3
+    indent .hilight.euphor O "end if"       -3
+    indent .hilight.euphor i "--"
 !endif
 
 ml-write "[MicroEmacs Euphoria file hook loaded]"

@@ -1,11 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  Created By    : Jon Green
-;  Created       : Sat Feb 6 13:05:23 1999
-;  Description   : Simple hilighting of a BNF file.
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Copyright (c) 1999-2001 JASSPA
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+; Created:     Sat Feb 6 1999
+; Synopsis:    Simple hilighting of a BNF file.
+; Authors:     Jon Green
+;
 define-macro fhook-bnf
     @# buffer-initialize "bnf"
     buffer-initialize-hooks

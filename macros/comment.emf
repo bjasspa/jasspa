@@ -1,8 +1,13 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  Created By    : Steven Phillips
-;  Created       : Mon Feb 26 08:23:33 2001
-;  Description   : General comment adding and removing routines
-;  Notes
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2001-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     Mon Feb 26 2001
+; Synopsis:    General comment adding and removing routines
+; Authors:     Steven Phillips
+;
+; Notes:
 ;      To use, the current buffer fhook command variable .comment must be set
 ;      to a list giving the following:
 ;           "|<Comment start>|<Comment end>|<comment pad>|<mid-box-left>|<mid-box-right>|<comment-flags>|"
@@ -17,9 +22,6 @@
 ;           H   Fill header line with <comment pad> strings
 ;           j   Enable Justify mode in *comment* buffer
 ;
-;  Copyright (c) 2001 JASPPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; 
 ; comment line ie xxx -> <comment start>xxx
 ;              or xxx -> <comment start>xxx<comment end>
 define-macro comment-line
@@ -109,7 +111,7 @@ define-macro comment-start
     !endif
     ; check we can edit the buffer 
     1 buffer-mode "edit" @mna
-    set-position "\x84"
+    set-position "\x83"
     set-variable #l1 $window-acol
     find-buffer "*comment*"
     1 buffer-mode "indent"
@@ -244,7 +246,7 @@ define-macro comment-end
     copy-region
     set-variable $fill-col :fill-col
     0 delete-buffer $buffer-bname
-    goto-position "\x84"
+    goto-position "\x83"
     yank
     -1 yank
     !if &seq @wl ""
@@ -272,7 +274,7 @@ define-macro comment-end
     !endif
     -1 search-forward #p8
     -2 show-region
-    set-position "\x84"
+    set-position "\x83"
     kill-region @mna
     set-variable #p0 $window-acol
     find-buffer "*comment*"
@@ -289,7 +291,7 @@ define-macro comment-end
     !endif
     set-mark
     search-backward #p8
-    set-position "\x84"
+    set-position "\x83"
     kill-region @mna
     set-variable #p0 $window-acol
     find-buffer "*comment*"

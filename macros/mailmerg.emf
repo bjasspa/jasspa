@@ -1,18 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips
-;  Created       : Fri Jul 23 10:05:30 1999
-;  Last Modified : <011118.2245>
+; Created:     Fri Jul 23 1999
+; Synopsis:    Merge a database into a text file.
+; Authors:     Steven Phillips
 ;
-;  Description
-;
-;  Notes
-;
-;  History
-;
-;  Copyright (c) 1999 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 !if &seq .osd-get-file.cmd "ERROR"
     execute-file fileopen
 !endif

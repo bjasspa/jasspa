@@ -1,14 +1,16 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  Created By    : Jon Green
-;  Created       : Wed Aug 23 21:01:51 2000
-;  Description   : Hilighting for diff files
-;  Notes         : This has been extrapolated from the tools.emf
-;                  file that originally handled the diff utility and
-;                  associated hilighting.
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2000-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Copyright (c) 2000-2001 JASPPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+; Created:     Wed Aug 23 2000
+; Synopsis:    Hilighting for diff files
+; Authors:     Jon Green
+;
+; Notes:
+;     This has been extrapolated from the tools.emf file that originally
+;     handled the diff utility and associated hilighting.
+;
 !if &not &exi .hilight.diff
     set-variable .hilight.diff  &pinc .hilight.next 1
     set-variable .hilight.gdiff &pinc .hilight.next 1

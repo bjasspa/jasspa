@@ -1,18 +1,16 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips
-;  Created       : Thu Feb 18 10:42:53 1999
-;  Last Modified : <011216.2144>
+; Created:     Thu Feb 18 1999
+; Synopsis:    Defines all schemes used.
+; Authors:     Steven Phillips
 ;
-;  Description
-;
-;  Notes
-;
+; Notes:
 ;    set up the color scheme variables - this fixes the color scheme table
 ;    so changing to different color scheme works!
 ;
-;  Copyright (c) 1999 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 0 define-macro scheme
     ; Execute the required color scheme creator macro file:
     !force -1 exec-file &reg "/history" &cat %platform "/scheme" "schemed"

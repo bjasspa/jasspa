@@ -1,11 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  Created By    : Steven Phillips
-;  Created       : Fri Apr 23 13:14:46 1999
-;  Description   : GNU Info support
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Copyright (c) 1999-2001 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+; Created:     Fri Apr 23 1999
+; Synopsis:    GNU Info support
+; Authors:     Steven Phillips
+;
 define-macro fhook-info
     @# buffer-initialize "info"
     set-variable :mouse-pick-1 info-mouse-pick-1

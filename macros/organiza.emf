@@ -1,19 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips
-;  Created       : Sat Jul 26 14:36:36 1997
-;  Last Modified : <011118.2252>
+; Created:     Sat Jul 26 1997
+; Synopsis:    Organizer address book macros.
+; Authors:     Steven Phillips
 ;
-;  Description   : cal calendar macro
-;
-;  Notes         : One of the last remaining screen-poke based utilities.
-;                  osd cannot currently do grids.
-;
-;  History       : Jon 20/04/98 - Moved to registry based tool.
-;
-;  Copyright (c) 1998 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 !if &seq .osd.orga-n "ERROR"
     set-variable .osd.orga-n    &pinc .osd.next 1
     set-variable .osd.orga-h    &pinc .osd.next 1

@@ -1,18 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2000-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips
-;  Created       : Tue May 23 08:06:34 2000
-;  Last Modified : <010807.1227>
+; Created:     Tue May 23 2000
+; Synopsis:    Printer setup OSD dialog macros.
+; Authors:     Steven Phillips
 ;
-;  Description
-;
-;  Notes
-;
-;  History
-;
-;  Copyright (c) 2000 JASSPA
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 !if &seq .osd.prtstp "ERROR"
     set-variable .osd.prtstp     &pinc .osd.next 1
     set-variable .osd.prtstp-nb  &pinc .osd.next 1

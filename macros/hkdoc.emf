@@ -1,15 +1,14 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2000-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;       Document hook for ASCII text documentation
+; Created:     19th February 1997
+; Synopsis:    Document hook for ASCII text documentation
+; Authors:     Jon Green
 ;
-;       Author          : Jon Green
-;       Created         : 19th February 1997
+; Notes:       See docmacro.emf for documentation
 ;
-;       Comment         : See docmacro.emf for documentation
-;
-; Copyright (c) 2000 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 define-macro fhook-doc
     ; use the document fhook in docmacro
     @# doc-fhook-body "doc" "document"

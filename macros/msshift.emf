@@ -1,18 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips
-;  Created       : Thu May 27 00:17:10 1999
-;  Last Modified : <011124.1317>
+; Created:     Thu May 27 1999
+; Synopsis:    Implementation of MS windows shift region definition style
+; Authors:     Steven Phillips
 ;
-;  Description     Implementation of MS windows shift region definition style
-;
-;  Notes
-;
-;  History
-;
-;  Copyright (c) 1999-2000 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 0 define-macro msshift-pick
     set-variable .msshift.state 1
 !emacro

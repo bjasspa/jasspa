@@ -1,6 +1,10 @@
-;       View Mail : Mail handling system
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1996-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;   Last Modified : <011116.2209>
+; Synopsis:    View Mail - Mail handling system
+; Authors:     Steven Phillips
 ;
 !if &seq .hilight.mail "ERROR"
     execute-file "mail"

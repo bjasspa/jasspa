@@ -1,18 +1,17 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips
-;  Created       : Wed Jul 7 13:22:00 1999
-;  Last Modified : <011010.0756>
+; Created:     Wed Jul 7 1999
+; Synopsis:    Abbrviations handler
+; Authors:     Steven Phillips
 ;
-;  Description
+; Notes:
+;     Currently handles iso standard accented char expansion,
+;     file hook specific abbreviations, eaf file abbreviations
+;     and dictionary word expansion.
 ;
-;  Notes
-;
-;  History
-;
-;  Copyright (c) 1999 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 define-macro expand-abbrev-handle
     ; Try abbrev files
     !force expand-abbrev

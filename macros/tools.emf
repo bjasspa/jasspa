@@ -1,18 +1,14 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips & Jon Green
-;  Created       : Sat Jul 18 14:58:08 1998
-;  Last Modified : <011116.2217>
+; Created:     Sat Jul 18 1998
+; Synopsis:    Compile, grep and macro to wrap the diff utility.
+; Authors:     Steven Phillips & Jon Green
 ;
-;  Description   : Compile, grep and macro to wrap the diff utility.
+; Notes:       There may be a bit too much color in the diff!
 ;
-;  Notes         : There may be a bit too much color in the diff!
-;
-;  History
-;
-;  Copyright (c) 1998 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 ; One off set up of tools variables.
 !if &seq %tool-null-file "ERROR"
     !if &band $system 0x080

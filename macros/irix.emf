@@ -1,12 +1,15 @@
-; file for sgi 
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1995-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-; Last Modified:     <001023.1123>
+; Synopsis:    Setup file for SGI IRIX boxes
+; Authors:     Steven Phillips
 ;
-; Load up common unix stuff (colors, templates, grep, RCS, mail)
+; Load up common unix stuff
 !force exec-file "unixterm"
 ;
 ; Compile stuff
-;
 0 add-next-line "*compile*"
 add-next-line "*compile*" "\"%f\", line %l:"
 add-next-line "*compile*" "^cfe: Error: \\.\\./%f, line %l"
@@ -14,8 +17,4 @@ add-next-line "*compile*" "^cfe: Warning [0-9]*: %f, line %l"
 add-next-line "*compile*" "^cfe: Error: %f, line %l"
 ; gcc compiler
 add-next-line "*compile*" "^%f:%l:"
-;
-; Setup for the different terminals.
-;
-
 

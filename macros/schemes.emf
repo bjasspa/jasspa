@@ -1,14 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2000-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Auther        : Steven Phillips
-;  Created       : Fri Feb 2 15:38:53 2001
-;  Last Modified : <010730.0855>
+; Created:     Fri Feb 2 2001
+; Synopsis:    List of screen color schemes
+; Authors:     Steven Phillips
 ;
-;  Description   : List of screen color schemes
-;
-;  Copyright (c) 2000 JASSPA
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Setup the screen color schemes
 set-variable .scheme.scheme-names "|Default White on Black|Basic Black on Cream|Black on Cream|Sandy Shores|Sherwood Forest|Blue Hue|Plain Black on Cream|Plain White on Black|Black on Grey|MS Dev-Studio Colors|Termcap (black)|"
 set-variable .scheme.scheme-files "|schemed|schemebc|schemej|schemevi|schemesf|schemebh|schemepl|schemepd|schemel|schememd|schemetb|"
 

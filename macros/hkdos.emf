@@ -1,9 +1,11 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; This file is invoked when a dos batch file is loaded.
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-; Copyright (c) 1998-2001 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+; Synopsis:    Dos batch file hook - invoked when a dos batch file is loaded.
+; Authors:     Steven Phillips & Jon Green
+;
 define-macro fhook-dos
     set-variable $buffer-mask "luh1"
     @# buffer-initialize "dos"

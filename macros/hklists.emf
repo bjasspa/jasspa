@@ -1,10 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  Created By    : Steven Pillips
-;  Created       : Wed Mar 12 20:29:38 1997
-;  Description   : Lists hook
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1997-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Copyright (c) 1997-2001 Jasspa
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Created:     Wed Mar 12 1997
+; Synopsis:    Lists hook
+; Authors:     Steven Pillips
+;
 set-char-mask "2" "-$&#!%:@."
 
 define-macro fhook-lists

@@ -1,7 +1,7 @@
-; Auto-created color scheme file for MicroEmacs
+; Generated color scheme file for JASSPA MicroEmacs
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ; Description: Black on Cream
-; Last Modified : <010716.1147>
-; Copyright (c) 1999 JASSPA Ltd.
 set-variable .hilight.flags 7
 ; Create the colors first
 add-color &set .col0 0 200 200 200
@@ -46,6 +46,7 @@ add-color-scheme $ml-scheme .col1 .col21 .col1 .col21 .col1 .col23 .col1 .col23 
 add-color-scheme $mode-line-scheme .col7 .col0 .col6 .col1 .col1 .col24 .col1 .col1 0 8 0 8 0 8 0 8
 add-color-scheme $scroll-bar-scheme .col0 .col24 .col0 .col1 .col24 .col0 .col24 .col6 0 8 0 8 0 8 0 8
 add-color-scheme $trunc-scheme .col7 .col22 .col7 .col21 .col7 .col23 .col7 .col23 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.dmf .col1 .col23 .col1 .col23 .col1 .col10 .col1 .col23 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.no1 .col16 .col22 .col16 .col21 .col16 .col23 .col16 .col23 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.no2 .col12 .col22 .col12 .col21 .col12 .col23 .col12 .col23 0 8 0 8 0 8 0 8
 ; OSD

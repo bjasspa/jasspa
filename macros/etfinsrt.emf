@@ -1,24 +1,18 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1997-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created       : Mon Dec 15 14:06:31 1997
-;  Last Modified : <011219.2338>
+; Created:     Mon Dec 15 1997
+; Synopsis:    Finds, inserts & edits the magic variables in a template file.
+; Authors:     Jon Green & Steven Phillips
 ;
-;  Description
-;      etfinsrt "etf-name"
-;      Finds, inserts & edits the magic variables in the template files.
+; Usage:
+;      etfinsrt "<etf-name>"
 ;
-;  Notes
+; The <etf-name> is typically the fhook label, i.e. emf or c etc, the template
+; file <etf-name>.etf is found and inserted.
 ;
-;    Command-line:   etfinsrt <type> [buffer-setup-flags]
-;
-;    The <type> is typically the fhook label, i.e. emf or c etc, the template
-;        file <type>.etf is found and inserted.
-;    The optional [buffer-setup-flags] are the current buffer type setup flags
-;        which can be set to disable the header insertion (flag 'n').
-;
-;  History
-;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 0 define-macro etfinsrt
     ; Insert the template file
     !force insert-file &find @1 ".etf"

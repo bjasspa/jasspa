@@ -1,15 +1,15 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips
-;  Created       : Thu May 7 20:18:08 1998
-;  Description   : Configure ME for the users language
+; Created:     Thu May 7 1998
+; Synopsis:    Configure ME for the users language
+; Authors:     Steven Phillips
 ;
-;  Notes
-;      See help on languageSupport(2) for adding support for a new lanugage
+; Notes:
+;     See help on localeSupport(2) for adding support for a new lanugage
 ;
-;  Copyright (c) 1999-2001 JASSPA
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 !if &les @# 1
     ; if executed with an argument of 0 or less, return the list
     set-variable %language-names "|Default|American|British|Deutsch|Espanol|Francais|Italiano|Polish|Portugues|"

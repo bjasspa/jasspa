@@ -1,18 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1997-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-; Author:           Steven Phillips
-; Created:          05th June 1997
-; Last Modified:    <011216.1312>
+; Created:     June 1997
+; Synopsis:    Silly game using the Mah Jongg tiles.
+; Authors:     Steven Phillips
 ;
-; History:
-;
-;   97/06/05 JG Initial Version
-;
-; Notes:
-;   This version of Mah Jongg was inspired by the X-Windows version of the
-;   same game.
-;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 0 define-macro mi-get-bit-square
 ;    set-variable $debug 1
     !if &seq &mid :mi-tiles @# 1 "\xfe"

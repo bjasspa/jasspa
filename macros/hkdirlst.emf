@@ -1,11 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  Created By    : Steven Phillips
-;  Created       : Thu Mar 1 16:28:07 2001
-;  Description   : directory tree buffer hook
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1997-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Copyright (c) 1997-2001 JASSPA
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+; Created:     Thu Mar 1 2001
+; Synopsis:    directory tree buffer hook
+; Authors:     Steven Phillips
+;
 0 define-macro-file osd osd-close
 
 define-macro fhook-dirlst

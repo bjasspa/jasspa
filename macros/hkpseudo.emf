@@ -1,29 +1,33 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2000-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Jon Green
-;  Created       : Mon Mar 20 21:26:14 2000
-;  Last Modified : <000719.0012>
+; Created:     Mon Mar 20 2000
+; Synposis:    Pseudo code hook
+; Authors:     Jon Green
+; Description:
+;     This file contains simple pseudo code style tokens
+;     which are typically used for defining pseudo code
+;     fragments. These tokens were removed from the
+;     documentation template following the newly adopted 
+;     convention of splicing and swapping hilighting 
+;     pioneered by Detlef.
 ;
-;  Description   ; This file contains simple pseudo code style tokens
-;                  which are typically used for defining pseudo code
-;                  fragments. These tokens were removed from the
-;                  documentation template following the newly adopted 
-;                  convention of splicing and swapping hilighting 
-;                  pioneered by Detlef.
+; Notes:
+;     PSEUDO CODE
 ;
-;  Notes         : PSEUDO CODE
-;
-; Defined using a magic string: -!- pseudo -!-
-; Used for psuedo code fragments, typically embedded into an ASCII text
-; document.
-; The PSUDO code keywords are all defined as uppercase, and use a set
-; of basic language independent primatives, the keywords are listed below.
-; Using pseudo also includes the sectioned hilighting. e.g.
+;     Defined using a magic string: -!- pseudo -!-
+;     Used for psuedo code fragments, typically embedded into an ASCII text
+;     document.
+;     The PSUDO code keywords are all defined as uppercase, and use a set
+;     of basic language independent primatives, the keywords are listed below.
+;     Using pseudo also includes the sectioned hilighting. e.g.
 ;
 ; // -!- pseudo -!-
 ; // Author:       My Self
 ; // Created:      11/11/97
-; // Modified:     <211197.1011>
+; // Modified:     <011228.2337>
 ; // Location:     /xx/xx/zz.doc
 ; //
 ; //____________________________________________________________________________
@@ -51,11 +55,6 @@
 ;         ..
 ;     END
 ;
-;  History
-;
-;  Copyright (c) 2000 JASSPA
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 !if &band .hilight.flags 0x02
     !if &not &exist .hilight.pseudo
         set-variable .hilight.pseudo  &pinc .hilight.next 1

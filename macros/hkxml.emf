@@ -1,22 +1,20 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  Created By    : Jon Green
-;  Created       : Wed Mar 14 22:48:42 2001
-;  Description   : XML hilighting.
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2001-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Notes
+; Created:     Wed Mar 14 2001
+; Synopsis:    XML hilighting.
+; Authors:     Jon Green
 ;
-;  Jon 01/03/14 Original
-; 
-;               First XML hook, simple hilighting based on the HTML. Differs
-;               from HTML in that we only hilight the keyword at the start
-;               of a token. The remaining arguments are not hilighted.
-;               This makes it a little easier to read.
+; Notes:
+;     First XML hook, simple hilighting based on the HTML. Differs
+;     from HTML in that we only hilight the keyword at the start
+;     of a token. The remaining arguments are not hilighted.
+;     This makes it a little easier to read.
 ;
-;               Not sure about the VB or java - do not use them myself.
+;     Not sure about the VB or java - do not use them myself.
 ;
-;  Copyright (c) 2001 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 define-macro fhook-xml
     set-variable #l0 &mid $buffer-bname &rsin "." $buffer-bname 3
     set-variable $buffer-mask "luh1"

@@ -1,22 +1,15 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips & Jon Green
-;  Created       : Sat Jul 18 15:11:54 1998
-;  Last Modified : <010520.2303>
-;
-;  Description   : Contains buffer formating commands, namely:
+; Created:     Sat Jul 18 1998
+; Synopsis:    Contains buffer formating commands, namely:
+; Authors:     Steven Phillips & Jon Green
 ;                  clean sort-lines-ignore-case tabs-to-spaces restyle-region
 ;                  restyle-buffer ifill-paragraph paragraph-to-line
 ;                  delete-indentation
 ;
-;  Notes         : restyle-region uses alpha-mark "t" and restyle-buffer uses
-;                  alpha-mark "t" and "T".
-;
-;  History
-;
-;  Copyright (c) 1998 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 ; clean - clean all redundant white-spaces
 ; If an argument is given it runs in spotless mode which removes blank
 ; ines as well

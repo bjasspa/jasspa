@@ -1,12 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  Created By    : Steven Phillips
-;  Created       : Wed Jan 12 16:37:22 2000
-;  Description   : File-browser extensions to support ftp
-;  Notes
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2000-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Copyright (c) 2000-2001 JASSPA
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+; Created:     Wed Jan 12 2000
+; Synopsis:    File-browser extensions to support ftp
+; Authors:     Steven Phillips
+;
 !if &not &exi dirlst-sort-list
     0 exec-file "hkdirlst"
 !endif

@@ -1,18 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips & Jon Green
-;  Created       : Sat Jul 18 15:11:54 1998
-;  Last Modified : <010520.2314>
+; Created:     Sat Jul 18 1998
+; Synopsis:    Miscellaneous macros
+; Authors:     Steven Phillips & Jon Green
 ;
-;  Description   : Miscellaneous macros, namely
-;                  symbol, check-line-length, alarm, time etc
-;
-;  Notes
-;
-;  History
-;
-;  Copyright (c) 1998 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 !if &seq %alarm-numb "ERROR"
     set-variable %alarm-numb 0
     set-variable .osd.alarm &pinc .osd.next 1

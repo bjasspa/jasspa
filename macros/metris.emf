@@ -1,6 +1,9 @@
-;       Silly Metris game
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1996-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;   Last Modified : <011216.1312>
+; Synopsis:    Silly Metris game
 ;
 set-variable %met-file    &find "metris" ".emf"
 set-variable %met-hiscore "2379 by jk the invincible"

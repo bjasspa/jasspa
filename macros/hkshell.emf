@@ -1,29 +1,28 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;       UNIX shell hook
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1996-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;       Author        : Jon Green
-;       Created       : 2nd November 1996
+; Created:     2nd November 1996
+; Synopsis:    UNIX shell hook
+; Authors:     Jon Green
 ;
-;   Last Modified : <011219.2326>
+; Notes:       This shell file has given me grief. It is difficult
+;              to know how much to hilight. At the moment it appears
+;              too colored - however this really does depend on the
+;              content of the file.
 ;
-;       Comment       : This shell file has given me grief. It is difficult
-;                       to know how much to hilight. At the moment it appears
-;                       too colored - however this really does depend on the
-;                       content of the file.
+;              I have knocked the hilighting off the shell commands
+;              to make the file a little less busy. This seems to be
+;              a little better.
 ;
-;                       I have knocked the hilighting off the shell commands
-;                       to make the file a little less busy. This seems to be
-;                       a little better.
+;              Maybe somebody else will come up with a more subtle
+;              scheme ??
 ;
-;                       Maybe somebody else will come up with a more subtle
-;                       scheme ??
+;              There is a heavy bias towards Bourne and Korn shells.
+;              I am not a csh shell user so I have probably missed
+;              alot of csh features.
 ;
-;       Note          : There is a heavy bias towards Bourne and Korn shells.
-;                       I am not a csh shell user so I have probably missed
-;                       alot of csh features.
-;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 define-macro fhook-shell
     set-variable $buffer-mask "luh1"
     @# buffer-initialize "shell"

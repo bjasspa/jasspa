@@ -1,5 +1,10 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; C++ mode hook
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1997-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Synopsis:    C++ mode hook
+; Authors:     Steven Phillips & Jon Green
 ;
 ; Notes:
 ;       There is a distinction between C++ and C because of problems with
@@ -7,9 +12,6 @@
 ;       Also recognise magic-string for C++ as:- "-!- cmode; c++ -!-" in
 ;       the first line.
 ;
-; Copyright (c) 1997-2001 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 define-macro fhook-cpp
     ; Is it an include h file or a c file?
     set-variable #l0 &con &isin ".h" $buffer-bname "hpp" "cpp"

@@ -1,13 +1,11 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips
-;  Last Modified : <011219.2326>
+; Synopsis:    Macros used for sending e-mails
+; Authors:     Steven Phillips
 ;
-;  Description   : Macros used for sending e-mails
-;
-;  Copyright (c) 1998-99 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 0 define-macro fhook-mail
     set-variable $buffer-fhook fhook-mail
     -1 buffer-mode "edit"

@@ -1,12 +1,13 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  Created By    : Jon Green
-;  Created       : Sat Mar 20 19:18:31 1999
-;  Description   : MHEG-5
-;  Notes         : Configured for UK-DTTV broadcast MHEG-5 only.
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Copyright (c) 1999-2001 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+; Created:     Sat Mar 20 1999
+; Synopsis:    MHEG-5 hook
+; Authors:     Jon Green
+; Notes:       Configured for UK-DTTV broadcast MHEG-5 only.
+;
 define-macro fhook-mhg
     set-variable $buffer-mask "luh1"
     @# buffer-initialize "mhg"

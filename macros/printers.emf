@@ -1,14 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2000-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Auther        : Steven Phillips
-;  Created       : Tue May 23 08:06:34 2000
-;  Last Modified : <000607.1930>
+; Created:     Tue May 23 2000
+; Synopsis:    List of printer drivers and schemes
+; Authors:     Steven Phillips
 ;
-;  Description   : List of printer drivers and schemes
-;
-;  Copyright (c) 2000 JASSPA
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 ; Setup the Print drivers
 set-variable .print-setup.driver-names "|Default Plain Text|HTML|Windows|HP Deskjet|HP Laserjet 4v|Epson Stylus|"
 set-variable .print-setup.driver-files "|printd|printhtm|printwdw|printhpd|printhpl|printeps|"

@@ -1,19 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips
-;  Created       : Sat Jul 26 14:36:36 1997
-;  Last Modified : <011010.0756>
+; Created:     Sat Jul 26 1997
+; Synopsis:    Organizer week view macros.
+; Authors:     Steven Phillips
 ;
-;  Description   : cal calendar macro
-;
-;  Notes         : One of the last remaining screen-poke based utilities.
-;                  osd cannot currently do grids.
-;
-;  History       : Jon 20/04/98 - Moved to registry based tool.
-;
-;  Copyright (c) 1998 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 ; Key binding definitions
 set-variable .org.bind-k1 "|C-left|C-right|C-up|C-down|" 
 set-variable .org.bind-c1 "|-1 org-week-inc-week|1 org-week-inc-week|-1 org-week-inc-year|1 org-week-inc-year|" 

@@ -1,23 +1,16 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips & Jon Green
-;  Created       : Sat Jul 18 15:11:54 1998
-;  Last Modified : <011215.2336>
-;
-;  Description   : Triangle playing card patience game
-;
-;  Notes
-;
-;  History
-;
-;  Copyright (c) 1998 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Created:     Sat Jul 18 1998
+; Synopsis:    Triangle playing card patience game
+; Authors:     Steven Phillips & Jon Green
 ;
 ; Define positions
 ;
 ; void tri-decode-char (char card)
 ; Decode the character
-;
 0 define-macro tri-decode-char
     set-variable :tri-char @1
     set-variable :tri-num &add &atoi :tri-char 1

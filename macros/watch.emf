@@ -1,11 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  Created By    : Steven Phillips
-;  Created       : Tue May 9 07:21:38 2000
-;  Description   : Sets up a watch on the current buffer's file and auto-reloads
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2000-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Copyright (c) 2000-2001 JASSPA
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+; Created:     Tue May 9 2000
+; Synopsis:    Sets up a watch on the current buffer's file and auto-reloads
+; Authors:     Steven Phillips
+;
 0 define-macro watch-callback
     set-variable #l0 $window-mode-line
     set-variable #l1 $window-scroll-bar

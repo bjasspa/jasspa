@@ -1,13 +1,14 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Jon Green
-;  Created       : Mon Jul 12 21:29:44 1999
-;  Description   : Quick hilight for texinfo files. 
+; Created:     Mon Jul 12 1999
+; Synopsis:    Quick hilight for texinfo files. 
+; Authors:     Jon Green
 ;
-;  Notes         : Could benifit with some tools.
+; Notes:       Could benifit with some tools.
 ;
-;  Copyright (c) 1999-2001 JASSPA
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 define-macro fhook-texi
     @# buffer-initialize "texi"
     buffer-initialize-hooks

@@ -1,12 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2000-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips
-;  Created       : Thu Nov 23 21:19:31 2000
-;  Last Modified : <011123.0816>
-;
-;  Description
-;
-;  Notes
+; Created:     Thu Nov 23 2000
+; Synopsis:    buffer-setup macros & GUI
+; Authors:     Steven Phillips
+; Notes:
 ;
 ;     The following flags are used in the .setup & .setup-mask variables:
 ;
@@ -46,7 +46,7 @@
 ;         .command-nbind  - The numeric argument for the buffer binding
 ;         .command-kbind  - The key for the buffer binding
 ;         .command-desc   - Brief description of the command
-
+;
 ;    The following flags are used for each component of .command-flag:
 ;
 ;         t Show in tool
@@ -56,9 +56,6 @@
 ;         i ignore emulation key mappings
 ;         H Only create binding if Hilighting is enabled
 ;
-;  Copyright (c) 2000 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 !if &not &exi .osd.buffstp
     set-variable .osd.buffstp &pinc .osd.next 1
 !endif

@@ -1,9 +1,11 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; erf hook - This file is invoked when a MicroEmacs registry file is loaded.
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-; Copyright (c) 1999-2001 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+; Synopsis:    erf hook - invoked when a MicroEmacs registry file is loaded.
+; Authors:     Jon Green & Steven Phillips
+;
 define-macro fhook-erf
     set-variable $buffer-mask "luh1"
     @# buffer-initialize "erf"

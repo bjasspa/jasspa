@@ -1,17 +1,12 @@
- ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips
-;  Created       : Sat Jun 13 18:01:56 1998
-;  Last Modified : <010805.0021>
+; Created:     Sat Jun 13 1998
+; Synopsis:    Defines mouse opened dialogs
+; Authors:     Steven Phillips
 ;
-;  Description     Defines mouse opened dialogs
-;
-;  Notes
-;
-;  History
-;
-;  Copyright (c) 1999-2000 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; define some external macros which are used first.
 0 define-macro-file osd osd-1-buffer osd-close
 0 define-macro-file search osd-line-scheme

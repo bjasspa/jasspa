@@ -1,7 +1,10 @@
-;       Setup file for Microsoft Windows.
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1996-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;       Author:         Jon Green
-;   Last Modified : <010307.1601>
+; Synopsis:    Setup file for Microsoft Windows.
+; Authors:     Jon Green
 ;
 ; Notes on the standard configuration
 ; ===================================

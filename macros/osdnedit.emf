@@ -1,12 +1,14 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;  Created By    : Steven Phillips
-;  Created       : Wed Feb 21 09:26:58 2001
-;  Description   : NEdit v5 Emulation
-;  Notes
-;      See meosd.emf for notes on emulaton.
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2001-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Copyright (c) 2001 JASSPA
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Created:     Wed Feb 21 2001
+; Synopsis:    NEdit v5 Emulation
+; Authors:     Steven Phillips
+;
+; Notes:       See meosd.emf for notes on emulaton.
+;
 ; Make the main menus look like NEdits
 ; File
 osd 1  10  ""   "&New        C-n"   f osd-new-buffer ; Create a new document

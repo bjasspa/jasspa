@@ -1,19 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2000-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Author        : $Author: jon $
-;  Created By    : Steven Phillips
-;  Created       : Tue Dec 19 22:52:46 2000
-;  Last Modified : <160495.1521>
+; Created:     Tue Dec 19 2000
+; Synopsis:    Display the JASSPA MiroEmacs Logo.
+; Authors:     Steven Phillips
 ;
-;  Description
-;
-;  Notes
-;
-;  History
-;
-;  Copyright (c) 2000 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 !if &not &exi .osd.melogo
     set-variable .osd.melogo &pinc .osd.next 1
 !endif

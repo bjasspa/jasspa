@@ -1,18 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2000-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips
-;  Created       : Fri Nov 24 00:09:57 2000
+; Created:     Fri Nov 24 2000
+; Synopsis:    Buffer initialization routines
+; Authors:     Steven Phillips
 ;
-;  Description   : Buffer initialization routines
-;
-;  Notes
-;      By setting a few .fhook-foo.??? variables most features and tools
-;      can be setup generically using the routines in this macro file
-;      and buffstp.emf. See the header of buffstp.emf for more info.
-;
-;  Copyright (c) 2000-2001 JASSPA.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 define-macro-file spellaut auto-spell auto-spell-buffer auto-spell-reset
 define-macro-file fold fold-current fold-all
 

@@ -1,23 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips
-;  Created       : Sat Jun 13 10:25:33 1998
-;  Last Modified : <010805.0021>
+; Created:     Sat Jun 13 1998
+; Synopsis:    On-line help macros.
+; Authors:     Steven Phillips
 ;
-;  Description
-;
-;  Notes
-;      To create me.ehf:
-;          nmake meehf.hts
-;          hts2html -l .htm meehf.hts
-;          mv me.htm me/1.htm
-;          cd me
-;          me "@ehftools" *.htm
-;
-;  History
-;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 0 define-macro-file utils ascii-time regex-forward regex-backward var-str-sub str-to-regex
 define-macro-file htmltool html-to-ehf
 
