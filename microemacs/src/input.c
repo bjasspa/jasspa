@@ -162,283 +162,6 @@ mlyesno(meUByte *prompt)
     return meTRUE ;
 }
 
-/*
- * These are very simple character inserting, character deleting, move
- * over or erase spaces forwards or backwards routines. They are used
- * by the meGetString routine to edit the command line.
- */
-
-static int
-cins(meUByte cc, meUByte *buf, int *pos, int *len, int max)
-{
-    /*
-     * Insert a character "c" into the buffer pointed to by "buf" at
-     * position pos (which we update), if the length len (which we
-     * also update) is less than the maximum length "max".
-     *
-     * Return:  meTRUE    if the character will fit
-     *          meFALSE   otherwise
-     */
-    int ll ;
-    ll = meStrlen(buf);
-    if(ll + 1 >= max)
-        return meFALSE ;
-    
-    if(*pos == ll)
-    {
-        /* The character goes on the end of the buffer. */
-        buf[ll++] = cc;
-        buf[ll] = '\0';
-        *len = ll;
-        *pos = ll;
-    }
-    else
-    {
-        /* The character goes in the middle of the buffer. */
-        meUByte *ss, c1, c2 ;
-        
-        ss = buf + *pos ;
-        c2 = cc ;
-        
-        do {
-            c1 = c2 ;
-            c2 = *ss ;
-            *ss++ = c1 ;
-        } while(c1 != '\0') ;
-        
-        /* update the pos & length */
-        *len = ll+1;
-        (*pos)++ ;
-    }
-    return meTRUE ;
-}
-
-static void
-cdel(meUByte *buf, int pos, int *len)
-{
-    /*
-     * Delete the character at position 'pos' in the buffer, update len.
-     */
-    meStrcpy(&buf[pos], &buf[pos + 1]);
-    buf[--*len] = '\0';
-}
-
-#define ERASE (-1)      /* erase whatever we move over	*/
-#define LEAVE 1         /* leave whatever we move over	*/
-
-/* buf		pointer to buffer 		*/
-/* pos		position in above buffer	*/
-/* len		length of buffer (ie no. of chars in it) */
-/* state	either ERASE or LEAVE		*/
-static void
-fspace(meUByte *buf, int *pos, int *len, int state)
-{
-    /*
-     * Move over or erase spaces in the buffer (depending on the value
-     * of "state") pointed to by "buf", after the current cursor position,
-     * given by "pos", updating the length (ie the number of characters
-     * in the buffer).
-     */
-    register meUByte c;
-    
-    for(;;)
-    {
-        if(*pos >= *len)
-            return;
-        
-        if(((c = buf[*pos]) != ' ') && (c != '\t') && (c != '\n') && (c != DIR_CHAR))
-            return;
-        
-        if(state == ERASE)
-            cdel(buf, *pos, len);
-        else
-            ++*pos;
-    }
-}
-
-/* buf		pointer to buffer 		*/
-/* pos		position in above buffer	*/
-/* len		length of buffer (ie no. of chars in it) */
-/* state	either ERASE or LEAVE		*/
-static void
-bspace(meUByte *buf, int *pos, int *len, int state)
-{
-    /*
-     * Identical to fspace() except that we go backwards instead of
-     * forwards.
-     */
-    register meUByte c;
-    
-    for(;;)
-    {
-        if(*pos == 0)
-            return;
-        
-        if(((c = buf[*pos - 1]) != ' ') && (c != '\t') && (c != '\n') && (c != DIR_CHAR))
-            return;
-        
-        if(state == ERASE)
-            cdel(buf, *pos - 1, len);
-        
-        --*pos;
-    }
-}
-
-/* buf		pointer to buffer 		*/
-/* pos		position in above buffer	*/
-/* len		length of buffer (ie no. of chars in it) */
-/* state	either ERASE or LEAVE		*/
-static void
-fword(meUByte *buf, int *pos, int *len, int state)
-{
-    /*
-     * Move forward over a "word", erasing it if "state" is ERASE.
-     * The defintion of "word" is very rudimentary. It is considered
-     * to be delimited by a space or by the dir char "/" character.
-     */
-    register meUByte c;
-    
-    for(;;)
-    {
-        if(*pos >= *len)
-            return ;
-        
-        if((c = buf[*pos]) == ' ' || c == '\t' || c == '\n' || c == DIR_CHAR)
-            return;
-        
-        if(state == ERASE)
-            cdel(buf, *pos, len);
-        else
-            ++*pos;
-    }
-}
-
-/* buf		pointer to buffer 		*/
-/* pos		position in above buffer	*/
-/* len		length of buffer (ie no. of chars in it) */
-/* state	either ERASE or LEAVE		*/
-static void
-bword(meUByte *buf, int *pos, int *len, int state)
-{
-    /*
-     * As for fword() but go backwards to the start, instead of forwards.
-     */
-    register meUByte c;
-    
-    for(;;)
-    {
-        if(*pos == 0)
-            return;
-        
-        if((c = buf[*pos - 1]) == ' ' || c == '\t' || c == '\n' || c == DIR_CHAR)
-            return;
-        
-        if(state == ERASE)
-            cdel(buf, *pos - 1, len);
-        
-        --*pos;
-    }
-}
-
-/*
- * mldisp() - expand control characters in "prompt" and "buf" (ie \t -> <TAB>,
- * \n -> <NL> etc etc). The third argument, "cpos" causes mldisp() to return
- * the column position of the "cpos" character in the "buf" string, ie if
- * mldisp is called as:
- *
- *        mldisp("hello", "\n\nthere", 3);
- *
- * Then mldisp will return:
- *
- *        5 + 4 + 4 + 1 = 10
- *        ^   ^   ^   ^
- *        |   |   |   |
- *    lenght of   |   |   length of "t"
- *       prompt   |   |   ^
- *      "hello"   lenght  |
- *            of <NL> |
- *            ^        |
- *            |-------|
- *            |
- *            3 characters into "buf"
- *
- * If "cpos" is < 0 then the the length of the expanded prompt + buf
- * combination, or term.t_ncol is returned (the routine displays only
- * term.t_ncol characters of the expanded buffer.
- * Added continue string which is printed after buf.
- */
-
-/* prompt         prompt to be displayed      */
-/* buf            buffer to expand controls from */
-/* cont           continuing str to be displayed */
-/* cpos           offset into "buf"          */
-/* expChr         0=dont expand unprintables, use ?, 1=expand ?'s */
-void
-mlDisp(meUByte *prompt, meUByte *buf, meUByte *cont, int cpos)
-{
-    char   expbuf[meMLDISP_SIZE_MAX] ;
-    int    len, start, col, maxCol ;
-    int    promsiz ;
-    
-    col = -1 ;
-    len = expandexp(-1,buf,meMLDISP_SIZE_MAX-1,0,(meUByte *)expbuf,cpos,&col,0) ;
-    if(col < 0)
-        col = len ;
-    if(cont != NULL)
-    {
-        meStrncpy(expbuf+len,cont,meMLDISP_SIZE_MAX-len);
-        expbuf[meMLDISP_SIZE_MAX-1] = '\0' ;
-        len += strlen(expbuf+len) ;
-    }
-    /* switch off the status cause we are replacing it */
-    frameCur->mlStatus = 0 ;
-    maxCol = frameCur->width ;
-    promsiz = meStrlen(prompt) ;
-    col += promsiz ;
-    len += promsiz ;
-    /*
-     * Having expanded it, display it.
-     *
-     * "ret" which is the actual column number of the "cpos" character
-     * is used as an indication of how to display the line. If it is
-     * too long for the terminal to display then:
-     *    if "ret" is between 0 and max-column-number
-     *    then
-     *        display with $ in right hand column
-     *    else
-     *        display with $ after prompt
-     *
-     * Be careful about putting characters in the lower left hand corner
-     * of the screen as this may cause scrolling on some terminals.
-     */
-    if(col > maxCol - 1)
-    {
-        int div = maxCol >> 1 ;
-        
-        start = (((col - (div >> 1)) / div) * div) ;
-        len -= start ;
-        col -= start-1 ;
-        maxCol-- ;
-    }
-    else
-        start = 0 ;
-    if(len > maxCol)
-    {
-        expbuf[start+maxCol-promsiz-1] = '$';
-        expbuf[start+maxCol-promsiz] = '\0';
-    }
-    frameCur->mlColumn = col ;
-    if(start >= promsiz)
-        mlwrite(MWUSEMLCOL|MWCURSOR,(meUByte *)"%s%s",(start) ? "$":"",expbuf+start-promsiz) ;
-    else
-        mlwrite(MWUSEMLCOL|MWCURSOR,(meUByte *)"%s%s%s",(start) ? "$":"",prompt+start,expbuf) ;
-    
-    /* switch on the status so we save it */
-    frameCur->mlStatus = MLSTATUS_KEEP|MLSTATUS_POSML ;
-}
-
-
-
 /*    tgetc:    Get a key from the terminal driver, resolve any keyboard
  *              macro action
  */
@@ -615,9 +338,201 @@ meGetKeyFromUser(int f, int n, int flag)
     return cc ;
 }
 
+#define mlINPUT_LAST_KILL   0x01
+#define mlINPUT_LAST_YANK   0x02
+#define mlINPUT_LAST_REYANK 0x04
+#define mlINPUT_THIS_KILL   0x10
+#define mlINPUT_THIS_YANK   0x20
+#define mlINPUT_THIS_REYANK 0x40
+static int mlInputFlags ;
 
 static meIFuncSSI curCmpIFunc ;
 static meIFuncSS  curCmpFunc ;
+
+#define mlForwardToNextSpace(buff,curPos,curLen) \
+for(; (curPos < curLen) && isAlphaNum(buff[curPos]) ; curPos++)
+#define mlBackwardToNextSpace(buff,curPos) \
+for(; (curPos > 0) && isAlphaNum(buff[curPos-1]) ; curPos--)
+
+#define mlForwardToNextWord(buff,curPos,curLen) \
+for(; (curPos < curLen) && !isAlphaNum(buff[curPos]) ; curPos++)
+#define mlBackwardToNextWord(buff,curPos) \
+for(; (curPos > 0) && !isAlphaNum(buff[curPos-1]) ; curPos--)
+
+static int
+mlInsertChar(meUByte cc, meUByte *buf, int *pos, int *len, int max)
+{
+    /*
+     * Insert a character "c" into the buffer pointed to by "buf" at
+     * position pos (which we update), if the length len (which we
+     * also update) is less than the maximum length "max".
+     *
+     * Return:  meTRUE    if the character will fit
+     *          meFALSE   otherwise
+     */
+    int ll ;
+    ll = meStrlen(buf);
+    if(ll + 1 >= max)
+        return meFALSE ;
+    
+    if(*pos == ll)
+    {
+        /* The character goes on the end of the buffer. */
+        buf[ll++] = cc;
+        buf[ll] = '\0';
+        *len = ll;
+        *pos = ll;
+    }
+    else
+    {
+        /* The character goes in the middle of the buffer. */
+        meUByte *ss, c1, c2 ;
+        
+        ss = buf + *pos ;
+        c2 = cc ;
+        
+        do {
+            c1 = c2 ;
+            c2 = *ss ;
+            *ss++ = c1 ;
+        } while(c1 != '\0') ;
+        
+        /* update the pos & length */
+        *len = ll+1;
+        (*pos)++ ;
+    }
+    return meTRUE ;
+}
+
+static int
+mlForwardDelete(meUByte *buf,int curPos, int curLen, int delLen, int flags)
+{
+    meUByte *ss, *dd ;
+    if((curPos+delLen) > curLen)
+        delLen = curLen - curPos ;
+    if(delLen > 0)
+    {
+        dd = buf + curPos ;
+        if(flags & 2)
+        {
+            if((mlInputFlags & mlINPUT_LAST_KILL) == 0)
+                killSave() ;
+            if((ss = killAddNode(delLen)) != NULL)
+            {
+                memcpy(ss,dd,delLen) ;
+                ss[delLen] = '\0' ;
+                mlInputFlags |= mlINPUT_THIS_KILL ;
+            }
+        }
+        if(flags & 1)
+        {
+            curLen -= delLen ;
+            ss = dd + delLen ;
+            while((*dd++ = *ss++) != '\0')
+                ;
+        }
+    }
+    return curLen ;
+}
+
+
+/*
+ * mldisp() - expand control characters in "prompt" and "buf" (ie \t -> <TAB>,
+ * \n -> <NL> etc etc). The third argument, "cpos" causes mldisp() to return
+ * the column position of the "cpos" character in the "buf" string, ie if
+ * mldisp is called as:
+ *
+ *        mldisp("hello", "\n\nthere", 3);
+ *
+ * Then mldisp will return:
+ *
+ *        5 + 4 + 4 + 1 = 10
+ *        ^   ^   ^   ^
+ *        |   |   |   |
+ *    lenght of   |   |   length of "t"
+ *       prompt   |   |   ^
+ *      "hello"   lenght  |
+ *            of <NL> |
+ *            ^        |
+ *            |-------|
+ *            |
+ *            3 characters into "buf"
+ *
+ * If "cpos" is < 0 then the the length of the expanded prompt + buf
+ * combination, or term.t_ncol is returned (the routine displays only
+ * term.t_ncol characters of the expanded buffer.
+ * Added continue string which is printed after buf.
+ */
+
+/* prompt         prompt to be displayed      */
+/* buf            buffer to expand controls from */
+/* cont           continuing str to be displayed */
+/* cpos           offset into "buf"          */
+/* expChr         0=dont expand unprintables, use ?, 1=expand ?'s */
+void
+mlDisp(meUByte *prompt, meUByte *buf, meUByte *cont, int cpos)
+{
+    char   expbuf[meMLDISP_SIZE_MAX] ;
+    int    len, start, col, maxCol ;
+    int    promsiz ;
+    
+    col = -1 ;
+    len = expandexp(-1,buf,meMLDISP_SIZE_MAX-1,0,(meUByte *)expbuf,cpos,&col,0) ;
+    if(col < 0)
+        col = len ;
+    if(cont != NULL)
+    {
+        meStrncpy(expbuf+len,cont,meMLDISP_SIZE_MAX-len);
+        expbuf[meMLDISP_SIZE_MAX-1] = '\0' ;
+        len += strlen(expbuf+len) ;
+    }
+    /* switch off the status cause we are replacing it */
+    frameCur->mlStatus = 0 ;
+    maxCol = frameCur->width ;
+    promsiz = meStrlen(prompt) ;
+    col += promsiz ;
+    len += promsiz ;
+    /*
+     * Having expanded it, display it.
+     *
+     * "ret" which is the actual column number of the "cpos" character
+     * is used as an indication of how to display the line. If it is
+     * too long for the terminal to display then:
+     *    if "ret" is between 0 and max-column-number
+     *    then
+     *        display with $ in right hand column
+     *    else
+     *        display with $ after prompt
+     *
+     * Be careful about putting characters in the lower left hand corner
+     * of the screen as this may cause scrolling on some terminals.
+     */
+    if(col > maxCol - 1)
+    {
+        int div = maxCol >> 1 ;
+        
+        start = (((col - (div >> 1)) / div) * div) ;
+        len -= start ;
+        col -= start-1 ;
+        maxCol-- ;
+    }
+    else
+        start = 0 ;
+    if(len > maxCol)
+    {
+        expbuf[start+maxCol-promsiz-1] = '$';
+        expbuf[start+maxCol-promsiz] = '\0';
+    }
+    frameCur->mlColumn = col ;
+    if(start >= promsiz)
+        mlwrite(MWUSEMLCOL|MWCURSOR,(meUByte *)"%s%s",(start) ? "$":"",expbuf+start-promsiz) ;
+    else
+        mlwrite(MWUSEMLCOL|MWCURSOR,(meUByte *)"%s%s%s",(start) ? "$":"",prompt+start,expbuf) ;
+    
+    /* switch on the status so we save it */
+    frameCur->mlStatus = MLSTATUS_KEEP|MLSTATUS_POSML ;
+}
+
 
 #if MEOPT_EXTENDED
 static int
@@ -958,13 +873,14 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
     int     ipos ;                      /* input position in buffer */
     int     ilen ;                      /* number of chars in buffer */
     int     cont_flag ;                 /* Continue flag */
+    meKill   *lastYank ;
     meUByte **history ;
     meUByte   onHist, numHist, *numPtr ;
     meUByte  *defaultStr ;
     meUByte   prom[meBUF_SIZE_MAX] ;
     meUByte   ch, **strList ;
     meUByte  *contstr=NULL ;
-    int     gotPos=1, fstPos, lstPos, curPos, noStrs ;
+    int     gotPos=1, fstPos, lstPos, curPos, mrkPos=0, noStrs ;
     int     changed=1, compOff=0 ;
     
     if((mlgsStoreBuf = meMalloc(nbuf)) == NULL)
@@ -1011,6 +927,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
         onHist = ~0 ;
     else
         onHist = numHist+1 ;
+    mlInputFlags = 0 ;
     meStrcpy(prom,prompt) ;
     ii = meStrlen(prom) ;
     if((defnum > 0) && (defnum <= numHist))
@@ -1083,6 +1000,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
         else
             mlgsDisp(prom,buf,contstr,ipos) ;
         contstr = NULL ;
+        mlInputFlags >>= 4 ;
 
         /* mlfirst  may be set by meShell. If both are unset, get a 
          * character from the user. */
@@ -1127,11 +1045,9 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
             break;
             
         case CK_DELFOR:    /* ^D : Delete the character under the cursor */
-            while((ipos < ilen) && ii--)
+            if((ipos < ilen) & ii)
             {
-                cdel(buf, ipos, &ilen);
-                /*                if(ipos > ilen)*/
-                /*                    ipos = ilen;*/
+                ilen = mlForwardDelete(buf,ipos,ilen,ii,1) ;
                 changed=1 ;
             }
             break;
@@ -1160,10 +1076,14 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
             return ctrlg(meFALSE,1);
             
         case CK_DELBAK:    /* ^H : backwards delete. */
-            while(ipos && ii--)
+            if(ipos && ii)
             {
-                cdel(buf, ipos-1, &ilen);
-                ipos--;
+                if((ipos -= ii) < 0)
+                {
+                    ii += ipos ;
+                    ipos = 0 ;
+                }
+                ilen = mlForwardDelete(buf,ipos,ilen,ii,1) ;
                 changed=1 ;
             }
             break;
@@ -1482,43 +1402,39 @@ input_expand:
             break ;
             
         case CK_KILEOL:    /* ^K : Kill to end of line */
-            if((ii > 0) && (ipos < ilen))
+            ff = ipos ;
+            if(ii > 0)
             {
                 if(frameCur->mlStatus & MLSTATUS_NINPUT)
                 {
-                    ii = ilen ;
-                    while((ipos < ilen) && (buf[ipos] != meCHAR_NL))
-                        cdel(buf, ipos, &ilen);
+                    while((ff < ilen) && (buf[ff] != meCHAR_NL))
+                        ff++ ;
                     /* kill \n as if we were at the end of the line or arg
                      * given (as per kill-line) */
-                    if((ii == ilen) ||
-                       (ff && (ipos < ilen) &&
+                    if((ff == ipos) ||
+                       (ff && (ff < ilen) &&
                         ((ipos == 0) || (buf[ipos-1] == meCHAR_NL))))
-                        cdel(buf, ipos, &ilen);
+                        ff++ ;
                 }
                 else
-                {
-                    buf[ipos] = '\0';
-                    ilen = ipos;
-                }
-                changed=1 ;
+                    ff = ilen ;
             }
             else if((ii < 0) && ipos)
             {
                 if(frameCur->mlStatus & MLSTATUS_NINPUT)
                 {
-                    ii = ipos-2 ;
-                    while((ii >= 0) && (buf[ii] != meCHAR_NL))
-                        ii-- ;
-                    ii++ ;
+                    ipos-- ;
+                    while((ipos > 0) && (buf[ipos-1] != meCHAR_NL))
+                        ipos-- ;
                 }
                 else
                 {
-                    ii = 0 ;
+                    ipos = 0 ;
                 }
-                do
-                    cdel(buf,--ipos,&ilen);
-                while(ipos != ii) ;
+            }
+            if((ff -= ipos) > 0)
+            {
+                ilen = mlForwardDelete(buf,ipos,ilen,ff,3) ;
                 changed=1 ;
             }
             break;
@@ -1535,6 +1451,10 @@ input_expand:
                 cc = meCHAR_NL ;
                 goto input_addexpand ;
             }
+#if MEOPT_OSD
+            if(frameCur->mlStatus & MLSTATUS_POSOSD)
+                mlfirst = cc ;
+#endif
             cont_flag = 0;
             break;
             
@@ -1587,12 +1507,46 @@ input_expand:
             }
             break;
             
-        case CK_KILREG:    /* ^W : Kill the whole line */
-            ipos = 0 ;
-            ilen = 0 ;
-            buf[ipos] = '\0';
-            changed=1 ;
+        case CK_SWPMRK:
+            ii = mrkPos ;
+            mrkPos = ipos ;
+            if((ipos=ii) > ilen)
+                ipos = ilen ;
+            break ;
+        
+        case CK_SETMRK:
+            mrkPos = ipos ;
+            break ;
+            
+        case CK_CPYREG:    /* M-w : Copy region */
+            ii = ipos ;
+            if(mrkPos < ipos)
+            {
+                ff = ipos ;
+                ipos = mrkPos ;
+            }
+            else
+                ff = mrkPos ;
+            if((ff -= ipos) > 0)
+                ilen = mlForwardDelete(buf,ipos,ilen,ff,2) ;
+            ipos = ii ;
             break;
+        
+        case CK_KILREG:    /* C-w : Kill region */
+            if(mrkPos < ipos)
+            {
+                ff = ipos ;
+                ipos = mrkPos ;
+            }
+            else
+                ff = mrkPos ;
+            if((ff -= ipos) > 0)
+            {
+                ilen = mlForwardDelete(buf,ipos,ilen,ff,3) ;
+                changed=1 ;
+            }
+            break;
+        
         case CK_QUOTE:    /* ^Q - quote the next character */
             if((cc = quoteKeyToChar(tgetc())) < 0)
             {
@@ -1600,7 +1554,7 @@ input_expand:
                 break ;
             }
             while(ii--)
-                if(cins((meUByte) cc, buf, &ipos, &ilen, nbuf) == meFALSE)
+                if(mlInsertChar((meUByte) cc, buf, &ipos, &ilen, nbuf) == meFALSE)
                     TTbell();
             changed=1 ;
             break;
@@ -1611,7 +1565,7 @@ input_expand:
                 register int count = frameCur->windowCur->dotLine->length;
                 
                 while(*p && count--)
-                    cins(*p++, buf, &ipos, &ilen, nbuf);
+                    mlInsertChar(*p++, buf, &ipos, &ilen, nbuf);
                 changed=1 ;
                 break ;
             }
@@ -1623,27 +1577,44 @@ input_expand:
 #ifdef _CLIPBRD
                 TTgetClipboard() ;
 #endif
-                if(klhead == (meKill*) NULL)
+                if((lastYank=klhead) == (meKill*) NULL)
                 {
                     TTbell() ;
                     break ;
                 }
-                killp = klhead->kill;
-                
+ml_yank:
+                mrkPos = ipos ;
+                killp = lastYank->kill;
                 while(killp != NULL)
                 {
                     pp = killp->data ;
                     while((cy=*pp++))
-                        if(cins(cy, buf, &ipos, &ilen, nbuf) == meFALSE)
+                        if(mlInsertChar(cy, buf, &ipos, &ilen, nbuf) == meFALSE)
                         {
                             TTbell() ;
                             break ;
                         }
                     killp = killp->next;
                 }
+                mlInputFlags |= mlINPUT_THIS_YANK ;
                 changed=1 ;
                 break;
             }
+            
+        case CK_REYANK:    /* ^Y : reyank kill buffer */
+            if(mlInputFlags & mlINPUT_LAST_YANK)
+            {
+                ff = ipos ;
+                ipos = mrkPos ;
+                if((ff -= ipos) > 0)
+                    ilen = mlForwardDelete(buf,ipos,ilen,ff,1) ;
+                if((lastYank = lastYank->next) == NULL)
+                    lastYank = klhead ;
+                mlInputFlags |= mlINPUT_THIS_REYANK ;
+                goto ml_yank ;
+            }
+            TTbell() ;
+            break ;
             
         case CK_INSFLNM:    /* insert file name */
             {
@@ -1651,7 +1622,7 @@ input_expand:
                 
                 if(p != NULL)
                     while(ii--)
-                        while((ch=*p++) && cins(ch, buf, &ipos, &ilen, nbuf))
+                        while((ch=*p++) && mlInsertChar(ch, buf, &ipos, &ilen, nbuf))
                             ;
                 break ;
             }
@@ -1664,92 +1635,79 @@ input_expand:
         case CK_BAKWRD:    /* M-B : Move to start of previous word */
             while(ipos && ii--)
             {
-                bspace(buf, &ipos, &ilen, LEAVE); /* move over space after word */
-                bword(buf, &ipos, &ilen, LEAVE);  /* move over word */
-            }
-            break;
-            
-        case CK_CAPWRD:    /* M-C : Capitalise next word and move past it. */
-            while(ilen && (ipos != ilen) && ii--)
-            {
-                fspace(buf, &ipos, &ilen, LEAVE); /* Move over spaces before word */
-                /* capitalise if lower-case letter */
-                buf[ipos] = toUpper(buf[ipos]) ;
-                for(ipos++ ; (ipos<ilen) && isWord(buf[ipos]) ; ipos++)
-                    buf[ipos] = toLower(buf[ipos]) ;
-                changed=1 ;
-            }
-            break;
-            
-        case CK_HIWRD:    /* M-U : Capitalise the whole of the next
-                           *      word and move past it.
-                           */
-            while(ii--)
-            {
-                /* move over spaces before word */
-                fspace(buf, &ipos, &ilen, LEAVE);
-                
-                /* capitalise if lower-case letter */
-                for(; (ipos<ilen) && isWord(buf[ipos]) ; ipos++)
-                    buf[ipos] = toUpper(buf[ipos]) ;
-                changed=1 ;
-            }
-            break;
-            
-        case CK_LOWWRD:   /* M-L : Converts to lower case the whole of the next
-                           *      word and move past it.
-                           */
-            while(ii--)
-            {
-                /* move over spaces before word */
-                fspace(buf, &ipos, &ilen, LEAVE);
-                
-                /* to lower-case letter */
-                for(; (ipos<ilen) && isWord(buf[ipos]) ; ipos++)
-                    buf[ipos] = toLower(buf[ipos]) ;
-                changed=1 ;
-            }
-            break;
-            
-        case CK_DELFWRD: /* Delete word forwards. */
-            while(ilen && ii--)
-            {
-                fspace(buf, &ipos, &ilen, ERASE);    /* eat spaces before word */
-                fword(buf, &ipos, &ilen, ERASE);    /* eat word */
-                changed=1 ;
+                mlBackwardToNextWord(buf,ipos) ;
+                mlBackwardToNextSpace(buf,ipos) ;
             }
             break;
             
         case CK_FORWRD:    /* M-F : Move forward to start of next word. */
             while((ipos != ilen) && ii--)
             {
-                /* move over spaces before word */
-                fspace(buf, &ipos, &ilen, LEAVE);
-                fword(buf, &ipos, &ilen, LEAVE);    /* move over word */
+                mlForwardToNextWord(buf,ipos,ilen) ;
+                mlForwardToNextSpace(buf,ipos,ilen) ;
+            }
+            break;
+            
+        case CK_CAPWRD:    /* M-C : Capitalise next word and move past it. */
+            while(ilen && (ipos != ilen) && ii--)
+            {
+                mlForwardToNextWord(buf,ipos,ilen) ;
+                buf[ipos] = toUpper(buf[ipos]) ;
+                for(ipos++ ; (ipos<ilen) && isAlphaNum(buf[ipos]) ; ipos++)
+                    buf[ipos] = toLower(buf[ipos]) ;
+                changed=1 ;
+            }
+            break;
+            
+        case CK_HIWRD:    /* M-U : Capitalise the whole of the next
+                           *      word and move past it. */
+            while(ii--)
+            {
+                mlForwardToNextWord(buf,ipos,ilen) ;
+                for(; (ipos<ilen) && isAlphaNum(buf[ipos]) ; ipos++)
+                    buf[ipos] = toUpper(buf[ipos]) ;
+                changed=1 ;
+            }
+            break;
+            
+        case CK_LOWWRD:   /* M-L : Converts to lower case the whole of the next
+                           *      word and move past it. */
+            while(ii--)
+            {
+                mlForwardToNextWord(buf,ipos,ilen) ;
+                for(; (ipos<ilen) && isAlphaNum(buf[ipos]) ; ipos++)
+                    buf[ipos] = toLower(buf[ipos]) ;
+                changed=1 ;
+            }
+            break;
+            
+        case CK_DELFWRD: /* Delete word forwards. */
+            ff = ipos ;
+            while((ff < ilen) && ii--)
+            {
+                mlForwardToNextWord(buf,ff,ilen) ;
+                mlForwardToNextSpace(buf,ff,ilen) ;
+            }
+            if((ff -= ipos) > 0)
+            {
+                ilen = mlForwardDelete(buf,ipos,ilen,ff,3) ;
+                changed=1 ;
             }
             break;
             
         case CK_DELWBAK:
-            /* Delete word backwards. If spaces before
-             * the input position then delete those too.
-             */
-            while(ipos && ii--)
+            ff = ipos ;
+            while((ipos > 0) && ii--)
             {
-                bspace(buf, &ipos, &ilen, ERASE);    /* eat spaces after word */
-                bword(buf, &ipos, &ilen, ERASE);    /* eat word */
+                mlBackwardToNextWord(buf,ipos) ;
+                mlBackwardToNextSpace(buf,ipos) ;
+            }
+            if((ff -= ipos) > 0)
+            {
+                ilen = mlForwardDelete(buf,ipos,ilen,ff,3) ;
                 changed=1 ;
             }
             break;
-            
-        case CK_REYANK:    /* M-Y or M-^Y : Yank the current buffername. */
-            {
-                register meUByte *p = frameCur->bufferCur->name;
-                
-                while(*p && cins(*p++, buf, &ipos, &ilen, nbuf))
-                    ;
-                changed=1 ;
-                break;
-            }
             
 #if MEOPT_ISEARCH
         case CK_BISRCH:
@@ -1834,7 +1792,7 @@ input_addexpand:
             /*
              * And insert it ....
              */
-            if(cins((meUByte) cc, buf, &ipos, &ilen, nbuf) == meFALSE)
+            if(mlInsertChar((meUByte) cc, buf, &ipos, &ilen, nbuf) == meFALSE)
                 TTbell();
             changed=1 ;
             break;
