@@ -19,9 +19,10 @@ GZIP	= gzip -9
 #
 # Install
 #
-INSTALL_FIL	= ginstall -m 0666
-INSTALL_DIR	= ginstall -m 0755
-INSTALL_EXE	= ginstall -m 0777
+INSTALL		= install
+INSTALL_FIL	= $(INSTALL) -m 0666
+INSTALL_DIR	= $(INSTALL) -m 0755
+INSTALL_EXE	= $(INSTALL) -m 0777
 #
 # Use microemacs for conversions.
 #
