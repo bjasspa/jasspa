@@ -33,8 +33,8 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		au3.eaf		\
 	hkbibtex.emf	hkbinary.emf	hkblist.emf	hkbnf.emf	\
 	hkc.emf		hkcobol.emf	hkcpp.emf	hkcss.emf	\
 	hkcygwin.emf	\
-	hkdefault.emf	hkdiff.emf	hkdirlst.emf	hkdirtre.emf	\
-	hkdoc.emf	hkdos.emf	\
+	hkdiff.emf	hkdirlst.emf	hkdirtre.emf	hkdoc.emf	\
+	hkdos.emf	\
 	hkehf.emf	hkemf.emf	hkerf.emf	hkeuphor.emf	\
 	hkf90.emf	filetype.emf	hkfvwm.emf	\
 	hkhtml.emf	\
