@@ -2,7 +2,7 @@
 >  Copyright 2003 Jasspa.
 
 THE JASSPA CDROM
-Version 1.1 - 14th August 2003
+Version 1.2 - 17th August 2003
 
 Introduction
 
@@ -114,6 +114,12 @@ Exec Disk Contents
 
 Revision History
 
+    Version 1.2 - 17th August 2003
+    
+        Added HP-UX 10.20 (PA-RISC) package
+        Added HP-UX 11.xx (PA-RISC) package
+        Added HP-UX 11.xx experimental binaries.
+        
     Version 1.1 - 14th August 2003
 
         Added Sun Solaris 8 (Sparc) binaries + package
@@ -274,6 +280,7 @@ doc/readme.txt
 experimental/                               ** New experimental release
 experimental/bin/medevbin_linux_24.tgz      -- MicroEmacs Linux 2.4.x executable
 experimental/bin/medevbin_sparc_sol9.zip    -- Sun Solaris 9 (SPARC) executable
+experimental/bin/medevbin_hpux11.tar.gz     -- HP-UX 11.xx (PA-RISC) executable
 experimental/bin/medevbin_win32.zip         -- Microsoft 95/98/NT/2K/XP executable
 experimental/macros/medevmac.tar.gz         -- Experimental macros
 experimental/src/medevsrc.tar.gz            -- Experimental source.
@@ -320,6 +327,9 @@ ne/readme.txt
  @
 packages/                                               ** Complete packages
 packages/cygwin/jasspa-20021216*                        -- Cygwin packages
+packages/hpux/jasspame-loc-0212-10.20.depot             -- HP-UX 10.20 (PA-RISC) /usr/local/ install
+packages/hpux/jasspame-loc-0212-11.00.depot             -- HP-UX 11.xx (PA-RISC) /usr/local/ install
+packages/hpux/jasspame-opt-0212-11.00.depot             -- HP-UX 11.xx (PA-RISC) /opt/jasspa install
 packages/linux/microemacs-jasspa-2002_12-1.i386.rpm     -- Linux RPM
 packages/readme.txt
 packages/sun/jasspa-i386-sol8.pkg                       -- Sun Solaris 8 (Intel)
@@ -335,4 +345,4 @@ submissions/sub*.txt                    -- User submission
 
 Prepared by JASSPA
 Copyright (c) 2003 JASSPA
-14th August 2003
+17th August 2003

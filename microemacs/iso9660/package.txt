@@ -4,7 +4,7 @@
 >
 >  Created By    : Jon Green
 >  Created       : Sun Aug 10 14:00:59 2003
->  Last Modified : <030814.1552>
+>  Last Modified : <030817.1750>
 >
 Packages
 
@@ -29,6 +29,22 @@ Packages
             To subsequently remove, as root:
 
                 # pkgrm jasspa
+
+    hpux - HP-UX 10.20 and 11.xx
+
+            Packages available:-
+
+                jasspame-loc-0212-10.20.depot - HP-UX 10.20 (PA-RISC) install to "/usr/local"
+                jasspame-loc-0212-11.00.depot - HP-UX 11.xx (PA-RISC) install to "/usr/local"
+                jasspame-opt-0212-11.00.depot - HP-UX 11.xx (PA-RISC) install to "/opt/jasspa"
+
+            To install, as root:-
+
+                # swinstall -s /<path_to>/jasspame-opt-0212-11.00.depot jasspame
+
+            To subsequently remove:-
+
+                # swremove jasspame
 
     windows  - Microsoft Windows 95/98/NT/2K/XP installer.
 
