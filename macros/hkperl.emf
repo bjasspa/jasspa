@@ -55,25 +55,25 @@ set-variable .fhook-perl.item-list-r1 "Sub  \ecB\\1\ecA"
     hilight .hilight.perl 0 "\\\\'"                $global-scheme 
     hilight .hilight.perl 0 "\\\\`"                $global-scheme 
     hilight .hilight.perl 0x804 "\\W\\{'" "'" "\\" .scheme.string
-    hilight .hilight.perl 0x80 "\\W\\{\"" .hilight.perlS .scheme.string
-    hilight .hilight.perl 0x80 "[^\\\\]\\{\"" .hilight.perlS .scheme.string
+    hilight .hilight.perl 0x80 "\\W\\{\""        .hilight.perlS .scheme.string
+    hilight .hilight.perl 0x80 "[^\\\\]\\{\""    .hilight.perlS .scheme.string
     ; Replace strings 
-    hilight .hilight.perl 0 "=~\\{[ \t]*\\{s\\(.\\)\\S1*\\1\\S1*\\1" .scheme.string
-    hilight .hilight.perl 0 "!~\\{[ \t]*\\{s\\(.\\)\\S1*\\1\\S1*\\1" .scheme.string
-    hilight .hilight.perl 0x80 "=~\\{[ \t]*\\{s/"  .hilight.perlR .scheme.string
-    hilight .hilight.perl 0x80 "!~\\{[ \t]*\\{s/"  .hilight.perlR .scheme.string
-    hilight .hilight.perl 0x80 "\\W\\{s/"          .hilight.perlR .scheme.string
+    hilight .hilight.perl 0 "=~\\{[ \t]*s\\(.\\)\\S1*\\1\\S1*\\1" .scheme.string
+    hilight .hilight.perl 0 "!~\\{[ \t]*s\\(.\\)\\S1*\\1\\S1*\\1" .scheme.string
+    hilight .hilight.perl 0x80 "=~\\{[ \t]*s/"   .hilight.perlR .scheme.string
+    hilight .hilight.perl 0x80 "!~\\{[ \t]*s/"   .hilight.perlR .scheme.string
+    hilight .hilight.perl 0x80 "\\W\\{s/"        .hilight.perlR .scheme.string
     ; Translate strings
-    hilight .hilight.perl 0 "=~\\{[ \t]*\\{tr\\(.\\)\\S1*\\1\\S1*\\1" .scheme.string
-    hilight .hilight.perl 0 "!~\\{[ \t]*\\{tr\\(.\\)\\S1*\\1\\S1*\\1" .scheme.string
-    hilight .hilight.perl 0x80 "=~\\{[ \t]*\\{tr/"  .hilight.perlR .scheme.string
-    hilight .hilight.perl 0x80 "!~\\{[ \t]*\\{tr/"  .hilight.perlR .scheme.string
-    hilight .hilight.perl 0x80 "\\W\\{tr/"          .hilight.perlR .scheme.string
-    hilight .hilight.perl 0 "=~\\{[ \t]*\\{y\\(.\\)\\S1*\\1\\S1*\\1" .scheme.string
-    hilight .hilight.perl 0 "!~\\{[ \t]*\\{y\\(.\\)\\S1*\\1\\S1*\\1" .scheme.string
-    hilight .hilight.perl 0x80 "=~\\{[ \t]*\\{y/"   .hilight.perlR .scheme.string
-    hilight .hilight.perl 0x80 "!~\\{[ \t]*\\{y/"   .hilight.perlR .scheme.string
-    hilight .hilight.perl 0x80 "\\W\\{y/"           .hilight.perlR .scheme.string
+    hilight .hilight.perl 0 "=~\\{[ \t]*tr\\(.\\)\\S1*\\1\\S1*\\1" .scheme.string
+    hilight .hilight.perl 0 "!~\\{[ \t]*tr\\(.\\)\\S1*\\1\\S1*\\1" .scheme.string
+    hilight .hilight.perl 0x80 "=~\\{[ \t]*tr/"  .hilight.perlR .scheme.string
+    hilight .hilight.perl 0x80 "!~\\{[ \t]*tr/"  .hilight.perlR .scheme.string
+    hilight .hilight.perl 0x80 "\\W\\{tr/"       .hilight.perlR .scheme.string
+    hilight .hilight.perl 0 "=~\\{[ \t]*y\\(.\\)\\S1*\\1\\S1*\\1" .scheme.string
+    hilight .hilight.perl 0 "!~\\{[ \t]*y\\(.\\)\\S1*\\1\\S1*\\1" .scheme.string
+    hilight .hilight.perl 0x80 "=~\\{[ \t]*y/"   .hilight.perlR .scheme.string
+    hilight .hilight.perl 0x80 "!~\\{[ \t]*y/"   .hilight.perlR .scheme.string
+    hilight .hilight.perl 0x80 "\\W\\{y/"        .hilight.perlR .scheme.string
     ; Search strings 
     hilight .hilight.perl 0 "=~\\{[ \t]*\\([^st]\\)\\S1*\\1" .scheme.string
     hilight .hilight.perl 0 "!~\\{[ \t]*\\([^st]\\)\\S1*\\1" .scheme.string
