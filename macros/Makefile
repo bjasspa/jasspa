@@ -6,12 +6,12 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040207.1408>
+# Last Modified: <20040207.1749>
 #
 ##############################################################################
 
-SRCROOT=..
-include $(SRCROOT)/etc/makeinc
+TOPDIR=..
+include $(TOPDIR)/etc/makeinc
 #
 # Basic macros to release
 #

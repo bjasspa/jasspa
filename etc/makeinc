@@ -1,12 +1,5 @@
 # -*- Makefile -*-
 #
-# MicroEmacs date
-#
-MEYY=04
-MEMM=02
-MEDD=06
-MEVERS=20$(MEYY)$(MEMM)$(MEDD)
-#
 # Determine make version
 # gmake defines MAKE_VERSION use this to determine the make tool
 _FOOBAR=	AaBbCc
@@ -16,6 +9,11 @@ MAKE_TYPE=	$(__BASE_MAKE:$(_FOOBAR)$(MAKE_VERSION)$(FOOBAR)=gmake)
 #
 # Include the other files.
 #
-include $(SRCROOT)/etc/makeinc.$(MAKE_TYPE)
-include $(SRCROOT)/etc/makeinc.dir
-include $(SRCROOT)/etc/makeinc.$(UNAME)
+# Make dependant settings
+include $(TOPDIR)/etc/makeinc.$(MAKE_TYPE)
+# Directory settings
+include $(TOPDIR)/etc/makeinc.dir
+# Platform settings
+include $(TOPDIR)/etc/makeinc.$(UNAME)
+# Package definitions
+include $(TOPDIR)/etc/makeinc.pkg
