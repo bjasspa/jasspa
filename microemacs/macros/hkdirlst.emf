@@ -1245,10 +1245,20 @@ osd .osd.dirlst 130 ""  "\HAuto-Refresh: on "   f dirlst-auto-refresh
     !endif
     set-variable $window-line 3
     set-mark
-    !while &seq &rig @wl &sub &len @wl 1 "/"
-        set-variable $line-scheme .scheme.dir
-        forward-line
-    !done
+    set-variable .done-dir 0
+    !repeat 
+        ; Simple Directory search, if the simple search fails look for 
+        ; a symbolic link to a directory.
+        !if &seq &rig @wl &sub &len @wl 1 "/"
+            set-variable $line-scheme .scheme.dir
+            forward-line
+        !elif &xis @wl ".*/ -> .*" 
+            set-variable $line-scheme .scheme.dir-slink
+            forward-line
+        !else
+            set-variable .done-dir 1
+        !endif
+    !until &equ .done-dir 1
     !if &band $system 0x100
         sort-lines
         set-mark
