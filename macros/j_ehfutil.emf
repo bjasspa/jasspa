@@ -3,15 +3,16 @@
 ;  Author        : $Author: jon $
 ;  Created By    : Steven Phillips
 ;  Created       : Thu Jan 15 20:27:13 2004
-;  Last Modified : <040116.1341>
+;  Last Modified : <040116.2042>
 ;
 ;  Description
 ;
-;  Notes
+;  Notes         : To use it, start up a new ME, execute the emf file and
+;                  run ehf-doc-test, following the prompts - easy.
 ;
 ;  History
 ;
-;  Copyright (c) 2004 PTC.
+;  Copyright (c) 2004 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro ehf-doc-test

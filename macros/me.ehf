@@ -3580,6 +3580,36 @@ Miscellaneous Information
 
     Thanks to everybody else that has used and abused it locally feeding back 
     comments and preferences, wishes and desires. 
+
+
+cEcEAnd Finally .... cEcA
+
+
+    Answers to those burning questions that people ask from time to time ... 
+
+
+cEWhere does the name JASSPA come from ? cA
+
+
+    The current maintainers initials mixed up, padded out to make words, short 
+    listed and searched on the WWW to find a unique name. This process took 
+    approximately two months. 
+
+
+cEHow was the JASSPA logo derived ? cA
+
+
+    The logo was derived from the program initials Me. Given the limited 
+    number of pixels available in an icon then the 'e' was superimposed in the 
+    center of the 'M'. With some further refinement the legs of the 'M' were 
+    later lost leaving a triangular shape - this was then adopted as the 
+    iconic outline. The colored lines at the top and bottom portray the visual 
+    appearance of a JASSPA's MicroEmacs from afar when viewing an X-term 
+    running me within an X-Windows environment. The blue line representing the 
+    window header color (that I use), the red line representing the MicroEmacs 
+    mode bar; the screen was typically black with white or yellow characters. 
+    The icon was incrementally refined over a period of approximately six 
+    months. 
 !   MicroEmacs '04 - Copyright
 !9  Copyright - MicroEmacs '04
 cEcECOPYRIGHT cEcA
@@ -6414,7 +6444,7 @@ Miscellaneous Information
 sB
         set-variable $tabwidth 2 
 
-sB
+sA
     then whenever you start a new session you will always have the $tabwidth 
     defined as you want it. 
 
@@ -8148,6 +8178,7 @@ $a
 sB
         add-next-line "*grep*" "" 
 
+sA
 
 cEcESEE ALSO cEcA
 
@@ -36356,7 +36387,7 @@ $a
 sB
         save-some-buffers @mna 
 
-
+sA
     The following example sets cG%languagecA to a language supplied by the user 
     from a given list, giving the current setting as a default 
 sB
@@ -38128,12 +38159,11 @@ $a
 
 
     The following macro code gives a simple example of their potential use: 
-$emf-scheme
-
+sB
         forward-search "Token *{\\(Start\\|End\\)}" 
         !if $status 
             ml-write "[found \"%s\"]" @s0 
-            if &seq @s1 "Start" 
+            !if &seq @s1 "Start" 
                . 
                . 
 
