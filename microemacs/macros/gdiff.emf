@@ -757,7 +757,7 @@ define-macro gdiff
     command-wait
 !emacro
 
-define-macro-file search osd-search
+define-macro-file osdmisc osd-search
 osd .osd.gdiff 0   b
 osd .osd.gdiff 10  ""   "\HPrev Diff"       -1 gdiff-next
 osd .osd.gdiff 20  ""   "\HNext Diff"        1 gdiff-next

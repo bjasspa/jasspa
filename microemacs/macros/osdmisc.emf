@@ -1,0 +1,837 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2004 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     Thu Nov 25 2004
+; Synopsis:    Misc OSD macros
+; Authors:     Steven Phillips
+; Notes:       Many have come from removing OSD from search.emf 
+;
+define-macro osd-search
+!emacro
+!if &seq .osd.ftag "ERROR"
+    set-variable .osd.ftag    &pinc .osd.next 1
+    set-variable .osd.ftagc   &pinc .osd.next 1
+    set-variable .osd.ftagl   &pinc .osd.next 1
+    set-variable .osd.ftagr   &pinc .osd.next 1
+    set-variable .osd.gline   &pinc .osd.next 1
+    set-variable .osd.sar     &pinc .osd.next 1
+    set-variable .osd.sar-nb  &pinc .osd.next 1
+    ; main notebook pages must be numerically sequential
+    set-variable .osd.sar-src &pinc .osd.next 1
+    set-variable .osd.sar-rpc &pinc .osd.next 1
+    set-variable .osd.sar-hlt &pinc .osd.next 1
+    ; sub osd dialogs
+    set-variable .osd.sar-srl &pinc .osd.next 1
+    set-variable .osd.sar-srr &pinc .osd.next 1
+    set-variable .osd.sar-rpl &pinc .osd.next 1
+    set-variable .osd.sar-rpr &pinc .osd.next 1
+    set-variable .osd.sar-hll &pinc .osd.next 1
+    set-variable .osd.sar-hlr &pinc .osd.next 1
+    set-variable .osd-search.search ""
+    set-variable .osd-search.replace ""
+    set-variable .osd-search.scheme 1
+    set-variable .osd-search.hilnames "|Remove |White  |Black  |Red    |Green  |Yellow |Blue   |Magenta|Cyan   |"
+    set-variable .osd-search.hilschms &spr "|%d|%d|%d|%d|%d|%d|%d|%d|%d|" $global-scheme .scheme.hlwhite .scheme.hlblack .scheme.hlred .scheme.hlgreen .scheme.hlyellow .scheme.hlblue .scheme.hlmagenta .scheme.hlcyan
+    ; indent-setup
+    set-variable .osd.indstp &pinc .osd.next 1
+!endif
+set-variable .osd.ftagw 32
+set-variable .osd.ftagd 16
+
+0 define-macro osd-find-tag-goto
+    !if @?
+        !if &seq $result .osd.tag-cur
+            3 find-tag .osd.tag-cur
+            !abort
+        !else
+            set-variable .osd.tag-cur $result
+        !endif
+    !elif &seq .osd.tag-cur ""
+        ml-write "[No tag selected]"
+    !else
+        3 find-tag .osd.tag-cur
+    !endif
+!emacro
+
+0 define-macro osd-find-tag-set
+    !if &les @# 0
+        set-variable .osd.tag-cur @ml25 "" .osd.tag-cur
+    !else
+        set-variable $result .osd.tag-cur
+    !endif
+!emacro
+
+0 define-macro osd-find-tag-find
+    !if &seq .osd.tag-cur ""
+        !bell
+        !return
+    !endif
+    ; construct the tag file name
+    set-variable #l4 $buffer-bname
+    set-variable #l1 &cat &lef $buffer-fname &rsin "/" $buffer-fname "tags"
+    0 find-file #l1 "y"
+    ; search for the string
+    beginning-of-buffer
+    set-variable #l9 .osd.tag-cur
+    set-variable #l1 0
+    !while &set #l2 &sin "?" &rig #l9 #l1
+        set-variable #l2 &add #l1 #l2
+        set-variable #l5 &cat &lef #l9 &sub #l2 1 "[^\CI]"
+        set-variable #l1 &len #l5
+        set-variable #l9 &cat #l5 &rig #l9 #l2
+    !done
+    set-variable #l1 0
+    !while &set #l2 &sin "*" &rig #l9 #l1
+        set-variable #l2 &add #l1 #l2
+        set-variable #l5 &cat &lef #l9 &sub #l2 1 "[^\CI]*"
+        set-variable #l1 &len #l5
+        set-variable #l9 &cat #l5 &rig #l9 #l2
+    !done
+    set-variable #l9 &spr "^[^\CI]*%s[^\CI]*\CI" #l9
+    -1 osd .osd.ftagc
+    osd .osd.ftagc 0 "fsS" .scheme.osd-child .osd.ftagw .osd.ftagd 0 -1 
+    set-variable #l0 0
+    !force search-forward #l9
+    !while $status
+        set-variable #l2 &lef @wl &sub &sin "\t" @wl 1
+        osd .osd.ftagc &inc #l0 1 "Rx" #l2 1 "osd-find-tag-goto"
+        !force search-forward #l9
+    !done
+    !if &not #l0
+        osd .osd.ftagc 1 ""
+    !endif
+    -1 find-buffer $buffer-bname
+    find-buffer #l4
+    set-variable .osd.tag-last ""
+!emacro
+    
+0 define-macro osd-find-tag-parse
+    ; construct the tag file name
+    set-variable #l4 $buffer-bname
+    set-variable #l1 &cat &lef $buffer-fname &rsin "/" $buffer-fname "tags"
+    0 find-file #l1 "y"
+    !if &and &seq #l1 .osd.tag-last &seq &set #l3 &stat "d" #l1 :date
+        ; the same as last time so return
+        -1 find-buffer $buffer-bname
+        !return
+    !endif
+    ml-write "[Processing tags file...]"
+    1 buffer-mode "hide"
+    1 buffer-mode "magic"
+    -1 buffer-mode "exact"
+    -1 osd .osd.ftagc
+    osd .osd.ftagc 0 "fsS" .scheme.osd-child .osd.ftagw .osd.ftagd 0 -1 
+    set-variable #l0 0
+    beginning-of-buffer
+    !while &not &seq @wc ""
+        set-variable #l2 &lef @wl &sub &sin "\t" @wl 1
+        osd .osd.ftagc &inc #l0 1 "Rx" #l2 1 "osd-find-tag-goto"
+        forward-line
+    !done
+    !if &not #l0
+        osd .osd.ftagc 1 ""
+    !endif
+    set-variable .osd.tag-last $buffer-fname
+    set-variable :date #l3
+    -1 find-buffer $buffer-bname
+    find-buffer #l4
+    ml-clear
+!emacro
+
+0 define-macro osd-find-tag-resize
+    set-variable #l0 &sub &lef $result 4 &add 18 &band $scroll-bar 0x01
+    set-variable #l1 &sub &mid $result 4 4 9
+    !if &les #l0 26
+        !if &les #l1 3
+            !abort
+        !endif
+        set-variable #l0 26
+    !endif
+    !if &les #l1 3
+        set-variable #l1 3
+    !endif
+    ; change the width
+    !if &band $scroll-bar 0x01
+        set-variable #l0 &sub #l0 1
+    !endif
+    !if &band $scroll-bar 0x40
+        set-variable #l1 &sub #l1 1
+    !endif
+    set-variable .osd.ftagw #l0
+    set-variable .osd.ftagd #l1
+    osd .osd.ftagc 0 "fsS" .scheme.osd-child #l0 #l1 0 -1
+    osd .osd.ftagl 20 "ExHcfzt" .scheme.osd-entry #l0 1 "" 1 osd-find-tag-set
+    osd .osd.ftagl 40 "IbHt" .scheme.osd-sbar #l0 #l1 .osd.ftagc
+!emacro
+
+osd .osd.ftagl 0   "d" 20
+osd .osd.ftagl 10  "S" " \HTag or Filter" 20
+osd .osd.ftagl 20  "ExHcfzt" .scheme.osd-entry .osd.ftagw 1 "" 1 osd-find-tag-set
+osd .osd.ftagl 30  ""
+osd .osd.ftagl 40  "IbHt" .scheme.osd-sbar .osd.ftagw .osd.ftagd .osd.ftagc
+osd .osd.ftagl 50  ""
+
+osd .osd.ftagr 0   ""
+osd .osd.ftagr 5   ""
+osd .osd.ftagr 10  "BHRxt" .scheme.osd-ebtt " \HFilter "          f osd-find-tag-find
+osd .osd.ftagr 20  ""
+osd .osd.ftagr 30  "BHt" .scheme.osd-ebtt " \HGoto "          f osd-find-tag-goto
+osd .osd.ftagr 40  ""
+osd .osd.ftagr 50  "BHt"  .scheme.osd-ebtt " \HCancel "        f void
+
+-1 osd .osd.ftag
+osd .osd.ftag 0  "batcdHR" 3 6 30 .scheme.osd-title "Find Tag" osd-find-tag-resize
+osd .osd.ftag 10  ""
+osd .osd.ftag 20  "h" " "
+osd .osd.ftag 30  "Iht" .osd.ftagl
+osd .osd.ftag 40  "h" "  "
+osd .osd.ftag 50  "Iht" .osd.ftagr
+osd .osd.ftag 60  "" " "
+
+0 define-macro osd-find-tag
+    !if &inw @wc
+        set-variable #l0 $window-col
+        forward-char
+        backward-word
+        set-variable #l1 $window-col
+        forward-word
+        set-variable .osd.tag-cur &mid @wl #l1 &sub $window-col #l1
+        set-variable $window-col #l0
+        !force 3 find-tag .osd.tag-cur
+        !if $status
+            !return
+        !endif
+    !else
+        set-variable .osd.tag-cur ""
+    !endif
+    osd-find-tag-parse
+    .osd.ftag osd
+!emacro
+
+;
+; Osd search menu
+;
+0 define-macro osd-search-set-state
+    !if &seq .osd-search.search ""
+        osd .osd.sar-srr 10  "BcfH" .scheme.osd-dbtt " Find First  "
+        osd .osd.sar-srr 30  "BcfH" .scheme.osd-dbtt " Find Next   "
+        osd .osd.sar-srr 50  "BcfH" .scheme.osd-dbtt " Find Prev   "
+        osd .osd.sar-rpr 10  "BcfH" .scheme.osd-dbtt " Find First  "
+        osd .osd.sar-rpr 30  "BcfH" .scheme.osd-dbtt " Find Next   "
+        osd .osd.sar-rpr 50  "BcfH" .scheme.osd-dbtt " Replace     "
+        osd .osd.sar-rpr 70  "BcfH" .scheme.osd-dbtt " Replace All "
+        osd .osd.sar-hlr 10  "BcfH" .scheme.osd-dbtt " Find First  "
+        osd .osd.sar-hlr 30  "BcfH" .scheme.osd-dbtt " Find Next   "
+        osd .osd.sar-hlr 50  "BcfH" .scheme.osd-dbtt " Find Prev   "
+        osd .osd.sar-hll 160 "BhfH" .scheme.osd-dbtt " Below "
+        osd .osd.sar-hll 170 "BhfH" .scheme.osd-dbtt " Above "
+        osd .osd.sar-hll 180 "BhfH" .scheme.osd-dbtt " All  "
+    !else
+        osd .osd.sar-srr 10  "BcfxHt" .scheme.osd-ebtt " Find \HFirst  "  1 osd-search-search
+        osd .osd.sar-srr 30  "BcfxHt" .scheme.osd-ebtt " Find \HNext   "  3 osd-search-search
+        osd .osd.sar-srr 50  "BcfxHt" .scheme.osd-ebtt " Find \HPrev   " -1 osd-search-search
+        osd .osd.sar-rpr 10  "BcfxHt" .scheme.osd-ebtt " Find \HFirst  "  1 osd-search-search
+        osd .osd.sar-rpr 30  "BcfxHt" .scheme.osd-ebtt " Find \HNext   "  3 osd-search-search
+        !if &seq .osd-search.replace ""
+            osd .osd.sar-rpr 50 "BcfH" .scheme.osd-dbtt " Replace     "
+            osd .osd.sar-rpr 70 "BcfH" .scheme.osd-dbtt " Replace All "
+        !else
+            osd .osd.sar-rpr 50 "BcfxHt" .scheme.osd-ebtt " \HReplace     "  1 osd-search-replace
+            osd .osd.sar-rpr 70 "BcfxHt" .scheme.osd-ebtt " Replace \HAll "  2 osd-search-replace
+        !endif
+        osd .osd.sar-hlr 10  "BcfxHt" .scheme.osd-ebtt " Find \HFirst  "  1 osd-search-hilight
+        osd .osd.sar-hlr 30  "BcfxHt" .scheme.osd-ebtt " Find \HNext   "  3 osd-search-hilight
+        osd .osd.sar-hlr 50  "BcfxHt" .scheme.osd-ebtt " Find \HPrev   " -1 osd-search-hilight
+        osd .osd.sar-hll 160 "BhfxHt" .scheme.osd-ebtt " \HBelow "        4 osd-search-hilight
+        osd .osd.sar-hll 170 "BhfxHt" .scheme.osd-ebtt " Abo\Hve "       -4 osd-search-hilight
+        osd .osd.sar-hll 180 "BhfxHt" .scheme.osd-ebtt " \HAll  "         5 osd-search-hilight
+        !if &equ @# -1
+            set-variable #l0 $window-col
+            !force -1 search-forward .osd-search.search
+            !if $status
+                -2 show-region
+                !if &equ $window-col #l0
+                    2 osd-search-search
+                    !return
+                !endif
+            !endif
+            set-variable $window-col #l0
+            osd .osd.sar-srl 70 ""
+            osd .osd.sar-rpl 70 ""
+            osd .osd.sar-hll 70 ""
+            ; remove the hilight region
+            !force -3 show-region
+            !force  3 show-region
+            !force -1 show-region
+            2 screen-update
+        !else
+            !force show-region
+        !endif
+    !endif
+!emacro
+
+0 define-macro osd-search-set
+    !if &equ @# -1
+        set-variable .osd-search.search @ml25 "" .osd-search.search
+    !elif &equ @# -2
+        set-variable .osd-search.replace @ml25 "" .osd-search.replace
+    !elif &equ @# 2
+        set-variable $result .osd-search.replace
+        !return
+    !else
+        set-variable $result .osd-search.search
+        !return
+    !endif
+    !force @# osd-search-set-state
+!emacro
+0 define-macro osd-search-set-hilight
+    set-variable .osd-search.scheme @#
+    set-variable #l0 &cat "            " &rep &lget .osd-search.hilnames @# "&" ""
+    osd .osd.sar-hll 50 "MdHmsxfzt" &lget .osd-search.hilschms @# 30 1 #l0 .osd.tmp osd-search-setup-hilight
+!emacro
+0 define-macro osd-search-setup-hilight
+    -1 osd @#
+    osd @# 0 "b"
+    set-variable #l0 0
+    !while &not &seq "" &set #l1 &lget .osd-search.hilnames &inc #l0 1
+        osd @# #l0 "Hcz" &lget .osd-search.hilschms #l0 30 1 &cat "            " #l1 #l0 osd-search-set-hilight
+    !done
+!emacro
+0 define-macro osd-search-cmagic
+    !if &les @# 0
+        0 buffer-mode "magic"
+    !elif &not &bmod "magic"
+        !abort
+    !endif
+!emacro
+0 define-macro osd-search-cexact
+    !if &les @# 0
+        0 buffer-mode "exact"
+    !elif &bmod "exact"
+        !abort
+    !endif
+!emacro
+0 define-macro osd-search-search
+    !if &les @# 0
+        !force search-backward .osd-search.search
+    !else
+        !if &equ @# 1
+            beginning-of-buffer
+        !elif &equ @# 3
+            forward-char
+        !endif
+        !force search-forward .osd-search.search
+    !endif
+    set-variable .status $status
+    !if .status
+        set-variable #l0 &cat "Found on line " $window-line
+        !if &gre @# 0
+            -2 show-region
+        !endif
+    !else
+        set-variable #l0 "Not found!"
+        !if &gre @# 1
+            backward-char
+        !endif
+    !endif
+    osd .osd.sar-srl 70 "c" #l0
+    osd .osd.sar-rpl 70 "c" #l0
+    osd .osd.sar-hll 70 "c" #l0
+    .osd-search.recenter recenter
+    !force show-region
+    2 screen-update
+!emacro
+
+0 define-macro osd-search-replace
+    !if &bmod "view"
+        osd-xdialog "Replace" "Buffer in view mode, remove?" 1 "  \HYes  " "  \HNo  "
+        !if &equ $result 2
+            !abort
+        !endif
+        -1 buffer-mode view
+    !endif
+    !if &equ @# 1
+        0 show-region
+        !if &equ $result 0xf
+            ; currently found, replace it
+            -2 undo
+            insert-string "U"
+            backward-delete-char
+            1 replace-string .osd-search.search .osd-search.replace
+            ; remove the hilight region
+            !force -3 show-region
+            !force  3 show-region
+            !force -1 show-region
+            !if &gre #g0 -1
+                !if &not #g1
+                    osd .osd.sar-rpr 90 "BcfxHt" .scheme.osd-ebtt " \HUndo Last   "  3 osd-search-replace
+                !endif
+                set-variable #g0 &add #g0 1
+                set-variable #g1 #g0
+            !endif
+        !endif
+        ; now search for the next
+        3 osd-search-search
+    !elif &equ @# 2
+        replace-string .osd-search.search .osd-search.replace
+        !abort
+    !elif &equ @# 3
+        !if &not &equ #g0 #g1
+            set-variable @cl undo
+        !endif
+        undo
+        !if &not &dec #g1 1
+            osd .osd.sar-rpr 90 "BcfH" .scheme.osd-dbtt " Undo Last   "
+        !endif
+        ; now use the search to find this undone occurance
+        2 osd-search-search
+    !endif
+!emacro
+
+0 define-macro osd-search-hilight
+    set-position "\x81"
+    !if &not @?
+        ; remove all line hilighting
+        beginning-of-buffer
+        !repeat 
+            ; Protect folded lines.
+            !if &not &or &equ $line-scheme .scheme.fold-close &equ $line-scheme .scheme.fold-open
+                set-variable $line-scheme -1
+            !endif
+            !force forward-line
+        !until &not $status
+        goto-position "\x81"
+    !else
+        set-variable #l8 &lget .osd-search.hilschms .osd-search.scheme
+        set-variable #l8 &cond &equ #l8 $global-scheme -1 #l8
+        !if &equ @# 5
+            ; Type 5 - Handle all of the buffer 
+            beginning-of-buffer
+            !goto forward-search
+        !elif &equ @# 4
+            ; Type 4 - Handle to the end of the buffer 
+*forward-search            
+            set-variable #l2 0
+            !repeat
+                !force search-forward .osd-search.search
+                set-variable #l0 $status
+                !if #l0 
+                    ; Protect folded lines.
+                    !if &not &or &equ $line-scheme .scheme.fold-close &equ $line-scheme .scheme.fold-open
+                        set-variable $line-scheme #l8
+                    !endif
+                    set-variable #l2 &add #l2 1
+                !endif
+            !until &not #l0
+            goto-position "\x81"
+            osd .osd.sar-hll 70 "c" &spr "%d match%s found" #l2 &cond &equ #l2 1 "" "es" 
+        !elif &equ @# -4
+            ; Type -4 - handle to the top of the buffer
+            set-variable #l2 0
+            !repeat
+                !force search-backward .osd-search.search
+                set-variable #l0 $status
+                !if #l0 
+                    ; Protect folded lines.
+                    !if &not &or &equ $line-scheme .scheme.fold-close &equ $line-scheme .scheme.fold-open
+                        set-variable $line-scheme #l8
+                    !endif
+                    set-variable #l2 &add #l2 1
+                !endif
+            !until &not #l0
+            goto-position "\x81"
+            osd .osd.sar-hll 70 "c"  &spr "%d match%s found" #l2 &cond &equ #l2 1 "" "es" 
+        !else
+            ; Type 1 3 or -1 - First, Next or Prev
+            @# osd-search-search
+            !if .osd-search-search.status
+                ; Protect folded lines.
+                !if &not &or &equ $line-scheme .scheme.fold-close &equ $line-scheme .scheme.fold-open
+                    set-variable $line-scheme #l8
+                !endif
+            !endif
+        !endif
+    !endif
+    2 screen-update
+!emacro
+
+0 define-macro search-get-region-text
+    0 show-region
+    !if &equ &band $result 5 5
+        !if &not &band $result 2
+            3 show-region
+        !endif
+        set-position "\x81"
+        -2 show-region
+        set-variable #l0 $window-line
+        set-variable #l1 $window-col
+        2 show-region
+        set-variable #l2 &sub $window-col #l1
+        !if &and &equ #l0 $window-line #l2
+            set-variable #p9 &mid @wl &cond &gre #l2 0 #l1 $window-col &abs #l2
+            !if &not @#
+                goto-position "\x81"
+            !elif &gre $window-col #l1
+                set-variable $window-col #l1
+            !endif
+            !return
+        !endif
+        !force -3 show-region
+        !force  3 show-region
+        !force -1 show-region
+        goto-position "\x81"
+        !if @#
+            2 screen-update
+        !endif
+    !endif
+    !abort
+!emacro
+
+0 define-macro hilight-region-text
+     0 show-region
+     !if &equ &band $result 5 5
+         !if &not &band $result 2
+             3 show-region
+         !endif
+         set-position "\x81"
+         -2 show-region
+         set-variable #l1 $window-line
+         2 show-region
+         set-variable #l2 $window-line
+         ; If the lines are equal then quit now.
+         !if &equ #l1 #l2
+             ; Failed - Reactivate the region that is active.
+             goto-position "\x81"
+             !force 4 show-region
+             !abort
+         !endif
+         ; Set up for a hilighting operation.
+         set-variable #l8 &lget .osd-search.hilschms @#
+         set-variable #l8 &cond &equ #l8 $global-scheme -1 #l8
+         ; Compute the top line.
+         !if &gre #l1 #l2
+             set-variable #l0 #l2
+             set-variable #l2 #l1
+             set-variable #l1 #l0
+         !else
+             -2 show-region
+         !endif
+         ; Hilight all of the lines in the region.
+         !repeat
+             !if &not &or &equ $line-scheme .scheme.fold-close &equ $line-scheme .scheme.fold-open
+                 ; just do current line - Protect folded lines.
+                 set-variable $line-scheme #l8
+             !endif
+             !force forward-line
+             set-variable #l1 &add #l1 1
+         !until &gre #l1 #l2
+         ; Knock off all of the region stuff and resume first position.
+         !force -3 show-region
+         !force  3 show-region
+         !force -1 show-region
+         goto-position "\x81"
+         !return
+     !endif
+     !abort
+!emacro
+
+
+osd .osd.sar-srl 00  "sd" 30 11 -1 -1 20
+osd .osd.sar-srl 10  "Sf" "\HSearch for" 20
+osd .osd.sar-srl 20  "ExfHt" .scheme.osd-entry "##############################" 1 osd-search-set
+osd .osd.sar-srl 40  ""
+osd .osd.sar-srl 50  ""
+osd .osd.sar-srl 60  ""
+osd .osd.sar-srl 70  ""
+osd .osd.sar-srl 80  ""
+osd .osd.sar-srl 110 "hf" "  "
+osd .osd.sar-srl 120 "Cfxpt" &cat .osd.checkbox-chars "\} \HCase insensitive" f osd-search-cexact
+osd .osd.sar-srl 130 "hf" "  "
+osd .osd.sar-srl 140 "Cfxpt" &cat .osd.checkbox-chars "\} \HMagic mode"       f osd-search-cmagic
+
+osd .osd.sar-srr 0  "s" 13 11 -1 -1
+osd .osd.sar-srr 20 ""
+osd .osd.sar-srr 40  ""
+osd .osd.sar-srr 60  ""
+osd .osd.sar-srr 70  ""
+osd .osd.sar-srr 80  ""
+osd .osd.sar-srr 90  ""
+osd .osd.sar-srr 100 ""
+osd .osd.sar-srr 110 "BcfHt" .scheme.osd-ebtt " E\Hxit        "   1 void
+
+osd .osd.sar-src 00  "sd" 49 13 -1 -1 30
+osd .osd.sar-src 10  ""
+osd .osd.sar-src 20  "h" "  "
+osd .osd.sar-src 30  "Iht" .osd.sar-srl
+osd .osd.sar-src 40  "h" "  "
+osd .osd.sar-src 50  "Iht" .osd.sar-srr
+osd .osd.sar-src 60  "" " "
+osd .osd.sar-src 70  ""
+
+osd .osd.sar-rpl 00  "sd" 30 11 -1 -1 20
+osd .osd.sar-rpl 10  "Sf" "\HSearch for" 20
+osd .osd.sar-rpl 20  "ExfHt" .scheme.osd-entry "##############################" 1 osd-search-set
+osd .osd.sar-rpl 40  "Sf" "\HReplace with" 50
+osd .osd.sar-rpl 50  "ExfHt" .scheme.osd-entry "##############################" 2 osd-search-set
+osd .osd.sar-rpl 60  ""
+osd .osd.sar-rpl 70  ""
+osd .osd.sar-rpl 80  ""
+osd .osd.sar-rpl 110 "hf" "  "
+osd .osd.sar-rpl 120 "Cfxpt" &cat .osd.checkbox-chars "\} \HCase insensitive" f osd-search-cexact
+osd .osd.sar-rpl 130 "hf" "  "
+osd .osd.sar-rpl 140 "Cfxpt" &cat .osd.checkbox-chars "\} \HMagic mode"       f osd-search-cmagic
+
+osd .osd.sar-rpr 0   "s" 13 11 -1 -1
+osd .osd.sar-rpr 20  ""
+osd .osd.sar-rpr 40  ""
+osd .osd.sar-rpr 60  ""
+osd .osd.sar-rpr 80  ""
+osd .osd.sar-rpr 90  "BcfHt" .scheme.osd-ebtt " \HUndo Last   "  0 osd-search-replace
+osd .osd.sar-rpr 100 ""
+osd .osd.sar-rpr 110 "BcfHt" .scheme.osd-ebtt " E\Hxit        "  1 void
+
+osd .osd.sar-rpc 00  "sd" 49 13 -1 -1 30
+osd .osd.sar-rpc 10  ""
+osd .osd.sar-rpc 20  "h" "  "
+osd .osd.sar-rpc 30  "Iht" .osd.sar-rpl
+osd .osd.sar-rpc 40  "h" "  "
+osd .osd.sar-rpc 50  "Iht" .osd.sar-rpr
+osd .osd.sar-rpc 60  "" " "
+osd .osd.sar-rpc 70  ""
+
+osd .osd.sar-hll 00  "sd" 30 11 -1 -1 20
+osd .osd.sar-hll 10  "Sf" "\HSearch for" 20
+osd .osd.sar-hll 20  "ExfHt" .scheme.osd-entry "##############################" 1 osd-search-set
+osd .osd.sar-hll 40  "Sf" "\HHilight" 50
+osd .osd.sar-hll 60  ""
+osd .osd.sar-hll 70  ""
+osd .osd.sar-hll 80  ""
+osd .osd.sar-hll 110 "hf" "  "
+osd .osd.sar-hll 120 "Cfxpt" &cat .osd.checkbox-chars "\} \HCase insensitive" f osd-search-cexact
+osd .osd.sar-hll 130 "hf" "  "
+osd .osd.sar-hll 140 "Cfxpt" &cat .osd.checkbox-chars "\} \HMagic mode"       f osd-search-cmagic
+osd .osd.sar-hll 150 ""
+osd .osd.sar-hll 165 "hf" "  "
+osd .osd.sar-hll 175 "hf" "  "
+.osd-search.scheme osd-search-set-hilight
+
+osd .osd.sar-hlr 0   "s" 13 11 -1 -1
+osd .osd.sar-hlr 20  ""
+osd .osd.sar-hlr 40  ""
+osd .osd.sar-hlr 60  ""
+osd .osd.sar-hlr 70  ""
+osd .osd.sar-hlr 80  ""
+osd .osd.sar-hlr 90  "BcfHxt" .scheme.osd-ebtt " \HRemove All  "   f osd-search-hilight
+osd .osd.sar-hlr 100 ""
+osd .osd.sar-hlr 110 "BcfHt" .scheme.osd-ebtt " E\Hxit        "   1 void
+
+osd .osd.sar-hlt 00  "sd" 49 13 -1 -1 30
+osd .osd.sar-hlt 10  ""
+osd .osd.sar-hlt 20  "h" "  "
+osd .osd.sar-hlt 30  "Iht" .osd.sar-hll
+osd .osd.sar-hlt 40  "h" "  "
+osd .osd.sar-hlt 50  "Iht" .osd.sar-hlr
+osd .osd.sar-hlt 60  "" " "
+osd .osd.sar-hlt 70  ""
+
+osd .osd.sar-nb 0   "Nsd" 51 14 -1 -1 100
+osd .osd.sar-nb 1   "Ptf" "Search"  .osd.sar-src
+osd .osd.sar-nb 2   "Ptf" "Replace" .osd.sar-rpc
+osd .osd.sar-nb 3   "Ptf" "Hilight" .osd.sar-hlt
+osd .osd.sar-nb 100 "It"            .osd.sar-src
+
+osd .osd.sar  0 ""
+osd .osd.sar  10 "It" .osd.sar-nb
+
+0 define-macro osd-search
+    ; if some text is hilighted, use that as the search string
+    !force search-get-region-text
+    !if $status
+        set-variable .osd-search.search #l9
+    !endif
+    set-variable #g0 &cond &bmod "undo" 0 -1
+    set-variable #g1 0
+    ; work out a window-line to recenter on for good visibility
+    set-variable #l0 &sub $window-mode-line &div $window-depth 2
+    set-variable #l1 &div $window-depth 3
+    !if &gre #l0 &div $frame-depth 2
+        ; place in bottom third of window
+        set-variable .osd-search.recenter &sub $window-depth #l1
+        set-variable #l0 &sub &sub &sub $window-mode-line #l1 #l1 15
+        !if &les #l0 0
+            set-variable #l0 0
+        !endif
+    !else
+        ; place in top third of window
+        set-variable .osd-search.recenter #l1
+        set-variable #l0 &sub $window-mode-line #l1
+        !if &gre &add #l0 15 $frame-depth
+            set-variable #l0 &sub $frame-depth 15
+        !endif
+    !endif
+    osd .osd.sar 0 "batcdHs" 6 #l0 53 15 -1 -1 10 .scheme.osd-title "Search and Replace"
+    osd .osd.sar-rpr 90 "BcfH" .scheme.osd-dbtt " Undo Last   "
+    !if &or &les &dec @# 1 0 &gre @# 2
+        set-variable @# 0
+    !endif
+    osd .osd.sar-nb 100 "It" &add .osd.sar-src @#
+    .osd-search.recenter recenter
+    !force -1 osd-search-set-state
+    .osd.sar osd
+!emacro
+
+; line-scheme & osd-line-scheme external interfaces, used by the multi-menu code
+define-macro line-scheme
+    !if @?
+        ; See if this is a region hilight operation, if so then do it
+        ; immediately before search-get-region-text destroys the region
+        ; information. Returns TRUE if a region has been hilighted.
+        !force @# hilight-region-text
+        !if $status
+            !return
+        !endif
+        ; @# is a scheme number (1 == remove), if text is hilighted
+        ; the search all buffer for it and hilight, else just do current line
+        !force 0 search-get-region-text
+        !if $status
+            ; if some text is hilighted, use that as the search string
+            set-variable #l0 .osd-search.search
+            set-variable #l1 .osd-search.scheme
+            set-variable .osd-search.search #l9
+            set-variable .osd-search.scheme @#
+            !force !force 5 osd-search-hilight
+            set-variable .osd-search.search #l0
+            set-variable .osd-search.scheme #l1
+        !elif &not &or &equ $line-scheme .scheme.fold-close &equ $line-scheme .scheme.fold-open
+            ; just do current line - Protect folded lines.
+            set-variable #l8 &lget .osd-search.hilschms @#
+            set-variable #l8 &cond &equ #l8 $global-scheme -1 #l8
+            set-variable $line-scheme #l8
+        !endif
+    !else
+        ; remove all hilighting
+        osd-search-hilight
+    !endif
+!emacro
+
+; Macro to delete all hilighted lines.
+define-macro delete-hilight-lines
+    set-position "\x81"
+    ; remove all line hilighting
+    beginning-of-buffer
+    !repeat 
+        ; Protect folded lines.
+        !if &or &equ $line-scheme -1 &or &equ $line-scheme .scheme.fold-close &equ $line-scheme .scheme.fold-open
+            !force forward-line
+            !if &not $status 
+                goto-position "\x81"
+                !return
+            !endif
+        !else
+            set-variable $line-scheme -1
+            set-mark
+            forward-line
+            -1 kill-region @mna
+        !endif
+    !until 0
+!emacro
+
+0 define-macro hilight-line-narrow
+    set-position "\x81"
+    ; remove all line hilighting
+    beginning-of-buffer
+    set-variable #l0 1
+    !repeat 
+        !if &or &les $line-scheme .scheme.hlwhite &gre $line-scheme .scheme.hlcyan
+        !else
+            !if &les #l0 $window-line
+                set-variable #l1 $window-line
+                set-variable $window-line #l0
+                set-mark
+                set-variable $window-line #l1
+                0x24 narrow-buffer "..."
+            !endif
+            set-variable #l0 &add $window-line 1
+        !endif
+        !force forward-line
+    !until &not $status
+    !if &les #l0 $window-line
+        set-variable #l1 $window-line
+        set-variable $window-line #l0
+        set-mark
+        set-variable $window-line #l1
+        0x24 narrow-buffer "..."
+    !endif
+    goto-position "\x81"
+!emacro
+
+0 define-macro osd-line-scheme
+    -1 osd @#
+    osd @# 0 "b"
+    set-variable #l0 0
+    !while &not &seq "" &set #l1 &lget .osd-search.hilnames &inc #l0 1
+        osd @# #l0 "H" &lget .osd-search.hilschms #l0 #l1 #l0 line-scheme
+    !done
+    osd @# &inc #l0 1 "" "Remove \HAll" f line-scheme
+    osd @# &inc #l0 1 "" "\HSearch"     3 osd-search
+    osd @# &inc #l0 1 "" "\HNarrow To"  f hilight-line-narrow
+!emacro
+
+; Dialogue for goto line.
+0 define-macro osd-goto-set
+    !if &les @# 0
+        set-variable .osd.gline-str @ml20 "" .osd.gline-str
+    !else
+        set-variable $result .osd.gline-str
+    !endif
+!emacro
+;
+osd .osd.gline 0  "batcdHs" 10 3 44 0 -1 -1 11 .scheme.osd-title "Goto Line"
+osd .osd.gline 2  ""
+osd .osd.gline 3  "Shf"  "  Line \HNumber : " 4
+osd .osd.gline 4  "ExfH" .scheme.osd-entry "#########" f "osd-goto-set"
+osd .osd.gline 5  ""
+osd .osd.gline 6  "" "  (Use +/- for relative jump)"
+osd .osd.gline 7  ""
+osd .osd.gline 8  "BhcfHi" .scheme.osd-ebtt " \HJump "    f "goto-line .osd.gline-str"
+osd .osd.gline 9  "BhcfH"  .scheme.osd-ebtt " \HFirst "   f beginning-of-buffer
+osd .osd.gline 10 "BhcfH"  .scheme.osd-ebtt " \HLast "    1 end-of-buffer
+osd .osd.gline 11 "BcfH"   .scheme.osd-ebtt " E\Hxit "    1 void
+
+0 define-macro osd-goto-line
+    set-variable .osd.gline-str ""
+    .osd.gline osd
+!emacro
+
+0 define-macro indent-setup-exec
+    !if &equ @# 3
+        !return &not &bmod "tab"
+    !elif &equ @# 2
+        set-variable $result $buffer-indent-width
+    !elif &equ @# 1
+        set-variable $result $buffer-tab-width
+    !elif &equ @# -1
+        set-variable $buffer-tab-width @ml2 "" $buffer-tab-width
+    !elif &equ @# -2
+        set-variable $buffer-indent-width @ml2 "" $buffer-indent-width
+    !elif &equ @# -3
+        0 buffer-mode "tab"
+    !endif
+!emacro
+osd .osd.indstp  0 "batcdHs" 9 3 30 10 -1 -1 110 .scheme.osd-title "Indentation Setup"
+osd .osd.indstp 10 ""
+osd .osd.indstp 20 "Sfh" "  \HTab Width:    " 30
+osd .osd.indstp 30 "EtRxHf" .scheme.osd-entry "##########" 1 indent-setup-exec
+osd .osd.indstp 40 ""
+osd .osd.indstp 50 "Sfh" "  \HIndent Width: " 60
+osd .osd.indstp 60 "EtRxHf" .scheme.osd-entry "##########" 2 indent-setup-exec
+osd .osd.indstp 70 ""
+osd .osd.indstp 80 "fh" "  "
+osd .osd.indstp 90 "Cptfx" &spr "%s\} \HUse tab characters" .osd.checkbox-chars 3 indent-setup-exec
+osd .osd.indstp 100 ""
+osd .osd.indstp 110 "BtcfHh" .scheme.osd-ebtt " \HOkay "  f void
+define-macro indent-setup
+    .osd.indstp osd
+!emacro

@@ -26,7 +26,7 @@
 ;          replacing).
 ;
 define-macro-file osd osd-new-buffer osd-close osd-undo osd-redo
-define-macro-file search osd-find-tag osd-search osd-goto-line
+define-macro-file osdmisc osd-find-tag osd-search osd-goto-line
 define-macro-file osdhelp osd-help
 
 ; cua-get-region - turn the current show-region into the current ME region,

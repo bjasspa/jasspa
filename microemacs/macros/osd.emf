@@ -15,10 +15,10 @@
 ;     increment the value of .osd.next
 ;
 ; define some external macros which are used first.
-0 define-macro-file search   osd-find-tag osd-search osd-goto-line
+0 define-macro-file osdmisc osd-find-tag osd-search osd-goto-line line-scheme
 0 define-macro-file favorite osd-favorites
-0 define-macro-file insdate  osd-insert-date
-define-macro-file osdhelp  osd-help
+0 define-macro-file insdate osd-insert-date
+define-macro-file osdhelp osd-help
 ;
 ; define a main menu initialisation macro - main use of this is to insert the
 ; find tag if a tags file exists & call specific file type open and close

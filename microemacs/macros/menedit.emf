@@ -25,7 +25,7 @@
 ;          replacing).
 ;
 define-macro-file osd osd-new-buffer osd-save osd-save-as osd-close osd-undo osd-redo
-define-macro-file search osd-find-tag osd-search osd-goto-line
+define-macro-file osdmisc osd-find-tag osd-search osd-goto-line
 define-macro-file osdhelp osd-help
 define-macro select-all
     beginning-of-buffer

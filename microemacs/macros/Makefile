@@ -71,7 +71,7 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		au3.eaf		\
 	openbsd.emf	openstep.emf	organiza.emf	organizd.emf	\
 	organize.emf	organizi.emf	organizl.emf	organizm.emf	\
 	organizt.emf	organizw.emf	osd.emf		osdhelp.emf	\
-	osdnedit.emf	osdcua.emf	osf1.emf	\
+	osdmisc.emf	osdnedit.emf	osdcua.emf	osf1.emf	\
 	pagefile.emf	patience.emf	perltags.emf	print.emf	\
 	printall.emf	printd.emf	printepc.emf	printers.emf	\
 	printf.emf	printstp.emf	\

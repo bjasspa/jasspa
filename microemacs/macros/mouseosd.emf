@@ -11,7 +11,7 @@
 !if &not &exi osd-1-buffer
     exec-file osd
 !endif
-0 define-macro-file search osd-line-scheme
+0 define-macro-file osdmisc osd-line-scheme
 !if &reg "/history" "find-buffer" "0"
     !if &not &exi .osd.find-buffer
         set-variable .osd.find-buffer &pinc .osd.next 1
