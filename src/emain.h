@@ -92,7 +92,9 @@
 #define _HPUX          1                /* This is a hpux box            */
 #define _UNIX          1                /* This is a UNIX system         */
 #define _USG           1                /* UNIX system V                 */
-/*#define _TERMIOS       1*/            /* Use termios, not termio       */
+#if (defined _HPUX10) || (defined _HPUX11)
+#define _TERMIOS       1                /* Use termios, not termio       */
+#endif
 #define _XTERM         1                /* Use Xlib                      */
 #define _TCAP          1                /* Use TERMCAP                   */
 #define _TCAPFONT      1                /* Use TERMCAP fonts to color    */
