@@ -1,0 +1,217 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+;  Created:    Mon Jan 14 2002
+; Synopsis:    Document hook for ASCII text documentation
+; Authors:     Jon Green & Steven Phillips
+;
+; Notes:       broken out of hkdoc.emf and docmacro.emf
+;
+define-macro fhook-jst
+    @# buffer-initialize "jst"
+    doc-buffer-context-init
+    ; Over-ride any special document modes
+    ; Search for additional modes in a:
+    ;     -!- jst; fill-column: <digit> fill-mode: <mode> -!-
+    ;
+    beginning-of-buffer
+    !force -20 regex-forward &spr "-[*!]-[ \t]*jst[ \t]*"
+    !if $status
+        ; Search for fill-column: <var>;
+        !force -1 regex-forward "fill-column[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;]"
+        !if $status
+            set-variable :fill-col @s1
+            beginning-of-line
+        !endif
+        ; Search for fill-mode: <string>
+        !force -1 regex-forward "fill-mode[ \t]*:[ \t]*\\([a-zA-Z]+\\)[ \t]*[-;]"            
+        !if $status
+            set-variable #l0 @s1
+            !if &iseq #l0 "left"
+                set-variable :fill-mode "L"
+            !elif &iseq #l0 "none"
+                set-variable :fill-mode "n"
+            !elif &iseq #l0 "right"
+                set-variable :fill-mode "R"
+            !elif &iseq #l0 "full"
+                set-variable :fill-mode "B"
+            !elif &iseq #l0 "both"
+                set-variable :fill-mode "B"
+            !elif &iseq #l0 "center"
+                set-variable :fill-mode "C"
+            !endif
+            beginning-of-line
+        !endif
+        ; Add any others in here.
+        
+        ; Back to the start of the buffer
+        beginning-of-buffer
+    !endif
+    buffer-initialize-hooks
+!emacro
+
+; buffer-initialize variables
+set-variable .fhook-jst.setup &reg "/history" "fhook/jst" "fghijnopswx"
+set-variable .fhook-jst.setup-mask "aefghijkmnopstuwx"
+set-variable .fhook-jst.comment "|>||>|> | <||"
+
+set-variable &ind &spr ".fhook-%s.command-flag"  #l1 "|thb|hb|thb|th|th|th|h|h|thb|thb|thb|thb|thb|h|h|th|h|h|thb|thb|thb|thb|thb|thb|"
+set-variable &ind &spr ".fhook-%s.command-name"  #l1 "|doc-mode-state|spell-buffer|paragraph-to-line|jst-to-text|jst-to-html||||fill-paragraph-both|fill-paragraph-center|fill-paragraph-left|fill-paragraph-gutter|fill-paragraph-right|fill-paragraph|ifill-paragraph||||doc-set-justify|doc-set-justify|doc-set-justify|doc-set-justify|doc-set-justify|doc-set-justify|"
+set-variable &ind &spr ".fhook-%s.command-nbind" #l1 "|||||||||||||||||||0|1|2|3|4|5|"
+set-variable &ind &spr ".fhook-%s.command-kbind" #l1 "|C-c C-h|C-c C-s|C-c o||||||C-c C-b|C-c C-c|C-c C-l|C-c C-g|C-c C-r||||||C-c a|C-c b|C-c c|C-c l|C-c n|C-c r|"
+set-variable &ind &spr ".fhook-%s.command-desc"  #l1 "|&Show Current Settings|Spell Check Buffer|Fill Paragraph for WP Export|Export to Plain Text|Export to HTML||To format current paragraph:||Justify Both Margins|Justify Center|Justify Left|Justify Gutter (on left margin)|Justify Right|Format Paragraph in Current Mode|Intelligently Format Paragraph||To change justification mode:||Change to auto justification [DEFAULT]|Change to both justification|Change to center justification|Change to left justification|Change to none justification|Change to right justification|"
+!if &sin "f" #l0
+    ; Define the folding definitions.
+    set-variable &ind &spr ".fhook-%s.fold-open" #l1  "^[ \t]*\\(Appendix[ \t]+[A-Z][0-9.]*\\|[0-9]\\.[0-9.]*\\)[ \t]+\\w"
+    set-variable &ind &spr ".fhook-%s.fold-close" #l1 "^[ \t]*\\(Appendix[ \t]+[A-Z][0-9.]*\\|[0-9]\\.[0-9.]*\\)[ \t]+\\w"
+    set-variable &ind &spr ".fhook-%s.fold-mopen" #l1 "1"
+    set-variable &ind &spr ".fhook-%s.fold-mnext" #l1 "-1"
+!endif
+
+!if &and &sin "h" #l0 &band .hilight.flags 0x02
+    !if &not &exist .hilight.jst
+        set-variable .hilight.jst  &pinc .hilight.next 1
+        set-variable .hilight.jst1 &pinc .hilight.next 1
+    !endif
+    ; Define the hilighting. Note that we use a look back so that
+    ; we can process the inserted schemes if necessary. Ordinarily
+    ; we do not need it. This will only hurt branch tokens, as there
+    ; are none below then there is no adverse effect.
+    0 hilight  .hilight.jst 2 100                               $global-scheme
+    hilight .hilight.jst 0x20 "*\\}[ \t]+\\S "                  .scheme.no1
+    hilight .hilight.jst 0x21 "\\w)"                            .scheme.no1
+    hilight .hilight.jst 1 "\\*\\S [^*\n]*\\*"                  .scheme.bold
+    hilight .hilight.jst 1 "~\\S [^~\n]*~"                      .scheme.italic
+    hilight .hilight.jst 1 "_\\S [^_\n]*_"                      .scheme.under
+    hilight .hilight.jst 0 "^\\s *\\[\\w*\\]"                   .scheme.no1
+    hilight .hilight.jst 0x22 "[0-9]+\\.[0-9.]*[ \t]+\\w"       .scheme.header
+    hilight .hilight.jst 0x804 "\"" "\"" "\\"                   .scheme.string
+    hilight .hilight.jst 0x804 "`" "'" ""                       .scheme.bold-italic
+    hilight .hilight.jst 0    "'.'"                             .scheme.quote
+    hilight .hilight.jst 0    "'\\\\.'"                         .scheme.quote
+    hilight .hilight.jst 0x22 "^[ \t]*Appendix [[:alpha:]]"     .scheme.header
+    hilight .hilight.jst 0    "^>\\."                           .scheme.comment
+    hilight .hilight.jst 0x02 "^>_"                             .scheme.comment
+    hilight .hilight.jst 0x22 ">"                               .scheme.comment
+    hilight .hilight.jst 0x80 "^>@" .hilight.jst1               .scheme.no2
+    ; @ block
+    0 hilight .hilight.jst1 0                                   .scheme.no2
+    hilight   .hilight.jst1 0x80 "^[ \t]*\n" .hilight.jst       $global-scheme
+    
+    ; Allow inserts into the jst mode. You may add to the
+    ; available inserts by adding to your myjst.emf file
+    
+    ; Allow MicroEmacs Macro .emf inserts
+    ; Force the ".emf" scheme to be loaded into the context of the jst
+    ; scheme. We delimit the .emf scheme with a pair of markers ">emf>" and
+    ; ">jst>"
+    ;
+    ; Force the hilighting mode to load if not already loaded.
+    !if &not &exi .hilight.emf
+        !force execute-file "hkemf"
+    !endif
+    ; If the hilighting mode is loaded then modify it.
+    !if &and &sin "h" .fhook-emf.setup &band .hilight.flags 0x02 
+        hilight .hilight.jst 0x80 "^>emf>" .hilight.emf .scheme.hide
+        hilight .hilight.emf 0x80 "^>jst>" .hilight.jst .scheme.hide
+    !endif
+    
+    ; Allow Pseudo Code inserts
+    ; Force the ".pseudo" scheme to be loaded into the context of the jst
+    ; scheme. We delimit the .emf scheme with a pair of markers ">pseudo>" and
+    ; ">jst>"
+    ;
+    ; Force the hilighting mode to load if not already loaded.
+    !if &not &exi .hilight.pseudo
+        !force execute-file "hkpseudo"
+    !endif
+    ; If the hilighting mode is loaded then modify it.
+    !if &exi .hilight.pseudo
+        hilight .hilight.jst 0x80 "^>pseudo>" .hilight.pseudo .scheme.hide
+        hilight .hilight.pseudo 0x80 "^>jst>" .hilight.jst .scheme.hide
+    !endif
+    
+    ; Allow BNF inserts
+    ; Force the ".bnf" scheme to be loaded into the context of the jst
+    ; scheme. We delimit the .emf scheme with a pair of markers ">bnf>" and
+    ; ">jst>"
+    ;
+    ; Force the hilighting mode to load if not already loaded.
+    !if &not &exi .hilight.bnf
+        !force execute-file "hkbnf"
+    !endif
+    ; If the hilighting mode is loaded then modify it.
+    !if &and &sin "h" .fhook-bnf.setup &band .hilight.flags 0x02 
+        hilight .hilight.jst 0x80 "^>bnf>" .hilight.bnf .scheme.hide
+        hilight .hilight.bnf 0x80 "^>jst>" .hilight.jst .scheme.hide
+    !endif
+    
+    ; Allow C Code inserts
+    ; Force the ".c" scheme to be loaded into the context of the jst
+    ; scheme. We delimit the .emf scheme with a pair of markers ">c>" and
+    ; ">jst>"
+    ;
+    ; Force the hilighting mode to load if not already loaded.
+    !if &not &exi .hilight.c
+        !force execute-file "hkc"
+    !endif
+    ; If the hilighting mode is loaded then modify it.
+    !if &and &sin "h" .fhook-c.setup &band .hilight.flags 0x02 
+        hilight .hilight.jst 0x80 "^>c>"   .hilight.c   .scheme.hide
+        hilight .hilight.c   0x80 "^>jst>" .hilight.jst .scheme.hide
+    !endif
+    
+    ; Allow C++ Code inserts ...
+    !if &not &exi .hilight.cpp
+        !force execute-file "hkcpp"
+    !endif
+    !if &and &sin "h" .fhook-cpp.setup &band .hilight.flags 0x02 
+        hilight .hilight.jst 0x80 "^>cpp>"     .hilight.cpp .scheme.hide
+        hilight .hilight.jst 0x80 "^>c\\+\\+>" .hilight.cpp .scheme.hide
+        hilight .hilight.cpp 0x80 "^>jst>"     .hilight.jst .scheme.hide
+    !endif
+    ; Allow Perl Code inserts ...
+    !if &not &exi .hilight.perl
+        !force execute-file "hkperl"
+    !endif
+    !if &and &sin "h" .fhook-perl.setup &band .hilight.flags 0x02 
+        hilight .hilight.jst  0x80 "^>perl>" .hilight.perl .scheme.hide
+        hilight .hilight.jst  0x80 "^>pl>"   .hilight.perl .scheme.hide
+        hilight .hilight.perl 0x80 "^>jst>"  .hilight.jst  .scheme.hide
+    !endif
+    ; Allow TCL Code inserts ...
+    !if &not &exi .hilight.tcl
+        !force execute-file "hktcl"
+    !endif
+    !if &and &sin "h" .fhook-cpp.setup &band .hilight.flags 0x02 
+        hilight .hilight.jst 0x80 "^>tcl>" .hilight.tcl .scheme.hide
+        hilight .hilight.tcl 0x80 "^>jst>" .hilight.jst .scheme.hide
+    !endif
+!endif
+
+; Set up for jst mode.
+define-macro bhook-jst
+    doc-buffer-context
+    !if &exist my-bhook-jst
+        my-bhook-jst
+    !endif
+!emacro
+
+define-macro ehook-jst
+    doc-global-context
+    !if &exist my-ehook-jst
+        my-ehook-jst
+    !endif
+!emacro
+
+; load docutl.emf to get the doc support macros
+execute-file "docutil"
+
+define-macro-file jstutl jst-to-text jst-to-html
+
+ml-write "[JASSPA Structured Text file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "myjst"

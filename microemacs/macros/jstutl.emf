@@ -1,0 +1,427 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     Mon Jan 14 2002
+; Synopsis:    JST export macros
+; Authors:     Steven Phillips
+;
+define-macro jst-prepare-header
+    -1 buffer-mode "exact"
+    beginning-of-buffer
+    search-forward "^[^>]"
+    !if $window-line
+        set-variable #l0 &sub 1 $window-line
+        beginning-of-buffer
+        !force #l0 search-forward "^>[ \t]*title:[ \t]*\\(.+\\)"
+        !if $status
+            set-variable :title @s1
+        !endif
+        beginning-of-buffer
+        !force #l0 search-forward "^>[ \t]*authors?:[ \t]*\\(.+\\)"
+        !if $status
+            set-variable :author @s1
+        !endif
+        beginning-of-buffer
+        !force #l0 search-forward "^>[ \t]*created:[ \t]*\\(.+\\)"
+        !if $status
+            set-variable :created @s1
+        !endif
+    !endif        
+!emacro
+
+define-macro jst-prepare-section
+    ; Identify bullet lists
+    ; indent tolerance
+    set-variable #l9 &div $tabsize 2
+    set-variable $window-line #p0
+    !force &sub $window-line #p1 search-forward "^\n[ \t]*\\(\\*\\|[0-9]+)\\|[a-zA-Z][).]\\|[ivxlc]+[).]\\)[ \t]+\\S "
+    !while $status
+        !if &seq &lef @s1 1 "*"
+            set-variable #l3 "^[ \t]*\\*[ \t]+\\S "
+            set-variable #l4 "\bD"
+        !elif &xse &lef @s1 1 "[0-9]"
+            set-variable #l3 "^[ \t]*[0-9]+)[ \t]+\\S "
+            set-variable #l4 "\bN"
+        !else
+            set-variable #l3 "^[ \t]*[A-Za-z]+[).][ \t]+\\S "
+            !if &isin "i" @s1
+                ; roman numberals?
+                set-variable #l4 "\bR"
+            !else
+                set-variable #l4 "\bA"
+            !endif
+        !endif
+        set-variable #l0 $window-line
+        backward-char
+        set-variable #l5 $window-col
+        beginning-of-line
+        search-forward "^[ \t]*"
+        set-variable #l1 $window-acol
+        &sub #l5 $window-col forward-delete-char
+        -1 yank
+        insert-string &cat "\bE" #l4
+        set-variable #l2 0
+        !repeat
+            forward-line
+            !if &not &seq @wl ""
+                beginning-of-line
+                !force -1 search-forward #l3
+                !if $status
+                    backward-char
+                    set-variable #l5 $window-col
+                !else
+                    set-variable #l5 -1
+                !endif
+                beginning-of-line
+                search-forward "^[ \t]*"
+                !if &gre #l5 -1
+                    !if &gre &sub #l1 $window-acol #l9
+                        ; end of these bullets
+                        set-variable #l2 1
+                    !elif &gre &sub $window-acol #l1 #l9
+                        ; a sub bullet list - ignore
+                    !else
+                        &sub #l5 $window-col forward-delete-char
+                        -1 yank
+                        insert-string #l4
+                        set-variable #l6 $window-line
+                        beginning-of-line
+                        search-backward "\\S "
+                        forward-char
+                        insert-string &slo #l4
+                        set-variable $window-line #l6
+                    !endif
+                !elif &les &sub $window-acol #l1 2
+                    ; very close to the starting indent - end bullets
+                    set-variable #l2 1
+                !endif
+            !endif
+            !if &not &gre #p1 $window-line
+                set-variable #l2 1
+            !endif
+        !until #l2
+        beginning-of-line
+        search-backward "\\S "
+        forward-char
+        insert-string &cat &slo #l4 "\be"
+        ; find the next set of bullets
+        set-variable $window-line #l0
+        end-of-line
+        !force &sub $window-line #p1 search-forward "^\n[ \t]*\\(\\*\\|[0-9]+)\\|[a-zA-Z][).]\\|[ivxlc]+[).]\\)[ \t]+\\S "
+    !done
+    
+    ; find the indent of the first non-blank line (possibly a header) and use
+    ; this as a base line 
+    set-variable $window-line #p0
+    !force &sub $window-line #p1 search-forward "^[ \t]*\\S "
+    !if $status
+        backward-char
+        set-variable #l3 $window-acol
+    !else
+        set-variable #l3 0
+    !endif
+    
+    set-variable $window-line #p0
+    !if #p2
+        search-forward "^[ \t]*"
+        $window-col backward-delete-char
+        -1 yank
+        insert-string "\bS"
+        end-of-line
+        insert-string "\bs"
+        forward-line
+    !endif
+    set-variable #l2 0
+    set-variable #l4 #l3
+    !while &les $window-line #p1
+        !if &not &seq @wl ""
+            beginning-of-line
+            search-forward "^[ \t]*"
+            set-variable #l5 $window-acol
+            $window-col backward-delete-char
+            -1 yank
+            !if &not &les &sub #l5 #l4 $tabsize
+                set-variable #l4 #l5
+                set-variable #l2 &add #l2 1
+                insert-string "\bT"
+            !elif &not #l2
+                ; can't negative indent
+            !elif &not &less &sub #l4 #l5 $tabsize
+                set-variable #l4 #l5
+                set-variable #l6 $window-line
+                search-backward "\\S "
+                forward-char
+                insert-string "\bt"
+                set-variable $window-line #l6
+                set-variable #l2 &sub #l2 1
+            !endif
+            forward-line
+            !if &seq @wl ""
+                ; a one line paragraph
+                backward-line
+                beginning-of-line
+                search-forward "^\\(\bT\\)*"
+                insert-string "\bP"
+                end-of-line
+                insert-string "\bp"
+            !else
+                ; a no-format paragraph
+                backward-line
+                beginning-of-line
+                search-forward "^\\(\b.\\)*"
+                insert-string "\bC"
+                !repeat
+                    search-forward "^[ \t]*"
+                    !if &gre $window-acol #l5
+                        set-variable $window-acol #l5
+                    !endif
+                    $window-col backward-delete-char
+                    -1 yank
+                    forward-line
+                !until &seq @wl ""
+                search-backward "\\S "
+                forward-char
+                insert-string "\bc"
+            !endif
+            forward-line
+        !endif
+        forward-line
+    !done
+    !if #l2
+        ; rebalance the indents
+        beginning-of-line
+        search-backward "\\S "
+        forward-char
+        #l2 insert-string "\bt"
+    !endif
+!emacro
+
+define-macro jst-prepare-doc
+    1 buffer-mode "magic"
+    ; clean the buffer
+    1 clean
+    ; Get the header
+    jst-prepare-header
+    ; must use exact
+    1 buffer-mode "exact"
+    ; Find any dividing lines
+    beginning-of-buffer
+    replace-string "^\n___+\n\n?" "\n\bL\n\n"
+    ; change bold *....* to easily found labels
+    beginning-of-buffer
+    replace-string "\\([^*]\\)\\*\\([^ \t*]\\([^*\n]\\|\\*\\*\\)*\\)\\*" "\\1\bB\\2\bb"
+    ; change italic ~....~ to easily found labels
+    beginning-of-buffer
+    replace-string "\\([^~]\\)~\\([^ \t~]\\([^~\n]\\|~~\\)*\\)~" "\\1\bI\\2\bi"
+    ; change underline _...._ to easily found labels
+    beginning-of-buffer
+    replace-string "\\([^_]\\)_\\([^ \t_]\\([^_\n]\\|__\\)*\\)_" "\\1\bU\\2\bu"
+    ; change hilight `....' to easily found labels
+    beginning-of-buffer
+    replace-string "\\([^`]\\)`\\(\\([^']\\|''\\)*\\)'" "\\1\bH\\2\bh"
+    ; format all paragraphs to a single line
+    beginning-of-buffer
+    65536 paragraph-to-line
+    ; remove any 'don't format paragraph tokens
+    beginning-of-buffer
+    replace-string "^>\\." "  "
+    beginning-of-buffer
+    replace-string "^>_" "  "
+    beginning-of-buffer
+    replace-string "^>@" "  "
+    ; remove any comment lines
+    beginning-of-buffer
+    replace-string "^>.*\n" ""
+    ; loop through each section trying to normalize the indentation
+    beginning-of-buffer
+    ; delete-blank-lines - doesn't work!
+    set-mark
+    search-forward "\\S "
+    beginning-of-line
+    kill-region
+    -1 yank
+    ; is the first line a section or normal line
+    set-variable #l0 1
+    set-variable #l2 &xse @wl "^[ \t]*[0-9]+\\.[0-9.]*[ \t]+\\w.*"
+    !repeat
+        end-of-line
+        !force search-forward "^\n[ \t]*[0-9]+\\.[0-9.]*[ \t]+\\w"
+        !if $status
+            beginning-of-line
+        !else
+            end-of-buffer
+        !endif
+        set-variable #l1 $window-line
+        jst-prepare-section
+        set-variable #l0 #l1
+        set-variable $window-line #l0
+    !until &seq @wc ""
+!emacro
+
+define-macro jst-to-html
+    set-position "\x83"
+    set-variable #l0 @ml01 "Export to htm file"
+    set-variable #l1 $buffer-bname
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    copy-region
+    !force 0 delete-buffer "*jst-tmp*"
+    find-buffer "*jst-tmp*"
+    yank
+    -1 yank
+    jst-prepare-doc
+    beginning-of-buffer
+    replace-string "&" "&amp;"
+    beginning-of-buffer
+    replace-string "<" "&lt;"
+    beginning-of-buffer
+    replace-string ">" "&gt;"
+    beginning-of-buffer
+    replace-string "\bL" "<HR>"
+    beginning-of-buffer
+    replace-string "\bB" "<B>"
+    beginning-of-buffer
+    replace-string "\bb" "</B>"
+    beginning-of-buffer
+    replace-string "\bI" "<I>"
+    beginning-of-buffer
+    replace-string "\bi" "</I>"
+    beginning-of-buffer
+    replace-string "\bU" "<U>"
+    beginning-of-buffer
+    replace-string "\bu" "</U>"
+    beginning-of-buffer
+    replace-string "\bH" "<B><I>"
+    beginning-of-buffer
+    replace-string "\bh" "</I></B>"
+    beginning-of-buffer
+    replace-string "\bT" "<DIR>"
+    beginning-of-buffer
+    replace-string "\bt" "</DIR>"
+    beginning-of-buffer
+    replace-string "\bP" "<P>"
+    beginning-of-buffer
+    replace-string "\bp" "</P>"
+    beginning-of-buffer
+    replace-string "\bC" "<PRE>"
+    beginning-of-buffer
+    replace-string "\bc" "</PRE>"
+    beginning-of-buffer
+    replace-string "\bE\bD" "<UL><LI>"
+    beginning-of-buffer
+    replace-string "\bd\be" "</LI></UL>"
+    beginning-of-buffer
+    replace-string "\bD" "<LI>"
+    beginning-of-buffer
+    replace-string "\bd" "</LI>"
+    beginning-of-buffer
+    replace-string "\bE\bA" "<OL TYPE=\"a\"><LI>"
+    beginning-of-buffer
+    replace-string "\ba\be" "</LI></OL>"
+    beginning-of-buffer
+    replace-string "\bA" "<LI>"
+    beginning-of-buffer
+    replace-string "\ba" "</LI>"
+    beginning-of-buffer
+    replace-string "\bE\bR" "<OL TYPE=\"i\"><LI>"
+    beginning-of-buffer
+    replace-string "\br\be" "</LI></OL>"
+    beginning-of-buffer
+    replace-string "\bR" "<LI>"
+    beginning-of-buffer
+    replace-string "\br" "</LI>"
+    beginning-of-buffer
+    replace-string "\bE\bN" "<OL><LI>"
+    beginning-of-buffer
+    replace-string "\bn\be" "</LI></OL>"
+    beginning-of-buffer
+    replace-string "\bN" "<LI>"
+    beginning-of-buffer
+    replace-string "\bn" "</LI>"
+    beginning-of-buffer
+    replace-string "\bS" "<H2><P>"
+    beginning-of-buffer
+    replace-string "\bs" "</P></H2>"
+    beginning-of-buffer
+    insert-string "<HTML>\n<HEAD>\n"
+    !if &exi :title
+        insert-string &spr "<TITLE>%s</TITLE>\n" :title
+    !else
+        insert-string &spr "<TITLE>%s</TITLE>\n" #l1
+    !endif
+    !if &exi :author
+        insert-string &spr "<META NAME=\"Author\" CONTENT=\"%s\">\n" :author
+    !endif
+    insert-string "<META NAME=\"Generator\" CONTENT=\"MicroEmacs EFT\">\n</HEAD>\n<BODY>\n"
+    !if &exi :title
+        insert-string &spr "<H1><CENTER>%s</CENTER></A></H1>\n" :title
+    !endif
+    end-of-buffer
+    insert-string "</BODY>\n</HTML>"
+    !force !force write-buffer #l0 @mna
+    set-variable #l3 $status
+    0 delete-buffer $buffer-bname
+    goto-position "\x83"
+    !if &not #l3
+        !abort
+    !endif
+    ml-write &spr "[Export to %s complete]" #l0
+!emacro
+
+define-macro jst-to-text
+    set-position "\x83"
+    set-variable #l0 @ml01 "Export to txt file"
+    set-variable #l1 $buffer-bname
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    copy-region
+    !force 0 delete-buffer "*jst-tmp*"
+    find-buffer "*jst-tmp*"
+    yank
+    -1 yank
+    jst-prepare-header
+    ; must use exact
+    1 buffer-mode "exact"
+    ; Find any dividing lines
+    beginning-of-buffer
+    replace-string "^\n___+\n\n?" &spr "\n%n\n\n" $fill-col "_"
+    ; remove bold *....* labels
+    beginning-of-buffer
+    replace-string "\\([^*]\\)\\*\\([^ \t*]\\([^*\n]\\|\\*\\*\\)*\\)\\*" "\\1\\2"
+    ; remove italic ~....~ labels
+    beginning-of-buffer
+    replace-string "\\([^~]\\)~\\([^ \t~]\\([^~\n]\\|~~\\)*\\)~" "\\1\\2"
+    ; remove underline _...._ labels
+    beginning-of-buffer
+    replace-string "\\([^_]\\)_\\([^ \t_]\\([^_\n]\\|__\\)*\\)_" "\\1\\2"
+    ; remove hilight `....' labels
+    beginning-of-buffer
+    replace-string "\\([^`]\\)`\\(\\([^']\\|''\\)*\\)'" "\\1\\2"
+    ; remove any 'don't format paragraph tokens
+    beginning-of-buffer
+    replace-string "^>\\." "  "
+    beginning-of-buffer
+    replace-string "^>_" "  "
+    beginning-of-buffer
+    replace-string "^>@" "  "
+    ; remove any comment lines
+    beginning-of-buffer
+    replace-string "^>.*\n" ""
+    !if &exi :title
+        beginning-of-buffer
+        insert-string &spr "%n%s\n" &div &sub $fill-col &len :title 2 " " :title
+    !endif
+    !force !force write-buffer #l0 @mna
+    set-variable #l3 $status
+    0 delete-buffer $buffer-bname
+    goto-position "\x83"
+    !if &not #l3
+        !abort
+    !endif
+    ml-write &spr "[Export to %s complete]" #l0
+!emacro
+
