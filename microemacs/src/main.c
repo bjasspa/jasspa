@@ -507,12 +507,35 @@ exitEmacs(int f, int n)
     int s, ec=0 ;
     char buff[128] ;
         
+    /* Set the exit code */
     if(n & 4)
     {
         if(meGetString((meUByte *)"Exit code", 0, 0, buff,128) <= 0)
             return meFALSE ;
         ec = meAtoi(buff) ;
     }
+    
+    /* Discard changed buffers - mark all changed buffers as not changed. */
+    if (((n & (8|16)) != 0) && ((n & 1) == 0))
+    {
+        meBuffer *bp = bheadp;          /* scanning pointer to buffers */
+        while (bp != NULL)
+        {
+            if(bufferNeedSaving(bp))
+            {
+		/* Save a backup */
+                if (n & 16)
+                    autowriteout(bp) ;
+                /* Remove the backup */
+                else
+                    autowriteremove(bp) ;
+		meModeClear(bp->mode,MDEDIT) ;
+            }
+            bp = bp->next;            /* on to the next buffer */
+        }
+    }
+    
+    /* Unconditionally save buffers, dictionary and registry files */
     if((n & 2) &&
        ((saveSomeBuffers(f,(n & 0x01)) <= 0)
 #if MEOPT_SPELL
@@ -867,7 +890,7 @@ exitEmacs(int f, int n)
 int
 saveExitEmacs(int f, int n)
 {
-    return exitEmacs(1,n|2) ;
+    return exitEmacs(1,(n & 7)|2) ;
 }
 
 /*
@@ -877,7 +900,7 @@ saveExitEmacs(int f, int n)
 int
 quickExit(int f, int n)
 {
-    return exitEmacs(1,(n & 4)|2) ;
+    return exitEmacs(1,(n & 0x1c)|2) ;
 }
 
 /*
