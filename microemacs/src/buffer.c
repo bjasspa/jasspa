@@ -493,7 +493,7 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
 	{
             update(meTRUE) ;
             lineno = wp->dotLineNo ;
-            if((mlyesno((meUByte *)"File changed on disk, reload") > 0) &&
+            if((meModeTest(bp->mode,MDDIR) || (mlyesno((meUByte *)"File changed on disk, reload") > 0)) &&
                (bclear(bp) > 0))
             {
                 /* achieve cheekily by calling itself as the bclear make it inactive,
