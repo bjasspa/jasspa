@@ -1,14 +1,14 @@
 .\"*-*- nroff -*-*************************************************************
 .\"
-.\"			Copyright 1999 JASSPA.
+.\"			Copyright 1998 JASSPA.
 .\"			      All Rights Reserved
 .\"
 .\"
 .\"  System        :
 .\"  Module        :
-.\"  Object Name   : m9typ014.9
-.\"  Created By    : Jon Green
-.\"  Created       : Sat Feb 6 14:22:09 1999
+.\"  Object Name   : m3osd000.3
+.\"  Created By    : Steven Phillips
+.\"  Created       : Sat Aug 22 09:00:06 1998
 .\"  Last Modified : <000719.1013>
 .\"
 .\"  Description
@@ -19,7 +19,7 @@
 .\"
 .\"***************************************************************************
 .\"
-.\"  Copyright (c) 1999 JASSPA.
+.\"  Copyright (c) 1998 JASSPA.
 .\"
 .\"  All Rights Reserved.
 .\"
@@ -29,33 +29,24 @@
 .\"
 .\"***************************************************************************
 .\"
-.Id $Id: m9typ014.9,v 2.2 2001-07-14 10:12:07 jon Exp $
-.Im MicroEmacs filetype
+.Id $Id: m3osd011.3,v 2.1 2001-07-14 10:11:26 jon Exp $
+.Im MicroEmacs command|osd
 .so me.tni
-.TH vhdl 9
-.XI vhdl - "VHDL hardware simulation File"
+.TH buffer-help 3
+.XI buffer-help - "Displays help page for current buffer"
+.SH NAME
+buffer-help \- Displays help page for current buffer
+.Me $a
 .SH SYNOPSIS
-vhdl \- VHDL hardware simulation files
-.SH FILES
 .na
-.B hkvhdl.emf
-\- VHDL hook definition
-.br
-.B vhdl.etf
-\- VHDL template file.
-.ad
-.SH EXTENSIONS
-.na
-\fB.vhdl\fR, \fB.vhd\fR \- VHDL file
+.B buffer-help
 .ad
 .SH DESCRIPTION
-The  \fBvhdl\fR  file type  template  provides  simple  hilighting of VHDL
-files, the template provides minimal hilighting.
-.SH BUGS
-None  reported.  Template  could  probably  benifit  from  some  form  of auto
-indentation.
+\fBbuffer-help\fR  opens a dialog  giving  the user a brief help page on tools
+available for the current buffer. The help page changes  depending on the type
+of the current buffer.
 .SH "SEE ALSO"
 .na
-.Hl "Supported File Types" FileTypes -
+.Ht buffer-setup 3 .
 .ad
 .FH

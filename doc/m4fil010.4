@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m4fil010.4,v 2.1 2001-05-14 19:54:30 jon Exp $
+.Id $Id: m4fil010.4,v 2.2 2001-07-14 10:11:29 jon Exp $
 .Im MicroEmacs macro;directive|miscellaneousOperators
 .so me.tni
 .TH !return 4
@@ -11,7 +11,7 @@
 .na
 .nf
 \fB!return\fR [\fIn\fR]
-\fB!abort\fR
+\fB!abort\fR [\fIn\fR]
 .fi
 .ad
 .SH DESCRIPTION
@@ -20,26 +20,23 @@ status, either returning to the caller (if any) or to interactive  mode. If an
 argument  \fIn\fR is specified  then the return  status is  determined  by the
 value of \fIn\fR.
 .PP
-\fB!abort\fR has the same effect as \fB!return\fR only returning a \fCFALSE\fR
-status,  this halts the  execution  of any  calling  macros.  \fB!abort\fR  is
-generally used in conjunction with
+\fB!abort\fR  has the same  effect as  \fB!return\fR  only always  returning a
+\fCFALSE\fR  status to halt the execution of any calling macro. If an argument
+\fIn\fR is given to  \fB!abort\fR  the bell is also rung, the valid  values of
+\fCn\fR are the same as for the
 .Ht !bell 4
-to sound an audio alarm if the user has performed an invalid action.
+directive.
 .SH EXAMPLE
-The  following  example  checks the monitor type. If the monitor is monochrome
-then the message is  displayed.  If the monitor type is not mono no message is
-displayed.
+The  following  example  checks the current  language  and warns if it has not
+be set, i.e. \fCDefault\fR.
 .Me $emf-scheme
 .CS
-;	Check the monitor type and set %mtyp
+;	Check the current language
 
-!if &not &seq $TERM "MONO"
-    set-variable %mtyp 1
+!if &not &seq %language "Default"
     !return
-!else
-    set-variable %mtyp 2
 !endif
-ml-write "You are on a MONOCHROME machine (if you are color blind)"
+ml-write "Warning - you have not setup the Language - use user-setup"
 .CE
 .Me $ehf-scheme
 The following example is shows the logic of the \fB!return\fR directive:-

@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m4fil013.4,v 2.1 2001-05-14 19:54:30 jon Exp $
+.Id $Id: m4fil013.4,v 2.2 2001-07-14 10:11:30 jon Exp $
 .Im MicroEmacs macro;directive|miscellaneousOperators
 .so me.tni
 .TH !bell 4
@@ -20,12 +20,14 @@ mode, as such if  \fBquiet\fR  mode is  disabled an audible  warning is given,
 otherwise  a  visual  warning  is  given  to the  user  (usually  the  message
 "\fI[BELL]\fR" in the bottom left hand corner).
 .PP
-The  optional  numerical  argument  \fIn\fR  specifies  the  duration  of  the
-\fIbeep\fR, the default is 1 when omitted.
+The  optional  numerical  argument  \fIn\fR  can  be  used  to  over-ride  the
+current setting of the \fBquite\fR, a value of \fC0\fR specifies a quite bell,
+\fC2\fR an audible one, when  omitted the default is \fC1\fR for  honoring the
+quite mode.
 .PP
 \fB!bell\fR is generally used in conjunction with
-.Hl !abort !abort 4
-the bell functions warning the user, the abort function to quit the macro.
+.Hl !abort !abort 4 ,
+the !bell function warning the user and the !abort function to quit the macro.
 .SH EXAMPLE
 The  following  example  checks for incoming mail and is taken from  mail.emf.
 If any mail has  arrived  an  audible  warning  is  assured  by  toggling  the
