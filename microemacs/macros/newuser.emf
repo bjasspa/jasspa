@@ -50,7 +50,7 @@
     !endif
     !force set-registry "" "history" #l1
     set-registry "/history" "user-name" .newuser.fullname
-    set-registry "/history" "setup-file" $user-name
+    set-registry "/history" "setup-file" .newuser.setup-file
     !if &exi .newuser.company
         set-registry "/history" "company" .newuser.company
     !endif
@@ -71,8 +71,8 @@
 ;
 ; Create the file user.emf
 0 define-macro newuser-makeemf
-    insert-string &spr "Creating user setup file \"%s.emf\" ... " $user-name
-    set-variable #l1 &spr "%s%s.emf" $user-path $user-name
+    insert-string &spr "Creating user setup file \"%s.emf\" ... " .newuser.setup-file
+    set-variable #l1 &spr "%s%s.emf" $user-path .newuser.setup-file
     set-variable #l0 &stat "t" #l1
     !if &not &seq #l0 "X"
         insert-string &spr "[ERROR]\n"
@@ -112,10 +112,10 @@
     !force 0 delete-buffer $buffer-bname
     find-buffer "*newuser*"
     insert-string "[OK]\n"
-    !if &not &seq &find $user-name ".emf" &stat "a" #l1
+    !if &not &seq &find .newuser.setup-file ".emf" &stat "a" #l1
         insert-string "WARNING: MicroEmacs finds the wrong macro file\n"
         insert-string &spr "  Should find:     %s\n" &stat "a" #l1
-        insert-string &spr "  Currently finds: %s\n" &find $user-name ".emf"
+        insert-string &spr "  Currently finds: %s\n" &find .newuser.setup-file ".emf"
     !endif
 !emacro
 ;
@@ -301,7 +301,15 @@
     2 screen-update
     set-variable .newuser.fullname @ml "Full name"
     insert-string &spr "[%s]\n\n" .newuser.fullname
-
+    
+    ; Get a user setup-file name - must not conflict with system emf files
+    set-variable #l1 0
+    set-variable .newuser.setup-file $user-name
+    !while &not &seq &find .newuser.setup-file ".emf" "ERROR"
+        set-variable .newuser.setup-file &spr "%d%s" &inc #l1 1 $user-name
+    !done
+    insert-string &spr "User setup file: %s.emf\n\n" .newuser.setup-file 
+    
     set-variable #l1 &reg "/history" "company" "company"
     insert-string &spr "Looking for company file \"%s.emf\" ... " #l1
     !if &seq &find #l1 ".emf" "ERROR"
@@ -377,7 +385,7 @@
     insert-string "need to edit them in the future.\n"
     insert-string "\n"
     insert-string &spr "  Registry file:      %s\n" &find $user-name ".erf"
-    insert-string &spr "  User Setup file:    %s\n" &find $user-name ".emf"
+    insert-string &spr "  User Setup file:    %s\n" &find .newuser.setup-file ".emf"
     !if &exi .newuser.company
         insert-string &spr "  Company Setup file: %s\n" &find .newuser.company ".emf"
     !endif
