@@ -23,7 +23,7 @@ define-macro fhook-nroff
 set-variable .fhook-nroff.setup &reg "/history" "fhook/nroff" "bfhijnopswx"
 set-variable .fhook-nroff.setup-mask "abefhijkmnopstuwx"
 set-variable .fhook-nroff.tags "ntags"
-set-variable .fhook-nroff.comment "|.\\\"||*|.\\\" ||"
+set-variable .fhook-nroff.comment "|.\\\"||*|.\\\" | \"\\||"
 set-variable .fhook-nroff.command-flag  "|thbo|bo|thb|thb|th|thb|thb|thb|thb|th|thb|thb|thb|th|thbH|t|"
 set-variable .fhook-nroff.command-name  "|nroff-para|nroff-para|nroff-add-padding|nroff-remove-padding||nroff-bold|nroff-mono|nroff-italic|nroff-roman||nroff-bold-region|nroff-mono-region|nroff-italic-region||nroff-swap-hilight|tex2nr|"
 set-variable .fhook-nroff.command-nbind "|||||||||||||||||"

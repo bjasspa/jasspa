@@ -5,10 +5,10 @@
 ;  Notes
 ;      To use, the current buffer fhook command variable .comment must be set
 ;      to a list giving the following:
-;           "|<Comment start>|<Comment end>|<comment pad>|"
+;           "|<Comment start>|<Comment end>|<comment pad>|<mid-box-left>|<mid-box-right>|<comment-end-flags>|"
 ;      e.g. the following are C and emf comments
-;           set-variable .fhook-c.comment "|/*|*/|*|"
-;           set-variable .fhook-emf.comment "|;||;|"
+;           set-variable .fhook-c.comment "|/*|*/|*| * | * |f|"
+;           set-variable .fhook-emf.comment "|;||;|; | ;||"
 ;
 ;  Copyright (c) 2001 JASPPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -75,14 +75,16 @@ define-macro uncomment-line
 ; fill from the current column to fill-col with <comment pad> and a trailing <comment end>
 define-macro comment-to-end-of-line
     set-variable #l0 &ind &spr ".%s.comment"  $buffer-fhook
-    !if &seq  &lget #l0 1 ""
+    !if &seq &lget #l0 1 ""
         ml-write "[Comments not setup for this buffer]"
         !abort
     !endif
     !if &not &len &set #l1 &lget #l0 3
         set-variable #l1 " "
     !endif
-    set-variable #l2 &lget #l0 2
+    !if &seq &set #l2 &lget #l0 2 ""
+        set-variable #l2 &trb &lget #l0 5
+    !endif
     &div &sub &sub $fill-col $window-acol &len #l2 &len #l1 insert-string #l1
     insert-string #l2
 !emacro
@@ -106,6 +108,9 @@ define-macro comment-start
     set-variable :buffer-name #l2
     set-variable :fill-col $fill-col
     set-variable $fill-col &sub $fill-col &sub #l1 &len &lget #l0 4
+    !if &sin "b" &lget :comment 6
+        set-variable $fill-col &sub $fill-col &len &lget #l0 5
+    !endif
     !if &les $fill-col 20
         set-variable $fill-col 20
     !endif
@@ -116,40 +121,91 @@ define-macro comment-end
     clean
     beginning-of-buffer
     set-variable #l0 &lget :comment 4
+    set-variable #l9 &lget :comment 5
+    !if &not &len &set #l8 &lget :comment 3
+        set-variable #l8 " "
+    !endif
     insert-string &lget :comment 1
-    !if &sin "h" &lget :comment 5
-        !if &sin "H" &lget :comment 5
-            !if &len &set #l1 &lget :comment 3
+    !if &sin "h" &lget :comment 6
+        !if &sin "b" &lget :comment 6
+            set-variable #l1 &cond &sin "H" &lget :comment 6 #l8 " "
+            set-variable #l2 &add $fill-col &sub &len #l0 &len &lget :comment 1
+            set-variable #l2 &add #l2 &sub &len #l9 &len &trl #l9
+            &div #l2 &len #l1 insert-string #l1
+            insert-string &trb #l9
+        !elif &sin "H" &lget :comment 6
+            !if &not &sin #l8 " "
                 set-variable #l2 &add $fill-col &sub &len #l0 &len &lget :comment 1
                 &div #l2 &len #l1 insert-string #l1
             !endif
         !endif
         insert-newline
     !else
+        !if &sin "b" &lget :comment 6
+            end-of-line
+            &sub $fill-col $window-acol insert-space
+            insert-string &trr #l9
+            beginning-of-line
+        !endif
         insert-string &rig #l0 &len &lget :comment 1
         beginning-of-line
         forward-line
     !endif
+    set-variable #l1 #l8
+    str-to-regex #l1
+    set-variable #l1 &spr "^\\(%s\\)\\{3,\\}$" #l1
     !while &not &seq @wc ""
+        !if &xse @wl #l1
+            end-of-line
+            set-variable #l2 &add &sub $fill-col $window-acol &sub &len #l0 &len &trr #l0
+            !if &sin "b" &lget :comment 6
+                set-variable #l2 &add #l2 &sub &len #l9 &len &trl #l9
+                &div #l2 &len #l8 insert-string #l8
+                insert-string &trb #l9
+            !else
+                &div #l2 &len #l8 insert-string #l8
+            !endif
+            beginning-of-line
+            insert-string &trr #l0
+        !else
+            !if &sin "b" &lget :comment 6
+                end-of-line
+                &sub $fill-col $window-acol insert-space
+                insert-string &trr #l9
+                beginning-of-line
+            !endif
+            insert-string #l0
+        !endif
+        beginning-of-line
         :column insert-space
-        insert-string #l0
         beginning-of-line
         forward-line
     !done
-    !if &sin "f" &lget :comment 5
+    !if &sin "f" &lget :comment 6
         :column insert-space
-        !if &sin "F" &lget :comment 5
+        !if &sin "F" &lget :comment 6
+            set-variable #l1 #l8
+            !jump 3
+        !elif &sin "b" &lget :comment 6
+            set-variable #l1 " "
             insert-string &trr #l0
-            !if &not &len &set #l1 &lget :comment 3
-                set-variable #l1 " "
+            !if &seq &set #l3 &lget :comment 2 ""
+                set-variable #l3 #l9
             !endif
             set-variable #l2 &add $fill-col &sub &len #l0 &len &trr #l0
-            set-variable #l2 &sub #l2 &len &trl &lget :comment 2
+            !if &sin "b" &lget :comment 6
+                set-variable #l2 &add #l2 &sub &len #l9 &len &trl #l9
+            !else
+                set-variable #l2 &sub #l2 &len &trl #l3
+            !endif
             &div #l2 &len #l1 insert-string #l1
+            insert-string &trl #l3
+        !elif &seq &lget :comment 2 ""
+            insert-string &trr #l0
         !else
             insert-string &lef #l0 &sub &len #l0 &len &trl #l0
+            insert-string &trl &lget :comment 2
         !endif
-        insert-string &trl &lget :comment 2
     !elif &not $seq "" &lget :comment 2
         backward-line
         end-of-line

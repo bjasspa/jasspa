@@ -32,7 +32,7 @@ define-macro fhook-c
 set-variable .fhook-c.setup &reg "/history" "fhook/c" "bdfhnopx"
 set-variable .fhook-c.setup-mask "abdefhikmnoptux>"
 set-variable .fhook-c.tags "ctags"
-set-variable .fhook-c.comment "|/*|*/|*| * |f|"
+set-variable .fhook-c.comment "|/*|*/|*| * | * |f|"
 set-variable .fhook-c.command-flag  "|t|t|thbo|bo|th|th|th|t|t|t|t|t|t|"
 set-variable .fhook-c.command-name  "|c-to-cpp-convert||c-box|c-box||c-slashify|c-deslashify||c-hash-set-define|c-hash-unset-define|c-hash-eval|c-hash-eval|c-hash-del|"
 set-variable .fhook-c.command-nbind "||||||||||||1||"

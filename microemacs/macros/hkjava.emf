@@ -21,7 +21,7 @@ define-macro fhook-java
 set-variable .fhook-java.setup &reg "/history" "fhook/java" "bdfhnopx"
 set-variable .fhook-java.setup-mask "abdefhikmnoptux>"
 set-variable .fhook-java.tags "javatags"
-set-variable .fhook-java.comment "|/*|*/|*| * |f|"
+set-variable .fhook-java.comment "|/*|*/|*| * | * |f|"
 set-variable .fhook-java.command-flag  "|thbo|bo|"
 set-variable .fhook-java.command-name  "|c-box|c-box|"
 set-variable .fhook-java.command-nbind "|||"

@@ -10,7 +10,7 @@
 *
 *	Author:			Mike Rendell of ROOT Computers Ltd.
 *
-*	Creation Date:		10/05/91 08:27		<010305.0749>
+*	Creation Date:		10/05/91 08:27		<010328.1311>
 *
 *	Modification date:	%G% : %U%
 *
@@ -102,10 +102,11 @@ findTagInFile(uint8 *file, uint8 *baseName, uint8 *tagTemp,
                     break ;
                 end = opos ;
             }
-            else if (tmp < 0)	/* back */
-                end = opos;
-            else			/* foward */
+            else if (tmp > 0)
+                /* foward */
                 start = ftell(fp) - 1 ;
+            else if((end=opos) == 0)
+                break ;
             pos = ((start+end) >> 1) ;
         }
     }

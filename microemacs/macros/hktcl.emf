@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;       TCL mode hook
 ;
-;   Last Modified : <010316.1357>
+;   Last Modified : <010319.2310>
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 set-char-mask "3" "-$."
 
@@ -22,7 +22,7 @@ set-variable .fhook-tcl.name "Tcl/Tk"
 set-variable .fhook-tcl.setup &reg "/history" "fhook/tcl" "dfhnopx"
 set-variable .fhook-tcl.setup-mask "adefhikmnoptux"
 set-variable .fhook-tcl.tags "tcltags"
-set-variable .fhook-tcl.comment "|#||#|# ||"
+set-variable .fhook-tcl.comment "|#||#|# | #||"
 
 ; setup tcl folding support
 set-variable .fhook-tcl.fold-open  "^proc "

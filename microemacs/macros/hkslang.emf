@@ -30,7 +30,7 @@ define-macro fhook-slang
 set-variable .fhook-slang.setup &reg "/history" "fhook/slang" "bdfhnopx"
 set-variable .fhook-slang.setup-mask "abdefhikmnoptux>"
 set-variable .fhook-slang.tags "ctags"
-set-variable .fhook-slang.comment "|/*|*/|*| * ||"
+set-variable .fhook-slang.comment "|/*|*/|*| * | * ||"
 set-variable .fhook-slang.command-flag  "|thbo|bo|th|th|th|t|t|t|t|t|t|"
 set-variable .fhook-slang.command-name  "|c-box|c-box||c-slashify|c-deslashify||c-hash-set-define|c-hash-unset-define|c-hash-eval|c-hash-eval|c-hash-del|"
 set-variable .fhook-slang.command-nbind "||||||||||1||"

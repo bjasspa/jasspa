@@ -4,7 +4,7 @@
 ;       Author        : Jon Green
 ;       Created       : 2nd November 1996
 ;
-;   Last Modified : <010316.1357>
+;   Last Modified : <010319.2310>
 ;
 ;       Comment       : This shell file has given me grief. It is difficult
 ;                       to know how much to hilight. At the moment it appears
@@ -36,7 +36,7 @@ define-macro fhook-shell
 ; buffer-initialize variables
 set-variable .fhook-shell.setup &reg "/history" "fhook/shell" "hiopx"
 set-variable .fhook-shell.setup-mask "aehikmoptux"
-set-variable .fhook-shell.comment "|#||#|# ||"
+set-variable .fhook-shell.comment "|#||#|# | #||"
 
 !if &and &sin "h" .fhook-shell.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.shell

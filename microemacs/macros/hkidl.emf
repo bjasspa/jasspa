@@ -27,7 +27,7 @@ define-macro fhook-idl
 set-variable .fhook-idl.name "OMG IDL"
 set-variable .fhook-idl.setup &reg "/history" "fhook/idl" "dfhnopx"
 set-variable .fhook-idl.setup-mask "adefhikmnoptux>"
-set-variable .fhook-idl.comment "|//||*|// ||"
+set-variable .fhook-idl.comment "|//||*|// | //||"
 set-variable .fhook-idl.command-flag  "|thbo|bo|"
 set-variable .fhook-idl.command-name  "|c-box|c-box|"
 set-variable .fhook-idl.command-nbind "|||"
