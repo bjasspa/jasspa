@@ -4,7 +4,7 @@
 >
 >  Created By    : Jon Green
 >  Created       : Sun Aug 10 14:00:59 2003
->  Last Modified : <030810.1658>
+>  Last Modified : <030814.1552>
 >
 Packages
 
@@ -14,11 +14,17 @@ Packages
 
              Installation instructions are included in the directory.
 
-    sun_sol9 - Sun solaris 9.
+    sun - Sun solaris 8 and 9.
+
+            Packages available:-
+
+                jasspa-sparc-sol8.pkg - SPARC, Solaris 8
+                jasspa-i386-sol8.pkg  - Intel, Solaris 8
+                jasspa-sparc-sol9.pkg - SPARC, Solaris 9
 
             To add, as root (installs into "/opt/jasspa"):-
 
-                # pkgadd -d jasspa.pkg
+                # pkgadd -d jasspa-sparc-sol9.pkg
 
             To subsequently remove, as root:
 
@@ -33,4 +39,3 @@ Packages
             This package was prepared by http://www.hardline.org  and the i386
             RPM was  built  on  RedHat  7.3.  Other  Linux  architectures  and
             packages are available from http://www.hardline.org.
-
