@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var047.5,v 2.6 2002-10-16 22:28:04 jon Exp $
+.Id $Id: m5var047.5,v 2.7 2004-11-26 23:53:22 bill Exp $
 .Im MicroEmacs variable|hilight|macrodevelop
 .so me.tni
 .TH $system 5
@@ -53,6 +53,9 @@ If  this  bit is set  then  the  current  system  supports  the  use of  fonts
 utilized  depends  upon the  platform and the system font being used, for UNIX
 TERMCAP systems it will also depend on the terminal being used. This option is
 not supported on MS_DOS.
+.IP \fB0x020\fR
+When this bit is set the  cursor is always  shown in OSD (main menu)  dialogs,
+this helps to improve navigation of dialogs ion systems with limited colors. 
 .IP \fB0x080\fR
 This  bit  is  set if the  current  system  is a UNIX  based  system  such  as
 \s-1LINUX\s0  or  \s-1HPUX\s0.  This bit cannot be altered,  its use is within
