@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd068.2,v 2.6 2004-01-11 01:11:17 jon Exp $
+.Id $Id: m2cmd068.2,v 2.7 2004-01-11 12:07:57 jon Exp $
 .Im MicroEmacs command|buffer
 .so me.tni
 .TH narrow-buffer 2
@@ -15,64 +15,234 @@ narrow-buffer \- Hide buffer lines
 .na
 .I n
 .B narrow-buffer
+.br
+n
+.B narrow-buffer
+.I line-scheme
+"\|\fImarkup-command\fR\|"
 .ad
 .SH DESCRIPTION
-The effect of  \fBnarrow-buffer\fR  depends on the argument  given, defined as
-follows:-
-.BS 1 1 "1"
-Removes all narrows in the current buffer (Default).
-.BU "2"
-Removes the current line's narrow.
-.BU 3 
-Narrow to region.  Hides all but the lines of test in the current  buffer from
-the
-.Hl mark set-mark 2
-position to the current cursor position, effectively 'narrowing' the buffer to
-the remaining text.
-.BU 4 
-Narrow out region. Hides the lines of test in the current buffer from the
-.Hl mark set-mark 2
-position to the current cursor position, opposite to argument \fB3\fR.
-.BE
+The
+.B narrow-buffer
+command  allows  lines in a buffer to be hidden or folded up, the scope of the
+narrow  is  defined  by a region. A region  is the text  located  between  the
+\fBpoint\fR (the current cursor position) and the \fBmark\fR defined by
+.Hl set-mark set-mark 2 .
+.PP
+.B narrow-buffer
+supports  two  types  of  information   hiding.  A  simple   \fINarrow\fR   or
+\fINarrow\fR  \fIOut\fR  hides lines of the region from display and optionally
+inserts a new line, called a mark-up  line. The mark-up line allows the narrow
+position  to be  annotated  with  a line  scheme  color  and  annotation  text
+providing a visual representation of the narrow i.e.
+.ne 9
+.CS
+Before Narrow Out           After Narrow Out
+________________________________________________________________
+
+\... buffer text ...        ... buffer text ..
+<region start>              <Optional Narrow Out line mark-up>
+\.... region text ...       ... more buffer text ...
+<region end>
+\... more buffer text ...
+.CE
+The second narrow form is a
+.I "Narrow To"
+which hides text around the region leaving just the region displayed. A
+.I "Narrow Out"
+will  optionally show a mark-up line at both the top and bottom of the region.
+The mark-up line permits the \fINarrow\fR \fITo\fR position to be annotated in
+the buffer with a line scheme  color and  annotation  text  providing a visual
+representation of the narrow i.e.
+.ne 9
+.CS
+Before Narrow To            After Narrow To
+________________________________________________________________
+
+\... buffer text ...        <Optional Narrow Out top mark-up>
+<region start>              <region start>
+\.... region text ...       .... region text ...
+<region end>                <region end>
+\... more buffer text ...   <Optional Narrow Out bottom mark-up>
+.CE
+Once a narrow has been created and information has been hidden
+.B narrow-buffer
+may be used to  subsequently  reveal  the  hidden  text on a line or  complete
+buffer basis.
+.PP
+Narrowed  regions  do not  delete  the text  contained  within  the narrow the
+information is simply hidden. Saving the buffer using
+.Ht save-buffer 2 ,
+by  default,  writes all of the  displayed  and hidden  information  contained
+within  any  narrow   region  but  may   optionally   save  only  the  visible
+representation.
+.PP
+While information is hidden in a narrow
+.Ht copy-region 2
+and
+.Ht kill-region 2
+operate as expected. If a narrow is copied then all of the information that is
+contained  within  the narrow is also  copied to the new  location.  Similarly
+killing or deleting a narrow removes all of the information  that is contained
+within the narrow.
+.PP
+.B narrow-region
+performs the low-level information hiding and is used within the macro command
+language, the command is not  generally  invoked  directly by the user. Within
+the macro  environment the location of narrows in any buffer may be determined
+using the line variable
+.Ht $line-flags 5 .
+This  variable  allows the narrow  state of the current line in a buffer to be
+determined. The narrow state of a buffer may be determined with
+.Ht narrow 2m .
 When a narrow is created the buffer mode
 .Ht narrow 2m
 is automatically set, when the last is removed this mode is deleted.
 .PP
+The effect of  \fBnarrow-buffer\fR  depends on the argument  given, defined as
+follows:-
+.BS 1 1 "1"
+Removes all narrows in the current  buffer  (Default).  Aborts if there are no
+narrows in the buffer.
+.BU "2"
+Removes the current line's narrow. Aborts if there is no narrow at the current
+line.
+.BU 3
+Narrow to region.  Hides all but the lines of text in the current  buffer from
+the
+.Hl mark set-mark 2
+position to the current cursor position, effectively 'narrowing' the buffer to
+the remaining text.
+.BU 4
+Narrow out region. Hides the lines of test in the current buffer from the
+.Hl mark set-mark 2
+position to the current cursor position, opposite to argument \fB3\fR.
+.BE 0
+.PP
+The second form of the command takes up to two arguments  which are determined
+by the value of \fIn\fR when bits in the range \fC0x0ff0\fR are defined. These
+bits are  interpreted  as a  bit-mask  and  determine  how the narrow is to be
+visually displayed to the user. When these bits are set then a mark-up line is
+created.
+.TP
+\fC0x0010\fR \- \fIline-scheme\fR
+.\"
+Bit \fC0x0010\fR specifies the line
+.Ht hilight 2
+color  scheme  to be  used on the  narrow  line  when it is an open or  closed
+narrow.  The  scheme   colors  used  are  defined  by  the  scheme   variables
+\fCscheme.fold-open\fR and \fCscheme.fold-closed\fR.
+.TP
+\fC0x0020\fR \- "\|\fImarkup-command\fR\|"
+.\"
+Bit  \fC0x0020\fR  specifies  that a mark-up  line is to be used to  represent
+the narrow region. When the narrow region is created then the
+.I markup-command
+macro is executed to annotate  the narrowed  region. The macro is invoked when
+the  narrow  is  created  and is  passed  a  numeric  argument  \fIn\fR  which
+identifies  the  operation of the narrow. The numeric  argument to the mark-up
+macro is defined below, generally a \fC+ve\fR  argument means that a narrow is
+being added and \fC-ve\fR means that the narrow is being removed.
+.IP
+\fC1\fR \- This is a \fINarrow Out\fR line.
+.br
+\fC2\fR \- This is the top of a \fINarrow To\fR.
+.br
+\fC3\fR \- This is the bottom of a \fINarrow To\fR.
+.IP
+When the macro is executed then the current line is the start of the narrow, the
+text of the line is available in the macro via
+.Ht @wl 4 .
+The
+.I markup-command
+aborts, using
+.Ht !abort 4
+if the mark-up line is to be removed, or returns a mark-up line in the
+variable
+.Ht $result 5 .
+.SH EXAMPLE
 For example, if the buffer contains the following text:
 .CS
-1 Richmond 
-2 Lafayette 
+1 Richmond
+2 Lafayette
 3 Bloomington
-4 Indianapolis 
-5 Gary 
+4 Indianapolis
+5 Gary
 6
 .CE
 If the mark is on line 2 and the current point is on line 4, executing:-
+.Me $emf-scheme
 .CS
 4 narrow-buffer
 .CE
+.Me $ehf-scheme
 Creates  one  narrow,  narrowing  out line 2 and 3. Line 4 becomes  the narrow
 anchor line, when the narrow is removed lines 2 and 3 will be inserted  before
-line 4. The buffer will become:- 
+line 4. The buffer will become:-
 .CS
-1 Richmond 
-4 Indianapolis 
-5 Gary 
+1 Richmond
+4 Indianapolis
+5 Gary
 .CE
 If instead the following was executed:-
+.Me $emf-scheme
 .CS
 3 narrow-buffer
 .CE
+.Me $ehf-scheme
 Two narrows are  created,  the first  narrowing  out line 4 and 5 (line 6, the
 last line,  being the  anchor  line) the second  narrowing  out line 1 (line 2
 being the anchor line). The buffer will become:-
 .CS
-2 Lafayette 
+2 Lafayette
 3 Bloomington
 6
 .CE
 Executing  \fBnarrow-buffer\fR  with an argument of \fB2\fR  will only work on
 the anchor lines, namely 4 in the first example and 2 and 6 in the second.
+.SS "Marking Up"
+A pseudo line may be created by
+.B narrow-buffer
+which is  hilighted  and  annotated to show that a narrow exists. This markup is
+used in the language templates in the collapse operations (\fCcollapse.emf\fR)
+to show that a narrow exists. The narrow region is applied using the
+.B narrow-buffer
+command as follows:-
+.Me $emf-scheme
+.CS
+0x34 narrow-buffer .scheme.fold-close collapse-markup
+.CE
+.Me $ehf-scheme
+This defines a narrow region with a color scheme  mark-up, the mark-up line is
+annotated by the macro
+.C collapse-markup
+once the narrow is created, the macro is defined as follows:-
+.Me $emf-scheme
+.CS
+0 define-macro collapse-markup
+    !if &les @# 0
+        ; no markup line modificaton
+        !abort
+    !endif
+    set-variable $result &cat &trr &lef @wl 40 " ..."
+!emacro
+.CE
+.Me $ehf-scheme
+The
+.C collapse-markup
+macro process the numeric argument
+.Ht @# 5
+to  determine  the mark-up  type to be applied to the buffer. When the numeric
+argument is \-ve then
+.Ht !abort 4
+is called to remove the mark-up. When the numeric argument is +ve then
+a mark-up line  annotation is created by taking the first 40 characters of the
+line and appending "\fC...\fR" to indicate that this is a narrow. The original
+.B narrow-buffer
+call included a
+.Ht hilight 2
+line scheme so the resultant mark-up line will be hilighted and show the first
+40 characters of the defined followed by an ellipsis.
 .SH NOTES
 Alpha mark set by
 .Ht set-alpha-mark 2
@@ -84,11 +254,11 @@ narrow if the user returns to the mark using
 operates  on the  unnarrowed  buffer and will  remove any  narrows  hiding the
 \&'next' line.
 .PP
-When copying a region containing a narrowed region(s) with 
-.Ht copy-region 2 
+When copying a region containing a narrowed region(s) with
+.Ht copy-region 2
 then the content of the narrowed region(s) is also copied. A numeric argument
-to  
-.Ht copy-region 2 
+to
+.Ht copy-region 2
 may be used to change the behavior to copy the visual representation only.
 .SH EXAMPLE
 .Ht c-hash-eval 3
@@ -103,11 +273,23 @@ and
 to write out only parts of the current buffer.
 .SH "SEE ALSO"
 .na
-.Ht narrow 2m ,
-.Ht set-mark 2 ,
-.Ht set-alpha-mark 2 ,
-.Ht get-next-line 2 ,
+.Ht !abort 4 ,
+.Ht $line-flags 5 ,
+.Ht $result 5 ,
+.Ht @# 5 ,
+.Ht @wl 4 ,
+.Ht append-buffer 2 ,
 .Ht c-hash-eval 3 ,
-.Ht vm 3 .
+.Ht copy-region 2 ,
+.Ht get-next-line 2 ,
+.Ht goto-alpha-mark 2 ,
+.Ht hilight 2 ,
+.Ht kill-region 2 ,
+.Ht narrow 2m ,
+.Ht save-buffer 2 ,
+.Ht set-alpha-mark 2 ,
+.Ht set-mark 2 ,
+.Ht vm 3 ,
+.Ht write-buffer 2 .
 .ad
 .FH
