@@ -40,6 +40,7 @@
 #define meTOKENBUF_SIZE_MAX   meBUF_SIZE_MAX+4  /* meBUF_SIZE_MAX + an overrun safe area*/
 #define meMLDISP_SIZE_MAX     meBUF_SIZE_MAX+20 /* meBUF_SIZE_MAX + completion label*/
 #define meTIME_STAMP_SIZE_MAX 40                /* Max len of a time stamp str. */
+#define meMACRO_DEPTH_MAX     20                /* maximum depth of recursion   */
 
 #define meCHAR_BELL           0x07              /* the bell character           */
 #define meCHAR_TAB            0x09              /* the tab character            */
@@ -1186,7 +1187,8 @@ typedef struct meRegister {
     meUByte           *execstr ;
     int                f ;
     int                n ;
-    int                force ;
+    meUByte            force ;
+    meUByte            depth ;
     meUByte            reg[meREGISTER_MAX][meBUF_SIZE_MAX] ;
 } meRegister ;
 
