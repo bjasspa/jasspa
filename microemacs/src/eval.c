@@ -993,6 +993,13 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             findWordsInit(vvalue) ;
             break ;
 #endif
+#if MEOPT_EXTENDED
+        case EVRECENTKEYS:
+            if(vvalue[0] != '\0')
+                return meFALSE ;
+            TTkeyBuf[TTnextKeyIdx] = 0 ;
+            break ;
+#endif
         case EVRESULT:                      /* Result string - assignable */
             meStrcpy (resultStr, vvalue);
             break;
