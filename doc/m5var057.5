@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var057.5,v 2.6 2004-02-01 22:49:56 jon Exp $
+.Id $Id: m5var057.5,v 2.7 2004-02-04 22:54:22 jon Exp $
 .Im MicroEmacs variable|file
 .so me.tni
 .TH $search-path 5
@@ -62,12 +62,9 @@ overriding any built in search path(s).
 .BU
 The environment variable
 .Ht $MEPATH 5
-which  absolutely  overrides any search paths with a user defined path. Use of
-this variable is depreciated, a combination of
-.Ht MEINSTALLPATH 5
-and
-.Ht MEUSERPATH 5
-is preferred.
+which  absolutely  overrides any search paths with a user defined path where 
+.Ht $MEUSERPATH 5 
+is not defined.
 .BU
 The command line option \fB\-u\fR \fIuser-name\fR to
 .Ht me 1

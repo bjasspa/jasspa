@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Tue Jan 25 23:22:52 2000
 .\"
-.Id $Id: m3mac050.3,v 2.7 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m3mac050.3,v 2.8 2004-02-04 22:54:22 jon Exp $
 .Im MicroEmacs command|file
 .so me.tni
 .TH ftp 3
@@ -44,8 +44,9 @@ select existing sites that have been previously entered.
 The address of the host, this may be an IP address  (\fC111.222.333.444\fR) or
 a DNS name (i.e. \fCftp.mysite.com\fR).
 .IP "\fBUser Name\fR"
-The login name for the site. If this is omitted  then  \fCguest\fR  is used by
-default.
+The login name for the site. If this is omitted  then 
+.Ht $user-name 5
+is used by default.
 .IP "\fBPassword\fR"
 The password  used to enter the site for the given login name. If the password
 is NOT supplied  then the user is prompted for the password when a transaction
@@ -117,6 +118,7 @@ from the directory to load.
 .SH "SEE ALSO"
 .na
 .Ht %ftp-flags 5 ,
+.Ht $user-name 5 ,
 .Ht erf 8 ,
 .Ht find-file 2 ,
 .Ht file-op 2 ,

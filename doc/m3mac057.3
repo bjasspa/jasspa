@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Jul 5 18:16:21 1999
 .\"
-.Id $Id: m3mac057.3,v 2.7 2004-01-17 22:27:28 jon Exp $
+.Id $Id: m3mac057.3,v 2.8 2004-02-04 22:54:22 jon Exp $
 .Im MicroEmacs shell|command
 .so me.tni
 .TH cvs 3
@@ -23,9 +23,13 @@
 .XI cvs-status - "\*(mS CVS interface - status of files"
 .XI cvs-tag - "\*(mS CVS interface - tag files"
 .XI cvs-update - "\*(mS CVS interface - update directory files"
+.XI %cvs-com 5 "CVS Command line" variable|shell
 .SH NAME
 .Me "|cvs"
 cvs \- \*(mS CVS interface
+.br
+.Me "|%cvs-com"
+%cvs-com \- CVS Command line
 .br
 .Me "|cvs-add"
 cvs-add \- \*(mS CVS interface - add file
@@ -66,7 +70,9 @@ cvs-update \- \*(mS CVS interface - update directory files
 .SH SYNOPSIS
 .na
 .B cvs
-.sp
+.br
+.B %cvs-com
+.sp 1
 .B cvs-add
 .br
 .B cvs-checkout
@@ -227,6 +233,19 @@ The  \fBcvs-update\fR  command updates all files in the current directory, the
 output  being  reported to a new  \fI*cvs-update*\fR  window. Note that unlike
 most cvs sub  commands  this  command  executes  over all files in the current
 buffer's file directory.
+.PP
+.B %cvs-com
+defines the command line used to execute a 
+.Hr cvs 1 
+system command. The default when not defined is \fBcvs\fR.  The 
+.B %cvs-com
+variable is typically re-defined in the user configuration file to add 
+other common options i.e. \fB-z\fR for compression etc. i.e.
+.Me $emf-scheme
+.CS
+set-variable %cvs-com "cvs -z"
+.CE 0
+.Me $ehf-scheme
 .SH NOTES
 \fBcvs\fR and sub-commands are macros defined in file \fCcvs.emf\fR.
 .PP
