@@ -57,6 +57,37 @@ set-variable .fhook-man.item-list-r1 "Sec \\1"
     ; Note that we do a .^H._^H_ check first to ensure we do not mix
     ; bold and italic.
     hilight .hilight.man 64 "\\(.\\)\CH\\1_\CH_\\}[^\CH]" "\\1_" .scheme.bold
+    
+    ; GNU/Linux/Cygwin manual page hilighting.
+    ; Linux uses some non-ASCII characters in manual pages correct.
+    ; Right single quote
+    hilight .hilight.man 64 "_\CH\xe2\x80\x99" "'"            .scheme.italic
+    hilight .hilight.man 64 "\xe2\x80\x99\CH\xe2\x80\x99" "'" .scheme.bold
+    hilight .hilight.man 64 "\xe2\x80\x99"                "'" $global-scheme
+    ; Left single quote
+    hilight .hilight.man 64 "_\CH\xe2\x80\x98" "`"            .scheme.italic
+    hilight .hilight.man 64 "\xe2\x80\x98\CH\xe2\x80\x98" "`" .scheme.bold
+    hilight .hilight.man 64 "\xe2\x80\x98" "`"                $global-scheme
+    ; Right double quote
+    hilight .hilight.man 64 "_\CH\xe2\x80\x9C" "\""           .scheme.italic
+    hilight .hilight.man 64 "\xe2\x80\x9C\CH\xe2\x80\x9C" "\"" .scheme.bold
+    hilight .hilight.man 64 "\xe2\x80\x9C"                "\"" $global-scheme
+    ; Left double quote
+    hilight .hilight.man 64 "_\CH\xe2\x80\x9D" "\""            .scheme.italic
+    hilight .hilight.man 64 "\xe2\x80\x9D\CH\xe2\x80\x9D" "\"" .scheme.bold
+    hilight .hilight.man 64 "\xe2\x80\x9D" "\""                $global-scheme
+    ; Bullet
+    hilight .hilight.man 64 "_\CH\xc2\xb7" "*"                .scheme.italic
+    hilight .hilight.man 64 "\xc2\xb7\CH\xc2\xb7" "*"         .scheme.bold
+    hilight .hilight.man 64 "\xc2\xb7" "*"                    $global-scheme
+    ; Hyphen
+    hilight .hilight.man 64 "_\CH\xe2\x80\x94" "-"            .scheme.italic
+    hilight .hilight.man 64 "\xe2\x80\x94\CH\xe2\x80\x94" "-" .scheme.bold
+    hilight .hilight.man 64 "\xe2\x80\x94" "-"                $global-scheme
+    ; Vertical bar or pipe
+    hilight .hilight.man 64 "_\CH\xe2\x94\x82" "|"            .scheme.italic
+    hilight .hilight.man 64 "\xe2\x94\x82\CH\xe2\x94\x82" "|" .scheme.bold
+    hilight .hilight.man 64 "\xe2\x94\x82" "|"                $global-scheme
 !endif
 
 define-macro aman
