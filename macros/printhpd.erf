@@ -1,0 +1,75 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : Jon Green & Steven Phillips
+;  Last Modified : <000529.1426>
+;
+;  Description   : HP Deskjet printer driver.
+;
+;  Notes
+; 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+"internal" = "0"
+; Separator characters
+"econt" = "\\"                ;; Print continuation character.
+"scont" = ">"                 ;; Print start continuation character
+"xsep" = "-+-"                ;; Horizontal/vertical separator intersection.
+"hsep" = "-"                  ;; Horizontal separator sting - one character.
+"vsep" = " | "                ;; Vertical separator string
+"wsep" = "3"                  ;; The vertical separator width is 3 characters
+
+; Strip blanks from the end of the line.
+"strip" = "1"
+
+"eol" = "\r\n"
+"sop" = ""
+"eop" = "\e&l0H"
+"eof" = "\eE"
+
+; Does bold, underline and italic. Start/End sequences.
+"start"
+{
+ "b" = "\e(s3B"
+ "i" = "\e(s1S"
+ "u" = "\e&d1D"
+}
+"end"
+{
+ "b" = "\e(s0B"
+ "i" = "\e(s0S"
+ "u" = "\e&d@"
+}
+
+"layout"
+{
+ "A4 Portrait"
+ {
+  "192x134"
+  {
+   "paper-x" = "192"
+   "paper-y" = "134"
+   "sof" = "\eE\e&l0L\e&l0E\e&a0L\e(s0P\e(s24H\e(s6V\e&l4C"
+  }
+  " 80x68"
+  {
+   "paper-x" = "80"
+   "paper-y" = "68"
+   "sof" = "\eE\e&l0L\e&l0E\e&a0L"
+  }
+ }
+ "A4 Landscape"
+ {
+  "220x96"
+  {
+   "paper-x" = "220"
+   "paper-y" = "96"
+   "sof" = "\eE\e&l0L\e&l0E\e&a0L\e&l1O\e(s0P\e(s24H\e(s6V\e&l4C"
+  }
+  "110x48"
+  {
+   "paper-x" = "110"
+   "paper-y" = "48"
+   "sof" = "\eE\e&l0L\e&l0E\e&a0L\e&l1O"
+  }
+ }
+}
+
