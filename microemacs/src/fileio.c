@@ -2341,7 +2341,7 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags)
     if((rr > 0) && (dFlags & meRWFLAG_FTPCLOSE) && !meSocketIsBad(ffccsk))
     {
 #ifdef _UNIX
-        meSigRelease() ;
+        meSigHold() ;
 #endif
         if(!(dFlags & meRWFLAG_NOCONSOLE))
             ffUrlFileSetupFlags((dFlags & meRWFLAG_SILENT) ? 1:0) ;
