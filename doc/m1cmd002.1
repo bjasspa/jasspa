@@ -1,0 +1,261 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1988-2005 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.\" Created By: Jon Green
+.\"
+.Id $Id: m1cmd002.1,v 1.1 2005-03-06 08:40:59 jon Exp $
+.Im MicroEmacs function
+.so me.tni
+.TH ne 1
+.XI ne - "\*(nE text editor"
+.SH NAME
+ne - \*(nE text editor
+.SH SYNOPSIS
+.na
+.B ne
+[\fIoptions\fR]
+[\fIfiles ...\fR]
+.sp
+.B ne
+[\|\fB@\fR\|\fIstartupFile\fR\|]
+[\|\fB\-a\fR\|]
+[\|\fB\-b\fR\ \|\fIfile\fR\|]
+[\|\fB\-B\fR\|]
+[\|\fB\-c\fR\|]
+[\|\fB\-h\fR\|]
+[\|\fB\-k\fR[\|\fIkey\fR\|]\ \|\fIfile\fR\|]
+[\|\fB\-l\fR\|\fIlineNo\fR\|]
+[\|\fB\-r\fR\|]
+[\|\fB\-s\fR\|\fIstring\fR\|]
+[\|\fB\-u\fR\|\fIusername\fR\|]
+[\|\fB\-v\fR\|\fIvariable=string\fR\|]
+[\|\fB\-V\fR\|]
+[\|\fB\-x\fR\|]
+[\|\fB\-y\fR\ \|\fIfile\fR\|]
+\fIfiles...\fR
+.ad
+.SH DESCRIPTION
+.B "\*(nE"
+is a cut down version of 
+.B \*(mE 
+\s-1EMACS\s0  text  editor,  based on  Danial
+Lawrences \*(mS.
+.PP
+.B "\*(nE"
+provides the basic \s-1EMACS\s0  editor functions,  allowing multiple files to
+be edited at the same time. The screen may be split into different windows and
+screens,  and text may be moved  freely  from one  window on any screen to the
+next. The  editor  typically  runs in a  console  mode and is set up for basic
+system administration work or system bring up, macro files are not expected to
+be present, the system is still  capable of running a macro file (with limited
+capability),  the default  start-up  file is  \fCne.emf\fR  and is executed at
+start-up if present.
+.PP
+The command line options to
+.B "\*(nE"
+are defined as follows:-
+.IP "\fB@\fR\|\fIstartFile\fR"
+Initialize \*(nE using \fIstartFile\fR\|[\fB.emf\fR]. The default when omitted
+is \fBne.emf\fR. See 
+.Ht start-up 3 
+and 
+.Hl "Command Line Filters" filters - 
+for more information.
+.IP \fB-a\fR
+Toggle the auto-save mode, this toggles the 
+.Ht auto 2m 
+mode. 
+.IP
+\fBNote:\fR  that \*(nS  disables  auto save mode by default and \*(mS enables
+auto save mode by default.  The  behavior of \fB-a\fR is  therefore  different
+between the two editors. 
+.IP \fB\-b\fR
+Load next file as a binary file (binary editor mode, uses
+.Ht binary 2m
+buffer mode).
+.IP \fB-B\fR
+Toggle the backup mode, this toggles the 
+.Ht backup 2m 
+mode. 
+.IP
+\fBNote:\fR  that \*(nS  disables  backup  mode by default  and \*(mS  enables
+backup  mode by  default.  The  behavior  of \fB-B\fR is  therefore  different
+between the two editors. 
+.IP \fB\-c\fR
+Continuation  mode. Load \fB\*(nE\fR last edit session,  restoring the buffers
+to their  previous  loaded state and position.  Note that history mode must be
+enabled. The  \fB\-c\fR  option is generally  used with  windowing  interfaces
+(X-Windows/Microsoft Windows) as the shortcut icon invocation.
+.IP \fB\-h\fR
+Show the help page (does not start the editor).
+.IP \fB\-k\fR[\fIkey\fR]
+Load next file as an encrypted file (uses
+.Ht crypt 2m
+buffer  mode). The  optional  adjoining  argument  can be used to specify  the
+decrypting  key, if this argument is not specify the user will be prompted for
+it on start-up. 
+.IP \fB\-l\fR\|\fIlineNo\fR
+Go to line  \fIlineNo\fR in the next given file. Typically used with utilities
+such a
+.Hr more 1
+where an external editor may be invoked from other viewer.
+.IP \fB\-n\fR
+\s-1UNIX\s0  X-Windows  environments  only and  MicroSoft  Windows  NT console
+versions.  Execute   \fB\*(mE\fR  using  termcap  rather  than  X-Windows  for
+\s-1UNIX\s0; typically used within an \fBxterm\fR shell to fire up \fB\*(mE\fR
+for a quick  edit. For  Microsoft  Windows,  a console  window is  started  as
+opposed to a GUI window.  This  option is not present if a console  version of
+the application has been built.
+.IP \fB\-r\fR
+Read-only, all buffers will be in view mode
+.IP \fB\-s\fR\|\fIstring\fR
+Search for string "\fIstring\fR" in the current buffer. e.g.
+.C "ne -sfoo bar"
+starts  \fB\*(mE\fR,  loads file  \fCbar\fR  and  initiates  a search for
+\fIfoo\fR.  The cursor is left at the end of the string if located,  otherwise
+at the top of the buffer.
+.IP \fB\-u\fR\|\fIusername\fR
+Set the current user name
+.Ht $user-name 5 
+to \fIusername\fR before \*(nS is initialized. 
+.IP \fB\-v\fR\|\fIvariable=string\fR
+Assign the \*(mE \fIvariable\fR with \fIstring\fR. The assignment is performed
+before  the  buffers  are  loaded.  Typically  used  to  change  the  start-up
+characteristics of the startup file(s).
+.IP \fB\-V\fR
+Print the name and version of \*(nS. i.e.
+.IP
+\fCorac% ne -V\fR
+.br
+\fCNanoEmacs 05 - Date 2005/02/24 - sunos\fR
+.IP \fB\-x\fR
+\s-1UNIX\s0  environments. Disable the capture of signals. \fB\*(mE\fR by
+default  captures  an handles  all illicit  signal  interrupts.  The option is
+enabled when  debugging  the source code allowing  exception  conditions to be
+trapped within the debugger.
+.IP \fB\-y\fR
+Load next file as a reduced binary file (uses
+.Ht rbin 2m
+buffer mode).
+.SH ENVIRONMENT
+The following environment variables are used by \fB\*(nE\fR.
+.IP \fBDISPLAY\fR
+\s-1UNIX\s0 environments running X-Windows only. The identity of the X-Windows
+server. Typically set to \fBunix:0.0\fR, refer to the X-Windows  documentation
+for details of this environment variable.
+.IP "\fBMENAME\fR"
+.Ht $MENAME 5 
+is used to override the identity of the user
+.Ht $user-name 5 .
+The variable may be used to determine which start-up  configuration  to use in
+the initialization of \fB\*(mE\fR (\fI$user-name\fR.erf). This is ignored if 
+the \fB-u\fR option is specified on the command line.
+.IP
+Non-\s-1UNIX\s0  platforms  usually need to explicitly  set the  \fB$MENAME\fR
+environment  variable to identify the aforementioned  files. for \s-1MS-DOS\s0
+and early  versions of  Microsoft  Windows this is typically  performed in the
+\fCAUTOEXEC.BAT\fR file.
+.IP \fBPATH\fR
+The \fB$PATH\fR  environment  variable is used on most operating  systems as a
+search path for executable files. This \fB$PATH\fR  environment  variable must
+be defined with \fB\*(mE\fR on the search path. Under \s-1UNIX\s0 this is
+set in the \fC.login\fR, \fC.cshrc\fR or \fC.profile\fR file i.e.
+.RS
+.IP
+export PATH $PATH:/usr/name/ne
+.RE
+.IP
+Within  \s-1MS-DOS\s0 or Microsoft  Windows  environments it is defined in the
+\fCAUTOEXEC.BAT\fR file. e.g.
+.RS
+.IP
+set PATH=%PATH%;c:\\ne
+.RE
+.IP
+\fB\*(mE\fR  utilizes information in the \fB$PATH\fR environment variable
+to locate the start-up files, dictionaries etc.
+.IP \fBTERM\fR
+The terminal identification sting. In \s-1UNIX\s0 environments the environment
+variable  \fB$TERM\fR is set to "\fCvt...\fR", in this case it is assumed that
+the  machine is a server,  and the host  cannot  support X (see  command  line
+option \fB\-n\fR).
+.IP
+In  \s-1MS-DOS\s0  the  environment  variable  is  usually  set to define  the
+graphics  adapter mode.  \fB%TERM\fR  is assigned a string,  understood by the
+\fCme.emf\fR  start-up  file, to set the  graphics  mode.  Predefined  strings
+include:-
+.RS
+.IP \fBE80x50\fR
+Initiates an 80 column by 50 line screen.
+.IP \fBE80x25\fR
+Initiates an 80 column by 25 line screen.
+.IP \fIuserDefined\fR
+A user defined string to set an explicit  graphics card mode. The operation is
+dependent upon the support offered by the graphics adapter.
+.RE
+.TP \fB$MEINSTALLPATH\fR
+.Ht $MEINSTALLPATH 5 
+is an environment  variable that overrides any internally  defined search path
+for \*(nS system macros and defines the root  directory(s) of the \*(nS system
+macros. The presence of the environment variable affects 
+.Ht $search-path 5 .
+.TP \fB$MEUSERPATH\fR
+.Ht $MEUSERPATH 5
+is an  environment  variable  that defines the users  private  directory  
+where user configuration files such as
+.Hl $user-name $user-name 5 \fB.emf\fR,
+.Hl $user-name $user-name 5 \fB.erf\fR
+and personal spelling  dictionaries are stored. This is an absolute  directory
+path. The environment variable sets the \*(nS variable
+.Ht $user-path 5 .
+.IP \fBMEPATH\fR
+.Ht $MEPATH 5
+is an environment variable that may be used to define the absolute search path
+for \*(nS macro files and affects the setting of
+.BR $search-path .
+The path should include the system macros  location(s)  and should include the
+user directory location
+.Ht $user-path 5
+as the first path when the environment variable
+.Ht $MEUSERPATH 5
+is not defined. If  \fB$MEUSERPATH\fR  is defined  then this path name appears
+before the \fB$MEPATH\fR variable to define the user directory location.
+.B $MEPATH
+is not searching, so \s-1ALL\s0 directories to be searched must be included in
+the path specification.
+.IP
+.Ht $MEUSERPATH 5
+is the preferred method used to defined the user directory.
+.SH FILES
+All of the macro files and  dictionaries  are located in the \fB\*(nS\fR  home
+directory. The standard file extensions that are utilized are:-
+.TP
+.Hl ".emf" emf 8
+.\"
+A \fB\*(mE\fR macro file. The following classes of macro file exist:
+.RS
+.IP \fBne.emf\fR
+The default startup file.
+.RE
+.SH "MICROSOFT WINDOWS"
+Microsoft  Windows environments should refer to 
+.Ht me32.ini 8
+for a method of  setting up the  environment  variables  without  editing  the
+\fCAUTOEXEC.BAT\fR configuration file.
+.SH "SEE ALSO"
+.na
+.Ht $MEINSTALLPATH 5 ,
+.Ht $MENAME 5 ,
+.Ht $MEPATH 5 ,
+.Ht $MEUSERPATH 5 ,
+.Ht emf 8 ,
+.Hr emacs 1 " [GNU],"
+.Hr more 1 ,
+.Ht me 1 ,
+.Hr vi 1 .
+.br
+.Hl "Command Line Filters" filters - .
+.ad
+.FH
