@@ -1354,25 +1354,25 @@ meXEventHandler(void)
 
             ss = event.xkey.state ;
             XLookupString(&event.xkey,keyStr,20,&keySym,NULL);
+            /* printf("#1 got key %x, ss=%x \n",(unsigned int) keySym, ss) ;*/
             /* Map Mod2 which is ALT-GR onto A-C */
 #if (defined _SUNOS)
-            /* SunOS Alt-Gr mapped to modifier key 2 */
             /* SunOS <> mapped tp modifier key 4 */
-            if (ss & Mod4Mask|Mod2Mask)
+            if (ss & (Mod4Mask))
             {
-                ss &= ~(Mod4Mask|Mod2Mask);
+                ss &= ~(Mod4Mask);
                 ss |= ControlMask | Mod1Mask;
             }
 #endif
 #if (defined _LINUX)
             /* Linux mapped to modifier key 3 */
-            if (ss & Mod3Mask)
-                ss = (ss & ~Mod3Mask) | ControlMask | Mod1Mask;
+            if (ss & (Mod3Mask))
+                ss = (ss & ~(Mod3Mask)) | ControlMask | Mod1Mask;
 #endif
              
             /* keyStr[19] = '\0' ;
                printf("got key %x, ss=%x [%s]\n",(unsigned int) keySym, ss, keyStr) ;*/
-            /* printf("got key %x, ss=%x \n",(unsigned int) keySym, ss) ;*/
+            /* printf("#2 got key %x, ss=%x \n",(unsigned int) keySym, ss) ;*/
             if(keySym > 0xff)
             {
                 switch (keySym)
@@ -1563,7 +1563,7 @@ meXEventHandler(void)
                 case XK_ISO_Left_Tab:  ii = SKEY_tab | ME_SHIFT; goto special_key;
 #endif
                 default:
-                    /*  printf ("This is a default %d (0x%04x)\n", ii, ii);*/
+                    /* printf ("This is a default %d (0x%04x)\n", ii, ii);*/
                     ii = keySym & 0xff;
                     goto done_key;
                 }
