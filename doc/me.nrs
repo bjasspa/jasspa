@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.23 2004-03-24 00:21:21 jon Exp $
+.Id $Id: me.nrs,v 2.24 2004-03-26 20:46:38 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -2051,6 +2051,41 @@ common editor across all working platforms has been achieved!
 .\"
 .B "7th Release - March 2004"
 .BS
+[040326] Release wrapped - public release tag is \fB20040301\fR for executable
+and macros. 
+.BU    
+[040326]  Support for  \s-1MAC\s0  O/S Darwin  image.  Console  only (no build
+machine available for X-11 version).
+.BU
+[040326] Introduction of \s-1UPX\s0 on Windows and \s-1DOS\s0  executables for
+\fBne\fR only.
+.BU    
+[040326]  Support for  \s-1MS-DOS\s0  long name under  \s-1DJGPP\s0  v2.0. For
+version 2.0 then the  \s-1DJGPP\s0  functions  must be invoked rather than the
+\s-1MS-DOS\s0 \s-1BIOS\s0 calls otherwise the modified short name is returned.
+\s-1DJGPP\s0 v1 is still supported original definitions maintained.
+.BU
+[040326] Added  
+.Ht filetype 3f
+macro to determine the file type of \s-1MS-DOS\s0, Windows or \s-1UNIX\s0.
+.BU    
+[040322] \fI$mouse\fR variables configured under console modes to allow pseudo
+mouse operations to be performed.
+.BU
+[040322] Fixed the \fBwin32s\fR  build and emain.h  definitions. Mouse was not
+supported under \fIwin32s\fR through incorrect configuration definition.
+.BU
+[040322] Key  bindings for the file  browser.  \fCENTER\fR  now handled on the
+reserved fields to sort. \fCBACKSPACE\fR now moves up a directory level.
+.BU
+[040322] Changed the interface to \fBcvs\fR, \fBftp\fR and  \fBfile-browser\fR
+command so that if a numeric  argument of \fC0\fR is given then the  directory
+tree window is not opened, just the \fC*files*\fR buffer.
+.BU
+[040322] AutoIt hook. Thanks to Dr Detlef Groth.
+.BU
+[040322] Added CSS template. Thanks to Gabriel Tabares-Barreiro.
+.BU
 [040318] Fix to Microsoft Windows clipboard when operating with VNC.
 .BU
 [040317] Macro and source release set to "\fC20040301\fR".
