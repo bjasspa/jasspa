@@ -161,6 +161,16 @@ define-macro item-list-create
             set-variable #l8 "default"
         !endif
         !if &not &exi &ind &spr ".fhook-%s.item-list-s1" #l8
+            find-buffer #l6
+            -1 buffer-mode "undo"
+            -1 buffer-mode "view"
+            1 buffer-mode "magic"
+            #l9 buffer-mode "exact"
+            beginning-of-buffer
+            set-mark
+            end-of-buffer
+            -1 kill-region
+            insert-string "<No item list>"
             goto-position "\x86"
             !return
         !endif
