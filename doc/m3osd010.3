@@ -6,7 +6,7 @@
 .\"  Created By    : Steven Phillips
 .\"  Created       : Sat Aug 22 09:00:06 1998
 .\"
-.Id $Id: m3osd010.3,v 2.6 2004-01-11 14:50:08 jon Exp $
+.Id $Id: m3osd010.3,v 2.7 2004-01-11 16:52:42 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH buffer-setup 3
@@ -60,13 +60,13 @@ the main menu's \fBTools\fR sub-menu.
 For file types which have an automatic formatter/viewer  (currently only html)
 enabling  this will simply load the file enabling the source code to be viewed
 and edited. When disabled files of this type will be  automatically  processed
-giving a more readable 'formatted' representation. 
+giving a more readable 'formatted' representation.
 .IP "Insert New Template"
 When  creating  a new  buffer/file  of this type, a default  template  will be
 inserted if this is enabled. When disabled the buffer will remain empty.
 .IP "Fence Display"
 Enables or disables the displaying of matching fences for this file type. Note
-that the way in which the matching fence is display is determined by the 
+that the way in which the matching fence is display is determined by the
 \fBFence Display\fR option on the Platform page of
 .Ht user-setup 3 ;
 the \fBbuffer-setup\fR option is ignored if this option is set to
@@ -97,7 +97,7 @@ Enables the setting up of section
 when enabled the folding key bindings are created.
 .IP "Add Abbreviations"
 Adds the file type's abbreviation file to the buffer using
-.Ht buffer-abbrev-file 2 
+.Ht buffer-abbrev-file 2
 .IP "Search Modes: Exact"
 Enables/disables the
 .Ht exact 2m
@@ -115,19 +115,19 @@ ignored for the current file type.
 .IP "Buffer Modes: Auto"
 Enables/disables the
 .Ht auto 2m
-mode. 
+mode.
 .IP "Buffer Modes: Backup"
 Enables/disables the
 .Ht backup 2m
-mode. 
+mode.
 .IP "Buffer Modes: Indent"
 Enables/disables the
 .Ht indent 2m
-mode. 
+mode.
 .IP "Buffer Modes: Justify"
 Enables/disables the
 .Ht justify 2m
-mode. 
+mode.
 .IP "Buffer Modes: Tab"
 Enables/disables the
 .Ht tab 2m
@@ -138,7 +138,7 @@ ignored for the current file type.
 .IP "Buffer Modes: Time"
 Enables/disables the
 .Ht time 2m
-mode. 
+mode.
 .IP "Buffer Modes: Undo"
 Enables/disables the
 .Ht undo 2m
@@ -149,16 +149,16 @@ ignored for the current file type.
 .IP "Buffer Modes: Wrap"
 Enables/disables the
 .Ht wrap 2m
-mode. 
+mode.
 .SH NOTES
 \fBbuffer-setup\fR is a macro using
 .Ht osd 2 ,
 defined in  \fCbuffstp.emf\fR.  This macro configures the user settings of the
 \fChkXXX.emf\fR files via
-.Ht buffer-init 2 . 
+.Ht buffer-init 3 .
 .SH "SEE ALSO"
 .na
-.Ht buffer-init 2 ,
+.Ht buffer-init 3 ,
 .Ht buffer-help 3 ,
 .Ht user-setup 3 .
 .Hl "File Hooks" fileHooks 2 .

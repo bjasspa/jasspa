@@ -3,7 +3,7 @@
 .\" Copyright (c) 2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac064.3,v 1.5 2004-01-11 14:50:07 jon Exp $
+.Id $Id: m3mac064.3,v 1.6 2004-01-11 16:52:42 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH buffer-init 3
@@ -607,14 +607,14 @@ Show the command in the toolbar. The
 .C .fhook-XXX.command-desc
 variable  should  contain a  readable  name for the  command to display in the
 menu. An optional hot key for selection in any
-.Hl osd osd 3
+.Hl osd osd 2
 is  specified by prefixing  the  character in the string with  \fC\\H\fR.
 .BU "h"
 Show the command in the help screen. The
 .C .fhook-XXX.command-desc
 variable  should  contain a  readable  name for the  command to display in the
 menu. An optional hot key for selection in any
-.Hl osd osd 3
+.Hl osd osd 2
 is specified by prefixing the character in the string with \fC\\H\fR.
 .BU "b"
 Create a buffer key binding for the command, the key to bind is defined by the
@@ -657,7 +657,7 @@ required for each binding.
 .\"
 A short  description  of the command that is used for the help page  (\fCh\fR)
 and toolbar (\fCt\fR). A hot key for use in the
-.Hl osd osd 3
+.Hl osd osd 2
 is specified by prefixing the hot key character with \fC\\H\fR. The field
 may be empty if the field is not  specified for insertion  into the toolbar or
 help page.
@@ -869,7 +869,7 @@ fully in
 .Ht item-list 3 .
 .SS Hilighting
 Buffer hilighting is defined by the
-.Ht hilight 3
+.Ht hilight 2
 command.   Within  the  context  of   \fBbuffer-init\fR   then  the   standard
 definitions and name space conventions should be adhered to:-
 .Me "$emf-scheme"
@@ -892,7 +892,7 @@ definitions and name space conventions should be adhered to:-
 .Me "$ehf-scheme"
 .SS Indentation
 Buffer indentation is defined by the
-.Ht indent 3
+.Ht indent 2
 command.   Within  the  context  of   \fBbuffer-init\fR   then  the   standard
 definitions  and name  space  conventions  should be  adhered  to. The  buffer
 indentation scheme uses the hilighting  variable, if hilighting is not defined
