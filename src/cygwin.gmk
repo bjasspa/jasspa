@@ -103,7 +103,7 @@ install: me
 	@echo "install done"
 
 clean:
-	$(RM) me med men *.o *.od *.on core
+	$(RM) me.exe med.exe men.exe *.o *.od *.on core
 
 spotless: clean
 	$(RM) tags *~
@@ -116,6 +116,7 @@ me:	$(OBJ)
 men:	$(NOBJ)
 	$(RM) $@.exe
 	$(LD) $(LDFLAGS) -o $@ $(NOBJ) $(LIBS)
+	$(STRIP) $@.exe
 
 med:	$(DOBJ)
 	$(RM) $@
