@@ -3,7 +3,7 @@
  * JASSPA MicroEmacs - www.jasspa.com
  * crypt.c - Encryption Routines.
  *
- * Copyright (C) 1986, Dana L. Hoggatt
+ * Copyright (C) 1986 Dana L. Hoggatt
  * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
