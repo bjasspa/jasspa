@@ -1,0 +1,136 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2004 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     Thu Oct 21 2004
+; Synopsis:    Macros to implement mouse rectangle regions
+; Authors:     Steven Phillips
+;
+0 define-macro mouse-rectangle-mark
+    set-variable #l0 $mouse-x
+    set-variable #l1 $mouse-y
+    ; go to the right line first
+    !if &not &equ .mouse-event.y #l1
+        !if &les #l1 $window-mode-line
+            set-variable #l3 &sub $window-mode-line $window-depth
+            !if &and #l1 &not &les #l1 #l3
+                set-variable .mouse-event.y #l1
+            !else
+                set-variable .mouse-event.y &add #l3 1
+                !force &sub .mouse-event.y #l1 scroll-up
+            !endif
+        !else
+            set-variable .mouse-event.y &sub $window-mode-line 1
+            !force &sub #l1 .mouse-event.y scroll-down
+        !endif
+        !force &sub $mouse-y $cursor-y forward-line
+    !endif
+    !if &not &equ .mouse-event.x #l0
+        !if &gre #l0 &sub $window-scroll-bar 3
+            set-variable .mouse-event.x &sub $window-scroll-bar 2
+            !force &sub $mouse-x .mouse-event.x scroll-right
+        !else
+            set-variable #l3 &sub $window-scroll-bar $window-width
+            !if &gre #l0 #l3
+                set-variable .mouse-event.x #l0
+            !else
+                set-variable .mouse-event.x #l3
+                !force &sub .mouse-event.x $mouse-x scroll-left
+            !endif
+        !endif
+        ;!force set-variable $window-acol &add $window-acol &sub #l0 $cursor-x
+    !endif
+    1 screen-update
+    !if &les &set #l2 &sub .mouse-drop-t1.sc $window-x-scroll 0
+        set-variable #l2 0
+    !elif &not &les #l2 $window-width
+        set-variable #l2 &sub $window-width 1
+    !endif
+    set-variable #l2 &add #l2 &sub $window-scroll-bar $window-width
+    !if &equ #l2 .mouse-event.x
+        !return
+    !elif &gre #l2 .mouse-event.x
+        set-variable #l3 &sub #l2 1
+        set-variable #l2 .mouse-event.x
+    !else
+        set-variable #l3 &sub .mouse-event.x 1
+    !endif
+    !if &les &set #l0 &sub .mouse-drop-t1.sl $window-y-scroll 1
+        set-variable #l0 1
+    !elif &gre #l0 $window-depth
+        set-variable #l0 $window-depth
+    !endif
+    set-variable #l0 &add #l0 &sub &sub $window-mode-line $window-depth 1
+    set-variable #l1 .mouse-event.y
+    !if &gre #l0 #l1
+        set-variable #l4 #l0
+        set-variable #l0 #l1
+        set-variable #l1 #l4
+    !endif
+    !while &les #l0 #l1
+        3 screen-poke #l0 #l2 .scheme.hlred @fs #l0 #l2
+        3 screen-poke #l0 #l3 .scheme.hlred @fs #l0 #l3
+        set-variable #l0 &add #l0 1
+    !done
+    3 screen-poke #l0 #l2 .scheme.hlred @fs #l0 #l2
+    1 screen-poke #l0 #l3 .scheme.hlred @fs #l0 #l3
+
+!emacro
+
+0 define-macro mouse-pick-rectangle
+    ; set the cursor position to the mouse position
+    0x21 set-position "\x82"
+    set-variable $delay-time $repeat-time
+    set-variable .mouse-drop-t1.sl $window-line
+    set-variable .mouse-drop-t1.sc &add $window-xcl-scroll &sub $mouse-x &sub $window-scroll-bar $window-width
+    ; Scroll the screen if we are marking.
+    set-variable .mouse-event.scroll $scroll
+    set-variable $scroll 3
+    global-bind-key mouse-rectangle-mark &spr .mouse-event.mask "time"
+!emacro
+
+0 define-macro mouse-drop-rectangle
+    ; ensure the .mouse-event.x & .y variables are correct
+    !force mouse-rectangle-mark
+    set-variable #l4 &add $window-y-scroll &sub .mouse-event.y &sub &sub $window-mode-line $window-depth 1
+    set-variable #l5 &add $window-x-scroll &sub .mouse-event.x &add &sub $window-scroll-bar $window-width 1
+    set-variable $delay-time 500
+    set-variable $scroll .mouse-event.scroll
+    !if @#
+        set-variable #l0 &bmod "view"
+        set-variable #l1 &bmod "edit"
+        set-variable #l2 &bmod "undo"
+        -1 buffer-mode view
+        1 buffer-mode undo
+    !endif
+    set-variable #l3 1
+    set-variable $window-line .mouse-drop-t1.sl
+    !force set-variable $window-acol .mouse-drop-t1.sc
+    !if &gre $window-acol .mouse-drop-t1.sc
+        backward-char
+        set-variable #l3 &add #l3 1
+    !endif
+    !if &les $window-acol .mouse-drop-t1.sc
+        &sub .mouse-drop-t1.sc $window-acol insert-space @mna
+    !endif
+    set-mark
+    set-variable $window-line #l4
+    !force set-variable $window-acol #l5
+    !if &gre $window-acol #l5
+        backward-char
+    !endif
+    !if &les $window-acol #l5
+        &sub #l5 $window-acol insert-space @mna
+        set-variable #l3 &add #l3 1
+    !endif
+    kill-rectangle @mna
+    !if @#
+        ; this is a copy rectangle - undo the kill and restore the buffer state
+        undo
+        &cond #l2 1 -1 buffer-mode "undo"
+        &cond #l1 1 -1 buffer-mode "edit"
+        &cond #l0 1 -1 buffer-mode "view"
+    !endif
+    1 screen-update
+!emacro
