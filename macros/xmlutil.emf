@@ -1,19 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2001-2004 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Author        : $Author: bill $
-;  Created By    : Steven Phillips
-;  Created       : Mon Sep 13 17:11:16 2004
-;  Last Modified : <040915.2320>
+; Created:     Mon Sep 13 2004
+; Synopsis:    XML language utility macros
+; Authors:     Steven Phillips
 ;
-;  Description
-;
-;  Notes
-;
-;  History
-;
-;  Copyright (c) 2004 PTC.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 define-macro xml-forward-tag
     forward-char
     set-variable #l9 &bmod "magic"
@@ -207,7 +200,6 @@ define-macro xml-backward-tag
         set-variable $window-col #l0
     !endif
 !emacro
-11 global-bind-key xml-get-tag-info "C-j"
 
 0 define-macro xml-goto-matching-tag-b
     set-variable #l2 &lget #p9 6

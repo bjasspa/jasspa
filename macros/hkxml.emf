@@ -5,7 +5,7 @@
 ;
 ; Created:     Wed Mar 14 2001
 ; Synopsis:    XML hilighting.
-; Authors:     Jon Green
+; Authors:     Jon Green & Steven Phillips
 ;
 ; Notes:
 ;     First XML hook, simple hilighting based on the HTML. Differs
