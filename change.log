@@ -4,9 +4,32 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <040828.0907>
+>  Last Modified : <041002.1344>
 >
     
+    [041002] Added X-Windows drag and drop support using xdnd.
+    
+    [040930] Added HTML, XML and SGML close bracket auto expansion.
+
+    [040930] Added XML and HTML verification macro. Added XML utilities macros
+             to allow next and  previous tag to be matched. The XML  utilities
+             are also used by SGML.
+    
+    [040930] Added  xxxx-pre-expand-abbrev  hook so that  macros may add their
+             own expansion methods. 
+    
+    [040917] Added <...> as supported fences.
+    
+    [040917] Fixed the -1 add-next-line ignore line feature.
+
+    [040915] cvs-add  looks for a Tags file in the CVS  directory and sets the
+             GUI  state  appropriately.  Added  server to the  cvs-state  line
+             mangling.
+
+    [040909] cvs GUI updated with new features. Added repository set up to the
+             UI. Reduced wait time on long commands by using ipipe. Allowed -z
+             option to be used with %cvs-com.
+
     [040828] About page includes the century in the date (suggested by -Th)
     
     [040824] Fix for man page hyper-link when includes -/./_ characters.
