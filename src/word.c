@@ -73,7 +73,7 @@
  */
 
 #define	__WORDC			/* Define filename */
-#define meTABCHAR '\t'
+
 #include "emain.h"
 
 /*
@@ -398,7 +398,7 @@ wrapWord(int f, int n)
     do
     {
         c = meLineGetChar(frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset) ;
-        if((c == ' ') || (c == TAB))
+        if((c == ' ') || (c == meTABCHAR))
         {
             if(last == 1)
                 cnt = frameCur->windowCur->dotOffset+1 ;
@@ -415,7 +415,7 @@ wrapWord(int f, int n)
     else
     {
         frameCur->windowCur->dotOffset = off ;
-        if(((c = meLineGetChar(frameCur->windowCur->dotLine,off)) != ' ') && (c != TAB))
+        if(((c = meLineGetChar(frameCur->windowCur->dotLine,off)) != ' ') && (c != meTABCHAR))
             return meTRUE ;
     }
     off = meLineGetLength(frameCur->windowCur->dotLine) - off ;
@@ -562,7 +562,7 @@ justify(int leftMargin, int leftDoto)
     while(len > 0)
     {
         len-- ;
-        if(((cc = meLineGetChar(frameCur->windowCur->dotLine,len)) != ' ') && (cc != TAB))
+        if(((cc = meLineGetChar(frameCur->windowCur->dotLine,len)) != ' ') && (cc != meTABCHAR))
         {
             len++ ;
             break ;
@@ -599,7 +599,7 @@ justify(int leftMargin, int leftDoto)
     /* check for and trash any TABs on the rest of the line */
     while((cc=meLineGetChar(frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset)) != '\0')
     {
-	if (cc == TAB)
+	if (cc == meTABCHAR)
 	{
 	    /* Get expansion width of TAB */ 
 	    int jj = next_tab_pos(getccol());
@@ -730,13 +730,13 @@ lookahead(meInt fillState)
     for (ii = 0, last_c = (char) 1; ii < limit; ii++)
     {
         c = meLineGetChar (frameCur->windowCur->dotLine, ii);
-        if ((meStrchr (fillbullet, last_c) != NULL) && (c == ' ' || c == TAB))
+        if ((meStrchr (fillbullet, last_c) != NULL) && (c == ' ' || c == meTABCHAR))
         {
             /* Go to the end of the spaces. */
             while (++ii < limit)
             {
                 c = meLineGetChar(frameCur->windowCur->dotLine, ii);
-                if ((c != ' ') && (c != TAB))
+                if ((c != ' ') && (c != meTABCHAR))
                     break;
             }
             
@@ -763,7 +763,7 @@ lookahead(meInt fillState)
                     for (jj = 0; jj < jlen; jj++)
                     {
                         c = meLineGetChar(frameCur->windowCur->dotLine, jj);
-                        if ((c != ' ') && (c != TAB))
+                        if ((c != ' ') && (c != meTABCHAR))
                             break;
                     }
                 
@@ -1001,7 +1001,8 @@ fillPara(int f, int n)
         
         if(f == 0)
             f = ((ilength > frameCur->windowCur->dotLineNo) ||
-                 ((ilength == frameCur->windowCur->dotLineNo) && icol)) ? 2:1 ;
+                 ((ilength == frameCur->windowCur->dotLineNo) &&
+                  (icol > frameCur->windowCur->dotOffset))) ? 2:1 ;
             
         /* Skip non-formatting paragraphs */
         if ((fillignore != NULL) &&

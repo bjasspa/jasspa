@@ -1452,12 +1452,12 @@ findToken(meHilight *root, meUByte *text, meUByte mode,
     {                                                                        \
         if(cc == ' ')                                                        \
             disLineBuff[dstPos++] = displaySpace ;                           \
-        else if(cc == TAB)                                                   \
+        else if(cc == meTABCHAR)                                             \
             disLineBuff[dstPos++] = displayTab ;                             \
         else                                                                 \
             disLineBuff[dstPos++] = cc ;                                     \
     }                                                                        \
-    else if(cc == TAB)                                                       \
+    else if(cc == meTABCHAR)                                                 \
     {                                                                        \
         int ii=get_tab_pos(dstPos) ;                                         \
         disLineBuff[dstPos++] = displayTab ;                                 \
@@ -2078,7 +2078,7 @@ hilightLookBack(meWindow *wp)
     int ii ;                                                                 \
     if(isDisplayable(cc))                                                    \
         ii = 1 ;                                                             \
-    else if(cc == TAB)                                                       \
+    else if(cc == meTABCHAR)                                                 \
         ii = get_tab_pos(dstPos) + 1 ;                                       \
     else if(cc < 0x20)                                                       \
         ii = 2 ;                                                             \

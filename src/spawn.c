@@ -1068,7 +1068,7 @@ cant_handle_this:
             }
             else if(*p1 == '\0')
                 p1[1] = '\0' ;
-            else if((cc == TAB) && (get_tab_pos(curOff) == 0))
+            else if((cc == meTABCHAR) && (get_tab_pos(curOff) == 0))
             {
                 /* theres a strangeness with vt100 tab as it doesn't
                  * seem to erase the next character and seems to be used
@@ -1083,7 +1083,7 @@ cant_handle_this:
             *p1++ = cc ;
             if(isDisplayable(cc))
                 curOff++ ;
-            else if(cc == TAB)
+            else if(cc == meTABCHAR)
                 curOff += get_tab_pos(curOff) + 1 ;
             else if (cc  < 0x20)
                 curOff += 2 ;

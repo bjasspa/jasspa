@@ -384,7 +384,7 @@ windCurLineOffsetEval(meWindow *wp)
         {
             if(isDisplayable(cc))
                 ii = 1 ;
-            else if(cc == TAB)
+            else if(cc == meTABCHAR)
                 ii = get_tab_pos(pos) + 1;
             else if (cc < 0x20)
                 ii = 2 ;
@@ -528,12 +528,12 @@ renderLine (meUByte *s1, int len, int wid)
             wid++ ;
             if(cc == ' ')
                 *s2++ = displaySpace ;
-            else if(cc == TAB)
+            else if(cc == meTABCHAR)
                 *s2++ = displayTab ;
             else
                 *s2++ = cc ;
         }
-        else if(cc == TAB)
+        else if(cc == meTABCHAR)
         {
             int ii=get_tab_pos(wid) ;
 

@@ -40,6 +40,8 @@
 #define meTIME_STAMP_SIZE_MAX 40                /* Max len of a time stamp str. */
 
 #define meNLCHAR       0x0a                     /* the \n char ^J, not ^M       */
+#define meBELLCHAR     0x07                    
+#define meTABCHAR      '\t'
 
 #define ME_SHIFT       0x0100                   /* special key shift            */
 #define ME_CONTROL     0x0200                   /* special key conrtol          */

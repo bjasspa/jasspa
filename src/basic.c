@@ -521,7 +521,7 @@ windowBackwardParagraph(int f, int n)
             for (i = 0; i < line_len ; i++)
             {
                 c = meLineGetChar (frameCur->windowCur->dotLine, i);	/* Get character */
-                if (c != TAB && c != ' ')	/* Character on line ?? */
+                if (c != meTABCHAR && c != ' ')	/* Character on line ?? */
                 {
                     /*---	Yes - prvious line. Exit loop */
                     
@@ -583,7 +583,7 @@ windowForwardParagraph(int f, int n)
             for (i = 0; i < line_len ; i++)
             {
                 c = meLineGetChar (frameCur->windowCur->dotLine, i);	/* Get character */
-                if (c != TAB && c != ' ')	/* Character on line ?? */
+                if (c != meTABCHAR && c != ' ')	/* Character on line ?? */
                 {
                     /*---	Goto the next line. Break ot of loop. */
                     frameCur->windowCur->dotLine = meLineGetNext(frameCur->windowCur->dotLine);
