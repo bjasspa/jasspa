@@ -4,14 +4,26 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <050226.0013>
+>  Last Modified : <050306.0315>
 >
+
+    [050306] Changed the date format of the -V command  line option to include
+             the century, same format as the about(2) buffer.
+
+    [050302] HTLP and PHP - fixed indent problems.
+    
+    [050302] Perl template - fixed indent  problems caused by not skipping the
+             =~ type regex's
+
+    [050302] TCL template - fixed continuation and comment indent bug.
+        
+    [050302] Added support for R/S-plus (.r) files - thanks to Detlef.
 
     [050225] HTML  template  - fixed an  indent  which was fixed at "2" rather
              than "t" and added comment skipping indent rules
 
-    [050225] dos2unix,  unix2dos  and unix2win - Removed use of &spr in favour
-             of &cat so dos2unix etc work in ne.
+    [050225] dos2unix, unix2dos and unix2win - Removed use of &spr in favor of
+             &cat so dos2unix etc work in ne.
 
     [050225] Tracing a problem  with  hilighting  a token of the form  "AB*$",
              works if there is a B but  fails if there  are no 'B's, i.e. only
@@ -27,7 +39,7 @@
              where "\c#" is capitalise,  "\l#" is lower "\u#" is upper and "#"
              is the group number (0-9, &)
 
-    [050225] Regular expressions - changed syntax of "\s?" and "\S?" in favour
+    [050225] Regular  expressions - changed syntax of "\s?" and "\S?" in favor
              of perl's  simpler  "\s" and "\S" for a  whitespace  char  class.
              Added new character  classes "\d" = digits, "\D" != digits "\h" =
              hexdigits  "\H" != hexdigits  "\l" = lowercase  "\L" != lowercase
