@@ -875,7 +875,7 @@ define-macro file-browser-swap-buffers
         !abort
     !endif
     set-variable #l0 &ind &cat ".find-file.file" 1
-    2 osd-entry "Rename File" "\HNew Name : " #l0 .dirlst-pos.x .dirlst-pos.y 20
+    2 osd-entry "Rename File" "\HNew Name: " #l0 .dirlst-pos.x .dirlst-pos.y 20
     !if &seq &set #l1 &stat "t" &cat .find-file.file-dir #l0 "R"
         2 osd-xdialog "Rename File" &spr "  %s already exists, replace?  " #l0 2 .dirlst-pos.x .dirlst-pos.y " \HYes " " \HNo "
         !if &equ $result 2
@@ -944,7 +944,7 @@ define-macro file-browser-swap-buffers
 0 define-macro dirlst-new-folder
     dirlst-pos -10 -4
     set-variable #l0 ""
-    2 osd-entry "New Folder" "Folder \HName : " #l0 .dirlst-pos.x .dirlst-pos.y 20
+    2 osd-entry "New Folder" "Folder \HName: " #l0 .dirlst-pos.x .dirlst-pos.y 20
     0x100 file-op #l0
     !if &band .find-file.flags 1
         dirlst-refresh
@@ -979,7 +979,7 @@ osd .osd.dirlst 120 ""  "Re\Hfresh"             f dirlst-refresh
 osd .osd.dirlst 130 ""  "\HAuto-Refresh: on "   f dirlst-auto-refresh
 osd .osd.dirlst 99  ""  "\HInvert Selection"      f dirlst-tag-invert
 
-0 define-macro dirlst-popup-menu
+0 define-macro dirlst-context-menu
     !if :tag-count
         osd .osd.dirlst  10 ""  "\HOpen"         f dirlst-tag-open
         osd .osd.dirlst  20 ""  "Cu\Ht"          f dirlst-tag-cut
@@ -1049,7 +1049,7 @@ osd .osd.dirlst 99  ""  "\HInvert Selection"      f dirlst-tag-invert
     !if &seq #l0 $buffer-bname
         ; same buffer - no drag - do popup menu
         goto-position "\x83"
-        dirlst-popup-menu
+        dirlst-context-menu
         !return
     !endif
     ; what type of buffer is the destination buffer?
