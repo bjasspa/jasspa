@@ -20,3 +20,9 @@ add-next-line "*compile*" "%f:%l:"
 ; platforms. Nobody is going to change this are they ??
 ;
 set-variable %diff-com "diff --context --minimal --ignore-space-change --recursive"
+;
+; Set up the info path
+;
+!if &not &exi $INFOPATH
+    set-variable $INFOPATH "/usr/info"
+!endif
