@@ -2,6 +2,7 @@
 ; Copyright (C) 1999-2004 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ; Description: Basic Black on Cream
+set-variable $system &band $system &bnot 0x020
 set-variable .hilight.flags 7
 ; Create the colors first
 add-color &set .col0 0 0 0 0
@@ -102,3 +103,4 @@ add-color-scheme .scheme.mi3 .col5 .col8 .col5 .col7 .col7 .col3 .col7 .col9 0 8
 add-color-scheme .scheme.met-back .col12 .col0 .col7 .col0 .col8 .col0 .col9 .col0 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.met-fore1 .col11 .col0 .col12 .col0 .col5 .col0 .col7 .col0 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.met-fore2 .col8 .col0 .col9 .col0 .col11 .col0 .col12 .col0 0 8 0 8 0 8 0 8
+

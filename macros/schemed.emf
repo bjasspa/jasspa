@@ -2,6 +2,7 @@
 ; Copyright (C) 1999-2004 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ; Description: Default White on Black
+set-variable $system &band $system &bnot 0x020
 set-variable .hilight.flags 7
 ; Create the colors first
 add-color &set .col0 0 200 200 200

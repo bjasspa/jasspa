@@ -2,6 +2,7 @@
 ; Copyright (C) 1999-2004 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ; Description: Sandy Shores
+set-variable $system &band $system &bnot 0x020
 set-variable .hilight.flags 15
 ; Create the colors first
 add-color &set .col0 0 0 0 0
@@ -32,7 +33,7 @@ add-color &set .col24 24 152 198 254
 add-color &set .col25 25 233 215 253
 add-color &set .col26 26 187 242 247
 ; Set the required cursor-color
-set-variable $cursor-color .col8
+set-variable $cursor-color .col13
 ; Create the color schemes
 ; Standard
 add-color-scheme $global-scheme .col0 .col1 .col0 .col2 .col0 .col3 .col0 .col3 0 8 0 8 0 8 0 8
