@@ -1,0 +1,52 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1999-2005 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.\"  Created By    : Jon Green
+.\"  Created       : Thu Jun 24 22:19:53 1999
+.\"
+.Id $Id: m9typ040.9,v 1.1 2005-01-23 16:51:21 jon Exp $
+.Im MicroEmacs filetype
+.so me.tni
+.TH verilog 9
+.XI verilog - "Verilog hardware description language"
+.XI v - "Verilog hardware description language"
+.SH SYNOPSIS
+Verilog \- Verilog hardware description language
+.SH FILES
+.na
+.B hkverilg.emf
+\- Verilog hardware description language hook definition
+.ad
+.SH EXTENSIONS
+.na
+\fB.v\fR \- Verilog file
+.ad
+.SH DESCRIPTION
+The  \fBVerilog\fR  file type template  provides  simple  highlighting  of the
+Verilog  hardware  description  language.  \fB.v\fR  files  are  automatically
+recognized as Verilog files.
+.IP \fBHilighting\fR
+The  hilighting  features  allow  commands,  variables  and  operators  of the
+language to be differentiated and rendered in different colors.
+.IP \fBComments\fR
+Comments  may be formatted  using  \fC\*eo\fR,  which  reformats  the comments
+according  to  the  current  fill  paragraph.
+.IP "\fBShort Cuts\fR"
+The short cut keys used within the buffer are:-
+.IP
+\fB\*eh\fR \- Key binding help information.
+.br
+\fB\*cc \*cc\fR \- Comment out the current line.
+.br
+\fB\*cc \*cd\fR \- Uncomment the current line.
+.br
+\fB\*cc \*ce\fR \- Comment to the end of the line with hash (#).
+.br
+\fB\*cc \*co\fR \- Format a comment
+.SH "SEE ALSO"
+.na
+.Hl "Supported File Types" FileTypes -
+.ad
+.FH
