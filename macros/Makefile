@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040223.2119>
+# Last Modified: <20040317.2022>
 #
 ##############################################################################
 
@@ -24,8 +24,9 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		\
 	dmf.emf		docmacro.emf	docutl.emf	dos.emf		\
 	dos2unix.emf	draw.emf	\
 	ehftools.emf	emftags.emf	etfinsrt.emf	\
-	fattrib.emf	favorite.emf	fileopen.emf	findbuff.emf	\
-	fold.emf	format.emf	freebsd.emf	ftp.emf		\
+	fattrib.emf	favorite.emf	fileopen.emf	find.emf	\
+	findbuff.emf	fold.emf	format.emf	freebsd.emf	\
+	ftp.emf		\
 	games.emf	gdiff.emf	gentags.emf	\
 	hkada.emf	hkasmx86.emf	hkasn1.emf	hkasp.emf	\
 	hkawk.emf	\
