@@ -186,11 +186,6 @@ define-macro fold-exit
             !if &equ &band $line-flags 0x44 0x44
                 !if &equ $line-scheme .scheme.fold-open
                     !force 2 narrow-buffer
-                    set-variable #l0 $window-line
-                    end-of-buffer
-                    backward-line
-                    !force 2 narrow-buffer
-                    set-variable $window-line #l0
                     fold-close
                     !return
                 !endif
@@ -217,11 +212,6 @@ define-macro fold-exit-all
             !if &equ &band $line-flags 0x44 0x44
                 !if &equ $line-scheme .scheme.fold-open
                     !force 2 narrow-buffer
-                    set-variable #l0 $window-line
-                    end-of-buffer
-                    backward-line
-                    !force 2 narrow-buffer
-                    set-variable $window-line #l0
                     fold-close
                     !goto next
                 !endif

@@ -14,17 +14,33 @@ define-macro fhook-python
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-python.setup &reg "/history" "fhook/python" "ghiopx"
-set-variable .fhook-python.setup-mask "aeghikmoptux"
+set-variable .fhook-python.setup &reg "/history" "fhook/python" "fghiopx"
+set-variable .fhook-python.setup-mask "aefghikmnoptux"
 set-variable .fhook-python.comment "|#||#|# | #||"
 
-!if &and &sin "h" .fhook-python.setup &band .hilight.flags 0x02 
+; Set up collapse for python
+set-variable .fhook-python.collapse-open  "^{"
+set-variable .fhook-python.collapse-close "^}"
+set-variable .fhook-python.collapse-mopen  "-1"
+set-variable .fhook-python.collapse-mclose "1"
+set-variable .fhook-python.collapse-mnext "-1"
+
+; setup item-list
+set-variable .fhook-python.item-list-s1 "^[ \t]*def[ \t]+\\(\\w+\\)"
+set-variable .fhook-python.item-list-r1 "Def \ecB\\1\ecA"
+set-variable .fhook-python.item-list-s2 "^[ \t]*class*[ \t]+\\(\\w+\\)\\([ \t]+:\\|[ \t]*{\\|[ \t]*$\\)"
+set-variable .fhook-python.item-list-r2 "Class \ecB\\1\ecA"
+
+!if &and &sin "h" .fhook-python.setup &band .hilight.flags 0x02
     !if &not &exist .hilight.python
         set-variable .hilight.python &pinc .hilight.next 1
     !endif
     0 hilight .hilight.python 0                     $global-scheme
     hilight   .hilight.python 2 "#"                 .scheme.comment
     hilight   .hilight.python 4 "\"" "\"" "\\"      .scheme.string
+    hilight   .hilight.python 0 "\\["               .scheme.string
+    hilight   .hilight.python 0 "\\]"               .scheme.string
+    ; Quote
     hilight   .hilight.python 4 "'" "'" "\\"        .scheme.quote
     ; Variables
     hilight   .hilight.python 1 "\\.real"           .scheme.variable
@@ -64,8 +80,8 @@ set-variable .fhook-python.comment "|#||#|# | #||"
     hilight   .hilight.python 1 "then"              .scheme.keyword
     hilight   .hilight.python 1 "while"             .scheme.keyword
     ; Operators
-    hilight   .hilight.python 0 "\\["               .scheme.string
-    hilight   .hilight.python 0 "\\]"               .scheme.string
+    hilight   .hilight.python 0 "("                 .scheme.operator
+    hilight   .hilight.python 0 ")"                 .scheme.operator
     hilight   .hilight.python 1 ":"                 .scheme.operator
     hilight   .hilight.python 1 "<"                 .scheme.operator
     hilight   .hilight.python 1 ">"                 .scheme.operator
@@ -95,6 +111,9 @@ set-variable .fhook-python.comment "|#||#|# | #||"
     hilight   .hilight.python 1 "<<"                .scheme.operator
     hilight   .hilight.python 1 ">>"                .scheme.operator
     hilight   .hilight.python 1 "len"               .scheme.operator
+    hilight   .hilight.python 1 "and"               .scheme.operator
+    hilight   .hilight.python 1 "or"                .scheme.operator
+    hilight   .hilight.python 1 "not"               .scheme.operator
     hilight   .hilight.python 1 "min"               .scheme.operator
     hilight   .hilight.python 1 "\\.append"         .scheme.operator
     hilight   .hilight.python 1 "\\.count"          .scheme.operator
