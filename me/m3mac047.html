@@ -1,8 +1,8 @@
 <HTML>
 <HEAD><TITLE>expand-abbrev-handle(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 expand-abbrev-handle(3)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
@@ -20,22 +20,34 @@ expand-abbrev-handle(3)</H1>
 <UL><P><B>expand-abbrev-handle</B> pulls together all forms of abbreviation expansion into a single command so that it can be bound to a single key. The abbreviation must be an alpha-numeric string and the cursor must be one position to the right of the abbreviation (which must not be alpha-numeric) when this command is called. The command attempts to expand the abbreviation using the following commands in turn: 
 <P>
 <A HREF="m2cmd051.html">expand-abbrev(2)</A> 
-<UL><P>Uses a buffer specific and global abbreviation files, if set, to look up the abbreviation. 
+<UL><P>Uses a buffer specific and global abbreviation files, if set, to look up the abbreviation. The use of the abbreviation file can be disabled using 
+<A HREF="m3osd010.html">buffer-setup(3)</A>. 
 </UL><P>
-<A HREF="m3mac045.html">iso-accents-expand(3)</A> 
-<UL><P>Expands ISO accent letter if the expansion mode is enabled. 
+<A HREF="m3mac045.html">expand-iso-accents(3)</A> 
+<UL><P>Expands ISO accent letter if the expansion mode is enabled via either the 
+<A HREF="m3osd000.html">user-setup(3)</A> General Page or by using the 
+<A HREF="m3mac045.html">iso-accents-mode(3)</A> command. 
+</UL><P>
+<A HREF="m3mac062.html">expand-look-back(3)</A> 
+<UL><P>Looks for a word starting the same in the current buffer's last 100 lines, this can be enabled in the 
+<A HREF="m3osd000.html">user-setup(3)</A> General page. 
 </UL><P><B>Buffer specific expansion</B> 
 <UL><P>Executes a buffer specific abbreviation expansion if the current buffer's 
 <A HREF="m2cmd202.html">file hook</A> supports abbreviation expansion. 
 </UL><P><B>Word expansion</B> 
-<UL><P>If the current buffer does not support file type specific expansion and the variable <B>.spell-complete-word.on</B> is set to <TT>1</TT> the abbreviation is assumed to be the start of a word and completed against the dictionary of the user's current language. 
+<UL><P>If the current buffer does not support file type specific expansion and Word Expansion is enabled via the 
+<A HREF="m3osd000.html">user-setup(3)</A> General page (<TT>Dict'n</TT> setting) expansion is attempted using the 
+<A HREF="m3mac048.html">expand-word(3)</A> command which expands the current partial word using the dictionary of the user's current language; warning - this can be slow! 
 </UL><P>The command exits after first command to successfully expand or if none expand the command fails. See the help in the individual expansion commands for more help. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
+<A HREF="m3osd000.html">user-setup(3)</A>, 
 <A HREF="m2cmd051.html">expand-abbrev(2)</A>, 
-<A HREF="m3mac045.html">iso-accents-expand(3)</A>. </UL>
+<A HREF="m3mac045.html">expand-iso-accents(3)</A>, 
+<A HREF="m3mac062.html">expand-look-back(3)</A>, 
+<A HREF="m3mac048.html">expand-word(3)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2001/12/18</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2004/01/11</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>

@@ -1,8 +1,8 @@
 <HTML>
 <HEAD><TITLE>translate-key(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 translate-key(2)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
@@ -100,7 +100,7 @@ translate-key&nbsp;&quot;esc&nbsp;[&nbsp;5&nbsp;^&quot;&nbsp;&quot;C-page-up&quo
 </PRE></UL>
 <P>When a <TT>mouse-pick-1</TT> key is generated MicroEmacs must wait to see if a <TT>mouse-pick-3</TT> key is next and therefore translate both to a single <TT>mouse-pick-2</TT> key. This wait time is usually a quarter of a second but this makes the left button unusable for dragging regions etc as the delay is too long. By giving a argument of 10ms the delay is long enough for a simultaneous left and right button press but short enough for the left button to still be usable on its own. 
 <P>The +ve numeric argument can be very useful for delaying MicroEmacs as well, for example, the character string &quot;<TT>'e</TT>&quot; can be converted to e-accute using 
-<A HREF="m3mac045.html">iso-accents-expand(3)</A>. This could be performed automatically using translate-key as follows: <UL>
+<A HREF="m3mac045.html">expand-iso-accents(3)</A>. This could be performed automatically using translate-key as follows: <UL>
 <PRE>1000&nbsp;translate-key&nbsp;&quot;'&nbsp;e&quot;&nbsp;&quot;\xE9&quot; 
 </PRE></UL>
 <P>The larger 1 second delay give the user enough time to type the '<TT>e</TT>' after the '<TT>'</TT>' character. </UL>
@@ -111,12 +111,12 @@ translate-key&nbsp;&quot;esc&nbsp;[&nbsp;5&nbsp;^&quot;&nbsp;&quot;C-page-up&quo
 <P>One of the easiest ways of obtaining a key sequence is to run <B>sh(1)</B> which does not attempt to interpret these keys so when a key is pressed (followed by <TT>&lt;RETURN&gt;</TT>) the following type of error message is usually generated:- <UL>
 <PRE>sh:&nbsp;^[[2~:&nbsp;&nbsp;not&nbsp;found. 
 </PRE></UL>
-<P>where <TT>^[[2~</TT> is the required key sequence. Another method of obtaining these key sequences is to start MicroEmacs '02, use 
+<P>where <TT>^[[2~</TT> is the required key sequence. Another method of obtaining these key sequences is to start MicroEmacs '04, use 
 <A HREF="m2cmd011.html">start-kbd-macro(2)</A> to start a macro definition, press the required keys and then use 
 <A HREF="m2cmd011.html">end-kbd-macro(2)</A> followed by 
 <A HREF="m2cmd089.html">name-kbd-macro(2)</A> and 
 <A HREF="m2cmd074.html">insert-macro(2)</A> to display the keys pressed. 
-<P>The key sequences generated for these keys are dependent on the machine displaying MicroEmacs '02 as opposed to the machine running it. Often they are the same machine, but when they are not there is no easy method of determining the displaying machine and therefore correctly configuring MicroEmacs '02. 
+<P>The key sequences generated for these keys are dependent on the machine displaying MicroEmacs '04 as opposed to the machine running it. Often they are the same machine, but when they are not there is no easy method of determining the displaying machine and therefore correctly configuring MicroEmacs '04. 
 <P>A better way of obtaining this cross platform consistency is to create an XTerm app-defaults setup file with the correct VT100 key translations, e.g. the setup file could contain the following <UL>
 <PRE>*vt100.translations:&nbsp;#override&nbsp;\ 
 	Shift&lt;Key&gt;Tab:		string(&quot;\033[Z&quot;)&nbsp;\n\ 
@@ -139,12 +139,13 @@ translate-key&nbsp;&quot;esc&nbsp;[&nbsp;5&nbsp;^&quot;&nbsp;&quot;C-page-up&quo
 <P>By using the environment variable <I>XUSERFILESEARCHPATH</I> to ensure that this configuration file is found instead of the system one (found in <TT>/usr/lib/X11/app-defaults</TT>), the key sequences will then be the same across all platforms. See manual page on <B>xterm(1)</B> for more information. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
+<A HREF="m3mac045.html">expand-iso-accents(3)</A>, 
 <A HREF="m3osd000.html">user-setup(3)</A>, 
 <A HREF="m2cmd039.html">describe-key(2)</A>, 
 <A HREF="m2cmd013.html">global-bind-key(2)</A>, 
 <A HREF="m2cmd011.html">start-kbd-macro(2)</A>, <B>xterm(1)</B>, <B>sh(1)</B>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2001/12/18</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2002/10/16</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>

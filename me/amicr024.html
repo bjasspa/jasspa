@@ -1,7 +1,7 @@
 <HTML>
 <HEAD><TITLE>Window Commands</TITLE></HEAD>
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 Window Commands</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
@@ -12,7 +12,7 @@ Window Commands</H1>
 </FONT>
 <HR>
 <H2><B>WINDOW COMMANDS </B></H2>
-<UL><P>MicroEmacs '02 uses windows to display and allow you to edit the contents of 
+<UL><P>MicroEmacs '04 uses windows to display and allow you to edit the contents of 
 <A HREF="amicr012.html">buffers</A>. Multiple windows may be present on the 
 <A HREF="amicr010.html">screen</A> at once, each is separated by a 
 <A HREF="amicr027.html">mode line</A> which describes the contents of the window above it. 
@@ -21,9 +21,17 @@ Window Commands</H1>
 <P>Commands that operate on windows are defined as follows: </UL>
 <H2>Commands </H2>
 <UL><P>
+<A HREF="m2cmd063.html">change-window-depth(2)</A> Change the depth of the current window 
+<BR>
+<A HREF="m2cmd152.html">change-window-width(2)</A> Change the width of the current window 
+<BR>
 <A HREF="m2cmd020.html">compare-windows(2)</A> Compare buffer windows, ignore whitespace 
 <BR>
 <A HREF="m2cmd020.html">compare-windows-exact(3)</A> Compare buffer windows, with whitespace 
+<BR>
+<A HREF="m2cmd161.html">create-frame(2)</A> Create a new frame 
+<BR>
+<A HREF="m2cmd162.html">delete-frame(2)</A> Delete the current frame 
 <BR>
 <A HREF="m2cmd036.html">delete-other-windows(2)</A> (<B>C-x&nbsp;1</B>)&nbsp;Delete other windows 
 <BR>
@@ -31,7 +39,9 @@ Window Commands</H1>
 <BR>
 <A HREF="m2cmd152.html">grow-window-horizontally(2)</A> Enlarge current window horizontally (relative) 
 <BR>
-<A HREF="m2cmd063.html">grow-window-vertically(2)</A> (<B>C-x&nbsp;z</B>)&nbsp;Enlarge the current window (relative change) 
+<A HREF="m2cmd063.html">grow-window-vertically(2)</A> Enlarge the current window (relative change) 
+<BR>
+<A HREF="m2cmd163.html">next-frame(2)</A> Change the focus to the next frame 
 <BR>
 <A HREF="m2cmd095.html">next-window(2)</A> (<B>C-x&nbsp;o</B>)&nbsp;Move the cursor to the next window 
 <BR>
@@ -39,13 +49,17 @@ Window Commands</H1>
 <BR>
 <A HREF="m2cmd127.html">next-window-find-file(2)</A> (<B>C-x&nbsp;4</B>)&nbsp;Split the current window and find file 
 <BR>
+<A HREF="m3mac065.html">page-file-scroll-down(3)</A> (<B>C-n</B>)&nbsp;Scroll paged buffer down 
+<BR>
+<A HREF="m3mac065.html">page-file-scroll-up(3)</A> (<B>C-p</B>)&nbsp;Scroll paged buffer up 
+<BR>
 <A HREF="m2cmd095.html">previous-window(2)</A> (<B>C-x&nbsp;p</B>)&nbsp;Move the cursor to the previous window 
 <BR>
 <A HREF="m2cmd153.html">resize-all-windows(2)</A> Resize all windows (automatic change) 
 <BR>
 <A HREF="m2cmd152.html">resize-window-horizontally(2)</A> Resize current window horizontally (absolute) 
 <BR>
-<A HREF="m2cmd063.html">resize-window-vertically(2)</A> (<B>C-x&nbsp;w</B>)&nbsp;Resize the current window (absolute change) 
+<A HREF="m2cmd063.html">resize-window-vertically(2)</A> Resize the current window (absolute change) 
 <BR>
 <A HREF="m2cmd087.html">scroll-down(2)</A> (<B>C-n</B>)&nbsp;Move the window down (scrolling) 
 <BR>
@@ -61,7 +75,7 @@ Window Commands</H1>
 <BR>
 <A HREF="m2cmd152.html">shrink-window-horizontally(2)</A> Shrink current window horizontally (relative) 
 <BR>
-<A HREF="m2cmd063.html">shrink-window-vertically(2)</A> (<B>C-x&nbsp;C-z</B>)&nbsp;Shrink the current window (relative change) 
+<A HREF="m2cmd063.html">shrink-window-vertically(2)</A> Shrink the current window (relative change) 
 <BR>
 <A HREF="m2cmd151.html">split-window-horizontally(2)</A> (<B>C-x&nbsp;5</B>)&nbsp;Split current window into two (horizontally) 
 <BR>
@@ -98,7 +112,7 @@ Window Commands</H1>
 <BR>
 <A HREF="m5var081.html">$window-y-scroll(5)</A> Current window Y scroll </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2002/01/06</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2004/01/11</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>

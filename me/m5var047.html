@@ -1,8 +1,8 @@
 <HTML>
 <HEAD><TITLE>$system(5)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 $system(5)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
@@ -57,6 +57,8 @@ $system(5)</H1>
 <P><B>0x10000</B> 
 <BR><UL>Enable box character rendering fix, supported on Win32 and XTerm interfaces only. Windows ANSI fonts and many XTerm ISO-8859-1 fonts do not have well formed box characters which are used by 
 <A HREF="m2cmd066.html">osd(2)</A> and other commands to create a better looking interface. When this bit is enabled MicroEmacs traps the printing of characters with an ASCII value of less than 32 and renders them directly. Following is a table of supported characters, other characters in the range of <TT>0x00</TT> to <TT>0x1f</TT> not listed are rendered as a space: <UL>
+<P><TT>0x08</TT> 
+<BR><UL>Special Character; Backspace </UL>
 <P><TT>0x09</TT> 
 <BR><UL>Special Character; Tab </UL>
 <P><TT>0x0b</TT> 
@@ -107,7 +109,9 @@ $system(5)</H1>
 <A HREF="m2mod002.html">cmode(2m)</A> or has an 
 <A HREF="m2cmd033.html">indentation</A> method. The setting of this bit has no effect if bit <B>0x1000</B> is set. If this and bit <B>0x1000</B> are clear then the <TT>tab</TT> will not check the indentation. </UL>
 <P><B>0x400000</B> 
-<BR><UL>When this bit is set the external cut buffer (Windows &amp; XTerm platforms) will never be set to empty, if the current yank buffer is the empty string the cut buffer will be set to a space (i.e. &quot; &quot;). This feature has been added to avoid problems with other software (e.g. <B>exceed(1)</B> which can crash if given an empty cut buffer). </UL></UL>
+<BR><UL>When this bit is set the external clipboard (Windows &amp; XTerm platforms) will never be set to empty, if the current yank buffer is the empty string the cut buffer will be set to a space (i.e. &quot; &quot;). This feature has been added to avoid problems with other software (e.g. <B>exceed(1)</B> which can crash if given an empty cut buffer). </UL>
+<P><B>0x800000</B> 
+<BR><UL>When this bit is set all use of the external clipboard (Windows &amp; XTerm platforms) is disabled, this means that MicroEmacs will not attempt to retrieve or set the content of the system clipboard. </UL></UL>
 <H2><B>EXAMPLE </B></H2>
 <UL><P>The follow example works out the current buffer's backup file name using <B>$system</B> to determine the naming system being used by MicroEmacs:- <UL>
 <PRE>set-variable&nbsp;#l0&nbsp;&amp;stat&nbsp;&quot;a&quot;&nbsp;$buffer-fname 
@@ -140,7 +144,7 @@ $system(5)</H1>
 <LI>The environment variable <TT>$TERM</TT> is set to &quot;<TT>vt...</TT>&quot;, in this case it is assumed that the machine is a server, and the host cannot support X. 
 <LI>The <TT>-n</TT> option is used on the command line (see 
 <A HREF="m1cmd000.html">me(1)</A>) to disable the windowing interface. </UL><P>If X is disabled then the <B>termcap</B> interface is used instead, still allowing the use of colors through the ANSI standard, or the use of fonts (see bits <B>0x004</B> and <B>0x008</B>). 
-<P>X provides the following features over and above a <B>termcap</B> based version of MicroEmacs '02: <UL><P>
+<P>X provides the following features over and above a <B>termcap</B> based version of MicroEmacs '04: <UL><P>
 <LI>R,G,B style color creator giving access to up to 256 different colors for the ultimate hilighting schemes (see bit <B>0x002</B> and 
 <A HREF="m2cmd001.html">add-color(2)</A>). 
 <LI>Full mouse support, allowing user definable bindings to every mouse event (see 
@@ -157,7 +161,7 @@ $system(5)</H1>
 <A HREF="m2cmd077.html">ipipe-shell-command(2)</A>, 
 <A HREF="m5var024.html">$global-scheme(5)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2001/12/18</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2002/10/16</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>

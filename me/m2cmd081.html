@@ -1,8 +1,8 @@
 <HTML>
 <HEAD><TITLE>kill-region(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 kill-region(2)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
@@ -21,7 +21,9 @@ kill-region(2)</H1>
 <A HREF="m2cmd121.html">set-mark(2)</A> command. The characters removed are copied into the kill buffer and may be extracted using 
 <A HREF="m2cmd146.html">yank(2)</A>. If a numeric argument of <TT>0</TT> is given the command has no effect. If a -ve argument is given the characters are not placed in the kill buffer, therefore the text is effectively lost (this does not effect the 
 <A HREF="m2cmd136.html">undo(2)</A> operation). 
-<P>The mark position may be ahead or behind the current cursor position. </UL>
+<P>The mark position may be ahead or behind the current cursor position. 
+<P>Where the region contains a narrowed region, defined by 
+<A HREF="m2cmd068.html">narrow-buffer(2)</A>, then <B>kill-region</B> deletes all text contained within the narrow, this text is added to the kill buffer. </UL>
 <H2><B>USAGE </B></H2>
 <UL><P>To move text from one place to another: <UL><P>
 <LI>Move to the beginning of the text you want to move. 
@@ -36,17 +38,18 @@ kill-region(2)</H1>
 <UL><P>If a region is accidentally removed then 
 <A HREF="m2cmd146.html">yank</A> the text back immediately or use 
 <A HREF="m2cmd136.html">undo(2)</A>. 
-<P>Windowing systems such as X-Windows and Microsoft Windows utilize a global windowing kill buffer allowing data to be moved between windowing applications (<I>cut buffer</I> and <I>clipboard</I>, respectively). Within these environments MicroEmacs '02 automatically interacts with the windowing systems kill buffer, the last MicroEmacs '02 <B>kill-region</B> entry is immediately available for a paste operation into another windowing application. </UL>
+<P>Windowing systems such as X-Windows and Microsoft Windows utilize a global windowing kill buffer allowing data to be moved between windowing applications (<I>cut buffer</I> and <I>clipboard</I>, respectively). Within these environments MicroEmacs '04 automatically interacts with the windowing systems kill buffer, the last MicroEmacs '04 <B>kill-region</B> entry is immediately available for a paste operation into another windowing application. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m2cmd022.html">copy-region(2)</A>, 
 <A HREF="m2cmd159.html">kill-rectangle(2)</A>, 
+<A HREF="m2cmd068.html">narrow-buffer(2)</A>, 
 <A HREF="m2cmd111.html">reyank(2)</A>, 
 <A HREF="m2cmd121.html">set-mark(2)</A>, 
 <A HREF="m2cmd136.html">undo(2)</A>, 
 <A HREF="m2cmd146.html">yank(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2001/12/18</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2004/01/11</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>

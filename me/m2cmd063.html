@@ -1,9 +1,9 @@
 <HTML>
-<HEAD><TITLE>grow-window-vertically(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<HEAD><TITLE>change-window-depth(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
-grow-window-vertically(2)</H1>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
+change-window-depth(2)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
 <A HREF="amicr031.html">[Commands]</A>
@@ -13,25 +13,41 @@ grow-window-vertically(2)</H1>
 </FONT>
 <HR>
 <H2><B>NAME </B></H2>
-<UL><P>grow-window-vertically - Enlarge the current window (relative change) 
+<UL><P>change-window-depth - Change the depth of the current window 
+<BR>grow-window-vertically - Enlarge the current window (relative change) 
 <BR>shrink-window-vertically - Shrink the current window (relative change) 
 <BR>resize-window-vertically - Resize the current window (absolute change) </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><I>n</I> <B>grow-window-vertically</B> (<B>C-x&nbsp;z</B>)&nbsp; 
-<BR><I>n</I> <B>shrink-window-vertically</B> (<B>C-x&nbsp;C-z</B>)&nbsp; 
-<BR><I>n</I> <B>resize-window-vertically</B> (<B>C-x&nbsp;w</B>)&nbsp; </UL>
+<UL><P><I>n</I> <B>change-window-depth</B> [ &quot;<I>depth</I>&quot; ] 
+<P><I>n</I> <B>grow-window-vertically</B> 
+<BR><I>n</I> <B>shrink-window-vertically</B> 
+<BR><I>n</I> <B>resize-window-vertically</B> </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P><B>grow-window-vertically</B> enlarges the current window by <I>n</I> number of lines (1 by default). If <I>n</I> is negative then the window is shrunk. 
-<P><B>shrink-window-vertically</B> shrinks the current window by <I>n</I> number of lines (1 by default). If <I>n</I> is negative then the window is enlarged. 
-<P><B>resize-window-vertically</B> change the size of the current window to <I>n</I> lines, if possible. i.e. resize window is not a relative displacement. 
-<P>Growth is performed by consuming space from the next vertical window below the current window, except at the bottom of the screen where the previous window is consumed. </UL>
-<H2><B>SEE ALSO </B></H2>
+<UL><P><B>change-window-depth</B> changes the depth of the current window, if the numeric argument <I>n</I> is given then the window depth is changed by <I>n</I> lines. If <I>n</I> is not specified the user is prompted for the new <I>depth</I> and the window depth will be changed to this value. The command aborts if the requested size cannot be achieved (the window becomes too small or a neighbouring one does). </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>Commands <B>grow-window-vertically</B>, <B>shrink-window-vertically</B> and <B>resize-window-vertically</B> were replaced by the new <B>change-window-depth</B> command in April 2002. Following are macro implementations of the old commands: <UL>
+<PRE>define-macro&nbsp;grow-window-vertically 
+&nbsp;&nbsp;&nbsp;&nbsp;@#&nbsp;change-window-depth 
+!emacro 
+
+define-macro&nbsp;shrink-window-vertically 
+&nbsp;&nbsp;&nbsp;&nbsp;&amp;neg&nbsp;@#&nbsp;change-window-depth 
+!emacro 
+
+define-macro&nbsp;resize-window-vertically 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;@? 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!abort 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;change-window-depth&nbsp;@# 
+!emacro 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
 <UL><P>
-<A HREF="m2cmd152.html">grow-window-horizontally(2)</A>, 
+<A HREF="m2cmd152.html">change-window-width(2)</A>, 
 <A HREF="m2cmd153.html">resize-all-windows(2)</A>, 
 <A HREF="m2cmd128.html">split-window-vertically(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2001/12/18</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2002/10/16</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>

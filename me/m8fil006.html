@@ -1,8 +1,8 @@
 <HTML>
 <HEAD><TITLE>me32.ini(8)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 me32.ini(8)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
@@ -40,12 +40,12 @@ me32.ini(8)</H1>
 <LI>The <I>login&nbsp; name</I> under Windows '95 or NT if <B>$MENAME</B> is not set. If the <I>login&nbsp; name</I> is defined then environment variable <B>$MENAME</B> is set to this value. 
 <LI>The environment variable 
 <A HREF="m5var076.html">$LOGNAME(5)</A> if the <I>login&nbsp;name</I> cannot be located. 
-<LI><B>guest</B> if none of the above are defined. </UL><P>A section <B>[</B><I>userName</I><B>]</B> is looked up, and if located each of the entries <I>&lt;environmentVariable&gt;</I> <B>=</B> <I>&lt;value&gt;</I> is extracted and pushed into the execution environment. The <B>&lt;environmentVariable&gt;</B> is automatically promoted to upper case if specified as a lower case entry. The environment variables may be subsequently used within the <B>.emf</B> macro files to configure MicroEmacs '02 at start up. 
+<LI><B>guest</B> if none of the above are defined. </UL><P>A section <B>[</B><I>userName</I><B>]</B> is looked up, and if located each of the entries <I>&lt;environmentVariable&gt;</I> <B>=</B> <I>&lt;value&gt;</I> is extracted and pushed into the execution environment. The <B>&lt;environmentVariable&gt;</B> is automatically promoted to upper case if specified as a lower case entry. The environment variables may be subsequently used within the <B>.emf</B> macro files to configure MicroEmacs '04 at start up. 
 <P>Any value may be inserted into the environment including the <TT>$MENAME</TT> environment variable which is used in the next section. </UL>
 <H2>Defaults Section </H2>
 <UL><P>The defaults section, labeled <B>[Defaults]</B> includes the following keys:- 
 <P><B>mepath</B> 
-<BR><UL>The directory (or folder) location of the MicroEmacs '02 default configuration files. </UL>
+<BR><UL>The directory (or folder) location of the MicroEmacs '04 default configuration files. </UL>
 <P><B>userpath</B> 
 <BR><UL>The directory (or folder) location of the user(s) directories. </UL>
 <UL><P>Given that the <B>userpath</B> is specified as <TT>c:\me98.5</TT> and the user is called <TT>foo</TT>, then the directory location <TT>c:\me98.5\foo</TT> is considered to be the user path. </UL>
@@ -55,9 +55,9 @@ me32.ini(8)</H1>
 <P><B>fontfile</B> 
 <BR><UL>The name of the font file used to render the text to the screen. The default font file is <B>dosapp.fon</B>, this is a fixed mono font as used in the MS-DOS windows. </UL></UL>
 <H2>Location Section </H2>
-<UL><P>The location section, labeled <B>[Location]</B>, identifies the location of MicroEmacs '02, and is typically used by other components to find and launch MicroEmacs. The section includes the following keys:- 
+<UL><P>The location section, labeled <B>[Location]</B>, identifies the location of MicroEmacs '04, and is typically used by other components to find and launch MicroEmacs. The section includes the following keys:- 
 <P><B>exe</B> 
-<BR><UL>The absolute pathname to the MicroEmacs '02 executable image. </UL></UL>
+<BR><UL>The absolute pathname to the MicroEmacs '04 executable image. </UL></UL>
 <H2><B>EXAMPLE </B></H2>
 <UL><P>The following is an example of the <B>me32.ini</B> file:- <UL>
 <PRE>;&nbsp;External&nbsp;locater&nbsp;for&nbsp;the&nbsp;executable 
@@ -107,7 +107,7 @@ FOO=bar
 <A HREF="m3osd000.html">user-setup(3)</A>, 
 <A HREF="m8fil003.html">emf(8)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2001/12/18</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2002/01/11</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>

@@ -1,8 +1,8 @@
 <HTML>
 <HEAD><TITLE>list-buffers(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 list-buffers(2)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
@@ -15,9 +15,14 @@ list-buffers(2)</H1>
 <H2><B>NAME </B></H2>
 <UL><P>list-buffers - List all buffers and show their status </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><B>list-buffers</B> (<B>C-x&nbsp;C-b</B>)&nbsp; </UL>
+<UL><P><I>n</I> <B>list-buffers</B> (<B>C-x&nbsp;C-b</B>)&nbsp; </UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P><B>list-buffers</B> splits the current window and in one half brings up a list of all the buffers currently existing in the editor. The active modes, change flag, and active flag for each buffer is displayed. (The change flag is a <B>*</B> character if the buffer has been changed and not written out. The active flag is not an <B>@</B> if the file had been specified on the command line, but has not been read in yet since nothing has switched to that buffer.) 
+<P>The numerical argument <I>n</I> determines the information that is displayed by the command and follows:- 
+<P><TT>&nbsp;&nbsp;1</TT> - The default, when omitted, displays all user visible buffers. 
+<BR><TT>&nbsp;&nbsp;0</TT> - Displays both visible and hidden buffers. 
+<BR><TT>-ve</TT> - Display the visible buffers and size information. 
+<BR><TT>+ve</TT> - Displays both visible and hidden buffers with size information. 
 <P>The buffer list has some special command keys associated with it which allow the state of the buffers to be edited from the buffer list, the editing allows buffers to be killed and saved to disk. The key codes are defined as follows:- 
 <P><B>1</B> - Switch to buffer 
 <BR><UL>Switch to that buffer and make it the only buffer. </UL>
@@ -38,7 +43,7 @@ list-buffers(2)</H1>
 <A HREF="m2cmd062.html">list-commands(2)</A>, 
 <A HREF="m2cmd151.html">split-window-horizontally(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2001/12/18</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2004/01/05</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>

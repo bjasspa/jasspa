@@ -1,8 +1,8 @@
 <HTML>
 <HEAD><TITLE>perl(9)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 perl(9)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
@@ -22,9 +22,9 @@ perl(9)</H1>
 <UL><P><B>.pl</B>, <B>.pm</B> - Perl file </UL>
 <H2><B>MAGIC STRINGS </B></H2>
 <UL><P><B>#![ \t]*/.*perl</B> 
-<BR><UL>MicroEmacs '02 recognizes the magic string on the first line of the file used to locate the executable. The Perl files may be extension-less and are still recognized. </UL>
+<BR><UL>MicroEmacs '04 recognizes the magic string on the first line of the file used to locate the executable. The Perl files may be extension-less and are still recognized. </UL>
 <P><B># -*- perl -*-</B> 
-<BR><UL>MicroEmacs '02 recognizes the standard GNU Emacs magic string on the first line of the file. The Perl files may be extension-less and are still recognized. </UL></UL>
+<BR><UL>MicroEmacs '04 recognizes the standard GNU Emacs magic string on the first line of the file. The Perl files may be extension-less and are still recognized. </UL></UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P>The <B>perl</B> file type template provides the hilighting, indentation and tools definitions for a perl file. 
 <P>File recognition is performed using the standard file extension <B>.pl</B>, <B>.pm</B> or by the magic string. 
@@ -40,8 +40,8 @@ perl(9)</H1>
 <A HREF="m3mac025.html">restyle-buffer(3)</A> are available to reformat (re-layout) selected sections of the buffer, or the whole buffer, respectively. </UL>
 <P><B>Folding and Information Hiding</B> 
 <BR><UL>Generic folding is enabled within perl files. The folds occur about <I>sub</I>...<B>}</B> located on the left-hand margin. 
-<A HREF="m3mac029.html">fold-all(3)</A> (un)folds all regions in the file, 
-<A HREF="m3mac029.html">fold-current(3)</A> (un)folds the current region. </UL>
+<A HREF="m3mac029.html">collapse-all(3)</A> (un)folds all regions in the file, 
+<A HREF="m3mac029.html">collapse-current(3)</A> (un)folds the current region. </UL>
 <P><B>Short Cuts</B> 
 <BR><UL>The short cut keys used within the buffer are:- </UL>
 <UL><P><B>C-c C-c</B> - Comment out the current line. 
@@ -57,17 +57,17 @@ perl(9)</H1>
 <UL><P>The flexibility of the perl language does cause some hilighting anomalies from time to time, typically with unbalanced quote characters. Most of the common exceptions have been caught, however there are a few syntax sequences that involve quotation marks that can cause problems. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
-<A HREF="m3mac055.html">perldb(3)</A>, 
-<A HREF="m3mac029.html">fold-all(3)</A>, 
-<A HREF="m3mac029.html">fold-current(3)</A>, 
+<A HREF="m3mac029.html">collapse-all(3)</A>, 
+<A HREF="m3mac029.html">collapse-current(3)</A>, 
 <A HREF="m2cmd033.html">indent(2)</A>, 
+<A HREF="m3mac055.html">perldb(3)</A>, 
 <A HREF="m3mac025.html">restyle-buffer(3)</A>, 
 <A HREF="m3mac025.html">restyle-region(3)</A>, 
 <A HREF="m2mod013.html">time(2m)</A>. 
 <P>
 <A HREF="amicr030.html">Supported File Types</A> </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2001/12/18</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2004/01/05</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>

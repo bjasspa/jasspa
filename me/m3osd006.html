@@ -1,8 +1,8 @@
 <HTML>
 <HEAD><TITLE>MainMenu(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 MainMenu(3)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
@@ -15,8 +15,54 @@ MainMenu(3)</H1>
 <H2><B>NAME </B></H2>
 <UL><P>Main Menu - The top main menu </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><I>n</I> osd </UL>
-<H2><B>DESCRIPTION </B></H2>
+<UL><P><I>n</I> osd 
+<BR><B>toolbar</B> </UL>
+<H2><B>FRAME COMPOSIOTION </B></H2>
+<UL><P>The frame composition presented by MicroEmacs is defined as follows:- <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+--------------------------------------------+ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;File&nbsp;&nbsp;Edit&nbsp;..&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Help&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;Menu&nbsp;Line 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+-----+-+----------------------------------+-+ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|=|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|=|Split&nbsp;Vertically 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;T&nbsp;&nbsp;|^|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|^| 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;O&nbsp;&nbsp;|||&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CURRENT&nbsp;WINDOW&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|#|Scroll&nbsp;Bar 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;O&nbsp;&nbsp;|#|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|#| 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;L&nbsp;&nbsp;|#|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|V| 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;B&nbsp;&nbsp;|#||=*&nbsp;file&nbsp;=&nbsp;17:30&nbsp;04/1/11&nbsp;(Aeb)&nbsp;==&nbsp;|*|&nbsp;Mode&nbsp;Line 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;A&nbsp;&nbsp;|#|^&nbsp;&nbsp;Split&nbsp;Horizontally&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|^| 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;R&nbsp;&nbsp;|&nbsp;|&nbsp;&nbsp;^&nbsp;Buffer&nbsp;edit(*)&nbsp;Read&nbsp;Only(%)&nbsp;&nbsp;&nbsp;|#| 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|#| 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHER&nbsp;WINDOW&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;| 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|v|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|v| 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+&lt;---&gt;+*+|--&nbsp;file&nbsp;-&nbsp;17:30&nbsp;04/1/11&nbsp;(AeB)&nbsp;---|*|&nbsp;Mode&nbsp;Line 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|f-isearch..:&nbsp;forw&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;Message&nbsp;Line 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+--------------------------------------------+ 
+</PRE></UL>
+<P><B>Menu Line</B> 
+<BR><UL>The <I>Menu Line</I> appears at the top of the buffer. A left click of the mouse on the menu line shows a menu dialog for user selection. </UL>
+<P><B>Window</B> 
+<BR><UL>The windows appear at the center of the frame, typically with a scroll bar to the right of the window and a <B>Mode Line</B> at the bottom of the window. The mouse interactions with the window are defined as follows:- 
+<P>Left mouse in window - Selecting a region 
+<BR><UL>Regions may be selected with the mouse. Select a position with the left mouse, keep the left button pressed move the mouse to the desired region end and release the left button. Theregion is hilighted, the text is copied the user does not need to perform any other selection operation to copy the text. </UL>
+<P>Right mouse in window - Pop up Dialog 
+<BR><UL>A right mouse click in the window brings up a context sensitive pop-up menu. A right click on a spelling error, with 
+<A HREF="m3mac039.html">auto-spell(3)</A> enabled shows a list of possible corrections. </UL>
+<P>Right mouse on mode line - Pop up Dialog 
+<BR><UL>A right mouse click on the <B>Mode Line</B> brings up a pop-up menu to control the buffer. </UL>
+<P>Left mouse on mode line - split and resize window 
+<BR><UL>If the <TT>|</TT> character is selected on the <B>Mode Line</B> then the window is split into two horizontally. If the mode line is dragged with the mouse then the buffer is re-sized. If the window is dragged into another window then the other window is deleted. </UL>
+<P>Left mouse on scroll bar - Up/down action 
+<BR><UL>A left click on the scroll bar moves the window up/down. If the <TT>=</TT> component of the scroll bar is selected then the window is split into two vertically. Dragging the scroll-bar with the mouse horizontally causes the window to be re-sized. Selecting the <TT>*</TT> in the corner of the window allows the window to be resized both horizontally and vertically. </UL>
+<P>Right mouse on scroll bar - Scroll bar size 
+<BR><UL>A right click of the mouse on the scroll bar allows the scroll bar width to be altered. </UL></UL>
+<P>Message Line 
+<BR><UL>The message line is used from command entry and messages. On entering a command such as 
+<A HREF="m2cmd078.html">isearch-forward(2)</A> then the user enters text into the <B>Message Line</B> until the command completes. Messages are also displayed in the message line using 
+<A HREF="m2cmd145.html">ml-write(2)</A>. </UL>
+<P>Toolbar 
+<BR><UL>The toolbar window is displayed if 
+<A HREF="m3mac066.html">toolbar</A> mode is enabled in 
+<A HREF="m3osd000.html">user-setup(3)</A>. The mouse interaction is a little different from a conventional mode line, a mouse right click on the toolbar <B>Mode Line</B> allows the tollbar to be configured. A Right click on the <TT>&lt;</TT> and <TT>&gt;</TT> characters of the toolbar mode line moves to the next or previous tool. </UL></UL>
+<H2><B>MAIN MENU </B></H2>
 <UL><P>The main menu is provided to give an easier access to parts of MicroEmacs functionality, the menu is not burnt into MicroEmacs but defined on start-up in <TT>me.emf</TT> and <TT>osd.emf</TT>. The 
 <A HREF="m3osd000.html">user-setup(3)</A> command can be used to set whether the menu is always visible and if the Alt-Hotkeys are enabled (i.e. '<TT>A-f</TT>' to open the <B>File</B> menu). 
 <P>The main menu is 
@@ -242,7 +288,7 @@ MainMenu(3)</H1>
 <A HREF="m3osd002.html">spell-buffer(3)</A>. </UL>
 <P><TT>Word Complete</TT> 
 <BR><UL>Takes the incomplete word to the left of the cursor and attempts to complete the word by using the users current language dictionary. Executes command 
-<A HREF="m3mac048.html">spell-complete-word(3)</A>. </UL>
+<A HREF="m3mac048.html">expand-word(3)</A>. </UL>
 <P><TT>Compare Windows</TT> 
 <BR><UL>Executes command 
 <A HREF="m2cmd020.html">compare-windows(2)</A>. </UL>
@@ -278,19 +324,19 @@ MainMenu(3)</H1>
 <A HREF="m2cmd128.html">split-window-vertically(2)</A>. </UL>
 <P><TT>Grow Window V</TT> 
 <BR><UL>Executes command 
-<A HREF="m2cmd063.html">grow-window-vertically(2)</A>. </UL>
+<A HREF="m2cmd063.html">change-window-depth(2)</A> with an argument of 1. </UL>
 <P><TT>Shrink Window V</TT> 
 <BR><UL>Executes command 
-<A HREF="m2cmd063.html">shrink-window-vertically(2)</A>. </UL>
+<A HREF="m2cmd063.html">change-window-depth(2)</A> with an argument of -1. </UL>
 <P><TT>Split Window H</TT> 
 <BR><UL>Executes command 
 <A HREF="m2cmd151.html">split-window-horizontally(2)</A>. </UL>
 <P><TT>Grow Window H</TT> 
 <BR><UL>Executes command 
-<A HREF="m2cmd152.html">grow-window-horizontally(2)</A>. </UL>
+<A HREF="m2cmd152.html">change-window-width(2)</A> with an argument of 1. </UL>
 <P><TT>Shrink Window H</TT> 
 <BR><UL>Executes command 
-<A HREF="m2cmd152.html">shrink-window-horizontally(2)</A>. </UL>
+<A HREF="m2cmd152.html">change-window-width(2)</A> with an argument of -1. </UL>
 <P><TT>One Window</TT> 
 <BR><UL>Executes command 
 <A HREF="m2cmd036.html">delete-other-windows(2)</A>. </UL>
@@ -302,7 +348,13 @@ MainMenu(3)</H1>
 <A HREF="m2cmd095.html">previous-window(2)</A>. </UL>
 <P><TT>Next Window</TT> 
 <BR><UL>Executes command 
-<A HREF="m2cmd095.html">next-window(2)</A>. </UL></UL>
+<A HREF="m2cmd095.html">next-window(2)</A>. </UL>
+<P><TT>Create New Frame</TT> 
+<BR><UL>Create an new external frame, only available on version which support multiple-window frames. Executes command 
+<A HREF="m2cmd161.html">create-frame(2)</A>. </UL>
+<P><TT>Close This Frame</TT> 
+<BR><UL>Closes the current frame, only available on version which support multiple-window frames. The command will fail if this is the only frame, use File -&gt; Exit to exit MicroEmacs, executes command 
+<A HREF="m2cmd162.html">delete-frame(2)</A>. </UL></UL>
 <H2>Help Menu </H2>
 <UL><P><TT>Curr Buffer Help</TT> 
 <BR><UL>For some file formats MicroEmacs provides a file format specific help page giving details of key-bindings and tools specific to the current buffers file type. </UL>
@@ -369,7 +421,7 @@ MainMenu(3)</H1>
 <UL><P>
 <A HREF="m3osd000.html">user-setup(3)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2001/12/18</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2004/01/11</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>

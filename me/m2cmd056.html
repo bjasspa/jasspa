@@ -1,8 +1,8 @@
 <HTML>
 <HEAD><TITLE>find-file(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 find-file(2)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
@@ -18,7 +18,7 @@ find-file(2)</H1>
 <UL><P><I>n</I> <B>find-file</B> &quot;<I>file-name</I>&quot; (<B>C-x&nbsp;C-f</B>)&nbsp; </UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P><B>find-file</B> finds the named file <I>file-name</I>. If it is already in a buffer, make that buffer active in the current window, otherwise attempt to create a new buffer and read the file into it. 
-<P>The numeric argument <I>n</I> can be used to modify the default behaviour of the command, where the bits are defined as follows: 
+<P>The numeric argument <I>n</I> is used to modify the default behavior of the command, where the bits are defined as follows: 
 <P><B>0x01</B> 
 <BR><UL>If the file does not exist and this bit is not set the command fails at this point. If the file does not exist and this bit is set (or no argument is specified as the default argument is <TT>1</TT>) then a new empty buffer is created with the given file name, saving the buffer subsequently creates a new file. </UL>
 <P><B>0x02</B> 
@@ -30,8 +30,8 @@ find-file(2)</H1>
 <P><B>0x08</B> 
 <BR><UL>If this bit is set the file will be loaded with 
 <A HREF="m2mod031.html">rbin(2m)</A> mode enabled. See help on <B>rbin</B> mode for more information on efficient editing of binary data files. 
-</UL><P>Text files are usually thought of as named collections of text residing on disk (or some other storage medium). In MicroEmacs '02 the disk based versions of files come into play only when reading into or writing out buffers. The link between the physical file and the buffer is through the associated file name. 
-<P>MicroEmacs '02 permits full file names, i.e. you can specify: <UL>
+</UL><P>Text files are usually thought of as named collections of text residing on disk (or some other storage medium). In MicroEmacs '04 the disk based versions of files come into play only when reading into or writing out buffers. The link between the physical file and the buffer is through the associated file name. 
+<P>MicroEmacs '04 permits full file names, i.e. you can specify: <UL>
 <PRE>disk:\directories\filename.extension 
 </PRE></UL>
 <P>or (UNIX) <UL>
@@ -89,21 +89,23 @@ find-file(2)</H1>
 <A HREF="m2mod013.html">time(2m)</A>, 
 <A HREF="m2mod016.html">view(2m)</A>, 
 <A HREF="m2cmd006.html">buffer-mode(2)</A>, 
+<A HREF="m3osd008.html">file-attrib(3)</A>, 
+<A HREF="m2cmd158.html">file-op(2)</A>, 
 <A HREF="m3mac030.html">find-bfile(3)</A>, 
 <A HREF="m3mac050.html">ftp(3)</A>, 
-<A HREF="m5var036.html">$rcs-file(5)</A>, 
-<A HREF="m5var049.html">%ftp-flags(5)</A>, 
-<A HREF="m5var049.html">%http-flags(5)</A>, 
-<A HREF="m5var079.html">%http-proxy-addr(5)</A>, 
 <A HREF="m2cmd127.html">next-window-find-file(2)</A>, 
+<A HREF="m3mac065.html">page-bfile(3)</A>, 
+<A HREF="m3mac065.html">page-file(3)</A>, 
 <A HREF="m2cmd106.html">read-file(2)</A>, 
 <A HREF="m2cmd113.html">save-buffer(2)</A>, 
 <A HREF="m2cmd140.html">view-file(2)</A>, 
 <A HREF="m2cmd143.html">write-buffer(2)</A>, 
-<A HREF="m2cmd158.html">file-op(2)</A>, 
-<A HREF="m3osd008.html">file-attrib(3)</A>. </UL>
+<A HREF="m5var036.html">$rcs-file(5)</A>, 
+<A HREF="m5var049.html">%ftp-flags(5)</A>, 
+<A HREF="m5var049.html">%http-flags(5)</A>, 
+<A HREF="m5var079.html">%http-proxy-addr(5)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2001/12/18</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2004/01/11</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>

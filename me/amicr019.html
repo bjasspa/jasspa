@@ -1,7 +1,7 @@
 <HTML>
 <HEAD><TITLE>Macro Development Commands</TITLE></HEAD>
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 Macro Development Commands</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
@@ -23,11 +23,21 @@ Macro Development Commands</H1>
 <BR>
 <A HREF="m3mac019.html">ascii-time(3)</A> Return the current time as a string 
 <BR>
+<A HREF="m3mac064.html">buffer-init(3)</A> Initialize a buffer language template 
+<BR>
+<A HREF="m3mac064.html">buffer-init-fhook(3)</A> Initialize the buffer file hooks 
+<BR>
+<A HREF="m3mac064.html">buffer-init-hooks(3)</A> Initialize the buffer language template hooks 
+<BR>
 <A HREF="m2cmd160.html">command-wait(2)</A> Conditional wait command 
 <BR>
 <A HREF="m2cmd024.html">create-callback(2)</A> Create a timer callback 
 <BR>
+<A HREF="m2cmd161.html">create-frame(2)</A> Create a new frame 
+<BR>
 <A HREF="m2cmd147.html">define-macro-file(2)</A> Define macro file location 
+<BR>
+<A HREF="m2cmd162.html">delete-frame(2)</A> Delete the current frame 
 <BR>
 <A HREF="m2cmd032.html">directory-tree(2)</A> Draw the file directory tree 
 <BR>
@@ -55,11 +65,43 @@ Macro Development Commands</H1>
 <BR>
 <A HREF="m2cmd090.html">newline(2)</A> (<B>return</B>)&nbsp;Insert a new line 
 <BR>
+<A HREF="m2cmd163.html">next-frame(2)</A> Change the focus to the next frame 
+<BR>
 <A HREF="m3mac037.html">osd-dialog(3)</A> OSD dialog box 
 <BR>
 <A HREF="m3mac037.html">osd-entry(3)</A> OSD entry dialog box 
 <BR>
 <A HREF="m3mac037.html">osd-xdialog(3)</A> OSD Extended dialog box 
+<BR>
+<A HREF="m3mac065.html">page-bfile(3)</A> Load a large binary file as binary data 
+<BR>
+<A HREF="m3mac065.html">page-file(3)</A> Load a large file in page mode 
+<BR>
+<A HREF="m3mac065.html">page-file-backward-line(3)</A> (<B>C-p</B>)&nbsp;Move backwards one line in paged buffer 
+<BR>
+<A HREF="m3mac065.html">page-file-beginning-of-buffer(3)</A> Move to the start of the paged file 
+<BR>
+<A HREF="m3mac065.html">page-file-end-of-buffer(3)</A> Move to the end of the paged file 
+<BR>
+<A HREF="m3mac065.html">page-file-forward-line(3)</A> (<B>C-n</B>)&nbsp;Move forwards one line in paged buffer 
+<BR>
+<A HREF="m3mac065.html">page-file-goto-byte(3)</A> Page to the buffer byte offset 
+<BR>
+<A HREF="m3mac065.html">page-file-goto-page(3)</A> Move to page 
+<BR>
+<A HREF="m3mac065.html">page-file-isearch-backward(3)</A> (<B>C-r</B>)&nbsp;Page search backwards incrementally (interactive) 
+<BR>
+<A HREF="m3mac065.html">page-file-isearch-forward(3)</A> (<B>C-s</B>)&nbsp;Page search forward incrementally (interactive) 
+<BR>
+<A HREF="m3mac065.html">page-file-save-buffer(3)</A> (<B>C-x&nbsp;C-s</B>)&nbsp;Save contents of a page mode buffer to file 
+<BR>
+<A HREF="m3mac065.html">page-file-scroll-down(3)</A> (<B>C-n</B>)&nbsp;Scroll paged buffer down 
+<BR>
+<A HREF="m3mac065.html">page-file-scroll-up(3)</A> (<B>C-p</B>)&nbsp;Scroll paged buffer up 
+<BR>
+<A HREF="m3mac065.html">page-file-search-backward(3)</A> (<B>C-x&nbsp;r</B>)&nbsp;Page search for a string in the backward direction 
+<BR>
+<A HREF="m3mac065.html">page-file-search-forward(3)</A> (<B>C-x&nbsp;s</B>)&nbsp;Page search for a string in the forward direction 
 <BR>
 <A HREF="m2cmd100.html">popup-window(2)</A> Pop-up a window on the screen 
 <BR>
@@ -88,6 +130,8 @@ Macro Development Commands</H1>
 <A HREF="m2cmd125.html">spell(2)</A> Spell checker service provider 
 <BR>
 <A HREF="m3mac024.html">start-up(3)</A> Editor startup callback command 
+<BR>
+<A HREF="m3mac066.html">toolbar-refresh(3)</A> Update the tool bar 
 <BR>
 <A HREF="m2cmd122.html">unset-variable(2)</A> Delete a variable 
 <BR>
@@ -132,6 +176,8 @@ Macro Development Commands</H1>
 <BR>
 <A HREF="m5var070.html">$global-fmod(5)</A> Global file modes (or attributes) 
 <BR>
+<A HREF="m5var085.html">$line-flags(5)</A> Current buffer line flags 
+<BR>
 <A HREF="m5var065.html">$mode-names(5)</A> Filtered mode name list 
 <BR>
 <A HREF="m5var073.html">$mouse(5)</A> Mouse configuration variable 
@@ -158,13 +204,17 @@ Macro Development Commands</H1>
 <BR>
 <A HREF="m5var083.html">$version(5)</A> MicroEmacs version date-code 
 <BR>
+<A HREF="m5var084.html">$window-flags(5)</A> Current window setup flags 
+<BR>
 <A HREF="m5var046.html">$window-mode-line(5)</A> Window mode line position 
 <BR>
 <A HREF="m5var046.html">$window-scroll-bar(5)</A> Window scroll bar (or separator) position 
 <BR>
+<A HREF="m3mac018.html">%company-name(5)</A> Name of company for template 
+<BR>
 <A HREF="m5var063.html">.calc.result(5)</A> Last calc calculation result </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2002/01/06</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2004/01/11</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>

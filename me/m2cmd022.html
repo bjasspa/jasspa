@@ -1,8 +1,8 @@
 <HTML>
 <HEAD><TITLE>copy-region(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 copy-region(2)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
@@ -15,13 +15,15 @@ copy-region(2)</H1>
 <H2><B>NAME </B></H2>
 <UL><P>copy-region - Copy a region of the buffer </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><B>copy-region</B> (<B>esc w</B>)&nbsp; </UL>
+<UL><P><I>n</I> <B>copy-region</B> (<B>esc w</B>)&nbsp; </UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P><B>copy-region</B> copies all the characters between the cursor and the mark set with the 
 <A HREF="m2cmd121.html">set-mark(2)</A> command into the kill buffer (so they can later be 
 <A HREF="m2cmd146.html">yanked</A> elsewhere). 
 <P>If the last command also entered text into the kill buffer (or the 
-<A HREF="m4fil017.html">@cl(4)</A> variable is set to one of these commands) the <B>copy-region</B> text is appended to the last kill. </UL>
+<A HREF="m4fil017.html">@cl(4)</A> variable is set to one of these commands) the <B>copy-region</B> text is appended to the last kill. 
+<P>The numeric argument <I>n</I> determines how the copy operates when a narrow region, defined by 
+<A HREF="m2cmd068.html">narrow-buffer(2)</A>, is encountered. The default operation, when the number argument is <TT>1</TT>, is to copy all of the text contained within the narrowed region. When the numeric argument is <TT>0</TT> then narrowed region is NOT copied and the text is copied as it appears in the buffer. </UL>
 <H2><B>USAGE </B></H2>
 <UL><P>To copy text from one place to another, using the <B>copy-region</B> command, the following operations are performed: <UL><P>
 <LI>Move to the beginning of the text you want to copy. 
@@ -35,15 +37,17 @@ copy-region(2)</H1>
 <LI>Use the 
 <A HREF="m2cmd146.html">yank</A> (<B>C-y</B>) command to copy the text from the kill buffer to the current point. </UL><P>Repeat the last two steps to insert further copies of the same text. </UL>
 <H2><B>NOTES </B></H2>
-<UL><P>Windowing systems such as X-Windows and Microsoft Windows utilize a global windowing kill buffer allowing data to be moved between windowing applications (<I>cut buffer</I> and <I>clipboard</I>, respectively). Within these environments MicroEmacs '02 automatically interacts with the windowing systems kill buffer, the last MicroEmacs '02 <B>copy-region</B> entry is immediately available for a paste operation into another windowing application. </UL>
+<UL><P>Windowing systems such as X-Windows and Microsoft Windows utilize a global windowing kill buffer allowing data to be moved between windowing applications (<I>cut buffer</I> and <I>clipboard</I>, respectively). Within these environments MicroEmacs '04 automatically interacts with the windowing systems kill buffer, the last MicroEmacs '04 <B>copy-region</B> entry is immediately available for a paste operation into another windowing application. 
+<P>The numeric argument <I>n</I> was introduced in the '04 release. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m2cmd043.html">exchange-point-and-mark(2)</A>, 
 <A HREF="m2cmd081.html">kill-region(2)</A>, 
+<A HREF="m2cmd068.html">narrow-buffer(2)</A>, 
 <A HREF="m2cmd121.html">set-mark(2)</A>, 
 <A HREF="m2cmd146.html">yank(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2001/12/18</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2004/01/11</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>

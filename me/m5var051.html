@@ -1,8 +1,8 @@
 <HTML>
 <HEAD><TITLE>$window-chars(5)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 $window-chars(5)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
@@ -15,7 +15,7 @@ $window-chars(5)</H1>
 <H2><B>NAME </B></H2>
 <UL><P>$window-chars - Character set used to render the windows </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><B>$window-chars</B> &quot;<I>sting</I>&quot;; Default is &quot;<TT>=-#*%=^|#|v*==^^||##||vv**|&lt;-#-&gt;*||&lt;&lt;--##--&gt;&gt;** x*[]&gt;\.</TT>&quot; </UL>
+<UL><P><B>$window-chars</B> &quot;<I>sting</I>&quot;; Default is &quot;<TT>=-#*%=^|#|v*==^^||##||vv**|&lt;-#-&gt;*||&lt;&lt;--##--&gt;&gt;** x*[]&gt;\.$$\</TT>&quot; </UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P><B>$window-chars</B> is a fixed length string that defines the set of characters used to render the windows. The characters have fixed indices defined as follows:- 
 <P>Index 0 
@@ -66,32 +66,43 @@ $window-chars(5)</H1>
 <P>Index 48 
 <BR><UL>Osd title bar right corner kill character. Default is '<B>x</B>'. </UL>
 <P>Index 49 
+<BR><UL>Osd dialog bottom right corner resize character. Default is '<B>*</B>'. </UL>
+<P>Index 50 
 <BR><UL>Osd open button character. Default is '<B> </B>'. </UL>
-<P>Index 48 
+<P>Index 51 
 <BR><UL>Osd close button character. Default is '<B> </B>'. </UL>
-<P>Index 49 
+<P>Index 52 
 <BR><UL>Displayed tab character (used when 
 <A HREF="m5var047.html">$system(5)</A> bit 0x80000 is set). Default is '<B>&gt;</B>'. </UL>
-<P>Index 50 
+<P>Index 53 
 <BR><UL>Displayed new-line character (used when 
 <A HREF="m5var047.html">$system(5)</A> bit 0x80000 is set). Default is '<B>\</B>'. </UL>
-<P>Index 51 
+<P>Index 54 
 <BR><UL>Displayed space character (used when 
-<A HREF="m5var047.html">$system(5)</A> bit 0x80000 is set). Default is '<B>.</B>'. </UL></UL>
+<A HREF="m5var047.html">$system(5)</A> bit 0x80000 is set). Default is '<B>.</B>'. </UL>
+<P>Index 55 
+<BR><UL>Displayed truncated text to left character (used when the current line is scrolled to the right). Default is '<B>$</B>'. </UL>
+<P>Index 56 
+<BR><UL>Displayed truncated text to right character (used when the current line is longer than the window width). Default is '<B>$</B>'. </UL>
+<P>Index 57 
+<BR><UL>Inserted end of wrapped line character in an 
+<A HREF="m2cmd077.html">ipipe-shell-command(2)</A> buffer. Default is '<B>\</B>'. </UL></UL>
 <H2><B>EXAMPLE </B></H2>
-<UL><P>The <B>$window-chars</B> is typically platform dependent, it's setting is determined by the characters available in character set of the hosting platform. MS-DOS and Microsoft Windows environments might use a string such as:- <UL>
-<PRE>&quot;=-#*%\x1E\xB1\xDB\xB1\x1F\x04&nbsp;\x1E\xB1\xB1\xDB\xDB\xB1\xB1&nbsp;\x1F\x1B\x1A\xaf\xfb\xfa&quot; 
+<UL><P>The <B>$window-chars</B> is typically platform dependent, it's setting is determined by the characters available in character set of the hosting platform. MS-DOS and Microsoft Windows use an OEM font might use the following value: <UL>
+<PRE>&quot;=-#*%=\C^\xB1&nbsp;\xB1\C_\CD==\C^\C^\xB1\xB1&nbsp;&nbsp;\xB1\xB1\C_\C_\C[ 
+\CZ|\CQ\xB1&nbsp;\xB1\CP\CD||\CQ\CQ\xB1\xB1&nbsp;&nbsp;\xB1\xB1\CP\CP\C[ 
+\CZ&nbsp;x*&nbsp;&nbsp;&gt;\\.$$\\&quot; 
 </PRE></UL>
-<P>X-Windows environments might use a string such as:- <UL>
-<PRE>&quot;=-#*%^\x02&nbsp;\x02v\x01&nbsp;^\x02\x02&nbsp;&nbsp;\x02\x02&nbsp;v\xAB\xBB&gt;\\.&quot; 
-</PRE></UL>
-<P>Both utilize platform specific characters to render some of the window components. </UL>
+<P>This utilizes character-set specific characters to render some of the window components. </UL>
 <H2><B>NOTES </B></H2>
 <UL><UL><P>
 <LI>
 <A HREF="m5var055.html">$scroll-bar(5)</A> allows the scroll box to be rendered in reverse video allowing a space to be used for the scroll box. 
 <LI>Use 
-<A HREF="m3osd003.html">symbol(3)</A> to determine the displayable characters on the host platform. </UL></UL>
+<A HREF="m3osd003.html">symbol(3)</A> to determine the displayable characters on the host platform. 
+<LI>The use of MicroEmacs's extended character set on Windows and XTerm platforms can greatly improve the look and usability of MicroEmacs, see the Extend Char Set option in the Platform page of 
+<A HREF="m3osd000.html">user-setup(3)</A> and bit <TT>0x10000</TT> of variable 
+<A HREF="m5var047.html">$system(5)</A>. </UL></UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m2cmd151.html">split-window-horizontally(2)</A>, 
@@ -104,7 +115,7 @@ $window-chars(5)</H1>
 <A HREF="m5var050.html">$scroll-bar-scheme(5)</A>, 
 <A HREF="m5var047.html">$system(5)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2001/12/18</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2002/10/16</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>

@@ -1,8 +1,8 @@
 <HTML>
 <HEAD><TITLE>osd(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 osd(2)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
@@ -104,7 +104,7 @@ osd&nbsp;200&nbsp;3&nbsp;&quot;&quot;
 <PRE>define-macro&nbsp;test-osd 
 &nbsp;&nbsp;&nbsp;&nbsp;save-buffer 
 &nbsp;&nbsp;&nbsp;&nbsp;osd&nbsp;200&nbsp;2&nbsp;&quot;&quot;&nbsp;&quot;Save&nbsp;Complete&quot; 
-&nbsp;&nbsp;&nbsp;&nbsp;osd&nbsp;200&nbsp;4&nbsp;&quot;BcfH&quot;&nbsp;%osd-ebtt-scheme&nbsp;&quot;&nbsp;&nbsp;&amp;Okay&nbsp;&nbsp;&quot;&nbsp;f&nbsp;void 
+&nbsp;&nbsp;&nbsp;&nbsp;osd&nbsp;200&nbsp;4&nbsp;&quot;BcfH&quot;&nbsp;%osd-ebtt-scheme&nbsp;&quot;&nbsp;&nbsp;\HOkay&nbsp;&nbsp;&quot;&nbsp;f&nbsp;void 
 &nbsp;&nbsp;&nbsp;&nbsp;osd 
 !emacro 
 
@@ -119,7 +119,7 @@ osd&nbsp;200&nbsp;4&nbsp;&quot;BcfHS&quot;&nbsp;%osd-dbtt-scheme&nbsp;&quot;&nbs
 </UL><UL><P>The above mechanism is how 
 <A HREF="m3osd002.html">spell-buffer(3)</A> operates. </UL>
 <P><B>k</B> 
-<BR><UL>Disables hot-keys for the dialog. All text strings are copied literally. This is useful for dialogs like the tags child dialog as many tags have '<TT>&amp;</TT>'s in them. </UL>
+<BR><UL>Disables hot-keys (\H) for the dialog. All text strings are copied literally. This is useful for dialogs like the tags child dialog as many tags have '<TT>&amp;</TT>'s in them. </UL>
 <P><B>B</B> 
 <BR><UL>Makes the mouse right Button have the same behaviour as the left, by default the right mouse button simply closes the dialog. This is useful for some dialogs which are opened using the right mouse button. </UL>
 <P><B>f</B> 
@@ -233,7 +233,7 @@ define-macro&nbsp;my-entry-set
 &nbsp;&nbsp;&nbsp;&nbsp;!endif 
 !emacro 
 
-osd&nbsp;200&nbsp;1&nbsp;&nbsp;&quot;S&quot;&nbsp;&quot;&nbsp;&amp;Enter&nbsp;text&quot;&nbsp;2 
+osd&nbsp;200&nbsp;1&nbsp;&nbsp;&quot;S&quot;&nbsp;&quot;&nbsp;\HEnter&nbsp;text&quot;&nbsp;2 
 osd&nbsp;200&nbsp;2&nbsp;&nbsp;&quot;ExHf&quot;&nbsp;%osd-entry-scheme&nbsp;&quot;########&quot;&nbsp;1&nbsp;my-entry-set 
 </PRE></UL>
 </UL><P><B>B</B> 
@@ -248,10 +248,10 @@ osd&nbsp;200&nbsp;2&nbsp;&nbsp;&quot;ExHf&quot;&nbsp;%osd-entry-scheme&nbsp;&quo
 <A HREF="m5var071.html">$repeat-time(5)</A>. </UL>
 <P><B>S</B> 
 <BR><UL>Item is a separator type. This is not often required as any item without anything to execute is automatically set to be a separator. Occasionally a mouse-insensitive item which can be executed is required, typically a text string with a hot key, e.g. <UL>
-<PRE>osd&nbsp;200&nbsp;1&nbsp;&nbsp;&quot;S&quot;&nbsp;&quot;&nbsp;&amp;Enter&nbsp;text&quot;&nbsp;2 
+<PRE>osd&nbsp;200&nbsp;1&nbsp;&nbsp;&quot;S&quot;&nbsp;&quot;&nbsp;\HEnter&nbsp;text&quot;&nbsp;2 
 osd&nbsp;200&nbsp;2&nbsp;&nbsp;&quot;ExHf&quot;&nbsp;%osd-entry-scheme&nbsp;&quot;########&quot;&nbsp;1&nbsp;my-entry-set 
 </PRE></UL>
-<P>will be drawn as &quot;<TT>[ Okay ]</TT>&quot; </UL>
+<P>will be drawn as &quot;<TT>[ Okay ]</TT>&quot;. The hot-key is denoted by \H so for osd item 1 then this is the <B>E</B> of <I>Enter</I>. </UL>
 <UL><P>Item 1 will have a hot-key which executes item 2 (as no command is given), but it will not hi-light if the mouse is placed over it. </UL>
 <P><B>R</B> 
 <BR><UL>Redraw dialog. Forces a redraw of the dialog when the item is executed. This is not usually required as <B>osd</B> generally works out for itself whether a redraw is needed, however, sometimes it does not, most notably when the item sets a variable that is displayed by another item as an entry, e.g. <UL>
@@ -265,9 +265,9 @@ define-macro&nbsp;my-entry-set
 &nbsp;&nbsp;&nbsp;&nbsp;!endif 
 !emacro 
 
-osd&nbsp;200&nbsp;1&nbsp;&nbsp;&quot;S&quot;&nbsp;&quot;&nbsp;&amp;Enter&nbsp;text&quot;&nbsp;2 
+osd&nbsp;200&nbsp;1&nbsp;&nbsp;&quot;S&quot;&nbsp;&quot;&nbsp;\HEnter&nbsp;text&quot;&nbsp;2 
 osd&nbsp;200&nbsp;2&nbsp;&nbsp;&quot;ExHf&quot;&nbsp;%osd-entry-scheme&nbsp;&quot;########&quot;&nbsp;1&nbsp;my-entry-set 
-osd&nbsp;200&nbsp;3&nbsp;&nbsp;&quot;BxHcfiR&quot;&nbsp;%osd-ebtt-scheme&nbsp;&nbsp;&quot;&nbsp;&amp;Reset&nbsp;&quot;&nbsp;f&nbsp;&quot;set-variable&nbsp;%entry-value\&quot;\&quot;&quot; 
+osd&nbsp;200&nbsp;3&nbsp;&nbsp;&quot;BxHcfiR&quot;&nbsp;%osd-ebtt-scheme&nbsp;&nbsp;&quot;&nbsp;\HReset&nbsp;&quot;&nbsp;f&nbsp;&quot;set-variable&nbsp;%entry-value\&quot;\&quot;&quot; 
 </PRE></UL>
 </UL><UL><P>If item 3 did not have flag <B>R</B> set when executed, <B>osd</B> would not realize that the change to value <TT>%entry-value</TT> affects the display and the button would not appear to operate. </UL>
 <P><B>H</B> 
@@ -302,7 +302,7 @@ osd&nbsp;200&nbsp;3&nbsp;&nbsp;&quot;BxHcfiR&quot;&nbsp;%osd-ebtt-scheme&nbsp;&n
 <A HREF="m5var055.html">$scroll-bar(5)</A>. 
 <A HREF="m5var051.html">$window-chars(5)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2001/12/18</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2004/01/11</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>

@@ -1,8 +1,8 @@
 <HTML>
 <HEAD><TITLE>scroll-left(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 scroll-left(2)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
@@ -62,7 +62,7 @@ scroll-left(2)</H1>
 <H2><B>NOTES </B></H2>
 <UL><P>The scrolling is an attribute of the WINDOW and not the BUFFER. If the window is closed, or contents swapped to a different buffer then the scroll setting is reset for the next buffer. A return to the previous buffer does not restore the scroll setting. The only case where scrolling is inherited is when a window is split (see 
 <A HREF="m2cmd128.html">split-window-vertically(2)</A>). 
-<P>When binding <B>scroll-left</B> to the keyboard then it is important to note that when no argument is specified the resolution is <I>screen-width</I>'s. A key binding would operate on character multiples, hence the command should be bound with a numeric argument to perform the perform the keyboard action. e.g. <UL>
+<P>When binding <B>scroll-left</B> to the keyboard then it is important to note that when no argument is specified the resolution is <I>frame-width</I>'s. A key binding would operate on character multiples, hence the command should be bound with a numeric argument to perform the perform the keyboard action. e.g. <UL>
 <PRE>1&nbsp;global-bind-key&nbsp;scroll-left&nbsp;&nbsp;&quot;A-left&quot; 
 1&nbsp;global-bind-key&nbsp;scroll-right&nbsp;&quot;A-right&quot; 
 </PRE></UL>
@@ -77,7 +77,7 @@ scroll-left(2)</H1>
 <A HREF="m2cmd087.html">scroll-down(2)</A>, 
 <A HREF="m5var081.html">$window-x-scroll(5)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2001/12/18</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2002/10/16</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>

@@ -1,8 +1,8 @@
 <HTML>
 <HEAD><TITLE>Installation(1)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 Installation(1)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
@@ -13,7 +13,7 @@ Installation(1)</H1>
 </FONT>
 <HR>
 <H2><B>INSTALLATION </B></H2>
-<UL><P>This page describes introductory notes for the installation and setup of MicroEmacs '02. </UL>
+<UL><P>This page describes introductory notes for the installation and setup of MicroEmacs '04. </UL>
 <H2>Quick Install </H2>
 <UL><P>The quickest way to install MicroEmacs without reading the rest of this document is to:- <UL><P>
 <LI>Create a new directory i.e. <TT>me</TT> or <TT>microemacs</TT>. 
@@ -38,7 +38,7 @@ Installation(1)</H1>
 <P><B>Complete Installations </B>
 <BR><UL>The Microsoft '95/'98/NT platforms may be installed using the <B>Install</B> <B>Shield</B> installation utility and do not require the components specified in later sections. <TT>jasspame.exe</TT>&nbsp;-&nbsp;'95/'98/NT&nbsp;Self&nbsp;Extracting&nbsp;Install&nbsp;Shield&nbsp;Installation </UL>
 <P><B>Executable Source Code </B>
-<BR><UL>The source code release for MicroEmacs '02 contains makefiles (<TT>*.mak</TT>) for all supported platforms. Microsoft '95/'98/NT makefiles contain options at the top of the makefile to enable/disable console and URL support. <TT>mesrc.zip</TT>&nbsp;-&nbsp;Source&nbsp;code&nbsp;for&nbsp;all&nbsp;platforms 
+<BR><UL>The source code release for MicroEmacs '04 contains makefiles (<TT>*.mak</TT>) for all supported platforms. Microsoft '95/'98/NT makefiles contain options at the top of the makefile to enable/disable console and URL support. <TT>mesrc.zip</TT>&nbsp;-&nbsp;Source&nbsp;code&nbsp;for&nbsp;all&nbsp;platforms 
 <BR><TT>mesrc.tar.gz</TT>&nbsp;-&nbsp;Source&nbsp;code </UL>
 <P><B>Executable Images </B>
 <BR><UL><TT>medos.zip</TT>&nbsp;-&nbsp;DOS&nbsp;Executable 
@@ -86,11 +86,11 @@ Installation(1)</H1>
 <BR><TT>lsdmeses.tar.gz</TT>&nbsp;-&nbsp;Spanish&nbsp;rules&nbsp;and&nbsp;dictionary. </UL>
 <UL><P><B>NOTE:</B> The binary versions of the executables held on the site include the platform name as part of the executable name i.e. <B>me</B> for <TT>DOS</TT> is called <B>medos.exe</B>. On installing the binaries onto the target machine, you should rename the executable to <B>me</B> or <B>me.exe</B>, whatever is appropriate. The ONLY exception to this rule is the Microsoft Windows executable where <B>mewin32.exe</B> should be renamed to <B>me32.exe</B>. Our reason for this naming is to allow the executables to be unpacked in the same directory and not be confused with each other. </UL></UL>
 <H2>Quick Start Guild For All Platforms </H2>
-<UL><P>Simply create a directory, down-load the files required (see list for each platform below) and extract into this directory. From a shell or command prompt, change to the directory, making it the current one (i.e. <B>cd</B> to it), and run the executable. MicroEmacs '02 should open with the on-line help page visible. 
+<UL><P>Simply create a directory, down-load the files required (see list for each platform below) and extract into this directory. From a shell or command prompt, change to the directory, making it the current one (i.e. <B>cd</B> to it), and run the executable. MicroEmacs '04 should open with the on-line help page visible. 
 <P>On Windows based systems this can also be achieved by creating a short-cut and setting the Working Directory in Properties to this path. 
 <P>To enable MicroEmacs to be run from any directory, simply include this directory in you <B>PATH</B> environment variable. Alternatively, copy the executable to somewhere in your PATH and set the environment variable 
 <A HREF="m5var057.html">MEPATH</A> to point to this directory. 
-<P>MicroEmacs '02 will function normally in this environment, but in multi-user environments and for up-dating purposes, it is strongly recommended that a proper installation is used, see below. </UL>
+<P>MicroEmacs '04 will function normally in this environment, but in multi-user environments and for up-dating purposes, it is strongly recommended that a proper installation is used, see below. </UL>
 <H2>Installation </H2>
 <UL><P><B>DOS</B> <UL>
 <P>Executable: 
@@ -146,7 +146,7 @@ me&nbsp;-c&nbsp;-v$TERM=E80x25&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&
 <BR><UL><B>win32s</B> is a requirement on this platform, typically taken from <B>pw1118.exe</B> which freely available on the Internet. </UL>
 <P>Installation: 
 <BR><UL>This version of Windows does not have a <I>install</I> directory as '95/'98 and it is expected that the <TT>MS-DOS</TT> version will coexist. No <I>Install</I> <I>Shield</I> installation is provided. Install in a directory structure similar to <TT>MS-DOS</TT>. Install the helper DLL <B>methnk16.dll</B> in the <TT>C:\WINDOWS\SHELL</TT> directory. Create a 
-<A HREF="m8fil006.html">me32.ini(8)</A> file in the <TT>C:\WINDOWS</TT> directory to identify the location of the MicroEmacs '02 components, this much the same as the '95/'98 file, change the directory paths to suite the install base. </UL>
+<A HREF="m8fil006.html">me32.ini(8)</A> file in the <TT>C:\WINDOWS</TT> directory to identify the location of the MicroEmacs '04 components, this much the same as the '95/'98 file, change the directory paths to suite the install base. </UL>
 <P>Support Status: 
 <BR><UL>The <B>win32s</B> release has not been used with vengeance, although no specific problems have been reported with this release. </UL>
 </UL><P><B>Windows '95/'98/NT</B> <UL>
@@ -193,7 +193,7 @@ fontfile=dosapp.fon
 [HKEY_CLASSES_ROOT\MicroEmacs_foo\Shell\open\command] 
 &quot;C:\Program&nbsp;File\JASSPA\MicroEmacs\me32.exe&nbsp;-o&nbsp;&quot;%1&quot;&quot; 
 </PRE></UL>
-</UL><UL><P>In the previous exaple the <I>DefaultIcon</I> entry is the icon assigned to the file. This may be an icon taken from <TT>meicons.exe</TT> (in this case icon number 23), or may be some other icon. The open action in the example uses the <B>-o</B> option of the <I>client-server</I>, which loads the file into the current MicroEmacs '02 session, alternatively the <B>-c</B> option may be used to retain the previous context, or no option if a new session with no other files loaded is started. </UL>
+</UL><UL><P>In the previous exaple the <I>DefaultIcon</I> entry is the icon assigned to the file. This may be an icon taken from <TT>meicons.exe</TT> (in this case icon number 23), or may be some other icon. The open action in the example uses the <B>-o</B> option of the <I>client-server</I>, which loads the file into the current MicroEmacs '04 session, alternatively the <B>-c</B> option may be used to retain the previous context, or no option if a new session with no other files loaded is started. </UL>
 <UL><P>A generic open for ALL files may be defined using a wildcard, this may be used to place a <I>MicroEmacs</I> edit entry in the right-click popup menu, as follows:- <UL>
 <PRE>[HKEY_CLASSES_ROOT\*\shell] 
 [HKEY_CLASSES_ROOT\*\shell\MicroEmacs] 
@@ -296,7 +296,7 @@ fontfile=dosapp.fon
 <A HREF="m2nar000.html">File Language Templates</A>, 
 <A HREF="m2nar003.html">User Profiles</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2002/01/04</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2002/01/11</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>

@@ -1,8 +1,8 @@
 <HTML>
 <HEAD><TITLE>narrow-buffer(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1f - [Nroff Parser : 1.3.4 (Win32)] - Jan 25 2000 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 narrow-buffer(2)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
@@ -15,22 +15,63 @@ narrow-buffer(2)</H1>
 <H2><B>NAME </B></H2>
 <UL><P>narrow-buffer - Hide buffer lines </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><I>n</I> <B>narrow-buffer</B> </UL>
+<UL><P><I>n</I> <B>narrow-buffer</B> 
+<BR>n <B>narrow-buffer</B> <I>line-scheme</I> &quot;<I>markup-command</I>&quot; </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P>The effect of <B>narrow-buffer</B> depends on the argument given, defined as follows:- 
-<P>1 
-<BR><UL>Removes all narrows in the current buffer (Default). </UL>
-<P>2 
-<BR><UL>Removes the current line's narrow. </UL>
-<P>3 
-<BR><UL>Narrow to region. Hides all but the lines of test in the current buffer from the 
-<A HREF="m2cmd121.html">mark</A> position to the current cursor position, effectively 'narrowing' the buffer to the remaining text. </UL>
-<P>4 
-<BR><UL>Narrow out region. Hides the lines of test in the current buffer from the 
-<A HREF="m2cmd121.html">mark</A> position to the current cursor position, opposite to argument <B>3</B>. 
-</UL><P>When a narrow is created the buffer mode 
+<UL><P>The <B>narrow-buffer</B> command allows lines in a buffer to be hidden or folded up, the scope of the narrow is defined by a region. A region is the text located between the <B>point</B> (the current cursor position) and the <B>mark</B> defined by 
+<A HREF="m2cmd121.html">set-mark</A>. 
+<P><B>narrow-buffer</B> supports two types of information hiding. A simple <I>Narrow</I> or <I>Narrow</I> <I>Out</I> hides lines of the region from display and optionally inserts a new line, called a mark-up line. The mark-up line allows the narrow position to be annotated with a line scheme color and annotation text providing a visual representation of the narrow i.e. <UL>
+<PRE>Before&nbsp;Narrow&nbsp;Out&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;After&nbsp;Narrow&nbsp;Out 
+________________________________________________________________ 
+
+...&nbsp;buffer&nbsp;text&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...&nbsp;buffer&nbsp;text&nbsp;.. 
+&lt;region&nbsp;start&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Optional&nbsp;Narrow&nbsp;Out&nbsp;line&nbsp;mark-up&gt; 
+....&nbsp;region&nbsp;text&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...&nbsp;more&nbsp;buffer&nbsp;text&nbsp;... 
+&lt;region&nbsp;end&gt; 
+...&nbsp;more&nbsp;buffer&nbsp;text&nbsp;... 
+</PRE></UL>
+<P>The second narrow form is a <I>Narrow To</I> which hides text around the region leaving just the region displayed. A <I>Narrow Out</I> will optionally show a mark-up line at both the top and bottom of the region. The mark-up line permits the <I>Narrow</I> <I>To</I> position to be annotated in the buffer with a line scheme color and annotation text providing a visual representation of the narrow i.e. <UL>
+<PRE>Before&nbsp;Narrow&nbsp;To&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;After&nbsp;Narrow&nbsp;To 
+________________________________________________________________ 
+
+...&nbsp;buffer&nbsp;text&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;Optional&nbsp;Narrow&nbsp;Out&nbsp;top&nbsp;mark-up&gt; 
+&lt;region&nbsp;start&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;region&nbsp;start&gt; 
+....&nbsp;region&nbsp;text&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;....&nbsp;region&nbsp;text&nbsp;... 
+&lt;region&nbsp;end&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;region&nbsp;end&gt; 
+...&nbsp;more&nbsp;buffer&nbsp;text&nbsp;...&nbsp;&nbsp;&nbsp;&lt;Optional&nbsp;Narrow&nbsp;Out&nbsp;bottom&nbsp;mark-up&gt; 
+</PRE></UL>
+<P>Once a narrow has been created and information has been hidden <B>narrow-buffer</B> may be used to subsequently reveal the hidden text on a line or complete buffer basis. 
+<P>Narrowed regions do not delete the text contained within the narrow the information is simply hidden. Saving the buffer using 
+<A HREF="m2cmd113.html">save-buffer(2)</A>, by default, writes all of the displayed and hidden information contained within any narrow region but may optionally save only the visible representation. 
+<P>While information is hidden in a narrow 
+<A HREF="m2cmd022.html">copy-region(2)</A> and 
+<A HREF="m2cmd081.html">kill-region(2)</A> operate as expected. If a narrow is copied then all of the information that is contained within the narrow is also copied to the new location. Similarly killing or deleting a narrow removes all of the information that is contained within the narrow. 
+<P><B>narrow-region</B> performs the low-level information hiding and is used within the macro command language, the command is not generally invoked directly by the user. Within the macro environment the location of narrows in any buffer may be determined using the line variable 
+<A HREF="m5var085.html">$line-flags(5)</A>. This variable allows the narrow state of the current line in a buffer to be determined. The narrow state of a buffer may be determined with 
+<A HREF="m2mod025.html">narrow(2m)</A>. When a narrow is created the buffer mode 
 <A HREF="m2mod025.html">narrow(2m)</A> is automatically set, when the last is removed this mode is deleted. 
-<P>For example, if the buffer contains the following text: <UL>
+<P>The effect of <B>narrow-buffer</B> depends on the argument given, defined as follows:- <UL><P>
+<LI>Removes all narrows in the current buffer (Default). Aborts if there are no narrows in the buffer. <P>
+<LI>Removes the current line's narrow. Aborts if there is no narrow at the current line. <P>
+<LI>Narrow to region. Hides all but the lines of text in the current buffer from the 
+<A HREF="m2cmd121.html">mark</A> position to the current cursor position, effectively 'narrowing' the buffer to the remaining text. <P>
+<LI>Narrow out region. Hides the lines of test in the current buffer from the 
+<A HREF="m2cmd121.html">mark</A> position to the current cursor position, opposite to argument <B>3</B>. </UL>
+<P>The second form of the command takes up to two arguments which are determined by the value of <I>n</I> when bits in the range <TT>0x0ff0</TT> are defined. These bits are interpreted as a bit-mask and determine how the narrow is to be visually displayed to the user. When these bits are set then a mark-up line is created. 
+<P><TT>0x0010</TT> - <I>line-scheme</I> 
+<BR><UL>Bit <TT>0x0010</TT> specifies the line 
+<A HREF="m2cmd069.html">hilight(2)</A> color scheme to be used on the narrow line when it is an open or closed narrow. The scheme colors used are defined by the scheme variables <TT>scheme.fold-open</TT> and <TT>scheme.fold-closed</TT>. </UL>
+<P><TT>0x0020</TT> - &quot;<I>markup-command</I>&quot; 
+<BR><UL>Bit <TT>0x0020</TT> specifies that a mark-up line is to be used to represent the narrow region. When the narrow region is created then the <I>markup-command</I> macro is executed to annotate the narrowed region. The macro is invoked when the narrow is created and is passed a numeric argument <I>n</I> which identifies the operation of the narrow. The numeric argument to the mark-up macro is defined below, generally a <TT>+ve</TT> argument means that a narrow is being added and <TT>-ve</TT> means that the narrow is being removed. </UL>
+<UL><P><TT>1</TT> - This is a <I>Narrow Out</I> line. 
+<BR><TT>2</TT> - This is the top of a <I>Narrow To</I>. 
+<BR><TT>3</TT> - This is the bottom of a <I>Narrow To</I>. </UL>
+<UL><P>When the macro is executed then the current line is the start of the narrow, the text of the line is available in the macro via 
+<A HREF="m4fil016.html">@wl(4)</A>. The <I>markup-command</I> aborts, using 
+<A HREF="m4fil010.html">!abort(4)</A> if the mark-up line is to be removed, or returns a mark-up line in the variable 
+<A HREF="m5var041.html">$result(5)</A>. </UL></UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>For example, if the buffer contains the following text: <UL>
 <PRE>1&nbsp;Richmond 
 2&nbsp;Lafayette 
 3&nbsp;Bloomington 
@@ -55,12 +96,32 @@ narrow-buffer(2)</H1>
 6 
 </PRE></UL>
 <P>Executing <B>narrow-buffer</B> with an argument of <B>2</B> will only work on the anchor lines, namely 4 in the first example and 2 and 6 in the second. </UL>
+<H2>Marking Up </H2>
+<UL><P>A pseudo line may be created by <B>narrow-buffer</B> which is hilighted and annotated to show that a narrow exists. This markup is used in the language templates in the collapse operations (<TT>collapse.emf</TT>) to show that a narrow exists. The narrow region is applied using the <B>narrow-buffer</B> command as follows:- <UL>
+<PRE>0x34&nbsp;narrow-buffer&nbsp;.scheme.fold-close&nbsp;collapse-markup 
+</PRE></UL>
+<P>This defines a narrow region with a color scheme mark-up, the mark-up line is annotated by the macro <TT>collapse-markup</TT> once the narrow is created, the macro is defined as follows:- <UL>
+<PRE>0&nbsp;define-macro&nbsp;collapse-markup 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;les&nbsp;@#&nbsp;0 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;no&nbsp;markup&nbsp;line&nbsp;modificaton 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!abort 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$result&nbsp;&amp;cat&nbsp;&amp;trr&nbsp;&amp;lef&nbsp;@wl&nbsp;40&nbsp;&quot;&nbsp;...&quot; 
+!emacro 
+</PRE></UL>
+<P>The <TT>collapse-markup</TT> macro process the numeric argument 
+<A HREF="m4fil014.html">@#(4)</A> to determine the mark-up type to be applied to the buffer. When the numeric argument is -ve then 
+<A HREF="m4fil010.html">!abort(4)</A> is called to remove the mark-up. When the numeric argument is +ve then a mark-up line annotation is created by taking the first 40 characters of the line and appending &quot;<TT>...</TT>&quot; to indicate that this is a narrow. The original <B>narrow-buffer</B> call included a 
+<A HREF="m2cmd069.html">hilight(2)</A> line scheme so the resultant mark-up line will be hilighted and show the first 40 characters of the defined followed by an ellipsis. </UL>
 <H2><B>NOTES </B></H2>
 <UL><P>Alpha mark set by 
 <A HREF="m2cmd118.html">set-alpha-mark(2)</A> in text which is subsequently narrowed out will automatically remove the narrow if the user returns to the mark using 
 <A HREF="m2cmd059.html">goto-alpha-mark(2)</A>. 
 <P>
-<A HREF="m2cmd058.html">get-next-line(2)</A> operates on the unnarrowed buffer and will remove any narrows hiding the 'next' line. </UL>
+<A HREF="m2cmd058.html">get-next-line(2)</A> operates on the unnarrowed buffer and will remove any narrows hiding the 'next' line. 
+<P>When copying a region containing a narrowed region(s) with 
+<A HREF="m2cmd022.html">copy-region(2)</A> then the content of the narrowed region(s) is also copied. A numeric argument to 
+<A HREF="m2cmd022.html">copy-region(2)</A> may be used to change the behavior to copy the visual representation only. </UL>
 <H2><B>EXAMPLE </B></H2>
 <UL><P>
 <A HREF="m3mac017.html">c-hash-eval(3)</A> macro defined in cmacros.emf uses narrow-buffer to hide regions of source code which has been #defined out, improving readability. 
@@ -70,14 +131,26 @@ narrow-buffer(2)</H1>
 <A HREF="m2cmd143.html">write-buffer(2)</A> to write out only parts of the current buffer. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
-<A HREF="m2mod025.html">narrow(2m)</A>, 
-<A HREF="m2cmd121.html">set-mark(2)</A>, 
-<A HREF="m2cmd118.html">set-alpha-mark(2)</A>, 
-<A HREF="m2cmd058.html">get-next-line(2)</A>, 
+<A HREF="m4fil010.html">!abort(4)</A>, 
+<A HREF="m5var085.html">$line-flags(5)</A>, 
+<A HREF="m5var041.html">$result(5)</A>, 
+<A HREF="m4fil014.html">@#(4)</A>, 
+<A HREF="m4fil016.html">@wl(4)</A>, 
+<A HREF="m2cmd123.html">append-buffer(2)</A>, 
 <A HREF="m3mac017.html">c-hash-eval(3)</A>, 
-<A HREF="m3mac028.html">vm(3)</A>. </UL>
+<A HREF="m2cmd022.html">copy-region(2)</A>, 
+<A HREF="m2cmd058.html">get-next-line(2)</A>, 
+<A HREF="m2cmd059.html">goto-alpha-mark(2)</A>, 
+<A HREF="m2cmd069.html">hilight(2)</A>, 
+<A HREF="m2cmd081.html">kill-region(2)</A>, 
+<A HREF="m2mod025.html">narrow(2m)</A>, 
+<A HREF="m2cmd113.html">save-buffer(2)</A>, 
+<A HREF="m2cmd118.html">set-alpha-mark(2)</A>, 
+<A HREF="m2cmd121.html">set-mark(2)</A>, 
+<A HREF="m3mac028.html">vm(3)</A>, 
+<A HREF="m2cmd143.html">write-buffer(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2001/12/18</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2004/01/11</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>

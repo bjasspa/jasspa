@@ -43,7 +43,91 @@
     <p><HR color=#cccccc noShade SIZE=1></p>
     <p>
     <font class=bodytext face="Ariel, Helvetica, san-serif" size=2 color="#FF0000">
-    <b>5th December 2002</b></font>
+    <b>January 2004</b></font>
+    <ul>
+      
+      <li>Large file support with the new command <b>page-file</b> command.
+      This command allows large files to be edited by partially loading the
+      file into memory which is paged in an out depending on the position in
+      the file.</li>
+      
+      <li>Enhanced Toolbar support. Enable the toolbar with <b>User Setup /
+      Platform / Toolbar</b>. Right click on the toolbar mode line to add
+      tools to the tool bar. Click on the arrows of the mode line to change to
+      displayed tool.</li>
+      
+      <li>Auto spell correction pop-up. Enable Auto Spell with <b>User Setup /
+      Platform</b>. Spelling mistakes are hilighted on text entry, force the
+      whole buffer to be spell checked with <b>auto-spell-buffer</b>. For the
+      spelling pop-up, right click with the mouse on the spelling error and
+      select <b>Auto Spell</b> for a list of spelling suggestions. When an
+      alternative word is selected the spelling error is corrected and the
+      cursor returns to the current position.</li>
+      
+      <li>Enhanced folding or collapsing support. Folding using
+      <b>narrow-buffer</b> supports full copying and deletion 
+      of folds. Many language templates now support collapsing
+      to hide information. Folding is supported from the 
+      <b>Menu / Edit</b>, <b>Narrow To</b> hides the
+      around a selected region, <b>Narrow Out</b> hides the 
+      lines of a selected region. Macros may determine the 
+      hidden state of a line using the new variable $line-flags.
+      
+      <li>New language templates for PHP, LUA, SGML. Existing language
+      templates include enhanced capabilities. Template definition has been
+      improved with the <b>buffer-init</b> macro development commands.</li>
+      
+      <li>Improved support for CVS. Use <b>M-x cvs</b> to launch the CVS view.
+      Use the mouse (right button) to select CVS operations to be performed on
+      the selection, dialogs are used to enter logging messages and select
+      the CVS behaviour.</li>
+      
+      <li>Directory listing enhancements. With the mouse, select <b>Order by
+      Extension</b> to sort the files by extension. Selecting a path component
+      in the <i>Directory listing of:</i> line at the top of the buffer moves
+      to the specified directory.</li>
+      
+      <li>Macro language speed ups. MicroEmacs '04 now runs faster than
+      previous versions.</li>
+    </ul>
+    <p>
+    <ul>
+      <li><b>For those that use the toolbar:</b><br>There are a lot of fixes and
+      replaced/removed some of the tools (ftp-files had to go and the file
+      list tool is no longer linked to the browser - could not get this
+      working correctly and not affect the browser). JASSPA recommend that
+      you remove each toolbar and re-create it, this will ensure that your
+      setup has the correct settings.</li>
+
+      <li><b>For those that have their own file hooks:</b><br>The
+      <b>buffer-initialize-*</b> functions have been renamed to
+      <b>buffer-init*</b> and another function has been added which should be
+      called at the end of the file. You may have settings for the old
+      function folding feature, this feature has changed from <b>fold</b> to
+      <b>collapse</b> so <tt>set-variable .fhook-???.fold-open</tt> should now
+      be defined as <tt>.fhook-???.collapse-open</tt>. The reason for the
+      change is that MicroEmacs can now be used as a proper folding editor,
+      try loading <tt>fold.emf</tt>. Improvements in the narrowing capability
+      now makes narrowing easy and safe to use, try the main menus <b>Edit
+      -&gt; Narrow commands</b>. See any <tt>fhook</tt> in <tt>hkxxx.emf</tt>
+      for examples of how <b>fhooks</b> should be defined.</li> 
+    
+      <li><b>For those of you with Personal Favourites:</b><br>The hot key
+      char has changed from "<tt>&amp;</tt>" to "<tt>\H</tt>". To fix your
+      favorite list go to the main menu <b>File -&gt; Favorites -&gt; Edit</b>
+      and in the buffer change "<tt>&amp;</tt>" (1 character) to "<tt>\H</tt>"
+      (2 chars).</li>
+
+      <li><b>For those with OSD dialogs:</b><br>The same "<tt>&amp;</tt>" -&gt;
+      "<tt>\H</tt>" change has been made and you may also find lots of
+      "<tt>..</tt>"s at the end on menu items, this is due to a change in the
+      behaviour of the "<tt>d</tt>" flag.</li>
+    
+    </ul>
+    <p><HR color=#cccccc noShade SIZE=1></p>
+    <p>
+    <font class=bodytext face="Ariel, Helvetica, san-serif" size=2 color="#FF0000">
+    <b>December 2002</b></font>
     <ul>
       <li>This release introduces the concept of <i>frames</i>, multiple
       frames (i.e. the display window) may be created from a single
@@ -67,7 +151,7 @@
     <font class=bodytext face="Ariel, Helvetica, san-serif" size=2 color="#FF0000">
     <b>5th January 2002</b></font>
     <ul>
-      <li>Jasspa MicroEmacs is now distributed under the GNU General Public License (GPL).<br>
+      <li>Jasspa MicroEmacs is now distributed under the GNU General Public License (GPL).
       All files now have the GPL licensing terms applied to them.</li>
       <li>Language and spelling support are separated. It is now possible to support local
       keyboards and non-Latin character sets without installing the appropriate spelling dictionaries.</li>
@@ -76,7 +160,7 @@
     <p><HR color=#cccccc noShade SIZE=1></p>
     <p>
     <font class=bodytext face="Ariel, Helvetica, san-serif" size=2 color="#FF0000">
-    <b>14th August 2001</b></font>
+    <b>August 2001</b></font>
     <ul>
       Hot on the tail of our last major release, this release tidies up a few loose
       ends and resolves a number of more obscure problems. The release includes
@@ -96,7 +180,7 @@
     <p><HR color=#cccccc noShade SIZE=1></p>
     <p>
     <font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
-    <b><a href="new0001.html" style="COLOR: red" >25th January 2000</a></b></font>
+    <b><a href="new0001.html" style="COLOR: red" >January 2000</a></b></font>
     <ul>
       <li>Multiple font support, <b>bold</b>, <i>italic</i>, <u>underline</u>.</li>
       <li>LaTeX support.</li>
@@ -105,6 +189,6 @@
     </ul>
     <p><HR color=#cccccc noShade SIZE=1></p>
   </ul>
-  <p><font size="-2"><i>Copyright &copy; 2000-2002 Jasspa</i></font></p>
+  <p><font size="-2"><i>Copyright &copy; 2000-2004 Jasspa</i></font></p>
   </body>
 </html>

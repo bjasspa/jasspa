@@ -1,8 +1,8 @@
 <HTML>
-<HEAD><TITLE>MicroEmacs '02 - Origins</TITLE></HEAD>
+<HEAD><TITLE>MicroEmacs '04 - Origins</TITLE></HEAD>
 <BODY>
-<H1><A HREF="../me.html"><IMG SRC="../me/logo.gif" ALIGN=BOTTOM ALT="[me]"></A>
-MicroEmacs '02 - Origins</H1>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
+MicroEmacs '04 - Origins</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
 <A HREF="amicr031.html">[Commands]</A>
@@ -13,10 +13,10 @@ MicroEmacs '02 - Origins</H1>
 <HR>
 <H2><B>ORIGINS </B></H2>
 <UL><P>This version of MicroEmacs is based on an early <I>MicroEmacs</I> release of 3.8 in 1988, the origins of which are unknown, except to say it was delivered on a unmarked 5 1/2&quot; floppy disk. 
-<P>The program was originally ported to a Motorola MVME147 UNIX box as an alternative to <B>vi</B>. Reliability of the program proved to be a problem as it constantly crashed. In an attempt to rectify the problems the development of MicroEmacs '02 commenced. 
-<P>Development has continued from 1988 through to today, on the whole oblivious to further developments of the existing <B>MicroEmacs</B> program. This was due to no Internet access. It was not until 1996 the next version of <B>MicroEmacs</B> and <B>mewin</B> (Microsoft Windows (TM) port of the same program) was downloaded from the Internet and compared. By this time MicroEmacs '02 was radically different and we were not about to mesh the two together - that would be a step backwards. 
-<P>Development of MicroEmacs '02 has been biased towards the UNIX platform, as most of the early development was performed in the UNIX domain. The first of the window servers was X-Windows, which in turn has shaped the implementation of the Microsoft Windows port. Latterly, we have seen the resurgence of the IBM-PC platform which is now commonplace. For the return port to the DOS environment, and subsequent development of the Microsoft Windows port, a UNIX like interface was required. Most existing users could not abide the primitive editors found on these machines; Microsoft Windows was an alien and hostile environment when compared with UNIX. Hence, the MicroEmacs '02 interface utilizes UNIX style cut and paste across all platforms. 
-<P>For portability, MicroEmacs '02 utilizes character rendering on all platforms regardless of the window manager. Under X-Windows and Microsoft Windows, the display is still treated as a character based display, the subtle difference is that the display pane is re-sizable. This means that the scroll bars, fonts etc. are not as slick as they could be, certainly under Microsoft Windows MicroEmacs '02 looks positively primitive!! Regardless of the look, the goal of a common editor across all working platforms has been achieved! </UL>
+<P>The program was originally ported to a Motorola MVME147 UNIX box as an alternative to <B>vi</B>. Reliability of the program proved to be a problem as it constantly crashed. In an attempt to rectify the problems the development of MicroEmacs '04 commenced. 
+<P>Development has continued from 1988 through to today, on the whole oblivious to further developments of the existing <B>MicroEmacs</B> program. This was due to no Internet access. It was not until 1996 the next version of <B>MicroEmacs</B> and <B>mewin</B> (Microsoft Windows (TM) port of the same program) was downloaded from the Internet and compared. By this time MicroEmacs '04 was radically different and we were not about to mesh the two together - that would be a step backwards. 
+<P>Development of MicroEmacs '04 has been biased towards the UNIX platform, as most of the early development was performed in the UNIX domain. The first of the window servers was X-Windows, which in turn has shaped the implementation of the Microsoft Windows port. Latterly, we have seen the resurgence of the IBM-PC platform which is now commonplace. For the return port to the DOS environment, and subsequent development of the Microsoft Windows port, a UNIX like interface was required. Most existing users could not abide the primitive editors found on these machines; Microsoft Windows was an alien and hostile environment when compared with UNIX. Hence, the MicroEmacs '04 interface utilizes UNIX style cut and paste across all platforms. 
+<P>For portability, MicroEmacs '04 utilizes character rendering on all platforms regardless of the window manager. Under X-Windows and Microsoft Windows, the display is still treated as a character based display, the subtle difference is that the display pane is re-sizable. This means that the scroll bars, fonts etc. are not as slick as they could be, certainly under Microsoft Windows MicroEmacs '04 looks positively primitive!! Regardless of the look, the goal of a common editor across all working platforms has been achieved! </UL>
 <H2>Development History </H2>
 <UL><P>1988-92 <UL><UL><P>
 <LI>Ported to MVME147, UNIX using curses. 
@@ -169,23 +169,306 @@ MicroEmacs '02 - Origins</H1>
 <LI><B>3rd Release</B> - July 2001. Fixed many bugs in the last 12 months as well as adding the above features. 
 <A HREF="m4fil026.html">&amp;cbind(4)</A>, 
 <A HREF="m4fil026.html">&amp;kbind(4)</A> and 
-<A HREF="m4fil026.html">&amp;nbind(4)</A>. </UL></UL></UL>
+<A HREF="m4fil026.html">&amp;nbind(4)</A>. 
+<LI><B>3rd Release</B> - Minor Updates July 14th 2001 onwards. Minor buf fixes. 
+<LI>LaTeX template corrections. 
+<LI>Corrected Windows Install Shield <I>Company</I> <I>Entry</I> and <I>Registry</I> <I>entry</I> <I>fields</I>. 
+<LI>Minor macros modification to font selection for schemes. Default guest setup font selection for cleaner <I>first</I> page. 
+<LI>CVS macro update. Changed <B>cvs-diff</B> to <B>cvs-gdiff</B> and introduced a new <B>cvs-diff</B> which just gives the diff output and fixed several bugs when running with a cvs server. Also added support for the CVS/Template file when committing. 
+<LI>Minor update to the CVS help page for the aforementioned (Affected all help files). 
+<LI><B>4th Release</B> - August 2001. Minor bug fixes. 
+<LI>Inclusion of 
+<A HREF="m3mac058.html">occur(3)</A> regexp function. 
+<LI>List function for sumarising file contents (<TT>F7</TT> / <TT>Esc-F7</TT> to close). 
+<LI>Rendered character for the scroll bar - improves clarity. 
+<LI>Modified the printer registry file location. 
+<LI>New Guest default color scheme. </UL></UL>
+<P>2002 <UL><UL><P>
+<LI><B>5th Release</B> - January 2002 
+<LI>Applied GPL License to code base. Transition to GPL following permission from Daniel M Lawrence. 
+<LI>Fix to comment-restyle in <TT>comment.emf</TT> - stops a spin. 
+<LI>nroff makefile full target building the txt files. (internal). 
+<LI>Added support for a $CURSOR$ tag to the etf files which sets the initial cursor position, and included h.etf as an example. 
+<LI>Moved the template etfinsrt calls into the buffer-initialize macro . 
+<LI>Fixed the exec fhook-cpp not working. 
+<LI>Fixes to ctags for C++ function call initialisers. 
+<LI>Fixed Windows Console <TT>RETURN</TT> key keyboard mapping, returning incorrect binding. 
+<LI>Fixed Termcap <TT>TAB</TT> key translation. 
+<LI>Fixed Termcap tparm() to use a default stack argument if not specified by default. 
+<LI>Added cygwin support to the build file. 
+<LI>Added extra argument to buffer-initialise. 
+<LI>Added support for Euphoria language. 
+<LI>Italian spelling dictionary. 
+<LI>Added scheme support for fence matching colors. 
+<LI>Removed global binding of TAB key from unixterm.emf and build in translation. 
+<LI>Fixed cygwin makefile for latest version, added cygwin macros. 
+<LI>Fixed remaining termcap crash under cygwin. 
+<LI>Merged prototype cygwin code base into release, use poll() following select(). 
+<LI>Fence matching added to user sertup (user-setup -&gt; Platform -&gt; Fence Display). 
+<LI>Reworked the buffer hooks such that mybhook/myehook can be defined. 
+<LI>Fixed a corking crash! (load random.c and do 2222 replace-string &quot;\n&quot; &quot;&quot;). 
+<LI>hklatex.emf item-list support (hit f7). 
+<LI>hklatex.emf has a greatly improved pseudo hilighting. 
+<LI>Tweaked the @fs variable to improve its usability. 
+<LI>set-position can now store the mark position. 
+<LI>Fixes to windows file times. 
+<LI>New caps-lock, num-lock, scroll-lock and pause key support for win32 &amp; unix. The *-lock implementation to be more like S-pick and C-pick as the keys are automatically supported (like the shift) so there are no default binds to void, the keys are only generated if there are bound. Could not implement this on DOS. 
+<LI>which command built in i.e. &quot;M-x which&quot;. Used for command utilities. 
+<LI>A new Hide value feature when inputting strings, this is now used be the crypt and ftp Password entry. The string is shown as '*'s. 
+<LI>Utilised the latest screen-update improvements to make the gdiff screen update rock solid. 
+<LI>mlGetChar fix. The key &quot;return&quot; was the 78th special char, i.e. SKEY_SPEC|'N' and as the mlGetChar did not check the SKEY_SPEC bits, pressing return was like pressing 'N' so on a Y/N prompt try pressing return, its like saying No. 
+<LI>Spelling dictionaries renamed with ISO naming scheme. Because of the language changes, you need to rename your personal dictionary to lsdpengb.edf for British and lsdpenus.edf for American. 
+<LI>Hilighting brackets/braces as requested from user base. The hilight braces required some other subtle changes to screen-update and show-region and the addition of the rbin mode means that this version is incompatible with the last in quite a few areas. 
+<LI>Fixed mouse handler (turns out that if the pick event was lost (use @cg or an error) then me would lock!). 
+<LI>Extended control on indent tab and return behaviour (can disable the tab behaviour). 
+<LI>C++ namespace indentation support. 
+<LI>New language support interface so spelling is not required for a language to be supported (may only want the basic alphabet setup etc). 
+<LI>Changed file loading interface so all commands (like view-file) can load in bin,crypt or rbin mode. 
+<LI>Reduced binary mode added (rbin). 
+<LI><B>6th Release</B> - December 2002 
+<LI>Added LATEX abbreviation file and updated template to load abbreviation file. 
+<LI>Added binary add mode to the CVS menu. 
+<LI>JASSPA Structured Text (still prototyping - jst). Macros to convert structured text into other formats. 
+<LI>Reworked the build files to build the multitude of debug, console and window varients. 
+<LI>Split source code with conditional compilation into functional blocks. 
+<LI>Added latex template file. 
+<LI>Added new JST support. 
+<LI>CVS - added support for adding binary files. 
+<LI>Major changes to create NanoEmacs! Made macro getting of keys for binding very strict, no superfluous chars allowed Changed mlwrite so that when aborting and no !force is used it will write message even with a MWEXCEL. Made printing optionally quiet for JST insert printing. Minor changes to scroll commands to abort when at the top or bottom. Small change to numerical interface to suspend-emacs. 
+<LI>Minor fix to the html processing and link following. 
+<LI>Minor search fix to handle get-next-line requiring user input (out-of-date buffer etc). 
+<LI>Mouse - changes required for changes to scroll commands which now abort at the top and bottom. 
+<LI>Major edit! Added frame support, standardized many of the structure and function names, introduced $window-flags (not the size lock yet). Also fixed abbrev word boundary bug. 
+<LI>US Letter support added by Th. 
+<LI>Changed the ipipe wrap line length to be the 'term-size', using the frame size causes problems, particularly with the toolbar. 
+<LI>Name changes (screen -&gt; frame) due to frame support, new toolbar support, new abbrev-list and expand-look-back, new filter on normal browser, auto-spell ignore, perldb sub-func fix, tables added to jst, fixes to bullet list in ifill-paragraph. 
+<LI>Improved the 'closest window match' algorithm so it gets the closest window! 
+<LI>Windows - fixed an new compile problem and a frame loop bug in the font setup (frameCur == NULL for first call). 
+<LI>Added extra parameter to HideBuffer flagging whether to hide the buffer if the window buffer lock is set. Changed find-buffer numerical arg so -1 hides all but lock windows, -2 or less hides all. 
+<LI>Added left and right truncate chars to $window-chars, fix ABORT string value. 
+<LI>Added new &lt;- and -&gt; truncate chars to $window-chars. 
+<LI>CVS - added 'U'pdate file flag support. 
+<LI>Changed interface to frame resizing functions, numerical arg is now a delta change. 
+<LI>Combined the shrink and enlarge window commands into a single change-window-width/depth command. 
+<LI>Fixed a nasty multi-line regex search failing at end of buffer problem. 
+<LI>Fixed mutli-frame console crash, window depth resize jump bug. Fixed drag-n-drop so it won't use a locked window. Fixed a nasty no-update bug involving the ERASEBKGND message. Added the drawing of a &lt;- char to 0x08 (Backspace). 
+<LI>Modified to supprt $window-flags and window resize changes. 
+<LI>Removed the ANSI and APRAM macros - redundant. 
+<LI>Added support for the toolbar and the initial frame size being set in the history. 
+<LI>Fixed NT and win2000 mouse cursor not staying hidden, caused by dubious mouse move events. 
+<LI>Fixed isearch so the next command will be executed in the correct frame. 
+<LI>Fixed minor bug in file handling found by BC compiler. 
+<LI>Macros - broke the setup default and standard tools into separate files. Improved the update flags for better control. 
+<LI>New osd-find-buffer popup menu using the user-setup file types, based on Detlef's. 
+<LI>Pascal. Added (* .. *) and // comment hilighting. 
+<LI>Updated makefile to new style which supports NE. 
+<LI>Added drag and drop support to directory view. Can now use this to load and copy/move files. 
+<LI>Added support for item-lists to C++ and added support for classes to C as the header is commonly used. 
+<LI>Changed the FOLDER tags to FOLD and improved the eaf files. 
+<LI>Fixed nasty pick -&gt; drop local buffer override problem. 
+<LI>Added drag and drop support to directory view. Can now use this to load and copy/move files. 
+<LI>Added new kill list tool to the toolbar. 
+<LI>Added support for item-lists to C++ and added support for classes to C as the header is commonly used. 
+<LI>Changed the FOLDER tags to FOLD and improved the eaf files. 
+<LI>Changed the List Functions to List Items in buffer setup. 
+<LI>Fixed system clipboard being trashed problem by disabling interaction with it during toolbar updates. 
+<LI>HTML Added table creation and external preview commands. 
+<LI>Added a system clipboard interaction disable flag to $system so the toolbar can stop messing up the clipboard whenever it updates. 
+<LI>Fixed an uninitialized variable bug breaking the FTP logoff operation of file-op. 
+<LI>Added new \\L -&gt; x-line, \\X -&gt; x-command special keys to improve eaf file read and portability. 
+<LI>Added right and bottom toolbars, and a paged tool concept, fixed quite a few problems found with the toolbar. Added a new Buffer Tools tool which loads the hk???.eaf file so that the abrev ???.eaf file can be left as solely an abbrev file. 
+<LI>Changed the interface to regexStrcmp to give better control. Added support for the @s# vars after a &amp;xseq, re-implemented the buffer context initialization to not use iscanner so it no longer need to swap buffers also changed the location of the fhook exec to earlier, where it was the window count was incorrect for the old current buffer and this could lead to a crash if the fhook deletes this buffer (found in CVS mode). 
+<LI>Directory list - check for and fail on urls! 
+<LI>Fixed a couple of goto-position problems. 
+<LI>Fixed item-list search strings. 
+<LI>New revamped html support with toolbar support. 
+<LI>VM Added code to handle empty multi message end section. 
+<LI>Added $window-id. 
+<LI>Added crypting of registry files and MS friendly key bindings. 
+<LI>Added crypting support to registry files - crypt key is auto-generated. 
+<LI>Changed the msshift key list to a macro list which checks the non-shifted key is bound first. Added C-home and C-end. 
+<LI>Fixed a reload fhook bug and added code to handle the fhook deleting the buffer! 
+<LI>Fixed an odd win98 shell-command start-up dir bug and handled bogus consol sizes being returned (running me -n in me). 
+<LI>Fixed several html -&gt; vb indent and hilight issues, re-implemented the mode change to be toolbar aware. 
+<LI>Fixed windows -p lock-up bug caused by reading from stdin fp when no file is piped. 
+<LI>Changed the way manual sub-menus are opened and closed to improve usability (particularly for the combo box). Added auto side placement of sub-menus remove the 'e' 'w' and 'n' flags. 
+<LI>Saved 3 bytes per line by using the rounded bytes and changing the length to an unused size. Fixed some minor unix compile warnings. 
+<LI>Fixed new frame ml junk text - new problem with line changes. 
+<LI>Added !forces to all unbinds to avoid bells. 
+<LI>Added @mna to all find-files incase there are problems. 
+<LI>Added Finnish support - thanks to Sebastian Bojers. 
+<LI>Added Hot key for ms friendly keys option. 
+<LI>Added PL/SQL file support. 
+<LI>Added item-list and tag generation support to VB, fixed a few hilight issues. 
+<LI>Added new find and refresh tool toolbar options. 
+<LI>Broke the toolbar tools out of the abbrev eaf file into their own tool eaf file. 
+<LI>Fix for printing of *printer* buffer crash. 
+<LI>Made manual sub-menus have the .. And added Occurrences to the right button mouse menu. 
+<LI>Shrunk the combo button size now that osd works better. 
+<LI>Updated macros for osd sub-menu position changes. 
+<LI>Updated mode change to use just a buffer type change flag. 
+<LI>Fix for frame resize crash. 
+<LI>Fix for Sun Solaris PTY creation and setup. 
+<LI>Fix for UNIX terminal resize with frames. 
+<LI>Fix for VM mail searching - Thanks to Th. 
+<LI>Fix for XML macros - Thanks to Th. 
+<LI>Added UNIX icons for CDE environment to meicons.tgz (me.t.pm, me.m.pm, me.l.pm) 
+<LI>Filed build file for cygwin, pushed cygwin binaries and re-released source. 
+<LI>Confirmed Sun Solaris 2.6 PTY operation OK. 
+<LI>Fixed $frame-width/depth macro operation on the set - Thanks to Th. 
+<LI>Fixed NE UNIX build for a window build 
+<LI>Fixed PERL abbreviations - Thanks to Detlef. 
+<LI>Removed .cvsignore from source release. </UL></UL>
+<P>2003 <UL><UL><P>
+<LI>Big return value change to get functions consistent - found that the return values of low level line functions where different to high level functions making the code hard to read and dangerous. Also needed a consistent triple value return (true false and error) so change meABORT to -1 across the board. 
+<LI>Build fix for SUNOS. 
+<LI>Fixed compiler warning in spawn.c. 
+<LI>Fixed display matching mench issue with poke screen hiding the cursor on Unix X. May need to be done on DOS as well. 
+<LI>Fixed fill-paragraph when no arg is given but at the beginning of para still move forward. 
+<LI>Fixed horrid crash caused in search.c by buffer change in macro followed by query replace and toolbar up-date changing the regex variables. 
+<LI>Ipipe fix for SUNOS. Big return value change to get functions consistent - found that the return values of low level line functions where different to high level functions making the code hard to read and dangerous. Also needed a consistent triple value return (true false and error) so change meABORT to -1 across the board. changed the line flag implementation to be more flexible and variable in size so UE has a smaller memory usage and ME has line flags available. Improved the AMark setting and deleting. Added a Protected Line flag and vastly improved the narrowing. Renamed most function in line.c to make them more readable. 
+<LI>Latest versions of build.txt, cygwin.txt, faq.txt and readme.txt. 
+<LI>Abbreviation, Changed 
+<A HREF="m2cmd022.html">copy-region(2)</A> call to not expand the narrows, numeric argument added to prevent narrow copy. 
+<LI>Buffer setup. Changed fold -&gt; collapse and added proper folding setup entries. 
+<LI>Changed auto-spell hilighting scheme to a new spell-error scheme to avoid printing issues. 
+<LI>Color Schemes. Split the fold scheme into fold-close and fold-open. 
+<LI>Commenting. Fixed silly \\x80 alpha char label bug. 
+<LI>File Dialogue. Added tab ordering to dialog. 
+<LI>Folding all templates. Changed the function folding commands to collapse to avoid confusion with real folding. 
+<LI>HTML Template. Fixed script indent problem, improved the fench matching and added close tag feature. 
+<LI>Latex Template. Added latex chars etc to the eaf file. 
+<LI>Mouse. Changed the column setting to use alpha marks. 
+<LI>OSD. Improved the Edit narrow commands to take advantage of the new protected narrow support. 
+<LI>Removed old hkfold.emf fold implementation. Moved fold.emf to collapse.emf and added a real folding editor support macros to a new fold.emf, based loosely on fue. 
+<LI>Search. Added region line hilighting support. 
+<LI>Search. Changed to handle the fold-open &amp; fold-close split. 
+<LI>Tools. Fixed dummy tool removal and changed position setting to use alpha mark. 
+<LI>User setup. Changed fold -&gt; collapse. 
+<LI>Utils. simplified the str-to-regex by using &amp;xrep. 
+<LI>VM Mail. Regex protected the boundary id string. 
+<LI>XML Template, Added indent rules for &lt;? ... ?&gt;. 
+<LI>Buffer initialisation. Changed the fold-setup call so that it gets called if likely to be required - use the new buffer-fhook $result setting to help in determining this. 
+<LI>Fixed \xb bad regex bug. 
+<LI>Folding. Changed the fold-setup so a setup string can be passed in rather than searching for one in the buffer, aimed at utilizing the new buffer-fhook $result setting. 
+<LI>HTML Template. Changed html-fold -&gt; collapse, reported goto-matching-tag failure. 
+<LI>JST Template. Fixed jst magic hook and added Imakefile one. Changed jst magic hook variable setting setup to use the new $result variable. 
+<LI>Set $result to the magic fhook string so the fhook macro does not have to search for it again in buffer.c. 
+<LI>Organizer. Fixed bugs with creating new addresses and indexing etc. 
+<LI>Printer. Store the windows device information in the print-history as well. 
+<LI>C Template. Changed C #define evaluation to use new protected narrows. 
+<LI>Made dos redraw the cursor on a poke as well. 
+<LI>Stopped the Organiser Find exit quitting the organizer itself. 
+<LI>VM Mail. Fixes from Tom Hundt fixes message separator problem. 
+<LI>Fixed minor compiler warning in search.c by removing pointless static initialization. 
+<LI>Fixed poke over-writing cursor on win32 console. 
+<LI>Added $window-eline and moved the aline into extended version. 
+<LI>Added new -ve argument to insert-file which inserts only a section of the file. Optimized the file-op move command to try just moving the file first. 
+<LI>Added new macro oriented buffer-info numeric argument. Fixed bug in the ignore white-space buffer compare. 
+<LI>Changed the addLine function so it always flags the line as changed, this avoids some bizarre issues when macros delete an insert lines of text (best shown by the buffer-info toolbar tool). 
+<LI>Changed the history so it always removes any duplicate entries. 
+<LI>Changed the mouse default behavior to do a move yank. 
+<LI>Changing the addLine function to always set the changed flag meant all macros became hidden, use different bits. 
+<LI>Fixed a minor compile warnings. 
+<LI>Fixed a minor debug build issue in undo.c. 
+<LI>Fixed buffer reload a file while displayed in another window problems. 
+<LI>Fixed default printer selection issues - not complete. 
+<LI>MS-Shift region. Check for kill-rectangle and treat like we do the kill-region. 
+<LI>Toolbar. Only update the toolbar if its the top level command, i.e. the screen-update is not required due to spell-buffer (say). 
+<LI>Tools. Removed superfluous endif. 
+<LI>Changed TAB and BELL to safer defines. Optimised the fill-para function so that it keeps one of the existing spaces between the words, this also help preserve the position of anchors. 
+<LI>Package making files for sunos. 
+<LI>Added macro release makefile. 
+<LI>CVS. Removed debug line. 
+<LI>First revision of page-file. 
+<LI>MicroEmacs 3.8 compatibility. Fixed isearch emulation. 
+<LI>Added new define for the number of history types and added new @h history variable. 
+<LI>Added new undo type for line reordering undos, used by sort-lines and transpose-line. 
+<LI>Added support to @mn and @mna in the meGetKey routine 
+<LI>Changed some define names to make them compatible. Changed the calls to meGetUserKey to meGetKey so a macro can give a list of keys Added new 0 argument which quits at the EOB rather than going to the top of the buffer etc (used in page-file isearch). 
+<LI>Changed the logic of the 'd' flag so that it disables the displaying of the item type, changed button rendering so that it adheres to this so a single char button can be created Added new 'O' combo box item type which is a mixture between an entry box and a sub-menu item. 
+<LI>Fixed a nasty bug to do with file hooks that load other files and the find-file command manipulating the buffHistNo incorrectly so the wrong buffer is shown - obscure! 
+<LI>Improved the special char drawing routines so that they remain inside the char space and triangles look good regardless of size. 
+<LI>ODS. Updated osd calls due to the change in 'd' flag behavior. 
+<LI>User setup. Updated osd calls due to the change in 'd' flag behavior and changed the items with drop down menus to use the new combo-box. 
+<LI>Rationalized the buffer sizes, increased the keyboard macro and search string buffer sizes. Removed the GNU regex code - not used or tested in years. Part one of Jon's XTerm key lookup fix to get the keypad working. 
+<LI>Added use default printer setting. 
+<LI>Page-file. Fixed header and added isearch support. 
+<LI>Added support for new Check-box chars in extended chars. 
+<LI>CVS. Major revamp of CVS support including an OSD dialog for each tool. 
+<LI>Changed the CHAR defines and add defines for the LEADER and TRAIL bytes used for special chars. Re-implemented OSD hot-keys to use \\H instead of &amp; and added new \\{ &amp; \\} to stop and start current item hilighting. Added support for C++ private public and protected token indentation. Added new Check-box chars to the extended chars (1,2,3,4,19 &amp; 20) and improved the drawing of some of the others Fixed windows 'close while minimized' test so only prompted if something has changed. 
+<LI>Fixed a build.bat not setting MAKE to nmake problem. 
+<LI>HTML Template. Fixed a hilighting and indent problem caused by embedded script. 
+<LI>OSD. Changed OSD hot-key '&amp;' to new style '\H'. Changed user-setup dialog to use new Combo-box. 
+<LI>Abbreviations. Added support for the new :chook current file type variable and added support for an INCLUDE tag. 
+<LI>Abbreviations. Improved the look-back abbrev to expand to one before if exec'd again. 
+<LI>Added ADA file hook - thanks to Gabriel Tabares-Barreiro. 
+<LI>Added support for a look-back indent scheme which can be used to get the correct indent scheme to use. 
+<LI>CVS. Fixed unix checkout path and implemented cvs remove. 
+<LI>Changed the mldelete to respect the scrollFlag setting, if smooth scroll enabled then delete text smoothly. 
+<LI>Fix for Sunos Xterm function keys. 
+<LI>Fixed -ve recenter bug found by Alexander Doktorovich. 
+<LI>Fixed a nasty buffer reload bug. 
+<LI>Fixed history line numbers (were one line out for non-current buffers). 
+<LI>Fixed lookback hilight bug. 
+<LI>Fixed narrow lookback hilight bug. 
+<LI>HTML Template. Major shake-up for HTML base files including major enhancements to indentation and current script auto-detection. 
+<LI>Last commit to search fixed a &amp;xse failure on start-up, was not setting the internal flags correctly. Fix go a little messy as it should not affect the hunt commands. 
+<LI>Minor restyle. 
+<LI>Nroff template. Removed unused variable. 
+<LI>Page-file. Fixed backward isearch blow out. 
+<LI>Perl Template. Updated the perl.eaf to &lt;FOLD&gt;. 
+<LI>Toolbar. Added support for the new :chook current file type variable and got toolbar and buffer tool menu to call the update command (toolbar only on a C-l). 
+<LI>Added new hilight schemes &quot;Lemon Jelly&quot; and &quot;Brownie&quot;. 
+<LI>CVS. Fixed several issues with the why the cvs dir list processed the missing and added files. 
+<LI>Fixed a goto-line bug shown when using grep on a single lined file (like CVS/Root). 
+<LI>Fixed the games to cope with the toolbar by closing it. 
+<LI>HTML Template. Improved indentation. 
+<LI>Toolbar. Added trunc-sheme reset to force a redraw if required. 
+<LI>buffer.c. Changed the n arg to list buffer so user can select hidden or verbose etc. Added check after exec of ehook to catch nasties, not full proof but catches attempts to close toolbar etc. 
+<LI>hilight.c. Changed indent line count to use the close so values of greater that 256 can be used. 
+<LI>input.c Added support for EOB &amp; BOB keys &amp; fixed fwd/bck word movement across lines. 
+<LI>C++ restyle fixes - Problems reported by Salman. 
+<LI>Code optimizations and extensions - Thanks Peter Smith. 
+<LI>Lua language template - Thanks Jeremy Cowgar. 
+<LI>X-Window fixes - Thanks Jeremy Cowgar. 
+<LI>Macro execution speed-ups - Thanks Mike Hopkirk for analysis. 
+<LI>string-rectangle command added - Suggested by Salman. 
+<LI>SGML language template. </UL></UL></UL>
 <H2>Work In Progress or Planned </H2>
-<UL><P>Development of MicroEmacs '02 is an on-going process, follows is a list of work items which is currently being undertaken or planned:- <UL><P>
-<LI>Integrate the mouse interaction, especially the pop-up menus of the right mouse to be buffer sensitive and to deal with regions. (Macro implementation). 
+<UL><P>Development of MicroEmacs '04 is an on-going process, follows is a list of work items which is currently being undertaken or planned:- <UL><P>
+<LI>Horizontal scroll bars. 
+<LI>On-line tutorial to help beginners get up and running. 
 <LI>Native printer support for the generation of postscript. 
 <LI>GNU Emacs compatibility macro file. </UL></UL>
 <H2>Release History </H2>
-<UL><P><B>May 1999</B> 
+<UL><P><B>January 2004</B> 
+<BR><UL>7th Major Release - MicroEmacs '04. </UL>
+<P><B>December 2002</B> 
+<BR><UL>6th Major Release - MicroEmacs '02. </UL>
+<P><B>January 2002</B> 
+<BR><UL>5th Major Release - MicroEmacs '02. </UL>
+<P><B>August 2001</B> 
+<BR><UL>Patch Release for MicroEmacs '01. </UL>
+<P><B>July 2001</B> 
+<BR><UL>3rd Major release - MicroEmacs '01. </UL>
+<P><B>March 2000</B> 
+<BR><UL>2nd Release alpha patch. </UL>
+<P><B>May 1999</B> 
 <BR><UL>2nd Major Release - MicroEmacs '99. </UL>
 <P><B>October 1998</B> 
 <BR><UL>Minor patch to MicroEmacs '98 to correct a font problem on Windows platforms. </UL>
 <P><B>September 1998</B> 
-<BR><UL>1st Major Release - MicroEmacs '98. </UL></UL>
+<BR><UL>1st Major Release - MicroEmacs '98. </UL>
+<P><B>1988</B> 
+<BR><UL>Daniel M. Lawrence - Microemacs V3.8 distribution. </UL>
+<UL><P>Daniel Lawrence turned MicroEmacs into an editor for the masses, it is his work that ultimately made MicroEmacs so popular. Daniel did a tremendous amount of work, both adding features and supporting other platforms resulting in the MicroEmacs v3.8 release on which JASSPA's MicroEmacs is based. </UL>
+<P><B>Late 1985/early 1986</B> 
+<BR><UL>Dave Conroy, the original author, first developed the original code base for private use. Various people asked Dave for a copy of the program and it was distributed without concern for copyrights or ownership as was the custom of that era. </UL></UL>
 <H2>Documentation </H2>
 <UL><P>The documentation is all written in UNIX <B>nroff(1)</B> and converted to HTML, Microsoft Windows Help File format and MicroEmacs Help file format. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2002</I>
-<BR><I>Last Modified: 2002/01/06</I>
-<BR><I>Generated On: 2002/01/06</I>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2004/01/11</I>
+<BR><I>Generated On: 2004/01/11</I>
 </BODY></HMTL>
