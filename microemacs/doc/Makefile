@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20050116.1318>
+# Last Modified: <20050119.0004>
 #
 ##############################################################################
 
@@ -118,10 +118,11 @@ NAR2_000=	$(DOCDIR)m2nar000.2 $(DOCDIR)m2nar001.2	$(DOCDIR)m2nar002.2 \
 #
 MOD2_000=	$(DOCDIR)m2mod000.2 $(DOCDIR)m2mod001.2 \
 		$(DOCDIR)m2mod003.2 $(DOCDIR)m2mod004.2 $(DOCDIR)m2mod005.2\
-		$(DOCDIR)m2mod006.2 $(DOCDIR)m2mod007.2 $(DOCDIR)m2mod008.2\
+		$(DOCDIR)m2mod006.2 \
 		$(DOCDIR)m2mod009.2
 # TODO: deleted c-mode(2m) - $(DOCDIR)m2mod002.2
-# 
+# TODO: deleted letter(2m) - $(DOCDIR)m2mod007.2 
+# TODO: deleted line(2m) - $(DOCDIR)m2mod008.2
 MOD2_010=	$(DOCDIR)m2mod010.2 $(DOCDIR)m2mod011.2 $(DOCDIR)m2mod012.2\
 		$(DOCDIR)m2mod013.2 $(DOCDIR)m2mod014.2 $(DOCDIR)m2mod015.2\
 		$(DOCDIR)m2mod016.2 $(DOCDIR)m2mod017.2 $(DOCDIR)m2mod018.2\

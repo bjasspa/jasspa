@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd146.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd146.2,v 2.6 2005-01-19 00:10:58 jon Exp $
 .Im MicroEmacs command|insert
 .ds C0 "(\fB\*cy\fR)\ \&
 .so me.tni
@@ -32,7 +32,7 @@ ring. (another  \fBreyank\fR  replaces the text with the previous  reyank text
 and so on).
 .PP
 If an \-ve argument is given, \fByank\fR removes the last 0-\fIn\fR items from
-the kill ring. 
+the kill ring.
 .PP
 Text is inserted into the kill buffer by one of the following commands:-
 .IP
@@ -47,11 +47,10 @@ Text is inserted into the kill buffer by one of the following commands:-
 .Ht backward-delete-char 2 .
 .ad
 .LP
-All the above commands (except \fBcopy-region\fR) cut text out of the buffer,
-the last 2 commands require the
-.Ht letter 2m
-mode enabled to add the text to the kill buffer. If any of these  commands are
-executed immediately after any other (including itself) or the
+All the above commands (except  \fBcopy-region\fR) cut text out of the buffer,
+the last two  character  delete  commands  require  the  presence of a numeric
+argument to add the deleted text to the kill buffer. If any of these  commands
+are executed immediately after any other (including itself) or the
 .Ht @cl 4
 variable is set to one of these  command, the new kill text is appended to the
 last kill buffer text.
@@ -70,7 +69,7 @@ inserted into the kill buffer (the data may still be available via
 .SH EXAMPLE
 The  following  example is a basic macro code implementation of the
 .Ht transpose-lines 2
-command, 
+command,
 .Me $emf-scheme
 .CS
 beginning-of-line
@@ -85,11 +84,16 @@ Note that similar to  \fBtranspose-lines\fR it does not leave the moved line in
 the kill buffer, effectively tidying up after itself.
 .SH "SEE ALSO"
 .na
-.Ht yank-rectangle 2 ,
+.Ht backward-delete-char 2 ,
+.Ht backward-kill-word 2 ,
 .Ht copy-region 2 ,
+.Ht forward-delete-char 2 ,
+.Ht forward-kill-word 2 ,
+.Ht kill-line 2 ,
+.Ht kill-paragraph 2 ,
 .Ht kill-region 2 ,
-.Ht letter 2m ,
 .Ht reyank 2 ,
+.Ht yank-rectangle 2 ,
 .Ht @y 4 ,
 .Ht @cc 4 .
 .ad
