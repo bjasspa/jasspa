@@ -15,3 +15,4 @@ include $(TOPDIR)/etc/makeinc.gcc
 # Platform specific defines.
 #
 CPP_PLATDEFS=   -D_CYGWIN -D_UNIX
+
