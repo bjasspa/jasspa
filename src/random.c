@@ -46,7 +46,7 @@ meMalloc(size_t s)
 {
     register void *r ;
     if((r = malloc(s)) == NULL)
-        mlwrite(MWCURSOR|MWABORT|MWWAIT,(uint8 *)"Warning! Malloc failure") ;
+        mlwrite(MWCURSOR|MWABORT|MWWAIT,(meUByte *)"Warning! Malloc failure") ;
     return r ;
 }
 
@@ -54,7 +54,7 @@ void *
 meRealloc(void *r, size_t s)
 {
     if((r = realloc(r,s)) == NULL)
-        mlwrite(MWCURSOR|MWABORT|MWWAIT,(uint8 *)"Warning! Realloc failure") ;
+        mlwrite(MWCURSOR|MWABORT|MWWAIT,(meUByte *)"Warning! Realloc failure") ;
     return r ;
 }
 
@@ -128,10 +128,10 @@ stridif(const char *str1, const char *str2)
 */
 #ifdef _NOQSORT
 void
-sortStrings(int noStr, uint8 **strs, int offset, Fintss cmpFunc)
+sortStrings(int noStr, meUByte **strs, int offset, Fintss cmpFunc)
 {
     int chng, i ;
-    uint8 *tmp ;
+    meUByte *tmp ;
 	
     if(offset < 0)
     {
@@ -184,7 +184,7 @@ sortStringsCmp(const void *v1, const void *v2)
 }
 
 void
-sortStrings(int noStr, uint8 **strs, int offset, Fintss cmpFunc)
+sortStrings(int noStr, meUByte **strs, int offset, Fintss cmpFunc)
 {
     if((sortStringsBackward=(offset < 0)))
         offset = -1-offset ;
@@ -201,7 +201,7 @@ sortLines(int f, int n)
     Fintss    cmpFunc ;
     LINE     *sL, *eL ;
     register  LINE *l, **list ;
-    int32     sln, noL, ii, jj, len ;
+    meInt     sln, noL, ii, jj, len ;
     int       offs ;
     
     if (curwp->w_markp == NULL)
@@ -267,11 +267,11 @@ sortLines(int f, int n)
                 jj++ ;
             }
         }
-        sortStrings(jj,(uint8 **)list, offs,cmpFunc) ;
+        sortStrings(jj,(meUByte **)list, offs,cmpFunc) ;
     }
     else
         jj = 0 ;
-    sortStrings(noL-jj,(uint8 **)(list+jj), n+offs,cmpFunc) ;
+    sortStrings(noL-jj,(meUByte **)(list+jj), n+offs,cmpFunc) ;
     
     for(ii=0, l=sL ; ii<noL ; l=lforw(l),ii++)
     {
@@ -295,8 +295,8 @@ sortLines(int f, int n)
 
 
 int
-getBufferInfo(int32 *numlines, int32 *predlines,
-              int32 *numchars, int32 *predchars)
+getBufferInfo(meInt *numlines, meInt *predlines,
+              meInt *numchars, meInt *predchars)
 {
     register LINE   *lp;		/* current line */
     register int    curchar = 0;	/* character under cursor */
@@ -348,10 +348,10 @@ getBufferInfo(int32 *numlines, int32 *predlines,
 int
 bufferInfo(int f, int n)
 {
-    int32 numchars ;			/* # of chars in file */
-    int32 numlines ;			/* # of lines in file */
-    int32 predchars ;			/* # chars preceding point */
-    int32 predlines ;			/* # lines preceding point */
+    meInt numchars ;			/* # of chars in file */
+    meInt numlines ;			/* # of lines in file */
+    meInt predchars ;			/* # chars preceding point */
+    meInt predlines ;			/* # lines preceding point */
     int   curchar ;			/* character under cursor */
     int   ratio;
     int   col;
@@ -403,7 +403,7 @@ getcline(WINDOW *wp)	/* get the current line number */
 }
 
 int
-getcol(uint8 *ss, int off)
+getcol(meUByte *ss, int off)
 {
     register int c, col=0 ;
     
@@ -463,7 +463,7 @@ setccol(int pos)
 int
 getcwcol(void)
 {
-    uint8 *off ;
+    meUByte *off ;
     int ii, col=0 ;
     
     windCurLineOffsetEval(curwp) ;
@@ -477,7 +477,7 @@ getcwcol(void)
 int
 setcwcol(int col)
 {
-    uint8 *off ;
+    meUByte *off ;
     int ii, jj ;
     
     windCurLineOffsetEval(curwp) ;
@@ -503,7 +503,7 @@ transChars(int f, int n)
 {
     LINE         *dotp;
     int           doto;
-    uint8 cl, cr;
+    meUByte cl, cr;
     
     dotp = curwp->w_dotp;
     doto = curwp->w_doto;
@@ -579,7 +579,7 @@ transLines(int f, int n)
 }
 
 int
-quoteKeyToChar(uint16 cc)
+quoteKeyToChar(meUShort cc)
 {
     if(cc > 255)
     {
@@ -636,8 +636,8 @@ quote(int f, int n)
         return (FALSE);
     if (n == 0)
         return (TRUE);
-    if((c = mlCharReply((uint8 *)"Quote: ",mlCR_QUOTE_CHAR,NULL, NULL)) < 0)
-        return mlwrite(MWABORT,(uint8 *)"[Cannot quote this key]") ;
+    if((c = mlCharReply((meUByte *)"Quote: ",mlCR_QUOTE_CHAR,NULL, NULL)) < 0)
+        return mlwrite(MWABORT,(meUByte *)"[Cannot quote this key]") ;
     if((s=bchange()) != TRUE)               /* Check we can change the buffer */
         return s ;
     if(c == meNLCHAR)
@@ -726,7 +726,7 @@ meTab(int f, int n)
 int
 meBacktab(int f, int n)
 {
-    uint8 cc;		/* Character buffer */
+    meUByte cc;		/* Character buffer */
     int tabspace;	/* Count of the size of the TAB space */
     int delspace;	/* Count of the size of the delete space */
     int doto;		/* Current position in line - 1 */
@@ -779,7 +779,7 @@ meBacktab(int f, int n)
         if (delspace)
         {
             curwp->w_doto -= delspace;
-            return (ldelete((int32) delspace, 2));
+            return (ldelete((meInt) delspace, 2));
         }
     }
     else
@@ -829,10 +829,10 @@ winsert(void)	/* insert a newline and indentation for Wrap indent mode */
        to drop a tab position when  we come back. Hence on spaced tab we need
        to consume to the previous tab stop.  */
     
-    register uint8 *cptr;	/* string pointer into text to copy */
+    register meUByte *cptr;	/* string pointer into text to copy */
     register int tptr;	        /* index to scan into line */
     register int i;
-    uint8 ichar[NSTRING];	/* buffer to hold indent of last line */
+    meUByte ichar[NSTRING];	/* buffer to hold indent of last line */
     
     /* grab a pointer to text to copy indentation from */
     cptr = &curwp->w_dotp->l_text[0];
@@ -1017,7 +1017,7 @@ backDelChar(int f, int n)
          * Always make ldelete save the deleted stuff in a kill buffer
          * unless only one character and in letter kill mode.
          */
-        s = ldelete((int32)n, keep);
+        s = ldelete((meInt)n, keep);
     
     return s ;
 }
@@ -1087,7 +1087,7 @@ forwDelChar(int f, int n)
      * Always make ldelete save the deleted stuff in a kill buffer
      * unless only one character and in letter kill mode.
      */
-    return (ldelete((int32)n, keep));
+    return (ldelete((meInt)n, keep));
 }
 
 
@@ -1103,7 +1103,7 @@ int
 killLine(int f, int n)
 {
     LINE *nextp;
-    int32 chunk;
+    meInt chunk;
     int s, del ;
     
     if(n == 0)
@@ -1160,9 +1160,9 @@ int
 mlWrite(int f, int n)
 {
     register int status;
-    uint8 buf[MAXBUF];	/* buffer to recieve message into */
+    meUByte buf[MAXBUF];	/* buffer to recieve message into */
     
-    if ((status = meGetString((uint8 *)"Message", 0, 0, buf, MAXBUF)) != TRUE)
+    if ((status = meGetString((meUByte *)"Message", 0, 0, buf, MAXBUF)) != TRUE)
         return(status);
     
     mlwrite(MWSPEC,buf);
@@ -1174,12 +1174,12 @@ mlWrite(int f, int n)
 #if CFENCE
 
 /* List of fense id chars, close (or move backward) first then open */
-uint8 fenceString[] = "##/*)(}{][" ; /* */
+meUByte fenceString[] = "##/*)(}{][" ; /* */
 
-uint8
+meUByte
 gotoFrstNonWhite(void)
 {
-    register uint8 ch ;
+    register meUByte ch ;
     
     while(((ch = lgetc(curwp->w_dotp,curwp->w_doto)) != '\0') &&
           ((ch == ' ') || (ch == '\t')))
@@ -1188,7 +1188,7 @@ gotoFrstNonWhite(void)
 }
 
 static int
-findfence(uint8 ch, uint8 forwFlag) ;
+findfence(meUByte ch, meUByte forwFlag) ;
 
 /* move forward of backward the the next non-white char
  * skipping '#' lines and comments
@@ -1206,11 +1206,11 @@ findfence(uint8 ch, uint8 forwFlag) ;
 #define MTNW_SIMPLE    0x10
 
 static int
-moveToNonWhite(uint8 forwFlag, uint8 *flags)
+moveToNonWhite(meUByte forwFlag, meUByte *flags)
 {
-    register uint8 ch ;
+    register meUByte ch ;
     register LINE *lp ;
-    uint8 *ss, lc ;
+    meUByte *ss, lc ;
     int inq ;
     
     for(;;)
@@ -1312,7 +1312,7 @@ moveToNonWhite(uint8 forwFlag, uint8 *flags)
                 for(;;)
                 {
                     int comCont ;
-                    uint8 *fss ;
+                    meUByte *fss ;
 newline_skip:
                     /* Go back lines until we find a line which
                      * 1) Doesn't start with a '#'
@@ -1383,7 +1383,7 @@ hash_skip:
                                 if((ch == '\\') && (lc != '\\') && (lc != '\''))
                                 {
                                     /* must do a quick check to see if we're not in a comment */
-                                    uint8 *tss=ss ;
+                                    meUByte *tss=ss ;
                                     lc = ch ;
                                     while((ch = *tss++) != '\0')
                                     {
@@ -1433,7 +1433,7 @@ hash_skip:
                          * previous line to see if it has a trailing '\'. If
                          * so then this line is part of a hash define, so we
                          * must skip to the line before the # */
-                        uint8 tflags ;
+                        meUByte tflags ;
                         long lineNo=curwp->line_no ;
                         
                         curwp->w_doto = 0 ;
@@ -1461,7 +1461,7 @@ hash_skip:
             {
                 if(forwFlag)
                 {
-                    register uint8 c2 = lgetc(curwp->w_dotp, curwp->w_doto+1) ;
+                    register meUByte c2 = lgetc(curwp->w_dotp, curwp->w_doto+1) ;
                     if(c2 == '*')
                     {   /* c comment, go to the end of it */
                         if(findfence('*',forwFlag) != TRUE)
@@ -1508,12 +1508,12 @@ hash_skip:
 
 /* ch - fence type to find is " or ', where a \" must be ignored */
 static int
-findQuoteFence(uint8 qtype, uint8 forwFlag)
+findQuoteFence(meUByte qtype, meUByte forwFlag)
 {
-    register uint8 c ;  	/* current character in scan */
+    register meUByte c ;  	/* current character in scan */
     LINE *comlp;	        /* comment line pointer */
-    uint16 comoff;	        /* and offset */
-    int32 comlno;               /* and line-no */
+    meUShort comoff;	        /* and offset */
+    meInt comlno;               /* and line-no */
     int comStt=0;               /* and status */
     
     /* scan until we find it, or reach the end of file */
@@ -1528,7 +1528,7 @@ findQuoteFence(uint8 qtype, uint8 forwFlag)
             if(curwp->w_doto >= llength(curwp->w_dotp))
             {
                 register LINE *lp ;
-                register int32 ii=0 ;
+                register meInt ii=0 ;
                 lp = curwp->w_dotp ;
                 do {
                     if((lp = lforw(lp)) == curbp->b_linep)
@@ -1547,7 +1547,7 @@ findQuoteFence(uint8 qtype, uint8 forwFlag)
             if(curwp->w_doto == 0)
             {
                 register LINE *lp ;
-                register int32 ii=0 ;
+                register meInt ii=0 ;
                 if(comStt > 0)
                     /* if we have found an open comment it is
                      * more likely that the quote is part of a comment
@@ -1575,7 +1575,7 @@ findQuoteFence(uint8 qtype, uint8 forwFlag)
              * check whether its the close or just quoted in
              * a string, e.g. "\\\"" etc.
              */
-            register int32 ii=curwp->w_doto ;
+            register meInt ii=curwp->w_doto ;
             while((--ii > 0) && (lgetc(curwp->w_dotp,ii) == '\\'))
                 ;
             /* if its an odd number then its a quote (note that ii is over decr)  */
@@ -1620,18 +1620,18 @@ findQuoteFence(uint8 qtype, uint8 forwFlag)
  * movenext is the function used to move, sets direction.
  */
 static int
-findfence(uint8 ch, uint8 forwFlag)
+findfence(meUByte ch, meUByte forwFlag)
 {
-    uint8 inCom ;
-    register uint8 cc ;
+    meUByte inCom ;
+    register meUByte cc ;
     register int  inAps ;
     
     /* Separate hash case as we can really optimise this */
     if(ch == '#')
     {
         register LINE *lp ;
-        register int32 ii=0 ;
-        uint8 *ss ;
+        register meInt ii=0 ;
+        meUByte *ss ;
         lp = curwp->w_dotp ;
         if(forwFlag)
         {
@@ -1755,7 +1755,7 @@ findfence(uint8 ch, uint8 forwFlag)
             return TRUE ;
         else if(!(inCom & MTNW_INCOM))
         {
-            uint8 *ss ;
+            meUByte *ss ;
             
             /* If we're looking for a bracket then check for a bracket,
              * i.e. a ",',(,),[,],{,}
@@ -1795,12 +1795,12 @@ int
 gotoFence(int f, int n)
 {
     register LINE  *oldlp;	/* original line pointer */
-    register uint16 oldoff;	/* and offset */
+    register meUShort oldoff;	/* and offset */
     register long   oldlno;	/* and line-no */
     register long   oldtln;	/* The window top line-no */
     register int    ret;	/* return value */
-    register uint8  ch; 	/* open fence */
-    register uint8 *ss;         /* fenceSting pointer */
+    register meUByte  ch; 	/* open fence */
+    register meUByte *ss;       /* fenceSting pointer */
     
     /* save the original cursor position */
     oldlp  = curwp->w_dotp ;
@@ -1812,7 +1812,7 @@ gotoFence(int f, int n)
     /* Check the current char is a valid fence char, if not do nothing */
     if((ch != '\0') && ((ss=meStrchr(fenceString,ch)) != NULL))
     { 
-        register uint8 forwFlag=1;  /* movement direction */
+        register meUByte forwFlag=1;  /* movement direction */
         
         if(ch == '*')
         {
@@ -1894,7 +1894,7 @@ invalid_fence:
 
 
 static int
-prevCToken(uint8 *token, int size)
+prevCToken(meUByte *token, int size)
 {
     register int offset ;
     
@@ -1908,8 +1908,8 @@ static int
 getCoffset(int onBrace, int *inComment)
 {
     LINE *oldlp;    	        /* original line pointer */
-    uint8 cc ;
-    uint8 mtnwFlag=0 ;
+    meUByte cc ;
+    meUByte mtnwFlag=0 ;
     int   normCont=1, brakCont=0, indent=0, gotsome=0 ;
     
     *inComment = 0 ;
@@ -1966,7 +1966,7 @@ find_bracket_fence:
             }
         case '{':
             {
-                uint16 off ;
+                meUShort off ;
                 long lno ;
                 LINE *lp ;
                 int ii ;
@@ -1995,7 +1995,7 @@ find_bracket_fence:
 					    foundFence = findfence('(',0) ;
 				    if((foundFence == 1) &&
 				       (moveToNonWhite(0,&mtnwFlag) != 0) &&
-				       prevCToken((uint8 *)"switch",6))
+				       prevCToken((meUByte *)"switch",6))
 					    indent = -1 ;
 			    }
                             curwp->w_dotp = lp ;
@@ -2091,14 +2091,14 @@ find_bracket_fence:
         case '[':
             if(brakCont >= 0)
             {
-                uint8 ch ;
+                meUByte ch ;
                 /* ignore tabs here cos they will screw up anyway */
                 while(((ch=lgetc(curwp->w_dotp,++(curwp->w_doto))) == ' ') || (ch == '\t'))
                     ;
 		brakCont = getccol() ;
                 if((continueMax > 0) && (brakCont > continueMax))
 		{
-                    uint16 off ;
+                    meUShort off ;
                     int ii ;
 
                     off = curwp->w_doto ;
@@ -2143,7 +2143,7 @@ find_bracket_fence:
                         (lgetc(curwp->w_dotp, curwp->w_doto+2) == '(')) &&
                        (--onBrace == 1))
                     {
-                        uint16 odoto=curwp->w_doto ;
+                        meUShort odoto=curwp->w_doto ;
                         curwp->w_doto = 0 ;
                         gotoFrstNonWhite() ;
                         brakCont = getccol() ;
@@ -2171,8 +2171,8 @@ find_bracket_fence:
             if(findfence('(',0) <= 0)
                 return 0 ;
             moveToNonWhite(0,&mtnwFlag) ;
-            if(prevCToken((uint8 *)"if",2) || prevCToken((uint8 *)"for",3) ||
-               prevCToken((uint8 *)"while",5) || prevCToken((uint8 *)"switch",6))
+            if(prevCToken((meUByte *)"if",2) || prevCToken((meUByte *)"for",3) ||
+               prevCToken((meUByte *)"while",5) || prevCToken((meUByte *)"switch",6))
             {
                 curwp->w_doto = 0 ;
                 gotoFrstNonWhite() ;
@@ -2186,7 +2186,7 @@ find_bracket_fence:
                     brakCont += continueIndent ;
             }
         }
-        else if(!prevCToken((uint8 *)"do",2) && !prevCToken((uint8 *)"else",4))
+        else if(!prevCToken((meUByte *)"do",2) && !prevCToken((meUByte *)"else",4))
         {
             if(onBrace < 0)
                 brakCont += statementIndent ;
@@ -2333,7 +2333,7 @@ cinsert(void)
 /* insert a newline and indentation for C */
 {
     int inComment, doto ;
-    uint8 *str ;
+    meUByte *str ;
     
     doCindent(&inComment) ;
     
@@ -2377,13 +2377,13 @@ int
 insString(int f, int n)	/* ask for and insert a string into the current
                            buffer at the current point */
 {
-    register uint8 cc, *tp;	        /* pointer into string to add */
-    uint8 tstring[MAXBUF];              /* string to add */
+    register meUByte cc, *tp;	        /* pointer into string to add */
+    meUByte tstring[MAXBUF];              /* string to add */
     register int status;		/* status return code */
     register int count=0;		/* char insert count */
     
     /* ask for string to insert */
-    if((status=meGetString((uint8 *)"String", 0, 0,tstring, MAXBUF)) != TRUE)
+    if((status=meGetString((meUByte *)"String", 0, 0,tstring, MAXBUF)) != TRUE)
         return status ;
     if((status=bchange()) != TRUE)               /* Check we can change the buffer */
         return status ;
@@ -2411,7 +2411,7 @@ insString(int f, int n)	/* ask for and insert a string into the current
 
 
 int
-alphaMarkGet(BUFFER *bp, uint16 name)
+alphaMarkGet(BUFFER *bp, meUShort name)
 {
     meAMARK *p = bp->b_amark;
     
@@ -2472,8 +2472,8 @@ try_again:
 }
 
 int
-alphaMarkSet(BUFFER *bp, uint16 name, LINE *lp,
-             uint16 off, int silent)
+alphaMarkSet(BUFFER *bp, meUShort name, LINE *lp,
+             meUShort off, int silent)
 {
     meAMARK *p = bp->b_amark;
     
@@ -2488,7 +2488,7 @@ alphaMarkSet(BUFFER *bp, uint16 name, LINE *lp,
         bp->b_amark = p ;
     }
     else if(!silent)
-        mlwrite(MWCLEXEC,(uint8 *)"[overwriting existing mark]");
+        mlwrite(MWCLEXEC,(meUByte *)"[overwriting existing mark]");
     
     p->name = name ;
     p->line = lp ;
@@ -2507,13 +2507,13 @@ setAlphaMark(int f, int n)
      */
     int   cc ;
     
-    if((cc = mlCharReply((uint8 *)"Place mark: ",mlCR_QUIT_ON_USER,NULL,NULL)) == -2)
-        cc = mlCharReply((uint8 *)"Place mark: ",mlCR_ALPHANUM_CHAR,NULL,NULL) ;
+    if((cc = mlCharReply((meUByte *)"Place mark: ",mlCR_QUIT_ON_USER,NULL,NULL)) == -2)
+        cc = mlCharReply((meUByte *)"Place mark: ",mlCR_ALPHANUM_CHAR,NULL,NULL) ;
     
     if(cc < 0)
         return ctrlg(FALSE,1) ;
     
-    return alphaMarkSet(curbp,(uint16) cc,curwp->w_dotp,curwp->w_doto,0) ;
+    return alphaMarkSet(curbp,(meUShort) cc,curwp->w_dotp,curwp->w_doto,0) ;
 }
 
 int
@@ -2526,16 +2526,16 @@ gotoAlphaMark(void)
      */
     int	   cc ;
     
-    if((cc = mlCharReply((uint8 *)"Goto mark: ",mlCR_QUIT_ON_USER,NULL,NULL)) == -2)
-        cc = mlCharReply((uint8 *)"Goto mark: ",mlCR_ALPHANUM_CHAR,NULL,NULL) ;
+    if((cc = mlCharReply((meUByte *)"Goto mark: ",mlCR_QUIT_ON_USER,NULL,NULL)) == -2)
+        cc = mlCharReply((meUByte *)"Goto mark: ",mlCR_ALPHANUM_CHAR,NULL,NULL) ;
     
     if(cc < 0)
         return ctrlg(FALSE,1) ;
     
-    if(alphaMarkGet(curbp,(uint16) cc) != TRUE)
+    if(alphaMarkGet(curbp,(meUShort) cc) != TRUE)
     {
         meAMARK *p = curbp->b_amark;
-        uint8    allmarks[256]; 	/* record of the marks	*/
+        meUByte    allmarks[256]; 	/* record of the marks	*/
         int      ii = 0;
         
         while(p != NULL)
@@ -2543,14 +2543,14 @@ gotoAlphaMark(void)
             if(p->name < 128)
             {
                 allmarks[ii++] = ' ' ;
-                allmarks[ii++] = (uint8) p->name;
+                allmarks[ii++] = (meUByte) p->name;
             }
             p = p->next;
         }
         if(ii == 0)
-            return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[No marks in buffer]");
+            return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No marks in buffer]");
         allmarks[ii] = '\0';
-        return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[Marks in buffer:%s]", allmarks);
+        return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[Marks in buffer:%s]", allmarks);
     }
     
     /* do the buisness */
@@ -2568,9 +2568,9 @@ gotoAlphaMark(void)
 ** What can I say - its simple.
 */
 void
-makestrlow(uint8 *str)
+makestrlow(meUByte *str)
 {
-    register uint8 cc, *p=str ;
+    register meUByte cc, *p=str ;
     
     while((cc=*p) != '\0')
         *p++ = toLower(cc) ;
@@ -2580,7 +2580,7 @@ makestrlow(uint8 *str)
 int
 insFileName(int f, int n)
 {
-    register uint8 *p, cc ;
+    register meUByte *p, cc ;
     register int s, count=0 ;
     
     if((n <= 0) || (curbp->b_fname == NULL))
@@ -2606,7 +2606,7 @@ int
 cmpBuffers(int f, int n)
 {
     register WINDOW *wp ;
-    register uint8 cc;
+    register meUByte cc;
     if (n == 0)
     {
         /* Exact match - white space is matched. */
@@ -2631,9 +2631,9 @@ cmpBuffers(int f, int n)
         /* Ignore white space */
         for(;;)
         {
-            uint8 moreData;
-            uint8 winData;
-            uint8 tmpc;
+            meUByte moreData;
+            meUByte winData;
+            meUByte tmpc;
             
             wp = wheadp ;
             cc = getCurChar(wp);
@@ -2694,7 +2694,7 @@ createCallback(int f, int n)
 {
     struct meTimeval tp ;
     meMACRO *mac ;
-    uint8 buf[MAXBUF] ;
+    meUByte buf[MAXBUF] ;
     
     if((mac=userGetMacro(buf,MAXBUF)) == NULL)
         return FALSE ;

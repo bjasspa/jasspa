@@ -40,14 +40,14 @@
 
 #include "emain.h"
 
-static uint8 histVerId[] = "6" ;      /* History version */
-uint8 *defHistFile=NULL ;
+static meUByte histVerId[] = "6" ;      /* History version */
+meUByte *defHistFile=NULL ;
 
 /* Constants */
-static uint8 *regNames[5] = {
-    (uint8 *)"string",(uint8 *)"buffer",(uint8 *)"command",(uint8 *)"file",(uint8 *)"search"
+static meUByte *regNames[5] = {
+    (meUByte *)"string",(meUByte *)"buffer",(meUByte *)"command",(meUByte *)"file",(meUByte *)"search"
 };
-static uint8 *numList[5]=
+static meUByte *numList[5]=
 {
     &numStrHist,
     &numBuffHist,
@@ -61,12 +61,12 @@ void
 initHistory(void)
 {
     /* Must malloc the 20 history slots for the 5 history types */
-    if((strHist = (uint8 **) meMalloc(sizeof(uint8 *) * 5 * MLHISTSIZE)) == NULL)
+    if((strHist = (meUByte **) meMalloc(sizeof(meUByte *) * 5 * MLHISTSIZE)) == NULL)
         meExit(1) ;
     /* Initialise the array to NULLS so we know they don't point to a history
      * string
      */
-    memset(strHist,0,sizeof(uint8 *) * 5 * MLHISTSIZE) ;
+    memset(strHist,0,sizeof(meUByte *) * 5 * MLHISTSIZE) ;
     buffHist = strHist + MLHISTSIZE ;
     commHist = buffHist + MLHISTSIZE ;
     fileHist = commHist + MLHISTSIZE ;
@@ -74,7 +74,7 @@ initHistory(void)
 }
 
 int
-setupHistory(int option, uint8 **numPtr, uint8 ***list)
+setupHistory(int option, meUByte **numPtr, meUByte ***list)
 {
     if(option & MLBUFFER)
     {
@@ -106,10 +106,10 @@ setupHistory(int option, uint8 **numPtr, uint8 ***list)
 
 
 void
-addHistory(int option, uint8 *str)
+addHistory(int option, meUByte *str)
 {
-    uint8   *numPtr, numHist,i ;
-    uint8  **history, *buf ;
+    meUByte   *numPtr, numHist,i ;
+    meUByte  **history, *buf ;
 
     numHist = setupHistory(option, &numPtr, &history) ;
 
@@ -142,25 +142,25 @@ readHistory(int f, int n)
     BUFFER *bp ;                        /* Buffer pointer */
     REGHANDLE regRoot;                  /* Root of the registry */
     REGHANDLE reg;                      /* temp registry pointer */
-    uint8 filename[FILEBUF] ;	        /* Filename */
-    uint8 *fname;	                /* Resulting file name to execute */
+    meUByte filename[FILEBUF] ;	        /* Filename */
+    meUByte *fname;	                /* Resulting file name to execute */
     int ii;                             /* Loop counter */
     
     if(n == 0)
     {
         if(defHistFile == NULL)
-            return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[No default history file]") ;
+            return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No default history file]") ;
         fname = defHistFile ;
     }
     else
     {
-        if (meGetString((uint8 *)"Read history", MLFILECASE,0,filename,FILEBUF) != TRUE)
+        if (meGetString((meUByte *)"Read history", MLFILECASE,0,filename,FILEBUF) != TRUE)
             return ABORT ;
         fname = filename ;
     }
     
     /* Write the strings into the registry */
-    if ((regRoot = regRead((uint8 *)"history", fname, REGMODE_RELOAD|REGMODE_BACKUP)) == NULL)
+    if ((regRoot = regRead((meUByte *)"history", fname, REGMODE_RELOAD|REGMODE_BACKUP)) == NULL)
         return ABORT ;
     
     if((f == TRUE) && (n != 0))
@@ -169,9 +169,9 @@ readHistory(int f, int n)
         meNullFree(defHistFile) ;
         defHistFile = meStrdup(regRoot->value) ;
     }
-    if ((regRoot = regFind(regRoot,(uint8 *)"history")) != NULL)
+    if ((regRoot = regFind(regRoot,(meUByte *)"history")) != NULL)
     {
-        uint8 *ss;                       /* temp string pointer */
+        meUByte *ss;                       /* temp string pointer */
         
         /* Load in the history */
         for (ii = 0; ii < 5; ii++)
@@ -209,18 +209,18 @@ readHistory(int f, int n)
         if(HistNoFilesLoaded < 0)
         {
             /* Get the version information */
-            if (((reg = regFind (regRoot,(uint8 *)"version")) != NULL) &&
+            if (((reg = regFind (regRoot,(meUByte *)"version")) != NULL) &&
                 ((ss=regGetString(reg,NULL)) != NULL) && !meStrcmp(ss,histVerId))
             {
                 /* Set up to extract the 'active' configuration */
                 /* Reset the files loaded counter */
                 ii = 0;
-                if((reg = regFind (regRoot,(uint8 *)"active")) != NULL)
+                if((reg = regFind (regRoot,(meUByte *)"active")) != NULL)
                     reg = regGetChild(reg) ;
                 while (reg != NULL)
                 {
                     meSTAT stats ;
-                    uint8  fnbuf[FILEBUF] ;
+                    meUByte  fnbuf[FILEBUF] ;
                     int    flags ;
                     
                     /* Get the filename */
@@ -237,11 +237,11 @@ readHistory(int f, int n)
                         /* now extract the buffer info */
                         sscanf((char *)reg->name,"%d,%d,%d,%d,%d,%d,%d,%d",
                                &flags,&histNo,&lineNo,&m0,&m1,&m2,&m3,&m4) ;
-                        mode[0] = (uint8) m0 ;
-                        mode[1] = (uint8) m1 ;
-                        mode[2] = (uint8) m2 ;
-                        mode[3] = (uint8) m3 ;
-                        mode[4] = (uint8) m4 ;
+                        mode[0] = (meUByte) m0 ;
+                        mode[1] = (meUByte) m1 ;
+                        mode[2] = (meUByte) m2 ;
+                        mode[3] = (meUByte) m3 ;
+                        mode[4] = (meUByte) m4 ;
                         
                         /* don't worry about the binary, crypt and rbin
                          * modes here, we copy them across next */
@@ -278,7 +278,7 @@ readHistory(int f, int n)
         }
         /* Delete the history from memory - we have finished with it */
         regDelete (regRoot);
-        mlwrite(MWCLEXEC,(uint8 *)"[History loaded]") ;
+        mlwrite(MWCLEXEC,(meUByte *)"[History loaded]") ;
     }
     return TRUE ;
 }
@@ -294,34 +294,34 @@ saveHistory(int f, int n)
     BUFFER *bp ;                        /* Pointer to buffers */
     REGHANDLE regRoot;                  /* Root of the registry */
     REGHANDLE regHistory;               /* Handle into the registry */
-    uint8 name[2] = "0";                /* Automatic name seed */
-    uint8 filename[FILEBUF] ;           /* Filename */
-    uint8 *fname;                       /* Resulting file name to execute */
+    meUByte name[2] = "0";                /* Automatic name seed */
+    meUByte filename[FILEBUF] ;           /* Filename */
+    meUByte *fname;                       /* Resulting file name to execute */
 
     if(n == 0)
     {
         if((fname = defHistFile) == NULL)
-            return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[No default history file]") ;
+            return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No default history file]") ;
     }
     else
     {
-        uint8 tmp[FILEBUF] ;	/* Filename */
-        if(meGetString((uint8 *)"Save history",MLFILECASE,0,tmp,FILEBUF) != TRUE)
+        meUByte tmp[FILEBUF] ;	/* Filename */
+        if(meGetString((meUByte *)"Save history",MLFILECASE,0,tmp,FILEBUF) != TRUE)
             return FALSE ;
-        if(!fileLookup(tmp,(uint8 *)".erf",meFL_CHECKDOT|meFL_USESRCHPATH,filename))
+        if(!fileLookup(tmp,(meUByte *)".erf",meFL_CHECKDOT|meFL_USESRCHPATH,filename))
             meStrcpy(filename,tmp) ;
         fname = filename ;
     }
     /* Write the strings into the registry */
-    if ((regRoot = regRead((uint8 *)"history", NULL, REGMODE_BACKUP)) == NULL)
-        return mlwrite (MWABORT|MWPAUSE,(uint8 *)"Cannot write history");
+    if ((regRoot = regRead((meUByte *)"history", NULL, REGMODE_BACKUP)) == NULL)
+        return mlwrite (MWABORT|MWPAUSE,(meUByte *)"Cannot write history");
     
     /* Delete any other history information */
-    if((regHistory = regFind (regRoot,(uint8 *)"history")) != NULL)
+    if((regHistory = regFind (regRoot,(meUByte *)"history")) != NULL)
         regDelete (regHistory);
     
     /* Construct a new history entry */
-    if ((regHistory = regSet (regRoot,(uint8 *)"history",(uint8 *)"")) != 0)
+    if ((regHistory = regSet (regRoot,(meUByte *)"history",(meUByte *)"")) != 0)
     {
         REGHANDLE regSection;
         
@@ -329,12 +329,12 @@ saveHistory(int f, int n)
         regHistory->mode |= REGMODE_HIDDEN ;
         
         /* Write the version information in */
-        regSet (regHistory,(uint8 *)"version", histVerId);
+        regSet (regHistory,(meUByte *)"version", histVerId);
         
         for (ii = 0; ii < 5; ii++)
         {
             /* Construct the new node container */
-            if ((regSection = regSet(regHistory, regNames [ii],(uint8 *)"")) != NULL)
+            if ((regSection = regSet(regHistory, regNames [ii],(meUByte *)"")) != NULL)
             {
                 int numHistory = *(numList[ii]);
                 
@@ -350,7 +350,7 @@ saveHistory(int f, int n)
                         
         /* Construct the buffer history list container and make it
          * current. */
-        if ((regHistory = regSet (regHistory,(uint8 *)"active",(uint8 *)"")) != NULL)
+        if ((regHistory = regSet (regHistory,(meUByte *)"active",(meUByte *)"")) != NULL)
         {
             int bufno=0 ;
             /* Write the buffer information */
@@ -358,8 +358,8 @@ saveHistory(int f, int n)
             {
                 if((bp->b_bname[0] != '*') && (bp->b_fname != NULL))
                 {
-                    uint8 buff[40] ;
-                    int32 lineNo ;
+                    meUByte buff[40] ;
+                    meInt lineNo ;
                     int histno ;
                     
                     if(bp->b_nwnd)
@@ -397,7 +397,7 @@ saveHistory(int f, int n)
     /* Save the history to file. */
     if (regSave (regRoot, fname))
     {
-        mlwrite(MWCLEXEC,(uint8 *)"[History written in %s]", fname) ;
+        mlwrite(MWCLEXEC,(meUByte *)"[History written in %s]", fname) ;
         return TRUE ;
     }
     return FALSE;

@@ -27,11 +27,11 @@
 #	DJDIR must be setup to point to your DJGPP installation (normally
 #		done in djgpp.env)
 #
-#	Run "make -f dosdj1.mak"      for optimised build produces ./me.exe
-#	Run "make -f dosdj1.mak med"  for debug build produces     ./med.386
+#	Run "make -f dosdj2.mak"      for optimised build produces ./me.exe
+#	Run "make -f dosdj2.mak med"  for debug build produces     ./med.386
 #
-#	Run "make -f dosdj1.mak clean"      to clean source directory
-#	Run "make -f dosdj1.mak spotless"   to clean source directory even more
+#	Run "make -f dosdj2.mak clean"      to clean source directory
+#	Run "make -f dosdj2.mak spotless"   to clean source directory even more
 #
 ##############################################################################
 #

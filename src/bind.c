@@ -38,11 +38,11 @@
 #include "esearch.h"
 #include "eskeys.h"
 
-uint16
-meGetKeyFromString(uint8 **tp)
+meUShort
+meGetKeyFromString(meUByte **tp)
 {
-    uint8 *ss=*tp, cc, dd ;
-    uint16 ii=0 ;
+    meUByte *ss=*tp, cc, dd ;
+    meUShort ii=0 ;
     
     for(;;)
     {
@@ -60,7 +60,7 @@ meGetKeyFromString(uint8 **tp)
     {
         if(!isSpace(dd))
         {
-            uint8 *s1=ss ;
+            meUByte *s1=ss ;
             int skey ;
             
             while(((dd=*s1) != '\0') && (dd != ' '))
@@ -104,16 +104,16 @@ meGetKeyFromString(uint8 **tp)
  * 
  *     flag - meGETKEY flags
  */
-uint16
+meUShort
 meGetKey(int flag)
 {
-    register uint16 cc ;	/* character fetched */
+    register meUShort cc ;	/* character fetched */
     
     /* check to see if we are executing a command line */
     if (clexec)
     {
-        uint8 *tp;		/* pointer into the token */
-        uint8 tok[MAXBUF];	/* command incoming */
+        meUByte *tp;		/* pointer into the token */
+        meUByte tok[MAXBUF];	/* command incoming */
         
         macarg(tok);	        /* get the next token */
         
@@ -132,8 +132,8 @@ meGetKey(int flag)
                 }
             if(cc & ME_PREFIX_MASK)
             {
-                uint16 ee ;	/* character fetched */
-                uint8  dd ;
+                meUShort ee ;	/* character fetched */
+                meUByte  dd ;
                 while(((dd=*tp) != '\0') && isSpace(dd))
                     tp++ ;
                 ee = meGetKeyFromString(&tp) ;
@@ -151,10 +151,10 @@ meGetKey(int flag)
 }
 
 int
-meGetStringFromChar(uint16 cc, uint8 *d)
+meGetStringFromChar(meUShort cc, meUByte *d)
 {
     register int  doff=0, spec ;
-    register uint8 *ss ;
+    register meUByte *ss ;
     
     if(cc & ME_ALT)
     {
@@ -176,7 +176,7 @@ meGetStringFromChar(uint16 cc, uint8 *d)
     
     if(spec)
     {
-        register uint8 ch ;
+        register meUByte ch ;
         
         ss = specKeyNames[cc] ;
 name_copy:
@@ -196,7 +196,7 @@ name_copy:
         cc = toLower(cc) ;
         d[doff++] = 'C' ;
         d[doff++] = '-' ;
-        d[doff++] = (uint8) cc ;
+        d[doff++] = (meUByte) cc ;
     }
     else if((cc == 0) || (cc >= 0x80))
     {
@@ -208,10 +208,10 @@ name_copy:
     else if((cc == '\\') || (cc == '"'))
     {
         d[doff++] = '\\';
-        d[doff++] = (uint8) cc ;
+        d[doff++] = (meUByte) cc ;
     }
     else			/* any other character */
-        d[doff++] = (uint8) cc ;
+        d[doff++] = (meUByte) cc ;
     
     return doff ;
 }
@@ -220,7 +220,7 @@ name_copy:
 /* c   - 	sequence to translate */
 /* seq - 	destination string for sequence */
 void
-meGetStringFromKey(uint16 cc, register uint8 * seq)
+meGetStringFromKey(meUShort cc, register meUByte * seq)
 {
     /* apply prefix sequence if needed */
     if(cc & ME_PREFIX_MASK)
@@ -235,14 +235,14 @@ meGetStringFromKey(uint16 cc, register uint8 * seq)
 int
 descKey(int f, int n)	/* describe the command for a certain key */
 {
-    static   uint8  notBound[] = "Not Bound" ;
-    static   uint8  dskyPrompt[]="Show binding: " ;
-    register uint16 cc;		/* command character to describe */
-    register uint8 *ptr; 	/* string pointer to scan output strings */
+    static   meUByte  notBound[] = "Not Bound" ;
+    static   meUByte  dskyPrompt[]="Show binding: " ;
+    register meUShort cc;	/* command character to describe */
+    register meUByte *ptr; 	/* string pointer to scan output strings */
     register int    found;	/* matched command flag */
-    uint32          arg ;	/* argument */
-    uint8           outseq[40];	/* output buffer for command sequence */
-    uint8           argStr[20];	/* argument string */
+    meUInt          arg ;	/* argument */
+    meUByte           outseq[40];	/* output buffer for command sequence */
+    meUByte           argStr[20];	/* argument string */
     
     /* prompt the user to type us a key to describe */
     mlwrite(MWCURSOR,dskyPrompt);
@@ -269,18 +269,18 @@ descKey(int f, int n)	/* describe the command for a certain key */
     }
 
     /* output the resultant string */
-    mlwrite(MWCURSOR,(uint8 *)"%s\"%s\" %s%s",dskyPrompt,outseq,argStr,ptr);
+    mlwrite(MWCURSOR,(meUByte *)"%s\"%s\" %s%s",dskyPrompt,outseq,argStr,ptr);
     
     return TRUE ;
 }
 
 
-uint32
-cmdHashFunc (register uint8 *cmdName)
+meUInt
+cmdHashFunc (register meUByte *cmdName)
 {
-    uint32 ii = 0;
-    uint32 jj;
-    uint8 cc;
+    meUInt ii = 0;
+    meUInt jj;
+    meUByte cc;
     
     while ((cc = *cmdName++) != '\0')
     {
@@ -299,9 +299,9 @@ cmdHashFunc (register uint8 *cmdName)
    and return index into table or -1 if none	
    fname;	name to attempt to match */
 int
-decode_fncname(register uint8 *fname, int silent)
+decode_fncname(register meUByte *fname, int silent)
 {
-    uint32 key ;
+    meUInt key ;
     meCMD *cmd ;
     
     key = cmdHashFunc(fname) ;
@@ -310,7 +310,7 @@ decode_fncname(register uint8 *fname, int silent)
             return cmd->id ;
     
     if(!silent)
-        mlwrite(MWABORT,(uint8 *)"[No such command \"%s\"]", fname);
+        mlwrite(MWABORT,(meUByte *)"[No such command \"%s\"]", fname);
     
     return -1 ;				/* Not found - error. */
 }
@@ -375,10 +375,10 @@ charMaskTblInit(void)
 int
 setCharMask(int f, int n)
 {
-    static uint8 tnkyPrompt[]="set-char-mask chars" ;
-    uint8 buf1[MAXBUF], *ss, *dd ;
+    static meUByte tnkyPrompt[]="set-char-mask chars" ;
+    meUByte buf1[MAXBUF], *ss, *dd ;
     int	  c1, c2, flags, ii, jj ;
-    uint8 mask1, mask2 ;
+    meUByte mask1, mask2 ;
     
     meStrcpy(tnkyPrompt+14,"flags") ;
     if(meGetString(tnkyPrompt,0,0,buf1,20) != TRUE)
@@ -387,14 +387,14 @@ setCharMask(int f, int n)
     flags = 0 ;
     ss = buf1 ;
     while((c1 = *ss++) != '\0')
-        if((dd = (uint8 *) strchr((char *) charMaskFlags,c1)) != NULL)
+        if((dd = (meUByte *) strchr((char *) charMaskFlags,c1)) != NULL)
             flags |= 1 << (((int) dd)- ((int) charMaskFlags)) ;
     mask2 = (flags & 0x00ff) ;
     mask1 = (flags & 0x0f00) >> 4 ;
     
     if(n == 0)
     {
-        ss = (uint8 *) resultStr ;
+        ss = (meUByte *) resultStr ;
         if(flags & 0x1c000)
         {
             if(flags & 0x4000)
@@ -470,7 +470,7 @@ setCharMask(int f, int n)
         mereRegexInvalidate() ;
 #endif
         if(flags & 0x1A003)
-            return mlwrite(MWABORT,(uint8 *)"[Cannot set flags u, l, A, L or U]");
+            return mlwrite(MWABORT,(meUByte *)"[Cannot set flags u, l, A, L or U]");
         meStrcpy(tnkyPrompt+14,"chars") ;
         if(meGetString(tnkyPrompt,MLFFZERO,0,buf1,MAXBUF) != TRUE)
             return FALSE ;
@@ -553,17 +553,17 @@ setCharMask(int f, int n)
 */
 
 int
-bindkey(uint8 *prom, int f, int n, uint16 *lclNoBinds, KEYTAB **lclBinds)
+bindkey(meUByte *prom, int f, int n, meUShort *lclNoBinds, KEYTAB **lclBinds)
 {
     register int	ss;
-    register uint16 cc;	/* command key to bind */
+    register meUShort   cc;	/* command key to bind */
     register Fintii	kfunc;	/* ptr to the requexted function to bind to */
     register KEYTAB    *ktp;	/* pointer into the command table */
-    uint8    outseq[40];        /* output buffer for keystroke sequence */
+    meUByte  outseq[40];        /* output buffer for keystroke sequence */
     int	     namidx;		/* Name index */
-    uint8    buf[MAXBUF] ;
-    uint32 arg ;
-    uint16 ssc ;
+    meUByte  buf[MAXBUF] ;
+    meUInt   arg ;
+    meUShort ssc ;
     
     /*---	Get the function name to bind it to */
     
@@ -579,7 +579,7 @@ bindkey(uint8 *prom, int f, int n, uint16 *lclNoBinds, KEYTAB **lclBinds)
     if((ss=(kfunc==(Fintii) prefixFunc)))
     {
         if((n < 1) || (n > ME_PREFIX_NUM))
-            return mlwrite(MWABORT,(uint8 *)"[Prefix number is out of range]") ;
+            return mlwrite(MWABORT,(meUByte *)"[Prefix number is out of range]") ;
         ssc = prefixc[n] ;
     }
     else if((ss=(kfunc==(Fintii) ctrlg)))
@@ -589,9 +589,9 @@ bindkey(uint8 *prom, int f, int n, uint16 *lclNoBinds, KEYTAB **lclBinds)
 
 #if LCLBIND
     if((lclNoBinds != NULL) && ss)
-        return mlwrite(MWABORT,(uint8 *)"Can not locally bind [%s]",buf) ;
+        return mlwrite(MWABORT,(meUByte *)"Can not locally bind [%s]",buf) ;
 #endif              
-    mlwrite(MWCURSOR|MWCLEXEC,(uint8 *)"%s [%s] to: ",prom,buf) ;
+    mlwrite(MWCURSOR|MWCLEXEC,(meUByte *)"%s [%s] to: ",prom,buf) ;
     cc = meGetKey((ss) ? meGETKEY_SILENT|meGETKEY_SINGLE:meGETKEY_SILENT) ;
     
     /*---   Change it to something we can print as well */
@@ -599,12 +599,12 @@ bindkey(uint8 *prom, int f, int n, uint16 *lclNoBinds, KEYTAB **lclBinds)
     if (!clexec)
     {
         meGetStringFromKey(cc,outseq);
-        mlwrite(0,(uint8 *)"%s [%s] to: %s",prom,buf,outseq);
+        mlwrite(0,(meUByte *)"%s [%s] to: %s",prom,buf,outseq);
     }
     
     /*---   Calculate the argument */
     if(f)
-        arg = (uint32) (n+0x80000000) ;
+        arg = (meUInt) (n+0x80000000) ;
     else
         arg = 0 ;
     
@@ -636,7 +636,7 @@ bindkey(uint8 *prom, int f, int n, uint16 *lclNoBinds, KEYTAB **lclBinds)
         {
             if(ktp[ss].code == cc)
             {
-                ktp[ss].index = (uint16) namidx;
+                ktp[ss].index = (meUShort) namidx;
                 ktp[ss].arg   = arg ;
                 return TRUE ;
             }
@@ -646,7 +646,7 @@ bindkey(uint8 *prom, int f, int n, uint16 *lclNoBinds, KEYTAB **lclBinds)
         if(kk != NULL)
         {
             kk->code  = cc ;
-            kk->index = (uint16) namidx;
+            kk->index = (meUShort) namidx;
             kk->arg   = arg ;
         }
         else
@@ -655,7 +655,7 @@ bindkey(uint8 *prom, int f, int n, uint16 *lclNoBinds, KEYTAB **lclBinds)
                 meRealloc(ktp,(++(*lclNoBinds))*sizeof(KEYTAB))) == NULL)
                 return FALSE ;
             ktp[ss].code  = cc ;
-            ktp[ss].index = (uint16) namidx ;
+            ktp[ss].index = (meUShort) namidx ;
             ktp[ss].arg   = arg ;
         }
     }
@@ -665,7 +665,7 @@ bindkey(uint8 *prom, int f, int n, uint16 *lclNoBinds, KEYTAB **lclBinds)
         for (ktp = &keytab[0]; ktp->code != ME_INVALID_KEY; ktp++)
             if (ktp->code == cc)
             {
-                ktp->index = (uint16) namidx;
+                ktp->index = (meUShort) namidx;
                 ktp->arg   = arg ;
                 return TRUE ;
             }
@@ -673,8 +673,8 @@ bindkey(uint8 *prom, int f, int n, uint16 *lclNoBinds, KEYTAB **lclBinds)
         /*---	Otherwise we  need to  add it  to the  end, if  we run  out of
            binding room, bitch */
         
-        if(insert_key(cc, (uint16) namidx, arg) != TRUE)
-            return mlwrite(MWABORT,(uint8 *)"Binding table FULL!");
+        if(insert_key(cc, (meUShort) namidx, arg) != TRUE)
+            return mlwrite(MWABORT,(meUByte *)"Binding table FULL!");
     }
     return(TRUE);
 }
@@ -683,29 +683,29 @@ bindkey(uint8 *prom, int f, int n, uint16 *lclNoBinds, KEYTAB **lclBinds)
 int
 globalBind(int f, int n)
 {
-    return bindkey((uint8 *)"global bind", f, n, NULL, NULL) ;
+    return bindkey((meUByte *)"global bind", f, n, NULL, NULL) ;
 }
 
 #if LCLBIND
 int
 bufferBind(int f, int n)
 {
-    return bindkey((uint8 *)"local bind", f, n, &(curbp->nobbinds), &(curbp->bbinds)) ;
+    return bindkey((meUByte *)"local bind", f, n, &(curbp->nobbinds), &(curbp->bbinds)) ;
 }
 int
 mlBind(int f, int n)
 {
-    return bindkey((uint8 *)"ml bind", f, n, &mlNoBinds, &mlBinds) ;
+    return bindkey((meUByte *)"ml bind", f, n, &mlNoBinds, &mlBinds) ;
 }
 #endif
 
 /* unbindkey:	delete a key from the key binding table */
 
 int
-unbindkey(uint8 *prom, int n, uint16 *lclNoBinds, KEYTAB **lclBinds)
+unbindkey(meUByte *prom, int n, meUShort *lclNoBinds, KEYTAB **lclBinds)
 {
-    register uint16 cc;	/* command key to unbind */
-    uint8 outseq[40];	/* output buffer for keystroke sequence */
+    register meUShort cc;  /* command key to unbind */
+    meUByte outseq[40];	   /* output buffer for keystroke sequence */
     int  rr ;
     
     if(n < 0)
@@ -765,7 +765,7 @@ unbindkey(uint8 *prom, int n, uint16 *lclNoBinds, KEYTAB **lclBinds)
     /*---	Prompt the user to type in a key to unbind */
     
     /* if interactive then print prompt */
-    mlwrite(MWCURSOR|MWCLEXEC,(uint8 *)"%s unbind: ",prom);
+    mlwrite(MWCURSOR|MWCLEXEC,(meUByte *)"%s unbind: ",prom);
     
     /*---	Get the command sequence to unbind */
     
@@ -779,7 +779,7 @@ unbindkey(uint8 *prom, int n, uint16 *lclNoBinds, KEYTAB **lclBinds)
      * Hence, safer bet is to re-do the mlwrite(); my preference would be
      * to remove the keyboard echo !! - Jon Green 13/03/97 */
     meGetStringFromKey(cc, outseq);		/* change to something printable */
-    mlwrite(MWCURSOR|MWCLEXEC,(uint8 *)"%s unbind: %s", prom, outseq);
+    mlwrite(MWCURSOR|MWCLEXEC,(meUByte *)"%s unbind: %s", prom, outseq);
 #if LCLBIND
     if(lclNoBinds != NULL)
     {
@@ -805,7 +805,7 @@ unbindkey(uint8 *prom, int n, uint16 *lclNoBinds, KEYTAB **lclBinds)
         {
             if(n == 0)
             {
-                register uint16 mask=ME_PREFIX_NUM+1;
+                register meUShort mask=ME_PREFIX_NUM+1;
                 
                 while(--mask > 0)
                     if(cc == prefixc[mask])
@@ -850,26 +850,26 @@ unbindkey(uint8 *prom, int n, uint16 *lclNoBinds, KEYTAB **lclBinds)
         }
     }
     if(rr == FALSE)	/* if it isn't bound, bitch */
-        return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[%s Key \"%s\" not bound]", prom,outseq);
+        return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[%s Key \"%s\" not bound]", prom,outseq);
     return TRUE ;
 }
 
 int
 globalUnbind(int f, int n)
 {
-    return unbindkey((uint8 *)"Global",n, NULL, NULL) ;
+    return unbindkey((meUByte *)"Global",n, NULL, NULL) ;
 }
 
 #if LCLBIND
 int
 bufferUnbind(int f, int n)
 {
-    return unbindkey((uint8 *)"Local",n, &(curbp->nobbinds), &(curbp->bbinds)) ;
+    return unbindkey((meUByte *)"Local",n, &(curbp->nobbinds), &(curbp->bbinds)) ;
 }
 int
 mlUnbind(int f, int n)
 {
-    return unbindkey((uint8 *)"ML",n, &mlNoBinds, &mlBinds) ;
+    return unbindkey((meUByte *)"ML",n, &mlNoBinds, &mlBinds) ;
 }
 #endif
 
@@ -878,21 +878,21 @@ mlUnbind(int f, int n)
 /* type  	true = full list,   false = partial list */
 /* mstring	match string if a partial list */
 static int
-buildlist(int type, int n, uint8 *mstring)
+buildlist(int type, int n, meUByte *mstring)
 {
     meCMD    *cmd ;
     KEYTAB   *ktp;	        /* pointer into the command table */
     WINDOW   *wp;
     BUFFER   *bp;	        /* buffer to put binding list into */
     int       cpos;   		/* current position to use in outseq */
-    uint8     _outseq[MAXBUF]; 	/* output buffer for keystroke sequence */
-    uint8    *outseq=_outseq+4;	/* output buffer for keystroke sequence */
+    meUByte     _outseq[MAXBUF]; 	/* output buffer for keystroke sequence */
+    meUByte    *outseq=_outseq+4;	/* output buffer for keystroke sequence */
     int       curidx;           /* Name integer index. */
     char      op_char;		/* Output character */
     
     /* and get a buffer for it */
     if((wp = wpopup(BcommandsN,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR))) == NULL)
-        return mlwrite(MWABORT,(uint8 *)"[Failed to create list]") ;
+        return mlwrite(MWABORT,(meUByte *)"[Failed to create list]") ;
     bp = wp->w_bufp ;
     
     _outseq[0] = ' ' ;
@@ -958,16 +958,16 @@ buildlist(int type, int n, uint8 *mstring)
 int
 listCommands(int f, int n)
 {
-    return (buildlist(TRUE, n, (uint8 *) ""));
+    return (buildlist(TRUE, n, (meUByte *) ""));
 }
 
 int
 commandApropos(int f, int n)	/* Apropos (List functions that match a substring) */
 {
-    uint8 mstring[NSTRING];	/* string to match cmd names to */
+    meUByte mstring[NSTRING];	/* string to match cmd names to */
     int	  status;		/* status return */
 
-    if ((status = meGetString((uint8 *)"Apropos string", MLCOMMAND, 0, 
+    if ((status = meGetString((meUByte *)"Apropos string", MLCOMMAND, 0, 
                           mstring+2, NSTRING-4)) != TRUE)
         return status ;
     mstring[0] = '.' ;
@@ -984,7 +984,7 @@ commandApropos(int f, int n)	/* Apropos (List functions that match a substring) 
 static void
 showBinding(BUFFER *bp, KEYTAB *ktp)
 {
-    uint8 *ss, buf[MAXBUF], outseq[40];
+    meUByte *ss, buf[MAXBUF], outseq[40];
     int len;
     
     /* If the keyboard code is zero then the command has been unbound.
@@ -1014,7 +1014,7 @@ descBindings (int f, int n)
 {
     WINDOW *wp ;
     BUFFER *bp ;
-    uint8   buf[MAXBUF] ;
+    meUByte   buf[MAXBUF] ;
     int     ii ;
     KEYTAB *ktp;
     
@@ -1025,27 +1025,27 @@ descBindings (int f, int n)
 #if LCLBIND
     sprintf((char *)buf,"Buffer [%s] bindings:", curbp->b_bname);
     addLineToEob(bp,buf);
-    addLineToEob(bp,(uint8 *)"") ;
+    addLineToEob(bp,(meUByte *)"") ;
     
     ii  = curbp->nobbinds ;
     ktp = curbp->bbinds ;
     while(ii--)
         showBinding(bp,ktp++) ;
-    addLineToEob(bp,(uint8 *)"") ;
+    addLineToEob(bp,(meUByte *)"") ;
     
     sprintf((char *)buf,"Ml bindings:") ;
     addLineToEob(bp,buf);
-    addLineToEob(bp,(uint8 *)"") ;
+    addLineToEob(bp,(meUByte *)"") ;
     
     ii  = mlNoBinds ;
     ktp = mlBinds ;
     while(ii--)
         showBinding(bp,ktp++) ;
-    addLineToEob(bp,(uint8 *)"") ;
+    addLineToEob(bp,(meUByte *)"") ;
 #endif    
     
-    addLineToEob(bp,(uint8 *)"Global bindings:");
-    addLineToEob(bp,(uint8 *)"") ;
+    addLineToEob(bp,(meUByte *)"Global bindings:");
+    addLineToEob(bp,(meUByte *)"") ;
     
     ii  = keyTableSize ;
     ktp = keytab ;

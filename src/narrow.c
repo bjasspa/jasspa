@@ -44,11 +44,11 @@
 #if NARROW
 
 void
-createNarrow(BUFFER *bp, LINE *slp, LINE *elp, int32 sln, int32 eln, uint16 name)
+createNarrow(BUFFER *bp, LINE *slp, LINE *elp, meInt sln, meInt eln, meUShort name)
 {
     WINDOW   *wp ;
     meNARROW *nrrw, *cn, *pn ;
-    int32     nln ;
+    meInt     nln ;
     
     if((nrrw = meMalloc(sizeof(meNARROW))) == NULL)
         return ;
@@ -287,7 +287,7 @@ narrowBuffer(int f, int n)
         meNARROW *nrrw, *nn ;
         
         if((nrrw=curbp->narrow) == NULL)
-            return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[Current buffer not narrowed]") ;
+            return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[Current buffer not narrowed]") ;
     
         while(nrrw != NULL)
         {
@@ -326,16 +326,16 @@ narrowBuffer(int f, int n)
                 nrrw = nrrw->next ;
             }
         }
-        return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[No narrow on current line]") ;
+        return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No narrow on current line]") ;
     }
     else
     {
         LINE   *slp, *elp ;
-        int32   sln,  eln ;
+        meInt   sln,  eln ;
         if(curwp->w_markp == NULL)
             return noMarkSet() ;
         if(curwp->line_no == curwp->mlineno)
-            return mlwrite(MWABORT,(uint8 *)"[Illegal narrow]") ;
+            return mlwrite(MWABORT,(meUByte *)"[Illegal narrow]") ;
         if(curwp->line_no < curwp->mlineno)
         {
             slp = curwp->w_dotp ;
@@ -360,7 +360,7 @@ narrowBuffer(int f, int n)
                 createNarrow(curbp,lforw(curbp->b_linep),slp,0,sln,0) ;
         }
         else
-            return mlwrite(MWABORT,(uint8 *)"[Illegal narrow argument]") ;
+            return mlwrite(MWABORT,(meUByte *)"[Illegal narrow argument]") ;
     }
     return TRUE ;
 }

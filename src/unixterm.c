@@ -158,10 +158,10 @@ static    char   tcapbuf[TCAPSLEN];
 * Special termcal color definitions                                       *
 **************************************************************************/
 #if COLOR
-uint32 *colTable=NULL ;
+meUInt *colTable=NULL ;
 
 #define tcapNumColors 8
-static uint8 tcapColors[tcapNumColors*3] =
+static meUByte tcapColors[tcapNumColors*3] =
 {
     0,    0,  0,                        /* Black */
     200,  0,  0,                        /* Red */
@@ -200,9 +200,9 @@ static char *tcapSpecKeyStrs[]=
 };
 #undef	DEFSKEY
 
-#define	DEFSKEY(s,i,d,t) (uint8 *) d,
+#define	DEFSKEY(s,i,d,t) (meUByte *) d,
 
-static uint8 *tcapSpecKeyDefs[]=
+static meUByte *tcapSpecKeyDefs[]=
 {
 #include	"eskeys.def"
 };
@@ -239,7 +239,7 @@ char *meName="MicroEmacs" ;
 
 #define iconWidth  48
 #define iconHeight 48
-static uint8 iconBits[] = {
+static meUByte iconBits[] = {
  0xff, 0xff, 0xff, 0xff, 0xff, 0x7f,
  0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
  0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
@@ -296,7 +296,7 @@ static uint8 iconBits[] = {
 #define ME_BIND_FLAG  0x40
 #define ME_BIND_COUNT 3
 #define ME_BIND_MASK  0x3f
-uint8 TTextkey_lut [256] =
+meUByte TTextkey_lut [256] =
 {
   0,  0,  0,  0,  0,  0,  0,  0,  SKEY_backspace,  SKEY_tab,  0,  0,  0, SKEY_return,  0,  0,
   SKEY_f11,SKEY_f12,  0,  SKEY_pause,  ME_KP_FLAG|ME_BIND_FLAG|2,  0,  0,  0,  0,  0,  0, SKEY_esc,  0,  0,  0,  0,
@@ -316,15 +316,15 @@ uint8 TTextkey_lut [256] =
   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,SKEY_delete
 };	/* Extended Keyboard lookup table */
 
-uint16 NumLockLookUpOn[ME_KP_COUNT]=
+meUShort NumLockLookUpOn[ME_KP_COUNT]=
 { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '/', '*', '-', '+', ME_SPECIAL|SKEY_return } ;
-uint16 NumLockLookUpOff[ME_KP_COUNT]=
+meUShort NumLockLookUpOff[ME_KP_COUNT]=
 {   ME_SPECIAL|SKEY_kp_insert, ME_SPECIAL|SKEY_kp_end, ME_SPECIAL|SKEY_kp_down, ME_SPECIAL|SKEY_kp_page_down,
     ME_SPECIAL|SKEY_kp_left, ME_SPECIAL|SKEY_kp_begin, ME_SPECIAL|SKEY_kp_right, ME_SPECIAL|SKEY_kp_home,
     ME_SPECIAL|SKEY_kp_up, ME_SPECIAL|SKEY_kp_page_up, ME_SPECIAL|SKEY_kp_delete,
     '/', '*', '-', '+', ME_SPECIAL|SKEY_return
 } ;
-uint16 bindKeyLookUp[ME_BIND_COUNT]={ SKEY_caps_lock, SKEY_num_lock, SKEY_scroll_lock } ;
+meUShort bindKeyLookUp[ME_BIND_COUNT]={ SKEY_caps_lock, SKEY_num_lock, SKEY_scroll_lock } ;
 #else  /* _XTERM */
 #define meStdin 0
 #endif /* _XTERM */
@@ -348,9 +348,9 @@ int  mouseState = 0;             /* State of the mouse. */
 
 /* mouseKeyState
  * The state of the control keys when the mouse was pressed. */
-uint16 mouseKeyState;     /* State of keyboard control */
+meUShort mouseKeyState;          /* State of keyboard control */
 
-static uint16 mouseKeys[8] = { 0, 1, 2, 3, 4, 5 } ;
+static meUShort mouseKeys[8] = { 0, 1, 2, 3, 4, 5 } ;
 #define mouseButtonPick(bb) (mouseState |=  (1<<((bb)-1)))
 #define mouseButtonDrop(bb) (mouseState &= ~(1<<((bb)-1)))
 
@@ -457,9 +457,9 @@ sigSize(SIGNAL_PROTOTYPE)
 #ifdef _XTERM
 
 static Font
-__XTERMfontGetId(uint8 font)
+__XTERMfontGetId(meUByte font)
 {
-    uint8 fontNU ;
+    meUByte fontNU ;
     
     /* remove the underline as this is not a different font,
      * the underline is drawn on after */
@@ -523,8 +523,8 @@ __XTERMfontGetId(uint8 font)
 void
 XTERMschemeSet(meSCHEME scheme)
 {
-    uint32 valueMask = 0 ;
-    uint8 cc ;
+    meUInt valueMask = 0 ;
+    meUByte cc ;
 
     cc = meStyleGetFColor(meSchemeGetStyle(scheme)) ;
     if(mecm.fcol != cc)
@@ -565,7 +565,7 @@ XTERMschemeSet(meSCHEME scheme)
  * colors.
  */
 void
-XTERMSpecialChar (int x, int y, uint8 cc)
+XTERMSpecialChar (int x, int y, meUByte cc)
 {
     XPoint points[3] ;
     int ii ;
@@ -722,7 +722,7 @@ XTERMPaint (int srow, int scol, int erow, int ecol)
 {
     FRAMELINE *flp;                     /* Frame store line pointer */
     meSCHEME  *fssp;                    /* Frame store colour pointer */
-    uint8     *fstp;                    /* Frame store text pointer */
+    meUByte     *fstp;                    /* Frame store text pointer */
     meSCHEME   schm;                    /* Current colour */
     int col;                            /* Current column position */
     int row;                            /* Current row screen position */
@@ -732,7 +732,7 @@ XTERMPaint (int srow, int scol, int erow, int ecol)
     /* Process each row in turn until we reach the end of the line */
     if (meSystemCfg & meSYSTEM_FONTFIX)
     {
-        uint8 cc, *sfstp, buff[MAXBUF] ;
+        meUByte cc, *sfstp, buff[MAXBUF] ;
         int spFlag ;
 
         for (flp = frameStore + srow; srow < erow; srow++, flp++)
@@ -831,7 +831,7 @@ XTERMPaint (int srow, int scol, int erow, int ecol)
 }
 
 /* following are used for incremental Selection getting */
-static uint8 *meClipBuff=NULL ;
+static meUByte *meClipBuff=NULL ;
 static int meClipSize=0 ;
 
 /* The xterm XEvent handler */
@@ -987,8 +987,8 @@ meXEventHandler(void)
              * does not seemed to have aquired an incorrect state (i.e. button
              * state mis-represented). I will leave it for the time being (JDG)
              */
-            uint16 cc;                  /* Character code */
-            uint32 arg;                 /* Decode key argument */
+            meUShort cc;                  /* Character code */
+            meUInt arg;                 /* Decode key argument */
             mouse_X = event.xmotion.x / mecm.fwidth ;
             mouse_Y = event.xmotion.y / mecm.fdepth ;
             mouse_dX = ((event.xmotion.x - (mouse_X * mecm.fwidth)) << 8) / mecm.fwidth;
@@ -1061,7 +1061,7 @@ meXEventHandler(void)
         if(meMouseCfg & meMOUSE_ENBLE)
         {
             unsigned int   bb ;
-            uint16 ss ;
+            meUShort ss ;
             if(!TTfocus)
                 /* if we haven't currently got the input focus, grab it now */
                 XSetInputFocus(mecm.xdisplay,mecm.xwindow,RevertToPointerRoot,CurrentTime) ;
@@ -1088,7 +1088,7 @@ meXEventHandler(void)
         if(meMouseCfg & meMOUSE_ENBLE)
         {
             unsigned int   bb ;
-            uint16 ss ;
+            meUShort ss ;
             /* Collect the position of the mouse. Require the row/column mouse
              * position. Also require the fractional bits incase we are scrolling */
             mouse_X = event.xbutton.x / mecm.fwidth ;
@@ -1109,7 +1109,7 @@ meXEventHandler(void)
         break ;
     case KeyPress:
         {
-            uint16 ii, ss ;
+            meUShort ii, ss ;
             KeySym keySym ;
             char   keyStr[20];
 
@@ -1151,7 +1151,7 @@ meXEventHandler(void)
                 }
                 else
                 {
-                    uint32 arg;
+                    meUInt arg;
                     ii = (ME_SPECIAL | bindKeyLookUp[keySym & ME_BIND_MASK] | ((ss & 0x01) << 8) | ((ss & 0x0C) << 7)) ;
                     if (decode_key(ii,&arg) == -1)  /* Key bound ?? */
                         break ;
@@ -1206,9 +1206,9 @@ meXEventHandler(void)
             {
                 if((event.xselectionrequest.target == XA_STRING) && (klhead != NULL))
                 {
-                    static uint8 *data=NULL ;
+                    static meUByte *data=NULL ;
                     static int dataLen=0 ;
-                    uint8 *ss, *dd, cc ;
+                    meUByte *ss, *dd, cc ;
                     KILL *killp ;
                     int   len ;
 
@@ -1259,8 +1259,8 @@ meXEventHandler(void)
         }
     case SelectionNotify:
         {
-            uint32 nitems, left;
-            uint8 *buff, *dd ;
+            meUInt nitems, left;
+            meUByte *buff, *dd ;
             Atom type ;
             int  fmt ;
 
@@ -1321,8 +1321,8 @@ meXEventHandler(void)
         if ((meClipSize > 0) && (event.xproperty.state == PropertyNewValue) &&
             (event.xproperty.atom == meAtoms[meATOM_COPY_TEXT]))
         {
-            uint32 nitems, left;
-            uint8 *buff ;
+            meUInt nitems, left;
+            meUByte *buff ;
             Atom type ;
             int  fmt, ret ;
 
@@ -1496,7 +1496,7 @@ TCAPstart(void)
     /* Try and setup some of the standard keys like the cursor keys */
     {
         char buf[20] ;
-        uint16 ii, sl[20] ;
+        meUShort ii, sl[20] ;
 
         for(ii=0 ; ii<SKEY_MAX ; ii++)
         {
@@ -1508,7 +1508,7 @@ TCAPstart(void)
         {
             p = buf ;
             if((tcapSpecKeyStrs[ii] != NULL) && ((p=tgetstr(tcapSpecKeyStrs[ii], &p)) != NULL))
-                translateKeyAdd(&TTtransKey,charListToShorts(sl,(uint8 *) p),
+                translateKeyAdd(&TTtransKey,charListToShorts(sl,(meUByte *) p),
                                 TTtransKey.time,sl,(ii|ME_SPECIAL)) ;
             else
                 tcapSpecKeyStrs[ii] = NULL ;
@@ -1517,14 +1517,14 @@ TCAPstart(void)
         if((tcapSpecKeyStrs[SKEY_page_up] == NULL) && ((p=tgetstr("kP", &p)) != NULL))
         {
             tcapSpecKeyStrs[SKEY_page_up] = "kP" ;
-            translateKeyAdd(&TTtransKey,charListToShorts(sl,(uint8 *) p),
+            translateKeyAdd(&TTtransKey,charListToShorts(sl,(meUByte *) p),
                             TTtransKey.time,sl,(SKEY_page_up|ME_SPECIAL)) ;
         }
         /* KEY_NPAGE, sent by next-page key */
         if((tcapSpecKeyStrs[SKEY_page_down] == NULL) && ((p=tgetstr("kN", &p)) != NULL))
         {
             tcapSpecKeyStrs[SKEY_page_down] = "kN" ;
-            translateKeyAdd(&TTtransKey,charListToShorts(sl,(uint8 *) p),
+            translateKeyAdd(&TTtransKey,charListToShorts(sl,(meUByte *) p),
                             TTtransKey.time,sl,(SKEY_page_down|ME_SPECIAL)) ;
         }
     }
@@ -1557,11 +1557,11 @@ TTinitMouse(void)
         meMouseCfg &= ~meMOUSE_ENBLE ;
     else if(meMouseCfg & meMOUSE_ENBLE)
     {
-        static uint8  meCurCursor=0 ;
+        static meUByte  meCurCursor=0 ;
         static Cursor meCursors[meCURSOR_COUNT]={0,0,0,0,0,0,0} ;
-        static uint8  meCursorChar[meCURSOR_COUNT]={
+        static meUByte  meCursorChar[meCURSOR_COUNT]={
             0,XC_arrow,XC_xterm,XC_crosshair,XC_hand2,XC_watch,XC_pirate} ;
-        uint8 cc ;
+        meUByte cc ;
         int b1, b2, b3 ;
 
         if(meMouseCfg & meMOUSE_SWAPBUTTONS)
@@ -1576,7 +1576,7 @@ TTinitMouse(void)
         mouseKeys[2] = b2 ;
         mouseKeys[3] = b3 ;
 
-        cc = (uint8) ((meMouseCfg & meMOUSE_ICON) >> 16) ;
+        cc = (meUByte) ((meMouseCfg & meMOUSE_ICON) >> 16) ;
         if(cc >= meCURSOR_COUNT)
             cc = 0 ;
         if(cc != meCurCursor)
@@ -1664,7 +1664,7 @@ XTERMsetFont(char *fontName)
     if((meSystemCfg & meSYSTEM_FONTS) &&
        ((mecm.fontName=meStrdup(fontName)) != NULL))
     {
-        uint8 cc, *p = mecm.fontName ;
+        meUByte cc, *p = mecm.fontName ;
 
         /* Break up the font. This must be the full X-Window font definition, we
          * do not understand the X-Windows wildcards and aliases. Lifes too short
@@ -1729,7 +1729,7 @@ XTERMstart(void)
     else
     {
         char buff[1048] ;
-        meStrcpy(buff,(homedir != NULL) ? homedir:(uint8 *)".") ;
+        meStrcpy(buff,(homedir != NULL) ? homedir:(meUByte *)".") ;
         meStrcat(buff,"/.Xdefaults") ;
         rdb = XrmGetFileDatabase(buff);
     }
@@ -2207,8 +2207,8 @@ TTwaitForChar(void)
      */
     if(!isTimerSet(MOUSE_TIMER_ID) && (mouseState != 0))
     {
-        uint16 mc ;
-        uint32 arg ;
+        meUShort mc ;
+        meUInt arg ;
         mc = ME_SPECIAL | mouseKeyState | (SKEY_mouse_time+mouseKeys[mouseButtonGetPick()]) ;
         /* mouse-time bound ?? */
         if((!TTallKeys && (decode_key(mc,&arg) != -1)) || (TTallKeys & 0x2))
@@ -2306,9 +2306,9 @@ TCAPshowCur(void)
 #if COLOR
 
 int
-TCAPaddColor(uint8 index, uint8 r, uint8 g, uint8 b)
+TCAPaddColor(meUByte index, meUByte r, meUByte g, meUByte b)
 {
-    uint8 *ss ;
+    meUByte *ss ;
     int ii, jj, idif, jdif ;
 
     jdif = 256*256*3 ;                  /* Smallest least squares. */
@@ -2336,8 +2336,8 @@ TCAPaddColor(uint8 index, uint8 r, uint8 g, uint8 b)
 
     if(noColors <= index)
     {
-        colTable = (uint32 *) realloc(colTable,(index+1)*sizeof(uint32)) ;
-        memset(colTable+noColors,0, (index-noColors+1)*sizeof(uint32)) ;
+        colTable = (meUInt *) realloc(colTable,(index+1)*sizeof(meUInt)) ;
+        memset(colTable+noColors,0, (index-noColors+1)*sizeof(meUInt)) ;
         noColors = index+1 ;
     }
     colTable[index] = jj ;
@@ -2347,10 +2347,10 @@ TCAPaddColor(uint8 index, uint8 r, uint8 g, uint8 b)
 
 #endif
 
-static uint8 oschemeFcol=meCOLOR_INVALID ;
-static uint8 oschemeBcol=meCOLOR_INVALID ;
-static uint8 oschemeFont=0 ;
-static uint8 oschemeFntr=0 ;
+static meUByte oschemeFcol=meCOLOR_INVALID ;
+static meUByte oschemeBcol=meCOLOR_INVALID ;
+static meUByte oschemeFont=0 ;
+static meUByte oschemeFntr=0 ;
 
 void
 TCAPschemeSet(meSCHEME scheme)
@@ -2363,7 +2363,7 @@ TCAPschemeSet(meSCHEME scheme)
 #ifdef _TCAPFONT
     if(meSystemCfg & meSYSTEM_FONTS)
     {
-        uint8 font ;
+        meUByte font ;
         
         font = meStyleGetFont(nstyle) ;
         if(meSchemeTestNoFont(scheme))
@@ -2411,7 +2411,7 @@ TCAPschemeSet(meSCHEME scheme)
 #if COLOR    
     if(meSystemCfg & meSYSTEM_ANSICOLOR)
     {
-        uint8 col ;
+        meUByte col ;
         
         /* Foreground color */
         col = colTable[meStyleGetFColor(nstyle)] ;
@@ -2545,8 +2545,8 @@ TTahead(void)
         /* If an alarm hCheck the mouse */
         if(isTimerExpired(MOUSE_TIMER_ID))
         {
-            uint16 mc ;
-            uint32 arg ;
+            meUShort mc ;
+            meUInt arg ;
 
             timerClearExpired(MOUSE_TIMER_ID) ;
             mc = ME_SPECIAL | mouseKeyState |
@@ -2580,7 +2580,7 @@ TTahead(void)
          * buffer to store them. */
         while(TTnoKeys != KEYBUFSIZ)
         {
-            uint8 cc ;
+            meUByte cc ;
             int status;                 /* Status of the input check */
             
 #ifdef _USEPOLL
@@ -2615,7 +2615,7 @@ TTahead(void)
     if(isTimerExpired(IDLE_TIMER_ID))
     {
         register int index;
-        uint32 arg;           /* Decode key argument */
+        meUInt arg;           /* Decode key argument */
         if((index=decode_key(ME_SPECIAL|SKEY_idle_time,&arg)) != -1)
         {
             /* Execute the idle-time key */
@@ -2644,7 +2644,7 @@ XTERMhideCur(void)
     if((TTcurr <= TTnrow) && (TTcurc < TTncol))
     {
         FRAMELINE *flp;                     /* Frame store line pointer */
-        uint8     *cc ;                     /* Current cchar  */
+        meUByte     *cc ;                     /* Current cchar  */
         meSCHEME   schm;                    /* Current colour */
 
         flp  = frameStore + TTcurr ;
@@ -2672,7 +2672,7 @@ XTERMshowCur(void)
     if((TTcurr <= TTnrow) && (TTcurc < TTncol))
     {
         FRAMELINE *flp;                     /* Frame store line pointer */
-        uint8     *cc ;                     /* Current cchar  */
+        meUByte     *cc ;                     /* Current cchar  */
         meSCHEME   schm;                    /* Current colour */
 
         flp  = frameStore + TTcurr ;
@@ -2682,8 +2682,8 @@ XTERMshowCur(void)
 
         if(TTfocus)
         {
-            uint32 valueMask=0 ;
-            uint8 ff ;
+            meUInt valueMask=0 ;
+            meUByte ff ;
             ff = meStyleGetBColor(meSchemeGetStyle(schm)) ;
             if(mecm.fcol != ff)
             {
@@ -2774,7 +2774,7 @@ TTwidth(int x)
 int
 changeFont(int f, int n)
 {
-    uint8        buff[MAXBUF] ;            /* Input buffer */
+    meUByte        buff[MAXBUF] ;            /* Input buffer */
 	
     if(meSystemCfg & meSYSTEM_CONSOLE)
         /* change-font not supported on termcap */
@@ -2782,7 +2782,7 @@ changeFont(int f, int n)
     
     /* Get the name of the font. If it is specified as default then
      * do not collect the remaining arguments */
-    if(meGetString((uint8 *)"Font Name", 0, 0, buff, MAXBUF) == ABORT)
+    if(meGetString((meUByte *)"Font Name", 0, 0, buff, MAXBUF) == ABORT)
         return FALSE ;
 
     /* Change the font */
@@ -2807,26 +2807,26 @@ changeFont(int f, int n)
 }
 
 int
-XTERMaddColor(meCOLOR index, uint8 r, uint8 g, uint8 b)
+XTERMaddColor(meCOLOR index, meUByte r, meUByte g, meUByte b)
 {
     XColor col ;
 
     if(noColors <= index)
     {
-        colTable = (uint32 *) realloc(colTable,
-                                             (index+1)*sizeof(uint32)) ;
+        colTable = (meUInt *) realloc(colTable,
+                                             (index+1)*sizeof(meUInt)) ;
         memset(colTable+noColors,0,
-               (index-noColors+1)*sizeof(uint32)) ;
+               (index-noColors+1)*sizeof(meUInt)) ;
         noColors = index+1 ;
     }
-    col.red   = ((uint16) r) << 8 ;
-    col.green = ((uint16) g) << 8 ;
-    col.blue  = ((uint16) b) << 8 ;
+    col.red   = ((meUShort) r) << 8 ;
+    col.green = ((meUShort) g) << 8 ;
+    col.blue  = ((meUShort) b) << 8 ;
     if(!XAllocColor(mecm.xdisplay,xcmap,&col))
     {
         static int noCells=-1 ;
-        static uint8 *cells=NULL ;
-        uint8 *ss ;
+        static meUByte *cells=NULL ;
+        meUByte *ss ;
         int ii, diff;
         int bDiff= 256*256*3 ;          /* Smallest least squares. */
 
@@ -2834,7 +2834,7 @@ XTERMaddColor(meCOLOR index, uint8 r, uint8 g, uint8 b)
         {
             printf("Warning: Failed to allocate colors, looking up closest\n") ;
             if(((noCells = DisplayCells(mecm.xdisplay,xscreen)) > 0) &&
-               ((cells = malloc(noCells*3*sizeof(uint8))) != NULL))
+               ((cells = malloc(noCells*3*sizeof(meUByte))) != NULL))
             {
                 ii = noCells ;
                 ss = cells ;
@@ -2941,7 +2941,7 @@ TTgetClipboard(void)
  */
 
 void
-TTtitleText (uint8 *str)
+TTtitleText (meUByte *str)
 {
     if(!(meSystemCfg & meSYSTEM_CONSOLE))
     {
@@ -3037,11 +3037,11 @@ TTopenClientServer (void)
         ipipe->bp = bp ;
         /* setup the buffer */
         {
-            uint8 buff[MAXBUF] ;
+            meUByte buff[MAXBUF] ;
             sprintf((char *)buff,"Client Server: /tmp/mesrv%d",(int) meUid) ;
             addLineToEob(bp,buff) ;              /* Add string */
-            addLineToEob(bp,(uint8 *)"") ;       /* Add string */
-            addLineToEob(bp,(uint8 *)"") ;       /* Add string */
+            addLineToEob(bp,(meUByte *)"") ;       /* Add string */
+            addLineToEob(bp,(meUByte *)"") ;       /* Add string */
             bp->b_dotp = lback(bp->b_linep) ;
             bp->b_doto = 0 ;
             bp->line_no = bp->elineno-1 ;
@@ -3123,7 +3123,7 @@ TTconnectClientServer (void)
     return 1 ;
 }
 void
-TTsendClientServer(uint8 *line)
+TTsendClientServer(meUByte *line)
 {
     if(meCCSSock >= 0)
     {

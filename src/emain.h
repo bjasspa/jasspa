@@ -395,12 +395,12 @@ extern const char *sys_errlist[];
 #endif
 
 /* Standard Types */
-typedef   signed char  int8 ;
-typedef unsigned char  uint8 ;
-typedef          short int16 ;
-typedef unsigned short uint16 ;
-typedef          long  int32 ;
-typedef unsigned long  uint32 ;
+typedef   signed char  meByte ;
+typedef unsigned char  meUByte ;
+typedef   signed short meShort ;
+typedef unsigned short meUShort ;
+typedef   signed long  meInt ;
+typedef unsigned long  meUInt ;
 
 #include "emode.h"      /* Mode enum, type & var defs    */
 #include "estruct.h"    /* Type structure definitions    */

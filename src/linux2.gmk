@@ -1,7 +1,7 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# linux2.gmk - Make file for Linux - Slackware V2.2.6
+# linux2.gmk - Make file for Linux v2 using gcc
 #
 # Copyright (C) 2001-2002 JASSPA (www.jasspa.com)
 #
@@ -22,13 +22,13 @@
 ##############################################################################
 #
 # Created:     Sat Jan 24 1998
-# Synopsis:    Make file for Linux - Slackware V2.2.6
+# Synopsis:    Make file for Linux v2 using gcc
 # Notes:
-#	Run "make -f linux2.mak"      for optimised build produces ./me
-#	Run "make -f linux2.mak med"  for debug build produces     ./med
+#	Run "make -f linux2.gmk"      for optimised build produces ./me
+#	Run "make -f linux2.gmk med"  for debug build produces     ./med
 #
-#	Run "make -f linux2.mak clean"      to clean source directory
-#	Run "make -f linux2.mak spotless"   to clean source directory even more
+#	Run "make -f linux2.gmk clean"      to clean source directory
+#	Run "make -f linux2.gmk spotless"   to clean source directory even more
 #
 ##############################################################################
 #

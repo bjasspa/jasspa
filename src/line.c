@@ -118,7 +118,7 @@ bchange(void)
     {
         if((curbp->b_bname[0] != '*') &&
            (bufferOutOfDate(curbp)) &&
-           (mlyesno((uint8 *)"File changed on disk, really edit") != TRUE))
+           (mlyesno((meUByte *)"File changed on disk, really edit") != TRUE))
             return ctrlg(TRUE,1) ;
         meModeSet(curbp->b_mode,MDEDIT);
         addModeToWindows(WFMODE) ;
@@ -180,20 +180,20 @@ lchange(register int flag)
  * greater than the place where you did the insert. Return line pointer if all
  * is well, and NULL on errors.
  */
-uint8 *
+meUByte *
 lmakespace(int n)
 {
-    uint8  *cp1;
+    meUByte  *cp1;
     WINDOW *wp;
     LINE   *lp_new;
     LINE   *lp_old;
-    uint16  doto ;
+    meUShort  doto ;
     int     newl ;
 
     lp_old = curwp->w_dotp;			/* Current line         */
     if((newl=(n+((int) llength(lp_old)))) > 0x0fff0)
     {
-        mlwrite(MWABORT|MWPAUSE,(uint8 *)"[Line too long!]") ;
+        mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Line too long!]") ;
         return NULL ;
     }
     if (lp_old == curbp->b_linep)		/* At the end: special  */
@@ -228,8 +228,8 @@ lmakespace(int n)
         doto = curwp->w_doto;           /* Save for later.      */
         if (newl > lp_old->l_size)      /* Hard: reallocate     */
         {
-            uint8 *cp2 ;
-            uint16 ii ;
+            meUByte *cp2 ;
+            meUShort ii ;
 
             /*---	Allocate new line of correct length */
 
@@ -261,8 +261,8 @@ lmakespace(int n)
         }
         else                                /* Easy: in place       */
         {
-            uint8 *cp2 ;
-            uint16 ii ;
+            meUByte *cp2 ;
+            meUShort ii ;
 
             lp_new = lp_old;                      /* Pretend new line     */
             lp_new->l_used = newl ;
@@ -312,7 +312,7 @@ lmakespace(int n)
 int
 linsert(int n, int c)
 {
-    uint8 *cp;
+    meUByte *cp;
 
     lchange(WFMOVEC|WFMAIN);		/* Declare editied buffer */
     if ((cp = lmakespace(n))==NULL)     /* Make space for the characters */
@@ -324,9 +324,9 @@ linsert(int n, int c)
 
 /*---	As insrt char, insert string */
 int
-lsinsert(register int n, register uint8 *cp)
+lsinsert(register int n, register meUByte *cp)
 {
-    uint8 *lp ;
+    meUByte *lp ;
 
     if(n == 0)
     {
@@ -388,9 +388,9 @@ lnewline(void)
 {
     register LINE   *lp1;
     register LINE   *lp2;
-    register uint16  doto, llen ;
+    register meUShort  doto, llen ;
     register WINDOW *wp;
-    register int32   lineno ;
+    register meInt   lineno ;
 
     lchange(WFMOVEL|WFMAIN|WFSBOX);
     lp1  = curwp->w_dotp;                   /* Get the address and  */
@@ -410,7 +410,7 @@ lnewline(void)
         if(doto)
         {
             /* Shuffle text around  */
-            register uint8 *cp1, *cp2 ;
+            register meUByte *cp1, *cp2 ;
             
             llen = doto ;
             cp1 = lp1->l_text ;
@@ -470,7 +470,7 @@ lnewline(void)
     }
     else
     {
-        register uint8 *cp1, *cp2, *cp3 ;
+        register meUByte *cp1, *cp2, *cp3 ;
         
         if ((lp2=lalloc(llen)) == NULL) /* New second line      */
             return FALSE ;
@@ -541,7 +541,7 @@ lnewline(void)
 int
 ksave(void)
 {
-    int16 count=0 ;
+    meShort count=0 ;
     KLIST *thiskl, *lastkl ;/* pointer to last klist element */
 
     /*
@@ -607,8 +607,8 @@ ksave(void)
  * returns NULL on failure, pointer to the 1st byte of
  * the block otherwise.
  */
-uint8 *
-kaddblock(int32 count)
+meUByte *
+kaddblock(meInt count)
 {
     KILL *nbl ;
 
@@ -636,11 +636,11 @@ kaddblock(int32 count)
  *  kstring - put killed text into kill string
  */
 int
-mldelete(int32 noChrs, uint8 *kstring)
+mldelete(meInt noChrs, meUByte *kstring)
 {
     LINE   *slp, *elp, *fslp, *felp ;
-    int32   slno, elno, nn=noChrs, ii, soff, eoff ;
-    uint8  *ks, *ss ;
+    meInt   slno, elno, nn=noChrs, ii, soff, eoff ;
+    meUByte  *ks, *ss ;
     WINDOW *wp ;
     
     ks = kstring ;
@@ -660,7 +660,7 @@ mldelete(int32 noChrs, uint8 *kstring)
          * the line - removal as window position updates are
          * special case and very easy
          */
-        uint8 *s1, *s2 ;
+        meUByte *s1, *s2 ;
         
         s1 = slp->l_text+soff ;
         if(ks != NULL)
@@ -674,7 +674,7 @@ mldelete(int32 noChrs, uint8 *kstring)
         s2 = s1+nn ;
         while((*s1++ = *s2++) != '\0')
             ;
-        slp->l_used -= (uint16) nn ;
+        slp->l_used -= (meUShort) nn ;
         slp->l_flag |= LNCHNG ;
         
         /* Last thing to do is update the windows */
@@ -683,19 +683,19 @@ mldelete(int32 noChrs, uint8 *kstring)
         {
             if(wp->w_bufp == curbp)
             {
-                if((wp->w_dotp == slp) && (((int32) wp->w_doto) > soff))
+                if((wp->w_dotp == slp) && (((meInt) wp->w_doto) > soff))
                 {
                     if((ii=wp->w_doto - nn) < soff)
-                        wp->w_doto = (uint16) soff ;
+                        wp->w_doto = (meUShort) soff ;
                     else
-                        wp->w_doto = (uint16) ii ;
+                        wp->w_doto = (meUShort) ii ;
                 }
-                if((wp->w_markp == slp) && (((int32) wp->w_marko) > soff))
+                if((wp->w_markp == slp) && (((meInt) wp->w_marko) > soff))
                 {
                     if((ii=wp->w_marko - nn) < soff)
-                        wp->w_marko = (uint16) soff ;
+                        wp->w_marko = (meUShort) soff ;
                     else
-                        wp->w_marko = (uint16) ii ;
+                        wp->w_marko = (meUShort) ii ;
                 }
                 wp->w_flag |= WFMAIN ;
             }
@@ -723,7 +723,7 @@ mldelete(int32 noChrs, uint8 *kstring)
         if(nn <= ii)
         {
             /* Ends somewhere in this line, set the offset and break */
-            eoff = (uint16) nn ;
+            eoff = (meUShort) nn ;
             if(ks != NULL)
             {
                 ss = elp->l_text ;
@@ -754,13 +754,13 @@ mldelete(int32 noChrs, uint8 *kstring)
         /* here we can simply use the end line */
         if(eoff != 0)
         {
-            uint8 *s1, *s2 ;
+            meUByte *s1, *s2 ;
             
             s1 = elp->l_text ;
             s2 = s1+eoff ;
             while((*s1++ = *s2++) != '\0')
                 ;
-            elp->l_used -= (uint16) eoff ;
+            elp->l_used -= (meUShort) eoff ;
         }
         fslp = slp ;
         felp = elp ;
@@ -793,7 +793,7 @@ mldelete(int32 noChrs, uint8 *kstring)
             if(elp == curbp->b_linep)
             {
                 slp->l_text[soff] = '\0' ;
-                slp->l_used = (uint16) soff ;
+                slp->l_used = (meUShort) soff ;
                 felp = elp ;
                 /* increment the no-lines cause we're only pretending we've
                  * removed the last line
@@ -802,7 +802,7 @@ mldelete(int32 noChrs, uint8 *kstring)
             }
             else
             {
-                uint8 *s1, *s2 ;
+                meUByte *s1, *s2 ;
             
                 slp->l_used = newl ;
                 s1 = slp->l_text+soff ;
@@ -815,7 +815,7 @@ mldelete(int32 noChrs, uint8 *kstring)
         }
         else if(elp->l_size >= newl)
         {
-            uint8 *s1, *s2 ;
+            meUByte *s1, *s2 ;
             
             if(soff > eoff)
             {
@@ -832,7 +832,7 @@ mldelete(int32 noChrs, uint8 *kstring)
                 while((*s1++ = *s2++) != '\0')
                     ;
             }
-            elp->l_used = (uint16) newl ;
+            elp->l_used = (meUShort) newl ;
             s1 = elp->l_text ;
             s2 = slp->l_text ;
             ii = soff ;
@@ -844,7 +844,7 @@ mldelete(int32 noChrs, uint8 *kstring)
         }
         else
         {
-            uint8 *s1, *s2 ;
+            meUByte *s1, *s2 ;
             fslp = slp ;
             if((slp=lalloc(newl)) == NULL)
                 return noChrs ;
@@ -915,9 +915,9 @@ mldelete(int32 noChrs, uint8 *kstring)
                 else
                 {
                     if((wp->line_no == elno) && (wp->w_doto > eoff))
-                        wp->w_doto = (uint16) (soff + wp->w_doto - eoff) ;
+                        wp->w_doto = (meUShort) (soff + wp->w_doto - eoff) ;
                     else if((wp->line_no != slno) || (wp->w_doto > soff))
-                        wp->w_doto = (uint16) soff ;
+                        wp->w_doto = (meUShort) soff ;
                     wp->w_dotp = slp ;
                     wp->line_no = slno ;
                 }
@@ -929,9 +929,9 @@ mldelete(int32 noChrs, uint8 *kstring)
                 else
                 {
                     if((wp->mlineno == elno) && (wp->w_marko > eoff))
-                        wp->w_marko = (uint16) (soff + wp->w_marko - eoff) ;
+                        wp->w_marko = (meUShort) (soff + wp->w_marko - eoff) ;
                     else if((wp->mlineno != slno) || (wp->w_marko > soff))
-                        wp->w_marko = (uint16) soff ;
+                        wp->w_marko = (meUShort) soff ;
                     wp->w_markp = slp ;
                     wp->mlineno = slno ;
                 }
@@ -953,10 +953,10 @@ mldelete(int32 noChrs, uint8 *kstring)
 /* n     -  # of chars to delete */
 /* kflag -  put killed text in kill buffer flag */
 int
-ldelete(int32 nn, int kflag)
+ldelete(meInt nn, int kflag)
 {
     LINE *ll ;
-    uint8 *kstring ;
+    meUByte *kstring ;
     long ret ;
     
     /* A quick test to make failure handling easier */
@@ -1012,7 +1012,7 @@ ldelete(int32 nn, int kflag)
          * All we have to do is reduce the no chars appropriately
          */
         nn -= llength(ll)+ret+1 ;
-        mlwrite(MWABORT|MWPAUSE,(uint8 *)"[Line too long!]") ;
+        mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Line too long!]") ;
         ret = FALSE ;
     }        
     else
@@ -1052,7 +1052,7 @@ yankfrom(struct KLIST *pklist)
 {
     int ii, cutLen ;
     int len=0 ;
-    uint8 *ss, *dd, *tt, cc ;		/* pointer into string to insert */
+    meUByte *ss, *dd, *tt, cc ;		/* pointer into string to insert */
     KILL *killp ;
 
     /* if pasting to the end of a very long line, the combined length could
@@ -1141,7 +1141,7 @@ yank(int f, int n)
 #endif
     /* make sure there is something to yank */
     if(klhead == NULL)
-        return mlwrite(MWABORT,(uint8 *)"[nothing to yank]");
+        return mlwrite(MWABORT,(meUByte *)"[nothing to yank]");
     /* Check we can change the buffer */
     if((ret=bchange()) != TRUE)
         return ret ;
@@ -1194,7 +1194,7 @@ reyank(int f, int n)
          * the last yank so this will be ok, but otherwise the user
          * would loose text with no hope of recovering it.
          */
-        return mlwrite(MWABORT,(uint8 *)"[reyank must IMMEDIATELY follow a yank or reyank]");
+        return mlwrite(MWABORT,(meUByte *)"[reyank must IMMEDIATELY follow a yank or reyank]");
 
     reyankLastYank = reyankLastYank->next;
     /*
@@ -1224,7 +1224,7 @@ reyank(int f, int n)
      */
     if(reyankLastYank == (KLIST*) NULL)
     {
-        mlwrite(MWABORT,(uint8 *)"[start of kill-ring]");
+        mlwrite(MWABORT,(meUByte *)"[start of kill-ring]");
         reyankLastYank = klhead;
     }
 

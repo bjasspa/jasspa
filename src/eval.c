@@ -45,11 +45,11 @@
 #endif
 #endif
 
-uint8 evalResult[TOKENBUF];    /* resulting string */
-static uint8 machineName[]=meSYSTEM_NAME;    /* resulting string */
+meUByte evalResult[TOKENBUF];    /* resulting string */
+static meUByte machineName[]=meSYSTEM_NAME;    /* resulting string */
 
 #if TIMSTMP
-extern uint8 time_stamp[];   /* Time stamp string */
+extern meUByte time_stamp[];   /* Time stamp string */
 #endif
 
 static time_t timeOffset=0 ;            /* Time offset in seconds */
@@ -99,7 +99,7 @@ static meRegex meRegexStrCmp={0} ;
  * return -1 on error, 0 on no match 1 if matched
  */
 int
-regexStrCmp(uint8 *str, uint8 *reg, int exact)
+regexStrCmp(meUByte *str, meUByte *reg, int exact)
 {
     int ii ;
     
@@ -118,7 +118,7 @@ regexStrCmp(uint8 *str, uint8 *reg, int exact)
  * the exact flag indicates a case sensitive comparision
  */
 int
-regexStrCmp(uint8 *str, uint8 *reg, int exact)
+regexStrCmp(meUByte *str, meUByte *reg, int exact)
 {
     char *starStr, *starReg ;
     int   starState=0 ;
@@ -263,10 +263,10 @@ regexStrCmp(uint8 *str, uint8 *reg, int exact)
  * integer to ascii string..........
  * This is too inconsistant to use the system's */
 #define INTWIDTH (sizeof(int)*4+2)
-uint8 *
+meUByte *
 meItoa(int i)
 {
-    register uint8 *sp;      /* pointer into result */
+    register meUByte *sp;      /* pointer into result */
     register int sign;      /* sign of resulting number */
     
     if(i == 0)          /* eliminate the trivial 0  */
@@ -292,7 +292,7 @@ meItoa(int i)
 
 
 meVARIABLE *
-SetUsrLclCmdVar(uint8 *vname, uint8 *vvalue, register meVARLIST *varList)
+SetUsrLclCmdVar(meUByte *vname, meUByte *vvalue, register meVARLIST *varList)
 {
     /* set a user variable */
     register meVARIABLE *vptr, *vp ;
@@ -303,7 +303,7 @@ SetUsrLclCmdVar(uint8 *vname, uint8 *vvalue, register meVARLIST *varList)
     /* scan the list looking for the user var name */
     while(ii)
     {
-        uint8 *s1, *s2, cc ;
+        meUByte *s1, *s2, cc ;
         
         jj = (ii>>1)+1 ;
         vp = vptr ;
@@ -342,10 +342,10 @@ SetUsrLclCmdVar(uint8 *vname, uint8 *vvalue, register meVARLIST *varList)
 }
 
 int
-setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
+setVar(meUByte *vname, meUByte *vvalue, meREGISTERS *regs)
 {
     register int status ;         /* status return */
-    uint8 *nn ;
+    meUByte *nn ;
     
     /* check the legality and find the var */
     nn = vname+1 ;
@@ -353,14 +353,14 @@ setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
     {
     case TKREG:
         {
-            uint8 cc ;
+            meUByte cc ;
             if((cc=*nn) == 'g')
                 regs = meRegHead ;
             else if(cc == 'p')
                 regs = regs->prev ;
             cc = nn[1] - '0' ;
             if(cc >= ('0'+meNUMREG))
-                return mlwrite(MWABORT,(uint8 *)"[No such register %s]",vname);
+                return mlwrite(MWABORT,(meUByte *)"[No such register %s]",vname);
             meStrcpy(regs->reg[cc],vvalue) ;
             break ;
         }
@@ -371,7 +371,7 @@ setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
     case TKLVR:
         {
             BUFFER *bp ;
-            uint8 *ss ;
+            meUByte *ss ;
             if((ss=meStrrchr(nn,':')) != NULL)
             {
                 *ss = '\0' ;
@@ -379,7 +379,7 @@ setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
                 *ss++ = ':' ;
                 if(bp == NULL)
                     /* not a buffer - abort */
-                    return mlwrite(MWABORT,(uint8 *)"[No such variable]");
+                    return mlwrite(MWABORT,(meUByte *)"[No such variable]");
                 nn = ss ;
             }
             else
@@ -391,7 +391,7 @@ setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
     case TKCVR:
         {
             meVARLIST *varList ;
-            uint8 *ss ;
+            meUByte *ss ;
             if((ss=meStrrchr(nn,'.')) != NULL)
             {
                 int ii ;
@@ -401,12 +401,12 @@ setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
                 *ss++ = '.' ;
                 if(ii < 0)
                     /* not a command - abort */
-                    return mlwrite(MWABORT,(uint8 *)"[No such variable]");
+                    return mlwrite(MWABORT,(meUByte *)"[No such variable]");
                 varList = &(cmdTable[ii]->varList) ;
                 nn = ss ;
             }
             else if((varList = regs->varList) == NULL)
-                return mlwrite(MWABORT,(uint8 *)"[No such variable]");
+                return mlwrite(MWABORT,(meUByte *)"[No such variable]");
             if(SetUsrLclCmdVar(nn,vvalue,varList) == NULL)
                 return FALSE ;
             break ;
@@ -420,10 +420,10 @@ setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
             if(nn[1] == 'l')
             {
                 int ll=0 ;
-                uint8 cc ;
+                meUByte cc ;
                 
                 if (curwp->w_dotp >= curbp->b_linep)
-                    return mlwrite(MWABORT,(uint8 *)"[Cannot set @wl here]");
+                    return mlwrite(MWABORT,(meUByte *)"[Cannot set @wl here]");
                 
                 curwp->w_doto = 0 ;
 #if MEUNDO
@@ -447,7 +447,7 @@ setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
             else
             {
                 if (curwp->w_doto >= curwp->w_dotp->l_used)
-                    return mlwrite(MWABORT,(uint8 *)"[Cannot set @wc here]");
+                    return mlwrite(MWABORT,(meUByte *)"[Cannot set @wc here]");
                 
                 lchange(WFMAIN);
 #if MEUNDO
@@ -461,7 +461,7 @@ setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
             int ii ;
             if(nn[2] == 'k')
             {
-                uint8 *saves, savcle ;
+                meUByte *saves, savcle ;
                           
                 /* use the macro string to key evaluator to get the value,
                  * must set this up carefully and restore state */
@@ -521,7 +521,7 @@ setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
         else if(*nn == '#')
             meRegCurr->n = meAtoi(vvalue) ;
         else
-            return mlwrite(MWABORT,(uint8 *)"[Cannot set variable %s]",vname);
+            return mlwrite(MWABORT,(meUByte *)"[Cannot set variable %s]",vname);
         break ;
     
     case TKENV:
@@ -544,7 +544,7 @@ setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
             break;
         case EVBOXCHRS:
             {
-                uint8 cc ;
+                meUByte cc ;
                 int len;
                 len = meStrlen(vvalue);
                 if (len > BCLEN)
@@ -559,17 +559,17 @@ setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
             }
             break;
         case EVIDLETIME:
-            idletime = (uint32) meAtoi(vvalue);
+            idletime = (meUInt) meAtoi(vvalue);
             if (idletime < 10)
                 idletime = 10;
             break;
         case EVDELAYTIME:
-            delaytime = (uint32) meAtoi(vvalue);
+            delaytime = (meUInt) meAtoi(vvalue);
             if (delaytime < 10)
                 delaytime = 10;
             break;
         case EVREPEATTIME:
-            repeattime = (uint32) meAtoi(vvalue);
+            repeattime = (meUInt) meAtoi(vvalue);
             if (repeattime < 10)
                 repeattime = 10;
             break;
@@ -629,17 +629,17 @@ setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
             fillbullet[15] = '\0' ;
             break;
         case EVFILLBULLETLEN:
-            fillbulletlen = (int16) meAtoi (vvalue);
+            fillbulletlen = (meShort) meAtoi (vvalue);
             break;
         case EVFILLCOL:
-            fillcol = (int16) meAtoi(vvalue);
+            fillcol = (meShort) meAtoi(vvalue);
             break;
         case EVFILLEOS:
             meStrncpy(filleos,vvalue,15);
             filleos[15] = '\0' ;
             break;
         case EVFILLEOSLEN:
-            filleoslen = (int16) meAtoi (vvalue);
+            filleoslen = (meShort) meAtoi (vvalue);
             break;
         case EVFILLIGNORE:
             meStrncpy(fillignore,vvalue,15);
@@ -652,7 +652,7 @@ setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
             timeOffset = meAtoi(vvalue) ;
             break;
         case EVMATCHLEN:
-            matchlen = (int16) meAtoi (vvalue);
+            matchlen = (meShort) meAtoi (vvalue);
             break;
         case EVPAGELEN:
             return changeScreenDepth(TRUE, meAtoi(vvalue));
@@ -680,7 +680,7 @@ setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
             return gotoLine(TRUE, meAtoi(vvalue));
         case EVWINCHRS:
             {
-                uint8 cc ;
+                meUByte cc ;
                 int len;
                 len = meStrlen(vvalue);
                 if (len > WCLEN)
@@ -750,10 +750,10 @@ setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
             linkBuffer(curbp) ;
             break;
         case EVBUFFMOD:
-            curbp->stats.stmode = (uint16) meAtoi(vvalue) ;
+            curbp->stats.stmode = (meUShort) meAtoi(vvalue) ;
             break ;
         case EVGLOBFMOD:
-            meUmask = (uint16) meAtoi(vvalue) ;
+            meUmask = (meUShort) meAtoi(vvalue) ;
             break ;
         case EVCFNAME:
             meNullFree(curbp->b_fname) ;
@@ -761,7 +761,7 @@ setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
             addModeToWindows(WFMODE) ;
             break;
         case EVDEBUG:
-            macbug = (int8) meAtoi(vvalue);
+            macbug = (meByte) meAtoi(vvalue);
             break;
 #if TIMSTMP
         case EVTIMSTMP:
@@ -770,10 +770,10 @@ setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
             break;
 #endif
         case EVTABSIZE:
-            tabsize = (uint16) meAtoi(vvalue);
+            tabsize = (meUShort) meAtoi(vvalue);
             break;
         case EVTABWIDTH:
-            tabwidth = (uint16) meAtoi(vvalue);
+            tabwidth = (meUShort) meAtoi(vvalue);
             addModeToWindows(WFRESIZE) ;
             break;
         case EVSRCHPATH:
@@ -786,10 +786,10 @@ setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
             break;
 #if CFENCE
         case EVCBRACE:
-            braceIndent = (int16) meAtoi (vvalue);
+            braceIndent = (meShort) meAtoi (vvalue);
             break;
         case EVCCASE:
-            caseIndent = (int16) meAtoi (vvalue);
+            caseIndent = (meShort) meAtoi (vvalue);
             break;
         case EVCCONTCOMM:
             if(commentCont != commentContOrg)
@@ -797,24 +797,24 @@ setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
             commentCont = meStrdup(vvalue) ;
             break ;
         case EVCCONTINUE:
-            continueIndent = (int16) meAtoi (vvalue);
+            continueIndent = (meShort) meAtoi (vvalue);
             break;
         case EVCCONTMAX:
-            continueMax = (int16) meAtoi (vvalue);
+            continueMax = (meShort) meAtoi (vvalue);
             break;
         case EVCMARGIN:
-            commentMargin = (int16) meAtoi(vvalue);
+            commentMargin = (meShort) meAtoi(vvalue);
             break;
         case EVCSTATEMENT:
-            statementIndent = (int16) meAtoi (vvalue);
+            statementIndent = (meShort) meAtoi (vvalue);
             break;
         case EVCSWITCH:
-            switchIndent = (int16) meAtoi (vvalue);
+            switchIndent = (meShort) meAtoi (vvalue);
             break;
 #endif
         case EVSHWMDS:
             {
-                uint8 cc ;
+                meUByte cc ;
                 int nn ;
                 for(nn=0; nn < MDNUMMODES ; nn++) 
                 {
@@ -829,7 +829,7 @@ setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
                 break ;
             }
         case EVSHWRGN:
-            selhilight.uFlags = (uint16) meAtoi(vvalue);
+            selhilight.uFlags = (meUShort) meAtoi(vvalue);
             break;
         case EVCURSORBLK:
             timerKill(CURSOR_TIMER_ID) ;
@@ -923,13 +923,13 @@ setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
             break ;
 #if HILIGHT
         case EVBUFHIL:
-            if(((curbp->hiLight = (uint8) meAtoi(vvalue)) >= noHilights) ||
+            if(((curbp->hiLight = (meUByte) meAtoi(vvalue)) >= noHilights) ||
                (hilights[curbp->hiLight] == NULL))
                 curbp->hiLight = 0 ;
             addModeToBufferWindows(curbp,WFRESIZE) ;
             break ;
         case EVBUFIND:
-            if(((curbp->indent = (uint8) meAtoi(vvalue)) >= noIndents) ||
+            if(((curbp->indent = (meUByte) meAtoi(vvalue)) >= noIndents) ||
                (indents[curbp->indent] == NULL))
                 curbp->indent = 0 ;
             break ;
@@ -991,7 +991,7 @@ setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
             break ;
 #endif
         case EVSCROLL:
-            scrollFlag = (uint8) meAtoi(vvalue) ;
+            scrollFlag = (meUByte) meAtoi(vvalue) ;
             break ;
         case EVBNAMES:
             meNullFree(buffNames.list) ;
@@ -1012,7 +1012,7 @@ setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
             break ;
         case EVFNAMES:
             {
-                uint8 *mm, *ss, cc ;
+                meUByte *mm, *ss, cc ;
                 
                 meNullFree(fileNames.mask) ;
                 ss = mm = vvalue ;
@@ -1027,7 +1027,7 @@ setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
                 }
                 if((fileNames.mask = meStrdup(mm)) != NULL)
                 {
-                    uint8 buff[FILEBUF] ;
+                    meUByte buff[FILEBUF] ;
 #ifdef _DRV_CHAR
                     if((isAlpha(mm[0]) || (mm[0] == '.' )) && (mm[1] == _DRV_CHAR))
                     {
@@ -1087,16 +1087,16 @@ setVar(uint8 *vname, uint8 *vvalue, meREGISTERS *regs)
         break ;
     default:
         /* else its not legal....bitch */
-        return mlwrite(MWABORT,(uint8 *)"[No such variable]");
+        return mlwrite(MWABORT,(meUByte *)"[No such variable]");
     }
     return TRUE ;
 }
 
-static uint8 *
-gtenv(uint8 *vname)   /* vname   name of environment variable to retrieve */
+static meUByte *
+gtenv(meUByte *vname)   /* vname   name of environment variable to retrieve */
 {
     int ii ;
-    register uint8 *ret ;
+    register meUByte *ret ;
     register meNAMESVAR *mv ;
     
     /* scan the list, looking for the referenced name */
@@ -1154,13 +1154,13 @@ handle_namesvar:
             return abortm ;
         while(mv->curr < mv->size)
         {
-            uint8 *ss = mv->list[(mv->curr)++] ;
+            meUByte *ss = mv->list[(mv->curr)++] ;
             if(regexStrCmp(ss,mv->mask,mv->exact))
                 return ss ;
         }
         return emptym ;
     case EVVERSION:
-        return (uint8 *) meVERSION_CODE ;
+        return (meUByte *) meVERSION_CODE ;
     case EVTEMPNAME:
         mkTempName (evalResult, NULL,NULL);
         return evalResult ;
@@ -1170,7 +1170,7 @@ handle_namesvar:
     case EVRECENTKEYS:
         {
             int ii, jj, kk ;
-            uint16 cc ;
+            meUShort cc ;
             for(ii=100,jj=TTnextKeyIdx,kk=0 ; --ii>0 ; )
             {
                 if(((cc=TTkeyBuf[jj++]) == 0) ||
@@ -1246,7 +1246,7 @@ handle_namesvar:
     case EVCURWIDTH:    return (meItoa(TTncol));
     case EVCBUFBACKUP:
         if((curbp->b_fname == NULL) || createBackupName(evalResult,curbp->b_fname,'~',0))
-            return (uint8 *) "" ;
+            return (meUByte *) "" ;
 #ifndef _DOS
         if(!(meSystemCfg & meSYSTEM_DOSFNAMES) && (keptVersions > 0))
             meStrcpy(evalResult+meStrlen(evalResult)-1,".~0~") ;
@@ -1264,7 +1264,7 @@ handle_namesvar:
     case EVBUFFMOD:     return (meItoa(curbp->stats.stmode));
     case EVGLOBFMOD:    return (meItoa(meUmask));
 #endif
-    case EVCFNAME:      return ((curbp->b_fname == NULL) ? (uint8 *)"":curbp->b_fname);
+    case EVCFNAME:      return ((curbp->b_fname == NULL) ? (meUByte *)"":curbp->b_fname);
     case EVDEBUG:       return (meItoa(macbug));
     case EVSTATUS:      return (meLtoa(cmdstatus));
 #if TIMSTMP
@@ -1341,7 +1341,7 @@ hook_jump:
 #endif
     case EVBUFMASK:
         {
-            uint8 *ss=evalResult ;
+            meUByte *ss=evalResult ;
             int   ii ;
             for(ii=0 ; ii<8 ; ii++)
                 if(isWordMask & (1<<ii))
@@ -1372,8 +1372,8 @@ hook_jump:
 
 /* look up a user var's value */
 /* vname - name of user variable to fetch */
-uint8 *
-getUsrLclCmdVar(uint8 *vname, register meVARLIST *varList)
+meUByte *
+getUsrLclCmdVar(meUByte *vname, register meVARLIST *varList)
 {
     register meVARIABLE *vptr, *vp ;
     register int ii, jj ;
@@ -1383,15 +1383,15 @@ getUsrLclCmdVar(uint8 *vname, register meVARLIST *varList)
     /* scan the list looking for the user var name */
     while(ii)
     {
-        int8 *s1, *s2, ss ;
+        meByte *s1, *s2, ss ;
         
         jj = ii>>1 ;
         vp = vptr ;
         while(--jj >= 0)
             vp = vp->next ;
         
-        s1 = (int8 *) vp->name ;
-        s2 = (int8 *) vname ;
+        s1 = (meByte *) vp->name ;
+        s2 = (meByte *) vname ;
         for( ; ((ss=*s1++) == *s2) ; s2++)
             if(ss == 0)
                 return(vp->value);
@@ -1407,11 +1407,11 @@ getUsrLclCmdVar(uint8 *vname, register meVARLIST *varList)
 }
 
 
-static uint8 *
+static meUByte *
 getMacroArg(int index)
 {
     meREGISTERS *crp ;
-    uint8 *oldestr, *ss ;
+    meUByte *oldestr, *ss ;
     
     /* move the register pointer to the parent as any # reference
      * will be w.r.t the parent
@@ -1435,8 +1435,8 @@ getMacroArg(int index)
 }
 
 
-uint8 *
-getval(uint8 *tkn)   /* find the value of a token */
+meUByte *
+getval(meUByte *tkn)   /* find the value of a token */
 {
     switch (getMacroTypeS(tkn)) 
     {
@@ -1448,7 +1448,7 @@ getval(uint8 *tkn)   /* find the value of a token */
             if(tkn[2] == 'l')
             {
                 register int blen ;
-                uint8 *ss, *dd ;
+                meUByte *ss, *dd ;
                 /* Current buffer line fetch */
                 blen = curwp->w_dotp->l_used;
                 if (blen >= MAXBUF)
@@ -1481,13 +1481,13 @@ getval(uint8 *tkn)   /* find the value of a token */
         else if(isDigit(tkn[1]))
         {
             int index ;
-            uint8 *ss ;
+            meUByte *ss ;
             
             if((index = meAtoi(tkn+1)) == 0)
             {
                 ss = meRegCurr->commandName ;
                 if(ss == NULL)
-                    return (uint8 *) "" ;
+                    return (meUByte *) "" ;
             }
             else if((ss = getMacroArg(index)) == NULL)
                 return abortm ;
@@ -1523,7 +1523,7 @@ getval(uint8 *tkn)   /* find the value of a token */
         else if(tkn[1] == 'y')
         {
             /* Don't use the X or windows clipboard in this case */
-            register uint8 *ss, *dd, cc ;
+            register meUByte *ss, *dd, cc ;
             register int   ii=MAXBUF-1 ;
             KILL          *killp;
             
@@ -1546,7 +1546,7 @@ getval(uint8 *tkn)   /* find the value of a token */
         }
         else if(tkn[1] == 'c')
         {
-            uint16 key ;
+            meUShort key ;
             int kk, index ;
                         
             kk = (tkn[3] == 'k') ;
@@ -1554,14 +1554,14 @@ getval(uint8 *tkn)   /* find the value of a token */
             {
                 if(alarmState & meALARM_VARIABLE)
                     return tkn ;
-                key = (uint16) thisCommand ;
+                key = (meUShort) thisCommand ;
                 index = thisIndex ;
             }
             else if(tkn[2] == 'l')
             {
                 if(alarmState & meALARM_VARIABLE)
                     return tkn ;
-                key = (uint16) lastCommand ;
+                key = (meUShort) lastCommand ;
                 index = lastIndex ;
             }
             else
@@ -1586,7 +1586,7 @@ getval(uint8 *tkn)   /* find the value of a token */
                     key = meGetKeyFromUser(FALSE, 1, 0) ;
                 if(!kk)
                 {
-                    uint32 arg ;
+                    meUInt arg ;
                     index = decode_key(key,&arg) ;
                 }
             }
@@ -1596,7 +1596,7 @@ getval(uint8 *tkn)   /* find the value of a token */
             {
                 if(key > 0xff)
                     return errorm ;
-                evalResult[0] = (uint8) key ;
+                evalResult[0] = (meUByte) key ;
                 evalResult[1] = '\0';
             }
             else
@@ -1611,11 +1611,11 @@ getval(uint8 *tkn)   /* find the value of a token */
                  *       in modeline which is is by update which can be used
                  *       by meGetStringFromUser
                  */
-                static uint8 **strList=NULL ;
+                static meUByte **strList=NULL ;
                 static int    strListSize=0 ;
-                uint8 cc, *ss, buff[TOKENBUF] ;
-                uint8 divChr ;
-                uint8 prompt[MAXBUF] ;
+                meUByte cc, *ss, buff[TOKENBUF] ;
+                meUByte divChr ;
+                meUByte prompt[MAXBUF] ;
                 int  option=0 ;
                 int  flag, defH ;
                 
@@ -1704,7 +1704,7 @@ getval(uint8 *tkn)   /* find the value of a token */
                     /* Get and evaluate the next argument - this is the
                      * completion list
                      */
-                    uint8 comp[TOKENBUF], *tt ;
+                    meUByte comp[TOKENBUF], *tt ;
                     execstr = token(execstr,comp) ;
                     if((ss = getval(comp)) == abortm)
                         return abortm ;
@@ -1718,7 +1718,7 @@ getval(uint8 *tkn)   /* find the value of a token */
                         if(bp->elineno > strListSize)
                         {
                             strListSize = bp->elineno ;
-                            if((strList = meRealloc(strList,strListSize*sizeof(uint8 *))) == NULL)
+                            if((strList = meRealloc(strList,strListSize*sizeof(meUByte *))) == NULL)
                             {
                                 strListSize = 0 ;
                                 return abortm ;
@@ -1745,7 +1745,7 @@ getval(uint8 *tkn)   /* find the value of a token */
                             *tt++ = '\0' ;
                             if(mlgsStrListSize == strListSize)
                             {
-                                if((strList = meRealloc(strList,(strListSize+8)*sizeof(uint8 *))) == NULL)
+                                if((strList = meRealloc(strList,(strListSize+8)*sizeof(meUByte *))) == NULL)
                                 {
                                     strListSize = 0 ;
                                     return abortm ;
@@ -1786,7 +1786,7 @@ getval(uint8 *tkn)   /* find the value of a token */
                     /* glue the completion string back together */
                     while(--mlgsStrListSize >= 0)
                     {
-                        uint8 *s1 = mlgsStrList[mlgsStrListSize] ;
+                        meUByte *s1 = mlgsStrList[mlgsStrListSize] ;
                         s1[meStrlen(s1)] = divChr ;
                     }
                 }
@@ -1795,8 +1795,8 @@ getval(uint8 *tkn)   /* find the value of a token */
             }
             else if(tkn[2] == 'c')
             {
-                uint8 *ss, buff[TOKENBUF] ;
-                uint8 prompt[MAXBUF] ;
+                meUByte *ss, buff[TOKENBUF] ;
+                meUByte prompt[MAXBUF] ;
                 int ret ;
                 
                 if((ret=tkn[3]) != '\0')
@@ -1841,13 +1841,13 @@ getval(uint8 *tkn)   /* find the value of a token */
         {
             /* parent command name */
             if(meRegCurr->prev->commandName == NULL)
-                return (uint8 *) "" ;
+                return (meUByte *) "" ;
             return meRegCurr->prev->commandName ;
         }
         else if((tkn[1] == 'f') && (tkn[2] == 's'))
         {
             /* frame store @fs <row> <col> */
-            uint8 *ss, buff[TOKENBUF] ;
+            meUByte *ss, buff[TOKENBUF] ;
             int row, col ;
             
             /* Get and evaluate the arguments */
@@ -1871,7 +1871,7 @@ getval(uint8 *tkn)   /* find the value of a token */
         }
         else
         {
-            mlwrite(MWABORT|MWWAIT,(uint8 *)"[Unknown argument %s]",tkn);
+            mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unknown argument %s]",tkn);
             return abortm ;
         }
         return evalResult ;
@@ -1881,7 +1881,7 @@ getval(uint8 *tkn)   /* find the value of a token */
             return tkn ;
         {
             meREGISTERS *rp ;
-            uint8 cc ;
+            meUByte cc ;
             
             if((cc=tkn[1]) == 'l')
                 rp = meRegCurr ;
@@ -1902,7 +1902,7 @@ getval(uint8 *tkn)   /* find the value of a token */
     
     case TKLVR:
         {
-            uint8 *ss, *tt ;
+            meUByte *ss, *tt ;
             BUFFER *bp ;
             if(alarmState & meALARM_VARIABLE)
                 return tkn ;
@@ -1924,7 +1924,7 @@ getval(uint8 *tkn)   /* find the value of a token */
         
     case TKCVR:
         {
-            uint8 *ss, *tt ;
+            meUByte *ss, *tt ;
             if(alarmState & meALARM_VARIABLE)
                 return tkn ;
             tt = tkn+1 ;
@@ -1963,8 +1963,8 @@ getval(uint8 *tkn)   /* find the value of a token */
     return abortm ;
 }
 
-static uint8 *
-queryMode(uint8 *name, uint8 *mode)
+static meUByte *
+queryMode(meUByte *name, meUByte *mode)
 {
     int ii ;
     
@@ -1974,15 +1974,15 @@ queryMode(uint8 *name, uint8 *mode)
     return abortm ;
 }
 
-uint8 *
-gtfun(uint8 *fname)  /* evaluate a function given name of function */
+meUByte *
+gtfun(meUByte *fname)  /* evaluate a function given name of function */
 {
     register int fnum;      /* index to function to eval */
     meREGISTERS *regs ;     /* pointer to relevant regs if setting var */
-    uint8 arg1[MAXBUF];      /* value of first argument */
-    uint8 arg2[MAXBUF];      /* value of second argument */
-    uint8 arg3[MAXBUF];      /* value of third argument */
-    uint8 *varVal ;
+    meUByte arg1[MAXBUF];      /* value of first argument */
+    meUByte arg2[MAXBUF];      /* value of second argument */
+    meUByte arg3[MAXBUF];      /* value of third argument */
+    meUByte *varVal ;
     
     /* look the function up in the function table */
 #ifdef _MACRO_COMP
@@ -1992,13 +1992,13 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
 #endif
         if((fnum = biChopFindString(fname,3,funcNames,NFUNCS)) < 0)
     {
-        mlwrite(MWABORT|MWWAIT,(uint8 *)"[Unknown function &%s]",fname);
+        mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unknown function &%s]",fname);
         return abortm ;
     }
     if((fnum == UFCBIND) || (fnum == UFNBIND))
     {
-        uint32 arg ;
-        uint16 ii ;
+        meUInt arg ;
+        meUShort ii ;
         int jj ;
         
         ii = meGetKey(meGETKEY_SILENT) ;
@@ -2014,7 +2014,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
     }
     /* retrieve the arguments */
     {
-        uint8 alarmStateStr=alarmState ;
+        meUByte alarmStateStr=alarmState ;
         int ii ;
         
         if(funcTypes[fnum] & FUN_SETVAR)
@@ -2040,7 +2040,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
              ((funcTypes[fnum] & FUN_ARG3) &&
               (macarg(arg3) != TRUE)))))
         {
-            mlwrite(MWABORT|MWWAIT,(uint8 *)"[Failed to get argument for function &%s]",fname);
+            mlwrite(MWABORT|MWWAIT,(meUByte *)"[Failed to get argument for function &%s]",fname);
             return abortm ;
         }
         alarmState = alarmStateStr ;
@@ -2081,16 +2081,16 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
         }
     case UFKBIND:
         {
-            uint32 narg ;
+            meUInt narg ;
             int ii, idx ;
-            uint16 code=ME_INVALID_KEY ;
+            meUShort code=ME_INVALID_KEY ;
             
             if((idx = decode_fncname(arg2,0)) < 0)
                 return abortm ;
             if(arg1[0] == '\0')
                 narg = 0 ;
             else
-                narg = (uint32) (0x80000000+meAtoi(arg1)) ;
+                narg = (meUInt) (0x80000000+meAtoi(arg1)) ;
 #if LCLBIND
             for(ii=0 ; ii<curbp->nobbinds ; ii++)
             {
@@ -2131,7 +2131,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
             ii  = meAtoi(arg1) ;
             if ((jj = meAtoi(arg2)) == 0)
             {
-                mlwrite(MWABORT|MWWAIT,(uint8 *)"[Divide by zero &%s]",fname) ;
+                mlwrite(MWABORT|MWWAIT,(meUByte *)"[Divide by zero &%s]",fname) ;
                 return abortm ;
             }
             ii /= jj ;
@@ -2146,7 +2146,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
             ii  = meAtoi(arg1) ;
             if ((jj = meAtoi(arg2)) == 0)
             {
-                mlwrite(MWABORT|MWWAIT,(uint8 *)"[Modulus of zero &%s]",fname) ;
+                mlwrite(MWABORT|MWWAIT,(meUByte *)"[Modulus of zero &%s]",fname) ;
                 return abortm ;
             }
             ii %= jj ;
@@ -2157,7 +2157,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
     case UFITOA:
         {
             int ii = meAtoi(arg1) ;
-            evalResult[0] = (uint8) ii ;
+            evalResult[0] = (meUByte) ii ;
             if(ii == 0xff)
             {
                 evalResult[1] = 0xff ;
@@ -2169,7 +2169,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
         }
     case UFCAT:
         {
-            uint8 *dd, *ss ;
+            meUByte *dd, *ss ;
             int ii = MAXBUF-1 ;
             
             /* first string can be copied, second we must check the left */
@@ -2190,7 +2190,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
         }
     case UFLEFT:
         {
-            uint8 *dd, *ss, cc ;
+            meUByte *dd, *ss, cc ;
             int ii=meAtoi(arg2) ;
             ss = arg1 ;
             dd = evalResult ;
@@ -2210,7 +2210,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
         }
     case UFRIGHT:
         {
-            uint8 *dd, *ss, cc ;
+            meUByte *dd, *ss, cc ;
             int ii=meAtoi(arg2) ;
             ss = arg1 ;
             while(--ii >= 0)
@@ -2230,7 +2230,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
         }
     case UFMID:
         {
-            uint8 *dd, *ss, cc ;
+            meUByte *dd, *ss, cc ;
             int ii, ll ;
             ss = arg1 ;
             
@@ -2268,7 +2268,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
         }
     case UFLEN:
         {
-            uint8 *ss, cc ;
+            meUByte *ss, cc ;
             int ii=0 ;
             ss = arg1 ;
             for(;;)
@@ -2283,7 +2283,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
         }
     case UFSLOWER:
         {
-            uint8 cc, *dd, *ss ;
+            meUByte cc, *dd, *ss ;
             dd = evalResult ;
             ss = arg1 ;
             do {
@@ -2294,7 +2294,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
         }
     case UFSUPPER:
         {
-            uint8 cc, *dd, *ss ;
+            meUByte cc, *dd, *ss ;
             dd = evalResult ;
             ss = arg1 ;
             do {
@@ -2309,7 +2309,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
     case UFRISIN:
         {
             Fintssi cmpIFunc ;
-            uint8 cc, *ss=arg2, *lss=NULL ;
+            meUByte cc, *ss=arg2, *lss=NULL ;
             int len, off=0 ;
             len = meStrlen(arg1) ;
             if((fnum == UFSIN) || (fnum == UFRSIN))
@@ -2340,7 +2340,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
     case UFIREP:
         {
             Fintssi cmpIFunc ;
-            uint8 cc, *ss=arg1 ;
+            meUByte cc, *ss=arg1 ;
             int mlen, dlen=0, rlen, ii ;
             mlen = meStrlen(arg2) ;
             rlen = meStrlen(arg3) ;
@@ -2378,7 +2378,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
     case UFXREP:
     case UFXIREP:
         {
-            uint8 cc, *rr ;
+            meUByte cc, *rr ;
             int slen, soff=0, mlen, dlen=0, ii ;
             
             if(meRegexComp(&meRegexStrCmp,arg2,(fnum == UFXREP) ? 0:meREGEX_ICASE) != meREGEX_OKAY)
@@ -2486,7 +2486,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
     case UFLDEL:
         {
             int  index=meAtoi(arg2) ;
-            uint8 cc, *s1, *s2 ;
+            meUByte cc, *s1, *s2 ;
             if(index > 0)
             {
                 s2 = arg1 ;
@@ -2512,7 +2512,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
     case UFLFIND:
         {
             int  index ;
-            uint8 cc, *s1, *s2 ;
+            meUByte cc, *s1, *s2 ;
             s2 = arg1 ;
             cc = *s2 ;
             for(index=1 ; ; index++)
@@ -2528,7 +2528,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
     case UFLGET:
         {
             int  index ;
-            uint8 cc, *s1, *s2 ;
+            meUByte cc, *s1, *s2 ;
             if((index=meAtoi(arg2)) <= 0)
                 return emptym ;
             s2 = arg1 ;
@@ -2547,7 +2547,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
     case UFLSET:
         {
             int  index=meAtoi(arg2), ii ;
-            uint8 cc, *s1, *s2 ;
+            meUByte cc, *s1, *s2 ;
             s2 = arg1 ;
             cc = *s2 ;
             if(index <= 0)
@@ -2609,8 +2609,8 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
     case UFTRIMB:
         {
             /* Trim both */
-            uint8 *ss;
-            uint8 cc;
+            meUByte *ss;
+            meUByte cc;
             int ii;
             
             /* Trim left */
@@ -2633,8 +2633,8 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
     case UFTRIML:
         {
             /* Trim left */
-            uint8 *ss;
-            uint8 cc;
+            meUByte *ss;
+            meUByte cc;
             for (ss = arg1; (((cc = *ss) != '\0') && isSpace(cc)) ; ss++)
                 ;
             meStrcpy(evalResult, ss);
@@ -2647,7 +2647,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
             ii = meStrlen (arg1);
             while (ii > 0)
             {
-                uint8 cc;
+                meUByte cc;
                 cc = arg1[ii-1];
                 if (isSpace(cc))
                     ii--;
@@ -2703,7 +2703,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
     case UFREGISTRY:
         {
             REGHANDLE reg;
-            uint8 *p = arg3;
+            meUByte *p = arg3;
             /*
              * Read a value from the registry.
              * 
@@ -2757,9 +2757,9 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
              *     "Foo [aaaaaaaaaab]"
              */
             
-            uint8 *p;                            /* Temp char pointer */
-            uint8  c;                            /* Current char */
-            uint8 *s = arg1;                     /* String pointer */
+            meUByte *p;                            /* Temp char pointer */
+            meUByte  c;                            /* Current char */
+            meUByte *s = arg1;                     /* String pointer */
             int   count, nn, index=0 ;          /* Count of repeat */
             
             while ((c = *s++) != '\0') 
@@ -2828,7 +2828,7 @@ get_flag:
         }
     case UFSTAT:
         {
-            static uint8 typeRet[] = "NRDXHF" ;
+            static meUByte typeRet[] = "NRDXHF" ;
             meSTAT stats ;
             int    ftype ;
             /*
@@ -2849,7 +2849,7 @@ get_flag:
                 /* if its a directory check there's an ending '/' */
                 if(ftype == meFILETYPE_DIRECTORY)
                 {
-                    uint8 *ss=evalResult+meStrlen(evalResult) ;
+                    meUByte *ss=evalResult+meStrlen(evalResult) ;
                     if(ss[-1] != DIR_CHAR)
                     {
                         ss[0] = DIR_CHAR ;
@@ -2962,8 +2962,8 @@ unsetVariable(int f, int n)     /* Delete a variable */
     register meVARIABLE *vptr, *prev;   /* User variable pointer */
     register int   vnum;                /* ordinal number of var refrenced */
     meREGISTERS *regs ;
-    uint8 var[NSTRING] ;                 /* name of variable to fetch */
-    uint8 *vv ;
+    meUByte var[NSTRING] ;                 /* name of variable to fetch */
+    meUByte *vv ;
     
     /* First get the variable to set.. */
     /* set this flag to indicate that the variable name is required, NOT
@@ -2971,7 +2971,7 @@ unsetVariable(int f, int n)     /* Delete a variable */
     alarmState |= meALARM_VARIABLE ;
     /* horrid global variable, see notes at definition */
     gmaLocalRegPtr = meRegCurr ;
-    vnum = meGetString((uint8 *)"Unset variable", MLVARBL, 0, var, NSTRING) ;
+    vnum = meGetString((meUByte *)"Unset variable", MLVARBL, 0, var, NSTRING) ;
     regs = gmaLocalRegPtr ;
     alarmState &= ~meALARM_VARIABLE ;
     if(vnum != TRUE)
@@ -2984,7 +2984,7 @@ unsetVariable(int f, int n)     /* Delete a variable */
         varList = &usrVarList ;
     else if(vnum == TKLVR)
     {        
-        uint8 *ss ;
+        meUByte *ss ;
         BUFFER *bp ;
         
         if((ss=meStrrchr(vv,':')) != NULL)
@@ -2994,7 +2994,7 @@ unsetVariable(int f, int n)     /* Delete a variable */
             *ss++ = ':' ;
             if(bp == NULL)
                 /* not a command - abort */
-                return mlwrite(MWABORT,(uint8 *)"[No such variable]");
+                return mlwrite(MWABORT,(meUByte *)"[No such variable]");
             vv = ss ;
         }
         else
@@ -3003,7 +3003,7 @@ unsetVariable(int f, int n)     /* Delete a variable */
     }
     else if(vnum == TKCVR)
     {
-        uint8 *ss ;
+        meUByte *ss ;
         if((ss=meStrrchr(vv,'.')) != NULL)
         {
             int idx ;
@@ -3012,15 +3012,15 @@ unsetVariable(int f, int n)     /* Delete a variable */
             idx = decode_fncname(var+1,0) ;
             *ss++ = '.' ;
             if(idx < 0)
-                return mlwrite(MWABORT,(uint8 *)"[No such variable]");
+                return mlwrite(MWABORT,(meUByte *)"[No such variable]");
             varList = &(cmdTable[idx]->varList) ;
             vv = ss ;
         }
         else if((varList = regs->varList) == NULL)
-            return mlwrite(MWABORT,(uint8 *)"[No such variable]");
+            return mlwrite(MWABORT,(meUByte *)"[No such variable]");
     }
     else
-        return mlwrite(MWABORT,(uint8 *)"[User variable required]");
+        return mlwrite(MWABORT,(meUByte *)"[User variable required]");
     
     /*---   Check for existing legal user variable */
     prev = NULL ;
@@ -3046,22 +3046,22 @@ unsetVariable(int f, int n)     /* Delete a variable */
     }
     
     /* If its not legal....bitch */
-    return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[No such variable]") ;
+    return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No such variable]") ;
 }
 
 int
 descVariable(int f, int n)      /* describe a variable */
 {
-    uint8  var[NSTRING]; /* name of variable to fetch */
-    uint8 *ss ;
+    meUByte  var[NSTRING]; /* name of variable to fetch */
+    meUByte *ss ;
     int    status ;
     
     /* first get the variable to describe */
-    if((status = meGetString((uint8 *)"Show variable",MLVARBL,0,var,NSTRING)) != TRUE)
+    if((status = meGetString((meUByte *)"Show variable",MLVARBL,0,var,NSTRING)) != TRUE)
         return(status);
     if((ss = getval(var)) == NULL)
-        return mlwrite(MWABORT,(uint8 *)"Unknown variable type") ;
-    mlwrite(0,(uint8 *)"Current setting is \"%s\"", ss) ;
+        return mlwrite(MWABORT,(meUByte *)"Unknown variable type") ;
+    mlwrite(0,(meUByte *)"Current setting is \"%s\"", ss) ;
     return TRUE ;
 } 
 
@@ -3070,8 +3070,8 @@ int
 setVariable(int f, int n)       /* set a variable */
 {
     register int   status ;         /* status return */
-    uint8 var[NSTRING] ;            /* name of variable to fetch */
-    uint8 value[MAXBUF] ;           /* value to set variable to */
+    meUByte var[NSTRING] ;            /* name of variable to fetch */
+    meUByte value[MAXBUF] ;           /* value to set variable to */
     meREGISTERS *regs ;
     
     /* horrid global variable, see notes at definition */
@@ -3079,7 +3079,7 @@ setVariable(int f, int n)       /* set a variable */
     /* set this flag to indicate that the variable name is required, NOT
      * its value */
     alarmState |= meALARM_VARIABLE ;
-    status = meGetString((uint8 *)"Set variable", MLVARBL, 0, var,NSTRING) ;
+    status = meGetString((meUByte *)"Set variable", MLVARBL, 0, var,NSTRING) ;
     alarmState &= ~meALARM_VARIABLE ;
     regs = gmaLocalRegPtr ;
     if(status != TRUE)
@@ -3087,7 +3087,7 @@ setVariable(int f, int n)       /* set a variable */
     /* get the value for that variable */
     if (f == TRUE)
         meStrcpy(value, meItoa(n));
-    else if((status = meGetString((uint8 *)"Value", MLFFZERO, 0, value,MAXBUF)) != TRUE)
+    else if((status = meGetString((meUByte *)"Value", MLFFZERO, 0, value,MAXBUF)) != TRUE)
         return status ;
     
     return setVar(var,value,regs) ;
@@ -3109,9 +3109,9 @@ setVariable(int f, int n)       /* set a variable */
  *    name......... "value"
  */
 static void
-showVariable (BUFFER *bp, uint8 prefix, uint8 *name, uint8 *value)
+showVariable (BUFFER *bp, meUByte prefix, meUByte *name, meUByte *value)
 {
-    uint8 buf[MAXBUF+NSTRING+16] ;
+    meUByte buf[MAXBUF+NSTRING+16] ;
     int len;
     
     if (value == NULL)
@@ -3139,15 +3139,15 @@ listVariables (int f, int n)
     meVARIABLE *tv ;
     WINDOW *wp ;
     BUFFER *bp ;
-    uint8   buf[MAXBUF] ;
+    meUByte   buf[MAXBUF] ;
     int     ii ;
     
     if((wp = wpopup(BvariablesN,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR))) == NULL)
         return FALSE ;
     bp = wp->w_bufp ;
     
-    addLineToEob(bp,(uint8 *)"Register variables:");
-    addLineToEob(bp,(uint8 *)"") ;
+    addLineToEob(bp,(meUByte *)"Register variables:");
+    addLineToEob(bp,(meUByte *)"") ;
     
     buf[0] = 'g';
     buf[2] = '\0';
@@ -3156,10 +3156,10 @@ listVariables (int f, int n)
         buf[1] = (int)('0') + ii;
         showVariable (bp, '#', buf,meRegHead->reg[ii]);
     }
-    addLineToEob(bp,(uint8 *)"") ;
+    addLineToEob(bp,(meUByte *)"") ;
     sprintf((char *)buf,"Buffer [%s] variables:", curbp->b_bname);
     addLineToEob(bp,buf);
-    addLineToEob(bp,(uint8 *)"") ;
+    addLineToEob(bp,(meUByte *)"") ;
     tv = curbp->varList.head ;
     while(tv != NULL)
     {
@@ -3167,15 +3167,15 @@ listVariables (int f, int n)
         tv = tv->next ;
     }
     
-    addLineToEob(bp,(uint8 *)"") ;
-    addLineToEob(bp,(uint8 *)"System variables:");
-    addLineToEob(bp,(uint8 *)"") ;
+    addLineToEob(bp,(meUByte *)"") ;
+    addLineToEob(bp,(meUByte *)"System variables:");
+    addLineToEob(bp,(meUByte *)"") ;
     for (ii = 0; ii < NEVARS; ii++)
         showVariable (bp, '$', envars [ii],gtenv(envars [ii]));
     
-    addLineToEob(bp,(uint8 *)"") ;
-    addLineToEob(bp,(uint8 *)"Global variables:");
-    addLineToEob(bp,(uint8 *)"") ;
+    addLineToEob(bp,(meUByte *)"") ;
+    addLineToEob(bp,(meUByte *)"Global variables:");
+    addLineToEob(bp,(meUByte *)"") ;
     for (tv=usrVarList.head ; tv != NULL ; tv = tv->next)
         showVariable (bp, '%', tv->name,tv->value);
     

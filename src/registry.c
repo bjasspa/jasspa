@@ -63,7 +63,7 @@ static RNODE root =
  * Allocate and initialise a new node
  */
 static RNODE *
-rnodeNew (uint8 *name)
+rnodeNew (meUByte *name)
 {
     RNODE *np;                          /* Pointer to the node */
     int len;                            /* Length of the string */
@@ -186,7 +186,7 @@ rnodeUnlink (RNODE *np)
  * Assign a new value to the node.
  */
 static void
-rnodeSet (RNODE *np, uint8 *value)
+rnodeSet (RNODE *np, meUByte *value)
 {
     /* Free off the old value */
     if (np->value != NULL)
@@ -203,12 +203,12 @@ rnodeSet (RNODE *np, uint8 *value)
  */
 
 static RNODE *
-rnodeFind (RNODE *np, uint8 *name)
+rnodeFind (RNODE *np, meUByte *name)
 {
     for (np = np->chld; np != NULL; np = np->sblg)
     {
-        uint8 rc, *r = name;             /* Temporary search string */
-        uint8 pc, *p = np->name;         /* Temporary registry string */
+        meUByte rc, *r = name;             /* Temporary search string */
+        meUByte pc, *p = np->name;         /* Temporary registry string */
         
         while(((rc = *r++) == (pc = *p++)) && rc != '\0')
             ;
@@ -237,8 +237,8 @@ parseFile (RNODE *rnp, LINE *hlp)
     LINE  *lp;                          /* Current line pointer */
     RNODE *cnp;                         /* Current node pointer */
     RNODE *lnp;                         /* Last node pointer */
-    uint8 *lsp;                         /* Current line string pointer */
-    uint8  buf [TOKENBUF];              /* Local parse buffer */
+    meUByte *lsp;                         /* Current line string pointer */
+    meUByte  buf [TOKENBUF];              /* Local parse buffer */
     int level = 0;                      /* Nesting depth */
     int needValue = 0;                  /* Need a value flag */
 
@@ -285,7 +285,7 @@ parseFile (RNODE *rnp, LINE *hlp)
         
         case '{':
             if ((lnp == NULL) || needValue)
-                mlwrite(MWWAIT,(uint8 *)"[Registry unexpected '{' %s:%d]",
+                mlwrite(MWWAIT,(meUByte *)"[Registry unexpected '{' %s:%d]",
                         rnp->value, lineNo);
             else
             {
@@ -302,28 +302,28 @@ parseFile (RNODE *rnp, LINE *hlp)
                 level--;
             }
             else
-                mlwrite(MWWAIT,(uint8 *)"[Registry mismatched '}' %s:%d]",
+                mlwrite(MWWAIT,(meUByte *)"[Registry mismatched '}' %s:%d]",
                         rnp->value, lineNo);
             break;
         case '=':
             if ((needValue == 0) && (lnp != NULL))
                 needValue = 1;
             else
-                mlwrite(MWWAIT,(uint8 *)"[Registry syntax, expected <name>=<value> %s:%d]",
+                mlwrite(MWWAIT,(meUByte *)"[Registry syntax, expected <name>=<value> %s:%d]",
                         rnp->value, lineNo);
             break;
         default:
             if (isDigit(buf[0]) && (needValue == 0) && (lnp != NULL))
                 lnp->mode |= meAtoi(buf) ;
             else
-                mlwrite(MWWAIT,(uint8 *)"[Registry syntax, unexpected token \"%s\":%d]",
+                mlwrite(MWWAIT,(meUByte *)"[Registry syntax, unexpected token \"%s\":%d]",
                         buf,lineNo);
         }
     }
 
     /* End of file. Check for unmatched braces. */
     if (level > 0)
-        mlwrite(MWWAIT,(uint8 *)"[Registry mismatched '}' at EOF. %d levels open %s:%d]",
+        mlwrite(MWWAIT,(meUByte *)"[Registry mismatched '}' at EOF. %d levels open %s:%d]",
                 level, rnp->value, lineNo);
 }
 
@@ -333,13 +333,13 @@ parseFile (RNODE *rnp, LINE *hlp)
  * Save the registry back to file
  */
 int
-regSave (RNODE *rnp, uint8 *fname)
+regSave (RNODE *rnp, meUByte *fname)
 {
     int   ss, level = 0;
 
     /* Check the root pointer */
     if (rnp == NULL)
-        return mlwrite(MWABORT|MWPAUSE,(uint8 *)"Registry: No node specified on export");
+        return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Registry: No node specified on export");
 
     /* Find the filename */
     if ((fname == NULL) || (fname[0] == '\0'))
@@ -348,7 +348,7 @@ regSave (RNODE *rnp, uint8 *fname)
         if (rnp->mode & REGMODE_FROOT)
             fname = rnp->value;        /* Use the default file name */
         if (fname == NULL)
-            return mlwrite(MWABORT|MWPAUSE,(uint8 *)"Registry: No file name specified on save");
+            return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Registry: No file name specified on save");
     }
 
     /* Open the file */
@@ -357,13 +357,13 @@ regSave (RNODE *rnp, uint8 *fname)
         RNODE *rr ;
         
         /* Add a recognition string to the header */
-        ss = ffWriteFileWrite(12,(uint8 *) ";-!- erf -!-",1) ;
+        ss = ffWriteFileWrite(12,(meUByte *) ";-!- erf -!-",1) ;
 
         /* Recurse the children of the node and write to file */
         rr = rnp->chld ;
         while ((ss == TRUE) && (rr != NULL))
         {
-            uint8 buff[4096] ;
+            meUByte buff[4096] ;
             int  len ;
             /* Print the node */
             if((len = level) != 0)
@@ -435,7 +435,7 @@ regSave (RNODE *rnp, uint8 *fname)
             return TRUE ;
         }
     }
-    return mlwrite(MWABORT|MWPAUSE,(uint8 *)"[Failed to write registry %s]",fname) ;
+    return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to write registry %s]",fname) ;
 }
 
 /*
@@ -443,7 +443,7 @@ regSave (RNODE *rnp, uint8 *fname)
  * Assign a new value and key to the registry item
  */
 RNODE *
-regSet (RNODE *sroot, uint8 *subkey, uint8 *value)
+regSet (RNODE *sroot, meUByte *subkey, meUByte *value)
 {
     /* Find or create the specified node tree */
     if (sroot == NULL)
@@ -451,9 +451,9 @@ regSet (RNODE *sroot, uint8 *subkey, uint8 *value)
 
     if (subkey != NULL)
     {
-        uint8 buf [1024];
+        meUByte buf [1024];
         RNODE *tnp;
-        uint8 *p;
+        meUByte *p;
 
         /* Determine if this is a ralative or absolute node */
         if (*subkey == '/')             /* Ignore leading '/' */
@@ -497,7 +497,7 @@ regSet (RNODE *sroot, uint8 *subkey, uint8 *value)
  * Find the node in the registry
  */
 RNODE *
-regFind (RNODE *sroot, uint8 *subkey)
+regFind (RNODE *sroot, meUByte *subkey)
 {
     if (sroot == NULL)                  /* A NULL root is meaningless */
         sroot = &root;
@@ -517,10 +517,10 @@ regFind (RNODE *sroot, uint8 *subkey)
  */
 #ifdef _STDARG
 RNODE *
-vregFind (RNODE *sroot, uint8 *fmt, ...)
+vregFind (RNODE *sroot, meUByte *fmt, ...)
 #else
 RNODE *
-vregFind (RNODE *sroot, uint8 *fmt)
+vregFind (RNODE *sroot, meUByte *fmt)
 #endif
 {
     if (sroot == NULL)                  /* A NULL root is meaningless */
@@ -532,7 +532,7 @@ vregFind (RNODE *sroot, uint8 *fmt)
 #else
         register char **ap;
 #endif
-        uint8 buf [MAXBUF];
+        meUByte buf [MAXBUF];
 #ifdef _STDARG
         va_start(ap,fmt);
 #else
@@ -569,7 +569,7 @@ regTestSave(RNODE *sroot, int flags)
     
     if((flags & 0x01) && !(sroot->mode & REGMODE_AUTO))
     {
-        uint8 prompt[MAXBUF] ;
+        meUByte prompt[MAXBUF] ;
         int ret ;
         meStrcpy(prompt,"Save registry ") ;
         meStrcat(prompt,(sroot->value != NULL) ? sroot->value:sroot->name) ;
@@ -611,10 +611,10 @@ regDelete (RNODE *sroot)
  * REGMODE_MERGE  - Merge the existing file.
  */
 RNODE *
-regRead (uint8 *rname, uint8 *fname, int mode)
+regRead (meUByte *rname, meUByte *fname, int mode)
 {
     LINE hlp, *lp ;
-    uint8 *fn ;
+    meUByte *fn ;
     RNODE *rnp;                         /* Root node pointer */
 
     /* Find the registry entry */
@@ -632,8 +632,8 @@ regRead (uint8 *rname, uint8 *fname, int mode)
     /* have we been given a valid file name ? */
     if ((fname != NULL) && (fname [0] != '\0'))
     {
-        uint8 filename[FILEBUF] ;	/* Filename */
-        if(fileLookup(fname,(uint8 *)".erf",meFL_CHECKDOT|meFL_USESRCHPATH,filename))
+        meUByte filename[FILEBUF] ;	/* Filename */
+        if(fileLookup(fname,(meUByte *)".erf",meFL_CHECKDOT|meFL_USESRCHPATH,filename))
             fn = meStrdup(filename) ;
         else
             fn = meStrdup(fname) ;
@@ -641,7 +641,7 @@ regRead (uint8 *rname, uint8 *fname, int mode)
     /* else use the old file name (if there is one) else fail */
     else if(fn == NULL)
     {
-        mlwrite(MWABORT|MWWAIT,(uint8 *)"[No file name given to load]") ;
+        mlwrite(MWABORT|MWWAIT,(meUByte *)"[No file name given to load]") ;
         return NULL ;
     }
     
@@ -651,7 +651,7 @@ regRead (uint8 *rname, uint8 *fname, int mode)
     if((ffReadFile(fn,meRWFLAG_SILENT,NULL,&hlp) == ABORT) &&
        !(mode & REGMODE_CREATE))
     {
-        mlwrite (MWABORT|MWWAIT,(uint8 *)"[Cannot load registry file %s]", fname);
+        mlwrite (MWABORT|MWWAIT,(meUByte *)"[Cannot load registry file %s]", fname);
         return NULL ;
     }
     lp = &hlp ;
@@ -701,13 +701,13 @@ finished:
  * regDecodeMode
  * Decode the registry mode.
  */
-static uint8 meRegModeList[]="!hfubadmrc?g" ;
+static meUByte meRegModeList[]="!hfubadmrc?g" ;
 static int
-regDecodeMode (int *modep, uint8 *modeStr)
+regDecodeMode (int *modep, meUByte *modeStr)
 {
     int mode = *modep;                  /* The mode */
     int ii, jj ;                        /* Local loop counter */
-    uint8 *ss, cc ;
+    meUByte *ss, cc ;
     
     /* Get the mode out */
     if (modeStr != NULL)
@@ -715,7 +715,7 @@ regDecodeMode (int *modep, uint8 *modeStr)
         for (ii = 0; (cc=modeStr[ii]) != '\0'; ii++)
         {
             if((ss=meStrchr(meRegModeList,toLower(cc))) == NULL)
-                return mlwrite(MWABORT|MWPAUSE,(uint8 *)"Illegal Registry mode [%c]",cc) ;
+                return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Illegal Registry mode [%c]",cc) ;
             jj = (1<< (((int) ss)-((int) meRegModeList))) ;
             if(isUpper(cc))
                 mode &= ~jj ;
@@ -734,15 +734,15 @@ regDecodeMode (int *modep, uint8 *modeStr)
 int
 readRegistry (int f, int n)
 {
-    uint8 filebuf [FILEBUF];
-    uint8 rootbuf [32];
-    uint8 modebuf [10];
+    meUByte filebuf [FILEBUF];
+    meUByte rootbuf [32];
+    meUByte modebuf [10];
     int mode = 0;
 
     /* Get the input from the command line */
-    if ((meGetString((uint8 *)"Read registry root",0, 0, rootbuf, 32) == ABORT) ||
-        (meGetString((uint8 *)"Registry file",MLFILECASE, 0, filebuf, FILEBUF) == ABORT) ||
-        (meGetString((uint8 *)"File Mode", 0, 0, modebuf, 10) == ABORT))
+    if ((meGetString((meUByte *)"Read registry root",0, 0, rootbuf, 32) == ABORT) ||
+        (meGetString((meUByte *)"Registry file",MLFILECASE, 0, filebuf, FILEBUF) == ABORT) ||
+        (meGetString((meUByte *)"File Mode", 0, 0, modebuf, 10) == ABORT))
         return ABORT;
 
     /* Get the mode out */
@@ -760,10 +760,10 @@ readRegistry (int f, int n)
  * Find the absolute node name associated with a node.
  * Use tail recursion to do the expansion
  */
-static uint8 *
-findRegistryName (RNODE *rnp, uint8 *p)
+static meUByte *
+findRegistryName (RNODE *rnp, meUByte *p)
 {
-    uint8 *q;
+    meUByte *q;
 
     if (rnp->prnt != NULL)
     {
@@ -785,19 +785,19 @@ findRegistryName (RNODE *rnp, uint8 *p)
 int
 markRegistry (int f, int n)
 {
-    uint8 rootbuf [MAXBUF];
-    uint8 modebuf [10];
+    meUByte rootbuf [MAXBUF];
+    meUByte modebuf [10];
     int mode;
     RNODE *rnp;
 
     /* Get the input from the command line */
-    if ((meGetString((uint8 *)"Registry node",0, 0, rootbuf, MAXBUF) == ABORT) ||
-        (meGetString((uint8 *)"Mark modes", 0, 0, modebuf, 10) == ABORT))
+    if ((meGetString((meUByte *)"Registry node",0, 0, rootbuf, MAXBUF) == ABORT) ||
+        (meGetString((meUByte *)"Mark modes", 0, 0, modebuf, 10) == ABORT))
         return ABORT;
 
     /* Find the node */
     if ((rnp = regFind (&root, rootbuf)) == NULL)
-        return mlwrite(MWCLEXEC|MWABORT,(uint8 *)"[Cannot find node %s]",rootbuf);
+        return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Cannot find node %s]",rootbuf);
 
 
     /* Find the integer offset if there is one. */
@@ -837,7 +837,7 @@ markRegistry (int f, int n)
 
         /* tnp is the current node. Change the node */
         if ((rnp = tnp) == NULL)
-            mlwrite (MWCLEXEC|MWABORT,(uint8 *)"[Cannot locate node %d]", f);
+            mlwrite (MWCLEXEC|MWABORT,(meUByte *)"[Cannot locate node %d]", f);
     }
 
     /* Get the mode out */
@@ -852,7 +852,7 @@ markRegistry (int f, int n)
         findRegistryName (rnp, resultStr);
     else if (mode & REGMODE_GETMODE)
     {
-        uint8 *ss=resultStr ;
+        meUByte *ss=resultStr ;
         int ii ;
         for(ii=0 ; ii<8 ; ii++)
             if(rnp->mode & (1<<ii))
@@ -876,8 +876,8 @@ markRegistry (int f, int n)
 int
 saveRegistry (int f, int n)
 {
-    uint8 filebuf [FILEBUF];
-    uint8 rootbuf [128];
+    meUByte filebuf [FILEBUF];
+    meUByte rootbuf [128];
     RNODE *rnp;
     
     if(n & 0x2)
@@ -895,12 +895,12 @@ saveRegistry (int f, int n)
     }
     
     /* Get the input from the command line */
-    if (meGetString((uint8 *)"Save registry root",0, 0, rootbuf, 128) == ABORT)
+    if (meGetString((meUByte *)"Save registry root",0, 0, rootbuf, 128) == ABORT)
         return FALSE;
     
     /* Find the root */
     if ((rnp = regFind (&root, rootbuf)) == NULL)
-        return mlwrite(MWCLEXEC|MWABORT,(uint8 *)"[Cannot find node %s]",rootbuf);
+        return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Cannot find node %s]",rootbuf);
     
     if (rnp->mode & REGMODE_FROOT)
         meStrcpy(filebuf,rnp->value) ;
@@ -908,7 +908,7 @@ saveRegistry (int f, int n)
         filebuf[0] = '\0' ;
     
     /* Get the filename */
-    if(meGetString((uint8 *)"Registry file",MLFILECASE|MLFILECASE, 0, filebuf, FILEBUF) != TRUE)
+    if(meGetString((meUByte *)"Registry file",MLFILECASE|MLFILECASE, 0, filebuf, FILEBUF) != TRUE)
         return FALSE ;
     return regSave (rnp, filebuf);
 }
@@ -939,13 +939,13 @@ anyChangedRegistry(void)
 int
 deleteRegistry (int f, int n)
 {
-    uint8 rootbuf [MAXBUF];
+    meUByte rootbuf [MAXBUF];
     RNODE *rnp;
 
-    if (meGetString((uint8 *)"Registry Path", 0, 0, rootbuf, MAXBUF) == ABORT)
+    if (meGetString((meUByte *)"Registry Path", 0, 0, rootbuf, MAXBUF) == ABORT)
         return ABORT;
     if ((rnp = regFind (&root, rootbuf)) == NULL)
-        return mlwrite(MWCLEXEC|MWABORT,(uint8 *)"[Cannot find node %s]",rootbuf);
+        return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Cannot find node %s]",rootbuf);
     return regDelete (rnp);
 }
 
@@ -956,22 +956,22 @@ deleteRegistry (int f, int n)
 int
 setRegistry (int f, int n)
 {
-    uint8 rootbuf [MAXBUF];
-    uint8 valbuf [MAXBUF];
-    uint8 skeybuf [MAXBUF];
+    meUByte rootbuf [MAXBUF];
+    meUByte valbuf [MAXBUF];
+    meUByte skeybuf [MAXBUF];
     RNODE *rnp;
 
     /* Get the arguments */
-    if ((meGetString((uint8 *)"Registry Path", 0, 0, rootbuf, MAXBUF) == ABORT) ||
-        (meGetString((uint8 *)"Sub key", 0, 0, skeybuf, MAXBUF) == ABORT) ||
-        (meGetString((uint8 *)"Value", 0, 0, valbuf, MAXBUF) == ABORT))
+    if ((meGetString((meUByte *)"Registry Path", 0, 0, rootbuf, MAXBUF) == ABORT) ||
+        (meGetString((meUByte *)"Sub key", 0, 0, skeybuf, MAXBUF) == ABORT) ||
+        (meGetString((meUByte *)"Value", 0, 0, valbuf, MAXBUF) == ABORT))
         return ABORT;
 
     /* Assigns the new value */
     if ((rnp = regFind (&root, rootbuf)) == NULL)
-        return mlwrite(MWCLEXEC|MWABORT,(uint8 *)"[Cannot find node %s]",rootbuf);
+        return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Cannot find node %s]",rootbuf);
     if (regSet (rnp, skeybuf, valbuf) == NULL)
-        return mlwrite(MWCLEXEC|MWABORT,(uint8 *)"[Cannot set registry node]");
+        return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Cannot set registry node]");
     return TRUE;
 }
 
@@ -984,20 +984,20 @@ setRegistry (int f, int n)
 int
 getRegistry (int f, int n)
 {
-    uint8 rootbuf [MAXBUF];
-    uint8 skeybuf [MAXBUF];
+    meUByte rootbuf [MAXBUF];
+    meUByte skeybuf [MAXBUF];
     RNODE *rnp;
 
     resultStr [0] = '\0';
     /* Get the arguments */
-    if ((meGetString((uint8 *)"Registry Path", 0, 0, rootbuf, MAXBUF) == ABORT) ||
-        (meGetString((uint8 *)"Sub key", 0, 0, skeybuf, MAXBUF) == ABORT))
+    if ((meGetString((meUByte *)"Registry Path", 0, 0, rootbuf, MAXBUF) == ABORT) ||
+        (meGetString((meUByte *)"Sub key", 0, 0, skeybuf, MAXBUF) == ABORT))
         return ABORT;
 
     /* Assigns the new value */
     if (((rnp = regFind (&root, rootbuf)) == NULL) ||
         ((rnp = regFind (rnp, skeybuf)) == NULL))
-        return mlwrite(MWCLEXEC|MWABORT,(uint8 *)"[Cannot find node %s/%s]",rootbuf,skeybuf);
+        return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Cannot find node %s/%s]",rootbuf,skeybuf);
     
     if (rnp->value != NULL)
     {
@@ -1014,23 +1014,23 @@ getRegistry (int f, int n)
 int
 findRegistry (int f, int n)
 {
-    uint8 rootbuf [MAXBUF];
-    uint8 valbuf [12];
-    uint8 skeybuf [MAXBUF];
+    meUByte rootbuf [MAXBUF];
+    meUByte valbuf [12];
+    meUByte skeybuf [MAXBUF];
     int index;
     RNODE *rnp;
 
     /* Get the arguments */
-    if ((meGetString((uint8 *)"Registry Path", 0, 0, rootbuf, MAXBUF) == ABORT) ||
-        (meGetString((uint8 *)"Sub key", 0, 0, skeybuf, MAXBUF) == ABORT) ||
-        (meGetString((uint8 *)"Index", 0, 0, valbuf, 12) == ABORT))
+    if ((meGetString((meUByte *)"Registry Path", 0, 0, rootbuf, MAXBUF) == ABORT) ||
+        (meGetString((meUByte *)"Sub key", 0, 0, skeybuf, MAXBUF) == ABORT) ||
+        (meGetString((meUByte *)"Index", 0, 0, valbuf, 12) == ABORT))
         return ABORT;
     index = meAtoi (valbuf);
 
     /* Assigns the new value */
     if (((rnp = regFind (&root, rootbuf)) == NULL) ||
         ((rnp = regFind (rnp, skeybuf)) == NULL))
-        return mlwrite(MWCLEXEC|MWABORT,(uint8 *)"[Cannot find node %s/%s]",rootbuf,skeybuf);
+        return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Cannot find node %s/%s]",rootbuf,skeybuf);
     /* Find the node that is indexed */
     rnp = rnp->chld;
     while ((--index >= 0) && rnp)
@@ -1038,7 +1038,7 @@ findRegistry (int f, int n)
     if (rnp == NULL)
     {
         resultStr [0] ='\0';
-        return mlwrite (MWCLEXEC|MWABORT,(uint8 *)"Cannot find node at index %d", index);
+        return mlwrite (MWCLEXEC|MWABORT,(meUByte *)"Cannot find node at index %d", index);
     }
     else
     {
@@ -1058,8 +1058,8 @@ listRegistry (int f, int n)
     BUFFER *bp;                         /* Buffer pointer */
     WINDOW *wp;                         /* Window associated with buffer */
     RNODE *rnp;                         /* Draw the nodes */
-    uint8 vstrbuf [MAXBUF];             /* Vertical string buffer */
-    uint8 buf[MAXBUF*2];                /* Working line buffer */
+    meUByte vstrbuf [MAXBUF];             /* Vertical string buffer */
+    meUByte buf[MAXBUF*2];                /* Working line buffer */
     int level = 0;                      /* Depth in the registry */
     int len;                            /* Length of the string */
 

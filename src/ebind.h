@@ -29,7 +29,7 @@
  */
 #ifdef maindef
 
-#define	DEFBIND(x,y,z)	{(uint16)(x), (uint16)(z), (uint32)(y)},
+#define	DEFBIND(x,y,z)	{(meUShort)(x), (meUShort)(z), (meUInt)(y)},
 
 KEYTAB  keytab[NBINDS] = {
 

@@ -50,7 +50,7 @@ setAbbrev(int f, int n, meABBREV **abrevPtr)
 {
     register meABBREV *abrev ;
     register int status;        /* return status of name query */
-    uint8 buf[MAXBUF];          /* name of file to execute */
+    meUByte buf[MAXBUF];          /* name of file to execute */
     
     if(n == 0)
     {
@@ -62,7 +62,7 @@ setAbbrev(int f, int n, meABBREV **abrevPtr)
         return TRUE ;
     }
         
-    if((status=meGetString((uint8 *)"Abbrev file",MLFILECASE,0,buf,MAXBUF)) != TRUE)
+    if((status=meGetString((meUByte *)"Abbrev file",MLFILECASE,0,buf,MAXBUF)) != TRUE)
         return status ;
     
     if(buf[0] == '\0')
@@ -105,18 +105,18 @@ globalAbbrev(int f, int n)
 
 
 static int
-doExpandAbbrev(uint8 *abName, int abLen, meABBREV *abrev)
+doExpandAbbrev(meUByte *abName, int abLen, meABBREV *abrev)
 {
     register LINE *lp, *hlp ;
     
     hlp = &abrev->hlp ;
     if(!abrev->loaded)
     {
-        uint8 fname[FILEBUF] ;
+        meUByte fname[FILEBUF] ;
         
-        if(!fileLookup(abrev->fname,(uint8 *)".eaf",meFL_CHECKDOT|meFL_USESRCHPATH,fname) ||
+        if(!fileLookup(abrev->fname,(meUByte *)".eaf",meFL_CHECKDOT|meFL_USESRCHPATH,fname) ||
            (ffReadFile(fname,meRWFLAG_SILENT,NULL,hlp) == ABORT))
-            return mlwrite(MWABORT,(uint8 *)"[Failed to abbrev file %s]",abrev->fname);
+            return mlwrite(MWABORT,(meUByte *)"[Failed to abbrev file %s]",abrev->fname);
         abrev->loaded = 1 ;
     }
     lp = lforw(hlp) ;
@@ -126,7 +126,7 @@ doExpandAbbrev(uint8 *abName, int abLen, meABBREV *abrev)
            !strncmp((char *) lp->l_text,(char *) abName,abLen) &&
            (lp->l_text[abLen] == ' '))
         {
-            uint8 buf[TOKENBUF] ;
+            meUByte buf[TOKENBUF] ;
             curwp->w_doto -= abLen ;
             ldelete(abLen,2) ;
             /* grab token */
@@ -142,7 +142,7 @@ int
 expandAbbrev(int f, int n)
 {
     register int len, ii ;
-    uint8 buf[MAXBUF] ;
+    meUByte buf[MAXBUF] ;
     
     if(bchange() != TRUE)               /* Check we can change the buffer */
         return ABORT ;
@@ -162,7 +162,7 @@ expandAbbrev(int f, int n)
      * there seems to be no good reason to do this. Instead bitch
      * if we are not in a macro and return a false condition. The
      * error is not serious enough to abort */
-    mlwrite (MWCLEXEC,(uint8 *)"[No abbrev expansion defined]"); 
+    mlwrite (MWCLEXEC,(meUByte *)"[No abbrev expansion defined]"); 
     return FALSE;
     
 }

@@ -55,26 +55,26 @@ enum
 #define meModeClear(mb,flag)  ((mb)[(flag) >> 3] &= ~(1 << ((flag) & 0x07)))
 #define meModeToggle(mb,flag) ((mb)[(flag) >> 3] ^=  (1 << ((flag) & 0x07)))
 
-typedef uint8 meMODE[MDNUMBYTES] ;
+typedef meUByte meMODE[MDNUMBYTES] ;
 
 
 extern meMODE globMode ;                /* global editor mode		*/
 extern meMODE modeLineDraw ;
-extern uint8 *modeName[] ;		/* name of modes		*/
-extern uint8  modeCode[] ;		/* letters to represent modes	*/
+extern meUByte *modeName[] ;		/* name of modes		*/
+extern meUByte  modeCode[] ;		/* letters to represent modes	*/
 
 
 #ifdef	INC_MODE_DEF
 
-#define DEFMODE(varnam,strnam,chrnam,masklbl,maskval) (uint8 *)strnam,
-uint8 *modeName[] = {                  /* name of modes                */
+#define DEFMODE(varnam,strnam,chrnam,masklbl,maskval) (meUByte *)strnam,
+meUByte *modeName[] = {                  /* name of modes                */
 #include "emode.def"
     NULL
 };
 #undef DEFMODE
 
 #define DEFMODE(varnam,strnam,chrnam,masklbl,maskval) chrnam,
-uint8 modeCode[] =
+meUByte modeCode[] =
 {
 #include "emode.def"
 };

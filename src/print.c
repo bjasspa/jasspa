@@ -40,15 +40,15 @@
 
 #define TESTPRINT  0                    /* Enable printer testing */
 
-uint8 *printNames [] =
+meUByte *printNames [] =
 {
-#define DEFPRINT(s,t,v) (uint8 *)s,
+#define DEFPRINT(s,t,v) (meUByte *)s,
 #include "eprint.def"
     NULL
 #undef DEFPRINT
 };
 
-uint8 printTypes[] =
+meUByte printTypes[] =
 {
 #define DEFPRINT(s,t,v) t,
 #include "eprint.def"
@@ -74,13 +74,13 @@ static BUFFER *gpbp;                    /* Composition print buffer */
 
 static int     fontCount ;
 static meSTYLE fontMasks[2][mePRINTSTYLE_SIZE] ;
-static int16   fontStrlen[2][mePRINTSTYLE_SIZE] ;
-static uint8  *fontStrings[2][mePRINTSTYLE_SIZE] ;
-static uint8  *fontPaths[2] = {(uint8 *)"start",(uint8 *)"end"} ;
-static uint8  *fontOrder = (uint8 *)"biu" ;
+static meShort   fontStrlen[2][mePRINTSTYLE_SIZE] ;
+static meUByte  *fontStrings[2][mePRINTSTYLE_SIZE] ;
+static meUByte  *fontPaths[2] = {(meUByte *)"start",(meUByte *)"end"} ;
+static meUByte  *fontOrder = (meUByte *)"biu" ;
 
 /* The hilighting characters */
-static uint8 hilchars[mePRINTSTYLE_SIZE] = {'b', 'i', 'l', 'r', 'u', 'F', 'B'};
+static meUByte hilchars[mePRINTSTYLE_SIZE] = {'b', 'i', 'l', 'r', 'u', 'F', 'B'};
 meSCHEME printTextScheme=meSCHEME_INVALID ;
 meSCHEME printCurrScheme=meSCHEME_INVALID ;
 
@@ -101,11 +101,11 @@ printFreeMemory(void)
  * Compute the length of the string with characters translated
  */
 static int
-getTranslationLen (uint8 *str, int n)
+getTranslationLen (meUByte *str, int n)
 {
     int len = 0;                        /* Length of the string */
     int cc;                             /* Character pointer */
-    uint8 *p;
+    meUByte *p;
 
     while (((cc = *str++) != '\0') && (--n >= 0))
     {
@@ -122,11 +122,11 @@ getTranslationLen (uint8 *str, int n)
  * Translate the characters in the string ready for the printer.
  */
 static int
-doTranslation (uint8 *dest, uint8 *str, int n)
+doTranslation (meUByte *dest, meUByte *str, int n)
 {
     int len = 0;                        /* Length of the string */
     int cc;                             /* Character pointer */
-    uint8 *p;                   /* Character pointer */
+    meUByte *p;                   /* Character pointer */
 
     while (((cc = *str++) != '\0') && (--n >= 0))
     {
@@ -135,7 +135,7 @@ doTranslation (uint8 *dest, uint8 *str, int n)
             cc = ttSpeChars [cc];
         
         /* Process the character through the filter */
-        if ((p = (uint8 *) printer.filter[cc]) == NULL)
+        if ((p = (meUByte *) printer.filter[cc]) == NULL)
             dest [len++] = cc;
         else
         {
@@ -150,9 +150,9 @@ doTranslation (uint8 *dest, uint8 *str, int n)
 int
 printColor (int f, int n)
 {
-    uint8 buf[20];              /* Local character buffer */
+    meUByte buf[20];              /* Local character buffer */
     int colNo;                  /* color number to add */
-    int32 color;                /* the color */
+    meInt color;                /* the color */
     
     if(n == 0)
     {
@@ -165,20 +165,20 @@ printColor (int f, int n)
         
     /* Get the color number and color */
     color = 0 ;
-    if ((meGetString((uint8 *)"Number", 0, 0, buf, 20) == ABORT) ||
+    if ((meGetString((meUByte *)"Number", 0, 0, buf, 20) == ABORT) ||
         ((colNo = meAtoi(buf)) < 0) || (colNo > 255) ||
-        (meGetString((uint8 *)"Red",0,0,buf,20) == ABORT) ||
+        (meGetString((meUByte *)"Red",0,0,buf,20) == ABORT) ||
         ((color = mePrintColorSetRed(color,meAtoi(buf))),
-         (meGetString((uint8 *)"Green",0,0,buf,20) == ABORT)) ||
+         (meGetString((meUByte *)"Green",0,0,buf,20) == ABORT)) ||
         ((color = mePrintColorSetGreen(color,meAtoi(buf))),
-         (meGetString((uint8 *)"Blue",0,0,buf,20) == ABORT)))
+         (meGetString((meUByte *)"Blue",0,0,buf,20) == ABORT)))
         return FALSE;
     color = mePrintColorSetBlue(color,meAtoi(buf)) ;
 
     /* Add a new entry to the printer color table */
     if (printer.colorNum <= colNo)
     {
-        printer.color = meRealloc (printer.color, sizeof(uint32) * (colNo+1));
+        printer.color = meRealloc (printer.color, sizeof(meUInt) * (colNo+1));
         if (printer.color == NULL)
         {
             /* Make safe */
@@ -187,7 +187,7 @@ printColor (int f, int n)
         }
         /* Fill the memory with zero's */
         memset (&printer.color[printer.colorNum], 0,
-                ((colNo+1) - printer.colorNum) * sizeof(uint32));
+                ((colNo+1) - printer.colorNum) * sizeof(meUInt));
         printer.colorNum = colNo+1;
     }
     printer.color[colNo] = color ;
@@ -196,9 +196,9 @@ printColor (int f, int n)
 int
 printScheme (int f, int n)
 {
-    uint8 buf[20];              /* Local character buffer */
+    meUByte buf[20];              /* Local character buffer */
     int schmNo;                 /* color number to add */
-    uint8 fc, bc, ff ;          /* temporary fore, back & font */
+    meUByte fc, bc, ff ;          /* temporary fore, back & font */
     meSTYLE scheme;             /* the scheme */
     
     if(n == 0)
@@ -212,15 +212,15 @@ printScheme (int f, int n)
         
     /* Get the scheme number and scheme */
     scheme = 0 ;
-    if ((meGetString((uint8 *)"Number", 0, 0, buf, 10) == ABORT) ||
+    if ((meGetString((meUByte *)"Number", 0, 0, buf, 10) == ABORT) ||
         ((schmNo = meAtoi(buf)) < 0) || (schmNo > 255) ||
-        (meGetString((uint8 *)"Fore-col",0,0,buf,MAXBUF) == ABORT) ||
-        ((fc = (uint8) meAtoi(buf)),
-         (meGetString((uint8 *)"Back-col",0,0,buf,MAXBUF) == ABORT)) ||
-        ((bc = (uint8) meAtoi(buf)),
-         (meGetString((uint8 *)"Font",0,0,buf,MAXBUF) == ABORT)))
+        (meGetString((meUByte *)"Fore-col",0,0,buf,MAXBUF) == ABORT) ||
+        ((fc = (meUByte) meAtoi(buf)),
+         (meGetString((meUByte *)"Back-col",0,0,buf,MAXBUF) == ABORT)) ||
+        ((bc = (meUByte) meAtoi(buf)),
+         (meGetString((meUByte *)"Font",0,0,buf,MAXBUF) == ABORT)))
         return FALSE;
-    ff = (uint8) meAtoi(buf) ;
+    ff = (meUByte) meAtoi(buf) ;
     
     /* create the scheme */
     meStyleSet(scheme,fc,bc,ff) ;
@@ -249,24 +249,24 @@ printGetParams (void)
 {
     REGHANDLE regPrint;              /* /print registry pointer */
     REGHANDLE regData;               /* Temporary data */
-    uint8 *order, *ss ;
+    meUByte *order, *ss ;
     int ii, jj, kk, option;
 #if TESTPRINT 
     FILE *fp;
 #endif
-    mlwrite (0,(uint8 *)"[Configuring printer ...]");
+    mlwrite (0,(meUByte *)"[Configuring printer ...]");
 	
-    if(dofile((uint8 *)"print",0,1) != TRUE)
+    if(dofile((meUByte *)"print",0,1) != TRUE)
         return ABORT ;
     
     /* Get the registry directory & the name of the driver out of the registry */
-    if(((regPrint = regFind (NULL,(uint8 *)"/print")) == NULL) ||
-       ((regData = regFind (regPrint,(uint8 *)"setup")) == NULL) ||
+    if(((regPrint = regFind (NULL,(meUByte *)"/print")) == NULL) ||
+       ((regData = regFind (regPrint,(meUByte *)"setup")) == NULL) ||
        ((ss = regGetString(regData,NULL)) == NULL) || !meAtoi(ss))
-        return mlwrite (MWABORT|MWPAUSE,(uint8 *)"[Printer driver not setup]");
+        return mlwrite (MWABORT|MWPAUSE,(meUByte *)"[Printer driver not setup]");
 
 #ifdef WIN32
-    if(((regData = regFind (regPrint,(uint8 *)"internal")) != NULL) &&
+    if(((regData = regFind (regPrint,(meUByte *)"internal")) != NULL) &&
        ((ss = regGetString(regData,NULL)) != NULL))
         printer.pInternal = meAtoi(ss) ;
     else
@@ -274,7 +274,7 @@ printGetParams (void)
 #endif
         
     /* Get the output destination */
-    if (((regData = regFind (regPrint,(uint8 *)"dest")) == NULL) ||
+    if (((regData = regFind (regPrint,(meUByte *)"dest")) == NULL) ||
         ((ss = regGetString (regData,NULL)) == NULL) ||
         ((printer.pDestination=meAtoi(ss)) < 0) ||
         (printer.pDestination > PDEST_COMLINE))
@@ -331,12 +331,12 @@ printGetParams (void)
 
     /* Allocate the filter table */
     if (printer.filter == NULL)
-        printer.filter = meMalloc (sizeof (uint8 *) * 256);
-    memset(printer.filter,0, sizeof(uint8 *) * 256) ;
+        printer.filter = meMalloc (sizeof (meUByte *) * 256);
+    memset(printer.filter,0, sizeof(meUByte *) * 256) ;
 
-    if ((regData = regFind (regPrint,(uint8 *)"filter")) != NULL)
+    if ((regData = regFind (regPrint,(meUByte *)"filter")) != NULL)
     {
-        uint8 *nodeName;
+        meUByte *nodeName;
         regData = regGetChild(regData) ;
 
         while (regData != NULL)
@@ -357,7 +357,7 @@ printGetParams (void)
     }
     /* get the font and color settings */
     option = 0 ;
-    if(((regData = regFind (regPrint,(uint8 *)"scheme-flags")) != NULL) &&
+    if(((regData = regFind (regPrint,(meUByte *)"scheme-flags")) != NULL) &&
        ((ss = regGetString (regData, NULL)) != NULL))
     {
         ii = meAtoi(ss) ;
@@ -371,7 +371,7 @@ printGetParams (void)
     if(!(option & (1<<mePRINTSTYLE_BCOLOR)))
         printer.param[mePS_BGCOL].p = NULL ;
         
-    regData = regFind(regPrint,(uint8 *)"scheme-order") ;
+    regData = regFind(regPrint,(meUByte *)"scheme-order") ;
     order = (regData == NULL) ? fontOrder : regGetString (regData, NULL) ;
         
     for(ii=0 ; ii<2 ; ii++)
@@ -388,10 +388,10 @@ printGetParams (void)
                 {
                     if(option & (1 << kk))
                     {
-                        uint8 subkey[2] ;
+                        meUByte subkey[2] ;
                         subkey[0] = order[jj] ;
                         subkey[1] = '\0' ;
-                        if ((regData = vregFind (regPrint,(uint8 *)"%s/%s", fontPaths[ii],subkey)) != NULL)
+                        if ((regData = vregFind (regPrint,(meUByte *)"%s/%s", fontPaths[ii],subkey)) != NULL)
                         {
                             fontStrings[ii][jj] = regGetString (regData, NULL) ;
                             if(kk == mePRINTSTYLE_FCOLOR)
@@ -406,7 +406,7 @@ printGetParams (void)
                             }
                             else
                             {
-                                fontStrlen[ii][jj] = (uint16) meStrlen(fontStrings[ii][jj]) ;
+                                fontStrlen[ii][jj] = (meUShort) meStrlen(fontStrings[ii][jj]) ;
                                 fontMasks[ii][jj] = 1 << (kk+16) ;
                             }
 #if TESTPRINT
@@ -424,16 +424,16 @@ printGetParams (void)
     if (fp)
         fclose (fp);
 #endif
-    mlwrite (0,(uint8 *)"[Printer read the registry ...]");
+    mlwrite (0,(meUByte *)"[Printer read the registry ...]");
     /* Add a few defaults */
     if (printer.param[mePI_COLS].l < 1)
         printer.param[mePI_COLS].l = 1;
     if (printer.param[mePI_ROWS].l < 1)
         printer.param[mePI_ROWS].l = 1;
     if (printer.param[mePS_SCONT].p == NULL)
-        printer.param[mePS_SCONT].p = (uint8 *)" ";
+        printer.param[mePS_SCONT].p = (meUByte *)" ";
     if (printer.param[mePS_ECONT].p == NULL)
-        printer.param[mePS_ECONT].p = (uint8 *)" ";
+        printer.param[mePS_ECONT].p = (meUByte *)" ";
     /* sort out the header and footer */
     if((printer.param [mePI_FLAGS].l & PFLAG_ENBLHEADER) &&
        ((ss=printer.param [mePS_HEADER].p) != NULL))
@@ -458,7 +458,7 @@ printGetParams (void)
 
     /* Default the output states */
     if (printer.param[mePS_BUFFER].p == NULL)
-        printer.param[mePS_BUFFER].p = (uint8 *)"*printer*";
+        printer.param[mePS_BUFFER].p = (meUByte *)"*printer*";
     return TRUE;
 }
 
@@ -507,13 +507,13 @@ printComputePageSetup (int f)
     /* Check to ensure that the page request is legal. */
     if ((printer.param[mePI_PAPERX].l < (printer.param[mePI_PAGEX].l * printer.param[mePI_COLS].l + xtraWidth)) ||
         (printer.param[mePI_PAPERY].l < (printer.param[mePI_PAGEY].l * printer.param[mePI_ROWS].l + xtraDepth)))
-        return mlwrite (MWABORT|MWPAUSE,(uint8 *)"Invalid paper size %d x %d. Page requirements %d x %d",
+        return mlwrite (MWABORT|MWPAUSE,(meUByte *)"Invalid paper size %d x %d. Page requirements %d x %d",
                         printer.param[mePI_PAPERX].l,
                         printer.param[mePI_PAPERY].l,
                         printer.param[mePI_PAGEX].l * printer.param[mePI_COLS].l + xtraWidth,
                         (printer.param[mePI_PAGEY].l * printer.param[mePI_ROWS].l + xtraDepth));
     else if (!f)
-        mlwrite (0,(uint8 *)"Valid paper size %d x %d. Page requirements %d x %d of %d x %d",
+        mlwrite (0,(meUByte *)"Valid paper size %d x %d. Page requirements %d x %d of %d x %d",
                  printer.param[mePI_PAPERX].l,
                  printer.param[mePI_PAPERY].l,
                  printer.param[mePI_PAGEX].l,
@@ -557,7 +557,7 @@ printInit (int f, int n)
     {
         REGHANDLE regPrint;  
         
-        regPrint = regFind (NULL,(uint8 *)"/print") ;
+        regPrint = regFind (NULL,(meUByte *)"/print") ;
         regSet(regPrint, printNames[mePI_PAPERX], meItoa(printer.param[mePI_PAPERX].l));
         regSet(regPrint, printNames[mePI_PAPERY], meItoa(printer.param[mePI_PAPERY].l));
         regSet(regPrint, printNames[mePI_PAGEX], meItoa(printer.param[mePI_PAGEX].l));
@@ -571,7 +571,7 @@ printInit (int f, int n)
  * Add a composed line to the lpage line list
  */
 static void
-addComposedLine (LINE **head, LINE **tail, uint8 *buf, int len)
+addComposedLine (LINE **head, LINE **tail, meUByte *buf, int len)
 {
     LINE *nline;                        /* New line */
 
@@ -593,11 +593,11 @@ addComposedLine (LINE **head, LINE **tail, uint8 *buf, int len)
  * Expand control codes in the escape sequence
  */
 static int
-expandText (uint8 *buf, uint8 *strp, int level)
+expandText (meUByte *buf, meUByte *strp, int level)
 {
-    uint8 cc;
-    uint8 *bbuf = buf;
-    uint8 *ss;
+    meUByte cc;
+    meUByte *bbuf = buf;
+    meUByte *ss;
 
     if (strp == NULL)
         return 0;
@@ -641,12 +641,12 @@ expandText (uint8 *buf, uint8 *strp, int level)
                 break;
             case 'f':
                 if ((gpbp->b_bname[0] == '*') || (gpbp->b_fname == NULL))
-                    ss = (uint8 *) gpbp->b_bname;
+                    ss = (meUByte *) gpbp->b_bname;
                 else
-                    ss = (uint8 *) gpbp->b_fname;
+                    ss = (meUByte *) gpbp->b_fname;
                 goto cat_string;
             case 'b':
-                ss = (uint8 *) gbp->b_bname;
+                ss = (meUByte *) gbp->b_bname;
 cat_string:
                 if (ss != NULL)
                     buf += sprintf ((char *) buf, "%s", ss);
@@ -698,16 +698,16 @@ cat_string:
  */
 static void
 addFormatedLine (LINE **head, LINE **tail,
-                 uint8 *buf, int noLines, uint8 *strp, int filter)
+                 meUByte *buf, int noLines, meUByte *strp, int filter)
 {
-    uint8 *bhead = buf;
-    uint8 *p = strp;
+    meUByte *bhead = buf;
+    meUByte *p = strp;
 
     while (--noLines >= 0)
     {
         int ii;
-        uint8 cc;
-        uint8 tbuf [MAXBUF];
+        meUByte cc;
+        meUByte tbuf [MAXBUF];
 
         /* Get the new lines out */
         if (strp != NULL)
@@ -743,7 +743,7 @@ addFormatedLine (LINE **head, LINE **tail,
 
 #if HILIGHT
 static int
-printSetScheme(meSCHEME col, uint8 *buff)
+printSetScheme(meSCHEME col, meUByte *buff)
 {
     meSCHEME ts ;
     meSTYLE ss, cs ;
@@ -786,7 +786,7 @@ printSetScheme(meSCHEME col, uint8 *buff)
             /* Always want to set the fore and back-ground colors (col 0 may not be black!) */
             if(fontStrlen[sore][ii] < 0)
             {
-                int32 cno, cc, rr, gg, bb ;
+                meInt cno, cc, rr, gg, bb ;
                 char *str ;
                 if(fontMasks[sore][ii] & meSTYLE_FCOLOR)
                     cno = meStyleGetFColor(ss) ;
@@ -829,8 +829,8 @@ composePage (int f)
 {
     LINE *head = NULL;
     LINE *tail = NULL;
-    uint8 buf [1024*5];                 /* Heafty line store !! */
-    uint8 *p;                           /* Pointer to the buffer */
+    meUByte buf [1024*5];                 /* Heafty line store !! */
+    meUByte *p;                           /* Pointer to the buffer */
     int xx;                             /* Page column iterator */
     int yy;                             /* Page row iterator */
     int ll;                             /* Lines on page iterator */
@@ -862,7 +862,7 @@ composePage (int f)
             /* set the default bg-color */
             if(printer.param[mePS_BGCOL].p != NULL)
             {
-                int32 cno, cc, rr, gg, bb ;
+                meInt cno, cc, rr, gg, bb ;
                 char *str ;
                 
                 cno = printTextScheme / meSCHEME_STYLES ;
@@ -940,8 +940,8 @@ composePage (int f)
 
                     /* Concatinate the composed line information */
                     {
-                        uint8 cc;
-                        uint8 *str;
+                        meUByte cc;
+                        meUByte *str;
 
                         str = lp->l_text;
                         while ((cc = *str++) != '\0')
@@ -1162,7 +1162,7 @@ dumpToBuffer (BUFFER *bp, LINE *lp)
 }
 
 static void
-printLinkLine (BUFFER *bp, LINE *nlp, uint16 lno)
+printLinkLine (BUFFER *bp, LINE *nlp, meUShort lno)
 {
     bp->b_linep->l_bp->l_fp = nlp;
     nlp->l_bp = bp->b_linep->l_bp;
@@ -1186,10 +1186,10 @@ printAddLine (BUFFER *bp, LINE *lp)
 #if HILIGHT
     meSCHEME  scheme ;
 #endif
-    uint16    noColChng ;
+    meUShort    noColChng ;
     HILBLOCK *blkp;
     LINE     *nlp;
-    uint16    len, wid, ii, jj, kk, ll;
+    meUShort    len, wid, ii, jj, kk, ll;
 
     /* Render the line to get the colour information */
 #if HILIGHT
@@ -1212,7 +1212,7 @@ printAddLine (BUFFER *bp, LINE *lp)
     for(;;)
     {
         /* Get the length of the text */
-        ll = (uint16) printer.param[mePI_PAGEX].l;
+        ll = (meUShort) printer.param[mePI_PAGEX].l;
         kk = wid-len ;
         if ((printer.param [mePI_FLAGS].l & PFLAG_ENBLTRUNCC))
         {
@@ -1244,7 +1244,7 @@ printAddLine (BUFFER *bp, LINE *lp)
          * markers until later (i.e. a line that continues on the next line)
          * This basically saves some space and is easy to deal with later */
         if ((ii == 0) && (printer.pLineNumDigits > 0))
-            ll += (uint16) printer.pLineNumDigits ;
+            ll += (meUShort) printer.pLineNumDigits ;
         ll += getTranslationLen (disLineBuff+len,kk) - kk;
 
         /* Construct a new composition line */
@@ -1256,7 +1256,7 @@ printAddLine (BUFFER *bp, LINE *lp)
         if ((nlp->l_flag & LNCHNG) && (printer.pLineNumDigits > 0))
         {
             char lnobuf [40];
-            ll = (uint16) printer.pLineNumDigits ;
+            ll = (meUShort) printer.pLineNumDigits ;
             sprintf (lnobuf, "% 20d ", printer.pLineNo);
             memcpy (nlp->l_text, &lnobuf [21-printer.pLineNumDigits], ll);
         }
@@ -1339,7 +1339,7 @@ printSection (WINDOW *wp, long sLineNo, long numLines, LINE *sLine, LINE *eLine,
     LINE *ihead = NULL;                 /* Internal destination header */
     LINE *itail = NULL;                 /* Internal destination trailer */
     int status = TRUE;                  /* Return status */
-    uint8 fname [MAXBUF];               /* File name buffer */
+    meUByte fname [MAXBUF];               /* File name buffer */
     int ii;                             /* Local loop counter. */
 
 #if HILIGHT
@@ -1369,7 +1369,7 @@ printSection (WINDOW *wp, long sLineNo, long numLines, LINE *sLine, LINE *eLine,
         break;
     case PDEST_BUFFER:
         if ((dwp = wpopup (printer.param [mePS_BUFFER].p,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR))) == NULL)
-            return mlwrite(MWABORT,(uint8 *)"[Failed to create print buffer]") ;
+            return mlwrite(MWABORT,(meUByte *)"[Failed to create print buffer]") ;
         dbp = dwp->w_bufp;
         break;
     case PDEST_COMLINE:
@@ -1381,7 +1381,7 @@ printSection (WINDOW *wp, long sLineNo, long numLines, LINE *sLine, LINE *eLine,
 
         /* Endevour to open the file */
         if ((fp = fopen ((char *)fname, "wb")) == NULL)
-            return mlwrite (MWABORT,(uint8 *)"Unable to open printer spool file %s", fname);
+            return mlwrite (MWABORT,(meUByte *)"Unable to open printer spool file %s", fname);
         break;
     }
     
@@ -1391,9 +1391,9 @@ printSection (WINDOW *wp, long sLineNo, long numLines, LINE *sLine, LINE *eLine,
               ((charMaskTbl1[ii] & CHRMSK_DISPLAYABLE) ? CHRMSK_PRINTABLE:0) |
               ((charMaskTbl1[ii] & CHRMSK_PRINTABLE) ? CHRMSK_DISPLAYABLE:0) ;
     /* Initialise the printer */
-    if ((bp = createBuffer((uint8 *)"")) == NULL)
+    if ((bp = createBuffer((meUByte *)"")) == NULL)
     {
-        status = mlwrite (MWABORT,(uint8 *)"Unable to setup Printer");
+        status = mlwrite (MWABORT,(meUByte *)"Unable to setup Printer");
         goto quitEarly;
     }
     /* Set up the buffer modes correctly so that we save the codes correctly */
@@ -1431,7 +1431,7 @@ printSection (WINDOW *wp, long sLineNo, long numLines, LINE *sLine, LINE *eLine,
 
     do {
         printer.pPageNo++;              /* Next page */
-        mlwrite (0,(uint8 *)"Printing page %d ..", printer.pPageNo);
+        mlwrite (0,(meUByte *)"Printing page %d ..", printer.pPageNo);
 
         /* Construcr a page worth of formatted data */
         while ((sLine != eLine) && (printer.pNoLines < printer.pLinesPerPage))
@@ -1443,7 +1443,7 @@ printSection (WINDOW *wp, long sLineNo, long numLines, LINE *sLine, LINE *eLine,
             if (printAddLine (bp,sLine) != TRUE)
 #endif
             {
-                status = mlwrite (MWABORT,(uint8 *)"Internal error: Cannot add new prin line");
+                status = mlwrite (MWABORT,(meUByte *)"Internal error: Cannot add new prin line");
                 goto quitEarly;
             }
             sLine = lforw (sLine);
@@ -1461,7 +1461,7 @@ printSection (WINDOW *wp, long sLineNo, long numLines, LINE *sLine, LINE *eLine,
         gpbp = wp->w_bufp;
         if ((clp = composePage (0)) == NULL)
         {
-            status = mlwrite (MWABORT,(uint8 *)"Internal error: Cannot compose printer page");
+            status = mlwrite (MWABORT,(meUByte *)"Internal error: Cannot compose printer page");
             goto quitEarly;
         }
 
@@ -1514,16 +1514,16 @@ printSection (WINDOW *wp, long sLineNo, long numLines, LINE *sLine, LINE *eLine,
     {
     case PDEST_COMLINE:
         {
-            uint8 cmdLine [MAXBUF+20];
-            uint8 *p, *q;
-            uint8 cc;
+            meUByte cmdLine [MAXBUF+20];
+            meUByte *p, *q;
+            meUByte cc;
             
             /* Expand the command line */
             p = printer.param [mePS_CMD].p;
             q = cmdLine;
             if ((p == NULL) || (*p == '\0'))
             {
-                mlwrite (MWPAUSE|MWABORT,(uint8 *)"No command line specified. Print file %s", fname);
+                mlwrite (MWPAUSE|MWABORT,(meUByte *)"No command line specified. Print file %s", fname);
                 goto quitEarly;
             }
             
@@ -1534,7 +1534,7 @@ printSection (WINDOW *wp, long sLineNo, long numLines, LINE *sLine, LINE *eLine,
                     /* %f - insert the filename */
                     if ((cc = *p) == 'f')
                     {
-                        uint8 *r = fname;
+                        meUByte *r = fname;
                         while ((*q = *r++) != '\0')
                             q++;
                         p++;                /* Skip the '%f' */
@@ -1561,14 +1561,14 @@ printSection (WINDOW *wp, long sLineNo, long numLines, LINE *sLine, LINE *eLine,
             if((status=doShellCommand(cmdLine)) == TRUE)
                 status = (resultStr[0] == '0') ? TRUE:FALSE ;
             if(status != TRUE)
-                mlwrite(MWABORT,(uint8 *)"[Failed to print file %s]",fname);
+                mlwrite(MWABORT,(meUByte *)"[Failed to print file %s]",fname);
             break;
         
         case PDEST_INTERNAL:
 #ifdef _WIN32
             status = WinPrint ((curbp->b_fname != NULL) ? curbp->b_fname
                                : (curbp->b_bname != NULL) ? curbp->b_bname
-                               :(uint8 *)"UNKNOWN source",
+                               :(meUByte *)"UNKNOWN source",
                                ihead);
             ihead = NULL;               /* Reset - never returned */
             break;
@@ -1605,7 +1605,7 @@ quitEarly:
 
     /* Put out end of file indicator. */
     if (status == TRUE)
-        mlwrite (0,(uint8 *)"Printing - Done. %d page(s).", printer.pPageNo);
+        mlwrite (0,(meUByte *)"Printing - Done. %d page(s).", printer.pPageNo);
     return status;
 
 

@@ -38,11 +38,11 @@
  * with a ^G. Used any time a confirmation is required.
  */
 int
-mlCharReply(uint8 *prompt, int mask, uint8 *validList, uint8 *helpStr)
+mlCharReply(meUByte *prompt, int mask, meUByte *validList, meUByte *helpStr)
 {
     int   inpType=0, cc ;
-    uint8 buff[TOKENBUF] ;
-    uint8 *pp=prompt ;
+    meUByte buff[TOKENBUF] ;
+    meUByte *pp=prompt ;
     
     for(;;)
     {
@@ -79,7 +79,7 @@ mlCharReply(uint8 *prompt, int mask, uint8 *validList, uint8 *helpStr)
         }
         else
         {
-            uint8 *ss = execstr ;
+            meUByte *ss = execstr ;
             execstr = token(execstr,buff) ;
             if((buff[0] == '@') && (buff[1] == 'm') && (buff[2] == 'x'))
             {
@@ -103,7 +103,7 @@ mlCharReply(uint8 *prompt, int mask, uint8 *validList, uint8 *helpStr)
             else
             {
                 /* evaluate it */
-                uint8 *res = getval(buff) ;
+                meUByte *res = getval(buff) ;
                 if(res == abortm)
                     return -1 ;
                 cc = *res ;
@@ -111,7 +111,7 @@ mlCharReply(uint8 *prompt, int mask, uint8 *validList, uint8 *helpStr)
         }
         
         if((mask & mlCR_QUOTE_CHAR) &&
-           ((cc = quoteKeyToChar((uint16) cc)) < 0))
+           ((cc = quoteKeyToChar((meUShort) cc)) < 0))
         {
             if(validList == NULL)
                 return -1 ;
@@ -129,8 +129,8 @@ mlCharReply(uint8 *prompt, int mask, uint8 *validList, uint8 *helpStr)
             {
                 if (inpType == 2)
                 {
-                    meGetStringFromKey((uint16) cc,buff) ;
-                    mlwrite(MWCURSOR,(uint8 *)"%s%s",prompt,buff) ;
+                    meGetStringFromKey((meUShort) cc,buff) ;
+                    mlwrite(MWCURSOR,(meUByte *)"%s%s",prompt,buff) ;
                 }
                 return cc ;
             }
@@ -140,16 +140,16 @@ mlCharReply(uint8 *prompt, int mask, uint8 *validList, uint8 *helpStr)
 }
 
 int
-mlyesno(uint8 *prompt)
+mlyesno(meUByte *prompt)
 {
-    uint8 buf[MAXBUF] ;    /* prompt to user */
+    meUByte buf[MAXBUF] ;    /* prompt to user */
     int ret ;
     
     /* build and prompt the user */
     meStrcpy(buf,prompt) ;
     meStrcat(buf," [y/n]? ") ;
 
-    ret = mlCharReply(buf,mlCR_LOWER_CASE,(uint8 *)"yn",NULL) ;
+    ret = mlCharReply(buf,mlCR_LOWER_CASE,(meUByte *)"yn",NULL) ;
     
     if(ret == -1)
         return ctrlg(FALSE,1) ;
@@ -165,7 +165,7 @@ mlyesno(uint8 *prompt)
  */
 
 static int
-cins(uint8 cc, uint8 *buf, int *pos, int *len, int max)
+cins(meUByte cc, meUByte *buf, int *pos, int *len, int max)
 {
     /*
      * Insert a character "c" into the buffer pointed to by "buf" at
@@ -191,7 +191,7 @@ cins(uint8 cc, uint8 *buf, int *pos, int *len, int max)
     else
     {
         /* The character goes in the middle of the buffer. */
-        uint8 *ss, c1, c2 ;
+        meUByte *ss, c1, c2 ;
         
         ss = buf + *pos ;
         c2 = cc ;
@@ -210,7 +210,7 @@ cins(uint8 cc, uint8 *buf, int *pos, int *len, int max)
 }
 
 static void
-cdel(uint8 *buf, int pos, int *len)
+cdel(meUByte *buf, int pos, int *len)
 {
     /*
      * Delete the character at position 'pos' in the buffer, update len.
@@ -227,7 +227,7 @@ cdel(uint8 *buf, int pos, int *len)
 /* len		length of buffer (ie no. of chars in it) */
 /* state	either ERASE or LEAVE		*/
 static void
-fspace(uint8 *buf, int *pos, int *len, int state)
+fspace(meUByte *buf, int *pos, int *len, int state)
 {
     /*
      * Move over or erase spaces in the buffer (depending on the value
@@ -235,7 +235,7 @@ fspace(uint8 *buf, int *pos, int *len, int state)
      * given by "pos", updating the length (ie the number of characters
      * in the buffer).
      */
-    register uint8 c;
+    register meUByte c;
     
     for(;;)
     {
@@ -257,13 +257,13 @@ fspace(uint8 *buf, int *pos, int *len, int state)
 /* len		length of buffer (ie no. of chars in it) */
 /* state	either ERASE or LEAVE		*/
 static void
-bspace(uint8 *buf, int *pos, int *len, int state)
+bspace(meUByte *buf, int *pos, int *len, int state)
 {
     /*
      * Identical to fspace() except that we go backwards instead of
      * forwards.
      */
-    register uint8 c;
+    register meUByte c;
     
     for(;;)
     {
@@ -285,14 +285,14 @@ bspace(uint8 *buf, int *pos, int *len, int state)
 /* len		length of buffer (ie no. of chars in it) */
 /* state	either ERASE or LEAVE		*/
 static void
-fword(uint8 *buf, int *pos, int *len, int state)
+fword(meUByte *buf, int *pos, int *len, int state)
 {
     /*
      * Move forward over a "word", erasing it if "state" is ERASE.
      * The defintion of "word" is very rudimentary. It is considered
      * to be delimited by a space or by the dir char "/" character.
      */
-    register uint8 c;
+    register meUByte c;
     
     for(;;)
     {
@@ -314,12 +314,12 @@ fword(uint8 *buf, int *pos, int *len, int state)
 /* len		length of buffer (ie no. of chars in it) */
 /* state	either ERASE or LEAVE		*/
 static void
-bword(uint8 *buf, int *pos, int *len, int state)
+bword(meUByte *buf, int *pos, int *len, int state)
 {
     /*
      * As for fword() but go backwards to the start, instead of forwards.
      */
-    register uint8 c;
+    register meUByte c;
     
     for(;;)
     {
@@ -372,7 +372,7 @@ bword(uint8 *buf, int *pos, int *len, int state)
 /* cpos           offset into "buf"          */
 /* expChr         0=dont expand unprintables, use ?, 1=expand ?'s */
 void
-mlDisp(uint8 *prompt, uint8 *buf, uint8 *cont, int cpos)
+mlDisp(meUByte *prompt, meUByte *buf, meUByte *cont, int cpos)
 {
     int    len ;               /* offset into current buffer   */
     char   expbuf[RESTSIZ+1];    /* expanded buf                 */
@@ -380,7 +380,7 @@ mlDisp(uint8 *prompt, uint8 *buf, uint8 *cont, int cpos)
     int    promsiz ;
     
     col = -1 ;
-    len = expandexp(-1,buf,RESTSIZ,0,(uint8 *)expbuf,cpos,&col,0) ;
+    len = expandexp(-1,buf,RESTSIZ,0,(meUByte *)expbuf,cpos,&col,0) ;
     if(col < 0)
         col = len ;
     if(cont != NULL)
@@ -428,9 +428,9 @@ mlDisp(uint8 *prompt, uint8 *buf, uint8 *cont, int cpos)
     }
     mlCol = col ;
     if(start >= promsiz)
-        mlwrite(MWUSEMLCOL|MWCURSOR,(uint8 *)"%s%s",(start) ? "$":"",expbuf+start-promsiz) ;
+        mlwrite(MWUSEMLCOL|MWCURSOR,(meUByte *)"%s%s",(start) ? "$":"",expbuf+start-promsiz) ;
     else
-        mlwrite(MWUSEMLCOL|MWCURSOR,(uint8 *)"%s%s%s",(start) ? "$":"",prompt+start,expbuf) ;
+        mlwrite(MWUSEMLCOL|MWCURSOR,(meUByte *)"%s%s%s",(start) ? "$":"",prompt+start,expbuf) ;
     
     /* switch on the status so we save it */
     mlStatus = MLSTATUS_KEEP|MLSTATUS_POSML ;
@@ -441,10 +441,10 @@ mlDisp(uint8 *prompt, uint8 *buf, uint8 *cont, int cpos)
 /*    tgetc:    Get a key from the terminal driver, resolve any keyboard
  *              macro action
  */
-static uint16
+static meUShort
 tgetc(void)
 {
-    uint16 cc ;    /* fetched character */
+    meUShort cc ;    /* fetched character */
 
     /* if we are playing a keyboard macro back, */
     if (kbdmode == PLAY)
@@ -453,14 +453,14 @@ kbd_rep:
         /* if there is some left... */
         if(kbdoff < kbdlen)
         {
-            cc = (uint16) kbdptr[kbdoff++] ;
+            cc = (meUShort) kbdptr[kbdoff++] ;
             if(cc == 0xff)
             {
                 cc = kbdptr[kbdoff++] ;
                 if(cc == 0x02)
                 {
-                    uint8 dd ;    /* fetched character */
-                    cc = ((uint16) kbdptr[kbdoff++]) << 8 ;
+                    meUByte dd ;    /* fetched character */
+                    cc = ((meUShort) kbdptr[kbdoff++]) << 8 ;
                     if(((dd = kbdptr[kbdoff++]) != 0xff) ||
                        ((dd = kbdptr[kbdoff++]) != 0x01))
                         cc |= dd ;
@@ -503,7 +503,7 @@ kbd_rep:
         }
         else
         {
-            uint8 dd ;
+            meUByte dd ;
             /* must store 0xaabb as ff,2,aa,bb
              * also must store 0x00ff as ff,ff & 0x0000 as 0xff01
              * Also 0x??00 stored as ff,2,??,ff,01
@@ -540,16 +540,16 @@ kbd_rep:
 static int
 getprefixchar(int f, int n, int ctlc, int flag)
 {
-    uint8 buf[20] ;
+    meUByte buf[20] ;
     int c ;
 
     if(!(flag & meGETKEY_SILENT))
     {
-        buf[meGetStringFromChar((uint16) ctlc,buf)] = '\0' ;
+        buf[meGetStringFromChar((meUShort) ctlc,buf)] = '\0' ;
         if(f==TRUE)
-            mlwrite(MWCURSOR,(uint8 *)"Arg %d: %s", n, buf);
+            mlwrite(MWCURSOR,(meUByte *)"Arg %d: %s", n, buf);
         else
-            mlwrite(MWCURSOR,(uint8 *)"%s", buf);
+            mlwrite(MWCURSOR,(meUByte *)"%s", buf);
     }
     c = tgetc();
     if(!(c & (ME_SHIFT|ME_CONTROL|ME_ALT|ME_SPECIAL)))
@@ -560,10 +560,10 @@ getprefixchar(int f, int n, int ctlc, int flag)
 /*    GETCMD:    Get a command from the keyboard. Process all applicable
         prefix keys
  */
-uint16
+meUShort
 meGetKeyFromUser(int f, int n, int flag)
 {
-    uint16 cc ;        /* fetched keystroke */
+    meUShort cc ;        /* fetched keystroke */
     int ii ;
     
     if(kbdmode == PLAY)
@@ -581,7 +581,7 @@ meGetKeyFromUser(int f, int n, int flag)
             flag |= meGETKEY_SILENT ;
     }
     if(f && !(flag & meGETKEY_SILENT))
-        mlwrite(MWCURSOR,(uint8 *)"Arg %d:",n);
+        mlwrite(MWCURSOR,(meUByte *)"Arg %d:",n);
 
     /* get initial character */
     cc = tgetc();
@@ -611,7 +611,7 @@ static Fintssi curCmpIFunc ;
 static Fintss  curCmpFunc ;
 
 static int
-getFirstLastPos(int noStr,uint8 **strs, uint8 *str, int option,
+getFirstLastPos(int noStr,meUByte **strs, meUByte *str, int option,
                 int *fstPos, int *lstPos)
 {
     register int nn ;
@@ -650,7 +650,7 @@ getFirstLastPos(int noStr,uint8 **strs, uint8 *str, int option,
          * usually . .. and backup files (*~) etc.
          */
         register int ff, ll, ii=1, len, fil ;
-        register uint8 *ss, *fi, cc ;
+        register meUByte *ss, *fi, cc ;
         ff = *fstPos ;
         ll = *lstPos ;
         
@@ -691,11 +691,11 @@ getFirstLastPos(int noStr,uint8 **strs, uint8 *str, int option,
 }
 
 int
-createBuffList(uint8 ***listPtr, int noHidden)
+createBuffList(meUByte ***listPtr, int noHidden)
 {
     register BUFFER *bp = bheadp ;    /* index buffer pointer    */
     register int     i, n ;
-    register uint8 **list ;
+    register meUByte **list ;
 
     n = 0 ;
     while(bp != NULL)
@@ -704,7 +704,7 @@ createBuffList(uint8 ***listPtr, int noHidden)
             n++;
         bp = bp->b_bufp ;
     }
-    if((list = (uint8 **) meMalloc(sizeof(uint8 *) * n)) == NULL)
+    if((list = (meUByte **) meMalloc(sizeof(meUByte *) * n)) == NULL)
         return 0 ;
     bp = bheadp ;
     for(i=0 ; i<n ; )
@@ -718,15 +718,15 @@ createBuffList(uint8 ***listPtr, int noHidden)
 }
     
 int
-createVarList(uint8 ***listPtr)
+createVarList(meUByte ***listPtr)
 {
     meVARIABLE *vptr;     	/* User variable pointer */
     int     ii, nn ;
-    uint8  **list ;
+    meUByte  **list ;
 
     nn = NEVARS + usrVarList.count + curbp->varList.count ;
     
-    if((list = (uint8 **) meMalloc(sizeof(uint8 *) * nn)) == NULL)
+    if((list = (meUByte **) meMalloc(sizeof(meUByte *) * nn)) == NULL)
         return 0 ;
     *listPtr = list ;
     
@@ -755,13 +755,13 @@ createVarList(uint8 ***listPtr)
 }
     
 int
-createCommList(uint8 ***listPtr, int noHidden)
+createCommList(meUByte ***listPtr, int noHidden)
 {
     meCMD *cmd ;
     register int ii ;
-    register uint8 **list ;
+    register meUByte **list ;
     
-    if((list = meMalloc(sizeof(uint8 *) * (cmdTableSize))) == NULL)
+    if((list = meMalloc(sizeof(meUByte *) * (cmdTableSize))) == NULL)
         return 0 ;
     ii = 0 ;
     cmd = cmdHead ;
@@ -778,17 +778,17 @@ createCommList(uint8 ***listPtr, int noHidden)
 
 
 #if LCLBIND
-uint8 oldUseMlBinds ;
+meUByte oldUseMlBinds ;
 #endif
-uint8 **mlgsStrList ;
+meUByte **mlgsStrList ;
 int    mlgsStrListSize ;
 static WINDOW *mlgsOldCwp=NULL ;
-static int32   mlgsSingWind=0 ;
+static meInt   mlgsSingWind=0 ;
 static int     mlgsCursorState=0 ;
-static uint8  *mlgsStoreBuf=NULL ;
+static meUByte  *mlgsStoreBuf=NULL ;
 
 static void
-mlfreeList(int option, int noStrs, uint8 **strList)
+mlfreeList(int option, int noStrs, meUByte **strList)
 {
     mlStatus = MLSTATUS_CLEAR ;
 #if LCLBIND
@@ -834,7 +834,7 @@ mlfreeList(int option, int noStrs, uint8 **strList)
 }
 
 static int
-mlHandleMouse(uint8 *inpBuf, int inpBufSz, int compOff)
+mlHandleMouse(meUByte *inpBuf, int inpBufSz, int compOff)
 {
     int row, col ;
     
@@ -849,7 +849,7 @@ mlHandleMouse(uint8 *inpBuf, int inpBufSz, int compOff)
             {
                 int ii ;
                 for (ii = 0; ii <= (WCVSBML-WCVSBSPLIT); ii++)
-                    if (mouse_Y < (int16) curwp->w_sbpos[ii])
+                    if (mouse_Y < (meShort) curwp->w_sbpos[ii])
                         break;
                 if(ii == (WCVSBUP-WCVSBSPLIT))
                     scrollUp(1,1) ;
@@ -911,10 +911,10 @@ mlHandleMouse(uint8 *inpBuf, int inpBufSz, int compOff)
     return 0 ;
 }
 
-uint8 *compSole     = (uint8 *)" [Sole completion]" ;
-uint8 *compNoMch    = (uint8 *)" [No match]" ;
-uint8 *compNoExp    = (uint8 *)" [No expansion]" ;
-uint8 *compFailComp = (uint8 *)" [Failed to create]" ;
+meUByte *compSole     = (meUByte *)" [Sole completion]" ;
+meUByte *compNoMch    = (meUByte *)" [No match]" ;
+meUByte *compNoExp    = (meUByte *)" [No expansion]" ;
+meUByte *compFailComp = (meUByte *)" [Failed to create]" ;
 
 #if MEOSD
 #define mlgsDisp(prom,buf,contstr,ipos) \
@@ -929,19 +929,19 @@ uint8 *compFailComp = (uint8 *)" [Failed to create]" ;
 /* buf    - where it all goes at the end of the day          */
 /* nbuf   - amount of space in buffer                        */
 int
-meGetStringFromUser(uint8 *prompt, int option, int defnum, uint8 *buf, int nbuf)
+meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int nbuf)
 {
     register int cc ;
     int     ii ;
     int     ipos ;                      /* input position in buffer */
     int     ilen ;                      /* number of chars in buffer */
     int     cont_flag ;                 /* Continue flag */
-    uint8 **history ;
-    uint8   onHist, numHist, *numPtr ;
-    uint8  *defaultStr ;
-    uint8   prom[MAXBUF] ;
-    uint8   ch, **strList ;
-    uint8  *contstr=NULL ;
+    meUByte **history ;
+    meUByte   onHist, numHist, *numPtr ;
+    meUByte  *defaultStr ;
+    meUByte   prom[MAXBUF] ;
+    meUByte   ch, **strList ;
+    meUByte  *contstr=NULL ;
     int     gotPos=1, fstPos, lstPos, curPos, noStrs ;
     int     changed=1, compOff=0 ;
     
@@ -1004,7 +1004,7 @@ meGetStringFromUser(uint8 *prompt, int option, int defnum, uint8 *buf, int nbuf)
         ilen = meStrlen(buf) ;
         if(mlStatus & MLSTATUS_OSDPOS)
         {
-            uint8 *s1, *s2 ;
+            meUByte *s1, *s2 ;
             s1 = buf ;
             while((--osdRow >= 0) && ((s2 = meStrchr(s1,meNLCHAR)) != NULL))
                 s1 = s2+1 ;
@@ -1036,13 +1036,13 @@ meGetStringFromUser(uint8 *prompt, int option, int defnum, uint8 *buf, int nbuf)
         showCursor(FALSE,1) ;
     for (cont_flag = 1; cont_flag != 0;)
     {
-        uint32 arg ;
+        meUInt arg ;
         int idx ;
         int ff ;
         
         if(option & MLHIDEVAL)
         {
-            uint8 hbuf[MAXBUF] ;
+            meUByte hbuf[MAXBUF] ;
             ff = meStrlen(buf) ;
             meAssert(ff < MAXBUF) ;
             memset(hbuf,'*',ff) ;
@@ -1066,7 +1066,7 @@ meGetStringFromUser(uint8 *prompt, int option, int defnum, uint8 *buf, int nbuf)
         else
             cc = meGetKeyFromUser(FALSE,0,meGETKEY_SILENT) ;
         
-        idx = decode_key((uint16) cc,&arg) ;
+        idx = decode_key((meUShort) cc,&arg) ;
         if(arg)
         {
             ff = 1 ;
@@ -1144,7 +1144,7 @@ meGetStringFromUser(uint8 *prompt, int option, int defnum, uint8 *buf, int nbuf)
 input_expand:
             if(option & MLFILE)
             {
-                uint8 fname[FILEBUF], *base ;
+                meUByte fname[FILEBUF], *base ;
                 
                 pathNameCorrect(buf,PATHNAME_PARTIAL,fname,&base) ;
                 meStrcpy(buf,fname) ;
@@ -1198,7 +1198,7 @@ input_expand:
                         for(ii=fstPos ; ii<lstPos ; ii++)
                             if((strList[ii][ilen-compOff] != ch) &&
                                (((option & MLINSENSCASE) == 0) ||
-                                ((uint8) toLower(strList[ii][ilen-compOff]) != (uint8) toLower(ch))))
+                                ((meUByte) toLower(strList[ii][ilen-compOff]) != (meUByte) toLower(ch))))
                                 break ;
                         if(ii != lstPos)
                             break ;
@@ -1216,7 +1216,7 @@ input_expand:
                 contstr = compSole ;
             else
             {
-                uint8 line[150] ;
+                meUByte line[150] ;
                 int len, lwidth ;
                 
                 for(ii=fstPos ; ii<=lstPos ; ii++)
@@ -1247,7 +1247,7 @@ input_expand:
                 curwp->w_marko = lwidth ;
                 for(ii=fstPos ; ii<=lstPos ; ii++)
                 {
-                    uint8 flag ;
+                    meUByte flag ;
                     
                     if(((len= meStrlen(strList[ii])) < lwidth) && (ii<lstPos) &&
                        (((int) meStrlen(strList[ii+1])) < lwidth-1))
@@ -1490,14 +1490,14 @@ mlgs_prevhist:
                 break ;
             }
             while(ii--)
-                if(cins((uint8) cc, buf, &ipos, &ilen, nbuf) == FALSE)
+                if(cins((meUByte) cc, buf, &ipos, &ilen, nbuf) == FALSE)
                     TTbell();
             changed=1 ;
             break;
             
         case CK_OPNLIN:    /* ^O : Insert current line into buffer */
             {
-                register uint8 *p = curwp->w_dotp->l_text;
+                register meUByte *p = curwp->w_dotp->l_text;
                 register int count = curwp->w_dotp->l_used;
                 
                 while(*p && count--)
@@ -1507,7 +1507,7 @@ mlgs_prevhist:
             }
         case CK_YANK:    /* ^Y : insert yank buffer */
             {
-                register uint8 *pp, cy ;
+                register meUByte *pp, cy ;
                 KILL *killp;
                 
 #ifdef _CLIPBRD
@@ -1538,7 +1538,7 @@ mlgs_prevhist:
             
         case CK_INSFLNM:    /* insert file name */
             {
-                register uint8 ch, *p = curbp->b_fname;
+                register meUByte ch, *p = curbp->b_fname;
                 
                 if(p != NULL)
                     while(ii--)
@@ -1642,7 +1642,7 @@ mlgs_prevhist:
             
         case CK_REYANK:    /* M-Y or M-^Y : Yank the current buffername. */
             {
-                register uint8 *p = curbp->b_bname;
+                register meUByte *p = curbp->b_bname;
                 
                 while(*p && cins(*p++, buf, &ipos, &ilen, nbuf))
                     ;
@@ -1727,7 +1727,7 @@ input_addexpand:
             /*
              * And insert it ....
              */
-            if(cins((uint8) cc, buf, &ipos, &ilen, nbuf) == FALSE)
+            if(cins((meUByte) cc, buf, &ipos, &ilen, nbuf) == FALSE)
                 TTbell();
             changed=1 ;
             break;
@@ -1750,7 +1750,7 @@ input_addexpand:
     /* Store the history if it is not disabled. */
     if((option & (MLNOHIST|MLNOSTORE)) == 0)
     {
-        uint8 *ss=mlgsStoreBuf ;
+        meUByte *ss=mlgsStoreBuf ;
         
         /* If the number of history buffers is at it's maximum 
          * then swap out the last history buffer (mlgsStoreBuf is

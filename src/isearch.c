@@ -41,13 +41,13 @@
 
 #if ISRCH
 
-static uint8 isHeadStr[12]="f-isearch: " ;
-static uint8 *statusStr[5]={
-    (uint8 *)" [LOST]",(uint8 *)" [FOUND]",(uint8 *)" [INCOMPLETE]",(uint8 *)" [REGEX ERROR]",(uint8 *)" [SEARCHING]"
+static meUByte isHeadStr[12]="f-isearch: " ;
+static meUByte *statusStr[5]={
+    (meUByte *)" [LOST]",(meUByte *)" [FOUND]",(meUByte *)" [INCOMPLETE]",(meUByte *)" [REGEX ERROR]",(meUByte *)" [SEARCHING]"
 } ;
 
 static int
-isearchGotoEnd(uint8 *patrn, int flags, int histNo, int16 *histLen, SCANNERPOS *histPos)
+isearchGotoEnd(meUByte *patrn, int flags, int histNo, meShort *histLen, SCANNERPOS *histPos)
 {
     if(histLen[histNo] == 0)
         return TRUE ;
@@ -58,8 +58,8 @@ isearchGotoEnd(uint8 *patrn, int flags, int histNo, int16 *histLen, SCANNERPOS *
     {
         LINE *tmpline;
         int   tmpoff;
-        int32 tmplno;
-        int8 cc ;
+        meInt tmplno;
+        meByte cc ;
         tmpline = curwp->w_dotp ;       /* Store the current position*/
         tmpoff  = curwp->w_doto ;       /* incase its not found      */
         tmplno  = curwp->line_no ;
@@ -87,7 +87,7 @@ isearchGotoEnd(uint8 *patrn, int flags, int histNo, int16 *histLen, SCANNERPOS *
     return TRUE ;
 }
 static int
-isearchGotoStart(uint8 *patrn, int flags, int histNo, int16 *histLen, SCANNERPOS *histPos)
+isearchGotoStart(meUByte *patrn, int flags, int histNo, meShort *histLen, SCANNERPOS *histPos)
 {
     if(histLen[histNo] == 0)
         return TRUE ;
@@ -99,7 +99,7 @@ isearchGotoStart(uint8 *patrn, int flags, int histNo, int16 *histLen, SCANNERPOS
         LINE *tmpline;
         int   tmpoff;
         long  tmplno;
-        uint8 cc ;
+        meUByte cc ;
         tmpline = curwp->w_dotp ;       /* Store the current position*/
         tmpoff  = curwp->w_doto ;       /* incase its not found      */
         tmplno  = curwp->line_no ;
@@ -137,7 +137,7 @@ isearchGotoStart(uint8 *patrn, int flags, int histNo, int16 *histLen, SCANNERPOS
  * searches.
  */
 static int
-scanmore(uint8 *patrn, int flags, int histNo, int16 *histLen, SCANNERPOS *histPos)
+scanmore(meUByte *patrn, int flags, int histNo, meShort *histLen, SCANNERPOS *histPos)
 {
     int sts;                            /* search status */
     
@@ -215,18 +215,18 @@ do {                                                                         \
 static int
 isearch(int flags)
 {
-    uint8         status;       /* Search status */
-    uint32        arg;          /* argument */
+    meUByte         status;       /* Search status */
+    meUInt        arg;          /* argument */
     int           cpos;         /* character number in search string */
     int           c;            /* current input character */
     LINE         *tmpline;      /* Tempory storage for wrap searching*/
     int           tmpoff;
-    int32         tmplno;
+    meInt         tmplno;
     SCANNERPOS    histPos[HISTBUFSIZ] ;
-    int16         histLen[HISTBUFSIZ] ;
-    uint8         histStt[HISTBUFSIZ], kbmd=kbdmode ;
-    int16         histNo=0 ;
-    uint8         oldUseMlBinds = useMlBinds ;
+    meShort         histLen[HISTBUFSIZ] ;
+    meUByte         histStt[HISTBUFSIZ], kbmd=kbdmode ;
+    meShort         histNo=0 ;
+    meUByte         oldUseMlBinds = useMlBinds ;
     
     /* Initialize starting conditions */
     useMlBinds = 1 ;                 /* Use the ml-bind-key's             */
@@ -244,8 +244,8 @@ isearch(int flags)
     
     /* ask the user for the text of a pattern */
     isHeadStr[9] = '\0' ;
-    mlwrite(MWCURSOR,(uint8 *)"%s (default [%s]): ",isHeadStr,
-            (numSrchHist==0) ? (uint8 *)"":srchHist[0]) ;
+    mlwrite(MWCURSOR,(meUByte *)"%s (default [%s]): ",isHeadStr,
+            (numSrchHist==0) ? (meUByte *)"":srchHist[0]) ;
     /* switch on the status so we save it */
     mlStatus = MLSTATUS_KEEP|MLSTATUS_POSML ;
     if(meModeTest(curbp->b_mode,MDMAGIC))
@@ -267,7 +267,7 @@ isearch(int flags)
 get_another_key:
     /* Get the first character   */
     c = meGetKeyFromUser (FALSE, 0, meGETKEY_SILENT|meGETKEY_COMMAND);
-    switch(decode_key((uint16) c,&arg))
+    switch(decode_key((meUShort) c,&arg))
     {
     case CK_NEWLIN:                     /* ^M : New line. do other search */
         useMlBinds = oldUseMlBinds ;
@@ -320,7 +320,7 @@ get_another_key:
 
     for(;;)
     {
-        switch(decode_key((uint16) c,&arg))
+        switch(decode_key((meUShort) c,&arg))
         {
         case CK_ABTCMD: /* ^G : Abort input and return */
 #ifdef _IPIPES
@@ -543,7 +543,7 @@ isAddChar:
             if(cpos >= NPAT)                    /* too many chars in string? */
             {                                   /* Yup.  Complain about it   */
                 addHistory(MLSEARCH, srchPat) ;
-                mlwrite(MWABORT,(uint8 *)"[Search string too long!]");
+                mlwrite(MWABORT,(meUByte *)"[Search string too long!]");
                 goto quit_finish ;
             }
             srchPat[cpos] = 0;                  /* null terminate the buffer */

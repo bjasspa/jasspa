@@ -70,8 +70,8 @@ extern "C" {
  */
 typedef union
 {
-    int32 l;                             /* Integer component */
-    uint8 *p;                            /* Character pointer */
+    meInt l;                             /* Integer component */
+    meUByte *p;                            /* Character pointer */
 } LPU;
 
 enum
@@ -95,24 +95,24 @@ typedef struct
     int pLineNumDigits;                 /* Number of line number digits */
     int pNoHeaderLines;                 /* Number of lines needed for header */
     int pNoFooterLines;                 /* Number of lines needed for footer */
-    uint8 **filter;                     /* Character filter table */
+    meUByte **filter;                     /* Character filter table */
     int colorNum;                       /* Number of printer colors */
     int schemeNum;                      /* Number of printer schemes */
-    uint32 *color;                      /* Color table */
+    meUInt *color;                      /* Color table */
     meSTYLE *scheme;                    /* Scheme table */
 } PRINTER;
 
-extern uint8 *printNames[];
-extern uint8 printTypes[];
+extern meUByte *printNames[];
+extern meUByte printTypes[];
 extern PRINTER printer;
 
 #define mePrintColorGetRed(cc)      ((cc & 0x00ff0000) >> 16)
 #define mePrintColorGetGreen(cc)    ((cc & 0x0000ff00) >> 8)
 #define mePrintColorGetBlue(cc)     ((cc & 0x000000ff))
 
-#define mePrintColorSetRed(cc,rr)   (cc | (((uint32) (rr & 0xff)) << 16))
-#define mePrintColorSetGreen(cc,gg) (cc | (((uint32) (gg & 0xff)) << 8))
-#define mePrintColorSetBlue(cc,bb)  (cc | ((uint32) (bb & 0xff)))
+#define mePrintColorSetRed(cc,rr)   (cc | (((meUInt) (rr & 0xff)) << 16))
+#define mePrintColorSetGreen(cc,gg) (cc | (((meUInt) (gg & 0xff)) << 8))
+#define mePrintColorSetBlue(cc,bb)  (cc | ((meUInt) (bb & 0xff)))
 
 #if defined(__cplusplus) || defined(c_plusplus)
 }

@@ -59,13 +59,13 @@ gotoeol(int f, int n)
 int
 eobError(void)
 {
-    return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[end of buffer]");
+    return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[end of buffer]");
 }
 
 int
 bobError(void)
 {
-    return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[top of buffer]");
+    return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[top of buffer]");
 }
 
 int
@@ -149,10 +149,10 @@ forwChar(int f, register int n)
 }
 
 
-uint8
+meUByte
 getCurChar(WINDOW *wp)
 {
-    register uint8 cc ;
+    register meUByte cc ;
     
     if (wp->w_bufp->b_linep == wp->w_dotp)
         cc = '\0';
@@ -276,13 +276,13 @@ int
 gotoLine(int f, int n)
 {
     register int status;	/* status return */
-    uint8 arg[NSTRING];	        /* buffer to hold argument */
-    int32 nlno ;
+    meUByte arg[NSTRING];	        /* buffer to hold argument */
+    meInt nlno ;
     
     /* get an argument if one doesnt exist */
     if ((f == FALSE) || (n == 0))
     {
-        if ((status = meGetString((uint8 *)"Goto line", 0, 0, arg, NSTRING)) != TRUE) 
+        if ((status = meGetString((meUByte *)"Goto line", 0, 0, arg, NSTRING)) != TRUE) 
             return(status);
         
         /*---	Skip white space */
@@ -348,7 +348,7 @@ gotoLine(int f, int n)
     /* force the $scroll variable to no smooth so if the line is off the screen
      * the reframe will center the line */
     {
-        uint8 sscrollFlag ; 
+        meUByte sscrollFlag ; 
         
         sscrollFlag = scrollFlag ;
         scrollFlag = 0 ;
@@ -364,7 +364,7 @@ gotoLine(int f, int n)
  * Goto absolute line is similar to gotoLine except it considers narrowed out
  * text as well */
 int	
-gotoAbsLine(int32 line)
+gotoAbsLine(meInt line)
 {
     int rr ;
     
@@ -568,7 +568,7 @@ setMark(int f, int n)
     curwp->w_markp = curwp->w_dotp;
     curwp->w_marko = curwp->w_doto;
     curwp->mlineno = curwp->line_no;
-    return mlwrite(MWCLEXEC,(uint8 *)"[Mark set]");
+    return mlwrite(MWCLEXEC,(meUByte *)"[Mark set]");
 }
 
 /*
@@ -600,11 +600,11 @@ swapmark(int f, int n)
 }
 
 static LINE  *orgLpp, *orgLnp ;
-static uint16 orgLo ;
-static int32  orgLn ;
+static meUShort orgLo ;
+static meInt  orgLn ;
 
 void
-bufferPosStore(LINE *lp, uint16 lo, int32 ln)
+bufferPosStore(LINE *lp, meUShort lo, meInt ln)
 {
     orgLpp = lback(lp) ;
     orgLnp = lforw(lp) ;
@@ -613,7 +613,7 @@ bufferPosStore(LINE *lp, uint16 lo, int32 ln)
 }
 
 void
-bufferPosUpdate(BUFFER *bp, uint32 noLines, uint16 newOff)
+bufferPosUpdate(BUFFER *bp, meUInt noLines, meUShort newOff)
 {
     WINDOW *wp = wheadp;
     
