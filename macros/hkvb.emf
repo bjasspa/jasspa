@@ -118,7 +118,7 @@ set-variable .fhook-vb.item-list-r3 "Prop \ecB\\2 \\3\ecA"
     0 indent .hilight.vb 1 20
     indent .hilight.vb i "'"
     indent .hilight.vb i "^#"
-    indent .hilight.vb e "\"" "\"" "\\"
+    indent .hilight.vb e "\"" "\"" ""
     indent .hilight.vb N "Declare" -2
     indent .hilight.vb N "Function" 2
     indent .hilight.vb N "Property" 2
@@ -146,8 +146,11 @@ set-variable .fhook-vb.item-list-r3 "Prop \ecB\\2 \\3\ecA"
     indent .hilight.vb O "Exit\\s +Property" 0
     indent .hilight.vb O "Exit\\s +Sub" 0
     indent .hilight.vb N "While" 2
+    indent .hilight.vb N "Do[ \t]+While" 2
+    indent .hilight.vb N "Do" 2
     indent .hilight.vb O "Wend" -2
-    indent .hilight.vb O "loop" -2
+    indent .hilight.vb O "Loop" -2
+    indent .hilight.vb O "Exit\\s +Do" 0
     indent .hilight.vb N "For" 2
     indent .hilight.vb O "Next" -2
     indent .hilight.vb f "^\\w+:" 0
