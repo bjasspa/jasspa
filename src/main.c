@@ -1847,11 +1847,9 @@ handle_stdin:
      */
     sgarbf = meTRUE;			 /* Erase-page clears */
 
-#if MEOPT_CALLBACK
     carg = decode_fncname((meUByte *)"start-up",1) ;
     if(carg >= 0)
         execFunc(carg,meFALSE,1) ;
-#endif
 }
 
 #ifndef NDEBUG
