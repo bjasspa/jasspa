@@ -34,6 +34,8 @@ set-variable .fhook-jsp.command-desc  "|"
     ; add JSP html extensions
     hilight .hilight.jsp 4 "<%--" "%>" ""     .scheme.comment
     hilight .hilight.jsp 4 "<%@" "%>" ""      .scheme.prepro
+    hilight .hilight.jsptag 4 "=\\{[^ \t\n<>]*<%" "%>[^ \t\n>]*" ""  .scheme.string
+    hilight .hilight.jsptag 4 "=\\{\"[^\"\n<]*<%" "%>[^\"]*\"" ""  .scheme.string
     !if &exist .hilight.javascript
         hilight .hilight.jsp        0x80 "<%" .hilight.java .scheme.prepro
         hilight .hilight.jsptag     0x80 "<%" .hilight.java .scheme.prepro

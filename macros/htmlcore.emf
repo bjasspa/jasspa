@@ -49,6 +49,7 @@ set-variable #l2 &ind &spr ".hilight.%stag" #l0
     0 hilight #l1 3 200                      $global-scheme
     hilight #l1 0x80 "<\\w*" #l2             .scheme.keyword
     hilight #l1 4 "</" ">" ""                .scheme.keyword
+    hilight #l1 4 "<!--" "-->" ""            .scheme.comment
     hilight #l1 4 "<!" ">" ""                .scheme.comment
     hilight #l1 0 "&\\w\\w;"                 .scheme.variable
     hilight #l1 0 "&\\w\\w\\w;"              .scheme.variable
@@ -63,7 +64,6 @@ set-variable #l2 &ind &spr ".hilight.%stag" #l0
     0 hilight #l2 1                         $global-scheme
     hilight #l2 4  "=\\{\"" "\"" "\\"       .scheme.string
     hilight #l2 4  "=\\{" "\\}[ \t\n>]" ""  .scheme.string
-    hilight #l2 4  "=\\{[^ \t\n<>]*<%" "%>[^ \t\n>]*" ""  .scheme.string
     hilight #l2 1  "abbr"                   .scheme.operator
     hilight #l2 1  "above"                  .scheme.operator
     hilight #l2 1  "accept-charset"         .scheme.operator

@@ -53,12 +53,12 @@ set-variable .fhook-phps.item-list-r1 "Func \ecB\\1\ecA"
     hilight .hilight.phps 0x80 "\"" .hilight.phpsS .scheme.string
     hilight .hilight.phps 0    "\\W\\{/[^/]*\\}$"  $global-scheme 
     hilight .hilight.phps 20   "/\\*" "*/" ""      .scheme.comment
-    hilight .hilight.phps 2    "^//"               .scheme.comment
-    hilight .hilight.phps 2    ";\\{//"            .scheme.comment
-    hilight .hilight.phps 2    "\\s \\{//"         .scheme.comment
-    hilight .hilight.phps 2    "^#"                .scheme.comment
-    hilight .hilight.phps 2    ";\\{#"             .scheme.comment
-    hilight .hilight.phps 2    "\\s \\{#"          .scheme.comment
+    hilight .hilight.phps 0x1004 "^//" "\\}\\?>" "" .scheme.comment
+    hilight .hilight.phps 0x1004 ";\\{//" "\\}\\?>" "" .scheme.comment
+    hilight .hilight.phps 0x1004 "\\s \\{//" "\\}\\?>" "" .scheme.comment
+    hilight .hilight.phps 0x1004 "^#" "\\}\\?>" "" .scheme.comment
+    hilight .hilight.phps 0x1004 ";\\{#" "\\}\\?>" "" .scheme.comment
+    hilight .hilight.phps 0x1004 "\\s \\{#" "\\}\\?>" "" .scheme.comment
     ; Includes.
     hilight .hilight.phps 2    "^require"          .scheme.prepro
     hilight .hilight.phps 2    "^require_once"     .scheme.prepro
