@@ -323,6 +323,62 @@ define-macro jst-prepare-doc
     !until &seq @wc ""
 !emacro
 
+define-macro jst-to-text
+    set-position "\x83"
+    set-variable #l0 @ml01 "Export to txt file"
+    set-variable #l1 $buffer-bname
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    copy-region
+    !force 0 delete-buffer "*jst-tmp*"
+    find-buffer "*jst-tmp*"
+    yank
+    -1 yank
+    jst-prepare-header
+    ; must use exact
+    1 buffer-mode "exact"
+    ; Find any dividing lines
+    beginning-of-buffer
+    replace-string "^\n___+\n\n?" &spr "\n%n\n\n" $fill-col "_"
+    beginning-of-buffer
+    replace-string "^\n---+\n\n?" &spr "\n%n\n\n" $fill-col "_"
+    ; remove bold *....* labels
+    beginning-of-buffer
+    replace-string "\\([^*]\\)\\*\\([^ \t*]\\([^*\n]\\|\\*\\*\\)*\\)\\*" "\\1\\2"
+    ; remove italic ~....~ labels
+    beginning-of-buffer
+    replace-string "\\([^~]\\)~\\([^ \t~]\\([^~\n]\\|~~\\)*\\)~" "\\1\\2"
+    ; remove underline _...._ labels
+    beginning-of-buffer
+    replace-string "\\([^_]\\)_\\([^ \t_]\\([^_\n]\\|__\\)*\\)_" "\\1\\2"
+    ; remove hilight `....' labels
+    beginning-of-buffer
+    replace-string "\\([^`]\\)`\\(\\([^']\\|''\\)*\\)'" "\\1\\2"
+    ; remove any 'don't format paragraph tokens
+    beginning-of-buffer
+    replace-string "^>\\." "  "
+    beginning-of-buffer
+    replace-string "^>_" "  "
+    beginning-of-buffer
+    replace-string "^>@" "  "
+    ; remove any comment lines
+    beginning-of-buffer
+    replace-string "^>.*\n" ""
+    !if &exi :title
+        beginning-of-buffer
+        insert-string &spr "%n%s\n" &div &sub $fill-col &len :title 2 " " :title
+    !endif
+    !force !force write-buffer #l0 @mna
+    set-variable #l3 $status
+    0 delete-buffer $buffer-bname
+    goto-position "\x83"
+    !if &not #l3
+        !abort
+    !endif
+    ml-write &spr "[Export to %s complete]" #l0
+!emacro
+
 define-macro jst-to-html
     set-position "\x83"
     set-variable #l0 @ml01 "Export to htm file"
@@ -454,9 +510,9 @@ define-macro jst-to-html
     ml-write &spr "[Export to %s complete]" #l0
 !emacro
 
-define-macro jst-to-text
+define-macro jst-to-rtf
     set-position "\x83"
-    set-variable #l0 @ml01 "Export to txt file"
+    set-variable #l0 @ml01 "Export to rtf file"
     set-variable #l1 $buffer-bname
     beginning-of-buffer
     set-mark
@@ -466,40 +522,92 @@ define-macro jst-to-text
     find-buffer "*jst-tmp*"
     yank
     -1 yank
-    jst-prepare-header
-    ; must use exact
-    1 buffer-mode "exact"
-    ; Find any dividing lines
+    jst-prepare-doc
     beginning-of-buffer
-    replace-string "^\n___+\n\n?" &spr "\n%n\n\n" $fill-col "_"
+    replace-string "\\\\" "\\\\\\\\"
     beginning-of-buffer
-    replace-string "^\n---+\n\n?" &spr "\n%n\n\n" $fill-col "_"
-    ; remove bold *....* labels
+    replace-string "{" "\\\\{"
     beginning-of-buffer
-    replace-string "\\([^*]\\)\\*\\([^ \t*]\\([^*\n]\\|\\*\\*\\)*\\)\\*" "\\1\\2"
-    ; remove italic ~....~ labels
+    replace-string "}" "\\\\}"
+    set-variable #l2 0
     beginning-of-buffer
-    replace-string "\\([^~]\\)~\\([^ \t~]\\([^~\n]\\|~~\\)*\\)~" "\\1\\2"
-    ; remove underline _...._ labels
+    !while &not &seq @wc ""
+        set-variable #l3 &len @wl
+        -1 replace-string  "\bLT" ""
+        beginning-of-line
+        set-variable #l4 &len @wl
+        set-variable #l2 &add #l2 &div &sub #l3 #l4 3
+        -1 replace-string  "\blT" ""
+        beginning-of-line
+        set-variable #l4 &sub #l2 &div &sub #l4 &len @wl 3
+        insert-string &spr "\\par\\li%d " &mul #l2 360
+        beginning-of-line
+        forward-line
+        set-variable #l2 #l4
+    !done
     beginning-of-buffer
-    replace-string "\\([^_]\\)_\\([^ \t_]\\([^_\n]\\|__\\)*\\)_" "\\1\\2"
-    ; remove hilight `....' labels
+    replace-string "^.*\bLL.*" "\\\\pard {\\\\shp{\\\\shpleft0\\\\shptop240\\\\shpright9360\\\\shpbottom241\\\\shpbypara}}"
     beginning-of-buffer
-    replace-string "\\([^`]\\)`\\(\\([^']\\|''\\)*\\)'" "\\1\\2"
-    ; remove any 'don't format paragraph tokens
+    replace-string "\bFB" "{\\\\b "
     beginning-of-buffer
-    replace-string "^>\\." "  "
+    replace-string "\bfB" "}"
     beginning-of-buffer
-    replace-string "^>_" "  "
+    replace-string "\bFI" "{\\\\i "
     beginning-of-buffer
-    replace-string "^>@" "  "
-    ; remove any comment lines
+    replace-string "\bfI" "}"
     beginning-of-buffer
-    replace-string "^>.*\n" ""
+    replace-string "\bFU" "{\\\\ul "
+    beginning-of-buffer
+    replace-string "\bfU" "}"
+    beginning-of-buffer
+    replace-string "\bFH" "{\\\\b\\\\i "
+    beginning-of-buffer
+    replace-string "\bfH" "}"
+    beginning-of-buffer
+    replace-string "\bLP" ""
+    beginning-of-buffer
+    replace-string "\blP" ""
+    beginning-of-buffer
+    replace-string "\bLC" "{\\\\f1 "
+    beginning-of-buffer
+    replace-string "\blC" "}"
+    beginning-of-buffer
+    replace-string "\bBE" ""
+    beginning-of-buffer
+    replace-string "\bbE" ""
+    beginning-of-buffer
+    replace-string "\bb[DNAaRr]" ""
+    beginning-of-buffer
+    replace-string "\bBD" "{\\\\f2\\\\'b7}\\\\tab "
+    beginning-of-buffer
+    replace-string "\bB[AaRrN]\\(.\\)\\([^\b]*\\)\bB)" "\\2\\1\\\\tab "
+    beginning-of-buffer
+    replace-string "\bS2" "{\\\\fs36\\\\b "
+    beginning-of-buffer
+    replace-string "\bs2" "}"
+    beginning-of-buffer
+    replace-string "\bS3" "{\\\\fs28\\\\b "
+    beginning-of-buffer
+    replace-string "\bs3" "}"
+    beginning-of-buffer
+    insert-string "{\\rtf1\\ansi\\ansicpg1252\\deff0\\deftab360\\viewscale100\n"
+    insert-string "{\\fonttbl{\\f0\\froman Times New Roman;}{\\f1\\fmodern Courier New;}{\\f2\\froman\\fcharset2 Symbol;}}\n"
+    insert-string "{\\colortbl\\red0\\green0\\blue0;}\n{\\info"
     !if &exi :title
-        beginning-of-buffer
-        insert-string &spr "%n%s\n" &div &sub $fill-col &len :title 2 " " :title
+        insert-string &spr "{\\title %s}" :title
+    !else
+        insert-string &spr "{\\title %s}" #l1
     !endif
+    !if &exi :author
+        insert-string &spr "{\\author %s}" :author
+    !endif
+    insert-string "}\n"
+    !if &exi :title
+        insert-string &spr "\\f0\\fs48 %s\n\\par" :title
+    !endif
+    insert-string "\\f0\\fs20 "
+    end-of-buffer
+    insert-string "}"
     !force !force write-buffer #l0 @mna
     set-variable #l3 $status
     0 delete-buffer $buffer-bname
@@ -509,4 +617,5 @@ define-macro jst-to-text
     !endif
     ml-write &spr "[Export to %s complete]" #l0
 !emacro
+
 
