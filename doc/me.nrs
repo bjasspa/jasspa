@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.21 2004-03-01 21:12:07 jon Exp $
+.Id $Id: me.nrs,v 2.22 2004-03-11 00:49:47 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -3141,6 +3141,184 @@ New key bindings for
 supports   new   binding  for   next/previous   file,   history   search  uses
 \fBup\fR/\fBdown\fR      \fBC-p\fR/\fBC-n\fR,      prompted     by     Gabriel
 Tabares-Barreiro..
+.BU
+.Ht user-setup 3
+mouse button selection fixed.
+.BU
+Fixed re-style for C/C++ comments in vertical alignment.
+.BU
+XML template extended to include javascript.
+.BU
+New user setup.
+.BU
+Added 
+.Ht %cvs-com 5
+variable to define the CVS command.
+.BU
+Corrected osf1, openBSD and zaraus emf files.
+.BU
+Reworked all user defined defined  directory save locations, ftp, spell, etc..
+.BU
+.Ht user-setup 3
+changed  name to  "Rebind  Home Keys" for  re-binding  of home and end keys to
+start/end  of line.  Removed  "C-v"  binding  that  existed with old "MS keys"
+label.
+.BU
+Re-worked Microsoft Windows 
+.Ht me32.ini 8
+file specification.  Order revised and lookup simplified.
+.BU
+Added template support for XML. Thanks to Dr. Detlef Groth.
+.BU
+Fixes for tool-bar Buffer Item List update problem. Thanks to Dr.
+Detlef Groth.
+.BU
+RC4 - Release Candidate 4 - MicroEmacs '04
+.BU
+Corrected  UNIX jasspa tree search when  executable is in CWD and
+there is no executable path.                          
+.BU
+Fixed 
+.Ht me 1 
+\fB-n\fR  command line option to a console  build causes a option  failure and
+the executable does not run.
+.BU
+Fix   subtle   ftp  bug  with  alias  ftp   addressed.   Create  an  ftp  site
+"\fCftp://test/\fR"  say with  user name foo and  passwd  bar and then load in
+"\fCftp://test/dir1/\fR"   the   buffer   file  name  is   correctly   set  as
+"\fCftp://test/dir1/\fR"  but the '\fIDirectory listing of:\fR' line is set to
+"\fCftp://foo@test/dir1/\fR". Firstly the user may wish the 'foo' to be hidden
+but secondly with the  introduction  of being able to click on the  'Directory
+listing of:' line this has introduced a subtle inefficiency/bug, if I click on
+the    '\fIfoo@test\fR'    ME   will    load    "\fCftp://foo@test/\fR"    not
+"\fCftp://test/\fR"  which to ME is a completely  different  file. This can in
+turn lead to "\fCftp://foo@test/dir1/\fR"  being loaded so you can end up with
+2 copies of every dir being loaded! The fix is to make the 'Directory  listing
+of:' line the same, i.e. "\fCftp://test/dir1/\fR"
+.BU
+Fixed. On unix,  find-file  of a  symbolic  link which  points to a  directory
+results in a bad dir  listing.  The list of files is correct but the stats are
+all wrong (found on sunos 5.8).
+.BU
+Fixed. On UNIX only the 
+.Ht $progname 5
+may  not be  fully  expanded  (has  just  "me")  which  may  lead  to a  ctags
+generation error and an alternate fix to 
+.Ht $search-path 5 .
+.BU
+Fixed toolbar  Directory  File List does not contain "\fC../\fR" - UNIX
+only.
+.BU
+Documented the create/delete/next-frame keys.
+.BU
+Corrected  UNIX  ishell  operation  when "su" to another  user.  Locking up or
+generally behaving badly (termio not initialized). Affects all UNIX platforms.
+.BU             
+PHP script can be started with '<?' tag in a php file.
+.BU
+Fixed reframe  cvs-console better so the exit status can be easily seen from a
+small window.
+.BU
+Recognize  \fC-*- makefile -*-\fR and \fC-*- sh -*-\fR.
+.BU
+Added .psf template for HP-UX depot product file specification.
+.BU
+Added .spec template for RedHat RPM package file specification.
+.BU
+Fixed   bottom   Toolbar   window   grows  when  CVS  is  opened,
+.Ht change-window-depth 2 
+does not respect bit 2 of 
+.Ht $window-flags 5 .
+.BU
+Fixed.  build.bat   -l  options  do  not  work  in  standard
+cmd/command as there use 4DOS '>>&'  extension.  Changed to using
+2>&1 which works on cmd & 4nt but breaks 4Dos and command.
+.BU
+Fixed. CVS status of  directories  is not shown. Also add 'b' and
+\'o' file type flags.
+.BU
+Fixed.  '2   
+.Ht  popup-window 2 '
+does not work on an XTerm, no implementation in function meFrameXTermMakeCur. 
+.BU
+Fixed. Need some way of opening the right mouse button menu using
+a key. Also need so  termcap  bindings  to open main and  context
+menus.  Created new  context-menu  command, bound to S-f1 and the
+windows  'menu' key (aka windows) and created  binds to open main
+menu (esc =) and context menu (esc +) on termcap platforms.
+.BU
+Add 'f5' refresh binding to a dir list buffer.
+.BU
+Added 'Invert Selection' to context menu.
+.BU 
+Mouse wheel operation fixed. Added new mouse-wup-scroll  commands
+that should be used instead.
+.BU
+Add   new   
+.Ht narrow-search-forward 3
+and
+.Ht narrow-search-backward 3 
+commands.             
+.BU
+Fixed UNIX signal lock  synchronization,  solves  problems  with read  failing
+following FTP or HTTP command. 
+.BU
+CVS directory listing file loss solved.  Differences  between CVS command line
+operations and directory list  operations  resolved, both now produce the same
+results.
+.BU
+Fixed. Executing 'me' (user-setup -> Current) breaks  auto-spell  until a main
+spell command (spell-word or spell-buffer) is executed.
+.BU
+Fixed. Calender day is off by one when going backwards to before 2004.
+.BU
+Add <> buttons to toolbar mode lines to scroll left and right.            
+.BU
+Add new buffer tab list  toolbar tool for rapid access to buffers via a top or
+bottom toolbar.
+.BU
+Add new 'narrow out unhilighted lines' feature.
+.BU
+Deleted  "cygnus.emf"  added  "cygwin.emf" for cygwin BASH shell support under
+Windows.  Corrected  the  shell  operation  with  macro  layer  for  echo  and
+completion.
+.BU
+.Ht ipipe-shell-command 2
+includes  additional  flag  to run in  "raw  mode"  where  the  buffer  is not
+annotated and wrap is disabled.  Additional argument added to command to allow
+the 
+.Ht $buffer-ipipe 5
+macro to be defined when the pipe is defined. Corrected operation of 
+.Ht pipe-shell-command 2
+where \fIipipe\fR  automatically  degrades to a \fIpipe\fR  (Windows only), if
+degraded then the 
+.Ht $buffer-ipipe 5
+macro is still invoked on completion.
+.BU
+.Ht narrow-search-forward 3
+bound  to "C-c s",  
+.Ht narrow-search-backward 3 
+bound to "C-c r".
+.BU 
+CVS  operates   asynchronously  using  ipipes.  Refresh  problems
+resolved.
+.BU
+Support the 'r' flag in  ".fhook-XXX.comment"  flag field. Causes
+the key  binding to "esc-o" and "esc-q" to restyle  the  comment.
+All templates updated to include the flag where appropriate. See
+.Ht buffer-init 3 .
+.BU
+Support  for  multiple   comment  styles  in  the  same  language
+template.   Additional   comment   styles  are   defined  in  the
+"hkXXX.emf" file with the syntax ".fhook-XXX.comment-N" where "N"
+is an  integer  starting  for 1 to n,  the  number  of  different
+comment styles. Templates  updated to use multiple comment styles
+where appropriate (C, C++ and SQL).    
+.BU
+Fix to graphical diff (see 
+.Ht gdiff 3 ).
+Occasions  where all changes had been  accepted  and the changes  could not be
+saved. gdiff incorrectly prompted user to accept all changes first.
 .BE 0
 .SS "Work In Progress or Planned"
 Development  of  \*(mE  is an  on-going  process,  follows  is a list  of work
