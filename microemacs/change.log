@@ -4,22 +4,30 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <041002.1344>
+>  Last Modified : <041015.0851>
 >
-    
+    [041014] Within OSD, fixed spelling mistake. Loose -> Lose
+
+    [041014] Fixed delete-hilight-lines failure when buffer file has changed.
+
+    [041009] Fixed  osd  entry  scheme as the  cursor  was not  visible  in MS
+             Dev-Studio Colors.
+
+    [041009] Added Wiki language template
+
     [041002] Added X-Windows drag and drop support using xdnd.
-    
+
     [040930] Added HTML, XML and SGML close bracket auto expansion.
 
     [040930] Added XML and HTML verification macro. Added XML utilities macros
              to allow next and  previous tag to be matched. The XML  utilities
              are also used by SGML.
-    
+
     [040930] Added  xxxx-pre-expand-abbrev  hook so that  macros may add their
-             own expansion methods. 
-    
+             own expansion methods.
+
     [040917] Added <...> as supported fences.
-    
+
     [040917] Fixed the -1 add-next-line ignore line feature.
 
     [040915] cvs-add  looks for a Tags file in the CVS  directory and sets the
@@ -31,9 +39,9 @@
              option to be used with %cvs-com.
 
     [040828] About page includes the century in the date (suggested by -Th)
-    
+
     [040824] Fix for man page hyper-link when includes -/./_ characters.
-    
+
     [040814] Linux manual page formatting fixes.
 
 Minor Patch - July 2004
@@ -41,15 +49,15 @@ Minor Patch - July 2004
     [040728] Released patches.
 
     [040728] Corrected Linux kernel 2.6 pty allocation.
-    
-    [040630] Linux manual page formatting fixes. 
-    
+
+    [040630] Linux manual page formatting fixes.
+
     [040518] Comment  definition  corrections  for C, C++  and  java,  notable
              doxygen comment formation omitted.
 
     [040518] Corrected block comment  formatting, adding an extra space at the
              end of the comment.
-    
+
 7th Release - March 2004
 
     [040326] Release wrapped - public release tag is "20040301" for executable
@@ -67,7 +75,7 @@ Minor Patch - July 2004
 
     [040326] Added  "filetype"  macro to  determine  the file type of  MS-DOS,
              Windows or UNIX.
-    
+
     [040322] $mouse  variables  configured under console modes to allow pseudo
              mouse operations to be performed.
 
