@@ -29,7 +29,7 @@
 .\"
 .\"***************************************************************************
 .\"
-.Id $Id: m2nar006.2,v 1.1.1.1 2000-07-25 22:03:59 jon Exp $
+.Id $Id: m2nar006.2,v 1.2 2000-10-09 22:42:05 jon Exp $
 .Im MicroEmacs search
 .so me.tni
 .TH "RegularExpressions" 2
@@ -340,8 +340,31 @@ whitespace (which can be a newline) by either '\fC-\fR' or a space character.
 \fC\\SC\fR
 .\"
 matches any character whose syntax is not \fCC\fR.
-.LP
+.TP
+\fC\\{N,M\\}\fR
+.\"
+Matches an integer  number of the previous item, where \fCN\fR and \fCM\fR are
+integer constants interpreted as follows:-
+.RS
+.TP
+\fC\\{N\\}\fR
+.\"
+The preceeding item is matched exactly \fCN\fR times.
+.TP
+\fC\\{N,\\}\fR
+The preceeding item is matched \fCN\fR or more times.
+.TP
+\fC\\{N,M\\}\fR
+.\"
+The  preceeding  item is  matched  at least  \fCN\fR  times, but no more than
+\fCM\fR times.
+.TP
+\fC\\{,M\\}\fR
+.\"
+The preceeding item is optional and is matched at most \fCM\fR times.
 .RE
+.RE
+.LP
 The constructs  that pertain to words and syntax are controlled by the setting
 of the syntax table.
 .SS "Syntax of Replacement Expressions"
@@ -390,6 +413,29 @@ mode. When  \fIexact\fR  mode is enabled  (default) the then searches are case
 sensitive; disabled then case is ignored. The
 .Ht exact 2m
 mode is set on a per-buffer basis.
+.SH "NOTES"
+The  search  engine  searches  for the  longest  string  that  matches a given
+pattern, the longest  pattern is  sometimes  the pattern  that is not actually
+required.  For instance,  consider  searching  for an  HTML  bracket  set.  The
+simplest search is:-
+.CS
+M-x search-forward "<.*>"
+.CE
+Unfortunately, this pattern is not specific enough, given an HTML line:-
+.CS
+<a href="www.jasspa.com">Jasspa Site</a>
+.CE
+Then the pattern  matched is actually  the whole line as the \fC.*\fR  matches
+everything  to the last  \fC>\fR,  this is the longest  string. To rectify the
+pattern then we must be more  specific, the correct  search  pattern to use in
+this instance is:-
+.CS
+M-x search-forward "<[^>]*>"
+.CE
+In this case we match any  character  excluding  the closing  character,  this
+guarantees that we always find the shortest string match. A search of our HTML
+line   locates   two   separate    instances   of   the   regular   expression
+\fC<a\ href="www.jasspa.com">\fR and \fC</a>\fR.
 .SH "SEE ALSO"
 .na
 .Ht search-forward 2 ,

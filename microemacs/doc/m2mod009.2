@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m2mod009.2,v 1.1.1.1 2000-07-25 22:03:58 jon Exp $
+.Id $Id: m2mod009.2,v 1.2 2000-10-09 22:42:05 jon Exp $
 .Im MicroEmacs modes
 .so me.tni
 .TH magic 2m
@@ -26,7 +26,8 @@ when using the search commands (note that they also affect
 commands).
 .PP
 The  symbols  that have  special  meaning in magic mode are \fC^\fR,  \fC$\fR,
-\fC.\fR, \fC\\|\fR, \fC*\fR, \fC[\fR \fC]\fR, \fC\\(\fR \fC\\)\fR, and \fC\\\fR.
+\fC.\fR, \fC\\|\fR, \fC*\fR, \fC[\fR \fC]\fR, \fC\\(\fR  \fC\\)\fR,  \fC\\{\fR
+\fC\\}\fR and \fC\\\fR.
 .PP
 The characters \fC^\fR and \fC$\fR fix the search pattern to the beginning and
 end of line,  respectively. The \fC^\fR character must appear at the beginning
@@ -87,6 +88,12 @@ The \fC?\fR  character  provides a simple zero or one  occurrence  test of the
 previous  character e.g. "\fCca?r\fR"  matches  "\fCcr\fR" and "\fCcar\fR", it
 will not match "\fCcaar\fR".
 .PP
+Where a  previous  item has a range of  repetitions  then the  \fC\\{N,M\\}\fR
+syntax  may be used to  denote  the  minimum  and  maximum  iterations  of the
+previous  item. Where a set quantity of repetitions is required then the simpler
+syntax  of  \fC\\{N\\}\fR  may  be  used.  i.e.   "\fCca\\{2\\}r\fR"   matches
+"\fCcaar\fR", "\fCca\\{2,3\\}r\fR" matches "\fCcaar\fR" and "\fCcaaar\fR".
+.PP
 The escape character  \fC\\\fR is for those times when you want to be in magic
 mode,  but  also  want  to use a  regular  expression  character  to be just a
 character. It turns off the special  meaning of the character. So a search for
@@ -117,18 +124,23 @@ Anchor search at end of line
 .IP \fB.\fR
 Match any character except \fC<NL>\fR
 .IP \fB*\fR
-Match zero or more occurrences of the preceding character
+Match zero or more occurrences of the preceding item.
 .IP \fB\\\\|\fR
 Match either/or i.e.  \fCcar\\|bike\fR  matches the work \fCcar\fR and matches
 the word \fCbike\fR.
 .IP \fB+\fR
-Match one or more occurrences of the preceding character
+Match one or more occurrences of the preceding item.
 .IP \fB?\fR
-Match zero or one occurrences of the previous character
+Match zero or one occurrences of the preceeding item.
 .IP \fB[]\fR
 Match a class of characters (\fC[a-z]\fR would be all alphabetics)
 .IP \fB\\\\\fR
 Take next literally
+.IP "\fB\\\\{\|\fIN\fR\|\fB,\fR\|\fIM\fR\fB\|\\\\}\fR"
+Match a minimum of \fIN\fR occurrences and maximum of \fIM\fR occurrences of the
+preceeding item.
+.IP "\fB\\\\{\|\fIN\fR\|\fB\\\\}\fR"
+Match a \fIN\fR occurrences of the preceeding item.
 .IP \fB\\\\(...\\\\)\fR
 Delimit  pattern to replicate in replace  string. Max of 9 allowed.  Called in
 replace  string with  \fC\\1\fR,..,\fC\\9\fR.  1 being 1st etc.  \fC\\0\fR  or
