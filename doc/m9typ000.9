@@ -29,7 +29,7 @@
 .\"
 .\"***************************************************************************
 .\"
-.Id $Id: m9typ000.9,v 1.1.1.1 2000-07-25 22:04:08 jon Exp $
+.Id $Id: m9typ000.9,v 1.2 2000-10-09 22:42:06 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH c 9
@@ -111,14 +111,26 @@ and
 are available to reformat  (re-layout) selected sections of the buffer, or the
 whole buffer, respectively.
 .IP
-Comments  may be formatted  using  \fC\*eo\fR,  which  reformats  the  comments
+Comments  may be formatted  using  \fC\*eo\fR,  which  reformats  the comments
 according  to  the  current  fill  paragraph.  If  a  comment  commences  with
-\fC/***...\fR then the comment is automatically formatted to a box.
+\fC/***...\fR  then the comment is  automatically  formatted  to a box. If the
+comment  commentces  with  \fC/**\fR  then  the  comment  is  assumed  to be a
+\fIJava\fR \fIDoc\fR comment.
 .IP "\fBTags\fR"
 A C-tags file may be generated within the editor using the \fBTools\fR \->
 \fBC-Tools\fR \-> \fBCreate Tag File\fR.
 .Ht find-tag 2
 takes the user to the file using the tag information.
+.IP
+On invoking  the tag  generator  then the user is presented  with a dialog box
+which specifies the generation  option of the tags file. The base directory of
+the tags file search and tagging options may be specified to locate all of the
+definitions within the code space.
+.IP
+The  \fBtags\fR  file is  extremely  useful  where  the user is  dealing  with
+inherited  source  code  spread over  multiple  directories.  Generation  of a
+recursive  tag file with all  searching  options  enabled  allows labels to be
+located extremely rapidly (certainly faster than IDE environments).
 .IP "\fBFolding and Information Hiding\fR"
 Generic  folding is enabled  within the C and C++ files. The folds occur about
 braces \fB{\fR...\fB}\fR located on the left-hand margin.

@@ -7,7 +7,7 @@
 #
 # Author      : Jon Green
 # Created     : 22nd February 1997
-# Last Edited : <000703.2210>
+# Last Edited : <001009.2330>
 #
 # History     : JG  220297 Original  Constructed from emacssrc
 #
@@ -190,8 +190,9 @@ OSD3_000=	$(DOCDIR)m3osd000.3 $(DOCDIR)m3osd001.3 $(DOCDIR)m3osd002.3\
 
 FCL3_000=	$(DOCDIR)m3fcl001.3 $(DOCDIR)m3fcl002.3 $(DOCDIR)m3fcl003.3\
 		$(DOCDIR)m3fcl004.3 $(DOCDIR)m3fcl005.3 $(DOCDIR)m3fcl006.3\
-		$(DOCDIR)m3fcl007.3 $(DOCDIR)m3fcl008.3 $(DOCDIR)m3fcl009.3\
-		$(DOCDIR)m3fcl010.3
+		$(DOCDIR)m3fcl007.3 $(DOCDIR)m3fcl008.3 $(DOCDIR)m3fcl009.3
+
+FCL3_010=	$(DOCDIR)m3fcl010.3 $(DOCDIR)m3fcl011.3
 
 FIL4_000=	$(DOCDIR)m4fil001.4 $(DOCDIR)m4fil002.4 $(DOCDIR)m4fil003.4\
 		$(DOCDIR)m4fil004.4 $(DOCDIR)m4fil005.4 $(DOCDIR)m4fil006.4\
@@ -277,7 +278,8 @@ TEMPSMS	=	cmd2_000.sm	cmd2_010.sm	cmd2_020.sm	cmd2_030.sm \
 		mod2_000.sm	mod2_010.sm	mod2_020.sm	mod2_030.sm \
 		mac3_000.sm	mac3_010.sm	mac3_020.sm	mac3_030.sm \
 		mac3_040.sm	mac3_050.sm \
-		osd3_000.sm 	fcl3_000.sm \
+		osd3_000.sm \
+		fcl3_000.sm	fcl3_010.sm \
 		fil4_000.sm	fil4_010.sm	fil4_020.sm	fil4_030.sm \
 		var5_000.sm	var5_010.sm	var5_020.sm	var5_030.sm \
 		var5_040.sm	var5_050.sm	var5_060.sm	var5_070.sm \
@@ -374,6 +376,8 @@ osd3_000.sm:	$(OSD3_000)
 
 fcl3_000.sm:	$(FCL_000)
 	$(SUPERMAN) -o $@ $(FCL3_000)
+fcl3_010.sm:	$(FCL_010)
+	$(SUPERMAN) -o $@ $(FCL3_010)
 
 fil4_000.sm:	$(FIL4_000)
 	$(SUPERMAN) -o $@ $(FIL4_000)

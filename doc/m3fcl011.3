@@ -6,7 +6,7 @@
 .\"
 .\"  System        :
 .\"  Module        :
-.\"  Object Name   : m3fcl004.3
+.\"  Object Name   : m3fcl011.3
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Jul 5 21:40:07 1999
 .\"  Last Modified : <000719.1013>
@@ -29,21 +29,21 @@
 .\"
 .\"***************************************************************************
 .\"
-.Id $Id: m3fcl004.3,v 1.2 2000-10-09 22:42:05 jon Exp $
+.Id $Id: m3fcl011.3,v 1.1 2000-10-09 22:42:05 jon Exp $
 .Im MicroEmacs filter
 .so me.tni
-.TH ctags 3f
-.XI ctags - "Generate a C tags file"
+.TH javatags 3f
+.XI javatags - "Generate a C tags file from Java sources"
 .SH NAME
-ctags \- Generate a C tags file
+javatags \- Generate a C tags file from Java sources.
 .Me $a
 .SH SYNOPSIS
 .na
-\fBme\fR "@ctags" [\fI-v%tag-option=<flags>\fR] [\fIfiles\fR]
+\fBme\fR "@javatags" [\fI-v%tag-option=<flags>\fR] [\fIfiles\fR]
 .ad
 .SH DESCRIPTION
-The start-up file  \fCctags.emf\fR  may be invoked from the command line to
-generate a \fBtags\fR file for C and C++ source and header files.
+The start-up file  \fCjavatags.emf\fR  may be invoked from the command line to
+generate a \fBtags\fR file for java source files.
 .PP
 Given a list of  \fIfiles\fR  a tags file  \fCtags\fR  is  generated  in the
 current directory, which may be used by the 
@@ -51,10 +51,10 @@ current directory, which may be used by the
 command. This is a good  alternative  on Microsoft  platforms  where a utility
 such as 
 .Hr ctags 1 
-is not typically  available. If no \fIfiles\fR  are specified the default file
-list is "\fC./\fR", i.e. process the current directory. If a directory name is
-given (such as the default  "\fC./\fR")  all C and C++ source and header files
-within the directory will be processed. 
+is not  typically  available  to process  Java  files. If no  \fIfiles\fR  are
+specified  the  default  file list is  "\fC./\fR",  i.e.  process  the current
+directory. If a directory  name is given (such as the default  "\fC./\fR") all
+Java source files within the directory will be processed.
 .PP
 The value of variable  \fB%tag-option\fR is used to control the tag generation
 process,  its value  \fI<flags>\fR  can  contain  any number of the  following
@@ -73,11 +73,8 @@ will also be processed.
 .IP \fCv\fR
 Add  global variables  to  the  tag  file.  (i.e.  variables  marked  with
 \fIextern\fR).
-.IP \fCe\fR
-Add enumerated variables to the tag file (i.e. \fIenum\fR members).
 .IP \fCs\fR
-Add structure, type definitions and classes to the tag file (i.e. \fIstuct\fR,
-\fItypedef\fR and \fIclass\fR).
+Add classes definitions to the tag file (i.e. \fIclass\fR).
 .PP
 The generated tags file includes \fC#define\fR and C++ class names.
 .SH NOTES
@@ -87,27 +84,27 @@ This function is invoked from menu
 .LP
 when the user requests a tags file to be generated.
 .PP
-The user setup file  "\fCmyctags.emf\fR" is executed by ctags during start-up,
-this file can be used to over-ride  any of the ctags  configuration  variables
-(see below).
+The user setup file  "\fCmyjavatags.emf\fR"  is  executed  by javatags  during
+start-up, this file can be used to over-ride any of the javatags configuration
+variables (see below).
 .PP
-The  following  variables  are set  within  "\fCctags.emf\fR"  and are used to
+The following  variables are set within  "\fCjavatags.emf\fR"  and are used to
 control the process:-
 .IP \fB%tag-option\fR
 Tags options flag, default value is "". See above for more information.
 .IP \fB%tag-filemask\fR
 A list of source file masks to be processed when a directory is given, default
-value   is   "\fC:*.[cC]:*.cpp:*.cc:*.h:*.hpp:\fR".
+value   is   "\fC:*.java:*.jav:\fR".
 .IP \fB%tag-ignoredir\fR
 A list of  directories  to be ignored when  recursive  option is used, default
 value is "\fC:SCCS/:CVS/:\fR".
 .PP
 These  variables  can be changed using the -v  command-line  option or via the
-"\fCmyctags.emf\fR" file
+"\fCmyjavatags.emf\fR" file
 .SH "SEE ALSO"
 .na
 .Ht find-tag 2 ,
 .Ht start-up 3 ,
-.Ht c 9 .
+.Ht java 9 .
 .ad
 .FH

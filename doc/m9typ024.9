@@ -29,12 +29,13 @@
 .\"
 .\"***************************************************************************
 .\"
-.Id $Id: m9typ024.9,v 1.1.1.1 2000-07-25 22:04:09 jon Exp $
+.Id $Id: m9typ024.9,v 1.2 2000-10-09 22:42:06 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH perl 9
 .XI perl - "Practical Extraction and Report Language File"
 .XI pl - "Practical Extraction and Report Language File"
+.XI pm - "Practical Extraction and Report Language File"
 .SH SYNOPSIS
 perl \- Practical Extraction and Report Language File.
 .SH FILES
@@ -44,10 +45,13 @@ perl \- Practical Extraction and Report Language File.
 .br
 .B perl.etf
 \- Practical Extraction and Report Language header template file.
+.br
+.B  perl.eaf
+\- Practical Extraction and Report Language abbreviation file.
 .ad
 .SH EXTENSIONS
 .na
-\fB.pl\fR \- Perl file
+\fB.pl\fR, \fB.pm\fR \- Perl file
 .ad
 .SH "MAGIC STRINGS"
 .TP
@@ -55,20 +59,69 @@ perl \- Practical Extraction and Report Language File.
 .\"
 \*(mE recognizes the magic string on the first line of the file used to locate
 the executable. The Perl files may be extension-less and are still recognized.
+.TP
+\fB# -*- perl -*-\fR
+.\"
+\*(mE  recognizes the standard GNU Emacs magic string on the first line of the
+file. The Perl files may be extension-less and are still recognized.
 .SH DESCRIPTION
-The \fBperl\fR file type template  provides  simple  hilighting of Perl files,
-the template provides minimal hilighting.
+The \fBperl\fR  file type template  provides the hilighting,  indentation  and
+tools definitions for a perl file.
 .PP
-File recognition is performed using the standard file extension  \fB.pl\fR, or
-by the magic string.
+File  recognition  is performed  using the standard file extension  \fB.pl\fR,
+\fB.pm\fR or by the magic string.
+.IP "\fBGeneral Editing\fR"
+On creating a new file, a new header is automatically included into the file.
+.Ht time 2m
+is by default enabled, allowing the modification time-stamp to be maintained in
+the header.
+.IP \fBHilighting\fR
+The hilighting  features allow commands, variables, logical, comments, strings
+and characters of the language to be differentiated  and rendered in different
+colors.
+.IP "\fBAuto Layout\fR"
+The
+.Hl "indentation mechanism" indent 2
+is enabled which performs automatic layout of the text.
+.Ht restyle-region 3
+and
+.Ht restyle-buffer 3
+are available to reformat  (re-layout) selected sections of the buffer, or the
+whole buffer, respectively.
+.IP "\fBFolding and Information Hiding\fR"
+Generic   folding  is  enabled  within  perl  files.  The  folds  occur  about
+\fIsub\fR...\fB}\fR  located on the left-hand  margin. 
+.Ht fold-all 3
+(un)folds all regions in the file,
+.Ht fold-current 3
+(un)folds the current region.
+.IP "\fBShort Cuts\fR"
+The short cut keys used within the buffer are:-
+.IP
+\fB\*cc \*cc\fR \- Comment out the current line.
+.br
+\fB\*cc \*cd\fR \- Uncomment the current line.
+.br
+\fB\*cc \*e\*e\fR \- Command complete.
+.br
+\fB\*a\*ci\fR \- Restyle the current region.
+.br
+\fBf2\fR \- (un)fold the current region
+.br
+\fBf3\fR \- (un)fold all regions
 .SH BUGS
-None  reported.  Template  could  probably  benefit  from  some  form  of auto
-indentation.
+The flexibility of the perl language does cause some hilighting  anomalies from
+time to time, typically with unbalanced  quote  characters. Most of the common
+exceptions  have been caught,  however there are a few syntax  sequences  that
+involve quotation marks that can cause problems.
 .SH "SEE ALSO"
 .na
+.Ht fold-all 3 ,
+.Ht fold-current 3 ,
 .Ht indent 2 ,
 .Ht restyle-buffer 3 ,
-.Ht restyle-region 3 .
+.Ht restyle-region 3 ,
+.Ht time 2m .
 .sp 1
 .Hl "Supported File Types" FileTypes -
 .ad
