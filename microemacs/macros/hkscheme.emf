@@ -7,15 +7,12 @@
 define-macro fhook-scheme
     set-variable $buffer-mask "luh1"
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-scheme
-        my-fhook-scheme
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
-set-variable .fhook-scheme.setup &reg "/history" "fhook/scheme" "hiopx"
-set-variable .fhook-scheme.setup-mask "aehikmoptux"
+set-variable .fhook-scheme.setup &reg "/history" "fhook/scheme" "ghiopx"
+set-variable .fhook-scheme.setup-mask "aeghikmoptux"
 set-variable .fhook-scheme.comment "|;||;|; | ;||"
 
 !if &and &sin "h" .fhook-scheme.setup &band .hilight.flags 0x02

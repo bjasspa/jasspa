@@ -6,7 +6,7 @@
  *  Object Name   : emode.h
  *  Created By    : Steven Phillips
  *  Created       : Thu Jan 15 20:16:54 2000
- *  Last Modified : <010901.1258>
+ *  Last Modified : <011114.1151>
  *
  *  Description
  *       Define interface to the modes
@@ -33,7 +33,7 @@ extern "C" {
 #endif
 
 /* Expand the mode definitions from the .def file */
-#define DEFMODE(varnam,strnam,chrnam) varnam,
+#define DEFMODE(varnam,strnam,chrnam,masklbl,maskval) varnam,
 enum
 {
 #include "emode.def"
@@ -60,35 +60,45 @@ extern uint8  modeCode[] ;		/* letters to represent modes	*/
 
 #ifdef	INC_MODE_DEF
 
-meMODE globMode =
-#ifdef _WIN32
-/* MDAUTO|MDATSV|MDBACK|MDCRLF|MDEXACT|MDMAGIC|MDQUIET|MDTAB|MDUNDO */
-{ 0x27, 0x08, 0x84, 0x14, 0x00 } ;      /* Windows is \r\n              */
-#else
-#ifdef _DOS
-/* MDAUTO|MDATSV|MDBACK|MDCRLF|BEFCTRLZ|MDEXACT|MDMAGIC|MDQUIET|MDTAB|MDUNDO */
-{ 0xa7, 0x08, 0x84, 0x14, 0x00 } ;      /* DOS is \r\n + CTRL-Z         */
-#else
-/* MDAUTO|MDATSV|MDBACK|MDEXACT|MDMAGIC|MDQUIET|MDTAB|MDUNDO */
-{ 0x07, 0x08, 0x84, 0x14, 0x00 } ;      /* UNIX is \n only              */
-#endif /* _DOS */
-#endif /* _WIN32 */
-
-meMODE modeLineDraw = { 0x3f, 0x6a, 0x34, 0xfc, 0x7f } ;
-
-#define DEFMODE(varnam,strnam,chrnam) (uint8 *)strnam,
+#define DEFMODE(varnam,strnam,chrnam,masklbl,maskval) (uint8 *)strnam,
 uint8 *modeName[] = {                  /* name of modes                */
 #include "emode.def"
     NULL
 };
 #undef DEFMODE
 
-#define DEFMODE(varnam,strnam,chrnam) chrnam,
+#define DEFMODE(varnam,strnam,chrnam,masklbl,maskval) chrnam,
 uint8 modeCode[] =
 {
 #include "emode.def"
 };
 #undef DEFMODE
+
+#define DEFMODE(varnam,strnam,chrnam,masklbl,maskval) masklbl=maskval,
+enum
+{
+#include "emode.def"
+} ;
+#undef DEFMODE
+
+meMODE globMode =
+#ifdef _WIN32
+{ MDAUTO_MASK|MDATSV_MASK|MDBACK_MASK|MDCRLF_MASK, MDEXACT_MASK|MDFENCE_MASK, MDMAGIC_MASK, MDQUIET_MASK|MDTAB_MASK|MDUNDO_MASK, 0 } ;
+#else
+#ifdef _DOS
+{ MDAUTO_MASK|MDATSV_MASK|MDBACK_MASK|MDCRLF_MASK|MDCTRLZ_MASK, MDEXACT_MASK|MDFENCE_MASK, MDMAGIC_MASK, MDQUIET_MASK|MDTAB_MASK|MDUNDO_MASK, 0 } ;
+#else
+{ MDAUTO_MASK|MDATSV_MASK|MDBACK_MASK, MDEXACT_MASK|MDFENCE_MASK, MDMAGIC_MASK, MDQUIET_MASK|MDTAB_MASK|MDUNDO_MASK, 0 } ;
+#endif /* _DOS */
+#endif /* _WIN32 */
+
+meMODE modeLineDraw = { 
+    MDAUTO_MASK|MDATSV_MASK|MDBACK_MASK|MDBINRY_MASK|MDCMOD_MASK|MDCRYPT_MASK,
+    MDDIR_MASK|MDEXACT_MASK|MDINDEN_MASK|MDJUST_MASK,
+    MDMAGIC_MASK|MDNRRW_MASK|MDOVER_MASK,
+    MDRBIN_MASK|MDTAB_MASK|MDTIME_MASK|MDUNDO_MASK|MDUSR1_MASK|MDUSR2_MASK,
+    MDUSR3_MASK|MDUSR4_MASK|MDUSR5_MASK|MDUSR6_MASK|MDUSR7_MASK|MDUSR8_MASK|MDVIEW_MASK|MDWRAP_MASK
+} ;
 
 #endif /* INC_MODE_DEF */
 

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Tue Aug 10 01:01:17 1999
-;  Last Modified : <010805.0021>
+;  Last Modified : <011118.2245>
 ;
 ;  Description
 ;
@@ -32,8 +32,7 @@
     !done
     end-of-buffer
     set-variable #l5 &rig #l4 &rsin "/" #l4
-    var-str-sub #l5 "\\" "\\\\"
-    var-str-sub #l5 "&" "\\&"
+    set-variable #l5 &rep &rep #l5 "\\" "\\\\" "&" "\\&"
     !if &les $window-line 18
         insert-string &spr "&%d " &add 1 &div $window-line 2
     !endif

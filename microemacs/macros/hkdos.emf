@@ -7,15 +7,12 @@
 define-macro fhook-dos
     set-variable $buffer-mask "luh1"
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-dos
-        my-fhook-dos
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
-set-variable .fhook-dos.setup &reg "/history" "fhook/dos" "hiopx"
-set-variable .fhook-dos.setup-mask "aehikmoptux"
+set-variable .fhook-dos.setup &reg "/history" "fhook/dos" "ghiopx"
+set-variable .fhook-dos.setup-mask "aeghikmoptux"
 set-variable .fhook-dos.comment "|rem |||rem |||"
 
 !if &and &sin "h" .fhook-dos.setup &band .hilight.flags 0x02 

@@ -13,15 +13,12 @@ define-macro fhook-nroff
         etfinsrt "nroff"
     !endif
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-nroff
-        my-fhook-nroff
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
-set-variable .fhook-nroff.setup &reg "/history" "fhook/nroff" "bfhijnopswx"
-set-variable .fhook-nroff.setup-mask "abefhijkmnopstuwx"
+set-variable .fhook-nroff.setup &reg "/history" "fhook/nroff" "bfghijnopswx"
+set-variable .fhook-nroff.setup-mask "abefghijkmnopstuwx"
 set-variable .fhook-nroff.tags "ntags"
 set-variable .fhook-nroff.comment "|.\\\"||*|.\\\" | \"\\||"
 set-variable .fhook-nroff.command-flag  "|thbo|bo|thb|thb|th|thb|thb|thb|thb|th|thb|thb|thb|th|thbH|t|"
@@ -145,7 +142,6 @@ set-variable .fhook-nroff.fold-mnext "-1"
     hilight .hilight.nroff 3   "^[.']SS"               .scheme.header
     hilight .hilight.nroff 3   "^[.']Me"               .scheme.prepro
     hilight .hilight.nroff 3   "^[.']vs"               .scheme.keyword
-    hilight .hilight.nroff 1   "them"               .scheme.keyword
     
     0 hilight  .hilight.roffR 2 40                     $global-scheme
     hilight-nroff-common                    .hilight.roffR $global-scheme
@@ -587,9 +583,15 @@ define-macro-file hkman aman
     0 define-macro bhook-nroff
         set-variable .timestamp $timestamp
         set-variable $timestamp "%Y/%M/%D %h:%m:%s"
+        !if &exist my-bhook-nroff
+            my-bhook-nroff
+        !endif
     !emacro
     0 define-macro ehook-nroff
         set-variable $timestamp .bhook-nroff.timestamp
+        !if &exist my-ehook-nroff
+            my-ehook-nroff
+        !endif
     !emacro
 !endif
 

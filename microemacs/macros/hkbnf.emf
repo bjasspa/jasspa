@@ -8,16 +8,13 @@
 
 define-macro fhook-bnf
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exi my-fhook-bnf
-        my-fhook-bnf
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
 set-variable .fhook-bnf.name "BNF"
-set-variable .fhook-bnf.setup &reg "/history" "fhook/bnf" "hix"
-set-variable .fhook-bnf.setup-mask "aehikmtux"
+set-variable .fhook-bnf.setup &reg "/history" "fhook/bnf" "ghix"
+set-variable .fhook-bnf.setup-mask "aeghikmtux"
 
 !if &and &sin "h" .fhook-bnf.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.bnf

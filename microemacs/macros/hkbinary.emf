@@ -24,15 +24,12 @@ define-macro fhook-binary
         beginning-of-buffer
     !endif
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-binary
-        my-fhook-binary
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
-set-variable .fhook-binary.setup &reg "/history" "fhook/binary" "hop"
-set-variable .fhook-binary.setup-mask "aehkmopu"
+set-variable .fhook-binary.setup &reg "/history" "fhook/binary" "ghop"
+set-variable .fhook-binary.setup-mask "aeghkmopu"
 set-variable .fhook-binary.command-flag  "|thbio|th|thbo|thbo|"
 set-variable .fhook-binary.command-name  "|binary-swap-section||binary-move-backward|binary-move-forward|"
 set-variable .fhook-binary.command-nbind "|||||"

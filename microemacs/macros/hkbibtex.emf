@@ -10,16 +10,13 @@ define-macro fhook-bibtex
         etfinsrt "bibtex"
     !endif
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-bibtex
-        my-fhook-bibtex
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
 set-variable .fhook-bibtex.name "BibTeX"
-set-variable .fhook-bibtex.setup &reg "/history" "fhook/bibtex" "fhinsx"
-set-variable .fhook-bibtex.setup-mask "aefhikmnstux"
+set-variable .fhook-bibtex.setup &reg "/history" "fhook/bibtex" "fghinsx"
+set-variable .fhook-bibtex.setup-mask "aefghikmnstux"
 set-variable .fhook-bibtex.command-flag  "|thbH|"
 set-variable .fhook-bibtex.command-name  "|bibtex-swap-hilight|"
 set-variable .fhook-bibtex.command-nbind "||"

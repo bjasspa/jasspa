@@ -1,0 +1,120 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  Created By    : Steven Phillips
+;  Created       : Tue Aug 28 23:10:38 2001
+;  Description   ; Display matching brackets emacs style
+;  Notes         : Uses idle-pick event - may cause some issues
+;
+;  Copyright (c) 2001 JASSPA.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;  Bits in arg n have the following meaning
+;
+;  0x01 use pos 0x85 instead of 0x84
+;  0x02 Display fence (if not set nothing is done)
+;  0x04 Jump when closing brase is off screen
+;  0x08 Always jump when closing brase
+;  0x10 Give preference to the open fence
+
+define-macro display-matching-fence
+    ; must preserve the show-region status
+    0 show-region
+    set-variable #l9 &band $result 0x07
+    !if @?
+    !elif &exi &set #l8 &spr ".%s.dmf" $buffer-fhook
+        set-variable @# &ind #l8
+    !else
+        set-variable @# .dmf
+    !endif
+    !if &not &band @# 2
+        !return
+    !endif
+    set-variable #l8 &itoa &add 0x84 &band @# 1
+    set-position #l8
+    set-variable #l0 $window-x-scroll
+    set-variable #l1 $window-xcl-scroll
+    set-variable #l2 $window-y-scroll
+    !if &equ #l9 7
+        show-region
+    !elif &equ #l9 5
+        4 show-region
+    !endif
+    !if &and $window-col &sin &set #l3 &mid @wl &sub $window-col 1 1 "})]"
+        !if &and &band @# 16 &sin @wc "{(["
+            set-variable #l3 @wc
+            set-variable #l4 $cursor-x
+            set-variable #l6 0
+        !else
+            backward-char
+            set-variable #l4 &sub $cursor-x 1
+            set-variable #l6 &sin @cl "})]"
+        !endif
+    !elif &sin &set #l3 @wc "{(["
+        set-variable #l4 $cursor-x
+        set-variable #l6 0
+    !else
+        !return
+    !endif
+    set-variable #l5 $cursor-y
+    !force 0 goto-matching-fence
+    !if &not $status
+        goto-position #l8
+        !if &equ #l9 5
+            4 show-region
+        !endif
+        0x10 screen-poke #l5 #l4 .scheme.error #l3
+        !return
+    !endif
+    3 screen-update
+    !if &equ #l0 $window-x-scroll
+        !if &equ #l1 $window-xcl-scroll
+            !if &equ #l2 $window-y-scroll
+                set-variable #l0 $cursor-y
+                set-variable #l1 $cursor-x
+                set-variable #l2 @wc
+                !if &and #l6 &band @# 8
+                    !if &equ #l9 7
+                        show-region
+                    !elif &equ #l9 5
+                        4 show-region
+                    !endif
+                    2 screen-update
+                    0x12 screen-poke #l0 #l1 .scheme.no1 #l2
+                    0x10 screen-poke #l5 #l4 .scheme.no1 #l3
+                    !force !force &neg $fmatchdelay command-wait
+                !endif
+                goto-position #l8
+                !if &equ #l9 7
+                    show-region
+                !elif &equ #l9 5
+                    4 show-region
+                !endif
+                2 screen-update
+                0x12 screen-poke #l0 #l1 .scheme.no1 #l2
+                0x10 screen-poke #l5 #l4 .scheme.no1 #l3
+                !return
+            !endif
+        !endif
+    !endif
+    !if &and #l6 &band @# 4
+        !if &equ #l9 7
+            show-region
+        !elif &equ #l9 5
+            4 show-region
+        !endif
+        2 screen-update
+        19 display-matching-fence
+        !force !force &neg $fmatchdelay command-wait
+    !endif
+    goto-position #l8
+    !if &equ #l9 7
+        show-region
+    !elif &equ #l9 5
+        4 show-region
+    !endif
+    2 screen-update
+    0x10 screen-poke #l5 #l4 .scheme.no2 #l3
+!emacro
+set-variable .display-matching-fence.dmf &cond @? @# 2
+
+global-bind-key display-matching-fence "idle-pick"
+;global-unbind-key "idle-pick"

@@ -12,15 +12,12 @@ define-macro fhook-lisp
     !endif
     set-variable $buffer-mask "luh1"
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-lisp
-        my-fhook-lisp
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
-set-variable .fhook-lisp.setup &reg "/history" "fhook/lisp" "dhiopx"
-set-variable .fhook-lisp.setup-mask "adehikmoptux"
+set-variable .fhook-lisp.setup &reg "/history" "fhook/lisp" "dghiopx"
+set-variable .fhook-lisp.setup-mask "adeghikmoptux"
 set-variable .fhook-lisp.comment "|;||;|; | ;||"
 
 !if &not &exist .hilight.lisp

@@ -10,7 +10,7 @@
  *
  *	Author:			Danial Lawrence.
  *
- *	Creation Date:		07/05/91 08:19		<011029.1145>
+ *	Creation Date:		07/05/91 08:19		<011123.0807>
  *
  *	Modification date:	%G% : %U%
  *
@@ -1182,7 +1182,6 @@ mlClear(int f, int n)
 
 /*	This function writes a string on the message line
    mainly for macro usage			*/
-
 int
 mlWrite(int f, int n)
 {

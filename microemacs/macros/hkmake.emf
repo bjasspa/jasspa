@@ -11,16 +11,13 @@ define-macro fhook-make
     !endif
     set-variable $buffer-mask "luh1"
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-make
-        my-fhook-make
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
 set-variable .fhook-make.name "Makefile"
-set-variable .fhook-make.setup &reg "/history" "fhook/make" "hinopTx"
-set-variable .fhook-make.setup-mask "aehikmnoptux"
+set-variable .fhook-make.setup &reg "/history" "fhook/make" "ghinopTx"
+set-variable .fhook-make.setup-mask "aeghikmnoptux"
 set-variable .fhook-make.comment "|#||#|# | #||"
 
 !if &and &sin "h" .fhook-make.setup &band .hilight.flags 0x02 

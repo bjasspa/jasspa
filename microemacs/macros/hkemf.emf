@@ -12,15 +12,12 @@ define-macro fhook-emf
     !endif
     set-variable $buffer-mask "luh12"
     buffer-initialize
-    ; execute user extensions if enabled 
-    !if &exist my-fhook-emf
-        my-fhook-emf
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
-set-variable .fhook-emf.setup &reg "/history" "fhook/emf" "bdfhnopx"
-set-variable .fhook-emf.setup-mask "abdefhikmnoptux"
+set-variable .fhook-emf.setup &reg "/history" "fhook/emf" "bdfghnopx"
+set-variable .fhook-emf.setup-mask "abdefghikmnoptux"
 set-variable .fhook-emf.tags "emftags"
 set-variable .fhook-emf.comment "|;||;|; | ;||"
 set-variable .fhook-emf.command-flag  "|th|thbo|b|bo|bo|"

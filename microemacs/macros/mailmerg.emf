@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Fri Jul 23 10:05:30 1999
-;  Last Modified : <010805.1134>
+;  Last Modified : <011118.2245>
 ;
 ;  Description
 ;
@@ -47,7 +47,7 @@
             !if &seq &lef #l3 1 #g2
                 set-variable #l3 &mid #l3 1 &sub &len #l3 2
                 set-variable #l4 &spr "%s%s" #g2 #g2
-                var-str-sub #l3 #l4 #g2
+                set-variable #l3 &rep #l3 #l4 #g2
             !endif
             !if &seq #l3 ""
                 set-variable #l3 .mmrg.nfld
@@ -83,7 +83,7 @@
         !if &seq &lef #l3 1 #g2
             set-variable #l3 &mid #l3 1 &sub &len #l3 2
             set-variable #l4 &spr "%s%s" #g2 #g2
-            var-str-sub #l3 #l4 #g2
+            set-variable #l3 &rep #l3 #l4 #g2
         !endif
         set-variable &ind &cat ".mmrg." #l0 #l3
         !if &seq @wc #g0
@@ -149,15 +149,9 @@ define-macro mail-merge-popup
 !emacro 
 
 0 define-macro mmrg-setdelimit
-    set-variable #g0 .mmrg.endrec
-    set-variable #g1 .mmrg.endfld
-    set-variable #g2 .mmrg.delimit
-    var-str-sub #g0 "\\n" "\n"
-    var-str-sub #g1 "\\n" "\n"
-    var-str-sub #g2 "\\n" "\n"
-    var-str-sub #g0 "\\t" "\t"
-    var-str-sub #g1 "\\t" "\t"
-    var-str-sub #g2 "\\t" "\t"
+    set-variable #g0 &rep &rep .mmrg.endrec  "\\n" "\n" "\\t" "\t"
+    set-variable #g1 &rep &rep .mmrg.endfld  "\\n" "\n" "\\t" "\t"
+    set-variable #g2 &rep &rep .mmrg.delimit "\\n" "\n" "\\t" "\t"
 !emacro
 
 0 define-macro mmrg-get-info

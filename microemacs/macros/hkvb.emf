@@ -9,16 +9,13 @@
 define-macro fhook-vb
     set-variable $buffer-mask "luh1"
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-vb
-        my-fhook-vb
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
 set-variable .fhook-vb.name "Visual Basic"
-set-variable .fhook-vb.setup &reg "/history" "fhook/vb" "dhiopx"
-set-variable .fhook-vb.setup-mask "adehikmoptux"
+set-variable .fhook-vb.setup &reg "/history" "fhook/vb" "dghiopx"
+set-variable .fhook-vb.setup-mask "adeghikmoptux"
 set-variable .fhook-vb.comment "|'||'|' | '||"
 
 !if &not &exist .hilight.vb

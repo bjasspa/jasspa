@@ -5,7 +5,7 @@
  *  Synopsis      : Unix X-Term and Termcap support routines
  *  Created By    : Steven Phillips
  *  Created       : 1993
- *  Last Modified : <011015.1221>
+ *  Last Modified : <011114.2210>
  *
  *  Description
  *    This implementation of unix support currently only supports Unix v5 (_USG),
@@ -2219,16 +2219,7 @@ TTwaitForChar(void)
          * the key can be proccessed by TTahead and then you sit and wait
          * in TCAPwait
          */
-        if(isTimerExpired(AUTOS_TIMER_ID))  /* Alarm expired ?? */
-            autoSaveHandler();              /* Initiate an auto save */
-        if(isTimerExpired(CALLB_TIMER_ID))  /* Alarm expired ?? */
-            callBackHandler();              /* Initiate any callbacks */
-        if(isTimerExpired(CURSOR_TIMER_ID)) /* Alarm expired ?? */
-            TThandleBlink(0);               /* Initiate a cursor blink */
-#ifdef _URLSUPP
-        if(isTimerExpired(SOCKET_TIMER_ID)) /* socket connection time-out */
-            ffFileOp(NULL,NULL,meRWFLAG_FTPCLOSE|meRWFLAG_SILENT) ;
-#endif
+        handleTimerExpired() ;
         if(TTahead())
             break ;
         if(sgarbf == TRUE)
@@ -2505,16 +2496,7 @@ TTsleep(int  msec, int  intable)
     timerSet(SLEEP_TIMER_ID,-1,msec);
     do
     {
-        if(isTimerExpired(AUTOS_TIMER_ID))  /* Alarm expired ?? */
-            autoSaveHandler();              /* Initiate an auto save */
-        if(isTimerExpired(CALLB_TIMER_ID))  /* Alarm expired ?? */
-            callBackHandler();              /* Initiate any callbacks */
-        if(isTimerExpired(CURSOR_TIMER_ID)) /* Alarm expired ?? */
-            TThandleBlink(0);               /* Initiate a cursor blink */
-#ifdef _URLSUPP
-        if(isTimerExpired(SOCKET_TIMER_ID)) /* socket connection time-out */
-            ffFileOp(NULL,NULL,meRWFLAG_FTPCLOSE|meRWFLAG_SILENT) ;
-#endif
+        handleTimerExpired() ;
         if(intable && TTahead())
             break ;
         waitForEvent() ;

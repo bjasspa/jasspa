@@ -14,15 +14,12 @@
 define-macro fhook-ini
     set-variable $buffer-mask "luh1"
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-ini
-        my-fhook-ini
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
-set-variable .fhook-ini.setup &reg "/history" "fhook/ini" "fhiopx"
-set-variable .fhook-ini.setup-mask "aefhikmoptux"
+set-variable .fhook-ini.setup &reg "/history" "fhook/ini" "fghiopx"
+set-variable .fhook-ini.setup-mask "aefghikmoptux"
 set-variable .fhook-ini.comment "|;||;|; | ;||"
 
 ; setup ini file folding

@@ -21,15 +21,12 @@ define-macro fhook-xml
     set-variable #l0 &mid $buffer-bname &rsin "." $buffer-bname 3
     set-variable $buffer-mask "luh1"
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exi my-fhook-xml
-        my-fhook-xml
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
-set-variable .fhook-xml.setup &reg "/history" "fhook/xml" "cdhiopsx"
-set-variable .fhook-xml.setup-mask "acdehikmopstux"
+set-variable .fhook-xml.setup &reg "/history" "fhook/xml" "cdghiopsx"
+set-variable .fhook-xml.setup-mask "acdeghikmopstux"
 set-variable .fhook-xml.comment  "|<!--|-->|--|  -- | -- |f|"
 
 !if &and &sin "h" .fhook-xml.setup &band .hilight.flags 0x02 

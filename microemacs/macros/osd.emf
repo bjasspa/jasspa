@@ -488,10 +488,7 @@ set-variable #l0 0
     -1 osd .osd.tmp
     osd .osd.tmp 0 ""
     osd .osd.tmp 1 ""
-    set-variable #l0 @2
-    var-str-sub #l0 "\\" "\\\\"
-    var-str-sub #l0 "&" "\\&"
-    osd .osd.tmp 2 "c" #l0
+    osd .osd.tmp 2 "c" &rep &rep @2 "\\" "\\\\" "&" "\\&"
     osd .osd.tmp 3 ""
     set-variable #l0 1
     set-variable #l2 1

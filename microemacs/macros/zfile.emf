@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sun Jan 10 20:57:03 1999
-;  Last Modified : <010805.0021>
+;  Last Modified : <011116.2211>
 ;
 ;  Description
 ;
@@ -57,20 +57,18 @@
     ; create a temporary buffer, set the filename to the path and kick off extract
     find-buffer "*zfile log*"
     set-variable $buffer-fname #l0
-    var-str-sub #l9 "%zb" &rig #l4 &rsin "/" #l4
+    set-variable #l9 &rep #l9 "%zb" &rig #l4 &rsin "/" #l4 
     !if &band $system 0x400
-        var-str-sub #l4 "/" "\\"
+        set-variable #l4 &rep #l4 "/" "\\"
     !endif
-    var-str-sub #l9 "%zf" #l4
-    var-str-sub #l9 "%fb" #l2
+    set-variable #l9 &rep &rep #l9 "%zf" #l4 "%fb" #l2
     0 pipe-shell-command #l9 "*zfile log*" @mna
     find-file #l3 @mna
     set-variable $buffer-fname ""
     set-variable #l5 $buffer-bname
     find-buffer "*zfile log*"
     !if &not &seq #l7 ""
-        var-str-sub #l7 "%fb" #l2
-        shell-command #l7
+        shell-command &rep #l7 "%fb" #l2
     !endif
     set-variable $buffer-fname ""
     -1 find-buffer "*zfile log*"
@@ -148,8 +146,7 @@ define-macro find-zfile
     find-buffer #l3
     set-variable $buffer-fname #l0
     ; execute the list command into the buffer
-    var-str-sub #l9 "%zb" #l2
-    var-str-sub #l9 "%zf" #l0
+    set-variable #l9 &rep &rep #l9 "%zb" #l2 "%zf" #l0
     0 pipe-shell-command #l9 #l3 @mna
     set-variable $buffer-fname #l0
     -1 buffer-mode "view"

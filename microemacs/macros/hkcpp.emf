@@ -22,16 +22,13 @@ define-macro fhook-cpp
     !endif
     set-variable $buffer-mask "luh1"
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-cpp
-        my-fhook-cpp
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
 set-variable .fhook-cpp.name "C++"
-set-variable .fhook-cpp.setup &reg "/history" "fhook/cpp" "bdfhnopx"
-set-variable .fhook-cpp.setup-mask "abdefhikmnoptux>"
+set-variable .fhook-cpp.setup &reg "/history" "fhook/cpp" "bdfghnopx"
+set-variable .fhook-cpp.setup-mask "abdefghikmnoptux>"
 set-variable .fhook-cpp.tags "ctags"
 set-variable .fhook-cpp.comment "|//||/|// | //||"
 set-variable .fhook-cpp.command-flag  "|th|th|t|t|t|t|t|t|bo|bo|"

@@ -5,7 +5,7 @@
  *  Synopsis      : Dos terminal support routines
  *  Created By    : Steven Phillips
  *  Created       : 1994
- *  Last Modified : <010305.0749>
+ *  Last Modified : <011114.2210>
  *
  *  Description
  *
@@ -357,12 +357,7 @@ TTwaitForChar(void)
     
     for(;;)
     {
-        if(isTimerExpired(AUTOS_TIMER_ID))  /* Alarm expired ?? */
-            autoSaveHandler();              /* Initiate an auto save */
-        if(isTimerExpired(CALLB_TIMER_ID))  /* Alarm expired ?? */
-            callBackHandler();              /* Initiate any callbacks */
-        if(isTimerExpired(CURSOR_TIMER_ID)) /* Alarm expired ?? */
-            TThandleBlink(0);               /* Initiate a cursor blink */
+        handleTimerExpired() ;
         if(TTahead())
             break ;
 #if MOUSE
@@ -756,12 +751,7 @@ TTsleep(int msec, int intable)
     timerSet(SLEEP_TIMER_ID,-1,msec);
     do
     {
-        if(isTimerExpired(AUTOS_TIMER_ID))  /* Alarm expired ?? */
-            autoSaveHandler();              /* Initiate an auto save */
-        if(isTimerExpired(CALLB_TIMER_ID))  /* Alarm expired ?? */
-            callBackHandler();              /* Initiate any callbacks */
-        if(isTimerExpired(CURSOR_TIMER_ID)) /* Alarm expired ?? */
-            TThandleBlink(0);               /* Initiate a cursor blink */
+        handleTimerExpired() ;
         if(TTahead() && intable)                    /* Interruptable ?? */
             break ;
     } while(!isTimerExpired(SLEEP_TIMER_ID)) ;

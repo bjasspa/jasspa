@@ -8,7 +8,7 @@
  *  Object Name   : eterm.h
  *  Created By    : Steven Phillips and Jon Green
  *  Create Date   : Some time in 1994
- *  Last Modified : <20001011.1802>
+ *  Last Modified : <20011114.2206>
  *
  *  Description	  : Terminal I/O definitions.
  *
@@ -568,6 +568,7 @@ extern TIMERBLOCK *timers ;        /* Head of timer list             */
 extern void timerSet (int id, int32 tim, int32 offset) ;
 extern int  _timerKill (int id) ;
 #define timerKill(id) (isTimerSet(id)?_timerKill(id):timerClearExpired(id))
+extern void handleTimerExpired(void) ;
 
 #ifdef _MULTI_NOID_TIMER
 extern void timerAlarm(int id) ;

@@ -17,16 +17,13 @@ define-macro fhook-idl
     !endif
     set-variable $buffer-mask "luh1"
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-idl
-        my-fhook-idl
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
 set-variable .fhook-idl.name "OMG IDL"
-set-variable .fhook-idl.setup &reg "/history" "fhook/idl" "dfhnopx"
-set-variable .fhook-idl.setup-mask "adefhikmnoptux>"
+set-variable .fhook-idl.setup &reg "/history" "fhook/idl" "dfghnopx"
+set-variable .fhook-idl.setup-mask "adefghikmnoptux>"
 set-variable .fhook-idl.comment "|//||*|// | //||"
 set-variable .fhook-idl.command-flag  "|bo|bo|"
 set-variable .fhook-idl.command-name  "|comment-restyle|comment-restyle|"

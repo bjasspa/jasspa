@@ -11,13 +11,10 @@ define-macro fhook-rul
     !endif
     set-variable $buffer-mask "luh13"
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-rul
-        my-fhook-rul
-    !endif
+    buffer-initialize-hooks
 !emacro
-set-variable .fhook-rul.setup &reg "/history" "fhook/rul" "bdfhnopx"
-set-variable .fhook-rul.setup-mask "abdefhikmnoptux"
+set-variable .fhook-rul.setup &reg "/history" "fhook/rul" "bdfghnopx"
+set-variable .fhook-rul.setup-mask "abdefghikmnoptux"
 set-variable .fhook-rul.comment "|/*|*/|*| * | * |f|"
 
 ; setup rul folding support

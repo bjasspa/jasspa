@@ -11,15 +11,12 @@ define-macro fhook-java
     !endif
     set-variable $buffer-mask "luh1"
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-java
-        my-fhook-java
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
-set-variable .fhook-java.setup &reg "/history" "fhook/java" "bdfhnopx"
-set-variable .fhook-java.setup-mask "abdefhikmnoptux>"
+set-variable .fhook-java.setup &reg "/history" "fhook/java" "bdfghnopx"
+set-variable .fhook-java.setup-mask "abdefghikmnoptux>"
 set-variable .fhook-java.tags "javatags"
 set-variable .fhook-java.comment "|/*|*/|*| * | * |f|"
 set-variable .fhook-java.command-flag  "|bo|bo|"
@@ -134,12 +131,18 @@ define-macro bhook-java
         set-variable .fhook-java.ofill-ignore $fill-ignore
         set-variable $fill-ignore .fhook-java.fill-ignore
     !endif
+    !if &exist my-bhook-java
+        my-bhook-java
+    !endif
 !emacro
 
 ; End hook - leaving the buffer - restore the fill-ignore characters
 define-macro ehook-java
     !if &exi .fhook-java.fill-ignore
         set-variable $fill-ignore .fhook-java.ofill-ignore
+    !endif
+    !if &exist my-ehook-java
+        my-ehook-java
     !endif
 !emacro    
 
@@ -148,7 +151,7 @@ define-macro ehook-java
 ; from the $fill-ignore variable.
 !if &sin "@" $fill-ignore
     set-variable .fhook-java.fill-ignore $fill-ignore
-    var-str-sub .fhook-java.fill-ignore "@" ""
+    set-variable .fhook-java.fill-ignore &rep .fhook-java.fill-ignore "@" ""
 !endif
 
 ml-write "[Java file hook loaded]"

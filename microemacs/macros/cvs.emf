@@ -30,12 +30,14 @@ set-variable .cvs.message ""
         set-variable .hilight.cvs &pinc .hilight.next 1
     !endif
     0 hilight .hilight.cvs 2 100           $global-scheme
+    hilight .hilight.cvs 0x40 "^>cvs-" ""  $global-scheme
     !if &not &exi .hilight.diff
         !force execute-file "hkdiff"
     !endif
     ; If the hilighting mode is loaded then modify it.
     !if &and &sin "h" .fhook-emf.setup &band .hilight.flags 0x02 
         hilight .hilight.cvs  0xc0 "^>diff-" "" .hilight.diff $global-scheme
+        hilight .hilight.diff 0x40 "^>diff-" ""               $global-scheme
         hilight .hilight.diff 0xc0 "^>cvs-"  "" .hilight.cvs  $global-scheme
         set-variable .cvs.console-hilight &lset .cvs.console-hilight 3 ">diff-"
     !endif
@@ -79,10 +81,7 @@ define-macro cvs-update
         0 delete-buffer $buffer-bname
     !endif
     osd-entry "CVS - Commit" "&Log message:" .cvs.message "70x10"
-    set-variable #l1 &trb .cvs.message
-    var-str-sub #l1 "\\" "\\\\" 
-    var-str-sub #l1 "\"" "\\\"" 
-    set-variable @1 #l1
+    set-variable @1 &rep &rep &trb .cvs.message "\\" "\\\\" "\"" "\\\""
 !emacro
     
 define-macro cvs-commit
@@ -536,8 +535,7 @@ define-macro cvs-resolve-conflicts
             set-variable #l4 &lef #l4 &sub &len #l4 1
         !endif
         !if &sin " " #l4
-            var-str-sub #l4 "\\" "\\\\" 
-            var-str-sub #l4 "\"" "\\\"" 
+            set-variable #l4 &rep &rep #l4 "\\" "\\\\" "\"" "\\\""
             set-variable #l4 &cat &cat "\"" #l4 "\""
         !endif
         !if &gre &add #l3 &len #l4 1020

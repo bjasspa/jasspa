@@ -44,7 +44,7 @@
 ;         >
 ;         > Author:       My Self
 ;         > Created:      11/11/97
-;         > Modified:     <011015.2258>
+;         > Modified:     <011114.0001>
 ;         > Location:     /xx/yy/zz.doc
 ; *
 ;         All lines commencing with '*' are assumed to be bullet lists. Bullet
@@ -341,6 +341,7 @@ define-macro doc-fhook-body
             beginning-of-buffer
         !endif
     !endif
+    buffer-initialize-hooks
 !emacro
 
 set-variable &ind &spr ".fhook-%s.command-flag"  #l1 "|thb|hb|thb|th|h|h|thb|thb|thb|thb|thb|h|h|th|h|h|thb|thb|thb|thb|thb|thb|"

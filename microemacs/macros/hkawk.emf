@@ -1,21 +1,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;       Install Shield awk file hook
 ;
-;   Last Modified : <010319.2310>
+;   Last Modified : <011123.0807>
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro fhook-awk
     set-variable $buffer-mask "luh1"
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-awk
-        my-fhook-awk
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
-set-variable .fhook-awk.setup &reg "/history" "fhook/awk" "hiopx"
-set-variable .fhook-awk.setup-mask "aehikmoptux"
+set-variable .fhook-awk.setup &reg "/history" "fhook/awk" "ghiopx"
+set-variable .fhook-awk.setup-mask "aeghikmoptux"
 set-variable .fhook-awk.comment "|#||#|# | #||"
 
 !if &and &sin "h" .fhook-awk.setup &band .hilight.flags 0x02 

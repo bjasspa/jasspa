@@ -12,16 +12,13 @@ define-macro fhook-yacc
     !endif
     set-variable $buffer-mask "luh1"
     buffer-initialize
-    ; execute user extensions if defined
-    !if &exist my-fhook-yacc
-        my-fhook-yacc
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
 set-variable .fhook-yacc.name "Lex/Yacc"
-set-variable .fhook-yacc.setup &reg "/history" "fhook/yacc" "hinopx"
-set-variable .fhook-yacc.setup-mask "aehikmnoptux"
+set-variable .fhook-yacc.setup &reg "/history" "fhook/yacc" "ghinopx"
+set-variable .fhook-yacc.setup-mask "aeghikmnoptux"
 set-variable .fhook-yacc.comment "|/*|*/|*| * | * |f|"
 
 !if &and &sin "h" .fhook-yacc.setup &band .hilight.flags 0x02 

@@ -10,7 +10,7 @@
 *
 *	Author:			Jon Green
 *
-*	Creation Date:		03/05/91 17:19		<011015.1321>
+*	Creation Date:		03/05/91 17:19		<011114.0939>
 *
 *	Modification date:	%G% : %U%
 *
@@ -377,7 +377,7 @@ execute(register int c, register int f, register int n)
         }
     }
     /* check for fence matching */
-    if((c == '}') || (c == ')') || (c == ']'))
+    if(meModeTest(curbp->b_mode,MDFENCE) && ((c == '}') || (c == ')') || (c == ']')))
     {
         curwp->w_doto-- ;
         /* flag for delay move and only bell in cmode */

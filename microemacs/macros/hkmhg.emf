@@ -14,16 +14,13 @@ define-macro fhook-mhg
     !endif
     set-variable $buffer-mask "luh1"
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-mhg
-        my-fhook-mhg
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
 set-variable .fhook-mhg.name "MHEG"
-set-variable .fhook-mhg.setup &reg "/history" "fhook/mhg" "fhinopx"
-set-variable .fhook-mhg.setup-mask "aefhikmnoptux"
+set-variable .fhook-mhg.setup &reg "/history" "fhook/mhg" "fghinopx"
+set-variable .fhook-mhg.setup-mask "aefghikmnoptux"
 set-variable .fhook-mhg.comment "|//||/|// | //||"
 
 ; Set up the folds for 'mheg'

@@ -11,16 +11,13 @@ define-macro fhook-reg
     set-variable :mouse-drop-1 reg-toggle-hidden
     set-variable :mouse-pick-3 void
     set-variable :mouse-drop-3 reg-set-node
-    ; execute user extensions if enabled
-    !if &exist my-fhook-reg
-        my-fhook-reg
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
 set-variable .fhook-reg.name "ME Registry"
-set-variable .fhook-reg.setup &reg "/history" "fhook/reg" "hmop"
-set-variable .fhook-reg.setup-mask "aehkop"
+set-variable .fhook-reg.setup &reg "/history" "fhook/reg" "ghmop"
+set-variable .fhook-reg.setup-mask "aeghkop"
 set-variable .fhook-reg.command-flag  "|thbio|thbio|thbio|thbio|thbio|bio|thbio|bio|"
 set-variable .fhook-reg.command-name  "|reg-toggle-hidden|reg-set-node|reg-copy-node|reg-move-node|reg-delete-node|reg-delete-node|reg-insert-node|reg-insert-node|"
 set-variable .fhook-reg.command-nbind "|||||||||"

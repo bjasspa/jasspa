@@ -12,16 +12,13 @@ define-macro fhook-asmx86
     !endif
     set-variable $buffer-mask "luh1"
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-asmx86
-        my-fhook-asmx86
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-setup variables
 set-variable .fhook-asmx86.name "x86 Assembler"
-set-variable .fhook-asmx86.setup &reg "/history" "fhook/asmx86" "dfhnopx"
-set-variable .fhook-asmx86.setup-mask "adefhikmnoptux"
+set-variable .fhook-asmx86.setup &reg "/history" "fhook/asmx86" "dfghnopx"
+set-variable .fhook-asmx86.setup-mask "adefghikmnoptux"
 set-variable .fhook-asmx86.comment "|;||;|; | ;||"
 
 ; setup.asmx86 folding support

@@ -10,16 +10,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 define-macro fhook-texi
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-texi
-        my-fhook-texi
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
 set-variable .fhook-texi.name "Texinfo"
-set-variable .fhook-texi.setup &reg "/history" "fhook/texi" "bhiopx"
-set-variable .fhook-texi.setup-mask "abehikmoptux"
+set-variable .fhook-texi.setup &reg "/history" "fhook/texi" "bghiopx"
+set-variable .fhook-texi.setup-mask "abeghikmoptux"
 set-variable .fhook-texi.comment "|@c |||@c |||"
 
 !if &and &sin "h" .fhook-texi.setup &band .hilight.flags 0x02 

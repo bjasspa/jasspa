@@ -5,7 +5,7 @@
  *  Synopsis      : Generic terminal support routines
  *  Created By    : Steven Phillips
  *  Created       : 1993
- *  Last Modified : <010730.2036>
+ *  Last Modified : <011115.0002>
  *
  *  Description
  *     Many generic routines to support timers, key input and some output.
@@ -462,6 +462,21 @@ _timerKill (int id)
 #endif            
     }
     return (meTimerState[id] = meTimerState[id] & ~(TIMER_SET|TIMER_EXPIRED)) ;
+}
+
+void
+handleTimerExpired(void)
+{
+    if(isTimerExpired(AUTOS_TIMER_ID))  /* Alarm expired ?? */
+        autoSaveHandler();              /* Initiate an auto save */
+    if(isTimerExpired(CALLB_TIMER_ID))  /* Alarm expired ?? */
+        callBackHandler();              /* Initiate any callbacks */
+    if(isTimerExpired(CURSOR_TIMER_ID)) /* Alarm expired ?? */
+        TThandleBlink(0);               /* Initiate a cursor blink */
+#ifdef _URLSUPP
+    if(isTimerExpired(SOCKET_TIMER_ID)) /* socket connection time-out */
+        ffFileOp(NULL,NULL,meRWFLAG_FTPCLOSE|meRWFLAG_SILENT) ;
+#endif
 }
 
 /* translate-key support code */

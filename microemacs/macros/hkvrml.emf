@@ -7,15 +7,12 @@
 define-macro fhook-vrml
     set-variable $buffer-mask "luh1"
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-vrml
-        my-fhook-vrml
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
-set-variable .fhook-vrml.setup &reg "/history" "fhook/vrml" "dhinx"
-set-variable .fhook-vrml.setup-mask "adehikmntux"
+set-variable .fhook-vrml.setup &reg "/history" "fhook/vrml" "dghinx"
+set-variable .fhook-vrml.setup-mask "adeghikmntux"
 
 !if &not &exist .hilight.vrml
     set-variable .hilight.vrml &pinc .hilight.next 1

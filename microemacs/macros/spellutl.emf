@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Thu May 7 20:59:12 1998
-;  Last Modified : <010911.1023>
+;  Last Modified : <011116.2216>
 ;
 ;  Description
 ;
@@ -20,7 +20,7 @@ define-macro spell-add-word
         !while &pdec @# 1
             !force forward-word
             !if &not $status
-                var-str-sub $buffer-mask "s" ""
+                set-variable $buffer-mask &rep $buffer-mask "s" ""
                 !abort
             !endif
             !force backward-word
@@ -43,7 +43,7 @@ define-macro spell-add-word
                 0x05 spell #l1 #l2
             !endif
         !done
-        var-str-sub $buffer-mask "s" ""
+        set-variable $buffer-mask &rep $buffer-mask "s" ""
     !else
         !nma 0x05 spell
     !endif

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Jon Green
 ;  Created       : Wed Sep 30 23:16:34 1998
-;  Last Modified : <011010.0756>
+;  Last Modified : <011116.2227>
 ;
 ;  Description   : This file contains the necessary hooks to run a Cygnus
 ;                  window inside the MicroEmacs editor. The user variable
@@ -39,8 +39,7 @@
 ;  Copyright (c) 1998 JASSPA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; convert any '\\'s to '/'s
-set-variable #l0 %cygnus-bin-path
-var-str-sub #l0 "\\" "/"
+set-variable #l0 &rep %cygnus-bin-path "\\" "/"
 ; ditch the end /bin/
 !if &seq "/bin" &rig #l0 &sub &len #l0 4
     set-variable #l0 &lef #l0 &sub &len #l0 4
@@ -49,7 +48,7 @@ var-str-sub #l0 "\\" "/"
 !endif
 ; set varaibles to the \\ equiv & ditch the /h-i...
 set-variable #l1 &lef #l0 &sub &rsin "/" #l0 1
-var-str-sub  #l0 "/" "\\"
+set-variable #l0 &rep #l0 "/" "\\"
 ; now set the environment
 set-variable $MAKE_MODE unix
 set-variable $CYGFS #l1

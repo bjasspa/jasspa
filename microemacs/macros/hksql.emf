@@ -9,16 +9,13 @@
 define-macro fhook-sql
     set-variable $buffer-mask "luh1"
     buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-sql
-        my-fhook-sql
-    !endif
+    buffer-initialize-hooks
 !emacro
 
 ; buffer-initialize variables
 set-variable .fhook-sql.name "SQL"
-set-variable .fhook-sql.setup &reg "/history" "fhook/sql" "hix"
-set-variable .fhook-sql.setup-mask "aehikmtux"
+set-variable .fhook-sql.setup &reg "/history" "fhook/sql" "ghix"
+set-variable .fhook-sql.setup-mask "aeghikmtux"
 
 !if &and &sin "h" .fhook-sql.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.sql
