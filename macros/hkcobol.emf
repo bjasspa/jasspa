@@ -22,7 +22,7 @@ define-macro fhook-cobol
 ; buffer-initialize variables
 set-variable .fhook-cobol.setup &reg "/history" "fhook/cobol" "bhinopx"
 set-variable .fhook-cobol.setup-mask "aebhikmnoptux"
-set-variable .fhook-cobol.comment "|*||*|"
+set-variable .fhook-cobol.comment "|*||*|* ||"
 
 !if &and &sin "h" .fhook-cobol.setup &band .hilight.flags 0x02 
     ; High-light COBOL-85

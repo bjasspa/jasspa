@@ -1,7 +1,7 @@
 /*
  * Define the string name / internal variable name binding
  *
- * Last Modified:         <010220.2218>
+ * Last Modified:         <010314.2156>
  * 
  ****************************************************************************
  *
@@ -206,7 +206,7 @@ DEFFUN (UFWHICH,    "whi", FUN_MONAMIC)     /* Does a which on a given program n
 DEFFUN (UFXISEQ,    "xis", FUN_DYNAMIC)     /* regexp case insensitive string logical equality check */
 DEFFUN (UFXSEQ,     "xse", FUN_DYNAMIC)     /* regexp string logical equality check */
 
-DEFDER (DRABORT,    "abo", DRFLAG_SWITCH)
+DEFDER (DRABORT,    "abo", DRFLAG_SWITCH|DRFLAG_ARG|DRFLAG_NARG|DRFLAG_OPTARG)
 DEFDER (DRBELL,     "bel", DRFLAG_SWITCH|DRFLAG_ARG|DRFLAG_NARG|DRFLAG_OPTARG)
 DEFDER (DRCONTIN,   "con", 0x0)
 DEFDER (DRDONE,     "don", DRFLAG_SDBLEXECLVL)

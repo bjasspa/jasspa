@@ -567,12 +567,16 @@ define-macro gdb
     !if $status
         find-buffer #l0
         popup-window  "*gdb*"
-    !else
-        set-variable #l0 @ml01 "gdb program"
-        0 ipipe-shell-command &cat "gdb -f " #l0 "*gdb*"
-        popup-window "*gdb*"
-        fhook-ipipe
+        !if &bmod "pipe"
+            !return
+        !endif
+        screen-update
     !endif
+    set-variable #l0 @ml01 "gdb program"
+    set-variable #l1 @ml "gdb args"
+    0 ipipe-shell-command &spr "gdb -f %s %s" #l0 #l1 "*gdb*"
+    popup-window "*gdb*"
+    fhook-ipipe
     global-bind-key gdb-add-breakpoint "f9"
 !emacro
 
@@ -628,16 +632,20 @@ define-macro dbx
     !if $status
         find-buffer #l0
         popup-window  "*dbx*"
-    !else
-        set-variable #l0 @ml01 "dbx program"
-        0 ipipe-shell-command &cat "dbx " #l0 "*dbx*"
-        popup-window "*dbx*"
-        fhook-ipipe
-        set-variable :mode 0
-        set-variable :prompt "^(dbx) "
-        ipipe-write "set $showfilename=2\CMset $repeatmode=1\CM"
-;        ipipe-write "alias n `next`\CMalias s `step`\CMalias p `print`\CMalias c `cont`\CMalias b `stop in`\CM"
+        !if &bmod "pipe"
+            !return
+        !endif
+        screen-update
     !endif
+    set-variable #l0 @ml01 "dbx program"
+    set-variable #l1 @ml "dbx args"
+    0 ipipe-shell-command &spr "dbx %s %s" #l0 #l1 "*dbx*"
+    popup-window "*dbx*"
+    fhook-ipipe
+    set-variable :mode 0
+    set-variable :prompt "^(dbx) "
+    ipipe-write "set $showfilename=2\CMset $repeatmode=1\CM"
+    ; ipipe-write "alias n `next`\CMalias s `step`\CMalias p `print`\CMalias c `cont`\CMalias b `stop in`\CM"
     global-bind-key dbx-add-breakpoint "f9"
 !emacro
 

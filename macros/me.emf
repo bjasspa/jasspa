@@ -37,8 +37,8 @@ define-macro-file abbrev expand-abbrev-handle spell-complete-word iso-accents-mo
 define-macro-file misc symbol check-line-length alarm time compare-windows-exact display-white-chars
 define-macro-file search replace-all-string query-replace-all-string replace-all-pairs line-scheme
 define-macro-file tools compile grep rgrep which diff diff-changes execute-tool uniq reread-file
+define-macro-file comment comment-line uncomment-line comment-to-end-of-line comment-start
 define-macro-file hkdirlst file-browser file-browser-close file-browser-swap-buffers
-define-macro-file comment comment-line uncomment-line comment-to-end-of-line
 define-macro-file spell spell-word spell-buffer spell-edit-word find-word
 define-macro-file games Metris Patience Triangle Mahjongg Match-It
 define-macro-file buffstp buffer-setup buffer-help buffer-tool
@@ -175,7 +175,6 @@ add-file-hook "Imakefile imakefile"                           fhook-imake
 add-file-hook ".sh .ksh .csh .login .cshrc .profile .tcshrc"  fhook-shell
 add-file-hook ".ini .hpj .reg .rgy"                           fhook-ini
 add-file-hook ".htm .html .asp .htp .hts"                     fhook-html  
-add-file-hook ".xml"                                          fhook-xml
 add-file-hook ".bas .cls"                                     fhook-vb
 add-file-hook ".cmd .bat .btm"                                fhook-dos
 add-file-hook ".tcl .tk"                                      fhook-tcl
@@ -204,6 +203,7 @@ add-file-hook ".texi"                                         fhook-texi
 add-file-hook ".idl"                                          fhook-idl
 add-file-hook ".info dir"                                     fhook-info
 add-file-hook ".diff .dif *diff*"                             fhook-diff
+add-file-hook ".xml"                                          fhook-xml
 ; Add magic hooks
  1 add-file-hook "^#![ \t]*/.*sh"                fhook-shell  ; UNIX shell files
  1 add-file-hook "^#![ \t]*/.*perl"              fhook-perl   ; UNIX perl script
@@ -214,6 +214,7 @@ add-file-hook ".diff .dif *diff*"                             fhook-diff
  1 add-file-hook "^#Inventor"                    fhook-vrml   ; Use the VRML hook for iv files
 -2 add-file-hook "This is Info file"             fhook-info   ; GNU info file
 -4 add-file-hook "<html>"                        fhook-html   ; HTML files
+-1 add-file-hook "<?xml"                         fhook-xml    ; <?xml version="1.0" standalone="no"?>
 -1 add-file-hook "-[*!]-[ \t]*c.*-[*!]-"         fhook-c      ; -*- C -*-
 -1 add-file-hook "-[*!]-[ \t]*c\\+\\+.*-[*!]-"   fhook-cpp    ; -*- C++ -*-
 -1 add-file-hook "-[*!]-[ \t]*f.*-[*!]-"         fhook-f90    ; -*- f -*-
@@ -233,7 +234,6 @@ add-file-hook ".diff .dif *diff*"                             fhook-diff
 -1 add-file-hook "-!-[ \t]*asmx86.*-!-"          fhook-asmx86 ; -!- asmx86 -!-
 -1 add-file-hook "-!-[ \t]*text.*-!-"            fhook-txt    ; -!- text -!-
 -1 add-file-hook "-!-[ \t]*msvb.*-!-"            fhook-vb     ; -!- msvb -!-
--1 add-file-hook "<?[Xx][Mm][lL]"                fhook-xml    ; <?xml version="1.0" standalone="no"?>
 ; Initialize the top menu line
 osd 0  0  "asM" 0 0 -1 0 0 0 osd-main
 osd 0  5   "fh" " "

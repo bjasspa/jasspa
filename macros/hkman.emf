@@ -63,7 +63,7 @@ define-macro aman
     fhook-man
 !emacro
 
-define-macro man-backward-word
+0 define-macro man-backward-word
     !repeat
         backward-char
     !until &inw @wc
@@ -76,7 +76,7 @@ define-macro man-backward-word
     forward-char
 !emacro
 
-define-macro man-forward-word
+0 define-macro man-forward-word
     !repeat
         forward-char
     !until &inw @wc

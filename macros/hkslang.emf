@@ -2,13 +2,8 @@
 ;
 ;  Created By    : Pedro Gomes
 ;  Created       : Thu Mar 8 22:15:50 2001
-;  Last Modified : <010308.2231>
-;
 ;  Description   : S-Lang hook - This file is invoked when a S-Lang file is
 ;                  loaded.
-;  Notes
-;
-;  History
 ;
 ;  Copyright (c) Pedro Gomes 2000-2001.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -32,16 +27,15 @@ define-macro fhook-slang
 !emacro
 
 ; buffer-initialize variables
-set-variable .fhook-slang.name "Slang"
 set-variable .fhook-slang.setup &reg "/history" "fhook/slang" "bdfhnopx"
 set-variable .fhook-slang.setup-mask "abdefhikmnoptux>"
 set-variable .fhook-slang.tags "ctags"
-set-variable .fhook-slang.comment "|/*|*/|*|"
-set-variable .fhook-slang.command-flag  "|thb|thbo|thbo|bo|th|th|th|t|t|t|t|t|t|"
-set-variable .fhook-slang.command-name  "|normal-tab|c-start-comment|c-box|c-box||c-slashify|c-deslashify||c-hash-set-define|c-hash-unset-define|c-hash-eval|c-hash-eval|c-hash-del|"
-set-variable .fhook-slang.command-nbind "||||||||||||1||"
-set-variable .fhook-slang.command-kbind "|A-tab|esc C-c|esc q|esc o||||||||||"
-set-variable .fhook-slang.command-desc  "|&Insert tab|Start co&mment|Restyle c&omment|||Slashify region|Deslashify region||&Set #define|&Unset #define|Evaluate &#'s|Evaluate #'s use &Narrow|&Remove # evaluation|"
+set-variable .fhook-slang.comment "|/*|*/|*| * ||"
+set-variable .fhook-slang.command-flag  "|thbo|bo|th|th|th|t|t|t|t|t|t|"
+set-variable .fhook-slang.command-name  "|c-box|c-box||c-slashify|c-deslashify||c-hash-set-define|c-hash-unset-define|c-hash-eval|c-hash-eval|c-hash-del|"
+set-variable .fhook-slang.command-nbind "||||||||||1||"
+set-variable .fhook-slang.command-kbind "|esc q|esc o||||||||||"
+set-variable .fhook-slang.command-desc  "|Restyle c&omment|||Slashify region|Deslashify region||&Set #define|&Unset #define|Evaluate &#'s|Evaluate #'s use &Narrow|&Remove # evaluation|"
 
 ; Set up the folds for slang
 set-variable .fhook-slang.fold-open  "^{"
@@ -119,7 +113,7 @@ set-variable .fhook-slang.fold-close "^}"
 !endif
 
 ; setup fuctions to auto-load from cmacros & cbox
-define-macro-file cmacros c-slashify c-deslashify c-start-comment c-hash-eval c-hash-set-define c-hash-unset-define c-hash-del
+define-macro-file cmacros c-slashify c-deslashify c-hash-eval c-hash-set-define c-hash-unset-define c-hash-del
 define-macro-file cbox c-box
 
 ml-write "[Slang file hook loaded]"

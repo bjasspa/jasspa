@@ -22,7 +22,7 @@ define-macro fhook-emf
 set-variable .fhook-emf.setup &reg "/history" "fhook/emf" "bdfhnopx"
 set-variable .fhook-emf.setup-mask "abdefhikmnoptux"
 set-variable .fhook-emf.tags "emftags"
-set-variable .fhook-emf.comment "|;||;|"
+set-variable .fhook-emf.comment "|;||;|; ||"
 set-variable .fhook-emf.command-flag  "|th|thbo|b|"
 set-variable .fhook-emf.command-name  "|expand-abbrev-handle|emf-quote-command|emf-quote-command|"
 set-variable .fhook-emf.command-nbind "||||"

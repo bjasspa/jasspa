@@ -1,5 +1,5 @@
 ;       C-macro : bunch of useful macros for writing c
-;   Last Modified : <010227.1301>
+;   Last Modified : <010316.1334>
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Bunch of C macros we may need.
@@ -67,47 +67,6 @@ define-macro c-deslashify
         forward-line
     !done
     beginning-of-line
-!emacro
-
-define-macro c-start-comment
-    ; check we can edit the buffer first
-    1 buffer-mode "edit" @mna
-    set-variable %c-store-fill $fill-col
-    set-variable %c-store-buf  $buffer-bname
-    set-variable $fill-col &sub &sub $fill-col $window-acol 3
-    find-buffer "*c-comment*"
-    1 buffer-mode "indent"
-    1 buffer-mode "wrap"
-    buffer-bind-create "b" "C-c C-c" "" c-end-comment 
-!emacro
-
-define-macro c-end-comment
-    beginning-of-buffer
-    set-mark
-    end-of-buffer
-    set-variable #l0 $window-line
-    copy-region
-    0 delete-buffer $buffer-bname
-    find-buffer %c-store-buf
-    set-variable $fill-col %c-store-fill
-    set-variable %c-store-fill $window-acol
-    insert-string "/*"
-    insert-newline
-    yank
-    -1 yank
-    exchange-point-and-mark
-    !while #l0
-        %c-store-fill insert-string " "
-        insert-string " * "
-        beginning-of-line
-        forward-line
-        set-variable #l0 &sub #l0 1
-    !done
-    backward-char
-    backward-delete-char
-    insert-string "/"
-    unset-variable %c-store-fill
-    unset-variable %c-store-buf
 !emacro
 
 define-macro c-hash-set-define

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Jon Green
 ;  Created       : Wed Sep 30 23:16:34 1998
-;  Last Modified : <010301.1208>
+;  Last Modified : <010313.1240>
 ;
 ;  Description   : This file contains the necessary hooks to run a Cygnus
 ;                  window inside the MicroEmacs editor. The user variable
@@ -243,9 +243,9 @@ define-macro cygpipe-break
         ; process has ended, clear-up
         set-variable $buffer-input ""
         set-variable $buffer-ipipe ""
-        !force buffer-unbind-key &kbin "0" ipipe-mode
-        !force buffer-unbind-key &kbin "1" ipipe-mode
-        !force buffer-unbind-key &kbin "2" ipipe-mode
+        !force buffer-unbind-key &kbin "0" cygpipe-mode
+        !force buffer-unbind-key &kbin "1" cygpipe-mode
+        !force buffer-unbind-key &kbin "2" cygpipe-mode
     !endif
     !if &bmo "usr4"
         0 screen-update

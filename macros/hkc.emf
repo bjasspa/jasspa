@@ -32,12 +32,12 @@ define-macro fhook-c
 set-variable .fhook-c.setup &reg "/history" "fhook/c" "bdfhnopx"
 set-variable .fhook-c.setup-mask "abdefhikmnoptux>"
 set-variable .fhook-c.tags "ctags"
-set-variable .fhook-c.comment "|/*|*/|*|"
-set-variable .fhook-c.command-flag  "|t|t|thb|thbo|thbo|bo|th|th|th|t|t|t|t|t|t|"
-set-variable .fhook-c.command-name  "|c-to-cpp-convert||normal-tab|c-start-comment|c-box|c-box||c-slashify|c-deslashify||c-hash-set-define|c-hash-unset-define|c-hash-eval|c-hash-eval|c-hash-del|"
-set-variable .fhook-c.command-nbind "||||||||||||||1||"
-set-variable .fhook-c.command-kbind "|||A-tab|esc C-c|esc q|esc o||||||||||"
-set-variable .fhook-c.command-desc  "|Convert to C&++||&Insert tab|Start co&mment|Restyle c&omment|||Slashify region|Deslashify region||&Set #define|&Unset #define|Evaluate &#'s|Evaluate #'s use &Narrow|&Remove # evaluation|"
+set-variable .fhook-c.comment "|/*|*/|*| * |f|"
+set-variable .fhook-c.command-flag  "|t|t|thbo|bo|th|th|th|t|t|t|t|t|t|"
+set-variable .fhook-c.command-name  "|c-to-cpp-convert||c-box|c-box||c-slashify|c-deslashify||c-hash-set-define|c-hash-unset-define|c-hash-eval|c-hash-eval|c-hash-del|"
+set-variable .fhook-c.command-nbind "||||||||||||1||"
+set-variable .fhook-c.command-kbind "|||esc q|esc o||||||||||"
+set-variable .fhook-c.command-desc  "|Convert to C&++||Restyle c&omment|||Slashify region|Deslashify region||&Set #define|&Unset #define|Evaluate &#'s|Evaluate #'s use &Narrow|&Remove # evaluation|"
 
 ; Set up the folds for C
 set-variable .fhook-c.fold-open  "^{"
@@ -121,7 +121,7 @@ set-variable .fhook-c.fold-close "^}"
 !endif
 ;
 ; setup useful C fuctions to auto-load cmacros
-define-macro-file cmacros c-slashify c-deslashify c-start-comment c-hash-eval c-hash-set-define c-hash-unset-define c-hash-del
+define-macro-file cmacros c-slashify c-deslashify c-hash-eval c-hash-set-define c-hash-unset-define c-hash-del
 define-macro-file cbox c-box
 define-macro-file hkcpp fhook-cpp
 ;

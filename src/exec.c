@@ -10,7 +10,7 @@
  *
  *       Author:                 Danial Lawrence
  *
- *       Creation Date:          14/05/86 12:37          <010305.0801>
+ *       Creation Date:          14/05/86 12:37          <010314.2157>
  *
  *       Modification date:      %G% : %U%
  *
@@ -687,10 +687,12 @@ elif_jump:
                 {
                     if(!(dirType & DRFLAG_OPTARG))
                         return FALSE ;
+                    f = FALSE;
                     n = 1 ;
                 }
                 else if(dirType & DRFLAG_NARG)
                 {
+                    f = TRUE;
                     n = meAtoi(tkn) ;
                     if(dirType & DRFLAG_JUMP)
                         relJumpTo = n ;
@@ -718,6 +720,8 @@ elif_jump:
                 nmacro = TRUE;
                 goto try_again;
             case DRABORT:
+                if(f)
+                    TTdoBell(n) ;
                 return FALSE ;
             case DRBELL:
                 TTdoBell(n) ;

@@ -33,12 +33,12 @@ set-variable .fhook-cpp.name "C++"
 set-variable .fhook-cpp.setup &reg "/history" "fhook/cpp" "bdfhnopx"
 set-variable .fhook-cpp.setup-mask "abdefhikmnoptux>"
 set-variable .fhook-cpp.tags "ctags"
-set-variable .fhook-cpp.comment "|//||/|"
-set-variable .fhook-cpp.command-flag  "|thb|thbo|thbo|bo|th|th|th|t|t|t|t|t|t|"
-set-variable .fhook-cpp.command-name  "|normal-tab|c-start-comment|c-box|c-box||c-slashify|c-deslashify||c-hash-set-define|c-hash-unset-define|c-hash-eval|c-hash-eval|c-hash-del|"
-set-variable .fhook-cpp.command-nbind "||||||||||||1||"
-set-variable .fhook-cpp.command-kbind "|A-tab|esc C-c|esc q|esc o||||||||||"
-set-variable .fhook-cpp.command-desc  "|&Insert tab|Start co&mment|Restyle c&omment|||Slashify region|Deslashify region||&Set #define|&Unset #define|Evaluate &#'s|Evaluate #'s use &Narrow|&Remove # evaluation|"
+set-variable .fhook-cpp.comment "|//||/|// ||"
+set-variable .fhook-cpp.command-flag  "|thbo|bo|th|th|th|t|t|t|t|t|t|"
+set-variable .fhook-cpp.command-name  "|c-box|c-box||c-slashify|c-deslashify||c-hash-set-define|c-hash-unset-define|c-hash-eval|c-hash-eval|c-hash-del|"
+set-variable .fhook-cpp.command-nbind "||||||||||1||"
+set-variable .fhook-cpp.command-kbind "|esc q|esc o||||||||||"
+set-variable .fhook-cpp.command-desc  "|Restyle c&omment|||Slashify region|Deslashify region||&Set #define|&Unset #define|Evaluate &#'s|Evaluate #'s use &Narrow|&Remove # evaluation|"
 
 ; Set up the folds for C++
 set-variable .fhook-cpp.fold-open  "^{"
@@ -135,7 +135,7 @@ set-variable .fhook-cpp.fold-close "^}"
 !endif
 ;
 ; setup fuctions to auto-load from cmacros & cbox
-define-macro-file cmacros c-slashify c-deslashify c-start-comment c-hash-eval c-hash-set-define c-hash-unset-define c-hash-del
+define-macro-file cmacros c-slashify c-deslashify c-hash-eval c-hash-set-define c-hash-unset-define c-hash-del
 define-macro-file cbox c-box
 
 ml-write "[C++ file hook loaded]"

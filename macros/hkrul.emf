@@ -18,7 +18,7 @@ define-macro fhook-rul
 !emacro
 set-variable .fhook-rul.setup &reg "/history" "fhook/rul" "bdfhnopx"
 set-variable .fhook-rul.setup-mask "abdefhikmnoptux"
-set-variable .fhook-rul.comment "|/*|*/|*|"
+set-variable .fhook-rul.comment "|/*|*/|*| * |f|"
 
 ; setup rul folding support
 set-variable .fhook-rul.fold-open  "^function"

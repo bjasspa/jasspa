@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Tue Sep 19 10:10:01 2000
-;  Last Modified : <010302.0917>
+;  Last Modified : <010314.2139>
 ;
 ;  Description   : Generic tags generator
 ;
@@ -82,9 +82,13 @@ osd .osd.gtf 100 "BcfH"   .scheme.osd-ebtt " E&xit "    1 void
 ; generate-tags-file "<tagtype>" "[start-path]"
 ; runs ME @<tagtype> -v%tags-option=...
 define-macro generate-tags-file
-    !force set-variable .type @1
-    !if &not $status
+    !if &exi &ind &spr ".%s.tags" $buffer-fhook
         set-variable .type &ind &spr ".%s.tags" $buffer-fhook
+    !else
+        !force set-variable .type @1
+        !if &not $status
+            set-variable .type @ml "tag command"
+        !endif
     !endif
     !if &seq &lef .type 1 "!"
         ; direct shell command - run it

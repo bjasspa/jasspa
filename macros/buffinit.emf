@@ -136,8 +136,12 @@ define-macro-file fold fold-current fold-all
             !endif
         !endif
     !done
+    !if &sin "d" #l0
+        buffer-bind-create "bi" "C-tab" "" normal-tab
+    !endif
     set-variable #l5 &ind &spr ".%s.comment" $buffer-fhook
     !if &not &seq &lget #l5 1 ""
+        buffer-bind-create "b" "C-c C-s" "" comment-start
         buffer-bind-create "b" "C-c C-c" "" comment-line
         buffer-bind-create "b" "C-c C-d" "" uncomment-line
         buffer-bind-create "b" "C-c C-e" "" comment-to-end-of-line
