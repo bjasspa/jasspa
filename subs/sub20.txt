@@ -8,7 +8,7 @@ using:-
 
     -1 next-buffer
 
-Hence a ley  binding  in the July 2001  release  should be  defined as
+Hence a key  binding  in the July 2001  release  should be  defined as
 follows.  Assuming  that "f6" allows you to move  between the previous
 and next buffers, the binding may be defined as follows:-
 
@@ -22,7 +22,7 @@ macro as follows:-
         &neg @# next-buffer
     !emacro
 
-The @# processing propogates the numeric argument so
+The @# processing propagates the numeric argument so
 
     2 previous-buffer
 
