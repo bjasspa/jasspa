@@ -1553,7 +1553,7 @@ meXEventHandler(void)
              * does not seemed to have aquired an incorrect state (i.e. button
              * state mis-represented). I will leave it for the time being (JDG)
              */
-            meUShort cc;                  /* Character code */
+            meUShort cc;                /* Character code */
             meUInt arg;                 /* Decode key argument */
             mouse_X = event.xmotion.x / mecm.fwidth ;
             mouse_Y = event.xmotion.y / mecm.fdepth ;
@@ -1564,7 +1564,7 @@ meXEventHandler(void)
                   (SKEY_mouse_move+mouseKeys[mouseButtonGetPick()])) ;
             /* Are we after all movements or mouse-move bound ?? */
             if((TTallKeys & 0x1) || (!TTallKeys && (decode_key(cc,&arg) != -1)))
-                addKeyToBuffer(cc) ;        /* Add key to keyboard buffer */
+                addKeyToBufferOnce(cc) ; /* Add key to keyboard buffer */
         }
         break;
 #endif

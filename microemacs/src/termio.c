@@ -934,6 +934,20 @@ addKeyToBuffer(meUShort cc)
         TTNbell() ;
 }
 
+/*
+ * Add the key to the buffer if it is not already in the buffer. We only check
+ * the last key event. This is typically used for the mouse events which may
+ * be many and we only need a single mouse move event.
+ */
+void 
+addKeyToBufferOnce (meUShort cc)
+{
+    /* Add the key to the buffer if the buffer is empty or the key code is
+     * different from the last key code. */
+    if ((TTnoKeys == 0) || (TTkeyBuf [TTlastKeyIdx] != cc))
+        addKeyToBuffer (cc);
+}
+
 #ifdef _ME_CONSOLE
 #ifdef _TCAP
 #ifndef _USETPARM
