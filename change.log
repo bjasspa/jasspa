@@ -4,10 +4,64 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <040214.1538>
+>  Last Modified : <040307.1443>
 >
 
-7th Release - February 2004
+7th Release - March 2004
+
+    [040226] Deleted cygnus.emf added cygwin.emf for cygwin BASH shell support
+             under Windows. Corrected the shell operation with macro layer for
+             echo and completion.
+
+    [040224] Add new 'narrow out unhilighted lines' feature.
+
+    [040223] Add new buffer tab list  toolbar tool for rapid access to buffers
+             via a top or bottom toolbar.
+
+    [040223] Add <> buttons to toolbar mode lines to scroll left and right.
+
+    [040223] Fixed. Calender day is off by one when going  backwards to before
+             2004.
+
+    [040223] Fixed.  Executing 'me' (user-setup -> Current) breaks  auto-spell
+             until  a main  spell  command  (spell-word  or  spell-buffer)  is
+             executed.
+
+    [040223] CVS directory listing file loss solved.  Differences  between CVS
+             command line  operations and directory list operations  resolved,
+             both now produce the same results.
+
+    [040229] Fixed UNIX signal lock synchronization, solves problems with read
+             failing following FTP or HTTP command.
+
+    [040223] Add   new   narrow-search-forward   and    narrow-search-backward
+             commands.
+
+    [040220] Mouse wheel operation fixed. Added new mouse-wup-scroll  commands
+             that should be used instead.
+
+    [040218] Added 'Invert Selection' to context menu.
+
+    [040218] Add 'f5' refresh binding to a dir list buffer.
+
+    [040218] Fixed. Need some way of opening the right mouse button menu using
+             a key. Also need so  termcap  bindings  to open main and  context
+             menus.  Created new  context-menu  command, bound to S-f1 and the
+             windows  'menu' key (aka windows) and created  binds to open main
+             menu (esc =) and context menu (esc +) on termcap platforms.
+
+    [040217] Fixed.  '2   popup-window'   does  not  work  on  an   XTerm,  no
+             implementation in function meFrameXTermMakeCur.
+
+    [040217] Fixed. CVS status of  directories  is not shown. Also add 'b' and
+             'o' file type flags.
+
+    [040216] Fixed.  ME   build.bat   -l  options  do  not  work  in  standard
+             cmd/command as there use 4DOS '>>&'  extension.  Changed to using
+             2>&1 which works on cmd & 4nt but breaks 4Dos and command.
+
+    [040216] Fixed   bottom   Toolbar   window   grows  when  CVS  is  opened,
+             change-window-depth does not respect bit 2 of $window-flags.
 
     [040214] Added .spec template for RedHat RPM package file specification.
 
@@ -15,15 +69,51 @@
 
     [040214] Recognize  -* makefile -*- and -* sh -*-
 
+    [040213] Fixed reframe  cvs-console better so the exit status can be easily seen
+             from a small window.
+
+    [040213] PHP script can be started with '<?' tag in a php file.
+
     [040213] Corrected  UNIX  ishell  operation  when  "su" to  another  user.
-             Locking up or generally behaving badly (termio not initialized). 
+             Locking up or generally  behaving badly (termio not initialized).
+             Affects all UNIX platforms.
+
+    [040213] Documented the create/delete/next-frame keys.
+
+    [040210] Fixed toolbar  Directory  File List does not contain "../" - UNIX
+             only.
+
+    [040210] Fixed. On UNIX only the $progname may not be fully  expanded (has
+             just  "me")  which  may lead to a ctags  generation  error and an
+             alternate fix to $search-path.
+
+    [040210] Fixed. On unix,  find-file  of a symbolic  link which points to a
+             directory  results  in a bad dir  listing.  The  list of files is
+             correct but the stats are all wrong (found on sunos 5.8).
+
+    [040210] Fix subtle ftp bug with alias ftp  addressed.  Create an ftp site
+             "ftp://test/" say with user name foo and passwd bar and then load
+             in  "ftp://test/dir1/"  the buffer file name is correctly  set as
+             "ftp://test/dir1/" but the 'Directory listing of:' line is set to
+             "ftp://foo@test/dir1/". Firstly the user may wish the 'foo' to be
+             hidden but secondly with the  introduction of being able to click
+             on the 'Directory  listing of:' line this has introduced a subtle
+             inefficiency/bug,  if I  click  on the  'foo@test'  ME will  load
+             "ftp://foo@test/"  not "ftp://test/"  which to ME is a completely
+             different  file. This can in turn lead to  "ftp://foo@test/dir1/"
+             being  loaded  so you can end up with 2 copies of every dir being
+             loaded! The fix is to make the  'Directory  listing of:' line the
+             same, i.e. "ftp://test/dir1/"
+
+    [040208] Fixed.  "-n"  command  line  option to a console  build  causes a
+             option failure and the executable does not run.
 
     [040208] Corrected  UNIX jasspa tree search when  executable is in CWD and
              there is no executable path.
-    
+
     [040206] RC4 - Release Candidate 4 - MicroEmacs '04
 
-    [040206] Fixes for toolbar Buffer Item List update  problem. Thanks to Dr.
+    [040206] Fixes for tool-bar Buffer Item List update problem. Thanks to Dr.
              Detlef Groth.
 
     [040206] Added template support for XML. Thanks to Dr. Detlef Groth.
@@ -31,7 +121,7 @@
     [040204] Re-worked Microsoft Windows "me32.ini" file specification.  Order
              revised and lookup simplified.
 
-    [040203] "user-setup"  changed name to "Rebind Home Keys" for rebinding of
+    [040203] "user-setup" changed name to "Rebind Home Keys" for re-binding of
              home and end keys to  start/end  of line.  Removed  "C-v" binding
              that existed with old "MS keys" label.
 
