@@ -1,28 +1,32 @@
 ##############################################################################
 #
-#			Copyright 2003 Jon Green.
+#			Copyright 2003-2004 Jon Green.
 #			      All Rights Reserved
 #
 #
-#  System        :
-#  Module        :
+#  System        : MicroEmacs
+#  Module        : CD-ROM image
 #  Object Name   : $RCSfile: Makefile,v $
-#  Revision      : $Revision: 1.6 $
-#  Date          : $Date: 2004-03-27 21:20:47 $
+#  Revision      : $Revision: 1.7 $
+#  Date          : $Date: 2004-03-27 23:59:37 $
 #  Author        : $Author: jon $
 #  Created By    : Jon Green
 #  Created       : Sun Aug 10 11:57:07 2003
-#  Last Modified : <040327.2119>
+#  Last Modified : <040327.2358>
 #
-#  Description
+#  Description   : Construct the ISO CD-ROM images of MicroEmacs
 #
-#  Notes
+#  Notes         : Runs under sunOS only.
+#                  All images are taken from the www.jasspa.com site
+#                  following a release.
+#                  Uses "unix2dos" and "unix2mac" these are private
+#	           tools.
 #
 #  History
 #
 ##############################################################################
 #
-#  Copyright (c) 2003 Jon Green.
+#  Copyright (c) 2003-2004 Jon Green.
 #
 #  All Rights Reserved.
 #
@@ -71,11 +75,11 @@ EDIRS=	$(EDIR) \
 	$(EDIR)/me \
 	$(EDIR)/subs \
 	$(EDIR)/cdlabels \
-	$(EDIR)/archive	
+	$(EDIR)/archive
 #
 # Basic tools
 #
-RM	= rm -f
+RM	= 	rm -f
 UNIX2DOS=	/opt/jon/bin/unix2dos
 UNIX2MAC=	/opt/jon/bin/unix2mac
 
@@ -207,7 +211,7 @@ spotless: clean
 	rm -f *.iso
 #
 # Root directory readme's
-# 
+#
 $(FDIR) $(EDIR):
 	mkdir -p $@
 	cp $(RELDIR)/doc/faq.txt $@/faq.unix
@@ -230,7 +234,7 @@ $(FDIR) $(EDIR):
 	$(UNIX2MAC) cdrom.txt $@/cdrom.hfs
 #
 # Nano Emacs excecutable directory.
-# 
+#
 $(FDIR)/ne $(EDIR)/ne:	ne.txt
 	mkdir -p $@
 	gunzip -c $(RELDIR)/jasspa-ne-linux-i386-2.4-20040301.gz > $@/nelinux24
@@ -263,14 +267,14 @@ $(FDIR)/ne $(EDIR)/ne:	ne.txt
 	unzip -o $(RELDIR)/jasspa-ne-msdos-djgpp1-20040301.zip -d $@
 	mv $@/ne.exe $@/nedos.exe
 	cp $(RELDIR)/jasspa-ne-msdos-djgpp2-20040301.exe $@/nedosdj2.exe
-	cp $(RELDIR)/jasspa-new-ms-win32-20040301.exe $@/new32.exe				
+	cp $(RELDIR)/jasspa-new-ms-win32-20040301.exe $@/new32.exe
 	cp $(RELDIR)/ne.emf $@
 	cp ne.txt $@/readme.unix
 	$(UNIX2DOS) ne.txt $@/readme.joliet
 	$(UNIX2MAC) ne.txt $@/readme.hfs
 #
 # Spelling dictionaries.
-# 
+#
 $(FDIR)/archive/spelling: spell.txt
 	mkdir -p $@
 	cp $(SPLDIR)/ls_dede.tar.gz $(SPLDIR)/ls_dede.zip $@
@@ -298,7 +302,7 @@ $(FDIR)/doc: doc.txt
 	$(UNIX2MAC) doc.txt $@/readme.hfs
 #
 # Packages.
-# 
+#
 $(FDIR)/packages:
 	mkdir -p $@/windows
 	unzip -o $(RELDIR)/jasspa-mepkg-ms-win32-2004030.zip -d $@/windows
@@ -329,12 +333,12 @@ $(FDIR)/src:
 	(cd $@; gunzip -c $(RELDIR)/jasspa-mesrc-20040301.tar.gz | tar xvf -)
 #
 # Executable direcotory.
-# 
+#
 $(FDIR)/me $(EDIR)/me: me.txt
 	- rm -rf $@
 	mkdir $@
 	(cd $@; gunzip -c $(RELDIR)/jasspa-metree-20040301.tar.gz | tar xvf -)
-	mv $@/jasspa/* $@	
+	mv $@/jasspa/* $@
 	rmdir $@/jasspa
 	gunzip -c $(RELDIR)/jasspa-me-linux-i386-2.4-20040301.gz > $@/melinux24
 	chmod a+rx $@/melinux24
@@ -442,7 +446,7 @@ $(FDIR)/archive:
 	cp $(RELDIR)/meicons_pm.tar.gz $@/icons
 #
 # Limited archive.
-# 
+#
 $(EDIR)/archive:
 	mkdir -p $@
 	cp $(RELDIR)/jasspa-mesrc-20040301.tar.gz $@
