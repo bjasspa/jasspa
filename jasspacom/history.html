@@ -107,7 +107,44 @@
   <h3>7th Release - March 2004</h3>
   <ul>
 
-    <li>[040318] Fix to Microsoft Windows clipboard when operating with VNC.</li>
+    <li> [040326] Release wrapped - public release tag is <b>20040301</b> for
+    executable and macros.</li>
+
+    <li>[040326] Support for MAC O/S Darwin image. Console only (no build
+    machine available for X-11 version).</li>
+
+    <li>[040326] Introduction of UPX on Windows and DOS executables for ne
+    only.</li>
+
+    <li>[040326] Support for MS-DOS long name under DJGPP v2.0. For version
+    2.0 then the DJGPP functions must be invoked rather than the MS-DOS BIOS
+    calls otherwise the modified short name is returned. DJGPPv1 is still
+    supported original definitions maintained.</li>
+
+    <li>[040326] Added <b>filetype</b> macro to determine the file type of
+    MS-DOS, Windows or UNIX.</li>
+    
+    <li>[040322] <b>$mouse</b> variables configured under console modes to
+    allow pseudo mouse operations to be performed.</li>
+
+    <li>[040322] Fixed the <b>win32s</b> build and emain.h definitions. Mouse
+    was not supported under win32s through incorrect configuration
+    definition.</li>
+
+    <li>[040322] Key bindings for the file browser. <tt>ENTER</tt> now handled
+    on the reserved fields to sort. <tt>BACKSPACE</tt> now moves up a
+    directory level.</li>
+
+    <li>[040322] Changed the interface to cvs, ftp and file-browser command so
+    that if a numeric argument of 0 is given then the directory tree window is
+    not opened, just the <b>*files*</b> buffer.</li>
+
+    <li>[040322] AutoIt hook. Thanks to Dr Detlef Groth.</li>
+
+    <li>[040322] Added CSS template. Thanks to Gabriel Tabares-Barreiro.</li>
+    
+    <li>[040318] Fix to Microsoft Windows clipboard when operating with
+    VNC.</li>
 
     <li>[040317] Macro and source release set to <tt>20040301</tt>.</li>
 
