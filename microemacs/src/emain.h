@@ -305,11 +305,11 @@
 #if (_MSC_VER != 900)
 /* MSVC Not version 2 - win32s */
 #define _IPIPES        1                /* platform supports Inc. pipes  */
-#define _MOUSE         1                /* Mouse supported               */
 #define _CLIENTSERVER  1                /* Client server support         */
 #endif
 /* The next option is commented out as the win32*.mak file define it when required */
 /*#define _SOCKET     1*/                /* Supports url reading          */
+#define _MOUSE         1                /* Mouse supported               */
 #define _CLIPBRD       1                /* Inter window clip board supp  */
 #define _WINDOW        1                /* Windowed, resizing & title    */
 #define _INSENSE_CASE  1                /* File names case insensitive   */
