@@ -56,6 +56,8 @@
  "mouse-pick-1" = "mouse-pick-type1"
  "mouse-pick-2"
  "mouse-pick-3"
+ "mouse-wdown" = "5 mouse-wdown-scroll"
+ "mouse-wup" = "5 mouse-wup-scroll"
 }
 "openbsd" {
  "ext-char-set" = "1"
