@@ -4,105 +4,163 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <040217.2303>
+>  Last Modified : <040223.2125>
 >
 
-    [040213] BS/0401-4 - Minor - TBD
+   [040220] SP/0401-4 - Minor - TBD
 
-        Reframe  cvs-console better so the exit status can be easily seen from
-        a small window.
+        Add new 'narrow out unhilighted lines feature
 
-    [040213] SP/0401-4 - Major - Target TBD
+   [040220] SP/0401-4 - Minor - TBD
 
-        CVS status of directories is not shown.
+        Add <> buttons to toolbar mode lines to scroll left and right
 
-    [040212] SP/0401-4 - Major - Target TBD
+   [040220] SP/0401-4 - Minor - TBD
 
-        Executing 'me' (user-setup -> Current) breaks  auto-spell until a main
-        spell command (spell-word or spell-buffer) is executed.
+        Add new buffer tab list toolbar tool for rapid access to buffers via a
+        top or bottom toolbar.
 
-    [040212] SP/0401-4 - Enhancement - TBD
-
-        Need some way of opening the right mouse button menu using a key. 'esc
-        ='
-
-    [040210] BS/0401-4 - Minor - TBD
-
-        ME build.bat -l options do not work in standard  cmd/command  as there
-        use 4DOS '>>&' extension.
-
-    [040210] BS/0401-4 - Minor - TBD
+   [040210] BS/0401-4 - Minor - TBD
 
         ME can't load files within a directory with '[..]' in its name - win32
-
+        
 ___________________________________________________________________________
 
 0401-4 Release Fixes
 ___________________________________________________________________________
 
-    [040213] SP/0401-4 - Major - Target 0401-5
+     [040220] SP/0401-4 - Major - Target 0401-5
+    
+        Doc changes to set-cursor-to-mouse command.
 
-        Bottom  Toolbar  window grows when CVS is opened,  change-window-depth
-        does not respect bit 2 of $window-flags.
+     [040216] JG/0401-4 - Enhancement - Target TBD
 
-    [040210] BS/0401-4 - Major - Target 0401-5
+        Cygwin shell under  windows does not echo the command line. The cygwin
+        behavior  has changed and BASH no longer echos the command  line. This
+        means  that  ME must  supply  its own  command  line  and  completion.
+        Completion is simplified if the $TERM=EMACS and $EMACS="*term*" as the
+        bash  shell  will echo the  current  directory  before the prompt on a
+        separate line commencing ^Z to allow the caller to complete.
+
+> FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED 
+
+     [040220] BS/0401-4 - Major - Target 0401-5
+    
+        Found the mouse  position not set correctly for the mouse wheel events
+        as position is absolute.
+        
+        Fixed SP/0401-5 04/02/20: Source & macro change.
+        
+        Fixed the bug by ignoring the position  (will use last  position)  but
+        binding this to the base scroll-up  command will now break the toolbar
+        as it leaves  the cursor in the  toolbar.  Added new  mouse-wup-scroll
+        commands that should be used instead.
+
+     [040220] JG/0401-4 - Major - Target 0401-5
+    
+        Calender day is off by one when going backwards to before 2004.
+
+        Fixed SP/0401-5 04/02/23: Macro change.
+
+     [040212] SP/0401-4 - Major - Target TBD
+        
+        Executing 'me' (user-setup -> Current) breaks  auto-spell until a main
+        spell command (spell-word or spell-buffer) is executed.
+
+        Fixed SP/0401-5 04/02/23: Macro change.
+
+     [040210] BS/0401-4 - Major - Target 0401-5
 
         There are  several  differences  between  running  'cvs' and using the
         'cvs-*'  commands  that can lead to  unexpected  and unwanted  results
         (e.g. use C-f10, select a couple of files and then execute cvs-commit,
         this will commit  changes to all files as it does not respect the list
         of selected  files).
+        
+        Fixed SP/0401-5 04/02/23: Macro change.
 
+    [040206] SP/0401-4 - Enhancement - Target TBD
+
+        Would like a Select All and  Inverse  Selection  in the *files*  right
+        mouse button menu to select all files/dirs in the listing
+
+        Fixed SP/0401-5 04/02/18: Macro change.
+        
+        Added  'Invert  Selection' to context menu, I don't think a select all
+        is required as a 'Deselect All' followed by an 'Invert' does this.
+        
+     [040218] SP/0401-4 - Minor - TBD
+     
+        Add 'f5' refresh binding to a dir list buffer.
+
+        Fixed SP/0401-5 04/02/18: Macro change.
+        
     [040129] JG/0401-1 - Major - Target 0401-5
-
+    
         From  Organizer  -> Address,  do "Find" and search  "First" for a name
         that does not exist - Organiser locks up.
 
-    [040203] Gabriel/0401-3 - Font selection under XP
+        Not  Reproducible - believe its caused by a very out of date sort list
+        which would have caused problems. Running the Sort fixes the issue.
+        
+    [040212] SP/0401-4 - Enhancement - TBD
+        
+        Need some way of opening the right mouse button menu using a key.
+        Also need so termcap bindings to open main and context menus.
+        
+        Fixed SP/0401-5 04/02/18: Source & Macro change.
+        
+        Created new context-menu command, bound to S-f1 and the windows 'menu'
+        key (aka  windows)  and  created  binds to open  main menu (esc =) and
+        context menu (esc +) on termcap platforms.
 
-        I have downloaded unix fonts from
-
-            http://www.tomasek.cz/semtel/download/fonts.zip
-
-        and I can't  get  them to work in ME. I can get  them to work on other
-        programs (such as notepad) but not on ME.
-
-        I have got 6x13 from somewhere else working, but that is too small for
-        1280x960 (shame, it's my favourite programming font).
-
-        I can  choose  the fonts from the list, but I cannot use them (it goes
-        back to some other default font).
-
-        Same problem under RC4.
-
-> FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED FIXED
-
-    [040217] SK/0401-4 - Minor - Target 0401-5
-
-        I am using the ME Server  feature  where in KDE File  Manager I double
-        click on a file and have an existing  instance of ME open the file up.
-        The  problem  is that  once  this  happens,  ME does  not  come to the
-        foreground.
+    [040216] SP/0401-4 - Major - Target TBD
+        
+        '2  popup-window'  does not work on an  XTerm,  no  implementation  in
+        function meFrameXTermMakeCur.
 
         Fixed JG/0401-5 04/02/17: Source change.
 
+    [040213] SP/0401-4 - Major - Target TBD
+    
+        CVS status of directories is not shown. Also add 'b' and 'o' file type
+        flags.
+        
+        Fixed SP/0401-5 04/02/17: Macro change.
+
+    [040210] BS/0401-4 - Minor - TBD
+
+        ME build.bat -l options do not work in standard  cmd/command  as there
+        use 4DOS '>>&' extension. 
+
+        Fixed SP/0401-5 04/02/16: Source change.
+        
+        Changed  to using  2>&1  which  works on cmd & 4nt but breaks 4Dos and
+        command.
+
+    [040213] SP/0401-4 - Major - Target 0401-5
+    
+        Bottom  Toolbar  window grows when CVS is opened,  change-window-depth
+        does not respect bit 2 of $window-flags.
+        
+        Fixed SP/0401-5 04/02/16: Source change.
+
+    [040213] BS/0401-4 - Minor - Target 0401-5
+
+        Reframe  cvs-console better so the exit status can be easily seen from
+        a small window.
+
+        Fixed SP/0401-5 04/02/16: Macro change.
+
     [040213] BS/0401-4 - Major - Target 0401-5
-
+    
         PHP script can be started with '<?' tag in a php file.
-
+        
         Fixed SP/0401-5 04/02/13: Macro change.
-
-    [040206] JG/0401-4 - Minor - target 0401-5
-
-        Under Linux and SunOS then cannot "su" to another  user from an ishell
-        window.
-
-        Fixed JG/0401-5  04/02/13: Source change unixterm.c.  "otermio" is not
-        initialized.
-
+        
     [040210] DG/0401-4 - Major - Target 0401-5
-
-        Toolbar Directory File List does not contain "../" - UNIX only.
+    
+        Toolbar Directory File List does not contain "../" - UNIX only. 
 
         Fixed 0401-5 04/02/10: Source change.
 
@@ -116,8 +174,8 @@ ___________________________________________________________________________
 
         Support to recognize GNU tags for makefile "-*- Makefile -*-" and UNIX
         shell files "-*- sh -*-".
-
-        Fixed 0401-5 04/02/10: Macro change.
+        
+        Fixed JS/0401-5 04/02/10: Macro change.
 
     [040206] JG/0401-4 - Critical - Target 0401-5
 
@@ -140,7 +198,7 @@ ___________________________________________________________________________
         UNIX the Copy and Paste is not  working  correctly  between  X-Windows
         applications.  Data selected in Mozilla  copies into GNU Emacs OK, but
         not into ME.
-
+        
         Fixed JG/0401-5 04/02/09: Build Solaris 8 image.
 
     [040206] JG/0401-4 - Minor - Target 0401-5
@@ -173,17 +231,13 @@ ___________________________________________________________________________
 Subsequent Release
 ___________________________________________________________________________
 
-    [040216] JG/0401-4 - Enhancement - Target TBD
-
-        Cygwin shell under  windows does not echo the command line. The cygwin
-        behavior  has changed and BASH no longer echos the command  line. This
-        means  that  ME must  supply  its own  command  line  and  completion.
-        Completion is simplified if the $TERM=EMACS and $EMACS="*term*" as the
-        bash  shell  will echo the  current  directory  before the prompt on a
-        separate line commencing ^Z to allow the caller to complete.
+    [040218] SP/0401-4 - Enhancement - Target TBD
+    
+        In  Organiser I want an easy way to deselect all and in the Find a way
+        of selecting all matches.
 
     [040211] SP/0401-4 - Enhancement - Target TBD
-
+    
         evaluation  of ~fred/ on UNIX  should use the passwd file first to get
         the correct home directory of fred.
 
@@ -191,15 +245,15 @@ ___________________________________________________________________________
 
         There are  differences  between  the output  buffer used when  running
         'cvs'  and  using  the  'cvs-*'   commands,  e.g.   *cvs-console*   or
-        *cvs-commit* buffer. Should these differences be engineered out?
+        *cvs-commit* buffer. Should these differences be engineered out? 
 
     [040210] SP/0401-4 - Enhancement - Target TBD
-
+    
         Add support for deleting  directories to file-op and to  file-browser.
-        This would also be used by upload's clean process.
+        This would also be used by upload's clean process. 
 
-    [040206] SP/0401-4 - Minor - Target TBD
-
+    [040206] JG/0401-4 - Minor - Target TBD
+    
         ME does not work on a HP-UX console. Probably because termcap database
         is not being used and built in definitions are being used to over-ride
         termcap. Need to revisit this.
@@ -213,11 +267,6 @@ ___________________________________________________________________________
         CVS  directory  listing  looses  files  sometimes.  Deleted  files and
         sometimes new files fail to show in CVS directory  listing.  Unsure if
         it is CVS problem or ME problem. (sunos).
-
-    [040206] SP/0401-4 - Enhancement - Target TBD
-
-        Would like a Select All and  Inverse  Selection  in the *files*  right
-        mouse button menu to select all files/dirs in the listing
 
     [040206] SP/0401-4 - Enhancement - Target TBD
 
@@ -237,15 +286,15 @@ ___________________________________________________________________________
         the printer.
 
     [040101] DG/0401-1 - Enhancement - Target TBD
-
+    
         Support hierarchical favorites.
 
     [040101] BS/0401-1 - Enhancement - Target TBD
-
+    
         New work notepad/todo list feature.
 
     [040101] JG/0401-1 - Minor - Target TBD
-
+    
         Default  printer  selection  can be wrong on windows  unless the print
         setup dialog is opened.
 
