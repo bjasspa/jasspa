@@ -183,8 +183,16 @@ enum {
     meREGEXITEM_DOUBLE,
     meREGEXITEM_CLASS,
     meREGEXITEM_ANYCHR,
+    meREGEXITEM_DIGITCHR,
+    meREGEXITEM_NDIGITCHR,
+    meREGEXITEM_XDIGITCHR,
+    meREGEXITEM_NXDIGITCHR,
+    meREGEXITEM_LOWERCHR,
+    meREGEXITEM_NLOWERCHR,
     meREGEXITEM_SPACECHR,
     meREGEXITEM_NSPACECHR,
+    meREGEXITEM_UPPERCHR,
+    meREGEXITEM_NUPPERCHR,
     meREGEXITEM_WORDCHR,
     meREGEXITEM_NWORDCHR,
     meREGEXITEM_BEGBUFF,
@@ -198,10 +206,10 @@ enum {
 } meREGEXITEM ;
 
 /* meRegexClass functions and macros */
-#define meRegexClassTest(clss,cc)    (clss[cc>>3] &   (1<<(cc&0x7)))
-#define meRegexClassSet(clss,cc)     (clss[cc>>3] |=  (1<<(cc&0x7)))
-#define meRegexClassClear(clss,cc)   (clss[cc>>3] &= ~(1<<(cc&0x7)))
-#define meRegexClassToggle(clss,cc)  (clss[cc>>3] ^=  (1<<(cc&0x7)))
+#define meRegexClassTest(clss,cc)    (clss[(cc)>>3] &   (1<<((cc)&0x7)))
+#define meRegexClassSet(clss,cc)     (clss[(cc)>>3] |=  (1<<((cc)&0x7)))
+#define meRegexClassClear(clss,cc)   (clss[(cc)>>3] &= ~(1<<((cc)&0x7)))
+#define meRegexClassToggle(clss,cc)  (clss[(cc)>>3] ^=  (1<<((cc)&0x7)))
 #define meRegexClassSetAll(clss)     (memset(clss,0xff,meREGEXCLASS_SIZE))
 #define meRegexClassClearAll(clss)   (memset(clss,0x00,meREGEXCLASS_SIZE))
 
@@ -321,12 +329,28 @@ do { \
         if((string[offset] != '\0') && (string[offset] != '\n')) \
             retOffset = offset+1 ; \
         break ; \
-    case meREGEXITEM_WORDCHR: \
-        if((string[offset] != '\0') && isWord(string[offset])) \
+    case meREGEXITEM_DIGITCHR: \
+        if((string[offset] != '\0') && isDigit(string[offset])) \
             retOffset = offset+1 ; \
         break ; \
-    case meREGEXITEM_NWORDCHR: \
-        if((string[offset] != '\0') && !isWord(string[offset])) \
+    case meREGEXITEM_NDIGITCHR: \
+        if((string[offset] != '\0') && !isDigit(string[offset])) \
+            retOffset = offset+1 ; \
+        break ; \
+    case meREGEXITEM_XDIGITCHR: \
+        if((string[offset] != '\0') && isXDigit(string[offset])) \
+            retOffset = offset+1 ; \
+        break ; \
+    case meREGEXITEM_NXDIGITCHR: \
+        if((string[offset] != '\0') && !isXDigit(string[offset])) \
+            retOffset = offset+1 ; \
+        break ; \
+    case meREGEXITEM_LOWERCHR: \
+        if((string[offset] != '\0') && isLower(string[offset])) \
+            retOffset = offset+1 ; \
+        break ; \
+    case meREGEXITEM_NLOWERCHR: \
+        if((string[offset] != '\0') && !isLower(string[offset])) \
             retOffset = offset+1 ; \
         break ; \
     case meREGEXITEM_SPACECHR: \
@@ -335,6 +359,22 @@ do { \
         break ; \
     case meREGEXITEM_NSPACECHR: \
         if((string[offset] != '\0') && !isSpace(string[offset])) \
+            retOffset = offset+1 ; \
+        break ; \
+    case meREGEXITEM_UPPERCHR: \
+        if((string[offset] != '\0') && isUpper(string[offset])) \
+            retOffset = offset+1 ; \
+        break ; \
+    case meREGEXITEM_NUPPERCHR: \
+        if((string[offset] != '\0') && !isUpper(string[offset])) \
+            retOffset = offset+1 ; \
+        break ; \
+    case meREGEXITEM_WORDCHR: \
+        if((string[offset] != '\0') && isWord(string[offset])) \
+            retOffset = offset+1 ; \
+        break ; \
+    case meREGEXITEM_NWORDCHR: \
+        if((string[offset] != '\0') && !isWord(string[offset])) \
             retOffset = offset+1 ; \
         break ; \
     case meREGEXITEM_BEGBUFF: \
@@ -635,7 +675,6 @@ do {                                                                         \
     switch(cc)                                                               \
     {                                                                        \
     case 'a':   cc = 0x07; break;                                            \
-    case 'd':   cc = 0x7f; break;                                            \
     case 'e':   cc = 0x1b; break;                                            \
     case 'f':   cc = 0x0c; break;                                            \
     case 'n':   cc = 0x0a; break;                                            \
@@ -802,37 +841,35 @@ meRegexItemGet(meRegex *regex, meRegexItem *lastItem,
         case 'B':
             item->type = meREGEXITEM_NWORDBND ;
             break ;
+        case 'd':
+            item->type = meREGEXITEM_DIGITCHR ;
+            break ;
+        case 'D':
+            item->type = meREGEXITEM_NDIGITCHR ;
+            break ;
+        case 'h':
+            item->type = meREGEXITEM_XDIGITCHR ;
+            break ;
+        case 'H':
+            item->type = meREGEXITEM_NXDIGITCHR ;
+            break ;
+        case 'l':
+            item->type = meREGEXITEM_LOWERCHR ;
+            break ;
+        case 'L':
+            item->type = meREGEXITEM_NLOWERCHR ;
+            break ;
         case 's':
-            switch(*rs++)
-            {
-            case 'w':
-                item->type = meREGEXITEM_WORDCHR ;
-                break ;
-            case ' ':
-            case '-':
-                item->type = meREGEXITEM_SPACECHR ;
-                break ;
-            case '\0':
-                return meREGEX_ERROR_TRAIL_BKSSH ;
-            default:
-                return meREGEX_ERROR_UNSUPCLASS ;
-            }
+            item->type = meREGEXITEM_SPACECHR ;
             break ;
         case 'S':
-            switch(*rs++)
-            {
-            case 'w':
-                item->type = meREGEXITEM_NWORDCHR ;
-                break ;
-            case ' ':
-            case '-':
-                item->type = meREGEXITEM_NSPACECHR ;
-                break ;
-            case '\0':
-                return meREGEX_ERROR_TRAIL_BKSSH ;
-            default:
-                return meREGEX_ERROR_UNSUPCLASS ;
-            }
+            item->type = meREGEXITEM_NSPACECHR ;
+            break ;
+        case 'u':
+            item->type = meREGEXITEM_UPPERCHR ;
+            break ;
+        case 'U':
+            item->type = meREGEXITEM_NUPPERCHR ;
             break ;
         case 'w':
             item->type = meREGEXITEM_WORDCHR ;
@@ -890,8 +927,36 @@ meRegexItemGet(meRegex *regex, meRegexItem *lastItem,
                 return meREGEX_ERROR_OCLASS ;
             if(cc == '\\')
             {
+                static char *classChar="dDhHlLsSuUwW" ;
+                char *ss ;
                 cc = *rs++ ;
-                meRegexItemGetBackslashChar(rs,cc) ;
+                if((ss=strchr(classChar,cc)) != NULL)
+                {
+                    int ii, jj, kk, invert ;
+                    ii = ((size_t) ss) - ((size_t) classChar) ;
+                    invert = ii & 1 ;
+                    ii >>= 1 ;
+                    jj = 255 ;
+                    do
+                    {
+                        if(ii == 0)
+                            kk = isDigit(jj) ;
+                        else if(ii == 1)
+                            kk = isXDigit(jj) ;
+                        else if(ii == 2)
+                            kk = isLower(jj) ;
+                        else if(ii == 3)
+                            kk = isSpace(jj) ;
+                        else if(ii == 4)
+                            kk = isUpper(jj) ;
+                        else
+                            kk = isWord(jj) ;
+                        if((kk != 0) ^ invert)
+                            meRegexClassSet(item->data.cclass,jj) ;
+                    } while(--jj > 0) ;
+                }
+                else
+                    meRegexItemGetBackslashChar(rs,cc) ;
             }
             if((*rs == '-') && ((dd=rs[1]) != ']'))
             {
@@ -954,8 +1019,9 @@ meRegexItemGet(meRegex *regex, meRegexItem *lastItem,
                 
                 if(cc != '\0')
                 {
-                    jj = 256 ;
-                    while(--jj >= 0)
+                    /* don't bother with '\0' - can never match */
+                    jj = 255 ;
+                    do
                     {
                         if(((ii & 0x001) && isSpace(jj)) ||
                            ((ii & 0x002) && isDigit(jj)) ||
@@ -967,7 +1033,7 @@ meRegexItemGet(meRegex *regex, meRegexItem *lastItem,
                            ((ii & 0x080) && isGraph(jj)) ||
                            ((ii & 0x100) && isCntrl(jj)) )
                             meRegexClassSet(item->data.cclass,jj) ;
-                    }
+                    } while(--jj > 0) ;
                     rs = s2+1 ;
                 }
                 else
@@ -1117,8 +1183,34 @@ meRegexItemStartComp(meRegex *regex, meRegexItem *item, int first)
         meRegexClassMergeAll(regex->start,item->data.cclass) ;
         gotStart = 1 ;
         break ;
+    case meREGEXITEM_DIGITCHR:
+        {
+            int ii=9 ;
+            do
+                meRegexClassSet(regex->start,'0'+ii) ;
+            while(--ii >= 0) ;
+        }
+        gotStart = 1 ;
+        break ;
+    case meREGEXITEM_NDIGITCHR:
+        {
+            int ii=255 ;
+            /* don't bother with '\0' - can never match */
+            do
+                if((ii < '0') || (ii > '9'))
+                    meRegexClassSet(regex->start,ii) ;
+            while(--ii > 0) ;
+        }
+        gotStart = 1 ;
+        break ;
+    case meREGEXITEM_XDIGITCHR:
+    case meREGEXITEM_NXDIGITCHR:
+    case meREGEXITEM_LOWERCHR:
+    case meREGEXITEM_NLOWERCHR:
     case meREGEXITEM_SPACECHR:
     case meREGEXITEM_NSPACECHR:
+    case meREGEXITEM_UPPERCHR:
+    case meREGEXITEM_NUPPERCHR:
     case meREGEXITEM_WORDCHR:
     case meREGEXITEM_NWORDCHR:
         /* the WORDCHR & SPACE classes are not burnt in so flag
@@ -1126,25 +1218,40 @@ meRegexItemStartComp(meRegex *regex, meRegexItem *item, int first)
          * changed the first will be recompiled.
          */
         {
-            int ii=256, jj ;
+            int ii=255, jj, invert, type ;
+            type = item->type ;
+            if((invert = (type == meREGEXITEM_NSPACECHR)))
+                type = meREGEXITEM_SPACECHR ;
+            else if((invert = (type == meREGEXITEM_NWORDCHR)))
+                type = meREGEXITEM_WORDCHR ;
+            else if((invert = (type == meREGEXITEM_NLOWERCHR)))
+                type = meREGEXITEM_LOWERCHR ;
+            else if((invert = (type == meREGEXITEM_NUPPERCHR)))
+                type = meREGEXITEM_UPPERCHR ;
+            else if((invert = (type == meREGEXITEM_NXDIGITCHR)))
+                type = meREGEXITEM_XDIGITCHR ;
+            
             /* don't bother with '\0' - can never match */
-            while(--ii > 0)
+            do
             {
-                if((item->type == meREGEXITEM_SPACECHR) || 
-                   (item->type == meREGEXITEM_NSPACECHR))
+                if(type == meREGEXITEM_SPACECHR)
                     jj = isSpace(ii) ;
-                else
+                else if(type == meREGEXITEM_WORDCHR)
                     jj = isWord(ii) ;
-                if((item->type == meREGEXITEM_NSPACECHR) || 
-                   (item->type == meREGEXITEM_NWORDCHR))
-                    jj = !jj ;
-                if(jj)
+                else if(type == meREGEXITEM_LOWERCHR)
+                    jj = isLower(ii) ;
+                else if(type == meREGEXITEM_UPPERCHR)
+                    jj = isUpper(ii) ;
+                else
+                    jj = isXDigit(ii) ;
+                if((jj != 0) ^ invert)
                     meRegexClassSet(regex->start,ii) ;
-            }
+            } while(--ii > 0) ;
+            if(type != meREGEXITEM_XDIGITCHR)
+                regex->flags |= meREGEX_CLASSUSED ;
+            gotStart = 1 ;
+            break ;
         }
-        regex->flags |= meREGEX_CLASSUSED ;
-        gotStart = 1 ;
-        break ;
     case meREGEXITEM_ANYCHR:
         meRegexClassSetAll(regex->start) ;
         /* this can never match \0 or \n */

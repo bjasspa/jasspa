@@ -444,35 +444,41 @@ meHiltItemCompile(meUByte *dest, meUByte **token,
         cc = *ss++ ;
         switch(cc)
         {
+        case '!':
+            cc = *ss++ ;
+            if((cc <= '0') || ((cc-='0') > noGroups))
+            {
+                mlwrite(MWABORT|MWWAIT,(meUByte *)"[Back reference out of range]");
+                return NULL ;
+            }
+            *dest++ = meHIL_TEST_VALID|meHIL_TEST_INVERT|meHIL_TEST_BACKREF ;
+            *dest++ = meHIL_TEST_DEF_GROUP ;
+            *dest++ = cc ;
+            break ;
+        case 'D':
+            *dest++ = meCHAR_LEADER ;
+            *dest++ = meHIL_TEST_VALID|meHIL_TEST_INVERT|meHIL_TEST_DIGIT ;
+            *dest++ = meHIL_TEST_DEF_GROUP ;
+            break ;
+        case 'H':
+            *dest++ = meCHAR_LEADER ;
+            *dest++ = meHIL_TEST_VALID|meHIL_TEST_INVERT|meHIL_TEST_XDIGIT ;
+            *dest++ = meHIL_TEST_DEF_GROUP ;
+            break ;
+        case 'L':
+            *dest++ = meCHAR_LEADER ;
+            *dest++ = meHIL_TEST_VALID|meHIL_TEST_INVERT|meHIL_TEST_LOWER ;
+            *dest++ = meHIL_TEST_DEF_GROUP ;
+            break ;
         case 'S':
             *dest++ = meCHAR_LEADER ;
-            cc = *ss++ ;
-            switch(cc)
-            {
-            case 'w':
-                *dest++ = meHIL_TEST_VALID|meHIL_TEST_INVERT|meHIL_TEST_WORD ;
-                *dest++ = meHIL_TEST_DEF_GROUP ;
-                break ;
-            case ' ':
-            case '-':
-                *dest++ = meHIL_TEST_VALID|meHIL_TEST_INVERT|meHIL_TEST_SPACE ;
-                *dest++ = meHIL_TEST_DEF_GROUP ;
-                break ;
-            default:
-                if(!isDigit(cc))
-                {
-                    mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unsupported \\SC char class]");
-                    return NULL ;
-                }
-                if(((cc-='0') == 0) || (cc > noGroups))
-                {
-                    mlwrite(MWABORT|MWWAIT,(meUByte *)"[Back reference out of range]");
-                    return NULL ;
-                }
-                *dest++ = meHIL_TEST_VALID|meHIL_TEST_INVERT|meHIL_TEST_BACKREF ;
-                *dest++ = meHIL_TEST_DEF_GROUP ;
-                *dest++ = cc ;
-            }
+            *dest++ = meHIL_TEST_VALID|meHIL_TEST_INVERT|meHIL_TEST_SPACE ;
+            *dest++ = meHIL_TEST_DEF_GROUP ;
+            break ;
+        case 'U':
+            *dest++ = meCHAR_LEADER ;
+            *dest++ = meHIL_TEST_VALID|meHIL_TEST_INVERT|meHIL_TEST_UPPER ;
+            *dest++ = meHIL_TEST_DEF_GROUP ;
             break ;
         case 'W':
             *dest++ = meCHAR_LEADER ;
@@ -480,41 +486,36 @@ meHiltItemCompile(meUByte *dest, meUByte **token,
             *dest++ = meHIL_TEST_DEF_GROUP ;
             break ;
         case 'a':   *dest++ = 0x07; break;
-        case 'd':   *dest++ = 0x7f; break;
+        case 'd':
+            *dest++ = meCHAR_LEADER ;
+            *dest++ = meHIL_TEST_VALID|meHIL_TEST_DIGIT ;
+            *dest++ = meHIL_TEST_DEF_GROUP ;
+            break ;
         case 'e':   *dest++ = 0x1b; break;
         case 'f':   *dest++ = 0x0c; break;
+        case 'h':
+            *dest++ = meCHAR_LEADER ;
+            *dest++ = meHIL_TEST_VALID|meHIL_TEST_XDIGIT ;
+            *dest++ = meHIL_TEST_DEF_GROUP ;
+            break ;
+        case 'l':
+            *dest++ = meCHAR_LEADER ;
+            *dest++ = meHIL_TEST_VALID|meHIL_TEST_LOWER ;
+            *dest++ = meHIL_TEST_DEF_GROUP ;
+            break ;
         case 'n':   *dest++ = 0x0a; break;
         case 'r':   *dest++ = 0x0d; break;
         case 's':
             *dest++ = meCHAR_LEADER ;
-            cc = *ss++ ;
-            switch(cc)
-            {
-            case 'w':
-                *dest++ = meHIL_TEST_VALID|meHIL_TEST_WORD ;
-                break ;
-            case ' ':
-            case '-':
-                *dest++ = meHIL_TEST_VALID|meHIL_TEST_SPACE ;
-                break ;
-            default:
-                if(!isDigit(cc))
-                {
-                    mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unsupported \\SC char class]");
-                    return NULL ;
-                }
-                if(((cc-='0') == 0) || (cc > noGroups))
-                {
-                    mlwrite(MWABORT|MWWAIT,(meUByte *)"[Back reference out of range]");
-                    return NULL ;
-                }
-                *dest++ = meHIL_TEST_VALID|meHIL_TEST_BACKREF ;
-                *dest++ = meHIL_TEST_DEF_GROUP ;
-                *dest++ = cc ;
-            }
+            *dest++ = meHIL_TEST_VALID|meHIL_TEST_SPACE ;
             *dest++ = meHIL_TEST_DEF_GROUP ;
             break ;
         case 't':   *dest++ = 0x09; break;
+        case 'u':
+            *dest++ = meCHAR_LEADER ;
+            *dest++ = meHIL_TEST_VALID|meHIL_TEST_UPPER ;
+            *dest++ = meHIL_TEST_DEF_GROUP ;
+            break ;
         case 'v':   *dest++ = 0x0b; break;
         case 'w':
             *dest++ = meCHAR_LEADER ;
@@ -546,13 +547,13 @@ meHiltItemCompile(meUByte *dest, meUByte **token,
                     *dest++ = meCHAR_TRAIL_LEADER ;
             }
             break;
-        case '|':
-        case '`':
         case '\'':
         case '<':
         case '>':
-        case 'b':
         case 'B':
+        case '`':
+        case 'b':
+        case '|':
             mlwrite(MWABORT|MWWAIT,(meUByte *)"[Hilight does not support \\%c]",cc);
             return NULL ;
         default:
@@ -1077,7 +1078,7 @@ do {                                                                         \
 	break ;                                                              \
     case meHIL_TEST_CLASS:                                                   \
         {                                                                    \
-	    meUByte rc, nrc ;                                                  \
+	    meUByte rc, nrc ;                                                \
                                                                              \
 	    __ts = testStr ;                                                 \
 	    for(ret=*testStr++ ; ret>0 ; ret--)                              \
@@ -1106,7 +1107,7 @@ do {                                                                         \
 	    break ;                                                          \
 	}                                                                    \
     case meHIL_TEST_EOL:                                                     \
-	ret = (ftctcc == meCHAR_NL) ;                                         \
+	ret = (ftctcc == meCHAR_NL) ;                                        \
 	break ;                                                              \
     case meHIL_TEST_SPACE:                                                   \
 	ret = isSpace(ftctcc) ;                                              \
@@ -1150,7 +1151,7 @@ do {                                                                         \
 	}                                                                    \
 	tokTest = 0 ;                                                        \
     }                                                                        \
-    else if((lastChar=ftctcc) == meCHAR_NL)                                   \
+    else if((lastChar=ftctcc) == meCHAR_NL)                                  \
 	tokTest = 0 ;                                                        \
     else if(tokTest & meHIL_TEST_MATCH_MULTI)                                \
     {                                                                        \
