@@ -2138,8 +2138,8 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
 #endif
         meSigHold() ;
 #endif
-
-#if (defined _DOS) || (defined _WIN32)
+    
+#if (defined _DOS)
     /* the directory time stamps on dos are not updated so the best
      * we can do is flag that the dirLists are out of date when WE
      * create a new file. Obviously if something else creates a file
@@ -2149,9 +2149,9 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
     {
 #if MEOPT_EXTENDED
         extern meDirList fileNames ;
-        fileNames.timeStamp = 1 ;
+        fileNames.stmtime = 1 ;
 #endif
-        curDirList.timeStamp = 1 ;
+        curDirList.stmtime = 1 ;
     }
 #endif
     return meTRUE ;

@@ -17,7 +17,45 @@ define-macro fhook-yacc
 set-variable .fhook-yacc.name "Lex/Yacc"
 set-variable .fhook-yacc.setup &reg "/history" "fhook/yacc" "ghinopx"
 set-variable .fhook-yacc.setup-mask "aeghikmnoptux"
-set-variable .fhook-yacc.comment "|/*|*/|*| * | * |f|"
+set-variable .fhook-yacc.comment "|/*| */|*| * | * |f|"
+; Doxygen comment - //!< ... member detailed text ...
+;                   //!< ... member detailed text ...
+set-variable .fhook-yacc.comment-1 "|//!<|||//!< |||"
+; Doxygen comment - //! ... text ...
+;                   //! ... text ...
+set-variable .fhook-yacc.comment-2 "|//!|||//! |||" 
+; Doxygen comment - ///< ... text ...
+;                   ///< ... text ...
+set-variable .fhook-yacc.comment-3 "|///<||/|///< | ///||"
+; Doxygen comment - /// ... text ...
+;                   /// ... text ...
+set-variable .fhook-yacc.comment-4 "|///||/|/// | ///||"
+; Doxygen comment - /**< ... member detailed text ...
+;                    *   ... member detailed text ... */
+set-variable .fhook-yacc.comment-5 "|/**<| */|*| *   | * |f|"
+; Doxygen comment - /*!< ... member detailed text ...
+;                    *   ... member detailed text ... */
+set-variable .fhook-yacc.comment-6 "|/*!<| */|*| *   | * |f|"
+; Fancy C - /*
+;           ** Comment
+;           */
+set-variable .fhook-yacc.comment-7 "|/*|*/|*|** | * |f|"
+; Fancy C - /*
+;           ** Comment
+;            */
+set-variable .fhook-yacc.comment-8 "|/*| */|*|** | * |f|"
+; Fancy C - /*\
+;            * Comment
+;           \*/
+set-variable .fhook-yacc.comment-9 "|/*\\|\\*/|*| * | * |f|"
+; Standard comment - We repeat here incase the default comment style is
+; over-ridden. 
+; Standard C - /*
+;               * ... comment ... 
+;               */
+set-variable .fhook-yacc.comment-10 "|/*| */|*| * | * |f|"
+; Standard C++ comment.
+set-variable .fhook-yacc.comment-11 "|//||/|// | //||"
 
 !if &and &sin "h" .fhook-yacc.setup &band .hilight.flags 0x02 
     ; Hi-light LEX/YACC Mode

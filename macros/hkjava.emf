@@ -16,12 +16,7 @@ define-macro fhook-java
 set-variable .fhook-java.setup &reg "/history" "fhook/java" "bdfghnopx"
 set-variable .fhook-java.setup-mask "abdefghikmnoptux>"
 set-variable .fhook-java.tags "javatags"
-set-variable .fhook-java.comment "|/*|*/|*| * | * |f|"
-set-variable .fhook-java.command-flag  "|bo|bo|"
-set-variable .fhook-java.command-name  "|comment-restyle|comment-restyle|"
-set-variable .fhook-java.command-nbind "|||"
-set-variable .fhook-java.command-kbind "|esc q|esc o|"
-set-variable .fhook-java.command-desc  "|||"
+set-variable .fhook-java.comment "|/*| */|*| * | * |fr|"
 
 ; Set up the collapse of functions
 set-variable .fhook-java.collapse-open   "^[a-zA-Z].*{$"

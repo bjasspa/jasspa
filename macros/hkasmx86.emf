@@ -17,7 +17,7 @@ define-macro fhook-asmx86
 set-variable .fhook-asmx86.name "x86 Assembler"
 set-variable .fhook-asmx86.setup &reg "/history" "fhook/asmx86" "dfghnopx"
 set-variable .fhook-asmx86.setup-mask "adefghikmnoptux"
-set-variable .fhook-asmx86.comment "|;||;|; | ;||"
+set-variable .fhook-asmx86.comment "|;||;|; | ;|r|"
 
 ; setup item-list
 set-variable .fhook-asmx86.item-list-s1 "^[ \t]*proc*[ \t]+\\(\\w+\\)"

@@ -4432,8 +4432,8 @@ TTwaitForChar(void)
 
         if (sgarbf == meTRUE)
         {
-            update (meFALSE);
-            mlerase (MWCLEXEC);
+            update(meFALSE) ;
+            mlerase(MWCLEXEC) ;
         }
 
         /* Suspend until there is another message to process. */

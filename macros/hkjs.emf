@@ -4,7 +4,7 @@
 ; See the file me.emf for copying and conditions.
 ;
 ; Synopsis:    JavaScript
-; Authors:     Gabriel Tabares-Barreiro & Steven Phillips
+; Authors:     Gabriel Tabares-Barreiro, Steven Phillips & Detlef Groth
 ;
 define-macro fhook-js
     set-variable $buffer-mask "luh1"
@@ -17,12 +17,7 @@ set-variable .fhook-js.name "JavaScript"
 set-variable .fhook-js.setup &reg "/history" "fhook/js" "bdfghnopx"
 set-variable .fhook-js.setup-mask "abdefghikmnoptux>"
 set-variable .fhook-js.tags "jstags"
-set-variable .fhook-js.comment "|/*|*/|*| * | * |f|"
-set-variable .fhook-js.command-flag  "|bo|bo|"
-set-variable .fhook-js.command-name  "|comment-restyle|comment-restyle|"
-set-variable .fhook-js.command-nbind "|||"
-set-variable .fhook-js.command-kbind "|esc q|esc o|"
-set-variable .fhook-js.command-desc  "|||"
+set-variable .fhook-js.comment "|/*|*/|*| * | * |fr|"
 
 ; Set up the folding of functions
 set-variable .fhook-js.collapse-open   "^[ \t]*function[ \t]+[^\n{]*{[ \t]*$"

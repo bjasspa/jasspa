@@ -398,9 +398,21 @@ define-macro cvs-log-list
 !emacro
 
 0 define-macro cvs-exec-cmd-complete
-    !if @#
+    set-position "\x87"
+    !if &seq @cck "callback"
+        0 find-buffer .cvs-exec-cmd-ipipe.bname
+    !endif
+    !if &exi :cvs-complete-done
+        goto-position "\x87"
         !return
     !endif
+    set-variable :cvs-complete-done 1
+    !if &exi :lock
+        set-variable #l0 :lock
+    !else
+        set-variable #l0 .cvs-osd.lock
+    !endif
+    unset-variable .cvs-osd.lock
     end-of-buffer
     set-mark
     backward-line
@@ -409,14 +421,13 @@ define-macro cvs-log-list
     -1 kill-region
     backward-line
     !if &xse @wl "\\[EXIT \\(.*\\)]"
-        set-variable #l0 @s1
+        set-variable #l2 @s1
         set-mark
         end-of-line
         -1 kill-region
-        insert-string &spr "\n*****CVS exited with code %s*****" #l0
+        insert-string &spr "\n*****CVS exited with code %s*****" #l2
         beginning-of-line
     !endif
-    set-variable #l0 .cvs-osd.lock
     !if &seq &set #l1 $buffer-bname "*cvs-console*" 
         set-variable #l1 "*cvs-last-cmd*"
         !force 0 delete-buffer #l1
@@ -444,7 +455,35 @@ define-macro cvs-log-list
         end-of-buffer
         backward-line
     !endif
-    !force unset-variable .cvs-osd.lock
+    set-variable #l2 0
+    !if &exi .cvs-osd.refresh
+        !force 0 find-buffer .cvs-osd.refresh
+        !if $status
+            ; if update, commit remove or add then refresh or drop tags
+            !if &band .find-file.flags 1
+                dirlst-refresh
+            !else
+                dirlst-tag-remove
+            !endif
+            ; this odd line ensures the screen is redrawn if this is called via a callback.
+            ;set-variable #l2 1
+            set-variable $trunc-scheme $trunc-scheme
+        !endif
+        unset-variable .cvs-osd.refresh
+    !endif
+    !force goto-position "\x87"
+    500 ml-write &spr "[CVS %s command complete]" &lget .cvs-osd.names #l0
+!emacro
+
+0 define-macro cvs-exec-cmd-ipipe
+    !if &not &exi :lock
+        set-variable :lock .cvs-osd.lock
+    !endif
+    set-variable $buffer-dhook "cvs-exec-cmd-complete"
+    !if &not @#
+        set-variable .bname $buffer-bname
+        1 create-callback "cvs-exec-cmd-complete"
+    !endif
 !emacro
 
 0 define-macro cvs-exec-add-recurse
@@ -520,7 +559,7 @@ define-macro cvs-log-list
     set-variable $buffer-fname @3
     !if &equ @# 4
         ; if this is the only exec line and its not to the *cvs-console* then use ipipe straight to the buffer
-        !force !force !force 0x86 ipipe-shell-command @1 @2 cvs-exec-cmd-complete
+        !force !force !force 0x86 ipipe-shell-command @1 @2 cvs-exec-cmd-ipipe
         set-variable #l1 $status
     !else
         !force !force !force 6 pipe-shell-command @1 "*cvs-temp*"
@@ -692,8 +731,10 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
 0 define-macro cvs-osd
     set-position "\x82"
     !if &exi .lock
-        osd-dialog &cat "CVS - " &lget .names @# &spr "    CVS %s command currently in progress!    " &lget .names .lock "  \HAbort  "
-        !abort
+        osd-xdialog &cat "CVS - " &lget .names @# &spr "    CVS %s command currently in progress!    " &lget .names .lock 2 "  \HIgnore  " "  \HAbort  "
+        !if &not &equ $result 1
+            !abort
+        !endif
     !endif
     !if &seq $buffer-fname ""
         osd-dialog &cat "CVS - " &lget .names @# "    Current buffer has no file name!    " "  \HAbort  "
@@ -704,7 +745,12 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
         osd-dialog &cat "CVS - " &lget .names @# "    Current buffer is not located in a directory!    " "  \HAbort  "
         !abort
     !endif
+    !force unset-variable .refresh
     !if &set #l9 &seq $buffer-fhook "fhook-dirlst"
+        !if &lfind "|11|3|1|7|2|" @#
+            ; if update, commit remove or add then refresh or drop tags
+            set-variable .refresh $buffer-bname
+        !endif
         dirlst-tag-list
         goto-position "\x82"
     !else
@@ -990,7 +1036,7 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
     !if &not &equ #l2 4
         end-of-buffer
         insert-string &spr "\n*****CVS exited with code %d*****" #l7
-        0 cvs-exec-cmd-complete
+        cvs-exec-cmd-complete
         -1 recenter
     !endif
     !if &not &seq #l6 "*cvs-console*"
@@ -1000,14 +1046,6 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
         !endif
     !endif
     !force goto-position "\x82"
-    !if &and #l9 &lfind "|11|3|1|7|2|" @#
-        ; if update, commit remove or add then refresh or drop tags
-        !if &band .find-file.flags 1
-            dirlst-refresh
-        !else
-            dirlst-tag-remove
-        !endif
-    !endif
     set-variable $mouse #l5
 !emacro
 
@@ -1133,8 +1171,8 @@ define-macro cvs-resolve-conflicts
                 !force search-backward &spr "^D/%s/" #l4
                 !if &seq #l5 "A"
                     !if $status
+                        ; Already in the Entries file - can happen
                         set-variable $window-line #l3
-                        1000 ml-write &spr "[Warning: found unexpected A Entries.Log line \"%s\"]" @wl
                         !goto rm-line
                     !endif
                     set-variable $window-line #l3
@@ -1149,8 +1187,8 @@ define-macro cvs-resolve-conflicts
                         -1 kill-region
                         set-variable $window-line &sub #l3 1
                     !else
+                        ; Not in the Entries file - not see this but may be possible
                         set-variable $window-line #l3
-                        1000 ml-write &spr "[Warning: found unexpected R Entries.Log line \"%s\"]" @wl
                     !endif
                     !goto rm-line
                 !endif

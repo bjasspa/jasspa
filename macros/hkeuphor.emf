@@ -17,7 +17,7 @@ define-macro fhook-euphor
 set-variable .fhook-euphor.name "Euphoria"
 set-variable .fhook-euphor.setup &reg "/history" "fhook/euphor" "bdghinopx"
 set-variable .fhook-euphor.setup-mask "abdeghikmnoptux"
-set-variable .fhook-euphor.comment "|--||--|-- | --||"
+set-variable .fhook-euphor.comment "|--||--|-- | --|r|"
 set-variable .fhook-euphor.exact -1
 
 ; setup item-list

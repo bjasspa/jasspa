@@ -61,12 +61,8 @@ define-macro fhook-pls
 set-variable .fhook-pls.name "PL/SQL"
 set-variable .fhook-pls.setup &reg "/history" "fhook/pls" "bfhnopx"
 set-variable .fhook-pls.setup-mask "abefghikmtux"
-set-variable .fhook-pls.comment "|/*|*/|*| * | * |f|"
-set-variable .fhook-pls.command-flag  "|bo|bo|"
-set-variable .fhook-pls.command-name  "|comment-restyle|comment-restyle|"
-set-variable .fhook-pls.command-nbind "|||"
-set-variable .fhook-pls.command-kbind "|esc q|esc o|"
-set-variable .fhook-pls.command-desc  "|||"
+set-variable .fhook-pls.comment "|/*| */|*| * | * |fr|"
+set-variable .fhook-pls.comment-1 "|rem|||rem |||"
 set-variable .fhook-pls.exact -1
 
 ; Set up the folds for PL/SQL
