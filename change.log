@@ -4,8 +4,10 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <041015.0851>
+>  Last Modified : <041016.1930>
 >
+    [041016] Added Ruby programing language support.
+
     [041014] Within OSD, fixed spelling mistake. Loose -> Lose
 
     [041014] Fixed delete-hilight-lines failure when buffer file has changed.

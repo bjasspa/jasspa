@@ -265,12 +265,14 @@ add-file-hook ".spec"                                         fhook-spec
 add-file-hook ".sl"                                           fhook-slang
 add-file-hook ".au3"                                          fhook-au3
 add-file-hook ".mod"                                          fhook-mod2
+add-file-hook ".rb"                                           fhook-ruby
 ; Add magic hooks
  1 add-file-hook "^#![ \t]*/.*sh"                fhook-shell  ; UNIX shell files
  1 add-file-hook "^#![ \t]*/.*perl"              fhook-perl   ; UNIX perl script
  1 add-file-hook "^#![ \t]*/.*wish"              fhook-tcl    ; tcl, tk & tix files
  1 add-file-hook "^#![ \t]*/.*awk"               fhook-awk    ; awk scripts
  1 add-file-hook "^#![ \t]*/.*python"            fhook-python ; Python file
+ 1 add-file-hook "^#![ \t]*/.*ruby"              fhook-ruby   ; Ruby shell script
  4 add-file-hook "^[ \t]*exec[ \t]*tclsh"        fhook-tcl    ; TCL shell script
  1 add-file-hook "^#VRML"                        fhook-vrml   ; VRML or wrl files
  1 add-file-hook "^#Inventor"                    fhook-vrml   ; Use the VRML hook for iv files
@@ -288,6 +290,7 @@ add-file-hook ".mod"                                          fhook-mod2
 -1 add-file-hook "-[*!]-[ \t]*makefile.*-[*!]-"  fhook-make   ; -!- makefile -!-
 -1 add-file-hook "-[*!]-[ \t]*sh\\(ell\\)?.*-[*!]-" fhook-shell  ; -!- shell -!-
 -1 add-file-hook "-[*!]-[ \t]*mode: wiki.*-[*!]-" fhook-wiki  ; -*- mode: wiki -*-
+-1 add-file-hook "-[*!]-[ \t]*ruby.*-[*!]-"      fhook-ruby   ; -*- ruby -*-
 -1 add-file-hook "-!-[ \t]*mhg.*-!-"             fhook-mhg    ; -!- mhg -!-
 -1 add-file-hook "-!-[ \t]*msdos.*-!-"           fhook-dos    ; -!- msdos -!-
 -1 add-file-hook "-!-[ \t]*imakefile.*-!-"       fhook-imake  ; -!- imakefile -!-
