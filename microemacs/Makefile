@@ -74,6 +74,7 @@ spotless: clean
 	cd pixmaps;	$(MAKE) $@
 	cd memsdev;	$(MAKE) $@
 	cd msdev6;	$(MAKE) $@
+	cd etc;		$(MAKE)	$@
 	$(RM) *~
 #
 # Local Rules
