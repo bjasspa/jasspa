@@ -428,7 +428,7 @@ define-macro cvs-log-list
         insert-string &spr "\n*****CVS exited with code %s*****" #l2
         beginning-of-line
     !endif
-    !if &seq &set #l1 $buffer-bname "*cvs-console*" 
+    !if &set #l3 &seq &set #l1 $buffer-bname "*cvs-console*" 
         set-variable #l1 "*cvs-last-cmd*"
         !force 0 delete-buffer #l1
         change-buffer-name #l1
@@ -451,9 +451,14 @@ define-macro cvs-log-list
         !endif
         yank
         -1 yank
-        find-buffer #l1
-        end-of-buffer
-        backward-line
+        !if #l3
+            -1 find-buffer #l1
+            -1 find-buffer "*cvs-console*"
+        !else
+            find-buffer #l1
+            end-of-buffer
+            backward-line
+        !endif
     !endif
     set-variable #l2 0
     !if &exi .cvs-osd.refresh

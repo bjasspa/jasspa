@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040323.2047>
+# Last Modified: <20040325.2153>
 #
 ##############################################################################
 
@@ -22,8 +22,8 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		au3.eaf		\
 	calc.emf	charset.emf	charsutl.emf	cmacros.emf	\
 	collapse.emf	comment.emf	crosswd.emf	ctags.emf	\
 	cvs.emf		cygwin.emf	\
-	dmf.emf		docmacro.emf	docutl.emf	dos.emf		\
-	dos2unix.emf	draw.emf	\
+	darwin.emf	dmf.emf		docmacro.emf	docutl.emf	\
+	dos.emf		dos2unix.emf	draw.emf	\
 	ehftools.emf	emftags.emf	etfinsrt.emf	\
 	fattrib.emf	favorite.emf	fileopen.emf	find.emf	\
 	findbuff.emf	fold.emf	format.emf	freebsd.emf	\
@@ -36,8 +36,7 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		au3.eaf		\
 	hkcygwin.emf	\
 	hkdiff.emf	hkdirlst.emf	hkdirtre.emf	hkdoc.emf	\
 	hkdos.emf	\
-	hkeaf.emf	hkehf.emf	hkemf.emf	hkerf.emf	\
-	hkeuphor.emf	\
+	hkehf.emf	hkemf.emf	hkerf.emf	hkeuphor.emf	\
 	hkf90.emf	hkfvwm.emf	\
 	hkhtml.emf	\
 	hkidl.emf	hkimake.emf	hkinfo.emf	hkini.emf	\

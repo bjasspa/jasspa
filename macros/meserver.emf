@@ -40,4 +40,5 @@
     !done
     goto-alpha-mark  "I"
     set-variable :last-line $window-line
+    -1 find-buffer $buffer-bname
 !emacro

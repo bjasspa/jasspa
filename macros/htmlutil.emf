@@ -634,16 +634,19 @@ define-macro html-create-table
 !emacro
 
 0 define-macro html-view-launch
-    !if &seq $buffer-fname ""
-        ml-write "[Current buffer has no file name]"
-        !abort
-    !endif
-    !if &bmod "edit"
-        !if &iseq @mc1 "Save buffer first [y/n]? " "nNyY" "y"
-            save-buffer
+    !force set-variable #l1 @2
+    !if &not $status
+        !if &seq $buffer-fname ""
+            ml-write "[Current buffer has no file name]"
+            !abort
         !endif
+        !if &bmod "edit"
+            !if &iseq @mc1 "Save buffer first [y/n]? " "nNyY" "y"
+                save-buffer
+            !endif
+        !endif
+        set-variable #l1 $buffer-fname
     !endif
-    set-variable #l1 $buffer-fname
     !if &seq &lef #l1 7 "http://"
     !elif &seq &lef #l1 6 "ftp://"
     !else
@@ -659,11 +662,11 @@ define-macro html-create-table
 !emacro
 define-macro html-view-iexplorer
     set-variable #l0 &reg "/history" &cat $platform "/html-iexplorer" "iexplore \"%f\""
-    html-view-launch #l0
+    html-view-launch #l0 @1
 !emacro
 define-macro html-view-netscape
     set-variable #l0 &reg "/history" &cat $platform "/html-netscape" "netscape \"%f\""
-    html-view-launch #l0
+    html-view-launch #l0 @1
 !emacro
 
 define-macro html-config-iexplorer
