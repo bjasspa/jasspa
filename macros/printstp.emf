@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Tue May 23 08:06:34 2000
-;  Last Modified : <000719.0012>
+;  Last Modified : <001108.2253>
 ;
 ;  Description
 ;
@@ -79,11 +79,11 @@
     set-variable #l1 &lget .print-setup.driver-names @#
     osd .osd.prtstp-prt 30 "MtxmsfHz" 30 .scheme.osd-entry 25 1 #l1 .osd.tmp print-setup-setup-driver
     !if .print-setup.inter
-        osd .osd.prtstp-prt 120  "D"
-        osd .osd.prtstp-prt 130  "D"
-        osd .osd.prtstp-prt 140  "D"
+        osd .osd.prtstp-prt 120  ""
+        osd .osd.prtstp-prt 130  ""
+        osd .osd.prtstp-prt 140  ""
         osd .osd.prtstp-prt 150  "D"
-        osd .osd.prtstp-pag  60  "EsfhHz" .scheme.osd-entry 20 1  "" 2 print-setup-display-page-size
+        osd .osd.prtstp-pag  60  "ESsfhHz" .scheme.osd-entry 20 1  "" 2 print-setup-display-page-size
         osd .osd.prtstp-pag  65  "BtHcfixR" 65 .scheme.osd-ebtt " &Edit "  f print-setup-setup-page
     !else
         osd .osd.prtstp-prt 120  "Sfh" "  &Command line : " 130
@@ -252,7 +252,7 @@
 0 define-macro print-setup-display-page-size
     !if .recalc
         -1 print-buffer
-        set-variable .value &lset .value 1 &spr "%dx%d" &reg "/print" "page-x" "0" &reg "/print" "page-y" "0"
+        set-variable .value &lset .value 1 &spr "%dx%d %dx%d" &reg "/print-history" &spr "%s/cols" $platform 1 &reg "/print-history" &spr "%s/rows" $platform 1 &reg "/print" "page-x" "0" &reg "/print" "page-y" "0"
         !if .print-setup.inter
             set-variable .value &lset .value 2 &spr "%dx%d" &reg "/print" "paper-x" "0" &reg "/print" "paper-y" "0"
             !force delete-registry "/print/paper-x"
@@ -278,6 +278,9 @@ osd .osd.prtstp-prt  70  "BtHcfix" 70 .scheme.osd-ebtt " &Edit "  f "scheme-edit
 osd .osd.prtstp-prt  80  ""
 osd .osd.prtstp-prt  90  "Shf" "   D&estination : " 100
 osd .osd.prtstp-prt 110  ""
+osd .osd.prtstp-prt 210  ""
+osd .osd.prtstp-prt 220  "fh"  "     Page Size : "
+osd .osd.prtstp-prt 230  "SEf" "#x# #####x#####" 1 print-setup-display-page-size
 
 -1 osd .osd.prtstp-pag
 osd .osd.prtstp-pag   0 "s" 52 13 -1 -1
@@ -297,7 +300,7 @@ osd .osd.prtstp-pag 150  "Shf" "   Split &Line ID : " 160
 osd .osd.prtstp-pag 160  "Ctfx" 160 "^^NY^^" 0x80 print-setup-set-flag
 osd .osd.prtstp-pag 170  ""
 osd .osd.prtstp-pag 180  "fh" "       Page Size : "
-osd .osd.prtstp-pag 190  "SEf" "#####x#####" 1 print-setup-display-page-size
+osd .osd.prtstp-pag 190  "SEf" "#x# #####x#####" 1 print-setup-display-page-size
 
 -1 osd .osd.prtstp-lyt
 osd .osd.prtstp-lyt   0 "s" 52 13 -1 -1

@@ -10,7 +10,7 @@
  *
  *  Author:         Danial Lawrence
  *
- *  Creation Date:      14/05/86 12:37      <000825.1840>
+ *  Creation Date:      14/05/86 12:37      <001010.2248>
  *
  *  Modification date:  %G% : %U%
  *
@@ -2625,11 +2625,12 @@ get_flag:
             meSTAT stats ;
             int    ftype ;
             /*
-             * 0 -> 4 - If file is nasty
-             * 1 -> 1 - If file is regular
-             * 2 -> 2 - If file is a directory
-             * 3 -> 0 - If file doesn't exist
-             * 5 -> 3 - If file is a url
+             * 0 -> N - If file is nasty
+             * 1 -> R - If file is regular
+             * 2 -> D - If file is a directory
+             * 3 -> X - If file doesn't exist
+             * 4 -> H - If file is a HTTP url
+             * 5 -> F - If file is a FTP url
              */
             ftype = getFileStats(arg2,1,&stats,evalResult) ;
             switch(arg1[0])

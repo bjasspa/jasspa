@@ -10,7 +10,7 @@
  *
  *       Author:                 Danial Lawrence
  *
- *       Creation Date:          14/05/86 12:37          <001002.1051>
+ *       Creation Date:          14/05/86 12:37          <001017.1901>
  *
  *       Modification date:      %G% : %U%
  *
@@ -39,7 +39,7 @@
 
 #define __EXECC                 /* Define program name */
 
-#define KEY_TEST 1
+#define KEY_TEST 0
 
 /*---   Include files */
 

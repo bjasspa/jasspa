@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m2cmd110.2,v 1.2 2000-10-21 17:09:51 jon Exp $
+.Id $Id: m2cmd110.2,v 1.3 2000-11-18 01:47:11 jon Exp $
 .Im MicroEmacs command|cursor|macrodevelop
 .so me.tni
 .TH set-position 2
@@ -26,9 +26,10 @@ goto-position \- Restore a stored position
 .ad
 .SH DESCRIPTION
 \fBset-position\fR   stores  current   window,  buffer  and  cursor   position
-information  against the given  '\fClabel\fR'.  \fBgoto-position\fR  takes the
-positional information stored against the given '\fClabel\fR' and restores the
-window, buffer and cursor positions from those previously \fBset\fR.
+information   against  the  given   '\fClabel\fR'   (a  single   alpha-numeric
+character).   \fBgoto-position\fR  takes  the  positional  information  stored
+against the given  '\fClabel\fR'  and  restores the window,  buffer and cursor
+positions from those previously \fBset\fR.
 .PP
 A call to  \fBset-position\fR  with the same label  over-writes  the  previous
 stored  information,  a  call  to  \fBgoto-position\fR   does  not  alter  the

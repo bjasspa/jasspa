@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m3mac020.3,v 1.2 2000-10-21 17:10:20 jon Exp $
+.Id $Id: m3mac020.3,v 1.3 2000-11-18 01:47:14 jon Exp $
 .Im MicroEmacs command|search
 .so me.tni
 .TH replace-all-pairs 3
@@ -16,17 +16,21 @@ replace-all-pairs \- Replace string pairs in a list of files
 .SH DESCRIPTION
 \fBreplace-all-pairs\fR  uses the current buffer to extract  "\fIfrom\fR"  and
 "\fIto\fR"  pairs  and  then  replaces  all  occurrences  of  "\fIfrom\fR"  to
-"\fIto\fR" in the given list of files  without  prompting the user. The format
-of the current buffer must be:
+"\fIto\fR" in the given list of files without  prompting the user. An optional
+third  argument  "\fIgrep\fR"  can be  given  which  will be used as the  grep
+string,  if not  given  the  "\fIfrom\fR"  string  is used. The  format of the
+current buffer must be:
 .CS
 /from1/to1/
 Xfrom2Xto2X
 ?from3?to3?
+/from4/to4/grep4/
   .
   .
 /fromN/toN/
 .CE
-For each pair the command finds all occurrences of "\fIfrom\fR" by calling the
+For  each  pair  the  command  finds  all   occurrences  of  "\fIfrom\fR"  (or
+"\fIgrep\fR" if specified) by calling the
 command
 .Ht grep 3
 to search for string  "\fIfrom\fR" in files  "\fIfiles\fR".  Thus all relevant

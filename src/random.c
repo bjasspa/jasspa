@@ -10,7 +10,7 @@
  *
  *	Author:			Danial Lawrence.
  *
- *	Creation Date:		07/05/91 08:19		<001002.1236>
+ *	Creation Date:		07/05/91 08:19		<001108.2159>
  *
  *	Modification date:	%G% : %U%
  *
@@ -1901,6 +1901,9 @@ gotoFence(int f, int n)
             update(FALSE);
             TTsleep(matchlen,1) ;
             curwp->w_flag |= WFMOVEL;
+            if(curwp->topLineNo != oldtln)
+                /* the redraw has changed the top line - must do a major update */
+                curwp->w_flag |= (WFREDRAW|WFSBOX) ;
         }
         /* restore the current position */
         curwp->w_dotp  = oldlp;
