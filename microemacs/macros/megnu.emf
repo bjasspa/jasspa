@@ -12,12 +12,29 @@
 ; will be huge) but retain the best compatibility that we can. 
 
 ; Kill should kill to the end of line only, add this with "line" mode.
-add-global-mode "line"
+1 global-mode "line"
 
-global-bind-key "S-delete" kill-region
+global-bind-key kill-region "S-delete"
 ; All bindings to "delete" map to backspace.
-global-bind-key "delete"   backward-delete-char
+global-bind-key backward-delete-char "delete"
 
-global-bind-key "A-left" backward-word
-global-bind-key "A-right" forward-word
+global-bind-key backward-paragraph "C-up"
+global-bind-key forward-paragraph "C-down"
+
+global-bind-key backward-word "A-left"
+global-bind-key forward-word "A-right"
+
+; create wrapper macros for commands which are differently named
+define-macro revert-buffer
+    reread-file
+!emacro
+define-macro kill-word
+    @# forward-kill-word
+!emacro
+define-macro next-line
+    @# forward-line
+!emacro
+define-macro previous-line
+    @# previous-line
+!emacro
 
