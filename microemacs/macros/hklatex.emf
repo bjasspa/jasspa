@@ -1,6 +1,6 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 1998-2004 JASSPA (www.jasspa.com)
+; Copyright (C) 1998-2005 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     Jan 26 1998
@@ -10,7 +10,7 @@
 define-macro fhook-latex
     @# buffer-init "latex"
     ; Set up the default constants
-    set-variable :fill-mode "L"
+    set-variable :fill-mode "l"
     set-variable :fill-col $fill-col
     buffer-init-hooks
 !emacro
@@ -40,7 +40,7 @@ set-variable .fhook-latex.item-list-r5 "SSSc \ecB\\1\ecA"
 set-variable .fhook-latex.item-list-s6 "^[ \t]*\\\\markboth\\*?{\\([^}]*\\)}"
 set-variable .fhook-latex.item-list-r6 "Mark \ecB\\1\ecA"
 
-set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|section\\|chap\\|subsec\\|label\\|begin\\|paragraph\\|subparagraph\\|end\\)\\)"
+set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|section\\|chap\\|subsec\\|subsubsec\\|label\\|begin\\|paragraph\\|subparagraph\\|end\\)\\)"
 
 !if &sin "f" .fhook-latex.setup
     ; Set up collapse for LaTeX
@@ -420,7 +420,7 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|se
     !while &gre &pdec @# 1 0
         ; Find the end of the paragraph
 ;        !force search-buffer "em" "\\([^\n\\\\]%\\|^%\\|^$\\|^[ \t]*$\\|^\\\\newpag\\|^\\\\section\\|^\\\\chap\\|^\\\\subsec\\|^\\\\label\\|^\\\\begin\\|^\\\\paragraph\\|^\\\\subparagraph\\|^\\\\end\\)"
-        !force search-buffer "em" "\\([^\n\\\\]%\\|^$\\|^%\\|^[ \t]*$\\|^\\\\newpag\\|^\\\\section\\|^\\\\chap\\|^\\\\subsec\\|^\\\\label\\|^\\\\begin\\|^\\\\para\\|^\\\\subpar\\|^\\\\end\\)"
+        !force search-buffer "em" "\\([^\n\\\\]%\\|^$\\|^%\\|^[ \t]*$\\|^\\\\newpag\\|^\\\\section\\|^\\\\chap\\|^\\\\subsec\\|^\\\\subsubsec\\|^\\\\label\\|^\\\\begin\\|^\\\\para\\|^\\\\subpar\\|^\\\\end\\)"
         !if &not $status
             !abort
             end-of-buffer
@@ -432,14 +432,14 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|se
         ; Jump back line.
         backward-line
         ; Find the start of the paragraph
-        !force search-buffer "bem" "\\([^\n\\\\]%\\|^%\\|^$\\|^[ \t]*$\\|^\\\\newpag\\|^\\\\section\\|^\\\\chap\\|^\\\\subsec\\|^\\\\label\\|^\\\\begin\\|^\\\\para\\|^\\\\subpar\\|^\\\\end\\)"
+        !force search-buffer "bem" "\\([^\n\\\\]%\\|^%\\|^$\\|^[ \t]*$\\|^\\\\newpag\\|^\\\\section\\|^\\\\chap\\|^\\\\subsec\\|^\\\\subsubsec\\|^\\\\label\\|^\\\\begin\\|^\\\\para\\|^\\\\subpar\\|^\\\\end\\)"
         !if $status
             end-of-line
         !else
             beginning-of-buffer
         !endif
         insert-newline
-        -1 fill-paragraph
+        fill-paragraph
         search-buffer "bem" "^$"
         forward-delete-char
         search-buffer "em" "^$"
