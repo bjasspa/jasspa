@@ -43,7 +43,7 @@ find ${BASEDIR}/jasspa -print | pkgproto | sed -e "s/jon users/bin bin/g" >> pro
 echo 'PKG="jasspa-me"' > pkginfo
 echo 'NAME="JASSPA MicroEmacs"' >> pkginfo
 echo 'ARCH="i386"' >> pkginfo
-echo 'VERSION="04.07.01"'  >> pkginfo
+echo 'VERSION="05.02.19"'  >> pkginfo
 echo 'CATEGORY="application"' >> pkginfo
 echo 'VENDOR="www.jasspa.com"' >> pkginfo
 echo 'EMAIL="support@jasspa.com"' >> pkginfo
