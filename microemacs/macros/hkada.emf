@@ -65,12 +65,12 @@ set-variable .fhook-ada.exact -1
     hilight .hilight.ada 1 "var"            .scheme.keyword
     hilight .hilight.ada 1 "while"          .scheme.keyword
     hilight .hilight.ada 1 "with"           .scheme.keyword
-    hilight .hilight.ada 1 "use"           .scheme.keyword
-    hilight .hilight.ada 1 "is"           .scheme.keyword
-    hilight .hilight.ada 1 "new"           .scheme.keyword
-    hilight .hilight.ada 1 "all"           .scheme.keyword
-    hilight .hilight.ada 1 "package"           .scheme.keyword
-    hilight .hilight.ada 1 "private"           .scheme.keyword
+    hilight .hilight.ada 1 "use"            .scheme.keyword
+    hilight .hilight.ada 1 "is"             .scheme.keyword
+    hilight .hilight.ada 1 "new"            .scheme.keyword
+    hilight .hilight.ada 1 "all"            .scheme.keyword
+    hilight .hilight.ada 1 "package"        .scheme.keyword
+    hilight .hilight.ada 1 "private"        .scheme.keyword
     hilight .hilight.ada 1 "loop"           .scheme.keyword
     hilight .hilight.ada 1 "body"           .scheme.keyword
     
@@ -100,7 +100,7 @@ set-variable .fhook-ada.exact -1
     hilight .hilight.ada 1 "shl"            .scheme.operator
     hilight .hilight.ada 1 "shr"            .scheme.operator
     hilight .hilight.ada 1 "xor"            .scheme.operator
-    hilight .hilight.ada 1 "\.\."            .scheme.operator
+    hilight .hilight.ada 1 "\.\."           .scheme.operator
     
     hilight .hilight.ada 1 "false"          .scheme.operator
     hilight .hilight.ada 1 "true"           .scheme.operator
@@ -109,11 +109,11 @@ set-variable .fhook-ada.exact -1
     hilight .hilight.ada 1 "eof"            .scheme.operator
     hilight .hilight.ada 1 "eoln"           .scheme.operator
     
-	hilight .hilight.ada 1 "'class"           .scheme.operator
-	hilight .hilight.ada 1 "'first"           .scheme.operator
-	hilight .hilight.ada 1 "'last"           .scheme.operator
+    hilight .hilight.ada 1 "'class"         .scheme.operator
+    hilight .hilight.ada 1 "'first"         .scheme.operator
+    hilight .hilight.ada 1 "'last"          .scheme.operator
     
-	hilight .hilight.ada 0x1004 "'" "'" ""  .scheme.string
+    hilight .hilight.ada 4 "'" "'" ""       .scheme.string
 !endif
 
 buffer-init-fhook "ada"
