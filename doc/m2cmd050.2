@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd050.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd050.2,v 2.6 2005-02-10 22:44:26 jon Exp $
 .Im MicroEmacs command|buffer|file
 .ds C0 "(\fB\*(cX\*cy\fR)\ \&
 .so me.tni
@@ -14,6 +14,7 @@ insert-file-name \- Insert filename into current buffer
 .Me $a
 .SH SYNOPSIS
 .na
+.I n
 \fBinsert-file-name\fR \*(C0
 .ad
 .SH DESCRIPTION
@@ -21,6 +22,9 @@ insert-file-name \- Insert filename into current buffer
 inserts the current buffer's file name into the current buffer or, if entering
 text on the  message  line then  enters  the file name into the  message  line
 buffer.
+.PP
+If the numeric  argument \fIn\fR is \fC\-1\fR then the buffer name is inserted
+into the buffer.
 .SH "SEE ALSO"
 .na
 .Ht insert-file 2 ,

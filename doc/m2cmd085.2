@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd085.2,v 2.9 2005-01-16 17:47:12 jon Exp $
+.Id $Id: m2cmd085.2,v 2.10 2005-02-10 22:43:41 jon Exp $
 .Im MicroEmacs command|bind|message
 .so me.tni
 .TH ml-bind-key 2
@@ -89,6 +89,10 @@ insert current buffers current line into the buffer, command:
 insert current buffers file name into the buffer, command:
 .Hl insert-file-name insert-file-name 2
 (\fB\*(cX\*cy\fR)
+.BU
+insert current buffer name into the buffer, command:
+.Hl "-1 insert-file-name" insert-file-name 2
+(\fB\*(cXy\fR)
 .BU
 get the previous item in the yank buffer, command:
 .Hl reyank reyank 2
