@@ -68,7 +68,7 @@ INSTALLATION
           mehpux10.gz - Hewlett Packard HP-UX 10 Executable 
           mehpux11.gz - Hewlett Packard HP-UX 11 Executable 
           mesunos55.gz - Sun OS 5.5 Executable 
-          mesunos56.gz - Sun OS 5.5 Executable 
+          mesunos56.gz - Sun OS 5.6 Executable 
           mesolx86.gz - Sun Solaris 2.6 Intel Platform Executable 
           melinux20.gz - Linux 2.0.0 Executable 
           mefreebsd.gz - Free BSD Executable 
@@ -92,6 +92,7 @@ INSTALLATION
           lsdxenus.zip - American extended dictionary. 
           lsdmengb.zip - British rules and base dictionary. 
           lsdxengb.zip - British extended dictionary. 
+          lsdmfifi.zip - Finnish rules and dictionary. 
           lsdmfrfr.zip - French rules and dictionary. 
           lsdmdede.zip - German rules and base dictionary. 
           lsdxdede.zip - German extended dictionary. 
@@ -104,6 +105,7 @@ INSTALLATION
           lsdxenus.gz - American extended dictionary. 
           lsdmengb.tar.gz - British rules and base dictionary. 
           lsdxengb.gz - British extended dictionary. 
+          lsdmfifi.tar.gz - Finnish rules and dictionary. 
           lsdmfrfr.tar.gz - French rules and dictionary. 
           lsdmdede.tar.gz - German rules and base dictionary. 
           lsdxdede.gz - German extended dictionary. 
@@ -830,8 +832,8 @@ EXAMPLE
                ; Small non-bold font. 
                ; change-font "-misc-fixed-medium-r-normal--13-*-*-*-c-70-iso8859-1"
                ; Change the size of the screen 
-               82 change-screen-width 
-               50 change-screen-depth 
+               82 change-frame-width 
+               50 change-frame-depth 
            !endif 
        !endif 
        ; Change the default diff command-line for GNU diff utility all platforms
