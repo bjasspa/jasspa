@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd085.2,v 2.8 2004-01-22 00:56:47 jon Exp $
+.Id $Id: m2cmd085.2,v 2.9 2005-01-16 17:47:12 jon Exp $
 .Im MicroEmacs command|bind|message
 .so me.tni
 .TH ml-bind-key 2
@@ -63,6 +63,14 @@ move to beginning of buffer, command:
 move to the end of buffer, command:
 .Hl end-of-line end-of-line 2
 (\fB\*ce\fR, \fBend\fR)
+.BU
+move to beginning of buffer, command:
+.Hl beginning-of-buffer beginning-of-buffer 2
+(\fB\*e<\fR)
+.BU
+move to the end of buffer, command:
+.Hl end-of-buffer end-of-buffer 2
+(\fB\*e>\fR)
 .BE 0
 .SS Input
 .BS
@@ -80,14 +88,22 @@ insert current buffers current line into the buffer, command:
 .BU
 insert current buffers file name into the buffer, command:
 .Hl insert-file-name insert-file-name 2
-(\fB\*(cX\*cy\fR).
+(\fB\*(cX\*cy\fR)
 .BU
-insert current buffers buffer name into the buffer, command:
+get the previous item in the yank buffer, command:
 .Hl reyank reyank 2
 (\fB\*ey\fR)
 .BE 0
 .SS Deletion
 .BS
+copy marked region, command:
+.Hl copy-region copy-region 2
+(\fB\*ew\fR)
+.BU
+delete marked region, command:
+.Hl kill-region kill-region 2 
+(\fB\&cw\fR)
+.BU
 delete backward 1 character, command:
 .Hl backward-delete-char backward-delete-char 2
 (\fB\*ch\fR, \fBbackspace\fR)
@@ -96,11 +112,20 @@ delete forward 1 character, command:
 .Hl forward-delete-char forward-delete-char 2
 (\fB\*cd\fR, \fBdelete\fR)
 .BU
-kill text from current position to end of line, command:
+delete forward word, command:
+.Hl forward-kill-word  forward-kill-word 2
+(\fB\*ed\fR)
+.BU
+delete backward word, command:
+.Hl backward-kill-word  backward-kill-word 2
+(\fB\*ebackspace\fR)
+.BU
+kill text from current position to end of line, the text is placed in the kill
+buffer. Command:
 .Hl kill-line kill-line 2
 (\fB\*ck\fR).
 .BU
-erase whole line, command
+erase whole line, the text is placed in the kill buffer, command
 .Hl kill-region kill-region 2
 (\fB\*cw\fR).  Note  that  in  incremental  searches  this  is used to add the
 current word to the search string.
@@ -164,6 +189,13 @@ finish input, command
 .Hl newline newline 2
 (\fB\*cm\fR, \fBreturn\fR)
 .BU
+set mark, command:
+.Hl set-mark set-mark 2 
+(\fB\*cspace\fR)
+.BU 
+exchange point and mark, command:
+.Hl exchange-point-and-mark exchange-point-and-mark 2
+.BU
 transpose previous character with current character, command:
 .Hl transpose-chars transpose-chars 2
 (\fB\*ct\fR)
@@ -179,6 +211,13 @@ Turn the whole of the next word to lower case letters, command:
 Turn the whole of the next word to upper case letters, command:
 .Hl lower-case-word lower-case-word 2
 (\fB\*el\fR)
+.BU
+Cursor to mouse position, command:
+.Hl set-cursor-to-mouse set-cursor-to-mouse 2 
+(mouse select in window)
+.BU 
+Empty function, command:
+.Hl void void 2 
 .BE
 .B ml-unbind-key
 unbinds a user created message line key binding, this command effects only the
@@ -189,7 +228,7 @@ If  expansion  was  required on the  \fB\*e\*(eS\fR  key binding  then use the
 following:-
 .Me $emf-scheme
 .CS
-ml-bind-key tab \*e\*e
+ml-bind-key tab "esc esc"
 .CE 0
 .Me $ehf-scheme
 .SH NOTES
