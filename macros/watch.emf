@@ -21,14 +21,13 @@
 ;         find-buffer "watched-buffer"
 ;         -1 watch
 ;   * The default 10sec delay between watch cycles can be altered by executing
-;     watch with an argument of 0, i.e.:
-;         0 watch
+;     watch-time
 ;   * Watch keeps a count of the number of buffers being watch and if this gets
 ;     back to zero it stops watching, but it is easily confused by users simply
 ;     deleting a watched buffer. If this happens watch will continue to be called
-;     but should have no effect.
-;   * Use the watch-reset command to stop all watch, which also fixes the above
-;     problem
+;     but should have no effect (but does effect the region hilight).
+;     Use watch-reset with no argument to safely reset the watch state.
+;   * Use the watch-reset command with a n argument of 0 to stop all watches.
 ;
 0 define-macro watch-callback
     set-variable #l0 $window-id
@@ -78,45 +77,44 @@
 !emacro
 
 define-macro watch
-    !if @#
-        !if &les @# 0
-            !jump 2
-        !elif &and &not @? &exi :watch
-            !if &exi :watch
-                unset-variable :watch
-                !force unset-variable :watch-size
-                set-variable $buffer-mode-line &rep $buffer-mode-line "%kW" "%k"
-                !if &not &dec .count 1
-                    -1 create-callback watch-callback
-                !endif
-            !endif
-        !else
-            !if &not &exi :watch
-                set-variable #l0 &stat d $buffer-fname
-                !if &equ #l0 -1
-                    ml-write "[Invalid buffer for watch]"
-                    !bell
-                    !abort
-                !endif
-                set-variable :watch #l0
-                set-variable $buffer-mode-line &rep $buffer-mode-line "%k" "%kW"
-                !if &not &pinc .count 1
-                    .time create-callback watch-callback
-                !endif
-            !endif
-            !if &equ @# 3
-                set-variable :watch-size &stat s $buffer-fname
-            !elif &equ @# 2
-                set-variable :watch-size 0x7fffffff
-            !elif &exi :watch-size
-                unset-variable :watch-size
+    !if @?
+    !elif &exi :watch
+        set-variable @# -1
+    !else
+        set-variable @# @mc1 "Watch method: (1)Reread (2)Reread-append (3)Append [1/2/3] ? " "123"
+    !endif
+    !if &les @# 0
+        !if &exi :watch
+            unset-variable :watch
+            !force unset-variable :watch-size
+            set-variable $buffer-mode-line &rep $buffer-mode-line "%kW" "%k"
+            !if &not &dec .count 1
+                -1 create-callback watch-callback
             !endif
         !endif
-        ml-write &spr "[Watch %sabled]" &cond &exi :watch "en" "dis"
+        ml-write &spr "[Watch disabled]"
     !else
-        set-variable #l0 @ml1 "Watch time (s)" &div .time 1000
-        set-variable .time &mul 1000 &cond &les #l0 1 1 #l0
-        watch-reset
+        !if &not &exi :watch
+            set-variable #l0 &stat d $buffer-fname
+            !if &equ #l0 -1
+                ml-write "[Invalid buffer for watch]"
+                !bell
+                !abort
+            !endif
+            set-variable :watch #l0
+            set-variable $buffer-mode-line &rep $buffer-mode-line "%k" "%kW"
+            !if &not &pinc .count 1
+                .time create-callback watch-callback
+            !endif
+        !endif
+        !if &equ @# 3
+            set-variable :watch-size &stat s $buffer-fname
+        !elif &equ @# 2
+            set-variable :watch-size 0x7fffffff
+        !elif &exi :watch-size
+            unset-variable :watch-size
+        !endif
+        ml-write &spr "[Watch enabled]"
     !endif
 !emacro
 
@@ -150,8 +148,15 @@ define-macro watch-reset
     !endif
 !emacro
 
+define-macro watch-time
+    set-variable #l0 @ml1 "Watch time (s)" &div .time 1000
+    set-variable .time &mul 1000 &cond &les #l0 1 1 #l0
+    watch-reset
+!emacro
+
 !if &not &exi .watch.time
     set-variable .watch.time 10000
     set-variable .watch.count 0
 !endif
+
 
