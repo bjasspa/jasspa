@@ -596,16 +596,17 @@ windowGotoNext(int f, int n)
             if((wp->flags & meWINDOW_NO_NEXT) && ((n & 0x02) == 0))
                 return meFALSE ;
 #endif
-            return meTRUE ;
+            break;
         }
 #if MEOPT_EXTENDED
         if(((wp->flags & meWINDOW_NO_NEXT) == 0) || (n & 0x02))
 #endif
         {
             meWindowMakeCurrent(wp) ;
-            return meTRUE ;
+            break;
         }
     }
+    return meTRUE ;
 }
 
 /*
@@ -646,16 +647,17 @@ windowGotoPrevious(int f, int n)
             if((wp->flags & meWINDOW_NO_NEXT) && ((n & 0x02) == 0))
                 return meFALSE ;
 #endif
-            return meTRUE ;
+            break;
         }
 #if MEOPT_EXTENDED
         if(((wp->flags & meWINDOW_NO_NEXT) == 0) || (n & 0x02))
 #endif
         {
             meWindowMakeCurrent(wp) ;
-            return meTRUE ;
+            break;
         }
     }
+    return meTRUE ;
 }
 
 /*

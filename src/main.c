@@ -55,6 +55,12 @@
 #ifdef _UNIX
 #include <fcntl.h>
 #include <sys/wait.h>
+
+/* Password entry retrieval */
+#ifdef _SUNOS
+#include <pwd.h>
+#endif
+
 #endif
 #endif
 #include <assert.h>
@@ -714,6 +720,9 @@ exitEmacs(int f, int n)
             meNullFree(flNextLineTemp) ;
             if(commentCont != commentContOrg)
                 meFree(commentCont) ;
+            
+            meNullFree(loginHome) ; 
+            meNullFree(loginName) ;  
 
             meNullFree(rcsFile) ;
             meNullFree(rcsCiStr) ;
@@ -1185,11 +1194,11 @@ void
 mesetup(int argc, char *argv[])
 {
     meBuffer *bp, *mainbp ;
-    int     carg,rarg;          /* current arg to scan            */
+    int     carg,rarg;                  /* current arg to scan */
     int     noFiles=0 ;
     meUByte  *file=NULL ;
 #ifdef _UNIX
-    int     sigcatch=1 ;        /* Dont catch signals             */
+    int     sigcatch=1 ;                /* Dont catch signals */
 #endif
 #ifdef _DOS
     int     dumpScreen=0 ;
@@ -1225,7 +1234,29 @@ mesetup(int argc, char *argv[])
         meGidSize = getgroups(meGidSize,meGidList) ;
     else
         meGidSize = 0 ;
-
+    
+#ifdef _SUNOS
+    /* Get the login name and login home directory from the password file. */
+    {
+        struct passwd *pwdp;            /* Password structure entry */
+        
+        pwdp = getpwuid (meUid);        /* Get the password entry */
+        if (pwdp != NULL)
+        {
+            /* Copy out the string information we need and initialise the
+             * string variables. */
+            if (pwdp->pw_dir != NULL)
+                meStrrep(&loginHome,(meUByte *)(pwdp->pw_dir)) ; 
+            if (pwdp->pw_name != NULL)
+                meStrrep(&loginName,(meUByte *)(pwdp->pw_name)) ;  
+        }
+        
+        /* Shut down the password retrieval and allow system to relinquish
+         * any resource it may have cached. */
+        endpwent() ;
+    }
+#endif    
+    
     /* Set the required alarms first so we always have them */
     /* setup alarm process for timers */
 #ifdef _POSIX_SIGNALS
@@ -1274,21 +1305,9 @@ mesetup(int argc, char *argv[])
         meRegHead->reg[carg][0] = '\0' ;
 
     /* initialize the editor and process the command line arguments */
-    initHistory() ;           /* allocate history space */
-    set_dirs();               /* setup directories */
+    initHistory() ;                     /* allocate history space */
+    set_dirs((meUByte *)argv[0]) ;      /* setup directories */
 
-    {
-        /* setup the $progname make it an absolute path. */
-        if(executableLookup((meUByte *)argv[0],evalResult))
-            progName = meStrdup(evalResult) ;
-        else
-#ifdef _ME_FREE_ALL_MEMORY
-            /* stops problems on exit */
-            progName = meStrdup(argv[0]) ;
-#else
-            progName = (meUByte *)argv[0] ;
-#endif
-    }
     /* scan through the command line and get all global options */
     carg = rarg = 1 ;
     for( ; carg < argc; ++carg)

@@ -873,6 +873,12 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             meStrrep(&flNextLineTemp,vvalue) ;
             break ;
 #endif
+        case EVLOGNAME:
+            meStrrep(&loginName,vvalue);
+            break;
+        case EVLOGHOME:
+            meStrrep(&loginHome,vvalue);
+            break;
 #if MEOPT_RCS
         case EVRCSFILE:
             meStrrep(&rcsFile,vvalue) ;
@@ -1292,6 +1298,8 @@ hook_jump:
     case EVFILETEMP:    return flNextFileTemp ;
     case EVLINETEMP:    return flNextLineTemp ;
 #endif
+    case EVLOGNAME:     return loginName ;
+    case EVLOGHOME:     return loginHome ;
 #if MEOPT_RCS
     case EVRCSFILE:     return rcsFile ;
     case EVRCSCOCOM:    return rcsCoStr ;
