@@ -376,7 +376,26 @@ setCharMask(int f, int n)
     if(n == 0)
     {
         ss = (meUByte *) resultStr ;
-        if(flags & 0x1c000)
+        if(flags & 0x20000)
+        {
+            if(charKeyboardMap != NULL)
+            {
+                for(c1=1 ; c1<256 ; c1++)
+                {
+                    if((c2 = charKeyboardMap[c1]) != '\0')
+                    {
+                        if(c1 == meCHAR_LEADER)
+                            *ss++ = meCHAR_LEADER ;
+                        *ss++ = c1 ;
+                        if(c2 == meCHAR_LEADER)
+                            *ss++ = meCHAR_LEADER ;
+                        *ss++ = c2 ;
+                    }
+                }
+            }
+                
+        }
+        else if(flags & 0x1c000)
         {
             if(flags & 0x4000)
                 flags |= 0x18000 ;
@@ -389,22 +408,22 @@ setCharMask(int f, int n)
                     {
                         if(c1 == 0)
                         {
-                            *ss++ = 255 ;
-                            c1 = 1 ;
+                            *ss++ = meCHAR_LEADER ;
+                            c1 = meCHAR_TRAIL_NULL ;
                         }
-                        else if(c1 == 255)
-                            *ss++ = 255 ;
+                        else if(c1 == meCHAR_LEADER)
+                            *ss++ = meCHAR_LEADER ;
                         *ss++ = c1 ;
                     }
                     if(flags & 0x10000)
                     {
                         if(c2 == 0)
                         {
-                            *ss++ = 255 ;
-                            c2 = 1 ;
+                            *ss++ = meCHAR_LEADER ;
+                            c2 = meCHAR_TRAIL_NULL ;
                         }
-                        else if(c2 == 255)
-                            *ss++ = 255 ;
+                        else if(c2 == meCHAR_LEADER)
+                            *ss++ = meCHAR_LEADER ;
                         *ss++ = c2 ;
                     }
                 }
@@ -425,20 +444,20 @@ setCharMask(int f, int n)
                     {
                         if(c2 == 0)
                         {
-                            *ss++ = 255 ;
-                            c2 = 1 ;
+                            *ss++ = meCHAR_LEADER ;
+                            c2 = meCHAR_TRAIL_NULL ;
                         }
-                        else if(c2 == 255)
-                            *ss++ = 255 ;
+                        else if(c2 == meCHAR_LEADER)
+                            *ss++ = meCHAR_LEADER ;
                         *ss++ = c2 ;
                     }
                     if(c1 == 0)
                     {
-                        *ss++ = 255 ;
-                        c1 = 1 ;
+                        *ss++ = meCHAR_LEADER ;
+                        c1 = meCHAR_TRAIL_NULL ;
                     }
-                    else if(c1 == 255)
-                        *ss++ = 255 ;
+                    else if(c1 == meCHAR_LEADER)
+                        *ss++ = meCHAR_LEADER ;
                     *ss++ = c1 ;
                 }
         }
@@ -455,6 +474,36 @@ setCharMask(int f, int n)
         meStrcpy(tnkyPrompt+14,"chars") ;
         if(meGetString(tnkyPrompt,MLFFZERO,0,buf1,meBUF_SIZE_MAX) <= 0)
             return meFALSE ;
+        if(flags & 0x20000)
+        {
+            ss = buf1 ;
+            if(*ss != '\0')
+            {
+                if((charKeyboardMap == NULL) &&
+                   ((charKeyboardMap = (meUByte *) meMalloc(256)) == NULL))
+                    return meABORT ;
+                /* reset the map */
+                memset(charKeyboardMap,0,256) ;
+                while((c1=*ss++) != '\0')
+                {
+                    if((c1 == meCHAR_LEADER) && ((c1=*ss++) == meCHAR_TRAIL_NULL))
+                        c1 = 0 ;
+                    c1 = toUserFont(c1) ;
+                    if((c2=*ss++) == '\0')
+                        break ;
+                    if((c2 == meCHAR_LEADER) && ((c2=*ss++) == meCHAR_TRAIL_NULL))
+                        c2 = 0 ;
+                    charKeyboardMap[c1] = c2 ;
+                }
+            }
+            /* reset completely */
+            else if(charKeyboardMap != NULL)
+            {
+                meFree(charKeyboardMap) ;
+                charKeyboardMap = NULL ;
+            }
+            return meTRUE ;
+        }
         if(flags & 0x4000)
         {
             /* reset the tables */
@@ -462,24 +511,24 @@ setCharMask(int f, int n)
             ss = buf1 ;
             while((c1=*ss++) != '\0')
             {
-                if((c1 == 255) && ((c1=*ss++) == 1))
+                if((c1 == meCHAR_LEADER) && ((c1=*ss++) == meCHAR_TRAIL_NULL))
                     c1 = 0 ;
                 if((c2=*ss++) == '\0')
                     break ;
-                if((c2 == 255) && ((c2=*ss++) == 1))
+                if((c2 == meCHAR_LEADER) && ((c2=*ss++) == meCHAR_TRAIL_NULL))
                     c2 = 0 ;
                 charLatinUserTbl[c1] = c2 ;
                 charUserLatinTbl[c2] = c1 ;
             }
             return meTRUE ;
         }
-        /* convert the string to user font and take out any 255 padding, 0's are now 0's so need int count */
+        /* convert the string to user font and take out any LEADER padding, 0's are now 0's so need int count */
         ss = buf1 ;
         dd = buf1 ;
         ii = 0 ;
         while((c1=*ss++) != '\0')
         {
-            if((c1 == 255) && ((c1=*ss++) == 1))
+            if((c1 == meCHAR_LEADER) && ((c1=*ss++) == meCHAR_TRAIL_NULL))
                 c1 = 0 ;
             *dd++ = toUserFont(c1) ;
             ii++ ;
@@ -527,7 +576,7 @@ setCharMask(int f, int n)
             }
         }
     }
-    return (meTRUE);
+    return meTRUE ;
 }
 #endif
 

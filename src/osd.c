@@ -4295,7 +4295,7 @@ osdMouseContextChange(int leftPick)
  * Character selection of the displayed menu.
  */
 static int
-osdDisplaySelect (int cc, osdDISPLAY *md)
+osdDisplaySelect(int cc, osdDISPLAY *md)
 {
     osdCONTEXT *mcp;                   /* Menu context pointer */
     osdITEM *mp;                       /* Menu pointer */
@@ -5010,7 +5010,10 @@ execute_item:
                 {
                     if(osdCurChild->flags & RF_FRSTLET)
                         nit = osdDisplaySelectFirstLetter(cc,osdCurChild) ;
-                    else if((nit = osdDisplaySelect(cc,osdCurMd)) != 0)
+                    else if(((nit = osdDisplaySelect(cc,osdCurMd)) != 0) ||
+                            ((charKeyboardMap != NULL) &&
+                             ((cc=charKeyboardMap[cc]) != '\0') &&
+                             ((nit = osdDisplaySelect(cc,osdCurMd)) != 0)))
                         state = meOSD_EXECUTE_MENU|meOSD_OPEN_MENU|meOSD_FOCUS_MENU|meOSD_ENTER_MENU ;
                 }
                 break;

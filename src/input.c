@@ -125,7 +125,11 @@ mlCharReply(meUByte *prompt, int mask, meUByte *validList, meUByte *helpStr)
                 pp = helpStr ;
             else if((cc != '\0') &&
                     (!(mask & mlCR_ALPHANUM_CHAR) || isAlphaNum(cc)) &&
-                    ((validList == NULL) || (((cc & 0xff00) == 0) && (meStrchr(validList,cc) != NULL))))
+                    ((validList == NULL) || (((cc & 0xff00) == 0) && 
+                                             ((meStrchr(validList,cc) != NULL) ||
+                                              ((charKeyboardMap != NULL) &&
+                                               ((cc=charKeyboardMap[cc]) != '\0') &&
+                                               (meStrchr(validList,cc) != NULL))))))
             {
                 if (inpType == 2)
                 {

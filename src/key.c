@@ -71,14 +71,14 @@ count_key_table(void)
  */
 
 int
-decode_key(register meUShort code, meUInt *arg)
+decode_key(meUShort ocode, meUInt *arg)
 {
     register meBind  *ktp;			/* Keyboard character array */
     register int      low;			/* Lowest index in table. */
     register int      hi;			/* Hightest index in table. */
     register int      mid;			/* Mid value. */
     register int      status;			/* Status of comparison. */
-    
+    register meUShort code=ocode;    
 try_again:
 #if MEOPT_LOCALBIND
     if(useMlBinds)
@@ -130,7 +130,7 @@ try_again:
 #if MEOPT_OSD
         if((meSystemCfg & meSYSTEM_ALTMENU) &&
            ((code & (ME_SPECIAL|ME_PREFIX_MASK)) == 0) &&
-           ((status = osdMainMenuCheckKey(code & 0xff)) != 0))
+           ((status = osdMainMenuCheckKey(code & 0x0ff)) != 0))
         {
             /* Found - return index */
             *arg = (meUInt) (status+0x80000000) ;
@@ -144,9 +144,19 @@ try_again:
             goto try_again ;
         }
     }
+    if((charKeyboardMap != NULL) && ((code & ME_SPECIAL) == 0) &&
+       (charKeyboardMap[code & 0x0ff] != 0))
+    {
+        meUByte *ckm=charKeyboardMap ;
+        code = (ocode & 0xff00) | charKeyboardMap[code & 0x0ff] ;
+        charKeyboardMap = NULL ;
+        status = decode_key(code,arg) ;
+        charKeyboardMap = ckm ;
+        return status ;
+    }
     *arg = 0 ;
     return -1 ;				/* Not found - return error */
-}	/* End of "decode_key" () */
+}
 
 /*****************************************************************************
 *								x.
