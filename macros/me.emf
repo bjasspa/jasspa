@@ -54,6 +54,7 @@ define-macro-file fileopen osd-file-open osd-get-file
 define-macro-file hkinfo info info-on info-goto-link
 define-macro-file zfile find-zfile zfile-setup
 define-macro-file gentags generate-tags-file
+define-macro-file dmf display-matching-fence
 define-macro-file schemosd scheme-editor
 define-macro-file printstp print-setup
 define-macro-file fattrib file-attrib
@@ -117,7 +118,8 @@ set-variable $cursor-blink &reg "/history" &cat %platform "/blink" $cursor-blink
 set-variable #l0 &reg "/history" &cat %platform "/fence" "1"
 &cond &equ #l0 1 1 -1 global-mode "fence"
 !if &gre #l0 1
-    &lget "|0|2|6|14|" #l0 exec-file "dmf"
+    set-variable .display-matching-fence.dmf &lget "|0|37|45|61|" #l0
+    0 global-bind-key display-matching-fence "idle-pick"
 !endif
 ; Setup the color scheme
 scheme
@@ -223,6 +225,7 @@ add-file-hook ".idl"                                          fhook-idl
 add-file-hook ".info dir"                                     fhook-info
 add-file-hook ".diff .dif *diff*"                             fhook-diff
 add-file-hook ".xml"                                          fhook-xml
+add-file-hook ".ex .exw .exu .e .ew .eu"                      fhook-euphor
 ; Add magic hooks
  1 add-file-hook "^#![ \t]*/.*sh"                fhook-shell  ; UNIX shell files
  1 add-file-hook "^#![ \t]*/.*perl"              fhook-perl   ; UNIX perl script
@@ -253,6 +256,7 @@ add-file-hook ".xml"                                          fhook-xml
 -1 add-file-hook "-!-[ \t]*asmx86.*-!-"          fhook-asmx86 ; -!- asmx86 -!-
 -1 add-file-hook "-!-[ \t]*text.*-!-"            fhook-txt    ; -!- text -!-
 -1 add-file-hook "-!-[ \t]*msvb.*-!-"            fhook-vb     ; -!- msvb -!-
+-1 add-file-hook "-!-[ \t]*euphoria[ \t]*-!-"    fhook-euphor ; -!- euphoria -!-
 ; Initialize the top menu line
 osd 0  0  "asM" 0 0 -1 0 0 0 osd-main
 osd 0  5   "fh" " "
@@ -281,7 +285,7 @@ osd -1 &cond &reg "/history" "main-menu" "1" "1" "-1"
 ; execute any emulation file, e.g. Emacs, Vi etc
 !if &not &seq &set #l0 &reg "/history" "emulate" "" ""
     set-variable %emulate #l0
-    !force execute-file #l0
+    !force execute-file &cat "me" #l0
 !endif
 ; load ftp/http registry file
 !if &not &seq &set #l0 &reg "/history" "url-file" "" ""

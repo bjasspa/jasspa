@@ -14,6 +14,8 @@
 define-macro cvs
 !emacro
 set-variable .cvs.filter &cond &exi .cvs.filter .cvs.filter 1
+set-variable .cvs.diff-c &cond &exi .cvs.diff-c .cvs.diff-c 1
+set-variable .cvs.diff-w &cond &exi .cvs.diff-w .cvs.diff-w 1
 set-variable .cvs.console-hilight "|||||||"
 set-variable .cvs.message ""
 
@@ -166,7 +168,7 @@ define-macro cvs-diff
     !if &sin " " #l3
         set-variable #l3 &spr "\"%s\"" #l3
     !endif
-    set-variable #l2 &cat "cvs diff " #l3
+    set-variable #l2 &spr "cvs diff %s%s%s" &cond .cvs.diff-c "-c " "" &cond .cvs.diff-w "-w " "" #l3
     4 ipipe-shell-command #l2 "*cvs-diff*"
     !if &not &seq &lget .cvs.console-hilight 3 ""
         set-position "\x82"
@@ -519,6 +521,8 @@ define-macro cvs-resolve-conflicts
         set-variable .find-file.file-count 1
         set-variable .find-file.file1 #l2
         set-variable #l2 "cvs checkout"
+    !elif &seq @# 3
+        set-variable #l2 &spr "cvs diff %s%s" &cond .cvs.diff-c "-c " "" &cond .cvs.diff-w "-w " ""
     !else
         set-variable #l2 &spr "cvs %s" &lget "|update|commit|diff|log|status -v|add|" @#
     !endif

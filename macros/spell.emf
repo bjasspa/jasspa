@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Apr 25 18:12:30 1998
-;  Last Modified : <010915.2352>
+;  Last Modified : <011203.2144>
 ;
 ;  Description   : spell-buffer, spell-word, spell-edit-word and find-word
 ;                  osd based interface to spell and $find-words.
@@ -472,7 +472,7 @@ set-variable .spell.check-wordo ""
 
 0 define-macro spell-check-insertflag
     !if &bmod "view"
-        osd-xdialog "Spell Checker" "Buffer in view mode, remove?" 1 "  &Yes  " "  &No  "
+        osd-xdialog "Spelling Checker" "Buffer in view mode, remove?" 1 "  &Yes  " "  &No  "
         !if &equ $result 2
             !abort
         !endif
@@ -708,7 +708,7 @@ set-variable .spell.check-wordo ""
 !emacro
 
 -1 osd .osd.spell-check
-osd .osd.spell-check 0  "batcHC" 9 3 .scheme.osd-title "Spell Check" spell-check-control
+osd .osd.spell-check 0  "batcHC" 9 3 .scheme.osd-title "Spelling Checker" spell-check-control
 osd .osd.spell-check 10 "Iht" 1 .osd.spell-chkl
 osd .osd.spell-check 20 "It"  2 .osd.spell-chkr
 
@@ -784,7 +784,7 @@ define-macro spell-buffer
     -1 osd .osd.spell-guess
     osd .osd.spell-guess 0 "ksS" .scheme.osd-child 20 10 -1 -1
     osd .osd.spell-guess 1 ""
-    osd .osd.spell-check 0  "batcHC" 9 3 .scheme.osd-title "Spell Check" spell-check-control
+    osd .osd.spell-check 0  "batcHC" 9 3 .scheme.osd-title "Spelling Checker" spell-check-control
     osd .osd.spell-chkr 87 "BcSfH" .scheme.osd-dbtt " Undo Last   "
     0 spell-set-language
     -1 show-cursor
@@ -841,7 +841,7 @@ define-macro spell-word
         set-variable #g0 -1
         set-variable .spell.check-word &rig $result 1
         set-variable .spell.check-wordo .spell.check-word
-        osd .osd.spell-check 0 "batcH" 9 3 .scheme.osd-title "Spell Check Word"
+        osd .osd.spell-check 0 "batcH" 9 3 .scheme.osd-title "Spelling Check Word"
         osd .osd.spell-chkr 87 "BcfSH" .scheme.osd-dbtt " Undo Last   "
         0 spell-set-language
         !force 1 show-region

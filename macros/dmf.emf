@@ -9,26 +9,31 @@
 
 ;  Bits in arg n have the following meaning
 ;
-;  0x01 use pos 0x85 instead of 0x84
-;  0x02 Display fence (if not set nothing is done)
-;  0x04 Jump when closing brase is off screen
-;  0x08 Always jump when closing brase
-;  0x10 Give preference to the open fence
-
+;      0x01 Display fence (if not set nothing is done)
+;      0x02 use pos 0x85 instead of 0x84 (internal)
+;      0x04 Don't Jump when off screen
+;      0x08 Jump when closing brase is off screen
+;      0x10 Always jump when closing brase
+;      0x20 Give preference close fence to left of cursor
+;
+;  if arg of 0 given the use value of variable .<fhook>.dmf if defined or
+;  .display-matching-fence.dmf
 define-macro display-matching-fence
     ; must preserve the show-region status
     0 show-region
     set-variable #l9 &band $result 0x07
-    !if @?
+    !if @#
     !elif &exi &set #l8 &spr ".%s.dmf" $buffer-fhook
         set-variable @# &ind #l8
     !else
         set-variable @# .dmf
     !endif
-    !if &not &band @# 2
+    !if &not @#
         !return
     !endif
-    set-variable #l8 &itoa &add 0x84 &band @# 1
+    set-variable #l8 &cond &band @# 2 "\x85" "\x84"
+    set-variable #l7 &cond &seq @cck "idle-pick" 0 -1
+    set-variable #l6 &sin @cl "})]"
     set-position #l8
     set-variable #l0 $window-x-scroll
     set-variable #l1 $window-xcl-scroll
@@ -38,19 +43,17 @@ define-macro display-matching-fence
     !elif &equ #l9 5
         4 show-region
     !endif
-    !if &and $window-col &sin &set #l3 &mid @wl &sub $window-col 1 1 "})]"
-        !if &and &band @# 16 &sin @wc "{(["
-            set-variable #l3 @wc
-            set-variable #l4 $cursor-x
-            set-variable #l6 0
-        !else
+    !if &band @# 32
+        !if &and $window-col &sin &set #l3 &mid @wl &sub $window-col 1 1 "})]"
             backward-char
             set-variable #l4 &sub $cursor-x 1
-            set-variable #l6 &sin @cl "})]"
+        !elif &sin &set #l3 @wc "{([])}"
+            set-variable #l4 $cursor-x
+        !else
+            !return
         !endif
-    !elif &sin &set #l3 @wc "{(["
+    !elif &sin &set #l3 @wc "{([])}"
         set-variable #l4 $cursor-x
-        set-variable #l6 0
     !else
         !return
     !endif
@@ -61,7 +64,9 @@ define-macro display-matching-fence
         !if &equ #l9 5
             4 show-region
         !endif
-        0x10 screen-poke #l5 #l4 .scheme.error #l3
+        2 screen-update
+        0x40 screen-poke #l5 #l4 .scheme.dmf #l3
+        #l7 screen-update
         !return
     !endif
     3 screen-update
@@ -71,15 +76,15 @@ define-macro display-matching-fence
                 set-variable #l0 $cursor-y
                 set-variable #l1 $cursor-x
                 set-variable #l2 @wc
-                !if &and #l6 &band @# 8
+                !if &and #l6 &band @# 16
                     !if &equ #l9 7
                         show-region
                     !elif &equ #l9 5
                         4 show-region
                     !endif
                     2 screen-update
-                    0x12 screen-poke #l0 #l1 .scheme.no1 #l2
-                    0x10 screen-poke #l5 #l4 .scheme.no1 #l3
+                    0x02 screen-poke #l0 #l1 .scheme.dmf #l2
+                    0x00 screen-poke #l5 #l4 .scheme.dmf #l3
                     !force !force &neg $fmatchdelay command-wait
                 !endif
                 goto-position #l8
@@ -89,20 +94,23 @@ define-macro display-matching-fence
                     4 show-region
                 !endif
                 2 screen-update
-                0x12 screen-poke #l0 #l1 .scheme.no1 #l2
-                0x10 screen-poke #l5 #l4 .scheme.no1 #l3
+                0x02 screen-poke #l0 #l1 .scheme.dmf #l2
+                0x00 screen-poke #l5 #l4 .scheme.dmf #l3
+                #l7 screen-update
                 !return
             !endif
         !endif
     !endif
-    !if &and #l6 &band @# 4
+    !if &not &band @# 4
+        !jump 2
+    !elif &and #l6 &band @# 8
         !if &equ #l9 7
             show-region
         !elif &equ #l9 5
             4 show-region
         !endif
         2 screen-update
-        19 display-matching-fence
+        7 display-matching-fence
         !force !force &neg $fmatchdelay command-wait
     !endif
     goto-position #l8
@@ -112,9 +120,7 @@ define-macro display-matching-fence
         4 show-region
     !endif
     2 screen-update
-    0x10 screen-poke #l5 #l4 .scheme.no2 #l3
+    0x20 screen-poke #l5 #l4 .scheme.dmf #l3
+    #l7 screen-update
 !emacro
-set-variable .display-matching-fence.dmf &cond @? @# 2
 
-global-bind-key display-matching-fence "idle-pick"
-;global-unbind-key "idle-pick"

@@ -44,7 +44,7 @@ set-variable %scrollb-value "|0|0x13e|0x1be|0x13f|0x1bf|"
 0 exec-file "schemes"
 ; Implemented Emulation modes
 set-variable %emulate-names "|<No Emulation>|MicroEmacs v3.8|NEdit v5|"
-set-variable %emulate-value "||meme3_8|menedit|"
+set-variable %emulate-value "||me3_8|nedit|"
 
 set-variable .user-setup.name $MENAME
 set-variable .user-setup.path ""

@@ -2,7 +2,7 @@
 ;
 ; Author:           Steven Phillips
 ; Created:          05th June 1997
-; Last Modified:    <011010.0756>
+; Last Modified:    <011216.1312>
 ;
 ; History:
 ;
@@ -407,7 +407,7 @@
 ; Draw all of the mahjong tiles.
 ;
 0 define-macro mi-draw
-    !if &not @#
+    !if &not &equ @# 1
         !return
     !endif
     delete-other-windows
@@ -1103,7 +1103,7 @@
 !emacro
 
 0 define-macro mi-main-draw
-    !if &not @#
+    !if &not &equ @# 1
         !return
     !endif
     screen-update

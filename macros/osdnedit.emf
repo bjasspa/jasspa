@@ -9,7 +9,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Make the main menus look like NEdits
 ; File
-osd 1  10  ""   "&New        C-n"   f osd-1-new      ; Create a new document
+osd 1  10  ""   "&New        C-n"   f osd-new-buffer ; Create a new document
 osd 1  20  ""   "&Open       C-o"   f osd-file-open  ; Find a new file
 osd 1  50  ""   "Find file"         f file-browser   ; file browser
 osd 1  55  ""   "FTP"               f ftp            ; ftp browser

@@ -122,13 +122,13 @@ Miscellaneous Information
 cEcEMICROEMACS cEcA
 
 
-    cDMicroEmacs '01cA, JASSPA Distribution, is defined as follows, refer to lslmme(1)le 
+    cDMicroEmacs '02cA, JASSPA Distribution, is defined as follows, refer to lslmme(1)le 
     for a description of the command line variables. 
 
     The following sections describe the topics that are available as part of 
-    the on-line cDMicroEmacs '01cA manual pages. 
+    the on-line cDMicroEmacs '02cA manual pages. 
 
-    lsMicroEmacs '01 - AcknowledgmentslmAcknowledgmentsle, lslmCopyrightle, lsMicroEmacs '01 - OriginslmOriginsle and lslmContact Informationle. 
+    lsMicroEmacs '02 - AcknowledgmentslmAcknowledgmentsle, lslmCopyrightle, lsMicroEmacs '02 - OriginslmOriginsle and lslmContact Informationle. 
     lslmFrequently Asked Questionsle. 
 
     See lslmHelp!le for some information on using the hypertext manual pages. 
@@ -165,7 +165,7 @@ Miscellaneous Information
         lslmMacro Development Commandsle 
         lsRegistrylmRegistry Commandsle 
         lslmCommand Line Filtersle 
-        lsMicroEmacs '01 - GameslmGamesle 
+        lsMicroEmacs '02 - GameslmGamesle 
 
 
 cEGlossaries cA
@@ -187,7 +187,7 @@ Miscellaneous Information
         lsEditor File TypeslmEditor Filesle 
         lsCompatibility(2)lmCompatibility with the original MicroEMACSle 
         lsInterfacing(2)lmInterfacing to external componentsle 
-        lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+        lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
         lsClient-Server(2)lmClient-Server Interfacele 
         lsRegularExpressions(2)lmRegular Expressionsle 
         lsBuild(2)lmBuilding the sourcele 
@@ -204,9 +204,9 @@ Miscellaneous Information
     The components of the header are defined as follows:- 
 
     cC[logo]cA 
-        The MicroEmacs '01 Logo in the top left hand corner of the screen 
+        The MicroEmacs '02 Logo in the top left hand corner of the screen 
         exists on every page and hides a hypertext link. Selecting this item 
-        will take you back to the main lslmMicroEmacs '01le page (Only present on 
+        will take you back to the main lslmMicroEmacs '02le page (Only present on 
         HTML and Windows help pages). 
 
     cDTitle cA
@@ -613,7 +613,7 @@ Miscellaneous Information
     Keyboard binding allows key strokes to be associated with commands and 
     macros such that when a bound key stroke sequence is recognized its 
     associated (or bound) command is invoked, thereby controlling the editor. 
-    A set of lsBindings(2)lmDefault Bindingsle exist for MicroEmacs '01 which may be altered 
+    A set of lsBindings(2)lmDefault Bindingsle exist for MicroEmacs '02 which may be altered 
     using the binding commands. There are three types of key bindings: 
 
     cDGlobalcA 
@@ -693,7 +693,7 @@ ehf-scheme
 cEcEBUFFER MANIPULATION COMMANDS cEcA
 
 
-    A buffer is where MicroEmacs '01 stores text. Normally text is read from a 
+    A buffer is where MicroEmacs '02 stores text. Normally text is read from a 
     file and is visible in an editing lsWindow Commandslmwindowle. The name, associated file and 
     operating modes of the buffer, are generally shown in the lsMode Linelmmode linele. 
 
@@ -848,7 +848,7 @@ ehf-scheme
 cEcEEDITOR FILE TYPES cEcA
 
 
-    Different file types used by MicroEmacs '01: 
+    Different file types used by MicroEmacs '02: 
 
     lslmeaf(8)le MicroEmacs abbreviation file format 
     lslmedf(8)le MicroEmacs spelling dictionary file 
@@ -1038,7 +1038,7 @@ ehf-scheme
 
 
     cDModescA are switches (or states) that may be applied globally or on a per 
-    buffer basis whose settings determine how MicroEmacs '01 operates. Modes 
+    buffer basis whose settings determine how MicroEmacs '02 operates. Modes 
     affect operations within a buffer, global modes determine the modes of 
     newly created buffers. 
 
@@ -1210,7 +1210,7 @@ ehf-scheme
 cEcEWINDOW COMMANDS cEcA
 
 
-    MicroEmacs '01 uses windows to display and allow you to edit the contents 
+    MicroEmacs '02 uses windows to display and allow you to edit the contents 
     of lsBuffer Manipulation Commandslmbuffersle. Multiple windows may be present on the lsHilighting, Color and Screen Appearancelmscreenle at once, each is 
     separated by a lsMode Linelmmode linele which describes the contents of the window above 
     it. 
@@ -1280,7 +1280,7 @@ ehf-scheme
 cEcEPRINTING COMMANDS cEcA
 
 
-    Printing within MicroEmacs '01 is fairly restrictive, the following 
+    Printing within MicroEmacs '02 is fairly restrictive, the following 
     commands are used in conjunction with the print facility. 
 
     lslmprint-buffer(2)le Print buffer, with formatting 
@@ -1297,7 +1297,7 @@ ehf-scheme
     have in general one, two, or three arguments. These arguments will always 
     be placed after the function on the current command line. For example, if 
     we wanted to increase the current fill column by two, using MicroEmacs 
-    '01's lslmset-variable(2)le (C-x v) command, we would write: 
+    '02's lslmset-variable(2)le (C-x v) command, we would write: 
 
         set-variable $fill-col &add $fill-col 2 
             \            \      \       \     \____second operand 
@@ -1505,23 +1505,23 @@ ehf-scheme
     lslm%http-proxy-addr(5)le Set HTTP proxy server address 
     lslm%http-proxy-port(5)le Set HTTP proxy server port 
 
-!   MicroEmacs '01 - Games
+!   MicroEmacs '02 - Games
 cEcEGAMES cEcA
 
 
-    The following is a list of all of the games provided by cDMicroEmacs '01cA: 
+    The following is a list of all of the games provided by cDMicroEmacs '02cA: 
 
-    lslmMahjongg(3)le MicroEmacs '01 version of the solitaire Mah Jongg game 
-    lslmMatch-It(3)le MicroEmacs '01 version of the Match-It game 
-    lslmMetris(3)le MicroEmacs '01 version of the falling blocks game 
-    lslmPatience(3)le MicroEmacs '01 version of Patience (or Solitaire) 
-    lslmTriangle(3)le MicroEmacs '01 version of Triangle patience game 
+    lslmMahjongg(3)le MicroEmacs '02 version of the solitaire Mah Jongg game 
+    lslmMatch-It(3)le MicroEmacs '02 version of the Match-It game 
+    lslmMetris(3)le MicroEmacs '02 version of the falling blocks game 
+    lslmPatience(3)le MicroEmacs '02 version of Patience (or Solitaire) 
+    lslmTriangle(3)le MicroEmacs '02 version of Triangle patience game 
 
-!   MicroEmacs '01 - Supported File Types
+!   MicroEmacs '02 - Supported File Types
 cEcESUPPORTED FILE TYPES cEcA
 
 
-    The file types currently supported by MicroEmacs '01 are defined in the 
+    The file types currently supported by MicroEmacs '02 are defined in the 
     following list. Other file types may be supported by definition of an 
     appropriate hook function to handle the file, see lslmfileHooks(2)le. 
 
@@ -1541,9 +1541,9 @@ ehf-scheme
     lslmcsh(9)le C-Shell file 
     lslmdef(9)le C or C++ definition file 
     lslmdoc(9)le ASCII plain text document file 
-    lslmehf(9)le MicroEmacs '01 help file 
-    lslmemf(9)le MicroEmacs '01 Macro File 
-    lslmerf(9)le MicroEmacs '01 registry file 
+    lslmehf(9)le MicroEmacs '02 help file 
+    lslmemf(9)le MicroEmacs '02 Macro File 
+    lslmerf(9)le MicroEmacs '02 registry file 
     lslmf(9)le Fortran File 
     lslmf77(9)le Fortran 77 File 
     lslmf90(9)le Fortran 90 File 
@@ -1608,13 +1608,13 @@ ehf-scheme
     lslmy(9)le YACC programming language 
     lslmzsh(9)le Z-Shell file 
 
-!   MicroEmacs '01 - Command Glossary
-!9  Command Glossary - MicroEmacs '01
+!   MicroEmacs '02 - Command Glossary
+!9  Command Glossary - MicroEmacs '02
 cEcECOMMAND GLOSSARY cEcA
 
 
     The following is a list of all of the commands (built-in and macro) 
-    provided by cDMicroEmacs '01cA [See lsMicroEmacs '01 - Split Command Glossarylmsplit listingle]: 
+    provided by cDMicroEmacs '02cA [See lsMicroEmacs '02 - Split Command Glossarylmsplit listingle]: 
 
     lslmabort-command(2)le (cDC-gcA) Abort command 
     lslmabout(2)le Information About MicroEmacs 
@@ -1809,10 +1809,10 @@ ehf-scheme
     lslmlist-variables(2)le (cDC-h vcA) List defined variables 
     lslmlower-case-region(2)le (cDC-x C-lcA) Lowercase a region (downcase) 
     lslmlower-case-word(2)le (cDesc lcA) Lowercase word (downcase) 
-    lslmMahjongg(3)le MicroEmacs '01 version of the solitaire Mah Jongg game 
+    lslmMahjongg(3)le MicroEmacs '02 version of the solitaire Mah Jongg game 
     lslmMainMenu(3)le The top main menu 
-    lslmMatch-It(3)le MicroEmacs '01 version of the Match-It game 
-    lslmMetris(3)le MicroEmacs '01 version of the falling blocks game 
+    lslmMatch-It(3)le MicroEmacs '02 version of the Match-It game 
+    lslmMetris(3)le MicroEmacs '02 version of the falling blocks game 
     lslmmail(3)le Compose and send an email 
     lslmmail-check(3)le Check for new email 
     lslmman(3)le UNIX manual page viewer 
@@ -1839,7 +1839,7 @@ ehf-scheme
     lslmosd-help(3)le GUI based on-line help 
     lslmosd-unbind-key(2)le Remove key binding from OSD dialog 
     lslmosd-xdialog(3)le OSD Extended dialog box 
-    lslmPatience(3)le MicroEmacs '01 version of Patience (or Solitaire) 
+    lslmPatience(3)le MicroEmacs '02 version of Patience (or Solitaire) 
     lslmparagraph-to-line(3)le Convert a paragraph to a single line 
     lslmpipe-shell-command(2)le (cDesc @cA) Execute a single operating system command 
     lslmpopup-window(2)le Pop-up a window on the screen 
@@ -1930,7 +1930,7 @@ ehf-scheme
     lslmstop-mail-check(3)le Disable the check for new email 
     lslmsuspend-emacs(2)le Suspend editor and place in background 
     lslmsymbol(3)le Insert an ASCII character 
-    lslmTriangle(3)le MicroEmacs '01 version of Triangle patience game 
+    lslmTriangle(3)le MicroEmacs '02 version of Triangle patience game 
     lslmtab(2)le (cDtabcA) Handle the tab key 
     lslmtabs-to-spaces(3)le Converts all tabs to spaces 
     lslmtex2nr(3)le Convert a Latex file into nroff 
@@ -1956,12 +1956,12 @@ ehf-scheme
     lslmyank-rectangle(2)le (cDesc C-ycA) Insert a column of text 
     lslmzfile-setup(3)le Compressed file support setup 
 
-!   MicroEmacs '01 - Split Command Glossary
+!   MicroEmacs '02 - Split Command Glossary
 cEcESPLIT COMMAND GLOSSARY cEcA
 
 
     The following is a list of all of the built in commands provided by 
-    cDMicroEmacs '01cA [See lsMicroEmacs '01 - Command Glossarylmmixed listingle]: 
+    cDMicroEmacs '02cA [See lsMicroEmacs '02 - Command Glossarylmmixed listingle]: 
 
     lslmabort-command(2)le (cDC-gcA) Abort command 
     lslmabout(2)le Information About MicroEmacs 
@@ -2187,7 +2187,7 @@ ehf-scheme
     lslmyank-rectangle(2)le (cDesc C-ycA) Insert a column of text 
 
     The following is a list of documented macro commands provided by 
-    cDMicroEmacs '01cA: 
+    cDMicroEmacs '02cA: 
 
     lslmadd-global-mode(3)le Set a global buffer mode 
     lslmadd-mode(3)le Set a local buffer mode 
@@ -2257,10 +2257,10 @@ ehf-scheme
     lslminfo-on(3)le Display Info on a given topic 
     lslmishell(3)le Open a Cygwin BASH window 
     lslmline-scheme-search(3)le Search and annotate the current buffer 
-    lslmMahjongg(3)le MicroEmacs '01 version of the solitaire Mah Jongg game 
+    lslmMahjongg(3)le MicroEmacs '02 version of the solitaire Mah Jongg game 
     lslmMainMenu(3)le The top main menu 
-    lslmMatch-It(3)le MicroEmacs '01 version of the Match-It game 
-    lslmMetris(3)le MicroEmacs '01 version of the falling blocks game 
+    lslmMatch-It(3)le MicroEmacs '02 version of the Match-It game 
+    lslmMetris(3)le MicroEmacs '02 version of the falling blocks game 
     lslmmail(3)le Compose and send an email 
     lslmmail-check(3)le Check for new email 
     lslmman(3)le UNIX manual page viewer 
@@ -2271,7 +2271,7 @@ ehf-scheme
     lslmosd-entry(3)le OSD entry dialog box 
     lslmosd-help(3)le GUI based on-line help 
     lslmosd-xdialog(3)le OSD Extended dialog box 
-    lslmPatience(3)le MicroEmacs '01 version of Patience (or Solitaire) 
+    lslmPatience(3)le MicroEmacs '02 version of Patience (or Solitaire) 
     lslmparagraph-to-line(3)le Convert a paragraph to a single line 
     lslmprint-setup(3)le Configure (*mS's printer interface 
     lslmquery-replace-all-string(3)le Query replace string in a list of files 
@@ -2296,7 +2296,7 @@ ehf-scheme
     lslmstart-up(3)le Editor startup callback command 
     lslmstop-mail-check(3)le Disable the check for new email 
     lslmsymbol(3)le Insert an ASCII character 
-    lslmTriangle(3)le MicroEmacs '01 version of Triangle patience game 
+    lslmTriangle(3)le MicroEmacs '02 version of Triangle patience game 
     lslmtabs-to-spaces(3)le Converts all tabs to spaces 
     lslmtex2nr(3)le Convert a Latex file into nroff 
     lslmtime(3)le Command time evaluator 
@@ -2307,12 +2307,12 @@ ehf-scheme
     lslmwhich(3)le Program finder 
     lslmzfile-setup(3)le Compressed file support setup 
 
-!   MicroEmacs '01 - Variable Glossary
-!9  Variable Glossary - MicroEmacs '01
+!   MicroEmacs '02 - Variable Glossary
+!9  Variable Glossary - MicroEmacs '02
 cEcEVARIABLE GLOSSARY cEcA
 
 
-    The following is an alphabetic list of cDMicroEmacs '01cA variables:- 
+    The following is an alphabetic list of cDMicroEmacs '02cA variables:- 
 
     lslm$INFOPATH(5)le GNU info files base directory 
     lslm$LOGNAME(5)le System user name (UNIX) 
@@ -2443,13 +2443,13 @@ ehf-scheme
     lslm%tag-template(5)le Tag file search string 
     lslm.calc.result(5)le Last calc calculation result 
 
-!   MicroEmacs '01 - Macro Language Glossary
-!9  Macro Language Glossary - MicroEmacs '01
+!   MicroEmacs '02 - Macro Language Glossary
+!9  Macro Language Glossary - MicroEmacs '02
 cEcEMACRO LANGUAGE GLOSSARY cEcA
 
 
     The following is a list of all of the macro language commands available in 
-    cDMicroEmacs '01cA. 
+    cDMicroEmacs '02cA. 
 
 
 cEFunctions cA
@@ -2598,12 +2598,12 @@ ehf-scheme
     lslmSearchGroups(4)le Last search group values 
     lslmVariables(4)le User defined macro variables 
 
-!   MicroEmacs '01 - Global Glossary
-!8  Global Glossary - MicroEmacs '01
+!   MicroEmacs '02 - Global Glossary
+!8  Global Glossary - MicroEmacs '02
 cEcEGLOSSARY cEcA
 
 
-    The following is a list of all keywords associated with cDMicroEmacs '01cA: 
+    The following is a list of all keywords associated with cDMicroEmacs '02cA: 
 
     lslm!abort(4)le Exit macro with a FALSE status 
     lslm!bell(4)le Sound audio alarm 
@@ -2989,16 +2989,16 @@ ehf-scheme
     lslmedit(2m)le Buffer has be changed 
     lslmedit-dictionary(3)le Insert a dictionary in a buffer 
     lslmehf(8)le MicroEmacs help file 
-    lslmehf(9)le MicroEmacs '01 help file 
+    lslmehf(9)le MicroEmacs '02 help file 
     lslmehftools(3f)le Generate a MicroEmacs help file 
     lslmemf(8)le MicroEmacs macro file 
-    lslmemf(9)le MicroEmacs '01 Macro File 
+    lslmemf(9)le MicroEmacs '02 Macro File 
     lslmemftags(3f)le Generate a MicroEmacs macro tags file 
     lslmend-kbd-macro(2)le (cDC-x )cA) Stop recording keyboard macro 
     lslmend-of-buffer(2)le (cDesc >cA) Move to end of buffer/file 
     lslmend-of-line(2)le (cDC-ecA) Move to end of line 
     lslmerf(8)le MicroEmacs registry file 
-    lslmerf(9)le MicroEmacs '01 registry file 
+    lslmerf(9)le MicroEmacs '02 registry file 
     lslmetf(8)le MicroEmacs template file format 
     lslmetfinsrt(3)le Insert template file into current buffer 
     lslmexact(2m)le Searching and sorting case sensitivity 
@@ -3137,12 +3137,12 @@ ehf-scheme
     lslmlower-case-word(2)le (cDesc lcA) Lowercase word (downcase) 
     lslmMacroArguments(4)le Arguments to macros 
     lslmMacroNumericArguments(4)le Numeric arguments to macros 
-    lslmMahjongg(3)le MicroEmacs '01 version of the solitaire Mah Jongg game 
+    lslmMahjongg(3)le MicroEmacs '02 version of the solitaire Mah Jongg game 
     lslmMainMenu(3)le The top main menu 
-    lslmMatch-It(3)le MicroEmacs '01 version of the Match-It game 
+    lslmMatch-It(3)le MicroEmacs '02 version of the Match-It game 
     lslmMessageLineVaraibles(4)le Prompt the user for input on message line 
     lslmMetaFont(9)le MetaFont/MetaPost File 
-    lslmMetris(3)le MicroEmacs '01 version of the falling blocks game 
+    lslmMetris(3)le MicroEmacs '02 version of the falling blocks game 
     lslmm4(9)le M4 Macro Processor 
     lslmmagic(2m)le Regular expression search 
     lslmmail(3)le Compose and send an email 
@@ -3152,9 +3152,9 @@ ehf-scheme
     lslmman(9)le UNIX Manual Page 
     lslmman-clean(3)le Clean UNIX manual page 
     lslmmark-registry(2)le Modify the operating mode of a registry node 
-    lslmme(1)le MicroEmacs '01 text editor 
+    lslmme(1)le MicroEmacs '02 text editor 
     lslmme32.ini(8)le Microsoft Window's Initialization (ini) File 
-    lslmmemsdev(1)le Microsoft Developer Studio Add-in for MicroEmacs '01 
+    lslmmemsdev(1)le Microsoft Developer Studio Add-in for MicroEmacs '02 
     lslmmf(9)le MetaFont File 
     lslmml-bind-key(2)le Create key binding for message line 
     lslmml-clear(2)le Clear the message line 
@@ -3185,7 +3185,7 @@ ehf-scheme
     lslmosd-unbind-key(2)le Remove key binding from OSD dialog 
     lslmosd-xdialog(3)le OSD Extended dialog box 
     lslmover(2m)le Over-strike Mode 
-    lslmPatience(3)le MicroEmacs '01 version of Patience (or Solitaire) 
+    lslmPatience(3)le MicroEmacs '02 version of Patience (or Solitaire) 
     lslmp(9)le Pascal File 
     lslmparagraph-to-line(3)le Convert a paragraph to a single line 
     lslmpas(9)le Pascal File 
@@ -3304,7 +3304,7 @@ ehf-scheme
     lslmstop-mail-check(3)le Disable the check for new email 
     lslmsuspend-emacs(2)le Suspend editor and place in background 
     lslmsymbol(3)le Insert an ASCII character 
-    lslmTriangle(3)le MicroEmacs '01 version of Triangle patience game 
+    lslmTriangle(3)le MicroEmacs '02 version of Triangle patience game 
     lslmtab(2)le (cDtabcA) Handle the tab key 
     lslmtab(2m)le Tabulation mode 
     lslmtabs-to-spaces(3)le Converts all tabs to spaces 
@@ -3356,11 +3356,11 @@ ehf-scheme
     lslmzfile-setup(3)le Compressed file support setup 
     lslmzsh(9)le Z-Shell file 
 
-!   MicroEmacs '01 - Acknowledgments
+!   MicroEmacs '02 - Acknowledgments
 cEcEACKNOWLEDGMENTS cEcA
 
 
-    The following persons contributed to this release of cDMicroEmacs '01cA over 
+    The following persons contributed to this release of cDMicroEmacs '02cA over 
     the last decade, roughly in the order of participation. This list 
     represents the main developers:- 
 
@@ -3388,8 +3388,8 @@ ehf-scheme
     Thanks to everybody else that has used and abused it locally feeding back 
     comments and preferences, wishes and desires. 
 
-!   MicroEmacs '01 - Copyright
-!9  Copyright - MicroEmacs '01
+!   MicroEmacs '02 - Copyright
+!9  Copyright - MicroEmacs '02
 cEcECOPYRIGHT cEcA
 
 
@@ -3407,10 +3407,10 @@ ehf-scheme
     The following notices apply after 1988. 
 
         cDCopyright (C) 1988 - 2001, JASSPAcA 
-        MicroEmacs '01 can be copied and distributed freely for any 
-        non-commercial purposes. Commercial users may use MicroEmacs '01 
-        inhouse. Shareware distributors may redistribute MicroEmacs '01 for 
-        media costs only. MicroEmacs '01 can only be incorporated into 
+        MicroEmacs '02 can be copied and distributed freely for any 
+        non-commercial purposes. Commercial users may use MicroEmacs '02 
+        inhouse. Shareware distributors may redistribute MicroEmacs '02 for 
+        media costs only. MicroEmacs '02 can only be incorporated into 
         commercial software or resold with the permission of the current 
         author. 
 
@@ -3448,8 +3448,8 @@ ehf-scheme
 
     cDTHIS NOTICE MUST BE CARRIED IN ALL COPIES OF THE DISTRIBUTIONcA 
 
-!   MicroEmacs '01 - Contact Information
-!7  Contact Information - MicroEmacs '01
+!   MicroEmacs '02 - Contact Information
+!7  Contact Information - MicroEmacs '02
 cEcECONTACT INFORMATION cEcA
 
 
@@ -3539,7 +3539,7 @@ ehf-scheme
         The host platform which is exhibiting a problem 
 
     cDVersioncA 
-        The version of MicroEmacs '01. Use the cGesc x aboutcA to retrieve the 
+        The version of MicroEmacs '02. Use the cGesc x aboutcA to retrieve the 
         information e.g. 
 
             cGMicroEmacs 01 - Date 01/01/01 - win32cA 
@@ -3585,11 +3585,11 @@ ehf-scheme
         cCTitle:cA cDPORTcA 
         cCMessage Body:cA Details 
 
-    If you wish to port MicroEmacs '01 to another platform and are willing to 
+    If you wish to port MicroEmacs '02 to another platform and are willing to 
     undertake responsibility for maintenance of that platform then we would 
     like to here from you. Send us some details. 
 
-!   MicroEmacs '01 - Origins
+!   MicroEmacs '02 - Origins
 cEcEORIGINS cEcA
 
 
@@ -3600,17 +3600,17 @@ ehf-scheme
     The program was originally ported to a Motorola MVME147 UNIX box as an 
     alternative to cDvicA. Reliability of the program proved to be a problem as it 
     constantly crashed. In an attempt to rectify the problems the development 
-    of MicroEmacs '01 commenced. 
+    of MicroEmacs '02 commenced. 
 
     Development has continued from 1988 through to today, on the whole 
     oblivious to further developments of the existing cDMicroEmacscA program. This 
     was due to no Internet access. It was not until 1996 the next version of 
     cDMicroEmacscA and cDmewincA (Microsoft Windows (TM) port of the same program) was 
-    downloaded from the Internet and compared. By this time MicroEmacs '01 was 
+    downloaded from the Internet and compared. By this time MicroEmacs '02 was 
     radically different and we were not about to mesh the two together - that 
     would be a step backwards. 
 
-    Development of MicroEmacs '01 has been biased towards the UNIX platform, 
+    Development of MicroEmacs '02 has been biased towards the UNIX platform, 
     as most of the early development was performed in the UNIX domain. The 
     first of the window servers was X-Windows, which in turn has shaped the 
     implementation of the Microsoft Windows port. Latterly, we have seen the 
@@ -3619,15 +3619,15 @@ ehf-scheme
     Windows port, a UNIX like interface was required. Most existing users 
     could not abide the primitive editors found on these machines; Microsoft 
     Windows was an alien and hostile environment when compared with UNIX. 
-    Hence, the MicroEmacs '01 interface utilizes UNIX style cut and paste 
+    Hence, the MicroEmacs '02 interface utilizes UNIX style cut and paste 
     across all platforms. 
 
-    For portability, MicroEmacs '01 utilizes character rendering on all 
+    For portability, MicroEmacs '02 utilizes character rendering on all 
     platforms regardless of the window manager. Under X-Windows and Microsoft 
     Windows, the display is still treated as a character based display, the 
     subtle difference is that the display pane is re-sizable. This means that 
     the scroll bars, fonts etc. are not as slick as they could be, certainly 
-    under Microsoft Windows MicroEmacs '01 looks positively primitive!! 
+    under Microsoft Windows MicroEmacs '02 looks positively primitive!! 
     Regardless of the look, the goal of a common editor across all working 
     platforms has been achieved! 
 
@@ -3848,7 +3848,7 @@ ehf-scheme
 cEWork In Progress or Planned cA
 
 
-    Development of MicroEmacs '01 is an on-going process, follows is a list of 
+    Development of MicroEmacs '02 is an on-going process, follows is a list of 
     work items which is currently being undertaken or planned:- 
 
         * Integrate the mouse interaction, especially the pop-up menus of the 
@@ -3885,57 +3885,57 @@ ehf-scheme
     This page contains frequently asked questions submitted to JASSPA. 
 
     lsFAQs(0f)lmFAQsle - FAQ Contact information 
-    lsfaq00(0f)lmfaq00le - New functionality; what is useful to me as an old MicroEmacs user 
+    lsFAQs(0f)lmfaq00le - New functionality; what is useful to me as an old MicroEmacs user 
     ?? 
-    lsfaq01(0f)lmfaq01le - Languages; Are any foreign languages supported other than English 
+    lsFAQs(0f)lmfaq01le - Languages; Are any foreign languages supported other than English 
     ?? 
-    lsfaq02(0f)lmfaq02le - C++ is not default, C is - how do I change this ?? 
-    lsfaq03(0f)lmfaq03le - GNU Emacs; are there any GNU Emacs bindings. ? 
-    lsfaq04(0f)lmfaq04le - Icons are not displayed correctly in Microsoft Windows 
+    lsFAQs(0f)lmfaq02le - C++ is not default, C is - how do I change this ?? 
+    lsFAQs(0f)lmfaq03le - GNU Emacs; are there any GNU Emacs bindings. ? 
+    lsFAQs(0f)lmfaq04le - Icons are not displayed correctly in Microsoft Windows 
     environments !! 
-    lsfaq05(0f)lmfaq05le - ipipes not working on Microsoft Windows network drives ? 
-    lsfaq06(0f)lmfaq06le - Language not supported - will it be ?? 
-    lsfaq07(0f)lmfaq07le - Language file is incomplete 
-    lsfaq08(0f)lmfaq08le - Input locked up and not accepting keys; how do I unlock ? 
-    lsfaq09(0f)lmfaq09le - MicroEmacs Bindings; How do I get the original MicroEmacs bindings 
+    lsFAQs(0f)lmfaq05le - ipipes not working on Microsoft Windows network drives ? 
+    lsFAQs(0f)lmfaq06le - Language not supported - will it be ?? 
+    lsFAQs(0f)lmfaq07le - Language file is incomplete 
+    lsFAQs(0f)lmfaq08le - Input locked up and not accepting keys; how do I unlock ? 
+    lsFAQs(0f)lmfaq09le - MicroEmacs Bindings; How do I get the original MicroEmacs bindings 
     ? 
-    lsfaq10(0f)lmfaq10le - Microsoft Windows Locks up after killing an ipipe. 
-    lsfaq11(0f)lmfaq11le - Mouse support under Microsoft windows is strange !! 
-    lsfaq12(0f)lmfaq12le - Scroll bars too narrow !! 
-    lsfaq13(0f)lmfaq13le - Tab key; Why does the tab key not operate in some windows ?? 
-    lsfaq14(0f)lmfaq14le - Termcap; On a color terminal why is there no color ?? 
-    lsfaq15(0f)lmfaq15le - Termcap; Some of the keys do not work - how can I bind them ? 
-    lsfaq16(0f)lmfaq16le - Timestamp; Format incorrect, how can I change to MMDDYY.hhmm ? 
-    lsfaq17(0f)lmfaq17le - Windows; Component characters rendered incorrectly, how do I fix ? 
-    lsfaq18(0f)lmfaq18le - Windows Autosave and Backup files; are these potentially a problem 
+    lsFAQs(0f)lmfaq10le - Microsoft Windows Locks up after killing an ipipe. 
+    lsFAQs(0f)lmfaq11le - Mouse support under Microsoft windows is strange !! 
+    lsFAQs(0f)lmfaq12le - Scroll bars too narrow !! 
+    lsFAQs(0f)lmfaq13le - Tab key; Why does the tab key not operate in some windows ?? 
+    lsFAQs(0f)lmfaq14le - Termcap; On a color terminal why is there no color ?? 
+    lsFAQs(0f)lmfaq15le - Termcap; Some of the keys do not work - how can I bind them ? 
+    lsFAQs(0f)lmfaq16le - Timestamp; Format incorrect, how can I change to MMDDYY.hhmm ? 
+    lsFAQs(0f)lmfaq17le - Windows; Component characters rendered incorrectly, how do I fix ? 
+    lsFAQs(0f)lmfaq18le - Windows Autosave and Backup files; are these potentially a problem 
     ? 
-    lsfaq19(0f)lmfaq19le - Printing; Why in Windows does the output come out in a buffer ?? 
-    lsfaq20(0f)lmfaq20le - Printing; On Windows which font should I use ?? 
-    lsfaq21(0f)lmfaq21le - Printing; My printer is not supported ? 
-    lsfaq22(0f)lmfaq22le - Alt key maps to the Menu, how do I change ? 
-    lsfaq23(0f)lmfaq23le - me32.ini - Where does it go, how do I know it's being processed ?? 
-    lsfaq24(0f)lmfaq24le - Windows - Where is app850.fon ? 
-    lsfaq25(0f)lmfaq25le - Time; mode line is showing the date in DD/MM/YY format how do I 
+    lsFAQs(0f)lmfaq19le - Printing; Why in Windows does the output come out in a buffer ?? 
+    lsFAQs(0f)lmfaq20le - Printing; On Windows which font should I use ?? 
+    lsFAQs(0f)lmfaq21le - Printing; My printer is not supported ? 
+    lsFAQs(0f)lmfaq22le - Alt key maps to the Menu, how do I change ? 
+    lsFAQs(0f)lmfaq23le - me32.ini - Where does it go, how do I know it's being processed ?? 
+    lsFAQs(0f)lmfaq24le - Windows - Where is app850.fon ? 
+    lsFAQs(0f)lmfaq25le - Time; mode line is showing the date in DD/MM/YY format how do I 
     change ? 
-    lsfaq26(0f)lmfaq26le - C or C++ indentation and effects; how can I turn off ? 
-    lsfaq27(0f)lmfaq27le - fill-paragraph function does not fill ?? 
-    lsfaq28(0f)lmfaq28le - Key modifier which acts as the ESC key; what is it ? 
-    lsfaq29(0f)lmfaq29le - find-file start location; where is it ? 
-    lsfaq30(0f)lmfaq30le - Re-using a MicroEmacs session; how to ?? 
-    lsfaq31(0f)lmfaq31le - Microsoft Drag and Drop; is it supported ?? 
-    lsfaq32(0f)lmfaq32le - Cut and Paste to/from other applications; is it supported ?? 
-    lsfaq33(0f)lmfaq33le - Fonts; how can I change the font ?? 
-    lsfaq34(0f)lmfaq34le - Colors; how can I change screen colors ?? 
-    lsfaq35(0f)lmfaq35le - File Types; how do I interchange between UNIX, Windows and DOS 
+    lsFAQs(0f)lmfaq26le - C or C++ indentation and effects; how can I turn off ? 
+    lsFAQs(0f)lmfaq27le - fill-paragraph function does not fill ?? 
+    lsFAQs(0f)lmfaq28le - Key modifier which acts as the ESC key; what is it ? 
+    lsFAQs(0f)lmfaq29le - find-file start location; where is it ? 
+    lsFAQs(0f)lmfaq30le - Re-using a MicroEmacs session; how to ?? 
+    lsFAQs(0f)lmfaq31le - Microsoft Drag and Drop; is it supported ?? 
+    lsFAQs(0f)lmfaq32le - Cut and Paste to/from other applications; is it supported ?? 
+    lsFAQs(0f)lmfaq33le - Fonts; how can I change the font ?? 
+    lsFAQs(0f)lmfaq34le - Colors; how can I change screen colors ?? 
+    lsFAQs(0f)lmfaq35le - File Types; how do I interchange between UNIX, Windows and DOS 
     files ?? 
-    lsfaq36(0f)lmfaq36le - Non-English Languages; What font should I select ?? 
-    lsfaq37(0f)lmfaq37le - MicroEmacs '99; How do I up-grade from MicroEmacs'98 ?? 
-    lsfaq38(0f)lmfaq38le - Some keys on my foreign keyboard do not work properly, how do I 
+    lsFAQs(0f)lmfaq36le - Non-English Languages; What font should I select ?? 
+    lsFAQs(0f)lmfaq37le - MicroEmacs '99; How do I up-grade from MicroEmacs'98 ?? 
+    lsFAQs(0f)lmfaq38le - Some keys on my foreign keyboard do not work properly, how do I 
     get them working ?? 
-    lsfaq39(0f)lmfaq39le - Tabs; How to change the tab width ?? 
-    lsfaq40(0f)lmfaq40le - Windows/DOS; Where do I get grep/diff etc. ?? 
-    lsfaq41(0f)lmfaq41le - Home/End Keys; How do I change the default bindings ?? 
-    lsfaq42(0f)lmfaq42le - tags; How do I generate a MicroEmacs compatible tags file ?? 
+    lsFAQs(0f)lmfaq39le - Tabs; How to change the tab width ?? 
+    lsFAQs(0f)lmfaq40le - Windows/DOS; Where do I get grep/diff etc. ?? 
+    lsFAQs(0f)lmfaq41le - Home/End Keys; How do I change the default bindings ?? 
+    lsFAQs(0f)lmfaq42le - tags; How do I generate a MicroEmacs compatible tags file ?? 
 
 ! 0ffaq00
 cEcEQUESTION (00) cEcA
@@ -4137,7 +4137,7 @@ ehf-scheme
     with. If you are using a language that we are not supporting then you will 
     need to write a new cGhk<language>.emfcA file. See lslanguageTemplates(2)lmLanguage Templatesle on how 
     to map a new programming language. The list of currently supported file 
-    types is defined in lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle. 
+    types is defined in lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle. 
 
     Jasspa would appreciate any new templates that people define for standard 
     file types so that we can add them to the distribution. 
@@ -4162,7 +4162,7 @@ ehf-scheme
     ourselves. 
 
     For a number of templates, there is no indent support (see lslmindent(2)le and 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle). 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle). 
 
     Note that when extending the template then only standard words should be 
     added. Words which are local extensions should be added to a cGmyXXX.emfcA. 
@@ -4173,7 +4173,7 @@ ehf-scheme
 cEcESEE ALSO cEcA
 
 
-    lsfaq06(0f)lmFAQ06le 
+    lsFAQs(0f)lmFAQ06le 
 
     lsFrequently Asked Questionslm[FAQ Index]le. 
 
@@ -4807,7 +4807,7 @@ ehf-scheme
 cEcEANSWER cEcA
 
 
-    MicroEmacs '01 supports Microsoft cCdrag and dropcA interaction. Multiple 
+    MicroEmacs '02 supports Microsoft cCdrag and dropcA interaction. Multiple 
     files and directories may be dragged from Microsoft Explorer (or other 
     application) and dropped into a buffer window. The destination buffer 
     window is the window in which the dropped file(s) are displayed. 
@@ -4827,20 +4827,20 @@ ehf-scheme
 cEcEANSWER cEcA
 
 
-    MicroEmacs '01 supports cCcut and pastecA operations on all platforms. 
+    MicroEmacs '02 supports cCcut and pastecA operations on all platforms. 
 
-    To copy a region from MicroEmacs '01 to another application 
+    To copy a region from MicroEmacs '02 to another application 
         Select a region (with the mouse or keys) - there is no need to invoke 
         a copy operation. All selected text is immediately available to other 
         applications. 
 
         Move to the new application and paste, as dictated by the platform. 
 
-    To copy a region from another application to MicroEmacs '01 
+    To copy a region from another application to MicroEmacs '02 
         Select the region in the application into the clipboard, as dictated 
         by the platform. 
 
-        Move to MicroEmacs '01, position the cursor and lslmyank(2)le (cGC-ycA or 
+        Move to MicroEmacs '02, position the cursor and lslmyank(2)le (cGC-ycA or 
         typically the middle mouse button) the clipboard text. 
 
     lsFrequently Asked Questionslm[FAQ Index]le. 
@@ -4896,7 +4896,7 @@ ehf-scheme
 cEcEANSWER cEcA
 
 
-    MicroEmacs '01 facilitates the editing of the standard file types on all 
+    MicroEmacs '02 facilitates the editing of the standard file types on all 
     platforms. All files retain their line ending type through edits. i.e. if 
     a DOS file is edited on a UNIX system, the file is still written as a DOS 
     file. When new files are created, they are created with the standard 
@@ -4925,7 +4925,7 @@ ehf-scheme
 cEcEANSWER cEcA
 
 
-    MicroEmacs '01 has only been tested with Western Lanuguages only. Within 
+    MicroEmacs '02 has only been tested with Western Lanuguages only. Within 
     the Microsoft Windows environment an ANSI type font should be selected, 
     assuming of course that the characters required are in the ISO-Latin 
     character set. UNIX typically supports ISO-Latin character sets. 
@@ -5125,7 +5125,7 @@ ehf-scheme
 
     A cDtagscA file is used by the lslmfind-tag(2)le command. This is used to hypertext 
     to the cCtaggedcA definition or variable. The standard cDctags(1)cA format is used 
-    by MicroEmacs. The cDtagscA file itself may be generated by MicroEmacs '01 
+    by MicroEmacs. The cDtagscA file itself may be generated by MicroEmacs '02 
     from the menu (cCTools->XX Tools->Create Tags FilecA). Alternatively a cDtagscA 
     file may be generated by the cDctags(1)cA utility. This is typically standard 
     on UNIX platforms. For Windows and DOS platforms then the cDExuberant CtagscA 
@@ -5133,7 +5133,7 @@ ehf-scheme
 
        cG http://darren.hiebert.comcA 
 
-    A MicroEmacs '01 compatible tags file may be generated using the command 
+    A MicroEmacs '02 compatible tags file may be generated using the command 
     line "cGctags -N --format=1 ."cA cataloging the current directory. To generate 
     cDtagscA for a directory tree then use "cGctags -NR --format=1 .cA". Refer to the 
     cDExuberant CtagscA documentation for a more detailed description of the 
@@ -5150,7 +5150,7 @@ ehf-scheme
 
 
     This document contains frequently asked questions submitted to JASSPA. Use 
-    the E-Mail reflector and associated logs, described in the lsMicroEmacs '01 - Contact InformationlmContactln
+    the E-Mail reflector and associated logs, described in the lsMicroEmacs '02 - Contact InformationlmContactln
     lnInformationle section, alternatively questions may be submitted to:- 
 
         cGEmail:support@jasspa.comcA 
@@ -5166,7 +5166,7 @@ ehf-scheme
 cEcENAME cEcA
 
 
-    me - MicroEmacs '01 text editor 
+    me - MicroEmacs '02 text editor 
 
 
 cEcESYNOPSIS cEcA
@@ -5182,17 +5182,17 @@ ehf-scheme
 cEcEDESCRIPTION cEcA
 
 
-    cDMicroEmacs '01cA is a cut down version of the EMACS text editor, based on 
-    Danial Lawrences MicroEmacs. cDMicroEmacs '01cA is a tool for creating and 
+    cDMicroEmacs '02cA is a cut down version of the EMACS text editor, based on 
+    Danial Lawrences MicroEmacs. cDMicroEmacs '02cA is a tool for creating and 
     changing documents, programs, and other text files. It is both relatively 
     easy for the novice to use, but also very powerful in the hands of an 
-    expert. MicroEmacs '01 can be extensively customized for the needs of the 
+    expert. MicroEmacs '02 can be extensively customized for the needs of the 
     individual user. 
 
-    cDMicroEmacs '01cA allows multiple files to be edited at the same time. The 
+    cDMicroEmacs '02cA allows multiple files to be edited at the same time. The 
     screen may be split into different windows and screens, and text may be 
     moved freely from one window on any screen to the next. Depending on the 
-    type of file being edited, cDMicroEmacs '01cA can change how it behaves to 
+    type of file being edited, cDMicroEmacs '02cA can change how it behaves to 
     make editing simple. Editing standard text files, program files and word 
     processing documents are all possible at the same time. 
 
@@ -5203,7 +5203,7 @@ ehf-scheme
 
     For complex and repetitive editing tasks editing macros can be written. 
     These macros allow the user a great degree of flexibility in determining 
-    how cDMicroEmacs '01cA behaves. Also, any and all the commands can be used by 
+    how cDMicroEmacs '02cA behaves. Also, any and all the commands can be used by 
     any key stroke by changing, or rebinding, what commands various keys 
     invoke. 
 
@@ -5212,10 +5212,10 @@ ehf-scheme
     detabbing lines, executing operating system commands and filtering of text 
     through other programs. 
 
-    The command line options to cDMicroEmacs '01cA are defined as follows:- 
+    The command line options to cDMicroEmacs '02cA are defined as follows:- 
 
     cD@cAcCstartFilecA 
-        Initialize MicroEmacs '01 using cCstartFilecA[cD.emfcA]. The default when 
+        Initialize MicroEmacs '02 using cCstartFilecA[cD.emfcA]. The default when 
         omitted is cDme.emfcA. See lslmstart-up(3)le and lslmCommand Line Filtersle for more 
         information. 
 
@@ -5224,7 +5224,7 @@ ehf-scheme
         buffer mode). 
 
     cD-ccA 
-        Continuation mode. Load cDMicroEmacs '01cA last edit session, restoring 
+        Continuation mode. Load cDMicroEmacs '02cA last edit session, restoring 
         the buffers to their previous loaded state and position. Note that 
         history mode must be enabled. The cD-ccA option is generally used with 
         windowing interfaces (X-Windows/Microsoft Windows) as the shortcut 
@@ -5237,7 +5237,7 @@ ehf-scheme
         Show the help page (does not start the editor). 
 
     cD-icA 
-        MS-DOS versions of cDMicroEmacs '01cA only. Insert the contents of the 
+        MS-DOS versions of cDMicroEmacs '02cA only. Insert the contents of the 
         current screen into the cD*scratch*cA buffer 
 
     cD-kcA[cCkeycA] 
@@ -5276,13 +5276,13 @@ ehf-scheme
 
     cD-ncA 
         UNIX X-Windows environments only and MicroSoft Windows NT console 
-        versions. Execute cDMicroEmacs '01cA using termcap rather than X-Windows 
+        versions. Execute cDMicroEmacs '02cA using termcap rather than X-Windows 
         for UNIX; typically used within an cDxtermcA shell to fire up cDMicroEmacs 
-        '01cA for a quick edit. For Microsoft Windows, a console window is 
+        '02cA for a quick edit. For Microsoft Windows, a console window is 
         started as opposed to a GUI window. 
 
     cD-ocAcC<file>cA 
-        Use already running version of MicroEmacs '01 to load the cC<file>cA, if 
+        Use already running version of MicroEmacs '02 to load the cC<file>cA, if 
         it exists, otherwise start a new editor session. This uses the 
         cCclient-servercA interface to push the new file into the existing editor 
         session. Refer to the lsClient-Server(2)lmClient-Server Interfacele for details. 
@@ -5310,7 +5310,7 @@ ehf-scheme
 
     cD-scAcCstringcA 
         Search for string "cCstringcA" in the current buffer. e.g. cGme -sfoo barcA 
-        starts cDMicroEmacs '01cA, loads file cGbarcA and initiates a search for cCfoocA. 
+        starts cDMicroEmacs '02cA, loads file cGbarcA and initiates a search for cCfoocA. 
         The cursor is left at the end of the string if located, otherwise at 
         the top of the buffer. 
 
@@ -5320,12 +5320,12 @@ ehf-scheme
         ls$MENAME(5)lmMENAME(5)le to the given value. 
 
     cD-vcAcCvariable=stringcA 
-        Assign the MicroEmacs '01 cCvariablecA with cCstringcA. The assignment is 
+        Assign the MicroEmacs '02 cCvariablecA with cCstringcA. The assignment is 
         performed before the buffers are loaded. Typically used to change the 
         start-up characteristics of the startup file(s). 
 
     cD-xcA 
-        UNIX environments. Disable the capture of signals. cDMicroEmacs '01cA by 
+        UNIX environments. Disable the capture of signals. cDMicroEmacs '02cA by 
         default captures an handles all illicit signal interrupts. The option 
         is enabled when debugging the source code allowing exception 
         conditions to be trapped within the debugger. 
@@ -5337,7 +5337,7 @@ ehf-scheme
 cEcEENVIRONMENT cEcA
 
 
-    The following environment variables are used by cDMicroEmacs '01cA. 
+    The following environment variables are used by cDMicroEmacs '02cA. 
 
     cDDISPLAYcA 
         UNIX environments running X-Windows only. The identity of the 
@@ -5348,7 +5348,7 @@ ehf-scheme
         The identity of the user, cD$MENAMEcA takes precedence over cD$LOGNAMEcA. 
         cD$LOGNAMEcA variable is generally defined within UNIX as part of the 
         login script. The variables are used to determine which start-up 
-        configuration to use in the initialization of cDMicroEmacs '01cA 
+        configuration to use in the initialization of cDMicroEmacs '02cA 
         (cC$MENAMEcA.erf). 
 
         Non-UNIX platforms usually need to explicitly set the cD$MENAMEcA 
@@ -5359,7 +5359,7 @@ ehf-scheme
     cDPATHcA 
         The cD$PATHcA environment variable is used on most operating systems as a 
         search path for executable files. This cD$PATHcA environment variable must 
-        be defined with cDMicroEmacs '01cA on the search path. Under UNIX this is 
+        be defined with cDMicroEmacs '02cA on the search path. Under UNIX this is 
         set in the cG.logincA, cG.cshrccA or cG.profilecA file i.e. 
 
             export PATH $PATH:/usr/name/me 
@@ -5369,7 +5369,7 @@ ehf-scheme
 
             set PATH=%PATH%;c:\me 
 
-        cDMicroEmacs '01cA utilizes information in the cD$PATHcA environment variable 
+        cDMicroEmacs '02cA utilizes information in the cD$PATHcA environment variable 
         to locate the start-up files, dictionaries etc. 
 
     cDTERMcA 
@@ -5395,10 +5395,10 @@ ehf-scheme
             adapter. 
 
     cDMEPATHcA 
-        MicroEmacs '01 uses the environment variable cG$MEPATHcA as the 
+        MicroEmacs '02 uses the environment variable cG$MEPATHcA as the 
         directory(s) used to search for the macro files (see lslmemf(8)le). Within 
         the UNIX cG$MEPATHcA is a semi-colon separated list of directories which 
-        are used to search for the MicroEmacs '01 macro files. The path is 
+        are used to search for the MicroEmacs '02 macro files. The path is 
         searched from left to right. The environment variable is typically 
         defined in the in the cG.logincA, cG.cshrccA or cG.profilecA file i.e. 
 
@@ -5416,10 +5416,10 @@ ehf-scheme
         the cG$MEPATHcA from the windows configuration file. 
 
     cDINFOPATHcA 
-        MicroEmacs '01 uses the environment variable cG$INFOPATHcA as the 
+        MicroEmacs '02 uses the environment variable cG$INFOPATHcA as the 
         directory(s) used to search for GNU cDInfocA files. Within the UNIX 
         cG$INFOPATHcA is a semi-colon separated list of directories which are used 
-        to search for the MicroEmacs '01 macro files. The path is searched 
+        to search for the MicroEmacs '02 macro files. The path is searched 
         from left to right. The environment variable is typically defined in 
         the in the cG.logincA, cG.cshrccA or cG.profilecA file i.e. 
 
@@ -5444,19 +5444,19 @@ ehf-scheme
     directory. The standard file extensions that are utilized are:- 
 
     lseaf(8)lm.eafle 
-        cDMicroEmacs '01cA abbreviation file, defines completion definitions for 
+        cDMicroEmacs '02cA abbreviation file, defines completion definitions for 
         buffer dependent text expansion. 
 
     lsedf(8)lm.edfle 
-        A cDMicroEmacs '01cA spelling dictionary. cC<language>cAcD.edfcA provide language 
+        A cDMicroEmacs '02cA spelling dictionary. cC<language>cAcD.edfcA provide language 
         specific dictionaries; cC$LOGNAMEcAcD.edfcA is personal spelling dictionary. 
 
     lsehf(8)lm.ehfle 
-        cDMicroEmacs '01cA help file information. On-line help information for 
+        cDMicroEmacs '02cA help file information. On-line help information for 
         emacs, the main file is cGme.ehfcA. 
 
     lsemf(8)lm.emfle 
-        A cDMicroEmacs '01cA macro file. The following classes of macro file 
+        A cDMicroEmacs '02cA macro file. The following classes of macro file 
         exist: 
 
         cDme.emfcA 
@@ -5504,7 +5504,7 @@ ehf-scheme
 cEcENAME cEcA
 
 
-    memsdev - Microsoft Developer Studio Add-in for MicroEmacs '01 
+    memsdev - Microsoft Developer Studio Add-in for MicroEmacs '02 
 
 
 cEcESYNOPSIS cEcA
@@ -5516,7 +5516,7 @@ ehf-scheme
 cEcEDESCRIPTION cEcA
 
 
-    cDmeMsdevcA is a Microsoft Visual Studio Add-In that allows MicroEmacs '01 to 
+    cDmeMsdevcA is a Microsoft Visual Studio Add-In that allows MicroEmacs '02 to 
     be integrated as the default text editor. It will be used instead of the 
     Visual Studio built in editor when you double click on a file or press F4. 
 
@@ -5707,9 +5707,9 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    cDadd-colorcA creates a new color and inserts it into MicroEmacs '01 colors 
+    cDadd-colorcA creates a new color and inserts it into MicroEmacs '02 colors 
     table, where cCredcA, cCgreencA and cCbluecA are the color components and cCcol-nocA is 
-    the MicroEmacs '01 color table number. The color table contains 256 
+    the MicroEmacs '02 color table number. The color table contains 256 
     entries indexed by cCcol-nocA in the range 0-255. 
 
     On some platforms (DOS and UNIX termcap) the number of colors is 
@@ -5930,7 +5930,7 @@ $a
         lslmexecute-file(2)le spellutl.emf to define macro lslmspell-add-word(3)le. 
 
     cD3)cA 
-        Start up MicroEmacs '01 and execute the command cDadd-dictionarycA giving 
+        Start up MicroEmacs '02 and execute the command cDadd-dictionarycA giving 
         an appropriate new dictionary name. 
 
     cD4)cA 
@@ -5962,7 +5962,7 @@ $a
 cEcENOTES cEcA
 
 
-    MicroEmacs '01 is supplied with a dictionaries for American and British 
+    MicroEmacs '02 is supplied with a dictionaries for American and British 
     English, it is strongly suggested that these dictionaries are cDNOTcA modified 
     in anyway. Ensure that the dictionary is protected by loading the base 
     dictionaries first, followed by a personal dictionary. New words added 
@@ -5973,7 +5973,7 @@ $a
 cEcEEXAMPLE cEcA
 
 
-    The MicroEmacs '01 start-up file cDme.emfcA executes cDlanguage.emfcA which in 
+    The MicroEmacs '02 start-up file cDme.emfcA executes cDlanguage.emfcA which in 
     turn executes the user language setup file, for example cDamerican.emfcA, 
     which adds the main language dictionaries and rules. cDlanguage.emfcA then 
     adds the user's dictionary, this process can be simplified to:- 
@@ -6178,10 +6178,10 @@ $a
         cG-*-cA cDMode:cA cCmodecA; ... cG-*-cA 
         cG-!-cA cCmodecA cG-!-cA 
 
-    The cG-*-cA notation belongs to GNU Emacs, but MicroEmacs '01 recognizes the 
+    The cG-*-cA notation belongs to GNU Emacs, but MicroEmacs '02 recognizes the 
     construct and extracts the string correctly. The cG-!-cA notation is 
-    MicroEmacs '01 specific and is provided so as not to cause conflict with 
-    GNU Emacs. MicroEmacs '01 searches for either construct on the first 
+    MicroEmacs '02 specific and is provided so as not to cause conflict with 
+    GNU Emacs. MicroEmacs '02 searches for either construct on the first 
     non-blank line of the file. 
 
     The explicit strings are defined with a negative numerical argument cCncA, 
@@ -6216,7 +6216,7 @@ $a
     containing the macro is automatically derived from the cCnamecA component of 
     the cDfhookcA macro name. The cDfhook-cA part of the name is stripped off and 
     prepended with cDhkcA and suffixed with cD.emfcA. Hence, macro cDfhook-doccA would be 
-    searched for in file cGhkdoc.emfcA within the MicroEmacs '01 directory. The 
+    searched for in file cGhkdoc.emfcA within the MicroEmacs '02 directory. The 
     command file is automatically loaded and executed. 
 
     In cases where the fhook macro is not located in an equivalent hook file, 
@@ -6235,7 +6235,7 @@ $a
         add-file-hook ".h .hpp"                         "fhook-hmode" 
 
 sA
-    In this case the lsdefine-macro-file(2)lmdefine-macro-filele has been used to inform MicroEmacs '01 
+    In this case the lsdefine-macro-file(2)lmdefine-macro-filele has been used to inform MicroEmacs '02 
     of the location of the cDfhook-hmodecA macro thereby overriding the automatic 
     load of a file called cDhkhmode.emfcA. The cDfhook-cmodecA macro requires no such 
     definition as it is located in a hook file that matches the mode name, 
@@ -6265,7 +6265,7 @@ $a
     The extension separator, usually dot (cG.cA), is typically added to the 
     cCextensionscA list, they may be omitted with effect where a file always ends 
     in the same set of characters. A notable example is "cGmakefilecA" which 
-    includes no extension, as such, MicroEmacs '01 applies the same hook 
+    includes no extension, as such, MicroEmacs '02 applies the same hook 
     function to a file called cGImakefilecA as the endings are the same. 
 
 
@@ -6311,7 +6311,7 @@ $a
 cEcEEXAMPLE cEcA
 
 
-    The standard set of supported file types by MicroEmacs '01, at the time of 
+    The standard set of supported file types by MicroEmacs '02, at the time of 
     writing, is defined as:- 
 sB
         ; reset the file hook list 
@@ -6565,7 +6565,7 @@ $a
 
 
     cDbuffer-modecA changes the state of a given buffer mode, affecting only the 
-    current buffer. A buffer's mode affects the behavior of MicroEmacs '01. 
+    current buffer. A buffer's mode affects the behavior of MicroEmacs '02. 
     The lslmabout(2)le command gives a list of the current global and buffer modes. 
     Refer to lslmOperating Modesle for a description of the buffer modes. 
 
@@ -7075,7 +7075,7 @@ $a
     standard key binding. 
 
     Permanent changes are done indirectly through the cGme.emfcA file. This is a 
-    file that MicroEmacs '01 reads and executes (see lslmexecute-file(2)le) during 
+    file that MicroEmacs '02 reads and executes (see lslmexecute-file(2)le) during 
     startup and hence results in the appearance of a permanent change in the 
     key bindings. The syntax of commands in the cGme.emfcA file is described under 
     the lsexecute-file(2)lmexecute-filele command. Of principal concern here are the two commands 
@@ -7304,7 +7304,7 @@ $a
 
 
     cDchange-screen-depthcA changes the size of the screen to cCncA lines deep. It is 
-    assumed that the screen is cCncA lines deep and MicroEmacs '01 draws cCncA lines 
+    assumed that the screen is cCncA lines deep and MicroEmacs '02 draws cCncA lines 
     at the users peril. A change in depth causes all of the windows currently 
     displayed on the screen to be re-sized, the vertical position of the 
     windows is modified to match the new screen dimension, the horizontal 
@@ -7314,7 +7314,7 @@ $a
     window. 
 
     cDchange-screen-widthcA changes the size of the screen to cCncA characters wide. 
-    It is assumed that the screen is cCncA columns wide and MicroEmacs '01 draws cCncA 
+    It is assumed that the screen is cCncA columns wide and MicroEmacs '02 draws cCncA 
     columns at the users peril. The windows are reorganized as 
     cDchange-screen-depthcA working horizontally rather than vertically. 
 
@@ -7331,7 +7331,7 @@ $a
     used to correct anomalies (usually on portables) in the displayable screen 
     area and the graphics mode. e.g. the graphics mode utilizes 50 lines, and 
     only 47 lines are viewable. In this case change the screen depth to 47 and 
-    MicroEmacs '01 will not utilize the remaining lines which are not 
+    MicroEmacs '02 will not utilize the remaining lines which are not 
     viewable. 
 
 
@@ -7364,7 +7364,7 @@ $a
     Callback macros which may interrupt the user at any point in time are 
     handled by cDml-clearcA. The callback macro for instance may interrupt the 
     user while entering a new file name, and any lslmml-write(2)le erases the 
-    message-line which may currently be in use. MicroEmacs '01 stores the line 
+    message-line which may currently be in use. MicroEmacs '02 stores the line 
     and when lslmml-clear(2)le is invoked, instead of clearing the message line the 
     current input line is restored. 
 
@@ -7540,8 +7540,8 @@ $a
     Windowing systems such as X-Windows and Microsoft Windows utilize a global 
     windowing kill buffer allowing data to be moved between windowing 
     applications (cCcut buffercA and cCclipboardcA, respectively). Within these 
-    environments MicroEmacs '01 automatically interacts with the windowing 
-    systems kill buffer, the last MicroEmacs '01 cDcopy-regioncA entry is 
+    environments MicroEmacs '02 automatically interacts with the windowing 
+    systems kill buffer, the last MicroEmacs '02 cDcopy-regioncA entry is 
     immediately available for a paste operation into another windowing 
     application. 
 
@@ -7804,7 +7804,7 @@ $a
     cCsetcA 
         Character set - character set standards e.g. cDiso8859-1cA. 
 
-    The default font used by MicroEmacs '01 is 
+    The default font used by MicroEmacs '02 is 
 
         -*-fixed-medium-r-normal--15-*-*-*-c-90-iso8859-1 
 
@@ -7830,11 +7830,11 @@ $a
 
     The main problem with MS-DOS machines is that there is no standard and 
     this is no exception. The graphics mode needed to get a 132 by 60 screen 
-    (if available) varies from one card to the next so MicroEmacs '01 needs to 
+    (if available) varies from one card to the next so MicroEmacs '02 needs to 
     know the graphic mode number your card uses to get your required screen 
     resolution. 
 
-    MicroEmacs '01 can also attempt a little bit of magic to double the number 
+    MicroEmacs '02 can also attempt a little bit of magic to double the number 
     of rows on the screen for a given screen resolution. This is how 50 lines 
     are obtained from the standard 25 line mode 3. If the value of "cCspeccA" is 
     non-zero then this is attempted, to the authors knowledge this will either 
@@ -7843,7 +7843,7 @@ $a
     and everything, the user uses this at their own peril, like everything 
     else. 
 
-    MicroEmacs '01 attempts to determine the new screen width and depth 
+    MicroEmacs '02 attempts to determine the new screen width and depth 
     itself, in case this fails the commands lslmchange-screen-width(2)le and 
     lslmchange-screen-depth(2)le may be used to correct the problem. 
 
@@ -8117,17 +8117,17 @@ $a
     command completion list. 
 
     See lslmexecute-file(2)le for a complete definition and examples of the 
-    MicroEmacs '01 macro language. 
+    MicroEmacs '02 macro language. 
 
     Once the macro has been defined, it becomes indistinguishable from a 
-    standard MicroEmacs '01 command, i.e. lslmexecute-named-command(2)le (cGesc xcA) can 
+    standard MicroEmacs '02 command, i.e. lslmexecute-named-command(2)le (cGesc xcA) can 
     be used to execute the macro and lslmglobal-bind-key(2)le can be used to 
     globally bind the command to a key combination. 
 
     There are no restrictions on the number of macros that may be defined, 
     provided that the name space is managed properly. Consideration must be 
     given as to when any additional macros that are created are loaded into 
-    MicroEmacs '01. We usually like start-up to be rapid and macros are loaded 
+    MicroEmacs '02. We usually like start-up to be rapid and macros are loaded 
     as and when requested by the user, or by the buffer hooks as new files are 
     loaded (see lslmadd-file-hook(2)le and lslmdefine-macro-file(2)le). 
 
@@ -8138,7 +8138,7 @@ $a
 cEcEEXAMPLE cEcA
 
 
-    The following are two standard macros provided with MicroEmacs '01. The 
+    The following are two standard macros provided with MicroEmacs '02. The 
     first is a macro called cDcleancA, this strips trailing white space from the 
     ends of lines in a file and removes blank lines from the end of the file. 
 sB
@@ -9428,7 +9428,7 @@ $a
 
 
     cDexecute-filecA executes script lines from the given cCfilecA cCncA times in 
-    succession, this is the normal way to execute a MicroEmacs '01 script. The 
+    succession, this is the normal way to execute a MicroEmacs '02 script. The 
     command prompts for a file name, and will then search for <cCfilecA>[.emf] in 
     the search path. If the file is found then the file is loaded and the 
     buffer is executed cCncA times. 
@@ -9491,7 +9491,7 @@ $a
 
 
     cDexecute-named-commandcA command prompts the user for the name of a command 
-    to execute and then executes the command cCncA times. MicroEmacs '01 offers 
+    to execute and then executes the command cCncA times. MicroEmacs '02 offers 
     command completion and history facilities, see lslmml-bind-key(2)le. 
 
 
@@ -9607,9 +9607,9 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    Exit MicroEmacs '01 back to the operating system. If no argument cCncA is 
+    Exit MicroEmacs '02 back to the operating system. If no argument cCncA is 
     given and there are any unwritten, changed buffers, the editor prompts the 
-    user to discard changes. If an argument is specified then MicroEmacs '01 
+    user to discard changes. If an argument is specified then MicroEmacs '02 
     exits immediately. 
 
 
@@ -9704,7 +9704,7 @@ $a
     defined by surrounding blank lines, or a leading indent) and attempts to 
     fill it from the left margin to the current fill column as defined by 
     lslm$fill-col(5)le. When an argument cCncA is supplied cCncA paragraphs are filled. If cCncA 
-    is positive then MicroEmacs '01 performs indented filling (i.e. 
+    is positive then MicroEmacs '02 performs indented filling (i.e. 
     indentation for a bullet mark etc). If cCncA is negative then indented filling 
     is disabled. If no argument cCncA is supplied then the paragraph is filled and 
     the cCpointcA and cCmarkcA positions are retained. This allows paragraphs to be 
@@ -9744,7 +9744,7 @@ $a
 
             This is a regular  paragraph that is 
             offset  from  the  margin.  Note how 
-            MicroEmacs '01 retains the indent. 
+            MicroEmacs '02 retains the indent. 
 
             * With  the  introduction  of one of 
               the  special  characters,  in this 
@@ -9853,12 +9853,12 @@ $a
         binary data files. 
 
     Text files are usually thought of as named collections of text residing on 
-    disk (or some other storage medium). In MicroEmacs '01 the disk based 
+    disk (or some other storage medium). In MicroEmacs '02 the disk based 
     versions of files come into play only when reading into or writing out 
     buffers. The link between the physical file and the buffer is through the 
     associated file name. 
 
-    MicroEmacs '01 permits full file names, i.e. you can specify: 
+    MicroEmacs '02 permits full file names, i.e. you can specify: 
 
         disk:\directories\filename.extension 
 
@@ -10049,7 +10049,7 @@ $a
 cEcENOTES cEcA
 
 
-    A cDtagscA file may be generated by MicroEmacs '01 from the menu (cCTools->XX 
+    A cDtagscA file may be generated by MicroEmacs '02 from the menu (cCTools->XX 
     Tools->Create Tags FilecA). Alternatively a cDtagscA file may be generated by 
     the cDctags(1)cA utility. This is typically standard on UNIX platforms. For 
     Windows and DOS platforms then the cDExuberant CtagscA is recommended, this is 
@@ -10057,7 +10057,7 @@ $a
 
        cG http://darren.hiebert.comcA 
 
-    A MicroEmacs '01 compatible tags file may be generated using the command 
+    A MicroEmacs '02 compatible tags file may be generated using the command 
     line "cGctags -N --format=1 ."cA cataloging the current directory. To generate 
     cDtagscA for a directory tree then use "cGctags -NR -format=1 .cA". Refer to the 
     cDExuberant CtagscA documentation for a more detailed description of the 
@@ -10245,7 +10245,7 @@ $a
 
 
     cDlist-commandscA constructs a list of all known built in commands and macros 
-    that are currently defined by MicroEmacs '01 and presents a list of those 
+    that are currently defined by MicroEmacs '02 and presents a list of those 
     commands in the buffer "cD*commands*cA". Each entry is formatted as:- 
 
         cDcommand ......................... keyCodecA 
@@ -10411,7 +10411,7 @@ $a
 
 
     The help commands provide a quick on-line help facility within MicroEmacs 
-    '01 without invoking a third party documentation system (e.g. a browser 
+    '02 without invoking a third party documentation system (e.g. a browser 
     such as cDNetscape(1)cA or cDwinhelp(1)cA). 
 
     The on-line help is assisted by a set of macros which enable key words 
@@ -10420,7 +10420,7 @@ $a
     completion. 
 
     cDhelpcA provides general help on the philosophy and functionality of 
-    MicroEmacs '01, if an argument cCncA of 0 is given to the command it changes 
+    MicroEmacs '02, if an argument cCncA of 0 is given to the command it changes 
     the current buffer to the internal help buffer, typically named "cG*on-line 
     help*cA". This is a lshide(2m)lmhiddenle system buffer used to store all the on-line help 
     and can be used for a variety of things. Note that access to this buffer 
@@ -10433,13 +10433,13 @@ $a
     cDhelp-commandcA, only for variables. 
 
     cDhelp-itemcA Describes the purpose of any given item, where item could be a 
-    command, variable or any aspect of MicroEmacs '01. 
+    command, variable or any aspect of MicroEmacs '02. 
 
 
 cEcEFILES cEcA
 
 
-    The help files are ASCII text files located in the MicroEmacs '01 home 
+    The help files are ASCII text files located in the MicroEmacs '02 home 
     directory. The files are defined as follows:- 
 
     cGme.ehfcA - Help text file. 
@@ -11220,7 +11220,7 @@ $a
     scheme cChil-nocA (1-255). Every buffer has a hilight scheme, the default is 0 
     which means no hi-lighting and only the lslm$global-scheme(5)le etc. are used. 
     The hilighting scheme must be defined before use and is used to specify 
-    how the buffer is to be hilighted. MicroEmacs '01 supports the following 
+    how the buffer is to be hilighted. MicroEmacs '02 supports the following 
     hilighting concepts:- 
 
         * cDhilight stringcA, a user specified string is hilighted in any color 
@@ -11814,16 +11814,16 @@ $a
 
 
     cDshell-commandcA creates a new command processor or shell. Upon exiting the 
-    shell, MicroEmacs '01 redraws its screen and continues editing. The 
+    shell, MicroEmacs '02 redraws its screen and continues editing. The 
     exceptions to this are as follows: 
 
     cDX-WindowscA 
         A new cDxtermcA is spawned off and editing control is returned to 
-        MicroEmacs '01 once the cDxtermcA has initialized. 
+        MicroEmacs '02 once the cDxtermcA has initialized. 
 
     cDMicrosoft WindowscA 
         A new MS-DOS shell is created and control is returned to MicroEmacs 
-        '01 once the DOS console window has initialized. The shell created is 
+        '02 once the DOS console window has initialized. The shell created is 
         determined by the MS-DOS environment variable cGCOMSPECcA, this may be a 
         replacement shell e.g. cG4DOScA. 
 
@@ -11940,11 +11940,11 @@ $a
 
 
     cDinsert-macrocA inserts the named cCcommandcA into the current buffer in the 
-    MicroEmacs '01 macro language, thus enables it to be saved, re-load and 
+    MicroEmacs '02 macro language, thus enables it to be saved, re-load and 
     therefore re-used at a later date. This is often used in conjunction with 
     lslmstart-kbd-macro(2)le, lslmend-kbd-macro(2)le and lslmname-kbd-macro(2)le. The given 
     cCcommandcA must have been defined either by a keyboard macro or in MicroEmacs 
-    '01 macro code. 
+    '02 macro code. 
 
 
 cEcENOTES cEcA
@@ -12428,8 +12428,8 @@ $a
     Windowing systems such as X-Windows and Microsoft Windows utilize a global 
     windowing kill buffer allowing data to be moved between windowing 
     applications (cCcut buffercA and cCclipboardcA, respectively). Within these 
-    environments MicroEmacs '01 automatically interacts with the windowing 
-    systems kill buffer, the last MicroEmacs '01 cDkill-regioncA entry is 
+    environments MicroEmacs '02 automatically interacts with the windowing 
+    systems kill buffer, the last MicroEmacs '02 cDkill-regioncA entry is 
     immediately available for a paste operation into another windowing 
     application. 
 
@@ -12666,7 +12666,7 @@ $a
 cEHistory cA
 
 
-    MicroEmacs '01 stores the last 20 entries of each kind (command, buffer, 
+    MicroEmacs '02 stores the last 20 entries of each kind (command, buffer, 
     file, search and general which is also saved in the history file so the 
     state of the history is retained when next loaded. The following commands 
     can be used to manipulate the history. 
@@ -12679,7 +12679,7 @@ $a
 cECompletion cA
 
 
-    When entering a command, file, buffer or a mode name MicroEmacs '01 
+    When entering a command, file, buffer or a mode name MicroEmacs '02 
     creates a list of possible completions the following operations can be 
     performed on this list. 
 
@@ -13092,7 +13092,7 @@ $a
 
     cCstringcA is the name of the item that is being defined, cCsectioncA defines what 
     section the item belongs to. Following is a table of standard MicroEmacs 
-    '01 sections: 
+    '02 sections: 
 
         cG1 cAMicroEmacs command line arguments. 
         cG2 cABuilt-in commands. 
@@ -13886,7 +13886,7 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    MicroEmacs '01 RCS support command. The action of this command depends on 
+    MicroEmacs '02 RCS support command. The action of this command depends on 
     the current buffer lslmview(2m)le mode state, the argument cCncA, and the existence 
     of an RCS file. 
 
@@ -13992,7 +13992,7 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    cDread-historycA reads in a MicroEmacs '01 history file, setting the current 
+    cDread-historycA reads in a MicroEmacs '02 history file, setting the current 
     history information. If argument cDncA is not given then the given "cChist-filecA" 
     is simply read in. If a non-zero argument is specified then default 
     history is set to the given file-name and the file is read. If an argument 
@@ -14006,7 +14006,7 @@ $a
         * General (all the rest) history. 
         * Buffer and file list with line numbers. 
 
-    MicroEmacs '01's environment may be retained almost intact by the use of 
+    MicroEmacs '02's environment may be retained almost intact by the use of 
     the default history and using the cD-ccA (continue) command-line option to 
     re-load all files that were being edited in a previous session. 
 
@@ -14014,15 +14014,15 @@ $a
 cEcENOTES cEcA
 
 
-    When running multiple MicroEmacs '01 sessions on the same work-station (or 
+    When running multiple MicroEmacs '02 sessions on the same work-station (or 
     different workstations sharing the same home directory), the default 
-    history is saved when MicroEmacs '01 exits. As a result the last 
-    MicroEmacs '01 sessions that terminates writes the history information 
+    history is saved when MicroEmacs '02 exits. As a result the last 
+    MicroEmacs '02 sessions that terminates writes the history information 
     used next time. 
 
     The history information is saved in a registry format file (see lslmerf(8)le). 
     Reference should be made to the notes included in lslmerf(8)le as to how the 
-    history file may be edited and effected in the same MicroEmacs '01 
+    history file may be edited and effected in the same MicroEmacs '02 
     session. 
 
 
@@ -14411,7 +14411,7 @@ $a
 
         * lslmundo(2)le information is discarded when the file is saved. 
         * Refer to lslm$auto-time(5)le for a description of the file extensions used 
-          by MicroEmacs '01 for backup and temporary files. 
+          by MicroEmacs '02 for backup and temporary files. 
         * Buffers may also be saved via the lslmlist-buffers(2)le command. 
 
 
@@ -14611,7 +14611,7 @@ $a
     loaded only once at the first call to lslmexpand-abbrev(2)le, from then on it 
     reminds buffered. An abbreviation file has an abbreviation per line, they 
     cannot use multiple lines. This is not a draw back as the expansion string 
-    is executed using lslmexecute-string(2)le so any MicroEmacs '01 command may also 
+    is executed using lslmexecute-string(2)le so any MicroEmacs '02 command may also 
     be called. 
 
     For example the following expansion string inserts the string "cG!continuecA" 
@@ -14659,7 +14659,7 @@ $a
         | 
 
 
-    The following example is MicroEmacs '01 C-Mode abbreviation file for 
+    The following example is MicroEmacs '02 C-Mode abbreviation file for 
     constructing C files. Remember cD\pcA is where the cursor is positioned 
     following the expansion. 
 
@@ -14675,7 +14675,7 @@ $a
 cEcENOTES cEcA
 
 
-    Abbreviation files are given the extension cD.eafcA in the MicroEmacs '01 home 
+    Abbreviation files are given the extension cD.eafcA in the MicroEmacs '02 home 
     directory. 
 
     One of the easiest ways to create more complex abbreviations is to record 
@@ -14830,10 +14830,10 @@ $a
     be deleted, issues the cDset-markcA command by typing cDesc spacecA, moves the 
     cursor to the end of the text to be deleted, and then deletes it by using 
     the lslmkill-region(2)le (cDC-wcA) command. Only one mark can be set in one window 
-    or one buffer at a time, and MicroEmacs '01 will try to remember a mark 
+    or one buffer at a time, and MicroEmacs '02 will try to remember a mark 
     set in an off screen buffer when it is called back on screen. 
 
-    A region is a block of text to be acted upon by some MicroEmacs '01 
+    A region is a block of text to be acted upon by some MicroEmacs '02 
     commands. It is demarcated by the cDPOINTcA on one end and the cDMARKcA at the 
     other. The point is the primary location identifier where most of the 
     action takes place and is always between two characters. The point is 
@@ -15093,7 +15093,7 @@ $a
 
 
     cDspellcA is a low level command which provides spell checking capabilities 
-    for MicroEmacs '01, it is not designed to be used directly. The action of 
+    for MicroEmacs '02, it is not designed to be used directly. The action of 
     cDspellcA depends on the argument given, which is a bitwise flag defined as 
     follows:- 
 
@@ -15404,7 +15404,7 @@ $a
 
 
     cDsuspend-emacscA suspends the editing processor and puts it into the 
-    background. The "cCfgcA" command restarts MicroEmacs '01. 
+    background. The "cCfgcA" command restarts MicroEmacs '02. 
 
 
 cEcESEE ALSO cEcA
@@ -15661,7 +15661,7 @@ $a
 sA
     If your keyboard is not directly supported by MicroEmacs, please submit 
     the keyboard name and platform with a working translate-key configuration 
-    to lsMicroEmacs '01 - Contact InformationlmJASSPAle as a cDBUGcA. 
+    to lsMicroEmacs '02 - Contact InformationlmJASSPAle as a cDBUGcA. 
 
 
 cEUNIX TERMCAP cA
@@ -15752,16 +15752,16 @@ $a
 
 
     where cG^[[2~cA is the required key sequence. Another method of obtaining 
-    these key sequences is to start MicroEmacs '01, use lslmstart-kbd-macro(2)le to 
+    these key sequences is to start MicroEmacs '02, use lslmstart-kbd-macro(2)le to 
     start a macro definition, press the required keys and then use 
     lslmend-kbd-macro(2)le followed by lslmname-kbd-macro(2)le and lslminsert-macro(2)le to 
     display the keys pressed. 
 
     The key sequences generated for these keys are dependent on the machine 
-    displaying MicroEmacs '01 as opposed to the machine running it. Often they 
+    displaying MicroEmacs '02 as opposed to the machine running it. Often they 
     are the same machine, but when they are not there is no easy method of 
     determining the displaying machine and therefore correctly configuring 
-    MicroEmacs '01. 
+    MicroEmacs '02. 
 
     A better way of obtaining this cross platform consistency is to create an 
     XTerm app-defaults setup file with the correct VT100 key translations, 
@@ -16124,7 +16124,7 @@ $a
     The undo information is retained up until the next save operation, at 
     which point the undo information is discarded. When editing large files 
     with gross changes then it is advisable to either disable undo mode, or 
-    save frequently to flush the undo buffer, thereby keeping MicroEmacs '01 
+    save frequently to flush the undo buffer, thereby keeping MicroEmacs '02 
     memory requirements reasonable (most UNIX users have restrictions on the 
     amount of memory that may be consumed by a single process. Windows is 
     restricted by the amount of virtual memory (or swap space)). 
@@ -16200,7 +16200,7 @@ $a
     conjunction with the language dictionary. The letter conventions are 
     defined by the cDFree Software FoundationcA GNU cDispell(1)cA package. 
 
-    cDadd-spell-rulecA is used in the MicroEmacs '01 dictionary initialization 
+    cDadd-spell-rulecA is used in the MicroEmacs '02 dictionary initialization 
     files called cC<language>cAr.emf, e.g. cGamericar.erfcA, cGbritishr.erfcA supplied in 
     the MicroEmacs macros directory. 
 
@@ -16584,7 +16584,7 @@ $a
     cD0x01cA 
         Enables validity checks (default). These include a check that the 
         proposed file does not already exist, if so confirmation of writing is 
-        requested from the user. Also MicroEmacs '01 checks all other current 
+        requested from the user. Also MicroEmacs '02 checks all other current 
         buffers for one with the proposed file name, if found, again 
         confirmation is requested. Without this flag the command will always 
         succeed wherever possible. 
@@ -16623,12 +16623,12 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    cDsave-historycA writes out MicroEmacs '01's current history information into 
+    cDsave-historycA writes out MicroEmacs '02's current history information into 
     the given history file. 
 
     The command lslmread-history(2)le can set a default history file in which case 
     the history is automatically written out to this file if an argument of 
-    zero is given; the user is not prompted for a file. MicroEmacs '01 
+    zero is given; the user is not prompted for a file. MicroEmacs '02 
     automatically tries to write the default history whenever it is exited. 
 
 
@@ -16637,7 +16637,7 @@ $a
 
     The history information is saved in a registry format file (see lslmerf(8)le). 
     Reference should be made to the notes included in lslmerf(8)le as to how the 
-    history file may be edited and effected in the same MicroEmacs '01 
+    history file may be edited and effected in the same MicroEmacs '02 
     session. 
 
 
@@ -16737,11 +16737,11 @@ $a
     Windowing systems such as X-Windows and Microsoft Windows utilize a global 
     windowing kill buffer allowing data to be moved between windowing 
     applications (cCcut buffercA and cCclipboardcA, respectively). Within these 
-    environments MicroEmacs '01 automatically interacts with the windowing 
-    systems kill buffer, the last MicroEmacs '01 kill buffer entry is 
+    environments MicroEmacs '02 automatically interacts with the windowing 
+    systems kill buffer, the last MicroEmacs '02 kill buffer entry is 
     immediately available for a cCpastecA operation into another application 
     (regardless of how it was inserted into the kill buffer). Conversely, data 
-    placed in the windowing kill buffer is available to MicroEmacs '01, via 
+    placed in the windowing kill buffer is available to MicroEmacs '02, via 
     cDyankcA, until a new item has been inserted into the kill buffer (the data 
     may still be available via lslmreyank(2)le). 
 
@@ -16788,14 +16788,14 @@ $a
 
 
     Macros are loaded as late as possible using an on-demand mechanism, this 
-    speeds up the load time of MicroEmacs '01, it also keeps the startup file 
+    speeds up the load time of MicroEmacs '02, it also keeps the startup file 
     clean since macros are not defined within the start-up file. Only when the 
     user first executes a macro defined via cDdefine-macro-filecA is the file 
     loaded, the macro becomes defined and is executed. Subsequent calls to the 
     macro will not reload the file as the macro will now be fully defined. 
 
     cDdefine-macro-filecA binds macros (cCmacro-namecA ...) to a file name 
-    (cCfile-namecA). This operation informs MicroEmacs '01 which file should be 
+    (cCfile-namecA). This operation informs MicroEmacs '02 which file should be 
     loaded when cCmacro-namecA is first executed. The cCmacro-namecA arguments may be 
     omitted if the file contains only one exported macro which has the same 
     name as cCfile-namecA. 
@@ -16860,7 +16860,7 @@ $a
 cEcENAME cEcA
 
 
-    about - Information About MicroEmacs '01 
+    about - Information About MicroEmacs '02 
 $a
 
 
@@ -16873,10 +16873,10 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    cDaboutcA displays information about the current MicroEmacs '01 editing 
+    cDaboutcA displays information about the current MicroEmacs '02 editing 
     session and includes the following information:- 
 
-        * Version number and date information for MicroEmacs '01. 
+        * Version number and date information for MicroEmacs '02. 
         * Global status information including the number of active buffers and 
           global mode status information. 
         * Current buffer status information; buffer modes and buffer size 
@@ -17888,7 +17888,7 @@ $a
 
     cGC-x C-acA lsset-alpha-mark(2)lmset-alpha-markle Mark the current position with an alphabetic mark. 
     cGC-x C-bcA lslist-buffers(2)lmlist-buffersle Display buffer list. 
-    cGC-x C-ccA lsquick-exit(2)lmsave-buffer-exit-emacsle Exit MicroEmacs '01. 
+    cGC-x C-ccA lsquick-exit(2)lmsave-buffer-exit-emacsle Exit MicroEmacs '02. 
     cGC-x C-dcA lschange-directory(2)lmchange-directoryle Change the current working directory. 
     cGC-x C-ecA lsexecute-kbd-macro(2)lmexecute-kbd-macrole Execute a macro. 
     cGC-x C-fcA lsfind-file(2)lmfind-filele Find a file and load into buffer. 
@@ -17951,7 +17951,7 @@ $a
     the MicroEmacs environment. If you want a Windows style environment then 
     use cDNotepad(1)cA or cDWordpad(1)cA, this editor is not for you !! 
 
-    The gross changes to cDMicroEmacs '01cA are summarized as follows:- 
+    The gross changes to cDMicroEmacs '02cA are summarized as follows:- 
 
         * Macro language interpreter re-written allowing an unlimited number 
           of named macros to be supported. The macro implementation allows new 
@@ -18126,7 +18126,7 @@ $a
 
 sA
     which binds the file hook cDfhook-ccA to any files that are loaded with the 
-    extension cD.ccA and cD.hcA. The operations undertaken by MicroEmacs '01 are 
+    extension cD.ccA and cD.hcA. The operations undertaken by MicroEmacs '02 are 
     defined as follows when a file cGfoo.ccA is loaded:- 
 
         * Attempt to load file cGfoo.ccA, if cGfoo.ccA is not found then create a new 
@@ -18262,13 +18262,13 @@ $a
 cEcEFILE HOOK SELECTION cEcA
 
 
-    MicroEmacs '01 may be reconfigured to operate in different modes (referred 
+    MicroEmacs '02 may be reconfigured to operate in different modes (referred 
     to a cCMajor ModescA in GNU cDemacs(1)cA) using the lsadd-file-hook(2)lmmacro file hooksle. The file 
     hooks allow the working environment to be customized for the editing of 
     text of a particular sort, by importing text specific macros, key 
     rebinding and highlighting. 
 
-    MicroEmacs '01, by default, loads a file into a buffer with default global 
+    MicroEmacs '02, by default, loads a file into a buffer with default global 
     modes with no highlighting. There are no mode specific key bindings, 
     variable settings, macros or highlights, buffer interaction behaves in 
     it's default state. The state of the buffer interaction may be modified 
@@ -18281,14 +18281,14 @@ $a
     allowing them to be differentiated without studying the content. 
 
     Setting the operating mode of the buffer would be tedious to perform from 
-    the command line, instead MicroEmacs '01 uses three different prioritized 
+    the command line, instead MicroEmacs '02 uses three different prioritized 
     criteria to endeavor to select the correct operating mode. The operating 
     mode is applied to the buffer by execution of a set of file specific 
     macros, referred to a hook commands. The selection criteria of the hook 
     commands is performed as follows, ordered in lowest to highest priority:- 
 
     cDFile NamecA 
-        MicroEmacs '01 uses the filename and/or the file extension to select a 
+        MicroEmacs '02 uses the filename and/or the file extension to select a 
         start-up hook command. File names and extensions are bound to a set of 
         macro hooks in a space separated list e.g. 
 
@@ -18311,7 +18311,7 @@ $a
         typically these files include an identifier, or magic string, on the 
         first line of the file which is used to identify the file to the 
         operating system or application e.g. shell scripts under UNIX. 
-        MicroEmacs '01 automatically interrogates the top of every file that 
+        MicroEmacs '02 automatically interrogates the top of every file that 
         is loaded to locate some form of identification string. The 
         identification strings are defined in a similar way to the file name 
         hooks, except instead of defining a file extension the location and 
@@ -18344,7 +18344,7 @@ $a
 
     cDExplicit StringscA 
         The last method allows an explicit identifier string to be embedded 
-        into the text of the file informing MicroEmacs '01 which mode it 
+        into the text of the file informing MicroEmacs '02 which mode it 
         should adopt. GNU Emacs supports this (see cDMajor ModecA in the GNU Emacs 
         documentation) type of operation by insertion of strings of the form: 
 
@@ -18365,11 +18365,11 @@ $a
             ... 
 
         It should be stressed that the cD-*-cA syntax belongs to GNU Emacs and NOT 
-        MicroEmacs '01, MicroEmacs '01 provides a mechanism to locate, extract 
+        MicroEmacs '02, MicroEmacs '02 provides a mechanism to locate, extract 
         and interpret the string. The cD-*-cA syntax should only be applied to 
         files if it is known that the cCmodecA is a GNU mode. 
 
-        A MicroEmacs '01 specific string is also provided, defined as: 
+        A MicroEmacs '02 specific string is also provided, defined as: 
 
             cD-!-cA cCmodecA cD-!-cA 
 
@@ -18455,7 +18455,7 @@ $a
 cEcEMODIFYING FILE HOOKS cEcA
 
 
-    The standard hook files supplied with MicroEmacs '01 should not be 
+    The standard hook files supplied with MicroEmacs '02 should not be 
     modified, changes to the file hooks may be applied using a separate macro 
     file called cDmycAcCXXX.emfcA, this is automatically executed after the cDhkcAcCXXX.emfcA 
     file is executed. 
@@ -18535,7 +18535,7 @@ $a
 cEcEKEY BINDING NAMES cEcA
 
 
-    Every key which can be generated in MicroEmacs '01 has a character string 
+    Every key which can be generated in MicroEmacs '02 has a character string 
     or name representation which can be used to bind and unbind the key to a 
     command. The name of simple keys like "cGacA" or "cG$cA" is simply the character, 
     i.e. "cGacA" and "cG$cA". Following is a list of other parts to a key name. 
@@ -18557,7 +18557,7 @@ $a
 
 
     Many binding are single stroke key sequences (e.g. "cGC-acA" => 
-    beginning-of-line). However MicroEmacs '01 has a lslmprefix(2)le command which 
+    beginning-of-line). However MicroEmacs '02 has a lslmprefix(2)le command which 
     can be used to bind up to 8 single stroke keys, turning them into two 
     stroke keys; this greatly increasing the number of available bindable key 
     sequences. For example cDprefix 1cA is bound to the escape character (cGesccA), 
@@ -18961,7 +18961,7 @@ ehf-scheme
 
     The encryption algorithm is a Beaufort Cipher with a variant key. This is 
     reasonably difficult to decrypt. When you write out text, if cGcryptcA mode is 
-    active and there is no encryption key, MicroEmacs '01 will ask: 
+    active and there is no encryption key, MicroEmacs '02 will ask: 
 
         cGEncryption String:cA 
 
@@ -19168,10 +19168,10 @@ ehf-scheme
     search and the replace commands such as lslmsearch-forward(2)le and 
     lslmquery-replace-string(2)le. 
 
-    In the magic mode of MicroEmacs '01, certain characters gain special 
+    In the magic mode of MicroEmacs '02, certain characters gain special 
     meanings when used in a search pattern. Collectively they are know as 
     regular expressions, and a limited number of them are supported in 
-    MicroEmacs '01. They grant greater flexibility when using the search 
+    MicroEmacs '02. They grant greater flexibility when using the search 
     commands (note that they also affect lslmisearch-forward(2)le commands). 
 
     The symbols that have special meaning in magic mode are cG^cA, cG$cA, cG.cA, cG\|cA, cG*cA, cG[cA 
@@ -19359,7 +19359,7 @@ ehf-scheme
     default audible warning. This mode can only be globally changed, an error 
     will occur if an attempt is made to change the mode for a buffer. 
 
-    The default state is on, so users of MicroEmacs '01 can relax in the 
+    The default state is on, so users of MicroEmacs '02 can relax in the 
     knowledge that they won't annoy other people when things go wrong. 
 
     When disabled the system bell is rung when required, otherwise the usual 
@@ -19523,7 +19523,7 @@ ehf-scheme
     cDviewcA mode sets the buffer to read-only, disabling the ability to alter the 
     contents of the buffer. This mode is automatically set for any files 
     attributed with a read-only status on the file system when read into 
-    MicroEmacs '01. Files loaded via lslmview-file(2)le are also assigned cDviewcA mode. 
+    MicroEmacs '02. Files loaded via lslmview-file(2)le are also assigned cDviewcA mode. 
 
     While in cDviewcA mode, any attempt to alter the buffer contents results in 
     the following message:- 
@@ -19562,7 +19562,7 @@ ehf-scheme
     lslmindent(2m)le modes for editing text documents. 
 
     cDwrapcA mode also automatically wraps long lines in the output of an 
-    lslmipipe-shell-command(2)le to the width of the MicroEmacs '01 window. 
+    lslmipipe-shell-command(2)le to the width of the MicroEmacs '02 window. 
 
 
 cEcESEE ALSO cEcA
@@ -19707,7 +19707,7 @@ ehf-scheme
 
         cG[Auto-writeout failure for buffer xxxxx]cA 
 
-        MicroEmacs '01 can not write to the generated temporary file name. 
+        MicroEmacs '02 can not write to the generated temporary file name. 
         When this occurs the error message: 
 
         cG[Auto-writeout failure for file xxxxx#]cA 
@@ -19797,7 +19797,7 @@ ehf-scheme
 
     This mode can only be used while an incremental pipe (started by 
     lslmipipe-shell-command(2)le) is running in the current buffer, denoted by the 
-    lslmpipe(2m)le being set. When this mode is enabled and MicroEmacs '01 buffer 
+    lslmpipe(2m)le being set. When this mode is enabled and MicroEmacs '02 buffer 
     cursor is at the same location as the process shell cursor, the buffer 
     cursor is automatically moved with the shell cursor. 
 
@@ -20217,19 +20217,19 @@ ehf-scheme
 cEcEFILE LANGUAGE TEMPLATES cEcA
 
 
-    MicroEmacs '01 provides a large range of macros and templates to deal with 
+    MicroEmacs '02 provides a large range of macros and templates to deal with 
     the most commonly occurring types of ASCII file that may be edited. 
     However, there is a requirement for users to extend this capability to 
     include more obscure file types, in addition to bespoke files found 
     internally within organizations, or devised by the user. 
 
-    For each file type, MicroEmacs '01 may be tailored to recognize the file 
+    For each file type, MicroEmacs '02 may be tailored to recognize the file 
     and modify it's hilighting, key binding configuration, osd display and 
     indentation to accommodate the file. In addition, new shorthand macros may 
     be introduced to help deal with the contents of the file. 
 
     This section outlines the steps to be taken to integrate a new file 
-    language template into MicroEmacs '01. 
+    language template into MicroEmacs '02. 
 
 
 cEThe scope of the File Type cA
@@ -20239,8 +20239,8 @@ ehf-scheme
     where the file hook should be defined. The options are:- 
 
     cDA standard file type not supportedcA 
-        If this is a standard file type not supported by MicroEmacs '01 then 
-        it should be added to cGme.emfcA, in addition lsMicroEmacs '01 - Contact Informationlmcontact usle and we will add 
+        If this is a standard file type not supported by MicroEmacs '02 then 
+        it should be added to cGme.emfcA, in addition lsMicroEmacs '02 - Contact Informationlmcontact usle and we will add 
         it to the standard release. Any macro files associated with this file 
         type should be available globally and are added to the MicroEmacs 
         cCmacrocA directory. 
@@ -20248,20 +20248,20 @@ ehf-scheme
     cDLocal To your organizationcA 
         If it is a file type local to your organization then it should be 
         added to your cCcompanycA.emf file. Any macro files associated with the 
-        file type should be added to your local company MicroEmacs '01 
+        file type should be added to your local company MicroEmacs '02 
         directory. 
 
     cDLocal to an individualcA 
         If this is a file type that is only used by a limited number of 
         individuals then it should be added to the cCusercA.emf file. Any files 
         associated with the file type are added to your local user MicroEmacs 
-        '01 directory. 
+        '02 directory. 
 
 
 cERecognizing the File Type cA
 
 
-    The next step to adding a new file type is to get MicroEmacs '01 to 
+    The next step to adding a new file type is to get MicroEmacs '02 to 
     recognize the file as the new type. Recognition is performed by the lsfileHooks(2)lmFileln
     lnHooksle which perform recognition on the file extension and/or the file 
     content. The name of the file type must be determined, this is typically 
@@ -20289,7 +20289,7 @@ ehf-scheme
         cCtypecA cG-!-cA, if the string is GNU Emacs compatible then the cG-*-cA 
         convention may be used. The binding is defined as:- 
 sB
-            add-file-hook "-!-[ \t]*foo.*-!-"           fhook-foo 
+            -1 add-file-hook "-!-[ \t]*foo.*-!-"           fhook-foo 
 
 sA
     cDRecognizing a magic string in the filecA 
@@ -20324,7 +20324,7 @@ ehf-scheme
         ml-write "[MicroEmacs foo file hook loaded]" 
 
 sA
-    The file hook may be tested by exiting and re-loading MicroEmacs '01, or 
+    The file hook may be tested by exiting and re-loading MicroEmacs '02, or 
     simply by executing the file containing the cGadd-file-hookcA function. Once 
     the file bindings are installed a cCfoocA file may be loaded and the hook 
     message should be displayed. 
@@ -20333,7 +20333,7 @@ ehf-scheme
 cEModifying an Existing file hook cA
 
 
-    The standard file hooks supplied with MicroEmacs '01 should not be 
+    The standard file hooks supplied with MicroEmacs '02 should not be 
     modified, typically a user will want to extend the repertoire of 
     hi-lighting tokens to encompass locally defined programming libraries or 
     syntactical extensions, in addition to extending support macros that are 
@@ -20853,7 +20853,7 @@ ehf-scheme
 
 
     This page describes introductory notes for the installation and setup of 
-    MicroEmacs '01. 
+    MicroEmacs '02. 
 
 
 cEQuick Install cA
@@ -20906,7 +20906,7 @@ ehf-scheme
         Install Shield Installation 
 
     cDExecutable Source Code cA
-        The source code release for MicroEmacs '01 contains makefiles (cG*.makcA) 
+        The source code release for MicroEmacs '02 contains makefiles (cG*.makcA) 
         for all supported platforms. Microsoft '95/'98/NT makefiles contain 
         options at the top of the makefile to enable/disable console and URL 
         support. cGmesrc.zipcA - Source code for all platforms 
@@ -20976,7 +20976,7 @@ ehf-scheme
     Simply create a directory, down-load the files required (see list for each 
     platform below) and extract into this directory. From a shell or command 
     prompt, change to the directory, making it the current one (i.e. cDcdcA to 
-    it), and run the executable. MicroEmacs '01 should open with the on-line 
+    it), and run the executable. MicroEmacs '02 should open with the on-line 
     help page visible. 
 
     On Windows based systems this can also be achieved by creating a short-cut 
@@ -20987,7 +20987,7 @@ ehf-scheme
     executable to somewhere in your PATH and set the environment variable 
     ls$search-path(5)lmMEPATHle to point to this directory. 
 
-    MicroEmacs '01 will function normally in this environment, but in 
+    MicroEmacs '02 will function normally in this environment, but in 
     multi-user environments and for up-dating purposes, it is strongly 
     recommended that a proper installation is used, see below. 
 
@@ -21096,7 +21096,7 @@ ehf-scheme
             structure similar to cGMS-DOScA. Install the helper DLL cDmethnk16.dllcA 
             in the cGC:\WINDOWS\SHELLcA directory. Create a lslmme32.ini(8)le file in 
             the cGC:\WINDOWScA directory to identify the location of the 
-            MicroEmacs '01 components, this much the same as the '95/'98 file, 
+            MicroEmacs '02 components, this much the same as the '95/'98 file, 
             change the directory paths to suite the install base. 
 
         Support Status: 
@@ -21176,7 +21176,7 @@ ehf-scheme
             to the file. This may be an icon taken from cGmeicons.execA (in this 
             case icon number 23), or may be some other icon. The open action 
             in the example uses the cD-ocA option of the cCclient-servercA, which 
-            loads the file into the current MicroEmacs '01 session, 
+            loads the file into the current MicroEmacs '02 session, 
             alternatively the cD-ccA option may be used to retain the previous 
             context, or no option if a new session with no other files loaded 
             is started. 
@@ -21377,7 +21377,7 @@ ehf-scheme
 
 
     This section describes how a company profile should be incorporated into 
-    MicroEmacs '01. A company profile defines a set of extensions to 
+    MicroEmacs '02. A company profile defines a set of extensions to 
     MicroEmacs which encapsulate settings which are used on a company wide 
     basis. This type of configuration is typically used with a networked 
     (shared) installation. The company profile would typically include:- 
@@ -21392,7 +21392,7 @@ ehf-scheme
 
 
     It is suggested that all of the company extensions applied to MicroEmacs 
-    '01 are performed in a separate directory location which shadows the 
+    '02 are performed in a separate directory location which shadows the 
     MicroEmacs standard macro file directory. This enables the original files 
     to be sourced if a user does not want to include the company files. This 
     method also allows MicroEmacs to be updated in the future, whilst 
@@ -21492,15 +21492,15 @@ ehf-scheme
 
 
     This section describes how a user profile should be incorporated into 
-    MicroEmacs '01. A user profile defines a set of extensions to MicroEmacs 
+    MicroEmacs '02. A user profile defines a set of extensions to MicroEmacs 
     which encapsulates settings which are used by an individual user. 
 
     The user profile allows:- 
 
         * Saving of the last session (history), allowing the next invocation 
-          of MicroEmacs '01 to restore your previous session. 
+          of MicroEmacs '02 to restore your previous session. 
         * Personalized spelling dictionaries. 
-        * Redefinition of MicroEmacs '01, allowing the editor to be tailored 
+        * Redefinition of MicroEmacs '02, allowing the editor to be tailored 
           to an individual's requirements. Including the re-binding of keys, 
           modification of the screen colors. Definition of personal macros 
           etc. 
@@ -21509,7 +21509,7 @@ ehf-scheme
 cEIdentification cA
 
 
-    In order to identify a user MicroEmacs '01 uses information in the system 
+    In order to identify a user MicroEmacs '02 uses information in the system 
     to determine the name of the user, and in turn the configuration to use. 
     On all systems the value of the environment variable lslm$MENAME(5)le takes 
     priority over any other means of user identification. If this variable is 
@@ -21745,7 +21745,7 @@ ehf-scheme
 cEcEINTERFACING cEcA
 
 
-    This sections describes how MicroEmacs '01 may be interfaced to external 
+    This sections describes how MicroEmacs '02 may be interfaced to external 
     components. 
 
 
@@ -21774,7 +21774,7 @@ ehf-scheme
 
 
     In the Microsoft windows environment, the lslmmemsdev(1)le DLL may be attached 
-    to the cDMicrosoft Developer StudiocA to enable MicroEmacs '01 to be used in 
+    to the cDMicrosoft Developer StudiocA to enable MicroEmacs '02 to be used in 
     place of the in-built editor. 
 
 
@@ -21801,14 +21801,14 @@ ehf-scheme
     A cDtagcA capability exists (see lslmfind-tag(2)le) such that source functions and 
     alike may be located quickly using a cDtagscA file. The standard cDctags(1)cA 
     format is used by MicroEmacs. The cDtagscA file itself may be generated by 
-    MicroEmacs '01 from the menu (cCTools->XX Tools->Create Tags FilecA). 
+    MicroEmacs '02 from the menu (cCTools->XX Tools->Create Tags FilecA). 
     Alternatively a cDtagscA file may be generated by the cDctags(1)cA utility. This 
     is typically standard on UNIX platforms. For Windows and DOS platforms 
     then the cDExuberant CtagscA is recommended, this is available from:- 
 
        cG http://darren.hiebert.comcA 
 
-    A MicroEmacs '01 compatible tags file may be generated using the command 
+    A MicroEmacs '02 compatible tags file may be generated using the command 
     line "cGctags -N --format=1 ."cA cataloging the current directory. To generate 
     cDtagscA for a directory tree then use "cGctags -NR --format=1 .cA". Refer to the 
     cDExuberant CtagscA documentation for a more detailed description of the 
@@ -21826,14 +21826,14 @@ ehf-scheme
 
 
     The lsClient-Server(2)lmClient-Serverle interface allows other client applications to inject 
-    commands into an already existing MicroEmacs '01 session (the server), 
+    commands into an already existing MicroEmacs '02 session (the server), 
     thereby controlling the editor remotely. This is typically used to inject 
     new files into the editor to be presented to the user. 
 
     The cCClient-ServercA interface is available in both the UNIX and Microsoft 
     Windows environments. This mechanism is used in the Microsoft windows 
     environment by the lslmmemsdev(1)le DLL to attach the cDMicrosoft Developer StudiocA 
-    to MicroEmacs '01. This may be used with similar effects within the UNIX 
+    to MicroEmacs '02. This may be used with similar effects within the UNIX 
     environments from the X-Window managers desktop in addition to other 
     utilities such as cDTkDesk(1)cA. 
 
@@ -21857,17 +21857,17 @@ ehf-scheme
 cEcECLIENT-SERVER cEcA
 
 
-    This sections describes how MicroEmacs '01 may be interfaced to external 
+    This sections describes how MicroEmacs '02 may be interfaced to external 
     components through the cDClient-ServercA interface. 
 
-    The cDClient-ServercA interface of MicroEmacs '01 provides a capability for 
+    The cDClient-ServercA interface of MicroEmacs '02 provides a capability for 
     other applications to inject commands into a running version of the 
     editor, which are interpreted and executed. The interface is only 
     available on multi-tasking operating systems such as UNIX and Microsoft 
     Windows; it is not available on MS-DOS systems. 
 
     Within the following discussions, the cDServercA is a running version of the 
-    MicroEmacs '01 editor; the cDclientcA is the application (or shell script) 
+    MicroEmacs '02 editor; the cDclientcA is the application (or shell script) 
     that communicates a new command to the cCservercA. 
 
     The cDClient-ServercA interface may provide a bidirectional interface such 
@@ -21978,7 +21978,7 @@ ehf-scheme
     commands as they arrive on the input, an lsgoto-alpha-mark(2)lmalpha-markle is used to record the 
     processed position at the end of the buffer. The pipe handler itself 
     decodes the client request and executes it. The default handler supplied 
-    with MicroEmacs '01 is defined within the macro file cGmeserver.emfcA 
+    with MicroEmacs '02 is defined within the macro file cGmeserver.emfcA 
 
     Responses to the client are inserted into the response file by writing 
     directly into the ipipe buffer (cG*server*cA) using the lslmipipe-write(2)le 
@@ -22005,7 +22005,7 @@ ehf-scheme
 cEcEBUGS cEcA
 
 
-    The first MicroEmacs '01 session that executes becomes the editor server, 
+    The first MicroEmacs '02 session that executes becomes the editor server, 
     additional editor sessions that are executed do not become server 
     processes. In the event that the cCservercA editor is terminated, any other 
     sessions do not take over the role of server. Subsequently issuing a 
@@ -22033,7 +22033,7 @@ ehf-scheme
     describes some (mathematical) set of strings. A regex cDRcA "cCmatchescA" a string 
     cDScA if cDScA is in the set of strings described by cDRcA. 
 
-    MicroEmacs '01 includes the GNU cDregcAular cDexpcAression pattern matcher 
+    MicroEmacs '02 includes the GNU cDregcAular cDexpcAression pattern matcher 
     library, cDregexcA which provides a powerful search engine, using the search 
     engine you can: 
 
@@ -22409,7 +22409,7 @@ ehf-scheme
 cEcEBUILD cEcA
 
 
-    MicroEmacs '01 may be compiled from the source files using the command 
+    MicroEmacs '02 may be compiled from the source files using the command 
     shell build scripts cCbuildcA (UNIX Bourne Shell) or cCbuild.batcA (DOS/Windows). 
     A default compile sequence may be achieved with a simple: 
 
@@ -22726,7 +22726,7 @@ ehf-scheme
 
         The spelling checker is supported by the current language but the 
         required rules and dictionaries have not been downloaded. You should 
-        be able to download them from the JASSPA website, see lsMicroEmacs '01 - Contact InformationlmContactln
+        be able to download them from the JASSPA website, see lsMicroEmacs '02 - Contact InformationlmContactln
         lnInformationle. Once downloaded they must be placed in the MicroEmacs 
         ls$search-path(5)lmsearch pathle, i.e. where the other macro files (like cGme.emfcA) are 
         located. 
@@ -22767,7 +22767,7 @@ ehf-scheme
     cDNotecA: the character set used by the rules should be the most appropriate 
     ISO standard (see cDDisplayed Character SetcA section), this can make the 
     process much more difficult if the current character set not compatible, 
-    if you are having difficulty with this please e-mail lsMicroEmacs '01 - Contact InformationlmJASSPA Supportle. 
+    if you are having difficulty with this please e-mail lsMicroEmacs '02 - Contact InformationlmJASSPA Supportle. 
 
     Once the rules have been created, create a dictionary for the language 
     from the word lists, see help on command lslmadd-dictionary(2)le. The dictionary 
@@ -23671,7 +23671,7 @@ $a
     line-feeds have to be manually deleted. 
 
     cDparagraph-to-linecA allows text based documents to be prepared in MicroEmacs 
-    '01 and imported into the word processor at the final stage for formatting 
+    '02 and imported into the word processor at the final stage for formatting 
     and layout. 
 
 
@@ -24155,7 +24155,7 @@ $a
 cEcENAME cEcA
 
 
-    Mahjongg - MicroEmacs '01 version of the solitaire Mah Jongg game 
+    Mahjongg - MicroEmacs '02 version of the solitaire Mah Jongg game 
 $a
 
 
@@ -24169,7 +24169,7 @@ $a
 
 
     Mah Jongg is an ancient Chinese game usually played by four players with 
-    tiles similar to dominos. This is a MicroEmacs '01 version which was 
+    tiles similar to dominos. This is a MicroEmacs '02 version which was 
     inspired by the X-Windows version of the same game. The X-Windows version 
     for the solitaire game originally seen on the PC and later ported to 
     SunView. 
@@ -24243,13 +24243,13 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lsMicroEmacs '01 - GameslmGamesle, lslmMatch-It(3)le, lslmPatience(3)le. 
+    lsMicroEmacs '02 - GameslmGamesle, lslmMatch-It(3)le, lslmPatience(3)le. 
 
 ! 3 Match-It
 cEcENAME cEcA
 
 
-    Match-It - MicroEmacs '01 version of the Match-It game 
+    Match-It - MicroEmacs '02 version of the Match-It game 
 $a
 
 
@@ -24373,13 +24373,13 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lsMicroEmacs '01 - GameslmGamesle, lslmMahjongg(3)le, lslmMetris(3)le. 
+    lsMicroEmacs '02 - GameslmGamesle, lslmMahjongg(3)le, lslmMetris(3)le. 
 
 ! 3 Metris
 cEcENAME cEcA
 
 
-    Metris - MicroEmacs '01 version of the falling blocks game 
+    Metris - MicroEmacs '02 version of the falling blocks game 
 $a
 
 
@@ -24440,13 +24440,13 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lsMicroEmacs '01 - GameslmGamesle, lslmMatch-It(3)le, lslmPatience(3)le. 
+    lsMicroEmacs '02 - GameslmGamesle, lslmMatch-It(3)le, lslmPatience(3)le. 
 
 ! 3 Patience
 cEcENAME cEcA
 
 
-    Patience - MicroEmacs '01 version of Patience (or Solitaire) 
+    Patience - MicroEmacs '02 version of Patience (or Solitaire) 
 $a
 
 
@@ -24545,13 +24545,13 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lsMicroEmacs '01 - GameslmGamesle, lslmTriangle(3)le, lslmMahjongg(3)le. 
+    lsMicroEmacs '02 - GameslmGamesle, lslmTriangle(3)le, lslmMahjongg(3)le. 
 
 ! 3 Triangle
 cEcENAME cEcA
 
 
-    Triangle - MicroEmacs '01 version of Triangle patience game 
+    Triangle - MicroEmacs '02 version of Triangle patience game 
 $a
 
 
@@ -24643,7 +24643,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lsMicroEmacs '01 - GameslmGamesle, lslmPatience(3)le, lslmMahjongg(3)le. 
+    lsMicroEmacs '02 - GameslmGamesle, lslmPatience(3)le, lslmMahjongg(3)le. 
 
 ! 3 c-hash-eval
 ! 3 c-hash-del
@@ -24852,7 +24852,7 @@ $a
 cEcENOTES cEcA
 
 
-    cDascii-timecA is a macro defined in cGmisc.emfcA. 
+    cDascii-timecA is a macro defined in cGutils.emfcA. 
 
 
 cEcESEE ALSO cEcA
@@ -25103,7 +25103,7 @@ $a
 
 
     By default cDstart-upcA is not defined, if the command is defined (via a user 
-    macro) then it is executed immediately after MicroEmacs '01 has completed 
+    macro) then it is executed immediately after MicroEmacs '02 has completed 
     its initialization. 
 
     This command may initially seem redundant as the user may execute any 
@@ -25114,7 +25114,7 @@ $a
     present will be the "cD*scratch*cA" buffer). 
 
     The cDstart-upcA command is executed AFTER the execution of "cGme.emfcA" and 
-    initialization of buffers, but before MicroEmacs '01 waits for user input. 
+    initialization of buffers, but before MicroEmacs '02 waits for user input. 
 
     The cDshut-downcA command is also not defined by default, but if it is defined 
     during the running of MicroEmacs the command will be called when 
@@ -25582,7 +25582,7 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    MicroEmacs '01 provides a generic, albeit course, folding mechanism which 
+    MicroEmacs '02 provides a generic, albeit course, folding mechanism which 
     is applied to some of the well known file modes. The folding mechanism 
     allows parts of the buffer to be scrolled up and hidden, leaving a residue 
     hilighting marker within the buffer indicating a folded region. A folded 
@@ -28420,7 +28420,7 @@ $a
         emulate another editor/program; this is done by executing a macro file 
         at start-up. An emulation macro file should contain the macro code 
         required to simulate the environment of the other editor. MicroEmacs 
-        '01 is released with two emulation modes, MicroEmacs v3.8 which 
+        '02 is released with two emulation modes, MicroEmacs v3.8 which 
         executes macro file cGmeme3_8.emfcA (See lsCompatibility(2)lmCompatibilityle for more 
         information) and NEdit v5 which is at best a demonstration of what can 
         be achieved, this executes macro file cGmenedit.emfcA. 
@@ -28443,7 +28443,7 @@ $a
         generation keys present on foreign keyboards cannot be automatically 
         supported on Windows platforms. MicroEmacs must be informed of the 
         keyboard being used to correctly interpret the keys. If a required 
-        keyboard is not supported please see lsfaq38(0f)lmFAQ38le on how to setup the 
+        keyboard is not supported please see lsFAQs(0f)lmFAQ38le on how to setup the 
         keyboard, also see lslocaleSupport(2)lmLocale Supportle. 
 
     cGLanguagecA 
@@ -28606,7 +28606,7 @@ $a
 
     cGDOS File NamescA 
         DOS has a restricted 8.3 file naming system (i.e. "cGBBBBBBBB.XXXcA"), if 
-        this option is enabled the MicroEmacs '01 will adhere to this system 
+        this option is enabled the MicroEmacs '02 will adhere to this system 
         for auto-save and backup file names whenever possible. See 
         lslm$auto-time(5)le for more information on the naming convention used. This 
         indirectly sets bit 0x400 of the lslm$system(5)le variable. 
@@ -28878,7 +28878,7 @@ $a
 
     The mouse device creates keys in a similar way to regular keyboard keys 
     and, like keyboard keysm they must be bound before they are used. 
-    MicroEmacs '01 does not have the mouse functionality hard coded into the 
+    MicroEmacs '02 does not have the mouse functionality hard coded into the 
     editor, it provides a macro interface to the mouse for ultimate 
     flexibility and a set of default functionality which can be bound to the 
     mouse in a variety of ways. 
@@ -29187,7 +29187,7 @@ $a
 cEE-Mail cA
 
 
-    MicroEmacs '01 provides a simple E-Mail manager, see lslmvm(3)le for more 
+    MicroEmacs '02 provides a simple E-Mail manager, see lslmvm(3)le for more 
     information and example entries. It must be stressed that cDvmcA has only been 
     tested in one environment, caution should be used as system differences 
     may cause problems, such as loss of data, which the author does not except 
@@ -29310,7 +29310,7 @@ $a
     cDorganizercA is a calendar and address organizer, enabling notes to be stored 
     against the calendar days; addresses may be archived into an address book. 
 
-    cDorganizercA uses the MicroEmacs '01 in-built registry to store information 
+    cDorganizercA uses the MicroEmacs '02 in-built registry to store information 
     within a registry file called cC<username>cAcG.eofcA. cDorganizercA may be entered 
     directly from the command line, or via the menu (via cDToolscA). 
 
@@ -29757,7 +29757,7 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    MicroEmacs '01 provides an integrated spell checker with the following 
+    MicroEmacs '02 provides an integrated spell checker with the following 
     features:- 
 
         * Different languages. 
@@ -30125,7 +30125,7 @@ $a
         The name of the color scheme to be modified. This is the name of the 
         cDschemecAcCXcAcD.emfcA file, omitting the file extension. See the cDFILEScA section 
         below for a list of standard screen and printer scheme supplied with 
-        MicroEmacs '01. 
+        MicroEmacs '02. 
 
     cDTypecA 
         Defines whether the scheme is a screen or printer type. 
@@ -30601,7 +30601,7 @@ $a
 
     cGCurrent Buffer ToolscA 
         For some file formats MicroEmacs provides a file format specific set 
-        of tools, see the lsMicroEmacs '01 - Supported File Typeslmfile typele help page for more specific information. 
+        of tools, see the lsMicroEmacs '02 - Supported File Typeslmfile typele help page for more specific information. 
 
     cGCount WordscA 
         Executes command lslmcount-words(2)le. 
@@ -30737,7 +30737,7 @@ $a
         Executes command lslmscheme-editor(3)le. 
 
     cGGamescA 
-        Opens a sub-menu listing all available games, see lsMicroEmacs '01 - GameslmGamesle for more 
+        Opens a sub-menu listing all available games, see lsMicroEmacs '02 - GameslmGamesle for more 
         information. 
 
     cGProduct SupportcA 
@@ -32294,7 +32294,7 @@ $a
 
 
     cD!forcecA ignores the return status of a cCcommandcA while executing a macro. 
-    When MicroEmacs '01 executes a macro, if any command fails, the macro is 
+    When MicroEmacs '02 executes a macro, if any command fails, the macro is 
     terminated at that point. If a line is preceded by a cD!forcecA directive, 
     execution continues whether the command succeeds or not. lslm$status(5)le may be 
     used following cD!forcecA to determine if the command failed or not. 
@@ -32401,7 +32401,7 @@ $a
     non-zero evaluates cGTRUEcA, zero evaluates to cGFALSEcA. A non-numerical 
     argument, such as a string is always cGFALSEcA. 
 
-    The cCconditional bodycA may be any cDMicroEmacs '01cA function, macro or 
+    The cCconditional bodycA may be any cDMicroEmacs '02cA function, macro or 
     directive with the exception of cDdefine-macrocA and cD!emacrocA. All directives 
     that alter the execution of the macro are handled correctly within the cD!ifcA 
     statement (e.g. ls!goto(4)lm!gotole, ls!return(4)lm!returnle etc. 
@@ -32470,7 +32470,7 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    Flow can be controlled within a MicroEmacs '01 macro using the cD!gotocA 
+    Flow can be controlled within a MicroEmacs '02 macro using the cD!gotocA 
     directive. It takes as an argument a cClabelcA. A cClabelcA consists of a line 
     starting with an asterisk (cD*cA) and then an alphanumeric label. Only labels 
     in the currently executing macro can be jumped to, trying to jump to a 
@@ -33009,12 +33009,12 @@ $a
 
         cG0cA For a general string input using the general history. 
         cG1cA For an absolute file name, with completion and history. 
-        cG2cA For a MicroEmacs '01 buffer name, with completion and history. 
-        cG3cA For a MicroEmacs '01 command name, with completion and history. 
+        cG2cA For a MicroEmacs '02 buffer name, with completion and history. 
+        cG3cA For a MicroEmacs '02 command name, with completion and history. 
         cG4cA For a file name, with completion and history. 
         cG5cA For a search string, with history. 
-        cG6cA For a MicroEmacs '01 mode name, with completion and history. 
-        cG7cA For a MicroEmacs '01 variable name, with completion and history. 
+        cG6cA For a MicroEmacs '02 mode name, with completion and history. 
+        cG7cA For a MicroEmacs '02 variable name, with completion and history. 
         cG8cA For a general string using no history. 
         cG9cA For a user supplied completion list (cGcom-listcA). 
         cGacA For a user supplied completion list (cGbuffer-namecA). 
@@ -33290,7 +33290,7 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    The Command Variables allow macros to obtain MicroEmacs '01 input commands 
+    The Command Variables allow macros to obtain MicroEmacs '02 input commands 
     and keystrokes from the user. The general format of the command is:- 
 
         cD@ccAcCicA[cDkcA] 
@@ -34082,7 +34082,7 @@ $a
 
 
     cD&findcA searches for a named file cC<basename><extension>cA on the MicroEmacs 
-    '01 search path defined by the variable lslm$search-path(5)le (initialized from 
+    '02 search path defined by the variable lslm$search-path(5)le (initialized from 
     the environment variable lslm$MEPATH(5)le). Each path component defined in 
     cD$search-pathcA is prepended to the constructed file name and it's existence 
     is tested. If the file exists, then the FULL path name of the file is 
@@ -34143,7 +34143,7 @@ $a
 
     cD!nmacrocA causes cCcommandcA to be executed as if it were initiated from the 
     command line by the user, rather than from the macro context. When 
-    MicroEmacs '01 executes a macro, by default any input the command requires 
+    MicroEmacs '02 executes a macro, by default any input the command requires 
     is expected on the same line immediately following the command. If a line 
     is preceded by a cD!nmacrocA (or cD!nmacA) directive, the command is executed as 
     if it was invoked from the command line by the user, as such, the rest of 
@@ -34734,7 +34734,7 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    Flow can be controlled within a MicroEmacs '01 macro using the cD!jumpcA 
+    Flow can be controlled within a MicroEmacs '02 macro using the cD!jumpcA 
     directive. It takes as a numerical argument cCoffsetcA. The cCoffsetcA is a signed 
     relative displacement, it may be a literal numeric value, a variable or an 
     evaluated expression (see lsIntroduction to Variable FunctionslmVariable Functionsle). The displacement to jump 
@@ -35112,7 +35112,7 @@ $a
 
     cDdhookscA are executed when a buffer is deleted, but before the contents of 
     the buffer are lost. Note that dhooks will not be called if the buffer 
-    never becomes active, or if MicroEmacs '01 quits due to the receipt of a 
+    never becomes active, or if MicroEmacs '02 quits due to the receipt of a 
     panic signal. 
 
     cDbhookscA and cDehookscA are usually used to set and restore global variables 
@@ -35250,7 +35250,7 @@ $a
 
 
     Caution is advised when using this, if there is no way of reseting the 
-    variable then cDMicroEmacs '01cA must be killed. 
+    variable then cDMicroEmacs '02cA must be killed. 
 
 
 cEcESEE ALSO cEcA
@@ -35305,7 +35305,7 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    cD$buffer-maskcA sets the current buffer word class mask. MicroEmacs '01 has 
+    cD$buffer-maskcA sets the current buffer word class mask. MicroEmacs '02 has 
     an internal word lookup table which defines whether a given letter is 
     considered to be part of a word. This functionality is used in many areas 
     such as lslmforward-word(2)le, lslmforward-kill-word(2)le hilighting etc. The mask is 
@@ -37318,9 +37318,9 @@ $a
 
     cD$tabsizecA defines the width of a tab character. 
 
-    Setting tabs to arbitrary widths is possible in MicroEmacs '01 but you 
+    Setting tabs to arbitrary widths is possible in MicroEmacs '02 but you 
     must be aware of a subtle difference that it makes to your file and hence 
-    to your editing. When you start MicroEmacs '01, the tab width is set to 
+    to your editing. When you start MicroEmacs '02, the tab width is set to 
     the default (usually every 8th column) for the tab character (cGCTRL-IcA). As 
     long as you stay with the default, every time you insert the tab 
     character, a CTRL-I get inserted. Hence, you logically have a single 
@@ -37330,7 +37330,7 @@ $a
     the tab character. 
 
     On the other hand, the moment you explicitly set the tab interval (even if 
-    it is to the default value), MicroEmacs '01 handles the tab character by 
+    it is to the default value), MicroEmacs '02 handles the tab character by 
     expanding the character into the required number of spaces to move you to 
     the appropriate column. In this case, to remove the spacing you have to 
     delete the appropriate number of spaces inserted by M-e to get you to the 
@@ -37468,7 +37468,7 @@ $a
 
     Note that GNU Emacs uses it's own tag file format generated by cDetags(1)cA 
     which does not contain the appropriate information to drive the MicroEmacs 
-    '01 cDfind-tagcA command. 
+    '02 cDfind-tagcA command. 
 
     The above settings should support the extended version 2 tag file format 
     which has an extra tag type field at the end of each line. 
@@ -37496,7 +37496,7 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    cD$timestampcA defines the file time-stamping string. MicroEmacs '01 searches 
+    cD$timestampcA defines the file time-stamping string. MicroEmacs '02 searches 
     for, and modifies, the string to the current time and date whenever the 
     file is saved (written to disk) and lslmtime(2m)le mode is enabled. 
 
@@ -37851,6 +37851,13 @@ $a
         cD0x1000cA is set. If this and bit cD0x1000cA are clear then the cGtabcA will not 
         check the indentation. 
 
+    cD0x400000cA 
+        When this bit is set the external cut buffer (Windows & XTerm 
+        platforms) will never be set to empty, if the current yank buffer is 
+        the empty string the cut buffer will be set to a space (i.e. " "). 
+        This feature has been added to avoid problems with other software 
+        (e.g. cDexceed(1)cA which can crash if given an empty cut buffer). 
+
 
 cEcEEXAMPLE cEcA
 
@@ -37908,7 +37915,7 @@ $a
     (see bits cD0x004cA and cD0x008cA). 
 
     X provides the following features over and above a cDtermcapcA based version 
-    of MicroEmacs '01: 
+    of MicroEmacs '02: 
 
         * R,G,B style color creator giving access to up to 256 different 
           colors for the ultimate hilighting schemes (see bit cD0x002cA and 
@@ -38618,7 +38625,7 @@ $a
         cDMEPATH=cAcC<user>cA:cC<company>cA:cC<me>cA 
 
     where cC<user>cA represents the users path; cC<company>cA is the company file path 
-    (e.g. template files) and cC<me>cA are the standard MicroEmacs '01 files. 
+    (e.g. template files) and cC<me>cA are the standard MicroEmacs '02 files. 
 
     This would correspond to a directory installation, of user cDfoocA such as:- 
 
@@ -38701,7 +38708,7 @@ $a
         set-variable $file-ignore "./" 
 
 sA
-    To ignore MicroEmacs '01 backup files ("cG~cA"), C object files ("cG.ocA"), "cG./cA" 
+    To ignore MicroEmacs '02 backup files ("cG~cA"), C object files ("cG.ocA"), "cG./cA" 
     and "cG../cA" directories try using: 
 sB
         set-variable $file-ignore "~ .o ./" 
@@ -39157,16 +39164,16 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    cD$prognamecA is set the the MicroEmacs '01 program file name currently being 
+    cD$prognamecA is set the the MicroEmacs '02 program file name currently being 
     run. This can be used by macros for many purposes, from spawning another 
-    MicroEmacs '01 session to working out where MicroEmacs '01 is running 
+    MicroEmacs '02 session to working out where MicroEmacs '02 is running 
     from. 
 
 
 cEcEEXAMPLE cEcA
 
 
-    The following example is used to spawn of another MicroEmacs '01 command 
+    The following example is used to spawn of another MicroEmacs '02 command 
     to create a C tags file:- 
 
         shell-command &cat $progname " \"@ctags\" *.c *.h" 
@@ -39897,7 +39904,7 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    cD$MENAMEcA is an environment variable used to initialize the MicroEmacs '01 
+    cD$MENAMEcA is an environment variable used to initialize the MicroEmacs '02 
     environment for a given user. At start-up, if cD$MENAMEcA is defined then the 
     user's configuration and history file "cGnamecAcC.erfcA" is located and read, 
     where cGnamecA is the variable value. 
@@ -40342,7 +40349,7 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    The MicroEmacs '01 abbreviation file, typically given the extension cD.eafcA, 
+    The MicroEmacs '02 abbreviation file, typically given the extension cD.eafcA, 
     defines a set of shorthand expansion strings which are used by the command 
     lslmexpand-abbrev(2)le. lslmbuffer-abbrev-file(2)le defines the abbreviation file. 
 
@@ -40472,7 +40479,7 @@ $a
 
     Similarly the "\b" is typically used when lslmindent(2m)le is enabled, but when 
     the tab spacing is known. Consider the following example used in the 
-    MicroEmacs '01 cD.emfcA files to define a help entry. In this case the indent 
+    MicroEmacs '02 cD.emfcA files to define a help entry. In this case the indent 
     is known to be 5 characters. Hence to move the cursor back 5 characters 
     then a sequence of cD\bcA's are used:- 
 
@@ -40493,11 +40500,11 @@ $a
 cEcEFILES cEcA
 
 
-    The default abbreviation files are located in the MicroEmacs '01 cChomecA 
+    The default abbreviation files are located in the MicroEmacs '02 cChomecA 
     directory. 
 
     User's may specify their own abbreviation files by shadowing the cChomecA 
-    directory file with their own file located in a personal MicroEmacs '01 
+    directory file with their own file located in a personal MicroEmacs '02 
     directory. See lslm$MEPATH(5)le. 
 
 
@@ -40523,7 +40530,7 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    The MicroEmacs '01 template file, typically given the extension cD.etfcA, is a 
+    The MicroEmacs '02 template file, typically given the extension cD.etfcA, is a 
     file template for a new file and defines common text that is automatically 
     included when a new file is created. 
 
@@ -40559,7 +40566,7 @@ $a
     See lslmetfinsrt(3)le for more information on how the template file is located 
     and inserted into the buffer. 
 
-    The default MicroEmacs '01 'C' mode template is defined as follows, but 
+    The default MicroEmacs '02 'C' mode template is defined as follows, but 
     may be replaced with any other text:- 
 
         /* -*- C -*- **************************************************************** 
@@ -40600,11 +40607,11 @@ $a
 cEcEFILES cEcA
 
 
-    The default template files are located in the MicroEmacs '01 cChomecA 
+    The default template files are located in the MicroEmacs '02 cChomecA 
     directory. 
 
     User's may specify their own template files by shadowing the cChomecA 
-    directory file with their own file located in a personal MicroEmacs '01 
+    directory file with their own file located in a personal MicroEmacs '02 
     directory. See lslm$MEPATH(5)le. 
 
 
@@ -40632,9 +40639,9 @@ $a
 
 
     The spelling dictionary files are given the extension cD.edfcA. These are 
-    binary files read by MicroEmacs '01 and cannot be edited directly. 
+    binary files read by MicroEmacs '02 and cannot be edited directly. 
 
-    MicroEmacs '01 is supplied with a dictionaries for American and British 
+    MicroEmacs '02 is supplied with a dictionaries for American and British 
     English. It is recommended that these dictionaries are not modified, a 
     personal dictionary is used and modified instead. 
 
@@ -40646,11 +40653,11 @@ $a
 
 
     The standard dictionary files cClanguagecAcD.edfcA are located in the MicroEmacs 
-    '01 cChomecA directory. 
+    '02 cChomecA directory. 
 
     User's may create their own dictionary files by shadowing the cChomecA 
     directory file with their local dictionary(s) located in a personal 
-    MicroEmacs '01 directory. See lslm$search-path(5)le. 
+    MicroEmacs '02 directory. See lslm$search-path(5)le. 
 
 
 cEcESEE ALSO cEcA
@@ -40671,12 +40678,12 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    The MicroEmacs '01 macro files are ASCII text files, given the file 
+    The MicroEmacs '02 macro files are ASCII text files, given the file 
     extension cD.emfcA. A number of special macro files exist as follows:- 
 
     cDme.emfcA 
         The start-up macro file. This file is the first macro file to be 
-        invoked and is used to bootstrap MicroEmacs '01 into the correct 
+        invoked and is used to bootstrap MicroEmacs '02 into the correct 
         configuration. 
 
     cDhkcAcC<name>cAcD.emfcA 
@@ -40706,11 +40713,11 @@ $a
 cEcEFILES cEcA
 
 
-    The default start-up file cDme.emfcA is located in the MicroEmacs '01 cChomecA 
+    The default start-up file cDme.emfcA is located in the MicroEmacs '02 cChomecA 
     directory. 
 
     User's may create their own start-up and files in their local MicroEmacs 
-    '01 directory. The users start-up file is called cC$LOGNAMEcAcD.emfcA, and may be 
+    '02 directory. The users start-up file is called cC$LOGNAMEcAcD.emfcA, and may be 
     used to execute other macro files defined by the user. 
 
 
@@ -40736,7 +40743,7 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    MicroEmacs '01 registry files are ASCII text files, given the file 
+    MicroEmacs '02 registry files are ASCII text files, given the file 
     extension cD.erfcA. The registry file is a simple syntax that allows an 
     cCidentifiercA to be associated with a cCstringcA. The cCidentifierscA are unique and 
     allow a cCstringcA value to be found when a search for a cCidentifiercA is made. 
@@ -40787,7 +40794,7 @@ $a
     lslmsave-history(2)le). 
 
     Every user should have their own personal history file in their personal 
-    MicroEmacs directory. The history file is located from the MicroEmacs '01 
+    MicroEmacs directory. The history file is located from the MicroEmacs '02 
     search path defined by lslm$MEPATH(5)le, and is named by the environment 
     variable lslm$LOGNAME(5)le. 
 
@@ -41044,7 +41051,7 @@ $a
 cEcEFILES cEcA
 
 
-    The help file cDme.ehfcA is located in the MicroEmacs '01 cChomecA directory. 
+    The help file cDme.ehfcA is located in the MicroEmacs '02 cChomecA directory. 
 
 
 cEcESEE ALSO cEcA
@@ -41119,7 +41126,7 @@ $a
     cC<environmentVariable>cA cD=cA cC<value>cA is extracted and pushed into the execution 
     environment. The cD<environmentVariable>cA is automatically promoted to upper 
     case if specified as a lower case entry. The environment variables may be 
-    subsequently used within the cD.emfcA macro files to configure MicroEmacs '01 
+    subsequently used within the cD.emfcA macro files to configure MicroEmacs '02 
     at start up. 
 
     Any value may be inserted into the environment including the cG$MENAMEcA 
@@ -41132,7 +41139,7 @@ $a
     The defaults section, labeled cD[Defaults]cA includes the following keys:- 
 
     cDmepathcA 
-        The directory (or folder) location of the MicroEmacs '01 default 
+        The directory (or folder) location of the MicroEmacs '02 default 
         configuration files. 
 
     cDuserpathcA 
@@ -41161,11 +41168,11 @@ $a
 
 
     The location section, labeled cD[Location]cA, identifies the location of 
-    MicroEmacs '01, and is typically used by other components to find and 
+    MicroEmacs '02, and is typically used by other components to find and 
     launch MicroEmacs. The section includes the following keys:- 
 
     cDexecA 
-        The absolute pathname to the MicroEmacs '01 executable image. 
+        The absolute pathname to the MicroEmacs '02 executable image. 
 
 
 cEcEEXAMPLE cEcA
@@ -41278,7 +41285,7 @@ $a
 
 
     The cDCcA and cDC++cA file type templates offer the most sophisticated editing 
-    features within the MicroEmacs '01 environment. 
+    features within the MicroEmacs '02 environment. 
 
     cDGeneral EditingcA 
         On creating a new file, a new header is automatically included into 
@@ -41396,19 +41403,19 @@ $a
     lslmfold-current(3)le, lslmrcs-file(2)le, lslmrestyle-buffer(3)le, lslmrestyle-region(3)le, 
     lslmtime(2m)le. 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 ehf
 cEcESYNOPSIS cEcA
 
 
-    ehf - MicroEmacs '01 help file 
+    ehf - MicroEmacs '02 help file 
 
 
 cEcEFILES cEcA
 
 
-    cDhkehf.emfcA - MicroEmacs '01 help file. 
+    cDhkehf.emfcA - MicroEmacs '02 help file. 
 
 
 cEcEEXTENSIONS cEcA
@@ -41432,32 +41439,32 @@ $a
 
     lslmhelp(2)le. 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 emf
 cEcESYNOPSIS cEcA
 
 
-    emf - MicroEmacs '01 Macro File 
+    emf - MicroEmacs '02 Macro File 
 
 
 cEcEFILES cEcA
 
 
-    cDhkemf.emfcA - MicroEmacs '01 Macro File hook definition 
+    cDhkemf.emfcA - MicroEmacs '02 Macro File hook definition 
     cDemf.etfcA - Template file 
 
 
 cEcEEXTENSIONS cEcA
 
 
-    cD.emfcA - MicroEmacs '01 Macro File 
+    cD.emfcA - MicroEmacs '02 Macro File 
 
 
 cEcEDESCRIPTION cEcA
 
 
-    The cDemfcA file type template handles the hilighting of the MicroEmacs '01 
+    The cDemfcA file type template handles the hilighting of the MicroEmacs '02 
     macro files. 
 
     cDGeneral EditingcA 
@@ -41510,7 +41517,7 @@ $a
     lslmemftags(3f)le, lslmfind-tag(2)le, lslmfold-all(3)le, lslmfold-current(3)le, lslmindent(2)le, 
     lslmrestyle-buffer(3)le, lslmrestyle-region(3)le, lslmtime(2m)le. 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 txt
 ! 9 doc
@@ -41681,7 +41688,7 @@ $a
 
     ls$fill-col(5)lmfill-col(5)le, lslmfill-paragraph(2)le, lslmspell-buffer(3)le. 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 latex
 ! 9 tex
@@ -41745,7 +41752,7 @@ $a
 
     lslmtime(2m)le. 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 makefile
 cEcESYNOPSIS cEcA
@@ -41804,7 +41811,7 @@ $a
 
     lslmimakefile(9)le, lslmtime(2m)le. 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 imakefile
 cEcESYNOPSIS cEcA
@@ -41856,7 +41863,7 @@ $a
 
     lslmmakefile(9)le, lslmtime(2m)le. 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 bat
 ! 9 btm
@@ -41908,7 +41915,7 @@ $a
 
     lslmini(9)le. 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 ini
 ! 9 hpj
@@ -41965,7 +41972,7 @@ $a
 
     lslmbat(9)le. 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 f
 ! 9 f77
@@ -42014,7 +42021,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 p
 ! 9 pas
@@ -42053,7 +42060,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 rul
 cEcESYNOPSIS cEcA
@@ -42120,7 +42127,7 @@ $a
     lslmfold-current(3)le, lslmfold-all(3)le, lslmindent(2)le, lslmrestyle-region(3)le 
     lslmrestyle-buffer(3)le 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 bnf
 cEcESYNOPSIS cEcA
@@ -42166,7 +42173,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 sql
 cEcESYNOPSIS cEcA
@@ -42204,7 +42211,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 vhdl
 cEcESYNOPSIS cEcA
@@ -42243,7 +42250,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 awk
 ! 9 gawk
@@ -42273,7 +42280,7 @@ $a
 
 
     cD#![ \t]*/.*awkcA 
-        MicroEmacs '01 recognises the magic string on the first line of the 
+        MicroEmacs '02 recognises the magic string on the first line of the 
         file used to locate the executable. The awk files may be extensionless 
         and are still recognised. 
 
@@ -42295,7 +42302,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 fvwm
 ! 9 fvwmrc
@@ -42341,7 +42348,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 sh
 ! 9 ksh
@@ -42378,7 +42385,7 @@ $a
 
 
     cD#![ \t]*/.*shcA 
-        MicroEmacs '01 recognizes the magic string on the first line of the 
+        MicroEmacs '02 recognizes the magic string on the first line of the 
         file used to locate the executable. The shell files may be extension 
         less and are still recognized. Note that this is the typical method of 
         identifying shell files and will recognize other files not mentioned 
@@ -42406,7 +42413,7 @@ $a
 
     lslmfvwm(9)le. 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 java
 ! 9 jav
@@ -42526,7 +42533,7 @@ $a
     lslmfind-tag(2)le, lslmfold-all(3)le, lslmfold-current(3)le, lslmrcs-file(2)le, lslmrestyle-buffer(3)le, 
     lslmrestyle-region(3)le, lslmtime(2m)le. 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 tcl
 ! 9 tk
@@ -42554,7 +42561,7 @@ $a
 
 
     cD^#![ \t]*/.*wishcA 
-        MicroEmacs '01 recognizes the magic string on the first line of the 
+        MicroEmacs '02 recognizes the magic string on the first line of the 
         file used to locate the executable. The tcl files may be extension 
         less and are still recognized. 
 
@@ -42609,7 +42616,7 @@ $a
     lslmindent(2)le, lslmfind-tag(2)le, lslmfold-all(3)le, lslmfold-current(3)le, lslmrestyle-buffer(3)le, 
     lslmrestyle-region(3)le, lslmtcltags(3f)le, lslmtime(2m)le. 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 asn.1
 cEcESYNOPSIS cEcA
@@ -42666,19 +42673,19 @@ $a
 
     lslmtime(2m)le. 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 erf
 cEcESYNOPSIS cEcA
 
 
-    erf - MicroEmacs '01 registry file 
+    erf - MicroEmacs '02 registry file 
 
 
 cEcEFILES cEcA
 
 
-    cDhkerf.emfcA - MicroEmacs '01 registry file. 
+    cDhkerf.emfcA - MicroEmacs '02 registry file. 
 
 
 cEcEEXTENSIONS cEcA
@@ -42708,7 +42715,7 @@ $a
 
     lslmlist-registry(2)le. 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 man
 cEcESYNOPSIS cEcA
@@ -42750,7 +42757,7 @@ $a
 
     cDShort CutscA 
         Selecting a link node within the manual page using the mouse (i.e. a 
-        reference to another manual page) then MicroEmacs '01 attempts to find 
+        reference to another manual page) then MicroEmacs '02 attempts to find 
         the manual page in the text and invokes lslmman(3)le to render the page. 
         This provides a crude hyper text mechanism simply using the manual 
         page information itself. 
@@ -42764,7 +42771,7 @@ $a
 
     lslmman(3)le, lslmman-clean(3)le, 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 vrml
 cEcESYNOPSIS cEcA
@@ -42827,7 +42834,7 @@ $a
 
     lslmindent(2)le, lslmrestyle-buffer(3)le, lslmrestyle-region(3)le. 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 perl
 ! 9 pl
@@ -42856,12 +42863,12 @@ $a
 
 
     cD#![ \t]*/.*perlcA 
-        MicroEmacs '01 recognizes the magic string on the first line of the 
+        MicroEmacs '02 recognizes the magic string on the first line of the 
         file used to locate the executable. The Perl files may be 
         extension-less and are still recognized. 
 
     cD# -*- perl -*-cA 
-        MicroEmacs '01 recognizes the standard GNU Emacs magic string on the 
+        MicroEmacs '02 recognizes the standard GNU Emacs magic string on the 
         first line of the file. The Perl files may be extension-less and are 
         still recognized. 
 
@@ -42926,7 +42933,7 @@ $a
     lslmperldb(3)le, lslmfold-all(3)le, lslmfold-current(3)le, lslmindent(2)le, lslmrestyle-buffer(3)le, 
     lslmrestyle-region(3)le, lslmtime(2m)le. 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 html
 ! 9 htm
@@ -42954,7 +42961,7 @@ $a
 
 
     cD<html>cA 
-        MicroEmacs '01 recognizes the magic string on any of the first 4 lines 
+        MicroEmacs '02 recognizes the magic string on any of the first 4 lines 
         of the file. The HTML files may be extension-less and are still 
         recognized. 
 
@@ -42963,7 +42970,7 @@ $a
 
 
     The cDhtmlcA file type template provides simple hilighting of HTML files. 
-    Additionally, MicroEmacs '01 is capable of rendering simple HTML files 
+    Additionally, MicroEmacs '02 is capable of rendering simple HTML files 
     (without graphic content) into the current buffer and follow the hyper 
     text links. The JASSPA HTML documentation may be viewed in this way. 
 
@@ -43014,7 +43021,7 @@ $a
     buffer. 
 
     cD.htscA and cD.htpcA are computer generated extended HTML files used in the 
-    MicroEmacs '01 documentation system. 
+    MicroEmacs '02 documentation system. 
 
 
 cEcEBUGS cEcA
@@ -43028,7 +43035,7 @@ $a
 
     lslmprint-buffer(2)le, lslmbuffer-setup(3)le. 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 nroff
 ! 9 troff
@@ -43144,7 +43151,7 @@ $a
 
     The template in the current form has been used entirely by JASSPA in 
     generating all of the documentation (cDHTMLcA, cDWinhelpcA, cDehfcA, cDPostScriptcA) used 
-    by MicroEmacs '01. It does not include all of the troff/nroff keywords, or 
+    by MicroEmacs '02. It does not include all of the troff/nroff keywords, or 
     keywords for any of the standard macro packages. 
 
     The JASSPA documentation preparation tools are proprietary and have not 
@@ -43157,7 +43164,7 @@ $a
     lslmfill-paragraph(2)le, lslmfind-tag(2)le, lslmfold-all(3)le, lslmfold-current(3)le, lslmntags(3f)le, 
     lslmtime(2m)le. 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 info
 cEcESYNOPSIS cEcA
@@ -43198,7 +43205,7 @@ $a
 cEcEBUGS cEcA
 
 
-    There is no support within MicroEmacs '01 to regenerate the cCinfocA tags and 
+    There is no support within MicroEmacs '02 to regenerate the cCinfocA tags and 
     indexes. 
 
 
@@ -43207,7 +43214,7 @@ $a
 
     lslminfo(3)le. 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 cbl
 cEcESYNOPSIS cEcA
@@ -43261,7 +43268,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 x86
 cEcESYNOPSIS cEcA
@@ -43326,7 +43333,7 @@ $a
 
     lslmindent(2)le, lslmrestyle-region(3)le lslmrestyle-buffer(3)le lslmasm(9)le 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 asm
 ! 9 s
@@ -43363,7 +43370,7 @@ $a
 
 
     lslmx86(9)le. 
-    lsfileHooks(2)lmFile Hooksle, lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle. 
+    lsfileHooks(2)lmFile Hooksle, lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle. 
 
 ! 9 vb
 ! 9 bas
@@ -43413,7 +43420,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 m4
 cEcESYNOPSIS cEcA
@@ -43455,7 +43462,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 python
 ! 9 py
@@ -43481,7 +43488,7 @@ $a
 
 
     cD^#![ \t]*/.*env[ \t]+pythoncA 
-        MicroEmacs '01 recognizes the magic string on the first line of the 
+        MicroEmacs '02 recognizes the magic string on the first line of the 
         file used to locate the executable. The Python files may be 
         extension-less and are still recognized. 
 
@@ -43506,7 +43513,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 scheme
 ! 9 scm
@@ -43548,7 +43555,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 MetaFont
 ! 9 mp
@@ -43591,7 +43598,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 
 ! 9 texinfo
 ! 9 texi
@@ -43640,5 +43647,5 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
+    lsMicroEmacs '02 - Supported File TypeslmSupported File Typesle 
 

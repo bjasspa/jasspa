@@ -1,5 +1,5 @@
 ; Common unix setup file
-; Last Modified:     <010124.1637>
+; Last Modified:     <011218.1011>
 ;
 define-macro-file hkman man
 define-macro-file hkipipe ishell gdb dbx perldb
@@ -8,8 +8,7 @@ add-file-hook ".C" fhook-cpp
     ipipe-shell-command &spr "\"%s\" %s" $progname @1 @mna
 !emacro
 !if &band $system 0x01
-    ; Not using X - bind C-i to the tab character
-    global-bind-key tab "C-i"
+    ; Not using X
     !if &not &band $system 0x02
         ; no color - change the window chars so osd is more usable
         set-variable $window-chars &cat &lef $window-chars 47 "=x*[]"

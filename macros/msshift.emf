@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Thu May 27 00:17:10 1999
-;  Last Modified : <011116.2237>
+;  Last Modified : <011124.1317>
 ;
 ;  Description     Implementation of MS windows shift region definition style
 ;
@@ -23,6 +23,8 @@
         ; abort to tell ME to handle the actual input
         !abort
     !elif &seq @cck "callback"
+        !abort
+    !elif &seq @cck "idle-pick"
         !abort
     !endif
     ; restore the input function so this only gets called once!

@@ -446,6 +446,9 @@ define-macro fhook-ipipe
         !elif &seq $buffer-bname "*grep*"
             set-variable :mouse-word-select "mouse-get-next-line"
         !endif
+        !if &exi my-fhook-ipipe
+            my-fhook-ipipe
+        !endif
         !return
     !endif
     -1 buffer-mode "wrap"

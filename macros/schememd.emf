@@ -1,6 +1,6 @@
 ; Auto-created color scheme file for MicroEmacs
 ; Description: MS Dev-Studio Colors
-; Last Modified : <010718.2203>
+; Last Modified : <011216.2244>
 ; Copyright (c) 1999 JASSPA Ltd.
 set-variable .hilight.flags 7
 ; Create the colors first
@@ -40,6 +40,7 @@ add-color-scheme $ml-scheme .col1 .col26 .col1 .col8 .col1 .col15 .col1 .col15 0
 add-color-scheme $mode-line-scheme .col0 .col5 .col8 .col13 .col0 .col5 .col8 .col13 0 8 0 8 0 8 0 8
 add-color-scheme $scroll-bar-scheme .col25 .col16 .col25 .col9 .col9 .col25 .col9 .col25 0 8 0 8 0 8 0 8
 add-color-scheme $trunc-scheme .col2 .col26 .col2 .col8 .col2 .col15 .col2 .col15 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.dmf .col1 .col15 .col1 .col15 .col1 .col10 .col1 .col15 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.no1 .col22 .col26 .col22 .col8 .col22 .col15 .col22 .col15 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.no2 .col22 .col26 .col22 .col8 .col22 .col15 .col22 .col15 0 8 0 8 0 8 0 8
 ; OSD

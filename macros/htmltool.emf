@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Jun 13 23:21:55 1998
-;  Last Modified : <010805.0021>
+;  Last Modified : <011203.2245>
 ;
 ;  Description
 ;
@@ -63,7 +63,7 @@
             insert-string "\ele"
             set-variable #p8 &band #p8 0x7f
             !if #p8
-                insert-string &cat "\ec" &mid %html-colors #p8 1
+                insert-string &cat "\ec" &mid .html-to-ehf.colors #p8 1
             !endif
         !else
             set-mark
@@ -84,7 +84,6 @@
 ; 10  IMG
 ; 20  HREF (no color set - done automatically to color G)
 
-set-variable %html-colors "ABCCDDDDEEEEEEEEFFFFFFFFFFFFFFFFGBCCDDDDEEEEEEEEFFFFFFFFFFFFFFFF"
 0 define-macro html-to-ehf
     -1 buffer-mode "view"
     -1 buffer-mode "magic"
@@ -199,7 +198,7 @@ set-variable %html-colors "ABCCDDDDEEEEEEEEFFFFFFFFFFFFFFFFGBCCDDDDEEEEEEEEFFFFF
                             !if &band #l8 8
                                 set-variable #l8 &band #l8 0xf7
                                 !if &not &band #l8 0x80
-                                    insert-string &cat "\ec" &mid %html-colors #l8 1
+                                    insert-string &cat "\ec" &mid .colors #l8 1
                                 !endif
                             !endif
                             html-add-newline
@@ -219,7 +218,7 @@ set-variable %html-colors "ABCCDDDDEEEEEEEEFFFFFFFFFFFFFFFFGBCCDDDDEEEEEEEEFFFFF
                         !if &band #l8 4
                             set-variable #l8 &band #l8 0xfb
                             !if &not &band #l8 0x80
-                                insert-string &cat "\ec" &mid %html-colors #l8 1
+                                insert-string &cat "\ec" &mid .colors #l8 1
                             !endif
                         !endif
                     !elif &iseq #l3 "DL>"
@@ -236,7 +235,7 @@ set-variable %html-colors "ABCCDDDDEEEEEEEEFFFFFFFFFFFFFFFFGBCCDDDDEEEEEEEEFFFFF
                         !if &band #l8 2
                             set-variable #l8 &band #l8 0xfd
                             !if &not &band #l8 0x80
-                                insert-string &cat "\ec" &mid %html-colors #l8 1
+                                insert-string &cat "\ec" &mid .colors #l8 1
                             !endif
                         !endif
                     !elif &iseq #l3 "PRE>"
@@ -249,7 +248,7 @@ set-variable %html-colors "ABCCDDDDEEEEEEEEFFFFFFFFFFFFFFFFGBCCDDDDEEEEEEEEFFFFF
                         !if &band #l8 0x20
                             set-variable #l8 &band #l8 0xdf
                             !if &not &band #l8 0x80
-                                insert-string &cat "\ec" &mid %html-colors #l8 1
+                                insert-string &cat "\ec" &mid .colors #l8 1
                             !endif
                         !endif
                     !elif &iseq #l3 "TABLE>"
@@ -262,7 +261,7 @@ set-variable %html-colors "ABCCDDDDEEEEEEEEFFFFFFFFFFFFFFFFGBCCDDDDEEEEEEEEFFFFF
                         !if &band #l8 1
                             set-variable #l8 &band #l8 0xfe
                             !if &not &band #l8 0x80
-                                insert-string &cat "\ec" &mid %html-colors #l8 1
+                                insert-string &cat "\ec" &mid .colors #l8 1
                             !endif
                         !endif
                     !elif &iseq #l3 "UL>"
@@ -312,7 +311,7 @@ set-variable %html-colors "ABCCDDDDEEEEEEEEFFFFFFFFFFFFFFFFGBCCDDDDEEEEEEEEFFFFF
                             !if &not &band #l8 8
                                 set-variable #l8 &bor #l8 8
                                 !if &not &band #l8 0x80
-                                    insert-string &cat "\ec" &mid %html-colors #l8 1
+                                    insert-string &cat "\ec" &mid .colors #l8 1
                                 !endif
                             !endif
                         !elif &iseq #l3 "HR>"
@@ -370,7 +369,7 @@ set-variable %html-colors "ABCCDDDDEEEEEEEEFFFFFFFFFFFFFFFFGBCCDDDDEEEEEEEEFFFFF
                             !if &not &band #l8 1
                                 set-variable #l8 &bor #l8 0x20
                                 !if &not &band #l8 0x80
-                                    insert-string &cat "\ec" &mid %html-colors #l8 1
+                                    insert-string &cat "\ec" &mid .colors #l8 1
                                 !endif
                             !endif
                         !elif &iseq &lef #l3 5 "TABLE"
@@ -411,19 +410,19 @@ set-variable %html-colors "ABCCDDDDEEEEEEEEFFFFFFFFFFFFFFFFGBCCDDDDEEEEEEEEFFFFF
                         !if &not &band #l8 4
                             set-variable #l8 &bor #l8 4
                             !if &not &band #l8 0x80
-                                insert-string &cat "\ec" &mid %html-colors #l8 1
+                                insert-string &cat "\ec" &mid .colors #l8 1
                             !endif
                         !endif
                     !elif &iseq #l3 "I>"
                         !if &not &band #l8 2
                             set-variable #l8 &bor #l8 2
                             !if &not &band #l8 0x80
-                                insert-string &cat "\ec" &mid %html-colors #l8 1
+                                insert-string &cat "\ec" &mid .colors #l8 1
                             !endif
                         !endif
                     !elif &iseq &lef #l3 4 "IMG "
                         !if &not &band #l8 0x80
-                            insert-string &cat "\ec" &mid %html-colors &bor #l8 16 1
+                            insert-string &cat "\ec" &mid .colors &bor #l8 16 1
                         !endif
                         !if &isin "ALT=" #l3
                             set-variable #l3 &rig #l3 &add 3 &isin "ALT=" #l3
@@ -440,7 +439,7 @@ set-variable %html-colors "ABCCDDDDEEEEEEEEFFFFFFFFFFFFFFFFGBCCDDDDEEEEEEEEFFFFF
                             set-variable #l4 &add #l4 5
                         !endif
                         !if &not &band #l8 0x80
-                            insert-string &cat "\ec" &mid %html-colors #l8 1
+                            insert-string &cat "\ec" &mid .colors #l8 1
                         !endif
                         set-variable #l5 &bor #l5 0x86
                     !elif &iseq #l3 "LI>"
@@ -465,7 +464,7 @@ set-variable %html-colors "ABCCDDDDEEEEEEEEFFFFFFFFFFFFFFFFGBCCDDDDEEEEEEEEFFFFF
                         !if &not &band #l8 1
                             set-variable #l8 &bor #l8 1
                             !if &not &band #l8 0x80
-                                insert-string &cat "\ec" &mid %html-colors #l8 1
+                                insert-string &cat "\ec" &mid .colors #l8 1
                             !endif
                         !endif
                     !elif &iseq #l3 "UL>"
@@ -483,4 +482,5 @@ set-variable %html-colors "ABCCDDDDEEEEEEEEFFFFFFFFFFFFFFFFGBCCDDDDEEEEEEEEFFFFF
     !until 0
 !emacro
 
+set-variable .html-to-ehf.colors "ABCCDDDDEEEEEEEEFFFFFFFFFFFFFFFFGBCCDDDDEEEEEEEEFFFFFFFFFFFFFFFF"
 
