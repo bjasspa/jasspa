@@ -1,9 +1,10 @@
+> -!- jst; fill-mode:both; fill-column:78 -!-
 >
 >  Copyright 1998-2004 JASSPA (www.jasspa.com).
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <040211.2103>
+>  Last Modified : <040213.1040>
 >
 ___________________________________________________________________________
 
@@ -14,10 +15,6 @@ ___________________________________________________________________________
     
         From  Organizer  -> Address,  do "Find" and search  "First" for a name
         that does not exist - Organiser locks up.
-
-    [040206] Th/0401-4 - Minor - Target 0401-5
-
-        Document the create/delete/next-frame keys.
 
     [040206] JG/0401-4 - Enhancement - Target 0401-5
 
@@ -50,6 +47,12 @@ ___________________________________________________________________________
         Toolbar Directory File List does not contain "../" - UNIX only. 
 
         Fixed 0401-5 04/02/10: Source change.
+
+    [040206] Th/0401-4 - Minor - Target 0401-5
+
+        Document the create/delete/next-frame keys.
+        
+        Fixed 0401-5 04/02/13: Updated documentation.
 
     [040206] JG/0401-4 - Critical - Target 0401-5
 
