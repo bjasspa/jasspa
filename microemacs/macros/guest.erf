@@ -77,3 +77,21 @@
  "file-ignore" = "~ ./"
  "scroll-bar" = "0x1be"
 }
+"openbsd" {
+ "ext-char-set" = "1"
+ "file-ignore" = "~ ./"
+ "scheme" = "schemebc"
+ "scroll-bar" = "0x1be"
+}
+"osf1" {
+ "ext-char-set" = "1"
+ "file-ignore" = "~ ./"
+ "scheme" = "schemebc"
+ "scroll-bar" = "0x1be"
+}
+"zaurus" {
+ "ext-char-set" = "1"
+ "file-ignore" = "~ ./"
+ "scheme" = "schemebc"
+ "scroll-bar" = "0x1be"
+}
