@@ -1183,16 +1183,9 @@ updateWindow(meWindow *wp)
     register meLine *lp ;               /* Line to update */
     register int   row, nrows ;         /* physical screen line to update */
     register meUByte force ;
-    int TTaheadStatus;                  /* ttahead status */
 
     force = (meUByte) (wp->updateFlags & (WFREDRAW|WFRESIZE)) ;
     
-    /* Get the input status if there are no inputs pending then we can
-     * perform the look back - otherwise this is deferred. We check this
-     * before we snapshot the 'vptr' value as a change in the frame size
-     * may cause the video buffers to be re-allocated. */
-    TTaheadStatus = TTahead();
-              
     /* Determine the video line position and determine the video block that
      * is being used. */
     row   = wp->frameRow ;
@@ -1217,7 +1210,7 @@ updateWindow(meWindow *wp)
             vptr->bracket = NULL ;
             wp->updateFlags |= WFLOOKBK ;
         }
-        if((wp->updateFlags & WFLOOKBK) && !TTaheadStatus)
+        if(wp->updateFlags & WFLOOKBK)
         {
             if(hilights[bp->hilight]->ignore)
                 hilightLookBack(wp) ;
