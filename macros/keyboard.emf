@@ -14,10 +14,11 @@
 ;
 !if &les @# 1
     ; if executed with an argument of 0 or less, return the list
-    set-variable %keyboard-names "|Default|American|Belgian|British|Deutsch|Espanol|Finnish|Francais|Polish|Portugues|"
+    set-variable %keyboard-names "|Default|American|Belgian|British|Deutsch|Espanol|Finnish|Francais|Polish|Portugues|Russian|"
     !return
 !endif
 
+set-char-mask "k" ""
 ; get the users keyboard
 set-variable #l0 &reg "/history" "keyboard" ""
 !if &seq #l0 ""
@@ -148,4 +149,6 @@ set-variable #l0 &reg "/history" "keyboard" ""
         translate-key "A-C-9 A-C-]" "]"
         translate-key "A-C-0 A-C-}" "}"
     !endif
+!elif &seq #l0 "Russian"
+    set-char-mask "k" "äaØbácÒdãeĞfßgàhèiŞjÛkÔlìmânéo×pÙqÚrësÕtÓuÜvæwçxİyïzÄA¸BÁC²DÃE°F¿GÀHÈI¾J»K´LÌMÂNÉO·P¹QºRËSµT³U¼VÆWÇX½YÏZ"
 !endif
