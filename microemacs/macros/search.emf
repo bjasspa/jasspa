@@ -486,7 +486,54 @@ osd .osd.ftag 60  "" " "
     !abort
 !emacro
 
-
+0 define-macro hilight-region-text
+    0 show-region
+    !if &equ &band $result 5 5
+        !if &not &band $result 2
+            3 show-region
+        !endif
+        set-position "\x81"
+        -2 show-region
+        set-variable #l1 $window-line
+        2 show-region
+        set-variable #l2 $window-line
+        ; If the lines are equal then quit now.
+        !if &equ #l1 #l2
+            ; Failed - Reactivate the region that is active.
+            goto-position "\x81"
+            !force 4 show-region
+            !abort
+        !endif
+        ; Set up for a hilighting operation.
+        set-variable #l8 &lget .osd-search.hilschms @#
+        set-variable #l8 &cond &equ #l8 $global-scheme -1 #l8
+        ; Compute the top line.
+        !if &gre #l1 #l2
+            set-variable #l0 #l2
+            set-variable #l2 #l1
+            set-variable #l1 #l0
+        !else
+            -2 show-region
+        !endif
+        ; Hilight all of the lines in the region.
+        !repeat 
+            !if &not &or &equ $line-scheme .scheme.fold &equ $line-scheme .scheme.fold-open
+                ; just do current line - Protect folded lines.
+                set-variable $line-scheme #l8
+            !endif
+            !force forward-line
+            set-variable #l1 &add #l1 1
+        !until &gre #l1 #l2
+        ; Knock off all of the region stuff and resume first position.
+        !force -3 show-region
+        !force  3 show-region
+        !force -1 show-region
+        goto-position "\x81"
+        !return
+    !endif
+    !abort
+!emacro        
+    
 osd .osd.sar-srl 00  "s" 30 11 -1 -1
 osd .osd.sar-srl 10  "Sf" "&Search for" 20
 osd .osd.sar-srl 20  "ExfH" .scheme.osd-entry "##############################" 1 osd-search-set
@@ -634,6 +681,13 @@ osd .osd.sar  10 "It" 1 .osd.sar-nb
 ; line-scheme & osd-line-scheme external interfaces, used by the multi-menu code
 define-macro line-scheme
     !if @?
+        ; See if this is a region hilight operation, if so then do it
+        ; immediately before search-get-region-text destroys the region
+        ; information. Returns TRUE if a region has been hilighted.
+        !force @# hilight-region-text
+        !if $status
+            !return
+        !endif
         ; @# is a scheme number (1 == remove), if text is hilighted
         ; the search all buffer for it and hilight, else just do current line
         !force 0 search-get-region-text
