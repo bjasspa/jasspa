@@ -1544,13 +1544,20 @@ meXEventHandler(void)
                     /* Help */
                 case XK_Help:           ii = SKEY_help; goto special_key;
                 case XK_Break:          ii = SKEY_break; goto special_key;
+                    /* Mode switch - used on foreign keyboards, always ignore. */
+                    
                     /* Character set switch */
-                    /* case XK_Mode_switch:*/
+#ifdef XK_Mode_switch
+                case XK_Mode_switch:
+                    goto ignore_key;
+#else
+#ifdef XK_script_switch
                     /* Alias for mode_switch */
-                    /* case XK_script_switch:*/
-                    
+                case XK_script_switch:
+                    goto ignore_key;
+#endif
+#endif
                     /* Keypad Functions, keypad numbers cleverly chosen to map to ascii */
-                    
                 case XK_KP_Space:       ii = SKEY_space; goto special_key;
                 case XK_KP_Tab:         ii = SKEY_tab; goto special_key;
                     /* enter */
