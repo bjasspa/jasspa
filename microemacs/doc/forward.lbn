@@ -1,6 +1,5 @@
 .\" -*- nroff -*-
 .Ls foo 
-.Li printsetup3 foo
 .\".Li executetool3 foo
 .Le
 .\".Ls emacs

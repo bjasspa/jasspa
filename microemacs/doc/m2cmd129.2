@@ -29,7 +29,7 @@
 .\"
 .\"***************************************************************************
 .\"
-.Id $Id: m2cmd129.2,v 2.2 2001-07-14 10:10:42 jon Exp $
+.Id $Id: m2cmd129.2,v 2.3 2001-08-12 14:42:21 jon Exp $
 .Im MicroEmacs command|print|hilight
 .so me.tni
 .TH print-color 2
@@ -46,7 +46,7 @@ print-scheme \- Create a new printer color and font scheme
 .SH SYNOPSIS
 .na
 .I n
-.B print-color 
+.B print-color
 "\fIcol-no\fR"
 "\fIred\fR"
 "\fIgreen\fR"
@@ -77,17 +77,17 @@ table  contains  256  entries  indexed  by  \fIcol-no\fR  in the range  0-255.
 re-assignment,  the existing  color  definition is  over-written  with the new
 color definition.
 .PP
-If an argument  \fIn\fR of 0 is given to  \fBprint-color\fR  the printer color
-table is reset, removing all currently defined colors.  
+An argument \fIn\fR of 0 to \fBprint-color\fR  resets the printer color table,
+removing all currently defined colors.
 .PP
-\fBprint-scheme\fR  creates a new printer  scheme  which  defines how schemes,
-used by
+\fBprint-scheme\fR creates a new printer scheme. A printer scheme maps the
 .Ht hilight 2
-when rendering a buffer's text, are to be printed. For example key words could
-be  printed  in bold or in blue  etc. It  takes an  identifying  index  number
-"\fIschemeNum\fR", two color values, "\fIfore\fR" and "\fIback\fR" (defined by
-\fBprint-color\fR)  and a font setting  "\fIfont-mask\fR". The \fIfont-mask\fR
-is a bit mask where each bit is defined as follows:
+buffer's  text into a print  scheme. For example key words could be printed in
+\fIbold\fR  or in \fIblue\fR  etc.  \fBprint-scheme\fR  arguments  comprise an
+identifying index number "\fIschemeNum\fR", two color values, "\fIfore\fR" and
+"\fIback\fR"    (defined   by   \fBprint-color\fR)    and   a   font   setting
+"\fIfont-mask\fR". The \fIfont-mask\fR is a bit mask where each bit is defined
+as follows:
 .sp
 .RS
 \fC0x01\fR Enable bold font.
@@ -101,17 +101,18 @@ is a bit mask where each bit is defined as follows:
 \fC0x10\fR Enable underlining.
 .RE
 .PP
-If an argument \fIn\fR of 0 is given to \fBprint-scheme\fR  the printer scheme
-table is reset, removing all currently defined printer schemes.
+An  argument  \fIn\fR of 0 to  \fBprint-scheme\fR  resets the  printer  scheme
+table, removing all currently defined printer schemes.
 .SH NOTES
-Printer schemes can be created and altered using the
+Printer schemes may be created and altered using the
 .Ht scheme-editor 3
-dialog, the created printer scheme can then the used directly in the
+dialog, the created printer scheme may then be used directly in the
 .Ht print-setup 3
 dialog. Therefore direct use of these commands is largely redundant.
 .SH "SEE ALSO"
 .na
 .Ht scheme-editor 3 ,
+.Ht print-setup 3 ,
 .Ht print-buffer 2 ,
 .Ht hilight 2 ,
 .Ht $buffer-hilight 5 .

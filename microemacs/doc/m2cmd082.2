@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m2cmd082.2,v 2.2 2001-07-14 10:10:28 jon Exp $
+.Id $Id: m2cmd082.2,v 2.3 2001-08-12 14:42:20 jon Exp $
 .Im MicroEmacs command|delete
 .ds C0 "(\fB\*ck\fR)\ \&
 .so me.tni
@@ -16,29 +16,33 @@ kill-line \- Delete all characters to the end of the line
 .SH DESCRIPTION
 .BR kill-line ,
 when used with no  argument  \fIn\fR,  deletes all text from the cursor to the
-end of a line.  When used on a blank  line, it  deletes  the blank  line. If a
-non-zero  argument  \fIn\fR is  supplied  it deletes the  specified  number of
-lines.
-.PP
-When the buffer mode
+end of a line, the end of line  character is also deleted if the  cursor  is in the  first
+column and the
 .Ht line 2m
-is  enabled  and the  cursor  is at the start of the line then the text on the
-line and the line itself are removed.
+mode is disabled. The deleted text is placed in the kill buffer, see
+.Ht yank 2
+for more information on the kill buffer. When used on a blank  line, it always
+deletes it.
 .PP
-The removed text is placed in the
-.Hl yank yank 2
-buffer.
+If a +ve  argument  \fIn\fR  is  supplied  the  specified  number  of lines is
+deleted, the setting of the  \fBline\fR  mode is ignore. If \fIn\fR is \fC0\fR
+the  command has no effect. If a \-ve  argument is given,  +\fIn\fR  lines are
+deleted but the text is NOT added to the kill buffer.
 .SH NOTES
 If a line is accidentally removed then
 .Hl yank yank 2
 the text back immediately or use
 .Ht undo 2 .
+.PP
+The \-ve argument is typically used in macro scripts where the yank buffer
+is more precisely controlled by the script.
 .SH "SEE ALSO"
 .na
 .Ht kill-region 2 ,
 .Ht line 2m ,
 .Ht undo 2 ,
-.Ht yank 2 .
+.Ht yank 2 ,
+.Ht forward-kill-word 2 .
 .ad
 .rm C0
 .FH
