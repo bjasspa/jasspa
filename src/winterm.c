@@ -5,7 +5,7 @@
  * Synopsis      : Win32 platform support
  * Created By    : Jon Green
  * Created       : 21/12/1996
- * Last Modified : <010305.0848>
+ * Last Modified : <010308.2050>
  *
  * Description
  *
@@ -2883,7 +2883,48 @@ int
 WinKeyboard (UINT message, UINT wParam, LONG lParam)
 {
     uint16 cc;                  /* Local keyboard character */
-
+    
+    
+#ifdef _WIN_KEY_DEBUGGING
+    {
+        FILE *fp = NULL;
+        
+        if ((fp = fopen ("c:/me.dump", "a")) != NULL)
+        {
+            char *name;
+            
+            switch (message)
+            {
+            case WM_SYSKEYDOWN:
+                name = "WM_SYSKEYDOWN";
+                break;
+            case WM_KEYDOWN:
+                name = "WM_KEYDOWN";
+                break;
+            case WM_SYSKEYUP:
+                name = "WM_SYSKEYUP";
+                break;
+            case WM_KEYUP:
+                name = "WM_KEYUP";
+                break;
+            case WM_SYSCHAR:
+                name = "WM_SYSCHAR";
+                break;
+            case WM_CHAR:
+                name = "WM_CHAR";
+                break;
+            default:
+                name = "?WM_UNKNOWN?";
+                break;
+            }
+            
+            fprintf (fp, "%s::%d(0x%08x). wParam = %d(%04x) lParam = %d(%08x)\n",
+                     name, message, message, wParam, wParam, lParam, lParam);
+            fclose (fp);
+        }
+    }
+#endif
+    
     switch (message)
     {
     case WM_SYSKEYDOWN:
@@ -3009,6 +3050,18 @@ do_keydown:
             /* Add the character to the typeahead buffer.
              * Note that we do not process (lParam & 0xff) which is the
              * auto-repeat count - this always appears to be 1. */
+#ifdef _WIN_KEY_DEBUGGING
+            {
+                FILE *fp = NULL;
+                
+                if ((fp = fopen ("c:/me.dump", "a")) != NULL)
+                {
+                    fprintf (fp, "addKeyToBuffer %c - %d(0x%04x)\n",
+                             cc & 0xff, cc, cc);
+                    fclose (fp);
+                }
+            }
+#endif
             addKeyToBuffer (cc);
 #if MOUSE
             mouseHide() ;
@@ -3052,87 +3105,100 @@ do_keydown:
                  * Fail on most keys */
                 if ((ttmodif & ME_ALT) || ((ttmodif & ME_CONTROL) == 0))
                     return FALSE;
-
+                
                 /* The only keys we want to process here are those that do not
                  * come back to use as WM_CHAR. Fail on all of the others - we
                  * will see them later as a different message type */
                 if (wParam & 0x80)
                 {
-                    wParam &= 0x7f;
-                    if ((ttmodif & ME_SHIFT) == 0)
+                    switch ((lParam >> 16) & 0xff)
                     {
-                        switch (wParam)
-                        {
-                            /* C-: */
-                        case 0x3a : cc = ttmodif | ';'; break;
-                            /* C-= */
-                        case 0x3b : cc = ttmodif | 0x3d; break;
-                            /* C-, */
-                        case 0x3c:
-                            /* C-= */
-                        case 0x3d:
-                            /* C-. */
-                        case 0x3e:
-                            /* C-? */
-                        case 0x3f:
-                            cc = ttmodif | (wParam & ~0x10);
-                            break;
-                            /* C-' */
-                        case 0x40: cc = ttmodif | 0x27; break;
-                            /* C-~ */
-                        case 0x5e: cc = ttmodif | 0x23; break;
-                            /* C-` */
-                        case 0x5f: cc = ttmodif | 0x5d; break;
-                            /* Other specials */
-                            /* cc = ttmodif | (wParam & 0x7f);*/
-                        default:
-                            return FALSE;;
-                        }
-                    }
-                    else
-                    {
-                        /* Process the rest */
-                        switch (wParam)
-                        {
-                            /* C-+ */
-                        case 0x3b:
-                            cc = (~ME_SHIFT & ttmodif) | 0x2b; break;
-                            /* C-{ */
-                        case 0x5b:
-                            /* C-\ */
-                        case 0x5c:
-                            /* C-} */
-                        case 0x5d:
-                            /* C-~ */
-                        case 0x5e:
-                            cc = (~ME_SHIFT & ttmodif) | wParam | 0x20;
-                            break;
-                        case 0x40:
-                            cc = (~ME_SHIFT & ttmodif) | wParam;
-                            break;
-                            /* C-: */
-                        case 0x3a:
-                            /* C-> */
-                        case 0x3e:
-                            /* C-? */
-                        case 0x3f:
-                            /* C-< */
-                        case 0x3c:
-                            cc = (~ME_SHIFT & ttmodif) | wParam; break;
-                        default:
+                    case 0x0c:          /* -/_ key. Scan code 0x0c */
+                        if (ttmodif & ME_SHIFT)
                             return FALSE;
-                        }
+                        else
+                            cc = ttmodif | '-';
+                        break;
+                    case 0x0d:          /* +/= key. Scan code 0x0d */
+                        if (ttmodif & ME_SHIFT)
+                            cc = (ttmodif & ~ME_SHIFT) | '+';
+                        else
+                            cc = ttmodif | '=';
+                        break;
+                    case 0x1a:
+                        if (ttmodif & ME_SHIFT)
+                            cc = (ttmodif &= ~ME_SHIFT) | '{';
+                        else
+                            return FALSE;
+                        break;
+                    case 0x1b:
+                        if (ttmodif & ME_SHIFT)
+                            cc = (ttmodif &= ~ME_SHIFT) | '}';
+                        else
+                            return FALSE;
+                        break;
+                    case 0x27:
+                        if (ttmodif & ME_SHIFT)
+                            cc = (ttmodif & ~ME_SHIFT) | ':';
+                        else
+                            cc = ttmodif | ';';
+                        break;
+                    case 0x28:
+                        if (ttmodif & ME_SHIFT)
+                            cc = (ttmodif & ~ME_SHIFT) | '@';
+                        else
+                            cc = ttmodif | '\'';
+                        break;
+                    case 0x29:
+                        if (ttmodif & ME_SHIFT)
+                            cc = (ttmodif & ~ME_SHIFT) | 0xac;
+                        else
+                            cc = ttmodif | '`';
+                        break;
+                    case 0x2b:
+                        if (ttmodif & ME_SHIFT)
+                            cc = (ttmodif & ~ME_SHIFT) | '~';
+                        else
+                            return FALSE;
+                        break;
+                    case 0x33:
+                        if (ttmodif & ME_SHIFT)
+                            cc = (ttmodif & ~ME_SHIFT) | '<';
+                        else
+                            cc = ttmodif | ',';
+                        break;
+                    case 0x34:
+                        if (ttmodif & ME_SHIFT)
+                            cc = (ttmodif & ~ME_SHIFT) | '>';
+                        else
+                            cc = ttmodif | '.';
+                        break;
+                    case 0x35:
+                        if (ttmodif & ME_SHIFT)
+                            cc = (ttmodif & ~ME_SHIFT) | '?';
+                        else
+                            cc = ttmodif | '/';
+                        break;
+                    case 0x56:
+                        if (ttmodif & ME_SHIFT)
+                            cc = (ttmodif &= ~ME_SHIFT) | '|';
+                        else
+                            return FALSE;
+                        break;
+                    case 0x0f:          /* TAB scan key code */
+                        cc = SKEY_tab;
+                        goto return_spec;
+                    default:
+                        return FALSE;
                     }
-                    /*                cc = ttmodif | (wParam & 0x7f);*/
-                }
-                /* Some other special characters in here we need to process */
+                }                    
                 else if (wParam == VK_TAB)
                 {
-                    cc = SKEY_tab;
+                    cc = SKEY_tab|ttmodif;
                     goto return_spec;
                 }
                 else
-                    return (FALSE);          /* NOT PROCESSED - return a false state */
+                    return FALSE;
             }
             else if ((wParam >= 'A') && (wParam <= 'Z'))
             {
@@ -3223,6 +3289,18 @@ do_keydown:
             /* Add the character to the typeahead buffer.
              * Note that we do no process (lParam & 0xff) which is the
              * auto-repeat count. - this always appears to be 1 */
+#ifdef _WIN_KEY_DEBUGGING
+            {
+                FILE *fp = NULL;
+                
+                if ((fp = fopen ("c:/me.dump", "a")) != NULL)
+                {
+                    fprintf (fp, "addKeyToBuffer %c - %d(0x%04x)\n",
+                             cc & 0xff, cc, cc);
+                    fclose (fp);
+                }
+            }
+#endif
             addKeyToBuffer (cc);
 #if MOUSE
             mouseHide() ;
@@ -3276,6 +3354,15 @@ done_syschar:
                 goto return_spec;
             }
 #endif
+        case VK_CONVERT:                /* 0x1c - This is '#' */
+            /* Look at the scan code. 0x56000 == '\'. 0x2b0000 == '#'. This is
+             * an unconventional way of getting this, but seems to be totaly
+             * undocumented !! */
+            if ((lParam & 0xff0000) == (0x56<<16))
+                wParam = '\\';
+            else
+                wParam = '#';
+            break;
         }
 
         cc = wParam;
@@ -3335,6 +3422,18 @@ done_syschar:
         /* Add the character to the typeahead buffer.
          * Note that we do no process (lParam & 0xff) which is the
          * auto-repeat count. - this always appears to be 1 */
+#ifdef _WIN_KEY_DEBUGGING
+        {
+            FILE *fp = NULL;
+            
+            if ((fp = fopen ("c:/me.dump", "a")) != NULL)
+            {
+                fprintf (fp, "addKeyToBuffer %c - %d(0x%04x)\n",
+                         cc & 0xff, cc, cc);
+                fclose (fp);
+            }
+        }
+#endif
         addKeyToBuffer(cc) ;
 #if MOUSE
         mouseHide() ;
@@ -3342,6 +3441,18 @@ done_syschar:
         break;
 return_spec:
         cc = (ME_SPECIAL | ttmodif | cc) ;
+#ifdef _WIN_KEY_DEBUGGING
+        {
+            FILE *fp = NULL;
+            
+            if ((fp = fopen ("c:/me.dump", "a")) != NULL)
+            {
+                fprintf (fp, "addKeyToBuffer %c - %d(0x%04x)\n",
+                         cc & 0xff, cc, cc);
+                fclose (fp);
+            }
+        }
+#endif
         addKeyToBuffer(cc) ;
 #if MOUSE
         mouseHide() ;
