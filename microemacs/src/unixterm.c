@@ -3793,7 +3793,7 @@ TTahead(void)
             {
                 /* Timer has expired and timer still bound. Report the key. */
                 /* Push the generated keycode into the buffer */
-                addKeyToBuffer(mc) ;
+                addKeyToBufferOnce(mc) ;
                 /* Set the new timer and state */
                 /* Start a new timer to clock in at 'repeat' intervals */
                 /* printf("Setting mouse timer for repeat %d\n",repeattime) ;*/
