@@ -5,7 +5,7 @@
  *  Synopsis      : Internal registry support routines
  *  Created By    : Jon Green
  *  Created       : 26/03/1998
- *  Last Modified : <000814.0942>
+ *  Last Modified : <010305.0749>
  *
  *  Description
  *
@@ -735,9 +735,9 @@ readRegistry (int f, int n)
     int mode = 0;
 
     /* Get the input from the command line */
-    if ((mlreply((uint8 *)"Read registry root",0, 0, rootbuf, 32) == ABORT) ||
-        (mlreply((uint8 *)"Registry file",MLFILECASE, 0, filebuf, FILEBUF) == ABORT) ||
-        (mlreply((uint8 *)"File Mode", 0, 0, modebuf, 10) == ABORT))
+    if ((meGetString((uint8 *)"Read registry root",0, 0, rootbuf, 32) == ABORT) ||
+        (meGetString((uint8 *)"Registry file",MLFILECASE, 0, filebuf, FILEBUF) == ABORT) ||
+        (meGetString((uint8 *)"File Mode", 0, 0, modebuf, 10) == ABORT))
         return ABORT;
 
     /* Get the mode out */
@@ -786,8 +786,8 @@ markRegistry (int f, int n)
     RNODE *rnp;
 
     /* Get the input from the command line */
-    if ((mlreply((uint8 *)"Registry node",0, 0, rootbuf, MAXBUF) == ABORT) ||
-        (mlreply((uint8 *)"Mark modes", 0, 0, modebuf, 10) == ABORT))
+    if ((meGetString((uint8 *)"Registry node",0, 0, rootbuf, MAXBUF) == ABORT) ||
+        (meGetString((uint8 *)"Mark modes", 0, 0, modebuf, 10) == ABORT))
         return ABORT;
 
     /* Find the node */
@@ -885,7 +885,7 @@ saveRegistry (int f, int n)
     }
     
     /* Get the input from the command line */
-    if (mlreply((uint8 *)"Save registry root",0, 0, rootbuf, 128) == ABORT)
+    if (meGetString((uint8 *)"Save registry root",0, 0, rootbuf, 128) == ABORT)
         return ABORT;
     
     /* Find the root */
@@ -898,7 +898,7 @@ saveRegistry (int f, int n)
         filebuf[0] = '\0' ;
     
     /* Get the filename */
-    if(mlreply((uint8 *)"Registry file",MLFILECASE|MLFILECASE, 0, filebuf, FILEBUF) != TRUE)
+    if(meGetString((uint8 *)"Registry file",MLFILECASE|MLFILECASE, 0, filebuf, FILEBUF) != TRUE)
         return ABORT;
     return regSave (rnp, filebuf);
 }
@@ -914,7 +914,7 @@ deleteRegistry (int f, int n)
     uint8 rootbuf [MAXBUF];
     RNODE *rnp;
 
-    if (mlreply((uint8 *)"Registry Path", 0, 0, rootbuf, MAXBUF) == ABORT)
+    if (meGetString((uint8 *)"Registry Path", 0, 0, rootbuf, MAXBUF) == ABORT)
         return ABORT;
     if ((rnp = regFind (&root, rootbuf)) == NULL)
         return mlwrite(MWCLEXEC|MWABORT,(uint8 *)"[Cannot find node %s]",rootbuf);
@@ -934,9 +934,9 @@ setRegistry (int f, int n)
     RNODE *rnp;
 
     /* Get the arguments */
-    if ((mlreply((uint8 *)"Registry Path", 0, 0, rootbuf, MAXBUF) == ABORT) ||
-        (mlreply((uint8 *)"Sub key", 0, 0, skeybuf, MAXBUF) == ABORT) ||
-        (mlreply((uint8 *)"Value", 0, 0, valbuf, MAXBUF) == ABORT))
+    if ((meGetString((uint8 *)"Registry Path", 0, 0, rootbuf, MAXBUF) == ABORT) ||
+        (meGetString((uint8 *)"Sub key", 0, 0, skeybuf, MAXBUF) == ABORT) ||
+        (meGetString((uint8 *)"Value", 0, 0, valbuf, MAXBUF) == ABORT))
         return ABORT;
 
     /* Assigns the new value */
@@ -962,8 +962,8 @@ getRegistry (int f, int n)
 
     resultStr [0] = '\0';
     /* Get the arguments */
-    if ((mlreply((uint8 *)"Registry Path", 0, 0, rootbuf, MAXBUF) == ABORT) ||
-        (mlreply((uint8 *)"Sub key", 0, 0, skeybuf, MAXBUF) == ABORT))
+    if ((meGetString((uint8 *)"Registry Path", 0, 0, rootbuf, MAXBUF) == ABORT) ||
+        (meGetString((uint8 *)"Sub key", 0, 0, skeybuf, MAXBUF) == ABORT))
         return ABORT;
 
     /* Assigns the new value */
@@ -993,9 +993,9 @@ findRegistry (int f, int n)
     RNODE *rnp;
 
     /* Get the arguments */
-    if ((mlreply((uint8 *)"Registry Path", 0, 0, rootbuf, MAXBUF) == ABORT) ||
-        (mlreply((uint8 *)"Sub key", 0, 0, skeybuf, MAXBUF) == ABORT) ||
-        (mlreply((uint8 *)"Index", 0, 0, valbuf, 12) == ABORT))
+    if ((meGetString((uint8 *)"Registry Path", 0, 0, rootbuf, MAXBUF) == ABORT) ||
+        (meGetString((uint8 *)"Sub key", 0, 0, skeybuf, MAXBUF) == ABORT) ||
+        (meGetString((uint8 *)"Index", 0, 0, valbuf, 12) == ABORT))
         return ABORT;
     index = meAtoi (valbuf);
 

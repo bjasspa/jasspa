@@ -5,7 +5,7 @@
  * Synopsis      : Win32 platform support
  * Created By    : Jon Green
  * Created       : 21/12/1996
- * Last Modified : <010302.2351>
+ * Last Modified : <010305.0848>
  *
  * Description
  *
@@ -496,7 +496,7 @@ TTopenClientServer (void)
 
         /* Open the response file for read/write, if this fails we are not the server, another
          * ME is */
-        if ((clientHandle = CreateFile (strWfn1(fname),
+        if ((clientHandle = CreateFile (fname,
                                         GENERIC_WRITE,
                                         FILE_SHARE_READ,
                                         NULL,
@@ -509,7 +509,7 @@ TTopenClientServer (void)
         }
         /* Open command file for read/write */
         mkTempName (fname, meUserName, ".cmd");
-        if ((serverHandle = CreateFile (strWfn1(fname),
+        if ((serverHandle = CreateFile (fname,
                                         GENERIC_READ,
                                         FILE_SHARE_READ|FILE_SHARE_WRITE,
                                         NULL,
@@ -666,7 +666,7 @@ TTconnectClientServer (void)
         mkTempName (fname, meUserName, ".cmd");
         if(meTestExist(fname) || DeleteFile (fname))
             return 0 ;
-        if ((connectHandle = CreateFile (strWfn1(fname), GENERIC_WRITE, FILE_SHARE_READ, NULL,
+        if ((connectHandle = CreateFile (fname, GENERIC_WRITE, FILE_SHARE_READ, NULL,
                                          OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL,NULL)) == INVALID_HANDLE_VALUE)
             return 0 ;
         /* Goto the end of the file */
@@ -674,7 +674,7 @@ TTconnectClientServer (void)
 
         /* Try opening the response file and get the ttHwnd value */
         mkTempName (fname, meUserName, ".rsp");
-        if ((hndl = CreateFile (strWfn1(fname), GENERIC_READ, FILE_SHARE_READ|FILE_SHARE_WRITE, NULL,
+        if ((hndl = CreateFile (fname, GENERIC_READ, FILE_SHARE_READ|FILE_SHARE_WRITE, NULL,
                                  OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL)) != INVALID_HANDLE_VALUE)
         {
             if((ReadFile(hndl,&fname,20,&ii,NULL) != 0) && (ii > 0))
@@ -1821,7 +1821,7 @@ mkTempCommName(uint8 *filename, uint8 *basename)
     {
         if(meTestExist(filename))
             break ;
-        else if ((hdl = CreateFile(strWfn1(filename),GENERIC_READ,FILE_SHARE_READ,NULL,
+        else if ((hdl = CreateFile(filename,GENERIC_READ,FILE_SHARE_READ,NULL,
                                    OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL)) != INVALID_HANDLE_VALUE)
         {
             CloseHandle(hdl);
@@ -2077,10 +2077,10 @@ WinLaunchProgram (uint8 *cmd, int flags, uint8 *inFile, uint8 *outFile,
                 strcpy (pipeOutFile, outFile);
 #else
                 HANDLE h ;
-                if((meSuInfo.hStdInput=CreateFile(strWfn1(inFile),GENERIC_READ,FILE_SHARE_READ,&sbuts,
+                if((meSuInfo.hStdInput=CreateFile(inFile,GENERIC_READ,FILE_SHARE_READ,&sbuts,
                                                   OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL)) == INVALID_HANDLE_VALUE)
                     return FALSE ;
-                if((meSuInfo.hStdOutput=CreateFile(strWfn1(outFile),GENERIC_WRITE,FILE_SHARE_READ,&sbuts,
+                if((meSuInfo.hStdOutput=CreateFile(outFile,GENERIC_WRITE,FILE_SHARE_READ,&sbuts,
                                                    OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL)) == INVALID_HANDLE_VALUE)
                 {
                     CloseHandle(meSuInfo.hStdInput) ;
@@ -2123,7 +2123,7 @@ WinLaunchProgram (uint8 *cmd, int flags, uint8 *inFile, uint8 *outFile,
                     strcat (cp, " > ");
                 strcat (cp, outFile);
 #else
-                meSuInfo.hStdOutput=CreateFile(strWfn1(outFile),GENERIC_WRITE,FILE_SHARE_WRITE,
+                meSuInfo.hStdOutput=CreateFile(outFile,GENERIC_WRITE,FILE_SHARE_WRITE,
                                                &sbuts,CREATE_ALWAYS,FILE_ATTRIBUTE_TEMPORARY,NULL) ;
                 if(meSuInfo.hStdOutput == INVALID_HANDLE_VALUE)
                     return FALSE ;
@@ -2152,12 +2152,12 @@ WinLaunchProgram (uint8 *cmd, int flags, uint8 *inFile, uint8 *outFile,
                  * Construct the dummy input file */
                 mkTempName (dummyInFile, DUMMY_STDIN_FILE,NULL);
 
-                if ((dumHdl = CreateFile(strWfn1(dummyInFile),GENERIC_WRITE,FILE_SHARE_WRITE,NULL,
+                if ((dumHdl = CreateFile(dummyInFile,GENERIC_WRITE,FILE_SHARE_WRITE,NULL,
                                          CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL)) != INVALID_HANDLE_VALUE)
                     CloseHandle (dumHdl);
 
                 /* Re-open the file for reading */
-                if ((dumHdl = CreateFile(strWfn1(dummyInFile),GENERIC_READ,FILE_SHARE_READ,NULL,
+                if ((dumHdl = CreateFile(dummyInFile,GENERIC_READ,FILE_SHARE_READ,NULL,
                                          OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL)) == INVALID_HANDLE_VALUE)
                 {
                     DeleteFile(dummyInFile) ;
@@ -3264,6 +3264,7 @@ done_syschar:
             /* Distinguish between the Number Pad and standard enter */
 #if 0
             cc = ((lParam & 0x01000000) ? SKEY_kp_enter : SKEY_return) ;
+            goto return_spec;
 #else
             /* Look at the scan code to determine if this is a C-m or a
              * <return>. The scan code for 'M' is 0x32; the scan code for
@@ -3827,17 +3828,17 @@ changeFont(int f, int n)
     {
         /* Get the name of the font. If it is specified as default then
          * do not collect the remaining arguments */
-        if (mlreply ("Font Name ['' for default]", 0, 0, fontName, FONTBUFSIZ) == ABORT)
+        if (meGetString ("Font Name ['' for default]", 0, 0, fontName, FONTBUFSIZ) == ABORT)
             return (FALSE);
         if (fontName[0] == '\0')
             status = TTchangeFont (NULL, -1, 0, 0, 0);
-        else if ((mlreply ("Font Type [ANSI=0]", 0, 0, buff, FONTBUFSIZ) == TRUE) &&
+        else if ((meGetString ("Font Type [ANSI=0]", 0, 0, buff, FONTBUFSIZ) == TRUE) &&
                  ((fontType = meAtoi(buff)),
-                  (mlreply ("Font Weight [1-9; 0=don't care]", 0, 0, buff, FONTBUFSIZ) == TRUE)) &&
+                  (meGetString ("Font Weight [1-9; 0=don't care]", 0, 0, buff, FONTBUFSIZ) == TRUE)) &&
                  ((fontWeight = meAtoi(buff)),
-                  (mlreply ("Font Width", 0, 0, buff, FONTBUFSIZ) == TRUE)) &&
+                  (meGetString ("Font Width", 0, 0, buff, FONTBUFSIZ) == TRUE)) &&
                  ((fontWidth = meAtoi(buff)),
-                  (mlreply ("Font Height", 0, 0, buff, FONTBUFSIZ) == TRUE)))
+                  (meGetString ("Font Height", 0, 0, buff, FONTBUFSIZ) == TRUE)))
         {
             fontHeight = meAtoi (buff);
             status = TTchangeFont (fontName, fontType,
@@ -4178,7 +4179,7 @@ TTwaitForChar(void)
             TThandleBlink(0);               /* Initiate a cursor blink */
 #ifdef _URLSUPP
         if(isTimerExpired(SOCKET_TIMER_ID)) /* socket connection time-out */
-            ffCloseSockets(1) ;
+            ffFileOp(NULL,NULL,meRWFLAG_FTPCLOSE|meRWFLAG_SILENT) ;
 #endif
         if(TTahead())
             break ;
@@ -4704,7 +4705,7 @@ TTsleep (int msec, int intable)
             TThandleBlink(0);               /* Initiate a cursor blink */
 #ifdef _URLSUPP
         if(isTimerExpired(SOCKET_TIMER_ID)) /* socket connection time-out */
-            ffCloseSockets(1) ;
+            ffFileOp(NULL,NULL,meRWFLAG_FTPCLOSE|meRWFLAG_SILENT) ;
 #endif
 
         /* Call TTahead first to get the input */

@@ -10,7 +10,7 @@
 *
 *	Author:			Jon Green
 *
-*	Creation Date:		03/05/91 17:19		<010302.1306>
+*	Creation Date:		03/05/91 17:19		<010305.1601>
 *
 *	Modification date:	%G% : %U%
 *
@@ -102,7 +102,7 @@ static char meHelpPage[]=
 "  -p      : Pipe stdin into *stdin*, when saved output to stdout\n"
 "  -r      : Read-only, all buffers will be in view mode\n"
 "  -s <s>  : Search for string <s> in the next given file\n"
-"  -u <n>  : Set user name to <n> ($MENAME)\n"
+"  -u <n>  : Set user name to <n> (sets $MENAME)\n"
 "  -v <v=s>: Set variable <v> to string <s>\n"
 #ifdef _UNIX
 "  -x      : Don't catch signals\n"
@@ -297,7 +297,7 @@ execute(register int c, register int f, register int n)
     if(c < 0x20 || c > 0xff)    /* If not an insertable char */
     {
         uint8 outseq[40];	/* output buffer for keystroke sequence */
-        cmdstr((uint16) c,outseq);	/* change to something printable */
+        meGetStringFromKey((uint16) c,outseq);	/* change to something printable */
         lastflag = 0;                       /* Fake last flags.     */
         cmdstatus = 0 ;
         /* don't complain about mouse_move* or mouse_time* as these are
@@ -543,7 +543,7 @@ exitEmacs(int f, int n)
         if(func >= 0)
             execFunc(func,FALSE,1) ;
 #ifdef _URLSUPP
-        ffCloseSockets(1) ;
+        ffFileOp(NULL,NULL,meRWFLAG_FTPCLOSE|meRWFLAG_NOCONSOLE) ;
 #endif
         TTend();
 #ifdef _TCAP
@@ -1135,7 +1135,7 @@ doOneKey(void)
     if (kbdmode == STOP)
         kbdmode = KBD_IDLE;             /* In an idle state  */
     
-    c = getkeycmd(FALSE, 1, meGETKEY_COMMAND);     /* Get a key */
+    c = meGetKeyFromUser(FALSE, 1, meGETKEY_COMMAND);     /* Get a key */
 
     if (mlStatus & MLSTATUS_CLEAR)
         mlerase(MWCLEXEC) ;
@@ -1158,7 +1158,7 @@ doOneKey(void)
             mflag = 1 ;
             n = basec - '0' ;
         }
-        while(((c=getkeycmd(TRUE,(n * mflag),meGETKEY_COMMAND)) >= '0') && (c <= '9'))
+        while(((c=meGetKeyFromUser(TRUE,(n * mflag),meGETKEY_COMMAND)) >= '0') && (c <= '9'))
             n = n * 10 + (c - '0');
         n *= mflag;    /* figure in the sign */
     }
@@ -1168,7 +1168,7 @@ doOneKey(void)
     {                           /* ^U, start argument   */
         f = TRUE;               /* In case not set */
         mflag = 1;              /* current minus flag */
-        for(;;c = getkeycmd(f,n,meGETKEY_COMMAND))
+        for(;;c = meGetKeyFromUser(f,n,meGETKEY_COMMAND))
         {
             switch(c)
             {
@@ -1195,7 +1195,7 @@ doOneKey(void)
                  * get the next key, if a digit, update the
                  * count note that we do not handle "-" here
                  */
-                c = getkeycmd(TRUE,(mflag*n),meGETKEY_COMMAND);
+                c = meGetKeyFromUser(TRUE,(mflag*n),meGETKEY_COMMAND);
                 if(c >= '0' && c <= '9')
                     n = n * 10 + (c - '0');
                 else

@@ -5,7 +5,7 @@
  *  Synopsis      : Generic terminal support routines
  *  Created By    : Steven Phillips
  *  Created       : 1993
- *  Last Modified : <010219.1757>
+ *  Last Modified : <010305.0759>
  *
  *  Description
  *     Many generic routines to support timers, key input and some output.
@@ -602,7 +602,7 @@ keyListToShorts(uint16 *sl, uint8 *kl)
             if(!isSpace(dd))
                 break ;
         }
-        sl[ii++] = getskey(&kl) ;
+        sl[ii++] = meGetKeyFromString(&kl) ;
     }
 }
 
@@ -640,7 +640,7 @@ translateKeyShow(meTRANSKEY *tcapKeys, BUFFER *bp, uint8 *key, int depth)
         buf[ii++] = ' ' ;
         buf[ii++] = '"' ;
         if(tcapKeys->map != ME_DELETE_KEY)
-            ii += cmdchar(tcapKeys->map,buf+ii);
+            ii += meGetStringFromChar(tcapKeys->map,buf+ii);
         buf[ii++] = '"' ;
         buf[ii] = '\0' ;
         addLineToEob(bp,buf) ;
@@ -649,7 +649,7 @@ translateKeyShow(meTRANSKEY *tcapKeys, BUFFER *bp, uint8 *key, int depth)
         key[depth++] = ' ' ;
     for(ii=0 ; ii<tcapKeys->count ; ii++)
     {
-        nd = depth + cmdchar(tcapKeys->child[ii].key,key+depth);
+        nd = depth + meGetStringFromChar(tcapKeys->child[ii].key,key+depth);
         translateKeyShow(tcapKeys->child+ii,bp,key,nd) ;
     }
 }
@@ -683,7 +683,7 @@ translateKey(int f, int n)
     else
     {
         meStrcpy(tnkyPrompt+19,"code") ;
-        if((mlreply(tnkyPrompt,0,0,buf,128) != TRUE) ||
+        if((meGetString(tnkyPrompt,0,0,buf,128) != TRUE) ||
            ((ii=keyListToShorts(c_from,buf)) <= 0))
             return FALSE ;
 
@@ -694,7 +694,7 @@ translateKey(int f, int n)
             if(f == FALSE)
                 n = TTtransKey.time ;
             meStrcpy(tnkyPrompt+19,"to") ;
-            if((mlreply(tnkyPrompt,0,0,buf,128) != TRUE) ||
+            if((meGetString(tnkyPrompt,0,0,buf,128) != TRUE) ||
                ((f=keyListToShorts(c_to,buf)) < 0))
                 return FALSE ;
             if(f == 0)

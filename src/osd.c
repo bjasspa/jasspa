@@ -5,7 +5,7 @@
  *  Synopsis      : Narrow out regions of a buffer
  *  Created By    : On-Screen Display routines
  *  Created       : 26/07/97
- *  Last Modified : <010219.2035>
+ *  Last Modified : <010305.0757>
  *
  *  Description
  *     This file contains the on screen display routines that
@@ -3698,11 +3698,11 @@ osdDisplayMouseMove(osdDISPLAY *md)
     int16 mmx, mmy ;
     int cc ;
     
-    /* Enable all mouse movements - important if we've come from mlgetstring */
+    /* Enable all mouse movements - important if we've come from meGetStringFromUser */
     TTallKeys = 1 ;
     mmx = mouse_X ;
     mmy = mouse_Y ;
-    for( ; (cc=getkeycmd(FALSE,0,meGETKEY_SILENT)) != (ME_SPECIAL|SKEY_mouse_drop_1) ; )
+    for( ; (cc=meGetKeyFromUser(FALSE,0,meGETKEY_SILENT)) != (ME_SPECIAL|SKEY_mouse_drop_1) ; )
     {
         if(cc == (ME_SPECIAL|SKEY_mouse_move_1))
         {
@@ -3775,11 +3775,11 @@ osdDisplayMouseResize(void)
     int16 mmx, mmy ;
     int cc ;
     
-    /* Enable all mouse movements - important if we've come from mlgetstring */
+    /* Enable all mouse movements - important if we've come from meGetStringFromUser */
     TTallKeys = 1 ;
     mmx = mouse_X ;
     mmy = mouse_Y ;
-    for( ; (cc=getkeycmd(FALSE,0,meGETKEY_SILENT)) != (ME_SPECIAL|SKEY_mouse_drop_1);)
+    for( ; (cc=meGetKeyFromUser(FALSE,0,meGETKEY_SILENT)) != (ME_SPECIAL|SKEY_mouse_drop_1);)
     {
         if(cc == (ME_SPECIAL|SKEY_mouse_move_1))
         {
@@ -3846,7 +3846,7 @@ scrollScrollBarEvent(meSCROLLBAR *sb, int dd)
                 meScrollBarDrawBar(sb) ;
             meScrollBarDrawMain(sb) ;
         }
-        while((cc = getkeycmd(FALSE,0,meGETKEY_SILENT)) != (ME_SPECIAL|SKEY_mouse_time_1))
+        while((cc = meGetKeyFromUser(FALSE,0,meGETKEY_SILENT)) != (ME_SPECIAL|SKEY_mouse_time_1))
         {
             if(cc == (ME_SPECIAL|SKEY_mouse_drop_1))
             {
@@ -3916,7 +3916,7 @@ boxDragScrollBarEvent(meSCROLLBAR *sb)
                 meScrollBarDrawBar(sb) ;
             meScrollBarDrawMain(sb) ;
         }
-        while((cc = getkeycmd(FALSE,0,meGETKEY_SILENT)) != (ME_SPECIAL|SKEY_mouse_move_1))
+        while((cc = meGetKeyFromUser(FALSE,0,meGETKEY_SILENT)) != (ME_SPECIAL|SKEY_mouse_move_1))
         {
             if(cc == (ME_SPECIAL|SKEY_mouse_drop_1))
             {
@@ -4613,7 +4613,7 @@ menuInteraction (int *retState)
         nit = 0 ;
         state = 0 ;
         /* Get a command from the keyboard */
-        cc = getkeycmd(FALSE,0,meGETKEY_SILENT);
+        cc = meGetKeyFromUser(FALSE,0,meGETKEY_SILENT);
         /* handle and osd bindings first */
         if(osdCurMd->dialog->nobinds)
         {
@@ -5023,7 +5023,7 @@ osd (int f, int n)
         int16 width, depth, tab ;
         
         /* Get the menu identity */
-        if ((ii=mlreply((uint8 *)"Identity", 0, 0, buf, 16)) == FALSE)
+        if ((ii=meGetString((uint8 *)"Identity", 0, 0, buf, 16)) == FALSE)
         {
             pmd = osdCurMd ;
             if(n < 0)
@@ -5064,7 +5064,7 @@ osd (int f, int n)
              * 0x02         Define the menu line string.
              */
             
-            if (mlreply((uint8 *)"Flags", 0, 0, buf, 16) == ABORT)
+            if (meGetString((uint8 *)"Flags", 0, 0, buf, 16) == ABORT)
                 return ABORT ;
             flags = meAtoi(buf) ;
             if (flags == 0)
@@ -5104,7 +5104,7 @@ osd (int f, int n)
         }
         
         /* Get the menu index */
-        if ((mlreply((uint8 *)"Item", 0, 0, buf, 16) == ABORT) ||
+        if ((meGetString((uint8 *)"Item", 0, 0, buf, 16) == ABORT) ||
             (((item = meAtoi(buf)) < 0) || (item > 32767)))
             return mlwrite(MWABORT|MWPAUSE,(uint8 *)"Invalid item identity [%s]", buf);
         
@@ -5113,7 +5113,7 @@ osd (int f, int n)
         {
             if ((rp = dialogConstruct (id)) == NULL)
                 return ABORT ;
-            if (mlreply((uint8 *)"Flags", 0, 0, buf,MAXBUF) != TRUE)
+            if (meGetString((uint8 *)"Flags", 0, 0, buf,MAXBUF) != TRUE)
                 return ABORT ;
             
             /* turn the flag string into bits */
@@ -5131,7 +5131,7 @@ osd (int f, int n)
             /* If it has a main dialog scheme then get it */
             if(flags & RF_MSCHEME) 
             {
-                if (mlreply((uint8 *)"Scheme", 0, 0, buf, MAXBUF) != TRUE)
+                if (meGetString((uint8 *)"Scheme", 0, 0, buf, MAXBUF) != TRUE)
                     return ABORT ;
                 rp->mScheme = convertUserScheme(meAtoi(buf),osdScheme) ;
             }
@@ -5140,9 +5140,9 @@ osd (int f, int n)
             /* If its an absolute position menu, get the position */
             if(rp->flags & (RF_ABSPOS|RF_OFFSTPOS))
             {
-                if((mlreply((uint8 *)"X-pos", 0, 0, buf, 16) != TRUE) ||
+                if((meGetString((uint8 *)"X-pos", 0, 0, buf, 16) != TRUE) ||
                    ((rp->x = (int16) meAtoi(buf)),
-                    (mlreply((uint8 *)"Y-pos", 0, 0, buf, 16) != TRUE)))
+                    (meGetString((uint8 *)"Y-pos", 0, 0, buf, 16) != TRUE)))
                     return ABORT ;
                 rp->y = (int16) meAtoi(buf) ;
             }
@@ -5157,22 +5157,22 @@ osd (int f, int n)
             {
                 for(; item<2 ; item++)
                 {
-                    if((mlreply((uint8 *)"Width", 0, 0, buf, 16) != TRUE) ||
+                    if((meGetString((uint8 *)"Width", 0, 0, buf, 16) != TRUE) ||
                        ((rp->width[item] = (int16) meAtoi(buf)),
-                        (mlreply((uint8 *)"Depth", 0, 0, buf, 16) != TRUE)))
+                        (meGetString((uint8 *)"Depth", 0, 0, buf, 16) != TRUE)))
                         return ABORT ;
                     rp->depth[item] = (int16) meAtoi(buf) ;
                 }
             }
             if(rp->flags & RF_DEFAULT)
             {
-                if(mlreply((uint8 *)"Default", 0, 0, buf, 16) != TRUE)
+                if(meGetString((uint8 *)"Default", 0, 0, buf, 16) != TRUE)
                     return ABORT ;
                 rp->defItem = (int16) meAtoi(buf) ;
             }
             if(rp->flags & RF_FOCALITM)
             {
-                if(mlreply((uint8 *)"Focus", 0, 0, buf, 16) != TRUE)
+                if(meGetString((uint8 *)"Focus", 0, 0, buf, 16) != TRUE)
                     return ABORT ;
                 rp->focalItem = (int16) meAtoi(buf) ;
             }
@@ -5180,19 +5180,19 @@ osd (int f, int n)
             {
                 if(flags & RF_TSCHEME) 
                 {
-                    if (mlreply((uint8 *)"Scheme", 0, 0, buf, MAXBUF) != TRUE)
+                    if (meGetString((uint8 *)"Scheme", 0, 0, buf, MAXBUF) != TRUE)
                         return ABORT ;
                     rp->tScheme = convertUserScheme(meAtoi(buf),rp->mScheme) ;
                 }
                 else
                     rp->tScheme = rp->mScheme ;
-                if(mlreply((uint8 *)"Text", 0, 0, txtbuf, MAXBUF) == TRUE)
+                if(meGetString((uint8 *)"Text", 0, 0, txtbuf, MAXBUF) == TRUE)
                     rp->strData = meStrdup(txtbuf) ;
             }
             /* get the resize command if there is one */
             if(rp->flags & RF_RESIZE)
             {
-                if ((ii = mlreply((uint8 *)"Command", MLCOMMAND, 0, buf, MAXBUF)) != TRUE)
+                if ((ii = meGetString((uint8 *)"Command", MLCOMMAND, 0, buf, MAXBUF)) != TRUE)
                     return ABORT ;
                 if ((rp->rszIndex = decode_fncname(buf,0)) < 0)
                     return mlwrite (MWABORT|MWPAUSE,(uint8 *)"Cannot find command [%s]", buf);
@@ -5200,7 +5200,7 @@ osd (int f, int n)
             /* get the resize command if there is one */
             if(rp->flags & RF_CONTROL)
             {
-                if ((ii = mlreply((uint8 *)"Control", MLCOMMAND, 0, buf, MAXBUF)) != TRUE)
+                if ((ii = meGetString((uint8 *)"Control", MLCOMMAND, 0, buf, MAXBUF)) != TRUE)
                     return ABORT ;
                 if ((rp->cntIndex = decode_fncname(buf,0)) < 0)
                     return mlwrite (MWABORT|MWPAUSE,(uint8 *)"Cannot find command [%s]", buf);
@@ -5208,7 +5208,7 @@ osd (int f, int n)
             else
                 rp->cntIndex = -1 ;
             /* get the initialize command if there is one */
-            if ((ii = mlreply((uint8 *)"Command", MLCOMMAND, 0, buf, MAXBUF)) == ABORT)
+            if ((ii = meGetString((uint8 *)"Command", MLCOMMAND, 0, buf, MAXBUF)) == ABORT)
                 return ABORT ;
             rp->cmdIndex = -1 ;                     /* Assume no command */
             if (ii == TRUE)
@@ -5229,7 +5229,7 @@ osd (int f, int n)
         
             
         /* Get the enable flag */
-        if (mlreply((uint8 *)"Flags", 0, 0, buf,MAXBUF) != TRUE)
+        if (meGetString((uint8 *)"Flags", 0, 0, buf,MAXBUF) != TRUE)
             return ABORT ;
         /* turn the flag string into bits */
         bb = buf ;
@@ -5272,7 +5272,7 @@ osd (int f, int n)
         
         if(flags & MF_TAB) 
         {
-            if(mlreply((uint8 *)"Tab", 0, 0, buf, 16) != TRUE)
+            if(meGetString((uint8 *)"Tab", 0, 0, buf, 16) != TRUE)
                 return ABORT ;
             tab = (int16) meAtoi(buf) ;
         }
@@ -5282,15 +5282,15 @@ osd (int f, int n)
         scheme = rp->mScheme ;
         if(flags & MF_SCHEME) 
         {
-            if (mlreply((uint8 *)"Scheme", 0, 0, buf, MAXBUF) != TRUE)
+            if (meGetString((uint8 *)"Scheme", 0, 0, buf, MAXBUF) != TRUE)
                 return ABORT ;
             scheme = convertUserScheme(meAtoi(buf),osdScheme) ;
         }
         if(flags & MF_SIZE) 
         {
-            if((mlreply((uint8 *)"Width", 0, 0, buf, 16) != TRUE) ||
+            if((meGetString((uint8 *)"Width", 0, 0, buf, 16) != TRUE) ||
                ((width = (int16) meAtoi(buf)),
-                (mlreply((uint8 *)"Depth", 0, 0, buf, 16) != TRUE)))
+                (meGetString((uint8 *)"Depth", 0, 0, buf, 16) != TRUE)))
                 return ABORT ;
             depth = (int16) meAtoi(buf) ;
         }
@@ -5298,7 +5298,7 @@ osd (int f, int n)
         {
             flags &= ~MF_SCRLBOX ;
             /* Get the string field - not needed if deleting a non alpha item */
-            if ((ii = mlreply((uint8 *)"Text", 0, 0, txtbuf, MAXBUF)) == ABORT)
+            if ((ii = meGetString((uint8 *)"Text", 0, 0, txtbuf, MAXBUF)) == ABORT)
                 return ABORT ;
             else if (ii == FALSE)
             {
@@ -5313,7 +5313,7 @@ osd (int f, int n)
         /* Get the numeric argument. Check for 'f' which means false or
          * a value which means true. */
         argc = 1 ;
-        if ((ii = mlreply((uint8 *)"Argument", 0, 0, buf, 16)) == ABORT)
+        if ((ii = meGetString((uint8 *)"Argument", 0, 0, buf, 16)) == ABORT)
             return ABORT ;
         if (ii == TRUE)
         {
@@ -5327,7 +5327,7 @@ osd (int f, int n)
             flags |= MF_SEP ;
 
         /* Get the command */
-        if ((ii = mlreply((uint8 *)"Command", MLCOMMAND, 0, buf, MAXBUF)) == ABORT)
+        if ((ii = meGetString((uint8 *)"Command", MLCOMMAND, 0, buf, MAXBUF)) == ABORT)
             return ABORT ;
         namidx = -1;              /* Assume no sub-command */
         cmdlen = 0;                     /* Assume no command string */
@@ -5547,7 +5547,7 @@ osdBind(int f, int n)
     uint8 buf[16];
     
     /* Get the menu root */
-    if(mlreply((uint8 *)"Identity", 0, 0, buf, 16) != TRUE)
+    if(meGetString((uint8 *)"Identity", 0, 0, buf, 16) != TRUE)
         return ABORT ;
     if((rp=dialogFind(meAtoi(buf))) == NULL)
         return mlwrite(MWABORT|MWPAUSE,(uint8 *)"[Osd dialog %s undefined]",buf);
@@ -5560,7 +5560,7 @@ osdUnbind(int f, int n)
     uint8 buf[16];
     
     /* Get the menu root */
-    if(mlreply((uint8 *)"Identity", 0, 0, buf, 16) != TRUE)
+    if(meGetString((uint8 *)"Identity", 0, 0, buf, 16) != TRUE)
         return ABORT ;
     if((rp=dialogFind(meAtoi(buf))) == NULL)
         return mlwrite(MWABORT|MWPAUSE,(uint8 *)"[Osd dialog %s undefined]",buf);

@@ -10,7 +10,7 @@
  *
  *  Author:         Danial Lawrence
  *
- *  Creation Date:      14/05/86 12:37      <010227.1054>
+ *  Creation Date:      14/05/86 12:37      <010305.0801>
  *
  *  Modification date:  %G% : %U%
  *
@@ -490,7 +490,7 @@ found_ulcvar:
                 clexec = TRUE;      /* get the argument */
                 saves = execstr ;
                 execstr = vvalue ;
-                ii = getckey(meGETKEY_SILENT) ;
+                ii = meGetKey(meGETKEY_SILENT) ;
                 execstr = saves ;
                 clexec = savcle;        /* restore execution mode */
                 if(nn[1] == 'c')
@@ -1193,7 +1193,7 @@ handle_namesvar:
             for(ii=100,jj=TTnextKeyIdx,kk=0 ; --ii>0 ; )
             {
                 if(((cc=TTkeyBuf[jj++]) == 0) ||
-                   ((kk+=cmdchar(cc,evalResult+kk)) > MAXBUF-20))
+                   ((kk+=meGetStringFromChar(cc,evalResult+kk)) > MAXBUF-20))
                     break ;
                 evalResult[kk++] = ' ' ;
                 if(jj == KEYBUFSIZ)
@@ -1587,7 +1587,7 @@ getval(uint8 *tkn)   /* find the value of a token */
                 {
                     /* intercative single char read which will be quoted */
                     int cc ;
-                    key = getkeycmd(FALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE) ;
+                    key = meGetKeyFromUser(FALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE) ;
                     if((cc=quoteKeyToChar(key)) > 0)
                     {
                         if(tkn[3] == 'k')
@@ -1600,7 +1600,7 @@ getval(uint8 *tkn)   /* find the value of a token */
                     }
                 }
                 else
-                    key = getkeycmd(FALSE, 1, 0) ;
+                    key = meGetKeyFromUser(FALSE, 1, 0) ;
                 if(!kk)
                 {
                     uint32 arg ;
@@ -1608,7 +1608,7 @@ getval(uint8 *tkn)   /* find the value of a token */
                 }
             }
             if(kk)
-                cmdstr(key,evalResult) ;
+                meGetStringFromKey(key,evalResult) ;
             else if(index < 0)
             {
                 if(key > 0xff)
@@ -1626,7 +1626,7 @@ getval(uint8 *tkn)   /* find the value of a token */
                 /* interactive argument */
                 /* note: the result buffer cant be used directly as it is used
                  *       in modeline which is is by update which can be used
-                 *       by mlgetstring
+                 *       by meGetStringFromUser
                  */
                 static uint8 **strList=NULL ;
                 static int    strListSize=0 ;
@@ -1778,7 +1778,7 @@ getval(uint8 *tkn)   /* find the value of a token */
                     if(!(option & MLNORESET))
                         getFilePath(curbp->b_fname,buff) ;
                     clexec = FALSE ;
-                    if((cc = mlreply(prompt,(MLFILECASE|MLNORESET|MLMACNORT),0,buff,MAXBUF)) == TRUE)
+                    if((cc = meGetString(prompt,(MLFILECASE|MLNORESET|MLMACNORT),0,buff,MAXBUF)) == TRUE)
                         fileNameCorrect(buff,evalResult,NULL) ;
                     clexec = TRUE ;
                 }
@@ -1789,7 +1789,7 @@ getval(uint8 *tkn)   /* find the value of a token */
                      * so use a temp buffer and copy across. note that inputFileName
                      * above doesn't suffer from this as the function uses a temp buffer
                      */
-                    cc = mlgetstring(prompt,option,defH,buff,MAXBUF) ;
+                    cc = meGetStringFromUser(prompt,option,defH,buff,MAXBUF) ;
                     meStrncpy(evalResult,buff,MAXBUF) ;
                     evalResult[MAXBUF-1] = '\0' ;
                 }
@@ -2002,7 +2002,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
         uint16 ii ;
         int jj ;
         
-        ii = getckey(meGETKEY_SILENT) ;
+        ii = meGetKey(meGETKEY_SILENT) ;
         if((jj = decode_key(ii,&arg)) < 0)
             return errorm ;
         if(fnum == UFCBIND)
@@ -2114,7 +2114,7 @@ gtfun(uint8 *fname)  /* evaluate a function given name of function */
                     }
             }
             if(code != ME_INVALID_KEY)
-                cmdstr(code,evalResult) ;
+                meGetStringFromKey(code,evalResult) ;
             else
                 evalResult[0] = '\0' ;
             return evalResult ;
@@ -2837,7 +2837,7 @@ unsetVariable(int f, int n)     /* Delete a variable */
     alarmState |= meALARM_VARIABLE ;
     /* horrid global variable, see notes at definition */
     gmaLocalRegPtr = meRegCurr ;
-    vnum = mlreply((uint8 *)"Unset variable", MLVARBL, 0, var, NSTRING) ;
+    vnum = meGetString((uint8 *)"Unset variable", MLVARBL, 0, var, NSTRING) ;
     regs = gmaLocalRegPtr ;
     alarmState &= ~meALARM_VARIABLE ;
     if(vnum != TRUE)
@@ -2923,7 +2923,7 @@ descVariable(int f, int n)      /* describe a variable */
     int    status ;
     
     /* first get the variable to describe */
-    if((status = mlreply((uint8 *)"Show variable",MLVARBL,0,var,NSTRING)) != TRUE)
+    if((status = meGetString((uint8 *)"Show variable",MLVARBL,0,var,NSTRING)) != TRUE)
         return(status);
     if((ss = getval(var)) == NULL)
         return mlwrite(MWABORT,(uint8 *)"Unknown variable type") ;
@@ -2945,7 +2945,7 @@ setVariable(int f, int n)       /* set a variable */
     /* set this flag to indicate that the variable name is required, NOT
      * its value */
     alarmState |= meALARM_VARIABLE ;
-    status = mlreply((uint8 *)"Set variable", MLVARBL, 0, var,NSTRING) ;
+    status = meGetString((uint8 *)"Set variable", MLVARBL, 0, var,NSTRING) ;
     alarmState &= ~meALARM_VARIABLE ;
     regs = gmaLocalRegPtr ;
     if(status != TRUE)
@@ -2953,7 +2953,7 @@ setVariable(int f, int n)       /* set a variable */
     /* get the value for that variable */
     if (f == TRUE)
         meStrcpy(value, meItoa(n));
-    else if((status = mlreply((uint8 *)"Value", MLFFZERO, 0, value,MAXBUF)) != TRUE)
+    else if((status = meGetString((uint8 *)"Value", MLFFZERO, 0, value,MAXBUF)) != TRUE)
         return status ;
     
     return setVar(var,value,regs) ;

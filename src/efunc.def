@@ -12,7 +12,7 @@
 *
 *	Creation Date:		17/10/91
 *
-*	Modification date:	%G%		<010203.1817>
+*	Modification date:	%G%		<010304.2351>
 *
 *	Current rev:		%I%
 *
@@ -73,8 +73,7 @@ DEFFUNC ("change-screen-depth",		0x00, changeScreenDepth,CK_SCNSIZ, __meFunc_SCN
 DEFFUNC ("change-screen-width",		0x00, changeScreenWidth,CK_SCNWTH, __meFunc_SCNWTH, &__meFunc_APROPS, 0)
 DEFFUNC ("command-apropos",		0x42, commandApropos,	CK_APROPS, __meFunc_APROPS, &__meFunc_CMDWAIT, 0)
 DEFFUNC ("command-wait",		0x42, commandWait,	CK_CMDWAIT, __meFunc_CMDWAIT, &__meFunc_CMPBUF, 0)
-DEFFUNC ("compare-windows",		0x42, cmpBuffers,	CK_CMPBUF, __meFunc_CMPBUF, &__meFunc_FILECPY, 0)
-DEFFUNC ("copy-file",			0x04, copyFile,		CK_FILECPY, __meFunc_FILECPY, &__meFunc_CPYREG, 0)
+DEFFUNC ("compare-windows",		0x42, cmpBuffers,	CK_CMPBUF, __meFunc_CMPBUF, &__meFunc_CPYREG, 0)
 DEFFUNC ("copy-region",			0x39, copyRegion,	CK_CPYREG, __meFunc_CPYREG, &__meFunc_WRDCNT, 0)
 DEFFUNC ("count-words",			0x42, countWords,	CK_WRDCNT, __meFunc_WRDCNT, &__meFunc_CRTCLBK, 0)
 DEFFUNC ("create-callback",             0x00, createCallback,   CK_CRTCLBK, __meFunc_CRTCLBK, &__meFunc_DEFHELP, 0)
@@ -103,7 +102,8 @@ DEFFUNC ("execute-line",		0x00, execLine,		CK_EXECMD, __meFunc_EXECMD, &__meFunc
 DEFFUNC ("execute-named-command",       0x00, execCommand,       CK_EXENCMD, __meFunc_EXENCMD, &__meFunc_EXESTR, 0)
 DEFFUNC ("execute-string",              0x00, execString,  	CK_EXESTR, __meFunc_EXESTR, &__meFunc_EXIT, &__meFunc_TRNCHR)
 DEFFUNC ("exit-emacs",			0x00, exitEmacs,	CK_EXIT, __meFunc_EXIT, &__meFunc_EXABREV, 0)
-DEFFUNC	("expand-abbrev",		0x04, expandAbbrev,	CK_EXABREV, __meFunc_EXABREV, &__meFunc_FILPAR, 0)
+DEFFUNC	("expand-abbrev",		0x04, expandAbbrev,	CK_EXABREV, __meFunc_EXABREV, &__meFunc_FILEOP, 0)
+DEFFUNC ("file-op",			0x04, fileOp,		CK_FILEOP, __meFunc_FILEOP, &__meFunc_FILPAR, 0)
 DEFFUNC ("fill-paragraph",		0x04, fillPara,		CK_FILPAR, __meFunc_FILPAR, &__meFunc_FILTBUF, 0)
 DEFFUNC ("filter-buffer",		0x04, meFilter,		CK_FILTBUF, __meFunc_FILTBUF, &__meFunc_FNDBFIL, 0)
 DEFFUNC ("find-bfile",			0x42, findBFile,	CK_FNDBFIL, __meFunc_FNDBFIL, &__meFunc_USEBUF, &__meFunc_PREFIX)
@@ -232,7 +232,7 @@ DEFFUNC ("shrink-window-vertically",	0x00, shrinkWindVert,	CK_REDVWND, __meFunc_
 DEFFUNC ("sort-lines",		        0x04, sortLines,	CK_SORTLNS, __meFunc_SORTLNS, &__meFunc_SPLLWRD, 0)
 DEFFUNC ("spell",                       0x42, spellWord,  	CK_SPLLWRD, __meFunc_SPLLWRD, &__meFunc_SWNDH, 0)
 DEFFUNC ("split-window-horizontally",	0x42, splitWindHorz,	CK_SWNDH, __meFunc_SWNDH, &__meFunc_SWNDV, 0)
-DEFFUNC ("split-window-vertically",	0x42, splitWindVert,	CK_SWNDV, __meFunc_SWNDV, &__meFunc_BGNMAC, &__meFunc_FILECPY)
+DEFFUNC ("split-window-vertically",	0x42, splitWindVert,	CK_SWNDV, __meFunc_SWNDV, &__meFunc_BGNMAC, 0)
 DEFFUNC ("start-kbd-macro",		0x42, startKbdMacro,	CK_BGNMAC, __meFunc_BGNMAC, &__meFunc_SUSPEND, 0)
 DEFFUNC ("suspend-emacs",		0x00, suspendEmacs,	CK_SUSPEND, __meFunc_SUSPEND, &__meFunc_DOTAB, 0)
 DEFFUNC ("tab",				0x04, meTab,		CK_DOTAB, __meFunc_DOTAB, &__meFunc_TRNSKEY, 0)

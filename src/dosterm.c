@@ -5,7 +5,7 @@
  *  Synopsis      : Dos terminal support routines
  *  Created By    : Steven Phillips
  *  Created       : 1994
- *  Last Modified : <010219.1502>
+ *  Last Modified : <010305.0749>
  *
  *  Description
  *
@@ -707,10 +707,10 @@ changeFont(int f, int n)
     char buf[NSTRING] ;
     int  mode ;
 
-    if(mlreply("Res mode",0,0,buf,NBUFN) != TRUE)
+    if(meGetString("Res mode",0,0,buf,NBUFN) != TRUE)
         return FALSE ;
     mode = meAtoi(buf) ;
-    if(mlreply("Res special",0,0,buf,NBUFN) != TRUE)
+    if(meGetString("Res special",0,0,buf,NBUFN) != TRUE)
         return FALSE ;
     dosResMode = mode ;
     dosResSpecial = meAtoi(buf) ;

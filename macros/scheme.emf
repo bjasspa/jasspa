@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Thu Feb 18 10:42:53 1999
-;  Last Modified : <010202.1541>
+;  Last Modified : <010305.0806>
 ;
 ;  Description
 ;
@@ -44,7 +44,7 @@ set-variable .scheme.osd-dbtt   8
 set-variable .scheme.osd-title  9
 set-variable .scheme.osd-child  10
 set-variable .scheme.osd-sbar   11
-; Schemes for hkdir
+; Schemes for hkdirtre & hkdirlst
 set-variable .scheme.dir-open   12
 set-variable .scheme.dir-closed 13
 set-variable .scheme.dir-uknown 14

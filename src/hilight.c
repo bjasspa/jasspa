@@ -5,7 +5,7 @@
  *  Synopsis      : Token based hilighting routines
  *  Created By    : Steven Phillips
  *  Created       : 21/12/94
- *  Last Modified : <001004.0828>
+ *  Last Modified : <010305.0749>
  *
  *  Description
  *
@@ -922,9 +922,9 @@ hilight(int f, int n)
     
     if(n == 0)
     {
-        if((mlreply((uint8 *)"Enter hi-light number",0,0,buf,MAXBUF-1) != TRUE) ||
+        if((meGetString((uint8 *)"Enter hi-light number",0,0,buf,MAXBUF-1) != TRUE) ||
            ((hilno = (uint8) meAtoi(buf)) == 0) || 
-           (mlreply((uint8 *)"Flags",0,0,buf,MAXBUF-1) != TRUE))
+           (meGetString((uint8 *)"Flags",0,0,buf,MAXBUF-1) != TRUE))
             return ABORT ;
         type = (uint16) meAtoi(buf) ;
         
@@ -936,18 +936,18 @@ hilight(int f, int n)
         root->type = type ;
         if(type & HFLOOKB)
         {
-            if(mlreply((uint8 *)"lines",0,0,buf,MAXBUF) != TRUE)
+            if(meGetString((uint8 *)"lines",0,0,buf,MAXBUF) != TRUE)
                 return ABORT ;
             root->ignore = (uint8) meAtoi(buf) ;
         }
-        if((ii=mlreply((uint8 *)"Scheme",0,0,buf,MAXBUF)) == ABORT)
+        if((ii=meGetString((uint8 *)"Scheme",0,0,buf,MAXBUF)) == ABORT)
             return ABORT ;
         if(ii == FALSE)
             ii = globScheme ;
         else if((ii=convertUserScheme(meAtoi(buf), -1)) < 0)
             return FALSE ;
         root->scheme = (meSCHEME) ii ;
-        if((ii=mlreply((uint8 *)"Trunc scheme",0,0,buf,MAXBUF)) == ABORT)
+        if((ii=meGetString((uint8 *)"Trunc scheme",0,0,buf,MAXBUF)) == ABORT)
             return ABORT ;
         if(ii == FALSE)
             ii = trncScheme ;
@@ -959,21 +959,21 @@ hilight(int f, int n)
     }
     n = (n < 0) ? ADDTOKEN_REMOVE:0 ;
     
-    if((mlreply((uint8 *)"Hi number",0,0,buf,MAXBUF-1) != TRUE) ||
+    if((meGetString((uint8 *)"Hi number",0,0,buf,MAXBUF-1) != TRUE) ||
        ((hilno = (uint8) meAtoi(buf)) == 0) ||
        (hilno >= noHilights) ||
        ((root  = hilights[hilno]) == NULL) ||
-       (mlreply((uint8 *)"Type",0,0,buf,MAXBUF-1) != TRUE))
+       (meGetString((uint8 *)"Type",0,0,buf,MAXBUF-1) != TRUE))
         return FALSE ;
     type = (uint16) meAtoi(buf) ;
     if(type & HLCOLUMN)
     {
         int fmCol, toCol ;
         
-        if((mlreply((uint8 *)"From",0,0,buf,MAXBUF-1) != TRUE) ||
+        if((meGetString((uint8 *)"From",0,0,buf,MAXBUF-1) != TRUE) ||
            ((fmCol = (uint8) meAtoi(buf)) < 0) ||
            (!(n & ADDTOKEN_REMOVE) &&
-            ((mlreply((uint8 *)"To",0,0,buf,MAXBUF-1) != TRUE) ||
+            ((meGetString((uint8 *)"To",0,0,buf,MAXBUF-1) != TRUE) ||
              ((toCol = (uint8) meAtoi(buf)) < fmCol))))
             return FALSE ;
         while(((node = (HILNODEPTR) root->rclose) != NULL) && (((int) node->close) < fmCol))
@@ -1003,7 +1003,7 @@ hilight(int f, int n)
         goto get_scheme ;
     }
     
-    if(mlreply((uint8 *)"Token",0,0,buf,MAXBUF-1) != TRUE)
+    if(meGetString((uint8 *)"Token",0,0,buf,MAXBUF-1) != TRUE)
         return FALSE ;
     
     /* add the token */
@@ -1017,30 +1017,30 @@ hilight(int f, int n)
     if(!(type & HLVALID))
     {
         if(((type & HLREPLACE) && 
-            ((mlreply((uint8 *)"Replace",0,0,buf,MAXBUF-1) != TRUE) ||
+            ((meGetString((uint8 *)"Replace",0,0,buf,MAXBUF-1) != TRUE) ||
              (meHiltTokenAddReplaceString(root,node,(uint8 *)buf,1) == NULL))) ||
            ((type & HLBRACKET) &&
-            ((mlreply((uint8 *)"Close",0,0,buf,MAXBUF-1) != TRUE) ||
+            ((meGetString((uint8 *)"Close",0,0,buf,MAXBUF-1) != TRUE) ||
              (meHiltTokenAddSearchString(root,node,(uint8 *) buf,0) == NULL) ||
              ((type & HLREPLACE) && 
-              ((mlreply((uint8 *)"Replace",0,0,buf,MAXBUF-1) != TRUE) ||
+              ((meGetString((uint8 *)"Replace",0,0,buf,MAXBUF-1) != TRUE) ||
                (meHiltTokenAddReplaceString(root,node,(uint8 *)buf,0) == NULL))) ||
-             (mlreply((uint8 *)"Ignore",0,0,buf,MAXBUF-1) != TRUE) ||
+             (meGetString((uint8 *)"Ignore",0,0,buf,MAXBUF-1) != TRUE) ||
              ((node->ignore = buf[0]) > 255))) ||
            ((type & HLCONTIN) &&
-            ((mlreply((uint8 *)"Continue",0,0,buf,MAXBUF-1) != TRUE) ||
+            ((meGetString((uint8 *)"Continue",0,0,buf,MAXBUF-1) != TRUE) ||
              ((node->close = (uint8 *) meStrdup(buf)) == NULL) ||
              ((type & HLREPLACE) && 
-              ((mlreply((uint8 *)"Replace",0,0,buf,MAXBUF-1) != TRUE) ||
+              ((meGetString((uint8 *)"Replace",0,0,buf,MAXBUF-1) != TRUE) ||
                ((node->rclose = (uint8 *) meStrdup(buf)) == NULL))))) ||
            ((type & HLBRANCH) &&
-            ((mlreply((uint8 *)"hilno",0,0,buf,MAXBUF-1) != TRUE) ||
+            ((meGetString((uint8 *)"hilno",0,0,buf,MAXBUF-1) != TRUE) ||
              ((node->ignore = (uint8) meAtoi(buf)) > 255))))
             return FALSE;
 get_scheme:        
         /* Get the colour index. This uses the root hilight 
          * colour if not specified. */
-        ii = mlreply((uint8 *)"Scheme",0,0,buf,MAXBUF-1);
+        ii = meGetString((uint8 *)"Scheme",0,0,buf,MAXBUF-1);
         if (ii == ABORT)
             return (FALSE);
         
@@ -2400,11 +2400,11 @@ indent(int f, int n)
     
     if(n == 0)
     {
-        if((mlreply((uint8 *)"Enter indent no",0,0,buf,MAXBUF-1) != TRUE) ||
+        if((meGetString((uint8 *)"Enter indent no",0,0,buf,MAXBUF-1) != TRUE) ||
            ((indno = (uint8) meAtoi(buf)) == 0) || 
-           (mlreply((uint8 *)"Flags",0,0,buf,MAXBUF-1) != TRUE) ||
+           (meGetString((uint8 *)"Flags",0,0,buf,MAXBUF-1) != TRUE) ||
            ((itype = meAtoi(buf)),
-            (mlreply((uint8 *)"look back",0,0,buf,MAXBUF) != TRUE)))
+            (meGetString((uint8 *)"look back",0,0,buf,MAXBUF) != TRUE)))
             return mlwrite(MWABORT|MWPAUSE,(uint8 *)"Invalid init-indent entry") ;
         if((indents[indno] = createHilight(indno,&noIndents,&indents)) == NULL)
             return FALSE ;
@@ -2416,11 +2416,11 @@ indent(int f, int n)
     
     n = (n < 0) ? ADDTOKEN_REMOVE:0 ;
     
-    if((mlreply((uint8 *)"Ind no",0,0,buf,MAXBUF-1) != TRUE) ||
+    if((meGetString((uint8 *)"Ind no",0,0,buf,MAXBUF-1) != TRUE) ||
        ((indno = (uint8) meAtoi(buf)) > noIndents) ||
        ((root  = indents[indno]) == NULL) ||
        ((itype = mlCharReply((uint8 *)"Type: ",0,typesChar,NULL)) == -1) ||
-       (mlreply((uint8 *)"Token",0,0,buf,MAXBUF-1) != TRUE))
+       (meGetString((uint8 *)"Token",0,0,buf,MAXBUF-1) != TRUE))
         return FALSE ;
     
     itype = (int) (((uint8 *)meStrchr(typesChar,itype)) - typesChar) ;
@@ -2438,7 +2438,7 @@ indent(int f, int n)
     {
         if(itype == 0)
         {
-            if(mlreply((uint8 *)"Close",0,0,buf,MAXBUF-1) != TRUE)
+            if(meGetString((uint8 *)"Close",0,0,buf,MAXBUF-1) != TRUE)
                 return FALSE ;
             meHiltTokenAddSearchString(root,NULL,(uint8 *) buf,(htype|n)) ;
         }
@@ -2453,7 +2453,7 @@ indent(int f, int n)
         root->type |= HIGOTCONT ;
     else if(itype <= 2)
     {
-        if(mlreply((uint8 *)"Close",0,0,buf,MAXBUF-1) != TRUE)
+        if(meGetString((uint8 *)"Close",0,0,buf,MAXBUF-1) != TRUE)
             return FALSE ;
         if(itype == 0)
         {
@@ -2464,14 +2464,14 @@ indent(int f, int n)
         else
         {
             if((meHiltTokenAddSearchString(root,node,(uint8 *) buf,0) == NULL) ||
-               (mlreply((uint8 *)"Ignore",0,0,buf,MAXBUF-1) != TRUE))
+               (meGetString((uint8 *)"Ignore",0,0,buf,MAXBUF-1) != TRUE))
                 return FALSE;
             node->ignore = buf[0] ;
         }
     }
     if(typesFlag[itype] & INDGOTIND)
     {
-        if(mlreply((uint8 *)"Indent",0,0,buf,MAXBUF-1) != TRUE)
+        if(meGetString((uint8 *)"Indent",0,0,buf,MAXBUF-1) != TRUE)
             return FALSE ;
         node->scheme |= ((int8) meAtoi(buf)) & 0x00ff ;
     }

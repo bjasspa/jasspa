@@ -338,7 +338,7 @@ meShellCommand(int f, int n)
     uint8 cmdstr[MAXBUF+20];		/* string holding command to execute */
 
     /* get the line wanted */
-    if((mlreply((uint8 *)"System", 0, 0, cmdstr, MAXBUF)) != TRUE)
+    if((meGetString((uint8 *)"System", 0, 0, cmdstr, MAXBUF)) != TRUE)
         return ABORT ;
     return doShellCommand(cmdstr) ;
 }
@@ -1156,7 +1156,7 @@ ipipeWrite(int f, int n)
     if(!meModeTest(curbp->b_mode,MDPIPE))
         return mlwrite(MWABORT,(uint8 *)"[Not an ipipe-buffer]") ;
     /* ask for string to insert */
-    if((ss=mlreply((uint8 *)"String", 0, 0, buff, MAXBUF)) != TRUE)
+    if((ss=meGetString((uint8 *)"String", 0, 0, buff, MAXBUF)) != TRUE)
         return ss ;
     
     ipipe = ipipes ;
@@ -1756,7 +1756,7 @@ ipipeCommand(int f, int n)
         return pipeCommand(f,n) ;
     }
     /*---	Get the command to pipe in */
-    if((ss=mlreply((uint8 *)"Ipipe", 0, 0, lbuf, MAXBUF)) != TRUE)
+    if((ss=meGetString((uint8 *)"Ipipe", 0, 0, lbuf, MAXBUF)) != TRUE)
         return ss ;
     if((n & 0x01) == 0)
     {
@@ -1929,7 +1929,7 @@ pipeCommand(int f, int n)
     uint8 pbuf[MAXBUF] ;
 
     /* get the command to pipe in (-14 cos need to append a string) */
-    if((ss=mlreply((uint8 *)"Pipe", 0, 0, line, MAXBUF-14)) != TRUE)
+    if((ss=meGetString((uint8 *)"Pipe", 0, 0, line, MAXBUF-14)) != TRUE)
         return ss ;
     if((n & 0x01) == 0)
     {
@@ -1970,7 +1970,7 @@ meFilter(int f, int n)
     mkTempName (filnam2,(uint8 *)FILTER_OUT_FILE,NULL);
 
     /* get the filter name and its args */
-    if ((s=mlreply((uint8 *)"Filter", 0, 0, line, MAXBUF)) != TRUE)
+    if ((s=meGetString((uint8 *)"Filter", 0, 0, line, MAXBUF)) != TRUE)
         return(s);
 
     if((s=bchange()) != TRUE)               /* Check we can change the buffer */

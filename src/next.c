@@ -5,7 +5,7 @@
  *  Synopsis      : Next file/line goto routines
  *  Created By    : Steven Phillips
  *  Created       : 01/06/1994
- *  Last Modified : <010115.1952>
+ *  Last Modified : <010305.0749>
  *
  *  Description
  *
@@ -227,7 +227,7 @@ addNextLine(int f, int n)
     uint8 name[MAXBUF], line[MAXBUF] ;
     int no, cnt ;
     
-    if(mlreply((uint8 *)"next name",0,0,name,MAXBUF) != TRUE)
+    if(meGetString((uint8 *)"next name",0,0,name,MAXBUF) != TRUE)
         return FALSE ;
     for(no=0 ; no<noNextLine ; no++)
         if(!meStrcmp(nextName[no],name))
@@ -244,7 +244,7 @@ addNextLine(int f, int n)
         return TRUE ;
     }
     line[0] = (n < 0) ? '0':'1' ;
-    if(mlreply((uint8 *)"next line",0,0,line+1,MAXBUF) != TRUE)
+    if(meGetString((uint8 *)"next line",0,0,line+1,MAXBUF) != TRUE)
         return FALSE ;
     if(no == noNextLine)
     {
@@ -308,9 +308,9 @@ addFileHook(int f, int n)
             fileHookCount=0 ;
             return FALSE ;
         }
-        if((mlreply((uint8 *)"File id",0,0,buff,MAXBUF) != TRUE) ||
+        if((meGetString((uint8 *)"File id",0,0,buff,MAXBUF) != TRUE) ||
            ((fileHookExt[fileHookCount] = meStrdup(buff)) == NULL) ||
-           (mlreply((uint8 *)"Hook func",0,0,buff,MAXBUF) != TRUE) ||
+           (meGetString((uint8 *)"Hook func",0,0,buff,MAXBUF) != TRUE) ||
            ((fileHookFunc[fileHookCount] = meStrdup(buff)) == NULL))
             return FALSE ;
         if(f == FALSE)
@@ -386,7 +386,7 @@ doRcsCommand(uint8 *fname, register uint8 *comStr)
             }
             else
             {
-                if(mlreply((uint8 *)"Enter message",0,0,pat+ii,MAXBUF-ii) != TRUE)
+                if(meGetString((uint8 *)"Enter message",0,0,pat+ii,MAXBUF-ii) != TRUE)
                     return FALSE ;
                 ii = meStrlen(pat) ;
             }

@@ -5,7 +5,7 @@
  *  Synopsis      : Unix X-Term and Termcap support routines
  *  Created By    : Steven Phillips
  *  Created       : 1993
- *  Last Modified : <010219.1533>
+ *  Last Modified : <010305.0848>
  *
  *  Description
  *    This implementation of unix support currently only supports Unix v5 (_USG),
@@ -2192,7 +2192,7 @@ TTwaitForChar(void)
             TThandleBlink(0);               /* Initiate a cursor blink */
 #ifdef _URLSUPP
         if(isTimerExpired(SOCKET_TIMER_ID)) /* socket connection time-out */
-            ffCloseSockets(1) ;
+            ffFileOp(NULL,NULL,meRWFLAG_FTPCLOSE|meRWFLAG_SILENT) ;
 #endif
         if(TTahead())
             break ;
@@ -2478,7 +2478,7 @@ TTsleep(int  msec, int  intable)
             TThandleBlink(0);               /* Initiate a cursor blink */
 #ifdef _URLSUPP
         if(isTimerExpired(SOCKET_TIMER_ID)) /* socket connection time-out */
-            ffCloseSockets(1) ;
+            ffFileOp(NULL,NULL,meRWFLAG_FTPCLOSE|meRWFLAG_SILENT) ;
 #endif
         if(intable && TTahead())
             break ;
@@ -2732,7 +2732,7 @@ changeFont(int f, int n)
     
     /* Get the name of the font. If it is specified as default then
      * do not collect the remaining arguments */
-    if(mlreply((uint8 *)"Font Name", 0, 0, buff, MAXBUF) == ABORT)
+    if(meGetString((uint8 *)"Font Name", 0, 0, buff, MAXBUF) == ABORT)
         return FALSE ;
 
     /* Change the font */

@@ -10,7 +10,7 @@
 *
 *	Author:			Danial Lawrence
 *
-*	Creation Date:		14/05/86 12:37		<010219.1448>
+*	Creation Date:		14/05/86 12:37		<010305.1128>
 *
 *	Modification date:	%G% : %U%
 *
@@ -731,7 +731,7 @@ inputFileName(uint8 *prompt, uint8 *fn, int corFlag)
     buf = (corFlag) ? tmp:fn ;
 
     getFilePath(curbp->b_fname,buf) ;
-    s = mlreply(prompt,(MLFILECASE|MLNORESET|MLMACNORT), 0, buf, FILEBUF) ;
+    s = meGetString(prompt,(MLFILECASE|MLNORESET|MLMACNORT), 0, buf, FILEBUF) ;
     if(corFlag && (s == TRUE))
         fileNameCorrect(tmp,fn,NULL) ;
     return s ;
@@ -1839,14 +1839,18 @@ writeFileChecks(uint8 *dfname, uint8 *sfname, uint8 *lfname, int flags)
     fn = (lfname[0] == '\0') ? dfname:lfname ;
     if(flags & 0x01)
     {
+        uint8 prompt[MAXBUF+48];
         BUFFER *bp ;
         
         /* Check for write-out filename problems */
-        if((s == meFILETYPE_REGULAR) &&
-           (mlyesno((uint8 *)"File already exists, overwrite") != TRUE))
+        if(s == meFILETYPE_REGULAR)
         {
-            ctrlg(FALSE,1);
-            return NULL ;
+            sprintf((char *)prompt,"File %s already exists, overwrite",fn) ;
+            if(mlyesno(prompt) != TRUE)
+            {
+                ctrlg(FALSE,1);
+                return NULL ;
+            }
         }
         /* Quick check on the file write condition */
         if(writeCheck (fn, flags, &stats) != TRUE)
@@ -1869,8 +1873,7 @@ writeFileChecks(uint8 *dfname, uint8 *sfname, uint8 *lfname, int flags)
                !fnamecmp(bp->b_fname,fn))
 #endif
             {
-                uint8 prompt[MAXBUF];
-                sprintf((char *)prompt, "Buffer %s is the same file, write",bp->b_bname) ;
+                sprintf((char *)prompt, "Buffer %s is the same file, overwrite",bp->b_bname) ;
                 if(mlyesno(prompt) != TRUE)
                 {
                     ctrlg(FALSE,1);
@@ -1883,17 +1886,27 @@ writeFileChecks(uint8 *dfname, uint8 *sfname, uint8 *lfname, int flags)
     return fn ;
 }
 
+#define meFILEOP_CHECK    0x001
+#define meFILEOP_BACKUP   0x002
+#define meFILEOP_FTPCLOSE 0x010
+#define meFILEOP_DELETE   0x020
+#define meFILEOP_MOVE     0x040
+#define meFILEOP_COPY     0x080
+#define meFILEOP_MKDIR    0x100
 int
-copyFile(int f, int n)
+fileOp(int f, int n)
 {
     uint8 sfname[FILEBUF], dfname[FILEBUF], lfname[FILEBUF], *fn ;
-    int dFlags ;
+    int dFlags=0 ;
 	
-    if(n & 0x04)
+    if((n & (meFILEOP_FTPCLOSE|meFILEOP_DELETE|meFILEOP_MOVE|meFILEOP_COPY|meFILEOP_MKDIR)) == 0)
+        return mlwrite(MWABORT,(uint8 *)"[No operation set]") ;
+       
+    if(n & meFILEOP_DELETE)
     {
         if (inputFileName((uint8 *)"Delete file", sfname,1) != TRUE)
             return ABORT ;
-        if(n & 0x01)
+        if(n & meFILEOP_CHECK)
         {        
             uint8 prompt[MAXBUF];
             sprintf((char *)prompt, "%s: Delete file",sfname) ;
@@ -1901,35 +1914,24 @@ copyFile(int f, int n)
                 return ctrlg(FALSE,1);
         }
         fn = NULL ;
+        dFlags = meRWFLAG_DELETE ;
     }
-    else if(n & 0x10)
-    {
-        int s ;
-        if (inputFileName((uint8 *)"Create dir", sfname,1) != TRUE)
-            return ABORT ;
-        /* check that nothing of that name currently exists */
-        if (((s=getFileStats(sfname,0,NULL,NULL)) != meFILETYPE_NOTEXIST)
-#ifdef _URLSUPP
-            && (s != meFILETYPE_FTP)
-#endif
-            )
-            return mlwrite(MWABORT,(uint8 *)"[%s already exists]",sfname);
-        fn = NULL ;
-    }
-    else
+    else if(n & (meFILEOP_MOVE|meFILEOP_COPY))
     {
         static uint8 prompt[]="Copy file to" ;
-        if(n & 0x08)
+        if(n & meFILEOP_MOVE)
         {
             prompt[0] = 'M' ;
             prompt[2] = 'v' ;
             prompt[3] = 'e' ;
+            dFlags = meRWFLAG_DELETE ;
         }
         else
         {
             prompt[0] = 'C' ;
             prompt[2] = 'p' ;
             prompt[3] = 'y' ;
+            dFlags = 0 ;
         }
         prompt[9] = '\0' ;
         if (inputFileName(prompt, sfname,1) != TRUE)
@@ -1944,15 +1946,29 @@ copyFile(int f, int n)
         if((fn=writeFileChecks(dfname,sfname,lfname,n)) == NULL)
             return ABORT ;
         /* can this be done by a simple rename? */
-        if(((n & 0xfe) == 0x8) && !meRename(sfname,fn))
+        if(((n & (meFILEOP_BACKUP|meFILEOP_MOVE)) == meFILEOP_MOVE) && !meRename(sfname,fn))
             return TRUE ;
     }
-    dFlags = (n & 0x0c) ? meRWFLAG_DELETE:0 ;
-    if(n & 0x02)
+    else if(n & meFILEOP_MKDIR)
+    {
+        int s ;
+        if (inputFileName((uint8 *)"Create dir", sfname,1) != TRUE)
+            return ABORT ;
+        /* check that nothing of that name currently exists */
+        if (((s=getFileStats(sfname,0,NULL,NULL)) != meFILETYPE_NOTEXIST)
+#ifdef _URLSUPP
+            && (s != meFILETYPE_FTP)
+#endif
+            )
+            return mlwrite(MWABORT,(uint8 *)"[%s already exists]",sfname);
+        fn = NULL ;
+        dFlags = meRWFLAG_MKDIR ;
+    }
+    if(n & meFILEOP_BACKUP)
         dFlags |= meRWFLAG_BACKUP ;
-    if(n & 0x10)
-        dFlags |= meRWFLAG_MKDIR ;
-    return ffCopyFile(sfname,fn,dFlags) ;
+    if(n & meFILEOP_FTPCLOSE)
+        dFlags |= meRWFLAG_FTPCLOSE ;
+    return ffFileOp(sfname,fn,dFlags) ;
 }
 
 /*

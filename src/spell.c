@@ -5,7 +5,7 @@
  *  Synopsis      : Spell checking routines
  *  Created By    : Steven Phillips
  *  Created       : 21/12/94
- *  Last Modified : <000814.0937>
+ *  Last Modified : <010305.0749>
  *
  *  Description
  *
@@ -441,7 +441,7 @@ findDictionary(int flag)
     uint8 fname[FILEBUF], tmp[FILEBUF] ;
     int found ;
     
-    if(mlreply((uint8 *)"Dictionary name",MLFILECASE,0,tmp,FILEBUF) != TRUE)
+    if(meGetString((uint8 *)"Dictionary name",MLFILECASE,0,tmp,FILEBUF) != TRUE)
         return FALSE ;
     
     if(!fileLookup(tmp,(uint8 *)".edf",meFL_CHECKDOT|meFL_USESRCHPATH,fname))
@@ -615,7 +615,7 @@ addSpellRule(int f, int n)
         }
         else if((f == FALSE) && (rule == '#'))
         {
-            if(mlreply((uint8 *)"Guess score",MLNOSPACE,0,buff,MAXBUF) != TRUE)
+            if(meGetString((uint8 *)"Guess score",MLNOSPACE,0,buff,MAXBUF) != TRUE)
                 return ABORT ;
             maxScore = meAtoi(buff) ;
             return TRUE ;
@@ -624,7 +624,7 @@ addSpellRule(int f, int n)
         {
             rule = NOSPELLRULES ;
             if(((rr = meMalloc(sizeof(meSPELLRULE))) == NULL) || 
-               (mlreply((uint8 *)"Rule",MLNOSPACE,0,buff,MAXBUF) != TRUE) ||
+               (meGetString((uint8 *)"Rule",MLNOSPACE,0,buff,MAXBUF) != TRUE) ||
                ((rr->ending = meStrdup(buff)) == NULL))
                 return ABORT ;
             rr->remove = NULL ;
@@ -641,11 +641,11 @@ addSpellRule(int f, int n)
             
             rule -= FRSTSPELLRULE ;
             if(((rr = meMalloc(sizeof(meSPELLRULE))) == NULL) || 
-               (mlreply((uint8 *)"Ending",MLNOSPACE,0,buff,MAXBUF) != TRUE) ||
+               (meGetString((uint8 *)"Ending",MLNOSPACE,0,buff,MAXBUF) != TRUE) ||
                ((rr->ending = (uint8 *) meStrdup(buff)) == NULL) ||
-               (mlreply((uint8 *)"Remove",MLNOSPACE,0,buff,MAXBUF) != TRUE) ||
+               (meGetString((uint8 *)"Remove",MLNOSPACE,0,buff,MAXBUF) != TRUE) ||
                ((rr->remove = (uint8 *) meStrdup(buff)) == NULL) ||
-               (mlreply((uint8 *)"Append",MLNOSPACE,0,buff,MAXBUF) != TRUE) ||
+               (meGetString((uint8 *)"Append",MLNOSPACE,0,buff,MAXBUF) != TRUE) ||
                ((rr->append = (uint8 *) meStrdup(buff)) == NULL))
                 return ABORT ;
             rr->removeLen = meStrlen(rr->remove) ;
@@ -1816,7 +1816,7 @@ spellWord(int f, int n)
     
     if(n & SPELLWORD_GET)
     {
-        if(mlreply((uint8 *)"Enter word", MLNOSPACE,0,resultStr+1,meMAXWORDLEN) != TRUE)
+        if(meGetString((uint8 *)"Enter word", MLNOSPACE,0,resultStr+1,meMAXWORDLEN) != TRUE)
             return ABORT ;
         spellWordToLatinFont(word,resultStr+1) ;
     }
@@ -1923,7 +1923,7 @@ spellWord(int f, int n)
         memcpy(meWordGetWord(wd),word,len) ;
         meWordSetWordLen(wd,len) ;
         
-        if(mlreply((uint8 *)"Enter flags", MLNOSPACE,0,word,meMAXWORDLEN) != TRUE)
+        if(meGetString((uint8 *)"Enter flags", MLNOSPACE,0,word,meMAXWORDLEN) != TRUE)
             return ABORT ;
         len = meStrlen(word) ;
         memcpy(meWordGetFlag(wd),word,len) ;

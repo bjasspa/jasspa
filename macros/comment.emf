@@ -1,14 +1,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
-;  Author        : $Author: jon $
 ;  Created By    : Steven Phillips
 ;  Created       : Mon Feb 26 08:23:33 2001
-;  Last Modified : <010226.1039>
-;
 ;  Description   : General comment adding and removing routines
-;
 ;  Notes
-;
 ;      To use, the current buffer fhook command variable .comment must be set
 ;      to a list giving the following:
 ;           "|<Comment start>|<Comment end>|<comment pad>|"
@@ -16,9 +10,7 @@
 ;           set-variable .fhook-c.comment "|/*|*/|*|"
 ;           set-variable .fhook-emf.comment "|;||;|"
 ;
-;  History
-;
-;  Copyright (c) 2001 Parametric Technology Corporation.
+;  Copyright (c) 2001 JASPPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; 
 ; comment line ie xxx -> <comment start>xxx

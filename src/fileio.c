@@ -1,7 +1,7 @@
 /*
  *	SCCS:		%W%		%G%		%U%
  *
- *	Last Modified :	<010224.0132>
+ *	Last Modified :	<010305.0846>
  * 
  *****************************************************************************
  * 
@@ -520,7 +520,7 @@ ftpCommand(int flags, char *fmt, ...)
     return ftpReadReply();
 }
     
-void
+static void
 ffCloseSockets(int logoff)
 {
     timerClearExpired(SOCKET_TIMER_ID) ;
@@ -640,7 +640,7 @@ ffurlGetInfo(int type, uint8 **host, uint8 **port, uint8 **user, uint8 **pass)
         {
             uint8 buff[NPAT] ;
             
-            if((mlreply((uint8 *)"Password", MLNOHIST, 0, buff, NPAT-1) != TRUE) ||
+            if((meGetString((uint8 *)"Password", MLNOHIST, 0, buff, NPAT-1) != TRUE) ||
                ((ffpasswdReg = regSet(root,(uint8 *)"pass",buff)) == NULL))
                 return FALSE ;
             ffpasswdReg->mode |= REGMODE_INTERNAL ;
@@ -927,6 +927,31 @@ ffHttpFileOpen(uint8 *host, uint8 *port, uint8 *user, uint8 *pass, uint8 *file, 
     return mlwrite(MWABORT|MWPAUSE,(uint8 *)"[Failed to read header of %s]",ss) ;
 }
 
+static void
+ffUrlFileSetupFlags(int flag)
+{
+    uint8 *ss ;
+    
+    /* setup the flags and console buffer */
+    ffurlFlags = ffURL_CONSOLE ;
+    if ((ss = getUsrVar (ffurlFlagsVName[fftype-meURLTYPE_HTTP])) != errorm)
+    {
+        if(meStrchr(ss,'c') != NULL)
+            ffurlFlags |= ffURL_CONSOLE ;
+        if(meStrchr(ss,'s') != NULL)
+            ffurlFlags |= ffURL_SHOW_CONSOLE ;
+        if(meStrchr(ss,'p') != NULL)
+            ffurlFlags |= ffURL_SHOW_PROGRESS ;
+    }
+    if((ffurlFlags & ffURL_CONSOLE) &&
+       ((ffurlBp=bfind(ffurlConsoleBName[fftype-meURLTYPE_HTTP],BFND_CREAT)) != NULL))
+    {
+        meModeClear(ffurlBp->b_mode,MDUNDO) ;
+        if((ffurlFlags & ffURL_SHOW_CONSOLE) && !(flag & 0x01))
+            wpopup(ffurlConsoleBName[fftype-meURLTYPE_HTTP],0) ;
+    }
+}
+
 static int
 ffUrlFileOpen(uint8 *urlName, uint8 *user, uint8 *pass, uint32 rwflag)
 {
@@ -957,24 +982,7 @@ ffUrlFileOpen(uint8 *urlName, uint8 *user, uint8 *pass, uint32 rwflag)
     else if(rwflag & meRWFLAG_WRITE)
         ffwp = ffpInvalidVal ;
     
-    /* setup the flags and console buffer */
-    ffurlFlags = ffURL_CONSOLE ;
-    if ((ss = getUsrVar (ffurlFlagsVName[fftype-meURLTYPE_HTTP])) != errorm)
-    {
-        if(meStrchr(ss,'c') != NULL)
-            ffurlFlags |= ffURL_CONSOLE ;
-        if(meStrchr(ss,'s') != NULL)
-            ffurlFlags |= ffURL_SHOW_CONSOLE ;
-        if(meStrchr(ss,'p') != NULL)
-            ffurlFlags |= ffURL_SHOW_PROGRESS ;
-    }
-    if((ffurlFlags & ffURL_CONSOLE) &&
-       ((ffurlBp=bfind(ffurlConsoleBName[fftype-meURLTYPE_HTTP],BFND_CREAT)) != NULL))
-    {
-        meModeClear(ffurlBp->b_mode,MDUNDO) ;
-        if(ffurlFlags & ffURL_SHOW_CONSOLE)
-            wpopup(ffurlConsoleBName[fftype-meURLTYPE_HTTP],0) ;
-    }
+    ffUrlFileSetupFlags(0) ;
     
     /* skip the http: or ftp: */
     ss = (fftype == meURLTYPE_FTP) ? urlName+6:urlName+7 ;
@@ -1643,7 +1651,7 @@ ffReadFileOpen(uint8 *fname, uint32 flags, BUFFER *bp)
 #endif
         {
 #ifdef _WIN32
-            if((ffrp=CreateFile(strWfn1(fname),GENERIC_READ,FILE_SHARE_READ|FILE_SHARE_WRITE,NULL,OPEN_EXISTING,
+            if((ffrp=CreateFile(fname,GENERIC_READ,FILE_SHARE_READ|FILE_SHARE_WRITE,NULL,OPEN_EXISTING,
                                FILE_ATTRIBUTE_NORMAL,NULL)) == INVALID_HANDLE_VALUE)
 #else
             if ((ffrp=fopen((char *)fname, "rb")) == NULL)
@@ -1890,7 +1898,7 @@ ffWriteFileOpen(uint8 *fname, uint32 flags, BUFFER *bp)
                         filenameOld = filenameOldB ;
                         if(!meTestExist(filenameOld) && meUnlink(filenameOld))
                             mlwrite(MWABORT|MWPAUSE,"[Unable to remove backup file %s]", filenameOld) ;
-                        else if(meRename(fname,filenameOld) && (ffCopyFile(fname,filenameOld,meRWFLAG_DELETE) != TRUE))
+                        else if(meRename(fname,filenameOld) && (ffFileOp(fname,filenameOld,meRWFLAG_DELETE) != TRUE))
                             mlwrite(MWABORT|MWPAUSE,"[Unable to backup file to %s]",filenameOld) ;
                     }
                     else
@@ -1926,7 +1934,7 @@ ffWriteFileOpen(uint8 *fname, uint32 flags, BUFFER *bp)
                             {
                                 sprintf((char *)filename2+ll,"%d~",ii--) ;
                                 sprintf((char *)filename+ll,"%d~",ii) ;
-                                if(meRename(filename,filename2) && (ffCopyFile(filename,filename2,meRWFLAG_DELETE) != TRUE))
+                                if(meRename(filename,filename2) && (ffFileOp(filename,filename2,meRWFLAG_DELETE) != TRUE))
                                 {
                                     mlwrite(MWABORT|MWPAUSE,(uint8 *)"[Unable to backup file to %s (%d - %s)]", 
                                             filename2,errno,sys_errlist[errno]) ;
@@ -1942,7 +1950,7 @@ ffWriteFileOpen(uint8 *fname, uint32 flags, BUFFER *bp)
 #endif
                     if(!meTestExist(filename) && meUnlink(filename))
                         mlwrite(MWABORT|MWPAUSE,(uint8 *)"[Unable to remove backup file %s]", filename) ;
-                    else if(meRename(filenameOld,filename) && (ffCopyFile(filenameOld,filename,meRWFLAG_DELETE) != TRUE))
+                    else if(meRename(filenameOld,filename) && (ffFileOp(filenameOld,filename,meRWFLAG_DELETE) != TRUE))
                         mlwrite(MWABORT|MWPAUSE,(uint8 *)"[Unable to backup file to %s (%d - %s)]", 
                                 filename,errno,sys_errlist[errno]) ;
                     else if(flags & 0xffff)
@@ -1984,7 +1992,7 @@ ffWriteFileOpen(uint8 *fname, uint32 flags, BUFFER *bp)
             /* Windows must open the file with the correct permissions to support the
              * compress attribute
              */
-            if((ffwp=CreateFile(strWfn1(fname),GENERIC_WRITE,FILE_SHARE_READ,NULL,create,
+            if((ffwp=CreateFile(fname,GENERIC_WRITE,FILE_SHARE_READ,NULL,create,
                                ((bp == NULL) ? meUmask:bp->stats.stmode),
                                NULL)) == INVALID_HANDLE_VALUE)
                 return mlwrite(MWABORT,(uint8 *)"Cannot open file [%s] for writing",fname);
@@ -2181,7 +2189,7 @@ ffWriteFile(uint8 *fname, uint32 flags, BUFFER *bp)
 }
 
 int
-ffCopyFile(uint8 *sfname, uint8 *dfname, uint32 dFlags)
+ffFileOp(uint8 *sfname, uint8 *dfname, uint32 dFlags)
 {
     int rr=TRUE ;
     if(dfname != NULL)
@@ -2210,49 +2218,19 @@ ffCopyFile(uint8 *sfname, uint8 *dfname, uint32 dFlags)
     {
         rr = ffWriteFileOpen(sfname,dFlags & (meRWFLAG_DELETE|meRWFLAG_MKDIR|meRWFLAG_BACKUP),NULL) ;
     }
+#ifdef _URLSUPP
+    if((rr == TRUE) && (dFlags & meRWFLAG_FTPCLOSE) && !meSocketIsBad(ffccsk))
+    {
+#ifdef _UNIX
+        meSigRelease() ;
+#endif
+        if(!(dFlags & meRWFLAG_NOCONSOLE))
+            ffUrlFileSetupFlags((dFlags & meRWFLAG_SILENT) ? 1:0) ;
+        ffCloseSockets(1) ;
+#ifdef _UNIX
+        meSigRelease() ;
+#endif
+    }
+#endif
     return rr ;
 }
-
-#ifdef _WIN32
-char *
-strWfn1 (uint8 *s)
-{
-    static char d[FILEBUF];
-    char *p = d;
-    char cc;
-    
-    if (s == NULL)
-        return NULL;
-    
-    while ((cc = (char )(*s++)) != 0)
-    {
-        if (cc == '/')
-            cc = '\\';
-        *p++ = cc;
-    }
-    *p = cc;
-    return d;
-}
-
-char *
-strWfn2 (uint8 *s)
-{
-    static char d[FILEBUF];
-    char *p = d;
-    char cc;
-    
-    if (s == NULL)
-        return NULL;
-    
-    while ((cc = (char )(*s++)) != 0)
-    {
-        if (cc == '/')
-            cc = '\\';
-        *p++ = cc;
-    }
-    *p = cc;
-    return d;
-}
-#endif
-
-

@@ -1,7 +1,7 @@
 /*
  *      SCCS:           %W%             %G%             %U%
  *
- *      Last Modified : <010227.1242>
+ *      Last Modified : <010305.0749>
  *
  *      EDEF:           Global variable definitions for
  *                      MicroEMACS 3.2
@@ -310,7 +310,7 @@ extern uint8 *rcsCiFStr ;
 extern uint8 *rcsUeStr ;
 #endif
 
-/* history variables used in mlgetstring */
+/* history variables used in meGetStringFromUser */
 extern  uint8 numStrHist ;              /* curent no. of hist. strings    */
 extern  uint8 numBuffHist ;             /* curent no. of hist. buff names */
 extern  uint8 numCommHist ;             /* curent no. of hist. comm names */
@@ -707,7 +707,7 @@ uint8 *rcsCiFStr=NULL ;
 uint8 *rcsUeStr=NULL ;
 #endif
 
-/* history variables used in mlgetstring */
+/* history variables used in meGetStringFromUser */
 uint8 numStrHist = 0 ;                  /* curent no. of hist. strings    */
 uint8 numBuffHist = 0 ;                 /* curent no. of hist. buff names */
 uint8 numCommHist = 0 ;                 /* curent no. of hist. comm names */

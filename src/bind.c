@@ -10,7 +10,7 @@
 *
 *	Author:			Daniel Lawrence
 *
-*	Creation Date:		11/02/86 12:37		<010219.2220>
+*	Creation Date:		11/02/86 12:37		<010305.0801>
 *
 *	Modification date:	%G% : %U%
 *
@@ -55,7 +55,7 @@
 #include "eskeys.h"
 
 uint16
-getskey(uint8 **tp)
+meGetKeyFromString(uint8 **tp)
 {
     uint8 *ss=*tp, cc, dd ;
     uint16 ii=0 ;
@@ -113,10 +113,15 @@ getskey(uint8 **tp)
     return ii ;
 }
 
-/* get a command key sequence from the keyboard	*/
-/* flag	- meGETKEY flags */
+/* meGetKey
+ * 
+ * get a key sequence from either the current macro execute line, a keyboard
+ * macro or the keyboard
+ * 
+ *     flag - meGETKEY flags
+ */
 uint16
-getckey(int flag)
+meGetKey(int flag)
 {
     register uint16 cc ;	/* character fetched */
     
@@ -129,7 +134,7 @@ getckey(int flag)
         macarg(tok);	        /* get the next token */
         
         tp = tok ;
-        cc = getskey(&tp) ;
+        cc = meGetKeyFromString(&tp) ;
         
         if(!(flag & meGETKEY_SINGLE))
         {
@@ -147,7 +152,7 @@ getckey(int flag)
                 uint8  dd ;
                 while(((dd=*tp) != '\0') && isSpace(dd))
                     tp++ ;
-                ee = getskey(&tp) ;
+                ee = meGetKeyFromString(&tp) ;
                 if((ee >= 'A') && (ee <= 'Z'))
                     /* with a prefix make a letter lower case */
                     ee ^= 0x20 ;
@@ -157,12 +162,12 @@ getckey(int flag)
     }
     else
         /* or the normal way */
-        cc = getkeycmd(FALSE,0,flag) ;
+        cc = meGetKeyFromUser(FALSE,0,flag) ;
     return cc ;
 }
 
 int
-cmdchar(uint16 cc, uint8 *d)
+meGetStringFromChar(uint16 cc, uint8 *d)
 {
     register int  doff=0, spec ;
     register uint8 *ss ;
@@ -231,15 +236,15 @@ name_copy:
 /* c   - 	sequence to translate */
 /* seq - 	destination string for sequence */
 void
-cmdstr(uint16 cc, register uint8 * seq)
+meGetStringFromKey(uint16 cc, register uint8 * seq)
 {
     /* apply prefix sequence if needed */
     if(cc & ME_PREFIX_MASK)
     {
-        seq += cmdchar(prefixc[(cc&ME_PREFIX_MASK)>>ME_PREFIX_BIT],seq);
+        seq += meGetStringFromChar(prefixc[(cc&ME_PREFIX_MASK)>>ME_PREFIX_BIT],seq);
         *seq++ = ' ' ;
     }
-    seq += cmdchar(cc,seq);
+    seq += meGetStringFromChar(cc,seq);
     *seq = 0;	/* terminate the string */
 }
 
@@ -259,10 +264,10 @@ descKey(int f, int n)	/* describe the command for a certain key */
     mlwrite(MWCURSOR,dskyPrompt);
     
     /* get the command sequence to describe */
-    cc = getckey(meGETKEY_SILENT);	/* get a silent command sequence */
+    cc = meGetKey(meGETKEY_SILENT);	/* get a silent command sequence */
     
     /* change it to something we can print as well */
-    cmdstr(cc, outseq);
+    meGetStringFromKey(cc, outseq);
     
     /* find the right function */
     if ((found = decode_key(cc,&arg)) < 0)
@@ -390,7 +395,7 @@ setCharMask(int f, int n)
     uint8 mask1, mask2 ;
     
     meStrcpy(tnkyPrompt+14,"flags") ;
-    if(mlreply(tnkyPrompt,0,0,buf1,20) != TRUE)
+    if(meGetString(tnkyPrompt,0,0,buf1,20) != TRUE)
         return FALSE ;
     /* setup the masks */
     flags = 0 ;
@@ -481,7 +486,7 @@ setCharMask(int f, int n)
         if(flags & 0x1A003)
             return mlwrite(MWABORT,(uint8 *)"[Cannot set flags u, l, A, L or U]");
         meStrcpy(tnkyPrompt+14,"chars") ;
-        if(mlreply(tnkyPrompt,MLFFZERO,0,buf1,MAXBUF) != TRUE)
+        if(meGetString(tnkyPrompt,MLFFZERO,0,buf1,MAXBUF) != TRUE)
             return FALSE ;
         if(flags & 0x4000)
         {
@@ -576,7 +581,7 @@ bindkey(uint8 *prom, int f, int n, uint16 *lclNoBinds, KEYTAB **lclBinds)
     
     /*---	Get the function name to bind it to */
     
-    if(mlreply(prom, MLCOMMAND, 0, buf, MAXBUF) != TRUE)
+    if(meGetString(prom, MLCOMMAND, 0, buf, MAXBUF) != TRUE)
         return FALSE ;
     if((namidx = decode_fncname(buf,0)) < 0)
         return FALSE ;
@@ -601,13 +606,13 @@ bindkey(uint8 *prom, int f, int n, uint16 *lclNoBinds, KEYTAB **lclBinds)
         return mlwrite(MWABORT,(uint8 *)"Can not locally bind [%s]",buf) ;
 #endif              
     mlwrite(MWCURSOR|MWCLEXEC,(uint8 *)"%s [%s] to: ",prom,buf) ;
-    cc = getckey((ss) ? meGETKEY_SILENT|meGETKEY_SINGLE:meGETKEY_SILENT) ;
+    cc = meGetKey((ss) ? meGETKEY_SILENT|meGETKEY_SINGLE:meGETKEY_SILENT) ;
     
     /*---   Change it to something we can print as well */
     
     if (!clexec)
     {
-        cmdstr(cc,outseq);
+        meGetStringFromKey(cc,outseq);
         mlwrite(0,(uint8 *)"%s [%s] to: %s",prom,buf,outseq);
     }
     
@@ -779,7 +784,7 @@ unbindkey(uint8 *prom, int n, uint16 *lclNoBinds, KEYTAB **lclBinds)
     /*---	Get the command sequence to unbind */
     
     /* get a command sequence */
-    cc = getckey((n==0) ? meGETKEY_SILENT|meGETKEY_SINGLE:meGETKEY_SILENT);
+    cc = meGetKey((n==0) ? meGETKEY_SILENT|meGETKEY_SINGLE:meGETKEY_SILENT);
     
     /* If interactive then there is no really need to print the string because
      * you will probably not see it !! The TTputc() is dangerous and squirts
@@ -787,7 +792,7 @@ unbindkey(uint8 *prom, int n, uint16 *lclNoBinds, KEYTAB **lclBinds)
      * we were in a macro and has not moved the cursor to the message line.
      * Hence, safer bet is to re-do the mlwrite(); my preference would be
      * to remove the keyboard echo !! - Jon Green 13/03/97 */
-    cmdstr(cc, outseq);		/* change to something printable */
+    meGetStringFromKey(cc, outseq);		/* change to something printable */
     mlwrite(MWCURSOR|MWCLEXEC,(uint8 *)"%s unbind: %s", prom, outseq);
 #if LCLBIND
     if(lclNoBinds != NULL)
@@ -939,7 +944,7 @@ buildlist(int type, int n, uint8 *mstring)
                 outseq[cpos++] = ' ';
                 outseq[cpos++] = '"';
                 /*---	Add in the command sequence */
-                cmdstr(ktp->code, &outseq[cpos]);
+                meGetStringFromKey(ktp->code, &outseq[cpos]);
                 meStrcat(outseq+cpos,"\"");
                 
                 /* and add it as a line into the buffer */
@@ -976,7 +981,7 @@ commandApropos(int f, int n)	/* Apropos (List functions that match a substring) 
     uint8 mstring[NSTRING];	/* string to match cmd names to */
     int	  status;		/* status return */
 
-    if ((status = mlreply((uint8 *)"Apropos string", MLCOMMAND, 0, 
+    if ((status = meGetString((uint8 *)"Apropos string", MLCOMMAND, 0, 
                           mstring+2, NSTRING-4)) != TRUE)
         return status ;
     mstring[0] = '.' ;
@@ -1004,7 +1009,7 @@ showBinding(BUFFER *bp, KEYTAB *ktp)
         return;
     
     /* The key command is non-zero therefore it is legal - print it */
-    cmdstr(ktp->code, outseq);
+    meGetStringFromKey(ktp->code, outseq);
     len = sprintf((char *)buf, "    \"%s\" ", outseq);
     while (len < 35)
         buf[len++] = '.';

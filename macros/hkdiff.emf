@@ -1,19 +1,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
-;  Author        : $Author: jon $
 ;  Created By    : Jon Green
 ;  Created       : Wed Aug 23 21:01:51 2000
-;  Last Modified : <000919.1057>
-;
 ;  Description   : Hilighting for diff files
-;
 ;  Notes         : This has been extrapolated from the tools.emf
 ;                  file that originally handled the diff utility and
 ;                  associated hilighting.
 ;
-;  History
-;
-;  Copyright (c) 2000 Samsung (SERI) Ltd.
+;  Copyright (c) 2000-2001 JASPPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 !if &not &exi .hilight.diff

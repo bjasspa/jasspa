@@ -1,20 +1,24 @@
 .\" -*- nroff -*-
-.Id $Id: m2cmd158.2,v 1.4 2001-02-16 21:38:10 jon Exp $
-.Im MicroEmacs command|file
+.Id $Id: m2cmd158.2,v 1.5 2001-03-05 21:39:41 jon Exp $
+.Im MicroEmacs command|file|macrodevelop
 .so me.tni
-.TH copy-file 2
-.XI copy-file \- "Copy, move or delete a file"
+.TH file-op 2
+.XI file-op \- "File system operations command"
 .SH NAME
-copy-file \- Copy, move or delete a file
+file-op \- File system operations command
 .Me $a
 .SH SYNOPSIS
 .na
 .I n
-.B copy-file
-"\fIfrom-file-name\fR" [ "\fIto-file-name\fR" ]
+.B file-op
+[ ( [ "\fIfrom-file\fR" "\fIto-file\fR" ] ) |
+.br
+.RS
+( ["\fIdelete-file\fR"] ) | ( ["\fIdir-name\fR"] ) ]
+.RE
 .ad
 .SH DESCRIPTION
-.B copy-file
+.B file-op
 copies the source file  \fIfrom-file-name\fR to \fIto-file-name\fR, the source
 file  must be a  single  file,  i.e. no  wild-cards  and not a  directory.  If
 \fIto-file-name\fR  is a directory  the base name of  \fIfrom-file-name\fR  is
@@ -61,6 +65,7 @@ which provides an easy to use interfaces for file manipulation.
 .Ht file-browser 3 ,
 .Ht ftp 3 ,
 .Ht find-file 2 ,
-.Ht write-buffer 2 .
+.Ht write-buffer 2 ,
+.Ht $temp-name 5 .
 .ad
 .FH

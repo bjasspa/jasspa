@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Jon Green
 ;  Created       : Mon Feb 22 19:31:58 1999
-;  Last Modified : <000719.0012>
+;  Last Modified : <010305.0809>
 ;
 ;  Description
 ;
@@ -19,7 +19,7 @@ define-macro 00000
 ; load up the environment
 execute-file "me"
 execute-file "vm"
-execute-file "user"
+execute-file "userstp"
 
 define-macro zzzzz
 !emacro

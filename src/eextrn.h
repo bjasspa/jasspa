@@ -1,7 +1,7 @@
 /****************************************************************************
  * External function definitions
  *
- * Last Modified:       <010224.0125>
+ * Last Modified:       <010305.0846>
  * 
  ****************************************************************************
  * 
@@ -66,11 +66,11 @@ extern	void	bufferPosUpdate APRAM((BUFFER *bp, uint32 noLines, uint16 newOff)) ;
  */
 #if !(defined __BINDC) || (defined _ANSI_C)		/* BIND.C Externals */
 extern  uint32  cmdHashFunc APRAM((register uint8 *cmdName)) ;
-extern  uint16  getskey APRAM((uint8 **tp)) ;
-extern  uint16  getckey APRAM((int flag)) ;
+extern  uint16  meGetKeyFromString APRAM((uint8 **tp)) ;
+extern  uint16  meGetKey APRAM((int flag)) ;
 extern	int	descKey APRAM((int f,int n));
-extern  int     cmdchar APRAM((uint16 cc, uint8 *d)) ;
-extern	void	cmdstr APRAM((uint16 cc, uint8 *seq));
+extern  int     meGetStringFromChar APRAM((uint16 cc, uint8 *d)) ;
+extern	void	meGetStringFromKey APRAM((uint16 cc, uint8 *seq));
 extern	int     decode_fncname APRAM((uint8 *fname, int silent));
 extern	int	bindkey APRAM((uint8 *prom, int f, int n, uint16 *lclNoBinds,
                                KEYTAB **lclBinds)) ;
@@ -235,7 +235,7 @@ extern  int     lineExec APRAM((int f, int n, uint8 *cmdstr));
  * returning a string no bigger than MAXBUF with the \0 */
 extern	uint8  *token APRAM((uint8 *src, uint8 *tok));
 extern	int	macarg APRAM((uint8 *tok));
-extern  int     mlreply APRAM((uint8 *prompt, int option, int defnum,
+extern  int     meGetString APRAM((uint8 *prompt, int option, int defnum,
                                uint8 *buffer, int size));
 extern	int	storemac APRAM((int f, int n));
 extern	int	dofile APRAM((uint8 *fname, int f, int n));
@@ -279,7 +279,7 @@ extern	int findCFile APRAM((int f, int n));
 extern	int readFile APRAM((int f, int n));
 extern	int nextWndFindFile APRAM((int f, int n));
 extern	int viewFile APRAM((int f, int n));
-extern	int copyFile APRAM((int f, int n));
+extern	int fileOp APRAM((int f, int n));
 extern  void freeFileList APRAM((int noStr, uint8 **files)) ;
 #if	CRYPT
 extern	int	resetkey APRAM((BUFFER *bp));
@@ -318,20 +318,22 @@ extern  void    getDirectoryList APRAM((uint8 *pathName, meDIRLIST *dirList)) ;
  * fileio.c
  */
 #if !(defined __FILEIOC) || (defined _ANSI_C)		/* FILEIO.C Externals */
-#define meRWFLAG_FMOD      0x000ffff
-#define meRWFLAG_SILENT    0x0010000
-#define meRWFLAG_READ      0x0020000
-#define meRWFLAG_INSERT    0x0040000
-#define meRWFLAG_WRITE     0x0080000
-#define meRWFLAG_BACKUP    0x0100000
-#define meRWFLAG_OPENEND   0x0200000
-#define meRWFLAG_OPENTRUNC 0x0400000
-#define meRWFLAG_AUTOSAVE  0x0800000
-#define meRWFLAG_CHKBREAK  0x1000000
-#define meRWFLAG_IGNRNRRW  0x2000000
+#define meRWFLAG_FMOD      0x0000ffff
+#define meRWFLAG_SILENT    0x00010000
+#define meRWFLAG_READ      0x00020000
+#define meRWFLAG_INSERT    0x00040000
+#define meRWFLAG_WRITE     0x00080000
+#define meRWFLAG_BACKUP    0x00100000
+#define meRWFLAG_OPENEND   0x00200000
+#define meRWFLAG_OPENTRUNC 0x00400000
+#define meRWFLAG_AUTOSAVE  0x00800000
+#define meRWFLAG_CHKBREAK  0x01000000
+#define meRWFLAG_IGNRNRRW  0x02000000
 /* following using in ffCopyFile to remove the source file & create a dir */
-#define meRWFLAG_DELETE    0x4000000
-#define meRWFLAG_MKDIR     0x8000000
+#define meRWFLAG_DELETE    0x04000000
+#define meRWFLAG_MKDIR     0x08000000
+#define meRWFLAG_FTPCLOSE  0x10000000
+#define meRWFLAG_NOCONSOLE 0x20000000
 
 extern int      ffReadFile APRAM((uint8 *fname, uint32 flags, BUFFER *bp, LINE *hlp)) ;
 #define meBACKUP_CREATE_PATH 0x0001
@@ -343,10 +345,7 @@ extern int      ffWriteFileWrite APRAM((register int len,
                                         register uint8 *buff, int eolFlag)) ;
 extern int      ffWriteFileClose APRAM((uint8 *fname, uint32 flags, BUFFER *bp)) ;
 extern int      ffWriteFile APRAM((uint8 *fname, uint32 flags, BUFFER *bp)) ;
-extern int	ffCopyFile APRAM((uint8 *sfname, uint8 *dfname, uint32 dFlags)) ;
-#ifdef _URLSUPP
-extern void	ffCloseSockets APRAM((int logoff)) ;
-#endif
+extern int	ffFileOp APRAM((uint8 *sfname, uint8 *dfname, uint32 dFlags)) ;
 #endif
 /*
  * input.c
@@ -365,7 +364,7 @@ extern	int	getexecCommand APRAM((void));
 #define meGETKEY_SILENT     0x01
 #define meGETKEY_SINGLE     0x02
 #define meGETKEY_COMMAND    0x04
-extern	uint16  getkeycmd APRAM((int f, int n, int flag));
+extern	uint16  meGetKeyFromUser APRAM((int f, int n, int flag));
 extern  int     createBuffList APRAM((uint8 ***listPtr, int noHidden)) ;
 extern  int     createCommList APRAM((uint8 ***listPtr, int noHidden)) ;
 extern  int     createVarList  APRAM((uint8 ***listPtr)) ;
@@ -412,7 +411,7 @@ extern  int     createVarList  APRAM((uint8 ***listPtr)) ;
  */
 extern uint8 **mlgsStrList ;
 extern int mlgsStrListSize ;
-extern int mlgetstring APRAM((uint8 *prompt, int option, int defnum, uint8 *buf, int nbuf)) ;
+extern int meGetStringFromUser APRAM((uint8 *prompt, int option, int defnum, uint8 *buf, int nbuf)) ;
 #endif
 /*
  * hilight.c
@@ -1010,27 +1009,24 @@ extern void gettimeofday (struct meTimeval *tp, struct meTimezone *tz);
  * Why the hell we need these functions and the ANSI 'C' functions are not
  * valid is beyond belief - typical bloody Microsoft !!
  */
-extern char *strWfn1 (uint8 *s);
-extern char *strWfn2 (uint8 *s);
-
 extern int chdir(const char *name) ;
 extern int _getdrive(void) ;
 #define meChdir(dir)        chdir(dir)
-#define meRename(src,dst)   (MoveFile(strWfn1(src),strWfn2(dst))==FALSE)
-#define meUnlink(fn)        (DeleteFile(strWfn1(fn))==FALSE)
+#define meRename(src,dst)   (MoveFile(src,dst)==FALSE)
+#define meUnlink(fn)        (DeleteFile(fn)==FALSE)
 /* Doesn't exist if function returns -1 */
-#define meTestExist(fn)     (((int) GetFileAttributes(strWfn1(fn))) < 0)
+#define meTestExist(fn)     (((int) GetFileAttributes(fn)) < 0)
 /* Can't read if doesn't exist or its a directory */
-#define meTestRead(fn)      (GetFileAttributes(strWfn1(fn)) & FILE_ATTRIBUTE_DIRECTORY)
+#define meTestRead(fn)      (GetFileAttributes(fn) & FILE_ATTRIBUTE_DIRECTORY)
 /* Can't write if exists and its readonly or a directory */
-#define meTestWrite(fn)     ((((int) GetFileAttributes(strWfn1(fn))) & 0xffff8011) > 0)
+#define meTestWrite(fn)     ((((int) GetFileAttributes(fn)) & 0xffff8011) > 0)
 /* File is a directory */
-#define meTestDir(fn)       ((GetFileAttributes(strWfn1(fn)) & (0xf0000000|FILE_ATTRIBUTE_DIRECTORY)) != FILE_ATTRIBUTE_DIRECTORY)
+#define meTestDir(fn)       ((GetFileAttributes(fn) & (0xf0000000|FILE_ATTRIBUTE_DIRECTORY)) != FILE_ATTRIBUTE_DIRECTORY)
 extern int meTestExecutable(uint8 *fileName) ;
 #define meStatTestRead(st)  (((st).stmode & FILE_ATTRIBUTE_DIRECTORY) == 0)
 #define meStatTestWrite(st) (((st).stmode & (FILE_ATTRIBUTE_DIRECTORY|FILE_ATTRIBUTE_READONLY)) == 0)
 #define meStatTestSystem(st) (((st).stmode & FILE_ATTRIBUTE_SYSTEM) == 0)
-#define meChmod(fn,mode)    (SetFileAttributes(strWfn1(fn),mode))
+#define meChmod(fn,mode)    (SetFileAttributes(fn,mode))
 extern void WinShutdown (void);
 #define meExit(status)      (WinShutdown(), ExitProcess(status))
 #endif

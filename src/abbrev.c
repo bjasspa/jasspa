@@ -5,7 +5,7 @@
  *  Synopsis      : Abbrevation expansion routines
  *  Created By    : Steven Phillips
  *  Created       : 12/06/1995
- *  Last Modified : <000814.0931>
+ *  Last Modified : <010305.0749>
  *
  *  Description
  *        Handle character expansion. The expansion sequences are held in 
@@ -72,7 +72,7 @@ setAbbrev(int f, int n, meABREV **abrevPtr)
         return TRUE ;
     }
         
-    if((status=mlreply((uint8 *)"Abbrev file",MLFILECASE,0,buf,MAXBUF)) != TRUE)
+    if((status=meGetString((uint8 *)"Abbrev file",MLFILECASE,0,buf,MAXBUF)) != TRUE)
         return status ;
     
     if(buf[0] == '\0')

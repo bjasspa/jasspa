@@ -1,13 +1,13 @@
 /*
  *	SCCS:		%W%		%G%		%U%
  *
- *	Last Modified :	<010219.2044>
+ *	Last Modified :	<010305.1315>
  *
  *	INPUT:	Various input routines for MicroEMACS 3.7
  *		written by Daniel Lawrence
  *		5/9/86
  *
- *	BUG:	mlreply() responds to backChar as back word. Backspace 
+ *	BUG:	meGetString() responds to backChar as back word. Backspace 
  *		does not delete previous character. Fix 05/11/90 JDG. 
  *
  *	BUG	mldisp() Core dumps if the search/replace string exceeds 
@@ -76,7 +76,7 @@ mlCharReply(uint8 *prompt, int mask, uint8 *validList, uint8 *helpStr)
                     inpType = 2 ;
                 }
             }
-            cc = getkeycmd(FALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE) ;
+            cc = meGetKeyFromUser(FALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE) ;
             mlStatus &= ~(MLSTATUS_KEEP|MLSTATUS_RESTORE|MLSTATUS_POSML) ;
             if(cc == breakc)
                 return -1 ;
@@ -87,8 +87,9 @@ mlCharReply(uint8 *prompt, int mask, uint8 *validList, uint8 *helpStr)
             execstr = token(execstr,buff) ;
             if((buff[0] == '@') && (buff[1] == 'm') && (buff[2] == 'x'))
             {
+                cc = buff[3] ;
                 execstr = token(execstr, buff);
-                if(buff[3] == 'a')
+                if(cc == 'a')
                     execstr = ss ;
                 meStrcpy(resultStr,prompt) ;
                 if(lineExec (0, 1, buff) != TRUE)
@@ -132,7 +133,7 @@ mlCharReply(uint8 *prompt, int mask, uint8 *validList, uint8 *helpStr)
             {
                 if (inpType == 2)
                 {
-                    cmdstr((uint16) cc,buff) ;
+                    meGetStringFromKey((uint16) cc,buff) ;
                     mlwrite(MWCURSOR,(uint8 *)"%s%s",prompt,buff) ;
                 }
                 return cc ;
@@ -164,7 +165,7 @@ mlyesno(uint8 *prompt)
 /*
  * These are very simple character inserting, character deleting, move
  * over or erase spaces forwards or backwards routines. They are used
- * by the mlreply routine to edit the command line.
+ * by the meGetString routine to edit the command line.
  */
 
 static int
@@ -548,7 +549,7 @@ getprefixchar(int f, int n, int ctlc, int flag)
 
     if(!(flag & meGETKEY_SILENT))
     {
-        buf[cmdchar((uint16) ctlc,buf)] = '\0' ;
+        buf[meGetStringFromChar((uint16) ctlc,buf)] = '\0' ;
         if(f==TRUE)
             mlwrite(MWCURSOR,(uint8 *)"Arg %d: %s", n, buf);
         else
@@ -564,7 +565,7 @@ getprefixchar(int f, int n, int ctlc, int flag)
         prefix keys
  */
 uint16
-getkeycmd(int f, int n, int flag)
+meGetKeyFromUser(int f, int n, int flag)
 {
     uint16 cc ;        /* fetched keystroke */
     int ii ;
@@ -932,7 +933,7 @@ uint8 *compFailComp = (uint8 *)" [Failed to create]" ;
 /* buf    - where it all goes at the end of the day          */
 /* nbuf   - amount of space in buffer                        */
 int
-mlgetstring(uint8 *prompt, int option, int defnum, uint8 *buf, int nbuf)
+meGetStringFromUser(uint8 *prompt, int option, int defnum, uint8 *buf, int nbuf)
 {
     register int cc ;
     int     ii ;
@@ -1057,7 +1058,7 @@ mlgetstring(uint8 *prompt, int option, int defnum, uint8 *buf, int nbuf)
             mlfirst = -1;
         }
         else
-            cc = getkeycmd(FALSE,0,meGETKEY_SILENT) ;
+            cc = meGetKeyFromUser(FALSE,0,meGETKEY_SILENT) ;
         
         idx = decode_key((uint16) cc,&arg) ;
         if(arg)

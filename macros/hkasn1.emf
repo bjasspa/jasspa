@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Jon Green
 ;  Created       : Thu Sep 10 12:41:38 1998
-;  Last Modified : <010301.2248>
+;  Last Modified : <010303.1524>
 ;
 ;  Description
 ;            Hilighting for ISO 7498 ASN.1. 
@@ -30,8 +30,8 @@ define-macro fhook-asn1
 !emacro
 
 ; buffer-setup flags - note the indentation is not very good so don't enable by default
-set-variable .fhook-asn1.setup &reg "/history" "fhook/asn1" "bhinx"
-set-variable .fhook-asn1.setup-mask "aebdhikmntux"
+set-variable .fhook-asn1.setup &reg "/history" "fhook/asn1" "bhinopx"
+set-variable .fhook-asn1.setup-mask "aebdhikmnoptux"
 set-variable .fhook-asn1.comment "|--||=|"
 
 !if &not &exist .hilight.asn1

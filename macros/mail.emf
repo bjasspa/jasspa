@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ;  Created By    : Steven Phillips
-;  Last Modified : <010301.2318>
+;  Last Modified : <010304.1414>
 ;
 ;  Description   : Macros used for sending e-mails
 ;
@@ -22,8 +22,8 @@
     !endif
 !emacro
 
-set-variable .fhook-mail.setup &reg "/history" "fhook/mail" "hijnopsw"
-set-variable .fhook-mail.setup-mask "aehijkmnopstuwx"
+set-variable .fhook-mail.setup &reg "/history" "fhook/mail" "bhijnopsw"
+set-variable .fhook-mail.setup-mask "abehijkmnopstuwx"
 set-variable .fhook-mail.command-flag  "|thb|th|thb|thb|h|h|h|h|h|h|"
 set-variable .fhook-mail.command-name  "|mail-send||mail-data-insert|mail-data-insert|||||||"
 set-variable .fhook-mail.command-nbind "|||1|2|||||||"

@@ -10,7 +10,7 @@
 *
 *       Author:                 Danial Lawrence
 *
-*       Creation Date:          14/05/86 12:37          <010202.1024>
+*       Creation Date:          14/05/86 12:37          <010305.0749>
 *
 *       Modification date:      %G% : %U%
 *
@@ -71,7 +71,7 @@ getBufferName(uint8 *prompt, int opt, int defH, uint8 *buf)
 	}
 	addHistory(MLBUFFER, bp->b_bname) ;
     }
-    return mlreply(prompt,opt|MLBUFFERCASE,defH,buf,MAXBUF) ;
+    return meGetString(prompt,opt|MLBUFFERCASE,defH,buf,MAXBUF) ;
 }
 
 /* Check extent.
@@ -1397,7 +1397,7 @@ adjustMode(BUFFER *bp, int nn)  /* change the editor mode status */
 	mlgsStrListSize = MDNUMMODES ;
 	
 	/* prompt the user and get an answer */
-	if(mlreply(prompt, MLLOWER|MLUSER, 0, cbuf, NPAT) == ABORT)
+	if(meGetString(prompt, MLLOWER|MLUSER, 0, cbuf, NPAT) == ABORT)
 	    return(FALSE);
     
 	/* test it against the modes we know */
