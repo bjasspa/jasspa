@@ -760,7 +760,7 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
         goto-position "\x82"
     !else
         !if &sin "S" &lget .flags @#
-            !if &bmod "edit"
+            !if &and &bmod "edit" &not &seq &lef $buffer-bname 1 "*"
                 set-variable #l0 @mc1 "Save buffer first [y/n]? " "nNyY"
                 !if &iseq #l0 "y"
                     save-buffer @mna
