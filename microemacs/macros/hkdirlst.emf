@@ -104,11 +104,11 @@ set-variable .fhook-dirlst.setup &reg "/history" "fhook/dirlst" "ghmop"
 set-variable .fhook-dirlst.setup-mask    "aceghop"
 set-variable .fhook-dirlst.setup-flags   "|c|"
 set-variable .fhook-dirlst.setup-labels  "|CVS menu always available|"
-set-variable .fhook-dirlst.command-flag  "|thbio|thbio|th|thbio|thbio|thbio|thbio|bio|thbio|bio|h|"
-set-variable .fhook-dirlst.command-name  "|file-browser-swap-buffers|file-browser-close||reread-file|dirlst-find-file|dirlst-tag-toggle|dirlst-tag-remove|dirlst-tag-remove|dirlst-tag-execute|dirlst-tag-execute||"
-set-variable .fhook-dirlst.command-nbind "|||||||||||"
-set-variable .fhook-dirlst.command-kbind "|tab|delete||f5|return|space|d|D|x|X||"
-set-variable .fhook-dirlst.command-desc  "|Swap Browser \HWindows|\HClose File Browser||\HRefresh|\HOpen File|Toggle \HSelection|\HDelete All Selections||E\Hxecute Shell Command on Selected||            (%p for path, %f for file & %% for %)|"
+set-variable .fhook-dirlst.command-flag  "|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|bio|thbio|bio|h|"
+set-variable .fhook-dirlst.command-name  "|file-browser-swap-buffers|file-browser-close||reread-file|dirlst-find-file|dirlist-up-dir|dirlst-tag-toggle|dirlst-tag-remove|dirlst-tag-remove|dirlst-tag-execute|dirlst-tag-execute||"
+set-variable .fhook-dirlst.command-nbind "||||||||||||"
+set-variable .fhook-dirlst.command-kbind "|tab|delete||f5|return|backspace|space|d|D|x|X||"
+set-variable .fhook-dirlst.command-desc  "|Swap Browser \HWindows|\HClose File Browser||\HRefresh|\HOpen File|Goto Parent Directory|Toggle \HSelection|\HDelete All Selections||E\Hxecute Shell Command on Selected||            (%p for path, %f for file & %% for %)|"
 
 set-variable .fhook-dirlst.col-name "|Name|Attr|    Size|        Modified|<Order by Extension>|"
 set-variable .fhook-dirlst.col-flag "|0|4|2|1|8|"
@@ -527,6 +527,15 @@ define-macro file-browser-swap-buffers
     ; if part of a toolbar update the mode lines
     !if &band $window-flags 0x1000
         set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x080
+    !endif
+!emacro
+0 define-macro dirlist-up-dir
+    !if &set #l0 &rsin "/" &lef $buffer-fname &sub &len $buffer-fname 1
+        set-variable #l1 &lef $buffer-fname #l0
+        ; if this is the 2nd / of a double / (e.g. current fname is //machine/ or ftp://site/) then fail
+        !if &not &seq $mid #l1 &sub #l0 2 1 "/"
+            0 dirlst-find-file #l1 
+        !endif
     !endif
 !emacro
 

@@ -17,6 +17,7 @@ set-variable .fhook-css.setup &reg "/history" "fhook/css" "dfghiopx"
 set-variable .fhook-css.setup-mask "adefghikmoptux"
 set-variable .fhook-css.comment   "|/*| */|*| * | * |fr|"
 set-variable .fhook-css.comment-1 "|<!--| -->|-|  -- | -- |r|"
+set-variable .fhook-css.exact -1
 
 ; Setup collapse
 set-variable .fhook-css.collapse-open  "^\\.?\\w[^\n{]+{"
@@ -33,16 +34,22 @@ set-variable .fhook-css.item-list-r1 "Item \ecB\\1\ecA"
 !endif
 !if &and &sin "h" .fhook-css.setup &band .hilight.flags 0x02
     ; css file highlighting
-    0 hilight .hilight.css 2 50                     $global-scheme
+    0 hilight .hilight.css 3 50                     $global-scheme
     ; Strings and things
     hilight .hilight.css 20 "'" "'" ""              .scheme.string
     hilight .hilight.css 20 "\"" "\"" ""            .scheme.string
-
     ; Comments.
     hilight .hilight.css 20 "/\\*" "*/" ""          .scheme.comment
     hilight .hilight.css 4  "<!--" "-->" ""         .scheme.comment
+    ; class
+    hilight .hilight.css 1  "\\.\\w+"               .scheme.variable
     ; Separators
-    hilight .hilight.css 0  ":"                     .scheme.operator
+    hilight .hilight.css 0  ":active"               .scheme.operator
+    hilight .hilight.css 0  ":focus"                .scheme.operator
+    hilight .hilight.css 0  ":hover"                .scheme.operator
+    hilight .hilight.css 0  ":lang(\\w*)"           .scheme.operator
+    hilight .hilight.css 0  ":link"                 .scheme.operator
+    hilight .hilight.css 0  ":visited"              .scheme.operator
     hilight .hilight.css 0  "%"                     .scheme.operator
     hilight .hilight.css 0  "[0-9]\\{cm"            .scheme.operator
     hilight .hilight.css 0  "[0-9]\\{em"            .scheme.operator
@@ -52,7 +59,7 @@ set-variable .fhook-css.item-list-r1 "Item \ecB\\1\ecA"
     hilight .hilight.css 0  "[0-9]\\{pc"            .scheme.operator
     hilight .hilight.css 0  "[0-9]\\{pt"            .scheme.operator
     hilight .hilight.css 0  "[0-9]\\{px"            .scheme.operator
-    ; Keywords
+    ; Properties
     hilight .hilight.css 1  "align"                 .scheme.keyword
     hilight .hilight.css 1  "auto"                  .scheme.keyword
     hilight .hilight.css 1  "azimuth"               .scheme.keyword
@@ -63,6 +70,7 @@ set-variable .fhook-css.item-list-r1 "Item \ecB\\1\ecA"
     hilight .hilight.css 1  "background-position"   .scheme.keyword
     hilight .hilight.css 1  "background-repeat"     .scheme.keyword
     hilight .hilight.css 1  "baseline"              .scheme.keyword
+    hilight .hilight.css 1  "behavior"              .scheme.keyword
     hilight .hilight.css 1  "blink"                 .scheme.keyword
     hilight .hilight.css 1  "bolder"                .scheme.keyword
     hilight .hilight.css 1  "border"                .scheme.keyword
@@ -82,6 +90,8 @@ set-variable .fhook-css.item-list-r1 "Item \ecB\\1\ecA"
     hilight .hilight.css 1  "border-width-top"      .scheme.keyword
     hilight .hilight.css 1  "bottom"                .scheme.keyword
     hilight .hilight.css 1  "capitalize"            .scheme.keyword
+    hilight .hilight.css 1  "cellpadding"           .scheme.keyword
+    hilight .hilight.css 1  "cellspacing"           .scheme.keyword
     hilight .hilight.css 1  "clear"                 .scheme.keyword
     hilight .hilight.css 1  "clip"                  .scheme.keyword
     hilight .hilight.css 1  "color"                 .scheme.keyword
@@ -98,7 +108,6 @@ set-variable .fhook-css.item-list-r1 "Item \ecB\\1\ecA"
     hilight .hilight.css 1  "fantasy"               .scheme.keyword
     hilight .hilight.css 1  "first-letter"          .scheme.keyword
     hilight .hilight.css 1  "first-line"            .scheme.keyword
-    hilight .hilight.css 1  "fixed"                 .scheme.keyword
     hilight .hilight.css 1  "float"                 .scheme.keyword
     hilight .hilight.css 1  "font"                  .scheme.keyword
     hilight .hilight.css 1  "font-family"           .scheme.keyword
@@ -109,8 +118,6 @@ set-variable .fhook-css.item-list-r1 "Item \ecB\\1\ecA"
     hilight .hilight.css 1  "height"                .scheme.keyword
     hilight .hilight.css 1  "important"             .scheme.keyword
     hilight .hilight.css 1  "inherit"               .scheme.keyword
-    hilight .hilight.css 1  "italic"                .scheme.keyword
-    hilight .hilight.css 1  "justify"               .scheme.keyword
     hilight .hilight.css 1  "letter-spacing"        .scheme.keyword
     hilight .hilight.css 1  "lighter"               .scheme.keyword
     hilight .hilight.css 1  "line-height"           .scheme.keyword
@@ -173,7 +180,6 @@ set-variable .fhook-css.item-list-r1 "Item \ecB\\1\ecA"
     hilight .hilight.css 1  "uppercase"             .scheme.keyword
     hilight .hilight.css 1  "vertical-align"        .scheme.keyword
     hilight .hilight.css 1  "visibility"            .scheme.keyword
-    hilight .hilight.css 1  "visited"               .scheme.keyword
     hilight .hilight.css 1  "volume"                .scheme.keyword
     hilight .hilight.css 1  "white-space"           .scheme.keyword
     hilight .hilight.css 1  "width"                 .scheme.keyword
@@ -183,9 +189,11 @@ set-variable .fhook-css.item-list-r1 "Item \ecB\\1\ecA"
     hilight .hilight.css 1  "x-large"               .scheme.keyword
     hilight .hilight.css 1  "z-index"               .scheme.keyword
     ; token values
-    hilight .hilight.css 1  "black"                 .scheme.prepro
     hilight .hilight.css 1  "bold"                  .scheme.prepro
     hilight .hilight.css 1  "center"                .scheme.prepro
+    hilight .hilight.css 1  "fixed"                 .scheme.prepro
+    hilight .hilight.css 1  "italic"                .scheme.prepro
+    hilight .hilight.css 1  "justify"               .scheme.prepro
     hilight .hilight.css 1  "left"                  .scheme.prepro
     hilight .hilight.css 1  "light"                 .scheme.prepro
     hilight .hilight.css 1  "middle"                .scheme.prepro
@@ -195,6 +203,15 @@ set-variable .fhook-css.item-list-r1 "Item \ecB\\1\ecA"
     hilight .hilight.css 1  "solid"                 .scheme.prepro
     hilight .hilight.css 1  "transparent"           .scheme.prepro
     hilight .hilight.css 1  "underline"             .scheme.prepro
+    ; fonts
+    hilight .hilight.css 1  "Arial"                 .scheme.prepro
+    hilight .hilight.css 1  "Helvetica"             .scheme.prepro
+    hilight .hilight.css 1  "sans-serif"            .scheme.prepro
+    ; colors
+    hilight .hilight.css 1  "black"                 .scheme.prepro
+    hilight .hilight.css 1  "blue"                  .scheme.prepro
+    hilight .hilight.css 1  "green"                 .scheme.prepro
+    hilight .hilight.css 1  "red"                   .scheme.prepro
     hilight .hilight.css 1  "white"                 .scheme.prepro
     ; html tags
     hilight .hilight.css 1  "a"                     .scheme.variable
@@ -247,7 +264,6 @@ set-variable .fhook-css.item-list-r1 "Item \ecB\\1\ecA"
     hilight .hilight.css 1  "label"                 .scheme.variable
     hilight .hilight.css 1  "legend"                .scheme.variable
     hilight .hilight.css 1  "li"                    .scheme.variable
-    hilight .hilight.css 1  "link"                  .scheme.variable
     hilight .hilight.css 1  "map"                   .scheme.variable
     hilight .hilight.css 1  "menu"                  .scheme.variable
     hilight .hilight.css 1  "meta"                  .scheme.variable
@@ -285,21 +301,38 @@ set-variable .fhook-css.item-list-r1 "Item \ecB\\1\ecA"
     hilight .hilight.css 1  "u"                     .scheme.variable
     hilight .hilight.css 1  "ul"                    .scheme.variable
     hilight .hilight.css 1  "var"                   .scheme.variable
+    ; Mozilla properties
+    hilight .hilight.css 1  "-moz-binding"          .scheme.keyword
+    hilight .hilight.css 1  "-moz-border-radius"    .scheme.keyword
+    hilight .hilight.css 1  "-moz-border-radius-topleft" .scheme.keyword
+    hilight .hilight.css 1  "-moz-border-radius-topright" .scheme.keyword
+    hilight .hilight.css 1  "-moz-border-radius-bottomleft" .scheme.keyword
+    hilight .hilight.css 1  "-moz-border-radius-bottomright" .scheme.keyword
+    hilight .hilight.css 1  "-moz-border-top-colors" .scheme.keyword
+    hilight .hilight.css 1  "-moz-border-right-colors" .scheme.keyword
+    hilight .hilight.css 1  "-moz-border-bottom-colors" .scheme.keyword
+    hilight .hilight.css 1  "-moz-border-left-colors" .scheme.keyword
+    hilight .hilight.css 1  "-moz-opacity"          .scheme.keyword
+    hilight .hilight.css 1  "-moz-outline"          .scheme.keyword
+    hilight .hilight.css 1  "-moz-outline-color"    .scheme.keyword
+    hilight .hilight.css 1  "-moz-outline-style"    .scheme.keyword
+    hilight .hilight.css 1  "-moz-outline-width"    .scheme.keyword
+    hilight .hilight.css 1  "-moz-user-focus"       .scheme.keyword
+    hilight .hilight.css 1  "-moz-user-input"       .scheme.keyword
+    hilight .hilight.css 1  "-moz-user-modify"      .scheme.keyword
+    hilight .hilight.css 1  "-moz-user-select"      .scheme.keyword
     ; Constants
     !if &band .hilight.flags 0x08
         ; hilight constants, e.g. numbers
         hilight .hilight.css 1 "#[[:xdigit:]]+"     .scheme.constant
-        ; Variables.
-        ; hilight .hilight.css 4    "\\." "[a-fA-F0-9_]*"  "" .scheme.variable
     !endif
 !endif
 !if &sin "d" .fhook-css.setup
-    0 indent  .hilight.css 0 100
+    0 indent  .hilight.css 1 100
     indent .hilight.css n "{"  4
     indent .hilight.css o "}" -4
-    indent .hilight.css b "<!" ">"
+    indent .hilight.css b "<!--" "-->"
     indent .hilight.css b "/\\*" "\\*/"
-    indent .hilight.css i "//"
 !endif
 
 buffer-init-fhook "css"
