@@ -39,29 +39,30 @@ set-variable .fhook-emf.item-list-r1 "Macr \ecB\\1\ecA"
 !if &not &exist .hilight.emf
     set-variable .hilight.emf &pinc .hilight.next 1
 !endif
-!if &and &sin "h" .fhook-emf.setup &band .hilight.flags 0x02 
-    0 hilight .hilight.emf 0                        $global-scheme
+!if &and &sin "h" .fhook-emf.setup &band .hilight.flags 0x02
+    0 hilight .hilight.emf 0                            $global-scheme
     !if &band .hilight.flags 0x04
         hilight .hilight.emf 1  "define-help\\s +\\w+"  .scheme.function
         hilight .hilight.emf 1  "define-macro\\s +\\w+" .scheme.function
-        hilight .hilight.emf 0  "define-macro-file.*" .scheme.function
+        hilight .hilight.emf 0  "define-macro-file.*"   .scheme.function
     !endif
-    hilight .hilight.emf 4  "\"" "\"" "\\"          .scheme.string
-    hilight .hilight.emf 0  ";.*"                   .scheme.comment
-    hilight .hilight.emf 4  "!"   "\\}\\W" ""       .scheme.keyword
-    hilight .hilight.emf 4  "&"   "\\}\\W" ""       .scheme.operator
-    hilight .hilight.emf 4  "\\." "\\}\\W" ""       .scheme.variable
-    hilight .hilight.emf 4  "%"   "\\}\\W" ""       .scheme.variable
-    hilight .hilight.emf 4  ":"   "\\}\\W" ""       .scheme.variable
-    hilight .hilight.emf 4  "\\$" "\\}\\W" ""       .scheme.variable
-    hilight .hilight.emf 4  "@"   "\\}\\s " ""      .scheme.variable
-    hilight .hilight.emf 1  "#[gpl][[:digit:]]"     .scheme.variable
-    hilight .hilight.emf 0  "^*\\w+"                .scheme.link
+    hilight .hilight.emf 4  "\"" "\"" "\\"              .scheme.string
+    hilight .hilight.emf 0  ";.*"                       .scheme.comment
+    hilight .hilight.emf 0  ";\\s *[tT][oO][dD][oO].*"  .scheme.error
+    hilight .hilight.emf 4  "!"   "\\}\\W" ""           .scheme.keyword
+    hilight .hilight.emf 4  "&"   "\\}\\W" ""           .scheme.operator
+    hilight .hilight.emf 4  "\\." "\\}\\W" ""           .scheme.variable
+    hilight .hilight.emf 4  "%"   "\\}\\W" ""           .scheme.variable
+    hilight .hilight.emf 4  ":"   "\\}\\W" ""           .scheme.variable
+    hilight .hilight.emf 4  "\\$" "\\}\\W" ""           .scheme.variable
+    hilight .hilight.emf 4  "@"   "\\}\\s " ""          .scheme.variable
+    hilight .hilight.emf 1  "#[gpl][[:digit:]]"         .scheme.variable
+    hilight .hilight.emf 0  "^*\\w+"                    .scheme.link
     !if &band .hilight.flags 0x08
         ; hilight constants, e.g. numbers
-        hilight .hilight.emf 1 "[[:digit:]]+"       .scheme.constant
-        hilight .hilight.emf 1 "-[[:digit:]]+"      .scheme.constant
-        hilight .hilight.emf 1 "0[xX][[:xdigit:]]+" .scheme.constant
+        hilight .hilight.emf 1 "[[:digit:]]+"           .scheme.constant
+        hilight .hilight.emf 1 "-[[:digit:]]+"          .scheme.constant
+        hilight .hilight.emf 1 "0[xX][[:xdigit:]]+"     .scheme.constant
     !endif
 !endif
 !if &sin "d" .fhook-emf.setup
