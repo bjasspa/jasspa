@@ -604,7 +604,23 @@ bad_finish:
     mlerase(MWCLEXEC) ;
     if(c == 0)
         return meTRUE ;
-    lastflag = 0;                               /* Fake last flags.     */
+#if MEOPT_MWFRAME
+    /* Check the focus has not changed before we execute the extra command, if
+     * it has then change focus */
+    {
+        extern int commandDepth ;
+    
+        /* if the user has changed the window focus using the OS
+         * and this is the top level then change frames */
+        if((frameFocus != NULL) && (frameFocus != frameCur) &&
+           (commandDepth == 1))
+        {
+            frameCur = frameFocus ;
+            frameFocus = NULL ;
+        }
+    }
+#endif
+    lastflag = 0;                                 /* Fake last flags.     */
     return execute(c,meFALSE,1) ;                 /* Execute last command. */
 
 quit_finish:

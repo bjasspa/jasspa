@@ -540,8 +540,8 @@ ibmChangeSRes(void)
         rg.h.bh = 0 ;		/* set screen page number */
         int86(0x10, &rg, &rg);
 #endif
-        frameChangeDepth(meTRUE,row);
-        frameChangeWidth(meTRUE,col);
+        frameChangeDepth(meTRUE,frameCur->depth+1-row);
+        frameChangeWidth(meTRUE,frameCur->width-col);
     }
     /* Stop that horrible blinking */
     rg.x.ax = 0x1003;		/* blink state dos call */

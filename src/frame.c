@@ -64,6 +64,12 @@ meFrameEnlargeVideo(meFrame *frame, int rows)
 int
 meFrameChangeWidth(meFrame *frame, int ww)
 {
+    /* ensure the value is in range */
+    if(ww < 8)
+        ww = 8 ;
+    else if(ww > 400)
+        ww = 400 ;
+    
     /* Already this size ?? Nothing to do */
     if(frame->width == ww)
         return meTRUE;
@@ -153,11 +159,11 @@ meFrameChangeWidth(meFrame *frame, int ww)
     {
         meFrame *fc=frameCur ;
         frameCur = loopFrame ;
-        frameResizeWindows (meTRUE, -1);        /* Resize windows horizontally */
+        meFrameResizeWindows(frameCur,meFRAMERESIZEWIN_WIDTH);
         frameCur = fc ;
     }
 #else
-    frameResizeWindows (meTRUE, -1);            /* Resize windows horizontally */
+    meFrameResizeWindows(frameCur,meFRAMERESIZEWIN_WIDTH);
 #endif
     
     meFrameLoopEnd() ;
@@ -168,6 +174,12 @@ meFrameChangeWidth(meFrame *frame, int ww)
 int
 meFrameChangeDepth(meFrame *frame, int dd)
 {
+    /* ensure the value is in range */
+    if(dd < 4)
+        dd = 4 ;
+    else if(dd > 400)
+        dd = 400 ;
+        
     /* Already this size ?? Nothing to do */
     if(frame->depth+1 == dd)
         return meTRUE;
@@ -237,11 +249,11 @@ meFrameChangeDepth(meFrame *frame, int dd)
     {
         meFrame *fc=frameCur ;
         frameCur = loopFrame ;
-        frameResizeWindows (meTRUE, 1);             /* Resize windows vertically */
+        meFrameResizeWindows(frameCur,meFRAMERESIZEWIN_DEPTH);
         frameCur = fc ;
     }
 #else
-    frameResizeWindows (meTRUE, 1);             /* Resize windows vertically */
+    meFrameResizeWindows(frameCur,meFRAMERESIZEWIN_DEPTH);
 #endif
     
     meFrameLoopEnd() ;
@@ -257,9 +269,19 @@ meFrameChangeDepth(meFrame *frame, int dd)
 int
 frameChangeWidth(int f, int n)
 {
-    /* if the command defaults, fail */
-    if (f == meFALSE)                     /* No argument ?? */
-        return mlwrite(MWABORT,(meUByte *)"Argument expected");
+    /* if no argument is given then prompt for the new width */
+    if (f == meFALSE)
+    {
+        meUByte buff[meSBUF_SIZE_MAX] ;
+        
+        if (meGetString((meUByte *)"New width", 0, 0, buff, meSBUF_SIZE_MAX) != meTRUE) 
+            return meFALSE ;
+        n = meAtoi(buff) ;
+    }
+    else
+        /* n is a delta, add this to the current width to get the new width */
+        n = frameCur->width + n ;
+    
     if ((n < 8) || (n > 400))           /* In range ?? */
         return mlwrite(MWABORT,(meUByte *)"Screen width %d out of range", n);
     if (n == frameCur->width)                    /* Already this size ?? */
@@ -278,13 +300,21 @@ frameChangeWidth(int f, int n)
  * frameChangeDepth  - Change the depth of the screen.
  * Resize the screen, re-writing the screen
  */
-
 int
 frameChangeDepth(int f, int n)
 {
-    /* if the command defaults fail. */
-    if (f == meFALSE)                     /* No argument ?? */
-        return mlwrite(MWABORT,(meUByte *)"[Argument expected]");
+    /* if no argument is given then prompt for the new depth */
+    if (f == meFALSE)
+    {
+        meUByte buff[meSBUF_SIZE_MAX] ;
+        
+        if (meGetString((meUByte *)"New width", 0, 0, buff, meSBUF_SIZE_MAX) != meTRUE) 
+            return meFALSE ;
+        n = meAtoi(buff) ;
+    }
+    else
+        /* n is a delta, add this to the current width to get the new width */
+        n = frameCur->depth + 1 + n ;
     if ((n < 4) || (n > 400))           /* Argument in range ?? */
         return mlwrite(MWABORT,(meUByte *)"[Screen depth %d out of range]", n);
     if (n == frameCur->depth+1)

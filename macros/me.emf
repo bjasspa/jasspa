@@ -67,12 +67,12 @@ define-macro-file hkdirlst file-browser file-browser-close file-browser-swap-buf
 define-macro-file charsutl charset-change charset-iso-to-user charset-user-to-iso
 define-macro-file spell spell-word spell-buffer spell-edit-word find-word
 define-macro-file games Metris Patience Triangle Mahjongg Match-It
+define-macro-file toolbar toolbar toolbar-close toolbar-mode-line
 define-macro-file buffstp buffer-setup buffer-help buffer-tool
 define-macro-file itemlist item-list item-list-close occur
 define-macro-file mail mail mail-check stop-mail-check
 define-macro-file fileopen osd-file-open osd-get-file
 define-macro-file hkinfo info info-on info-goto-link
-define-macro-file toolbar toolbar toolbar-close
 define-macro-file zfile find-zfile zfile-setup
 define-macro-file gentags generate-tags-file
 define-macro-file dmf display-matching-fence
@@ -282,6 +282,18 @@ add-file-hook ".ex .exw .exu .e .ew .eu"                      fhook-euphor
 -1 add-file-hook "-!-[ \t]*text.*-!-"            fhook-txt    ; -!- text -!-
 -1 add-file-hook "-!-[ \t]*msvb.*-!-"            fhook-vb     ; -!- msvb -!-
 -1 add-file-hook "-!-[ \t]*euphoria[ \t]*-!-"    fhook-euphor ; -!- euphoria -!-
+; Load in the mouse handling routines if required
+!if &band $mouse 0x10
+    !force exec-file "mouse"
+!endif
+; load in the platform specific stuff if found
+!force exec-file $platform
+!if &set #l0 &reg "/history" &cat %platform "/frame-width" "0"
+    change-frame-width #l0
+!endif
+!if &set #l0 &reg "/history" &cat %platform "/frame-depth" "0"
+    change-frame-depth #l0
+!endif
 ; Initialize the top menu line
 osd 0  0  "asM" 0 0 -1 0 0 0 osd-main
 osd 0  5   "fh" " "
@@ -303,12 +315,10 @@ osd 0  80  "Mfsh" "&Window  "  8
 osd 0  85  "fh" " "
 osd 0  90  "Mfsr" "&Help "     9
 osd -1 &cond &reg "/history" "main-menu" "1" "1" "-1"
-; Load in the mouse handling routines if required
-!if &band $mouse 0x10
-    !force exec-file "mouse"
+; setup the toolbar
+!if &reg "/history" &cat %platform "/toolbar" "0"
+    toolbar
 !endif
-; load in the platform specific stuff if found
-!force exec-file $platform
 ; execute any emulation file, e.g. Emacs, Vi etc
 !if &not &seq &set #l0 &reg "/history" "emulate" "" ""
     set-variable %emulate #l0

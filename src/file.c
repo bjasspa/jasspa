@@ -1618,9 +1618,9 @@ findFileList(meUByte *fname, int bflag, meInt lineno)
         {
             meUByte *ss = curDirList.list[ii] ;
 #ifdef _INSENSE_CASE
-            if(regexStrCmp(ss,mask,0))
+            if(regexStrCmp(ss,mask,meRSTRCMP_ICASE|meRSTRCMP_WHOLE))
 #else
-            if(regexStrCmp(ss,mask,1))
+            if(regexStrCmp(ss,mask,meRSTRCMP_WHOLE))
 #endif
             {
                 meStrcpy(baseName,ss) ;
@@ -1868,7 +1868,7 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
 int
 fileOp(int f, int n)
 {
-    meUByte sfname[meFILEBUF_SIZE_MAX], dfname[meFILEBUF_SIZE_MAX], lfname[meFILEBUF_SIZE_MAX], *fn ;
+    meUByte sfname[meFILEBUF_SIZE_MAX], dfname[meFILEBUF_SIZE_MAX], lfname[meFILEBUF_SIZE_MAX], *fn=NULL ;
     int dFlags=0 ;
 	
     if((n & (meFILEOP_FTPCLOSE|meFILEOP_DELETE|meFILEOP_MOVE|meFILEOP_COPY|meFILEOP_MKDIR)) == 0)
@@ -1885,7 +1885,6 @@ fileOp(int f, int n)
             if(mlyesno(prompt) != meTRUE)
                 return ctrlg(meFALSE,1);
         }
-        fn = NULL ;
         dFlags = meRWFLAG_DELETE ;
     }
     else if(n & (meFILEOP_MOVE|meFILEOP_COPY))
@@ -1933,7 +1932,6 @@ fileOp(int f, int n)
 #endif
             )
             return mlwrite(MWABORT,(meUByte *)"[%s already exists]",sfname);
-        fn = NULL ;
         dFlags = meRWFLAG_MKDIR ;
     }
     if(n & meFILEOP_BACKUP)
@@ -2248,7 +2246,7 @@ appendBuffer(int f, int n)
             if(mlyesno(prompt) != meTRUE)
                 return ctrlg(meFALSE,1);
         }
-        ss = 0 ;
+        flags = 0 ;
     }
     else if(n & 0x04)
         flags = meRWFLAG_OPENTRUNC ;

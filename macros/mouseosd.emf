@@ -10,18 +10,29 @@
 ; define some external macros which are used first.
 0 define-macro-file osd osd-1-buffer osd-close
 0 define-macro-file search osd-line-scheme
+!if &reg "/history" "find-buffer" "0"
+    !if &not &exi .osd.find-buffer
+        set-variable .osd.find-buffer &pinc .osd.next 1
+        0 define-macro-file findbuff osd-find-buffer
+    !endif
+!endif
 ;
+0 define-macro store-frame-size
+    set-registry "/history" &cat %platform "/frame-width" $frame-width 
+    set-registry "/history" &cat %platform "/frame-depth" $frame-depth 
+!emacro
 ; MENU #23 - MODE LINE pop-up menu
 ; The mode line pop-up menu is invoked when the mouse is right clicked
 ; on the mode line
 ;
 osd 23 0  b
-osd 23 1  "M"  "Buffer &Modes" 24
-osd 23 2  ""   "&Save Buffer"   f save-buffer    ; Save the buffer
-osd 23 3  ""   "&Close Buffer"  f osd-close      ; Close the buffer
-osd 23 4  "Md" "&Buffer"       20 osd-1-buffer   ; Set up the buffers
-osd 23 5  "Md" "&Quick Open"   19                ; Open a file. 
-osd 23 6  "M"  "S&croll Bars"  25
+osd 23 1  "M"  "Buffer &Modes"    24
+osd 23 2  ""   "&Save Buffer"      f save-buffer    ; Save the buffer
+osd 23 3  ""   "&Close Buffer"     f osd-close      ; Close the buffer
+osd 23 4  "Md" "&Buffer"          20 osd-1-buffer   ; Set up the buffers
+osd 23 5  "Md" "&Quick Open"      19                ; Open a file. 
+osd 23 6  "M"  "S&croll Bars"     25
+osd 23 7  ""   "Store Frame Size"  f store-frame-size
 ;
 ; MENU #24 - BUFFER MODES pop-up menu
 ; Show the buffer modes. These are check items on the popup menu, a callback
@@ -83,7 +94,7 @@ set-variable $mode-names ".*"
         man @y
     !endif
 !emacro
-osd 25 0 b
+osd 25 0 "bB"
 osd 25 1 "" "&Enabled"  0 osd-25-scroll-bars
 osd 25 2 "" "&Wide"     1 osd-25-scroll-bars
 ;
@@ -106,15 +117,11 @@ osd 27 30  ""   "&Paste"            f osd-mouse-yank ; Paste text
 osd 27 40  "-"
 osd 27 50  "i"  "&Find tag"         1 "3 find-tag @y"
 osd 27 60  ""   "Find &help"        f osd-find-help
-osd 27 70  "Md" "Sort &Lines"      28
 osd 27 80  ""   "Restyle &Region "  f restyle-region
-osd 27 90  "Md" "H&ilight Line"     .osd.tmp osd-line-scheme
 osd 27 100  "-"
 osd 27 120 ""   "Spell Buffer"      f spell-buffer
 osd 27 130 ""   "&Save Buffer"      f save-buffer    ; Save the buffer
 osd 27 140 ""   "&Close Buffer"     f osd-close      ; close the buffer
-osd 27 150 "Md" "&Buffer"          20 osd-1-buffer   ; Set up the buffers
-osd 27 160 "Md" "&Quick Open"      19                ; Open a file. 
 ;
 ; MENU 28 - Sort lines.
 ; Simple menu for options for the sort lines item. Used in the Pop-up menus.
@@ -131,17 +138,15 @@ define-macro mouse-osd-multi
         0 show-region
         set-variable #l2 $result
         goto-position "\x82"
-        !if &and &gre $mouse-x 20 &les &sub $frame-width $mouse-x 33 
-            osd 27 70  "Mdw" "Sort &Lines"      28
-            osd 27 90  "Mdw" "H&ilight Line"    .osd.tmp osd-line-scheme
-            osd 27 150 "Mdw" "&Buffer"          20 osd-1-buffer
-            osd 27 160 "Mdw" "&Quick Open"      19
-        !else
-            osd 27 70  "Md"  "Sort &Lines"      28
-            osd 27 90  "Md"  "H&ilight Line"    .osd.tmp osd-line-scheme
-            osd 27 150 "Md"  "&Buffer"          20 osd-1-buffer
-            osd 27 160 "Md"  "&Quick Open"      19
+        set-variable #l1 &cond &and &gre $mouse-x 20 &les &sub $frame-width $mouse-x 33 "Mdw" "Md"
+        osd 27 70  #l1 "Sort &Lines"      28
+        osd 27 90  #l1 "H&ilight Line"    .osd.tmp osd-line-scheme
+        !if &reg "/history" "find-buffer" "0"
+            osd 27 150 #l1 "&Buffer"      .osd.find-buffer osd-find-buffer
+        !else    
+            osd 27 150 #l1 "&Buffer"      20 osd-1-buffer   ; Set up the buffers
         !endif
+        osd 27 160 #l1 "&Quick Open"      19
         osd 27 110 "i" &cond &band $window-flags 4 "Unloc&k Window" "Loc&k Window" f "set-variable $window-flags &bxor $window-flags 4"
         !if &band #l2 1
             !force show-region
@@ -150,15 +155,16 @@ define-macro mouse-osd-multi
     !elif &equ #l0 1
         ; Message line
         void
-    !elif &equ #l0 2
-        ; Mouse on Mode line
-        23 osd
+    !elif &or &equ #l0 2 &equ #l0 10
+        ; Mouse on Mode line or corner - if this is a toolbar window execute the toolbar-setup
+        !if &band $window-flags 0x1000
+            toolbar-setup
+        !else
+            23 osd
+        !endif
     !elif &and &gre #l0 2 &les #l0 10
         ; Mouse on scroll bar
         25 osd
-    !elif &equ #l0 10
-        ; Mouse on corner
-        23 osd
     !elif &equ #l0 11
         ; menu line
         0 osd

@@ -150,7 +150,8 @@ meRegexMatch(meRegex *regex, unsigned char *string, int len,
 			 int offsetS, int offsetE, int flags) ;
 
 extern char *meRegexCompErrors[] ;
-extern meRegex mereRegex ;
+extern meRegex mereRegex ;         /* meRegex used by main search */
+extern meRegex meRegexStrCmp ;     /* meRegex used meRegexStrCmp  */
 
 #define mereRegexInvalidate()   (mereRegex.flags = 0)
 #define mereRegexClassChanged() (mereRegex.flags |= meREGEX_CLASSCHANGE)
@@ -163,10 +164,10 @@ extern meRegex mereRegex ;
 #endif
 
 typedef struct {                       
-    meLine *startline;                    /* Pattern start position */
+    meLine *startline;                  /* Pattern start position */
     int   startoff;                     /* Pattern start line offset */
     int   startline_no;                 /* Pattern start line number */
-    meLine *endline;                      /* Pattern end position */
+    meLine *endline;                    /* Pattern end position */
     int   endoffset;                    /* Pattern end offset */
     int   endline_no;                   /* Pattern end line number */
 } SCANNERPOS;
@@ -182,13 +183,13 @@ extern int iscanner (meUByte *apat, int n, int flags, SCANNERPOS *sp);
 /* search arrays and variables, defined in search.c, but exported
  * here so others can access them.
  */ 
-extern meUByte  srchPat[] ;                    /* current search string          */
-extern meUByte  srchRPat[] ;                   /* reverse current search string  */
+extern meUByte  srchPat[] ;             /* current search string          */
+extern meUByte  srchRPat[] ;            /* reverse current search string  */
 /* the following variables store info on the last match - for @s# support     */
-extern int    srchLastState;                 /* status of last search          */
-extern meUByte *srchLastMatch;                 /* pointer to the last match string */
+extern int    srchLastState;            /* status of last search          */
+extern meUByte *srchLastMatch;          /* pointer to the last match string */
 #if MEOPT_MAGIC
-extern int    srchLastMagic;                 /* last search was a magic        */
+extern int    srchLastMagic;            /* last search was a magic        */
 #endif
 
 /* Incremental search defines */

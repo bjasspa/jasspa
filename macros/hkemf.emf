@@ -31,7 +31,7 @@ set-variable .fhook-emf.fold-close "^!emacro"
 set-variable .fhook-emf.fold-mopen "1"
 
 ; setup item-list
-set-variable .fhook-emf.item-list-s1 "^\\s *[0-9]*\\s *define-macro\\s +\\(\\w+\\)"
+set-variable .fhook-emf.item-list-s1 "^[ \t]*[0-9]*[ \t]*define-macro[ \t]+\\(\\w+\\)"
 set-variable .fhook-emf.item-list-r1 "Macr \ecB\\1\ecA"
 
 !if &not &exist .hilight.emf

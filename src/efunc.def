@@ -85,6 +85,10 @@ DEFFUNC ("change-file-name",		0x00, changeFileName,	CK_CHGFIL, &__cmdArray[CK_CH
 DEFFUNC ("change-font",                 0x00, changeFont,       CK_CHGFONT,&__cmdArray[CK_CHGFONT+1], 0)
 DEFFUNC ("change-frame-depth",		0x00, frameChangeDepth, CK_FRMDPTH, &__cmdArray[CK_FRMDPTH+1], 0)
 DEFFUNC ("change-frame-width",		0x00, frameChangeWidth, CK_FRMWDTH, &__cmdArray[CK_FRMWDTH+1], 0)
+DEFFUNC ("change-window-depth",		0x00, windowChangeDepth,CK_WDWDPTH, &__cmdArray[CK_WDWDPTH+1], 0)
+#if MEOPT_CMDHASH || MEOPT_HSPLIT
+DEFFUNC ("change-window-width",		0x00, windowChangeWidth,CK_WDWWDTH, &__cmdArray[CK_WDWWDTH+1], &__cmdArray[CK_QUIT])
+#endif
 #if MEOPT_CMDHASH || MEOPT_EXTENDED
 DEFFUNC ("command-apropos",		0x42, commandApropos,	CK_APROPS, &__cmdArray[CK_APROPS+1], 0)
 DEFFUNC ("command-wait",		0x42, commandWait,	CK_CMDWAIT, &__cmdArray[CK_CMDWAIT+1], 0)
@@ -176,7 +180,7 @@ DEFFUNC	("global-abbrev-file",		0x00, globalAbbrev,	CK_GLOBABBREV, &__cmdArray[C
 DEFFUNC ("global-bind-key",		0x00, globalBindKey,	CK_BINDKEY, &__cmdArray[CK_BINDKEY+1], 0)
 DEFFUNC ("global-mode",			0x00, globalMode,	CK_GLOBMOD, &__cmdArray[CK_GLOBMOD+1], 0)
 DEFFUNC ("global-unbind-key",		0x00, globalUnbindKey,	CK_UBNDKEY, &__cmdArray[CK_UBNDKEY+1], 0)
-DEFFUNC	("goto-alpha-mark",		0x42, gotoAlphaMark,	CK_GOAMRK, &__cmdArray[CK_GOAMRK+1], &__cmdArray[CK_REDHWND])
+DEFFUNC	("goto-alpha-mark",		0x42, gotoAlphaMark,	CK_GOAMRK, &__cmdArray[CK_GOAMRK+1], 0)
 DEFFUNC ("goto-line",			0x42, windowGotoLine,	CK_GOLIN, &__cmdArray[CK_GOLIN+1], 0)
 #if MEOPT_CMDHASH || MEOPT_CFENCE
 DEFFUNC ("goto-matching-fence",		0x48, gotoFence,	CK_GOFNC, &__cmdArray[CK_GOFNC+1], 0)
@@ -184,10 +188,6 @@ DEFFUNC ("goto-matching-fence",		0x48, gotoFence,	CK_GOFNC, &__cmdArray[CK_GOFNC
 #if MEOPT_CMDHASH || MEOPT_POSITION
 DEFFUNC ("goto-position",		0x42, positionGoto,	CK_GOTOPOS, &__cmdArray[CK_GOTOPOS+1], 0)
 #endif
-#if MEOPT_CMDHASH || MEOPT_HSPLIT
-DEFFUNC ("grow-window-horizontally",	0x00, windowGrowWidth,	CK_ENGHORZWIN, &__cmdArray[CK_ENGHORZWIN+1], 0)
-#endif
-DEFFUNC ("grow-window-vertically",	0x00, windowGrowDepth,	CK_ENGWIN, &__cmdArray[CK_ENGWIN+1], 0)
 #if MEOPT_CMDHASH || MEOPT_EXTENDED
 DEFFUNC ("help",			0x42, help,		CK_HELP, &__cmdArray[CK_HELP+1], 0)
 DEFFUNC ("help-command",		0x42, helpCommand,	CK_HELPCOM, &__cmdArray[CK_HELPCOM+1], 0)
@@ -304,10 +304,6 @@ DEFFUNC ("read-registry",		0x42, readRegistry,	CK_REDREGY, &__cmdArray[CK_REDREG
 DEFFUNC ("recenter",		        0x42, windowRecenter,	CK_RECENT, &__cmdArray[CK_RECENT+1], 0)
 DEFFUNC ("replace-string",		0x42, replaceStr,	CK_STRREP, &__cmdArray[CK_STRREP+1], 0)
 DEFFUNC ("resize-all-windows",          0x00, frameResizeWindows,CK_RESIZEALL, &__cmdArray[CK_RESIZEALL+1], 0)
-#if MEOPT_CMDHASH || MEOPT_HSPLIT
-DEFFUNC ("resize-window-horizontally",	0x00, windowResizeWidth,CK_RESIZEHORZ, &__cmdArray[CK_RESIZEHORZ+1], 0)
-#endif
-DEFFUNC ("resize-window-vertically",	0x00, windowResizeDepth,CK_RESIZE, &__cmdArray[CK_RESIZE+1], &__cmdArray[CK_OSDUNBD])
 DEFFUNC ("reyank",			0x39, reyank,		CK_REYANK, &__cmdArray[CK_REYANK+1], 0)
 DEFFUNC ("save-buffer",			0x42, saveBuffer,	CK_SAVBUF, &__cmdArray[CK_SAVBUF+1], 0)
 DEFFUNC ("save-buffers-exit-emacs",	0x00, saveExitEmacs,	CK_QUIT, &__cmdArray[CK_QUIT+1], 0)
@@ -362,10 +358,6 @@ DEFFUNC ("shell-command",	        0x00, meShellCommand,	CK_SYSTEM, &__cmdArray[C
 DEFFUNC ("show-cursor",			0x42, showCursor,	CK_SHOWCUR, &__cmdArray[CK_SHOWCUR+1], 0)
 DEFFUNC ("show-region",			0x00, showRegion,	CK_SHOWSEL, &__cmdArray[CK_SHOWSEL+1], 0)
 #endif
-#if MEOPT_CMDHASH || MEOPT_HSPLIT
-DEFFUNC ("shrink-window-horizontally",	0x00, windowShrinkWidth,CK_REDHWND, &__cmdArray[CK_REDHWND+1], 0)
-#endif
-DEFFUNC ("shrink-window-vertically",	0x00, windowShrinkDepth,CK_REDVWND, &__cmdArray[CK_REDVWND+1], 0)
 DEFFUNC ("sort-lines",		        0x04, sortLines,	CK_SORTLNS, &__cmdArray[CK_SORTLNS+1], 0)
 #if MEOPT_CMDHASH || MEOPT_SPELL
 DEFFUNC ("spell",                       0x42, spellWord,  	CK_SPLLWRD, &__cmdArray[CK_SPLLWRD+1], 0)

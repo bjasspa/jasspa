@@ -83,7 +83,7 @@ readHistory(int f, int n)
         /* ditch the default history */
         meNullFree(defHistFile) ;
         defHistFile = NULL ;
-        return TRUE ;
+        return meTRUE ;
     }
     else
     {

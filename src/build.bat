@@ -90,6 +90,14 @@ if %borland% GT %msvc% goto build_msvc
 :build_borland
 
 set MAKE=make
+
+if %@INDEX[%lpath%,\bcc55] == -1 goto build_borland_bc
+
+set MAKEFILE=win32b55.mak
+goto build
+
+:build_borland_bc
+
 set MAKEFILE=win32bc.mak
 goto build
 

@@ -463,6 +463,7 @@
  *************************************************************************/
 #include <stdio.h>                      /* Always need this              */
 #include <stdlib.h>                     /* Usually need this             */
+#include <string.h>                     /* Usually need this             */
 #include <errno.h>                      /* Need errno and sys_errlist    */
 
 #ifdef _ME_FULL_DEBUG

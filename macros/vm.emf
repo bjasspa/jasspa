@@ -473,7 +473,7 @@ hilight .hilight.vmhl 0x40 "." ""                 $global-scheme
     vm-moveto
     delete-other-windows
     2 split-window-vertically
-    15 resize-window-vertically
+    change-window-depth 15
     find-buffer &cat %vm-curbuf "-list"
     goto-line &ind %vm-curmcur
     next-window

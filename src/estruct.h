@@ -225,11 +225,17 @@ typedef struct meLine
  * contents of the window, thereby reducing maintenance of the tesselation 
  * code which is a bit of a mind bender at times.
  * 
- * Note that the "flags" are at the top. We access these alot on the display
+ * Note that the "updateFlags" are at the top. We access these alot on the display
  * side. Positioned here ensures that they are available immediatly without
  * any indirect offset - just give that compiler a hand. 
  */
 
+/*
+ * meWindow size limits, note that the minimum width must allow for the
+ * narrow -> wide scroll-bar change as we don't want to resize all the windows
+ * if the user makes this change */
+#define meWINDOW_WIDTH_MIN  5           /* Minimum width of a window    */
+#define meWINDOW_DEPTH_MIN  2           /* Minimum width of a window    */
 /*
  * meWindow structure updateFlag values.
  * Define states to the display drivers to update the screen. 
@@ -349,7 +355,10 @@ typedef struct meLine
 #define WCDISPTAB    52                  /* Display tab char                 */
 #define WCDISPCR     53                  /* Display new-line char            */
 #define WCDISPSPACE  54                  /* Display space char               */
-#define WCLEN        55                  /* Number of characters             */
+#define WCDISPTXTLFT 55                  /* Display text off to left         */
+#define WCDISPTXTRIG 56                  /* Display text off to right        */
+#define WCDISPSPLTLN 57                  /* Display split line char (ipipe)  */
+#define WCLEN        58                  /* Number of characters             */
 
 /* The box chars BC=Box Chars, N=North, E=East, S=South, W=West,
  * So BCNS = Box Char which has lines from North & South to centre, i.e. 
@@ -370,6 +379,7 @@ typedef struct meLine
 #define BCLEN       11                          /* Number of characters         */
 
 typedef struct  meWindow {
+    meUInt             updateFlags;             /* Window update flags.         */
     struct  meWindow  *next;                    /* Next window                  */
     struct  meWindow  *prev;                    /* Previous window              */
     struct  meWindow  *videoNext;               /* meVideo thread of windows    */
@@ -383,7 +393,6 @@ typedef struct  meWindow {
     meInt              vertScroll;              /* windows top line number      */
     meInt              dotLineNo;               /* current line number          */
     meInt              markLineNo;              /* current mark line number     */
-    meUInt             updateFlags;             /* Window update flags.         */
     meUShort           dotOffset;               /* Byte offset for "."          */
     meUShort           markOffset;              /* Byte offset for "mark"       */
     meUShort           windowRecenter;                /* If NZ, forcing row.          */

@@ -57,15 +57,15 @@ extern meUByte time_stamp[];   /* Time stamp string */
 static time_t timeOffset=0 ;            /* Time offset in seconds */
 
 #ifdef _INSENSE_CASE
-meNamesList buffNames={0,0} ;
-meDirList  fileNames={0,0} ;
+meNamesList buffNames={0,0,NULL,NULL,0} ;
+meDirList  fileNames={0,0,NULL,NULL,0,NULL,0} ;
 #else
-meNamesList buffNames={1,0} ;
-meDirList  fileNames={1,0} ;
+meNamesList buffNames={1,0,NULL,NULL,0} ;
+meDirList  fileNames={1,0,NULL,NULL,0,NULL,0} ;
 #endif
-meNamesList commNames={1,0} ;
-meNamesList modeNames={0,MDNUMMODES,modeName,0} ;
-meNamesList varbNames={1,0} ;
+meNamesList commNames={1,0,NULL,NULL,0} ;
+meNamesList modeNames={0,MDNUMMODES,modeName,NULL,0} ;
+meNamesList varbNames={1,0,NULL,NULL,0} ;
 #endif
 
 /* The following horrid global variable solves a horrid problem, consider:
@@ -96,169 +96,21 @@ meNamesList varbNames={1,0} ;
 static meRegister *gmaLocalRegPtr=NULL ;
 
 #if MEOPT_MAGIC
-static meRegex meRegexStrCmp={0} ;
+meRegex meRegexStrCmp={0} ;
 /* Quick and easy interface to regex compare
  * 
  * return -1 on error, 0 on no match 1 if matched
  */
 int
-regexStrCmp(meUByte *str, meUByte *reg, int exact)
+regexStrCmp(meUByte *str, meUByte *reg, int flags)
 {
     int ii ;
     
-    if(meRegexComp(&meRegexStrCmp,reg,(exact) ? 0:meREGEX_ICASE) != meREGEX_OKAY)
+    if(meRegexComp(&meRegexStrCmp,reg,(flags & meRSTRCMP_ICASE)) != meREGEX_OKAY)
         return -1 ;
     
     ii = meStrlen(str) ;
-    return meRegexMatch(&meRegexStrCmp,str,ii,0,ii,(meREGEX_BEGBUFF|meREGEX_ENDBUFF|meREGEX_MATCHWHOLE)) ;
-}
-#else
-/* Cheesy regular expression comparer
- * 
- * reg is the regular expersion which is matched against str
- * reg's special chars are * ? [
- * in a [, a ^ can follow meaning not, and ranges are allowed
- * the exact flag indicates a case sensitive comparision
- */
-int
-regexStrCmp(meUByte *str, meUByte *reg, int exact)
-{
-    char *starStr, *starReg ;
-    int   starState=0 ;
-    char  rc, sc, nrc ;
-    
-    for(;;)
-    {
-        rc = *reg++ ;
-        if(rc == '*')
-        {
-            /* A wild card, if its the last char in the match then we have
-             * a match, else flag we got one and where (incase we 
-             * have to go back) and move on
-             */
-            if(*reg == '\0')
-                return 1 ;
-            starState = 1 ;
-            starReg = reg ;
-        }
-        else
-        {
-            if(!exact)
-                rc = toLower(rc) ;
-            for(;;)
-            {
-                sc = *str++ ;
-                /* is it the end of str */
-                if(sc == '\0')
-                {
-                    /* if its the end of reg break as if a char match, otherwise
-                     * we have failed
-                     */
-                    if(rc != '\0')
-                        return 0 ;
-                    break ;
-                }
-                if(!exact)
-                    sc = toLower(sc) ;
-                /* if rc is a wild char then as long as sc isn't '\0'
-                 * then its a match
-                 */
-                if(rc == '?')
-                    break ;
-                /* Test for a bracketed range */
-                if(rc == '[')
-                {
-                    int not ;
-                    /* do we inverse the result ? */
-                    if(*reg == '^')
-                    {
-                        not = 1 ;
-                        reg++ ;
-                    }
-                    else
-                        not = 0 ;
-                    while((rc=*reg++) != ']')
-                    {
-                        if(rc == '\0')
-                            /* failed to find closing ']' - abort */
-                            return -1 ;
-                        nrc = *reg ;
-                        if(nrc == '-')
-                        {
-                            /* range, note that if we're done a case insensitive compare
-                             * we must test the two cases of sc and not change any of the
-                             * range charaters
-                             */
-                            reg++ ;
-                            nrc = *reg++ ;
-                            if((sc >= rc) && (sc <= nrc))
-                                break ;
-                            if(!exact)
-                            {
-                                char tc=toggleCase(sc) ;
-                                if((tc >= rc) && (tc <= nrc))
-                                    break ;
-                            }
-                        }
-                        else
-                        {
-                            /* single char compare */
-                            if(!exact)
-                                rc = toLower(rc) ;
-                            if(sc == rc)
-                                break ;
-                        }
-                    }
-                    if(rc != ']')
-                    {
-                        /* found match, move to the ']' and continue */
-                        while((rc=*reg++) != ']')
-                            if(rc == '\0')
-                                return -1 ;
-                        /* X-or to allow for the not */
-                        not ^= 1 ;
-                    }
-                    /* Did we find a match ? */
-                    if(not)
-                        break ;
-                }
-                /* If the letters are the same, match. */
-                else if(sc == rc)
-                    break ;
-                /* Character match has failed - if there's been no wild
-                 * card we've failed
-                 */
-                if(starState == 0)
-                    return 0 ;
-                if(starState < 0)
-                {
-                    /* There has been, but we've matched chars after, so
-                     * move back to the char after the first match and try again
-                     * This is to cope with matching *.cpp with test.c.cpp
-                     */
-                    starState = 1 ;
-                    str = starStr ;
-                    reg = starReg ;
-                    rc = *reg++ ;
-                    if(!exact)
-                        rc = toLower(rc) ;
-                }
-            }
-            /* we matched the char, if it was the null terminator then we've
-             * got a match
-             */
-            if(sc == '\0')
-                return 1 ;
-            /* if the previous char was a'*' then store this location incase
-             * we fail later on and we can come back to here and try again
-             */
-            if(starState > 0)
-            {
-                starState = -1 ;
-                starStr = str ;
-            }
-        }
-    }
+    return meRegexMatch(&meRegexStrCmp,str,ii,0,ii,(flags & meRSTRCMP_WHOLE)) ;
 }
 #endif
 
@@ -675,7 +527,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             break ;
 #endif
         case EVFRMDPTH:
-            return frameChangeDepth(meTRUE, meAtoi(vvalue));
+            return frameChangeDepth(meTRUE,frameCur->depth+1-meAtoi(vvalue));
         case EVABSCOL:
             return setcwcol(meAtoi(vvalue));
         case EVABSLINE:
@@ -757,7 +609,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             return meTRUE ;
 #endif
         case EVFRMWDTH:
-            return frameChangeWidth(meTRUE, meAtoi(vvalue));
+            return frameChangeWidth(meTRUE,frameCur->width-meAtoi(vvalue));
         case EVCBUFNAME:
             unlinkBuffer(frameCur->bufferCur) ;
             if((vvalue[0] == '\0') || (bfind(vvalue,0) != NULL))
@@ -904,7 +756,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
 #endif
         case EVSBAR:    
             gsbarmode = meAtoi(vvalue) & WMUSER;
-            frameResizeWindows (meTRUE, 0);         /* Force window update */
+            meFrameResizeWindows(frameCur,0);
             break;
 #if MEOPT_IPIPES
         case EVBUFIPIPE:
@@ -1203,7 +1055,7 @@ handle_namesvar:
         while(mv->curr < mv->size)
         {
             meUByte *ss = mv->list[(mv->curr)++] ;
-            if(regexStrCmp(ss,mv->mask,mv->exact))
+            if(regexStrCmp(ss,mv->mask,(mv->exact) ? meRSTRCMP_WHOLE:meRSTRCMP_ICASE|meRSTRCMP_WHOLE))
                 return ss ;
         }
         return emptym ;
@@ -1298,7 +1150,7 @@ handle_namesvar:
     case EVWDEPTH:      return (meItoa(frameCur->windowCur->textDepth));
     case EVWWIDTH:      return (meItoa(frameCur->windowCur->textWidth));
 #endif
-    case EVFRMWDTH:    return (meItoa(frameCur->width));
+    case EVFRMWDTH:     return (meItoa(frameCur->width));
     case EVCBUFBACKUP:
         if((frameCur->bufferCur->fileName == NULL) || createBackupName(evalResult,frameCur->bufferCur->fileName,'~',0))
             return (meUByte *) "" ;
@@ -2581,8 +2433,8 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
     case UFSGREAT:     return(meLtoa(meStrcmp(arg1,arg2) > 0));
     case UFISEQUAL:    return(meLtoa(meStricmp(arg1,arg2) == 0));
 #if MEOPT_MAGIC
-    case UFXSEQ:       return(meLtoa(regexStrCmp(arg1,arg2,1) == 1));
-    case UFXISEQ:      return(meLtoa(regexStrCmp(arg1,arg2,0) == 1));
+    case UFXSEQ:       return(meLtoa(regexStrCmp(arg1,arg2,meRSTRCMP_WHOLE) == 1));
+    case UFXISEQ:      return(meLtoa(regexStrCmp(arg1,arg2,meRSTRCMP_ICASE|meRSTRCMP_WHOLE) == 1));
 #endif
 #if MEOPT_EXTENDED
     case UFLDEL:

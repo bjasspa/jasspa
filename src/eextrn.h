@@ -127,7 +127,7 @@ extern	int	swbuffer(meWindow *wp, meBuffer *bp);
 extern	int	delBuffer(int f, int n);
 extern	int	delSomeBuffers(int f, int n);
 extern  meBuffer *replacebuffer(meBuffer *oldbuf) ;
-extern	int	HideBuffer(meBuffer *bp) ;
+extern	int	HideBuffer(meBuffer *bp, int forceAll) ;
 extern  void    linkBuffer(meBuffer *bp) ;
 extern  void    unlinkBuffer(meBuffer *bp) ;
 extern	int	zotbuf(meBuffer *bp, int silent);
@@ -232,9 +232,14 @@ extern  int     doRedrawEvent(void);
 extern  int     mlwrite(int flags, meUByte *fmt, ...) ;
 
 /* eval.c externals */
-extern  int     regexStrCmp(meUByte *str, meUByte *reg, int exact) ;
-extern	meUByte  *gtfun(meUByte *fname);
-extern  meUByte  *getUsrLclCmdVar(meUByte *vname, register meVarList *varList) ;
+#define meRSTRCMP_ICASE      0x01
+#define meRSTRCMP_BEGBUFF    0x02
+#define meRSTRCMP_ENDBUFF    0x04
+#define meRSTRCMP_MATCHWHOLE 0x08
+#define meRSTRCMP_WHOLE      (meRSTRCMP_BEGBUFF|meRSTRCMP_ENDBUFF|meRSTRCMP_MATCHWHOLE)
+extern  int     regexStrCmp(meUByte *str, meUByte *reg, int flags) ;
+extern	meUByte *gtfun(meUByte *fname);
+extern  meUByte *getUsrLclCmdVar(meUByte *vname, register meVarList *varList) ;
 #define getUsrVar(vname) getUsrLclCmdVar(vname,&usrVarList)
 extern	meVariable *SetUsrLclCmdVar(meUByte *vname, meUByte *vvalue,
                                            register meVarList *varList) ;
@@ -976,21 +981,18 @@ extern  int     windowScrollRight(int f, int n);
 extern	int	windowScrollUp(int f, int n);
 extern	int	windowDeleteOthers(int f, int n);
 extern	int	windowDelete(int f, int n);
-extern	int	windowGrowDepth(int f, int n);
-extern	int	windowResizeDepth(int f, int n);
-extern	int	windowShrinkDepth(int f, int n);
-extern	int	windowSplitDepth(int f, int n);
+#define meFRAMERESIZEWIN_WIDTH  0x01
+#define meFRAMERESIZEWIN_DEPTH  0x02
+extern  int     meFrameResizeWindows(meFrame *frame, int flags);
 extern  int     frameResizeWindows(int f, int n);
+extern	int	windowSplitDepth(int f, int n);
+extern	int	windowChangeDepth(int f, int n);
 #if MEOPT_HSPLIT
-extern	int	windowGrowWidth(int f, int n);
-extern	int	windowResizeWidth(int f, int n);
-extern	int	windowShrinkWidth(int f, int n);
 extern	int	windowSplitWidth(int f, int n);
+extern	int	windowChangeWidth(int f, int n);
 #else
-#define windowGrowWidth notAvailable
-#define windowResizeWidth notAvailable
-#define windowShrinkWidth notAvailable
 #define windowSplitWidth notAvailable
+#define windowChangeWidth notAvailable
 #endif
 #if MEOPT_POSITION
 extern	int	positionSet(int f, int n);
@@ -1275,29 +1277,6 @@ extern void exit(int i) ;
 /*
  * Terminal I/O file defintions
  */
-#if 0                                   /* These should not be required. */
-extern	char   *getenv(const char *);
-
-extern  void    free(void *block);
-extern  void   *malloc(size_t s);
-extern  void   *realloc(void *block, size_t s);
-extern	void   *memcpy(void *d, const void *s, size_t n);
-extern	void   *memset(void *d, int c, size_t n);
-
-extern	size_t	strlen(const char *s);
-extern	int	strcmp(const char *s1, const char *s2);
-extern	char   *strcpy(char *s1, const char *s2);
-extern	char   *strcat(char *s1, const char *s2);
-extern	char   *strdup(const char *s1);
-extern	char   *strncpy(char *s1, const char *s2, size_t n);
-extern	int	strncmp(const char *s1, const char *s2, size_t n);
-extern	char   *strchr(const char *, int);
-extern	char   *strrchr(const char *, int);
-extern  long    strtol(const char*, char**, int);
-extern  int     abs(int);
-extern  int     system(const char*);
-#endif
-
 #ifdef _NOPUTENV
 #define meGetenv(s1)        ((void *) megetenv((const char *)(s1)))
 extern char    *megetenv(const char *s);

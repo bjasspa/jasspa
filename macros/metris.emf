@@ -12,7 +12,7 @@ set-variable %met-level   6
 0 define-macro bhook-metris
     -1 show-cursor
     !force osd -1 0                         ; Turn off the menu.
-    !if &not &bmod "usr8"
+    !if &not &bmod "usr3"
         !return
     !endif
     1 met-redraw
@@ -285,7 +285,7 @@ set-variable %met-level   6
         !return
     !endif
     !if &gre :met-score %met-hiscore
-        -1 buffer-mode "usr8"
+        -1 buffer-mode "usr3"
         set-variable #l0 &spr "%d by %s" :met-score $MENAME
         find-file %met-file
         beginning-of-buffer
@@ -303,7 +303,7 @@ set-variable %met-level   6
         1 met-redraw
         set-variable %met-hiscore #l0
         65 screen-poke 20 32 .scheme.met-back "NEW HI-SCORE!!"
-        1 buffer-mode "usr8"
+        1 buffer-mode "usr3"
     !else
         1 met-redraw
     !endif
@@ -631,5 +631,5 @@ define-macro Metris
     buffer-bind-create "bo" "esc h" "" met-help
     met-select-piece
     met-new-piece
-  1 buffer-mode "usr8"
+  1 buffer-mode "usr3"
 !emacro

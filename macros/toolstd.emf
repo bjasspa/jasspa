@@ -1,0 +1,299 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     Fri May 24 2002
+; Synopsis:    Standard basic toolbar tools
+; Authors:     Steven Phillips
+;
+0 define-macro buffer-info-mouse-drop-1
+    set-variable #l0 0
+    !if &equ $window-line 4
+        ; on the attr line
+        !if &gre $window-col 10
+            ; on the changeable file fmod bits
+            !if &les &set #l1 &sub $window-col 10 &cond &band $system 0x80 10 5
+                set-variable #l0 1
+            !endif
+        !elif &gre $window-col 8
+        !elif &gre $window-col 5
+            ; on the file type
+            set-variable #l0 2
+        !endif
+    !endif
+    goto-position "\x82"
+    !if #l0
+        !if &equ #l0 1
+            ; on the changeable file fmod bits
+            !if &band $system 0x80
+                set-variable $buffer-fmod &bxor $buffer-fmod &lget "|256|128|64|32|16|8|4|2|1|" #l1
+            !else
+                set-variable $buffer-fmod &bxor $buffer-fmod &lget "|1|2|4|32|" #l1
+            !endif
+        !else
+            ; on the file type
+            !if &bmod "crlf"
+                buffer-mode "ctrlz"
+                !if &bmod "ctrlz"
+                    ; dont go to the weird ??? mode
+                    -1 buffer-mode "crlf"
+                !endif
+            !endif
+            buffer-mode "crlf"
+            !endif
+        !endif
+        ; 1 buffer-mode "edit"
+        buffer-info-create
+    !endif
+!emacro
+
+0 define-macro buffer-info-create
+    set-position "\x86"
+    set-variable #l0 $buffer-fname
+    set-variable #l2 &lget "|Unx|Win|???|Dos|" &add 1 &add &bmod "crlf" &mul 2 &bmod "ctrlz"
+    set-variable #l2 &cat #l2 &cond &bmod "dir" " d" " -"
+    !if &band $system 0x80
+        ; unix system
+        set-variable #l2 &cat #l2 &cond &band $buffer-fmod 256 "r" "-"  
+        set-variable #l2 &cat #l2 &cond &band $buffer-fmod 128 "w" "-"  
+        set-variable #l2 &cat #l2 &cond &band $buffer-fmod  64 "x" "-"  
+        set-variable #l2 &cat #l2 &cond &band $buffer-fmod  32 "r" "-"  
+        set-variable #l2 &cat #l2 &cond &band $buffer-fmod  16 "w" "-"  
+        set-variable #l2 &cat #l2 &cond &band $buffer-fmod   8 "x" "-"  
+        set-variable #l2 &cat #l2 &cond &band $buffer-fmod   4 "r" "-"  
+        set-variable #l2 &cat #l2 &cond &band $buffer-fmod   2 "w" "-"  
+        set-variable #l2 &cat #l2 &cond &band $buffer-fmod   1 "x" "-"  
+    !else
+        ; MS system (probably)
+        set-variable #l2 &cat #l2 &cond &band $buffer-fmod  1 "-" "w"
+        set-variable #l2 &cat #l2 &cond &band $buffer-fmod  2 "h" "-"
+        set-variable #l2 &cat #l2 &cond &band $buffer-fmod  4 "s" "-"
+        set-variable #l2 &cat #l2 &cond &band $buffer-fmod 32 "a" "-"
+    !endif
+    set-variable #l1 ""
+    set-variable #l3 ""
+    !if &seq "" #l0
+        ; no file name
+    !elif &seq &lef .toolbar-redraw.bn 1 "*"
+        ; A '*' buffer like *grep* - ingore the 'file'
+    !elif &seq &lef #l0 6 "ftp://"
+        ; a ftp file, &stat 'm' & 's' does not work on these files
+    !elif &seq &lef #l0 7 "http://"
+        ; a http file, &stat 'm' & 's' does not work on these files
+    !elif &or &not &exi :buffer-info &band .toolbar-redraw.bc 0x013
+        set-variable #l1 &stat "m" $buffer-fname
+        set-variable #l1 &spr "%d-%02d-%02d" &lef #l1 4 &mid #l1 7 2 &mid #l1 9 2
+        set-variable #l3 &stat "s" $buffer-fname
+        set-variable #l3 &cond &les #l3 0 "-" #l3
+        set-variable :buffer-info &spr "|%s|%s|" #l1 #l3
+    !else
+        set-variable #l1 &lget :buffer-info 1
+        set-variable #l3 &lget :buffer-info 2
+    !endif
+    !if &seq $buffer-fhook ""
+        set-variable #l4 "<unknown>"
+    !else
+        set-variable #l4 &ind &spr ".%s.name" $buffer-fhook
+        !if &seq #l4 "ERROR"
+            set-variable #l4 &cat &sup &mid $buffer-fhook 6 1 &rig $buffer-fhook 7
+        !endif
+        set-variable #l4 &spr "%s (%s)" #l4 &rig $buffer-fhook 6
+    !endif
+    find-buffer "*buffer-info*" 
+    -1 buffer-mode "undo"
+    -1 buffer-mode "view"
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    -1 kill-region
+    insert-string &spr "File Info - %s\n\n" .toolbar-redraw.bn
+    ;insert-string &spr "State:  %s\n" &cond &nbm .toolbar-redraw.bn "edit" "Modified" "Unchanged"
+    insert-string &spr "Type: %s\n" #l4
+    insert-string &spr "Attr: %s\n" #l2
+    insert-string &spr "Date: %s\n" #l1
+    insert-string &spr "Size: %s\n" #l3
+    insert-string &spr "Name: %s\n" &rig #l0 &rsin "/" #l0
+    insert-string &spr "Path: %s\n" &lef #l0 &rsin "/" #l0
+    beginning-of-buffer
+    set-variable $line-scheme .scheme.header
+    set-variable :mouse-pick-1 void
+    set-variable :mouse-drop-1 buffer-info-mouse-drop-1
+    -1 buffer-mode "edit"
+    1 buffer-mode "view"
+    goto-position "\x86"
+!emacro
+
+0 define-macro buffer-list-create-single
+    !if &nbmod #p9 "del"
+        set-variable #l4 "D"
+    !elif &nbmod #p9 "nact"
+        set-variable #l4 " "
+    !else
+        set-variable #l4 "@"
+    !endif
+    !if &nbmod #p9 "save"
+        set-variable #l4 &cat #l4 "S "
+    !elif &nbmod #p9 "edit"
+        set-variable #l4 &cat #l4 "* "
+    !elif &nbmod #p9 "view"
+        set-variable #l4 &cat #l4 "% "
+    !else
+        set-variable #l4 &cat #l4 "  "
+    !endif
+    insert-string &cat #l4 #p9
+    insert-newline
+!emacro
+
+0 define-macro buffer-list-command
+    set-variable #l9 &rig @wl 3
+    !if &equ @# -2
+        goto-position "\x82"
+        set-variable $buffer-names ".*"
+        !while &not &seq &set #l0 $buffer-names ""
+            !if &and &not &nbmod #l0 "hide" &nbmod #l0 "save"
+                find-buffer #l0
+                save-buffer @mna
+            !endif
+        !done
+        set-variable $buffer-names ".*"
+        !while &not &seq &set #l0 $buffer-names ""
+            !if &and &nbmod #l0 "nact" &nbmod #l0 "del"
+                delete-buffer #l0 @mna
+            !endif
+        !done
+        set-variable $buffer-names ".*"
+        !while &not &seq &set #l0 $buffer-names ""
+            !if &and &not &nbmod #l0 "hide" &nbmod #l0 "del"
+                delete-buffer #l0 @mna
+            !endif
+        !done
+        ; force a toolbar update on buffers
+        set-variable .toolbar-redraw.bn "\CH"
+    !elif &equ @# -1
+        !force !force delete-buffer #l9 @mna
+        !if $status
+            ; force a toolbar update on buffers
+            set-variable .toolbar-redraw.bn "\CH"
+        !endif
+    !elif &not @#
+        0 named-buffer-mode #l9 "del"
+        !jump 3
+    !elif &equ @# 1
+        0 named-buffer-mode #l9 "save"
+        -1 buffer-mode "view"
+        beginning-of-line
+        set-mark
+        forward-line
+        -1 kill-region
+        buffer-list-create-single
+        backward-line
+        -1 buffer-mode "edit"
+        1 buffer-mode "view"
+    !elif &gre @# 2
+        ml-write &spr "[%s]" #l9
+        !force popup-window #l9
+        !return
+    !endif
+    goto-position "\x82"
+!emacro
+
+0 define-macro buffer-list-mouse-pick-1
+    set-variable .buffer-list-create.line $window-line
+    goto-position "\x82"
+!emacro
+
+0 define-macro buffer-list-mouse-drop-1
+    !if &gre $window-line 1
+        !if &equ .buffer-list-create.line $window-line
+            $window-col buffer-list-command
+            !return
+        !endif
+    !endif
+    goto-position "\x82"
+!emacro
+
+0 define-macro buffer-list-mouse-drop-3
+    -1 osd .osd.tmp
+    osd .osd.tmp 0 b
+    !if &gre $window-line 1
+        osd .osd.tmp 10 "" "Switch to &Buffer"   3 buffer-list-command
+        osd .osd.tmp 20 "" "&Close Buffer"      -1 buffer-list-command
+        osd .osd.tmp 30 "" "Toggle &Save Flag"   1 buffer-list-command
+        osd .osd.tmp 40 "" "Toggle &Delete Flag" 0 buffer-list-command
+    !else
+        osd .osd.tmp 10 "" "Switch to Buffer"
+        osd .osd.tmp 20 "" "Close Buffer"
+        osd .osd.tmp 30 "" "Toggle Save Flag"
+        osd .osd.tmp 40 "" "Toggle Delete Flag"
+    !endif
+    osd .osd.tmp 50 "" "E&xecute Flags" -2 buffer-list-command
+    !force !force .osd.tmp osd
+    !if &not $status
+        goto-position "\x82"
+    !endif
+!emacro
+
+0 define-macro buffer-list-create
+    set-position "\x86"
+    find-buffer "*buffer-list*" 
+    -1 buffer-mode "undo"
+    -1 buffer-mode "view"
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    -1 kill-region
+    insert-string "AC Buffer List\n"
+    set-variable $buffer-names ".*"
+    !while &not &seq &set #l9 $buffer-names ""
+        !if &not &nbmod #l9 "hide"
+            buffer-list-create-single
+        !endif
+    !done
+    backward-delete-char
+    beginning-of-buffer
+    set-variable $line-scheme .scheme.header
+    set-variable :mouse-pick-1 buffer-list-mouse-pick-1
+    set-variable :mouse-drop-1 buffer-list-mouse-drop-1
+    set-variable :mouse-pick-3 void
+    set-variable :mouse-drop-3 buffer-list-mouse-drop-3
+    -1 buffer-mode "edit"
+    1 buffer-mode "view"
+    goto-position "\x86"
+!emacro
+
+0 define-macro toolbar-dir-list-create
+    !if &seq "" &set #l0 &lef $buffer-fname &rsin "/" $buffer-fname
+        set-variable #l0 &stat "a" "."
+    !endif
+    set-position "\x86"
+    find-buffer "*directory*"
+    !if &not &seq #l0 $buffer-fname
+        0x0f directory-tree #l0
+    !endif
+    goto-position "\x86"
+!emacro
+
+0 define-macro toolbar-file-list-create
+    !if &seq "" &set #l0 &lef $buffer-fname &rsin "/" $buffer-fname
+        set-variable #l0 &stat "a" "."
+    !endif
+    set-position "\x86"
+    find-buffer "*files*"
+    !if &not &and &seq #l0 $buffer-fname &seq .fhook-dirlst.file-process :file-process
+        read-file #l0
+        !if &not &seq .fhook-dirlst.file-process :file-process
+            ; old buffer with the wrong processing - refresh
+            !force 0 delete-buffer $buffer-bname
+            find-file #l0
+        !endif
+        change-buffer-name "*files*"
+        ; as we have delete *files* the toolbar window would have been lost - restore
+        1 goto-position "\x85"
+        find-buffer "*files*"
+    !endif
+    buffer-bind-create "bio" "delete" "" file-browser-close
+    buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
+    goto-position "\x86"
+!emacro
+

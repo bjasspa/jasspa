@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Fri Aug 10 10:28:53 2001
-;  Last Modified : <020426.1105>
+;  Last Modified : <020625.1305>
 ;  Description   : Create a list of abbreviations
 ;
 ;  Notes
@@ -16,19 +16,15 @@
     !endif
     0 hilight .hilight.abbrev-item 0 $global-scheme
     hilight .hilight.abbrev-item 0x40 ":EXSTR:.*" "" $global-scheme
-    hilight .hilight.abbrev-item 0x40 ">>><FOLDER>" ">>>" .scheme.dir-closed
-    hilight .hilight.abbrev-item 0x40 "<<<<FOLDER>" "<<<" .scheme.dir-open
-    hilight .hilight.abbrev-item 0x40 "</FOLDER>" "" $global-scheme
+    hilight .hilight.abbrev-item 0x40 "<FOLD\\+>" "+" .scheme.dir-closed
+    hilight .hilight.abbrev-item 0x40 "<FOLD->" "-" .scheme.dir-open
+    hilight .hilight.abbrev-item 0x40 "</FOLD>" "" $global-scheme
     hilight .hilight.abbrev-item 0x44 "\ecB" "" "\ecA" "" "" .scheme.function
     hilight .hilight.abbrev-item 0x44 "\ecC" "" "\ecA" "" "" .scheme.keyword
     hilight .hilight.abbrev-item 0x44 "\ecD" "" "\ecA" "" "" .scheme.operator
     hilight .hilight.abbrev-item 0x44 "\ecE" "" "\ecA" "" "" .scheme.variable
     hilight .hilight.abbrev-item 0x44 "\ecF" "" "\ecA" "" "" .scheme.string
 !endif
-
-define-macro Test
-    ml-write &xre @wl "^\\([^ ]*\\)? +\"\\(\\(\\\\.\\|.\\)*\\)\" +\"\\(\\\\.\\|.\\)*\".*" "\\2"
-!emacro
 
 0 define-macro abbrev-list-add
     !force set-variable #l0 @3
@@ -41,6 +37,24 @@ define-macro Test
             insert-string &spr "%s:EXSTR:%s" #l0 #l1
         !endif
     !endif
+!emacro
+
+0 define-macro abbrev-list-fold-find-close
+    set-variable #l1 $window-aline
+    set-variable #l0 1
+    !repeat
+        !force search-forward "<FOLD[+-]>\\|</FOLD>"
+        !if &not $status
+            ml-write &spr  "[missing </FOLD> for <FOLD+> on line %d]" &sub #l1 3
+            !abort
+        !elif &seq @s0 "</FOLD>"
+            !if &not &dec #l0 1
+                !return
+            !endif
+        !else
+            set-variable #l0 &add #l0 1
+        !endif
+    !until 0
 !emacro
 
 0 define-macro abbrev-list-create
@@ -57,54 +71,62 @@ define-macro Test
     set-mark
     end-of-buffer
     -1 kill-region
+    !if &band .toolbar-redraw.bc 0x003
+        ; If a toolbar create or recenter then force an update
+        !force 0 delete-buffer #l0
+    !endif
     !force 0 find-buffer #l0
     !if &not $status
         find-buffer #l0
         1 buffer-mode "hide"
+        1 buffer-mode "magic"
         -1 buffer-mode "undo"
         set-variable #l8 &ind &spr ".fhook-%s.name" #l9
         !if &seq #l8 "ERROR"
             set-variable #l8 &cat &sup &lef #l9 1 &rig #l9 1
         !endif
         insert-string &spr "%s Tools\n" #l8
-        !force 0 find-file &find #l9 ".eaf"
-        !if $status
-            set-variable #l1 $buffer-bname
-            set-variable #l2 1
-            beginning-of-buffer
-            !while &not &seq @wc ""
-                set-variable #l3 &xre @wl "^\\([^ ]*\\)? +\"\\(\\(\\\\.\\|[^\\\\\"\n]\\)*\\)\" +\"\\(\\(\\\\.\\|[^\\\\\"\n]\\)*\\)\".*" "\\4"
-                !if &not &seq #l3 @wl
-                    set-variable #l4 &xre @wl "^\\([^ ]*\\)? +\"\\(\\(\\\\.\\|[^\\\\\"\n]\\)*\\)\" +\"\\(\\(\\\\.\\|[^\\\\\"\n]\\)*\\)\".*" "\\2"
-                    find-buffer #l0
-                    end-of-buffer
-                    !if &seq #l3 ""
-                        insert-newline
-                    !else
-                        execute-line &spr "insert-string \"%s\"" #l3
-                        !if &not &seq #l4 ""
-                            insert-string &cat ":EXSTR:" #l4
-                        !endif
+        set-variable #l1 "*abbrev-list-tmp*"
+        !force 0 delete-buffer #l1
+        find-buffer #l1
+        !force insert-file &find #l9 ".eaf"
+        set-variable #l2 1
+        beginning-of-buffer
+        !while &not &seq @wc ""
+            set-variable #l3 &xre @wl "^\\([^ ]*\\)? +\"\\(\\(\\\\.\\|[^\\\\\"\n]\\)*\\)\" +\"\\(\\(\\\\.\\|[^\\\\\"\n]\\)*\\)\".*" "\\4"
+            !if &not &seq #l3 @wl
+                set-variable #l4 &xre @wl "^\\([^ ]*\\)? +\"\\(\\(\\\\.\\|[^\\\\\"\n]\\)*\\)\" +\"\\(\\(\\\\.\\|[^\\\\\"\n]\\)*\\)\".*" "\\2"
+                find-buffer #l0
+                end-of-buffer
+                !if &seq #l3 ""
+                    insert-newline
+                !else
+                    execute-line &spr "insert-string \"%s\"" #l3
+                    !if &not &seq #l4 ""
+                        insert-string &cat ":EXSTR:" #l4
                     !endif
-                    find-buffer #l1
                 !endif
-                set-variable $window-line &inc #l2 1
-            !done
-            !force 0 delete-buffer #l1
-            find-buffer #l0
-            beginning-of-buffer
-            !force search-forward ">>><FOLDER>"
-            !while $status
-                forward-line
-                set-mark
-                !force search-forward "</FOLDER>"
-                !if $status
-                    4 narrow-buffer
-                !endif
-                !force search-forward "<FOLDER>"
-            !done
-            -1 buffer-mode "edit"
-        !endif
+                find-buffer #l1
+            !endif
+            set-variable $window-line &inc #l2 1
+        !done
+        !force 0 delete-buffer #l1
+        find-buffer #l0
+        end-of-buffer
+        !force search-backward "<FOLD\\+>"
+        !while $status
+            set-variable #l1 $window-line
+            forward-line
+            beginning-of-line
+            set-mark
+            !force abbrev-list-fold-find-close
+            !if $status
+                4 narrow-buffer
+            !endif
+            set-variable $window-line #l1
+            !force search-backward "<FOLD\\+>"
+        !done
+        -1 buffer-mode "edit"
     !endif
     beginning-of-buffer
     set-mark
@@ -144,28 +166,21 @@ define-macro abbrev-list
 !emacro
 
 define-macro abbrev-list-execute
-    !if &set #l0 &sin ":EXSTR:" @wl
-        set-variable #l0 &rig @wl &add #l0 6
-        goto-position "\x82"
-        execute-line &spr "execute-string \"%s\"" #l0
-    !elif &set #l0 &sin ">>><FOLDER>" @wl
-        set-variable #l1 "<<<"
-        !jump 3
-    !elif &set #l0 &sin "<<<<FOLDER>" @wl
-        set-variable #l1 ">>>"
+    !if &xseq &rig @wl $window-col "\\(</FOLD>\\)*<FOLD[+-]>.*"
+        set-variable #l0 &add 4 &add $window-col &sin "<FOLD" &rig @wl $window-col
+        set-variable #l1 &con &seq &mid @wl #l0 1 "-" "+" "-"
         -1 buffer-mode "view"
         set-variable #l2 $window-line
         !force 0 find-buffer :abbrev-list
         !if $status
             set-variable $window-line #l2
-            set-variable $window-col &sub #l0 1
-            3 forward-delete-char
-            -1 yank
+            set-variable $window-col #l0
+            forward-delete-char
             insert-string #l1
-            !if &seq #l1 ">>>"
+            !if &seq #l1 "+"
                 set-variable $window-line &add #l2 1
                 set-mark
-                !force search-forward "</FOLDER>"
+                !force abbrev-list-fold-find-close
                 !if $status
                     set-variable #l3 $window-line
                     4 narrow-buffer
@@ -192,14 +207,21 @@ define-macro abbrev-list-execute
             find-buffer "*abbrev-list*" 
             set-variable $window-line #l2
         !endif
-        set-variable $window-col &sub #l0 1
-        3 forward-delete-char
-        -1 yank
+        set-variable $window-col #l0
+        forward-delete-char
         insert-string #l1
         -1 buffer-mode "edit"
         1 buffer-mode "view"
         goto-position "\x82"
-    !else
+    !elif &not &set #l0 &sin ":EXSTR:" @wl
         goto-position "\x82"
+    !elif &seq &trb &lef @wl &add $window-col 1 ""
+        goto-position "\x82"
+    !elif &seq &trb &mid @wl $window-col &sub &sub #l0 1 $window-col ""
+        goto-position "\x82"
+    !else
+        set-variable #l0 &rig @wl &add #l0 6
+        goto-position "\x82"
+        execute-line &spr "execute-string \"%s\"" #l0
     !endif
 !emacro

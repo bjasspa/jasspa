@@ -35,7 +35,7 @@
 ;     for macro files, the file hook command is fhook-emf, therefore the
 ;     following is required:
 ;
-;    set-variable .fhook-emf.item-list-s1 "^\\s *[0-9]*\\s *define-macro\\s +\\(\\w+\\)"
+;    set-variable .fhook-emf.item-list-s1 "^[ \t]*[0-9]*[ \t]*define-macro[ \t]+\\(\\w+\\)"
 ;    set-variable .fhook-emf.item-list-r1 "Macr \ecB\\1\ecA"
 ;
 ;    Also note that you can have as many of these search and replace variables as you
@@ -141,7 +141,10 @@ define-macro item-list-find
 
 define-macro item-list-create
     set-position "\x86"
-    set-variable #l6 @1
+    !force set-variable #l6 @1
+    !if &not $status
+        set-variable #l6 "*item-list*"
+    !endif
     set-variable #l1 $buffer-bname
     set-variable #l3 $buffer-mask
     find-buffer #l6
@@ -245,7 +248,7 @@ define-macro item-list
             split-window-vertically
         !else
             split-window-horizontally
-            25 shrink-window-horizontally
+            change-window-width 25
         !endif
         find-buffer "*item-list*"
         3 next-window

@@ -35,7 +35,7 @@ set-variable .fhook-dirtre.command-desc  "|Swap Browser &Windows|&Close File Bro
     !if &seq &lef $box-chars 1 "|"
         hilight .hilight.dirtre  0x081 "+" .hilight.dirtre2   $global-scheme
         
-        0 hilight  .hilight.dirtre2 0                      $global-scheme
+        0 hilight  .hilight.dirtre2 0                         $global-scheme
         hilight .hilight.dirtre2 0x081 "+" .hilight.dirtre    .scheme.dir-closed
         hilight .hilight.dirtre2 0x081 "?" .hilight.dirtre    .scheme.dir-uknown
         hilight .hilight.dirtre2 0x080 "." .hilight.dirtre    $global-scheme

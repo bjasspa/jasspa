@@ -96,8 +96,8 @@ set-variable .fhook-jst.item-list-r4 "Appx \ecB\\1\ecA"
     0 hilight  .hilight.jst 2 100                               $global-scheme
     hilight .hilight.jst 0x22 "[0-9]+\\.[0-9.]+[ \t]+\\S "      .scheme.header
     hilight .hilight.jst 0x22 "Appendix [[:alpha:]]"            .scheme.header
-    hilight .hilight.jst 0x22 "===+$"                           .scheme.bold
-    hilight .hilight.jst 0x22 "---+$"                           .scheme.bold
+    hilight .hilight.jst 0x22 "===+$"                           .scheme.header
+    hilight .hilight.jst 0x22 "---+$"                           .scheme.header
     hilight .hilight.jst 0x20 "*\\}[ \t]+\\S "                  .scheme.no1
     hilight .hilight.jst 0x20 "[0-9]+[]).]\\}[ \t]+\\S "        .scheme.no1
     hilight .hilight.jst 0x20 "[a-z][]).]\\}[ \t]+\\S "         .scheme.no1
@@ -105,7 +105,7 @@ set-variable .fhook-jst.item-list-r4 "Appx \ecB\\1\ecA"
     hilight .hilight.jst 0x20 "[IVXLC]+[]).]\\}[ \t]+\\S "      .scheme.no1
     hilight .hilight.jst 0x20 "[ivxlc]+[]).]\\}[ \t]+\\S "      .scheme.no1
     hilight .hilight.jst 0x20 "\\[\\S [^]\n]*]"                 .scheme.no1
-    hilight .hilight.jst 0x22 "^___+$"                          .scheme.under
+    hilight .hilight.jst 0x22 "^___+$"                          .scheme.no1
     hilight .hilight.jst 0x40 "^\x0c$" "<<Page-Break>>"         .scheme.keyword
     hilight .hilight.jst 0x00 "\\*\\S [^*\n]*\\*"               .scheme.bold
     hilight .hilight.jst 0x00 "~\\S [^~\n]*~"                   .scheme.italic
