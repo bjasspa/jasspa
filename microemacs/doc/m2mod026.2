@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2mod026.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2mod026.2,v 2.6 2004-01-05 00:19:24 jon Exp $
 .Im MicroEmacs modes
 .so me.tni
 .TH del 2m
@@ -19,11 +19,12 @@ This mode cannot be set  globally and is used to flag that the buffer is to be
 deleted. The state of the mode is displayed in the output of
 .Ht list-buffers 2 ,
 if the first  column is a 'D' the mode is set,  otherwise  it is not. Only the
-execute command in 
+execute command in
 .Ht list-buffers 2
 (bound to 'x') uses this flag to actually delete the buffer.
 .SH "SEE ALSO"
 .na
+.Hl "Operating Modes" Modes - ,
 .Ht list-buffers 2 ,
 .Ht save 2m .
 .ad

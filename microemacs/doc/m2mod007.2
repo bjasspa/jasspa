@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2mod007.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2mod007.2,v 2.6 2004-01-05 00:19:23 jon Exp $
 .Im MicroEmacs modes
 .so me.tni
 .TH letter 2m
@@ -18,7 +18,7 @@ letter \- Letter kill policy
 By default  individually  deleted  characters are not added to the kill buffer
 unless an  argument is given to the  command.  This allows the user to delete
 characters  while preserving the kill buffer, at the expense of not being able
-to 
+to
 .Ht yank 2
 the  character  back out. Enabling  \fBletter\fR mode ensures that all deleted
 characters are added to the kill buffer.
@@ -32,9 +32,10 @@ argument with the delete or backspace key binding as follows:
 1 global-bind-key backward-delete-char "backspace"
 .CE
 .Me $ehf-scheme
-The use of the numeric argument of 1 has the same effect. 
+The use of the numeric argument of 1 has the same effect.
 .SH "SEE ALSO"
 .na
+.Hl "Operating Modes" Modes - ,
 .Ht buffer-mode 2 ,
 .Ht global-mode 2 ,
 .Ht yank 2 ,

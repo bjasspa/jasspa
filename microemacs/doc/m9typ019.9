@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1999-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1999-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ019.9,v 2.5 2002-01-11 21:58:43 jon Exp $
+.Id $Id: m9typ019.9,v 2.6 2004-01-05 00:19:24 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH tcl 9
@@ -62,9 +62,9 @@ takes the user to the file using the tag information.
 .IP "\fBFolding and Information Hiding\fR"
 Generic  folding is enabled  within the C and C++ files. The folds occur about
 braces \fB{\fR...\fB}\fR located on the left-hand margin.
-.Ht fold-all 3
+.Ht collapse-all 3
 (un)folds all regions in the file,
-.Ht fold-current 3
+.Ht collapse-current 3
 (un)folds the current region.
 Note that folding does not operate on K&R style code.
 .IP "\fBShort Cuts\fR"
@@ -83,10 +83,10 @@ The short cut keys used within the buffer are:-
 \fBf3\fR \- (un)fold all regions
 .SH "SEE ALSO"
 .na
-.Ht indent 2 ,
+.Ht collapse-all 3 ,
+.Ht collapse-current 3 ,
 .Ht find-tag 2 ,
-.Ht fold-all 3 ,
-.Ht fold-current 3 ,
+.Ht indent 2 ,
 .Ht restyle-buffer 3 ,
 .Ht restyle-region 3 ,
 .Ht tcltags 3f ,

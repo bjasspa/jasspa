@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac005.3,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m3mac005.3,v 2.6 2004-01-05 00:19:24 jon Exp $
 .Im MicroEmacs command|delete
 .so me.tni
 .TH clean 3
@@ -55,6 +55,19 @@ Replace with:    "\\t"
 .IP c)
 Search for:      "\\n\\n\\n"
 Replace with:    "\\n\\n"
+.LP
+It is useful to define a new command called  \fBspotless\fR  in the user macro
+file which cleans the file and removes blank lines. The new command is defined
+as follows:-
+.ne 4
+.Me $emf-scheme
+.CS
+; spotless; Perform a clean and remove any multi-blank lines.
+define-macro spotless
+    -1 clean
+!emacro
+.CE 0
+.Me $ehf-scheme
 .SH "SEE ALSO"
 .na
 .Ht replace-string 2 ,

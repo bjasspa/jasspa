@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2mod019.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2mod019.2,v 2.6 2004-01-05 00:19:23 jon Exp $
 .Im MicroEmacs modes
 .so me.tni
 .TH autosv 2m
@@ -17,7 +17,7 @@ autosv \- Automatic file save
 .SH DESCRIPTION
 When this mode is enabled when the buffer is changed it will be  automatically
 saved to a temporary file
-.Ht $auto-time 5 
+.Ht $auto-time 5
 later.
 .PP
 Automatic saving for a buffer will not occur if
@@ -25,18 +25,18 @@ Automatic saving for a buffer will not occur if
 The buffer  name  starts  with a '*', this is  considered  a temporary  system
 buffer.
 .IP
-.Ht $auto-time 5 
+.Ht $auto-time 5
 is set to 0, this disables auto-saving for all buffers.
 .IP
 The buffer does not a file name from which to generate a temporary  file name.
 When this occurs the error message:
 .IP
-.C "[Auto-writeout failure for buffer xxxxx]"  
+.C "[Auto-writeout failure for buffer xxxxx]"
 .IP
 \*(mE can not write to the generated temporary file name. When this occurs the
 error message:
 .IP
-.C "[Auto-writeout failure for file xxxxx#]"  
+.C "[Auto-writeout failure for file xxxxx#]"
 .PP
 On unlimited  length file name systems  (\s-1UNIX\s0),  the temporary file
 naming convention used for file \fCxxxxx\fR:
@@ -65,6 +65,7 @@ be used to avoid  auto-saving  conflict  with other buffers with the same base
 file name but different paths.
 .SH "SEE ALSO"
 .na
+.Hl "Operating Modes" Modes - ,
 .Ht $auto-time 5 ,
 .Ht backup 2m ,
 .Ht find-file 2 ,

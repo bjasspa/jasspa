@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1999-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1999-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ024.9,v 2.7 2002-01-11 21:58:43 jon Exp $
+.Id $Id: m9typ024.9,v 2.8 2004-01-05 00:19:24 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH perl 9
@@ -68,9 +68,9 @@ whole buffer, respectively.
 .IP "\fBFolding and Information Hiding\fR"
 Generic   folding  is  enabled  within  perl  files.  The  folds  occur  about
 \fIsub\fR...\fB}\fR  located on the left-hand  margin. 
-.Ht fold-all 3
+.Ht collapse-all 3
 (un)folds all regions in the file,
-.Ht fold-current 3
+.Ht collapse-current 3
 (un)folds the current region.
 .IP "\fBShort Cuts\fR"
 The short cut keys used within the buffer are:-
@@ -97,10 +97,10 @@ exceptions  have been caught,  however there are a few syntax  sequences  that
 involve quotation marks that can cause problems.
 .SH "SEE ALSO"
 .na
-.Ht perldb 3 ,
-.Ht fold-all 3 ,
-.Ht fold-current 3 ,
+.Ht collapse-all 3 ,
+.Ht collapse-current 3 ,
 .Ht indent 2 ,
+.Ht perldb 3 ,
 .Ht restyle-buffer 3 ,
 .Ht restyle-region 3 ,
 .Ht time 2m .

@@ -3,7 +3,7 @@
 # JASSPA MicroEmacs - www.jasspa.com
 # win32v6.mak - Make file for Windows using Microsoft MSVC development kit.
 #
-# Copyright (C) 1997-2002 JASSPA (www.jasspa.com)
+# Copyright (C) 1997-2004 JASSPA (www.jasspa.com)
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -207,7 +207,8 @@ MAC3_050=	$(DOCDIR)m3mac050.3 $(DOCDIR)m3mac051.3 $(DOCDIR)m3mac052.3\
 		$(DOCDIR)m3mac053.3 $(DOCDIR)m3mac054.3 $(DOCDIR)m3mac055.3\
 		$(DOCDIR)m3mac056.3 $(DOCDIR)m3mac057.3 $(DOCDIR)m3mac058.3\
 		$(DOCDIR)m3mac059.3
-MAC3_060=	$(DOCDIR)m3mac060.3 $(DOCDIR)m3mac061.3 $(DOCDIR)m3mac062.3
+MAC3_060=	$(DOCDIR)m3mac060.3 $(DOCDIR)m3mac061.3 $(DOCDIR)m3mac062.3\
+		$(DOCDIR)m3mac063.3
 		
 OSD3_000=	$(DOCDIR)m3osd000.3 $(DOCDIR)m3osd001.3 $(DOCDIR)m3osd002.3\
 		$(DOCDIR)m3osd003.3 $(DOCDIR)m3osd004.3 $(DOCDIR)m3osd005.3\
@@ -235,7 +236,8 @@ FIL4_020=	$(DOCDIR)m4fil020.4 $(DOCDIR)m4fil021.4 $(DOCDIR)m4fil022.4\
 		$(DOCDIR)m4fil026.4 $(DOCDIR)m4fil027.4 $(DOCDIR)m4fil028.4\
 		$(DOCDIR)m4fil029.4
 FIL4_030=	$(DOCDIR)m4fil030.4 $(DOCDIR)m4fil031.4 $(DOCDIR)m4fil032.4\
-		$(DOCDIR)m4fil033.4 $(DOCDIR)m4fil034.4 $(DOCDIR)m4fil035.4
+		$(DOCDIR)m4fil033.4 $(DOCDIR)m4fil034.4 $(DOCDIR)m4fil035.4\
+		$(DOCDIR)m4fil036.4
 
 VAR5_000=	$(DOCDIR)m5var000.5 $(DOCDIR)m5var001.5 $(DOCDIR)m5var002.5\
 		$(DOCDIR)m5var003.5 $(DOCDIR)m5var004.5 $(DOCDIR)m5var005.5\
