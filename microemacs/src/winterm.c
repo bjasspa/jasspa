@@ -848,7 +848,8 @@ TTend (void)
         SetConsoleScreenBufferSize(hOutput, OldConsoleSize);
 
         /* Restore the console mode and title */
-        SetConsoleMode(hInput, OldConsoleMode);
+        if(hInput != INVALID_HANDLE_VALUE)
+            SetConsoleMode(hInput, OldConsoleMode);
         SetConsoleTitle(chConsoleTitle);
 
         /* Show the cursor */
@@ -866,8 +867,8 @@ TTend (void)
 }
 
 /* Get a console message and format as a standard windows message */
-int
-meGetConsoleMessage(MSG *msg)
+static int
+meGetConsoleMessage(MSG *msg, int mode)
 {
     INPUT_RECORD ir;
     DWORD dwCount;
@@ -886,8 +887,15 @@ meGetConsoleMessage(MSG *msg)
     }
 
     /* Get the next keyboard/mouse/resize event */
-    ReadConsoleInput(hInput, &ir, 1, &dwCount);
-
+    if(ReadConsoleInput(hInput, &ir, 1, &dwCount) == 0)
+    {
+        /* if ReadConsoleInput fails we have lost the console input
+         * and as the user is waiting on this bomb out */
+        if(!mode)
+            meDie() ;
+        hInput = INVALID_HANDLE_VALUE ;
+        return meFALSE ;
+    }
     /* Let the proper event handler field this event */
     if (ir.EventType == KEY_EVENT)
     {
@@ -4233,8 +4241,8 @@ TTcolour (int fcol, int bcol)
  * Get a new message from the windows message queue. Handle
  * any streams immediatly.
  */
-void
-meGetMessage(MSG *msg)
+static int
+meGetMessage(MSG *msg, int mode)
 {
 #if MEOPT_IPIPES || (defined _ME_CONSOLE)
     if (
@@ -4284,6 +4292,7 @@ meGetMessage(MSG *msg)
             /* Loop round first time to read anything available and close
              * those processes that have finished
              */
+            jj = 0 ;
             ipipe = ipipes ;
             while(ipipe != NULL)
             {
@@ -4293,7 +4302,10 @@ meGetMessage(MSG *msg)
                 if(ipipe->pid == 0)
                 {
                     if(TTcheckClientServer())
+                    {
                         ipipeRead(ipipe) ;
+                        jj = 1 ;
+                    }
                 }
                 else
 #endif
@@ -4315,7 +4327,10 @@ meGetMessage(MSG *msg)
                         }
                     }
                     if((ipipe->pid < 0) || doRead)
+                    {
                         ipipeRead(ipipe) ;
+                        jj = 1 ;
+                    }
                     else if((platformId != VER_PLATFORM_WIN32_NT) &&
                             /* ipipe->bp->windowCount &&*/
                             (!GetExitCodeProcess(ipipe->process,&doRead) || (doRead != STILL_ACTIVE)))
@@ -4330,6 +4345,9 @@ meGetMessage(MSG *msg)
                 ipipe = pp ;
             }
 #endif
+            if(mode && jj)
+                return meFALSE ;
+            
             /* Now simply loop through creating a wait object list of all remaining
              * processes & console.
              */
@@ -4338,7 +4356,13 @@ meGetMessage(MSG *msg)
 #ifdef _ME_WINDOW
             if(meSystemCfg & meSYSTEM_CONSOLE)
 #endif /* _ME_WINDOW */
-                hTable[ii++] = hInput ;
+            {
+                if(hInput != INVALID_HANDLE_VALUE)
+                    hTable[ii++] = hInput ;
+                else if(!mode)
+                    /* stdin has gone and we're only interested in user input - exit */
+                    meDie() ;
+            }
 #endif
 #if MEOPT_IPIPES
             ipipe = ipipes ;
@@ -4363,9 +4387,11 @@ meGetMessage(MSG *msg)
             if(meSystemCfg & meSYSTEM_CONSOLE)
 #endif /* _ME_WINDOW */
             {
-                if((PeekMessage(msg, meHWndNull, WM_TIMER, WM_TIMER, PM_REMOVE) != meFALSE) ||
-                   (((jj <= 0) || (jj >= ii)) && meGetConsoleMessage(msg)))
-                    return ;
+                if(PeekMessage(msg, meHWndNull, WM_TIMER, WM_TIMER, PM_REMOVE) != meFALSE)
+                    return meTRUE ;
+                if(((jj < 0) || (jj >= ii) || ((jj == 0) && (hInput != INVALID_HANDLE_VALUE))) &&
+                   meGetConsoleMessage(msg,mode))
+                    return meTRUE ;
             }
 #ifdef _ME_WINDOW
             else
@@ -4385,6 +4411,7 @@ meGetMessage(MSG *msg)
                   0,                /* first message */
                   0) <= 0)          /* last message */
         meDie() ;
+    return meTRUE ;
 }
 
 /*
@@ -4461,7 +4488,7 @@ TTwaitForChar(void)
         /* Do heap walk in idle time */
         _CrtCheckMemory();
 #endif
-        meGetMessage(&msg);         /* Suspend for a message */
+        meGetMessage(&msg,0);         /* Suspend for a message */
         
         /* Closing down the system */
         if (msg.message == WM_CLOSE)
@@ -4736,10 +4763,15 @@ TTstart (void)
         GetConsoleCursorInfo (hOutput, &CursorInfo);
         CursorInfo.bVisible = meFALSE;
         SetConsoleCursorInfo (hOutput, &CursorInfo);
-        /* so move the cursor to a fixed less annoying position */
-        coord.X = TTwidthDefault-1;
-        coord.Y = 0;
-        SetConsoleCursorPosition(hOutput,coord);
+#if MEOPT_EXTENDED
+        if(!(alarmState & meALARM_PIPED))
+#endif
+        {
+            /* so move the cursor to a fixed less annoying position */
+            coord.X = TTwidthDefault-1;
+            coord.Y = 0;
+            SetConsoleCursorPosition(hOutput,coord);
+        }
     }
 #ifdef _ME_WINDOW
     else
@@ -4810,9 +4842,10 @@ TTahead (void)
          * them. */
         while(TTnoKeys != KEYBUFSIZ)
         {
-            if ((PeekConsoleInput(hInput, &ir, 1, &dwCount) != meFALSE) && (dwCount > 0))
+            if((hInput != INVALID_HANDLE_VALUE) &&
+               (PeekConsoleInput(hInput, &ir, 1, &dwCount) != meFALSE) && (dwCount > 0))
             {
-                if(meGetConsoleMessage(&msg))
+                if(meGetConsoleMessage(&msg,0))
                 {
                     /* Keyboard message */
                     if ((msg.message >= WM_KEYFIRST) && (msg.message <= WM_KEYLAST))
@@ -4944,9 +4977,10 @@ TTaheadFlush (void)
         INPUT_RECORD ir;
         for (;;)
         {
-            if ((PeekConsoleInput(hInput, &ir, 1, &dwCount) != meFALSE) && (dwCount > 0))
+            if((hInput != INVALID_HANDLE_VALUE) &&
+               (PeekConsoleInput(hInput, &ir, 1, &dwCount) != meFALSE) && (dwCount > 0))
             {
-                if(meGetConsoleMessage(&msg))
+                if(meGetConsoleMessage(&msg,0))
                 {
                     /* Keyboard message */
                     if ((msg.message >= WM_KEYFIRST) && (msg.message <= WM_KEYLAST))
@@ -5062,17 +5096,26 @@ TTaheadFlush (void)
  * is no type-ahead data.
  */
 void
-TTsleep (int msec, int intable)
+TTsleep (int msec, int intable, meVarList *waitVarList)
 {
+    meUByte *ss ;
+    
     if (intable && ((kbdmode == mePLAY) || (clexec == meTRUE)))
         return;
 
     /* Do not actually need the absolute time as this will
      * remain the next alarm. Ensure that the value is sane */
-    if (msec < 10)
-        msec = 10;
-    timerSet (SLEEP_TIMER_ID,-1,msec);
-
+    if(msec >= 0)
+    {
+        if (msec < 10)
+            msec = 10;
+        timerSet (SLEEP_TIMER_ID,-1,msec);
+    }
+    else if(waitVarList != NULL)
+        timerKill(SLEEP_TIMER_ID);              /* Kill off the timer */
+    else
+        return ;
+    
     do
     {
         MSG msg;                            /* Message buffer */
@@ -5081,13 +5124,17 @@ TTsleep (int msec, int intable)
 
         /* Call TTahead first to get the input */
         if (intable && TTahead())
-            break;
+            break ;
         /* TTahead can process the timers so we need to recheck the timers
          * before we wait for the next message */
         handleTimerExpired() ;
-
+        
+        if((waitVarList != NULL) &&
+           (((ss=getUsrLclCmdVar((meUByte *)"wait",waitVarList)) == errorm) || !meAtoi(ss)))
+            break ;
+        
         /* Suspend until there is another message to process. */
-        meGetMessage (&msg);
+        meGetMessage(&msg,1) ;
 #ifdef _ME_CONSOLE
 #ifdef _ME_WINDOW
         if (meSystemCfg & meSYSTEM_CONSOLE)

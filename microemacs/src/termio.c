@@ -643,7 +643,8 @@ keyListToShorts(meUShort *sl, meUByte *kl)
             if(!isSpace(dd))
                 break ;
         }
-        sl[ii++] = meGetKeyFromString(&kl) ;
+        if((sl[ii++] = meGetKeyFromString(&kl))==0)
+            return meABORT ;
     }
 }
 
@@ -778,7 +779,7 @@ TTgetc(void)
                      * a receipt of a new key. Must remember to reset it as well.
                      */
                     TTnoKeys = 0 ;
-                    TTsleep(tt->time,1) ;
+                    TTsleep(tt->time,1,NULL) ;
                     TTnoKeys += keyNo ;
                     if(keyNo == TTnoKeys)
                         break ;

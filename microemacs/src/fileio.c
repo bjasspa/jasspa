@@ -1661,7 +1661,15 @@ ffReadFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
     ffremain = 0 ;
     ffread = 0 ;
     
-    if(fname != NULL)
+    if(fname == NULL)
+    {
+#ifdef _WIN32
+        ffrp = GetStdHandle(STD_INPUT_HANDLE) ;
+#else
+        ffrp = stdin ;
+#endif
+    }
+    else
     {
         if(isUrlLink(fname))
         {

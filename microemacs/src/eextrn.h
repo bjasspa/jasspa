@@ -219,15 +219,18 @@ extern  void    meVideoDetach(meWindow *wp);
 
 extern  int     doRedrawEvent(void);
 
-#define MWCURSOR   0x001
-#define MWSPEC     0x002
-#define MWABORT    0x004
-#define MWPAUSE    0x008
-#define MWWAIT     0x010
-#define MWCLEXEC   0x020
-#define MWCLWAIT   0x040
-#define MWUSEMLCOL 0x080
-#define MWERASE    0x100
+#define MWCURSOR    0x001
+#define MWSPEC      0x002
+#define MWABORT     0x004
+#define MWPAUSE     0x008
+#define MWWAIT      0x010
+#define MWCLEXEC    0x020
+#define MWCLWAIT    0x040
+#define MWUSEMLCOL  0x080
+#define MWERASE     0x100
+#define MWSTDOUTWRT 0x200
+#define MWSTDERRWRT 0x400
+#define MWSTDALLWRT 0x600
 
 extern  int     mlwrite(int flags, meUByte *fmt, ...) ;
 

@@ -63,6 +63,9 @@ static char meHelpPage[]=
 "usage     : me [options] [files]\n\n"
 "where options can be:-\n"
 "  @<file> : Setup using <file>[.emf], default is me.emf\n"
+#if MEOPT_EXTENDED
+"  -       : Read input from stdin into *stdin* buffer\n"
+#endif
 "  -b      : Load next file as a binary file\n"
 "  -c      : Continuation mode (last edit, must have history setup)\n"
 #if MEOPT_DEBUGM
@@ -92,7 +95,8 @@ static char meHelpPage[]=
 "  -o      : One MicroEmacs, use ME server if available\n"
 #endif
 #if MEOPT_EXTENDED
-"  -p      : Pipe stdin into *stdin*, when saved output to stdout\n"
+"  -P      : Piped with debugging (see -p)\n"
+"  -p      : Piped mode, no user interactivity\n"
 #endif
 "  -r      : Read-only, all buffers will be in view mode\n"
 "  -s <s>  : Search for string <s> in the next given file\n"
@@ -1287,6 +1291,11 @@ mesetup(int argc, char *argv[])
         {
             switch (argv[carg][1])
             {
+#if MEOPT_EXTENDED
+            case 0:      /* get input from stdin */
+/*                getStdin = 1 ;*/
+/*                break ;*/
+#endif                
             case 'b':    /* -b bin flag */
             case 'k':    /* -k crypt flag */
             case 'y':    /* -y rbin flag */
@@ -1360,6 +1369,8 @@ missing_arg:
 #endif
 #if MEOPT_EXTENDED
             case 'p':
+                alarmState |= meALARM_PIPED_QUIET ;
+            case 'P':
                 alarmState |= meALARM_PIPED ;
                 break ;
 #endif
@@ -1559,41 +1570,6 @@ missing_arg:
         carg++ ;
     }
 #endif
-#if MEOPT_EXTENDED
-    if(alarmState & meALARM_PIPED)
-    {
-#ifdef _WIN32
-        DWORD type, dwCount ;
-#endif
-        
-        bp = bfind(BstdinN,BFND_CREAT);
-#ifdef _WIN32
-        ffrp = GetStdHandle(STD_INPUT_HANDLE) ;
-        /* Is a file piped into stdin? Must ensure there is BEFORE we try to
-         * read it otherwise a call to ReadFile will lock up ME! */
-        if(ffrp == INVALID_HANDLE_VALUE)
-            ;
-        else if((type=GetFileType(ffrp)) == FILE_TYPE_CHAR)
-            ;
-        else if((type == FILE_TYPE_PIPE) &&
-                ((PeekNamedPipe(ffrp,NULL,0,NULL,&dwCount,NULL) == meFALSE) || (dwCount <= 0)))
-            ;
-        else
-#else
-        ffrp = stdin ;
-#endif
-        {
-            readin(bp,NULL) ;
-        }
-#ifdef _ME_WINDOW
-#ifdef _ME_CONSOLE
-        if((meSystemCfg & meSYSTEM_CONSOLE) == 0)
-#endif /* _ME_CONSOLE */
-            /* when not in a console mode allow ME to run as normal */
-            alarmState &= ~meALARM_PIPED ;
-#endif /* _ME_WINDOW */
-    }
-#endif
 
     mlerase(0);                /* Delete command line */
     /* run me.emf unless an @... arg was given in which case run that */
@@ -1622,6 +1598,7 @@ missing_arg:
         meUByte  *searchStr=NULL, *cryptStr=NULL ;
         int     binflag=0 ;         /* load next file as a binary file*/
         int     gline = 0 ;         /* what line? (-g option)         */
+        int     stdinflag=0 ;
         int     obufHistNo ;
         
         obufHistNo = bufHistNo ;
@@ -1634,6 +1611,17 @@ missing_arg:
             {
                 switch(argv[carg][1])
                 {
+#if MEOPT_EXTENDED
+                case 0:
+                    bp = bfind(BstdinN,BFND_CREAT|binflag);
+                    bp->dotLineNo = gline ;
+                    bufHistNo = obufHistNo + rarg - carg + 1 ;
+                    bp->histNo = bufHistNo ;
+                    bp->intFlag |= BIFFILE ;
+                    noFiles++ ;
+                    stdinflag = 1 ;
+                    goto handle_stdin ;
+#endif
                 case 'l':    /* -l for initial goto line */
                     if (argv[carg][2] == 0)
                         gline = meAtoi(argv[++carg]);
@@ -1660,7 +1648,7 @@ missing_arg:
                     break;
                 }
             }
-            else if (argv[carg][0] == '+')
+            else if(argv[carg][0] == '+')
                 gline = meAtoi((argv[carg])+1);
             else
             {
@@ -1670,6 +1658,9 @@ missing_arg:
                 noFiles += findFileList((meUByte *)argv[carg],(BFND_CREAT|BFND_MKNAM|binflag),gline) ;
                 if((cryptStr != NULL) || (searchStr != NULL))
                 {
+#if MEOPT_EXTENDED
+handle_stdin:
+#endif
                     /* Deal with -k<key> and -s <search> */
                     bp = bheadp ;
                     while(bp != NULL)
@@ -1680,20 +1671,23 @@ missing_arg:
                             if(cryptStr != NULL)
                                 setBufferCryptKey(bp,cryptStr) ;
 #endif
-                            if(searchStr != NULL)
+                            if((searchStr != NULL) || stdinflag)
                             {
                                 meBuffer *cbp ;
                                 int histNo, flags ;
                                 cbp = frameCur->bufferCur ;
                                 histNo = cbp->histNo ;
                                 swbuffer(frameCur->windowCur,bp) ;
-                                flags = ISCANNER_QUIET ;
-                                if(meModeTest(bp->mode,MDMAGIC))
-                                    flags |= ISCANNER_MAGIC ;
-                                if(meModeTest(bp->mode,MDEXACT))
-                                    flags |= ISCANNER_EXACT ;
-                                /* what can we do if we fail to find it? */
-                                iscanner(searchStr,0,flags,NULL) ;
+                                if(searchStr != NULL)
+                                {
+                                    flags = ISCANNER_QUIET ;
+                                    if(meModeTest(bp->mode,MDMAGIC))
+                                        flags |= ISCANNER_MAGIC ;
+                                    if(meModeTest(bp->mode,MDEXACT))
+                                        flags |= ISCANNER_EXACT ;
+                                    /* what can we do if we fail to find it? */
+                                    iscanner(searchStr,0,flags,NULL) ;
+                                }
                                 swbuffer(frameCur->windowCur,cbp) ;
                                 cbp->histNo = histNo ;
                                 bp->histNo = bufHistNo ;
@@ -1706,6 +1700,7 @@ missing_arg:
                 }
                 gline = 0 ;
                 binflag = 0 ;
+                stdinflag = 0 ;
             }
         }
         bufHistNo = obufHistNo + rarg ;
@@ -1719,8 +1714,7 @@ missing_arg:
     
     if(noFiles > 0)
     {
-        if((frameCur->bufferCur == mainbp) && ((bp = replacebuffer(NULL)) != mainbp) &&
-           (bp->fileName != NULL))
+        if((frameCur->bufferCur == mainbp) && ((bp = replacebuffer(NULL)) != mainbp))
         {
             if(HistNoFilesLoaded && isUrlLink(bp->fileName))
             {
@@ -1863,21 +1857,26 @@ commandWait(int f, int n)
     int execlevelSv ;
     meUByte *ss ;
     
-    if(f)
+    if(f && n)
     {
         f = clexec ;
         clexec = meFALSE ;
         if(n < 0)
-            TTsleep(0-n,1) ;
+            TTsleep(0-n,1,NULL) ;
         else
-            TTsleep(n,0) ;
+            TTsleep(n,0,NULL) ;
         clexec = f ;
         return meTRUE ;
     }
     if((meRegCurr->commandName != NULL) &&
        ((f=decode_fncname(meRegCurr->commandName,1)) >= 0))
         varList = &(cmdTable[f]->varList) ;
-    
+    if(n == 0)
+    {
+        if(varList != NULL)
+            TTsleep(-1,0,varList) ;
+        return meTRUE ;
+    }
     clexecSv = clexec;
     execlevelSv = execlevel ;
     clexec = meFALSE ;

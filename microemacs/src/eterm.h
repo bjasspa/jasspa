@@ -54,8 +54,8 @@
  *     or 0 if it is only allowed to collect user input. Note that not all platforms
  *     support this argument.
  */
-#ifndef __TERMIOH
-#define __TERMIOH
+#ifndef __ETERM_H
+#define __ETERM_H
 
 /**************************************************************************
 * Common variables, constants and defines                                 *
@@ -89,6 +89,11 @@ extern meUByte    TTallKeys;            /* Report all keys              */
 extern meUShort   TTgetc(void) ;
 extern void       TThandleBlink(int initFlag) ;
 extern void       TTmove(int r, int c) ;
+extern void       TTwaitForChar(void) ;
+extern void       TTsleep(int msec, int intable, meVarList *waitVarList) ;
+#if MEOPT_TYPEAH
+extern int        TTahead(void) ;
+#endif
 #define TTinflush()   (TTahead(),TTlastKeyIdx=TTnextKeyIdx,TTnoKeys=0)
 extern void       addKeyToBuffer(meUShort cc) ;
 #if MEOPT_CALLBACK
@@ -172,11 +177,6 @@ extern	char *tgoto(char *, int, int ) ;
 #define TTbreakTest(x) ((--TTbreakCnt == 0) &&                         \
                        (((alarmState & meALARM_DIE) && meDie()) ||     \
                         (TTbreakCnt=TTBREAKCNT,TTahead(),TTbreakFlag)))
-extern void TTwaitForChar(void) ;
-extern void TTsleep(int msec, int intable) ;
-#if MEOPT_TYPEAH
-extern int  TTahead(void) ;
-#endif
 #if MEOPT_MOUSE
 extern void TTinitMouse(void);
 #endif
@@ -473,7 +473,6 @@ extern void meFrameSetWindowSize(meFrame *frame) ;
 extern void meFrameShowCursor(meFrame *frame) ;
 extern void meFrameHideCursor(meFrame *frame) ;
 
-extern void TTwaitForChar(void) ;
 #define TTshowCur() meFrameShowCursor(frameCur)
 #define TThideCur() meFrameHideCursor(frameCur)
 #define TTNbell()   MessageBeep(0xffffffff)
@@ -492,11 +491,6 @@ extern int  TTconnectClientServer(void) ;
 extern void TTsendClientServer(meUByte *) ;
 #endif
 
-
-extern void TTsleep(int msec, int intable) ;
-#if MEOPT_TYPEAH
-extern int TTahead(void) ;
-#endif
 extern int TTaheadFlush(void);
 #define TTdieTest()
 #define TTbreakTest(x) ((TTbreakCnt-- ==  0) ? (TTbreakCnt=TTBREAKCNT,((x==0)?TTahead():TTaheadFlush()),TTbreakFlag):(TTbreakFlag))
@@ -533,17 +527,12 @@ extern int  TTclose(void) ;
 #define meFrameTermFree(f,s)
 #define meFrameTermMakeCur(f)
 
-extern void TTwaitForChar(void) ;
 #define TTflush()
 extern void TThideCur(void) ;
 extern void TTshowCur(void) ;
 extern int  bdos(int func, unsigned dx, unsigned al);
 #define TTNbell()   bdos(6,meCHAR_BELL, 0);
 
-extern void TTsleep(int msec, int intable) ;
-#if MEOPT_TYPEAH
-extern int TTahead(void) ;
-#endif
 #define TTdieTest()
 #define TTbreakTest(x) ((TTbreakCnt-- ==  0) && (TTbreakCnt=TTBREAKCNT,TTahead(),TTbreakFlag))
 
@@ -649,4 +638,4 @@ extern void timerCheck(meInt tim) ;
 /* flag used when idle-drop needs to be called */
 #define IDLE_STATE_DROP         0x04  /* Idle timer is running */
 
-#endif /* __TERMIOH */
+#endif /* __ETERM_H */
