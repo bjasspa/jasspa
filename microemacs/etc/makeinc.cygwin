@@ -1,0 +1,45 @@
+# -*- Makefile -*-
+# Make rules for SunOS
+# 
+# Remove unconditionally + copy
+RM	= rm -f
+CP	= cp
+#
+# Directory stuff
+#
+MKDIR	= mkdir -p
+RMDIR 	= rm -rf 
+#
+# Archives - always full compression.
+# 
+GTAR	= gtar
+TAR	= tar
+ZIP	= zip -9 
+GZIP	= gzip -9 
+#
+# Microemacs executable
+#
+ME	= me
+#
+# Install
+#
+INSTALL_FIL	= install -m 0666  
+INSTALL_DIR	= install -m 0755 
+INSTALL_EXE	= install -m 0777 
+DOS2UNIX= $(ME) -n "@dos2unix"
+UNIX2DOS= $(ME) -n "@unix2dos"
+#
+# Documentation tools
+#
+DOCBIN	=
+SUPERMAN=	$(DOCBIN)superman -b
+DROFF	=	$(DOCBIN)droff
+NR2RTF	=	$(DOCBIN)nr2rtf
+NRAR	=	$(DOCBIN)nrar
+NR2HTML	=	$(DOCBIN)nr2html
+NR2EHF	=	$(DOCBIN)nr2ehf
+NRORDER	=	$(DOCBIN)nrorder
+NRSEARCH=	$(DOCBIN)nrsearch
+HTS	=	$(DOCBIN)hts
+HTS2HTML=	$(DOCBIN)hts2html
+HC31	=	hc31
