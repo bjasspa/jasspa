@@ -3,7 +3,7 @@
  * JASSPA MicroEmacs - www.jasspa.com
  * file.c - File handling.
  *
- * Copyright (C) 1988-2004 JASSPA (www.jasspa.com)
+ * Copyright (C) 1988-2005 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -529,7 +529,7 @@ fileLookup(meUByte *fname, meUByte *ext, meUByte flags, meUByte *outName)
     {
         /* build next possible file spec */
         sp = path ;
-        if((path = meStrchr(++path,mePATH_CHAR)) != NULL)
+        if((path = meStrchr(path,mePATH_CHAR)) != NULL)
         {
             ii = path++ - sp ;
             meStrncpy(buf,sp,ii) ;
