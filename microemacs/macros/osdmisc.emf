@@ -645,6 +645,7 @@ osd .osd.sar-srl 130 "hf" "  "
 osd .osd.sar-srl 140 "Cfxpt" &cat .osd.checkbox-chars "\} \HMagic mode"       f osd-search-cmagic
 
 osd .osd.sar-srr 0 "sD" 13 11 -1 -1 30
+osd .osd.sar-srr 5 ""
 osd .osd.sar-srr 20 ""
 osd .osd.sar-srr 40 ""
 osd .osd.sar-srr 60 ""
@@ -677,6 +678,7 @@ osd .osd.sar-rpl 130 "hf" "  "
 osd .osd.sar-rpl 140 "Cfxpt" &cat .osd.checkbox-chars "\} \HMagic mode"       f osd-search-cmagic
 
 osd .osd.sar-rpr 0 "sD" 13 11 -1 -1 30
+osd .osd.sar-rpr 5 ""
 osd .osd.sar-rpr 20 ""
 osd .osd.sar-rpr 40 ""
 osd .osd.sar-rpr 60 ""
@@ -706,11 +708,13 @@ osd .osd.sar-hll 120 "Cfxpt" &cat .osd.checkbox-chars "\} \HCase insensitive" f 
 osd .osd.sar-hll 130 "hf" "  "
 osd .osd.sar-hll 140 "Cfxpt" &cat .osd.checkbox-chars "\} \HMagic mode"       f osd-search-cmagic
 osd .osd.sar-hll 150 ""
+osd .osd.sar-hll 155 ""
 osd .osd.sar-hll 165 "hf" "  "
 osd .osd.sar-hll 175 "hf" "  "
 .osd-search.scheme osd-search-set-hilight
 
 osd .osd.sar-hlr 0 "sD" 13 11 -1 -1 30
+osd .osd.sar-hlr 5 ""
 osd .osd.sar-hlr 20 ""
 osd .osd.sar-hlr 40 ""
 osd .osd.sar-hlr 60 ""
