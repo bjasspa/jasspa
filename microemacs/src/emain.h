@@ -142,29 +142,24 @@
 #endif
 
 /**************************************************************************
-* UNIX : FreeBSD                                                          *
+* UNIX : FreeBSD based OSs                                                *
 **************************************************************************/
 #ifdef _FREEBSD
 #define meSYSTEM_NAME  "freebsd"        /* Identity name of the system   */
-#define _UNIX          1                /* This is a UNIX system         */
-#define _USG           1                /* UNIX system V                 */
-#define _DIRENT        1                /* Use <dirent.h> for directory  */
-#define _TERMIOS       1                /* Use termios, not termio       */
-#define _XTERM         1                /* Use Xlib                      */
-#define _TCAP          1                /* Use TERMCAP                   */
-#define _TCAPFONT      1                /* Use TERMCAP fonts to color    */
-#define _CLIENTSERVER  1                /* Client server support         */
-#define _SOCKET        1                /* Supports url reading          */
-#define _IPIPES        1                /* platform supports Inc. pipes  */
-#define _POSIX_SIGNALS 1                /* use POSIX signals             */
+#define _FREEBSD_BASE  1                /* Uses FreeBSD as base          */
 #endif
 
-/**************************************************************************
-* UNIX : OpenBSD                                                          *
-**************************************************************************/
 #ifdef _OPENBSD
-#define _FREEBSD       1                /* Use the FreeBSD cond. build   */
 #define meSYSTEM_NAME  "openbsd"        /* Identity name of the system   */
+#define _FREEBSD_BASE  1                /* Uses FreeBSD as base          */
+#endif
+
+#ifdef _OSF1
+#define meSYSTEM_NAME  "osf1"           /* Identity name of the system   */
+#define _FREEBSD_BASE  1                /* Uses FreeBSD as base          */
+#endif
+
+#ifdef _FREEBSD_BASE
 #define _UNIX          1                /* This is a UNIX system         */
 #define _USG           1                /* UNIX system V                 */
 #define _DIRENT        1                /* Use <dirent.h> for directory  */
@@ -198,10 +193,19 @@
 #endif
 
 /**************************************************************************
-* UNIX : Linux                                                            *
+* UNIX : Linux based OSs                                                  *
 **************************************************************************/
 #ifdef _LINUX
 #define meSYSTEM_NAME  "linux"          /* Identity name of the system   */
+#define _LINUX_BASE    1                /* Uses Linux as base            */
+#endif
+
+#ifdef _ZAURUS
+#define meSYSTEM_NAME  "zaurus"         /* Identity name of the system   */
+#define _LINUX_BASE    1                /* Uses Linux as base            */
+#endif
+
+#ifdef _LINUX_BASE
 #define _UNIX          1                /* This is a UNIX system         */
 #define _USG           1                /* UNIX system V                 */
 #define _DIRENT        1                /* Use <dirent.h> for directory  */

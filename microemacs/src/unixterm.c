@@ -1530,10 +1530,15 @@ meXEventHandler(void)
                 case XK_Help:           ii = SKEY_help; goto special_key;
                 case XK_Break:          ii = SKEY_break; goto special_key;
                     /* Mode switch - used on foreign keyboards, always ignore. */
-                    
+
                     /* Character set switch */
 #ifdef XK_Mode_switch
                 case XK_Mode_switch:
+#ifdef XK_script_switch
+#if XK_script_switch != XK_Mode_switch
+                case XK_script_switch:
+#endif
+#endif
                     goto ignore_key;
 #else
 #ifdef XK_script_switch
@@ -3308,7 +3313,7 @@ TTwaitForChar(void)
     {
 #ifdef _ME_WINDOW
 #ifdef _XTERM
-#if (defined _LINUX) || (defined _CYGWIN)
+#if (defined _LINUX_BASE) || (defined _CYGWIN)
 #ifdef _ME_CONSOLE
         if(!(meSystemCfg & meSYSTEM_CONSOLE))
 #endif /* _ME_CONSOLE */

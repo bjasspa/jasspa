@@ -751,7 +751,7 @@ ipipeRead(meIPipe *ipipe)
         {
 
             if(ipipe->pid == -4)
-                sprintf(p1,"[EXIT %d]",ipipe->exitCode) ;
+                sprintf((char *) p1,"[EXIT %d]",ipipe->exitCode) ;
             else
             {
                 meUByte *ins ;
@@ -1434,7 +1434,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
     if((ptyFp=allocatePty(line)) >= 0)
     {
         fds[0] = outFds[1] = ptyFp ;
-#if ((defined _LINUX) || (defined _FREEBSD) || (defined _SUNOS) || (defined _BSD))
+#if ((defined _LINUX_BASE) || (defined _FREEBSD_BASE) || (defined _SUNOS) || (defined _BSD))
         /* On the BSD systems we open the tty prior to the fork. If this is a
          * later POSIX platform then we will expect O_NOCTTY to exist and we
          * open the tty with O_NOCTTY. Do not let this terminal become our
@@ -1531,7 +1531,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
         setpgid (0,0);                  /* Newer UNIX systems */
 #endif        
         /* Not sure what the hell this does, why is it here ?? */
-#if (defined (TIOCSCTTY) && (defined (_LINUX) || defined (_FREEBSD)))
+#if (defined (TIOCSCTTY) && (defined (_LINUX_BASE) || defined (_FREEBSD_BASE)))
         if((ptyFp >= 0) && (outFds[0] >= 0))
             ioctl (outFds[0],TIOCSCTTY,0);
 #endif
@@ -1583,7 +1583,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
 #endif /* _BSD_SIGNALS */
 #endif /* _POSIX_SIGNALS  */
 
-#if !((defined _LINUX) || (defined _FREEBSD) || (defined _SUNOS) || (defined _BSD))
+#if !((defined _LINUX_BASE) || (defined _FREEBSD_BASE) || (defined _SUNOS) || (defined _BSD))
         /* Some systems the tty is opened late as here */
         if(ptyFp >= 0)
         {
