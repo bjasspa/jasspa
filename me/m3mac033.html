@@ -1,9 +1,9 @@
 <HTML>
-<HEAD><TITLE>cygnus(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
+<HEAD><TITLE>cygwin(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
-cygnus(3)</H1>
+cygwin(3)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
 <A HREF="amicr031.html">[Commands]</A>
@@ -13,21 +13,21 @@ cygnus(3)</H1>
 </FONT>
 <HR>
 <H2><B>NAME </B></H2>
-<UL><P>cygnus - Open a Cygwin BASH window 
-<BR>%cygnus-bin-path - Cygwin BASH directory 
-<BR>%cygnus-hilight - Cygwin shell hilight enable flag 
-<BR>%cygnus-prompt - Cygwin shell prompt </UL>
+<UL><P>cygwin - Open a Cygwin BASH window 
+<BR>%cygwin-path - Cygwin root directory 
+<BR>%cygwin-hilight - Cygwin shell hilight enable flag 
+<BR>%cygwin-prompt - Cygwin shell prompt </UL>
 <H2><B>PLATFORM </B></H2>
 <UL><P>Windows '95/'98/NT - win32 ONLY </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><B>cygnus</B> 
-<P><B>%cygnus-bin-path</B> &quot;<I>path</I>&quot; 
-<BR><B>%cygnus-hilight</B> [<TT>0</TT>|<TT>1</TT>] 
-<BR><B>%cygnus-prompt</B> &quot;<I>hilightString</I>&quot; </UL>
+<UL><P><B>cygwin</B> 
+<P><B>%cygwin-path</B> &quot;<I>path</I>&quot; 
+<BR><B>%cygwin-hilight</B> [<TT>0</TT>|<TT>1</TT>] 
+<BR><B>%cygwin-prompt</B> &quot;<I>hilightString</I>&quot; </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P><B>cygnus</B> creates an interactive BASH shell window within a MicroEmacs buffer window, providing a UNIX command line facility within the Microsoft Windows environment. This is a preferable environment to the MS-DOS shell and is certainly far more comfortable for those people familiar with UNIX. 
+<UL><P><B>cygwin</B> creates an interactive BASH shell window within a MicroEmacs buffer window, providing a UNIX command line facility within the Microsoft Windows environment. This is a preferable environment to the MS-DOS shell and is certainly far more comfortable for those familiar with UNIX. 
 <P>Within the window BASH commands may be entered and executed, the results are shown in the window. Within the context of the BASH shell window then directory naming conforms to the <B>cygwin</B> standard conventions (as opposed to the Microsoft directory naming). 
-<P>On running <B>cygnus</B> a new buffer is created called <TT>*cygnus*</TT> which contains the shell. Executing the command again creates a new shell window called <TT>*cygnus1*</TT>, and so on. If a cygwin window is killed off then the available window is used next time the command is run. 
+<P>On running <B>cygwin</B> a new buffer is created called <TT>*cygwin*</TT> which contains the shell. Executing the command again creates a new shell window called <TT>*cygwin1*</TT>, and so on. If a cygwin window is killed off then the available window is used next time the command is run. 
 <P>Additional controls are available within the shell window to control the editors interaction with the window. The operating mode is shown as a digit on the buffer mode line, this should typically show &quot;3&quot;, which corresponds to <I>F3</I>. The operating modes are mapped to keys as follows:- 
 <P><B>F2</B> 
 <BR><UL>Locks the window and allows local editing to be performed. All commands entered into the window are interpreted by the editors. <B>F2</B> mode is typically entered to cut and paste from the window, search for text strings etc. In mode 2, a <B>2</B> is shown on the mode line. </UL>
@@ -38,55 +38,46 @@ cygnus(3)</H1>
 <P><B>F5</B> 
 <BR><UL>Clears the buffer contents. This simply erases all of the historical information in the buffer. The operation of the shell is unaffected. </UL>
 <P>To exit the shell then end the shell session using &quot;<TT>exit</TT>&quot; or &quot;<TT>C-d</TT>&quot; as normal and then close the buffer. A short cut &quot;<TT>C-c C-k</TT>&quot; is available to kill off the pipe. However, it is not recommended that this method is used as it effectively performs a hard kill of the buffer and attached process 
-<P><B>%cygnus-bin-path</B> is a user defined variable that defines the file system location of the <I>cygwin</I> directory. This variable MUST be defined within the user start up script in order for the <B>cygnus</B> command to start the shell. With a default installation of <I>cygwin</I> then the settings are typically defined as:- 
-<P><B>Release B19</B> <UL>
-<PRE>set-variable&nbsp;%cygnus-bin-path&nbsp;&quot;C:/Cygnus/B19/h-i386~1/bin&quot; 
+<P><B>%cygwin-path</B> is a user defined variable that defines the file system location of the <I>cygwin</I> directory, this is typically <TT>c:/cygwin</TT>. If <I>cygwin</I> is located at a different location then the variable MUST be defined within the user start up script in order for the <B>cygwin</B> command to start the shell. With a default installation of <I>cygwin</I> then the settings are typically defined as:- 
+<P><B>Current Release</B> <UL>
+<PRE>set-variable&nbsp;%cygwin-path&nbsp;&quot;c:/cygwin&quot; 
 </PRE></UL>
-<P><B>Release B20</B> <UL>
-<PRE>set-variable&nbsp;%cygnus-bin-path&nbsp;&quot;c:/cygnus/cygwin-b20/H-i586-cygwin32/bin&quot; 
+<P><B>%cygwin-hilight</B> is a boolean flag which controls how the cygwin command shell window is hilighted. This value MUST be defined within the user start up script prior to executing cygwin if hilighting is to be disabled; by default hilighting is enabled. A value of 0 disables shell hilighting i.e. <UL>
+<PRE>set-variable&nbsp;%cygwin-hilight&nbsp;0 
 </PRE></UL>
-<P><B>%cygnus-hilight</B> is a boolean flag which controls how the cygnus command shell window is hilighted. This value MUST be defined within the user start up script prior to executing cygnus if hilighting is to be enabled; by default hilighting is disabled. A value of 1 enables shell hilighting i.e. <UL>
-<PRE>set-variable&nbsp;%cygnus-hilight&nbsp;1 
-</PRE></UL>
-<P><B>%cygnus-prompt</B> is an optional variable that is used in conjunction with <B>%cygnus-hilight</B>, it defines the hilighting string identifying the prompt. This allows the prompt to be rendered with a different color. The default prompt is <TT>bash-2.01$</TT> and may be hilighted using a definition:- <UL>
-<PRE>set-variable&nbsp;%cygnus-prompt&nbsp;&quot;bash-2.01$&quot; 
+<P><B>%cygwin-prompt</B> is an optional variable that is used in conjunction with <B>%cygwin-hilight</B>, it defines the hilighting string identifying the prompt. This allows the prompt to be rendered with a different color. The default prompt is <TT>bash-x.yyr$</TT> and may be hilighted using a definition:- <UL>
+<PRE>set-variable&nbsp;%cygwin-prompt&nbsp;&quot;bash-2.01$&quot; 
 </PRE></UL>
 <P>The user typically overrides the prompt definition within the BASH startup file, a more appropriate definition of the prompt may be:- <UL>
-<PRE>set-variable&nbsp;%cygnus-prompt&nbsp;&quot;^[a-z]*@[^&gt;]*&gt;&quot; 
+<PRE>set-variable&nbsp;%cygwin-prompt&nbsp;&quot;^[a-z]*@[^&gt;]*&gt;&quot; 
 </PRE></UL>
 </UL><H2><B>NOTES </B></H2>
-<UL><P>The <B>cygnus</B> command uses the 
-<A HREF="m2cmd077.html">ipipe-shell-command(2)</A> to manage the pipe between the editor and the <B>bash</B> shell. The window is controlled by the macro file <TT>hkcygnus.emf</TT> which controls the interaction with the shell. 
-<P>The macro <B>cygnus</B> in <TT>hkcygnus.emf</TT> defines the parameter setup to connect to the cygwin bash shell (Version 19), installed in the default location <TT>c:/cygnus</TT>. If your installation of cygnus is in a different location then correct the macro to match your install location, preferably correct by creating a <I>mycygnus.emf</I> file in your user directory simply containing a re-defined <B>cygnus</B> macro. 
-<P>If you have exported some of the cygwin environment variables in your <TT>autoexec.bat</TT> then you will have to figure out for yourself what variables macro <I>cygnus</I> needs to export - the current configuration is for a vanilla install. 
-<P>The <B>bash</B> shell is executed with options <I>i</I>, for interactive shell and <I>m</I> to enable job control. </UL>
+<UL><P>The <B>cygwin</B> command uses the 
+<A HREF="m2cmd077.html">ipipe-shell-command(2)</A> to manage the pipe between the editor and the <B>bash</B> shell. The window is controlled by the macro file <TT>hkcygwin.emf</TT> which controls the interaction with the shell. 
+<P>The macro <B>cygwin</B> in <TT>hkcygwin.emf</TT> defines the parameter setup to connect to the cygwin bash shell, installed in the default location <TT>c:/cygwin</TT>. If your installation of cygwin is in a different location then correct the macro to match your install location, preferably correct by creating a <I>mycygwin.emf</I> file in your user directory simply containing a re-defined <B>cygwin</B> macro. 
+<P>If you have exported some of the cygwin environment variables in your <TT>autoexec.bat</TT> then you will have to figure out for yourself what variables macro <I>cygwin</I> needs to export - the current configuration is for a vanilla install. 
+<P>The <B>bash</B> shell is executed with options <B>-i</B>, for interactive shell and <B>-m</B> to enable job control. 
+<P>As of the 2004 release then the <B>Cygwin</B>/<B>Cygnus</B> support has been revised in light of the changes in <B>cygwin</B> <UL><P>
+<LI>Renamed the command from <B>cygnus</B> to <B>cygwin</B>. 
+<LI>Following a change in the <B>bash(1)</B> command line operation, which now no longer echos user input, then the user input is processed by MicroEmacs. This does cause some problems with completion as the Cygwin environment has a different name space. The completion still requires some more work, but sufficient for smaller tasks. </UL></UL>
 <H2><B>TESTED CONFIGURATIONS </B></H2>
-<UL><P>This configuration has only been tested on a Windows '98 installation, whether this works on NT and Windows '95 (OEM SR2) is unknown. 
+<UL><P>This configuration has only been tested on a Windows 2000 installation, whether this works on Windows NT/XP/95/98 is unknown. 
 <P>We have only been running &quot;make&quot; operations in the shell and do not know how the likes of &quot;more&quot;, &quot;man&quot; or anything other terminal interaction works. 
 <P><B>Tested Configurations</B> 
-<BR><UL>Windows '98 (Pentium 120MHz/Pentium Pro 200MHz/Cyrix 300MHz/Pentium II 450MHz) </UL>
-<UL><P>cygwin version B19.3 - this is the original &quot;cygwin&quot; distribution + the latest &quot;coolview.tar.gz&quot; patch. 
-<BR>cygwin version B20 - the latest cygwin distribution. </UL></UL>
+<BR><UL>Windows 2K (Pentium-4) and Windows 2K (SunPCi-III) </UL>
+<UL><P>cygwin latest version as of February 2004. </UL></UL>
 <H2><B>BUGS </B></H2>
 <UL><P><B>Break Key</B> 
-<BR><UL>A break in a bash shell is <TT>C-c</TT>, the macros define the key <TT>C-c&nbsp;C-c</TT> to perform the break. This sequence is sent to the process but is not enacted by the shell. This is a property of the Bash shell rather than MicroEmacs. </UL>
-<P><B>Slow Response</B> 
-<BR><UL>If you are getting a very slow response from the bash shell then check the directory where <I>bash</I> was started. Sometimes there are problems if the shell is started in &quot;<TT>c:/</TT>&quot; (which is typically &quot;<TT>/</TT>&quot;) then the <I>bash</I> shell is very unresponsive and tends to '<I>ignore me</I>' for periods of time. If it is started in another location, i.e. &quot;<I>c:/temp</I>&quot; directory, then this problem does not occur. </UL>
-<UL><P>You can see the start-up location in the top of the buffer when the shell is started. </UL>
-<P><B>Prompt at top of buffer</B> 
-<BR><UL>Very, very occasionally the ishell sticks at the top of the buffer with only a couple of lines showing. A swap of the buffers or a quick window resize sorts out the problem. A fix for this problem has been applied but still may occasionally occur. </UL>
-<P><B>WinOldAp</B> 
-<BR><UL><B>Winoldap</B> is created by the Microsoft environment whenever a BASH shell is created. On occasions where processes have terminated badly the user may be prompted to kill these off; this is the normal behaviour of windows. It is strongly advised that all of the BASH processes are killed from within the Bash shell itself and the shell is always exited correctly (i.e. <TT>exit</TT>) before leaving the editor. The Windows operating system for '95/'98 is not particularly resilient to erroneous processes (for those of us familiar with UNIX) and can bring the whole system down. I believe that NT does not suffer from these problems (much). </UL>
-<P><B>Locked Input</B> 
-<BR><UL>There are occasions after killing a process the editor appears to lock up. This is typically a case that the old application has not shut down correctly. Kill off the erroneous task (<TT>Alt-Ctrl-Del</TT> - <I>End Task</I>) then bring the editor under control using a few <TT>C-g</TT> 
-<A HREF="m2cmd000.html">abort-command(2)</A> sequences. </UL></UL>
+<BR><UL>A break in a bash shell is <TT>C-c</TT>, the macros define the key <TT>C-c&nbsp;C-c</TT> to perform the break. If the shell environment is not configured then this will cause the shell to close down. Configuring bash resolves this problem. </UL>
+<P><B>Completion</B> 
+<BR><UL>Completion processing needs to be improved. The directory location is retrieved from <B>bash(1)</B> on each command line prompt, this is used for file completion. There is no command completion. Room for some improvement here. </UL></UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m2cmd077.html">ipipe-shell-command(2)</A>, 
 <A HREF="m3mac034.html">ishell(3)</A>. 
-<BR>Cygnus Win32 home sites <B>www.cygnus.com</B> and <B>www.cygnus.co.uk</B> </UL>
+<BR>Cygwin home site <B>www.cygwin.com</B> </UL>
 <HR>
 <P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2004/02/06</I>
+<BR><I>Last Modified: 2004/02/22</I>
+<BR><I>Generated On: 2004/03/26</I>
 </BODY></HMTL>

@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>set-cursor-to-mouse(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 set-cursor-to-mouse(2)</H1>
@@ -18,10 +18,15 @@ set-cursor-to-mouse(2)</H1>
 <UL><P><I>n</I> <B>set-cursor-to-mouse</B> </UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P><B>set-cursor-to-mouse</B> sets the current window and cursor position to the location of the mouse on it's last event (button press or release). This command may change the current window. If the line on which the mouse was located was the message line then the no action is taken, if the line was a window mode line the that window is made the current window but the cursor location within the window remains the same. This is usually used in user defined macros that control the functionality of the mouse. 
-<P>An argument <I>n</I> determines if the command is permitted to change windows, when omitted a window change is permitted on <B>set-cursor-to-mouse</B>. When specified, the mouse is not permitted to change windows and returns an error condition in 
-<A HREF="m5var038.html">$mouse-pos(5)</A> indicating that the mouse is not within the current window. 
 <P>Invocation of this command sets the variable 
 <A HREF="m5var038.html">$mouse-pos(5)</A> which determines where the mouse is within the window. Interrogation of the variable following the command may be used to determine if the mouse is located on one of the more specialized window or screen regions. 
+<P>An argument <I>n</I> determines if the command is permitted to change windows and cursor position, where the bits are defined as follows: 
+<P><B>0x01</B> 
+<BR><UL>Permit changing of the current window, if not permitted and the mouse is not in the current window <B>set-cursor-to-mouse</B> returns an error condition in 
+<A HREF="m5var038.html">$mouse-pos(5)</A>. </UL>
+<P><B>0x02</B> 
+<BR><UL>Permit changing of the cursor position. 
+</UL><P>The default argument when omitted is <I>3</I>, allowing the changing of both. 
 <P>When writing macros to cut and paste using the mouse, care should be taken to ensure that the window at the button release is the same is at the button press. If this is not undertaken, undesired effects could result. The use of 
 <A HREF="m2cmd110.html">set-position(2)</A> and 
 <A HREF="m2cmd110.html">goto-position(2)</A> are most usefully used with this command to restore existing window context. </UL>
@@ -37,6 +42,6 @@ set-cursor-to-mouse(2)</H1>
 <A HREF="m2cmd110.html">goto-position(2)</A>. </UL>
 <HR>
 <P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2004/02/06</I>
+<BR><I>Last Modified: 2004/03/23</I>
+<BR><I>Generated On: 2004/03/26</I>
 </BODY></HMTL>

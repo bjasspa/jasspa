@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>ipipe-shell-command(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 ipipe-shell-command(2)</H1>
@@ -17,7 +17,7 @@ ipipe-shell-command(2)</H1>
 <BR>ipipe-kill - Kill a incremental pipe 
 <BR>ipipe-write - Write a string to an incremental pipe </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><I>n</I> <B>ipipe-shell-command</B> &quot;<I>command</I>&quot; [&quot;<I>buffer-name</I>&quot;] (<B>esc  backslash</B>)&nbsp; 
+<UL><P><I>n</I> <B>ipipe-shell-command</B> &quot;<I>command</I>&quot; [&quot;<I>buffer-name</I>&quot;] [&quot;<I>buffer-ipipe-command</I>|&quot;] (<B>esc  backslash</B>)&nbsp; 
 <BR><I>n</I> <B>ipipe-write</B> &quot;<I>string</I>&quot; 
 <BR><I>n</I> <B>ipipe-kill</B> </UL>
 <H2><B>PLATFORM </B></H2>
@@ -41,7 +41,13 @@ ipipe-shell-command(2)</H1>
 <P><B>0x10</B> 
 <BR><UL>Disable the command name mangling (win32 versions only). By default any '<TT>/</TT>' characters found in the command name (the first argument only) are converted to '<TT>\</TT>' characters to make it Windows compliant. </UL>
 <P><B>0x20</B> 
-<BR><UL>Displays the new process window, by default this window is hidden. 
+<BR><UL>Displays the new process window, by default this window is hidden. </UL>
+<P><B>0x40</B> 
+<BR><UL>Raw ipipe, disable text annotation at the start and end of the pipe output and force 
+<A HREF="m2mod017.html">wrap(2m)</A> mode off. </UL>
+<P><B>0x80</B> 
+<BR><UL>Supply a function <I>buffer-ipipe-command</I> to be invoked when the pipe receives data and terminates, this is equivalent to setting the buffer variable 
+<A HREF="m5var006.html">$buffer-ipipe(5)</A> but allows the pipe to be set when the ipipe is created. It is useful to set the <I>$buffer-ipipe</I> on invocation and allows the pipe exit status to be trapped properly. 
 </UL><P>Many other macro commands (see 
 <A HREF="m3mac000.html">compile(3)</A>, 
 <A HREF="m3mac001.html">grep(3)</A>etc.) use this command. 
@@ -89,6 +95,7 @@ ipipe-shell-command(2)</H1>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m5var006.html">$buffer-ipipe(5)</A>, 
+<A HREF="m5var005.html">$buffer-input(5)</A>, 
 <A HREF="m3mac000.html">compile(3)</A>, 
 <A HREF="m3mac001.html">grep(3)</A>, 
 <A HREF="m2cmd098.html">pipe-shell-command(2)</A>, 
@@ -99,6 +106,6 @@ ipipe-shell-command(2)</H1>
 <A HREF="m2mod017.html">wrap(2m)</A>. </UL>
 <HR>
 <P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2004/02/06</I>
+<BR><I>Last Modified: 2004/03/07</I>
+<BR><I>Generated On: 2004/03/26</I>
 </BODY></HMTL>

@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>indent(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 indent(2)</H1>
@@ -16,9 +16,9 @@ indent(2)</H1>
 <UL><P>indent - Manage the auto-indentation methods </UL>
 <H2><B>SYNOPSIS </B></H2>
 <UL><P><I>0</I> <B>indent</B> &quot;<I>ind-no</I>&quot; &quot;<I>flags</I>&quot; &quot;<I>look-back</I>&quot; [ &quot;<I>indent-scheme</I>&quot; ] 
-<P><B>indent</B> &quot;<I>ind-no</I>&quot; &quot;<I>type</I>&quot; &quot;<I>token</I>&quot; [ &quot;<I>close</I>&quot; [ &quot;<I>ignore</I>&quot; ]] [ &quot;<I>indent</I>&quot; ] 
-<BR><B>indent</B> &quot;<I>ind-no</I>&quot; <B>t</B> &quot;<I>token</I>&quot; &quot;<I>indent-scheme</I>&quot; 
-<BR><B>indent</B> &quot;<I>ind-no</I>&quot; <B>x</B> | <B>w</B> &quot;<I>token</I>&quot; &quot;<I>indent</I>&quot; &quot;<I>indent-scheme</I>&quot; </UL>
+<P><B>indent</B> &quot;<I>ind-no</I>&quot; &quot;<I>type</I>&quot; &quot;<I>token</I>&quot; [ &quot;<I>close</I>&quot; &quot;<I>ignore</I>&quot; ] [ &quot;<I>indent</I>&quot; ] 
+<BR><B>indent</B> &quot;<I>ind-no</I>&quot; &quot;<B>t</B>&quot; &quot;<I>token</I>&quot; &quot;<I>indent-scheme</I>&quot; 
+<BR><B>indent</B> &quot;<I>ind-no</I>&quot; &quot;<B>x</B>&quot; | &quot;<B>w</B>&quot; &quot;<I>token</I>&quot; &quot;<I>indent</I>&quot; &quot;<I>indent-scheme</I>&quot; </UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P>The <B>indent</B> command creates and manages the auto-indenting methods, the process of creating a new indentation method is best described in 
 <A HREF="m2nar000.html">File Language Templates</A>. The command takes various forms as defined by the arguments. Each of the argument configurations is defined as follows:- </UL>
@@ -30,12 +30,12 @@ indent(2)</H1>
 <P><TT>0x01</TT> 
 <BR><UL>Indent method is case insensitive. Note that <B>indent</B> tokens must be specified in lower case. </UL>
 <P><TT>0x02</TT> 
-<BR><UL>Defines a <B>fast look-back</B> indentation scheme that is associated with the current indentation scheme. The fast look-back scheme locates the start of indentation tokens in the buffer. The <I>indent-scheme</I> argument is required when the flag bit is set and identifies the handle of the fast look-back indentation scheme that is used to locate the indentation style of the current block. </UL>
-<UL><P>This flag is only defined where the buffer is required to support multiple complex indentation schemes. When defined the <I>look-back</I> argument is typically set to look back a long way i.e. 500 lines, the fast look-back <I>indent-scheme</I> should contain few tokens to ensure that system performance is maintained. </UL>
+<BR><UL>Defines a <B>fast look-back</B> indentation scheme to be used in conjunction with the current indentation scheme. The fast look-back scheme is used to identify a change in the current buffer's indent scheme, for example the starting of embedded script in html. The <I>indent-scheme</I> argument is required when this flag bit is set and identifies the handle of the fast look-back indentation scheme to be used. </UL>
+<UL><P>This feature is only used when indent is required to support multiple complex indentation schemes within a single file, for example indentation of scripts within html, asp or php pages etc. When defined the given <I>indent-scheme</I> must also be defined using <B>indent</B>, the scheme's <I>look-back</I> argument is typically set to look back a long way to ensure correctness, i.e. 500 lines, but it should therefore contain few tokens to maintain performance. </UL>
 <P><I>look-back</I> specifies the maximum number of lines, prior to the current line, considered when calculating the indentation of a line, i.e. if there are <I>look-back</I> number of lines between the line to be indented and the previous non-blank line then the current indentation is lost. 
-<P>If <I>look-back</I> is set to 0 then the indentation is effectively disabled as the current indentation can never be found. The value may be specified in the range 0-255, a value of 10 is typically sufficient. </UL>
+<P>If <I>look-back</I> is set to 0 then the indentation is effectively disabled as the current indentation can never be found. The maximum value has been increase as of January 2004 from 255 to an integer (large number), a value of 10 is typically sufficient for a normal indent scheme and 500 for a fast look-back scheme. </UL>
 <H2>Indentation Rule Creation </H2>
-<UL><P><B>indent</B> &quot;<I>ind-no</I>&quot; &quot;<I>type</I>&quot; &quot;<I>token</I>&quot; [ &quot;<I>close</I>&quot; [ &quot;<I>ignore</I>&quot; ]] [ &quot;<I>indent</I>&quot; ] 
+<UL><P><B>indent</B> &quot;<I>ind-no</I>&quot; &quot;<I>type</I>&quot; &quot;<I>token</I>&quot; [ &quot;<I>close</I>&quot; [ &quot;<I>ignore</I>&quot; ]] [ &quot;<I>indent</I>&quot; ] [ &quot;<I>indent-scheme</I>&quot; ] 
 <P>With the default argument of <TT>1</TT>, <B>indent</B> creates a new rule for the indentation method <I>ind-no</I> which must have previously been defined and initialized. 
 <P>The indentation of a line in a buffer, which is using an indentation method, is affected by the token types matched on the line (<I>type</I> <TT>f</TT>, <TT>o</TT>, <TT>s</TT>) and the current indentation (if line is not of type <TT>f</TT>). 
 <P>The current indentation is determined by searching the previous lines (look-back) for the indentation of the last indented line. This may not simply be the indentation of the last non-blank line, the exact indentation is determined by searching for tokens in the line and assessing their effect on the indentation of the current line. 
@@ -141,9 +141,9 @@ indent(2)</H1>
 .... 
 </PRE></UL>
 </UL><P><B>Type</B> (<I>type</I> = '<TT>t</TT>' or '<TT>T</TT>') 
-<BR><UL>Used in conjunction with the <B>fast look-back</B> indentation scheme to define the look back indentation start token(s). The fast look-back token typically shadows the <TT>x</TT> type and identifies the indentation scheme. The token itself does not change the indentation, it simply identifies the indentation scheme. The '<TT>x</TT>' or '<TT>w</TT>' types are used to perform the actual indentation of the line if required. </UL>
+<BR><UL>Used in a <B>fast look-back</B> indentation scheme (see bit <TT>0x02</TT> of <B>0 indent</B> above) to define the scheme change tokens. The fast look-back token typically shadows the <TT>x</TT> and <TT>w</TT> types and identifies the indentation scheme. The token itself does not change the indentation, it simply identifies the indentation scheme. The '<TT>x</TT>' or '<TT>w</TT>' types are used to perform the actual indentation of the line if required. </UL>
 <UL><P>If the <I>indent-scheme</I> is defined as zero (<TT>0</TT>) then the indentation scheme is set to the same value as the 
-<A HREF="m2cmd069.html">hilight(2)</A> scheme handle. </UL>
+<A HREF="m5var075.html">$buffer-indent(5)</A> variable. </UL>
 <UL><P>The following example is taken from the XML language definition . A fast-look back scheme is used (<TT>hilight.xmlT</TT>) to search for the alternative indentation schemes for <I>javascript</I> and <I>vbscript</I>. The <TT>t</TT> indent type defines the start of script tokens and to switch the indentation to the new indent type. <UL>
 <PRE>;&nbsp;Fast&nbsp;look-back&nbsp;indentation&nbsp;scheme 
 0&nbsp;indent&nbsp;.hilight.xmlT&nbsp;1&nbsp;500 
@@ -172,12 +172,12 @@ indent&nbsp;.hilight.xml&nbsp;o&nbsp;&quot;&lt;/&quot;&nbsp;&nbsp;&nbsp;&nbsp;-2
 indent&nbsp;.hilight.xml&nbsp;o&nbsp;&quot;/&gt;&quot;&nbsp;&nbsp;&nbsp;&nbsp;-2 
 </PRE></UL>
 </UL><P><B>Change</B> (<I>type</I> = '<TT>x</TT>' or '<TT>X</TT>' or '<TT>w</TT>' or '<TT>W</TT>') 
-<BR><UL>Change the indentation scheme from the current scheme to the new <I>indent-scheme</I>. If the <I>indent-scheme</I> is specified as zero (<TT>0</TT>) then the indentation scheme is set to the same handle value as the current 
-<A HREF="m2cmd069.html">hilight(2)</A> scheme. <I>ind-no</I> specifies the indent value, when the <I>type</I> is <TT>x</TT> then the current line is indented, a <I>type</I> of <TT>w</TT> indents the next line. </UL>
-<UL><P>Refer the the <I>type</I>=<TT>x</TT> for an example of indentation switching. </UL></UL>
+<BR><UL>Change the indentation scheme from the current scheme to the new <I>indent-scheme</I>. If the <I>indent-scheme</I> is specified as zero (<TT>0</TT>) then the indentation scheme is set to the same handle value as the 
+<A HREF="m5var075.html">$buffer-indent(5)</A> variable. <I>indent</I> specifies the indent value, when the <I>type</I> is <TT>w</TT> then the current line onwards is indented (similar to <TT>o</TT>), a <I>type</I> of <TT>x</TT> indents the next line onwards (similar to <TT>n</TT>). </UL>
+<UL><P>Refer the the <I>type</I>=<TT>t</TT> for an example of indentation switching. </UL></UL>
 <H2><B>EXAMPLE </B></H2>
 <UL><P>Examples of indentation method creations can be found in macro files <TT>hkemf.emf</TT>, <TT>hktcl.emf</TT> and <TT>hkvrml.emf</TT>. The following example is taken from <TT>hkemf.emf</TT>:- <UL>
-<PRE>!if&nbsp;&amp;sequal&nbsp;.hilight.emf&nbsp;&quot;ERROR&quot; 
+<PRE>!if&nbsp;&amp;not&nbsp;&amp;exist&nbsp;.hilight.emf 
 &nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;.hilight.emf&nbsp;&amp;pinc&nbsp;.hilight.next&nbsp;1 
 !endif 
 
@@ -198,7 +198,8 @@ indent&nbsp;.hilight.emf&nbsp;e&nbsp;&quot;\&quot;&quot;&nbsp;&quot;\&quot;&quot
 indent&nbsp;.hilight.emf&nbsp;i&nbsp;&quot;;&quot; 
 indent&nbsp;.hilight.emf&nbsp;f&nbsp;&quot;*&quot;&nbsp;0 
 </PRE></UL>
-</UL><H2><B>SEE ALSO </B></H2>
+<P>Note that a <B>.hilight</B> command variable is typically used as a buffer with indentation rules will almost certainly have hilighting and the same variable is used to define the hilighting scheme. </UL>
+<H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m2nar000.html">File Language Templates</A>, 
 <A HREF="m5var075.html">$buffer-indent(5)</A>, 
@@ -206,6 +207,6 @@ indent&nbsp;.hilight.emf&nbsp;f&nbsp;&quot;*&quot;&nbsp;0
 <A HREF="m2cmd069.html">hilight(2)</A>. </UL>
 <HR>
 <P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2004/02/04</I>
-<BR><I>Generated On: 2004/02/06</I>
+<BR><I>Last Modified: 2004/03/24</I>
+<BR><I>Generated On: 2004/03/26</I>
 </BODY></HMTL>
