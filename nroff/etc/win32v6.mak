@@ -82,9 +82,10 @@ EXE	=	.exe
 .SUFFIXES: .od .o .c
 #{..}.c{.}.o:
 .c.o:
-	$(CC) $(COPTIMISE) $(CFLAGS) -c $< -Fo$(*F).o
+	$(CC) $(CDEBUG) $(CFLAGS) -c $*.c -Fo$(*F).o
+#	$(CC) $(COPTIMISE) $(CFLAGS) -c $< -Fo$(*F).o
 .c.od:	
-	$(CC) $(CDEBUG) $(CFLAGS) -c $*.c -Fo $(*F).od
+	$(CC) $(CDEBUG) $(CFLAGS) -c $*.c -Fo$(*F).od
 all::
 install::
 clean::

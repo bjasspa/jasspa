@@ -7,12 +7,12 @@
  *  System        : 
  *  Module        : 
  *  Object Name   : $RCSfile: nr2tex.c,v $
- *  Revision      : $Revision: 1.3 $
- *  Date          : $Date: 2002-04-02 20:26:22 $
+ *  Revision      : $Revision: 1.4 $
+ *  Date          : $Date: 2003-03-12 20:46:04 $
  *  Author        : $Author: jon $
  *  Created By    : Jon Green
  *  Created       : Thu Mar 7 20:45:45 2002
- *  Last Modified : <020318.2209>
+ *  Last Modified : <020402.2138>
  *
  *  Description	
  *
@@ -21,6 +21,9 @@
  *  History
  *	
  *  $Log: not supported by cvs2svn $
+ *  Revision 1.3  2002/04/02 20:26:22  jon
+ *  Intermediate save
+ *
  *  Revision 1.2  2002/03/10 18:36:17  jon
  *  New label name space for TEX
  *
@@ -588,7 +591,7 @@ static void
 nrPP_func (void)
 {
     insertPara (PARA_TERM);
-    latexStr ("\\PP");                  /* Add openners !! */
+    latexStr ("\\PP ");                 /* Add openners !! */
     latexEol ();                        /* Make pretty */
     sub_indent = 0;
 }
