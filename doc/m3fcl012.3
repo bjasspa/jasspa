@@ -6,29 +6,30 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Jul 5 21:40:07 1999
 .\"
-.Id $Id: m3fcl002.3,v 2.6 2004-03-26 20:13:00 jon Exp $
+.Id $Id: m3fcl012.3,v 2.1 2004-03-26 20:13:00 jon Exp $
 .Im MicroEmacs filter
 .so me.tni
-.TH dos2unix 3f
-.XI dos2unix - "Convert DOS format files to UNIX format files"
+.TH filetype 3f
+.XI filetype - "Determine file type UNIX, DOS or Windows"
 .SH NAME
-dos2unix \-  Convert DOS format files to UNIX format files
+filetype \-  Determine file type UNIX, DOS or Windows
 .Me $a
 .SH SYNOPSIS
 .na
-\fBme\fR "@dos2unix" \fI<files>\fR
+\fBme\fR "@filetype" \fI<files>\fR
 .ad
 .SH DESCRIPTION
-The start-up file \fCdos2unix.emf\fR may be invoked from the command line as a
-filter to convert  all files in  \s-1MS-DOS\s0  (or  Windows)  format into the
-correct \s-1UNIX\s0 format.
-.PP
+The start-up file \fCfiletype.emf\fR may be invoked from the command line as a
+filter to determine the file type (\s-1MS-DOS\s0, Windows or \s-1UNIX\s0).
 Each file  specified on the command line is  interrogated  and the line ending
-modified to \s-1UNIX\s0.
+is reported.
+.PP
+When the command completes then the \fC*scratch*\fR  buffer contains a list of
+the files and their file type.
 .SH "SEE ALSO"
 .na
 .Ht start-up 3 ,
-.Ht filetype 3f ,
+.Ht dos2unix 3f ,
 .Ht auto 2m ,
 .Ht crlf 2m ,
 .Ht ctrlz 2m .

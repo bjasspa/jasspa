@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040317.2051>
+# Last Modified: <20040326.2011>
 #
 ##############################################################################
 
@@ -172,7 +172,7 @@ FCL3_000=	$(DOCDIR)m3fcl001.3 $(DOCDIR)m3fcl002.3 $(DOCDIR)m3fcl003.3\
 		$(DOCDIR)m3fcl004.3 $(DOCDIR)m3fcl005.3 $(DOCDIR)m3fcl006.3\
 		$(DOCDIR)m3fcl007.3 $(DOCDIR)m3fcl008.3 $(DOCDIR)m3fcl009.3
 #
-FCL3_010=	$(DOCDIR)m3fcl010.3 $(DOCDIR)m3fcl011.3
+FCL3_010=	$(DOCDIR)m3fcl010.3 $(DOCDIR)m3fcl011.3 $(DOCDIR)m3fcl012.3
 #
 FIL4_000=	$(DOCDIR)m4fil000.4 $(DOCDIR)m4fil001.4 $(DOCDIR)m4fil002.4\
 		$(DOCDIR)m4fil003.4 $(DOCDIR)m4fil004.4 $(DOCDIR)m4fil005.4\
