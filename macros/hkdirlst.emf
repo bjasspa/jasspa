@@ -10,6 +10,9 @@
 0 define-macro-file osd osd-close
 0 define-macro-file ftp ftp-rename-buffer
 0 define-macro-file cvs osd-cvs-file-menu
+!if &not &exi fhook-html
+    define-macro-file hkhtml fhook-html
+!endif
 
 define-macro fhook-dirlst
     ; note that as the hook it quite complex and in the case of CVS it can
@@ -83,6 +86,10 @@ define-macro fhook-dirlst
             ; No - set this to get a descending Name order
             set-variable .fhook-dirlst.sort "|1|0|"
         !endif
+    !elif &seq &lef $buffer-fname 7 "http://"
+        ; loading "http://www.jasspa.com/" would call this hook if there's no <html> magic hook as it ends in a '/'
+        fhook-html
+        !return
     !else
         -1 buffer-mode "view"
         1 buffer-mode "magic"
@@ -1177,6 +1184,8 @@ osd .osd.dirlst 99  ""  "\HInvert Selection"      f dirlst-tag-invert
         3 show-region
         set-variable $delay-time $repeat-time
         global-bind-key dirlst-mouse-drag-1 &spr .mouse-event.mask "time"
+    !elif &seq @wc "\n"
+        !return
     !else
         set-variable $window-col :fmpf
         -3 show-region
@@ -1228,7 +1237,9 @@ osd .osd.dirlst 99  ""  "\HInvert Selection"      f dirlst-tag-invert
             set-cursor-to-mouse
         !endif
     !elif &and &not :fmpt &equ :fmpl $window-line
-        dirlst-find-file
+        !if &not &seq @wc "\n"
+            dirlst-find-file
+        !endif
     !endif
 !emacro
 
