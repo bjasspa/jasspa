@@ -144,7 +144,13 @@
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
 #define _meDEF_SYS_ERRLIST              /* errno.h not def sys_errlist   */
+
+/* Search path for CSW Sun build. */
+#ifdef _CSW
+#define _DEFAULT_SEARCH_PATH "/opt/csw/share/jasspa"
+#else
 #define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa"
+#endif
 #endif
 
 /**************************************************************************
