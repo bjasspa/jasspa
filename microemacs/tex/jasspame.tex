@@ -7,12 +7,12 @@
 %  System        : MicroEmacs
 %  Module        : user Manual
 %  Object Name   : $RCSfile: jasspame.tex,v $
-%  Revision      : $Revision: 1.8 $
-%  Date          : $Date: 2005-03-14 23:48:02 $
+%  Revision      : $Revision: 1.9 $
+%  Date          : $Date: 2005-03-15 09:07:45 $
 %  Author        : $Author: jon $
 %  Created By    : Jon Green
 %  Created       : Mon Oct 25 21:36:13 2004
-%  Last Modified : <050314.2345>
+%  Last Modified : <050315.0901>
 %
 %  Description
 %
@@ -35,8 +35,8 @@
 \documentclass[11pt,a4paper,pdftex]{article}
 % Bring in the CVS information.
 \def\CVS$#1: #2 ${\expandafter\def\csname CVS#1\endcsname{#2}}
-\CVS$Revision: 1.8 $ % or any CVS keyword
-\CVS$Date: 2005-03-14 23:48:02 $
+\CVS$Revision: 1.9 $ % or any CVS keyword
+\CVS$Date: 2005-03-15 09:07:45 $
 
 \usepackage{ifthen}                     % Conditional processing.
 
@@ -464,7 +464,7 @@ gtar zxvf /\textit{path-to}/jasspa-metree-\textit{yyyymmdd}.tar.gz}
 
 \CodeInsert{cd /usr/local/bin\newline
 gunzip -c /\textit{path-to}/jasspa-me-linux-2.\textit{x}-\textit{yyyymmdd}.gz > me\newline
-chmod a rx me}
+chmod a+rx me}
 
   The installation is complete, \texttt{/usr/local/bin} is assumed to be on 
   the executable path.
@@ -603,9 +603,9 @@ unzip enus.zip}
 
   A simple build script is provided for both UNIX and DOS/Windows systems
   called \textbf{build}. Download the source bundle
-  \texttt{jasspa-mesrc-\textit{yyyymmdd}} and unpack, this will create a
-  directory \textbf{meYYMMDD}. Change directory to \textbf{src} and issue a
-  build command:
+  \texttt{jasspa-mesrc-\textit{yyyymmdd}} and unpack, this creates a directory
+  \textbf{meYYMMDD}. Change directory to \textbf{src} and issue a build
+  command:
 
 \CodeInsert{\# DOS\newline
 c:> build}
@@ -613,11 +613,10 @@ c:> build}
 \CodeInsert{\# UNIX\newline
 >sh> ./build}
 
-  On most systems then the \textbf{build} will be performed, alternatively an
-  explicit \textbf{make} operation may be performed. A selection of
-  \textit{make} files exist for different platforms \textbf{.mak}
-  indicates a native platform compiler and \textbf{.gmk} indicates a GNU
-  compiler.
+  On most systems then \textbf{build} is performed, alternatively an explicit
+  \textbf{make} operation may be performed. A selection of \textit{make} files
+  exist for different platforms \textbf{.mak} indicates a native platform
+  compiler and \textbf{.gmk} indicates a GNU compiler.
 
 \CodeInsert{make -f \textit{platform}.mak}
 
@@ -718,7 +717,7 @@ c:> build}
 
       \item \textbf{Emulation} select the preferred emulation mode of the
       editor. The standard key bindings are adjusted to be more consistent
-      with the selected emulation. if the emulation is changed then it is
+      with the selected emulation. If the emulation is changed then it is
       advisable to re-start the editor when \textit{User Setup} is complete. 
 
       \item \textbf{Re-bind Home Keys} when disabled then the keys
@@ -741,9 +740,10 @@ c:> build}
       editor.
 
       \item \textbf{Enable Auto-spell} enable this option to allow MicroEmacs
-      to perform spell checking whilst you type. Spelling errors are
-      highlighted to indicate errors. With the mouse right click on the
-      mis-spelt word and select an auto correction.
+      to perform spell checking whilst you type. When enabled then spelling
+      errors are highlighted to indicate errors, to correct a mis-spelling
+      with auto-spell enabled then mouse right click on the mis-spelt word and
+      select an auto correction from the list.
 
       \textbf{M-x auto-spell-buffer} to automatically spell check the
       whole buffer.
@@ -811,7 +811,7 @@ c:> build}
       itemized lists for specific buffers. The tool bar is buffer sensitive.
 
       \item \textbf{Ignore files} the list of files to be ignored in directory
-      listings. e.g. \texttt{~ .o CVS}
+      listings. e.g. \texttt{$\sim$ .o CVS}
 
       \item \textbf{Fence Display} defines the behavior of the cursor at fence
       characters (i.e. \texttt{(,\{,\},),..}). \textbf{Always draw and jump on
@@ -888,14 +888,17 @@ c:> build}
     (controlled by the variable \textit{\$indent-width}).
   \end{itemize}
   
-  The \textit{indentation} and \textit{tab width} may be temporarily
-  controlled without changing the saved setting using the command \textbf{M-x
-  indent-setup}. Running the command presents a dialog which locally changes
-  the indentation setting of the current buffer. This is useful when dealing
-  with code from a different source where the \textit{indentation} and
-  \textit{Tab width} may be aligned to match the original authoring, the
-  command \textbf{M-x tabs-to-spaces} may be used to expand the tabs back to
-  spaces to make the file editor portable.
+  The configuration may be saved permanently using \textbf{Save} and installed
+  into the current session using \textbf{Current}.
+  
+  \textbf{Note:} the \textit{indentation} and \textit{tab width} may be
+  temporarily controlled without changing the saved setting using the command
+  \textbf{M-x indent-setup}. Running the command presents a dialog which
+  locally changes the indentation setting of the current buffer. This is
+  useful when dealing with code from a different source where the
+  \textit{indentation} and \textit{Tab width} may be aligned to match the
+  original authoring, the command \textbf{M-x tabs-to-spaces} may be used to
+  expand the tabs back to spaces to make the file editor portable.
 
 \subsection{MicroEmacs Integration}
 
@@ -1101,8 +1104,8 @@ c:> build}
 
   The editor should start and load the file \textit{myfile}. If the file does
   not exist no error is reported and the user is presented with an empty file,
-  subsequently saving that buffer will create the file. If the file is a
-  directory then a directory listing is presented.
+  subsequently saving that buffer creates the file. If the file is a directory
+  then a directory listing is presented.
 
   If MicroEmacs is started with the command option \textbf{-c} then the last
   editing session is restored i.e.
@@ -1154,14 +1157,14 @@ c:> build}
   file contents allowing the user to restore the previous version if
   necessary. During an editing session then a periodic automatic save is
   performed every few minutes to a recovery file, should the system
-  unexpectedly crash then MicroEmacs will recover the automatic save the next
-  time the file is loaded.
+  unexpectedly crash then MicroEmacs recovers the automatic save the next time
+  the file is loaded.
 
   MicroEmacs allows multiple buffers to be loaded into the system at any time,
   not all buffers are necessarily visible, the user controls which buffers to
   display in a \textit{window}. The windows may be split horizontally or
   vertically allowing the same, or different, buffer to be viewed in another
-  window i.e. you are allowed to have two (or more) window views into a
+  window i.e. you are allowed to have two (or more) window views into the same
   buffer. Editing in one window immediately affects other windows that are
   viewing the same buffer.
 
@@ -1277,10 +1280,10 @@ c:> build}
     \endhead
     \endfoot
     \endlastfoot
-    \textbf{C-x C-c} & \texttt{CONTROL}-\texttt{X} followed by
+    \textbf{C-x~C-c} & \texttt{CONTROL}-\texttt{X} followed by
                        \texttt{CONTROL}-\texttt{C}.\\
 
-    \textbf{C-z a} & \texttt{CONTROL}-\texttt{X} followed by \texttt{A}.\\
+    \textbf{C-x~a} & \texttt{CONTROL}-\texttt{X} followed by \texttt{A}.\\
     \textbf{M-space} & \texttt{ALT} and \texttt{SPACE} or \texttt{ESC} followed
                        by \texttt{SPACE}.\\
     \textbf{S-f1} & \texttt{SHIFT} and \texttt{F1} function key.\\
@@ -1289,10 +1292,9 @@ c:> build}
 \subsection{Entering Text}
 
   Entering text in MicroEmacs is easy, simply type in text and \texttt{RETURN}
-  to start a new line. MicroEmacs does not wrap text by default and will
-  scroll the line to keep it within the window as more text is typed.
-  MicroEmacs will automatically wrap the text if \textbf{wrap} mode is
-  enabled.
+  to start a new line. MicroEmacs does not wrap text by default and scrolls
+  the line to keep it within the window as more text is typed. MicroEmacs
+  automatically wraps the text if \textbf{wrap} mode is enabled.
 
   You can change the wrap mode setting using the following commands:
 
@@ -1377,8 +1379,8 @@ c:> build}
 
   The \underline{most} important command is \textbf{C-g} \textit{abort}. If
   you are in the middle of executing a command or are in a unrecognized state
-  then \textbf{C-g} will abort the current command and restore the user to a
-  sane state.
+  then \textbf{C-g} aborts the current command and restore the user to a sane
+  state.
 
   To exit MicroEmacs:
 
@@ -1405,7 +1407,7 @@ c:> build}
   \textit{find-file}. Control is moved to the \textit{Message Line} for file
   entry. Within the Message Line then use the \texttt{TAB} key (or
   \textbf{esc~esc}) to auto-complete, a second \texttt{TAB} displays a list of
-  possible completions. Enter the a few characters and use the \texttt{TAB} to
+  possible completions. Enter a few characters and use the \texttt{TAB} to
   complete again. Once the filename has completed then use \texttt{RETURN} to
   perform the read.
 
@@ -1438,7 +1440,7 @@ c:> build}
 
 \subsection{Insertion and Deletion}
 
-  By default MicroEmacs operates in \textbf{insert} mode, the \textbf{insert}
+  By default MicroEmacs operates in \textbf{insert} mode, the \texttt{insert}
   key toggles \textit{insertion} and \textit{overwrite}.
 
 \subsubsection{Region Copy/Delete}
@@ -1484,7 +1486,7 @@ c:> build}
     \begin{itemize}
       \item Use the cursor keys to move to the start of the region.
       \item Hold down the shift key whilst moving the cursor keys, a region
-      will be defined.
+      is defined.
     \end{itemize}
   \end{itemize}
 
@@ -1512,7 +1514,7 @@ c:> build}
   is performed immediately after a \textit{yank} operation then the previous
   yank buffer contents are used. This allows previous text that has been
   copied or killed to be restored. The yank buffer remains valid when moving
-  between different buffers, allowing text to be copied from one buffer to
+  between different buffers allowing text to be copied from one buffer to
   another.
 
   \begin{longtable}{ll@{\ --\ }l}
@@ -1546,8 +1548,8 @@ c:> build}
 
   Experienced users of MicroEmacs typically use more than one buffer
   (sometimes hundreds when running a long session) and continually move
-  between different buffers. Typically only two or three \textit{windows} will
-  be used (depending on screen estate), a working window and other window.
+  between different buffers. Typically only two or three \textit{windows} are
+  used (depending on screen estate), a working window and other window.
 
 \subsubsection{Buffers}
 
@@ -1607,24 +1609,24 @@ c:> build}
 \subsection{Searching and Replacing}
 
   Searching and replacement of text are frequently used in MicroEmacs, the
-  search is probably the most important and runs using \textit{incrementally}.
-  This is different from most other systems which require you to enter the
+  search is probably the most important and runs \textit{incrementally}. This
+  is different from most other systems which require the user to enter the
   whole search string. The incremental search starts searching from the first
-  character that you type in allowing the search to be refined as it continues
+  character that is entered allowing the search to be refined as it continues
   through the buffer.
 
 \subsubsection{Searching}
 
   The search command is initiated using \textbf{C-s} \textit{isearch-forward},
   the user is placed on the Message Line. As characters are entered then the
-  search proceeds through the buffer until a match is found and are displayed.
-  if the user wishes to continue then refine the search by entering more
+  search proceeds through the buffer until a match is found and is displayed.
+  If the user wishes to continue then refine the search by entering more
   characters or find the next match by entering another \textbf{C-s}. If the
-  correct location in the file has been located then any other command will
-  quit the search leaving the cursor at the current position (e.g.
-  \textbf{C-f} or a cursor key). If the end of the buffer is reached then the
-  user is warned, a further \textbf{C-s} will continue the search from the
-  start of the buffer, effectively wrapping the buffer.
+  correct location in the file has been located then any other command quits
+  the search leaving the cursor at the current position (e.g. \textbf{C-f} or
+  a cursor key). If the end of the buffer is reached then the user is warned,
+  a further \textbf{C-s} continues the search from the start of the buffer,
+  effectively wrapping the buffer.
 
   A search in a backward direction is initiated with \textbf{C-r}
   \textit{isearch-backward} this operates in the same way as the forward
@@ -1633,10 +1635,11 @@ c:> build}
   The search is sensitive to the buffer modes:
 
   \begin{description}
-    \item[exact] when enabled performs a case sensitive search, the default is
-      case insensitive.
 
-    \item[magic] when enabled performs a regular expression search, in
+    \item[exact] when enabled performs a case sensitive search, the default is
+    case insensitive.
+
+    \item[magic] when enabled performs a regular expression search. In
     \textbf{magic} mode then some characters are reserved as follows:
 
       \begin{description}
@@ -1659,12 +1662,13 @@ c:> build}
 \subsubsection{Replacing}
 
   Replacing text is a powerful way to make global changes to a file and is
-  invoked with \textbf{M-\%} or \textbf{M-C-r} \textit{query-replace-string}.
-  This is an interactive replacement where the user controls the replacement,
-  other replacement commands exist without the query.
+  invoked with \textbf{M-\%} or \textbf{M-C-r} (\textbf{esc~C-r})
+  \textit{query-replace-string} This is an interactive replace where the user
+  controls each replacement, other replacement commands exist without the
+  query.
 
-  On invoking the command then the user is prompted for the search string
-  followed by the replacement string. MicroEmacs then commences the search and
+  On invoking the command then the user is prompted for a search string
+  followed by a replacement string. MicroEmacs then commences the search and
   prompts the user for the required action when the search pattern is found.
   The user responses are defined as follows:
 
@@ -1692,7 +1696,7 @@ c:> build}
   command then we use \textbf{M-x \textit{command}}
   \textit{execute-named-command}. MicroEmacs prompts the user for the
   \textit{command} to execute, at the prompt the \texttt{TAB} or
-  \textbf{esc~esc} will attempt to complete the command, this is similar to
+  \textbf{esc~esc} keys attempt to complete the command, this is similar to
   the file name completion.
 
 \subsection{Universal Repeat}
