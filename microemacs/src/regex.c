@@ -5,7 +5,7 @@
  *  Synopsis      : regex compiler and matcher.
  *  Created By    : Steven Phillips
  *  Created       : Wed Aug 11 11:35:51 1999
- *  Last Modified : <000723.1904>
+ *  Last Modified : <001009.2024>
  *
  *  Description
  *
@@ -731,17 +731,21 @@ meRegexItemGet(meRegex *regex, meRegexItem *lastItem,
             unsigned char *srs=rs ;
             while(isDigit(*rs))
                 rs++ ;
-            if(rs == srs)
+            if(rs != srs)
+                min = atoi((char *) srs) ;
+            else if(*rs != ',')
                 return meREGEX_ERROR_INTERVAL ;
-            min = atoi((char *) srs) ;
+            else
+                min = 0 ;
             if((cc=*rs++) == ',')
             {
                 srs=rs ;
                 while(isDigit(*rs))
                     rs++ ;
-                if(rs == srs)
-                    return meREGEX_ERROR_INTERVAL ;
-                max = atoi((char *) srs) ;
+                if(rs != srs)
+                    max = atoi((char *) srs) ;
+                else
+                    max = -1 ;
                 cc = *rs++ ;
             }
             else

@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m4fil007.4,v 1.1.1.1 2000-07-25 22:04:02 jon Exp $
+.Id $Id: m4fil007.4,v 1.2 2000-10-21 17:10:36 jon Exp $
 .Im MicroEmacs macro;directive|miscellaneousOperators
 .so me.tni
 .TH !force 4
@@ -40,10 +40,10 @@ The following example shows how \fB!force\fR is used in conjunction with
 .CS
 ;	Merge the top two windows
 
-set-window		;remember what window we are at
-1 next-window		;go to the top window
-delete-window		;merge it with the second window
-!force goto-window	;This will continue regardless
+push-position           ;remember where we are
+1 next-window           ;go to the top window
+delete-window           ;merge it with the second window
+!force pop-position     ;This will continue regardless
 !if $status
     ml-write "Call PASSED"
 !else

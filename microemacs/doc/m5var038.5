@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m5var038.5,v 1.1.1.1 2000-07-25 22:04:05 jon Exp $
+.Id $Id: m5var038.5,v 1.2 2000-10-21 17:10:53 jon Exp $
 .Im MicroEmacs variable|hilight
 .so me.tni
 .TH $mouse-pos 5 
@@ -52,177 +52,33 @@ Bit 4 (16)  is  set  if 2  character  column  scroll  bar or  vertical  window
 separator is in effect and the cursor  exists in the second  column This value
 is bitwise OR'ed with the aforementioned intersection values.
 .SH EXAMPLE
-.B $mouse-pos 
-is utilized by the mouse  picking code, found in  \fCmouse.emf\fR,  an extract
-from that macro file is shown below which  hilights  the use of the  variable.
-The extract shows how the mouse intersection is used to manipulate the size of
-the windows on the screen.
+The  following  macro  can be used to print out the  current  position  of the
+mouse, try binding the macro to the "\fCmouse-move\fR" key:
 .Me $emf-scheme
 .CS
-;
-; grow-window
-; Helper for the mouse on the window mode line, divider or corner. Grows the
-; window with the mouse.
-;
-0 define-macro mouse-grow-window
-    set-variable #l0 &band %pick-mode 15
-    !if &not &equ %mouse-y $mouse-y
-        ; HANDLE: Vertical window growing
-        !if &or &equ #l0 10 &equ #l0 2
-            ; If we move the window to the top then auto delete it.
-            !if &equ &sub $mouse-y &sub $window-mode-line $window-depth 0
-                ; Only delete if the split bar is enabled.
-                !if &band $scroll-bar 0x80
-                    !force delete-window
-                    !if $status
-                        global-unbind-key &spr %mouse-mask "move"
-                    !endif
-                !endif
-            ; ONLY grow the window if we are not at the bottom
-            !elif &les &add $window-mode-line 2 $screen-depth
-                ; Otherwise resize the window.
-                !force &sub $mouse-y $window-mode-line grow-window-vertically
-            !endif
-        !elif &equ #l0 6
-            &mul &div $window-depth 2 &sub $mouse-y %box-pos scroll-down
-        !endif
-        set-variable %mouse-y $mouse-y
-    !endif
-    !if &not &equ %mouse-x $mouse-x
-        ; HANDLE: Horizontal window growing.
-        !if &or &equ #l0 10 &equ #l0 3
-            ; If we move the window to the left then delete the window.
-            !if &equ $mouse-x &sub $window-scroll-bar $window-width 
-                ; Only delete if the split bar is enabled.
-                !if &band $scroll-bar 0x80
-                    !force delete-window
-                    !if $status
-                        global-unbind-key &spr %mouse-mask "move"
-                    !endif
-                !endif
-            ; ONLY grow the window if we are not at the right edge
-            !elif &not &equ &add &add $window-scroll-bar &band $scroll-bar 1 1 $screen-width
-                ; Otherwise resize the window.
-                !force &sub $mouse-x &cond &band %pick-mode 16 &add $window-scroll-bar 1 $window-scroll-bar grow-window-horizontally
-            !endif
-        !endif
-        set-variable %mouse-x $mouse-x
-    !endif
-!emacro
-
-0 define-macro mouse-auto-pick-event
-    set-variable #l0 &band %pick-mode 15
-    !if &equ #l0 1
-        ; Message line
-        void
+define-macro print-mouse-position
+    !force set-cursor-to-mouse
+    set-variable #l0 &band $mouse-pos 15
+    !if &equ #l0 0
+        ml-write "Mouse in text window"
+    !elif &equ #l0 1
+        ml-write "Mouse on message line"
     !elif &equ #l0 2
-        ; ml-write "Mouse on Mode line "
-        ; Check for mouse on position 0 of the mode line. If it is
-        ; then construct a new horizontal window; otherwise we grow
-        ; the window. We only do the window creation if the split
-        ; is enabled.
-        !if &and &band $scroll-bar 0x80 &equ %mouse-x &sub $window-scroll-bar $window-width 
-            !force 1 split-window-horizontally
-            !if $status
-                ; Set to the minimum size and change the mode to a 
-                ; horizontal re-size.
-                !force 4 resize-window-horizontally
-                set-variable %pick-mode &bor 3 &band $mouse-pos 0x30
-            !endif
-        !endif
-        ; Either case; always perform a window re-szie operation.
-        ; The modified mode determines if this is vertical or
-        ; horizontal.
-        global-bind-key mouse-grow-window &spr %mouse-mask "move"
-    !elif &equ #l0 3
-        ; ml-write "Mouse on divider"
-        global-bind-key mouse-grow-window &spr %mouse-mask "move"
-    !elif &equ #l0 4
-        ; ml-write "Mouse on split"
-        ; Mouse on the buffer vertical divider. Split the window into two
-        ; and then assume a 'grow window' with the new window. Force the 
-        ; mode to re-size operation.
-        !force 1 split-window-vertically
-        !if $status
-            !force 2 resize-window-vertically 
-            set-variable %pick-mode &bor 2 &band $mouse-pos 0x30
-            global-bind-key mouse-grow-window &spr %mouse-mask "move"
-        !endif
-    !elif &equ #l0 5
-        ; ml-write "Mouse on up-arrow"
-        1 scroll-up
-        1 global-bind-key scroll-up &spr %mouse-mask "time"
-    !elif &equ #l0 6
-        ; ml-write "Mouse on upper-shaft"
-        scroll-up
-        10 global-bind-key scroll-up &spr %mouse-mask "time"
-    !elif &equ #l0 7
-        ; ml-write "Mouse on box"
-        1 set-scroll-with-mouse         ; Lock mouse position to scroller
-        global-bind-key set-scroll-with-mouse &spr %mouse-mask "move"
-    !elif &equ #l0 8
-        ; ml-write "Mouse on lower shaft"
-        scroll-down
-        10 global-bind-key scroll-down &spr %mouse-mask "time"
-    !elif &equ #l0 9
-        ; ml-write "Mouse on down-arrow"
-        1 scroll-down
-        1 global-bind-key scroll-down &spr %mouse-mask "time"
+        ml-write "Mouse on Mode line"
+    !elif &and &gre #l0 2 &les #l0 10
+        ml-write "Mouse on scroll bar"
     !elif &equ #l0 10
-        ; ml-write "Mouse on corner"
-        global-bind-key mouse-grow-window &spr %mouse-mask "move"
+        ml-write "Mouse on corner"
     !elif &equ #l0 11
-        ; ml-write "Mouse on Menu"
-        0 osd
-    !else
-        ml-write "Mouse-pos ERROR !!"
+        ml-write "Mouse on menu line"
     !endif
 !emacro
 
-0 define-macro mouse-event
-    set-variable #l1 @cck
-    set-variable %mouse-x $mouse-x
-    set-variable %mouse-y $mouse-y
-    ; force the unbind of the last pick time or move - do this on pick and drop as a safety mechanism 
-    !force global-unbind-key &spr %mouse-mask "time"
-    !force global-unbind-key &spr %mouse-mask "move"
-    ; must store the original window and cursor position
-    !if   &set #l0 &sin "-pick" #l1
-        set-window
-        set-alpha-mark "T"
-        set-cursor-to-mouse
-        ; work out the mouse mask
-        set-variable %pick-mode $mouse-pos
-        set-variable %mouse-mask &cat &cat &lef #l1 #l0 "%s" &rig #l1 &add #l0 4
-    !elif &set #l0 &sin "-drop" #l1
-        set-cursor-to-mouse
-    !else
-        !return
-    !endif
-    !if &band %pick-mode 15
-        ; Not in the text window 
-        !if &reg "/history" &cat "mouse/" &spr %mouse-mask "auto" "0"
-            ; do the scroll bar stuff
-            !if &sin "-pick" #l1
-                mouse-auto-pick-event
-            !else
-                goto-window
-            !endif
-            !return
-        !endif
-    !endif
-    !if &not &seq &set #l0 &ind &cat ":" #l1 "ERROR"
-        execute-line #l0
-    !elif &not &seq &set #l0 &reg "/history" &cat "mouse/" #l1 "" ""
-        execute-line #l0
-    !else
-        goto-window
-        goto-alpha-mark "T"
-        !force show-region
-    !endif
-!emacro
-.CE 0    
+global-bind-key print-mouse-position mouse-move
+.CE
 .Me $ehf-scheme
+.B $mouse-pos 
+is utilized by the mouse  picking code, found in macro file  \fCmouse.emf\fR.
 .SH "SEE ALSO"
 .na
 .Ht $mouse-x 5 ,

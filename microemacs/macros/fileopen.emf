@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sun Mar 22 20:25:48 1998
-;  Last Modified : <000719.0012>
+;  Last Modified : <000926.0924>
 ;
 ;  Description
 ;
@@ -157,7 +157,7 @@ define-macro osd-fo-dirlist
         !endif
     !done
     !if &equ #l1 1
-        osd .osd.fodc 1 ""
+        osd .osd.fodc 1 "" " "
     !endif
     !if &band $system 0x200
         osd .osd.fodm 6 "xMscfH" .scheme.osd-entry &spr "%s%n" &lef .osd.fo-path 2 &sub .osd.fo-width 2 " " .osd.fodv

@@ -8,7 +8,7 @@
  *  Object Name   : eterm.h
  *  Created By    : Steven Phillips and Jon Green
  *  Create Date   : Some time in 1994
- *  Last Modified : <20000718.2348>
+ *  Last Modified : <20001011.1802>
  *
  *  Description	  : Terminal I/O definitions.
  *
@@ -438,7 +438,11 @@ do {                                                                         \
 
 extern void TTapplyArea (void) ;
 extern int  WinMouseMode (int buttonMask, int highlight, int cursorShape);
-extern int  WinLaunchProgram (uint8 *cmd, int flags, uint8 *inFile, uint8 *outFile, int *sysRet);
+extern int  WinLaunchProgram (uint8 *cmd, int flags, uint8 *inFile, uint8 *outFile,
+#ifdef _IPIPES
+                              meIPIPE *ipipe,
+#endif
+                              int *sysRet);
 
 #endif /* _WIN32 */
 

@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m2cmd119.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Id $Id: m2cmd119.2,v 1.2 2000-10-21 17:09:53 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH set-cursor-to-mouse 2
@@ -38,9 +38,9 @@ located on one of the more specialized window or screen regions.
 When writing  macros to cut and paste using the mouse, care should be taken to
 ensure  that the  window at the  button  release  is the same is at the button
 press. If this is not undertaken, undesired effects could result. The use of
-.Ht set-window 2
+.Ht set-position 2
 and
-.Ht goto-window 2
+.Ht goto-position 2
 are most usefully used with this command to restore existing window context.
 .SH "SEE ALSO"
 .na
@@ -49,8 +49,8 @@ are most usefully used with this command to restore existing window context.
 .Ht $mouse-y 5 ,
 .Ht $window-mode-line 5 ,
 .Ht $window-scroll-bar 5 ,
-.Ht goto-window 2 ,
 .Ht set-scroll-with-mouse 2 ,
-.Ht set-window 2 .
+.Ht set-position 2 ,
+.Ht goto-position 2 .
 .ad
 .FH

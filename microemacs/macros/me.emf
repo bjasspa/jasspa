@@ -1,6 +1,6 @@
 ;  Startup file for MicroEmacs '99 JASSPA Distribution
 ;
-;  Last Modified :  <001009.2248>
+;  Last Modified :  <001010.1212>
 ;  Copyright (c) 1999 JASSPA
 ;
 ; If mename isn't set or registry file isn't found then set it to guest
@@ -124,6 +124,8 @@ scheme
 0xa0000 global-bind-key osd              "f1"
 0x1 global-bind-key spell-word           "esc $"
 4 global-bind-key prefix                 "C-c"
+global-bind-key set-position             "C-c C-a"
+global-bind-key goto-position            "C-c a"
 global-bind-key grep                     "C-c g"
 global-bind-key replace-all-string       "A-C-r"
 global-bind-key query-replace-all-string "esc A-C-r"
@@ -131,6 +133,7 @@ global-bind-key query-replace-all-string "esc A-C-r"
 global-bind-key ifill-paragraph          "esc q"
 global-bind-key delete-indentation       "esc ^"
 global-bind-key file-browser             "f10"
+global-bind-key ftp                      "S-f10"
 global-bind-key display-white-chars      "f11"
 ml-bind-key     tab                      "esc esc"
 ; setup abbreviations

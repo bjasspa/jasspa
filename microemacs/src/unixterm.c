@@ -5,7 +5,7 @@
  *  Synopsis      : Unix X-Term and Termcap support routines
  *  Created By    : Steven Phillips
  *  Created       : 1993
- *  Last Modified : <000907.1406>
+ *  Last Modified : <001011.1802>
  *
  *  Description
  *    This implementation of unix support currently only supports Unix v5 (_USG),
@@ -2056,10 +2056,10 @@ waitForEvent(void)
 {
     static int lost=0 ;
 #ifdef _IPIPES
-    IPIPEBUF *ipipe, *pp ;
+    meIPIPE *ipipe, *pp ;
 #endif
-    fd_set    select_set;
-    int       pfd ;
+    fd_set select_set;
+    int pfd ;
 
     /* While no input keys and ipipe or alarm signals. */
     for(;;)
@@ -2944,7 +2944,7 @@ TTopenClientServer (void)
     if(meCSSock == -1)
     {
         struct sockaddr_un cssa ;
-        IPIPEBUF *ipipe ;
+        meIPIPE *ipipe ;
         BUFFER *bp ;
         meMODE sglobMode ;
         int ii ;
@@ -2986,7 +2986,7 @@ TTopenClientServer (void)
         meModeClear(globMode,MDWRAP) ;
         meModeClear(globMode,MDUNDO) ;
         if(((bp=bfind(BserverN,BFND_CREAT)) == NULL) ||
-           ((ipipe = meMalloc(sizeof(IPIPEBUF))) == NULL))
+           ((ipipe = meMalloc(sizeof(meIPIPE))) == NULL))
         {
             meSystemCfg &= ~meSYSTEM_CLNTSRVR ;
             close(meCSSock) ;
@@ -3034,7 +3034,7 @@ TTkillClientServer(void)
     /* Close & delete the client file */
     if(meCSSock != -1)
     {
-        IPIPEBUF *ipipe ;
+        meIPIPE *ipipe ;
         char fname[MAXBUF] ;
 
         /* get the ipipe node */

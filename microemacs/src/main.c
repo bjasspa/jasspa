@@ -10,7 +10,7 @@
 *
 *	Author:			Jon Green
 *
-*	Creation Date:		03/05/91 17:19		<000907.1419>
+*	Creation Date:		03/05/91 17:19		<001011.1802>
 *
 *	Modification date:	%G% : %U%
 *
@@ -885,7 +885,7 @@ sigchild(SIGNAL_PROTOTYPE)
 #ifdef _IPIPES
     if(noIpipes != 0)
     {
-        IPIPEBUF *ipipe ;
+        meIPIPE *ipipe ;
 
         ipipe = ipipes ;
         while(ipipe != NULL)

@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m3mac005.3,v 1.1.1.1 2000-07-25 22:04:00 jon Exp $
+.Id $Id: m3mac005.3,v 1.2 2000-10-21 17:10:16 jon Exp $
 .Im MicroEmacs command|delete
 .so me.tni
 .TH clean 3
@@ -9,7 +9,7 @@ clean \- Remove redundant white spaces from the current buffer
 .Me $a
 .SH SYNOPSIS
 .na
-\fBclean\fR
+\fIn\fR \fBclean\fR
 .ad
 .SH DESCRIPTION
 .B clean
@@ -28,6 +28,9 @@ be removed.
 .IP 3)
 Superfluous empty lines at the end of the buffer are removed, leaving only one
 empty line.
+.IP 4)
+If  argument  \fIn\fR is given  (value is not used)  multiple  blank lines are
+reduced to a single blank line.
 .SH DIAGNOSTICS
 .IP "\fC[Command illegal in view mode]\fR"
 Caused by a  redundant  white  space being found and the buffer  being in view
@@ -45,6 +48,9 @@ Replace with:    "\\\\0"
 .IP b)
 Search for:      "[ ]+\\t"
 Replace with:    "\\t"
+.IP c)
+Search for:      "\\n\\n\\n"
+Replace with:    "\\n\\n"
 .SH "SEE ALSO"
 .na
 .Ht replace-string 2 ,

@@ -10,7 +10,7 @@
 *
 *       Author:                 Danial Lawrence
 *
-*       Creation Date:          14/05/86 12:37          <000823.1637>
+*       Creation Date:          14/05/86 12:37          <001011.1802>
 *
 *       Modification date:      %G% : %U%
 *
@@ -655,7 +655,7 @@ bclear(register BUFFER *bp)
 #ifdef _IPIPES
     if(meModeTest(bp->b_mode,MDPIPE))
     {
-	IPIPEBUF *ipipe ;
+	meIPIPE *ipipe ;
 	
 	if(!(bp->intFlag & BIFBLOW) &&
 	   ((s=mlyesno((uint8 *)"Kill active process")) != TRUE))

@@ -29,7 +29,7 @@
 .\"
 .\"***************************************************************************
 .\"
-.Id $Id: m2cmd154.2,v 1.1.1.1 2000-07-25 22:03:57 jon Exp $
+.Id $Id: m2cmd154.2,v 1.2 2000-10-21 17:10:01 jon Exp $
 .Im MicroEmacs command|registry
 .so me.tni
 .TH mark-registry 2
@@ -57,6 +57,11 @@ Returns  the full  name,  including  path, of the given  registry  node in the
 variable
 .Ht $result 5 .
 This does not alter the registry.
+.IP "\fB!\fR \- Hide Value"
+Hides  the  value of the  given  registry  node,  i.e. its  value  will not be
+displayed in the output of
+.Ht list-registry 2 .
+Once set, this mode cannot be removed.
 .IP "\fBa\fR \- Autosave"
 Automatically  saves the  registry  when it is  deleted or  unloaded  from the
 registry. The user is not prompted for a save.
@@ -73,11 +78,16 @@ are not saved.
 .IP "\fBf\fR \- File"
 The  registry  node is  marked  as a file  root, the value  must be set to the
 registry file name.
+.IP "\fBg\fR \- Get Modes"
+Returns  the list of modes  currently  set on the given  registry  node in the
+variable
+.Ht $result 5 .
+This does not alter the registry.
 .IP "\fBh\fR \- Hidden"
-The registry  node is created in the  \fIHidden\fR  state. (i.e. children will
-not be shown in
+The registry  node is marked as  \fIHidden\fR,  i.e. its children  will not be
+shown in
 .Ht list-registry 2
-output).
+output.
 .IP "\fBu\fR \- Updated"
 Marks the registry as modified.  The modified bit is removed when the registry
 file is saved. If the  modified  bit is  applied  to a registry  node the user
