@@ -136,7 +136,7 @@ define-macro delete-indentation
         !endif
     !until &les &dec @# 1 1
 !emacro
-; ifill-paragragh - intelligently try to fill paragraphs by spotting
+; ifill-paragraph - intelligently try to fill paragraphs by spotting
 ; bullet lists etc.
 0 define-macro ifill-para2
     set-variable #l0 $window-line
@@ -193,7 +193,19 @@ define-macro delete-indentation
             forward-line
         !endif
     !done
-    @# fill-paragraph @mna
+    !if &seq .mode ""
+        set-variable #l0 $recent-keys
+        @# fill-paragraph @mna
+        set-variable #l1 $recent-keys
+        !if &not &seq #l0 #l1
+            set-variable #l2 &trr &lef #l1 &sin " " #l1
+            !if &lfin "|a|A|v|V|" #l2
+                set-variable .mode #l2 
+            !endif
+        !endif
+    !else
+        @# fill-paragraph .mode
+    !endif
 !emacro
 
 0 define-macro ifill-para1
@@ -258,6 +270,7 @@ define-macro ifill-paragraph
     !else
         !return
     !endif
+    set-variable .ifill-para2.mode ""
     !if &les &len &set #l2 &rep $fill-bullet "]" "" &len $fill-bullet
         set-variable #l2 &cat "]" #l2
     !endif

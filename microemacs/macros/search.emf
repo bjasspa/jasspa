@@ -857,14 +857,40 @@ define-macro query-replace-all-string
     &band @# 1 save-some-buffers @mna
     set-variable #l0 &spr "\"%s\" %s" #l3 #l0
     1 grep #l0
-    !while 1
+    set-variable #l4 0
+    !repeat
         !force get-next-line @mna
         !if &not $status
             ml-write "All done!"
             !return
         !endif
-        -1 query-replace-string #l1 #l2 @mna
-    !done
+        !if #l4
+            -1 replace-string #l1 #l2 @mna
+        !else
+            set-variable $recent-keys ""
+            -1 query-replace-string #l1 #l2 @mna
+            set-variable #l5 $recent-keys
+            set-variable #l6 &sub &len #l5 &len &rep #l5 " " ""
+            set-variable #l5 &cat " " #l5
+            !while #l6
+                set-variable #l7 &slo &lget #l5 #l6
+                !if &lfin "|y|n|i|l|!|u|c-g|.|" #l7
+                    ; found the query input, handle it
+                    !if &seq #l7 "l"
+                        ml-write "All done!"
+                        !return
+                    !elif &seq #l7 "!"
+                        set-variable #l4 1
+                    !elif &seq #l7 "i"
+                        set-variable #l2 @h4 0
+                    !endif
+                    set-variable #l6 0
+                !else
+                    set-variable #l6 &sub #l6 1
+                !endif
+            !done
+        !endif
+    !until 0
 !emacro
 ;
 define-macro replace-all-pairs
