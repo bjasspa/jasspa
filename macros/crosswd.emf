@@ -231,7 +231,7 @@ define-macro crosswd-create-word-list
                 !if &sin &mid @wl #l3 1 #l2
                     forward-line
                 !else
-                    kill-line
+                    1 kill-line
                     -1 yank
                 !endif
             !done

@@ -11,8 +11,8 @@
 ; reproduced all of the bindings literally (obviously otherwise MicroEmacs
 ; will be huge) but retain the best compatibility that we can. 
 
-; Kill should kill to the end of line only, add this with "line" mode.
-1 global-mode "line"
+; C-k kill-line binding should kill to the end of line only
+global-bind-key kill-line "C-k"
 
 global-bind-key kill-region "S-delete"
 ; All bindings to "delete" map to backspace.

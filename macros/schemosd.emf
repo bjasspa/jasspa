@@ -633,7 +633,7 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
             set-variable &ind &spr ".%s.scheme-files" #l2 &lset &ind &spr ".%s.scheme-files" #l2 #l0 .schm-osd.fname
         !endif
         insert-string &spr "set-variable .%s.scheme-files \"%s\"" #l2 &ind &spr ".%s.scheme-files" #l2
-        kill-line
+        1 kill-line
         beginning-of-buffer
         !force regex-forward &spr "set-variable *\\.%s\\.scheme-names" #l2
         !if $status
@@ -641,7 +641,7 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
             execute-line @wl
             set-variable &ind &spr ".%s.scheme-names" #l2 &lset &ind &spr ".%s.scheme-names" #l2 #l0 .schm-osd.desc
             insert-string &spr "set-variable .%s.scheme-names \"%s\"" #l2 &ind &spr ".%s.scheme-names" #l2
-            kill-line
+            1 kill-line
         !endif
         ; save changes locally
         set-variable #l0 &stat "a" &spr "%s%s.emf" $user-path #l1

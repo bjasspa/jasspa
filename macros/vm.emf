@@ -154,7 +154,7 @@ hilight .hilight.vmhl 0x40 "." ""                 $global-scheme
         !force &sub #l0 #l1 search-forward "filename="
         !if $status
             set-variable $window-col &sub $window-col 9
-            kill-line
+            1 kill-line
             -1 yank
         !endif
         !if &sin "M" #l9
@@ -347,7 +347,7 @@ hilight .hilight.vmhl 0x40 "." ""                 $global-scheme
         insert-string &spr "%3d %s%n%s" &ind %vm-curmtot #l0 &sub 5 &len #l0 " " #l9
         !if &gre $window-col 30
             set-variable $window-col 30
-            kill-line
+            1 kill-line
             -1 yank
             2 insert-space
         !else
@@ -1249,7 +1249,7 @@ define-macro-file htmltool html-to-ehf
         set-variable $window-line #l1
         !force &sub #l1 #l2 search-forward "name="
         !if $status
-            kill-line
+            1 kill-line
             -1 yank
             insert-string &spr "\"%s\"" #l6
             beginning-of-line
@@ -1266,7 +1266,7 @@ define-macro-file htmltool html-to-ehf
             set-variable #l9 "HTML"
         !else
             2 forward-word
-            kill-line
+            1 kill-line
             -1 yank
             insert-string &cat " " #l6
             beginning-of-line
