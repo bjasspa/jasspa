@@ -1,0 +1,76 @@
+##############################################################################
+#
+#			Copyright $YEAR$ $COMPANY_NAME$.
+#			      All Rights Reserved
+#
+#
+#  System        :
+#  Module        :
+#  Object Name   : $RCSfile$
+#  Revision      : $Revision$
+#  Date          : $Date$
+#  Author        : $Author$
+#  Created By    : $USER_NAME$
+#  Created       : $ASCII_TIME$
+#  Last Modified : <160495.1521>
+#
+#  Description
+#
+#  Notes
+#
+#  History
+#
+##############################################################################
+#
+#  Copyright (c) $YEAR$ $COMPANY_NAME$.
+#
+#  All Rights Reserved.
+#
+#  This  document  may  not, in  whole  or in  part, be  copied,  photocopied,
+#  reproduced,  translated,  or  reduced to any  electronic  medium or machine
+#  readable form without prior written consent from $COMPANY_NAME$.
+#
+##############################################################################
+
+Summary:            # your one line summary of package
+Name:               # yourPackageName - what the package will be called.
+Version: 1.0        # Version of software being packaged.
+Release: 1          # Number of times software been packaged.
+Copyright: GPL      # Copyright terms, we'll assume GPL here.
+Group:              # How package should be grouped i.e. Applications/Sound
+URL:                # http://www.somewhere.com
+Source:             # where you get your source from
+Packager: $USER_NAME$ <you@somewhere.com>
+Vendor:   $COMPANY_NAME$
+
+%description
+Add a longer description here
+that may span over multiple lines
+and end with an empty line.
+
+# Scripts to prepare the package
+%prep
+
+# As alternative to %prep then use %setup
+%setup
+
+# Shell script to build product
+%build
+make
+
+# Shell script to install the product.
+%install
+make install
+
+# Clean - remove files that are not part of build area.
+%clean
+
+# Define the files that are part of the package.
+%files
+%defattr(-,root,root)
+%doc README
+%{_bindir}/myapp
+%{_datadir}/myappdata
+
+# Log of changes
+%changelog

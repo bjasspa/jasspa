@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040210.2018>
+# Last Modified: <20040214.1544>
 #
 ##############################################################################
 
@@ -28,22 +28,32 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		\
 	fold.emf	format.emf	freebsd.emf	ftp.emf		\
 	games.emf	gdiff.emf	gentags.emf	\
 	hkada.emf	hkasmx86.emf	hkasn1.emf	hkasp.emf	\
-	hkawk.emf	hkbibtex.emf	hkbinary.emf	hkblist.emf	\
-	hkbnf.emf	hkc.emf		hkcobol.emf	hkcpp.emf	\
-	hkcygnus.emf	hkdiff.emf	hkdirlst.emf	hkdirtre.emf	\
-	hkdoc.emf	hkdos.emf	hkeaf.emf	hkehf.emf	\
-	hkemf.emf	hkerf.emf	hkeuphor.emf	hkf90.emf	\
-	hkfvwm.emf	hkhtml.emf	hkidl.emf	hkimake.emf	\
-	hkinfo.emf	hkini.emf	hkipipe.emf	hkjava.emf	\
-	hkjs.emf	hkjsp.emf	hkjst.emf	hklatex.emf	\
-	hklhtml.emf	hklisp.emf	hklists.emf	hklua.emf	\
+	hkawk.emf	\
+	hkbibtex.emf	hkbinary.emf	hkblist.emf	hkbnf.emf	\
+	hkc.emf		hkcobol.emf	hkcpp.emf	hkcygnus.emf	\
+	hkdiff.emf	hkdirlst.emf	hkdirtre.emf	hkdoc.emf	\
+	hkdos.emf	\
+	hkeaf.emf	hkehf.emf	hkemf.emf	hkerf.emf	\
+	hkeuphor.emf	\
+	hkf90.emf	hkfvwm.emf	\
+	hkhtml.emf	\
+	hkidl.emf	hkimake.emf	hkinfo.emf	hkini.emf	\
+	hkipipe.emf	\
+	hkjava.emf	hkjs.emf	hkjsp.emf	hkjst.emf	\
+	hklatex.emf	hklhtml.emf	hklisp.emf	hklists.emf	\
+	hklua.emf	\
 	hkm4.emf	hkmake.emf	hkman.emf	hkmeta.emf	\
-	hkmhg.emf	hknroff.emf	hkpascal.emf	hkperl.emf	\
-	hkphp.emf	hkphps.emf	hkpls.emf	hkpseudo.emf	\
-	hkpython.emf	hkreg.emf	hkrul.emf	hkscheme.emf	\
-	hksgml.emf	hkshell.emf	hkslang.emf	hksql.emf	\
-	hktcl.emf	hktexi.emf	hktxt.emf	hkvb.emf	\
-	hkvhdl.emf	hkvrml.emf	hkxml.emf	hkyacc.emf	\
+	hkmhg.emf	\
+	hknroff.emf	\
+	hkpascal.emf	hkperl.emf	hkphp.emf	hkphps.emf	\
+	hkpls.emf	hkpseudo.emf	hkpsf.emf	hkpython.emf	\
+	hkreg.emf	hkrul.emf	\
+	hkscheme.emf	hksgml.emf	hkshell.emf	hkslang.emf	\
+	hkspec.emf	hksql.emf	\
+	hktcl.emf	hktexi.emf	hktxt.emf	\
+	hkvb.emf	hkvhdl.emf	hkvrml.emf	\
+	hkxml.emf	\
+	hkyacc.emf	\
 	hpux.emf	htmlcore.emf	htmltool.emf	htmlutil.emf	\
 	insdate.emf	irix.emf	itemlist.emf	\
 	javatags.emf	jst2html.emf	jst2ltx.emf	jst2rtf.emf	\
@@ -90,8 +100,9 @@ ETFS=	asmx86.etf	asn1.etf	\
 	latex.etf	\
 	makefile.etf	mhg.etf		\
 	newcomp.etf	newuser.etf	nroff.etf	\
-	pascal.etf	perl.etf	pls.etf		\
+	pascal.etf	perl.etf	pls.etf		psf.etf		\
 	rul.etf		\
+	spec.etf	\
 	tcl.etf		\
 	vhdl.etf	\
 	xml.etf
