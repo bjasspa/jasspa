@@ -1,0 +1,792 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.\"  Created By    : Jon Green
+.\"  Created       : Fri Jan 9 00:04:42 2004
+.\"
+.Id $Id: m2nar010.2,v 2.5 2005-02-13 00:50:47 jon Exp $
+.Im MicroEmacs 
+.so me.tni
+.TH macroWriting 4
+.XI macroWriting - "Writing MicroEmacs Macros"
+.SH "MACROS"
+\fB\*(mS\fR  is based on a core set of built in commands  and  variables  that
+provide a a basic set of functionality,  almost all of the visible features of
+\*(mS are implemented or controlled by its macro language.  \fBNanoEmacs\fR is
+quite  simply  this base set of  commands of \*(mS with no macro  support and
+provides a basic Emacs editor.
+.PP
+\*(mS is extended with an interpreted  script file that allows new commands to
+be defined using the base level commands and variables which is referred to as
+a Macro. Once a macro  command has been  defined then it appears as a built in
+command to the user, and as with the existing commands, may have a key binding
+to invoke the new command.
+.PP
+In  addition  to the  base  commands,  the  macro  language  includes  control
+statements and logical  operators  which allow loops and  conditional  command
+sequences to control the sequence of operations. 
+.SS "Starting to write Macros"
+For new  users to \*(mS  writing  macros  can be quite  daunting,  some of the
+macros  shipped  with \*(mS are  complex  and have  evolved  over many  years.
+Beginners should start with simple macros which has verifiable  output and can
+be performed interactively. This makes the task of writing and testing easier,
+some of the \fIbehind the scene\fR macros like the mouse driver and auto-spell
+checker are difficult to get working and requires a greater  understanding  of
+\*(mS and experience in macro debugging.
+.PP
+A good starting point is to try to write a macro to do something that you find
+yourself doing all the time, for example reread-file, write-region etc. 
+.PP
+.B TIP:
+Remember  when you write a macro you are placing the editor in control of your
+macro,  when  testing a new macro then start a new \*(mS  session or make sure
+that if  things  go wrong  you will not  loose any work. If you loose  control
+of the editor then  \fBabort\fR  (\fCC-g\fR)  will  typically  regain  control
+again. 
+.SS "Developing you First Macro"
+In the following example then we walk through the steps to create a macro that
+saves a  region  of text to a file  (i.e.  the text  between  \fBpoint\fR  and
+\fBmark\fR). The resultant macro will be called  \fBwrite-region\fR, note that
+this macro already exists in \*(mS.
+.PP
+The  first  thing  to do is walk  through  the  macro  that  you wish to write
+interactively  in \*(mS. Whilst doing this you should decide which approach to
+take and the commands (or keys) used. Our \fBwrite-region\fR  could either use
+narrows or copy the region to a  temporary  buffer, a decision  has to be made
+which  approach is best to use. Narrows would be more  efficient but there are
+more complications (such as restoring edit mode, avoid changing the \fBundo\fR
+stack etc.). For the moment then the temporary buffer approach is probably the
+best solution. 
+.PP
+Walking  through the sequence of steps  required to save a region of text then
+the following command sequence would be executed  (assuming a marked up region
+has been selected):-
+.ne 6
+.CS
+esc w                      ; Copy the region.
+C-x b "tmp-buffer"         ; Create a new temporary buffer.
+C-y                        ; Yank copied region into temporary buffer.
+C-x C-w "write_region_file" ; Save the buffer to a file.
+C-x k RETURN               ; Kill the temporary buffer.
+.CE
+This is a fairly  easy  sequence  of steps, the  history of key presses can be
+viewed in the variable 
+.Ht $recent-keys 5
+the command 
+.Ht list-variables 2 
+includes this variable in its output. 
+.PP
+Macros are not written in key sequences, instead the commands  associated with
+the key bindings are used. A key binding command name may be determined using 
+.Ht describe-key 2
+and 
+.Ht describe-bindings 2 .
+Some command  bindings  include a numeric  argument,  the numeric  argument is
+important (both the value and absence/presence of the argument) and can change
+the behavior of the command.  \fCC-up\fR is not  '\fBbackward-line\fR',  it is
+\'\fB5\fR  \fBbackward-line\fR'  to go back 5 lines, if you supply a numerical
+value to the command as well, e.g. '\fCesc 3 C-up\fR' you must  multiply  that
+with the numerical argument of the binding:
+.ne 3
+.CS
+3 up   -> 3   'backward-line' -> 3 * 1 backward-line ->  3 backward-line      
+3 C-up -> 3 '5 backward-line' -> 3 * 5 backward-line -> 15 backward-line
+.CE
+Translating  the keys that we used into  commands then our  \fBwrite-region\fR
+process becomes:-
+.Me $emf-scheme
+.CS
+copy-region
+find-buffer "tmp-buffer"
+yank
+write-buffer "write_region_file"
+delete-buffer RETURN
+.CE
+.Me $ehf-scheme
+.B TIP:
+If  you  are  in  an  \*(mS  macro   buffer  (e.g.   \fCfoo.emf\fR)   use  the
+\fBemf-quote-command\fR  command  (bound to  \fCA-q\fR)  to make this  process
+trivial. This  converts the key binding into a command  which is inserted into
+the buffer.
+.PP
+The obvious problem here is the last line, \fC'delete-buffer  RETURN'\fR. When
+running interactively you can simply press \s-1RETURN\s0 to delete the current
+buffer  however you cannot do this in a macro so you must  explicitly  specify
+the buffer name to delete: 
+.Me $emf-scheme
+.CS
+delete-buffer  "write_region_file"
+.CE
+.Me $ehf-scheme
+The the  process of writing  the buffer has the side  effect of  changing  the
+buffer  name to reflect the output file name, as  \fBdelete-buffer\fR  follows
+the \fBwrite-buffer\fR then the name will have changed. 
+.PP
+Correcting  the delete buffer name, the sequence of commands is wrapped with a
+macro definition, which binds a name to the command sequence, and a terminator
+which terminates the macro. 
+.Me $emf-scheme
+.CS
+define-macro write-region
+    copy-region
+    find-buffer "tmp-buffer"
+    yank
+    write-buffer "write_region_file"
+    delete-buffer "write_region_file"
+!emacro
+.CE
+.Me $ehf-scheme
+This macro works but is not very  effective  as the output  filename  has been
+fixed,  this  creates a file  "\fCwrite_region_file\fR"  in the \*(mS start up
+directory - probably  not what is required.  The specific  macro that has been
+created must be made  interactive,  this means it must get filenames  from the
+user, cope with a failure  and the user  doing  silly  things. So what must we
+cope with ? The list of defects is surprisingly  long considering we are doing
+so little:
+.BS  1 0 "1."
+The temp buffer used ("\fCtmp-buffer\fR") is not a temporary buffer, temporary
+buffers must always commence with a '\fC*\fR' and should be identifiable  with
+the generating  macro.\fBNote:\fR  knowledge that a buffer is temporary allows
+\*(mS to discard  content when  shutting  down without  prompting  the user to
+save.
+.BU "2."
+What happens if the "\fCtmp-buffer\fR" already exists ?
+.BU "3."
+What happens if the "\fCwrite_region_file\fR" buffer already exists ?
+.BU "4."
+We need to get the filename to write from the user.
+.BU "5."
+What happens if the user aborts during the macro ? 
+.BU "6."
+What happens if the write fails (disk full or file exists etc.) ?
+.BU "7."
+What happens if the user has the current buffer  displayed in more than
+one window ?
+.BU "8."
+Does this fit in with other \*(mS commands amd macros ? Do we want to use this
+new command from another context ?
+.BE
+The list of issues is a re-occurring theme, once you have got the hang of this
+it does become easier. In short reliable macros must:
+.BS
+Check inputs
+.BU
+Check outputs
+.BU
+Handle errors
+.BU
+Where appropriate handle an unexpected failure.
+.BE    
+The  last  one  is  really   reserved  for  low  level  drivers  (i.e.  mouse,
+directory listings etc.) which really must be bomb proof.
+.SS "Generalising Macros"
+In the  previous  section  we have  created a basic  macro to save a region of
+text, in this  section  we look at that  macro  is  transformed  from a static
+sequence  to  commands  to  a  fully  interactive  robust  command.  Reference
+should be made to 
+.Hl "MicroEmacs Macro Language at a Glance" macroOverview 4
+for a quick tour of the language syntax.
+.SS "1. The temp buffer used is not a temporary buffer..."
+Forming a temporary  buffer is simply a naming issue,  temporary  buffer names
+are simply  started with a "\fC*\fR", by  convention  for a simple buffer name
+then they are terminated  with a "\fC*\fR" as well. The temporary  buffer name
+should  reflect the name of the original macro hence the buffer name should be
+something like \fC*write-region-tmp*\fR
+.Me $emf-scheme
+.CS
+define-macro write-region
+    copy-region
+    find-buffer "*write-region-tmp*"
+    yank
+    write-buffer "write_region_file"
+    delete-buffer "write_region_file"
+!emacro
+.CE 0
+.Me $ehf-scheme
+.SS "2. What happens if the 'tmp-buffer' already exists ?"
+Looking at the current  implementation if the write fails the temporary buffer
+will be left lying  around.  This is very likely to happen and if it does then
+we will get the last region as well as the next region in the output file. The
+simple solution is to delete the temporary  buffer first, our first attempt to
+correct this:
+.Me $emf-scheme
+.CS
+define-macro write-region
+    copy-region
+    delete-buffer "*write-region-tmp*"
+    find-buffer "*write-region-tmp*"
+    \....
+!emacro    
+.CE
+.Me $ehf-scheme
+Unfortunately  this fails if the buffer  does not exist, so we must tell \*(mS
+to ignore the failure by \fBforcing\fR the execution:
+.Me $emf-scheme
+.CS
+define-macro write-region
+    copy-region
+    !force delete-buffer "*write-region-tmp*"
+    find-buffer "*write-region-tmp*"
+    yank
+    write-buffer "write_region_file"
+    delete-buffer "write_region_file"
+!emacro
+.CE 0
+.Me $ehf-scheme
+.SS "3. What happens if the 'write_region_file' buffer already exists ?"
+If the \fBwrite_region_file\fR  buffer already exists the buffer being written
+is renamed to "\fBwrite_region_file<1>\fR" rather than "write_region_file" and
+so the \fBdelete-buffer\fR will delete the wrong buffer. Therefore rather than
+delete an explicitly named buffer the environment  variables are used to query
+the name of the current buffer. The variable
+.Ht $buffer-bname 5 
+returns  the  current  buffer's  buffer  name  and may be used  instead  of an
+explicit name. 
+.Me $emf-scheme
+.CS
+define-macro write-region
+    copy-region
+    !force delete-buffer "*write-region-tmp*"
+    find-buffer "*write-region-tmp*"
+    yank
+    write-buffer "write_region_file"
+    delete-buffer $buffer-bname
+!emacro
+.CE 
+.Me $ehf-scheme
+Macro  variables  may be used to get just  about  any  information  you  could
+possibly want. For example 
+.Ht $buffer-fname  5 
+could be used after the \fBbuffer-write\fR to get the file name, 
+.Ht $window-line 5
+provides the  current  line number etc. See
+.IP
+Help -> 
+.Hl "Variable Glossary" VariableGlossary -
+.LP
+for a full  list of system  variables.  There are also  \fBMacro  Variables\fR
+(\fC@\fR,\fC#\fR,...) which are also very useful, e.g. 
+.Hl @wl @wl 4 
+gives the text on the current  line as a string, see the
+.Hl "Macro Language Glossary" MacroGlossary -
+for a full  list of these  and other  macro  features  such as  functions  and
+directives. 
+.SS "4. We need to get the destination filename from the user."
+Getting  input from the user is always  dangerous,  most macros run so quickly
+that the user will not have  sufficient time to abort the process  (\fCC-g\fR)
+and if they do there is not much that can be done. When collecting  input from
+the user the macro  must wait for some  input, at this  point the user can and
+should be able to abort the process which must be handled. If the user has not
+aborted the user still has this uncanny  ability of doing the  unexpected  and
+the input has to be checked, better still get \*(mS to get the input and check
+it. 
+.PP
+There are two approaches to the input problem:
+.BS
+We  get  the  filename  ourselves  and  pass  this  to the  \fBwrite-buffer\fR
+command.
+.BU
+Make  \fBwrite-buffer\fR  get the input  from the user  itself as the  command
+would when run from the command key binding.
+.BE
+We would  need to use the  first  approach  if we  needed  the  entered  value
+multiple  times,  in  this  case we are not so we can use the  simpler  second
+approach but for the sake of this document lets consider the first approach.
+.PP    
+First stab:
+.Me $emf-scheme
+.CS
+set-variable $write-region-file-name @ml "Write-region file"
+write-buffer $write-region-file-name
+.CE 
+.Me $ehf-scheme
+This does work but you really do not want to do this !  Consider what happens
+if the user aborts while entering the file name ? The user would be left in
+the  "\fC*write-buffer-tmp*\fR"  buffer  and  would  have to  clear  up the mess
+themselves.  This  may be fixed by  catching  the  abort  from the  input  and
+deleting the buffer.
+.Me $emf-scheme
+.CS
+!force !force set-variable $write-region-file-name @ml "Write-region file"
+!if &not $status
+    !force delete-buffer $buffer-bname
+    !abort
+!endif        
+write-buffer $write-region-file-name
+.CE 0
+.Me $ehf-scheme
+.IP \fBNOTE:\fR
+The call to 
+.Hl set-variable set-variable 2
+requires a double 
+.Hl !force !force 4 ,
+a single  \fB!force\fR  allows a macro to continue  after a failed command but
+not after a user  interrupt  (i.e. a \fCC-g\fR  abort), to continue after this
+requires a double \fB!force\fR.
+.LP    
+The second problem is with the input type, the 
+.Hl @ml @ml 4 
+does not  indicate  that a file name is required.  The type of input should be
+qualified to first check the input type and to provide other  features such as
+file completion on file name entry. Specifying the input type correctly:
+.Me $emf-scheme
+.CS
+!force !force set-variable $write-region-file-name @ml04 "Write-region file"
+!if &not $status
+    !force delete-buffer $buffer-bname
+    !abort
+!endif        
+write-buffer $write-region-file-name
+.CE 0
+.Me $ehf-scheme
+.IP \fBTIP:\fR
+How did we find out about 
+.Hl @ml04 @ml 4
+? The  best way to find out how to do  something  is find  another  macro  (or
+command) that does something very similar and copy it, in this case the
+.Hl diff diff 3
+macro has to perform a similar  operation.  If you cannot find  anything  then
+look in the command  documents, the documents  generally  provide this sort of
+information  (for example see 
+.Ht @ml 4 ).
+If all else fails then use the News Group, somebody will be able to provide an
+answer to your question. 
+.LP
+In  progressing  through the example we have used the basic  system  variables
+(\fC$var\fR)  as they are simple. Other  variables  exist: user  (\fC%var\fR),
+buffer (\fC:var\fR) or command  (\fC.var\fR). All of the previously  mentioned
+variables use valuable system resource and consideration should be given as to
+whether the value is required  once the macro has completed  execution. In our
+case the file name is  temporary  and is not required  outside of the scope of
+the macro,  rather than waste memory then a register  variable is preferred as
+they have zero cost and execute  faster than the other  variables.  Re-writing
+the macro with register (\fC#lx\fR) variables:
+.Me $emf-scheme
+.CS
+!force !force set-variable #l1 @ml04 "Write-region file"
+!if &not $status
+    !force delete-buffer $buffer-bname
+    !abort
+!endif        
+write-buffer #l1
+.CE 0
+.Me $ehf-scheme
+.IP \fBTIP:\fR
+Avoid using the global variables (\fC#g1\fR etc.) as these could be altered by
+other macros.  Sub-macros (i.e. macros called by other macros) can pass values
+back to their  calling macro via the parent's  register  variables  (\fC#p1\fR
+etc.). When using parent  register  variables  then ensure that the  sub-macro
+does not destroy some context of the parent macro through  altering a register
+variable that has been used for another purpose.
+.LP
+At the start of this section we said that there were two  techniques  by which
+we could get user input, we selected the first (which was less  desirable than
+the  second).  The  approach  that we have taken of passing  the  filename  to
+\fBwrite-buffer\fR  appears  to be  correct,  however  the  \fBwrite-buffer\fR
+command  probably  expects a  reasonable  filename -- what happens if the user
+enters a directory name ? There are other potential esoteric problems with our
+current approach, all of which may be overcome, but not here. 
+.PP
+The second  technique, which is by far the best solution, is to simply get the
+command 
+.Ht write-buffer 2
+to get its input directly from the user. The command does this by default when
+bound to a key and run from the command line however when run from a macro the
+behavior is different as there is no command line. We can force this  behavior
+by asking the command to be executed as if it were run from the command line:-
+.Me $emf-scheme
+.CS
+write-buffer @mn
+.CE
+.Me $ehf-scheme
+When  \fBwrite-buffer\fR  asks the \*(mS macro  processor for a file name the 
+.Hl @mn @mn 4
+argument  tells it to go  directly  to the user  even  though ME is  currently
+running a macro.  This will only get a single  argument  from the user, if the
+file already exits  \fBwrite-buffer\fR asks for confirmation that over-writing
+the existing file is okay, but this argument has not been given so the command
+fails. To fix this we could do:
+.Me $emf-scheme
+.CS
+write-buffer @mn "y"
+.CE
+.Me $ehf-scheme
+However  this has now created  even more issues, what  happens if this file is
+already loaded into \*(mS, should we allow the user to decide ? We could allow
+the command line to handle all of the cases:
+.Me $emf-scheme
+.CS
+write-buffer @mn @mn @mn @mn ....
+.CE
+.Me $ehf-scheme
+Which is rapidly becoming very messy for each individual  argument, instead we
+use
+.Hl @mna @mna 4 
+to ask the command to handle all input associated with the command:
+.Me $emf-scheme
+.CS
+write-buffer @mna
+.CE
+.Me $ehf-scheme
+Note  that  we  should  have  used  this  for  the  first  method  to  protect
+\fBwrite-buffer\fR:
+.Me $emf-scheme
+.CS
+write-buffer #l1 @mna
+.CE
+.Me $ehf-scheme
+In this  case the file name is  provided  by the  argument  \fC#l1\fR  but the
+remaining arguments are handled internally by the command itself as if invoked
+from the command line.
+.PP
+Moreover,  there is one subtle  problem  here that can cause a lot of problems
+especially  for other  macros  trying to use this macro (uses tend to spot the
+problem  themselves and correct it causing only minor  frustration). The macro
+creates a new temporary  buffer which has no file name, this means that saving
+to  "\fC./file\fR"  will  write  the  region to  "\fCfile\fR"  in the  startup
+directory  rather than in the current  buffer's file path. For example, if you
+start   \*(mS   from   "\fC/bin\fR",   load  file   "\fC/tmp/foo.txt\fR"   and
+\fCwrite-region\fR    "\fC./bar.txt\fR"    you    will    create    the   file
+"\fC/bin/bar.txt\fR" not "\fC/tmp/bar.txt\fR".
+.PP    
+To solve this directory issue the file name of the temporary  buffer has to be
+set to the same  filename as the current  buffer we are copying  from. This is
+safe as this is a temporary buffer (starts with a '\fC*\fR') so \*(mS will not
+attempt to auto save or allow the buffer to be saved using 
+.Hl write-buffer write-buffer 2 
+and is performed as follows:
+.Me $emf-scheme
+.CS
+define-macro write-region
+    copy-region
+    set-variable #l0 $buffer-fname       ; ADDED to fix directory location
+    !force delete-buffer "*write-region-tmp*"
+    find-buffer "*write-region-tmp*"
+    yank
+    set-variable $buffer-fname #l0       ; ADDED to fix directory location
+    write-buffer @mna
+    delete-buffer $buffer-bname
+!emacro
+.CE
+.Me $ehf-scheme
+After all of that, the solution is in fact very simple, however the underlying
+complexity  of the user  expectations  as to the  behavior  of the command are
+complicated.
+.SS "5. What happens if the user aborts during the macro ?"
+This issue has already been touched on in the previous  sections, by using the
+\fB@mna\fR only the  \fBwrite-buffer\fR is likely to be aborted while the user
+is prompted  for a file name etc. and if the user  manages to abort  elsewhere
+there really is not much that can be done about it without severely  impacting
+the  complexity of the macro.  Practically  it is only  necessary to catch the
+exception   when  the  user  is  being  prompted  on  the  command  line  with
+\fBwrite-buffer\fR,  as with our existing user input a double  \fB!force\fR is
+required to catch an abort at a prompt. 
+.Me $emf-scheme
+.CS
+define-macro write-region
+    copy-region
+    set-variable #l0 $buffer-fname
+    !force delete-buffer "*write-region-tmp*"
+    find-buffer "*write-region-tmp*"
+    yank
+    set-variable $buffer-fname #l0
+    !force !force write-buffer @mna
+    !if &not $status
+        !force delete-buffer $buffer-bname
+        !abort
+    !endif        
+    delete-buffer $buffer-bname
+!emacro
+.CE
+.Me $ehf-scheme
+The 
+.Ht $status 5 
+variable  allows us to catch the exit state of the forced command and test for
+an abort condition following the forced statement. Note that the \fB$status\fR
+value is only valid  immediately  after the last executed  command,  executing
+another command changes the value of  \fB$status\fR. If the status is required
+after execution of another command then it may be saved in a variable and used
+later.
+.SS "6. what happens if the write fails (disk full or file exists etc) ?"
+As the \fBwrite-buffer\fR  command should handle write file failures sensibly,
+and we have  enabled  it to get input  from the user,  then the  command  will
+automatically  handle  the  failure  conditions.  Within  our macro then it is
+simply a case of  detecting  and  handling  the  failure  condition -- we have
+already  done this by handling the user input so no additions  are required to
+the macro.
+.SS "7. What happens if the current buffer displayed in more than one window ?"
+If the user has the  current  buffer  displayed  only once then the  action of
+deleting  the  temporary  buffer  returns the current  window to the  previous
+buffer, as  required. If however the buffer is  displayed  more than once then
+when  the   temporary   buffer  is  deleted  \*(mS  will  select  a  different
+non-displayed  buffer to become the current  window  (unless  this is the only
+buffer) and so the user will not be returned back to their original buffer.
+.PP 
+This may be fixed by storing the initial buffer name and explicitly  returning
+to it after the \fBdelete-buffer\fR:
+.Me $emf-scheme
+.CS
+define-macro write-region
+    copy-region
+    set-variable #l0 $buffer-fname
+    set-variable #l1 $buffer-bname
+    !force delete-buffer "*write-region-tmp*"
+    find-buffer "*write-region-tmp*"
+    yank
+    set-variable $buffer-fname #l0
+    !force !force write-buffer @mna
+    !if &not $status
+        !force delete-buffer $buffer-bname
+        find-buffer #l1
+        !abort
+    !endif        
+    delete-buffer $buffer-bname
+    find-buffer #l1
+!emacro
+.CE
+.Me $ehf-scheme
+However,  when there are two  windows  into the same  buffer the  command  may
+inherit the other window's  buffer  location, i.e. if the current window is on
+line 100 and the other  window  display  this  buffer is at line 200 the above
+version will leave the user at line 200 and a different region. The commands 
+.Ht set-position 2
+and 
+.Ht goto-position 2 
+allow the current  position to be saved and later  restored, the commands both
+take a single  character  which  identifies  the saved  position,  this allows
+multiple  positions to be saved.  Re-writing our macro to save and restore the
+buffer position we get:
+.Me $emf-scheme
+.CS
+define-macro write-region
+    copy-region
+    set-variable #l0 $buffer-fname
+    set-position "P"
+    !force delete-buffer "*write-region-tmp*"
+    find-buffer "*write-region-tmp*"
+    yank
+    set-variable $buffer-fname #l0
+    !force !force write-buffer @mna
+    !if &not $status
+        !force delete-buffer $buffer-bname
+        goto-position "P"
+        !abort
+    !endif        
+    delete-buffer $buffer-bname
+    goto-position "P"
+!emacro
+.CE 0
+.Me $ehf-scheme
+.SS "8. Does this fit in with other \*(mS commands and macros ?"
+Finally we should  consider how to make the macro more like a built in command
+so that other users and macros can take advantage of this new feature. Firstly
+let us  consider  supporting  the  numerical  argument  which is passed to all
+commands and macros.  Considering  \fBwrite-buffer\fR  the command  permits an
+invocation from the command line of:
+.CS    
+esc 0 C-x C-w
+.CE
+or from a macro:
+.CS    
+0 write-buffer
+.CE
+The  \fC0\fR  argument  disables  validity  checks  and  therefore  forces the
+write. It would be  reasonable  to expect  that a new  command  that  writes a
+region to a file  behaves  in exactly  the same way, where the  commands  have
+consistent  behavior  it makes it far  easier  for the user to guess  how like
+commands operate. Unfortunately this behavior is absent from our current macro
+command. To support the numerical  argument then the 
+.Hl @? @? 4 
+and
+.Hl @# @hash 4
+variables are used to test for and retrieve the numerical argument.
+.Me $emf-scheme
+.CS
+define-macro write-region
+    copy-region
+    set-variable #l0 $buffer-fname
+    set-position "P"
+    !force delete-buffer "*write-region-tmp*"
+    find-buffer "*write-region-tmp*"
+    yank
+    set-variable $buffer-fname #l0
+    !if @?
+        !force !force @# write-buffer @mna
+    !else
+        !force !force write-buffer @mna
+    !endif        
+    !if &not $status
+        !force delete-buffer $buffer-bname
+        goto-position "P"
+        !abort
+    !endif        
+    delete-buffer $buffer-bname
+    goto-position "P"
+!emacro
+.CE 0
+.Me $ehf-scheme
+.IP \fBNote:\fR
+that the  \fB!else\fR  and  \fB!endif\fR  directive  lines do not  effect  the
+setting  of  \fB$status\fR  so this is safe, only the  execution  of  commands
+effect this variable. 
+.LP
+We can  optimize  the macro a little by noting  that the  default  behavior of
+"\fBwrite-buffer\fR" is the same as "\fB1 write-buffer\fR" (this is not always
+the case), re-writing:
+.Me $emf-scheme
+.CS
+define-macro write-region
+    copy-region
+    set-variable #l0 $buffer-fname
+    set-position "P"
+    !force delete-buffer "*write-region-tmp*"
+    find-buffer "*write-region-tmp*"
+    yank
+    set-variable $buffer-fname #l0
+    !force !force @# write-buffer @mna
+    !if &not $status
+        !force delete-buffer $buffer-bname
+        goto-position "P"
+        !abort
+    !endif        
+    delete-buffer $buffer-bname
+    goto-position "P"
+!emacro
+.CE 
+.Me $ehf-scheme
+After  all of this work  there are still  some  compatibility  problems  to be
+resolved for our macro to be a true command  replacement.  Considering our use
+of \fBwrite-buffer\fR, we have effectively have:
+.Me $emf-scheme
+.CS   
+write-buffer "myfile"
+.CE 
+.Me $ehf-scheme
+The command  gets the filename  from the macro line and allow us to invoke the
+command  in  our  own  macros.  So  what  about  our  new   \fBwrite-region\fR
+macro ?  It is  not unreasonable  to expect that some macro  developer in the future will want
+to  write  the  current  region  out to a file  and if we  write  this one
+correctly  they will be able to use this  command  directly.  At the  moment a
+command invocation of
+.Me $emf-scheme
+.CS   
+write-region "myfile"
+.CE 
+.Me $ehf-scheme
+in another macro will not have the desired  effect.  The "\fCmyfile\fR"  argument
+is  ignored  and the user is always  prompted  for the file  name. This can be
+solved by  providing an optional  parameter to be passed to the command  using
+the 
+/Hl @1 @1 4 
+variable as follows:
+.Me $emf-scheme
+.CS   
+define-macro write-region
+    copy-region
+    set-variable #l0 $buffer-fname
+    set-position "P"
+    !force delete-buffer "*write-region-tmp*"
+    find-buffer "*write-region-tmp*"
+    yank
+    set-variable $buffer-fname #l0
+    !force set-variable #l1 @1
+    !if $status
+        !force !force @# write-buffer #l1 @mna
+    !else
+        !force !force @# write-buffer @mna
+    !endif
+    !if &not $status
+        !force delete-buffer $buffer-bname
+        goto-position "P"
+        !abort
+    !endif        
+    delete-buffer $buffer-bname
+    goto-position "P"
+!emacro
+.CE 
+.Me $ehf-scheme
+Setting the register  variable  \fC#l1\fR to the first argument  passed to the
+command will fail if no argument was given, so we use a  \fB!force\fR  to stop
+the macro from quitting and change the \fB$status\fR of the \fBset-variable\fR
+command. If the  assignment  fails then we get the  filename  from the user as
+before, if it succeeds then the calling macro has provided the file name.
+.PP    
+The \fBwrite-region\fR  macro is now complete and provides both a command line
+and macro interface. It is important to note that there is a subtle difference
+between  macros and built in commands even though their  capabilities  are the
+same. To  execute  \fBwrite-buffer\fR  in a macro and get the user to supply a
+file name you must do:
+.Me $emf-scheme
+.CS   
+write-buffer @mna
+.CE 
+.Me $ehf-scheme
+However  for a macro, it is not itself a command and you cannot ask a macro to
+behave like a command. For a macro you must call it as:
+.Me $emf-scheme
+.CS   
+write-region
+.CE 
+.Me $ehf-scheme
+The use of  '\fC@mna\fR'  is only valid for  commands, this perhaps is a quirk  of the
+language which should really be fixed in the future.
+.SS "Concluding"
+We started this  tutorial  with a unusable 5 line macro and now have a 20 line
+version which should be  indistinguishable  from a built in \*(mS command. The
+same command is available as part of the macro  release and this  document was
+written as part of the  process of writing  that macro. The only  change to be
+made  in   making   it  part  of  the   macro   release   is  to  change   the
+\fBset-position\fR  label from "\fCP\fR", which a user could use, to something
+like "\fC\\x88\fR" which is much safer to use.
+.PP
+The final macro release version becomes:
+.Me $emf-scheme
+.CS   
+define-macro write-region
+    copy-region
+    set-variable #l0 $buffer-fname
+    set-position "\\x88"
+    !force delete-buffer "*write-region-tmp*"
+    find-buffer "*write-region-tmp*"
+    yank
+    set-variable $buffer-fname #l0
+    !force set-variable #l1 @1
+    !if $status
+        !force !force @# write-buffer #l1 @mna
+    !else
+        !force !force @# write-buffer @mna
+    !endif
+    !if &not $status
+        !force delete-buffer $buffer-bname
+        goto-position "\\x88"
+        !abort
+    !endif        
+    delete-buffer $buffer-bname
+    goto-position "\\x88"
+!emacro
+.CE 
+.Me $ehf-scheme
+It is perhaps  surprising the number of steps it has taken to write  something
+that  appears  to  be  simple,  however  in  writing  macros  there  are  many
+re-occurring  themes and once  familiar  with the concepts  then then you will
+typically  get them  right  first  time.  Creating  a macro  like  this  takes
+approximately half an hour.
+.PP
+We have to question whether it is worth writing these  extensions. If you find
+yourself doing the same thing all the time then  definitely  yes, it will save
+time and you will have less aches and pains in your hand.  Spending  the extra
+time  to  write  a  good   macro   saves   time  in  the  long  run,  it  also
+provides a better base on which more sophisticated  macros may be based. \*(mS
+has actually  evolved like this. Hopefully this tutorial will encourage rather
+than frighten off budding macro writers.
+.SH "SEE ALSO"
+.na
+.nf
+.Hl "Macro Glossary" MacroGlossary -
+.Hl "Macro Debugging - A Crash Course" macroDebugging 4 
+.Hl "MicroEmacs Macro Language at a Glance" macroOverview 4 
+.fi
+.ad
+.FH

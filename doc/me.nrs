@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.30 2005-02-10 22:47:51 jon Exp $
+.Id $Id: me.nrs,v 2.31 2005-02-13 00:50:40 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -217,6 +217,8 @@ for some information on using the hypertext manual pages.
 .Hl "Message Line Commands" MessageLine -
 .br
 .Hl "Printing Commands" Printing -
+.br
+.Hl "Writing MicroEmacs Macros" macroWriting 4 
 .br
 .Hl "Macro Development Commands" MacroDevelopment -
 .br
@@ -651,6 +653,10 @@ output * "%N
 .Se
 .NH MacroDevelopment - "Macro Development Commands"
 .SH "MACRO DEVELOPMENT COMMANDS"
+\*(mS is based on a macro language which may be extended, refer to 
+.Hl "Writing MicroEmacs Macros" macroWriting 4 
+to get started with the language.
+.PP
 Commands used in macro  development, and more  specialized  commands which are
 only invoked from macros. Refer to
 .Hl "Macro Commands" MacroCommands -
@@ -986,7 +992,9 @@ output * "%N
 .Me "!9  Macro Language Glossary - \*(mS"
 .SH "MACRO LANGUAGE GLOSSARY"
 The  following is a list of all of the macro  language  commands  available in
-\fB\*(mS\fR.
+\fB\*(mS\fR, refer to 
+.Hl "Writing MicroEmacs Macros" macroWriting 4  
+for information on writing macros.
 .SS "Functions"
 All functions are denoted by a \fB&\fR prefix as follows:-
 .PP
