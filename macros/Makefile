@@ -63,14 +63,15 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		au3.eaf		\
 	keyboard.emf	killlist.emf	\
 	language.emf	langutl.emf	linux.emf	list.emf	\
 	mahjongg.emf	mail.emf	mailmerg.emf	matchit.emf	\
-	me.emf		melogo.emf	meme3_8.emf	menedit.emf	\
+	me.emf		melogo.emf	\
+	mecua.emf	meme3_8.emf	menedit.emf	\
 	meserver.emf	metris.emf	misc.emf	mouse.emf	\
 	mouseosd.emf	msshift.emf	\
 	narrow.emf	newuser.emf	ntags.emf	\
 	openbsd.emf	openstep.emf	organiza.emf	organizd.emf	\
 	organize.emf	organizi.emf	organizl.emf	organizm.emf	\
 	organizt.emf	organizw.emf	osd.emf		osdhelp.emf	\
-	osdnedit.emf	osf1.emf	\
+	osdnedit.emf	osdcua.emf	osf1.emf	\
 	pagefile.emf	patience.emf	perltags.emf	print.emf	\
 	printall.emf	printd.emf	printepc.emf	printers.emf	\
 	printf.emf	printstp.emf	\
