@@ -262,6 +262,67 @@
     goto-position "\x86"
 !emacro
 
+0 define-macro buffer-tab-list-mouse-pick-1
+    !if &seq @wc &lef $box-chars 1
+        set-variable .buffer-tab-list-create.col1 0
+    !else
+        !repeat
+            backward-char
+        !until &seq @wc &lef $box-chars 1
+        forward-char
+        set-variable .buffer-tab-list-create.col1 $window-col
+        !repeat
+            forward-char
+        !until &seq @wc &lef $box-chars 1
+        set-variable .buffer-tab-list-create.col2 $window-col
+    !endif
+    goto-position "\x82"
+!emacro
+
+0 define-macro buffer-tab-list-mouse-drop-1
+    !if .buffer-tab-list-create.col1
+        !if &les $window-col .buffer-tab-list-create.col1
+        !elif &les $window-col .buffer-tab-list-create.col2
+            set-variable $window-col .buffer-tab-list-create.col1
+            set-mark
+            set-variable $window-col .buffer-tab-list-create.col2
+            copy-region
+            set-variable #l1 &trr @y
+            -1 yank
+            set-variable $window-col .buffer-tab-list-create.col1
+            goto-position "\x82"
+            find-buffer #l1
+            !return
+        !endif
+    !endif
+    goto-position "\x82"
+!emacro
+
+0 define-macro buffer-tab-list-create
+    set-position "\x86"
+    find-buffer "*toolbar-buffer-tab*" 
+    -1 buffer-mode "undo"
+    -1 buffer-mode "view"
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    -1 kill-region
+    set-variable #l0 &lef $box-chars 1
+    insert-string #l0
+    set-variable $buffer-names ".*"
+    !while &not &seq &set #l9 $buffer-names ""
+        !if &not &nbmod #l9 "hide"
+            insert-string &spr "%s%n%s" #l9 &sub 12 &len #l9 " " #l0
+        !endif
+    !done
+    beginning-of-buffer
+    set-variable :mouse-pick-1 buffer-tab-list-mouse-pick-1
+    set-variable :mouse-drop-1 buffer-tab-list-mouse-drop-1
+    -1 buffer-mode "edit"
+    1 buffer-mode "view"
+    goto-position "\x86"
+!emacro
+
 0 define-macro toolbar-dir-list-create
     set-variable #l0 $buffer-fname
     set-position "\x86"

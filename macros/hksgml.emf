@@ -17,6 +17,7 @@ define-macro fhook-sgml
 set-variable .fhook-sgml.setup &reg "/history" "fhook/sgml" "cdghinopsx"
 set-variable .fhook-sgml.setup-mask "acdeghikmnopstux"
 set-variable .fhook-sgml.comment  "|<!|>|-| - | - ||"
+set-variable .fhook-sgml.exact -1
 ;set-variable .fhook-sgml.command-flag  "|th|h|th|h|th|h|thb|thb|"
 ;set-variable .fhook-sgml.command-name  "|||sgml-process-link||||sgml-show-buffer|sgml-toggle-mode|"
 ;set-variable .fhook-sgml.command-nbind "|||||||||"

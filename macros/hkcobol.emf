@@ -18,6 +18,7 @@ set-variable .fhook-cobol.name "Cobol-85"
 set-variable .fhook-cobol.setup &reg "/history" "fhook/cobol" "bghinopx"
 set-variable .fhook-cobol.setup-mask "aebghikmnoptux"
 set-variable .fhook-cobol.comment "|*||*|* | *||"
+set-variable .fhook-cobol.exact -1
 
 !if &and &sin "h" .fhook-cobol.setup &band .hilight.flags 0x02 
     ; High-light COBOL-85

@@ -17,6 +17,7 @@ set-variable .fhook-dos.name "DOS Batch"
 set-variable .fhook-dos.setup &reg "/history" "fhook/dos" "ghiopx"
 set-variable .fhook-dos.setup-mask "aeghikmoptux"
 set-variable .fhook-dos.comment "|rem |||rem |||"
+set-variable .fhook-dos.exact -1
 
 !if &and &sin "h" .fhook-dos.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.dos "ERROR"

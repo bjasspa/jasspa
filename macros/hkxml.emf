@@ -26,6 +26,7 @@ define-macro fhook-xml
 set-variable .fhook-xml.setup &reg "/history" "fhook/xml" "cdghinopsx"
 set-variable .fhook-xml.setup-mask "acdeghikmnopstux"
 set-variable .fhook-xml.comment  "|<!--|-->|--|  -- | -- |f|"
+set-variable .fhook-xml.exact -1
 
 !if &not &exist fhook-vb
     !force exec-file "hkvb"

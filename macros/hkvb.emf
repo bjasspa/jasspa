@@ -19,6 +19,7 @@ set-variable .fhook-vb.setup &reg "/history" "fhook/vb" "dghiopx"
 set-variable .fhook-vb.setup-mask "adeghikmoptux"
 set-variable .fhook-vb.tags "vbtags"
 set-variable .fhook-vb.comment "|'||'|' | '||"
+set-variable .fhook-vb.exact -1
 
 ; setup item-list
 set-variable .fhook-vb.item-list-s1 "^[ \t]*\\(Private[ \t]+\\|Public[ \t]+\\)?Function[ \t]+\\(\\w+\\)[ \t]*("
@@ -27,9 +28,6 @@ set-variable .fhook-vb.item-list-s2 "^[ \t]*\\(Private[ \t]+\\|Public[ \t]+\\)?S
 set-variable .fhook-vb.item-list-r2 "Sub  \ecB\\2\ecA"
 set-variable .fhook-vb.item-list-s3 "^[ \t]*\\(Private[ \t]+\\|Public[ \t]+\\)?Property[ \t]+\\(Get\\|Let\\)[ \t]+\\(\\w+\\)[ \t]*("
 set-variable .fhook-vb.item-list-r3 "Prop \ecB\\2 \\3\ecA"
-; Listing variables is a bit of an over-kill?
-;set-variable .fhook-vb.item-list-s4 "^[ \t]*\\(Private\\|Public\\)[ \t]+\\(\\w+\\)[ \t]+As[ \t]"
-;set-variable .fhook-vb.item-list-r4 "Var  \ecB\\2\ecA"
 
 !if &not &exist .hilight.vb
     set-variable .hilight.vb &pinc .hilight.next 1

@@ -17,6 +17,7 @@ set-variable .fhook-rul.name "Install Shield Rul"
 set-variable .fhook-rul.setup &reg "/history" "fhook/rul" "bdfghnopx"
 set-variable .fhook-rul.setup-mask "abdefghikmnoptux"
 set-variable .fhook-rul.comment "|/*|*/|*| * | * |f|"
+set-variable .fhook-rul.exact -1
 
 set-variable .fhook-rul.collapse-open  "^function"
 set-variable .fhook-rul.collapse-close "^end"

@@ -19,6 +19,7 @@ set-variable .fhook-mhg.name "MHEG"
 set-variable .fhook-mhg.setup &reg "/history" "fhook/mhg" "fghinopx"
 set-variable .fhook-mhg.setup-mask "aefghikmnoptux"
 set-variable .fhook-mhg.comment "|//||/|// | //||"
+set-variable .fhook-mhg.exact -1
 
 ; Set up the collapses for 'mheg'
 set-variable .fhook-mhg.collapse-open  "^{"

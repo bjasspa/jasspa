@@ -120,6 +120,5 @@ define-macro man
         man
     !endif
 !emacro
-; Bind the windows Menu key to the menu. Users may choose to use this
-; as an additional prefix key if they want.
-0xa0000 global-bind-key osd "menu"
+; Bind the windows Menu key to the context menu.
+global-bind-key context-menu "menu"
