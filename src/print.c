@@ -257,7 +257,7 @@ printGetParams (void)
     /* silent printing may be required, don't know yet - so don't mlwrite yet */
     /* mlwrite(0,(meUByte *)"[Configuring printer ...]");*/
 	
-    if(dofile((meUByte *)"print",0,1) <= 0)
+    if(execFile((meUByte *)"print",0,1) <= 0)
         return meABORT ;
     
     /* Get the registry directory & the name of the driver out of the registry */

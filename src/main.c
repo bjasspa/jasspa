@@ -1611,7 +1611,7 @@ missing_arg:
 
     mlerase(0);                /* Delete command line */
     /* run me.emf unless an @... arg was given in which case run that */
-    startup(file) ;
+    execFile(file,meFALSE,1) ;
 
     /* initalize *scratch* colors & modes to global defaults & check for a hook */
     if((mainbp=bfind(BmainN,0)) != NULL)
