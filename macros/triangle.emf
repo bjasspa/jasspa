@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips & Jon Green
 ;  Created       : Sat Jul 18 15:11:54 1998
-;  Last Modified : <010301.1844>
+;  Last Modified : <010805.0021>
 ;
 ;  Description   : Triangle playing card patience game
 ;
@@ -286,8 +286,7 @@
     delete-other-windows
     set-mark
     end-of-buffer
-    kill-region
-    -1 yank
+    -1 kill-region
     ; Shuffle by generating random key and then sorting.
     beginning-of-buffer
     set-variable #g1 :tri-pack
@@ -313,8 +312,7 @@
     beginning-of-buffer
     set-mark
     end-of-buffer
-    kill-region
-    -1 yank
+    -1 kill-region
     -1 buffer-mode "edit"
      1 buffer-mode "view"
     ;

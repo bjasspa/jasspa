@@ -17,8 +17,7 @@ define-macro fhook-binary
         beginning-of-buffer
         set-mark
         end-of-buffer
-        kill-region
-        -1 yank
+        -1 kill-region
         1 buffer-mode "binary"
         insert-file $buffer-fname
         -1 buffer-mode "edit"

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Jun 13 18:01:56 1998
-;  Last Modified : <010307.1143>
+;  Last Modified : <010805.0021>
 ;
 ;  Description     Defines mouse opened dialogs
 ;
@@ -97,8 +97,7 @@ osd 25 2 "" "&Wide"     1 osd-25-scroll-bars
 0 define-macro osd-mouse-yank
     !if .mouse-event.msshift
         -1 yank
-        kill-region
-        -1 yank
+        -1 kill-region
     !endif
     yank @mna
     set-variable @cc yank

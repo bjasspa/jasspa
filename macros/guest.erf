@@ -1,18 +1,23 @@
 ;-!- erf -!-
 "aix" {
+ "ext-char-set" = "1"
  "file-ignore" = "~ ./"
+ "scheme" = "schemebc"
  "scroll-bar" = "0x1be"
 }
 "dos" {
  "blink" = "13107800"
- "file-ignore" = "~ ./"
  "char-set" = "PC-437"
+ "file-ignore" = "~ ./"
  "scroll-bar" = "0x1be"
 }
+"exact" = "0"
 "file-mask" = "\CH*.c,*.cc,*.cpp\CH*.h,*.hpp,*.def\CHImakefile,Makefile*\CH*.txt,*.doc,*.log\CH*.emf,*.eaf,*.erf,*.etf,*.ehf\CH*.bat,*.sys,*.sh,*.csh,*shrc,.login\CH*.tk,*.tcl\CH*.[0-9],*.tni\CH"
 "file-type" = "\CHC/C++ Source\CHC/C++ Header\CHMakefile\CHText file\CHEmacs File\CHShell Script\CHTK/TCL\CHNroff file\CH"
 "freebsd" {
+ "ext-char-set" = "1"
  "file-ignore" = "~ ./"
+ "scheme" = "schemebc"
  "scroll-bar" = "0x1be"
 }
 "history" {
@@ -25,15 +30,21 @@
  "version" = "4"
 }
 "hpux" {
+ "ext-char-set" = "1"
  "file-ignore" = "~ ./"
+ "scheme" = "schemebc"
  "scroll-bar" = "0x1be"
 }
 "irix" {
+ "ext-char-set" = "1"
  "file-ignore" = "~ ./"
+ "scheme" = "schemebc"
  "scroll-bar" = "0x1be"
 }
 "linux" {
+ "ext-char-set" = "1"
  "file-ignore" = "~ ./"
+ "scheme" = "schemebc"
  "scroll-bar" = "0x1be"
 }
 "mouse" {
@@ -46,20 +57,22 @@
  "mouse-pick-3"
 }
 "sunos" {
+ "ext-char-set" = "1"
  "file-ignore" = "~ ./"
+ "scheme" = "schemebc"
  "scroll-bar" = "0x1be"
 }
 "win32" {
  "blink" = "13107800"
  "char-set" = "Win-ANSI"
- "color" = "jcolor"
- "file-ignore" = "~ ./"
  "ext-char-set" = "1"
+ "file-ignore" = "~ ./"
+ "scheme" = "schemebc"
  "scroll-bar" = "0x1be"
 }
 "win32c" {
  "blink" = "13107800"
- "file-ignore" = "~ ./"
  "char-set" = "Win-OEM"
+ "file-ignore" = "~ ./"
  "scroll-bar" = "0x1be"
 }

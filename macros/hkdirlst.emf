@@ -6,6 +6,8 @@
 ;  Copyright (c) 1997-2001 JASSPA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+0 define-macro-file osd osd-close
+
 define-macro fhook-dirlst
     -1 buffer-mode "view"
     1 buffer-mode "magic"
@@ -100,7 +102,7 @@ set-variable .fhook-dirlst.command-flag  "|thbio|thbio|th|thbio|thbio|thbio|bio|
 set-variable .fhook-dirlst.command-name  "|file-browser-swap-buffers|file-browser-close||dirlst-find-file|dirlst-tag-toggle|dirlst-tag-remove|dirlst-tag-remove|dirlst-tag-execute|dirlst-tag-execute||"
 set-variable .fhook-dirlst.command-nbind "|||||||||||"
 set-variable .fhook-dirlst.command-kbind "|tab|delete||return|space|d|D|x|X||"
-set-variable .fhook-dirlst.command-desc  "|Swap Browser &Windows|&Close File Browser||&Open File|&Toggle Selection|&Delete All Selections||E&xecute Shell Command on Selected||            (%p for path, %f for file & %% for %)|"
+set-variable .fhook-dirlst.command-desc  "|Swap Browser &Windows|&Close File Browser||&Open File|Toggle &Selection|&Delete All Selections||E&xecute Shell Command on Selected||            (%p for path, %f for file & %% for %)|"
 
 set-variable .fhook-dirlst.col-name "|Name|Attr|    Size|        Modified|"
 set-variable .fhook-dirlst.col-flag "|0|4|2|1|"
@@ -682,6 +684,11 @@ osd .osd.dirlst 130 ""  "&Auto-Refresh: on "   f dirlst-auto-refresh
         osd .osd.dirlst  40 ""  "Delete"
         osd .osd.dirlst  90 ""  "Execute"
         osd .osd.dirlst 100 ""  "Deselect All"
+    !endif
+    !if &seq $buffer-bname "*files*"
+        osd .osd.dirlst 140 ""  "Close &Browser" f file-browser-close
+    !else
+        osd .osd.dirlst 140 ""  "Close &Buffer"  f osd-close
     !endif
     !if &equ :tag-count 1
         osd .osd.dirlst 50 ""  "&Rename"       f dirlst-tag-rename

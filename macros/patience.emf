@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Jon Green
 ;  Created       : 24th November 1995
-;  Last Modified : <010301.1843>
+;  Last Modified : <010805.0021>
 ;
 ;  Description   : Patience playing card patience game
 ;
@@ -336,8 +336,7 @@
     delete-other-windows
     set-mark
     end-of-buffer
-    kill-region
-    -1 yank
+    -1 kill-region
     ; Shuffle by generating random key and then sorting.
     beginning-of-buffer
     set-variable #g1 :pat-pack
@@ -363,8 +362,7 @@
     beginning-of-buffer
     set-mark
     end-of-buffer
-    kill-region
-    -1 yank
+    -1 kill-region
     -1 buffer-mode "edit"
      1 buffer-mode "view"
     ;

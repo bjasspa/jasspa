@@ -39,8 +39,7 @@
             -1 yank
             set-mark
             end-of-buffer
-            kill-region
-            -1 yank
+            -1 kill-region
             !force set-variable $window-col &sub #l2 :mode
             goto-position "\x83"
         !else
@@ -156,8 +155,7 @@
                 set-variable $window-col :mode
                 set-mark
                 end-of-line
-                kill-region
-                -1 yank
+                -1 kill-region
             !endif
             set-alpha-mark "I"
             set-variable :mode 0
@@ -229,8 +227,7 @@
             insert-string #l3
             set-mark
             end-of-buffer
-            kill-region
-            -1 yank
+            -1 kill-region
             !goto update-cmdline
         !else
             ; edit the current line
@@ -254,8 +251,7 @@
             set-variable $window-col :mode
             set-mark
             end-of-line
-            kill-region
-            -1 yank
+            -1 kill-region
             insert-string #l3
             set-variable $window-col &add :mode #l2
             ml-write ""
@@ -533,9 +529,8 @@ define-macro ishell
         2 backward-char
         set-mark
         forward-line
-        kill-region
+        -1 kill-region
         1 scroll-up
-        -1 yank
         forward-char
         !force find-file #l3 @mna
         !if $status

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Tue May 23 08:06:34 2000
-;  Last Modified : <001108.2253>
+;  Last Modified : <010728.2231>
 ;
 ;  Description
 ;
@@ -285,7 +285,7 @@ osd .osd.prtstp-prt 230  "SEf" "#x# #####x#####" 1 print-setup-display-page-size
 -1 osd .osd.prtstp-pag
 osd .osd.prtstp-pag   0 "s" 52 13 -1 -1
 osd .osd.prtstp-pag  10  ""
-osd .osd.prtstp-pag  20  "Sfh" "       &Page Size : " 30
+osd .osd.prtstp-pag  20  "Sfh" "      &Paper Size : " 30
 osd .osd.prtstp-pag  40  ""
 osd .osd.prtstp-pag  50  "Shf" "  Character &Size : " 60
 osd .osd.prtstp-pag  70  ""

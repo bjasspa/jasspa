@@ -68,8 +68,7 @@ set-variable .fhook-info.command-desc  "||View &Info Help|Page Down Node|Page Up
     set-variable #l0 @wl
     set-mark
     forward-line
-    kill-region
-    -1 yank
+    -1 kill-region
     !if &set #l1 &sin ":" #l0
         set-variable #l0 &lef #l0 &sub #l1 1
     !endif
@@ -94,8 +93,7 @@ set-variable .fhook-info.command-desc  "||View &Info Help|Page Down Node|Page Up
             backward-line
         !endif
         set-variable #l1 &sub #l1 &sub $window-line #l2
-        kill-region
-        -1 yank
+        -1 kill-region
     !endif
     #l1 goto-line
 !emacro
@@ -173,13 +171,11 @@ set-variable .fhook-info.command-desc  "||View &Info Help|Page Down Node|Page Up
         ml-write &spr "[%s does not appear to be an info file]" #l1
         !abort
     !endif
-    kill-region
-    -1 yank
+    -1 kill-region
     !if &seq &lef @wl 9 "Indirect:"
         set-mark
         forward-line
-        kill-region
-        -1 yank
+        -1 kill-region
         !while &not &seq @wc "\C_"
             info-load-indirect-file
         !done
@@ -243,8 +239,7 @@ set-variable .fhook-info.command-desc  "||View &Info Help|Page Down Node|Page Up
     set-variable #l1 @wl
     set-mark
     end-of-buffer
-    kill-region
-    -1 yank
+    -1 kill-region
     -1 find-buffer "*info-last*"
     find-buffer #l0
     info-goto-link #l1

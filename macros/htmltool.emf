@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Jun 13 23:21:55 1998
-;  Last Modified : <010215.2318>
+;  Last Modified : <010805.0021>
 ;
 ;  Description
 ;
@@ -68,8 +68,7 @@
         !else
             set-mark
             -1 search-backward "\els"
-            kill-region
-            -1 yank
+            -1 kill-region
         !endif
         ; Remove 10 & 80 (link and text)
         set-variable #p5 &band #p5 0xf6f
@@ -353,8 +352,7 @@ set-variable %html-colors "ABCCDDDDEEEEEEEEFFFFFFFFFFFFFFFFGBCCDDDDEEEEEEEEFFFFF
                         !if &iseq &left #l3 6 "SCRIPT"
                             !force search-forward "</SCRIPT>"
                             !if $status
-                                kill-region
-                                -1 yank
+                                -1 kill-region
                             !endif
                         !endif
                     !elif &iseq &lef #l3 1 "T"

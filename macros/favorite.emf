@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Tue Aug 10 01:01:17 1999
-;  Last Modified : <000719.0012>
+;  Last Modified : <010805.0021>
 ;
 ;  Description
 ;
@@ -27,8 +27,7 @@
         beginning-of-line
         set-mark
         forward-line
-        kill-region
-        -1 yank
+        -1 kill-region
         !force search-forward "^[ \t]*$"
     !done
     end-of-buffer

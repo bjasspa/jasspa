@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Mar 13 14:31:05 1999
-;  Last Modified : <010301.0840>
+;  Last Modified : <010805.0021>
 ;
 ;  Description
 ;
@@ -611,8 +611,7 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
     beginning-of-buffer
     set-mark
     end-of-buffer
-    kill-region
-    -1 yank
+    -1 kill-region
     ; insert the new settings
     schm-osd-store
     ; save the file

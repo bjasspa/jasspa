@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Detlef Groth, Steven Phillips
 ;  Created       : 1999
-;  Last Modified : <000824.2155>
+;  Last Modified : <010805.0021>
 ;
 ;  Description   : Command-line macro for creating a tex tags file
 ;     Extracts the labels and the bibitems into an tag-file which can be
@@ -110,8 +110,7 @@ define-macro textags
         beginning-of-buffer
         set-mark
         end-of-buffer
-        kill-region
-        -1 yank
+        -1 kill-region
     !else
         end-of-buffer
     !endif

@@ -58,8 +58,7 @@ define-macro aman
     2 forward-line
     forward-word
     beginning-of-line
-    kill-region
-    -1 yank
+    -1 kill-region
     fhook-man
 !emacro
 
@@ -181,8 +180,7 @@ define-macro man
     2 forward-line
     forward-word
     beginning-of-line
-    kill-region
-    -1 yank
+    -1 kill-region
     set-variable $buffer-fhook "fhook-man"
     fhook-man
 !emacro

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Thu May 27 00:17:10 1999
-;  Last Modified : <010220.2227>
+;  Last Modified : <010805.0021>
 ;
 ;  Description     Implementation of MS windows shift region definition style
 ;
@@ -39,8 +39,7 @@
     !elif &seq "yank" @cc
         set-variable .status "1"
         -1 yank
-        kill-region
-        -1 yank
+        -1 kill-region
         yank
         !return
     !elif &seq "mouse-event" @cc
@@ -56,8 +55,7 @@
             set-variable #l2 @cqk
             set-variable .status "1"
             -1 yank
-            kill-region
-            -1 yank
+            -1 kill-region
             yank
             !return
         !endif
