@@ -9,15 +9,17 @@
 ;
 0 define-macro toolbar-default
     set-position "\x86"
-    set-variable #l0 &lget "|Left|Top|Right|Bottom|" @#
-    set-variable #l1 &cond &band @# 1 "\n" " "
-    find-buffer &spr "*toolbar-%s*" &slo #l0 
+    goto-position "\x85"
+    set-variable #l0 &mid $buffer-bname 9 &sub &len $buffer-bname 10
+    set-variable #l1 &cond &gre $window-depth $window-width "\n" " "
+    find-buffer &spr "*toolbar-%s*" #l0 
     -1 buffer-mode "undo"
     -1 buffer-mode "view"
     beginning-of-buffer
     set-mark
     end-of-buffer
     -1 kill-region
+    set-variable #l0 &cat &sup &lef #l0 1 &rig #l0 1
     insert-string &cat #l0 " Toolbar\n\n"
     insert-string &spr "The %s toolbar%shas not yet been%sconfigured.\n\nUse mode-line right%smouse button pop-up%smenu to set-up." #l0 #l1 #l1 #l1 #l1
     beginning-of-buffer

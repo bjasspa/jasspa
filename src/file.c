@@ -1931,7 +1931,7 @@ fileOp(int f, int n)
             && (s != meFILETYPE_FTP)
 #endif
             )
-            return mlwrite(MWABORT,(meUByte *)"[%s already exists]",sfname);
+            return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[%s already exists]",sfname);
         dFlags = meRWFLAG_MKDIR ;
     }
     if(n & meFILEOP_BACKUP)

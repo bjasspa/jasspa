@@ -600,6 +600,9 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
         case EVWFLAGS:
             frameCur->windowCur->flags = (meUShort) meAtoi(vvalue) ;
             break;
+        case EVWID:
+            frameCur->windowCur->id = meAtoi(vvalue) ;
+            break;
         case EVWXSCROLL:
             if((status=meAtoi(vvalue)) < 0)
                 status = 0 ;
@@ -1174,6 +1177,7 @@ handle_namesvar:
     case EVWMDLINE:     return (meItoa(frameCur->windowCur->frameRow+frameCur->windowCur->textDepth));
     case EVWSBAR:       return (meItoa(frameCur->windowCur->frameColumn+frameCur->windowCur->textWidth));
     case EVWFLAGS:      return (meItoa(frameCur->windowCur->flags));
+    case EVWID:         return (meItoa(frameCur->windowCur->id));
     case EVWDEPTH:      return (meItoa(frameCur->windowCur->textDepth));
     case EVWWIDTH:      return (meItoa(frameCur->windowCur->textWidth));
 #endif
@@ -1640,7 +1644,7 @@ getval(meUByte *tkn)   /* find the value of a token */
                      * to the completion list */
                     mlfirst = ME_SPECIAL|SKEY_tab ;
                 if(flag & 0x08)
-                    option |= MLHIDEVAL ;
+                    option |= MLNOHIST|MLHIDEVAL ;
                 
                 if(flag & 0x100)
                 {

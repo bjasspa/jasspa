@@ -55,31 +55,28 @@
 #define MF_CHECK    0x00000020          /* C - This is a check-box item */
 #define MF_NOEXIT   0x00000040          /* x - Do not exit */
 #define MF_STR      0x00000080          /* i - Execute as a line-string */
-#define MF_EAST     0x00000100          /* e - Make sub-menu popup east  */
-#define MF_SOUTH    0x00000200          /* s - Make sub-menu popup south */
-#define MF_WEST     0x00000400          /* w - Make sub-menu popup west  */
-#define MF_NORTH    0x00000800          /* n - Make sub-menu popup north */
-#define MF_HORZADD  0x00001000          /* h - Add to the next menu line */
-#define MF_CENTER   0x00002000          /* c - Center the item */
-#define MF_TAB      0x00004000          /* t - has tab position */
-#define MF_SCRLBOX  0x00008000          /* b - child scroll box */
-#define MF_RIGHT    0x00010000          /* r - push item right */
-#define MF_NOFILL   0x00020000          /* f - Do not fill the item to the full length */
-#define MF_ENTRY    0x00040000          /* E - Entry field type */
-#define MF_BUTTON   0x00080000          /* B - Button field type */
-#define MF_PREPND   0x00100000          /* p - prepend the check-box */
-#define MF_SEP      0x00200000          /* S - Separator field type */
-#define MF_REDRAW   0x00400000          /* R - Redraw the current menu */
-#define MF_SCHEME   0x00800000          /* H - drawn color scHeme (or Hilight) */
-#define MF_CHILD    0x01000000          /* I - chIld or Include dialog */
-#define MF_GRID     0x02000000          /* G - Draw grid around item */
-#define MF_NBPAGE   0x04000000          /* P - Note book page */
-#define MF_SIZE     0x08000000          /* z - Specify an item size */
-#define MF_NINPUT   0x10000000          /* N - ML Newline input style */
-#define MF_REPEAT   0x20000000          /* T - Button Repeat execution */
-#define MF_NHILIGHT 0x40000000          /* X - No hilighting when under mouse */
+#define MF_SOUTH    0x00000100          /* s - Make sub-menu popup south */
+#define MF_HORZADD  0x00000200          /* h - Add to the next menu line */
+#define MF_CENTER   0x00000400          /* c - Center the item */
+#define MF_TAB      0x00000800          /* t - has tab position */
+#define MF_SCRLBOX  0x00001000          /* b - child scroll box */
+#define MF_RIGHT    0x00002000          /* r - push item right */
+#define MF_NOFILL   0x00004000          /* f - Do not fill the item to the full length */
+#define MF_ENTRY    0x00008000          /* E - Entry field type */
+#define MF_BUTTON   0x00010000          /* B - Button field type */
+#define MF_PREPND   0x00020000          /* p - prepend the check-box */
+#define MF_SEP      0x00040000          /* S - Separator field type */
+#define MF_REDRAW   0x00080000          /* R - Redraw the current menu */
+#define MF_SCHEME   0x00100000          /* H - drawn color scHeme (or Hilight) */
+#define MF_CHILD    0x00200000          /* I - chIld or Include dialog */
+#define MF_GRID     0x00400000          /* G - Draw grid around item */
+#define MF_NBPAGE   0x00800000          /* P - Note book page */
+#define MF_SIZE     0x01000000          /* z - Specify an item size */
+#define MF_NINPUT   0x02000000          /* N - ML Newline input style */
+#define MF_REPEAT   0x04000000          /* T - Button Repeat execution */
+#define MF_NHILIGHT 0x08000000          /* X - No hilighting when under mouse */
 
-static meUByte osdItemFlags[]="DdmM-CxieswnhctbrfEBpSRHIGPzNTu" ; 
+static meUByte osdItemFlags[]="DdmM-CxishctbrfEBpSRHIGPzNTu" ; 
 
 /* Following are the internal flags worked out from the information given */
 #define MFI_NOTEXT  0x00000001          /* No text is given, just pad */
@@ -126,6 +123,11 @@ static meUByte osdMenuFlags[]="baAtdcrHsSRMCkNGnfioFB" ;
 #define CF_ROWMASK  0x0030              /* Item row mask */
 #define CF_NBPTOP   0x0040              /* Notebook Page on top */
 #define CF_NBPBOT   0x0080              /* Notebook Page on top */
+
+#define osdMOVE_LEFT  0x0001            /* item move direction */
+#define osdMOVE_DOWN  0x0002            /* item move direction */
+#define osdMOVE_RIGHT 0x0004            /* item move direction */
+#define osdMOVE_UP    0x0008            /* item move direction */
 
 /* Local type definitions */
 
@@ -255,6 +257,7 @@ typedef struct osdDISPLAY
     meShort    focalY[2];               /* Focal Position min/max y of menu */
     meShort    width ;                  /* Width of menu */
     meShort    depth ;                  /* Depth of menu */
+    meUByte    parPosition ;            /* Location of this dialog relative to parent */
     osdCONTEXT context [1];             /* Context of the menu */
 } osdDISPLAY;
 
@@ -1017,6 +1020,21 @@ osdDisplaySnapshotDraw(osdDISPLAY *md, int sx, int sy, int nx, int ny, int drawT
         menuRenderArea(sx,sy,nx,ny) ;
 }
 
+meInt
+osdDialogGetCurContextFlags(osdDISPLAY *md)
+{
+    osdCONTEXT *mcp ;
+    meInt flags = 0 ;
+    
+    do
+    {
+        if(md->curContext < 0)
+            break ;
+        mcp = &md->context[md->curContext] ;
+        flags = mcp->menu->flags ;
+    } while((mcp->child != NULL) && ((md=mcp->child->display) != NULL)) ;
+    return flags ;
+}
 
 /*
  * menuSetItemDetails
@@ -3113,19 +3131,47 @@ menuPosition(osdDISPLAY *md, int redraw)
                 /* From the previous menu item work out where the
                  * menu should be placed
                  */
-                if(flags & MF_NORTH)
-                    md->y -= md->depth ;
-                else if(flags & MF_SOUTH)
-                    md->y += mcp->depth ;
-                else if(flags & MF_WEST)
-                    md->x -= md->width ;
-                else
-                    md->x += mcp->width ;
-                if(md->flags & RF_BOARDER)
+                if(flags & MF_SOUTH)
                 {
-                    if(flags & (MF_NORTH|MF_SOUTH))
-                        md->x -= 1 ;
+                    /* calc the bottom if positioned below and the top if above and 
+                       see which is best, favour below */
+                    int ii ;
+                    
+                    ii = (frameCur->depth+1) - (md->y + mcp->depth + md->depth) ; 
+                    if((ii >= 0) || (ii >= (md->y - md->depth)))
+                    {
+                        /* position below */
+                        md->y += mcp->depth ;
+                        md->parPosition = osdMOVE_UP ;
+                    }
                     else
+                    {
+                        /* position above */
+                        md->y -= md->depth ;
+                        md->parPosition = osdMOVE_DOWN ;
+                    }
+                    if(md->flags & RF_BOARDER)
+                        md->x -= 1 ;
+                }
+                else
+                {
+                    /* calc the right most column if positioned right and the
+                     * left if to the left and see which is best, favour right */
+                    int ii ;
+                    ii = (frameCur->width) - (md->x + mcp->width + md->width) ; 
+                    if((ii >= 0) || (ii >= (md->x - md->width)))
+                    {
+                        /* position right */
+                        md->x += mcp->width ;
+                        md->parPosition = osdMOVE_LEFT ;
+                    }
+                    else
+                    {
+                        /* position left */
+                        md->x -= md->width ;
+                        md->parPosition = osdMOVE_RIGHT ;
+                    }
+                    if(md->flags & RF_BOARDER)
                         md->y -= 1 ;
                 }
             }
@@ -3177,7 +3223,7 @@ osdDisplayFindNext (osdDISPLAY *md, int curCont, int dir, int canLoop, int depth
     if ((curCont < 0) || (depth < 0))
     {
         /* quick case - just do it */
-        if (dir & (MF_EAST|MF_SOUTH))            /* Forwards */
+        if (dir & (osdMOVE_LEFT|osdMOVE_DOWN))            /* Forwards */
         {
             for (ii = 0 ; ii < md->numContexts ; ii++)
                 if (!(md->context [ii].menu->flags & MF_SEP))
@@ -3204,7 +3250,7 @@ osdDisplayFindNext (osdDISPLAY *md, int curCont, int dir, int canLoop, int depth
     /* moving north or south is trivial as its simply the next item after
      * the end of the current row
      */
-    if(dir == MF_SOUTH)
+    if(dir == osdMOVE_DOWN)
     {
         depth += md->context[ii].y ;
         mn = md->context[ii].x ;
@@ -3227,7 +3273,7 @@ osdDisplayFindNext (osdDISPLAY *md, int curCont, int dir, int canLoop, int depth
                 return ei ;
         }
     }
-    else if(dir == MF_NORTH)
+    else if(dir == osdMOVE_UP)
     {
         depth = md->context[ii].y - depth ;
         mn = md->context[ii].x ;
@@ -3280,7 +3326,7 @@ osdDisplayFindNext (osdDISPLAY *md, int curCont, int dir, int canLoop, int depth
             mx = md->context[jj].y+md->context[jj].depth ;
     }
     jj = ii ;
-    if(dir == MF_EAST)
+    if(dir == osdMOVE_LEFT)
     {
         for(;;)
         {
@@ -3399,7 +3445,7 @@ osdDisplayPush(int id, int flags)
             }
         }
         else if((flags & ENTER_MENU) && (md->curContext < 0))
-            md->curContext = osdDisplayFindNext(md, -1, MF_EAST, 1, 0);
+            md->curContext = osdDisplayFindNext(md, -1, osdMOVE_LEFT, 1, 0);
     }
     /* Snapshot the region occupied by the menu. */
     osdDisplaySnapshotStore(md) ;
@@ -3557,7 +3603,7 @@ osdDisplaySub(osdDISPLAY *md, int flags)
         osdNewChild = nmd->next ;
         osdNewMd->newContext = osdNewMd->curContext ;
         if((flags & ENTER_MENU) && (osdNewMd->newContext < 0))
-            osdNewMd->newContext = osdDisplayFindNext(osdNewMd, -1, MF_EAST, 1, 0);
+            osdNewMd->newContext = osdDisplayFindNext(osdNewMd, -1, osdMOVE_LEFT, 1, 0);
         osdDisplaySetNewFocus(0) ;
     }
 }
@@ -4072,14 +4118,14 @@ osdDisplayGetMousePosition(osdDISPLAY *md, meShort xx, meShort yy, int leftPick)
             }
             /* On the rest of the title bar only a left pick button does anything
              * Handle the moving of a display */
-            if(leftPick)
+            if(leftPick == 1)
                 osdDisplayMouseMove(md) ;
             /* events handled so return 0 */
             return 0 ;
         }
         else if(yy == (md->depth - 1))
         {
-            if(leftPick && (md->flags & RF_RESIZE) &&
+            if((leftPick == 1) && (md->flags & RF_RESIZE) &&
                !(md->flags & RF_DISABLE) && (xx == (md->width - 1)))
                 /* Mouse on the the dialog bottom resize '*' */
                 osdDisplayMouseResize() ;
@@ -4097,7 +4143,7 @@ osdDisplayGetMousePosition(osdDISPLAY *md, meShort xx, meShort yy, int leftPick)
             if (mcp->menu->flags & MF_SEP)
             {
                 /* if it has an argument then the argument is the item number to execute */
-                if(leftPick && (mcp->menu->iflags & MFI_ARG) && !(mcp->menu->flags & MF_NBPAGE))
+                if((leftPick == 1) && (mcp->menu->iflags & MFI_ARG) && !(mcp->menu->flags & MF_NBPAGE))
                 {
                     osdITEM *mp;
                     int itm ;
@@ -4138,7 +4184,7 @@ osdDisplayGetMousePosition(osdDISPLAY *md, meShort xx, meShort yy, int leftPick)
                          * 2) we're not past the end of scroll-bar
                          * 3) There is one
                          */
-                        if(leftPick && (child->vertSBar != NULL) && (yy < child->wndDepth))
+                        if((leftPick == 1) && (child->vertSBar != NULL) && (yy < child->wndDepth))
                         {
                             /* calculate the scroll bar's x & y position.
                              * easier to do here as this could be inside another
@@ -4160,7 +4206,7 @@ osdDisplayGetMousePosition(osdDISPLAY *md, meShort xx, meShort yy, int leftPick)
                          * 1) Its a leftPick event
                          * 2) There is one
                          */
-                        if(leftPick && (child->horzSBar != NULL))
+                        if((leftPick == 1) && (child->horzSBar != NULL))
                         {
                             /* calculate the scroll bar's x & y position.
                              * easier to do here as this could be inside another
@@ -4192,14 +4238,15 @@ static int
 osdDisplayMouseLocate(int leftPick)
 {
     osdDISPLAY *md;
-
+    int rr, closeSub=0 ;
+    
     /* Go to the last entry in the list */
     for (md = osdCurMd; md->next != NULL; md = md->next)
          ;
 
     /* Iterate backwards over the menu display blocks to locate the position
      * of the mouse. */
-    do
+    for(;;)
     {
         /* Check if the mouse is within the window of the menu. A separate
          * check is performed is this is a horizontal or vertical menu */
@@ -4207,10 +4254,20 @@ osdDisplayMouseLocate(int leftPick)
             (mouse_X >= md->x) && (mouse_X < (md->x + md->width)) )
         {
             osdNewMd = md ;
-            return osdDisplayGetMousePosition(md,mouse_X,mouse_Y,leftPick) ;
+            rr = osdDisplayGetMousePosition(md,mouse_X,mouse_Y,leftPick) ;
+            if((rr == 0) && closeSub)
+                rr = -1 ;
+            return rr ;
         }
-    } while ((md = md->prev) != NULL);
-    
+        if((md = md->prev) == NULL)
+            break ;
+        if((osdDialogGetCurContextFlags(md) & (MF_SUBMNU|MF_MANUAL)) != MF_SUBMNU)
+        {
+            if(!leftPick)
+                break ;
+            closeSub = 1 ;
+        }
+    }
     return -1 ;
 }
 
@@ -4416,7 +4473,7 @@ osdDisplayTabMove(osdDISPLAY *md, int dir, int mustSel)
 }
 
 static int
-osdDisplayKeyMove (int dir, int nn)
+osdDisplayKeyMove(int dir, int nn)
 {
     osdDISPLAY *hmd=osdCurMd, *md ;
     int loop, depth, flags ;
@@ -4432,7 +4489,7 @@ osdDisplayKeyMove (int dir, int nn)
     {
         if(loop == 0)
             hmd = md ;
-        if((dir & (MF_NORTH|MF_SOUTH)) && (nn == 0) && (md->prev != NULL) &&
+        if((dir & (osdMOVE_UP|osdMOVE_DOWN)) && (nn == 0) && (md->prev != NULL) &&
            !(md->prev->flags & RF_DISABLE) && (md->prev->newContext >= 0) &&
            ((md->prev->context[md->prev->newContext].menu->flags & (MF_CHILD|MF_SCRLBOX)) == (MF_CHILD|MF_SCRLBOX)))
             depth = md->prev->context[md->prev->newContext].child->wndDepth - 1 ;
@@ -4458,12 +4515,11 @@ osdDisplayKeyMove (int dir, int nn)
             /* If this is the first loop & we have a sub-menu and we're going
              * the right direction open it. */
             if((flags & MF_SUBMNU) &&
-               (((flags & (MF_NORTH|MF_SOUTH)) && (dir & (MF_NORTH|MF_SOUTH))) ||
-                ((flags & (MF_EAST |MF_WEST )) && (dir & (MF_EAST |MF_WEST ))) ))
+               (((flags & MF_SOUTH) && (dir & (osdMOVE_UP|osdMOVE_DOWN))) ||
+                (!(flags & MF_SOUTH) && (dir & (osdMOVE_LEFT|osdMOVE_RIGHT))) ))
             {
                 /* we may want to actually go back to the parent, lets check */
-                if(!(flags & dir) && (md->prev != NULL) &&
-                   (md->prev->context[md->prev->curContext].menu->flags & (flags & (MF_NORTH|MF_SOUTH|MF_EAST|MF_WEST))))
+                if((md->prev != NULL) && (md->parPosition & dir))
                 {
                     /* The cursor movement is back to the parent */
                     osdNewChild = md->prev ;
@@ -4704,15 +4760,46 @@ menuInteraction (int *retState)
         case ME_SPECIAL|SKEY_mouse_drop_3:
             if(!(osdCurMd->flags & RF_RISLBUT))
             {
-                state = QUIT_MENU;
+                /* Close the dialog - drop back to the parent of last manually
+                 * opened sub-menu or close all */
+                osdDISPLAY *md = osdCurMd ;
+                while(md->next != NULL)
+                    md = md->next ;
+                while(((md=md->prev) != NULL) &&
+                      ((osdDialogGetCurContextFlags(md) & (MF_SUBMNU|MF_MANUAL)) != (MF_SUBMNU|MF_MANUAL)))
+                    ;
+                if(md != NULL)
+                {
+                    osdNewChild = osdNewMd = md ;
+                    osdDisplayPop(md->next) ;
+                    osdDisplaySetNewFocus(0) ;
+                }
+                else
+                    state = QUIT_MENU ;
                 break ;
             }
             /* no break */
         case ME_SPECIAL|SKEY_mouse_drop_1:
-            nit = osdDisplayMouseLocate(0) ;
+            nit = osdDisplayMouseLocate(2) ;
             if(nit == -1)
-                /* complete miss - abort */
-                state = QUIT_MENU ;
+            {
+                /* complete miss, if this is part of a manually open sub-menu
+                 * then drop back to its parent dialog, otherwise abort */
+                osdDISPLAY *md = osdCurMd ;
+                while(md->next != NULL)
+                    md = md->next ;
+                while(((md=md->prev) != NULL) &&
+                      ((osdDialogGetCurContextFlags(md) & (MF_SUBMNU|MF_MANUAL)) != (MF_SUBMNU|MF_MANUAL)))
+                    ;
+                if(md != NULL)
+                {
+                    osdNewChild = osdNewMd = md ;
+                    osdDisplayPop(md->next) ;
+                    osdDisplaySetNewFocus(0) ;
+                }
+                else
+                    state = QUIT_MENU ;
+            }
             else if(nit == 1)
             {
                 /* selected item */
@@ -4772,28 +4859,28 @@ menuInteraction (int *retState)
             switch (ii)
             {
             case CK_GOBOF:                  /* M-< - beginning of buffer */
-                nit = osdDisplayKeyMove(MF_SOUTH,-1) ;
+                nit = osdDisplayKeyMove(osdMOVE_DOWN,-1) ;
                 break;
             case CK_GOEOF:                  /* M-< - end of buffer */
-                nit = osdDisplayKeyMove(MF_NORTH,-1) ;
+                nit = osdDisplayKeyMove(osdMOVE_UP,-1) ;
                 break;
             case CK_FORCHR:                 /* ^F  - Forward character */
-                nit = osdDisplayKeyMove(MF_EAST,n) ;
+                nit = osdDisplayKeyMove(osdMOVE_LEFT,n) ;
                 break;
             case CK_BAKCHR:                 /* ^B  - Previous charater */
-                nit = osdDisplayKeyMove(MF_WEST,n) ;
+                nit = osdDisplayKeyMove(osdMOVE_RIGHT,n) ;
                 break;
             case CK_BAKLIN:                 /* C-p - Previous line */
-                nit = osdDisplayKeyMove(MF_NORTH,n) ;
+                nit = osdDisplayKeyMove(osdMOVE_UP,n) ;
                 break;
             case CK_FORLIN:                 /* C-n - Next line */
-                nit = osdDisplayKeyMove(MF_SOUTH,n) ;
+                nit = osdDisplayKeyMove(osdMOVE_DOWN,n) ;
                 break;
             case CK_MOVUWND:                  /* M-N - Move menu up */
                 if(f == 0)
                     /* if scrolling by a page then assume its a page-up and
                      * we want to scroll a child dialog */
-                    nit = osdDisplayKeyMove(MF_NORTH,0) ;
+                    nit = osdDisplayKeyMove(osdMOVE_UP,0) ;
                 else if(osdCurMd->flags & (RF_TITLE|RF_BOARDER))
                     /* Allow the menu to move if it has a title bar or a boarder
                      * This is different to hte mouse as for the mouse to be
@@ -4802,19 +4889,19 @@ menuInteraction (int *retState)
                 break ;
             case CK_MOVDWND:                  /* M-N - Move menu down */
                 if(f == 0)
-                    nit = osdDisplayKeyMove(MF_SOUTH,0) ;
+                    nit = osdDisplayKeyMove(osdMOVE_DOWN,0) ;
                 else if(osdCurMd->flags & (RF_TITLE|RF_BOARDER))
                     osdDisplayMove(osdCurMd,0,1) ;
                 break ;
             case CK_MOVLWND:                 /* M-N - Move menu left */
                 if(f == 0)
-                    nit = osdDisplayKeyMove(MF_EAST,0) ;
+                    nit = osdDisplayKeyMove(osdMOVE_LEFT,0) ;
                 else if(osdCurMd->flags & (RF_TITLE|RF_BOARDER))
                     osdDisplayMove(osdCurMd,-1,0) ;
                 break ;
             case CK_MOVRWND:                 /* M-N - Move menu right */
                 if(f == 0)
-                    nit = osdDisplayKeyMove(MF_WEST,0) ;
+                    nit = osdDisplayKeyMove(osdMOVE_RIGHT,0) ;
                 else if(osdCurMd->flags & (RF_TITLE|RF_BOARDER))
                     osdDisplayMove(osdCurMd,1,0) ;
                 break ;
@@ -5279,11 +5366,6 @@ osd (int f, int n)
                 return mlwrite(MWABORT,(meUByte *)"[Illegal NoteBook item]") ;
         }
         
-        /* if this item has a sub-menu and no direction is set,
-         * Set it to the default east direction
-         */
-        if((flags & (MF_SUBMNU|MF_NORTH|MF_SOUTH|MF_WEST)) == MF_SUBMNU)
-            flags |= MF_EAST ;
         if(flags & MF_CHILD)
         {
             if (rp->flags & RF_ALPHA)

@@ -651,7 +651,7 @@ ffurlGetInfo(int type, meUByte **host, meUByte **port, meUByte **user, meUByte *
         {
             meUByte buff[mePATBUF_SIZE_MAX] ;
             
-            if((meGetString((meUByte *)"Password", MLNOHIST, 0, buff, mePATBUF_SIZE_MAX-1) != meTRUE) ||
+            if((meGetString((meUByte *)"Password", MLNOHIST|MLHIDEVAL, 0, buff, mePATBUF_SIZE_MAX-1) != meTRUE) ||
                ((ffpasswdReg = regSet(root,(meUByte *)"pass",buff)) == NULL))
                 return meFALSE ;
             ffpasswdReg->mode |= meREGMODE_INTERNAL ;
@@ -1655,7 +1655,7 @@ ffReadFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
     else
     {
         ffbinary = 0 ;
-        ffcrypt = 0 ;
+        ffcrypt = ((flags & meRWFLAG_CRYPT) != 0) ;
         ffauto = 1 ;
     }        
     ffautoRet= 0 ;
@@ -2095,7 +2095,7 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
     else
     {
         ffbinary = 0 ;
-        ffcrypt  = 0 ;
+        ffcrypt  = ((flags & meRWFLAG_CRYPT) != 0) ;
         ffauto   = 0 ;
         ffautoRet= 0 ;
     }

@@ -955,7 +955,12 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
     if((mlgsStoreBuf = meMalloc(nbuf)) == NULL)
        return meABORT ;
 
-    mlerase(0);            /* Blank line to force update */
+    /* Blank line to force update
+     * Don't do this if in an osd dialog as the osd cursor position is not
+     * calculated until the first call to osdDisp, osdCol is likely to be -1
+     * which will blow ME up */
+    if(!(frameCur->mlStatus & MLSTATUS_POSOSD))
+        mlerase(0);
 
     if(option & MLINSENSCASE)
     {

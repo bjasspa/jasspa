@@ -132,10 +132,6 @@ set-variable $cursor-blink &reg "/history" &cat %platform "/blink" $cursor-blink
 !force exec-file "charset"
 !force exec-file "keyboard"
 !force exec-file "language"
-; execute msshift if using MS Shift style region definition
-!if &reg "/history" "msshift" "0"
-    !force exec-file "msshift"
-!endif
 ; setup the displaying of fences
 set-variable #l0 &reg "/history" &cat %platform "/fence" "1"
 &cond &equ #l0 1 1 -1 global-mode "fence"
@@ -169,6 +165,19 @@ global-bind-key cvs                      "C-f10"
 global-bind-key display-white-chars      "f11"
 global-bind-key expand-abbrev-handle     "esc esc"
 ml-bind-key     tab                      "esc esc"
+; if using MS friendly key bindings create them now
+!if &reg "/history" "mskeys" "0"
+    global-bind-key beginning-of-line    "home"
+    global-bind-key beginning-of-buffer  "C-home"
+    global-bind-key end-of-line          "end"
+    global-bind-key end-of-buffer        "C-end"
+    global-bind-key yank                 "C-v"
+    global-bind-key reyank               "esc v"
+!endif
+; execute msshift if using MS Shift style region definition
+!if &reg "/history" "msshift" "0"
+    !force exec-file "msshift"
+!endif
 ;
 ; Setup modes
 &cond &reg "/history" "auto"   "1" 1 -1 global-mode "auto"
@@ -319,14 +328,14 @@ osd -1 &cond &reg "/history" "main-menu" "1" "1" "-1"
 !if &reg "/history" &cat %platform "/toolbar" "0"
     toolbar
 !endif
-; execute any emulation file, e.g. Emacs, Vi etc
+; execute any emulation file, e.g. Emacs etc
 !if &not &seq &set #l0 &reg "/history" "emulate" "" ""
     set-variable %emulate #l0
     !force execute-file &cat "me" #l0
 !endif
 ; load ftp/http registry file
 !if &not &seq &set #l0 &reg "/history" "url-file" "" ""
-    read-registry "/url" &find #l0 ".erf" "" 
+    read-registry "/url" #l0 "y" 
 !endif
 ; execute company setup
 !if &not &seq &set #l0 &reg "/history" "company" "" ""

@@ -362,11 +362,12 @@ extern  void    getDirectoryList(meUByte *pathName, meDirList *dirList) ;
 #define meRWFLAG_AUTOSAVE  0x00800000
 #define meRWFLAG_CHKBREAK  0x01000000
 #define meRWFLAG_IGNRNRRW  0x02000000
+#define meRWFLAG_CRYPT     0x04000000
 /* following using in ffCopyFile to remove the source file & create a dir */
-#define meRWFLAG_DELETE    0x04000000
-#define meRWFLAG_MKDIR     0x08000000
-#define meRWFLAG_FTPCLOSE  0x10000000
-#define meRWFLAG_NOCONSOLE 0x20000000
+#define meRWFLAG_DELETE    0x08000000
+#define meRWFLAG_MKDIR     0x10000000
+#define meRWFLAG_FTPCLOSE  0x20000000
+#define meRWFLAG_NOCONSOLE 0x40000000
 
 extern int      ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp) ;
 #define meBACKUP_CREATE_PATH 0x0001

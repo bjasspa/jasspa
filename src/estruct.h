@@ -269,12 +269,15 @@ typedef struct meLine
 /*
  * meWindow structure flags values.
  */
-#define meWINDOW_LOCK_WIDTH  0x0001     /* Lock the width of the window */
-#define meWINDOW_LOCK_DEPTH  0x0002     /* Lock the depth of the window */
-#define meWINDOW_LOCK_BUFFER 0x0004     /* Lock the buffer shown        */
-#define meWINDOW_NO_CMP      0x0008     /* Exclude from compare-windows */
-#define meWINDOW_NO_NEXT     0x0010     /* Exclude from next/prev-window*/
-#define meWINDOW_NO_DELETE   0x0020     /* Exclude from del-other-window*/
+#define meWINDOW_LOCK_WIDTH   0x0001    /* Lock the width of the window */
+#define meWINDOW_LOCK_DEPTH   0x0002    /* Lock the depth of the window */
+#define meWINDOW_LOCK_BUFFER  0x0004    /* Lock the buffer shown        */
+#define meWINDOW_NO_CMP       0x0008    /* Exclude from compare-windows */
+#define meWINDOW_NO_NEXT      0x0010    /* Exclude from next/prev-window*/
+#define meWINDOW_NO_OTHER_DEL 0x0020    /* Exclude from del-other-window*/
+#define meWINDOW_NO_DELETE    0x0040    /* Cannot delete window         */
+#define meWINDOW_NO_SPLIT     0x0080    /* Cannot split window          */
+#define meWINDOW_NOT_ALONE    0x0100    /* Cannot exist alone           */
 
 /*
  * meWindow structure vertScrollBarMode values.
@@ -393,9 +396,12 @@ typedef struct  meWindow {
     meInt              vertScroll;              /* windows top line number      */
     meInt              dotLineNo;               /* current line number          */
     meInt              markLineNo;              /* current mark line number     */
+#if MEOPT_EXTENDED
+    meInt              id;                      /* $window-id                   */
+#endif
     meUShort           dotOffset;               /* Byte offset for "."          */
     meUShort           markOffset;              /* Byte offset for "mark"       */
-    meUShort           windowRecenter;                /* If NZ, forcing row.          */
+    meUShort           windowRecenter;          /* If NZ, forcing row.          */
     meUShort           frameRow;                /* Window starting row          */
     meUShort           frameColumn;             /* Window starting column       */
     meUShort           width;                   /* Window number text columns   */
@@ -883,27 +889,27 @@ typedef struct meSelection {
     int                eoff;                    /* End offset                */
 } meSelection;
 
-#define SELHIL_ACTIVE    0x0001         /* Buffer has been edited    */
-#define SELHIL_FIXED     0x0002         /* Buffer has been edited    */
-#define SELHIL_KEEP      0x0004         /* Buffer has been edited    */
-#define SELHIL_CHANGED   0x0008         /* Hilighting been changed   */
-#define SELHIL_SAME      0x0010         /* Highlighting is same point*/
+#define SELHIL_ACTIVE    0x0001                 /* Buffer has been edited    */
+#define SELHIL_FIXED     0x0002                 /* Buffer has been edited    */
+#define SELHIL_KEEP      0x0004                 /* Buffer has been edited    */
+#define SELHIL_CHANGED   0x0008                 /* Hilighting been changed   */
+#define SELHIL_SAME      0x0010                 /* Highlighting is same point*/
 
-#define SELHILU_ACTIVE   0x0001         /* Buffer has been edited    */
-#define SELHILU_KEEP     0x0002         /* Buffer has been edited    */
+#define SELHILU_ACTIVE   0x0001                 /* Buffer has been edited    */
+#define SELHILU_KEEP     0x0002                 /* Buffer has been edited    */
 
-#define VFMESSL 0x0001                  /* Message line */
-#define VFMENUL 0x0002                  /* Menu line changed flag */
-#define VFMODEL 0x0004                  /* Mode line */
-#define VFMAINL 0x0008                  /* Main line */
-#define VFCURRL 0x0010                  /* Current line */
-#define VFCHNGD 0x0020                  /* Changed flag */
-#define VFSHBEG 0x0100                  /* Start of the selection hilight */
-#define VFSHEND 0x0200                  /* End of the selection hilight */
-#define VFSHALL 0x0400                  /* Whole line is selection hilighted */
+#define VFMESSL 0x0001                          /* Message line */
+#define VFMENUL 0x0002                          /* Menu line changed flag */
+#define VFMODEL 0x0004                          /* Mode line */
+#define VFMAINL 0x0008                          /* Main line */
+#define VFCURRL 0x0010                          /* Current line */
+#define VFCHNGD 0x0020                          /* Changed flag */
+#define VFSHBEG 0x0100                          /* Start of the selection hilight */
+#define VFSHEND 0x0200                          /* End of the selection hilight */
+#define VFSHALL 0x0400                          /* Whole line is selection hilighted */
 
-#define VFSHMSK 0x0700                  /* Mask of the flags  */
-#define VFTPMSK 0x003f                  /* Mask of the line type */
+#define VFSHMSK 0x0700                          /* Mask of the flags  */
+#define VFTPMSK 0x003f                          /* Mask of the line type */
 
 typedef struct  meVideoLine
 {
@@ -1133,19 +1139,20 @@ typedef struct {
 
 /* Registry Open types - NOTE any changes to these must be reflected in
  * the variable meRegModeList defined in registry.c */
-#define meREGMODE_INTERNAL   0x001        /* Internal registry - hidden */
-#define meREGMODE_HIDDEN     0x002        /* Node is hidden */
-#define meREGMODE_FROOT      0x004        /* File root */
-#define meREGMODE_CHANGE     0x008        /* Tree has changed */
-#define meREGMODE_BACKUP     0x010        /* Perform a backup of the file */
-#define meREGMODE_AUTO       0x020        /* Automatic save */
-#define meREGMODE_DISCARD    0x040        /* Discardable entry (memory only) */
-#define meREGMODE_MERGE      0x080        /* Merge a loaded registry */
-#define meREGMODE_RELOAD     0x100        /* Reload existing registry */
-#define meREGMODE_CREATE     0x200        /* Create if does not exist */
-#define meREGMODE_QUERY      0x400        /* Query the current node */
-#define meREGMODE_GETMODE    0x800        /* Return modes set in $result */
-#define meREGMODE_STORE_MASK 0x07f        /* Bits actually worth storing */
+#define meREGMODE_INTERNAL   0x0001             /* Internal registry - hidden */
+#define meREGMODE_HIDDEN     0x0002             /* Node is hidden */
+#define meREGMODE_FROOT      0x0004             /* File root */
+#define meREGMODE_CHANGE     0x0008             /* Tree has changed */
+#define meREGMODE_BACKUP     0x0010             /* Perform a backup of the file */
+#define meREGMODE_AUTO       0x0020             /* Automatic save */
+#define meREGMODE_DISCARD    0x0040             /* Discardable entry (memory only) */
+#define meREGMODE_CRYPT      0x0080             /* crypt the registry file */
+#define meREGMODE_MERGE      0x0100             /* Merge a loaded registry */
+#define meREGMODE_RELOAD     0x0200             /* Reload existing registry */
+#define meREGMODE_CREATE     0x0400             /* Create if does not exist */
+#define meREGMODE_QUERY      0x0800             /* Query the current node */
+#define meREGMODE_GETMODE    0x1000             /* Return modes set in $result */
+#define meREGMODE_STORE_MASK 0x00ff             /* Bits actually worth storing */
 /*
  * meRegNode
  * Data structure to hold a hierarchy node

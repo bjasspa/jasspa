@@ -1,15 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Created By    : Steven Phillips
-;  Created       : Fri Aug 10 10:28:53 2001
-;  Last Modified : <020806.0954>
-;  Description   : Create a list of abbreviations
+; Created:     Fri Aug 10 10:28:53 2001
+; Synopsis:    Create a list of abbreviations for the toolbar
+; Authors:     Steven Phillips
 ;
-;  Notes
-;
-;  Copyright (c) 2001 Jasspa
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 !if &band .hilight.flags 0x01
     !if &not &exist .hilight.abbrev-item
         set-variable .hilight.abbrev-item &pinc .hilight.next 1
@@ -125,8 +122,8 @@ define-macro eaf-list-execute
     set-mark
     end-of-buffer
     -1 kill-region
-    !if &band .toolbar-redraw.bc 0x003
-        ; If a toolbar create or recenter then force an update
+    !if &band @# 0x003
+        ; If this is a tool create or toolbar refresh then force a complete update
         !force 0 delete-buffer #l0
     !endif
     !force 0 find-buffer #l0
@@ -203,11 +200,11 @@ define-macro eaf-list-execute
 !emacro
 
 0 define-macro abbrev-list-create
-    eaf-list-create "*abbrev-list*" "Abbrevs" ""
+    @# eaf-list-create "*abbrev-list*" "Abbrevs" ""
 !emacro
 
 0 define-macro tool-list-create
-    eaf-list-create "*tool-list*" "Tools" "hk"
+    @# eaf-list-create "*tool-list*" "Tools" "hk"
 !emacro
 
 define-macro abbrev-list
@@ -216,7 +213,7 @@ define-macro abbrev-list
         !abort
     !endif
     set-position "\x81"
-    !force abbrev-list-create
+    !force &cond @? 1 0 abbrev-list-create
     !if &not $status
         goto-position "\x81"
         ml-write "[Failed to load abbreviation list for current buffer]"

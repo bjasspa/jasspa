@@ -32,29 +32,32 @@ extern  meDirList  curDirList ;
 extern  struct osdDIALOG  *osdDialogHd; /* Root of the on screen displays */
 extern  struct osdDISPLAY *osdDisplayHd;/* OSD dialog display list      */
 #endif
-extern  meRegister *meRegHead;         /* The register Head            */
-extern  meRegister *meRegCurr;         /* The current register set     */
-extern  meSelection selhilight;          /* Selection hilight            */
-extern  meSchemeSet  *hilBlock;            /* Hilighting colour changes    */
+extern  meRegister *meRegHead;          /* The register Head            */
+extern  meRegister *meRegCurr;          /* The current register set     */
+extern  meSelection selhilight;         /* Selection hilight            */
+extern  meSchemeSet  *hilBlock;         /* Hilighting colour changes    */
 extern  meColor    noColors ;           /* No defined colours           */
-extern  int        styleTableSize;      /* Size of the colour table     */
+extern  meInt      styleTableSize;      /* Size of the colour table     */
 extern  meStyle   *styleTable;          /* Highlighting colour table    */
 extern  meStyle    defaultScheme[] ;    /* Default colour scheme        */
 #if MEOPT_ABBREV
 extern  meAbbrev  *globalAbrev ;        /* Global Abreviation file      */
 #endif
 #if MEOPT_POSITION
-extern  mePosition *position ;         /* Position stack head          */
+extern  mePosition *position ;          /* Position stack head          */
 #endif
 extern  meUShort   hilBlockS ;          /* Hilight - HilBlock array siz */
-extern  int        cursorState ;        /* Current state of cursor      */
+extern  meInt      cursorState ;        /* Current state of cursor      */
 extern  meUByte   *progName ;           /* the program name (argv[0])   */
 extern  meUByte  **ModeLineStr ;        /* modeline line format         */
 extern  meUByte    orgModeLineStr[] ;   /* original modeline line format*/
 extern  meUByte   *modeLineStr ;        /* current modeline format      */
 extern  meUByte    modeLineFlags ;      /* current modeline flags       */
 extern  meInt      autotime;            /* auto save time in seconds    */
-extern  int        keptVersions;        /* No. of kept backup versions  */
+extern  meInt      keptVersions;        /* No. of kept backup versions  */
+#if MEOPT_EXTENDED
+extern  meInt      nextWindowId;        /* window-id of the next create */
+#endif
 #if MEOPT_MOUSE
 extern  meUInt     delaytime;           /* mouse-time delay time        */
 extern  meUInt     repeattime;          /* mouse-time repeat time       */
@@ -197,8 +200,8 @@ extern int       noIpipes ;             /* count of all the cur pipes   */
 
 extern  meUByte   alarmState;           /* Auto-save alarm time         */
 extern  meInt     startTime;            /* me start time. used as offset*/
-extern  meLine     *lpStore;              /* line off which to store macro*/
-extern  meBuffer   *lpStoreBp ;           /* help is stored in a buffer   */
+extern  meLine   *lpStore;              /* line off which to store macro*/
+extern  meBuffer *lpStoreBp ;           /* help is stored in a buffer   */
 extern  meUShort  thiskey;              /* the current key              */
 extern  int       taboff;               /* tab offset for display       */
 extern  meUShort  prefixc[];            /* prefix chars           */
@@ -256,8 +259,8 @@ extern  meUByte  *derNames[];           /* name list of directives      */
 extern  meUByte   derTypes[];           /* type list of directives      */
 extern  meUByte  *funcNames[];          /* name list of user funcs      */
 extern  meUByte   funcTypes[];          /* type list of user funcs      */
-extern  meKillNode     *kbufp;                /* current kill buffer chunk pointer */
-extern  meKillNode     *kbufh;                /* kill buffer header pointer   */
+extern  meKillNode *kbufp;              /* current kill buffer chunk pointer */
+extern  meKillNode *kbufh;              /* kill buffer header pointer   */
 extern  meUByte   lkbdptr[];            /* Holds last keybd macro data  */
 extern  int       lkbdlen;              /* Holds length of last macro   */
 extern  meUByte  *kbdptr;               /* start of current keyboard buf*/
@@ -430,9 +433,9 @@ meDirList curDirList={1,0,NULL,NULL,0,NULL,0} ;
 struct osdDIALOG  *osdDialogHd = NULL;  /* Root of the on screen displays */
 struct osdDISPLAY *osdDisplayHd = NULL; /* Menu display list */
 #endif
-meRegister *meRegHead=NULL ;           /* The register Head            */
-meRegister *meRegCurr=NULL ;           /* The current register set     */
-meSelection selhilight={1,0} ;           /* Selection hilight            */
+meRegister *meRegHead=NULL ;            /* The register Head            */
+meRegister *meRegCurr=NULL ;            /* The current register set     */
+meSelection selhilight={1,0} ;          /* Selection hilight            */
 meUShort  hilBlockS=20 ;                /* Hilight - HilBlock array siz */
 meStyle  *styleTable = NULL;            /* Highlighting colour table    */
 meStyle defaultScheme[meSCHEME_STYLES*2] = /* Default colour scheme     */
@@ -450,17 +453,20 @@ meStyle defaultScheme[meSCHEME_STYLES*2] = /* Default colour scheme     */
 meAbbrev *globalAbrev = NULL;           /* Global Abreviation file      */
 #endif
 #if MEOPT_POSITION
-mePosition    *position=NULL ;             /* Position stack head          */
+mePosition *position=NULL ;             /* Position stack head          */
 #endif
 meColor   noColors=0 ;                  /* No defined colours           */
-int       styleTableSize = 2;           /* Size of the style table      */
-meSchemeSet *hilBlock;                     /* Hilighting style change      */
-int       cursorState=0 ;               /* Current state of cursor      */
+meInt     styleTableSize=2 ;            /* Size of the style table      */
+meSchemeSet *hilBlock;                  /* Hilighting style change      */
+meInt     cursorState=0 ;               /* Current state of cursor      */
 meUByte  *progName=NULL ;               /* the program name (argv[0])   */
 meUByte   orgModeLineStr[]="%s%r%u " ME_SHORTNAME " (%e) - %l %b (%f) ";
 meUByte  *modeLineStr=orgModeLineStr;   /* current modeline format      */
-meInt     autotime = 300 ;              /* auto save time in seconds    */
-int       keptVersions = 0 ;            /* No. of kept backup versions  */
+meInt     autotime=300 ;                /* auto save time in seconds    */
+meInt     keptVersions=0 ;              /* No. of kept backup versions  */
+#if MEOPT_EXTENDED
+meInt      nextWindowId=0 ;             /* window-id of the next create */
+#endif
 #if MEOPT_WORDPRO
 meUByte   fillbullet[16]="*)].-";       /* Fill bullet character class  */
 meShort   fillbulletlen = 15;           /* Fill lookahead limit         */
@@ -585,14 +591,14 @@ meUByte   thisflag;                     /* Flags, this command          */
 meUByte   lastflag;                     /* Flags, last command          */
 meUByte   alarmState=0;                 /* Unix auto-save alarm time    */
 meUByte   scrollFlag = 1 ;              /* horiz/vert scrolling method  */
-meUByte   sgarbf = meTRUE;                /* meTRUE if screen is garbage    */
-meUByte   clexec = meFALSE;               /* command line execution flag  */
-meUByte   mcStore = meFALSE;              /* storing text to macro flag   */
+meUByte   sgarbf = meTRUE;              /* meTRUE if screen is garbage    */
+meUByte   clexec = meFALSE;             /* command line execution flag  */
+meUByte   mcStore = meFALSE;            /* storing text to macro flag   */
 #if MEOPT_DEBUGM
 meByte    macbug = 0 ;                  /* macro debuging flag          */
 #endif
-meUByte   cmdstatus = meTRUE;             /* last command status          */
-meUByte   kbdmode=meSTOP;                 /* current keyboard macro mode  */
+meUByte   cmdstatus = meTRUE;           /* last command status          */
+meUByte   kbdmode=meSTOP;               /* current keyboard macro mode  */
 meUByte   lastReplace=0;                /* set to non-zero if last was a replace */
 meUByte   modeLineFlags=                /* current modeline flags       */
 (WFMODE|WFRESIZE|WFMOVEL) ;
@@ -670,8 +676,8 @@ int       noIpipes=0 ;                  /* count of all the cur pipes   */
 int       osdCol=0 ;                    /* The osd current column */
 int       osdRow=0 ;                    /* The osd current row */
 #endif
-meLine     *lpStore = NULL;               /* line off which to store macro*/
-meBuffer   *lpStoreBp = NULL;             /* help is stored in a buffer   */
+meLine     *lpStore = NULL;             /* line off which to store macro*/
+meBuffer   *lpStoreBp = NULL;           /* help is stored in a buffer   */
 meUShort  prefixc[ME_PREFIX_NUM+1]=
 { ME_INVALID_KEY,                       /* unused 0th value             */
   ME_SPECIAL|SKEY_esc,                  /* prefix1 = Escape             */
@@ -807,12 +813,12 @@ meUByte   *disLineBuff=NULL ;           /* interal display buffer array */
 int        disLineSize=512 ;            /* interal display buffer size  */
 
 int       curgoal;                      /* Goal for C-P, C-N            */
-meBuffer   *bheadp;                       /* Head of list of buffers      */
+meBuffer   *bheadp;                     /* Head of list of buffers      */
 #if MEOPT_ABBREV
 meAbbrev *aheadp=NULL;                  /* Head of list of abrev files  */
 #endif
 meUShort  keyTableSize;                 /* The current size of the key table */
-meUByte   resultStr [meBUF_SIZE_MAX];           /* Result string from commands  */
+meUByte   resultStr[meBUF_SIZE_MAX];    /* Result string from commands  */
 
 #ifdef _CLIPBRD
 meUByte   clipState=0;                  /* clipboard status flag        */

@@ -460,7 +460,7 @@ osd 9  130 ""  "Command &Apropos   C-h a"         f command-apropos
 osd 9  140 "-"
 osd 9  150 ""   "&User Setup"                     f user-setup
 osd 9  160 ""   "Scheme &Editor"                  f scheme-editor
-osd 9  170 "Mdw" "&Games"                         21
+osd 9  170 "Md" "&Games"                         21
 osd 9  180 "i" "&Product Support"                 f "help-item \"Contact\""
 osd 9  190 ""  "About &MicroEmacs"                f about
 ;

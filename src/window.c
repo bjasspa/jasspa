@@ -979,7 +979,7 @@ windowDeleteOthers(int f, int n)
         wp = frameCur->windowList ;
         while (wp != NULL)
         {
-            if((wp->flags & meWINDOW_NO_DELETE) && (wp != frameCur->windowCur))
+            if((wp->flags & (meWINDOW_NO_DELETE|meWINDOW_NO_OTHER_DEL)) && (wp != frameCur->windowCur))
                 break ;
             wp = wp->next;
         }
@@ -991,7 +991,7 @@ windowDeleteOthers(int f, int n)
             while (wp != NULL)
             {
                 nwp = wp->next;
-                if(((wp->flags & meWINDOW_NO_DELETE) == 0) && (wp != cwp))
+                if(((wp->flags & (meWINDOW_NO_DELETE|meWINDOW_NO_OTHER_DEL)) == 0) && (wp != cwp))
                 {
                     meWindowMakeCurrent(wp) ;
                     windowDelete(meFALSE,1) ;
@@ -1074,6 +1074,29 @@ windowDelete(int f, int n)
     }
     
     cwp = frameCur->windowCur ;
+#if MEOPT_EXTENDED
+    if((n & 2) == 0)
+    {
+        if(cwp->flags & meWINDOW_NO_DELETE)
+            /* cannot delete this window */ 
+            return meFALSE ;
+        if(!(cwp->flags & meWINDOW_NOT_ALONE))
+        {
+            /* check there is another window that can exist alone before
+             * deleting this one */
+            nwp = frameCur->windowList ;
+            while(nwp != NULL)
+            {
+                if((nwp != cwp) && !(nwp->flags & meWINDOW_NOT_ALONE))
+                    break ;
+                nwp = nwp->next;
+            }
+            if(nwp == NULL)
+                return meFALSE ;
+        }
+    }
+#endif
+    
     nwp = cwp->next;
     pwp = cwp->prev;
 
@@ -1252,8 +1275,8 @@ windowDelete(int f, int n)
             wp->width += cwp->width;
             
             /* Move virtual video frames */
-            meVideoDetach (wp);
-            meVideoAttach (cwp->video, wp);
+            meVideoDetach(wp);
+            meVideoAttach(cwp->video, wp);
             break;
         case WINDOW_PREV:           /* Window vertically up */
             wp->depth += cwp->depth;
@@ -1338,6 +1361,11 @@ windowSplitDepth(int f, int n)
     register int    ntrl, strl;
     register int    ntrd;
 
+#if MEOPT_EXTENDED
+    if(frameCur->windowCur->flags & meWINDOW_NO_SPLIT)
+        /* cannot split this window */ 
+        return meFALSE ;
+#endif
     if (frameCur->windowCur->textDepth < 3)
         return mlwrite(MWABORT,(meUByte *)"Cannot split a %d line window",frameCur->windowCur->textDepth);
     if (frameCur->windowCount == meWINDOW_MAX)
@@ -1345,8 +1373,8 @@ windowSplitDepth(int f, int n)
     if(((wp = (meWindow *) meMalloc(sizeof(meWindow))) == NULL) || 
        ((lp=lalloc(frameCur->widthMax)) == NULL) || ((off=lalloc(frameCur->widthMax)) == NULL))
     {
-        meNullFree (wp);                /* Destruct created window */
-        return (meFALSE);                 /* Fail */
+        meNullFree(wp) ;                /* Destruct created window */
+        return meFALSE ;                /* Fail */
     }
     /* reset the window flags for both as these tend to cause more trouble
      * than they are worth */
@@ -1358,8 +1386,11 @@ windowSplitDepth(int f, int n)
     wp->modeLine = lp ;
     off->next = NULL ;
     wp->dotCharOffset = off ;
-    (frameCur->bufferCur->windowCount)++;                  /* Displayed once more.  */
+#if MEOPT_EXTENDED
+    wp->id = nextWindowId++ ;
+#endif
     frameCur->windowCount++;                       /* One more window displayed */
+    frameCur->bufferCur->windowCount++;            /* Displayed once more.  */
 
     meVideoAttach (frameCur->windowCur->video, wp); /* Attach to frameCur->vvideo block */
 
@@ -1431,6 +1462,9 @@ windowSplitWidth(int f, int n)
     register meWindow *wp;
     register meLine   *lp, *off;
 
+    if(frameCur->windowCur->flags & meWINDOW_NO_SPLIT)
+        /* cannot split this window */ 
+        return meFALSE ;
     /* Out minimum split value horizontally is 7 i.e. |$c$|$c$| */
     if (frameCur->windowCur->textWidth < ((gsbarmode & WMVWIDE) ? 8 : 7))
         return mlwrite(MWABORT,(meUByte *)"Cannot split a %d column window", frameCur->windowCur->textWidth);
@@ -1450,21 +1484,24 @@ windowSplitWidth(int f, int n)
     memcpy(wp,frameCur->windowCur,sizeof(meWindow)) ;
     if (meVideoAttach (NULL, wp) == meFALSE)
     {
-        meFree (lp);                       /* Destruct line */
-        meFree (off);                      /* Destruct line */
-        meFree (wp);                       /* Destruct window */
-        return (meFALSE);                    /* Failed */
+        meFree(lp) ;                       /* Destruct line */
+        meFree(off) ;                      /* Destruct line */
+        meFree(wp) ;                       /* Destruct window */
+        return meFALSE ;                   /* Failed */
     }
 
     /* All storage allocated. Build the new window */
-    frameCur->windowCount++;               /* One more window displayed */
     wp->modeLine = lp ;                    /* Attach mode line */
     off->next = NULL ;
     wp->dotCharOffset = off ;              /* Attach current line offset buffer */
-    (frameCur->bufferCur->windowCount)++;  /* Displayed once more.  */
+#if MEOPT_EXTENDED
+    wp->id = nextWindowId++ ;
+#endif
+    frameCur->windowCount++;               /* One more window displayed */
+    frameCur->bufferCur->windowCount++;    /* Displayed once more.  */
 
     /* Maintain the window prevous/next linkage. */
-    if ((wp->next = frameCur->windowCur->next) != NULL)
+    if((wp->next = frameCur->windowCur->next) != NULL)
         wp->next->prev = wp;
     frameCur->windowCur->next = wp;
     wp->prev = frameCur->windowCur;

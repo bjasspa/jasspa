@@ -84,6 +84,137 @@ define-macro cvs-commit
     4 ipipe-shell-command #l2 "*cvs-commit*"
 !emacro
 
+0 define-macro cvs-log-list-gen-prep-single
+    set-mark
+    search-forward "^RCS file:"
+    beginning-of-line
+    forward-line
+    set-variable #l0 @wl
+    search-forward "^\\(----\\|====\\)"
+    beginning-of-line
+    kill-region
+    -1 yank
+    !while &seq @wc "-"
+        forward-line
+        set-variable #l1 @wl
+        set-mark
+        forward-line
+        kill-region
+        -1 yank
+        search-forward ";"
+        backward-delete-char
+        forward-delete-char
+        forward-delete-char
+        insert-newline
+        search-forward ";"
+        backward-char
+        kill-line
+        -1 yank
+        search-forward "^\\(----\\|====\\)"
+        beginning-of-line
+        insert-string &spr "%s; %s\n" #l0 #l1
+    !done
+    set-mark
+    forward-line
+    kill-region
+    -1 yank
+!emacro
+
+0 define-macro cvs-log-list-gen-rmdup-single
+    forward-line
+    !if &not &seq &lef @wl 5 "date:"
+        !abort
+    !endif
+    set-variable #l0 &lef @wl 17
+    forward-line
+    set-mark
+    forward-line
+    !tjump &not &seq &lef @wl 13 "Working file:" -1
+    copy-region
+    set-variable #l1 @y
+    -1 yank
+    forward-line
+    set-alpha-mark "\x81"
+    str-to-regex #l1
+    set-variable #l0 &spr "-\n%s.*\n%s" #l0 #l1 
+    !force search-forward #l0
+    !while $status
+        -2 show-region
+        beginning-of-line
+        set-mark
+        forward-line
+        search-forward "^----"
+        beginning-of-line
+        backward-line
+        set-variable #l1 @wl
+        forward-line
+        kill-region
+        -1 yank
+        set-alpha-mark "\x82"
+        goto-alpha-mark "\x81"
+        insert-string &cat #l1 "\n"
+        set-alpha-mark "\x81"
+        goto-alpha-mark "\x82"
+        !force search-forward #l0
+    !done
+    goto-alpha-mark "\x81"
+!emacro
+
+0 define-macro cvs-log-list-gen
+    set-variable #l2 $buffer-bname
+    beginning-of-buffer
+    -1 buffer-mode "view"
+    1 buffer-mode "magic"
+    !repeat
+        !force cvs-log-list-gen-prep-single
+    !until &not $status
+    insert-string &spr "%n" 28 "-"
+    beginning-of-buffer
+    !repeat
+        !force cvs-log-list-gen-rmdup-single
+    !until &not $status
+    beginning-of-buffer
+    !force 0 delete-buffer "*cvs-log-list*"
+    find-buffer "*cvs-log-list*"
+    -1 buffer-mode "undo"
+    find-buffer #l2
+    !force search-forward "--\ndate:"
+    !while $status
+        set-variable #l0 $window-line
+        set-variable #l1 @wl
+        find-buffer "*cvs-log-list*"
+        insert-string &spr "%9d %s\n" #l0 #l1
+        find-buffer #l2
+        !force search-forward "--\ndate:"
+    !done
+    find-buffer "*cvs-log-list*"
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    backward-line
+    -10 sort-lines
+    beginning-of-buffer
+    !while &not &seq @wl ""
+        set-variable #l0 &add 0 @wl
+        find-buffer #l2
+        #l0 goto-line
+        set-mark
+        search-forward "^----"
+        beginning-of-line
+        forward-line
+        copy-region
+        find-buffer "*cvs-log-list*"
+        yank
+        -1 yank
+        set-mark
+        forward-line
+        kill-region
+        -1 yank
+    !done
+    beginning-of-buffer
+    0 delete-buffer #l2
+!emacro
+
 define-macro cvs-log
     1 cvs-command-init
     set-variable #l3 &rig $buffer-fname &rsin "/" $buffer-fname
@@ -92,6 +223,17 @@ define-macro cvs-log
     !endif
     set-variable #l2 &cat "cvs log " #l3
     4 ipipe-shell-command #l2 "*cvs-log*"
+!emacro
+
+define-macro cvs-log-list
+    1 cvs-command-init
+    set-variable #l3 &rig $buffer-fname &rsin "/" $buffer-fname
+    !if &sin " " #l3
+        set-variable #l3 &spr "\"%s\"" #l3
+    !endif
+    set-variable #l2 &cat "cvs log " #l3
+    4 pipe-shell-command #l2 "*cvs-log-list-tmp*"
+    cvs-log-list-gen
 !emacro
 
 define-macro cvs-add
@@ -176,8 +318,10 @@ define-macro cvs-gdiff
         set-variable #l3 &spr "\"%s\"" #l3
     !endif
     set-variable #l1 $temp-name
+    set-variable $debug 1
     !if &seq $platform "win32"
-	shell-command &spr "cvs -n update -p %s > %s" #l3 #l1
+        ; system does not maintain the correct starting dir so use whole file name
+	shell-command &spr "cvs -n update -p %s > %s" #l0 #l1
     !else
 	shell-command &spr "cvs -n update -p %s > %s 2> /dev/null" #l3 #l1
     !endif

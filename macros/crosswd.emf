@@ -296,9 +296,9 @@ define-macro crosswd-create-word-list
                 set-variable #l4 &add #l3 &mul #l1 2
                 set-variable &ind &spr ".crosswd.letter%d-%d" @# #l1 " "
                 set-variable &ind &spr ".crosswd.crossref%d-%d" @# #l1 " "
-                osd .osd.crosswdc &add #l4 4   "MimxeRHfh" .scheme.osd-entry " " .osd.crosswdl &spr "crosswd-setup-letter %d %d" @# #l1
+                osd .osd.crosswdc &add #l4 4   "MimxRHfh" .scheme.osd-entry " " .osd.crosswdl &spr "crosswd-setup-letter %d %d" @# #l1
                 osd .osd.crosswdc &add #l4 5   "hf" " "
-                osd .osd.crosswdc &add #l4 129 "MimxeRHfh" .scheme.osd-entry " " .osd.crosswdr &spr "crosswd-setup-crossref %d %d" @# #l1
+                osd .osd.crosswdc &add #l4 129 "MimxRHfh" .scheme.osd-entry " " .osd.crosswdr &spr "crosswd-setup-crossref %d %d" @# #l1
                 osd .osd.crosswdc &add #l4 130 "hf" " "
             !done
         !endif
@@ -315,7 +315,7 @@ define-macro crosswd-create-word-list
     !endif
     set-variable &ind &spr ".crosswd.letter%d-%d" .word .letter #l0
     set-variable #l4 &add &add 104 &mul .word 256 &mul .letter 2
-    osd .osd.crosswdc #l4 "MimxeRHfh" .scheme.osd-entry #l0 .osd.crosswdl &spr "crosswd-setup-letter %d %d" .word .letter
+    osd .osd.crosswdc #l4 "MimxRHfh" .scheme.osd-entry #l0 .osd.crosswdl &spr "crosswd-setup-letter %d %d" .word .letter
 !emacro
 
 0 define-macro crosswd-setup-letter
@@ -331,7 +331,7 @@ define-macro crosswd-create-word-list
     !endif
     set-variable &ind &spr ".crosswd.crossref%d-%d" .word .letter #l0
     set-variable #l4 &add &add 229 &mul .word 256 &mul .letter 2
-    osd .osd.crosswdc #l4 "MimxeRHfh" .scheme.osd-entry #l0 .osd.crosswdr &spr "crosswd-setup-crossref %d %d" .word .letter
+    osd .osd.crosswdc #l4 "MimxRHfh" .scheme.osd-entry #l0 .osd.crosswdr &spr "crosswd-setup-crossref %d %d" .word .letter
 !emacro
 
 0 define-macro crosswd-setup-crossref

@@ -195,6 +195,11 @@ hilight .hilight.vmhl 0x40 "." ""                 $global-scheme
                 !if $status
                     set-variable #l4 $window-line
                 !else
+                    !if &equ &add #l3 1 @#
+                        ; an empty next part insert a line
+                        set-variable $window-line &pinc @# 1
+                        insert-newline
+                    !endif
                     set-variable #l4 @#
                 !endif
                 set-variable $window-line #l3

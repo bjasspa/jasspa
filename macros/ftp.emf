@@ -64,7 +64,10 @@ define-macro ftp-connect
         ; if this is a toolbar window move to the next normal window
         !force next-window
     !endif
-    !if &seq &lef $buffer-fname 6 "ftp://"
+    !if &seq $buffer-fname ""
+        set-variable #l0 ""
+        set-variable #l1 ""
+    !elif &seq &lef $buffer-fname 6 "ftp://"
         set-variable #l0 ""
         set-variable #l1 &lef $buffer-fname &rsin "/" $buffer-fname
     !else
@@ -222,14 +225,15 @@ define-macro ftp-connect
             !force mark-registry "/url" "U"
             !force 0 delete-registry "/url" @mna
             ; read the registry
-            read-registry "url" #l1 "cb"
+            read-registry "url" #l1 "cby"
             ; clear the current entry
             set-variable .ftp.name ""
         !else
             ; new file does not exist, write it now to create it and change the
             ; current file to the new name
-            !force save-registry "/url" #l1 @mna
             set-registry "/" "url" #l1
+            mark-registry "/url" "fyb"
+            !force save-registry "/url" #l1 @mna
         !endif
         ; can we store just the base name or the whole path?
         !if &seq &find #l0 ".erf" #l1
@@ -296,7 +300,7 @@ define-macro ftp-connect
 
 0 define-macro ftp-host-setup
     -1 osd .osd.tmp
-    osd .osd.tmp 0 "bso" 3 2 32 0 -1 -1
+    osd .osd.tmp 0 "bso" -28 0 30 0 -1 -1
     set-variable #l0 0
     !while 1
         !force find-registry "/url" "ftp" &pinc #l0 1
@@ -417,7 +421,7 @@ osd .osd.ftp 45  ""
 osd .osd.ftp 50  "Sf" "    &Site Name" 70
 osd .osd.ftp 55  "hf" "    "
 osd .osd.ftp 60  "EtxHfhR" 6 .scheme.osd-entry "############################" 1 ftp-data-entry
-osd .osd.ftp 70  "MmxwtfHiR" 7 .scheme.osd-ebtt &spr " %s "&mid $window-chars 10 1 .osd.tmp ftp-host-setup
+osd .osd.ftp 70  "MmxstfHiR" 7 .scheme.osd-ebtt &mid $window-chars 10 1 .osd.tmp ftp-host-setup
 osd .osd.ftp 80  "Sf" "    &Host Address" 90
 osd .osd.ftp 85  "hf" "    "
 osd .osd.ftp 90  "EtxHfR"  9 .scheme.osd-entry "############################" 2 ftp-data-entry
