@@ -64,15 +64,13 @@ define-macro clean
 ;
 ; Insert a normal none c-mode/indent tab (still effected by tab mode)
 define-macro normal-tab
-    ; Remember we have set cmode
+    ; Remember we have set indent
     set-variable #l0 &bmod cmode
     set-variable #l1 $buffer-indent
-    -1 buffer-mode "cmode"
     set-variable $buffer-indent 0
     !force !force @# tab
     set-variable #l2 $status
     set-variable $buffer-indent #l1
-    &cond #l0 1 -1 buffer-mode "cmode"
     !return #l2
 !emacro
 ;
@@ -317,7 +315,7 @@ define-macro ifill-paragraph
         set-alpha-mark "\x82"
         exchange-point-and-mark
     !endif
-    !if &or &bmod "cmode" $buffer-indent
+    !if $buffer-indent
         !while &les $window-line #l0
             beginning-of-line
             tab @mna

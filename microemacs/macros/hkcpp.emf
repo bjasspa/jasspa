@@ -23,7 +23,7 @@ define-macro fhook-cpp
 ; buffer-init variables
 set-variable .fhook-cpp.name "C++"
 set-variable .fhook-cpp.setup &reg "/history" "fhook/cpp" "bdfghnopx"
-set-variable .fhook-cpp.setup-mask "abdefghikmnoptux>"
+set-variable .fhook-cpp.setup-mask "abdefghikmnoptux"
 set-variable .fhook-cpp.tags "ctags"
 
 ; Comments
@@ -98,11 +98,11 @@ set-variable .fhook-cpp.item-list-r5 "Type \ecB\\1\ecA"
 set-variable .fhook-cpp.item-list-s6 "^[ \t]*class[ \t]+\\(\\w+\\)\\([ \t]+:\\|[ \t]*{\\|[ \t]*$\\)"
 set-variable .fhook-cpp.item-list-r6 "Clss \ecB\\1\ecA"
 
+!if &not &exist .hilight.cpp
+    set-variable .hilight.cpp &pinc .hilight.next 1
+!endif
 !if &and &sin "h" .fhook-cpp.setup &band .hilight.flags 0x02 
     ; High-light C++ Mode
-    !if &not &exist .hilight.cpp
-        set-variable .hilight.cpp &pinc .hilight.next 1
-    !endif
     0 hilight .hilight.cpp  2 50             $global-scheme
     hilight .hilight.cpp 0x3a "#" "\\"       .scheme.prepro
     hilight .hilight.cpp   18 "//"           .scheme.comment
@@ -196,6 +196,9 @@ set-variable .fhook-cpp.item-list-r6 "Clss \ecB\\1\ecA"
         hilight .hilight.cpp 1 "[[:digit:]]+\\.[[:digit:]]+"  .scheme.constant
         hilight .hilight.cpp 1 "-[[:digit:]]+\\.[[:digit:]]+" .scheme.constant
     !endif
+!endif
+!if &sin "d" .fhook-cpp.setup
+    0 indent .hilight.cpp 28 t 3/2t 0 -t 0 -t 1 -1 " * "
 !endif
 ;
 ; setup fuctions to auto-load from cmacros

@@ -21,6 +21,13 @@ set-variable %tag-ignore   &cond &exi %tag-ignore   %tag-ignore   ":SCCS/:CVS/:"
 
 set-char-mask "1" ":_"
 set-char-mask "1" ":~"
+!if &exist .hilight.c
+!elif &exist .hilight.next
+    set-variable .hilight.c &pinc .hilight.next 1
+!else
+    set-variable .hilight.c 1
+!endif
+0 indent .hilight.c 28 t 3/2t 0 -t 0 -t 1 -1 " * "
 
 0 define-macro ctags-add-tag
     forward-word
@@ -198,9 +205,9 @@ set-char-mask "1" ":~"
         set-variable #l9 &rig #l9 #g1
     !endif
     ml-write &spr "[Parsing file %s]" #l9
-    ; the hooks may not be loaded, must setup the main cmode & magic modes ourselves
+    ; the hooks may not be loaded, must setup the main indent & magic modes ourselves
     1 buffer-mode "magic"
-    1 buffer-mode "cmode"
+    set-variable $buffer-indent .hilight.c
     set-variable #l0 0
     set-variable #l6 ""
     beginning-of-buffer

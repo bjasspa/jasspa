@@ -26,12 +26,7 @@ define-macro-file collapse collapse-current collapse-all
         -1 buffer-mode "magic"
     !endif
     !if &sin "d" #l1
-        ; if auto-indent enabled don't enable indent mode
-        !if &sin ">" &ind &spr ".%s.setup-mask" $buffer-fhook
-            1 buffer-mode "cmode"
-        !else
-            set-variable $buffer-indent &ind &cat ".hilight." &rig $buffer-fhook 6
-        !endif
+        set-variable $buffer-indent &ind &cat ".hilight." &rig $buffer-fhook 6
     !elif &sin "i" #l1
         1 buffer-mode "indent"
     !elif &sin "I" #l1

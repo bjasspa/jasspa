@@ -22,7 +22,7 @@ define-macro fhook-c
 
 ; buffer-init variables
 set-variable .fhook-c.setup &reg "/history" "fhook/c" "bdfghnopx"
-set-variable .fhook-c.setup-mask "abdefghikmnoptux>"
+set-variable .fhook-c.setup-mask "abdefghikmnoptux"
 set-variable .fhook-c.tags "ctags"
 
 ; Comments
@@ -98,11 +98,11 @@ set-variable .fhook-c.item-list-r5 "Type \ecB\\1\ecA"
 set-variable .fhook-c.item-list-s6 "^[ \t]*class[ \t]+\\(\\w+\\)\\([ \t]+:\\|[ \t]*{\\|[ \t]*$\\)"
 set-variable .fhook-c.item-list-r6 "Clss \ecB\\1\ecA"
 
+!if &not &exi .hilight.c
+    set-variable .hilight.c &pinc .hilight.next 1
+!endif
 !if &and &sin "h" .fhook-c.setup &band .hilight.flags 0x02 
     ; Hi-light C Mode
-    !if &not &exi .hilight.c
-        set-variable .hilight.c &pinc .hilight.next 1
-    !endif
     0 hilight .hilight.c  2 50
     ; comments, strings and quotes
     hilight .hilight.c 0x3a "#" "\\"       .scheme.prepro
@@ -174,6 +174,9 @@ set-variable .fhook-c.item-list-r6 "Clss \ecB\\1\ecA"
         hilight .hilight.c 1 "[[:digit:]]+\\.[[:digit:]]+f"  .scheme.constant
         hilight .hilight.c 1 "-[[:digit:]]+\\.[[:digit:]]+f" .scheme.constant
     !endif
+!endif
+!if &sin "d" .fhook-c.setup
+    0 indent .hilight.c 28 t 3/2t 0 -t 0 -t 1 -1 " * "
 !endif
 ;
 ; setup useful C fuctions to auto-load cmacros

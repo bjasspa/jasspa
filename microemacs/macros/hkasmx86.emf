@@ -247,7 +247,7 @@ set-variable .fhook-asmx86.collapse-mnext "-1"
     indent .hilight.asmx86 e "\"" "\"" "\\"
     indent .hilight.asmx86 b "\\[" "]"
     indent .hilight.asmx86 b "(" ")"
-    indent .hilight.asmx86 c "\\\\\\s " 5/2t
+    indent .hilight.asmx86 c "\\\\\\s " 3/2t
     indent .hilight.asmx86 i ";"
 !endif
 

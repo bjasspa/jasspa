@@ -6,15 +6,6 @@
 ; Synopsis:    bunch of useful macros for writing c
 ; Authors:     Steven Phillips
 ;
-; Insert a normal none c-mode tab (still effected by tab mode)
-define-macro c-insert-tab
-    ; Remember we have set cmode
-    set-variable #l0 &bmod cmode
-    -1 buffer-mode "cmode"
-    tab
-    &cond #l0 1 -1 buffer-mode "cmode"
-!emacro
-;
 define-macro c-slashify
     ; check we can edit the buffer first
     1 buffer-mode "edit" @mna
