@@ -6,7 +6,7 @@
 .\"  Created By    : Steven Phillips
 .\"  Created       : Sat Jul 28 10:59:37 2001
 .\"
-.Id $Id: m3osd012.3,v 2.5 2004-01-11 01:11:18 jon Exp $
+.Id $Id: m3osd012.3,v 2.6 2005-01-03 15:44:02 bill Exp $
 .Im MicroEmacs command|osd|print
 .so me.tni
 .TH print-setup 3
@@ -103,8 +103,8 @@ On MS-DOS  machines  this can  usually be  achieved by copying the file to the
 copy %f PRN
 .CE 0
 .RE
-.IP "\fCPage Size\fR"
-Displays the currently  configured page size in the form: 
+.IP "\fCPage Layout\fR"
+Displays the current page configuration in the form: 
 .RS
 .IP
 \fIColumns\fR\fBx\fR\fIRows\fR \fIChars-Wide\fR\fBx\fR\fIChars-High\fR
@@ -118,33 +118,33 @@ Sets the size of the  printer  paper,  selecting  this  item  will  produce  a
 pop down menu  listing all  available  paper sizes unless the Windows  printer
 driver is being  used in which  case this  field  cannot be  selected  and the
 \fBEdit\fR button must be used.
-.IP "\fCCharacter Size\fR"
-Sets the size of a character within the page, expressed in terms of the number
-of  characters  which will fit on the paper  (\fIwidth\fR\fBx\fR\fIheight\fR).
-When selected a drop down menu lists all available sizes for the current paper
-size unless the Windows  driver is selected in which case this field cannot be
-selected and the \fBEdit\fR button must be used.
+.IP "\fCPage Size\fR"
+Sets the printable size of the page in terms of the number of characters which
+will fit on the paper  (\fIwidth\fR\fBx\fR\fIheight\fR).  When selected a drop
+down menu lists all  available  sizes for the  current  paper size  unless the
+Windows driver is selected in which case this field cannot be selected and the
+\fBEdit\fR button must be used.
 .IP "\fCEdit\fR (Windows only)"
 Opens a Windows  printer  dialog box  allowing  the user to specify  the  windows
 printer, paper size and character size etc.
 .IP "\fCNo. of Columns\fR and \fCRows\fR"
 Sets the  number of  sub-columns  and rows to divide  the page into,  creating
-pages within a page.
-.IP "\fCLine Numbers\fR"
+sub-pages within a page.
+.IP "\fCPrint Line Numbers\fR"
 When enabled, prints the line number at the left hand edge for each line.
-.IP "\fCSplit Line ID\fR"
+.IP "\fCPrint Split Line IDs\fR"
 When  enabled  the  last  right  hand  text  column  is  reserved  for a split
 identifier.  Whenever  a line is too long to fit on a single  line it is split
 over two or more lines, if this  option is enabled  the right edge will be set
 to the split  character  (usually a '\fC\\\fR' char) to clearly  indicate that
 the line is split.
-.IP "\fCPage Size\fR"
-As with the  \fBPrinter\fR  \fBPage Size\fR it displays the current page size,
-the field cannot be edited. 
+.IP "\fCPage Layout\fR"
+As with the  \fBPrinter\fR  \fBPage  Layout\fR  it displays  the current  page
+configuration, the field cannot be edited. 
 .SS "Layout"
 .IP "\fCMargins\fR"
 Configures the top, bottom, left and right margins in characters.
-.IP "\fCHeader\fR"
+.IP "\fCPrint Header\fR"
 Sets  whether  a header  should be  printed  and if so what it should  be, the
 following special strings can be used:
 .RS
@@ -171,21 +171,24 @@ Print the current year as a 2 digit number.
 .IP "\fC%y\fR"
 Print the current year as a 4 digit number.
 .RE
-.IP "\fCFooter\fR"
+.IP "\fCPrint Footer\fR"
 Sets  whether  a footer  should be  printed  and if so what it should  be, the
 same special strings can be used as for the header.
 .SH NOTES
-\fBuser-setup\fR is a macro using
+\fBprint-setup\fR is a macro using
 .Ht osd 2 ,
 defined in \fCprintstp.emf\fR.
 .PP
 The list of available printer drivers and print schemes is stored in the macro
-file \fCprinters.emf\fR. Using the \fBInstall\fR option of the
-.Ht scheme-editor 3
-automatically  adds the new scheme to the print  schemes list. To create a new
+file  \fCprinters.emf\fR. To create a new
 printer  driver  a  new  configuration  registry  file  (\fCerf\fR  file - see
 \fCprint*.erf\fR for examples) must be created and added to the printer driver
 lists within \fCprinter.emf\fR.
+.PP
+The  \fCprinters.emf\fR  file also contains a list of printing  schemes, using
+the \fBInstall\fR option of the
+.Ht scheme-editor 3
+automatically  adds the new scheme to the print  schemes list.
 .SH "SEE ALSO"
 .na
 .Ht print-buffer 2 ,
