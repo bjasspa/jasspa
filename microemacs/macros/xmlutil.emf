@@ -45,11 +45,13 @@ define-macro xml-backward-tag
 ;  |<type>|<start-line>|<start-col>|<end-line>|<end-col>|<TAG>|
 ; the <type> of the current tag is on of:
 ; -ve - a bad tag
-;   1 - comment tag     <!-- ... -->
-;   2 - declaration tag <?TAG ... ?>
-;   3 - standalone tag <TAG ... />
-;   4 - open tag <TAG ... >
-;   5 - close tag </TAG ... >
+;   1 - comment tag <!-- ... -->
+;   2 - CDATA tag <![CDATA[ ... ]]>
+;   3 - DOCTYPE tag <!DOCTYPE type class "str1" "str2">
+;   4 - declaration tag <?TAG ... ?>
+;   5 - standalone tag <TAG ... />
+;   6 - open tag <TAG ... >
+;   7 - close tag </TAG ... >
 ;
 ; The numeric arg is a bitmask with the following value:
 ;   0x01 - report errors
@@ -62,8 +64,8 @@ define-macro xml-backward-tag
 0 define-macro xml-get-tag-info
     set-variable #l0 $window-col
     set-variable #l1 $window-line
-    ; handle comments first as anything from the <!-- to the first --> is a comment that can throw the rest of this macro out
     !if &seq &mid @wl $window-col 4 "<!--"
+        ; handle comments first as anything from the <!-- to the first --> is a comment that can throw the rest of this macro out
         !force search-forward "-->"
         !if $status
             set-variable #p9 &spr "|1|%d|%d|%d|%d||" #l1 #l0 $window-line $window-col
@@ -74,6 +76,23 @@ define-macro xml-backward-tag
             set-variable #p9 "|-1||||||"
             !if &band @# 1
                 ml-write "[comment tag not closed properly - '-->']"
+            !endif
+        !endif
+        set-variable $window-line #l1
+        set-variable $window-col #l0
+        !return
+    !elif &seq &mid @wl $window-col 9 "<![CDATA["
+        ; handle CDATA next as anything from the <![CDATA[ to the first ]]> is data that could throw the macro out
+        !force search-forward "]]>"
+        !if $status
+            set-variable #p9 &spr "|2|%d|%d|%d|%d||" #l1 #l0 $window-line $window-col
+            !if &band @# 8
+                100 ml-write &spr "[Got tag on line %d, type 2, tag '']" #l1
+            !endif
+        !else
+            set-variable #p9 "|-1||||||"
+            !if &band @# 1
+                ml-write "[CDATA tag not closed properly - ']]>']"
             !endif
         !endif
         set-variable $window-line #l1
@@ -99,37 +118,52 @@ define-macro xml-backward-tag
     set-variable #l5 ""
     !if &not &seq &rig #l4 2 ">"
         set-variable #l9 -2
-    !elif &seq &mid @wl #l0 2 "<?"
-        !if &not &seq &rig #l4 1 "?>"
-            set-variable #l9 -3
-        !elif &xseq &rig @wl #l0 "<\\?\\(\\w[-._:a-zA-Z0-9]*\\)\\([ \t>].*\\)?"
-            set-variable #l9 2
+    !elif &inw &mid @wl &add #l0 1 1
+        !if &not &xseq &rig @wl #l0 "<\\(\\w[-._:a-zA-Z0-9]*\\)\\([ \t/>].*\\)?"
+            set-variable #l9 -6
+        !elif &seq &rig #l4 1 "/>"
+            set-variable #l9 5
             set-variable #l5 @s1
         !else
-            set-variable #l9 -4
+            set-variable #l9 6
+            set-variable #l5 @s1
         !endif
     !elif &seq &mid @wl #l0 2 "</"
         !if &xseq &rig @wl #l0 "</\\(\\w[-._:a-zA-Z0-9]*\\)\\([ \t>].*\\)?"
-            set-variable #l9 5
+            set-variable #l9 7
             set-variable #l5 @s1
         !else
             set-variable #l9 -5
         !endif
-    !else
-        !if &not &xseq &rig @wl #l0 "<\\(\\w[-._:a-zA-Z0-9]*\\)\\([ \t/>].*\\)?"
-            set-variable #l9 -6
-        !elif &seq &rig #l4 1 "/>"
-            set-variable #l9 3
-            set-variable #l5 @s1
-        !else
+    !elif &seq &mid @wl #l0 2 "<?"
+        !if &not &seq &rig #l4 1 "?>"
+            set-variable #l9 -3
+        !elif &xseq &rig @wl #l0 "<\\?\\(\\w[-._:a-zA-Z0-9]*\\)\\([ \t>].*\\)?"
             set-variable #l9 4
             set-variable #l5 @s1
+        !else
+            set-variable #l9 -4
         !endif
+    !elif &seq &mid @wl #l0 9 "<!DOCTYPE"
+        !if &xseq &rig @wl #l0 "<!DOCTYPE\\([ \t>].*\\)?"
+            set-variable #l9 3
+            set-variable #l5 "DOCTYPE"
+            !if &band @# 2
+                !force -1 search-forward "<!DOCTYPE\\s +\\w+\\s +\\w+\\s +\"[^\"]*\"\\s +\"[^\"]*\"\\w*>"
+                !if &not $status
+                    set-variable #l9 -12
+                !endif
+            !endif
+        !else
+            set-variable #l9 -12
+        !endif
+    !else
+        set-variable #l9 -6
     !endif
     !if &band @# 2
-        !if &gre #l9 1
-            set-variable $window-col &add #l0 &add &len #l5 &lget "||1|0|0|1|" #l9
-            set-variable #l6 &sub #l2 &lget "||2|2|1|1|" #l9
+        !if &gre #l9 3
+            set-variable $window-col &add #l0 &add &len #l5 &lget "||||1|0|0|1|" #l9
+            set-variable #l6 &sub #l2 &lget "||||2|2|1|1|" #l9
             set-variable #l4 1
             !repeat
                 forward-char
@@ -189,7 +223,7 @@ define-macro xml-backward-tag
     !endif
     !if &les #l9 0
         !if &band @# 1
-            ml-write &spr "[malformed tag on line %d, %s]" #l1 &lget "||expected closing '>'|expected closing declaration '?>'|declaration tag form '<?TAG ... ?>'|expected '</TAG ... >'|expected '<TAG ... >'|tag ends before attribute fully defined|illegal attribute name|'=' expected after attribute name|quoted value expected|separator required between attributes|" &abs #l9
+            ml-write &spr "[malformed tag on line %d, %s]" #l1 &lget "||expected closing '>'|expected closing declaration '?>'|declaration tag form '<?TAG ... ?>'|expected '</TAG ... >'|expected '<TAG ... >'|tag ends before attribute fully defined|illegal attribute name|'=' expected after attribute name|quoted value expected|separator required between attributes|DOCTYPE tag form '<!DOCTYPE type prm1 \"prm2\" \"prm3\">'|" &abs #l9
         !endif
         !if &band @# 4
             set-variable $window-line #l1
@@ -217,13 +251,13 @@ define-macro xml-backward-tag
             !abort
         !elif &les &set #l0 &lget #l9 1 0
             !abort
-        !elif &equ #l0 4
+        !elif &equ #l0 6
             !if &xise &rig @wl $window-col #l2
                 !return
             !endif
             ml-write &spr "[failed to find openning <%s> for tag on line %d]" &lget #p9 6 &lget #p9 2
             !abort
-        !elif &equ #l0 5
+        !elif &equ #l0 7
             @# xml-goto-matching-tag-b
         !endif
     !until 0
@@ -248,9 +282,9 @@ define-macro xml-backward-tag
             !abort
         !elif &les &set #l0 &lget #l9 1 0
             !abort
-        !elif &equ #l0 4
+        !elif &equ #l0 6
             &bor @# 16 xml-goto-matching-tag-f
-        !elif &equ #l0 5
+        !elif &equ #l0 7
             !if &xise &rig @wl $window-col #l2
                 !if &band @# 16
                     set-variable $window-line &lget #l9 4
@@ -285,15 +319,15 @@ define-macro xml-goto-matching-tag
     !if &not $status
         ml-write "[xml-get-tag-info failed]"
     !elif &les &set #l0 &lget #l9 1 0
-    !elif &equ #l0 4
+    !elif &equ #l0 6
         !force !force @# xml-goto-matching-tag-f
         set-variable #l2 $status
-    !elif &equ #l0 5
+    !elif &equ #l0 7
         !force !force @# xml-goto-matching-tag-b
         set-variable #l2 $status
     !else
         !if &seq @p ""
-            ml-write &spr "[standalone %stag]" &lget "|comment |declaration ||||" #l0
+            ml-write &spr "[standalone %stag]" &lget "|comment |CDATA |DOCTYPE |declaration ||||" #l0
         !endif
         set-variable #l2 1
     !endif
@@ -323,11 +357,11 @@ define-macro xml-verify
         !if &not $status
             ml-write "[xml-get-tag-info failed]"
         !elif &les &set #l0 &lget #l9 1 0
-        !elif &equ #l0 4
+        !elif &equ #l0 6
             ml-write &spr "[verifying tag <%s> ...]" &lget #l9 6
             !force !force 19 xml-goto-matching-tag-f
             set-variable #l2 $status
-        !elif &equ #l0 5
+        !elif &equ #l0 7
             ml-write &spr "[verifying tag </%s> ...]" &lget #l9 6
             !force !force 3 xml-goto-matching-tag-b
             set-variable #l2 $status
