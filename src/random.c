@@ -10,7 +10,7 @@
  *
  *	Author:			Danial Lawrence.
  *
- *	Creation Date:		07/05/91 08:19		<000719.1747>
+ *	Creation Date:		07/05/91 08:19		<000720.1645>
  *
  *	Modification date:	%G% : %U%
  *
@@ -2094,25 +2094,25 @@ find_bracket_fence:
                 if(!brakCont)
                 {
                     if(indent == 2)
-			    brakCont = ii ;
+                        brakCont = ii ;
 		    else
 		    {
-			    if((cc == '{') || (cc == '}'))
-				    brakCont = ii-braceIndent ;
-			    else
-				    brakCont = ii+statementIndent ;
-			    if(!onBrace && indent == -1)
-				    brakCont += switchIndent ;
-			    
-			    if(brakCont < 0)
-				    brakCont = 0 ;
+                        if((cc == '{') || (cc == '}'))
+                            brakCont = ii-braceIndent ;
+                        else
+                            brakCont = ii+statementIndent ;
+                        if(!onBrace && indent == -1)
+                            brakCont += switchIndent ;
+                        
+                        if(brakCont < 0)
+                            brakCont = 0 ;
 		    }
                 }
                 curwp->w_doto = off ;
                 if(ii <= statementIndent+braceIndent)
-			indent = 1 ;
+                    indent = 1 ;
 		else if(indent < 0)
-			indent = 0 ;
+                    indent = 0 ;
                 break ;
             }
         case '#':
@@ -2138,13 +2138,16 @@ find_bracket_fence:
 		brakCont = getccol() ;
                 if((continueMax > 0) && (brakCont > continueMax))
 		{
+                    uint16 off ;
                     int ii ;
 
+                    off = curwp->w_doto ;
                     curwp->w_doto = 0 ;
                     gotoFrstNonWhite() ;
                     ii = getccol() + continueMax ;
                     if(ii < brakCont)
                         brakCont = ii ;
+                    curwp->w_doto = off ;
 		}
                 brakCont = 0-brakCont ;
             }
