@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac066.3,v 2.2 2004-01-17 22:27:28 jon Exp $
+.Id $Id: m3mac066.3,v 2.3 2004-01-22 00:56:47 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH toolbar 3
@@ -54,7 +54,7 @@ of date, the command
 .Ht toolbar-refresh 3
 forces the toolbar to be re-evaluated and the content is updated.
 .SH CONFIGURATION
-The toolbar is configured  with command  variables  \fBtoolbar.*\fR.  The size
+The toolbar is configured  with command  variables  \fB.toolbar.*\fR.  The size
 information of the toolbar is defined with the following variables:-
 .IP "\fI.toolbar.width\fR"
 Defines the default width of the left-hand vertical toolbar.
@@ -66,8 +66,8 @@ variable is divided  into  fields,  each field  represents  a single tool. The
 fields are separated with the \fC\\CH\fR  character. The order of the fields MUST
 be the same in each of the variables  such that the field content  matches the
 tool that is being defined.
-.IP "\fI.toolbar.tool-flag\fR"
-The  \fBtool-flag\fR  variable  describes  the  behaviour of the tool, this is
+.IP "\fI.tool-flag\fR"
+The  \fB.tool-flag\fR  variable  describes  the  behaviour of the tool, this is
 defined as a bitmask as follows:-
 .RS
 .TP
@@ -110,8 +110,8 @@ The tool uses a paged window in the toolbar (i.e. only one tool has focus).
 .TP
 \fC0x000400\fR \- Tool is hidden
 .\"
-The tool is currently hidden. When in this state then the 
-not active sub-page \fC0x200\fR will also be set.
+The tool is  currently  hidden.  When in this  state the not  active  sub-page
+\fC0x200\fR will also be set.
 .TP
 \fC0x000800\fR \- Tool paged window, not first user.
 .\"
@@ -171,15 +171,26 @@ are usually \fB*name*\fR so that they are not saved.
 The macro file to load when the tool is loaded, if a tool is not used then the
 macros that define the tool are not loaded.
 .IP "\fI.toolbar.tool-cmds\fR"
-The creation command to run when the command is created.
+The creation and update commands to run when the command is created.
 .SH FILES
 Notable toolbox macro files:-
-.BS 1 0 
+.BS  
+\fCtoolbar.emf\fR \- The main toolbar file.
+.BU
+\fCtoolstp.emf\fR  \- The toolbar setup menu i.e. the right click of the mouse
+on the toolbar mode line.
+.BU
 \fCtoollist.emf\fR \- List off tools available in the toolbar.
 .BU
 \fCbookmark.emf\fR \- The bookmark tool.
 .BU 
 \fCtoolstd.emf\fR  \- Basic tools (Info, Buffer list)
+.BU
+\fCabbrlist.emf\fR \- The buffer tools and buffer abbreviation tools.
+.BU
+\fCitemlist.emf\fR \- Buffer item list tool.
+.BU 
+\fCkilllist.emf\fR \- The kill list tool.
 .BE 0
 .SH "SEE ALSO"
 .na
