@@ -277,6 +277,7 @@ add-file-hook ".sl"                                           fhook-slang
 add-file-hook ".au3"                                          fhook-au3
 add-file-hook ".mod"                                          fhook-mod2
 add-file-hook ".rb"                                           fhook-ruby
+add-file-hook ".r"                                            fhook-r
 ; Add magic hooks
  1 add-file-hook "^#![ \t]*/.*sh"                fhook-shell  ; UNIX shell files
  1 add-file-hook "^#![ \t]*/.*perl"              fhook-perl   ; UNIX perl script

@@ -48,7 +48,7 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		au3.eaf		\
 	hknroff.emf	\
 	hkpascal.emf	hkperl.emf	hkphp.emf	hkphps.emf	\
 	hkpls.emf	hkpseudo.emf	hkpsf.emf	hkpython.emf	\
-	hkreg.emf	hkruby.emf	hkrul.emf	\
+	hkr.emf		hkreg.emf	hkruby.emf	hkrul.emf	\
 	hksamba.emf	hkscheme.emf	hksgml.emf	hkshell.emf	\
 	hkslang.emf	hkspec.emf	hksql.emf	\
 	hktcl.emf	hktexi.emf	hktxt.emf	\
