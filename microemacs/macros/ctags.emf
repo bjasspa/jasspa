@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : 1998
-;  Last Modified : <000918.1236>
+;  Last Modified : <000928.2133>
 ;
 ;  Description   : Command-line macro for creating a C tags file
 ;
@@ -61,8 +61,13 @@ set-char-mask "1" ":~"
         search-forward #l0
         !if &seq @s0 "/*"
             backward-char
-            goto-matching-fence
-            2 forward-char
+            !force goto-matching-fence
+            !if $status
+                2 forward-char
+            !else
+                forward-char
+                search-forward "*/"
+            !endif
         !elif &seq @s0 "//"
             end-of-line
         !elif &seq &lef &trl @s0 3 "#if"
