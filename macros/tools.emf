@@ -16,7 +16,10 @@
     !else
         set-variable %tool-null-file &spr "\"%s\"" &find "null" ""
     !endif
-    ; Once only. Add the default diff command line.
+    ; Once only. Add the default grep & diff command line.
+    !if &not &exi %grep-com
+        set-variable %grep-com "grep"
+    !endif
     !if &not &exi %diff-com
         ; Assume GNU diff utility - probably the best under all platforms !!.
         ;set-variable %diff-com "diff -c -w"
@@ -48,9 +51,6 @@ define-macro compile
     0 ipipe-shell-command %compile-com "*compile*" @mna
 !emacro
 define-macro grep
-    !if &seq %grep-com "ERROR"
-        set-variable %grep-com "grep"
-    !endif
     !force set-variable #l0 @1
     !if &not $status
         set-variable #l0 @ml00 %grep-com
@@ -62,8 +62,8 @@ define-macro grep
     !endif
 !emacro
 define-macro rgrep
-    !if &seq %grep-com "ERROR"
-        set-variable %grep-com "grep"
+    !if &not &exi %find-com
+        exec-file "find"
     !endif
     !force set-variable #l2 @3
     !if &not $status
@@ -75,17 +75,22 @@ define-macro rgrep
         set-variable #l1 @2
     !endif
     !if &seq $platform "win32"
-        set-variable #l3 &find "null" ""
+         ; If this is a drive then add a dot to the end.
+         !if &xis #l1 "[a-z]:/"
+             set-variable #l1 &cat #l1 "."
+         !endif
+         set-variable #l1 &xrep #l1 "/$" ""
+         set-variable #l1 &rep #l1 "/" "\\"
         !if @?
-            4 pipe-shell-command &spr "find \"%s\" -name \"%s\" -exec %s \"%s\" {} %s ;" #l1 #l2 %grep-com #l0 %tool-null-file "*grep*" @mna
+            4 pipe-shell-command &spr "%s \"%s\" -name \"%s\" -exec %s \"%s\" {} %s ;" %find-com #l1 #l2 %grep-com #l0 %tool-null-file "*grep*" @mna
         !else
-            4 ipipe-shell-command &spr "find \"%s\" -name \"%s\" -exec %s \"%s\" {} %s ;" #l1 #l2 %grep-com #l0 %tool-null-file "*grep*" @mna
+            4 ipipe-shell-command &spr "%s \"%s\" -name \"%s\" -exec %s \"%s\" {} %s ;" %find-com #l1 #l2 %grep-com #l0 %tool-null-file "*grep*" @mna
         !endif
     !else
         !if @?
-            0 pipe-shell-command &spr "find \"%s\" -name \"%s\" -exec %s \"%s\" {} %s \\;" #l1 #l2 %grep-com #l0 %tool-null-file "*grep*" @mna
+            0 pipe-shell-command &spr "%s \"%s\" -name \"%s\" -exec %s \"%s\" {} %s \\;" %find-com #l1 #l2 %grep-com #l0 %tool-null-file "*grep*" @mna
         !else
-            0 ipipe-shell-command &spr "find \"%s\" -name \"%s\" -exec %s \"%s\" {} %s \\;" #l1 #l2 %grep-com #l0 %tool-null-file "*grep*" @mna
+            0 ipipe-shell-command &spr "%s \"%s\" -name \"%s\" -exec %s \"%s\" {} %s \\;" %find-com #l1 #l2 %grep-com #l0 %tool-null-file "*grep*" @mna
         !endif
     !endif
 !emacro

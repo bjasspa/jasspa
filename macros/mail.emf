@@ -607,3 +607,5 @@ define-macro mail-send
         mail-send-msg
     !endif
 !emacro
+
+buffer-init-fhook "mail"

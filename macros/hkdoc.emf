@@ -36,3 +36,5 @@ define-macro ehook-doc
 
 ; load docmacro.emf passing the doc setup flags
 execute-file "docmacro" "doc"
+
+buffer-init-fhook "doc"
