@@ -80,6 +80,7 @@ define-macro-file fattrib file-attrib
 define-macro-file organize organizer
 define-macro-file userstp user-setup
 define-macro-file word describe-word
+define-macro-file watch
 define-macro-file notes
 define-macro-file gdiff
 define-macro-file calc
