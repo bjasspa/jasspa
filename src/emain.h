@@ -81,6 +81,7 @@
 #define _SOCKET        1                /* Supports url reading          */
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
+#define _DRAGNDROP     1                /* Drag and drop supported.      */
 #define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa"
 #endif
 
@@ -102,6 +103,7 @@
 #define _SOCKET        1                /* Supports url reading          */
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
+#define _DRAGNDROP     1                /* Drag and drop supported.      */
 #define _meDEF_SYS_ERRLIST              /* errno.h not def sys_errlist   */
 #define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa"
 #endif
@@ -122,6 +124,7 @@
 #define _SOCKET        1                /* Supports url reading          */
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
+#define _DRAGNDROP     1                /* Drag and drop supported.      */
 #define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa"
 #endif
 
@@ -143,6 +146,7 @@
 #define _SOCKET        1                /* Supports url reading          */
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
+#define _DRAGNDROP     1                /* Drag and drop supported.      */
 #define _meDEF_SYS_ERRLIST              /* errno.h not def sys_errlist   */
 
 /* Search path for CSW Sun build. */
@@ -188,6 +192,7 @@
 #define _SOCKET        1                /* Supports url reading          */
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
+#define _DRAGNDROP     1                /* Drag and drop supported.      */
 #define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa:/usr/local/share/jasspa"
 #endif
 
@@ -207,6 +212,7 @@
 #define _SOCKET        1                /* Supports url reading          */
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
+#define _DRAGNDROP     1                /* Drag and drop supported.      */
 #define _meDEF_SYS_ERRLIST              /* errno.h doesnt def sys_errlist*/
 #define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa"
 #endif
@@ -236,6 +242,7 @@
 #define _SOCKET        1                /* Supports url reading          */
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
+#define _DRAGNDROP     1                /* Drag and drop supported.      */
 #define _DEFAULT_SEARCH_PATH "/usr/share/jasspa:/usr/local/jasspa"
 #endif
 
@@ -256,6 +263,7 @@
 #define _XTERM         1                /* Use Xlib                      */
 #define _CLIENTSERVER  1                /* Client server support         */
 #define _SOCKET        1                /* Supports url reading          */
+#define _DRAGNDROP     1                /* Drag and drop supported.      */
 #if 0
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #endif

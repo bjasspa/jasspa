@@ -1917,6 +1917,68 @@ main(int argc, char *argv[])
                 selhilight.flags &= ~SELHIL_ACTIVE ;
             TTbreakFlag = 0 ;
         }
+
+#ifdef _DRAGNDROP
+        /* if drag and drop is enabled then process the drag and drop
+         * files now. Note we make the invocation here as we
+         * know we have returned to a base state; any macro's would have
+         * been aborted. However it is better that macro debugging
+         * is disabled so explicitly disable it. */
+        if (dadHead != NULL)
+        {
+            struct s_DragAndDrop *dadp; /* Drag and drop pointer */
+#if MEOPT_FRAME            
+            meFrame *startFrame;        /* Starting frame */
+            startFrame = frameCur;
+#endif
+            /* Disable the cursor to allow the mouse position to be
+             * artificially moved */
+#if MEOPT_DEBUGM
+            macbug = 0;                 /* Force macro debugging off */
+#endif
+            /* Iterate down the list and get the files. */
+            while ((dadp = dadHead) != NULL)
+            {
+#if MEOPT_FRAME            
+                /* Change to the correct frame */
+                meFrameMakeCur (dadp->frame, 1);
+#endif
+
+#if MEOPT_MOUSE
+                /* Re-position the mouse */
+                mouse_X = clientToCol (dadp->mouse_x);
+                mouse_Y = clientToRow (dadp->mouse_y);
+                if (mouse_X > frameCur->width)
+                    mouse_X = frameCur->width;
+                if (mouse_Y > frameCur->depth)
+                    mouse_Y = frameCur->depth;
+
+                /* Find the window with the mouse */
+                setCursorToMouse (meFALSE, 0);
+#endif
+#if MEOPT_EXTENDED
+                /* if the current window is locked to a buffer find another */
+                if(frameCur->windowCur->flags & meWINDOW_LOCK_BUFFER)
+                    meWindowPopup(NULL,WPOP_MKCURR|WPOP_USESTR,NULL) ;
+#endif
+
+                /* Find the file into buffer */
+                findSwapFileList (dadp->fname,BFND_CREAT|BFND_MKNAM,0);
+
+                /* Destruct the list */
+                dadHead = dadp->next;
+                meFree (dadp);
+            }
+            
+#if MEOPT_FRAME            
+            /* Restore the starting frame */
+            meFrameMakeCur (startFrame, 1);
+#endif
+
+            /* Display a message indicating last trasaction */
+            mlwrite (0, "Drag and Drop transaction completed");
+        }
+#endif /* _DRAGNDROP */
     }
     return 0 ;
 }

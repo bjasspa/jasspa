@@ -195,20 +195,6 @@ typedef struct
 
 CellMetrics eCellMetrics={0};           /* Cell metrics */
 RECT   ttRect;                          /* Area of screen to update */
-
-#ifdef _DRAGNDROP
-/* Retain a list of drag and drop files with thier raw screen position and
- * filename for subsequent processing. This is a single linked list of
- * filenames and screen positions. */
-typedef struct s_DragAndDrop
-{
-    struct s_DragAndDrop *next;         /* Next drag and drop event */
-    POINT mousePos;                     /* Position of the mouse */
-    meUByte fname[1];                      /* Filename */
-};
-
-static struct s_DragAndDrop *dadHead = NULL;
-#endif
 #endif /* _ME_WINDOW */
 
 #if MEOPT_CLIENTSERVER
