@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd143.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd143.2,v 2.6 2005-02-13 19:31:22 jon Exp $
 .Im MicroEmacs command|file
 .ds C0 "(\fB\*(cX\*cw\fR)\ \&
 .so me.tni
@@ -55,7 +55,7 @@ with \fIfile-name\fR) then any
 .Hl "automatic save" $auto-time 5
 copies of the file associated with the \fIbuffer\fR are deleted.
 .PP
-The  argument  \fIn\fR  can  be  used  to  change  the  default  behavior  of
+The  argument  \fIn\fR  may  be  used  to  change  the  default   behavior  of
 write-buffer described above, \fIn\fR is a bit based flag where:-
 .IP \fB0x01\fR
 Enables  validity  checks  (default).  These include a check that the proposed
@@ -69,17 +69,18 @@ Disables the expansion of any narrows (see
 before saving the buffer.
 .SH NOTES
 .Ht undo 2
-information is discarded when the file is written.
+information may be discarded when the file is written.
 .SH "SEE ALSO"
 .na
 .Ht $auto-time 5 ,
+.Ht append-buffer 2 ,
 .Ht backup 2m ,
-.Ht time 2m ,
 .Ht buffer-mode 2 ,
-.Ht file-attrib 3 ,
 .Ht change-file-name 2 ,
+.Ht file-attrib 3 ,
 .Ht save-buffer 2 ,
-.Ht append-buffer 2 .
+.Ht time 2m ,
+.Ht write-region 3 .
 .ad
 .rm C0
 .FH
