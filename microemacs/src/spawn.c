@@ -172,8 +172,11 @@ getShellCmd(void)
     static meUByte *shellCmd=NULL ;
     if(shellCmd == NULL)
     {
-        meUByte *cp;
-        if(((cp = meGetenv("SHELL")) == NULL) || (*cp == '\0'))
+        meUByte *cp, env[meBUF_SIZE_MAX], exe[meBUF_SIZE_MAX] ;
+        if(((cp = meGetenv("SHELL")) != NULL) && (cp[0] != '\0') &&
+           (meStrcpy(env,cp),(executableLookup(env,exe) != 0)))
+            cp = exe ;
+        else
             cp = (meUByte *)"/bin/sh" ;
         shellCmd = meStrdup(cp) ;
     }
