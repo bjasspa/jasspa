@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.33 2005-02-19 10:54:42 jon Exp $
+.Id $Id: me.nrs,v 2.34 2005-03-06 08:45:04 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -2058,6 +2058,161 @@ common editor across all working platforms has been achieved!
 .\"
 .B "8th Release - March 2005"
 .BS
+[050306]  Changed  the date  format of the  \fB-V\fR  command  line  option to
+include the century, same format as the
+.Ht about 2
+buffer.
+.BU
+[050302] HTLP and PHP - fixed 
+.Ht indent 2 
+problems.
+.BU
+[050302]  Perl  template - fixed  indent  problems  caused by not skipping the
+\fC=~\fR type regular expressions.
+.BU
+[050302] TCL template - fixed continuation and comment indent bug.
+.BU        
+[050302] Added support for R/S-plus (.r) files - thanks to Detlef.
+.BU
+[050225] HTML  template - fixed an indent which was fixed at "\fC2\fR"  rather
+than "\fCt\fR" and added comment skipping indent rules
+.BU
+[050225] 
+.Ht dos2unix 3f ,
+.Ht unix2dos 3f
+and
+.Ht unix2win 3f 
+\- Removed use of  \fB&spr\fR  in favor of \fB&cat\fR so  \fCdos2unix\fR  etc.
+work in
+.Ht ne 1 .
+[050225]  Tracing a problem with hilighting a token of the form  "\fCAB*$\fR",
+works if there is a '\fCB\fR' but fails if there are no '\fCB\fR's,  i.e. only
+matches  "\fCAB+$\fR".  Found that  removing the end of line special case code
+fixes the problem. I believe the rest of the code has been  improved to handle
+any end-of-line quirks - I hope so!
+.BU
+[050225]  Removed the  '\fCstart-up\fR'  macro function  compile option so all
+versions support this - "\fCne\fR" can now do a "\fC@dos2unix\fR"
+.BU
+[050225]  Regular  expressions - extended  replacement  string  syntax.  Added
+support for  "\fC\\c#\fR"  "\fC\\l#\fR" and "\fC\\u#\fR" to change the case of
+groups, where  "\fC\\c#\fR" is capitalise,  "\fC\\l#\fR" is lower "\fC\\u#\fR"
+is upper and "\fC#\fR" is the group number (\fC0-9\fR, \fC&\fR)
+.BU
+[050225] Regular expressions - changed syntax of "\fC\\s?\fR" and "\fC\\S?\fR"
+in favor of Perl's simpler  "\fC\\s\fR" and "\fC\\S\fR" for a whitespace  char
+class. Added new character classes "\fC\\d\fR" = digits, "\fC\\D\fR" != digits
+"\fC\\h\fR"  = hexdigits  "\fC\\H\fR"  !=  hexdigits  "\fC\\l\fR"  = lowercase
+"\fC\\L\fR" != lowercase "\fC\\u\fR" = uppercase and "\fC\\U\fR" != uppercase.
+These changes were made to both the main regex search engine and the 
+.Ht hilight 2
+token  matching  engine. Added support for char classes  within the main regex
+\fC[...]\fR  character class, i.e. now supports regexs like  "\fC[\\l\\u_]\fR"
+for any lower, upper or '\fC_\fR'  char. This is not  supported in the hilight
+which currently has a more simplistic "\fC[...]\fR" char class support.
+.BU
+[050225]  Regular  expressions  - changed use of "\fC\\s  \fR",  "\fC\\s-\fR",
+"\fC\\S \fR" and  "\fC\\S-\fR"  classes to simply  "\fC\\s\fR" and "\fC\\S\fR"
+which is perl regex  compliant  (ditching  Emacs  "\fC\\s\fR"  syntax as it is
+cumbersome  and not very  useful).  The only  nasty side  effect is  hilight's
+miss-use of  "\fC\\S1\fR" - "\fC\\S9\fR" to mean not "\fC\\1\fR" - "\fC\\9\fR"
+group char, changed to "\fC\\!1\fR" - "\fC\\!9\fR"
+.BU
+[050224] 
+.Ht ne 1 
+set to not auto-save or create backups by default.
+.BU
+[050224]  Added  "\fC-a\fR" and "\fC-B\fR"  command line options to enable and
+disable auto-save 
+.Ht auto 2m 
+and
+.Ht backup 2m 
+modes.
+.BU
+[050224] Tcl template - some more fixes to the item list from Detlef
+.BU
+[050224] 
+.Ht watch 3 
+improved   the  refresh  rate  of  a  type  2  or  3  watch  by  ignoring  the
+\fC:watch-time\fR and just look at the \fC:watch-size\fR. Fixed the split line
+issue with type 2 of 3 watching caused by last line not being complete.
+.BU
+[050224]  \fBM-x\fR  \fBftp\fR  -  stripped  '\fCftp://\fR'  and any  trailing
+\'\fC/\fR'  of the users  entered  host name as these break ftp.  Improved the
+dialog's  handling of passwords,  the user can now tell if a password has been
+set.
+.BU
+[050224] Added standard binding for mark-function
+.BU
+[050224] Fixed the ME token hilighting in the C hook
+.BU
+[050224] Removed  recently added  \fC%no_backup\fR  variable to disable backup
+create as new \fB-B\fR option is a much better way of doing it.
+.BU
+[050224] \fCedef.h\fR - Removed definition of non-existant variable
+.BU
+[050224]  Fixed  failure  when  trying to load  "\fChttp://www.jasspa.com\fR",
+there is an implicit trailing '\fC/\fR' which \*(mS now adds.
+.BU
+[050224] Tcl template - major improvement - courtesy of Detlef.
+.BU
+[050224] Fixed \fBcollapse\fRto  support the file hooks .exact setting (set to
+-1 means case insensitive)
+.BU
+[050224]   Added   new   \fBbeginning-of-function\fR,   \fBend-of-function\fR,
+\fBgoto-function-line\fR and \fBmark-function macros\fR - thanks to Detlef.
+.BU
+[050223]   Windows  MS-dev  6  project  -  corrected   project   settings  for
+\fC_URLSUPP\fR  to  \fC_SOCKET\fR  in keeping with the socket dynamic  library
+loading.
+.BU
+[050223] Added exec of wish to the tcl magic hook
+.BU
+[050223] Fixed 
+.Ht $window-chars 5
+- added OSD default button chars.
+.BU
+[050222] Fixed 
+.Ht $user-path 5
+being more that 35 chars breaking the 
+.Ht user-setup 3
+dialog.
+.BU
+[050222]   Directory   listing  -  call   \fCfhook-html\fR   when  file  is  a
+\fChttp://\fR file - this is never a directory listing.
+.BU
+[050222]  Stopped  loading of files in dir listing  when  clicking  way to the
+right, must click on the name (\*(mS kept  loading  files when just  trying to
+raise the window to the front - annoying).
+.BU
+[050222] If 0 given  to 
+.Ht watch 3
+call watch-time, this preserves the old interface.
+.BU
+[050222] Added backup file disabling for 
+.Ht dos2unix 3f 
+macros via command line defineable variable.
+.BU
+[050221]   Changed   the   new   Windows   process   tree   killing   to   use
+\fCLoadLibrary()\fR  to detect  whether the OS supports  this  feature (and NT
+does not). Also moved the URL support  over to  \fCLoadLibrary()\fR  so we can
+remove the \fB-u\fR builds.
+.BU
+[050220] Added UNIX Shell and Makefile hilighting to 
+.Ht notes 3 ).
+.BU
+[050219]  Fixed GNU GCC  warnings in Makefiles  for #pragma in X11 files under
+Sun Solaris and uninitialized variables.
+.BU
+[050219] 
+.Ht osd 2 .
+Removed dialog  '\fCF\fR' flag as it was not documented, did not work and only
+used in one obscure  place. Fixed  \fBC-g\fR and \fBDel\fR so they close up to
+the  previous  dialog  but does  close  the main  menu  down in one call - was
+annoying.
+.BU
+[050219] Release Candidate 1 - MicroEmacs 2005 (RC1)
+.BU
 [050218]  Corrected  \s-1UNIX\s0  
 .Hl client-server Client-Server 2
 socket file check -- bad test on  existence  of  connection  file, using wrong
