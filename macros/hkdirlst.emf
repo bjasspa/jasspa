@@ -874,7 +874,7 @@ define-macro file-browser-swap-buffers
         ml-write "[Rename file: something strange happend - abort]"
         !abort
     !endif
-    set-variable #l0 ""
+    set-variable #l0 &ind &cat ".find-file.file" 1
     2 osd-entry "Rename File" "\HNew Name : " #l0 .dirlst-pos.x .dirlst-pos.y 20
     !if &seq &set #l1 &stat "t" &cat .find-file.file-dir #l0 "R"
         2 osd-xdialog "Rename File" &spr "  %s already exists, replace?  " #l0 2 .dirlst-pos.x .dirlst-pos.y " \HYes " " \HNo "
