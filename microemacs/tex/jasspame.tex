@@ -7,12 +7,12 @@
 %  System        : MicroEmacs
 %  Module        : user Manual
 %  Object Name   : $RCSfile: jasspame.tex,v $
-%  Revision      : $Revision: 1.7 $
-%  Date          : $Date: 2005-03-13 21:14:26 $
+%  Revision      : $Revision: 1.8 $
+%  Date          : $Date: 2005-03-14 23:48:02 $
 %  Author        : $Author: jon $
 %  Created By    : Jon Green
 %  Created       : Mon Oct 25 21:36:13 2004
-%  Last Modified : <050313.2108>
+%  Last Modified : <050314.2345>
 %
 %  Description
 %
@@ -35,8 +35,8 @@
 \documentclass[11pt,a4paper,pdftex]{article}
 % Bring in the CVS information.
 \def\CVS$#1: #2 ${\expandafter\def\csname CVS#1\endcsname{#2}}
-\CVS$Revision: 1.7 $ % or any CVS keyword
-\CVS$Date: 2005-03-13 21:14:26 $
+\CVS$Revision: 1.8 $ % or any CVS keyword
+\CVS$Date: 2005-03-14 23:48:02 $
 
 \usepackage{ifthen}                     % Conditional processing.
 
@@ -299,6 +299,8 @@ Typeset with the TexLive 2004 \LaTeX\ Documentation System under Sun Solaris
     \hline
     \tableTitle{Date} & \tableTitle{Who} & \tableTitle{Description} & \tableTitle{Revision} \\
     \hline
+    2005/03/14 & Jon & Updated with Buffer Setup information.
+                       Added section MicroEmacs Basics. & 1.8\\ \hline
     2004/10/25 & Jon & Draft. & 1.00 \\ \hline
     \end{tabular}
   \end{table}
@@ -850,6 +852,50 @@ c:> build}
     \end{itemize}
 
   \end{itemize}
+
+\subsection{Buffer Setup}
+
+  The \textbf{User Setup} described in the previous section defines the global
+  parameters and settings for the user session. User modifiable configuration
+  parameters also exist on a buffer basis, settings such as
+  \textit{indentation} are modified, per buffer type, using the command:
+  
+  \textbf{esc-x buffer-setup} $\dots$ \textit{OR}\newline
+  \textbf{Help$\rightarrow$Buffer Setup}
+  
+  The settings for the buffer, Figure~\ref{fig:buffersetup}, are saved in the
+  user registry file (\textbf{\textit{user}.erf}) and are configured into any
+  subsequent buffer of the given type that is loaded. The buffer setup dialog
+  is tailored to a specific buffer type i.e. the Buffer Setup for the C
+  programming language includes specific C options. 
+  
+\begin{figure}[!hbt]
+  \begin{center}
+    \includegraphics[keepaspectratio,height=4in]{buffersetup}
+    \caption{Buffer Setup Dialog}
+    \label{fig:buffersetup}
+  \end{center}
+\end{figure}
+  
+  The following notable fields exist in the Buffer Setup dialog:
+  
+  \begin{itemize}
+    \item Search Modes, to control the exact and magic search modes.
+    \item Buffer Modes, the default modes for the buffer type.
+    \item Tab Width, the width of a rendered \texttt{TAB} character, the 
+    default is 8 characters.
+    \item Indent Width, the indentation width for the buffer, the default is 4 
+    (controlled by the variable \textit{\$indent-width}).
+  \end{itemize}
+  
+  The \textit{indentation} and \textit{tab width} may be temporarily
+  controlled without changing the saved setting using the command \textbf{M-x
+  indent-setup}. Running the command presents a dialog which locally changes
+  the indentation setting of the current buffer. This is useful when dealing
+  with code from a different source where the \textit{indentation} and
+  \textit{Tab width} may be aligned to match the original authoring, the
+  command \textbf{M-x tabs-to-spaces} may be used to expand the tabs back to
+  spaces to make the file editor portable.
 
 \subsection{MicroEmacs Integration}
 
