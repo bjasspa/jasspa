@@ -419,7 +419,7 @@ add_more:
             {
                 meRegexItem **itp, **iap ;
                 int *iip ;
-                if((itp=malloc((matchSz+128+4)*(sizeof(meRegexItem *)+sizeof(meRegexItem *)+
+                if((itp=(meRegexItem **)malloc((matchSz+128+4)*(sizeof(meRegexItem *)+sizeof(meRegexItem *)+
                                                 sizeof(int)+sizeof(int)))) == NULL)
                     return -1 ;
                 matchSz += 128 ;
@@ -611,7 +611,7 @@ meRegexItemCreate(meRegex *regex)
     
     if((item=regex->lnext) == NULL)
     {
-        if((item=malloc(sizeof(meRegexItem))) == NULL)
+        if((item=(meRegexItem *)malloc(sizeof(meRegexItem))) == NULL)
             return NULL ;
         item->lnext = regex->lhead ;
         regex->lhead = item ;
@@ -1200,8 +1200,8 @@ meRegexComp(meRegex *regex, unsigned char *regStr, int flags)
     /* If first time, malloc initial match buffers */
     if(matchSz == 0)
     {
-        if((matchItem=malloc((128+4)*(sizeof(meRegexItem *)+sizeof(meRegexItem *)+
-                                      sizeof(int)+sizeof(int)))) == NULL)
+        if((matchItem=(meRegexItem **)malloc((128+4)*(sizeof(meRegexItem *)+sizeof(meRegexItem *)+
+                                                      sizeof(int)+sizeof(int)))) == NULL)
             return meREGEX_ERROR_MALLOC ;
         matchSz = 128 ;
         matchAlt  = (meRegexItem **) (matchItem+128+4) ;
@@ -1210,7 +1210,7 @@ meRegexComp(meRegex *regex, unsigned char *regStr, int flags)
     }
     if(((ii=strlen((char *) regStr)) > regex->regexSz) || (regex->regex == NULL))
     {
-        if((regex->regex = realloc(regex->regex,ii+1)) == NULL)
+        if((regex->regex = (unsigned char *)realloc(regex->regex,ii+1)) == NULL)
         {
             regex->regexSz = 0 ;
             return meREGEX_ERROR_MALLOC ;
@@ -1247,7 +1247,7 @@ meRegexComp(meRegex *regex, unsigned char *regStr, int flags)
     /* check the group array is large enough */
     if(regex->groupNo >= regex->groupSz)
     {
-        if((regex->group=realloc(regex->group,(regex->groupNo+1) * sizeof(meRegexGroup))) == NULL)
+        if((regex->group=(meRegexGroup *)realloc(regex->group,(regex->groupNo+1) * sizeof(meRegexGroup))) == NULL)
         {
             regex->groupSz = 0 ;
             return meREGEX_ERROR_MALLOC ;
@@ -1464,4 +1464,3 @@ main(int argc, char *argv[])
 
 #endif
 #endif
-
