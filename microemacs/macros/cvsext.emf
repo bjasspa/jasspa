@@ -1,0 +1,151 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : $Author: jon $
+;  Created By    : Steven Phillips
+;  Created       : Mon Jul 30 11:48:08 2001
+;  Last Modified : <010821.2034>
+;
+;  Description
+;
+;  Notes
+;
+;       cvs log .... > my.log
+;
+; load my.log, execute-file cvsext and run cvs-list - not that the current rev
+; modifies the my.log buffer. I will add this to the cvs support at some
+; point.
+; 
+;
+;  History
+;
+;  Copyright (c) 2001 PTC.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro cvs-list-prep-single
+    set-mark
+    search-forward "^RCS file:"
+    beginning-of-line
+    forward-line
+    set-variable #l0 @wl
+    search-forward "^\\(----\\|====\\)"
+    beginning-of-line
+    kill-region
+    -1 yank
+    !while &seq @wc "-"
+        forward-line
+        set-variable #l1 @wl
+        set-mark
+        forward-line
+        kill-region
+        -1 yank
+        search-forward ";"
+        backward-delete-char
+        forward-delete-char
+        forward-delete-char
+        insert-newline
+        search-forward ";"
+        backward-char
+        kill-line
+        -1 yank
+        search-forward "^\\(----\\|====\\)"
+        beginning-of-line
+        insert-string &spr "%s; %s\n" #l0 #l1
+    !done
+    set-mark
+    forward-line
+    kill-region
+    -1 yank
+!emacro
+
+define-macro cvs-list-rmdup-single
+    forward-line
+    !if &not &seq &lef @wl 5 "date:"
+        !abort
+    !endif
+    set-variable #l0 &lef @wl 17
+    forward-line
+    set-mark
+    forward-line
+    !tjump &not &seq &lef @wl 13 "Working file:" -1
+    copy-region
+    set-variable #l1 @y
+    -1 yank
+    forward-line
+    set-alpha-mark "\x81"
+    str-to-regex #l1
+    set-variable #l0 &spr "-\n%s.*\n%s" #l0 #l1 
+    !force search-forward #l0
+    !while $status
+        -2 show-region
+        beginning-of-line
+        set-mark
+        forward-line
+        search-forward "^----"
+        beginning-of-line
+        backward-line
+        set-variable #l1 @wl
+        forward-line
+        kill-region
+        -1 yank
+        set-alpha-mark "\x82"
+        goto-alpha-mark "\x81"
+        insert-string &cat #l1 "\n"
+        set-alpha-mark "\x81"
+        goto-alpha-mark "\x82"
+        !force search-forward #l0
+    !done
+    goto-alpha-mark "\x81"
+!emacro
+
+define-macro cvs-list
+    set-variable #l2 $buffer-bname
+    beginning-of-buffer
+    1 buffer-mode "magic"
+    !repeat
+        !force cvs-list-prep-single
+    !until &not $status
+    insert-string &spr "%n" 28 "-"
+    beginning-of-buffer
+    !repeat
+        !force cvs-list-rmdup-single
+    !until &not $status
+    beginning-of-buffer
+    !force 0 delete-buffer "*cvs-list*"
+    find-buffer "*cvs-list*"
+    -1 buffer-mode "undo"
+    find-buffer #l2
+    !force search-forward "--\ndate:"
+    !while $status
+        set-variable #l0 $window-line
+        set-variable #l1 @wl
+        find-buffer "*cvs-list*"
+        insert-string &spr "%9d %s\n" #l0 #l1
+        find-buffer #l2
+        !force search-forward "--\ndate:"
+    !done
+    find-buffer "*cvs-list*"
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    backward-line
+    -10 sort-lines
+    beginning-of-buffer
+    !while &not &seq @wl ""
+        set-variable #l0 &add 0 @wl
+        find-buffer #l2
+        #l0 goto-line
+        set-mark
+        search-forward "^----"
+        beginning-of-line
+        forward-line
+        copy-region
+        find-buffer "*cvs-list*"
+        yank
+        -1 yank
+        set-mark
+        forward-line
+        kill-region
+        -1 yank
+    !done
+    beginning-of-buffer
+!emacro
