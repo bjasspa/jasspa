@@ -4,9 +4,16 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <041016.1930>
+>  Last Modified : <041016.2349>
 >
-    [041016] Added Ruby programing language support.
+
+    [041016] Fixed termcap entry for ^@ key (C-space).  (Thanks to Bob Paddock
+             for noting ommission)
+
+    [041016] Added M-% binding to  query-replace  as built in binding. (Thanks
+             to Bob Paddock)
+
+    [041016] Added Ruby programming language support.
 
     [041014] Within OSD, fixed spelling mistake. Loose -> Lose
 
