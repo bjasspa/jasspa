@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd035.2,v 2.6 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd035.2,v 2.7 2005-02-19 10:56:30 jon Exp $
 .Im MicroEmacs command|delete
 .ds C0 "(\fB\*ed\fR)\ \&
 .ds C1 "(\fB\*e\*(bS\fR)\ \&
@@ -33,8 +33,9 @@ deletes the next \fIn\fR words  starting at the current  cursor  position, the
 deleted text is added to the kill buffer. See
 .Ht forward-word  2
 for a description of word  boundaries. If the argument  \fIn\fR is \fC0\fR the
-command has no effect. If a \-ve  argument is  specified,  +\fIn\fR  words are
-deleted and the text is not added to the kill buffer.
+command has no effect. If a \-ve  argument is  specified,  \fIn\fR  words are
+deleted backwards (i.e. this is the same as 
+.BR "-n backward-kill-word" ).
 .PP
 .B backward-kill-word
 deletes the  previous  \fIn\fR  words  before the cursor, the deleted  text is
@@ -44,13 +45,21 @@ added to the kill  buffer. The  numeric  argument has the same  effect as with
 .B backward-kill-word
 is also bound to \fB\*e\*(bS\fR.
 .PP
-The \-ve argument is typically  used from macro  scripts where the kill buffer
-is more precisely controlled.
+The \-ve argument is typically  used by macro scripts where the kill buffer is
+more precisely controlled.
+.SH HISTORY
+The  interpretation  of the numeric  argument  was changed in the 2005 release
+to kill  \fIn\fR  words in a forwards  or  backwards  direction.  In  previous
+releases  then the \-ve  argument  controlled  the kill  buffer  behavior.  If
+kill buffer control is required then 
+.Ht kill-region 2
+should be used instead.
 .SH "SEE ALSO"
 .na
 .Ht backward-delete-char 2 ,
 .Ht forward-delete-char 2 ,
 .Ht forward-word 2 ,
+.Ht kill-region 2 ,
 .Ht yank 2 .
 .ad
 .rm C0
