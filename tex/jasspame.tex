@@ -7,12 +7,12 @@
 %  System        : MicroEmacs
 %  Module        : user Manual
 %  Object Name   : $RCSfile: jasspame.tex,v $
-%  Revision      : $Revision: 1.4 $
-%  Date          : $Date: 2005-03-11 23:16:41 $
+%  Revision      : $Revision: 1.5 $
+%  Date          : $Date: 2005-03-12 01:07:58 $
 %  Author        : $Author: jon $
 %  Created By    : Jon Green
 %  Created       : Mon Oct 25 21:36:13 2004
-%  Last Modified : <050311.2313>
+%  Last Modified : <050312.0105>
 %
 %  Description
 %
@@ -21,6 +21,9 @@
 %  History
 %
 %  $Log: not supported by cvs2svn $
+%  Revision 1.4  2005/03/11 23:16:41  jon
+%  Included start up window position and size information
+%
 %  Revision 1.3  2005/03/11 21:12:42  jon
 %  Added desktop integration information.
 %
@@ -46,8 +49,8 @@
 \documentclass[11pt,a4paper,pdftex]{article}
 % Bring in the CVS information.
 \def\CVS$#1: #2 ${\expandafter\def\csname CVS#1\endcsname{#2}}
-\CVS$Revision: 1.4 $ % or any CVS keyword
-\CVS$Date: 2005-03-11 23:16:41 $
+\CVS$Revision: 1.5 $ % or any CVS keyword
+\CVS$Date: 2005-03-12 01:07:58 $
 
 \usepackage{ifthen}                     % Conditional processing.
 
@@ -933,7 +936,7 @@ c:> build}
 
   \end{itemize}
 
-\subsubsection{Tools Integration}
+\subsubsection{Application Integration}
 
   MicroEmacs may be invoked from other tools as the selected text editor (i.e.
   \textbf{WinZip}). Multiple files may be specified on the command line for
@@ -947,5 +950,88 @@ c:> build}
 
   which opens file \texttt{foo.c} displaying line 20 and opens \texttt{bar.c}
   displaying line 902.
+
+\subsubsection{Utilities Integration}
+
+  MicroEmacs uses the standard UNIX utilities such as \textbf{grep},
+  \textbf{find} and \textbf{diff} for searching for information from the file
+  system when present. These tools are typically found as default on a UNIX
+  system. 
+
+  Where the tools are \underline{not} on the execution path, or the tool
+  default options are altered, then the tools should be declared to MicroEmacs
+  in your \textbf{\textit{username}.emf} file. Table~\ref{tab:com} defines
+  the variables which are associated with the utility execution.
+
+  \begin{table}[ht]
+   \begin{center}
+    \begin{tabular}{lll}
+    \textbf{Variable} & \textbf{Description} \\ \hline
+    \textbf{\%man-com} & \texttt{man} utility, find and display reference pages.\\
+    \textbf{\%find-com} & \texttt{find} utility, find files.\\
+    \textbf{\%grep-com} & \texttt{grep} utility, search a file for a pattern.\\
+    \textbf{\%diff-com} & \texttt{diff} utility, compare two files.\\
+    \textbf{\%gdiff-com} & \texttt{diff} utility, graphical compare of two files.\\
+    \textbf{\%cvs-com} & \texttt{cvs} utility, Concurrent versions system.\\
+    \textbf{\%compile-com} & \texttt{make} utility, build command line. \\ \hline
+    \end{tabular}
+    \caption{External Command Variables}
+    \label{tab:com}
+   \end{center}
+  \end{table}
+  
+  The command defaults are platform specific, but are typically defined as
+  follows:
+  
+  \CodeInsert{%
+  set-variable \%man-com "man"\newline
+  set-variable \%find-com "find"\newline
+  set-variable \%grep-com "grep -n"\newline
+  set-variable \%diff-com "diff -r -c"\newline
+  set-variable \%gdiff-com "diff -w"\newline
+  set-variable \%find-com "find"\newline
+  set-variable \%cvs-com "cvs"\newline
+  set-variable \%compile-com "make"}
+
+\subsubsection{Microsoft Windows UNIX utilities}
+
+  Microsoft Windows does not include the standard UNIX utilities by default,
+  they may be downloaded from
+  \href{http://unxutils.sourceforge.net/}{http://unxutils.sourceforge.net/}.
+  Alternatively \textbf{cygwin} binaries may be used if installed.
+
+  The tools should be declared to MicroEmacs in your
+  \textbf{\textit{username}.emf} file, typically located in directory
+  \textbf{c:$\backslash$Documents and
+  Settings$\backslash$\textit{username}$\backslash$Application
+  Data$\backslash$jasspa}. 
+
+  With the \textbf{unxutils} standard installation
+  then the tools are defined in \textbf{\textit{username}.emf} as follows:
+
+  \CodeInsert{set-variable \%grep-com "c:/unix/usr/local/wbin/grep.exe -n"\newline
+  set-variable \%find-com "c:/unix/usr/local/wbin/find.exe"\newline
+  set-variable \%diff-com "c:/unix/usr/local/wbin/diff.exe -c -d -b -r"\newline
+  set-variable \%gdiff-com "c:/unix/usr/local/wbin/diff.exe -c -w"}
+
+  The directory path and options should be modified to match \textit{your}
+  version of the tools.
+
+\subsubsection{Microsoft Windows and Cygwin}
+
+  MicroEmacs integrates with \textbf{Cygwin}
+  (\href{http://www.cygwin.com}{www.cygwin.com}) allowing a \textbf{Bash}
+  shell to be opened up in a window using the command \textbf{M-x\ cygwin}.
+  Additionally the MicroEmacs commands \textbf{M-x man} and \textbf{M-x
+  info} are available to access the Cygwin Manual and Info pages,
+  respectively.
+
+  If cygwin is installed in the default location \texttt{c:$\backslash$cygwin}
+  then MicroEmacs automatically detects the directory and enables support. If
+  cygwin has been installed in a different location then this should be
+  defined to MicroEmacs in \textbf{\textit{username}.emf} using the variable 
+  \texttt{\%cygwin-path} as follows, correcting for your installation location:
+   
+  \CodeInsert{set-variable \%cygwin-path "c:/cygwin"}
 
 \end{document}
