@@ -3843,7 +3843,16 @@ TTahead(void)
 #endif /* _USEPOLL */
             /* There is some data present. Read it */
             if(read(meStdin,&cc,1) > 0)
-                addKeyToBuffer(cc) ;
+            {
+                /* C-Space is returned as "\x00" (or ^@) or nul. This is a
+                 * horrible character to translate so we do it here before we
+                 * enter the system. There is not an easy way to add this
+                 * translation. */
+                if (cc == '\0')
+                    addKeyToBuffer (ME_CONTROL|' ');
+                else
+                    addKeyToBuffer(cc) ;
+            }
         }
 
         if(alarmState & meALARM_WINSIZE)
