@@ -1,0 +1,68 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1999-2005 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.\"  Created By    : Jon Green
+.\"  Created       : Thu Jun 24 22:19:53 1999
+.\"
+.Id $Id: m9typ039.9,v 1.1 2005-01-23 16:34:19 jon Exp $
+.Im MicroEmacs filetype
+.so me.tni
+.TH samba 9
+.XI samba - "Samba smb.conf configuration file"
+.SH SYNOPSIS
+Samba \- Samba smb.conf configuration file
+.SH FILES
+.na
+.B hksamba.emf
+\- Samba smb.conf configuration file
+.ad
+.SH EXTENSIONS
+.na
+\fBsmb.conf\fR \- Samba configuration file
+.ad
+.SH DESCRIPTION
+The \fBSamba\fR file type template provides simple highlighting of the Samba
+\fCsmb.conf\fR file.
+.IP \fBHilighting\fR
+The hilighting  features allow commands, variables,  operators and comments of
+the language to be differentiated and rendered in different colors.
+.IP
+Comments  may be formatted  using  \fC\*eo\fR,  which  reformats  the comments
+according  to  the  current  fill  paragraph.
+.IP "\fBFolding and Information Hiding\fR"
+Generic  folding is enabled,  the folds occur about
+bracketed constructs \fB<...>\fR...\fB</...>\fR located on the left-hand margin.
+.Ht collapse-all 3
+(un)folds all regions in the file,
+.Ht collapse-current 3
+(un)folds the current region.
+.IP "\fBList Items\fR"
+Item listing is available and the key  constructs of the file may be listed in
+the \fIitem-list\fR.
+.IP "\fBShort Cuts\fR"
+The short cut keys used within the buffer are:-
+.IP
+\fB\*eh\fR \- Key binding help information.
+.br
+\fB\*cc \*cc\fR \- Comment out the current line.
+.br
+\fB\*cc \*cd\fR \- Uncomment the current line.
+.br
+\fB\*cc \*ce\fR \- Comment to the end of the line with hash (#).
+.br
+\fB\*cc \*co\fR \- Format a comment
+.br
+\fBf2\fR \- (un)fold the current region
+.br
+\fBf3\fR \- (un)fold all regions
+.br
+\fBf6\fR \- List items.
+.br
+\fB\*ef6\fR \- Close list items window.
+.SH "SEE ALSO"
+.na
+.Hl "Supported File Types" FileTypes -
+.ad
+.FH
