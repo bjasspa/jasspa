@@ -192,8 +192,14 @@ set-variable .org.addr-lbl  "|Record No|First Name|Surname|Nick Name|Selected|No
         copy-registry &spr "/org/addr/%d" .org.addr &spr "/org/addr/%d" .org.naddr
         mark-registry "/org" "u"
         set-variable .org.addr .org.naddr
-        set-variable .org.naddr &add .org.naddr 1
+        set-variable .org.naddr &add .org.addr 1
         set-registry "/org" "addr/naddr" .org.naddr
+        !if &gre .org.iaddr -1
+            set-variable #l3 &lset &reg "/org" &spr "addr/i%d" &div .org.addr 128 "|" &band .org.addr 127 .org.addr
+            set-registry "/org" &spr "addr/i%d" &div .org.addr 128 #l3
+            set-variable .org.iaddr .org.naddr
+            org-addr-dec-recno
+        !endif
     !endif
 !emacro
 
