@@ -340,6 +340,7 @@ define-macro auto-spell
         osd @# 180 "" "Auto Spell \HReset"  f auto-spell-reset 
         set-variable .lword .word
     !endif
+    osd @# 190 "" &cat &cond &seq $buffer-input "auto-spell-input" "\HDisable" "\HEnable" " Auto Spell"  0 auto-spell 
 !emacro
 set-variable .auto-spell-osd.lword ""
 
