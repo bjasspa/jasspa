@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac000.3,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m3mac000.3,v 2.6 2004-09-14 21:19:34 jon Exp $
 .Im MicroEmacs command|shell
 .so me.tni
 .TH compile 3
@@ -34,6 +34,20 @@ Before the compile command is executed
 is executed to allow the user to ensure that all  relevant  buffers are saved.
 If an argument is given to compile then it is passed on to this command, so if
 an argument of 0 is given, all buffers are automatically saved.
+.PP
+By default  the output  lines in the window  wrap,  wrapping  may be  disabled
+during compilations by redefining the wrap mode as follows. Create the file 
+\fCmyipipe.emf\fR to redefine the behavior and add the following lines:-
+.Me $emf-scheme
+.CS
+; Macro to redefine the wrapping behavior of the *compile* buffer
+0 define-macro my-fhook-ipipe
+    !if &seq $buffer-bname "*compile*"
+        -1 buffer-mode "wrap"
+    !endif
+!emacro
+.CE 0
+.Me $ehf-scheme
 .SH NOTES
 \fBcompile\fR is a macro defined in \fCtools.emf\fR.
 .SH "SEE ALSO"
