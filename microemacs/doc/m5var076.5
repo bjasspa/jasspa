@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Steven Phillips
 .\"  Created       : Wed Aug 5 23:13:35 1998
 .\"
-.Id $Id: m5var076.5,v 2.5 2002-01-11 21:58:43 jon Exp $
+.Id $Id: m5var076.5,v 2.6 2004-02-01 22:49:56 jon Exp $
 .Im MicroEmacs variable;environment
 .so me.tni
 .TH $MENAME 5
@@ -27,17 +27,18 @@ $LOGNAME \- System user name (UNIX)
 .ad
 .SH DESCRIPTION
 .B $MENAME
-is an  environment  variable used to initialize  the \*(mE  environment  for a
-given  user.  At  start-up,  if  \fB$MENAME\fR  is  defined  then  the  user's
-configuration  and  history  file  "\fCname\fR\fI.erf\fR" is located and read,
-where \fCname\fR is the variable value.
+is an  environment  variable  which  may  be  used  to  initialize  the  \*(mE
+environment  for a given user. At start-up, if  \fB$MENAME\fR  is defined then
+the user's  configuration and history file  "\fCname\fR\fI.erf\fR"  is located
+and read, where \fCname\fR is the variable value. The environment  variable is
+used to initialise the 
+.Ht $user-name 5 
+variable.
 .PP
-If at start-up \fB$MENAME\fR is not defined then \fB$MENAME\fR is assigned the
-value  of   \fB$LOGNAME\fR,   if   \fB$LOGNAME\fR  is  not  defined  the  file
-\fCdefault.emf\fR is located and executed. This macro file is created by
-.Ht user-setup 3
-to set  \fB$MENAME\fR  to the default  user. If this fails then  \fB$MENAME\fR
-defaults to \fCguest\fR and a default configuration is used.
+Where the user name has been specified on the command line using the \fB-u\fR
+option to 
+.Ht me 1 
+then the environment variable is ignored and \fB\-u\fR option takes precedence.
 .PP
 The user configuration and history file has many uses, see
 .Ht user-setup 3
@@ -49,18 +50,18 @@ Within  Microsoft  Windows  environments,  if  \fIlogin\fR is enabled then the
 users  login name is  automatically  used as the first  choice  login name. No
 environment  variables need to be set. If login is not enabled then one of the
 aforementioned methods should be used.
-.SS "UNIX"
-In \s-1UNIX\s0 environments,  \fB$LOGNAME\fR is typically defined.
+.SS "Microsoft Windoes"
+In Microsoft Windows environments,  \fB$LOGNAME\fR is sometimes defined.
 .SH NOTES
 The three  variables  must be  defined  before  start-up  for them to have any
 effect.
-.PP
-\fB$LOGNAME\fR  is often defined by the system and should not be altered. If a
-different user name is required, setting of \fB$MENAME\fR is preferable.
 .SH "SEE ALSO"
 .na
+.Ht me 1 ,
 .Ht user-setup 3 ,
 .Ht read-history 2 ,
+.Ht $user-name 5 ,
+.Ht $user-path 5 ,
 .Ht $MEPATH 5 .
 .ad
 .FH

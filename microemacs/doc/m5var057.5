@@ -1,20 +1,15 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var057.5,v 2.5 2002-01-11 21:58:43 jon Exp $
-.Im MicroEmacs variable;environment
+.Id $Id: m5var057.5,v 2.6 2004-02-01 22:49:56 jon Exp $
+.Im MicroEmacs variable|file
 .so me.tni
 .TH $search-path 5
-.XI $search-path - "MicroEmacs search path"
-.XI $MEPATH - "MicroEmacs search path"
+.XI $search-path - "\*(mS search path"
 .SH NAME
-.Me "|$seach-path"
 $search-path \- MicroEmacs search path
-.Me "|$MEPATH"
-$MEPATH \- MicroEmacs search path
-.Me $a
 .SH SYNOPSIS
 .na
 .B $search-path
@@ -22,61 +17,111 @@ $MEPATH \- MicroEmacs search path
 .sp
 .I "[Microsoft Windows/MS-DOS]"
 .br
-.B MEPATH=
+.B $search-path
 \fI<path1>\fR\|\fB;\fR\|\fI<path2>\fR\fB;\fR....\fB;\fR\|\fI<pathn>\fR
 .sp
 .I "[UNIX]"
 .br
-.B MEPATH=
+.B $search-path
 \fI<path1>\fR\|\fB:\fR\|\fI<path2>\fR\fB:\fR....\fB:\fR\|\fI<pathn>\fR
 .ad
 .SH DESCRIPTION
 .B $search-path
-is initialized to the environment variable
-.BR $MEPATH ,
-and  identifies the search paths which are searched to locate editor  specific
-files. Multiple search paths may be specified,  separated by the platform path
-separator  (semi-colon  ('\fB;\fR')  on  Microsoft  Windows  or  \s-1MS-DOS\s0
-environments  and a colon  ('\fB:\fR')  on  \s-1UNIX\s0  environments).  Where
-multiple search paths are defined then they are search left to right.
+is  automatically  determined  by  \*(mS  when it  initializes.  The  variable
+identifies  the directory  paths which are searched to locate editor  specific
+files. The variable may contain  multiple  search paths each  separated by the
+platform  path  separator  (semi-colon  ('\fB;\fR')  on  Microsoft  Windows or
+\s-1MS-DOS\s0   environments   and  a   colon   ('\fB:\fR')   on   \s-1UNIX\s0
+environments).  Where multiple search paths are defined then they are searched
+in a left to right order.
 .PP
+.B $search-path
+is  determined  at run-time and is fixed once the editor  starts. The value of
+the search path is determined from a number of different sources in a platform
+specific manner as follows:-
+.BS
+Built in pathnames \- On  \s-1UNIX\s0  platforms  then preset search paths are
+built into the executable i.e. \fC/opt/jasspa\fR, \fC/usr/local/jasspa\fR etc.
+.BU
+The users home directory, taken from the  \fC/etc/passwd\fR  under \s-1UNIX\s0
+and from the shell environment under Microsoft Windows.
+.BU
+The location of the executable,  typically only used under  Microsoft  Windows
+and  \s-1MS-DOS\s0  environments  where the  concept of standard  installation
+locations is vague.
+.BU
+The environment variable
+.Ht $MEUSERPATH 5
+which  identifies the preferred user directory  location,  overriding any home
+directory location specified by the system.
+.BU
+The environment variable
+.Ht $MEINSTALLPATH 5
+which   identifies  the   installation   directory  of  the  standard   macros
+overriding any built in search path(s).
+.BU
+The environment variable
+.Ht $MEPATH 5
+which  absolutely  overrides any search paths with a user defined path. Use of
+this variable is depreciated, a combination of
+.Ht MEINSTALLPATH 5
+and
+.Ht MEUSERPATH 5
+is preferred.
+.BU
+The command line option \fB\-u\fR \fIuser-name\fR to
+.Ht me 1
+which overrides the user name found by the system.
+.BU
+The environment variable
+.Ht $MENAME 5
+which overrides the user name found by the system.
+.BE
 The search  paths are  generally  ordered  from  highest  priority  to lowest
-priority and might be arranged such as:-
+priority and typically arranged in the order:-
 .IP
-\fBMEPATH=\fR\|\fI<user>\fR:\fI<company>\fR:\fI<me>\fR
+\fB$search-path=\fR\|\fI<user>\fR:\fI<company>\fR:\fI<me>\fR
 .LP
-where \fI<user>\fR  represents the users path;  \fI<company>\fR is the company
-file path (e.g. template files) and \fI<me>\fR are the standard \*(mE files.
+where  \fI<user>\fR  represents  the  users  path(s);  \fI<company>\fR  is the
+company file path(s) (e.g. company wide template files) and \fI<me>\fR path(s)
+which contain the standard \*(mE files.
 .PP
-This would correspond to a directory installation, of user \fBfoo\fR such as:-
-.CS
-/usr/foo/microemacs   - User files.
-/usr/group/microemacs - Company wide files
-/usr/local/microemacs - MicroEmacs installation directory
-.CE
-and a \fB$MEPATH\fR such as:-
-.CS
-MEPATH=/usr/foo/microemacs:/usr/group/microemacs:/usr/local/microemacs
-.CE 0
+This would correspond to a typical  directory  installation, of user \fBfoo\fR
+on \s-1UNIX\s0 such as:
+.PP
+\fC/usr/foo/.jassa\ \ \ \ \ \ \ \ \ \ \fR \- User files.
+.br
+\fC/usr/local/jasspa/company\fR \- Company wide files
+.br
+\fC/usr/local/jasspa/macros\ \fR \- MicroEmacs installation directory
 .SH USAGE
-The current working directory is checked first for the location of a file.
+The current working  directory is always checked first for the location of any
+file.
 .PP
 .B $search-path
 is used to locate all macro files, and other files located with operators such
 as
 .Ht &find 4 .
-.SH NOTES
-If  \fB$MEPATH\fR  is not set then  \fB$search-path\fR  is  initialized to the
-environment variable \fB$PATH\fR.
 .PP
-On \s-1UNIX\s0 systems the path  \fI/usr/local/microemacs\fR  is automatically
-added to the end of  \fB$MEPATH\fR,  or if not  defined, to the  beginning  of
-\fB$PATH\fR.
+Users   should   not   modify   this    variable    directly,   the   external
+aforementioned  environment  variables  should be used to affect  any  desired
+changes.
+.SH NOTES
+The search path  operation  was revised in the \*(mS 2004 release and operates
+differently from earlier releases.
 .SH "SEE ALSO"
 .na
-.Hl "Variable Functions" Functions - ,
+.Ht me 1 ,
 .Ht execute-file 2 ,
-.Ht $MENAME 5 ,
 .Ht &find 4 .
+.Ht $home 5 ,
+.Ht $progname 5 ,
+.Ht $user-name 5 ,
+.Ht $user-path 5 ,
+.Ht $MEINSTALLPATH 5 ,
+.Ht $MENAME 5 ,
+.Ht $MEPATH 5 ,
+.Ht $MEUSERPATH 5 ,
+.Hl "Variable Functions" Functions - .
 .ad
 .FH

@@ -170,7 +170,6 @@ NAR2_000=	$(DOCDIR)m2nar000.2 $(DOCDIR)m2nar001.2	$(DOCDIR)m2nar002.2 \
 		$(DOCDIR)m2nar003.2 $(DOCDIR)m2nar004.2 $(DOCDIR)m2nar005.2 \
 		$(DOCDIR)m2nar006.2 $(DOCDIR)m2nar007.2 $(DOCDIR)m2nar008.2 \
 		$(DOCDIR)m2nar009.2
-NAR2_010=	$(DOCDIR)m2nar010.2
 
 MOD2_000=	$(DOCDIR)m2mod000.2 $(DOCDIR)m2mod001.2 $(DOCDIR)m2mod002.2\
 		$(DOCDIR)m2mod003.2 $(DOCDIR)m2mod004.2 $(DOCDIR)m2mod005.2\
@@ -281,7 +280,9 @@ VAR5_070=	$(DOCDIR)m5var070.5 $(DOCDIR)m5var071.5 $(DOCDIR)m5var072.5\
 		$(DOCDIR)m5var079.5
 VAR5_080=	$(DOCDIR)m5var080.5 $(DOCDIR)m5var081.5 $(DOCDIR)m5var082.5\
 		$(DOCDIR)m5var083.5 $(DOCDIR)m5var084.5 $(DOCDIR)m5var085.5\
-		$(DOCDIR)m5var086.5 $(DOCDIR)m5var087.5
+		$(DOCDIR)m5var086.5 $(DOCDIR)m5var087.5 $(DOCDIR)m5var088.5\
+		$(DOCDIR)m5var089.5
+VAR5_090=	$(DOCDIR)m5var090.5
 
 FIL8_000=	$(DOCDIR)m8fil000.8 $(DOCDIR)m8fil001.8 $(DOCDIR)m8fil002.8\
 		$(DOCDIR)m8fil003.8 $(DOCDIR)m8fil004.8 $(DOCDIR)m8fil005.8\
@@ -314,7 +315,7 @@ TEMPSMS	=	cmd2_000.sm	cmd2_010.sm	cmd2_020.sm	cmd2_030.sm \
 		cmd2_080.sm	cmd2_090.sm	cmd2_100.sm	cmd2_110.sm \
 		cmd2_120.sm	cmd2_130.sm	cmd2_140.sm	cmd2_150.sm \
 		cmd2_160.sm	cmd2_200.sm \
-		nar2_000.sm	nar2_010.sm \
+		nar2_000.sm \
 		mod2_000.sm	mod2_010.sm	mod2_020.sm	mod2_030.sm \
 		mac3_000.sm	mac3_010.sm	mac3_020.sm	mac3_030.sm \
 		mac3_040.sm	mac3_050.sm	mac3_060.sm	mac3_070.sm \
@@ -323,7 +324,8 @@ TEMPSMS	=	cmd2_000.sm	cmd2_010.sm	cmd2_020.sm	cmd2_030.sm \
 		fil4_000.sm	fil4_010.sm	fil4_020.sm	fil4_030.sm \
 		var5_000.sm	var5_010.sm	var5_020.sm	var5_030.sm \
 		var5_040.sm	var5_050.sm	var5_060.sm	var5_070.sm \
-		var5_080.sm	fil8_000.sm \
+		var5_080.sm	var5_090.sm \
+		fil8_000.sm \
 		typ9_000.sm	typ9_010.sm	typ9_020.sm	typ9_030.sm \
 		faq.2
 
@@ -455,6 +457,8 @@ var5_070.sm:	$(VAR5_070)
 	$(SUPERMAN) -o $@ $(VAR5_070)
 var5_080.sm:	$(VAR5_080)
 	$(SUPERMAN) -o $@ $(VAR5_080)
+var5_090.sm:	$(VAR5_090)
+	$(SUPERMAN) -o $@ $(VAR5_090)
 
 fil8_000.sm:	$(FIL8_000)
 	$(SUPERMAN) -o $@ $(FIL8_000)
@@ -470,8 +474,6 @@ typ9_030.sm:	$(FIL9_030)
 
 nar2_000.sm:	$(NAR2_000)
 	$(SUPERMAN) -o $@ $(NAR2_000)
-nar2_010.sm:	$(NAR2_010)
-	$(SUPERMAN) -o $@ $(NAR2_010)
 
 me.sm: $(TEMPSMS) $(TNIS) $(MAN1)
 	$(SUPERMAN) -o $@ $(TNIS) $(MAN1) $(TEMPSMS)
@@ -488,7 +490,7 @@ me.hts: me.sm me.0 me.lbn me.tni forward.lbn logo.png
 		   -tMacro-Dev:MacroGlossary	\
 		   -tGlossary:Glossary		\
 		   me.sm me.0
-	$(HTS) -a $@ -E $(MANLOG) -s me/logo -b logo.png
+	$(HTS) -a $@ -E $(MANLOG) -s me -b logo.gif
 	- $(RM) *.so
 
 me.rtf: me.sm me.0 me.lbn me.tni forward.lbn me.hpj logo.bmp
@@ -523,7 +525,7 @@ meehf.hts: me.sm me.0 me.lbn me.tni forward.lbn logo.png
 		   -t Macro-Dev:MacroGlossary		\
 		   -t Glossary:Glossary			\
 		    me.sm me.0
-	$(HTS) -a $@ -E $(MANLOG) -s me/logo -b logo.png
+	$(HTS) -a $@ -E $(MANLOG) -b logo.gif
 	- $(RM) *.so
 
 #

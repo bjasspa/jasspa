@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil024.4,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m4fil024.4,v 2.6 2004-02-01 22:49:56 jon Exp $
 .Im MicroEmacs macro;function;miscellaneous
 .so me.tni
 .TH &find 4
@@ -29,9 +29,11 @@
 .B &find
 searches for a named file \fI<basename><extension>\fR on the \*(mE search path
 defined by the variable
-.Ht $search-path 5
-(initialized from the environment variable
-.Ht $MEPATH 5 ).
+.Ht $search-path 5 ,
+initialized by the system of from the the environment variables
+.Ht $MEINSTALLPATH 5
+ etc.
+.PP
 Each  path  component  defined  in  \fB$search-path\fR  is  prepended  to  the
 constructed  file name and it's  existence is tested. If the file exists, then
 the  \s-1FULL\s0  path name of the file is  returned to the caller,  otherwise
@@ -68,7 +70,9 @@ Would insert the file \fC/usr/bob/emacs/c.etf\fR if it existed, else the file
 .na
 .Hl "Variable Functions" Functions - ,
 .Ht find-file 2 ,
+.Ht insert-file 2 ,
 .Ht $search-path 5 ,
-.Ht insert-file 2 .
+.Ht $MEINSTALLPATH 5 ,
+.Ht $MEUSERPATH 5 .
 .ad
 .FH
