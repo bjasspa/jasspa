@@ -4,8 +4,12 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <050218.1834>
+>  Last Modified : <050218.2152>
 >
+
+    [050218] Corrected  UNIX  client-server  socket  file check -- bad test on
+             existence of  connection  file, using wrong  variable  with wrong
+             test sense.
 
     [050218] Added site delete button to ftp-connect dialog.
 

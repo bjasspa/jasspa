@@ -1,0 +1,26 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : $Author: jon $
+;  Created By    : Steven Phillips
+;  Created       : Sat Sep 4 14:08:51 1999
+;  Last Modified : <990904.1415>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 1999 Division Ltd.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+!if &sequal .hilight.latexbi "ERROR"
+    set-variable .hilight.latexbi &pinc .hilight.next 1
+!endif
+
+0 hilight  .hilight.latexbi 2 50                           .scheme.bold
+;hilight .hilight.latexbi 0x40 "\\\\\\{" "{"                  .scheme.bold
+hilight .hilight.latexbi 0x40 "\\\\\\}" "}"                  .scheme.bold
+set-variable $buffer-hilight .hilight.latexbi
+;set-variable $buffer-hilight 0
+
