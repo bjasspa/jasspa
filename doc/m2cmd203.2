@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd203.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd203.2,v 2.6 2004-01-11 01:11:18 jon Exp $
 .Im MicroEmacs bindings
 .so me.tni
 .TH keyNames 2
@@ -164,7 +164,7 @@ If the  \fCALT\fR  key is to be used  strictly  as the Emacs Meta key then the
 bindings for the menu should be over-ridden by \fIDirect Key Bindings\fR  from
 the user  configuration  file i.e. to re-map the default MicroEmacs Alt key to
 equivalent \fCesc\fR keys then the following keys should be re-bound.
-.Me emf-scheme
+.Me $emf-scheme
 .CS
 global-bind-key forward-word "A-f"      ; Over-ride File menu binding
 :                                       ; For all of the other menu items.
@@ -172,7 +172,7 @@ global-bind-key forward-word "A-f"      ; Over-ride File menu binding
 global-bind-key backward-word "A-b"     ; Over-ride the file browser.
 global-bind-key replace-string "A-r"    ; Over-ride tools binding.
 .CE
-.Me ehf-scheme
+.Me $ehf-scheme
 This  creates a higher  priority  binding  which  overrides  the  underlying
 default.  The  commands  that  are  displaced  would  have to be  re-bound  to
 different keys if required.

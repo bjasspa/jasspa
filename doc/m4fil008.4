@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil008.4,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m4fil008.4,v 2.6 2004-01-11 01:11:18 jon Exp $
 .Im MicroEmacs macro;directive|miscellaneousOperators
 .so me.tni
 .TH !if 4
@@ -34,22 +34,20 @@
 .fi
 .ad
 .SH DESCRIPTION
-The conditional directives
-allow statements  to be  executed only if a condition
-specified in  the  directive is  met, as follows:-
+The conditional directives allow statements to be executed only if a condition
+specified in the directive is met, as follows:-
 .BS 1 1
-Every line  following  the \fB!if\fR
-directive, until the first  \fB!elif\fR, \fB!else\fR or  \fB!endif\fR directive, is only
-executed if the expression following  the \fB!if\fR directive evaluates to a
-\fCTRUE\fR value (non-zero).
+Every line following the \fB!if\fR
+directive, until the first \fB!elif\fR, \fB!else\fR or \fB!endif\fR directive,
+is only executed if the expression following the \fB!if\fR directive evaluates
+to a \fCTRUE\fR value (non-zero).
 .BU
 If the \fB!if\fR evaluates to \fCFALSE\fR and a \fB!elif\fR  directive is next
 then the  expression  following  the  \fB!if\fR  is  evaluated  and  following
 statements are executed if \fCTRUE\fR.
 .BU
-If no  \fB!if\fR or \fB!elif\fR  is found to be
-\fCTRUE\fR and  a  \fB!else\fR  is  found then  the  statements  following  it are
-executed.
+If no \fB!if\fR or  \fB!elif\fR is found to be \fCTRUE\fR and a \fB!else\fR is
+found then the statements following it are executed.
 .BE
 The \fIcondition\fR may be any logical condition as evaluated by the
 .Hl "variable functions" Functions -

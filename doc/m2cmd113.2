@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd113.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd113.2,v 2.6 2004-01-11 01:11:18 jon Exp $
 .Im MicroEmacs command|file|essential
 .ds C0 "(\fB\*(cX\*cs\fR)\ \&
 .so me.tni
@@ -60,7 +60,8 @@ to the user.
 .IP \fB0x02\fR
 Disables the expansion of any narrows (see
 .Ht narrow-buffer 2 )
-before saving the buffer.
+before  saving the  buffer.  That is, the buffer is saved as it appears on the
+screen and the content of any narrow regions is discarded.
 .SH NOTES
 .BS
 .Ht undo 2

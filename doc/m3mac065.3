@@ -1,0 +1,270 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 2004 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m3mac065.3,v 2.1 2004-01-11 01:11:17 jon Exp $
+.Im MicroEmacs command|macrodevelop
+.ds C0 "(\fB\*cs\fR)\ \&
+.ds C1 "(\fB\*cr\fR)\ \&
+.ds C2 "(\fB\*(cXs\fR)\ \&
+.ds C3 "(\fB\*(cXr\fR)\ \&
+.ds C4 "(\fB\*cn\fR)\ \&
+.ds C5 "(\fB\*cp\fR)\ \&
+.ds C6 "(\fB\*cn\fR)\ \&
+.ds C7 "(\fB\*cp\fR)\ \&
+.ds C8 "(\fB\*(cX\*cs\fR)\ \&
+.so me.tni
+.TH page-file 3
+.XI page-file - "Load a large file in page mode" command|file
+.XI page-bfile - "Load a large binary file as binary data" command|file
+.XI page-file-save-buffer - "\*(C8Save contents of a page mode buffer to file" command|file
+.XI page-file-beginning-of-buffer - "Move to the start of the paged file" command|cursor
+.XI page-file-end-of-buffer - "Move to the end of the paged file" command|cursor
+.XI page-file-goto-byte - "Page to the buffer byte offset" command|cursor
+.XI page-file-goto-page - "Move to page" command|cursor
+.XI page-file-scroll-down - "\*(C6Scroll paged buffer down" command|window
+.XI page-file-scroll-up - "\*(C7Scroll paged buffer up" command|window
+.XI page-file-forward-line - "\*(C4Move forwards one line in paged buffer" command|cursor
+.XI page-file-backward-line - "\*(C5Move backwards one line in paged buffer" command|cursor
+.XI page-file-search-forward - "\*(C2Page search for a string in the forward direction" command|search
+.XI page-file-search-backward - "\*(C3Page search for a string in the backward direction" command|search
+.XI page-file-isearch-forward - "\*(C0Page search forward incrementally (interactive)" command|search
+.XI page-file-isearch-backward - "\*(C1Page search backwards incrementally (interactive)" command|search
+.SH NAME
+.Me "|page-file"
+page-file \- Load a large file in page mode.
+.br
+.Me "|page-bfile"
+page-bfile \- Load a large binary file as binary data.
+.br
+.Me "|page-file-save-buffer"
+page-file-save-buffer \- Save contents of a page mode buffer to file.
+.br
+.Me "|page-file-beginning-of-buffer"
+page-file-beginning-of-buffer \- Move to the start of the paged file.
+.br
+.Me "|page-file-save-buffer"
+page-file-end-of-buffer \- Move to the end of the paged file.
+.br
+.Me "|page-file-goto-byte"
+page-file-goto-byte \- Page to the buffer byte offset.
+.br
+.Me "|page-file-goto-page"
+page-file-goto-page \- Move to page.
+.br
+.Me "|page-file-scroll-down"
+page-file-scroll-down \- Scroll paged buffer down.
+.br
+.Me "|page-file-scroll-up"
+page-file-scroll-up \- Scroll paged buffer up.
+.br
+.Me "|page-file-forward-line"
+page-file-forward-line \- Move forwards one line in paged buffer.
+.br
+.Me "|page-file-backward-line"
+page-file-backward-line \- Move backwards one line in paged buffer.
+.br
+.Me "|page-file-search-forward"
+page-file-search-forward \- Search for a string in the forward direction. 
+.br
+.Me "|page-file-search-backward"
+page-file-search-backward \- Search for a string in the backward direction. 
+.br
+.Me "|page-file-isearch-forward"
+page-file-isearch-forward \- Search forward incrementally (interactive).
+.br
+.Me "|page-file-isearch-backward"
+page-file-isearch-backward \- Search backwards incrementally (interactive)
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B page-file
+"\fIfile-name\fR"
+.br
+.B page-bfile
+.I file-name 
+.sp
+.B page-file-save-buffer
+\*(C8
+.sp
+.B page-file-beginning-of-buffer
+.br
+.B page-file-end-of-buffer
+.br
+.B page-file-goto-byte
+.I byte-offset
+.br
+.B page-file-goto-page
+.I page-offset
+.sp
+.I n
+.B page-file-scroll-down
+\*(C6
+.br
+.I n
+.B page-file-scroll-up
+\*(C7
+.sp
+.I n
+.B page-file-forward-line
+\*(C4
+.br
+.I n
+.B page-file-backward-line
+\*(C5 
+.sp
+.B page-file-search-forward
+\*(C2
+.br
+.B page-file-search-backward
+\*(C3
+.br
+.B page-file-isearch-forward
+\*(C0
+.br
+.B page-file-isearch-backward
+\*(C1
+.ad
+.SH DESCRIPTION
+The 
+.B page-file
+commands allow large files, up to 2GB in size, to be viewed and edited.  
+.B page-file
+operates by loading a small part (or
+.IR page )
+of the file into a buffer for viewing and editing  hence the whole file is not
+loaded  into  memory. The file may be viewed and edited  while in a page mode,
+\*(mS automatically manages the page swapping and updates to the file.
+.PP
+While a file is being paged
+then a  replacement  set of commands are used to navigate  through the buffer.
+These replacement  commands  automatically load the next page into the
+buffer, discarding or saving any edits from existing pages. 
+.SS "File Loading"
+.B page-file
+finds the named file  \fIfile-name\fR. If it is already in a buffer, make that
+buffer active in the current window, otherwise  attempt to create a new paged buffer
+and read the file  into it.  Syntax  hilighting  is  available  following  any
+file loading.
+.B  page-file 
+is the paged equivalent of 
+.Ht find-file 2 . 
+.PP
+The  numeric  argument  \fIn\fR is used to modify the default  behavior of the
+command, where the bits are defined as follows:
+.IP \fB0x01\fR
+If the file does not exist and this bit is not set the  command  fails at this
+point.
+.IP \fB0x02\fR
+If this bit is set the file will be loaded with
+.Ht binary 2m
+mode enabled. See help on  \fBbinary\fR  mode for more  information on editing
+binary data files.
+.PP
+.B page-bfile
+loads a file as  binary  data,  providing  binary  editing  capabilities.  The
+command operate as command
+.Ht page-file 3
+except that it loads the given  file with
+.Ht binary 2m
+mode set.
+.SS "Saving"
+.B page-file-save-buffer
+saves the contents of the current  buffer if the contents  have been  changed,
+writing the buffer back to the file it was read from. This command is the same as 
+.Ht save-buffer 2
+for a paged file.
+.SS "Navigation"
+.B page-file-beginning-of-buffer
+moves to the beginning of the buffer. If any edits have been  performed at the
+current  viewing  position  that need to be saved then the user is prompted to
+save the  changes and the new pages are loaded from the file at the  beginning
+of the buffer.
+.PP
+.B page-file-end-of-buffer
+moves to the end of the buffer in a similar way to  
+.BR page-file-beginning-of-buffer .
+.PP
+.B page-file-goto-byte
+advances the buffer to the byte offset specified by
+.IR byte-offset .
+If any edits have been performed at the current viewing  position that need to
+be saved then the user is  prompted  to save the changes and the new pages are
+loaded from the file at the specified file byte offset.
+.PP
+.B page-file-goto-page
+advances the buffer to the page offset specified by
+.IR byte-offset .
+The behavior is the same as 
+.BR page-file-goto-byte .
+.PP
+.B page-file-scroll-up
+and 
+.B page-file-scroll-down
+moves the window in the current buffer down by \fIn\fR lines, the default when
+\fIn\fR  is  omitted is 1 windows  worth of lines i.e. a next page  operation.
+The user is prompted to save changes if a file paging operation is performed.
+.PP
+.B page-file-forward-line
+moves the  cursor  down  \fIn\fR  lines,  default 1. If the line is not on the
+current screen then display the next page and move to the line. Similarly 
+.B page-file-backward-line
+moves the cursor up \fIn\fR  lines, if the line is not on the  current  screen
+then  display the previous  page and move to the line. The user is prompted to
+save changes if a file paging operation is performed.
+.SS "Searching"
+.B page-file-search-forward
+and 
+.B page-file-search-backward
+searches for a string from the current cursor position to the end/start of the
+file and is simular to 
+.Ht search-forward 2 
+and 
+.Ht search-backward 2 ,
+respectively. If the search string is not found in the current buffer then the
+search  continues  by  paging  the file  until  the  start/end  of the file is
+reached. The user is prompted to save  changes if a file paging  operation  is
+performed.
+.PP
+.B page-file-isearch-forward
+and
+.B page-file-isearch-backward
+perform and incremental  forward and backward search in the paged file and are
+similar to 
+.Ht isearch-forward 2 
+and 
+.Ht isearch-backward 2 ,
+respectively. If the search string is not found in the current buffer then the
+search  continues  by  paging  the file  until  the  start/end  of the file is
+reached.  The  user is  prompted  to page and save  changes  if a file  paging
+operation is performed.
+.SH NOTES
+The 
+.B page-file
+macros are implemented in macro file \fCpagefile.emf\fR. The paging is managed
+in macro space and uses 
+.Ht insert-file 2
+to perform the read.
+.SH "SEE ALSO"
+.na
+.Ht binary 2m ,
+.Ht find-bfile 3 , 
+.Ht find-file 2 , 
+.Ht isearch-backward 2 ,
+.Ht isearch-forward 2 ,
+.Ht save-buffer 2 ,
+.Ht search-backward 2 ,
+.Ht search-forward 2 .
+.ad
+.rm C0
+.rm C1
+.rm C2
+.rm C3
+.rm C4
+.rm C5
+.rm C6
+.rm C7
+.rm C8
+.FH

@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd056.2,v 2.7 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd056.2,v 2.8 2004-01-11 01:11:17 jon Exp $
 .Im MicroEmacs command|file
 .ds C0 "(\fB\*(cX\*cf\fR)\ \&
 .so me.tni
@@ -24,8 +24,8 @@ finds the named file  \fIfile-name\fR. If it is already in a buffer, make that
 buffer active in the current window, otherwise  attempt to create a new buffer
 and read the file into it.
 .PP
-The numeric  argument  \fIn\fR can be used to modify the default  behaviour of
-the command, where the bits are defined as follows:
+The  numeric  argument  \fIn\fR is used to modify the default  behavior of the
+command, where the bits are defined as follows:
 .IP \fB0x01\fR
 If the file does not exist and this bit is not set the  command  fails at this
 point.  If the file  does not  exist  and this bit is set (or no  argument  is
@@ -163,19 +163,21 @@ the progress of the transfer (when configured), this is described in
 .Ht time 2m ,
 .Ht view 2m ,
 .Ht buffer-mode 2 ,
+.Ht file-attrib 3 ,
+.Ht file-op 2 ,
 .Ht find-bfile 3 ,
 .Ht ftp 3 ,
-.Ht $rcs-file 5 ,
-.Ht %ftp-flags 5 ,
-.Ht %http-flags 5 ,
-.Ht %http-proxy-addr 5 ,
 .Ht next-window-find-file 2 ,
+.Ht page-bfile 3 ,
+.Ht page-file 3 ,
 .Ht read-file 2 ,
 .Ht save-buffer 2 ,
 .Ht view-file 2 ,
 .Ht write-buffer 2 ,
-.Ht file-op 2 ,
-.Ht file-attrib 3 .
+.Ht $rcs-file 5 ,
+.Ht %ftp-flags 5 ,
+.Ht %http-flags 5 ,
+.Ht %http-proxy-addr 5 .
 .ad
 .rm C0
 .FH

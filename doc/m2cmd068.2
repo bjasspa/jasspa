@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd068.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd068.2,v 2.6 2004-01-11 01:11:17 jon Exp $
 .Im MicroEmacs command|buffer
 .so me.tni
 .TH narrow-buffer 2
@@ -19,21 +19,21 @@ narrow-buffer \- Hide buffer lines
 .SH DESCRIPTION
 The effect of  \fBnarrow-buffer\fR  depends on the argument  given, defined as
 follows:-
-.IP 1
+.BS 1 1 "1"
 Removes all narrows in the current buffer (Default).
-.IP 2
+.BU "2"
 Removes the current line's narrow.
-.IP 3
+.BU 3 
 Narrow to region.  Hides all but the lines of test in the current  buffer from
 the
 .Hl mark set-mark 2
 position to the current cursor position, effectively 'narrowing' the buffer to
 the remaining text.
-.IP 4
+.BU 4 
 Narrow out region. Hides the lines of test in the current buffer from the
 .Hl mark set-mark 2
 position to the current cursor position, opposite to argument \fB3\fR.
-.PP
+.BE
 When a narrow is created the buffer mode
 .Ht narrow 2m
 is automatically set, when the last is removed this mode is deleted.
@@ -83,6 +83,13 @@ narrow if the user returns to the mark using
 .Ht get-next-line 2
 operates  on the  unnarrowed  buffer and will  remove any  narrows  hiding the
 \&'next' line.
+.PP
+When copying a region containing a narrowed region(s) with 
+.Ht copy-region 2 
+then the content of the narrowed region(s) is also copied. A numeric argument
+to  
+.Ht copy-region 2 
+may be used to change the behavior to copy the visual representation only.
 .SH EXAMPLE
 .Ht c-hash-eval 3
 macro defined in cmacros.emf uses narrow-buffer to hide regions of source code

@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.13 2004-01-09 00:46:53 jon Exp $
+.Id $Id: me.nrs,v 2.14 2004-01-11 01:11:18 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -540,7 +540,7 @@ If the  \fCALT\fR  key is to be used  strictly  as the Emacs Meta key then the
 bindings for the menu should be over-ridden by \fIDirect Key Bindings\fR  from
 the user  configuration  file i.e. to re-map the default MicroEmacs Alt key to
 equivalent \fCesc\fR keys then the following keys should be re-bound.
-.Me emf-scheme
+.Me $emf-scheme
 .CS
 global-bind-key forward-word "A-f"      ; Over-ride File menu binding
 :                                       ; For all of the other menu items.
@@ -548,7 +548,7 @@ global-bind-key forward-word "A-f"      ; Over-ride File menu binding
 global-bind-key backward-word "A-b"     ; Over-ride the file browser.
 global-bind-key replace-string "A-r"    ; Over-ride tools binding.
 .CE
-.Me ehf-scheme
+.Me $ehf-scheme
 This creates a higher priority binding which overrides the underlying default.
 The commands that are displaced would have to be re-bound to different keys if
 required.
@@ -2783,7 +2783,9 @@ make them more readable.
 .BU
 Latest versions of build.txt, cygwin.txt, faq.txt and readme.txt.
 .BU
-Abbreviation, Changed copy-region call to not expand the narrows.
+Abbreviation, Changed 
+.Ht copy-region 2
+call to not expand the narrows, numeric argument added to prevent narrow copy.
 .BU
 Buffer setup. Changed fold -> collapse and added proper folding setup entries.
 .BU

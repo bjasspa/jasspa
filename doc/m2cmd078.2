@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd078.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd078.2,v 2.6 2004-01-11 01:11:18 jon Exp $
 .Im MicroEmacs command|search
 .ds C0 "(\fB\*cs\fR)\ \&
 .ds C1 "(\fB\*cr\fR)\ \&
@@ -20,9 +20,11 @@ isearch-backward \- Search backwards incrementally (interactive)
 .Me $a
 .SH SYNOPSIS
 .na
-\fBisearch-forward\fR \*(C0
+.I n
+\fBisearch-forward\fR [ "\|\fIarg\fR\|" ] \*(C0
 .br
-\fBisearch-backward\fR \*(C1
+.I n
+\fBisearch-backward\fR [ "\|\fIarg\fR\|" ] \*(C1
 .ad
 .SH DESCRIPTION
 .B isearch-forward
@@ -31,7 +33,8 @@ similar to
 .Ht search-forward 2 ,
 but it processes the search as each character of the input string is typed in.
 This allows the user to only use as many key-strokes as are needed to uniquely
-specify the string being searched.
+specify  the string  being  searched.  The string  argument  \fIarg\fR  is not
+supplied when invoked interactively.
 .PP
 The follow keys can be used at the start of an incremental search only:
 .IP
@@ -64,6 +67,21 @@ is the same as \fBisearch-forward\fR, but it searches in the reverse direction.
 For both  commands  when the end of the buffer is  reached, an alarm is raised
 (bell  etc.) a  further  search  request  (\fC\*cs\fR)  causes  the  search to
 commence  from the start of the  buffer.
+.PP
+The numeric argument \fIn\fR controls the behavior of  \fBisearch-*\fR  at the
+end of the buffer. When  specified  as \fC0\fR then the search  exits when the
+start/end of the buffer is reached and the search is  exhausted.  When omitted
+(or specified as \fC1\fR) then the search  recommences  again at the start/end
+of the buffer, this is the default behavior.
+.PP
+When  \fBisearch-*\fR  is  invoked  from a  macro  then  the  string  argument
+\fIarg\fR specifies the search string. \fBisearch\fR is primarily designed for
+for  interactive  use and is not  typically  used  from  within a macro.  When
+embedded in a macro then it is typically  invoked with the \fC0\fR argument so
+that the calling macro may handle the start/end of buffer condition. The macro
+.Ht page-file 3 
+uses  \fBisearch-*\fR and performs exactly this operation, for a comprehensive
+example refer to macro file \fCpagefile.emf\fR.
 .SH NOTES
 The
 .Ht ml-bind-key 2
@@ -73,6 +91,9 @@ The incremental search supports buffer modes
 .Ht exact 2m
 and
 .Ht magic 2m .
+.PP
+The numeric argument to  \fBisearch-*\fR  was first introduced into MicroEmacs
+\'04.
 .SH BUGS
 Due to the dynamic nature of active
 .Ht ipipe-shell-command 2
@@ -85,6 +106,7 @@ which are not guaranteed to be consistent.
 .Ht hunt-forward 2 ,
 .Ht magic 2m ,
 .Ht ml-bind-key 2 ,
+.Ht page-file 3 ,
 .Ht search-forward 2 .
 .br
 .Hl "Regular Expressions" RegularExpressions 2
