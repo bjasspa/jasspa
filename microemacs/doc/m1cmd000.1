@@ -5,7 +5,7 @@
 .\"
 .\" Created By: Jon Green
 .\"
-.Id $Id: m1cmd000.1,v 2.10 2005-01-16 18:46:30 jon Exp $
+.Id $Id: m1cmd000.1,v 2.11 2005-02-19 13:44:43 jon Exp $
 .Im MicroEmacs function
 .so me.tni
 .TH me 1
@@ -20,6 +20,7 @@ me - \*(mE text editor
 .sp
 .B me
 [\|\fB@\fR\|\fIstartupFile\fR\|]
+[\|\fB\-\fR\|]
 [\|\fB\-b\fR\ \|\fIfile\fR\|]
 [\|\fB\-c\fR\|]
 [\|\fB\-d\fR\|]
@@ -31,7 +32,7 @@ me - \*(mE text editor
 [\|\fB\-n\fR\|]
 [\|\fB\-o\fR\|]
 [\|\fB\-0\fR\|\fIfile\fR\|]
-[\|\fB\-p\fR\|]
+[\|\fB\-p\fR\ [\|\fB\-P\fR\|]\ \|]
 [\|\fB\-r\fR\|]
 [\|\fB\-s\fR\|\fIstring\fR\|]
 [\|\fB\-u\fR\|\fIusername\fR\|]
@@ -84,6 +85,27 @@ omitted is \fBme.emf\fR. See
 and 
 .Hl "Command Line Filters" filters - 
 for more information.
+.IP \fB\-\fR
+Pipe  \fIstdin\fR  into  buffer  \fB*stdin*\fR,  when the  buffer is saved the
+output is written  \fIstdout\fR.  Following is a simple  example which changes
+\'\fCa\fR's to '\fCb\fR's:
+.Me $emf-scheme
+.CS
+        define-macro start-up
+            find-buffer "*stdin*"
+            beginning-of-buffer
+            replace-string "a" "b"
+            save-buffer
+            quick-exit
+        !emacro
+.CE 0
+.Me $ehf-scheme
+.IP
+This can be used in the following manner:
+.CS
+        me "@testpipe.emf" < foo.a > foo.b
+.CE 
+See \fB\-p\fR for disabling user interaction.
 .IP \fB\-b\fR
 Load next file as a binary file (binary editor mode, uses
 .Ht binary 2m
@@ -153,24 +175,13 @@ interface to push the new file into the existing editor session. Refer to the
 .Hl "Client-Server Interface" client-server 2
 for details.
 .IP \fB\-p\fR
-Pipe \fIstdin\fR into buffer \fB*stdin*\fR, when saved output to \fIstdout\fR,
-following is a simple example which changes '\fCa\fR's to '\fCb\fR's:
-.Me $emf-scheme
-.CS
-        define-macro start-up
-            find-buffer "*stdin*"
-            beginning-of-buffer
-            replace-string "a" "b"
-            save-buffer
-            quick-exit
-        !emacro
-.CE 0
-.Me $ehf-scheme
-.IP
-This can be used in the following manner:
-.CS
-        me "@testpipe.emf" < foo.a > foo.b
-.CE 0
+Used with the  \fB\-\fR  which  inputs  from  \fIstdin\fR  and  disables  user
+interaction  within \*(mS. To debug then the  \fB\-P\fR  option may be used to
+enable debug on \fIstderr\fR.
+.IP \fB-P\fR
+Used with the \fB\-p\fR option and is used for debugging the pipe mode,
+.Ht ml-write 2
+messages are displayed on \fIstderr\fR.
 .IP \fB\-r\fR
 Read-only, all buffers will be in view mode
 .IP \fB\-s\fR\|\fIstring\fR
