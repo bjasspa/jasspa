@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jul 16 23:13:14 1998
 .\"
-.Id $Id: m2cmd066.2,v 2.11 2005-02-19 20:12:20 bill Exp $
+.Id $Id: m2cmd066.2,v 2.12 2005-02-19 21:46:07 bill Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH osd 2
@@ -324,14 +324,13 @@ define-macro submenu-setup
 .Me $ehf-scheme
 .RE
 .IP
-See also options \fBm\fR, \fBn\fR, \fBe\fR, \fBs\fR, \fBw\fR and \fBd\fR.
+See also options \fBm\fR, \fBs\fR and \fBd\fR.
 .IP \fBm\fR
 Sub-menu must be manually  opened, using  hot-key,  the return key or the left
 mouse button.
-.IP "\fBn\fR, \fBe\fR, \fBs\fR, \fBw\fR"
-Specify  where a sub-menu  is to be placed  relative  to the parent  item. The
-letter indicates the direction as points on a compass,
-North, East, South and West, respectively. The default when omitted is East.
+.IP \fBs\fR
+Specifies  the  sub-menu is to be placed to the south (under) the parent item,
+The default when omitted is to the right of the parent.
 .IP \fBd\fR
 Display  sub-menu  type, i.e. "\fC..\fR" for auto opening and "\fC >\fR" for a
 manual opening sub-menu.
@@ -466,8 +465,7 @@ set (usually using
 .Ht @ml 4
 or
 .Ht @mc 4 )
-if the  argument  is  negated.  The
-absolute value of the argument is maintained.
+if the argument is negated. The absolute value of the argument is maintained.
 .RS
 .Me $emf-scheme
 .CS
@@ -486,6 +484,14 @@ osd 200 2  "ExHf" %osd-entry-scheme "########" 1 my-entry-set
 .CE 0
 .Me $ehf-scheme
 .RE
+.IP \fBO\fR
+Item is a read-only  Combo-box  type of entry. As with entry items (type \fBE\fR)
+the command  given must return the current  value to be displayed in the
+entry box when it is called with a  non-negated  argument.  However,  when the
+entry box is selected  the item  behaves like a sub-menu  (type  \fCM\fR), the
+command is called  (with a negated  argument)  which can be used to create the
+sub-menu.  The type of item is often used with a button item (type \fBB\fR) to
+the right of it which also opens the sub-menu by executing this item.
 .IP \fBB\fR
 Item is a Button  type. Add the last 2 characters of
 .Ht $window-chars 5
@@ -559,6 +565,8 @@ the button would not appear to operate.
 Sets the item color scheme. Note that for scrolled  child items this only sets
 the  scroll-box  color  scheme, the dialog  scheme is used for the rest of the
 boarder.
+.IP \fBu\fR
+Disables the high-lighting of the item when the mouse is over it.
 .IP \fBG\fR
 This flag is only  applicable  in grid  dialogs  (see flag  \fBG\fR  in dialog
 creation). The current item will be drawn with a box around it using
