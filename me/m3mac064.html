@@ -1,0 +1,529 @@
+<HTML>
+<HEAD><TITLE>buffer-init(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
+buffer-init(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>buffer-init - Initialize a buffer language template. 
+<BR>buffer-init-hooks - Initialize the buffer language template hooks. 
+<BR>buffer-init-fhook - Initialize the buffer file hooks. </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>buffer-init</B> <I>name</I> [<I>etf</I>] 
+<BR><B>buffer-init-hooks</B> 
+<BR><B>buffer-init-fhook</B> <I>name</I> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The <B>buff-init</B> commands prepare the operating modes of a buffer for a language template. These commands operate with variables defined in the template and automatically configure MicroEmacs to use the template. 
+<P>The commands are used in the hook files (hkXXX.emf - see 
+<A HREF="m2cmd202.html">File Hooks</A>) and simply the setting up of 
+<A HREF="m2nar000.html">File Language Templates</A> by automating common actions and integrating the configuration settings made via 
+<A HREF="m3osd010.html">buffer-setup(3)</A>. 
+<P>The hook file is declared from <TT>me.emf</TT> or the user start up file binding a file extension or magic string association with the hook file. i.e. <UL><UL>
+<PRE>-1&nbsp;add-file-hook&nbsp;&quot;-[*!]-[&nbsp;\t]*XXX.*-[*!]-&quot;&nbsp;&nbsp;&nbsp;&nbsp;fhook-XXX 
+&nbsp;1&nbsp;add-file-hook&nbsp;&quot;^#!/.*XXX&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhook-XXX 
+</PRE></UL>
+</UL><P>On loading a file which matches the 
+<A HREF="m2cmd003.html">add-file-hook(2)</A> definition then the <TT>hkXXX.emf</TT> file is executed and the template is applied to the file. 
+<P>A basic template framework to be used with the <B>buff-init</B> commands may be defined as follows for a language template called <I>XXX</I>:- <UL>
+<PRE>;&nbsp;File&nbsp;hook&nbsp;-&nbsp;initialize&nbsp;buffer&nbsp;on&nbsp;loading&nbsp;the&nbsp;file. 
+define-macro&nbsp;fhook-XXX 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$buffer-mask&nbsp;&quot;luh1&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;@#&nbsp;buffer-init&nbsp;&quot;XXX&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;buffer-init-hooks 
+!emacro 
+
+;&nbsp;buffer-init&nbsp;variables 
+set-variable&nbsp;.fhook-XXX.name&nbsp;&quot;XXX&nbsp;Macro&quot; 
+set-variable&nbsp;.fhook-XXX.setup&nbsp;&amp;reg&nbsp;&quot;/history&quot;&nbsp;&quot;fhook/XXX&quot;&nbsp;&quot;bdfghnopx&quot; 
+set-variable&nbsp;.fhook-XXX.setup-mask&nbsp;&quot;abdefghikmnoptux&quot; 
+;&nbsp;Commenting&nbsp;configuration&nbsp;--&nbsp;omit&nbsp;if&nbsp;not&nbsp;defined. 
+set-variable&nbsp;.fhook-XXX.comment&nbsp;&quot;|#||#|#&nbsp;|&nbsp;#||&quot; 
+;&nbsp;Additional&nbsp;commands&nbsp;--&nbsp;omit&nbsp;if&nbsp;not&nbsp;defined. 
+set-variable&nbsp;.fhook-XXX.command-flag&nbsp;&nbsp;&quot;||&quot; 
+set-variable&nbsp;.fhook-XXX.command-name&nbsp;&nbsp;&quot;||&quot; 
+set-variable&nbsp;.fhook-XXX.command-nbind&nbsp;&quot;||&quot; 
+set-variable&nbsp;.fhook-XXX.command-kbind&nbsp;&quot;||&quot; 
+set-variable&nbsp;.fhook-XXX.command-desc&nbsp;&nbsp;&quot;||&quot; 
+;&nbsp;Set&nbsp;up&nbsp;collapse&nbsp;or&nbsp;folding&nbsp;for&nbsp;XXX&nbsp;--&nbsp;omit&nbsp;if&nbsp;not&nbsp;defined 
+set-variable&nbsp;.fhook-XXX.collapse-open&nbsp;&nbsp;&quot;^{&quot; 
+set-variable&nbsp;.fhook-XXX.collapse-close&nbsp;&quot;^}&quot; 
+set-variable&nbsp;.fhook-XXX.collapse-mopen&nbsp;&nbsp;&quot;-1&quot; 
+set-variable&nbsp;.fhook-XXX.collapse-mclose&nbsp;&quot;1&quot; 
+set-variable&nbsp;.fhook-XXX.collapse-mnext&nbsp;&quot;-1&quot; 
+;&nbsp;setup&nbsp;XXX&nbsp;item-list&nbsp;--&nbsp;omit&nbsp;if&nbsp;not&nbsp;defined 
+set-variable&nbsp;.fhook-XXX.item-list-s1&nbsp;&quot;^[&nbsp;\t]*func\\(\\w+\\)&quot; 
+set-variable&nbsp;.fhook-XXX.item-list-r1&nbsp;&quot;^[&nbsp;\t]*end&quot; 
+;&nbsp;Set&nbsp;up&nbsp;hilighting 
+!if&nbsp;&amp;and&nbsp;&amp;sin&nbsp;&quot;h&quot;&nbsp;.fhook-XXX.setup&nbsp;&amp;band&nbsp;.hilight.flags&nbsp;0x02 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Hi-light&nbsp;XXX&nbsp;Mode 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;&amp;exi&nbsp;.hilight.XXX 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;.hilight.XXX&nbsp;&amp;pinc&nbsp;.hilight.next&nbsp;1 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+
+&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;hilight&nbsp;.hilight.XXX&nbsp;&nbsp;2&nbsp;50 
+&nbsp;&nbsp;&nbsp;&nbsp;hilight&nbsp;.hilight.XXX&nbsp;0&nbsp;&quot;#.*&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.comment 
+&nbsp;&nbsp;&nbsp;&nbsp;hilight&nbsp;.hilight.XXX&nbsp;1&nbsp;&quot;end&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.keyword 
+&nbsp;&nbsp;&nbsp;&nbsp;hilight&nbsp;.hilight.XXX&nbsp;1&nbsp;&quot;^[&nbsp;\t]*func&quot;&nbsp;.scheme.function 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;...&nbsp;more&nbsp;... 
+
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Hilight&nbsp;numbers. 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;band&nbsp;.hilight.flags&nbsp;0x08 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;hilight&nbsp;constants,&nbsp;e.g.&nbsp;numbers 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hilight&nbsp;.hilight.XXX&nbsp;1&nbsp;&quot;[[:digit:]]+&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.constant 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hilight&nbsp;.hilight.XXX&nbsp;1&nbsp;&quot;-[[:digit:]]+&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.constant 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hilight&nbsp;.hilight.XXX&nbsp;1&nbsp;&quot;0[xX][[:xdigit:]]+&quot;&nbsp;.scheme.constant 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hilight&nbsp;.hilight.XXX&nbsp;1&nbsp;&quot;[[:digit:]]+\.[[:digit:]]+&quot;&nbsp;&nbsp;.scheme.constant 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hilight&nbsp;.hilight.XXX&nbsp;1&nbsp;&quot;-[[:digit:]]+\.[[:digit:]]+&quot;&nbsp;.scheme.constant 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hilight&nbsp;.hilight.XXX&nbsp;1&nbsp;&quot;[[:digit:]]+\.[[:digit:]]+f&quot;&nbsp;&nbsp;.scheme.constant 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hilight&nbsp;.hilight.XXX&nbsp;1&nbsp;&quot;-[[:digit:]]+\.[[:digit:]]+f&quot;&nbsp;.scheme.constant 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+!endif 
+
+;&nbsp;End&nbsp;the&nbsp;initialisation&nbsp;-&nbsp;call&nbsp;user&nbsp;extensions&nbsp;i.e.&nbsp;myXXX.emf 
+buffer-init-fhook&nbsp;&quot;XXX&quot; 
+</PRE></UL>
+<P><B>buffer-init</B> is invoked from the buffer file hook 
+<A HREF="m2cmd202.html">fhook</A> and is invoked with the numerical argument passed to the <I>fhook</I> macro (specified as <TT>$#</TT>). The call takes two arguments, the first is the <I>name</I> of the template or hook, in the example this is <I>XXX</I>. The second argument is the <I>etf</I> template name (see 
+<A HREF="m8fil001.html">etf(8)</A>). The command initializes the buffer, using the <I>.fhook-XXX</I> variable information defined in the file. 
+<P><B>buffer-init-fhooks</B> is invoked from the buffer file hook 
+<A HREF="m2cmd202.html">fhook</A> typically following the <B>buffer-init</B> call this macro invokes any user defined file hooks of the form <B>my-fhook-XXX</B>. User defined <B>my-bhook-XXX</B> and <B>my-ehook-XXX</B> are configured into the buffer space ready for execution. 
+<P><B>buffer-init-fhook</B> is placed at the end of the hook file definition and retrieves additional configuration information from the registry and the user settings, it will also locate and load any user additions to the template by loading the file <TT>myXXX.emf</TT>. </UL>
+<H2>Execution Sequence </H2>
+<UL><P>It is important to understand the execution sequence of the buffer hook files. On identifying a new file hook then the <TT>hkXXX.emf</TT> file is fetched from the file system and executed. Execution causes all of the variables to be defined and finally, when all definitions have been made, <B>buffer-init-fhook</B> is executed to load in any user defined extensions. At this point then the macro <B>fhook-XXX</B> has ONLY been defined it has NOT been executed. This load operation is performed once only and is on demand. 
+<P>The <B>fhook-XXX</B> macro must be defined BEFORE any of the variables associated with the hook as all subsequent variables are command variables and are defined in the context of the macro definition. See 
+<A HREF="m4fil018.html">Variables(4)</A> for more information on macro variables. 
+<P><B>fhook-XXX</B> is invoked to apply hilighting, buffer key bindings, indentation etc. to the newly loaded buffer. </UL>
+<H2>Configuration Masks </H2>
+<UL><P>Buffer initialization is controlled by the settings of the variables <B>.fhook-XXX.setup</B> and <B>fhook-XXX.setup-mask</B>:- <UL>
+<PRE>set-variable&nbsp;.fhook-XXX.setup&nbsp;&amp;reg&nbsp;&quot;/history&quot;&nbsp;&quot;fhook/XXX&quot;&nbsp;&quot;bdfghnopx&quot; 
+set-variable&nbsp;.fhook-XXX.setup-mask&nbsp;&quot;abdefghikmnoptux&gt;&quot; 
+</PRE></UL>
+<P>The variables use an ASCII configuration string that identifies the modes of operation that are required. Upper and lower case alternatives are presented, an uppercase flag disables the mode, lower case enables. Where the flag is not specified then the mode is not changed. 
+<P><TT>a</TT> - Auto mode 
+<BR><UL>Configure 
+<A HREF="m2mod000.html">auto(2m)</A> mode for automatic source file line type detection. Typically enabled for text files. </UL>
+<P><TT>b</TT> - Abbreviation mode 
+<BR><UL>Configures the abbreviation mode using 
+<A HREF="m2cmd117.html">buffer-abbrev-file(2)</A> for the buffer. </UL>
+<P><TT>c</TT> - View / Author mode 
+<BR><UL>Configure 
+<A HREF="m2mod016.html">view(2m)</A> mode for read only or authoring. </UL>
+<P><TT>d</TT> - Auto indentation operation. 
+<BR><UL>Automatic indent is enabled. Where <I>C-mode</I> is required (see 
+<A HREF="m2mod002.html">cmode(2m)</A>) then the flag <TT>&gt;</TT> should be used in conjunction with the <TT>d</TT> flag, otherwise the indentation should be defined in the template using 
+<A HREF="m2cmd033.html">indent(2)</A>. </UL>
+<UL><P>Where 
+<A HREF="m2mod005.html">indent(2m)</A> mode is required then omit the <TT>d</TT> flag and use flag <TT>i</TT> instead. </UL>
+<P><TT>e</TT> - Exact or case sensitivity operation 
+<BR><UL>Configure 
+<A HREF="m2mod004.html">exact(2m)</A> case sensitive mode. <TT>e</TT> enable exact, <TT>E</TT> disable exact. </UL>
+<P><TT>f</TT> - Folding/Collapsing operation 
+<BR><UL>Configures folding support, if enabled then the variables <I>.fhook-XXX.collapse-OPERATION</I>, should be defined to declare the folding points. </UL>
+<P><TT>g</TT> - Fence matching operation 
+<BR><UL>Configure fence matching mode with 
+<A HREF="m2mod032.html">fence(2m)</A>. Note that fence matching is now typically performed in the macro environment using 
+<A HREF="m3mac061.html">display-matching-fence(3)</A> rather than the in-built fence matching. This colorizes the fences that are matched. <TT>g</TT> enable fence matching, <TT>G</TT> disable fence matching. </UL>
+<P><TT>h</TT> - Hilighting 
+<BR><UL>Support syntax hilighting, when defined then the hilighting scheme defined by <I>.hilight.XXX</I> is attached to the buffer. </UL>
+<P><TT>i</TT> - Automatic indentation 
+<BR><UL>Support indentation using 
+<A HREF="m2mod005.html">indent(2m)</A>. Automatic indentation defined with the <TT>d</TT> and optionally the <TT>&gt;</TT> flag where the in-built <I>C-mode</I> (see 
+<A HREF="m2mod002.html">cmode(2m)</A>) is required. <TT>i</TT> enable indent, <TT>J</TT> disable indent. </UL>
+<P><TT>j</TT> - Justify 
+<BR><UL>Configure paragraph justification using 
+<A HREF="m2mod006.html">justify(2m)</A>. <TT>j</TT> enable justify, <TT>J</TT> disable justify. </UL>
+<P><TT>k</TT> - Backup mode 
+<BR><UL>Configure backups with 
+<A HREF="m2mod001.html">backup(2m)</A> mode. <TT>k</TT> enable backup, <TT>K</TT> disable backup. </UL>
+<P><TT>m</TT> - Magic mode 
+<BR><UL>Configure regular expression 
+<A HREF="m2mod009.html">magic(2m)</A> mode. <TT>m</TT> enable magic, <TT>M</TT> disable magic. </UL>
+<P><TT>n</TT> - New buffer header 
+<BR><UL>Enable the insertion of a buffer header from the 
+<A HREF="m8fil001.html">etf(8)</A> template file. </UL>
+<P><TT>o</TT> - Tool menu 
+<BR><UL>Enable the tool menu for the buffer. </UL>
+<P><TT>p</TT> - Help page 
+<BR><UL>Produce a help page for the buffer describing the bindings. </UL>
+<P><TT>s</TT> - Auto spell 
+<BR><UL>Configure automatic spelling for the buffer using 
+<A HREF="m3mac039.html">auto-spell(3)</A>. </UL>
+<P><TT>t</TT> - Tab mode 
+<BR><UL>Configure insertion of literal tabs by enabling 
+<A HREF="m2mod012.html">tab(2m)</A> mode. <TT>t</TT> enable tab, <TT>T</TT> disable tab. </UL>
+<P><TT>u</TT> - Undo 
+<BR><UL>Configure the undo/redo history using 
+<A HREF="m2mod014.html">undo(2m)</A> mode. <TT>u</TT> enable undo, <TT>U</TT> disable undo. </UL>
+<P><TT>w</TT> - Wrap 
+<BR><UL>Configure wrapping using 
+<A HREF="m2mod017.html">wrap(2m)</A> mode. <TT>w</TT> enable wrap, <TT>W</TT> disable wrap. </UL>
+<P><TT>x</TT> - Time stamping 
+<BR><UL>Configure time stamping as defined by 
+<A HREF="m2mod013.html">time(2m)</A>. </UL>
+<P><TT>&gt;</TT> - Electric-c indentation. 
+<BR><UL>A special internal flag indicating that indentation is to be performed using 
+<A HREF="m2mod002.html">cmode(2m)</A>. This option should only be used when the <TT>d</TT> flag is also defined. The flag should only be present in the <I>.setup-mask</I>. </UL>
+<P><TT>1</TT> - Reformatting hilighting 
+<BR><UL>A special internal flag indicating that hilighting is used for reformatting purposes, i.e. to make readable and hide control text. </UL>
+<P><TT>#</TT> - Commenting 
+<BR><UL>Special flag used to indicate commenting is supported. The comment format should be defined with the <I>.fhook-XXX.comment</I> variable within the template. </UL>
+<P><B>.fhook-XXX.setup</B> is the current set-up, this is normally defined to take settings from the registry providing a default when not defined. This is the only mask that is allowed to include the uppercase flags. All values defined in <B>.fhook-XXX.setup</B> are explicitly enabled or disabled by default. The setup set should contain the configuration flags that are required to make the template operate correctly, but should not include modes that the user may set up i.e. <I>exact</I> or <I>magic</I> etc. 
+<P><B>.fhook-XXX.setup-mask</B> defines the set of flags that are allowed with the template. The configuration defined in 
+<A HREF="m3osd010.html">buffer-setup(3)</A> is tested against the mask, if the mask allows it then the mode is enabled. <B>.fhook-XXX.setup</B> is generally a subset of <B>.fhook-XXX.setup-mask</B>. 
+<P>
+<A HREF="m3osd010.html">buffer-setup(3)</A> operates with the values defined by <B>.fhook-XXX.setup</B> and <B>.fhook-XXX.setup-mask</B>. The initialization of <B>.fhook-XXX.setup</B> is performed using the registry as follows:- <UL>
+<PRE>set-variable&nbsp;.fhook-XXX.setup&nbsp;&amp;reg&nbsp;&quot;/history&quot;&nbsp;&quot;fhook/XXX&quot;&nbsp;&quot;bdfghnopx&quot; 
+</PRE></UL>
+<P>This allows the user to configure over-ridding modes via 
+<A HREF="m3osd010.html">buffer-setup(3)</A>. The user configuration is saved to the 
+<A HREF="amicr006.html">Registry</A> and restored using 
+<A HREF="m4fil028.html">&amp;reg(4)</A>, when the variable is defined. The flags that are defined by 
+<A HREF="m3osd010.html">buffer-setup(3)</A> include <TT>a</TT>, <TT>b</TT>, <TT>c</TT>, <TT>d</TT>, <TT>e</TT>, <TT>f</TT>, <TT>g</TT>, <TT>h</TT>, <TT>i</TT>, <TT>j</TT>, <TT>k</TT>, <TT>m</TT>, <TT>n</TT>, <TT>o</TT>, <TT>p</TT>, <TT>s</TT>, <TT>t</TT>, <TT>u</TT>, <TT>w</TT>, and <TT>x</TT>. </UL>
+<H2>Tags </H2>
+<UL><P>The buffer setup may be configured to add a tags generator to the language template, this is added to the menu. The tags generation is declared in the template by assigning the variable <B>.fhook-XXX.tags</B> with a command line to run tags utility. The command line string should commence with a <TT>!</TT> character to tell MicroEmacs to execute an external command, for example to use the GNU <B>ctags(2)</B> utility is defined as:- <UL>
+<PRE>set-variable&nbsp;.fhook-c.tags&nbsp;&quot;!ctags&nbsp;*.c&nbsp;*.h&quot; 
+</PRE></UL>
+<P>When the value starts with a '<TT>!</TT>' then rest of the line is spawned as a process, no additional interface is provided to the command. 
+<P>Some language templates include a macro <I>tags</I> facility to generate a tags file (See 
+<A HREF="m3fcl006.html">emftags(3f)</A> - <TT>emftags.emf</TT>, 
+<A HREF="m3fcl004.html">ctags(3f)</A> - <TT>ctags.emf</TT>, 
+<A HREF="m3fcl007.html">ntags(3f)</A> - <TT>ntags.emf</TT>). <B>.fhook-XXX.tags</B> may be defined to use an internal macro based tags generator rather than an external command. Without the '<TT>!</TT>' character the command line is assumed to be an MicroEmacs macro based and runs the command <UL>
+<PRE>me&nbsp;@&lt;.tags-var-value&gt;&nbsp;-v%tag-options=&lt;options&gt; 
+</PRE></UL>
+<P>A macros based command line for the 'C' Programming Language is defined as:- <UL>
+<PRE>set-variable&nbsp;.fhook-c.tags&nbsp;&quot;ctags&quot; 
+</PRE></UL>
+<P>The presence of a tags generator is not flagged in the setup flags, declaration of the <B>.fhook-XXX.tags</B> variable is sufficient to declare that a tags generator exists. </UL>
+<H2>Comments </H2>
+<UL><P>The format of comments may be defined in the template using the <B>.fhook-XXX.comment</B> variable. Definition of the comment form allows the comment formatting to be automatically set up. Where the comment format is defined then the following key bindings are automatically added to the template:- 
+<UL><P><TT>C-c C-s</TT> <B>comment-start</B> - start a new comment. 
+<BR><TT>C-c C-c</TT> <B>comment-line</B> - comment out the current line. 
+<BR><TT>C-c C-d</TT> <B>uncomment-line</B> - remove commenting from current line. 
+<BR><TT>C-c C-e</TT> <B>comment-to-end-of-line</B> - comment to end of line. 
+<BR><TT>C-c C-r</TT> <B>comment-restyle</B> - format/re-style comment. </UL>
+<P>Help information is automatically added to the buffer to describe the key bindings if help information is enabled. 
+<P>The comment format is defined with the variable <B>.fhook-XXX.comment</B> with an argument string in the form &quot;<B>|</B> <I>&lt;comment-start&gt;</I> <B>|</B> <I>&lt;comment-end&gt;</I> <B>|</B> <I>&lt;comment-pad&gt;</I> <B>|</B> <I>&lt;mid-box-left&gt;</I> <B>|</B> <I>&lt;mid-box-right&gt;</I> <B>|</B> <I>&lt;comment-flags&gt;</I> <B>|</B>&quot;. Where the fields are defined as follows:- 
+<P><I>&lt;comment-start&gt;</I> 
+<BR><UL>The format of the start of the comment or comment open syntax. </UL>
+<P><I>&lt;comment-end&gt;</I> 
+<BR><UL>The format of the closing comment, where the comment exists to the end of the line then the field is defined as empty. </UL>
+<P><I>&lt;comment-pad&gt;</I> 
+<BR><UL>The character to use to pad a comment between the <I>&lt;comment-start&gt;</I> and <I>&lt;comment-end&gt;</I> characters when creating a line or a box formation. </UL>
+<P><I>&lt;mid-box-left&gt;</I> 
+<BR><UL>The start of a comment continuation line when creating a box comment. </UL>
+<P><I>&lt;mid-box-right&gt;</I> 
+<BR><UL>The end of a comment continuation line when creating a box comment and the comment is not closed and continues on the next line. </UL>
+<P><I>&lt;comment-flags&gt;</I> 
+<BR><UL>The comment flags define how the comment should be formatted when re-styled. The flags are defined as single characters that describe the attributes. Re-styling may include the following attributes:- 
+<P><B>b </B>
+<BR><UL>Box format required, create a left and right edge for the comment. </UL>
+<P><B>f </B>
+<BR><UL>A footer line is required, a new line is created following the comment text to contain the with a closing comment <I>&lt;comment-end&gt;</I> string. The end of comment is not padded. </UL>
+<P><B>F </B>
+<BR><UL>As <B>f</B> except the footer line is left padded with <I>&lt;comment-pad&gt;</I> strings. </UL>
+<P><B>h </B>
+<BR><UL>A header line is required, a new line is created before the comment text to contain the opening comment <I>&lt;comment-start&gt;</I> string. The end of comment is not padded. </UL>
+<P><B>H </B>
+<BR><UL>As <B>h</B> except the header line is right padded with <I>&lt;comment-pad&gt;</I> strings. </UL>
+<P><B>j </B>
+<BR><UL>Enable justification mode in the *comment* buffer and re-style. </UL>
+</UL><P>Examples of the comments format are shown below. 
+<P><B>'C' Programming language </B>
+<BR><UL>Format: <TT>/* ... */</TT> </UL><UL><UL>
+<PRE>set-variable&nbsp;.fhook-c.comment&nbsp;&quot;|/*|*/|*|&nbsp;*&nbsp;|&nbsp;*&nbsp;|f|&quot; 
+</PRE></UL>
+</UL><UL><P>The comment output is defined as:- </UL><UL><UL>
+<PRE>/*************************************************************** 
+&nbsp;*&nbsp;This&nbsp;is&nbsp;a&nbsp;box&nbsp;comment&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;* 
+&nbsp;***************************************************************/ 
+
+/*&nbsp;Comment&nbsp;to&nbsp;end&nbsp;of&nbsp;line&nbsp;**************************************/ 
+</PRE></UL>
+</UL><P><B>C++ Programming language </B>
+<BR><UL>Format: <TT>// ... &lt;EOL&gt;</TT> </UL><UL><UL>
+<PRE>set-variable&nbsp;.fhook-cpp.comment&nbsp;&quot;|//||/|//&nbsp;|&nbsp;//||&quot; 
+</PRE></UL>
+</UL><UL><P>The comment output is defined as:- </UL><UL><UL>
+<PRE>///////////////////////////////////////////////////////////////// 
+//&nbsp;This&nbsp;is&nbsp;a&nbsp;box&nbsp;comment&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 
+///////////////////////////////////////////////////////////////// 
+
+//&nbsp;Comment&nbsp;to&nbsp;end&nbsp;of&nbsp;line&nbsp;/////////////////////////////////////// 
+</PRE></UL>
+</UL><P><B>MicroEmacs macro language </B>
+<BR><UL>Format: <TT>; ... &lt;EOL&gt;</TT> </UL><UL><UL>
+<PRE>set-variable&nbsp;.fhook-emf.comment&nbsp;&quot;|;||;|;&nbsp;|&nbsp;;||&quot; 
+</PRE></UL>
+</UL><UL><P>The comment output is defined as:- </UL><UL><UL>
+<PRE>;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+;&nbsp;Box&nbsp;Comment&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;; 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+
+;&nbsp;Comment&nbsp;to&nbsp;end&nbsp;of&nbsp;line&nbsp;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+</PRE></UL>
+</UL><P><B>Shell script </B>
+<BR><UL>Format: <TT># ... &lt;EOL&gt;</TT> </UL><UL><UL>
+<PRE>set-variable&nbsp;.fhook-shell.comment&nbsp;&quot;|#||#|#&nbsp;|&nbsp;#||&quot; 
+</PRE></UL>
+</UL><UL><P>The comment output is defined as:- </UL><UL><UL>
+<PRE>################################################################# 
+#&nbsp;Box&nbsp;Comment&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# 
+################################################################# 
+
+#&nbsp;Comment&nbsp;to&nbsp;end&nbsp;of&nbsp;line&nbsp;######################################## 
+</PRE></UL>
+</UL><P><B>MS-DOS Batch file </B>
+<BR><UL>Format: <TT>rem ... &lt;EOL&gt;</TT> </UL><UL><UL>
+<PRE>set-variable&nbsp;.fhook-dos.comment&nbsp;&quot;|rem&nbsp;|||rem&nbsp;|||&quot; 
+</PRE></UL>
+</UL><UL><P>The comment output is defined as:- </UL><UL><UL>
+<PRE>rem 
+rem&nbsp;Box&nbsp;Comment 
+rem 
+
+rem&nbsp;Comment&nbsp;to&nbsp;end&nbsp;of&nbsp;line 
+</PRE></UL>
+</UL></UL><H2>Commands and Key Bindings </H2>
+<UL><P>Local buffer commands and key bindings for over-riding key definitions used within the buffer are defined with the <TT>fhook-XXX.command-*</TT> variables. These are defined as MicroEmacs list variables (see 
+<A HREF="m4fil029.html">&amp;lfind(4)</A>, 
+<A HREF="m4fil029.html">&amp;lget(4)</A>, etc. for the full syntax definition) and define a list of keys, commands and bindings. Each command is typically separated by the '<TT>|</TT>' character. The field order in all of the <TT>fhook-XXX.command-*</TT> variables MUST be consistent, so if a command is defined in field 5, then all definitions associated with that command MUST be defined in field 5 for all variables. The command variables are defined as follows:- 
+<P><I>.fhook-c.command-flag</I> 
+<BR><UL>A configuration flag that defines the components to use for the command. The flags are set as individual characters and are defined as follows:- 
+<P><TT>t</TT> - Toolbar 
+<BR><UL>Show the command in the toolbar. The <TT>.fhook-XXX.command-desc</TT> variable should contain a readable name for the command to display in the menu. An optional hot key for selection in any 
+<A HREF="m2cmd066.html">osd</A> is specified by prefixing the character in the string with <TT>\H</TT>. </UL>
+<P><TT>h</TT> - Help Screen 
+<BR><UL>Show the command in the help screen. The <TT>.fhook-XXX.command-desc</TT> variable should contain a readable name for the command to display in the menu. An optional hot key for selection in any 
+<A HREF="m2cmd066.html">osd</A> is specified by prefixing the character in the string with <TT>\H</TT>. </UL>
+<P><TT>b</TT> - Key binding 
+<BR><UL>Create a buffer key binding for the command, the key to bind is defined by the variable <TT>fhook-XXX.command-kbind</TT>, if the command requires a numerical argument then this is defined in the variable <TT>fhook-XXX.command-nbind</TT>. The binding is only created if the key buffer binding does not already exist, the binding may be forced by using the <TT>o</TT> flag. Where a key binding is only to be created if hilighting is enabled then the <TT>b</TT> flag should be qualified with the <TT>H</TT> flag. </UL>
+<P><TT>o</TT> - Forced key binding 
+<BR><UL>Optionally used with the <TT>b</TT> and forces the binding to over-write any existing binding. </UL>
+<P><TT>i</TT> - Emulated key binding 
+<BR><UL>Used with the <TT>b</TT> flag, ignores key bindings that are emulation mappings. </UL>
+<P><TT>H</TT> - Hilighting key binding 
+<BR><UL>Used with the <TT>b</TT> flag, only performs the key binding if hilighting is enabled. </UL></UL>
+<P><I>.fhook-XXX.command-name</I> 
+<BR><UL>Specifies the name of the command to execute, this may be a built in command of a macro. Typically the command is a local macro defined in the hook file. </UL>
+<P><I>.fhook-XXX.command-nbind</I> 
+<BR><UL>The value of the numeric argument to pass to the command defined in the <I>.fhook-XXX.command-name</I> field. This field may be empty if no numeric argument is required. </UL>
+<P><I>.fhook-XXX.command-kbind</I> 
+<BR><UL>The local key binding to bind to the command, this field is only interpreted if the <TT>b</TT> is specified, otherwise the field may be empty. Where multiple key bindings are required to the same command then a field definition is required for each binding. </UL>
+<P><I>.fhook-c.command-desc</I> 
+<BR><UL>A short description of the command that is used for the help page (<TT>h</TT>) and toolbar (<TT>t</TT>). The field may be empty if the field is not specified for insertion into the toolbar or help page. </UL>
+<P>As an example, two new commands or bindings may be defined for a template, the first field is bound to key <TT>A-q</TT> which executes macro <TT>XXX-comp</TT> with a numerical argument of 2. The second field binds a new key to 
+<A HREF="m3mac060.html">comment-restyle(3)</A>. <UL>
+<PRE>
+..... 
+
+set-variable&nbsp;.fhook-XXX.command-flag&nbsp;&nbsp;&quot;|th|bo|&quot; 
+set-variable&nbsp;.fhook-XXX.command-name&nbsp;&nbsp;&quot;|XXX-comp|comment-restyle|&quot; 
+set-variable&nbsp;.fhook-XXX.command-nbind&nbsp;&quot;|2||&quot; 
+set-variable&nbsp;.fhook-XXX.command-kbind&nbsp;&quot;|A-q|esc&nbsp;o|&quot; 
+set-variable&nbsp;.fhook-XXX.command-desc&nbsp;&nbsp;&quot;|Complete&nbsp;command||&quot; 
+
+..... 
+
+;&nbsp;Local&nbsp;macro&nbsp;definition&nbsp;to&nbsp;perform&nbsp;command&nbsp;completion 
+define-macro&nbsp;XXX-comp 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l1&nbsp;@# 
+&nbsp;&nbsp;&nbsp;&nbsp;..... 
+!emacro 
+</PRE></UL>
+<P>The key bindings sometimes need to be protected where they have been redefined to perform some other operation for example when emulation modes are used (i.e. <B>nedit</B>, <B>me3.8</B>). The buffer initialisation uses the command <B>buffer-bind-create</B> and the variables <B>.buffer-bind-create.map-from</B> and <B>.buffer-bind-create.map-to</B> which define replacement keys for bindings. As an example the <B>nedit</B> emulation mode uses key binding <TT>C-c C-c</TT> and provides a buffer binding mapping to translate any key buffer binding to a different key. i.e. <UL>
+<PRE>;&nbsp;reconfigure&nbsp;the&nbsp;buffer&nbsp;bindings 
+set-variable&nbsp;.buffer-bind-key.map-from&nbsp;&quot;|C-c&nbsp;C-c|C-c&nbsp;C-d|&quot; 
+set-variable&nbsp;.buffer-bind-key.map-to&nbsp;&nbsp;&nbsp;&quot;|C-b|C-u|&quot; 
+</PRE></UL>
+</UL><H2>Information Hiding with Collapse </H2>
+<UL><P>MicroEmacs '04 provides a generic, albeit coarse, folding mechanism which is applied to some of the well known file modes. The folding mechanism allows parts of the buffer to be scrolled up and hidden, leaving a residue hilighting marker within the buffer indicating a folded region. A folded buffer typically allows a summary of the buffer contents to be viewed within several windows, hiding the detail of the buffer. 
+<P>Note: <B>collapse</B> was called <B>fold</B> in earlier releases but the name was changed when real fold editing support was added, see <TT>fold.emf</TT> for more information. 
+<P>The folding mechanism uses well defined <I>start</I> and <I>end</I> markers which form part of the syntax of the well known file mode. i.e. in 'C' this is the open and closed braces that appear on the left-hand margin (<TT>{</TT> .. <TT>}</TT>). The intention is that the natural syntax of the text is used to determine the fold positions, requiring no additional text formating or special text tags to be inserted by the user. 
+<P>The language template defines the syntax of blocks of information that may be collapsed and hidden with 
+<A HREF="m2cmd068.html">narrow</A>. In order to utilize the 
+<A HREF="m3mac029.html">collapse-current(3)</A> and 
+<A HREF="m3mac029.html">collapse-all(3)</A> commands within a buffer, the <I>start</I> and <I>end</I> markers have to be initialized for the syntactical contents of the buffer. The buffer specific variables are defined as follows, where <I>XXX</I> is the file hook base name. The <TT>.fhook-XXX.collapse-*</TT> variables define the regular expression search pattern and line positioning. 
+<P><B>.fhook-</B><I>XXX</I><B>-collapse-open</B> 
+<BR><UL>A regular expression search string used to locate the start of the string. For speed the search string should include a regular expression start or end of line character whenever possible. i.e. in C the open is defined as &quot;<TT>^{</TT>&quot;. </UL>
+<P><B>.fhook-</B><I>XXX</I><B>-collapse-close</B> 
+<BR><UL>A regular expression search string used to locate the end of the string. For speed the search string should include a regular expression start or end line character whenever possible. i.e. in C the close is defined as &quot;<TT>^}</TT>&quot;. </UL>
+<P><B>.fhook-</B><I>XXX</I><B>-collapse-mopen</B> 
+<BR><UL>An integer value that denotes the number of lines to move in a forward or (-ve) backward direction from the <I>start</I> line located by the search string to the position in the buffer to be folded. If default value when <B>mopen</B> is omitted is 0, starting the fold from the search string line. </UL>
+<P><B>.fhook-</B><I>XXX</I><B>-collapse-mclose</B> 
+<BR><UL>The relative displacement from the close fold line to the fold position, this is a positive or negative displacement depending on where the fold is to be positioned. </UL>
+<P><B>.fhook-</B><I>XXX</I><B>-collapse-mnext</B> 
+<BR><UL>Specifies the number of lines to advance before the next search is continued on the fold operation. This is only used by 
+<A HREF="m3mac029.html">collapse-all</A>. 
+</UL><P>The following examples show how the collapse variables are set up in each of the buffer modes. 
+<P><B>C and C++</B> 
+<BR><UL><B>C</B> and <B>C++</B> collapse on the open and close brace appearing in the left-hand margin. The collapse variables are defined in <TT>hkc</TT>/<TT>hkcpp.emf</TT> as follows:- <UL>
+<PRE>set-variable&nbsp;.fhook-c.collapse-open&nbsp;&nbsp;&quot;^{&quot; 
+set-variable&nbsp;.fhook-c.collapse-close&nbsp;&quot;^}&quot; 
+set-variable&nbsp;.fhook-c.collapse-mopen&nbsp;&nbsp;&quot;-1&quot; 
+set-variable&nbsp;.fhook-c.collapse-mclose&nbsp;&quot;1&quot; 
+set-variable&nbsp;.fhook-c.collapse-mnext&nbsp;&quot;-1&quot; 
+</PRE></UL>
+<P>Given a 'C' function definition:- <UL>
+<PRE>static&nbsp;void 
+myfunc&nbsp;(int&nbsp;a,&nbsp;int&nbsp;b) 
+{ 
+&nbsp;&nbsp;&nbsp;&nbsp;/*&nbsp;Function&nbsp;body&nbsp;*/ 
+} 
+</PRE></UL>
+<P>the folded version appears as follows:- <UL>
+<PRE>static&nbsp;void 
+myfunc&nbsp;(int&nbsp;a,&nbsp;int&nbsp;b)&nbsp;...&nbsp;} 
+</PRE></UL>
+</UL><P><B>emf</B> 
+<BR><UL>MicroEmacs macro files <B>emf</B> support folding of macro definitions, the collapse variables are defined in <TT>hkemf.emf</TT> as follows:- <UL>
+<PRE>set-variable&nbsp;.fhook-emf.collapse-open&nbsp;&nbsp;&quot;^0?&nbsp;?define-macro[&nbsp;\t]&quot; 
+set-variable&nbsp;.fhook-emf.collapse-close&nbsp;&quot;^!emacro&quot; 
+set-variable&nbsp;.fhook-emf.collapse-mclose&nbsp;&quot;1&quot; 
+set-variable&nbsp;.fhook-emf.collapse-mnext&nbsp;&quot;-1&quot; 
+</PRE></UL>
+<P>Given a macro definition:- <UL>
+<PRE>0&nbsp;define-macro&nbsp;mymacro 
+;&nbsp;This&nbsp;is&nbsp;the&nbsp;body&nbsp;of&nbsp;the&nbsp;macro 
+;&nbsp;...&nbsp;and&nbsp;some&nbsp;more&nbsp;... 
+!emacro 
+</PRE></UL>
+<P>the collapsed version of the macro is defined as:- <UL>
+<PRE>0&nbsp;define-macro&nbsp;mymacro&nbsp;...&nbsp;!emacro 
+</PRE></UL>
+</UL><P><B>nroff</B> 
+<BR><UL><B>nroff</B> is configured for manual pages only and folds between <TT>.SH</TT> and <TT>.SS</TT> sections, the hook variables are defined as follows:- <UL>
+<PRE>set-variable&nbsp;.fhook-nroff.collapse-open&nbsp;&nbsp;&quot;^\.S[SH]&quot; 
+set-variable&nbsp;.fhook-nroff.collapse-close&nbsp;&quot;^\.S[SH]\|\'&quot; 
+set-variable&nbsp;.fhook-nroff.collapse-mnext&nbsp;&quot;-1&quot; 
+</PRE></UL>
+<P>Given an nroff block of text defined as:- <UL>
+<PRE>.SH&nbsp;SYNOPSIS 
+.\&quot;&nbsp;Some&nbsp;text 
+.\&quot;&nbsp;Some&nbsp;more&nbsp;text 
+.SH&nbsp;DESCRIPTION 
+</PRE></UL>
+<P>Then the collapsed version appears as: <UL>
+<PRE>.SH&nbsp;SYNOPSIS 
+.SH&nbsp;DESCRIPTION 
+</PRE></UL>
+</UL><P><B>tcl/tk</B> 
+<BR><UL><B>tcl/tk</B> is configured to collapse procedures. The collapse variables are defined as:- <UL>
+<PRE>set-variable&nbsp;.fhook-tcl.collapse-open&nbsp;&nbsp;&quot;^proc&nbsp;&quot; 
+set-variable&nbsp;.fhook-tcl.collapse-close&nbsp;&quot;^}&quot; 
+set-variable&nbsp;.fhook-tcl.collapse-mclose&nbsp;&quot;1&quot; 
+set-variable&nbsp;.fhook-tcl.collapse-mnext&nbsp;&quot;-1&quot; 
+</PRE></UL>
+<P>Given a tcl procedure definition:- <UL>
+<PRE>proc&nbsp;tixControl:InitWidgetRec&nbsp;{w}&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;upvar&nbsp;#0&nbsp;$w&nbsp;data 
+
+&nbsp;&nbsp;&nbsp;&nbsp;tixChainMethod&nbsp;$w&nbsp;InitWidgetRec 
+
+&nbsp;&nbsp;&nbsp;&nbsp;set&nbsp;data(varInited)	&nbsp;&nbsp;0 
+&nbsp;&nbsp;&nbsp;&nbsp;set&nbsp;data(serial)	0 
+} 
+</PRE></UL>
+<P>The collapsed version of the same section appears as:- <UL>
+<PRE>proc&nbsp;tixControl:InitWidgetRec&nbsp;{w}&nbsp;{&nbsp;...&nbsp;} 
+</PRE></UL>
+</UL><P>Where folding is required using 
+<A HREF="m3mac073.html">fold-open(3)</A> then the collapse methods above are not enacted when folding is enabled. Folding may be enabled as defined by the 
+<A HREF="m2cmd202.html">File Hooks</A>, alternatively the folding may be explicitly defined using the variable <I>.fhook-XXX.fold</I>. The <I>.fhook-XXX.fold</I> variable argument is defined as &quot;<B>|</B> <I>&lt;literal-open&gt;</I> <B>|</B> <I>&lt;literal-close&gt;</I> <B>|</B> <I>&lt;comment-termination&gt;</I> <B>|</B> <I>&lt;regex-find-open&gt;</I> <B>|</B> <I>&lt;regex-find-close&gt;</I> <B>|</B>. Where the fields are defined as follows:- 
+<P><I>&lt;literal-open&gt;</I> 
+<BR><UL>The literal fold open string. </UL>
+<P><I>&lt;literal-close&gt;</I> 
+<BR><UL>The literal fold close string. </UL>
+<P><I>&lt;comment-termination&gt;</I> 
+<BR><UL>The comment termination string. </UL>
+<P><I>&lt;regex-find-open&gt;</I> 
+<BR><UL>The regular expression to find an open fold. </UL>
+<P><I>&lt;regex-find-close&gt;</I> 
+<BR><UL>The regular expression to find a close string. </UL>
+<P>As an example, a language may have the following syntax for defining folds:- <UL>
+<PRE>/*&nbsp;{{{&nbsp;This&nbsp;is&nbsp;an&nbsp;example&nbsp;fold.&nbsp;*/ 
+This&nbsp;is 
+the&nbsp;body 
+of&nbsp;the&nbsp;fold 
+/*&nbsp;}}}&nbsp;*/ 
+</PRE></UL>
+<P>The fold is defined as follows:- <UL>
+<PRE>set-variable&nbsp;fhook-XXX.fold&nbsp;&quot;|/\\*&nbsp;{{{|/\\*&nbsp;}}}|\\*/|/\\*[&nbsp;\t]*{{{|/\\*[&nbsp;\t]*}}}|&quot; 
+</PRE></UL>
+</UL><H2>Item Lists </H2>
+<UL><P>
+<A HREF="m3mac059.html">Item Lists</A> perform a regular expression search of a buffer, presenting a list of the located text and associated types in a separate window which is presented to the left of the buffer window or more typically in the toolbar. The command 
+<A HREF="m3mac059.html">item-list(3)</A> is a generic command that interacts with the buffer environment variables to present abbreviated buffer information to the user. 
+<P>The regular expression search strings are predefined in the language templates, using the variables <B>.fhook-</B><I>XXX</I><B>-item-list-s</B><I>Y</I> and <B>.fhook-</B><I>XXX</I><B>-item-list-r</B><I>Y</I> and are described more fully in 
+<A HREF="m3mac059.html">item-list(3)</A>. </UL>
+<H2>Hilighting </H2>
+<UL><P>Buffer hilighting is defined by the 
+<A HREF="m2cmd069.html">hilight(2)</A> command. Within the context of <B>buffer-init</B> then the standard definitions and name space conventions should be adhered to:- <UL>
+<PRE>!if&nbsp;&amp;not&nbsp;&amp;exist&nbsp;.hilight.XXX 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;.hilight.XXX&nbsp;&amp;pinc&nbsp;.hilight.next&nbsp;1 
+!endif 
+!if&nbsp;&amp;and&nbsp;&amp;sin&nbsp;&quot;h&quot;&nbsp;.fhook-XXX.setup&nbsp;&amp;band&nbsp;.hilight.flags&nbsp;0x02 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;High-light&nbsp;XXX&nbsp;Mode 
+&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;hilight&nbsp;&nbsp;&nbsp;&nbsp;.hilight.XXX&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$global-scheme 
+&nbsp;&nbsp;&nbsp;&nbsp;..... 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Variable&nbsp;hilighting 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;band&nbsp;.hilight.flags&nbsp;0x08 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;hilight&nbsp;constants,&nbsp;e.g.&nbsp;numbers 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hilight&nbsp;.hilight.XXX&nbsp;1&nbsp;&quot;[[:digit:]]+&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.scheme.constant 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...... 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+!endif 
+</PRE></UL>
+</UL><H2>Indentation </H2>
+<UL><P>Buffer indentation is defined by the 
+<A HREF="m2cmd033.html">indent(2)</A> command. Within the context of <B>buffer-init</B> then the standard definitions and name space conventions should be adhered to. The buffer indentation scheme uses the hilighting variable, if hilighting is not defined then the variable allocation of <TT>.hilight.XXX</TT> should be performed as defined in the previous Hilighting section. <UL>
+<PRE>!if&nbsp;&amp;sin&nbsp;&quot;d&quot;&nbsp;.fhook-XXX.setup 
+&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;indent&nbsp;&nbsp;.hilight.XXX&nbsp;0&nbsp;10 
+&nbsp;&nbsp;&nbsp;&nbsp;indent&nbsp;.hilight.XXX&nbsp;n&nbsp;&quot;{&quot;&nbsp;&nbsp;4 
+&nbsp;&nbsp;&nbsp;&nbsp;indent&nbsp;.hilight.XXX&nbsp;o&nbsp;&quot;}&quot;&nbsp;-4 
+&nbsp;&nbsp;&nbsp;&nbsp;..... 
+!endif 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var004.html">$buffer-hilight(5)</A>, 
+<A HREF="m5var075.html">$buffer-indent(5)</A>, 
+<A HREF="m2cmd003.html">add-file-hook(2)</A>, 
+<A HREF="m2cmd117.html">buffer-abbrev-file(2)</A>, 
+<A HREF="m3osd010.html">buffer-setup(3)</A>, 
+<A HREF="m3mac029.html">collapse-all(3)</A>, 
+<A HREF="m3mac029.html">collapse-current(3)</A>, 
+<A HREF="m3fcl004.html">ctags(3f)</A>, 
+<A HREF="m8fil000.html">eaf(8)</A>, 
+<A HREF="m3fcl006.html">emftags(3f)</A>, 
+<A HREF="m8fil001.html">etf(8)</A>, 
+<A HREF="m3mac018.html">etfinsrt(3)</A>, 
+<A HREF="m2cmd044.html">execute-buffer(2)</A>, 
+<A HREF="m2cmd051.html">expand-abbrev(2)</A>, 
+<A HREF="m2cmd117.html">global-abbrev-file(2)</A>, 
+<A HREF="m2cmd069.html">hilight(2)</A>, 
+<A HREF="m2cmd033.html">indent(2)</A>, 
+<A HREF="m2mod005.html">indent(2m)</A>, 
+<A HREF="m3mac059.html">item-list(3)</A>, 
+<A HREF="m2cmd068.html">narrow-buffer(2)</A>, 
+<A HREF="m3fcl007.html">ntags(3f)</A>, 
+<A HREF="m3mac025.html">restyle-buffer(3)</A>, 
+<A HREF="m3mac025.html">restyle-region(3)</A>, 
+<A HREF="m3osd005.html">scheme-editor(3)</A>, 
+<A HREF="m2mod013.html">time(2m)</A>, 
+<BR>
+<A HREF="m2cmd202.html">File Hooks</A>, 
+<BR>
+<A HREF="m2nar000.html">File Language Templates</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2004/01/18</I>
+<BR><I>Generated On: 2004/02/06</I>
+</BODY></HMTL>

@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>ftp(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 ftp(3)</H1>
@@ -27,7 +27,8 @@ ftp(3)</H1>
 <P><B>Host Address</B> 
 <BR><UL>The address of the host, this may be an IP address (<TT>111.222.333.444</TT>) or a DNS name (i.e. <TT>ftp.mysite.com</TT>). </UL>
 <P><B>User Name</B> 
-<BR><UL>The login name for the site. If this is omitted then <TT>guest</TT> is used by default. </UL>
+<BR><UL>The login name for the site. If this is omitted then 
+<A HREF="m5var088.html">$user-name(5)</A> is used by default. </UL>
 <P><B>Password</B> 
 <BR><UL>The password used to enter the site for the given login name. If the password is NOT supplied then the user is prompted for the password when a transaction takes place. If the password is omitted and left to promt then it is not stored in the registry. </UL>
 <UL><P>Take note of the comments provided above regarding the password information. </UL>
@@ -64,12 +65,13 @@ ftp(3)</H1>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m5var049.html">%ftp-flags(5)</A>, 
+<A HREF="m5var088.html">$user-name(5)</A>, 
 <A HREF="m8fil004.html">erf(8)</A>, 
 <A HREF="m2cmd056.html">find-file(2)</A>, 
 <A HREF="m2cmd158.html">file-op(2)</A>, 
 <A HREF="m2cmd025.html">list-registry(2)</A>. </UL>
 <HR>
 <P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2004/01/11</I>
+<BR><I>Last Modified: 2004/02/04</I>
+<BR><I>Generated On: 2004/02/06</I>
 </BODY></HMTL>

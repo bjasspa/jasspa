@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>User Profiles(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 User Profiles(2)</H1>
@@ -15,75 +15,70 @@ User Profiles(2)</H1>
 <H2><B>USER PROFILES </B></H2>
 <UL><P>This section describes how a user profile should be incorporated into MicroEmacs '04. A user profile defines a set of extensions to MicroEmacs which encapsulates settings which are used by an individual user. 
 <P>The user profile allows:- <UL><P>
-<LI>Saving of the last session (history), allowing the next invocation of MicroEmacs '04 to restore your previous session. 
+<LI>Saving of the last session (history), allowing the next invocation of MicroEmacs '04 to restore your previous session. The <B>-c</B> option to 
+<A HREF="m1cmd000.html">me(1)</A> restores a previous sessions buffers to the same state prior to exiting the editor. 
 <LI>Personalized spelling dictionaries. 
-<LI>Redefinition of MicroEmacs '04, allowing the editor to be tailored to an individual's requirements. Including the re-binding of keys, modification of the screen colors. Definition of personal macros etc. </UL></UL>
+<LI>Redefinition of MicroEmacs '04 operation, allowing the editor to be tailored to an individual's requirements. Including the re-binding of keys, modification of the screen colors. Definition of personal macros etc. </UL></UL>
 <H2>Identification </H2>
 <UL><P>In order to identify a user MicroEmacs '04 uses information in the system to determine the name of the user, and in turn the configuration to use. On all systems the value of the environment variable 
-<A HREF="m5var076.html">$MENAME(5)</A> takes priority over any other means of user identification. If this variable is not defined then the host system typically provides a mechanism to determine the current user. DOS and <I>Windows</I> systems present problems where a login prompt is not supplied. 
+<A HREF="m5var076.html">$MENAME(5)</A> takes priority over any other means of user identification. If this variable is not defined then the host system typically provides a mechanism to determine the current user. MS-DOS and Microsoft Windows systems present problems where a login prompt is not used. 
 <P>Each of the supported platforms are now described. 
 <P><B>UNIX </B>
-<BR><UL>The environment variable <TT>$LOGNAME</TT> is defined. This is the user name used by the system. </UL>
+<BR><UL>The login name is determined from the <TT>/etc/passwd</TT> file and defines 
+<A HREF="m5var088.html">$user-name(5)</A>. The environment variable 
+<A HREF="m5var076.html">$MENAME(5)</A> may be defined alter the default user configuration file name. </UL>
 <P><B>DOS </B>
-<BR><UL>MS-DOS typically has no concept of the user name. The user name should be defined in the <TT>autoexec.bat</TT> file, choose a name of 8 characters or less, i.e. to fix the user name to <TT>fred</TT> then add the following line:- <UL>
+<BR><UL>MS-DOS typically has no concept of the user name. The user name may be defined in the <TT>autoexec.bat</TT> file, choose a name of 8 characters or less, i.e. to fix the user name to <TT>fred</TT> then add the following line:- <UL>
 <PRE>SET&nbsp;MENAME=fred 
 </PRE></UL>
 <P>Remember to re-boot the system before the new command takes effect. (see the next step, there is another change to <TT>autoexec.bat</TT>). </UL>
 <P><B>Microsoft Windows </B>
-<BR><UL>Microsoft windows environments may, or may not, have logging enabled. If you have to log into your system then a login identification has been supplied and will be recognized by MicroEmacs, setting the environment variable 
-<A HREF="m5var076.html">$MENAME(5)</A> to this value. </UL>
-<UL><P>If login is not enabled then the 
-<A HREF="m8fil006.html">me32.ini(8)</A> file may be modified to provide a default login name. To add the user <B>fred</B> then add the following lines to the <I>ini</I> file:- <UL>
-<PRE>[guest] 
-MENAME=fred 
-</PRE></UL>
-<P>If login is subsequently enabled on the system then these lines should be removed. These lines force the user identification to be <B>fred</B>. 
-<P>The above technique may be used within the windows environment to modify your login name. Assuming that the system administrator has assigned <B>fred</B> a user login name of <B>fwhite</B>, and <I>fred</I> requires all of his configuration files to be the same name as his UNIX login which is <B>fred</B>. Then <I>fred</I> may force his user name to <I>fred</I> from the <TT>me32.ini</TT> file as follows:- <UL>
-<PRE>[fwhite] 
-MENAME=fred 
-</PRE></UL>
-<P>Once <I>fred</I> has entered MicroEmacs he will adopt his new login name which will be used to identify his own files etc. The action of this statement is to force the environment variable <TT>$MENAME</TT> to a new value. Any other environment variables may be forced in this way i.e. <TT>$HOSTNAME</TT> is a good candidate here as the <TT>me32.ini</TT> is local to the machine. </UL>
-<P><B>Shared Platforms </B>
-<BR><UL>Platforms may share the same set of configuration files. Consider a system which may boot under MS-DOS, Windows '98, NT and Linux. Provided that the macro files are located on a file system that may be mounted by all of the other operating systems and the $MEPATH is set appropriately, then a single set of MicroEmacs macro files may be shared across all platforms. </UL></UL>
+<BR><UL>Microsoft windows environments may, or may not, have login enabled. If login is enabled then 
+<A HREF="m5var088.html">$user-name(5)</A> is set to the login user name. The login name may be overridden by setting the environment variable 
+<A HREF="m5var076.html">$MENAME(5)</A> this may be performed in the environment or through the 
+<A HREF="m8fil006.html">me32.ini(8)</A> file. </UL></UL>
+<H2>Shared Platforms </H2>
+<UL><P>Platforms may share the same set of configuration files. Consider a system which may boot under MS-DOS, Windows '98, NT and Linux. Provided that the macro files are located on a file system that may be mounted by all of the other operating systems and the 
+<A HREF="m5var090.html">$MEUSERPATH(5)</A> and 
+<A HREF="m5var090.html">$MEPATH(5)</A> are set appropriately to point to the users private MicroEmacs and system directories, then a single set of macro files may be shared across all platforms. </UL>
 <H2>Personal MicroEmacs Directory </H2>
-<UL><P>The private user profile is stored in a separate directory. The directory that MicroEmacs uses must be created by the user, create the directory in your local file system. In addition, the MicroEmacs search path 
-<A HREF="m5var057.html">$MEPATH(5)</A> should be modified to include your new MicroEmacs personal directory. 
+<UL><P>The private user profile is stored in a separate directory. The directory that MicroEmacs uses is typically automatically created at start up, but may be created manually by the user. If the directory is to be placed in a special location then the 
+<A HREF="m5var090.html">$MEUSERPATH(5)</A> environment variable should be defined and set to point at this directory location. 
 <P><B>UNIX </B>
-<BR><UL>Create in your local directory, typically called <TT>microemacs</TT> or <TT>.microemacs</TT> (if it is to be hidden). </UL>
-<UL><P>Add/modify the 
-<A HREF="m5var057.html">$MEPATH(5)</A> environment variable to include your personal directory in your <TT>.login</TT>, <TT>.chsrc</TT> or <TT>.profile</TT> file, the file and exact syntax will depend upon your shell. For a Korn shell the following line would be added to the <TT>.profile</TT> file:- <UL>
-<PRE>export&nbsp;MEPATH=$HOME/.microemacs:/usr/local/microemacs 
-</PRE></UL>
-<P>Where <TT>$HOME</TT> is assumed to be the users login home directory, or use the directory location of your new directory. </UL>
+<BR><UL>In the UNIX environment then the local directory is typically created in the users home directory obtained from the <TT>/etc/passwd</TT> file and is called <TT>~/.jasspa</TT>. MicroEmacs will automatically look for this directory and set the 
+<A HREF="m5var089.html">$user-path(5)</A> variable to this value. The location may be overridden by setting the environment variable 
+<A HREF="m5var090.html">$MEUSERPATH(5)</A> to reference a different directory location. </UL>
 <P><B>DOS </B>
 <BR><UL>For MS-DOS environments, there is typically no user directory, it is suggested that the user directory is created in the MicroEmacs directory, use the <TT>$MENAME</TT> defined in the previous step i.e. <UL>
-<PRE>mkdir&nbsp;c:\me\fred 
+<PRE>mkdir&nbsp;c:\jasspa\fred 
 </PRE></UL>
-<P>Change the 
-<A HREF="m5var057.html">$MEPATH(5)</A> in the <B>autoexec.bat</B> to include the new directory i.e. <UL>
-<PRE>SET&nbsp;MEPATH=c:\me\fred;c:\me 
+<P>Change or add the environment variable 
+<A HREF="m5var090.html">$MEUSERPATH(5)</A> in the <B>autoexec.bat</B> to include the new directory i.e. <UL>
+<PRE>SET&nbsp;MEUSERPATH=c:\jasspa\fred 
 </PRE></UL>
 </UL><P><B>Windows </B>
-<BR><UL>Windows environments, the 
-<A HREF="m8fil006.html">me32.ini(8)</A> <B>userPath</B> entry defines the location of the user profile directories, within the <B>Install</B> <B>Shield</B> installation, the <TT>me32.ini</TT> is typically defined as:- <UL>
-<PRE>userPath=C:\Program&nbsp;Files\JASSPA\MicroEmacs 
-</PRE></UL>
-<P>Create your MicroEmacs personal directory in this folder, the name of the folder should be your login name or <TT>$MENAME</TT>, depending upon how your name is identified. </UL></UL>
+<BR><UL>In Microsoft Windows environment using Explorer 4.0 or later then a user application data directory exists (<TT>$APPDATA</TT>) and MicroEmacs will create a directory <TT>jasspa</TT> in this directory location to hold private data. If there is no such data area then all user configuration is stored in the executable directory location (or a sub-directory called 
+<A HREF="m5var088.html">$user-name(5)</A>). </UL>
+<UL><P>The user data area 
+<A HREF="m5var089.html">$user-path(5)</A> may be modified by creating a new directory and setting the environment variable 
+<A HREF="m5var090.html">$MEUSERPATH(5)</A> to point to this new directory location. The location be specified by a <B>meuserpath</B> entry in the 
+<A HREF="m8fil006.html">me32.ini(8)</A> file rather than setting the environment variable 
+<A HREF="m5var090.html">$MEUSERPATH(5)</A>. </UL></UL>
 <H2>Creating Your Profile </H2>
-<UL><P>Once you have created a new directory to store your user profile, create a default profile for yourself from MicroEmacs using the 
+<UL><P>On starting MicroEmacs for the first time then the user is guided through the configuration file setup to create any local configuration files. Once set up then MicroEmacs may be configured using the 
 <A HREF="m3osd000.html">user-setup(3)</A> dialog:- <UL>
 <PRE>Help&nbsp;=&gt;&nbsp;User&nbsp;Setup 
 </PRE></UL>
-<P>Fill in the entries in the dialog, and ensure that <B>Save</B> is depressed on exit to write the files. 
-<P>The dictionaries often present difficulties the first time, a prompt to save the dictionary requires the full pathname and the name of the file, the pathname is the path to your personal folder, the filename is typically your <I>username</I>.edf. Once the file is created you will not have a problem in the future. </UL>
-<H2>The User Profile </H2>
+</UL><H2>The User Profile </H2>
 <UL><P>Files created in the user directory include:- <UL><P>
-<LI>Setup registry and previous session history <I>username</I>.erf, see 
-<A HREF="m8fil004.html">erf(8)</A>). This stores the <B>user-setup</B> settings and also the context from your previous edit session. 
-<LI>Users start-up file <I>username</I>.emf, see 
-<A HREF="m8fil003.html">emf(8)</A> the user may make local changes to MicroEmacs in this file, this may include changing key bindings, defining new hook functions etc. You should over-ride the standard MicroEmacs settings from your start-up file rather than modifying the standard MicroEmacs files. 
-<LI>Personal spelling dictionary <I>username.edf</I>, see 
-<A HREF="m8fil002.html">edf(8)</A>. This file contains your personal spelling modifications, any words that are added to the spelling dictionary are added to this file. </UL><P>In addition to the above, if new file hooks are defined then they should be added to this directory (if they are not global to the company). </UL>
+<LI>Setup registry and previous session history 
+<A HREF="m5var088.html">$user-name</A>.erf (see 
+<A HREF="m8fil004.html">erf(8)</A>). This stores the <B>user-setup</B> settings and the context from previous edit sessions. 
+<LI>Users start-up file 
+<A HREF="m5var088.html">$user-name</A>.emf (see 
+<A HREF="m8fil003.html">emf(8)</A>). This is typically referred to as &quot;<I>user.emf</I>&quot; in the documentation and means the users private MicroEmacs macro file. The user may make local changes to MicroEmacs in this file, this may include definition of new key bindings, defining new hook functions etc. You should override the standard MicroEmacs settings from your start-up file rather than modifying the standard MicroEmacs files. 
+<LI>Personal spelling dictionary <B>lsdp</B><I>lang</I>.edf (see 
+<A HREF="m8fil002.html">edf(8)</A>). Multiple spelling dictionaries may be created, one for each language. Any words that are added to the spelling dictionary are stored in these files. </UL><P>In addition to the above, if new private macro files are constructed then they should be added to this directory (if they are not global to the company). </UL>
 <H2><B>EXAMPLE </B></H2>
 <UL><P>The following are examples of some individuals start-up files:- <UL>
 <PRE>;&nbsp;Jon's&nbsp;special&nbsp;settings 
@@ -164,11 +159,6 @@ global-bind-key&nbsp;undo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&
 &nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;&amp;seq&nbsp;$platform&nbsp;&quot;win32&quot; 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Small&nbsp;bold&nbsp;font&nbsp;is&nbsp;better&nbsp;for&nbsp;me. 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;change-font&nbsp;&quot;-*-clean-medium-r-*-*-*-130-*-*-*-*-*-*&quot; 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Small&nbsp;non-bold&nbsp;font. 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;change-font&nbsp;&quot;-misc-fixed-medium-r-normal--13-*-*-*-c-70-iso8859-1&quot; 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Change&nbsp;the&nbsp;size&nbsp;of&nbsp;the&nbsp;screen 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;82&nbsp;change-frame-width 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;50&nbsp;change-frame-depth 
 &nbsp;&nbsp;&nbsp;&nbsp;!endif 
 !endif 
 ;&nbsp;Change&nbsp;the&nbsp;default&nbsp;diff&nbsp;command-line&nbsp;for&nbsp;GNU&nbsp;diff&nbsp;utility&nbsp;all&nbsp;platforms 
@@ -197,15 +187,21 @@ ml-write&nbsp;&quot;Configured&nbsp;to&nbsp;Jon's&nbsp;requirements&quot;
 </PRE></UL>
 </UL><H2><B>SEE ALSO </B></H2>
 <UL><P>
-<A HREF="m5var057.html">$MEPATH(5)</A>, 
-<A HREF="m5var076.html">$MENAME(5)</A>, 
 <A HREF="m3osd000.html">user-setup(3)</A>, 
+<A HREF="m5var057.html">$search-path(5)</A>, 
+<A HREF="m5var088.html">$user-name(5)</A>, 
+<A HREF="m5var089.html">$user-path(5)</A>, 
+<A HREF="m5var090.html">$MEINSTALLPATH(5)</A>, 
+<A HREF="m5var076.html">$MENAME(5)</A>, 
+<A HREF="m5var090.html">$MEPATH(5)</A>, 
+<A HREF="m5var090.html">$MEUSERPATH(5)</A>, 
+<A HREF="m8fil006.html">me32.ini(8)</A>, 
 <A HREF="m2nar002.html">Company Profiles</A>, 
 <A HREF="m2cmd202.html">File Hooks</A>, 
 <A HREF="m2nar000.html">File Language Templates</A>, 
 <A HREF="m2nar001.html">Installation</A>. </UL>
 <HR>
 <P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/10/16</I>
-<BR><I>Generated On: 2004/01/11</I>
+<BR><I>Last Modified: 2004/02/04</I>
+<BR><I>Generated On: 2004/02/06</I>
 </BODY></HMTL>

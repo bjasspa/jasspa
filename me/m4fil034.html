@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>@fs(4)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 @fs(4)</H1>
@@ -13,13 +13,17 @@
 </FONT>
 <HR>
 <H2><B>NAME </B></H2>
-<UL><P>@fs - Frame store variable </UL>
+<UL><P>@fs - Frame store variable 
+<BR>@fss - Frame store scheme variable </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><B>@fs</B> <I>row</I> <I>column</I> </UL>
+<UL><P><B>@fs</B>&nbsp;<I>row</I>&nbsp;<I>column</I> 
+<BR><B>@fss</B>&nbsp;<I>row</I>&nbsp;<I>column</I> </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P>The frame store variable <B>@fs</B> gives macros a way of obtaining the character currently being drawn on the screen at the given location. If the given value of <I>row</I> or <I>column</I> is out range, i.e. less than zero or greater than or equal to the screen size (see 
+<UL><P>The frame store variable <B>@fs</B> permits macros to obtain the character currently being drawn on the screen at the specified location. If the given value of <I>row</I> or <I>column</I> is out range, i.e. less than zero or greater than or equal to the screen size (see 
 <A HREF="m5var037.html">$frame-width(5)</A>) then the value returned is the empty string (i.e. <TT>&quot;&quot;</TT>). 
-<P>This variable cannot be set and is only updated during a screen update, this means that macros that change the cursor position will need to redraw the screen before using this variable. </UL>
+<P>The frame store scheme variable <B>@fss</B> operates in the same way as <B>@fs</B> but returns the hilighting scheme number as opposed to the character. 
+<P>These variables cannot be set and are only updated during a screen update, this means that macros that change the cursor position need to redraw the screen before using this variable (see 
+<A HREF="m2cmd139.html">screen-update(2)</A>). </UL>
 <H2><B>EXAMPLE </B></H2>
 <UL><P>The following example gets the word under the current mouse position, this may not be the current cursor position: <UL>
 <PRE>define-macro&nbsp;word-under-mouse 
@@ -44,6 +48,30 @@
 &nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&amp;spr&nbsp;&quot;[mouse&nbsp;is&nbsp;over&nbsp;the&nbsp;word&nbsp;\&quot;%s\&quot;]&quot;&nbsp;#l2 
 !emacro 
 </PRE></UL>
+<P>Knowledge of the display scheme as returned by the <B>@fss</B> variable is a little more obscure than the previous example. This variable is currently used to determine if there is a spelling error under the cursor position. When 
+<A HREF="m3mac039.html">auto-spell(3)</A> is enabled then spelling errors are hilighted in a different colour, return of the 
+<A HREF="m2cmd069.html">hilighting</A> scheme allows the caller to determine that there is a spelling error at the current position, this could also be applied to collapsed regions etc. The following example is taken from <TT>mouseosd.emf</TT> to determine if there is a spelling error at the mouse position. <UL>
+<PRE>set-variable&nbsp;#l0&nbsp;&amp;band&nbsp;$mouse-pos&nbsp;15 
+!if&nbsp;&amp;equ&nbsp;#l0&nbsp;&nbsp;&nbsp;0 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Text&nbsp;window&nbsp;-&nbsp;must&nbsp;goto&nbsp;the&nbsp;original&nbsp;position&nbsp;or&nbsp;cut&nbsp;etc&nbsp;wont&nbsp;work&nbsp;-&nbsp;must&nbsp;dup&nbsp;the&nbsp;position 
+&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;show-region 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l2&nbsp;$result 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;20 
+&nbsp;&nbsp;&nbsp;&nbsp;osd&nbsp;27&nbsp;5&nbsp;&nbsp;&quot;D&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;seq&nbsp;$buffer-input&nbsp;&quot;auto-spell-input&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;equ&nbsp;@fss&nbsp;$mouse-y&nbsp;$mouse-x&nbsp;.scheme.spell-error 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;auto-spell-test 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;seq&nbsp;&amp;lef&nbsp;$result&nbsp;1&nbsp;&quot;E&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-position&nbsp;&quot;\x83&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;.auto-spell-osd.word&nbsp;&amp;rig&nbsp;$result&nbsp;1 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;osd&nbsp;27&nbsp;5&nbsp;&nbsp;&quot;M&quot;&nbsp;&quot;Auto&nbsp;Spell&quot;&nbsp;.osd.spell-auto&nbsp;auto-spell-osd 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;&amp;add&nbsp;#l0&nbsp;1 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;goto-position&nbsp;&quot;\x82&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;.... 
+</PRE></UL>
 </UL><H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m5var037.html">$frame-width(5)</A>, 
@@ -53,6 +81,6 @@
 <A HREF="m2cmd029.html">define-macro(2)</A>. </UL>
 <HR>
 <P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/10/16</I>
-<BR><I>Generated On: 2004/01/11</I>
+<BR><I>Last Modified: 2004/01/17</I>
+<BR><I>Generated On: 2004/02/06</I>
 </BODY></HMTL>

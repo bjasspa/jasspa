@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>collapse-current(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 collapse-current(3)</H1>
@@ -19,7 +19,7 @@ collapse-current(3)</H1>
 <UL><P><B>collapse-current</B> 
 <BR><B>collapse-all</B> </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P>MicroEmacs '04 provides a generic, albeit course, folding mechanism which is applied to some of the well known file modes. The folding mechanism allows parts of the buffer to be scrolled up and hidden, leaving a residue hilighting marker within the buffer indicating a folded region. A folded buffer typically allows a summary of the buffer contents to be viewed within several windows, hiding the detail of the buffer. 
+<UL><P>MicroEmacs '04 provides a generic, albeit coarse, folding mechanism which is applied to some of the well known file modes. The folding mechanism allows parts of the buffer to be scrolled up and hidden, leaving a residue hilighting marker within the buffer indicating a folded region. A folded buffer typically allows a summary of the buffer contents to be viewed within several windows, hiding the detail of the buffer. 
 <P>The folding mechanism uses well defined <I>start</I> and <I>end</I> markers which form part of the syntax of the well known file mode. i.e. in 'C' this is the open and closed braces that appear on the left-hand margin (<TT>{</TT> .. <TT>}</TT>). The intention is that the natural syntax of the text is used to determine the fold positions, requiring no additional text formating or special text tags to be inserted by the user. 
 <P><B>collapse-current</B> opens and closes a folded region within the buffer. If the current cursor position lies between a <I>start</I> and <I>end</I> marker then the region between the start and end is folded out and hidden from view, leaving a highlight marker in the buffer. If the fold already exists then, moving the cursor to the folded line and invoking <B>collapse-current</B> removes the fold marker and reveals the text. 
 <P><B>collapse-all</B> opens and closes all folded regions within the buffer, if the current state is unfolded then all of the <I>start</I>/<I>end</I> markers are located and their regions folded. Conversely, if the buffer is currently folded and <B>collapse-all</B> is invoked, then all folds are removed and the associated text revealed. </UL>
@@ -36,6 +36,13 @@ collapse-current(3)</H1>
 <BR><UL>The relative displacement from the close fold line to the fold position, this is a positive or negative displacement depending on where the fold is to be positioned. </UL>
 <P><B>.fhook-</B><I>XXX</I><B>-collapse-mnext</B> 
 <BR><UL>Specifies the number of lines to advance before the next search is continued on the fold operation. This is only used by <B>collapse-all</B>. </UL></UL>
+<H2><B>PRESENTATION </B></H2>
+<UL><P>The presentation of a collapsed region takes the form: 
+<UL><P><I>&lt;open line string&gt;</I> ... <I>&lt;close line string&gt;</I> </UL>
+<P>Where <I>&lt;open line string&gt;</I> and <I>&lt;close line string&gt;</I> are automatically extracted from the originating buffer using the search string definition. Existing <B>collapse</B> implementations used a simpler format: 
+<UL><P><I>&lt;open line string&gt;</I> ... </UL>
+<P>In MicroEmacs '04 and later versions, then the <I>&lt;close line string&gt;</I> is always appended. Appending of the closing token is required to ensure that any 
+<A HREF="m2cmd033.html">indentation</A> is maintained. This allows the indent processing to find both an <I>open</I> and <I>close</I> character sequence and not introduce an unwanted indentation. To ensure that indentation consistency is maintained then the <B>.fhook-XXX.collapse-close</B> definition should minimally match the corresponding indentation close regular expression. </UL>
 <H2><B>EXAMPLE </B></H2>
 <UL><P>The following examples show how the collapse variables are set up in each of the buffer modes. </UL>
 <H2>C and C++ </H2>
@@ -55,7 +62,7 @@ myfunc&nbsp;(int&nbsp;a,&nbsp;int&nbsp;b)
 </PRE></UL>
 <P>the folded version appears as follows:- <UL>
 <PRE>static&nbsp;void 
-myfunc&nbsp;(int&nbsp;a,&nbsp;int&nbsp;b)&nbsp;... 
+myfunc&nbsp;(int&nbsp;a,&nbsp;int&nbsp;b)&nbsp;...&nbsp;} 
 </PRE></UL>
 </UL><H2>emf </H2>
 <UL><P>MicroEmacs macro files <B>emf</B> support folding of macro definitions, the collapse variables are defined in <TT>hkemf.emf</TT> as follows:- <UL>
@@ -71,7 +78,7 @@ set-variable&nbsp;.fhook-emf.collapse-mnext&nbsp;&quot;-1&quot;
 !emacro 
 </PRE></UL>
 <P>the collapsed version of the macro is defined as:- <UL>
-<PRE>0&nbsp;define-macro&nbsp;mymacro&nbsp;... 
+<PRE>0&nbsp;define-macro&nbsp;mymacro&nbsp;...&nbsp;!emacro 
 </PRE></UL>
 </UL><H2>nroff </H2>
 <UL><P><B>nroff</B> is configured for manual pages only and folds between <TT>.SH</TT> and <TT>.SS</TT> sections, the hook variables are defined as follows:- <UL>
@@ -107,7 +114,7 @@ set-variable&nbsp;.fhook-tcl.collapse-mnext&nbsp;&quot;-1&quot;
 } 
 </PRE></UL>
 <P>The collapsed version of the same section appears as:- <UL>
-<PRE>proc&nbsp;tixControl:InitWidgetRec&nbsp;{w}&nbsp;{&nbsp;... 
+<PRE>proc&nbsp;tixControl:InitWidgetRec&nbsp;{w}&nbsp;{&nbsp;...&nbsp;} 
 </PRE></UL>
 </UL><H2><B>NOTES </B></H2>
 <UL><P><B>collapse-current</B> and <B>collapse-all</B> are macros implemented in <TT>collapse.emf</TT>. The collapsing is performed using the 
@@ -120,10 +127,11 @@ set-variable&nbsp;.fhook-tcl.collapse-mnext&nbsp;&quot;-1&quot;
 <UL><P>
 <A HREF="m2cmd202.html">File Hooks</A>, 
 <A HREF="m3mac064.html">buffer-init(3)</A>, 
+<A HREF="m2cmd033.html">indent(2)</A>, 
 <A HREF="m3osd000.html">user-setup(3)</A>, 
 <A HREF="m2cmd068.html">narrow-buffer(2)</A>. </UL>
 <HR>
 <P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2004/01/11</I>
-<BR><I>Generated On: 2004/01/11</I>
+<BR><I>Last Modified: 2004/01/17</I>
+<BR><I>Generated On: 2004/02/06</I>
 </BODY></HMTL>

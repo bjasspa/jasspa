@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>me(1)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 me(1)</H1>
@@ -16,7 +16,7 @@ me(1)</H1>
 <UL><P>me - MicroEmacs '04 text editor </UL>
 <H2><B>SYNOPSIS </B></H2>
 <UL><P><B>me</B> [<I>options</I>] [<I>files ...</I>] 
-<P><B>me</B> [<B>@</B><I>startupFile</I>] [<B>-b</B>] [<B>-c</B>] [<B>-d</B>] [<B>-h</B>] [<B>-i</B>] [<B>-l</B><I>lineNo</I>] [<B>-m</B><I>command</I>] [<B>-n</B>] [<B>-0</B><I>file</I>] [<B>-p</B>] [<B>-r</B>] [<B>-s</B><I>string</I>] [<B>-u</B><I>username</I>] [<B>-v</B><I>variable=string</I>] [<B>-x</B>] <I>files...</I> </UL>
+<P><B>me</B> [<B>@</B><I>startupFile</I>] [<B>-b</B>&nbsp;<I>file</I>] [<B>-c</B>] [<B>-d</B>] [<B>-h</B>] [<B>-i</B>] [<B>-k</B>[<I>key</I>]&nbsp;<I>file</I>] [<B>-l</B><I>lineNo</I>] [<B>-m</B><I>command</I>] [<B>-n</B>] [<B>-o</B>] [<B>-0</B><I>file</I>] [<B>-p</B>] [<B>-r</B>] [<B>-s</B><I>string</I>] [<B>-u</B><I>username</I>] [<B>-v</B><I>variable=string</I>] [<B>-V</B>] [<B>-x</B>] [<B>-y</B>&nbsp;<I>file</I>] <I>files...</I> </UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P><B>MicroEmacs '04</B> is a cut down version of the EMACS text editor, based on Danial Lawrences MicroEmacs. <B>MicroEmacs '04</B> is a tool for creating and changing documents, programs, and other text files. It is both relatively easy for the novice to use, but also very powerful in the hands of an expert. MicroEmacs '04 can be extensively customized for the needs of the individual user. 
 <P><B>MicroEmacs '04</B> allows multiple files to be edited at the same time. The screen may be split into different windows and screens, and text may be moved freely from one window on any screen to the next. Depending on the type of file being edited, <B>MicroEmacs '04</B> can change how it behaves to make editing simple. Editing standard text files, program files and word processing documents are all possible at the same time. 
@@ -79,10 +79,14 @@ me&nbsp;-m&nbsp;&quot;C:ME:ml-write&nbsp;\&quot;Hello&nbsp;world\&quot;
 <P><B>-s</B><I>string</I> 
 <BR><UL>Search for string &quot;<I>string</I>&quot; in the current buffer. e.g. <TT>me -sfoo bar</TT> starts <B>MicroEmacs '04</B>, loads file <TT>bar</TT> and initiates a search for <I>foo</I>. The cursor is left at the end of the string if located, otherwise at the top of the buffer. </UL>
 <P><B>-u</B><I>username</I> 
-<BR><UL>Set the current user name to <I>username</I> before MicroEmacs is initialized. This is done by setting the environment variable 
-<A HREF="m5var076.html">MENAME(5)</A> to the given value. </UL>
+<BR><UL>Set the current user name 
+<A HREF="m5var088.html">$user-name(5)</A> to <I>username</I> before MicroEmacs is initialized. </UL>
 <P><B>-v</B><I>variable=string</I> 
 <BR><UL>Assign the MicroEmacs '04 <I>variable</I> with <I>string</I>. The assignment is performed before the buffers are loaded. Typically used to change the start-up characteristics of the startup file(s). </UL>
+<P><B>-V</B> 
+<BR><UL>Print the name and version of MicroEmacs. i.e. </UL>
+<UL><P><TT>orac% me -V</TT> 
+<BR><TT>MicroEmacs 04 - Date 04/02/01 - sunos</TT> </UL>
 <P><B>-x</B> 
 <BR><UL>UNIX environments. Disable the capture of signals. <B>MicroEmacs '04</B> by default captures an handles all illicit signal interrupts. The option is enabled when debugging the source code allowing exception conditions to be trapped within the debugger. </UL>
 <P><B>-y</B> 
@@ -92,9 +96,11 @@ me&nbsp;-m&nbsp;&quot;C:ME:ml-write&nbsp;\&quot;Hello&nbsp;world\&quot;
 <UL><P>The following environment variables are used by <B>MicroEmacs '04</B>. 
 <P><B>DISPLAY</B> 
 <BR><UL>UNIX environments running X-Windows only. The identity of the X-Windows server. Typically set to <B>unix:0.0</B>, refer to the X-Windows documentation for details of this environment variable. </UL>
-<P><B>MENAME</B> and <B>LOGNAME</B> 
-<BR><UL>The identity of the user, <B>$MENAME</B> takes precedence over <B>$LOGNAME</B>. <B>$LOGNAME</B> variable is generally defined within UNIX as part of the login script. The variables are used to determine which start-up configuration to use in the initialization of <B>MicroEmacs '04</B> (<I>$MENAME</I>.erf). </UL>
-<UL><P>Non-UNIX platforms usually need to explicitly set the <B>$MENAME</B> environment variable to identify the aforementioned files. for MS-DOS and Microsoft Windows this is typically performed in the <TT>AUTOEXEC.BAT</TT> file. </UL>
+<P><B>MENAME</B> 
+<BR><UL>
+<A HREF="m5var076.html">$MENAME(5)</A> is used to override the identity of the user 
+<A HREF="m5var088.html">$user-name(5)</A>. The variable may be used to determine which start-up configuration to use in the initialization of <B>MicroEmacs '04</B> (<I>$user-name</I>.erf). This is ignored if the <B>-u</B> option is specified on the command line. </UL>
+<UL><P>Non-UNIX platforms usually need to explicitly set the <B>$MENAME</B> environment variable to identify the aforementioned files. for MS-DOS and early versions of Microsoft Windows this is typically performed in the <TT>AUTOEXEC.BAT</TT> file. </UL>
 <P><B>PATH</B> 
 <BR><UL>The <B>$PATH</B> environment variable is used on most operating systems as a search path for executable files. This <B>$PATH</B> environment variable must be defined with <B>MicroEmacs '04</B> on the search path. Under UNIX this is set in the <TT>.login</TT>, <TT>.cshrc</TT> or <TT>.profile</TT> file i.e. 
 <UL><P>export PATH $PATH:/usr/name/me </UL></UL>
@@ -110,15 +116,23 @@ me&nbsp;-m&nbsp;&quot;C:ME:ml-write&nbsp;\&quot;Hello&nbsp;world\&quot;
 <BR><UL>Initiates an 80 column by 25 line screen. </UL>
 <P><I>userDefined</I> 
 <BR><UL>A user defined string to set an explicit graphics card mode. The operation is dependent upon the support offered by the graphics adapter. </UL></UL>
+<P>
+<A HREF="m5var090.html">$MEINSTALLPATH(5)</A> 
+<BR><UL>is an environment variable that overrides any internally defined search path for MicroEmacs system macros and defines the root directory(s) of the MicroEmacs system macros. The presence of the environment variable affects 
+<A HREF="m5var057.html">$search-path(5)</A>. </UL>
+<P>
+<A HREF="m5var090.html">$MEUSERPATH(5)</A> 
+<BR><UL>is an environment variable that defines the users private directory where user configuration files such as 
+<A HREF="m5var088.html">$user-name</A><B>.emf</B>, 
+<A HREF="m5var088.html">$user-name</A><B>.erf</B> and personal spelling dictionaries are stored. This is an absolute directory path. The environment variable sets the MicroEmacs variable 
+<A HREF="m5var089.html">$user-path(5)</A>. </UL>
 <P><B>MEPATH</B> 
-<BR><UL>MicroEmacs '04 uses the environment variable <TT>$MEPATH</TT> as the directory(s) used to search for the macro files (see 
-<A HREF="m8fil003.html">emf(8)</A>). Within the UNIX <TT>$MEPATH</TT> is a semi-colon separated list of directories which are used to search for the MicroEmacs '04 macro files. The path is searched from left to right. The environment variable is typically defined in the in the <TT>.login</TT>, <TT>.cshrc</TT> or <TT>.profile</TT> file i.e. 
-<UL><P>export MEPATH /usr/name/me/macros:/usr/local/microemacs </UL></UL>
-<UL><P>The default when omitted is <TT>/usr/local/microemacs</TT>. </UL>
-<UL><P>Within MS-DOS or Microsoft Windows environments it is defined in the <TT>AUTOEXEC.BAT</TT> file. e.g. 
-<UL><P>set MEPATH=c:\me\username;\me\macros </UL></UL>
-<UL><P>There is no default location in these environments. For Microsoft Windows environments refer to 
-<A HREF="m8fil006.html">me32.ini(8)</A> for a method of setting up the <TT>$MEPATH</TT> from the windows configuration file. </UL>
+<BR><UL>
+<A HREF="m5var090.html">$MEPATH(5)</A> is an environment variable that may be used to define the absolute search path for MicroEmacs macro files and affects the setting of <B>$search-path</B>. The path should include the system macros location(s) and should include the user directory location 
+<A HREF="m5var089.html">$user-path(5)</A> as the first path when the environment variable 
+<A HREF="m5var090.html">$MEUSERPATH(5)</A> is not defined. If <B>$MEUSERPATH</B> is defined then this path name appears before the <B>$MEPATH</B> variable to define the user directory location. <B>$MEPATH</B> is not searching, so ALL directories to be searched must be included in the path specification. </UL>
+<UL><P>
+<A HREF="m5var090.html">$MEUSERPATH(5)</A> is the preferred method used to defined the user directory. </UL>
 <P><B>INFOPATH</B> 
 <BR><UL>MicroEmacs '04 uses the environment variable <TT>$INFOPATH</TT> as the directory(s) used to search for GNU <B>Info</B> files. Within the UNIX <TT>$INFOPATH</TT> is a semi-colon separated list of directories which are used to search for the MicroEmacs '04 macro files. The path is searched from left to right. The environment variable is typically defined in the in the <TT>.login</TT>, <TT>.cshrc</TT> or <TT>.profile</TT> file i.e. 
 <UL><P>export INFOPATH /usr/local/info:$HOME/info </UL></UL>
@@ -158,14 +172,19 @@ me&nbsp;-m&nbsp;&quot;C:ME:ml-write&nbsp;\&quot;Hello&nbsp;world\&quot;
 <A HREF="m8fil006.html">me32.ini(8)</A> for a method of setting up the environment variables without editing the <TT>AUTOEXEC.BAT</TT> configuration file. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
+<A HREF="m5var090.html">$MEINSTALLPATH(5)</A>, 
+<A HREF="m5var076.html">$MENAME(5)</A>, 
+<A HREF="m5var090.html">$MEPATH(5)</A>, 
+<A HREF="m5var090.html">$MEUSERPATH(5)</A>, 
 <A HREF="m8fil003.html">emf(8)</A>, 
-<A HREF="m8fil004.html">erf(8)</A>, <B>emacs(1)</B> [GNU], <B>more(1)</B>, <B>vi(1)</B>. 
+<A HREF="m8fil004.html">erf(8)</A>, 
+<A HREF="m5var026.html">$home(5)</A>, <B>emacs(1)</B> [GNU], <B>more(1)</B>, <B>vi(1)</B>. 
 <BR>
 <A HREF="m2nar005.html">Client-Server Interface</A>. 
 <BR>
 <A HREF="amicr007.html">Command Line Filters</A>. </UL>
 <HR>
 <P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2004/01/11</I>
+<BR><I>Last Modified: 2004/02/03</I>
+<BR><I>Generated On: 2004/02/06</I>
 </BODY></HMTL>

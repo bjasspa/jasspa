@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>cvs(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 cvs(3)</H1>
@@ -14,6 +14,7 @@ cvs(3)</H1>
 <HR>
 <H2><B>NAME </B></H2>
 <UL><P>cvs - MicroEmacs CVS interface 
+<BR>%cvs-com - CVS Command line 
 <BR>cvs-add - MicroEmacs CVS interface - add file 
 <BR>cvs-checkout - MicroEmacs CVS interface - checkout files and directories 
 <BR>cvs-commit - MicroEmacs CVS interface - commit changes 
@@ -23,9 +24,12 @@ cvs(3)</H1>
 <BR>cvs-remove - MicroEmacs CVS interface - remove file 
 <BR>cvs-resolve-conflicts - MicroEmacs CVS interface - resolve conflicts 
 <BR>cvs-state - MicroEmacs CVS interface - list state of directory files 
+<BR>cvs-status - MicroEmacs CVS interface - status of files 
+<BR>cvs-tag - MicroEmacs CVS interface - tag files 
 <BR>cvs-update - MicroEmacs CVS interface - update directory files </UL>
 <H2><B>SYNOPSIS </B></H2>
 <UL><P><B>cvs</B> 
+<BR><B>%cvs-com</B> 
 <P><B>cvs-add</B> 
 <BR><B>cvs-checkout</B> 
 <BR><B>cvs-commit</B> 
@@ -35,25 +39,31 @@ cvs(3)</H1>
 <BR><B>cvs-remove</B> 
 <BR><B>cvs-resolve-conflicts</B> 
 <BR><B>cvs-state</B> 
+<BR><B>cvs-status</B> 
+<BR><B>cvs-tag</B> 
 <BR><B>cvs-update</B> </UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P>The cvs and sub-commands provide MicroEmacs with an interface to <B>cvs(1)</B>. <B>CVS</B> is a version control system; using it, you can record the history of your source file modifications. CVS is licensed under the GNU General Public License and is freely available on the Internet, see the documentation provided with CVS for more information on its features and use. 
 <P>The MicroEmacs <B>cvs</B> command opens up a modified 
-<A HREF="m3mac027.html">file-browser(3)</A> with an additional &quot;<TT>*cvs-console*</TT>&quot; window. The &quot;<TT>*files*</TT>&quot; window includes additional columns showing the CVS state, revision and repository date. The functionality of the file-browser is the same as a non-CVS folder with the exception that additional CVS item controls are located in the mouse context menu (opened by clicking the right mouse button in the <TT>*files*</TT> buffer). This menu item opens another sub-menu providing access to the following items: 
+<A HREF="m3mac027.html">file-browser(3)</A> with an additional &quot;<TT>*cvs-console*</TT>&quot; window. The &quot;<TT>*files*</TT>&quot; window includes additional columns showing the CVS state, revision and repository date. The functionality of the file-browser is the same as a non-CVS folder with the exception that additional CVS item controls are located in the mouse context menu (opened by clicking the right mouse button in the <TT>*files*</TT> buffer). This menu item opens another sub-menu providing access to the items below. When selecting commands than a pop-up check-box may be displayed which allows options to be selected for the command. 
+<P><B>Current State</B> 
+<BR><UL>Checks the state of selected file(s) or directory against the repository. Differences detected are shown in the <TT>*cvs-state*</TT> window. This provides a quick method of determining the working directory state. This runs the command &quot;<TT>cvs&nbsp;-nq&nbsp;update &lt;files&gt;</TT>&quot;. </UL>
 <P><B>Checkout files</B> 
 <BR><UL>Checks out a file or directory from the repository into the current directory. The file or directory is specified by typing the name into a dialog which is opened when this option is selected. This runs the command &quot;<TT>cvs&nbsp;checkout&nbsp;&lt;file&gt;</TT>&quot;. </UL>
 <P><B>Update files</B> 
 <BR><UL>Updates the currently selected files, files are selected by clicking the left button to the left of the required file name. Multiple files may be selected by 'dragging' a hilight region over the required files. This runs the command &quot;<TT>cvs update &lt;files&gt;</TT>&quot;. </UL>
 <P><B>Commit files</B> 
-<BR><UL>Commits any changes made to the selected files back to the CVS repository. This runs the command &quot;<TT>cvs commit &lt;files&gt;</TT>&quot;. </UL>
+<BR><UL>Commits any changes made to the selected files back to the CVS repository. This runs the command &quot;<TT>cvs&nbsp;commit&nbsp;&lt;files&gt;</TT>&quot;. The user is prompted for the message to add on the commit. </UL>
 <P><B>Diff files</B> 
 <BR><UL>Displays any differences between the selected files and the CVS repository version in the <I>*cvs-console*</I> window. This runs the command &quot;<TT>cvs diff &lt;files&gt;</TT>&quot;. </UL>
 <P><B>Log files</B> 
-<BR><UL>Displays the CVS logs for the selected files in the <I>*cvs-console*</I> window. This runs the command &quot;<TT>cvs log &lt;files&gt;</TT>&quot;. </UL>
+<BR><UL>Displays the CVS logs for the selected files in the <I>*cvs-console*</I> window. This runs the command &quot;<TT>cvs&nbsp;log&nbsp;&lt;files&gt;</TT>&quot;. </UL>
 <P><B>Status files</B> 
 <BR><UL>Displays the CVS status for each of the selected files in the <I>*cvs-console*</I> window. This runs the command &quot;<TT>cvs status -v &lt;files&gt;</TT>&quot;. </UL>
+<P><B>Tag files</B> 
+<BR><UL>Adds, removes or moves a CVS tag on the selected file(s) or directories. A pop-up window is displayed which allows entry of the tag name and define the operation. This runs the command &quot;<TT>cvs&nbsp;tag&nbsp;&lt;files&gt;</TT>&quot;. </UL>
 <P><B>Add files</B> 
-<BR><UL>Adds the selected files to the CVS repository. Note this command only performs the local add, a <B>CVS commit</B> is required to make the addition permanent. This runs the command &quot;<TT>cvs add &lt;files&gt;</TT>&quot;. </UL>
+<BR><UL>Adds the selected files to the CVS repository. Note this command only performs the local add, a <B>CVS commit</B> is required to make the addition permanent. This runs the command &quot;<TT>cvs add &lt;files&gt;</TT>&quot;. A pop-up is displayed to allow the user to change the mode of the add to binary or text. </UL>
 <P><B>Remove files</B> 
 <BR><UL>This command is deliberately not implemented as its far to dangerous! Instead it opens a dialog informing the user to use the <B>cvs-remove</B> command instead. </UL>
 <P><B>Graphical diff</B> 
@@ -74,8 +84,13 @@ cvs(3)</H1>
 <P>The <B>cvs-remove</B> command removes the current buffer's file from the repository - PLEASE NOTE THIS CAN LEAD TO LOST DATA!!! This command only performs the local removal; as it deletes the buffer and file the <B>cvs-commit</B> command cannot be used to commit the removal to the CVS repository. Instead the main <B>cvs</B> file-browser menu or <B>cvs(1)</B> itself must be used. 
 <P>The <B>cvs-resolve-conflicts</B> command may be used to resolve any conflicts created by CVS when the current buffer's file is updated. The command opens a gdiff window displaying the areas of conflict, the user may then select the correct version in each case and save the resultant new version over the local file. 
 <P>The <B>cvs-state</B> command opens a <I>*cvs-state*</I> window listing the state of any file in the current directory which is not up-to-date. Note that unlike most cvs sub commands this command executes over all files in the current buffer's file directory. 
-<P>The <B>cvs-update</B> command updates all files in the current directory, the output being reported to a new <I>*cvs-update*</I> window. Note that unlike most cvs sub commands this command executes over all files in the current buffer's file directory. </UL>
-<H2><B>NOTES </B></H2>
+<P>The <B>cvs-status</B> command opens a <I>*cvs-state*</I> window and shows the state of the current buffer in the window including the modification state, repository etc. 
+<P>The <B>cvs-tag</B> command opens a dialog box and allows the user to add, remove or delete a CVS tag. 
+<P>The <B>cvs-update</B> command updates all files in the current directory, the output being reported to a new <I>*cvs-update*</I> window. Note that unlike most cvs sub commands this command executes over all files in the current buffer's file directory. 
+<P><B>%cvs-com</B> defines the command line used to execute a <B>cvs(1)</B> system command. The default when not defined is <B>cvs</B>. The <B>%cvs-com</B> variable is typically re-defined in the user configuration file to add other common options i.e. <B>-z</B> for compression etc. i.e. <UL>
+<PRE>set-variable&nbsp;%cvs-com&nbsp;&quot;cvs&nbsp;-z&quot; 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
 <UL><P><B>cvs</B> and sub-commands are macros defined in file <TT>cvs.emf</TT>. 
 <P>By default MicroEmacs's <B>cvs</B> commands skip all files ignored by <B>cvs(1)</B>. This is configured by the variable <B>.cvs.filter</B>, defining this variable to <TT>0</TT> disables this special filtering. </UL>
 <H2><B>SEE ALSO </B></H2>
@@ -83,6 +98,6 @@ cvs(3)</H1>
 <A HREF="m3mac027.html">file-browser(3)</A>. </UL>
 <HR>
 <P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2004/01/11</I>
+<BR><I>Last Modified: 2004/02/04</I>
+<BR><I>Generated On: 2004/02/06</I>
 </BODY></HMTL>

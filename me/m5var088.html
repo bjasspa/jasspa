@@ -1,0 +1,46 @@
+<HTML>
+<HEAD><TITLE>$user-name(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
+$user-name(5)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>$user-name - MicroEmacs user name </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>$user-name</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>$user-name</B> is the name of the MicroEmacs user. The name is used for identifying user configuration files such as <I>$user-name</I><B>.emf</B> and <I>$user-name</I><B>.erf</B>, the start-up 
+<A HREF="m2nar003.html">user</A> macro file and 
+<A HREF="m8fil004.html">erf(8)</A> registry file that contains saved user preferences. 
+<P>The <B>$user-name</B> is determined as follows, in order of precedence: <UL><P>
+<LI>The 
+<A HREF="m1cmd000.html">me(1)</A> command line option <B>-u</B> <I>username</I>. 
+<LI>The environment variable 
+<A HREF="m5var076.html">MENAME(5)</A> (alternatively via <TT>$LOGNAME</TT> on Microsoft Windows platforms ONLY). 
+<LI>The name determined from the system. On UNIX then the <TT>/etc/passwd</TT> entry is used, on MicroSoft Windows then the login name is used. 
+<LI>When no other name is located then <TT>user</TT> is used (MS-DOS and Microsoft Windows environments running without a login mechanism). </UL><P>For most conventional <I>login</I> systems then the correct login name is retrieved and it is not necessary to over-ride the name, unless a special configuration of MicroEmacs is being used. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>The user should not attempt to write to <B>$user-name</B>, the variable should be controlled through the aforementioned techniques. 
+<P><B>$user-name</B> was first introduced into MicroEmacs in the 2004 release. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m1cmd000.html">me(1)</A>, 
+<A HREF="m5var026.html">$home(5)</A>, 
+<A HREF="m5var057.html">$search-path(5)</A>, 
+<A HREF="m5var089.html">$user-path(5)</A>, 
+<A HREF="m5var076.html">$MENAME(5)</A>, 
+<A HREF="m8fil003.html">emf(8)</A>, 
+<A HREF="m8fil004.html">erf(8)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2004/02/01</I>
+<BR><I>Generated On: 2004/02/06</I>
+</BODY></HMTL>

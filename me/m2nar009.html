@@ -1,0 +1,81 @@
+<HTML>
+<HEAD><TITLE>Patching(1)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
+Patching(1)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>PATCHING </B></H2>
+<UL><P>This page describes how to patch a MicroEmacs installation with a later release without re-installing. </UL>
+<H2>Windows </H2>
+<UL><P>Windows requires careful patching in order not to disturb the registry settings The following procedure should be followed. <UL><P>
+<LI>Move to the jasspa directory, <TT>c:\ProgramFiles\JASSPA\Microemacs</TT>. 
+<LI>COPY the executable <TT>me32.exe</TT> to a backup, you MUST copy the file otherwise the registry settings will change. DO NOT MOVE THE FILE. <UL><UL>
+<PRE>copy&nbsp;me32.exe&nbsp;me32_2002_12.exe 
+</PRE></UL>
+
+<LI></UL><P>Save the macros directory, these may be moved i.e. <UL><UL>
+<PRE>rename&nbsp;macros&nbsp;macros_2002_12 
+</PRE></UL>
+
+<LI></UL><P>Unpack and install the new Windows executable and COPY over the original executable that was previously backed up i.e. <UL><UL>
+<PRE>copy&nbsp;c:\path-to-executable\me32-win32-20040108-rc1.exe&nbsp;me32.exe 
+</PRE></UL>
+
+<LI></UL><P>Create a new macros directory and install the macros into this new directory, do this manually or using a utility like WINZip. <UL><UL>
+<PRE>mkdir&nbsp;macros 
+cd&nbsp;macros 
+unzip&nbsp;c:\path-to\memacros-20040108-rc1.zip 
+</PRE></UL>
+
+<LI></UL><P>The new version of MicroEmacs will now operate with the old installation environment. You may return to the old release by reversing the steps to patch the installation. </UL></UL>
+<H2>UNIX/Linux </H2>
+<UL><P>For <B>*NIX</B> package installations then patching is a little easier. The steps are defined as follows:- <UL><P>
+<LI>Move to the jasspa directory. <UL><UL>
+<PRE>cd&nbsp;/opt/jasspa/bin 
+</PRE></UL>
+
+<LI></UL><P>Save the original executable. <UL><UL>
+<PRE>mv&nbsp;me&nbsp;me_200212 
+</PRE></UL>
+
+<LI></UL><P>Unpack the new executable and make it executable. <UL><UL>
+<PRE>gunzip&nbsp;me-sun-solaris-20040108-rc1.gz 
+mv&nbsp;me-sun-solaris-20040108-rc1&nbsp;me 
+chmod&nbsp;a+x&nbsp;me 
+</PRE></UL>
+
+<LI></UL><P>Save the existing macros directory. <UL><UL>
+<PRE>cd&nbsp;/opt/jasspa 
+mv&nbsp;macros&nbsp;macros_200212 
+</PRE></UL>
+
+<LI></UL><P>Create a new macros directory and install the new macros:- <UL><UL>
+<PRE>mkdir&nbsp;macros 
+cd&nbsp;macros 
+unzip&nbsp;/path-to/memacros-20040108-rc1.zip 
+</PRE></UL>
+
+<LI></UL><P>Installed packages are built with the install path built into the executable, this may be different from the patch version of the executable so the environment variable 
+<A HREF="m5var090.html">$MEINSTALLPATH(5)</A> may be defined in the environment with the macro installation search paths. </UL></UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var076.html">$MENAME(5)</A>, 
+<A HREF="m5var090.html">$MEINSTALLPATH(5)</A>, 
+<A HREF="m2nar002.html">Company Profiles</A>, 
+<A HREF="m2nar001.html">Installation</A>, 
+<A HREF="m2cmd202.html">File Hooks</A>, 
+<A HREF="m2nar000.html">File Language Templates</A>, 
+<A HREF="m2nar003.html">User Profiles</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2004/02/04</I>
+<BR><I>Generated On: 2004/02/06</I>
+</BODY></HMTL>

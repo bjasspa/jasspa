@@ -1,0 +1,78 @@
+<HTML>
+<HEAD><TITLE>fold-create(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
+fold-create(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>fold-create - Create a new fold (<B>C-f2</B>)&nbsp; 
+<BR>fold-close - Close an open fold (in-line) (<B>C-f2</B>)&nbsp; 
+<BR>fold-enter - Enter fold (<B>f3</B>)&nbsp; 
+<BR>fold-exit - Exit a fold (<B>esc f3</B>)&nbsp; 
+<BR>fold-exit-all - Exit all folds (<B>esc C-f3</B>)&nbsp; 
+<BR>fold-kill - Delete the fold and all its contents (<B>C-x&nbsp;C-k</B>)&nbsp; 
+<BR>fold-open - Open fold (in-line) (<B>f2</B>)&nbsp; 
+<BR>fold-remove - Remove the fold, maintaining content (<B>esc C-f3</B>)&nbsp; </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>fold-create</B> (<B>C-f2</B>)&nbsp; 
+<BR><B>fold-close</B> (<B>C-f2</B>)&nbsp; 
+<BR><B>fold-enter</B> (<B>f3</B>)&nbsp; 
+<BR><B>fold-exit</B> (<B>esc f3</B>)&nbsp; 
+<BR><B>fold-exit-all</B> (<B>esc C-f3</B>)&nbsp; 
+<BR><B>fold-kill</B> (<B>C-x&nbsp;C-k</B>)&nbsp; 
+<BR><B>fold-open</B> (<B>f2</B>)&nbsp; 
+<BR><B>fold-remove</B> (<B>esc C-f3</B>)&nbsp; </UL>
+<H2><B>INTRODUCTION </B></H2>
+<UL><P>MicroEmacs supports folding editor type features that allow folds to be created, deleted and traversed. Folded regions of the file may be entered and edited whilst hiding information in other folds. Folds may also be opened in-line such that more than one fold is visible at any time. 
+<P>The <B>fold</B> operation has different semantics than 
+<A HREF="m3mac029.html">collapse</A> which simply hides information with a single narrow and does not provide features such as entering the fold. </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>fold-create</B> creates a new fold from the text defined between the cursor and the 
+<A HREF="m2cmd121.html">set-mark</A> position. The text between the mark line and the cursor line inclusive are then folded and fold markers are inserted into the buffer. The folded line may be commented with a fold comment. The fold may be subsequently removed with <B>fold-remove</B> which removes the fold under the cursor, deleting any fold annotations. 
+<P><B>fold-open</B> opens the fold under the cursor, the fold is expanded in line such that the contents of the fold are visible. The fold may be subsequently closed using <B>fold-close</B> when the body of the text is hidden underneath a fold marker. 
+<P><B>fold-enter</B> enters a fold under the cursor and the contents of the fold are reveled the rest of the buffer is narrowed out. The previous fold level may be restored with <B>fold-exit</B>. Where the fold nesting is deep then <B>fold-exit-all</B> may be used to return to the top level. 
+<P><B>fold-kill</B> deletes the fold under the cursor and all of the information contained within the fold. 
+<A HREF="m2cmd136.html">undo(2)</A> will restore the fold if this was not the required action. </UL>
+<H2><B>DEFINITION </B></H2>
+<UL><P>Any file may be folded provided that the opening and closing fold strings are defined. Folding may be defined and initialized for a file type using 
+<A HREF="m3mac064.html">buffer-init(3)</A> by defining the <B>fhopok-XXX.fold</B> variable to define the opening and closing fold markers. i.e. <UL>
+<PRE>set-variable&nbsp;.fhook-XXX.fold&nbsp;&quot;&lt;open&gt;&nbsp;&lt;close&gt;&quot; 
+</PRE></UL>
+<P>Where <I>&lt;open&gt;</I> and <I>&lt;close&gt;</I> are the opening and closing fold strings. 
+<P>Folding may also be introduced on a file basis by defining the sold markers in the magic string by assignment of the open and close fold strings through the variables <B>fold-open:</B> and <B>fold-close:</B>. The macro file <TT>fold.emf</TT> does this to fold a MicroEmacs macro file as follows:- <UL>
+<PRE>;&nbsp;-!-&nbsp;emf:&nbsp;fold-open:&nbsp;&quot;;OPEN&quot;&nbsp;;&nbsp;fold-close:&nbsp;&quot;;CLOSE&quot;&nbsp;;&nbsp;-!- 
+
+;OPEN&nbsp;fold-idle 
+0&nbsp;define-macro&nbsp;fold-idle 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;lfind&nbsp;&quot;|yank|reyank|&quot;&nbsp;@cl 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fold-region 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;screen-update 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;exi&nbsp;:fold-idle 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;execute-line&nbsp;:fold-idle 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+!emacro 
+;CLOSE 
+</PRE></UL>
+</UL><H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var085.html">$line-flags(5)</A>, 
+<A HREF="m3mac064.html">buffer-init(3)</A>, 
+<A HREF="m3mac029.html">collapse-all(3)</A>, 
+<A HREF="m3mac029.html">collapse-current(3)</A>, 
+<A HREF="m2mod025.html">narrow(2m)</A>, 
+<A HREF="m2cmd068.html">narrow-buffer(2)</A>, 
+<A HREF="m2cmd121.html">set-mark(2)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2004</I>
+<BR><I>Last Modified: 2004/01/17</I>
+<BR><I>Generated On: 2004/02/06</I>
+</BODY></HMTL>

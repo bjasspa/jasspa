@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>languageTemplates(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1i - [Nroff Parser : 1.3.4a (SunOS)] - Jan  6 2004 - Jon Green (1995-97) -->
+<!-- nr2html - Version 1.0.1j - [Nroff Parser : 1.3.4a (SunOS)] - Jan 12 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 languageTemplates(2)</H1>
@@ -52,11 +52,13 @@ languageTemplates(2)</H1>
 !emacro 
 ml-write&nbsp;&quot;[MicroEmacs&nbsp;foo&nbsp;file&nbsp;hook&nbsp;loaded]&quot; 
 </PRE></UL>
-<P>The file hook may be tested by exiting and re-loading MicroEmacs '04, or simply by executing the file containing the <TT>add-file-hook</TT> function. Once the file bindings are installed a <I>foo</I> file may be loaded and the hook message should be displayed. </UL>
+<P>The file hook may be tested by exiting and re-loading MicroEmacs '04, or simply by executing the file containing the <TT>add-file-hook</TT> function. Once the file bindings are installed a <I>foo</I> file may be loaded and the hook message should be displayed. 
+<P>The best way to create a new file hook is to find an existing file type with similar support to the new file hook you wish to create and re-use the hook code to create the new one. </UL>
 <H2>Modifying an Existing file hook </H2>
 <UL><P>The standard file hooks supplied with MicroEmacs '04 should not be modified, typically a user will want to extend the repertoire of hi-lighting tokens to encompass locally defined programming libraries or syntactical extensions, in addition to extending support macros that are associated with the file type. In this case, an extension to the hook function is required. The hook file <B>my</B><I>XXX</I><B>.emf</B>, allows extensions to be made to the <B>hk</B><I>XXX</I><B>.emf</B>, without editing the original file. This may be considered to be an <I>include</I> file and is executed, if it exists, after the <B>hk</B> file has been executed. i.e. if the hook file <B>hkfoo.emf</B> is already defined and extensions are added to <B>myfoo.emf</B>. 
 <P>Note that the <B>my</B><I>XXX</I><B>.emf</B> files do not typically include any <B>fhook-XXX</B> functions, the original <I>fhook</I> functions would be used. However, if a different buffer environment is required from the one created be the hook, such as a different setting of 
-<A HREF="m2mod012.html">tab(2m)</A> mode, the hook function should be copied to <B>my</B><I>XXX</I><B>.emf</B> and altered appropriately. </UL>
+<A HREF="m2mod012.html">tab(2m)</A> mode, the hook function should be copied to <B>my</B><I>XXX</I><B>.emf</B> and altered appropriately. 
+<P>Most extensions and changes to the buffer environment may be performed using <B>my</B><I>XXX</I><B>.emf</B>. If the extension macro file includes a macro definition <B>my-fhook-</B><I>XXX</I>, then <B>my-fhook</B><I>XXX</I> is automatically executed after <B>fhook</B><I>XXX</I> has been run. </UL>
 <H2>Adding Hilighting definitions </H2>
 <UL><P>File specific hilighting is used to pick out key words and tokens used within the file type, it greatly improves readability; the hilighting is also used for 
 <A HREF="m2cmd101.html">printing</A>. The hilighting is defined within the body of the file and is executed once when the hook file is loaded, this occurs when the hook function is executed. During development of the hilighting code, it is usually necessary to 
@@ -442,6 +444,6 @@ el&nbsp;&quot;else\r\p\P&quot;
 <A HREF="m2cmd202.html">File Hooks</A>. </UL>
 <HR>
 <P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2004/01/06</I>
-<BR><I>Generated On: 2004/01/11</I>
+<BR><I>Last Modified: 2004/01/17</I>
+<BR><I>Generated On: 2004/02/06</I>
 </BODY></HMTL>
