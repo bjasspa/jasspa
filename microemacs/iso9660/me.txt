@@ -1,0 +1,56 @@
+> -!- document; fill-mode:both; fill-column:65; -!-
+>
+>  Copyright 2004 JASSPA. www.jasspa.com
+>
+>  Created By    : Jon Green
+>  Created       : Sat Mar 27 17:47:06 2004
+>  Last Modified : <040327.1918>
+>
+
+MicroEmacs
+
+    Full version of JASSPAs  MicroEmacs.
+
+    This may be run straight from the CD-ROM.
+
+  Configuration Files
+
+    Contained in the sub-directory "macros"
+
+  UNIX
+
+    meaix4        - IBM AIX executable.
+    mehpux10      - HP-UX 10.20 executable.
+    mehpux11      - HP-UX 11.00 executable.
+    meirix6       - Silicon Graphics IRIX 6.
+    melinux24     - LINUX, Kernel 2.4.x.
+    mesun86_58    - Sun Solaris 8 (i386).
+    mesun86_59    - Sun Solaris 9 (i386).
+    mesunos56     - Sun Solaris 2.6 (SPARC).
+    mesunos58     - Sun Solaris 8 (SPARC).
+    mesunos59     - Sun Solaris 9 (SPARC).
+    meopenbsd34   - OpenBSD 3.4
+
+  Apple
+
+    mecdarwin     - Apple Mac Darwin 6.6 (PPC), console only.
+
+  Microsoft Windows
+
+    me32.exe      - Microsoft '95/'98/NT/2K/XP, window only
+    meu32.exe     - Microsoft '95/'98/NT/2K/XP, window + URL only
+    meucw32.exe   - Microsoft '95/'98/NT/2K/XP, window + console + URL
+                    (meucw32.exe -n runs console version)
+
+    me32s.exe     - Microsoft Win32s, window only.
+    methnk16.dll  - Microsoft Win32s, thunking DLL.
+
+    meccygwin.exe - Cygwin, console only.
+    mecygwin.exe  - Cygwin with X11R6 and console support.
+
+    meicons.exe   - Icon container for Microsoft Windows (win32/win32s).
+
+  MS-DOS
+
+    medos.exe     - MS-DOS DJGPP v1.x - 8.3 name support.
+    medosdj2.exe  - MS-DOS DJGPP v2.x - long name support.

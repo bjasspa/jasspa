@@ -4,7 +4,7 @@
 >
 >  Created By    : Jon Green
 >  Created       : Sun Aug 10 13:34:35 2003
->  Last Modified : <030810.1348>
+>  Last Modified : <040327.1751>
 >
 
 Documentation
@@ -15,25 +15,20 @@ Documentation
 
   Documentation Sources
 
-    me.html    - HTML browser version on the CD.
+    me.htm    - HTML browser version on the CD.
 
-    me.hlp     - Microsoft Windows Help file format
-
-    me2002.chm - MicroSoft   Windows   only.   Documentation   in
-                 chm-format.
-
-                 Acknowledgement   to  Dr.   Detlef   Groth   for
-                 generating  this file. See  http://www.dgroth.de
-                 and http://www.microemacs.de
-
-    me2002.pdf - Documentation in Adobe Acrobat format.
-
-                 Acknowledgement   to  Dr.   Detlef   Groth   for
-                 generating  this file. See  http://www.dgroth.de
-                 and http://www.microemacs.de
+    ME.HLP    - Microsoft Windows winhelp file.
 
   Documentation Archives
 
-    mehtm.zip     - HTML documentation in 8.3 format for DOS (*.htm)
+    jasspa-mehtm-20040301.zip
 
-    mehtml.tar.gz - HTML documentation in 8.4 format for UNIX (*.html)
+        HTML documentation in 8.3 format for DOS (*.htm)
+
+    jasspa-mehtml-20040301.tar.gz
+
+        HTML documentation in 8.4 format for UNIX (*.html)
+
+    jasspa-mehtm-20040301.zip
+
+        Microsoft Windows Help file format
