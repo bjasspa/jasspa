@@ -5,7 +5,7 @@
  *  Synopsis      : Dos terminal support routines
  *  Created By    : Steven Phillips
  *  Created       : 1994
- *  Last Modified : <011114.2210>
+ *  Last Modified : <011126.2108>
  *
  *  Description
  *
@@ -768,18 +768,20 @@ int
 TTahead(void)
 {
     extern int kbhit APRAM((void)) ;
+    
     while(kbhit() != 0)
         TTgetkeyc() ;
     
-    /* don't process the timers if we have a key waiting!
+    /* Check the timers but don't process them if we have a key waiting!
      * This is because the timers can generate a lot of timer
      * keys, filling up the input buffer - these are not wanted.
      * By not processing, we leave them there until we need them.
      */
+    timerCheck(0) ;
+    
     if(TTnoKeys)
         return TTnoKeys ;
 
-    timerCheck(0) ;
 #if MOUSE
     /* If an alarm hCheck the mouse */
     if(isTimerExpired(MOUSE_TIMER_ID))

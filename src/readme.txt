@@ -31,12 +31,12 @@ INSTALLATION
           See Contact Information for full  contact information. A mail archive
           exists at:- 
 
-            http://www.egroups.com/list/jasspa/ 
+            http://groups.yahoo.com/group/jasspa/ 
 
           If you wish to  participate in the list  then you must first register
           by sending an empty mail message body to:- 
 
-            jasspa-subscribe@egroups.com 
+            jasspa-subscribe@yahoogroups.com 
 
           You  will  then  be  able  to  mail  any  questions  into  the group.
           Registration is  required  in  order to  prevent  spam  mailings from
@@ -49,7 +49,7 @@ INSTALLATION
           The Microsoft '95/'98/NT platforms may be installed using the Install
           Shield  installation  utility  and  do  not  require  the  components
           specified in later sections. 
-          me32inst.zip - '95/'98/NT Install Shield Installation 
+          jasspame.exe - '95/'98/NT Self Extracting Install Shield Installation
 
      Executable Source Code 
           The source code release for MicroEmacs '01 contains makefiles (*.mak)
@@ -63,11 +63,10 @@ INSTALLATION
           medos.zip - DOS Executable 
           mewin32.zip - Windows 32' (95/98/NT) Executable 
           mewin32s.zip - Windows win32s (Win3.1/3.11) Executable 
-          meirix5.gz - Silicon Graphics Irix 5 Executable 
           meirix6.gz - Silicon Graphics Irix 6 Executable 
-          meaix34.gz - IBM's AIX 3.4 Executable 
-          mehpux9.gz - Hewlett Packard HP-UX 9 Executable 
+          meaix43.gz - IBM's AIX 4.3 Executable 
           mehpux10.gz - Hewlett Packard HP-UX 10 Executable 
+          mehpux11.gz - Hewlett Packard HP-UX 11 Executable 
           mesunos55.gz - Sun OS 5.5 Executable 
           mesunos56.gz - Sun OS 5.5 Executable 
           mesolx86.gz - Sun Solaris 2.6 Intel Platform Executable 

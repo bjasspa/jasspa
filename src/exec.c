@@ -10,7 +10,7 @@
  *
  *       Author:                 Danial Lawrence
  *
- *       Creation Date:          14/05/86 12:37          <011015.1206>
+ *       Creation Date:          14/05/86 12:37          <011206.1403>
  *
  *       Modification date:      %G% : %U%
  *
@@ -860,10 +860,15 @@ dobuf(LINE *hlp)
         {
             if((macbug > 1) || (macbug && !execlevel))
             {
-                uint8 outline[MAXBUF];   /* string to hold debug line text */
+                uint8 dd=macbug, outline[MAXBUF];   /* string to hold debug line text */
                 LINE *tlp=hlp ;
                 uint16 cc ;
                 int lno=0 ;
+                
+                /* force debugging off while we are getting input from the user,
+                 * if we don't and any macro is executed (idle-pick macro) then
+                 * ME will spin and crash!! */
+                macbug = 0 ;
                 
                 /*---   Generate the debugging line for the 'programmer' !! */
                 do 
@@ -880,11 +885,13 @@ loop_round2:
                 screenUpdate(TRUE,2-sgarbf) ;
                 /* reset garbled status */
                 sgarbf = FALSE ;
-                if(macbug <= 2)
+                if(dd <= 2)
                 {
 loop_round:
                     /* and get the keystroke */
-                    switch ((cc=meGetKeyFromUser(FALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE)))
+                    dd ;
+                    cc = meGetKeyFromUser(FALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE) ;
+                    switch(cc)
                     {
                     case '?':
                         mlwrite(MWSPEC,__dobufStr1) ;       /* Write out the debug line */
@@ -910,15 +917,17 @@ loop_round:
                             ctrlg(FALSE,1) ;
                             status = ABORT ;
                             errorLine = lp ;
+                            macbug = dd ;
                             goto dobuf_exit ;
                         }
-                        debug = macbug ;
+                        debug = dd ;
                     case '!':
-                        macbug = 0 ;
+                        dd = 0 ;
                     case 's':
                         break;
                     }
                 }
+                macbug = dd ;
             }
         }
 #endif
@@ -1442,9 +1451,9 @@ dofile(uint8 *fname, int f, int n)
         return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[Failed to load file %s]", fname);
     
     /* go execute it! */
-    if((status = donbuf(&hlp,&varList,fname,f,n)) != TRUE)
+    if((status = donbuf(&hlp,&varList,fn,f,n)) != TRUE)
         /* the execution failed lets go to the line that caused the grief */
-        macroPrintError(&hlp,fname) ;
+        macroPrintError(&hlp,fn) ;
     freeLineLoop(&hlp,0) ;
     /* free off any command variables */
     if(varList.head != NULL)
