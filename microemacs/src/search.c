@@ -449,7 +449,7 @@ mere_scanner(int direct, int beg_or_end, int *n, SCANNERPOS *sp)
 
 #else
 
-meRegex mereRegex={0} ;
+meRegex mereRegex ;
 
 static int
 mere_compile_pattern(meUByte *apat)

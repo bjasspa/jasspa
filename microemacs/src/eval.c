@@ -548,8 +548,10 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             return frameChangeWidth(meTRUE,meAtoi(vvalue)-frameCur->width);
         case EVABSCOL:
             return setcwcol(meAtoi(vvalue));
+#if MEOPT_EXTENDED
         case EVABSLINE:
             return windowGotoAbsLine(meAtoi(vvalue));
+#endif
         case EVCURCOL:
             if((status=meAtoi(vvalue)) < 0)
             {
@@ -994,7 +996,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             }
         default:
             /* default includes EVCBUFBACKUP EVMOUSEX EVMOUSEY EVSTATUS EVMACHINE 
-             * EVSYSRET EVUSEX, EVVERSION, EVWMDLINE or system dependant vars
+             * EVSYSRET EVUSEX, EVVERSION, EVWMDLINE, EVEOBLINE or system dependant vars
              * where this isn't the system (e.g. use-x) which cant be set
              */
             return meFALSE ;
@@ -1153,11 +1155,11 @@ handle_namesvar:
 #endif
     case EVFRMDPTH:     return (meItoa(frameCur->depth + 1));
     case EVABSCOL:      return (meItoa(getcwcol()));
-    case EVABSLINE:     return (meItoa(windowGotoAbsLine(-1)+1));
     case EVCURCOL:      return (meItoa(frameCur->windowCur->dotOffset));
     case EVCURLINE:     return (meItoa(frameCur->windowCur->dotLineNo+1));
-    case EVWINCHRS:     return windowChars;
 #if MEOPT_EXTENDED
+    case EVABSLINE:     return (meItoa(windowGotoAbsLine(-1)+1));
+    case EVEOBLINE:     return (meItoa(frameCur->bufferCur->lineCount+1));
     case EVBMDLINE:
         if(frameCur->bufferCur->modeLineStr == NULL)
             return modeLineStr ;
@@ -1172,6 +1174,7 @@ handle_namesvar:
     case EVWDEPTH:      return (meItoa(frameCur->windowCur->textDepth));
     case EVWWIDTH:      return (meItoa(frameCur->windowCur->textWidth));
 #endif
+    case EVWINCHRS:     return windowChars;
     case EVFRMWDTH:     return (meItoa(frameCur->width));
     case EVCBUFBACKUP:
         if((frameCur->bufferCur->fileName == NULL) || createBackupName(evalResult,frameCur->bufferCur->fileName,'~',0))

@@ -303,8 +303,9 @@ extern	meUByte *gwd(meUByte drive);
 extern  meUByte *getFileBaseName(meUByte *fname) ;
 extern  void  getFilePath(meUByte *fname, meUByte *path) ;
 extern  int inputFileName(meUByte *prompt, meUByte *fn, int corFlag);
-extern	int ifile(meBuffer *bp, meUByte *fname, meUInt flags);
-extern	int insFile(int f, int n);
+extern	int meBufferInsertFile(meBuffer *bp, meUByte *fname, meUInt flags,
+                               meInt offest, meInt length);
+extern	int insertFile(int f, int n);
 extern  int findFileList(meUByte *seed, int bflag, meInt lineno) ;
 extern  int findSwapFileList(meUByte *seed, int bflag, meInt lineno) ;
 extern	int findFile(int f, int n);
@@ -370,7 +371,8 @@ extern  void    getDirectoryList(meUByte *pathName, meDirList *dirList) ;
 #define meRWFLAG_FTPCLOSE  0x20000000
 #define meRWFLAG_NOCONSOLE 0x40000000
 
-extern int      ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp) ;
+extern int      ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
+                           meInt offset, meInt length) ;
 #define meBACKUP_CREATE_PATH 0x0001
 extern int      createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag) ;
 

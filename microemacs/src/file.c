@@ -1289,7 +1289,7 @@ readin(register meBuffer *bp, meUByte *fname)
         else
             mlwrite(MWCURSOR|MWCLEXEC,(meUByte *)"[Reading %s]", fn);
     }
-    ss = ffReadFile(fn,0,bp,bp->baseLine) ;
+    ss = ffReadFile(fn,0,bp,bp->baseLine,0,0) ;
     
     /*
     ** Set up the modification time field of the buffer structure.
@@ -1322,7 +1322,8 @@ error_end:
  */
 /* must have the buffer line no. correct */
 int
-ifile(meBuffer *bp, meUByte *fname, meUInt flags)
+meBufferInsertFile(meBuffer *bp, meUByte *fname, meUInt flags,
+                   meInt offset, meInt length)
 {
     register meWindow *wp ;
     register meLine   *lp ;
@@ -1342,7 +1343,7 @@ ifile(meBuffer *bp, meUByte *fname, meUInt flags)
     
     nline = bp->lineCount ;
     lp = bp->dotLine ;
-    ss = ffReadFile(fname,flags|meRWFLAG_INSERT,bp,lp) ;
+    ss = ffReadFile(fname,flags|meRWFLAG_INSERT,bp,lp,offset,length) ;
     nline = bp->lineCount-nline ;
     /* restore the mode */
     meModeCopy(bp->mode,md) ;
@@ -1390,16 +1391,17 @@ ifile(meBuffer *bp, meUByte *fname, meUInt flags)
  * Bound to "C-X C-I".
  */
 int
-insFile(int f, int n)
+insertFile(int f, int n)
 {
     register int s;
     meUByte fname[meFILEBUF_SIZE_MAX] ;
+    meInt offset, length ;
 
     if((s=inputFileName((meUByte *)"Insert file",fname,1)) <= 0)
         return s ;
-    /* Allow existing or url files */
+    /* Allow existing or url files if not doing a partial insert */
     if(((s=getFileStats(fname,3,NULL,NULL)) != meFILETYPE_REGULAR) &&
-       (s != meFILETYPE_HTTP) && (s != meFILETYPE_FTP))
+       ((n < 0) || ((s != meFILETYPE_HTTP) && (s != meFILETYPE_FTP))))
         return meABORT ;
     if((s=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
         return s ;
@@ -1412,10 +1414,25 @@ insFile(int f, int n)
     frameCur->bufferCur->dotLine = frameCur->windowCur->dotLine ;
     frameCur->bufferCur->dotLineNo = frameCur->windowCur->dotLineNo ;   /* must have the line no. correct */
     
+    if(n < 0)
+    {
+        meUByte arg[meSBUF_SIZE_MAX] ;
+        
+        if(meGetString((meUByte *)"Read Offest",0,0,arg,meSBUF_SIZE_MAX) <= 0)
+            return meABORT ;
+        offset = meAtoi(arg) ;
+        if((meGetString((meUByte *)"Read Length",0,0,arg,meSBUF_SIZE_MAX) <= 0) ||
+           ((length = meAtoi(arg)) <= 0))
+            return meABORT ;
+        n = 1 ;
+    }
+    else
+        length = 0 ;
+    
     for(; n>0 ; n--)
-        if((s = ifile(frameCur->bufferCur,fname,0)) <= 0)
+        if((s = meBufferInsertFile(frameCur->bufferCur,fname,0,offset,length)) <= 0)
             break ;
-
+    
     /* move the mark down 1 line into the correct place */
     frameCur->windowCur->markLine = meLineGetNext(frameCur->windowCur->markLine);
     frameCur->windowCur->markLineNo++ ;

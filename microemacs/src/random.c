@@ -373,8 +373,16 @@ bufferInfo(int f, int n)
     if (numchars != 0)
         ratio = (100L*predchars) / numchars;
     
+    if(n == 0)
+    {
+        /* macro call - put info into $result only and in a more usable form */
+        sprintf((char *)resultStr,"|%ld|%ld|%d|%d|%ld|%ld|%d|%d|%d|%d|%d|0x%02x|",
+                predlines+1, numlines+1, savepos, meLineGetLength(frameCur->windowCur->dotLine),predchars, numchars, ratio, 
+                (int) (frameCur->windowCur->dotLineNo-frameCur->windowCur->vertScroll), frameCur->windowCur->textDepth-1,col, ecol, curchar);
+        return meTRUE ;
+    }
     /* summarize and report the info */
-    sprintf((char *)resultStr,"Line %ld/%ld Col %d/%d Char %ld/%ld (%d%%) Win Line %d/%d Col %d/%d char = 0x%x",
+    sprintf((char *)resultStr,"Line %ld/%ld Col %d/%d Char %ld/%ld (%d%%) Win Line %d/%d Col %d/%d char = 0x%02x",
             predlines+1, numlines+1, savepos, meLineGetLength(frameCur->windowCur->dotLine),predchars, numchars, ratio, 
             (int) (frameCur->windowCur->dotLineNo-frameCur->windowCur->vertScroll), frameCur->windowCur->textDepth-1,col, ecol, curchar);
     return mlwrite(MWSPEC,resultStr) ;
@@ -2670,7 +2678,7 @@ cmpBuffers(int f, int n)
                 if(((wp->flags & meWINDOW_NO_CMP) == 0) &&
                    ((tmpc = meWindowGetChar(wp)) != cc))
                 {
-                    if (!isSpace(tmpc) && (tmpc != ' '))
+                    if ((cc != ' ') || !isSpace(tmpc))
                         return meFALSE ;
                 }
             }
@@ -2684,7 +2692,7 @@ cmpBuffers(int f, int n)
                 do
                 {
                     tmpc = meWindowGetChar(wp);
-                    if (!isSpace (tmpc) && (tmpc != ' '))
+                    if(!isSpace(tmpc))
                         break;
                 }
                 while ((moreData = meWindowForwardChar(wp,1)) > 0);
@@ -2700,12 +2708,11 @@ cmpBuffers(int f, int n)
                         do
                         {
                             tmpc = meWindowGetChar(wp);
-                            if (!isSpace (tmpc) && (tmpc != ' '))
+                            if(!isSpace(tmpc))
                                 break;
                         }
                         while ((winData = meWindowForwardChar(wp,1)) > 0);
                     }
-                
                     if(winData != moreData)
                         return meFALSE ;
                 }

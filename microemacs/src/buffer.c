@@ -420,7 +420,7 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
         }
 #endif
     }
-    if(bp->windowCount++ == 0)
+    if((bp->windowCount++ == 0) || reload)
     {
 	/* First use.           */
 	restoreWindBSet(wp,bp) ;
@@ -434,8 +434,21 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
         }            
 	if(lineno > 0)
 	    windowGotoLine(meTRUE,lineno) ;
+        /* on a reload reset all other windows displaying this buffer to the tob */
+        if(reload && (bp->windowCount > 1))
+        {
+            meFrameLoopBegin() ;
+            twp = loopFrame->windowList;
+            while(twp != NULL)
+            {
+                if((twp != wp) && (twp->buffer == bp)) 
+                    restoreWindWSet(twp,wp) ;
+                twp = twp->next;
+            }
+            meFrameLoopEnd() ;
+        }
     }
-    else
+    else if(bp != tbp)
     {
         meFrameLoopBegin() ;
 	twp = loopFrame->windowList;                            /* Look for old.        */
@@ -466,8 +479,8 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
         bp->intFlag &= ~BIFLOAD ;
 	if(bufferOutOfDate(bp))
 	{
-            lineno = bp->dotLineNo ;
             update(meTRUE) ;
+            lineno = wp->dotLineNo ;
             if((mlyesno((meUByte *)"File changed on disk, reload") > 0) &&
                (bclear(bp) > 0))
             {

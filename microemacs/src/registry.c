@@ -683,7 +683,7 @@ regRead (meUByte *rname, meUByte *fname, int mode)
         meCrypt(s1,len+meStrlen(s1+len)+1) ;
         flags |= meRWFLAG_CRYPT ;
     }
-    if((ffReadFile(fn,flags,NULL,&hlp) == meABORT) &&
+    if((ffReadFile(fn,flags,NULL,&hlp,0,0) == meABORT) &&
        !(mode & meREGMODE_CREATE))
     {
         mlwrite (MWABORT|MWWAIT,(meUByte *)"[Cannot load registry file %s]", fname);
