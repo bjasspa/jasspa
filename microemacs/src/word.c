@@ -420,9 +420,9 @@ wrapWord(int f, int n)
             return meTRUE ;
     }
     off = meLineGetLength(frameCur->windowCur->dotLine) - off ;
-#if MEOPT_CFENCE
-    if(meModeTest(frameCur->bufferCur->mode,MDCMOD))
-        cnt = cinsert() ;
+#if MEOPT_HILIGHT
+    if(frameCur->bufferCur->indent)
+        cnt = indentInsert() ;
     else
 #endif
     if(meModeTest(frameCur->bufferCur->mode,MDINDEN))

@@ -702,37 +702,6 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
         case EVHOMEDIR:
             meStrrep(&homedir,vvalue) ;
             break;
-#if MEOPT_CFENCE
-        case EVCBRACE:
-            braceIndent = (meShort) meAtoi (vvalue);
-            break;
-        case EVCCASE:
-            caseIndent = (meShort) meAtoi (vvalue);
-            break;
-        case EVCCONTCOMM:
-            if(commentCont != commentContOrg)
-                meFree(commentCont) ;
-            commentCont = meStrdup(vvalue) ;
-            break ;
-        case EVCCONTINUE:
-            continueIndent = (meShort) meAtoi (vvalue);
-            break;
-        case EVCCONTMAX:
-            continueMax = (meShort) meAtoi (vvalue);
-            break;
-        case EVCMARGIN:
-            commentMargin = (meShort) meAtoi(vvalue);
-            break;
-        case EVCSTATEMENT:
-            statementIndent = (meShort) meAtoi (vvalue);
-            break;
-        case EVCSWITCH:
-            switchIndent = (meShort) meAtoi (vvalue);
-            break;
-        case EVMATCHLEN:
-            matchlen = (meShort) meAtoi (vvalue);
-            break;
-#endif
 #if MEOPT_EXTENDED
         case EVSHWMDS:
             {
@@ -1234,17 +1203,6 @@ handle_namesvar:
     case EVBUFTABWIDTH: return meItoa(frameCur->bufferCur->tabWidth);
     case EVSRCHPATH:    return mePtos(searchPath) ;
     case EVHOMEDIR:     return mePtos(homedir) ;
-#if MEOPT_CFENCE
-    case EVCBRACE:      return meItoa(braceIndent) ;
-    case EVCCASE:       return meItoa(caseIndent) ;
-    case EVCCONTCOMM:   return commentCont ;
-    case EVCCONTINUE:   return meItoa(continueIndent) ;
-    case EVCCONTMAX:    return meItoa(continueMax) ;
-    case EVCMARGIN:     return meItoa(commentMargin) ;
-    case EVCSTATEMENT:  return meItoa(statementIndent) ;
-    case EVCSWITCH:     return meItoa(switchIndent) ;
-    case EVMATCHLEN:    return meItoa(matchlen);
-#endif
 #if MEOPT_EXTENDED
     case EVSHWMDS:
         {

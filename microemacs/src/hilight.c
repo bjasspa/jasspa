@@ -127,7 +127,7 @@ freeToken(meHilight *root)
 }
 
 static meHilight *
-createHilight(meUByte hilno, meUByte *noHils , meHilight ***hTbl)
+createHilight(meUByte hilno, meInt size, meUByte *noHils , meHilight ***hTbl)
 {
     meHilight *root ;
     
@@ -149,13 +149,12 @@ createHilight(meUByte hilno, meUByte *noHils , meHilight ***hTbl)
                 root->rclose = hn->rclose ;
                 meFree(hn) ;
             }
-            root->rtoken = NULL ;
             root->close = NULL ;
             freeToken(root) ;
         }
         (*hTbl)[hilno] = NULL ;
     }
-    if((root = meMalloc(sizeof(meHilight))) == NULL)
+    if((root = meMalloc(sizeof(meHilight) + size)) == NULL)
         return NULL ;
     memset(root,0,sizeof(meHilight)) ;
     return root ;
@@ -931,7 +930,7 @@ hilight(int f, int n)
             return meABORT ;
         type = (meUShort) meAtoi(buf) ;
         
-        if((root = createHilight(hilno,&noHilights,&hilights)) == NULL)
+        if((root = createHilight(hilno,0,&noHilights,&hilights)) == NULL)
             return meFALSE ;
         
         /* force a complete update next time */ 
@@ -2460,6 +2459,85 @@ indentLookBack(meLine *lp, meUShort offset)
     return 0 ;
 }
 
+/* Retrieve the indent value given the indent mask and the indentWidth to be used
+ * in any expansion. */
+int
+meIndentGetIndent(meUByte indent, meUShort bIndentWidth)
+{
+    int ind;
+    
+    /* Get the indent out */
+    ind = (int)(indent & INDNUMOFFSETMASK);
+    if ((indent & INDNUMINDSIZE) != 0)
+        ind = (bIndentWidth * ind) / (1 << INDNUMOFFSETSHIFT);
+    if ((indent & INDNUMNEG) != 0)
+        ind = -ind;
+    return ind;
+}
+
+static int
+meGetIndent(meUByte *prompt)
+{
+    meUByte *p, *q, buf[32] ;
+    int ipart, fpart ;                   /* Integer & flag part. */
+    
+    /* The indent type may be specified in a number of different ways:-
+     * 
+     * -4, 4, 8, ....        This is a character based indent.
+         * t,+t,-t,2t,-2t, ....  indentWidth based indent. 
+     * -2/3t, 3/2t, ...      tagsize vulgar fraction based indent.
+     */
+    if(meGetString(prompt,0,0,buf,32) <= 0)
+        return meABORT ;
+        
+    /* Get rid of any leading white space. */
+    for (q = buf; (*q == ' ') || (*q == '\t'); q++)
+        ;
+    /* Check for a indent offset */
+    if ((p = meStrchr(q, 't')) != NULL)
+    {
+        fpart = INDNUMINDSIZE ;
+        p[1] = '\0';                /* Get rid of any training information. */
+        
+        /* Test for special string cases */
+        if ((meStrcmp (q, "t") == 0) || (meStrcmp (q, "+t") == 0))
+            ipart = 1 << INDNUMOFFSETSHIFT;
+        else if (meStrcmp (q, "-t") == 0)
+            ipart = -1 << INDNUMOFFSETSHIFT;
+        else
+        {
+            int fpart;              /* Fractional part */
+            
+            /* Check for a vulgar fraction */
+            *p = '\0';              /* Get rid of 'i' */
+            if ((p = meStrchr(q, '/')) != NULL)
+                *p++ = '\0';        /* Kill off the fraction */
+            ipart = meAtoi(q);      /* Get integer part */
+            
+            /* Get fractional part */
+            if (p == NULL)
+                fpart = 1;
+            else if ((fpart = meAtoi(p)) == 0)
+                fpart = 1;          /* Avoid divide by 0 */
+            
+            ipart = (ipart * (1 << INDNUMOFFSETSHIFT)) / fpart;
+        }
+    }
+    else
+    {
+        fpart = 0 ;
+        ipart = meAtoi(buf);
+    }
+    
+    /* Add the offset */
+    if (ipart < 0)
+    {
+        fpart |= INDNUMNEG;
+        ipart = -ipart;
+    }
+    return (fpart | (ipart & INDNUMOFFSETMASK)) ;
+}
+
 int
 indent(int f, int n)
 {
@@ -2480,24 +2558,45 @@ indent(int f, int n)
         if((meGetString((meUByte *)"Ind no",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
            ((indno = (meUByte) meAtoi(buf)) == 0) || 
            (meGetString((meUByte *)"Flags",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
-           ((itype = meAtoi(buf)),
+           ((((itype = meAtoi(buf)) & HICMODE) == 0) &&
             (meGetString((meUByte *)"Lines",0,0,buf,meBUF_SIZE_MAX) <= 0)))
             return meABORT ;
-        if((indents[indno] = createHilight(indno,&noIndents,&indents)) == NULL)
+        if((root = createHilight(indno,(itype & HICMODE) ? meHICMODE_SIZE:0,
+                                           &noIndents,&indents)) == NULL)
             return meFALSE ;
-        indents[indno]->close = (meUByte *) meAtoi(buf) ;
-        indents[indno]->type  = itype ;
-        if(itype & HILOOKB)
+        root->type = itype ;
+        if(itype & HICMODE)
         {
-            if((meGetString((meUByte *)"Ind no",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
-               ((lindno = (meUByte) meAtoi(buf)) == 0) ||
-               (lindno >= noIndents) || (indents[lindno] == NULL))
+            static meUByte *prompts[meHICMODE_SIZE]={
+                (meUByte *) "Statement", (meUByte *) "Continue", (meUByte *) "Max",
+                (meUByte *) "Brace", (meUByte *) "Switch", (meUByte *) "Case",
+                (meUByte *) "Comment", (meUByte *) "Margin"
+            } ;
+            int ii ;
+            
+            for(ii=0 ; ii<meHICMODE_SIZE ; ii++)
             {
-                indents[indno]->type ^= HILOOKB ;
-                return meABORT ;
+                if((n = meGetIndent(prompts[ii])) < 0)
+                    return meFALSE ;
+                root->token[ii] = (meUByte) n ;
             }
-            indents[indno]->tknSttOff = lindno ;
+            if((itype & HICOMCONT) &&
+               (meGetString((meUByte *)"Com Cont",0,0,buf,meBUF_SIZE_MAX) > 0) && (buf[0] != '\0'))
+                root->rtoken = meStrdup(buf) ;
         }
+        else
+        {
+            root->close = (meUByte *) meAtoi(buf) ;
+            if(itype & HILOOKB)
+            {
+                if((meGetString((meUByte *)"Ind no",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
+                   ((lindno = (meUByte) meAtoi(buf)) == 0) ||
+                   (lindno >= noIndents) || (indents[lindno] == NULL))
+                    return meABORT ;
+                root->tknSttOff = lindno ;
+            }
+        }
+        indents[indno] = root ;
         return meTRUE ;
     }
     else if(n == 2)
@@ -2585,62 +2684,9 @@ indent(int f, int n)
     }
     if(typesFlag[itype] & INDGOTIND)
     {
-        meUByte *p, *q;
-        int ipart;                      /* Integer part. */
-        
-        /* The indent type may be specified in a number of different ways:-
-         * 
-         * -4, 4, 8, ....        This is a character based indent.
-         * t,+t,-t,2t,-2t, ....  indentWidth based indent. 
-         * -2/3t, 3/2t, ...      tagsize vulgar fraction based indent.
-         */
-        if(meGetString((meUByte *)"Indent",0,0,buf,meBUF_SIZE_MAX) <= 0)
+        if((n = meGetIndent((meUByte *)"Indent")) < 0)
             return meFALSE ;
-        
-        node->scheme &= ~INDNUMMASK;
-        /* Get rid of any leading white space. */
-        for (q = buf; (*q == ' ') || (*q == '\t'); q++)
-            ;
-        /* Check for a indent offset */
-        if ((p = meStrchr(q, 't')) != NULL)
-        {
-            node->scheme |= INDNUMINDSIZE;
-            p[1] = '\0';                /* Get rid of any training information. */
-            
-            /* Test for special string cases */
-            if ((meStrcmp (q, "t") == 0) || (meStrcmp (q, "+t") == 0))
-                ipart = 1 << INDNUMOFFSETSHIFT;
-            else if (meStrcmp (q, "-t") == 0)
-                ipart = -1 << INDNUMOFFSETSHIFT;
-            else
-            {
-                int fpart;              /* Fractional part */
-                
-                /* Check for a vulgar fraction */
-                *p = '\0';              /* Get rid of 'i' */
-                if ((p = meStrchr(q, '/')) != NULL)
-                    *p++ = '\0';        /* Kill off the fraction */
-                ipart = meAtoi(q);      /* Get integer part */
-                
-                /* Get fractional part */
-                if (p == NULL)
-                    fpart = 1;
-                else if ((fpart = meAtoi(p)) == 0)
-                    fpart = 1;          /* Avoid divide by 0 */
-                
-                ipart = (ipart * (1 << INDNUMOFFSETSHIFT)) / fpart;
-            }
-        }
-        else
-            ipart = meAtoi(buf);
-        
-        /* Add the offset */
-        if (ipart < 0)
-        {
-            node->scheme |= INDNUMNEG;
-            ipart = -ipart;
-        }
-        node->scheme |= ipart & INDNUMOFFSETMASK;
+        node->scheme = (node->scheme & ~INDNUMMASK) | (n & INDNUMMASK)  ;
     }
     if((typesFlag[itype] & INDFILETYPE) || (typesType[itype] & HLBRANCH))
     {
@@ -2653,24 +2699,9 @@ indent(int f, int n)
     return meTRUE ;
 }
 
-/* Retrieve the indent value given the indent mask and the indentWidth to be used
- * in any expansion. */
-static int
-getIndent (meUShort scheme, meUShort bIndentWidth)
-{
-    int ind;
-    
-    /* Get the indent out */
-    ind = (int)(scheme & INDNUMOFFSETMASK);
-    if ((scheme & INDNUMINDSIZE) != 0)
-        ind = (bIndentWidth * ind) / (1 << INDNUMOFFSETSHIFT);
-    if ((scheme & INDNUMNEG) != 0)
-        ind = -ind;
-    return ind;
-}
 
 int
-indentLine(void)
+indentLine(int *inComment)
 {
     meSchemeSet *blkp;
     meHilight **bhilights ;
@@ -2679,6 +2710,10 @@ indentLine(void)
     meUByte *ss, indent, lindent, bdisplayTab, bdisplayNewLine, bdisplaySpace ;
     meLine *lp ;
     int lb, ind, cind, coff ;
+    
+    indent = frameCur->bufferCur->indent ;
+    if(indents[indent]->type & HICMODE)
+        return doCindent(indents[indent],inComment) ;
     
     /* change the hilights to the indents, must backup the old value and
      * must also ensure that the hilightLine routine will use a ' ' char,
@@ -2692,8 +2727,8 @@ indentLine(void)
     displaySpace = ' ';    
     
     hilights = indents ;
-    indent = frameCur->bufferCur->indent ;
     
+    *inComment = 0 ;
     lindent = 0 ;
     if(indents[indent]->type & HILOOKB)
     {
@@ -2736,14 +2771,14 @@ indentLine(void)
     else
         fnoz = 0 ;
     if((fnoz & 0xff00) == INDFIXED)
-        ind = getIndent (fnoz, frameCur->bufferCur->indentWidth);
+        ind = meIndentGetIndent((meUByte) fnoz, frameCur->bufferCur->indentWidth);
     else
     {
         int jj, brace=0, contFlag=0, aind, lind, nind ;
         
         if((fnoz & INDINDCURLINE) &&
            ((fnoz == blkp[0].scheme) || (cind >= blkp[0].column)))
-            aind = getIndent (fnoz, frameCur->bufferCur->indentWidth);
+            aind = meIndentGetIndent((meUByte) fnoz, frameCur->bufferCur->indentWidth);
         else
             aind = 0 ;
         jj = (int) indents[indent]->close ;
@@ -2783,13 +2818,13 @@ indentLine(void)
             {
                 fnoz = (blkp[ii].scheme & 0xff00) ;
                 if(fnoz == INDNEXTONWARD)
-                    ind += getIndent (blkp[ii].scheme, frameCur->bufferCur->indentWidth);
+                    ind += meIndentGetIndent((meUByte) blkp[ii].scheme, frameCur->bufferCur->indentWidth);
                 else if((fnoz == INDSINGLE) && 
                         ((ii == 0) || ((ii == 1) && ((ss-disLineBuff) >= blkp[0].column))))
-                    ind -= getIndent (blkp[ii].scheme, frameCur->bufferCur->indentWidth);
+                    ind -= meIndentGetIndent((meUByte) blkp[ii].scheme, frameCur->bufferCur->indentWidth);
                 else if((fnoz == INDCURONWARD) && (ii != 0) &&
                         ((ii != 1) || ((ss-disLineBuff) < blkp[0].column)))
-                    ind += getIndent (blkp[ii].scheme, frameCur->bufferCur->indentWidth);
+                    ind += meIndentGetIndent((meUByte) blkp[ii].scheme, frameCur->bufferCur->indentWidth);
                 else if(fnoz == INDBRACKETOPEN)
                 {
                     if(brace >= 0)
@@ -2802,7 +2837,7 @@ indentLine(void)
                 {
                     contFlag |= 0x03 ;
                     if(!(contFlag & 0x04))
-                        ind += getIndent (blkp[ii].scheme, frameCur->bufferCur->indentWidth);
+                        ind += meIndentGetIndent((meUByte) blkp[ii].scheme, frameCur->bufferCur->indentWidth);
                 }
                 /*                printf("Colour change %d is to 0x%x at column %d, ind %d\n",ii,blkp[ii].scheme,blkp[ii].column,ind) ;*/
             }

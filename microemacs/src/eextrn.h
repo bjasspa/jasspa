@@ -499,15 +499,16 @@ extern int meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte 
 /* hilight.c externals */
 extern	void	mlerase(int flag);
 #if MEOPT_HILIGHT
-extern	int	indent(int f, int n);
 extern	int	hilight(int f, int n);
 extern  void    hilightCurLineOffsetEval(meWindow *wp) ;
-extern  int     indentLine(void) ;
+extern  int     indentLine(int *inComment) ;
 extern  meUShort hilightLine(meVideoLine *vp1) ;
 extern  void    hilightLookBack(meWindow *) ;
+extern	int	meIndentGetIndent(meUByte indent, meUShort bIndentWidth) ;
+extern	int	indent(int f, int n);
 #else
-#define indent notAvailable
 #define hilight notAvailable
+#define indent notAvailable
 #endif
 
 /* history.c externals */
@@ -743,11 +744,13 @@ extern	int	mlWrite(int f, int n);
 extern  void    makestrlow(meUByte *str);
 #if MEOPT_CFENCE
 extern  meUByte gotoFrstNonWhite(void) ;
-extern  int     doCindent(int *inComment) ;
-extern	int	cinsert(void);
 extern	int	gotoFence(int f, int n);
 #else
 #define gotoFence notAvailable
+#endif
+#if MEOPT_HILIGHT
+extern  int     doCindent(meHilight *indentDef, int *inComment) ;
+extern	int	indentInsert(void) ;
 #endif
 #if MEOPT_WORDPRO
 extern  int	winsert(void) ;

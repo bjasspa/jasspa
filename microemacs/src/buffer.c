@@ -1646,15 +1646,8 @@ invalid_global:
     
     if(meModeTest(mode,nn))
     {
-	/*
-	 * make sure that, if INDENT is set, CMODE isnt
-	 * and vice versa and same for BNIARY and RBIN
-	 */
-	if(nn == MDINDEN)
-	    meModeClear(mode,MDCMOD) ;
-	else if(nn == MDCMOD)
-	    meModeClear(mode,MDINDEN) ;
-	else if(nn == MDBINRY)
+	/* make sure that, if setting RBIN the clear BINARY and vice versa */
+        if(nn == MDBINRY)
 	    meModeClear(mode,MDRBIN) ;
 	else if(nn == MDRBIN)
 	    meModeClear(mode,MDBINRY) ;

@@ -64,16 +64,6 @@ DEFVAR ("buffer-names",        EVBNAMES)        /* buffer names access variable 
 DEFVAR ("buffer-scheme",       EVBUFSCHM)       /* Window colour  */
 #endif
 DEFVAR ("buffer-tab-width",    EVBUFTABWIDTH)   /* Buffer literal tab width */
-#if MEOPT_CFENCE
-DEFVAR ("c-brace",             EVCBRACE)        /* c-mode brace indent   */
-DEFVAR ("c-case",              EVCCASE)         /* c-mode case indent    */
-DEFVAR ("c-contcomm",          EVCCONTCOMM)     /* c-mode cont comm str  */
-DEFVAR ("c-continue",          EVCCONTINUE)     /* c-mode cont state ind */
-DEFVAR ("c-contmax",           EVCCONTMAX)      /* c-mode cont state ind */
-DEFVAR ("c-margin",            EVCMARGIN)       /* c-mode comm margin    */
-DEFVAR ("c-statement",         EVCSTATEMENT)    /* c-mode statement ind  */
-DEFVAR ("c-switch",            EVCSWITCH)       /* c-mode switch indent   */
-#endif
 #if MEOPT_EXTENDED
 DEFVAR ("command-names",       EVCNAMES)        /* command names access variable */
 #endif
