@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20050123.1629>
+# Last Modified: <20050123.1649>
 #
 ##############################################################################
 
@@ -256,7 +256,8 @@ TYP9_030=	$(DOCDIR)m9typ030.9 $(DOCDIR)m9typ031.9 $(DOCDIR)m9typ032.9\
 		$(DOCDIR)m9typ033.9 $(DOCDIR)m9typ034.9 $(DOCDIR)m9typ035.9\
 		$(DOCDIR)m9typ036.9 $(DOCDIR)m9typ037.9 $(DOCDIR)m9typ038.9\
 		$(DOCDIR)m9typ039.9
-#
+TYP9_040=	$(DOCDIR)m9typ040.9
+ #
 TNIS	=	me.tni
 
 TEMPSMS	=	cmd2_000.sm	cmd2_010.sm	cmd2_020.sm	cmd2_030.sm \
@@ -276,6 +277,7 @@ TEMPSMS	=	cmd2_000.sm	cmd2_010.sm	cmd2_020.sm	cmd2_030.sm \
 		var5_080.sm	var5_090.sm \
 		fil8_000.sm \
 		typ9_000.sm	typ9_010.sm	typ9_020.sm	typ9_030.sm \
+		typ9_040.sm \
 		faq.2
 
 all:	$(HTSS) $(HLPS) $(SMS) $(EHFS) $(TXTS)
@@ -446,6 +448,8 @@ typ9_020.sm:	$(FIL9_020)
 	$(SUPERMAN) -o $@ $(TYP9_020)
 typ9_030.sm:	$(FIL9_030)
 	$(SUPERMAN) -o $@ $(TYP9_030)
+typ9_040.sm:	$(FIL9_040)
+	$(SUPERMAN) -o $@ $(TYP9_040)
 # Narratives
 nar2_000.sm:	$(NAR2_000)
 	$(SUPERMAN) -o $@ $(NAR2_000)
