@@ -2182,12 +2182,14 @@ special_bound:
  * fail we have been launched off the desktop via an open action. Return an
  * integer status of -1 if the call failed and we filled in the values. */
 static int
-TCAPgetattr (meTermio p)
+TCAPgetattr (meTermio p, int isX)
 {
+    int status;                         /* Status for attribute retrieval. */
+    
 #ifdef _TERMIOS
-    if (tcgetattr (0, p) < 0)
+    if ((status = tcgetattr (0, p)) < 0)
 #else
-    if (ioctl(0, TCGETA, p) < 0)
+    if ((status = ioctl(0, TCGETA, p)) < 0)
 #endif
     {
         /* Input flag defaults */
@@ -2218,9 +2220,55 @@ TCAPgetattr (meTermio p)
         p->c_cc [VSTART] = CSTART;      /* C-q */
         p->c_cc [VSTOP]  = CSTOP;       /* C-s */
 #endif
-        return -1;                      /* Original call failed */
     }
-    return 0;
+    else if (isX != 0)
+    {
+        /* We are running X-Windows. We have been launched from the command
+         * line as we have obtained the terminal environment. Set this up for
+         * an interactive shell session. */
+#ifdef _HPUX
+        /* HP-UX seems to be susceptible to "su" problems when running "me&".
+         * 
+         * Fix any base modes in-case we have been started in the background.
+         * At the very minimum we need to echo characters and process
+         * concanical input. */
+        p->c_iflag |= ICRNL;
+        p->c_lflag |= ICANON|ECHO|ECHOK|ECHOE;
+#endif        
+        /* Correct the erase if it is defaulted */
+        if (p->c_cc [VERASE] == 0x7f)
+            p->c_cc [VERASE] = 'H' - '@';  /* Backspace */
+    }
+    
+    /* Logging for tracing the output of the termio statement at start-up. We
+     * cannot dump onto stdio because it may not exist. */
+#if 0
+    {
+        FILE *fp;
+        int ii;
+#ifdef _TERMIOS
+#define MECC_LEN NCCS
+#else
+#define MECC_LEN NCC
+#endif        
+        if ((fp = fopen ("/tmp/termio.out", "w")) != NULL)
+        {
+            fprintf (fp, "status = %d\n", status);
+            fprintf (fp, "c_iflag = 0x%08x %011o\n", p->c_iflag, p->c_iflag);
+            fprintf (fp, "c_oflag = 0x%08x %011o\n", p->c_oflag, p->c_oflag);
+            fprintf (fp, "c_cflag = 0x%08x %011o\n", p->c_cflag, p->c_cflag);
+            fprintf (fp, "c_lflag = 0x%08x %011o\n", p->c_lflag, p->c_lflag);
+            
+            for (ii = 0; ii < MECC_LEN; ii++)
+                fprintf (fp, "c_cc[%d] = 0x%08x %011o\n",
+                         ii, p->c_cc[ii], p->c_cc[ii]);
+            fclose (fp);
+        }
+    }
+#endif
+    
+    /* Return the status of the system call. */
+    return status;
 }
 #endif /* _USG */
 
@@ -2235,7 +2283,7 @@ TCAPstart(void)
     
     /* Get the attributes from the system */
 #ifdef _USG
-    TCAPgetattr (&otermio);
+    TCAPgetattr (&otermio, 0);
 #endif
     
     /* default to use fonts - usually supports reverse */
@@ -3058,7 +3106,7 @@ XTERMstart(void)
      * uninitialised if we have been launched off the desktop via an open
      * action. */
 #ifdef _USG
-    TCAPgetattr (&otermio);
+    TCAPgetattr (&otermio, 1);
 #endif
     
     /* Configure X-Windows */
