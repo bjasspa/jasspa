@@ -825,11 +825,17 @@ Miscellaneous Information
 cEVariables cA
 
 
+    lslm$MEINSTALLPATH(5)le MicroEmacs system macros search path 
+    lslm$MEPATH(5)le MicroEmacs search path 
+    lslm$MEUSERPATH(5)le MicroEmacs user directory 
     lslm$auto-time(5)le Automatic buffer save time 
     lslm$file-ignore(5)le File extensions to ignore 
     lslm$home(5)le Users `home' directory location 
     lslm$kept-versions(5)le Number of backups to be kept 
+    lslm$search-path(5)le MicroEmacs search path 
     lslm$timestamp(5)le Time stamp string 
+    lslm$user-name(5)le MicroEmacs user name 
+    lslm$user-path(5)le MicroEmacs user directory 
     lslm%ftp-flags(5)le Configure the FTP console 
     lslm%http-flags(5)le Configure the HTTP console 
     lslm%http-proxy-addr(5)le Set HTTP proxy server address 
@@ -1558,11 +1564,17 @@ Miscellaneous Information
 cEVariables cA
 
 
+    lslm$MEINSTALLPATH(5)le MicroEmacs system macros search path 
+    lslm$MEPATH(5)le MicroEmacs search path 
+    lslm$MEUSERPATH(5)le MicroEmacs user directory 
     lslm$auto-time(5)le Automatic buffer save time 
     lslm$file-ignore(5)le File extensions to ignore 
     lslm$home(5)le Users `home' directory location 
     lslm$kept-versions(5)le Number of backups to be kept 
+    lslm$search-path(5)le MicroEmacs search path 
     lslm$timestamp(5)le Time stamp string 
+    lslm$user-name(5)le MicroEmacs user name 
+    lslm$user-path(5)le MicroEmacs user directory 
     lslm%ftp-flags(5)le Configure the FTP console 
     lslm%http-flags(5)le Configure the HTTP console 
     lslm%http-proxy-addr(5)le Set HTTP proxy server address 
@@ -2480,8 +2492,10 @@ Miscellaneous Information
     lslm$LOGNAME(5)le System user name (UNIX) 
     lslm$MEBACKUPPATH(5)le Backup file location 
     lslm$MEBACKUPSUB(5)le Backup file name modifier 
+    lslm$MEINSTALLPATH(5)le MicroEmacs system macros search path 
     lslm$MENAME(5)le MicroEmacs user name 
     lslm$MEPATH(5)le MicroEmacs search path 
+    lslm$MEUSERPATH(5)le MicroEmacs user directory 
     lslm$ME_ISHELL(5)le Windows ishell command.com 
     lslm$ME_PIPE_STDERR(5)le Command line diversion to stderr symbol 
     lslm$auto-time(5)le Automatic buffer save time 
@@ -2577,6 +2591,8 @@ Miscellaneous Information
     lslm$time(5)le The current system time 
     lslm$timestamp(5)le Time stamp string 
     lslm$trunc-scheme(5)le Truncation color scheme 
+    lslm$user-name(5)le MicroEmacs user name 
+    lslm$user-path(5)le MicroEmacs user directory 
     lslm$variable-names(5)le Filtered variable name list 
     lslm$version(5)le MicroEmacs version date-code 
     lslm$window-acol(5)le Window cursor actual column 
@@ -2804,8 +2820,10 @@ Miscellaneous Information
     lslm$LOGNAME(5)le System user name (UNIX) 
     lslm$MEBACKUPPATH(5)le Backup file location 
     lslm$MEBACKUPSUB(5)le Backup file name modifier 
+    lslm$MEINSTALLPATH(5)le MicroEmacs system macros search path 
     lslm$MENAME(5)le MicroEmacs user name 
     lslm$MEPATH(5)le MicroEmacs search path 
+    lslm$MEUSERPATH(5)le MicroEmacs user directory 
     lslm$ME_ISHELL(5)le Windows ishell command.com 
     lslm$ME_PIPE_STDERR(5)le Command line diversion to stderr symbol 
     lslm$auto-time(5)le Automatic buffer save time 
@@ -2901,6 +2919,8 @@ Miscellaneous Information
     lslm$time(5)le The current system time 
     lslm$timestamp(5)le Time stamp string 
     lslm$trunc-scheme(5)le Truncation color scheme 
+    lslm$user-name(5)le MicroEmacs user name 
+    lslm$user-path(5)le MicroEmacs user directory 
     lslm$variable-names(5)le Filtered variable name list 
     lslm$version(5)le MicroEmacs version date-code 
     lslm$window-acol(5)le Window cursor actual column 
@@ -3004,6 +3024,7 @@ Miscellaneous Information
     lslm&xisequal(4)le Case insensitive regex String equivalence operator 
     lslm&xrep(4)le Regex replace string in string 
     lslm&xsequal(4)le Regex string equivalence operator 
+    lslm.Xdefaults(8)le UNIX Window Manager defaults file 
     lslm.calc.result(5)le Last calc calculation result 
     lslm.which.result(5)le Program path 
     lslm0-9(9)le UNIX t/nroff file 
@@ -5350,8 +5371,44 @@ Miscellaneous Information
             * Lua language template - Thanks Jeremy Cowgar. 
             * X-Window fixes - Thanks Jeremy Cowgar. 
             * Macro execution speed-ups - Thanks Mike Hopkirk for analysis. 
-            * string-rectangle command added - Suggested by Salman. 
+            * lslmstring-rectangle(3)le command added - Suggested by Salman. 
             * SGML language template. 
+            * Fixed comment re-styling for single start of line comments (REM 
+              in MS-DOS) 
+            * Fixed rendering anomalies of menus and pop-ups on Windows XP 
+              ClearType when anti-aliasing is enabled. 
+            * Shrink line crash on SunOS and IRIX fixed. 
+            * PHP template added. 
+            * Hilighting fix for toolbar Dir Files list with symbolic links. 
+            * create-frame canvas size fix on creating internal frame. 
+            * lslmrestyle-buffer(3)le fix when cGTABcA mode defined - thanks to Pedro 
+              Gomes. 
+            * lslmopen-line(3)le added for correct binding of cDC-ocA. 
+            * Latex item-list and template updated - thanks to Dr. Detlef 
+              Groth for diagnosing problems. 
+            * Perl and TCL abbreviation files - thanks to Dr. Detlef Groth. 
+            * Added cD*compile*cA hilighting and cGENTERcA selects error file and line 
+              - prompted by Salman Khilji. 
+            * Added lslmcopy-rectangle(3)le and lslmyank-rectangle-overwrite(3)le 
+              commands. 
+            * lslmcollapse-current(3)le line format now includes the end token so 
+              that indent operates correctly following a fold. 
+            * lslmfold-exit-all(3)le fixed. 
+            * Fixed lslmc-hash-eval(3)le region hilighting problem. 
+            * Updated templates for Python and AsmX86 - thanks to Pedro Gomes. 
+            * Updated the Lau HTML processing tags - thanks to Jeremy Cowgar. 
+            * lslmnarrow-buffer(2)le numeric argument and command line options 
+              extended for mark-up lines. 
+            * spawn.c compilation warnings removed. 
+            * Added support for OSF1, thanks to Dr. Detlef Groth. 
+            * Added support for OpenBSD. 
+            * Added support for Zaurus, thanks to Pierre Gaston 
+            * Fixes for Non-US keyboards under X, thanks to Pierre Gaston and 
+              Dr. Detlef Groth 
+            * New key bindings for lslmcreate-frame(2)le. 
+            * lslmml-bind-key(2)le supports new binding for next/previous file, 
+              history search uses cDupcA/cDdowncA cDC-pcA/cDC-ncA, prompted by Gabriel 
+              Tabares-Barreiro.. 
 
 
 cEWork In Progress or Planned cA
@@ -6669,9 +6726,9 @@ Miscellaneous Information
 
     cDmecA [cCoptionscA] [cCfiles ...cA] 
 
-    cDmecA [cD@cAcCstartupFilecA] [cD-bcA] [cD-ccA] [cD-dcA] [cD-hcA] [cD-icA] [cD-lcAcClineNocA] [cD-mcAcCcommandcA] [cD-ncA] 
-    [cD-0cAcCfilecA] [cD-pcA] [cD-rcA] [cD-scAcCstringcA] [cD-ucAcCusernamecA] [cD-vcAcCvariable=stringcA] [cD-xcA] 
-    cCfiles...cA 
+    cDmecA [cD@cAcCstartupFilecA] [cD-bcA cCfilecA] [cD-ccA] [cD-dcA] [cD-hcA] [cD-icA] [cD-kcA[cCkeycA] cCfilecA] [cD-lcAcClineNocA] 
+    [cD-mcAcCcommandcA] [cD-ncA] [cD-ocA] [cD-0cAcCfilecA] [cD-pcA] [cD-rcA] [cD-scAcCstringcA] [cD-ucAcCusernamecA] 
+    [cD-vcAcCvariable=stringcA] [cD-VcA] [cD-xcA] [cD-ycA cCfilecA] cCfiles...cA 
 
 
 cEcEDESCRIPTION cEcA
@@ -6810,14 +6867,19 @@ Miscellaneous Information
         the top of the buffer. 
 
     cD-ucAcCusernamecA 
-        Set the current user name to cCusernamecA before MicroEmacs is 
-        initialized. This is done by setting the environment variable 
-        ls$MENAME(5)lmMENAME(5)le to the given value. 
+        Set the current user name lslm$user-name(5)le to cCusernamecA before MicroEmacs 
+        is initialized. 
 
     cD-vcAcCvariable=stringcA 
         Assign the MicroEmacs '04 cCvariablecA with cCstringcA. The assignment is 
         performed before the buffers are loaded. Typically used to change the 
         start-up characteristics of the startup file(s). 
+
+    cD-VcA 
+        Print the name and version of MicroEmacs. i.e. 
+
+        cGorac% me -VcA 
+        cGMicroEmacs 04 - Date 04/02/01 - sunoscA 
 
     cD-xcA 
         UNIX environments. Disable the capture of signals. cDMicroEmacs '04cA by 
@@ -6839,17 +6901,16 @@ Miscellaneous Information
         X-Windows server. Typically set to cDunix:0.0cA, refer to the X-Windows 
         documentation for details of this environment variable. 
 
-    cDMENAMEcA and cDLOGNAMEcA 
-        The identity of the user, cD$MENAMEcA takes precedence over cD$LOGNAMEcA. 
-        cD$LOGNAMEcA variable is generally defined within UNIX as part of the 
-        login script. The variables are used to determine which start-up 
-        configuration to use in the initialization of cDMicroEmacs '04cA 
-        (cC$MENAMEcA.erf). 
+    cDMENAMEcA 
+        lslm$MENAME(5)le is used to override the identity of the user lslm$user-name(5)le. 
+        The variable may be used to determine which start-up configuration to 
+        use in the initialization of cDMicroEmacs '04cA (cC$user-namecA.erf). This is 
+        ignored if the cD-ucA option is specified on the command line. 
 
         Non-UNIX platforms usually need to explicitly set the cD$MENAMEcA 
         environment variable to identify the aforementioned files. for MS-DOS 
-        and Microsoft Windows this is typically performed in the cGAUTOEXEC.BATcA 
-        file. 
+        and early versions of Microsoft Windows this is typically performed in 
+        the cGAUTOEXEC.BATcA file. 
 
     cDPATHcA 
         The cD$PATHcA environment variable is used on most operating systems as a 
@@ -6889,26 +6950,32 @@ Miscellaneous Information
             operation is dependent upon the support offered by the graphics 
             adapter. 
 
+    cDMEUSERPATHcA 
+        lslm$MEINSTALLPATH(5)le is an environment variable that overrides any 
+        internally defined search path for MicroEmacs system macros and 
+        defines the root directory(s) of the MicroEmacs system macros. The 
+        presence of the environment variable affects lslm$search-path(5)le. 
+
+    lslm$MEUSERPATH(5)le 
+        is an environment variable that defines the users private directory 
+        where user configuration files such as ls$user-name(5)lm$user-namelecD.emfcA, ls$user-name(5)lm$user-namelecD.erfcA 
+        and personal spelling dictionaries are stored. This is an absolute 
+        directory path. The environment variable sets the MicroEmacs variable 
+        lslm$user-name(5)le. 
+
     cDMEPATHcA 
-        MicroEmacs '04 uses the environment variable cG$MEPATHcA as the 
-        directory(s) used to search for the macro files (see lslmemf(8)le). Within 
-        the UNIX cG$MEPATHcA is a semi-colon separated list of directories which 
-        are used to search for the MicroEmacs '04 macro files. The path is 
-        searched from left to right. The environment variable is typically 
-        defined in the in the cG.logincA, cG.cshrccA or cG.profilecA file i.e. 
+        lslm$MEPATH(5)le is an environment variable that may be used to define the 
+        absolute search path for MicroEmacs macro files and affects the 
+        setting of cD$search-pathcA. The path should include the system macros 
+        location(s) and should include the user directory location 
+        lslm$user-path(5)le as the first path when the environment variable 
+        lslm$MEUSERPATH(5)le is not defined. If cD$MEUSERPATHcA is defined then this 
+        path name appears before the cD$MEPATHcA variable to define the user 
+        directory location. cD$MEPATHcA is not searching, so ALL all directories 
+        to be searched must be included in the path specification. 
 
-            export MEPATH /usr/name/me/macros:/usr/local/microemacs 
-
-        The default when omitted is cG/usr/local/microemacscA. 
-
-        Within MS-DOS or Microsoft Windows environments it is defined in the 
-        cGAUTOEXEC.BATcA file. e.g. 
-
-            set MEPATH=c:\me\username;\me\macros 
-
-        There is no default location in these environments. For Microsoft 
-        Windows environments refer to lslmme32.ini(8)le for a method of setting up 
-        the cG$MEPATHcA from the windows configuration file. 
+        lslm$MEUSERPATH(5)le is the preferred method used to defined the user 
+        directory. 
 
     cDINFOPATHcA 
         MicroEmacs '04 uses the environment variable cG$INFOPATHcA as the 
@@ -6991,7 +7058,8 @@ Miscellaneous Information
 cEcESEE ALSO cEcA
 
 
-    lslmemf(8)le, lslmerf(8)le, cDemacs(1)cA [GNU], cDmore(1)cA, cDvi(1)cA. 
+    lslm$MEINSTALLPATH(5)le, lslm$MENAME(5)le, lslm$MEPATH(5)le, lslm$MEUSERPATH(5)le, lslmemf(8)le, lslmerf(8)le, 
+    lslm$home(5)le, cDemacs(1)cA [GNU], cDmore(1)cA, cDvi(1)cA. 
     lsClient-Server(2)lmClient-Server Interfacele. 
     lslmCommand Line Filtersle. 
 ! 1 memsdev
@@ -14145,12 +14213,12 @@ $a
     has not been read in yet since nothing has switched to that buffer.) 
 
     The numerical argument cCncA determines the information that is displayed by 
-    the command and follows:- 
+    the command and is interpreted follows:- 
 
-    cG  1cA - The default, when omitted, displays all user visible buffers. 
-    cG  0cA - Displays both visible and hidden buffers. 
-    cG-vecA - Display the visible buffers and size information. 
-    cG+vecA - Displays both visible and hidden buffers with size information. 
+    cG  1cA - The default, when the bit is set displays visible buffers only. When 
+    clear displays both visible and invisible buffers. 
+    cG  2cA - When set shows buffer size information, including file size, memory 
+    size and undo size in bytes. 
 
     The buffer list has some special command keys associated with it which 
     allow the state of the buffers to be edited from the buffer list, the 
@@ -19054,8 +19122,8 @@ $a
 
     cCfilecA 
         The name of the registry file lslmerf(8)le to load. This may be an absolute, 
-        relative or cG$MEPATHcA specified file; typically it is located on 
-        cG$MEPATHcA. 
+        relative or a lslm$search-path(5)le specified file; typically it is located 
+        on ls$search-path(5)lm$search-pathle. 
 
     cCmodecA 
         The cCmodecA is string specifying the registry node loading and saving 
@@ -19114,7 +19182,7 @@ $a
     retrieved. Note that the name of the registry file is actually retrieved 
     from the cChistorycA registry. 
 sB
-        set-variable #l1 &reg "/history" "address" $MENAME 
+        set-variable #l1 &reg "/history" "address" $user-name 
         !if &seq &set #l0 &find #l1 ".ab" "ERROR" 
             set-variable #l0 &reg "/" "history" "" 
             set-variable #l0 &spr "%s%s.ab" &lef #l0 &rsin "/" #l0 #l1 
@@ -19132,7 +19200,8 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmsave-registry(2)le, lslmlist-registry(2)le, lslmmark-registry(2)le, lslmerf(8)le. 
+    lslmsave-registry(2)le, lslmlist-registry(2)le, lslmmark-registry(2)le, lslm$search-path(5)le, 
+    lslmerf(8)le. 
 ! 2 file-op
 cEcENAME cEcA
 
@@ -22738,7 +22807,7 @@ $a
     To enable MicroEmacs to be run from any directory, simply include this 
     directory in you cDPATHcA environment variable. Alternatively, copy the 
     executable to somewhere in your PATH and set the environment variable 
-    ls$search-path(5)lmMEPATHle to point to this directory. 
+    ls$MEINSTALLPATH(5)lmMEPATHle to point to this directory. 
 
     MicroEmacs '04 will function normally in this environment, but in 
     multi-user environments and for up-dating purposes, it is strongly 
@@ -24642,7 +24711,7 @@ $a
         required rules and dictionaries have not been downloaded. You should 
         be able to download them from the JASSPA website, see lsMicroEmacs '04 - Contact InformationlmContactln
         lnInformationle. Once downloaded they must be placed in the MicroEmacs 
-        ls$search-path(5)lmsearch pathle, i.e. where the other macro files (like cGme.emfcA) are 
+        ls$MEINSTALLPATH(5)lmsearch pathle, i.e. where the other macro files (like cGme.emfcA) are 
         located. 
 
     Dialog opens with the following error message: 
@@ -24691,7 +24760,7 @@ $a
     obscure words "cGlsdxcAcC<lang-id>cAcG.edfcA" and the other as above. 
 
     Once the generated word and dictionary files have been place in the 
-    MicroEmacs ls$search-path(5)lmsearch pathle, the spelling checker should find and use them. 
+    MicroEmacs ls$MEINSTALLPATH(5)lmsearch pathle, the spelling checker should find and use them. 
     Please submit your generated support to MicroEmacs for others to benefit. 
 
 
@@ -32286,14 +32355,12 @@ $a
         defined). 
 
     cGDefault UsercA 
-        Creates a small macro file, "cGdefault.emfcA", setting lslm$MENAME(5)le to the 
-        current setting of cDLog NamecA. This may be executed at start-up to 
-        determine the current user. See lslm$MENAME(5)le for more information. 
+        The name or profile of the current user, the value is defined by the 
+        MicroEmacs variable lslm$user-name(5)le. This field may not be altered. 
 
     cGSetup PathcA 
-        Sets the location of the user files, the files are searched for and 
-        created in this directory. lslm$MEPATH(5)le should be defined to include 
-        this path. 
+        The location of the user defined macro files, the value is defined by 
+        the MicroEmacs variable lslm$user-path(5)le. This field may not be altered. 
 
     cGSetup FilecA 
         Sets the personal user setup macro file name which is executed at 
@@ -32496,7 +32563,7 @@ $a
         Sets the X font name to be used. This indirectly executes 
         lslmchange-font(2)le with the given font name. e.g. 
 
-        cG"-misc-fixed-bold-r-normal--13-*-*-*-c-70-iso8859-1"cA 
+        cG"-*-fixed-medium-r-normal--15-*-*-*-c-90-*"cA 
 
     cGDisplay Char SetcA 
         Selects the display character set being used by the system to render 
@@ -32566,10 +32633,11 @@ $a
         {...}   (...)   [...] 
 
 
-    Jumping to the opening fence only occurs when the closing brace is typed, 
-    whereas the drawing of matching fences occurs whenever the cursor is on an 
-    open fence or one character past the close fence. When this option is set 
-    to "cGNever DisplaycA" the lslmbuffer-setup(3)le setting is ignored. 
+        Jumping to the opening fence only occurs when the closing brace is 
+        typed, whereas the drawing of matching fences occurs whenever the 
+        cursor is on an open fence or one character past the close fence. When 
+        this option is set to "cGNever DisplaycA" the lslmbuffer-setup(3)le setting is 
+        ignored. 
 
     cGScroll BarscA 
         Selects the scroll bar support required. When Splitter is enabled, the 
@@ -33217,7 +33285,7 @@ $a
 
 
     lsUserProfiles(2)lmUser Profilesle, lsCompanyProfiles(2)lmCompany Profilesle, lsInstallation(1)lmInstallationle, lslmbuffer-setup(3)le, 
-    lslmscheme-editor(3)le. 
+    lslmscheme-editor(3)le, lslm$user-name(5)le, lslm$user-path(5)le. 
 ! 3 organizer
 cEcENAME cEcA
 
@@ -38118,11 +38186,13 @@ $a
 
 
     cD&findcA searches for a named file cC<basename><extension>cA on the MicroEmacs 
-    '04 search path defined by the variable lslm$search-path(5)le (initialized from 
-    the environment variable lslm$MEPATH(5)le). Each path component defined in 
-    cD$search-pathcA is prepended to the constructed file name and it's existence 
-    is tested. If the file exists, then the FULL path name of the file is 
-    returned to the caller, otherwise cGERRORcA. 
+    '04 search path defined by the variable lslm$search-path(5)le, initialized by 
+    the system of from the the environment variables lslm$MEINSTALLPATH(5)le etc. 
+
+    Each path component defined in cD$search-pathcA is prepended to the 
+    constructed file name and it's existence is tested. If the file exists, 
+    then the FULL path name of the file is returned to the caller, otherwise 
+    cGERRORcA. 
 
     cC<basename>cA 
         The base name of the file, excluding any extension. 
@@ -38159,7 +38229,8 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lsIntroduction to Variable FunctionslmVariable Functionsle, lslmfind-file(2)le, lslm$search-path(5)le, lslminsert-file(2)le. 
+    lsIntroduction to Variable FunctionslmVariable Functionsle, lslmfind-file(2)le, lslminsert-file(2)le, lslm$search-path(5)le, 
+    lslm$MEINSTALLPATH(5)le, lslm$MEUSERPATH(5)le. 
 !44 !nmacro
 cEcENAME cEcA
 
@@ -40543,17 +40614,31 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    The file naming convention utilizes tilde ('cG~cA') to identify the users home 
-    directory (cG$HOMEcA). When entering a file name: 
+    cD$homecA contains the pathname of the users home directory. The file naming 
+    convention utilizes tilde ('cG~cA') to identify the users home directory 
+    (cG$HOMEcA). When entering a file name: 
 
         ~/xxx    -> $home/xxx 
         ~yyy/xxx -> $home/../yyy/xxx 
 
 
     On most systems this is automatically set to the environment variable 
-    "HOME" if it is defined or may be defined explicitly in the start-up file. 
-    'cG~cA' may be used in the cGme.emfcA files but must be specified as 'cG~cA'. It may 
-    be picked up in command files as cD$homecA. 
+    "HOME" if it is defined. On systems (i.e. Microsoft Windows or MS-DOS) 
+    where there may be no home defined then the system user directory is used 
+    by default. The value may be explicitly redefined by the user in the 
+    start-up file to be a different location. If cD$homecA is re-defined then 
+    ensure that a trailing directory separator is included at the end of the 
+    pathname. 
+
+    'cG~cA' may be used in pathname definitions in the macro files, files but must 
+    be specified as 'cG~cA', it is perhaps better to use cD$homecA. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslm$user-path(5)le, lslm$user-name(5)le, lslm$progname(5)le, lslm$MENAME(5)le, lslm$MEINSTALLPATH(5)le, 
+    lsIntroduction to Variable FunctionslmVariable Functionsle. 
 ! 5 $scroll
 cEcENAME cEcA
 
@@ -42883,15 +42968,10 @@ $a
     lslm$buffer-scheme(5)le, lslm$line-flags(5)le, lslm$mode-line-scheme(5)le, 
     lslm$scroll-bar-scheme(5)le, lslm$system(5)le. 
 ! 5 $search-path
-! 5 $MEPATH
 cEcENAME cEcA
 
 
-|$seach-path
     $search-path - MicroEmacs search path 
-|$MEPATH
-    $MEPATH - MicroEmacs search path 
-$a
 
 
 cEcESYNOPSIS cEcA
@@ -42900,65 +42980,93 @@ $a
     cD$search-pathcA cCstringcA 
 
     cC[Microsoft Windows/MS-DOS]cA 
-    cDMEPATH=cA cC<path1>cAcD;cAcC<path2>cAcD;cA....cD;cAcC<pathn>cA 
+    cD$search-pathcA cC<path1>cAcD;cAcC<path2>cAcD;cA....cD;cAcC<pathn>cA 
 
     cC[UNIX]cA 
-    cDMEPATH=cA cC<path1>cAcD:cAcC<path2>cAcD:cA....cD:cAcC<pathn>cA 
+    cD$search-pathcA cC<path1>cAcD:cAcC<path2>cAcD:cA....cD:cAcC<pathn>cA 
 
 
 cEcEDESCRIPTION cEcA
 
 
-    cD$search-pathcA is initialized to the environment variable cD$MEPATHcA, and 
-    identifies the search paths which are searched to locate editor specific 
-    files. Multiple search paths may be specified, separated by the platform 
-    path separator (semi-colon ('cD;cA') on Microsoft Windows or MS-DOS 
-    environments and a colon ('cD:cA') on UNIX environments). Where multiple 
-    search paths are defined then they are search left to right. 
+    cD$search-pathcA is automatically determined by MicroEmacs when it 
+    initializes. The variable identifies the directory paths which are 
+    searched to locate editor specific files. The variable may contain 
+    multiple search paths each separated by the platform path separator 
+    (semi-colon ('cD;cA') on Microsoft Windows or MS-DOS environments and a colon 
+    ('cD:cA') on UNIX environments). Where multiple search paths are defined then 
+    they are searched in a left to right order. 
+
+    cD$search-pathcA is determined at run-time and is fixed once the editor 
+    starts. The value of the search path is determined from a number of 
+    different sources in a platform specific manner as follows:- 
+
+        * Built in pathnames - On UNIX platforms then preset search paths are 
+          built into the executable i.e. cG/opt/jasspacA, cG/usr/local/jasspacA etc. 
+        * The users home directory, taken from the cG/etc/passwdcA under UNIX and 
+          from the shell environment under Microsoft Windows. 
+        * The location of the executable, typically only used under Microsoft 
+          Windows and MS-DOS environments where the concept of standard 
+          installation locations is vague. 
+        * The environment variable lslm$MEUSERPATH(5)le which identifies the 
+          preferred user directory location, overriding any home directory 
+          location specified by the system. 
+        * The environment variable lslm$MEINSTALLPATH(5)le which identifies the 
+          installation directory of the standard macros overriding any built 
+          in search path(s). 
+        * The environment variable lslm$MEPATH(5)le which absolutely overrides any 
+          search paths with a user defined path. Use of this variable is 
+          depreciated, a combination of ls$MEINSTALLPATH(5)lmMEINSTALLPATH(5)le and ls$MEINSTALLPATH(5)lmMEUSERPATH(5)le is 
+          preferred. 
+        * The command line option cD-ucA cCuser-namecA to lslmme(1)le which overrides the 
+          user name found by the system. 
+        * The environment variable lslm$MENAME(5)le which overrides the user name 
+          found by the system. 
 
     The search paths are generally ordered from highest priority to lowest 
-    priority and might be arranged such as:- 
+    priority and typically arranged in the order:- 
 
-        cDMEPATH=cAcC<user>cA:cC<company>cA:cC<me>cA 
+        cD$search-path=cAcC<user>cA:cC<company>cA:cC<me>cA 
 
-    where cC<user>cA represents the users path; cC<company>cA is the company file path 
-    (e.g. template files) and cC<me>cA are the standard MicroEmacs '04 files. 
+    where cC<user>cA represents the users path(s); cC<company>cA is the company file 
+    path(s) (e.g. company wide template files) and cC<me>cA path(s) which contain 
+    the standard MicroEmacs '04 files. 
 
-    This would correspond to a directory installation, of user cDfoocA such as:- 
+    This would correspond to a typical directory installation, of user cDfoocA on 
+    UNIX such as: 
 
-        /usr/foo/microemacs   - User files. 
-        /usr/group/microemacs - Company wide files 
-        /usr/local/microemacs - MicroEmacs installation directory 
-
-
-    and a cD$MEPATHcA such as:- 
-
-        MEPATH=/usr/foo/microemacs:/usr/group/microemacs:/usr/local/microemacs 
+    cG/usr/foo/.jassa          cA- User files. 
+    cG/usr/local/jasspa/companycA - Company wide files 
+    cG/usr/local/jasspa/macros cA- MicroEmacs installation directory 
 
 
 cEcEUSAGE cEcA
 
 
-    The current working directory is checked first for the location of a file. 
+    The current working directory is always checked first for the location of 
+    any file. 
 
     cD$search-pathcA is used to locate all macro files, and other files located 
     with operators such as lslm&find(4)le. 
+
+    Users should not modify this variable directly, the external 
+    aforementioned environment variables should be used to affect any desired 
+    changes. 
 
 
 cEcENOTES cEcA
 
 
-    If cD$MEPATHcA is not set then cD$search-pathcA is initialized to the environment 
-    variable cD$PATHcA. 
-
-    On UNIX systems the path cC/usr/local/microemacscA is automatically added to 
-    the end of cD$MEPATHcA, or if not defined, to the beginning of cD$PATHcA. 
+    The search path operation was revised in the MicroEmacs 2004 release and 
+    operates differently from earlier releases. 
 
 
 cEcESEE ALSO cEcA
 
 
-    lsIntroduction to Variable FunctionslmVariable Functionsle, lslmexecute-file(2)le, lslm$MENAME(5)le, lslm&find(4)le. 
+    lslmme(1)le, lslmexecute-file(2)le, lslm&find(4)le. lslm$home(5)le, lslm$progname(5)le, lslm$user-name(5)le, 
+    lslm$user-path(5)le, lslm$MEINSTALLPATH(5)le, lslm$MENAME(5)le, lslm$MEPATH(5)le, lslm$MEUSERPATH(5)le, 
+    lsIntroduction to Variable FunctionslmVariable Functionsle. 
 ! 5 $file-ignore
 cEcENAME cEcA
 
@@ -43452,17 +43560,17 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    cD$prognamecA is set the the MicroEmacs '04 program file name currently being 
-    run. This can be used by macros for many purposes, from spawning another 
-    MicroEmacs '04 session to working out where MicroEmacs '04 is running 
-    from. 
+    cD$prognamecA contains the absolute file and path to the MicroEmacs '04 binary 
+    file currently being executed. This value is typically used by macros to 
+    spawning another MicroEmacs '04 sessions and to determine where MicroEmacs 
+    '04 is being executed from. 
 
 
 cEcEEXAMPLE cEcA
 
 
     The following example is used to spawn of another MicroEmacs '04 command 
-    to create a C tags file:- 
+    to create a C-tags file:- 
 
         shell-command &cat $progname " \"@ctags\" *.c *.h" 
 
@@ -43470,7 +43578,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmme(1)le. 
+    lslmme(1)le, lslmshell-command(2)le, lslm$search-path(5)le, lslm$user-name(5)le, lslm$user-path(5)le. 
 ! 5 $find-words
 cEcENAME cEcA
 
@@ -44182,16 +44290,15 @@ $a
 cEcEDESCRIPTION cEcA
 
 
-    cD$MENAMEcA is an environment variable used to initialize the MicroEmacs '04 
-    environment for a given user. At start-up, if cD$MENAMEcA is defined then the 
-    user's configuration and history file "cGnamecAcC.erfcA" is located and read, 
-    where cGnamecA is the variable value. 
+    cD$MENAMEcA is an environment variable which may be used to initialize the 
+    MicroEmacs '04 environment for a given user. At start-up, if cD$MENAMEcA is 
+    defined then the user's configuration and history file "cGnamecAcC.erfcA" is 
+    located and read, where cGnamecA is the variable value. The environment 
+    variable is used to initialise the lslm$user-name(5)le variable. 
 
-    If at start-up cD$MENAMEcA is not defined then cD$MENAMEcA is assigned the value 
-    of cD$LOGNAMEcA, if cD$LOGNAMEcA is not defined the file cGdefault.emfcA is located 
-    and executed. This macro file is created by lslmuser-setup(3)le to set cD$MENAMEcA 
-    to the default user. If this fails then cD$MENAMEcA defaults to cGguestcA and a 
-    default configuration is used. 
+    Where the user name has been specified on the command line using the cD-ucA 
+    option to lslmme(1)le then the environment variable is ignored and cD-ucA option 
+    takes precedence. 
 
     The user configuration and history file has many uses, see lslmuser-setup(3)le 
     and lslmread-history(2)le for more information. 
@@ -44206,10 +44313,10 @@ $a
     the aforementioned methods should be used. 
 
 
-cEUNIX cA
+cEMicrosoft Windoes cA
 
 
-    In UNIX environments, cD$LOGNAMEcA is typically defined. 
+    In Microsoft Windows environments, cD$LOGNAMEcA is sometimes defined. 
 
 
 cEcENOTES cEcA
@@ -44218,14 +44325,12 @@ $a
     The three variables must be defined before start-up for them to have any 
     effect. 
 
-    cD$LOGNAMEcA is often defined by the system and should not be altered. If a 
-    different user name is required, setting of cD$MENAMEcA is preferable. 
-
 
 cEcESEE ALSO cEcA
 
 
-    lslmuser-setup(3)le, lslmread-history(2)le, lslm$MEPATH(5)le. 
+    lslmme(1)le, lslmuser-setup(3)le, lslmread-history(2)le, lslm$user-name(5)le, lslm$user-path(5)le, 
+    lslm$MEPATH(5)le. 
 ! 5 $recent-keys
 cEcENAME cEcA
 
@@ -44834,6 +44939,330 @@ $a
 
     lslmnext-window(2)le, lslmsplit-window-horizontally(2)le, lslmsplit-window-vertically(2)le, 
     lslm$frame-id(5)le. 
+! 5 $user-name
+cEcENAME cEcA
+
+
+    $user-name - MicroEmacs user name 
+
+
+cEcESYNOPSIS cEcA
+
+
+    cD$user-namecA 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    cD$user-namecA is the name of the MicroEmacs user. The name is used for 
+    identifying user configuration files such as cC$user-namecAcD.emfcA and 
+    cC$user-namecAcD.erfcA, the start-up lsUserProfiles(2)lmuserle macro file and lslmerf(8)le registry file that 
+    contains saved user preferences. 
+
+    The cD$user-namecA is determined as follows, in order of precedence: 
+
+        * The lslmme(1)le command line option cD-ucA cCusernamecA. 
+        * The environment variable ls$MENAME(5)lmMENAME(5)le (alternatively via cG$LOGNAMEcA on 
+          Microsoft Windows platforms ONLY). 
+        * The name determined from the system. On UNIX then the cG/etc/passwdcA 
+          entry is used, on MicroSoft Windows then the login name is used. 
+        * When no other name is located then cGusercA is used (MS-DOS and 
+          Microsoft Windows environments running without a login mechanism). 
+
+    For most conventional cClogincA systems then the correct login name is 
+    retrieved and it is not necessary to over-ride the name, unless a special 
+    configuration of MicroEmacs is being used. 
+
+
+cEcENOTES cEcA
+
+
+    The user should not attempt to write to cD$user-namecA, the variable should be 
+    controlled through the aforementioned techniques. 
+
+    cD$user-namecA was first introduced into MicroEmacs in the 2004 release. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmme(1)le, lslm$home(5)le, lslm$search-path(5)le, lslm$user-path(5)le, lslm$MENAME(5)le, lslmemf(8)le, 
+    lslmerf(8)le. 
+! 5 $user-path
+cEcENAME cEcA
+
+
+    $user-path - MicroEmacs user directory 
+
+
+cEcESYNOPSIS cEcA
+
+
+    cD$user-pathcA 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    cD$user-pathcA is the name of the MicroEmacs user directory where user 
+    configuration files such as ls$user-name(5)lm$user-namelecD.emfcA, ls$user-name(5)lm$user-namelecD.erfcA and personal 
+    spelling dictionaries are stored. This is an absolute directory path and 
+    is always terminated with a directory separator character 'cG/cA'. 
+
+    The value of the variable is determined when the editor is started as 
+    follows: 
+
+        * The environment variable lslm$MEUSERPATH(5)le is defined, the cD$user-pathcA 
+          is set to this value. If the environment cD$MEUSERPATHcA is defined 
+          without a trailing 'cG/cA' then it is automatically added. 
+        * The environment variable lslm$MEPATH(5)le is defined and lslm$MEUSERPATH(5)le is 
+          undefined. The first directory in the cD$MEPATHcA variable is used as 
+          the cD$user-pathcA directory. The use of cD$MEPATHcA is discouraged as it is 
+          less specific than cD$MEUSERPATHcA and my potentially not be what the 
+          user intended. This variable is retained for backwards compatibility 
+          with earlier releases of MicroEmacs. 
+        * The directory is determined from the system: 
+        cDUNIXcA: the home directory from cG/etc/passwdcA entry is used and appended 
+        with cG.jasspacA i.e. cG$HOME/.jasspacA, if the sub-directory ls$user-name(5)lm$user-namele is 
+        detected in this directory then it is used instead 
+        (cG$HOME/.jasspa/$user-namecA). 
+        cDMicrosoft WindowscA: the user application data directory is obtained 
+        from the system and appended with cGjasspacA i.e. cG$APPDATA/jasspacA. If the 
+        sub-directory ls$user-name(5)lm$user-namele is detected in this directory then it is used 
+        instead (cG$APPDATA/jasspa/$user-namecA). 
+        cDMS-DOScA and older versions of cDMicrosoftcA cDWindowscA without cCInternetcA 
+        cCExplorercA cC4.0cA then a sub-directory ls$user-name(5)lm$user-namele of the program directory 
+        lslm$progname(5)le is used. 
+
+    For most conventional cClogincA systems then the correct user path is 
+    retrieved and it is not necessary to over-ride the pathname, unless a 
+    special configuration of MicroEmacs is being used. Where the user 
+    directory is to be manually specified then lslm$MEUSERPATH(5)le is the preferred 
+    method. 
+
+
+cEcENOTES cEcA
+
+
+    The user should not attempt to write to cD$user-pathcA, the variable should be 
+    controlled through the aforementioned techniques. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmme(1)le, lslm$home(5)le, lslm$progname(5)le lslm$search-path(5)le, lslm$user-name(5)le, 
+    lslm$MEINSTALLPATH(5)le, lslm$MENAME(5)le, lslm$MEPATH(5)le, lslm$MEUSERPATH(5)le, lslmemf(8)le, lslmerf(8)le. 
+! 5 $MEINSTALLPATH
+! 5 $MEPATH
+! 5 $MEUSERPATH
+cEcENAME cEcA
+
+
+|$MEINSTALLPATH
+    $MEINSTALLPATH - MicroEmacs system macros search path 
+|$MEPATH
+    $MEPATH - MicroEmacs search path 
+|$MEUSERPATH
+    $MEUSERPATH - MicroEmacs user directory 
+$a
+
+
+cEcESYNOPSIS cEcA
+
+
+    cC[Microsoft Windows/MS-DOS]cA 
+    cD$MEINSTALLPATHcA cC<path1>cAcD;cAcC<path2>cAcD;cA....cD;cAcC<pathn>cA 
+    cD$MEPATH=cA cC<path1>cAcD;cAcC<path2>cAcD;cA....cD;cAcC<pathn>cA 
+    cD$MEUSERPATHcA cC<path>cA 
+
+    cC[UNIX]cA 
+    cD$MEINSTALLPATHcA cC<path1>cAcD:cAcC<path2>cAcD:cA....cD:cAcC<pathn>cA 
+    cD$MEPATH=cA cC<path1>cAcD:cAcC<path2>cAcD:cA....cD:cAcC<pathn>cA 
+    cD$MEUSERPATHcA cC<path>cA 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    These environment variables control the run-time search paths for 
+    MicroEmacs and affect the operation of lslm$search-path(5)le and lslm$user-path(5)le, 
+    the macro search path and user macro directory respectively. 
+
+    cD$MEINSTALLPATHcA is an environment variable that overrides any internally 
+    defined search path for MicroEmacs system macros and defines the root 
+    directory(s) of the MicroEmacs system macros. The presence of the 
+    environment variable affects lslm$search-path(5)le. 
+
+    The environment variable cD$MEINSTALLPATHcA is ignored if cD$MEPATHcA is defined. 
+    The search path is always included after any user path defined by 
+    lslm$user-name(5)le. 
+
+    cD$MEUSERPATHcA is an environment variable that defines the users private 
+    directory where user configuration files such as ls$user-name(5)lm$user-namelecD.emfcA, 
+    ls$user-name(5)lm$user-namelecD.erfcA and personal spelling dictionaries are stored. This is an 
+    absolute directory path. The environment variable sets the MicroEmacs 
+    variable lslm$user-name(5)le. 
+
+    cD$MEPATHcA is an environment variable that may be used to define the absolute 
+    search path for MicroEmacs macro files and affects the setting of 
+    cD$search-pathcA. The path should include the system macros location(s) and 
+    should include the user directory location lslm$user-path(5)le as the first path 
+    when the environment variable lslm$MEUSERPATH(5)le is not defined. If 
+    cD$MEUSERPATHcA is defined then this path name appears before the cD$MEPATHcA 
+    variable to define the user directory location. cD$MEPATHcA is not searching, 
+    so ALL all directories to be searched must be included in the path 
+    specification. 
+
+    lslm$MEUSERPATH(5)le is the preferred method used to defined the user directory. 
+
+
+cESearch Paths cA
+
+
+    MicroEmacs needs to know the installation directory location(s) of its 
+    macro files when it executes, this includes both user defined and system 
+    macros. MicroEmacs performs a searching operation of well-known directory 
+    locations where it may expect to find these macros at start up, the 
+    locations that it has found are saved in macro variables lslm$user-path(5)le and 
+    lslm$search-path(5)le and are used to subsequently locate files thereafter. The 
+    environment variables defined here allow that default search process to be 
+    modified by the user or system administrator. 
+
+    Directories are specified as cCsearchingcA if a search operation is performed. 
+    The following sub-directories of a base directory are searched for the 
+    existence of subdirectories: 
+
+        cC.cA - root directory. 
+        ls$user-name(5)lm$user-namele - private user directory. 
+        cCcompanycA - company files. 
+        cCmacroscA - JASSPA standard macros. 
+        cCspellingcA - spelling dictionaries. 
+
+    MicroEmacs performs a searching operation on some directories to locate 
+    information. Generally, if the directory exists then it is included in the 
+    search path, otherwise it is excluded. Any subdirectories that are found 
+    are added in the order presented above. The ls$search-path(5)lm$search-pathle is ONLY evaluated 
+    at start-up therefore directories created after MicroEmacs is running are 
+    not detected until the editor is closed down and re-started. 
+
+
+cEUNIX cA
+
+
+    The defined search paths for UNIX are defined as follows:- 
+
+    Default install directories:- 
+
+        cC/opt/jasspacA - searching (SunOS, HP-UX, AIX and IRIX only) 
+        cC/usr/share/jasspacA - searching 
+        cC/usr/local/share/jasspacA - searching (BSD systems only) 
+        cC/usr/local/jasspacA - searching 
+
+    The default user location is defined as follows. 
+
+        cC$(passwd-home)/.jasspacA - searching 
+
+    MicroEmacs searches for user defined configuration files in this directory 
+    and will write new user configuration files to this directory. The 
+    behaviour of the search may be over-ridden by setting some environment 
+    variables. 
+
+    cG$MEUSERPATHcA - not searching 
+        Specified as a single pathname and redefines the cC$user-pathcA where user 
+        macros are placed, this overrides the cC$(passwd-home)/.jasspacA directory 
+        location. 
+
+    cG$MEINSTALLPATHcA - searching 
+        Specified as multiple pathname components and overrides the default 
+        install directory location (i.e. cG/usr/local/jasspacA, etc. Typically 
+        used when the system macro directory has been install in another 
+        location that is not included in the default search path. This does 
+        not affect the user directory location. 
+
+    cG$MEPATHcA - not searching 
+        Overrides the cC$(passwd-home)/.jasspacA and default search paths 
+        (including cG$MEINSTALLPATHcA), MicroEmacs will use this directory as the 
+        search path. The user directory is assumed to be the FIRST directory 
+        path in the string unless the cG$MEUSERPATHcA environment variable is 
+        defined which specifies the user path. 
+
+
+cEMicrosoft Windows cA
+
+
+    he defined search paths for WINDOWS are defined as follows:- 
+
+        Default search locations:- 
+
+        cCExecutable directory locationcA - searching 
+
+    The default user location is defined as follows. MicroEmacs searches for 
+    user defined configuration files in this directory and will write new user 
+    configuration files to this directory. 
+
+        cC$APPDATA\jasspacA - not searching 
+
+    If the system does not define a user application data location (cDWin95cA and 
+    cDWin32scA) then a directory ls$user-name(5)lm$user-namele or the executable location is used. 
+
+    The behaviour may be over-ridden by setting the environment variables as 
+    follows: 
+
+    cG$MEUSERPATHcA - not searching 
+        Specified as a single pathname and redefines the users home directory, 
+        this overrides the cC$APPDATA\jasspacA directory location. 
+
+    cG$MEINSTALLPATHcA - searching 
+        Specified as multiple pathname components and overrides the default 
+        install directory location. Typically used when the macro directory 
+        has been install in another location that is not in the same directory 
+        as the executable. This does not affect the user directory location. 
+
+    cG$MEPATHcA - not searching 
+        Overrides the cC$APPDATA\jasspacA and default search paths. MicroEmacs 
+        will use the FIRST directory path as the ls$user-path(5)lm$user-pathle unless cG$MEUSERPATHcA 
+        is defined. 
+
+
+cEMS-DOS cA
+
+
+    MS-DOS does not include a concept of a user name or user directory. 
+
+        Default search locations:- 
+
+        cCExecutable directory locationcA - searching 
+
+    If a sub-directory exists at the executable location with name ls$user-name(5)lm$user-namele 
+    then this is used as ls$user-path(5)lm$user-pathle, otherwise the execution directory 
+    location is used. 
+
+    The behaviour may be over-ridden using the environment variables. 
+
+    cG$MEUSERPATHcA - not searching 
+        Specified as a single pathname and redefines the ls$user-path(5)lm$user-pathle overriding 
+        the cCexecutablecA directory location. 
+
+    cG$MEINSTALLPATHcA - searching 
+        Specified as multiple pathname components and overrides the default 
+        executable directory location. Typically used when the macro directory 
+        has been installed at a different location that is not in the same 
+        directory as the executable. This does not affect the user directory 
+        location. 
+
+    cG$MEPATHcA - not searching 
+        Overrides the cCExecutable...cA and default search paths (including 
+        cG$MEINSTALLPATHcA). MicroEmacs will use FIRST directory path as the 
+        ls$user-path(5)lm$user-pathle unless cG$MEUSERPATHcA is defined. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmme(1)le, lslm$home(5)le, lslm$progname(5)le lslm$search-path(5)le, lslm$user-name(5)le, lslmemf(8)le, 
+    lslmerf(8)le. 
 ! 8 eaf
 cEcENAME cEcA
 
@@ -45009,14 +45438,14 @@ $a
 
     User's may specify their own abbreviation files by shadowing the cChomecA 
     directory file with their own file located in a personal MicroEmacs '04 
-    directory. See lslm$MEPATH(5)le. 
+    directory. See lslm$user-path(5)le. 
 
 
 cEcESEE ALSO cEcA
 
 
     lslmexpand-abbrev(2)le, lslmbuffer-abbrev-file(2)le, lslmglobal-abbrev-file(2)le, 
-    lslmiso-accents-mode(3)le. 
+    lslmiso-accents-mode(3)le, lslm$user-path(5)le. 
 ! 8 etf
 cEcENAME cEcA
 
@@ -45115,14 +45544,14 @@ $a
 
     User's may specify their own template files by shadowing the cChomecA 
     directory file with their own file located in a personal MicroEmacs '04 
-    directory. See lslm$MEPATH(5)le. 
+    directory. See lslm$user-path(5)le. 
 
 
 cEcESEE ALSO cEcA
 
 
     lsfileHooks(2)lmFile Hooksle. 
-    lslmetfinsrt(3)le, lslm&find(4)le. 
+    lslmetfinsrt(3)le, lslm&find(4)le, lslm$user-path(5)le. 
 ! 8 edf
 cEcENAME cEcA
 
@@ -45215,17 +45644,17 @@ $a
 
 
     The default start-up file cDme.emfcA is located in the MicroEmacs '04 cChomecA 
-    directory. 
+    directory lslm$user-path(5)le. 
 
     User's may create their own start-up and files in their local MicroEmacs 
-    '04 directory. The users start-up file is called cC$LOGNAMEcAcD.emfcA, and may be 
-    used to execute other macro files defined by the user. 
+    '04 directory. The users start-up file is called ls$user-name(5)lm$user-namelecD.emfcA, and may 
+    be used to execute other macro files defined by the user. 
 
 
 cEcESEE ALSO cEcA
 
 
-    lsfileHooks(2)lmFile Hooksle, lslmemftags(3f)le, lslm$MEPATH(5)le, lslmexecute-file(2)le. 
+    lsfileHooks(2)lmFile Hooksle, lslmemftags(3f)le, lslm$user-path(5)le, lslmexecute-file(2)le. 
 ! 8 erf
 cEcENAME cEcA
 
@@ -45295,8 +45724,8 @@ $a
 
     Every user should have their own personal history file in their personal 
     MicroEmacs directory. The history file is located from the MicroEmacs '04 
-    search path defined by lslm$MEPATH(5)le, and is named by the environment 
-    variable lslm$LOGNAME(5)le. 
+    search path defined by lslm$user-path(5)le, and is named by the variable 
+    lslm$user-name(5)le. 
 
 
 cEcENOTES cEcA
@@ -45325,7 +45754,7 @@ $a
 
 
     lslmlist-registry(2)le, lslmread-history(2)le, lslmread-registry(2)le, lslmsave-history(2)le, 
-    lslmsave-history(2)le, lslm$MEPATH(5)le. 
+    lslmsave-history(2)le, lslm$user-name(5)le, lslm$user-path(5)le. 
 ! 8 ehf
 cEcENAME cEcA
 
@@ -45550,13 +45979,14 @@ $a
 cEcEFILES cEcA
 
 
-    The help file cDme.ehfcA is located in the MicroEmacs '04 cChomecA directory. 
+    The help file cDme.ehfcA is located in the MicroEmacs '04 cCmacroscA directory and 
+    should exist on the lslm$search-path(5)le. 
 
 
 cEcESEE ALSO cEcA
 
 
-    lslmdefine-help(2)le, lslm$MEPATH(5)le. 
+    lslmdefine-help(2)le, lslm$search-path(5)le. 
 ! 8 me32.ini
 cEcENAME cEcA
 
@@ -45572,16 +46002,17 @@ $a
 
     cD[Defaults]cA 
     cDmepath=cAcC<directoryPath>cA 
-    cDuserpath=cAcC<directoryPath>cA 
+    cDmeinstallpath=cAcC<directoryPath>cA 
+    cDgeometry=cAcC<width>cAcDxcAcC<depth>cA+cC<xoffset>cA+cC<yoffset>cA 
     cDfontfile=cAcC<fontFileName>cA 
 
     cD[cAcC<userName>cAcD]cA 
-    cC<environmentVariable>cAcD=cAcC<value>cA 
-    cC<environmentVariable>cAcD=cAcC<value>cA 
+    cDmenamecAcD=cAcC<value>cA 
+    cDmeuserpathcAcD=cAcC<value>cA 
 
     cD[cAcC<userName>cAcD]cA 
-    cC<environmentVariable>cAcD=cAcC<value>cA 
-    cC<environmentVariable>cAcD=cAcC<value>cA 
+    cDmenamecAcD=cAcC<value>cA 
+    cDmeuserpathcAcD=cAcC<value>cA 
 
     cD;cA cCComments commence with a semi-coloncA 
 
@@ -45610,25 +46041,22 @@ $a
 
 
     The cDUser SectioncA is executed prior to the cDDefaults SectioncA. The cDUser 
-    SectioncA uses the user name which is defined as follows:- 
+    SectioncA uses the lslm$user-name(5)le which is defined as follows:- 
 
-        * The environment variable lslm$MENAME(5)le. 
-        * The cClogin namecA under Windows '95 or NT if cD$MENAMEcA is not set. If the 
-          cClogin namecA is defined then environment variable cD$MENAMEcA is set to 
-          this value. 
+        * The environment variable lslm$MENAME(5)le 
+        * The cClogin namecA under Windows '95 or NT. If the cClogin namecA is defined 
+          then the variable lslm$user-name(5)le is set to this value. 
         * The environment variable lslm$LOGNAME(5)le if the cClogin namecA cannot be 
           located. 
-        * cDguestcA if none of the above are defined. 
 
-    A section cD[cAcCuserNamecAcD]cA is looked up, and if located each of the entries 
-    cC<environmentVariable>cA cD=cA cC<value>cA is extracted and pushed into the execution 
-    environment. The cD<environmentVariable>cA is automatically promoted to upper 
-    case if specified as a lower case entry. The environment variables may be 
-    subsequently used within the cD.emfcA macro files to configure MicroEmacs '04 
-    at start up. 
+    A section cD[cAcCuserNamecAcD]cA is looked up, and if located each of the entries is 
+    used to set up the editor. 
 
-    Any value may be inserted into the environment including the cG$MENAMEcA 
-    environment variable which is used in the next section. 
+    cDmenamecA 
+        The MicroEmacs lslm$user-name(5)le to use rather than the login name. 
+
+    cDmeuserpathcA 
+        The value of lslm$user-path(5)le. 
 
 
 cEDefaults Section cA
@@ -45637,29 +46065,21 @@ $a
     The defaults section, labeled cD[Defaults]cA includes the following keys:- 
 
     cDmepathcA 
-        The directory (or folder) location of the MicroEmacs '04 default 
+        Sets the environment variable lslm$MEPATH(5)le to the specified value. This 
+        is the directory (or folder) location of the MicroEmacs '04 default 
         configuration files. 
 
-    cDuserpathcA 
-        The directory (or folder) location of the user(s) directories. 
+    cDmeinstallpathcA 
+        Equivalent of setting the environment variable lslm$MEINSTALLPATH(5)le to 
+        define the directory (or folder) location of the macros directory. 
 
-        Given that the cDuserpathcA is specified as cGc:\me98.5cA and the user is 
-        called cGfoocA, then the directory location cGc:\me98.5\foocA is considered to 
-        be the user path. 
-
-        If the cDuserpathcA is omitted then the cDmepathcA entry is used as the user 
-        path. 
-
-    The cDuserpathcA and cDmepathcA entries are concatenated together to form the 
-    environment variable lslm$MEPATH(5)le, e.g. cCuserpathcAcD\cAcClognamecAcD;cAcCmepathcA. If the 
-    entries are omitted the then environment variable cG$MEPATHcA is used as 
-    defined. The cDmepathcA and cDuserpathcA are configured initialy by the 
-    cDInstallShieldcA installation process. 
+    cDgeometrycA 
+        The geometry of the window the width and height are specified in 
+        character, the position of the window is specified as an offset. 
 
     cDfontfilecA 
-        The name of the font file used to render the text to the screen. The 
-        default font file is cDdosapp.foncA, this is a fixed mono font as used in 
-        the MS-DOS windows. 
+        A default font file to use to render the font. This is not really 
+        required. 
 
 
 cELocation Section cA
@@ -45686,48 +46106,129 @@ $a
         ; mepath 
         ; The location of the MicroEmacs common files. 
         ; 
-        mepath=d:/me98.4/common 
+        meinstallpath=d:/jasspa 
         ; 
         ; userpath - The location of the users MicroEmacs directory. 
-        ; The $MENAME is appended as a directory to userpath 
         ; 
-        userpath=d:/me98.4/common 
-        ; 
-        ; fontfile - The name of the font file used as default. 
-        fontfile=dosapp.fon 
-        ; 
-        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
-        ; 
-        ; Environment settings for a user. 
-        ; All settings are pushed into the environment. 
-        ; 
-        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
-        ; 
-        [guest] 
-        term=8x12 
-        ; 
-        [jon] 
-        MENAME=jon 
-        FOO=bar 
-        ; 
-        [jnaught] 
-        MENAME=jon 
-        FOO=bar 
-        ; 
-        [bill] 
-        .... 
+        meuserpath=d:/jasspa/user 
 
 
     Note that multiple users share the same cDme32.inicA file, each user may 
     include their own configuration settings which may be interrogated in the 
-    configuration files (e.g. cG$FOOcA is assigned the value cGbarcA, which may be 
-    extracted from the environment context). 
+    configuration files. 
+
+
+cEcENOTES cEcA
+
+
+    As of MicroEmacs 2004 then the cDme32.inicA file is depreciated and not 
+    normally used. 
 
 
 cEcESEE ALSO cEcA
 
 
-    lslm$MENAME(5)le, lslm$MEPATH(5)le, lslmuser-setup(3)le, lslmemf(8)le. 
+    lslmuser-setup(3)le, ls$MEINSTALLPATH(5)lm$MEINSTALL_PATH(5)le lslm$MENAME(5)le, lslm$MEPATH(5)le, lslm$MEUSERPATH(5)le, 
+    lslm$user-name(5)le, lslm$user-path(5)le, lslmemf(8)le. 
+! 8 .Xdefaults
+cEcENAME cEcA
+
+
+    .Xdefaults - UNIX Window Manager defaults file 
+
+
+cEcESYNOPSIS cEcA
+
+
+    cDMicroEmacs.font:cA cCfontcA 
+    cDMicroEmacs.geometry:cA cCchar-widthcAcDxcAcCchar-heightcA [cD+-cA]cCxoffsetcA [cD+-cA]cCyoffsetcA 
+    cDMicroEmacs.name:cA cCnamecA 
+    cDMicroEmacs.iconname:cA cCnamecA 
+
+
+cEcEPLATFORM cEcA
+
+
+    cDUNIX environments onlycA 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    cD.XdefaultscA is the UNIX X-Windows configuration file that permits some of 
+    the X-Windows start up settings to be configured. The file is typically 
+    loaded into the X database when the Window Manager starts and the values 
+    are read from the database by MicroEmacs at start up, over-riding any 
+    internal defaults. 
+
+    The cD.XdefaultscA file is used by other applications and MicroEmacs may be 
+    added to the end of any existing file. 
+
+    The values interpreted by MicroEmacs are defined as follows: 
+
+    cDMicroEmacs.font:cA cCfontcA 
+        Specifies the font to use. 
+
+    cDMicroEmacs.geometry:cA cCchar-widthcAcDxcAcCchar-heightcA [cD+-cA]cCxoffsetcA [cD+-cA]cCyoffsetcA 
+        The geometry of the X-Window at start-up. cCchar-widthcA and cCchar-heightcA 
+        define the width and depth of the frame specified in characters of the 
+        current font. cCxoffsetcA and cCyoffsetcA specify the position of the wind 
+        with respect to the top left of the screen, defaults are used when 
+        specified as 0. 
+
+    cDMicroEmacs.name:cA cCnamecA 
+        Over-rides the name prefix used in the X-Window title bar, by default 
+        this is specified as cCMicroEmacscA. 
+
+    cDMicroEmacs.iconname:cA cCnamecA 
+        Over-rides the name prefix used in a X-Window iconic display, by 
+        default this is specified as cCMicroEmacscA. 
+
+
+cEcEEXAMPLE cEcA
+
+
+    The following is an example of the cD.XdefaultscA file:- 
+
+        !###################################################################### 
+        !#                                                                    # 
+        !# Defaults for MicroEmacs startup                                    # 
+        !#                                                                    # 
+        !###################################################################### 
+        !# MicroEmacs.font: <fontname> 
+        !# Set the default font. 
+        MicroEmacs.font: -*-lucidatypewriter-medium-r-*-*-*-*-*-*-m-*-*-* 
+        !# MicroEmacs.font: -*-clean-medium-r-*-*-*-130-*-*-*-*-*-* 
+
+        !# MicroEmacs.geometry: <char-width>x<char-height> {+/-}<xoffset> {+-}<yoffset> 
+        !# Set up the default screen size and position. 
+        !# 102x65 characters please, 30 pixels from top left 
+        MicroEmacs.geometry: 102x65 30 30 
+
+        !# MicroEmacs.name: <name> 
+        !# The name displayed in the title bar format is <name>: <file> 
+        MicroEmacs.name: JASSPAs MicroEmacs 
+
+        !# MicroEmacs: <icon-name> 
+        !# The name displayed when MicroEmacs is iconized 
+        MicroEmacs.iconname: JASSPAs MicroEmacs 
+
+
+cEcENOTES cEcA
+
+
+    The cD.XdefaultscA file is typically read once at login and and any changes to 
+    the files are not enacted until the Window Manager is re-started or a new 
+    login session commences. 
+
+    The settings in the cD.XdefaultscA may be subsequently overridden by the 
+    settings defined in lslmuser-setup(3)le. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmuser-setup(3)le. 
 ! 9 c
 ! 9 cc
 ! 9 h
