@@ -1,0 +1,102 @@
+> -!- document; fill-mode:both; fill-column:78 -!-
+>
+>  Copyright 1998-2004 JASSPA (www.jasspa.com).
+>
+>  Created By    : Jon Green
+>  Created       : Fri Feb 6 11:13:34 2004
+>  Last Modified : <040209.2316>
+>
+
+    [040206] SP/RC4 - Critical - To be fixed next release
+
+        On unix the $progname may not be fully  expanded (has just "me") which
+        may  lead  to a  ctags  generation  error  and  an  alternate  fix  to
+        $search-path.
+
+    [040206] SP/RC4 - Major - To be fixed next release
+
+        On unix,  find-file  of a symbolic  link which  points to a  directory
+        results  in a bad dir  listing.  The list of files is correct  but the
+        stats are all wrong (found on sunos 5.8).
+
+    [040206] Th/RC4 - Minor - To be fixed next release
+
+        Document the create/delete/next-frame keys.
+
+    [040206] JG/RC4 - Critical - To be fixed next release
+
+        UNIX the Copy and Paste is not  working  correctly  between  X-Windows
+        applications.  Data selected in Mozilla  copies into GNU Emacs OK, but
+        not into ME.
+        
+        Fixed 04/02/09: Build Solaris 8 image.
+
+    [040206] JG/RC4 - Minor - To be fixed next release
+
+        -n command line option to a console build causes a option  failure and
+        the executable does not run.
+
+    [040206] SP/RC4 - Major - Ideally fixed next release.
+
+        Fix  subtle  ftp bug with  alias  ftp  addressed.  Create  an ftp site
+        "ftp://test/"  say with user name foo and  passwd bar and then load in
+        "ftp://test/dir1/"   the  buffer  file  name  is   correctly   set  as
+        "ftp://test/dir1/"  but the  'Directory  listing  of:'  line is set to
+        "ftp://foo@test/dir1/".  Firstly  the  user  may  wish the 'foo' to be
+        hidden but secondly  with the  introduction  of being able to click on
+        the  'Directory  listing  of:'  line  this  has  introduced  a  subtle
+        inefficiency/bug,   if  I  click  on  the   'foo@test'  ME  will  load
+        "ftp://foo@test/"  not  "ftp://test/"  which  to  ME  is a  completely
+        different file. This can in turn lead to "ftp://foo@test/dir1/"  being
+        loaded so you can end up with 2 copies of every dir being  loaded! The
+        fix is to make  the  'Directory  listing  of:'  line  the  same,  i.e.
+        "ftp://test/dir1/"
+
+    [040206] SP/RC4 - Minor - ?
+    
+        ME  does  not  work  on a  HP-UX  console  .Probably  because  termcap
+        database is not being used and built in definitions are being used to 
+        over-ride termcap. Need to revisit this.
+
+    [040206] JG/RC4 - Minor - ?
+
+        CVS fails to show sometimes. Typically when done FTP (sunos).
+
+    [040206] JG/RC4 - Minor - ?
+
+        CVS  directory  listing  looses  files  sometimes.  Deleted  files and
+        sometimes new files fail to show in CVS directory  listing.  Unsure if
+        it is CVS problem or ME problem. (sunos).
+
+    [040206] SP/RC4 - Enhancement
+
+        Would like a Select All and  Inverse  Selection  in the *files*  right
+        mouse button menu to select all files/dirs in the listing
+
+        Add new narrow-search-forward and narrow-search-backward commands.
+
+    [040206] JG/RC4 - Enhancement
+
+        CVS has option not to open the dir-tree window, pain in butt.
+
+    [040206] JG/RC4 - Enhancement
+
+        Support to recognize GNU tags for makefile "-*- Makefile -*-" and UNIX
+        shell files "-*- sh -*-".
+
+    [040206] JG/RC4 - Enhancement
+
+        Tags window in the tool-bar
+
+    [040206] Th/RC4 - Enhancement
+
+        Support for multiple  pre-configured  print-layouts without setting up
+        the printer.
+
+    [010101] ??/RC4 - Enhancement
+
+        Native printer support for generation of postscript.
+
+    [010101] ??/RC4 - Enhancement
+
+        GNU Emacs compatibility macro file (Key bindings).
