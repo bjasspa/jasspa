@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040206.1342>
+# Last Modified: <20040207.1351>
 #
 ##############################################################################
 
@@ -15,12 +15,12 @@ include $(SRCROOT)/etc/makeinc
 # Installable text files
 TXTS	=	COPYING	license.txt change.log
 #
-ZIPS	=	$(WWWRELDIR)/jasspa-mesrc-20$(MEYY)$(MEMM)$(MEDD).zip		\
-		$(WWWRELDIR)/jasspa-memacros-20$(MEYY)$(MEMM)$(MEDD).zip	\
+ZIPS	=	$(WWWRELDIR)/jasspa-mesrc-20$(MEYY)$(MEMM)$(MEDD).zip	\
+		$(WWWRELDIR)/jasspa-memacros-20$(MEYY)$(MEMM)$(MEDD).zip\
 		$(WWWRELDIR)/jasspa-metree-20$(MEYY)$(MEMM)$(MEDD).zip
-TARS	=	$(WWWRELDIR)/jasspa-mesrc-20$(MEYY)$(MEMM)$(MEDD).tar.gz	\
-		$(WWWRELDIR)/jasspa-memacros-20$(MEYY)$(MEMM)$(MEDD).tar.gz	\
-		$(WWWRELDIR)/jasspa-metree-20$(MEYY)$(MEMM)$(MEDD).tar.gz		
+TARS	=	$(WWWRELDIR)/jasspa-mesrc-20$(MEYY)$(MEMM)$(MEDD).tar.gz\
+		$(WWWRELDIR)/jasspa-memacros-20$(MEYY)$(MEMM)$(MEDD).tar.gz\
+		$(WWWRELDIR)/jasspa-metree-20$(MEYY)$(MEMM)$(MEDD).tar.gz
 # Automatic rules
 RELTXTS	=	$(TXTS:%=$(MERELDIR)/%)	$(TXTS:%=$(WWWRELDIR)/doc/%)
 
@@ -44,8 +44,8 @@ install:
 	cd memsdev;	$(MAKE) $@
 	cd msdev6;	$(MAKE) $@
 
-release:: 
-	cd macros;	$(MAKE) $@	
+release::
+	cd macros;	$(MAKE) $@
 	cd spelling;	$(MAKE) $@
 	cd company;	$(MAKE) $@
 	cd src;		$(MAKE) $@
@@ -83,19 +83,18 @@ release:: $(RELTXTS) $(ZIPS) $(TARS)
 $(RELTXTS):	$(TXTS)
 		$(MKDIR) $(@D)
 		$(INSTALL_FIL) $(@F) $(@D)
-# Source archives	
+# Source archives
 $(WWWRELDIR)/jasspa-mesrc-20$(MEYY)$(MEMM)$(MEDD).zip: $(MERELDIR)
 	(cd $(RELDIR); $(ZIP) -r - ./me$(MEYY)$(MEMM)$(MEDD)) > $@
 $(WWWRELDIR)/jasspa-mesrc-20$(MEYY)$(MEMM)$(MEDD).tar.gz: $(MERELDIR)
-	$(GTAR) -C $(RELDIR) -zcvf $@ me$(MEYY)$(MEMM)$(MEDD)
+	(cd $(RELDIR); $(TAR) cf - ./me$(MEYY)$(MEMM)$(MEDD)) | $(GZIP) -c - > $@
 # Macros archives
 $(WWWRELDIR)/jasspa-memacros-20$(MEYY)$(MEMM)$(MEDD).zip: $(JASMACDIR)
 	(cd $(JASMACDIR); $(ZIP) -r - ./*) > $@
 $(WWWRELDIR)/jasspa-memacros-20$(MEYY)$(MEMM)$(MEDD).tar.gz: $(JASMACDIR)
-	$(GTAR) -C $(JASMACDIR) -zcvf $@ ./
+	(cd $(JASMACDIR); $(TAR) cf - ./*) | $(GZIP) -c - > $@
 # JASSPA tree archives
 $(WWWRELDIR)/jasspa-metree-20$(MEYY)$(MEMM)$(MEDD).zip: $(JASSPADIR)
 	(cd $(RELDIR); $(ZIP) -r - ./jasspa) > $@
-$(WWWRELDIR)/jasspa-metree-20$(MEYY)$(MEMM)$(MEDD).tar.gz: $(JASSPADIR)	
-	$(GTAR) -C $(RELDIR) -zcvf $@ ./jasspa
-
+$(WWWRELDIR)/jasspa-metree-20$(MEYY)$(MEMM)$(MEDD).tar.gz: $(JASSPADIR)
+	(cd $(RELDIR); $(TAR) cf - ./jasspa) | $(GZIP) -c - > $@
