@@ -637,8 +637,14 @@ osd .osd.user-tool 230 "Sfh" "  Tool \HName:      " 240
 osd .osd.user-tool 240 "EtxHf" .scheme.osd-entry "###################" 1 user-tool-set-entry
 osd .osd.user-tool 250 "Sfh" "  Command \HLine:   " 260
 osd .osd.user-tool 260 "EtxHf" .scheme.osd-entry "##################################" 2 user-tool-set-entry
-osd .osd.user-tool 263 ""    "       Buffer file name = %ff or %fp%fn or %fp%fb%fe"
-osd .osd.user-tool 265 ""
+osd .osd.user-tool 261 ""    "       Buffer file name = %ff or %fp%fn or %fp%fb%fe"
+osd .osd.user-tool 262 "fh"  "       "
+osd .osd.user-tool 263 "Ctpfxh" &cat .osd.checkbox-chars "\} Capture \HOutput" 0x10 user-tool-set-flag
+!if &band $system 0x800
+    osd .osd.user-tool 264 "Sfh" "   "
+    osd .osd.user-tool 265 "Ctpfx" &cat .osd.checkbox-chars "\} \HRun Concurrently" 0x40 user-tool-set-flag
+!endif
+osd .osd.user-tool 266 ""
 osd .osd.user-tool 270 "Sfh" "  Current \HBuffer: " 280
 osd .osd.user-tool 280 "Ctpfxh" &cat .osd.checkbox-chars "\} Save" 0x01 user-tool-set-flag
 osd .osd.user-tool 290 "Sfh" "  "
@@ -648,11 +654,6 @@ osd .osd.user-tool 320 "Ctpfxh" &cat .osd.checkbox-chars "\} Save" 0x04 user-too
 osd .osd.user-tool 330 "Sfh" "  "
 osd .osd.user-tool 340 "Ctpfx" &cat .osd.checkbox-chars "\} Promp\Ht Before Saving" 0x08 user-tool-set-flag
 osd .osd.user-tool 350 "Sfh" "  "
-osd .osd.user-tool 360 "Ctpfxh" &cat .osd.checkbox-chars "\} Capture \HOutput" 0x10 user-tool-set-flag
-!if &band $system 0x800
-    osd .osd.user-tool 410 "Sfh" "  "
-    osd .osd.user-tool 420 "Ctpfx" &cat .osd.checkbox-chars "\} \HRun Concurrently" 0x40 user-tool-set-flag
-!endif
 
 ; file type setup ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 0 define-macro user-filetype-set-fields
@@ -1074,48 +1075,47 @@ set-variable $mode-names ".*"
 -1 osd .osd.user-gener
 osd .osd.user-gener 0   "s" 55 18 -1 -1
 osd .osd.user-gener 10  ""
-osd .osd.user-gener 40  "Sfh" "          Full \HName : " 50
+osd .osd.user-gener 40  "Sfh" "  Full \HName:      " 50
 osd .osd.user-gener 50  "EtxHf" .scheme.osd-entry "#######################" 1 user-set-entry
-osd .osd.user-gener 60  "Sfh" "          \HOrganizer : " 70
+osd .osd.user-gener 60  "Sfh" "  \HOrganizer File: " 70
 osd .osd.user-gener 70  "EtxHf" .scheme.osd-entry "############" 5 user-set-entry
 osd .osd.user-gener 80 ""
-osd .osd.user-gener 90 "Sfh" "     Auto-Sa\Hve Time : " 100
-osd .osd.user-gener 100 "EtxHf" .scheme.osd-entry "############" 10 user-set-entry
-osd .osd.user-gener 110 "Sfh" "       Global Modes : "
+osd .osd.user-gener 110 "fh" "  Global Modes:   "
 osd .osd.user-gener 120 "Ctfxp" &cat .osd.checkbox-chars "\}\HQuiet" 8 user-set-checkbox
-osd .osd.user-gener 130 "fh"  "       Search Modes : "
+osd .osd.user-gener 130 "fh" "  Search Modes:   "
 osd .osd.user-gener 140 "Ctfxph" &cat .osd.checkbox-chars "\}\HExact" 4 user-set-checkbox
-osd .osd.user-gener 150 "fh"  "  "
+osd .osd.user-gener 150 "fh" "    "
 osd .osd.user-gener 160 "Ctfxp" &cat .osd.checkbox-chars "\}\HMagic " 5 user-set-checkbox
-osd .osd.user-gener 170 "Sfh" "       Buffer Modes : "
+osd .osd.user-gener 170 "fh" "  Buffer Modes:   "
 osd .osd.user-gener 180 "Ctfxph" &cat .osd.checkbox-chars "\}\HAuto "  6 user-set-checkbox
-osd .osd.user-gener 190 "fh"  "  "
+osd .osd.user-gener 190 "fh" "    "
 osd .osd.user-gener 200 "Ctfxp" &cat .osd.checkbox-chars "\}\HBackup" 7 user-set-checkbox
-osd .osd.user-gener 210 "fh"  "                      "
+osd .osd.user-gener 210 "fh" "                  "
 osd .osd.user-gener 220 "Ctfxph" &cat .osd.checkbox-chars "\}\HTab  " 9 user-set-checkbox
-osd .osd.user-gener 230 "fh"  "  "
+osd .osd.user-gener 230 "fh" "    "
 osd .osd.user-gener 240 "Ctfxp" &cat .osd.checkbox-chars "\}\HUndo " 10 user-set-checkbox
-osd .osd.user-gener 245 ""
-osd .osd.user-gener 250 "Sfh" "  \HKeep Undo History : " 260
-osd .osd.user-gener 260 "Ctfhx" "^^NY^^" 0x8000 user-set-system
-osd .osd.user-gener 263 "Sfh" "          \HHide Backups : " 265
-osd .osd.user-gener 265 "Ctfx" "^^NY^^" 0x100000 user-set-system
-osd .osd.user-gener 270 "Sfh" "          Main Menu : "  280
-osd .osd.user-gener 280 "Ctfhx" "^^NY^^" 1 user-set-checkbox
-osd .osd.user-gener 290 "Sfh" "      Alt \H-> Main Menu : " 300
-osd .osd.user-gener 300 "Ctfx" "^^NY^^" 0x2000 user-set-system
-osd .osd.user-gener 304 "Sfh" "  F-Type Buffer Sel : " 306
-osd .osd.user-gener 306 "Ctfhx" "^^NY^^" 17 user-set-checkbox
-osd .osd.user-gener 310 "Sfh" "      Alt -\H> Esc Prefx : " 320
-osd .osd.user-gener 320 "Ctfx" "^^NY^^" 0x4000 user-set-system
+osd .osd.user-gener 243 "Sfh" "  Auto-Sa\Hve Time: " 245
+osd .osd.user-gener 245 "EtxHfh" .scheme.osd-entry "########" 10 user-set-entry
+osd .osd.user-gener 247 "hf" "    "
+osd .osd.user-gener 260 "Ctfxp" &cat .osd.checkbox-chars "\}\HKeep Undo" 0x8000 user-set-system
+osd .osd.user-gener 263 "hf" "                              "
+osd .osd.user-gener 265 "Ctfxp" &cat .osd.checkbox-chars "\}\HHide Backups" 0x100000 user-set-system
+osd .osd.user-gener 267 ""
+osd .osd.user-gener 270 "fh" "  Main Menu:      "
+osd .osd.user-gener 280 "Ctfhxp" &cat .osd.checkbox-chars "\}Enable" 1 user-set-checkbox
+osd .osd.user-gener 285 "hf" "   "
+osd .osd.user-gener 290 "Ctfxp" &cat .osd.checkbox-chars "\}F-Type Buffer Sel" 17 user-set-checkbox
+osd .osd.user-gener 295 "fh" "  Alt Action:     "
+osd .osd.user-gener 300 "Ctfhxp" &cat .osd.checkbox-chars "\}Esc Prfx " 0x4000 user-set-system
+osd .osd.user-gener 305 "Ctfxp" &cat .osd.checkbox-chars "\}Main Menu Hot-keys" 0x2000 user-set-system
 osd .osd.user-gener 321 ""
-osd .osd.user-gener 322 "Sfh" "   Abbrev Expansion : "
+osd .osd.user-gener 322 "fh" "  Abbrev Setup:   "
 osd .osd.user-gener 323 "Ctfxhp" &cat .osd.checkbox-chars "\}Accent" 14 user-set-checkbox
-osd .osd.user-gener 324 "fh"  " "
-osd .osd.user-gener 325 "Ctfxhp" &cat .osd.checkbox-chars "\}Lookbk" 15 user-set-checkbox
+osd .osd.user-gener 324 "fh" "   "
+osd .osd.user-gener 325 "Ctfxhp" &cat .osd.checkbox-chars "\}Lookback" 15 user-set-checkbox
 osd .osd.user-gener 326 "fh"  " "
 osd .osd.user-gener 327 "Ctfxp" &cat .osd.checkbox-chars "\}Dict'n"  16 user-set-checkbox
-osd .osd.user-gener 330 "Sfh" "      Tab To \HIndent : " 340
+osd .osd.user-gener 330 "Sfh" "  Tab To \HIndent:  " 340
 osd .osd.user-gener 340 "OtxmsfhHzR" .scheme.osd-entry 18 1 "" .osd.user-sub user-setup-tab-indent
 osd .osd.user-gener 341 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 340
 osd .osd.user-gener 370 ""
@@ -1174,36 +1174,36 @@ osd .osd.user-gener 390 "MdtxmfH" .scheme.osd-ebtt " Sho\Hw Modes " .osd.user-mo
 -1 osd .osd.user-start
 osd .osd.user-start 0   "s" 55 18 -1 -1
 osd .osd.user-start 10  ""
-osd .osd.user-start 40  "Sfh" "    User \HName:    " 50
+osd .osd.user-start 40  "Sfh" "  User \HName:    " 50
 osd .osd.user-start 50  "tRxHf" .scheme.osd-entry &spr "%s%n" $user-name &sub 14 &len $user-name " " f user-set-logname
-osd .osd.user-start 60  "Sfh" "    User \HPath:    " 70
-osd .osd.user-start 70  "tRxHf" .scheme.osd-entry &spr "%s%n" $user-path &sub 33 &len $user-path " " f user-set-path
+osd .osd.user-start 60  "Sfh" "  User \HPath:    " 70
+osd .osd.user-start 70  "tRxHf" .scheme.osd-entry &spr "%s%n" $user-path &sub 35 &len $user-path " " f user-set-path
 osd .osd.user-start 80  ""
-osd .osd.user-start 90  "Sfh" "    Setup \HFile:   " 100
+osd .osd.user-start 90  "Sfh" "  Setup \HFile:   " 100
 osd .osd.user-start 100 "EtxHfh" .scheme.osd-entry "##############" 4 user-set-entry
 osd .osd.user-start 103 "fh" "         "
 osd .osd.user-start 105 "Ctpfx" &cat .osd.checkbox-chars "\} E\Hdit" 13 user-set-checkbox
-osd .osd.user-start 110 "Sfh" "    C\Hompany File: " 120
+osd .osd.user-start 110 "Sfh" "  C\Hompany File: " 120
 osd .osd.user-start 120 "EtxHf" .scheme.osd-entry "##############" 2 user-set-entry
-osd .osd.user-start 130 "Sfh" "    \HEmulation:    " 140
+osd .osd.user-start 130 "Sfh" "  \HEmulation:    " 140
 osd .osd.user-start 140 "OtxmsfhHzR" .scheme.osd-entry 24 1 "" .osd.user-sub user-setup-emulate
 osd .osd.user-start 141 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 140
-osd .osd.user-start 150 "fh" "    Key Bindings: "
+osd .osd.user-start 150 "fh" "  Key Bindings: "
 osd .osd.user-start 160 "Ctpfx" &cat .osd.checkbox-chars "\} \HRebind Home Keys" 18 user-set-checkbox
-osd .osd.user-start 170 "fh" "                  "
+osd .osd.user-start 170 "fh" "                "
 osd .osd.user-start 180 "Ctpfx" &cat .osd.checkbox-chars "\} \HMS Shift Region" 12 user-set-checkbox
 osd .osd.user-start 500 ""
 osd .osd.user-start 510 "c"  "Locale Setup"
 osd .osd.user-start 520 ""
-osd .osd.user-start 530 "Sfh" "    \HKeyboard:     " 540
+osd .osd.user-start 530 "Sfh" "  \HKeyboard:     " 540
 osd .osd.user-start 540 "OtxmsfhHzR" .scheme.osd-entry 14 1 "" .osd.user-sub user-setup-keyb
 osd .osd.user-start 541 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 540
-osd .osd.user-start 550 "Sfh" "    \HLanguage:     " 560
+osd .osd.user-start 550 "Sfh" "  \HLanguage:     " 560
 osd .osd.user-start 560 "OtxmsfhHzR" .scheme.osd-entry 14 1 "" .osd.user-sub user-setup-lang
 osd .osd.user-start 561 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 560
-osd .osd.user-start 570 "fh" "    Spelling:     "
+osd .osd.user-start 570 "fh" "  Spelling:     "
 osd .osd.user-start 580 "Ctpfx" &cat .osd.checkbox-chars "\} \HAuto Save Dictionaries" 2 user-set-checkbox
-osd .osd.user-start 590 "fh" "                  "
+osd .osd.user-start 590 "fh" "                "
 osd .osd.user-start 600 "Ctpfx" &cat .osd.checkbox-chars "\} Enable Au\Hto-Spell" 11 user-set-checkbox
 
 ; The note-book ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
