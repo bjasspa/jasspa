@@ -430,9 +430,9 @@ set-variable %user-mouse-S ""
 set-variable %user-mouse-C ""
 set-variable %user-mouse-A ""
 
-set-variable %user-mouse-bname "|Not bound|Drag region|Select Word|Default Pan|MS Pan|Find Buffer|Find Tag|Find ME Help|Undo|No move yank|Replace yank|Move to yank|Reyank|Collapse Current|Collapse All|Main menu|Multi-Menu|"
-set-variable %user-mouse-bpick "||mouse-pick-type1|mouse-pick-type1|mouse-pan-pick|mouse-mspan-pick|void|void|void|mouse-keepcl|||void|mouse-keepcl|void|void|||"
-set-variable %user-mouse-bdrop "||mouse-drop-type1|mouse-drop-type2|mouse-pan-drop|mouse-mspan-drop|0 osd-find-buffer|!nma find-tag|mouse-emacs-help|mouse-undo|mouse-no-move-yank|mouse-no-move-replace-yank|mouse-move-yank|mouse-reyank|collapse-current|collapse-all|mouse-osd|mouse-osd-multi|"
+set-variable %user-mouse-bname "|Not bound|Drag region|Copy Rectangle|Kill Rectangle|Select Word|Default Pan|MS Pan|Find Buffer|Find Tag|Find ME Help|Undo|No move yank|Replace yank|Move to yank|Reyank|Collapse Current|Collapse All|Main menu|Multi-Menu|"
+set-variable %user-mouse-bpick "||mouse-pick-type1|mouse-pick-rectangle|mouse-pick-rectangle|mouse-pick-type1|mouse-pan-pick|mouse-mspan-pick|void|void|void|mouse-keepcl|||void|mouse-keepcl|void|void|||"
+set-variable %user-mouse-bdrop "||mouse-drop-type1|1 mouse-drop-rectangle|0 mouse-drop-rectangle|mouse-drop-type2|mouse-pan-drop|mouse-mspan-drop|0 osd-find-buffer|!nma find-tag|mouse-emacs-help|mouse-undo|mouse-no-move-yank|mouse-no-move-replace-yank|mouse-move-yank|mouse-reyank|collapse-current|collapse-all|mouse-osd|mouse-osd-multi|"
 set-variable %user-mouse-wname "|Not bound|Scroll Up 1 Line|Scroll Up 5 Lines|Scroll Up 10 Line|Scroll Up 1 Page|Scroll Down 1 Line|Scroll Down 5 Lines|Scroll Down 10 Line|Scroll Down 1 Page|Scroll Left 1 Char|Scroll Left 10 Chars|Scroll Right 1 Char|Scroll Right 10 Chars|"
 set-variable %user-mouse-wheel "||1 mouse-wup-scroll|5 mouse-wup-scroll|10 mouse-wup-scroll|mouse-wup-scroll|1 mouse-wdown-scroll|5 mouse-wdown-scroll|10 mouse-wdown-scroll|mouse-wdown-scroll|1 mouse-wleft-scroll|10 mouse-wleft-scroll|1 mouse-wright-scroll|10 mouse-wright-scroll|"
 
