@@ -380,7 +380,7 @@ meUndoAddNarrow(meInt sln, meInt name,
     meUndoNarrow *nn ;
     int ll ;
     
-    ll = (markupCmd >= 0) ? meLineGetLength(firstLine):0 ;
+    ll = (markupCmd > 0) ? meLineGetLength(firstLine):0 ;
     if((frameCur->bufferCur->undoHead != NULL) &&
        ((nn = (meUndoNarrow *) meUndoCreateNode(sizeof(meUndoNarrow)+ll)) != NULL))
     {
@@ -389,7 +389,7 @@ meUndoAddNarrow(meInt sln, meInt name,
         nn->count = 0 ;
         nn->name = name ;
         nn->markupCmd = markupCmd ;
-        if(markupCmd >= 0)
+        if(markupCmd > 0)
             meStrcpy(nn->str,meLineGetText(firstLine)) ;
     }
 }
@@ -400,7 +400,7 @@ meUndoAddUnnarrow(meInt sln, meInt eln, meInt name, meScheme scheme,
     meUndoNarrow *nn ;
     int ll ;
     
-    ll = (markupCmd >= 0) ? meLineGetLength(markupLine):0 ;
+    ll = (markupCmd) ? meLineGetLength(markupLine):0 ;
     if((frameCur->bufferCur->undoHead != NULL) &&
        ((nn = (meUndoNarrow*) meUndoCreateNode(sizeof(meUndoNarrow)+ll)) != NULL))
     {
@@ -410,7 +410,7 @@ meUndoAddUnnarrow(meInt sln, meInt eln, meInt name, meScheme scheme,
         nn->name = name ;
         nn->scheme = scheme ;
         nn->markupCmd = markupCmd ;
-        if(markupCmd >= 0)
+        if(markupCmd)
             meStrcpy(nn->str,meLineGetText(markupLine)) ;
     }
 }
@@ -564,7 +564,7 @@ meUndo(int f, int n)
                         frameCur->bufferCur->dotLineNo = frameCur->windowCur->dotLineNo ;
                         frameCur->bufferCur->dotOffset = 0 ;
                         meBufferRemoveNarrow(frameCur->bufferCur,nrrw,1,
-                                             (nun->markupCmd >= 0) ? nun->str:NULL) ;
+                                             (nun->markupCmd > 0) ? nun->str:NULL) ;
                     }
                     else
                     {
@@ -572,7 +572,8 @@ meUndo(int f, int n)
                         slp = frameCur->windowCur->dotLine ;
                         windowGotoLine(meTRUE,ccount+1) ;
                         meBufferCreateNarrow(frameCur->bufferCur,slp,frameCur->windowCur->dotLine,
-                                             nun->dotp,ccount,name,nun->scheme,nun->markupCmd,nun->str) ;
+                                             nun->dotp,ccount,name,nun->scheme,
+                                             (nun->markupCmd) ? nun->str:NULL,nun->markupCmd) ;
                     }
                 }
 #endif

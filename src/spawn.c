@@ -573,6 +573,7 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff)
 #endif
     if(ipipe->flag & meIPIPE_CHILD_EXIT)
     {
+        GetExitCodeProcess(ipipe->process,&(ipipe->exitCode)) ;
         CloseHandle(ipipe->process);
         ipipe->pid = -4 ;
         return ipipe->pid ;
@@ -748,21 +749,24 @@ ipipeRead(meIPipe *ipipe)
     {
         if(!getNextCharFromPipe(ipipe,cc,rbuff,curROff,curRRead))
         {
-            meUByte *ins ;
 
-            if(ipipe->pid == -5)
-                ins = (meUByte *)"[TERMINATED]" ;
-            else if(ipipe->pid == -4)
-                ins = (meUByte *)"[EXIT]" ;
-            else if(ipipe->pid == -3)
-                ins = (meUByte *)"[KILLED]" ;
-            else if(ipipe->pid == -2)
-                ins = (meUByte *)"[CORE DUMP]" ;
+            if(ipipe->pid == -4)
+                sprintf(p1,"[EXIT %d]",ipipe->exitCode) ;
             else
-                /* none left to read */
-                break ;
+            {
+                meUByte *ins ;
+                if(ipipe->pid == -5)
+                    ins = (meUByte *)"[TERMINATED]" ;
+                else if(ipipe->pid == -3)
+                    ins = (meUByte *)"[KILLED]" ;
+                else if(ipipe->pid == -2)
+                    ins = (meUByte *)"[CORE DUMP]" ;
+                else
+                    /* none left to read */
+                    break ;
+                meStrcpy(p1,ins) ;
+            }
             ipipe->pid = -1 ;
-            meStrcpy(p1,ins) ;
             cc = meCHAR_NL ;
         }
         switch(cc)
@@ -1652,6 +1656,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
         exit(1) ;                       /* Should never get here unless we fail */
     }
     ipipe->pid = pid ;
+    ipipe->exitCode = 0 ;
     ipipe->rfd = fds[0] ;
     ipipe->outWfd = outFds[1] ;
 #endif /* _WIN32 */
@@ -1781,13 +1786,15 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
 {
     register meBuffer *bp;	/* pointer to buffer to zot */
     meUByte line[meBUF_SIZE_MAX+256] ;    /* new com line with "> command" (+256 to allow for the >.... */
-    int cd, ret ;
+    int cd, ret, systemRet ;
 #ifdef _DOS
     static meByte pipeStderr=0 ;
     meUByte cc, *ss, *dd ;
     int gotPipe=0 ;
 #endif
-#ifndef _UNIX
+#ifdef _UNIX
+    meWAIT_STATUS ws;
+#else
     meUByte filnam[meBUF_SIZE_MAX] ;
 
     mkTempCommName (filnam,COMMAND_FILE) ;
@@ -1830,7 +1837,7 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
     }
     if((flags & LAUNCH_SILENT) == 0)
         mlerase(MWERASE|MWCURSOR);
-    system(line);
+    systemRet = system(line);
     if(cd)
         meChdir(curdir) ;
     /* Call TTopen as we can't guarantee whats happend to the terminal */
@@ -1845,7 +1852,7 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
 #if MEOPT_IPIPES
                               NULL, 
 #endif
-                              NULL) ;
+                              &systemRet) ;
         if(cd)
             meChdir(curdir) ;
         if(ss == meFALSE)
@@ -1910,10 +1917,18 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
     if((flags & LAUNCH_SILENT) == 0)
         meWindowPopup(bp->name,WPOP_MKCURR,NULL) ;
 
-#ifndef _UNIX
+#ifdef _UNIX
+    /* close the pipe and get exit status */
+    ws = (meWAIT_STATUS) pclose(ffrp) ;
+    if(WIFEXITED(ws))
+        systemRet = WEXITSTATUS(ws) ;
+    else
+        systemRet = -1 ;
+#else
     /* and get rid of the temporary file */
     meUnlink(filnam);
 #endif
+    meStrcpy(resultStr,meItoa(systemRet)) ;
     return ret ;
 }
 

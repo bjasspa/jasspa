@@ -45,7 +45,7 @@
 
 meNarrow *
 meBufferCreateNarrow(meBuffer *bp, meLine *slp, meLine *elp, meInt sln, meInt eln, 
-                     meInt name, meScheme scheme, meInt markupCmd, meUByte *markupLine)
+                     meInt name, meScheme scheme, meUByte *markupLine, meInt markupCmd)
 {
     meWindow *wp ;
     meNarrow *nrrw, *cn, *pn ;
@@ -77,7 +77,7 @@ meBufferCreateNarrow(meBuffer *bp, meLine *slp, meLine *elp, meInt sln, meInt el
     nln = eln - sln ;
     nrrw->name = name ;
     nrrw->noLines = nln ;
-    if(markupCmd >= 0)
+    if(markupCmd)
     {
         bp->dotLine = slp ;
         bp->dotOffset = 0 ;
@@ -95,7 +95,7 @@ meBufferCreateNarrow(meBuffer *bp, meLine *slp, meLine *elp, meInt sln, meInt el
             nln-- ;
         }
         else
-            markupCmd = -1 ;
+            markupCmd = 0 ;
     }
     nrrw->markupCmd = markupCmd ;
     if(meAnchorSet(bp,name,elp,0,1) <= 0)
@@ -234,7 +234,7 @@ meBufferExpandNarrow(meBuffer *bp, register meNarrow *nrrw, int useDot, meUByte 
     meFrameLoopEnd() ;
     if(markup)
     {
-        if((firstLine == NULL) && meModeTest(bp->mode,MDEDIT))
+        if((firstLine == NULL) && (nrrw->markupCmd > 0))
         {
             meStrcpy(resultStr,meLineGetText(nrrw->markupLine)) ;
             bp->dotLine = nrrw->slp ;
@@ -459,6 +459,7 @@ int
 narrowBuffer(int f, int n)
 {
     meUByte buf[meBUF_SIZE_MAX] ;
+    meUByte *ml1, ml1b[meBUF_SIZE_MAX], *ml2, ml2b[meBUF_SIZE_MAX] ;
     meInt markupCmd, sln, eln ;
     meLine *slp, *elp ;
     meScheme scheme ;
@@ -502,13 +503,27 @@ narrowBuffer(int f, int n)
     
     if(f & 0x20)
     {
+        if(meGetString((meUByte *)"Markup Line",0,0,ml1b,meBUF_SIZE_MAX) <= 0)
+            return meABORT ;
+        if((n == 3) &&
+           (meGetString((meUByte *)"Markup Line",0,0,ml2b,meBUF_SIZE_MAX) <= 0))
+            return meABORT ;
+        ml1 = ml1b ;
+        ml2 = ml2b ;
+        markupCmd = -1 ;
+    }
+    else
+    {
+        ml1 = NULL ;
+        ml2 = NULL ;
+        markupCmd = 0 ;
+    }        
+    if(f & 0x40)
+    {
         if((meGetString((meUByte *)"Markup Command", MLCOMMAND,2,buf,meBUF_SIZE_MAX) <= 0) ||
            ((markupCmd = decode_fncname(buf,0)) < 0))
             return meABORT ;
     }
-    else
-        markupCmd = -1 ;
-    
     if(frameCur->windowCur->dotLineNo < frameCur->windowCur->markLineNo)
     {
         slp = frameCur->windowCur->dotLine ;
@@ -529,16 +544,16 @@ narrowBuffer(int f, int n)
         if(elp != frameCur->bufferCur->baseLine)
         {
             if((nrrw=meBufferCreateNarrow(frameCur->bufferCur,elp,frameCur->bufferCur->baseLine,eln,
-                                          frameCur->bufferCur->lineCount,meNARROW_TYPE_TO_BOTTOM,scheme,markupCmd,NULL)) == NULL)
+                                          frameCur->bufferCur->lineCount,meNARROW_TYPE_TO_BOTTOM,scheme,ml2,markupCmd)) == NULL)
                 return meFALSE ;
             n = meANCHOR_NARROW | meNARROW_TYPE_TO_TOP | (nrrw->name & meNARROW_NUMBER_MASK) ;
         }
         if(sln != 0)
             nrrw = meBufferCreateNarrow(frameCur->bufferCur,meLineGetNext(frameCur->bufferCur->baseLine),
-                                        slp,0,sln,n,scheme,markupCmd,NULL) ;
+                                        slp,0,sln,n,scheme,ml1,markupCmd) ;
     }
     else
-        nrrw = meBufferCreateNarrow(frameCur->bufferCur,slp,elp,sln,eln,meNARROW_TYPE_OUT,scheme,markupCmd,NULL) ;
+        nrrw = meBufferCreateNarrow(frameCur->bufferCur,slp,elp,sln,eln,meNARROW_TYPE_OUT,scheme,ml1,markupCmd) ;
     return (nrrw == NULL) ? meFALSE:meTRUE ;
 }
 #endif

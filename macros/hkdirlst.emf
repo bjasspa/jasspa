@@ -366,7 +366,7 @@ set-variable .file-browser-close.bn "\CH*directory*\CH*files*\CH*ftp-files*\CH*f
     ; if part of a toolbar don't mess with the window-flags and don't leave it current, but make sure the buffer is hidden
     !if &band $window-flags 0x1000
         1 buffer-mode "hide"
-        1 goto-position "\x82"
+        0 popup-window "*files*"
     !else
         set-variable $window-flags &bor 1 .fhook-dirlst.browser-lock
     !endif
@@ -1250,20 +1250,10 @@ osd .osd.dirlst 130 ""  "\HAuto-Refresh: on "   f dirlst-auto-refresh
     !endif
     set-variable $window-line 3
     set-mark
-    set-variable .done-dir 0
-    !repeat 
-        ; Simple Directory search, if the simple search fails look for 
-        ; a symbolic link to a directory.
-        !if &seq &rig @wl &sub &len @wl 1 "/"
-            set-variable $line-scheme .scheme.dir
-            forward-line
-        !elif &xis @wl ".*/ -> .*" 
-            set-variable $line-scheme .scheme.dir-slink
-            forward-line
-        !else
-            set-variable .done-dir 1
-        !endif
-    !until &equ .done-dir 1
+    !while &seq &rig @wl &sub &len @wl 1 "/"
+        set-variable $line-scheme .scheme.dir
+        forward-line
+    !done
     !if &band $system 0x100
         sort-lines
         set-mark

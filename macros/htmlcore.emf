@@ -55,7 +55,7 @@ set-variable #l2 &ind &spr ".hilight.%stag" #l0
     hilight #l1 0 "&\\w\\w\\w\\w\\w;"        .scheme.variable
     hilight #l1 0 "&\\w\\w\\w\\w\\w;"        .scheme.variable
     hilight #l1 0 "&\\w\\w\\w\\w\\w\\w;"     .scheme.variable
-    hilight #l1 0x804 "\"" "\"" "\\"         .scheme.string
+    hilight #l1 0 "\""                       .scheme.string
     hilight #l1 4 "<script" "</script>" ""   .scheme.keyword
     hilight #l1 4 "<%" "%>" ""               .scheme.keyword
     
@@ -286,13 +286,13 @@ set-variable #l2 &ind &spr ".hilight.%stag" #l0
     ;indent #l1 b "<" ">"
     indent #l1 n "<html>" 2 
     indent #l1 o "</html>" -2 
-    indent #l1 n "<head>" 2 
+    indent #l1 n "<head" 3 
     indent #l1 o "</head>" -2 
     indent #l1 n "<ul" 3 
     indent #l1 o "</ul>" -2 
     indent #l1 n "<ol" 3 
     indent #l1 o "</ol>" -2 
-    indent #l1 n "<dl>" 2 
+    indent #l1 n "<dl" 3 
     indent #l1 o "</dl>" -2 
     indent #l1 n "<table" 3
     indent #l1 o "</table>" -2

@@ -602,12 +602,17 @@ yankRectangleKill(struct meKill *pklist, int soff, int notLast)
                 *dd++ = ' ' ;
             while(--ii >= 0)
                 *dd++ = *tt++ ;
-            /* add the ending spaces (only if we've deleted a TAB) */
+            /* add the ending spaces (only if we've deleted a TAB),
+             * preserve dd so the end point is correct */
+            tt = dd ;
             while(--lespc >= 0)
-                *dd++ = ' ' ;
+                *tt++ = ' ' ;
 #if MEOPT_UNDO
             if(ldel > 0)
+            {
+                frameCur->windowCur->dotOffset += linsc+ldel ;
                 meUndoAddReplaceEnd(linsc+ldel) ;
+            }
             else
                 meUndoAddInsChars(linsc) ;
 #endif

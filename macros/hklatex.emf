@@ -60,8 +60,8 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*$\\|^\\\\\\(newpag\\|se
     set-variable %latex-compile &cond &seq %latex-compile "ERROR" "latex -interaction=nonstopmode" %latex-compile
     set-variable %latex-view    &cond &seq %latex-view    "ERROR" "xdvi"  %latex-view
 !endif
-
-!if &and &sin "h" .fhook-latex.setup &band .hilight.flags 0x02
+    
+!if &and &sin "h" .fhook-latex.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.latex
         set-variable .hilight.latex &pinc .hilight.next 1
         set-variable .hilight.latexs &pinc .hilight.next 1

@@ -631,7 +631,7 @@ extern  void    _meAssert(char *file, int line);
 #if MEOPT_NARROW
 extern meNarrow *
 meBufferCreateNarrow(meBuffer *bp, meLine *slp, meLine *elp, meInt sln, meInt eln,
-                     meInt name, meScheme scheme, meInt markupCmd, meUByte *markupLine) ;
+                     meInt name, meScheme scheme, meUByte *markupLine, meInt markupCmd) ;
 extern void
 meBufferRemoveNarrow(meBuffer *bp, register meNarrow *nrrw, int useDot, meUByte *firstLine) ;
 extern void meBufferExpandNarrowAll(meBuffer *bp) ;

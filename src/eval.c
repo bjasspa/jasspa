@@ -542,6 +542,11 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
 #endif
         case EVFRMDPTH:
             return frameChangeDepth(meTRUE,meAtoi(vvalue)-(frameCur->depth+1));
+#if MEOPT_EXTENDED
+        case EVFRMID:
+            frameCur->id = meAtoi(vvalue) ;
+            break;
+#endif
         case EVFRMWDTH:
             return frameChangeWidth(meTRUE,meAtoi(vvalue)-frameCur->width);
         case EVABSCOL:
@@ -1142,6 +1147,10 @@ handle_namesvar:
     case EVRANDOM:      return (meItoa(rand()));
 #endif
     case EVFRMDPTH:     return (meItoa(frameCur->depth + 1));
+#if MEOPT_EXTENDED
+    case EVFRMID:       return (meItoa(frameCur->id));
+#endif
+    case EVFRMWDTH:     return (meItoa(frameCur->width));
     case EVABSCOL:      return (meItoa(getcwcol()));
     case EVCURCOL:      return (meItoa(frameCur->windowCur->dotOffset));
     case EVCURLINE:     return (meItoa(frameCur->windowCur->dotLineNo+1));
@@ -1163,7 +1172,6 @@ handle_namesvar:
     case EVWWIDTH:      return (meItoa(frameCur->windowCur->textWidth));
 #endif
     case EVWINCHRS:     return windowChars;
-    case EVFRMWDTH:     return (meItoa(frameCur->width));
     case EVCBUFBACKUP:
         if((frameCur->bufferCur->fileName == NULL) || createBackupName(evalResult,frameCur->bufferCur->fileName,'~',0))
             return (meUByte *) "" ;

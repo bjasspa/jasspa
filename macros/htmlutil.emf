@@ -320,18 +320,6 @@ define-macro html-goto-matching-tag
     !endif
 !emacro
 
-0 define-macro html-collapse-tag-markup
-    !if &equ @# 1
-        !if &xseq @wl "\\([ \t]*\\)<\\(\\w+\\)\\>.*"
-            set-variable $result &spr "%s<%s> ... </%s>" @s1 @s2 @s2
-        !else
-            set-variable $result &cat &lef @wl 40 " ..."
-        !endif
-    !else
-        !abort
-    !endif
-!emacro
-
 define-macro html-collapse-tag
     set-position "\x83"
     set-variable #l0 $window-line
@@ -357,6 +345,10 @@ define-macro html-collapse-tag
         backward-char
     !else
         set-variable #l4 &lef @wl $window-col
+        forward-word
+        set-variable #l6 $window-col
+        backward-word
+        set-variable #l7 &mid @wl $window-col &sub #l6 $window-col
     !endif
     !force html-goto-matching-tag
     !if &not &and $status &equ $window-line #l0
@@ -370,6 +362,10 @@ define-macro html-collapse-tag
         forward-line
     !else
         set-variable #l4 &lef @wl $window-col
+        forward-word
+        set-variable #l6 $window-col
+        backward-word
+        set-variable #l7 &mid @wl $window-col &sub #l6 $window-col
     !endif
     !if &not &seq &trb #l4 ""
         goto-position "\x83"
@@ -385,7 +381,7 @@ define-macro html-collapse-tag
     !if &gre #l1 #l0
         forward-line
     !endif
-    0x34 narrow-buffer .scheme.fold-close html-collapse-tag-markup
+    0x34 narrow-buffer .scheme.fold-close &spr "%s<%s> ... </%s>" #l4 #l7 #l7
 !emacro
 
 ; n html-find-tag "name"

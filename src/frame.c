@@ -348,6 +348,7 @@ meFrameInit(meFrame *sibling)
         frame->mainId = sibling->mainId ;
         frame->width = sibling->width ;
         frame->depth = sibling->depth ;
+        frame->menuDepth = sibling->menuDepth;
         frame->widthMax = sibling->widthMax ;
         frame->depthMax = sibling->depthMax ;
     }
@@ -389,9 +390,6 @@ meFrameInit(meFrame *sibling)
        ((frame->mlLineStore = malloc(frame->widthMax+1)) == NULL))
         return NULL ;
 
-    frame->width = frame->widthMax ;
-    frame->depth = frame->depthMax-1 ;
-    
     /* Initialise the virtual video structure. */
     frame->video.lineArray[frame->depth].flag = VFMESSL ;
     frame->video.lineArray[frame->depth].line = frame->mlLine ;
@@ -401,6 +399,9 @@ meFrameInit(meFrame *sibling)
 
     memset(frame->mlLine->text,'\0',frame->widthMax) ;
     frame->mlLineStore[0] = '\0';
+#if MEOPT_EXTENDED
+    frame->id = ++nextFrameId ;
+#endif
 
     /* Frame Store storage
      * The frame store hold's 'n' lines of video information.
@@ -459,7 +460,7 @@ meFrameInitWindow(meFrame *frame, meBuffer *buffer)
     wp->dotLine = buffer->baseLine ;
     wp->updateFlags = WFMODE|WFRESIZE|WFSBAR;
 #if MEOPT_EXTENDED
-    wp->id = nextWindowId++ ;
+    wp->id = ++nextWindowId ;
 #endif
     /* Flag buffer as displayed. */
     buffer->windowCount++ ;

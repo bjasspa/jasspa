@@ -320,15 +320,16 @@ set-variable #l1 0
     !endif
 !emacro
 set-variable .undo.count 0
-0 define-macro osd-narrow-markup
-    !if &les @# 0
-        !abort
-    !elif &equ @# 1
-        set-variable $result &cat &lef @wl 60 " ..."
-    !elif &equ @# 2
-        set-variable $result "{{{"
+0 define-macro osd-narrow-buffer
+    !if @#
+        set-variable #l0 $window-line
+        exchange-point-and-mark
+        !if &les #l0 $window-line
+            exchange-point-and-mark
+        !endif
+        0x34 narrow-buffer .scheme.fold-close &cat &lef @wl 60 " ..."
     !else
-        set-variable $result "}}}"
+        0x33 narrow-buffer .scheme.fold-close "{{{" "}}}"
     !endif
 !emacro
 osd 2  0   "b"
@@ -341,8 +342,8 @@ osd 2  50  ""  "Cu\Ht        C-w"           f kill-region   ; Kill off the regio
 osd 2  60  ""  "\HCopy       esc w"         f copy-region   ; Copy the region
 osd 2  70  ""  "\HPaste      C-y"           f yank          ; Paste text
 osd 2  80  "-"
-osd 2  90  "i" "Narrow \HOut"               f "0x34 narrow-buffer .scheme.fold-close osd-narrow-markup"
-osd 2  100 "i" "\HNarrow To"                f "0x33 narrow-buffer .scheme.fold-close osd-narrow-markup"
+osd 2  90  ""  "Narrow \HOut"               1 osd-narrow-buffer
+osd 2  100 ""  "\HNarrow To"                0 osd-narrow-buffer
 osd 2  110 ""  "Remove S\Hingle Narrow"     2 narrow-buffer
 osd 2  120 ""  "Remove A\Hll Narrows"       1 narrow-buffer
 ;

@@ -1728,12 +1728,8 @@ ffReadFileClose(meUByte *fname, meUInt flags)
             mlwrite(MWABORT|MWPAUSE,(meUByte *)"Error closing file");
 #else
 #ifdef _UNIX
-        if(fname == NULL)
-        {
-            if(ffrp != stdin)
-                pclose(ffrp);
-        }
-        else if((fclose(ffrp) != 0) && !(flags & meRWFLAG_SILENT))
+        /* ffrp could be stdin or a pipe */
+        if((fname != NULL) && (fclose(ffrp) != 0) && !(flags & meRWFLAG_SILENT))
             mlwrite(MWABORT|MWPAUSE,(meUByte *)"Error closing file");
 #else
         if((ffrp != stdin) && (fclose(ffrp) != 0) && !(flags & meRWFLAG_SILENT))

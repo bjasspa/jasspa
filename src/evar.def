@@ -109,8 +109,11 @@ DEFVAR ("find-words",          EVFINDWORDS)     /* Find words matching mask, sim
 #if MEOPT_CFENCE
 DEFVAR ("fmatchdelay",         EVMATCHLEN)      /* Fence matchin length */
 #endif
-DEFVAR ("frame-depth",         EVFRMDPTH)       /* screen depth */
-DEFVAR ("frame-width",         EVFRMWDTH)       /* screen width */
+DEFVAR ("frame-depth",         EVFRMDPTH)       /* frame depth */
+#if MEOPT_EXTENDED
+DEFVAR ("frame-id",            EVFRMID)         /* frame unique id */
+#endif
+DEFVAR ("frame-width",         EVFRMWDTH)       /* frame width */
 DEFVAR ("global-fmod",         EVGLOBFMOD)      /* file mod or attributes */
 #if MEOPT_COLOR
 DEFVAR ("global-scheme",       EVGLOBSCHM)      /* Global colour  */

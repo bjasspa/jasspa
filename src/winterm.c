@@ -4216,7 +4216,7 @@ TTcolour (int fcol, int bcol)
  * any streams immediatly.
  */
 void
-meGetMessage (MSG *msg)
+meGetMessage(MSG *msg)
 {
 #if MEOPT_IPIPES || (defined _ME_CONSOLE)
     if (
@@ -4291,6 +4291,7 @@ meGetMessage (MSG *msg)
                                               (LPDWORD) NULL, &doRead, (LPDWORD) NULL) == meFALSE)
                         {
                             /* If peek failed, wipe our hands of it. Close the process */
+                            GetExitCodeProcess(ipipe->process,&(ipipe->exitCode)) ;
                             CloseHandle(ipipe->process);
                             ipipe->pid = -4 ;
                         }
@@ -4302,6 +4303,7 @@ meGetMessage (MSG *msg)
                             (!GetExitCodeProcess(ipipe->process,&doRead) || (doRead != STILL_ACTIVE)))
                     {
                         /* Win95 fails to spot the exit state some times, this fixes it */
+                        GetExitCodeProcess(ipipe->process,&ipipe->exitCode) ;
                         CloseHandle(ipipe->process);
                         ipipe->pid = -4 ;
                         pp = ipipe ;

@@ -416,6 +416,9 @@ define-macro cvs-resolve-conflicts
     set-variable $buffer-fname #l3
     !force !force !force 6 pipe-shell-command #l0 "*cvs-temp*"
     set-variable #l0 $status
+    !if $result
+        set-variable #p7 $result
+    !endif
     set-variable $buffer-fname #l5
     find-buffer "*cvs-temp*"
     beginning-of-buffer
@@ -432,7 +435,6 @@ define-macro cvs-resolve-conflicts
         !if &gre $window-line 1
             insert-newline
         !endif
-        insert-string &spr "%n\n\n" 78 "*"
     !endif
     !if &not &band @# 2
         insert-string &spr "cd %s\n" #l3
@@ -469,10 +471,14 @@ define-macro cvs-resolve-conflicts
     !if &equ @# 4
         ; if this is the only exec line and its not to the *cvs-console* then use ipipe straight to the buffer
         !force !force !force 6 ipipe-shell-command @1 @2
+        set-variable #l1 $status
     !else
         !force !force !force 6 pipe-shell-command @1 "*cvs-temp*"
+        set-variable #l1 $status
+        !if $result
+            set-variable #p7 $result
+        !endif
     !endif
-    set-variable #l1 $status
     set-variable $buffer-fname #l0
     !if &not &equ @# 4
         !force find-buffer "*cvs-temp*"
@@ -491,7 +497,6 @@ define-macro cvs-resolve-conflicts
             !if &gre $window-line 1
                 insert-newline
             !endif
-            insert-string &spr "%n\n\n" 78 "*"
         !endif
         yank
         -1 yank
@@ -864,6 +869,7 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
         ; if adding recursively we must do this ourselves
         !if &not &sin " -l" #l8
             set-variable #l0 0
+            set-variable #l7 0
             !while &les &pinc #l0 1 .find-file.file-count
                 set-variable #l4 &ind &cat ".find-file.file" #l0
                 !force !force #l2 cvs-exec-add-recurse #l8 #l4 #l6 .cwd
@@ -877,6 +883,7 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
         set-variable #l8 &rep #l8 " -l" ""
     !endif
     set-variable #l0 0
+    set-variable #l7 0
     set-variable #l1 #l8
     set-variable #l3 &len #l1
     !while &les &pinc #l0 1 .find-file.file-count
@@ -902,16 +909,20 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
         set-variable #l1 &cat #l1 &cat " " #l4
         set-variable #l3 &add #l3 &add &len #l4 1
     !done
-    !force !force &bor #l2 4 cvs-exec-cmd #l1 #l6 .cwd
+    set-variable #l2 &bor #l2 4
+    !force !force #l2 cvs-exec-cmd #l1 #l6 .cwd
 *recurse-add-complete
-    !if &seq #l6 "*cvs-console*"
-        !if .toolbar.open
+    !if .toolbar.open
+        !if &seq #l6 "*cvs-console*"
             !force toolbar-make-tool-visible "*cvs-console*"
         !endif
-        !force popup-window #l6
+    !endif
+    !force popup-window #l6
+    !if &not &equ #l2 4
         end-of-buffer
-    !else
-        !force popup-window #l6
+        insert-string &spr "\n*****CVS exited with code %d*****\n" #l7
+    !endif
+    !if &not &seq #l6 "*cvs-console*"
         beginning-of-buffer
         !if &seq &lget .names #l9 "Diff"
             set-variable $buffer-hilight .hilight.diff
@@ -925,9 +936,9 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
 ; resolve conflicts
 ; remove command - to prompt & del the file or prompt and cvs remove
 
-set-variable .cvs-osd.names "|Add|Checkout|Commit|Diff|Graphical Diff|Log|Remove|State|Status|Tag|Update|"
-set-variable .cvs-osd.cmds  "|add|checkout|commit|diff|gdiff|log|remove|-nq update|status|tag|update|"
-set-variable .cvs-osd.flags "|kRS*|DfvRP*|mZRS*|OZRScw|OS|ZR|*|ZSR|ZR|tZRbrF*|ZSdRPC*|"
+set-variable .cvs-osd.names "|Add|Checkout|Commit|Diff|Graphical Diff|Log|Remove|State|Status|Tag|Update|Annotate|"
+set-variable .cvs-osd.cmds  "|add|checkout|commit|diff|gdiff|log|remove|-nq update|status|tag|update|annotate|"
+set-variable .cvs-osd.flags "|kRS*|DfvRP*|mZRS*|OZRScw|OS|ZR|*|ZSR|ZR|tZRbrF*|ZSdRPC*|vZR|"
 set-variable .cvs-osd.options "mDftvOZkdRPCcwbrF"
 set-variable .cvs-osd.values  " 0  1110010011000"
 set-variable .cvs-osd.revs "|||||"
@@ -965,6 +976,9 @@ define-macro cvs-tag
 !emacro
 define-macro cvs-update
     11 cvs-osd
+!emacro
+define-macro cvs-annotate
+    12 cvs-osd
 !emacro
 
 0 define-macro osd-cvs-file-menu-cmd
@@ -1020,6 +1034,7 @@ define-macro cvs-update
     osd .osd.tmp 20 "" "\HCommit files"      3 osd-cvs-file-menu-cmd
     osd .osd.tmp 40 "" "\HLog files"         6 osd-cvs-file-menu-cmd
     osd .osd.tmp 50 "" "Status \Hfiles"      9 osd-cvs-file-menu-cmd
+    osd .osd.tmp 55 "" "A\Hnnotate files"   12 osd-cvs-file-menu-cmd
     osd .osd.tmp 60 "" "\HTag files"        10 osd-cvs-file-menu-cmd
     !if :tag-count
         osd .osd.tmp 70 "" "\HAdd files"     1 osd-cvs-file-menu-cmd

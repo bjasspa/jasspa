@@ -1040,10 +1040,13 @@ typedef struct meFrame
     int                mainColumn ;             /* Main Windows current column     */
     int                mlColumn ;               /* ml current column */
     int                mlColumnStore ;          /* ml Store column */
-    int                pokeColumnMin;           /* Minimum column extent of poke   */
-    int                pokeColumnMax;           /* Maximum column extent of poke   */
-    int                pokeRowMin;              /* Minimum row extent of poke      */
-    int                pokeRowMax;              /* Maximum row extent of poke      */
+    int                pokeColumnMin ;          /* Minimum column extent of poke   */
+    int                pokeColumnMax ;          /* Maximum column extent of poke   */
+    int                pokeRowMin ;             /* Minimum row extent of poke      */
+    int                pokeRowMax ;             /* Maximum row extent of poke      */
+#if MEOPT_EXTENDED
+    meInt              id ;                     /* $frame-id                       */
+#endif
 #if MEOPT_OSD
     meLine            *menuLine ;               /* Menu-poke line                  */
     meUShort           menuDepth ;              /* Terminal starting row           */
@@ -1083,6 +1086,7 @@ typedef struct meIPipe {
     meBuffer          *bp ;
     struct meIPipe    *next ;
     int                pid ;
+    int                exitCode ;
 #ifdef _WIN32
     HANDLE             rfd ;
     HANDLE             outWfd ;

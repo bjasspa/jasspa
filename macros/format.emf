@@ -289,11 +289,11 @@ define-macro ifill-paragraph
 ;
 0 define-macro restyle-region-int
     set-variable #l0 $window-line
-    set-alpha-mark "t"
+    set-alpha-mark "\x82"
     exchange-point-and-mark
     !if &gre $window-line #l0
         set-variable #l0 $window-line
-        set-alpha-mark "t"
+        set-alpha-mark "\x82"
         exchange-point-and-mark
     !endif
     !if &or &bmod "cmode" $buffer-indent
@@ -314,7 +314,7 @@ define-macro ifill-paragraph
         !while &les $window-line #l0
             execute-line #l1
             set-mark
-            goto-alpha-mark "t"
+            goto-alpha-mark "\x82"
             set-variable #l0 $window-line
             exchange-point-and-mark
         !done
@@ -324,21 +324,25 @@ define-macro ifill-paragraph
 define-macro restyle-region
     ml-write "[Restyling...]"
     set-variable #l0 $mouse
+    set-variable #l1 $system
     set-variable $mouse &bor 0x50000 &band 0xffff #l0
+    set-variable $system &bor $system 0x1000
     !force !force restyle-region-int
     !if &not $status
+        set-variable $system #l1
         set-variable $mouse #l0
         !abort
     !endif
+    set-variable $system #l1
     set-variable $mouse #l0
     ml-write "[Restyle complete]"
 !emacro
 
 define-macro restyle-buffer
-    set-alpha-mark "T"
+    set-alpha-mark "\x81"
     end-of-buffer
     set-mark
     beginning-of-buffer
     restyle-region
-    goto-alpha-mark "T"
+    goto-alpha-mark "\x81"
 !emacro

@@ -56,6 +56,7 @@ extern  meUByte    modeLineFlags ;      /* current modeline flags       */
 extern  meInt      autotime;            /* auto save time in seconds    */
 extern  meInt      keptVersions;        /* No. of kept backup versions  */
 #if MEOPT_EXTENDED
+extern  meInt      nextFrameId;         /* frame-id of the next create  */
 extern  meInt      nextWindowId;        /* window-id of the next create */
 #endif
 #if MEOPT_MOUSE
@@ -465,7 +466,8 @@ meUByte  *modeLineStr=orgModeLineStr;   /* current modeline format      */
 meInt     autotime=300 ;                /* auto save time in seconds    */
 meInt     keptVersions=0 ;              /* No. of kept backup versions  */
 #if MEOPT_EXTENDED
-meInt      nextWindowId=0 ;             /* window-id of the next create */
+meInt     nextFrameId=0 ;               /* frame-id of the next create  */
+meInt     nextWindowId=0 ;              /* window-id of the next create */
 #endif
 #if MEOPT_WORDPRO
 meUByte   fillbullet[16]="*)].-";       /* Fill bullet character class  */

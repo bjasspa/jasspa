@@ -103,14 +103,6 @@
     !endif
 !emacro
 
-0 define-macro collapse-markup
-    !if &les @# 0
-        ; no markup line modificaton
-        !abort
-    !endif
-    set-variable $result &cat &trr &lef @wl 40 " ..."
-!emacro
-
 ; PUBLIC:: Toggle a collapse open/shut
 define-macro collapse-current
     collapse-get-vars
@@ -138,10 +130,15 @@ define-macro collapse-current
         ml-write "[Collapse not found]"
         !abort
     !endif
-    #l6 forward-line
+    !if &gre #l6 0
+        set-variable #l2 &cat " ... " &lef &trb @s0 15
+        #l6 forward-line
+    !else
+        set-variable #l2 " ..."
+    !endif
     set-mark
     set-variable $window-line #l1
-    0x34 narrow-buffer .scheme.fold-close collapse-markup
+    0x34 narrow-buffer .scheme.fold-close &cat &trr &lef @wl 60 #l2
 !emacro
 
 ; PUBLIC:: Toggle all of the collapses open/shut
@@ -158,12 +155,16 @@ define-macro collapse-all
         !force regex-forward #l9
         !while $status
             #l7 forward-line
+            set-variable #l1 &cat &trr &lef @wl 60 " ..."
             end-of-line
             set-mark
             !force regex-forward #l8
             !if $status
-                #l6 forward-line
-                0x34 narrow-buffer .scheme.fold-close collapse-markup 
+                !if &gre #l6 0
+                    set-variable #l1 &cat #l1 &cat " " &lef &trb @s0 15
+                    #l6 forward-line
+                !endif
+                0x34 narrow-buffer .scheme.fold-close #l1
                 #l5 forward-line
                 end-of-line
                 !force regex-forward #l9

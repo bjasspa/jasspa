@@ -92,21 +92,8 @@
         !abort
     !else
         ; markup line has been modified - generate the new line
-        set-variable #l2 &trb &rig $result &add &sin "..." $result 2
-        set-variable $result &spr "%s %s%s" &lget :fold 1 #l2 &lget :fold 3
-    !endif
-!emacro
-;CLOSE
-
-;OPEN fold-markup-enter
-0 define-macro fold-markup-enter
-    !if &les @# 0
-        ; no markup line modificaton
-        !abort
-    !elif &equ @# 2
-        set-variable $result "{{{"
-    !else
-        set-variable $result "}}}"
+        set-variable #l2 &trr &rig $result &add &sin "..." $result 2
+        set-variable $result &spr "%s%s%s" &lget :fold 1 #l2 &lget :fold 3
     !endif
 !emacro
 ;CLOSE
@@ -150,7 +137,7 @@ define-macro fold-close
         !if $status 
             forward-line
             !if &gre $window-line #l2
-                0x34 narrow-buffer .scheme.fold-close fold-markup
+                0x54 narrow-buffer .scheme.fold-close fold-markup
                 backward-line
                 &cond #l0 1 -1 buffer-mode "magic"
                 !return
@@ -175,7 +162,7 @@ define-macro fold-enter
                 backward-line
                 set-mark
                 set-variable $window-line &add #l0 1
-                0x33 narrow-buffer .scheme.fold-open fold-markup-enter
+                0x33 narrow-buffer .scheme.fold-open "{{{" "}}}"
                 forward-line
                 !return
             !endif
@@ -348,7 +335,7 @@ define-macro fold-remove
             set-variable $line-flags &bor $line-flags 0x40
             set-variable $line-scheme .scheme.fold-open
             forward-line
-            0x34 narrow-buffer .scheme.fold-close fold-markup
+            0x54 narrow-buffer .scheme.fold-close fold-markup
             backward-line
         !endif
         !force &sub #l1 $window-line search-backward &cat "^[ \t]*" &lget :fold 4
@@ -420,7 +407,7 @@ define-macro fold-remove
             set-variable $line-flags &bor $line-flags 0x40
             set-variable $line-scheme .scheme.fold-open
             forward-line
-            0x34 narrow-buffer .scheme.fold-close fold-markup
+            0x54 narrow-buffer .scheme.fold-close fold-markup
             backward-line
         !endif
         !force search-backward &cat "^[ \t]*" &lget :fold 4
