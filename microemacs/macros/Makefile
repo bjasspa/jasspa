@@ -66,7 +66,7 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		au3.eaf		\
 	me.emf		melogo.emf	\
 	mecua.emf	meme3_8.emf	menedit.emf	\
 	meserver.emf	metris.emf	misc.emf	mouse.emf	\
-	mouseosd.emf	msshift.emf	\
+	mouseosd.emf	mouserec.emf	msshift.emf	\
 	narrow.emf	newuser.emf	ntags.emf	\
 	openbsd.emf	openstep.emf	organiza.emf	organizd.emf	\
 	organize.emf	organizi.emf	organizl.emf	organizm.emf	\
