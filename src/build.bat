@@ -118,8 +118,8 @@ set MAKEFILE=win32v6.mak
 
 if "%LOGFILE%." == "." goto build_applog
 
-echo %MAKE% -f %MAKEFILE% %OPTIONS% >& %LOGFILE%
-%MAKE% -f %MAKEFILE% %OPTIONS% >& %LOGFILE%
+echo %MAKE% -f %MAKEFILE% %OPTIONS% > %LOGFILE% 2>&1
+%MAKE% -f %MAKEFILE% %OPTIONS% > %LOGFILE% 2>&1
 
 goto build_exit
 
@@ -127,8 +127,8 @@ goto build_exit
 
 if "%LOGFILEA%." == "." goto build_nolog
 
-echo %MAKE% -f %MAKEFILE% %OPTIONS% >>& %LOGFILEA%
-%MAKE% -f %MAKEFILE% %OPTIONS% >>& %LOGFILEA%
+echo %MAKE% -f %MAKEFILE% %OPTIONS% >> %LOGFILEA% 2>&1
+%MAKE% -f %MAKEFILE% %OPTIONS% >> %LOGFILEA% 2>&1
 
 goto build_exit
 
