@@ -234,6 +234,10 @@ define-macro jst-fill-paragraph
         !return
     !endif
     set-position "\x81"
+    ; Save the starting paragraph separator state - if the numeric argument
+    ; is false then this will be used to determine if we restore the current
+    ; position. 
+    set-variable #l9 &xseq @wl "^[ \t]*$"
     !force search-buffer "bem" "^>[^ \t\n>]*>"
     !if $status
         !if &seq @s0 ">end>"
@@ -249,7 +253,7 @@ define-macro jst-fill-paragraph
     !endif
     !force !force @# jst-fill-paragraphi
     set-variable #l1 $status
-    !if &not @?
+    !if &and &not @? &not #l9
         goto-position "\x81"
     !endif
     !return #l1
