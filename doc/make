@@ -1,26 +1,39 @@
-#_____________________________-!-Makefile-!-________________________________
+# -!- makefile -!-
 #
-#		!!! MICROSOFT WINDOWS MAKE FILE !!!
+# JASSPA MicroEmacs - www.jasspa.com
+# win32v6.mak - Make file for Windows using Microsoft MSVC development kit.
 #
-# Make file for MicroEmacs icon file using the Microsoft MSCV 2.0/4.0
-# development kit.
+# Copyright (C) 1997-2002 JASSPA (www.jasspa.com)
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation; either version 2 of the License, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+# more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+##############################################################################
 #
 # Author      : Jon Green
-# Created     : 22nd February 1997
-# Last Edited : <020106.1035>
+# Created:     22nd February 1997
+# Synopsis:    Make file for Windows using Microsoft MSVC development kit.
+# Notes:
 #
-# History     : JG  220297 Original  Constructed from emacssrc
-#
-# Details     :
 #               Build from the command line using nmake.
 #
 #               nmake              - builds locally.
 #		nmake clean        - cleans emacs directory
 #		nmake spotless     - cleans some more !!
 #		nmake install	   - builds and copies to c:\emacs.
-#____________________________________________________________________________
 #
-#
+##############################################################################
 #
 MEVER=		02
 
