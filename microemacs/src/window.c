@@ -2151,8 +2151,8 @@ positionSet(int f, int n)		/* save ptr to current window */
         /* store window dimentions so we can pick the best */
         pos->winMinRow = frameCur->windowCur->frameRow ;
         pos->winMinCol = frameCur->windowCur->frameColumn ;
-        pos->winMaxRow = frameCur->windowCur->frameRow + frameCur->windowCur->width ;
-        pos->winMaxCol = frameCur->windowCur->frameColumn + frameCur->windowCur->depth ;
+        pos->winMaxRow = frameCur->windowCur->frameRow + frameCur->windowCur->width - 1 ;
+        pos->winMaxCol = frameCur->windowCur->frameColumn + frameCur->windowCur->depth - 1 ;
     }
     if(n & mePOS_BUFFER)
         pos->buffer = frameCur->bufferCur ;
@@ -2247,7 +2247,7 @@ positionGoto(int f, int n)		/* restore the saved screen */
     {
         /* find the window */
         register meWindow *wp, *bwp=NULL;
-        int off, boff ;
+        int off, boff, ww, dd ;
         
         if(frameCur->windowList->next == NULL)
             bwp = frameCur->windowList ;
@@ -2269,12 +2269,16 @@ positionGoto(int f, int n)		/* restore the saved screen */
             wp = frameCur->windowList;
             while (wp != NULL)
             {
-                /* calculate how close this window matches the original */
-                off =     abs(((int) pos->winMinRow) - ((int) wp->frameRow)) +
-                          abs(((int) pos->winMinCol) - ((int) wp->frameColumn)) +
-                          abs(((int) pos->winMaxRow) - ((int) (wp->frameRow + wp->width))) +
-                          abs(((int) pos->winMaxCol) - ((int) (wp->frameColumn + wp->depth))) ;
-                if((bwp == NULL) || (off < boff))
+                /* calculate how close this window matches the original -
+                 * calculate the amount this window covers of the old window */
+                ww = (pos->winMaxRow < (wp->frameRow + wp->width - 1)) ? pos->winMaxRow : (wp->frameRow + wp->width - 1) ;
+                ww = ww - ((pos->winMinRow > wp->frameRow) ? pos->winMinRow : wp->frameRow) ;
+                dd = (pos->winMaxCol < (wp->frameColumn + wp->width - 1)) ? pos->winMaxCol : (wp->frameColumn + wp->width - 1) ;
+                dd = ww - ((pos->winMinCol > wp->frameColumn) ? pos->winMinCol : wp->frameColumn) ;
+                off = ww * dd ;
+                if((ww < 0) && (dd < 0))
+                    off = -off ;
+                if((bwp == NULL) || (off > boff))
                 {
                     bwp = wp ;
                     boff = off ;

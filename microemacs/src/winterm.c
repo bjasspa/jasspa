@@ -392,6 +392,11 @@ static HCURSOR meCursors[1]={NULL} ;
 static meFrame *
 meMessageGetFrame(HWND hwnd)
 {
+#ifdef _ME_CONSOLE
+    if (meSystemCfg & meSYSTEM_CONSOLE)
+        return frameCur ;
+#endif /* _ME_CONSOLE */
+    
     meFrameLoopBegin() ;
     
     if(((loopFrame->flags & meFRAME_HIDDEN) == 0) &&
@@ -3303,7 +3308,8 @@ done_syschar:
                 }
                 break;                    /* This is C-m */
             }
-#else
+#endif
+#ifdef _ME_WINDOW
             /* Distinguish between the Number Pad and standard enter */
 #if 0
             cc = ((lParam & 0x01000000) ? SKEY_kp_enter : SKEY_return) ;
@@ -3801,7 +3807,10 @@ defaultFont:
     
     meFrameLoopContinue(loopFrame->flags & meFRAME_HIDDEN) ;
     
-    meFrameSetWindowSize(loopFrame) ;
+#if (MEOPT_FRAME == 0)
+    if(loopFrame != NULL)
+#endif
+        meFrameSetWindowSize(loopFrame) ;
 
     meFrameLoopEnd() ;
     
@@ -5616,8 +5625,10 @@ meFrameGainFocus(meFrame *frame)
         
         /* Record the fact we have focus */
         frame->flags &= ~meFRAME_NOT_FOCUS ;
+#if MEOPT_MWFRAME
         if(frameCur != frame)
             frameFocus = frame ;
+#endif
         
         /* Mark the screen as invalid */
         InvalidateRect(meFrameGetWinHandle(frame), NULL, meFALSE);
@@ -5658,8 +5669,10 @@ meFrameKillFocus(meFrame *frame)
     if(!(frame->flags & meFRAME_NOT_FOCUS))
     {
         frame->flags |= meFRAME_NOT_FOCUS ;
+#if MEOPT_MWFRAME
         if(frameFocus == frame)
             frameFocus = NULL ;
+#endif
         
         if(cursorState >= 0)
         {

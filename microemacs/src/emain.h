@@ -50,12 +50,11 @@
 /*#define _ME_FULL_DEBUG*/
 /*#define _ME_FREE_ALL_MEMORY*/
 
-/* These next 2 defines are platform specific, but as all supported 
+/* These next define is platform specific, but as all supported 
  * platforms use these and all future ones should I've put them here
- * for now.
+ * for now. NOTE APRAM has been removed, it became unused & redundant
  */
 #define _STDARG 1       /* Use <stdarg.h> in defintions                 */
-#define _ANSI_C 1       /* ANSI_C to be used                            */
 
 /* One may think that this should be platform dependant, BUT time and
  * experience has shown that it is best to always use a '/' in the body
@@ -64,12 +63,6 @@
  * as some need to check and convert to a '/' they define a CONVDIR_CHAR
  */
 #define DIR_CHAR  '/'   /* directory divide char, ie /bin/ */
-
-#ifdef _ANSI_C
-#define APRAM(x)        x
-#else
-#define APRAM(x)        ()
-#endif
 
 /**************************************************************************
 * UNIX : IRIX                                                             *
