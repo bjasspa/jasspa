@@ -7,7 +7,7 @@
 #
 # Author      : Jon Green
 # Created     : 22nd February 1997
-# Last Edited : <011219.1957>
+# Last Edited : <020102.1446>
 #
 # History     : JG  220297 Original  Constructed from emacssrc
 #
@@ -22,12 +22,17 @@
 #
 #
 #
-MEVER=		01
+MEVER=		02
 
 RM	=	- erase
-INSTALL	=	$(RUNBINDIR)\install
+RMDIR   =       - rd
+CD	=	cd
 MKDIR	=	mkdir
-COPY	=	copy
+CP	=	copy
+INSTALL	=	copy
+TAR	=	c:\cygwin\bin\tar
+GZIP	=	c:\cygwin\bin\gzip
+ZIP	=	c:\cygwin\bin\zip
 #
 # Documentation components
 #
@@ -43,6 +48,7 @@ NR2EHF	=	$(DOCBIN)nr2ehf
 NRORDER	=	$(DOCBIN)nrorder
 NRSEARCH=	$(DOCBIN)nrsearch
 HTS	=	$(DOCBIN)hts
+HTS2HTML=	$(DOCBIN)hts2html
 HC31	=	hc31
 #hc31
 
@@ -495,7 +501,7 @@ RELDOCFILES=	$(MERELDIR)\me.hlp \
 
 $(RELDIR)\html.z: me.hts
 		$(MKDIR) html
-		hts2html -p html -l ".html" me.hts
+		$(HTS2HTML) -p html -l ".html" me.hts
 		$(RUNBINDIR)\icomp -i html\*.* $(@F)
 		$(INSTALL) $(@F) $(@D)
 		deltree /Y html
@@ -537,52 +543,57 @@ clean::
 spotless:: clean
 	$(RM) *.??~
 	$(RM) tags
-	rd ehf\me
-	rd ehf
-	rd htm\me
-	rd htm
-	rd html\me
-	rd html
+	$(RMDIR) ehf\me
+	$(RMDIR) ehf
+	$(RMDIR) htm\me
+	$(RMDIR) htm
+	$(RMDIR) html\me
+	$(RMDIR) html
 
 me.ehf: meehf.hts
-	- md ehf 
-	- md ehf\me
-	cd ehf
+	- $(MKDIR) ehf 
+	- $(MKDIR) ehf\me
+	$(CD) ehf
 	$(RM) me\*.htm
 	$(RM) me\me.ehf
-	hts2html -l .htm ..\meehf.hts
-	copy me.htm me\1.htm
-	cd me
+	$(HTS2HTML) -l .htm ..\meehf.hts
+	$(CP) me.htm me\1.htm
+	$(CD) me
 	menu32 -n "@ehftools" *.htm
-	copy me.ehf ..\..
-	cd ..\..
+	$(CP) me.ehf ..\..
+	$(CD) ..\..
  
 mehtm.zip: me.hts
-	- md htm 
-	- md htm\me
-	cd htm
+	- $(MKDIR) htm 
+	- $(MKDIR) htm\me
+	$(CD) htm
 	$(RM) *.htm
 	$(RM) *.zip
 	$(RM) me\*.gif
 	$(RM) me\*.htm
-	hts2html -l .htm ..\me.hts
-	zip mehtm me.htm me/*
-	copy mehtm.zip ..
-	cd ..
+	$(HTS2HTML) -l .htm ..\me.hts
+	$(ZIP) mehtm me.htm me/*
+	$(CP) mehtm.zip ..
+	$(CD) ..
 	
 mehtml.tgz: me.hts
-	- md html
-	- md html\me
-	cd html
+	- $(MKDIR) html
+	- $(MKDIR) html\me
+	$(CD) html
 	$(RM) *.html
 	$(RM) *.tar.gz
 	$(RM) me\*.gif
 	$(RM) me\*.html
-	hts2html -l .html ..\me.hts
-	tar cvf mehtml.tar me.html me
-	gzip -9 mehtml.tar
-	copy mehtml.tar.gz ..\mehtml.tgz
-	cd ..
+	$(HTS2HTML) -l .html ..\me.hts
+	$(TAR) cvf mehtml.tar me.html me
+	$(GZIP) -9 mehtml.tar
+	$(CP) mehtml.tar.gz ..\mehtml.tgz
+	$(CD) ..
 	
 full:: mehtm.zip mehtml.tgz $(HLPS) me.ehf $(TXTS)
 
+install:: all full
+	$(CP) readme.txt ..\src
+	$(CP) faq.txt ..\src
+	$(CP) build.txt ..\src
+	$(CP) me.ehf ..\macros

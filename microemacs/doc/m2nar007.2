@@ -29,7 +29,7 @@
 .\"
 .\"***************************************************************************
 .\"
-.Id $Id: m2nar007.2,v 2.5 2001-12-20 17:29:48 jon Exp $
+.Id $Id: m2nar007.2,v 2.6 2002-01-04 21:04:02 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .TH "Build" 2
@@ -124,6 +124,9 @@ Build a console version (i.e. no window support).  Constructs the executable
 .IP \fB-nu\fR
 Build a console version with URL support (Windows '95/'98/NT only),  constructs the executable
 \fCmenu32.exe\fR.
+.IP "\fB\-p\fR \fI\|<searchpath>\|\fR"
+Sets the  default  system  search path to  \fI<searchpath>\fR,  the default is
+\fC/usr/local/microemacs\fR. Sets the default system search path to
 .IP \fB-S\fR
 Build  spotless.  Deletes  all of the object  files and any backup  files, tag
 files etc.
@@ -158,4 +161,18 @@ Other  \s-1UNIX\s0  ports  should  be fairly  easy from the base set of ported
 platforms. If any new platform ports are performed by individuals  then please
 submit the makefiles and any source changes back to JASSPA \- see
 .Hl "Contact Information" Contact - .
+.SS "Search Path"
+The default  search path is defined as  "\fI/usr/local/microemacs\fR"  for all
+UNIX  type   environments.   Recently  there  has  been  a  move  to  use  the
+"\fI/usr/share\fR"  directory.  The search path may be re-defined  through the
+macro definition  "\fC_SEARCH_PATH\fR".  Change the C pre-processor to include
+the macro  definition.  For  example,  to use  "\fI/usr/share/jasspa\fR"  with
+multiple sub-directories for each of the components:-
+.CS
+-D_SEARCH_PATH="\\"/usr/share/jasspa/company:\\
+/usr/share/jasspa/macros:\\
+/usr/share/jasspa/spelling\\""
+.CE
+Note due to the line length then the \fIbackslash\fR (\\) has been used
+to continue the lines.
 .FH
