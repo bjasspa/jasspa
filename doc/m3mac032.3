@@ -1,0 +1,80 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1998 Jon Green.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m3mac032.3
+.\"  Created By    : Jon Green
+.\"  Created       : Mon Aug 31 21:02:32 1998
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1998 Jon Green.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from Jon Green.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m3mac032.3,v 1.1.1.1 2000-07-25 22:04:01 jon Exp $
+.Im MicroEmacs command
+.so me.tni
+.TH draw 3
+.XI draw \- "Simple line drawing utility"
+.SH NAME
+draw - Simple line drawing utility
+.Me $a
+.SH SYNOPSIS
+.na
+\fBdraw\fR
+.ad
+.SH DESCRIPTION
+\fBdraw\fR  provides a simple way of drawing  lines into the  current  buffer,
+this has a variety  of uses such as  drawing  tables.  \fBdraw\fR  copies  the
+current buffer into a temporary  buffer and then allows the user to draw using
+simple commands until the user either aborts, discarding any changes, or exits
+insert the changes back into the buffer.
+.PP
+The keys for \fBdraw\fR are defined as follows:-
+.IP "\fBesc h\fR"
+Display a help dialog.
+.IP "\fBup\fR, \fBdown\fR, \fBleft\fR, \fBright\fR"
+The cursor keys (or any other keys bound the the same  commands) will move the
+cursor, drawing in the current mode.
+.IP "\fBd\fR"
+Change the current mode to \fBd\fRraw  (default),  cursor movement will result
+in drawing in the current style.
+.IP "\fBe\fR"
+Change the current mode to \fBe\fRrase,  cursor movement will result
+in erasing to spaces.
+.IP "\fBm\fR"
+Change the current  mode to  \fBm\fRove,  no drawing is performed  with cursor
+movement.
+.IP "\fBu\fR"
+Change the current mode to \fBu\fRndo,  cursor movement will result
+in undoing the character to the original or a space.
+.IP "\fB-\fR"
+Sets the current horizontal line drawing style to use '\fC-\fR's (default).
+.IP "\fB=\fR"
+Sets the current horizontal line drawing style to use '\fC=\fR's.
+.IP "\fBC-g\fR"
+Abort - changes are lost.
+.IP "\fBreturn\fR"
+Exit, inserting any changes into the current buffer.
+.SH NOTES
+.B draw
+is a macro defined in \fCdraw.emf\fR.
+.FH

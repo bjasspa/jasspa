@@ -1,0 +1,35 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd071.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|shell
+.ds C0 "(\fB\*(cXc\fR)\ \&
+.so me.tni
+.TH shell 2
+.XI shell \- "[\\fB\*(cXc\\fR] Create a new command processor or shell"
+.SH NAME
+shell \- Create a new command processor or shell
+.Me $a
+.SH SYNOPSIS
+.na
+\fBshell\fR \*(C0
+.ad
+.SH DESCRIPTION
+.B shell-command
+creates a new  command  processor  or shell.  Upon  exiting  the shell,  \*(mE
+redraws  its  screen and  continues  editing.  The  exceptions  to this are as
+follows:
+.IP "\fBX-Windows\fR"
+A new \fBxterm\fR is spawned off and editing control is returned to \*(mE once
+the \fBxterm\fR has initialized.
+.IP "\fBMicrosoft Windows\fR"
+A new \s-1MS-DOS\s0 shell is created and control is returned to \*(mE once the
+\s-1DOS\s0  console window has initialized. The shell created is determined by
+the  \s-1MS-DOS\s0   environment   variable   \fCCOMSPEC\fR,  this  may  be  a
+replacement shell e.g. \fC4DOS\fR.
+.SH "SEE ALSO"
+.na
+.Ht ipipe-shell-command 2 ,
+.Ht pipe-shell-command 2 ,
+.Ht suspend-emacs 2 .
+.ad
+.rm C0
+.FH

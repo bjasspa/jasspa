@@ -1,0 +1,43 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd020.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|window|comparison
+.so me.tni
+.TH compare-windows 2
+.XI compare-windows - "Compare buffer windows, ignore whitespace"
+.XI compare-windows-exact 3 "Compare buffer windows, with whitespace" 
+.SH NAME
+.Me "|compare-windows"
+compare-windows \- Compare buffer windows, ignore whitespace.
+.br
+.Me "|compare-windows-exact"
+compare-windows-exact \- Compare buffer windows, with whitespace.
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B compare-windows
+.br
+.B compare-windows-exact
+.ad
+.SH DESCRIPTION
+.B compare-windows
+compares the textural  content of  \s-1ALL\s0  the current  windows from their
+current cursor  position. These commands are generally used to locate the next
+difference in the windows  displayed. Returns \fCTRUE\fR if the buffers of the
+windows  do not  differ  from  the  current  position  to the end of the  file
+(inclusive), else returns \fCFALSE\fR setting the cursor of each buffer to the
+first point of difference.
+.PP
+The default mode of operation ignores  white-space, a numeric argument \fIn\fR
+of zero (0) then an exact white-space match is performed.
+.PP
+.B compare-windows-exact
+is a macro  short  cut for  \fI0  compare-windows\fR,  forcing  a white  space
+comparison.
+.SH "SEE ALSO"
+.na
+.Ht diff 3 ,
+.Ht diff-changes 3 ,
+.Ht gdiff 3 .
+.ad
+.FH

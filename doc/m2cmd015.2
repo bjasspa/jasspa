@@ -1,0 +1,70 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd015.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|capital
+.ds C0 "(\fB\*ec\fR)\ \&
+.ds C1 "(\fB\*el\fR)\ \&
+.ds C2 "(\fB\*eu\fR)\ \&
+.ds C3 "(\fB\*(cX\*cl\fR)\ \&
+.ds C4 "(\fB\*(cX\*cu\fR)\ \&
+.so me.tni
+.TH capitalize-word 2
+.XI capitalize-word - "\*(C0Capitalize word"
+.XI lower-case-word - "\*(C1Lowercase word (downcase)"
+.XI upper-case-word - "\*(C2Uppercase word (upcase)"
+.XI lower-case-region - "\*(C3Lowercase a region (downcase)"
+.XI upper-case-region - "\*(C4Uppercase a region (upcase)"
+.SH NAME
+.nf
+.Me "|capitalize-word"
+capitalize-word \- Capitalize word
+.Me "|lower-case-word"
+lower-case-word \- Lowercase word (downcase)
+.Me "|upper-case-word"
+upper-case-word \- Uppercase word (upcase)
+.Me "|lower-case-region"
+lower-case-region \-  Lowercase a region (downcase)
+.Me "|upper-case-region"
+upper-case-region \- Uppercase a region (upcase)
+.fi
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+\fBcapitalize-word\fR \*(C0
+.br
+.I n
+\fBlower-case-word\fR \*(C1
+.br
+.I n
+\fBupper-case-word\fR \*(C2
+.sp
+\fBlower-case-region\fR \*(C3
+.br
+\fBupper-case-region\fR \*(C4
+.ad
+.SH DESCRIPTION
+.B capitalize-word
+capitalizes the next \fIn\fR words.
+.PP
+.B lower-case-word
+changes the next \fIn\fR words to lower case.
+.PP
+.B upper-case-word
+changes the next \fIn\fR words to upper case.
+.PP
+.B lower-case-region
+changes all alphabetic characters in the marked region to lower case (see
+.Ht set-mark 2 ).
+.PP
+.B upper-case-region
+changes all alphabetic characters in the marked region to upper case
+.SH "SEE ALSO"
+.na
+.Ht set-mark 2 .
+.ad
+.rm C0
+.rm C1
+.rm C2
+.rm C3
+.rm C4
+.FH

@@ -1,0 +1,393 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			     Copyright 1999 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m3osd001.3
+.\"  Created By    : Jon Green
+.\"  Created       : Mon Feb 1 20:28:17 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m3osd001.3,v 1.1.1.1 2000-07-25 22:04:01 jon Exp $
+.Im MicroEmacs command|osd
+.so me.tni
+.TH organizer 3
+.XI organizer - "Calendar and address organizer"
+.SH NAME
+organizer \- Calendar and address organizer
+.Me $a
+.SH SYNOPSIS
+.na
+.B organizer
+.ad
+.SH DESCRIPTION
+\fBorganizer\fR  is a calendar  and address  organizer,  enabling  notes to be
+stored  against the calendar  days;  addresses may be archived into an address
+book.
+.PP
+\fBorganizer\fR uses the \*(mE in-built registry to store information within a
+registry  file  called  \fI<username>\fR\fC.eof\fR.   \fBorganizer\fR  may  be
+entered directly from the command line, or via the menu (via \fBTools\fR).
+.PP
+\fBorganizer\fR is displayed within a single osd dialog box, tab selections at
+the  top of the  window  enable  the  different  forms  of  information  to be
+displayed.  Navigation is typically performed using the mouse, where the mouse
+is absent then the  \fCTAB\fR  key may be used to move between the fields. The
+information presented is defined as follows:-
+.SS Month
+Shows the calendar  month, starting with the current month, the current day is
+hi-lighted  and  any  notes  that  have  been  entered  are  displayed  in the
+\fBNotes\fR entry box at the bottom of the page.
+.PP
+The default mode of operation is note entries for the current  month,  however
+specifying the  \fI<year>\fR  as the wild card '\fB*\fR' (star) enables annual
+events to be  entered  into the  organizer.  Annual  events are  automatically
+inserted into the calendar each year, typically used for birthdays etc.
+.PP
+The entry controls to the dialog are defined as follows:-
+.IP \fB<-\fR
+Advances to the previous month.
+.IP \fB->\fR
+Advances to the next month.
+.IP \fI<Month>\fR
+A pull down dialog enabling month selection.
+.IP \fI<year>\fR
+A text entry field specifying the current year as a 4 digit number. A value of
+\fB*\fR is the wild card year for specifying annual events.
+.IP \fBNotes\fR
+A free form text entry box  allowing a note to be  attached  to the  currently
+selected day.
+.IP \fBSave\fR
+Saves the entry back to file.
+.IP "\fBMonth To Buffer\fR"
+Dumps a view of the  month to the  currently  active  buffer,  any  notes  are
+also dumped to the buffer.
+.IP \fBExit\fR
+Exits the \fBorganizer\fR.
+.SS "Week"
+Shows the calendar week in the current  buffer, the days of the week are shown
+in a column  ordering. Note that selection of the week is typically  performed
+from the \fBMonth\fR view, moving to the \fBWeek\fR view (via the tab) selects
+the week appropriate to the previously selected day within the month view.
+.PP
+The entry controls on the dialog are defined as follows:-
+.IP \fB<-\fR
+Advances to the previous week.
+.IP \fB->\fR
+Advances to the next week.
+.IP \fI<year>\fR
+A text entry field  specifying the current year as a 4 digit number. The value
+of \fB*\fR for viewing and setting annual events is not valid in this view.
+.IP \fBNotes\fR
+A free form text entry box  allowing a note to be  attached  to the  currently
+selected day.
+.IP \fI<day>\fR
+Selecting a date in the  \fIday\fR  column  changes the view to the  \fBDay\fR
+view.
+.IP \fBSave\fR
+Saves the entry back to file.
+.IP "\fBWeek To Buffer\fR"
+Dumps a view of the week to the  currently  active  buffer, any notes are also
+dumped to the buffer.
+.IP \fBExit\fR
+Exits the \fBorganizer\fR.
+.LP
+\fBNote:\fR  The start day in the week view may be configured to commence on a
+day other than Sunday from the \fBSetup\fR tab.
+.SS Day
+Shows an extended view of the notes attached to the current day, day selection
+is typically  performed  from the  \fBMonth\fR or \fBWeek\fR  views. The entry
+controls on the dialog are defined as follows:-
+.IP \fB<\-\fR
+Advances to the previous day.
+.IP \fB\->\fR
+Advances to the next day.
+.IP \fI<year>\fR
+A text entry field specifying the current year as a 4 digit number. A value of
+\fB*\fR is the wild card year for specifying annual events.
+.IP \fI<month>\fR
+A pull down dialog enabling month selection.
+.IP \fI<day>\fR
+A text entry enabling the current day to be entered.
+.IP \fBNotes\fR
+A free form text entry box  allowing a note to be  attached  to the  currently
+selected day.
+.IP \fBSave\fR
+Saves the entry back to file.
+.IP "\fBDay To Buffer\fR"
+Dumps a view of the day to the currently  active buffer, any notes are printed
+in the buffer.
+.IP \fBExit\fR
+Exits the \fBorganizer\fR.
+.SS Lists
+The lists pane provides support for multiple list generation and manipulation.
+Each list  consists  of zero or more  ordered  items  each of which has a text
+field in which the user can enter information. 
+.PP
+Entry to the dialog is defined as follows:-
+.IP \fBList\fR
+Selects a list.
+.IP \fBNew\fR
+Creates a new list.
+.IP "\fBLines Per Item\fR"
+Sets the number of lines to use when displaying a list item.
+.IP \fBNew\fR
+Creates a new list item at the end of the current list. 
+.IP \fBUp\fR
+Moves the currently selected item (left click on the item number) up the list.
+.IP \fBDown\fR
+Moves the currently selected item down the list.
+.IP \fBInsert\fR
+Inserts a new list item before the currently selected item.
+.IP \fBDelete\fR
+Deletes the currently selected item.
+.IP \fBSave\fR
+Saves the entry back to file.
+.IP "\fBList To Buffer\fR"
+Dumps a view of the list to the currently  active buffer.
+.IP \fBExit\fR
+Exits the \fBorganizer\fR.
+.SS Address
+The address pane  provides  entry to the address book,  enabling  personal and
+business  details to be retained  against a single name, tabbed  selection  of
+\fBWork\fR or \fBHome\fR  selects the information  that is displayed. A search
+engine is provide to locate names within the  database, and  provision is made
+to save some text  against a name.  Entries in the  database  are, by default,
+organized  by record  number,  sorting may be  explicitly  performed  from the
+\fBSort\fR button.
+.PP
+Entry to the dialog is defined as follows:-
+.IP "\fI<Record No>\fR"
+The identity  number of the record, a value of \fB*\fR  denotes that this is a
+new record that is being inserted.
+.IP "\fB<<\fR"
+Moves to the start of the database.
+.IP "\fB>>\fR"
+Moves to the end of the database,  showing  record \fB*\fR, a new entry may be
+entered.
+.IP "\fB<\fR"
+Moves to the previous record.
+.IP "\fB>\fR"
+Moves to the next record.
+.IP "\fBName\fR"
+The name of the individual, entered as \fIfore-name\fR and \fIsurname\fR.
+.IP "\fBNickname\fR"
+A pseudo name assigned to an individual.
+.IP "\fBPartner\fR"
+Shown in the \fBHome\fR view only. The \fIforename\fR and \fIsurname\fR of any
+partner.
+.IP "\fBChld\fR"
+Shown in the \fBHome\fR view only in the \fBExtended Address Book Mode\fR. The
+names of any children (up to 3).
+.IP "\fBDOB\fR"
+Date of Birth, shown in the \fBHome\fR view only in the \fBExtended Address\fR
+\fBBook  Mode\fR. The dates of birth of the parents, any  children in addition
+to an anniversary date.
+.IP \fBCompany\fR
+Shown in the \fBWork\fR view only. The name of the company.
+.IP "\fBAddress\fR"
+The address of the individual/company.
+.IP "\fBTel\fR/\fBFax\fR/\fBMobile\fR"
+Telecommunication information.
+.IP "\fBEmail\fR/\fBWWW\fR/\fBFTP\fR"
+Electronic communication information.
+.IP \fBNotes\fR
+Notes associated with the individual.
+.IP \fBSave\fR
+Saves the address information to file.
+.IP \fBDup\fR
+Duplicates the currently  selected  address entry, creating a new record card.
+Typically used to construct a similar entry for a different individual.
+.IP \fBDelete\fR
+Deletes the currently selected entry.
+.IP "\fBAddr to Buffer\fR"
+Dumps the currently selected address to the current buffer.
+.IP \fBExit\fR
+Exits the organizer.
+.IP \fBFind\fR
+\fBfind\fR  provides  access  to a search  engine,  enabling  addresses  to be
+located in the address book.
+.RS
+.IP "\fBSearch For\fR"
+The string to search for.
+.IP "\fBIn Field\fR"
+Pull-down menu allowing the selection of the field to be searched in.
+.IP "\fBMatch\fR"
+Selects how strict the search should be; typically  \fBAny  Part\fR is used as
+this is the least  in-exact  search.  The  default  mode is  configured  in the
+\fBSetup\fR tab.
+.IP "\fBCase\fR/\fBmagic\fR"
+Selects the search  criteria. The default mode is configured in the \fBSetup\fR
+tab.
+.IP \fBFirst\fR
+Finds the first record that matches the search criteria
+.IP \fBNext\fR
+Finds the next record that  matches the search  criteria,  from the  currently
+displayed record.
+.IP \fBReverse\fR
+Searches in reverse order.
+.IP \fBExit\fR
+Exits the search
+.RE
+.IP \fBSort\fR
+\fBsort\fR  provides a  mechanism  to re-sort  the data base into a  different
+order. The sort is performed on up to 3 different  keys  enabling  conflicting
+primary sort fields to be resolved by the secondary sort criteria. The default
+sort order is \fI<Record No>\fR, \fI<None>\fR, \fI<None>\fR.
+.RS
+.IP "\fBSort Keys\fR"
+The \fIPrimary\fR, \fISecondary\fR and \fITertiary\fR sort fields are selected
+by a pull down menu. The fields to be used for sorting are  selected  from the
+list.
+.IP "\fBSort\fR"
+Performs the sort, based on the settings of the \fISort Keys\fR.
+.IP "\fBExit\fR"
+Exits the sort dialog.
+.RE
+.SS Setup
+The \fBsetup\fR pane configures a number of general settings of the organizer.
+.IP "\fBCurrent Organizer File\fR"
+The  full   pathname  of  the   organizer   file.  By  default   this  is  set
+to  \fI<userpath><userName>\fR\|\fB.eof\fR and can be altered using
+.Ht user-setup 3 .
+.IP "\fBChange Name\fR"
+Allows the displayed name of the month and the day to be modified.
+.IP "\fBFirst Day of the week\fR"
+Selects the first day of the week, this sets the first day to be  displayed in
+the \fBWeek\fR view and the first column in the \fBMonth\fR view.
+.IP "\fBMin New Year Days\fR"
+The number of days that must  appear in the first week of the New Year for the
+week to be considered  week 1. Modifying the value of this field  modifies the
+week number.
+.LP
+The  \fBCalendar\fR  section allows the wordy  representation  of the calendar
+date  to be  modified.  Typically  used to  modify  the  names  to the  native
+language.
+.IP "\fBChange Month Name\fR"
+Select the existing  month  representation  from the left-hand box and type in a
+new selection into the right-hand box.
+.IP "\fBChange Week Day Name\fR"
+As \fIChange Month Name\fR, enables the day of the week  representation  to be
+modified.
+.IP "\fBFirst Day Of The Week\fR"
+Selects the first day that appears in the \fBWeek\fR view.
+.IP "\fBMinimum Days of New Year in first week\fR"
+Specifies  the  number of days that must  appear in the first  week of the New
+Year  for the week to be  designated  as week 1. This  value  allows  the week
+number to be aligned with the calender weeks of standard  diaries. The default
+value is 7 days; but may be reduced to 5 or 6 for typical alignment.
+.LP
+The \fBAddress  Book\fR section allows the operation of the address book to be
+modified.
+.IP "\fBUse Extended Address Book\fR"
+The extended  address book allows  additional  information  to be added to the
+personal  address book. The extended  information  is limited to the amount of
+personal information attributed to an individual, including
+.I "Date of Birth"
+and
+.I Child
+information.
+.IP "\fBImport From File\fR"
+The \fBImport\fR from file allows the address book to be imported from a file.
+The import data format is a single line per entry,  comma  \fC,\fR  separated.
+The field  order is defined as  follows,  the  \fB*\fR  entries  indicate  the
+\fBExtended\fR \fBAddress\fR \fBBook\fR fields:-
+.RS
+.na
+.IP
+.IR "Record No" ,
+.IR "First Name" ,
+.IR "Surname" ,
+.IR "Nick Name" ,
+.IR "Selected" ,
+.IR "Notes" ,
+.IR "Partner First Name" ,
+.IR "Partner Surname" ,
+.IR "Home Address" ,
+.IR "Home Telephone" ,
+.IR "Home Fax" ,
+.IR "Home Mobile" ,
+.IR "Home E-Mail" ,
+.IR "Home WWW Page" ,
+.IR "Home FTP Site" ,
+.IR "Work Company" ,
+.IR "Work Address" ,
+.IR "Work Telephone" ,
+.IR "Work Fax" ,
+.IR "Work Mobile" ,
+.IR "Work E-Mail" ,
+.IR "Work WWW Page" ,
+.IR "Work FTP Site" ,
+.IR "Date-Of-Birth*" ,
+.IR "Partner DOB*" ,
+.IR "Date-Of-Marriage*" ,
+.IR "Child1 Name*" ,
+.IR "Child1 DOB*" ,
+.IR "Child2 Name*" ,
+.IR "Child2 DOB*" ,
+.IR "Child3 Name*",
+.IR "Child3 DOB*" .
+.RE
+.ad
+.IP "\fBExport To File\fR"
+Exports  the  address  book to a file, the  address  book is  exported  in the
+current  sort order, with the fields  defined as above. The  exported  address
+book may then be imported into a 3rd party package i.e. Microsoft Access, etc.
+.LP
+The \fBDefault  Address Find  Settings\fR  section  defines the default search
+criteria used in the address book search function.
+.IP "\fBWhole\fR/\fBStart\fR/\fBAny Part\fR"
+Radio buttons determine how the search is performed on the string.
+.RS
+.BS
+\fBWhole\fR matches  the whole  string  exactly.
+.BU
+\fBStart\fR  matches the first part of the string only (i.e.  \fCAb*\fR).
+.BU
+\fBAny  Part\fR finds entries that include the
+search string at any position within the data base search field.
+.BE 0
+.RE
+.IP "\fBCase Insensitive\fR"
+Checked, matches the strings regardless of case. (default).
+.IP "\fBMagic Mode\fR"
+Allows magic strings to be included in the search string.
+.SH NOTES
+\fBorganizer\fR  is a macro that is implemented in  \fCorganiz*.emf\fR  files.
+Organizer uses
+.Ht osd 2
+to create and manage the dialogs.
+.PP
+The maximum size of a text note is 1024 characters.
+.PP
+With an new  address  is  created it is added to the end of the  address  list
+regardless of the current sort criteria.
+.PP
+\fBOrganizer\fR replaces the original \fBCalendar\fR utility.
+.SH "SEE ALSO"
+.na
+.Ht user-setup 3 ,
+.Ht osd 2 .
+.ad
+.FH

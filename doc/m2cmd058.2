@@ -1,0 +1,41 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd058.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|shell
+.ds C0 "(\fB\*(cX`\fR)\ \&
+.so me.tni
+.TH get-next-line 2
+.XI get-next-line \- "\*(C0Find the next command line"
+.SH NAME
+get-next-line \- Find the next command line
+.Me $a
+.SH SYNOPSIS
+.na
+\fBget-next-line\fR \*(C0
+.ad
+.SH DESCRIPTION
+.B get-next-line
+is typically  used in conjunction with
+the
+.Ht compile 3
+and
+.Ht grep 3
+commands to enable the user to step through  errors/locations  one by one. The
+command looks for lines in the form defined by
+.Ht add-next-line 2
+in the order of definition. If a match is found the command attempts to
+find the next error or warning found from the current location (See
+.Ht  compile 3 ).
+If the buffer was not found then the next  buffer set is searched  for, and if
+found then the next expression from the cursor is  automatically  located. The
+command  fails  if none of the  buffers  exist,  or the end of the  buffer  is
+reached.
+.SH "SEE ALSO"
+.na
+.Ht $file-template 5 ,
+.Ht $line-template 5 .
+.Ht add-next-line 2 ,
+.Ht compile 3 ,
+.Ht grep 3 .
+.ad
+.rm C0
+.FH

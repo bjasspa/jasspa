@@ -1,0 +1,45 @@
+.\" -*- nroff -*-
+.Id $Id: m5var065.5,v 1.1.1.1 2000-07-25 22:04:06 jon Exp $
+.Im MicroEmacs variable|modes|macrodevelop
+.so me.tni
+.TH $mode-names 5
+.XI $mode-names - "Filtered mode name list"
+.SH NAME
+$mode-names \- Filtered mode name list
+.SH SYNOPSIS
+.B $mode-names
+.I ModeName
+.SH DESCRIPTION
+.B $mode-names 
+must first be  initialized  to the required  filter string, if the variable is
+evaluated  before it is initialized the value will be set to "\fIABORT\fR" and
+the command will fail. The filter takes the form of a
+.Hl "regex" RegularExpressions 2 .
+.PP
+Once  initialized,  evaluating  \fB$mode-names\fR  returns the name of the next
+mode which  matches the filter until no more modes are found, in which case an
+empty string is returned.
+.SH EXAMPLE
+The following  example  prints out the name of all modes to the massage line
+one at a time. Note that 
+.Ht &set 4
+is used on the
+.Ht !while 4
+statement to avoid evaluating \fB$mode-names\fR twice per loop.
+.Me "$emf-scheme"
+.CS
+set-variable $mode-names "*"
+!while &not &seq &set #l0 $mode-names ""
+    100 ml-write &cat "mode: " #l0
+!done
+.CE 0
+.Me "$ehf-scheme"
+.SH "SEE ALSO"
+.na
+.Ht buffer-mode 2 ,
+.Ht &bmode 4 ,
+.Ht $buffer-names 5 ,
+.Ht $command-names 5 ,
+.Hl "Regular Expressions" RegularExpressions 2 .
+.ad
+.FH

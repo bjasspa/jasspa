@@ -1,0 +1,109 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"  			     Copyright 1999 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        : 
+.\"  Module        : 
+.\"  Object Name   : m3mac045.3
+.\"  Created By    : Jon Green
+.\"  Created       : Mon Jul 5 18:16:21 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description	
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"	
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 JASSPA.
+.\" 
+.\"  All Rights Reserved.
+.\" 
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied, 
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m3mac045.3,v 1.1.1.1 2000-07-25 22:04:01 jon Exp $
+.Im MicroEmacs scuts|bind
+.so me.tni
+.TH iso-accents-mode 3
+.XI iso-accents-mode - "ISO accent expansion short-cut mode" 
+.XI iso-accents-expand - "Expand an ISO accent" 
+.SH NAME
+.Me "|iso-accents-mode"
+iso-accents-mode \- Enable/disable ISO accent expansion short-cut mode
+.br
+.Me "|iso-accents-expand"
+iso-accents-expand \- Expand an ISO accent
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B iso-accents-mode
+.br
+.I n
+.B iso-accents-expand
+.ad
+.SH DESCRIPTION
+\fBiso-accents-mode\fR provides a facility to enter a plain text representation
+of an ISO accent and then to expand it into a proper ISO  accented  character.
+For example:-
+.IP
+.na
+.nf
+\fC`a\fR => small a, grave accent
+\fC^a\fR => small a, circumflex accent
+\fC'a\fR => small a, acute accent
+\fC"a\fR => small a, umlaut
+\fC~a\fR => small a, tilde
+\fC.a\fR => small a, ring
+\fC14\fR => fraction, one-quater
+\fC12\fR => fraction, one-half
+\fC34\fR => fraction, three-quaters
+\fCae\fR => ae ligature
+\fCsz\fR => small sz ligature, German.
+\fC+-\fR => plus or minus (math.)
+\fCco\fR => copyright
+\fCrg\fR => registered trademark
+\fCtm\fR => trade mark
+\fCoe\fR => small oe ligature
+\fC/o\fR => small o, slash
+.fi
+.ad
+.PP
+In order to use the ISO accent  expansion  then it must be  installed,  either
+from  the  command  line  or,  for a more  permanent  installation,  from  the
+\fIuser\fR.emf   file.   Installation   is   performed   using   the   command
+\fBiso-accents-mode\fR,  if \fIn\fR is specified (any non-zero  numeric value)
+then the ISO accent expansion is installed locally into the current buffer. If
+\fIn\fR is omitted then expansion is available  globally (across all buffers).
+An argument of 0 and the \fBiso-accents-mode\fR is un-installed.
+.PP
+.B iso-accents-expand
+is the macro command that expands the ISO abbreviated  character sequence into
+it's ISO ASCII  character  equivalent.  This is by default  bound to \fCESC\fR
+\fCESC\fR. If an ISO character is not located then
+.Ht expand-abbrev 2
+is invoked to try a standard abbreviation.
+.SH NOTES
+\fBiso-accents-mode\fR and  \fBiso-accents-expand\fR are implemented as macros
+in the file  \fClangutl.emf\fR, the repertoire of expansions may be enhanced by
+editing this file. 
+.PP
+The  operation  of  the  \fBiso-accents-mode\fR   could  equally  as  well  be
+implemented with the appropriate definitions in a
+.Ht global-abbrev-file 2 .
+.SH "SEE ALSO"
+.na
+.Ht buffer-abbrev-file 2 ,
+.Ht expand-abbrev 2 ,
+.Ht global-abbrev-file 2 ,
+.Ht global-abbrev-file 2 .
+.ad
+.FH

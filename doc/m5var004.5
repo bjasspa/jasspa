@@ -1,0 +1,37 @@
+.\" -*- nroff -*-
+.Id $Id: m5var004.5,v 1.1.1.1 2000-07-25 22:04:04 jon Exp $
+.Im MicroEmacs variable|hilight
+.so me.tni
+.TH $buffer-hilight 5
+.XI $buffer-hilight - "Define current buffer hilighting scheme"
+.SH NAME
+$buffer-hilight \- Define current buffer hilighting scheme.
+.Me $a
+.SH SYNOPSIS
+\fB$buffer-hilight\fR \fIhilightNum\fR; Default is \fC0\fR
+.sp
+0 <= \fIhilightNum\fR <= 255
+.SH DESCRIPTION
+.B $buffer-hilight
+Sets the current buffer's hi-lighting scheme (see
+.Ht hilight 2
+for a full  description  of  hi-lighting).  The  default  setting  is 0  which
+specifies no hi-lighting,  when set to a non-zero, the hi-light scheme of that
+number \s-1MUST\s0 already be defined.
+.PP
+Terminals that cannot display color directly may still be able to take benefit
+from hi-lighting. A terminal that has fonts can use them in the same way using
+the
+.Ht add-color-scheme 2
+command. The hi-light scheme is also  used in printing (see
+.Ht print-buffer 2 ).
+If, however, your terminal  cannot display color in any way, it is recommended
+that hi-lighting is disabled (except when printing) as it does take CPU time.
+.SH "SEE ALSO"
+.na
+.Ht hilight 2 ,
+.Ht print-buffer 2 ,
+.Ht $buffer-scheme 5 ,
+.Ht $buffer-indent 5 .
+.ad
+.FH

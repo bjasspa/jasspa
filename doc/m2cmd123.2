@@ -1,0 +1,88 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd123.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|file
+.so me.tni
+.TH append-buffer 2
+.XI append-buffer - "Write contents of buffer to end of named file"
+.SH NAME
+append-buffer \- Write contents of buffer to end of named file
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B append-buffer
+"\fIfile-name\fR"
+.ad
+.SH DESCRIPTION
+.B append-buffer
+is used to write the  contents of the current  buffer into an  \s-1EXISTING\s0
+file. Use
+.Ht save-buffer 2
+if the buffer is to over-write the existing file already  associated  with the
+buffer. Use
+.Ht write-buffer 2
+if the  buffer is to be written  out to a new file, or to replace an  existing
+file.
+.PP
+.B append-buffer
+writes the contents of the current  buffer to the named file  \fIfile-name\fR.
+But unlike
+.Ht write-buffer 2
+the  action of the write does not change the  attributes  associated  with the
+file (if it exists), it also does not effect the stats of the current buffer.
+.PP
+On writing the file, append-buffer ignores the
+.Ht time 2m
+and
+.Ht backup 2m
+mode  settings. The current  buffer will not be time stamped and a backup will
+not be created for "\fIfile-name\fR". If the buffer contains a
+.Ht narrow 2m
+it will automatically  be removed  before  saving so that the whole  buffer is
+saved and restored when saving is complete
+.PP
+The  argument  \fIn\fR  is a bit based  flag, where:-
+.IP \fB0x01\fR
+Enables  validity checks  (default). These include a check that the given file
+already  exist, if not  confirmation  of writing is  requested  from the user.
+Without  this flag the  command  will always  succeed  wherever  possible.  If
+"\fIfile-name\fR"  does not  exist  the  buffer  is  written  out in a similar
+fashion to using the command
+.Ht write-buffer 2 .
+.IP \fB0x02\fR
+Disables the expansion of any narrows (see
+.Ht narrow-buffer 2 )
+before appending the buffer.
+.IP \fB0x04\fR
+Truncate the existing file before writing out the contents of the buffer. This
+means that the file will  consist  solely of the contents of the buffer, but it
+will still have the file attributes of the original file.
+.PP
+If \fIn\fR is not specified then the default argument of 1 is used.
+.SH EXAMPLE
+The  following  example  appends the current  buffer onto the end of a file,
+creating the file if it does not exists
+.Me $emf-scheme
+.CS
+append-buffer "things_to_do.txt"
+.CE 
+.Me $ehf-scheme
+The following  example  truncates the users email file while  maintaining the
+file attributes. This is taken from
+.Ht vm 3
+where it is used to remove the current mail from the system mail box.
+.CS
+find-buffer "*vm-empty-buffer"
+-1 buffer-mode "ctrlz"
+5 append-buffer %vm-mail-src
+delete-buffer $buffer-bname
+.CE
+Note that the macro ensures that
+.Ht ctrlz 2m
+mode is removed. If it was enabled then the file written would not be empty. 
+.SH "SEE ALSO"
+.na
+.Ht write-buffer 2 ,
+.Ht save-buffer 2 .
+.ad
+.FH

@@ -1,0 +1,62 @@
+.\" -*- nroff -*-
+.Id $Id: m5var061.5,v 1.1.1.1 2000-07-25 22:04:06 jon Exp $
+.Im MicroEmacs variable|buffer|macrodevelop
+.so me.tni
+.TH $buffer-names 5
+.XI $buffer-names - "Filtered buffer name list"
+.SH NAME
+$buffer-names \- Filtered buffer name list
+.SH SYNOPSIS
+.B $buffer-names
+.I BufferName
+.SH DESCRIPTION
+.B $buffer-names 
+must first be set to the required  filter string, if the variable is evaluated
+before  it is  initialized  the  value  will be set to  "\fIABORT\fR"  and the
+command will fail. The filter takes the form of a
+.Hl "regex" RegularExpressions 2 .
+.PP
+Once initialized, evaluating  \fB$buffer-names\fR  returns the name of the next
+buffer which matches the filter until no more buffers are found, in which case
+an empty string is returned.
+.SH EXAMPLE
+The following  example  prints out the name of all buffers to the massage line
+one at a time. Note that 
+.Ht &set 4
+is used on the
+.Ht !while 4
+statement to avoid evaluating \fB$buffer-names\fR twice per loop.
+.Me $emf-scheme
+.CS
+set-variable $buffer-names ".*"
+!while &not &seq &set #l0 $buffer-names ""
+    100 ml-write &cat "buffer: " #l0
+!done
+.CE
+.Me $ehf-scheme
+The  following  example is the same except it lists only the buffers which are
+not directory listings
+.Me $emf-scheme
+.CS
+set-variable $buffer-names ".*[^/]"
+!while &not &seq &set #l0 $buffer-names ""
+    100 ml-write &cat "buffer: " #l0
+!done
+.CE 0
+.Me $ehf-scheme
+.SH NOTES
+The list of buffers is  evaluated  when the variable is  initialized,  buffers
+created after the initialization will not be included in the list.
+.PP
+Deleting  buffers which are in the list, before they are evaluated,  will have
+undefined effects.
+.SH "SEE ALSO"
+.na
+.Ht list-buffers 2 ,
+.Ht $buffer-bname 5 ,
+.Ht $file-names 5 ,
+.Ht $command-names 5 ,
+.Ht $mode-names 5 ,
+.Hl "Regular Expressions" RegularExpressions 2 .
+.ad
+.FH

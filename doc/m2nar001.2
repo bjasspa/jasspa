@@ -1,0 +1,565 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1998 Jon Green.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m2nar001.2
+.\"  Created By    : Jon Green
+.\"  Created       : Thu Aug 20 22:34:10 1998
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1998 Jon Green.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from Jon Green.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m2nar001.2,v 1.1.1.1 2000-07-25 22:03:59 jon Exp $
+.Im MicroEmacs
+.so me.tni
+.TH Installation 1
+.XI Installation - "Installation details for MicroEmacs"
+.SH "INSTALLATION"
+This page describes introductory notes for the installation and setup of \*(mE.
+.SS "Quick Install"
+The  quickest  way to  install  MicroEmacs  without  reading  the rest of this
+document is to:-
+.BS
+Create a new directory i.e. \fCme\fR or \fCmicroemacs\fR.
+.BU 
+Unpack the macros archive into this directory.
+.BU
+Unpack any spelling dictionaries into this directory.
+.BU
+Unpack the executable into this directory.
+.BU
+Run \fCme\fR from this directory.
+.BE
+On starting, use the mouse and configure the user from the menu bar:-
+.CS
+Help->User Setup
+.CE
+This  allows the user and screen  settings  to be  altered. On  becoming  more
+accustomed to the editor then a fuller installation may be performed.
+.IP "\fBGetting Help\fR"
+See
+.Hl "Contact Information" Contact - 
+for full contact information. A mail archive exists at:-
+.RS
+.CS
+http://www.egroups.com/list/jasspa/
+.CE
+If you wish to participate in the list then you must first register by sending
+an empty mail message body to:-
+.CS
+jasspa-subscribe@egroups.com
+.CE
+You will then be able to mail any questions  into the group.  Registration  is
+required in order to prevent \fIspam\fR mailings from entering into the lists. 
+.RE
+.SS "Distribution"
+MicroEmacs is distributed in the following files:-
+.BP "Complete Installations"
+The Microsoft  '95/'98/NT  platforms may be installed using the  \fBInstall\fR
+\fBShield\fR  installation utility and do not require the components specified
+in later sections.
+.na
+.nf
+\fCme32inst.zip\fR \- '95/'98/NT Install Shield Installation
+.fi
+.ad
+.BP "Executable Source Code"
+The source code release for \*(mE  contains  makefiles  (\fC*.mak\fR)  for all
+supported  platforms.  Microsoft  '95/'98/NT  makefiles contain options at the
+top of the makefile to enable/disable console and URL support.
+.na
+.nf
+\fCmesrc.zip\fR \- Source code for all platforms
+\fCmesrc.tar.gz\fR \- Source code
+.fi
+.ad
+.BP "Executable Images"
+.na
+.nf
+\fCmedos.zip\fR \- DOS Executable
+\fCmewin32.zip\fR \- Windows 32' (95/98/NT) Executable
+\fCmewin32s.zip\fR \- Windows win32s (Win3.1/3.11) Executable
+\fCmeirix5.gz\fR \- Silicon Graphics Irix 5 Executable
+\fCmeirix6.gz\fR \- Silicon Graphics Irix 6 Executable
+\fCmeaix34.gz\fR \- IBM's AIX 3.4 Executable
+\fCmehpux9.gz\fR \- Hewlett Packard HP-UX 9 Executable
+\fCmehpux10.gz\fR \- Hewlett Packard HP-UX 10 Executable
+\fCmesunos55.gz\fR \- Sun OS 5.5 Executable
+\fCmesunos56.gz\fR \- Sun OS 5.5 Executable
+\fCmesolx86.gz\fR \- Sun Solaris 2.6 Intel Platform Executable
+\fCmelinux20.gz\fR \- Linux 2.0.0 Executable
+\fCmefreebsd.gz\fR \- Free BSD Executable
+.fi
+.ad
+.IP "\fBHelp File Images\fR (all platforms)"
+.na
+.nf
+\fCmewinhlp.zip\fR \- Windows Help file
+\fCmehtm.zip\fR  \- HTML Help files for 8.3 file systems (.htm)
+\fCmehtml.tar.gz\fR \- HTML Help files (.html)
+.ad
+.fi
+.IP "\fBMacro File Images\fR (all platforms)"
+.na
+.nf
+\fCmemacros.zip\fR \- Macro files
+\fCmemacros.tar.gz\fR \- Macro files
+.fi
+.ad
+.IP "\fBSpelling Dictionaries\fR (all platforms)"
+One of the following base  dictionaries is required for spelling. The extended
+dictionaries  require  the  base  dictionary  and are  recommended  for a more
+comprehensive spelling list. Other languages are supported.
+.IP
+.na
+.nf
+\fCamerican.zip\fR \- American rules and base dictionary.
+\fCamericax.zip\fR \- American extended dictionary.
+\fCbritish.zip\fR \- British rules and base dictionary.
+\fCbritishx.zip\fR \- British extended dictionary.
+\fCdeutsch.zip\fR \- German rules and base dictionary.
+\fCdeutschx.zip\fR \- German extended dictionary.
+\fCespanol.zip\fR \- Spanish rules and dictionary.
+\fCfrancais.zip\fR \- French rules and dictionary.
+\fCportuges.zip\fR \- Portuguese rules and dictionary.
+.sp 1
+\fCamerican.tar.gz\fR \- American rules and base dictionary.
+\fCamericax.gz\fR \- American extended dictionary.
+\fCbritish.tar.gz\fR \- British rules and base dictionary.
+\fCbritishx.gz\fR \- British extended dictionary.
+\fCdeutsch.tar.gz\fR \- German rules and base dictionary.
+\fCdeutschx.gz\fR \- German extended dictionary.
+\fCespanol.tar.gz\fR \- Spanish rules and dictionary.
+\fCfrancais.tar.gz\fR \- French rules and dictionary.
+\fCportuges.tar.gz\fR \- Portuguese rules and dictionary.
+.fi
+.ad
+.IP
+.B NOTE:
+The binary  versions of the executables  held on the site include the platform
+name as part of the  executable  name i.e.  \fBme\fR  for  \fCDOS\fR is called
+\fBmedos.exe\fR.  On  installing  the  binaries  onto the target  machine, you
+should  rename  the  executable  to  \fBme\fR  or  \fBme.exe\fR,  whatever  is
+appropriate.  The  ONLY  exception  to  this  rule  is the  Microsoft  Windows
+executable where \fBmewin32.exe\fR should be renamed to \fBme32.exe\fR.
+Our reason for this naming is to allow the  executables  to be  unpacked in the
+same directory and not be confused with each other.
+.SS "Quick Start Guild For All Platforms"
+Simply  create a directory,  down-load  the files  required (see list for each
+platform  below) and  extract  into this  directory.  From a shell or  command
+prompt,  change to the directory,  making it the current one (i.e. \fBcd\fR to
+it), and run the  executable.  \*(mE  should  open with the on-line  help page
+visible.
+.PP
+On Windows based systems this can also be achieved by creating a short-cut and
+setting the Working Directory in Properties to this path.
+.PP
+To enable \*(mS to be run from any directory, simply include this directory in
+you \fBPATH\fR  environment  variable.  Alternatively,  copy the executable to
+somewhere in your PATH and set the environment variable
+.Hl MEPATH $MEPATH 5
+to point to this directory.
+.PP
+\*(mE  will  function   normally  in  this   environment,  but  in  multi-user
+environments  and for up-dating  purposes, it is strongly  recommended  that a
+proper installation is used, see below.
+.SS "Installation"
+.B "DOS"
+.RS
+.IP Executable:
+Compiled with DJGPP V1.0
+.IP "Distribution components required:"
+\fCmedos.zip\fR
+.br
+\fCmemacros.zip\fR
+.br
+\fI<spelling>\fR\fC.zip\fR
+.sp 1
+\fCmewinhlp.zip\fR if you are using windows 3.1/3.11
+.IP "Recommended installed components:"
+\fC4dos\fR \- Command shell (giving \fIstderr\fR redirection).
+.br
+\fCgrep\fR \- Version of grep (djgpp recommended)
+.br
+\fCmake\fR \- Version of make (djgpp recommended)
+.br
+\fCdiff\fR \- Version of diff (djgpp recommended)
+.IP "Installation:"
+Create the directory \fCc:\\me\fR (or other location)
+.IP
+Unzip the MicroEmacs components into \fCc:\\me\fR
+.IP
+Edit "\fCc:\\autoexec.bat\fR" and add the following lines:-
+.RS
+.CS
+SET MENAME=<name>
+SET PATH=%PATH%;c:\\me
+SET MEPATH="c:\\me"
+.CE
+Reboot the system.
+.IP
+MicroEmacs may be run from the command line using
+.CS
+me
+.CE 0
+.RE
+.IP "Graphics Cards:"
+MicroEmacs may be configured to the text modes of your graphics card. Refer to
+you graphics card DOS text modes to identify the text modes  supported by your
+monitor.  The  text  mode  number  may  be  entered   into  the  user  monitor
+configuration, defined in \fBHelp\fR->\fBUser Setup\fR.
+.IP "Running From Windows (3.x)"
+The DOS version of MicroEmacs may be executed from a \fB.pif\fR  file. Use the
+pif editor to create a new \fB.pif\fR  file to launch  MicroEmacs. The size of
+the DOS window may be configured  from the command line, set the terminal size
+using one of the following command lines:-
+.RS
+.CS
+me -c -v$TERM=E80x50        - 80 x 50 window
+me -c -v$TERM=E80x25        - 80 x 25 window.
+.CE
+We  usually  add the \fC\-c\fR option so that  MicroEmacs  is  executed  with
+history information. This may be omitted if required.
+.RE
+.RE
+.PP
+.ne 5
+.B "Windows 3.1/3.11"
+.RS
+.IP Executable: 
+Compiled with Microsoft Developer 2.0 
+.IP "Helper DLL:"
+Under \fBWin32s\fR a helper \s-1DLL\s0 \fBmethnk16.dll\fR is required to perform the 
+.Ht pipe-shell-command 2
+in   a   synchronous    manner.   This   should   be   installed    into   the
+\fCC:\\WINDOWS\\SHELL\fR  directory. This (rather inelegantly) gets around the
+problems of spawning a process under \fBwin32s\fR due to a number of Microsoft
+bugs in the operating  system. Note: that on a spawn  operation a \fCMS-DOS\fR
+window is  visible,  this is due to the  nature of the  command  shell on this
+platform which has a tendency to prompt the user at every opportunity, hence a
+certain amount of interaction (which is out of our control) is necessary.
+.IP
+The helper \s-1DLL\s0 is compiled with a 16-bit Windows compiler \- \s-1MSVC\s0 1.5.
+.IP "Distribution components required:"
+\fCmewin32s.zip\fR
+.br
+\fCmemacros.zip\fR
+.br
+\fCmewinhlp.zip\fR 
+.br
+\fI<spelling>\fR\fC.zip\fR
+.IP "Recommended installed components:"
+\fC4dos\fR \- command shell (giving \fIstderr\fR redirection)
+.br
+\fCgrep\fR \- Version of grep (GNU port of grep recommended)
+.br
+\fCdiff\fR \- Version of diff (GNU port of grep recommended)
+.br
+\fCmake\fR \- use nmake or GNU port of make.
+.IP win32s
+\fBwin32s\fR is a requirement on this platform, typically taken from 
+.B pw1118.exe
+which freely available on the Internet.
+.IP "Installation:"
+This version of Windows does not have a \fIinstall\fR directory as '95/'98 and
+it is expected that the  \fCMS-DOS\fR  version will coexist. No \fIInstall\fR
+\fIShield\fR  installation  is  provided.  Install  in a  directory  structure
+similar to  \fCMS-DOS\fR.  Install  the helper \s-1DLL\s0  \fBmethnk16.dll\fR  in the
+\fCC:\\WINDOWS\\SHELL\fR directory. Create a
+.Ht me32.ini 8
+file in the \fCC:\\WINDOWS\fR  directory to identify the location of the \*(mE
+components, this much the same as the '95/'98 file, change the directory paths
+to suite the install base.
+.IP "Support Status:"
+The  \fBwin32s\fR  release  has not been  used  with  vengeance,  although  no
+specific problems have been reported with this release. 
+.RE
+.PP
+.ne 5
+.B "Windows '95/'98/NT"
+.RS
+.IP Executable:
+Compiled with Microsoft Developer 5.0
+.IP "Install Shield"
+An \fBInstall Shield\fR version of \*(mS is available which includes all
+of the distribution components.
+.IP "Distribution components required:"
+\fCmewin32.zip\fR
+.br
+\fCmemacros.zip\fR
+.br
+\fI<spelling>\fR\fC.zip\fR
+.br
+\fCmewinhlp.zip\fR (optional)
+.IP "Recommended installed components:"
+\fC4dos\fR or \fC4nt\fR \- command shell
+.br
+\fCgrep\fR \- Version of grep (GNU port of grep recommended)
+.br
+\fCdiff\fR \- Version of diff (GNU port of grep recommended)
+.br
+\fCmake\fR \- use nmake or GNU port of make.
+.IP "Installation:"
+Create the directory "\fCC:\\Program\ Files\\Jasspa\\MicroEmacs\fR" (or other location)
+.IP
+Unzip the MicroEmacs components into "\fCC:\\Program Files\\Jasspa\\MicroEmacs\fR"
+.IP
+Create the file "\fCc:\\windows\\me32.ini\fR" and add the following lines:-
+.RS
+.CS
+[Defaults]
+mepath=C:\\Program Files\\Jasspa\\MicroEmacs
+userPath=C:\\Program Files\\Jasspa\\MicroEmacs
+fontfile=dosapp.fon
+.CE
+Create a short cut to MicroEmacs for the Desktop
+.PP
+Right click on the desk top
+.CS
+=> New
+=> Short
+=> Command Line: "c:\\Program Files\\Jasspa\\MicroEmacs\\me.exe \-c"
+=> Short Cut Name: "MicroEmacs"
+.CE
+MicroEmacs may be executed from the shortcut.
+.RE
+.IP "Open Actions"
+Microsoft Windows 95/98/NT provide short cut actions, assigning an open action
+to a file. The short  cuts may be  installed  from the  \fBInstall  Shieled\fR
+installation,  but may  alternativelly  be  explictly  defined by editing  the
+registry file with
+.Hr regedit 1 .
+.IP
+A file open  action in the  registry is bound to the file file  extension,  to
+bind a file  extension  \fI.foo\fR to the editor then the  following  registry
+entries should be defined:-
+.RS
+.CS
+[HKEY_CLASSES_ROOT\\.foo]
+"MicroEmacs_foo"
+[HKEY_CLASSES_ROOT\\MicroEmacs_foo\\DefaultIcon]
+"C:\\Program File\\JASSPA\\MicroEmacs\\meicons,23"
+[HKEY_CLASSES_ROOT\\MicroEmacs_foo\\Shell\\open]
+"&Open"
+[HKEY_CLASSES_ROOT\\MicroEmacs_foo\\Shell\\open\\command]
+"C:\\Program File\\JASSPA\\MicroEmacs\\me32.exe -o "%1""
+.CE 0
+.RE
+.IP 
+In the previous exaple the \fIDefaultIcon\fR entry is the icon assigned to the
+file.  This may be an icon  taken  from  \fCmeicons.exe\fR  (in this case icon
+number 23), or may be some other icon. The open action in the example uses the
+\fB-o\fR  option  of the  \fIclient-server\fR,  which  loads the file into the
+current \*(mE session, alternatively the \fB-c\fR option may be used to retain
+the previous context, or no option if a new session with no other files loaded
+is started.
+.IP
+A generic open for \s-1ALL\s0  files may be defined using a wildcard, this may
+be used to place a \fIMicroEmacs\fR  edit entry in the right-click popup menu,
+as follows:-
+.RS
+.CS
+[HKEY_CLASSES_ROOT\\*\\shell]
+[HKEY_CLASSES_ROOT\\*\\shell\\MicroEmacs]
+"&MicroEmacs"
+[HKEY_CLASSES_ROOT\\*\\shell\\MicroEmacs\\command]
+"C:\\Program File\\JASSPA\\MicroEmacs\\me32.exe -o "%1""
+.CE 0
+.RE
+.RE
+.PP
+.B UNIX
+.RS
+.IP "Executable:"
+Compiled with native compilers.
+.IP "Distribution Components Required:"
+\fCme\fR\fI<unix>\fR\fC.gz\fR
+.br
+\fCmemacros.tar.gz\fR
+.br
+\fI<spelling>\fR\fC.gz\fR
+.br
+\fChtml.tar.gz\fR (optional)
+.IP "Installation:"
+It is recommended that all files are placed in \fC/usr/local\fR, although they
+may be installed locally.
+.IP
+Unpack the executable and placed in "\fC/usr/local/bin\fR"
+.IP
+Create the new directory "\fC/usr/local/microemacs\fR", unpack and install the
+\fCmemacros.tar.gz\fR into this directory.
+.IP
+For
+.Hr csh 1
+users  execute a "\fCrehash\fR"  command and then
+.Ht me 1
+can be executed from the command line.
+.IP
+By default a X-Windows  terminal is displayed, ensure that  \fC$DISPLAY\fR and
+\fC$TERM\fR  are correctly  configured. To execute a terminal  emulation  then
+execute  \fBme\fR  with the \fC\-n\fR  option i.e. "\fCme\  \-n\fR". Note that
+this is not required if you are using a \fCvt100\fR emulation.
+.RE
+.SS "Organizing a local user profile"
+MicroEmacs  uses  local user  configuration  profiles  to store user  specific
+information. The user  information may be stored in the MicroEmacs  directory,
+or more  typically in a users  private  directory.  The  environment  variable
+\fC$MENAME\fR is typically used to determine the identity of the user.
+.PP
+The  location  of  the  user  profile  will  depend  upon  your   installation
+configuration.
+.BP "Single Machine"
+For a  single  user  machine  it is  typically  easiest  to use the  installed
+MicroEmacs  directory  where user  specific  files are  placed.  This  method,
+although not  recommended, is simple as all files that are executed are in the
+same location. The \fC$MEPATH\fR is not changed.
+.BP UNIX
+The  \s-1UNIX\s0  environment  is fairly easy and  operates as most other UNIX
+applications.  The user should  create a  MicroEmacs  directory  in their home
+directory for their own local configuration. Assigning a suitable name such as
+"\fCmicroemacs\fR", or if the file is to be hidden "\fC.microemacs\fR".
+.IP
+The  \fC$MEPATH\fR  environment  variable  of the user  should be  modified to
+include the users MicroEmacs path  \s-1BEFORE\s0 the default macros MicroEmacs
+path i.e.
+.RS
+.IP "Ksh/Zsh:"
+.C "export MEPATH=$HOME/microemacs:/usr/local/bin"
+.IP "Csh/Bash:"
+.C "setenv MEPATH $HOME/microemacs:/usr/local/bin"
+.RE
+.IP
+Where \fC$HOME\fR is defined as "\fC/usr/<name>\fR" (typically by default).
+.BP "DOS/Windows"
+DOS and Windows are a little more tricky as numerous  directories  at the root
+level are more than a little  annoying. It is suggested that the user directory
+is created as a sub-directory of the MicroEmacs directory. i.e.
+.RS
+.IP
+"\fCc:\\me\\\fR\fI<user>\fR" for DOS
+.IP or
+"\fCc:\\Program\ Files\\Jasspa\\MicroEmacs\\\fR\fI<user>\fR" for Windows
+.RE
+.IP
+The \fC$MEPATH\fR  environment  variable  (see
+.Ht me32.ini 8
+for Windows) is
+modified to include the user component before the MicroEmacs component
+where \fC$MEPATH\fR is defined i.e.
+.RS
+.CS
+SET MEPATH=c:\\me\\<user>;c:\\me
+.CE
+where \fC<user>\fR is the user name (or \fC$MENAME\fR).
+.RE
+.SS "Alternative Directory Configurations"
+Numerous other configurations exist to organize the macro directories, to take
+the directory organization to the extreme then it is sometimes easiest to keep
+all of the macro components separate. An installation layout which encompasses
+different macro directories for:-
+.BS
+User profiles - 1 per user.
+.BU
+Shared company profiles - 1 per organization.
+.BU
+MicroEmacs macros which are updated from time to time.
+.BE
+The configuration on different systems may be defined as follows:-
+.BP "UNIX"
+The shared files are placed in \fC/usr/local\fR
+.RS
+.CS
+/usr
+   \\
+  local
+     \\
+  microemacs   - Spelling + standard macros
+       \\
+     company   - Company specific files
+.CE
+The user profile is stored in the users directory
+.CS
+/usr
+  \\
+<name>
+    \\
+ microemacs    - User specific files
+.CE
+The user should configure the \fC$MEPATH\fR as:
+.CS
+MEPATH=$(HOME)/microemacs:/usr/local/microemacs/company:/usr/local/microemacs
+.CE 0
+.RE
+.BP "DOS/WINDOWS"
+For \s-1DOS\s0 and MS-Windows environments, bearing in mind the problem of the
+root  directory, then it is easier to use the "\fCme\fR"  directory as a place
+holder for a number of sub-directories, using a configuration such as:-
+.RS
+.CS
+            c:
+            |
+            me      - Place holder directory
+          / | \\
+        /   |   \\
+   <name> macros company
+.CE
+The user should configure the \fC$MEPATH\fR as:-
+.CS
+SET MEPATH=c:\\me\\<name>;c:\\me\\company;c:\\me\\macros
+.CE 0
+.RE
+.SS "User Profile Files"
+Files contained in the user profiles typically include:-
+.PP
+\fI<name>\fR\fC.emf\fR \- The users start up profile.
+.br
+\fI<name>\fR\fC.edf\fR \- The users spelling dictionary.
+.br
+\fI<name>\fR\fC.erf\fR \- The users registry configuration file.
+.PP
+These  files are  established  from the menu  "\fBHelp\->User  Setup\fR".  The
+"\fBSetup  Path\fR"  item  defines  the  location  of the  files,  but must be
+\s-1MANUALLY\s0 included in the \fC$MEPATH\fR environment.
+.SS "Company Profiles"
+Company  profiles  include standard files and extensions to the standard files
+which may be related to a company, this is typically \fI<company>\fR.emf where
+\fI<company>\fR is the name of the company.
+.PP
+The directory may also include template files
+.Ht etf 8
+files which defines
+the standard header template used in the files. Files in the "\fCcompany\fR"
+directory would over-ride the standard template files.
+.PP
+The  company  directory  should be added to the  \fC$MEPATH\fR  after the user
+profile and before the MicroEmacs standard macro directory.
+.SH "SEE ALSO"
+.na
+.Ht $MENAME 5 ,
+.Ht $MEPATH 5 ,
+.Hl "Company Profiles" CompanyProfiles 2 ,
+.Hl "File Hooks" fileHooks 2 ,
+.Hl "File Language Templates" languageTemplates 2 ,
+.Hl "User Profiles" UserProfiles 2 .
+.ad
+.FH

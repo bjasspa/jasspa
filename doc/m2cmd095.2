@@ -1,0 +1,54 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd095.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|window
+.ds C0 "(\fB\*(cXo\fR)\ \&
+.ds C1 "(\fB\*(cXp\fR)\ \&
+.so me.tni
+.TH next-window 2
+.XI next-window - "\*(C0Move the cursor to the next window"
+.XI previous-window - "\*(C1Move the cursor to the previous window"
+.SH NAME
+.Me |next-window
+next-window \- Move the cursor to the next window
+.br
+.Me |previous-window
+previous-window \- Move the cursor to the previous window
+.Me $a
+.SH SYNOPSIS
+.na
+\fIn\fR \fBnext-window\fR \*(C0
+.br
+\fIn\fR \fBprevious-window\fR \*(C1
+.ad
+.SH DESCRIPTION
+.B next-window
+makes the next window down the current  window. A +ve argument  \fIn\fR, makes
+the \fIn\fRth window from the top current, where 1 is the first window. A \-ve
+argument  \fIn\fR  specifies the \fInth\fR  window from the bottom current. An
+argument \fIn\fR of 0, makes the next window down current, if this is the last
+window then the command fails.
+.PP
+.B previous-window
+makes the next  window up the current  window. A +ve  argument  \fIn\fR,  this
+makes the \fIn\fRth window from the bottom the current window. A \-ve argument
+\fIn\fR makes the \fInth\fR  window from the top current. An argument  \fIn\fR
+of zero makes the  previous  window  current, if this is the first window then
+the command fails.
+.PP
+When no argument is supplied  then the next (or previous)  window  becomes the
+current window. Wrapping occurs from bottom to top on  \fBnext-window\fR,  and
+top to bottom on \fBprevious-window\fR.
+.SH NOTES
+The \fIn=0\fR  argument is typically used to traverse the window list from top
+to  bottom,  where  the  \fCFALSE\fR  status  may be  trapped  and  used as an
+indicator that end of the windows list has been reached.
+.SH "SEE ALSO"
+.na
+.Ht goto-window 2 ,
+.Ht next-window-find-buffer 2 ,
+.Ht next-window-find-file 2 ,
+.Ht set-window 2 .
+.ad
+.rm C0
+.rm C1
+.FH

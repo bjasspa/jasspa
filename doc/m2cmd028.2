@@ -1,0 +1,77 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd028.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command
+.ds C0 "(\fB\*(eS\fR)\ \&
+.ds C1 "(\fB\*cx\fR)\ \&
+.ds C2 "(\fB\*ch\fR)\ \&
+.ds C3 "(\fB\*cc\fR)\ \&
+.so me.tni
+.TH prefix 2
+.XI prefix - "Key prefix command"
+.SH NAME
+.nf
+prefix \- Key prefix command
+.Me "|prefix2"
+prefix2 \- Control(2) prefix
+.Me "|prefix3"
+prefix3 \- Control(3) prefix
+.Me "|prefix4"
+prefix4 \- Control(4) prefix
+.fi
+.Me $a
+.SH SYNOPSIS
+.na
+\fIn\fR \fBprefix\fR
+.sp
+Default prefix bindings:
+.sp
+\fBprefix 1\fR \*(C0
+.br
+\fBprefix 2\fR \*(C1
+.br
+\fBprefix 3\fR \*(C2
+.br
+\fBprefix 4\fR \*(C3
+.ad
+.SH DESCRIPTION
+.B prefix
+sets up to 8 prefix  key  sequences,  allowing  two  stoke key  bindings.  The
+command does not do anything, it is used to create  double barrel key bindings
+such as such as
+.Ht goto-line 2 
+(\fB\*eg\fR).  This  binding  may be  redefined,  redefining  \s-1ALL\s0  meta
+bindings. If the meta  bindings  are not required the command  should first be
+unbound using the
+.Ht global-unbind-key 2 .
+.PP
+The prefix key can only be defined using the
+.Ht global-bind-key 2 ,
+passing the command the prefix number required, for example:
+.Me $emf-scheme
+.CS
+1 global-bind-key "prefix" "\*e"
+2 global-bind-key "prefix" "\*cx"
+.CE
+.Me $ehf-scheme
+Binds the first prefix to the Escape key and the second prefix to Control-x.
+.PP
+The first prefix key (\fBprefix 1\fR) differs from the other prefixes since it
+permits  entry of the numeric  argument at the message  line, e.g.
+"\fCesc 1 0 C-f\fR" will move forward 10 characters.
+.SH NOTES
+Invocating this command via 
+.Ht execute-named-command 2
+or by a macro has no  effect. It can be bound to only one key  sequence  which
+must be a single key stroke such as \fB\*(cX\fR etc. Re-binding the command to
+another  key will not only  unbind the new key but also the current
+\fBprefix ?\fR key bindings.
+.SH "SEE ALSO"
+.na
+.Ht global-bind-key 2 ,
+.Ht global-unbind-key 2 .
+.ad
+.rm C0
+.rm C1
+.rm C2
+.rm C3
+.FH

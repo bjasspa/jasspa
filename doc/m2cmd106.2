@@ -1,0 +1,33 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd106.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|file
+.ds C0 "(\fB\*(cX\*cr\fR)\ \&
+.so me.tni
+.TH read-file 2
+.XI read-file - "\*(C0Find and load file replacing current buffer"
+.SH NAME
+read-file \- Find and load file replacing current buffer
+.Me $a
+.SH SYNOPSIS
+.na
+.B read-file
+"\fI\&file-name\fR\&" \*(C0
+.ad
+.SH DESCRIPTION
+.B read-file
+operates like
+.Ht find-file 2 ,
+this  command  either  finds the file in a buffer, or creates a new buffer and
+reads the file in. The  command  destroys the current  buffer  before the new
+buffer is created  making  this  command  ideal to use when the wrong file was
+entered on a
+.Ht find-file 2 .
+This  command  is also useful for re-loading files that have changed on disk.
+.SH "SEE ALSO"
+.na
+.Ht reread-file 3 ,
+.Ht find-file 2 ,
+.Ht view-file 2 .
+.ad
+.rm C0
+.FH

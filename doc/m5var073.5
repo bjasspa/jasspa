@@ -1,0 +1,66 @@
+.\" -*- nroff -*-
+.Id $Id: m5var073.5,v 1.1.1.1 2000-07-25 22:04:07 jon Exp $
+.Im MicroEmacs variable|macrodevelop
+.so me.tni
+.TH $mouse 5
+.XI $mouse - "Mouse configuration variable"
+.SH NAME
+$mouse \- Mouse configuration variable
+.Me $a
+.SH SYNOPSIS
+.na
+\fB$mouse\fR \fIbitmask\fR; Default is system dependent
+.ad
+.SH DESCRIPTION
+The  \fB$mouse\fR  is used to define and configure the \*(mS mouse support, it
+is a bit based flag where:-
+.IP \fB0x00f\fR
+Defines  the number of button the mouse has, only  values 1, 2 & 3 are useful.
+By  default  \*(mS uses the  system  information  to  determine  the number of
+buttons on the mouse, this is not fool proof so the user can set these bits to
+the appropriate number if the initial value is incorrect.
+.IP \fB0x010\fR
+If set the mouse is enabled, if clear the mouse will not  function. On systems
+which do not support  mice (such as UNIX  Termcap)  this bit will be clear and
+can not be altered.
+.IP \fB0x020\fR
+If set the buttons are  reversed,  i.e. the left button  becomes the right and
+vice versa. By default this bit is clear.
+.IP \fB0xf0000\fR
+Defines the current mouse icon to used, valid values are as follows:
+.IP
+.RS
+.nf
+\fB0x00000\fR - Set mouse to default icon.
+\fB0x10000\fR - Set mouse to arrow icon.
+\fB0x20000\fR - Set mouse to text I-beam icon.
+\fB0x30000\fR - Set mouse to crosshair icon.
+\fB0x40000\fR - Set mouse to the grab icon.
+\fB0x50000\fR - Set mouse to the wait icon.
+\fB0x60000\fR - Set mouse to the stop icon.
+.fi
+.RE
+.IP
+This feature is not supported on some systems and on others some icons are not
+obvious due to platform limitations.
+.SH EXAMPLE
+The following example checks that the mouse is currently available, if not, it
+aborts.
+.Me $emf-scheme
+.CS
+!if &not &band $mouse 0x10
+    ml-write "[Mouse support is not currently available]"
+    !abort
+!endif
+.CE 0
+.Me $ehf-scheme
+.SH NOTES
+The mouse can be easily configured using
+.Ht user-setup 3 .
+.SH "SEE ALSO"
+.na
+.Ht user-setup 3 ,
+.Ht $system 5 ,
+.Ht $platform 5 .
+.ad
+.FH

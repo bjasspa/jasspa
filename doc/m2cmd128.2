@@ -1,0 +1,31 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd128.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|window
+.ds C0 "(\fB\*(cX2\fR)\ \&
+.so me.tni
+.TH split-window-vertically 2
+.XI split-window-vertically - "\*(C0Split the current window into two"
+.SH NAME
+split-window-vertically \- Split the current window into two
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+\fBsplit-window-vertically\fR \*(C0
+.ad
+.SH DESCRIPTION
+.B split-window-vertically
+splits  the  current  window  vertically  into two near  equal  windows,  each
+displaying  the buffer  displayed by the original  window. A numeric  argument
+\fIn\fR of 1 forces the upper window to be the new current  window  (default),
+and an argument of 2 forces the lower window to be the new current window.
+.SH "SEE ALSO"
+.na
+.Ht grow-window-vertically 2 ,
+.Ht next-window-find-buffer 2 ,
+.Ht next-window-find-file 2 ,
+.Ht resize-window-vertically 2 ,
+.Ht split-window-horizontally 2 .
+.ad
+.rm C0
+.FH

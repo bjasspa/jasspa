@@ -1,0 +1,69 @@
+.\" -*- nroff -*-
+.Id $Id: m5var068.5,v 1.1.1.1 2000-07-25 22:04:06 jon Exp $
+.Im MicroEmacs variable|macrodevelop
+.so me.tni
+.TH $variable-names 5
+.XI $variable-names - "Filtered variable name list"
+.SH NAME
+$variable-names \- Filtered variable name list
+.SH SYNOPSIS
+.B $variable-names
+.I VariableName
+.SH DESCRIPTION
+.B $variable-names 
+must first be  initialized  to the required  filter string, if the variable is
+evaluated  before it is initialized the value will be set to "\fIABORT\fR" and
+the command will fail.
+.PP
+The filter string can contain wild-card  characters  compatible with most file
+systems, namely:-
+.IP \fB?\fR
+Match any character.
+.IP \fB[abc]\fR
+Match character only if it is \fIa\fR, \fIb\fR or \fIc\fR.
+.IP \fB[a-d]\fR
+Match character only if it is \fIa\fR, \fIb\fR, \fIc\fR or \fId\fR.
+.IP \fB[^abc]\fR
+Match character only if it is not \fIa\fR, \fIb\fR or \fIc\fR.
+.IP \fB*\fR
+Match any number of characters.
+.PP
+Note that these are not the same characters used by
+.Ht exact 2m
+mode.
+.PP
+Once  initialized,  evaluating  \fB$variable-names\fR  returns the name of the next
+variable which  matches the filter until no more variables are found, in which case an
+empty string is returned.
+.SH EXAMPLE
+The following  example  prints out the name of all variables to the massage line
+one at a time. Note that 
+.Ht &set 4
+is used on the
+.Ht !while 4
+statement to avoid evaluating \fB$variable-names\fR twice per loop.
+.Me "$emf-scheme"
+.CS
+set-variable $variable-names "*"
+!while &not &seq &set #l0 $variable-names ""
+    100 ml-write &cat "variable: " #l0
+!done
+.CE 0
+.Me "$ehf-scheme"
+.SH NOTES
+The list of variables is evaluated when the variable is initialized, variables
+defined  after the  initialization  will not be included in the list. The list
+can contain the current buffer's buffer variables (See
+.Ht Variables 4
+for more information on the different types of variables).
+.PP
+Using
+.Ht unset-variable 2
+to delete a variable  which are in the list, before it has be evaluated,  will
+have undefined effects.
+.SH "SEE ALSO"
+.na
+.Ht list-variables 2 ,
+.Ht $command-names 5 .
+.ad
+.FH

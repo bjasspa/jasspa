@@ -1,0 +1,26 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd030.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|delete
+.ds C0 "(\fB\*(cX\*co\fR)\ \&
+.so me.tni
+.TH delete-blank-lines 2
+.XI delete-blank-lines - "\*(C0Delete blank lines about cursor"
+.SH NAME
+delete-blank-lines \- Delete blank lines about cursor
+.Me $a
+.SH SYNOPSIS
+.na
+\fBdelete-blank-lines\fR \*(C0
+.ad
+.SH DESCRIPTION
+.B delete-blank-lines
+deletes  all the blank  lines  before and after the current  cursor  position.
+Note that the deleted lines are not added to a kill buffer.
+.SH "SEE ALSO"
+.na
+.Ht delete-indentation 3 ,
+.Ht clean 3 ,
+.Ht kill-line 2 .
+.ad
+.rm C0
+.FH

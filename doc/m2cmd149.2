@@ -1,0 +1,159 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd149.2,v 1.1.1.1 2000-07-25 22:03:57 jon Exp $
+.Im MicroEmacs command|window
+.ds C0 "(\fB\*(cX<\fR)\ \&
+.ds C1 "(\fB\*(cX>\fR)\ \&
+.so me.tni
+.TH scroll-left 2
+.XI scroll-left - "\*(C0Move the window left (scrolling)"
+.XI scroll-right - "\*(C1Move the window right (scrolling)"
+.SH NAME
+.Me "|scroll-left"
+scroll-left \- Move the window left (scrolling)
+.br
+.Me "|scroll-right"
+scroll-right \- Move the window right (scrolling)
+.Me $a
+.SH SYNOPSIS
+.na
+\fIn\fR \fBscroll-left\fR \*(C0
+.br
+\fIn\fR \fBscroll-right\fR \*(C1
+.ad
+.SH DESCRIPTION
+.B scroll-left
+moves the  window in current  buffer  left by 1 screen  width. If an  argument
+\fIn\fR is supplied then the resolution of movement is specified in characters
+relative to the current  displacement. Moving the window in the current buffer
+left by \fIn\fR  characters  (that is if the current  left-hand  margin of the
+screen is column 0, the left hand margin becomes column \fIn\fR).
+.PP
+.B scroll-right
+moves the window in current  buffer  right by 1 screen  width. If an  argument
+\fIn\fR is supplied then the resolution of movement is specified in characters
+relative to the current displacement.
+.PP
+The  ends of the  lines  of a  scrolled  screen  are delimited  with a  dollar
+(\fB$\fR)  character  indicating that the text continues. When no scroll is in
+effect the left hand  margin of the screen  does not show the \fB$\fR  symbol.
+i.e. The line
+.C "This text is scrolled on this line"
+with a  current  scroll  offset  of 2 in a 22 column  window  would  appear as
+follows:
+.CS
+.ne 4
+         22
+|<------------------->|
+
+|$s text is scrolled $|
+.CE
+The amount of scroll  (\fIn\fR) is  effectively  unlimited,  it is possible to
+scroll  all of the text in a buffer  out of the  window,  when only  \fB$\fR's
+appear in the left margin, in the last  highlighting  color of the line (blank
+lines always  remain blank and are not delimited with a \fB$\fR).  Text on the
+current line is handled according to the value of
+.Ht $scroll 5
+as follows:
+.IP "\fB$scroll 0\fR"
+The current line  \s-1ONLY\s0 is scrolled (about the current scroll  position)
+to enable the current buffers cursor position to be viewed. To enable the user
+to determine  where the current line is in relation to the scrolled lines then
+the first character of the current line is interpreted as follows:-
+.PP
+.RS
+.B "All of user text appears"
+.CS
+.ne 3
+|$f line of te$|
+|At start of l$|
+|$f line of te$|
+.CE 0
+.IP
+Surrounding lines commence with "$" indicates at the start of the line.
+.LP
+.B "$ in column 0"
+.CS
+.ne 3
+|$f line of te$|
+|$f line of te$|
+|$f line of te$|
+.CE 0
+.IP
+Text  column  is the same as the  surrounding  text  i.e. the line and  window
+scroll are the same.
+.LP
+.B "> Left of scroll position"
+.CS
+.ne 3
+|$f line of te$|
+|>f line of te$|
+|$f line of te$|
+.CE 0
+.IP
+The current line is to the left of the scrolled
+position.
+.Hl forward-char forward-char 2
+(i.e.  interpret as \fC\-\->\fR  indicating the direction of travel) moves the
+cursor, and therefore the line, towards the natural scroll  position  (\fB$\fR
+in column).
+.LP
+.B "< Right of scroll position"
+.CS
+.ne 3
+|$f line of te$|
+|<f line of te$|
+|$f line of te$|
+.CE 0
+.IP
+The current line is to the right of the scrolled
+position.
+.Hl backward-char backward-char 2
+(i.e.  interpret as \fC<\-\-\fR  indicating the direction of travel) moves the
+cursor, and therefore the line, towards the natural scroll  position  (\fB$\fR
+in column).
+.RE
+.IP "\fB$scroll 1\fR"
+The position of the cursor on the line  determines  the scrolled  position. In
+this case all lines in the window are  scrolled  to ensure  that the cursor is
+always  visible.  This mode is only useful when  dealing  with large blocks of
+text whose line lengths do not vary.
+.SH NOTES
+The scrolling is an attribute of the \s-1WINDOW\s0 and not the  \s-1BUFFER\s0.
+If the window is closed, or  contents  swapped to a different  buffer then the
+scroll  setting is reset for the next buffer. A return to the previous  buffer
+does not  restore  the  scroll  setting.  The only  case  where  scrolling  is
+inherited is when a window is split (see
+.Ht split-window-vertically 2 ).
+.PP
+When binding
+.B scroll-left
+to the  keyboard  then  it is  important  to note  that  when no  argument  is
+specified the resolution is  \fIscreen-width\fR's. A key binding would operate
+on  character  multiples,  hence the  command  should be bound  with a numeric
+argument to perform the perform the keyboard action. e.g.
+.Me $emf-scheme
+.CS
+.ne 2
+1 global-bind-key scroll-left  "A-left"
+1 global-bind-key scroll-right "A-right"
+.CE
+.Me $ehf-scheme
+To move 5 columns on a key stroke, for an accelerated scroll, then the binding
+may be re-written as:-
+.Me $emf-scheme
+.CS
+.ne 2
+5 global-bind-key scroll-left  "A-left"
+5 global-bind-key scroll-right "A-right"
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Ht $scroll 5 ,
+.Ht scroll-up 2 ,
+.Ht scroll-down 2 ,
+.Ht $window-x-scroll 5 .
+.ad
+.rm C0
+.rm C1
+.FH

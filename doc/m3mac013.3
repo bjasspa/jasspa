@@ -1,0 +1,109 @@
+.\" -*- nroff -*-
+.Id $Id: m3mac013.3,v 1.1.1.1 2000-07-25 22:04:00 jon Exp $
+.Im MicroEmacs command|games
+.so me.tni
+.TH Match-It 3
+.XI Match-It - "\*(mE version of the Match-It game"
+.SH NAME
+Match-It \- \*(mE version of the Match-It game
+.Me $a
+.SH SYNOPSIS
+.na
+\fBMatch-It\fR
+.ad
+.SH DESCRIPTION
+The  object of the game is to score the  largest  number of points, to do this
+the player must complete as many sheets as possible. A sheet is completed when
+all the tiles are  removed  from the board  within  the given time limit - ALL
+sheet are  possible.  If the player  fails to remove all the tiles  before the
+time  runs out a life is lost, if all  lives  have  been lost then the game is
+over.
+.PP
+Tiles are removed from the board by matching two identical tiles which have an
+\&'extraction'  path between them. The only exception to this rule is that any
+open  "\fIflower\fR"  tile (bamboo  \fC[BAMB]\fR,  orchid  \fC[ORCH]\fR,  plum
+\fC[PLUM]\fR,   or   chrysanthemum   \fC[CHRY]\fR)   matches  any  other  open
+"\fIflower\fR"  tile and any open "\fIseason\fR" tile (spring, summer, autumn,
+or winter) matches any other open "\fIseason\fR" tile.
+.PP
+An 'extraction' path is a straight line which uses 2 or less right angles, the
+following are legal extraction paths, '\fC*\fR's denote the right angles:
+.CS
+                A---*       *-----*     A----*
+    A----A          A       AXXXXXA     XXXXX|
+                                        A----*
+.CE
+The following are illegal paths:
+.CS
+    *----*          *---*
+    AXXXX|          |XXXA
+    XXXXA*      A---*XXXX
+.CE
+2 points  are added to the score  whenever a pair is  successfully  removed, a
+point is deducted whenever a pair is selected which can not be removed because
+there is no valid extraction path. There are 2 aids, pressing the right button
+on a tile when no other tile is  selected  will  hilight all tiles of matching
+type, this costs 4 points. The other help is  activated by a button at the top
+right of the screen and it removes a random  removable  pair (or  informs  the
+user that there are no removable  pairs), there are a limited  number of these
+helps.
+.PP
+At the end of a successful  sheet the score is increased be the time left, the
+number of lives and helps  remaining and by the Pedigree and Internal  bonuses
+if they were  achieved.
+.PP
+The Pedigree  bonus is obtained when only identical  tiles are paired, i.e. no
+differing flowers or seasons were paired, 50 points are awarded when achieved.
+Its status is  indicated by a 'P' to the left of the 'Help' button and the top
+of the window.
+.PP
+The  internal  bonus is  obtained  when the outer 4 margins are not used. If
+the left or right margins are not used then 10 points are awarded for each, if
+the top or bottom are not used then 20 points are awarded for each and if none
+are used then 400  points are  awarded!  The status on the  Internal  bonus is
+indicated by an '\fCI\fR'  surrounded by '\fC*\fR's, one for each margin. This
+can be found next to the Pedigree bonus '\fCP\fR'.
+.SH "GAME CONTROLS"
+To the right of the high  score  table on the main menu  there are a number of
+control buttons. To select an option, click the left mouse button on it.
+.IP \fBNEW\fR
+Start a new game.
+.IP \fBQUIT\fR
+Exit Match-It.
+.IP \fBHELP\fR
+This help page (keyboard esc h).
+.PP
+During a sheet, to remove a pair of tiles,  click the left  mouse  button on a
+tile  (which will show in the  selection  color) and then click the left mouse
+button on the  matching  tile. At this point, if the tiles can be removed, the
+extraction  path is drawn and both  tiles  will  disappear  from the board. If
+after  selecting  the first tile, you decide  that you don't wish to play that
+tile, simply reclick the left button on the selected tile, alternatively click
+the right button to deselect any selected tile.
+.PP
+To the top right of the sheet there are a number of control buttons:-
+.IP \fBHELP\fR
+Removes a tile pair.
+.IP \fBQUIT\fR
+Exit the game.
+.IP \fBBOSS\fR
+Hides Match-It, also acts as a pause. Execute  Match-It again to return to the
+game.
+.PP
+The top left shows the number of remaining lives, the current sheet level, the
+current  score, time  remaining  for the  current  sheet and the status of the
+Internal and Pedigree bonuses.
+.SH NOTES
+Match-It is a macro defined in \fCmatchit.emf\fR.
+.PP
+Match-It may only be played with a mouse, there is no keyboard  support, with
+the exception of the re-start keys.
+.PP
+The sheet database file matchit.edf must be accessible for Match-It to work.
+.SH "SEE ALSO"
+.na
+.Hl Games Games - ,
+.Ht Mahjongg 3 ,
+.Ht Metris 3 .
+.ad
+.FH

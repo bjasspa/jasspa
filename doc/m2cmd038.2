@@ -1,0 +1,267 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd038.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|bind
+.ds C0 "(\fB\*(cHb\fR)\ \&
+.so me.tni
+.TH describe-bindings 2
+.XI describe-bindings - "\*(C0Show current command/key binding"
+.SH NAME
+describe-bindings \- Show current command/key binding
+.Me $a
+.SH SYNOPSIS
+.na
+\fBdescribe-bindings\fR \*(C0
+.ad
+.SH DESCRIPTION
+.B describe-bindings
+pops up a  window with a list of  all the named commands, and the
+keys currently bound to them. Each entry is formatted as:
+.IP
+.B keyCode
+\fC\.\.\.\.\.\.\.\.\.\.\.\fR
+.B command
+.LP
+.B describe-bindings
+is buffer  context  sensitive and shows the bindings for the currently  active
+buffer  (i.e. the buffer  that is active  when the  command is  invoked).  The
+resultant command list is divided into three sections as follows:
+.IP "\fBBuffer Bindings\fR"
+The bindings for the active buffer when  \fBdescribe-bindings\fR  was invoked.
+These are the buffer bindings set by
+.Ht buffer-bind-key 2 .
+.IP "\fBMl Bindings\fR"
+The message line bindings as set by
+.Ht ml-bind-key 2 .
+.IP "\fBGlobal Bindings\fR"
+Global binding of keys as set by
+.Ht global-bind-key 2 .
+.SH EXAMPLE
+The following is an example of the displayed output from
+.BR describe-bindings .
+This  was  invoked  while  editing  buffer   \fBm2fun038.2\fR   which  is  the
+\fBNroff\fR  file for this manual page; the local  bindings for the buffer are
+all Nroff related.
+.CS
+Buffer [m2cmd038.2] bindings:
+
+    "C-c C-s" ..................... nroff-size
+    "C-c C-r" ..................... nroff-roman
+    "C-c C-b" ..................... nroff-bold
+    "C-c C-i" ..................... nroff-italic
+    "C-c C-c" ..................... nroff-mono
+    "C-c C-o" ..................... nroff-para
+    "esc o" ....................... nroff-para
+    "esc q" ....................... nroff-para
+    "C-c b" ....................... nroff-bold-block
+    "C-c i" ....................... nroff-italic-block
+    "C-c C-h" ..................... nroff-swap-hilight
+    "C-c &" ....................... nroff-add-padding
+    "C-x &" ....................... nroff-remove-padding
+    "C-c C-p" ..................... nroff-prev
+    "C-mouse-drop-1" .............. nroff-tag
+
+Ml bindings:
+
+    "esc esc" ..................... tab
+
+Global bindings:
+
+    "C-a" ......................... beginning-of-line
+    "C-b" ......................... backward-char
+    "C-c" ......................... 4 prefix
+    "C-d" ......................... forward-delete-char
+    "C-e" ......................... end-of-line
+    "C-f" ......................... forward-char
+    "C-g" ......................... abort-command
+    "C-h" ......................... 3 prefix
+    "C-i" ......................... insert-tab
+    "C-k" ......................... kill-line
+    "C-l" ......................... recenter
+    "C-m" ......................... newline
+    "C-n" ......................... forward-line
+    "C-o" ......................... insert-newline
+    "C-p" ......................... backward-line
+    "C-q" ......................... quote-char
+    "C-r" ......................... isearch-backward
+    "C-s" ......................... isearch-forward
+    "C-t" ......................... transpose-chars
+    "C-u" ......................... universal-argument
+    "C-v" ......................... scroll-down
+    "C-w" ......................... kill-region
+    "C-x" ......................... 2 prefix
+    "C-y" ......................... yank
+    "C-z" ......................... scroll-up
+    "C-_" ......................... undo
+    "A-e" ......................... file-browser
+    "A-r" ......................... replace-all-string
+    "esc C-c" ..................... count-words
+    "esc C-f" ..................... goto-matching-fence
+    "esc C-g" ..................... abort-command
+    "esc C-i" ..................... goto-matching-fence
+    "esc C-k" ..................... global-unbind-key
+    "esc C-n" ..................... change-buffer-name
+    "esc C-r" ..................... query-replace-string
+    "esc C-v" ..................... scroll-next-window-down
+    "esc C-w" ..................... kill-paragraph
+    "esc C-z" ..................... scroll-next-window-up
+    "esc space" ................... set-mark
+    "esc !" ....................... pipe-shell-command
+    "esc $" ....................... spell-word
+    "esc ." ....................... set-mark
+    "esc /" ....................... execute-file
+    "esc <" ....................... beginning-of-buffer
+    "esc >" ....................... end-of-buffer
+    "esc ?" ....................... help
+    "esc @" ....................... pipe-shell-command
+    "esc [" ....................... backward-paragraph
+    "esc \\\\" ...................... ipipe-shell-command
+    "esc ]" ....................... forward-paragraph
+    "esc ^" ....................... delete-indentation
+    "esc b" ....................... backward-word
+    "esc c" ....................... compile
+    "esc d" ....................... forward-kill-word
+    "esc e" ....................... set-encryption-key
+    "esc f" ....................... forward-word
+    "esc g" ....................... goto-line
+    "esc i" ....................... tab
+    "esc k" ....................... global-bind-key
+    "esc l" ....................... lower-case-word
+    "esc m" ....................... global-mode
+    "esc n" ....................... forward-paragraph
+    "esc o" ....................... fill-paragraph
+    "esc p" ....................... backward-paragraph
+    "esc q" ....................... fill-paragraph
+    "esc r" ....................... replace-string
+    "esc t" ....................... find-tag
+    "esc u" ....................... upper-case-word
+    "esc v" ....................... scroll-up
+    "esc w" ....................... copy-region
+    "esc x" ....................... execute-named-command
+    "esc y" ....................... reyank
+    "esc z" ....................... quick-exit
+    "esc ~" ....................... -30 buffer-mode
+    "esc A-r" ..................... query-replace-all-string
+    "C-x C-a" ..................... set-alpha-mark
+    "C-x C-b" ..................... list-buffers
+    "C-x C-c" ..................... save-buffers-exit-emacs
+    "C-x C-d" ..................... change-directory
+    "C-x C-e" ..................... execute-kbd-macro
+    "C-x C-f" ..................... find-file
+    "C-x C-g" ..................... abort-command
+    "C-x C-h" ..................... hunt-backward
+    "C-x C-i" ..................... insert-file
+    "C-x C-l" ..................... lower-case-region
+    "C-x C-o" ..................... delete-blank-lines
+    "C-x C-q" ..................... rcs-file
+    "C-x C-r" ..................... read-file
+    "C-x C-s" ..................... save-buffer
+    "C-x C-t" ..................... transpose-lines
+    "C-x C-u" ..................... upper-case-region
+    "C-x C-v" ..................... view-file
+    "C-x C-w" ..................... write-buffer
+    "C-x C-x" ..................... exchange-point-and-mark
+    "C-x C-y" ..................... insert-file-name
+    "C-x C-z" ..................... shrink-window-vertically
+    "C-x #" ....................... filter-buffer
+    "C-x (" ....................... start-kbd-macro
+    "C-x )" ....................... end-kbd-macro
+    "C-x /" ....................... isearch-forward
+    "C-x 0" ....................... delete-window
+    "C-x 1" ....................... delete-other-windows
+    "C-x 2" ....................... split-window-vertically
+    "C-x 3" ....................... next-window-find-buffer
+    "C-x 4" ....................... next-window-find-file
+    "C-x 5" ....................... split-window-horizontally
+    "C-x 9" ....................... find-bfile
+    "C-x <" ....................... scroll-left
+    "C-x =" ....................... buffer-info
+    "C-x >" ....................... scroll-right
+    "C-x ?" ....................... describe-key
+    "C-x @" ....................... pipe-shell-command
+    "C-x [" ....................... scroll-up
+    "C-x ]" ....................... scroll-down
+    "C-x ^" ....................... grow-window-vertically
+    "C-x `" ....................... get-next-line
+    "C-x a" ....................... goto-alpha-mark
+    "C-x b" ....................... find-buffer
+    "C-x c" ....................... shell
+    "C-x e" ....................... execute-kbd-macro
+    "C-x h" ....................... hunt-forward
+    "C-x k" ....................... delete-buffer
+    "C-x m" ....................... buffer-mode
+    "C-x n" ....................... change-file-name
+    "C-x o" ....................... next-window
+    "C-x p" ....................... previous-window
+    "C-x q" ....................... kbd-macro-query
+    "C-x r" ....................... search-backward
+    "C-x s" ....................... search-forward
+    "C-x u" ....................... undo
+    "C-x v" ....................... set-variable
+    "C-x w" ....................... resize-window-vertically
+    "C-x x" ....................... next-buffer
+    "C-x z" ....................... grow-window-vertically
+    "C-x {" ....................... shrink-window-horizontally
+    "C-x }" ....................... grow-window-horizontally
+    "C-h C-c" ..................... help-command
+    "C-h C-i" ..................... help-item
+    "C-h C-v" ..................... help-variable
+    "C-h a" ....................... command-apropos
+    "C-h b" ....................... describe-bindings
+    "C-h c" ....................... list-commands
+    "C-h d" ....................... describe-variable
+    "C-h k" ....................... describe-key
+    "C-h v" ....................... list-variables
+    "backspace" ................... backward-delete-char
+    "delete" ...................... forward-delete-char
+    "down" ........................ forward-line
+    "end" ......................... end-of-buffer
+    "esc" ......................... 1 prefix
+    "f1" .......................... menu
+    "home" ........................ beginning-of-buffer
+    "insert" ...................... 141 buffer-mode
+    "left" ........................ backward-char
+    "mouse-drop-1" ................ mouse-drop-left
+    "mouse-drop-2" ................ yank
+    "mouse-drop-3" ................ menu
+    "mouse-pick-1" ................ mouse-pick-left
+    "mouse-pick-2" ................ void
+    "mouse-pick-3" ................ void
+    "page-down" ................... scroll-down
+    "page-up" ..................... scroll-up
+    "redraw" ...................... screen-update
+    "return" ...................... newline
+    "right" ....................... forward-char
+    "tab" ......................... tab
+    "up" .......................... backward-line
+    "S-backspace" ................. backward-delete-char
+    "S-delete" .................... forward-delete-char
+    "S-tab" ....................... backward-delete-tab
+    "C-down" ...................... 5 forward-line
+    "C-left" ...................... backward-word
+    "C-mouse-drop-1" .............. mouse-control-drop-left
+    "C-mouse-pick-1" .............. set-cursor-to-mouse
+    "C-page-down" ................. scroll-next-window-down
+    "C-page-up" ................... scroll-next-window-up
+    "C-right" ..................... forward-word
+    "C-up" ........................ 5 backward-line
+    "A-down" ...................... 1 scroll-down
+    "A-left" ...................... 1 scroll-left
+    "A-right" ..................... 1 scroll-right
+    "A-up" ........................ 1 scroll-up
+    "esc backspace" ............... backward-kill-word
+    "esc esc" ..................... expand-abbrev
+    "C-c g" ....................... grep
+.CE
+Note that both internal commands and macro commands are shown in the list.
+.SH "SEE ALSO"
+.na
+.Ht buffer-bind-key 2 ,
+.Ht command-apropos 2 ,
+.Ht describe-key 2 ,
+.Ht describe-variable 2 ,
+.Ht global-bind-key 2 ,
+.Ht list-commands 2 ,
+.Ht ml-bind-key 2 .
+.ad
+.rm C0
+.FH

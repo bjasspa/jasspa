@@ -1,0 +1,30 @@
+.\" -*- nroff -*-
+.Id $Id: m5var030.5,v 1.1.1.1 2000-07-25 22:04:05 jon Exp $
+.Im MicroEmacs variable|message
+.so me.tni
+.TH $ml-scheme 5
+.XI $ml-scheme - "Message line color scheme"
+.SH NAME
+$ml-scheme \- Message line color scheme
+.Me $a
+.SH SYNOPSIS
+\fB$ml-scheme\fR \fIschemeNum\fR; Default is \fC0\fR
+.SH DESCRIPTION
+.B $ml-scheme
+defines  the color  scheme to be used on the  message  line, the color  scheme
+\fIschemeNum\fR  identifies  the  foreground  and background color  and  is  defined  by  an
+invocation to
+.Ht add-color-scheme 2 .
+.PP
+The background color is always defined by
+.Ht $global-scheme 5 .
+.SH "SEE ALSO"
+.na
+.Ht $global-scheme 5 ,
+.Ht $osd-scheme 5 ,
+.Ht $mode-line-scheme 5 ,
+.Ht $scroll-bar-scheme 5 ,
+.Ht $system 5 ,
+.Ht add-color-scheme 2 .
+.ad
+.FH

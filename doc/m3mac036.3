@@ -1,0 +1,103 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"  			   Copyright 1999 Jasspa .
+.\"			    All Rights Reserved
+.\"
+.\"
+.\"  System        : MicroEmacs
+.\"  Module        : 
+.\"  Object Name   : m3mac036.3
+.\"  Created By    : Jon Green
+.\"  Created       : Wed Jan 20 21:57:53 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description	
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"	
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 Jasspa.
+.\" 
+.\"  All Rights Reserved.
+.\" 
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied, 
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from Jasspa.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m3mac036.3,v 1.1.1.1 2000-07-25 22:04:01 jon Exp $
+.Im MicroEmacs command|search|macrodevelop
+.so me.tni
+.TH regex-forward 3
+.XI regex-forward - "Search for a magic string in the forward direction"
+.XI regex-backward - "Search for a magic string in the backward direction"
+.SH NAME
+.Me "|regex-forward"
+regex-forward \- Search for a magic string in the forward direction
+.br
+.Me "|regex-backward"
+regex-backward \- Search for a magic string in the backward direction
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B regex-forward
+"\fIstring\fR"
+.br
+.I n
+.B regex-backward
+"\fIstring\fR"
+.ad
+.SH DESCRIPTION
+.B regex-forward
+searches for a regular expression string from the current cursor position to
+the end of the file. A case insensitive regular expression search is performed
+regardless of the 
+.Ht magic 2m
+and
+.Ht exact 2m
+mode settings. 
+.PP
+The numeric argument
+.I n
+is interpreted as follows:-
+.IP "\fBn > 0\fR"
+The \fIn\fRth occurrence of the \fIstring\fR is located.
+.IP "\fBn < 0\fR"
+The first occurrence of the \fIstring\fR is located in the next \fIn\fR lines.
+.PP
+.B regex-backward
+searches  backwards in  the file.  In all  other ways  it is like
+.BR regex-forward .
+.SH DIAGNOSTICS
+The command returns a status of \fCFALSE\fR if the  \fIstring\fR  could not be
+located (or \fIn\fRth  \fIstring\fR where \fIn\fR  occurrences are requested).
+If the  \fIstring\fR  is found  within the given  search  criteria  the return
+status is \fCTRUE\fR.
+.SH NOTES 
+The 
+.B regex-forward
+and
+.B regex-backward
+commands are not  publically  available from the command line, but may be used
+within macros to perform regular  expression  searches  regardless of the user
+mode settings.
+.PP
+These commands are implemented as macros in \fCutils.emf\fR.
+.SH "SEE ALSO"
+.na
+.Ht buffer-mode 2  ,
+.Ht exact 2m ,
+.Ht isearch-forward 2 ,
+.Ht magic 2m ,
+.Ht replace-string 2 ,
+.Ht search-backward 2 ,
+.Ht search-forward 2 .
+.br
+.Hl "Regular Expressions" RegularExpressions 2
+.ad
+.FH

@@ -1,0 +1,49 @@
+.\" -*- nroff -*-
+.Id $Id: m3osd007.3,v 1.1.1.1 2000-07-25 22:04:02 jon Exp $
+.Im MicroEmacs command|help
+.so me.tni
+.TH osd-help 3
+.XI osd-help - "GUI based on-line help"
+.SH NAME
+osd-help \- GUI based on-line help
+.Me $a
+.SH SYNOPSIS
+.na
+.B osd-help
+.ad
+.SH DESCRIPTION
+\fBosd-help\fR provides a GUI front end to the on-line help manual, the dialog
+consists of 3 pages which are defined as follows:-
+.SS Contents
+The contents page displays a list on contents similar to the
+.Ht help 2
+high  level  help  page.  Selecting  an item will  display  the help page in a
+buffer, selecting \fBExit\fR will exit the dialog.
+.SS Index
+The index page gives a list of help items, the \fBScope\fR menu can be used to
+narrow the index list to the required item type.
+.SS Search
+The search  page  provides a way of  searching  the  on-line  help for a given
+topic. Similarly to the Index page, the \fBScope\fR menu is provided to narrow
+the search to the required  area.
+.PP
+The search  strings is considered to be made up of items  separated by spaces,
+an item can be enclosed in quotes  ('\fC"\fR')  so that the item can include a
+space. If the first  letter of an item is a  '\fC+\fR'  the given item must be
+found in a page for it to match, if the character is a '\fC-\fR' the item must
+NOT be  found  on a page  for it to  match,  or  other  items  are  considered
+optional.  At least one item must be found on a page for it to be a match, the
+numbers to the right of each found page is the number of items found.
+.SH NOTES
+See
+.Hl "Help!" HelpOnHelp -
+for help on the on-line help pages.
+.PP
+\fBosd-help\fR is a macro using
+.Ht osd 2 ,
+defined in osdhelp.emf.
+.SH "SEE ALSO"
+.na
+.Ht help 2 .
+.ad
+.FH

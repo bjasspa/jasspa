@@ -1,0 +1,65 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd062.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|cursor
+.ds C0 "(\fB\*(cHc\fR)\ \&
+.so me.tni
+.TH list-commands 2
+.XI list-commands \- "\*(C0List available commands"
+.SH NAME
+list-commands \- List available commands
+.Me $a
+.SH SYNOPSIS
+.na
+\fBlist-commands\fR \*(C0
+.ad
+.SH DESCRIPTION
+.B list-commands
+constructs a list of all known built in commands and macros that are currently
+defined  by  \*(mE  and  presents  a list  of  those  commands  in the  buffer
+"\fB*commands*\fR". Each entry is formatted as:-
+.IP
+.B "command ......................... keyCode"
+.LP
+Where  multiple  keys  are  bound  to  the  same  command,  then  each  of the
+\fIkeyCode\fR's is shown.
+.PP
+.B list-commands
+is similar to
+.Ht describe-bindings 2
+except that the commands are  presented in  alphabetical  order (as opposed to
+key binding order).
+.SH EXAMPLE
+The following is an example of the output of \fBlist-commands\fR:-
+.CS
+backward-char ................. "C-b"
+                                "left"
+backward-delete-char .......... "backspace"
+                                "S-backspace"
+backward-delete-tab ........... "S-tab"
+backward-kill-word ............ "esc backspace"
+backward-line ................. "C-p"
+                                "up"
+                                "C-up"
+backward-paragraph ............ "esc ["
+                                "esc p"
+backward-word ................. "esc b"
+                                "C-left"
+beginning-of-buffer ........... "esc <"
+                                "home"
+beginning-of-line ............. "C-a"
+buffer-bind-key
+buffer-info ................... "C-x ="
+buffer-mode ................... "esc ~"
+                                "C-x m"
+                                "insert"
+buffer-unbind-key
+:
+:
+.CE 0
+.SH "SEE ALSO"
+.na
+.Ht describe-bindings 2 ,
+.Ht list-variables 2 .
+.ad
+.rm C0
+.FH

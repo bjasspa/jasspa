@@ -1,0 +1,886 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1998 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m3osd000.3
+.\"  Created By    : Steven Phillips
+.\"  Created       : Sat Aug 22 09:00:06 1998
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1998 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m3osd000.3,v 1.1.1.1 2000-07-25 22:04:01 jon Exp $
+.Im MicroEmacs command|osd
+.so me.tni
+.TH user-setup 3
+.XI user-setup - "Configure \*(mS for a specific user"
+.SH NAME
+user-setup \- Configure \*(mS for a specific user
+.Me $a
+.SH SYNOPSIS
+.na
+.B user-setup
+.ad
+.SH DESCRIPTION
+\fBuser-setup\fR  provides a dialog  interface to enable the user to configure
+the  editor.  \fBuser-setup\fR  may be  invoked  from  the main  \fIhelp\fR  menu or
+directly from the command line using
+.Ht execute-named-command 2 .
+.B user-setup
+configures the user's setup registry file,  "\fI<logname>\fR\fC.erf\fR"  which
+is used by \*(mS to initialize the environment to a user's preference.
+.PP
+Note, if your screen is too small to display the whole dialog, it may be moved
+using  any key bound to the  scroll  commands  such as  \fBscroll-up\fR,  e.g.
+\fCA-up\fR, \fCC-z\fR,  \fCA-down\fR, \fCC-v\fR, \fCA-left\fR etc. For systems
+without mouse support, the \fCtab\fR key may be used to move between fields.
+.PP
+On all pages the  following  buttons are available at the bottom of the dialog
+and have the following effect:
+.IP "\fCSave\fR"
+Saves    the    changes    made   to   the   users    registry    file,   i.e.
+"\fI<Log-Name>\fR\fC.erf\fR"  but does not re-initialize  \*(mS. Some changes,
+such as color scheme changes, only take effect when the  \fBCurrent\fR  button
+is used or when \*(mS is restarted.
+.IP "\fCCurrent\fR"
+Makes the current  user and the changes  made  Current to this \*(mS  session,
+dismissing the  \fBuser-setup\fR  dialog and  reinitializing  \*(mS. This also
+saves the  registry  file out!
+.IP "\fCExit\fR"
+Quits user-setup, if changes where not \fBSave\fRd or made  \fBCurrent\fR they
+will be lost.
+.PP
+The following pages, which appear in the dialog, are defined as follows:-
+.SS "Start-up"
+.IP "\fCLog Name\fR"
+Sets the name of the current  user to setup, this can be set to any valid file
+base name (no  extension)  which need not be the current user. The rest of the
+\fBuser-setup\fR  entries are then initialized to the settings defined for the
+given user (or standard defaults if not defined).
+.IP "\fCDefault User\fR"
+Creates a small macro file, "\fCdefault.emf\fR",  setting
+.Ht $MENAME 5
+to the current  setting of \fBLog Name\fR. This may be executed at start-up to
+determine the current user. See
+.Ht $MENAME 5
+for more information.
+.IP "\fCSetup Path\fR"
+Sets the location of the user files, the files are searched for and created in
+this directory.
+.Ht $MEPATH 5
+should be defined to include this path.
+.IP "\fCSetup File\fR"
+Sets the personal  user setup macro file name which is executed at start-up. A
+user macro file should  contain all  personal  settings  such as preferred  key
+bindings etc. See
+.Hl "Setting Up A User Profile" UserProfiles 2
+for more  information. The \fBEdit\fR check box can be used to  enable/disable
+the  automatic   loading  of  the  setup  file  ready  for  editing  when  the
+\fBCurrent\fR button is used.
+.IP "\fCCompany File\fR"
+Sets the  company  setup  macro file name which is  executed  at  start-up.  A
+company macro file should  contain all company wide standard  settings such as
+\fC%company-name\fR, No \fC.emf\fR extension is supplied. See
+.Hl "Setting Up a Company Profile" CompanyProfiles 2
+for more information.
+.IP "\fCEmulate\fR"
+Sets an emulation  macro file name which is executed at start-up. An emulation
+macro file should  contain macro code which creates an environment  similar to
+another  editor. \*(mE is released with one emulation  file,  \fCme3_8.emf\fR,
+which emulates MicroEmacs version 3.8 (See
+.Hl Compatibility Compatibility 2
+for more information).
+.IP "\fCMS Shift Region\fR"
+Enables/disables  cursor  key  manipulation  with the  shift  key  similar  to
+the conventional Microsoft region selection. When enabled,
+pressing the shift key in  conjunction  with the cursor  movement keys selects
+a region which is hilighted. Once the region is selected then the 
+\fC<DELETE>\fR or \fC<BACKSPACE>\fR  key erases the selected region. This also
+enables a similar  behaviour  with the Mouse  \fBDrag  region\fR  driver,  see
+below.
+.SS "Language Setup"
+.IP "\fCKeyboard\fR"
+Configures  \*(mS to the user's  keyboard.  Accent  character  generation keys
+present on foreign  keyboards  cannot be  automatically  supported  on Windows
+platforms.  \*(mS must be  informed of the  keyboard  being used to  correctly
+interpret the keys. If a required keyboard is not supported please see
+.Hl FAQ38 faq38 0f
+on how to setup the keyboard.
+.IP "\fCLanguage\fR"
+Sets the user language, this sets the printable  characters, letter characters
+and sets up
+.Ht spell 2
+with appropriate spelling rules and dictionaries. The "\fC(Ext)\fR"  languages
+are identical to the standard languages except they use the extended language
+dictionary as well as the base  dictionary,  vastly  increasing the word list.
+This indirectly executes
+.Ht set-language 3
+with  the  given   language.   \*(mS  by  default   comes  with   support  for
+\fBAmerican\fR  and  \fBBritish\fR.  If the user  creates  support for another
+language   it   can  be   installed   into   \*(mS   by   adding   it  to  the
+\fB%language-names\fR    and    \fB%language-val\fR    variables    found   in
+\fClanguage.emf\fR.
+.IP "\fCPers <language> Dic\fR"
+Sets   the    personal    dictionary    file   for   the   current    language
+("\fI<language>\fR").   Setting  the  personal  dictionary  for  the  language
+"\fCDefault\fR" sets the default personal dictionary file for a language which
+does not have a specific  personal  dictionary. The  \fBDefault\fR  language's
+default file is  "\fC<log-name>\fR".  Any words or auto-corrected  words added
+while configured for this language are added to this dictionary.
+.IP "\fCAuto Spell\fR"
+Enables Auto Spell Checking in file types which support this feature  (usually
+text based files such as
+.Ht txt 9
+or
+.Ht nroff 9
+files etc). Auto spell detects word breaks as you type and checks the spelling
+of every  completed  word  hilighting  any erroneous  words in the error color
+scheme  (usually  red). The  feature can be manually  enabled and  disabled by
+invoking the
+.Ht auto-spell 3
+command (usually bound to "\fCf5\fR").
+.IP "\fCAuto Save Dics\fR"
+Enables  auto-saving of any changed  dictionaries on exit. If this is disabled
+the user is prompted to save for each changed dictionary.
+.SS "General"
+.IP "\fCFull Name\fR"
+This should be set to the user's name and is used in a variety of places, e.g.
+by
+.Ht etfinsrt 3
+to set the "Created By" field in a template.
+.IP "\fCOrganizer\fR"
+Sets the organizer file base name, defaults to the \fBLog  Name\fR. When
+notes and addresses are stored using
+.Ht organizer 3
+the file "\fI<Organizer>\fR\fC.eof\fR" is used.
+.IP "\fCAuto-Save Time\fR"
+Sets the length of time in seconds  between  buffer  auto-saves,  a setting of
+\fC0\fR or an empty string  disables  auto-saving.  The default setting is 300
+seconds or 5 minutes. This indirectly sets the
+.Ht auto-time 5
+variable and the
+.Ht autosv 2m
+global mode. 
+.IP "\fCGlobal Modes\fR"
+Sets the initial state of the global
+.Ht quiet 2m
+mode. This indirectly executes
+.Ht global-mode 2
+to set the required modes.
+.IP "\fCBuffer Modes\fR"
+Sets the initial state of the global modes
+.Ht auto 2m ,
+.Ht backup 2m ,
+.Ht tab 2m
+and
+.Ht undo 2m ,
+any  buffers  created  will  inherit  the state of these  modes.  However,  as
+changing  these modes  directly  effects  only the global  modes, any existing
+buffers  (including ones re-created using the \fC\-c\fR  command-line  option,
+see
+.Ht me 1 )
+will not be effect by the setting of these modes. For them to take effect, the
+buffers  should  be  reloaded.  Also some file  hooks  override  these  global
+settings, such as the
+.Ht makefile 9
+hook which overrides the \fBtab\fR mode. This indirectly executes
+.Ht global-mode 2
+to set the required modes.
+.IP "\fCSearch Modes\fR"
+Sets the initial state of the global search modes
+.Ht exact 2m
+and
+.Ht magic 2m .
+This indirectly executes
+.Ht global-mode 2
+to set the required modes.
+.IP "\fCKeep Undo History\fR"
+If this is enabled the
+.Hl undo undo 2
+history is kept after a save allowing the
+.Ht undo 2
+command to back-up  changes  beyond the last save. When clear the undo history
+is discarded after the buffer is saved. This indirectly sets bit 0x8000 of the
+.Ht $system 5
+variable.
+.IP "\fCHide Backups\fR"
+Enables hiding \*(mS generated  backup files. On Windows and Dos platforms the
+Hidden  file  attribute  is used to hide the file,  whereas on UNIX the backup
+file name is prepended with a '\fC.\fR'. This  indirectly sets bit 0x100000 of
+the
+.Ht $system 5
+variable.
+.IP "\fCMain Menu\fR"
+Enables the top main menu bar.
+.IP "\fCAlt -> Main Menu\fR"
+If enabled the main menu Alt hot-key  bindings are enabled.  These are dynamic
+bindings automatically  generated from the main menu. Typically the first item
+in the  main  menu is  "\fCFile\fR"  with a hot key of  '\fBF\fR',  with  this
+enabled  '\fCA-f\fR'  will open this menu item. Note that global and local key
+bindings override these. This indirectly sets bit 0x2000 of the
+.Ht $system 5
+variable.
+.IP "\fCAlt -> Esc Prefx\fR"
+If enabled the Alt key acts as a
+.Hl "prefix 1" prefix 2
+modifier key. By default  '\fCA-n\fR'  is not bound, with this bit set the key
+is inferred to '\fCesc n\fR' which is bound to  \fBforward-paragraph\fR.  Note
+that global, local and menu hot-key  bindings  override these. This indirectly
+sets bit 0x4000 of the
+.Ht $system 5
+variable.
+.IP "\fCTab To Indent\fR"
+Sets the
+.Ht tab 2
+behavior in a buffer which has
+.Ht cmode 2m
+enabled or an
+.Hl indentation indent 2
+method. This indirectly sets bit 0x1000 of the
+.Ht $system 5
+variable.
+.IP "\fCShow Modes\fR"
+Selects which modes are to be displayed on the mode-line whenever a "\fC%e\fR"
+token is used in the
+.Ht $mode-line 5
+variable. This indirectly sets the
+.Ht $show-modes 5
+variable.
+.SS "Platform - UNIX Setup"
+Only  present  on UNIX  platforms  using  the X  interface,  see below for the
+Console setup.
+.IP "\fCFont\fR"
+Sets the X font name to be used. This indirectly executes
+.Ht change-font 2
+with the given font name. e.g.
+.IP
+\fC"-misc-fixed-bold-r-normal--13-*-*-*-c-70-iso8859-1"\fR
+.IP "\fCDisplay Char Set\fR"
+Selects the display character set being used by the system to render the \*(mS
+window,  dependent  on the  \fBFont\fR  being used. The setting of this option
+effects the configuration of \*(mS's internal character maps (using command
+.Ht set-char-mask 2 )
+enabling the character sets of foreign languages to be correctly supported. It
+also changes the definition of variables
+.Ht $box-chars 5
+and
+.Ht $window-chars 5
+to their best values for the given font.
+.IP "\fCExtend Char Set\fR"
+When enabled \*(mS replaces the display of characters \fC0x00\fR to \fC0x1f\fR
+with forms which are useful for  variables
+.Ht $box-chars 5
+and
+.Ht $window-chars 5
+greatly improving the look of
+.Ht osd 2
+dialogs, the scroll bars etc.
+.IP "\fCDraw White Spaces\fR"
+Enables the drawing of visible white  spaces, i.e. space, tab and new-line
+characters. This indirectly sets bit
+0x80000 of the
+.Ht $system 5
+variable.
+.IP "\fCClient Server\fR"
+The  client/server  enables the file based external macro command driver to be
+enabled - see
+.Hl Client-Server Client-Server 2 .
+This by default is disabled, when enabled it is used by 
+.Hl command-line me 1
+options  \fB-m\fR  and  \fB-o\fR.
+.IP "\fCDOS File Names\fR"
+DOS has a restricted  8.3 file naming system (i.e.  "\fCBBBBBBBB.XXX\fR"),  if
+this option is enabled the \*(mE will adhere to this system for  auto-save and
+backup file names whenever possible. See
+.Ht $auto-time 5
+for more  information on the naming  convention used. This indirectly sets bit
+0x400 of the
+.Ht $system 5
+variable.
+.IP "\fC# Backups\fR"
+This option only has an effect when \fBDOS File Names\fR is disabled.  Setting
+this to a  number  greater  than  zero  enables  multiple  backup  files to be
+created,  the number  determined  by this value. If set to zero (or less) then
+only a single backup file is created. This indirectly sets the
+.Ht $kept-versions 5
+variable.
+.IP "\fCIgnore Files\fR"
+Sets a list  extensions of files to be ignored in file  completion, e.g. \*(mS
+backup files (\fC~\fR). This indirectly sets the
+.Ht $file-ignore 5
+variable.
+.IP "\fCCursor Blink Rate\fR"
+Sets the cursor  blink  period in  millisecond.  The first  entry box sets the
+cursor visible time, a setting of zero disables  blinking. The second box sets
+the  hidden  time. A  visible  time  of 600  and  hidden  time of 200  gives a
+reasonable blink cycle. This indirectly sets the
+.Ht $cursor-blink 5
+variable.
+.IP "\fCScroll Bars\fR"
+Selects the scroll bar support  required.  When Splitter is enabled, the first
+character  of the  scroll  bar and  mode-line  is a split  character  used for
+splitting the window into two using the mouse. This indirectly sets the
+.Ht $scroll-bar 5
+variable.
+.IP "\fCHorizontal Scroll\fR"
+Selects the horizontal scrolling method used with the
+.Ht scroll-left 2
+and
+.Ht scroll-right 2
+commands. This indirectly sets the
+.Ht $scroll 5
+variable.
+.IP "\fCVertical Scroll\fR"
+Selects the vertical scrolling method used with the
+.Ht forward-line 2
+and
+.Ht backward-line 2
+commands. This indirectly sets the
+.Ht $scroll 5
+variable.
+.IP "\fCColor Scheme\fR"
+Sets the color  scheme  setup  macro file name which is executed at  start-up.
+\*(mS by default  comes with 4 color  schemes.  Color  schemes  can be created
+and altered using the
+.Ht scheme-editor 3
+dialog.
+.SS "Platform - UNIX Console Setup"
+Only  present on UNIX  platforms  when using the  termcap  interface,  all the
+Console platform settings are kept independent of the X interface settings.
+.IP "\fCTermcap Color\fR"
+This option determines  whether Termcap based colors should be used. These are
+typically the standard eight colors and may not be supported on all terminals.
+If this option is disabled  Termcap  fonts (such as bold) are used  instead to
+create a primitive hi-lighting. This indirectly sets bit 0x004 of the
+.Ht $system 5
+variable.
+.IP "\fCWith Bold\fR"
+This option only has an effect when  Termcap  Color is used. When  enabled the
+Termcap Bold font is used to create  brighter  colors,  doubling the number of
+foreground colors available. This indirectly sets bit 0x008 of the
+.Ht $system 5
+variable.
+.IP "\fCTermcap Fonts\fR"
+This  option  determines  whether  Termcap  fonts  should be used to  simulate
+colors,  creating  a  primitive  hi-lighting.  The fonts  available  are bold,
+italic, light,  reverse and underline,  depending on the terminal  being used.
+This feature cannot be used with Termcap  Colors, it does improve the look but
+at the cost of display performance. This indirectly sets bit 0x010 of the
+.Ht $system 5
+variable.
+.IP "\fCDisplay Char Set\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCDraw White Spaces\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCClient Server\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCDOS File Names\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fC# Backups\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCIgnore Files\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCCursor Blink Rate\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCScroll Bars\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCHorizontal Scroll\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCVertical Scroll\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCColor Scheme\fR"
+See \fBPlatform UNIX Setup\fR above.
+.SS "Platform - Win32 Setup"
+Only present on Microsoft Windows based machines.
+.IP "\fCFont Name\fR"
+Sets the windows font name and size. This indirectly executes
+.Ht change-font 2
+with the given font name.
+MicroEmacs may only use a Fixed Mono Font, either an OEM font as used by the
+MS-DOS command line, or the more conventional ANSI fonts. The fonts are
+selected using the
+\fBChange\fR \fBFont\fR button which invokes a dialog to allow the available
+fonts to be selected. True-Type mono fonts such as \fCCourier New\fR or
+\fCLucida Console\fR are
+typically used.
+.IP "\fCWeight & Size\fR"
+Allows  the  size  and  weight  of  the  font  to be  selected,  specified  as
+\fIweight\fR,  \fIwidth\fR and  \fIheight\fR. The \fIweight\fR is typically 4,
+this  corresponds to a regular  weighting, 7 is bold. \fIwidth\fR is the width
+of the font in  pixels,  this may be 0 when the  height is  specified  as -ve.
+\fIheight\fR  is the  height of the font,  typically  a -ve value  (where  the
+\fIwidth\fR  is 0), which produces a  proportionally  sized font, values of in
+the range -11 .. -14 generally produce reasonably sized fonts. The \fIhight\fR
+and  \fIwidth\fR  may be  specified  as +ve  values  and allow  explicit  font
+dimensions  to be  specified,  generally  used to achieve a precise  font size
+requirement.
+.IP "\fCDisplay Char Set\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCExtend Char Set\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCChoose Font\fR"
+Opens a windows  dialog  allowing the user to select a font, the  selection is
+used to configure the above font fields.  
+.IP "\fCDraw White Spaces\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCCapture Alt Space\fR"
+Used to enable/disable  the capture and  interpretation of the '\fCA-space\fR'
+key  sequence. If this key sequence is not captured by \*(mS it is passed back
+to Windows  which  opens the top left window  menu, allow  keyboard  access to
+Window commands like Maximize.
+.IP "\fCClient Server\fR"
+See  \fBPlatform  UNIX Setup\fR  above. Note that on windows based systems the
+client/server is also used by 
+.Ht memsdev 1 
+to drive the editor from the Microsoft Developer environment.
+.IP "\fCDOS File Names\fR"
+See  \fBPlatform  UNIX Setup\fR above. Note that some early version of Windows
+\'95 have  problems  with \fC~\fR  extensions.  Service  release 2 fixed these
+problems - if you experience  problems then return to 8.3 filename mode - note
+that  MicroEmacs  will still store longer file names, only the backup  naming
+convention changes.
+.IP "\fC# Backups\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCIgnore Files\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCCursor Blink Rate\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCScroll Bars\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCHorizontal Scroll\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCVertical Scroll\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCColor Scheme\fR"
+See \fBPlatform UNIX Setup\fR above.
+.SS "Platform - Win32 Console Setup"
+Only  present  on  Windows  NT and Win95+  platforms  when  using the  console
+interface,  all the Console  platform  settings  are kept  independent  of the
+Window interface settings.
+.IP "\fCDisplay Char Set\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCDraw White Spaces\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCClient Server\fR"
+See \fBPlatform Win32 Setup\fR above.
+.IP "\fCDOS File Names\fR"
+See \fBPlatform Win32 Setup\fR above.
+.IP "\fC# Backups\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCIgnore Files\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCCursor Blink Rate\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCScroll Bars\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCHorizontal Scroll\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCVertical Scroll\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCColor Scheme\fR"
+See \fBPlatform UNIX Setup\fR above.
+.SS "Platform - DOS Setup"
+Only present on DOS machines.
+.IP "\fCGraphic Mode #\fR and \fCDouble Lines\fR"
+Sets the DOS graphics  mode number and whether the number of text lines can be
+doubled. This indirectly executes
+.Ht change-font 2
+with the given font name.
+.IP "\fCDisplay Char Set\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCDraw White Spaces\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCIgnore Files\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCCursor Blink Rate\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCScroll Bars\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCHorizontal Scroll\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCVertical Scroll\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCColor Scheme\fR"
+See \fBPlatform UNIX Setup\fR above.
+.SS "Mouse"
+The mouse device  creates keys in a similar way to regular  keyboard keys and,
+like  keyboard  keysm they must be bound  before they are used. \*(mE does not
+have the mouse  functionality  hard coded into the editor, it provides a macro
+interface  to  the  mouse  for  ultimate  flexibility  and  a set  of  default
+functionality which can be bound to the mouse in a variety of ways.
+.PP
+All the mouse controlling macros are stored in
+\fCmouse.emf\fR  and  \fCmouseosd.emf\fR  although  some  buffers  have  local
+functionality over-rides, such as
+.Ht file-browser 3 .
+The user can expand the range of mouse  functionality but how this is achieved
+is beyond the scope of this documentation.
+.PP
+The \fBuser-setup\fR  dialog allows the user to configure the mouse to use the
+default functionality, as follows:-
+.IP "\fCEnable Mouse\fR"
+Enables or  disables  the mouse, when  disabled  the mouse can not be used and
+will not generate any key events. This does not apply to  \s-1UNIX\s0  Termcap
+systems as the mouse cut and paste  operation  is performed by the Xterm. This
+indirectly sets bit 0x010 of the
+.Ht $mouse 5
+variable.
+.IP "\fCNumber Buttons\fR"
+Sets the  number of  buttons  on the  mouse,  may be 1, 2 or 3. \*(mS  usually
+obtains the correct  number for the system, but  sometimes  this can be wrong.
+This  entry can be used to  correct  this  problem.  For one button  mice, the
+button is considered to be the  \fCleft\fR  mouse button, two button mice have
+an \fCleft\fR and \fCright\fR button. This indirectly sets the
+.Ht $mouse 5
+variable.
+.IP "\fCSwap Buttons\fR"
+If enabled then the \fCleft\fR and \fCright\fR  buttons are swapped, i.e. when
+the left  button is  pressed  it  executes  the right  button  bindings.  This
+indirectly sets bit 0x020 of the
+.Ht $mouse 5
+variable.
+.IP "\fCSimulate 3 Buttons\fR"
+If enabled then pressing the \fCleft\fR and \fCright\fR  buttons together with
+generate a middle  button  press  event, this  feature is for people  with a 2
+button  mouse who want more. The two buttons must be pressed or release within
+10 millisecond of each other.
+.PP
+The following four fields determine which mouse button binding the user wishes
+to view and change:-
+.IP "\fCButton\fR"
+The mouse  button,  \fCLeft\fR,  \fCRight\fR  or  \fCMiddle\fR  for the normal
+buttons and \fCWhell Up\fR or \fCWhell Down\fR for the pilot wheel events.
+.IP "\fCShift Pressed\fR"
+The action of the mouse can be  different  for every  modifier key setting, if
+this is enabled then the binding being modified is for the \fBButton\fR  being
+pressed with the \fBShift\fR key held down.
+.IP "\fCControl Pressed\fR"
+If enabled then modifying the action when the \fBButton\fR is pressed with the
+\fBControl\fR key held down.
+.IP "\fCAlt Pressed\fR"
+If enabled then modifying the action when the \fBButton\fR is pressed with the
+\fBAlt\fR key held down.
+.PP
+The following two fields determine the  functionality of the button defined by
+the previous four fields:-
+.IP "\fCHandle Scroll\fR"
+When  enabled,  if the  button is  pressed  with the mouse on the main menu, a
+scroll bar or mode-line the standard  action is performed, such as opening the
+main menu or scrolling up or down the window etc. The \fBbound  To\fR  command
+is only called if the mouse is in a main window. If disabled, the
+\fBBound To\fR command is always called.
+.IP "\fCBound To\fR"
+The function to be performed.  The functions  available  depend on the type of
+button being bound, the following is a list of functions  available for normal
+buttons:-
+.RS
+.IP "\fCNot bound\fR"
+The Button is not bound.
+.IP "\fCDrag region\fR"
+.Ht set-mark 2
+is called at the pick location,  until the button is dropped, the area of text
+between  this point and the current  mouse  position is  hi-lighted.  When the
+mouse button is dropped, if the drop position is the same as the pick then the
+double  click is tested for, if a double  click is entered then the
+\fBSelect  Word\fR function is executed,  otherwise the cursor is simply moved
+to the drop  position. If the pick and drop  position are  different  then the
+enclosed text is copied to the kill buffer using
+.Ht copy-region 2 .
+Note this behaviour is altered by the setting of
+.B "MS Shift Region"
+on the \fBStart-Up\fR page.
+.IP "\fCSelect Word\fR"
+Also executed from a double click bound to \fBDrag Region\fR,
+\fBSelect Word\fR copies the word under the mouse into the kill buffer using
+.Ht copy-region 2 ,
+unless a double click is entered in which case the whole line is copied.
+.IP "\fCDefault Pan\fR"
+While the mouse  button is  pressed  the  current  buffer  pans with any mouse
+movement.
+.IP "\fCMS Pan\fR"
+MicroSoft style Pan; while the mouse  button is  pressed  the  current  buffer
+pans  vertically  according to the mouse position  relative to the point where
+the button was pressed.
+.IP "\fCFind Tag\fR"
+Executes
+.Ht find-tag 2
+with the word currently under the mouse.
+.IP "\fCFind ME Help\fR"
+Executes
+.Ht help-item 2
+with the word currently under the mouse.
+.IP "\fCUndo\fR"
+Simply executes
+.Ht undo 2
+without  moving the cursor to the position of the mouse.  Subsequent  calls to
+this binding will undo multiple edits.
+.IP "\fCNo move yank\fR"
+Simply executes
+.Ht yank 2
+without moving the cursor to the position of the mouse.
+.IP "\fCReplace yank\fR"
+Simplar to "\fCNo move yank\fR" except when the is a current region (typically
+defined  by  "\fCDrag  region\fR"  above), in which  case the  region is first
+deleted.
+.IP "\fCMove to yank\fR"
+Moves the cursor to the current position of the mouse and executes
+.Ht yank 2 .
+.IP "\fCReyank\fR"
+Executes
+.Ht reyank 2
+without  moving the cursor.  Note, to enable  this  functionality  some sanity
+checks have had to be removed, as a result it should not be misused as seeming
+bizarre things can occur.
+.IP "\fCFold current\fR"
+Toggles  the fold  status of the  current  block, only  applicable  in buffers
+supporting
+.Ht fold-current 3 ,
+such as c and emf files.
+.IP "\fCFold all\fR"
+Toggles  the fold  status of the whole  buffer,  opening or closing  all found
+blocks. Only  applicable  in buffers
+supporting
+.Ht fold-all 3 ,
+such as c and emf files.
+.IP "\fCMain menu\fR"
+Simply opens the main menu from any where on the screen.
+.IP "\fCMulti-Menu\fR"
+Opens a context  sensitive  menu  dependent on the position of the mouse, i.e.
+opens the main menu if over it, opens a  different  menu when  executed on the
+mode-line etc.
+.PP
+The following is a list of functions  available for pilot wheel events:-
+.IP "\fCNot bound\fR"
+The Button is not bound.
+.IP "\fCScroll Up 1 Line\fR ...."
+Scrolls the current buffer by the specified amount.
+.RE
+.IP "\fCDefaults\fR"
+Rests the mouse configuration to the default settings.
+.SS "File Types"
+The file type list is used in two places, the main  menu's
+.C "File => Quick Open"
+sub-menu  list and the
+.C "File => Open => File Type"
+list. In each case the file
+type "\fCAll Files\fR" is automatically added. The user can add, remove and
+change the list of file types by using this dialog. An entry can be selected
+for editing or deletion by simply selecting it with the left mouse button. A
+new entry may be added by simply filling in the 3 entry boxes and selecting
+Add. Items in the Dialog are as follows.
+.IP "\fCNo.\fR"
+The file  type  entry  number. A new  entry is always  added to the end of the
+list, ignoring this value. The position of an existing  entry can be changed by
+altering  this field to the desired  position and  selecting the  \fCChange\fR
+button to move it to its new position.
+.IP "\fCName\fR"
+The file type name, the string printed in the sub-menus.
+.IP "\fCFile Mask List\fR"
+A comma  ('\fC,\fR')  separated  list of file masks which match the file type,
+e.g. for C and C++ source files use "\fC*.c,*.cc,*.cpp\fR".
+.IP "\fCAdd\fR"
+Adds a new entry to the list,  only the  \fBName\fR  and  \fBFileMask  List\fR
+fields  are used, the  \fBNo.\fR  field is  ignored as the new entry is always
+added  to the end of the  list.  The  position  can be  altered  by using  the
+\fBChange\fR button.
+.IP "\fCChange\fR"
+Alters an existing file type entry, all 3 fields must be set.
+.IP "\fCDelete\fR"
+Deletes the current entry number, only the \fBNo.\fR entry is used.
+.SS Tools
+The Tools  dialog  allows the user to  configure up to 10 system  commands, or
+tools, which can be executed via \*(mS Main Tools Menu. The dialog  configures
+the user's registry for the command
+.Ht execute-tool 3
+to be  used.  The  execution  of a  tool  can  also  be  bound  to a key,  see
+\fBexecute-tool\fR for more information.
+.PP
+The  top  half  of  the  dialog  consists  of the 10  Tools  (\fC0\fR-\fC9\fR)
+configuration  buttons.  Selecting  one of these  selects the current  tool to
+be  configured,  the  current  tool is shown by the title in the middle of the
+dialog.
+.PP
+The lower  half of the  dialog  configures  the  currently  selected  tool, as
+follows:-
+.IP "\fCTool Name\fR"
+Sets the  displayed  name of the tool. The tool name is used in the buttons in
+the top half of this dialog and in the \*(mS Main Tools Menu. 
+.IP "\fCTool Command Line\fR"
+Sets the system command-line to be launched whenever the tool is executed, the
+following  special tokens may be used in the command-line which are substituted
+at execution:-
+.RS
+.IP "\fB%ff\fR"
+The current  buffer's full file name, including the path.
+.IP "\fB%fp\fR"
+The current  buffer's file path.
+.IP "\fB%fn\fR"
+The current  buffer's file name without the path.
+.IP "\fB%fb\fR"
+The current  buffer's  file base name, i.e. the file name  without the path or
+the  extension.
+.IP "\fB%fe\fR"
+The current  buffer's file  extension with the '\fI.\fR' (e.g.  "\fI.emf\fR"),
+set to the empty string if the file name does not have an extension.
+.RE
+.IP
+Note   that   "\fB%ff\fR"   is   always   the  same  as   "\fB%fp%fn\fR"   and
+"\fB%fp%fb%fe\fR".  If any of these  tokens  are used, the tool  will  fail to
+execute if the current buffer does not have a file name.
+.IP "\fCSave Current Buffer\fR and \fCPrompt\fR"
+If the current buffer has been edited, enabling \fCSave Current Buffer\fR will
+automatically  save the  current  buffer  before  executing  the tool. This is
+particularly  useful when the tool operates on the current buffer's file (e.g.
+compiles the file). If  \fCPrompt\fR is also enabled the user will be prompted
+before the file is saved.
+.IP "\fCSave All Buffers\fR and \fCPrompt\fR"
+If \fCSave All Buffers\fR is enabled, all edited buffers will be automatically
+saved before executing the tool. This is particularly useful when the tool may
+operate on multiple files (e.g.  compilation of a project). If \fCPrompt\fR is
+also enabled the user will be prompted before each file is saved.
+.IP "\fCCapture Output\fR"
+If enabled any output produced from the execution of the tool will be captured
+and  inserted  into a new  buffer.  When  enabled  the  following  two  items,
+\fCBuffer\fR  and \fCHide\fR, may be specified. When disabled the command used
+to execute the tool is
+.Ht shell-command 2 ,
+otherwise the command used is either
+.Ht pipe-shell-command 2 
+or
+.Ht ipipe-shell-command 2
+depending on the setting of \fCRun Concurrently\fR. 
+.IP "\fCBuffer\fR"
+Specifies the buffer name the captured output should be dumped to, this option
+is only visible when  \fCCapture  Output\fR is enabled. The following  special
+tokens may be used in the buffer name which are substituted at execution:-
+.RS
+.IP "\fB%fn\fR"
+The current  buffer's file name without the path, set to the buffer name if the
+current buffer does not have a file name.
+.IP "\fB%fb\fR"
+The current  buffer's  file base name, i.e. the file name  without the path or
+the  extension.  Set to the buffer name if the current  buffer does not have a
+file name.
+.IP "\fB%fe\fR"
+The current  buffer's file  extension with the '\fI.\fR' (e.g.  "\fI.emf\fR"),
+set to the empty string if the current  buffer does not have a file name or it
+does not have an extension.
+.RE
+Note that  "\fB%fn\fR" is always the same as  "\fB%fb%fe\fR".  Default  buffer
+name when this field is left empty is "\fI*command*\fR", or "\fI*icommand*\fR"
+if \fCRun Concurrently\fR is enabled.
+.IP "\fCHide\fR"
+When  enabled the tool output  capture  buffer is hidden,  this option is only
+visible when \fCCapture Output\fR is enabled.
+.IP "\fCRun Concurrently\fR"
+If  enabled,  when  the tool is  executed  the  command  is  launched  and run
+concurrently,  allowing the user to continue working in \*(mS during the tools
+execution.  This option is not  available for all versions on \*(mS and forces
+the output to be captured. Enabling this option will force the use of command
+.Ht ipipe-shell-command 2
+to launch the tool.
+.SS "E-Mail"
+\*(mE provides a simple E-Mail manager, see
+.Ht vm 3
+for more  information  and example  entries. It must be stressed that \fBvm\fR
+has only  been  tested in one  environment,  caution  should be used as system
+differences  may cause  problems,  such as loss of data, which the author does
+not except any responsibility for.
+.PP
+The  \fBE-Mail Setup\fR dialog  configures  a user  to use  part or all of the
+\fBvm\fR E-Mail manager, as follows:-
+.SS "Platform ALL Mail Setup"
+The following field is used for both sending and receiving mail:
+.IP "\fCUser Mail Dir\fR"
+Sets the user  mail-box  directory  where all files are to be found and stored
+(except  usually  the  \fBIncoming  Mail  box\fR).  The value of this field is
+platform  independent  and  must be  setup  for each  one.
+.PP
+The following fields are used for sending mail:
+.IP "\fCSend Mail Signature\fR"
+Sets  the  signature  file  name  which is  inserted  at the  bottom  of every
+out-going  email  message, if empty the no signature is inserted. The value of
+this  field is  platform  independent,  is value  use by all. The file must be
+located in the \fBUser  Mail Dir\fR and no path  entered for it to work across
+platforms.
+.IP "\fCCarbon-Copy File\fR"
+Sets the sent-mail  carbon-copy  file, creating the  "\fCFcc:\fR"  line of the
+mail buffer. All out-going  emails are appended to the end of this file if the
+"\fCFcc:\fR"  line  is not  altered.  If  this  field  is left  empty  then no
+"\fCFcc:\fR" line is created. The value of this field is platform independent,
+the file must be located in the \fBUser Mail Dir\fR.
+.IP "\fCInsert Data (^C^I)\fR"
+Sets the first embedded data command line, bound to "\fCC-c C-I\fR". The value
+of this field is platform dependent.
+.IP "\fCInsert Data (^C^Z)\fR"
+Sets the second  embedded  data  command  line, bound to "\fCC-c  C-z\fR". The
+value of this field is platform dependent.
+.IP "\fCSend Mail Command\fR"
+Sets the command-line used for sending email messages. The value of this field
+is platform dependent.
+.PP
+The following fields are used for receiving mail:
+.IP "\fCCheck for mail\fR"
+Sets the time  interval  between the  automatic  checking for incoming mail in
+seconds, when set to 0 the automatic checking is disabled. When enabled, the
+check is performed by
+.Ht mail-check 3
+which also sends any queued mail and gets any new mail if the
+.B "Get Mail Command"
+is used. The value of this field is platform dependent.
+.IP "\fCGet Mail Command\fR"
+The  command  used to get new mail from the server, if empty it is assumed the
+\fBIncoming  Mail Box\fR is  automatically  updated by the system. If used the
+command  must  append  new  mail  to the end of the  \fBIncoming  Mail  Box\fR
+specified below. The value of this field is platform dependent.
+.IP "\fCIncoming Mail Box\fR"
+Sets the incoming mail box file which new incoming mail is appended to, either
+automatically  by the system or by the \fBGet  Mail  Command\fR.  The value of
+this field is platform dependent.
+.IP "\fCVM Main In Box\fR"
+Sets the main  current mail box, or inbox. The value of this field is platform
+independent, the file must be located in the \fBUser Mail Dir\fR.
+.IP "\fCVM Gets Mail\fR"
+When  enabled,  executing  the  command  vm will not only  create the mail box
+windows, it will also get and process any new mail. When  disabled only the vm
+\&'\fCg\fR' command can be used to get and process new mail.
+.IP "\fCMime Data Extract\fR"
+Sets the  command-line  used for  extracting  Mime encoded  embedded data. The
+value of this field is platform dependent.
+.IP "\fCUuencode Extract\fR"
+Sets the command-line used for extracting  Uuencoded  embedded data. The value
+of this field is platform dependent.
+.IP "\fCAuto-Archive Setup\fR"
+Sets up the auto-archive of messages in the current inbox to other mail boxes.
+.SH NOTES
+\fBuser-setup\fR is a macro using
+.Ht osd 2 ,
+defined in user.emf.
+.SH "SEE ALSO"
+.na
+.Hl "User Profiles" userProfiles 2 ,
+.Hl "Company Profiles" companyProfiles 2 ,
+.Hl "Installation" Installation 1 ,
+.Ht scheme-editor 3 .
+.ad
+.FH

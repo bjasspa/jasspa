@@ -1,0 +1,49 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd102.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|search
+.ds C0 "(\fB\*e\*cr\fR)\ \&
+.so me.tni
+.TH query-replace-string 2
+.XI query-replace-string - "\*(C0Search and replace a string - with query"
+.SH NAME
+query-replace-string \- Search and replace a string - with query
+.Me $a
+.SH SYNOPSIS
+.na
+\fBquery-replace-string\fR \*(C0
+.ad
+.SH DESCRIPTION
+.B query-replace-string
+operates like the
+.Ht replace-string 2
+command.  replacing  one string with  another.  However, it allows you to step
+through each string and ask you if you wish to make the  replacement. The user
+is prompted for a replacement response as follows:-
+.IP \fBY\fR
+Make the replacement and continue on to the next string.
+.IP \fBN\fR
+Do not make the replacement, and continue.
+.IP \fB!\fR
+Replace the rest of the strings without asking.
+.IP \fB^G\fR
+Stop the command.
+.IP \fB.\fR
+Go back to place the command started
+.IP \fBu\fR
+Undo last replacement.
+.IP \fBl\fR
+Last replacement, do next and stop.
+.IP \fB?\fR
+Help - get a list of options.
+.SH "SEE ALSO"
+Refer to
+.Ht search-forward 2
+for a description of the magic mode search characters.
+.PP
+.na
+.Ht replace-string 2 .
+.br
+.Hl "Regular Expressions" RegularExpressions 2
+.ad
+.rm C0
+.FH

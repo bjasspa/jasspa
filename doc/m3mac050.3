@@ -1,0 +1,142 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 2000 Jasspa.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m3mac050.3
+.\"  Created By    : Jon Green
+.\"  Created       : Tue Jan 25 23:22:52 2000
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 2000 Jasspa.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from Jasspa.
+.\"
+.\"***************************************************************************
+.Id $Id: m3mac050.3,v 1.1.1.1 2000-07-25 22:04:01 jon Exp $
+.Im MicroEmacs command|file
+.so me.tni
+.TH ftp 3
+.XI ftp - "Initiate an FTP connection"
+.SH NAME
+ftp \- Initiate an FTP connection
+.Me $a
+.SH SYNOPSIS
+.na
+.B ftp
+.ad
+.SH DESCRIPTION
+.B ftp
+initiates a File  Transfer  Protocol (FTP)  connection to a remote host on the
+network.  Using FTP, editing of files may be performed in much the same way as
+on the local file system.  Directory  listings  may be retrieved  and traversed
+using the mouse or cursor  keys.  Using the  directory  listing,  files may be
+transfered to/from the remote host to the local machine.
+.PP
+On issuing the command  then a dialog is  presented to the user which
+is used to open the connection. The dialog entries are defined as follows:-
+.IP "\fBRegistry File\fR"
+The name of a  registry  file which is used to store the FTP  information.  If
+a registry name is provided then all FTP address  information is stored in the
+registry file and saved for later sessions. Be aware that password information
+is saved in this file as plain  text if a  password  is entered  into the site
+information.
+.IP
+If the  registry  information  is omitted  then the  information  is not saved
+between sessions.
+.IP "\fBSite Name\fR"
+An ASCII  pseudo name for the remote host. The  pull-down  menu may be used to
+select existing sites that have been previously entered.
+.IP "\fBHost Address\fR"
+The address of the host, this may be an IP address  (\fC111.222.333.444\fR) or
+a DNS name (i.e. \fCftp.mysite.com\fR).
+.IP "\fBUser Name\fR"
+The login name for the site. If this is omitted  then  \fCguest\fR  is used by
+default.
+.IP "\fBPassword\fR"
+The password  used to enter the site for the given login name. If the password
+is NOT supplied  then the user is prompted for the password when a transaction
+takes  place. If the  password  is  omitted  and left to promt  then it is not
+stored in the registry.
+.IP
+Take note of the
+comments provided above regarding the password information.
+.IP "\fBInitial Host Path\fR"
+The  starting  directory  at the remote host. If this is omitted then the root
+directory ('\fC/\fR') is used by default.
+.PP
+On selecting  \fBConnect\fR  then a FTP  connection  is opened and the initial
+directory  appears as a directory  listing, if the initial path is a file then
+the file is loaded into the editor.
+.PP
+Thereafter  the file may be edited  within  the  editor as  normal, on a write
+operation then the file is written back to the host, via FTP.
+.PP
+On opening a FTP connection the progress of the transfer, and the FTP commands
+issued,  may be viewed in the  \fC*ftp-console*\fR  buffer.  This  buffer  may
+automatically appear depending upon the value of the
+.Ht %ftp-flags 5
+variable.
+.SH NOTES
+.B ftp
+is a macro implemented in \fCftp.emf\fR. This uses the underlying command
+.Ht find-file 2
+to implement the FTP transfer.
+.PP
+The FTP addresses are retained in a registry file (see
+.Ht erf 8 ).
+The  registry  file is  automatically  loaded when  MicroEmacs  starts up each
+session. The current site information may be viewed using
+.Ht list-registry 2
+and is located at the following registry addresses:-
+.IP "\fB/url\fR"
+Data value is file system location of the FTP registry file.
+.IP "\fB/url/ftp/\fR\|\fI<hostName>\fR"
+The name of the host to which the connection is to be made.
+.IP "\fB/url/ftp/\fR\|\fI<hostName>\fR\|\fB/host\fR"
+The name or IP address of the remote host
+.IP "\fB/url/ftp/\fR\|\fI<hostName>\fR\|\fB/user\fR"
+The user name used to log into the remote host.
+.IP "\fB/url/ftp/\fR\|\fI<hostName>\fR\|\fB/pass\fR"
+The user  password to the remote host. If this entry is empty then the user is
+always prompted for the password when the connection is made.
+.IP "\fB/url/ftp/\fR\|\fI<hostName>\fR\|\fB/path\fR"
+The initial path at the remote site.
+.PP
+When a FTP connection is initiated then the connection  (socket)  remains open
+for a period of  approximately  4 minutes from the last  transfer  time, after
+that the connection is  automatically  closed and is  re-initiated if required
+again.
+.PP
+.B NOTE:
+For windows  platforms  then the resultant  executable  must be built with URL
+support  enabled, for \s-1UNIX\s0  platforms  socket support is  automatically
+enabled.
+.SH BUGS
+Directory completion is not available when the current working directory is an
+FTP address. To work around this from the command line, select  \fC<RETURN>\fR
+to get a  directory  listing of the current  directory  and select the file(s)
+from the directory to load.
+.SH "SEE ALSO"
+.na
+.Ht %ftp-flags 5 ,
+.Ht erf 8 ,
+.Ht find-file 2 ,
+.Ht list-registry 2 .
+.ad
+.FH

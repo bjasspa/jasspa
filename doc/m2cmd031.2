@@ -1,0 +1,40 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd031.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|buffer
+.ds C0 "(\fB\*(cXk\fR)\ \&
+.so me.tni
+.TH delete-buffer 2
+.XI delete-buffer - "\*(C0Delete a buffer"
+.SH NAME
+delete-buffer \- Delete a buffer
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B delete-buffer
+"\fIbuffer-name\fR" \*(C0
+.ad
+.SH DESCRIPTION
+.B delete-buffer
+disposes of buffer  \fIbuffer-name\fR  in the editor and reclaim the memory.
+This does not delete the file that the buffer was read from.
+.PP
+If the  buffer  has been  edited  and its name does not start with a '\fB*\fR'
+then the user is prompted as to whether the changes should be discarded.  Also
+if the buffer has an active process  running in it then  confirmation  is sort
+from the user before the process is killed.
+.PP
+The  argument  \fIn\fR  can  be  used  to  change  the  default  behavior  of
+delete-buffer described above, \fIn\fR is a bit based flag where:-
+.IP \fB0x01\fR
+Enables lost of work checks  (default).  These include a check that the buffer
+has not  been  modified,  if so the user is  prompted.  Also if a  process  is
+running then user must confirm that the process can be killed. If this flag is
+not  supplied  then the buffer is killed  without any user prompts  (useful in
+macros).
+.SH "SEE ALSO"
+.na
+.Ht next-buffer 2 .
+.ad
+.rm C0
+.FH

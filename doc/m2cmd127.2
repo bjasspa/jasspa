@@ -1,0 +1,35 @@
+.Id $Id: m2cmd127.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|window
+.ds C0 "(\fB\*(cX4\fR)\ \&
+.so me.tni
+.TH next-window-find-file 2
+.XI next-window-find-file - "\*(C0Split the current window and find file"
+.SH NAME
+next-window-find-file \- Split the current window and find file
+.Me $a
+.SH SYNOPSIS
+.na
+.B next-window-find-file
+"\fIfile\fR" \*(C0
+.ad
+.SH DESCRIPTION
+.B next-window-find-file
+splits the  current  window into two near equal  windows,  and loads the given
+\fIfile\fR into the current window. It is effectively a
+.Ht split-window-vertically 2
+command followed by a
+.Ht find-file 2 .
+.PP
+When there is  insufficient  space in the current window to perform the split,
+then the  current  window is  replaced.  The  requested  \fIfile\fR  is always
+displayed,  if the file  does not  already  exist it is  effectively  created
+within  \*(mE  (although  it will  not  exist  on the  disk  until a save
+operation is performed).
+.SH "SEE ALSO"
+.na
+.Ht find-file 2 ,
+.Ht next-window-find-buffer 2 ,
+.Ht split-window-vertically 2 .
+.ad
+.rm C0
+.FH

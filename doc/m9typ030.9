@@ -1,0 +1,68 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1999 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m9typ030.9
+.\"  Created By    : Jon Green
+.\"  Created       : Mon May 24 17:48:03 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m9typ030.9,v 1.1.1.1 2000-07-25 22:04:10 jon Exp $
+.Im MicroEmacs filetype
+.so me.tni
+.TH asm 9
+.XI asm - "Assembler File"
+.XI s - "Assembler File"
+.SH SYNOPSIS
+asm, s \- Assembler File
+.SH EXTENSIONS
+.na
+\fB.s\fR \- Platform specific assembler file.
+.br
+\fB.asm\fR \- Platform specific assembler file.
+.ad
+.SH DESCRIPTION
+The standard assembler file extensions  \fB.s\fR and \fB.asm\fR are by default
+not bound to any hook functions as they are platform specific. The user should
+define a default  binding for the assembler  file types as  appropriate to the
+current platform and assembler  development. i.e. for the Windows  environment
+the
+.Ht x86 9
+file type would be conditionally bound to the file e.g.
+.Me $emf-scheme
+.CS
+!if &seq $platform "win32"
+    add-file-hook ".s .asm"             fhook-asmx86
+!endif
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Ht x86 9 .
+.br
+.Hl "File Hooks" fileHooks 2 ,
+.Hl "Supported File Types" FileTypes - .
+.ad
+.FH

@@ -1,0 +1,455 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1998 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m3osd006.3
+.\"  Created By    : Steven Phillips
+.\"  Created       : Sat Aug 22 09:00:06 1998
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1998 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m3osd006.3,v 1.1.1.1 2000-07-25 22:04:02 jon Exp $
+.Im MicroEmacs command|osd
+.so me.tni
+.TH "MainMenu" 3
+.XI "MainMenu" - "The top main menu"
+.SH NAME
+Main Menu \- The top main menu
+.Me $a
+.SH SYNOPSIS
+.na
+\fIn\fR osd
+.ad
+.SH DESCRIPTION
+The  main  menu is  provided  to give an  easier  access  to  parts  of  \*(mS
+functionality,  the menu is not burnt into \*(mS but  defined on  start-up  in
+\fCme.emf\fR and \fCosd.emf\fR. The
+.Ht user-setup 3
+command  can be used to set  whether  the menu is  always  visible  and if the
+Alt-Hotkeys are enabled (i.e. '\fCA-f\fR' to open the \fBFile\fR menu).
+.PP
+The main menu is
+.Ht osd 2
+dialog  number  \fC0\fR so key  bindings  can be made which will open the main
+menu, an  argument  of \fC0\fR  will simply open the main menu, an argument of
+\fC0x0n0000\fR  will not only  open the main menu but also the  \fCn\fRth  sub
+menu, e.g. to open the edit menu use:
+.CS
+    0x020000 osd
+.CE
+Following is a brief description of the main menu items:
+.SS "File Menu"
+.IP "\fCNew\fR"
+Changes the current buffer to a new buffer.
+.IP "\fCOpen\fR"
+Opens a dialog  enabling  the user to select  files for opening into \*(mS. By
+default the dialog opens the selected file using command
+.Ht find-file 2 ,
+but if the view, binary or encrypt options are used the command used is
+.Ht view-file 2 ,
+.Ht find-bfile 2
+or
+.Ht find-cfile 2
+respectively.
+.IP "\fCQuick Open\fR"
+Opens a sub-menu list all user file types (defined in
+.Ht user-setup 3 ).
+Selecting one will open another  sub-dialog list all files of that type in the
+current directory, selecting a file will open it using command
+.Ht find-file 2 .
+.IP "\fCFavorites\fR"
+Opens a  sub-menu  enabling  the  user to add new  favorite  files,  edit  the
+existing list of favorite files, or select an existing  favorite file in which
+case the file is opened using command
+.Ht find-file 2 .
+The favorite file using to store the list is "\fB$MENAME\fR\fC.eff\fR"  and is
+saved in the first path given in the
+.Ht $search-path 5 . 
+Each favorite file takes 2 lines in the file, the first is the text  displayed
+in the dialog (note that characters '\fC\\\fR' and '\fC&\fR' must be protected
+with a '\fC\\\fR'  and the  '\fC&\fR'  can be used to set the Hot key) and the
+second line is the file name. A line with a single '\fC-\fR' character creates
+a separater line in the dialog.
+.IP "\fCFind Tag\fR"
+Only  visible when a \fCtags\fR  file is found in the current  directory,  the
+command  jumps to the  current tag or if not on a tag or the tag is not found,
+opens a dialog enabling the user to select a tag. See command 
+.Ht find-tag 2
+for more information.
+.IP "\fCFind File\fR"
+Executes command
+.Ht file-browser 3 .
+.IP "\fCClose\fR"
+Executes a dialog form of the command
+.Ht delete-buffer 2 .
+.IP "\fCAttributes\fR"
+Opens a dialog  enabling the user to set the current buffers file  attributes.
+See command
+.Ht file-attrib 3 
+for more information.
+.IP "\fCSave\fR"
+Executes a dialog form of the command
+.Ht save-buffer 2 .
+.IP "\fCSave As\fR"
+Executes a dialog form of the command
+.Ht write-buffer 2 .
+.IP "\fCSave All\fR"
+Executes a dialog form of the command
+.Ht save-all 3 .
+.IP "\fCPrinter Setup\fR"
+Opens a dialog which enables the user to configure the printer  driver, output
+location and page layout.
+.IP "\fCPrint\fR"
+Executes command
+.Ht print-buffer 2 .
+.IP "\fCBuffer\fR"
+Opens a sub-menu  listing all created  buffers,  selecting one will change the
+current buffer to the selected one.
+.IP "\fCExit\fR"
+Executes command
+.Ht save-buffers-exit-emacs 2 .
+.SS "Edit Menu"
+.IP "\fCUndo\fR"
+Undoes the last edit in the current buffer (executes command
+.Ht undo 2 ).
+.IP "\fCRedo\fR"
+Redo the last  undo, only  available  immediately  after an undo. This is also
+done via the
+.Ht undo 2
+command.
+.IP "\fCUndo All\fR"
+Undo all  edits in the  current  buffer  until  the last  save or no more undo
+history is available. Executes the command
+.Ht undo 2
+with a 0 numerical argument.
+.IP "\fCSet Mark\fR"
+Executes command
+.Ht set-mark 2 .
+.IP "\fCCut\fR"
+Executes command
+.Ht kill-region 2 .
+.IP "\fCCopy\fR"
+Executes command
+.Ht copy-region 2 .
+.IP "\fCPaste\fR"
+Executes command
+.Ht yank 2 .
+.IP "\fCNarrow Out\fR"
+Executes command
+.Ht narrow-buffer 2 
+with a numeric argument of \fC4\fR.
+.IP "\fCNarrow To\fR"
+Executes command
+.Ht narrow-buffer 2 
+with a numeric argument of \fC3\fR.
+.IP "\fCRemove Single Narrow\fR"
+Executes command
+.Ht narrow-buffer 2 
+with a numeric argument of \fC2\fR.
+.IP "\fCRemove All Narrows\fR"
+Executes command
+.Ht narrow-buffer 2 
+with a numeric argument of \fC1\fR.
+.SS "Search Menu"
+.IP "\fCSearch\fR"
+Executes a dialog form of the command
+.Ht isearch-forward 2 .
+.IP "\fCReplace\fR"
+Executes a dialog form of the command
+.Ht query-replace-string 2 .
+.IP "\fCHilight Search\fR"
+Opens  another  dialog  which  can be  used to add and  remove  hilighting  of
+individual  lines in the current buffer. Note that setting a line hilight is a
+temporary  change, it will not  effect any files etc and will be lost when the
+buffer is deleted. The command executed is
+.Ht line-scheme-search 3 .
+.IP "\fCGoto Line\fR"
+Executes a dialog form of the command
+.Ht goto-line  2 .
+.IP "\fCGoto Fence\fR"
+Executes command
+.Ht goto-matching-fence 2 .
+.IP "\fCSet Bookmark\fR"
+Executes command
+.Ht set-alpha-mark 2 .
+.IP "\fCGoto Bookmark\fR"
+Executes command
+.Ht goto-alpha-mark 2 .
+.SS "Insert Menu"
+.IP "\fCSymbol\fR"
+Executes command
+.Ht symbol 3 .
+.IP "\fCDate & Time\fR"
+Opens a  dialog  with  the  current  date and time in a  selection  of  common
+formats; selecting one of these will insert the string into the current buffer
+at the  current  position.  Note that the format  text  strings  depend on the
+current  language  (Default and American  languages use the order MM-DD-YY etc
+whereas the rest use DD-MM-YY). The names used for the day and month names can
+be defined using the Setup page of
+.Ht Organizer 3 .
+.IP "\fCFile\fR"
+Executes command
+.Ht insert-file 2 .
+.IP "\fCFile Name\fR"
+Executes command
+.Ht insert-file-name 2 .
+.IP "\fCMacro...\fR"
+Executes command
+.Ht insert-macro 2 .
+.SS "Format Menu"
+.IP "\fCRestyle Buffer\fR"
+Executes command
+.Ht restyle-buffer 3 .
+.IP "\fCRestyle Region\fR"
+Executes command
+.Ht restyle-region 3 .
+.IP "\fCClean Buffer\fR"
+Executes command
+.Ht clean 3 .
+.IP "\fCChange Buffer Char Set\fR"
+Executes command
+.Ht charset-change 3 .
+.IP "\fCIQ Fill Paragraph\fR"
+Executes command
+.Ht ifill-paragraph 3 .
+.IP "\fCFill Paragraph\fR"
+Executes command
+.Ht fill-paragraph 2 .
+.IP "\fCFill All Paragraphs\fR"
+Executes command
+.Ht fill-paragraph 2 
+with a very large  positive  numerical  argument.  Note that this only effects
+paragraphs from the current position onwards.
+.IP "\fCParagraph to Line\fR"
+Executes command
+.Ht paragraph-to-line 3 .
+.IP "\fCAll Paragraphs to Line\fR"
+Executes command
+.Ht paragraph-to-line 3
+with a very large  positive  numerical  argument.  Note that this only effects
+paragraphs from the current position onwards.
+.IP "\fCSort Lines\fR"
+Executes command
+.Ht sort-lines 2 .
+.IP "\fCIgnore Case Sort Lines\fR"
+Executes command
+.Ht sort-lines-ignore-case 3 .
+.IP "\fCCapitalize Word\fR"
+Executes command
+.Ht capitalize-word 2 .
+.IP "\fCLower Case Word\fR"
+Executes command
+.Ht lower-case-word 2 .
+.IP "\fCLower Case Region\fR"
+Executes command
+.Ht lower-case-region 2 .
+.IP "\fCUpper Case Word\fR"
+Executes command
+.Ht upper-case-word 2 .
+.IP "\fCUpper Case Region\fR"
+Executes command
+.Ht upper-case-region 2 .
+.SS "Execute Menu"
+.IP "\fCExecute Command\fR"
+Executes command
+.Ht execute-named-command 2 .
+.IP "\fCExecute Buffer\fR"
+Executes command
+.Ht execute-buffer 2 .
+.IP "\fCExecute File\fR"
+Executes command
+.Ht execute-file 2 .
+.IP "\fCStart Kbd Macro\fR"
+Executes command
+.Ht start-kbd-macro 2 .
+.IP "\fCQuery Kbd Macro\fR"
+Executes command
+.Ht kbd-macro-query 2 .
+.IP "\fCEnd Kbd Macro\fR"
+Executes command
+.Ht end-kbd-macro 2 .
+.IP "\fCExecute Kbd Macro\fR"
+Executes command
+.Ht execute-kbd-macro 2 .
+.IP "\fCName Kbd Macro\fR"
+Executes command
+.Ht name-kbd-macro 2 .
+.IP "\fCIpipe command\fR"
+Executes command
+.Ht ipipe-shell-command 2 .
+.IP "\fCShell\fR"
+Executes command
+.Ht shell 2 .
+.SS "Tools Menu"
+.IP "\fCCurrent Buffer Tools\fR"
+For some file formats \*(mS provides a file format  specific set of tools, see
+the
+.Hl "file type" FileTypes -
+help page for more specific information.
+.IP "\fCCount Words\fR"
+Executes command
+.Ht count-words 2 .
+.IP "\fCSpell Word\fR"
+Executes command
+.Ht spell-word 3 .
+.IP "\fCSpell Buffer\fR"
+Executes command
+.Ht spell-buffer 3 .
+.IP "\fCWord Complete\fR"
+Takes the  incomplete  word to the left of the cursor and attempts to complete
+the word by using the users current language dictionary. Executes command
+.Ht spell-complete-word 3 .
+.IP "\fCCompare Windows\fR"
+Executes command
+.Ht compare-windows 2 .
+.IP "\fCCompile\fR"
+Executes command
+.Ht compile 3 .
+.IP "\fCGrep\fR"
+Executes command
+.Ht grep 3 .
+.IP "\fCGraphical Diff\fR"
+Executes command
+.Ht gdiff 3 .
+.IP "\fCDiff\fR"
+Executes command
+.Ht diff 3 .
+.IP "\fCDiff Changes\fR"
+Executes command
+.Ht diff-changes 3 .
+.IP "\fCOrganizer\fR"
+Executes command
+.Ht organizer 3 .
+.IP "\fCMail\fR"
+Executes command
+.Ht mail 3 .
+.IP "\fCView Mail\fR"
+Executes command
+.Ht vm 3 .
+.IP "\fCMore...\fR"
+Opens a sub-menu with a collection of other useful miscellaneous tools.
+.SS "Window Menu"
+.IP "\fCSplit Window V\fR"
+Executes command
+.Ht split-window-vertically 2 .
+.IP "\fCGrow Window V\fR"
+Executes command
+.Ht grow-window-vertically 2 .
+.IP "\fCShrink Window V\fR"
+Executes command
+.Ht shrink-window-vertically 2 .
+.IP "\fCSplit Window H\fR"
+Executes command
+.Ht split-window-horizontally 2 .
+.IP "\fCGrow Window H\fR"
+Executes command
+.Ht grow-window-horizontally 2 .
+.IP "\fCShrink Window H\fR"
+Executes command
+.Ht shrink-window-horizontally 2 .
+.IP "\fCOne Window\fR"
+Executes command
+.Ht delete-other-windows 2 .
+.IP "\fCDelete Window\fR"
+Executes command
+.Ht delete-window 2 .
+.IP "\fCPrevious Window\fR"
+Executes command
+.Ht previous-window 2 .
+.IP "\fCNext Window\fR"
+Executes command
+.Ht next-window 2 .
+.SS "Help Menu"
+.IP "\fCCurr Buffer Help\fR"
+For some file formats \*(mS  provides a file format  specific help page giving
+details of key-bindings and tools specific to the current buffers file type.
+.IP "\fCGeneral Help\fR"
+Executes command
+.Ht osd-help 3 .
+.IP "\fCHelp on Command\fR"
+Executes command
+.Ht help-command 2 .
+.IP "\fCHelp on Variable\fR"
+Executes command
+.Ht help-variable 2 .
+.IP "\fCDescribe Bindings\fR"
+Executes command
+.Ht describe-bindings 2 .
+.IP "\fCDescribe key\fR"
+Executes command
+.Ht describe-key 2 .
+.IP "\fCDescribe Variable\fR"
+Executes command
+.Ht describe-variable 2 .
+.IP "\fCList Buffers\fR"
+Executes command
+.Ht list-buffers 2 .
+.IP "\fCList Commands\fR"
+Executes command
+.Ht list-commands 2 .
+.IP "\fCList Registry\fR"
+Executes command
+.Ht list-registry 2 .
+.IP "\fCList Variables\fR"
+Executes command
+.Ht list-variables 2 .
+.IP "\fCCommand Apropos\fR"
+Executes command
+.Ht command-apropos 2 .
+.IP "\fCUser Setup\fR"
+Executes command
+.Ht user-setup 3 .
+.IP "\fCScheme Editor\fR"
+Executes command
+.Ht scheme-editor 3 .
+.IP "\fCGames\fR"
+Opens a sub-menu listing all available games, see
+.Hl "Games" Games -
+for more information.
+.IP "\fCProduct Support\fR"
+Opens on-line
+.Hl "Contact" Contact -
+information.
+.IP "\fCAbout MicroEmacs\fR"
+Executes command
+.Ht about 2 .
+.SH NOTES
+The main menu is defined using
+.Ht osd 2
+in macro files me.emf and osd.emf.
+.PP
+General  user  extensions  to the  main  menu  can be  added to the user  file
+\fCmyosd.emf\fR which is executed once when the main menu is first opened. The
+macro file can add new items to any of the main sub menus and can delete  most
+existing items (some are dynamically added when appropriate,  these should not
+be deleted). See \fCosd.emf\fR for examples of how to add items to the menu.
+.PP
+New sub-menus  should be added in the company or user setup files as this must
+be done at start-up.  The content on the menu is not  required  until the main
+menu is used so populating the new sub-menu can be done in \fCmyosd.emf\fR. 
+.SH "SEE ALSO"
+.na
+.Ht user-setup 3 .
+.ad
+.FH

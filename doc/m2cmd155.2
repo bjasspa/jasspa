@@ -1,0 +1,42 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd155.2,v 1.1.1.1 2000-07-25 22:03:57 jon Exp $
+.Im MicroEmacs command|buffer
+.so me.tni
+.TH delete-some-buffers 2
+.XI delete-some-buffers - "Delete buffers with query"
+.SH NAME
+delete-some-buffers \- Delete buffers with query
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B delete-some-buffers
+.ad
+.SH DESCRIPTION
+.B delete-some-buffers
+cycles through all visible buffers (buffers without mode
+.Ht hide 2m
+set) and prompts the user [\fBy\fR/\fBn\fR] as to whether the buffer should be
+deleted. A \fBy\fR response deletes the buffer, a \fBn\fR response retains the
+buffer.
+.PP
+If a \fBy\fR  response is given, the buffer has been edited, and its name does
+not start with a '\fB*\fR' then the user is prompted as to whether the changes
+should be discarded.  Also if the buffer has an active  process  running in it
+then confirmation is sort from the user before the process is killed.
+.PP
+The  argument  \fIn\fR  can  be  used  to  change  the  default  behavior  of
+delete-some-buffers described above, \fIn\fR is a bit based flag where:-
+.IP \fB0x01\fR
+Enables  all checks  (default).  These  include the initial y/n prompt on each
+buffer, the buffer has not been  modified  check, if so the user is  prompted.
+Also if a process is running  then user must  confirm  that the process can be
+killed. If this flag is not  supplied  then all  visible  buffers  are  killed
+without any user prompts (useful in macros).
+.SH "SEE ALSO"
+.na
+.Ht delete-buffer 2 ,
+.Ht next-buffer 2 ,
+.Ht hide 2m .
+.ad
+.FH

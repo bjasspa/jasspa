@@ -1,0 +1,69 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd022.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|region
+.ds C0 "(\fB\*ew\fR)\ \&
+.so me.tni
+.TH copy-region 2
+.XI copy-region - "\*(C0Copy a region of the buffer"
+.SH NAME
+copy-region \- Copy a region of the buffer
+.Me $a
+.SH SYNOPSIS
+.na
+\fBcopy-region\fR \*(C0
+.ad
+.SH DESCRIPTION
+.B copy-region
+copies all the characters between the cursor and the mark set with the
+.Ht set-mark 2
+command into the kill buffer (so they can later be
+.Hl yanked yank 2 
+elsewhere).
+.PP
+If the last command also entered text into the kill buffer (or the
+.Ht @cl 4
+variable  is set to one of  these  commands)  the  \fBcopy-region\fR  text  is
+appended to the last kill.
+.SH USAGE
+To copy text from one place to another, using the  \fBcopy-region\fR  command,
+the following operations are performed:
+.BS
+Move to the beginning of the text you want to copy.
+.BU
+Set the mark there with the
+.Hl set-mark set-mark 2 
+(\fBesc-space\fR) command.
+.BU
+Move the point (cursor) to the end of the text.
+.BU
+Use  \fBcopy-region\fR  to copy the region you just  defined. The text will be
+saved in the kill buffer. (If you accidentally delete the text use
+.Hl yank yank 2 
+(\fB\*cy\fR) immediately or
+.Hl undo undo 2 
+(\fB\*(cXu\fR) to restore the text).
+.BU 
+Move the point to the place you want the text to appear.
+.BU
+Use the
+.Hl yank yank 2 
+(\fB\*cy\fR)  command  to copy the text  from the kill  buffer to the  current
+point.
+.BE
+Repeat the last two steps to insert further copies of the same text.
+.SH NOTES
+Windowing  systems such as X-Windows  and Microsoft  Windows  utilize a global
+windowing kill buffer allowing data to be moved between windowing applications
+(\fIcut   buffer\fR   and   \fIclipboard\fR,   respectively).   Within   these
+environments  \*(mE  automatically  interacts with the windowing  systems kill
+buffer, the last \*(mE \fBcopy-region\fR  entry is immediately available for a
+paste operation into another windowing application.
+.SH "SEE ALSO"
+.na
+.Ht exchange-point-and-mark 2 ,
+.Ht kill-region 2 ,
+.Ht set-mark 2 ,
+.Ht yank 2 .
+.ad
+.rm C0
+.FH

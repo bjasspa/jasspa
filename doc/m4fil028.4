@@ -1,0 +1,75 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1998 samsung.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m4fil028.4
+.\"  Created By    : Jon Green
+.\"  Created       : Thu Jul 30 21:34:44 1998
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1998 samsung.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from samsung.
+.\"
+.\"***************************************************************************
+.\"
+.\" -*- nroff -*-
+.Id $Id: m4fil028.4,v 1.1.1.1 2000-07-25 22:04:03 jon Exp $
+.Im MicroEmacs macro;function;misc|registry
+.so me.tni
+.TH &reg 4
+.XI &reg - "Retrieve a registry value (with default)"
+.SH NAME
+&reg \- Retrieve a registry value (with default)
+.SH SYNOPSIS
+.na
+.B &reg
+.I root
+.I subkey
+.I default
+.ad
+.SH DESCRIPTION
+.B &reg
+retrieves  the value of a node  defined  by  \fIroot\fR/\fIsubkey\fR  from the
+registry. The  node  name  is  specified  in two  components,  typically  required  when
+iterating  over a registry tree, where the \fIroot\fR  component is static and
+the \fIsubkey\fR is dynamic,  \fIsubkey\fR may be specified as the null string
+(\fC""\fR) if an absolute registry path is specified.
+.PP
+The  \fIdefault\fR  value is the  value of the node to return if the  registry
+node does not exist.
+.SH EXAMPLE
+The  following  example is taken from  \fCme.emf\fR  and uses the  registry to
+retrieve some of the default configuration files:
+.Me $emf-scheme
+.CS
+; Load in the color setup
+!force execute-file &reg "/history" &cat $platform "/color" "color"
+; execute company setup
+!if &not &seq &set #l0 &reg "/history" "company" "" ""
+    !force execute-file #l0
+!endif
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Ht get-registry 2 ,
+.Ht set-registry 2 .
+.ad
+.FH

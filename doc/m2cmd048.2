@@ -1,0 +1,78 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd048.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|macrodevelop
+.so me.tni
+.TH execute-string 2
+.XI execute-string \- "Execute a string as a command"
+.SH NAME
+execute-string \- Execute a string as a command
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B execute-string
+"\fIstring\fR"
+.ad
+.SH DESCRIPTION
+.B execute-string
+executes the given \fIstring\fR \fIn\fR times as if it is being typed. This is
+the  writable  format of a  keyboard  macro, it can be placed in any  \fBemf\fR
+file. Any characters may form the  \fIstring\fR  (unprintables as \fC\\xXX\fR)
+and  key-strokes  that are bound to a command will execute that  command. This
+command is used by macros to store user defined keyboard macros.
+.SH EXAMPLE
+The following  example uses keyboard  strokes with  \fBexecute-string\fR  in a
+macro to format
+.Hr nroff 1
+text located between \fC.\fR commands:
+.Me $emf-scheme
+.CS
+define-macro nroff-para
+    beginning-of-line
+    !if &not &sequal @wc "."
+        1 buffer-mode "magic"
+        execute-string "\\CXS^\\\\.\\CM\\CB\\CM\\CX\\CH\\CN\\CM"
+        -1 fill-paragraph
+        execute-string "\\CD\\CX\\CH\\CN\\CD\\CXH\\CB"
+    !endif
+    forward-line
+!emacro
+.CE
+.Me $ehf-scheme
+.B execute-string
+has the  advantage  that  execution  is very fast as the amount of parsing and
+decoding  to be  performed  is  limited.  The  disadvantage  is that you cannot
+quickly discern which operations are being performed !!
+.SH NOTES
+Try to avoid using named key, such as "\fCup\fR"  and  "\fCreturn\fR",  as the
+keyboard  macro  equivalent  is not readable and is likely to change in future
+releases.
+.PP
+For this reason the following special abbreviations may be used
+.IP \fB\\\\E\fR
+The "\fBescape\fR" key.
+.IP \fB\\\\N\fR
+The "\fBreturn\fR" key.
+.IP \fB\\\\T\fR
+The "\fBtab\fR" key.
+.IP \fB\\\\b\fR
+The backspace character (0x08).
+.IP \fB\\\\d\fR
+The delete character (0x7f).
+.IP \fB\\\\e\fR
+The escape character (0x1b).
+.IP \fB\\\\f\fR
+The form-feed character (0x0c).
+.IP \fB\\\\n\fR
+The carriage-return character (0x0a).
+.IP \fB\\\\r\fR
+The line-feed character (0x0d).
+.SH "SEE ALSO"
+.na
+.Ht buffer-abbrev-file 2 ,
+.Ht global-abbrev-file 2 ,
+.Ht insert-macro 2 ,
+.Ht name-kbd-macro 2 ,
+.Ht start-kbd-macro 2 .
+.ad
+.FH

@@ -1,0 +1,69 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1999 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m9typ007.9
+.\"  Created By    : Jon Green
+.\"  Created       : Sat Feb 6 14:22:09 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m9typ007.9,v 1.1.1.1 2000-07-25 22:04:08 jon Exp $
+.Im MicroEmacs filetype
+.so me.tni
+.TH bat 9
+.XI bat - "MS-DOS Batch File"
+.XI btm - "4-DOS Batch File"
+.SH SYNOPSIS
+bat, btm \- MS-DOS batch files
+.SH FILES
+.na
+.B hkdos.emf
+\- MS-DOS hook definition
+.ad
+.SH EXTENSIONS
+.na
+\fB.bat\fR \- MS-DOS Batch file
+.br
+\fB.btm\fR \- 4-DOS Batch file
+.ad
+.SH "MAGIC STRINGS"
+.IP "\fB-!- msdos -!-\fR"
+Recognized by MicroEmacs only.  Denotes a MS-DOS batch file.
+.SH DESCRIPTION
+The \fBdos\fR file type  templates provide simple hilighting of a MS-DOS batch
+file. The template  provides minimal  hilighting  support of both standard and
+4-DOS batch files. 
+.PP
+The \fIMagic String\fR may be used within the  \fBconfig.sys\fR  file to force
+hilighting of the MS-DOS configuration file.
+.SH BUGS
+None reported.
+.SH "SEE ALSO"
+.na
+.Ht ini 9 .
+.sp 1
+.Hl "Supported File Types" FileTypes -
+.ad
+.FH

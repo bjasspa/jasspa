@@ -1,0 +1,68 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd081.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|delete|region
+.ds C0 "(\fB\*cw\fR)\ \&
+.so me.tni
+.TH kill-region 2
+.XI kill-region - "\*(C0Delete all characters in the marked region"
+.SH NAME
+kill-region \- Delete all characters in the marked region
+.Me $a
+.SH SYNOPSIS
+.na
+\fBkill-region\fR \*(C0
+.ad
+.SH DESCRIPTION
+.B kill-region
+deletes all characters from the cursor  to the mark set with the
+.Ht  set-mark 2
+command.  The  characters  removed  are copied into the kill buffer and may be
+extracted using
+.Ht yank 2 .
+.PP
+The mark position may be ahead or behind the current cursor position.
+.SH USAGE
+To move text from one place to another:
+.BS
+Move to the beginning of the text you want to move.
+.BU
+Set the mark there with the
+.Hl set-mark set-mark 2
+(\fB\*e\*(sP\fR) command.
+.BU
+Move the point (cursor) to the end of the text.
+.BU
+Use the  \fBkill-region\fR  command to delete the region you just defined. The
+text will be saved in the kill buffer.
+.BU
+Move the point to the place you want the text to appear.
+.BU
+Use the
+.Hl yank yank 2
+(\fB\*cy\fR)  command  to copy the text  from the kill  buffer to the  current
+point.
+.BE
+Repeat the last two steps to insert further copies of the same text.
+.SH NOTES
+If a region is accidentally removed then
+.Hl yank yank 2
+the text back immediately or use
+.Ht undo 2 .
+.PP
+Windowing  systems such as X-Windows  and Microsoft  Windows  utilize a global
+windowing kill buffer allowing data to be moved between windowing applications
+(\fIcut   buffer\fR   and   \fIclipboard\fR,   respectively).   Within   these
+environments  \*(mE  automatically  interacts with the windowing  systems kill
+buffer, the last \*(mE \fBkill-region\fR  entry is immediately available for a
+paste operation into another windowing application.
+.SH "SEE ALSO"
+.na
+.Ht copy-region 2 ,
+.Ht kill-rectangle 2 ,
+.Ht reyank 2 ,
+.Ht set-mark 2 ,
+.Ht undo 2 ,
+.Ht yank 2 .
+.ad
+.rm C0
+.FH

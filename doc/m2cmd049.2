@@ -1,0 +1,27 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd049.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command
+.so me.tni
+.TH exit-emacs 2
+.XI exit-emacs \- "Exit MicroEmacs"
+.SH NAME
+exit-emacs \- Exit MicroEmacs
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B exit-emacs
+.ad
+.SH DESCRIPTION
+Exit \*(mE back to the operating  system. If no argument  \fIn\fR is given and
+there are any  unwritten,  changed  buffers,  the editor  prompts  the user to
+discard changes. If an argument is specified then \*(mE exits immediately.
+.SH NOTES
+All buffers  with a name  starting  with a '\fC*\fR'  are assumed to be system
+buffers (i.e. \fB*scratch*\fR) and are not saved.
+.SH "SEE ALSO"
+.na
+.Ht quick-exit 2 ,
+.Ht save-buffers-exit-emacs 2 .
+.ad
+.FH

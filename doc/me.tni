@@ -1,0 +1,46 @@
+.\" Global abbreviations for MicroEmacs
+.ds mE "MicroEmacs '00
+.ds mS "MicroEmacs
+.ds cX "C-x\ \&
+.ds cH "C-h\ \&
+.ds e  "esc \&
+.ds a  "A\-
+.ds s  "S\-
+.ds c  "C\-
+.ds m  "M\-
+.ds dE "delete
+.ds eS "esc
+.ds tA "tab
+.ds rE "return
+.ds sP "space
+.ds bS "backspace
+.ds iN "insert
+.ds pD "page-down
+.ds pU "page-up
+.ds hO "home
+.ds eN "end
+.ds cC "center
+.ds cU "up
+.ds cD "down
+.ds cR "right
+.ds cL "left
+.ds f1 "f1
+.ds f2 "f2
+.ds f3 "f3
+.ds f4 "f4
+.ds f5 "f5
+.ds f6 "f6
+.ds f7 "f7
+.ds f8 "f8
+.ds f9 "f9
+.ds fA "f10
+.ds fB "f11
+.ds fC "f12
+.ds mP "pick-mouse
+.ds mD "drop-mouse
+.ds mM "move-mouse
+.ds mG "drag-mouse
+.ds rD "redraw
+.ds sF "ISO-8859-1 (Latin 1)
+.ds aF "ISO-8859-1
+.\" No spaces on end of file please !!

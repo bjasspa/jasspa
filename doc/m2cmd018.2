@@ -1,0 +1,61 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd018.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|hilight
+.so me.tni
+.TH change-screen-depth 2
+.XI change-screen-depth - "Change the number of lines on the screen"
+.XI change-screen-width - "Change the number of columns on the screen"
+.SH NAME
+.nf
+.Me "|change-screen-depth"
+change-screen-depth \- Change the number of lines of the screen
+.Me "|change-screen-width"
+change-screen-width \- Change the number of columns on the screen
+.fi
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B change-screen-depth
+.br
+.I n
+.B change-screen-width
+.ad
+.SH DESCRIPTION
+.B change-screen-depth
+changes the size of the screen to \fIn\fR  lines deep. It is assumed  that the
+screen is \fIn\fR lines deep and \*(mE draws \fIn\fR lines at the users peril.
+A change in depth causes all of the windows currently  displayed on the screen
+to be re-sized, the vertical  position of the windows is modified to match the
+new  screen  dimension,  the  horizontal   position  of  the  windows  remains
+unaltered. If the window is down-sized and the currently displayed windows are
+not able to fit into the new screen  space then all  windows are deleted  with
+the exception of the current window.
+.PP
+.B change-screen-width
+changes the size of the screen to \fIn\fR  characters wide. It is assumed that
+the screen is \fIn\fR  columns  wide and \*(mE  draws  \fIn\fR  columns at the
+users peril. The windows are reorganized as
+.B change-screen-depth
+working horizontally rather than vertically.
+.SH NOTES
+Within windowing environments such as
+.B X-Windows
+and
+.B "Microsoft Windows"
+these  commands  cause the canvas  window to be  re-sized to  accommodate  the
+change in screen size.
+.PP
+In \s-1MS-DOS\s0 environments the physical size of the screen is determined by
+the characteristics of the display adapter.
+.B change-screen-depth
+may be used to correct  anomalies  (usually on  portables) in the  displayable
+screen area and the graphics  mode. e.g. the graphics  mode utilizes 50 lines,
+and only 47 lines are viewable. In this case change the screen depth to 47 and
+\*(mE will not utilize the remaining lines which are not viewable.
+.SH "SEE ALSO"
+.na
+.Ht $screen-depth 5 ,
+.Ht $screen-width 5 .
+.ad
+.FH

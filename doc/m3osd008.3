@@ -1,0 +1,58 @@
+.\" -*- nroff -*-
+.Id $Id: m3osd008.3,v 1.1.1.1 2000-07-25 22:04:02 jon Exp $
+.Im MicroEmacs command|file
+.so me.tni
+.TH file-attrib 3
+.XI file-attrib - "Set the current buffers system file attributes"
+.SH NAME
+file-attrib \- Set the current buffers system file attributes
+.Me $a
+.SH SYNOPSIS
+.na
+.B file-attrib
+.ad
+.SH DESCRIPTION
+.B file-attrib
+opens a dialog  enabling  the user to  change  the  system  properties  of the
+current  buffer's file. Top of the dialog give the current buffer name and its
+file name. The \fCSave  Changes\fR  button writes the current  buffer out with
+any current  edits and changes to its file  attributes.  The  \fCOk\fR  button
+closes the file-attrib dialog, any changes made to the file attributes will be
+applied next time the buffer is written.
+.PP
+The type  allow  the  changing  between  UNIX, MS  Windows  and DOS text  file
+formats. UNIX has a single new line character  ('\fC\\n\fR')  where as Windows
+and Dos have a double  new line  character  ('\fC\\r\\n\fR').  Also a Dos text
+file is terminated  with a \fCC-z\fR (0x1A)  character  which the other two do
+not. These attribute are set in \*(mS by using buffer modes
+.Ht crlf 2m
+and
+.Ht ctrlz 2m .
+.PP
+The central part of the dialog contains system dependent  attributes which are
+defined as follows:
+.IP "\fBUNIX Platforms\fR"
+Allow  the  setting  of user,  group  and  global,  read,  write  and  execute
+permissions, see man pages on
+.Hr chmod 1
+for more information. This is a front end to setting the variable
+.Ht $buffer-fmod 5 .
+.IP "\fBWin32  Platforms\fR"
+Allow the  setting of MS Windows  file  attributes,  i.e.  read-only,  hidden,
+archive etc. Note that the  directory  attribute  is  displayed  but cannot be
+altered. This is a front end to setting the variable
+.Ht $buffer-fmod 5 .
+.IP "\fBDOS  Platform\fR"
+Allow the setting of MS Dos file  attributes, i.e. read-only,  hidden, archive
+etc. Note that the directory attribute is displayed but cannot be altered.
+.SH NOTES
+\fBfile-attrib\fR is a macro implemented in \fCfattrib.emf\fR.
+.SH "SEE ALSO"
+.na
+.Ht find-file 2 ,
+.Ht write-buffer 2 ,
+.Ht crlf 2m ,
+.Ht ctrlz 2m ,
+.Ht $buffer-fmod 5 .
+.ad
+.FH

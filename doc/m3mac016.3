@@ -1,0 +1,87 @@
+.\" -*- nroff -*-
+.Id $Id: m3mac016.3,v 1.1.1.1 2000-07-25 22:04:00 jon Exp $
+.Im MicroEmacs command|games
+.so me.tni
+.TH Triangle 3
+.XI Triangle - "\*(mE version of Triangle patience game"
+.SH NAME
+Triangle \- \*(mE version of Triangle patience game
+.Me $a
+.SH SYNOPSIS
+.na
+\fBTriangle\fR
+.ad
+.SH DESCRIPTION
+\fBTriangle\fR  is a solitaire game using a standard set of playing cards. The
+object  of the  game is to use all of the  cards  in the deck to build up four
+suit stacks from Ace to King.
+.PP
+The board is laid out so that  every card is used to create a triangle  shape.
+In the first column there is one up-turned card, in the second column there is
+one  down-turned  card and 2  up-turned,  third  has 2 down 3 up etc. The only
+break  form  this  pattern  is in the last 3 columns  where  there is an extra
+up-turned card so that all the deck is used.
+.PP
+Cards may be moved  around the playing area by stacking the same suit cards in
+descending order on the row stacks. When a row stack has no up-turned cards on
+the stack  then the top card may be turned  over and may be played. If a stack
+becomes empty then only a King may be moved into the vacant position.
+.PP
+If the last card in a stack is an Ace then it can be moved to its suit  stack,
+then the 2 of that suit etc. until finally the King is removed.
+.PP
+Cards are moved  around the board using the mouse. Cards may be moved from one
+row stack to another  row stack by placing the mouse over the 'from' stack and
+pressing the left mouse  button. Move the cursor to the 'to' stack and release
+the left mouse  button. If the move is legal then the card(s) are moved to the
+new stack.  Multiple  cards may be moved from the row stacks, the  appropriate
+card(s) to be moved is automatically determined.
+.PP
+Cards  may be moved  onto the suit  stacks by a single  left  mouse  press and
+release on the same card, the card is moved to the appropriate suit stack. The
+same technique is used to turn cards over in the suit stacks.
+.PP
+Note  that  once a card is  played  onto the suit  stacks  then it  cannot  be
+removed.
+.PP
+To the  right of the  board  are a number  of  control  buttons.  To select an
+option, click the left mouse button on it, the buttons are labeled:
+.IP \fBDEAL\fR
+Start a new game by dealing new cards.
+.IP \fBQUIT\fR
+Exit the game
+.IP \fBHELP\fR
+This help page
+.PP
+Note that the screen may be updated at any time using "\fIC-l\fR".
+.SH NOTES
+\fBTriangle\fR is a macro defined in \fCtriangle.emf\fR.
+.PP
+The  game is best  played  with a  mouse,  it is  possible  to play  with  the
+keyboard, as follows:-
+.IP
+"\fIesc h\fR" for help
+.IP
+To move a card between stacks enter the source and  destination  column number
+("\fI1\fR","\fI2\fR",.."\fI7\fR").
+.IP
+To  overturn a card on the row stacks  then enter the card  column  twice i.e.
+source and destination are the same.
+.IP
+To move a card  from the row to the suit  stacks  then  either  enter the card
+column       twice,       or       enter       the        destination       as
+"\fIh\fR","\fId\fR","\fIc\fR","\fIs\fR"  (i.e. "\fI2  2\fR" or "\fI2  s\fR" to
+move the card in column 2 to the spades stack).
+.IP
+"\fIC-c C-c\fR" to deal the cards again.
+.IP
+"\fIC-l\fR" redraw the screen.
+.IP
+"\fIq\fR" to quit the game.
+.SH "SEE ALSO"
+.na
+.Hl Games Games - ,
+.Ht Patience 3 ,
+.Ht Mahjongg 3 .
+.ad
+.FH

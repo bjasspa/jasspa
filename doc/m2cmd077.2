@@ -1,0 +1,161 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd077.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|shell
+.ds C0 "(\fB\*e backslash\fR)\ \&
+.so me.tni
+.TH ipipe-shell-command 2
+.XI ipipe-shell-command \- "\*(C0Incremental pipe (non-suspending system call)"
+.XI ipipe-kill \- "Kill a incremental pipe"
+.XI ipipe-write \- "Write a string to an incremental pipe"
+.SH NAME
+.Me "|ipipe-shell-command"
+ipipe-shell-command \- Incremental pipe (non-suspending system call)
+.br
+.Me "|ipipe-kill"
+ipipe-kill \- Kill a incremental pipe
+.br
+.Me "|ipipe-write"
+ipipe-write \- Write a string to an incremental pipe
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B ipipe-shell-command
+"\fIcommand\fR"
+["\fIbuffer-name\fR"] \*(C0
+.br
+.I n
+.B ipipe-write
+"\fIstring\fR"
+.br
+.B ipipe-kill
+.ad
+.SH PLATFORM
+UNIX - \fIirix\fR, \fIhpux\fR, \fIsunos55\fR, \fIfreebsd\fR, \fIlinux\fR.
+.PP
+Windows NT - \fIwin32\fR.
+.SH DESCRIPTION
+.B ipipe-shell-command
+executes the given system command \fIcommand\fR, opening up a \fB*icommand*\fR
+buffer into which the results of the command  execution are displayed.  Unlike
+the
+.Ht pipe-shell-command 2 ,
+the user may continue  editing  during  command  execution. The command may be
+terminated by deleting the buffer or issuing a \fBipipe-kill\fR command.
+.PP
+The  argument  \fIn\fR  can  be  used  to  change  the  default   behavior  of
+pipe-shell-command described above, \fIn\fR is a bit based flag where:-
+.IP \fB0x01\fR
+Enables the use of the default buffer name \fB*icommand*\fR (default). If this
+bit is clear the user must supply a buffer name. This enables  another command
+to be started without effecting any other command buffer.
+.IP \fB0x02\fR
+Hides the output  buffer,  default  action pops up a window and  displays  the
+output buffer in the new window.
+.IP \fB0x04\fR
+Disable the use of the  command-line  processor  to launch the program  (win32
+versions  only). By default the  "\fBcommand\fR"  is launched by executing the
+command:
+.CS
+    %COMSPEC% /c command 
+.CE 0
+.IP
+Where  \fC%COMSPEC%\fR  is  typically  command.com.  If this  bit is set,  the
+"\fBcommand\fR" is launched directly.
+.IP \fB0x08\fR
+Detach the launched  process from \*(mS (win32  versions only). By default the
+command is launched as a child  process of \*(mS with a new console. With this
+bit set the process is completely detached from \*(mS instead.
+.IP \fB0x10\fR
+Disable  the  command  name  mangling  (win32  versions  only). By default any
+\&'\fC/\fR' characters found in the command name (the first argument only) are
+converted to '\fC\\\fR' characters to make it Windows compliant.
+.PP
+Many other macro commands (see
+.Ht compile 3 ,
+.Ht grep 3  etc.)
+use this command.
+.PP
+.B ipipe-write
+writes a string \fIstring\fR to an open ipipe, \fIn\fR times.
+.PP
+.B ipipe-kill
+terminates an open ipipe, typically bound to the \fC\*cc\ \*cc\fR key sequence.
+.SH NOTES
+On \s-1UNIX\s0  platforms the TERM environment variable of the new process can
+be set by setting the user variable  \fB%ipipe-term\fR  to the required value,
+e.g.:
+.CS
+    set-variable %ipipe-term "TERM=vt100-nam"
+.CE
+Ipipe  shells  support a large  sub-set of vt100  terminal  commands,  notable
+exceptions are color and font support and the support of  auto-margins.  Using
+the  terminal  type  "\fCvt100-nam\fR"   disables  the  use  of  auto-margins,
+providing better support.
+.PP
+On  platforms  which  do  not  support   \fBipipe-shell-command\fR,   such  as
+\s-1MS-DOS\s0, executing \fBipipe-shell-command\fR automatically invokes
+.Hl pipe-shell-command pipe-shell-command 2 ,
+hence macros may safely use ipipes  without  explicitly  checking the platform
+type.  \fBipipe-shell-command\fR  does not run reliably on \s-1Windows 3.11\s0
+and \s-1Windows 95\s0; \s-1Windows NT\s0 does support ipipes.
+.PP
+While the pipe command is running, mode
+.Ht pipe 2m
+is enabled. Modes
+.Ht lock 2m
+and
+.Ht wrap 2m
+effect the output behavior of an \fBipipe-shell-command\fR.
+.SH EXAMPLE
+The following example is the
+.Ht grep 3
+command  macro which  utilizes the  \fBipipe-shell-command\fR, diverting the
+output to a buffer called \fB*grep*\fR.
+.Me $emf-scheme
+.CS
+define-macro grep
+    !if &seq %grep-com "ERROR"
+        set-variable %grep-com "grep "
+    !endif
+    !force set-variable #l0 @1
+    !if &not $status
+        set-variable #l0 @ml00 %grep-com
+    !endif
+    !if @?
+        1 pipe-shell-command &cat %grep-com #l0 "*grep*" @mna
+    !else
+        1 ipipe-shell-command &cat %grep-com #l0 "*grep*" @mna
+    !endif
+!emacro
+.CE
+.Me $ehf-scheme
+Note   that  if  an   argument   is   passed  to   \fBgrep\fR   then  it  uses
+pipe-shell-command  instead.  This is  useful  if  another  command  is  using
+\fBgrep\fR which must finish before the calling command can continue, see
+.Ht replace-all-string 3
+for an example.
+.SH BUGS
+On MicroSoft  Windows  platforms,  \fBipipe-shell-command\fR  spawns the shell
+(e.g.  \fCcommand.com\fR) with the appropriate command line to make it execute
+the  given  command.  If the  command  to be run  detaches  from the shell and
+creates its own window, for example \fCme.exe\fR,  \fBipipe-kill\fR  will only
+kill the shell, it will not kill the actual process, i.e. the \fCme.exe\fR.
+.PP
+On  MicroSoft  Windows platforms \fBipipe-shell-command\fR  does  not  work on
+Novell's  Intranet  Client v2.2 networked  drives,  version 2.5 does appear to
+work.
+.SH "SEE ALSO"
+.na
+.Ht $buffer-ipipe 5 ,
+.Ht compile 3 ,
+.Ht grep 3 ,
+.Ht pipe-shell-command 2 ,
+.Ht replace-all-string 3 ,
+.Ht shell-command 2 ,
+.Ht pipe 2m ,
+.Ht lock 2m ,
+.Ht wrap 2m .
+.ad
+.rm C0
+.FH

@@ -1,0 +1,26 @@
+.\" -*- nroff -*-
+.Id $Id: m2mod011.2,v 1.1.1.1 2000-07-25 22:03:58 jon Exp $
+.Im MicroEmacs modes
+.so me.tni
+.TH quiet 2m
+.XI quiet - "Quiet mode"
+.SH NAME
+quiet \- Quiet mode
+.SH SYNOPSIS
+.B "quiet Mode"
+.SH DESCRIPTION
+When  \fBquiet\fR  mode is enabled,  visual  warnings are given instead of the
+default audible warning. This mode can only be globally changed, an error will
+occur if an attempt is made to change the mode for a buffer.
+.PP
+The  default  state is on, so users of \*(mE can relax in the  knowledge  that
+they won't annoy other people when things go wrong.
+.PP
+When  disabled  the system  bell is rung when  required,  otherwise  the usual
+visual warning is the "\fI[BELL]\fR" string, printed on the bottom right hand
+side.
+.SH "SEE ALSO"
+.na
+.Ht global-mode 2 .
+.ad
+.FH

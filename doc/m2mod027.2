@@ -1,0 +1,28 @@
+.\" -*- nroff -*-
+.Id $Id: m2mod027.2,v 1.1.1.1 2000-07-25 22:03:59 jon Exp $
+.Im MicroEmacs modes
+.so me.tni
+.TH save 2m
+.XI save - "Flag buffer to be saved"
+.SH NAME
+save \- Flag buffer to be saved
+.SH SYNOPSIS
+.B "save Mode"
+.sp
+\fBS\fR \- mode line letter.
+.SH DESCRIPTION
+This mode cannot be set  globally  and can only be set on a buffer which needs
+saving.  The mode is used to flag that the buffer is to be saved, the state of
+the mode is displayed in the output of
+.Ht list-buffers 2 .
+If the second column is an 'S' the mode is set,  otherwise  it is not. Only the
+execute command in 
+.Ht list-buffers 2
+(bound  to 'x') uses this flag to  actually  save the  buffer  and the flag is
+automatically removed as soon as the buffer is saved.
+.SH "SEE ALSO"
+.na
+.Ht list-buffers 2 ,
+.Ht del 2m .
+.ad
+.FH

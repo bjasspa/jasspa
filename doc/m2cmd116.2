@@ -1,0 +1,74 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd116.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|search
+.ds C0 "(\fB\*(cXs\fR)\ \&
+.ds C1 "(\fB\*(cXr\fR)\ \&
+.so me.tni
+.TH search-forward 2
+.XI search-forward - "\*(C0Search for a string in the forward direction"
+.XI search-backward - "\*(C1Search for a string in the backward direction"
+.SH NAME
+.Me "|search-forward"
+search-forward \- Search for a string in the forward direction
+.br
+.Me "|search-backward"
+search-backward \- Search for a string in the backward direction
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B search-forward
+"\fIstring\fR"
+(\fB\*(cXs\fR)
+.br
+.I n
+.B search-backward
+"\fIstring\fR"
+(\fB\*(cXr\fR)
+.ad
+.SH DESCRIPTION
+.B search-forward
+searches for a string from the current cursor position to the end of the file.
+The string is typed on the bottom line of the screen, and terminated  with the
+\fC<ESC>\fR  key. Special  characters can be typed in by preceding them with a
+\fC^Q\fR. A single \fC^Q\fR  indicates a null string. On successive  searches,
+hitting \fC<ESC>\fR alone causes the last search string to be reused.
+.PP
+Searching is affected by
+.Ht magic 2m
+mode, which allows regular  expression  pattern
+matching, and
+.Ht exact 2m
+mode which makes the search case sensitive.
+.PP
+The numeric argument
+.I n
+is interpreted as follows:-
+.IP "\fBn > 0\fR"
+The \fIn\fRth occurrence of the \fIstring\fR is located.
+.IP "\fBn < 0\fR"
+The first occurrence of the \fIstring\fR is located in the next \fIn\fR lines.
+.PP
+.B search-backward
+searches  backwards in  the file.  In all  other ways  it is like
+.BR search-forward .
+.SH DIAGNOSTICS
+The command returns a status of \fCFALSE\fR if the  \fIstring\fR  could not be
+located (or \fIn\fRth  \fIstring\fR where \fIn\fR  occurrences are requested).
+If the  \fIstring\fR  is found  within the given  search  criteria  the return
+status is \fCTRUE\fR.
+.SH "SEE ALSO"
+.na
+.Ht buffer-mode 2  ,
+.Ht exact 2m ,
+.Ht hunt-backward 2 ,
+.Ht hunt-forward 2 ,
+.Ht isearch-forward 2 ,
+.Ht magic 2m ,
+.Ht replace-string 2 .
+.br
+.Hl "Regular Expressions" RegularExpressions 2
+.ad
+.rm C0
+.rm C1
+.FH

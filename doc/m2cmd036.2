@@ -1,0 +1,46 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd036.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|window
+.ds C0 "(\fB\*(cX0\fR)\ \&
+.ds C1 "(\fB\*(cX1\fR)\ \&
+.so me.tni
+.TH delete-window 2
+.XI delete-window - "\*(C0Delete current window"
+.XI delete-other-windows - "\*(C1Delete other windows"
+.SH NAME
+.Me "|delete-window"
+delete-window \- Delete the current window
+.br
+.Me "|delete-other-windows"
+delete-other-windows \- Delete other windows
+.Me $a
+.SH SYNOPSIS
+.na
+\fBdelete-window\fR \*(C0
+.br
+\fBdelete-other-windows\fR \*(C1
+.ad
+.SH DESCRIPTION
+.B delete-window
+attempts  to delete  the  current  window  (remove  window  from the  screen),
+retrieving the lines for use in the window adjacent to it.
+.PP
+The window  deletion  policy is  determined  by the  formation  of the windows
+displayed on the screen. The bias is for the \fIprevious\fR window (above) the
+current window to be merged when split  vertically, and for the left window to
+be merged when split horizontally.
+.PP
+.B delete-other-windows
+deletes all of the other windows, the current  window becomes the only window,
+using the entire available screen area.
+.SH "SEE ALSO"
+.na
+.Ht goto-window 2 ,
+.Ht grow-window-vertically 2 ,
+.Ht resize-window-vertically 2 ,
+.Ht split-window-horizontally 2 ,
+.Ht split-window-vertically 2 .
+.ad
+.rm C0
+.rm C1
+.FH

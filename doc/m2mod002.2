@@ -1,0 +1,42 @@
+.\" -*- nroff -*-
+.Id $Id: m2mod002.2,v 1.1.1.1 2000-07-25 22:03:57 jon Exp $
+.Im MicroEmacs modes
+.so me.tni
+.TH cmode 2m
+.XI cmode - "C Programming language mode"
+.SH NAME
+cmode \- C Programming language mode
+.SH SYNOPSIS
+.B "cmode Mode"
+.sp
+\fBC\fR \- mode line letter.
+.SH DESCRIPTION
+.B cmode
+mode enters C programming language mode, providing automatic indentation and
+bracket matching facilities.
+.PP
+New  users  might  initially  find  'C-mode'  a  little  disconcerting  as the
+\fCtab\fR  key is  bound to the  automatic  formatting  command,  however  the
+benefits of 'C-mode' far out weigh this. A lot of silly  programming  mistakes
+may be corrected at source, which are  reflected in the layout. An  unexpected
+automatic  layout is a sure  indication  that the input syntax is incorrect \-
+generally as a result of a missing semi-colon or bracket/brace pair.
+.PP
+The  layout  of a C  program  in  \s-1cmode\s0  is  controlled  by the  C-mode
+variables.  The use of tab  characters to create the required  indentation  is
+determined by the setting of the buffers
+.Ht tab 2m
+mode. If disabled tab characters are used wherever possible.
+.SH "SEE ALSO"
+.na
+.Ht buffer-mode 2 ,
+.Ht global-mode 2 ,
+.Ht tab 2m ,
+.Ht $c-brace 5 ,
+.Ht $c-case 5 ,
+.Ht $c-contcomm 5 ,
+.Ht $c-continue 5 ,
+.Ht $c-margin 5 ,
+.Ht $c-statement 5 .
+.ad
+.FH

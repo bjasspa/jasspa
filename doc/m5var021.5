@@ -1,0 +1,29 @@
+.\" -*- nroff -*-
+.Id $Id: m5var021.5,v 1.1.1.1 2000-07-25 22:04:04 jon Exp $
+.Im MicroEmacs variable|paragraph
+.so me.tni
+.TH $fill-col 5
+.XI $fill-col - "Paragraph Mode; right fill column"
+.SH NAME
+$fill-col \- Paragraph Mode; right fill column
+.Me $a
+.SH SYNOPSIS
+\fB$fill-col\fR \fIcolumnNumber\fR; Default is \fC78\fR
+.sp
+-1 <= \fIcolumnNumber\fR <= 32767
+.SH DESCRIPTION
+.B $fill-col
+defines the current fill column number. \fIcolumnNumber\fR defaults to 78 when
+undefined. This value is used in conjunction with 
+.Ht justify 2m
+and
+.Ht wrap 2m 
+modes.
+.SH "SEE ALSO"
+.na
+.Ht buffer-mode 2 ,
+.Ht fill-paragraph 2 ,
+.Ht justify 2m ,
+.Ht wrap 2m .
+.ad
+.FH

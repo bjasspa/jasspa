@@ -1,0 +1,42 @@
+.Id $Id: m3mac000.3,v 1.1.1.1 2000-07-25 22:03:59 jon Exp $
+.Im MicroEmacs command|shell
+.so me.tni
+.TH compile 3
+.XI compile - "Start a compilation process"
+.SH NAME
+compile \- Start a compilation process
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B compile 
+"\fIcompile-command\fR"
+.ad
+.SH DESCRIPTION
+.B compile
+gets and executes the compile command using a pipe execution (incremental pipe
+on UNIX platforms), loading the output into a buffer called "\fB*compile*\fR",
+with go to error parsing using the command
+.Ht get-next-line 2 .
+The  default compile execution is set  by variable
+.Ht %compile-com 5 ,
+the error parsing  is setup using
+the command
+.Ht add-next-line 2 .
+.PP
+Before the compile command is executed
+.Ht save-some-buffers 2
+is executed to allow the user to ensure that all  relevant  buffers are saved.
+If an argument is given to compile then it is passed on to this command, so if
+an argument of 0 is given, all buffers are automatically saved.
+.SH NOTES
+\fBcompile\fR is a macro defined in \fCtools.emf\fR.
+.SH "SEE ALSO"
+.na
+.Ht add-next-line 2 ,
+.Ht %compile-com 5 ,
+.Ht get-next-line 2 ,
+.Ht save-some-buffers 2 ,
+.Ht grep 3 .
+.ad
+.FH

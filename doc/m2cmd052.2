@@ -1,0 +1,103 @@
+.Id $Id: m2cmd052.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|paragraph
+.ds C0 "(\fB\*eo\fR)\ \&
+.so me.tni
+.TH fill-paragraph 2
+.XI fill-paragraph \- "\*(C0Format a paragraph"
+.SH NAME
+fill-paragraph \- Format a paragraph
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+\fBfill-paragraph\fR \*(C0
+.ad
+.SH DESCRIPTION
+.B fill-paragraph
+this takes all the text in the current  paragraph  (as defined by  surrounding
+blank lines, or a leading indent) and attempts to fill it from the left margin
+to the current fill column as defined by
+.Ht $fill-col 5 .
+When an argument \fIn\fR is supplied \fIn\fR paragraphs are filled. If \fIn\fR
+is positive  then \*(mE  performs  indented  filling (i.e.  indentation  for a
+bullet mark etc). If \fIn\fR is negative then indented filling is disabled. If
+no  argument  \fIn\fR  is  supplied  then  the  paragraph  is  filled  and the
+\fIpoint\fR and \fImark\fR  positions are retained. This allows  paragraphs to
+be filled,  whilst in the middle of the  paragraph  and the word  position  is
+maintained.
+.PP
+If \fBjustify mode\fR is enabled the variable
+.Ht $fill-mode 5
+determines  how  the  paragraph  is  filled  (i.e.  \fIleft\fR,   \fIright\fR,
+\fIboth\fR or \fIcenter\fR). The variable
+.Ht $fill-eos-len 5
+determines  the  trailing  space  used  after  a  period  (\fC.\fR)  character
+(the trailing characters are specified by 
+.Ht $fill-eos 5 ),
+typically defined as 2. 
+.PP
+A set of characters defined by
+.Ht $fill-bullet 5
+enable  bullet  markers  to be  placed  in the  text at the  beginning  of the
+paragraph  causing the left margin to be moved to the right of the bullet. The
+search depth for fill to locate a bullet character is defined by
+.Ht $fill-bullet-len 5 .
+When  the  paragraph  is  formatted  and  one  of the  bullet  characters  is
+encountered  then the user is prompted as to whether the  paragraph  should be
+indented following the marker or not. The point of indentation is shown with a
+\fC<<<<\fR marker.
+.PP
+Filling is automatically disabled on paragraphs which start with characters in
+the
+.Ht $fill-ignore 5
+set.
+.PP
+The simple text  formatting is generally used for mail messages,  \s-1ASCII\s0
+text \s-1README\s0 files etc.
+.SH EXAMPLE
+The following  examples show how the text is formatted  with indented  filling
+enabled and both justification enabled:-
+.CS
+This  is  regular  text  that  is on the
+margin
+
+    This is a regular  paragraph that is
+    offset  from  the  margin.  Note how
+    \*(mE retains the indent.
+
+    * With  the  introduction  of one of
+      the  special  characters,  in this
+      case a  bullet,  a  format  of the
+      paragraph  offsets  the text  from
+      the bullet.
+
+    1) Numbered  lists   are  the  same.
+       Note that the  paragraphs are all
+       separated with a blank line.
+
+    1. Numbered  lists  ending  with   a
+       period.
+
+    label - Or labeled lists, separated
+            with a dash.
+
+    >  '>' might be an ignore
+    >  character so it skips the paragraph
+    >
+    >          it is up to the user to
+    >   format these.
+.CE 0
+.SH "SEE ALSO"
+.na
+.Ht $fill-bullet 5 ,
+.Ht $fill-bullet-len 5 ,
+.Ht $fill-col 5 ,
+.Ht $fill-eos 5 ,
+.Ht $fill-eos-len 5 ,
+.Ht $fill-ignore 5 ,
+.Ht $fill-mode 5 ,
+.Ht ifill-paragraph 3 ,
+.Ht paragraph-to-line 3 .
+.ad
+.rm C0
+.FH

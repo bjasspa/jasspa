@@ -1,0 +1,35 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd014.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|buffer
+.ds C0 "(\fB\*(cX=\fR)\ \&
+.so me.tni
+.TH buffer-info 2
+.XI buffer-info - "\*(C0Status information on current buffer position"
+.SH NAME
+buffer-info \- Status information on current buffer position
+.Me $a
+.SH SYNOPSIS
+.na
+\fBbuffer-info\fR \*(C0
+.ad
+.SH DESCRIPTION
+.B buffer-info
+reports on the current and total lines and  characters of the current  buffer.
+It also  gives  the  hexadecimal  code of the  character  currently  under the
+cursor.
+.PP
+The output of the command is displayed on the message line e.g.
+.CS
+Line 1845/3955 Col 0.0 Char 78267/167172 (46%) Win Line 99/48 Col/0/0 char = 0xA
+.CE 0
+.PP
+.Ht $result 5
+is set to the same output string.
+.SH "SEE ALSO"
+.na
+.Ht $result 5 ,
+.Ht $mode-line 5 ,
+.Ht about 2 .
+.ad
+.rm C0
+.FH

@@ -1,0 +1,85 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd159.2,v 1.1.1.1 2000-07-25 22:03:57 jon Exp $
+.Im MicroEmacs command|delete|region
+.ds C0 "(\fB\*e\*cw\fR)\ \&
+.ds C1 "(\fB\*e\*cy\fR)\ \&
+.so me.tni
+.TH kill-rectangle 2
+.XI kill-rectangle - "\*(C0Delete a column of text"
+.XI yank-rectangle - "\*(C1Insert a column of text"
+.SH NAME
+.Me "|kill-rectangle"
+kill-rectangle \- Delete a column of text
+.br
+.Me "|yank-rectangle"
+yank-rectangle \- Insert a column of text
+.Me $a
+.SH SYNOPSIS
+.na
+\fBkill-rectangle\fR \*(C0
+.br
+.I n
+\fByank-rectangle\fR \*(C1
+.ad
+.SH DESCRIPTION
+.B kill-rectangle
+deletes a rectangle (or column) of text defined be the cursor and the
+.Hl set-mark set-mark 2
+position.  The text  between the mark column and the cursor  column is removed
+from every line between the mark line and the cursor line inclusive and copied
+to the kill buffer. The delete text may then be extracted from the kill buffer
+using
+.Ht yank 2
+or \fByank-rectangle\fR.
+.PP
+The mark position may be ahead or behind the current  cursor  position. If the
+rectangle column boundary divides a tab character which spans multiple columns,
+the tab character is replaces with the equivalent  number of spaces. Similarly
+if the boundary  divides an  unprintable  character  which is displayed  using
+multiple  characters  (e.g.  '\fC^A\fR'  for  character  0x01) then spaces are
+inserted before the character to move it to the right of the boundary.
+.PP
+.B yank-rectangle
+inserts  the  current  kill buffer  (which may or may not have been  generated
+using  \fBkill-rectangle\fR) into the current buffer in a column fashion. That
+is to say that the first line of text in the kill buffer is inserted  into the
+current line of text in the current buffer from the current cursor column, the
+cursor  is then  moved the the next line and  placed at the same  column.  The
+process is then repeated for the second line of text in the kill buffer etc.
+.SH NOTES
+The  command  copy-rectangle  is not  provided  by default as this  command is
+rarely  required. If this command is required, the following macro  definition
+can be used:
+.Me $emf-scheme
+.CS
+define-macro copy-rectangle
+    set-alpha-mark "T"
+    set-variable #l0 &bmod "view"
+    set-variable #l1 &bmod "edit"
+    set-variable #l2 &bmod "undo"
+    -1 buffer-mode view
+    1 buffer-mode undo
+    kill-rectangle
+    ; undo the kill and restore the buffer state
+    undo
+    &cond #l2 1 -1 buffer-mode "undo"
+    &cond #l1 1 -1 buffer-mode "edit"
+    &cond #l0 1 -1 buffer-mode "view"
+    goto-alpha-mark "T"
+    ; flag the command to be a copy-region type command
+    set-variable @cl copy-region
+!emacro
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Ht set-mark 2 ,
+.Ht kill-region 2 ,
+.Ht yank 2 ,
+.Ht copy-region 2 ,
+.Ht reyank 2 ,
+.Ht undo 2 .
+.ad
+.rm C0
+.rm C1
+.FH

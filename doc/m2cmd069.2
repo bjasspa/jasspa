@@ -1,0 +1,649 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd069.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|hilight|macrodevelop
+.so me.tni
+.TH hilight 2
+.XI hilight \- "Manage the buffer hilighting schemes"
+.SH NAME
+hilight \- Manage the buffer hilighting schemes
+.Me $a
+.SH SYNOPSIS
+.na
+.I 0
+.B hilight
+"\fIhil-no\fR"
+"\fIflags\fR"
+[ "\fInol\fR" ]
+[ "\fIbuffer-scheme\fR"
+[ "\fItrunc-scheme\fR" ] ]
+.sp
+.B hilight
+"\fIhil-no\fR"
+"\fItype\fR"
+"\fItoken\fR" [ ["\fIrtoken\fR"]
+.br
+.RS
+[ ( [ "\fIclose\fR" ["\fIrclose\fR"] "\fIignore\fR" ] ) |
+.br
+.RS
+( ["\fIcontinue\fR"] ) |
+.br
+( ["\fIb-hil-no\fR"] ) ]
+.br
+.RE
+"\fIschemeNum\fR"
+.RE
+.br
+.B hilight
+"\fIhil-no\fR"
+"\fI0x200\fR"
+"\fItoken\fR"
+.br
+.B hilight
+"\fIhil-no\fR"
+"\fI0x400\fR"
+"\fIfrom-col\fR"
+"\fIto-col\fR"
+"\fIschemeNum\fR"
+.sp
+.I -1
+.B hilight
+"\fIhil-no\fR"
+"\fItype\fR"
+"\fItoken\fR"
+.ad
+.SH DESCRIPTION
+The  \fBhilight\fR  command  creates  and manages the buffer  hilighting, the
+process of creating a new hilighting scheme is best described in
+.Hl "File Language Templates" languageTemplates 2 .
+The  command  takes  various  forms as defined by the  arguments.  Each of the
+argument configurations is defined as follows:-
+.SS "Hilight Scheme Creation"
+.na
+.I 0
+.B hilight
+"\fIhil-no\fR"
+"\fIflags\fR"
+[ "\fInol\fR" ]
+[ "\fIbuffer-scheme\fR"
+[ "\fItrunc-scheme\fR" ] ]
+.ad
+.PP
+With an argument of \fC0\fR,  \fBhilight\fR  initializes or re-initializes the
+hilight scheme  \fIhil-no\fR  (1-255). Every buffer has a hilight  scheme, the
+default is 0 which means no hi-lighting and only the
+.Ht $global-scheme 5
+etc. are used. The hilighting scheme must be defined before use and is used to
+specify  how the  buffer is to be  hilighted.  \*(mE  supports  the  following
+hilighting concepts:-
+.BS
+.BR "hilight string" ,
+a user specified string is hilighted in any color scheme.
+.BU
+.BR Tokens ,
+same as a hilight  string  except  that the  string  must be  enclosed  in non
+alpha-numeric characters.
+.BU
+.BR "Start-of-line  hilights" ,
+the start of the hilight must be the first non-white character of the line.
+.BU
+.BR "End-of-Line  hilights" ,
+the hilight  starts from the current  position and continues  until the end of
+the line.  Optionally,  the  hilight  may  continue  onto the next line if the
+current line ends in a given string. A bracket may also be searched for within
+the line.
+.BU
+.BR "Bracket hilight" ,
+hi-lights from the current position until the closing bracket token is found.
+.BU
+.BR "Replace string " ,
+allows the  hilight  string to be  replaced  with a different  user  specified
+string. (i.e. the displayed representation is different from the buffer contents)
+.BE
+Terminals  that  cannot  display  color  directly  may  still  be able to take
+advantage of the  hi-lighting. A terminal that has fonts (i.e.  \fITermcap\fR)
+can use them in the same way using the
+.Ht add-color-scheme 2
+command. The hi-light scheme is also used in printing (see
+.Ht print-buffer 2 ).
+If your  terminal  cannot  display  color in any way, it is  recommended  that
+hi-lighting is disabled (except when printing) as it does take CPU time.
+.PP
+The  "\fIhil-no\fR"  argument  specifies  which  hi-lighting  scheme  is being
+initialized.  Once a hilighting  scheme has been initialized,  hi-light tokens
+can be added to it and it  can be used by setting the current buffer's
+.Ht $buffer-hilight 5
+variable to  "\fIhil-no\fR".  The  "\fIflags\fR"  argument is a bit based flag
+setting global hi-light characteristics, where:-
+.IP \fB0x01\fR
+The hi-light scheme is case  insensitive,  i.e. the following  tokens become
+equivalent:-
+.RS
+.IP
+\fChouse\fR == \fCHOUSE\fR == \fChOuSe\fR
+.RE
+.IP
+When the hilight scheme is attributed as case  insensitive  then the
+tokens must \fBall\fR be specified in \fBlower\fR case.
+.IP \fB0x02\fR
+Set a  hi-light  look-back.  During  the  process  of  determining  the window
+hilighting  then the hilight  process has to determine  whether the top of the
+window  starts in a  hi-light  bracket  or not. The  look-back  command  tries
+looking "\fInol\fR" lines backwards for an open bracket. If an open bracket is
+found then the top of the window is assumed to start with that  bracket,  else
+it is assumed  that the top of the window is not in a bracket. For example, in
+`C', a comment  starts  with  "\fC/*\fR"  and ends with  "\fC*/\fR"  so if the
+hilight was initialized with
+.RS
+.Me $emf-scheme
+.CS
+0 hilight 1 2 10 $global-scheme
+.CE
+.Me $ehf-scheme
+of the  following,  only the first  would  begin  hi-lighted  which is correct
+(assuming the "\fC/*\fR" is 10 or less lines away).
+.CS
+ /* ........         /*.........           .........
+    ........           .........*/         .........
+----------------    ---------------     --------------- top of
+    ........*/         .........           .........    window
+.CE
+.RE
+The optional  argument  "\fIbuffer-scheme\fR"  specifies the default scheme to
+use if there is no specific hi-light, when omitted the value of
+.Ht $global-scheme 5
+is used. The  \fIbuffer-scheme\fR  is a reference to a set of  foreground  and
+background color pairs previously defined with
+.Ht add-color-scheme 2 .
+The last  argument  "\fItrunc-scheme\fR"  is also  optional and  specifies the
+line truncation scheme, when omitted the value of
+.Ht $trunc-scheme 5
+is used.
+.PP
+The hi-lighting  scheme required is based on the type of file being edited and
+so is  usually  directly  related  to  the  file  extension,  thus  it  can be
+automatically set using file hooks (see
+.Ht add-file-hook 2 ).
+.SS "Hilight Scheme Token Creation"
+.na
+.sp 1
+.B hilight
+"\fIhil-no\fR"
+"\fItype\fR"
+"\fItoken\fR" [ ["\fIrtoken\fR"]
+.br
+.RS
+[ ( [ "\fIclose\fR" ["\fIrclose\fR"] "\fIignore\fR" ] ) |
+.br
+.RS
+( ["\fIcontinue\fR" ["\fIrcontinue\fR"] ] ) |
+.br
+( ["\fIb-hil-no\fR"] ) ]
+.br
+.RE
+"\fIschemeNum\fR"
+.RE
+.br
+.B hilight
+"\fIhil-no\fR"
+"\fI0x200\fR"
+"\fItoken\fR"
+.br
+.B hilight
+"\fIhil-no\fR"
+"\fI0x400\fR"
+"\fIfrom-col\fR"
+"\fIto-col\fR"
+"\fIschemeNum\fR"
+.ad
+.PP
+With the default argument of \fC1\fR, \fBhilight\fR creates a hilight token to
+be used in hilight color scheme identified by "\fIhil-no\fR"  (1-255) (see the
+section on \fBHilight  Scheme  Creation\fR for a overview of hi-lighting). The
+second  argument  "\fItype\fR"  specifies  the token  type and must  always be
+specified, it determines which other arguments required.
+.PP
+Typically  the  last  argument,   \fIschemeNum\fR,   is  also  required.  This
+identifies  the color scheme to use when  hilighting  the token,  defining the
+foreground, background and selection color schemes. This is an index generated
+from
+.Ht add-color-scheme 2 .
+If the \fIschemeNum\fR  argument is omitted the default hilght color scheme is
+used.
+.PP
+The token  "\fBtype\fR"  is a bit based flag of which 0, 1 or more of the bits
+may be set, the effect of the bits are defined as follows:
+.IP \fB0x001\fR
+The   "\fItoken\fR"   must  be   surrounded  by  non-word   characters   (word
+characters  are typically the  alpha-numeric  characters),  e.g. the following
+defines "\fCif\fR" as a token:
+.RS
+.Me $emf-scheme
+.CS
+hilight 1 1 "if" .scheme.keyword
+.CE
+.Me $ehf-scheme
+this hilights the 'if' in "\fC if \fR" but not in "\fCaifa\fR".
+.RE
+.IP \fB0x002\fR
+Color this to the end of the line, often used for comments etc. For example in
+\*(mS macro language a '\fC;\fR' character signifies the rest of the line as a
+comment, hilighting is defined as follows:
+.RS
+.Me $emf-scheme
+.CS
+; this is a comment line
+hilight 1 2 ";" .scheme.comment
+.CE 0
+.Me $ehf-scheme
+.RE
+.IP \fB0x004\fR
+This is a bracket  token, the  closing  bracket  string  "\fIclose\fR"  and an
+ignore  character  "\fIignore\fR"  must also be supplied. The ignore character
+indicates that when found it should ignore the next  character;  this prevents
+an early end on bracket  miss-match.  For example, in C a '\fC"\fR'  character
+can be inserted into a string by 'protecting' it with a '\fC\\\fR'  character,
+such as "\fIthis is a string with a \\" in it\fR". In this  example the ignore
+character  should be  '\fI\\\fR'  so the mid  string  '\fC"\fR'  is  correctly
+ignored, as follows:
+.Me $emf-scheme
+.RS
+.CS
+hilight 1 4 "\\"" "\\"" "\\\\" .scheme.string
+.CE 0
+.RE
+.Me $ehf-scheme
+.IP
+An empty value, "", effectively  disables the ignore feature. If replacing bit
+\fC0x040\fR is set the replacement close bracket  "\fIrclose\fR"  must be
+supplied.
+.IP \fB0x008\fR
+The token has a continuation string, usually used with 0x02 but cannot be used
+with token types  \fC0x004\fR and  \fC0x080\fR. The argument  "\fIcontinue\fR"
+must be supplied and if the replacing bit  \fC0x040\fR is set the  replacement
+continue string  "\fIrcontinue\fR"  must also be supplied. The best example of
+its use can  again  be found in C;  macros  defined  using  the  \fC#define\fR
+pre-processor  construct may be  constructed on single or multiple  lines. The
+macro  continues  onto  another line if the current line ends with a backslash
+\'\fC\\\fR' character, e.g.:
+.RS
+.CS
+#define a_single_line_macro() printf("hello world\\n")
+
+#define a_four_lined_macro()          \\
+do {                                  \\
+    printf("hello world\\n") ;         \\
+} while(0)
+.CE
+This can be correctly hilighted with the pre-processor scheme using:
+.Me $emf-scheme
+.CS
+; use to-end-of-line (2) and continuation (8), i.e. 2+8=10
+hilight 1 10 "#" "\\\\" .scheme.prepro
+.CE 0
+.RE
+.Me $ehf-scheme
+\fB0x010\fR
+.RS
+.IP "If this is an end of line token (\fC0x002\fR) then"
+The rest of the line is checked for any valid brackets.
+.IP "Else if this is a bracket token (\fC0x004\fR) then"
+This is still searched for after an end of line token is found.
+.IP "Else"
+Ignored
+.RE
+.IP
+This  feature  enables  the  searching  and  hilighting  of specific  brackets
+contained within a to-end-of-line  scheme. For example, consider the following
+C code:
+.RS
+.CS
+#define My_Token 0x01  /* This is a multi-lined comment
+                        * describing My_Token */
+.CE 0
+.RE
+.IP
+With the '\fC#\fR' pre-processor hilight (see bit 0x08 above) the #define line
+would all be  hilighted  with the  pre-process  scheme, the  comment  would be
+missed causing incorrect hilighting of the next line. Instead this feature may
+be used by both the  pre-processor  and comment  hilight  tokens to  correctly
+hilight the above example:
+.Me $emf-scheme
+.RS
+.CS
+hilight 1 26 "#" "\\\\" .scheme.prepro
+hilight 1 20 "/\\\\*" "*/" "" .scheme.comment
+.CE 0
+.RE
+.Me $ehf-scheme
+.IP \fB0x020\fR
+This token must be the first non-white character of the line.
+.IP \fB0x040\fR
+The token  (and closing  bracket tokens) are  to be  replaced by the
+given  replacement  strings. This is often utilized when  displaying  formated
+text such as \*(mS on-line help
+.Ht ehf 8
+pages, the output from UNIX
+.Hr man 1
+etc. In \*(mS  help  pages,  the  start  of bold  text is  delimited  with the
+character  sequence  "\fC\\C[cD\fR"  and  ends  with  the  character  sequence
+"\fC\\C[cA\fR", e.g.
+.RS
+.CS
+"the word \\C[cDbold\\C[cA is in \\C[cDbold\\C[cA"
+.CE
+Obviously the hilight  delimiters should not appear so the character  sequence
+may be correctly drawn using a bracket token, starting with "\fC\\C[cD\fR" and
+ending with "\fC\\C[cA\fR", replacing both with an empty string:
+.Me $emf-scheme
+.CS
+hilight 1 0x44 "\\C[cD" "" "\\C[cA" "" "" .scheme.bold
+.CE 0
+.RE
+.Me $ehf-scheme
+.IP \fB0x080\fR
+This is a branch  token.  When this token is found, the token (or the  replace
+string) is colored using the given color  \fIschemeNum\fR and then the current
+hilighting scheme is changed to "\fIb-hil-no\fR" (which \s-1MUST\s0 be defined
+by the time it is first used). The  "\fIb-hil-no\fR"  hi-light  scheme  should
+also contain a branch token which branches back to "\fIhil-no\fR" or "\fC0\fR"
+(which branches to
+.Ht $buffer-hilight 5 ).
+A branch does not have to branch back to  "\fIhil-no\fR", it may branch to any
+other  hi-light  scheme. The branches are not stacked and there is no limit on
+the nesting.
+.IP \fB0x100\fR
+The token must be at the start of the line.
+.IP \fB0x200\fR
+This is an  invalid  token in its own right,  which is used for  optimizing  a
+hi-lighting scheme.
+.IP
+This has the second highest  precedence (see  \fB0x400\fR)  and all other bits
+are ignored.  Only the first 3 arguments  are  required. For example, if there
+are 11 tokens  starting with  "\fCdelete-\fR"  as with the hi-lighting of this
+buffer, then adding the token "\fCdelete-\fR", while invalid in its own right,
+means that  "\fCdelete-\fR"  is only  checked for once. This also  reduces the
+size of the internal  hilighting  tables so if the message "\fBTable  full\fR"
+appears,  the  hilighting  scheme  should be  reduced by removal of the common
+components.
+.IP \fB0x400\fR
+This is a column  hilighting  token, which allows  absolute  columns  within a
+window  to be  hilighted  (irrespective  of  the  contents).  This  bit  takes
+precedence  over  all  other  bits  and all  other  bits are  ignored.  Column
+highlighting  is  a  different   concept  to  token  in  that  it  requires  a
+"\fIfrom-col\fR"  and a  "\fIto-col\fR"  column  positions  and a line will be
+hilighted in the given scheme between these two columns.
+.IP \fB0x800\fR
+The flag is used with  bracket  tokens  (\fC0x04\fR)  and  indicates  that the
+bracket is typically  contained on a single line. This  information is used by
+\*(mS in trying to avoid  hilighting  anomalies  caused when the start and end
+tokens of the  bracket  are the same (e.g. a  string's  start and end token is
+\&'\fC"\fR'). Problems arise when the bracket starts on one line and closes on
+a later line, even with a large  look-back,  eventually the start bracket will
+become too far back and only the end bracket is found. But as this is the same
+as the open token it is mistaken  for an open  bracket and the strings  become
+out of synch.  This test can reset  this if further  down the file an open and
+close  bracket  is found on the same  line. For this to have any  effect,  the
+hilighting scheme must use look-back (flag \fC0x02\fR of
+\fBHilight Creation\fR).
+.LP
+Note that \fC0x004\fR,  \fC0x008\fR and \fC0x080\fR are mutually exclusive and
+more than 1 should not be set in any one  hilight  token, if 2 or more are set
+the effect is undefined.  Other than this there is no  restrictions  placed on
+the types of token used, although  strange  combinations  like \fC0x006\fR may
+lead to unexpected results -- hopefully not a core dump, but not guaranteed !
+.PP
+The token and close token of brackets may contain a limited  subset of regular
+expression tokens as follows:-
+.IP "\fB^\fR"
+When  specified as the first  character of the token, the token must be at the
+start of the line.
+.IP "\fB$\fR"
+The token must be at the end of the line, must be the last character.
+.IP "\fB\\\\{\fR"
+Indicates  the start of the hilighted  part of the token, only one may be used
+per token. This token use is different from regex.
+.IP "\fB\\\\}\fR"
+Indicates the end of the hilighted part of the token, only one may be used per
+token.  The rest of the  token  must be  matched  for it to be used but is not
+considered  part of the token,  i.e.  hilighting  continues  on the  character
+immediately after the "\fI\\}\fR", not at the end of the token. Similar to the
+\fB\\<\fR token, the length of the rest of the token must be fixed. This token
+use is different from regex.
+.IP "\fB\\\\(.\\\\)\fR"
+Groups  are  supported  in  hilighting,  but they  must only  enclose a single
+character,  closures  ('*', '?' and '+') must come after the closure, i.e. use
+"\\(.\\)*", not "\\(.*\\)". Alternatives ("\fC\\|\fR") are not supported.  
+.IP "\fB.\fR"
+Matches any character.
+.IP "\fB[...]\fR"
+Matches a single  buffer  character to a range of  characters,  for example to
+hilight    \*(mS     register     variables     (i.e.     \fC#g0\fR-\fC#g9\fR,
+\fC#p0\fR-\fC#p9\fR,  \fC#l0\fR-\fC#l9\fR)  the following  regex string may be
+used:
+.Me $emf-scheme
+.RS
+.CS
+hilight 1 1 "#[gpl][0-9]"
+.CE 0
+.RE
+.Me $ehf-scheme
+.IP
+This  matches a token which starts with a '\fC#\fR',  followed by a '\fCg\fR',
+\'\fCp\fR' or '\fCl\fR' character and ends with a numerical digit. If the user
+required the  replacement  (bit 0x40) of the "\fC#\fR" to  "#register"  to aid
+readability, the replacement  string some now needs to know whether the second
+character  was a '\fCg\fR',  '\fCp\fR' or '\fCl\fR'  and which  digit. Up to 9
+groups  ("\fC\\(.\\)\fR")  can  be  use to  store  a  store  a  single  search
+character, which can be used later in the search string and in the replacement
+string by using the form  "\\\fC#\fR",  where \fC#\fR is the range test number
+counting from the left, e.g. for the given example use:
+.Me $emf-scheme
+.RS
+.CS
+hilight 1 65 "#\\\\([gpl]\\\\)\\\\([0-9]\\\\)" "#register\\\\1\\\\2"
+.CE 0
+.RE
+.Me $ehf-scheme
+.IP
+The content of the brackets (\fB[\fR...\fB]\fR) include a set of special short
+cuts and regular expression syntax definitions as follows:-
+.RS
+.IP "\fC[abc]\fR"
+A list of characters.
+.br
+.IP "\fC[a-z]\fR"
+A range of characters.
+.br
+.IP "\fC[-.0-9]\fR"
+A combination of character lists and ranges.
+.br
+.IP \fC[[:space:]]\fR
+A white space character. See
+.Ht set-char-mask 2
+for a full description on \*(mS character range support.
+.br
+.IP \fC[[:digit:]]\fR
+A digit, 0-9.
+.br
+.IP \fC[[:xdigit:]]\fR
+A hexadecimal digit, 0-9, a-f, A-F.
+.br
+.IP \fC[[:lower:]]\fR
+A lower case letter, by default a-z.
+.br
+.IP \fC[[:upper:]]\fR
+An upper case letter, by default A-Z.
+.br
+.IP \fC[[:alpha:]]\fR
+A lower or upper case letter.
+.br
+.IP \fC[[:alnum:]]\fR
+A lower or upper case letter or a digit.
+.br
+.IP \fC[[:sword:]]\fR
+A spell word character.
+.IP "\fB[^...]\fR"
+Matches  all   characters   except  the  given  range  of   characters,   e.g.
+"\fC[^[:space:]]\fR".
+.IP \fC\\\\#\fR
+The same character which matched the #th group token. This functionality
+is best explained using UNIX
+.Hr man 1
+output  as an  example,  to  create a bold  character  '\fBX\fR'  it  produces
+"\fCX\\CHX\fR" where \fC\\CH\fR is a backspace character thereby  overstriking
+the first  '\fCX\fR'  with  another  creating  a bold  character.  This can be
+checked for and simulated in \*(mS using the following:
+.Me $emf-scheme
+.RS
+.CS
+hilight 1 64 "\\\\(.\\\\)\\CH\\\\1" "\\\\1" .scheme.bold
+.CE
+.RE
+.Me $ehf-scheme
+The use of "\fC\\1\fR" in the search string ensures that the second  character
+is the same as the first. This is replace by a single  character  drawn in the
+bold scheme.
+.RE
+.IP "\fB?\fR \fB+\fR \fB*\fR"
+Matches  0 or 1, 1 or  more  and  0 or  more  of  the  previous  character  or
+character range respectively.
+.PP
+Following is a list of hilighting regular expression restrictions:
+.IP
+The  number of  characters  to the left of a  \fB\\{\fR  and to the right of a
+\fB\\}\fR token must be fixed,
+i.e. the '\fB?\fR',  '\fB+\fR' and '\fB*\fR' tokens cannot be used before this
+token.  Consider the  hilighting of a C function name defined to be a token at
+the  start  of a line  followed  by 0 or more  spaces  followed  by a '('. The
+following  hilight token looks valid but the variable space match is incorrect
+as it is to the right of the \fB\\}\fR:
+.Me $emf-scheme
+.RS
+.CS
+hilight 1 0 "^\\\\w+\\\\}\\\\s-*(" .scheme.function
+.CE
+.Me $ehf-scheme
+Instead  either  the  space  match  must  be  include  in the  function  token
+hilighting   (which  may  cause  problems,   particularly   if  printing  with
+underlining) or by fixing the number of spaces as follows:
+.Me $emf-scheme
+.CS
+; include the spaces in the function hilighting
+hilight 1 0 "^\\\\w+\\\\s-*\\\\}(" .scheme.function
+; or fix the number of spaces to 0, 1 ...
+hilight .hilight.c    0 "^\\\\w+\\\\}(" .scheme.function
+hilight .hilight.c    0 "^\\\\w+\\}\\\\s-(" .scheme.function
+.CE 0
+.RE
+.Me $ehf-scheme
+.IP
+The \fB+\fR and \fB*\fR  tokens  match the  longest  string and do not narrow,
+e.g.  consider  the  hilighting  of a C goto label  which takes the form of an
+alpha-numerical  name at the start of a line followed by a ':' character.  The
+token "\fC^.*:\fR" cannot be used as \fC.\fR will also match and move past the
+ending ':', ending only at the end of the line. As no  narrowing  is performed
+the  final  '\fC:\fR'  in the token  will not match and the label  will not be
+hilighted.  Instead a character  range which  excludes a ':' character must be
+used, e.g. "\fB^[^:]*:\fR".
+.IP
+A group  should not be  followed  by a \fB?\fR or \fB*\fR  closure,  it should
+either be a fixed single  character or followed by a \fB+\fR closure (in which
+case the last matching character is stored).
+.PP
+Following is a list of hilight type bit / token regex equivalents:
+.IP \fB0x01\fR
+"\fC[^word]\\{????\\}[^word]\fR"
+.IP \fB0x02\fR
+"\fC????.*\fR"
+.IP \fB0x20\fR
+"\fC^\\s-*\\{????\fR"  - (note  that  this  is  strictly  incorrect  as the
+\fC\\s-*\fR  is to the left of the  \fC\\{\fR, it is correctly  handled for
+the ease of use).
+.IP \fB0x100\fR
+"\fC^????\fR"
+.SS "Hilight Scheme Token Deletion"
+.na
+.I -1
+.B hilight
+"\fIhil-no\fR"
+"\fItype\fR"
+"\fItoken\fR"
+.ad
+With a \-ve  argument  \fBhilight\fR  deletes the given  "\fItoken\fR"  from a
+hi-light color scheme  identified by  "\fIhil-no\fR".  The token  "\fItype\fR"
+must also be specified to distinguish between normal and column token types.
+.SH EXAMPLE
+.SS "Example 1"
+Hilighting a \*(mS  character  given in hex form,  checking its validity (i.e.
+"\fC\\x??\fR" where \fC?\fR is a hex digit):
+.Me $emf-scheme
+.CS
+hilight 1 0 "\\\\x[[:xdigit:]][[:xdigit:]]" .hilight.variable
+.CE
+.Me $ehf-scheme
+Hilighting a C style variable length hex number (i.e. "\fC0x???\fR"):
+.Me $emf-scheme
+.CS
+hilight 1 1 "0[xX][[:xdigit:]]+" .hilight.variable
+.CE 0
+.Me $ehf-scheme
+.SS "Example 2"
+Replacing  a quoted  character  with just the  character  (i.e.  \fC'x'\fR  ->
+\fCx\fR)
+.Me $emf-scheme
+.CS
+hilight 1 64 "'\\\\(.\\\\)'" "\\\\1" %magenta
+.CE 0
+.Me $ehf-scheme
+.SS "Example 3"
+The  following  example  uses the branch  hilighting  feature to hilight  each
+window line a different color to its neighbors by cycle through 3
+different color schemes:
+.Me $emf-scheme
+.CS
+0 hilight .hilight.line1 0                        $global-scheme
+  hilight .hilight.line1 0x80 "\\\\n" .hilight.line2 .scheme.no1
+0 hilight .hilight.line2 0                        .scheme.no1
+  hilight .hilight.line2 0x80 "\\\\n" .hilight.line3 .scheme.no2
+0 hilight .hilight.line3 0                        .scheme.no2
+  hilight .hilight.line3 0x80 "\\\\n" .hilight.line1 $global-scheme
+.CE 0
+.Me $ehf-scheme
+.SS "Example 4"
+Simulate the hilighting  from the output of a \s-1UNIX\s0 man page (taken from
+hkman.emf):
+.Me $emf-scheme
+.CS
+0 hilight  .hilight.man 0                                $global-scheme
+; ignore
+hilight .hilight.man 64 ".\\CH" ""                        $global-scheme
+; normal underline/italic
+hilight .hilight.man 64 "_\\CH\\\\(.\\\\)\\\\}[^\\CH]" "\\\\1"     .scheme.italic
+hilight .hilight.man 64 "\\\\(.\\\\)\\CH_\\\\}[^\\CH]" "\\\\1"     .scheme.italic
+; bold - first is for nroff -man
+hilight .hilight.man 64 "\\\\(.\\\\)\\CH\\\\1\\\\}[^\\CH]" "\\\\1"   .scheme.bold
+hilight .hilight.man 64 "_\\CH_\\CH_\\CH_\\\\}[^\\CH]" "_"     .scheme.header
+hilight .hilight.man 64 "\\\\(.\\\\)\\CH\\\\1\\CH\\\\1\\CH\\\\1\\\\}[^\\CH]" "\\\\1" .scheme.header
+; bold underline
+hilight .hilight.man 64 "_\\CH_\\CH_\\CH_\\CH_\\\\}[^\\CH]" "_" .scheme.italic
+hilight .hilight.man 64 "_\\CH\\\\(.\\\\)\\CH\\\\1\\CH\\\\1\\CH\\\\1\\\\}[^\\CH]" "\\\\1" .scheme.italic
+.CE
+.Me $ehf-scheme
+This  replaces the complex  nroff  character  string with a single  hi-lighted
+character (don't believe me, try it!).
+.SH NOTES
+\*(mS hilight was written with speed and  flexibility in mind, as a result the
+user is assumed to know what they are doing, if not the effects can be fatal.
+.SH "SEE ALSO"
+.na
+.Hl "File Language Templates" languageTemplates 2 ,
+.Ht $buffer-hilight 5 ,
+.Ht add-file-hook 2 ,
+.Ht add-color-scheme 2 ,
+.Ht print-scheme 2 ,
+.Ht indent 2 ,
+.Ht $system 5 ,
+.Ht print-buffer 2 .
+.ad
+.FH

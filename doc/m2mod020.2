@@ -1,0 +1,30 @@
+.\" -*- nroff -*-
+.Id $Id: m2mod020.2,v 1.1.1.1 2000-07-25 22:03:58 jon Exp $
+.Im MicroEmacs modes
+.so me.tni
+.TH pipe 2m
+.XI pipe - "Incremental Pipe running"
+.SH NAME
+pipe \- Incremental Pipe running
+.SH SYNOPSIS
+.B "pipe Mode"
+.sp
+\fBP\fR \- mode line letter.
+.SH DESCRIPTION
+This mode  indicates  whether an  incremental  pipe (started by
+.Ht ipipe-shell-command 2 )
+is running in the current buffer. This mode is  automatically  set and can not
+be changed by the user. pipe modes main use is in macros.
+.PP
+Modes
+.Ht lock 2m
+and
+.Ht wrap 2m
+effect the output behavior of a piped command.
+.SH "SEE ALSO"
+.na
+.Ht ipipe-shell-command 2 ,
+.Ht lock 2m ,
+.Ht wrap 2m .
+.ad
+.FH

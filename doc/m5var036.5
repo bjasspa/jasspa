@@ -1,0 +1,136 @@
+.\" -*- nroff -*-
+.Id $Id: m5var036.5,v 1.1.1.1 2000-07-25 22:04:05 jon Exp $
+.Im MicroEmacs variable|shell
+.so me.tni
+.TH $rcs-file 5
+.XI $rcs-file - "RCS (and SCCS) file name"
+.XI $rcs-ci-com - "RCS (and SCCS) check in command"
+.XI $rcs-cif-com - "RCS (and SCCS) check in first command"
+.XI $rcs-co-com - "RCS (and SCCS) check out command"
+.XI $rcs-cou-com - "RCS (and SCCS) check out unlock command"
+.XI $rcs-ue-com - "RCS (and SCCS) unedit file command"
+.SH NAME
+.Me "|$rcs-file"
+$rcs-file \- RCS (and SCCS) file name
+.br
+.Me "|$rcs-ci-com"
+$rcs-ci-com \- RCS (and SCCS) check in command
+.br
+.Me "|$rcs-cif-com"
+$rcs-cif-com \- RCS (and SCCS) check in first command
+.br
+.Me "|$rcs-co-com"
+$rcs-co-com \- RCS (and SCCS) check out command
+.br
+.Me "|$rcs-cou-com"
+$rcs-cou-com \- RCS (and SCCS) check out unlock command
+.br
+.Me "|$rcs-ue-com"
+$rcs-ue-com \- RCS (and SCCS) unedit file command
+.Me $a
+.SH SYNOPSIS
+\fB$rcs-file\fR "\fIstring\fR"; Default is ""
+.br
+\fB$rcs-ci-com\fR "\fIstring\fR"; Default is ""
+.br
+\fB$rcs-cif-com\fR "\fIstring\fR"; Default is ""
+.br
+\fB$rcs-co-com\fR "\fIstring\fR"; Default is ""
+.br
+\fB$rcs-cou-com\fR "\fIstring\fR"; Default is ""
+.br
+\fB$rcs-ue-com\fR "\fIstring\fR"; Default is ""
+.SH DESCRIPTION
+\s-1RCS\s0  (Revision  Control  System) and  \s-1SCCS\s0  (Source Code Control
+System) are programmers source code history data-bases.  \s-1RCS\s0 introduces
+a system in which only one  programmer can edit a source file at any one time,
+enforcing some form of stability in the global environment. The fact that this
+interface was developed for the \s-1RCS\s0 system is irrelevant, and should be
+usable under any other control systems such as SCCS.
+.PP
+When using \s-1RCS\s0, finding a file (see
+.Ht find-file 2 )
+checks  for the  existence  of the  actual  file. If this is not found then it
+checks for the  existence of an  \s-1RCS\s0  \fB$rcs-file\fR  variable, and if
+present  then it  constructs  the  \s-1RCS\s0  file  name and  checks  for its
+existence. If this file does not exist then it really is a new file and an new
+buffer is  created. If the file does exist then the file is checked  out using
+the  \fB$rcs-co-com\fR  which executes to create a file with the original file
+name, ready for loading.
+.PP
+\fB$rcs-file\fR  is the name of the file when it is fully check in, as opposed
+to when it is ready to be viewed or edited. In \s-1RCS\s0,  this is usually in
+the  \fCRCS\fR  directory  with an  appended  "\fC,v\fR",  i.e.  for the  file
+\fCfoo.c\fR in the \fC/test\fR directory, when fully checked in, the file will
+not be found at "\fC/test/foo.c\fR",  but at  "\fC/test/RCS/foo.c,v\fR".  When
+testing  for an  \s-1RCS\s0  file, the file name is split  into two parts, the
+path name and the file name, the path is always inserted at the start, and the
+file  name can  inserted  in the rcs  string by using the  special  "\fC%f\fR"
+token, thus if \fB$rcs-file\fR is set to "\fCRCS/%f,v\fR", the \s-1RCS\s0 file
+name is  constructed  from  "\fC/test/\fR"  + "\fCRCS/\fR" +  "\fCfoo.c\fR"  +
+"\fC,v\fR".
+.PP
+If the  \s-1RCS\s0  file  is  found  then  the  \fB$rcs-co-com\fR  (\s-1RCS\s0
+\fBC\fRheck  \fBO\fRut  \fBCOM\fRmand)  which is a simple system  command line
+with  the  exception  for  \fC%f\fR  which is  replaced  by the file  name, is
+executed.  This is  expected  to create the file (with the correct  file name)
+ready for viewing.
+.PP
+Once a file is loaded, then the
+.Ht rcs-file 2
+command has one of two effects:-
+.IP
+If  the  file  is  in  view  mode  then  the  \fB$rcs-cou-com\fR   (\s-1RCS\s0
+\fBC\fRheck \fBO\fRut \fBU\fRnlock  \fBCOM\fRmand) is executed (system command
+line using the "%f" as the file name). If the  \s-1RCS\s0  file does not exist
+then is simply toggles the view mode, allowing editing.
+.IP
+If the file is not in view  mode  \*(mS  attempts  to check the file back into
+\s-1RCS\s0  using either  \fB$rcs-ci-com\fR  (if the  \s-1RCS\s0  file already
+exists)  or  the  the  \fB$rcs-cif-com\fR   (\s-1RCS\s0  \fBC\fRheck  \fBI\fRn
+\fBF\fRirst  \fBCOM\fRmand).  The  "\fC%f\fR" is again used for the file name,
+the  "\fC%m\fR"  can also be used to get a  comment  from the user at check in
+time  which  will be  inserted  (without  quotes)  into the  \fB$rcs-ci-com\fR
+command line. For example, one possible \fB$rcs-ci-com\fR setting is
+.\"
+"\fCci -m\\"%m\\" %f\fR" which uses the
+.Hr ci 1
+program with the \fB-m\fR option to give a check in message.
+.PP
+If  \fBrcs-file\fR  is given a \-ve argument instead of checking in or out the
+current buffer's file it executes the command  specified by  \fB$rcs-ue-com\fR
+to unedit or abort any  changes  made to the file. After the  command has been
+executed the file is reloaded. 
+.SH NOTES
+The  \s-1RCS\s0  variables  are by  default  undefined  and must be explicitly
+enabled in the start-up files.
+.SH EXAMPLE
+The following are typical variable definitions for the \s-1RCS\s0 interface:-
+.Me $emf-scheme
+.CS
+set-variable $rcs-file     "RCS/%f,v"
+set-variable $rcs-co-com   "co %f"
+set-variable $rcs-cou-com  "co -l %f"
+set-variable $rcs-ci-com   "ci -u -m\\"%m\\" %f"
+.CE
+.Me $ehf-scheme
+Note that the  \fB$rcs-cif-com\fR  variable  is usually  left  unassigned  and
+\fB$rcs-ci-com\fR is used by default.
+.PP
+The following are typical variable definitions for the \s-1SCCS\s0 interface:-
+.Me $emf-scheme
+.CS
+set-variable $rcs-file     "SCCS/s.%f"
+set-variable $rcs-co-com   "sccs get %f"
+set-variable $rcs-cou-com  "sccs edit %f"
+set-variable $rcs-ci-com   "sccs delget -y\\"%m\\" %f"
+set-variable $rcs-ci-com   "sccs create %f"
+set-variable $rcs-ue-com   "sccs unedit %f"
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Ht find-file 2 ,
+.Ht rcs-file 2 .
+.ad
+.FH

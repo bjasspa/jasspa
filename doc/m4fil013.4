@@ -1,0 +1,67 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil013.4,v 1.1.1.1 2000-07-25 22:04:03 jon Exp $
+.Im MicroEmacs macro;directive|miscellaneousOperators
+.so me.tni
+.TH !bell 4
+.XI !bell - "Sound audio alarm"
+.SH NAME
+!bell \- Sound audio alarm
+.SH SYNOPSIS
+.na
+.nf
+\fB!bell\fR [\fIn\fR]
+.fi
+.ad
+.SH DESCRIPTION
+\fB!bell\fR  gives a  warning  (audible  or  visual)  to  alert  the user of a
+problem. \fB!bell\fR honors the
+.Ht quiet 2m
+mode, as such if  \fBquiet\fR  mode is  disabled an audible  warning is given,
+otherwise  a  visual  warning  is  given  to the  user  (usually  the  message
+"\fI[BELL]\fR" in the bottom left hand corner).
+.PP
+The  optional  numerical  argument  \fIn\fR  specifies  the  duration  of  the
+\fIbeep\fR, the default is 1 when omitted.
+.PP
+\fB!bell\fR is generally used in conjunction with
+.Hl !abort !abort 4
+the bell functions warning the user, the abort function to quit the macro.
+.SH EXAMPLE
+The  following  example  checks for incoming mail and is taken from  mail.emf.
+If any mail has  arrived  an  audible  warning  is  assured  by  toggling  the
+\fBquiet\fR mode.
+.Me $emf-scheme
+.CS
+;
+; Mail checker
+define-macro mail-check
+    !if &seq &set %vm-mail-src &reg "/history" &cat $platform "/mail-src" "" ""
+        ml-write "[Incoming mail file not setup! Use Help/User setup]"
+        !abort
+    !endif
+    600000 create-callback mail-check
+    ml-write &spr "Checking for mail in %s..." %vm-mail-src
+    set-variable #l0 &cond &gre &stat "s" %vm-mail-src 0 "M" "-"
+    !if &not &seq &mid $mode-line 2 1 #l0
+        set-variable #l1 &rig $mode-line &cond &seq &mid $mode-line 2 1 "%" 4 3
+        set-variable $mode-line &cat &cat &lef $mode-line 2 #l0 #l1
+        screen-update
+        !if &seq #l0 "M"
+            ; use no argument to the global-mode so it toggles it back to its original state
+            !bell
+            global-mode "quiet"
+            !bell
+            global-mode "quiet"
+        !endif
+    !endif
+    ml-clear
+!emacro
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Ht !abort 4 ,
+.Ht abort-command 2 ,
+.Ht quiet 2m .
+.ad
+.FH

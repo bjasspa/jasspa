@@ -1,0 +1,36 @@
+.Id $Id: m2cmd153.2,v 1.1.1.1 2000-07-25 22:03:57 jon Exp $
+.Im MicroEmacs command|window
+.so me.tni
+.TH resize-all-windows 2
+.XI resize-all-windows \- "Resize all windows (automatic change)"
+.SH NAME
+resize-all-windows \- Automatically resize the windows
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B resize-all-windows
+.ad
+.SH DESCRIPTION
+.B resize-all-windows
+performs an automatic  layout of the windows on the screen,  reorganizing  the
+windows  such that each  window  has an equal  amount of space.  The  argument
+\fIn\fR determines which axes reorganization is performed in.
+.BS
+A +ve argument  reorganizes  the windows  vertically,  leaving the  horizontal
+arrangement as is.
+.BU
+A -ve  argument  rearranges  the windows  horizontally,  leaving the  vertical
+arrangement as is.
+.BU
+An argument of zero performs no vertical or horizontal arrangement.
+.BU
+No argument re-arranges both the vertical and horizontal window layout.
+.BE 0
+.SH "SEE ALSO"
+.na
+.Ht resize-window-vertically 2 ,
+.Ht resize-window-horizontally 2 ,
+.Ht split-window-vertically 2 .
+.ad
+.FH

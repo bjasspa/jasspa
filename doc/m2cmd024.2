@@ -1,0 +1,62 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd024.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|macrodevelop
+.so me.tni
+.TH create-callback 2
+.XI create-callback - "Create a timer callback"
+.SH NAME
+create-callback \- Create a timer callback
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B create-callback
+"\fIcommand\fR"
+.ad
+.SH DESCRIPTION
+.B create-callback
+creates a timer based callback  command. The given  \fIcommand\fR  is called
+back in  \fIn\fR  milliseconds  time. This can be used by the user to  monitor
+system  events (such as incoming  mail). The command is called only once, but
+if the command creates a callback of itself a loop is created.
+.PP
+If a -ve argument \fIn\fR is given any pending  callback for  \fIcommand\fR is
+cancelled.
+.SH EXAMPLE
+The following example creates a callback that is invoked every 10 minutes.
+.Me $emf-scheme
+.CS
+define-macro Example-callback
+    ml-write "It was 10 minutes since you last saw me!"
+    600000 create-callback Example-callback
+!emacro
+Example-callback
+.CE 0
+.Me $ehf-scheme
+.SH NOTES
+A call-back  cannot  interrupt while \*(mS is active, instead the call-back is
+delayed until \*(mS becomes  inactive. \*(mS is considered to be inactive when
+it is waiting  for user input, this could be during the  execution  of another
+macro. If a command or macro  requires no user input then once  execution  has
+started, it cannot be interrupted by a call-back macro.
+.PP
+The resolution of the clock is platform  dependent,  some platforms  limit the
+minimum timer period to 10 milliseconds.
+.PP
+\*(mS  does  not  guarantee  to  service  the  callbacks  within  any set time
+constraints, the resultant  callback  intervals may be of a slightly different
+duration than requested.
+.PP
+When a callback macro is executed, the key given by
+.Ht @cck 4
+is "\fCcallback\fR. If the current buffer has a
+.Ht $buffer-input 5
+command set, this command will be called instead of the callback  command with
+\fB@cc\fR and \fB@cck\fR set  appropriately. It is the  responsibility  of the
+input macro to deal with the callback.
+.SH "SEE ALSO"
+.na
+.Ht $auto-time 5 ,
+.Ht define-macro 2 .
+.ad
+.FH

@@ -1,0 +1,45 @@
+.\" -*- nroff -*-
+.Id $Id: m5var059.5,v 1.1.1.1 2000-07-25 22:04:06 jon Exp $
+.Im MicroEmacs variable|hilight
+.so me.tni
+.TH $show-region 5
+.XI $show-region - "Enable the hilighting of regions"
+.SH NAME
+$show-region \- Enable the hilighting of regions
+.Me $a
+.SH SYNOPSIS
+\fB$show-region\fR \fIflag\fR; Default is \fC1\fR
+.SH DESCRIPTION
+.B $show-region
+enables or disables the current region  hilighting,  normally  associated with
+mouse interaction in a buffer. Region hilighting occurs between the \fImark\fR
+(see
+.Ht set-mark 2 )
+and  \fIpoint\fR  (current  cursor)  positions  within the current  buffer. An
+argument  \fIn\fR of 0 disables  region  hilighting,  an argument of 1 enables
+region  hilighting  between  the  two  positions.  If  it  is  set  to 3  then
+region hilighting will be enabled and a defined region (created using
+.Ht copy-region 2 or
+.Ht yank 2 )
+will continue to be hilighted  until the region is changed.
+.PP
+A defined region can be redisplayed (if still valid) using the command
+.Ht show-region 2 .
+The color of the region hilighting is defined by
+.Ht add-color-scheme 2
+and is determined by
+.Ht $buffer-scheme 5 ,
+.Ht $global-scheme 5
+or
+.Ht $buffer-hilight 5 .
+.SH "SEE ALSO"
+.na
+.Ht show-region 2 ,
+.Ht $buffer-hilight 5 ,
+.Ht $buffer-scheme 5 ,
+.Ht $global-scheme 5 ,
+.Ht $buffer-scheme 5  ,
+.Ht add-color-scheme 2 ,
+.Ht set-mark 2 .
+.ad
+.FH

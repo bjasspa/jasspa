@@ -1,0 +1,75 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1999 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m9typ024.9
+.\"  Created By    : Jon Green
+.\"  Created       : Sat Feb 6 14:22:09 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m9typ024.9,v 1.1.1.1 2000-07-25 22:04:09 jon Exp $
+.Im MicroEmacs filetype
+.so me.tni
+.TH perl 9
+.XI perl - "Practical Extraction and Report Language File"
+.XI pl - "Practical Extraction and Report Language File"
+.SH SYNOPSIS
+perl \- Practical Extraction and Report Language File.
+.SH FILES
+.na
+.B hkperl.emf
+\- Practical Extraction and Report Language file hook definition
+.br
+.B perl.etf
+\- Practical Extraction and Report Language header template file.
+.ad
+.SH EXTENSIONS
+.na
+\fB.pl\fR \- Perl file
+.ad
+.SH "MAGIC STRINGS"
+.TP
+\fB#![ \\t]*/.*perl\fR
+.\"
+\*(mE recognizes the magic string on the first line of the file used to locate
+the executable. The Perl files may be extension-less and are still recognized.
+.SH DESCRIPTION
+The \fBperl\fR file type template  provides  simple  hilighting of Perl files,
+the template provides minimal hilighting.
+.PP
+File recognition is performed using the standard file extension  \fB.pl\fR, or
+by the magic string.
+.SH BUGS
+None  reported.  Template  could  probably  benefit  from  some  form  of auto
+indentation.
+.SH "SEE ALSO"
+.na
+.Ht indent 2 ,
+.Ht restyle-buffer 3 ,
+.Ht restyle-region 3 .
+.sp 1
+.Hl "Supported File Types" FileTypes -
+.ad
+.FH

@@ -1,0 +1,160 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd117.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|scuts
+.so me.tni
+.TH global-abbrev-file 2
+.XI global-abbrev-file - "Set global abbreviation file"
+.XI buffer-abbrev-file - "Set buffers' abbreviation file"
+.SH NAME
+global-abbrev-file, buffer-abbrev-file \- Set abbreviation file(s).
+.Me $a
+.SH SYNOPSIS
+.na
+.Me "|global-abbrev-file"
+.I n
+.B global-abbrev-file
+"\fIabbrev-file\fR"
+.br
+.Me "|buffer-abbrev-file"
+.I n
+.B buffer-abbrev-file
+"\fIabbrev-file\fR"
+.ad
+.SH DESCRIPTION
+The abbreviation  files allow the user to define a set of short-cut  expansion
+text, whereby a short sequence of  chararacters  are associated  with a longer
+text  segment.  When the  short  sequence  is  entered,  the user may elect to
+maually  expand the sequnce with the associated  replacement  text.  Provision
+for cursor positioning may be made in the replacement text.
+.PP
+.B buffer-abbrev-file
+sets the current buffer's  abbreviation  file (limit of one abbreviation  file
+per  buffer).  \fBbuffer-abbrev-file\fR  does the  minimal  amount  of work to
+increase speed at load-up. The first use of
+.Ht expand-abbrev 2
+attempts to load the abbreviation file at which point errors may be reported.
+.PP
+An  argument  \fIn\fR  of zero,  forces  the  buffer  abbreviation  file to be
+uncached, such that the next abbreviation that is expanded forces a re-load of
+the abbreviation  file. This is typically only used when an abbreviation  file
+is being constructed and tested.
+.PP
+.B global-abbrev-file
+assigns a global set of abbreviations  accross  \s-1ALL\s0  buffers, such that
+the  abbreviation  is  available  regardless  of the current  buffer type. The
+global    abbreviation    file    has   a   lower    presidence    than    the
+\fBbuffer-abbrev-file\fR,       hence       the       currently       assigned
+\fBbuffer-abbrev-file\fR is searched before the \fBglobal-abbrev-file\fR. 
+.PP
+Similarly for  \fBglobal-abbrev-file\fR, an argument of zero forces the global
+abbreviation file to be uncached and re-loaded on the next use.
+.PP
+An abbreviation  is a  string which  is  expanded to  an alternate  form, e.g.
+.sp
+.RS
+\fBe.g.\fR -> \fBfor example\fR
+.RE
+.br
+or
+.br
+.RS
+\fBPI\fR -> \fB3.1415926536\fR
+.RE
+.br
+etc.
+.PP
+An  abbreviation  file is an  ordinary  text file with a strict  format, it is
+loaded only once at the first call to
+.Ht expand-abbrev 2 ,
+from then on it reminds buffered. An abbreviation file has an abbreviation per
+line,  they  cannot  use  multiple  lines.  This  is  not a draw  back  as the
+expansion string is executed using
+.Ht execute-string 2
+so any \*(mE command may also be called.
+.PP
+For   example   the   following    expansion   string   inserts   the   string
+"\fC!continue\fR"  and a  newline:-
+.RS
+.PP
+"\fC!abort\\r\fR"
+.RE
+.PP
+Note that '\fC\\r\fR' is used instead of '\fC\\n\fR' as \fBC-m\fR is bound to
+.Ht newline 2
+and not  \fBC-j\fR.  The  expansion  string  can also make use of a few useful
+abbreviations:-
+.RS
+.IP \fB\\\\p\fR
+Mark the current position (expanded to "\fCC-x C-a P\fR")
+.IP \fB\\\\P\fR
+Move cursor to the marked position (expanded to "\fCC-x a P\fR")
+.RE
+.PP
+See help on
+.Ht execute-string 2
+for more useful abbreviations.
+.SH EXAMPLE
+The  abbreviation  must be on the left hand side followed by at least 1 space,
+the expansion string must then be on the same line in quotes. So for the given
+examples, the abbreviation file would be:
+.CS
+|
+|e.g. "for example"
+|PI   "3.1415926536"
+|
+.CE
+The following abbreviation could be used for a C \fIif-else\fR statement.
+.CS
+|
+|if "if(\\p)\\r{\\r\\r}\\relse\\r{\\r\\r}\\r\\P"
+|
+.CE
+This is particularly useful for email address, e.g.
+.CS
+|
+|JA "\\"JASSPA\\" <jasspa@geocities.com>"
+|
+.CE
+The following  example is \*(mE C-Mode  abbreviation  file for  constructing C
+files.  Remember  \fB\\p\fR is where the cursor is  positioned  following  the
+expansion.
+.CS
+#i "#include <\\p>\\r\\P"
+#d "#define "
+if "if(\\p)\\r{\\r\\r}\\r\\P"
+ef "else if(\\p)\\r{\\r\\r}\\r\\P"
+el "else\\r{\\r\\p\\r}\\r\\P"
+wh "while(\\p)\\r{\\r\\r}\\r\\P"
+sw "switch(\\p)\\r{\\rcase :\\rdefault:\\r}\\r\\P"
+.CE 0
+.SH NOTES
+Abbreviation  files  are  given the  extension  \fB.eaf\fR  in the \*(mE  home
+directory.
+.PP
+One of the easiest  ways to create more complex  abbreviations  is to record a
+keyboard  macro,  name it and then  insert the  resultant  macro. See notes on
+commands
+.Ht start-kbd-macro 2 ,
+.Ht name-kbd-macro 2 
+and
+.Ht insert-macro 2 .
+.PP
+Try to avoid using named key, such as "\fCup\fR"  and  "\fCreturn\fR",  as the
+keyboard  macro  equivalent  is not readable and is likely to change in future
+releases.
+.SH FILES
+.B c.eaf
+\- C-Mode abbreviation file.
+.B emf.eaf
+\- Macro code abbreviation file.
+.SH "SEE ALSO"
+.na
+.Ht execute-string 2 ,
+.Ht expand-abbrev 2 ,
+.Ht insert-macro 2 ,
+.Ht iso-accents-mode 3 ,
+.Ht name-kbd-macro 2 , 
+.Ht start-kbd-macro 2 ,
+.Ht eaf 8 .
+.ad
+.FH

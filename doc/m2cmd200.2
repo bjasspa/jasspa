@@ -1,0 +1,720 @@
+.Id $Id: m2cmd200.2,v 1.1.1.1 2000-07-25 22:03:57 jon Exp $
+.Im MicroEmacs bindings
+.so me.tni
+.TH Bindings 2
+.XI Bindings - "Default Key Bindings"
+.SH "DEFAULT KEY BINDINGS"
+The default key bindings are presented below in four  alphabetical  lists, one
+for single key bindings and one for each of the 4 bound prefixes (\fC\*(eS\fR,
+\fC\*cx\fR, \fC\*ch\fR & \fC\*cc\fR). See
+.Hl "Key Names" keyNames 2
+for a list of valid key names.
+.SS "Single-Key Sequences"
+\fC\*(bS\fP 
+.Hl "backward-delete-char" backward-delete-char 2
+Delete the previous character.
+.br
+\fC\*(dE\fP 
+.Hl "forward-delete-char" forward-delete-char 2
+Delete character under the cursor.
+.br
+\fC\*(cD\fP 
+.Hl "forward-line" forward-line 2
+Move to next line.
+.br
+\fC\*(eN\fP 
+.Hl "end-of-buffer" end-of-buffer 2
+Move to the end of the buffer.
+.br
+\fC\*(eS\fP 
+.Hl "prefix 1" prefix 2
+Meta character prefix.
+.br
+\fC\*(f1\fP 
+.Hl "osd" osd 2
+Open top main menu.
+.br
+\fC\*(hO\fP 
+.Hl "beginning-of-buffer" beginning-of-buffer 2
+Move to the start of the buffer.
+.br
+\fC\*(iN\fP 
+.Hl "buffer-mode" buffer-mode 2
+Toggle over-write mode.
+.br
+\fC\*(cL\fP 
+.Hl "backward-char" backward-char 2
+Move backward one character (left).
+.br
+\fC\*(pD\fP 
+.Hl "scroll-down" scroll-down 2
+Move forward by one screen.
+.br
+\fC\*(pU\fP 
+.Hl "scroll-up" scroll-up 2
+Move backward by one screen.
+.br
+\fC\*(rE\fP 
+.Hl "newline" newline 2
+Insert a new line.
+.br
+\fC\*(cR\fP 
+.Hl "forward-char" forward-char 2
+Move forward one character (right).
+.br
+\fC\*(tA\fP 
+.Hl "tab" tab 2
+Insert a tab character.
+.br
+\fC\*(cU\fP 
+.Hl "backward-line" backward-line 2
+Move to previous line.
+.sp
+\fC\*s\*(bS\fP 
+.Hl "backward-delete-char" backward-delete-char 2
+Delete the previous character.
+.br
+\fC\*s\*(dE\fP 
+.Hl "forward-delete-char" forward-delete-char 2
+Delete character under the cursor.
+.br
+\fC\*s\*(tA\fP 
+.Hl "backward-delete-tab" backward-delete-tab 2
+Delete white space to previous tab-stop.
+.sp
+\fC\*ca\fP 
+.Hl "beginning-of-line" beginning-of-line 2
+Move to beginning of line.
+.br
+\fC\*cb\fP 
+.Hl "backward-char" backward-char 2
+Move backwards by one character
+.br
+\fC\*cc\fP 
+.Hl "prefix" prefix 2
+Control character prefix.
+.br
+\fC\*cd\fP 
+.Hl "forward-delete-char" forward-delete-char 2
+Delete character under the cursor.
+.br
+\fC\*ce\fP 
+.Hl "end-of-line" end-of-line 2
+Move to end of line.
+.br
+\fC\*cf\fP 
+.Hl "forward-char" forward-char 2
+Move forward one character (right).
+.br
+\fC\*cg\fP 
+.Hl "abort-command" abort-command 2
+Abort current command.
+.br
+\fC\*ch\fP 
+.Hl "prefix" prefix 2
+Control character prefix.
+.br
+\fC\*ci\fP 
+.Hl "insert-tab" insert-tab 2
+Insert tab character.
+.br
+\fC\*ck\fP 
+.Hl "kill-line" kill-line 2
+Delete from cursor to the end of the line.
+.br
+\fC\*cl\fP 
+.Hl "recenter" recenter 2
+Redraw screen with current line in the center.
+.br
+\fC\*cm\fP 
+.Hl "newline" newline 2
+Insert a new line.
+.br
+\fC\*cn\fP
+.Hl "forward-line" forward-line 2
+Move to next line (down).
+.br
+\fC\*co\fP 
+.Hl "insert-newline" insert-newline 2
+Open up a blank line.
+.br
+\fC\*cp\fP 
+.Hl "backward-line" backward-line 2
+Move to previous line (up).
+.br
+\fC\*cq\fP 
+.Hl "quote-char" quote-char 2
+Insert literal character.
+.br
+\fC\*cr\fP
+.Hl "isearch-backward" isearch-backward 2
+Start incremental search backwards.
+.br
+\fC\*cs\fP
+.Hl "isearch-forward" isearch-forward 2
+Start incremental search forwards.
+.br
+\fC\*ct\fP
+.Hl "transpose-chars" transpose-chars 2
+Transpose two letters.
+.br
+\fC\*cu\fP
+.Hl "universal-argument" universal-argument 2
+Repeat the next command \fIn\fP times (default is 4).
+.br
+\fC\*cv\fP
+.Hl "scroll-down" scroll-down 2
+Move forward by one screen.
+.br
+\fC\*cw\fP
+.Hl "kill-region" kill-region 2
+Delete a marked region.
+.br
+\fC\*cx\fP
+.Hl "prefix" prefix 2
+Control character prefix.
+.br
+\fC\*cy\fP
+.Hl "yank" yank 2
+Restore what was copied or deleted.
+.br
+\fC\*cz\fP
+.Hl "scroll-up" scroll-up 2
+Move backward by one screen.
+.br
+\fC\*c_\fP
+.Hl "undo" undo 2
+Undo the previous edit.
+.br
+\fC\*c\*(cD\fP 
+.Hl "forward-line" forward-line 2
+Move forward five lines.
+.br
+\fC\*c\*(cL\fP 
+.Hl "backward-word" backward-word 2
+Move one word backward.
+.br
+\fC\*c\*(pD\fP 
+.Hl "scroll-next-window-down" scroll-next-window-down 2
+Scroll next window down a page.
+.br
+\fC\*c\*(pU\fP 
+.Hl "scroll-next-window-up" scroll-next-window-up 2
+Scroll the next window up a page.
+.br
+\fC\*c\*(cR\fP 
+.Hl "forward-word" forward-word 2
+Move one word forward.
+.br
+\fC\*c\*(cU\fP 
+.Hl "backward-line" backward-line 2
+Move backward 5 lines.
+.sp
+\fC\*ae\fP 
+.Hl "file-browser" file-browser 3
+Browse the file system.
+.br
+\fC\*ar\fP 
+.Hl "replace-all-string" replace-all-string 3
+Replace string with new string in a list of files.
+.br
+\fC\*a\*(cD\fP 
+.Hl "scroll-down" scroll-down 2
+Scroll the current window down one line.
+.br
+\fC\*a\*(cL\fP 
+.Hl "scroll-left" scroll-left 2
+Scroll the current window left one character.
+.br
+\fC\*a\*(cR\fP 
+.Hl "scroll-right" scroll-right 2
+Scroll the current window right one character.
+.br
+\fC\*a\*(cU\fP 
+.Hl "scroll-up" scroll-up 2
+Scroll the current window up one line.
+.SS "\*e Prefix Sequences"
+\fC\*e!\fP
+.Hl "pipe-shell-command" pipe-shell-command 2
+Pipe a shell command to a buffer.
+.br
+\fC\*e$\fP
+.Hl "spell-word" spell-word 3
+Spell a word.
+.br
+\fC\*e.\fP
+.Hl "set-mark" set-mark 2
+Set the start of a region.
+.br
+\fC\*e/\fP
+.Hl "execute-file" execute-file 2
+Execute script lines from a file.
+.br
+\fC\*e<\fP
+.Hl "beginning-of-buffer" beginning-of-buffer 2
+Move to the start of the buffer.
+.br
+\fC\*e>\fP
+.Hl "end-of-buffer" end-of-buffer 2
+Move to the end of the buffer.
+.br
+\fC\*e?\fP
+.Hl "help" help 2
+Help - high level introduction to \*(mS.
+.br
+\fC\*e@\fP
+.Hl "pipe-shell-command" pipe-shell-command 2
+Pipe a shell command to a buffer.
+.br
+\fC\*e[\fP
+.Hl "backward-paragraph" backward-paragraph 2
+Goto the beginning of the paragraph.
+.br
+\fC\*e\\\fP
+.Hl "ipipe-shell-command" ipipe-shell-command 2
+Incrementally pipe a shell command to a buffer.
+.br
+\fC\*e]\fP
+.Hl "forward-paragraph" forward-paragraph 2
+Move forward one paragraph
+.br
+\fC\*e^\fP
+.Hl "delete-indentation" delete-indentation 3
+Join 2 lines deleting white spaces.
+.br
+\fC\*eb\fP
+.Hl "backward-word" backward-word 2
+Move one word backwards
+.br
+\fC\*ec\fP
+.Hl "capitalize-word" capitalize-word 2
+Capitalize first letter of a word
+.br
+\fC\*ed\fP
+.Hl "forward-kill-word" forward-kill-word 2
+Delete word the cursor is on.
+.br
+\fC\*ee\fP
+.Hl "set-encryption-key" set-encryption-key 2
+Reset the encryption key.
+.br
+\fC\*ef\fP
+.Hl "forward-word" forward-word 2
+Move one word forward.
+.br
+\fC\*eg\fP
+.Hl "goto-line" goto-line 2
+Goto a line.
+.br
+\fC\*ei\fP
+.Hl "tab" tab 2
+Insert a tab character.
+.br
+\fC\*ek\fP
+.Hl "global-bind-key" global-bind-key 2
+Bind a key to a command or macro.
+.br
+\fC\*el\fP
+.Hl "lower-case-word" lower-case-word 2
+Lowercase word.
+.br
+\fC\*em\fP
+.Hl "global-mode" global-mode 2
+Toggle a global mode.
+.br
+\fC\*en\fP
+.Hl "forward-paragraph" forward-paragraph 2
+Move forward one paragraph
+.br
+\fC\*eo\fP
+.Hl "fill-paragraph" fill-paragraph 2
+Reformat (fill) current paragraph.
+.br
+\fC\*ep\fP
+.Hl "backward-paragraph" backward-paragraph 2
+Goto the beginning of the paragraph.
+.br
+\fC\*eq\fP
+.Hl "ifill-paragraph" ifill-paragraph 3
+Reformat (fill) current paragraph.
+.br
+\fC\*er\fP
+.Hl "replace-string" replace-string 2
+Search and replace text (no query).
+.br
+\fC\*et\fP
+.Hl "find-tag" find-tag 2
+Find a tag.
+.br
+\fC\*eu\fP
+.Hl "upper-case-word" upper-case-word 2
+Uppercase word.
+.br
+\fC\*ev\fP
+.Hl "scroll-down" scroll-down 2
+Move to the previous screen.
+.br
+\fC\*ew\fP
+.Hl "copy-region" copy-region 2
+Copy region to the kill buffer.
+.br
+\fC\*ex\fP
+.Hl "execute-named-command" execute-named-command 2
+Execute the named command.
+.br
+\fC\*ey\fP
+.Hl "reyank" reyank 2
+Kill current yank data and restore previous kill buffer data.
+.br
+\fC\*ez\fP
+.Hl "quick-exit" quick-exit 2
+Save all buffers and exit.
+.sp
+\fC\*e~\fP
+.Hl "buffer-mode" buffer-mode 2
+Remove edited status from current buffer.
+.br
+\fC\*e\*(bS\fP 
+.Hl "backward-kill-word" backward-kill-word 2
+Delete the word under the cursor.
+.br
+\fC\*e\*(eS\fP 
+.Hl "expand-abbrev" expand-abbrev 2
+Expand an abbreviation.
+.br
+\fC\*e\*(sP\fP 
+.Hl "set-mark" set-mark 2
+Set the start of a region.
+.sp
+\fC\*e\*cc\fP
+.Hl "count-words" count-words 2
+Count words in a region.
+.br
+\fC\*e\*cf\fP
+.Hl "goto-matching-fence" goto-matching-fence 2
+Reposition the cursor at an opposing bracket.
+.br
+\fC\*e\*cg\fP
+.Hl "abort-command" abort-command 2
+Abort current command.
+.br
+\fC\*e\*ci\fP
+.Hl "tab" tab 2
+Insert tab character.
+.br
+\fC\*e\*ck\fP
+.Hl "global-unbind-key" global-unbind-key 2
+Unbind a key from a command or macro
+.br
+\fC\*e\*cn\fP
+.Hl "change-buffer-name" change-buffer-name 2
+Rename current buffer.
+.br
+\fC\*e\*cr\fP
+.Hl "query-replace-string" query-replace-string 2
+Search and replace with query.
+.br
+\fC\*e\*cv\fP
+.Hl "scroll-next-window-down" scroll-next-window-down 2
+Scroll next window down a page.
+.br
+\fC\*e\*cw\fP
+.Hl "kill-paragraph" kill-paragraph 2
+Delete current paragraph.
+.br
+\fC\*e\*cz\fP
+.Hl "scroll-next-window-up" scroll-next-window-up 2
+Scroll the next window up a page.
+.sp
+\fC\*e\*ar\fP 
+.Hl "query-replace-all-string" query-replace-all-string 3
+Query replace string in a list of files.
+.SS "\*(cX Prefix Sequences"
+\fC\*(cX#\fP
+.Hl "filter-buffer" filter-buffer 2
+Filter the buffer through a shell filter.
+.br
+\fC\*(cX(\fP
+.Hl "start-kbd-macro" start-kbd-macro 2
+Start recording a keyboard macro.
+.br
+\fC\*(cX)\fP
+.Hl "end-kbd-macro" end-kbd-macro 2
+Stop recording a keyboard macro.
+.br
+\fC\*(cX/\fP
+.Hl "isearch-forward" isearch-forward 2
+Start incremental search forwards.
+.br
+\fC\*(cX0\fP
+.Hl "delete-window"  delete-window 2
+Delete the current window.
+.br
+\fC\*(cX1\fP
+.Hl "delete-other-windows"  delete-other-windows 2
+Delete other windows.
+.br
+\fC\*(cX2\fP
+.Hl "split-window-vertically" split-window-vertically 2
+Split the current window into two.
+.br
+\fC\*(cX3\fP
+.Hl "next-window-find-buffer" next-window-find-buffer 2
+Find a buffer into the next window, split if necessary.
+.br
+\fC\*(cX4\fP
+.Hl "next-window-find-file" next-window-find-file 2
+Load a file into the next window, split if necessary.
+.br
+\fC\*(cX5\fP
+.Hl "split-window-horizontally" split-window-horizontally 2
+Split the current window horizontally into two.
+.br
+\fC\*(cX9\fP
+.Hl "find-bfile" find-bfile 2
+Find and load a file for binary editing.
+.br
+\fC\*(cX<\fP
+.Hl "scroll-left" scroll-left 2
+Scroll the window left by one screen width.
+.br
+\fC\*(cX=\fP
+.Hl "buffer-info" buffer-info 2
+Show cursor position information
+.br
+\fC\*(cX>\fP
+.Hl "scroll-right" scroll-right 2
+Scroll the window right by one screen width.
+.br
+\fC\*(cX?\fP
+.Hl "describe-key" describe-key 2
+Describe binding of command to key.
+.br
+\fC\*(cX@\fP
+.Hl "pipe-shell-command" pipe-shell-command 2
+Pipe a shell command to buffer.
+.br
+\fC\*(cX[\fP
+.Hl "scroll-up" scroll-up 2
+Move backward by one screen.
+.br
+\fC\*(cX]\fP
+.Hl "scroll-down" scroll-down 2
+Move forward by one screen.
+.br
+\fC\*(cX^\fP
+.Hl "grow-window-vertically" grow-window-vertically 2
+Enlarge the current window by a line.
+.br
+\fC\*(cX`\fP
+.Hl "get-next-line" get-next-line 2
+Find the next command line.
+.br
+\fC\*(cXa\fP
+.Hl "goto-alpha-mark" goto-alpha-mark 2
+Move the cursor to an alphabetic mark.
+.br
+\fC\*(cXb\fP
+.Hl "find-buffer" find-buffer 2
+Switch window to a buffer.
+.br
+\fC\*(cXc\fP
+.Hl "shell" shell 2
+Start a new command processor.
+.br
+\fC\*(cXe\fP
+.Hl "execute-kbd-macro" execute-kbd-macro 2
+Execute a macro.
+.br
+\fC\*(cXh\fP
+.Hl "hunt-forward"  hunt-forward 2
+Continue search in forward direction.
+.br
+\fC\*(cXk\fP
+.Hl "delete-buffer" delete-buffer 2
+Delete buffer.
+.br
+\fC\*(cXm\fP
+.Hl "buffer-mode" buffer-mode 2
+Toggle a local buffer mode.
+.br
+\fC\*(cXn\fP
+.Hl "change-file-name" change-file-name 2
+Rename current buffer file name.
+.br
+\fC\*(cXo\fP
+.Hl "next-window" next-window 2
+Move to the next window.
+.br
+\fC\*(cXp\fP
+.Hl "previous-window" previous-window 2
+Move to the previous window.
+.br
+\fC\*(cXq\fP
+.Hl "kbd-macro-query" kbd-macro-query 2
+Query keyboard macro.
+.br
+\fC\*(cXr\fP
+.Hl "search-backward" search-backward 2
+Search in a reverse direction.
+.br
+\fC\*(cXs\fP
+.Hl "search-forward" search-forward 2
+Search in a forward direction.
+.br
+\fC\*(cXu\fP
+.Hl "undo" undo 2
+Undo the previous edit.
+.br
+\fC\*(cXv\fP
+.Hl "set-variable" set-variable 2
+Assign a new value to a variable.
+.br
+\fC\*(cXw\fP
+.Hl "resize-window-vertically" resize-window-vertically 2
+Resize the window.
+.br
+\fC\*(cXx\fP
+.Hl "next-buffer" next-buffer 2
+Switch to the next buffer.
+.br
+\fC\*(cXz\fP
+.Hl "grow-window-vertically" grow-window-vertically 2
+Enlarge the current window.
+.br
+\fC\*(cX{\fP
+.Hl "shrink-window-horizontally" shrink-window-horizontally 2
+Shrink current window horizontally.
+.br
+\fC\*(cX}\fP
+.Hl "grow-window-horizontally" grow-window-horizontally 2
+Enlarge current window horizontally.
+.sp
+\fC\*(cX\*ca\fP
+.Hl "set-alpha-mark" set-alpha-mark 2
+Mark the current position with an alphabetic mark.
+.br
+\fC\*(cX\*cb\fP
+.Hl "list-buffers"  list-buffers 2
+Display buffer list.
+.br
+\fC\*(cX\*cc\fP
+.Hl "save-buffer-exit-emacs" save-buffers-exit-emacs 2
+Exit \*(mE.
+.br
+\fC\*(cX\*cd\fP
+.Hl "change-directory" change-directory 2
+Change the current working directory.
+.br
+\fC\*(cX\*ce\fP
+.Hl "execute-kbd-macro" execute-kbd-macro 2
+Execute a macro.
+.br
+\fC\*(cX\*cf\fP
+.Hl "find-file" find-file 2
+Find a file and load into buffer.
+.br
+\fC\*(cX\*cg\fP
+.Hl "abort-command" abort-command 2
+Abort current command.
+.br
+\fC\*(cX\*ch\fP
+.Hl "hunt-backward" hunt-backward 2
+Resume search in backwards direction.
+.br
+\fC\*(cX\*ci\fP
+.Hl "insert-file" insert-file 2
+Insert file into the current buffer.
+.br
+\fC\*(cX\*cl\fP
+.Hl "lower-case-region" lower-case-region 2
+Lowercase region.
+.br
+\fC\*(cX\*cn\fP
+.Hl "scroll-down" scroll-down 2
+Scroll the current window down one line.
+.br
+\fC\*(cX\*co\fP
+.Hl "delete-blank-lines" delete-blank-lines 2
+Delete blank lines about the cursor.
+.br
+\fC\*(cX\*cp\fP
+.Hl "scroll-up"  scroll-up 2
+Scroll the current window up one line.
+.br
+\fC\*(cX\*cq\fP
+.Hl " rcs-file" rcs-file 2
+Interact with RCS to check in/out a file.
+.br
+\fC\*(cX\*cr\fP
+.Hl "read-file" read-file 2
+Read a file from disk.
+.br
+\fC\*(cX\*cs\fP
+.Hl "save-buffer" save-buffer 2
+Save current file to disk.
+.br
+\fC\*(cX\*ct\fP
+.Hl "transpose-lines" transpose-lines 2
+Swap adjacent lines.
+.br
+\fC\*(cX\*cu\fP
+.Hl "upper-case-region" upper-case-region 2
+Uppercase region.
+.br
+\fC\*(cX\*cv\fP
+.Hl "view-file"  view-file 2
+Read a file for viewing (read only).
+.br
+\fC\*(cX\*cw\fP
+.Hl "write-buffer" write-buffer 2
+Write a file to disk witn new name.
+.br
+\fC\*(cX\*cx\fP
+.Hl "exchange-point-and-mark" exchange-point-and-mark 2
+Exchange cursor with mark position.
+.br
+\fC\*(cX\*cy\fP
+.Hl "insert-file-name" insert-file-name 2
+Insert filename into current buffer.
+.br
+\fC\*(cX\*cz\fP
+.Hl "shrink-window-vertically" shrink-window-vertically 2
+Reduce size of current window.
+.SS "\*(cH Prefix Sequences"
+\fC\*(cHa\fP
+.Hl "command-apropos" command-apropos 2
+List commands involving a concept.
+.br
+\fC\*(cHb\fP
+.Hl "describe-bindings" describe-bindings 2
+Show current command/key binding.
+.br
+\fC\*(cHc\fP
+.Hl "list-commands" list-commands 2
+List available commands.
+.br
+\fC\*(cHd\fP
+.Hl "describe-variable" describe-variable 2
+Describe current setting of a variable.
+.br
+\fC\*(cHk\fP
+.Hl "describe-key" describe-key 2
+Describe keyboard binding.
+.br
+\fC\*(cHv\fP
+.Hl "list-variables" list-variables 2
+List defined variables.
+.sp
+\fC\*(cH\*cc\fP
+.Hl "help-command" help-command 2
+Display command help information.
+.br
+\fC\*(cH\*ci\fP
+.Hl "help-item"  help-item 2
+Display item help information.
+.br
+\fC\*(cH\*cv\fP
+.Hl "help-variable" help-variable 2
+Display variable help information.
+.FH

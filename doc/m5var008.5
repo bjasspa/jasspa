@@ -1,0 +1,24 @@
+.\" -*- nroff -*-
+.Id $Id: m5var008.5,v 1.1.1.1 2000-07-25 22:04:04 jon Exp $
+.Im MicroEmacs variable|buffer|modeline
+.so me.tni
+.TH $buffer-mode-line 5
+.XI $buffer-mode-line - "Buffer mode line string"
+.SH NAME
+$buffer-mode-line \- Buffer mode line string
+.Me $a
+.SH SYNOPSIS
+.B $buffer-mode-line
+"\fIstring\fR"
+.SH DESCRIPTION
+Sets  the  buffer  mode  line,  unique  to  this  buffer,  see 
+.Ht $mode-line 5
+use,  description  and  syntax. If this  variable  is NOT set for a buffer and
+\fB$mode-line\fR  is changed, then the buffer's  mode line will also change to
+the new value. If this  variable is set, then then  buffer's mode line will be
+unaffected by any setting of \fB$mode-line\fR.
+.SH "SEE ALSO"
+.na
+.Ht $mode-line 5 .
+.ad
+.FH

@@ -1,0 +1,45 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd121.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|region
+.ds C0 "(\fB\*e\*(sP\fR)\ \&
+.so me.tni
+.TH set-mark 2
+.XI set-mark - "\*(C0Set starting point of region"
+.SH NAME
+set-mark \- Set starting point of region
+.Me $a
+.SH SYNOPSIS
+.na
+\fBset-mark\fR \*(C0
+.ad
+.SH DESCRIPTION
+.B set-mark
+is used to  delimit  the  beginning  of a marked  region.  Many  commands  are
+effective  for a region of text. A region is defined as the text  between  the
+mark and the  current  cursor  position.  To  delete a  section  of text,  for
+example,  one moves the  cursor to the  beginning  of the text to be  deleted,
+issues the \fBset-mark\fR  command by typing  \fB\*e\*(sP\fR, moves the cursor
+to the end of the text to be deleted, and then deletes it by using the
+.Ht kill-region 2
+(\fB\*cw\fR)  command. Only one mark can be set in one window or one buffer at
+a time, and \*(mE will try to remember a mark set in an off screen buffer when
+it is called back on screen.
+.PP
+A region is a block of text to be acted upon by some  \*(mE  commands. It
+is demarcated by the  \fBPOINT\fR  on one end and the \fBMARK\fR at the other.
+The point is the primary  location  identifier  where most of the action takes
+place and is always  between two  characters.  The point is  indicated  by the
+cursor  position  in that it is just  behind  the  cursor.  The  point is also
+significant  in that it defines  one end of the region. The mark, on the other
+hand, is invisible,  and is used to demarcate  the other end of the region and
+is set through \fBset-mark\fR.
+.SH "SEE ALSO"
+.na
+.Ht copy-region 2 ,
+.Ht exchange-point-and-mark 2 ,
+.Ht kill-region 2 .
+.Ht reyank 2 ,
+.Ht yank 2 ,
+.ad
+.rm C0
+.FH

@@ -1,0 +1,56 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd119.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|macrodevelop
+.so me.tni
+.TH set-cursor-to-mouse 2
+.XI set-cursor-to-mouse - "Move the cursor to the current mouse position"
+.SH NAME
+set-cursor-to-mouse \- Move the cursor to the current mouse position
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B set-cursor-to-mouse
+.ad
+.SH DESCRIPTION
+.B set-cursor-to-mouse
+sets the current  window and cursor  position to the  location of the mouse on
+it's last event (button press or release). This command may change the current
+window. If the line on which the mouse was  located was the message  line then
+the no action is taken, if the line was a window  mode line the that window is
+made the current window but the cursor  location within the window remains the
+same.  This  is  usually  used  in  user  defined   macros  that  control  the
+functionality of the mouse.
+.PP
+An argument \fIn\fR  determines if the command is permitted to change windows,
+when omitted a window change is permitted on  \fBset-cursor-to-mouse\fR.  When
+specified,  the mouse is not permitted to change  windows and returns an error
+condition in 
+.Ht $mouse-pos 5 
+indicating that the mouse is not within the current window.
+.PP
+Invocation of this command sets the variable
+.Ht $mouse-pos 5
+which  determines  where the mouse is within the window.  Interrogation of the
+variable  following  the  command  may be used to  determine  if the  mouse is
+located on one of the more specialized window or screen regions.
+.PP
+When writing  macros to cut and paste using the mouse, care should be taken to
+ensure  that the  window at the  button  release  is the same is at the button
+press. If this is not undertaken, undesired effects could result. The use of
+.Ht set-window 2
+and
+.Ht goto-window 2
+are most usefully used with this command to restore existing window context.
+.SH "SEE ALSO"
+.na
+.Ht $mouse-pos 5 ,
+.Ht $mouse-x 5 ,
+.Ht $mouse-y 5 ,
+.Ht $window-mode-line 5 ,
+.Ht $window-scroll-bar 5 ,
+.Ht goto-window 2 ,
+.Ht set-scroll-with-mouse 2 ,
+.Ht set-window 2 .
+.ad
+.FH

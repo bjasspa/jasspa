@@ -1,0 +1,90 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd078.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|search
+.ds C0 "(\fB\*cs\fR)\ \&
+.ds C1 "(\fB\*cr\fR)\ \&
+.so me.tni
+.TH isearch-forward 2
+.XI isearch-forward - "\*(C0Search forward incrementally (interactive)" essential
+.XI isearch-backward - "\*(C1Search backwards incrementally (interactive)"
+.SH NAME
+.Me "|isearch-forward"
+isearch-forward \- Search forward incrementally (interactive)
+.br
+.Me "|isearch-backward"
+isearch-backward \- Search backwards incrementally (interactive)
+.Me $a
+.SH SYNOPSIS
+.na
+\fBisearch-forward\fR \*(C0
+.br
+\fBisearch-backward\fR \*(C1
+.ad
+.SH DESCRIPTION
+.B isearch-forward
+provides  an  interactive  search in the forward  direction.  This  command is
+similar to
+.Ht search-forward 2 ,
+but it processes the search as each character of the input string is typed in.
+This allows the user to only use as many key-strokes as are needed to uniquely
+specify the string being searched.
+.PP
+The follow keys can be used at the start of an incremental search only:
+.IP
+\fC\*cs\fR \- Search for last string.
+.br
+\fC\*cm\fR \- Perform a search-forward instead.
+.br
+\fC\*ep\fR,
+.br
+\fC\*en\fR \- Scroll through history list etc (See
+.Ht ml-bind-key 2 ).
+.LP
+Several control characters are active while isearching:
+.IP "\fB\*cs\fR or \fB\*(cX\fR"
+Skip to the next occurrence of the current string
+.IP \fB\*cr\fR
+Skip to the last occurrence of the current string
+.IP \fB\*ch\fR
+Back up to the last match (possibly deleting the last character on the search string)
+.IP \fB\*cw\fR
+Insert the next word into the search string.
+.IP \fB\*cg\fR
+Abort the search, return to start.
+.IP "\fB\*e\fR or \fB\*cm\fR"
+End the search, stay here
+.LP
+.B isearch-backward
+is the same as \fBisearch-forward\fR, but it searches in the reverse direction.
+.PP
+For both  commands  when the end of the buffer is  reached, an alarm is raised
+(bell  etc.) a  further  search  request  (\fC\*cs\fR)  causes  the  search to
+commence  from the start of the  buffer.
+.SH NOTES
+The
+.Ht ml-bind-key 2
+bindings are used.
+.PP
+The incremental search supports buffer modes
+.Ht exact 2m
+and
+.Ht magic 2m .
+.SH BUGS
+Due to the dynamic nature of active
+.Ht ipipe-shell-command 2
+buffers  the search  history  cannot be stored in the same way (list of fixed
+locations).  As a result  the search  history is stored as a list of  searches
+which are not guaranteed to be consistent.
+.SH "SEE ALSO"
+.na
+.Ht exact 2m ,
+.Ht hunt-forward 2 ,
+.Ht magic 2m ,
+.Ht ml-bind-key 2 ,
+.Ht search-forward 2 .
+.br
+.Hl "Regular Expressions" RegularExpressions 2
+.ad
+.rm C0
+.rm C1
+.FH

@@ -1,0 +1,44 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd082.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|delete
+.ds C0 "(\fB\*ck\fR)\ \&
+.so me.tni
+.TH kill-line 2
+.XI kill-line - "\*(C0Delete all characters to the end of the line"
+.SH NAME
+kill-line \- Delete all characters to the end of the line
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+\fBkill-line\fR \*(C0
+.ad
+.SH DESCRIPTION
+.BR kill-line ,
+when used with no  argument  \fIn\fR,  deletes all text from the cursor to the
+end of a line.  When used on a blank  line, it  deletes  the blank  line. If a
+non-zero  argument  \fIn\fR is  supplied  it deletes the  specified  number of
+lines.
+.PP
+When the buffer mode
+.Ht line 2m
+is  enabled  and the  cursor  is at the start of the line then the text on the
+line and the line itself are removed.
+.PP
+The removed text is placed in the
+.Hl yank yank 2
+buffer.
+.SH NOTES
+If a line is accidentally removed then
+.Hl yank yank 2
+the text back immediately or use
+.Ht undo 2 .
+.SH "SEE ALSO"
+.na
+.Ht kill-region 2 ,
+.Ht line 2m ,
+.Ht undo 2 ,
+.Ht yank 2 .
+.ad
+.rm C0
+.FH

@@ -1,0 +1,27 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd142.2,v 1.1.1.1 2000-07-25 22:03:57 jon Exp $
+.Im MicroEmacs command|paragraph
+.so me.tni
+.TH wrap-word 2
+.XI wrap-word - "Wrap word onto next line"
+.SH NAME
+wrap-word \- Wrap word onto next line
+.Me $a
+.SH SYNOPSIS
+.na
+.B wrap-word
+.ad
+.SH DESCRIPTION
+.B wrap-word
+wraps the current word onto the next  line, justifying the current line if the
+.Ht justify 2m
+mode is enabled. The justification method is defined by
+.Ht $fill-mode 5 .
+.SH "SEE ALSO"
+.na
+.Ht buffer-mode 2 ,
+.Ht fill-paragraph 2 ,
+.Ht $fill-mode 5 ,
+.Ht justify 2m .
+.ad
+.FH

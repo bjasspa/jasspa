@@ -1,0 +1,674 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1998 Jon Green Ltd.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m2nar000.2
+.\"  Created By    : Jon Green
+.\"  Created       : Sat Jul 11 13:30:15 1998
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1998 Jon Green Ltd.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from Jon Green Ltd.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m2nar000.2,v 1.1.1.1 2000-07-25 22:03:59 jon Exp $
+.Im MicroEmacs macrodevelop
+.so me.tni
+.TH languageTemplates 2
+.XI languageTemplates - "File Language Templates"
+.SH "FILE LANGUAGE TEMPLATES"
+\*(mE  provides a large range of macros and  templates to deal with the most
+commonly  occurring types of ASCII file that may be edited. However, there is
+a  requirement  for users to extend this  capability  to include more obscure
+file  types,  in  addition  to  bespoke   files  found   internally   within
+organizations, or devised by the user.
+.PP
+For each file type, \*(mE may be tailored to  recognize  the file and modify
+it's hilighting, key binding  configuration,  osd display and indentation to
+accommodate the file. In addition, new shorthand  macros may be introduced to
+help deal with the contents of the file.
+.PP
+This section outlines the steps to be taken to integrate a new file language
+template into \*(mE.
+.SS "The scope of the File Type"
+The  first  step is to decide  the scope of the file, this  will  determine
+where the file hook should be defined. The options are:-
+.IP "\fBA standard file type not supported\fR"
+If this is a standard  file type not  supported by \*(mE then it
+should be added to \fCme.emf\fR, in addition
+.Hl "contact us" Contact -
+and we will add it to the standard  release. Any macro files  associated  with
+this file type should be  available  globally and are added to the  MicroEmacs
+\fImacro\fR directory.
+.IP "\fBLocal To your organization\fR"
+If it is a file type local to your organization then it should be added
+to your  \fIcompany\fR.emf  file. Any macro files  associated  with the file
+type should be added to your local company \*(mE directory.
+.IP "\fBLocal to an individual\fR"
+If this is a file type that is only used by a limited  number of individuals
+then it  should be added to the  \fIuser\fR.emf  file. Any files  associated
+with the file type are added to your local user \*(mE directory.
+.SS "Recognizing the File Type"
+The next  step to adding a new file type is to get \*(mE to  recognize  the
+file as the new type. Recognition is performed by the
+.Hl "File Hooks" fileHooks 2
+which perform recognition on the file extension and/or the file content.
+The name of the file type must be determined, this is typically the name of
+the file prepended by \fChk\fR. e.g. a file with extension \fIfoo\fR
+uses the file \fChkfoo.emf\fR for it's language specific definitions.
+.PP
+Using the
+.Ht add-file-hook 2
+invocation the file recognition is bound to the file hook macro whenever the
+file  type is  loaded.  The file  hook is added to the  appropriate  global,
+company  or user  start up file as  determined  in step 1. The file hooks for
+file \fIfoo\fR might be defined as follows, depending upon the recognition method:-
+.IP "\fBRecognizing the extension\fR"
+To recognize the file  extension, then a space  separated list of extensions
+may  be  defined, including  the  dot  '\fC.\fR' (or  other)  extension
+separator.
+.RS
+.Me $emf-scheme
+.CS
+add-file-hook ".foo"       fhook-foo
+.CE 0
+.Me $ehf-scheme
+.RE
+.IP "\fBRecognizing a magic editor string in the file\fR"
+If the file type adopts multiple extensions (or does not use a file extension)
+then an editor  specific  string may be  inserted  into the file to enable the
+editor to recognize it, typically of the form \fC-!-\fR \fItype\fR  \fC-!-\fR,
+if the string is GNU Emacs  compatible  then the \fC-*-\fR  convention  may be
+used. The binding is defined as:-
+.RS
+.Me $emf-scheme
+.CS
+add-file-hook "-!-[ \\t]*foo.*-!-"           fhook-foo
+.CE 0
+.Me $ehf-scheme
+.RE
+.IP "\fBRecognizing a magic string in the file\fR"
+\s-1UNIX\s0 files use a "\fC#!<path>\fR"  notation for executable ASCII files.
+If the file is this type of file (or uses any other  type of common  string in
+the as the first  characters  of a file) then the  binding  may be  defined  as
+follows, in this case we have assumed \fIfoo\fR is the \s-1UNIX\s0  executable
+variety i.e. \fC#!/usr/local/bin/foo\fR:-
+.RS
+.Me $emf-scheme
+.CS
+1 add-file-hook "^#!/.*foo" fhook-foo
+.CE
+.Me $ehf-scheme
+.RE
+Any, or all of the above  recognition  methods may be employed to invoke the
+language  specific macro. Note that the methods are evaluated in a LIFO order,
+hence it is possible to over-ride an existing method.
+.SS "Defining the Macro File"
+Once the hook has been defined, the language  specific file must be created.
+Create  the  language  specific  file with the same name as  defined  in the
+hooks, removing the \fBfhook-\fR prefix and replacing it with \fBhk\fR, i.e.
+\fCfhook-foo\fR invokes the language specific file \fChkfoo.emf\fR.
+Create,  the file and add the file hook macro. for  example  hk\fIfoo\fR.emf
+contents may be defined as:
+.Me $emf-scheme
+.CS
+define-macro fhook-foo
+    ; Temporary comment to make sure that it works.
+    ml-write "Loaded a foo file"
+!emacro
+ml-write "[MicroEmacs foo file hook loaded]"
+.CE
+.Me $ehf-scheme
+The file hook may be tested by exiting and  re-loading  \*(mE, or simply
+by executing the file containing the \fCadd-file-hook\fR  function. Once the
+file  bindings are  installed a \fIfoo\fR  file may be loaded and the
+hook message should be displayed.
+.SS "Modifying an Existing file hook"
+The standard file hooks supplied with \*(mE should not be modified,  typically
+a user will want to extend the  repertoire of hi-lighting  tokens to encompass
+locally defined programming  libraries or syntactical  extensions, in addition
+to extending  support  macros that are associated  with the file type. In this
+case,  an  extension  to  the  hook   function  is  required.  The  hook  file
+\fBmy\fR\fIXXX\fR\fB.emf\fR,   allows   extensions   to   be   made   to   the
+\fBhk\fR\fIXXX\fR\fB.emf\fR,  without  editing the original  file. This may be
+considered  to be an  \fIinclude\fR  file and is executed, if it exists, after
+the \fBhk\fR file has been executed. i.e. if the hook file  \fBhkfoo.emf\fR is
+already defined and extensions are added to \fBmyfoo.emf\fR.
+.PP
+Note that the  \fBmy\fR\fIXXX\fR\fB.emf\fR  files do not typically include any
+\fBfhook-XXX\fR  functions, the original \fIfhook\fR  functions would be used.
+However, if a different buffer environment is required from the one created be
+the hook, such as a different setting of
+.Ht tab 2m
+mode, the hook function  should be copied to  \fBmy\fR\fIXXX\fR\fB.emf\fR  and
+altered appropriately.
+.SS "Adding Hilighting definitions"
+File specific  hilighting is used to pick out key words and tokens used within
+the file type, it greatly improves  readability; the hilighting is also used
+for
+.Hl printing print-buffer 2 .
+The  hilighting  is defined  within the body of the file and is executed  once
+when the hook file is loaded, this occurs when the hook  function is executed.
+During development of the hilighting code, it is usually necessary to
+.Hl execute execute-buffer 2
+the hook buffer to view the effects of any changes to the hilighting.
+.PP
+The hilighting is defined using the command
+.Ht hilight 2
+which  requires a  hilighting  identifier,  used to  identify  the  hilighting
+scheme. This identifier is dynamically allocated when the hook file is loaded,
+again using  \fIfoo\fR, the identifier is allocated at the top of the file and
+is protected such that a value is assigned once only.
+.Me $emf-scheme
+.CS
+!if &sequal .hilight.foo "ERROR"
+    set-variable .hilight.foo &pinc .hilight.next 1
+!endif
+.CE
+.Me $ehf-scheme
+The  variable   \fC.hilight.next\fR   allocates  unique  hilighting   numbers,
+typically  a  single   hilighting   number  is  consumed,   incrementing   the
+\fC.hilight.next\fR  variable  ready for the next  allocation.  The hilighting
+color scheme is defined in a macro  variable  \fB.hilight.\fR\fIext\fR,  where
+\fIext\fR is the name of the language scheme (i.e. \fIfoo\fR).
+.PP
+Given a hilighting  number, the hilighting  scheme may be defined. Each of the
+tokens  in the  language  is  assigned  a  hilighting  color,  for our  simple
+\fIfoo\fR file type:-
+.Me $emf-scheme
+.CS
+0 hilight .hilight.foo 1                $global-scheme
+hilight .hilight.foo 2 "#"              .scheme.comment
+hilight .hilight.foo 4 "\\"" "\\"" "\\\\"   .scheme.string
+hilight .hilight.foo 0 "'.'"            .scheme.quote
+hilight .hilight.foo 0 "'\\\\\\\\.'"        .scheme.quote ; '\\?' quoted char
+
+hilight .hilight.foo 1 "if"             .scheme.keyword
+hilight .hilight.foo 1 "then"           .scheme.keyword
+hilight .hilight.foo 1 "else"           .scheme.keyword
+hilight .hilight.foo 1 "endif"          .scheme.keyword
+.CE
+.Me $ehf-scheme
+When the hilighting  tokens have been defined, the hilighting  scheme is bound
+to the buffer. This is performed by assigning
+.Ht $buffer-hilight 5
+with the hilighting scheme within the \fIfhook\fR macro body, e.g.
+.Me $emf-scheme
+.CS
+define-macro fhook-foo
+    ; Assign the hilighting
+    set-variable $buffer-hilight .hilight.foo
+    ; Temporary comment to make sure that it works.
+    ml-write "Loaded a foo file"
+!emacro
+.CE
+.Me $ehf-scheme
+Putting it all together \fChkfoo.emf\fR now comprises:-
+.Me $emf-scheme
+.CS
+!if &sequal .hilight.foo "ERROR"
+    ; Allocate a hilighting scheme number
+    set-variable .hilight.foo &pinc .hilight.next 1
+!endif
+
+; Define the hilighting scheme
+0 hilight .hilight.foo 1                $global-scheme
+hilight .hilight.foo 2 "#"              .scheme.comment
+hilight .hilight.foo 4 "\\"" "\\"" "\\\\"   .scheme.string
+hilight .hilight.foo 0 "'.'"            .scheme.quote
+hilight .hilight.foo 0 "'\\\\\\\\.'"        .scheme.quote ; '\\?' quoted char
+
+hilight .hilight.foo 1 "if"             .scheme.keyword
+hilight .hilight.foo 1 "then"           .scheme.keyword
+hilight .hilight.foo 1 "else"           .scheme.keyword
+hilight .hilight.foo 1 "endif"          .scheme.keyword
+
+; File hook - called when new file is loaded.
+define-macro fhook-foo
+    ; Assign the hilighting
+    set-variable $buffer-hilight .hilight.foo
+    ; Temporary comment to make sure that it works.
+    ml-write "Loaded a foo file"
+!emacro
+
+; Notification that hook is loaded.
+ml-write "[MicroEmacs foo file hook loaded]"
+.CE 0
+.Me $ehf-scheme
+.SS "Adding a Template"
+A  template  inserts  initial  text  into a new  file  that is  created.  This
+mechanism  is  typically  used to insert a  standard  header  into the file on
+creation. The insertion text is defined within a template file, given the file
+extension
+.Ht etf 8 ,
+which is created in the  corresponding  global, company or user directory as
+determined in step 1. The template is named \fIext\fR.etf, so for our example
+file  \fIfoo\fR,  the  template  file  is  called  \fCfoo.etf\fR.  We  shall
+simply  add a file  header,  our  comment  is  \fC#\fR  (as  defined  by the
+hilighting  tokens). Our example \fIfoo\fR template file \fCfoo.etf\fR may
+be defined as follows:-
+.CS
+#-!- foo -!- #################################
+#
+#  Created By    : $USER_NAME$
+#  Created       : $ASCII_TIME$
+#  Last Modified : <160495.1521>
+#
+#  Description
+#
+#  Notes
+#
+#  History
+#
+#  Copyright (c) $YEAR$ $COMPANY_NAME$.
+##############################################
+.CE
+The  template  file must be  explicitly  loaded by the hook file,  within  the
+\fBfhook\fR  function.  A new file  condition  may be tested  within the fhook
+macro by checking the numerical argument, an argument of 0 indicates that this
+is a new file. The template file is inserted with an invocation of
+.Ht etfinsrt 3 .
+The  \fBfhook\fR  macro checks the  argument and inserts the template file as
+follows:-
+.Me $emf-scheme
+.CS
+; File hook - called when new file is loaded.
+define-macro fhook-foo
+    ; if arg is 0 this is a new file so add template
+    !if &not @#
+        etfinsrt "foo"
+    !endif
+    ; Assign the hilighting
+    set-variable $buffer-hilight .hilight.foo
+    ; Temporary comment to make sure that it works.
+    ml-write "Loaded a foo file"
+!emacro
+.CE 0
+.Me $ehf-scheme
+.SS "Adding abbreviations"
+Abbreviations   are  short-cut   expansions  which  may  be  defined  for  the
+language specific file. The abbreviations are defined in a
+.Ht eaf 8
+file, \fIext\fR.eaf, located in the appropriately defined \*(mS directory. The
+abbreviation  file  defines  the  key  sequences  which  may be  automatically
+inserted, under user intervention, using
+.Ht expand-abbrev 2 .
+An abbreviation file for \fIfoo\fR, \fCfoo.eaf\fR, may be defined as:-
+.CS
+if "if \\p\\rthen\\rendif\\P"
+el "else\\r\\p\\P"
+.CE
+The binding to the hook is defined in the \fIfhook\fR macro using
+.Ht buffer-abbrev-file 2 .
+For the example language file \fIfoo\fR the \fIfhook\fR macro becomes:-
+.Me $emf-scheme
+.CS
+; File hook - called when new file is loaded.
+define-macro fhook-foo
+    ; if arg is 0 this is a new file so add template
+    !if &not @#
+        etfinsrt "foo"
+    !endif
+    ; Assign the hilighting
+    set-variable $buffer-hilight .hilight.foo
+    ; Set the abbreviation file
+    buffer-abbrev-file "foo"
+    ; Temporary comment to make sure that it works.
+    ml-write "Loaded a foo file"
+!emacro
+.CE 0
+.Me $ehf-scheme
+.SS "Automatic Indentation"
+Automatic indentation may be applied to the file, such that the indentation is
+automatically  performed when new lines are entered into the file. Indentation
+also benefits from automatic re-styling operations using
+.Ht restyle-region 3
+and
+.Ht restyle-buffer 3 .
+.PP
+The indentation  style is declared by defining language tokens that constitute
+positions  in the syntax  where the  indentation  is changed. The  indentation
+requires a unique identifier to identify the indentation style, the hilighting
+identifier  is used. If hilighting is not defined, then the language  template
+may still obtain an identifier as described in the hilighting section.
+.PP
+The indention is create with an argument of \fC0\fR to the
+.Ht indent 2
+command,  the  subsequent  tokens  are  defined  using  \fBindent\fR  with  no
+argument.  For our  simple  \fIfoo\fR  syntax  then the  indentation  might be
+defined as follows:-
+.Me $emf-scheme
+.CS
+0 indent  .hilight.foo 2 10
+indent .hilight.foo n "then" 4
+indent .hilight.foo s "else" -4
+indent .hilight.foo o "endif" -4
+.CE
+.Me $ehf-scheme
+This provides an indentation of the form:-
+.CS
+if condition
+then
+    XXXX
+else
+    if condition
+    then
+        XXXX
+    endif
+endif
+.CE
+The indentation is bound to the buffer in the \fIfhook\fR macro by defining
+.Ht $buffer-indent 5 .
+For the example file \fIfoo\fR then the \fIfhook\fR is defined as:-
+.Me $emf-scheme
+.CS
+; File hook - called when new file is loaded.
+define-macro fhook-foo
+    ; if arg is 0 this is a new file so add template
+    !if &not @#
+        etfinsrt "foo"
+    !endif
+    ; Assign the hilighting
+    set-variable $buffer-hilight .hilight.foo
+    ; Assign the buffer indentation
+    set-variable $buffer-indent .hilight.foo
+    ; Set the abbreviation file
+    buffer-abbrev-file "foo"
+    ; Temporary comment to make sure that it works.
+    ml-write "Loaded a foo file"
+!emacro
+.CE 0
+.Me $ehf-scheme
+.SS "Setting Buffer Modes"
+Buffer modes which are to be adopted (or  discarded) by the language  specific
+file are  defined in the  \fIfhook\fR  macro.  Typical  modes that are applied
+are:-
+.TP
+.Hl time time 2m
+.\"
+Enables  time  stamping on the file,  modifying  the time stamp field with the
+modification date and time.
+.TP
+.Hl indent indent 2m
+.\"
+Automatic  indentation,  where the cursor is  returned  to the same  column on
+entering a new line, rather than to the start of the line.
+.LP
+As an example, the \fIfoo\fR \fIfhook\fR file becomes:-
+.Me $emf-scheme
+.CS
+; File hook - called when new file is loaded.
+define-macro fhook-foo
+    ; if arg is 0 this is a new file so add template
+    !if &not @#
+        etfinsrt "foo"
+    !endif
+    ; Assign the hilighting
+    set-variable $buffer-hilight .hilight.foo
+    ; Assign the buffer indentation
+    set-variable $buffer-indent .hilight.foo
+    ; Set the abbreviation file
+    buffer-abbrev-file "foo"
+    ; Set up the buffer modes
+    1 buffer-mode "time"
+    1 buffer-mode "indent"
+    ; Temporary comment to make sure that it works.
+    ml-write "Loaded a foo file"
+!emacro
+.CE 0
+.Me $ehf-scheme
+.SS "Assigning New Bindings"
+New  bindings  and  language  specific  macros  may be  added to the  language
+specific  file. New macros, to extend the repertoire of commands  specifically
+developed for the language file are defined within the macro body using
+.Ht define-macro 2
+these are automatically  loaded when the hook file is loaded, which in turn is
+loaded when the file type is identified and loaded.
+.PP
+New bindings,  which may be associated  with new macros or existing  commands,
+are assigned within the \fIfhook\fR  macro. As an example, we shall extend the
+\fIfoo\fR  language  file to include a commenting  and  uncommenting  macros,
+locally  binding the macros to the keys "\fCC-c\  C-c\fR" and "\fCC-c\ C-d\fR"
+respectively. The macro definitions are defined as follows:-
+.Me $emf-scheme
+.CS
+; Macro to comment a line
+define-macro foo-comment-line
+    !while &gre &pdec @# 1 0
+        beginning-of-line
+        insert-string "#"
+        beginning-of-line
+        forward-line
+    !done
+!emacro
+
+; Macro to remove a comment from a line
+define-macro foo-uncomment-line
+    !while &gre &pdec @# 1 0
+        beginning-of-line
+        -1 search-forward "#"
+        backward-delete-char
+        forward-line
+    !done
+!emacro
+.CE
+.Me $ehf-scheme
+The key bindings for the macros are defined for the local buffer  \s-1ONLY\s0,
+as such are added using
+.Ht buffer-bind-key 2 .
+The bindings are declared in the \fIfhook\fR macro as follows:-
+.Me $emf-scheme
+.CS
+; File hook - called when new file is loaded.
+define-macro fhook-foo
+    ; if arg is 0 this is a new file so add template
+    !if &not @#
+        etfinsrt "foo"
+    !endif
+    ; Assign the hilighting
+    set-variable $buffer-hilight .hilight.foo
+    ; Assign the buffer indentation
+    set-variable $buffer-indent .hilight.foo
+    ; Set the abbreviation file
+    buffer-abbrev-file "foo"
+    ; Set up the buffer modes
+    1 buffer-mode "time"
+    1 buffer-mode "indent"
+    ; Set up local bindings
+    buffer-bind-key foo-comment-line "C-c C-c"
+    buffer-bind-key foo-uncomment-line "C-c C-d"
+    ; Temporary comment to make sure that it works.
+    ml-write "Loaded a foo file"
+!emacro
+.CE 0
+.Me $ehf-scheme
+.SS "Allowing Other to Modify the Hook"
+Other  users of the file hook may need to modify or extend  the file hook, the
+most common form is the addition of user specific hilight tokens. \*(mS uses a
+simple  mechanism  of executing a user hook  extension  file if it exists. The
+extension file name must be of the form  \fBmy\fR\fIXXX\fR\fB.emf\fR, i.e. for
+our example it must be "\fCmyfoo.emf\fR".  This is performed at the end of the
+macro file so that anything  within the file can be altered, it is executed as
+follows:-
+.Me $emf-scheme
+.CS
+; load in user extensions if found
+!force execute-file "myfoo"
+.CE
+.Me $ehf-scheme
+Note the
+.Ht !force 4
+directive is used as the file may not exist.
+.SS "Summing Up"
+The previous  sections have presented the basic steps involved in setting up a
+new language file template. They cater for simple file types, for more complex
+examples then browse the \fBhk\fR\fIxxx\fR.emf files.
+.PP
+The completed  files that should have been generated by following the previous
+examples are now presented:-
+.PP
+.B file.foo
+.CS
+# This is a comment.
+if condition
+then
+    do something
+else
+    if condition
+    then
+        do something
+    endif
+endif
+.CE
+.B hkfoo.emf
+.Me $emf-scheme
+.CS
+!if &sequal .hilight.foo "ERROR"
+    ; Allocate a hilighting scheme number
+    set-variable .hilight.foo &pinc .hilight.next 1
+!endif
+
+; Define the hilighting scheme
+0 hilight .hilight.foo 1                $global-scheme
+hilight .hilight.foo 2 "#"              .scheme.comment
+hilight .hilight.foo 4 "\\"" "\\"" "\\\\"   .scheme.string
+hilight .hilight.foo 0 "'.'"            .scheme.quote
+hilight .hilight.foo 0 "'\\\\\\\\.'"        .scheme.quote ; '\\?' quoted char
+
+hilight .hilight.foo 1 "if"             .scheme.keyword
+hilight .hilight.foo 1 "then"           .scheme.keyword
+hilight .hilight.foo 1 "else"           .scheme.keyword
+hilight .hilight.foo 1 "endif"          .scheme.keyword
+
+; File hook - called when new file is loaded.
+define-macro fhook-foo
+    ; Assign the hilighting
+    set-variable $buffer-hilight .hilight.foo
+    ; Temporary comment to make sure that it works.
+    ml-write "Loaded a foo file"
+!emacro
+
+; Define the indentation scheme
+0 indent  .hilight.foo 2 10
+indent .hilight.foo n "then" 4
+indent .hilight.foo s "else" -4
+indent .hilight.foo o "endif" -4
+
+; Reset the hilighting printer format and define the color bindings.
+0 hilight-print .hilight.foo
+hilight-print .hilight.foo "i"  .scheme.comment
+hilight-print .hilight.foo "b"  .scheme.keyword
+hilight-print .hilight.foo "bi" .scheme.string .scheme.quote
+
+; Macro to comment a line
+define-macro foo-comment-line
+    !while &gre &pdec @# 1 0
+        beginning-of-line
+        insert-string "#"
+        beginning-of-line
+        forward-line
+    !done
+!emacro
+
+; Macro to remove a comment from a line
+define-macro foo-uncomment-line
+    !while &gre &pdec @# 1 0
+        beginning-of-line
+        -1 search-forward "#"
+        backward-delete-char
+        forward-line
+    !done
+!emacro
+
+; File hook - called when new file is loaded.
+define-macro fhook-foo
+    ; if arg is 0 this is a new file so add template
+    !if &not @#
+        etfinsrt "foo"
+    !endif
+    ; Assign the hilighting
+    set-variable $buffer-hilight .hilight.foo
+    ; Assign the buffer indentation
+    set-variable $buffer-indent .hilight.foo
+    ; Set the abbreviation file
+    buffer-abbrev-file "foo"
+    ; Set up the buffer modes
+    1 buffer-mode "time"
+    1 buffer-mode "indent"
+    ; Set up local bindings
+    buffer-bind-key foo-comment-line "C-c C-c"
+    buffer-bind-key foo-uncomment-line "C-c C-d"
+    ; Temporary comment to make sure that it works.
+    ml-write "Loaded a foo file"
+!emacro
+
+; Notification that hook is loaded.
+ml-write "[MicroEmacs foo file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "myfoo"
+.CE
+.Me $ehf-scheme
+.B foo.eaf
+.CS
+if "if \\p\\rthen\\rendif\\P"
+el "else\\r\\p\\P"
+.CE
+.B foo.etf
+.CS
+#-!- foo -!- #################################
+#
+#  Created By    : $USER_NAME$
+#  Created       : $ASCII_TIME$
+#  Last Modified : <160495.1521>
+#
+#  Description
+#
+#  Notes
+#
+#  History
+#
+#  Copyright (c) $YEAR$ $COMPANY_NAME$.
+##############################################
+.CE 0
+.SH "SEE ALSO"
+.na
+.Ht add-file-hook 2 ,
+.Ht buffer-abbrev-file 2 ,
+.Ht etfinsrt 3 ,
+.Ht execute-buffer 2 ,
+.Ht expand-abbrev 2 ,
+.Ht global-abbrev-file 2 ,
+.Ht hilight 2 ,
+.Ht scheme-editor 3 ,
+.Ht indent 2 ,
+.Ht indent 2m ,
+.Ht restyle-buffer 3 ,
+.Ht restyle-region 3 ,
+.Ht time 2m ,
+.Ht $buffer-hilight 5 ,
+.Ht $buffer-indent 5 ,
+.Ht etf 8 ,
+.Ht eaf 8 ,
+.br
+.Hl "File Hooks" fileHooks 2 .
+.ad
+.FH

@@ -1,0 +1,51 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd112.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|spell
+.so me.tni
+.TH save-dictionary 2
+.XI save-dictionary - "Save changed spelling dictionaries"
+.SH NAME
+save-dictionary \- Save changed spelling dictionaries
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B save-dictionary
+["\fIdictionary\fR"]
+.ad
+.SH DESCRIPTION
+.B save-dictionary
+may be used to save one, or all changed, dictionaries back to disk. By default
+\fBsave-dictionary\fR prompts for a single dictionary, which is then saved. If
+the  dictionary to be saved has been created  within the session  (rather than
+read  from  disk)  the  user  is  always  prompted  to save  and  enter a full
+dictionary  file name (pathname) to save to. If the dictionary was not created
+then the user is only prompted to save if,
+.BS
+a non-zero argument is supplied
+.BU
+and the users history registry node  "\fI/history/spell/autosave\fR"  does not
+exist or its value is zero.
+.BE
+Otherwise the dictionary is automatically saved.
+.PP
+The argument \fIn\fR may be used to control the effect of the command, \fIn\fR
+is a bit based flag defined as follows:-
+.IP \fB0x01\fR
+Enables  prompting  before saving, only used when saving all dictionaries.
+.IP \fB0x02\fR
+Save all changed dictionaries.
+.SH NOTES
+This  command  is  called to save all  dictionary  changes  whenever  \*(mS is
+exited.
+.PP
+The  dictionary  auto-save  registry  value can be changed via the
+.Ht user-setup 3
+dialog.
+.SH "SEE ALSO"
+.na
+.Ht add-dictionary 2 ,
+.Ht delete-dictionary 2 ,
+.Ht spell 2 .
+.ad
+.FH

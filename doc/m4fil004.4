@@ -1,0 +1,96 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil004.4,v 1.1.1.1 2000-07-25 22:04:02 jon Exp $
+.Im MicroEmacs macro;function;string
+.so me.tni
+.TH &sprintf 4
+.XI &sprintf - "Formatted string construction"
+.SH NAME
+&sprintf \- Formatted string construction
+.SH SYNOPSIS
+.na
+.B &sprintf
+.I format
+.I args
+.ad
+.SH DESCRIPTION
+The
+.B &sprintf
+function (or  \fB&spr\fR  in it's  abbreviated  form)  provides a mechanism to
+generated a formatted string, similar to the 'C' programming language
+.Hr sprintf 2
+function.
+.PP
+The  \fB&sprintf\fR  function is  generally  used where a number of  different
+sources of information  have to be converted and joined together to form a new
+string. It is possible to do this using
+.Ht &cat 4 ,
+but it does become complicated if the number of strings to be spliced together
+is greater than about 4, \fBsprintf\fR  alleviates  these problems and results
+in faster  execution.  Where only two, or three strings are to be concatenated
+\fB&cat\fR provides better execution times.
+.PP
+The  \fB&sprintf\fR  function produces a string construct for the \fIformat\fR
+and a caller determined number of arguments  \fIargs\fR (variable  arguments).
+The \fIformat\fR string may contain special '\fB%\fR'  formatting  commands to
+insert strings and numbers into the base  \fIformat\fR  string. The format for
+the '\fB%\fR' commands is "\fB%nc\fR" where:-
+.IP \fBn\fR
+An optional  numerical  argument, the  interpretation  of the numeric value is
+determined by the following command (\fBc\fR).
+.IP \fBc\fR
+The command determines the interpretation of the next argument \fIarg\fR which
+are specified as follows:
+.RS
+.IP "\fBd\fR (Decimal integer)"
+Expects  a  single  numeric  argument  \fIarg\fR  which is  inserted  into the
+\fIformat\fR  string as decimal text string. If \fIn\fR is specified  then the
+inserted text string is fixed to \fIn\fR character in length.
+.IP "\fBn\fR (Repeat String)"
+Expects two arguments  \fIarg\fR, the first is a numeric  argument  giving the
+number of times to insert the given string (the second  argument).  If \fIn\fR
+is  specified  then the string is  inserted  \fIn\fR *  \fInumeric-argument\fR
+times.
+.IP "\fBs\fR (String)"
+Expects a single argument  \fIarg\fR which is a string to be inserted into the
+key. If \fIn\fR is given then it is inserted\fIn\fR times.
+.IP "\fBx\fR (Hexadecimal integer)"
+Expects a single numeric argument  \fIarg\fR which is inserted into the format
+string as hexadecimal  text string. If \fIn\fR is given then the inserted text
+string will be fixed to \fIn\fR character in length.
+.IP "\fB%\fR"
+Inserts a single '%', \fIn\fR has no effect.
+.LP
+The  \fB&sprintf\fR  function  may  be  nested  (i.e.  a  string  argument  to
+\fB&sprintf\fR  may  be the  result  of  another  \fB&sprintf\fR  invocation).
+Although this type of construct is not generally required !!
+.RE
+.SH EXAMPLE
+The following examples show how the command may be used:-
+.Me $emf-scheme
+.CS
+set-variable %result &sprintf "Foo [%s%s]" "a" "b"
+.CE
+.Me $ehf-scheme
+generates "\fCFoo [ab]\fR"
+.Me $emf-scheme
+.CS
+set-variable %result &sprintf "Foo [%n%s]" 10 "a" "b"
+.CE
+.Me $ehf-scheme
+generates "\fCFoo [aaaaaaaaaab]\fR".
+.Me $emf-scheme
+.CS
+set-variable %result &sprintf "[%d] [%3d] [%x] [%3x]" 10 11 12 13
+.CE
+.Me $ehf-scheme
+generates "\fC[10] [\ 11] [c] [\ \ d]\fR"
+.SH NOTES
+It is the  callers  responsibility  to  ensure  that  the  correct  number  of
+arguments is supplied to match the  requested  formatting  string. The results
+are undefined if an incorrect number of arguments are supplied.
+.SH "SEE ALSO"
+.na
+.Hl "Variable Functions" Functions - ,
+.Ht &cat 4 .
+.ad
+.FH

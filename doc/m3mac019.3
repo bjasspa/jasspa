@@ -1,0 +1,59 @@
+.\" -*- nroff -*-
+.Id $Id: m3mac019.3,v 1.1.1.1 2000-07-25 22:04:00 jon Exp $
+.Im MicroEmacs command|macrodevelop
+.so me.tni
+.TH ascii-time 3
+.XI ascii-time - "Return the current time as a string"
+.SH NAME
+ascii-time \- Return the current time as a string
+.Me $a
+.SH SYNOPSIS
+.na
+\fBascii-time\fR
+.ad
+.SH DESCRIPTION
+\fBascii-time\fR  returns the current time as a formatted  string in \fC#p9\fR
+which is equivalent to \fC#l9\fR for the calling macro. The format of the time
+string is:
+.RS
+.IP
+"\fIWWW MMM DD hh:mm:ss yyyy\fR"
+.RE
+.PP
+Where:
+.nf
+\fCWWW \fR - Week day, \fCSun\fR - \fCSat\fR
+\fCMMM \fR - Month, \fCJan\fR - \fCDec\fR
+\fCDD  \fR - Day, \fC1\fR - \fC31\fR
+\fChh  \fR - Hour, \fC00\fR - \fC23\fR
+\fCmm  \fR - Minute, \fC00\fR - \fC59\fR
+\fCss  \fR - Second, \fC00\fR - \fC59\fR
+\fCyyyy\fR - Year, \fC1998\fR...
+.fi
+.SH EXAMPLE
+The  following  is  taken  from  etfinsrt.emf,  it  uses  \fBascii-time\fR  in
+replacing "\fC$ASCII_TIME$\fR" with the current.
+.Me $emf-scheme
+.CS
+0 define-macro etfinsrt
+    .
+    .
+    ; Change the create date $ASCII_TIME$.
+    beginning-of-buffer
+    ; Get ASCII time in #l9
+    ascii-time
+    !force replace-string "\\\\$ASCII_TIME\\\\$" #l9
+    .
+    .
+!emacro
+.CE 0
+.Me $ehf-scheme
+.SH NOTES
+\fBascii-time\fR is a macro defined in \fCmisc.emf\fR.
+.SH "SEE ALSO"
+.na
+.Ht $buffer-fhook 5 ,
+.Ht &find 4 ,
+.Ht ascii-time 3 .
+.ad
+.FH

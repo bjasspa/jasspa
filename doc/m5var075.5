@@ -1,0 +1,141 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1998 Jon Green.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m5var075.5
+.\"  Created By    : Jon Green
+.\"  Created       : Wed Jul 29 20:47:07 1998
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1998 Jon Green.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from Jon Green.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m5var075.5,v 1.1.1.1 2000-07-25 22:04:07 jon Exp $
+.Im MicroEmacs variable|macrodevelop
+.so me.tni
+.TH $buffer-indent 5
+.XI $buffer-indent - "Current buffer indentation scheme"
+.SH NAME
+$buffer-indent \- Current buffer indentation scheme.
+.Me $a
+.SH SYNOPSIS
+.na
+\fB$buffer-indent\fR \fIindentNum\fR; Default is \fC0\fR
+.sp
+0 <= \fIindentNum\fR <= 255
+.ad
+.SH DESCRIPTION
+.B $buffer-indent
+sets the current buffers indentation scheme.
+\fIindentNum\fR is the identity of the indentation scheme, as defined by
+.Ht indent 2 ,
+which is typically the same value as the buffers hilighting scheme number
+(see
+.Ht $buffer-hilight 5 ).
+.PP
+The  default  setting  is 0  which
+specifies no indentation scheme is present (with the exception of
+.Ht cmode 2m ).
+When non-zero, the value identifies the indentation scheme.
+.PP
+A buffer  assigned  an  indentation  method,  \*(mS  performs  automatic  line
+re-styling,  by  moving  the  left  indentation,   according  to  the  defined
+indentation  method. The  \fCtab\fR key is typically  disabled.  This behavior
+can be altered using bit \fC0x1000\fR of the
+.Ht $system 5
+variable, which can be changed using
+.Ht user-setup 3 .
+.PP
+The use of tab characters to create the required  indentation is determined by
+the setting of the buffers
+.Ht tab 2m
+mode. If the mode is  disabled  tab  characters  are used  wherever  possible,
+otherwise spaces are always used.
+.SH NOTES
+The commands
+.Ht restyle-region 3
+and
+.Ht restyle-buffer 3
+use the indentation method when defined.
+.PP
+The buffer  indentation scheme is typically assigned in the \fIfhook\fR macro,
+see
+.Hl "Language Templates" languageTemplates 2 .
+.SH EXAMPLE
+The following  example sets up an  indentation  scheme for a buffer within the
+\fIfhook\fR macro.
+.Me $emf-scheme
+.CS
+!if &sequal .hilight.foo "ERROR"
+    set-variable .hilight.foo &pinc .hilight.next 1
+!endif
+
+\....
+
+; Define the indentation scheme
+0 indent  .hilight.foo 2 10
+indent .hilight.foo n "then" 4
+indent .hilight.foo s "else" -4
+indent .hilight.foo o "endif" -4
+
+\....
+
+; File hook - called when new file is loaded.
+define-macro fhook-foo
+    ; if arg is 0 this is a new file so add template
+    !if &not @#
+        etfinsrt "foo"
+    !endif
+    ; Assign the hilighting
+    set-variable $buffer-hilight .hilight.foo
+    ; Assign the buffer indentation
+    set-variable $buffer-indent .hilight.foo
+    ; Set the abbreviation file
+    buffer-abbrev-file "foo"
+    ; Temporary comment to make sure that it works.
+    ml-write "Loaded a foo file"
+!emacro
+.CE
+.Me $ehf-scheme
+This provides an indentation of the form:-
+.CS
+if condition
+then
+    XXXX
+else
+    if condition
+    then
+        XXXX
+    endif
+endif
+.CE 0
+.SH "SEE ALSO"
+.na
+.Ht indent 2 ,
+.Ht tab 2m ,
+.Ht $system 5 ,
+.Ht user-setup 3 ,
+.Ht restyle-buffer 3 ,
+.Ht restyle-region 3  ,
+.Ht $buffer-hilight 5 .
+.ad
+.FH

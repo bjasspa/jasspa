@@ -1,0 +1,127 @@
+.\" -*- nroff -*-
+.Id $Id: m5var051.5,v 1.1.1.1 2000-07-25 22:04:06 jon Exp $
+.Im MicroEmacs variable|hilight
+.so me.tni
+.TH $window-chars 5
+.XI $window-chars - "Character set used to render the windows"
+.SH NAME
+$window-chars - Character set used to render the windows
+.Me $a
+.SH SYNOPSIS
+\fB$window-chars\fR "\fIsting\fR"; Default is
+"\fC=-#*%=^|#|v*==^^||##||vv**|<-#->*||<<--##-->>** x*[]>\\.\fR"
+.SH DESCRIPTION
+.B $window-chars
+is a fixed length string that defines the set of characters used to render the
+windows. The characters have fixed indices defined as follows:-
+.IP "Index 0"
+The active window mode line separator character, This replaces all
+.I "Index 1"
+characters when the window is current. Default is '\fB=\fR'.
+.IP "Index 1"
+The inactive window mode line separator character. This character is replaced
+by
+.I "Index 0"
+characters when the window becomes current. Default is '\fB\-\fR'.
+.IP "Index 2"
+\s-1UNIX\s0 based platforms only. The \fBroot\fR or \fBsuperuser\fR  indicator
+character that appears on the mode line. Default is '\fB#\fR'.
+.IP "Index 3"
+The buffer changed indicator  character that appears on the mode line. Default
+is '\fB*\fR'.
+.IP "Index 4"
+The buffer in
+.Ht view 2m
+mode indicator character that appears in the mode line. Default is '\fB%\fR'.
+.IP "Index 5"
+Single column vertical scroll bar split window horizontally character. Default
+is '\fB=\fR'.
+.IP "Index 6"
+Single column vertical scroll bar up-arrow character. Default is '\fB^\fR'.
+.IP "Index 7"
+Single column vertical scroll bar upper-shaft character. Default is '\fB|\fR'.
+.IP "Index 8"
+Single column vertical scroll box character. Default is '\fB#\fR'.
+.IP "Index 9"
+Single column vertical scroll bar lower-shaft character. Default is '\fB|\fR'.
+.IP "Index 10"
+Single column vertical scroll bar down-arrow character. Default is '\fBv\fR'.
+.IP "Index 11"
+Single column vertical scroll bar corner character. Default is '\fB*\fR'.
+.IP "Index 12-13"
+Double column vertical scroll bar split window horizontally character. Default
+is '\fB==\fR'.
+.IP "Index 14-15"
+Double column vertical scroll bar up-arrow characters. Default is "\fB\^^\fR".
+.IP "Index 16-17"
+Double column vertical scroll bar upper-shaft characters. Default is "\fB||\fR".
+.IP "Index 18-19"
+Double column vertical scroll box characters. Default is "\fB##\fR".
+.IP "Index 20-21"
+Double column vertical scroll bar lower-shaft characters. Default is "\fB||\fR".
+.IP "Index 22-23"
+Double column vertical scroll bar down-arrow characters. Default is "\fBvv\fR".
+.IP "Index 24-25"
+Double column vertical scroll bar corner characters. Default is "\fB**\fR".
+.IP "Index 26-32"
+Single column horizontal scroll bar. Default is "\fB|<-#->*\fR".
+.IP "Index 33-46"
+Double column horizontal scroll bar. Default is "\fB||<<--##-->>**\fR".
+.IP "Index 47"
+Osd title bar blank character. Default is '\fB \fR'.
+.IP "Index 48"
+Osd title bar right corner kill character. Default is '\fBx\fR'.
+.IP "Index 49"
+Osd open button character. Default is '\fB \fR'.
+.IP "Index 48"
+Osd close button character. Default is '\fB \fR'.
+.IP "Index 49"
+Displayed tab character (used when
+.Ht $system 5
+bit 0x80000 is set). Default is '\fB>\fR'.
+.IP "Index 50"
+Displayed new-line character (used when
+.Ht $system 5
+bit 0x80000 is set). Default is '\fB\\\fR'.
+.IP "Index 51"
+Displayed space character (used when
+.Ht $system 5
+bit 0x80000 is set). Default is '\fB.\fR'.
+.SH EXAMPLE
+The
+.B $window-chars
+is typically platform  dependent, it's setting is determined by the characters
+available  in  character  set  of  the  hosting  platform.  \s-1MS-DOS\s0  and
+Microsoft Windows environments might use a string such as:-
+.CS
+"=-#*%\\x1E\\xB1\\xDB\\xB1\\x1F\\x04 \\x1E\\xB1\\xB1\\xDB\\xDB\\xB1\\xB1 \\x1F\\x1B\\x1A\\xaf\\xfb\\xfa"
+.CE
+X-Windows environments might use a string such as:-
+.CS
+"=-#*%^\\x02 \\x02v\\x01 ^\\x02\\x02  \\x02\\x02 v\\xAB\\xBB>\\\\."
+.CE
+Both  utilize  platform  specific  characters  to  render  some of the  window
+components.
+.SH NOTES
+.BS
+.Ht $scroll-bar 5
+allows the scroll box to be rendered in reverse  video  allowing a space to be
+used for the scroll box.
+.BU
+Use
+.Ht symbol 3
+to determine the displayable characters on the host platform.
+.BE 0
+.SH "SEE ALSO"
+.na
+.Ht split-window-horizontally 2 ,
+.Ht symbol 3 ,
+.Ht $box-chars 5 ,
+.Ht $global-scheme 5 ,
+.Ht $mode-line 5 ,
+.Ht $mode-line-scheme 5 ,
+.Ht $scroll-bar 5 ,
+.Ht $scroll-bar-scheme 5 ,
+.Ht $system 5 .
+.ad
+.FH

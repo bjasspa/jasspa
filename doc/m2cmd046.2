@@ -1,0 +1,36 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd046.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|macro
+.ds C0 "(\fB\*(cXe\fR)\ \&
+.so me.tni
+.TH execute-kbd-macro 2
+.XI execute-kbd-macro \- "\*(C0Execute a keyboard macro"
+.SH NAME
+execute-kbd-macro \- Execute a keyboard macro
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+\fBexecute-kbd-macro\fR \*(C0
+.ad
+.SH DESCRIPTION
+.B execute-kbd-macro
+executes a keyboard  macro. The entire  sequence  of recorded  key-strokes  is
+repeated  starting at the current  point. The result is exactly as if you were
+retyping the sequence all over again. A numeric argument \fIn\fR prefixing the
+.B execute-kbd-macro
+command repeats the stored key-strokes \fIn\fR times.
+.PP
+Keyboard macros are recored with
+.Ht start-kbd-macro 2 ;
+recording is terminated with
+.Ht end-kbd-macro 2 .
+.SH "SEE ALSO"
+.na
+.Ht end-kbd-macro 2 ,
+.Ht kbd-macro-query 2 ,
+.Ht name-kbd-macro 2 ,
+.Ht start-kbd-macro 2 .
+.ad
+.rm C0
+.FH

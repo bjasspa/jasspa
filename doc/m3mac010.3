@@ -1,0 +1,37 @@
+.\" -*- nroff -*-
+.Id $Id: m3mac010.3,v 1.1.1.1 2000-07-25 22:04:00 jon Exp $
+.Im MicroEmacs command
+.so me.tni
+.TH time 3
+.XI time - "Command time evaluator"
+.SH NAME
+time \- Command time evaluator
+.Me $a
+.SH SYNOPSIS
+.na
+\fBtime\fR
+"\fIstring\fR"
+.ad
+.SH DESCRIPTION
+.B time
+evaluates  the time  take to  execute  line  "\fIstring\fR".  \fBtime\fR  uses
+command
+.Ht execute-line 2
+to execute the given string.
+.SH EXAMPLE
+The following example simply times the time take to save the current buffer:-
+.CS
+time "save-buffer"
+.CE 0
+.SH NOTES
+.B time
+is a macro  defined  in  \fCmisc.emf\fR.
+.PP
+On multi-task systems like \s-1UNIX\s0 \fBtime\fR cannot take into account the
+number of other  processes  running  at the same time, it can only  return the
+actual time elapse. This leads to inaccuracies and variation in results.
+.SH "SEE ALSO"
+.na
+.Ht execute-line 2 .
+.ad
+.FH

@@ -1,0 +1,71 @@
+.\" -*- nroff -*-
+.Id $Id: m5var062.5,v 1.1.1.1 2000-07-25 22:04:06 jon Exp $
+.Im MicroEmacs variable|command|macrodevelop
+.so me.tni
+.TH $command-names 5
+.XI $command-names - "Filtered command name list"
+.SH NAME
+$command-names \- Filtered command name list
+.SH SYNOPSIS
+.B $command-names
+.I CommandName
+.SH DESCRIPTION
+.B $command-names 
+must first be  initialized  to the required  filter string, if the variable is
+evaluated  before it is initialized the value will be set to "\fIABORT\fR" and
+the command will fail. The filter takes the form of a
+.Hl "regex" RegularExpressions 2 .
+.PP
+Once initialized, evaluating  \fB$command-names\fR returns the name of the next
+command  which  matches the filter until no more  commands are found, in which
+case an empty string is returned.
+.SH EXAMPLE
+The following  example  prints out the name of all commands to the massage line
+one at a time. Note that 
+.Ht &set 4
+is used on the
+.Ht !while 4
+statement to avoid evaluating \fB$command-names\fR twice per loop.
+.Me "$emf-scheme"
+.CS
+set-variable $command-names ".*"
+!while &not &seq &set #l0 $command-names ""
+    100 ml-write &cat "command: " #l0
+!done
+.CE
+.Me "$ehf-scheme"
+The  following  example is an alternative implementation of
+.Ht command-apropos 2 .
+.Me "$emf-scheme"
+.CS
+define-macro alt-commad-apropos
+    set-variable #l1 @ml "Apropos string"
+    set-variable $command-names &cat &cat ".*" #l1 ".*"
+    !force 0 delete-buffer "*commands*"
+    1 popup-window "*commands*"
+    !while &not &seq &set #l0 $command-names ""
+        insert-string &spr "    %s\\n" #l0
+    !done
+    beginning-of-buffer
+    -1 buffer-mode "edit"
+    1 buffer-mode "view"
+!emacro
+.CE 0
+.Me "$ehf-scheme"
+.SH NOTES
+\fB$command-names\fR  does not  differentiate  between  built in commands  and
+macros.
+.PP
+The list of commands is  evaluated  when the variable is  initialized,  macros
+created after the initialization will not be included in the list.
+.SH "SEE ALSO"
+.na
+.Ht list-commands 2 ,
+.Ht command-apropos 2 ,
+.Ht $buffer-names 5 ,
+.Ht $file-names 5 ,
+.Ht $mode-names 5 ,
+.Ht $variable-names 5 ,
+.Hl "Regular Expressions" RegularExpressions 2 .
+.ad
+.FH

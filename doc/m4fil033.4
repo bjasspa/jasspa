@@ -1,0 +1,62 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil033.4,v 1.1.1.1 2000-07-25 22:04:03 jon Exp $
+.Im MicroEmacs macro;variable
+.so me.tni
+.TH "SearchGroups" 4
+.XI "SearchGroups" - "Last search group values"
+.XI "@s0" - "Last search's whole match string"
+.XI "@s1" - "Last search's first group value"
+.XI "@s2" - "Last search's second group value"
+.SH NAME
+@s0, @s1, @s2, ... @s9 \- Last search group values
+.SH SYNOPSIS
+.nf
+.na
+\fB@s0\fR \- Last search's whole match string
+\fB@s1\fR \- Last search's first group value
+\fB@s2\fR \- Last search's second group value
+\...
+\fB@s9\fR \- Last search's nineth group value
+.fi
+.ad
+.SH DESCRIPTION
+The search group variables  \fB@s\fR\|\fIn\fR return the string matches of the
+last regular  expression  search i.e. 
+.Ht search-forward 2 
+(in 
+.Ht magic 2m 
+mode) or
+.Ht regex-forward 3 .
+.PP
+\fB@s0\fR returns the whole of the matched string,  \fB@s\fR\|\fIn\fR, \fIn\fR
+= 1..9, returns the bracket  matches  corresponding  to the group  demarkation
+points indicated by \fC\\(\fR and \fC\\)\fR in the search regular expression.
+.SH DIAGNOSTICS
+An error is  generated if an attempt is made to access these  variables and the
+last search failed or the last search did not have the specified group.
+.PP
+The  value  returned  for an  unused  group,  e.g.  @s2 for the  regex  string
+"\fC\\(a\\)\\|\\(b\\)\fR" if "\fCa\fR" was matched, is an empty string ("").
+.SH EXAMPLE
+The following macro code gives a simple example of their potential use:
+.Me $emf-scheme\fB
+.CS
+forward-search "Token *{\\\\(Start\\\\|End\\\\)}"
+!if $status
+    ml-write "[found \\"%s\\"]" @s0
+    if &seq @s1 "Start"
+       .
+       .
+.CE 0
+.Me $ehf-scheme
+.SH NOTES
+Remember  that  the  regular  expression  escape  character  '\\'  has  to  be
+duplicated  within  a macro  file  as '\\' is also the  macro  file  escape
+sequence.
+.SH "SEE ALSO"
+.na
+.Ht magic 2m ,
+.Ht search-forward 2 ,
+.Ht regex-forward 3 .
+.ad
+.FH

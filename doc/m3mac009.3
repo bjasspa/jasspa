@@ -1,0 +1,84 @@
+.\" -*- nroff -*-
+.Id $Id: m3mac009.3,v 1.1.1.1 2000-07-25 22:04:00 jon Exp $
+.Im MicroEmacs command
+.so me.tni
+.TH calc 3
+.XI calc - "Integer calculator"
+.SH NAME
+calc \- Integer calculator
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+\fBcalc\fR
+"\fIstring\fR"
+.ad
+.SH DESCRIPTION
+.B calc
+can perform simple integer based calculations given by "\fIstring\fR", where the
+"\fIstring\fR" takes the following form:-
+.CS
+"[b]<s>"
+.CE
+Where '\fIb\fR' is an optional letter setting the required output base which can be one of the following:
+.IP
+.nf
+\fCb   \fR - Binary
+\fCo   \fR - Octal
+\fCd   \fR - Decimal
+\fCx   \fR - Hexadecimal
+.fi
+.PP
+Default  when  omitted  is  '\fId\fR'  (decimal).  "\fIs\fR"  is the sum to be
+calculated,  which  should  be  bodmas in form.  Following  is a list of valid
+symbols.
+.IP
+.nf
+\fC(..)\fR - Parentheses (contents calculated first)
+\fC!   \fR - Logical not
+\fC&&  \fR - Logical and
+\fC||  \fR - Logical or
+\fC==  \fR - Logical equals
+\fC!=  \fR - Logical not equals
+\fC~   \fR - Bitwise not
+\fC&   \fR - Bitwise and
+\fC|   \fR - Bitwise or
+\fC^   \fR - Bitwise xor
+\fC/   \fR - Divide
+\fC*   \fR - Multiply
+\fC%   \fR - Modulus
+\fC+   \fR - Addition
+\fC-   \fR - Subtraction
+\fC0xNN\fR - Hexadecimal number
+\fC0NN \fR - Octal number
+\fCLR  \fR - Last calculation recall
+.fi
+.PP
+Any  \*(mS  variables  can be  used  in the  calculation.  The  result  of the
+calculation is stored in
+.Ht .calc.result 5 .
+The argument \fIn\fR is a bitwise flag where:
+.IP \fB0x01\fR
+Print out the result on the message-line.
+.IP \fB0x02\fR
+Use string comparisons for == and != comparisons. This has the
+advantage of being able to calc "Foo" == "Bar" etc.
+.PP
+When omitted the default argument is 1.
+.SH EXAMPLE
+To calculate the number of hours in a year:
+.CS
+calc "365*24"
+.CE
+To then calculate the number of seconds in the year:
+.CS
+calc "LR*60*60"
+.CE 0
+.SH NOTES
+.B calc
+is a macro defined in \fCcalc.emf\fR.
+.SH "SEE ALSO"
+.na
+.Ht .calc.result 5 .
+.ad
+.FH

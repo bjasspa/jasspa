@@ -1,0 +1,43 @@
+.\" -*- nroff -*-
+.Id $Id: m5var003.5,v 1.1.1.1 2000-07-25 22:04:04 jon Exp $
+.Im MicroEmacs variable|buffer
+.so me.tni
+.TH $buffer-bname 5
+.XI $buffer-bname - "Name of the current buffer"
+.XI $buffer-fname - "Name of the current buffer's file name"
+.SH NAME
+.Me "|$buffer-bname"
+$buffer-bname \- Name of the current buffer
+.br
+.Me "|$buffer-fname"
+$buffer-fname \- Name of the current buffer's file name
+.Me $a
+.SH SYNOPSIS
+.B $buffer-bname
+.I BufferName
+.br
+.B $buffer-fname
+.I FileName
+.SH DESCRIPTION
+.B $buffer-bname 
+the string  name of the  current  buffer.  Buffer  names are  unrestricted  in
+length,  but must be unique. By default  the buffer  name is derived  from the
+buffer's file name without the path. But this can lead to conflicts, caused by
+identical  file names but  different  paths. In these  situations a counter is
+appended  to the end of the  buffer  name  and is  incremented  until a unique
+buffer name is created. For example:
+.CS
+File Name               Buffer Name
+_______________________________________
+
+/etc/file.c             file.c
+/tmp/file.c             file.c<1>
+/usr/file.c             file.c<2>
+.CE 
+.B $buffer-fname
+contains the name of the current buffer's file name complete with path.
+.SH "SEE ALSO"
+.na
+.Ht change-buffer-name 2 .
+.ad
+.FH

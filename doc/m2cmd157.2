@@ -1,0 +1,128 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1998 Jon Green.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m2cmd157.2
+.\"  Created By    : Jon Green
+.\"  Created       : Thu Jul 16 23:13:14 1998
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1998 Jon Green.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from Jon Green.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m2cmd157.2,v 1.1.1.1 2000-07-25 22:03:57 jon Exp $
+.Im MicroEmacs command|registry
+.so me.tni
+.TH read-registry 2
+.XI read-registry - "Read in a registry definition file"
+.SH NAME
+read-registry \- Read in a registry definition file
+.Me $a
+.SH SYNOPSIS
+.na
+.B read-registry
+"\|\fIroot\fR\|"
+"\|\fIfile\fR\|"
+"\|\fImode\fR\|"
+.ad
+.SH DESCRIPTION
+.B read-registry
+loads a registry file
+.Ht erf 8
+into the internal  registry  memory, where the information may be queried via
+the registry macro commands. The arguments are defined as follows:-
+.IP \fIroot\fR
+The  root  node in the  registry  to into  which  the  registry  contents  are
+attached. The root name is limited to 32 characters in length and is specified
+without a leading  forward slash '\fC/\fR'. The node \fIroot\fR is created at the root of
+the registry.
+.IP \fIfile\fR
+The name of the registry file
+.Ht erf 8
+to load. This may be an absolute,  relative or \fC$MEPATH\fR  specified  file;
+typically it is located on \fC$MEPATH\fR.
+.IP \fImode\fR
+The  \fImode\fR  is string  specifying  the  registry  node loading and saving
+modes, each mode is  represented by a character.  Lower case  characters add a
+mode, upper case characters delete a mode. The modes are defined as follows:-
+.RS
+.IP "\fBa\fR \- Autosave"
+Automatically  saves the  registry  when it is  deleted or  unloaded  from the
+registry. The user is not prompted for a save.
+.IP "\fBb\fR \- Backup"
+Automatically performs a backup of the registry file whenever a save operation
+is performed.
+.IP "\fBc\fR \- Create"
+If the registry file cannot be loaded then the \fIroot\fR  node is created and
+the  invocation  succeeds.  If this mode is omitted  then the call fails if the
+\fIfile\fR cannot be found.
+.IP "\fBd\fR \- Discard"
+Marks the registry as discardable.  This is typically used for registries that
+are not saved.
+.IP "\fBr\fR \- Reload"
+If the registry node already  exists then it is deleted and reloaded, see also
+the merge flag  (\fBm\fR). By default, when both the \fBr\fR and \fBm\fR flags
+are omitted and the  registry  node already  exists the read  operation is not
+performed and the existing node is used.
+.IP "\fBm\fR \- Merge"
+The registry file is merged with the contents of any existing  registry  node.
+(i.e. the existing registry tree nodes are not deleted if they already exist).
+See also the reload flag (\fBr\fR).
+.IP "\fBh\fR \- Hidden"
+The registry  node is created in the  \fIHidden\fR  state. (i.e. children will
+not be shown in
+.Ht list-registry 2
+output).
+.IP "\fBu\fR \- Updated"
+Marks the registry as modified.  The modified bit is removed when the registry
+file is saved. If the  modified  bit is  applied  to a registry  node the user
+will be  prompted  to save  the  registry  when it is  deleted  (or it will be
+automatically saved when the \fIAutosave\fR mode is used).
+.RE
+.IP
+Multiple modes may be applied.
+.SH EXAMPLE
+The  following  example is a typical  call made from a macro  using a registry
+file where the user may edit the registry  file. In this case this a reload of
+the  registry  is  forced  to ensure  that the most  up-to-date  contents  are
+retrieved.  Note that the name of the registry file is actually  retrieved from
+the \fIhistory\fR registry.
+.Me $emf-scheme
+.CS
+set-variable #l1 &reg "/history" "address" $MENAME
+!if &seq &set #l0 &find #l1 ".ab" "ERROR"
+    set-variable #l0 &reg "/" "history" ""
+    set-variable #l0 &spr "%s%s.ab" &lef #l0 &rsin "/" #l0 #l1
+!endif
+read-registry "AddressBook" #l0 "rc"
+.CE 0
+.Me $ehf-scheme
+.SH BUGS
+At exit only registry nodes attached to the root are saved.
+.SH "SEE ALSO"
+.na
+.Ht save-registry 2 ,
+.Ht list-registry 2 ,
+.Ht mark-registry 2 ,
+.Ht erf 8 .
+.ad
+.FH

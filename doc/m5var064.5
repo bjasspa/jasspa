@@ -1,0 +1,70 @@
+.\" -*- nroff -*-
+.Id $Id: m5var064.5,v 1.1.1.1 2000-07-25 22:04:06 jon Exp $
+.Im MicroEmacs variable|buffer|macrodevelop
+.so me.tni
+.TH $file-names 5
+.XI $file-names - "Filtered file name list"
+.SH NAME
+$file-names \- Filtered file name list
+.SH SYNOPSIS
+.B $file-names
+.I FileName
+.SH DESCRIPTION
+.B $file-names 
+must first be  initialized  to the required  filter string, if the variable is
+evaluated  before it is initialized the value will be set to "\fIABORT\fR" and
+the command will fail.
+.PP
+The filter takes the form of a
+.Hl "regex" RegularExpressions 2 .
+The filter string should also contain the path to the required  directory, the
+path many not contain  wild-cards. If no path is specified the the path of the
+current  buffers  file name is taken, if the  current  buffer has no file name
+then the current working directory is used.
+.PP
+On initialization,
+.Ht $result 5
+is set to the absolute path of the directory being evaluated. 
+.PP
+Once initialized, evaluating  \fB$file-names\fR  returns the name of the next
+buffer which matches the filter until no more buffers are found, in which case
+an empty string is returned.
+.SH EXAMPLE
+The  following  example  creates a list of all files in the current  directory
+to a fixed buffer "\fI*files*\fR". Note that 
+.Ht &set 4
+is used on the
+.Ht !while 4
+statement to avoid evaluating \fB$file-names\fR twice per loop.
+.Me "$emf-scheme"
+.CS
+set-variable $file-names ".*"
+!force 0 delete-buffer "*files*"
+1 popup-window "*files*"
+insert-string &spr "Directory listing of %s\\n\\n" $result
+!while &not &seq &set #l0 $file-names ""
+    insert-string &spr "    %s\\n" #l0
+!done
+beginning-of-buffer
+-1 buffer-mode "edit"
+1 buffer-mode "view"
+.CE 0
+.Me "$ehf-scheme"
+.SH NOTES
+Unlike \s-1MS-DOS\s0 and \s-1Windows\s0  systems, to match every file a filter
+of just "\fI*\fR" is required. A filter of "\fI*.*\fR" only matches file names
+with a '\fI.\fR' in them.
+.PP
+The list of files is evaluated when the variable is initialized, files created
+after the initialization will not be included in the list.
+.SH "SEE ALSO"
+.na
+.Ht $result 5 ,
+.Ht find-file 2 ,
+.Ht $buffer-fname 5 ,
+.Ht $buffer-names 5 ,
+.Ht $command-names 5 ,
+.Ht $mode-names 5 ,
+.Hl "Regular Expressions" RegularExpressions 2 .
+.ad
+.FH

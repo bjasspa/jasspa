@@ -1,0 +1,146 @@
+.Id $Id: m2cmd013.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|bind
+.ds C0 "(\fB\*ek\fR)\ \&
+.ds C1 "(\fB\*e\*ck\fR)\ \&
+.so me.tni
+.TH global-bind-key 2
+.XI global-bind-key - "\*(C0Bind a key to a named command or macro"
+.XI global-unbind-key - "\*(C1Unbind a key from a named command or macro"
+.SH NAME
+.Me "|global-bind-key"
+global-bind-key \- Bind a key to a named command or macro
+.br
+.Me "|global-unbind-key"
+global-unbind-key \- "Unbind a key from a named command or macro"
+.Me $a
+.SH SYNOPSIS
+.I n
+.B global-bind-key
+"\fIcommand\fR"
+"\fIkey\fR" \*(C0
+.br
+.I n
+.B global-unbind-key
+"\fIkey\fR" \*(C1
+.SH DESCRIPTION
+.B global-bind-key
+takes one of the named  commands and binds it to a key. Thereafter, whenever
+that key is struck, the bound  command is executed. If an argument  \fIn\fR is
+given then the bound command is executed \fIn\fR times when the key is struck.
+(i.e. the command is passed the numeric argument '\fIn\fR').
+.PP
+.B global-unbind-key
+unbinds  (detaches) a user entered \fIkey\fR  sequence (i.e.  \fC\*(cX\*cf\fR)
+from any command to which it may be bound. This does not work with
+.Hl buffer buffer-bind-key 2
+or
+.Hl "message line" ml-bind-key 2
+key bindings, see
+.Ht buffer-unbind-key 2
+and
+.Ht ml-unbind-key 2 .
+If an argument of 0 is given to \fBglobal-unbind-key\fR,  only a single key is
+obtained for the user, if the character is currently bound to the
+.Hl "prefix" prefix 2
+command,   the   prefix   binding   and   any    sub-bindings   are   removed.
+\fBglobal-bind-key\fR  calls  \fBglobal-unbind-key\fR  first  if the key to be
+bound is already bound to something else.
+.PP
+The \fBglobal-bind-key\fR  command, currently bound to \fC\*ek\fR, prompts the
+user for the named  command  and the key to which it is to be bound. This help
+file gives a complete list of all built in commands,  and some useful macros,
+a  complete  list of all  commands  and macros can be  obtained  by using the
+command completion (type \fC\*ex\fR\ \fC\*(tA\fR\ \fC\*(tA\fR, see
+.Ht ml-bind-key 2 )
+or using the command
+.Ht describe-bindings 2 .
+.PP
+The mouse  buttons are  considered to be \fIkeys\fR,  there is a \fIkey\fR for
+each button press and release event, use
+.Ht describe-key 2
+to get the binding key string.
+.PP
+The non-ASCII  standard keys such as the cursor keys have 'standard' key names
+to  make  cross   platform   binding   support  easy.  Some  systems  such  as
+\fItermcap\fR do not have fixed key-bindings, for these key the users must use
+the command
+.Ht translate-key 2
+to convert the system key binding to the standard key binding.
+.PP
+Permanent changes are done indirectly through the \fCme.emf\fR file. This is a
+file that \*(mE reads and executes (see
+.Ht execute-file 2 )
+during  startup and hence results in the  appearance of a permanent  change in
+the key bindings. The syntax of commands in the \fCme.emf\fR file is described
+under the
+.Hl execute-file execute-file 2
+command. Of principal concern here are the two commands  \fBglobal-bind-key\fR
+and \fBglobal-unbind-key\fR. The primary difference between the way parameters
+are passed to these commands in the \fCme.emf\fR file is that the keys are not
+typed in directly (as in the  \fIcontrol-I\fR key when you want \fCC-i\fR) but
+by symbolic  names.  Every key has a unique name which can be easily  obtained
+with the current binding by using the command
+.Ht describe-key 2 .
+.PP
+See help on
+.Hl "Key Names" keyNames 2
+for a description  of the symbolic  naming system and a complete list of valid
+key names. Also see
+.Hl Bindings Bindings 2
+for a complete list of default key bindings.
+.SH EXAMPLE
+.B "Alt P"
+.Me $emf-scheme
+.CS
+global-bind-key "func" "\*ap"
+.CE
+.Me $ehf-scheme
+.B "Control F2"
+.Me $emf-scheme
+.CS
+global-bind-key "func" "\*c\*(f3"
+.CE
+.Me $ehf-scheme
+.B "Shift Alt Left Cursor"
+.Me $emf-scheme
+.CS
+global-bind-key "func" "\*a\*s\*(cL"
+.CE
+.Me $ehf-scheme
+.B "Control Alt Delete"
+.Me $emf-scheme
+.CS
+global-bind-key "func" "\*c\*a\*(dE"
+.CE
+.Me $ehf-scheme
+.RS
+Note   that   binding   \fBControl-Alt-Delete\fR   is  not   recommended   for
+\s-1MS-DOS\s0 systems for obvious reasons.
+.RE
+.SH NOTES
+Some   ASCII   keys,   such  as   \fC<CR>\fR   (\*cm),   \fC<tab>\fR   (\*ci),
+\fC<BACKSPACE>\fR  (\*ch) have non-ASCII key bindings,  namely  "\fB\*(rE\fR",
+"\fB\*(tA\fR",  "\fB\*(bS\fR" etc. this is to allow separate  key-bindings for
+the real "\fB\*cm\fR" etc.
+.PP
+Be very  careful in binding and  unbinding  keys since you could get into some
+very  peculiar  situations  such as being unable to abort out of a command (if
+you unbind \s-1CTRL-G\s0 or bind it to something else) or recover from the bad
+binding/unbinding if you unbind
+.Ht execute-named-command  2
+or the  \fBglobal-unbind-key\fR command. As  long as you  leave  yourself  the
+opportunity  to do  both  of the  last  two  commands,  you can  recover  from
+disastrous bindings/unbindings.
+.SH "SEE ALSO"
+.na
+.Ht buffer-bind-key 2 ,
+.Ht buffer-unbind-key 2 ,
+.Ht describe-bindings 2 ,
+.Ht describe-key 2 ,
+.Ht ml-bind-key 2 ,
+.Ht ml-unbind-key 2 ,
+.Ht translate-key 2 .
+.ad
+.rm C0
+.rm C1
+.FH

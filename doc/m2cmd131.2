@@ -1,0 +1,28 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd131.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|shell
+.so me.tni
+.TH shell-command 2
+.XI shell-command - "Perform an operating system command"
+.SH NAME
+shell-command \- Perform an operating system command
+.Me $a
+.SH SYNOPSIS
+.na
+.B shell-command
+"\fIstring\fR"
+.ad
+.SH DESCRIPTION
+.B shell-command
+performs an operating system call with the given \fIstring\fR as its argument.
+The command only fails if the shell-command call returns \-1. The
+.Ht $result 5
+variable is set the return value and can be used to test the result.
+.SH "SEE ALSO"
+.na
+.Ht $result 5 ,
+.Ht ipipe-shell-command 2 ,
+.Ht pipe-shell-command 2 ,
+.Ht suspend-emacs 2 .
+.ad
+.FH

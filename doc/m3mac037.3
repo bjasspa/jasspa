@@ -1,0 +1,160 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			     Copyright 1999 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m3mac037.3
+.\"  Created By    : Jon Green
+.\"  Created       : Mon Feb 1 20:28:17 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m3mac037.3,v 1.1.1.1 2000-07-25 22:04:01 jon Exp $
+.Im MicroEmacs command|osd|macrodevelop
+.so me.tni
+.TH osd-dialog 3
+.XI osd-dialog - "OSD dialog box"
+.XI osd-xdialog - "OSD Extended dialog box"
+.XI osd-entry - "OSD entry dialog box"
+.SH NAME
+.Me "|osd-dialog"
+osd-dialog \- OSD dialog box
+.br
+.Me "|osd-xdialog"
+osd-xdialog \- OSD Extended dialog box
+.br
+.Me "|osd-entry"
+osd-entry \- OSD entry dialog box
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B osd-dialog
+"\fItitle\fR" "\fIprompt\fR" ["\fIx-pos\fR" "\fIy-pos\fR"]
+"\fIbut1\fR"
+.br
+.I n
+.B osd-xdialog
+"\fItitle\fR" "\fIprompt\fR" \fIdefault\fR ["\fIx-pos\fR" "\fIy-pos\fR"]
+"\fIbut1\fR" "\fIbut2\fR" \.\.\.
+.br
+.B osd-entry
+"\fItitle\fR" "\fIprompt\fR" \fIvariable\fR ["\fIentry-size\fR" ["\fItype\fR"]]
+.ad
+.SH DESCRIPTION
+\fBosd-dialog\fR   constructs  a  OSD  dialog   prompt  with  a  title  string
+\fItitle\fR,  a prompt  string  within  the dialog of  \fIprompt\fR.  A single
+button,  with text  rendering  \fIbut1\fR,  is placed  within the  dialog. The
+dialog remains on the screen until the button is selected or the user aborts.
+.PP
+\fBosd-xdialog\fR  creates an extended dialog with multiple buttons similar to
+\fBosd-dialog\fR,  the number of buttons created  (\fI#\fR) is determined from
+the  number  of  \fIbut\fR  arguments.  The  \fIdefault\fR   integer  argument
+specifies the default  button  (1..\fI#\fR), a value of 0 specifies that there
+is no default button.
+.PP
+The commands return the button pressed in the variable
+.Ht $result 5 .
+.PP
+The  argument  \fIn\fR  can be used to change  the  default  behavior  of both
+commands described above, \fIn\fR is a bit based flag where:-
+.IP \fB0x01\fR
+Enables  command  abort  (default).  When enabled, if the user abort by either
+closing  the dialog (top right  button) or using the  \fBabort-command\fR  the
+dialog  command  will also abort. If bit 0x01 is not set the command  will not
+abort and \fB$result\fR will be set to -1. 
+.IP \fB0x02\fR
+When set, flags that a dialog position has also been provided, extra arguments
+\fBx-pos\fR  and  \fBy-pos\fR  must also be given. By  default  the  dialog is
+placed under the mouse.
+.PP
+\fBosd-entry\fR constructs a simple OSD entry dialog which prompts the user to
+type in a value.  The value of the  supplied  variable  is used as an  initial
+entry value, the  variable is set to the entered  value when the user  presses
+the  "\fCOkay\fR"  button. The size of the entry  defaults to 30 characters if
+not specified by the user. The last optional argument \fItype\fR sets the type
+of value being  entered (e.g. file name, buffer name, etc) see flag \fBh\fR on
+the help page for
+.Ht @ml 4
+for a list of entry types and the numerical value to be supplied.
+.SH EXAMPLE
+A simple query dialog is typically constructed using
+.BR osd-dialog ,
+as follows:-
+.Me $emf-scheme
+.ne 5
+.CS
+!if &seq %osd-search-str ""
+    osd-dialog "Replace" "Error: Search string is empty!" "  &OK  "
+    !return
+!endif
+.CE
+.Me $ehf-scheme
+The  following  example uses multiple  buttons  within a single  dialog, using
+\fBosd-xdialog\fR, as follows:-
+.Me $emf-scheme
+.ne 8
+.CS
+0 define-macro osd-close
+    !if &bmod "edit"
+        set-variable #l0 &spr "Buffer \\"%s\\" changed" $buffer-bname
+        osd-xdialog "Buffer Close" #l0 1 "&Save First" \\
+                                        "&Loose Changes" "&Cancel"
+        !if &equ $result 3
+            !abort
+        !elif &equ $result 2
+            -1 buffer-mode "edit"
+        !else
+            !if &seq $buffer-fname ""
+                !nma write-buffer
+            !else
+                !nma save-buffer
+            !endif
+        !endif
+    !endif
+    delete-buffer $buffer-bname @mna
+!emacro
+.CE
+.Me $ehf-scheme
+The next example macro can be used to change the value of a user variable to a
+user supplied file name:
+.Me $emf-scheme
+.CS
+set-variable %source-root "~/"
+
+define-macro set-source-root
+    osd-entry "Source Root" "&Path : " %source-root 35 1
+!emacro
+.CE 0
+.Me $ehf-scheme
+.SH NOTES
+\fBosd-dialog\fR,  \fBosd-xdialog\fR and \fBosd-entry\fR are macros defined in
+\fCosd.emf\fR, using
+.Ht osd 2
+to create the dialog.
+.SH "SEE ALSO"
+.na
+.Ht $result 5 ,
+.Ht osd 2 .
+.ad
+.FH

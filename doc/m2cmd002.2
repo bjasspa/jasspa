@@ -1,0 +1,136 @@
+.Id $Id: m2cmd002.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|spell
+.so me.tni
+.TH add-dictionary 2
+.XI add-dictionary - "Declare existence of a spelling dictionary"
+.SH NAME
+add-dictionary \- Declare existence of a spelling dictionary
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B add-dictionary
+"\fIfile\fR"
+.ad
+.SH DESCRIPTION
+.B add-dictionary
+adds  the  given  dictionary  (specified  by  the  given  \fIfile\fR)  to  the
+dictionary  list. Note that the \fIfile\fR may omit the \fB.edf\fR  extension,
+this is automatically added.
+.PP
+The command accepts a numeric argument  '\fIn\fR' which determines the actions
+to be  undertaken.  When \fIn\fR is omitted then the  dictionary is marked for
+loading  (on demand) - this is the  standard  invocation  used in the start up
+files.
+.PP
+If an  argument  of \fB0\fR is given the  dictionary  is created but it is not
+marked for loading, this can be used to create an empty dictionary.
+.PP
+If an argument of \fB\-1\fR is given the contents of the dictionary are dumped
+into the current buffer, used for dictionary maintenance. The two main uses of
+this command are discussed below.
+.SS "Dictionary Loading"
+A call to
+.B add-dictionary
+with no numeric argument does not perform an immediate load of the dictionary,
+instead the dictionary is only loaded on demand, i.e. when a call to
+.Ht spell 2 
+(usually via
+.Ht spell-word 3
+or
+.Ht spell-buffer 3 )
+is made, this  ensures  that the start up time for \*(mS does not  become  too
+long. When the dictionary is loaded it is checked for  efficiency, if found to
+be  inefficient  it is  automatically  optimized  and  flagged as  changed. On
+exiting \*(mS, the user is prompted to save any dictionary that has be altered
+or optimized.
+.PP
+The spelling search order is made from the last dictionary added to the first,
+as soon as a word is found in a dictionary  the search is halted. This implies
+that if a word has been defined  incorrectly in one dictionary, but correct in
+another, the order in which the dictionaries are added determines the result.
+.PP
+The number of dictionaries  allowed is unlimited but note that any words added
+are always added to the \s-1LAST\s0  dictionary. The size of the dictionary is
+restricted  to about 16Mb, the size is  \s-1NOT\s0  tested when words are added
+and if this  size is  exceeded  the  results  are  undefined.  However,  it is
+unlikely  that this limit will be reached, the largest  dictionary  created to
+date is 0.8Mb.
+.PP
+A new main dictionary may be created as follows:-
+.IP \fB1)\fR
+Find a file containing an
+.Hr ispell 1
+compatible list of words.
+.IP \fB2)\fR
+.Ht execute-file 2
+spellutl.emf to define macro
+.Ht spell-add-word 3 .
+.IP \fB3)\fR
+Start  up  \*(mE  and  execute  the  command  \fBadd-dictionary\fR  giving  an
+appropriate new dictionary name.
+.IP \fB4)\fR
+Load up the file containing the words and execute the command
+.Ht spell-add-word 3
+with a very large argument so all the words are added.
+.IP \fB5)\fR
+Save the dictionary by either executing the command
+.Ht save-dictionary 2
+or exiting.
+.SS "Dictionary Dump"
+A call to
+.B add-dictionary
+with a numeric  argument  \fIn\fR  of \-1  causes  the  contents  of the given
+dictionary to be dumped into the current buffer (make sure you are in an empty
+buffer or \fB*scratch*\fR) where:
+.sp
+.RS
+.nf
+\fCxxxx\fR \- Good word \fCxxxx\fR with no spell rules allowed
+\fCxxxx/abc\fR \- Good word \fCxxxx\fR with spell rules \fCabc\fR allowed
+\fCxxxx>yyyy\fR \- Erroneous word with an auto-replace to \fCyyyy\fR
+.fi
+.RE
+.PP
+The dump of the dictionary may be edited,  allowing  erroneous  entries to be
+removed. The macro file \fCspellutl.emf\fR contains macros
+.Ht edit-dictionary 3
+and
+.Ht restore-dictionary 3
+which enable the user to edit a dictionary.
+.SH NOTES
+\*(mE is supplied with a dictionaries  for American and British English, it is
+strongly  suggested that these  dictionaries are \fBNOT\fR modified in anyway.
+Ensure  that the  dictionary  is  protected  by loading the base  dictionaries
+first, followed by a personal dictionary. New words added during spelling will
+then be added to the personal dictionary rather than the main dictionary.
+.SH EXAMPLE
+The \*(mE start-up file \fBme.emf\fR executes \fBlanguage.emf\fR which in turn
+executes the user language setup file, for example  \fBamerican.emf\fR,  which
+adds the main language  dictionaries and rules.  \fBlanguage.emf\fR  then adds
+the user's dictionary, this process can be simplified to:-
+.Me $emf-scheme
+.CS
+; add the main American dictionary
+add-dictionary "american"
+
+; reset the spell rules
+0 add-spell-rule
+; Now add the American spell rules
+-2 add-spell-rule "A" "" "" "re" ; As in enter > reenter
+-2 add-spell-rule "I" "" "" "in" ; As in disposed > indisposed
+    .
+    .
+; Now add the user dictionary
+add-dictionary $MENAME
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Ht add-spell-rule 2 ,
+.Ht save-dictionary 2 ,
+.Ht spell-add-word 3 ,
+.Ht edit-dictionary 3 ,
+.Ht spell-buffer 3 .
+.ad
+.FH

@@ -1,0 +1,32 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd110.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|macrodevelop
+.so me.tni
+.TH goto-window 2
+.XI goto-window - "Restore a saved window to the current window"
+.XI set-window - "Save the current window for restore"
+.SH NAME
+.Me "|goto-window"
+goto-window \- Restore a saved window to the current window
+.br
+.Me "|set-window"
+set-window \- Save the current window for restore
+.Me $a
+.SH SYNOPSIS
+.na
+.B goto-window
+.br
+.B set-window
+.ad
+.SH DESCRIPTION
+.B goto-window
+restores a previously saved window to being the current window.
+.PP
+.B set-window
+saves  the  current  window  so that it can be  returned  to via the  command
+.BR goto-window .
+.SH "SEE ALSO"
+.na
+.Ht find-buffer 2 .
+.ad
+.FH

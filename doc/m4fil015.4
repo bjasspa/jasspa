@@ -1,0 +1,213 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil015.4,v 1.1.1.1 2000-07-25 22:04:03 jon Exp $
+.Im MicroEmacs macro;variable
+.so me.tni
+.TH "MessageLineVariables" 4
+.XI "MessageLineVaraibles" - "Prompt the user for input on message line"
+.XI @mn - "Message line input as normal request"
+.XI @mna - "All input from Message line as normal"
+.XI @ml - "Message line input request"
+.XI @mc - "Message line character input request"
+.XI @mx - "Message line input by executing command"
+.XI @mxa - "All input from Message line by executing command"
+.SH NAME
+@mn, @mna, @ml, @mc, @mx, @mxa \- Message line input
+.SH SYNOPSIS
+.na
+\fB@mn\fR
+.br
+\fB@mna\fR
+.br
+\fB@ml\fR[\fIf\fR][\fIh\fR] "\fIprompt\fR" ["\fIdefault\fR"] ["\fIinitial\fR"]
+["\fIcom-list\fR"] ["\fIbuffer-name\fR"]
+.br
+\fB@mc\fR[\fIf\fR] \fIprompt\fR [\fIvalid-list\fR]
+.br
+\fB@mx\fR "\fIcommand-line\fR"
+.br
+\fB@mxa\fR "\fIcommand-line\fR"
+.ad
+.SH DESCRIPTION
+The \fBMessage  Line  Variables\fR  provide a method to prompt the user for an
+input returning the data to the caller. The \fB@mn\fR  variable cause \*(mS to
+input data from the user in the default way for that command's  argument, i.e.
+the normal  prompt  with the normal  history  and  completion  etc.  Similarly
+\fB@mna\fR  causes  \*(mS to input the  current  argument  and any  subsequent
+arguments in the default way.
+.PP
+The  \fB@ml\fR  variable  can be used to get a string  (or Line) of text  from
+the user using the  message-line  in a very  flexible way. The first  optional
+flag \fBf\fR is a bitwise flag where each bit has the following meaning
+.IP \fC0x01\fR
+The \fIdefault\fR value will be specified and this will be returned by default.
+.IP \fC0x02\fR
+The \fIinitial\fR value will be specified and this will be initial value given
+on the input line.
+.PP
+If no  value is  specified  then  default  value is 0 and  \fBh\fR  can not be
+specified. The  \fIdefault\fR  value is returned when the user enters an empty
+string. If the \fIinitial\fR  string is specified the the input buffer will be
+initialized to the given string instead of and empty one.
+.PP
+The flag \fBh\fR  specifies what type of data is to be entered, this specifies
+the  history  to be used  and the  semantics  allowed,  \fBh\fR  can  have the
+following values
+.IP
+.nf
+.na
+\fC0\fR For a general string input using the general history.
+\fC1\fR For an absolute file name, with completion and history.
+\fC2\fR For a \*(mE buffer name, with completion and history.
+\fC3\fR For a \*(mE command name, with completion and history.
+\fC4\fR For a file name, with completion and history.
+\fC5\fR For a search string, with history.
+\fC6\fR For a \*(mE mode name, with completion and history.
+\fC7\fR For a \*(mE variable name, with completion and history.
+\fC8\fR For a general string using no history.
+\fC9\fR For a user supplied completion list (\fCcom-list\fR).
+\fCa\fR For a user supplied completion list (\fCbuffer-name\fR).
+.fi
+.ad
+.LP
+A default  value of 0 is used if no value is specified. At first glance type 1
+and 4 appear to be the same. They differ only when a non absolute file name is
+entered, such as "foobar".  Type 1 will turn this into an absolute  path, i.e.
+if the current directory is "/tmp" then it will return  "/tmp/foobar".  Type 4
+however will return just "foobar", this is particularly useful with the
+.Ht &find 4
+directive to then find the file "foobar".
+.PP
+When a value of  \fC9\fR  is used the  argument  \fIcom-list\fR  must be given
+which  specifies a list of completion  values in the form of a \*(mS list (see
+help on
+.Ht &lget 4
+for further  information  on lists). The user may enter another value which is
+not in the list, which will be returned.
+.PP
+Alternatively  a completion  list may be given in the form of a buffer using a
+value of \fCa\fR. The argument  \fIbuffer-name\fR must be given to specify the
+buffer name from which to extract the completion list; each line of the buffer
+is taken as a completion  value. This option is particularly  useful for large
+completion lists as there is no size restrictions.
+.PP
+The  \fB@mc\fR  variable can be used to get a single  character  from the user
+using the message-line. The optional flag \fBf\fR is a bitwise flag where each
+bit has the following meaning
+.IP
+.nf
+.na
+\fC0x01\fR The \fIvalid-list\fR specifies all valid letters.
+.fi
+.ad
+.LP
+The  default  value  for  \fBf\fR  is 0. When  \fB@mc\fR  is used, the user is
+prompted, with the given prompt, for a single character. If a \fIvalid-list\fR
+is  specified  then  only a  specified  valid  character  or an  error  can be
+returned. For example, a yes/no prompt can be implemented by the following
+.Me $emf-scheme
+.CS
+!if &iseq @mc1 "Are you bored [y/n]? " "yYnN" "y"
+    save-buffers-exit-emacs
+!endif
+.CE
+.Me $ehf-scheme
+By using the
+.Ht &isequal 4
+operator a return of "Y" or "y" will match with "y".
+.PP
+When  the   \fB@mx\fR   variable   is  used  \*(mS sets the system variable
+.Ht $result 5
+to the input  prompt, it will then  execute the given  \fCcommand-line\fR.  If
+this command aborts then so does the calling  command, if it succeeds then the
+input value is taken from the  \fB$result\fR  variable.  Similarly  \fB@mxa\fR
+causes \*(mS to get the current and any subsequent arguments in this way.
+.PP
+These variables are useful when trying to use existing commands in a different
+way,  such  as  trying  to  provide  a GUI to an  existing  command.  See  the
+\fBdelete-buffer\fR example below.
+.SH EXAMPLE
+The  following  example  can be used to  prompt  the  user to save any  buffer
+changes,  the use of  \fB@mna\fR  ensures  the user will be  prompted as usual
+regardless of the number of buffers changed:
+.Me $emf-scheme
+.CS
+save-some-buffers @mna
+.CE
+The following example sets  \fC%language\fR to a language supplied by the user
+from a given list, giving the current setting as a default
+.Me $emf-scheme
+.CS
+set-variable %languages "|American|British|French|Spanish|"
+set-variable %language "American"
+
+set-variable %language @ml19 "Language" %language %languages
+.CE
+.Me $ehf-scheme
+The following example is taken from  \fCdiff-changes\fR  in tools.emf, it uses
+\fB@mc\fR to prompt the user to save the buffer before continuing:-
+.Me $emf-scheme
+.CS
+define-macro diff-changes
+    !if &seq $buffer-fname ""
+        ml-write "[Current buffer has no file name]"
+        !abort
+    !endif
+    !if &bmod "edit"
+        !if &iseq @mc1 "Save buffer first [y/n]? " "nNyY" "y"
+            save-buffer
+        !endif
+    !endif
+        .
+        .
+.CE
+.Me $ehf-scheme
+Note that the input is case insensitive. The following  version would not work
+as the user may expect when the buffer has not been edited:
+.Me $emf-scheme
+.CS
+        .
+        .
+    !if &and &bmod "edit" &iseq @mc1 "Save buffer first [y/n]? " "nNyY" "y"
+        save-buffer
+        .
+        .
+.CE
+.Me $ehf-scheme
+Unlike  \fBC\fR  and other  similar  languages  \*(mS  macro  language  always
+evaluates both \fB&and\fR arguments. This means that the user will be prompted
+to save the buffer regardless of whether the buffer has been edited.
+.PP
+The  \fB@mx\fR  variables  are useful  when using  existing  commands in a new
+environment. For example, consider providing a GUI for the
+.Ht delete-buffer 2
+command, when  executed the calling GUI may not be aware that changes could be
+lost or a process may still be active. These  variables  can be used as a call
+back mechanism to handle this problem:
+.Me $emf-scheme
+.CS
+define-macro osd-delete-buffer-callback
+    !if &sin "Discard changes" $result
+        2 osd-xdialog "Delete Buffer" "  Dicard changes?  " 2 10 6 "&Yes" "&No"
+        set-variable $result &cond &equ $result 1 "y" "n"
+    !elif &sin "Kill active process" $result
+        2 osd-xdialog "Delete Buffer" "  Kill active process?  " 2 10 6 "&Yes" "&No"
+        set-variable $result &cond &equ $result 1 "y" "n"
+    !else
+        1000 ml-write &spr "[Unknown prompt %s]" $result
+        !abort
+    !endif
+!emacro
+
+define-macro osd-delete-buffer
+    .
+    . set #l0 to buffer name to be deleted
+    .
+    delete-buffer #l0 @mxa osd-delete-buffer-callback
+!emacro
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Ht define-macro 2 .
+.ad
+.FH

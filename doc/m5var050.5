@@ -1,0 +1,38 @@
+.\" -*- nroff -*-
+.Id $Id: m5var050.5,v 1.1.1.1 2000-07-25 22:04:06 jon Exp $
+.Im MicroEmacs variable|hilight
+.so me.tni
+.TH $scroll-bar-scheme 5
+.XI $scroll-bar-scheme - "Scroll bar color scheme"
+.SH NAME
+$scroll-bar-scheme \- Scroll bar color scheme
+.Me $a
+.SH SYNOPSIS
+\fB$scroll-bar-scheme\fR \fIschemeNum\fR; Default is \fC1\fR
+.SH DESCRIPTION
+Sets  the   horizontal   window  scroll  bar  color  scheme,   assigning  the
+foreground,  background  and  selection  colors  which are used to render the
+vertical  separator / scroll bars (see 
+.Ht add-color-scheme 2 .
+The separator is rendered in reverse video,
+i.e. the  foreground  color of the  color  scheme is used as the  background
+color, and vice versa.
+.PP
+The separator is rendered in the standard  colors when the associated  buffer
+is not active, and in the current color when the buffer is active.
+.PP
+The scroll-bar is the window separator constructed by
+.Ht split-window-horizontally 2
+or when the scroll bars are enabled via
+.Ht $scroll-bar 5 .
+.SH "SEE ALSO"
+.na
+.Ht $global-scheme 5 ,
+.Ht $ml-scheme 5 ,
+.Ht $mode-line-scheme 5 ,
+.Ht $scroll-bar 5 ,
+.Ht $system 5 ,
+.Ht $window-chars 5 ,
+.Ht split-window-horizontally 2 .
+.ad
+.FH

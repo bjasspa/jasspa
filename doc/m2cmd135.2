@@ -1,0 +1,51 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd135.2,v 1.1.1.1 2000-07-25 22:03:57 jon Exp $
+.Im MicroEmacs command|transposition
+.ds C0 "(\fB\*ct\fR)\ \&
+.ds C1 "(\fB\*(cX\*ct\fR)\ \&
+.so me.tni
+.TH transpose-chars 2
+.XI transpose-chars - "\*(C0Exchange (swap) adjacent characters"
+.XI transpose-lines - "\*(C1Exchange (swap) adjacent lines"
+.SH NAME
+.Me "|transpose-chars"
+transpose-chars \- Exchange (swap) adjacent characters
+.Me "|transpose-lines"
+transpose-lines \- Exchange (swap) adjacent lines
+.Me $a
+.SH SYNOPSIS
+.na
+\fBtranspose-chars\fR \*(C0
+.br
+.I n
+\fBtranspose-lines\fR \*(C1
+.ad
+.SH DESCRIPTION
+.B transpose-chars
+exchanges  (swaps) the current  character  under the cursor with the  previous
+character.  \fBtranspose-characters\fR  does not  operate  in  column 0 (since
+there is no  previous  character).  If the cursor is at the end of a line when
+the command is  initiated  then the cursor is moved to the previous  character
+and the operation performed from the new position.
+.PP
+.B transpose-lines
+swaps  the  next  line  for the  current  line  and  moves  to the next  line,
+effectively  retaining the same text  position.  Repeating  this \fIn\fR times
+moves the current line \fIn\fR lines down.
+.SH EXAMPLE
+.B transpose-character
+performs the following operations (cursor at \fB^\fR):-
+.CS
+abcde  => acbde         [Middle of line]
+  ^         ^
+
+abcde  => abced         [End of line]
+     ^         ^
+.CE 0
+.SH "SEE ALSO"
+.na
+.Ht sort-lines 2 .
+.ad
+.rm C0
+.rm C1
+.FH

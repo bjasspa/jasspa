@@ -1,0 +1,42 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil012.4,v 1.1.1.1 2000-07-25 22:04:02 jon Exp $
+.Im MicroEmacs macro;directive|miscellaneousOperators
+.so me.tni
+.TH !repeat 4
+.XI !repeat - "Conditional loop (post testing)"
+.XI !until - "Test a conditional loop"
+.SH NAME
+!repeat, !until \- Conditional loop (post testing)
+.SH SYNOPSIS
+.na
+.nf
+\fB!repeat\fR
+.RS
+\&... loop body ...
+.RE
+\fB!until\fR \fIcondition\fR
+.fi
+.ad
+.SH DESCRIPTION
+Th \fB!repeat\fR command operates in a  similar fashion to
+.Hl "!while/!done" !while 4
+except the  condition is tested at the end. Control  finishes if the condition
+is met. As with the
+.Ht !while 4
+there is no nesting of multiple \fB!repeat\fR statements.
+.SH EXAMPLE
+For example, the following macro segment fills to the fill column with spaces.
+.Me $emf-scheme
+.CS
+!repeat
+    insert-string " "
+!until &equal $curcol $fill-col
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Ht !if 4 ,
+.Ht !goto 4 ,
+.Ht !repeat 4 .
+.ad
+.FH

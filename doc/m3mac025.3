@@ -1,0 +1,41 @@
+.\" -*- nroff -*-
+.Id $Id: m3mac025.3,v 1.1.1.1 2000-07-25 22:04:00 jon Exp $
+.Im MicroEmacs command|indent
+.so me.tni
+.TH restyle-buffer 3
+.XI restyle-buffer - "Automatically reformat a buffer's indentation"
+.XI restyle-region - "Automatically reformat a regions indentation"
+.SH NAME
+.Me "|restyle-buffer"
+restyle-buffer \- Automatically reformat a buffer's indentation.
+.br
+.Me "|restyle-region"
+restyle-region \- Automatically reformat a regions indentation.
+.Me $a
+.SH SYNOPSIS
+.na
+.B restyle-buffer
+.br
+.B restyle-region
+.ad
+.SH DESCRIPTION
+.B restyle-buffer
+automatically  re-formats the  indentation of a buffer. The  indentation  only
+operates if the indentation method is defined with
+.Ht cmode 2m
+or
+.Ht $buffer-indent 5  ,
+otherwise the command has no effect.
+.PP
+.B restyle-region
+modifies the indentation between \fIpoint\fR and \fImark\fR.
+.SH NOTES
+\fBrestyle-buffer\fR   and   \fBrestyle-region\fR   are   macros   defined  in
+\fCformat.emf\fR.
+.SH "SEE ALSO"
+.na
+.Ht cmode 2m ,
+.Ht indent 2 ,
+.Ht $buffer-indent 5 .
+.ad
+.FH

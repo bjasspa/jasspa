@@ -1,0 +1,91 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd086.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|cursor
+.ds C0 "(\fB\*(cHv\fR)\ \&
+.so me.tni
+.TH list-variables 2
+.XI list-variables \- "\*(C0List defined variables"
+.SH NAME
+list-variables \- List defined variables
+.Me $a
+.SH SYNOPSIS
+.na
+\fBlist-variables\fR \*(C0
+.ad
+.SH DESCRIPTION
+.B list-variables
+pops  up a  window  with a list  of all  register,  buffer,  user  and  global
+variables with their current  setting. The variables are shown for the current
+buffer from which the command was invoked
+.PP
+.B list-variables
+provides a good alternative to
+.Ht describe-variable 2
+where the value of multiple variables is to be interrogated.
+.PP
+The output is displayed in four sections:-
+.IP "\fBRegister variables\fR"
+The current settings of the global register variables ('\fB#\fR' prefix).
+.IP "\fBBuffer Variables\fR"
+The current setting of the buffer variables ('\fB:\fR' prefix). This variables
+relate to the current buffer from which the command was invoked.
+.IP "\fBSystem Variables\fR"
+The current settings of the system variables ('\fB$\fR' prefix).
+.IP "\fBGlobal Variables\fR"
+The current setting of the global variables ('\fB%\fR' prefix).
+.SH EXAMPLE
+An example output from
+.B list-variables
+is shown below:-
+.CS
+Register variables:
+
+    #g0 ........................... "29"
+    #g1 ........................... ""
+    #g2 ........................... "ERROR"
+    :
+    :
+    #g8 ........................... "ERROR"
+    #g9 ........................... "ERROR"
+
+Buffer [m2cmd086.2] variables:
+
+
+System variables:
+
+    $auto-time .................... "300"
+    $buffer-bhook ................. "bhook-nroff"
+    $buffer-bname ................. "m2cmd086.2"
+    $buffer-ehook ................. "ehook-nroff"
+    $buffer-fhook ................. "fhook-nroff"
+    $buffer-fmod .................. "040"
+    $buffer-fname ................. "d:/emacs/doc/m2cmd086.2"
+    $buffer-hilight ............... "3"
+    :
+    :
+    $window-width ................. "80"
+    $window-x-scroll .............. "0"
+    $window-xcl-scroll ............ "0"
+    $window-y-scroll .............. "52"
+
+Global variables:
+
+    %black ........................ "0"
+    %blue ......................... "4"
+    %compile-com .................. "nmake "
+    %cyan ......................... "6"
+    %green ........................ "2"
+    %grep-com ..................... "grep -n "
+    :
+    :
+    %usr1mode ..................... "off"
+    %white ........................ "7"
+    %yellow ....................... "3"
+.CE 0
+.SH "SEE ALSO"
+.na
+.Ht describe-variable 2 ,
+.Ht list-commands 2 .
+.ad
+.rm C0
+.FH

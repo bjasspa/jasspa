@@ -1,0 +1,106 @@
+.\" -*- nroff -*-
+.Id $Id: m8fil004.8,v 1.1.1.1 2000-07-25 22:04:08 jon Exp $
+.Im MicroEmacs files
+.so me.tni
+.TH erf 8
+.XI erf - "MicroEmacs registry file"
+.SH NAME
+erf \- MicroEmacs registry file
+.SH SYNOPSIS
+.na
+.I "; Comment to the end of the line"
+.br
+\fI<command>\fR ::= \fB"\fR\|\fI<identifier>\fR\|\fB"\fR [ \fB=\fR \fB"\fR\|\fI<string>\fR\|\fB"\fR ][ \fB{\fR \fI<command>\fR \fB}\fR ] *
+.ad
+.SH DESCRIPTION
+\*(mE   registry  files  are  ASCII  text  files,  given  the  file  extension
+\fB.erf\fR.   The   registry   file  is  a  simple   syntax   that  allows  an
+\fIidentifier\fR  to be associated with a \fIstring\fR. The  \fIidentifiers\fR
+are  unique  and allow a  \fIstring\fR  value to be found  when a search for a
+\fIidentifier\fR is made. The \fIstring\fR component is optional.
+.PP
+The syntax allows the \fIidentifier\fR's to be hierarchically nested, children
+of the  \fIidentifier\fR  node are  enclosed in a set of curly braces  \fB{\fR
+\... \fB}\fR. The enclosure  itself  comprises a number of  \fIidentifiers\fR,
+which may have their own enclosures, and so on.
+.PP
+The  backslash  character  `\fC\\\fR' is the escape  character,  the following
+sequences of escape character are recognized:-
+.IP
+\fC\\\\\fR \- Literal backslash
+.br
+\fC\\"\fR \- Double quote (used within a quoted string)
+.br
+\fC\\n\fR \- New line character.
+.br
+\fC\\t\fR \- Tab character.
+.PP
+The semi-colon  character  `\fC;\fR'  introduces a comment which exists to the
+end of the line.
+.SH EXAMPLE
+The following is an example of a registry file:-
+.CS
+; -!- erf -!-
+; Comment on this line
+"dos"
+{
+    "file-ignore" = "~ ./ .o"
+    "font" = "85"
+    "mail-dir" = "c:/mail/"
+    "mail-send" = "echo from \\"%f\\" file \\"%o\\""
+    "mail-src" = "c:/mail/jon"
+    "nested"="value"
+    {
+        "foo"="bar"
+    }
+}
+.CE
+The  history  file  \fIusername.erf\fR  is a good  example  of the  use of the
+registry.  This file retains  historical  session  information  in The history
+registry file is  automatically  written at the end of a editing  session when
+the editor is closed down (or may be saved explicitly using
+.Ht save-history 2 ).
+.PP
+Every user should have their own personal history file in their personal \*(mS
+directory. The history file is located from the \*(mE search path defined by
+.Ht $MEPATH 5 ,
+and is named by the environment variable
+.Ht $LOGNAME 5 .
+.SH NOTES
+.BS
+The registry files are not currently written with a backup.
+.BU
+Special care should be taken when editing  registry files when they are loaded
+into  MicroEmacs. It is recommended  that the registry file is not loaded as a
+registry item when editing the registry text file.
+.BE
+To edit  the  history  registry  file  within  MicroEmacs  then the  following
+sequence of steps should be followed:-
+.BS
+Save the current history
+.Ht save-history 2 .
+.BU
+Load the history registry file \fIusername\fR.erf.
+.BU
+Edit the file.
+.BU
+Save edits back to the file.
+.BU
+Re-install the history
+.Ht read-history 2 .
+This  flushes the current  session  history and restores it from the file. The
+new edits should now be in the registry.
+.BU
+Examine the loaded registry using
+.Ht list-registry 2 .
+.BE 0
+.SH "SEE ALSO"
+.na
+.Ht list-registry 2 ,
+.Ht read-history 2 ,
+.Ht read-registry 2 ,
+.Ht save-history 2 ,
+.Ht save-history 2 ,
+.Ht $MEPATH 5 .
+.ad
+.FH

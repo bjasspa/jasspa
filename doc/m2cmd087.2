@@ -1,0 +1,41 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd087.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|window
+.ds C0 "(\fB\*cn\fR)\ \&
+.ds C1 "(\fB\*cp\fR)\ \&
+.so me.tni
+.TH scroll-down 2
+.XI scroll-down - "\*(C0Move the window down (scrolling)"
+.XI scroll-up - "\*(C1Move the window up (scrolling)"
+.SH NAME
+.Me "|scroll-down"
+scroll-down \- Move the window down (scrolling)
+.br
+.Me "|scroll-up"
+scroll-up \- Move the window up (scrolling)
+.Me $a
+.SH SYNOPSIS
+.na
+\fIn\fR \fBscroll-down\fR \*(C0
+.br
+\fIn\fR \fBscroll-up\fR \*(C1
+.ad
+.SH DESCRIPTION
+.B scroll-down
+moves the window in the current buffer down by \fIn\fR lines, the default when
+\fIn\fR is omitted is 1 windows  worth of lines i.e. a next page  operation. A
+\-ve value of \fIn\fR causes the window to move up.
+.PP
+.B scroll-up
+moves the  window in the  current  buffer up by \fIn\fR  lines,  default  when
+\fIn\fR  is  omitted  is 1  windows  worth  of  lines,  i.e. a  previous  page
+operation. A \-ve value of \fIn\fR causes the window to move down.
+.SH "SEE ALSO"
+.na
+.Ht scroll-left 2 ,
+.Ht scroll-right 2 ,
+.Ht $window-y-scroll 5 .
+.ad
+.rm C0
+.rm C1
+.FH

@@ -1,0 +1,148 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd056.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|file
+.ds C0 "(\fB\*(cX\*cf\fR)\ \&
+.so me.tni
+.TH find-file 2
+.XI find-file \- "\*(C0Load a file"
+.SH NAME
+find-file \- Load a file
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B find-file
+"\fIfile-name\fR" \*(C0
+.ad
+.SH DESCRIPTION
+.B find-file
+finds the named file  \fIfile-name\fR. If it is already in a buffer, make that
+buffer active in the current window, otherwise  attempt to create a new buffer
+and read the file into it.
+.PP
+If the file does not exist and the variable
+.Ht $rcs-file 5
+is set then the  existence of the  \s-1RCS\s0  file is tested. If the rcs file
+exists  then it will be  checked  out using a  command-line  created  from the
+variable
+.Ht $rcs-co-com 5 .
+If the check-out is successful then this file is loaded.
+.PP
+If the file does not exist and an argument  \fIn\fR of 0 is  specified  the
+command  fails at this point. If the file does not exist and a non-zero  or no
+argument is  specified  then a new empty buffer is created with the given file
+name, saving the buffer subsequently creates a new file.
+.PP
+Text files are  usually thought  of as named  collections of  text residing on
+disk (or some other storage medium).  In \*(mE the disk based versions of
+files come into play only  when reading into or  writing out buffers. The link
+between the physical file and the buffer is through the associated file name.
+.PP
+\*(mE permits full file names, i.e. you can specify:
+.CS
+disk:\\directories\\filename.extension
+.CE
+or (\s-1UNIX\s0)
+.CS
+/directories/filename.extension
+.CE
+If the disk and  directories  are not  specified,  the current  buffers  disk/
+directory is used.  Several  points  should be noted in respect to the methods
+that \*(mS utilizes in the handling of files:-
+.BS 1 1
+Without  explicitly saving the buffer(s) to file, all edits would be lost upon
+leaving  \*(mS \- you are  asked to  confirm  whenever  you are  about to lose
+edits.
+.BU
+\*(mS  has a mechanism  for  "protecting"  your  disk-based  files from
+overwriting  when it saves files. When  instructed to save a file, it proceeds
+to dump  the file to disk,  making a backup  of the  existing  file  when
+.Ht backup 2m
+mode is enabled.
+.BU
+Auto-saving files  can  be  performed  on edited  buffers  by  setting the
+.Ht $auto-time 5
+variable. The file is saved in the same place with a '\fC#\fR' appended to the
+file name. This can be used  directly by the user or in the unlikely  event of
+\*(mS crashing (or system crash), the files are  automatically  recovered next
+time it is edited.
+.BE
+If you do not wish to perform any edits but merely browse the file(s), add the
+.Ht view 2m
+mode to the buffer or ask for the file to be read in for
+.Hl viewing view-file 2
+only.
+.SS "HTTP Support"
+\*(mS  supports http file loading, this is available by default on \s-1UNIX\s0
+systems  but must be  compiled in on win32  platforms  (socket  libraries  not
+available  on all win95  machines so cannot be compiled in by  default).  When
+available a http file can be loaded by simply  executing  \fBfind-file\fR  and
+giving the http file name, i.e.
+.\"
+"\fChttp://user:password@address:port/file\fR".    Only   the   \fChttp://\fR,
+\fCaddress\fR  and \fC/file\fR  components are mandatory, the rest can usually
+be omitted. e.g.:
+.CS
+find-file "http://members.xoom.com/jasspa/index.html"
+.CE
+See help page on
+.Ht %http-proxy-addr 5
+for information on HTTP proxy server support.
+.SS "FTP support"
+\*(mS  supports ftp file  loading, this is identical to http except the prefix
+\fCftp://\fR is used as opposed to  \fChttp://\fR.  The user name and password
+defaults to  \fIguest\fR  in the absence of these  fields.  Connection  is by
+default on port 21.
+.CS
+find-file "ftp://<me>:<password>@members.xoom.com/jasspa/index.html"
+.CE
+See also 
+.Ht ftp 3 .
+.PP
+The progress of the FTP transer, and the FTP commands issued, may be viewed in
+the \fC*ftp-console*\fR  buffer. This is popped up depending on the setting of
+the
+.Ht %ftp-flags 5 
+variable.
+.SH NOTES
+The  base  name  part  (i.e.  not the  path) of  \fCfile-name\fR  can  contain
+wild-card characters compatible with most file systems, namely:-
+.IP \fB?\fR
+Match any character.
+.IP \fB[abc]\fR
+Match character only if it is \fIa\fR, \fIb\fR or \fIc\fR.
+.IP \fB[a-d]\fR
+Match character only if it is \fIa\fR, \fIb\fR, \fIc\fR or \fId\fR.
+.IP \fB[^abc]\fR
+Match character only if it is not \fIa\fR, \fIb\fR or \fIc\fR.
+.IP \fB*\fR
+Match any number of characters.
+.PP
+If the name  matches  more than one file, a buffer  will be  created  for each
+matching file. Note that these are not the same wild-card characters used by
+.Hl "regex" RegularExpressions 2 .
+.PP
+For \fIftp\fR and  \fIhttp\fR  then a ftp console  window is opened up to show
+the progress of the transfer (when configured), this is described in 
+.Ht ftp 3 .
+.SH "SEE ALSO"
+.na
+.Ht $rcs-file 5 ,
+.Ht %ftp-flags 5 ,
+.Ht %http-flags 5 ,
+.Ht %http-proxy-addr 5 ,
+.Ht auto 2m ,
+.Ht buffer-mode 2 ,
+.Ht find-bfile 2 ,
+.Ht ftp 3 ,
+.Ht next-window-find-file 2 ,
+.Ht read-file 2 ,
+.Ht save-buffer 2 ,
+.Ht time 2m ,
+.Ht view 2m ,
+.Ht view-file 2 ,
+.Ht write-buffer 2 ,
+.Ht file-attrib 3 .
+.ad
+.rm C0
+.FH

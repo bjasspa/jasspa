@@ -1,0 +1,65 @@
+.\" -*- nroff -*-
+.Id $Id: m5var040.5,v 1.1.1.1 2000-07-25 22:04:05 jon Exp $
+.Im MicroEmacs variable|macrodevelop
+.so me.tni
+.TH $status 5
+.XI $status - "Macro command execution status"
+.SH NAME
+$status \- Macro command execution status
+.Me $a
+.SH SYNOPSIS
+.B $status
+.I boolean
+.sp
+\fIboolean\fR \fCTRUE\fR (1) | \fCFALSE\fR (0)
+.SH DESCRIPTION
+.B $status
+contains  the  return  status  of the last  command  executed  (\fCTRUE\fR  or
+\fCFALSE\fR). \fB$status\fR is generally used with the
+.Hl !force !force 4
+directives in macros.
+.SH NOTES
+This variable can not be set, any attempt to set it will result in an error.
+.SH EXAMPLE
+The following example shows how the variable is used within a macro construct,
+it converts all \s-1tab\s0 characters to their \s-1SPACE\s0 equivalent.
+.Me $emf-scheme
+.CS
+;
+; tabs-to-spaces.
+; Convert all of the tabs to spaces.
+define-macro tabs-to-spaces
+    ; Remember line
+    set-variable #l0 $window-line
+    beginning-of-buffer
+    !force search-forward "\\t"
+    !while $status
+        set-variable #l1 $window-acol
+        backward-delete-char
+        &sub #l1 $window-acol insert-space
+        !force search-forward "\\t"
+    !done
+    goto-line #l0
+    screen-update
+    ml-write "[Converted tabs]"
+!emacro
+.CE
+.Me $ehf-scheme
+In this case \fB$status\fR monitors the
+.Hl search-forward search-forward 2
+command which is searching for a \s-1tab\s0  character. The command  returns a
+status value of \fCTRUE\fR if a \s-1tab\s0 is found, otherwise \fCFALSE\fR.
+.PP
+The \fB!force\fR statement prevents the macro from terminating when a \fCFALSE\fR
+condition is detected, if omitted the macro would  terminate  with an error as
+soon as the \fCFALSE\fR status is encountered. The definition of
+.Ht tabs-to-spaces 3
+can be found in format.emf.
+.SH "SEE ALSO"
+.na
+.Ht execute-file 2 ,
+.Ht !force 4 ,
+.Ht $result 5 ,
+.Ht tabs-to-spaces 3 .
+.ad
+.FH

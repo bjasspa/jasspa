@@ -1,0 +1,35 @@
+.\" -*- nroff -*-
+.Id $Id: m5var012.5,v 1.1.1.1 2000-07-25 22:04:04 jon Exp $
+.Im MicroEmacs variable|paragraph
+.so me.tni
+.TH $fill-eos 5
+.XI $fill-eos - "Paragraph filling; end of sentence fill characters"
+.XI $fill-eos-len - "Paragraph filling; end of sentence padding length"
+.SH NAME
+.Me "|$fill-eos"
+$fill-eos \- Paragraph filling; end of sentence fill characters
+.br
+.Me "|$fill-eos-len"
+$fill-eos-len \- Paragraph filling; end of sentence padding length
+.Me $a
+.SH SYNOPSIS
+\fB$fill-eos\fR "\fIstring\fR"; Default is "\fC.!?\fR"
+.sp 1
+\fB$fill-eos-len\fR \fIinteger\fR; Default is \fC1\fR
+.br
+0 <= \fIinteger\fR <= \fIn\fR
+.SH DESCRIPTION
+.B $fill-eos
+defines  the  end  of  sentence  character  set.  Sentences  ending  in  these
+characters are padded with additional \fIend-of-sentence\fR spaces, as defined
+by
+.BR $fill-eos-len .
+.PP
+.B $fill-eos-len
+sets the number of spaces inserted after a full stop during paragraph filling.
+The default is 1 space.
+.SH "SEE ALSO"
+.na
+.Ht fill-paragraph 2 .
+.ad
+.FH

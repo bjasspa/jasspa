@@ -1,0 +1,56 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 2000 Jasspa.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m3mac052.3
+.\"  Created By    : Jon Green
+.\"  Created       : Tue Jan 25 23:22:52 2000
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 2000 Jasspa.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from Jasspa.
+.\"
+.\"***************************************************************************
+.Id $Id: m3mac052.3,v 1.1.1.1 2000-07-25 22:04:01 jon Exp $
+.Im MicroEmacs command
+.so me.tni
+.TH check-line-length 3
+.XI check-line-length - "Check the length of text lines are valid"
+.SH NAME
+check-line-length \- Check the length of text lines are valid
+.Me $a
+.SH SYNOPSIS
+.na
+.B check-line-length
+.ad
+.SH DESCRIPTION
+\fBcheck-line-length\fR  checks  that the  length of each line of the  current
+buffer, starting with the current line, is less than or equal to
+.Ht fill-col 5 .
+The  command  aborts if a line too long is found,  leaving  the  cursor on the
+offending line. If no invalid lines are found the command succeeds leaving the
+cursor at the end of the buffer.
+.SH NOTES
+\fBcheck-line-length\fR is a macro implemented in \fCmisc.emf\fR.
+.SH "SEE ALSO"
+.na
+.Ht $fill-col 5 .
+.ad
+.FH

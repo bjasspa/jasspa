@@ -1,0 +1,57 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd034.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|delete|essential
+.ds C0 "(\fB\*cd\fR)\ \&
+.ds C1 "(\fB\*(bS\fR)\ \&
+.so me.tni
+.TH forward-delete-char 2
+.XI forward-delete-char - "\*(C0Delete the next character at the cursor position"
+.XI backward-delete-char - "\*(C1Delete the previous character at the cursor position"
+.SH NAME
+.nf
+.Me "|forward-delete-char"
+forward-delete-char \- Delete next character at the cursor position
+.Me "|backward-delete-char"
+backward-delete-char \- Delete previous character at the cursor position
+.fi
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+\fBforward-delete-char\fR \*(C0
+.br
+.I n
+\fBbackward-delete-char\fR \*(C1
+.ad
+.SH DESCRIPTION
+.B forward-delete-char
+deletes the next \fIn\fR  characters from the current cursor  position. If the
+cursor  is at the end of a line,  the next  line is  joined  on the end of the
+current line. If an argument is given or
+.Ht letter 2m 
+mode is enabled then the character is added to the kill buffer,  otherwise the
+kill buffer is unaltered.
+.PP
+.B backward-delete-char
+deletes  the next  \fIn\fR  characters  immediately  to the left of the cursor
+(e.g. more  conventionally  backspace). If the cursor is at the beginning of a
+line, this will join the current  line on the end of the  previous  one. If an
+argument is given or
+.Hl "letter mode" global-bind-key 2 
+is enabled then the character is added to the kill buffer,  otherwise the kill
+buffer is unaltered.
+.SH NOTES
+.B forward-delete-char
+is also bound to  \fB\*(dE\fR and  \fB\*s\*(dE\fR.
+.PP
+.B backward-delete-char
+is also bound to \fB\*s\*(bS\fR.
+.SH "SEE ALSO"
+.na
+.Ht backward-kill-word 2 ,
+.Ht forward-kill-word 2 ,
+.Ht letter 2m .
+.ad
+.rm C0
+.rm C1
+.FH

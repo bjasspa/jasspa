@@ -1,0 +1,79 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1999 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m9typ008.9
+.\"  Created By    : Jon Green
+.\"  Created       : Sat Feb 6 14:22:09 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m9typ008.9,v 1.1.1.1 2000-07-25 22:04:08 jon Exp $
+.Im MicroEmacs filetype
+.so me.tni
+.TH ini 9
+.XI ini - "MS-Windows Initialization File"
+.XI hpj - "MS-Windows Help Project File"
+.XI reg - "Registry file"
+.XI rgy - "Registry file"
+.SH SYNOPSIS
+ini, hpj, reg, rgy \-  MS-Windows initialization and registry files
+.SH FILES
+.na
+.B hkini.emf
+\- MS-Windows initialization and registry files.
+.ad
+.SH EXTENSIONS
+.na
+\fB.ini\fR \- MS-Windows Initialization File
+.br
+\fB.hpj\fR \- MS-Windows Help Project File
+.br
+\fB.reg\fR \- Registry File
+.br
+\fB.rgy\fR \- (Other) registry File
+.ad
+.SH DESCRIPTION
+The \fBini\fR  file type  templates  provide  simple  hilighting of MS-Windows
+initialization  and registry  files. The file format is similar to a number of
+other registry type files which are also over-loaded into the same template.
+.IP \fBHilighting\fR
+The  template   provides  minimal   hilighting  ,  but  allows  the  different
+components of the file to be differentiated.
+.IP "\fBFolding and Information Hiding\fR"
+Generic  folding is enabled  within the ini files. The folds occur about
+lines with leading square brackets \fB[\fR...\fB[\fR located on the left-hand margin.
+.Ht fold-all 3
+(un)folds all regions in the file,
+.Ht fold-current 3
+(un)folds the current region.
+.SH BUGS
+None reported.
+.SH "SEE ALSO"
+.na
+.Ht bat 9 .
+.sp 1
+.Hl "Supported File Types" FileTypes -
+.ad
+.FH

@@ -1,0 +1,43 @@
+.\" -*- nroff -*-
+.Id $Id: m5var029.5,v 1.1.1.1 2000-07-25 22:04:05 jon Exp $
+.Im MicroEmacs variable|shell
+.so me.tni
+.TH $line-template 5
+.XI $line-template - "Command line regular expression search string"
+.SH NAME
+$line-template \- Command line regular expression search string
+.Me $a
+.SH SYNOPSIS
+\fB$line-template\fR "\fIstring\fR"; Default is ""
+.SH DESCRIPTION
+.B $line-template
+defines a regular expression search string used  to identify a  line number in
+the 
+.Ht grep 3 
+and 
+.Ht compile 3 
+buffers. The format  of the string  is the  same as magic  mode search strings
+(see 
+.Ht search-forward 2 ).
+.SH EXAMPLE
+The line number may be considered to contain any numeric number, thus
+.B $line-template
+is defined as:
+.Me $emf-scheme
+.CS
+set-variable $line-template "[0-9]+"
+.CE
+.Me $ehf-scheme
+This correctly identifies "45" in the following \fB*grep*\fR output example:
+.CS
+foo.c: 45:      printf("hello world\\n") ;
+.CE 0
+.SH "SEE ALSO"
+.na
+.Ht $file-template 5 ,
+.Ht compile 3 ,
+.Ht get-next-line 2 ,
+.Ht grep 3 ,
+.Ht search-forward 2 .
+.ad
+.FH

@@ -1,0 +1,75 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1999 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m9typ009.9
+.\"  Created By    : Jon Green
+.\"  Created       : Sat Feb 6 14:22:09 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m9typ009.9,v 1.1.1.1 2000-07-25 22:04:08 jon Exp $
+.Im MicroEmacs filetype
+.so me.tni
+.TH f 9
+.XI f - "Fortran File"
+.XI f77 - "Fortran 77 File"
+.XI f90 - "Fortran 90 File"
+.SH SYNOPSIS
+f, f77, f90 \- Fortran files
+.SH FILES
+.na
+.B hkf90.emf
+\- Fortran hook definition
+.br
+.B f90.etf
+\- Fortran 90 template file.
+.br
+.B f.etf
+\- Fortran (77) template file.
+.ad
+.SH EXTENSIONS
+.na
+\fB.f\fR \- Fortran file
+.br
+\fB.f77\fR \- Fortran 77 file
+.br
+\fB.f90\fR \- Fortran 90 file
+.ad
+.SH DESCRIPTION
+The \fBf90\fR file type  templates provide simple hilighting of Fortran 77 and
+Fortran 90 files, the template  provides  minimal  hilighting of both language
+syntaxes, which are overloaded into the same file.
+.PP
+The major  difference  between  the file  types,  apart from the new  reserved
+words, is the  comments. In Fortran 90 comments are  introduced  with  \fB!\fR,
+while the other types use a \fBc\fR in column 0.
+.SH BUGS
+The Fortran hilight file is in it's infancy and a number of it's tokens may be
+misplaced.
+.SH "SEE ALSO"
+.na
+.Hl "Supported File Types" FileTypes -
+.ad
+.FH

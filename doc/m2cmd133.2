@@ -1,0 +1,273 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd133.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|bind
+.so me.tni
+.TH translate-key 2
+.XI translate-key - "Translate key"
+.SH NAME
+translate-key \- Translate key
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B translate-key
+[ "\fIfrom\fR"
+["\fIto\fR"] ]
+.ad
+.SH DESCRIPTION
+.B translate-key
+may be used to convert  any given  input key  sequence to another  single key.
+\fBtranslate-key\fR  operates at a very low level,  before  \*(mS  attempts to
+evaluate  keyboard  bindings, so it may be used to solve a variety of keyboard
+problems  such as special  language  characters  and UNIX termcap key sequence
+bindings (see below).
+.PP
+If a +ve  numeric  argument  \fIn\fR  is  given  it is used to set the time in
+milliseconds  \*(mS waits for another key to be pressed before continuing, the
+default time use when no argument is supplied is 250ms.
+.PP
+If a numeric argument \fIn\fR of \-1 is specified then the "\fIto\fR" argument
+is not required and the  "\fIfrom\fR"  character  sequence is removed from the
+translate key table.
+.PP
+If a  numeric  argument  \fIn\fR  of 0 is  specified  then  no  arguments  are
+required;    the   current    translation    table   is   dumped   to   buffer
+"\fI*tcap-keys*\fR". Following is a sample output:-
+.CS
+    "C-h" ......................... "backspace"
+    "C-[" ......................... "esc"
+    "C-[ [ 1 ~" ................... "delete"
+    "C-[ [ 1 1 ~" ................. "f1"
+    "C-[ [ 1 2 ~" ................. "f2"
+    "C-[ [ 1 3 ~" ................. "f3"
+    "C-[ [ 1 4 ~" ................. "f4"
+    "C-[ [ B" ..................... "down"
+    "C-[ [ 4 ~" ................... "end"
+    "C-[ [ 2 ~" ................... "insert"
+    "C-[ [ 3 ~" ................... "home"
+    "C-[ [ D" ..................... "left"
+    "C-[ [ 6 ~" ................... "page-down"
+    "C-[ [ 5 ~" ................... "page-up"
+    "C-[ [ C" ..................... "right"
+    "C-[ [ A" ..................... "up"
+    "C-[ [ V" ..................... "page-up"
+    "C-[ [ U" ..................... "page-down"
+    "C-m" ......................... "return"
+    "C-i" ......................... "tab"
+    "\\x7F" ........................ "backspace"
+.CE 0
+.SS "FOREIGN KEYBOARDS"
+Foreign  keyboards  (non-US/UK) use a variety of key sequences, not recognized
+by  \*(mS, to  expand  the  keyboard  character  range to cope  with  accented
+characters. For example, on a German keyboard  '\fCAltGr-m\fR'  (recognized as
+\'\fCA-C-m\fR')  is used to  insert a Greek mu (or  micro  sign). On a  Belgian
+keyboard \&'\fCAltGr-9\fR' inserts a '{' character.
+.PP
+Many  foreign  keyboards  are  already  directly  supported  by \*(mS  and the
+keyboard  specifics  of a  country  have  been  understood  and  resolved.  In
+these cases the \fBKeyboard\fR configuration in
+.Ht user-setup 3
+may be used for the country location.
+.PP
+If \*(mS does not support your  keyboard,  \fBtranslate-key\fR  may be used to
+fix any key input  problems.  For the  aforementioned  examples the  following
+\fBtranslate-key\fR commands would be required:
+.Me $emf-scheme
+.CS
+; translate AltGr-m to a Greek mu (char 0xb5)
+translate-key "A-C-m" "\\xB5"
+; translate AltGr-9 to a '{'
+translate-key "A-C-9" "{"
+.CE
+.Me $ehf-scheme
+The problem is  complicated  further on  Microsoft  Window's  platforms by the
+simultaneous  generation of 2 keys for some Alt-Gr key combinations (this is a
+side  effect  of  endeavoring  to  capture  all  key   combinations   in  this
+environment).  For  the  Belgian  keyboard  example,  on  Win32  platforms  an
+\'\fCAltGr-9\fR'  generates an '\fCA-C-9\fR' key first followed  immediately by
+an  '\fCA-C-{\fR'.  As both keys are  generated  in quick  succession  this is
+unexpected and confusing.
+.PP
+When the key is first pressed on a poorly configured system the error
+.\"
+"\fI[Key not bound "A-C-{"]\fR" is given even when using the command
+.Ht describe-key 2
+as the key described will be '\fCA-C-9\fR'  and then the  '\fCA-C-{\fR' key is
+generated and interpreted creating the error message.
+.PP
+The variable
+.Ht $recent-keys 5
+can be used to  diagnose  this  problem  and to obtain  the 2 keys  generated;
+alternatively use the macro below:
+.Me $emf-scheme
+.CS
+define-macro report-2-keys
+    ml-write "Press key 1"
+    set-variable #l0 @cgk
+    ml-write "Press key 2"
+    set-variable #l1 @cgk
+    ml-write &spr "[The following keys where pressed: \\"%s\\" \\"%s\\"]" #l0 #l1
+!emacro
+.CE
+.Me $ehf-scheme
+When  executed  the user is prompted for the first key; press the required key
+sequence  (in this  case  '\fCAltGr-9\fR'),  if you are not  prompted  for the
+second key and the result is immediately returned then the key you pressed has
+generated 2 keys, both of which will be given in the print out, i.e.:
+.CS
+"[The following keys where pressed: "A-C-9" "A-C-{"]"
+.CE
+The translate-key required to fix this type of problem would be:
+.Me $emf-scheme
+.CS
+translate-key "A-C-9 A-C-{" "{"
+.CE
+.Me $ehf-scheme
+If your  keyboard  is not  directly  supported  by \*(mS,  please  submit  the
+keyboard name and platform with a working translate-key configuration to
+.Hl JASSPA Contact -
+as a \fBBUG\fR.
+.SS "UNIX TERMCAP"
+.B translate-key
+may also be used to  interpret  non-standard  key  sequences  for  \s-1UNIX\s0
+termcap  platforms  to  standard  \*(mS keys.  Non-standard  keys, such as the
+cursor keys, have system  dependent key  sequences. The output from these keys
+usually take the form:
+.IP
+\fC^[[X\fR or \fC^[[DX\fR or \fC^[[DDX\fR or \fC^[[DDD\fR
+.LP
+where  \fB^[\fR is the escape key (27),  \fBD\fR is a digit and \fBX\fR is any
+character.  These  keys may be bound to the  standard  keys, for  example  the
+typical output of the cursor keys may be translated as follows:-
+.IP
+\fC^[[A\fR = \fBup\fR,  \fC^[[B\fR = \fBdown\fR,  \fC^[[C\fR = \fBright\fR and
+\fC^[[D\fR = \fBleft\fR
+.LP
+The  "\fIfrom\fR"  string is specified as this key sequence and the "\fIto\fR"
+string is simply the key it is to be bound to, see
+.Ht global-bind-key 2
+for a guide to the string  format. For the above  example the following set of
+translations are required:-
+.Me $emf-scheme
+.CS
+.ne 4
+translate-key "esc [ A" "up"
+translate-key "esc [ B" "down"
+translate-key "esc [ C" "right"
+translate-key "esc [ D" "left"
+.CE
+.Me $ehf-scheme
+Note that \*(mS interprets  \fC\\e\fR as an escape key. More obscure keys tend
+to be very platform specific, following are some examples:
+.Me $emf-scheme
+.CS
+.ne 3
+translate-key "esc [ 2 ~" "insert"
+translate-key "esc [ 5 ~" "page-up"
+translate-key "esc [ 5 ^" "C-page-up"
+.CE 0
+.Me $ehf-scheme
+.SH EXAMPLE
+Using the +ve numeric argument it is possible to reduce the delay and there by
+increase usability is some features. For instance, in the Mouse  configuration
+of  \fBuser-setup\fR  there  is  an  option  to  'Simulate  3  Buttons'  which
+translates  a rapid left and right  button press into a middle  button  press.
+This is implemented using \fBtranslate-key\fR as follows:
+.Me $emf-scheme
+.CS
+10 translate-key "mouse-pick-1 mouse-pick-3" "mouse-pick-2"
+10 translate-key "mouse-pick-3 mouse-pick-1" "mouse-pick-2"
+10 translate-key "mouse-drop-1 mouse-drop-3" "mouse-drop-2"
+10 translate-key "mouse-drop-3 mouse-drop-1" "mouse-drop-2"
+.CE
+.Me $ehf-scheme
+When  a  \fCmouse-pick-1\fR  key is  generated  \*(mS  must  wait  to see if a
+\fCmouse-pick-3\fR  key is  next  and  therefore  translate  both to a  single
+\fCmouse-pick-2\fR  key. This wait time is  usually a quarter  of a second but
+this makes the left button  unusable for dragging  regions etc as the delay is
+too  long. By  giving  a  argument  of 10ms  the  delay is long  enough  for a
+simultaneous  left and right button press but short enough for the left button
+to still be usable on its own.
+.PP
+The +ve numeric  argument  can be very useful for delaying  \*(mS as well, for
+example, the character  string "\fC'e\fR" can be converted to e-accute using
+.Ht iso-accents-expand 3 .
+This could be performed automatically using translate-key as follows:
+.Me $emf-scheme
+.CS
+1000 translate-key "' e" "\\xE9"
+.CE
+.Me $ehf-scheme
+The  larger 1 second  delay give the user  enough  time to type the  '\fCe\fR'
+after the '\fC'\fR' character.
+.SH NOTES
+.PP
+The concept of standardized  key-bindings is very important for cross platform
+use and maintenance.
+.PP
+Refer to
+.Ht global-bind-key 2
+for a list of standard bindings.
+.PP
+One of the easiest ways of obtaining a key sequence is to run
+.Hr sh 1
+which  does not  attempt  to  interpret  these  keys so when a key is  pressed
+(followed by  \fC<RETURN>\fR)  the following  type of error message is usually
+generated:-
+.CS
+sh: ^[[2~:  not found.
+.CE
+where  \fC^[[2~\fR is the required key sequence.  Another  method of obtaining
+these key sequences is to start \*(mE, use
+.Ht start-kbd-macro 2
+to start a macro definition, press the required keys and then use
+.Ht end-kbd-macro 2
+followed by
+.Ht name-kbd-macro 2
+and
+.Ht insert-macro 2
+to display the keys pressed.
+.PP
+The key  sequences  generated  for these  keys are  dependent  on the  machine
+displaying \*(mE as opposed to the machine running it. Often they are the same
+machine,  but when  they are not there is no easy  method of  determining  the
+displaying machine and therefore correctly configuring \*(mE.
+.PP
+A better way of  obtaining  this cross  platform  consistency  is to create an
+XTerm  app-defaults  setup file with the correct VT100 key translations,  e.g.
+the setup file could contain the following
+.CS
+*vt100.translations: #override \\
+	Shift<Key>Tab:		string("\\033[Z") \\n\\
+	<Key>BackSpace:		string("\\177") \\n\\
+	<Key>Delete:		string("\\033[1~") \\n\\
+	<Key>Insert:		string("\\033[2~") \\n\\
+	<Key>Home:		string("\\033[3~") \\n\\
+	<Key>End:		string("\\033[4~") \\n\\
+	<Key>Prior:		string("\\033[5~") \\n\\
+	<Key>Next:		string("\\033[6~") \\n\\
+	Ctrl<Key>Up:		string("\\033Oa") \\n\\
+	Ctrl<Key>Down:		string("\\033Ob") \\n\\
+	Ctrl<Key>Right:		string("\\033Oc") \\n\\
+	Ctrl<Key>Left:		string("\\033Od") \\n\\
+	Shift<Key>Up:		string("\\033[a") \\n\\
+	Shift<Key>Down:		string("\\033[b") \\n\\
+	Shift<Key>Right:	string("\\033[c") \\n\\
+	Shift<Key>Left:		string("\\033[d") \\n
+.CE
+By using the  environment  variable  \fIXUSERFILESEARCHPATH\fR  to ensure that
+this  configuration  file  is  found  instead  of the  system  one  (found  in
+\fC/usr/lib/X11/app-defaults\fR),  the key  sequences  will  then be the  same
+across all platforms. See manual page on
+.Hr xterm 1
+for more information.
+.SH "SEE ALSO"
+.na
+.Ht user-setup 3 ,
+.Ht describe-key 2 ,
+.Ht global-bind-key 2 ,
+.Ht start-kbd-macro 2 ,
+.Hr xterm 1 ,
+.Hr sh 1 .
+.ad
+.FH

@@ -1,0 +1,32 @@
+.\" -*- nroff -*-
+.Id $Id: m2mod014.2,v 1.1.1.1 2000-07-25 22:03:58 jon Exp $
+.Im MicroEmacs modes
+.so me.tni
+.TH undo 2m
+.XI undo - "Retain edit modifications"
+.SH NAME
+undo \- Retain edit modifications
+.SH SYNOPSIS
+.B "undo Mode"
+.sp
+\fBU\fR \- mode line letter.
+.SH DESCRIPTION
+.B undo
+mode, when enabled, stores a history of all user edits so that the command
+.Ht undo 2
+may be used to undo the last  \fIn\fR  edits to a buffer.  If this mode is not
+enabled the \fBundo\fR command has no effect.
+.PP
+Obviously memory is required to store this information,  particularly  storing
+deleted,  reformed or replaced text, users editing large files or operating in
+restricted memory environments may wish to use this mode selectively.
+.SH NOTES
+The \fBundo\fR  information  is flushed, and is effectively  lost, when a save
+operation is performed on the buffer.
+.SH "SEE ALSO"
+.na
+.Ht buffer-mode 2 ,
+.Ht global-mode 2 .
+.Ht undo 2 .
+.ad
+.FH

@@ -1,0 +1,33 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd000.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|essential
+.ds C0 "(\fB\*cg\fR)\ \&
+.so me.tni
+.TH abort-command 2
+.XI abort-command - "\*(C0Abort command"
+.SH NAME
+abort-command \- Abort command
+.Me $a
+.SH SYNOPSIS
+\fBabort-command\fR \*(C0
+.SH DESCRIPTION
+Aborts the current  command, when in trouble, this command will usually  limit
+the  damage. If you find  yourself  in a position  where you do not want to be
+then this  command  will  usually  take you back to a sane state. This command
+rings the bell and stops keyboard macros.
+.PP
+Avoid re-binding this key where possible as it is used in other places.
+.PP
+When
+.B abort-command
+is  invoked  a warning is automatically given alerting  the user, this may be
+an audible or a visual warning depending on the global state of the
+.Ht quiet 2m
+mode.
+.SH "SEE ALSO"
+.na
+.Ht buffer-mode 2 ,
+.Ht quiet 2m .
+.ad
+.rm C0
+.FH

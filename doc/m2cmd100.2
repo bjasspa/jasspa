@@ -1,0 +1,25 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd100.2,v 1.1.1.1 2000-07-25 22:03:56 jon Exp $
+.Im MicroEmacs command|macrodevelop
+.so me.tni
+.TH popup-window 2
+.XI popup-window - "Pop-up a window on the screen"
+.SH NAME
+popup-window \- Pop-up a window on the screen
+.Me $a
+.SH SYNOPSIS
+.na
+.B popup-window
+"\fIname\fR"
+.ad
+.SH DESCRIPTION
+.B popup-window
+manages  the display of a new window on the screen. If only one window  exists
+then it will be split else the current window will changed to one of the other
+existing  visible  windows. If the given buffer name  "\fIname\fR" is not null
+("") then the buffer is created, if it does not exist, and swapped in.
+.SH "SEE ALSO"
+.na
+.Ht find-buffer 2 .
+.ad
+.FH

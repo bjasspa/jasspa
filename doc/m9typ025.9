@@ -1,0 +1,116 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1999 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m9typ025.9
+.\"  Created By    : Jon Green
+.\"  Created       : Sat Feb 6 14:22:09 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m9typ025.9,v 1.1.1.1 2000-07-25 22:04:09 jon Exp $
+.Im MicroEmacs
+.so me.tni
+.TH html 9
+.XI html - "HyperText Markup Language File" filetype
+.XI htm - "HyperText Markup Language File" filetype
+.XI %html-author 5 "Edit mode of HTML files" variable
+.SH SYNOPSIS
+html \- HyperText Markup Language File.
+.SH FILES
+.na
+.B hkhtml.emf
+\- HyperText Markup Language file hook definition
+.ad
+.SH EXTENSIONS
+.na
+\fB.htm\fR, \fB.html\fR \- HyperText Markup Language File.
+.br
+\fB.htp\fR \- \fI[Special]\fR Super HTML Preprocessor file.
+.br
+\fB.hts\fR \- \fI[Special]\fR Super HTML file.
+.ad
+.SH "MAGIC STRINGS"
+.TP
+\fB<html>\fR
+.\"
+\*(mE recognizes the magic string on any of the first 4 lines of the file. The
+HTML files may be extension-less and are still recognized.
+.SH DESCRIPTION
+The \fBhtml\fR file type template  provides  simple  hilighting of HTML files.
+Additionally, \*(mE is capable of rendering simple HTML files (without graphic
+content)  into the current  buffer and follow the hyper text links. The JASSPA
+HTML documentation may be viewed in this way.
+.IP "\fBGeneral Editing\fR"
+HTML files may be edited or processed and rendered into the buffer. The
+variable \fB%html-author\fR determines the edit mode on loading a HTML file;
+a value of \fB0\fR and the page is rendered,  \fB1\fR and the raw HTML file is
+presented. The default state is \fC1\fR. The author status is modified in
+.Ht user-setup 3 .
+.IP  \fBHilighting\fR
+The  hilighting  features allow  commands,  variables,  logical,  preprocessor
+definitions,   comments,   strings  and  characters  of  the  language  to  be
+differentiated and rendered in different colors.
+.IP "\fBShort Cuts\fR"
+The short cut keys used within the buffer are:-
+.IP
+\fB\*cc \*ch\fR \- Help information.
+.br
+\fB\*cc \*ca\fR \- Toggle the HTML author status.
+.br
+\fBhtml-spell-check-word\fR \- spell check the current word.
+.IP "\fBRendered Mode\fR"
+In the non-author mode, the HTML file is extracted and rendered to the buffer.
+The hypertext  links may be followed by selecting them with the mouse or using
+the \fC<RETURN>\fR key.
+.IP
+The  rendered  mode is  typically  used to check  HTML text  after it has been
+authored  from the editor. The rendered  mode only caters for regular HTML 2.0
+text. It does not handle tables or frames etc. \fI(use a browser)\fR.
+.IP
+Toggling between rendered and authoring mode, then the buffer should be killed
+as the translation is only performed when the file is read.
+.IP
+The   non-author   mode   can  be   permanently   enabled   by   setting   the
+\fB%html-author\fR  variable to \fC0\fR.  When set to 0 any HTML files  loaded
+are automatically processed, and rendered according to their HTML content.
+.SH NOTES
+The
+.Hl print print-buffer 2
+driver may be used to generate  HTML from the  contents of the buffer.  Select
+the printer  destination  as  \fIbuffer\fR,  and \fIHTML\fR as the driver. The
+buffer being printed is converted to HTML and dumped in the print buffer.
+.PP
+\fB.hts\fR and \fB.htp\fR are computer generated extended HTML files used in the
+\*(mE documentation system.
+.SH BUGS
+None  reported.
+.SH "SEE ALSO"
+.na
+.Ht print-buffer 2 ,
+.Ht user-setup 3 .
+.sp 1
+.Hl "Supported File Types" FileTypes -
+.ad
+.FH

@@ -1,0 +1,81 @@
+.\" -*- nroff -*-
+.Id $Id: m5var028.5,v 1.1.1.1 2000-07-25 22:04:05 jon Exp $
+.Im MicroEmacs variable|paragraph
+.so me.tni
+.TH $fill-mode 5
+.XI $fill-mode - "Paragraph mode; justification method"
+.SH NAME
+$fill-mode \- Paragraph mode; justification method
+.Me $a
+.SH SYNOPSIS
+\fB$fill-mode\fR \fIjustification\fR; Default is \fCN\fR
+.sp
+.I justification 
+\fCb\fR | \fCc\fR | \fCl\fR | \fCn\fR | \fCo\fR | \fCr\fR |
+\fCB\fR | \fCC\fR | \fCL\fR | \fCN\fR | \fCR\fR
+.SH DESCRIPTION
+.B $fill-mode
+defines the justification mode i.e. \fIleft\fR/\fIright\fR/\fIboth\fR/...  The
+default value is none automatic (\fBN\fR). The modes available are:-
+.IP "\fBb\fR Both"
+Enables left and right margin justification.
+.IP "\fBc\fR Center"
+Enables center justification.
+.IP "\fBl\fR Left"
+Enables left justification.
+.IP "\fBn\fR None"
+No filling is  performed,  adjacent  lines are not merged into a single  line.
+This subtly different from \fIleft\fR justification which fills lines to the
+.Ht $fill-col 5 .
+.IP "\fBo\fR One Line"
+Enables  the filling of the  paragraph  to a single  line.  Typically  used to
+prepare a file for transfer to a word processing package.
+.IP "\fBr\fR Right"
+Enables right justification.
+.IP "\fBB\fR Both (automatic)"
+Automatically  determines  the  mode,  defaulting  to left  and  right  (both)
+justification.
+.IP "\fBC\fR Center (automatic)"
+Automatically determines the mode, defaulting to center justification.
+.IP "\fBL\fR Left (automatic)"
+Automatically determines the mode, defaulting to left justification.
+.IP "\fBN\fR None (automatic)"
+Automatically determines the mode, defaults to \fIboth\fR and not \fInone\fR.
+.IP "\fBR\fR Right (automatic)"
+Automatically determines the mode, defaulting to right justification.
+.LP
+The lines are automatically justified only when the justification mode
+.Ht justify 2m
+is enabled.  Justification  is performed  between the left and right  margins,
+defined as 0 and
+.Ht $fill-col 5
+respectively.
+.SS "Automatic Filling"
+Automatic filling is performed when the mode  \fB$fill-mode\fR is specified in
+upper case. The format of the line (and adjacent lines) is interrogated and an
+\fIinformed\fR  guess  is  made as to the  expected  formating  which  is then
+adopted. The criteria for automatic formatting is defined as follows:-
+.IP \fIcenter\fR
+If the left and right margins contain  approximately  the same amount of white
+space +/-1 character then the paragraph is centered.
+.IP \fIright\fR
+If the text commences past half of the
+.Ht $fill-col 5
+(i.e.  first  half of the line  comprises  white  space)  \s-1AND\s0  the line
+extends to, or past, the  \fC$fill-col\fR  then the paragraph is assumed to be
+right justified.
+.IP \fInone\fR
+If the text commences in column 0 and occupies less than half of the line then
+the  paragraph  is  assumed to be not  justified.  (i.e. left  justified,  but
+consecutive lines of the paragraph are not filled)
+.IP "\fIdefault\fR"
+If none of the above  criteria  are met then the  default  mode is adopted, as
+determined by the lower-case value of the \fB$fill-mode\fR value.
+.SH "SEE ALSO"
+.na
+.Ht $fill-col 5 ,
+.Ht buffer-mode 2 ,
+.Ht fill-paragraph 2 ,
+.Ht justify 2m .
+.ad
+.FH

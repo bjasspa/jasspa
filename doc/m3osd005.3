@@ -1,0 +1,210 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			     Copyright 1999 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m3osd005.3
+.\"  Created By    : Jon Green
+.\"  Created       : Mon Feb 1 20:28:17 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m3osd005.3,v 1.1.1.1 2000-07-25 22:04:02 jon Exp $
+.Im MicroEmacs command|osd|hilight
+.so me.tni
+.TH scheme-editor 3
+.XI scheme-editor - "Color Scheme Editor"
+.SH NAME
+scheme-editor \- Color Scheme Editor
+.Me $a
+.SH SYNOPSIS
+.na
+.B scheme-editor
+.ad
+.SH DESCRIPTION
+\fBscheme-editor\fR  is a color scheme editor that provides a dialog interface
+to configure  the color  schemes used by the editor. The color  schemes may be
+created  or  modified  within  the  scheme  editor and then  committed  to the
+configuration files for general use.
+.PP
+The color schemes are typically  stored in the \fCmacros\fR  directory and are
+executed  as  macro  files  at  start  up. The  standard  schemes  are  called
+\fBscheme\fR\|\fIX\fR\|\fB.emf\fR.
+.PP
+The   \fBscheme-editor\fR  is  displayed  within  a  single  dialog  box,  tab
+selections at the top of the dialog box enable  \fBcolor\fR  and  \fBscheme\fR
+creation  and/or  modification.  Navigation is typically  performed  using the
+mouse,  where the mouse is absent then the  \fCTAB\fR  key may be used to move
+between the fields. The information presented is defined as follows:-
+.IP "\fBFile Name\fR"
+The  name  of the  color  scheme  to be  modified.  This  is the  name  of the
+\fBscheme\fR\|\fIX\fR\|\fB.emf\fR  file,  omitting  the  file  extension.  The
+standard color schemes supplied with \*(mE are:-
+.RS
+.BS
+\fCschemed\fR \- Default white on black.
+.BU
+\fCschemej\fR \- Black on cream.
+.BU
+\fCschemevi\fR \- GVim default color scheme
+.BU
+\fCschemepd\fR \- Plain Black on Cream
+.BU
+\fCschemepl\fR \- Plain White on Black
+.BU
+\fCschemel\fR \- Black on grey.
+.BU
+\fCschememd\fR \- Microsoft Developer Studio Colors.
+.BE 0
+.RE
+.IP "\fBDescription\fR"
+An ASCII description of the color scheme, used to identify the color scheme.
+.IP "\fBBuffer Hilight\fR"
+Defines whether buffer hilighting should be enabled, when
+\fICompletely  Disable\fR all buffers are displayed character for character in
+the standard text scheme, this will ensure maximum update performance but some
+file formats such as the on-line help will become unreadable so this option is
+really  selected.  Similarly  \fIReformat  Only\fR  disables  the  majority of
+buffers,  hilighting is only enabled when the file would be unreadable without
+it, such as the on-line help or man page files. The default
+\fIFully Enabled\fR setting enables all buffer hilighting.
+.SS Colors
+The  \fBcolors\fR  tab  allows  the basic  palette  colors of the editor to be
+created and modified. The  left-hand  side of the dialog  contains a scrolling
+window  containing  the existing  color  entries. The  right-hand  side of the
+dialog  provides  the  controls  to add and change the color  assignment.  The
+controls operate on the currently selected palette entry.
+.IP \fBAdd\fR
+Creates and adds a new color entry into the palette. The new palette  entry is
+created with a default color that may be subsequently modified.
+.IP \fBChange\fR
+Commits the current selection color to the palette.
+.IP "\fBRed\fR/\fBGreen\fR/\fBBlue\fR"
+The color  entries  allow the  currently  selected  palette  color entry to be
+modified. The color values may be changed by direct  numeric entry (0..255) or
+via the ^/v  controls;  the  color is  committed  to the  pallette  using  the
+\fBAdd\fR or \fBChange\fR button.
+.SS Schemes
+The  \fBschemes\fR  tab allows the color  schemes to be edited. The  left-hand
+side of the dialog contains a scrolling  window of the available color palette
+(created from the  \fBColors\fR  tab). The right-hand side of the window shows
+the variants of the color scheme.
+.IP "\fBSelection\fR"
+The  \fBselection\fR  item provides a pull-down  menu  containing  gross color
+scheme categories used by the editor.
+.IP \fBScheme\fR
+A pull-down menu containing the color schemes of the selection, modifying this
+entry  shows the  variants of the scheme in the  \fBNormal\fR,  \fBCurrent\fR,
+\fBSelect\fR and \fBSel-Cur\fR dialogs.
+.LP
+There are 4 variants of a single color  scheme; each variant is comprised of a
+foreground  and  background  color,  additionally a  \fITermcap\fR  hilighting
+classification may be assigned to the variant, which is used in the absence of
+(or in  addition  to) color. The variant of color  displayed  by a  particular
+scheme depends upon the selection/current status of the text.
+.IP \fBNormal\fR
+The normal color, when the text object is not selected or current (i.e. out of
+focus).
+.IP \fBCurrent\fR
+The scheme color when the text object is current (i.e. in focus)
+.IP \fBSelect\fR
+The scheme  color when the text object is selected  (i.e. by the mouse) and is
+not current.
+.IP \fBSel-Cur\fR
+The scheme color when the text object is selected and is current.
+.LP
+The \fITermcap\fR  hilighting assignments are indicated by the alphabetic mode
+selection \fCBILRUV\fR, which are interpreted as follows:-
+.IP
+\fCB\fR \- Bold.
+.br
+\fCI\fR \- Italic (typically displayed as underline).
+.br
+\fCL\fR \- Light (typically not supported).
+.br
+\fCR\fR \- Reverse video (fore/back-ground swapped).
+.br
+\fCU\fR \- Underline.
+.br
+\fCV\fR \- Toggle reverse video when inverted.
+.LP
+None, one or more of the \fITermcap\fR modes may be applied to a single scheme
+variant. The last mode \fBV\fR needs a little more explanation;  commands such
+as
+.Ht screen-poke 2
+are  able to  invert  the  color  scheme,  i.e.  use the  fore  color  for the
+background  etc.  Enabling  this  mode will  toggle  the  reverse  video  mode
+(\fBR\fR) when this feature is used.
+.PP
+Setting of the  \fBselection\fR  and \fBscheme\fR  shows the current scheme in
+the \fBNormal\fR,  \fBCurrent\fR,  \fBSelect\fR and \fBSel-Cur\fR dialogs. New
+colors are  assigned by  selecting a color in the pallette  area and making it
+current. The current color is applied by selecting the \fBFore\fR / \fBBack\fR
+boxes of the scheme dialog. The assigned color is displayed in the text box
+.IR "The big brown ..." .
+.SS Controls
+The controls at the bottom of the dialog apply the edits to the  configuration
+files.
+.IP \fBCurrent\fR
+Makes the changes to the pallette and schemes current, they are applied to the
+current  editing  session  but are not  committed  to file.  This  allows  the
+pallette  changes to be used prior to commitment. Note that all  modifications
+are lost if they are not saved and the editing session is terminated.
+.IP \fBSave\fR
+Saves  the  color  modifications  to  file,  effectively  making  the  changes
+permanent.  Note however that the scheme macro file will be saved in the first
+directory in the
+.Ht $search-path 5 ,
+regardless of the location of the original. For network systems this typically
+means that the changes will only effect the current user.
+.IP \fBInstall\fR
+Installs the current  color scheme into the  configuration  files,  making the
+color scheme accessible to the
+.Ht user-setup 3
+dialog.
+.IP \fBExit\fR
+Quits the scheme editor without modifying the settings.
+.SH FILES
+\fCschemed.emf\fR \- Default white on black color scheme.
+.br
+\fCschemej.emf\fR \- Black on cream color scheme.
+.br
+\fCschemel.emf\fR \- Black on grey color scheme.
+.br
+\fCschememd.emf\fR \- Microsoft Developer Studio color scheme.
+.br
+\fCscheme.emf\fR \- Defines the standard color scheme variables and associated
+text. The print <=> scheme assignments are made in this file.
+.SH NOTES
+\fBscheme-editor\fR is a macro that is implemented in file \fCschemosd.emf\fR.
+The scheme editor uses
+.Ht osd 2
+to create and manage the dialogs.
+.SH "SEE ALSO"
+.na
+.Ht user-setup 3 ,
+.Ht add-color 2 ,
+.Ht add-color-scheme 2 ,
+.Ht osd 2 .
+.ad
+.FH

@@ -1,0 +1,76 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil007.4,v 1.1.1.1 2000-07-25 22:04:02 jon Exp $
+.Im MicroEmacs macro;directive|miscellaneousOperators
+.so me.tni
+.TH !force 4
+.XI !force - "Ignore command or macro status"
+.SH NAME
+!force \- Ignore command or macro status
+.SH SYNOPSIS
+.na
+.B !force
+[\fIn\fR]
+.I command
+.ad
+.SH DESCRIPTION
+.B !force
+ignores the return  status of a  \fIcommand\fR  while  executing a macro. When
+\*(mE  executes a macro, if any command fails, the macro is terminated at that
+point. If a line is preceded by a \fB!force\fR  directive, execution continues
+whether the command succeeds or not.
+.Ht $status 5
+may be used following \fB!force\fR to determine if the command failed or not.
+.PP
+A double \fB!force\fR can be used to catch a user termination (via the
+.Ht abort-command 2
+bound to  \fCC-g\fR). A macro  command  aborted by the user will be terminated
+even with a single !force directive, but not with two. See the example below.
+.PP
+When specifying a numerical  argument with a \fIcommand\fR, it is placed after
+the \fI!force\fR directive and before the \fIcommand\fR i.e.
+.Me $emf-scheme
+.CS
+!force 1 forward-char
+.CE 0
+.Me $ehf-scheme
+.SH EXAMPLE
+The following example shows how \fB!force\fR is used in conjunction with
+\fB$status\fR.
+.Me $emf-scheme
+.CS
+;	Merge the top two windows
+
+set-window		;remember what window we are at
+1 next-window		;go to the top window
+delete-window		;merge it with the second window
+!force goto-window	;This will continue regardless
+!if $status
+    ml-write "Call PASSED"
+!else
+    ml-write "Call FAILED"
+!endif
+.CE
+The following  example creates an infinite loop that can only be broken out of
+by a user abort. The calling macro catches this by using a double \fB!force\fR
+and  continues.  This  concept is used by commands  which take a  considerable
+amount  of  time  yet  cannot  be  simply  aborted  by the  user  such  as the
+spell-checker's best guess list generator.
+.CS
+define-macro infinite-loop
+    set-variable #l0 1
+    !while 1
+        ml-write &cat "In loop, C-g to exit: " &pinc #l0 1
+    !done
+!emacro
+
+define-macro catch-abort
+    !force !force infinite-loop
+    ml-write "You will see this"
+!emacro
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Ht $status 5 .
+.ad
+.FH

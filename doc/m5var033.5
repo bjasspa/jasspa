@@ -1,0 +1,47 @@
+.\" -*- nroff -*-
+.Id $Id: m5var033.5,v 1.1.1.1 2000-07-25 22:04:05 jon Exp $
+.Im MicroEmacs variable|macrodevelop
+.so me.tni
+.TH $mouse-x 5
+.XI $mouse-x - "Mouse X (horizontal) position"
+.XI $mouse-y - "Mouse Y (vertical) position"
+.SH NAME
+.Me "|$mouse-x"
+$mouse-x \- Mouse X (horizontal) position
+.br
+.Me "|$mouse-y"
+$mouse-y \- Mouse Y (vertical) position
+.Me $a
+.SH SYNOPSIS
+\fB$mouse-x\fR \fIinteger\fR
+.sp
+0 <= \fIinteger\fR <= 
+.Hl "$screen-width" $screen-width  5
+\- 1
+.sp
+\fB$mouse-y\fR \fIinteger\fR
+.sp
+0 <= \fIinteger\fR <= 
+.Hl "$screen-depth" $screen-depth  5
+\- 1
+.SH DESCRIPTION
+.B $mouse-x
+and 
+.B $mouse-y
+are  automatically  set to the  position of the mouse at the last mouse event,
+where an event is a button press or release.  Initialized to 0,0. The top left
+character of the screen is coordinate 0,0 bottom right is
+.Hl $screen-width $screen-width 5 ,
+.Hl $screen-depth $screen-depth 5 .
+.SH NOTES
+These  variables  can not be set. Any  attempt  to set them will  result in an
+error.
+.SH "SEE ALSO"
+.na
+.Ht set-cursor-to-mouse 2 ,
+.Ht $mouse-pos 5 ,
+.Ht $cursor-x 5 ,
+.Ht $screen-depth 5 ,
+.Ht $screen-width 5 .
+.ad
+.FH

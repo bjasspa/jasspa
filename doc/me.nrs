@@ -1,0 +1,1611 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1999 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : me.nrs
+.\"  Created By    : Jon Green
+.\"  Created       : Mon May 24 17:48:03 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: me.nrs,v 1.1.1.1 2000-07-25 22:04:10 jon Exp $
+.Im MicroEmacs
+.so me.tni
+.\" me is a link burnt into executable (bind.c)
+.TH me - - - "MicroEmacs '00"
+.XI me - -
+.XI home - -
+.XI MicroEmacs - -
+.\" Next section (until .Ss) is for the osd-help contents page
+.Me "!   Contents"
+.Me "| home"
+.Me "MicroEmacs '00"
+.Me "|"
+.Me " "
+.Me "| osd-help(3)"
+.Me "    Help on help"
+.Me "| Help Information"
+.Me "    Help commands"
+.Me "| Frequently Asked Questions"
+.Me "    Frequently Asked Questions"
+.Me "| Installation"
+.Me "    Installation"
+.Me "| Contact Information"
+.Me "    Contact Information"
+.Me "| Copyright"
+.Me "    Copyright"
+.Me "|"
+.Me " "
+.Me "|"
+.Me "Contents"
+.Me "|"
+.Me " "
+.Me "| MainMenu(3)"
+.Me "    Top Main Menu"
+.Me "| Essential Commands"
+.Me "    Essential Commands"
+.Me "| Bindings(2)"
+.Me "    Key Bindings"
+.Me "|"
+.Me " "
+.Me "| File Handling Commands"
+.Me "    File Handling"
+.Me "| Dialogs and Menus"
+.Me "    Dialogs and Menus"
+.Me "| Cursor Movement Commands"
+.Me "    Cursor Movement"
+.Me "| Insertion and Deletion Commands"
+.Me "    Insertion and Deletion"
+.Me "| Paragraph and Text Formatting Commands"
+.Me "    Paragraph and Text Formatting"
+.Me "| Capitalization and Transposition Commands"
+.Me "    Capitalization and Transposition"
+.Me "| Searching and Replacing"
+.Me "    Searching and Replacing"
+.Me "| Macro Commands"
+.Me "    Macro Commands"
+.Me "| Buffer Manipulation Commands"
+.Me "    Buffer Manipulation"
+.Me "| Window Commands"
+.Me "    Window Manipulation"
+.Me "|"
+.Me " "
+.Me "| Keyboard Binding Commands"
+.Me "    Keyboard Binding"
+.Me "| Operating Modes"
+.Me "    Operating Modes"
+.Me "| Shell and Command Controls"
+.Me "    Shell and Command Controls"
+.Me "| Spelling Commands"
+.Me "    Spelling Commands"
+.Me "| Hilighting, Color and Screen Appearance"
+.Me "    Hilighting, Screen Appearance"
+.Me "| Comparison and Differencing"
+.Me "    Comparison and Differencing"
+.Me "| Short Cuts and Abbreviations"
+.Me "    Short Cuts and Abbreviations"
+.Me "| Message Line Commands"
+.Me "    Message Line Commands"
+.Me "| Printing Commands"
+.Me "    Printing"
+.Me "| Macro Development Commands"
+.Me "    Macro Development"
+.Me "| Registry"
+.Me "    Registry"
+.Me "| Command Line Filters"
+.Me "    Command Line Filters"
+.Me "| MicroEmacs '00 - Games"
+.Me "    Games"
+.Me "|"
+.Me " "
+.Me "|"
+.Me "Glossaries"
+.Me "|"
+.Me " "
+.Me "| Command Glossary"
+.Me "    Command Glossary"
+.Me "| Variable Glossary"
+.Me "    Variable Glossary"
+.Me "| Macro Language Glossary"
+.Me "    Macro Language Glossary"
+.Me "| Global Glossary"
+.Me "    Global Glossary"
+.Me "|"
+.Me " "
+.Me "|"
+.Me "Miscellaneous Information"
+.Me "|"
+.Me " "
+.Me "| languageTemplates(2)"
+.Me "    Language Templates"
+.Me "| fileHooks(2)"
+.Me "    File Hooks"
+.Me "| Editor File Types"
+.Me "    Editor Files"
+.Me "| Compatibility(2)"
+.Me "    Compatibility"
+.Me "| Interfacing(2)"
+.Me "    Interfacing to external components"
+.Me "| MicroEmacs '00 - Supported File Types"
+.Me "    Supported File Types"
+.Me "| Client-Server(2)"
+.Me "    Client-Server Interface"
+.Me "| RegularExpressions(2)"
+.Me "    Regular Expressions"
+.Me "| Build(2)"
+.Me "    Building the software"
+.Ss
+.\" Run in description mode for the searches.
+.\" Description mode includes the descriptions when generating indexes
+description
+.Se
+.SH "MICROEMACS"
+\fB\*(mE\fR, JASSPA Distribution, is defined as follows, refer to
+.Ht me 1
+for a description of the command line variables.
+.PP
+The following sections describe the topics that are available
+as part of the on-line \fB\*(mE\fR manual pages.
+.PP
+.Hl Acknowledgments Acknowledgments - ,
+.Hl Copyright Copyright - ,
+.Hl Origins Origins -
+and
+.Hl "Contact Information" Contact - .
+.br
+.Hl "Frequently Asked Questions" faq - .
+.PP
+See
+.Hl "Help!" HelpOnHelp -
+for some information on using the hypertext manual pages.
+.PP
+.RS
+.Hl "Installation Information" Installation 1
+.br
+.Hl "Setting Up A User Profile" UserProfiles 2
+.br
+.Hl "Setting Up a Company Profile" CompanyProfiles 2
+.PP
+.Hl "Top Main Menu" MainMenu 3
+.br
+.Hl "Essential Commands" EssentialCommands -
+.br
+.Hl "Help Information" HelpInformation -
+.br
+.Hl "Key Bindings" bindings 2
+.sp
+.Hl "File Handling Commands" FileHandling -
+.br
+.Hl "Dialogs and Menus" DialogMenu -
+.br
+.Hl "Cursor Movement Commands" CursorMovement -
+.br
+.Hl "Insertion and Deletion Commands" InsertionAndDeletion -
+.br
+.Hl "Paragraph and Text Formatting Commands" TextFormatting -
+.br
+.Hl "Capitalization and Transposition Commands" Transposition -
+.br
+.Hl "Searching and Replacing" Searching -
+.br
+.Hl "Macro Commands" MacroCommands -
+.br
+.Hl "Buffer Manipulation Commands" Buffers -
+.br
+.Hl "Window Commands" Windows -
+.sp
+.Hl "Keyboard Binding Commands" KeyboardBinding -
+.br
+.Hl "Operating Modes" Modes -
+.br
+.Hl "Shell and Command Controls" ShellCommands -
+.br
+.Hl "Spelling Commands" Spelling -
+.br
+.Hl "Hilighting, Color and Screen Appearance" Hilighting -
+.br
+.Hl "Comparison and Differencing Commands" Comparison - 
+.br
+.Hl "Short Cuts and Abbreviations" Abbreviations -
+.br
+.Hl "Message Line Commands" MessageLine -
+.br
+.Hl "Printing Commands" Printing -
+.br
+.Hl "Macro Development Commands" MacroDevelopment -
+.br
+.Hl "Registry Commands" Registry -
+.br
+.Hl "Command Line Filters" filters - 
+.br
+.Hl "Games" Games -
+.RE
+.SS "Glossaries"
+.Hl "Command Glossary" CommandGlossary -
+.br
+.Hl "Variable Glossary" VariableGlossary -
+.br
+.Hl "Macro Language Glossary" MacroGlossary -
+.br
+.Hl "Global Glossary" Glossary -
+.SS "Miscellaneous Information"
+The following topics provide more in depth information:-
+.PP
+.RS
+.Hl "Language Templates" languageTemplates 2
+.br
+.Hl "File Hooks" fileHooks 2
+.br
+.Hl "Editor Files" EditorFiles -
+.br
+.Hl "Compatibility with the original MicroEMACS" Compatibility 2
+.br
+.Hl "Interfacing to external components" Interfacing 2
+.br
+.Hl "Supported File Types" FileTypes -
+.br
+.Hl "Client-Server Interface" Client-Server 2
+.br
+.Hl "Regular Expressions" RegularExpressions 2
+.br
+.Hl "Building the source" Build 2
+.RE
+.NH HelpOnHelp - "Help!"
+.SH "Help!"
+The on-line manual pages are defined as follows:-
+.PP
+.RS
+.ps 12
+.vs 14
+[logo] \fBTitle\fR
+.br
+.ps 8
+.vs 10
+[link1][link2]..[linkn]
+.ps 10
+.vs 12
+.RE
+.PP
+The components of the header are defined as follows:-
+.IP \fI[logo]\fR
+The \*(mE  Logo in the top left hand corner of the screen exists on every
+page and hides a hypertext link. Selecting this item will take you back to the
+main
+.Hl "\*(mE" MicroEmacs -
+page (Only present on HTML and Windows help pages).
+.BP Title
+The title identifies the title of the topic that you are viewing.
+.BP [link]
+The link line  provides  quick links to other related  material in the on-line
+manual pages. Use these to take you to a chosen topic. The  \fB[home]\fR  link
+returns to the contents page of the currently viewed topic, this is equivalent
+to the \fBContents\fR button when viewing Microsoft Windows help files.
+.SS "Section Numbering"
+The section numbering conventions used in these pages is defined as follows:-
+.IP
+(1) \- Executable command line.
+.br
+(2) \- Editor built in commands.
+.br
+(2m) \- Editor built in modes.
+.br
+(3) \- Editor commands implemented as macros.
+.br
+(4) \- Editor macro language syntax
+.br
+(5) \- Editor variables
+.br
+(8) \- Editor specific file formats
+.NH EssentialCommands - "Essential Commands"
+.SH "ESSENTIAL COMMANDS"
+The very  essential  commands  which are the most  important  commands to know
+include:
+.PP
+.Ss
+search MicroEmacs 2 essential
+search MicroEmacs 3 essential
+output * "%N
+.Se
+.NH CursorMovement - "Cursor Movement Commands"
+.SH "CURSOR MOVEMENT COMMANDS"
+The  cursor  movement  commands  control  how the  cursor is moved  around the
+buffer.
+.SS Commands
+.Ss
+search MicroEmacs 2 cursor
+search MicroEmacs 3 cursor
+output * "%N
+.Se
+.SS Variables
+.Ss
+search MicroEmacs 5 cursor
+output * "%N
+.Se
+.NH InsertionAndDeletion - "Insertion and Deletion Commands"
+.SH "INSERTION AND DELETION COMMANDS"
+Commands that initiate insertion or deletion of text include:
+.SS Deletion
+.Ss
+search MicroEmacs 2 delete
+search MicroEmacs 3 delete
+output * "%N
+.Se
+.SS "Insertion"
+.Ss
+search MicroEmacs 2 insert
+search MicroEmacs 3 insert
+output * "%N
+.Se
+.SS "Variables"
+.Ss
+search MicroEmacs 5 insert
+search MicroEmacs 5 delete
+output * "%N
+.Se
+.NH TextFormatting - "Paragraph and Text Formatting Commands"
+.SH "PARAGRAPH AND TEXT FORMATTING COMMANDS"
+Commands that operate on paragraphs, and the layout of paragraphs:
+.SS Paragraph
+Paragraphs are separated by blank lines. A single  paragraph is defined as all
+of the text enclosed between two blank lines, with no intervening blank lines.
+.PP
+.Ss
+search MicroEmacs 2 paragraph
+search MicroEmacs 3 paragraph
+output * "%N
+.Se
+.SS "Regions and Marks"
+A region is the text  located  between the  \fBpoint\fR  (the  current  cursor
+position) and the \fBmark\fR defined by
+.Hl set-mark set-mark 2 .
+.PP
+.Ss
+search MicroEmacs 2 region
+search MicroEmacs 3 region
+output * "%N
+.Se
+.SS Variables
+.Ss
+search MicroEmacs 5 region
+search MicroEmacs 5 paragraph
+output * "%N
+.Se
+.NH Abbreviations - "Short Cuts and Abbreviations"
+.SH "SHORT CUTS"
+Automatic commands, history and automatic formatting modes such as
+.B "C-mode"
+(see
+.Ht cmode 2m ).
+.SS Commands
+.Ss
+search MicroEmacs 2 scuts
+search MicroEmacs 3 scuts
+output * "%N
+.Se
+.SS Variables
+.Ss
+search MicroEmacs 5 scuts
+output * "%N
+.Se
+.NH Registry - "Registry"
+.SH "REGISTRY"
+The  registry  commands  provide an  interface  to manage the  registry  files
+defined by
+.Ht erf 8 .
+The  registry  is a mechanism  which  allows the binding of  information  to a
+hierarchical  tree node,  using a file  system  metaphor  to access  the data.
+\fBMicroEmacs\fR  uses a  reserved  root node  \fChistory\fR  to save  session
+information (see
+.Ht save-history 2 ).
+.SS Commands
+.Ss
+search MicroEmacs 2 registry
+search MicroEmacs 3 registry
+output * "%N
+.Se
+.SS "Macro Functions"
+.Ss
+search MicroEmacs 4 registry
+output * "%N
+.Se
+.NH filters - "Command Line Filters"
+.SH "COMMAND LINE FILTERS"
+\*(mS may be  invoked  from the  command  line to  perform a  specific  set of
+filtering tasks, under control of a dedicated start up macro, see
+.Ht me 1 
+and
+.Ht start-up 3 .
+A  number  of  standard  macros  are  provided,  most  of  which  are  invoked
+automatically  from the editor itself when  requested by the user. Having said
+that, it has not been  unknown for a colleague  of mine to use the editor as a
+replacement for a more intelligent
+.Hr sed 1
+filter, with 12 hours to go and a huge ugly 3-D geometric database to convert,
+what  better  way than run it  through  a set of \*(mS  macros to turn it into
+another   database  format  that  can  be  handled  -  probably  not  for  the
+uninitiated, but that person did pull it off and went home for tea !!
+.SS "Macro Command Line Filters"
+.Ss
+search MicroEmacs 3f filter
+output * "%N
+.Se
+.SS "Macro Functions"
+.Ss
+search MicroEmacs 3 filter
+output * "%N
+.Se
+.SS "Macro Variables"
+.Ss
+search MicroEmacs 5 filter
+output * "%N
+.Se
+.NH Searching - "Searching and Replacing"
+.SH "SEARCHING AND REPLACING"
+Text searching and replacing commands:
+.PP
+.Ss
+search MicroEmacs 2 search
+search MicroEmacs 3 search
+output * "%N
+.Se
+.NH Comparison - "Comparison and Differencing"
+.SH "Comparison and Differencing"
+Commands that perform comparisons and differences:-
+.SS Commands
+.Ss
+search MicroEmacs 2 comparison
+search MicroEmacs 3 comparison
+output * "%N
+.Se
+.SS Variables
+.Ss
+search MicroEmacs 5 comparison
+search MicroEmacs 5 comparison
+output * "%N
+.Se
+.NH Hilighting - "Hilighting, Color and Screen Appearance"
+.SH "HILIGHTING, COLOR AND SCREEN APPEARANCE"
+Commands that change the hilighting, screen color and screen appearance:
+.SS Commands
+.Ss
+search MicroEmacs 2 hilight
+search MicroEmacs 2 indent
+search MicroEmacs 3 hilight
+search MicroEmacs 3 indent
+output * "%N
+.Se
+.SS Variables
+.Ss
+search MicroEmacs 5 hilight
+search MicroEmacs 5 indent
+output * "%N
+.Se
+.NH KeyboardBinding - "Keyboard Binding Commands"
+.SH "KEYBOARD BINDING COMMANDS"
+Keyboard  binding allows key strokes to be associated with commands and macros
+such that when a bound key stroke  sequence is recognized  its  associated (or
+bound) command is invoked, thereby controlling the editor. A set of
+.Hl "Default Bindings" bindings 2
+exist for \*(mE which may be altered  using the  binding  commands.  There are
+three types of key bindings:
+.IP "\fBGlobal\fR"
+Associates a key-stroke  with a command for all buffers. Used to establish the
+standard keyboard controls i.e. cursor movement, search, replace etc.
+.IP "\fBLocal\fR"
+Associates  a  key-stroke  with a command for a specified  buffer only, i.e. a
+binding local to the buffer. Local  bindings  allow macro  accelerators  to be
+bound to keys without  affecting other buffers  containing  different types of
+data. Local bindings are used extensively in the buffer hook commands.
+.IP "\fBMessage Line\fR"
+Associates  a key binding for use on the command line only,  allowing  command
+completion to be diverted etc.
+.PP
+To bind a command to a key, the command and key names must be known, see
+.Hl "Command Glossary" CommandGlossary -
+for a complete list of commands and
+.Hl "Key Names" keyNames 2
+for a complete list of key names.
+.LP
+The binding related commands are defined as follows:
+.SS Commands
+.Ss
+search MicroEmacs 2 bind
+search MicroEmacs 3 bind
+output * "%N
+.Se
+.SS Variables
+.Ss
+search MicroEmacs 5 bind
+.Se
+.SS "Alt Key"
+The
+.B "Alt Key"
+has special binding priorities defined as follows:-
+.BS
+Direct key binding (e.g. \fBA\-b\fR executes
+.Hl file-browser file-browser 3 )
+.BU
+Main menu hot key (e.g. \fBA\-f\fR opens the File menu)
+.BU
+Meta key binding (e.g. \fBA\-space\fR \-> \fBesc\ space\fR ->
+.Hl set-mark set-mark 2 )
+.BE
+If the  \fCALT\fR  key is to be used  strictly  as the Emacs Meta key then the
+bindings for the menu should be over-ridden by \fIDirect Key Bindings\fR  from
+the user  configuration  file i.e. to re-map the default MicroEmacs Alt key to
+equivalent \fCesc\fR keys then the following keys should be re-bound.
+.Me emf-scheme
+.CS
+global-bind-key forward-word "A-f"      ; Over-ride File menu binding
+:                                       ; For all of the other menu items.
+:
+global-bind-key backward-word "A-b"     ; Over-ride the file browser.
+global-bind-key replace-string "A-r"    ; Over-ride tools binding.
+.CE
+.Me ehf-scheme
+This creates a higher priority binding which overrides the underlying default.
+The commands that are displaced would have to be re-bound to different keys if
+required.
+.NH Buffers - "Buffer Manipulation Commands"
+.SH "BUFFER MANIPULATION COMMANDS"
+A buffer is where \*(mE stores text.  Normally text is read from a file and is
+visible in an editing
+.Hl window  Windows - .
+The name,  associated  file and  operating  modes of the buffer, are generally
+shown in the
+.Hl "mode line" modeline -  .
+.PP
+Commands that deal with buffers include:
+.SS Commands
+.Ss
+search MicroEmacs 2 buffer
+search MicroEmacs 3 buffer
+output * "%N
+.Se
+.SS Variables
+.Ss
+search MicroEmacs 5 buffer
+output * "%N
+.Se
+.NH Transposition - "Capitalization and Transposition Commands"
+.SH "CAPITALIZATION AND TRANSPOSITION COMMANDS"
+Commands to change the capitalization and transposition of text:
+.PP
+.Ss
+search MicroEmacs 2 capital
+search MicroEmacs 2 transposition
+search MicroEmacs 3 capital
+search MicroEmacs 3 transposition
+output * "%N
+.Se
+.NH FileHandling - "File Handling Commands"
+.SH "FILE HANDLING COMMANDS"
+Commands to read, write and interact with files:
+.SS Commands
+.Ss
+search MicroEmacs 2 file
+search MicroEmacs 3 file
+output * "%N
+.Se
+.SS Variables
+.Ss
+search MicroEmacs 5 file
+output * "%N
+.Se
+.Hl "Dialogs and Menus" DialogMenu -
+.NH DialogMenu - "Dialogs and Menus"
+.SH "DIALOGS AND MENUS"
+Menus and dialogs in the system:
+.SS Commands
+.Ss
+search MicroEmacs 2 osd
+search MicroEmacs 3 osd
+output * "%N
+.Se
+.SS Variables
+.Ss
+search MicroEmacs 5 osd
+output * "%N
+.Se
+.NH EditorFiles - "Editor File Types"
+.SH "EDITOR FILE TYPES"
+Different file types used by \*(mE:
+.PP
+.Ss
+search MicroEmacs 8 files
+output * "%N
+.Se
+.NH Spelling - "Spelling Commands"
+.SH "SPELLING COMMANDS"
+Commands related to spelling:
+.SS Commands
+.Ss
+search MicroEmacs 2 spell
+search MicroEmacs 3 spell
+output * "%N
+.Se
+.SS Variables
+.Ss
+search MicroEmacs 5 spell
+output * "%N
+.Se
+.NH MacroCommands - "Macro Commands"
+.SH "MACRO COMMANDS"
+Everyday macro commands used by the user. See
+.Hl "Macro Development Commands" MacroDevelopment -
+for commands related to macro development.
+.SS Commands
+.Ss
+search MicroEmacs 2 macro
+search MicroEmacs 3 macro
+output * "%N
+.Se
+.SS Variables
+.Ss
+search MicroEmacs 5 macro
+output * "%N
+.Se
+.NH MacroDevelopment - "Macro Development Commands"
+.SH "MACRO DEVELOPMENT COMMANDS"
+Commands used in macro  development, and more  specialized  commands which are
+only invoked from macros. Refer to
+.Hl "Macro Commands" MacroCommands -
+for keyboard macros etc.
+.PP
+An additional set of commands for use with macros is outlined in the
+.Hl "Introduction to Variable Functions" Functions -
+section. The
+.Hl "Macro Language Glossary" MacroGlossary -
+contains a full list of macro related commands and special variables.
+.SS Commands
+.Ss
+search MicroEmacs 2 macrodevelop
+search MicroEmacs 3 macrodevelop
+output * "%N
+.Se
+.SS Variables
+.Ss
+search MicroEmacs 5 macrodevelop
+output * "%N
+.Se
+.NH HelpInformation - "Help Information"
+.SH "HELP INFORMATION"
+Commands to retrieve on-line help information and status.
+.PP
+.Ss
+search MicroEmacs 2 help
+search MicroEmacs 3 help
+output * "%N
+.Se
+.NH Modes - "Operating Modes"
+.SH "OPERATING MODES"
+.B Modes
+are switches (or states) that may be applied globally or on a per buffer basis
+whose settings  determine how \*(mE operates.  Modes affect  operations within
+a buffer, global modes determine the modes of newly created buffers.
+.PP
+Commands to alter the operating state:
+.PP
+.RS
+.Ss
+search MicroEmacs 2 modes
+search MicroEmacs 3 modes
+output * "%N
+.Se
+.RE
+.SS "Modes"
+The operating modes are defined as follows:
+.PP
+.RS
+.Ss
+search MicroEmacs 2m modes
+output * "%N
+.Se
+.RE
+.SS "Mode Line"
+The buffer modes may be shown on the
+.Hl "mode line" modeline -
+as single letter mnemonics as follows:-
+.IP
+\fBA\fRuto, \fBa\fRutosv, \fBB\fRackup, \fBb\fRinary, \fBC\fRmode, \fBc\fRrlf,
+cr\fBY\fRpt,   ctrl\fBz\fR,  \fBd\fRel,  \fBD\fRir,  \fBe\fRdit,  \fBE\fRxact,
+\fBH\fRide, \fBI\fRndent, \fBJ\fRustify, \fBl\fRetter, \fBL\fRine, loc\fBk\fR,
+\fBM\fRagic,  \fBn\fRact,  \fBN\fRarrow,  \fBO\fRver, \fBP\fRipe, \fBQ\fRuiet,
+\fBS\fRave,  \fBT\fRab,  \fBt\fRime,   \fBU\fRndo,   usr\fB1\fR,   usr\fB2\fR,
+usr\fB3\fR,   usr\fB4\fR,   usr\fB5\fR,  usr\fB6\fR,  usr\fB7\fR,  usr\fB8\fR,
+\fBV\fRiew, \fBW\fRrap.
+.NH ShellCommands - "Shell and Command Controls"
+.SH "SHELL AND COMMAND CONTROLS"
+Operating system and external system call invocations:
+.SS Commands
+.Ss
+search MicroEmacs 2 shell
+search MicroEmacs 3 shell
+output * "%N
+.Se
+.SS Variables
+.Ss
+search MicroEmacs 5 shell
+output * "%N
+.Se
+.NH MessageLine - "Message Line Commands"
+.SH "MESSAGE LINE COMMANDS"
+The message line appears at the bottom of the screen and is used for the input
+of commands and also to receive  errors and  information (see also
+.Hl "Mode Line" modeline - ).
+.PP
+Commands and variables that interact with the message line include:
+.SS Commands
+.Ss
+search MicroEmacs 2 message
+search MicroEmacs 3 message
+output * "%N
+.Se
+.SS Variables
+.Ss
+search MicroEmacs 5 message
+output * "%N
+.Se
+.NH Windows - "Window Commands"
+.SH "WINDOW COMMANDS"
+\*(mE uses windows to display and allow you to edit the contents of
+.Hl buffers Buffers - .
+Multiple windows may be present on the
+.Hl screen Hilighting -
+at once, each is separated by a
+.Hl "mode line" modeline -
+which  describes the contents of the window above it.
+.PP
+You can scroll text vertically and  horizontally  within a window by using the
+.Hl cursor CursorMovement -
+commands. Note that if a line of text extends beyond the boundary of a window,
+a  dollar  "\fB$\fR"  sign is  displayed  instead  of the  first/last  visible
+character.
+.PP
+Commands that operate on windows are defined as follows:
+.SS Commands
+.Ss
+search MicroEmacs 2 window
+search MicroEmacs 3 window
+output * "%N
+.Se
+.SS Variables
+.Ss
+search MicroEmacs 5 window
+output * "%N
+.Se
+.NH Printing - "Printing Commands"
+.SH "PRINTING COMMANDS"
+Printing within \*(mE is fairly  restrictive, the following  commands are
+used in conjunction with the print facility.
+.PP
+.Ss
+search MicroEmacs 2 print
+search MicroEmacs 3 print
+output * "%N
+.Se
+.NH Functions - "Introduction to Variable Functions"
+.SH "VARIABLE FUNCTIONS"
+Functions can be used to manipulate  variables in various ways. Functions have
+in general one, two, or three arguments. These arguments will always be placed
+after the function on the current  command  line. For example, if we wanted to
+increase the current fill column by two, using \*(mE's
+.Ht set-variable 2
+(C-x v) command, we would write:
+.CS
+set-variable $fill-col &add $fill-col 2
+    \\            \\      \\       \\     \\____second operand
+     \\            \\      \\       \\_________first operand
+      \\            \\      \\________________function to execute
+       \\            \\______________________variable to set
+        \\__________________________________set-variable (C-x v) command
+.CE
+Functions  always begin with an ampersand  (\fB&\fR)  character,  and are only
+significant  to the first 3 characters  after the  ampersand.  Functions  will
+normally  expect  one of  three  types of  arguments,  and will  automatically
+convert types when needed.
+.IP \fB<num>\fR
+An ASCII string  of digits  which is interpreted  as a numeric
+value.  Any  string which  does not  start with  a digit  or a
+minus sign (\-) will be considered zero.
+.IP \fB<str>\fR
+An arbitrary string of characters.  At the moment, strings are
+limited to 128 characters in length.
+.IP \fB<log>\fR
+A  logical  value  consisting  of  a  non-zero  number  for  \fBTRUE\fR  (e.g.
+"\fC1\fR"),  anything  else  is  considered  \fBFALSE\fR  (e.g.  "\fC0\fR"  or
+"\fCfoo\fR").  This  differs  from earlier  versions of  MicroEmacs  where the
+strings "\fCTRUE\fR" and "\fCFALSE\fR" were used.
+.PP
+A list of the currently available functions follows:
+.PP
+.RS
+.B "Numeric Functions"
+(returns \fI<num>\fR)
+.PP
+.Ss
+search MicroEmacs 4 macro;function;numeric
+output * "%N
+.Se
+.PP
+.B "Bitwise Functions"
+(returns \fI<num>\fR)
+.PP
+.Ss
+search MicroEmacs 4 macro;function;bitwise
+output * "%N
+.Se
+.PP
+.B "String manipulation functions"
+(returns \fI<str>\fR)
+.PP
+.Ss
+search MicroEmacs 4 macro;function;string
+output * "%N
+.Se
+.PP
+.B "List manipulation functions"
+(returns \fI<str>\fR)
+.PP
+.Ss
+search MicroEmacs 4 macro;function;list
+output * "%N
+.Se
+.PP
+.B "Logical testing functions"
+(returns \fI<log>\fR)
+.PP
+.Ss
+search MicroEmacs 4 macro;function;logical
+output * "%N
+.Se
+.PP
+.B "Miscellaneous functions"
+.PP
+.Ss
+search MicroEmacs 4 macro;function;miscellaneous
+output * "%N
+.Se
+.RE
+.SH "SEE ALSO"
+.na
+Directives
+.ad
+.NH modeLine - "Mode Line"
+.SH "MODE LINE"
+The  \fBmodeLine\fR  is the line of text  shown at the  bottom of each
+.Hl window Windows -
+identifying the window being displayed. The mode line typically contains
+the name of the
+.Hl buffer Buffers - ,
+the file and  operating  mode  associated  with the  buffer  displayed  in the
+window. e.g.
+.CS
+#*-me (BEI) - 250 foo (foo.txt) ----------------
+.CE
+.B Note
+that only a sub-set  of the modes are  visible on the mode line, this  reduces
+the cluttering of the mode line. Use the
+.Ht about 2
+command to determine the exact modes that are active.
+.PP
+The text content and color of the mode line is fully  configurable  and may be
+defined in the users start-up script. The currently active buffer is generally
+indicated  by the state of the mode line, e.g.  highlighted  color  (typically
+red) and/or double line separator  characters  \fB===\fR;  conversely inactive
+buffers  are shown in a dull  color  with  single  line  separator  characters
+\fB---\fR.
+.PP
+The  mode  line  may  be  configured  or  interrogated   using  the  following
+variables:-
+.PP
+.Ss
+search MicroEmacs 5 modeline
+output * "%N
+.Se
+.NH FileHandlings - "MicroEmacs Files"
+.SH "FILE HANDLING COMMANDS"
+Commands to read, write and interact with files:
+.SS Commands
+.Ss
+search MicroEmacs 2 file
+search MicroEmacs 3 file
+output * "%N
+.Se
+.SS Variables
+.Ss
+search MicroEmacs 5 file
+output * "%N
+.Se
+.NH Games - "\*(mE \- Games"
+.SH "GAMES"
+The following is a list of all of the games provided by \fB\*(mE\fR:
+.PP
+.Ss
+search MicroEmacs 2 games
+search MicroEmacs 3 games
+output * "%N
+.Se
+.NH FileTypes - "\*(mE \- Supported File Types"
+.SH "SUPPORTED FILE TYPES"
+The file types currently supported by \*(mE are defined in the following list.
+Other  file  types may be  supported  by  definition  of an  appropriate  hook
+function to handle the file, see
+.Ht fileHooks 2 .
+.PP
+.Ss
+search MicroEmacs 9 filetype
+output * "%N
+.Se
+.NH CommandGlossary - "\*(mE \- Command Glossary"
+.\" "Command G" is a link burnt into executable (bind.c)
+.Me "!9  Command Glossary - \*(mE"
+.SH "COMMAND GLOSSARY"
+The following is a list of all of the commands  (built-in and macro)  provided
+by \fB\*(mE\fR [See
+.Hl "split listing" SplitCommandGlossary - "]:"
+.PP
+.Ss
+search MicroEmacs 2 command
+search MicroEmacs 3 command
+output * "%N
+.Se
+.NH SplitCommandGlossary - "\*(mE \- Split Command Glossary"
+.SH "SPLIT COMMAND GLOSSARY"
+The  following  is a  list  of  all of the  built  in  commands  provided  by
+\fB\*(mE\fR [See
+.Hl "mixed listing" CommandGlossary - "]:"
+.PP
+.Ss
+search MicroEmacs 2 command
+output * "%N
+.Se
+.PP
+The following is a list of documented macro commands provided by \fB\*(mE\fR:
+.PP
+.Ss
+search MicroEmacs 3 command
+output * "%N
+.Se
+.NH VariableGlossary - "\*(mE \- Variable Glossary"
+.\" "Variable " is a link burnt into executable (bind.c)
+.Me "!9  Variable Glossary - \*(mE"
+.SH "VARIABLE GLOSSARY"
+The following is an alphabetic list of \fB\*(mE\fR variables:-
+.PP
+.Ss
+search MicroEmacs 5 variable
+output * "%N
+.Se
+.NH MacroGlossary - "\*(mE \- Macro Language Glossary"
+.\" "Macro Lan" is a link burnt into executable (bind.c)
+.Me "!9  Macro Language Glossary - \*(mE"
+.SH "MACRO LANGUAGE GLOSSARY"
+The  following is a list of all of the macro  language  commands  available in
+\fB\*(mE\fR.
+.SS "Functions"
+All functions are denoted by a \fB&\fR prefix as follows:-
+.PP
+.Ss
+search MicroEmacs 4 macro;function
+output * "%N
+.Se
+.SS "Directives"
+The macro directives are denoted by a \fB!\fR prefix as follows:-
+.PP
+.Ss
+search MicroEmacs 4 macro;directive
+output * "%N
+.Se
+.SS "Variables"
+The macro variables are denoted by a \fB%\fR for user variables; \fB#\fR for a
+register variable and \fB@\fR for an interactive variable as follows:-
+.PP
+.Ss
+search MicroEmacs 4 macro;variable
+output * "%N
+.Se
+.NH Glossary - "\*(mE \- Global Glossary"
+.\" "Global G" is a link burnt into executable (bind.c)
+.Me "!8  Global Glossary - \*(mE"
+.SH GLOSSARY
+The following is a list of all keywords associated with \fB\*(mE\fR:
+.PP
+.Ss
+search MicroEmacs 1 *
+search MicroEmacs 2 *
+search MicroEmacs 2m *
+search MicroEmacs 3f *
+search MicroEmacs 3 *
+search MicroEmacs 4 *
+search MicroEmacs 5 *
+search MicroEmacs 8 *
+search MicroEmacs 9 *
+output * "%N
+.Se
+.NH Acknowledgments - "\*(mE \- Acknowledgments"
+.SH ACKNOWLEDGMENTS
+The following persons contributed to this release of \fB\*(mE\fR over the last
+decade, roughly in the order of  participation.  This list represents the main
+developers:-
+.IP
+.na
+.nf
+Danial M. Lawrence (Original Author)
+Martin House
+\fBJon Green\fR \- \fICurrent Maintainer\fR
+Callen McNally
+\fBSteven Phillips\fR \- \fICurrent Maintainer\fR
+.ad
+.fi
+.PP
+Additional contributions have been made as follows, in chrononlogical order:-
+.RS
+.IP "Detlef Groth \fI[June 1999]\fR"
+Setting up and validating the German environment.
+.br
+Latex features and excellent feedback.
+.IP "Pedro Gomes \fI[May 1999]\fR"
+Portuguese Dictionary.
+.br
+Cobol and Intel x86 language templates.
+.br
+Metapost/Meta Font templates.
+.IP "Matthew Robinson \fI[Feburary 1999]\fR"
+Developed the WinConsole version for Windows NT.
+.RE
+.PP
+Thanks to  everybody  else that has used and  abused it locally  feeding  back
+comments and preferences, wishes and desires.
+.NH Copyright - "\*(mE \- Copyright"
+.\" "Copyright" is a link burnt into executable (bind.c)
+.Me "!9  Copyright - \*(mE"
+.SH COPYRIGHT
+The following copyrights apply from the original source code of version 3.8.
+No explicit  copyrights were found with the original  distribution  apart from
+the following found in the main source code,
+.IP
+.B "(C)opyright 1987 by Daniel M. Lawrence"
+.br
+.\"MicroEMACS 3.8 can be copied and distributed freely for any non-commercial
+.\"purposes. MicroEMACS 3.8 can only be incorporated into commercial software
+.\"with the permission of the current author.
+.\".PP
+.\"The  current  version  of  MicroEmacs  V4.0 has a softer  licence,  which must
+.\"therefore apply to this distributuion:-
+.\".IP
+MicroEMACS  can be  copied  and  distributed  freely  for  any  non-commercial
+purposes. Commercial users may use MicroEMACS inhouse. Shareware  distributors
+may  redistribute  MicroEMACS  for media  costs only.  MicroEMACS  can only be
+incorporated  into  commercial  software or resold with the  permission of the
+current author.
+.PP
+The following notices apply after 1988.
+.IP
+.B "Copyright (C) 1988 - 2000, JASSPA"
+.br
+\*(mE can be copied and distributed  freely for any  non-commercial  purposes.
+Commercial   users  may  use  \*(mE  inhouse.   Shareware   distributors   may
+redistribute  \*(mE for media costs only. \*(mE can only be incorporated  into
+commercial software or resold with the permission of the current author.
+.SS "Spelling Dictionary Copyrights"
+The  spelling  dictionaries  are  converted  from  \fIispell\fR  dictionaries,
+each spelling dictionary has it's own copyright which is reproduced within the
+appropriate language spelling macro file.
+.SH "NO WARRANTY"
+THIS PROGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR THE PROGRAM,
+TO THE EXTENT  PERMITTED BY APPLICABLE  LAW. EXCEPT WHEN  OTHERWISE  STATED IN
+WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS"
+WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED,  INCLUDING, BUT NOT
+LIMITED TO, THE  IMPLIED  WARRANTIES  OF  MERCHANTABILITY  AND  FITNESS  FOR A
+PARTICULAR  PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND  PERFORMANCE OF THE
+PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE  DEFECTIVE,  YOU ASSUME THE COST
+OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+.PP
+IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY
+COPYRIGHT  HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR  REDISTRIBUTE  THE
+PROGRAM  AS  PERMITTED  ABOVE, BE  LIABLE TO YOU FOR  DAMAGES,  INCLUDING  ANY
+GENERAL, SPECIAL,  INCIDENTAL OR CONSEQUENTIAL  DAMAGES ARISING OUT OF THE USE
+OR INABILITY TO USE THE PROGRAM  (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR
+DATA BEING RENDERED  INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR
+A FAILURE OF THE  PROGRAM TO OPERATE  WITH ANY OTHER  PROGRAMS),  EVEN IF SUCH
+HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+.PP
+.B "THIS NOTICE MUST BE CARRIED IN ALL COPIES OF THE DISTRIBUTION"
+.NH Contact - "\*(mE \- Contact Information"
+.\" "Contact" is a link burnt into executable (bind.c)
+.Me "!7  Contact Information - \*(mE"
+.SH "CONTACT INFORMATION"
+The  following  contact  point may be used to report all  problems and request
+information:-
+.IP
+\fBEmail:\fR\fC jasspa@geocities.com \fR
+.PP
+Also visit our web site's on the Internet:-
+.IP
+\fChttp://www.jasspa.com\fR
+.br
+\fChttp://www.geocities.com/ResearchTriangle/Thinktank/7109/\fR
+.br
+\fChttp://members.xoom.com/jasspa/index.html\fR
+.PP
+This page carries the latest information and patches on the distribution.
+.SS "E-Mail Reflector"
+A E-Mail  reflector is available onto which  questions,  suggestions  and code
+fragments may be posted. A number of people have requested this service, so we
+have initiated it recently (July 1999). This is an un-moderated  E-Mail group.
+The mailing list archives may be found at:-
+.IP
+\fChttp://www.egroups.com/list/jasspa/\fR
+.LP
+These should be referenced before posting any questions, as an answer may have
+already been given. This mailing list is likely to contain the most up-to-date
+information available, as \s-1JASSPA\s0 will use this for any notifications.
+.PP
+If you want to join the E-Mail  reflector  then mail a request,  with an empty
+message body to:-
+.IP
+\fCjasspa-subscribe@egroups.com\fR
+.LP
+This  should  add you to the  mailing  list.  If you  want to be  subsequently
+removed from the mailing list then mail an empty message to:-
+.IP
+\fCjasspa-unsubscribe@egroups.com\fR
+.LP
+and you will be removed  from the lists. There are  facilities  on the site to
+allow you to receive digests, rather than multiple posts to the group once you
+have subscribed.
+.PP
+The mailing list is hosted by  \fBeGroups\fR.  General help information on the
+mailgroup is available at their site:-
+.IP
+\fChttp://www.egroups.com\fR
+.SS "Help, FAQ and other queries"
+Please use  \fBeGroup\fR  help  information  for any queries about the mailing
+lists,  \s-1JASSPA\s0  have simply registered and E-Mail group at the site and
+have not investigated fully all of the facilities that may be available.
+.PP
+Please check the  
+.Hl "Frequently Asked Questions" faq - .
+list and the home page FAQ before you submit any  information  to JASSPA, your
+problem may have already been addressed in these pages.
+.PP
+Every  effort  will be made to deal  with your  problem  as soon as  possible.
+Please send mail with the titles  indicated  below so that it maybe  filtered.
+Unless explicitly  requested (or appropriate) JASSPA will only respond through
+the FAQ  lists  on the  Internet  site.  It will  not be  possible  to  answer
+individual enquiries and questions.
+.PP
+Any sites that wish to mirror the JASSPA  distribution  should  contact JASSPA
+first (use PORT), we will then include details of the mirror on the home page.
+.\".SS "Registering Usage"
+.\"Mail as:-
+.\".IP
+.\".na
+.\".nf
+.\"\fITitle:\fR \fBREGISTER\fR
+.\"\fIMessage Body:\fR <your Email Address>
+.\".fi
+.\".ad
+.\".LP
+.\"If you  would  like to  receive  information  about  new  releases  and  other
+.\"informaton  then  simply  register  your  EMail  address.
+.SS "Reporting Problems"
+Mail as:-
+.IP
+.na
+.nf
+\fITitle:\fR \fBBUG\fR
+\fIMessage Body:\fR Description of the problem ....
+.fi
+.ad
+.LP
+Problems should be reported such that they may be reproduced,  this may not be
+that easy.  The information that is required is:-
+.IP "\fBPlatform\fR"
+The host platform which is exhibiting a problem
+.IP "\fBVersion\fR"
+The version of \*(mE. Use the  \fCesc x  info\fR to retrieve  the  information
+e.g.
+.RS
+.IP
+.C "MicroEmacs 98 - Date 01/01/98 - win32"
+.RE
+.IP "\fBDescription\fR"
+A description of the problem. Try to include as much  information as possible.
+Include any  material  necessary  to reproduce  the problem (i.e. macro files,
+text file that demonstrates problem etc).
+.SS "Suggestions"
+Mail as:-
+.IP
+.na
+.nf
+\fITitle:\fR \fBSUGGEST\fR
+\fIMessage Body:\fR Your suggestion, macro code fragment etc.
+.fi
+.ad
+.LP
+We always appreciate suggestions, new macro code fragments etc. We do not have
+support for all languages, e.g.  \fBPerl\fR,  \fBLatex\fR...  If you wish have
+developed new macro templates, or games (we get a bit bored with the ones that
+we have developed  ourselves)  then please mail them to  \fCSUGGEST\fR  and we
+will incorporate them into the release.
+.SS "Feedback"
+Mail as:-
+.IP
+.na
+.nf
+\fITitle:\fR \fBFEEDBACK\fR
+\fIMessage Body:\fR Your feedback.
+.fi
+.ad
+.LP
+Any general  comments  (which are not  suggestions),  your feelings about this
+version of \*(mS or any other non-technical dialogue.
+.SS "Porting"
+Mail as:-
+.IP
+.na
+.nf
+\fITitle:\fR \fBPORT\fR
+\fIMessage Body:\fR Details
+.fi
+.ad
+.LP
+If you wish to port \*(mE to another  platform  and are  willing to  undertake
+responsibility  for  maintenance  of that platform then we would like to here
+from you. Send us some details.
+.NH Origins - "\*(mE \- Origins"
+.SH "ORIGINS"
+This version of  MicroEmacs is based on an early  \fIMicroEmacs\fR  release of
+3.8 in 1988, the origins of which are unknown,  except to say it was delivered
+on a unmarked 5 1/2" floppy disk.
+.PP
+The  program  was  originally  ported  to a  Motorola  MVME147  UNIX box as an
+alternative to \fBvi\fR.  Reliability of the program proved to be a problem as
+it constantly  crashed. In an attempt to rectify the problems the  development
+of \*(mE commenced.
+.PP
+Development  has continued from 1988 through to today, on the whole  oblivious
+to further developments of the existing \fBMicroEmacs\fR program. This was due
+to  no  Internet   access.  It  was  not  until  1996  the  next   version  of
+\fBMicroEmacs\fR  and \fBmewin\fR  (Microsoft Windows  (\s-2TM\s0) port of the
+same  program) was  downloaded  from the  Internet and  compared. By this time
+\*(mE was  radically  different and we were not about to mesh the two together
+\- that would be a step backwards.
+.PP
+Development of \*(mE has been biased towards the UNIX platform, as most of the
+early  development  was performed in the \s-1UNIX\s0  domain. The first of the
+window servers was X-Windows, which in turn has shaped the  implementation  of
+the  Microsoft  Windows  port.  Latterly, we have seen the  resurgence  of the
+IBM-PC  platform  which is now  commonplace. For the return  port to the DOS
+environment,  and  subsequent  development  of the  Microsoft  Windows port, a
+\s-1UNIX\s0  like  interface was required. Most existing users could not abide
+the primitive editors found on these machines;  Microsoft Windows was an alien
+and hostile  environment  when compared with UNIX. Hence, the \*(mE  interface
+utilizes UNIX style cut and paste across all platforms.
+.PP
+For  portability,  \*(mE  utilizes   character   rendering  on  all  platforms
+regardless of the window manager. Under  X-Windows and Microsoft  Windows, the
+display is still treated as a character  based display, the subtle  difference
+is that the display pane is re-sizable. This means that the scroll bars, fonts
+etc. are not as slick as they  could be,  certainly  under  Microsoft  Windows
+\*(mE  looks  positively  primitive!!  Regardless  of the  look, the goal of a
+common editor across all working platforms has been achieved!
+.SS "Development History"
+.IP 1988-92
+.BS 0
+Ported to MVME147, UNIX using curses.
+.BU
+Fire fighting to get a stable version.
+.BU
+Expanded regular expression syntax.
+.BE 0
+.IP 1992-1993
+.BS 0
+Ported to IBM AIX
+.BU
+Ported to Silicon Graphics
+.BE 0
+.IP 1994
+.BS 0
+DOS built with djgpp, allowed large files to be edited.
+.BU
+Color hi-lighting.
+.BU
+Re-implemented the macro language. Allowed separately named macros.
+.BU
+Get-next-line support.
+.BU
+File hooks added.
+.BU
+Implemented Electric C.
+.BU
+RCS support.
+.BU
+Re-implemented backups and auto-saves.
+.BU
+Re-implemented isearch.
+.BU
+Re-implemented of keyboard macros.
+.BU
+Binary file reading support.
+.BE 0
+.IP 1995
+.BS 0
+Integral speller.
+.BU
+Ported to HP-UX.
+.BU
+Multiple ipipes supported on Unix.
+.BU
+Poke-screen support.
+.BU
+Call-back macro support.
+.BU
+Metris created.
+.BU
+Abbreviation and completion.
+.BU
+First implementation of mailing and View Mail.
+.BU
+Isearch expanded to support magic mode.
+.BU
+Session history support.
+.BU
+First ported to X-Terminal.
+.BU
+Mouse support.
+.BU
+Initial printer support.
+.BE 0
+.IP 1996
+.BS 0
+Ported to Slackware Linux.
+.BU
+First menu system (implemented in macros).
+.BU
+Undo support.
+.BU
+First ported to Microsoft Windows 95.
+.BU
+Re-implementation of get-next-line.
+.BU
+Auto mode support.
+.BU
+Magic file hooks added.
+.BU
+Proper key name support.
+.BU
+Key bindings support numeric arguments.
+.BE 0
+.IP 1997
+.BS 0
+Re-implementation of ipipes to enable terminal support.
+.BU
+Initial Directory-Tree support.
+.BU
+First implementation of the On Screen Display (OSD) menus and dialogues.
+.BU
+Horizontal split window support.
+.BU
+Scroll bar support.
+.BU
+Added menu bar.
+.BU
+Cursor position correction for hilights with invisible character.
+.BU
+Indentation scheme support.
+.BU
+Ported to Microsoft NT
+.BU
+Ipipes supported on NT.
+.BE 0
+.IP 1998
+.BS 0
+Registry features for configuration.
+.BU
+Re-implementation of OSD.
+.BU
+Re-implementation of termcap extended key support.
+.BU
+Narrow support.
+.BU
+Re-implementation of the session history.
+.BU
+Re-implemented the speller based on ispell dictionaries.
+.BU
+Re-worked the printer interface for Windows.
+.BU
+Rationalised mouse key bindings.
+.BU
+Added $system variable to configure \*(mS.
+.BU
+Added random hilight-token addition and removal support.
+.BU
+.B "1st Release"
+\- September 1998.
+.BU
+Support True-type fonts under windows, font selection dialog.
+.BU
+.B "Minor Patch"
+\- October 1998.
+.BU
+Enhanced the operation of the Window pipe's
+.BU
+Undo past the last save operation.
+.BU
+Added Tabbed entries to OSD.
+.BU
+Enhanced user setup using OSD.
+.BE 0
+.IP 1999
+.BS 0
+Introduction of the address and date
+.Ht organizer 3
+(replacing the existing \fBcal\fR interface)
+.BU
+Generic buffer folding using
+.Ht narrow-buffer 2
+.BU
+Rendered cursor support on all platforms.
+.BU
+Smooth scrolling mode.
+.BU
+Win32s port, for Microsoft 3.1/3.11 O/S.
+.BU
+Re-worked  \fBtranslate-tcap-key\fR  to generic
+.Ht translate-key 2
+to solve many of the foreign language problems.
+.BU
+Re-worked  the  \s-1ALT\s0  key mapping to allow  conventional  Emacs meta key
+bindings.
+.BU
+Implemented Auto-Spell utility.
+.BU
+Introduction   of  private  macro  variables  of  the  form   \fI.name\fR  and
+\fI.macro.name\fR.
+.BU
+Port to Sun Solaris Intel platform (2.6)
+.BU
+Merged the init-hilight and hilight-token into the single
+.Ht hilight 2
+command. Similarly for
+.Ht indent 2 .
+.BU
+Enhanced the regexp support in
+.Hl hilight hilight 2
+tokens, vastly  improving it capability
+and usability. Similarly for indent tokens.
+.BU
+Reorganized the hilighting files. Introduction of the
+.Ht scheme-editor 3
+and \fIHilight Search\fR OSD's.
+.BU
+Implemented box character override support (
+.Ht $system 5
+bit 0x10000) on Win32 and Xterm platforms.
+.BU
+Microsoft Windows native console support.
+.BU
+.B "2nd Release - Beta #1"
+\- May 1999.
+.BU 
+Bug fixes with multi-language support and spelling dictionaries.
+.BU
+Fixed 
+.Ht fill-paragraph 2 
+such that it retains the cursor position in the paragraph when invoked without
+arguments.
+.BU
+Moved to GNU regex for search/replace engine.
+.BU 
+Enhanced \fIisearch\fR such that it operates in \fI*shell*\fR buffers (again).
+.BU
+.Ht gdiff 3 
+macro  implementation  of  a  graphical  diff  to  allow  color  annotation  of
+differences and difference selection. Uses the output of a standard 
+.Hr diff 1 
+utility.
+.BU
+2nd port to IBM AIX.
+.BU
+.B "2nd Release - Beta #2"
+\- November 1999
+.BU
+Enhanced the 
+.Ht latex 9 
+support macros following various contributions from users.
+.BU 
+Added  \fIFavorites\fR  to the  \fIFile\fR  pull down  menu. This is a simple
+mechanism to allow the user to add a file to a favorites list.
+.BU
+Ground up implementation of the regular  expression pattern matcher, following
+licensing problems with the GNU regex. The resultant pattern matcher is now a 
+little  faster  than GNU regex and is capable of all of the  standard  regular
+expression pattern matches. The pattern matcher has diverged from GNU in that
+double  backslashes are required in the character classes  \fC[..]\fR to allow
+for escape  sequence  short cuts such as  '\fC\\n\fR'  (newline),  '\fC\\t\fR'
+(tab) etc. It was felt that this  compromise  was better  than having to quote
+the more obscure search characters.  
+.BU
+Changed the hilighting and indenting syntax to be GNU regex compliant.
+.BU
+Modified 
+.Ht compare-windows 2 
+to ignore white space by default, 
+.Ht compare-windows-exact 3 
+performs an exact character for character comparison.
+.BU
+Enhanced the tags support to handle multiple tags and recursive directory tree
+searching. 
+.BU
+Implemented osd-help, a gui front end to the on-line help. Required changes to
+the help system which gives macros  access to the on-line help buffer,  needed
+for the index and search.
+.BU
+Over-hauled the hilighting scheme files and editor to support the disabling of
+buffer hilighting.
+.BU
+Many bugs fixed on all  platforms,  in  particular  unix  cutting  and pasting
+(crashes exceed) and focus problems and NT exit delay.
+.BU
+Added tab and newline character printing in buffers.
+.BU
+Introduced message line variables @mx and @mxa.
+.BE 0
+.SS "Work In Progress or Planned"
+Development  of  \*(mE  is an  on-going  process,  follows  is a list  of work
+items which is currently  being undertaken or planned:-
+.BS
+Integrate  the mouse  interaction,  especially  the pop-up  menus of the right
+mouse to be buffer sensitive and to deal with regions. (Macro implementation).
+.BU
+Native printer support for the generation of postscript.
+.BU
+Box (or column) copy regions.
+.BU
+GNU Emacs compatibility macro file.
+.BE 0
+.SS "Release History"
+.IP "\fBMay 1999\fR"
+2nd Major Release \- MicroEmacs '99.
+.IP "\fBOctober 1998\fR"
+Minor patch to MicroEmacs '98 to correct a font problem on Windows platforms.
+.IP "\fBSeptember 1998\fR"
+1st Major Release \- MicroEmacs '98.
+.SS "Documentation"
+The documentation is all written in \s-1UNIX\s0
+.Hr nroff 1
+and converted to HTML, Microsoft  Windows Help File format and MicroEmacs Help
+file format.
+.NH faq -  "Frequently Asked Questions" 
+.SH "FAQ"
+This page contains  frequently asked questions submitted to JASSPA.
+.PP
+.Ss
+search MicroEmacs 0f *
+output * ".Hl %i %i %s\n\- %d%n.br\n
+.Se
+.FH

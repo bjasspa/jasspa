@@ -1,0 +1,41 @@
+.\" -*- nroff -*-
+.Id $Id: m2mod031.2,v 1.1.1.1 2000-07-25 22:03:59 jon Exp $
+.Im MicroEmacs modes
+.so me.tni
+.TH edit 2m
+.XI edit - "Buffer has be changed"
+.SH NAME
+edit \- Buffer has be changed
+.SH SYNOPSIS
+.B "edit Mode"
+.sp
+\fB\&e\fR\& \- mode line letters.
+.SH DESCRIPTION
+.B edit
+mode  indicated  that the buffer has been  edited.  Many  commands  and typing
+\&'edit' the current  buffer,  automatically  setting this mode. Commands  which
+save these edits, such as
+.Ht save-buffer 2 ,
+automatically remove this mode.
+.PP
+A '*'  character,  3  characters  from  the  left on the mode  line is used to
+indicate that this mode is set, see
+.Ht $mode-line 5 .
+.Ht list-buffers 2
+also  displays  the state of this mode in its  output, as a '*' in the  second
+column.
+.PP
+When this mode is set and
+.Ht undo 2m
+mode is enabled, the
+.Ht undo 2
+command can be used to undo all edits and the removal of this mode.
+.SH "SEE ALSO"
+.na
+.Ht save-buffer 2 ,
+.Ht undo 2 ,
+.Ht list-buffers 2 ,
+.Ht $mode-line 5 ,
+.Ht undo 2m .
+.ad
+.FH

@@ -1,0 +1,64 @@
+.\" -*- nroff -*-
+.Id $Id: m5var022.5,v 1.1.1.1 2000-07-25 22:04:04 jon Exp $
+.Im MicroEmacs variable|hilight
+.so me.tni
+.TH $box-chars 5
+.XI $box-chars - "Characters used to draw lines"
+.SH NAME
+$box-chars \- Characters used to draw lines
+.Me $a
+.SH SYNOPSIS
+\fB$box-chars\fR "\fIstring\fR"; Default is "\fC|+++++++++-\fR"
+.SH DESCRIPTION
+.B $box-chars
+is a fixed  length  string that defines the set of  characters  used to render
+lines to the screen.
+.Ht Osd 2 ,
+.Ht directory-tree 2 ,
+.Ht list-registry 2
+and many  macros  use these  characters  as a platform  independent  method of
+drawing lines. The characters have fixed indices defined as follows:-
+.IP "Index 0"
+Line joining north to south (vertical line). 
+.IP "Index 1"
+Line joining south to east. 
+.IP "Index 2"
+Line joining south to west. 
+.IP "Index 3"
+Line joining north to east. 
+.IP "Index 4"
+Line joining north to west.
+.IP "Index 5"
+Line joining east to south to west. 
+.IP "Index 6"
+Line joining north to east to south. 
+.IP "Index 7"
+Line joining north to east to south to west. 
+.IP "Index 8"
+Line joining north to south to west. 
+.IP "Index 9"
+Line joining north to east to south. 
+.IP "Index 10"
+Line joining east to west. 
+.SH EXAMPLE
+The
+.B $box-chars
+is typically platform  dependent, it's setting is determined by the characters
+available  in  character  set  of  the  hosting  platform.  \s-1MS-DOS\s0  and
+Microsoft Windows environments might use a string such as:-
+.CS
+"\\xB3\\xDA\\xBF\\xC0\\xD9\\xC2\\xC3\\xC5\\xB4\\xC1\\xC4"
+.CE
+X-Windows environments might use a string such as:-
+.CS
+"\\x19\\x0D\\x0C\\x0E\\x0B\\x18\\x15\\x0F\\x16\\x17\\x12"
+.CE
+Both utilize platform specific characters.
+.SH "SEE ALSO"
+.na
+.Ht Osd 2 ,
+.Ht directory-tree 2 ,
+.Ht list-registry 2
+.Ht $window-chars 5 .
+.ad
+.FH

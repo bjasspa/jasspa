@@ -1,0 +1,55 @@
+.\" -*- nroff -*-
+.Id $Id: m3mac047.3,v 1.1.1.1 2000-07-25 22:04:01 jon Exp $
+.Im MicroEmacs command|scuts
+.ds C0 "(\fB\*e\*(eS\fR)\ \&
+.so me.tni
+.TH expand-abbrev-handle 3
+.XI expand-abbrev-handle \- "\*(C0Expand an abbreviation handler"
+.SH NAME
+expand-abbrev-handle \- Expand an abbreviation handler
+.Me $a
+.SH SYNOPSIS
+.na
+\fBexpand-abbrev-handle\fR \*(C0
+.ad
+.SH DESCRIPTION
+.B expand-abbrev-handle
+pulls  together all forms of  abbreviation  expansion into a single command so
+that  it  can  be  bound  to  a  single  key.  The  abbreviation  must  be  an
+alpha-numeric  string and the cursor must be one  position to the right of the
+abbreviation  (which must not be  alpha-numeric)  when this command is called.
+The command attempts to expand the abbreviation  using the following  commands
+in turn:
+.PP
+.Ht expand-abbrev 2
+.IP
+Uses a buffer specific and global  abbreviation  files, if set, to look up the
+abbreviation.
+.PP
+.Ht iso-accents-expand 3
+.IP
+Expands ISO accent letter if the expansion mode is enabled.
+.PP
+\fBBuffer specific expansion\fR
+.IP
+Executes a buffer specific abbreviation expansion if the current buffer's
+.Hl "file hook" fileHooks 2
+supports abbreviation expansion.
+.PP
+\fBWord expansion\fR
+.IP
+If the current  buffer does not support file type  specific  expansion and the
+variable  \fB.spell-complete-word.on\fR  is set to \fC1\fR the abbreviation is
+assumed to be the start of a word and completed  against the dictionary of the
+user's current language.   
+.PP
+The command exits after first command to successfully expand or if none expand
+the command fails. See the help in the individual  expansion commands for more
+help.
+.SH "SEE ALSO"
+.na
+.Ht expand-abbrev 2 ,
+.Ht iso-accents-expand 3 .
+.ad
+.rm C0
+.FH

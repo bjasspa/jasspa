@@ -1,0 +1,79 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil027.4,v 1.1.1.1 2000-07-25 22:04:03 jon Exp $
+.Im MicroEmacs macro;function;miscellaneous
+.so me.tni
+.TH &stat 4
+.XI &stat - "Retrieve a file statistic"
+.SH NAME
+&stat \- Retrieve a file statistic
+.SH SYNOPSIS
+.na
+.B &stat
+.I <stat>
+.I <filename>
+.ad
+.SH DESCRIPTION
+.B &stat
+returns  the  specified  \fI<stat>\fR  on the  given  \fI<filename>\fR.  Valid
+\fI<stat>\fR values are:-
+.IP \fBa\fR
+Returns the absolute file name, corrects  relative  paths and symbolic  links,
+i.e. on unix if the  filename is a symbolic  link it returns the file name the
+link points to (recursive), otherwise returns the file name.
+.IP \fBd\fR
+Returns the file's  modification time stamp. The value returned is an integer,
+larger values indicate a later time.
+.IP \fBr\fR
+Returns a non-zero value if the user has permission to read the given file.
+.IP \fBs\fR
+Returns the size of the file in bytes.
+.IP \fBt\fR
+Returns the type of the file, where values returned are
+.CS
+    0   File does not exist.
+    1   File is a regular file.
+    2   File is a directory.
+    3   File is a URL link (i.e. http://...).
+    4   File is a untouchable system file.
+.CE 0
+.IP \fBw\fR
+Returns a non-zero value if the user has permission to write to the given file.
+.IP \fBx\fR
+Returns a non-zero value if the user has permission to execute the given file.
+.SH EXAMPLE
+The  following  example is a macro which, given a file name, uses  \fB&stat\fR
+to check that file file is regular:
+.Me $emf-scheme
+.CS
+define-macro test-file
+    !force set-variable #l0 @1
+    !if &not $status
+        set-variable #l0 @ml04 "File name"
+    !endif
+    !if &not &equ &stat "t" #l4 1
+        ml-write &spr "[%s is not a regular file]" #l0
+        !abort
+    !endif
+!emacro
+
+test-file "foobar"
+.CE
+.Me $ehf-scheme
+The  macro  can be passed a file name and  aborts if the file is not  regular,
+there by  returning  the state.
+.PP
+The  follow  example  checks  that  a file  is not  empty,  this  is  used  by
+\fBmail-check\fR to test for any incoming mail.
+.Me $emf-scheme
+.CS
+    !if &gre &stat "s" %incoming-mail-box
+        ml-write "[You have new mail]"
+    !endif
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Hl "Variable Functions" Functions - ,
+.Ht find-file 2 .
+.ad
+.FH

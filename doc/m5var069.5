@@ -1,0 +1,40 @@
+.\" -*- nroff -*-
+.Id $Id: m5var069.5,v 1.1.1.1 2000-07-25 22:04:07 jon Exp $
+.Im MicroEmacs variable|macrodevelop
+.so me.tni
+.TH $temp-name 5
+.XI $temp-name - "Temporary file name"
+.SH NAME
+$temp-name \- Temporary file name
+.Me $a
+.SH SYNOPSIS
+.B $temp-name
+.I FileName
+.SH DESCRIPTION
+.B $temp-names 
+is automatically  set to a nonexistent file name in the systems temporary file
+directory.  On  \s-1UNIX\s0  systems  the  temporary  directory  is  fixed  to
+"\fC/tmp/\fR",  on  other  systems  the  temporary  directory  is set by the
+\fB$TEMP\fR environment variable.
+.SH EXAMPLE
+The following  example  uuencodes a given file into a temporary  file and then
+inserts this file into the current buffer.
+.Me $emf-scheme
+.CS
+set-variable #l0 @ml04 "Uuencode and insert file"
+set-variable #l1 $temp-name
+!force shell-command &spr "uuencode %s < %s > %s" #l0 #l0 #l1
+insert-file #l1
+!force shell-command &cat "rm " #l1
+.CE 0
+.Me $ehf-scheme
+.SH NOTES
+This variable can not be set, any attempt to set it will result in an error.
+.PP
+The returned file name is not guaranteed to be unique between calls, only that
+the file does not currently exist.
+.SH "SEE ALSO"
+.na
+.Ht shell-command 2 .
+.ad
+.FH

@@ -1,0 +1,77 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1998 Jon Green.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m3mac031.3
+.\"  Created By    : Jon Green
+.\"  Created       : Mon Aug 31 21:02:32 1998
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1998 Jon Green.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from Jon Green.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m3mac031.3,v 1.1.1.1 2000-07-25 22:04:00 jon Exp $
+.Im MicroEmacs command
+.so me.tni
+.TH man 3
+.XI man \- "UNIX manual page viewer"
+.SH NAME
+man - UNIX manual page viewer.
+.Me $a
+.SH SYNOPSIS
+.na
+\fBman\fR
+.ad
+.SH DESCRIPTION
+\fBman\fR  provides  a  mechanism  to display a UNIX  manual  page  within the
+MicroEmacs  window. On invoking \fBman\fR the user is prompted for the name of
+the manual page to display:-
+.CS
+Man on ?
+.CE
+The name of the manual page (and any options) are entered on the command line.
+The macro invokes the UNIX utility
+.Hr man 1
+to generate the page and displays the results in a window.
+.PP
+Selecting  another  manual  page, with the left  mouse within the manual page,
+then  MicroEmacs attempts to load the selected manual page.
+.SH NOTES
+.B man
+is a macro defined in \fChkman.emf\fR.
+.PP
+.B man
+is only made available within \s-1UNIX\s0  environments, the \s-1UNIX\s0 start
+up file \fCunixterm.emf\fR  links in the macro. If the \fBman\fR
+utility is required  on other  platforms  then the  following  definition  is
+required in a start-up file.
+.Me "$emf-scheme"
+.CS
+define-macro-file hkman man
+.CE 0
+.Me "$ehf-scheme"
+.SH "SEE ALSO"
+.na
+.Ht user-setup 3 ,
+.Ht spell-buffer 3 .
+.ad
+.FH

@@ -1,0 +1,29 @@
+.\" -*- nroff -*-
+.Id $Id: m2mod024.2,v 1.1.1.1 2000-07-25 22:03:59 jon Exp $
+.Im MicroEmacs modes
+.so me.tni
+.TH crlf 2m
+.XI crlf - "File's line feed style"
+.SH NAME
+crlf \- File's line feed style
+.SH SYNOPSIS
+.B "crlf Mode"
+.sp
+\fBc\fR \- mode line letter.
+.SH DESCRIPTION
+When enabled  \fBcrlf\fR  indicates  that a line feed should be written out in
+the \s-1MS-DOS\s0 style of '\fB\\r\\n\fR'. When clear then a \s-1UNIX\s0 style
+of  '\fB\\n\fR' should be used. 
+.SH NOTES
+This mode only effects the style in which the buffer is written if
+.Ht auto 2m
+mode is enabled.
+.SH "SEE ALSO"
+.na
+.Ht auto 2m ,
+.Ht ctrlz 2m ,
+.Ht save-buffer 2 ,
+.Ht find-file 2 ,
+.Ht $buffer-fmod 5 .
+.ad
+.FH

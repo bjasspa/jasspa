@@ -1,0 +1,104 @@
+.\" -*- nroff -*-
+.Id $Id: m5var072.5,v 1.1.1.1 2000-07-25 22:04:07 jon Exp $
+.Im MicroEmacs variable
+.so me.tni
+.TH $idle-time 5
+.XI $idle-time - "System idle event delay time"
+.SH NAME
+$idle-time \- System idle event delay time
+.Me $a
+.SH SYNOPSIS
+.na
+\fB$idle-time\fR \fImilliseconds\fR; Default is \fC1000\fR
+.ad
+.sp
+10 <= \fImilliseconds\fR <= t
+.SH DESCRIPTION
+\fB$idle-time\fR  sets the time  waited  between  the last user  event and the
+generation  of  a  \fCidle-pick\fR  key  event.  When  user  input  stops  for
+\fB$idle-time\fR   milliseconds  \*(mS  checks  the  binding  of  the  special
+\fCidle-pick\fR  key, if this pseudo key is bound then the command it is bound
+to will be executed. \*(mS will then cycle, generating a \fCidle-pick\fR every
+\fB$idle-time\fR  milliseconds  until  user  activity  starts. At this point a
+\fCidle-drop\fR  key event is  generated, if this pseudo key is bound then the
+command it is bound to will be executed.
+.PP
+This system is useful for things which can be done in the background.
+.SH EXAMPLE
+The following example is taken from  \fCssaver.emf\fR  and implements a simple
+screen saver:-
+.Me $emf-scheme
+.CS
+set-variable %screen-saver 0
+define-macro screen-saver
+    !if &not &pinc %screen-saver 1
+        !if &seq @cck "idle-pick"
+            ; default is to switch on in 5 minutes time
+            &cond @? @# 300000 create-callback screen-saver
+        !else
+            !if &seq @cck "callback"
+                @# create-callback screen-saver
+            !elif @?
+                ; user has suppled argument, install or remove
+                !if &gre @# 0
+                    &mul @# 60000 global-bind-key screen-saver "idle-pick"
+                !else
+                    !force global-unbind-key "idle-pick"
+                !endif
+                set-variable %screen-saver &sub %screen-saver 1
+                !return
+            !endif
+            set-variable @# $screen-depth
+            !while &dec @# 1
+                2 screen-poke @# 0 $global-scheme &spr "%n" $screen-width " "
+            !done
+            0 screen-poke 0 0 $global-scheme &spr "%n" $screen-width " "
+            -1 show-cursor
+            ; must set this to stop recursion when waiting for a key!
+            set-variable %screen-saver 0
+            set-variable @# @cg
+            set-variable %screen-saver 1
+            1 show-cursor
+            screen-update
+            ml-clear
+        !endif
+    !endif
+    set-variable %screen-saver &sub %screen-saver 1
+!emacro
+.CE 0
+.Me $ehf-scheme
+.SH NOTES
+Care must be taken to ensure that a recursive  loop is not  created,  consider
+the following example:-
+.Me $emf-scheme
+.CS
+define-macro bored
+    !if &iseq @mc1 "Are you bored (y/n)? " "nNyY" "y"
+        ml-write "Play a silly game!"
+    !endif
+!emacro
+global-bind-key bored idle-pick
+.CE
+.Me $ehf-scheme
+If this was executed  \*(mS would very quickly crash! As soon as a second past
+\fBbored\fR would execute, which will prompt the user and wait for input. If a
+second passes without input  \fBbored\fR  will be executed again and again and
+again  until stack  memory runs out! To avoid this  \fCidle-pick\fR  should be
+unbound before waiting for user input, i.e.:-
+.Me $emf-scheme
+.CS
+define-macro bored
+    global-unbind-key idle-pick
+    !if &iseq @mc1 "Are you bored (y/n)? " "nNyY" "y"
+        ml-write "Play a silly game!"
+    !endif
+    global-bind-key bored idle-pick
+!emacro
+global-bind-key bored idle-pick
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Ht $delay-time 5 .
+.ad
+.FH

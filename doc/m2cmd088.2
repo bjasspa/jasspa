@@ -1,0 +1,42 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd088.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|buffer
+.ds C0 "(\fB\*e\*cn\fR)\ \&
+.so me.tni
+.TH change-buffer-name 2
+.XI change-buffer-name - "\*(C0Change name of current buffer"
+.SH NAME
+change-buffer-name \- Change name of current buffer
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B change-buffer-name
+"\fI\&buffer-name\fR\&" \*(C0
+.ad
+.SH DESCRIPTION
+.B change-buffer-name
+changes the name of the current buffer to \fI\&buffer-name\fR\&.  Buffer names
+must be unique as they act as the identity  handle. By default the buffer name
+is derived from the buffer's  file name  excluding  the path. This can lead to
+conflicts, when editing files with the same name and different paths, in which
+case a counter  is  appended  to the end of the  buffer  name to make the name
+unique. For example:
+.CS
+File Name               Buffer Name
+
+/etc/file.c             file.c
+/tmp/file.c             file.c<1>
+.CE
+By default, or an  argument is given with bit 1 set,  \fBchange-buffer-name\fR
+will fail if a buffer with the given name already  exists. This  behavior can
+be changed by giving an argument  with the first bit cleared, e.g. 0, in which
+case if a buffer with that name already exists then a counter as appended.  
+.SH "SEE ALSO"
+.na
+.Ht $buffer-fname 5 ,
+.Ht change-file-name 2 .
+.Ht delete-buffer 2 .
+.ad
+.rm C0
+.FH

@@ -1,0 +1,131 @@
+.Id $Id: m1cmd001.1,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs function
+.so me.tni
+.TH memsdev 1
+.XI memsdev - "Microsoft Developer Studio Add-in for \*(mE"
+.SH NAME
+memsdev - Microsoft Developer Studio Add-in for \*(mE
+.SH SYNOPSIS
+.na
+.B memsdev.dll
+.ad
+.SH DESCRIPTION
+.B meMsdev
+is a Microsoft Visual Studio Add-In that allows  \*(mE to be integrated as
+the default text editor. It will be used instead of the Visual Studio built in
+editor when you double click on a file or press F4.
+.SH "INSTALLATION"
+.B 1)
+Copy mesdev.dll into the MicroEmacs directory i.e.
+.CS
+c:/Program Files/JASSPA/MicroEmacs
+.CE
+.B 2)
+Edit  the
+.Ht me32.ini 8
+file in your  Windows  directory  and  identify  the
+location of the  MicroEmacs  executable.  The  executable  name is used to
+spawn MicroEmacs if it is not already running. The entry takes the form:-
+.CS
+; Identify the location of the MicroEmacs executable so that the
+; Developer Studio "Add-In" can locate the executable
+[Location]
+exe=c:\\Program Files\\JASSPA\\MicroEmacs\\me32.exe
+.CE
+Change the \fIexe\fR entry to match the location and name of your executable.
+.PP
+.B 3)
+For MS-DEV V5.0 only; from a DOS box, register the DLL using
+.Hr regsvr32.exe 1
+i.e.
+.CS
+> cd c:/Program Files/JASSPA/MicroEmacs
+> regsvr32 memsdev.dll
+.CE
+For MS-DEV V6.0 it is not necessary to perform this registration step.
+.PP
+.B 4)
+Start Visual Studio and goto:-
+.CS
+Tools
+    Customize...
+        Add-Ins and Macro Files
+.CE
+.B 5)
+Click on \fIBrowse\fR and point Visual Studio to your \fBmemsdev.dll\fR file.
+.PP
+.B 6)
+Click the check box to indicate that you want to use the Add-In, and
+close the Customize dialog box.
+.PP
+.B 7)
+You should notice the MicroEmacs tool bar showing the MicroEmacs Icon.
+This invokes a dialog that allows you to attach and detach MicroEmacs
+as the default editor.
+.SH "USING meMsdev"
+Clicking on the  MicroEmacs  Tool bar shows the meMsdev  configuration  dialog.
+Check the boxes when  MicroEmacs edit session is required as default;  uncheck
+the boxes if you wish to revert to the built-in dialog.
+.PP
+Use  Visual  Studio as normal,  and  MicroEmacs  should  almost  always  bring
+MicroEmacs to the  foreground to edit the document. If a MicroEmacs is already
+running then  "meMsdev"  will attach to an existing  session and will load the
+file. If  MicroEmacs is not detected then a new version is spawned off and then
+an attachment is made.
+.SH "RUNNING A DEBUG SESSION"
+.B meMsdev
+does not currently provide any debugging  capability (but we are working on it
+!!). To start debugging it is suggested that the Editor is decoupled
+.I "(MicroEmacs Dialogue -> Uncheck Boxes)"
+and work within the Developer studio.
+.PP
+When you have finished debugging and wish to move back to an edit session then
+re-enable MicroEmacs
+.I "(MicroEmacs Dialogue -> Check Boxes)"
+AND close any
+windows that are open within the MS-Dev environment (
+.I "Window->Windows...->Select All"
+and
+.IR "Close  All  Windows" ).
+Then  commence editing again.
+.PP
+While  MicroEmacs  is  attached,   selecting  any  of  the  find  file  lines,
+compilation  error lines etc within the response panes will take MicroEmacs to
+the specified line.
+.SH "BUGS"
+.B meMsdev
+works by hooks  exposed by Visual  Studio. Most of the  functionality
+works from the  OpenDocument  (look it up in VS 5) hook. So...If a document is
+ALREADY  open in  Visual  Studio,  and you  double  click the file in the File
+Browser...Emacs  will NOT come to the foreground.  Since the document was open
+in the Visual Studio editor, the OpenDocument event never occurred.
+.SH ACKNOWLEDGEMENTS
+.B meMsdev
+is based on the initial work from
+.B VisEmacs
+performed by
+.B "Christopher Payne"
+.I "<payneca@sagian.com>"
+for GNU Emacs. This software  comes under the GNU General  Public  License, as
+such, meMsdev is covered by the same licensing.
+.PP
+Many thanks to Christopher for putting  together this  technology, this manual
+page is derived from the documentation supplied with
+.IR VisEmacs .
+.SH LICENSING
+meMsdev is free software; you can  redistribute  it and/or modify it under the
+terms of the GNU General  Public  License as  published  by the Free  Software
+Foundation; either version 2, or (at your option) any later version.
+.PP
+meMsdev is  distributed  in the hope that it will be useful, but  WITHOUT  ANY
+WARRANTY; without even the implied warranty of  MERCHANTABILITY or FITNESS FOR
+A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+.PP
+You should have received a copy of the GNU General  Public  License along with
+GNU  Emacs;  see  the  file  COPYING.  If  not,  write  to the  Free  Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+.SH "SEE ALSO"
+.na
+.I "Microsoft Developer Studio Add-In Documentation"
+.ad
+.FH

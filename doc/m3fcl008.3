@@ -1,0 +1,61 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1999 Samsung (SERI) Ltd.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m3fcl008.3
+.\"  Created By    : Jon Green
+.\"  Created       : Mon Jul 5 21:40:07 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 Samsung (SERI) Ltd.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from Samsung (SERI) Ltd.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m3fcl008.3,v 1.1.1.1 2000-07-25 22:03:59 jon Exp $
+.Im MicroEmacs filter
+.so me.tni
+.TH printall 3f
+.XI printall - "Formatted print job"
+.SH NAME
+printall \- Formatted print job
+.Me $a
+.SH SYNOPSIS
+.na
+\fBme\fR "@printall" \fI<files>\fR
+.ad
+.SH DESCRIPTION
+The start-up file  \fCprintalls.emf\fR  may be invoked from the command line to
+generate a print job for each file specified on the command line.
+.PP
+Given  a list  of  \fI<files>\fR,  the  files  are  loaded  into  the  editor,
+and then printed through \*(mS printing formatter. This is an alternative to 
+.Hr cgrind 1 
+or some other syntax smart \fIpretty print\fR filter.
+.PP
+The operation of this macro assumes that the printer is functioning correctly.
+.SH BUGS
+As a guess, I would  probably bet that this does not work very well on Windows
+as a dialog is invoked for the print. 
+.SH "SEE ALSO"
+.na
+.Ht start-up 3 .
+.ad
+.FH

@@ -1,0 +1,36 @@
+.\" -*- nroff -*-
+.Id $Id: m3mac004.3,v 1.1.1.1 2000-07-25 22:04:00 jon Exp $
+.Im MicroEmacs command|transposition
+.so me.tni
+.TH sort-lines-ignore-case 3
+.XI sort-lines-ignore-case - "Alphabetically sort lines ignoring case"
+.SH NAME
+sort-lines-ignore-case \- Alphabetically sort lines ignoring case"
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B sort-lines-ignore-case
+.ad
+.SH DESCRIPTION
+.B sort-lines-ignore-case
+forces the current buffers
+.Ht exact 2m
+mode to off and then calls
+.Ht sort-lines 2
+which will  perform a case  insensitive  alphabetical  line sort from the mark
+position  to the current  cursor  position.  The state of the current  buffers
+\fBexact\fR mode is restored on completion.
+.SH NOTES
+.B sort-lines-ignore-case
+is a macro defined in \fCformat.emf\fR, see help on command 
+.Ht sort-lines 2
+for a complete definition.
+.SH "SEE ALSO"
+.na
+.Ht sort-lines 2 ,
+.Ht buffer-mode 2 ,
+.Ht exact 2m ,
+.Ht transpose-lines 2 .
+.ad
+.FH

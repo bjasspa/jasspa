@@ -1,0 +1,30 @@
+.\" -*- nroff -*-
+.Id $Id: m5var009.5,v 1.1.1.1 2000-07-25 22:04:04 jon Exp $
+.Im MicroEmacs variable|osd
+.so me.tni
+.TH $osd-scheme 5
+.XI $osd-scheme - "OSD color scheme"
+.SH NAME
+$osd-scheme \- OSD color scheme
+.Me $a
+.SH SYNOPSIS
+\fB$osd-scheme\fR \fIschemeNum\fR; Default is \fC1\fR
+.SH DESCRIPTION
+.B $ml-scheme
+defines the color scheme by default on an
+.Ht osd 2
+dialog,  the  color  scheme  \fIschemeNum\fR  identifies  the  foreground  and
+background color and is defined by an invocation to
+.Ht add-color-scheme 2 .
+Every osd dialog can over-ride this value by using the '\fIS\fR' flag.
+.SH "SEE ALSO"
+.na
+.Ht osd 2 ,
+.Ht add-color-scheme 2 ,
+.Ht $global-scheme 5 ,
+.Ht $ml-scheme 5 ,
+.Ht $mode-line-scheme 5 ,
+.Ht $scroll-bar-scheme 5 ,
+.Ht $system 5 .
+.ad
+.FH

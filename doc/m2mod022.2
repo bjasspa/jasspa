@@ -1,0 +1,28 @@
+.\" -*- nroff -*-
+.Id $Id: m2mod022.2,v 1.1.1.1 2000-07-25 22:03:58 jon Exp $
+.Im MicroEmacs modes
+.so me.tni
+.TH hide 2m
+.XI hide - "Hide buffer"
+.SH NAME
+hide \- Hide buffer
+.SH SYNOPSIS
+.B "hide Mode"
+.sp
+\fBH\fR \- mode line letter.
+.SH DESCRIPTION
+This  mode  can  only be set on a  buffer  and  when  enabled  the  buffer  is
+effectively  hidden  from the user. When set the buffer is hidden  from the buffer
+completion list used by commands such as
+.Ht find-buffer 2 ,
+the buffer is also ignored by commands
+.Ht list-buffers 2 ,
+.Ht save-some-buffers 2
+and
+.Ht delete-some-buffers 2 .
+.SH "SEE ALSO"
+.na
+.Ht find-buffer 2 ,
+.Ht list-buffers 2 .
+.ad
+.FH

@@ -1,0 +1,44 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd009.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|bind;command|help
+.ds C0 "(\fB\*(cHa\fR)\ \&
+.so me.tni
+.TH command-apropos 2
+.XI command-apropos - "\*(C0List commands involving a concept"
+.SH NAME
+command-apropos \- List commands involving a concept
+.Me $a
+.SH SYNOPSIS
+.na
+.B command-apropos
+"\fIstring\fR" (\fB\*(cHa\fR)
+.ad
+.SH DESCRIPTION
+.B command-apropos
+compiles a list of all commands with  \fIstring\fR in their name, also giving
+their current key bindings.
+.SH EXAMPLE
+To find all of the  commands  with  "\fCcommand\fR"  in their  name space then
+issue the command  "\fC\*(cHa command\fR"  which  generates a list of commands
+such as:-
+.CS
+abort-command ................. "C-g"
+                                "esc C-g"
+                                "C-x C-g"
+command-apropos ............... "C-h a"
+command-complete
+execute-named-command ......... "esc x"
+help-command .................. "C-h C-c"
+ipipe-shell-command ........... "esc \\\\"
+list-commands ................. "C-h c"
+pipe-shell-command ............ "esc !"
+                                "esc @"
+                                "C-x @"
+shell-command
+.CE 0
+.SH "SEE ALSO"
+.na
+.Ht describe-bindings 2 .
+.ad
+.rm C0
+.FH

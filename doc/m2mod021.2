@@ -1,0 +1,28 @@
+.\" -*- nroff -*-
+.Id $Id: m2mod021.2,v 1.1.1.1 2000-07-25 22:03:58 jon Exp $
+.Im MicroEmacs modes
+.so me.tni
+.TH lock 2m
+.XI lock - "Pipe cursor position lock"
+.SH NAME
+lock \- Pipe cursor position lock
+.SH SYNOPSIS
+.B "lock Mode"
+.sp
+\fBk\fR \- mode line letter.
+.SH DESCRIPTION
+This mode can only be used while an incremental pipe (started by
+.Ht ipipe-shell-command 2 )
+is running in the current buffer, denoted by the
+.Ht pipe 2m
+being set. When this mode is enabled  and \*(mE  buffer  cursor is at the same
+location as the process shell cursor, the buffer cursor is automatically moved
+with the shell cursor.
+.PP
+This mode is automatically enabled for a piped buffer.
+.SH "SEE ALSO"
+.na
+.Ht ipipe-shell-command 2 ,
+.Ht pipe 2m .
+.ad
+.FH

@@ -1,0 +1,117 @@
+.\" -*- nroff -*-
+.Id $Id: m3mac042.3,v 1.1.1.1 2000-07-25 22:04:01 jon Exp $
+.Im MicroEmacs command|shell
+.so me.tni
+.TH execute-tool 3
+.XI execute-tool - "Execute a user defined shell tool"
+.SH NAME
+execute-tool \- Execute a user defined shell tool
+.Me $a
+.SH SYNOPSIS
+.na
+\fIn\fR \fBexecute-tool\fR "\fItool-name\fR"
+.ad
+.SH DESCRIPTION
+\fBexecute-tool\fR  launches a predefined  shell tool, the tools are typically
+defined by the
+.Ht user-setup 3
+Tools page and executed using the \*(mS main Tools menu. See help on
+.Ht user-setup 3
+for more information on the basic facilities given by execute-tool.
+.PP
+If the numeric  argument \fIn\fR is supplied it is used as the tool name to be
+executed, otherwise the argument "\fItool-name\fR" must be given.
+.PP
+A tool with a numeric  name can be executed via a key binding, for example, to
+execute tool \fB3\fR (as defined by  \fBuser-setup\fR)  to '\fCC-3\fR' add the
+following line to the user setup file:-
+.Me $emf-scheme
+.CS
+3 global-bind-key execute-tool "C-3"
+.CE 0
+.Me $ehf-scheme
+.SH NOTES
+The  registry  entries  for a tool  must  be  located  in  registry  directory
+"\fC/history/\fR\fB$platform\fR\fB/tool/\fR\fBtool-name\fR"              where
+\fB$platform\fR is the current setting of variable
+.Ht $platform 5
+and  \fBtool-name\fR  is the  name of the  tool as given to the  command.  The
+following registry entries are used:-
+.IP "\fBname\fR"
+The name of the tool as displayed in the user-setup  Tools dialog and the Main
+Tools menu. This is only used for tools \fC0\fR to \fC9\fR.
+.IP "\fBcommand\fR"
+The  command-line  to be launched  when the tool is  executed,  the  following
+special  tokens  may be used in the  command-line  which  are  substituted  at
+execution:-
+.RS
+.IP "\fB%ff\fR"
+The current  buffer's full file name, including the path.
+.IP "\fB%fp\fR"
+The current  buffer's file path.
+.IP "\fB%fn\fR"
+The current  buffer's file name without the path.
+.IP "\fB%fb\fR"
+The current  buffer's  file base name, i.e. the file name  without the path or
+the  extension.
+.IP "\fB%fe\fR"
+The current  buffer's file  extension with the '\fI.\fR' (e.g.  "\fI.emf\fR"),
+set to the empty string if the file name does not have an extension.
+.RE
+.IP
+Note   that   "\fB%ff\fR"   is   always   the  same  as   "\fB%fp%fn\fR"   and
+"\fB%fp%fb%fe\fR".  If any of these  tokens  are used, the tool  will  fail to
+execute if the current buffer does not have a file name.
+.IP "\fBflag\fR"
+A bit based flag setting the tool characteristics, where:-
+.RS
+.IP "\fB0x01\fR"
+Enable current buffer saving. 
+.IP "\fB0x02\fR"
+Enable prompt before saving current buffer. 
+.IP "\fB0x04\fR"
+Enable all edited buffers saving. 
+.IP "\fB0x08\fR"
+Enable prompt before saving an edited buffer. 
+.IP "\fB0x10\fR"
+Enable output capturing. 
+.IP "\fB0x20\fR"
+Enable concurrent running, not available on all platforms, see variable
+.Ht $system 5 .
+.RE
+.IP "\fBbname\fR"
+The name of the  buffer to be used if the output is  captured.  The  following
+special  tokens  may be used in the  buffer  name  which  are  substituted  at
+execution:-
+.RS
+.IP "\fB%fn\fR"
+The current  buffer's file name without the path, set to the buffer name if the
+current buffer does not have a file name.
+.IP "\fB%fb\fR"
+The current  buffer's  file base name, i.e. the file name  without the path or
+the  extension.  Set to the buffer name if the current  buffer does not have a
+file name.
+.IP "\fB%fe\fR"
+The current  buffer's file  extension with the '\fI.\fR' (e.g.  "\fI.emf\fR"),
+set to the empty string if the current  buffer does not have a file name or it
+does not have an extension.
+.RE
+Note that  "\fB%fn\fR" is always the same as  "\fB%fb%fe\fR".  Default  buffer
+name when this field is left empty is "\fI*command*\fR", or "\fI*icommand*\fR"
+if \fCRun Concurrently\fR is enabled.
+.PP
+If  more  than  10  tools  are   required   (maximum   number   definable   by
+\fBuser-setup\fR)   or  names  are  preferred, it  is  recommended   that  the
+\fBuser-setup\fR  dialog is used to define the tool and then use the  registry
+copy utility bound to '\fCc\fR' in a
+.Ht list-registry 2
+buffer.
+.SH "SEE ALSO"
+.na
+.Ht user-setup 3 ,
+.Ht ipipe-shell-command 2 ,
+.Ht pipe-shell-command 2 ,
+.Ht shell-command 2 ,
+.Ht system 5 .
+.ad
+.FH

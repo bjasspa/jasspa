@@ -1,0 +1,81 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd147.2,v 1.1.1.1 2000-07-25 22:03:57 jon Exp $
+.Im MicroEmacs command|macrodevelop
+.so me.tni
+.TH define-macro-file 2
+.XI define-macro-file - "Define macro file location"
+.SH NAME
+define-macro-file \- Define macro file location
+.Me $a
+.SH SYNOPSIS
+.na
+.B define-macro-file
+"\fIfile-name\fR"
+["\fImacro-name\fR" "\fImacro2-name\fR" ...]
+.ad
+.SH DESCRIPTION
+Macros  are loaded as late as  possible  using an  on-demand  mechanism,  this
+speeds up the load time of \*(mE, it also keeps the  startup  file clean since
+macros  are not  defined  within the  start-up  file. Only when the user first
+executes a macro defined via  \fBdefine-macro-file\fR  is the file loaded, the
+macro becomes defined and is executed.  Subsequent calls to the macro will not
+reload the file as the macro will now be fully defined.
+.PP
+.B define-macro-file
+binds macros  (\fImacro-name\fR  ...) to a file name  (\fIfile-name\fR).  This
+operation informs \*(mE which file should be loaded when  \fImacro-name\fR  is
+first  executed.  The  \fImacro-name\fR  arguments  may be omitted if the file
+contains only one exported macro which has the same name as \fIfile-name\fR.
+.PP
+Alternatively  the macro  file may  contain  many  macros  all of which can be
+defined by a single call to \fBdefine-macro-file\fR, listing all macros on the
+same line after the  \fIfile-name\fR. If a \fImacro-name\fR  is given then the
+default  macro  \fIfile-name\fR  is not  created, if a macro of that name does
+exist it must be added to the \fImacro-name\fR list.
+.SH EXAMPLE
+The following definitions are found in the \fCme.emf\fR start-up file:-
+.Me $emf-scheme
+.CS
+define-macro-file search replace-all-string query-replace-all-string
+define-macro-file format clean sort-lines-ignore-case tabs-to-spaces ...
+define-macro-file misc symbol ascii-time check-line-length alarm
+define-macro-file spell spell-word spell-buffer spell-edit-word find-word
+define-macro-file tools compile grep diff diff-changes
+define-macro-file games Metris Patience Triangle Mahjongg Match-It
+define-macro-file print print print-setup
+define-macro-file hkdir file-browser
+define-macro-file fattrib file-attrib
+define-macro-file osd osd-main
+define-macro-file user user-setup
+define-macro-file addrbook address-book
+define-macro-file cal
+define-macro-file calc
+define-macro-file draw
+.CE
+.Me $ehf-scheme
+Hilighting a number of entries as examples;  macro file  \fBcalc\fR is defined
+with no macro  definition,  the macro is  assumed to be  \fBcalc\fR.  The file
+\fBtools.emf\fR contains multiple macros \fBcompile\fR, \fBgrep\fR, \fBdiff\fR
+and    \fBdiff-changes\fR;    all    can    be    defined    by    a    single
+\fBdefine-macro-file\fR  entry.
+.SH NOTES
+.BS
+Macro files are searched for in the current directory and along the
+.Ht $search-path 5 .
+.BU
+The  macro  file is not  loaded  unless  a  binding  has  been  defined  using
+\fBdefine-macro-file\fR.
+.BU
+Any other macros that exist in the  \fIfile-name\fR  macro file become defined
+when the  entry  point  macro is  loaded  and are  available  for use. This is
+potentially  useful  as a  single  \fIentry\fR  macro  may  be  defined  using
+\fBdefine-macro-file\fR, when invoked other helper macros become available.
+.BE 0
+.SH "SEE ALSO"
+.na
+.Ht add-file-hook 2 ,
+.Ht define-macro 2 ,
+.Ht $search-path 5 ,
+.Ht start-up 3 .
+.ad
+.FH

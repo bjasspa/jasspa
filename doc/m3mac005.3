@@ -1,0 +1,55 @@
+.\" -*- nroff -*-
+.Id $Id: m3mac005.3,v 1.1.1.1 2000-07-25 22:04:00 jon Exp $
+.Im MicroEmacs command|delete
+.so me.tni
+.TH clean 3
+.XI clean - "Remove redundant white spaces from the current buffer"
+.SH NAME
+clean \- Remove redundant white spaces from the current buffer
+.Me $a
+.SH SYNOPSIS
+.na
+\fBclean\fR
+.ad
+.SH DESCRIPTION
+.B clean
+removes  redundant white spaces from the current buffer, there are three types
+this command remove:
+.IP 1)
+Any space or tab  character at the end of the line. All are removed  until the
+last  character  is not a space or a tab, or the line is empty.  Note  that an
+empty line is not removed unless at the end of the buffer.
+.IP 2)
+Space  characters  are removed  when the next  character  is a tab, making the
+space  redundant,  e.g. the  strings  "\fC\tHello World\fR"  and
+"\fC \tHello World\fR"  will look  identical  because the tab character  ('\fI\t\fR')  will
+indent the text to the 8th column  with or without  the space so the space can
+be removed.
+.IP 3)
+Superfluous empty lines at the end of the buffer are removed, leaving only one
+empty line.
+.SH DIAGNOSTICS
+.IP "\fC[Command illegal in view mode]\fR"
+Caused by a  redundant  white  space being found and the buffer  being in view
+mode. Note that if clean  completes  while the  buffer is in view mode then no
+superfluous white spaces where found.
+.SH NOTES
+.B clean
+is a macro defined in \fCformat.emf\fR.
+.PP
+Most of this  command's  operation  is  performed  by simple  regex search and
+replace strings:
+.IP a)
+Search for:      "[\\t ]+$"
+Replace with:    "\\\\0"
+.IP b)
+Search for:      "[ ]+\\t"
+Replace with:    "\\t"
+.SH "SEE ALSO"
+.na
+.Ht replace-string 2 ,
+.Ht tab 2m ,
+.Ht delete-blank-lines 2 ,
+.Ht tabs-to-spaces 3 .
+.ad
+.FH

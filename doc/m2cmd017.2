@@ -1,0 +1,28 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd017.2,v 1.1.1.1 2000-07-25 22:03:54 jon Exp $
+.Im MicroEmacs command|file|buffer
+.ds C0 "(\fB\*(cXn\fR)\ \&
+.so me.tni
+.TH change-file-name 2
+.XI change-file-name - "\*(C0Change the file name of the current buffer"
+.SH NAME
+change-file-name \- Change the file name of the current buffer
+.Me $a
+.SH SYNOPSIS
+.na
+.B change-file-name
+"\fIfile-name\fR" \*(C0
+.ad
+.SH DESCRIPTION
+.B change-file-name
+changes  the file name of the current  buffer to  \fIfile-name\fR.  A validity
+check is made on the given  file name and if found to be  invalid  (e.g. its a
+directory) the name is rejected.
+.SH "SEE ALSO"
+.na
+.Ht change-buffer-name 2 ,
+.Ht change-directory 2 ,
+.Ht write-buffer 2 .
+.ad
+.rm C0
+.FH

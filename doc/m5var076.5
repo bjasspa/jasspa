@@ -1,0 +1,89 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1998 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m5var076.5
+.\"  Created By    : Steven Phillips
+.\"  Created       : Wed Aug 5 23:13:35 1998
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1998 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m5var076.5,v 1.1.1.1 2000-07-25 22:04:07 jon Exp $
+.Im MicroEmacs variable;environment
+.so me.tni
+.TH $MENAME 5
+.XI $MENAME - "MicroEmacs user name"
+.XI $LOGNAME - "System user name (UNIX)"
+.SH NAME
+.Me "|$MENAME"
+$MENAME \- MicroEmacs user name
+.br
+.Me "|$LOGNAME"
+$LOGNAME \- System user name (UNIX)
+.Me $a
+.SH SYNOPSIS
+.na
+\fB$MENAME\fR \fIstring\fR; Default is \fCguest\fR
+.sp
+\fB$LOGNAME\fR \fIstring\fR
+.ad
+.SH DESCRIPTION
+.B $MENAME
+is an  environment  variable used to initialize  the \*(mE  environment  for a
+given  user.  At  start-up,  if  \fB$MENAME\fR  is  defined  then  the  user's
+configuration  and  history  file  "\fCname\fR\fI.erf\fR" is located and read,
+where \fCname\fR is the variable value.
+.PP
+If at start-up \fB$MENAME\fR is not defined then \fB$MENAME\fR is assigned the
+value  of   \fB$LOGNAME\fR,   if   \fB$LOGNAME\fR  is  not  defined  the  file
+\fCdefault.emf\fR is located and executed. This macro file is created by
+.Ht user-setup 3
+to set  \fB$MENAME\fR  to the default  user. If this fails then  \fB$MENAME\fR
+defaults to \fCguest\fR and a default configuration is used.
+.PP
+The user configuration and history file has many uses, see
+.Ht user-setup 3
+and
+.Ht read-history 2
+for more information.
+.SS "Microsoft Windows Environments"
+Within  Microsoft  Windows  environments,  if  \fIlogin\fR is enabled then the
+users  login name is  automatically  used as the first  choice  login name. No
+environment  variables need to be set. If login is not enabled then one of the
+aforementioned methods should be used.
+.SS "UNIX"
+In \s-1UNIX\s0 environments,  \fB$LOGNAME\fR is typically defined.
+.SH NOTES
+The three  variables  must be  defined  before  start-up  for them to have any
+effect.
+.PP
+\fB$LOGNAME\fR  is often defined by the system and should not be altered. If a
+different user name is required, setting of \fB$MENAME\fR is preferable.
+.SH "SEE ALSO"
+.na
+.Ht user-setup 3 ,
+.Ht read-history 2 ,
+.Ht $MEPATH 5 .
+.ad
+.FH

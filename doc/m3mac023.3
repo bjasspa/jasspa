@@ -1,0 +1,41 @@
+.Id $Id: m3mac023.3,v 1.1.1.1 2000-07-25 22:04:00 jon Exp $
+.Im MicroEmacs command|spell
+.so me.tni
+.TH spell-add-word 3
+.XI spell-add-word - "Add a word to the main dictionary"
+.SH NAME
+spell-add-word \- Add a word to the main dictionary
+.SH SYNOPSIS
+.na
+.I n
+.B spell-add-word
+["\fIword\fR"]
+.ad
+.SH DESCRIPTION
+.B spell-add-word
+adds words to the last dictionary added using the command
+.Ht add-dictionary 2 .
+If no argument is supplied  the user is prompted  for the word and rule flags,
+only a 'Good' word can be added (see  below). If an argument  \fIn\fR is given
+then the next \fIn\fR words from the current  buffer are added. The words must
+take one of the following three forms:
+.sp
+.RS
+.nf
+\fCxxxx\fR \- Good word \fCxxxx\fR with no spell rules allowed
+\fCxxxx/abc\fR \- Good word \fCxxxx\fR with spell rules \fCabc\fR allowed
+\fCxxxx>yyyy\fR \- Erroneous word with an auto-replace to \fCyyyy\fR
+.fi
+.RE
+.SH NOTES
+\fBspell-add-word\fR  is a macro defined in file \fCspellutl.emf\fR. It is not
+defined by default so \fCspellutl.emf\fR must be executed first using
+.Ht execute-file 2 .
+.SH "SEE ALSO"
+.na
+.Ht add-dictionary 2 ,
+.Ht edit-dictionary 3 ,
+.Ht save-dictionary 2 ,
+.Ht delete-dictionary 2 .
+.ad
+.FH

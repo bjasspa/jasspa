@@ -1,0 +1,182 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			     Copyright 1999 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        : MicroEmacs
+.\"  Module        : gdiff
+.\"  Object Name   : m3mac044.3
+.\"  Created By    : Jon Green
+.\"  Created       : Wed Jun 30 23:44:57 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m3mac044.3,v 1.1.1.1 2000-07-25 22:04:01 jon Exp $
+.Im MicroEmacs shell|comparison
+.so me.tni
+.TH gdiff 3
+.XI gdiff - "Graphical file difference" command|shell
+.XI %gdiff-com 5 "Gdiff command line" variable
+.SH NAME
+gdiff \- Graphical file difference
+.br
+%gdiff-com \- Gdiff diff(1) command line
+.Me $a
+.SH SYNOPSIS
+.na
+.Me "|gdiff"
+.B gdiff
+"\fIversion1\fR"
+"\fIversion2\fR"
+.sp
+.Me "|%gdiff-com"
+\fC%gdiff-com\fR "\fIstring\fR"; Default is "\fCdiff -c -w\fR"
+.ad
+.SH DESCRIPTION
+.B gdiff
+is a macro utility that  facilitates the merging of two files  (typically with
+different  modification  revisions).  The changes  between the  revisions  are
+hilighted with color, allowing  modification  regions and lines to be selected
+for the  generation of a newer revision file, which might  encompass  selected
+modifications from each of the base revisions.
+.PP
+.B gdiff
+executes the
+.Hr diff 1
+command with the command line set by the
+.Ht %gdiff-com 5
+variable and the user supplied  \fIversion1\fR and  \fIversion2\fR. The output
+is displayed in two buffer  windows, side by side, and the  differences in the
+lines are  hilighted  to show the changes. In addition  the content of the two
+buffers is  \fInormalized\fR  such that both  windows  are aligned at the same
+line  position,  allowing the changes in the text to be viewed in both windows
+at the same time.
+.PP
+Whilst  in  \fBgdiff\fR  view  mode then both  scroll  bars (if  visible)  are
+\fIlocked\fR, such that either scrolls  \s-1BOTH\s0  windows at the same time.
+Other key commands are disabled, as are the menu  interactions.  The short cut
+keys are defined as follows:-
+.TP
+\fCesc h/A-h\fR \- View the help page.
+.\"
+Invokes the display of a OSD help box, summarizing the interaction commands
+.TP
+\fCC-up\fR \- Move to previous difference
+.\"
+Moves to the previous changed region above the current cursor position.
+.TP
+\fCC-down\fR \- Move to next difference
+.\"
+Moves to the next changed region below the current cursor position.
+.PP
+\fCleft mouse button\fR
+.br
+\fCspace\fR
+.br
+\fCenter\fR
+.br
+\fCr\fR \- Select difference version
+.br
+.RS
+Selects the difference version of the currently selected window. The region is
+hilighted as the required region to be incorporated into the new revision.
+.RE
+.TP
+\fCR\fR \- Select neither version.
+.\"
+Marks both regions as not required.
+.TP
+\fCl\fR \- Line select current version
+.\"
+Selects the current line from the region as being included, without  including
+\s-1ALL\s0 of the region modifications.
+.TP
+\fCL\fR \- Line select neither version
+Discards lines from both revisions of the file.
+.TP
+\fCg\fR \- Globally selects the current version.
+.\"
+Shortcut allows  \s-1ALL\s0  modifications to the current side to be accepted.
+This is  typically  the fastest  method to select all  changes,  minor  region
+adjustment  may then be performed on those  regions which are  inappropriately
+included by the selection.
+.TP
+\fCG\fR \- Globally selects neither version.
+.\"
+Marks all regions as not being acceptable.
+.TP
+\fCC-x C-s\fR \- Save current side
+.\"
+Saves the current window to the specified  file, merging the selected  changes
+between the two revisions.  Note that the save only operates iff all hilighted
+changes have been selected.
+.TP
+\fCC-x C-w\fR \- Save current side as
+.\"
+Same as \fBSave  current  side\fR  except the user is  prompted to enter a new
+filename to which the modifications are written.
+.TP
+\fCC-x k\fR \- Exit graphical diff
+.\"
+Exits the \fBgdiff\fR utility.
+.SS "Hilighting"
+The hilighting within the windows is dependent upon the color scheme selected,
+in general the following hilights apply:-
+.IP "normal text"
+No change
+.IP "cyan/grey"
+Addition/removal of line(s)/region(s) between files.
+.IP "yellow"
+Modification in line(s)/region(s).
+.IP "green/red"
+Selected region, red or green is attributed to a selection for each window.
+.SH NOTES
+\fBgdiff\fR is a macro defined in \fCgdiff.emf\fR,  inspired by the \s-1GNU\s0
+utility of the same name
+.Hr gdiff 1
+.PP
+.Hr diff 1
+must be executable on the system before \fBgdiff\fR can function. The
+.Hr diff 1
+invocation  must include the  \fIcontext\fR  difference,  which  annotates the
+differences with a \fC+\fR, \fC-\fR or \fC!\fR markers.
+.Hr diff 1
+is typically invoked with the options \fB-c -w\fR.
+.PP
+.Hr diff 1
+is a standard utility on UNIX systems. For Windows 95/NT a version of GNU
+.B diff
+may be found at:
+.IP
+.I "<ftp.winsite.com/ftp/pub/pc/winnt/misc/gnudiff.zip>"
+.LP
+For MS-DOS users, a DJGPP port of GNU \fBdiff\fR is also available on the net.
+A commercial version of \fBdiff\fR is also available from MKS.
+.SH "SEE ALSO"
+.na
+.Ht compare-windows 2 ,
+.Ht compile 3 ,
+.Hr diff 1 ,
+.Ht gdiff 3f ,
+.Ht grep 3 ,
+.Ht %grep-com 5 .
+.ad
+.FH

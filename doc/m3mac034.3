@@ -1,0 +1,184 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			Copyright 1998 Jon Green.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m3mac034.3
+.\"  Created By    : Jon Green
+.\"  Created       : Mon Aug 31 21:02:32 1998
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1998 Jon Green.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from Jon Green.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m3mac034.3,v 1.1.1.1 2000-07-25 22:04:01 jon Exp $
+.Im MicroEmacs shell
+.so me.tni
+.TH ishell 3
+.XI ishell - "Open a Cygwin BASH window" shell|command
+.XI $ME_ISHELL 5 "Windows ishell command.com" variable
+.SH NAME
+.Me "|ishell"
+ishell \- Open a interactive shell window
+.br
+.Me "|$ME_ISHELL"
+$ME_ISHELL \- Windows ishell command comspec
+.Me $a
+.SH PLATFORM
+Windows '95/'98/NT - win32
+.br
+Unix - All variants.
+.SH SYNOPSIS
+.na
+\fBishell\fR
+.sp 1
+.I "[Windows Only]"
+.br
+.B $ME_ISHELL
+.I "= <comspec>"
+.ad
+.SH DESCRIPTION
+\fBishell\fR  creates an  interactive  shell  window  within the a  MicroEmacs
+buffer window, providing access to the native operating systems command shell.
+Within the window commands may be entered and  executed, the results are
+shown  in the  window.
+.PP
+On running  \fBishell\fR a new buffer is created  called  \fC*shell*\fR  which
+contains the shell.  Executing  the command  again  creates a new shell window
+called \fC*shell1*\fR, and so on. If a \fC*shell*\fR window is killed off then
+the available window is used next time the command is run.
+.PP
+Additional  controls  are  available  within the shell  window to control  the
+editors interaction with the window. The operating mode is shown as a digit on
+the buffer mode line, this should  typically  show "3", which  corresponds  to
+\fIF3\fR. The operating modes are mapped to keys as follows:-
+.IP \fBF2\fR
+Locks the  window  and allows  local  editing to be  performed.  All  commands
+entered into the window are interpreted by the editors. \fBF2\fR mode is
+typically  entered to cut and paste from the window,  search for text  strings
+etc. In mode 2, a \fB2\fR is shown on the mode line.
+.IP \fBF3\fR
+The  normal  operating  mode, text typed into the window is  presented  to the
+shell window. Translation of MicroEmacs commands (i.e.  beginning-of-word) are
+translated  and passed to the shell. For  interactive  use this is the default
+mode. In mode 3, a \fB3\fR is shown on the mode line.
+.IP \fBF4\fR
+All input is passed to the shell, no MicroEmacs  commands are  interpreted and
+keys are passed  straight to the shell window. This mode is used where none of
+the keys to be entered are to be interpreted by MicroEmacs. Note that you have
+to un-toggle the F4 mode before you can swap buffers as this effectively locks
+the editor into the window.
+.IP \fBF5\fR
+Clears  the  buffer  contents.  This  simply  erases  all  of  the  historical
+information in the buffer. The operation of the shell is unaffected.
+.LP
+To exit the shell then end the shell  session  using the normal  exit  command
+i.e.  "\fCexit\fR" or "\fCC-d\fR" as normal and then close the buffer. A short
+cut  "\fCC-c C-k\fR" is  available  to kill off the pipe.  However, it is not
+recommended that this method is used as it effectively performs a hard kill of
+the buffer and attached process
+.SH UNIX
+The UNIX  environment  uses the  native  \fBpty\fR  support  of the  operating
+system.  The  shell  that  is  opened  is   determined  by  the   conventional
+\fC$SHELL\fR environment variable.
+.PP
+The shell window assumes that the user is running some sort of Emacs emulation
+on the command line (i.e. \fCVISUAL=emacs\fR for
+.Hr ksh 1 ,
+.Hr zsh 1 ,
+.Hr bash 1 ,
+.Hr tsch 1 )
+and passes Emacs controls for command line editing.
+.PP
+The  shell  window  understands  re-size  operations  and  provides  a limited
+decoding of the  \fItermio\fR  characters  for a VT100 screen. From within the
+shell window it is possible to run the likes of
+.Hr top 1
+correctly.  It is even possible to run another MicroEmacs terminal session !!
+.SH WINDOWS
+The Windows  environment  provides a very poor command shell facility, this is
+more of a fundamental  problem with the operating  system than anything  else.
+Unfortunately NT is no better than Windows '95/'98, stemming from the fact that
+the  Windows is not  actually  an O/S but a huge window  manager,  hindered by
+legacy issues of MS-DOS.
+.PP
+For those familiar with the UNIX command shell then it is strongly recommended
+that the
+.Ht cygnus 3
+\s-1BASH\s0  shell is used as an  alternative.  This is a far more  responsive
+shell window and provides the familiar Emacs editing of the command line.
+.PP
+The  command  shell under  Windows is slow and very  unresponsive,  this would
+appear to be a problem with the \fIcommand.com\fR as the same problems are not
+apparent with the
+.Hl cygwin cygnus 3
+environment.  However, the shell  window is good for kicking off command  line
+utilities  (such as  \fImake\fR),  or any command line processes that generate
+output on  \fIstdout\fR  as all of the output is captured in the buffer window
+which can be scrolled  backwards for post analysis. For this very reason it is
+more preferable to the standard MS-DOS box.
+.PP
+It is not possible to run any utilities that use embedded screen control
+characters as these are not interpreted by the editor.
+.SS "Changing the Shell"
+The default shell that is executed is defined by the environment variable
+.BR $COMSPEC .
+Where the user is using a different  command shell (i.e. 4-DOS), then problems
+may  arise if this is an old  16-bit  executable.  The shell  that  MicroEmacs
+executes may be overridden by setting the environment variable
+.BR $ME_ISHELL .
+This is typically set in the
+.Ht me32.ini 8
+file i.e.
+.CS
+[username]
+ME_ISHELL=c:\\windows\\command.com
+.CE 0
+.SS "Bugs"
+.IP "\fBWinOldAp\fR"
+.B Winoldap
+is  created  by the  Microsoft  environment  whenever a shell is  created.  On
+occasions  where  processes have terminated  badly the user may be prompted to
+kill  these off; this is the  normal  behaviour  of  Windows.  It is  strongly
+advised that the shell is always exited  correctly  (i.e.  \fCexit\fR)  before
+leaving  the  editor.  The  Windows   operating  system  for  '95/'98  is  not
+particularly resilient to erroneous processes can bring the whole system down.
+I believe that NT does not suffer from these problems (much).
+.IP "\fBLocked Input\fR"
+There are  occasions  after  killing a process the editor  appears to lock up.
+This is typically a case that the old application has not shut down correctly.
+Kill off the erroneous task  (\fCAlt-Ctrl-Del\fR  - \fIEnd Task\fR) then bring
+the editor under control using a few \fCC-g\fR
+.Ht abort-command 2
+sequences.
+.SH NOTES
+The \fBishell\fR command uses the
+.Ht ipipe-shell-command 2
+to manage the pipe between the editor and the shell. The window is  controlled
+by the macro file  \fChkipipe.emf\fR  which controls the interaction  with the
+shell.
+.SH "SEE ALSO"
+.na
+.Ht ipipe-shell-command 2 ,
+.Ht cygnus 3 ,
+.Ht me32.ini 8 .
+.ad
+.FH

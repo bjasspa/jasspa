@@ -1,0 +1,50 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil023.4,v 1.1.1.1 2000-07-25 22:04:03 jon Exp $
+.Im MicroEmacs macro;function;miscellaneous
+.so me.tni
+.TH &set 4
+.XI &set - "In-line macro variable assignment"
+.SH NAME
+&set \- In-line macro variable assignment
+.SH SYNOPSIS
+.na
+.B &set
+.I <var>
+.I <expr>
+.ad
+.SH DESCRIPTION
+.B &set
+performs an in-line macro variable assignment assigning a variable \fI<var>\fR
+the value of the expression  \fI<expr>\fR,  returning the evaluated  result to
+the caller. \fI<expr>\fR may be numeric, boolean or a string expression.
+.PP
+.B &set
+is typically used for defining (and simultaneously using) indices e.g. as with
+.Ht add-color 2
+or
+.Ht add-color-scheme 2 .
+This is a short-hand of
+.Ht set-variable 2 .
+.SH EXAMPLE
+The   following   example   uses\fB&set\fR   to   define   new   colors   (see
+\fCcolor.emf\fR):
+.Me $emf-scheme
+.CS
+; Standard colors
+add-color &set %white     0 200 200 200
+add-color &set %black     1 0   0   0
+add-color &set %red       2 200 0   0
+add-color &set %green     3 0   200 0
+add-color &set %yellow    4 200 200 0
+add-color &set %blue      5 0   0   200
+add-color &set %magenta   6 200 0   200
+add-color &set %cyan      7 0   200 200
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Hl "Variable Functions" Functions - ,
+.Ht &inc 4 ,
+.Ht set-variable 2 .
+.ad
+.FH

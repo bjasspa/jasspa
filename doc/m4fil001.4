@@ -1,0 +1,161 @@
+.\" -*- nroff -*-
+.Id $Id: m4fil001.4,v 1.1.1.1 2000-07-25 22:04:02 jon Exp $
+.Im MicroEmacs macro;function;numeric
+.so me.tni
+.TH &abs 4
+.XI &abs - "Absolute value of a number"
+.XI &add - "Add two numbers"
+.XI &sub - "Subtract two numbers"
+.XI &multiply - "Multiply two numbers"
+.XI &divide - "Division of two numbers"
+.XI &mod - "Modulus of two numbers"
+.XI &negate - "Negation of two numbers"
+.XI &inc - "Pre-increment variable"
+.XI &dec - "Pre-decrement variable"
+.XI &pinc - "Post-increment variable"
+.XI &pdec - "Post-decrement variable"
+.SH NAME
+&abs, &add, &sub, &mul, &div, &mod, &neg, &inc, &dec, &pinc, &pdec \- Numeric macro operators
+.SH SYNOPSIS
+.na
+.B &abs
+.I num1
+.br
+.B &add
+.I num1
+.I num2
+.br
+.B &sub
+.I num1
+.I num2
+.br
+.B &multiply
+.I num1
+.I num2
+.br
+.B &divide
+.I num1
+.I num2
+.br
+.B &mod
+.I num1
+.I num2
+.br
+.B &negate
+.I num
+.sp
+.B &inc
+.I variable
+.I increment
+.br
+.B &dec
+.I variable
+.I decrement
+.br
+.B &pinc
+.I variable
+.I increment
+.br
+.B &pdec
+.I variable
+.I decrement
+.ad
+.SH DESCRIPTION
+The numeric  operators  operate on  variables  or integers to perform  integer
+computations,  returning the integer  result of the operation. The contents of
+the variables are  interpreted  as signed  integers  typically  with a dynamic
+range of 2^31 <= \fInum\fR <= 2^31-1.
+.PP
+The operators may all be abbreviated to their three letter abbreviation  (i.e.
+\fB&multiply\fR  may be  expressed  as  \fB&mul\fR).  In all  cases  the first
+argument is completely evaluated before the second argument.
+.IP "\fB&abs\fR \fInum1\fR"
+Returns the absolute  value of  \fInum1\fR  i.e. if  \fInum1\fR is positive it
+returns \fInum1\fR, else -\fInum1\fR
+.IP "\fB&add\fR \fInum1\fR \fInum2\fR"
+Addition  of  two  numbers   \fInum1\fR  and  \fInum2\fR.  i.e.  \fInum1\fR  +
+\fInum2\fR
+.IP "\fB&sub\fR \fInum1\fR \fInum2\fR"
+Subtract  the  second  number   \fInum2\fR  from  the  first  \fInum1\fR  i.e.
+\fInum1\fR \- \fInum2\fR.
+.IP "\fB&multiply\fR \fInum1\fR \fInum2\fR"
+(Signed)  Multiply  \fInum1\fR by  \fInum2\fR.  i.e.  \fInum1\fR * \fInum2\fR.
+\fB&mul\fR is the three letter abbreviation.
+.IP "\fB&div\fR \fInum1\fR \fInum2\fR"
+Divide the first number  \fInum1\fR by the second  \fInum2\fR,  returning  the
+integer  result. i.e. \fInum1\fR / \fInum2\fR.  \fB&div\fR is the three letter
+abbreviation.
+.IP "\fB&mod\fR \fInum1\fR \fInum2\fR"
+Divide the first number  \fInum1\fR by the second  \fInum2\fR,  returning  the
+integer remainder. i.e. \fInum1\fR % \fInum2\fR. 
+.IP "\fB&negate\fR \fInum\fR"
+Negate the integer (multiply by \-1) i.e. \-\fInum\fR. \fB&neg\fR is the three
+letter abbreviation.
+.LP
+Expression  evaluation  is prefix.  Operators  may be nested  using a pre-fix
+ordering,  there is no concept of brackets  (in-fix  notation). The expression
+\fC(2 * 3) + 4\fR is expressed as:-
+.Me $emf-scheme
+.CS
+&add &mul 2 3 4
+.CE
+.Me $ehf-scheme
+conversely \fC2 * (3 + 4)\fR is expressed as:-
+.Me $emf-scheme
+.CS
+&mul 2 &add 3 4
+.CE
+.Me $ehf-scheme
+The pre/post  incrementing and decrementing  operators provide a mechanism for
+stepping  through  indexed  information  without  incurring  the  overhead  of
+providing   multiple   statements  to  perform   assignment   operations.  The
+\fIvariable\fR argument \s-1MUST\s0 be the name of a variable, it cannot be an
+expression  or  an  indirection.  The   \fIincrement\fR  may  be  any  integer
+expression  (including another auto  (dec)increment). Note that \fIvariable\fR
+is  re-assigned  with it's new value within the operator,  therefore  use with
+care when performing multiple  (dec)increments within the same statement line.
+The four operators are defined as follows:
+.IP "\fB&inc\fR \fIvariable\fR \fIincrement\fR"
+Pre-increment the \fIvariable\fR by \fIincrement\fR, returning the incremented
+value i.e. \fIvariable\fR += \fIincrement\fR.
+.IP "\fB&dec\fR \fIvariable\fR \fIdecrement\fR"
+Pre-decrement the \fIvariable\fR by  \fIdecrement\fR,  returning the decrement
+value i.e. \fIvariable\fR -= \fIdecrement\fR.
+.IP "\fB&pinc\fR \fIvariable\fR \fIincrement\fR"
+Post-increment   the   \fIvariable\fR   by   \fIincrement\fR,   returning  the
+pre-increment value i.e.  \fIvariable\fR++.,  where the ++ value is determined
+by \fIincrement\fR.  The return value is the value of \fIvariable\fR as passed
+by   the   caller,   the   next   reference   to   \fIvariable\fR   uses   the
+\fIvariable\fR+\fIincrement\fR value.
+.IP "\fB&pdec\fR \fIvariable\fR \fIdecrement\fR"
+Post-decrement   the   \fIvariable\fR   by   \fIdecrement\fR,   returning  the
+pre-decrement value i.e. \fIvariable\fR--, where the -- value is determined by
+\fIdecrement\fR.
+.SH EXAMPLE
+Add two numbers together and assign to a variable:-
+.Me $emf-scheme
+.CS
+set-variable %result &add %num1 %num2
+.CE
+.Me $ehf-scheme
+Increment \fC%result\fR by 1 and add to \fC%result2\fR
+.Me $emf-scheme
+.CS
+set-variable %result  &add %result 1 
+set-variable %result2 &add %result2 %result
+.CE
+.Me $ehf-scheme
+The previous  example  could have used the increment  operators to achieve the
+same result in a single operation e.g.
+.Me $emf-scheme
+.CS
+set-variable %result2 &add %result2 &inc %result 1 
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Hl "Variable Functions" Functions - ,
+.Ht &great 4 .
+.ad
+.FH
+

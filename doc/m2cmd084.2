@@ -1,0 +1,48 @@
+.\" -*- nroff -*-
+.Id $Id: m2cmd084.2,v 1.1.1.1 2000-07-25 22:03:55 jon Exp $
+.Im MicroEmacs command|bind
+.so me.tni
+.TH buffer-bind-key 2
+.XI buffer-bind-key - "Create local key binding for current buffer"
+.XI buffer-unbind-key - "Remove local key binding for current buffer"
+.SH NAME
+.Me "|buffer-bind-key"
+buffer-bind-key \- Create local key binding for current buffer
+.br
+.Me "|buffer-unbind-key"
+buffer-unbind-key \- Remove local key binding for current buffer
+.Me $a
+.SH SYNOPSIS
+.na
+.B buffer-bind-key
+"\fIcommand\fR"
+"\fIkey\fR"
+.br
+.B buffer-unbind-key
+"\fIkey\fR"
+.ad
+.SH DESCRIPTION
+.B buffer-bind-key
+creates a key  binding  local to the  current  buffer,  binding  the  command
+\fIcommand\fR  to the keyboard input  \fIkey\fR. This command is particularly
+useful in conjunction with file loading hooks (see
+.Ht add-file-hook 2 )
+allowing local key bindings dependent upon the context of the buffer.
+.PP
+The message line input is not effected by the current buffers local bindings.
+.PP
+.B buffer-unbind-key
+unbinds a user  created  local key binding,  this  command  effects  only the
+current buffer.
+.SH NOTES
+The prefix commands cannot be rebound with this command.
+.PP
+Key response time linearly increases with each local binding added.
+.SH "SEE ALSO"
+.na
+.Ht global-bind-key 2 ,
+.Ht ml-bind-key 2 ,
+.Ht osd-bind-key 2 ,
+.Ht global-unbind-key 2 .
+.ad
+.FH

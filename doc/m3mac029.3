@@ -1,0 +1,231 @@
+.\"*-*- nroff -*-*************************************************************
+.\"
+.\"			     Copyright 1999 JASSPA.
+.\"			      All Rights Reserved
+.\"
+.\"
+.\"  System        :
+.\"  Module        :
+.\"  Object Name   : m3mac029.3
+.\"  Created By    : Jon Green
+.\"  Created       : Tue Feb 2 21:10:34 1999
+.\"  Last Modified : <000719.1013>
+.\"
+.\"  Description
+.\"
+.\"  Notes
+.\"
+.\"  History
+.\"
+.\"***************************************************************************
+.\"
+.\"  Copyright (c) 1999 JASSPA.
+.\"
+.\"  All Rights Reserved.
+.\"
+.\"  This  document  may not, in  whole  or in part, be  copied,  photocopied,
+.\"  reproduced,  translated, or reduced to any  electronic  medium or machine
+.\"  readable form without prior written consent from JASSPA.
+.\"
+.\"***************************************************************************
+.\"
+.Id $Id: m3mac029.3,v 1.1.1.1 2000-07-25 22:04:00 jon Exp $
+.Im MicroEmacs command
+.ds C0 "(\fBf2\fR)\ \&
+.ds C1 "(\fBf3\fR)\ \&
+.so me.tni
+.TH fold-current 3
+.XI fold-current - "\*(C0(un)Fold a region in the current buffer"
+.XI fold-all - "\*(C1(Un)Fold all regions in the current buffer"
+.SH NAME
+.Me "|fold-current"
+fold-current \- (un)Fold a region in the current buffer
+.br
+.Me "|fold-all"
+fold-all \- (Un)Fold all regions in the current buffer
+.Me $a
+.SH SYNOPSIS
+.na
+.B fold-current
+.br
+.B fold-all
+.ad
+.SH DESCRIPTION
+\*(mE provides a generic, albeit course, folding mechanism which is applied to
+some of the well known file modes. The folding  mechanism  allows parts of the
+buffer to be  scrolled  up and  hidden,  leaving a residue  hilighting  marker
+within   the   buffer   indicating   a   folded   region.   A  folded   buffer
+typically  allows a summary of the buffer contents to be viewed within several
+windows, hiding the detail of the buffer.
+.PP
+The folding  mechanism  uses well defined  \fIstart\fR  and \fIend\fR  markers
+which form part of the syntax of the well known file mode. i.e. in 'C' this is
+the open and closed  braces that appear on the  left-hand  margin  (\fC{\fR ..
+\fC}\fR).  The  intention  is that the  natural  syntax of the text is used to
+determine  the fold  positions,  requiring  no  additional  text  formating or
+special text tags to be inserted by the user.
+.PP
+.B fold-current
+opens and closes a folded  region  within the  buffer. If the  current  cursor
+position  lies  between a  \fIstart\fR  and  \fIend\fR  marker then the region
+between  the  start and end is folded  out and  hidden  from  view,  leaving a
+highlight  marker in the buffer. If the fold  already  exists then, moving the
+cursor to the folded  line and  invoking  \fBfold-current\fR  removes the fold
+marker and reveals the text.
+.PP
+.B fold-all
+opens and closes all folded regions within the buffer, if the current state is
+unfolded then all of the  \fIstart\fR/\fIend\fR  markers are located and their
+regions   folded.   Conversely,   if  the  buffer  is  currently   folded  and
+\fBfold-all\fR  is invoked, then all folds are removed and the associated text
+revealed.
+.SH CONFIGURATION
+In order to utilize the  \fBfold-current/all\fR  commands within a buffer, the
+\fIstart\fR  and \fIend\fR  markers have to be initialized for the syntactical
+contents of the buffer. This is  performed  within the hook  function  for the
+buffer, using the hook-name. Buffer specific  variables are defined within the
+context  of the  buffer to  configure  that start and end fold  handling.  The
+buffer specific variables are defined as follows, where \fIxxxx\fR is the file
+hook base name.
+.IP "\fIxxxx\fR\|\fB-fold-open\fR"
+A regular expression search string used to locate the start of the string. For
+speed the search string should  include a regular  expression  start or end of
+line character whenever possible. i.e. in C the open is defined as "\fC^{\fR".
+.IP "\fIxxxx\fR\|\fB-fold-close\fR"
+A regular  expression  search string used to locate the end of the string. For
+speed the search string should include a regular  expression start or end line
+character whenever possible. i.e. in C the close is defined as "\fC^}\fR".
+.IP "\fIxxxx\fR\|\fB-fold-mopen\fR"
+An  integer  value  that  denotes  the number of lines to move in a forward or
+(\-ve)  backward  direction  from the  \fIstart\fR  line located by the search
+string to the  position  in the  buffer to be folded. If  default  value  when
+\fBmopen\fR is omitted is 0, starting the fold from the search string line.
+.IP "\fIxxxx\fR\|\fB-fold-mclose\fR"
+The relative  displacement from the close fold line to the fold position, this
+is a positive or negative  displacement  depending  on where the fold is to be
+positioned.
+.IP "\fIxxxx\fR\|\fB-fold-mnext\fR"
+Specifies the number  of lines to advance  before the next search is continued
+on the fold operation. This is only used by \fBfold-all\fR.
+.SH EXAMPLE
+The following  examples show how the fold  variables are set up in each of the
+buffer modes.
+.SS "C and C++"
+\fBC\fR  and  \fBC++\fR  fold on the open and  close  brace  appearing  in the
+left-hand margin. The fold variables are defined in \fChkc\fR/\fChkcpp.emf\fR
+as follows:-
+.Me "$emf-scheme"
+.CS
+set-variable %c-fold-open  "^{"
+set-variable %c-fold-close "^}"
+.CE
+.Me "$ehf-scheme"
+Given a 'C' function definition:-
+.CS
+static void
+myfunc (int a, int b)
+{
+    /* Function body */
+}
+.CE
+the folded version appears as follows:-
+.CS
+static void
+myfunc (int a, int b)
+}
+.CE 0
+.SS "emf"
+MicroEmacs  macro files  \fBemf\fR  support  folding of macro  definitions,  the
+fold variables are defined in \fChkemf.emf\fR as follows:-
+.Me "$emf-scheme"
+.CS
+set-variable %emf-fold-open  "^0? ?define-macro"
+set-variable %emf-fold-close "^!emacro"
+set-variable %emf-fold-mopen "1"
+.CE
+.Me "$ehf-scheme"
+Given a macro definition:-
+.Me "$emf-scheme"
+.CS
+0 define-macro mymacro
+; This is the body of the macro
+; ... and some more ...
+!emacro
+.CE
+.Me "$ehf-scheme"
+the folded version of the macro is defined as:-
+.Me "$emf-scheme"
+.CS
+0 define-macro mymacro
+!emacro
+.CE 0
+.Me "$ehf-scheme"
+.SS nroff
+\fBnroff\fR  is  configured  for  manual  pages  only and  folds  between
+\fC.SH\fR and \fC.SS\fR sections, the hook variables are defined as follows:-
+.Me "$emf-scheme"
+.CS
+set-variable %nroff-fold-open  "^\\.S[SH]"
+set-variable %nroff-fold-close "^\\.S[SH]"
+set-variable %nroff-fold-mopen "1"
+set-variable %nroff-fold-mnext "-1"
+.CE
+.Me "$ehf-scheme"
+Given an nroff block of text defined as:-
+.CS
+\&\.SH SYNOPSIS
+\&\.\e" Some text
+\&\.\e" Some more text
+\&\.SH DESCRIPTION
+.CE
+Then the folded version appears as:
+.CS
+\&\.SH SYNOPSIS
+\&\.SH DESCRIPTION
+.CE 0
+.SS "tcl/tk"
+\fBtcl/tk\fR is configured to fold procedures. The fold variables are defined
+as:-
+.Me "$emf-scheme"
+.CS
+set-variable %tcl-fold-open  "^proc "
+set-variable %tcl-fold-close "^}"
+set-variable %tcl-fold-mopen "1"
+.CE
+.Me "$ehf-scheme"
+Given a tcl procedure definition:-
+.CS
+proc tixControl:InitWidgetRec {w} {
+    upvar #0 $w data
+
+    tixChainMethod $w InitWidgetRec
+
+    set data(varInited)	  0
+    set data(serial)	0
+}
+.CE
+The folded version of the same section appears as:-
+.CS
+proc tixControl:InitWidgetRec {w} {
+}
+.CE 0
+.SH NOTES
+.B fold-current
+and
+.B fold-all
+are macros implemented in \fCfold.emf\fR. The folding is performed using the
+.Ht narrow-buffer 2
+command.
+.PP
+\fBfold-current\fR may also be bound to the mouse using the 
+.Ht user-setup 3 . 
+The typical binding is \fCC-mouse-drop-1\fR.
+.SH "SEE ALSO"
+.na
+.Hl "File Hooks" fileHooks 2 ,
+.Ht user-setup 3 ,
+.Ht narrow-buffer 2 .
+.ad
+.rm C0
+.rm C1
+.FH

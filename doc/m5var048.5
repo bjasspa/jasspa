@@ -1,0 +1,85 @@
+.\" -*- nroff -*-
+.Id $Id: m5var048.5,v 1.1.1.1 2000-07-25 22:04:06 jon Exp $
+.Im MicroEmacs variable|window
+.so me.tni
+.TH $window-col 5
+.XI $window-col - "Window cursor column (no expansion)"
+.XI $window-line - "Window cursor line"
+.XI $window-acol - "Window cursor actual column"
+.XI $window-aline - "Window cursor actual line"
+.XI $window-wcol - "Window cursor column (historic)"
+.XI $window-wline - "Window cursor line (historic)"
+.SH NAME
+.Me "|$window-col"
+$window-col \- Window cursor column (no expansion)
+.br
+.Me "|$window-line"
+$window-line \- Window cursor line (with narrows)
+.br
+.Me "|$window-acol"
+$window-acol \- Window cursor actual column (expansion)
+.br
+.Me "|$window-aline"
+$window-aline \- Window cursor actual line (ignore narrows)
+.Me $a
+.SH SYNOPSIS
+\fB$window-col\fR \fIinteger\fR
+.sp
+0 <= \fIinteger\fR <= 65535
+.sp 2
+\fB$window-line\fR \fIinteger\fR
+.sp
+1 <= \fIinteger\fR <= n
+.sp 2
+\fB$window-acol\fR \fIinteger\fR
+.sp
+0 <= \fIinteger\fR <= n
+.sp 2
+\fB$window-aline\fR \fIinteger\fR
+.sp
+1 <= \fIinteger\fR <= n
+.SH DESCRIPTION
+.B $window-col
+is defined as the  current  position of the cursor in the current  line in the
+current  window.  Column  zero  is the  left  hand  edge.  This  differs  from
+\fB$window-acol\fR  in that \s-1tab\s0 and special characters only count for 1
+character. \fB$window-col\fR is valid in the range 0 - \fIn\fR.
+.PP
+.B $window-line
+is defined as the  current  buffer line number the cursor is on in the current
+window. Line numbering starts from 1. \fB$window-line\fR is valid in the range
+1 - \fIn\fR.
+.PP
+\fB$window-aline\fR  is  identical  to  \fB$window-line\fR  except  when  the
+current buffer contains narrowed out sections before the current line. In this
+case  \fB$window-line\fR  will be set to the line number without  counting the
+number of lines in the narrow,  whereas  \fB$window-aline\fR  will  return the
+current  line number  including  all lines  narrowed  out before it. When this
+variable is set, the line  required may lie in a narrowed out section in which
+case the narrow is automatically removed. See
+.Ht narrow-buffer 2
+for more information on narrowing.  
+.PP
+.B  $window-acol
+is defined as the current  column of the cursor in the current  window. Column
+zero is the left  hand  edge.  This  differs  from  \fB$window-col\fR  in that
+\s-1tab\s0 and special characters may not count for 1 character.
+.SH NOTES
+Variable  \fB$window-wcol\fR  was renamed to  \fB$window-acol\fR in June 2000.
+Variable   \fB$window-wline\fR   was   also   removed   and  a  new   variable
+\fB$window-y-scroll\fR  introduced at this time. The following  macro code can
+be used to calculate the value of the original \fB$window-wline\fR variable:
+.Me $emf-scheme
+.CS
+&sub &sub $window-line $window-y-scroll 1
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Ht $screen-depth 5 ,
+.Ht $window-depth 5 ,
+.Ht $window-width 5 ,
+.Ht $window-y-scroll 5 ,
+.Ht narrow-buffer 2 .
+.ad
+.FH
