@@ -2269,6 +2269,17 @@ doCindent(int *inComment)
             ii += frameCur->windowCur->dotOffset ;
             while(((cc = meLineGetChar(frameCur->windowCur->dotLine,ii++)) == ' ') || (cc == '\t'))
                 ;
+            /* Special test for private/public/protected with a trailing
+             * keyword such as "public slots:" as used in Qt */
+            if (isWord (cc))
+            {
+                /* Consume the word */
+                while(isWord (cc))
+                    cc = meLineGetChar(frameCur->windowCur->dotLine,ii++);
+                /* Consume any trailing white space */
+                while ((cc == ' ') || (cc == '\t'))
+                    cc = meLineGetChar(frameCur->windowCur->dotLine,ii++);
+            }
             if(cc == ':')
                 addInd -= statementIndent ;
         }
