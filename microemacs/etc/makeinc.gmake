@@ -1,0 +1,1 @@
+UNAME:=$(shell echo `uname | tr '[A-Z]' '[a-z]'`)
