@@ -2019,7 +2019,6 @@ void
 autowriteout(register meBuffer *bp)
 {
     meUByte fn[meBUF_SIZE_MAX], lname[meBUF_SIZE_MAX], *ff ;
-    int ss ;
 
     bp->autotime = -1 ;
 
