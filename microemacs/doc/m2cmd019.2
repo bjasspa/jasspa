@@ -3,7 +3,7 @@
 .\" Copyright (c) 1988-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd019.2,v 2.7 2005-01-02 23:21:28 bill Exp $
+.Id $Id: m2cmd019.2,v 2.8 2005-01-15 16:11:47 jon Exp $
 .Im MicroEmacs command|macrodevelop|search
 .so me.tni
 .TH search-buffer 2
@@ -16,11 +16,151 @@ search-buffer \- Search the current buffer for a string
 \fIn\fR \fBsearch-buffer\fR "\fIflags\fR" "\fIstring\fR"
 .ad
 .SH DESCRIPTION
-Search the current buffer for a string...ZZZZ
+.B search-buffer
+searches for a  \fIstring\fR  from the current  cursor  position, in a forwards
+or backwards  direction, to the end or start of the buffer,  respectively. The
+search direction and mode is specified by the by \fIflags\fR argument.
+.PP
+The
+.B search-buffer
+command is designed to be used from the macro language rather than the command
+line as the search may be defined independently of the buffer setting of
+.Ht magic 2m
+mode,
+which allows regular expression pattern matching,
+or
+.Ht exact 2m
+mode,
+which makes the search case sensitive. The \fIflags\fR argument is used to
+explicitly set the
+.Ht magic 2m
+and
+.Ht exact 2m
+search modes.
+.PP
+The  \fIflags\fR  argument is defined as a character  string which defines the
+search behavior:
+.IP "\fCb\fR - backward search"
+Specifies the direction  of the search as  backwards,  when  omitted  then a
+forward search is performed.
+.IP "\fCe\fR - enable exact search"
+A
+.Ht exact 2m
+mode search is performed, the characters are matched case sensitively.
+.IP "\fCE\fR - disable exact search"
+A
+.Ht exact 2m
+mode search is not performed, the characters are matched case insensitively.
+.IP "\fCm\fR - enable magic"
+A
+.Ht magic 2m
+mode search is performed, the  search \fIstring\fR is interpreted as a regular
+expression.
+.IP "\fCM\fR - disable magic"
+A
+.Ht magic 2m
+mode   search  is  not   performed,   the  search   string  is  searched   for
+literally.
+.LP
+When the \fIflags\fR are not specified then the default  behavior is to search
+in a forwards direction inheriting the
+.Ht exact 2m
+and
+.Ht magic 2m
+modes of the buffer.  Within macros it is suggested  that the search modes are
+explicitly specified unless the buffer modes are to be inherited.
+.PP
+.ne 7
+The numeric argument \fIn\fR is interpreted in the same way as a
+.Ht search-forward 2
+command:-
+.IP "\fBn > 0\fR"
+The \fIn\fRth occurrence of the \fIstring\fR is located.
+.IP "\fBn < 0\fR"
+The first occurrence of the \fIstring\fR is located in the next \fIn\fR lines.
+.SH DIAGNOSTICS
+The command returns a status of \fCFALSE\fR if the  \fIstring\fR  could not be
+located (or \fIn\fRth  \fIstring\fR where \fIn\fR  occurrences are requested).
+If the  \fIstring\fR  is found  within the given  search  criteria  the return
+status is \fCTRUE\fR.
+.SH EXAMPLE
+The following  examples show the use of the  \fBsearch-buffer\fR  command. The
+\fBsearch-buffer\fR is usually used with the
+.Ht !force 4
+directive  which traps any \fCFALSE\fR  return status and may be  subsequently
+tested using the
+.Ht !if 4
+directive on the status
+.Ht $status 5
+variable. If the  \fB!force\fR  directive is omitted then the macro will abort
+with a failure  status if the search  fails  (sometimes  this  behavior may be
+required).
+.PP
+Case sensitive  search forward for the word  "\fCfoo\fR",  this is not a magic
+regular expression.
+.Me $emf-scheme
+.CS
+!force search-buffer "eM" "foo"
+!if $status
+    ; found string
+!else
+    ; not found
+!endif
+.CE
+.Me $ehf-scheme
+Case sensitive  search bacward for the word  "\fCfoo\fR",  this is not a magic
+regular expression.
+.Me $emf-scheme
+.CS
+search-buffer "beM" "foo"
+.CE
+.Me $ehf-scheme
+Regular expression search forward for `\fC<\fR' or `\fC>\fR'.
+.Me $emf-scheme
+.CS
+search-buffer "m" "[<>]"
+.CE
+.Me $ehf-scheme
+Regular expression search catching the regular expression.  A[a-z]*. The macro
+variable \fB@s1\fR returns the regular expression string that has been found.
+.Me $emf-scheme
+.CS
+!force search-buffer "em" "\\\\(A[a-z]*\\\\)"
+!if $status
+    ; found string
+    1000 ml-write &spr "Found string '%s'" @s1
+!else
+    ; not found
+!endif
+.CE 0
+.Me $ehf-scheme
+.SH NOTES
+.B Search-buffer
+was added in  November  2004 to simplify  macro  writing and to speed up macro
+execution. It replaces the macro commands
+.Hr regex-forward 3
+and
+.Hr regex-backward 3 .
+The command simplifies macro development by allowing the
+.Ht exact 2m
+and
+.Ht magic 2m
+modes to be  specified on the command  line, this ensures that the buffer mode
+does  not need to be  saved,  set and then  restored  in order to  modify  the
+behaviour of a search operation.
 .SH "SEE ALSO"
 .na
-.Ht search-forward 2 ,
+.Ht buffer-mode 2  ,
 .Ht exact 2m ,
-.Ht magic 2m .
+.Ht hunt-backward 2 ,
+.Ht hunt-forward 2 ,
+.Ht isearch-forward 2 ,
+.Ht narrow-search-forward 3 ,
+.Ht magic 2m ,
+.Ht replace-string 2 ,
+.Ht search-backward 2 ,
+.Ht search-forward 2 .
+.br
+.Hl "Regular Expressions" RegularExpressions 2
 .ad
 .FH
