@@ -545,7 +545,7 @@ define-macro comment-end
     set-variable #l2 &rig #l2 &len &trr #l2
     str-to-regex #l1
     str-to-regex #l2
-    set-variable #l0 &spr "^\\s *%s\\(%s\\)?" #l1 #l2
+    set-variable #l0 &spr "^\\s*%s\\(%s\\)?" #l1 #l2
     !force 1 replace-string #l0 ""
     !if $status
         forward-char
@@ -560,7 +560,7 @@ define-macro comment-end
         set-variable #l1 0
         ; Deal with non-space filled lines.
         str-to-regex #l2
-        set-variable #l0 &spr "\\(\\S \\) \\s *%s\\s *$" #l2
+        set-variable #l0 &spr "\\(\\S\\) \\s*%s\\s*$" #l2
         !force 1 replace-string #l0 "\\1"
         !if $status
             set-variable #l1 1
@@ -568,7 +568,7 @@ define-macro comment-end
         !endif
         ; Deal with blank lines as special case.
         beginning-of-buffer
-        set-variable #l0 &spr "^\\s *%s\\s *$" #l2
+        set-variable #l0 &spr "^\\s*%s\\s*$" #l2
         !force 1 replace-string #l0 " "
         !if $status
             set-variable #l1 1

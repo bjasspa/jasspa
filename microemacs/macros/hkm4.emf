@@ -30,7 +30,7 @@ set-variable .fhook-m4.comment "|#||#|# | #|r|"
     ; comments, strings and quotes
     ;hilight .hilight.m4    4  "``" "''" "\\"     .scheme.string ; This is not good
     ;hilight .hilight.m4    4  "`" "'" "\\"       .scheme.string ; This is not good
-    hilight .hilight.m4    2 "^\\s *#"            .scheme.comment
+    hilight .hilight.m4    2 "^\\s*#"             .scheme.comment
     hilight .hilight.m4    2 "[^$']*#"            .scheme.comment
     ; keywords
     hilight .hilight.m4    1 "builtin"            .scheme.keyword

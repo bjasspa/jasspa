@@ -146,7 +146,7 @@
                 !endif
             !endif
             set-variable #l2 #l3
-            !if &xise #l3 "[ \t]*cdd?[ \t]*\\S .*"
+            !if &xise #l3 "[ \t]*cdd?[ \t]*\\S.*"
                 set-variable #l4 &trb &xirep #l3 "[ \t]*cdd?\\(.*\\)" "\\1"
                 !if &xise #l4 "[a-z]:\\([^\\/].*\\)?"
                     !if &not &exi &ind &cat ":dir-" &slo &lef #l4 1

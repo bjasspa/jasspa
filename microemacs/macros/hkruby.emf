@@ -24,11 +24,11 @@ set-variable .fhook-ruby.collapse-mclose "1"
 set-variable .fhook-ruby.collapse-mnext "-1"
 
 ; setup item-list
-set-variable .fhook-ruby.item-list-s1 "^\\s *module\\s +\\(\\w[1-9A-Za-z_]*\\)\\s *"
+set-variable .fhook-ruby.item-list-s1 "^[\t ]*module[\t ]+\\(\\w[1-9A-Za-z_]*\\)"
 set-variable .fhook-ruby.item-list-r1 "Mod \ecB\\1\ecA"
-set-variable .fhook-ruby.item-list-s2 "^\\s *class\\s +\\(\\w[1-9A-Za-z_]*\\)\\s *<?<?\\s *[A-Za-z0-9_]*\\s *"
+set-variable .fhook-ruby.item-list-s2 "^[\t ]*class[\t ]+\\(\\w[1-9A-Za-z_]*\\)[\t ]*<?<?[\t ]*[A-Za-z0-9_]*"
 set-variable .fhook-ruby.item-list-r2 "Cls \ecB\\1\ecA"
-set-variable .fhook-ruby.item-list-s3 "^\\s *def\\s +\\(\\w[1-9A-Za-z_.]*\\)\\s *.*$"
+set-variable .fhook-ruby.item-list-s3 "^[\t ]*def[\t ]+\\(\\w[1-9A-Za-z_.]*\\)[\t ]*.*$"
 set-variable .fhook-ruby.item-list-r3 "Def \ecB\\1\ecA"
 
 !if &not &exist .hilight.ruby
@@ -42,7 +42,7 @@ set-variable .fhook-ruby.item-list-r3 "Def \ecB\\1\ecA"
     hilight .hilight.ruby 2 "^#!/"                 .scheme.header
     hilight .hilight.ruby 2 "#"                    .scheme.comment
     ;
-    hilight .hilight.ruby   18 "#\\s *[tT][oO][dD][oO]" .scheme.error
+    hilight .hilight.ruby   18 "#\\s*[tT][oO][dD][oO]" .scheme.error
     ; String literals
     hilight .hilight.ruby    4 "\"" "\"" "\\"      .scheme.string
     hilight .hilight.ruby    4 "'" "'" "\\"        .scheme.string
@@ -50,19 +50,19 @@ set-variable .fhook-ruby.item-list-r3 "Def \ecB\\1\ecA"
     ; String literals & special forms
     hilight .hilight.ruby    0 "%[qQ](\\{[^)]*\\})"           .scheme.string
     hilight .hilight.ruby    0 "%[qQ]{\\{[^}]*\\}}"           .scheme.string
-    hilight .hilight.ruby    0 "%[qQ]\\(.\\)\\{\\S1*\\}\\1"   .scheme.string
-    hilight .hilight.ruby    0 "%\\([^rqQx]\\)\\{\\S1*\\}\\1" .scheme.string
+    hilight .hilight.ruby    0 "%[qQ]\\(.\\)\\{\\!1*\\}\\1"   .scheme.string
+    hilight .hilight.ruby    0 "%\\([^rqQx]\\)\\{\\!1*\\}\\1" .scheme.string
     ; Command output
     hilight .hilight.ruby    4 "`" "`" "\\"              .scheme.variable
     hilight .hilight.ruby    0 "%x{\\{[^}]*\\}}"         .scheme.variable
     hilight .hilight.ruby    0 "%x(\\{[^)]*\\})"         .scheme.variable
-    hilight .hilight.ruby    0 "%x\\(.\\)\\{\\S1*\\}\\1" .scheme.variable
+    hilight .hilight.ruby    0 "%x\\(.\\)\\{\\!1*\\}\\1" .scheme.variable
     ; Regular Expression.
     hilight .hilight.ruby    0 "/\\{[^/]*\\}/"           .scheme.variable
     hilight .hilight.ruby    0 "/\\{[^/]*\\}/[io]"       .scheme.variable
     hilight .hilight.ruby    0 "%r{\\{[^}]*\\}}"         .scheme.variable
     hilight .hilight.ruby    0 "%r(\\{[^)]*\\})"         .scheme.variable
-    hilight .hilight.ruby    0 "%r\\(.\\)\\{\\S1*\\}\\1" .scheme.variable
+    hilight .hilight.ruby    0 "%r\\(.\\)\\{\\!1*\\}\\1" .scheme.variable
     
     hilight .hilight.ruby    0x20 "include" .scheme.prepro
     ; Reserved Words

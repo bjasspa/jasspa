@@ -48,7 +48,7 @@ set-variable .fhook-shell.comment "|#||#|# | #|r|"
     hilight .hilight.shell 0x804 "'" "'" ""        .scheme.quote
     hilight .hilight.shell 0x880 "\"" .hilight.shellS .scheme.string
     ; Comments. Note "#!" is the very first line
-    hilight .hilight.shell 2     "\\s \\{#"        .scheme.comment
+    hilight .hilight.shell 2     "\\s\\{#"        .scheme.comment
     hilight .hilight.shell 2     "^#!"             .scheme.header
     ; Variables.
     hilight .hilight.shell 4     "\\$" "\\}\\W" "" .scheme.variable
@@ -99,7 +99,7 @@ set-variable .fhook-shell.comment "|#||#|# | #|r|"
     hilight .hilight.shell 1     "wait"            .scheme.keyword
     ; Shell commands
     !if &band .hilight.flags 0x04
-        hilight .hilight.shell 0 "^\\s *\\{function\\s +\\w+" .scheme.function
+        hilight .hilight.shell 0 "^\\s*\\{function\\s+\\w+" .scheme.function
     !endif
     hilight .hilight.shell 1     "alias"           .scheme.keyword
     hilight .hilight.shell 1     "break"           .scheme.keyword

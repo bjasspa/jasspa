@@ -117,7 +117,7 @@ set-variable .fhook-cpp.item-list-r6 "Clss \ecB\\1\ecA"
     hilight .hilight.cpp    0 "'\\\\'"       .scheme.error
     hilight .hilight.cpp    0 "'\\\\''"      .scheme.quote
     !if &band .hilight.flags 0x04
-        hilight .hilight.cpp    0 "^[[:alpha:]][0-9a-zA-Z_:~]*\\}\\s (" .scheme.function
+        hilight .hilight.cpp    0 "^[[:alpha:]][0-9a-zA-Z_:~]*\\}\\s(" .scheme.function
         hilight .hilight.cpp    0 "^[[:alpha:]][0-9a-zA-Z_:~]*\\}(" .scheme.function
     !endif
     hilight .hilight.cpp    0 "^\\w+\\}:"    .scheme.link
@@ -365,15 +365,15 @@ set-variable .fhook-cpp.item-list-r6 "Clss \ecB\\1\ecA"
         ; Detect a for loop with no body - put semi-colon on next line, i.e.
         ; for (i = 1; i < 10; i++);
         ; { ... }
-        hilight .hilight.cpp  2 "\\s \\{for[ \t]*([^()]*)[ \t]*;" .scheme.hlred
+        hilight .hilight.cpp  2 "\\s\\{for[ \t]*([^()]*)[ \t]*;" .scheme.hlred
         ; Detect a for loop with no body - put semi-colon on next line, i.e.
         ; while (i == 1);
         ; { ... }
-        ; hilight .hilight.cpp  2 "\\s \\{while[ \t]*([^()]*)[ \t]*;" .scheme.hlred
+        ; hilight .hilight.cpp  2 "\\s\\{while[ \t]*([^()]*)[ \t]*;" .scheme.hlred
         ; Detect a bad 'if' statement that is terminated with ';' e.g.
         ; if (i < x);
         ; { ... }
-        hilight .hilight.cpp  2 "\\s \\{if[ \t]*([^()]*)[ \t]*;"  .scheme.hlred
+        hilight .hilight.cpp  2 "\\s\\{if[ \t]*([^()]*)[ \t]*;"  .scheme.hlred
         ; Detect a spurious '\' at the end of the line that is
         ; not a string or #define. i.e.
         ; char *d = "This is a " \

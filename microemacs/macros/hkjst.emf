@@ -59,11 +59,11 @@ set-variable .fhook-jst.command-kbind "|esc q|esc o|C-c C-h|C-c C-s|C-c o|||||||
 set-variable .fhook-jst.command-desc  "|||\HShow Current Settings|Spell Check Buffer|Fill Paragraph for WP Export|Export to HTML|Export to LaTeX|Export to RTF|Export to Plain Text||To format current paragraph:||Justify Both Margins|Justify Center|Justify Left|Justify Gutter (on left margin)|Justify Right|Format Paragraph in Current Mode|Intelligently Format Paragraph||To change justification mode:||Change to auto justification [DEFAULT]|Change to both justification|Change to center justification|Change to left justification|Change to none justification|"
 
 ; setup item-list
-set-variable .fhook-jst.item-list-s1 "^[ \t]*\\([0-9]+\\)\\.0[ \t]+\\(\\S .*\\)"
+set-variable .fhook-jst.item-list-s1 "^[ \t]*\\([0-9]+\\)\\.0[ \t]+\\(\\S.*\\)"
 set-variable .fhook-jst.item-list-r1 "Sct  \ecB\\1 \\2\ecA"
-set-variable .fhook-jst.item-list-s2 "^[ \t]*\\([0-9]+\\.[1-9][0-9]*\\)[ \t]+\\(\\S .*\\)"
+set-variable .fhook-jst.item-list-s2 "^[ \t]*\\([0-9]+\\.[1-9][0-9]*\\)[ \t]+\\(\\S.*\\)"
 set-variable .fhook-jst.item-list-r2 "SSct \ecB\\1 \\2\ecA"
-set-variable .fhook-jst.item-list-s3 "^[ \t]*\\([0-9]+\\.[0-9]+\\.[0-9.]+\\)[ \t]+\\(\\S .*\\)"
+set-variable .fhook-jst.item-list-s3 "^[ \t]*\\([0-9]+\\.[0-9]+\\.[0-9.]+\\)[ \t]+\\(\\S.*\\)"
 set-variable .fhook-jst.item-list-r3 "SSSc \ecB\\1 \\2\ecA"
 set-variable .fhook-jst.item-list-s4 "^[ \t]*Appendix \\([[:alpha:]].*\\)"
 set-variable .fhook-jst.item-list-r4 "Appx \ecB\\1\ecA"
@@ -86,25 +86,25 @@ set-variable .fhook-jst.item-list-r4 "Appx \ecB\\1\ecA"
     ; we do not need it. This will only hurt branch tokens, as there
     ; are none below then there is no adverse effect.
     0 hilight  .hilight.jst 2 100                               $global-scheme
-    hilight .hilight.jst 0x22 "[0-9]+\\.[0-9.]+[ \t]+\\S "      .scheme.header
+    hilight .hilight.jst 0x22 "[0-9]+\\.[0-9.]+[ \t]+\\S"       .scheme.header
     hilight .hilight.jst 0x22 "Appendix [[:alpha:]]"            .scheme.header
     hilight .hilight.jst 0x22 "===+$"                           .scheme.header
     hilight .hilight.jst 0x22 "---+$"                           .scheme.header
-    hilight .hilight.jst 0x20 "*\\}[ \t]+\\S "                  .scheme.no1
-    hilight .hilight.jst 0x20 "[0-9]+[]).]\\}[ \t]+\\S "        .scheme.no1
-    hilight .hilight.jst 0x20 "[a-z][]).]\\}[ \t]+\\S "         .scheme.no1
-    hilight .hilight.jst 0x20 "[A-Z][]).]\\}[ \t]+\\S "         .scheme.no1
-    hilight .hilight.jst 0x20 "[IVXLC]+[]).]\\}[ \t]+\\S "      .scheme.no1
-    hilight .hilight.jst 0x20 "[ivxlc]+[]).]\\}[ \t]+\\S "      .scheme.no1
-    hilight .hilight.jst 0x20 "\\[\\S [^]\n]*]"                 .scheme.no1
+    hilight .hilight.jst 0x20 "*\\}[ \t]+\\S"                   .scheme.no1
+    hilight .hilight.jst 0x20 "[0-9]+[]).]\\}[ \t]+\\S"         .scheme.no1
+    hilight .hilight.jst 0x20 "[a-z][]).]\\}[ \t]+\\S"          .scheme.no1
+    hilight .hilight.jst 0x20 "[A-Z][]).]\\}[ \t]+\\S"          .scheme.no1
+    hilight .hilight.jst 0x20 "[IVXLC]+[]).]\\}[ \t]+\\S"       .scheme.no1
+    hilight .hilight.jst 0x20 "[ivxlc]+[]).]\\}[ \t]+\\S"       .scheme.no1
+    hilight .hilight.jst 0x20 "\\[\\S[^]\n]*]"                  .scheme.no1
     hilight .hilight.jst 0x22 "^___+$"                          .scheme.no1
     hilight .hilight.jst 0x40 "^\x0c$" "<<Page-Break>>"         .scheme.keyword
-    hilight .hilight.jst 0x00 "\\*\\S [^*\n]*\\*"               .scheme.bold
-    hilight .hilight.jst 0x00 "~\\S [^~\n]*~"                   .scheme.italic
-    hilight .hilight.jst 0x00 "_\\S [^_\n]*_"                   .scheme.under
-    hilight .hilight.jst 0x00 "@\\S [^@\n]*@"                   .scheme.no2
+    hilight .hilight.jst 0x00 "\\*\\S[^*\n]*\\*"                .scheme.bold
+    hilight .hilight.jst 0x00 "~\\S[^~\n]*~"                    .scheme.italic
+    hilight .hilight.jst 0x00 "_\\S[^_\n]*_"                    .scheme.under
+    hilight .hilight.jst 0x00 "@\\S[^@\n]*@"                    .scheme.no2
     hilight .hilight.jst 0x04 "`" "'" ""                        .scheme.bold-italic
-    hilight .hilight.jst 0x00 "^\\s *\\[\\w*\\]"                .scheme.no1
+    hilight .hilight.jst 0x00 "^\\s*\\[\\w*\\]"                 .scheme.no1
 ;    hilight .hilight.jst 0x804 "\"" "\"" "\\"                   .scheme.string
 ;    hilight .hilight.jst 0x00 "'.'"                             .scheme.quote
 ;    hilight .hilight.jst 0x00 "'\\\\.'"                         .scheme.quote

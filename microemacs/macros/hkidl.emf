@@ -47,7 +47,7 @@ set-variable .fhook-idl.collapse-mnext "-1"
     hilight .hilight.idl    0 "'\\\\'"       .scheme.error
     hilight .hilight.idl    0 "'\\\\''"      .scheme.quote
     !if &band .hilight.flags 0x04
-        hilight .hilight.idl    0 "^[[:alpha:]][0-9a-zA-Z_:]*\\}\\s (" .scheme.function
+        hilight .hilight.idl    0 "^[[:alpha:]][0-9a-zA-Z_:]*\\}\\s(" .scheme.function
         hilight .hilight.idl    0 "^[[:alpha:]][0-9a-zA-Z_:]*\\}(" .scheme.function
     !endif
     hilight .hilight.idl    0 "^\\w+\\}:"    .scheme.link

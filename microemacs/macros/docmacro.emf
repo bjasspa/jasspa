@@ -46,7 +46,7 @@
 ;         >
 ;         > Author:       My Self
 ;         > Created:      11/11/97
-;         > Modified:     <041104.2103>
+;         > Modified:     <050224.2302>
 ;         > Location:     /xx/yy/zz.doc
 ; *
 ;         All lines commencing with '*' are assumed to be bullet lists. Bullet
@@ -99,7 +99,7 @@ set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
     hilight .hilight.doc 1 "\\*[A-Za-z_]+\\*"                   .scheme.bold
     hilight .hilight.doc 1 "<[A-Za-z_]+>"                       .scheme.italic
     hilight .hilight.doc 1 "_[A-Za-z0-9]+_"                     .scheme.under
-    hilight .hilight.doc 0 "^\\s *\\[\\w*\\]"                   .scheme.no1
+    hilight .hilight.doc 0 "^\\s*\\[\\w*\\]"                    .scheme.no1
     hilight .hilight.doc 0x22 "[0-9]+\\.[0-9.]*[ \t]+\\w"       .scheme.header
     hilight .hilight.doc 0x804 "\"" "\"" "\\"                   .scheme.string
     hilight .hilight.doc 0x804 "`" "'" ""                       .scheme.no1
@@ -290,7 +290,7 @@ define-macro doc-to-jst
     ; convert old docmode to jst
     ; italic <...> -> ~...~
     beginning-of-buffer
-    replace-string "<\\(\\S [^>\n]*\\)>" "~\\1~"
+    replace-string "<\\(\\S[^>\n]*\\)>" "~\\1~"
     ; change and >doc> to >end> and protect the starting >mode>
     beginning-of-buffer
     replace-string "^>doc>" "\b>end>"

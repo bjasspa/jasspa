@@ -52,8 +52,8 @@ set-variable .fhook-java.item-list-r2 "Clss \ecB\\2\ecA"
     hilight .hilight.java 0 "'\\\\''"       .scheme.quote
     ; Hilight TODO in a comment - Examples
     ; i.e. /* TODO I need to do this */
-    hilight .hilight.java   20 "/\\*\\s +[Tt][Oo][Dd][Oo]" "*/" "" .scheme.error
-    hilight .hilight.java   18 "//\\s *[tT][oO][dD][oO]"           .scheme.error
+    hilight .hilight.java   20 "/\\*\\s+[Tt][Oo][Dd][Oo]" "*/" "" .scheme.error
+    hilight .hilight.java   18 "//\\s*[tT][oO][dD][oO]"           .scheme.error
     ;
     hilight .hilight.java 0x12 "import"    .scheme.prepro
     hilight .hilight.java 0x12 "package"   .scheme.prepro

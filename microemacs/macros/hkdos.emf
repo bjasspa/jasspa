@@ -52,7 +52,7 @@ set-variable .fhook-dos.exact -1
     
     0 hilight .hilight.dosvar 1             .scheme.variable
     hilight .hilight.dosvar 128 "%"    .hilight.dos .scheme.variable
-    hilight .hilight.dosvar 128 "\\s " .hilight.dos $global-scheme
+    hilight .hilight.dosvar 128 "\\s"  .hilight.dos $global-scheme
     hilight .hilight.dosvar 128 "\\["  .hilight.dos $global-scheme
     hilight .hilight.dosvar 128 "]"    .hilight.dos $global-scheme
     hilight .hilight.dosvar 128 ","    .hilight.dos $global-scheme
