@@ -3908,7 +3908,7 @@ TTopenClientServer (void)
         ii += sizeof(cssa.sun_family);
         cssa.sun_family = AF_UNIX;
 
-        if(meTestExist(cssa.sun_path) &&
+        if(!meTestExist(cssa.sun_path) &&
            (connect(meCSSock,(struct sockaddr *)&cssa,ii) >= 0))
         {
             /* theres another me acting as a server, quit! */
