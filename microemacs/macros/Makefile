@@ -52,6 +52,7 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		au3.eaf		\
 	hkscheme.emf	hksgml.emf	hkshell.emf	hkslang.emf	\
 	hkspec.emf	hksql.emf	\
 	hktcl.emf	hktexi.emf	hktxt.emf	\
+	hkwiki.emf	\
 	hkvb.emf	hkvhdl.emf	hkvrml.emf	\
 	hkxml.emf	xmlutil.emf	\
 	hkyacc.emf	\

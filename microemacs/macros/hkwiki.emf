@@ -1,0 +1,258 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2004 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     Thu Sep 30 2004
+; Synopsis:    GNU Wiki support
+; Authors:     Steven Phillips
+;
+define-macro fhook-wiki
+    @# buffer-init "wiki"
+;    set-variable :mouse-pick-1 wiki-mouse-pick-1
+;    set-variable :mouse-drop-1 wiki-mouse-drop-1
+    &cond &sin "c" .fhook-wiki.setup 1 0 wiki-edit-mode
+    buffer-init-hooks
+!emacro    
+
+; buffer-init variables
+set-variable .fhook-wiki.name "GNU Wiki"
+set-variable .fhook-wiki.setup &reg "/history" "fhook/wiki" "fghijopsw"
+set-variable .fhook-wiki.setup-mask "acefghijkmnopstuwx"
+set-variable .fhook-wiki.setup-flags   "|c|"
+set-variable .fhook-wiki.setup-labels  "|Initial Edit Mode|"
+set-variable .fhook-wiki.command-flag  "|bio|thbio|thbio|bio|thbio|thbio|thbio|thbio|thbio|thbio|thbio|thbio|bio|h|"
+set-variable .fhook-wiki.command-name  "|wiki-help|wiki-scroll-down|wiki-scroll-up|wiki-scroll-up|wiki-goto-link|wiki-forward-node|wiki-backward-node|wiki-backward-node|wiki-goto-node|wiki-forward-link|wiki-backward-link|wiki-edit-mode|wiki-edit-mode||"
+set-variable .fhook-wiki.command-nbind "||||||||0||||||||"
+set-variable .fhook-wiki.command-kbind "|h|space|delete|backspace|return|n|p|b|g|tab|esc tab|e|C-c e||"
+set-variable .fhook-wiki.command-desc  "||Scroll down|Scroll Up||Follow hyperlink|Next node|Previous node|Go to beginning of node|Go to node by name|Next link|Previous link|Toggle edit mode||            also bound to C-c e|"
+
+set-variable .fhook-wiki.collapse-open  "^*\\s *\\S "
+set-variable .fhook-wiki.collapse-close "^*\\s *\\S \\|\\'"
+set-variable .fhook-wiki.collapse-mnext "-1"
+
+; Quick check to make sure that hilighting is required.
+!if &and &sin "h" .fhook-wiki.setup &band .hilight.flags 0x02 
+    !if &not &exist .hilight.wiki
+        set-variable .hilight.wiki &pinc .hilight.next 1
+        set-variable .hilight.wikiL &pinc .hilight.next 1
+        set-variable .hilight.wikiE &pinc .hilight.next 1
+    !endif
+    
+    ; Non-authoring mode hilight
+    0 hilight .hilight.wiki  0                        $global-scheme
+    hilight .hilight.wiki 2 "^-\\*-\\s *mode:\\s *wiki" .scheme.hide
+    hilight .hilight.wiki 0x42 "^\\*\\s *\\}." ""     .scheme.header
+    hilight .hilight.wiki 0xc0 ":#\\}\\w" ""          .hilight.wikiL .scheme.link
+    hilight .hilight.wiki 0xc0 ":\\w[^:#]*#\\}\\w" "" .hilight.wikiL .scheme.link
+    hilight .hilight.wiki 0xc0 ":\\}\\w" ""           .hilight.wikiL .scheme.link
+    
+    0 hilight .hilight.wikiL 0                        .scheme.link
+    hilight .hilight.wikiL 0xc0 ":" "" .hilight.wiki  .scheme.link
+    
+    ; authoring mode hilight
+    0 hilight .hilight.wikiE  0                $global-scheme
+    hilight .hilight.wikiE 2 "^-\\*-\\s *mode:\\s *wiki" .scheme.hide
+    hilight .hilight.wikiE 0x2 "^\\*\\s *\\S " .scheme.header
+    hilight .hilight.wikiE 0x1 ":#\\w[^:]*:"   .scheme.link
+    hilight .hilight.wikiE 0x1 ":\\w[^:]*:"    .scheme.link
+!endif
+
+0 define-macro wiki-edit-key
+    !if &and :wikimode &seq @1 ""
+        !if &set #l0 &lfin "|space|delete|backspace|return|tab|h|n|p|b|g|e|" @cck
+            set-variable #l1 &lget "|insert-space|forward-delete-char|backward-delete-char|newline|tab|||||||" #l0
+            !if &seq #l1 ""
+                @3 insert-string @cck
+            !elif @2
+                @3 execute-named-command #l1 @mna 
+            !else
+                execute-named-command #l1 @mna 
+            !endif
+            set-variable #p9 0
+            !return
+        !endif
+    !endif
+    set-variable #p9 1
+!emacro
+
+define-macro wiki-edit-mode
+    wiki-edit-key @p @? @#
+    !if #l9
+        !if @?
+            set-variable :wikimode &cond @# 1 0
+        !else
+            set-variable :wikimode &bxor :wikimode 1
+        !endif
+        !if :wikimode
+            -1 buffer-mode "view"
+            set-variable $buffer-hilight .hilight.wikiE
+            ml-write "[Edit mode enabled]"
+        !else
+            1 buffer-mode "view"
+            set-variable $buffer-hilight .hilight.wiki
+            ml-write "[Edit mode disabled]"
+        !endif
+    !endif
+!emacro
+
+0 define-macro wiki-load-file
+    -1 buffer-mode "edit"
+    1 buffer-mode "view"
+    beginning-of-buffer
+    fhook-wiki
+!emacro
+
+define-macro wiki-help
+    wiki-edit-key @p @? @#
+    !if #l9
+        buffer-help
+    !endif
+!emacro
+
+define-macro wiki-scroll-down
+    wiki-edit-key @p @? @#
+    !if #l9
+        scroll-down
+    !endif
+!emacro
+
+define-macro wiki-scroll-up
+    wiki-edit-key @p @? @#
+    !if #l9
+        scroll-up
+    !endif
+!emacro
+
+define-macro wiki-forward-node
+    wiki-edit-key @p @? @#
+    !if #l9
+        end-of-line
+        !while &gre &pdec @# 1 0
+            !force regex-forward "^\\*\\s *\\S "
+            !if &not $status
+                ml-write "[Error: no more nodes]"
+                !abort
+            !endif
+        !done
+        beginning-of-line
+    !endif
+!emacro
+
+define-macro wiki-backward-node
+    wiki-edit-key @p @? @#
+    !if #l9
+        set-variable @# &add @# 1
+        end-of-line
+        !while &gre &pdec @# 1 0
+            backward-char
+            !force regex-backward "^\\*\\s *\\S "
+            !if &not $status
+                ml-write "[Error: no more nodes]"
+                !abort
+            !endif
+        !done
+        beginning-of-line
+    !endif
+!emacro
+
+define-macro wiki-goto-node
+    wiki-edit-key @p @? @#
+    !if #l9
+        !force set-variable #l0 @1
+        !if &not $status
+            set-variable #l0 @ml1 "Goto node" .last
+        !endif
+        set-variable #l1 #l0
+        str-to-regex #l0
+        set-position "\x81"
+        beginning-of-buffer
+        !force search-forward &spr "^\\*\\s *%s[ \t]*$" #l0
+        !if $status
+            beginning-of-line
+            set-variable .last #l1
+            !return
+        !endif
+        goto-position "\x81"
+        ml-write &spr "[Failed to find node \"%s\"]" #l1
+        !abort
+    !endif
+!emacro
+set-variable .wiki-goto-node.last ""
+
+define-macro wiki-forward-link
+    wiki-edit-key @p @? @#
+    !if #l9
+        !while &gre &pdec @# 1 0
+            forward-char
+            !force regex-forward ":#?\\w[^:]*:"
+            !if &not $status
+                backward-char
+                ml-write "[Error: no more links]"
+                !abort
+            !endif
+            -2 show-region
+        !done
+    !endif
+!emacro
+
+define-macro wiki-backward-link
+    wiki-edit-key @p @? @#
+    !if #l9
+        !force @# regex-backward ":#?\\w[^:]*:"
+        !if &not $status
+            -1 show-region
+            ml-write "[Error: no more links]"
+            !abort
+        !endif
+        -2 show-region
+    !endif
+!emacro
+
+define-macro wiki-goto-link
+    wiki-edit-key @p @? @#
+    !if #l9
+        set-variable #l0 $window-line
+        set-variable #l1 $window-col
+        forward-char
+        !force -2 regex-backward ":\\(\\w[^#:]*\\)?\\(#\\w[^:]*\\)?:"
+        !if $status
+            2 show-region
+            !if &gre #l0 $window-line
+            !elif &and &equ #l0 $window-line &gre #l1 $window-col
+            !else
+                -2 show-region
+                set-variable #l2 @s1
+                set-variable #l3 @s2
+                !if &not &seq #l2 ""
+                    !force 0 find-file #l2
+                    !if &not $status
+                        ml-write &spr "[Error: failed to find wiki file \"%s\"]" #l2
+                        !abort
+                    !endif
+                    !if &not &seq $buffer-fhook "fhook-wiki"
+                        ml-write &spr "[Warning: Link file \"%s\" may not be a wiki file]" #l2
+                        fhook-wiki
+                    !endif
+                !endif
+                beginning-of-buffer
+                !if &gre &len #l3 1
+                    set-variable #l4 &rig #l3 1
+                    str-to-regex #l4
+                    set-variable #l4 &xrep #l4 "[ \n\t]+" "[ \t]+"
+                    !force regex-forward &spr "^*[ \t]*%s[ \t]*$" #l4
+                    !if &not $status
+                        ml-write &spr "[Error: failed to find link \"%s\"]" &rig #l3 1
+                        !abort
+                    !endif
+                    beginning-of-line
+                    !return
+                !endif
+            !endif
+        !endif
+        ml-write "[Error: cursor is not in a link]"
+        !abort
+    !endif
+!emacro
+
+buffer-init-fhook "wiki"
