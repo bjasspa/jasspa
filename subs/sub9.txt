@@ -1,0 +1,37 @@
+Title:  MicroEmacs Edit for all - Windows register setup file
+Ref:    sub9
+Author: Bruno Sabin
+Date:   2000-06-16
+
+The  following  registry  file  will  configure  your  windows  explorer  so a
+"MicroEmacs  Edit" item  appears in the right mouse  button  pop-up menu, this
+will open the file in MicroEmacs.
+
+WARNING: this up-dates your Windows registry, this is always dangerous.
+
+I EXCEPT NO RESPONSIBILITY  FOR THE USE OF THIS REGISTRY FILE AND THEREFORE AM
+NOT LIABLE TO YOU FOR ANY DAMAGES  ARISING  FROM THE USE OF THIS. YOU USE THIS
+AT YOUR OWN RISK!
+
+The registry file makes the  assumption  that the program  me32.exe is on your
+PATH, if this is not the case search and replace  me32.exe  with the  absolute
+path to your ME binary. the  command-line  also uses the -o option to only use
+one ME  session,  for  this to work the  Client  Server  must be  enable  (see
+user-setup),  if this behaviour is not desired then search and replace "-o -c"
+with "-c".
+
+Once you have done  this, cut out the  me32.reg  file and save to a  temporary
+.reg file, then double click on this file in a windows explorer.
+
+==== me_4_all.reg start ======================================================
+REGEDIT4
+
+[HKEY_CLASSES_ROOT\*\shell]
+
+[HKEY_CLASSES_ROOT\*\shell\MicroEmacs Edit]
+
+[HKEY_CLASSES_ROOT\*\shell\MicroEmacs Edit\command]
+@="me32.exe -c -o \"%1\""
+
+==== me_4_all.reg end ========================================================
+

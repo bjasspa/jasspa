@@ -1,0 +1,105 @@
+Title:  Further in-buffer highlight changing
+Ref:    sub4
+Author: Jon Green
+Date:   2000-03-14
+
+Further Detlef's  suggestion for insertion  hilighting which works very nicely
+(Thanks  -  very  nice  idea).  You  can  make  the   hilighting   modes  load
+automatically  without  defining  macro  loaders by loading  them  through the
+myXXX.emf extensions.
+
+Ironically  I have started to write some very high level  documentation  using
+the  hilighting,   following  Dave  E's  and  Alex's  request  for  some  more
+information. The text is written in the "document; pseudo-code" template, with
+extensions  to  provide  the  hilighting.  i.e. a text  extract  is defined as
+follows:-
+
+> 3.0 Hilighing by Example
+>
+>     This section describes the hilighting  techniques by example.
+>     The manual page on  hilight(2)  describe  what the raw tokens
+>     do, in  this  section  we  take  examples  from  the  various
+>     hilighting schemes and show how they are used.
+>
+>     3.1 Simple token hilighting
+>
+>     The simplest  form of  hilighting is token  hilighting  where
+>     keywords  are only  present in the text  surrounded  by white
+>     space (i.e.  non-alphanumeric  characters), so key words such
+>     as `if', `then',  `else' and `endif' fall into this  category
+>     i.e.
+>
+> >emf>
+>     hilight .hilight.eg 1 "if"               .scheme.keyword
+>     hilight .hilight.eg 1 "then"             .scheme.keyword
+>     hilight .hilight.eg 1 "else"             .scheme.keyword
+>     hilight .hilight.eg 1 "endif"            .scheme.keyword
+> >doc>
+>
+>     This hilights statements such as:-
+>
+> >eg>
+>     if(condition)
+>     then
+>         do this
+>     else
+>         do that
+>     endif
+> >doc>
+>
+>
+>     If the tokens are case  insensitive  then the hilighting mode
+>     is specified as case  insensitive  in the  hilighting  scheme
+>     i.e.
+
+In this  usage-case  hiding the tokens  used to change the  hilighting  may be
+preferred, e.g.
+
+> >emf-
+>     hilight .hilight.eg 1 "if"               .scheme.keyword
+>     hilight .hilight.eg 1 "then"             .scheme.keyword
+>     hilight .hilight.eg 1 "else"             .scheme.keyword
+>     hilight .hilight.eg 1 "endif"            .scheme.keyword
+> >doc-
+
+The  document  template to alternate  the  hilighting  above is defined in the
+following "mydoc.emf" file. Obviously the alternation tokens may be changed to
+anything that you want and may be applied to any existing template.
+
+==== mydoc.emf start =========================================================
+
+; Allow .eg inserts.
+
+; Force the ".eg" scheme to be loaded into the context of the document
+; scheme. We delimit the .eg scheme with a pair of markers ">eg>" and
+; ">doc>" at the start of the line.
+;
+; Force the hilighting mode to load if not already loaded.
+!if &seq .hilight.eg "ERROR"
+    !force execute-file "hkeg"
+!endif
+; If the hilighting mode is loaded then modify it.
+!if &not &seq .hilight.eg "ERROR"
+    hilight .hilight.psu 0x80 "^>eg>"  .hilight.eg .scheme.hide
+    hilight .hilight.eg  0x80 "^>doc>" .hilight.psu .scheme.hide
+!endif
+
+; Allow .emf inserts
+
+; Force the ".emf" scheme to be loaded into the context of the document
+; scheme. We delimit the .emf scheme with a pair of markers ">emf>" and
+; ">doc>" at the start of the line.
+;
+; Force the hilighting mode to load if not already loaded.
+!if &seq .hilight.emf "ERROR"
+    !force execute-file "hkemf"
+!endif
+; If the hilighting mode is loaded then modify it.
+!if &not &seq .hilight.emf "ERROR"
+    hilight .hilight.psu 0x80 "^>emf>" .hilight.emf .scheme.hide
+    hilight .hilight.emf 0x80 "^>doc>" .hilight.psu .scheme.hide
+    hilight .hilight.psu 0xc0 "^>emf-" "" .hilight.emf .scheme.hide
+    hilight .hilight.emf 0xc0 "^>doc-" "" .hilight.psu .scheme.hide
+!endif
+
+==== mydoc.emf end ===========================================================

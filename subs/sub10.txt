@@ -1,0 +1,103 @@
+Title:  Universal function tree-builder
+Ref:    sub10
+Author: Dr. Detlef Groth
+Date:   2000-12-22
+
+The  following  macros will create a list of  functions  for any file type for
+which a regex search string can be created for matching the function  names. I
+have  enclosed  search  strings  for  java,  perl  and  ME  macro  files.  The
+list-functions macro opens a new "*<buffer>functions*"  buffer which lists all
+the functions  found within the current buffer, double  clicking on a function
+will take you straight to the function.
+
+The macros are now put into my user.emf-file, but the search string is defined
+in myjava.emf,  myperl.emf and myemf.emf and so on so you can build navigation
+trees for almost every programming languages.
+
+
+==== myemf.emf start =========================================================
+
+define-macro my-fhook-emf
+    set-variable :searchstring "^define-macro "
+    buffer-bind-key "list-functions" "f7"
+!emacro
+
+==== myemf.emf end ===========================================================
+
+==== myjava.emf start ========================================================
+
+define-macro my-fhook-java
+    set-variable :searchstring "^[ \t]*[a-zA-Z0-9_ ]*\([a-zA-Z0-9_,]*\){\\|\\Wclass "
+    buffer-bind-key "list-functions" "f7"
+!emacro
+
+==== myjava.emf end ==========================================================
+
+==== myperl.emf start ========================================================
+
+define-macro my-fhook-perl
+    set-variable :searchstring "^sub "
+    buffer-bind-key "list-functions" "f7"
+!emacro
+
+==== myperl.emf end ==========================================================
+
+and so on...
+
+==== list_functions.emf (<user>.emf) start ===================================
+
+define-macro list-functions
+    set-variable .buffer $buffer-bname
+    set-variable .buffer-hilight $buffer-hilight ; for keeping proper hilight-scheme
+    delete-other-windows
+    find-buffer &cat &cat "*" .buffer "functions*"
+    split-window-horizontally
+    25 shrink-window-horizontally
+    ; to simple click the function
+    set-variable :mouse-word-select "find-function"
+    set-variable $buffer-hilight .buffer-hilight
+    screen-update
+    ; erase old-contents
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    exchange-point-and-mark
+    kill-region
+    next-window-find-buffer .buffer
+    set-alpha-mark "p"
+    beginning-of-buffer
+     !force search-forward :searchstring ; must be declared in my...emf-files
+    !while $status ; if found put into the *function*-buffer
+        beginning-of-line
+        set-mark
+        end-of-line
+        exchange-point-and-mark
+        copy-region
+        end-of-line
+        set-variable .function @y
+        -1 yank
+        set-variable .line $window-line
+        next-window-find-buffer &cat &cat "*" .buffer "functions*"
+        execute-string &cat &cat &cat "" .function "\t\t\t  Line:" .line
+        insert-newline
+        next-window-find-buffer .buffer
+        !force search-forward :searchstring
+    !done
+    goto-alpha-mark "p"
+!emacro
+
+define-macro find-function
+    search-forward "Line:"
+    set-mark
+    forward-word
+    exchange-point-and-mark
+    copy-region
+    set-variable #l0 @y
+    -1 yank
+    next-window
+    #l0 goto-line
+    recenter
+!emacro
+
+==== list_functions.emf (<user>.emf) end =====================================
+

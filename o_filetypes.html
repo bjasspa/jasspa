@@ -1,0 +1,733 @@
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="description" content="Jasspa Home">
+   <meta name="resource-type" content="document">
+   <meta name="distribution" content="global">
+   <meta name="keywords" content="jasspa microemacs, microemacs, emacs, uemacs, free, text, editor, JASSPA, me">
+   <meta name="authors" content="JASSPA">
+   <meta name="GENERATOR" content="MicroEmacs">
+   <title>MicroEmacs JASSPA Distribution</title>
+   <!-- BASE HREF="http://www.jasspa.com" -->
+   
+<!--JASSPA - common from this point -->
+<!-- BACKGROUND="meback.png"  -->
+</head>
+<body bgcolor="white">
+<!-- Banner across the top of the page -->
+</head>
+<table WIDTH="100%" HEIGHT="95" BORDER=0 CELLSPACING=0 CELLPADDING=0 >
+<tr>
+  <td BACKGROUND="images/backgrd.jpg"><center><img SRC="images/header.jpg" alt="jasspa.com"></center></td>
+</tr>
+</table>
+<!-- width="100%"  -->
+<table border=0 cellpadding=3 cellspacing=1 bgcolor="yellow">
+  <tr bgcolor="#0000ff">
+    <td align=center width="100"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
+      <b><a href="index.html" style="COLOR: yellow" >Home</a></b></font></td>
+    <td align=center width="100"  bgcolor="#0080ff"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
+      <b><a href="overview.html" style="COLOR: yellow">Overview</a></b></font></td>
+    <td align=center width="100"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
+      <b><a href="whatsnew.html" style="COLOR: yellow">What's New</a></b></font></td>
+    <td align=center width="100"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
+      <b><a href="support.html" style="COLOR: yellow">Support</a></b></font></td>
+    <td align=center width="100" ><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
+      <b><a href="download.html" style="COLOR: yellow">Download</a></b></font></td>
+    <td align=center width="100"><font class=bodytext face="Ariel, Helvetica, san-serif" size=2>
+      <b><a href="about.html" style="COLOR: yellow">About</a></b></font></td>
+  </tr>
+</table>
+<!-- Section selection -->
+<p><font size="+3" color="#0000ff"><b>Overview</b></font>
+<br>
+<font size="+1"><a href="overview.html" style="COLOR: black">what is it ?</a>&nbsp;&nbsp;</font>
+<font size="+1"><a href="o_features.html" style="COLOR: black">features</a>&nbsp;&nbsp;</font>
+<font size="+1" color="#ff0000">supported file types&nbsp;&nbsp;</font>
+<font size="+1"><a href="o_platforms.html" style="COLOR: black">supported platforms</a>&nbsp;&nbsp;</font>
+</p>
+<!-- What is it -->
+<h2>
+<font color="#0000FF" size="6">
+<img src="images/miniicon.gif" width="16" height="16"></font>
+Supported File Types</h2>
+<table width="100%">
+  <tr>
+    <td valign="top"><p>JASSPA's MicroEmacs performs file sytanx specific hilighting,
+      indentation and restyling. Additional syntax specific operations
+      may be applied to the buffer. The image on the right depicts file syntax
+      hilighting in addition to folding (or hiding) of the function body within
+      the 'C' programing language.</p>
+      
+      <p>These effects are created using the hilighting methods which are defined
+      using MicroEmacs macro language, the key tokens of the langauage are
+      identified within the macro definition and assigned a different display
+      attribute. The folding operation is also a visual effect, the actual
+      code contained within the leftmost braces is simply hidden, but still
+      resides within the editor. The folds are opened and closed using a click
+      of the mouse or key stroke.</p>
+      
+      <p>File syntax specific processing is currently available for the
+      following file types, new methods are progressivelly being added
+      and may be simply created for file types not listed below:-</p>
+      <td>
+        <p align="center" valign="top"><img src="images/foldview.jpg" alt="screen shot"></p>
+        <!-- a href="images/filetype.gif" target="miniwindow" -->
+      </td>
+    </tr>
+  </table>
+<p>
+
+<table border="0" CELLSPACING=1 CELLPADDING=1 bgcolor="#cccccc">
+    <tr>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00"
+         size="3">File Type</font>
+      </td>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00">Hilight</font>
+      </td>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00">Folding</font>
+      </td>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00">Indent/<br>Restyle</font>
+      </td>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00">Menu</font>
+      </td>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00">Short<br>cuts</font>
+      </td>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00">Comment<br>Support</font>
+      </td>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00">Tags<br>Gen.</font>
+      </td>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00">Macros</font>
+      </td>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00">Description / Special</font></td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>ASCII<br> Plain<br> Text</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">ASCII Plain Text<ul>
+          <li>Justification modes</li>
+          <li>Wrapping</li>
+          <li>Spelling</li>
+          <li>Bullets</li>
+        </ul></font>
+      </td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td> <font class=bodytext face="Ariel, Helvetica, san-serif" color="ffff00"><b>ASN.1</b></font> </td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td> <font class=bodytext face="Ariel, Helvetica, san-serif">SNACC</font></td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td> <font class=bodytext face="Ariel, Helvetica, san-serif" color="ffff00"><b>Awk</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">Awk/Gawk/Nawk Files</font></td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>Bat</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td>Microsoft/4-DOS Batch File</td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td> <font class=bodytext face="Ariel, Helvetica, san-serif" color="ffff00"><b>Binary</b></font> </td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td> <font class=bodytext face="Ariel, Helvetica, san-serif">Binary file loading mode</font></td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>BNF</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">Backus-Naur Form</font></td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>'C'/C++</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">ANSI / K&amp;R / C++<ul>
+          <li>#define evaluation.</li>
+        </ul></font>
+      </td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>Cobol</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">Cobol 85</font></td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>Fortran</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">Fortran 77 and 90</font></td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>FVWM</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">X-Window Manager</font></td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>HTML</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">HyperText markup Language<ul>
+          <li>Source (authoring)</li>
+          <li>Simple rendering</li>
+          <li>Spelling</li>
+        </ul></font>
+      </td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>IDL</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">OMG IDL Files.</font></td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>Info</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">GNU Info Files.<ul>
+          <li>Standard <b>info</b> navigation</li>
+          <li>Mouse navigation of links</li>
+        </ul></font>
+      </td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>Install<br> Shield</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">Install Shield Rule File.</font></td>
+    </tr>
+    <tr>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00"
+         size="3">File Type</font>
+      </td>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00">Hilight</font>
+      </td>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00">Folding</font>
+      </td>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00">Indent/<br>Restyle</font>
+      </td>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00">Menu</font>
+      </td>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00">Short<br>cuts</font>
+      </td>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00">Comment<br>Support</font>
+      </td>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00">Tags<br>Gen.</font>
+      </td>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00">Macros</font>
+      </td>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00">Description / Special</font></td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>Intel x86<br> Assember</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">Intel x86 assember</font></td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>Java</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">&nbsp;</font></td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>LaTeX</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">TeX documentation<ul>
+          <li>Initiate compile from buffer</li>
+        </ul></font>
+      </td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>Lisp</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">&nbsp;</font></td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>m4</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">M4 Pre-processor</font></td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>Make</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">Makefile, Imakefile</font></td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>Meta</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">MetaPost, MateFont</font></td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>MHEG-5</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">MHEG-5</font></td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>MicroEmacs<br> Help</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">MicroEmacs on-line help<ul>
+          <li>Hypertext help</li>
+        </ul></font>
+      </td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>MicroEmacs<br> Macro</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">MicroEmacs macro language.</font></td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>Nroff</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">UNIX Nroff<ul>
+          <li>Piping of generated output to window.</li>
+          <li>Display mode (hiding<b> \fx</b>'s)</li>
+          <li>Spelling</li>
+        </ul></font>
+      </td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>Pascal</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>Perl</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>Python</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00"
+         size="3">File Type</font>
+      </td>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00">Hilight</font>
+      </td>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00">Folding</font>
+      </td>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00">Indent/<br>Restyle</font>
+      </td>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00">Menu</font>
+      </td>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00">Short<br>cuts</font>
+      </td>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00">Comment<br>Support</font>
+      </td>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00">Tags<br>Gen.</font>
+      </td>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00">Macros</font>
+      </td>
+      <td align="center" bgcolor="#0000FF">
+        <font
+         class=bodytext face="Ariel, Helvetica, san-serif"
+         color="#FFFF00">Description / Special</font></td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>Registry </b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">Microsoft registry files, initialisation files (.ini)
+        and project files (.hpj)</font></td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>SQL</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>TCL/TK</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">Tcl/Tk/Tix/Wish</font></td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>Texinfo</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">GNU Texinfo documentation</font></td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>UNIX Man</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">Unix Manual Pages<ul>
+          <li>Display UNIX man in buffer</li>
+          <li>Hypertext mode to other manual pages.</li>
+        </ul></font>
+      </td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>UNIX<br> Shell</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">Korn/Bourne/Csh/Z/Tcsh/Bash</font></td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>VB</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">Visual Basic</font></td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>VHDL</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">VHDL hardware simulation language</font></td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>VRML</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr bgcolor="0080ff">
+      <td><font class=bodytext face="Ariel, Helvetica, sanserif" color="ffff00"><b>XML</b></font></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center"><img src="images/tick.gif" alt="yes" align="absmiddle" width="16" height="16"></td>
+      <td align="center">&nbsp;</td>
+      <td align="center">&nbsp;</td>
+      <td><font class=bodytext face="Ariel, Helvetica, san-serif">Extensible Markup Language</font></td>
+    </tr>
+  </table>
+  
+<HR color=#cccccc noShade SIZE=1>
+<p><font size="-2"><i>Copyright &copy; 2000-2001 Jasspa</i></font></p>
+</body>
+</html>

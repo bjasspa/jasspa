@@ -1,0 +1,997 @@
+Title:  ME Windows register setup file
+Ref:    sub8
+Author: Bruno Sabin
+Date:   2000-06-16
+
+The following  registry file will  configure your windows machine to use ME as
+the  default  problem  to open most file  types.
+
+WARNING: this up-dates your Windows registry, this is always dangerous.
+
+I EXCEPT NO RESPONSIBILITY  FOR THE USE OF THIS REGISTRY FILE AND THEREFORE AM
+NOT LIABLE TO YOU FOR ANY DAMAGES  ARISING  FROM THE USE OF THIS. YOU USE THIS
+AT YOUR OWN RISK!
+
+The registry file effects the behaviour of the following file types:
+
+    .*#, .#, .###, .*~, .~?~, .0, .1, .2, .3, .4, .5, .6, .7, .8, .9, .1st,
+    .asm, .awk, .bak, .btm, .c, .cc, .cpp, .def, .dmn, .eaf, .edf, .ehf, .emf,
+    .erf, .err, .esf, .etf, .gawk, .h, .hpp, .htp, .hts, .i, .ini, .l, .log,
+    .lbn, .mak, .make, .man, .nawk, .nrs, .old, .p, .pas, .pso, .rc, .rul,
+    .sm, .so, .sys, .tcl, .temp, .text, .tmp, .tni, .txt, .vhd, .vhdl, .y
+
+The registry file makes the  assumption  that the program  me32.exe is on your
+PATH, if this is not the case search and replace  me32.exe  with the  absolute
+path to your ME binary. the  command-line  also uses the -o option to only use
+one ME  session,  for  this to work the  Client  Server  must be  enable  (see
+user-setup),  if this behaviour is not desired then search and replace "-o -c"
+with "-c".
+
+Once you have done  this, cut out the  me32.reg  file and save to a  temporary
+.reg file, then double click on this file in a windows explorer.
+
+==== me32.reg start ==========================================================
+REGEDIT4
+
+[HKEY_CLASSES_ROOT]
+
+[HKEY_CLASSES_ROOT\*]
+
+[HKEY_CLASSES_ROOT\*\shell]
+
+[HKEY_CLASSES_ROOT\*\shell\MicroEmacs Edit]
+
+[HKEY_CLASSES_ROOT\*\shell\MicroEmacs Edit\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\.*#]
+@="MicroEmacs_autosave"
+
+[HKEY_CLASSES_ROOT\.#]
+@="MicroEmacs_autosave"
+
+[HKEY_CLASSES_ROOT\.###]
+@="MicroEmacs_autosave"
+
+[HKEY_CLASSES_ROOT\.*~]
+@="MicroEmacs_bak"
+
+[HKEY_CLASSES_ROOT\.~?~]
+@="MicroEmacs_bak"
+
+[HKEY_CLASSES_ROOT\.0]
+@="MicroEmacs_zero"
+
+[HKEY_CLASSES_ROOT\.1]
+@="MicroEmacs_one"
+
+[HKEY_CLASSES_ROOT\.2]
+@="MicroEmacs_two"
+
+[HKEY_CLASSES_ROOT\.3]
+@="MicroEmacs_three"
+
+[HKEY_CLASSES_ROOT\.4]
+@="MicroEmacs_four"
+
+[HKEY_CLASSES_ROOT\.5]
+@="MicroEmacs_five"
+
+[HKEY_CLASSES_ROOT\.6]
+@="MicroEmacs_six"
+
+[HKEY_CLASSES_ROOT\.7]
+@="MicroEmacs_seven"
+
+[HKEY_CLASSES_ROOT\.8]
+@="MicroEmacs_eight"
+
+[HKEY_CLASSES_ROOT\.9]
+@="MicroEmacs_nine"
+
+[HKEY_CLASSES_ROOT\.1st]
+@="MicroEmacs_1st"
+
+[HKEY_CLASSES_ROOT\.asm]
+@="MicroEmacs_asm"
+
+[HKEY_CLASSES_ROOT\.awk]
+@="MicroEmacs_awk"
+
+[HKEY_CLASSES_ROOT\.bak]
+@="MicroEmacs_bak"
+
+[HKEY_CLASSES_ROOT\.btm]
+@="MicroEmacs_btm"
+
+[HKEY_CLASSES_ROOT\.c]
+@="cfile"
+
+[HKEY_CLASSES_ROOT\.cc]
+@="cppfile"
+
+[HKEY_CLASSES_ROOT\.cpp]
+@="cppfile"
+
+[HKEY_CLASSES_ROOT\.def]
+@="MicroEmacs_def"
+
+[HKEY_CLASSES_ROOT\.dmn]
+@="MicroEmacs_dmn"
+
+[HKEY_CLASSES_ROOT\.eaf]
+@="MicroEmacs_eaf"
+
+[HKEY_CLASSES_ROOT\.edf]
+@="MicroEmacs_edf"
+
+[HKEY_CLASSES_ROOT\.ehf]
+@="MicroEmacs_ehf"
+
+[HKEY_CLASSES_ROOT\.emf]
+@="MicroEmacs_emf"
+
+[HKEY_CLASSES_ROOT\.erf]
+@="MicroEmacs_erf"
+
+[HKEY_CLASSES_ROOT\.err]
+@="MicroEmacs_err"
+
+[HKEY_CLASSES_ROOT\.esf]
+@="MicroEmacs_esf"
+
+[HKEY_CLASSES_ROOT\.etf]
+@="MicroEmacs_etf"
+
+[HKEY_CLASSES_ROOT\.gawk]
+@="MicroEmacs_gawk"
+
+[HKEY_CLASSES_ROOT\.h]
+@="hfile"
+
+[HKEY_CLASSES_ROOT\.hpp]
+@="hppfile"
+
+[HKEY_CLASSES_ROOT\.htp]
+@="MicroEmacs_htp"
+
+[HKEY_CLASSES_ROOT\.hts]
+@="MicroEmacs_hts"
+
+[HKEY_CLASSES_ROOT\.i]
+@="MicroEmacs_i"
+
+[HKEY_CLASSES_ROOT\.ini]
+@="MicroEmacs_text"
+
+[HKEY_CLASSES_ROOT\.l]
+@="MicroEmacs_l"
+
+[HKEY_CLASSES_ROOT\.log]
+@="MicroEmacs_log"
+
+[HKEY_CLASSES_ROOT\.lbn]
+@="MicroEmacs_lbn"
+
+[HKEY_CLASSES_ROOT\.mak]
+@="MicroEmacs_mak"
+
+[HKEY_CLASSES_ROOT\.make]
+@="MicroEmacs_mak"
+
+[HKEY_CLASSES_ROOT\.man]
+@="MicroEmacs_man"
+
+[HKEY_CLASSES_ROOT\.nawk]
+@="MicroEmacs_nawk"
+
+[HKEY_CLASSES_ROOT\.nrs]
+@="MicroEmacs_nrs"
+
+[HKEY_CLASSES_ROOT\.old]
+@="MicroEmacs_old"
+
+[HKEY_CLASSES_ROOT\.p]
+@="MicroEmacs_p"
+
+[HKEY_CLASSES_ROOT\.pas]
+@="MicroEmacs_pas"
+
+[HKEY_CLASSES_ROOT\.pso]
+@="MicroEmacs_pso"
+
+[HKEY_CLASSES_ROOT\.rc]
+@="rcfile"
+
+[HKEY_CLASSES_ROOT\.rul]
+@="MicroEmacs_rul"
+
+[HKEY_CLASSES_ROOT\.sm]
+@="MicroEmacs_sm"
+
+[HKEY_CLASSES_ROOT\.so]
+@="MicroEmacs_so"
+
+[HKEY_CLASSES_ROOT\.sys]
+@="sysfile"
+
+[HKEY_CLASSES_ROOT\.tcl]
+@="MicroEmacs_tcl"
+
+[HKEY_CLASSES_ROOT\.temp]
+@="MicroEmacs_temp"
+
+[HKEY_CLASSES_ROOT\.text]
+@="MicroEmacs_text"
+
+[HKEY_CLASSES_ROOT\.tmp]
+@="MicroEmacs_temp"
+
+[HKEY_CLASSES_ROOT\.tni]
+@="MicroEmacs_tni"
+
+[HKEY_CLASSES_ROOT\.txt]
+@="MicroEmacs_text"
+
+[HKEY_CLASSES_ROOT\.vhd]
+@="MicroEmacs_vhdl"
+
+[HKEY_CLASSES_ROOT\.vhdl]
+@="MicroEmacs_vhdl"
+
+[HKEY_CLASSES_ROOT\.y]
+@="MicroEmacs_y"
+
+[HKEY_CLASSES_ROOT\cfile]
+@="C Source File"
+
+[HKEY_CLASSES_ROOT\cfile\DefaultIcon]
+@="meicons.exe,1"
+
+[HKEY_CLASSES_ROOT\cfile\shell]
+
+[HKEY_CLASSES_ROOT\cfile\shell\open]
+
+[HKEY_CLASSES_ROOT\cfile\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\cppfile]
+@="C++ Source File"
+
+[HKEY_CLASSES_ROOT\cppfile\DefaultIcon]
+@="meicons.exe,2"
+
+[HKEY_CLASSES_ROOT\cppfile\shell]
+
+[HKEY_CLASSES_ROOT\cppfile\shell\open]
+
+[HKEY_CLASSES_ROOT\cppfile\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\hfile]
+@="C Header File"
+
+[HKEY_CLASSES_ROOT\hfile\DefaultIcon]
+@="meicons.exe,3"
+
+[HKEY_CLASSES_ROOT\hfile\shell]
+
+[HKEY_CLASSES_ROOT\hfile\shell\open]
+
+[HKEY_CLASSES_ROOT\hfile\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\hppfile]
+@="C++ Header File"
+
+[HKEY_CLASSES_ROOT\hppfile\DefaultIcon]
+@="meicons.exe,3"
+
+[HKEY_CLASSES_ROOT\hppfile\shell]
+
+[HKEY_CLASSES_ROOT\hppfile\shell\open]
+
+[HKEY_CLASSES_ROOT\hppfile\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\rcfile]
+@="Resource Template"
+
+[HKEY_CLASSES_ROOT\rcfile\DefaultIcon]
+@="meicons.exe,59"
+
+[HKEY_CLASSES_ROOT\rcfile\shell]
+
+[HKEY_CLASSES_ROOT\rcfile\shell\open]
+
+[HKEY_CLASSES_ROOT\rcfile\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\sysfile]
+@="System File"
+
+[HKEY_CLASSES_ROOT\sysfile\DefaultIcon]
+@="meicons.exe,0"
+
+[HKEY_CLASSES_ROOT\sysfile\shell]
+
+[HKEY_CLASSES_ROOT\sysfile\shell\open]
+
+[HKEY_CLASSES_ROOT\sysfile\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_1st]
+@="MicroEmacs 1st File"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_1st\DefaultIcon]
+@="meicons.exe,7"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_1st\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_1st\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_1st\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_asm]
+@="Assembler"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_asm\DefaultIcon]
+@="meicons.exe,70"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_asm\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_asm\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_asm\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_autosave]
+@="MicroEmacs Auto Save"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_autosave\DefaultIcon]
+@="meicons.exe,47"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_autosave\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_autosave\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_autosave\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_awk]
+@="AWK"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_awk\DefaultIcon]
+@="meicons.exe,57"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_awk\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_awk\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_awk\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_backup]
+@="MicroEmacs Backup"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_backup\DefaultIcon]
+@="meicons.exe,48"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_backup\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_backup\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_backup\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_bak]
+@="Backup"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_bak\DefaultIcon]
+@="meicons.exe,48"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_bak\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_bak\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_bak\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_btm]
+@="4DOS BTM"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_btm\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_btm\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_btm\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_cpp]
+@="C++ Source"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_cpp\DefaultIcon]
+@="meicons.exe,2"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_cpp\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_cpp\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_cpp\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_def]
+@="C Definitions"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_def\DefaultIcon]
+@="meicons.exe,4"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_def\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_def\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_def\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_dmn]
+@="(mad) Droff Man"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_dmn\DefaultIcon]
+@="meicons.exe,34"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_dmn\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_dmn\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_dmn\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_eaf]
+@="MicroEmacs Abbreviation"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_eaf\DefaultIcon]
+@="meicons.exe,53"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_eaf\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_eaf\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_eaf\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_edf]
+@="MicroEmacs Dictionary"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_edf\DefaultIcon]
+@="meicons.exe,54"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_edf\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_edf\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_edf\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_ehf]
+@="MicroEmacs Help"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_ehf\DefaultIcon]
+@="meicons.exe,15"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_ehf\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_ehf\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_ehf\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_eight]
+@="nroff 8"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_eight\DefaultIcon]
+@="meicons.exe,27"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_eight\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_eight\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_eight\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_emf]
+@="MicroEmacs Macro"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_emf\DefaultIcon]
+@="meicons.exe,56"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_emf\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_emf\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_emf\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_erf]
+@="MicroEmacs Registry"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_erf\DefaultIcon]
+@="meicons.exe,71"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_erf\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_erf\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_erf\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_err]
+@="Error Log"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_err\DefaultIcon]
+@="meicons.exe,62"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_err\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_err\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_err\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_esf]
+@="MicroEmacs History Session"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_esf\DefaultIcon]
+@="meicons.exe,55"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_esf\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_esf\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_esf\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_etf]
+@="MicroEmacs Template"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_etf\DefaultIcon]
+@="meicons.exe,52"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_etf\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_etf\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_etf\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_five]
+@="nroff 5"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_five\DefaultIcon]
+@="meicons.exe,24"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_five\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_five\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_five\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_four]
+@="nroff 4"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_four\DefaultIcon]
+@="meicons.exe,23"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_four\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_four\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_four\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_gawk]
+@="GNU AWK"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_gawk\DefaultIcon]
+@="meicons.exe,57"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_gawk\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_gawk\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_gawk\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_htp]
+@="(mad) Hypertext Precompiled"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_htp\DefaultIcon]
+@="meicons.exe,66"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_htp\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_htp\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_htp\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_hts]
+@="(mad) Hypertext Super"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_hts\DefaultIcon]
+@="meicons.exe,67"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_hts\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_hts\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_hts\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_i]
+@="C PreProcessor"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_i\DefaultIcon]
+@="meicons.exe,58"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_i\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_i\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_i\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_l]
+@="LEX"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_l\DefaultIcon]
+@="meicons.exe,50"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_l\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_l\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_l\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_log]
+@="LOG"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_log\DefaultIcon]
+@="meicons.exe,61"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_log\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_log\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_log\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_lbn]
+@="(mad) Nroff Archive"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_lbn\DefaultIcon]
+@="meicons.exe,63"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_lbn\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_lbn\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_lbn\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_mak]
+@="Makefile"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_mak\DefaultIcon]
+@="meicons.exe,16"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_mak\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_mak\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_mak\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_man]
+@="UNIX Manual"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_man\DefaultIcon]
+@="meicons.exe,34"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_man\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_man\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_man\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_nawk]
+@="New AWK"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_nawk\DefaultIcon]
+@="meicons.exe,57"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_nawk\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_nawk\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_nawk\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_nine]
+@="nroff 9"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_nine\DefaultIcon]
+@="meicons.exe,28"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_nine\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_nine\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_nine\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_nrs]
+@="(mad) Nroff Search"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_nrs\DefaultIcon]
+@="meicons.exe,31"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_nrs\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_nrs\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_nrs\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_old]
+@="Old Version"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_old\DefaultIcon]
+@="meicons.exe,0"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_old\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_old\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_old\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_one]
+@="nroff 1"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_one\DefaultIcon]
+@="meicons.exe,20"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_one\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_one\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_one\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_p]
+@="Pascal Source"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_p\DefaultIcon]
+@="meicons.exe,51"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_p\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_p\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_p\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_pas]
+@="Pascal Source"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_pas\DefaultIcon]
+@="meicons.exe,51"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_pas\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_pas\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_pas\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_pso]
+@="(mad) Postscript Ordering"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_pso\DefaultIcon]
+@="meicons.exe,69"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_pso\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_pso\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_pso\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_rul]
+@="Install Shield Rules"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_rul\DefaultIcon]
+@="meicons.exe,60"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_rul\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_rul\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_rul\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_seven]
+@="nroff 7"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_seven\DefaultIcon]
+@="meicons.exe,26"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_seven\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_seven\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_seven\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_six]
+@="nroff 6"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_six\DefaultIcon]
+@="meicons.exe,25"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_six\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_six\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_six\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_sm]
+@="(mad) Superman"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_sm\DefaultIcon]
+@="meicons.exe,68"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_sm\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_sm\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_sm\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_so]
+@="nroff Include"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_so\DefaultIcon]
+@="meicons.exe,29"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_so\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_so\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_so\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_tcl]
+@="Tool Command Language TCL and TK"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_tcl\DefaultIcon]
+@="meicons.exe,39"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_tcl\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_tcl\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_tcl\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_temp]
+@="Temporary"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_temp\DefaultIcon]
+@="meicons.exe,0"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_temp\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_temp\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_temp\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_text]
+@="Plain Text"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_text\DefaultIcon]
+@="meicons.exe,18"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_text\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_text\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_text\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_three]
+@="nroff 3"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_three\DefaultIcon]
+@="meicons.exe,22"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_three\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_three\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_three\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_tni]
+@="nroff Include"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_tni\DefaultIcon]
+@="meicons.exe,30"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_tni\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_tni\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_tni\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_two]
+@="nroff 2"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_two\DefaultIcon]
+@="meicons.exe,21"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_two\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_two\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_two\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_vhdl]
+@="VHDL"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_vhdl\DefaultIcon]
+@="meicons.exe,0"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_vhdl\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_vhdl\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_vhdl\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_y]
+@="YACC"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_y\DefaultIcon]
+@="meicons.exe,49"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_y\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_y\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_y\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+[HKEY_CLASSES_ROOT\MicroEmacs_zero]
+@="nroff 0"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_zero\DefaultIcon]
+@="meicons.exe,19"
+
+[HKEY_CLASSES_ROOT\MicroEmacs_zero\shell]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_zero\shell\open]
+
+[HKEY_CLASSES_ROOT\MicroEmacs_zero\shell\open\command]
+@="me32.exe -o -c \"%1\""
+
+==== me32.reg end ============================================================
+

@@ -1,0 +1,866 @@
+> -!- document; fill-column: 65; fill-mode: full -!-
+> Author:   Jon Green
+> Created:  Wed Feb 2 20:23:35 2000
+> Modified: <20000323.0006>
+
+1.0 Overview of the Documentation Modes
+
+    This is the 2nd revision of this  document  that outlines the
+    documentation  mode  supported by JASSPA's  MicroEmacs.  This
+    document   has  been  revised  from  the  previous   document
+    following  a  number  changes  in the  way  that  other  code
+    fragments  may be included  into the document and  hilighted.
+    These  changes are  effective  from releases made after March
+    2000.
+
+    Primarily the original "sectioned" and "pseudo-code" document
+    types have been  replaced by the "-!-  document  -!-" type. A
+    new  document  type  called "-!- text -!-" has been  created,
+    this is the default for all files with  extension  ".txt" and
+    has no hilighting.
+
+    "psuedo-code" is now performed by surrounding the pseudo code
+    block with document markers:-
+
+>pseudo>
+    // Function to do something
+    FUNCTION myFunction
+    BEGIN
+        IF condition
+        THEN
+            do something
+        ENDIF
+    END
+>doc>
+
+    This technique of inclusion allows other scheme inserts to be
+    included   into  the  document   i.e.  'C',  BNF  etc.  These
+    techniques are discussed later.
+
+    1.1 Background
+
+    The document mode (enabled on files with extensions of ".doc"
+    or  ".txt"),  is a  manual  text  layout  mode  that  retains
+    formatting.  What  that  basically  means  is that  you do an
+    initial  layout  and  there  after the  editor  endeavors  to
+    preserve it when you make changes.
+
+    When  you  run  in  document  mode  we  typically  run  in  a
+    $fill-mode  "B". This is the automatic mode (Both  Automatic)
+    that  attempts  to  identify  the format of the text, this is
+    based on the word(s)  position on the line and adjacent text.
+    As this mode is automatic  mistakes are sometimes  made (i.e.
+    it drops to center rather than justified).
+
+    The  advantage  of  running  like  this is once  the  text is
+    reasonably   formatted  you  can  then  re-format  the  whole
+    document as you make changes (i.e. add and delete things).
+
+    There is a quick  pop-up  help  page  that  shows you the key
+    bindings. (I was  planning on putting  these on the mouse but
+    never got round to it). Get the help using:-
+
+                          M-h or Esc-h
+
+    1.2 Cursor Position
+
+    The  cursor  position  is  always  left,  this  is  a  little
+    unfamiliar  when  you are  used to  center  or  right  cursor
+    positions. This is what happens next
+
+    The general rule is you enter a paragraph and then format the
+    paragraph  to the  appropriate  position.  Generally  we edit
+    justified  left or  justified  both, it is rare  that we edit
+    center or right. Hence left or both is always on.
+
+    1.3 Quick Summary
+
+     @  C-c C-b Justify about both margins
+        C-C C-c Justify center
+        C-C C-l Justify left
+        C-c C-r Justify right
+
+     @  M-o to fill the paragraph
+
+        If you fill in the middle of a paragraph the cursor stays
+        where  it is. If you  fill on a blank  line it fills  the
+        next paragraph and advances to the next.
+
+    There  are other  keys to change  the  justification  mode as
+    indicated  on the help pop-up.  Paragraph  formatting  may be
+    performed from the menu.
+
+    1.4 Types of document modes
+
+    MicroEmacs  is  currently  shipped with two types of document
+    mode:-
+
+    1.4.1 Text
+
+        Standard  plain  text or no  fixed  format.  No,  colored
+        syntax  hilighting  is  applied to the text. A plain text
+        file is assumed for files  ending in ".txt" or those that
+        include the magic string "-!- text -!-".
+
+    1.4.2 Document
+
+        Document mode is a more  sophisticated  text mode. Within
+        documentation  mode  hilighting  is  applied  to the text
+        which  is  assumed  to fit a  loose  set of  rules  which
+        designate  the text as a  document.  This may be  section
+        numbers, literal paragraphs, bullets etc.
+
+        The  text  must fit  these  loose  constraints  otherwise
+        anomalies   occur   with   the   hilighting   which   may
+        misrepresent the information.
+
+        A document  file is a file that ends in ".doc" or include
+        the magic string "-!- document -!-".
+
+2.0 Working In The Text Modes
+
+    This  section   describes   the  basics  of  working  in  the
+    documentation mode.
+
+    2.1 Whats a paragraph ??
+
+        A paragraph in  MicroEmacs  is anything that is separated
+        by a blank line. There are no control  characters  in the
+        text so this really is WYSIWYG !!
+
+        This is the next  paragraph.  So in any of the  automatic
+        modes (i.e. "N"), the context of the surrounding  text is
+        used  to  determine  the  paragraph  formatting.  This is
+        crude, but operates correctly 95% of the time.
+
+        The layout of any existing  text allows the  formatter to
+        work out where things should go.
+
+        2.1.1 The Fill Column
+
+        There is a fill column on the right which  determines how
+        long the paragraph is. I'm using a short one so this does
+        not get wrapped by the mailer, the typical value is 78.
+
+            $fill-col ..................... "65"
+
+        Documents  may use  predefined  fill  columns by adding a
+        magic  header  to the top of the  file.  i.e. for a plain
+        text document:-
+
+            -!- text; fill-column: 65 -!-
+
+        For a document (i.e. with headings and hilighting),  then
+        the following header is used:-
+
+            -!- document; fill-column: 65 -!-
+
+        Note  that  the  $fill-column  within  the  documentation
+        buffers  is private to that  buffer.  Modifying  the fill
+        column affects the current buffer only.
+
+        2.2.2 The Fill Mode
+
+        The fill mode determines how paragraphs are filled. These
+        are   detailed   in  the  on-line   documentation   under
+        $fill-mode. The most commonly used settings are:-
+
+            Justify left and right (both or full  justification).
+            This  gives neat line  endings on both the  left-hand
+            and right-hand sides of the text.
+
+                $fill-mode .................... "B"
+
+            Justify  left,  produces  a neat  left-hand  edge and
+            ragged right-hand edge.
+
+                $fill-mode .................... "L"
+
+            Justify none, Turns off all justification,  lines are
+            not wrapped, what you type is what you get.
+
+                $fill-mode .................... "n"
+
+        Documents may use predefined  fill mode by adding a magic
+        header  to the top of the  file.  i.e.  for a plain  text
+        document:-
+
+            -!- text; fill-mode: left -!-
+
+        For a document (i.e. with headings and hilighting),  then
+        the following header is used:-
+
+            -!- document; fill-mode: left -!-
+
+        The recognized keywords are:-
+
+        @   full   - Justified left and right margins.
+            both   - Justified left and right margins.
+            left   - Justified left only
+            right  - Justified right only
+            center - Justified center text
+            none   - Disable all justification
+
+        All modes, with the  exception of none, are assumed to be
+        automatic  in  that  they  recognize  pre-formatted  left
+        (column 0), right and centered text.
+
+        Where both the fill  column and fill mode  required  then
+        they may be specified as:-
+
+            -!- document; fill-column: 65; fill-mode: full -!-
+
+        Note that the $fill-mode within the documentation buffers
+        is  private  to that  buffer.  Modifying  the  fill  mode
+        affects the current buffer only.
+
+    2.2 Left Text (Work off the margin or column 0)
+
+        The margin is magic,  anything  on column 0 is assumed to
+        be hard left justified text i.e.
+
+This should not
+format because it is
+hard left
+
+        Most text in the  document  should be off the  margin (or
+        gutter).  Text on the  gutter  should  be  restricted  to
+        titles for it to work correctly. Gutter text only remains
+        untouched in the $fill-mode automatic modes (L/R/C/B).
+
+        Text  may be  moved  to the  gutter  using  "C-c  C-g" to
+        reformat the paragraph.
+
+        2.2.1 On a re-format
+
+            Left  justified  text is  assumed  to exist at column
+            zero  and  does  not  extend  beyond  50% of the fill
+            column.
+
+    2.3 Right Text (Work to right margin or $fill-col)
+
+        Right text is not as you  normally  expected  because the
+        cursor is on the left. Enter the text on the left  margin
+        and then format it to the right i.e.
+
+My Address
+My Street
+My County
+My Country
+My Zip code
+
+        Perform a right paragraph operation on the text i.e. "C-c
+        C-r"  and  it  appears  on  the  right  at the  $fill-col
+        position i.e.
+
+                                                       My Address
+                                                        My Street
+                                                        My County
+                                                       My Country
+                                                      My Zip code
+
+        2.3.1 On a re-format
+
+            With right  text, when you format it lines  extending
+            from 50% of the  fill  column  to the end of the line
+            are considered to be right justified.
+
+    2.4 Center Text
+
+        Center  is   similar   to  the  above,  but  a  bit  more
+        manageable,  again enter in on the left and then use "C-c
+        C-c" to center justify. Lines are preserved.
+
+                      This is in the center
+                       This is a bit more
+
+        2.3.1 On a re-format
+
+            If the number of spaces either side of the margins is
+            the same (+/-1) then the text is assumed to be center
+            justified.  This sometimes  causes  problems when you
+            require  justified lines and centering is assumed; in
+            this  instance  simply delete the end of the line and
+            re-format.
+
+    2.5 Justified Text
+
+        Any  other  text  that  does  not fit the  aforementioned
+        criteria  is  assumed  to be  justified  to  the  current
+        setting of $fill-col.
+
+            Indentation  commences  from the first column where a
+            text character appears so this line will wrap in line
+            with the first.
+
+                Indent again and the same thing happens, this bit
+                of text (when I write enough) will keep in line.
+
+    2.6 Literal Text
+
+        Often  you want to put text in the  document  that is not
+        subject  to  justification.  This  is  controlled  by the
+        "$fill-ignore"  variable (use "M-x list-variables" to see
+        them all).
+
+        The default is:-
+
+              $fill-ignore .................. ">_@"
+
+        Any paragraph that commences with the above characters is
+        not filled so:-
+
+        > This is a paragraph
+        > that is not subject to re-formatting
+        >      spaces
+        >          are
+        >            retained.
+
+        @ This is another
+             note that only the first character
+       of the
+             paragraph
+                is marked
+        when you re-format
+                             this should be still as you left it.
+
+       _ And
+           another - I think this is enough !!
+
+    2.7 Bullets
+
+        Bullets  are  useful  for  lists  and  alike. As with the
+        absolute  text  there are a few of  characters  which are
+        recognized as bullet characters. These are defined with:-
+
+        @    $fill-bullet .................. "*)].-"
+             $fill-bullet-len .............. "15"
+
+        The   "$fill-bullet"   characters   are   obviously   the
+        characters  recognized as bullets.  "$fill-bullet-len" is
+        the number of  characters  into the paragraph to look for
+        bullets. Examples include:-
+
+        * Simple bullet
+
+        * Note that there is a paragraph space between them, also
+          note that  bullets  should be  aligned  to the left and
+          right. You get prompted to do this when you  re-format.
+          If you re-format again you will not be prompted because
+          it works  out that the  first 2 lines of the  paragraph
+          text are in alignment.
+
+        a) Can have  letters,  the ")" is the  bullet  character,
+           again we should be aligned.
+
+        12345] Can have digits, the "]" is the bullet  character,
+               again we should be aligned.
+
+        Note - This time the  bullet  character  is '-', again we
+               wrap and square up after the bullet.
+
+               This one sometime  gives me problems when I forget
+               it's a bullet so I tend to use a 'soft'  character
+               when I do not want the indent i.e.
+
+               Note:  This is what I call a soft  bullet, ME does
+               not recognize this one so it wraps OK.
+
+        ix. Maybe a few  Roman  numerals,  it's nice to see these
+            from time to time. The bullet here is '.'.
+
+    2.8 Editing the Document
+
+        So now you have a text  document and you start to edit it
+        and make  changes or run the speller over it. The columns
+        go out of alignment.
+
+        If you have  obeyed  all of the above  then you should be
+        able to fill all of the  paragraphs  and get them looking
+        nice again. you can do this by:-
+
+              Menu -> Format -> Fill all Paragraphs
+
+        Or if you do not  like  the  menu  goto  the top line and
+        perform a
+
+                    Esc 10000 M-x fill-paragraph
+
+        then all paragraphs are reformatted.
+
+        2.8.1 What is IQ Fill paragraph ??
+
+        IQ  Fill   paragraph  as  shown  in  the  menus,  or  the
+        "ifill-paragraph"  command is a macro  alternative to the
+        built in  "fill-paragraph".  This deals with bullets that
+        are  adjacent  (i.e. no  intervening  blank  lines). This
+        makes for better presentation but you have to be a little
+        careful  that  you  always  use   "ifill-paragraph"   for
+        formatting. i.e.
+
+                 @  * ifill-paragraph  can cope with bullets that
+                      are tightly packed.
+                    * ifill-paragraph  can cope with bullets that
+                      are tightly packed.
+
+        This    document    has   not   been    authored    using
+        "ifill-paragraph" and is escaped the above.
+
+    2.9 Whats the advantage of the above
+
+        The advantage of doing  everything  above is primarily to
+        get a reasonable  looking document for the minimum amount
+        of work on behalf of the author.
+
+        Maybe I'm not familiar enough with Word Processors, but I
+        can do a document  in double time like this  because I do
+        not get distracted  with my styles blowing up, fontifying
+        things  and  everything  else  going  wrong.  You tend to
+        concentrate  on the text and not all the pretty bits that
+        are not really  important until you have actually created
+        the appropriate words for your masterpiece.
+
+3.0 Going Back To The Word Processor
+
+    With a finished masterpiece of literature, in plain text then
+    it is often desirable to move the text into the  presentation
+    engine i.e. the Word Processor.
+
+    Word  processors  tend to put paragraphs on one line. Cutting
+    and pasting the  document as it stands does not make for good
+    WP text unless the paste  target is a fixed font  destination
+    (i.e.  Netscape for mail - not sure about  Microsoft  Outlook
+    that probably wants pretty fonts everywhere !!)
+
+    So to prepare, the following operations should be performed.
+
+    a) Reformat your document for single line paragraphs. Do this
+       like:-
+
+            Menu -> Format -> All Paragraphs to Lines
+
+       or on the command line.
+
+       @    top of buffer
+            Esc 100000 M-x paragraph-to-line
+
+       The paragraph-to-line  operation reduces the paragraphs to
+       a single line,  removing any leading  spaces.  These lines
+       may be  copied  into  the  word  processor,  resulting  in
+       paragraphs.
+
+    b) Format away ....
+
+       You  now  have a bit of work to do  re-formatting  you new
+       document  text in your word  processor.  This can be a bit
+       tedious but it's simply adding emboldening and italicizing
+       here and there  with a few tables and  pictures  thrown in
+       for good  measure. You know the text is good so this makes
+       for a relaxing brain dead afternoon !!
+
+4.0 Extensions
+
+    There  are a  number  of  extensions  on the  standard  theme
+    outlined above.
+
+    4.1 Documents
+
+        The document  mode "-!- document -!-" are text files with
+        hilighting   applied.  These   documents  are  tagged  as
+        follows:-
+
+        > -!- document -!-
+        > Author:   Jon Green
+        > Created:  Wed Feb 2 20:23:35 2000
+        > Modified: <20000202.2100>
+
+        4.1.1 Hilighting Token Summary
+
+        The hilighting is kept to a reasonable minimum, including
+        the following:-
+
+        Start/End markers
+
+            _
+            "`..'"  `single acute/grave pair'
+            "*..*"  *AnyAlphabeticSurroundedByAsterisks*
+            "<..>"  <AnyAlphabeticSurroundedByGreaterOrLessThan>
+            "_.._"  _AnyAlphabeticSurroundedByUnderScore_
+
+        Literal Text Regions
+
+            > This is a literal text region
+            > Hilighting to end of line only.
+
+            @ This is a literal
+              region. It hilights
+              to the next blank line.
+
+            _ First Line. This is also
+              a literal region, no hilighting
+              on this one after the first line.
+
+        Strings and quoted characters
+
+            "string" and quoted 'q' '\0'
+
+        Headings,  lines  that are  classed  as  `heading'  lines
+        commence with the following text sequences:-
+
+            > 4.0 Section Header
+            > 4.1.1 Sub-Section header
+            > Appendix A
+            > Appendix A.1
+
+        Bullets of the * or ) variety
+
+            *  Bullet
+
+            1) Bullet
+
+        Note that any bullet-ed  sections with numbers  should be
+        defined as:-
+
+            > 1) bullet 1
+            > 2) bullet 2
+
+        rather than
+
+            > 1. bullet 1
+            > 2. bullet 2
+
+        otherwise the incorrect hilighting will be applied.
+
+    4.2 Code Inserts
+
+        As  of  the  beginning  of Q2  2000,  then  the  original
+        document modes of `sectioned' and `pseudo-code' have been
+        removed.  These methods have been replaced by the ability
+        to  insert   literal   fragments   of  other   coding  or
+        documentation  schemes  into the text and signal a change
+        in hilighting.
+
+        Hooks for the code inserts are only supported as standard
+        in the "-!-  document  -!-" mode,  details on  performing
+        this type of operation is provided in the next section.
+
+        The new scheme is introduced with a ">scheme>"  marker on
+        the left margin  (gutter),  where `scheme' is the name of
+        the scheme that you want to include i.e. the standard set
+        includes:-
+
+            _
+            ">bnf>" ............... Backus-Naur Form
+            ">c>" ................. ANSI 'C'
+            ">cpp>", ">c++>" ...... C++
+            ">emf>" ............... MicroEmacs macro format
+            ">pseudo>" ............ Pseudo code
+
+        The code statement is terminated with a ">doc>" statement
+        which returns the hilighting  mode to document mode. Note
+        that the ">"  character  has been  selected  as the token
+        leader.  Provided that the insert block includes no blank
+        lines  then the block is treated as a literal  text block
+        and  formatting  the  paragraph  does not affect the code
+        block. Here are some examples:-
+
+        4.2.1 Pseudo Code Example
+
+        Include a pseudo code block:-
+
+>pseudo>
+        // A days work
+        FUNCTION a days work
+        BEGIN
+            // A comment for my pseudo code.
+            WHILE (NOT bored)
+            DO
+                IF (this condition is true)
+                THEN
+                    do something
+                ELSE
+                    do something else
+                ENDIF
+            DONE
+            RETURN home
+        END
+>doc>
+
+        The  leading '>' protects  the text from  formatting.  Be
+        careful  not to leave  blank  lines in your  pseudo  code
+        because  this is a new  paragraph,  these  are  typically
+        plugged with comments.
+
+        4.2.2 C Code Example
+
+        The classic Hello World program
+
+>c>
+        #include <stdio.h>
+        #include <stdlib.h>
+        /* Entry point */
+        int
+        main (int argc, char *argv[])
+        {
+            printf ("Hello World\n");
+            return 0;
+        }
+>doc>
+
+        4.2.3 Backus-Naur Form
+
+        This  one is  included  as  standard  as it is  typically
+        included  in  technical   documentation.  Follows  is  an
+        example  of  BNF  for  the  Pascal  programming  language
+        decimal notation:-
+
+>bnf>
+        !! Pascal decimal notation.
+        <digit sequence> ::= <digit> { <digit> }
+        <unsigned integer> ::= <digit sequence>
+        <unsigned real> ::=
+            <unsigned integer>.<digit sequence> |
+            <unsigned integer>.<digit sequence>E<scale factor> |
+            <unsigned integer> E <scale factor>
+        <unsigned number> ::=
+            <unsigned integer> | <unsigned real>
+        <scale factor> ::=
+            <unsigned integer> | <sign><unsigned integer>
+        <sign> ::= + | -
+>doc>
+
+    4.3 Extending the Code Inserts
+
+        The number code insert types that may be supported may be
+        increased  by defining  other code types within the local
+        users extension file "mydoc.emf". i.e. to add the HTML to
+        the supported set then the following would be defined.
+
+>emf>
+    ; Allow HTML Code inserts
+    ; Force the ".html" scheme to be loaded into the context of
+    ; the document scheme. We delimit the .html scheme with a
+    ; pair of markers ">html>" and ">doc>"
+    ;
+    ; Force the hilighting mode to load if not already loaded.
+    !if &seq .hilight.html "ERROR"
+        !force execute-file "hkhtml"
+    !endif
+    ; If the hilighting mode is loaded then modify it.
+    !if &not &seq .hilight.html "ERROR"
+        hilight .hilight.doc 0xc0 "^>html>" ">html>" .hilight.html .scheme.hide
+        hilight .hilight.html 0xc0 "^>doc>" ">doc>" .hilight.doc .scheme.hide
+    !endif
+>doc>
+
+        The  macro  fragment  is simply  executed  when the first
+        document  is  loaded.  There  is no need to  include  any
+        additional  code in the hook  commands. The  operation of
+        the code is defined as follows:-
+
+>emf>
+        !if &seq .hilight.html "ERROR"
+            !force execute-file "hkhtml"
+        !endif
+>doc>
+
+        The  first  set of  commands  make  sure that the  target
+        hilighting  scheme  is  loaded,  if they  are not then an
+        explicit load is forced.
+
+>emf>
+        !if &not &seq .hilight.html "ERROR"
+>doc>
+
+        Check that the hilighting  scheme is loaded, if it is not
+        then the scheme modifications are not applied.
+
+>emf>
+        hilight .hilight.doc 0xc0 "^>html>" ">html>" .hilight.html .scheme.hide
+>doc>
+
+        Declare a hilighting token in the documentation scheme to
+        jump to the HTML hilighting scheme. The token that we use
+        is ">html>"  which must  appear at the start of the line,
+        hence is defined  "^>html>". The second  ">html>"  string
+        defines  what appears on the screen. This may be modified
+        if the screen  appearance is different  from the tag that
+        appears  in  the  text.  `.hilight.html'  is  the  scheme
+        identifier  of the  target  scheme  to which a branch  is
+        being taken. `.scheme.hide' is the color in which the tag
+        is rendered, the hidden scheme is selected here to reduce
+        the prominence of the tag (it is still visible).
+
+>emf>
+        hilight .hilight.html 0xc0 "^>doc>" ">doc>" .hilight.doc .scheme.hide
+>doc>
+
+        The next  statement  defines  the  hilighting  token that
+        returns the hilighting back to the documentation hilight.
+        This is the same as the  previous  statement  except that
+        the  hilight  token is  placed in the  target  hilighting
+        scheme to return the hilight to the  documentation  mode.
+        Typically ">doc>" may be used unless it conflicts with an
+        existing hilighting token in the target scheme.
+
+        4.3.1 Important Note on Code Inserts
+
+            In order for the code  inserts  to operate  correctly
+            then the  hilighting  schemes  must enable look back.
+            This is defined when the scheme is initialized,  with
+            a statement like:-
+
+>emf>
+            0 hilight  .hilight.doc 2 50  $global-scheme
+>doc>
+
+            Typically a look back value of 50 lines is specified,
+            this restricts the insert blocks to 50 lines of text.
+            These   values   may  be   extended   if   they   are
+            insufficient, by may reduce the rendering speed.
+
+    4.4 Folding
+
+        The  folding  feature  of ME using  narrowing  allows  an
+        overview  of  the  document  to be  created.  Folding  is
+        supported  as standard in the "-!- document -!-" template
+        where the folds are performed on the section numbers. The
+        function  keys  "F2" and "F3", by  default,  control  the
+        folding.  In  addition   <S-Left-Mouse>  folds  a  single
+        section.
+
+        The whole  document may be folded with "f3" the resultant
+        output of this document looks exactly like this:
+
+        > > -!- document; fill-column: 65; fill-mode: full -!-
+        > > Author:   Jon Green
+        > > Created:  Wed Feb 2 20:23:35 2000
+        > > Modified: <20000322.2157>
+        >
+        > 1.0 Overview of the Documentation Modes
+        >     1.1 Background
+        >     1.2 Cursor Position
+        >     1.3 Quick Summary
+        >     1.4 Types of document modes
+        >     1.4.1 Text
+        >     1.4.2 Document
+        > 2.0 Working In The Text Modes
+        >     2.1 Whats a paragraph ??
+        >         2.1.1 The Fill Column
+        >         2.2.2 The Fill Mode
+        >     2.2 Left Text (Work off the margin or column 0)
+        >         2.2.1 On a re-format
+        >     2.3 Right Text (Work to right margin or $fill-col)
+        >         2.3.1 On a re-format
+        >     2.4 Center Text
+        >         2.3.1 On a re-format
+        >     2.5 Justified Text
+        >     2.6 Literal Text
+        >     2.7 Bullets
+        >     2.8 Editing the Document
+        >         2.8.1 What is IQ Fill paragraph ??
+        >     2.9 Whats the advantage of the above
+        > 3.0 Going Back To The Word Processor
+        > 4.0 Extensions
+        >     4.1 Documents
+        >     4.2 Code Inserts
+        >         4.2.1 Pseudo Code Example
+        >         4.2.2 C Code Example
+        >         4.2.3 Backus-Naur Form
+        >     4.3 Extending the Code Inserts
+        >         4.3.1 Important Note on Code Inserts
+        >     4.4 Folding
+        >         4.3.2 Hilighting
+        >         4.3.3 Section Renumbering
+        >     4.5 Other Tools
+        > 5.0 Did you get this far ??
+        > 6.0 End
+
+        This  makes  it  easy to  edit.  Note  that a dummy  last
+        section is added to make  everything  fold nicely. Single
+        sections may be unfolded with "f2".
+
+        With  folding  enabled  then  one has to be a little  bit
+        careful not to edit over a folded section.
+
+        4.4.1 Redefining the Folding
+
+        The  definition of the folds may be redefined by the user
+        by extending the macro template  through  "mydoc.emf". As
+        an example of folding about section  numbers (i.e. "1.2.3
+        title") then the following extension is sufficient:-
+
+>emf>
+; my-fhook-doc; Extend the document bindings
+0 define-macro my-fhook-doc
+    ; setup doc buffer folding support used in section
+    ; and pseudo code modes.
+    buffer-bind-unbound-key fold-current "f2"
+    buffer-bind-unbound-key fold-all     "f3"
+!emacro
+; Define the folding definitions.
+set-variable .fhook-doc.fold-open  "^ *[0-9]\\(\\.[0-9.]\\)*\\.? +\\w"
+set-variable .fhook-doc.fold-close "^ *[0-9]\\(\\.[0-9.]\\)*\\.? +\\w"
+set-variable .fhook-doc.fold-mopen "1"
+set-variable .fhook-doc.fold-mnext "-1"
+;
+ml-write "[My document file extensions loaded]"
+>doc>
+
+        Note that  these  extensions  are not  necessary  for the
+        current  "-!-  document  -!-"  hook as they  are  already
+        defined.
+
+        4.5 Extending the Hilighting
+
+        The  "mydoc.emf"  may be used to extend  the  hilighting.
+        These are  usually  tailored  to the kind of text that is
+        worked  with. For  example  ~word~ may be added as a bold
+        token,  and  %word%  as  italic.  This  could be added to
+        "mydoc.emf" as follows:-
+
+>emf>
+        hilight .hilight.doc 0 "~[A-Za-z_]+~" .scheme.bold
+        hilight .hilight.doc 0 "%[A-Za-z_]+%" .scheme.italic
+>doc>
+
+        4.6 Section Renumbering
+
+        A number of macro  solutions have been posted to the mail
+        reflector  on this  subject. I suggest that you look over
+        these.
+
+    4.5 Other Tools
+
+        Other tools used with the documentation include:-
+
+        * spell-buffer (Command line or menu)
+
+            Spell checker.
+
+        * clean (command line or menu)
+
+            Removes all of the trailing spaces.
+
+        * count-words
+
+            Counts all the words.
+
+        * print-buffer
+
+            From the print dialog, an HTML  rendering of the page
+            may  be  printed  to  a  buffer.  This   inserts  the
+            appropriate  HTML hilighting into the page, retaining
+            the layout.
+
+5.0 Did you get this far ??
+
+    If you got this far well done !!
+
+    Exercise.
+
+            Cut and paste  this into a document  and have a go !!
+            You should be able to reformat the whole document and
+            nothing will change.
+
+6.0 End

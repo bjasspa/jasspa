@@ -1,0 +1,104 @@
+Title:  GNU Emacs like "occur" macros
+Ref:    sub13
+Author: Dr. Detlef Groth
+Date:   2001-08-08
+
+I have  improved  my old  macro  list-functions  and is now  working  like the
+Gnu-emacs occur.
+
+It allows the user to made a list in a separate  window which can be used as a
+simple  table of contents  for instance of a emf-file, or of a text-file.  You
+can click here to reach the appropiate part of the document.
+
+Also provided are useful examples for listing  perl-functions  and emf-macros.
+To customize this you only need to write two lines of code.
+
+==== occur.emf start =================================================
+
+define-macro occur
+    ; asks the user for a search-regexp
+    ; and will wrote a hyperlinked list
+    ; in a separate window
+    ; you can wrote you own simple occurs
+    ; without this asking ...
+    ; see occur-perl-subs,
+    ; and occur-emf-macros
+    ; getting what to look for
+     set-variable :searchstring @ml "Enter regex"
+    ; now looking for the regexp
+    ; outputting it into an other window
+    occur-list
+!emacro
+
+define-macro occur-perl-subs
+    set-variable :searchstring "^sub"
+    occur-list
+!emacro
+
+define-macro occur-emf-macros
+    set-variable :searchstring "^define-macro"
+    occur-list
+!emacro
+
+
+0 define-macro occur-list
+    ; first remember some variables
+    set-variable .buffer $buffer-bname
+    ; to provide hilighting in the occur-buffer
+    set-variable .buffer-hilight $buffer-hilight
+    ; if this disturbs you uncomment the following line
+    delete-other-windows
+    find-buffer &cat &cat "*" .buffer "-occur*"
+    split-window-horizontally
+    ; some resizing
+    25 shrink-window-horizontally
+    ;to simple click the function
+    set-variable :mouse-word-select "occur-find"
+    set-variable $buffer-hilight .buffer-hilight
+    screen-update
+    ; erase a possible old-content
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    exchange-point-and-mark
+    kill-region
+    next-window-find-buffer .buffer
+    set-alpha-mark "p"
+    beginning-of-buffer
+    ; now collect items
+    !force search-forward :searchstring
+    !while $status ;if found put into the *occur*-buffer
+        beginning-of-line
+        set-mark
+        end-of-line
+        exchange-point-and-mark
+        copy-region
+        end-of-line
+        set-variable .function @y
+        -1 yank
+        set-variable .line $window-line
+        next-window-find-buffer &cat &cat "*" .buffer "-occur*"
+        execute-string &cat &cat &cat "" .function "\t\t\t  Line:" .line
+        insert-newline
+        next-window-find-buffer .buffer
+        !force search-forward :searchstring
+    !done
+    goto-alpha-mark "p"
+!emacro
+
+0 define-macro occur-find
+    ; lets find the proper line
+    ; in the original buffer
+    search-forward "Line:"
+    set-mark
+    forward-word
+    exchange-point-and-mark
+    copy-region
+    set-variable #l0 @y
+    -1 yank
+    next-window
+    #l0 goto-line
+    recenter
+!emacro
+
+==== occur.emf end =================================================
