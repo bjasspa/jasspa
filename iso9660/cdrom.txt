@@ -20,7 +20,24 @@ CD-ROM
 
     Any   duplication  of  the  CDs  may  result  in  a  loss  of
     information   without  the  appropriate   master  disk  image
-    (jasspa0212.iso).
+    (jasspa-me-*.iso).
+    
+    jasspa-mecd-full-20040301.iso 
+        
+        All material on www.jasspa.com including packages.
+        
+    jasspa-mecd-exec-20040301.iso 
+        
+        Minimal live + source. CD-ROM conforms to ISO9660
+        
+    jasspa-mecd-lexe-20040301.iso
+    
+        Exactly the same content as "exec" expect the CD-ROM does
+        not  conform  fully to ISO9660  and allows  long names in
+        lower case. May be used on HP-UX without  performing  the
+        Rockridge  mount,  also  safe for  almost  all  operating
+        systems  except  MS-DOS as the 8.3 naming  convention  is
+        broken.
     
 HP-UX
 
@@ -28,7 +45,7 @@ HP-UX
     extensions,  a straight  forward  mount that results in names
     "NAME;1"  etc. means that it has not been mounted  correctly.
     The following notes should get the CD-ROM mounted:-
-    
+
     Make a directory to mount the CD-ROM
 
         % mkdir /cdrom
@@ -43,29 +60,29 @@ HP-UX
 
     Does  it  looks   like  squid  ?  Then  need  to  mount  with
     RockRidge support. See the HPUX-FAQ. Quick notes:-
-    
+
     Loopback   must  be   enabled.  As  root,   create  the  file
     "/etc/pfs_fstab" as follows:-
 
         #
         # Create a mount point for the CDROM
         # See HPUX-FAQ
-        # 
+        #
         /dev/dsk/c1t2d0 /cdrom pfs-rrip xlat=rrip 0 0
 
     Start daemons:
-    
+
         % nohup pfs_mountd &
         % nohup pfsd &
-        
+
     Mount the CD-ROM:
-    
+
         % pfs_mount /cdrom
 
     The CD-ROM should now be readable with long file names.
-        
+
     Subsequently unmount:
-              
+
         % pfs_umount /cdrom
 
 CD Labels
@@ -113,12 +130,12 @@ Full Disk Contents
     doc     - Browsable documentation formats
               (HTML, Windows Help).
 
-    macros - A browsable macros directory.
-
     me     - A live version of JASSPA's  MicroEmacs, includes all
              of the  executables  and macros  that allow the full
              version of  JASSPA's  MicroEmacs  to be run from the
              CD-ROM without installation.
+
+    me/macros - A browsable macros directory.
 
     ne     - A live  version of  JASSPA's  NanoEmacs  that allows
              nanoEmacs   to  be  run  from  the  CD-ROM   without
@@ -129,7 +146,8 @@ Full Disk Contents
 
     src    - A browasble source directory.
 
-    submissions - Directory containing submissions from users.
+    subs   - Directory  containing  submissions and contributions
+             from users.
 
 Exec Disk Contents
 
@@ -152,18 +170,21 @@ Exec Disk Contents
              nanoEmacs   to  be  run  from  the  CD-ROM   without
              installation.
 
+    subs   - Directory  containing  submissions and contributions
+             from users.
+
 Revision History
 
     Version 1.3 - 27th March 2004
-    
+
         7th Release. MicroEmacs '04 (March)
 
     Version 1.2 - 17th August 2003
-    
+
         Added HP-UX 10.20 (PA-RISC) package
         Added HP-UX 11.xx (PA-RISC) packages
         Added HP-UX 11.xx experimental binaries.
-        
+
     Version 1.1 - 14th August 2003
 
         Added Sun Solaris 8 (Sparc) binaries + package
@@ -178,215 +199,242 @@ _________________________________________________________________
 Exec CD Manifest
 _________________________________________________________________
  @
-build.txt                           -- Source build instructions
-CDROM.TXT                           -- CDROM information
-COPYING.TXT                         -- GNU License
-faq.txt                             -- Requenctly asked questions
-license.txt                         -- License
-readme.txt                          -- Install information
+build.txt                             -- Source build instructions
+CDROM.TXT                             -- CDROM information
+COPYING.TXT                           -- GNU License
+faq.txt                               -- Requenctly asked questions
+license.txt                           -- License
+readme.txt                            -- Install information
  @
-archive/                            ** Archive of base components for build
-archive/me.ehf.gz                   -- On-line help file.
-archive/memacros.tar.gz             -- Macro files (UNIX \n format files).
-archive/mesrc.tar.gz                -- MicroEmacs source (UNIX \n format files).
-archive/meicons.tar.gz              -- Basic MicroEmacs .pm icons
+archive/                              ** Archive of base components for build
+archive/jasspa-metree-20040301.tar.gz -- Jasspa tree files (UNIX \n format files).
+archive/jasspa-mesrc-20040301.tar.gz  -- MicroEmacs source (UNIX \n format files).
  @
-cdlabels/                           ** CD-ROM labels
-cdlabels/*_neto_0308.pdf            -- Neto labels
-cdlabels/*_pressit_0308.pdf         -- PressIt labels
-cdlabels/*.png                      -- Images of labels
-cdlabels/label0308.std              -- SureThing CD Labeller file.
+cdlabels/                             ** CD-ROM labels
+cdlabels/*_neto.pdf                   -- Neto labels
+cdlabels/*_pressit.pdf                -- PressIt labels
+cdlabels/*.png                        -- Images of labels
+cdlabels/cdlabel.std                  -- SureThing CD Labeller file.
  @
-me/                                 ** MicroEmacs + Macros; runs straight from CD-ROM
-me/*.emf/*.ehf                      -- Macro and help files.
-me/me32.exe                         -- MicroEmacs Windows windows executable 95/98/NT/2K/XP
-me/meaix4                           -- MicroEmacs IBM AIX executable
-me/mec32.exe                        -- MicroEmacs Windows console executable 95/98/NT/2K/XP
-me/mehpux10                         -- MicroEmacs HP-UX 10.20+ executable
-me/mehpux11                         -- MicroEmacs HP-UX 11.00+ executable
-me/meicons.exe                      -- Microsoft Windows Icons
-me/meirix6                          -- MicroEmacs SGI IRIX 6 executable
-me/melinux24                        -- MicroEmacs Linux 2.4.x executable
-me/mesunos56                        -- MicroEmacs Sun Solaris 2.6 (SPARC) executable (+ all newer)
-me/mesunos58                        -- MicroEmacs Sun Solaris 8 (SPARC) executable
-me/mesunos59                        -- MicroEmacs Sun Solaris 9 (SPARC) executable
-me/mesunx86_58                      -- MicroEmacs Sun Solaris 8 (Intel) executable
+me/                                   ** MicroEmacs + Macros; runs straight from CD-ROM
+me/readme.txt                         -- Information
+me/macros/*.emf,*.ehf                 -- Macro and on-line help files.
+me/pixmaps/*                          -- Pixmaps and PNGs for X11.
+me/me32.exe                           -- Windows executable 95/98/NT/2K/XP
+me/meu32.exe                          -- Windows executable + URL support. 95/98/NT/2K/XP
+me/meucw32.exe                        -- Windows executable + URL + Window + Console support. 95/98/NT/2K/XP
+me/me32s.exe                          -- Windows executable win32s
+me/meaix4                             -- IBM AIX 4.3 executable
+me/meccygwin.exe                      -- Cygwin executable, console only.
+me/mecdarwin                          -- Apple Mac PPC Darwin 6.6, console only
+me/medos.exe                          -- MS-DOS DJGPP v1.x (8.3 names)
+me/medosdj2.exe                       -- MS-DOS DJGPP v2.x (long names)
+me/mehpux10                           -- HP-UX 10.20+ executable
+me/mehpux11                           -- HP-UX 11.00+ executable
+me/meicons.exe                        -- MicroEmacs Windows Icons
+me/meirix6                            -- SGI IRIX 6 executable
+me/melinux24                          -- Linux 2.4.x executable
+me/meopenbsd34                        -- OpenBSD 3.4 executable
+me/mesunos56                          -- Sun Solaris 2.6 (SPARC) executable (+ all newer)
+me/mesunos58                          -- Sun Solaris 8 (SPARC) executable
+me/mesunos59                          -- Sun Solaris 9 (SPARC) executable
+me/mesun86_58                         -- Sun Solaris 8 (Intel) executable
+me/mesun86_59                         -- Sun Solaris 9 (Intel) executable
  @
-ne/                                 ** NanoEmacs; runs straight from CD-ROM
-ne/ne.emf                           -- Microsoft Windows Mini config for languages
-ne/neaix4                           -- NanoEmacs IBM AIX executable
-ne/nec32.exe                        -- NanoEmacs Windows console executable 95/98/NT/2K/XP
-ne/necygwin.exe                     -- NanoEmacs cygwin executable
-ne/nehpux10                         -- NanoEmacs HP-UX 10.20+ executable
-ne/nehpux11                         -- NanoEmacs HP-UX 11.00+ executable
-ne/neirix6                          -- NanoEmacs SGI IRIX 6 executable
-ne/nelinux24                        -- NanoEmacs Linux 2.4.x executable
-ne/nesunos56                        -- NanoEmacs Sun Solaris 2.6 (SPARC) executable (+ all newer)
-ne/nesunos58                        -- NanoEmacs Sun Solaris 8 (SPARC) executable
-ne/nesunos59                        -- NanoEmacs Sun Solaris 9 (SPARC) executable
-ne/nesunx86_58                      -- NanoEmacs Sun Solaris 8 (Intel) executable
-ne/new32.exe                        -- NanoEmacs Windows windows executable 95/98/NT/2K/XP
-ne/readme.txt
-
+ne/                                   ** NanoEmacs; runs straight from CD-ROM
+ne/readme.txt                         -- Information
+ne/ne.emf                             -- Microsoft Windows Mini config for languages
+ne/ne32.exe                           -- Windows console executable 95/98/NT/2K/XP
+ne/new32.exe                          -- Windows 'window' executable 95/98/NT/2K/XP
+ne/neaix4                             -- IBM AIX 4.3 executable
+ne/necygwin.exe                       -- cygwin executable, console.
+ne/nedarwin                           -- Apple Mac PPC Darwin 6.6, console only
+ne/nedos.exe                          -- MS-DOS DJGPP v1.x (8.3 names)
+ne/nedosdj2.exe                       -- MS-DOS DJGPP v2.x (long names)
+ne/nehpux10                           -- HP-UX 10.20+ executable
+ne/nehpux11                           -- HP-UX 11.00+ executable
+ne/neirix6                            -- SGI IRIX 6 executable
+ne/nelinux24                          -- Linux 2.4.x executable
+me/meopenbsd34                        -- OpenBSD 3.4 executable
+ne/nesunos56                          -- Sun Solaris 2.6 (SPARC) executable (+ all newer)
+ne/nesunos58                          -- Sun Solaris 8 (SPARC) executable
+ne/nesunos59                          -- Sun Solaris 9 (SPARC) executable
+ne/nesun86_58                         -- Sun Solaris 8 (Intel) executable
+ne/nesun86_59                         -- Sun  Solaris  9  (Intel)
+executable
+ @
+subs/                                 ** Submissions and contributions
+subs/*.txt                            -- Text description of submission.
 _________________________________________________________________
 
 Full CD Manifest
 _________________________________________________________________
  @
-build.txt                           -- Source build instructions
-CDROM.TXT                           -- CDROM information
-COPYING.TXT                         -- GNU License
-faq.txt                             -- Requenctly asked questions
-license.txt                         -- License
-readme.txt                          -- Install information
+build.txt                             -- Source build instructions
+CDROM.TXT                             -- CDROM information
+COPYING.TXT                           -- GNU License
+faq.txt                               -- Requenctly asked questions
+license.txt                           -- License
+readme.txt                            -- Install information
  @
-archive/                            ** Archive of all of the components
-archive/bin/
-archive/bin/meaix4.gz               -- MicroEmacs IBM AIX executable
-archive/bin/mecwin32.zip            -- MicroEmacs Windows console executable 95/98/NT/2K/XP
-archive/bin/mehpux10.gz             -- MicroEmacs HP-UX 10.20+ executable
-archive/bin/mehpux11.gz             -- MicroEmacs HP-UX 11.00+ executable
-archive/bin/meirix6.gz              -- MicroEmacs SGI IRIX 6 executable
-archive/bin/melinux24.gz            -- MicroEmacs Linux 2.4.x executable
-archive/bin/mesunos56.gz            -- MicroEmacs Sun Solaris 2.6 (SPARC) executable (+ all newer)
-archive/bin/mesunos58.zip           -- MicroEmacs Sun Solaris 8 (SPARC) executable
-archive/bin/mesunos59.zip           -- MicroEmacs Sun Solaris 9 (SPARC) executable
-archive/bin/mesunx86_58.zip         -- MicroEmacs Sun Solaris 8 (Intel) executable
-archive/bin/meuwin32.zip            -- MicroEmacs Windows windows + URL executable 95/98/NT/2K/XP
-archive/bin/mewin32.zip             -- MicroEmacs Windows windows executable 95/98/NT/2K/XP
-archive/bin/neaix4.gz               -- NanoEmacs IBM AIX executable
-archive/bin/necwin32.zip            -- NanoEmacs Windows console executable 95/98/NT/2K/XP
-archive/bin/necygwin.exe.gz         -- NanoEmacs cygwin executable
-archive/bin/nehpux10.gz             -- NanoEmacs HP-UX 10.20+ executable
-archive/bin/nehpux11.gz             -- NanoEmacs HP-UX 11.00+ executable
-archive/bin/neirix6.gz              -- NanoEmacs SGI IRIX 6 executable
-archive/bin/nelinux24.gz            -- NanoEmacs Linux 2.4.x executable
-archive/bin/nesunos56.gz            -- NanoEmacs Sun Solaris 2.6 (SPARC) executable (+ all newer)
-archive/bin/nesunos58.zip           -- NanoEmacs Sun Solaris 8 (SPARC) executable
-archive/bin/nesunos59.zip           -- NanoEmacs Sun Solaris 9 (SPARC) executable
-archive/bin/nesunx86_58.zip         -- NanoEmacs Sun Solaris 8 (Intel) executable
-archive/bin/newin32.zip             -- NanoEmacs Windows windows executable 95/98/NT/2K/XP
-archive/doc                         ** Documentation directory
-archive/doc/mehtm.zip               -- HTML documentation 8.3 (.htm) format
-archive/doc/mehtml.tar.gz           -- HTML documentation (.html) format
-archive/doc/mewinhlp.zip            -- Windows help file.
-archive/icons                       ** Icons
-archive/icons/jasspa_gnome.tar.zip  -- GNOME configuration files.
-archive/icons/meicons-extra.tar.gz  -- .png icon files (for GNOME)
-archive/icons/meicons-extra.tar.zip -- .png icon files (for GNOME)
-archive/icons/meicons.tar.gz        -- Basic MicroEmacs .pm icons
-archive/icons/meicons.zip           -- Basic MicroEmacs .pm icons
-archive/icons/meicons_pm.tar.gz     -- .pm icon files (for CDE)
-archive/icons/readme.jasspa_gnome   -- Information on setting up GNOME
-archive/macros/                     ** Macro files
-archive/macros/me.ehf.gz            -- On-line help file.
-archive/macros/meehf.zip            -- On-line help file.
-archive/macros/memacros.tar.gz      -- Macro files (UNIX \n format files).
-archive/macros/memacros.zip         -- Macro files (Windows \r\n format files).
-archive/spelling/                   ** Spelling dictionaries.
-archive/spelling/ls_dede.tar.gz     -- German spelling dictionary
-archive/spelling/ls_dede.zip        -- German spelling dictionary
-archive/spelling/ls_engb.tar.gz     -- English/Great Britain spelling dictionary
-archive/spelling/ls_engb.zip        -- English/Great Britain spelling dictionary
-archive/spelling/ls_enus.tar.gz     -- English/US spelling dictionary
-archive/spelling/ls_enus.zip        -- English/US spelling dictionary
-archive/spelling/ls_eses.tar.gz     -- Spanish spelling dictionary
-archive/spelling/ls_eses.zip        -- Spanish spelling dictionary
-archive/spelling/ls_fifi.tar.gz     -- Finnish spelling dictionary
-archive/spelling/ls_fifi.zip        -- Finnish spelling dictionary
-archive/spelling/ls_frfr.tar.gz     -- French spelling dictionary
-archive/spelling/ls_frfr.zip        -- French spelling dictionary
-archive/spelling/ls_itit.tar.gz     -- Italian spelling dictionary
-archive/spelling/ls_itit.zip        -- Italian spelling dictionary
-archive/spelling/ls_plpl.tar.gz     -- Polish spelling dictionary
-archive/spelling/ls_plpl.zip        -- Polish spelling dictionary
-archive/spelling/ls_ptpt.tar.gz     -- Portuguese spelling dictionary
-archive/spelling/ls_ptpt.zip        -- Portuguese spelling dictionary
+archive/                              ** Archive of all of the components
+archive/jasspa-mesrc-*                -- MicroEmacs source
+archive/jasspa-metree-*               -- MicroEmacs standard tree (macros + on-line help)
+archive/bin/                          ** Executable archives
+archive/bin/jasspa-me-cygwin-20040301.exe.gz
+archive/bin/jasspa-me-hpux-pa-10.20-20040301.gz
+archive/bin/jasspa-me-hpux-pa-11.00-20040301.gz
+archive/bin/jasspa-me-ibm-aix-4-20040301.gz
+archive/bin/jasspa-me-linux-i386-2.4-20040301.gz
+archive/bin/jasspa-me-ms-win32-20040301.zip
+archive/bin/jasspa-me-ms-win32s-20040301.zip
+archive/bin/jasspa-me-msdos-djgpp1-20040301.zip
+archive/bin/jasspa-me-msdos-djgpp2-20040301.zip
+archive/bin/jasspa-me-openbsd-i386-3.4-20040301.gz
+archive/bin/jasspa-me-sgi-irix-6-20040301.gz
+archive/bin/jasspa-me-sun-i386-58-20040301.gz
+archive/bin/jasspa-me-sun-i386-59-20040301.gz
+archive/bin/jasspa-me-sun-sparc-56-20040301.gz
+archive/bin/jasspa-me-sun-sparc-58-20040301.gz
+archive/bin/jasspa-me-sun-sparc-59-20040301.gz
+archive/bin/jasspa-mec-apple-darwin-6.6-20040301.gz
+archive/bin/jasspa-mec-cygwin-20040301.exe.gz
+archive/bin/jasspa-meu-ms-win32-20040301.zip
+archive/bin/jasspa-meucw-ms-win32-20040301.zip
+archive/bin/jasspa-ne-apple-darwin-6.6-20040301.gz
+archive/bin/jasspa-ne-cygwin-20040301.exe.gz
+archive/bin/jasspa-ne-hpux-pa-10.20-20040301.gz
+archive/bin/jasspa-ne-hpux-pa-11.00-20040301.gz
+archive/bin/jasspa-ne-ibm-aix-4-20040301.gz
+archive/bin/jasspa-ne-linux-i386-2.4-20040301.gz
+archive/bin/jasspa-ne-ms-win32-20040301.exe
+archive/bin/jasspa-ne-msdos-djgpp1-20040301.zip
+archive/bin/jasspa-ne-msdos-djgpp2-20040301.exe
+archive/bin/jasspa-ne-msdos-djgpp2-20040301.zip
+archive/bin/jasspa-ne-openbsd-i386-3.4-20040301.gz
+archive/bin/jasspa-ne-sgi-irix-6-20040301.gz
+archive/bin/jasspa-ne-sun-i386-58-20040301.gz
+archive/bin/jasspa-ne-sun-i386-59-20040301.gz
+archive/bin/jasspa-ne-sun-sparc-56-20040301.gz
+archive/bin/jasspa-ne-sun-sparc-58-20040301.gz
+archive/bin/jasspa-ne-sun-sparc-59-20040301.gz
+archive/bin/jasspa-new-ms-win32-20040301.exe
+archive/doc                           ** Documentation directory
+archive/doc/jasspa-mehtm-20040301.zip
+archive/doc/jasspa-mehtml-20040301.tar.gz
+archive/doc/jasspa-mewinhlp-20040301.zip
+archive/icons                         ** Icons
+archive/icons/jasspa_gnome.tar.zip    -- GNOME configuration files.
+archive/icons/meicons-extra.tar.gz    -- .png icon files (for GNOME)
+archive/icons/meicons-extra.tar.zip   -- .png icon files (for GNOME)
+archive/icons/meicons.tar.gz          -- Basic MicroEmacs .pm icons
+archive/icons/meicons.zip             -- Basic MicroEmacs .pm icons
+archive/icons/meicons_pm.tar.gz       -- .pm icon files (for CDE)
+archive/icons/readme.jasspa_gnome     -- Information on setting up GNOME
+archive/macros/                       ** Macro files
+archive/macros/jasspa-memacros-20040301.tar.gz
+archive/macros/jasspa-memacros-20040301.zip
+archive/spelling/                     ** Spelling dictionaries.
+archive/spelling/ls_dede.tar.gz       -- German spelling dictionary
+archive/spelling/ls_dede.zip          -- German spelling dictionary
+archive/spelling/ls_engb.tar.gz       -- English/Great Britain spelling dictionary
+archive/spelling/ls_engb.zip          -- English/Great Britain spelling dictionary
+archive/spelling/ls_enus.tar.gz       -- English/US spelling dictionary
+archive/spelling/ls_enus.zip          -- English/US spelling dictionary
+archive/spelling/ls_eses.tar.gz       -- Spanish spelling dictionary
+archive/spelling/ls_eses.zip          -- Spanish spelling dictionary
+archive/spelling/ls_fifi.tar.gz       -- Finnish spelling dictionary
+archive/spelling/ls_fifi.zip          -- Finnish spelling dictionary
+archive/spelling/ls_frfr.tar.gz       -- French spelling dictionary
+archive/spelling/ls_frfr.zip          -- French spelling dictionary
+archive/spelling/ls_itit.tar.gz       -- Italian spelling dictionary
+archive/spelling/ls_itit.zip          -- Italian spelling dictionary
+archive/spelling/ls_plpl.tar.gz       -- Polish spelling dictionary
+archive/spelling/ls_plpl.zip          -- Polish spelling dictionary
+archive/spelling/ls_ptpt.tar.gz       -- Portuguese spelling dictionary
+archive/spelling/ls_ptpt.zip          -- Portuguese spelling dictionary
 archive/spelling/readme.txt
-archive/src/                        ** Source archive
-archive/src/mesrc.tar.gz            -- MicroEmacs source
-archive/src/mesrc.zip               -- MicroEmacs source
  @
-cdlabels/                           ** CD-ROM labels
-cdlabels/*_neto_0308.pdf            -- Neto labels
-cdlabels/*_pressit_0308.pdf         -- PressIt labels
-cdlabels/*.png                      -- Images of labels
-cdlabels/label0308.std              -- SureThing CD Labeller file.
+cdlabels/                             ** CD-ROM labels
+cdlabels/*_neto.pdf                   -- Neto labels
+cdlabels/*_pressit.pdf                -- PressIt labels
+cdlabels/*.png                        -- Images of labels
+cdlabels/cdlabel.std                  -- SureThing CD Labeller file.
  @
-doc/                                ** Browsable Documentation
-doc/docmode.txt                     -- Using document modes
-doc/me.hlp                          -- Windows help file documentation.
-doc/me.html                         -- HTML format documentation.
-doc/me2002.chm                      -- Windows CHM format documentation.
-doc/me2002.pdf                      -- Adobe Acrobat format documentation
+doc/                                  ** Browsable Documentation
+doc/docmode.txt                       -- Using document modes
+doc/me.hlp                            -- Windows help file documentation.
+doc/me.htm                            -- HTML format documentation.
+doc/me/*.htm                          -- HTML help pages.
 doc/readme.txt
  @
-experimental/                               ** New experimental release
-experimental/bin/medevbin_linux_24.tgz      -- MicroEmacs Linux 2.4.x executable
-experimental/bin/medevbin_sparc_sol9.zip    -- Sun Solaris 9 (SPARC) executable
-experimental/bin/medevbin_hpux11.tar.gz     -- HP-UX 11.xx (PA-RISC) executable
-experimental/bin/medevbin_win32.zip         -- Microsoft 95/98/NT/2K/XP executable
-experimental/macros/medevmac.tar.gz         -- Experimental macros
-experimental/src/medevsrc.tar.gz            -- Experimental source.
+icons/                                ** Icons
+icons/*.bmp/*.png/*.pm/*.xpm          -- Logos various formats
+icons/pm/*                            -- Pixmap .pm icons
+icons/png/*                           -- PNG icons
+icons/windows/*.ico                   -- Microsoft Windows icons
  @
-icons/                              ** Icons
-icons/*.bmp/*.png/*.pm/*.xpm        -- Logos various formats
-icons/pm/*                          -- Pixmap .pm icons
-icons/png/*                         -- PNG icons
-icons/windows/*.ico                 -- Microsoft Windows icons
  @
-macros/                             ** Macros
-macros/*.emf/*.ehf                  -- Browsable macros directory.
+me/                                   ** MicroEmacs + Macros; runs straight from CD-ROM
+me/readme.txt                         -- Information
+me/macros/*.emf,*.ehf                 -- Macro and on-line help files.
+me/pixmaps/*                          -- Pixmaps and PNGs for X11.
+me/me32.exe                           -- Windows executable 95/98/NT/2K/XP
+me/meu32.exe                          -- Windows executable + URL support. 95/98/NT/2K/XP
+me/meucw32.exe                        -- Windows executable + URL + Window + Console support. 95/98/NT/2K/XP
+me/me32s.exe                          -- Windows executable win32s
+me/meaix4                             -- IBM AIX 4.3 executable
+me/meccygwin.exe                      -- Cygwin executable, console only.
+me/mecdarwin                          -- Apple Mac PPC Darwin 6.6, console only
+me/medos.exe                          -- MS-DOS DJGPP v1.x (8.3 names)
+me/medosdj2.exe                       -- MS-DOS DJGPP v2.x (long names)
+me/mehpux10                           -- HP-UX 10.20+ executable
+me/mehpux11                           -- HP-UX 11.00+ executable
+me/meicons.exe                        -- MicroEmacs Windows Icons
+me/meirix6                            -- SGI IRIX 6 executable
+me/melinux24                          -- Linux 2.4.x executable
+me/meopenbsd34                        -- OpenBSD 3.4 executable
+me/mesunos56                          -- Sun Solaris 2.6 (SPARC) executable (+ all newer)
+me/mesunos58                          -- Sun Solaris 8 (SPARC) executable
+me/mesunos59                          -- Sun Solaris 9 (SPARC) executable
+me/mesun86_58                         -- Sun Solaris 8 (Intel) executable
+me/mesun86_59                         -- Sun Solaris 9 (Intel) executable
  @
-me/                                 ** MicroEmacs + Macros; runs straight from CD-ROM
-me/*.emf/*.ehf                      -- Macro and help files.
-me/me32.exe                         -- MicroEmacs Windows windows executable 95/98/NT/2K/XP
-me/meaix4                           -- MicroEmacs IBM AIX executable
-me/mec32.exe                        -- MicroEmacs Windows console executable 95/98/NT/2K/XP
-me/mehpux10                         -- MicroEmacs HP-UX 10.20+ executable
-me/mehpux11                         -- MicroEmacs HP-UX 11.00+ executable
-me/meicons.exe                      -- Microsoft Windows Icons
-me/meirix6                          -- MicroEmacs SGI IRIX 6 executable
-me/melinux24                        -- MicroEmacs Linux 2.4.x executable
-me/mesunos56                        -- MicroEmacs Sun Solaris 2.6 (SPARC) executable (+ all newer)
-me/mesunos58                        -- MicroEmacs Sun Solaris 8 (SPARC) executable
-me/mesunos59                        -- MicroEmacs Sun Solaris 9 (SPARC) executable
-me/mesunx86_58                      -- MicroEmacs Sun Solaris 8 (Intel) executable
+ne/                                   ** NanoEmacs; runs straight from CD-ROM
+ne/readme.txt                         -- Information
+ne/ne.emf                             -- Microsoft Windows Mini config for languages
+ne/ne32.exe                           -- Windows console executable 95/98/NT/2K/XP
+ne/new32.exe                          -- Windows 'window' executable 95/98/NT/2K/XP
+ne/neaix4                             -- IBM AIX 4.3 executable
+ne/necygwin.exe                       -- cygwin executable, console.
+ne/nedarwin                           -- Apple Mac PPC Darwin 6.6, console only
+ne/nedos.exe                          -- MS-DOS DJGPP v1.x (8.3 names)
+ne/nedosdj2.exe                       -- MS-DOS DJGPP v2.x (long names)
+ne/nehpux10                           -- HP-UX 10.20+ executable
+ne/nehpux11                           -- HP-UX 11.00+ executable
+ne/neirix6                            -- SGI IRIX 6 executable
+ne/nelinux24                          -- Linux 2.4.x executable
+me/meopenbsd34                        -- OpenBSD 3.4 executable
+ne/nesunos56                          -- Sun Solaris 2.6 (SPARC) executable (+ all newer)
+ne/nesunos58                          -- Sun Solaris 8 (SPARC) executable
+ne/nesunos59                          -- Sun Solaris 9 (SPARC) executable
+ne/nesun86_58                         -- Sun Solaris 8 (Intel) executable
+ne/nesun86_59                         -- Sun  Solaris  9  (Intel)
+executable
  @
-ne/                                 ** NanoEmacs; runs straight from CD-ROM
-ne/ne.emf                           -- Microsoft Windows Mini config for languages
-ne/neaix4                           -- NanoEmacs IBM AIX executable
-ne/nec32.exe                        -- NanoEmacs Windows console executable 95/98/NT/2K/XP
-ne/necygwin.exe                     -- NanoEmacs cygwin executable
-ne/nehpux10                         -- NanoEmacs HP-UX 10.20+ executable
-ne/nehpux11                         -- NanoEmacs HP-UX 11.00+ executable
-ne/neirix6                          -- NanoEmacs SGI IRIX 6 executable
-ne/nelinux24                        -- NanoEmacs Linux 2.4.x executable
-ne/nesunos56                        -- NanoEmacs Sun Solaris 2.6 (SPARC) executable (+ all newer)
-ne/nesunos58                        -- NanoEmacs Sun Solaris 8 (SPARC) executable
-ne/nesunos59                        -- NanoEmacs Sun Solaris 9 (SPARC) executable
-ne/nesunx86_58                      -- NanoEmacs Sun Solaris 8 (Intel) executable
-ne/new32.exe                        -- NanoEmacs Windows windows executable 95/98/NT/2K/XP
-ne/readme.txt
- @
-packages/                                               ** Complete packages
-packages/cygwin/jasspa-20021216*                        -- Cygwin packages
-packages/hpux/jasspame-loc-0212-10.20.depot             -- HP-UX 10.20 (PA-RISC) /usr/local/ install
-packages/hpux/jasspame-loc-0212-11.00.depot             -- HP-UX 11.xx (PA-RISC) /usr/local/ install
-packages/hpux/jasspame-opt-0212-11.00.depot             -- HP-UX 11.xx (PA-RISC) /opt/jasspa install
-packages/linux/microemacs-jasspa-2002_12-1.i386.rpm     -- Linux RPM
+packages/                             ** Complete packages
 packages/readme.txt
-packages/sun/jasspa-i386-sol8.pkg                       -- Sun Solaris 8 (Intel)
-packages/sun/jasspa-sparc-sol8.pkg                      -- Sun Solaris 8 (SPARC)
-packages/sun/jasspa-sparc-sol9.pkg                      -- Sun Solaris 9 (SPARC)
-packages/windows/jasspame.exe                           -- 95/98/NT/2K/XP
+packages/hpux/*.depot                 -- HP-UX 10.20 and 11.0 (PA-RISC)
+packages/linux/*.rpm                  -- Linux Source and Binary RPM
+packages/sun/*/*                      -- Sun Solaris SPARC(6/8/9) and INTEL(8/9)
+packages/windows/*                    -- Windows Install Shield 95/98/NT/2K/XP
  @
-src/                                    ** Macros
-src/*.emf/*.ehf                         -- Browsable source directory.
+src/                                  ** Source
+src/                                  -- Browsable source directory.
  @
-submissions/                            ** User suggestions and ideas
-submissions/sub*.txt                    -- User submission
+subs/                                 ** Submissions and contributions
+subs/*.txt                            -- Text description of submission.
 
 Prepared by JASSPA
-Copyright (c) 2003 JASSPA
-17th August 2003
+Copyright (c) 1998-2004 JASSPA
+27th March 2004

@@ -7,12 +7,12 @@
 #  System        :
 #  Module        :
 #  Object Name   : $RCSfile: Makefile,v $
-#  Revision      : $Revision: 1.5 $
-#  Date          : $Date: 2004-03-27 16:34:35 $
+#  Revision      : $Revision: 1.6 $
+#  Date          : $Date: 2004-03-27 21:20:47 $
 #  Author        : $Author: jon $
 #  Created By    : Jon Green
 #  Created       : Sun Aug 10 11:57:07 2003
-#  Last Modified : <040327.1612>
+#  Last Modified : <040327.2119>
 #
 #  Description
 #
@@ -41,12 +41,15 @@ RELDIR=$(BASEDIR)/release_040301
 MISDIR=$(BASEDIR)/misc
 SUBDIR=$(BASEDIR)/subs
 
-FLABEL="jasspa0403f11"
-ELABEL="jasspa0403e11"
+FLABEL="jasspa0403f13"
+ELABEL="jasspa0403e13"
+LLABEL="jasspa0403x13"
 FDISK=jasspa-mecd-full-20040301.iso
 EDISK=jasspa-mecd-exec-20040301.iso
+LDISK=jasspa-mecd-lexe-20040301.iso
 FZIP =jasspa-mecd-full-20040301.zip
 EZIP =jasspa-mecd-exec-20040301.zip
+LZIP =jasspa-mecd-lexe-20040301.zip
 FDIR = fcd
 EDIR = ecd
 
@@ -57,16 +60,16 @@ FDIRS=	$(FDIR) \
 	$(FDIR)/doc \
 	$(FDIR)/packages \
 	$(FDIR)/src \
-	$(FDIR)/macros \
 	$(FDIR)/me \
 	$(FDIR)/archive \
-	$(FDIR)/submissions \
+	$(FDIR)/subs \
 	$(FDIR)/cdlabels \
 	$(FDIR)/icons
 
 EDIRS=	$(EDIR) \
 	$(EDIR)/ne \
 	$(EDIR)/me \
+	$(EDIR)/subs \
 	$(EDIR)/cdlabels \
 	$(EDIR)/archive	
 #
@@ -76,7 +79,9 @@ RM	= rm -f
 UNIX2DOS=	/opt/jon/bin/unix2dos
 UNIX2MAC=	/opt/jon/bin/unix2mac
 
-MKISOFS=	mkisofs -r -J -hfs -allow-multidot -allow-lowercase -hide-joliet-trans-tbl -l
+#ISOEXTRA=	-allow-multidot -allow-lowercase -hide-joliet-trans-tbl -l
+ISOEXTRA=	-U
+MKISOFS=	mkisofs -r -J -hfs
 FULLMKISOFSFLAGS=-graft-points						\
 		-hide readme.hfs -hide readme.joliet		\
 		-hide-joliet readme.hfs -hide-joliet readme.unix	\
@@ -102,6 +107,9 @@ FULLMKISOFSFLAGS=-graft-points						\
 		-hide ne/readme.hfs -hide ne/readme.joliet		\
 		-hide-joliet ne/readme.hfs -hide-joliet ne/readme.unix \
 		-hide-hfs ne/readme.joliet -hide-hfs ne/readme.unix	\
+		-hide me/readme.hfs -hide me/readme.joliet		\
+		-hide-joliet me/readme.hfs -hide-joliet me/readme.unix \
+		-hide-hfs me/readme.joliet -hide-hfs me/readme.unix	\
 		-hide archive/spelling/readme.hfs -hide archive/spelling/readme.joliet		\
 		-hide-joliet archive/spelling/readme.hfs -hide-joliet archive/spelling/readme.unix \
 		-hide-hfs archive/spelling/readme.joliet -hide-hfs archive/spelling/readme.unix	\
@@ -130,8 +138,11 @@ FULLMKISOFSFLAGS=-graft-points						\
 	        doc/readme.txt=doc/readme.joliet			\
 	        doc/readme.txt=doc/readme.unix				\
 	        ne/readme.txt=ne/readme.hfs				\
-	        ne/readme.txt=ne/readme.joliet			\
+	        ne/readme.txt=ne/readme.joliet				\
 	        ne/readme.txt=ne/readme.unix				\
+	        me/readme.txt=me/readme.hfs				\
+	        me/readme.txt=me/readme.joliet				\
+	        me/readme.txt=me/readme.unix				\
 	        archive/spelling/readme.txt=archive/spelling/readme.hfs \
 	        archive/spelling/readme.txt=archive/spelling/readme.joliet \
 	        archive/spelling/readme.txt=archive/spelling/readme.unix \
@@ -183,7 +194,7 @@ EXECMKISOFSFLAGS=-graft-points						\
 	        ne/readme.txt=ne/readme.joliet			\
 	        ne/readme.txt=ne/readme.unix				\
 
-all:	$(FZIP) $(EZIP)
+all:	$(FZIP) $(EZIP) $(LZIP)
 
 clean:
 	rm -rf ./$(FDIR)
@@ -192,7 +203,7 @@ clean:
 	rm -f make.err
 
 spotless: clean
-	rm -f $(FZIP) $(EZIP)
+	rm -f $(FZIP) $(EZIP) $(LZIP)
 	rm -f *.iso
 #
 # Root directory readme's
@@ -242,8 +253,8 @@ $(FDIR)/ne $(EDIR)/ne:	ne.txt
 	chmod a+rx $@/nehpux11
 	gunzip -c $(RELDIR)/jasspa-ne-ibm-aix-4-20040301.gz > $@/neaix4
 	chmod a+rx $@/neaix4
-	gunzip -c $(RELDIR)/jasspa-ne-openbsd-i386-3.4-20040301.gz > $@/openbsd34
-	chmod a+rx $@/openbsd34
+	gunzip -c $(RELDIR)/jasspa-ne-openbsd-i386-3.4-20040301.gz > $@/neopenbsd34
+	chmod a+rx $@/neopenbsd34
 	gunzip -c $(RELDIR)/jasspa-ne-cygwin-20040301.exe.gz > $@/necygwin.exe
 	chmod a+rx $@/necygwin.exe
 	gunzip -c $(RELDIR)/jasspa-ne-apple-darwin-6.6-20040301.gz > $@/nedarwin
@@ -296,7 +307,7 @@ $(FDIR)/packages:
 	mkdir -p $@/sunos/sparc8
 	unzip -o $(RELDIR)/jasspa-mepkg-sun-sparc-58-20040301.zip -d $@/sunos/sparc8
 	mkdir -p $@/sunos/sparc6
-	unzip -o $(RELDIR)/jasspa-mepkg-sun-sparc-58-20040301.zip -d $@/sunos/sparc6
+	unzip -o $(RELDIR)/jasspa-mepkg-sun-sparc-56-20040301.zip -d $@/sunos/sparc6
 	mkdir -p $@/sunos/intel8
 	unzip -o $(RELDIR)/jasspa-mepkg-sun-i386-58-20040301.zip -d $@/sunos/intel8
 	mkdir -p $@/sunos/intel9
@@ -317,15 +328,9 @@ $(FDIR)/src:
 	mkdir -p $@
 	(cd $@; gunzip -c $(RELDIR)/jasspa-mesrc-20040301.tar.gz | tar xvf -)
 #
-# Macros directory.
-#
-$(FDIR)/macros:
-	mkdir -p $@
-	(cd $@; gunzip -c $(RELDIR)/jasspa-memacros-20040301.tar.gz | tar xvf -)
-#
 # Executable direcotory.
 # 
-$(FDIR)/me $(EDIR)/me:
+$(FDIR)/me $(EDIR)/me: me.txt
 	- rm -rf $@
 	mkdir $@
 	(cd $@; gunzip -c $(RELDIR)/jasspa-metree-20040301.tar.gz | tar xvf -)
@@ -339,9 +344,9 @@ $(FDIR)/me $(EDIR)/me:
 	chmod a+rx $@/mesunos58
 	gunzip -c $(RELDIR)/jasspa-me-sun-sparc-59-20040301.gz > $@/mesunos59
 	chmod a+rx $@/mesunos59
-	gunzip -o $(RELDIR)/jasspa-me-sun-i386-58-20040301.gz > $@/mesun86_58
+	gunzip -c $(RELDIR)/jasspa-me-sun-i386-58-20040301.gz > $@/mesun86_58
 	chmod a+rx $@/mesun86_58
-	gunzip -o $(RELDIR)/jasspa-me-sun-i386-59-20040301.gz > $@/mesun86_59
+	gunzip -c $(RELDIR)/jasspa-me-sun-i386-59-20040301.gz > $@/mesun86_59
 	chmod a+rx $@/mesun86_59
 	gunzip -c $(RELDIR)/jasspa-me-sgi-irix-6-20040301.gz > $@/meirix6
 	chmod a+rx $@/meirix6
@@ -351,8 +356,8 @@ $(FDIR)/me $(EDIR)/me:
 	chmod a+rx $@/mehpux11
 	gunzip -c $(RELDIR)/jasspa-me-ibm-aix-4-20040301.gz > $@/meaix4
 	chmod a+rx $@/meaix4
-	gunzip -c $(RELDIR)/jasspa-me-openbsd-i386-3.4-20040301.gz > $@/openbsd34
-	chmod a+rx $@/openbsd34
+	gunzip -c $(RELDIR)/jasspa-me-openbsd-i386-3.4-20040301.gz > $@/meopenbsd34
+	chmod a+rx $@/meopenbsd34
 	gunzip -c $(RELDIR)/jasspa-me-cygwin-20040301.exe.gz > $@/mecygwin.exe
 	chmod a+rx $@/mecygwin.exe
 	gunzip -c $(RELDIR)/jasspa-mec-cygwin-20040301.exe.gz > $@/meccygwin.exe
@@ -368,30 +373,9 @@ $(FDIR)/me $(EDIR)/me:
 	mv $@/me.exe $@/medos.exe
 	unzip -o $(RELDIR)/jasspa-me-msdos-djgpp2-20040301.zip -d $@
 	mv $@/me.exe $@/medosdj2.exe
-#
-# Executable directory.
-# 
-$(FDIR)/bin:
-	gunzip -c $(RELDIR)/melinux24.gz > $@/melinux24
-	chmod a+rx $@/melinux24
-	gunzip -c $(RELDIR)/mesunos56.gz > $@/mesunos56
-	chmod a+rx $@/mesunos56
-	unzip -o $(RELDIR)/mesunos58.zip -d $@
-	chmod a+rx $@/mesunos58
-	unzip -o $(RELDIR)/mesunx86_58.zip -d $@
-	chmod a+rx $@/mesunx86_58
-	unzip -o $(RELDIR)/mesunos59.zip -d $@
-	chmod a+rx $@/mesunos59
-	gunzip -c $(RELDIR)/meirix6.gz > $@/meirix6
-	chmod a+rx $@/meirix6
-	gunzip -c $(RELDIR)/mehpux10.gz > $@/mehpux10
-	chmod a+rx $@/mehpux10
-	gunzip -c $(RELDIR)/mehpux11.gz > $@/mehpux11
-	chmod a+rx $@/mehpux11
-	gunzip -c $(RELDIR)/meaix4.gz > $@/meaix4
-	chmod a+rx $@/meaix4
-	unzip -o $(RELDIR)/mewin32.zip -d $@
-	unzip -o $(RELDIR)/mecwin32.zip -d $@
+	cp me.txt $@/readme.unix
+	$(UNIX2DOS) me.txt $@/readme.joliet
+	$(UNIX2MAC) me.txt $@/readme.hfs
 #
 # Archive directories.
 #
@@ -466,7 +450,7 @@ $(EDIR)/archive:
 #
 # User submissions.
 #
-$(FDIR)/submissions:
+$(FDIR)/subs $(EDIR)/subs:
 	mkdir -p $@
 	cp $(SUBDIR)/*.txt $@
 #
@@ -481,7 +465,7 @@ $(FDIR)/cdlabels $(EDIR)/cdlabels:
 	cp cdback.png $@
 	cp cdfull.png $@
 	cp cdexec.png $@
-	cp label0308.std $@
+	cp cdlabel.std $@
 #
 # Icons.
 #
@@ -502,8 +486,12 @@ jasspa-mecd-full-20040301.iso: $(FDIRS)
 	cd $(FDIR); $(MKISOFS) -o ../$@ -V $(FLABEL) $(FULLMKISOFSFLAGS) ./
 jasspa-mecd-exec-20040301.iso: $(EDIRS)
 	cd $(EDIR); $(MKISOFS) -o ../$@ -V $(ELABEL) $(EXECMKISOFSFLAGS) ./
+jasspa-mecd-lexe-20040301.iso: $(EDIRS)
+	cd $(EDIR); $(MKISOFS) $(ISOEXTRA) -o ../$@ -V $(LLABEL) $(EXECMKISOFSFLAGS) ./
 
 jasspa-mecd-full-20040301.zip:	jasspa-mecd-full-20040301.iso
 	zip -9 $@ jasspa-mecd-full-20040301.iso
 jasspa-mecd-exec-20040301.zip: jasspa-mecd-exec-20040301.iso
 	zip -9 $@ jasspa-mecd-exec-20040301.iso
+jasspa-mecd-lexe-20040301.zip: jasspa-mecd-lexe-20040301.iso
+	zip -9 $@ jasspa-mecd-lexe-20040301.iso
