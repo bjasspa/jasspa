@@ -1,18 +1,18 @@
 %-*- tex; tabsize:2; -*- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%                          Copyright 2004 JASSPA.
+%                          Copyright 2004-2005 JASSPA.
 %                           All Rights Reserved
 %
 %
 %  System        : MicroEmacs
 %  Module        : user Manual
 %  Object Name   : $RCSfile: jasspame.tex,v $
-%  Revision      : $Revision: 1.1 $
-%  Date          : $Date: 2005-03-10 01:00:55 $
+%  Revision      : $Revision: 1.2 $
+%  Date          : $Date: 2005-03-11 01:35:24 $
 %  Author        : $Author: jon $
 %  Created By    : Jon Green
 %  Created       : Mon Oct 25 21:36:13 2004
-%  Last Modified : <050310.0049>
+%  Last Modified : <050311.0132>
 %
 %  Description
 %
@@ -21,10 +21,13 @@
 %  History
 %
 %  $Log: not supported by cvs2svn $
+%  Revision 1.1  2005/03/10 01:00:55  jon
+%  First draft of quick start document.
+%
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% Copyright (c) 2004 JASSPA.
+% Copyright (c) 2004-2005 JASSPA.
 %
 % All Rights Reserved.
 %
@@ -37,8 +40,8 @@
 \documentclass[11pt,a4paper,pdftex]{article}
 % Bring in the CVS information.
 \def\CVS$#1: #2 ${\expandafter\def\csname CVS#1\endcsname{#2}}
-\CVS$Revision: 1.1 $ % or any CVS keyword
-\CVS$Date: 2005-03-10 01:00:55 $
+\CVS$Revision: 1.2 $ % or any CVS keyword
+\CVS$Date: 2005-03-11 01:35:24 $
 
 \usepackage{ifthen}                     % Conditional processing.
 
@@ -171,7 +174,7 @@
 \fancyhf{}          % Delete the current header and footer
 \fancyhead[EL,OR]{\bfseries\docTitle \\ \bfseries\rightmark}
 \fancyhead[LO,RE]{\usebox{\HeaderImage}}
-\fancyfoot[OL,ER]{{\small{Copyright {\textcopyright} 2004 JASSPA.}}\linebreak
+\fancyfoot[OL,ER]{{\small{Copyright {\textcopyright} 2004-2005 JASSPA.}}\linebreak
                    \textit{\small{\docReference~~v\docVersion~~\docDate}}}
 \fancyfoot[EL,OR]{\textsf{\large \textbf{\thepage}}}
 \renewcommand{\headrulewidth}{1.5pt}%
@@ -259,7 +262,7 @@ JASSPA.
 
 \vspace{0.5in}
 
-\textit{Copyright \textcopyright\ 2004 JASSPA.}
+\textit{Copyright \textcopyright\ 2004-2005 JASSPA.}
 
 % \textit{Copyright}
 
@@ -274,7 +277,7 @@ JASSPA.
   \end{tabular}
 \end{table}
 
-Typeset with the TexLive 2003 \LaTeX\ Documentation System under Sun Solaris 9.
+Typeset with the TexLive 2004 \LaTeX\ Documentation System under Sun Solaris 9.
 
 \vspace{0.5in}
 
@@ -316,6 +319,9 @@ In this first draft, that will undoubtedly grow over time, we simply present
 the post installation configuration to help the new user get up and running
 with the editor.
 
+Jon Green\newline
+25th October 2004.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Table of Contents                                                          %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -352,12 +358,12 @@ with the editor.
 \subsection{Installation}
 
 To install JASSPA MicroEmacs then download the appropriate bundle from
-href{http://www.jasspa.com}{www.jasspa.com}. Most of the common platforms
+\href{http://www.jasspa.com}{www.jasspa.com}. Most of the common platforms
 include packages to simplify the installation on each platform.
 
 \subsubsection{Packaged Sun Solaris}
 
-    As root install the package.
+  As root install the package.
 
 \begin{verbatim}
 cd /tmp
@@ -365,8 +371,8 @@ unzip jasspa-mepkg-sun-sparc-59-20040301.zip
 pkgadd -d jasspa-me
 \end{verbatim}
 
-    The package is installed in \texttt{/opt/jasspa}. Edit your local shell
-    file to include the executable on your local path.
+  The package is installed in \texttt{/opt/jasspa}. Edit your local shell file
+  to include the executable on your local path.
 
 \begin{verbatim}
 #
@@ -380,7 +386,7 @@ fi
 export PATH
 \end{verbatim}
 
-    The package may be subsequently removed using:-
+  The package may be subsequently removed using:-
 
 \begin{verbatim}
 pkgrm jasspa-me
@@ -388,17 +394,17 @@ pkgrm jasspa-me
 
 \subsubsection{Packaged Red Hat Linux/Fedore Core}
 
-    As root install the package.
+  As root install the package.
 
 \begin{verbatim}
 rpm -i jasspa-me-20040301-1.i386.rpm
 \end{verbatim}
 
-    The package is installed in directory \texttt{/usr/share/jasspa}, the
-    executable is installed in \texttt{/usr/bin} and requires no additional
-    setup.
+  The package is installed in directory \texttt{/usr/share/jasspa}, the
+  executable is installed in \texttt{/usr/bin} and requires no additional
+  setup.
 
-    The package may be subsequently removed using:-
+  The package may be subsequently removed using:-
 
 \begin{verbatim}
 rpm -e jasspa-me
@@ -406,19 +412,19 @@ rpm -e jasspa-me
 
 \subsubsection{Packaged HP-UX}
 
-    For HP-UX then the package may be installed via SAM, but is easier to
-    install using the command line:
+  For HP-UX then the package may be installed via SAM, but is easier to
+  install using the command line:
 
 \begin{verbatim}
 /usr/sbin/swinstall -s `pwd`/jasspa-mepkg-hpux-pa-10.20-20040301.depot jasspa-me
 \end{verbatim}
 
-    The package is installed in \texttt{/opt/jasspa}. The executable is
-    automatically added to the shell profile environment. The user should log
-    out and log back in again to pick up the new environment settings which
-    are added to \texttt{/etc/profile}.
+  The package is installed in \texttt{/opt/jasspa}. The executable is
+  automatically added to the shell profile environment. The user should log
+  out and log back in again to pick up the new environment settings which are
+  added to \texttt{/etc/profile}.
 
-    The package may be subsequently removed using:-
+  The package may be subsequently removed using:-
 
 \begin{verbatim}
 swremove jasspa-me
@@ -426,16 +432,16 @@ swremove jasspa-me
 
 \subsubsection{Packaged Microsoft Windows}
 
-    Microsoft Windows environments 95/98/NT/2K/XP use an \textit{Install
-    Shield} package installation which may be used to add and remove the
-    package. The software is installed into \texttt{c:$\backslash$Program
-    Files\-$\backslash$JASSPA\-$\backslash$MicroEmacs}.
+  Microsoft Windows environments 95/98/NT/2K/XP use an \textit{Install Shield}
+  package installation which may be used to add and remove the package. The
+  software is installed into \texttt{c:$\backslash$Program
+  Files\-$\backslash$JASSPA\-$\backslash$MicroEmacs}.
 
 \subsubsection{Non-packaged UNIX/Linux/BSD - System wide}
 
-    For other UNIX/BSD environments where no package is provided then a manual
-    installation is performed. Select the installation directory i.e.
-    \texttt{/usr/local}.
+  For other UNIX/BSD environments where no package is provided then a manual
+  installation is performed. Select the installation directory i.e.
+  \texttt{/usr/local}.
 
 \begin{verbatim}
 cd /usr/local
@@ -449,8 +455,8 @@ cd /usr/local
 gtar zxvf /path-to-tarball/jasspa-metree-yyyymmdd.tar.gz
 \end{verbatim}
 
-   The directory \texttt{/usr/local/jasspa} should now exist. Unpack the
-   binary into the new directory and make it executable.
+  The directory \texttt{/usr/local/jasspa} should now exist. Unpack the binary
+  into the new directory and make it executable.
 
 \begin{verbatim}
 cd /usr/local/bin
@@ -458,17 +464,18 @@ gunzip -c /path-to-tarball/jasspa-me-linux_2.x-yyyymmdd.gz > me
 chmod a+rx me
 \end{verbatim}
 
-    The installation is complete and you may now execute your favorite editor me.
+  The installation is complete and you may now execute your favorite editor
+  me.
 
 \subsubsection{Non-packaged UNIX/Linux/BSD - User Installation}
 
-    For other UNIX/BSD environments where a local user install is required
-    (i.e. the user has no permissions to write to the system directories) then
-    the following steps may be followed.
+  For other UNIX/BSD environments where a local user install is required (i.e.
+  the user has no permissions to write to the system directories) then the
+  following steps may be followed.
 
-    Unpack \textit{metree} in your home directory, this creates a directory
-    tree called \textbf{jasspa}, once unpacked then rename the directory to
-    \textbf{.jasspa}.
+  Unpack \textit{metree} in your home directory, this creates a directory tree
+  called \textbf{jasspa}, once unpacked then rename the directory to
+  \textbf{.jasspa}.
 
 \begin{verbatim}
 cd ~
@@ -476,9 +483,9 @@ gunzip -c /path-to-tarball/jasspa-metree-yyyymmdd.tar.gz | tar xvf -
 mv jasspa .jasspa
 \end{verbatim}
 
-Add downloaded spelling dictionaries by unpacking them into the
-\texttt{~/.jasspa/spell} subdirectory. Install the binary into your local
-binary directory - we assume \texttt{~/bin} e.g.
+  Add downloaded spelling dictionaries by unpacking them into the
+  \texttt{~/.jasspa/spell} subdirectory. Install the binary into your local
+  binary directory - we assume \texttt{~/bin} e.g.
 
 \begin{verbatim}
 cd ~/bin
@@ -486,17 +493,17 @@ gunzip -c /path-to-tarball/jasspa-me-linux-2.x-yyyymmdd.gz > me
 chmod a+rx me
 \end{verbatim}
 
-Assuming that the binary directory is already on the users path then the
-installation is complete.
+  Assuming that the binary directory is already on the users path then the
+  installation is complete.
 
 \subsubsection{MS-DOS}
 
-    For MS-DOS then no installation script is provided and a manual
-    installation is performed. Select the installation directory, we shall
-    assume \texttt{c:\\jasspa}.
+  For MS-DOS then no installation script is provided and a manual installation
+  is performed. Select the installation directory, we shall assume
+  \texttt{c:$\backslash$jasspa}.
 
-    Unpack the \texttt{metree} zip package to form the macro tree, this
-    creates the directory \textit{jasspa}.
+  Unpack the \texttt{metree} zip package to form the macro tree, this creates
+  the directory \textit{jasspa}.
 
 \begin{verbatim}
 c:
@@ -504,42 +511,43 @@ cd \
 unzip jasspa-metree-yyyymmdd.zip
 \end{verbatim}
 
-    The binary is placed in the \texttt{c:\\jasspa} directory. It is important
-    that the binary is placed in the JASSPA tree as this allows the executable
-    to locate the \textit{macros} and \textit{spelling} directories without
-    any further configuration. If the binary is placed in a separate location
-    from the tree then the \textit{\$MExxxPATH} environment variables must be
-    defined to enable the editor to locate the tree.
+  The binary is placed in the \texttt{c:$\backslash$jasspa} directory. It is
+  important that the binary is placed in the JASSPA tree as this allows the
+  executable to locate the \textit{macros} and \textit{spelling} directories
+  without any further configuration. If the binary is placed in a separate
+  location from the tree then the \textit{\$MExxxPATH} environment variables
+  must be defined to enable the editor to locate the tree.
 
-    Two different binaries provided built with DJGPP V1.0 and V2.0. If you
-    have DJGPP V2.0 installed in your environment then install the V2.0
-    binary, otherwise install the V1.0 binary as this is a self contained
-    executable and has no library dependencies.
+  Two different binaries are provided which are built with DJGPP V1.0 and
+  V2.0. If you have DJGPP V2.0 installed in your system then install the V2.0
+  binary, otherwise install the V1.0 binary (as this is a self contained
+  executable and has no run-time library dependencies).
 
 \begin{verbatim}
 cd \jasspa
 unzip jasspa-me-msdos-djgpp1-yyyymmdd.zip
 \end{verbatim}
 
-    The location of the executable should be added to the
-    \texttt{autoexec.bat} file e.g.
+  The location of the executable should be added to the \texttt{autoexec.bat}
+  file e.g.
 
 \begin{verbatim}
 SET PATH=%PATH%;c:\jasspa
 \end{verbatim}
 
-    The system may be re-booted and the editor should be available on the
-    command line \texttt{me}.
+  The system may be re-booted and the editor should be available on the
+  command line \texttt{me}.
 
 \subsubsection{Windows Manual Installation}
 
-    Manual installation is required under \textbf{Win32s} and may be
-    optionally performed in \textbf{Win32} environments (95/98/NT/2K/XP). This
-    is very similar to \textbf{MS-DOS} installation.
+  Manual installation is required under \textbf{Win32s} and may be optionally
+  performed in \textbf{Win32} environments (95/98/NT/2K/XP). This is very
+  similar to the \textbf{MS-DOS} installation.
 
-    Unpack the \texttt{metree} zip package to form the macro tree, this
-    creates the directory \textit{jasspa}. This is typically extracted to
-    \textit{c:\\Program Files} (\textbf{Win32s} may use \textit{c:\\me}).
+  Unpack the \texttt{metree} zip package to form the macro tree, this creates
+  the directory \textit{jasspa}. This is typically extracted to
+  \textit{c:$\backslash$Program Files} (\textbf{Win32s} may use
+  \textit{c:$\backslash$me}).
 
 \begin{verbatim}
 c:
@@ -547,71 +555,70 @@ cd "\Program Files"
 unzip jasspa-metree-yyyymmdd.zip
 \end{verbatim}
 
-    The executable is placed in the \textit{jasspa} directory:
+  The executable is placed in the \textit{jasspa} directory:
 
 \begin{verbatim}
 cd "\Program Files\jasspa"
 unzip jasspa-me-win32-yyyymmdd.zip
 \end{verbatim}
 
-    Unlike \textbf{MS-DOS} then short cuts are typically used to launch the
-    editor. The editor short-cut is typically edited with command line option
-    \textbf{-c} to restore the previous session when launched.
+  Unlike \textbf{MS-DOS} then short cuts are typically used to launch the
+  editor. The editor short-cut is typically edited with command line option
+  \textbf{-c} to restore the previous session when launched.
 
 \subsubsection{Spelling Dictionaries}
 
-    The spelling dictionaries are downloaded separately and are not included
-    in the base packages, multiple dictionaries may be downloaded and
-    installed for each language to be supported. Some languages include a
-    \textit{base} and \textit{extended} dictionary, the \textit{base} contains
-    the most popular words, the \textit{extended} includes more obscure words
-    over and above the \textit{base}. The \textit{base} and \textit{extended}
-    dictionary are packaged together, but the \textit{extended} dictionary may
-    be removed when downloaded to conserve disk space.
+  The spelling dictionaries are downloaded separately and are not included in
+  the base packages, multiple dictionaries may be downloaded and installed for
+  each language to be supported. Some languages include a \textit{base} and
+  \textit{extended} dictionary, the \textit{base} contains the most popular
+  words, the \textit{extended} includes more obscure words over and above the
+  \textit{base}. The \textit{base} and \textit{extended} dictionary are
+  packaged together, but the \textit{extended} dictionary may be removed when
+  downloaded to conserve disk space.
 
-    The spelling archive contain both the dictonaries and language specific
-    macros required to install the dictionary into the system. All of the
-    dictionaries are derrived from \textit{ispell} dictionaries. The
-    Copyrights for each of the dictionaries are contained in the macro files.
+  The spelling archive contains both the dictonaries and language specific
+  macros required to install the dictionary into the system. All of the
+  dictionaries are derrived from \textit{ispell} dictionaries. The Copyrights
+  for each of the dictionaries are contained in the macro files.
 
-    To install then the package is installed into the \textit{jasspa/spelling}
-    directory that is created when \textit{metree} is unpacked. Simply unpack
-    the contents of the archive into this directory.
+  To install then the archive is unpacked into the \textit{jasspa/spelling}
+  directory that was created when \textit{metree} was unpacked. Simply unpack
+  the contents of the archive into this directory.
 
 \begin{verbatim}
 cd /<pathto>/jasspa/spelling
 unzip enus.zip
 \end{verbatim}
 
-    With the directory installed then set up MicroEmacs using \textbf{Help
-    $\rightarrow$ User Setup} or from the command line \textbf{M-x
-    user-setup}.
+  With the directory installed then set up MicroEmacs using \textbf{Help
+  $\rightarrow$ User Setup} or from the command line \textbf{M-x user-setup}.
 
-    \begin{itemize}
-        \item Select the \textbf{Platform} tab.
+  \begin{itemize}
+    \item Select the \textbf{Platform} tab.
 
-        \item Select the \textbf{Language} from the drop-down box.
+    \item Select the \textbf{Language} from the drop-down box.
 
-        \item Enable \textbf{Auto Save Dictionaries} to automatically save the dictionary
-        when new words are added or ignored.
+    \item Enable \textbf{Auto Save Dictionaries} to automatically save the
+    dictionary when new words are added or ignored.
 
-        \item Enable \textbf{Enable Auto-Spell} if the auto spell facility is
-        required. Auto-Spell performs background spell checking and highlights
-        erroneous words.
+    \item Enable \textbf{Enable Auto-Spell} if the auto spell facility is
+    required. Auto-Spell performs background spell checking and highlights
+    erroneous words.
 
-    \end{itemize}
+  \end{itemize}
 
 \subsection{Building from Source}
 
-    Where a particular platform does not exist then MicroEmacs may be built
-    from source. It is expected that the environment is set up with the
-    appropriate tools to perform the build.
+  Where a particular platform does not exist then MicroEmacs may be built from
+  source. It is expected that the environment is set up with the appropriate
+  tools to perform the build.
 
-    A simple build script is provided for both UNIX and DOS/Windows systems
-    called \textbf{build}. Download the source bundle
-    \texttt{jasspa-mesrc-yyyymmdd} and unpack, this will create a directory
-    \textbf{meYYMMDD}. Change directory to \textbf{src} and issue a build
-    command:
+  A simple build script is provided for both UNIX and DOS/Windows systems
+  called \textbf{build}. Download the source bundle
+  \texttt{jasspa-mesrc-yyyymmdd} and unpack, this will create a directory
+  \textbf{meYYMMDD}. Change directory to \textbf{src} and issue a build
+  command:
 
 \begin{verbatim}
 # DOS
@@ -621,82 +628,84 @@ c:> build
 >sh> ./build
 \end{verbatim}
 
-    On most systems then the \textbf{build} will be performed, alternatively
-    explicit make may be performed. A selection of make files exist for the
-    different platforms \textbf{.mak} indicates the native platform compiler,
-    \textbf{.gmk} indicates a GNU CC build.
+  On most systems then the \textbf{build} will be performed, alternatively
+  explicit make may be performed. A selection of make files exist for the
+  different platforms \textbf{.mak} indicates the native platform compiler,
+  \textbf{.gmk} indicates a GNU CC build.
 
 \begin{verbatim}
 make -f platform.gmk
 \end{verbatim}
 
-    The platform specific makefiles may be modified with compiler specific
-    options for the target platform to produce a optimal executable.
+  The platform specific makefiles may be modified with compiler specific
+  options for the target platform to produce a optimal executable.
 
-    For Microsoft Windows environments then a Microsoft Project file is
-    provided.
+  For Microsoft Windows environments then a Microsoft Project file is
+  provided.
 
 \subsection{Running For the First Time}
 
-    On running MicroEmacs for the first time with the command \textbf{me} then
-    the user is asked to set up the environment. This process collects some
-    very basic information and creates the user private files that store
-    context and state. The user may decline to perform the set-up and is
-    prompted next time the editor is executed.
+  On running MicroEmacs for the first time with the command \textbf{me} then
+  the user is asked to set up the environment. This process collects some very
+  basic information and creates the user private files that store context and
+  state. The user may decline to perform the set-up and is prompted next time
+  the editor is executed.
 
-    The environment is analyzed and the system determined directory locations
-    and search paths are determined. These can typically be accepted.
+  The environment is analyzed and the system directory locations and search
+  paths are determined. These can typically be accepted as is.
 
-    \begin{itemize}
+  \begin{itemize}
 
-        \item Enter you full name. This is \textit{your} name that is inserted
-        in the header files that identify you as the author.
+    \item \textbf{Enter you full name ?}. This is \textit{your} name that is
+    inserted in the header files that identify you as the author.
 
-        \item Set up the company file (y/n). If you are working in a company
-        environment then this allows you to enter the name of the company that
-        is used in copyright statements automatically inserted into new
-        headers etc.
+    \item \textbf{Set up the company file (y/n) ?} If you are working in a
+    company environment then this allows you to enter the name of the company
+    that is used in copyright statements automatically inserted into new
+    headers etc.
 
-        \item Name the company file. This is the name of the macro file
-        that stores company wide company information. The default id dimply
-        called \textbf{company} and is typically accepted. If you are using a
-        site wide installation then your system administrator may set up a
-        specifically named file which should be entered here.
+    \item \textbf{Name the company file ?} This is the name of the macro file
+    that stores company wide company information. The default id dimply called
+    \textbf{company} and is typically accepted. If you are using a site wide
+    installation then your system administrator may set up a specifically
+    named file which should be entered here.
 
-        \item Company Name is the long name of the company i.e. \textit{Acme
-        Building Inc.}
+    \item \textbf{Company Name ?} is the long name of the company i.e.
+    \textit{Acme Building Inc.}
 
-    \end{itemize}
+  \end{itemize}
 
-    The configuration is complete and the top level help page is displayed.
+  The configuration is complete and the top level help page is displayed. The
+  user should now perform the \textbf{User Setup} step detailed in a later
+  section.
 
 \subsection{Help Information}
 
-    The help information is available on-line and may be accessed using the
-    mouse or the keyboard.
+  The help information is available on-line and may be accessed using the
+  mouse or the keyboard.
 
 \subsubsection{Mouse Interaction}
 
-    \textbf{Help$\rightarrow$General Help}
+  \textbf{Help$\rightarrow$General Help}
 
-    The links are shown highlighted and may be traversed with the mouse by
-    selecting the link with a double click.
+  The links are shown highlighted and may be traversed with the mouse by
+  selecting the link with a double click.
 
 \subsubsection{Keyboard Interaction}
 
-    \textbf{esc-x help}
+  \textbf{esc-x help}
 
-    The links may be traversed using the TAB key to move to the next link, a
-    RETURN on the link causes the link to be followed.
+  The links may be traversed using the TAB key to move to the next link, a
+  RETURN on the link causes the link to be followed.
 
 \subsection{User Setup}
 
-    On completion of the basic configuration then a certain amount of
-    customization is typically required. The \textit{User Setup} dialog
-    allows the user to perform this process and is invoked as follows:
+  On completion of the basic configuration then a certain amount of
+  customization is typically required. The \textit{User Setup} dialog allows
+  the user to perform this process and is invoked as follows:
 
-    \textbf{esc-x user-setup} $\dots$ \textit{OR}\newline
-    \textbf{Help$\rightarrow$User Setup}
+  \textbf{esc-x user-setup} $\dots$ \textit{OR}\newline
+  \textbf{Help$\rightarrow$User Setup}
 
 \begin{figure}[!hbt]
   \begin{center}
@@ -706,37 +715,151 @@ make -f platform.gmk
   \end{center}
 \end{figure}
 
-    Navigation within the dialog is performed using the mouse and/or
-    \texttt{TAB} and cursor keys. The \texttt{SPACE} key is used to open a
-    drop down dialog. The configuration may be saved permanently using
-    \textbf{Save} and installed into the current session using
-    \textbf{Current}.
+  Navigation within the dialog is performed using the mouse and/or
+  \texttt{TAB} and cursor keys. The \texttt{SPACE} key is used to open a drop
+  down dialog. The configuration may be saved permanently using \textbf{Save}
+  and installed into the current session using \textbf{Current}.
 
-\subsubsection{Home/End Key Behavior}
+\subsubsection{Quick Setup}
 
-    \textbf{User Setup::Start-Up::Rebind Home Keys}
+  For a quick setup then the \textit{User Setup} dialog is traversed by pane,
+  the most common options are described below, other options may be ignored.
 
-    The behavior of the Home/End key is to move to the start/end of the
-    buffer. When the option is enabled then the key behavior is changed to
-    start/end of line.
+  \begin{itemize}
+    \item \textbf{Start-up} -- start up configuration information.
 
-\subsubsection{Microsoft Shift Region Control}
+    \begin{itemize}
 
-    \textbf{User Setup::Start-Up::MS Shift Region}
+      \item \textbf{Emulation} select the preferred emulation mode of the
+      editor. The standard key bindings are adjusted to be more consistent
+      with the selected emulation.
 
-    Microsoft Shift Region Control when enabled emulates the Microsoft region
-    selection behavior of the cursor keys when the \texttt{SHIFT} key is
-    pressed. The cursor keys select a region whilst the \texttt{SHIFT} key is
-    depressed.
+      \item \textbf{Re-bind Home Keys} when disabled then the keys
+      \textit{Home} and \textit{End} move to the beginning and end of the
+      buffer respectively. When enabled then \textit{Home} and \textit{End}
+      move to the beginning and end of the line respectively.
 
-\subsubsection{Nedit key bindings}
+      \item \textbf{MS Shift Bindings} enabled performs Microsoft region
+      selection using the cursor keys whilst the \texttt{SHIFT} key is
+      pressed.
 
-    \textbf{User Setup::Start-Up::Emulation} = \textbf{NEdit v5}
+      \item \textbf{Keyboard} select your keyboard type, the keyboard bindings
+      are corrected for the locale.
 
-    \textbf{NEdit} key bindings are emulated when NEdit emulation is selected.
+      \item \textbf{Language} the default spelling language. This has no
+      effect if the dictionaries are not loaded.
 
-\subsubsection{GNU Emacs key bindings}
+      \item \textbf{Auto Save Dictionaries} typically enabled, causes the user
+      defined spelling dictionary to be automatically saved on exiting the
+      editor.
 
-    \textbf{User Setup::Start-Up::Emulation} = \textbf{GNU Emacs}
+      \item \textbf{Enable Auto-spell} enable this option to allow MicroEmacs
+      to perform spell checking whilst you type. Spelling errors are
+      highlighted to indicate errors. With the mouse right click on the
+      mis-spelt word and select an auto correction.
+
+      \textbf{M-x auto-spell-buffer} to automatically spell check the
+      whole buffer.
+
+      \textbf{M-x spell-buffer} to spell check the buffer via spell dialog.
+
+    \end{itemize}
+
+    \item \textbf{General} -- general defaults and settings.
+
+    \begin{itemize}
+
+      \item \textbf{Full Name} user name that is inserted into new file
+      templates
+
+      \item \textbf{Main Menu} disable if the Main Menu is not required.
+
+      \item \textbf{Alt Action} defines the behavior of the \texttt{ALT} key.
+      Enable \textbf{Esc Prfx} if the \texttt{ALT} key may be used as a
+      \texttt{ESC} key prefix (most Emacs users). Disable \textbf{Main menu
+      Hot-keys} if the \texttt{ALT} key should not be used as a hot key to the
+      Main menu. When both are enabled then the Main menu has priority.
+
+      \item \textbf{Abbrev Setup} defines the behavior of the abbreviation key
+      binding \textbf{esc esc}.
+
+      \begin{itemize}
+
+        \item Enabling \textbf{Accent} completes accented characters i.e.
+        \texttt{:o<esc><esc>} is converted to a umlaut.
+
+        \item Enabling \textbf{Lookback} attempts to complete the word based
+        on previous words in the buffer. A further \textbf{esc esc} finds the
+        previous etc.
+
+        \item Enabling \textbf{Dict'n} attempts to complete a word based on
+        the spelling dictionary.
+
+      \end{itemize}
+
+      \item \textbf{Tab to Indent} controls the behavior of the TAB key. By
+      default, where indent rules exist for a buffer then the TAB key causes
+      the indentation of the line to be re-evaluated rather than inserting a
+      literal TAB character. Select the operation required, the default is
+      \textit{Always Indent}.
+
+    \end{itemize}
+
+    \item \textbf{Platform} -- general platform specific settings.
+
+    \begin{itemize}
+
+      \item \textbf{Termcap Color (Termcap Only)} enables use of colors.
+
+      \item \textbf{Use Fonts (Termcap Only)} enables use of \textbf{bold} and
+      \underline{underline} fonts.
+
+      \item \textbf{Font Name} selection of an alternative fixed font. For
+      UNIX then use \textbf{xfontsel} to select a font to paste into the
+      window. For MS-Windows then use the \textbf{Choose Font} button to
+      select the font.
+
+      \item \textbf{Enable Tool Bar} enable if the tool bar at the left of the
+      screen is required. Add tools to the tool bar, this provides short cuts,
+      itemized lists for specific buffers. The tool bar is buffer sensitive.
+
+      \item \textbf{Ignore files} the list of files to be ignored in directory
+      listings.
+
+      \item \textbf{Fence Display} defines the behavior of the cursor at fence
+      characters (i.e. \texttt{(,\{,\},),..}). \textbf{Always draw and jump on
+      close} is the most popular, the brackets are colorized and the cursor
+      jumps to the opening fence on entering a close. A miss-matched fence is
+      highlighted in an error color.
+
+      \item \textbf{Scroll Bars} generally \textbf{Wide with Splitter} is
+      preferred in windowing environments.
+
+      \item \textbf{Horizontal Scroll} defines the behavior of horizontal
+      scrolling when the cursor is moved to the end of the line. By default
+      only the current line is scrolled.
+
+      \item \textbf{Vertical Scroll} defines the behavior of vertical
+      scrolling when the cursor is moved down at the top/bottom line of the
+      window. For terminals then \textbf{Default, half screen} is preferred,
+      for windowing environments then \textbf{Smooth, Single line} is
+      preferred.
+
+      \item \textbf{Color Scheme} the highlighting color of the buffer window.
+      In a console environment then use the special scheme for
+      \textit{Termcap}.
+
+    \end{itemize}
+
+    \item \textbf{Mouse} -- behavior of the mouse.
+
+    \begin{itemize}
+
+      \item \textbf{Mouse Button Bindings} control the action on pressing a
+      button, optionally in conjunction with the \texttt{SHIFT},
+      \texttt{CONTROL} and \texttt{ALT} modifier keys. The wheel mouse setting
+      is bound here. \end{itemize}
+
+  \end{itemize}
 
 \end{document}
