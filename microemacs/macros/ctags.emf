@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : 1998
-;  Last Modified : <000928.2133>
+;  Last Modified : <000928.2153>
 ;
 ;  Description   : Command-line macro for creating a C tags file
 ;
@@ -61,6 +61,9 @@ set-char-mask "1" ":~"
         search-forward #l0
         !if &seq @s0 "/*"
             backward-char
+            ; Find the end of the comment. Recover from a bogus
+            ; comment formation by doing a hard search for the 
+            ; end of the comment to keep the tags going.
             !force goto-matching-fence
             !if $status
                 2 forward-char
