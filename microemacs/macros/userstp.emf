@@ -590,15 +590,15 @@ set-variable .user-tool-init.cur 0
     osd .osd.user-tool 210 "c" &spr "Command %d Setup" @#
     set-variable #l0 &reg "/history" &spr "%s/tool/%d/flag" $platform @# 0x1a
     !if &band #l0 0x10
-        osd .osd.user-tool 370 "Sfh" "    B\Huffer: " 380
-        osd .osd.user-tool 380 "EtxHfh" .scheme.osd-entry "##########" 3 user-tool-set-entry
-        osd .osd.user-tool 390 "Sfh" "  "
-        osd .osd.user-tool 400 "Ctpfx" &cat .osd.checkbox-chars "\} \HHide" 0x20 user-tool-set-flag
+        osd .osd.user-tool 320 "Sfh" "           B\Huffer: " 320
+        osd .osd.user-tool 330 "EtxHfh" .scheme.osd-entry "##################" 3 user-tool-set-entry
+        osd .osd.user-tool 335 "Sfh" "  "
+        osd .osd.user-tool 340 "Ctpfx" &cat .osd.checkbox-chars "\} \HHide" 0x20 user-tool-set-flag
     !else
-        osd .osd.user-tool 370 "f" ""
-        osd .osd.user-tool 380 "D"
-        osd .osd.user-tool 390 "D"
-        osd .osd.user-tool 400 "D"
+        osd .osd.user-tool 320 "f" ""
+        osd .osd.user-tool 330 "D"
+        osd .osd.user-tool 335 "D"
+        osd .osd.user-tool 340 "D"
     !endif
 !emacro
 
@@ -617,9 +617,17 @@ set-variable .user-tool-init.cur 0
     set-variable #l2 &spr "%s/tool/%d/flag" $platform .user-tool-init.cur
     set-variable #l0 &reg "/history" #l2 0x1a
     !if &les @# 0
-        set-variable #l0 &bxor #l0 &abs @#
+        !if &band &set #l1 &abs @# 0x10
+            !if &band #l0 0x40
+                !return
+            !endif
+        !endif
+        set-variable #l0 &bxor #l0 #l1
+        !if &band #l0 0x40
+            set-variable #l0 &bor #l0 0x10
+        !endif
         set-registry "/history" #l2 #l0
-        !if &band &abs @# 0x10
+        !if &band #l1 0x50
             .user-tool-init.cur user-tool-setup
         !endif
     !elif &not &band #l0 @#
@@ -637,23 +645,23 @@ osd .osd.user-tool 230 "Sfh" "  Tool \HName:      " 240
 osd .osd.user-tool 240 "EtxHf" .scheme.osd-entry "###################" 1 user-tool-set-entry
 osd .osd.user-tool 250 "Sfh" "  Command \HLine:   " 260
 osd .osd.user-tool 260 "EtxHf" .scheme.osd-entry "##################################" 2 user-tool-set-entry
-osd .osd.user-tool 261 ""    "       Buffer file name = %ff or %fp%fn or %fp%fb%fe"
-osd .osd.user-tool 262 "fh"  "       "
-osd .osd.user-tool 263 "Ctpfxh" &cat .osd.checkbox-chars "\} Capture \HOutput" 0x10 user-tool-set-flag
+osd .osd.user-tool 270 ""    "       Buffer file name = %ff or %fp%fn or %fp%fb%fe"
 !if &band $system 0x800
-    osd .osd.user-tool 264 "Sfh" "   "
-    osd .osd.user-tool 265 "Ctpfx" &cat .osd.checkbox-chars "\} \HRun Concurrently" 0x40 user-tool-set-flag
+    osd .osd.user-tool 280 "fh"  "       "
+    osd .osd.user-tool 290 "Ctpfx" &cat .osd.checkbox-chars "\} \HRun Concurrently" 0x40 user-tool-set-flag
 !endif
-osd .osd.user-tool 266 ""
-osd .osd.user-tool 270 "Sfh" "  Current \HBuffer: " 280
-osd .osd.user-tool 280 "Ctpfxh" &cat .osd.checkbox-chars "\} Save" 0x01 user-tool-set-flag
-osd .osd.user-tool 290 "Sfh" "  "
-osd .osd.user-tool 300 "Ctpfx" &cat .osd.checkbox-chars "\} \HPrompt Before Saving" 0x02 user-tool-set-flag
-osd .osd.user-tool 310 "Sfh" "  \HAll Buffers:    " 320
-osd .osd.user-tool 320 "Ctpfxh" &cat .osd.checkbox-chars "\} Save" 0x04 user-tool-set-flag
-osd .osd.user-tool 330 "Sfh" "  "
-osd .osd.user-tool 340 "Ctpfx" &cat .osd.checkbox-chars "\} Promp\Ht Before Saving" 0x08 user-tool-set-flag
-osd .osd.user-tool 350 "Sfh" "  "
+osd .osd.user-tool 300 "fh"  "       "
+osd .osd.user-tool 310 "Ctpfx" &cat .osd.checkbox-chars "\} Capture \HOutput" 0x10 user-tool-set-flag
+osd .osd.user-tool 350 ""
+osd .osd.user-tool 360 "Sfh" "  Current \HBuffer: " 370
+osd .osd.user-tool 370 "Ctpfxh" &cat .osd.checkbox-chars "\} Save" 0x01 user-tool-set-flag
+osd .osd.user-tool 380 "Sfh" "  "
+osd .osd.user-tool 390 "Ctpfx" &cat .osd.checkbox-chars "\} \HPrompt Before Saving" 0x02 user-tool-set-flag
+osd .osd.user-tool 400 "Sfh" "  \HAll Buffers:    " 410
+osd .osd.user-tool 410 "Ctpfxh" &cat .osd.checkbox-chars "\} Save" 0x04 user-tool-set-flag
+osd .osd.user-tool 420 "Sfh" "  "
+osd .osd.user-tool 430 "Ctpfx" &cat .osd.checkbox-chars "\} Promp\Ht Before Saving" 0x08 user-tool-set-flag
+osd .osd.user-tool 440 "Sfh" "  "
 
 ; file type setup ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 0 define-macro user-filetype-set-fields
