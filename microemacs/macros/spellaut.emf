@@ -7,8 +7,9 @@
 ; Synopsis:    Auto-spelling checker routines.
 ; Authors:     Steven Phillips
 ;
-!if &sequal .hilight.spell "ERROR"
+!if &not &exi .hilight.spell
     set-variable .hilight.spell &pinc .hilight.next 1
+    set-variable .osd.spell-auto &pinc .osd.next 1
 !endif
 
 0 hilight .hilight.spell 0 $global-scheme
@@ -255,4 +256,66 @@ define-macro auto-spell
         !abort
     !endif
 !emacro
+
+0 define-macro auto-spell-osdrp
+    set-variable #l1 &rig $result 2
+    set-variable #l0 &len .auto-spell-osd.word
+    !while &not &seq &mid @wl $window-col #l0 .auto-spell-osd.word
+        !if &not &dec $window-col 1
+            !abort
+        !endif
+    !done
+    #l0 forward-delete-char
+    -1 yank
+    insert-string #l1
+!emacro
+
+0 define-macro auto-spell-osdaac
+    set-variable #l1 &rig $result 2
+    0x201 spell .auto-spell-osd.word
+    0x209 spell .auto-spell-osd.word
+    0x015 spell .auto-spell-osd.word #l1
+    auto-spell-test
+!emacro
+
+0 define-macro auto-spell-osdac
+    -1 osd @#
+    osd @# 0 b
+    set-variable #l0 0
+    !while &not &seq "" &set #l1 &lget .auto-spell-osd.list &inc #l0 1
+        osd @# #l0 "" &spr "\H%d %s" #l0 #l1 f auto-spell-osdaac
+    !done
+!emacro
+    
+0 define-macro auto-spell-osd
+    !if &not &seq .lword .word
+        -1 osd @#
+        osd @# 0 b
+        osd @# 130 "" "Auto Correct"
+        !force !force 33 spell .word
+        !if $status
+            set-variable .list &lset $result 10 ""
+            set-variable #l0 0
+            !while &not &seq "" &set #l1 &lget .list &inc #l0 1
+                osd @# #l0 "" &spr "\H%d %s" #l0 #l1 f auto-spell-osdrp
+            !done
+            !if &equ #l0 1
+                osd @# 1 "" "<no suggestions>"
+                set-variable #l0 2
+            !else
+                osd @# 130 "M" "Auto \HCorrect " .osd.tmp auto-spell-osdac 
+            !endif
+        !else
+            set-variable .list "|"
+            osd @# 1 "<interrupted>" .lword
+            set-variable #l0 2
+        !endif
+        osd @# 100 "-"
+        osd @# 110 "" "\HIgnore All"   1 auto-spell-ignore
+        osd @# 120 "" "\HAdd"          2 auto-spell-ignore
+        osd @# 140 "" "\HSpell Word"   1 spell-word
+        set-variable .lword .word
+    !endif
+!emacro
+set-variable .auto-spell-osd.lword ""
 

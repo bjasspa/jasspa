@@ -1,3 +1,4 @@
+; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
 ; Copyright (C) 1997-2002 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
@@ -8,13 +9,16 @@
 ;
 0 define-macro-file osd osd-close
 0 define-macro-file ftp ftp-rename-buffer
+0 define-macro-file cvs osd-cvs-file-menu
 
 define-macro fhook-dirlst
     -1 buffer-mode "view"
     1 buffer-mode "magic"
     !if &seq $buffer-fname ""
-        ; toolbar creates an empty *files* buffer - ignore it
+        ; toolbar creates an empty *files* buffer - ignore it 
         !return
+    !elif &or &exi :tag-count &seq $buffer-fname ""
+        ; dont process the dir twice as it changes the buffer
     !elif &seq &lef $buffer-fname 6 "ftp://"
         forward-line
         !if &iseq &lef @wl 5 "total" 
@@ -97,7 +101,9 @@ define-macro fhook-dirlst
 ; buffer-init variables
 set-variable .fhook-dirlst.name "Directory List"
 set-variable .fhook-dirlst.setup &reg "/history" "fhook/dirlst" "ghmop"
-set-variable .fhook-dirlst.setup-mask "aeghop"
+set-variable .fhook-dirlst.setup-mask    "aceghop"
+set-variable .fhook-dirlst.setup-flags   "|c|"
+set-variable .fhook-dirlst.setup-labels  "|CVS menu always available|"
 set-variable .fhook-dirlst.command-flag  "|thbio|thbio|th|thbio|thbio|thbio|bio|thbio|bio|h|"
 set-variable .fhook-dirlst.command-name  "|file-browser-swap-buffers|file-browser-close||dirlst-find-file|dirlst-tag-toggle|dirlst-tag-remove|dirlst-tag-remove|dirlst-tag-execute|dirlst-tag-execute||"
 set-variable .fhook-dirlst.command-nbind "|||||||||||"
@@ -109,6 +115,8 @@ set-variable .fhook-dirlst.col-flag "|0|4|2|1|8|"
 set-variable .fhook-dirlst.sort     "|1|0|"
 set-variable .fhook-dirlst.browser-lock 0
 set-variable .fhook-dirlst.file-process ""
+
+set-variable .fhook-dirlst.cvs-enable &sin "c" .fhook-dirlst.setup
 
 !if &not &exist .osd.dirlst
     set-variable .osd.dirlst &pinc .osd.next 1
@@ -944,7 +952,8 @@ osd .osd.dirlst 130 ""  "\HAuto-Refresh: on "   f dirlst-auto-refresh
             osd .osd.dirlst 140 "" "Enable Filter" f file-browser-set-filter
         !elif &seq :file-process "file-browser-filter"
             osd .osd.dirlst 140 "" "Disable Filter" f file-browser-set-filter
-        !elif &seq :file-process "cvs-dir-conv"
+        !endif
+        !if .fhook-dirlst.cvs-enable
             osd .osd.dirlst 11 "M" "C\HVS" .osd.tmp osd-cvs-file-menu
         !endif
     !endif

@@ -7,34 +7,56 @@
 ; Synopsis:    Kill list for the toolbar
 ; Authors:     Steven Phillips
 ;
+0 define-macro kill-list-set
+    !if &les @# 1
+        ml-write "{Error: kill-list-set called with invalid argument]"
+        !abort
+    !endif
+    set-position "\x86"
+    find-buffer &cat "*kill-list*" @#
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    -1 kill-region
+    insert-newline
+    backward-line
+    !force yank
+    -1 buffer-mode "edit"
+    1 buffer-mode "hide"
+    !if &gre &add @# 1 .kill-list-create.count
+        set-variable .kill-list-create.count &add @# 1
+    !endif
+    goto-position "\x86"
+!emacro
+
+0 define-macro kill-list-yank
+    set-position "\x86"
+    !force 0 find-buffer &cat "*kill-list*" &abs @#
+    !if &not $status
+        !abort
+    !endif
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    backward-char
+    copy-region
+    goto-position "\x86"
+    !if &gre @# 0
+        !force !force yank @mna
+        -1 yank
+    !endif
+!emacro
+
 0 define-macro kill-list-command
-    set-variable #l0 &sub $window-line 1
+    set-variable #l0 $window-line
+    goto-position "\x82"
     !if &equ @# 1
-        find-buffer &cat "*kill-list*" #l0
-        beginning-of-buffer
-        set-mark
-        end-of-buffer
-        -1 kill-region
-        !force yank
-        -1 buffer-mode "edit"
-        1 buffer-mode "hide"
-        !if &equ #l0 .kill-list-create.count
-            set-variable .kill-list-create.count &add .kill-list-create.count 1
-        !endif
+        #l0 kill-list-set
     !elif &equ @# 2
-        !force 0 find-buffer &cat "*kill-list*" #l0
-        !if $status
-            beginning-of-buffer
-            set-mark
-            end-of-buffer
-            backward-char
-            copy-region
-            find-buffer "*kill-list*"
-        !endif
+        &sub 0 #l0 kill-list-yank
         !return
     !elif &equ @# 3
-        set-variable .kill-list-mouse-drop-1.line $window-line
-        kill-list-mouse-drop-1
+        #l0 kill-list-yank
         161 set-position "\x82"
         !return
     !elif &equ @# 4
@@ -42,7 +64,6 @@
     !elif &equ @# 5
         set-variable .kill-list-create.count &add .kill-list-create.count 1
     !endif
-    goto-position "\x82"
     ; force an update by deleting buffer
     !force 0 delete-buffer "*kill-list*"
     set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x080
@@ -57,26 +78,12 @@
     set-variable #l0 $window-line
     goto-position "\x82"
     !if &equ .line #l0
-        set-position "\x86"
-        !force 0 find-buffer &cat "*kill-list*" &sub #l0 1
-        !if $status
-            beginning-of-buffer
-            set-mark
-            end-of-buffer
-            backward-char
-            copy-region
-            goto-position "\x86"
-            !force !force yank @mna
-            -1 yank
-            !return
-        !endif
+        #l0 kill-list-yank
     !endif
 !emacro
 
 0 define-macro kill-list-mouse-drop-3
-    !if &equ $window-line 1
-    !elif &gre $window-line &add .kill-list-create.count 1
-    !else
+    !if &les $window-line $window-eline
         -1 osd .osd.tmp
         osd .osd.tmp 0 b
         osd .osd.tmp 10 "" "\HStore current kill"   1 kill-list-command
@@ -99,7 +106,6 @@
     set-mark
     end-of-buffer
     -1 kill-region
-    insert-string "Kill List\n"
     set-variable #l0 0
     !while &les &pinc #l0 1 .count
         !force 0 find-buffer &cat "*kill-list*" #l0
@@ -110,7 +116,7 @@
             copy-region
             set-variable #l1 &rep &trb @y "\n" " "
             find-buffer "*kill-list*"
-            set-variable $window-line &add #l0 1
+            set-variable $window-line #l0
         !else
             set-variable #l1 "Not set"
             set-variable $line-scheme .scheme.hide
@@ -119,7 +125,6 @@
     !done
     backward-delete-char
     beginning-of-buffer
-    set-variable $line-scheme .scheme.header
     set-variable :mouse-pick-1 kill-list-mouse-pick-1
     set-variable :mouse-drop-1 kill-list-mouse-drop-1
     set-variable :mouse-pick-3 void

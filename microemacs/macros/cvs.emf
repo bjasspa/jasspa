@@ -1033,6 +1033,7 @@ define-macro cvs-update
         osd .osd.tmp 120 "" "Resolve conflicts"
     !endif
     osd .osd.tmp 150 "-"
+    osd .osd.tmp 155 "" "Generate Log List"         f cvs-log-list
     osd .osd.tmp 160 "" "Clear c\Hvs console"     101 osd-cvs-file-menu-cmd
 !emacro
 
@@ -1207,6 +1208,7 @@ define-macro cvs-update
 !emacro
 
 define-macro cvs
+    set-variable .fhook-dirlst.cvs-enable 1
     set-variable .fhook-dirlst.file-process "cvs-dir-conv"
     !if &band $window-flags 0x1000
         ; if this is a toolbar window move to the next normal window
