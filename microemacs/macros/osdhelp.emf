@@ -42,18 +42,17 @@
     set-variable #l3 $window-col
     0 help
     beginning-of-buffer
-    1 buffer-mode "magic"
     -1 osd #l8
     osd #l8 0 "AfS" .scheme.osd-child
     set-variable #l4 0
-    !force search-forward #l9
+    !force search-buffer "em" #l9
     !while $status
         !if &seq "" &set #l5 &trb @s1
             osd #l8 &inc #l4 1 "x" @s2 0 osd-help-goto
         !else
             osd #l8 &inc #l4 1 "x" &spr "%s(%s)" @s2 #l5 0 osd-help-goto
         !endif
-        !force search-forward #l9
+        !force search-buffer "em" #l9
     !done
     find-buffer #l0
     set-variable $window-line #l1
@@ -160,7 +159,7 @@
     beginning-of-buffer
     1 buffer-mode "magic"
     &cond &band @# 1 1 -1 buffer-mode "exact"
-    !force search-forward #l9
+    !force search-buffer "em" #l9
     !while $status
         set-variable #l1 $window-line
         !if &seq "" &set #l5 &trb @s1
@@ -168,9 +167,9 @@
         !else
             set-variable #l2 &spr "%s(%s)" @s2 #l5
         !endif
-        search-forward "^$"
+        search-buffer "em" "^$"
         set-variable #l3 $window-line
-        !force search-forward "^!"
+        !force search-buffer "em" "^!"
         !if &not $status
             end-of-buffer
         !endif
@@ -180,7 +179,7 @@
         set-variable #l5 &lget #l7 1
         !repeat
             #l3 goto-line
-            !force &sub $window-line #l4 search-forward #l5
+            !force &sub $window-line #l4 search-buffer "em" #l5
             !if $status
                 !if &equ &lget #l8 #l6 -1
                     ; must not find this componant, therefore fail
@@ -188,7 +187,7 @@
                     set-variable #l6 -1
                 !else
                     set-variable #l0 &add #l0 1
-                    !force &sub $window-line #l4 search-forward #l5
+                    !force &sub $window-line #l4 search-buffer "em" #l5
                     !if $status
                         set-variable #l0 &add #l0 1
                         !jump -3
@@ -207,7 +206,7 @@
         !endif
         #l1 goto-line
         end-of-line
-        !force search-forward #l9
+        !force search-buffer "em" #l9
     !done
     set-variable #l8 @1
     -1 osd #l8
@@ -333,10 +332,10 @@ osd .osd.ohlps 100 ""
 
 ; The Index page ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 0 define-macro osd-help-index-crt
-    !if &sub .osd-help-index-crt.scope .osd-help.scope
+    !if &sub .scope .osd-help.scope
+        set-variable .scope .osd-help.scope
         osd-help-create-list .osd.ohlpil
         osd .osd.ohlpil 0 "AfsS" .scheme.osd-child &sub .osd-help-set-size.w 8 &sub .osd-help-set-size.d 10 0 -1 
-        set-variable .scope .osd-help.scope
     !endif
 !emacro    
 set-variable .osd-help-index-crt.scope 0
@@ -383,7 +382,7 @@ osd .osd.ohlpi 70  ""
         set-variable #l4 0
         -1 osd .osd.ohlpcl
         osd .osd.ohlpcl 0 "sS" .scheme.osd-child &sub .osd-help-set-size.w 8 &sub .osd-help-set-size.d 10  0 -1 
-        !force search-forward "^!   Contents$"
+        !force search-buffer "em" "^!   Contents$"
         !if $status
             beginning-of-line
             forward-line
