@@ -1,8 +1,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Perl hook - This file is invoked when a Perl script file is loaded.
 ;
-; Last Modified : <991125.1029>
-; Copyright (c) 1999 JASSPA.
+; Last Modified : <000719.1924>
+; Copyright (c) 1999-2000 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 !if &band .hilight.flags 0x02
     !if &not &exist .hilight.perl
@@ -16,7 +16,8 @@
     ; Hilight the documentation backets
     hilight .hilight.perl 4    "^=head" "=cut" ""  .scheme.string
     ; Strings and things
-    hilight .hilight.perl 0x804 "'" "'" "\\"       .scheme.quote
+    hilight .hilight.perl 0x804 "'" "'" "\\"       .scheme.string
+    hilight .hilight.perl 0x804 "/" "/" "\\"       .scheme.string
     hilight .hilight.perl 0x80 "\"" .hilight.perlS .scheme.string
     hilight .hilight.perl 4    "EOF;" "EOF" ""     .scheme.string
     hilight .hilight.perl 4    "\"EOF\";" "EOF" "" .scheme.string
@@ -28,20 +29,24 @@
     ; Includes.
     hilight .hilight.perl 2    "^require"          .scheme.prepro
     hilight .hilight.perl 2    "^package"          .scheme.prepro
+    ; Function names
+    !if &band .hilight.flags 0x04
+        hilight .hilight.perl 0 "^\\s *\\{sub\\s +\\w+" .scheme.function
+    !endif
     ; Labels
     hilight .hilight.perl 0    "^__...__"          .scheme.link
     hilight .hilight.perl 0    "^__....__"         .scheme.link
     hilight .hilight.perl 0    "^\\s *\\{\\w*:"    .scheme.link
     ; Variables.
-    hilight .hilight.perl 4    "\\$" "\\}\\W" ""     .scheme.variable
+    hilight .hilight.perl 4    "\\$" "\\}\\W" ""   .scheme.variable
     hilight .hilight.perl 0x80 "\\${" .hilight.perlV .scheme.variable
-    hilight .hilight.perl 4    "\\$(" ")" ""         .scheme.variable
-    hilight .hilight.perl 0    "\\$\\?"              .scheme.variable
-    hilight .hilight.perl 0    "\\$#"                .scheme.variable
-    hilight .hilight.perl 0    "\\$$"                .scheme.variable
-    hilight .hilight.perl 0    "\\$!"                .scheme.variable
-    hilight .hilight.perl 0    "\\$\\*"              .scheme.variable
-    hilight .hilight.perl 0    "\\$[[:digit:]]+"     .scheme.variable
+    hilight .hilight.perl 4    "\\$(" ")" ""       .scheme.variable
+    hilight .hilight.perl 0    "\\$\\?"            .scheme.variable
+    hilight .hilight.perl 0    "\\$#"              .scheme.variable
+    hilight .hilight.perl 0    "\\$\\$"            .scheme.variable
+    hilight .hilight.perl 0    "\\$!"              .scheme.variable
+    hilight .hilight.perl 0    "\\$\\*"            .scheme.variable
+    hilight .hilight.perl 4    "@" "\\}\\W" ""     .scheme.variable
     ; Separators
     hilight .hilight.perl 1    "&"                 .scheme.operator
     hilight .hilight.perl 1    ">"                 .scheme.operator
@@ -58,81 +63,109 @@
     hilight .hilight.perl 1    "eq"                .scheme.operator
     hilight .hilight.perl 1    "or"                .scheme.operator
     hilight .hilight.perl 1    "ne"                .scheme.operator
-    ; O/S commands
-    hilight .hilight.perl 1    "bg"                .scheme.keyword
-    hilight .hilight.perl 1    "cd"                .scheme.keyword
-    hilight .hilight.perl 1    "cp"                .scheme.keyword
+    hilight .hilight.perl 1    "time"              .scheme.operator
+    hilight .hilight.perl 1    "defined"           .scheme.operator
+    hilight .hilight.perl 1    "undef"             .scheme.operator
+    hilight .hilight.perl 1    "<[^ \t\n>]*>"      .scheme.prepro
+    hilight .hilight.perl 1    "STDIN"             .scheme.prepro
+    hilight .hilight.perl 1    "STDOUT"            .scheme.prepro
+    hilight .hilight.perl 1    "STDERR"            .scheme.prepro
+    ; Keywords
+    hilight .hilight.perl 1    "accept"            .scheme.keyword
+    hilight .hilight.perl 1    "bind"              .scheme.keyword
+    hilight .hilight.perl 1    "chdir"             .scheme.keyword
     hilight .hilight.perl 1    "chmod"             .scheme.keyword
-    hilight .hilight.perl 1    "ci"                .scheme.keyword
-    hilight .hilight.perl 1    "co"                .scheme.keyword
-    hilight .hilight.perl 1    "echo"              .scheme.keyword
-    hilight .hilight.perl 1    "eval"              .scheme.keyword
-    hilight .hilight.perl 1    "exec"              .scheme.keyword
-    hilight .hilight.perl 1    "expr"              .scheme.keyword
-    hilight .hilight.perl 1    "fg"                .scheme.keyword
-    hilight .hilight.perl 1    "jobs"              .scheme.keyword
-    hilight .hilight.perl 1    "kill"              .scheme.keyword
-    hilight .hilight.perl 1    "mkdir"             .scheme.keyword
-    hilight .hilight.perl 1    "mv"                .scheme.keyword
-    hilight .hilight.perl 1    "newgrp"            .scheme.keyword
-    hilight .hilight.perl 1    "pwd"               .scheme.keyword
-    hilight .hilight.perl 1    "rm"                .scheme.keyword
-    hilight .hilight.perl 1    "rmdir"             .scheme.keyword
-    hilight .hilight.perl 1    "stop"              .scheme.keyword
-    hilight .hilight.perl 1    "suspend"           .scheme.keyword
-    hilight .hilight.perl 1    "test"              .scheme.keyword
-    hilight .hilight.perl 1    "time"              .scheme.keyword
-    hilight .hilight.perl 1    "umask"             .scheme.keyword
-    hilight .hilight.perl 1    "unset"             .scheme.keyword
-    hilight .hilight.perl 1    "wait"              .scheme.keyword
-    ; Shell commands
-    hilight .hilight.perl 1    "alias"             .scheme.keyword
-    hilight .hilight.perl 1    "break"             .scheme.keyword
-    hilight .hilight.perl 1    "breaksw"           .scheme.keyword
-    hilight .hilight.perl 1    "case"              .scheme.keyword
+    hilight .hilight.perl 1    "chop"              .scheme.keyword
+    hilight .hilight.perl 1    "chown"             .scheme.keyword
     hilight .hilight.perl 1    "close"             .scheme.keyword
-    hilight .hilight.perl 1    "continue"          .scheme.keyword
+    hilight .hilight.perl 1    "closedir"          .scheme.keyword
+    hilight .hilight.perl 1    "connect"           .scheme.keyword
+    hilight .hilight.perl 1    "dbmclose"          .scheme.keyword
+    hilight .hilight.perl 1    "dbmopen"           .scheme.keyword
+    hilight .hilight.perl 1    "delete"            .scheme.keyword
     hilight .hilight.perl 1    "die"               .scheme.keyword
-    hilight .hilight.perl 1    "dirs"              .scheme.keyword
     hilight .hilight.perl 1    "do"                .scheme.keyword
-    hilight .hilight.perl 1    "done"              .scheme.keyword
+    hilight .hilight.perl 1    "each"              .scheme.keyword
     hilight .hilight.perl 1    "else"              .scheme.keyword
     hilight .hilight.perl 1    "elsif"             .scheme.keyword
-    hilight .hilight.perl 1    "end"               .scheme.keyword
-    hilight .hilight.perl 1    "endsw"             .scheme.keyword
-    hilight .hilight.perl 1    "esac"              .scheme.keyword
+    hilight .hilight.perl 1    "endgrent"          .scheme.keyword
+    hilight .hilight.perl 1    "endpwent"          .scheme.keyword
+    hilight .hilight.perl 1    "eval"              .scheme.keyword
+    hilight .hilight.perl 1    "exec"              .scheme.keyword
     hilight .hilight.perl 1    "exit"              .scheme.keyword
-    hilight .hilight.perl 1    "export"            .scheme.keyword
     hilight .hilight.perl 1    "for"               .scheme.keyword
     hilight .hilight.perl 1    "foreach"           .scheme.keyword
-    hilight .hilight.perl 1    "glob"              .scheme.keyword
-    hilight .hilight.perl 1    "hash"              .scheme.keyword
-    hilight .hilight.perl 1    "hashstat"          .scheme.keyword
-    hilight .hilight.perl 1    "history"           .scheme.keyword
+    hilight .hilight.perl 1    "fork"              .scheme.keyword
+    hilight .hilight.perl 1    "getgrent"          .scheme.keyword
+    hilight .hilight.perl 1    "getgrgid"          .scheme.keyword
+    hilight .hilight.perl 1    "getgrnam"          .scheme.keyword
+    hilight .hilight.perl 1    "gethostbyname"     .scheme.keyword
+    hilight .hilight.perl 1    "getprotobyname"    .scheme.keyword
+    hilight .hilight.perl 1    "getpwent"          .scheme.keyword
+    hilight .hilight.perl 1    "getpwnam"          .scheme.keyword
+    hilight .hilight.perl 1    "getpwuid"          .scheme.keyword
+    hilight .hilight.perl 1    "getservbyname"     .scheme.keyword
+    hilight .hilight.perl 1    "goto"              .scheme.keyword
+    hilight .hilight.perl 1    "hex"               .scheme.keyword
     hilight .hilight.perl 1    "if"                .scheme.keyword
-    hilight .hilight.perl 1    "in"                .scheme.keyword
-    hilight .hilight.perl 1    "limit"             .scheme.keyword
-    hilight .hilight.perl 1    "onintr"            .scheme.keyword
+    hilight .hilight.perl 1    "index"             .scheme.keyword
+    hilight .hilight.perl 1    "int"               .scheme.keyword
+    hilight .hilight.perl 1    "join"              .scheme.keyword
+    hilight .hilight.perl 1    "keys"              .scheme.keyword
+    hilight .hilight.perl 1    "kill"              .scheme.keyword
+    hilight .hilight.perl 1    "last"              .scheme.keyword
+    hilight .hilight.perl 1    "length"            .scheme.keyword
+    hilight .hilight.perl 1    "link"              .scheme.keyword
+    hilight .hilight.perl 1    "listen"            .scheme.keyword
+    hilight .hilight.perl 1    "local"             .scheme.keyword
+    hilight .hilight.perl 1    "lstat"             .scheme.keyword
+    hilight .hilight.perl 1    "mkdir"             .scheme.keyword
+    hilight .hilight.perl 1    "oct"               .scheme.keyword
     hilight .hilight.perl 1    "open"              .scheme.keyword
-    hilight .hilight.perl 1    "paraprint"         .scheme.keyword
-    hilight .hilight.perl 1    "popd"              .scheme.keyword
+    hilight .hilight.perl 1    "opendir"           .scheme.keyword
+    hilight .hilight.perl 1    "ord"               .scheme.keyword
+    hilight .hilight.perl 1    "pack"              .scheme.keyword
+    hilight .hilight.perl 1    "pop"               .scheme.keyword
     hilight .hilight.perl 1    "print"             .scheme.keyword
-    hilight .hilight.perl 1    "pushd"             .scheme.keyword
+    hilight .hilight.perl 1    "printf"            .scheme.keyword
+    hilight .hilight.perl 1    "push"              .scheme.keyword
+    hilight .hilight.perl 1    "rand"              .scheme.keyword
     hilight .hilight.perl 1    "read"              .scheme.keyword
-    hilight .hilight.perl 1    "rehash"            .scheme.keyword
-    hilight .hilight.perl 1    "set"               .scheme.keyword
-    hilight .hilight.perl 1    "setenv"            .scheme.keyword
+    hilight .hilight.perl 1    "readdir"           .scheme.keyword
+    hilight .hilight.perl 1    "readlink"          .scheme.keyword
+    hilight .hilight.perl 1    "redo"              .scheme.keyword
+    hilight .hilight.perl 1    "reverse"           .scheme.keyword
+    hilight .hilight.perl 1    "rindex"            .scheme.keyword
+    hilight .hilight.perl 1    "rmdir"             .scheme.keyword
+    hilight .hilight.perl 1    "scalar"            .scheme.keyword
+    hilight .hilight.perl 1    "seek"              .scheme.keyword
+    hilight .hilight.perl 1    "select"            .scheme.keyword
+    hilight .hilight.perl 1    "setgrent"          .scheme.keyword
+    hilight .hilight.perl 1    "setpwent"          .scheme.keyword
     hilight .hilight.perl 1    "shift"             .scheme.keyword
-    hilight .hilight.perl 1    "source"            .scheme.keyword
-    hilight .hilight.perl 33   "sub\\s *\\w*"      .scheme.keyword
-    hilight .hilight.perl 1    "switch"            .scheme.keyword
-    hilight .hilight.perl 1    "then"              .scheme.keyword
-    hilight .hilight.perl 1    "trap"              .scheme.keyword
-    hilight .hilight.perl 1    "ulimit"            .scheme.keyword
-    hilight .hilight.perl 1    "unhash"            .scheme.keyword
-    hilight .hilight.perl 1    "unless"            .scheme.keyword
-    hilight .hilight.perl 1    "until"             .scheme.keyword
+    hilight .hilight.perl 1    "socket"            .scheme.keyword
+    hilight .hilight.perl 1    "sort"              .scheme.keyword
+    hilight .hilight.perl 1    "splice"            .scheme.keyword
+    hilight .hilight.perl 1    "split"             .scheme.keyword
+    hilight .hilight.perl 1    "sprintf"           .scheme.keyword
+    hilight .hilight.perl 1    "srnad"             .scheme.keyword
+    hilight .hilight.perl 1    "stat"              .scheme.keyword
+    hilight .hilight.perl 1    "substr"            .scheme.keyword
+    hilight .hilight.perl 1    "symlink"           .scheme.keyword
+    hilight .hilight.perl 1    "system"            .scheme.keyword
+    hilight .hilight.perl 1    "unlink"            .scheme.keyword
+    hilight .hilight.perl 1    "unpack"            .scheme.keyword
+    hilight .hilight.perl 1    "unshift"           .scheme.keyword
+    hilight .hilight.perl 1    "utime"             .scheme.keyword
+    hilight .hilight.perl 1    "values"            .scheme.keyword
     hilight .hilight.perl 1    "while"             .scheme.keyword
+    hilight .hilight.perl 1    "write"             .scheme.keyword
+    !if &band .hilight.flags 0x08
+        ; hilight constants, e.g. numbers
+        hilight .hilight.perl 1 "[[:digit:]]+"       .scheme.constant
+        hilight .hilight.perl 1 "-[[:digit:]]+"      .scheme.constant
+        hilight .hilight.perl 1 "0[xX][[:xdigit:]]+" .scheme.constant
+    !endif
     ; String hilighting
     0 hilight .hilight.perlS 0                     .scheme.string
     hilight .hilight.perlS 0    "\\\\\""           .scheme.string
@@ -149,12 +182,22 @@
     hilight .hilight.perlV 4   "\\${" "}" ""       .scheme.variable
     hilight .hilight.perlV 0x80 "}" .hilight.perl  .scheme.variable
 !endif
+0 indent  .hilight.perl 0 10
+indent .hilight.perl n "{"  4
+indent .hilight.perl o "}" -4
+indent .hilight.perl e "\"" "\"" "\\"
+indent .hilight.perl e "'" "'" "\\"
+indent .hilight.perl e "/" "/" "\\"
+indent .hilight.perl b "\\[" "]"
+indent .hilight.perl b "(" ")"
+indent .hilight.perl i "#"  
 
 define-macro fhook-perl
     set-variable $buffer-mask "luh1"
     !if &band .hilight.flags 0x02
         set-variable $buffer-hilight .hilight.perl
     !endif
+    set-variable $buffer-indent .hilight.perl
     1 buffer-mode "indent"
     1 buffer-mode "time"
     ; execute user extensions if enabled
