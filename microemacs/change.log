@@ -4,9 +4,11 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <040819.1107>
+>  Last Modified : <040824.2017>
 >
-
+    
+    [040824] Fix for man page hyper-link when includes -/./_ characters.
+    
     [040814] Linux manual page formatting fixes.
 
 Minor Patch - July 2004
