@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd077.2,v 2.6 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd077.2,v 2.7 2004-03-07 11:41:37 jon Exp $
 .Im MicroEmacs command|shell
 .ds C0 "(\fB\*e backslash\fR)\ \&
 .so me.tni
@@ -26,7 +26,8 @@ ipipe-write \- Write a string to an incremental pipe
 .I n
 .B ipipe-shell-command
 "\fIcommand\fR"
-["\fIbuffer-name\fR"] \*(C0
+["\fIbuffer-name\fR"]
+["\|\fIbuffer-ipipe-command\fR|"] \*(C0
 .br
 .I n
 .B ipipe-write
@@ -77,6 +78,19 @@ Disable  the  command  name  mangling  (win32  versions  only). By default any
 converted to '\fC\\\fR' characters to make it Windows compliant.
 .IP \fB0x20\fR
 Displays the new process window, by default this window is hidden.
+.IP \fB0x40\fR
+Raw ipipe,  disable  text  annotation  at the start and end of the pipe output
+and force 
+.Ht wrap 2m 
+mode off.
+.IP \fB0x80\fR
+Supply  a  function  \fIbuffer-ipipe-command\fR  to be  invoked  when the pipe
+receives  data and  terminates,  this is  equivalent  to  setting  the  buffer
+variable 
+.Ht $buffer-ipipe 5 
+but allows the pipe to be set when the ipipe is created. It is useful to 
+set the  \fI$buffer-ipipe\fR  on invocation and allows the pipe exit status to
+be trapped properly.
 .PP
 Many other macro commands (see
 .Ht compile 3 ,
@@ -167,6 +181,7 @@ work.
 .SH "SEE ALSO"
 .na
 .Ht $buffer-ipipe 5 ,
+.Ht $buffer-input 5 ,
 .Ht compile 3 ,
 .Ht grep 3 ,
 .Ht pipe-shell-command 2 ,
