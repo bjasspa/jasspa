@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Jul 25 00:00:27 1998
 .\"
-.Id $Id: m2cmd033.2,v 2.9 2005-01-15 18:29:43 jon Exp $
+.Id $Id: m2cmd033.2,v 2.10 2005-01-16 13:03:11 jon Exp $
 .Im MicroEmacs command|indent|scuts
 .so me.tni
 .TH indent 2
@@ -22,6 +22,20 @@ indent \- Manage the auto-indentation methods
 "\|\fIflags\fR\|"
 "\|\fIlook-back\fR\|"
 [ "\|\fIindent-scheme\fR\|" ]
+.br
+.I 0
+.B indent
+"\|\fIind-no\fR\|"
+"\|\fIflags\fR\|"
+"\|\fIstatement\fR\|"
+"\|\fIcontinue\fR\|"
+"\|\fImax\fR\|"
+"\|\fIbrace\fR\|"
+"\|\fIswitch\fR\|"
+"\|\fIcase\fR\|"
+"\|\fIcomment\fR\|"
+"\|\fImargin\fR\|"
+[ "\|\fIcomcont\fR" ]
 .sp
 .B indent
 "\|\fIind-no\fR\|"
@@ -88,6 +102,17 @@ within html, asp or php pages etc. When defined the given  \fIindent-scheme\fR
 must also be defined using \fBindent\fR, the scheme's \fIlook-back\fR argument
 is  typically  set to look  back a long way to  ensure  correctness,  i.e. 500
 lines, but it should therefore contain few tokens to maintain performance.
+.IP \fC0x04\fR
+Defines C mode of  indentation.  C styling  is built  into the  editor  and is
+enabled  through the  \fBindent\fR  command. The C form is  discussed  in more
+detail in the next section.
+.IP \fC0x08\fR
+Ring the bell if
+.Ht goto-matching-fence 2
+fails.
+.IP \fC0x10\fR
+Comment  continuation  mode. This is only valid when C mode is defined  and is
+defined further in the next section.
 .LP
 .I look-back
 specifies the maximum  number of lines, prior to the current line,  considered
@@ -100,6 +125,343 @@ the  current  indentation  can  never be found.  The  maximum  value  has been
 increase as of January 2004 from 255 to an integer (large  number), a value of
 10 is  typically  sufficient  for a normal  indent  scheme  and 500 for a fast
 look-back scheme.
+.SS "C Indentation Creation Method"
+.na
+.I 0
+.B indent
+"\|\fIind-no\fR\|"
+"\|\fIflags\fR\|"
+"\|\fIstatement\fR\|"
+"\|\fIcontinue\fR\|"
+"\|\fImax\fR\|"
+"\|\fIbrace\fR\|"
+"\|\fIswitch\fR\|"
+"\|\fIcase\fR\|"
+"\|\fIcomment\fR\|"
+"\|\fImargin\fR\|"
+[ "\|\fIcomcont\fR" ]
+.ad
+.PP
+C mode is built  into the  editor  by  default  and is  enabled by setting the
+indent  intialization  flag bit  \fC0x04\fR.  With this bit  enabled  then the
+indentation  for  'C'  mode  is  defined  through  the  additional  arguments.
+\fIind-no\fR  and \fIflags\fR have the same meaning as defined in the previous
+section. The remaining C arguments are defined as follows:
+.IP "\|\fIstatement\fR (=t)"
+The indent of the current  line is derived  from  \fIstatement\fR value plus the
+indent of the last c token  (\fIif\fR,  \fIelse\fR,  \fIwhile\fR  etc.) or the
+last  '\fC{\fR'  (which ever was found first). i.e. if the last  '\fC{\fR' was
+found at column 16 then the current line will be indented to 20:-
+.ne 4
+.RS
+.CS
+        {
+            xxxxxxxxxx
+            xxxxxxxxxx
+.CE 0
+.RE
+.IP
+or
+.ne 3
+.RS
+.CS
+        if(xxxxx)
+            xxxxxxxxxx
+.CE 0
+.RE
+.IP
+C tokens are only used to indent the next line, whereas  '\fC{\fR' are used in
+indenting every line to it's partnering '\fC}\fR'.
+.IP "\fIcontinue\fR (=3/2t)"
+.I continue
+sets the  indent  to be added to a split  line,  i.e. for an  indent  of 20, a
+continued statement would be indented to 30. A continued statement is a single
+c  statement  which is spread over 2 or more lines, the 2nd and any  following
+lines would be indented to 30. For example
+.ne 4
+.RS
+.CS
+        thisIsAVeryLongVariableWhichMeansAssignmentsAreSplit =
+                  ThisIsTheFirstContinuedStatementLine +
+                  ThisIsTheSecondContinuedStatementLine + etc ;
+.CE 0
+.RE
+.IP
+The indent is changed if there is an open bracket,  continued  statements  are
+indented to the depth of the open bracket plus one, e.g.
+.ne 6
+.RS
+.CS
+        func(firstFuncArg,
+             secondFuncArg,
+             anotherBracketForFun(firstAnotherBracketForFunArg,
+                                  secondAnotherBracketForFunArg),
+             thirdFuncArg) ;
+.CE 0
+.RE
+.IP
+\fImax\fR  sets an upper  limit of the  indentation  where an open  bracket is
+encountered,  in the case where the leading  indent of the  function  name and
+open  bracket  exceeds  \fImax\fR,  then the  continuation  is  reduced to the
+continuation indent.
+.IP
+The effect of  \fImax\fR  is  described  as follows; if  \fImax\fR is set to a
+large value then the default open brace offset appearence is:-
+.ne 3
+.RS
+.CS
+longVariable = LongFunctionNameWhichMeans(isSoFar,
+                                          OverAndYouRunOutOfRoom) ;
+.CE 0
+.RE
+.IP
+Setting \fImax\fR to 16 gives:
+.ne 3
+.RS
+.CS
+longVariable = LongFunctionNameWhichMeans(isSoFar,
+                overAndYouRunOutOfRoom) ;
+.CE 0
+.RE
+.IP
+Where by the second argument indent has been  artificially  reduced because of
+it's length.
+.IP "\fImax\fR (=0)"
+See \fIcontinue\fR.
+.IP "\|\fIbrace\fR (=-t)"
+Sets the indent of a '\fC{\fR' and a '\fC}\fR' on a new line, from the current
+indent. For example, using a
+.Ht $buffer-indent-width 5
+of 4 if the current  indent was 20 then a line  starting with a '\fC{\fR' or a
+\'\fC}\fR' would be indented to 16, i.e.
+.ne 7
+.RS
+.CS
+                    xxxxxxxxxxx
+                    xxxxxxxxxxx
+                { xxxxxxxxxxx
+                    xxxxxxxxxxx
+                } xxxxxxxxxxx
+                    xxxxxxxxxxx
+.CE 0
+.RE
+.IP
+This may seem  strange,  but the  current  indent  is the  indent  of the last
+\'\fC{\fR' (or "\fCif\fR", "\fCelse\fR" etc.) a \fIstatement\fR
+which is 4, so this  brings it back into line with  '\fC{\fR''s,  "\fCif\fR"'s
+and "\fCelse\fR"'s etc., e.g.
+.ne 6
+.RS
+.CS
+                if(xxxxxx)
+                {
+                    xxxxxxxxxx
+                    xxxxxxxxxx
+                }
+.CE 0
+.RE
+.IP
+With a setting of -2, this would become:-
+.ne 6
+.RS
+.CS
+                if(xxxxxx)
+                  {
+                    xxxxxxxxxx
+                    xxxxxxxxxx
+                  }
+.CE 0
+.RE
+.IP
+This works in conjunction  with  \fIstatement\fR  a change to  \fIstatement\fR
+will change the position of '\fC{\fR's. In summary:
+.ne 7
+.RS
+.CS
+if (condition)      if (condition)     if (condition)
+{                       {                {
+    statement;          statement;         statement;
+}                       }                 }
+
+brace = -statement     brace = 0     brace = -1/2 statement
+.CE 0
+.RE
+.IP "\|\fIswitch\fR (=0)"
+The  additional  indent to be  applied  after a  \fBswitch\fR  statement,  the
+\fIstatement\fR  indent is applied in addition to the \fIswitch\fR indent. See
+the \fIcase\fR argument.
+.IP "\|\fIcase\fR (=-t)"
+\fIswitch\fR value sets the offset of a "\fCcase\fR"  entry  statement  from the
+opening brace left margin position. The default value is zero. e.g.
+.ne 9
+.RS
+.CS
+                switch(xxxxxxxxx)
+                {
+                case 1:
+                    xxxxxxxxxx
+                    xxxxxxxxxx
+                case 2:
+                    xxxxxxxxxx
+                }
+.CE 0
+.RE
+.IP
+Setting  the  value to 4,  increases  the  leading  space on the  "\fCcase\fR"
+statement, e.g.
+.ne 9
+.RS
+.CS
+                switch(xxxxxxxxx)
+                {
+                    case 1:
+                        xxxxxxxxxx
+                        xxxxxxxxxx
+                    case 2:
+                        xxxxxxxxxx
+                }
+.CE 0
+.RE
+.IP
+\fIcase\fR sets the offset of the lines following a "\fCcase\fR" statement,
+from the  current  indent. For  example,  using the default  settings,  if the
+current  indent  was 20 then a line  starting  with a  "\fCcase\fR"  would  be
+indented to 16, i.e.
+.ne 4
+.RS
+.CS
+                    xxxxxxxxxx
+                case xxxxxxxxxx
+                    xxxxxxxxxx
+.CE 0
+.RE
+.IP
+This is used inside  "\fCswitch\fR" statements, the default setting give the following
+lay-out:-
+.ne 7
+.RS
+.CS
+                switch(xxxxxxxxxx)
+                {
+                case 1:
+                    xxxxxxxxxx
+                    xxxxxxxxxx
+                case 2:
+.CE 0
+.RE
+.IP
+This works in  conjunction with the \fIstatement\fR variable,
+a change  to \fIstatement\fR will change the position of '\fC{\fR's.
+.IP
+In summary:
+.ne 11
+.RS
+.CS
+switch (variable)   switch (variable)
+{                   {
+case 1:                 case 1:
+    break;                  break;
+default:                default:
+    break;                  break;
+}                    }
+
+  switch = 0           switch = t
+  case = -t            case = -t
+.CE 0
+.RE
+.IP "\|\fIcomment\fR (=1)"
+This appears to do nothing !
+.IP "\|\fImargin\fR (=-1)"
+If inserting a comment at the  end of a C line,  it is tedious typing \fIx\fR number
+of spaces to the comment column (by default tab  doesn't insert a tab when
+.Ht indent 2
+is enabled, it reformats the  indentation of the line regardless of the cursor
+position). This variable sets the indent column of these comments. So with the
+default settings and the following line,
+.ne 2
+.RS
+.CS
+        xxxxxx ;/
+.CE 0
+.RE
+.IP
+when a '*' is entered the line becomes
+.ne 2
+.RS
+.CS
+        xxxxxx ;                /*
+.CE 0
+.RE
+.IP
+The  indenting  of the  "\fC/*\fR"  occurs  only if  there is text on the line
+before  it,  and  none  after  it. If  the  current  column  is  already  past
+\fImargin\fR then it is indented to the next tab stop.
+.IP
+A value of -1 disables this feature.
+.IP
+In summary:
+.RS
+.ne 4
+.CS
+    statement;        /* Comment */      statement; /* Comment */
+
+    margin = 40                          margin = -1
+.CE 0
+.RE
+.TP
+\|\fIcomcont\fR "\fC * \fR"
+.\"
+This argument is only  specified if  \fIflags\fR  bit  \fC0x10\fR is set.
+This defines the string which is inserted  when a new line is started while in
+a comment. The string is only inserted if the cursor is at the end of the line
+when the
+.Ht newline 2
+command is given. For  example, for the default  settings, if a  \fBnewline\fR
+was  entered at the end of the first  line, the second  line would  initialize
+to:-
+.ne 3
+.RS
+.CS
+                /* xxxxxxxxxx
+                   @
+.CE 0
+.RE
+.IP
+where '\fC@\fR' is the current cursor position. With a setting of "\fC * \fR",
+then:-
+.ne 3
+.RS
+.CS
+                /* xxxxxxxxxx
+                 * @
+.CE 0
+.RE
+.IP
+In summary:
+.RS
+.CS
+/*                  /*               /* Comment
+ * Comment          ** Comment          Comment */
+ * Comment          ** Comment
+ */                 */
+ comcont = " * "    comcont = "** "   comcont = "   "
+.CE 0
+.RE
+.LP
+.ne 3
+The standard indent rule for setting up C and Java is defined as:-
+.Me $emf-scheme
+.CS
+    0 indent .hilight.c 28 t 3/2t 0 -t 0 -t 1 -1 " * "
+.CE
+.Me $ehf-scheme
+Where  comments are to be aligned at the end of a statement then the following
+definition is preferred.
+.Me $emf-scheme
+.CS
+    0 indent .hilight.c 28 t 3/2t 0 -t 0 -t 1 40 " * "
+.CE 0
+.Me $ehf-scheme
 .SS "Indentation Rule Creation"
 .na
 .B indent
@@ -135,12 +497,12 @@ for more information.
 The  \fIindent\fR  argument  specifies the indent to apply in characters.  The
 indent may be specified as a literal  integer value, a +ve value increases the
 indent a \-ve value reduces the indent. The  \fIindent\fR  may be specified in
-terms of buffer specific generic value 
-.Ht $buffer-indent-width 5 
+terms of buffer specific generic value
+.Ht $buffer-indent-width 5
 using the value  \fBt\fR,  indicating a tab width. The value of \fBt\fR may be
 prefixed with a signed  integer or vulgar  fraction  which adjusts the size of
-the indentation width by the appropriate amount. Modifying the value of 
-.Hl $buffer-indent-width $buffer-indent-width 5 
+the indentation width by the appropriate amount. Modifying the value of
+.Hl $buffer-indent-width $buffer-indent-width 5
 modifies the indent width that is applied  allowing the indentation  method to
 be specified independently of the indentation width.
 .PP
@@ -182,8 +544,8 @@ indent .hilight.emf n "!if" t
 .CE
 .Me $ehf-scheme
 Keeps  the  indentation  of  the  \fC!if\fR  line  the  same  as the  previous
-indentation,  change  the  indentation  on the  following  lines by an extra 
-.Hl $buffer-indent-width $buffer-indent-width 5 
+indentation,  change  the  indentation  on the  following  lines by an extra
+.Hl $buffer-indent-width $buffer-indent-width 5
 characters, to produce:
 .CS
 .ne 3
@@ -203,8 +565,8 @@ Increment  the  current  and  following  lines  indentation  by  \fIindent\fR.
 indent .hilight.emf o "!endif" -t
 .CE
 .Me $ehf-scheme
-decrement the indent of the \fC!endif\fR  line and following lines by 
-.Hl $buffer-indent-width $buffer-indent-width 5 
+decrement the indent of the \fC!endif\fR  line and following lines by
+.Hl $buffer-indent-width $buffer-indent-width 5
 spaces producing:
 .CS
 .ne 3
@@ -224,8 +586,8 @@ Changes the  indentation  of the current  line  \s-1ONLY\s0  by  \fIindent\fR.
 indent .hilight.emf o "!elif" -t
 .CE
 .Me $ehf-scheme
-decrements  the  indentation  of the  \fC!elif\fR  line by 
-.Hl $buffer-indent-width $buffer-indent-width 5 
+decrements  the  indentation  of the  \fC!elif\fR  line by
+.Hl $buffer-indent-width $buffer-indent-width 5
 characters,  but  restores the previous  indentation  after the current  line,
 producing:
 .CS
@@ -460,11 +822,23 @@ Note that a \fB.hilight\fR command variable is typically used as a buffer with
 indentation  rules will almost certainly have hilighting and the same variable
 is used to define the hilighting scheme.
 .SH NOTES
-The variables 
+The variables
 .Ht $indent-width 5 ,
 .Ht $buffer-indent-width 5
 and the \fBt\fP indent  notation were  introduced in the November 2004 version
 of \*(mS.
+.PP
+The electric C mode
+.Hr cmode 2m
+was removed in December 2004, as were the variables
+.Hr $c-brace 5 ,
+.Hr $c-case 5 ,
+.Hr $c-contcomm 5 ,
+.Hr $c-continue 5 ,
+.Hr $c-margin 5
+and
+.Hr $c-statement 5 .
+All replaced by the C Indent initialisation method.
 .SH "SEE ALSO"
 .na
 .Hl "File Language Templates" languageTemplates 2 ,
