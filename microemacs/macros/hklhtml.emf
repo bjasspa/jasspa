@@ -35,15 +35,22 @@ set-variable .fhook-lhtml.command-desc  "|"
         hilight .hilight.lhtml     0x80 "<\\?lua" .hilight.luascript .scheme.prepro
         hilight .hilight.lhtmltag  0x80 "<\\?lua" .hilight.luascript .scheme.prepro
         hilight .hilight.luascript 0x80 "\\?>" 0 .scheme.prepro
+        hilight .hilight.lhtml     0x80 "<%" .hilight.luascript .scheme.prepro
+        hilight .hilight.lhtmltag  0x80 "<%" .hilight.luascript .scheme.prepro
+        hilight .hilight.luascript 0x80 "%>" 0 .scheme.prepro
     !endif
 !endif
 !if &sin "d" .fhook-lhtml.setup
     !if &exist .indent.luascript
         indent .hilight.lhtmltag t "<\\?lua" .indent.luascript
         indent .hilight.lhtmltag t "\\?>" .hilight.lhtml
+        indent .hilight.lhtmltag t "<%" .indent.luascript
+        indent .hilight.lhtmltag t "%>" .hilight.lhtml
         
         indent .hilight.lhtml x "<\\?lua" 2 .indent.luascript
+        indent .hilight.lhtml x "<%" 2 .indent.luascript
         indent .indent.luascript w "\\?>" -2 0
+        indent .indent.luascript w "%>" -2 0
     !endif
 !endif
 
