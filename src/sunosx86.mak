@@ -211,7 +211,7 @@ med:	medcw
 
 nedc:	$(OBJ_DN)
 	$(RM) $@
-	$(LD) $(LDFLAGS) $(LDDEBUG) -o $@ $(OBJ_DC) $(CONSOLE_LIBS) $(LIBS)
+	$(LD) $(LDFLAGS) $(LDDEBUG) -o $@ $(OBJ_DN) $(CONSOLE_LIBS) $(LIBS)
 
 nedw:	$(OBJ_DV)
 	$(RM) $@
