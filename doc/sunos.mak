@@ -170,6 +170,7 @@ NAR2_000=	$(DOCDIR)m2nar000.2 $(DOCDIR)m2nar001.2	$(DOCDIR)m2nar002.2 \
 		$(DOCDIR)m2nar003.2 $(DOCDIR)m2nar004.2 $(DOCDIR)m2nar005.2 \
 		$(DOCDIR)m2nar006.2 $(DOCDIR)m2nar007.2 $(DOCDIR)m2nar008.2 \
 		$(DOCDIR)m2nar009.2
+NAR2_010=	$(DOCDIR)m2nar010.2
 
 MOD2_000=	$(DOCDIR)m2mod000.2 $(DOCDIR)m2mod001.2 $(DOCDIR)m2mod002.2\
 		$(DOCDIR)m2mod003.2 $(DOCDIR)m2mod004.2 $(DOCDIR)m2mod005.2\
@@ -284,7 +285,7 @@ VAR5_080=	$(DOCDIR)m5var080.5 $(DOCDIR)m5var081.5 $(DOCDIR)m5var082.5\
 
 FIL8_000=	$(DOCDIR)m8fil000.8 $(DOCDIR)m8fil001.8 $(DOCDIR)m8fil002.8\
 		$(DOCDIR)m8fil003.8 $(DOCDIR)m8fil004.8 $(DOCDIR)m8fil005.8\
-		$(DOCDIR)m8fil006.8
+		$(DOCDIR)m8fil006.8 $(DOCDIR)m8fil007.8
 
 TYP9_000=	$(DOCDIR)m9typ000.9 $(DOCDIR)m9typ001.9 $(DOCDIR)m9typ002.9\
 		$(DOCDIR)m9typ003.9 $(DOCDIR)m9typ004.9 $(DOCDIR)m9typ005.9\
@@ -313,7 +314,7 @@ TEMPSMS	=	cmd2_000.sm	cmd2_010.sm	cmd2_020.sm	cmd2_030.sm \
 		cmd2_080.sm	cmd2_090.sm	cmd2_100.sm	cmd2_110.sm \
 		cmd2_120.sm	cmd2_130.sm	cmd2_140.sm	cmd2_150.sm \
 		cmd2_160.sm	cmd2_200.sm \
-		nar2_000.sm \
+		nar2_000.sm	nar2_010.sm \
 		mod2_000.sm	mod2_010.sm	mod2_020.sm	mod2_030.sm \
 		mac3_000.sm	mac3_010.sm	mac3_020.sm	mac3_030.sm \
 		mac3_040.sm	mac3_050.sm	mac3_060.sm	mac3_070.sm \
@@ -469,6 +470,8 @@ typ9_030.sm:	$(FIL9_030)
 
 nar2_000.sm:	$(NAR2_000)
 	$(SUPERMAN) -o $@ $(NAR2_000)
+nar2_010.sm:	$(NAR2_010)
+	$(SUPERMAN) -o $@ $(NAR2_010)
 
 me.sm: $(TEMPSMS) $(TNIS) $(MAN1)
 	$(SUPERMAN) -o $@ $(TNIS) $(MAN1) $(TEMPSMS)

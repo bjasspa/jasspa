@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.18 2004-01-23 00:01:10 jon Exp $
+.Id $Id: me.nrs,v 2.19 2004-01-29 22:02:09 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -3139,8 +3139,9 @@ New key bindings for
 .Ht create-frame 2 .
 .BU
 .Ht ml-bind-key 2
- supports  new binding for  next/previous  file,  history  search uses \fBup\fR/\fBdown\fR
-\fBC-p\fR/\fBC-n\fR, prompted by Gabriel Tabares-Barreiro..
+supports   new   binding  for   next/previous   file,   history   search  uses
+\fBup\fR/\fBdown\fR      \fBC-p\fR/\fBC-n\fR,      prompted     by     Gabriel
+Tabares-Barreiro..
 .BE 0
 .SS "Work In Progress or Planned"
 Development  of  \*(mE  is an  on-going  process,  follows  is a list  of work

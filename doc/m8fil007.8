@@ -1,0 +1,104 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m8fil007.8,v 2.1 2004-01-29 22:02:09 jon Exp $
+.Im MicroEmacs
+.so me.tni
+.TH .Xdefaults 8
+.XI .Xdefaults - "UNIX Window Manager defaults file"
+.SH NAME
+\.Xdefaults \- UNIX Window Manager defaults file
+.SH SYNOPSIS
+.na
+.sp
+.B MicroEmacs.font:
+.I font
+.br
+.B MicroEmacs.geometry: 
+\fIchar-width\fR\|\fBx\fR\|\fIchar-height\fR [\fB+-\fR]\|\fIxoffset\fR [\fB+-\fR]\|\fIyoffset\fR
+.br
+.B MicroEmacs.name:
+.I name
+.br
+.B MicroEmacs.iconname:
+.I name
+.ad
+.SH PLATFORM
+.B "\s-1UNIX\s0 environments only"
+.SH DESCRIPTION
+.B .Xdefaults
+is the UNIX  X-Windows  configuration  file that permits some of the X-Windows
+start up settings to be  configured.  The file is typically  loaded into the X
+database  when the  Window  Manager  starts  and the  values are read from the
+database by \*(mS at start up, over-riding any internal defaults.
+.PP
+The 
+.B .Xdefaults 
+file is used by other  applications  and  \*(mS may be added to the end of any
+existing file.
+.PP
+The values interpreted by \*(mS are defined as follows:
+.TP
+\fBMicroEmacs.font:\fR \fIfont\fR
+.\"
+Specifies the font to use.
+.TP
+\fBMicroEmacs.geometry:\fR \fIchar-width\fR\|\fBx\fR\|\fIchar-height\fR [\fB+-\fR]\|\fIxoffset\fR [\fB+-\fR]\|\fIyoffset\fR
+.\"
+The   geometry   of   the   X-Window   at   start-up.   \fIchar-width\fR   and
+\fIchar-height\fR  define  the  width  and  depth of the  frame  specified  in
+characters of the current font.  \fIxoffset\fR  and \fIyoffset\fR  specify the
+position of the wind with respect to the top left of the screen,  defaults are
+used when specified as 0.
+.TP
+\fBMicroEmacs.name:\fR \fIname\fR
+.\"
+Over-rides  the name prefix used in the X-Window title bar, by default this is
+specified as \fIMicroEmacs\fR\|. 
+.TP
+\fBMicroEmacs.iconname:\fR \fIname\fR
+.\"
+Over-rides the name prefix used in a X-Window  iconic display, by default this
+is specified as \fIMicroEmacs\fR\|. 
+.SH EXAMPLE
+The following is an example of the \fB.Xdefaults\fR file:-
+.CS
+.ne 23
+!######################################################################
+!#                                                                    #
+!# Defaults for MicroEmacs startup                                    #
+!#                                                                    #
+!######################################################################
+!# MicroEmacs.font: <fontname>
+!# Set the default font.
+MicroEmacs.font: -*-lucidatypewriter-medium-r-*-*-*-*-*-*-m-*-*-*
+!# MicroEmacs.font: -*-clean-medium-r-*-*-*-130-*-*-*-*-*-*
+
+!# MicroEmacs.geometry: <char-width>x<char-height> {+/-}<xoffset> {+-}<yoffset>
+!# Set up the default screen size and position.
+!# 102x65 characters please, 30 pixels from top left
+MicroEmacs.geometry: 102x65 30 30
+
+!# MicroEmacs.name: <name>
+!# The name displayed in the title bar format is <name>: <file>
+MicroEmacs.name: JASSPAs MicroEmacs
+
+!# MicroEmacs: <icon-name>
+!# The name displayed when MicroEmacs is iconized
+MicroEmacs.iconname: JASSPAs MicroEmacs
+.CE 0
+.SH NOTES
+The \fB.Xdefaults\fR  file is typically read once at login and and any changes
+to the files are not enacted  until the Window  Manager is re-started or a new
+login session commences.
+.PP
+The settings in the  \fB.Xdefaults\fR  may be  subsequently  overridden by the
+settings defined in 
+.Ht user-setup 3 .
+.SH "SEE ALSO"
+.na
+.Ht user-setup 3 .
+.ad
+.FH
