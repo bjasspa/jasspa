@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040207.1750>
+# Last Modified: <20041126.2223>
 #
 ##############################################################################
 
@@ -17,7 +17,8 @@ include $(TOPDIR)/etc/makeinc
 #
 ZIPOBJS	=	ls_dede.zip	ls_engb.zip	ls_enus.zip	\
 		ls_eses.zip	ls_frfr.zip	ls_itit.zip	\
-		ls_plpl.zip	ls_ptpt.zip	ls_fifi.zip
+		ls_plpl.zip	ls_ptpt.zip	ls_fifi.zip	\
+		ls_ruye.zip	ls_ruyo.zip
 TAROBJS	=	$(ZIPOBJS:.zip=.tar.gz)
 #
 # Text files.
@@ -36,12 +37,14 @@ RELTXTS	= $(TXTOBJS:%=$(JASSPLDIR)/%)
 LSDEDE	=	lsrdede.emf	lsdmdede.edf	lsdxdede.edf
 LSENGB	=	lsrengb.emf	lsdmengb.edf	lsdxengb.edf
 LSENUS	=	lsrenus.emf	lsdmenus.edf	lsdxenus.edf
-LSITIT	=	lsritit.emf	lsdmitit.edf	COPYING
-LSFRFR	=	lsrfrfr.emf	lsdmfrfr.edf	COPYING
-LSPLPL	=	lsrplpl.emf	lsdmplpl.edf
-LSPTPT	=	lsrptpt.emf	lsdmptpt.edf	COPYING
 LSESES	=	lsreses.emf	lsdmeses.edf	COPYING
 LSFIFI	=	lsrfifi.emf	lsdmfifi.edf
+LSFRFR	=	lsrfrfr.emf	lsdmfrfr.edf	COPYING
+LSITIT	=	lsritit.emf	lsdmitit.edf	COPYING
+LSPLPL	=	lsrplpl.emf	lsdmplpl.edf
+LSPTPT	=	lsrptpt.emf	lsdmptpt.edf	COPYING
+LSRUYE	=	lsrruye.emf	lsdmruye.edf
+LSRUYO	=	lsrruyo.emf	lsdmruyo.edf
 
 all:	$(TAROBJS) $(ZIPOBJS)
 
@@ -50,6 +53,24 @@ ls_dede.zip:	$(LSDEDE)
 	$(ZIP) $@ $(LSDEDE)
 ls_dede.tar.gz:	$(LSDEDE)
 	$(TAR) cf - $(LSDEDE) | $(GZIP) -c > $@
+
+# American
+ls_enus.zip:	$(LSENUS)
+	$(ZIP) $@ $(LSENUS)
+ls_enus.tar.gz:	$(LSENUS)
+	$(TAR) cf - $(LSENUS) | $(GZIP) -c > $@
+
+# British
+ls_engb.zip:	$(LSENGB)
+	$(ZIP) $@ $(LSENGB)
+ls_engb.tar.gz:	$(LSENGB)
+	$(TAR) cf - $(LSENGB) | $(GZIP) -c > $@
+
+# Spanish
+ls_eses.zip:	$(LSESES)
+	$(ZIP) $@ $(LSESES)
+ls_eses.tar.gz:	$(LSESES)
+	$(TAR) cf - $(LSESES) | $(GZIP) -c > $@
 
 # French
 ls_frfr.zip:	$(LSFRFR)
@@ -69,12 +90,6 @@ ls_itit.zip:	$(LSITIT)
 ls_itit.tar.gz:	$(LSITIT)
 	$(TAR) cf - $(LSITIT) | $(GZIP) -c > $@
 
-# Spanish
-ls_eses.zip:	$(LSESES)
-	$(ZIP) $@ $(LSESES)
-ls_eses.tar.gz:	$(LSESES)
-	$(TAR) cf - $(LSESES) | $(GZIP) -c > $@
-
 # Polish
 ls_plpl.zip:	$(LSPLPL)
 	$(ZIP) $@ $(LSPLPL)
@@ -87,17 +102,16 @@ ls_ptpt.zip:	$(LSPTPT)
 ls_ptpt.tar.gz:	$(LSPTPT)
 	$(TAR) cf - $(LSPTPT) | $(GZIP) -c > $@
 
-# British
-ls_engb.zip:	$(LSENGB)
-	$(ZIP) $@ $(LSENGB)
-ls_engb.tar.gz:	$(LSENGB)
-	$(TAR) cf - $(LSENGB) | $(GZIP) -c > $@
+# Russian - Ye & Yo versions
+ls_ruye.zip:	$(LSRUYE)
+	$(ZIP) $@ $(LSRUYE)
+ls_ruye.tar.gz:	$(LSRUYE)
+	$(TAR) cf - $(LSRUYE) | $(GZIP) -c > $@
+ls_ruyo.zip:	$(LSRUYO)
+	$(ZIP) $@ $(LSRUYO)
+ls_ruyo.tar.gz:	$(LSRUYO)
+	$(TAR) cf - $(LSRUYO) | $(GZIP) -c > $@
 
-# American
-ls_enus.zip:	$(LSENUS)
-	$(ZIP) $@ $(LSENUS)
-ls_enus.tar.gz:	$(LSENUS)
-	$(TAR) cf - $(LSENUS) | $(GZIP) -c > $@
 #
 # Build Release
 #
