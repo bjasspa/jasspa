@@ -10,7 +10,7 @@
 *
 *	Author:			Danial Lawrence
 *
-*	Creation Date:		14/05/86 12:37		<000825.1818>
+*	Creation Date:		14/05/86 12:37		<001002.1304>
 *
 *	Modification date:	%G% : %U%
 *
@@ -2493,13 +2493,15 @@ pathNameCorrect(uint8 *oldName, uint8 *newName, uint8 **baseName)
             }
             else if((homedir != NULL) && (p1[0] == '~'))
             {
-                /* Got a home,  xxxx/~yyyyy  -> ~yyyyy */
+                /* Got a home,  xxxx/~yyyyy  -> ~yyyyy - remove ftp:// or //yyyy/... */
+                flag = 0 ;
                 p = p1 ;
             }
 #ifdef _DRV_CHAR
             else if(isAlpha(p1[0]) && (p1[1] == _DRV_CHAR))
             {
-                /* got a Drive, xxxx/z:yyyyy -> z:yyyyy */
+                /* got a Drive, xxxx/z:yyyyy -> z:yyyyy - remove ftp:// or //yyyy/... */
+                flag = 0 ;
                 p = p1 ;
             }
 #endif

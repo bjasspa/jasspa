@@ -1,7 +1,7 @@
 /****************************************************************************
  * External function definitions
  *
- * Last Modified:       <000907.1403>
+ * Last Modified:       <001002.1052>
  * 
  ****************************************************************************
  * 
@@ -911,8 +911,8 @@ extern	int	shrinkWindHorz APRAM((int f, int n));
 extern	int	splitWindVert APRAM((int f, int n));
 extern	int	splitWindHorz APRAM((int f, int n));
 extern  int     resizeAllWnd APRAM((int f, int n));
-extern	int	pushPosition APRAM((int f, int n));
-extern	int	popPosition APRAM((int f, int n));
+extern	int	setPosition APRAM((int f, int n));
+extern	int	gotoPosition APRAM((int f, int n));
 extern  int     setScrollWithMouse APRAM((int f, int n));
 /* uses the bfind flags for finding buffer "name"
  * if not null. Also if WPOP_MKCURR set then 

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Aug 1 10:12:48 1998
-;  Last Modified : <000802.2324>
+;  Last Modified : <001002.1216>
 ;
 ;  Description
 ;
@@ -230,18 +230,10 @@ define-macro redraw-display
     recenter
 !emacro
 define-macro restore-window
-    ; duplicate the position so we can restore multiple times
-    -1 push-position
-    pop-position
+    goto-position "\x80"
 !emacro
 define-macro save-window
-    !if &exi .called
-        ; remove the old window first
-        0 pop-position
-    !else
-        set-variable .called 1
-    !endif
-    1 push-position
+    1 set-position "\x80"
 !emacro
 define-macro save-file
     @# save-buffer

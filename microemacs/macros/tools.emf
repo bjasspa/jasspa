@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips & Jon Green
 ;  Created       : Sat Jul 18 14:58:08 1998
-;  Last Modified : <000825.0723>
+;  Last Modified : <001002.1230>
 ;
 ;  Description   : Compile, grep and macro to wrap the diff utility.
 ;
@@ -277,11 +277,11 @@ define-macro reread-file
         !bell
         !abort
     !endif
-    0xce push-position
+    0xce set-position "\x81"
     ; are we at the end of the buffer?
     set-variable #l7 &seq @wc ""
     read-file $buffer-fname @mna
-    pop-position
+    !force goto-position "\x81"
     !if #l7
         end-of-buffer
     !endif

@@ -10,7 +10,7 @@
  *
  *       Author:                 Danial Lawrence
  *
- *       Creation Date:          14/05/86 12:37          <000814.0931>
+ *       Creation Date:          14/05/86 12:37          <001002.1051>
  *
  *       Modification date:      %G% : %U%
  *
@@ -39,7 +39,7 @@
 
 #define __EXECC                 /* Define program name */
 
-#define KEY_TEST 0
+#define KEY_TEST 1
 
 /*---   Include files */
 
@@ -389,7 +389,7 @@ fnctest(void)
     register KEYTAB *ktp;                       /* Keyboard character array */
     register meCMD *cmd ;                       /* Names pointer */
     uint32 key ;
-    char outseq[12];
+    uint8 outseq[12];
     int count=0, ii;                            /* Counter of errors */
     
     /* test the command hash table */
@@ -411,7 +411,7 @@ fnctest(void)
     cmd = cmdHead ;
     while(cmd->anext != NULL)
     {
-        if(strcmp(cmd->anext->name,cmd->name) < 0)
+        if(meStrcmp(cmd->anext->name,cmd->name) < 0)
         {
             count++;
             printf("cmdHead Error: [%s] should be before [%s]\n", 

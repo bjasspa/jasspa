@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Jun 13 18:01:56 1998
-;  Last Modified : <000730.1718>
+;  Last Modified : <001002.1231>
 ;
 ;  Description     Defines mouse opened dialogs
 ;
@@ -135,8 +135,7 @@ define-macro mouse-osd-multi
         ; Text window - must goto the original position or cut etc wont work - must dup the position
         0 show-region
         set-variable #l2 $result
-        -1 push-position
-        pop-position
+        goto-position "\x82"
         !if &and &gre $mouse-x 20 &les &sub $screen-width $mouse-x 33 
             osd 27 7  "Mdw" "Sort &Lines"      28
             osd 27 9  "Mdw" "H&ilight Line"    29
@@ -168,9 +167,8 @@ define-macro mouse-osd-multi
         ; menu line
         0 osd
     !endif
-    ; goto the original window - must dup the position
-    -1 push-position
-    1 pop-position
+    ; goto the original window
+    1 goto-position "\x82"
 !emacro
 ;
 ; Menu 29 - Hilight Line
@@ -190,9 +188,8 @@ osd 29 9  ""             "&Remove " f          line-scheme
 osd 29 10 ""             "Remove &All" f       line-scheme-all
 osd 29 11 ""             "&Search " f          line-scheme-search
 define-macro mouse-osd
-    ; goto the original position - must dup the position
-    -1 push-position
-    pop-position
+    ; goto the original position
+    goto-position "\x82"
     0 osd
 !emacro
 

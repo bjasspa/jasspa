@@ -12,7 +12,7 @@
 *
 *	Creation Date:		17/10/91
 *
-*	Modification date:	%G%		<000731.0826>
+*	Modification date:	%G%		<001002.1013>
 *
 *	Current rev:		%I%
 *
@@ -125,7 +125,8 @@ DEFFUNC ("global-mode",			0x00, globalMode,	CK_GLOBMOD, __meFunc_GLOBMOD, &__meF
 DEFFUNC ("global-unbind-key",		0x00, globalUnbind,	CK_UBNDKEY, __meFunc_UBNDKEY, &__meFunc_GOAMRK, 0)
 DEFFUNC	("goto-alpha-mark",		0x42, gotoAlphaMark,	CK_GOAMRK, __meFunc_GOAMRK, &__meFunc_GOLIN, &__meFunc_REDHWND)
 DEFFUNC ("goto-line",			0x42, gotoLine,		CK_GOLIN, __meFunc_GOLIN, &__meFunc_GOFNC, 0)
-DEFFUNC ("goto-matching-fence",		0x48, gotoFence,	CK_GOFNC, __meFunc_GOFNC, &__meFunc_ENGHORZWIN, 0)
+DEFFUNC ("goto-matching-fence",		0x48, gotoFence,	CK_GOFNC, __meFunc_GOFNC, &__meFunc_GOTOPOS, 0)
+DEFFUNC ("goto-position",		0x42, gotoPosition,	CK_GOTOPOS, __meFunc_GOTOPOS, &__meFunc_ENGHORZWIN, 0)
 DEFFUNC ("grow-window-horizontally",	0x00, growWindHorz,	CK_ENGHORZWIN, __meFunc_ENGHORZWIN, &__meFunc_ENGWIN, 0)
 DEFFUNC ("grow-window-vertically",	0x00, growWindVert,	CK_ENGWIN, __meFunc_ENGWIN, &__meFunc_HELP, 0)
 DEFFUNC ("help",			0x42, help,		CK_HELP, __meFunc_HELP, &__meFunc_HELPCOM, 0)
@@ -175,16 +176,14 @@ DEFFUNC ("next-window-find-file",	0x42, nextWndFindFile,	CK_SFNDFIL, __meFunc_SF
 DEFFUNC ("osd",                         0x00, osd,              CK_OSD, __meFunc_OSD, &__meFunc_OSDBIND, 0)
 DEFFUNC ("osd-bind-key",		0x00, osdBind,		CK_OSDBIND, __meFunc_OSDBIND, &__meFunc_OSDUNBD, &__meFunc_GLOBABREV)
 DEFFUNC ("osd-unbind-key",		0x00, osdUnbind,	CK_OSDUNBD, __meFunc_OSDUNBD, &__meFunc_PIPCMD, 0)
-DEFFUNC ("pipe-shell-command",		0x42, pipeCommand,	CK_PIPCMD, __meFunc_PIPCMD, &__meFunc_POPPOS, 0)
-DEFFUNC ("pop-position",		0x42, popPosition,	CK_POPPOS, __meFunc_POPPOS, &__meFunc_PPPWND, 0)
+DEFFUNC ("pipe-shell-command",		0x42, pipeCommand,	CK_PIPCMD, __meFunc_PIPCMD, &__meFunc_PPPWND, 0)
 DEFFUNC ("popup-window",		0x42, popupWindow,	CK_PPPWND, __meFunc_PPPWND, &__meFunc_PREFIX, 0)
 DEFFUNC ("prefix",			0x00, prefixFunc,	CK_PREFIX, __meFunc_PREFIX, &__meFunc_BAKWND, 0)
 DEFFUNC ("previous-window",		0x42, prevwind,		CK_BAKWND, __meFunc_BAKWND, &__meFunc_PRTBUF, &__meFunc_PRTSCHM)
 DEFFUNC ("print-buffer",		0x42, printBuffer,	CK_PRTBUF, __meFunc_PRTBUF, &__meFunc_PRTCOL, 0)
 DEFFUNC ("print-color",			0x42, printColor,	CK_PRTCOL, __meFunc_PRTCOL, &__meFunc_PRTRGN, 0)
 DEFFUNC ("print-region",		0x42, printRegion,	CK_PRTRGN, __meFunc_PRTRGN, &__meFunc_PRTSCHM, 0)
-DEFFUNC ("print-scheme",		0x42, printScheme,	CK_PRTSCHM, __meFunc_PRTSCHM, &__meFunc_PUSHPOS, 0)
-DEFFUNC ("push-position",		0x42, pushPosition,	CK_PUSHPOS, __meFunc_PUSHPOS, &__meFunc_QREP, 0)
+DEFFUNC ("print-scheme",		0x42, printScheme,	CK_PRTSCHM, __meFunc_PRTSCHM, &__meFunc_QREP, 0)
 DEFFUNC ("query-replace-string",	0x42, queryReplaceStr,	CK_QREP, __meFunc_QREP, &__meFunc_QEXIT, 0)
 DEFFUNC ("quick-exit",			0x00, quickExit,	CK_QEXIT, __meFunc_QEXIT, &__meFunc_QUOTE, 0)
 DEFFUNC ("quote-char",			0x04, quote,		CK_QUOTE, __meFunc_QUOTE, &__meFunc_RCSCOCI, 0)
@@ -218,7 +217,8 @@ DEFFUNC	("set-alpha-mark",		0x42, setAlphaMark,	CK_SETAMRK, __meFunc_SETAMRK, &_
 DEFFUNC ("set-char-mask",		0x00, setCharMask,	CK_STCHRMK, __meFunc_STCHRMK, &__meFunc_CTOMOUSE, 0)
 DEFFUNC	("set-cursor-to-mouse",		0xc8, setCursorToMouse,	CK_CTOMOUSE, __meFunc_CTOMOUSE, &__meFunc_SETCRY, &__meFunc_HELPVAR)
 DEFFUNC ("set-encryption-key",		0x42, setCryptKey,	CK_SETCRY, __meFunc_SETCRY, &__meFunc_SETMRK, 0)
-DEFFUNC ("set-mark",			0x19, setMark,		CK_SETMRK, __meFunc_SETMRK, &__meFunc_SETREGY, &__meFunc_RECENT)
+DEFFUNC ("set-mark",			0x19, setMark,		CK_SETMRK, __meFunc_SETMRK, &__meFunc_SETPOS, &__meFunc_RECENT)
+DEFFUNC ("set-position",		0x42, setPosition,	CK_SETPOS, __meFunc_SETPOS, &__meFunc_SETREGY, 0)
 DEFFUNC ("set-registry",		0x42, setRegistry,	CK_SETREGY, __meFunc_SETREGY, &__meFunc_SSWM, 0)
 DEFFUNC ("set-scroll-with-mouse",       0xc8, setScrollWithMouse,  CK_SSWM, __meFunc_SSWM, &__meFunc_SETVAR, &__meFunc_INDENT)
 DEFFUNC ("set-variable",		0x00, setVariable,	CK_SETVAR, __meFunc_SETVAR, &__meFunc_SPWCLI, 0)

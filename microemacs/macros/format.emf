@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips & Jon Green
 ;  Created       : Sat Jul 18 15:11:54 1998
-;  Last Modified : <000807.1341>
+;  Last Modified : <001002.1231>
 ;
 ;  Description   : Contains buffer formating commands, namely:
 ;                  clean sort-lines-ignore-case tabs-to-spaces restyle-region
@@ -24,7 +24,7 @@ define-macro clean
     ;
     ; Prepare to clean up file.
     ; Remember position & magic mode
-    push-position
+    set-position "\x81"
     set-variable #l1 &not &bmod magic
     !if #l1
         1 buffer-mode "magic"
@@ -58,7 +58,7 @@ define-macro clean
     ;
     ; Clean up - restore buffer modes etc.
     ; Move back to starting position & restore original magic mode
-    !force pop-position
+    !force goto-position "\x81"
     !if #l1
         -1 buffer-mode "magic"
     !endif

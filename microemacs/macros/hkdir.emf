@@ -4,7 +4,7 @@
 ;       Author          : Jon Green
 ;       Created         : 19th February 1997
 ;
-;       Last Modified   : <000724.0008>
+;       Last Modified   : <001002.1234>
 ;
 ;       Comment         :
 !if &not &exist .osd.dir-help
@@ -57,13 +57,13 @@
 ; Creates 2 windows side by side.
 ;
 0 define-macro file-browser-close
-    1 push-position
+    1 set-position "\x81"
     !force 0 popup-window "*ftp-console*"
     !if $status
         next-window
         !if &seq $buffer-bname "*files*"
             next-window
-            !if &seq &lef $buffer-fname 6 "ftp://"
+            !if &or &seq &lef $buffer-fname 6 "ftp://" &seq $buffer-bname "*ftp*"
                 delete-other-windows
                 -1 find-buffer $buffer-bname
                 -1 find-buffer "*ftp-console*"
@@ -83,7 +83,7 @@
         !endif
     !endif
     !force -1 find-buffer "*files*"
-    pop-position
+    goto-position "\x81"
 !emacro
 ;
 ; file-browser-twin
@@ -126,8 +126,8 @@
 define-macro file-browser
     ; Close down file-browser if it is showing and the *directory* and *files*
     ; windows are side by side.
-    1 push-position                 ; Save the window position
-    !force 1 next-window            ; Goto the top window.
+    1 set-position "\x81"            ; Save the window position
+    !force 1 next-window             ; Goto the top window.
     set-variable #l0 TRUE            ; Assume a true status
     !repeat
         !if &seq $buffer-bname "*directory*"
@@ -142,7 +142,6 @@ define-macro file-browser
             ; and window height are the same then close down file-browser
             !if &and &and &seq $buffer-bname "*files*" &equ $window-mode-line #l0 &equ $window-depth #l1
                 file-browser-close
-                0 pop-position
                 !return
             !endif
         !else
@@ -153,7 +152,7 @@ define-macro file-browser
     !until &not #l0
 *done-search
     ; Restore window position
-    pop-position
+    goto-position "\x81"
     ; file-browser is not showing. Bring up Explorer.
     !force 0 popup-window "*directory*"
     !if $status
@@ -366,6 +365,15 @@ define-macro file-browser
     set-variable .find-file.flags &band .find-file.flags 0x01
 !emacro
 
+0 define-macro files-tag-open
+    files-tag-list
+    files-tag-remove
+    set-variable .find-file.flags &bor 6 &band .find-file.flags 0x01
+    set-variable #l0 &add .find-file.file-count 1
+    !while &gre &pdec #l0 1 1
+        find-file &cat .find-file.file-dir &ind &cat ".find-file.file" #l0
+    !done
+!emacro
 0 define-macro files-tag-cut
     0 files-tag-list "Cut Files"
     set-variable .find-file.flags &bor 6 &band .find-file.flags 0x01
@@ -471,6 +479,14 @@ define-macro file-browser
     !endif
 !emacro
 
+0 define-macro files-new-folder
+    set-variable #l0 ""
+    osd-entry "New Folder" "Folder Name : " #l0 20
+    0x10 copy-file #l0
+    !if &band .find-file.flags 1
+        files-refresh
+    !endif
+!emacro
 0 define-macro files-refresh
     set-variable #l0 $buffer-bname
     read-file $buffer-fname
@@ -484,17 +500,20 @@ define-macro file-browser
 osd .osd.file-menu 0   b
 osd .osd.file-menu 40  "-"
 osd .osd.file-menu 60  "-"
+osd .osd.file-menu 85  ""  "&New Folder"        f files-new-folder
 osd .osd.file-menu 90  ""  "&Refresh"           f files-refresh
 osd .osd.file-menu 100 ""  "&Auto-Refresh: on " f files-auto-refresh
 
 0 define-macro files-mouse-drop-3
     !if :tag-count
+        osd .osd.file-menu  5 ""  "&Open"         f files-tag-open
         osd .osd.file-menu 10 ""  "Cu&t"          f files-tag-cut
         osd .osd.file-menu 20 ""  "&Copy"         f files-tag-copy
         osd .osd.file-menu 30 ""  "&Delete"       f files-tag-delete
         osd .osd.file-menu 70 ""  "E&xecute"      f files-tag-execute
         osd .osd.file-menu 80 ""  "De&select All" f files-tag-remove
     !else
+        osd .osd.file-menu  5 ""  "Open"
         osd .osd.file-menu 10 ""  "Cut"
         osd .osd.file-menu 20 ""  "Copy"
         osd .osd.file-menu 30 ""  "Delete"
@@ -587,7 +606,7 @@ osd .osd.file-menu 100 ""  "&Auto-Refresh: on " f files-auto-refresh
     !endif
     ; Render the *files* information.
     set-variable #l0 $buffer-fname
-    1 push-position
+    1 set-position "\x81"
     !force 0 popup-window "*files*"
     !if $status
         !if &not &seq $buffer-fname #l0
@@ -597,7 +616,7 @@ osd .osd.file-menu 100 ""  "&Auto-Refresh: on " f files-auto-refresh
             buffer-bind-key dir-swap-buffers "tab"
         !endif
     !endif
-    pop-position
+    goto-position "\x81"
 !emacro
 
 define-macro dir-swap-buffers
@@ -642,7 +661,7 @@ define-macro dir-swap-buffers
     ; Set up the echo in the *files* directory.
     buffer-bind-key file-browser-close "delete"
     set-variable #l0 $buffer-fname
-    1 push-position
+    1 set-position "\x81"
     !force 0 popup-window "*files*"
     !if $status
         !if &not &seq $buffer-fname #l0
@@ -652,7 +671,7 @@ define-macro dir-swap-buffers
             buffer-bind-key file-browser-close "delete"
         !endif
     !endif
-    pop-position
+    goto-position "\x81"
 !emacro
 
 0 define-macro dir-mouse-drop-3

@@ -10,7 +10,7 @@
 *
 *       Author:                 Danial Lawrence
 *
-*       Creation Date:          10/05/91 08:27          <000802.1147>
+*       Creation Date:          10/05/91 08:27          <001002.1210>
 *
 *       Modification date:      %G% : %U%
 *
@@ -2064,37 +2064,37 @@ width_error:
 }
     
 int
-pushPosition(int f, int n)		/* save ptr to current window */
+setPosition(int f, int n)		/* save ptr to current window */
 {
     register mePOS *pos ;
+    uint16 mark ;                       /* Position alpha mark name*/
+    int cc ;
     
-    if(n == -1)
+    if((cc = mlCharReply((uint8 *)"Set position: ",mlCR_QUIT_ON_USER,NULL,NULL)) == -2)
+        cc = mlCharReply((uint8 *)"Set position: ",mlCR_ALPHANUM_CHAR,NULL,NULL) ;
+    
+    if(cc < 0)
+        return ctrlg(FALSE,1) ;
+    
+    pos = mePosition ;
+    mark = meAM_FRSTPOS ;
+    while((pos != NULL) && (cc != (int) pos->name))
     {
-        /* duplicate the previous */
-        if(mePosition == NULL)
-            return mlwrite(MWCLEXEC|MWABORT,(uint8 *)"[Position stack empty]");
-        if((pos = meMalloc(sizeof(mePOS))) == NULL)
-            return ABORT ;
-        memcpy(pos,mePosition,sizeof(mePOS)) ;
-        pos->prev = mePosition ;
-        mePosition = pos ;
-        if(pos->flags & mePOS_LINEMRK)
-            /* a bit horrible, if the previous used an alpha mark
-             * then this can use the same one, but we increment
-             * mePositionMark to allocate another one so we don't
-             * 'free' the shared one first time around */
-            mePositionMark++ ;
-        return TRUE ;
+        pos = pos->next ;
+        mark++ ;
     }
-    
-    pos = meMalloc(sizeof(mePOS)) ;
     if(pos == NULL)
-        return ABORT ;
-    pos->prev = mePosition ;
-    mePosition = pos ;
+    {
+        pos = meMalloc(sizeof(mePOS)) ;
+        if(pos == NULL)
+            return ABORT ;
+        pos->next = mePosition ;
+        mePosition = pos ;
+        pos->name = cc ;
+        pos->line_amark = mark ;
+    }
     if(f == FALSE)
         n = mePOS_DEFAULT ;
-    
     pos->flags = n ;
     
     if(n & mePOS_WINDOW)
@@ -2103,10 +2103,9 @@ pushPosition(int f, int n)		/* save ptr to current window */
         pos->buffer = curbp ;
     if(n & mePOS_LINEMRK)
     {
-        pos->line_amark = mePositionMark++ ;
         if(alphaMarkSet(curbp,pos->line_amark,curwp->w_dotp,0,1) != TRUE)
         {
-            popPosition(1,0) ;
+            pos->flags = 0 ;
             return ABORT ;
         }
     }
@@ -2125,24 +2124,52 @@ pushPosition(int f, int n)		/* save ptr to current window */
 }
 
 int
-popPosition(int f, int n)		/* restore the saved screen */
+gotoPosition(int f, int n)		/* restore the saved screen */
 {
-    register mePOS *pos=mePosition ;
+    register mePOS *pos ;
     int ret=TRUE, sflg ;
+    int cc ;
     
     if(n == -1)
     {
         while(mePosition != NULL)
         {
             pos = mePosition ;
-            mePosition = pos->prev ;
+            mePosition = pos->next ;
             free(pos) ;
         }
-        mePositionMark = meAM_FRSTPOS ;
         return TRUE ;
     }
+    
+    if((cc = mlCharReply((uint8 *)"Goto position: ",mlCR_QUIT_ON_USER,NULL,NULL)) == -2)
+        cc = mlCharReply((uint8 *)"Goto position: ",mlCR_ALPHANUM_CHAR,NULL,NULL) ;
+    if(cc < 0)
+        return ctrlg(FALSE,1) ;
+    
+    pos = mePosition ;
+    while((pos != NULL) && (cc != (int) pos->name))
+        pos = pos->next ;
+    
     if(pos == NULL)
-        return mlwrite(MWCLEXEC|MWABORT,(uint8 *)"[Position stack empty]");
+    {
+        uint8    allpos[256]; 	/* record of the positions	*/
+        int      ii = 0;
+        
+        pos = mePosition ;
+        while(pos != NULL)
+        {
+            if(pos->name < 128)
+            {
+                allpos[ii++] = ' ' ;
+                allpos[ii++] = (uint8) pos->name;
+            }
+            pos = pos->next;
+        }
+        if(ii == 0)
+            return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[No positions set]");
+        allpos[ii] = '\0';
+        return mlwrite(MWABORT|MWCLEXEC,(uint8 *)"[Valid positions:%s]", allpos);
+    }
     
     if(f == FALSE)
         n = pos->flags ;
@@ -2242,12 +2269,6 @@ popPosition(int f, int n)		/* restore the saved screen */
     if(sflg)
         updCursor(curwp) ;
     
-    /* remove the head of the stack */
-    mePosition = pos->prev ;
-    if(pos->flags & mePOS_LINEMRK)
-        mePositionMark-- ;
-    free(pos) ;
-
     if(!ret)
         return mlwrite(MWCLEXEC|MWABORT,(uint8 *)"[Failed to restore position]");
     return TRUE ;

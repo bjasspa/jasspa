@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Tue Sep 19 10:10:01 2000
-;  Last Modified : <000919.1013>
+;  Last Modified : <001002.1231>
 ;
 ;  Description   : Generic tags generator
 ;
@@ -41,7 +41,7 @@
 !emacro
 
 0 define-macro generate-tags-file-exec
-    push-position
+    set-position "\x81"
     find-buffer "*generate-tags-file tmp*"
     set-variable $buffer-fname .generate-tags-file.path
     !if &band $system 0x080
@@ -50,10 +50,10 @@
         !force exec-me &spr "\"@%s\" \"-v%%%%tag-option=%s\"" .generate-tags-file.type .generate-tags-file.flags
     !endif
     !force delete-buffer "*generate-tags-file tmp*"
-    pop-position
+    goto-position "\x81"
 !emacro
 
-osd .osd.gtf 0   "batcdHs" 10 3 46 0 -1 -1 11 .scheme.osd-title "Generate Tags File"
+osd .osd.gtf 0   "batcdHs" 10 3 46 0 -1 -1 90 .scheme.osd-title "Generate Tags File"
 osd .osd.gtf 10  ""
 osd .osd.gtf 20  "Shf"  "  Tags &Flags : " 4
 osd .osd.gtf 30  "ExfH" .scheme.osd-entry "###############" 1 generate-tags-file-entry
