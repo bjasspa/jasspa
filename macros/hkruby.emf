@@ -41,6 +41,8 @@ set-variable .fhook-ruby.item-list-r3 "Def \ecB\\1\ecA"
     ; Comments
     hilight .hilight.ruby 2 "^#!/"                 .scheme.header
     hilight .hilight.ruby 2 "#"                    .scheme.comment
+    ;
+    hilight .hilight.ruby   18 "#\\s *[tT][oO][dD][oO]" .scheme.error
     ; String literals
     hilight .hilight.ruby    4 "\"" "\"" "\\"      .scheme.string
     hilight .hilight.ruby    4 "'" "'" "\\"        .scheme.string
