@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jun 17 22:26:42 1999
 .\"
-.Id $Id: m2nar006.2,v 2.6 2004-02-24 18:51:56 jon Exp $
+.Id $Id: m2nar006.2,v 2.7 2005-03-06 08:47:12 jon Exp $
 .Im MicroEmacs search
 .so me.tni
 .TH "RegularExpressions" 2
@@ -115,9 +115,8 @@ starting  and  ending   characters  with  a  '\fC-\fR'   between  them.  Thus,
 freely with individual characters, as in \'\fC[a-z$%.]\fR',  which matches any
 lower-case ASCII letter or '\fC$\fR', '\fC%\fR' or period.
 .IP
-Note  that the  usual  regex  special  characters  are not  special  inside a
-character set. A completely  different set of special characters exists inside
-character sets: '\fC]\fR', '\fC-\fR' and '\fC^\fR'.
+The word and digit special  characters  (i.e. \fC\\w\fR,  \fC\\l\fR, etc.) are
+recognized within the character set.
 .IP
 To  include  a  '\fC]\fR'  in a  character  set, you  must  make it the  first
 character.  For  example,  '\fC[]a]\fR'  matches  '\fC]\fR' or  '\fCa\fR'.  To
@@ -290,6 +289,22 @@ matches the empty string, but only at the end of a word.  '\fC\\>\fR'  matches
 at the end of the  buffer  only if the  contents  end with a  word-constituent
 character.
 .TP
+\fC\\d\fR
+.\"
+matches any digit character.
+.TP
+\fC\\D\fR
+.\"
+matches any non-digit character.
+.TP
+\fC\\x\fR
+.\"
+matches any hexadecimal digit character.
+.TP
+\fC\\X\fR
+.\"
+matches any non-hexadecimal character.
+.TP
 \fC\\w\fR
 .\"
 matches any  word-constituent  character.  The syntax table  determines  which
@@ -299,16 +314,31 @@ characters these are.
 .\"
 matches any character that is not a word-constituent.
 .TP
-\fC\\sC\fR
+\fC\\l\fR
 .\"
-matches any  character  whose  syntax is \fCC\fR.  Here \fCC\fR is a character
-that represents a syntax code: thus, '\fCw\fR' for word constituent, '\fC-\fR'
-for whitespace,  '\fC(\fR' for open parenthesis, etc. Represent a character of
-whitespace (which can be a newline) by either '\fC-\fR' or a space character.
+matches any lowercase word-constituent  character. The syntax table determines
+which characters these are.
 .TP
-\fC\\SC\fR
+\fC\\L\fR
 .\"
-matches any character whose syntax is not \fCC\fR.
+matches any character that is not a lowercase word-constituent.
+.TP
+\fC\\u\fR
+.\"
+matches any uppercase word-constituent  character. The syntax table determines
+which characters these are.
+.TP
+\fC\\U\fR
+.\"
+matches any character that is not a uppercase word-constituent.
+.TP
+\fC\\s\fR
+.\"
+matches any white-space character, including new-line.
+.TP
+\fC\\S\fR
+.\"
+matches any character that is not white-space.
 .TP
 \fC\\{N,M\\}\fR
 .\"
@@ -374,6 +404,24 @@ performs the inverse transformation.
 .IP
 \fB\\0\fR is a special case, this  represents the whole of the search pattern,
 it is equivalent to \fB\\&\fR.
+.TP
+\fB\\c\|\fID\fR
+.\"
+In the  replacement  pattern  capitalizes the string, where \fID\fR is a digit
+\fC0-9\fR  or  \fC&\fR,  stands for  whatever  matched  the Dth  parenthesized
+grouping (\fC\\(..\\)\fR) in search pattern.
+.TP
+\fB\\l\|\fID\fR
+.\"
+In the  replacement  pattern  down-cases  the string, where \fBD\fR is a digit
+\fC0-9\fR  of  \fC&\fR,  stands for  whatever  matched  the Dth  parenthesized
+grouping (\fC\\(..\\)\fR) in search pattern.
+.TP
+\fB\\u\|\fID\fR
+.\"
+In the  replacement  pattern  up-cases  the string,  where  \fBD\fR is a digit
+\fC0-9\fR  or  \fC&\fR,  stands for  whatever  matched  the Dth  parenthesized
+grouping (\fC\\(..\\)\fR) in search pattern.
 .SS "Searching and Case"
 Searching may be either case sensitive or case  insensitive, and is controlled
 by the
@@ -405,6 +453,15 @@ In this case we match any  character  excluding  the closing  character,  this
 guarantees that we always find the shortest string match. A search of our HTML
 line   locates   two   separate    instances   of   the   regular   expression
 \fC<a\ href="www.jasspa.com">\fR and \fC</a>\fR.
+.SH HISTORY
+As of March 2005 then the existing  Emacs search string syntax of "\fC\\s?\fR"
+and  "\fC\\S?\fR"  has been  discarded  in favor of Perl's  simpler  syntax of
+"\fC\\s\fR"  and  "\fC\\S\fR"  for a  whitespace  character  class.  Added new
+character  classes  "\fC\\d\fR" = digits,  "\fC\\D\fR" != digits "\fC\\h\fR" =
+hexdigits  "\fC\\H\fR"  != hexdigits  "\fC\\l\fR" = lowercase  "\fC\\L\fR"  !=
+lowercase  "\fC\\u\fR" = uppercase and  "\fC\\U\fR" != uppercase.  The regular
+expression replacement string characters include "\fC\\c#\fR" "\fC\\l#\fR" and
+"\fC\\u#\fR" to change the case of groups.
 .SH "SEE ALSO"
 .na
 .Ht search-forward 2 ,
