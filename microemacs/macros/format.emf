@@ -373,36 +373,46 @@ define-macro restyle-buffer
     goto-alpha-mark "\x81"
 !emacro
 
-!if &not &exi .osd.indstp
-    set-variable .osd.indstp &pinc .osd.next 1
-!endif
-0 define-macro indent-setup-exec
-    !if &equ @# 3
-        !return &not &bmod "tab"
-    !elif &equ @# 2
-        set-variable $result $buffer-indent-width
-    !elif &equ @# 1
-        set-variable $result $buffer-tab-width
-    !elif &equ @# -1
-        set-variable $buffer-tab-width @ml2 "" $buffer-tab-width
-    !elif &equ @# -2
-        set-variable $buffer-indent-width @ml2 "" $buffer-indent-width
-    !elif &equ @# -3
-        0 buffer-mode "tab"
+;
+; Utilities in indent may be used even if me.emf has not been used to
+; initialise the system (i.e. ehf utils). In this case then we need to load
+; format but not initialise the OSD component. 
+!if &and &exi .scheme.osd-title &exi .scheme.osd-ebtt
+    !if &not &exi .osd.indstp
+        set-variable .osd.indstp &pinc .osd.next 1
     !endif
-!emacro
-osd .osd.indstp  0 "batcdHs" 9 3 30 10 -1 -1 110 .scheme.osd-title "Indentation Setup"
-osd .osd.indstp 10 ""
-osd .osd.indstp 20 "Sfh" "  \HTab Width:    " 30
-osd .osd.indstp 30 "EtRxHf" 30 .scheme.osd-entry "##########" 1 indent-setup-exec
-osd .osd.indstp 40 ""
-osd .osd.indstp 50 "Sfh" "  \HIndent Width: " 60
-osd .osd.indstp 60 "EtRxHf" 60 .scheme.osd-entry "##########" 2 indent-setup-exec
-osd .osd.indstp 70 ""
-osd .osd.indstp 80 "fh" "  "
-osd .osd.indstp 90 "Cptfx" 90 &spr "%s\} \HUse tab characters" .osd.checkbox-chars 3 indent-setup-exec
-osd .osd.indstp 100 ""
-osd .osd.indstp 110 "BtcfHh" 110 .scheme.osd-ebtt " \HOkay "  f void
-define-macro indent-setup
-    .osd.indstp osd
-!emacro
+    0 define-macro indent-setup-exec
+        !if &equ @# 3
+            !return &not &bmod "tab"
+        !elif &equ @# 2
+            set-variable $result $buffer-indent-width
+        !elif &equ @# 1
+            set-variable $result $buffer-tab-width
+        !elif &equ @# -1
+            set-variable $buffer-tab-width @ml2 "" $buffer-tab-width
+        !elif &equ @# -2
+            set-variable $buffer-indent-width @ml2 "" $buffer-indent-width
+        !elif &equ @# -3
+            0 buffer-mode "tab"
+        !endif
+    !emacro
+    osd .osd.indstp  0 "batcdHs" 9 3 30 10 -1 -1 110 .scheme.osd-title "Indentation Setup"
+    osd .osd.indstp 10 ""
+    osd .osd.indstp 20 "Sfh" "  \HTab Width:    " 30
+    osd .osd.indstp 30 "EtRxHf" 30 .scheme.osd-entry "##########" 1 indent-setup-exec
+    osd .osd.indstp 40 ""
+    osd .osd.indstp 50 "Sfh" "  \HIndent Width: " 60
+    osd .osd.indstp 60 "EtRxHf" 60 .scheme.osd-entry "##########" 2 indent-setup-exec
+    osd .osd.indstp 70 ""
+    osd .osd.indstp 80 "fh" "  "
+    osd .osd.indstp 90 "Cptfx" 90 &spr "%s\} \HUse tab characters" .osd.checkbox-chars 3 indent-setup-exec
+    osd .osd.indstp 100 ""
+    osd .osd.indstp 110 "BtcfHh" 110 .scheme.osd-ebtt " \HOkay "  f void
+    define-macro indent-setup
+        .osd.indstp osd
+    !emacro
+!else
+    define-macro indent-setup
+        !abort
+    !emacro
+!endif
