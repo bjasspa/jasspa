@@ -109,6 +109,7 @@ static meUByte *meHilTestNames[meHIL_TEST_NOCLASS]={
 #define meHIL_MODETOKEND 0x080
 
 static meUByte varTable[11] ;
+static meUShort meHilightBranchType ;
 
 void
 freeToken(meHilight *root)
@@ -1915,7 +1916,8 @@ BracketJump:
                 else
                     dstPos = hilCopyLenString(dstPos,s1,len,&hd) ;
                 hd.srcPos += len ;
-                hd.cnode = hd.root ;
+                if(hd.cnode == node)
+                    hd.cnode = hd.root ;
             }
             else if(node->type & HLCONTIN)
             {
@@ -1961,6 +1963,8 @@ BracketJump:
                 {
                     if((hilno = node->ignore) == 0)
                         hilno = vp1->wind->buffer->hilight ;
+                    meHilightBranchType = node->type ;
+                    mode &= ~meHIL_MODETOEOL ;
                     hd.root = hilights[hilno] ;
                     hd.cnode = hd.root;
                 }
@@ -2016,6 +2020,11 @@ hiline_exit:
         hd.blkp->column = dstPos;
     }
     
+    if((vp1[0].hilno != hilno) && (meHilightBranchType & HLSNGLLNBT))
+    {
+        hilno = vp1[0].hilno ;
+        node = NULL ;
+    }
     if((vp1[1].hilno != hilno) || (vp1[1].bracket != node))
     {
         vp1[1].flag |= VFCHNGD ;
@@ -2067,10 +2076,22 @@ hilightLookBack(meWindow *wp)
         for(;;)
         {
             vps[0].line = lp ;
-            if((hilightLine(vps) > 1) && (vps[0].bracket != NULL) &&
-               (vps[0].bracket == vps[1].bracket) &&
-               (vps[0].bracket->type & (HLONELNBT|HLSNGLLNBT)))
-                vps[1].bracket = NULL ;
+            if(hilightLine(vps) > 1)
+            {
+                if((vps[0].bracket != NULL) && (vps[0].bracket == vps[1].bracket) &&
+                   (vps[0].bracket->type & (HLONELNBT|HLSNGLLNBT)))
+                    vps[1].bracket = NULL ;
+                if(vps[1].hilno != hilno)
+                {
+                    if((vps[0].hilno == vps[1].hilno) &&
+                       (meHilightBranchType & (HLONELNBT|HLSNGLLNBT)))
+                    {
+                        vps[1].hilno = hilno ;
+                        vps[1].bracket = NULL ;
+                    }
+                    meHilightBranchType = 0 ;
+                }
+            }
             if(--ii == 0)
                 break ;
             vps[0].hilno = vps[1].hilno ;
