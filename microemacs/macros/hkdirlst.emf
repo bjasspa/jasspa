@@ -718,7 +718,7 @@ define-macro file-browser-swap-buffers
         !if &equ #l0 &lget .fhook-dirlst.sort 1
             set-variable .fhook-dirlst.sort &lset .fhook-dirlst.sort 2 &bxor &lget .fhook-dirlst.sort 2 1
         !else
-            set-variable .fhook-dirlst.sort &spr "|%d|0|" #l0
+            set-variable .fhook-dirlst.sort &spr "|%d|%s|" #l0 &con &sin "Modified" #l1 "1" "0"
         !endif
         dirlst-sort-list
     !else
