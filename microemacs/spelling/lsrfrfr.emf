@@ -1,15 +1,17 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2002 JASSPA (www.jasspa.com)
 ;
-;  Created By    : Steven Phillips
-;  Created       : Wed May 13 15:17:09 1998
-;  Description   : Spell checker rules for Francais
+; Created:     Wed May 13 1998
+; Authors:     Steven Phillips
+; Synopsis:    Spell checker rules for Francais
+; Description:
+;     This file "lsrfrfr.emf" and "lsdmfrfr.edf" are derived from the
+;     French ispell dictionary by Martin Boyer and Hydro-Quebec.
+;     The spell rules and word derivations have been repackaged in
+;     a proprietary format for use with JASSPA's MicroEmacs.
+;     The following copyright applies to these files:-
 ;
-;  Notes
-;
-;  The following copyright apply to the rules and dictionary
-;
-;      IREQ-Francais.dico -- A French dictionary for use with ispell 3.1
-;      
 ;        Copyright (c) 1993, 1994 Martin Boyer and Hydro-Quebec.
 ;      
 ;          This program is free software; you can redistribute it and/or modify
@@ -26,17 +28,11 @@
 ;          along with this program; if not, write to the Free Software
 ;          Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 ;      
-;      
-;      This set of data and program files implements a French dictionary to
-;      be used with the ispell program, version 3.1.04 and following.  The
-;      dictionary contains roughly 50,000 roots, which expand to about
-;      220,000 words.  Since I don't see why a person who doesn't understand
-;      French would need a French spelling checker, the rest of the
-;      description and installation instructions are in French, in the file
-;      "LISEZMOI".
+; Notes:     
+;      The dictionary contains roughly 50,000 roots, which expand to about
+;      220,000 words.
 ;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+; Rules used - list used by spell-edit-word
 set-variable .spell.rules "ABCDLNPQRSTX"
 
 ; reset the spell rules

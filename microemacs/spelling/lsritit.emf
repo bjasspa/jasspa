@@ -1,32 +1,33 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
 ;
-;  Created By    : Steven Phillips
-;  Created       : Thu May 27 09:17:09 1999
-;  Description   : Spell checker rules for Italiano
+; Created:     Mon Dec 13 1999
+; Authors:     Steven Phillips
+; Synopsis:    Spell checker rules for Italiano
+; Description:
+;     This file "lsritit.emf" and "lsdmitit.edf" are derived from the
+;     Italian ispell dictionary (Author unknown). The spell rules and
+;     word derivations have been repackaged in a proprietary format
+;     for use with JASSPA's MicroEmacs.
+;     The following copyright applies to these files:-
 ;
-;  Notes
+;       This table is a first cut at a description of the common affixes found
+;       in the Italian language.  It is definitely not final.  This is the
+;       equivalent of a pre-alpha version.  The dictionary is not complete
+;       either.
 ;
-;  The following copyright apply to the rules and dictionary
+;       Use at your own risk.  In principle, not many wrong spellings will be
+;       accepted, but since it is so preliminary, ispell will complain about
+;       many, many words. We state here the rule: the resulting word follows
+;       the accenting rules. 
 ;
-;	Affix table for Italian
+;       This is V1.0 of the release. It is released under the GNU General
+;       Public License. Copies of that license are available from Free
+;       Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+;       To use both upper- and lower-case affix flags, you must
 ;
-; This table is a first cut at a description of the common affixes found
-; in the Italian language.  It is definitely not final.  This is the
-; equivalent of a pre-alpha version.  The dictionary is not complete
-; either.
-;
-; Use at your own risk.  In principle, not many wrong spellings will be
-; accepted, but since it is so preliminary, ispell will complain about
-; many, many words. We state here the rule: the resulting word follows
-; the accenting rules. 
-;
-; This is V1.0 of the release. It is released under the GNU General
-; Public License. Copies of that license are available from Free
-; Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-; To use both upper- and lower-case affix flags, you must
-;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+; Rules used - list used by spell-edit-word
 set-variable .spell.rules "RBSAEIUFVONM"
 
 ; reset the spell rules

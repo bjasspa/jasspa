@@ -1,17 +1,21 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
 ;
-;  Created By    : Steven Phillips
-;  Created       : Thu May 27 09:17:09 1999
-;  Description   : Spell checker rules for Portuguese
+; Created:     Mon May 31 1999
+; Authors:     Steven Phillips
+; Synopsis:    Spell checker rules for Portuguese
+; Description:
+;     This file "lsrptpt.emf" and "lsdmptpt.edf" are derived from the
+;     Portuguese ispell dictionary by Jose Joao de Almeida. The spell
+;     rules and word derivations have been repackaged in a proprietary
+;     format for use with JASSPA's MicroEmacs.
+;     The following copyright applies to these files:-
 ;
-;  Notes
-;
-;  The following copyright apply to the rules and dictionary
-;
-;      Copyright (C) 1995,96,97,98  Jose Joao de Almeida <jj@di.uminho.pt> 
-;      e Ulisses Pinto
-;        Dep. Informatica, Universidade do Minho
-;          Portugal
+;       Copyright (C) 1995,96,97,98  Jose Joao de Almeida <jj@di.uminho.pt> 
+;       e Ulisses Pinto
+;         Dep. Informatica, Universidade do Minho
+;         Portugal
 ;     
 ;         This program is free software; you can redistribute it and/or modify
 ;         it under the terms of the GNU General Public License as published by
@@ -23,8 +27,7 @@
 ;         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;         GNU General Public License for more details.
 ;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+; Rules used - list used by spell-edit-word
 set-variable .spell.rules "ABCDEFIKMORSUXYZabcdefghijmnpstvwxyz"
 
 ; reset the spell rules

@@ -1,3 +1,18 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2001-2002 JASSPA (www.jasspa.com)
+;
+; Created:     Fri Sep 14 2001
+; Authors:     Steven Phillips
+; Synopsis:    Spell checker rules for Polish
+; Description:
+;     This file "lsrplpl.emf" and "lsdmplpl.edf" are derived from the
+;     Polish ispell dictionary by Piotr Gackiewicz and W³odzimierz Macewicz.
+;     The spell rules and word derivations have been repackaged in
+;     a proprietary format for use with JASSPA's MicroEmacs.
+;
+; Notes:
+;
 ; Ver. 1999.01.29
 ; Autorzy: 
 ;	Piotr Gackiewicz <gacek@ds14.agh.edu.pl>
@@ -130,7 +145,8 @@
 ;            - - - - - - - - - - - - - - - - - - - - - - - -   -
 ;            A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
 ;            - - - -   - - - - - - - - - - - - - - - - - - - - -
-
+;
+; Rules used - list used by spell-edit-word
 set-variable .spell.rules "abcdefghijklmnopqrstuvwxzABCDFGHIJKLMNOPQRSTUVWXYZ"
 
 ; reset the spell rules
