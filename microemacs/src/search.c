@@ -1442,15 +1442,19 @@ searchBuffer(int f, int n)
     int flags, rr ;
     
     if(((rr=meGetString((meUByte *)"Search Flags",0,0,flagsStr,20)) > 0) &&
-       ((rr=readpattern((meUByte *)"Search String",1+lastReplace)) > 0))
+       ((rr=meGetString((meUByte *)"Search String",MLSEARCH,1+lastReplace,srchPat,meBUF_SIZE_MAX)) > 0))
     {
         flags = 0 ;
         if(meStrchr(flagsStr,'b'))
             flags |= ISCANNER_BACKW ;
-        if(meStrchr(flagsStr,'e'))
+        if(meStrchr(flagsStr,'e') ||
+           ((meStrchr(flagsStr,'E') == NULL) &&
+            meModeTest(frameCur->bufferCur->mode,MDEXACT)))
             flags |= ISCANNER_EXACT ;
 #if MEOPT_MAGIC
-        if(meStrchr(flagsStr,'m'))
+        if(meStrchr(flagsStr,'m') ||
+           ((meStrchr(flagsStr,'M') == NULL) &&
+            meModeTest(frameCur->bufferCur->mode,MDMAGIC)))
             flags |= ISCANNER_MAGIC ;
 #endif
         if(n <= 0)
