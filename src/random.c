@@ -142,10 +142,8 @@ meStridif(const meUByte *str1, const meUByte *str2)
     return rr ;
 }
 
-/* 
-** sort the given list of strings out on the nth plus character.
-** Can be used on lines by adding (sizeof(meLine)-1) to the offset.
-*/
+/* sort the given list of strings out on the nth plus character. Can be used
+ * on lines by adding (sizeof(meLine)-1) to the offset. */
 #ifdef _NOQSORT
 void
 sortStrings(int noStr, meUByte **strs, int offset, meIFuncSS cmpFunc)
@@ -363,13 +361,11 @@ getBufferInfo(meInt *numlines, meInt *predlines,
 }
 
 
-/*
- * Display the current position of the cursor, in origin 1 X-Y coordinates,
- * the character that is under the cursor (in hex), and the fraction of the
- * text that is before the cursor. The displayed column is not the current
- * column, but the column that would be used on an infinite width display.
- * Normally this is bound to "C-X =".
- */
+/* buffer-info. Display the current position of the cursor, in origin 1 X-Y
+ * coordinates, the character that is under the cursor (in hex), and the
+ * fraction of the text that is before the cursor. The displayed column is not
+ * the current column, but the column that would be used on an infinite width
+ * display. Normally bound to C-x = */
 int
 bufferInfo(int f, int n)
 {
@@ -455,9 +451,6 @@ getcol(meUByte *ss, int off, int tabWidth)
     return col ;
 }
 
-/*
- * Set current column.
- */
 int
 setccol(int pos)
 {
@@ -524,13 +517,11 @@ setcwcol(int col)
     return ((col) ? meFALSE:meTRUE) ;
 }
 
-/*
- * Twiddle the two characters on either side of dot. If dot is at the end of
- * the line transChars the two characters before it. Return with an error if dot
- * is at the beginning of line; it seems to be a bit pointless to make this
- * work. This fixes up a very common typo with a single stroke. Normally bound
- * to "C-T". This always works within a line, so "WFMAIN" is good enough.
- */
+/* transpose-character. Twiddle the two characters on either side of dot. If
+ * dot is at the end of the line transChars the two characters before it.
+ * Return with an error if dot is at the beginning of line; it seems to be a
+ * bit pointless to make this work. This fixes up a very common typo with a
+ * single stroke. Normally bound to C-t. */
 int
 transChars(int f, int n)
 {
@@ -567,11 +558,9 @@ transChars(int f, int n)
     return (meTRUE);
 }
 
-/*
- * Twiddle the line before with dot nad move down (unless at the end where 
- * there is no advance. If dot is the top the move down 1 to start.
- * Normally bound ^X^T.
- */
+/* transpose-lines. Swap the line before with dot and move down (unless at the
+ * end where there is no advance. If dot is the top the move down 1 to start.
+ * Normally bound C-x C-t. */
 int
 transLines(int f, int n)
 {
@@ -675,11 +664,10 @@ quoteKeyToChar(meUShort cc)
 }
 
 
-/*
- * Quote the next character, and insert it into the buffer. All the characters
- * are taken literally, with the exception of the newline, which always has
- * its line splitting meaning. The character is always read, even if it is
- * inserted 0 times, for regularity. Bound to "C-Q"
+/* quote-char. Quote the next character, and insert it into the buffer. All
+ * the characters are taken literally, with the exception of the C-j,
+ * which always has its line splitting meaning. The character is always read,
+ * even if it is inserted 0 times. Normally bound to C-q
  */
 int
 quote(int f, int n)
@@ -714,12 +702,7 @@ quote(int f, int n)
 }
 
 
-/*
- * Set tab size if given non-default argument (n <> 1).  Otherwise, insert a
- * tab into file.  If given argument, n, of zero, change to true tabs.
- * If n > 1, simulate tab stop every n-characters using spaces. This has to be
- * done in this slightly funny way because the tab (in ASCII) has been turned
- * into "C-I" (in 10 bit code) already. Bound to "C-I".
+/* tab. Insert n tabs or pseudo tabs. Normally bound to tab.
  */
 int
 meTab(int f, int n)
@@ -775,13 +758,9 @@ meTab(int f, int n)
     return ii ;
 }
 
-/*
- * Delete back a tab-stop. If the previous character was a <TAB> then delete.
- * If the pseudo tabs are in operation then delete spaces to the next tab stop
- * position. 
- * backtab is bound to 'ESC-I'
- */
-
+/* backward-delete-tab. If the previous character was a <TAB> then delete. If
+ * the pseudo tabs are in operation then delete spaces to the next tab stop
+ * position. Normally bound to S-tab */
 int
 meBacktab(int f, int n)
 {
@@ -952,10 +931,8 @@ meLineSetIndent(int curInd, int newInd, int undo)
     return meTRUE ;
 }
 
-/*
- * Insert a newline. Bound to "C-M". If we are in CMODE, do automatic
- * indentation as specified.
- */
+/* newline. If we are in CMODE or have an indent rule, do automatic
+ * indentation as specified. Normally bound to C-m */
 int
 meNewline(int f, int n)
 {
@@ -1021,14 +998,11 @@ meNewline(int f, int n)
     return meTRUE ;
 }
 
-/*
- * Delete blank lines around dot. What this command does depends if dot is
- * sitting on a blank line. If dot is sitting on a blank line, this command
- * deletes all the blank lines above and below the current line. If it is
- * sitting on a non blank line then it deletes all of the blank lines after
- * the line. Normally this command is bound to "C-X C-O". Any argument is
- * ignored.
- */
+/* delete-blank-lines. What this command does depends if dot is sitting on a
+ * blank line. If dot is sitting on a blank line, this command deletes all the
+ * blank lines above and below the current line. If it is sitting on a non
+ * blank line then it deletes all of the blank lines after the line. Normally
+ * this command is bound to C-x C-o. */
 int
 windowDeleteBlankLines(int f, int n)
 {
@@ -1057,12 +1031,10 @@ windowDeleteBlankLines(int f, int n)
 }
 
 
-/*
- * Delete forward. This is real easy, because the basic delete routine does
- * all of the work. Watches for negative arguments, and does the right thing.
- * If any argument is present, it kills rather than deletes, to prevent loss
- * of text if typed with a big argument. Normally bound to "C-D".
- */
+/* forward-delete-char. This is real easy, because the basic delete routine
+ * does all of the work. Watches for negative arguments, and does the right
+ * thing. If any argument is present, it kills rather than deletes, to prevent
+ * loss of text if typed with a big argument. Normally bound to C-d. */
 int
 forwDelChar(int f, int n)
 {
@@ -1089,9 +1061,7 @@ forwDelChar(int f, int n)
     return ldelete(n,keep) ;
 }
 
-/*
- * Delete backwards. Normally bound to "C-H".
- */
+/* backward-delete-char. Normally bound to C-h */
 int
 backDelChar(int f, int n)
 {
@@ -1099,14 +1069,7 @@ backDelChar(int f, int n)
 }
 
 
-/*
- * Kill text. If called without an argument, it kills from dot to the end of
- * the line, unless it is at the end of the line, when it kills the newline.
- * If called with an argument of 0, it kills from the start of the line to dot.
- * If called with a positive argument, it kills from dot forward over that
- * number of newlines. If called with a negative argument it kills backwards
- * that number of newlines. Normally bound to "C-K".
- */
+/* kill-line. Kill or delete n lines. Normally bound to C-k */
 int
 killLine(int f, int n)
 {
@@ -1149,12 +1112,7 @@ killLine(int f, int n)
 }
 
 
-
-/* ARGSUSED */
-
-/*	This function simply clears the message line,
-   mainly for macro usage			*/
-
+/* ml-clear. This function simply clears the message line, mainly for macro usage */
 int
 mlClear(int f, int n)
 {
@@ -1162,8 +1120,7 @@ mlClear(int f, int n)
     return(meTRUE);
 }
 
-/*	This function writes a string on the message line
-   mainly for macro usage			*/
+/* ml-write. This function writes a string on the message line mainly for macro usage */
 int
 mlWrite(int f, int n)
 {
@@ -1516,12 +1473,6 @@ hash_skip:
     }
 }
 
-/* finds the matching given fence ch.
-** changes the current position to it and returns true. 
-** if fails then leaves the position in an undefined place and returns meFALSE
-*/
-
-/* ch - fence type to find is " or ', where a \" must be ignored */
 static int
 findQuoteFence(meUByte qtype, meUByte forwFlag)
 {
@@ -1805,7 +1756,8 @@ findfence(meUByte ch, meUByte forwFlag)
 }
 
 
-/* move cursor to a matching fence */
+/* goto-matching-fence. move cursor to a matching fence. Normally bound to
+ * esc C-i */
 int
 gotoFence(int f, int n)
 {
@@ -2227,10 +2179,7 @@ find_bracket_fence:
 }
 
 
-/*
-** do C indent, returns -ve if failed (god knows how)
-** the indent on success.
-*/
+/* do C indent, returns -ve if failed (god knows how) the indent on success. */
 int
 doCindent(int *inComment)
 {
@@ -2375,7 +2324,7 @@ use_contcomm:
         frameCur->windowCur->dotOffset = 0 ;
         if (setccol(curInd))             /* Move to position on prev line */
         {
-            /* Checkout the character. Note that we chack the previous
+            /* Checkout the character. Note that we check the previous
              * character to ensure that this is not some sort of block
              * comment which tend to mess things up. */
             if (((frameCur->windowCur->dotOffset == 0) ||
@@ -2436,9 +2385,9 @@ use_contcomm:
     return meLineSetIndent(curOff,ind,1) ;
 }
 
+/* insert a newline and indentation for C */
 int
 cinsert(void)
-/* insert a newline and indentation for C */
 {
     int inComment, doto ;
     meUByte *str ;
@@ -2692,9 +2641,7 @@ gotoAlphaMark(int f, int n)
 
 
 #ifdef _SINGLE_CASE
-/* make string lower case
-** What can I say - its simple.
-*/
+/* make string lower case */
 void
 makestrlow(meUByte *str)
 {
@@ -2729,8 +2676,8 @@ insFileName(int f, int n)
 }
 
 #if MEOPT_EXTENDED
-/* cmpBuffers; Compare buffers against each other. In no argument is specified
- * then perform a white space insensitive comparison */
+/* compare-windows. Compare buffers against each other. In no argument is
+ * specified then perform a white space insensitive comparison */
 int
 cmpBuffers(int f, int n)
 {

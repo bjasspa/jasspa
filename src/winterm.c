@@ -5369,6 +5369,9 @@ meSetupPathsAndUser(char *progname)
 {
     char *ss, *appData, buff[meBUF_SIZE_MAX], appDataBuff[meBUF_SIZE_MAX] ;
     int ii, ll, gotUserPath ;
+#if (defined CSIDL_APPDATA)
+    LPITEMIDLIST idList ;
+#endif
     
     curdir = gwd(0) ;
     if(curdir == NULL)
@@ -5392,8 +5395,18 @@ meSetupPathsAndUser(char *progname)
     /* Get a pointer to an item ID list that represents the path of a
      * special folder */
     appDataBuff[0] = '\0' ;
-    if((SHGetSpecialFolderPath(NULL,appDataBuff,CSIDL_APPDATA,FALSE) != NOERROR) &&
-       (appDataBuff[0] != '\0'))
+    if(SUCCEEDED(SHGetSpecialFolderLocation(NULL,CSIDL_APPDATA,&idList)) && (idList != NULL))
+    {
+        IMalloc *im ;
+        SHGetPathFromIDList(idList, appDataBuff);
+        if(SUCCEEDED(SHGetMalloc(&im)) && (im != NULL))
+        {
+            im->lpVtbl->Free(im,idList) ;
+            im->lpVtbl->Release(im);
+        }
+    }
+        
+    if(appDataBuff[0] != '\0')
         appData = appDataBuff ;
     else
 #endif    
@@ -6364,17 +6377,6 @@ do_window_resize:
             clipState &= ~CLIP_OWNER ;
         break;
 
-#ifdef WM_INPUTLANGCHANGE
-    case WM_INPUTLANGCHANGE:
-        /* the user has changed language, change the font type if different */
-        if(ttlogfont.lfCharSet != wParam)
-        {
-            TTchangeFont (ttlogfont.lfFaceName,wParam,ttlogfont.lfWeight/100,
-                          ttlogfont.lfHeight,ttlogfont.lfWidth) ;
-        }
-        goto unhandled_message;         /* must call the DefWindowProc as well */
-#endif
-        
     case WM_MOVE:
         if((frame = meMessageGetFrame(hWnd)) != NULL)
         {
