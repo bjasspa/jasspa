@@ -1,21 +1,29 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
-;  Author        : $Author: jon $
 ;  Created By    : Steven Phillips
 ;  Created       : Thu May 27 09:17:09 1999
-;  Last Modified : <010699.2200>
-;
-;  Description
+;  Description   : Spell checker rules for Portuguese
 ;
 ;  Notes
 ;
-;  History
-;      Rules must be given in standard Latin font
+;  The following copyright apply to the rules and dictionary
+;
+;      Copyright (C) 1995,96,97,98  Jose Joao de Almeida <jj@di.uminho.pt> 
+;      e Ulisses Pinto
+;        Dep. Informatica, Universidade do Minho
+;          Portugal
+;     
+;         This program is free software; you can redistribute it and/or modify
+;         it under the terms of the GNU General Public License as published by
+;         the Free Software Foundation; either version 2 of the License, or
+;         (at your option) any later version.
+;     
+;         This program is distributed in the hope that it will be useful,
+;         but WITHOUT ANY WARRANTY; without even the implied warranty of
+;         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;         GNU General Public License for more details.
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-0 define-macro spell-rules-init
-!emacro
 
 set-variable .spell.rules "ABCDEFIKMORSUXYZabcdefghijmnpstvwxyz"
 

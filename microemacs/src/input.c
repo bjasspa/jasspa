@@ -1,7 +1,7 @@
 /*
  *	SCCS:		%W%		%G%		%U%
  *
- *	Last Modified :	<010305.1315>
+ *	Last Modified :	<010823.1255>
  *
  *	INPUT:	Various input routines for MicroEMACS 3.7
  *		written by Daniel Lawrence
@@ -78,7 +78,7 @@ mlCharReply(uint8 *prompt, int mask, uint8 *validList, uint8 *helpStr)
             }
             cc = meGetKeyFromUser(FALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE) ;
             mlStatus &= ~(MLSTATUS_KEEP|MLSTATUS_RESTORE|MLSTATUS_POSML) ;
-            if(cc == breakc)
+            if((cc == breakc) && !(mask & mlCR_QUOTE_CHAR))
                 return -1 ;
         }
         else
@@ -1692,7 +1692,12 @@ mlgs_prevhist:
         case -1:
             if(cc & 0xff00)    /* if control, meta or prefix then scrap */
             {
-				TTbell();
+#if MOUSE
+                /* ignore mouse move events - these are sometimes generated
+                 * when executing a command from osd */
+                if((cc & 0x00ff) != SKEY_mouse_move)
+#endif                
+                    TTbell();
                 break ;
             }
             

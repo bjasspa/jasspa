@@ -10,7 +10,7 @@
  *
  *       Author:                 Danial Lawrence
  *
- *       Creation Date:          14/05/86 12:37          <010720.0752>
+ *       Creation Date:          14/05/86 12:37          <011015.1206>
  *
  *       Modification date:      %G% : %U%
  *
@@ -403,7 +403,7 @@ fnctest(void)
         if(cmd == NULL)
         {
             count++;
-            printf("cmdHash Error: [%s] should be in position %d\n", 
+            mlwrite(MWWAIT,"cmdHash Error: [%s] should be in position %d", 
                    getCommandName(ii),key) ;
         }
     }
@@ -415,7 +415,7 @@ fnctest(void)
         if(meStrcmp(cmd->anext->name,cmd->name) < 0)
         {
             count++;
-            printf("cmdHead Error: [%s] should be before [%s]\n", 
+            mlwrite(MWWAIT,"cmdHead Error: [%s] should be before [%s]", 
                    cmd->anext->name,cmd->name) ;
         }
         cmd = cmd->anext ;
@@ -428,7 +428,7 @@ fnctest(void)
         {
             count++;
             meGetStringFromKey(ktp->code, outseq);
-            printf("[%s] key out of place\n",outseq);
+            mlwrite(MWWAIT,"[%s] key out of place",outseq);
         }
     
     if(count)
@@ -877,7 +877,7 @@ loop_round2:
                  * we will end up in an infinite loop, the best we can do is
                  * call the screenUpdate function
                  */
-                screenUpdate(TRUE,sgarbf) ;
+                screenUpdate(TRUE,2-sgarbf) ;
                 /* reset garbled status */
                 sgarbf = FALSE ;
                 if(macbug <= 2)

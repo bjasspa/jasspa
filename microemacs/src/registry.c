@@ -5,7 +5,7 @@
  *  Synopsis      : Internal registry support routines
  *  Created By    : Jon Green
  *  Created       : 26/03/1998
- *  Last Modified : <010807.1423>
+ *  Last Modified : <010813.0926>
  *
  *  Description
  *
@@ -381,7 +381,7 @@ regSave (RNODE *rnp, uint8 *fname)
             if((len = level) != 0)
                 memset(buff,' ',len) ;
             buff[len++] = '"' ;
-            len = expandexp(-1,rr->name,4096-11,len,buff,-1,NULL,meEXPAND_BACKSLASH|meEXPAND_FFZERO) ;
+            len = expandexp(-1,rr->name,4096-11,len,buff,-1,NULL,meEXPAND_BACKSLASH|meEXPAND_FFZERO|meEXPAND_PRINTABLE) ;
             buff[len++] = '"' ;
             if (rr->mode & (REGMODE_HIDDEN|REGMODE_INTERNAL))
             {
@@ -394,7 +394,7 @@ regSave (RNODE *rnp, uint8 *fname)
                 buff[len++] = '=' ;
                 buff[len++] = ' ' ;
                 buff[len++] = '"' ;
-                len = expandexp(-1,rr->value,4096-4,len,buff,-1,NULL,meEXPAND_BACKSLASH|meEXPAND_FFZERO) ;
+                len = expandexp(-1,rr->value,4096-4,len,buff,-1,NULL,meEXPAND_BACKSLASH|meEXPAND_FFZERO|meEXPAND_PRINTABLE) ;
                 buff[len++] = '"' ;
             }
             /* write open '{' if it has children */

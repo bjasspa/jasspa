@@ -3027,6 +3027,26 @@ done_syskeydown:
             /* 105-Key keyboard, the Apps button mapped to "menu" */
             cc = SKEY_menu;
             goto do_keydown;
+        case VK_PAUSE:
+            cc = SKEY_pause ;
+            goto do_keydown;
+            
+            /* the following lock keys must be bound to generate a key event */
+        case VK_CAPITAL:
+            cc = SKEY_caps_lock ;
+            goto test_do_keydown;
+        case VK_NUMLOCK:
+            cc = SKEY_num_lock ;
+            goto test_do_keydown;
+        case VK_SCROLL:
+            cc = SKEY_scroll_lock ;
+test_do_keydown:
+            {
+                uint32 arg;
+                if (decode_key((ME_SPECIAL|ttmodif|cc),&arg) != -1)  /* Key bound ?? */
+                    goto do_keydown;
+            }
+            break ;
 #if 0
         case VK_LWIN:
         case VK_RWIN:

@@ -1,7 +1,7 @@
 /*****************************************************************************
  *	SCCS:		%W%		%G%		%U%
  *
- *	Last Modified :	<010804.2329>
+ *	Last Modified :	<011010.0813>
  *
  *****************************************************************************
  * 
@@ -128,8 +128,8 @@
  * THE BUILD DATE OF THE SOFTWARE AND MUST NOT BE MODIFIED AS SUCH */
 #define meCENTURY       "20"          /* Current century. Y2 complient :-) */
 #define meYEAR          "01"          /* Current year */
-#define meMONTH         "08"          /* Current month */
-#define meDAY           "01"          /* Day of the month */
+#define meMONTH         "10"          /* Current month */
+#define meDAY           "10"          /* Day of the month */
 
 /* Version information - Date of build */
 #define	meDATE          meYEAR "/" meMONTH "/" meDAY 

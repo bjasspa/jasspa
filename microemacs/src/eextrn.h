@@ -1,7 +1,7 @@
 /****************************************************************************
  * External function definitions
  *
- * Last Modified:       <010820.2223>
+ * Last Modified:       <010902.1152>
  * 
  ****************************************************************************
  * 
@@ -124,10 +124,11 @@ extern  int     bufferNeedSaving APRAM((BUFFER *bp)) ;
 extern	int	anyChangedBuffer APRAM((void));
 extern  BUFFER *createBuffer APRAM((register uint8 *bname)) ;
 #define BFND_CREAT  0x01
-#define BFND_MKNAM  0x02
-#define BFND_BINARY 0x10
-#define BFND_CRYPT  0x20
-#define BFND_CLEAR  0x40
+#define BFND_BINARY 0x02
+#define BFND_CRYPT  0x04
+#define BFND_RBIN   0x08
+#define BFND_MKNAM  0x10
+#define BFND_CLEAR  0x20
 
 extern	BUFFER *bfind APRAM((uint8 *bname, int cflag));
 extern	void    resetBufferWindows APRAM((BUFFER *bp)) ;
@@ -276,8 +277,6 @@ extern	int insFile APRAM((int f, int n));
 extern  int findFileList APRAM((uint8 *seed, int bflag, int32 lineno)) ;
 extern  int findSwapFileList APRAM((uint8 *seed, int bflag, int32 lineno)) ;
 extern	int findFile APRAM((int f, int n));
-extern	int findBFile APRAM((int f, int n));
-extern	int findCFile APRAM((int f, int n));
 extern	int readFile APRAM((int f, int n));
 extern	int nextWndFindFile APRAM((int f, int n));
 extern	int viewFile APRAM((int f, int n));

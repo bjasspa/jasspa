@@ -355,7 +355,7 @@
         1 buffer-mode "usr4"
         goto-alpha-mark "I"
         !repeat
-            0 screen-update
+            2 screen-update
             set-variable #l0 @cqk
             !if &not &bmo "pipe"
                 !return
@@ -386,7 +386,7 @@
         !force buffer-unbind-key &kbin "2" ipipe-mode
     !endif
     !if &bmo "usr4"
-        0 screen-update
+        2 screen-update
     !endif
 !emacro
 

@@ -103,6 +103,7 @@ set-variable .fhook-cpp.fold-close "^}"
     hilight .hilight.cpp    1 "inline"       .scheme.type
     hilight .hilight.cpp    1 "int"          .scheme.type
     hilight .hilight.cpp    1 "long"         .scheme.type
+    hilight .hilight.cpp    1 "namespace"    .scheme.type
     hilight .hilight.cpp    1 "register"     .scheme.type
     hilight .hilight.cpp    1 "short"        .scheme.type
     hilight .hilight.cpp    1 "signed"       .scheme.type

@@ -5,7 +5,7 @@
  *  Synopsis      : ME histroy saving and re-loading routines
  *  Created By    : Steven Phillips
  *  Created       : 1995
- *  Last Modified : <010305.0749>
+ *  Last Modified : <010902.1153>
  *
  *  Description
  *     Saves the main registry configuration, with a history of currently
@@ -49,7 +49,7 @@
 
 #include "emain.h"
 
-static uint8 histVerId[] = "4" ;      /* History version */
+static uint8 histVerId[] = "5" ;      /* History version */
 uint8 *defHistFile=NULL ;
 
 /* Constants */
@@ -252,9 +252,9 @@ readHistory(int f, int n)
                         mode[3] = (uint8) m3 ;
                         mode[4] = (uint8) m4 ;
                         
-                        /* set this to inactive */
-                        bp = bfind(fname,(BFND_CREAT|BFND_MKNAM|
-                                          (meModeTest(mode,MDBINRY) ? BFND_BINARY:0)));
+                        /* don't worry about the binary, crypt and rbin
+                         * modes here, we copy them across next */
+                        bp = bfind(fname,BFND_CREAT|BFND_MKNAM);
                         bp->intFlag |= BIFFILE ;
                         bp->b_fname = fname ;
                         bp->line_no = lineNo ;
@@ -263,6 +263,7 @@ readHistory(int f, int n)
                         meModeCopy(bp->b_mode,mode) ;
                         meModeClear(bp->b_mode,MDEDIT) ;
                         meModeClear(bp->b_mode,MDNRRW) ;
+                        /* set this to inactive */
                         meModeSet(bp->b_mode,MDNACT) ;
                         /* copy across the stat info - really important for unix
                          * to avoid the posibility of load the file in twice

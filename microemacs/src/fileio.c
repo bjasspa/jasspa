@@ -1,7 +1,7 @@
 /*
  *	SCCS:		%W%		%G%		%U%
  *
- *	Last Modified :	<010718.1249>
+ *	Last Modified :	<011015.1209>
  * 
  *****************************************************************************
  * 
@@ -180,15 +180,17 @@ uint8 isWordMask=CHRMSK_DEFWORDMSK;
 static int       ffremain ;
        uint8    *ffbuf=NULL ;
 static uint8    *ffcur ;
-static uint8     ffbinary=0 ;
 static uint8     ffcrypt=0 ;
 static uint8     ffauto=0 ;
 static uint8     ffautoRet=0 ;
 static uint8     ffnewFile ;
+static int       ffbinary=0 ;
 static int       ffread ;
 
-#define AUTO_CRLF  0x01
-#define AUTO_CTRLZ 0x02
+#define meBINARY_BPL   16   /* bytes per line */
+#define meRBIN_BPL    256   /* bytes per line */
+#define AUTO_CRLF    0x01
+#define AUTO_CTRLZ   0x02
 
 #ifdef _URLSUPP
 
@@ -389,7 +391,7 @@ ffurlConsoleAddText(uint8 *str, int flags)
     bufferPosUpdate(ffurlBp,(flags & 0x01) ? 0:1,ffurlBp->b_doto) ;
     
     if(!(flags & 0x04) && (ffurlFlags & ffURL_SHOW_CONSOLE))
-        screenUpdate(TRUE,sgarbf) ;
+        screenUpdate(TRUE,2-sgarbf) ;
 }
 
 static meSOCKET
@@ -892,7 +894,7 @@ ffHttpFileOpen(uint8 *host, uint8 *port, uint8 *user, uint8 *pass, uint8 *file, 
         }
         resetBufferWindows(ffurlBp) ;
         if(ffurlFlags & ffURL_SHOW_CONSOLE)
-            screenUpdate(TRUE,sgarbf) ;
+            screenUpdate(TRUE,2-sgarbf) ;
     }
     if(send(ffsock,(char *)buff,meStrlen(buff),0) <= 0)
     {
@@ -1170,7 +1172,6 @@ createBackupName(uint8 *filename, uint8 *fn, uint8 backl, int flag)
     static int     backupPathFlag=0 ;
     static uint8  *backupPath=NULL ;
     static int     backupSubCount=0 ;
-    static uint8  *backupSub=NULL ;
     static uint8 **backupSubFrom=NULL ;
     static uint8 **backupSubTo=NULL ;
     if(!backupPathFlag)
@@ -1190,8 +1191,7 @@ createBackupName(uint8 *filename, uint8 *fn, uint8 backl, int flag)
         }
 	else
 	    backupPathFlag = -1 ;
-	if(((s=meGetenv("MEBACKUPSUB")) != NULL) && (meStrlen(s) > 0) &&
-           ((backupSub=meStrdup(s)) != NULL))
+	if(((s=meGetenv("MEBACKUPSUB")) != NULL) && (meStrlen(s) > 0))
         {
             uint8 cc, dd ;
             int ii ;
@@ -1428,7 +1428,6 @@ ffgetBuf(void)
 static int	
 ffgetline(LINE **line)
 {
-    uint8  buf[16] ;
     register uint8 *text ;
     register uint8 *endp ;
     register int    len=0, newl, ii ;
@@ -1445,19 +1444,25 @@ ffgetline(LINE **line)
         }
         if(ffbinary)
         {
-            if(ffremain < (16-len))
+            if(len == 0)
             {
-                memcpy(buf+len,ffcur,ffremain) ;
+                ii = (ffbinary == meBINARY_BPL) ? (meBINARY_BPL*4)+14 : 2*meRBIN_BPL ;
+                if((lp = (LINE *) meMalloc(sizeof(LINE)+ii)) == NULL)
+                    return ABORT ;
+            }
+            if(ffremain < (ffbinary-len))
+            {
+                memcpy(lp->l_text+len,ffcur,ffremain) ;
                 len += ffremain ;
                 ffremain = -1 ;
             }
             else
             {
-                ii = 16-len ;
-                memcpy(buf+len,ffcur,ii) ;
+                ii = ffbinary-len ;
+                memcpy(lp->l_text+len,ffcur,ii) ;
                 ffremain -= ii ;
                 ffcur += ii ;
-                len = 16 ;
+                len = ffbinary ;
             }
         }
         else
@@ -1533,54 +1538,71 @@ ffgetline(LINE **line)
     
     if(ffbinary)
     {
-        long cpos ;
-        
         if(len == 0)
             return FALSE ;
-        if((lp = (LINE *) meMalloc(sizeof(LINE)+78)) == NULL)
-            return ABORT ;
-        lp->l_flag = 0 ;
-        text = lp->l_text ;
         
-        cpos = (ffread - ffremain - 1) & ~(0x0fL) ;
-        
-        for(newl=7 ; newl>=0 ; newl--)
+        if(ffbinary == meBINARY_BPL)
         {
-            text[newl] = hexdigits[cpos&0x0f] ;
-            cpos >>= 4 ;
-        }
-        text[8] = ':' ;
-        text[9] = ' ' ;
-                  
-        for(newl=0 ; newl<16 ; newl++)
-        {
-            if(newl < len)
+            int32 cpos ;
+            uint8 cc ;
+            
+            text = lp->l_text ;
+            newl = meBINARY_BPL ;
+            while(--newl >= 0)
             {
-                uint8 cc = buf[newl] ;
-                text[(newl*3)+10] = hexdigits[cc/0x10] ;
-                text[(newl*3)+11] = hexdigits[cc%0x10] ;
-                text[(newl*3)+12] = ' ' ;
-                if(isDisplayable(cc))
-                    text[newl+62] = cc ;
+                if(newl < len)
+                {
+                    cc = text[newl] ;
+                    text[(newl*3)+10] = hexdigits[cc >> 4] ;
+                    text[(newl*3)+11] = hexdigits[cc & 0x0f] ;
+                    text[(newl*3)+12] = ' ' ;
+                    if(!isDisplayable(cc))
+                        cc = '.' ;
+                }
                 else
-                    text[newl+62] = '.' ;
+                {
+                    text[(newl*3)+10] = ' ' ;
+                    text[(newl*3)+11] = ' ' ;
+                    text[(newl*3)+12] = ' ' ;
+                    cc = ' ' ;
+                }
+                text[newl+(meBINARY_BPL*3)+14] = cc ;
             }
-            else
+            cpos = (ffread - ffremain - 1) & ~((int32) (meBINARY_BPL-1)) ;
+            newl=8 ;
+            while(--newl >= 0)
             {
-                text[(newl*3)+10] = ' ' ;
-                text[(newl*3)+11] = ' ' ;
-                text[(newl*3)+12] = ' ' ;
-                text[62+newl] = ' ' ;
+                text[newl] = hexdigits[cpos&0x0f] ;
+                cpos >>= 4 ;
+            }
+            text[8] = ':' ;
+            text[9] = ' ' ;
+            
+            text[(meBINARY_BPL*3)+10] = ' ' ;
+            text[(meBINARY_BPL*3)+11] = '|' ;
+            text[(meBINARY_BPL*3)+12] = ' ' ;
+            text[(meBINARY_BPL*3)+13] = ' ' ;
+            text[(meBINARY_BPL*4)+14] = '\0' ;
+            lp->l_size = (meBINARY_BPL*4)+14 ;
+            lp->l_used = (meBINARY_BPL*4)+14 ;
+            lp->l_flag = 0 ;			/* line is not marked.	*/
+        }
+        else
+        {
+            uint8 cc ;
+            
+            text = lp->l_text ;
+            lp->l_size = meRBIN_BPL*2 ;
+            lp->l_used = len*2 ;
+            lp->l_flag = 0 ;			/* line is not marked.	*/
+            text[len*2] = '\0' ;
+            while(--len >= 0)
+            {
+                cc = text[len] ;
+                text[(len*2)]   = hexdigits[cc >> 4] ;
+                text[(len*2)+1] = hexdigits[cc & 0x0f] ;
             }
         }
-        text[58] = ' ' ;
-        text[59] = '|' ;
-        text[60] = ' ' ;
-        text[61] = ' ' ;
-        text[78] = '\0' ;
-        lp->l_size = 78 ;
-        lp->l_used = 78 ;
-        lp->l_flag = 0 ;			/* line is not marked.	*/
         *line = lp ;
         return TRUE ;
     }
@@ -1614,7 +1636,12 @@ ffReadFileOpen(uint8 *fname, uint32 flags, BUFFER *bp)
 {
     if(bp != NULL)
     {
-        ffbinary = (meModeTest(bp->b_mode,MDBINRY) != 0) ;
+        if(meModeTest(bp->b_mode,MDBINRY))
+            ffbinary = meBINARY_BPL ;
+        else if(meModeTest(bp->b_mode,MDRBIN))
+            ffbinary = meRBIN_BPL ;
+        else
+            ffbinary = 0 ;
         ffcrypt  = (meModeTest(bp->b_mode,MDCRYPT) != 0) ;
         ffauto   = (meModeTest(bp->b_mode,MDAUTO) != 0) ;
     }
@@ -2025,7 +2052,12 @@ ffWriteFileOpen(uint8 *fname, uint32 flags, BUFFER *bp)
     ffremain = 0 ;
     if(bp != NULL)
     {
-        ffbinary = (meModeTest(bp->b_mode,MDBINRY) != 0) ;
+        if(meModeTest(bp->b_mode,MDBINRY))
+            ffbinary = meBINARY_BPL ;
+        else if(meModeTest(bp->b_mode,MDRBIN))
+            ffbinary = meRBIN_BPL ;
+        else
+            ffbinary = 0 ;
         ffcrypt  = (meModeTest(bp->b_mode,MDCRYPT) != 0) ;
         if(!ffbinary &&
 #ifdef _CTRLZ
@@ -2096,22 +2128,38 @@ ffWriteFileWrite(register int len, register uint8 *buff, int eolFlag)
     
     if(ffbinary)
     {
-        while(--len >= 0)
-            if(*buff++ == ':')
-                break ;
-        for(;;)
+        if(ffbinary == meBINARY_BPL)
         {
-            while((--len >= 0) && ((cc = *buff++) == ' '))
-                ;
-            if((len < 0) || (cc == '|'))
-                break ;
-            if(!isXDigit(cc) || (--len < 0) ||
-               ((dd = *buff++),!isXDigit(dd)))
-                return mlwrite(MWABORT|MWPAUSE,(uint8 *)"Binary format error");
-            cc = (hexToNum(cc)<<4) | hexToNum(dd) ;
-            if(ffputc(cc))
-                return ABORT ;
+            while(--len >= 0)
+                if(*buff++ == ':')
+                    break ;
+            for(;;)
+            {
+                while((--len >= 0) && ((cc = *buff++) == ' '))
+                    ;
+                if((len < 0) || (cc == '|'))
+                    break ;
+                if(!isXDigit(cc) || (--len < 0) ||
+                   ((dd = *buff++),!isXDigit(dd)))
+                    return mlwrite(MWABORT|MWPAUSE,(uint8 *)"Binary format error");
+                cc = (hexToNum(cc)<<4) | hexToNum(dd) ;
+                if(ffputc(cc))
+                    return ABORT ;
+            }
         }
+        else
+        {
+            while(--len >= 0)
+            {
+                cc = *buff++ ;
+                if(!isXDigit(cc) || (--len < 0) ||
+                   ((dd = *buff++),!isXDigit(dd)))
+                    return mlwrite(MWABORT|MWPAUSE,(uint8 *)"[rbin format error]");
+                cc = (hexToNum(cc)<<4) | hexToNum(dd) ;
+                if(ffputc(cc))
+                    return ABORT ;
+            }
+        }            
     }
     else
     {

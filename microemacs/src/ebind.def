@@ -6,7 +6,7 @@
  *  Object Name   : ebind.def
  *  Date          : 12th June 1993
  *  Created By    : Steve Philips
- *  Last Modified : <010804.1624>
+ *  Last Modified : <010902.1153>
  *
  *  Description	
  *        Define the bindings to the keys
@@ -203,7 +203,7 @@
 	DEFBIND (ME_PREFIX2|'3',	0, CK_SFNDBUF)
 	DEFBIND (ME_PREFIX2|'4',	0, CK_SFNDFIL)
 	DEFBIND (ME_PREFIX2|'5',	0, CK_SWNDH)
-	DEFBIND (ME_PREFIX2|'9',	0, CK_FNDBFIL)
+	DEFBIND (ME_PREFIX2|'9',	0x80000003, CK_FNDFIL)
 	DEFBIND (ME_PREFIX2|'<',	0, CK_MOVLWND)
 	DEFBIND (ME_PREFIX2|'=',	0, CK_BUFPOS)
 	DEFBIND (ME_PREFIX2|'>',	0, CK_MOVRWND)

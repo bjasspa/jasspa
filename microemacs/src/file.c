@@ -10,7 +10,7 @@
 *
 *	Author:			Danial Lawrence
 *
-*	Creation Date:		14/05/86 12:37		<010819.0047>
+*	Creation Date:		14/05/86 12:37		<010915.2110>
 *
 *	Modification date:	%G% : %U%
 *
@@ -1533,6 +1533,7 @@ findFileSingle(uint8 *fname, int bflag, int32 lineno)
             /* if its a directory then add dir mode and remove binary */
             meModeSet(bp->b_mode,MDDIR) ;
             meModeClear(bp->b_mode,MDBINRY) ;
+            meModeClear(bp->b_mode,MDRBIN) ;
         }
         bp->line_no = lineno ;
         bp->histNo = bufHistNo ;
@@ -1659,51 +1660,28 @@ findSwapFileList(uint8 *fname, int bflag, int32 lineno)
 int
 findFile(int f, int n)
 {
-    register int s ;
-    uint8 fname[FILEBUF] ;
+    uint8 fname[FILEBUF], prompt[16], *ss ;
     
-    if((s=inputFileName((uint8 *)"Find file",fname,0)) != TRUE)
-        return s ;
-    if(n)
-        n = BFND_CREAT ;
-    n |= BFND_MKNAM ;
-    return findSwapFileList(fname,n,0) ;
-}
-
-/*
- * Select a binary file for editing.
- * Look around to see if you can find the
- * fine in another buffer; if you can find it
- * just switch to the buffer. If you cannot find
- * the file, create a new binary buffer, read in the
- * text, and switch to the new buffer.
- */
-int
-findBFile(int f, int n)
-{
-    register int s;		  /* status return	    */
-    uint8 fname[FILEBUF];
-
-    if((s=inputFileName((uint8 *)"Find binary file",fname,0)) != TRUE)
-        return s ;
-    if(n)
-        n = BFND_CREAT ;
-    n |= BFND_MKNAM|BFND_BINARY ;
-    return findSwapFileList(fname,n,0) ;
-}
-
-/* Select a crypt file for editing. */
-int
-findCFile(int f, int n)
-{
-    register int s;		   /* status return	    */
-    uint8 fname[FILEBUF];
-
-    if((s=inputFileName((uint8 *)"Find crypt file",fname,0)) != TRUE)
-        return s ;
-    if(n)
-        n = BFND_CREAT ;
-    n |= BFND_MKNAM|BFND_CRYPT ;
+    ss = prompt ;
+    *ss++ = 'f' ;
+    *ss++ = 'i' ;
+    *ss++ = 'n' ;
+    *ss++ = 'd' ;
+    *ss++ = '-' ;
+    if(n & BFND_BINARY)
+        *ss++ = 'b' ;
+    if(n & BFND_CRYPT)
+        *ss++ = 'c' ;
+    if(n & BFND_RBIN)
+        *ss++ = 'r' ;
+    *ss++ = 'f' ;
+    *ss++ = 'i' ;
+    *ss++ = 'l' ;
+    *ss++ = 'e' ;
+    *ss   = '\0' ;
+    if(inputFileName(prompt,fname,0) != TRUE)
+        return ABORT ;
+    n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN)) | BFND_MKNAM ;
     return findSwapFileList(fname,n,0) ;
 }
 
@@ -1719,15 +1697,12 @@ int
 nextWndFindFile(int f, int n)
 {
     uint8 fname[FILEBUF];	/* file user wishes to find */
-    register int s;		/* status return */
 
-    if ((s=inputFileName((uint8 *)"Find file",fname,0)) != TRUE)
-        return(s);
+    if(inputFileName((uint8 *)"Find file",fname,0) != TRUE)
+        return ABORT ;
     if(wpopup(NULL,WPOP_MKCURR) == NULL)
         return FALSE ;
-    if(n)
-        n = BFND_CREAT ;
-    n |= BFND_MKNAM ;
+    n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN)) | BFND_MKNAM ;
     return findSwapFileList(fname,n,0) ;
 }
 
@@ -1737,11 +1712,9 @@ readFile(int f, int n)
     uint8 fname[FILEBUF];	/* file user wishes to find */
     register int s;		/* status return */
 
-    if ((s=inputFileName((uint8 *)"Read file", fname,0)) != TRUE)
-        return s ;
-    if(n)
-        n = BFND_CREAT ;
-    n |= BFND_MKNAM ;
+    if(inputFileName((uint8 *)"Read file", fname,0) != TRUE)
+        return ABORT ;
+    n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN)) | BFND_MKNAM ;
     if((s=zotbuf(curbp,clexec)) == TRUE)
         s = findSwapFileList(fname,n,0) ;
     return s ;
@@ -1753,11 +1726,9 @@ viewFile(int f, int n)	/* visit a file in VIEW mode */
     uint8 fname[FILEBUF];	/* file user wishes to find */
     register int ss, vv;	/* status return */
 
-    if ((ss=inputFileName((uint8 *)"View file", fname,0)) != TRUE)
-        return ss ;
-    if(n)
-        n = BFND_CREAT ;
-    n |= BFND_MKNAM ;
+    if (inputFileName((uint8 *)"View file", fname,0) != TRUE)
+        return ABORT ;
+    n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN)) | BFND_MKNAM ;
     /* Add view mode globally so any new buffers will be created
      * with view mode */
     vv = meModeTest(globMode,MDVIEW) ;
@@ -2611,7 +2582,15 @@ pathNameCorrect(uint8 *oldName, int nameType, uint8 *newName, uint8 **baseName)
                ((p1[3] == DIR_CHAR) || ((nameType == PATHNAME_COMPLETE) && (p1[3] == '\0'))))
             {
                 if(p == NULL)        /* got /../YYYY */
-                    p = urle ;
+                {
+#ifdef _DRV_CHAR
+                    /* check for X:/../YYYY */
+                    if(urle[1] == _DRV_CHAR)
+                        p = urle+2 ;
+                    else
+#endif
+                        p = urle ;
+                }
                 /* else got /XXX/../YYYY */
                 
                 p1 += 3 ;

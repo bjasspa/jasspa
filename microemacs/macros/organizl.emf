@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Jul 26 14:36:36 1997
-;  Last Modified : <000719.0012>
+;  Last Modified : <011010.0756>
 ;
 ;  Description   : cal calendar macro
 ;
@@ -181,7 +181,7 @@
         set-variable $window-line #l5
     !done
     insert-newline
-    1 screen-update
+    screen-update
 !emacro
 
 0 define-macro org-list-set-list

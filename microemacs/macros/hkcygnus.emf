@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Jon Green
 ;  Created       : Wed Sep 30 23:16:34 1998
-;  Last Modified : <010313.1240>
+;  Last Modified : <011010.0756>
 ;
 ;  Description   : This file contains the necessary hooks to run a Cygnus
 ;                  window inside the MicroEmacs editor. The user variable
@@ -210,7 +210,7 @@ define-macro cygpipe-break
         1 buffer-mode "usr4"
         goto-alpha-mark "I"
         !repeat
-            0 screen-update
+            2 screen-update
             set-variable #l0 @cqk
             !if &not &bmo "pipe"
                 !return
@@ -248,7 +248,7 @@ define-macro cygpipe-break
         !force buffer-unbind-key &kbin "2" cygpipe-mode
     !endif
     !if &bmo "usr4"
-        0 screen-update
+        2 screen-update
     !endif
 !emacro
 

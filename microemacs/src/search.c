@@ -12,7 +12,7 @@
  *
  *	Creation Date:		07/05/85 08:19		
  *
- *	Modification date:	<010730.2036>
+ *	Modification date:	<010813.0926>
  *
  *	Current rev:		10.1
  *
@@ -1024,7 +1024,7 @@ expandchar(int c, uint8 *d, int flags)
 {
     register int  doff=1 ;
 
-    if(isDisplayable(c))
+    if((flags & meEXPAND_PRINTABLE) ? isPrint(c): isDisplayable(c))
     {
         if((flags & meEXPAND_BACKSLASH) && ((c == '\\') || (c == '"')))
         {

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Jul 26 14:36:36 1997
-;  Last Modified : <000719.0012>
+;  Last Modified : <011010.0756>
 ;
 ;  Description   : cal calendar macro
 ;
@@ -163,7 +163,7 @@ set-variable .org.bind-r0 "|1|1|1|1|"
         set-variable #l2 &mod #l2 7
     !until &equ &pinc #l0 1 #l1
     insert-newline
-    1 screen-update
+    screen-update
 !emacro
 
 osd .osd.orgm-c 0 "Gk"

@@ -44,8 +44,8 @@ set-variable .fhook-c.fold-open  "^{"
 set-variable .fhook-c.fold-close "^}"
 
 ; setup item-list
-set-variable .fhook-c.item-list-s1 "^\\(\\w+\\)\\s *("
-set-variable .fhook-c.item-list-r1 "Func  \ecB\\1\ecA"
+set-variable .fhook-c.item-list-s1 "^\\(static\\s +\\)?\\(const\\s +\\)?\\(union\\s +\\)?\\(struct\\s +\\)?\\(\\w+[\\* \\t]+\\)?\\(\\w+\\)\\s *("
+set-variable .fhook-c.item-list-r1 "Func  \ecB\\6\ecA"
 set-variable .fhook-c.item-list-s2 "^\\s *#\\s *define\\s +\\(\\w+\\)"
 set-variable .fhook-c.item-list-r2 "Defn  \ecB\\1\ecA"
 set-variable .fhook-c.item-list-s3 "^\\s *typedef\\s +struct\\s +\\(\\w+\\)\\s *{"

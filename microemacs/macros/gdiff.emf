@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Wed Jun 23 19:56:49 1999
-;  Last Modified : <010203.2215>
+;  Last Modified : <011025.1324>
 ;
 ;  Description
 ;
@@ -368,12 +368,12 @@ set-variable %gdiff-com &cond &seq %gdiff-com "ERROR" "diff -c -w" %gdiff-com
 
 0 define-macro gdiff-input
     !if &seq @cck "redraw"
-        @# screen-update
+        3 screen-update
         0xce set-position "\x81"
         next-window
         goto-position "\x81"
         previous-window
-        0 screen-update
+        @# screen-update
         !return
     !elif &seq @cck "callback"
         execute-named-command @cc

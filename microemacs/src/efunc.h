@@ -1,7 +1,7 @@
 /*
  *      SCCS:           %W%             %G%             %U%
  *
- *      Last Modified : <010304.2356>
+ *      Last Modified : <010902.1151>
  *
  *      EFUNC.H:        MicroEMACS function declarations and names
  *
@@ -176,7 +176,7 @@ meCMD  *cmdHash[cmdHashSize] =
     &__meFunc_FORCHR,     NULL,                 NULL,                 NULL,                 &__meFunc_HELPCOM,
     &__meFunc_REDHIST,    &__meFunc_ADDRULE,    NULL,                 NULL,                 &__meFunc_CTOMOUSE,
     &__meFunc_SPWCLI,     NULL,                 NULL,                 NULL,                 &__meFunc_DIRTREE,
-    &__meFunc_FNDBFIL,    NULL,                 NULL,                 NULL,                 NULL,
+    &__meFunc_PREFIX,     NULL,                 NULL,                 NULL,                 NULL,
     NULL,                 &__meFunc_SCLNXT,     NULL,                 NULL,                 NULL,
     NULL,                 &__meFunc_SHOWSEL,    &__meFunc_ENGWIN,     NULL,                 NULL,
     &__meFunc_HUNBAK,     &__meFunc_SWPMRK,     NULL,                 NULL,                 NULL,
@@ -201,7 +201,7 @@ meCMD  *cmdHash[cmdHashSize] =
     &__meFunc_CPYREG,     &__meFunc_ADDCOL,     &__meFunc_NAMMAC,     NULL,                 NULL,
     &__meFunc_OPNLIN,     NULL,                 NULL,                 NULL,                 &__meFunc_DELBUF,
     NULL,                 NULL,                 &__meFunc_MOVRWND,    NULL,                 NULL,
-    NULL,                 NULL,                 NULL,                 &__meFunc_FNDCFIL,    NULL,
+    NULL,                 NULL,                 NULL,                 NULL,                 NULL,
     &__meFunc_INSSTR,     NULL,                 &__meFunc_EXABREV,    NULL,                 &__meFunc_EXEBUF,
     NULL,                 NULL,                 &__meFunc_DEFMAC,     &__meFunc_MLBIND,     NULL,
     &__meFunc_ADNXTLN,    NULL,                 NULL,                 NULL,                 &__meFunc_CHGFIL,

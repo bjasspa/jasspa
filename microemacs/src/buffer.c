@@ -10,7 +10,7 @@
 *
 *       Author:                 Danial Lawrence
 *
-*       Creation Date:          14/05/86 12:37          <010820.2224>
+*       Creation Date:          14/05/86 12:37          <010823.1059>
 *
 *       Modification date:      %G% : %U%
 *
@@ -115,8 +115,10 @@ checkExtent (uint8 *filename, int len, uint8 *sptr, Fintssi cmpFunc)
 
 static uint8 defaultHookName[] = "fhook-default" ;
 static uint8 binaryHookName[]  = "fhook-binary" ;
+static uint8 rbinHookName[]    = "fhook-rbin" ;
 static uint8 triedDefault=0 ;
 static uint8 triedBinary=0 ;
+static uint8 triedRbin=0 ;
 
 static void
 assignHooks (BUFFER *bp, uint8 *hooknm)
@@ -130,6 +132,7 @@ assignHooks (BUFFER *bp, uint8 *hooknm)
     if((fhook == -1) &&
        ((hooknm != defaultHookName) || !triedDefault) &&
        ((hooknm != binaryHookName) || !triedBinary) &&
+       ((hooknm != rbinHookName) || !triedRbin) &&
        (meStrlen(hooknm) > 6))
     {
 	uint8 fn[FILEBUF], buff[MAXBUF] ;             /* Temporary buffer */
@@ -143,6 +146,8 @@ assignHooks (BUFFER *bp, uint8 *hooknm)
 		triedDefault++ ;
 	    else if(hooknm == binaryHookName)
 		triedBinary++ ;
+	    else if(hooknm == rbinHookName)
+		triedRbin++ ;
 	    else
 		mlwrite(MWABORT|MWWAIT,(uint8 *)"Failed to find file [%s]",buff);
 	}
@@ -207,7 +212,8 @@ setBufferContext(BUFFER *bp)
     
     /* Search the buffer for alternative hook information */
     if ((bp->intFlag & BIFFILE) && !meModeTest(bp->b_mode,MDBINRY) &&
-        !meModeTest(bp->b_mode,MDDIR) && ((ii = fileHookCount) > 0))
+        !meModeTest(bp->b_mode,MDRBIN) && !meModeTest(bp->b_mode,MDDIR) &&
+        ((ii = fileHookCount) > 0))
     {
 	uint8 *pp, cc ;
 	LINE *lp ;
@@ -253,6 +259,8 @@ setBufferContext(BUFFER *bp)
 	/* Do file hooks */
 	if(meModeTest(bp->b_mode,MDBINRY))
 	    hooknm = binaryHookName ;
+	else if(meModeTest(bp->b_mode,MDRBIN))
+	    hooknm = rbinHookName ;
 	else
 	{
 	    uint8 *sp ;
@@ -713,12 +721,14 @@ bclear(register BUFFER *bp)
 	execBufferFunc(bp,bp->dhook,0,1) ;      /* Execute the delete hook */
     
     /* Continue the destruction of the buffer space. */
-    /* The following modes to preserve are: MDBINARY, MDCRYPT, MDDEL */
+    /* The following modes to preserve are: MDBINARY, MDRBIN, MDCRYPT, MDDEL */
     meModeCopy(bmode,bp->b_mode) ;
     meModeCopy(bp->b_mode,globMode) ;
     meModeSet(bp->b_mode,MDNACT) ;
     if(meModeTest(bmode,MDBINRY))
         meModeSet(bp->b_mode,MDBINRY) ;
+    else if(meModeTest(bmode,MDRBIN))
+        meModeSet(bp->b_mode,MDRBIN) ;
     if(meModeTest(bmode,MDCRYPT))
         meModeSet(bp->b_mode,MDCRYPT) ;
     if(meModeTest(bmode,MDDEL))
@@ -1320,6 +1330,8 @@ bfind(register uint8 *bname, int cflag)
 		    /* set the modes correctly */
 		    if(cflag & BFND_BINARY)
 			meModeSet(bp->b_mode,MDBINRY) ;
+		    else if(cflag & BFND_RBIN)
+			meModeSet(bp->b_mode,MDRBIN) ;
 		    if(cflag & BFND_CRYPT)
 			meModeSet(bp->b_mode,MDCRYPT) ;
 		}
@@ -1336,6 +1348,8 @@ bfind(register uint8 *bname, int cflag)
     meModeCopy(sglobMode,globMode) ;
     if(cflag & BFND_BINARY)
 	meModeSet(globMode,MDBINRY) ;
+    else if(cflag & BFND_RBIN)
+	meModeSet(globMode,MDRBIN) ;
     if(cflag & BFND_CRYPT)
 	meModeSet(globMode,MDCRYPT) ;
     bp = createBuffer(bnm) ;
@@ -1496,12 +1510,16 @@ invalid_global:
     {
 	/*
 	 * make sure that, if INDENT is set, CMODE isnt
-	 * and vice versa
+	 * and vice versa and same for BNIARY and RBIN
 	 */
 	if(nn == MDINDEN)
 	    meModeClear(mode,MDCMOD) ;
 	else if(nn == MDCMOD)
 	    meModeClear(mode,MDINDEN) ;
+	else if(nn == MDBINRY)
+	    meModeClear(mode,MDRBIN) ;
+	else if(nn == MDRBIN)
+	    meModeClear(mode,MDBINRY) ;
     }
     else if(bp != NULL)
     {

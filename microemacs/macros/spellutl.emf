@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Thu May 7 20:59:12 1998
-;  Last Modified : <010301.1844>
+;  Last Modified : <010911.1023>
 ;
 ;  Description
 ;
@@ -105,7 +105,8 @@ define-macro spell-conv-aff-chars
     !emacro
 !endif
 0 define-macro spell-conv-aff-line
-    !while &pdec @# 1
+    set-variable #l0 @#
+    !while &pdec #l0 1
         execute-string "\CS>\CA"
         !force execute-string "\E-1\CXS#\N\CA"
         !if &not $status

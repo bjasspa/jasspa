@@ -12,7 +12,7 @@
 *
 *	Creation Date:		29/04/91 09:13
 *
-*	Modification date:	%G% : %U%	<010305.0749>
+*	Modification date:	%G% : %U%	<011010.0800>
 *
 *	Current rev:		%I%
 *
@@ -440,15 +440,23 @@ showRegion(int f, int n)
            (selhilight.bp != curbp))
         {
             selhilight.bp = curbp ;
-            selhilight.mlineoff = curwp->w_doto;   /* Current mark offset */
-            selhilight.mlineno = curwp->line_no;    /* Current mark line number */
+            selhilight.mlineoff = curwp->w_doto;  /* Current mark offset */
+            selhilight.mlineno = curwp->line_no;  /* Current mark line number */
         }
         selhilight.flags |= SELHIL_FIXED|SELHIL_CHANGED|SELHIL_ACTIVE ;
         if(selhilight.uFlags & SELHILU_KEEP)
             selhilight.flags |= SELHIL_KEEP ;
-        selhilight.dlineoff = curwp->w_doto;   /* Current mark offset */
-        selhilight.dlineno = curwp->line_no;    /* Current mark line number */
+        selhilight.dlineoff = curwp->w_doto;      /* Current mark offset */
+        selhilight.dlineno = curwp->line_no;      /* Current mark line number */
         break ;
+    case 4:
+        if(selhilight.bp == curbp)
+        {
+            selhilight.flags = SELHIL_ACTIVE|SELHIL_CHANGED ;
+            selhilight.dlineoff = curwp->w_doto;      /* Current mark offset */
+            selhilight.dlineno = curwp->line_no;      /* Current mark line number */
+            break ;
+        }
     default:
         return ABORT ;
     }
@@ -2047,6 +2055,7 @@ pokeUpdate (void)
  */
 /* screenUpdate:	user routine to force a screen update
 		always finishes complete update		*/
+static int screenUpdateDisabledCount=0 ;
 
 int
 screenUpdate(int f, int n)
@@ -2057,7 +2066,49 @@ screenUpdate(int f, int n)
     if(drawno++ == 'Z')
         drawno = 'A' ;
 #endif
-    if(n)
+    if(n <= 0)
+    {
+        screenUpdateDisabledCount = n ;
+        return TRUE ;
+    }
+    if(n == 3)
+    {
+        /* only update the screen enough to get the $window vars correct */
+        if(curwp->l_bufp != curwp->w_bufp)
+        {
+            curwp->l_bufp = curwp->w_bufp ;
+            curwp->w_flag |= WFMODE|WFREDRAW|WFMOVEL|WFSBOX ;
+        }
+        /* if top of window is the last line and there's more than
+         * one, force refame and draw */
+        if((curwp->topLineNo == curwp->w_bufp->elineno) && curwp->topLineNo)
+            curwp->w_flag |= WFFORCE ;
+
+        /* if the window has changed, service it */
+        if(curwp->w_flag & (WFMOVEL|WFFORCE))
+            reframe(curwp) ;	        /* check the framing */
+
+        if(curwp->w_flag & (WFREDRAW|WFRESIZE|WFSELHIL|WFSELDRAWN))
+            shilightWindow(curwp);         /* Update selection hilight */
+
+        /* check the horizontal scroll and cursor position */
+        updCursor(curwp) ;
+        return TRUE ;
+    }
+    if(n == 2)
+    {
+#if MEOSD
+        if(osdDisplayHd != NULL)
+            /* else we must store any osd dialogs */
+            osdStoreAll() ;
+#endif
+        /* if the screen has been poked then fix it */
+        if (poke_flag)                      /* Screen been poked ??           */
+            pokeUpdate();                   /* Yes - determine screen changes */
+        /* set n == 0 so (n != 0) means forced */
+        n = 0 ;
+    }
+    else
     {
         /* if screen is garbage, re-plot it all */
         if (TTsrow > 0)
@@ -2076,19 +2127,7 @@ screenUpdate(int f, int n)
         poke_ymax = 0;
         poke_flag = 0;
     }
-    else
-    {
-#if MEOSD
-        if(osdDisplayHd != NULL)
-            /* else we must store any osd dialogs */
-            osdStoreAll() ;
-#endif
-        
-        /* if the screen has been poked then fix it */
-        if (poke_flag)                      /* Screen been poked ??           */
-            pokeUpdate();                   /* Yes - determine screen changes */
-    }
-
+    
     /* Does the title bar need updating? */
 #ifdef _WINDOW
     {
@@ -2202,10 +2241,16 @@ update(int flag)    /* force=TRUE update past type ahead? */
        (!(flag & 0x01) && ((kbdmode == PLAY) || clexec || TTahead())))
         return TRUE ;
 
+    if(screenUpdateDisabledCount)
+    {
+        screenUpdateDisabledCount++ ;
+        return TRUE ;
+    }
+
     if((index = decode_key(ME_SPECIAL|SKEY_redraw,&arg)) >= 0)
-        execFuncHidden(ME_SPECIAL|SKEY_redraw,index,0x80000000+sgarbf) ;
+        execFuncHidden(ME_SPECIAL|SKEY_redraw,index,0x80000002-sgarbf) ;
     else
-        screenUpdate(1,sgarbf) ;
+        screenUpdate(1,2-sgarbf) ;
     /* reset garbled status */
     sgarbf = FALSE ;
 

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Jul 18 14:55:16 1998
-;  Last Modified : <010805.0021>
+;  Last Modified : <011010.0756>
 ;
 ;  Description   : Macros used for searching and replacing 
 ;
@@ -268,7 +268,7 @@ osd .osd.ftag 60  "" " "
             !force -3 show-region
             !force  3 show-region
             !force -1 show-region
-            0 screen-update
+            2 screen-update
         !else
             !force show-region
         !endif
@@ -345,7 +345,7 @@ osd .osd.ftag 60  "" " "
     osd .osd.sar-hll 70 "c" #l0
     .osd-search.recenter recenter
     !force show-region
-    0 screen-update
+    2 screen-update
 !emacro
 
 0 define-macro osd-search-replace
@@ -458,7 +458,7 @@ osd .osd.ftag 60  "" " "
             !endif
         !endif
     !endif
-    0 screen-update
+    2 screen-update
 !emacro
 
 0 define-macro search-get-region-text
@@ -487,7 +487,7 @@ osd .osd.ftag 60  "" " "
         !force -1 show-region
         goto-position "\x81"
         !if @#
-            0 screen-update
+            2 screen-update
         !endif
     !endif
     !abort

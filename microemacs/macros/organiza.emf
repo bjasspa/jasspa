@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Jul 26 14:36:36 1997
-;  Last Modified : <010217.2059>
+;  Last Modified : <011010.0756>
 ;
 ;  Description   : cal calendar macro
 ;
@@ -562,7 +562,7 @@ osd .osd.orga-f 660 "f" " "
         !endif
         insert-newline
     !endif
-    1 screen-update
+    screen-update
 !emacro
 
 -1 osd .osd.orga-h

@@ -2,7 +2,7 @@
  * 
  *	SCCS:		%W%		%G%		%U%
  *
- *	Last Modified :	<010820.2222>
+ *	Last Modified :	<011010.0906>
  *
  *	ESTRUCT:	Structure and preprocesser defined for
  *			MicroEMACS 3.7
@@ -734,7 +734,10 @@ typedef	struct	KLIST {
 #define HLRPLCDIFF 0x8000
 
 /* indent init flags */
-#define HICASE   0x01
+#define HICASE     0x01
+#define HINEWLINE  0x02
+#define HITABFST   0x04
+#define HITABANY   0x08
 
 typedef struct HILNODE {
     struct HILNODE **list ;
