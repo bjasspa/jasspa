@@ -432,8 +432,10 @@ osd .osd.org-aimp 650 "BhcfH"  .scheme.osd-ebtt " E\Hxit  "   f void
                             set-variable #l5 &rep #l5 #g2 &cat #g2 #g2
                         !endif
                         !if &and &gre .org.aexp-addrfld 1 &seq &rig #l4 5 "addr"
+                            ; Given the user has asked for the addr to be split into 'n' fields,
+                            ; replace the first 'n-1' \n's with field separators
                             set-variable #l6 &spr "%s%s%s" #g2 #g1 #g2
-                            .org.aexp-addrfld var-str-sub #l5 "\n" #l6
+                            &sub .org.aexp-addrfld 1 var-str-sub #l5 "\n" #l6
                             set-variable #l5 &spr "%s%n" #l5 &sub .org.aexp-addrfld &add .var-str-sub.count 1 #l6
                         !endif
                         set-variable #l5 &rep #l5 #g0 .org.aexp-endrec
