@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040327.1659>
+# Last Modified: <20040819.1111>
 #
 ##############################################################################
 
@@ -55,7 +55,7 @@ MAKSRC	=	build.bat	\
 		hpux9.gmk	hpux9.mak	\
 		irix5.gmk	irix5.mak	\
 		irix6.gmk	irix6.mak	\
-		linux2.gmk	\
+		linux2.gmk	linux26.gmk	\
 		openbsd.gmk	\
 		openstep.mak	\
 		osf1.gmk	\
