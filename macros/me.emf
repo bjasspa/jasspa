@@ -284,7 +284,7 @@ add-file-hook ".rb"                                           fhook-ruby
  1 add-file-hook "^#![ \t]*/.*awk"               fhook-awk    ; awk scripts
  1 add-file-hook "^#![ \t]*/.*python"            fhook-python ; Python file
  1 add-file-hook "^#![ \t]*/.*ruby"              fhook-ruby   ; Ruby shell script
- 4 add-file-hook "^[ \t]*exec[ \t]*tclsh"        fhook-tcl    ; TCL shell script
+ 4 add-file-hook "^[ \t]*exec[ \t]*\\(wish\\|tclsh\\)" fhook-tcl ; TCL shell script
  1 add-file-hook "^#VRML"                        fhook-vrml   ; VRML or wrl files
  1 add-file-hook "^#Inventor"                    fhook-vrml   ; Use the VRML hook for iv files
 -2 add-file-hook "This is Info file"             fhook-info   ; GNU info file
