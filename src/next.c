@@ -87,9 +87,9 @@ flNextFind(meUByte *str, meUByte **curFilePtr, meInt *curLine)
     if(iscanner(pat,1,ISCANNER_PTBEG|ISCANNER_MAGIC|ISCANNER_EXACT,NULL) <= 0)
         return 0 ;
 
-    /* Found it, is it an ignore line? if so return -1 else fill in the slots and return 1. */
+    /* Found it, is it an ignore line? if so return 2 else fill in the slots and return 1. */
     if(*str == '0')
-        return -1 ;
+        return 2 ;
     
     soff = frameCur->windowCur->dotOffset ;
     if(fileRpt >= 0)
@@ -173,7 +173,7 @@ getNextLine(int f,int n)
                 frameCur->windowCur->updateFlags |= WFMOVEL ;
                 return meABORT ;
             }
-            if(rr == -1)
+            if(rr == 2)
                 /* ignore the line */
                 ii = 0 ;
             else if(rr == 1)
