@@ -6,21 +6,30 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Aug 31 21:02:32 1998
 .\"
-.Id $Id: m3mac031.3,v 2.8 2004-01-11 01:11:18 jon Exp $
+.Id $Id: m3mac031.3,v 2.9 2004-02-22 18:46:36 jon Exp $
 .Im MicroEmacs command
 .so me.tni
 .TH man 3
 .XI man - "UNIX manual page viewer"
 .XI man-clean - "Clean UNIX manual page"
+.XI %man-com 5 "Man Command line" variable|shell
 .SH NAME
+.Me "|man"
 man \- UNIX manual page viewer.
+.br
+.Me "|man-clean"
 man-clean - Clean UNIX manual page.
+.br
+.Me "|%man-com"
+%man-com \- Man Command line
 .Me $a
 .SH SYNOPSIS
 .na
 \fBman\fR
 .br
 \fBman-clean\fR
+.br
+.B %man-com
 .ad
 .SH DESCRIPTION
 \fBman\fR  provides  a  mechanism  to display a UNIX  manual  page  within the
@@ -32,7 +41,10 @@ Man on ?
 The name of the manual page (and any options) are entered on the command line.
 The macro invokes the UNIX utility
 .Hr man 1
-to generate the page and displays the results in a window.
+to  generate  the page and  displays  the  results  in a window.  The man page
+executable may be defined with the variable
+.B %man-com
+this is defined as \fCman\fR by default.
 .PP
 Another  manual  page can be selected by either  moving the cursor to the link
 and pressing return or double clicking on it with the left mouse button. \*(mS
@@ -53,11 +65,18 @@ required in a start-up file.
 .Me "$emf-scheme"
 .CS
 define-macro-file hkman man
-.CE 0
+.CE
 .Me "$ehf-scheme"
+On Microsoft Windows environments, if the \fBcygwin\fR directory is located then
+.B man
+is enabled and uses the \fBcygwin\fR 
+.Hr man 1
+utility and manual pages.
 .SH "SEE ALSO"
 .na
+.Hr man 1 ,
 .Ht man 9 ,
+.Ht cygwin 3 ,
 .Ht user-setup 3 ,
 .Ht spell-buffer 3 .
 .ad
