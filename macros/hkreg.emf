@@ -1,14 +1,33 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; *registry* hook - This file is invoked when MicroEmacs's registry is displayed
 ;
-; Last Modified : <010228.1252>
-; Copyright (c) 1999 JASSPA.
+; Copyright (c) 1999-2001 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/reg" "hmop"
-set-variable #l1 "aehkop"
 
-!if &and &sin "h" #l0 &band .hilight.flags 0x02 
+define-macro fhook-reg
+    set-variable $buffer-mask "luh1"
+    buffer-initialize
+    set-variable :mouse-pick-1 void
+    set-variable :mouse-drop-1 reg-toggle-hidden
+    set-variable :mouse-pick-3 void
+    set-variable :mouse-drop-3 reg-set-node
+    ; execute user extensions if enabled
+    !if &exist my-fhook-reg
+        my-fhook-reg
+    !endif
+!emacro
+
+; buffer-initialize variables
+set-variable .fhook-reg.name "ME Registry"
+set-variable .fhook-reg.setup &reg "/history" "fhook/reg" "hmop"
+set-variable .fhook-reg.setup-mask "aehkop"
+set-variable .fhook-reg.command-flag  "|thbio|thbio|thbio|thbio|thbio|bio|thbio|bio|"
+set-variable .fhook-reg.command-name  "|reg-toggle-hidden|reg-set-node|reg-copy-node|reg-move-node|reg-delete-node|reg-delete-node|reg-insert-node|reg-insert-node|"
+set-variable .fhook-reg.command-nbind "|||||||||"
+set-variable .fhook-reg.command-kbind "|space|return|c|m|d|delete|i|insert|"
+set-variable .fhook-reg.command-desc  "|&Toggle Tree Visibility|&Set Value of Current Node|&Copy Current Node|&Move Current Node|&Delete Current Node||&Insert New Node||"
+
+!if &and &sin "h" .fhook-reg.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.reg
         set-variable .hilight.reg  &pinc .hilight.next 1
     !endif
@@ -157,27 +176,6 @@ set-variable #l1 "aehkop"
     delete-registry #l1
     list-registry
 !emacro
-
-define-macro fhook-reg
-    set-variable $buffer-mask "luh1"
-    buffer-initialize
-    set-variable :mouse-pick-1 void
-    set-variable :mouse-drop-1 reg-toggle-hidden
-    set-variable :mouse-pick-3 void
-    set-variable :mouse-drop-3 reg-set-node
-    ; execute user extensions if enabled
-    !if &exist my-fhook-reg
-        my-fhook-reg
-    !endif
-!emacro
-set-variable .fhook-reg.name "ME Registry"
-set-variable .fhook-reg.setup #l0
-set-variable .fhook-reg.setup-mask #l1
-set-variable .fhook-reg.command-flag  "|thbio|thbio|thbio|thbio|thbio|bio|thbio|bio|"
-set-variable .fhook-reg.command-name  "|reg-toggle-hidden|reg-set-node|reg-copy-node|reg-move-node|reg-delete-node|reg-delete-node|reg-insert-node|reg-insert-node|"
-set-variable .fhook-reg.command-nbind "|||||||||"
-set-variable .fhook-reg.command-kbind "|space|return|c|m|d|delete|i|insert|"
-set-variable .fhook-reg.command-desc  "|&Toggle Tree Visibility|&Set Value of Current Node|&Copy Current Node|&Move Current Node|&Delete Current Node||&Insert New Node||"
 
 ml-write "[ME Registry file hook loaded]"
 

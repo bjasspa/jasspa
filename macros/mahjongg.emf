@@ -2,7 +2,7 @@
 ;
 ; Author:           Jon Green
 ; Created:          05th June 1997
-; Last Modified:    <990824.1400>
+; Last Modified:    <010301.1844>
 ;
 ; History:
 ;
@@ -946,7 +946,7 @@ define-macro Mahjongg
         buffer-bind-key mjg-quit    "q"
         buffer-bind-key mjg-again   "a"
       1 buffer-bind-key mjg-draw    "r"
-        buffer-bind-key mjg-help    "esc h"
+        buffer-bind-create "bo" "esc h" "" mjg-help
         ; Mouse bindings
         buffer-bind-key void        "mouse-pick-1"
         buffer-bind-key mjg-mouse   "mouse-drop-1"

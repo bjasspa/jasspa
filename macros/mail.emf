@@ -1,35 +1,55 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ;  Created By    : Steven Phillips
-;  Last Modified : <010220.2227>
+;  Last Modified : <010301.2318>
 ;
 ;  Description   : Macros used for sending e-mails
 ;
 ;  Copyright (c) 1998-99 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-!if &seq .hilight.mail "ERROR"
-    set-variable .hilight.mail  &pinc .hilight.next 1
-    set-variable .hilight.vmh   &pinc .hilight.next 1
-    set-variable .osd.mail-help &pinc .osd.next 1
-    set-variable .osd.mail-ad   &pinc .osd.next 1
-    set-variable .osd.mail-adc  &pinc .osd.next 1
-    set-variable .osd.mail-adl  &pinc .osd.next 1
-    set-variable .osd.mail-adr  &pinc .osd.next 1
+
+0 define-macro fhook-mail
+    set-variable $buffer-fhook fhook-mail
+    -1 buffer-mode "edit"
+    1 buffer-mode "wrap"
+    1 buffer-mode "indent"
+    1 buffer-mode "justify"
+    buffer-initialize
+    ; Must explictily setup the auto-spell reset and abbrev as there is no fhook
+    set-variable :auto-spell-reset   "mail"
+    !if &exist my-fhook-mail
+        my-fhook-mail
+    !endif
+!emacro
+
+set-variable .fhook-mail.setup &reg "/history" "fhook/mail" "hijnopsw"
+set-variable .fhook-mail.setup-mask "aehijkmnopstuwx"
+set-variable .fhook-mail.command-flag  "|thb|th|thb|thb|h|h|h|h|h|h|"
+set-variable .fhook-mail.command-name  "|mail-send||mail-data-insert|mail-data-insert|||||||"
+set-variable .fhook-mail.command-nbind "|||1|2|||||||"
+set-variable .fhook-mail.command-kbind "|C-c C-c||C-c C-i|C-c C-z|||||||"
+set-variable .fhook-mail.command-desc  "|&Send mail||Insert given file, method 1|Insert given file, method 2||Abbreviation file is set to mail.eaf, mail also uses|the organizer(3) address book||See Help/User Setup/Mail to setup the command-lines|Windows mail can use postie or blat|"
+
+!if &and &sin "h" .fhook-mail.setup &band .hilight.flags 0x02
+    !if &not &exist .hilight.mail
+        set-variable .hilight.mail  &pinc .hilight.next 1
+        set-variable .hilight.vmh   &pinc .hilight.next 1
+    !endif
+    0 hilight  .hilight.mail 2 100       $global-scheme
+    hilight .hilight.mail 258 "Status:"  .scheme.variable
+    hilight .hilight.mail 256 "Date:"    .scheme.keyword
+    hilight .hilight.mail 256 "From:"    .scheme.keyword
+    hilight .hilight.mail 256 "To:"      .scheme.keyword
+    hilight .hilight.mail 256 "Cc:"      .scheme.keyword
+    hilight .hilight.mail 256 "CC:"      .scheme.keyword
+    hilight .hilight.mail 258 "Subject:" .scheme.keyword
+    hilight .hilight.mail 256 "Fcc:"     .scheme.keyword
+    hilight .hilight.mail 258 ">"        .scheme.comment
+    hilight .hilight.mail 258 "----"     .scheme.header
+    hilight .hilight.mail 258 "--text follows this line--" .scheme.error
+    hilight .hilight.mail 0x40 "\esA" ""                   $global-scheme
+    hilight .hilight.mail 0xc0 "\esB" "" .hilight.vmh      $global-scheme
 !endif
-0 hilight  .hilight.mail 2 100       $global-scheme
-hilight .hilight.mail 258 "Status:"  .scheme.variable
-hilight .hilight.mail 256 "Date:"    .scheme.keyword
-hilight .hilight.mail 256 "From:"    .scheme.keyword
-hilight .hilight.mail 256 "To:"      .scheme.keyword
-hilight .hilight.mail 256 "Cc:"      .scheme.keyword
-hilight .hilight.mail 256 "CC:"      .scheme.keyword
-hilight .hilight.mail 258 "Subject:" .scheme.keyword
-hilight .hilight.mail 256 "Fcc:"     .scheme.keyword
-hilight .hilight.mail 258 ">"        .scheme.comment
-hilight .hilight.mail 258 "----"     .scheme.header
-hilight .hilight.mail 258 "--text follows this line--" .scheme.error
-hilight .hilight.mail 0x40 "\esA" ""                   $global-scheme
-hilight .hilight.mail 0xc0 "\esB" "" .hilight.vmh      $global-scheme
 ;
 ; Mail checker
 define-macro mail-check
@@ -134,6 +154,12 @@ define-macro stop-mail-check
 ; E-mail address insertion ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 0 define-macro-file organize organizer-init
 
+!if &not &exi .osd.mail-ad
+    set-variable .osd.mail-ad   &pinc .osd.next 1
+    set-variable .osd.mail-adc  &pinc .osd.next 1
+    set-variable .osd.mail-adl  &pinc .osd.next 1
+    set-variable .osd.mail-adr  &pinc .osd.next 1
+!endif
 set-variable .osd.mail-adw 32
 set-variable .osd.mail-add 16
 
@@ -317,23 +343,6 @@ osd .osd.mail-ad 60  "" " "
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-osd .osd.mail-help 0  "batcdH" 9 3 99 .scheme.osd-title "Send Mail Help"
-osd .osd.mail-help 2  ""
-osd .osd.mail-help 3  ""  "    esc h   - View this help page"
-osd .osd.mail-help 4  ""
-osd .osd.mail-help 5  ""  "    C-c C-c - Send mail"
-osd .osd.mail-help 6  ""
-osd .osd.mail-help 7  ""  "    C-c C-i - Insert given file, method 1"
-osd .osd.mail-help 8  ""  "    C-c C-z - Insert given file, method 2"
-osd .osd.mail-help 9  ""
-osd .osd.mail-help 10 ""  " Abbreviation file is set to mail.eaf, mail also uses "
-osd .osd.mail-help 11 ""  " the organizer(3) address book"
-osd .osd.mail-help 12 ""
-osd .osd.mail-help 13 ""  " See Help/User Setup/Mail to setup the command-lines"
-osd .osd.mail-help 14 ""  " Windows mail can use postie or blat"
-osd .osd.mail-help 15 ""
-osd .osd.mail-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
-
 define-macro mail
     !force 0 find-buffer "Mail"
     !if $status
@@ -366,24 +375,6 @@ define-macro mail
     beginning-of-buffer
     end-of-line
     fhook-mail
-!emacro
-
-0 define-macro fhook-mail
-    set-variable $buffer-fhook fhook-mail
-    -1 buffer-mode "edit"
-    1 buffer-mode "wrap"
-    1 buffer-mode "indent"
-    1 buffer-mode "justify"
-    !if &not &seq &find "mail" ".eaf" "ERROR"
-        buffer-abbrev-file "mail"
-    !endif
-    buffer-bind-key mail-send          "C-c C-c"
-    1 buffer-bind-key mail-data-insert "C-c C-i"
-    2 buffer-bind-key mail-data-insert "C-c C-z"
-    .osd.mail-help buffer-bind-key osd "esc h"
-    ; Must explictily setup the auto-spell reset and abbrev as there is no fhook
-    set-variable :auto-spell-reset   "mail"
-    auto-spell-init
 !emacro
 
 ; Extracts a list of addresses from the current line

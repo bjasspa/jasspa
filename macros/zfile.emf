@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sun Jan 10 20:57:03 1999
-;  Last Modified : <000719.0013>
+;  Last Modified : <010301.1843>
 ;
 ;  Description
 ;
@@ -168,7 +168,7 @@ define-macro find-zfile
     beginning-of-buffer
     -1 buffer-mode "edit"
     1 buffer-mode "view"
-    buffer-bind-key zfile-loadfile "return"
+    buffer-bind-create "boi" "return" "" zfile-loadfile
     set-variable :zftype #l8
     set-variable :zfcol &reg "/history" &spr "%s/%s-file-col" $platform #l8 "-1"
     set-variable :mouse-pick-1 zfile-mouse-pick-1

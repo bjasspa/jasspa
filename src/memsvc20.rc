@@ -66,7 +66,7 @@ BEGIN
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP
     COMBOBOX        IDC_WIDTH_EXACTLY,81,108,56,49,CBS_DROPDOWN | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    RTEXT           "C&olumns",IDC_STATIC,136,110,28,8
+    RTEXT           "Col&umns",IDC_STATIC,136,110,28,8
     COMBOBOX        IDC_COLUMNS,170,108,42,67,CBS_DROPDOWN | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
     RTEXT           "H&eight",IDC_STATIC,5,127,22,8
@@ -74,7 +74,7 @@ BEGIN
                     WS_VSCROLL | WS_TABSTOP
     COMBOBOX        IDC_HEIGHT_EXACTLY,81,125,56,52,CBS_DROPDOWN | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
-    RTEXT           "R&ows",IDC_STATIC,145,127,19,8
+    RTEXT           "&Rows",IDC_STATIC,145,127,19,8
     COMBOBOX        IDC_ROWS,170,125,42,71,CBS_DROPDOWN | CBS_SORT | 
                     WS_VSCROLL | WS_TABSTOP
     RTEXT           "Font",IDC_STATIC,12,143,15,8
@@ -87,7 +87,7 @@ BEGIN
     CONTROL         "&Line Nos.",IDC_LINE_NOS,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,165,159,46,10
     PUSHBUTTON      "&Setup",IDC_PC_PRINTER_SETUP,20,183,51,14
-    PUSHBUTTON      "&Print",IDC_PC_PRINT,87,183,51,14
+    PUSHBUTTON      "&Okay",IDC_PC_PRINT,87,183,51,14
     PUSHBUTTON      "&Cancel",IDC_PC_CANCEL,154,183,51,14
     CONTROL         "Landscape",IDC_LANDSCAPE,"Button",BS_AUTOCHECKBOX | 
                     BS_LEFTTEXT | WS_DISABLED | WS_TABSTOP,161,141,51,10

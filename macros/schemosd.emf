@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Sat Mar 13 14:31:05 1999
-;  Last Modified : <010220.2227>
+;  Last Modified : <010301.0840>
 ;
 ;  Description
 ;
@@ -18,7 +18,6 @@
     !emacro
     set-variable .osd.schm    &pinc .osd.next 1
     set-variable .osd.schmc   &pinc .osd.next 1
-    set-variable .osd.schmf   &pinc .osd.next 1
     set-variable .osd.schm-c  &pinc .osd.next 1
     set-variable .osd.schm-cc &pinc .osd.next 1
     set-variable .osd.schm-s  &pinc .osd.next 1
@@ -91,13 +90,13 @@ set-variable .schm-osd.sectv8 "|.scheme.cardback|.scheme.cardfore|.scheme.mjg1|.
 
 0 define-macro schm-osd-setup-type
     -1 osd .osd.tmp
-    osd .osd.tmp 0 "b"
+    osd .osd.tmp 0 "bs" 10 0 0 0
     osd .osd.tmp 1 "" "&Screen"  0 schm-osd-set-type
     osd .osd.tmp 2 "" "&Printer" 1 schm-osd-set-type
 !emacro
 0 define-macro schm-osd-set-type
     set-variable .schm-osd.type @#
-    osd .osd.schm 35 "MtmsxRf" 35 &lget "|Screen|Printer|" &add @# 1 .osd.tmp schm-osd-setup-type
+    osd .osd.schm 35 "MtmsxHRf" 35 .scheme.osd-entry &lget "|Screen  |Printer |" &add @# 1 .osd.tmp schm-osd-setup-type
     schm-osd-set-flags
 !emacro
 
@@ -110,7 +109,7 @@ set-variable .schm-osd.sectv8 "|.scheme.cardback|.scheme.cardfore|.scheme.mjg1|.
 !emacro
 0 define-macro schm-osd-setup-flags
     -1 osd .osd.tmp
-    osd .osd.tmp 0 "b"
+    osd .osd.tmp 0 "bs" 32 0 0 0
     !if .schm-osd.type
         osd .osd.tmp 1 "" &lget .options 1 0 schm-osd-set-flags
         osd .osd.tmp 2 "" &lget .options 2 1 schm-osd-set-flags
@@ -120,7 +119,7 @@ set-variable .schm-osd.sectv8 "|.scheme.cardback|.scheme.cardfore|.scheme.mjg1|.
         osd .osd.tmp 6 "" &lget .options 8 7 schm-osd-set-flags
     !else
         osd .osd.tmp 1 "" "&Completely Disabled"  0 schm-osd-set-flags
-        osd .osd.tmp 2 "" "&Reformating Only"     1 schm-osd-set-flags
+        osd .osd.tmp 2 "" "&Reformatting Only"    1 schm-osd-set-flags
         osd .osd.tmp 3 "" "&Fully Enabled"        3 schm-osd-set-flags
     !endif
 !emacro
@@ -128,11 +127,11 @@ set-variable .schm-osd.sectv8 "|.scheme.cardback|.scheme.cardfore|.scheme.mjg1|.
     !if .schm-osd.type
         set-variable .schm-osd.print-option @#
         osd .osd.schm 60  "Sfh" "    &Print Option : " 70
-        osd .osd.schm 70  "MtmsxRf" 70 &lget .schm-osd-setup-flags.options &add @# 1 .osd.tmp schm-osd-setup-flags
+        osd .osd.schm 70  "MtmsxHRzf" 70 .scheme.osd-entry 30 1 &lget .schm-osd-setup-flags.options &add @# 1 .osd.tmp schm-osd-setup-flags
     !else
         set-variable .schm-osd.hilight-flags @#
         osd .osd.schm 60  "Sfh" "  &Buffer Hilight : " 70
-        osd .osd.schm 70  "MtmsxRf" 70 &lget "|Completely Disabled|Reformating Only||Fully Enabled|" &add @# 1 .osd.schmf schm-osd-setup-flags
+        osd .osd.schm 70  "MtmsxHRzf" 70 .scheme.osd-entry 30 1 &lget "|Completely Disabled|Reformatting Only||Fully Enabled|" &add @# 1 .osd.tmp schm-osd-setup-flags
     !endif
 !emacro
 set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color|Use Fonts \\& Fore Color|||Use Fore \\& Back Color|Use Fonts, Fore \\& Back Color|"
@@ -810,11 +809,11 @@ osd .osd.schm 10  ""
 osd .osd.schm 20  "Sfh" "       &File Name : " 30
 osd .osd.schm 30  "EtxHfh" 30 .scheme.osd-entry "############" 1 schm-osd-set-fname
 osd .osd.schm 32  "Sfh" "   Type : " 35
-osd .osd.schm 35  "MtmsxRf" 35 "Screen" .osd.tmp schm-osd-setup-type
+osd .osd.schm 35  "MtmsxHRf" 35 .scheme.osd-entry "Screen  " .osd.tmp schm-osd-setup-type
 osd .osd.schm 40  "Sfh" "      &Decription : " 50
-osd .osd.schm 50  "EtxHf" 50 .scheme.osd-entry "############################" 1 schm-osd-set-desc
+osd .osd.schm 50  "EtxHf" 50 .scheme.osd-entry "##############################" 1 schm-osd-set-desc
 osd .osd.schm 60  "Sfh" "  &Buffer Hilight : " 70
-osd .osd.schm 70  "MtmsxRf" 70 "Fully Enabled" .osd.schmf schm-osd-setup-flags
+osd .osd.schm 70  "MtmsxHRf" 70 .scheme.osd-entry "Fully Enabled" .osd.tmp schm-osd-setup-flags
 osd .osd.schm 80  ""
 osd .osd.schm 100 "It" 7 .osd.schm-nb
 osd .osd.schm 600 ""

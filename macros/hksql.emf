@@ -1,22 +1,26 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
 ;  Created By    : Jon Green
 ;  Created       : Sat Feb 6 13:05:23 1999
-;  Last Modified : <010228.1023>
+;  Description   : Simply hilighting of a SQL file.
 ;
-;  Description   : Simply hilighting of a BNF file.
-;
-;  Notes
-;
-;  History
-;
-;  Copyright (c) 1999 JASSPA.
+;  Copyright (c) 1999-2001 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/sql" "hix"
-set-variable #l1 "aehikmtux"
 
-!if &and &sin "h" #l0 &band .hilight.flags 0x02 
+define-macro fhook-sql
+    set-variable $buffer-mask "luh1"
+    buffer-initialize
+    ; execute user extensions if enabled
+    !if &exist my-fhook-sql
+        my-fhook-sql
+    !endif
+!emacro
+
+; buffer-initialize variables
+set-variable .fhook-sql.name "SQL"
+set-variable .fhook-sql.setup &reg "/history" "fhook/sql" "hix"
+set-variable .fhook-sql.setup-mask "aehikmtux"
+
+!if &and &sin "h" .fhook-sql.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.sql
         set-variable .hilight.sql &pinc .hilight.next 1
     !endif
@@ -347,17 +351,6 @@ set-variable #l1 "aehikmtux"
         hilight .hilight.sql 1 "[[:digit:]]+"  .scheme.constant
     !endif
 !endif
-
-define-macro fhook-sql
-    set-variable $buffer-mask "luh1"
-    buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-sql
-        my-fhook-sql
-    !endif
-!emacro
-set-variable .fhook-sql.setup #l0
-set-variable .fhook-sql.setup-mask #l1
 
 ml-write "[SQL file hook loaded]"
 

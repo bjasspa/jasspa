@@ -1,12 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
 ;  Created By    : Steve Philip
 ;  Created       : Jan 26 21:56:01 1998
-;  Last Modified : <010228.0958>
-;
-;  Description    MicroEmacs LaTeX file hook
-;
-;  Notes
+;  Description   : MicroEmacs LaTeX file hook
 ;
 ;  History
 ;  
@@ -25,28 +20,47 @@
 ; 
 ;      Original.
 ;
-;  Copyright (c) 1998-2000 JASSPA.
+;  Copyright (c) 1998-2001 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/latex" "fhinopsx"
-set-variable #l1 "aefhijkmnopstuwx"
 
-!if &not &exist .osd.latex-popup
-    ; set up the osd tool menu & help dialog
-    set-variable .osd.latex-popup &pinc .osd.next 1
-    set-variable .osd.latex-popgk &pinc .osd.next 1
-    set-variable .osd.latex-pophd &pinc .osd.next 1
-    set-variable .osd.latex-popsb &pinc .osd.next 1
-    set-variable .osd.latex-poprf &pinc .osd.next 1
-    set-variable .osd.latex-popft &pinc .osd.next 1
-    set-variable .osd.latex-popev &pinc .osd.next 1
+define-macro fhook-latex
+    ; if arg is 0 this is a new file so add template 
+    !if &not @#
+        etfinsrt "latex"
+    !endif
+    buffer-initialize
+    ; Set up the default constants
+    set-variable :fill-mode "L"
+    set-variable :fill-col $fill-col
+    ; execute user extensions if enabled
+    !if &exist my-fhook-latex
+        my-fhook-latex
+    !endif
+!emacro
+
+set-variable .fhook-latex.name "LaTeX"
+set-variable .fhook-latex.setup &reg "/history" "fhook/latex" "fhinopsx"
+set-variable .fhook-latex.setup-mask "aefhijkmnopstuwx"
+set-variable .fhook-latex.tags "textags"
+set-variable .fhook-latex.comment "|%||%|"
+set-variable .fhook-latex.command-flag  "|bo|bo|bo|bo|thb|thb|thb|thb|th|thb|thb|th|thb|th|th|thbH|"
+set-variable .fhook-latex.command-name  "|latex-para|latex-para|latex-backward-paragraph|latex-forward-paragraph|latex-ref-goto-label|latex-ref-go-back|latex-list-section|latex-list-label||latex-comment-line|latex-uncomment-line||latex-popup|latex-compile|latex-view|latex-swap-hilight|"
+set-variable .fhook-latex.command-nbind "|||||||||||||||||"
+set-variable .fhook-latex.command-kbind "|esc o|esc q|esc p|esc n|C-c r|C-c C-r|f7|f8||C-c C-c|C-c C-d||C-6|||C-c C-h|"
+set-variable .fhook-latex.command-desc  "|||||&Goto Reference Label|&Return to Reference|List &Sections|List &Labels||&Comment out Line|&Uncomment Line||&Insert Token|Com&pile Buffer|&View Buffer|T&oggle hilighting|"
+
+!if &sin "f" .fhook-latex.setup
+    ; Set up the folding tokens for LaTeX
+    set-variable .fhook-latex.fold-open  "\\\\chapter\\|\\\\section\\|\\\\subsection"
+    set-variable .fhook-latex.fold-close "\\\\chapter\\|\\\\section\\|\\\\subsection\\|\\\\end{document}"
+    set-variable .fhook-latex.fold-mopen "1"
+    set-variable .fhook-latex.fold-mnext "-1"
 !endif
 
 !if &seq $platform "win32"
     ; Win32, lets assume that everybody is using MikTex, and why not !!
     set-variable %latex-view    &cond &seq %latex-view    "ERROR" "yap"  %latex-view
     set-variable %latex-compile &cond &seq %latex-compile "ERROR" "latex --c-style-errors --halt-on-error " %latex-compile
-    
     ; Add hooks for the latex compiler errors
     0 add-next-line "*latex-compile*"
     add-next-line "*latex-compile*" "%f:%l:"
@@ -55,7 +69,7 @@ set-variable #l1 "aefhijkmnopstuwx"
     set-variable %latex-view    &cond &seq %latex-view    "ERROR" "xdvi"  %latex-view
 !endif
     
-!if &and &sin "h" #l0 &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-latex.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.latex
         set-variable .hilight.latex &pinc .hilight.next 1
         set-variable .hilight.latexs &pinc .hilight.next 1
@@ -666,6 +680,17 @@ define-macro latex-ref-go-back
 !emacro
 
 ;------------ latex-popup ------------------------------------------------
+!if &not &exist .osd.latex-popup
+    ; set up the osd tool menu & help dialog
+    set-variable .osd.latex-popup &pinc .osd.next 1
+    set-variable .osd.latex-popgk &pinc .osd.next 1
+    set-variable .osd.latex-pophd &pinc .osd.next 1
+    set-variable .osd.latex-popsb &pinc .osd.next 1
+    set-variable .osd.latex-poprf &pinc .osd.next 1
+    set-variable .osd.latex-popft &pinc .osd.next 1
+    set-variable .osd.latex-popev &pinc .osd.next 1
+!endif
+
 osd .osd.latex-popgk 0   "b"
 osd .osd.latex-popgk 1   "" "&alpha"           1 latex-popup-greek 
 osd .osd.latex-popgk 2   "" "&beta"            2 latex-popup-greek
@@ -764,38 +789,6 @@ define-macro latex-popup
     set-variable :fill-col $fill-col
     set-variable $fill-col :ofill-col
 !emacro
-
-define-macro fhook-latex
-    ; if arg is 0 this is a new file so add template 
-    !if &not @#
-        etfinsrt "latex"
-    !endif
-    buffer-initialize
-    ; Set up the default constants
-    set-variable :fill-mode "L"
-    set-variable :fill-col $fill-col
-    ; execute user extensions if enabled
-    !if &exist my-fhook-latex
-        my-fhook-latex
-    !endif
-!emacro
-set-variable .fhook-latex.name "LaTeX"
-set-variable .fhook-latex.setup #l0
-set-variable .fhook-latex.setup-mask #l1
-set-variable .fhook-latex.tags "textags"
-set-variable .fhook-latex.comment "|%||%|"
-set-variable .fhook-latex.command-flag  "|bo|bo|bo|bo|thb|thb|thb|thb|th|thb|thb|th|thb|th|th|thbH|"
-set-variable .fhook-latex.command-name  "|latex-para|latex-para|latex-backward-paragraph|latex-forward-paragraph|latex-ref-goto-label|latex-ref-go-back|latex-list-section|latex-list-label||latex-comment-line|latex-uncomment-line||latex-popup|latex-compile|latex-view|latex-swap-hilight|"
-set-variable .fhook-latex.command-nbind "|||||||||||||||||"
-set-variable .fhook-latex.command-kbind "|esc o|esc q|esc p|esc n|C-c r|C-c C-r|f7|f8||C-c C-c|C-c C-d||C-6|||C-c C-h|"
-set-variable .fhook-latex.command-desc  "|||||&Goto Reference Label|&Return to Reference|List &Sections|List &Labels||&Comment out Line|&Uncomment Line||&Insert Token|Com&pile Buffer|&View Buffer|T&oggle hilighting|"
-!if &sin "f" #l0 
-    ; Set up the folding tokens for LaTeX
-    set-variable .fhook-latex.fold-open  "\\\\chapter\\|\\\\section\\|\\\\subsection"
-    set-variable .fhook-latex.fold-close "\\\\chapter\\|\\\\section\\|\\\\subsection\\|\\\\end{document}"
-    set-variable .fhook-latex.fold-mopen "1"
-    set-variable .fhook-latex.fold-mnext "-1"
-!endif
 
 ml-write "[LaTeX file hook loaded]"
 

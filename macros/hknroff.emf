@@ -1,15 +1,43 @@
-;   Highlight mode NROFF
-;
-;   Last Modified : <010228.0959>
-;
-; Copyright (c) 1993-2000 JASSPA
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Highlight mode NROFF
 ;
 ; Note that this file contains some JASSPA extensions for their Nroff
 ; documentation.
-set-variable #l0 &reg "/history" "fhook/nroff" "bfhijnopswx"
-set-variable #l1 "abefhijkmnopstuwx"
+;
+; Copyright (c) 1993-2001 JASSPA
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-!if &and &sin "h" #l0 &band .hilight.flags 0x02 
+define-macro fhook-nroff
+    ; if arg is 0 this is a new file so add template 
+    !if &not @#
+        etfinsrt "nroff"
+    !endif
+    buffer-initialize
+    ; execute user extensions if enabled
+    !if &exist my-fhook-nroff
+        my-fhook-nroff
+    !endif
+!emacro
+
+; buffer-initialize variables
+set-variable .fhook-nroff.setup &reg "/history" "fhook/nroff" "bfhijnopswx"
+set-variable .fhook-nroff.setup-mask "abefhijkmnopstuwx"
+set-variable .fhook-nroff.tags "ntags"
+set-variable .fhook-nroff.comment "|.\\\"||*|"
+set-variable .fhook-nroff.command-flag  "|thbo|bo|thb|thb|th|thb|thb|thb|thb|th|thb|thb|thb|th|thbH|t|"
+set-variable .fhook-nroff.command-name  "|nroff-para|nroff-para|nroff-add-padding|nroff-remove-padding||nroff-bold|nroff-mono|nroff-italic|nroff-roman||nroff-bold-region|nroff-mono-region|nroff-italic-region||nroff-swap-hilight|tex2nr|"
+set-variable .fhook-nroff.command-nbind "|||||||||||||||||"
+set-variable .fhook-nroff.command-kbind "|esc q|esc o|C-c &|C-x &||C-c C-b|C-c C-m|C-c C-i|C-c C-r||C-c b|C-c m|C-c i||C-c C-h||"
+set-variable .fhook-nroff.command-desc  "|&Fill paragraph||&Add Padding|Remove &Padding||Change to &Bold|Change to &Mono (Courier)|Change to &Italic|Change to &Roman||R&egion to Bold|Region to Mo&no|Re&gion to Italic||T&oggle hilighting|Convert Tex to Nroff|"
+set-variable %usr1mode "off"
+
+; setup nroff file folding and spell word adjuster
+set-variable .fhook-nroff.fold-open  "^\.S[SH]"
+set-variable .fhook-nroff.fold-close "^\.S[SH]"
+set-variable .fhook-nroff.fold-mopen "1"
+set-variable .fhook-nroff.fold-mnext "-1"
+
+!if &and &sin "h" .fhook-nroff.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.nroff
         set-variable .hilight.nroff &pinc .hilight.next 1
         set-variable .hilight.roffR &pinc .hilight.next 1
@@ -351,73 +379,6 @@ set-variable #l1 "abefhijkmnopstuwx"
     screen-update
     ml-write "Removed nroff padding."
 !emacro
-
-0 define-macro nroff-mouse-usr-mode
-    !if &and &bmod "usr1" &sequal %usr1mode "off"
-        2 ml-write "Binding nroff stuff"
-        buffer-bind-key void         "mouse-pick-1" ; Pick left
-        buffer-bind-key nroff-roman  "mouse-drop-1" ; Drop left
-        buffer-bind-key void         "mouse-pick-2" ; Pick middle
-        buffer-bind-key nroff-italic "mouse-drop-2" ; Drop middle
-        buffer-bind-key void         "mouse-pick-3" ; Pick right
-        buffer-bind-key nroff-bold   "mouse-drop-3" ; Drop right
-        set-variable %usr1mode "on"
-    !elif &and &not &bmod "usr1" &sequal %usr1mode "on"
-        2 ml-write "Unbinding nroff stuff"
-        buffer-unbind-key "mouse-pick-1" ; Pick left
-        buffer-unbind-key "mouse-drop-1" ; Drop left
-        buffer-unbind-key "mouse-pick-2" ; Pick middle
-        buffer-unbind-key "mouse-drop-2" ; Drop middle
-        buffer-unbind-key "mouse-pick-3" ; Pick right
-        buffer-unbind-key "mouse-drop-3" ; Drop right
-        set-variable %usr1mode "off"
-    !else
-        2 ml-write "nroff stuff is buggered"
-    !endif
-!emacro
-
-0 define-macro nroff-mouse-pick-left
-    !if &not &bmod "usr1"
-        set-mark
-    !endif
-!emacro
-
-0 define-macro nroff-mouse-drop-left
-    !if &not &bmod "usr1"
-        copy-region
-    !else
-        nroff-roman
-    !endif
-!emacro
-
-0 define-macro nroff-mouse-pick-right
-    !if &not &bmod "usr1"
-        yank
-    !endif
-!emacro
-
-0 define-macro nroff-mouse-drop-right
-    !if &not &bmod "usr1"
-        void
-    !else
-        nroff-bold
-    !endif
-!emacro
-
-0 define-macro nroff-mouse-pick-middle
-    !if &not &bmod "usr1"
-        set-mark
-    !else
-        nroff-italic
-    !endif
-!emacro
-
-0 define-macro nroff-mouse-drop-middle
-    !if &not &bmod "usr1"
-        kill-region
-    !endif
-!emacro
-
 ;
 ; Convert TEX to nroff.
 ;
@@ -620,7 +581,7 @@ define-macro tex2nr
 
 define-macro-file hkman aman
 
-!if &sin "x" #l0
+!if &sin "x" .fhook-nroff.setup
     ; only define the b & e hooks if time mode is enabled
     0 define-macro bhook-nroff
         set-variable .timestamp $timestamp
@@ -630,35 +591,6 @@ define-macro-file hkman aman
         set-variable $timestamp .bhook-nroff.timestamp
     !emacro
 !endif
-
-define-macro fhook-nroff
-    ; if arg is 0 this is a new file so add template 
-    !if &not @#
-        etfinsrt "nroff"
-    !endif
-    buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-nroff
-        my-fhook-nroff
-    !endif
-!emacro
-set-variable .fhook-nroff.name "Nroff"
-set-variable .fhook-nroff.setup #l0
-set-variable .fhook-nroff.setup-mask #l1
-set-variable .fhook-nroff.tags "ntags"
-set-variable .fhook-nroff.comment "|.\\\"||*|"
-set-variable .fhook-nroff.command-flag  "|thbo|bo|thb|thb|th|thb|thb|thb|thb|th|thb|thb|thb|th|thbH|t|"
-set-variable .fhook-nroff.command-name  "|nroff-para|nroff-para|nroff-add-padding|nroff-remove-padding||nroff-bold|nroff-mono|nroff-italic|nroff-roman||nroff-bold-region|nroff-mono-region|nroff-italic-region||nroff-swap-hilight|tex2nr|"
-set-variable .fhook-nroff.command-nbind "|||||||||||||||||"
-set-variable .fhook-nroff.command-kbind "|esc q|esc o|C-c &|C-x &||C-c C-b|C-c C-c|C-c C-i|C-c C-r||C-c b|C-c c|C-c i||C-c C-h||"
-set-variable .fhook-nroff.command-desc  "|&Fill paragraph||&Add Padding|Remove &Padding||Change to &Bold|Change to &Courier|Change to &Italic|Change to &Roman||R&egion to Bold|Regio&n to Courier|Re&gion to Italic||T&oggle hilighting|Convert Tex to Nroff|"
-set-variable %usr1mode "off"
-
-; setup nroff file folding and spell word adjuster
-set-variable .fhook-nroff.fold-open  "^\.S[SH]"
-set-variable .fhook-nroff.fold-close "^\.S[SH]"
-set-variable .fhook-nroff.fold-mopen "1"
-set-variable .fhook-nroff.fold-mnext "-1"
 
 ml-write "[Nroff file hook loaded]"
 

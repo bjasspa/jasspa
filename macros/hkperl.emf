@@ -1,14 +1,35 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Perl hook - This file is invoked when a Perl script file is loaded.
 ;
-; Last Modified : <010228.1005>
+; Last Modified : <010302.0808>
 ; Copyright (c) 1999-2000 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/perl" "bdfhinopx"
-set-variable #l1 "abdefhikmnoptux"
 
-!if &and &sin "h" #l0 &band .hilight.flags 0x02 
+define-macro fhook-perl
+    ; if arg is 0 this is a new file so add template.
+    !if &not @#
+        etfinsrt "perl"
+    !endif
+    set-variable $buffer-mask "luh1"
+    buffer-initialize
+    ; execute user extensions if enabled
+    !if &exist my-fhook-perl
+        my-fhook-perl
+    !endif
+!emacro
+
+; buffer-initialize variables
+set-variable .fhook-perl.setup &reg "/history" "fhook/perl" "bdfhinopx"
+set-variable .fhook-perl.setup-mask "abdefhikmnoptux"
+set-variable .fhook-perl.tags "perltags"
+set-variable .fhook-perl.comment "|#||#|"
+
+; Folding variables
+set-variable .fhook-perl.fold-open  "^sub"
+set-variable .fhook-perl.fold-close "^}"
+set-variable .fhook-perl.fold-mopen "1"
+
+!if &and &sin "h" .fhook-perl.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.perl
         set-variable .hilight.perl  &pinc .hilight.next 1
         set-variable .hilight.perlR &pinc .hilight.next 1
@@ -251,7 +272,7 @@ set-variable #l1 "abdefhikmnoptux"
     hilight .hilight.perlR 0x80 "\n" .hilight.perl .scheme.string
     hilight .hilight.perlR 0x80 ";" .hilight.perl  .scheme.string
 !endif
-!if &sin "d" #l0
+!if &sin "d" .fhook-perl.setup
     0 indent  .hilight.perl 0 10
     indent .hilight.perl n "{"  4
     indent .hilight.perl o "}" -4
@@ -264,28 +285,6 @@ set-variable #l1 "abdefhikmnoptux"
     indent .hilight.perl s "<[^ \t\n>]*>" 0
     indent .hilight.perl i "#"  
 !endif
-
-define-macro fhook-perl
-    ; if arg is 0 this is a new file so add template.
-    !if &not @#
-        etfinsrt "perl"
-    !endif
-    set-variable $buffer-mask "luh1"
-    buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-perl
-        my-fhook-perl
-    !endif
-!emacro
-set-variable .fhook-perl.setup #l0
-set-variable .fhook-perl.setup-mask #l1
-set-variable .fhook-perl.tags "perltags"
-set-variable .fhook-perl.comment "|#||#|"
-
-; Folding variables
-set-variable .fhook-perl.fold-open  "^sub"
-set-variable .fhook-perl.fold-close "^}"
-set-variable .fhook-perl.fold-mopen "1"
 
 ml-write "[Perl file hook loaded]"
 

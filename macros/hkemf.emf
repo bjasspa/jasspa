@@ -1,18 +1,43 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; emf hook - This file is invoked when a MicroEmacs macro file is loaded.
 ;
-; Last Modified : <010228.1005>
-; Copyright (c) 1999 JASSPA.
+; Copyright (c) 1999-2001 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/emf" "bdfhnopx"
-set-variable #l1 "abdefhikmnoptux"
 set-char-mask "2" "-$&#!%:@."
+
+define-macro fhook-emf
+    ; if arg is 0 this is a new file so add template 
+    !if &not @#
+        etfinsrt "emf"
+    !endif
+    set-variable $buffer-mask "luh12"
+    buffer-initialize
+    ; execute user extensions if enabled
+    !if &exist my-fhook-emf
+        my-fhook-emf
+    !endif
+!emacro
+
+; buffer-initialize variables
+set-variable .fhook-emf.setup &reg "/history" "fhook/emf" "bdfhnopx"
+set-variable .fhook-emf.setup-mask "abdefhikmnoptux"
+set-variable .fhook-emf.tags "emftags"
+set-variable .fhook-emf.comment "|;||;|"
+set-variable .fhook-emf.command-flag  "|th|thbo|b|"
+set-variable .fhook-emf.command-name  "|expand-abbrev-handle|emf-quote-command|emf-quote-command|"
+set-variable .fhook-emf.command-nbind "||||"
+set-variable .fhook-emf.command-kbind "||A-q|C-c C-q|"
+set-variable .fhook-emf.command-desc  "|Complete co&mmand|&Quote command||"
+
+; setup emf folding
+set-variable .fhook-emf.fold-open  "^0? ?define-macro"
+set-variable .fhook-emf.fold-close "^!emacro"
+set-variable .fhook-emf.fold-mopen "1"
 
 !if &not &exist .hilight.emf
     set-variable .hilight.emf &pinc .hilight.next 1
 !endif
-!if &and &sin "h" #l0 &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-emf.setup &band .hilight.flags 0x02 
     0 hilight .hilight.emf 0                        $global-scheme
     !if &band .hilight.flags 0x04
         hilight .hilight.emf 1  "define-help\\s +\\w+"  .scheme.function
@@ -37,7 +62,7 @@ set-char-mask "2" "-$&#!%:@."
         hilight .hilight.emf 1 "0[xX][[:xdigit:]]+" .scheme.constant
     !endif
 !endif
-!if &sin "d" #l0
+!if &sin "d" .fhook-emf.setup
     0 indent  .hilight.emf 0 10
     indent .hilight.emf N "define-macro" 4
     indent .hilight.emf n "!if" 4
@@ -86,34 +111,7 @@ define-macro emf-quote-command
     @# insert-string @cg
 !emacro
 
-define-macro fhook-emf
-    ; if arg is 0 this is a new file so add template 
-    !if &not @#
-        etfinsrt "emf"
-    !endif
-    set-variable $buffer-mask "luh12"
-    buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-emf
-        my-fhook-emf
-    !endif
-!emacro
-set-variable .fhook-emf.setup #l0
-set-variable .fhook-emf.setup-mask #l1
-set-variable .fhook-emf.tags "emftags"
-set-variable .fhook-emf.comment "|;||;|"
-set-variable .fhook-emf.command-flag  "|th|thbo|b|"
-set-variable .fhook-emf.command-name  "|expand-abbrev-handle|emf-quote-command|emf-quote-command|"
-set-variable .fhook-emf.command-nbind "||||"
-set-variable .fhook-emf.command-kbind "||A-q|C-c C-q|"
-set-variable .fhook-emf.command-desc  "|Complete co&mmand|&Quote command||"
-
-; setup emf variables
-set-variable .fhook-emf.fold-open  "^0? ?define-macro"
-set-variable .fhook-emf.fold-close "^!emacro"
-set-variable .fhook-emf.fold-mopen "1"
-
-ml-write "[MicroEmacs emf file hook loaded]"
+ml-write "[ME Macro file hook loaded]"
 
 ; load in user extensions if found
 !force execute-file "myemf"

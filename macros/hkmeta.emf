@@ -1,19 +1,28 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;       MetaPost and compatible MetaFont hook
+;   MetaPost and compatible MetaFont hook
 ;
-;       Created by Pedro Gomes 99-06-08
-;
-;   Last Modified : <010228.1019>
+;   Created by Pedro Gomes 99-06-08
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/meta" "hix"
-set-variable #l1 "aehikmtux"
 
-!if &and &sin "h" #l0 &band .hilight.flags 0x02 
+define-macro fhook-meta
+    set-variable $buffer-mask "luh1"
+    buffer-initialize
+    ; execute user extensions if enabled
+    !if &exist my-fhook-meta
+        my-fhook-meta
+    !endif
+!emacro
+
+; buffer-initialize variables
+set-variable .fhook-meta.name "MetaPost/Font"
+set-variable .fhook-meta.setup &reg "/history" "fhook/meta" "hiopx"
+set-variable .fhook-meta.setup-mask "aehikmoptux"
+set-variable .fhook-meta.comment "|%||%|"
+
+!if &and &sin "h" .fhook-meta.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.meta
         set-variable .hilight.meta &pinc .hilight.next 1
     !endif
-    
     0 hilight .hilight.meta 0                 $global-scheme
     hilight   .hilight.meta 2 "%"             .scheme.comment
     hilight   .hilight.meta 4 "\"" "\"" "\\"  .scheme.string
@@ -133,18 +142,6 @@ set-variable #l1 "aehikmtux"
     
     hilight   .hilight.meta 1 "atan2"      .scheme.keyword
 !endif
-
-define-macro fhook-meta
-    set-variable $buffer-mask "luh1"
-    buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-meta
-        my-fhook-meta
-    !endif
-!emacro
-set-variable .fhook-meta.name "MetaPost/Font"
-set-variable .fhook-meta.setup #l0
-set-variable .fhook-meta.setup-mask #l1
 
 ml-write "[MetaPost/Font file hook loaded]"
 

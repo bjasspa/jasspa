@@ -10,7 +10,7 @@
 *
 *	Author:			Jon Green
 *
-*	Creation Date:		03/05/91 17:19		<010227.1054>
+*	Creation Date:		03/05/91 17:19		<010302.1306>
 *
 *	Modification date:	%G% : %U%
 *
@@ -102,6 +102,7 @@ static char meHelpPage[]=
 "  -p      : Pipe stdin into *stdin*, when saved output to stdout\n"
 "  -r      : Read-only, all buffers will be in view mode\n"
 "  -s <s>  : Search for string <s> in the next given file\n"
+"  -u <n>  : Set user name to <n> ($MENAME)\n"
 "  -v <v=s>: Set variable <v> to string <s>\n"
 #ifdef _UNIX
 "  -x      : Don't catch signals\n"
@@ -110,9 +111,9 @@ static char meHelpPage[]=
 ;
 
 #ifdef _WIN32
-#define mePrintHelpMessage(mm) MessageBox(NULL,mm,"MicroEmacs '" meVERSION,MB_OK);
+#define mePrintHelpMessage(mm) MessageBox(NULL,(char *) mm,"MicroEmacs '" meVERSION,MB_OK);
 #else
-#define mePrintHelpMessage(mm) write(2,mm,strlen(mm))
+#define mePrintHelpMessage(mm) write(2,mm,meStrlen(mm))
 #endif
 
 /*
@@ -1301,9 +1302,8 @@ mesetup(int argc, char *argv[])
 
     {
         /* setup the $progname make it an absolute path. */
-        uint8 buff[FILEBUF] ;
-        if(executableLookup((uint8 *)argv[0],buff))
-            progName = meStrdup(buff) ;
+        if(executableLookup((uint8 *)argv[0],evalResult))
+            progName = meStrdup(evalResult) ;
         else
 #ifdef FREE_ALL_MEMORY
             /* stops problems on exit */
@@ -1355,14 +1355,10 @@ mesetup(int argc, char *argv[])
                     if (carg == argc-1)
                     {
 missing_arg:
-                        {
-                            char buff[256] ;
-
-                            sprintf(buff,"%s Error: Argument expected with option %s\nOption -h gives further help\n",
-                                    argv[0],argv[carg]);
-                            mePrintHelpMessage(buff) ;
-                            meExit(1);
-                        }
+                        sprintf((char *)evalResult,"%s Error: Argument expected with option %s\nOption -h gives further help\n",
+                                argv[0],argv[carg]);
+                        mePrintHelpMessage(evalResult) ;
+                        meExit(1);
                     }
                     argv[rarg++] = argv[++carg] ;
                 }
@@ -1412,50 +1408,63 @@ missing_arg:
                 }
                 break;
 
-            case 'v':
-            {
-                char *ss, *tt, cc ;
-                if (argv[carg][2] == 0)
+            case 'u':    /* -u for setting the user name */
                 {
-                    if (carg == argc-1)
-                        goto missing_arg ;
-                    ss = argv[++carg] ;
-                }
-                else
-                    ss = argv[carg] + 2 ;
-                if((tt = strchr(ss,'=')) == NULL)
-                {
-                    char buff[256] ;
-                    sprintf(buff,"%s Error: Mal-formed -v option\n",argv[0]) ;
-                    mePrintHelpMessage(buff) ;
-                    meExit(1) ;
-                }
-
-                if(((cc=getMacroTypeS(ss)) != TKREG) && (cc != TKVAR) &&
-                   (cc != TKCVR) && (cc != TKENV))
-                {
-                    char buff[256] ;
-                    *tt = '\0' ;
-
-                    sprintf(buff,"%s Error: Cannot set variable [%s] from the command-line\n",argv[0],ss) ;
-                    mePrintHelpMessage(buff) ;
-                    meExit(1) ;
-                }
-                if((tt = strchr(ss,'=')) != NULL)
-                {
-                    *tt++ = '\0' ;
-                    if(setVar((uint8 *)ss,(uint8 *)tt,meRegCurr) != TRUE)  /* set a variable */
+                    char *un ;
+                    if (argv[carg][2] == 0)
                     {
-                        char buff[256] ;
-                        sprintf(buff,"%s Error: Unable to set variable [%s]\n",argv[0],ss) ;
-                        mePrintHelpMessage(buff) ;
+                        if (carg == argc-1)
+                            goto missing_arg ;
+                        un = argv[++carg] ;
+                    }
+                    else
+                        un = argv[carg] + 2 ;
+                    meStrcpy(evalResult,"MENAME=") ;
+                    meStrcpy(evalResult+7,un) ;
+                    mePutenv(meStrdup(evalResult)) ;
+                    break;
+                }
+
+            case 'v':
+                {
+                    char *ss, *tt, cc ;
+                    if (argv[carg][2] == 0)
+                    {
+                        if (carg == argc-1)
+                            goto missing_arg ;
+                        ss = argv[++carg] ;
+                    }
+                    else
+                        ss = argv[carg] + 2 ;
+                    if((tt = strchr(ss,'=')) == NULL)
+                    {
+                        sprintf((char *)evalResult,"%s Error: Mal-formed -v option\n",argv[0]) ;
+                        mePrintHelpMessage(evalResult) ;
                         meExit(1) ;
                     }
-                    execstr = NULL ;
-                    clexec = FALSE ;
+                    
+                    if(((cc=getMacroTypeS(ss)) != TKREG) && (cc != TKVAR) &&
+                       (cc != TKCVR) && (cc != TKENV))
+                    {
+                        *tt = '\0' ;
+                        sprintf((char *)evalResult,"%s Error: Cannot set variable [%s] from the command-line\n",argv[0],ss) ;
+                        mePrintHelpMessage(evalResult) ;
+                        meExit(1) ;
+                    }
+                    if((tt = strchr(ss,'=')) != NULL)
+                    {
+                        *tt++ = '\0' ;
+                        if(setVar((uint8 *)ss,(uint8 *)tt,meRegCurr) != TRUE)  /* set a variable */
+                        {
+                            sprintf((char *)evalResult,"%s Error: Unable to set variable [%s]\n",argv[0],ss) ;
+                            mePrintHelpMessage(evalResult) ;
+                            meExit(1) ;
+                        }
+                        execstr = NULL ;
+                        clexec = FALSE ;
+                    }
+                    break ;
                 }
-                break ;
-            }
 #ifdef _UNIX
             case 'x':
                 sigcatch = 0 ;
@@ -1464,9 +1473,8 @@ missing_arg:
 
             default:
                 {
-                    char buff[256] ;
-                    sprintf(buff,"%s Error: Unknown option %s\nOption -h gives further help\n",argv[0],argv[carg]) ;
-                    mePrintHelpMessage(buff) ;
+                    sprintf((char *)evalResult,"%s Error: Unknown option %s\nOption -h gives further help\n",argv[0],argv[carg]) ;
+                    mePrintHelpMessage(evalResult) ;
                     meExit(1) ;
                 }
             }
@@ -1548,9 +1556,8 @@ missing_arg:
     }
     else if(userClientServer && clientMessage)
     {
-        char buff[256] ;
-        sprintf(buff,"%s Error: Unable to connect to server\n",argv[0]) ;
-        mePrintHelpMessage(buff) ;
+        sprintf((char *)evalResult,"%s Error: Unable to connect to server\n",argv[0]) ;
+        mePrintHelpMessage(evalResult) ;
         meExit(1) ;
     }
 #endif

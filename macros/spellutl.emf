@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Thu May 7 20:59:12 1998
-;  Last Modified : <000719.0012>
+;  Last Modified : <010301.1844>
 ;
 ;  Description
 ;
@@ -244,7 +244,7 @@ define-macro edit-dictionary
     find-buffer #l1
     -1 add-dictionary #l0
     beginning-of-buffer
-    buffer-bind-key restore-dictionary "C-c C-c"
+    buffer-bind-create "b" "C-c C-c" "" restore-dictionary
     ml-write "Use C-c C-c to restore the dictionary"
 !emacro
 

@@ -1,13 +1,29 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;  Imakefile hook
 ;
-;  Last Modified : <010228.0956>
+;  Copyright (c) 1999-2001 JASSPA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/imake" "hinopTx"
-set-variable #l1 "aehikmnoptux"
 
-!if &and &sin "h" #l0 &band .hilight.flags 0x02 
+define-macro fhook-imake
+    ; if arg is 0 this is a new file so add template 
+    !if &not @#
+        etfinsrt "imake"
+    !endif
+    set-variable $buffer-mask "luh1"
+    buffer-initialize
+    ; execute user extensions if enabled
+    !if &exist my-fhook-imake
+        my-fhook-imake
+    !endif
+!emacro
+
+; buffer-initialize variables
+set-variable .fhook-imake.name "Imakefile"
+set-variable .fhook-imake.setup &reg "/history" "fhook/imake" "hinopTx"
+set-variable .fhook-imake.setup-mask "aehikmnoptux"
+set-variable .fhook-imake.comment "|/*|*/|*|"
+
+!if &and &sin "h" .fhook-imake.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.imake
         set-variable .hilight.imake &pinc .hilight.next 1
     !endif
@@ -31,23 +47,7 @@ set-variable #l1 "aehikmnoptux"
     hilight .hilight.imake 1  "\\$<"            .scheme.keyword   
 !endif
 
-define-macro fhook-imake
-    ; if arg is 0 this is a new file so add template 
-    !if &not @#
-        etfinsrt "imake"
-    !endif
-    set-variable $buffer-mask "luh1"
-    buffer-initialize
-    ; execute user extensions if enabled
-    !if &exist my-fhook-imake
-        my-fhook-imake
-    !endif
-!emacro
-set-variable .fhook-imake.setup #l0
-set-variable .fhook-imake.setup-mask #l1
-set-variable .fhook-imake.comment "|/*|*/|*|"
-
-ml-write "[Imake file hook loaded]"
+ml-write "[Imakefile file hook loaded]"
 
 ; load in user extensions if found
 !force execute-file "myimake"

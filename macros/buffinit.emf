@@ -1,17 +1,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
-;  Author        : $Author: jon $
 ;  Created By    : Steven Phillips
 ;  Created       : Fri Nov 24 00:09:57 2000
-;  Last Modified : <010228.0943>
 ;
-;  Description
+;  Description   : Buffer initialization routines
 ;
 ;  Notes
+;      By setting a few .fhook-foo.??? variables most features and tools
+;      can be setup generically using the routines in this macro file
+;      and buffstp.emf. See the header of buffstp.emf for more info.
 ;
-;  History
-;
-;  Copyright (c) 2000 JASSPA.
+;  Copyright (c) 2000-2001 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro-file spellaut auto-spell auto-spell-buffer auto-spell-reset
@@ -115,18 +114,24 @@ define-macro-file fold fold-current fold-all
     set-variable #l3 &ind &spr ".%s.command-nbind" $buffer-fhook
     set-variable #l4 &ind &spr ".%s.command-name"  $buffer-fhook
     buffer-initialize-modes
-    !if &and &sin "h" #l0 &band .hilight.flags 0x02 
-        set-variable $buffer-hilight &ind &cat ".hilight." &rig $buffer-fhook 6
+    set-variable #l7 0
+    !if &sin "h" #l0
+        !if &band .hilight.flags 0x02 
+            !jump 2
+        !else &and &band .hilight.flags 0x01 &sin "1" &ind &spr ".%s.setup-mask" $buffer-fhook
+            set-variable #l7 1
+            set-variable $buffer-hilight &ind &cat ".hilight." &rig $buffer-fhook 6
+        !endif
     !endif
     !if &sin "b" .fhook-emf.setup
-        buffer-abbrev-file &rig $buffer-fhook 6
+        !force buffer-abbrev-file &rig $buffer-fhook 6
     !endif
     set-variable #l6 0
     !while &not &seq "" &set #l5 &lget #l1 &inc #l6 1
         !if &sin "b" #l5
             !if &not &sin "H" #l5
                 !jump 2
-            !elif &and &sin "h" #l0 &band .hilight.flags 0x02
+            !elif #l7
                 buffer-bind-create #l5 &lget #l2 #l6 &lget #l3 #l6 &lget #l4 #l6
             !endif
         !endif

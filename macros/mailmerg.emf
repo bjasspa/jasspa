@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Fri Jul 23 10:05:30 1999
-;  Last Modified : <000719.0012>
+;  Last Modified : <010301.1836>
 ;
 ;  Description
 ;
@@ -409,7 +409,7 @@ define-macro mail-merge
         osd .osd.mmrg-ppfld #l0 "" #l1 #l0 mmrg-insert-data
     !done
     insert-string &spr "{{Mail-Merge: \b%s\b%s\b%s\b%s\b%s\b}}" .mmrg.header .mmrg.endrec .mmrg.endfld .mmrg.delimit .mmrg.dbfile
-    buffer-bind-key mail-merge-popup "C-6" 
-    buffer-bind-key mail-merge-exec "C-c C-c" 
+    buffer-bind-create "b" "C-6" "" mail-merge-popup
+    buffer-bind-create "b" "C-c C-c" "" mail-merge-exec
 !emacro
 

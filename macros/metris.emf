@@ -1,6 +1,6 @@
 ;       Silly Metris game
 ;
-;   Last Modified : <991121.1251>
+;   Last Modified : <010301.1844>
 ;
 set-variable %met-file    &find "metris" ".emf"
 set-variable %met-hiscore "2379 by jk the invincible"
@@ -625,7 +625,7 @@ define-macro Metris
     buffer-bind-key Metris     "return"
     buffer-bind-key met-pause  "p"
     buffer-bind-key met-quit   "q"
-    buffer-bind-key met-help   "esc h"   ; Help key
+    buffer-bind-create "bo" "esc h" "" met-help
     met-select-piece
     met-new-piece
   1 buffer-mode "usr8"

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Jon Green
 ;  Created       : 24th November 1995
-;  Last Modified : <000719.0012>
+;  Last Modified : <010301.1843>
 ;
 ;  Description   : Patience playing card patience game
 ;
@@ -789,7 +789,9 @@ define-macro Patience
         buffer-bind-key void "mouse-pick-3"
         buffer-bind-key void "mouse-drop-3"
         
-        buffer-bind-key pat-deal "C-c C-c"
+        buffer-bind-create "bo" "esc h" "" pat-help
+        buffer-bind-create "bo" "C-c C-c" "" pat-deal
+        buffer-bind-key pat-deal "backspace"
         0  buffer-bind-key pat-key "return"
         1  buffer-bind-key pat-key "1"           ; Column 1 - row stack
         2  buffer-bind-key pat-key "2"           ; Column 2 - row stack
@@ -804,7 +806,6 @@ define-macro Patience
         12 buffer-bind-key pat-key "s"           ; Spades   - suit stack
         13 buffer-bind-key pat-key "h"           ; Hearts   - suit stack
         buffer-bind-key pat-key-tab "tab"        ; Deal next card.
-        buffer-bind-key pat-help "esc h"         ; Help key
         buffer-bind-key pat-quit "q"             ; quit game
         buffer-bind-key pat-draw "redraw"        ; Redraw screen
         1 buffer-bind-key pat-draw "C-l"         ; Redraw screen

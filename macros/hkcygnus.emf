@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Jon Green
 ;  Created       : Wed Sep 30 23:16:34 1998
-;  Last Modified : <010228.1008>
+;  Last Modified : <010301.1208>
 ;
 ;  Description   : This file contains the necessary hooks to run a Cygnus
 ;                  window inside the MicroEmacs editor. The user variable
@@ -243,9 +243,9 @@ define-macro cygpipe-break
         ; process has ended, clear-up
         set-variable $buffer-input ""
         set-variable $buffer-ipipe ""
-        buffer-unbind-key "f2"
-        buffer-unbind-key "f3"
-        buffer-unbind-key "f4"
+        !force buffer-unbind-key &kbin "0" ipipe-mode
+        !force buffer-unbind-key &kbin "1" ipipe-mode
+        !force buffer-unbind-key &kbin "2" ipipe-mode
     !endif
     !if &bmo "usr4"
         0 screen-update
@@ -296,12 +296,13 @@ define-macro cygnus
 0 define-macro fhook-cygnus
     set-variable $buffer-fhook "fhook-cygnus"
     ; Bind the keys
-    buffer-bind-key cygpipe-kill "C-c C-k"
-    buffer-bind-key cygpipe-break "C-c C-c"
-    buffer-bind-key cygpipe-rerun "C-return"
+    buffer-bind-create "b" "C-c C-k" ""   cygpipe-kill
+    buffer-bind-create "b" "C-c C-c" "2"  cygpipe-kill
+    buffer-bind-create "bo" "C-return" "" cygpipe-rerun
+    buffer-bind-create "bo" "C-j" ""      cygpipe-rerun
     !if &seq &lef $buffer-bname 7 "*cygnus"
         set-variable $buffer-ipipe cygpipe-input
-        2 buffer-bind-key cygpipe-mode "f4"
+        buffer-bind-create "b" "f4" "2"   cygpipe-mode
     !else
         ml-write "cygpipe-minoutput"
         set-variable $buffer-input cygpipe-minoutput
@@ -309,10 +310,9 @@ define-macro cygnus
     !endif
     -1 buffer-mode "wrap"
     1 buffer-mode "magic"
-    ; ZZZZZ
-    0 buffer-bind-key cygpipe-mode "f2"
-    1 buffer-bind-key cygpipe-mode "f3"
-    buffer-bind-key cygpipe-clear  "f5"
+    buffer-bind-create "b" "f2" "0" cygpipe-mode
+    buffer-bind-create "b" "f3" "1" cygpipe-mode
+    buffer-bind-create "b" "f5" ""  cygpipe-clear
     set-variable $buffer-mask "luh1"
     ; Enable hilighting if requested.
     !if %cygnus-hilight
