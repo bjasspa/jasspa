@@ -6,56 +6,56 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Aug 31 21:02:32 1998
 .\"
-.Id $Id: m3mac033.3,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m3mac033.3,v 2.6 2004-02-22 18:37:18 jon Exp $
 .Im MicroEmacs shell
 .so me.tni
-.TH cygnus 3
-.XI cygnus - "Open a Cygwin BASH window" shell|command
-.XI %cygnus-bin-path 5 "Cygwin BASH directory" shell|variable
-.XI %cygnus-hilight  5 "Cygwin shell hilight enable flag" shell|variable
-.XI %cygnus-prompt   5 "Cygwin shell prompt" shell|variable
+.TH cygwin 3
+.XI cygwin - "Open a Cygwin BASH window" shell|command
+.XI %cygwin-path 5 "Cygwin root directory" shell|variable
+.XI %cygwin-hilight  5 "Cygwin shell hilight enable flag" shell|variable
+.XI %cygwin-prompt   5 "Cygwin shell prompt" shell|variable
 .SH NAME
-.Me "|cygnus"
-cygnus \- Open a Cygwin BASH window
+.Me "|cygwin"
+cygwin \- Open a Cygwin BASH window
 .br
-.Me "|%cygnus-bin-path"
-%cygnus-bin-path \- Cygwin BASH directory
+.Me "|%cygwin-path"
+%cygwin-path \- Cygwin root directory
 .br
-.Me "|%cygnus-hilight"
-%cygnus-hilight \- Cygwin shell hilight enable flag
+.Me "|%cygwin-hilight"
+%cygwin-hilight \- Cygwin shell hilight enable flag
 .br
-.Me "|%cygnus-prompt"
-%cygnus-prompt \- Cygwin shell prompt
+.Me "|%cygwin-prompt"
+%cygwin-prompt \- Cygwin shell prompt
 .Me $a
 .SH PLATFORM
 Windows '95/'98/NT - win32 ONLY
 .SH SYNOPSIS
 .na
-\fBcygnus\fR
+\fBcygwin\fR
 .sp
-.B %cygnus-bin-path
+.B %cygwin-path
 "\|\fIpath\fR\|"
 .br
-.B %cygnus-hilight
+.B %cygwin-hilight
 [\fC0\fR|\fC1\fR]
 .br
-.B %cygnus-prompt
+.B %cygwin-prompt
 "\|\fIhilightString\fR\|"
 .ad
 .SH DESCRIPTION
-\fBcygnus\fR  creates an  interactive  BASH shell  window  within a MicroEmacs
+\fBcygwin\fR  creates an  interactive  BASH shell  window  within a MicroEmacs
 buffer window,  providing a UNIX command line  facility  within the Microsoft
 Windows environment. This is a preferable  environment to the MS-DOS shell and
-is certainly far more comfortable for those people familiar with UNIX.
+is certainly far more comfortable for those familiar with UNIX.
 .PP
 Within the window BASH  commands may be entered and  executed, the results are
 shown  in the  window.  Within  the  context  of the BASH  shell  window  then
 directory naming conforms to the \fBcygwin\fR standard conventions (as opposed
 to the Microsoft directory naming).
 .PP
-On running  \fBcygnus\fR a new buffer is created called  \fC*cygnus*\fR  which
+On running  \fBcygwin\fR a new buffer is created called  \fC*cygwin*\fR  which
 contains the shell.  Executing  the command  again  creates a new shell window
-called  \fC*cygnus1*\fR,  and so on. If a cygwin window is killed off then the
+called  \fC*cygwin1*\fR,  and so on. If a cygwin window is killed off then the
 available window is used next time the command is run.
 .PP
 Additional  controls  are  available  within the shell  window to control  the
@@ -87,134 +87,110 @@ as normal and then close the buffer. A short cut "\fCC-c  C-k\fR" is available
 to kill off the pipe. However, it is not recommended  that this method is used
 as it effectively performs a hard kill of the buffer and attached process
 .PP
-.B %cygnus-bin-path
+.B %cygwin-path
 is a user  defined  variable  that  defines  the file  system  location of the
-\fIcygwin\fR  directory. This variable  \s-1MUST\s0 be defined within the user
-start up script in order for the \fBcygnus\fR command to start the shell. With
-a default installation of \fIcygwin\fR then the settings are typically defined
-as:-
+\fIcygwin\fR directory, this is typically  \fCc:/cygwin\fR. If \fIcygwin\fR is
+located at a  different  location  then the  variable  \s-1MUST\s0  be defined
+within the user start up script in order for the \fBcygwin\fR command to start
+the shell. With a default  installation of \fIcygwin\fR  then the settings are
+typically defined as:-
 .PP
-.B "Release B19"
+.B "Current Release"
 .Me $emf-scheme
 .CS
-set-variable %cygnus-bin-path "C:/Cygnus/B19/h-i386~1/bin"
+set-variable %cygwin-path "c:/cygwin"
 .CE
 .Me $ehf-scheme
-.B "Release B20"
-.Me $emf-scheme
-.CS
-set-variable %cygnus-bin-path "c:/cygnus/cygwin-b20/H-i586-cygwin32/bin"
-.CE
-.Me $ehf-scheme
-.B %cygnus-hilight
-is a boolean  flag  which  controls  how the cygnus  command  shell  window is
+.B %cygwin-hilight
+is a boolean  flag  which  controls  how the cygwin  command  shell  window is
 hilighted.  This value  \s-1MUST\s0 be defined within the user start up script
-prior to executing  \s-1cygnus\s0  if  hilighting is to be enabled; by default
-hilighting is disabled. A value of 1 enables shell hilighting i.e.
+prior to executing  \s-1cygwin\s0  if  hilighting is to be disabled; by default
+hilighting is enabled. A value of 0 disables shell hilighting i.e.
 .Me $emf-scheme
 .CS
-set-variable %cygnus-hilight 1
+set-variable %cygwin-hilight 0
 .CE
 .Me $ehf-scheme
-.B %cygnus-prompt
+.B %cygwin-prompt
 is   an   optional    variable    that   is   used   in    conjunction    with
-\fB%cygnus-hilight\fR,  it  defines  the  hilighting  string  identifying  the
+\fB%cygwin-hilight\fR,  it  defines  the  hilighting  string  identifying  the
 prompt.  This  allows the prompt to be  rendered  with a different  color. The
-default prompt is \fCbash-2.01$\fR and may be hilighted using a definition:-
+default prompt is \fCbash-x.yyr$\fR and may be hilighted using a definition:-
 .Me $emf-scheme
 .CS
-set-variable %cygnus-prompt "bash-2.01$"
+set-variable %cygwin-prompt "bash-2.01$"
 .CE
 .Me $ehf-scheme
 The user typically  overrides the prompt  definition  within the \s-1BASH\s0
 startup file, a more appropriate definition of the prompt may be:-
 .Me $emf-scheme
 .CS
-set-variable %cygnus-prompt "^[a-z]*@[^>]*>"
+set-variable %cygwin-prompt "^[a-z]*@[^>]*>"
 .CE 0
 .Me $ehf-scheme
 .SH NOTES
-The \fBcygnus\fR command uses the
+The \fBcygwin\fR command uses the
 .Ht ipipe-shell-command 2
 to manage the pipe between the editor and the \fBbash\fR  shell. The window is
-controlled by the macro file \fChkcygnus.emf\fR which controls the interaction
+controlled by the macro file \fChkcygwin.emf\fR which controls the interaction
 with the shell.
 .PP
 The macro
-.B cygnus
-in  \fChkcygnus.emf\fR  defines the  parameter  setup to connect to the cygwin
-bash shell (Version 19), installed in the default location \fCc:/cygnus\fR. If
-your installation of cygnus is in a different  location then correct the macro
-to  match  your   install   location,   preferably   correct  by   creating  a
-\fImycygnus.emf\fR  file in your user directory simply containing a re-defined
-\fBcygnus\fR macro.
+.B cygwin
+in  \fChkcygwin.emf\fR  defines the  parameter  setup to connect to the cygwin
+bash  shell,  installed  in the  default  location  \fCc:/cygwin\fR.  If  your
+installation  of cygwin is in a different  location  then correct the macro to
+match   your   install   location,    preferably   correct   by   creating   a
+\fImycygwin.emf\fR  file in your user directory simply containing a re-defined
+\fBcygwin\fR macro.
 .PP
 If you have exported some of the cygwin  environment  variables in your
 \fCautoexec.bat\fR  then  you  will  have to  figure  out for  yourself  what
-variables macro \fIcygnus\fR needs to export - the current configuration is
+variables macro \fIcygwin\fR needs to export - the current configuration is
 for a vanilla install.
 .PP
-The \fBbash\fR shell is executed with options \fIi\fR, for interactive  shell
-and \fIm\fR to enable job control.
+The \fBbash\fR shell is executed with options \fB-i\fR, for interactive  shell
+and \fB-m\fR to enable job control.
+.PP
+As of the 2004  release  then the  \fBCygwin\fR/\fBCygnus\fR  support has been
+revised in light of the changes in \fBcygwin\fR
+.BS
+Renamed the command from \fBcygnus\fR to \fBcygwin\fR.
+.BU
+Following a change in the
+.Hr bash 1
+command  line  operation,  which now no longer echos user input, then the user
+input is processed by \*(mS. This does cause some problems with completion as
+the Cygwin  environment  has a  different  name  space. The  completion  still
+requires some more work, but sufficient for smaller tasks.
+.BE 0
 .SH "TESTED CONFIGURATIONS"
-This configuration has only been tested on a Windows '98 installation, whether
-this works on NT and  Windows '95 (OEM SR2) is unknown.
+This configuration has only been tested on a Windows 2000 installation, whether
+this works on Windows NT/XP/95/98 is unknown.
 .PP
 We have only been running  "make"  operations in the shell and do not know how
 the likes of "more", "man" or anything other terminal interaction works.
 .IP "\fBTested Configurations\fR"
-Windows '98 (Pentium 120MHz/Pentium Pro 200MHz/Cyrix 300MHz/Pentium II 450MHz)
+Windows 2K (Pentium-4) and Windows 2K (SunPCi-III)
 .IP
-cygwin  version B19.3 - this is the original "cygwin"  distribution + the
-latest "coolview.tar.gz" patch.
-.br
-cygwin version B20 - the latest cygwin distribution.
+cygwin latest version as of February 2004.
 .SH BUGS
 .IP  "\fBBreak Key\fR"
 A break in a bash shell is \fCC-c\fR, the macros define the key \fCC-c\ C-c\fR
-to perform the break. This  sequence is sent to the process but is not enacted
-by the shell. This is a property of the Bash shell rather than MicroEmacs.
-.IP "\fBSlow Response\fR"
-If you are  getting a very slow  response  from the bash  shell then check the
-directory  where  \fIbash\fR was started.  Sometimes there are problems if the
-shell is  started  in  "\fCc:/\fR"  (which is  typically  "\fC/\fR")  then the
-\fIbash\fR  shell is very  unresponsive  and tends to  '\fIignore  me\fR'  for
-periods of time. If it is started in another  location,  i.e.  "\fIc:/temp\fR"
-directory, then this problem does not occur.
-.IP
-You can see the  start-up  location in the top of the buffer when the shell is
-started.
-.IP "\fBPrompt at top of buffer\fR"
-Very, very  occasionally  the ishell sticks at the top of the
-buffer with only a couple of lines  showing. A swap of the buffers or
-a quick window resize sorts out the problem. A fix for this problem has been
-applied but still may occasionally occur.
-.IP "\fBWinOldAp\fR"
-.B Winoldap
-is created by the Microsoft  environment  whenever a BASH shell is created. On
-occasions  where  processes have terminated  badly the user may be prompted to
-kill these off; this is the normal behaviour of windows. It is strongly advised
-that all of the BASH  processes  are killed from within the Bash shell  itself
-and the shell is always exited correctly (i.e. \fCexit\fR)  before leaving the
-editor. The Windows operating system for '95/'98 is not particularly resilient
-to erroneous  processes  (for those of us familiar with UNIX) and can bring the
-whole  system  down. I believe  that NT does not  suffer  from these  problems
-(much).
-.IP "\fBLocked Input\fR"
-There are  occasions  after  killing a process the editor  appears to lock up.
-This is typically a case that the old application has not shut down correctly.
-Kill off the erroneous task  (\fCAlt-Ctrl-Del\fR  - \fIEnd Task\fR) then bring
-the editor under control using a few \fCC-g\fR
-.Ht abort-command 2
-sequences.
+to perform the break. If the shell  environment  is not  configured  then this
+will cause the shell to close down. Configuring bash resolves this problem.
+.IP "\fBCompletion\fR"
+Completion  processing  needs  to  be  improved.  The  directory  location  is
+retrieved from
+.Hr bash 1
+on each  command  line prompt, this is used for file  completion.  There is no
+command completion. Room for some improvement here.
 .SH "SEE ALSO"
 .na
 .Ht ipipe-shell-command 2 ,
 .Ht ishell 3 .
 .br
-Cygnus Win32 home sites
-.B www.cygnus.com
-and
-.B www.cygnus.co.uk
+Cygwin home site
+.B www.cygwin.com
 .ad
 .FH
