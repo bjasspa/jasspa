@@ -92,6 +92,7 @@ set-variable .fhook-perl.item-list-r1 "Sub  \ecB\\1\ecA"
     hilight .hilight.perl 4    "EOF;" "EOF" ""     .scheme.string
     hilight .hilight.perl 4    "\"EOF\";" "EOF" "" .scheme.string
     hilight .hilight.perl 4    "'EOF';" "EOF" ""   .scheme.string
+    hilight .hilight.perl 4    "qq\\{{" "}" ""     .scheme.string
     ; Comments. Note "#!" is the very first line
     hilight .hilight.perl 2    "^#"                .scheme.comment
     hilight .hilight.perl 2    ";\\{#"             .scheme.comment
@@ -105,8 +106,8 @@ set-variable .fhook-perl.item-list-r1 "Sub  \ecB\\1\ecA"
         hilight .hilight.perl 0 "^\\s *\\{sub\\s +\\w[1-9A-Za-z_']*" .scheme.function
     !endif
     ; Labels
-    hilight .hilight.perl 0    "^__...__"          .scheme.link
-    hilight .hilight.perl 0    "^__....__"         .scheme.link
+    hilight .hilight.perl 0    "^__...__"          .scheme.prepro
+    hilight .hilight.perl 0    "^__....__"         .scheme.prepro
     hilight .hilight.perl 0    "^\\s *\\{\\w*:"    .scheme.link
     ; Variables.
     hilight .hilight.perl 4    "\\$" "\\}\\W" ""   .scheme.variable
@@ -119,6 +120,7 @@ set-variable .fhook-perl.item-list-r1 "Sub  \ecB\\1\ecA"
     hilight .hilight.perl 0    "\\$#"              .scheme.variable
     hilight .hilight.perl 0    "\\$\\$"            .scheme.variable
     hilight .hilight.perl 0    "\\$'"              .scheme.variable
+    hilight .hilight.perl 0    "\\$\""             .scheme.variable
     hilight .hilight.perl 0    "\\$/"              .scheme.variable
     hilight .hilight.perl 0    "\\$!"              .scheme.variable
     hilight .hilight.perl 0    "\\$\\*"            .scheme.variable

@@ -1,0 +1,49 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2004 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     Sun Jan 11 23:13:49 2004
+; Synopsis:    Toolbar macros for tags tool.
+; Authors:     Steven Phillips & Jon Green
+;
+0 define-macro toolbar-tags-create
+    set-position "\x86"
+    ; construct the tag file name
+    set-variable #l4 $buffer-bname
+    set-variable #l1 &cat &lef $buffer-fname &rsin "/" $buffer-fname "tags"
+    0 find-file #l1 "y"
+    ; search for the string
+    beginning-of-buffer
+    set-variable #l9 .osd.tag-cur
+    set-variable #l1 0
+    !while &set #l2 &sin "?" &rig #l9 #l1
+        set-variable #l2 &add #l1 #l2
+        set-variable #l5 &cat &lef #l9 &sub #l2 1 "[^\CI]"
+        set-variable #l1 &len #l5
+        set-variable #l9 &cat #l5 &rig #l9 #l2
+    !done
+    set-variable #l1 0
+    !while &set #l2 &sin "*" &rig #l9 #l1
+        set-variable #l2 &add #l1 #l2
+        set-variable #l5 &cat &lef #l9 &sub #l2 1 "[^\CI]*"
+        set-variable #l1 &len #l5
+        set-variable #l9 &cat #l5 &rig #l9 #l2
+    !done
+    set-variable #l9 &spr "^[^\CI]*%s[^\CI]*\CI" #l9
+    -1 osd .osd.ftagc
+    osd .osd.ftagc 0 "fsS" .scheme.osd-child .osd.ftagw .osd.ftagd 0 -1 
+    set-variable #l0 0
+    !force search-forward #l9
+    !while $status
+        set-variable #l2 &lef @wl &sub &sin "\t" @wl 1
+        osd .osd.ftagc &inc #l0 1 "Rx" #l2 1 "osd-find-tag-goto"
+        !force search-forward #l9
+    !done
+    !if &not #l0
+        osd .osd.ftagc 1 ""
+    !endif
+    -1 find-buffer $buffer-bname
+    find-buffer #l4
+    set-variable .osd.tag-last ""
+!emacro
