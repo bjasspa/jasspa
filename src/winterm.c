@@ -5513,13 +5513,22 @@ dostring:
     {
         /* geometry=wxh+x+y
          * Get the initial window size and position */
-        if ((meStricmp(label,"geometry") == 0) &&
-            (value[0] != '\0'))
+        if (meStricmp(label,"geometry") == 0)
         {
-            int ww=TTwidthDefault, dd=TTdepthDefault ;
-            sscanf((char *)(value),"%dx%d+%d+%d",&ww,&dd,&TTdefaultPosX,&TTdefaultPosY) ;
-            TTwidthDefault = ww ;
-            TTdepthDefault = dd ;
+            if (value[0] == '\0')
+            {
+                TTwidthDefault = 0;
+                TTdepthDefault = 0;
+                TTdefaultPosX = 0;
+                TTdefaultPosY = 0;
+            }
+            else
+            {
+                int ww=TTwidthDefault, dd=TTdepthDefault ;
+                sscanf((char *)(value),"%dx%d+%d+%d",&ww,&dd,&TTdefaultPosX,&TTdefaultPosY) ;
+                TTwidthDefault = ww ;
+                TTdepthDefault = dd ;
+            }
             return;
         }
 
