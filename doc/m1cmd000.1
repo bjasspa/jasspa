@@ -5,7 +5,7 @@
 .\"
 .\" Created By: Jon Green
 .\"
-.Id $Id: m1cmd000.1,v 2.11 2005-02-19 13:44:43 jon Exp $
+.Id $Id: m1cmd000.1,v 2.12 2005-03-06 08:48:56 jon Exp $
 .Im MicroEmacs function
 .so me.tni
 .TH me 1
@@ -21,7 +21,9 @@ me - \*(mE text editor
 .B me
 [\|\fB@\fR\|\fIstartupFile\fR\|]
 [\|\fB\-\fR\|]
+[\|\fB\-a\fR\|]
 [\|\fB\-b\fR\ \|\fIfile\fR\|]
+[\|\fB\-B\fR\|]
 [\|\fB\-c\fR\|]
 [\|\fB\-d\fR\|]
 [\|\fB\-h\fR\|]
@@ -45,7 +47,7 @@ me - \*(mE text editor
 .SH DESCRIPTION
 .B "\*(mE"
 is a cut  down  version  of the  \s-1EMACS\s0  text  editor,  based on  Danial
-Lawrences MicroEmacs.
+Lawrences \*(mS.
 .B "\*(mE"
 is a tool for creating and changing documents,  programs, and other text files.
 It is both  relatively  easy for the novice to use, but also very  powerful in
@@ -106,10 +108,26 @@ This can be used in the following manner:
         me "@testpipe.emf" < foo.a > foo.b
 .CE 
 See \fB\-p\fR for disabling user interaction.
+.IP \fB-a\fR
+Toggle the auto-save mode, this toggles the 
+.Ht auto 2m 
+mode. 
+.IP
+\fBNote:\fR  that \*(nS  disables  auto save mode by default and \*(mS enables
+auto save mode by default.  The  behavior of \fB-a\fR is  therefore  different
+between the two editors. 
 .IP \fB\-b\fR
 Load next file as a binary file (binary editor mode, uses
 .Ht binary 2m
 buffer mode).
+.IP \fB-B\fR
+Toggle the backup mode, this toggles the 
+.Ht backup 2m 
+mode. 
+.IP
+\fBNote:\fR  that \*(nS  disables  backup  mode by default  and \*(mS  enables
+backup  mode by  default.  The  behavior  of \fB-B\fR is  therefore  different
+between the two editors. 
 .IP \fB\-c\fR
 Continuation  mode. Load  \fB\*(mE\fR  last edit session,  restoring  the
 buffers to their  previous  loaded state and position.  Note that history mode
@@ -136,7 +154,7 @@ where an external editor may be invoked from other viewer.
 .IP "\fB\-m\fR\|\fIcommand\fR"
 Sends a  
 .Hl client-server client-server 2
-command  to an  existing  MicroEmacs  session.  The  command  takes  the  form
+command  to  an  existing   \*(mS   session.   The  command   takes  the  form
 "\fBC:\fR\|\fI<client>\fR\|\fB:\fR\|\fI<command>\fR"     i.e.     to     write
 "\fCHello\fR  \fCWorld\fR"  on the  message  line then a client  may issue the
 command:-
@@ -149,8 +167,8 @@ me -m "C:ME:ml-write \\"Hello world\\"
 .CE 0
 .RE
 .IP 
-Note that the  \fI<command>\fR  is a  MicroEmacs  macro  command,  the  escape
-sequences must be adhered to. The \fIclient-server\fR interface is typically used to
+Note that the  \fI<command>\fR  is a \*(mS macro command, the escape sequences
+must be adhered to. The  \fIclient-server\fR  interface  is typically  used to
 load a file, this may be performed as follows:-
 .RS
 .CS
@@ -159,9 +177,8 @@ me -m "C:myutility:find-file \\"/path/foo.bar\\""
 .RE
 .IP
 The  absolute  path is  specified in this type of  transaction  as the current
-working  directory of the active MicroEmacs  session is unknown. The \fB\-m\fR
-option   de-iconize's  the  existing  editor  session  and  bring  it  to  the
-foreground.
+working directory of the active \*(mS session is unknown. The \fB\-m\fR option
+de-iconize's the existing editor session and bring it to the foreground.
 .IP \fB\-n\fR
 \s-1UNIX\s0  X-Windows  environments  only and  MicroSoft  Windows  NT console
 versions.  Execute   \fB\*(mE\fR  using  termcap  rather  than  X-Windows  for
@@ -203,7 +220,7 @@ Print the name and version of \*(mS. i.e.
 .IP
 \fCorac% me -V\fR
 .br
-\fCMicroEmacs 04 - Date 04/02/01 - sunos\fR
+\fCMicroEmacs 05 - Date 2005/02/24 - sunos\fR
 .IP \fB\-x\fR
 \s-1UNIX\s0  environments. Disable the capture of signals. \fB\*(mE\fR by
 default  captures  an handles  all illicit  signal  interrupts.  The option is
@@ -272,8 +289,8 @@ dependent upon the support offered by the graphics adapter.
 .TP \fB$MEINSTALLPATH\fR
 .Ht $MEINSTALLPATH 5 
 is an environment  variable that overrides any internally  defined search path
-for \*(mS system macros and defines the root  directory(s)  of the  MicroEmacs
-system macros. The presence of the environment variable affects 
+for \*(mS system macros and defines the root  directory(s) of the \*(mS system
+macros. The presence of the environment variable affects 
 .Ht $search-path 5 .
 .TP \fB$MEUSERPATH\fR
 .Ht $MEUSERPATH 5
@@ -382,11 +399,11 @@ Microsoft  Windows environments should refer to
 for a method of  setting up the  environment  variables  without  editing  the
 \fCAUTOEXEC.BAT\fR configuration file.
 .PP
-Drag and drop support is provided in the Windowing  version of MicroEmacs. The
+Drag and drop  support  is  provided  in the  Windowing  version of \*(mS. The
 editor window is brought into focus following the drop.
 .SH UNIX
-Xdnd drag and drop support is provided in the X-Windows version of MicroEmacs.
-The editor  window is not raised or brought into focus  following  the drop as
+Xdnd drag and drop support is provided in the X-Windows  version of \*(mS. The
+editor  window is not  raised or  brought  into  focus  following  the drop as
 expected in the \s-1UNIX\s0 environment. 
 .SH "SEE ALSO"
 .na
@@ -399,6 +416,7 @@ expected in the \s-1UNIX\s0 environment.
 .Ht $home 5 ,
 .Hr emacs 1 " [GNU],"
 .Hr more 1 ,
+.Ht ne 1 ,
 .Hr vi 1 .
 .br
 .Hl "Client-Server Interface" client-server 2 .
