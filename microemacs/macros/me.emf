@@ -26,7 +26,7 @@
 !endif
 ; If mename isn't set or registry file isn't found then set it to guest
 !if &seq $MENAME "ERROR"
-    !if &not &seq $login-name "ERROR"
+    !if &not &seq &cat $login-name "ERROR" "ERROR"
         set-variable $MENAME $login-name
     !elif &not &seq $LOGNAME "ERROR"
         set-variable $MENAME $LOGNAME
