@@ -315,8 +315,8 @@ define-macro wiki-node-menu
     !if #l9
         set-position "\x81"
         -1 osd .osd.tmp
-        osd .osd.tmp 0 "sS" .scheme.osd-child .w .d 0 -1
-        set-variable #l1 1
+        osd .osd.tmp 0 "sSd" .scheme.osd-child .w .d 0 -1 1
+        set-variable #l1 0
         beginning-of-buffer
         !force search-buffer "Em" "^\\*\\(\\**\\)[ \t]*\\(\\S [^:#\n]*\\)"
         !while $status
@@ -374,7 +374,7 @@ set-variable .wiki-node-menu.d 25
     set-variable .osd.wikim &pinc .osd.next 1
 !endif
 -1 osd .osd.wikim
-osd .osd.wikim 0  "batcHR" 3 6 40 .scheme.osd-title "Node List" wiki-node-menu-resize
+osd .osd.wikim 0  "batcdHR" 3 6 20 .scheme.osd-title "Node List" wiki-node-menu-resize
 osd .osd.wikim 10  ""
 osd .osd.wikim 15  "h" "  "
 osd .osd.wikim 20  "IbHht" 20 .scheme.osd-sbar .wiki-node-menu.w .wiki-node-menu.d .osd.tmp

@@ -83,14 +83,17 @@ set-variable .schm-osd.sectv8 "|.scheme.cardback|.scheme.cardfore|.scheme.mjg1|.
 !emacro
 
 0 define-macro schm-osd-setup-type
-    -1 osd .osd.tmp
-    osd .osd.tmp 0 "bs" 10 0 0 0
-    osd .osd.tmp 1 "" "\HScreen"  0 schm-osd-set-type
-    osd .osd.tmp 2 "" "\HPrinter" 1 schm-osd-set-type
+    !if &les @# 0
+        -1 osd .osd.tmp
+        osd .osd.tmp 0 "bs" 10 0 0 0
+        osd .osd.tmp 1 "" "\HScreen"  0 schm-osd-set-type
+        osd .osd.tmp 2 "" "\HPrinter" 1 schm-osd-set-type
+    !else
+        set-variable $result &lget "|Screen|Printer|" &add .schm-osd.type 1
+    !endif
 !emacro
 0 define-macro schm-osd-set-type
     set-variable .schm-osd.type @#
-    osd .osd.schm 35 "MdtmsxHRf" 35 .scheme.osd-entry &lget "|Screen  |Printer |" &add @# 1 .osd.tmp schm-osd-setup-type
     schm-osd-set-flags
 !emacro
 
@@ -102,33 +105,37 @@ set-variable .schm-osd.sectv8 "|.scheme.cardback|.scheme.cardfore|.scheme.mjg1|.
     !endif
 !emacro
 0 define-macro schm-osd-setup-flags
-    -1 osd .osd.tmp
-    osd .osd.tmp 0 "bs" 32 0 0 0
-    !if .schm-osd.type
-        osd .osd.tmp 1 "" &lget .options 1 0 schm-osd-set-flags
-        osd .osd.tmp 2 "" &lget .options 2 1 schm-osd-set-flags
-        osd .osd.tmp 3 "" &lget .options 3 2 schm-osd-set-flags
-        osd .osd.tmp 4 "" &lget .options 4 3 schm-osd-set-flags
-        osd .osd.tmp 5 "" &lget .options 7 6 schm-osd-set-flags
-        osd .osd.tmp 6 "" &lget .options 8 7 schm-osd-set-flags
+    !if &les @# 0
+        -1 osd .osd.tmp
+        osd .osd.tmp 0 "bs" 32 0 0 0
+        !if .schm-osd.type
+            osd .osd.tmp 1 "" &lget .options 1 0 schm-osd-set-flags
+            osd .osd.tmp 2 "" &lget .options 2 1 schm-osd-set-flags
+            osd .osd.tmp 3 "" &lget .options 3 2 schm-osd-set-flags
+            osd .osd.tmp 4 "" &lget .options 4 3 schm-osd-set-flags
+            osd .osd.tmp 5 "" &lget .options 7 6 schm-osd-set-flags
+            osd .osd.tmp 6 "" &lget .options 8 7 schm-osd-set-flags
+        !else
+            osd .osd.tmp 1 "" "\HCompletely Disabled"  0 schm-osd-set-flags
+            osd .osd.tmp 2 "" "\HReformatting Only"    1 schm-osd-set-flags
+            osd .osd.tmp 3 "" "\HFully Enabled"        3 schm-osd-set-flags
+        !endif
+    !elif .schm-osd.type
+        set-variable $result &lget .schm-osd-setup-flags.options &add .schm-osd.print-option 1
     !else
-        osd .osd.tmp 1 "" "\HCompletely Disabled"  0 schm-osd-set-flags
-        osd .osd.tmp 2 "" "\HReformatting Only"    1 schm-osd-set-flags
-        osd .osd.tmp 3 "" "\HFully Enabled"        3 schm-osd-set-flags
+        set-variable $result &lget "|Completely Disabled|Reformatting Only||Fully Enabled|" &add .schm-osd.hilight-flags 1
     !endif
 !emacro
 0 define-macro schm-osd-set-flags
     !if .schm-osd.type
         set-variable .schm-osd.print-option @#
-        osd .osd.schm 60  "Sfh" "    \HPrint Option : " 70
-        osd .osd.schm 70  "MdtmsxHRzf" 70 .scheme.osd-entry 30 1 &lget .schm-osd-setup-flags.options &add @# 1 .osd.tmp schm-osd-setup-flags
+        osd .osd.schm 60  "Sfh" "    \HPrint Option: " 70
     !else
         set-variable .schm-osd.hilight-flags @#
-        osd .osd.schm 60  "Sfh" "  \HBuffer Hilight : " 70
-        osd .osd.schm 70  "MdtmsxHRzf" 70 .scheme.osd-entry 30 1 &lget "|Completely Disabled|Reformatting Only||Fully Enabled|" &add @# 1 .osd.tmp schm-osd-setup-flags
+        osd .osd.schm 60  "Sfh" "  \HBuffer Hilight: " 70
     !endif
 !emacro
-set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color|Use Fonts \\& Fore Color|||Use Fore \\& Back Color|Use Fonts, Fore \\& Back Color|"
+set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color|Use Fonts & Fore Color|||Use Fore & Back Color|Use Fonts, Fore & Back Color|"
 
 0 define-macro schm-osd-get-color
     set-variable #l0 &spr ".schm-osd.col-%03d-" @#
@@ -195,7 +202,7 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
 
 0 define-macro schm-osd-set-cursor
     set-variable .schm-osd.cursor .schm-osd.curcol
-    osd .osd.schm-cc 136 "BdtxHf"   4 &add 128 .schm-osd.cursor "      " f schm-osd-set-cursor
+    osd .osd.schm-cc 13 "BdtxHf"   4 &add 128 .schm-osd.cursor "      " f schm-osd-set-cursor
 !emacro
 
 0 define-macro schm-osd-color-add
@@ -271,13 +278,19 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
     0 schm-osd-set-type
     ; get the scheme description
     beginning-of-buffer
-    !force search-buffer "em" "Description:"
+    !force search-buffer "eM" "Description:"
     !if $status
         set-variable .schm-osd.desc &trb &rig @wl $window-col
     !endif
+    ; get the osd cursor state
+    beginning-of-buffer
+    !force search-buffer "eM" "$system &bnot"
+    !if $status
+        set-variable .schm-osd.osdcursor 0
+    !endif
     ; get the buffer hilight enabled flag
     beginning-of-buffer
-    !force search-buffer "em" ".hilight.flags"
+    !force search-buffer "eM" ".hilight.flags"
     !if $status
         set-variable #l0 &band 0x03 &trb &rig @wl $window-col
     !endif
@@ -285,7 +298,7 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
     ; load all the color definitions
     ; format of line must be: add-color &set var col-no red green blue
     beginning-of-buffer
-    !force search-buffer "em" "add-color "
+    !force search-buffer "eM" "add-color "
     !while $status
         3 forward-word
         backward-word
@@ -303,11 +316,11 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
         !if &not &les #l0 .schm-osd.nocol
             set-variable .schm-osd.nocol &add #l0 1
         !endif
-        !force search-buffer "em" "add-color "
+        !force search-buffer "eM" "add-color "
     !done
     ; get the cursor color out
     beginning-of-buffer
-    !force search-buffer "em" "\\$cursor-color"
+    !force search-buffer "eM" "$cursor-color"
     !if $status
         forward-word
         backward-word
@@ -317,7 +330,7 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
     ; load all the color schemes
     ; format of line must be: add-color-scheme scheme .col001 .col002 .col003 .... [# # # # # ..]
     beginning-of-buffer
-    !force search-buffer "em" "add-color-scheme"
+    !force search-buffer "eM" "add-color-scheme"
     !while $status
         forward-word
         set-variable #l0 $window-col
@@ -336,7 +349,7 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
             !endif
         !until &equ &pinc #l0 1 16
         set-variable &ind &cat ".schm-osd.schm-" #l1 #l2
-        !force search-buffer "em" "add-color-scheme"
+        !force search-buffer "eM" "add-color-scheme"
     !done
 !emacro
 
@@ -350,6 +363,7 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
     set-variable .schm-osd.desc ""
     set-variable .schm-osd.hilight-flags 3
     set-variable .schm-osd.print-option  1
+    set-variable .schm-osd.osdcursor 1
     set-variable .schm-osd.cursor 0
     set-variable .schm-osd.nocol 0
     ; is it a screen or print scheme and call the appropriate loader
@@ -386,8 +400,9 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
     set-variable #l3 &add 128 &lget #l1 &add #l0 2
     set-variable #l4 &add 128 &lget #l1 &add #l0 9
     set-variable #l5 &add 128 &lget #l1 &add #l0 10
-    osd .osd.schm-sc &add 110 &mul @# 100  "BtxHfh" &add 10 @# #l2 "  "      #l0   schm-osd-set-schm-colcomp
-    osd .osd.schm-sc &add 130 &mul @# 100  "BtxHfh" &add 11 @# #l3 "  " &add #l0 1 schm-osd-set-schm-colcomp
+    set-variable #l6 &add 110 &mul @# 100
+    osd .osd.schm-sc #l6 "BtxHfh" #l6 #l2 "  " #l0 schm-osd-set-schm-colcomp
+    osd .osd.schm-sc &add #l6 20 "BxHfh" #l3 "  " &add #l0 1 schm-osd-set-schm-colcomp
     add-color-scheme &add 123 @# #l2 #l3 #l2 #l3 #l2 #l3 #l2 #l3 #l4 #l5 #l4 #l5 #l4 #l5 #l4 #l5
 !emacro
     
@@ -396,6 +411,13 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
     set-variable #l0 &lset #l0 &add @# 1 .schm-osd.curcol
     set-variable &ind &cat ".schm-osd.schm-" .schm-osd.curschm #l0
     &div @# 2 schm-osd-show-schm-comp
+!emacro
+0 define-macro schm-osd-set-osd-cursor
+    !if &les @# 0
+        set-variable .schm-osd.osdcursor &bxor .schm-osd.osdcursor 1
+    !elif &not .schm-osd.osdcursor
+        !abort
+    !endif
 !emacro
 
 0 define-macro schm-osd-set-schm-fntcomp
@@ -449,7 +471,7 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
 0 define-macro schm-osd-set-scheme-var
     set-variable .schm-osd.cursvar @#
     set-variable #l0 &lget &ind &cat ".schm-osd.sectn" .schm-osd.cursect @#
-    osd .osd.schm-sc 50 "Mdtmxsf" 2 #l0 .osd.schm-sv
+    osd .osd.schm-sc 50 "Mdtmxsf" 50 #l0 .osd.schm-sv
     set-variable #l0 &ind &lget &ind &cat ".schm-osd.sectv" .schm-osd.cursect @#
     set-variable .schm-osd.curschm #l0
     !if &not &exi &cat ".schm-osd.schm-" #l0
@@ -463,7 +485,7 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
 
 0 define-macro schm-osd-set-scheme-section
     set-variable .schm-osd.cursect @#
-    osd .osd.schm-sc 30 "Mdtmxsf" 2 &lget .schm-osd.sectn @# .osd.schm-ss
+    osd .osd.schm-sc 30 "Mdtmxsf" 30 &lget .schm-osd.sectn @# .osd.schm-ss
     -1 osd .osd.schm-sv
     osd .osd.schm-sv 0 "b"
     set-variable #l1 0
@@ -486,6 +508,8 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
     insert-string "; Copyright (C) 1999-2004 JASSPA (www.jasspa.com)\n"
     insert-string "; See the file me.emf for copying and conditions.\n"
     insert-string &spr "; Description: %s\n" .schm-osd.desc
+    ; Set the osd cursor flag
+    insert-string &spr "set-variable $system %s 0x020\n" &cond .schm-osd.osdcursor "&bor $system" "&band $system &bnot"
     ; Setup the schemes hilight flags
     set-variable #l0 .schm-osd.hilight-flags
     schm-osd-cmp-schm $global-scheme .scheme.function
@@ -660,15 +684,17 @@ set-variable #l1 &mid $window-chars 10 1
 -1 osd .osd.schm-cc
 osd .osd.schm-cc 0   "s" 30 18 -1 -1
 osd .osd.schm-cc 10  ""
-osd .osd.schm-cc 12  ""
+osd .osd.schm-cc 12 "Sfh" "  C\Hursor: " 13
+osd .osd.schm-cc 15 "fh"  "          "
+osd .osd.schm-cc 16 "Ctpfx" 16 &cat .osd.checkbox-chars "\} S\Hhow in Dialogs" f schm-osd-set-osd-cursor
+osd .osd.schm-cc 18  ""
 osd .osd.schm-cc 20  "Hc" 127 ""
-;osd .osd.schm-cc 25  "Hc" 127 ""
 osd .osd.schm-cc 35  "fh"  "          "
 osd .osd.schm-cc 36  "RTfxh" #l0 0x164 schm-osd-inc-colcomp
 osd .osd.schm-cc 37  "RTfxh" #l0 0x10a schm-osd-inc-colcomp
 osd .osd.schm-cc 38  "RTfx"  #l0 0x101 schm-osd-inc-colcomp
-osd .osd.schm-cc 40  "Sfh" "    \HRed : " 50
-osd .osd.schm-cc 50  "REtxHf" 1 .scheme.osd-entry "####" 1 schm-osd-set-colcomp
+osd .osd.schm-cc 40  "Sfh" "  \HRed:    " 50
+osd .osd.schm-cc 50  "REtxHf" 50 .scheme.osd-entry "####" 1 schm-osd-set-colcomp
 osd .osd.schm-cc 51  "fh"  "          "
 osd .osd.schm-cc 52  "RTfxh" #l1 0x1e4 schm-osd-inc-colcomp
 osd .osd.schm-cc 53  "RTfxh" #l1 0x18a schm-osd-inc-colcomp
@@ -677,8 +703,8 @@ osd .osd.schm-cc 55  "fh"  "          "
 osd .osd.schm-cc 56  "RTfxh" #l0 0x264 schm-osd-inc-colcomp
 osd .osd.schm-cc 57  "RTfxh" #l0 0x20a schm-osd-inc-colcomp
 osd .osd.schm-cc 58  "RTfx"  #l0 0x201 schm-osd-inc-colcomp
-osd .osd.schm-cc 60  "Sfh" "  \HGreen : " 70
-osd .osd.schm-cc 70  "REtxHf" 2 .scheme.osd-entry "####" 2 schm-osd-set-colcomp
+osd .osd.schm-cc 60  "Sfh" "  \HGreen:  " 70
+osd .osd.schm-cc 70  "REtxHf" 70 .scheme.osd-entry "####" 2 schm-osd-set-colcomp
 osd .osd.schm-cc 71  "fh"  "          "
 osd .osd.schm-cc 72  "RTfxh" #l1 0x2e4 schm-osd-inc-colcomp
 osd .osd.schm-cc 73  "RTfxh" #l1 0x28a schm-osd-inc-colcomp
@@ -687,26 +713,22 @@ osd .osd.schm-cc 75  "fh"  "          "
 osd .osd.schm-cc 76  "RTfxh" #l0 0x364 schm-osd-inc-colcomp
 osd .osd.schm-cc 77  "RTfxh" #l0 0x30a schm-osd-inc-colcomp
 osd .osd.schm-cc 78  "RTfx"  #l0 0x301 schm-osd-inc-colcomp
-osd .osd.schm-cc 80  "Sfh" "   \HBlue : " 90
-osd .osd.schm-cc 90  "REtxHf" 3 .scheme.osd-entry "####" 3 schm-osd-set-colcomp
+osd .osd.schm-cc 80  "Sfh" "  \HBlue:   " 90
+osd .osd.schm-cc 90  "REtxHf" 90 .scheme.osd-entry "####" 3 schm-osd-set-colcomp
 osd .osd.schm-cc 100 "fh"  "          "
 osd .osd.schm-cc 102 "RTfxh" #l1 0x3e4 schm-osd-inc-colcomp
 osd .osd.schm-cc 103 "RTfxh" #l1 0x38a schm-osd-inc-colcomp
 osd .osd.schm-cc 104 "RTfx"  #l1 0x381 schm-osd-inc-colcomp
 osd .osd.schm-cc 120 "Hc" 127 ""
-;osd .osd.schm-cc 125 "Hc" 127 ""
 osd .osd.schm-cc 130 ""
-osd .osd.schm-cc 134 "Sfh" " C\Hursor : " 136
-osd .osd.schm-cc 140 ""
-;osd .osd.schm-cc 600 "BtcfHhx" 5 .scheme.osd-ebtt " &Delete " f void
-osd .osd.schm-cc 610 "RBtcfHhx" 6 .scheme.osd-ebtt " \HChange " f schm-osd-color-change
-osd .osd.schm-cc 620 "BtcfHx"   7 .scheme.osd-ebtt " \HAdd " f schm-osd-color-add
+osd .osd.schm-cc 610 "RBtcfHhx" 610 .scheme.osd-ebtt " \HChange " f schm-osd-color-change
+osd .osd.schm-cc 620 "BtcfHx"   620 .scheme.osd-ebtt " \HAdd " f schm-osd-color-add
 
 -1 osd .osd.schm-c
 osd .osd.schm-c 0   "s" 55 18 -1 -1 schm-osd-color-init
-osd .osd.schm-c 2  "IbHht" 1 .scheme.osd-sbar 19 16 .osd.schmc
+osd .osd.schm-c 2  "IbHht" 2 .scheme.osd-sbar 19 16 .osd.schmc
 osd .osd.schm-c 3  "h" " "
-osd .osd.schm-c 4  "Ih"  .osd.schm-cc
+osd .osd.schm-c 4  "Iht" 4 .osd.schm-cc
 
 osd .osd.schm-ss 0 "b"
 set-variable #l1 0
@@ -717,14 +739,14 @@ set-variable #l1 0
 -1 osd .osd.schm-sc
 osd .osd.schm-sc 0   "s" 30 18 -1 -1
 osd .osd.schm-sc 10  ""
-osd .osd.schm-sc 20  "Sfh"  " Section : " 30
-osd .osd.schm-sc 40  "Sfh"  "  Scheme : " 50
+osd .osd.schm-sc 20  "Sfh" " Section: " 30
+osd .osd.schm-sc 40  "Sfh" " Scheme:  " 50
 osd .osd.schm-sc 60  ""
 osd .osd.schm-sc 62  "fh" " "
-osd .osd.schm-sc 65  "BfhHx" .scheme.osd-ebtt " \HText " f schm-osd-set-to-text
-osd .osd.schm-sc 70  "f"    "   Fore  Back  BILRUV"
+osd .osd.schm-sc 65  "BfhHx" .scheme.osd-ebtt " \HReset " f schm-osd-set-to-text
+osd .osd.schm-sc 70  "f"    "  Fore  Back  BILRUV"
 osd .osd.schm-sc 80  ""
-osd .osd.schm-sc 100  "Sfh" "  Normal : |"
+osd .osd.schm-sc 100  "Sfh" " Normal:   |"
 osd .osd.schm-sc 120  "Sfh" "||"
 osd .osd.schm-sc 140  "Sfh" "| "
 osd .osd.schm-sc 151  "Cfxh" "^^ B^^" 0x101 schm-osd-set-schm-fntcomp
@@ -736,7 +758,7 @@ osd .osd.schm-sc 156  "Cfx"  "^^ V^^" 0x100 schm-osd-set-schm-fntcomp
 osd .osd.schm-sc 170  "Sfh" "           "
 osd .osd.schm-sc 180  "SfH" 123 "The big brown fox..."
 osd .osd.schm-sc 190  ""
-osd .osd.schm-sc 200  "Sfh" " Current : |"
+osd .osd.schm-sc 200  "Sfh" " Current:  |"
 osd .osd.schm-sc 220  "Sfh" "||"
 osd .osd.schm-sc 240  "Sfh" "| "
 osd .osd.schm-sc 251  "Cfxh" "^^ B^^" 0x201 schm-osd-set-schm-fntcomp
@@ -748,7 +770,7 @@ osd .osd.schm-sc 256  "Cfx"  "^^ V^^" 0x200 schm-osd-set-schm-fntcomp
 osd .osd.schm-sc 270  "Sfh" "           "
 osd .osd.schm-sc 280  "SfH" 124 "The big brown fox..."
 osd .osd.schm-sc 290  ""
-osd .osd.schm-sc 300  "Sfh" "  Select : |"
+osd .osd.schm-sc 300  "Sfh" " Select:   |"
 osd .osd.schm-sc 320  "Sfh" "||"
 osd .osd.schm-sc 340  "Sfh" "| "
 osd .osd.schm-sc 351  "Cfxh" "^^ B^^" 0x301 schm-osd-set-schm-fntcomp
@@ -760,7 +782,7 @@ osd .osd.schm-sc 356  "Cfx"  "^^ V^^" 0x300 schm-osd-set-schm-fntcomp
 osd .osd.schm-sc 370  "Sfh" "           "
 osd .osd.schm-sc 380  "SfH" 125 "The big brown fox..."
 osd .osd.schm-sc 390  ""
-osd .osd.schm-sc 400  "Sfh" " Sel-Cur : |"
+osd .osd.schm-sc 400  "Sfh" " Sel-Cur:  |"
 osd .osd.schm-sc 420  "Sfh" "||"
 osd .osd.schm-sc 440  "Sfh" "| "
 osd .osd.schm-sc 451  "Cfxh" "^^ B^^" 0x401 schm-osd-set-schm-fntcomp
@@ -774,9 +796,9 @@ osd .osd.schm-sc 480  "SfH" 126 "The big brown fox..."
 osd .osd.schm-sc 490  ""
 
 osd .osd.schm-s 0  "s" 55 18 -1 -1 schm-osd-scheme-init
-osd .osd.schm-s 2  "IbHht" 1 .scheme.osd-sbar 19 16 .osd.schmc
+osd .osd.schm-s 2  "IbHht" 2 .scheme.osd-sbar 19 16 .osd.schmc
 osd .osd.schm-s 3  "h" " "
-osd .osd.schm-s 4  "Ih"  .osd.schm-sc
+osd .osd.schm-s 4  "Iht" 4 .osd.schm-sc
 
 osd .osd.schm-nb 0   "N"
 osd .osd.schm-nb 1   "Pft" 1 "Colors" .osd.schm-c
@@ -785,14 +807,16 @@ osd .osd.schm-nb 100 "It"  8 .osd.schm-c
 
 osd .osd.schm 0   "batcHds" 9 3 59 31 -1 -1 630 .scheme.osd-title "Color Scheme Editor" 
 osd .osd.schm 10  ""
-osd .osd.schm 20  "Sfh" "       \HFile Name : " 30
+osd .osd.schm 20  "Sfh" "       \HFile Name: " 30
 osd .osd.schm 30  "EtxHfh" 30 .scheme.osd-entry "############" 1 schm-osd-set-fname
-osd .osd.schm 32  "Sfh" "   Type : " 35
-osd .osd.schm 35  "MdtmsxHRf" 35 .scheme.osd-entry "Screen  " .osd.tmp schm-osd-setup-type
-osd .osd.schm 40  "Sfh" "      \HDecription : " 50
-osd .osd.schm 50  "EtxHf" 50 .scheme.osd-entry "##############################" 1 schm-osd-set-desc
-osd .osd.schm 60  "Sfh" "  \HBuffer Hilight : " 70
-osd .osd.schm 70  "MdtmsxHRf" 70 .scheme.osd-entry "Fully Enabled" .osd.tmp schm-osd-setup-flags
+osd .osd.schm 32  "Sfh" "    \HType: " 35
+osd .osd.schm 35  "OtxmsfhHR" 35 .scheme.osd-entry "########" .osd.tmp schm-osd-setup-type
+osd .osd.schm 37  "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 35
+osd .osd.schm 40  "Sfh" "      \HDecription: " 50
+osd .osd.schm 50  "EtxHf" 50 .scheme.osd-entry "###############################" 1 schm-osd-set-desc
+osd .osd.schm 60  "Sfh" "  \HBuffer Hilight: " 70
+osd .osd.schm 70  "OtxmsfhHRz" 70 .scheme.osd-entry 30 1 "" .osd.tmp schm-osd-setup-flags
+osd .osd.schm 72  "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 70
 osd .osd.schm 80  ""
 osd .osd.schm 100 "It" 7 .osd.schm-nb
 osd .osd.schm 600 ""
