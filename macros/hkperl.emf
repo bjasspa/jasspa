@@ -20,9 +20,9 @@ set-variable .fhook-perl.comment "|#||#|# | #||"
 
 !if &exist perldb
     set-variable .fhook-perl.command-flag  "|t|h|"
-    set-variable .fhook-perl.command-name  "|perldb|"
-    set-variable .fhook-perl.command-nbind "|2|"
-    set-variable .fhook-perl.command-kbind "||"
+    set-variable .fhook-perl.command-name  "|perldb||"
+    set-variable .fhook-perl.command-nbind "|2||"
+    set-variable .fhook-perl.command-kbind "|||"
     set-variable .fhook-perl.command-desc  "|\HDebug Current Script|See tool menu to debug current script|"
 !endif
 
@@ -285,8 +285,6 @@ set-variable .fhook-perl.item-list-r1 "Sub  \ecB\\1\ecA"
     hilight .hilight.perlR 0x80 "/" .hilight.perlX .scheme.string
     hilight .hilight.perlR 0x80 "\n" .hilight.perl .scheme.string
     hilight .hilight.perlR 0x80 ";" .hilight.perl  .scheme.string
-    ; let html based files use the perl hilight for any php scripts
-    set-variable .hilight.phpscript .hilight.perl
 !endif
 !if &sin "d" .fhook-perl.setup
     0 indent  .hilight.perl 0 100
@@ -309,8 +307,6 @@ set-variable .fhook-perl.item-list-r1 "Sub  \ecB\\1\ecA"
     indent .hilight.perl s "<[^ \t\n>]*>" 0
     indent .hilight.perl e "\\$#" "." ""
     indent .hilight.perl i "#"  
-    ; let html based files use the perl indent for any php scripts
-    set-variable .indent.phpscript .hilight.perl
 !endif
 
 buffer-init-fhook "perl"

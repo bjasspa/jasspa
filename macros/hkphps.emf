@@ -1,0 +1,450 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2003-2004 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created      Fri Oct 24 2003
+; Synopsis:    PHP Script Hook File
+; Authors:     Bruno Sabin & Steven Phillips & Gabriel Tabares-Barreiro
+; Note:
+;   while php script is similar to perl it is different enough
+;   to warrant its own definition. The main hkphp hook handles
+;   the html side of the file, this handles the script side.
+
+define-macro fhook-phps
+    set-variable $buffer-mask "luh1"
+    @# buffer-init "phps"
+    buffer-init-hooks
+!emacro
+
+; buffer-init variables
+set-variable .fhook-phps.name "PHP Script"
+set-variable .fhook-phps.setup &reg "/history" "fhook/phps" "bdfghinopx"
+set-variable .fhook-phps.setup-mask "abdefghikmnoptux"
+set-variable .fhook-phps.comment "|//||/|// | //||"
+
+; Setup collapse
+set-variable .fhook-phps.collapse-open  "^function[ \t]"
+set-variable .fhook-phps.collapse-close "^}"
+set-variable .fhook-phps.collapse-mopen "1"
+
+; setup item-list
+set-variable .fhook-phps.item-list-s1 "^[ \t]*function[ \t]+\\(\\w[1-9A-Za-z_']*\\)"
+set-variable .fhook-phps.item-list-r1 "Func \ecB\\1\ecA"
+
+!if &not &exist .hilight.phps
+    set-variable .hilight.phps  &pinc .hilight.next 1
+!endif
+
+!if &and &sin "h" .fhook-phps.setup &band .hilight.flags 0x02 
+    !if &not &exist .hilight.phpsS
+        set-variable .hilight.phpsS &pinc .hilight.next 1
+        set-variable .hilight.phpsV &pinc .hilight.next 1
+    !endif
+    ; php file highlighting
+    0 hilight .hilight.phps 2 50                   $global-scheme
+    ; Hilight the documentation backets
+    hilight .hilight.phps 4    "^=head" "=cut" ""  .scheme.string
+    ; Strings and things
+    hilight .hilight.phps 0 "\\\\'"                $global-scheme 
+    hilight .hilight.phps 0 "\\\\`"                $global-scheme 
+    hilight .hilight.phps 0x804 "\\W\\{'" "'" "\\" .scheme.string
+    hilight .hilight.phps 0x80 "[^\\\\]\\{\"" .hilight.phpsS .scheme.string
+    hilight .hilight.phps 0    "\\W\\{/[^/]*\\}$"  $global-scheme 
+    hilight .hilight.phps 20   "/\\*" "*/" ""      .scheme.comment
+    hilight .hilight.phps 2    "^//"               .scheme.comment
+    hilight .hilight.phps 2    ";\\{//"            .scheme.comment
+    hilight .hilight.phps 2    "\\s \\{//"         .scheme.comment
+    hilight .hilight.phps 2    "^#"                .scheme.comment
+    hilight .hilight.phps 2    ";\\{#"             .scheme.comment
+    hilight .hilight.phps 2    "\\s \\{#"          .scheme.comment
+    ; Includes.
+    hilight .hilight.phps 2    "^require"          .scheme.prepro
+    hilight .hilight.phps 2    "^require_once"     .scheme.prepro
+    hilight .hilight.phps 2    "^include_once"     .scheme.prepro
+    hilight .hilight.phps 2    "^include_once"     .scheme.prepro
+    hilight .hilight.phps 2    "^package"          .scheme.prepro
+    ; Function names
+    !if &band .hilight.flags 0x04
+        hilight .hilight.phps 0 "^\\s *\\{sub\\s +\\w[1-9A-Za-z_']*" .scheme.function
+    !endif
+    ; Labels
+    hilight .hilight.phps 1    "STDIN"             .scheme.prepro
+    hilight .hilight.phps 1    "STDOUT"            .scheme.prepro
+    hilight .hilight.phps 1    "STDERR"            .scheme.prepro
+    hilight .hilight.phps 1    "__FILE__"          .scheme.prepro
+    hilight .hilight.phps 1    "__LINE__"          .scheme.prepro
+    hilight .hilight.phps 1    "__FUNCTION__"      .scheme.prepro
+    hilight .hilight.phps 1    "__CLASS__"         .scheme.prepro
+    hilight .hilight.phps 1    "__METHOD__"        .scheme.prepro
+    hilight .hilight.phps 0    "^__...__"          .scheme.prepro
+    hilight .hilight.phps 0    "^__....__"         .scheme.prepro
+    hilight .hilight.phps 0    "^\\s *\\{\\w*:"    .scheme.link
+    ; Variables.
+    hilight .hilight.phps 4    "\\$" "\\}\\W" ""   .scheme.variable
+    hilight .hilight.phps 4    "@" "\\}\\W" ""     .scheme.prepro
+    hilight .hilight.phps 0x80 "\\${" .hilight.phpsV .scheme.variable
+    hilight .hilight.phps 4    "\\$(" ")" ""       .scheme.variable
+    hilight .hilight.phps 0    "\\$\\?"            .scheme.variable
+    hilight .hilight.phps 0    "\\$#"              .scheme.variable
+    hilight .hilight.phps 0    "\\$\\$"            .scheme.variable
+    hilight .hilight.phps 0    "\\$'"              .scheme.variable
+    hilight .hilight.phps 0    "\\$/"              .scheme.variable
+    hilight .hilight.phps 0    "\\$!"              .scheme.variable
+    hilight .hilight.phps 0    "\\$\\*"            .scheme.variable
+    ; hash parser for better visibility of the keys
+    hilight .hilight.phps 1 "'[a-zA-Z0-9_]+' +=>"  .scheme.header
+    ; Separators
+    hilight .hilight.phps 0    "->"                .scheme.operator
+    hilight .hilight.phps 1    ">"                 .scheme.operator
+    hilight .hilight.phps 1    ">="                .scheme.operator
+    hilight .hilight.phps 1    "<"                 .scheme.operator
+    hilight .hilight.phps 1    "<>"                .scheme.operator
+    hilight .hilight.phps 1    "<=>"               .scheme.operator
+    hilight .hilight.phps 1    "=>"                .scheme.operator
+    hilight .hilight.phps 1    "<="                .scheme.operator
+    hilight .hilight.phps 0    "&&"                .scheme.operator
+    hilight .hilight.phps 0    "||"                .scheme.operator
+    hilight .hilight.phps 0    ">>"                .scheme.operator
+    hilight .hilight.phps 0    "<<"                .scheme.operator
+    hilight .hilight.phps 0    "!="                .scheme.operator
+    hilight .hilight.phps 0    "=="                .scheme.operator
+    hilight .hilight.phps 1    "and"               .scheme.operator
+    hilight .hilight.phps 1    "or"                .scheme.operator
+    hilight .hilight.phps 1    "xor"               .scheme.operator
+    hilight .hilight.phps 1    "defined"           .scheme.operator
+    hilight .hilight.phps 1    "undef"             .scheme.operator
+    
+    hilight .hilight.phps 0x804 "`" "`" "\\"       .scheme.prepro
+    hilight .hilight.phps 1    "<[^ \t\n>]*>"      .scheme.prepro
+    ; Keywords
+    hilight .hilight.phps 1    "exception"         .scheme.keyword
+    hilight .hilight.phps 1    "php_user_filter"   .scheme.keyword
+    hilight .hilight.phps 1    "array"             .scheme.keyword
+    hilight .hilight.phps 1    "as"                .scheme.keyword
+    hilight .hilight.phps 1    "break"             .scheme.keyword
+    hilight .hilight.phps 1    "case"              .scheme.keyword
+    hilight .hilight.phps 1    "cfunction"         .scheme.keyword
+    hilight .hilight.phps 1    "class"             .scheme.keyword
+    hilight .hilight.phps 1    "const"             .scheme.keyword
+    hilight .hilight.phps 1    "continue"          .scheme.keyword
+    hilight .hilight.phps 1    "declare"           .scheme.keyword
+    hilight .hilight.phps 1    "default"           .scheme.keyword
+    hilight .hilight.phps 1    "die"               .scheme.keyword
+    hilight .hilight.phps 1    "do"                .scheme.keyword
+    hilight .hilight.phps 1    "echo"              .scheme.keyword
+    hilight .hilight.phps 1    "else"              .scheme.keyword
+    hilight .hilight.phps 1    "elseif"            .scheme.keyword
+    hilight .hilight.phps 1    "empty"             .scheme.keyword
+    hilight .hilight.phps 1    "enddeclare"        .scheme.keyword
+    hilight .hilight.phps 1    "endfor"            .scheme.keyword
+    hilight .hilight.phps 1    "endforeach"        .scheme.keyword
+    hilight .hilight.phps 1    "endif"             .scheme.keyword
+    hilight .hilight.phps 1    "endswitch"         .scheme.keyword
+    hilight .hilight.phps 1    "endwhile"          .scheme.keyword
+    hilight .hilight.phps 1    "eval"              .scheme.keyword
+    hilight .hilight.phps 1    "exit"              .scheme.keyword
+    hilight .hilight.phps 1    "extends"           .scheme.keyword
+    hilight .hilight.phps 1    "for"               .scheme.keyword
+    hilight .hilight.phps 1    "foreach"           .scheme.keyword
+    hilight .hilight.phps 1    "function"          .scheme.keyword
+    hilight .hilight.phps 1    "global"            .scheme.keyword
+    hilight .hilight.phps 1    "if"                .scheme.keyword
+    hilight .hilight.phps 1    "include"           .scheme.keyword
+    hilight .hilight.phps 1    "include_once"      .scheme.keyword
+    hilight .hilight.phps 1    "isset"             .scheme.keyword
+    hilight .hilight.phps 1    "list"              .scheme.keyword
+    hilight .hilight.phps 1    "new"               .scheme.keyword
+    hilight .hilight.phps 1    "old_function"      .scheme.keyword
+    hilight .hilight.phps 1    "print"             .scheme.keyword
+    hilight .hilight.phps 1    "require"           .scheme.keyword
+    hilight .hilight.phps 1    "require_once"      .scheme.keyword
+    hilight .hilight.phps 1    "return"            .scheme.keyword
+    hilight .hilight.phps 1    "static"            .scheme.keyword
+    hilight .hilight.phps 1    "switch"            .scheme.keyword
+    hilight .hilight.phps 1    "unset"             .scheme.keyword
+    hilight .hilight.phps 1    "use"               .scheme.keyword
+    hilight .hilight.phps 1    "var"               .scheme.keyword
+    hilight .hilight.phps 1    "while"             .scheme.keyword
+    
+    ;Core Constants
+    hilight .hilight.phps 1 "PHP_VERSION"          .scheme.constant
+    hilight .hilight.phps 1 "PHP_OS"               .scheme.constant
+    hilight .hilight.phps 1 "DEFAULT_INCLUDE_PATH" .scheme.constant
+    hilight .hilight.phps 1 "PEAR_INSTALL_DIR"     .scheme.constant
+    hilight .hilight.phps 1 "PEAR_EXTENSION_DIR"   .scheme.constant
+    hilight .hilight.phps 1 "PHP_EXTENSION_DIR"    .scheme.constant
+    hilight .hilight.phps 1 "PHP_BINDIR"           .scheme.constant
+    hilight .hilight.phps 1 "PHP_LIBDIR"           .scheme.constant
+    hilight .hilight.phps 1 "PHP_DATADIR"          .scheme.constant
+    hilight .hilight.phps 1 "PHP_SYSCONFDIR"       .scheme.constant
+    hilight .hilight.phps 1 "PHP_LOCALSTATEDIR"    .scheme.constant
+    hilight .hilight.phps 1 "PHP_CONFIG_FILE_PATH" .scheme.constant
+    hilight .hilight.phps 1 "PHP_OUTPUT_HANDLER_START" .scheme.constant
+    hilight .hilight.phps 1 "PHP_OUTPUT_HANDLER_CONT" .scheme.constant
+    hilight .hilight.phps 1 "PHP_OUTPUT_HANDLER_END" .scheme.constant
+    hilight .hilight.phps 1 "E_ERROR"              .scheme.constant
+    hilight .hilight.phps 1 "E_WARNING"            .scheme.constant
+    hilight .hilight.phps 1 "E_PARSE"              .scheme.constant
+    hilight .hilight.phps 1 "E_NOTICE"             .scheme.constant
+    hilight .hilight.phps 1 "E_CORE_ERROR"         .scheme.constant
+    hilight .hilight.phps 1 "E_CORE_WARNING"       .scheme.constant
+    hilight .hilight.phps 1 "E_COMPILE_ERROR"      .scheme.constant
+    hilight .hilight.phps 1 "E_COMPILE_WARNING"    .scheme.constant
+    hilight .hilight.phps 1 "E_USER_ERROR"         .scheme.constant
+    hilight .hilight.phps 1 "E_USER_WARNING"       .scheme.constant
+    hilight .hilight.phps 1 "E_USER_NOTICE"        .scheme.constant
+    hilight .hilight.phps 1 "E_ALL"                .scheme.constant    
+    
+    ;Standard constants
+    hilight .hilight.phps 1 "EXTR_OVERWRITE"       .scheme.constant
+    hilight .hilight.phps 1 "EXTR_SKIP"            .scheme.constant
+    hilight .hilight.phps 1 "EXTR_PREFIX_SAME"     .scheme.constant
+    hilight .hilight.phps 1 "EXTR_PREFIX_ALL"      .scheme.constant
+    hilight .hilight.phps 1 "EXTR_PREFIX_INVALID"  .scheme.constant
+    hilight .hilight.phps 1 "EXTR_PREFIX_IF_EXISTS" .scheme.constant
+    hilight .hilight.phps 1 "EXTR_IF_EXISTS"       .scheme.constant
+    hilight .hilight.phps 1 "SORT_ASC"             .scheme.constant
+    hilight .hilight.phps 1 "SORT_DESC"            .scheme.constant
+    hilight .hilight.phps 1 "SORT_REGULAR"         .scheme.constant
+    hilight .hilight.phps 1 "SORT_NUMERIC"         .scheme.constant
+    hilight .hilight.phps 1 "SORT_STRING"          .scheme.constant
+    hilight .hilight.phps 1 "CASE_LOWER"           .scheme.constant
+    hilight .hilight.phps 1 "CASE_UPPER"           .scheme.constant
+    hilight .hilight.phps 1 "COUNT_NORMAL"         .scheme.constant
+    hilight .hilight.phps 1 "COUNT_RECURSIVE"      .scheme.constant
+    hilight .hilight.phps 1 "ASSERT_ACTIVE"        .scheme.constant
+    hilight .hilight.phps 1 "ASSERT_CALLBACK"      .scheme.constant
+    hilight .hilight.phps 1 "ASSERT_BAIL"          .scheme.constant
+    hilight .hilight.phps 1 "ASSERT_WARNING"       .scheme.constant
+    hilight .hilight.phps 1 "ASSERT_QUIET_EVAL"    .scheme.constant
+    hilight .hilight.phps 1 "CONNECTION_ABORTED"   .scheme.constant
+    hilight .hilight.phps 1 "CONNECTION_NORMAL"    .scheme.constant
+    hilight .hilight.phps 1 "CONNECTION_TIMEOUT"   .scheme.constant
+    hilight .hilight.phps 1 "INI_USER"             .scheme.constant
+    hilight .hilight.phps 1 "INI_PERDIR"           .scheme.constant
+    hilight .hilight.phps 1 "INI_SYSTEM"           .scheme.constant
+    hilight .hilight.phps 1 "INI_ALL"              .scheme.constant
+    hilight .hilight.phps 1 "M_E"                  .scheme.constant
+    hilight .hilight.phps 1 "M_LOG2E"              .scheme.constant
+    hilight .hilight.phps 1 "M_LOG10E"             .scheme.constant
+    hilight .hilight.phps 1 "M_LN2"                .scheme.constant
+    hilight .hilight.phps 1 "M_LN10"               .scheme.constant
+    hilight .hilight.phps 1 "M_PI"                 .scheme.constant
+    hilight .hilight.phps 1 "M_PI_2"               .scheme.constant
+    hilight .hilight.phps 1 "M_PI_4"               .scheme.constant
+    hilight .hilight.phps 1 "M_1_PI"               .scheme.constant
+    hilight .hilight.phps 1 "M_2_PI"               .scheme.constant
+    hilight .hilight.phps 1 "M_2_SQRTPI"           .scheme.constant
+    hilight .hilight.phps 1 "M_SQRT2"              .scheme.constant
+    hilight .hilight.phps 1 "M_SQRT1_2"            .scheme.constant
+    hilight .hilight.phps 1 "CRYPT_SALT_LENGTH"    .scheme.constant
+    hilight .hilight.phps 1 "CRYPT_STD_DES"        .scheme.constant
+    hilight .hilight.phps 1 "CRYPT_EXT_DES"        .scheme.constant
+    hilight .hilight.phps 1 "CRYPT_MD5"            .scheme.constant
+    hilight .hilight.phps 1 "CRYPT_BLOWFISH"       .scheme.constant
+    hilight .hilight.phps 1 "DIRECTORY_SEPARATOR"  .scheme.constant
+    hilight .hilight.phps 1 "SEEK_SET"             .scheme.constant
+    hilight .hilight.phps 1 "SEEK_CUR"             .scheme.constant
+    hilight .hilight.phps 1 "SEEK_END"             .scheme.constant
+    hilight .hilight.phps 1 "LOCK_SH"              .scheme.constant
+    hilight .hilight.phps 1 "LOCK_EX"              .scheme.constant
+    hilight .hilight.phps 1 "LOCK_UN"              .scheme.constant
+    hilight .hilight.phps 1 "LOCK_NB"              .scheme.constant
+    hilight .hilight.phps 1 "HTML_SPECIALCHARS"    .scheme.constant
+    hilight .hilight.phps 1 "HTML_ENTITIES"        .scheme.constant
+    hilight .hilight.phps 1 "ENT_COMPAT"           .scheme.constant
+    hilight .hilight.phps 1 "ENT_QUOTES"           .scheme.constant
+    hilight .hilight.phps 1 "ENT_NOQUOTES"         .scheme.constant
+    hilight .hilight.phps 1 "INFO_GENERAL"         .scheme.constant
+    hilight .hilight.phps 1 "INFO_CREDITS"         .scheme.constant
+    hilight .hilight.phps 1 "INFO_CONFIGURATION"   .scheme.constant
+    hilight .hilight.phps 1 "INFO_MODULES"         .scheme.constant
+    hilight .hilight.phps 1 "INFO_ENVIRONMENT"     .scheme.constant
+    hilight .hilight.phps 1 "INFO_VARIABLES"       .scheme.constant
+    hilight .hilight.phps 1 "INFO_LICENSE"         .scheme.constant
+    hilight .hilight.phps 1 "INFO_ALL"             .scheme.constant
+    hilight .hilight.phps 1 "CREDITS_GROUP"        .scheme.constant
+    hilight .hilight.phps 1 "CREDITS_GENERAL"      .scheme.constant
+    hilight .hilight.phps 1 "CREDITS_SAPI"         .scheme.constant
+    hilight .hilight.phps 1 "CREDITS_MODULES"      .scheme.constant
+    hilight .hilight.phps 1 "CREDITS_DOCS"         .scheme.constant
+    hilight .hilight.phps 1 "CREDITS_FULLPAGE"     .scheme.constant
+    hilight .hilight.phps 1 "CREDITS_QA"           .scheme.constant
+    hilight .hilight.phps 1 "CREDITS_ALL"          .scheme.constant
+    hilight .hilight.phps 1 "STR_PAD_LEFT"         .scheme.constant
+    hilight .hilight.phps 1 "STR_PAD_RIGHT"        .scheme.constant
+    hilight .hilight.phps 1 "STR_PAD_BOTH"         .scheme.constant
+    hilight .hilight.phps 1 "PATHINFO_DIRNAME"     .scheme.constant
+    hilight .hilight.phps 1 "PATHINFO_BASENAME"    .scheme.constant
+    hilight .hilight.phps 1 "PATHINFO_EXTENSION"   .scheme.constant
+    hilight .hilight.phps 1 "CHAR_MAX"             .scheme.constant
+    hilight .hilight.phps 1 "LC_CTYPE"             .scheme.constant
+    hilight .hilight.phps 1 "LC_NUMERIC"           .scheme.constant
+    hilight .hilight.phps 1 "LC_TIME"              .scheme.constant
+    hilight .hilight.phps 1 "LC_COLLATE"           .scheme.constant
+    hilight .hilight.phps 1 "LC_MONETARY"          .scheme.constant
+    hilight .hilight.phps 1 "LC_ALL"               .scheme.constant
+    hilight .hilight.phps 1 "LC_MESSAGES"          .scheme.constant
+    hilight .hilight.phps 1 "ABDAY_1"              .scheme.constant
+    hilight .hilight.phps 1 "ABDAY_2"              .scheme.constant
+    hilight .hilight.phps 1 "ABDAY_3"              .scheme.constant
+    hilight .hilight.phps 1 "ABDAY_4"              .scheme.constant
+    hilight .hilight.phps 1 "ABDAY_5"              .scheme.constant
+    hilight .hilight.phps 1 "ABDAY_6"              .scheme.constant
+    hilight .hilight.phps 1 "ABDAY_7"              .scheme.constant
+    hilight .hilight.phps 1 "DAY_1"                .scheme.constant
+    hilight .hilight.phps 1 "DAY_2"                .scheme.constant
+    hilight .hilight.phps 1 "DAY_3"                .scheme.constant
+    hilight .hilight.phps 1 "DAY_4"                .scheme.constant
+    hilight .hilight.phps 1 "DAY_5"                .scheme.constant
+    hilight .hilight.phps 1 "DAY_6"                .scheme.constant
+    hilight .hilight.phps 1 "DAY_7"                .scheme.constant
+    hilight .hilight.phps 1 "ABMON_1"              .scheme.constant
+    hilight .hilight.phps 1 "ABMON_2"              .scheme.constant
+    hilight .hilight.phps 1 "ABMON_3"              .scheme.constant
+    hilight .hilight.phps 1 "ABMON_4"              .scheme.constant
+    hilight .hilight.phps 1 "ABMON_5"              .scheme.constant
+    hilight .hilight.phps 1 "ABMON_6"              .scheme.constant
+    hilight .hilight.phps 1 "ABMON_7"              .scheme.constant
+    hilight .hilight.phps 1 "ABMON_8"              .scheme.constant
+    hilight .hilight.phps 1 "ABMON_9"              .scheme.constant
+    hilight .hilight.phps 1 "ABMON_10"             .scheme.constant
+    hilight .hilight.phps 1 "ABMON_11"             .scheme.constant
+    hilight .hilight.phps 1 "ABMON_12"             .scheme.constant
+    hilight .hilight.phps 1 "MON_1"                .scheme.constant
+    hilight .hilight.phps 1 "MON_2"                .scheme.constant
+    hilight .hilight.phps 1 "MON_3"                .scheme.constant
+    hilight .hilight.phps 1 "MON_4"                .scheme.constant
+    hilight .hilight.phps 1 "MON_5"                .scheme.constant
+    hilight .hilight.phps 1 "MON_6"                .scheme.constant
+    hilight .hilight.phps 1 "MON_7"                .scheme.constant
+    hilight .hilight.phps 1 "MON_8"                .scheme.constant
+    hilight .hilight.phps 1 "MON_9"                .scheme.constant
+    hilight .hilight.phps 1 "MON_10"               .scheme.constant
+    hilight .hilight.phps 1 "MON_11"               .scheme.constant
+    hilight .hilight.phps 1 "MON_12"               .scheme.constant
+    hilight .hilight.phps 1 "AM_STR"               .scheme.constant
+    hilight .hilight.phps 1 "PM_STR"               .scheme.constant
+    hilight .hilight.phps 1 "D_T_FMT"              .scheme.constant
+    hilight .hilight.phps 1 "D_FMT"                .scheme.constant
+    hilight .hilight.phps 1 "T_FMT"                .scheme.constant
+    hilight .hilight.phps 1 "T_FMT_AMPM"           .scheme.constant
+    hilight .hilight.phps 1 "ERA"                  .scheme.constant
+    hilight .hilight.phps 1 "ERA_YEAR"             .scheme.constant
+    hilight .hilight.phps 1 "ERA_D_T_FMT"          .scheme.constant
+    hilight .hilight.phps 1 "ERA_D_FMT"            .scheme.constant
+    hilight .hilight.phps 1 "ERA_T_FMT"            .scheme.constant
+    hilight .hilight.phps 1 "ALT_DIGITS"           .scheme.constant
+    hilight .hilight.phps 1 "INT_CURR_SYMBOL"      .scheme.constant
+    hilight .hilight.phps 1 "CURRENCY_SYMBOL"      .scheme.constant
+    hilight .hilight.phps 1 "CRNCYSTR"             .scheme.constant
+    hilight .hilight.phps 1 "MON_DECIMAL_POINT"    .scheme.constant
+    hilight .hilight.phps 1 "MON_THOUSANDS_SEP"    .scheme.constant
+    hilight .hilight.phps 1 "MON_GROUPING"         .scheme.constant
+    hilight .hilight.phps 1 "POSITIVE_SIGN"        .scheme.constant
+    hilight .hilight.phps 1 "NEGATIVE_SIGN"        .scheme.constant
+    hilight .hilight.phps 1 "INT_FRAC_DIGITS"      .scheme.constant
+    hilight .hilight.phps 1 "FRAC_DIGITS"          .scheme.constant
+    hilight .hilight.phps 1 "P_CS_PRECEDES"        .scheme.constant
+    hilight .hilight.phps 1 "P_SEP_BY_SPACE"       .scheme.constant
+    hilight .hilight.phps 1 "N_CS_PRECEDES"        .scheme.constant
+    hilight .hilight.phps 1 "N_SEP_BY_SPACE"       .scheme.constant
+    hilight .hilight.phps 1 "P_SIGN_POSN"          .scheme.constant
+    hilight .hilight.phps 1 "N_SIGN_POSN"          .scheme.constant
+    hilight .hilight.phps 1 "DECIMAL_POINT"        .scheme.constant
+    hilight .hilight.phps 1 "RADIXCHAR"            .scheme.constant
+    hilight .hilight.phps 1 "THOUSANDS_SEP"        .scheme.constant
+    hilight .hilight.phps 1 "THOUSEP"              .scheme.constant
+    hilight .hilight.phps 1 "GROUPING"             .scheme.constant
+    hilight .hilight.phps 1 "YESEXPR"              .scheme.constant
+    hilight .hilight.phps 1 "NOEXPR"               .scheme.constant
+    hilight .hilight.phps 1 "YESSTR"               .scheme.constant
+    hilight .hilight.phps 1 "NOSTR"                .scheme.constant
+    hilight .hilight.phps 1 "CODESET"              .scheme.constant
+    hilight .hilight.phps 1 "LOG_EMERG"            .scheme.constant
+    hilight .hilight.phps 1 "LOG_ALERT"            .scheme.constant
+    hilight .hilight.phps 1 "LOG_CRIT"             .scheme.constant
+    hilight .hilight.phps 1 "LOG_ERR"              .scheme.constant
+    hilight .hilight.phps 1 "LOG_WARNING"          .scheme.constant
+    hilight .hilight.phps 1 "LOG_NOTICE"           .scheme.constant
+    hilight .hilight.phps 1 "LOG_INFO"             .scheme.constant
+    hilight .hilight.phps 1 "LOG_DEBUG"            .scheme.constant
+    hilight .hilight.phps 1 "LOG_KERN"             .scheme.constant
+    hilight .hilight.phps 1 "LOG_USER"             .scheme.constant
+    hilight .hilight.phps 1 "LOG_MAIL"             .scheme.constant
+    hilight .hilight.phps 1 "LOG_DAEMON"           .scheme.constant
+    hilight .hilight.phps 1 "LOG_AUTH"             .scheme.constant
+    hilight .hilight.phps 1 "LOG_SYSLOG"           .scheme.constant
+    hilight .hilight.phps 1 "LOG_LPR"              .scheme.constant
+    hilight .hilight.phps 1 "LOG_NEWS"             .scheme.constant
+    hilight .hilight.phps 1 "LOG_UUCP"             .scheme.constant
+    hilight .hilight.phps 1 "LOG_CRON"             .scheme.constant
+    hilight .hilight.phps 1 "LOG_AUTHPRIV"         .scheme.constant
+    hilight .hilight.phps 1 "LOG_LOCAL0"           .scheme.constant
+    hilight .hilight.phps 1 "LOG_LOCAL1"           .scheme.constant
+    hilight .hilight.phps 1 "LOG_LOCAL2"           .scheme.constant
+    hilight .hilight.phps 1 "LOG_LOCAL3"           .scheme.constant
+    hilight .hilight.phps 1 "LOG_LOCAL4"           .scheme.constant
+    hilight .hilight.phps 1 "LOG_LOCAL5"           .scheme.constant
+    hilight .hilight.phps 1 "LOG_LOCAL6"           .scheme.constant
+    hilight .hilight.phps 1 "LOG_LOCAL7"           .scheme.constant
+    hilight .hilight.phps 1 "LOG_PID"              .scheme.constant
+    hilight .hilight.phps 1 "LOG_CONS"             .scheme.constant
+    hilight .hilight.phps 1 "LOG_ODELAY"           .scheme.constant
+    hilight .hilight.phps 1 "LOG_NDELAY"           .scheme.constant
+    hilight .hilight.phps 1 "LOG_NOWAIT"           .scheme.constant
+    hilight .hilight.phps 1 "LOG_PERROR"           .scheme.constant
+    
+    !if &band .hilight.flags 0x08
+        ; hilight constants, e.g. numbers
+        hilight .hilight.phps 1 "[[:digit:]]+"       .scheme.constant
+        hilight .hilight.phps 1 "-[[:digit:]]+"      .scheme.constant
+        hilight .hilight.phps 1 "0[xX][[:xdigit:]]+" .scheme.constant
+    !endif
+    ; String hilighting
+    0 hilight .hilight.phpsS 0                     .scheme.string
+    hilight .hilight.phpsS 0    "\\\\."            .scheme.string
+    hilight .hilight.phpsS 4   "@" "\\}\\W" ""     .scheme.variable
+    hilight .hilight.phpsS 4   "\\$" "\\}\\W" ""   .scheme.variable
+    hilight .hilight.phpsS 4   "\\${" "}" ""       .scheme.variable
+    hilight .hilight.phpsS 4   "\\$(" ")" ""       .scheme.variable
+    hilight .hilight.phpsS 0x80 "\"" .hilight.phps .scheme.string
+    ; Shell variable hilighting
+    0 hilight .hilight.phpsV 0                     .scheme.variable
+    hilight .hilight.phpsV 0   ":-"                $global-scheme
+    hilight .hilight.phpsV 0   ":="                $global-scheme
+    hilight .hilight.phpsV 0   ":\\?"              $global-scheme
+    hilight .hilight.phpsV 4   "\"" "\"" ""        .scheme.string
+    hilight .hilight.phpsV 4   "\\${" "}" ""       .scheme.variable
+    hilight .hilight.phpsV 0x80 "}" .hilight.phps  .scheme.variable
+    
+    ; let html based files use the phps hilight for any php scripts
+    set-variable .hilight.phpscript .hilight.phps
+!endif
+!if &sin "d" .fhook-phps.setup
+    0 indent  .hilight.phps 0 100
+    indent .hilight.phps n "{"  4
+    indent .hilight.phps o "}" -4
+    indent .hilight.phps e "\"" "\"" "\\"
+    ; note that tokens in php can contain a single ', i.e. foo'bar
+    ; but we also need to cope with split(' ',... as the '(' is a token
+    ; using the hilighting approach of '\\W'" is not good enough so
+    ; exclude the first case first.
+    indent .hilight.phps e "\\w'" "\\w" ""
+    indent .hilight.phps e "'" "'" "\\"
+    indent .hilight.phps e "`" "`" "\\"
+    ; The following causes problems for the search /'s
+    ; printf LOGFILE "Average = %f\n", ($Total / $Count); 
+    ; return;   # This line formats wrongly!
+    ;indent .hilight.phps e "/" "/" "\\"
+    indent .hilight.phps b "\\[" "]"
+    indent .hilight.phps b "(" ")"
+    indent .hilight.phps b "/\\*" "\\*/"
+    indent .hilight.phps i "//"
+    indent .hilight.phps i "#"
+    ; let html based files use the phps indent for any php scripts
+    set-variable .indent.phpscript .hilight.phps
+!endif
+
+buffer-init-fhook "phps"

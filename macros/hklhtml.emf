@@ -1,0 +1,50 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2004 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created      Fri Jan 9 2004
+; Synopsis:    LUA-HTML Hook File
+; Authors:     Steven Phillips & Jeremy Cowgar
+;
+define-macro fhook-lhtml
+    set-variable $buffer-mask "luh1"
+    @# buffer-init "lhtml"
+    buffer-init-hooks
+!emacro
+
+; buffer-init variables
+set-variable .fhook-lhtml.name "LUA-HTML"
+set-variable .fhook-lhtml.setup &reg "/history" "fhook/lhtml" "cdghinopsx"
+set-variable .fhook-lhtml.setup-mask "acdeghikmnopstux"
+set-variable .fhook-lhtml.command-flag  "|"
+set-variable .fhook-lhtml.command-name  "|"
+set-variable .fhook-lhtml.command-nbind "|"
+set-variable .fhook-lhtml.command-kbind "|"
+set-variable .fhook-lhtml.command-desc  "|"
+
+; load in lua script & the html core
+!if &not &exist fhook-lua
+    !force exec-file "hklua"
+!endif
+!force execute-file "htmlcore" "lhtml" 
+
+; add the <?lua ?> lua script support
+!if &and &sin "h" .fhook-lhtml.setup &band .hilight.flags 0x02 
+    !if &exist .hilight.luascript
+        hilight .hilight.lhtml     0x80 "<\\?lua" .hilight.luascript .scheme.prepro
+        hilight .hilight.lhtmltag  0x80 "<\\?lua" .hilight.luascript .scheme.prepro
+        hilight .hilight.luascript 0x80 "\\?>" 0 .scheme.prepro
+    !endif
+!endif
+!if &sin "d" .fhook-lhtml.setup
+    !if &exist .indent.luascript
+        indent .hilight.lhtmltag t "<\\?lua" .indent.luascript
+        indent .hilight.lhtmltag t "\\?>" .hilight.lhtml
+        
+        indent .hilight.lhtml x "<\\?lua" 2 .indent.luascript
+        indent .indent.luascript w "\\?>" -2 0
+    !endif
+!endif
+
+buffer-init-fhook "lhtml"

@@ -361,7 +361,7 @@ set-variable .file-browser-close.bn "\CH*directory*\CH*files*\CH*ftp-files*\CH*f
     !endif
     0 popup-window "*directory*"
     !if &not &seq #l0 $buffer-fname
-        0x0f directory-tree #l0
+        !force 0x0f directory-tree #l0
     !endif
     ; if part of a toolbar don't mess with the window-flags and don't leave it current, but make sure the buffer is hidden
     !if &band $window-flags 0x1000
@@ -404,7 +404,11 @@ define-macro file-browser-swap-buffers
 !emacro
 
 0 define-macro dirlst-find-file
-    dirlst-get-current-filename #l0
+    !if @#
+        dirlst-get-current-filename #l0
+    !else
+        set-variable #l0 @1
+    !endif
     !if &seq &lef #l0 6 "ftp://"
         ; it is unknown whether an ftp file is a directory until loaded 
         ; if the ftp console tool is used make it visible
@@ -446,7 +450,7 @@ define-macro file-browser-swap-buffers
             !endif
             !force 0 popup-window "*directory*"
             !if $status
-                0x6f directory-tree #l0
+                !force 0x6f directory-tree #l0
                 !if &band $window-flags 0x1000
                     1 buffer-mode "hide"
                 !endif
@@ -999,7 +1003,7 @@ osd .osd.dirlst 130 ""  "\HAuto-Refresh: on "   f dirlst-auto-refresh
         ; a directory listing - copy or move the files
         set-variable #l1 $buffer-fname
     !elif &seq #l0 "*directory*"
-        2 directory-tree
+        !force 2 directory-tree
         set-variable #l1 $buffer-fname
         set-position "\x83"
     !elif &band $window-flags 0x1000
@@ -1048,35 +1052,54 @@ osd .osd.dirlst 130 ""  "\HAuto-Refresh: on "   f dirlst-auto-refresh
 !emacro
 
 0 define-macro dirlst-mouse-pick-1
+    set-variable :fmpl $window-line
     !if &les $window-line 4
-        !return
+        !if &gre $window-line 1
+            !return
+        !elif &les $window-col 22
+            !return
+        !elif &seq @wc "\n"
+            !return
+        !endif
+        set-variable #l0 $window-col
+        set-variable $window-col 22
+        -3 show-region
+        set-variable $window-col &add #l0 &sin "/" &rig @wl #l0
+        3 show-region
+        set-variable $window-col #l0
     !elif &equ $window-line 4
         !force 0 dirlst-get-sort-col
         !if &not $status
             !return
         !endif
+    !elif &set :fmpt &les $window-col :fmpf
+        beginning-of-line
+        -3 show-region
+        !force forward-line
+        3 show-region
+        set-variable $delay-time $repeat-time
+        global-bind-key dirlst-mouse-drag-1 &spr .mouse-event.mask "time"
     !else
-        set-variable :fmpl $window-line
-        !if &set :fmpt &les $window-col :fmpf
-            beginning-of-line
-            -3 show-region
-            !force forward-line
-            3 show-region
-            set-variable $delay-time $repeat-time
-            global-bind-key dirlst-mouse-drag-1 &spr .mouse-event.mask "time"
-        !else
-            set-variable $window-col :fmpf
-            -3 show-region
-            end-of-line
-            3 show-region
-        !endif
+        set-variable $window-col :fmpf
+        -3 show-region
+        end-of-line
+        3 show-region
     !endif
     set-cursor-to-mouse
     show-region
 !emacro
 0 define-macro dirlst-mouse-drop-1
     !if &les $window-line 4
-        !return
+        !if &gre $window-line 1
+        !elif &gre :fmpl 1
+        !elif &les $window-col 22
+        !elif &seq @wc "\n"
+        !else
+            set-variable #l0 $window-col
+            set-variable #l1 &add #l0 &sin "/" &rig @wl #l0
+            set-variable #l2 &mid @wl 22 &sub #l1 22
+            0 dirlst-find-file #l2
+        !endif
     !elif &equ $window-line 4
         !force 1 dirlst-get-sort-col
         set-cursor-to-mouse

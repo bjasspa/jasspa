@@ -323,10 +323,15 @@ set-variable #l2 &ind &spr ".hilight.%stag" #l0
         !endif
         set-variable :chook "java"
     !elif &equ $result .indent.phpscript
-        !if &seq :chook "perl"
+        !if &seq :chook "phps"
             !return
         !endif
-        set-variable :chook "perl"
+        set-variable :chook "phps"
+    !elif &equ $result .indent.luascript
+        !if &seq :chook "lua"
+            !return
+        !endif
+        set-variable :chook "lua"
     !elif &exi :chook
         unset-variable :chook
     !else

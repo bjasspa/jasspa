@@ -3,10 +3,9 @@
 ; Copyright (C) 2003-2004 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
+; Created      Fri Jan 9 2004
 ; Synopsis:    Lua hook - invoked when a Lua file is loaded.
-; Authors:     Jeremy Cowgar
-;
-; Notes:
+; Authors:     Jeremy Cowgar & Steven Phillips
 ;
 
 define-macro fhook-lua
@@ -101,6 +100,8 @@ set-variable .fhook-lua.collapse-mnext  "-1"
     hilight .hilight.luaS 0   "\\[\\["            .scheme.string
     hilight .hilight.luaS 0   "\\]\\]"            .scheme.string
     hilight .hilight.luaS 0x80 "\\]" .hilight.lua .scheme.string
+    ; let html based files use the lua hilight for any LUA Scripts
+    set-variable .hilight.luascript .hilight.lua
 !endif
 
 !if &sin "d" .fhook-lua.setup
@@ -111,7 +112,7 @@ set-variable .fhook-lua.collapse-mnext  "-1"
     indent .hilight.lua N "repeat"   4
     indent .hilight.lua O "until"   -4
     indent .hilight.lua N "do"       4
-    indent .hilight.lua n "if"       4
+    indent .hilight.lua N "if"       4
     indent .hilight.lua S "else"    -4
     indent .hilight.lua S "else\\s *if"  -4
     indent .hilight.lua O "end"     -4
@@ -124,6 +125,8 @@ set-variable .fhook-lua.collapse-mnext  "-1"
     indent .hilight.lua e "'" "'" "\\" 
     indent .hilight.lua e "\\[" "\\]" "" 
     indent .hilight.lua i "--"
+    ; let html based files use the lua indent for any LUA Scripts
+    set-variable .indent.luascript .hilight.lua
 !endif
 
 buffer-init-fhook "lua"
