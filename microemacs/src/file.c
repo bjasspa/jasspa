@@ -324,44 +324,109 @@ fnamecmp(meUByte *f1, meUByte *f2)
 #endif
 }
 
+#if (defined _UNIX)
+/* Search the directory and subdirectories for MicroEmacs macro directories */
+static int
+set_subdirs (int index, meUByte *path_name, meUByte *base_name)
+{
+    /* Common sub-directories of JASSPAs MicroEmacs */
+    static char *subdirs[] =
+    {
+        "company",                      /* Company wide files */
+        "macros",                       /* Standard distribution macros */
+        "spelling",                     /* Spelling dictionaries */
+        "",                             /* Include the root directory */
+        NULL
+    };
+    
+    /* Append the search paths if necessary. We construct the standard JASSPA
+     * MicroEmacs paths and then test for the existance of the directory. If
+     * the directory exists then we add it to the search path. We do not add
+     * any directories to the search path that do not exist. */
+    if (subdirs != NULL)
+    {
+        char *s;
+        int ii;
+        
+        /* Build up strings ":<s1>/<jdirs[ii]>" */
+        for (ii = 0; (s = subdirs[ii]) != NULL; ii++)
+        {
+            int last_index = index ;    /* Save the position */
+            int path_index ;            /* Start of path position */ 
+            int pathtype;               /* Path file type */
+            
+            if (index > 0)
+                path_name[index++] = mePATH_CHAR ;
+            path_index = index ;        /* Save start of path */
+            
+            meStrcpy (&path_name[index], base_name) ;
+            index += meStrlen (base_name) ;
+            if (*s != '\0')     /* Special case of the empty string */
+                path_name[index++] = DIR_CHAR ;
+            meStrcpy (&path_name[index], s) ;
+            index += meStrlen (s) ;
+            path_name[index] = '\0' ;
+            
+            /* Test the directory for existance, if it does not exist
+             * then do not add it as we do not want to search any
+             * directory unecessarily. */
+            pathtype = getFileStats(&path_name[path_index],0,NULL,NULL);
+            /* printf ("Testing %s : %d\n",  &path_name[path_index], pathtype);*/
+            if(pathtype != meFILETYPE_DIRECTORY)
+                index = last_index;     /* Skip this path. */
+        }
+    }
+    return index;
+}
+#endif
+
 /* Set up directories. */
 void
 set_dirs(meUByte *argv)
 {
+    int ll ;                            /* Line length */
+    meUByte *s1 ;                       /* Search word */
+    meUByte *mepath ;                   /* $MEPATH */
+
 #if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
 #ifdef _UNIX
-    /* Hidden directory */
-#ifdef _HIDDEN_DIR
+    
+    /* The Hidden directory, by default this is the <logpath>/.jasspa */
+#ifndef _HIDDEN_DIR
+#define _HIDDEN_DIR ".jasspa"
+#endif
     static meUByte hdir[] = _HIDDEN_DIR ;
-#else
-    static meUByte hdir[] = ".jasspa" ;
-#endif    
+    
+    /* Pre-built search path, this is a path built into the executable. */
 #ifdef _SEARCH_PATH
     static meUByte lpath[] = _SEARCH_PATH ;
+#endif
+    
+    /* The installation root path of the installation macros searched in the
+     * order specified. Once a directory has been located then it is used as
+     * the default path. */
+#ifdef _INSTALL_PATH
+    static meUByte ipath[] = _INSTALL_PATH ;
 #else
-    /* The local directory is organized as follows and searched in the
-     * order presented:
-     *
-     * /usr/local/jasspa/company  - Comany wide private over-rides.
-     * /usr/local/jasspa/macros   - The base macro set.
-     * /usr/local/jasspa/spelling - Spelling dictionaries.
-     */
-    static meUByte lpath[] =
-              "/usr/local/jasspa/company:"
-              "/usr/local/jasspa/macros:"
-              "/usr/local/jasspa/spelling";
-#endif /* _SEARCH_PATH */
+    static char *spath[] =
+    {
+        /* MicroEmacs '04 and later distributions standard macro locations */
+        "/opt/jasspa",
+        "/usr/share/jasspa",
+        "/usr/local/jasspa",
+        /* Historical locations */
+        "/usr/local/microemacs",
+        NULL
+    };
 #endif /* UNIX */
-    int ll ;
-    meUByte *s1 ;                       /* Search word */
-#ifdef _UNIX
-    int setExecDir = 0;
-    meUByte *hpath = NULL ;             /* Home directory */
 #endif
 
     /* Use $HOME if the loginHome is not defined. */
-    if ((s1 = loginHome) == NULL)
-        s1 = meGetenv("HOME");
+    s1 = meGetenv("MEHOME");            /* Use $MEHOME by default */
+    if (s1 == NULL)
+        s1 = loginHome;                 /* Try $login-home - ME internal */
+    if (s1 == NULL)
+        s1 = meGetenv("HOME");          /* Otherwise $HOME */
     if (s1 != NULL)
     {
         homedir = meStrdup(s1) ;
@@ -383,59 +448,113 @@ set_dirs(meUByte *argv)
         }
     }
     else
-        homedir = NULL ;			/* Set to NULL */
+        homedir = NULL ;                /* Set to NULL */
+
+    /* Get $MEPATH, this over-rides everything */
+    mepath = meGetenv("MEPATH") ;
+    if (mepath != NULL)
+        meStrrep (&mepath, mepath) ;
 
 #ifdef _UNIX
-    s1 = meGetenv("MEPATH");			/* Get home directory */
-    if(s1 == NULL)
+    ll = 0 ;                            /* Line length */
+
+    /* First set up the location of the users home directory, MEPATH
+     * over-rides everything when defined. */
+    if (mepath == NULL)
     {
-        /* If the login home directory is defined then use this
-         * as "$login-home/.jasspa" */
-        if ((loginHome != NULL) && (hdir[0] != '\0'))
-            hpath = loginHome;
-        setExecDir = 1;
-    }
-    
-    /* Add "$login-home/.jasspa:" */
-    if (hpath != NULL)
-    {
-        ll = meStrlen (hpath);
-        meStrcpy(evalResult, hpath);
-        if (evalResult[ll-1] != DIR_CHAR)
-            evalResult[ll++] = DIR_CHAR;
-        meStrcpy (&evalResult[ll], hdir);
-        ll += meStrlen (hdir);
-    }
-    else
-        ll = 0;
-    
-    /* Add $MEPATH */
-    if ((s1 != NULL) && (*s1 != '\0'))
-    {
-        if (ll > 0)
-            evalResult[ll++] = mePATH_CHAR ;
-        meStrcpy (&evalResult[ll], s1);
-        ll += meStrlen(s1);
-    }
-    
-    /* Add the static component */
-    if((lpath != NULL) && (lpath[0] != '\0'))
-    {
-        if (ll > 0)
-            evalResult[ll++] = mePATH_CHAR ;
-        meStrcpy(&evalResult[ll],lpath) ;
-    }
-    
-    /* Make this our new search path */
-    meStrrep (&searchPath, evalResult);
+        s1 = meGetenv ("MEUSERPATH") ;
+        if (s1 != NULL)
+        {
+            /* Use $MEUSERPATH as the home directory, no questions asked */
+            ll = meStrlen (s1) ;
+            meStrcpy(evalResult, s1) ;
+            if ((ll > 1) && (evalResult[ll-1] == DIR_CHAR))
+                ll-- ;                  /* Remove DIR_CHAR */
+        }
+        else if ((loginHome != NULL) && (hdir[0] != '\0'))
+        {
+            meUByte loghome [meBUF_SIZE_MAX] ;
+            int ii;
+            
+            /* Use "$login-home/.jasspa" */
+            meStrcpy(loghome, loginHome);
+            ii = meStrlen (loghome) ;
+            if (loghome[ii-1] != DIR_CHAR)
+                loghome[ii++] = DIR_CHAR ;
+            meStrcpy (&loghome[ii], hdir) ;
+            
+            /* Append and search sub-directories */
+            ii = set_subdirs (ll, evalResult, loghome);
+            if (ii == ll)
+            {
+                /* We have not added the home directory, force it so the
+                 * macros can save to the directory location if they need to. */
+                if (ll > 0)
+                    evalResult[ll++] = mePATH_CHAR ;
+                meStrcpy (&evalResult[ll], loghome) ;
+                ll += meStrlen(loghome) ;
+            }
+            else
+                ll = ii;
+        }
+
+        /* Get the system path of the installed macros. Use $MEINSTPATH as the
+         * MicroEmacs standard macros */
+        s1 = meGetenv ("MEINSTALLPATH") ;
+#ifdef _SEARCH_PATH
+        if ((s1 == NULL) && ((lpath != NULL) && (lpath[0] != '\0')))
+            s1 = lpath;                 /* Use the built in path 'lpath' */
+#endif
+        if (s1 != NULL)
+        {
+            if (ll > 0)
+                evalResult[ll++] = mePATH_CHAR ;
+            meStrcpy (&evalResult[ll], s1) ;
+            ll += meStrlen(s1) ;
+        }
+        else
+        {
+#ifdef _INSTALL_PATH
+            /* Use the installation path defined in the build. */
+            s1  = ipath;
 #else
-    s1 = meGetenv("MEPATH");			/* Get home directory */
+            int ii;
+
+            /* Search for a path in the root directories. We search for
+             * "jasspa" in the following variable */
+            for (ii = 0; spath[ii] != NULL; ii++)
+            {
+                if(getFileStats((meUByte *)(spath[ii]),0,NULL,NULL) == meFILETYPE_DIRECTORY)
+                {
+                    s1 = (meUByte *)(spath[ii]);
+                    break;
+                }
+            }
+#endif
+            /* Append the search path and sub-directories if necessary.  */
+             if (s1 != NULL)
+                ll = set_subdirs (ll, evalResult, s1);
+        }
+    }
+    else if (mepath[0] != '\0')
+    {
+        if (ll > 0)
+            evalResult[ll++] = mePATH_CHAR ;
+        meStrcpy (&evalResult[ll], mepath) ;
+        ll += meStrlen(mepath) ;
+    }
+
+    /* Make this our new search path */
+    if (ll > 0)
+        meStrrep (&searchPath, evalResult) ;
+#else
+    s1 = mepath;                        /* Use $MEPATH */
     if(s1 == NULL)
-        s1 = meGetenv("PATH");			/* Get home directory */
+        s1 = meGetenv("PATH") ;         /* Get home directory */
     if(s1 == NULL)
         searchPath = NULL ;
     else
-        searchPath = meStrdup(s1);
+        searchPath = meStrdup(s1) ;
 #endif
 #else
     homedir = NULL ;				/* Set to NULL */
@@ -456,7 +575,7 @@ set_dirs(meUByte *argv)
            (dotstat.st_dev == pwdstat.st_dev))
         {
             meUByte cc, *dd ;
-            
+
             ll = meStrlen(pwd) ;
             curdir = dd = meMalloc(ll+2) ;
             while((cc=*pwd++) != '\0')
@@ -471,7 +590,7 @@ set_dirs(meUByte *argv)
 #else
     curdir = gwd(0) ;
 #endif
-    
+
     if(curdir == NULL)
     {
         printf("Failed to get cwd\n") ;
@@ -492,9 +611,10 @@ set_dirs(meUByte *argv)
     }
 
     /* If we need to append the executable directory to the end of the search
-     * path then do so now. */
+     * path then do so now. if the $MEPATH is not defined then the concatinate
+     * the Microemacs executable location to the path. */
 #ifdef _UNIX
-    if ((setExecDir != 0) && (progName != NULL))
+    if ((mepath == NULL) && (progName != NULL))
     {
         /* Get the search path out */
         if (searchPath != NULL)
@@ -522,11 +642,13 @@ set_dirs(meUByte *argv)
         }
     }
 #endif
+    /* Release the mepath */
+    meNullFree (mepath);
 
-/*    printf ("Search path = %s\n", searchPath);*/
-/*    printf ("Prog name   = %s\n", progName);*/
-/*    printf ("Home dir    = %s\n", homedir);*/
-/*    fflush (stdout);*/
+    /* printf ("Search path = %s\n", searchPath);*/
+    /* printf ("Prog name   = %s\n", progName);*/
+    /* printf ("Home dir    = %s\n", homedir);*/
+    /* fflush (stdout);*/
 }   /* End of "set_dirs" () */
 
 /* Look up the existance of a file along the normal or PATH
