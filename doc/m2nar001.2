@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Aug 20 22:34:10 1998
 .\"
-.Id $Id: m2nar001.2,v 2.8 2004-02-04 22:54:22 jon Exp $
+.Id $Id: m2nar001.2,v 2.9 2005-01-16 18:33:55 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .TH Installation 1
@@ -18,7 +18,7 @@ The quickest way to install MicroEmacs for testing without reading the rest of
 this document is to:-
 .BS
 Create a new directory i.e. \fCjasspa\fR.
-.BU 
+.BU
 Unpack the macros archive into this directory.
 .BU
 Unpack the executable into this directory.
@@ -34,7 +34,7 @@ This  allows the user and screen  settings  to be  altered. On  becoming  more
 accustomed to the editor then a fuller installation may be performed.
 .IP "\fBGetting Help\fR"
 See
-.Hl "Contact Information" Contact - 
+.Hl "Contact Information" Contact -
 for full contact information. A mail archive exists at:-
 .RS
 .CS
@@ -46,62 +46,81 @@ an empty mail message body to:-
 jasspa-subscribe@yahoogroups.com
 .CE
 You will then be able to mail any questions  into the group.  Registration  is
-required in order to prevent \fIspam\fR mailings from entering into the lists. 
+required in order to prevent \fIspam\fR mailings from entering into the lists.
 .RE
 .SS "Distribution"
 MicroEmacs is distributed in the following files:-
 .BP "Complete Installations"
-The Microsoft  '95/'98/NT  platforms may be installed using the  \fBInstall\fR
-\fBShield\fR  installation utility and do not require the components specified
-in later sections.
+The  Microsoft  95/98/NT/2K/XP,  Solaris,  HP-UX,  Linux and the more  popular
+platforms may be installed  using a package and do not require the  components
+specified in later sections as these are all bundled  together (these packages
+do not include spelling).
+.sp
 .na
 .nf
-\fCjasspame.exe\fR \- '95/'98/NT Self Extracting Install Shield Installation
+\fCjasspa-me-YYYYMMDD-1.i386.rpm\fR \- Linux RedHat 9.x package.
+\fCjasspa-me-YYYYMMDD-1.src.rpm\fR \- Linux RedHat 9.x source package.
+\fCjasspa-mepkg-hpux-pa-10.20-YYYYMMDD.depot.gz\fR \- HP-UX 10 package.
+\fCjasspa-mepkg-hpux-pa-11.00-YYYYMMDD.depot.gz\fR \- HP-UX 11 package.
+\fCjasspa-mepkg-ms-win32-2004030.zip\fR  \- 95/98/NT/2K/XP Install Shield
+\fCjasspa-mepkg-sun-i386-58-YYYYMMDD.zip\fR \- Sun 2.8(i386) package.
+\fCjasspa-mepkg-sun-i386-59-YYYYMMDD.zip\fR \- Sun 2.9(i386) package.
+\fCjasspa-mepkg-sun-sparc-56-YYYYMMDD.zip\fR \- Sun 2.6(Sparc) package.
+\fCjasspa-mepkg-sun-sparc-58-YYYYMMDD.zip\fR \- Sun 2.8(Sparc) package.
+\fCjasspa-mepkg-sun-sparc-59-YYYYMMDD.zip\fR \- Sun 2.9(Sparc) package.
 .fi
 .ad
 .BP "Executable Source Code"
 The source code release for \*(mE  contains  makefiles  (\fC*.mak\fR)  for all
 supported platforms. Microsoft  '95/'98/NT/2K/XP  makefiles contain options at
 the top of the makefile to enable/disable console and URL support.
+.sp 1
 .na
 .nf
-\fCmesrc.zip\fR \- Source code for all platforms
-\fCmesrc.tar.gz\fR \- Source code
+\fCjasspa-mesrc-YYYYMMDD.zip\fR \- Source code for all platforms
+\fCjasspa-mesrc-YYYYMMDD.tar.gz\fR \- Source code
 .fi
 .ad
 .BP "Executable Images"
 .na
 .nf
-\fCmedos.zip\fR \- DOS Executable
-\fCmewin32.zip\fR \- Windows 32' (95/98/NT) Executable
-\fCmewin32s.zip\fR \- Windows win32s (Win3.1/3.11) Executable
-\fCmeirix6.gz\fR \- Silicon Graphics Irix 6 Executable
-\fCmeaix43.gz\fR \- IBM's AIX 4.3 Executable
-\fCmehpux10.gz\fR \- Hewlett Packard HP-UX 10 Executable
-\fCmehpux11.gz\fR \- Hewlett Packard HP-UX 11 Executable
-\fCmesunos55.gz\fR \- Sun OS 5.5 Executable
-\fCmesunos56.gz\fR \- Sun OS 5.5 Executable
-\fCmesolx86.gz\fR \- Sun Solaris 2.6 Intel Platform Executable
-\fCmelinux20.gz\fR \- Linux 2.0.0 Executable
-\fCmefreebsd.gz\fR \- Free BSD Executable
-\fCmepenbsd.gz\fR \- Open BSD Executable
-\fCmeosf1.gz\fR \- OSF1 Executable
-\fCmezaraus.gz\fR \- Zauraus Palm Executable
+\fCjasspa-me-cygwin-YYYYMMDD.exe.gz\fR \- Cygwin Executable (X-Windows)
+\fCjasspa-me-hpux-pa-10.20-YYYYMMDD.gz\fR \- Hewlett Packard HP-UX 10 Executable
+\fCjasspa-me-hpux-pa-11.00-YYYYMMDD.gz\fR \- Hewlett Packard HP-UX 11 Executable
+\fCjasspa-me-ibm-aix-4-YYYYMMDD.gz\fR \- IBM's AIX 4.3 Executable
+\fCjasspa-me-linux-i386-2.4-YYYYMMDD.gz\fR \- Linux 2.2.x/2.4.x Executable
+\fCjasspa-me-linux-i386-2.6-YYYYMMDD.gz\fR \- Linux 2.6.x Executable
+\fCjasspa-me-ms-win32-YYYYMMDD.zip\fR \- Windows 32' (95/98/NT/2K/XP) Executable
+\fCjasspa-me-ms-win32s-YYYYMMDD.zip\fR \- Windows win32s (Win3.1/3.11) Executable
+\fCjasspa-me-msdos-djgpp1-YYYYMMDD.zip\fR \- DOS Executable (DJGPP v1.x)
+\fCjasspa-me-msdos-djgpp2-YYYYMMDD.zip\fR \- DOS Executable (DJGPP v2.x)
+\fCjasspa-me-openbsd-i386-3.4-YYYYMMDD.gz\fR \- Open BSD 3.4 Executable
+\fCjasspa-me-sgi-irix-6-YYYYMMDD.gz\fR \- Silicon Graphics Irix 6 Executable
+\fCjasspa-me-sun-i386-58-YYYYMMDD.gz\fR \- Sun Solaris 2.8 Intel Platform Executable
+\fCjasspa-me-sun-i386-59-YYYYMMDD.gz\fR \- Sun Solaris 2.9 Intel Platform Executable
+\fCjasspa-me-sun-sparc-56-YYYYMMDD.gz\fR \- Sun OS 5.5 Executable
+\fCjasspa-me-sun-sparc-58-YYYYMMDD.gz\fR \- Sun OS 5.8 Executable
+\fCjasspa-me-sun-sparc-59-YYYYMMDD.gz\fR \- Sun OS 5.9 Executable
+\fCjasspa-mec-apple-darwin-6.6-YYYYMMDD.gz\fR \- Apple console Executable
+\fCjasspa-mec-cygwin-YYYYMMDD.exe.gz\fR \- Cygwin Executable (Console)
 .fi
 .ad
 .IP "\fBHelp File Images\fR (all platforms)"
 .na
 .nf
-\fCmewinhlp.zip\fR \- Windows Help file
-\fCmehtm.zip\fR  \- HTML Help files for 8.3 file systems (.htm)
-\fCmehtml.tar.gz\fR \- HTML Help files (.html)
+\fCjasspa-mewinhlp-YYYYMMDD.zip\fR \- Windows Help file
+\fCjasspa-mehtm-YYYYMMDD.zip\fR  \- HTML Help files for 8.3 file systems (.htm)
+\fCjasspa-mehtml-YYYYMMDD.tar.gz\fR \- HTML Help files (.html)
 .ad
 .fi
 .IP "\fBMacro File Images\fR (all platforms)"
 .na
 .nf
-\fCmemacros.zip\fR \- Macro files
-\fCmemacros.tar.gz\fR \- Macro files
+\fCjasspa-memacros-YYYYMMDD.tar.gz\fR \- Macro files
+\fCjasspa-memacros-YYYYMMDD.zip\fR \- Macro files
+.sp 1
+\fCjasspa-metree-YYYYMMDD.tar.gz\fR \- Complete install tree + help
+\fCjasspa-metree-YYYYMMDD.zip\fR \- Complete install tree + help
 .fi
 .ad
 .IP "\fBSpelling Dictionaries\fR (all platforms)"
@@ -111,29 +130,27 @@ comprehensive spelling list. Other languages are supported.
 .IP
 .na
 .nf
-\fClsdmenus.zip\fR \- American rules and base dictionary.
-\fClsdxenus.zip\fR \- American extended dictionary.
-\fClsdmengb.zip\fR \- British rules and base dictionary.
-\fClsdxengb.zip\fR \- British extended dictionary.
-\fClsdmfrfr.zip\fR \- French rules and dictionary.
-\fClsdmdede.zip\fR \- German rules and base dictionary.
-\fClsdxdede.zip\fR \- German extended dictionary.
-\fClsdmitit.zip\fR \- Italian rules and dictionary
-\fClsdmplpl.zip\fR \- Polish rules and dictionary.
-\fClsdmptpt.zip\fR \- Portuguese rules and dictionary.
-\fClsdmeses.zip\fR \- Spanish rules and dictionary.
+\fCls_dede.zip\fR \- German rules and base + extended dictionary.
+\fCls_engb.zip\fR \- British rules and base + extended dictionary.
+\fCls_enus.zip\fR \- American rules and base + extended dictionary.
+\fCls_eses.zip\fR \- Spanish rules and dictionary.
+\fCls_frfr.zip\fR \- French rules and dictionary.
+\fCls_itit.zip\fR \- Italian rules and dictionary
+\fCls_plpl.zip\fR \- Polish rules and dictionary.
+\fCls_ptpt.zip\fR \- Portuguese rules and dictionary.
+\fCls_ruye.zip\fR \- Russian YE rules and dictionary.
+\fCls_ruyo.zip\fR \- Russian YO rules and dictionary.
 .sp 1
-\fClsdmenus.tar.gz\fR \- American rules and base dictionary.
-\fClsdxenus.gz\fR \- American extended dictionary.
-\fClsdmengb.tar.gz\fR \- British rules and base dictionary.
-\fClsdxengb.gz\fR \- British extended dictionary.
-\fClsdmfrfr.tar.gz\fR \- French rules and dictionary.
-\fClsdmdede.tar.gz\fR \- German rules and base dictionary.
-\fClsdxdede.gz\fR \- German extended dictionary.
-\fClsdmitit.tar.gz\fR \- Italian rules and dictionary
-\fClsdmplpl.tar.gz\fR \- Polish rules and dictionary.
-\fClsdmptpt.tar.gz\fR \- Portuguese rules and dictionary.
-\fClsdmeses.tar.gz\fR \- Spanish rules and dictionary.
+\fCls_dede.tar.gz\fR \- German rules and base + extended dictionary.
+\fCls_engb.tar.gz\fR \- British rules and base + extended dictionary.
+\fCls_enus.tar.gz\fR \- American rules and base + extended dictionary.
+\fCls_eses.tar.gz\fR \- Spanish rules and dictionary.
+\fCls_frfr.tar.gz\fR \- French rules and dictionary.
+\fCls_itit.tar.gz\fR \- Italian rules and dictionary
+\fCls_plpl.tar.gz\fR \- Polish rules and dictionary.
+\fCls_ptpt.tar.gz\fR \- Portuguese rules and dictionary.
+\fCls_ruye.tar.gz\fR \- Russian YE rules and dictionary.
+\fCls_ruyo.tar.gz\fR \- Russian YO rules and dictionary.
 .fi
 .ad
 .IP
@@ -149,7 +166,7 @@ same directory and not be confused with each other.
 .SS "Installation Directories"
 The suggested installation structure for all platforms is defined as:-
 .CS
-          jasspa    
+          jasspa
           / | \\
          /  |  \\
         /   |   \\
@@ -168,29 +185,29 @@ Spelling dictionaries.
 Company  wide local  definitions  for the local  site. This  directory  may be
 omitted if not applicable.  Header templates  (\fC.etf\fR are typically copied
 from the \fCmacro\fR directory to the \fCcompany\fR directory and modified for
-the local site. 
+the local site.
 .LP
 The  search  order is  defined  as  \fCroot\fR,  \fCcompany\fR,  \fCmacros\fR,
-\fCspelling\fR. 
+\fCspelling\fR.
 .SS "UNIX Installation (System Wide)"
 A system wide  installation  on  \s-1UNIX\s0  for  multiple  users  adheres to
 conventional package installation methods.
 .PP
 .B "Distribution Components Required:"
 .br
-\fCme\fR\fI<unix>\fR\fC.gz\fR
+\fCjasspa-me-\fR\fI<unix>\fR\fC-YYYYMMDD.gz\fR
 .br
-\fCmemacros.tar.gz\fR
+\fCjasspa-metree-YYYYMMDD.tar.gz\fR
 .br
 \fI<spelling>\fR\fC.gz\fR
 .br
-\fChtml.tar.gz\fR (optional)
+\fCjasspa-mehtml-YYYYMMDD.tar.gz\fR (optional)
 .PP
 .B "Installation:"
 .br
 It is recommended  that the macro files are placed in a standard shared system
 directory. The standard directory locations searched by \*(mS are defined on a
-per-platform basis, only one of the directory locates is selected, as follows: 
+per-platform basis, only one of the directory locates is selected, as follows:
 .LP
 .ne6
 .CS 0
@@ -204,12 +221,12 @@ per-platform basis, only one of the directory locates is selected, as follows:
 .BS
 Create the directory \fC/usr/local/jasspa\fR.
 .BU
-Create the  sub-directory  \fC/usr/local/jasspa/macros\fR.  Unpack and install
-the \fCmemacros.tar.gz\fR into this directory
+Unpack  and   install   the   \fCjasspa-metree-YYYYMMDD.tar.gz\fR   into  this
+directory.
 .BU
-If   spelling   dictionaries   are   required   then   create  the   directory
-\fC/usr/local/jasspa/spelling\fR.  Unpack and install the \fCspelling\fR  into
-this directory.
+If spelling  dictionaries  are required then place them in the  \fIspelling\fR
+sub-directory  created when  \fImetree\fR was unpacked. Unpack and install the
+\fCspelling\fR into this directory.
 .BU
 If the standard icons are required for Gnome, KDE or some other window manager
 then  create the  sub-directory  \fC/usr/local/jasspa/icons\fR  and unpack and
@@ -243,12 +260,12 @@ system directories then \*(mS may be installed locally as follows:-
 .BS
 Create the directory \fC~/.jasspa\fR.
 .BU
-Create  the  sub-directory   \fC~.jasspa/macros\fR.  Unpack  and  install  the
-\fCmemacros.tar.gz\fR into this directory
-.BU
-If   spelling   dictionaries   are   required   then   create  the   directory
-\fC~/.jasspa/spelling\fR.  Unpack  and  install  the  \fCspelling\fR  into this
+Unpack  and   install   the   \fCjasspa-metree-YYYYMMDD.tar.gz\fR   into  this
 directory.
+.BU
+If spelling  dictionaries  are required then place them in the  \fIspelling\fR
+sub-directory  created when  \fImetree\fR was unpacked. Unpack and install the
+\fCspelling\fR into this directory.
 .BU
 If the standard icons are required for Gnome, KDE or some other window manager
 then  create the  sub-directory  \fC~/.jasspa/icons\fR  and unpack and
@@ -256,7 +273,7 @@ install the icons into the new directory.
 .BU
 The user files will be placed in the \fC~/.jasspa\fR  directory by default. To
 keep the user macros separate then the directory  \fC~/.jasspa/$LOGNAME\fR may
-be created and will identified as the users home directory. 
+be created and will identified as the users home directory.
 .BU
 Unpack (or build) the executable and place in "\fC~/bin\fR"
 .BE
@@ -264,15 +281,15 @@ Unpack (or build) the executable and place in "\fC~/bin\fR"
 .SS "DOS Installation"
 \s-1MS-DOS\s0  has  no  concept  of a  standard  installation  directory.  The
 location  of the \*(mS  macros  is  generally  determined  from the  directory
-location of the executable. 
+location of the executable.
 .PP
 .B Executable:
 .br
 Compiled with DJGPP V1.0
 .IP "Distribution components required:"
-\fCmedos.zip\fR
+\fCjasspa-me-msdos-djgpp1-YYYYMMDD.zip\fR
 .br
-\fCmemacros.zip\fR
+\fCjasspa-metree-YYYYMMDD.zip\fR
 .br
 \fI<spelling>\fR\fC.zip\fR
 .sp 1
@@ -290,12 +307,12 @@ This installation relies on the executable position.
 .BS
 Create the directory \fCc:\\jasspa\fR (or other location)
 .BU
-Create  the  sub-directory  \fCc:\\jasspa\\macros\fR.  Unpack and  install  the
-\fCmemacros.zip\fR into this directory
-.BU
-If   spelling   dictionaries   are   required   then   create  the   directory
-\fCc:\\jasspa\\spelling\fR.  Unpack and install the  \fCspelling\fR  into this
+Unpack  and   install   the   \fCjasspa-metree-YYYYMMDD.zip\fR   into  this
 directory.
+.BU
+If spelling  dictionaries  are required then place them in the  \fIspelling\fR
+sub-directory  created when  \fImetree\fR was unpacked. Unpack and install the
+\fCspelling\fR into this directory.
 .BU
 Unzip   the   executable   and  place  it  in  the   jasspa   root   directory
 \fCc:\\jasspa\fR.
@@ -330,14 +347,14 @@ We  usually  add the \fC\-c\fR option so that  MicroEmacs  is  executed  with
 history information. This may be omitted if required.
 .RE
 .SS "Microsoft Windows 3.1/3.11"
-.B "Executable:" 
+.B "Executable:"
 .br
-Compiled with Microsoft Developer 2.0 
+Compiled with Microsoft Developer 2.0
 .PP
 .B "Helper DLL:"
 .br
 Under  \fBWin32s\fR  a helper  \s-1DLL\s0  \fBmethnk16.dll\fR  is  required to
-perform the 
+perform the
 .Ht pipe-shell-command 2
 in   a   synchronous    manner.   This   should   be   installed    into   the
 \fCC:\\WINDOWS\\SHELL\fR  directory. This (rather inelegantly) gets around the
@@ -352,11 +369,11 @@ The  helper   \s-1DLL\s0  is  compiled  with  a  16-bit  Windows  compiler  \-
 .PP
 .B "Distribution components required:"
 .IP
-\fCmewin32s.zip\fR
+\fCjasspa-me-ms-win32s-YYYYMMDD.zip\fR
 .br
-\fCmemacros.zip\fR
+\fCjasspa-metree-YYYYMMDD.zip\fR
 .br
-\fCmewinhlp.zip\fR 
+\fCjasspa-mewinhlp-YYYYMMDD.zip\fR
 .br
 \fI<spelling>\fR\fC.zip\fR
 .PP
@@ -370,7 +387,7 @@ The  helper   \s-1DLL\s0  is  compiled  with  a  16-bit  Windows  compiler  \-
 .br
 \fCmake\fR \- use nmake or GNU port of make.
 .IP
-If\fBwin32s\fR is a requirement on this platform, typically taken from 
+If\fBwin32s\fR is a requirement on this platform, typically taken from
 .B pw1118.exe
 which freely available on the Internet.
 .PP
@@ -389,8 +406,8 @@ to suite the install base.
 .B "Support Status:"
 .br
 The  \fBwin32s\fR  release  has not been  used  with  vengeance,  although  no
-specific problems have been reported with this release. 
-.SS "Windows '95/'98/NT/2K/XP"
+specific problems have been reported with this release.
+.SS "Windows 95/98/NT/2K/XP"
 .B Executable:
 .IP
 Compiled with Microsoft Developer 6.x
@@ -402,13 +419,7 @@ of the distribution components.
 .LP
 .B "Distribution components required:"
 .IP
-\fCmewin32.zip\fR
-.br
-\fCmemacros.zip\fR
-.br
-\fI<spelling>\fR\fC.zip\fR
-.br
-\fCmewinhlp.zip\fR (optional)
+\fCjasspa-mepkg-ms-win32-2004030.zip\fR
 .LP
 .B "Recommended installed components:"
 .IP
@@ -418,7 +429,7 @@ of the distribution components.
 .br
 \fCmake\fR \- use nmake or GNU port of make.
 .IP
-A good source of \s-1UNIX\s0 native tools is 
+A good source of \s-1UNIX\s0 native tools is
 .IP
 .C http://unxutils.sourceforge.net/
 \- for native windows grep, diff, zip etc.
@@ -451,7 +462,7 @@ Unzip the executable components into
 Create a short cut to MicroEmacs for the Desktop
 .sp
 Right click on the desk top
-.sp 
+.sp
 \fC=> New\fR
 .br
 \fC=> Short\fR
@@ -505,24 +516,24 @@ as follows:-
 information. The user  information may be stored in the MicroEmacs  directory,
 or more  typically in a users  private  directory.  On login  systems then the
 user name and user private directory location is automatically determined from
-the system. 
+the system.
 .PP
-The user name identified by \*(mS is 
-.Ht $user-name 5 
-this value may be set or re-defined using the environment variable 
+The user name identified by \*(mS is
+.Ht $user-name 5
+this value may be set or re-defined using the environment variable
 .Ht $MENAME 5 .
 On  \s-1MS-DOS\s0  and early windows systems where there is no user login then
 then
 .Ht $MENAME 5
-may be defined in the environment. 
+may be defined in the environment.
 .PP
 The  location  of  the  user  information   depends  upon  your  platform  and
 installation   configuration. The private directory identified by \*(mS is
-.Ht $user-path 5 
-this location may be changed by defining the environment variable 
+.Ht $user-path 5
+this location may be changed by defining the environment variable
 .Ht $MEUSERPATH 5 .
 .PP
-Microsoft Windows users may use the 
+Microsoft Windows users may use the
 .Ht me32.ini 8
 file to define \*(mS configuration path and name information.
 .SS "User Profile Files"
@@ -534,7 +545,7 @@ Files contained in the user profiles typically include:-
 .br
 \fI<name>\fR\fC.erf\fR \- The users registry configuration file.
 .PP
-These files are automatically set up by \*(mS. 
+These files are automatically set up by \*(mS.
 These  files are  established  from the menu  "\fBHelp\->User  Setup\fR".  The
 "\fBSetup  Path\fR"  item  defines  the  location  of the  files,  but must be
 \s-1MANUALLY\s0 included in the \fC$MEPATH\fR environment.
