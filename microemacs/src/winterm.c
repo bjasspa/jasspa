@@ -5532,17 +5532,8 @@ meSetupPathsAndUser(char *progname)
     
     if((((ss = meGetenv ("HOME")) != NULL) && (ss[0] != '\0')) ||
        ((ss = appData) != NULL))
-    {
-        ll = meStrlen(ss) ;
-        homedir = meMalloc(ll+2) ;
-        meStrcpy(homedir,ss) ;
-        fileNameConvertDirChar(homedir) ;
-        if(homedir[ll-1] != DIR_CHAR)
-        {
-            homedir[ll++] = DIR_CHAR ;
-            homedir[ll] = '\0' ;
-        }
-    }
+        fileNameSetHome(ss) ;
+    
     /* Free off the Install Path information if defined */
     meNullFree(meInstallPath) ;
 }
