@@ -270,10 +270,10 @@ add-file-hook ".lua"                                          fhook-lua
 -1 add-file-hook "-[*!]-[ \t]*nroff.*-[*!]-"     fhook-nroff  ; -*- nroff -*-
 -1 add-file-hook "-[*!]-[ \t]*cobol.*-[*!]-"     fhook-cobol  ; -*- cobol -*-
 -1 add-file-hook "-[*!]-[ \t]*pl/?sq?l?.*-[*!]-" fhook-pls    ; -*- pl/sql -*- or -*- pls -*-
+-1 add-file-hook "-[*!]-[ \t]*makefile.*-[*!]-"  fhook-make   ; -!- makefile -!-
+-1 add-file-hook "-[*!]-[ \t]*sh\\(ell\\)?.*-[*!]-" fhook-shell  ; -!- shell -!-
 -1 add-file-hook "-!-[ \t]*mhg.*-!-"             fhook-mhg    ; -!- mhg -!-
--1 add-file-hook "-!-[ \t]*shell.*-!-"           fhook-shell  ; -!- shell -!-
 -1 add-file-hook "-!-[ \t]*msdos.*-!-"           fhook-dos    ; -!- msdos -!-
--1 add-file-hook "-!-[ \t]*makefile.*-!-"        fhook-make   ; -!- makefile -!-
 -1 add-file-hook "-!-[ \t]*imakefile.*-!-"       fhook-imake  ; -!- imakefile -!-
 -1 add-file-hook "-!-[ \t]*document.*-!-"        fhook-doc    ; -!- document -!-
 -1 add-file-hook "-!-[ \t]*jst.*-!-"             fhook-jst    ; -!- jst -!-
