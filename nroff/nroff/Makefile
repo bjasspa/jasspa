@@ -1,21 +1,16 @@
 #____________________________________________________________________________
 #
-# Last Edited <040207.1236>
+# Last Edited <040207.1604>
 #
 # Nroff tools makefile.
 #____________________________________________________________________________
 #
-TARGET	= linux
-ROOTDIR = ..
-include $(ROOTDIR)/etc/linux200.mak
-#____________________________________________________________________________
-#
+TOPDIR	= ..
+include $(TOPDIR)/etc/makeinc
 # Local definitions.
-#____________________________________________________________________________
-#
-VPATH	= $(LOCALDIR)
+# VPATH	= $(LOCALDIR)
 
-LOCALLIBS=	-L$(INSTLIBDIR)  -lutils
+LOCALLIBS=	-L$(INSTLIBDIR) -lutils
 INCLUDES=       $(I). $(I)$(INSTINCDIR)
 CLIBS	=	libnroff.$A
 # -lmalloc
@@ -108,14 +103,16 @@ libnroff.$A:	$(LIBOBJ)
 #
 install::	$(ALLEXES)
 		$(MKDIR) $(INSTBINDIR)
-		$(INSTALL) $(INSTBINFLAGS) $(RTFEXES) $(INSTBINDIR)
-		$(INSTALL) $(INSTBINFLAGS) $(TEXEXES) $(INSTBINDIR)
-		$(INSTALL) $(INSTBINFLAGS) $(HTMEXES) $(INSTBINDIR)
-		$(INSTALL) $(INSTBINFLAGS) $(MANEXES) $(INSTBINDIR)
-		$(INSTALL) $(INSTBINFLAGS) $(TOLEXES) $(INSTBINDIR)
+		$(INSTALL_EXE) $(RTFEXES) $(INSTBINDIR)
+		$(INSTALL_EXE) $(TEXEXES) $(INSTBINDIR)
+		$(INSTALL_EXE) $(HTMEXES) $(INSTBINDIR)
+		$(INSTALL_EXE) $(MANEXES) $(INSTBINDIR)
+		$(INSTALL_EXE) $(TOLEXES) $(INSTBINDIR)
 
 clean::
-	$(RM) $(ALLEXES) *.$O *.$A
+	$(RM) $(ALLEXES)
+	$(RM) *.$O
+	$(RM) *.$A
 	@echo Cleaned
 
 spotless:: clean

@@ -1,0 +1,16 @@
+# -*- Makefile -*-
+# Make rules for Linux
+# Use standard definitions
+include $(TOPDIR)/etc/makeinc.std
+#
+# Host specific definitions
+# 
+TARGETDIR   =   $(UNAME)
+#
+# Set up the compiler Compiler
+#
+include $(TOPDIR)/etc/makeinc.gcc
+#
+# Platform specific defines.
+#
+CPP_PLATDEFS=   -D_HPUX -D_UNIX

@@ -1,74 +1,53 @@
 ##############################################################################
 #
-#			Copyright 2000 samsung.
+#  			Copyright 2000-2004 Jon Green.
 #			      All Rights Reserved
 #
 #
-#  System        :
-#  Module        :
-#  Object Name   : $RCSfile: linux200.mak,v $
-#  Revision      : $Revision: 1.2 $
-#  Date          : $Date: 2002-03-10 14:23:14 $
+#  System        : 
+#  Module        : 
+#  Object Name   : $RCSfile: Makefile,v $
+#  Revision      : $Revision: 1.1 $
+#  Date          : $Date: 2004-02-07 16:59:52 $
 #  Author        : $Author: jon $
 #  Created By    : Jon Green
-#  Created       : Sat Oct 21 14:13:05 2000
-#  Last Modified : <020310.1422>
+#  Created       : Sat Feb 7 16:08:59 2004
+#  Last Modified : <040207.1616>
 #
-#  Description
+#  Description	
 #
 #  Notes
 #
 #  History
-#
-#  $Log: not supported by cvs2svn $
-#  Revision 1.1  2000/10/21 15:03:17  jon
-#  Compiled under Linux
-#
-#
+#	
 ##############################################################################
 #
-#  Copyright (c) 2000 samsung.
-#
+#  Copyright (c) 2000-2004 Jon Green.
+# 
 #  All Rights Reserved.
-#
+# 
 #  This  document  may  not, in  whole  or in  part, be  copied,  photocopied,
 #  reproduced,  translated,  or  reduced to any  electronic  medium or machine
-#  readable form without prior written consent from samsung.
+#  readable form without prior written consent from Jon Green.
 #
 ##############################################################################
-
-#____________________________________________________________________________
 #
-# Author:	Jon Green
-#
-# Last Modified <001021.1450>
-#
-# Description:	The dudev component describes the utilities library. This
-#		includes the file searching functions etc.
-#
-#____________________________________________________________________________
+TOPDIR	= ..
+include $(TOPDIR)/etc/makeinc
 #
 # Define the modules to build to make.
 #
-RM	=	rm -f
-INSTALL	=	$(RUNBINDIR)\install
-MKDIR	=	mkdir
-COPY	=	cp
-#
 # Documentation components
 #
-DOCBIN	=	../bin/
-DOCDIR	=
-
-SUPERMAN=	$(DOCBIN)superman -b
-NR2RTF	=	$(DOCBIN)nr2rtf
-NR2TEX	=	$(DOCBIN)nr2tex
-NRAR	=	$(DOCBIN)nrar
-NR2HTML	=	$(DOCBIN)nr2html
-NR2EHF	=	$(DOCBIN)nr2ehf
-NRORDER	=	$(DOCBIN)nrorder
-NRSEARCH=	$(DOCBIN)nrsearch
-HTS	=	$(DOCBIN)hts
+SUPERMAN=	$(INSTBINDIR)/superman -b
+NR2RTF	=	$(INSTBINDIR)/nr2rtf
+NR2TEX	=	$(INSTBINDIR)/nr2tex
+NRAR	=	$(INSTBINDIR)/nrar
+NR2HTML	=	$(INSTBINDIR)/nr2html
+NR2EHF	=	$(INSTBINDIR)/nr2ehf
+NRORDER	=	$(INSTBINDIR)/nrorder
+NRSEARCH=	$(INSTBINDIR)/nrsearch
+HTS	=	$(INSTBINDIR)/hts
 #hc31
 #____________________________________________________________________________
 #
@@ -103,7 +82,7 @@ TEX1	=	$(MAN1:.1=.tex)
 TEX4	=	$(MAN1:.4=.tex)
 TEX7	=	$(MAN1:.7=.tex)
 
-all:: $(HLPS) $(HTSS) $(TEX1)
+all:: $(HLPS) $(HTSS)
 install:: all
 #____________________________________________________________________________
 #
@@ -126,27 +105,28 @@ manrun.sm:: $(MANRUN)
 	$(SUPERMAN) -o $@ $(MANRUN)
 
 manrun.hts: manrun.sm manrun.1 manrun.lbn forward.lbn
-	$(NR2HTML) -x -M manrun manrun.sm manrun.1	\
-	           -c JASSPA                            \
-		   -H jasspa				\
-		   -p toollogo.gif			\
-		   -L. -lmanrun -lforward		\
-		   -thome:manrun			\
-		   -tbuild:build
-
+	$(NR2HTML) -x -M manrun	\
+	           -c JASSPA \
+		   -H jasspa \
+		   -p toollogo.gif \
+		   -L. -lmanrun -lforward \
+		   -thome:manrun \
+		   -tbuild:build \
+		   manrun.sm manrun.1
 manrun.rtf: manrun.sm manrun.1 manrun.lbn forward.lbn
-	$(NR2RTF) -x -M manrun manrun.sm manrun.1	\
-	          -c JASSPA                             \
-		  -H jasspa				\
-		  -p toollogo.bmp			\
-		  -L. -lmanrun -lforward		\
-		  -thome:manrun				\
-		  -tbuild:build
-$(TEX1):	manrun.sm manrun.1 manrun.lbn forward.lbn
-	$(NR2TEX) -x -M manrun manrun.sm manrun.1	\
-		  -c JASSPA				\
-		  -L. -lmanrun -lforward		\
-
+	$(NR2RTF) -x -M manrun \
+	          -c JASSPA \
+		  -H jasspa \
+		  -p toollogo.bmp \
+		  -L. -lmanrun -lforward \
+		  -thome:manrun \
+		  -tbuild:build \
+		  manrun.sm manrun.1
+$(TEX1):	  manrun.sm manrun.1 manrun.lbn forward.lbn
+	$(NR2TEX) -x -M manrun \
+		  -c JASSPA \
+		  -L. -lmanrun -lforward \
+		  manrun.sm manrun.1
 #
 # Build the postscript print job ordering files.
 #
@@ -169,9 +149,3 @@ clean::
 spotless:: clean
 	- $(RM) *~
 	- $(RM) tags
-#____________________________________________________________________________
-#
-# Standard make rules here.
-#____________________________________________________________________________
-#
-#include $(MAKEBODY)

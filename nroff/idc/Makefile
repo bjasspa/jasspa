@@ -1,25 +1,24 @@
 ##############################################################################
 #
-#  			Copyright 2000-2004 Jon Green.
+#  			Copyright 2000-2004 Jon Green
 #			      All Rights Reserved
 #
 #
 #  System        : 
 #  Module        : 
-#  Object Name   : $RCSfile: sunos.mak,v $
+#  Object Name   : $RCSfile: Makefile,v $
 #  Revision      : $Revision: 1.1 $
-#  Date          : $Date: 2004-01-06 00:53:09 $
+#  Date          : $Date: 2004-02-07 17:00:31 $
 #  Author        : $Author: jon $
 #  Created By    : Jon Green
 #  Created       : Sat Oct 21 14:08:08 2000
-#  Last Modified : <040104.0000>
+#  Last Modified : <040207.1607>
 #
 #  Description	
 #
 #  Notes
 #
 #  History
-#	
 #
 ##############################################################################
 #
@@ -33,24 +32,10 @@
 #
 ##############################################################################
 
+TOPDIR	= ..
+include $(TOPDIR)/etc/makeinc
 
-#____________________________________________________________________________
-#
-# Last Edited <001021.1342>
-#
-# Bug makefile.
-#____________________________________________________________________________
-#
-
-TARGET	=	linux
-ROOTDIR	=	..
-include		$(ROOTDIR)/etc/sunos.mak
-
-#____________________________________________________________________________
-#
 # Local definitions.
-#____________________________________________________________________________
-#
 LOCALLIBS=	$(INSTLIBDIR)/libutils.$A
 HEADERS	=	idc.h		list.h		idc.def
 UTILS_H	=	$(INSTINCDIR)/utils.h
@@ -64,23 +49,24 @@ SRCS	=	idc.c		line.c		name.c		list.c \
 		hml.c		rtf.c
 OBJS	=	$(SRCS:.c=.o)
 
-#____________________________________________________________________________
-#
 # Dependencies
-#____________________________________________________________________________
-#
-
-all::	$(EXES)
+all::		$(EXES)
 
 $(EXES):	$(OBJS) $(INSTLIBDIR)/libutils.$(A)
 		$(CC) -o $@ $(LDFLAGS) $(OBJS) $(LOCALLIBS) $(CLIBS) $(SYSLIBS)
 
 clean::
 		$(RM) $(EXES)
+		$(RM) *.$O
+		$(RM) *.A
+
+spotless:	clean
+		$(RM) *~
+		$(RM) tags
 
 install::	$(EXES)
 		$(MKDIR) $(INSTBINDIR)
-		$(INSTALL) $(INSTBINFLAGS) $(EXES) $(INSTBINDIR)
+		$(INSTALL_EXE) $(EXES) $(INSTBINDIR)
 
 idc.$O:		idc.h
 line.$O:	idc.h idc.def

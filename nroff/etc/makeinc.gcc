@@ -1,0 +1,32 @@
+#
+# GCC Compiler.
+#
+CC          =       gcc
+CPP         =       $(CC) -E
+CPPFLAGS    =       $(CPP_PLATDEFS) $(LOCALDEFS) $(INCLUDES)
+CDEBUGFLAGS =	    -g  -Wall
+CPROFILEFLAGS=      -p1
+COPTIMISEFLAGS=	    -O3 -DNDEBUG=1 -Wall
+CNONOPTIMISEFLAGS=  -O0 -DNDEBUG=1
+CFLAGS =            $(CPPFLAGS) $(COPTIMISEFLAGS)
+#
+# GCC Linker
+#
+LD          =   $(CC)
+LD_CFLAGS   =   $(CFLAGS)
+#
+# AR flags
+#
+AR		=	ar
+ARFLAGS		=	-rc
+#
+# YACC Flags
+#
+YACC		=	yacc
+YFLAGS		=	-d
+#
+# File Extensions
+O   = o
+A   = a
+EXE =
+I   = -I
