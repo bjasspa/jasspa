@@ -485,7 +485,10 @@ date: 2004/11/18 00:02:33
 author: bill
 Added a macro recursion depth limit of 20 to avoid blowing ME
 
-Do we need to doc this? May need to as someone may get the error on a legit macro of their own. 
+Do we need to doc this? May need to as  someone  may get the  error on a legit
+macro of their own. 
+
+Done Doc [Jon 2005/02/02]
 ----------------------------
 date: 2004/11/07 23:25:29
 author: jon
@@ -493,14 +496,14 @@ New paragraph definition.
 Paragraph movement now defined blank-line to blank-line.
 fill/kill/back/forward paragraph operations redefined.
 
-Todo
+Done Doc [Jon 2005/02/02]
 ----------------------------
 date: 2004/11/05 23:00:27
 author: bill
 Fixed kill-lines and kill-word numerical argument implementation.
 
 Done Doc [Jon  2005/01/16] kill-line only
-Todo
+Done Doc [Jon  2005/02/19] Completed kill-word changes.
 ----------------------------
 date: 2004/11/04 20:17:32
 author: bill
@@ -512,6 +515,7 @@ Need to finalise kill-line's numeric argument behaviour, GNUs is inconsistent an
 
 remove line and letter mode docs, add reference to them in kill-line & forward-delete-char (and
 backward-delete-char ?) outlining the alternative new way. 
+Done Doc [Jon  2005/02/19] Completed kill-word changes.
 ----------------------------
 date: 2004/10/23 21:06:24
 author: bill
@@ -524,6 +528,7 @@ author: jon
 Indentation prototype implementation.
 
 Todo (with new 'C' style indent form)
+Done Doc [Jon  2005/02/19]
 ----------------------------
 date: 2004/10/02 10:39:39
 author: jon
@@ -543,14 +548,15 @@ author: bill
 branches:  2.29.2;
 Added the ability to empty $recent-keys
 
-DONE
+Done Doc [Steve  2005/01/02]
 ----------------------------
 date: 2004/06/27 16:45:08
 author: bill
 Big shack-up of -p pipe interface, introduced -P for debugging and broken stdin reading to separate - option/file.
 Added -1 & -2 ml-write support for writing to stdout & stderr and inproved command-wait so it can be used with ipipe commands (waiting for the process to complete)
 
-Todo
+Done Doc [Jon  2005/01/15] - ml-write only
+Done Doc [Jon  2005/02/19]
 ----------------------------
 
 List generated via macros CVS commit
