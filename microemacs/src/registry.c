@@ -4,7 +4,7 @@
  * registry.c - Internal registry routines.
  *
  * Copyright (c) 1998-2001 Jon Green
- * Copyright (C) 2002 JASSPA (www.jasspa.com)
+ * Copyright (C) 2002-2004 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -195,7 +195,7 @@ rnodeSet (meRegNode *np, meUByte *value)
     if ((value == NULL) || (value[0] == '\0'))
         np->value = NULL;
     else
-        np->value = meStrdup (value);
+        np->value = meStrdup(value);
 }
 
 /*
@@ -267,9 +267,7 @@ parseFile (meRegNode *rnp, meLine *hlp)
             if (needValue)
             {
                 /* Link the value to the name */
-                if (lnp->value)
-                    free (lnp->value);
-                lnp->value = meStrdup (buf+1);
+                meStrrep(&lnp->value,buf+1) ;
                 needValue = 0;
             }
             else

@@ -3,7 +3,7 @@
  * JASSPA MicroEmacs - www.jasspa.com
  * line.c - Line handling operations.
  *
- * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ * Copyright (C) 1988-2004 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -56,20 +56,44 @@
 static meKillNode **currkill=NULL ;	/* current kill buffer */
 static meKill *reyankLastYank=NULL;
 
-#define meLineShrink(lp,newlen)                                              \
-do {                                                                         \
-    int len = (newlen) ;                                                     \
-    int unused = meLineGetMaxLength(lp) - len ;                              \
-    if(unused > 0xff)                                                        \
-    {                                                                        \
-        unused = meLineMallocSize(len+meLINE_BLOCK_SIZE) ;                   \
-        (lp) = realloc(lp,unused) ;                                          \
-        (lp)->unused = unused - len - meLINE_SIZE ;                          \
-    }                                                                        \
-    else                                                                     \
-        (lp)->unused = unused ;                                              \
-    (lp)->length = len ;                                                     \
-} while(0)
+static meLine *
+meLineShrink(meLine *lp, int newlen)
+{
+    int unused = meLineGetMaxLength(lp) - newlen ;
+    if(unused > 0xff)
+    {
+        meLine *nlp ;
+        
+        unused = meLineMallocSize(newlen+meLINE_BLOCK_SIZE) ;
+        if((nlp = realloc(lp,unused)) != lp)
+        {
+            meWindow *wp ;
+            assert (nlp != NULL) ;
+            nlp->next->prev = nlp ;
+            nlp->prev->next = nlp ;
+            meFrameLoopBegin() ;
+            wp = loopFrame->windowList;                    /* Update windows       */
+            while (wp != NULL)
+            {
+                if(wp->buffer == frameCur->bufferCur)
+                {
+                    if(wp->dotLine == lp)
+                        wp->dotLine = nlp ;
+                    if(wp->markLine == lp)
+                        wp->markLine = nlp ;
+                }
+                wp = wp->next;
+            }
+            meFrameLoopEnd() ;
+            lp = nlp ;
+        }
+        lp->unused = unused - newlen - meLINE_SIZE ;
+    }
+    else
+        lp->unused = unused ;
+    lp->length = newlen ;
+    return lp ;
+}
 
 /****************************************************************************
  * This routine allocates a block of memory large enough to hold a meLine
@@ -456,7 +480,7 @@ lineInsertNewline(int ignoreProtect)
             while((*cp2++ = *cp1++))
                 ;
             *cp2 = '\0' ;
-            meLineShrink(lp1,llen) ;
+            lp1 = meLineShrink(lp1,llen) ;
             /* sort out the line flags: anchors, schemes etc */ 
             if(lp1->flag & meLINE_ANCHOR)
             {
@@ -524,7 +548,7 @@ lineInsertNewline(int ignoreProtect)
         while((*cp3++=*cp2++))
             ;
         *cp1 = '\0' ;
-        meLineShrink(lp1,doto) ;
+        lp1 = meLineShrink(lp1,doto) ;
         lp2->next = lp1->next;
         lp1->next->prev = lp2;
         lp2->prev = lp1 ;
@@ -610,7 +634,6 @@ bufferInsertText(meUByte *str)
     if(str[0] == '\0')
         return 0 ;
     
-    /* ZZZZ - handle a cut length of 0xfff0 */
     for(;;)
     {
         while(((cc=*ss++) != '\0') && (cc != meCHAR_NL))
@@ -935,7 +958,7 @@ mldelete(meInt noChrs, meUByte *kstring)
         s2 = s1+nn ;
         while((*s1++ = *s2++) != '\0')
             ;
-        meLineShrink(slp,slp->length-nn) ;
+        slp = meLineShrink(slp,slp->length-nn) ;
         if(slp->flag & meLINE_ANCHOR)
             meLineResetAnchors(meLINEANCHOR_IF_GREATER|meLINEANCHOR_COMPRESS|meLINEANCHOR_RELATIVE,
                                frameCur->bufferCur,slp,slp,(meUShort) (soff+nn),-nn);
@@ -1026,7 +1049,7 @@ mldelete(meInt noChrs, meUByte *kstring)
             s2 = s1+eoff ;
             while((*s1++ = *s2++) != '\0')
                 ;
-            meLineShrink(elp,elp->length-eoff) ;
+            elp = meLineShrink(elp,elp->length-eoff) ;
         }
         fslp = slp ;
         felp = elp ;
@@ -1075,7 +1098,7 @@ mldelete(meInt noChrs, meUByte *kstring)
                     ;
                 felp = meLineGetNext(elp) ;
             }
-            meLineShrink(slp,newl) ;
+            slp = meLineShrink(slp,newl) ;
             if(slp->flag & meLINE_ANCHOR)
                 meLineResetAnchors(meLINEANCHOR_IF_GREATER|meLINEANCHOR_FIXED,frameCur->bufferCur,
                                    slp,slp,(meUShort) soff,soff) ;
@@ -1104,7 +1127,7 @@ mldelete(meInt noChrs, meUByte *kstring)
                 while((*s1++ = *s2++) != '\0')
                     ;
             }
-            meLineShrink(elp,newl) ;
+            elp = meLineShrink(elp,newl) ;
             s1 = elp->text ;
             s2 = slp->text ;
             ii = soff ;

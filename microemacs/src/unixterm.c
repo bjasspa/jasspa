@@ -4,7 +4,7 @@
  * unixterm.c - Unix X-Term and Termcap support routines.
  *
  * Copyright (C) 1993-2001 Steven Phillips
- * Copyright (C) 2002 JASSPA (www.jasspa.com)
+ * Copyright (C) 2002-2004 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -2634,7 +2634,7 @@ XTERMsetFont(char *fontName)
         free(mecm.fontName) ;
 
     if((meSystemCfg & meSYSTEM_FONTS) &&
-       ((mecm.fontName=meStrdup(fontName)) != NULL))
+       ((mecm.fontName=meStrdup((meUByte *) fontName)) != NULL))
     {
         meUByte cc, *p = mecm.fontName ;
 
@@ -2667,6 +2667,7 @@ static meFrameData *
 XTERMcreateWindow(meUShort width, meUShort depth)
 {
     meFrameData *frameData ;
+    XClassHint *classHint ;
     Pixmap iconPixmap ;
     XWMHints wmHints ;
     
@@ -2681,6 +2682,13 @@ XTERMcreateWindow(meUShort width, meUShort depth)
                                              sizeHints.x,sizeHints.y,sizeHints.width,sizeHints.height,0,
                                              WhitePixel(mecm.xdisplay,xscreen),BlackPixel(mecm.xdisplay,xscreen)) ;
 
+    /* Set the class hint correctly - Thanks to Jeremy Cowgar */
+    classHint = XAllocClassHint();
+    classHint->res_name = "microemacs";
+    classHint->res_class = "MicroEmacs";
+    XSetClassHint(mecm.xdisplay, frameData->xwindow, classHint);
+    XFree(classHint);
+    
     XSetWMNormalHints(mecm.xdisplay,frameData->xwindow,&sizeHints);
     
     XSetWMProtocols(mecm.xdisplay,frameData->xwindow,meAtoms,2) ;
@@ -2883,11 +2891,11 @@ XTERMstart(void)
     
     if(XrmGetResource(rdb,"MicroEmacs.name","MicroEmacs.Name",&retType,&retVal) &&
        !strcmp(retType,"String") &&
-       ((ss = meStrdup(retVal.addr)) != NULL))
+       ((ss = meStrdup((meUByte *) retVal.addr)) != NULL))
         meName = ss ;
 
     if(XrmGetResource(rdb,"MicroEmacs.iconname","MicroEmacs.IconName",&retType,&retVal) &&
-       !strcmp(retType,"String") && ((ss = meStrdup(retVal.addr)) != NULL))
+       !strcmp(retType,"String") && ((ss = meStrdup((meUByte *) retVal.addr)) != NULL))
         meIconName = ss ;
     
     /* Free off the resource database */
@@ -3084,7 +3092,7 @@ XTERMaddColor(meColor index, meUByte r, meUByte g, meUByte b)
 
         if(noCells < 0)
         {
-            printf("Warning: Failed to allocate colors, looking up closest\n") ;
+            /* printf("Warning: Failed to allocate colors, looking up closest\n") ;*/
             if(((noCells = DisplayCells(mecm.xdisplay,xscreen)) > 0) &&
                ((cells = malloc(noCells*3*sizeof(meUByte))) != NULL))
             {
@@ -3578,10 +3586,8 @@ TTopenClientServer (void)
         /* setup the buffer */
         {
             meUByte buff[meBUF_SIZE_MAX] ;
-            sprintf((char *)buff,"Client Server: /tmp/mesrv%d",(int) meUid) ;
+            sprintf((char *)buff,"Client Server: /tmp/mesrv%d\n\n",(int) meUid) ;
             addLineToEob(bp,buff) ;              /* Add string */
-            addLineToEob(bp,(meUByte *)"") ;       /* Add string */
-            addLineToEob(bp,(meUByte *)"") ;       /* Add string */
             bp->dotLine = meLineGetPrev(bp->baseLine) ;
             bp->dotOffset = 0 ;
             bp->dotLineNo = bp->lineCount-1 ;
@@ -3732,7 +3738,7 @@ putenv (const char *string)
         /* Copy across the environment */
         for (jj = 0; jj < ii; jj++)
         {
-            if ((meEnviron[jj] = meStrdup (environ[jj])) == NULL)
+            if ((meEnviron[jj] = meStrdup(environ[jj])) == NULL)
             {
                 while (--jj > 0)
                     meFree (meEnviron[jj]);
@@ -3754,7 +3760,7 @@ putenv (const char *string)
     /* Try and locate the environment value in the existing environment */
     for (ii = 0, p = meEnviron; (*p != NULL); ii++, p++)
     {
-        if ((strnicmp (*p, string, len) == 0) && ((*p)[len] == '='))
+        if ((meStrnicmp (*p, string, len) == 0) && ((*p)[len] == '='))
         {
             /* Same entry. push the new value */
             meFree (*p);
@@ -3793,7 +3799,7 @@ megetenv (const char *string)
         {
             while (*p != NULL)
             {
-                if ((strnicmp (*p, string, len) == 0) && ((*p)[len] == '='))
+                if((meStrnicmp (*p, string, len) == 0) && ((*p)[len] == '='))
                     return (&((*p)[len+1]));
                 p++;
             }

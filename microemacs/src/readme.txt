@@ -8,7 +8,7 @@ Installation(1)                   microemacs                    Installation(1)
 
 INSTALLATION 
      This page describes introductory  notes for the  installation and setup of
-     MicroEmacs '02. 
+     MicroEmacs '04. 
 
   Quick Install 
      The quickest way  to install MicroEmacs  without reading the  rest of this
@@ -52,7 +52,7 @@ INSTALLATION
           jasspame.exe - '95/'98/NT Self Extracting Install Shield Installation
 
      Executable Source Code 
-          The source code release for MicroEmacs '02 contains makefiles (*.mak)
+          The source code release for MicroEmacs '04 contains makefiles (*.mak)
           for all supported  platforms. Microsoft  '95/'98/NT makefiles contain
           options at the top of the  makefile to enable/disable console and URL
           support. 
@@ -68,7 +68,7 @@ INSTALLATION
           mehpux10.gz - Hewlett Packard HP-UX 10 Executable 
           mehpux11.gz - Hewlett Packard HP-UX 11 Executable 
           mesunos55.gz - Sun OS 5.5 Executable 
-          mesunos56.gz - Sun OS 5.6 Executable 
+          mesunos56.gz - Sun OS 5.5 Executable 
           mesolx86.gz - Sun Solaris 2.6 Intel Platform Executable 
           melinux20.gz - Linux 2.0.0 Executable 
           mefreebsd.gz - Free BSD Executable 
@@ -92,7 +92,6 @@ INSTALLATION
           lsdxenus.zip - American extended dictionary. 
           lsdmengb.zip - British rules and base dictionary. 
           lsdxengb.zip - British extended dictionary. 
-          lsdmfifi.zip - Finnish rules and dictionary. 
           lsdmfrfr.zip - French rules and dictionary. 
           lsdmdede.zip - German rules and base dictionary. 
           lsdxdede.zip - German extended dictionary. 
@@ -105,7 +104,6 @@ INSTALLATION
           lsdxenus.gz - American extended dictionary. 
           lsdmengb.tar.gz - British rules and base dictionary. 
           lsdxengb.gz - British extended dictionary. 
-          lsdmfifi.tar.gz - Finnish rules and dictionary. 
           lsdmfrfr.tar.gz - French rules and dictionary. 
           lsdmdede.tar.gz - German rules and base dictionary. 
           lsdxdede.gz - German extended dictionary. 
@@ -127,7 +125,7 @@ INSTALLATION
      Simply create a directory, down-load the files required (see list for each
      platform below) and extract  into this directory. From  a shell or command
      prompt, change to  the directory,  making it the  current one  (i.e. cd to
-     it), and run the  executable. MicroEmacs '02 should  open with the on-line
+     it), and run the  executable. MicroEmacs '04 should  open with the on-line
      help page visible. 
 
      On Windows based systems this can also be achieved by creating a short-cut
@@ -138,7 +136,7 @@ INSTALLATION
      executable to  somewhere in  your  PATH and  set the  environment variable
      MEPATH to point to this directory. 
 
-     MicroEmacs  '02  will  function  normally  in  this  environment,  but  in
+     MicroEmacs  '04  will  function  normally  in  this  environment,  but  in
      multi-user  environments  and  for  up-dating  purposes,  it  is  strongly
      recommended that a proper installation is used, see below. 
 
@@ -241,7 +239,7 @@ INSTALLATION
                directory structure  similar to  MS-DOS. Install  the helper DLL
                methnk16.dll  in   the  C:\WINDOWS\SHELL   directory.  Create  a
                me32.ini(8) file  in the  C:\WINDOWS  directory to  identify the
-               location of the MicroEmacs '02 components, this much the same as
+               location of the MicroEmacs '04 components, this much the same as
                the '95/'98  file,  change  the  directory  paths  to  suite the
                install base. 
 
@@ -320,7 +318,7 @@ INSTALLATION
                (in this case  icon number 23),  or may be  some other icon. The
                open  action  in  the   example  uses  the   -o  option  of  the
                client-server, which loads the  file into the current MicroEmacs
-               '02 session, alternatively the  -c option may  be used to retain
+               '04 session, alternatively the  -c option may  be used to retain
                the previous  context, or  no option  if a  new session  with no
                other files loaded is started. 
 
@@ -492,123 +490,22 @@ SEE ALSO
      $MENAME(5), $MEPATH(5), Company Profiles, File Hooks, File Language
      Templates, User Profiles. 
 
-COMPANY PROFILES 
-     This section describes how  a company profile  should be incorporated into
-     MicroEmacs  '02.  A  company  profile  defines  a  set  of  extensions  to
-     MicroEmacs which  encapsulate settings  which are  used on  a company wide
-     basis. This  type  of configuration  is  typically used  with  a networked
-     (shared) installation. The company profile would typically include:- 
-
-       *  Name of the company. 
-       *  Standard header files including company copyright statements. 
-       *  Standard file layouts 
-       *  Company defined language extensions. 
-
-  Location Of The Company Information 
-     It is suggested that  all of the company  extensions applied to MicroEmacs
-     '02 are  performed  in a  separate  directory location  which  shadows the
-     MicroEmacs standard macro file directory.  This enables the original files
-     to be sourced if a  user does not want to  include the company files. This
-     method  also  allows  MicroEmacs  to  be  updated  in  the  future, whilst
-     retaining the  company files.  For  our example,  we  shall use  a company
-     called JASSPA,  you  should replace  references  to jasspa  with  your own
-     company name. The steps involved are laid out as follows:- 
-
-     Create a new company directory 
-          You may  skip  this step  if  you are  going  to modify  the standard
-          installation. 
-
-          Create a new directory to hold the company information. i.e. 
-
-               /usr/local/microemacs/jasspa - UNIX 
-               c:\Program Files\JASSPA\MicroEmacs\jasspa - Microsoft 
-
-          Modify the $MEPATH(5)  of the (of  all users) to  include the company
-          directory on the search path i.e. 
-
-          UNIX Users edit their local $MEPATH or a base $MEPATH is added to the
-               system .login or .profile scripts. 
-
-                    MEPATH=/usr/local/microemacs 
-                    MEPATH=/usr/local/microemacs/jasspa:$MEPATH 
-
-          Microsoft Windows Platforms 
-               Edit the me32.ini  file and  modify the mepath  entry to reflect
-               the location of the company directory:- 
-
-                    mepath=C:\Prog....\Mic...\macros\jasspa;C:\Prog...\Mic...\macros
-
-          DOS Platforms 
-               Edit the  autoexec.bat  file and  modify  MEPATH to  include the
-               company directory location. 
-
-                    SET MEPATH=c:\me\jasspa;c:\me 
-
-  Content Of The Company Information 
-
-     Company macro file 
-          The company  file  is  typically  called by  the  company  name (i.e.
-          jasspa.emf) create a new company file. The file includes your company
-          name and hook functions for any new file types that have been defined
-          for the company, an example company  file for Jasspa might be defined
-          as:- 
-
-            ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-            ; 
-            ;  Author        : Jasspa 
-            ;  Created       : Thu Jul 24 09:44:49 1997 
-            ;  Last Modified : <190698.2225> 
-            ; 
-            ;  Description     Extensions for Jasspa 
-            ; 
-            ;  Notes 
-            ; 
-            ;  History 
-            ; 
-            ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-            ; Define the name of the company. 
-            set-variable %company-name "Jasspa" 
-            ; Add Jasspa specific file hooks 
-            ; Make-up foo file hook 
-            add-file-hook ".foo"    fhook-foo 
-            1 add-file-hook "-!-[ \t]*foobar.*-!-" fhook-foo ; -!- foobar -!- 
-            ; Override the make with localised build command 
-            set-variable %compile-com "build" 
-
-          The file contains  company specific  file hooks  and the  name of the
-          company. 
-
-     Other Company Files 
-          Files defined on  behalf of the  company are included  in the company
-          directory. These would include:- 
-
-            *  Template header files etf(8). 
-            *  Hook file  definitions (hkXXX.emf)  for company  specific files,
-               see add-file-hook(2). 
-            *  Extensions to  the  standard  hook  definitions  (myXXX.emf) for
-               company specific language extensions to the standard hook files.
-               See File Hooks and File Language Templates. 
-
-SEE ALSO 
-     $MENAME(5), $MEPATH(5), File Hooks, File Language Templates, Installation,
-     user-setup(3), User Profiles. 
-
 USER PROFILES 
      This section  describes how  a  user profile  should be  incorporated into
-     MicroEmacs '02. A user  profile defines a set  of extensions to MicroEmacs
+     MicroEmacs '04. A user  profile defines a set  of extensions to MicroEmacs
      which encapsulates settings which are used by an individual user. 
 
      The user profile allows:- 
 
        *  Saving of the last session (history), allowing the next invocation of
-          MicroEmacs '02 to restore your previous session. 
+          MicroEmacs '04 to restore your previous session. 
        *  Personalized spelling dictionaries. 
-       *  Redefinition of MicroEmacs '02, allowing the editor to be tailored to
+       *  Redefinition of MicroEmacs '04, allowing the editor to be tailored to
           an  individual's  requirements.  Including  the  re-binding  of keys,
           modification of the screen colors. Definition of personal macros etc.
 
   Identification 
-     In order to identify a user  MicroEmacs '02 uses information in the system
+     In order to identify a user  MicroEmacs '04 uses information in the system
      to determine the name of  the user, and in  turn the configuration to use.
      On all  systems the  value  of the  environment variable  $MENAME(5) takes
      priority over any other means of  user identification. If this variable is
@@ -832,8 +729,8 @@ EXAMPLE
                ; Small non-bold font. 
                ; change-font "-misc-fixed-medium-r-normal--13-*-*-*-c-70-iso8859-1"
                ; Change the size of the screen 
-               change-frame-width 82 
-               change-frame-depth 50 
+               82 change-frame-width 
+               50 change-frame-depth 
            !endif 
        !endif 
        ; Change the default diff command-line for GNU diff utility all platforms
@@ -863,4 +760,105 @@ EXAMPLE
 SEE ALSO 
      $MEPATH(5), $MENAME(5), user-setup(3), Company Profiles, File Hooks, File
      Language Templates, Installation. 
+
+COMPANY PROFILES 
+     This section describes how  a company profile  should be incorporated into
+     MicroEmacs  '04.  A  company  profile  defines  a  set  of  extensions  to
+     MicroEmacs which  encapsulate settings  which are  used on  a company wide
+     basis. This  type  of configuration  is  typically used  with  a networked
+     (shared) installation. The company profile would typically include:- 
+
+       *  Name of the company. 
+       *  Standard header files including company copyright statements. 
+       *  Standard file layouts 
+       *  Company defined language extensions. 
+
+  Location Of The Company Information 
+     It is suggested that  all of the company  extensions applied to MicroEmacs
+     '04 are  performed  in a  separate  directory location  which  shadows the
+     MicroEmacs standard macro file directory.  This enables the original files
+     to be sourced if a  user does not want to  include the company files. This
+     method  also  allows  MicroEmacs  to  be  updated  in  the  future, whilst
+     retaining the  company files.  For  our example,  we  shall use  a company
+     called JASSPA,  you  should replace  references  to jasspa  with  your own
+     company name. The steps involved are laid out as follows:- 
+
+     Create a new company directory 
+          You may  skip  this step  if  you are  going  to modify  the standard
+          installation. 
+
+          Create a new directory to hold the company information. i.e. 
+
+               /usr/local/microemacs/jasspa - UNIX 
+               c:\Program Files\JASSPA\MicroEmacs\jasspa - Microsoft 
+
+          Modify the $MEPATH(5)  of the (of  all users) to  include the company
+          directory on the search path i.e. 
+
+          UNIX Users edit their local $MEPATH or a base $MEPATH is added to the
+               system .login or .profile scripts. 
+
+                    MEPATH=/usr/local/microemacs 
+                    MEPATH=/usr/local/microemacs/jasspa:$MEPATH 
+
+          Microsoft Windows Platforms 
+               Edit the me32.ini  file and  modify the mepath  entry to reflect
+               the location of the company directory:- 
+
+                    mepath=C:\Prog....\Mic...\macros\jasspa;C:\Prog...\Mic...\macros
+
+          DOS Platforms 
+               Edit the  autoexec.bat  file and  modify  MEPATH to  include the
+               company directory location. 
+
+                    SET MEPATH=c:\me\jasspa;c:\me 
+
+  Content Of The Company Information 
+
+     Company macro file 
+          The company  file  is  typically  called by  the  company  name (i.e.
+          jasspa.emf) create a new company file. The file includes your company
+          name and hook functions for any new file types that have been defined
+          for the company, an example company  file for Jasspa might be defined
+          as:- 
+
+            ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+            ; 
+            ;  Author        : Jasspa 
+            ;  Created       : Thu Jul 24 09:44:49 1997 
+            ;  Last Modified : <190698.2225> 
+            ; 
+            ;  Description     Extensions for Jasspa 
+            ; 
+            ;  Notes 
+            ; 
+            ;  History 
+            ; 
+            ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+            ; Define the name of the company. 
+            set-variable %company-name "Jasspa" 
+            ; Add Jasspa specific file hooks 
+            ; Make-up foo file hook 
+            add-file-hook ".foo"    fhook-foo 
+            1 add-file-hook "-!-[ \t]*foobar.*-!-" fhook-foo ; -!- foobar -!- 
+            ; Override the make with localised build command 
+            set-variable %compile-com "build" 
+
+          The file contains  company specific  file hooks  and the  name of the
+          company. 
+
+     Other Company Files 
+          Files defined on  behalf of the  company are included  in the company
+          directory. These would include:- 
+
+            *  Template header files etf(8). 
+            *  Hook file  definitions (hkXXX.emf)  for company  specific files,
+               see add-file-hook(2). 
+            *  Extensions to  the  standard  hook  definitions  (myXXX.emf) for
+               company specific language extensions to the standard hook files.
+               See File Hooks and File Language Templates. 
+
+SEE ALSO 
+     $MENAME(5), $MEPATH(5), File Hooks, File Language Templates, Installation,
+     user-setup(3), User Profiles. 
 

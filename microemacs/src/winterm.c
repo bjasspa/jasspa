@@ -4,7 +4,7 @@
  * winterm.c - Win32 platform support.
  *
  * Copyright (C) 1996-2001 Jon Green
- * Copyright (C) 2002 JASSPA (www.jasspa.com)
+ * Copyright (C) 2002-2004 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -584,10 +584,8 @@ TTopenClientServer (void)
             ii = sprintf((char *)buff,"%d\n",baseHwnd) ;
             WriteFile(clientHandle,buff,ii,&ii,NULL) ;
 
-            sprintf((char *)buff,"Client Server: %s",fname) ;
+            sprintf((char *)buff,"Client Server: %s\n\n",fname) ;
             addLineToEob(bp,buff) ;     /* Add string */
-            addLineToEob(bp,"") ;       /* Add string */
-            addLineToEob(bp,"") ;       /* Add string */
             bp->dotLine = meLineGetPrev(bp->baseLine) ;
             bp->dotOffset = 0 ;
             bp->dotLineNo = bp->lineCount-1 ;
@@ -664,27 +662,6 @@ TTkillClientServer (void)
     {
         CloseHandle (connectHandle);
         connectHandle = INVALID_HANDLE_VALUE;
-#if 0
-        /* With the introduction of multi-frames this does not make sense
-         * (which frame do you pop-up?) (it wasn't very safe anyway, what if
-         * the main ME is a console?) Instead a make-current command should be
-         * passed down to the main ME and let it do the work */
-#ifdef _ME_WINDOW
-#ifdef _ME_CONSOLE
-        if (!(meSystemCfg & meSYSTEM_CONSOLE))
-#endif /* _ME_CONSOLE */
-        {
-            if(meFrameGetWinHandle(frameCur) != NULL)
-            {
-                /* make this the current window */
-                if (IsIconic (meFrameGetWinHandle(frameCur)))
-                    ShowWindow (meFrameGetWinHandle(frameCur), SW_SHOWNORMAL);
-                else
-                    SetForegroundWindow (meFrameGetWinHandle(frameCur));
-            }
-        }
-#endif /* _ME_WINDOW */
-#endif
     }
 }
 
@@ -2464,12 +2441,6 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
                       &mePInfo))
     {
         status = meTRUE ;
-#if 0
-        /* We do not do this here as it causes problems for win95 ipipes on
-         * network drives */
-        WaitForSingleObject(GetCurrentProcess(), 50);
-        WaitForInputIdle(mePInfo.hProcess, 5000);
-#endif
         CloseHandle(mePInfo.hThread);
         /* Ipipes need the process handle and we dont wait for it */
         if((flags & LAUNCH_IPIPE) == 0)
@@ -4140,8 +4111,11 @@ meFrameHideCursor(meFrame *frame)
                 meFrameGetWinPaintEndCol(frame)[frame->cursorRow] = frame->cursorColumn+1 ;
             /* Set up the area on the client window to be modified
                and signal that the client is about to be updated */
+            /* SWP 20040108 - XP ClearType smooth edge font rendering seems
+             * to spill the bg out onto the next character by one pixel so
+             * to avoid dropping vertical lines add 1 to the right edge */
             rect.left   = eCellMetrics.cellColPos[frame->cursorColumn];
-            rect.right  = eCellMetrics.cellColPos[frame->cursorColumn+1];
+            rect.right  = eCellMetrics.cellColPos[frame->cursorColumn+1] + 1 ;
             rect.top    = eCellMetrics.cellRowPos[frame->cursorRow];
             rect.bottom = eCellMetrics.cellRowPos[frame->cursorRow+1];
             InvalidateRect (meFrameGetWinHandle(frame), &rect, meFALSE);
@@ -4212,8 +4186,9 @@ meFrameShowCursor(meFrame *frame)
                 meFrameGetWinPaintEndCol(frame)[frame->cursorRow] = frame->cursorColumn+1 ;
             /* Set up the area on the client window to be modified
                and signal that the client is about to be updated */
+            /* SWP 20040108 - XP ClearType smooth edge font fix - see first comment */
             rect.left   = eCellMetrics.cellColPos[frame->cursorColumn];
-            rect.right  = eCellMetrics.cellColPos[frame->cursorColumn+1];
+            rect.right  = eCellMetrics.cellColPos[frame->cursorColumn+1] + 1;
             rect.top    = eCellMetrics.cellRowPos[frame->cursorRow];
             rect.bottom = eCellMetrics.cellRowPos[frame->cursorRow+1];
             InvalidateRect (meFrameGetWinHandle(frame), &rect, meFALSE);
@@ -4543,8 +4518,9 @@ TTputs (int row, int col, int len)
 
         /* Set up the area on the client window to be modified
            and signal that the client is about to be updated */
+        /* SWP 20040108 - XP ClearType smooth edge font fix - see first comment */
         rect.left   = eCellMetrics.cellColPos [col];
-        rect.right  = eCellMetrics.cellColPos [col+len];
+        rect.right  = eCellMetrics.cellColPos [col+len] + 1 ;
         rect.top    = eCellMetrics.cellRowPos [row];
         rect.bottom = eCellMetrics.cellRowPos [row+1];
         InvalidateRect (meFrameGetWinHandle(frameCur), &rect, meFALSE);
@@ -4569,8 +4545,9 @@ TTapplyArea(void)
             if(meFrameGetWinPaintEndCol(frameCur)[row] < (meShort) ttRect.right)
                 meFrameGetWinPaintEndCol(frameCur)[row] = (meShort) ttRect.right ;
         }
+        /* SWP 20040108 - XP ClearType smooth edge font fix - see first comment */
         ttRect.left   = eCellMetrics.cellColPos[ttRect.left] ;
-        ttRect.right  = eCellMetrics.cellColPos[ttRect.right] ;
+        ttRect.right  = eCellMetrics.cellColPos[ttRect.right] + 1 ;
         ttRect.top    = eCellMetrics.cellRowPos[ttRect.top] ;
         ttRect.bottom = eCellMetrics.cellRowPos[ttRect.bottom] ;
         InvalidateRect (meFrameGetWinHandle(frameCur), &ttRect, meFALSE) ;
@@ -5341,9 +5318,9 @@ readIniFile (void)
         else
         {
             /* Add a '=' and concat the data */
-            strcat (buf3, "=");             /* Add '=' assignment */
-            strcat (buf3, buf1);            /* Add the data */
-            mePutenv (meStrdup (buf3));     /* Duplicate for putenv */
+            strcat(buf3, "=");             /* Add '=' assignment */
+            strcat(buf3, buf1);            /* Add the data */
+            mePutenv(meStrdup(buf3));      /* Duplicate for putenv */
         }
     }
     HeapFree (GetProcessHeap(), 0L, lpSectionNames);
@@ -5422,8 +5399,8 @@ readIniFile (void)
         while((p=strchr(p,'/')) != NULL)     /* got a '/', -> '\\' */
             *p++ = DIR_CHAR ;
 #endif
-        p = meStrdup (buf3);
-        mePutenv (p);
+        p = meStrdup(buf3);
+        mePutenv(p);
     }
 
 #ifdef _ME_WINDOW
@@ -5779,13 +5756,6 @@ meFrameGainFocus(meFrame *frame)
         /* Mark the screen as invalid */
         InvalidateRect(meFrameGetWinHandle(frame), NULL, meFALSE);
         meFrameGetWinPaintAll(frame) = 1 ;
-        
-#if 0
-        /* Kick of the blinker - as default value for cursorBlink
-         * is 0 this will not happen until after the window is created */
-        if((cursorState >= 0) && cursorBlink)
-            TThandleBlink(2) ;
-#endif
         
         /* We have been swapped out. Therefore we potentially do not
          * own the clipboard contents*/

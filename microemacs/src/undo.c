@@ -4,7 +4,7 @@
  * undo.c - Undo & Redo support routines.
  *
  * Copyright (C) 1996-2001 Steven Phillips
- * Copyright (C) 2002 JASSPA (www.jasspa.com)
+ * Copyright (C) 2002-2004 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -451,7 +451,7 @@ meUndo(int f, int n)
                     fprintf(undoFp,"Undo 0x%02x %x %ld %ld:",nn->type,(int) nn->next,
                             nn->udata.lineSort[0],nn->count) ;
                     for(n=0 ; n<nn->count ; n++)
-                        fprintf(undoFp," %d",nn->udata.lineSort[n+1]) ;
+                        fprintf(undoFp," %ld",nn->udata.lineSort[n+1]) ;
                     fprintf(undoFp,"\n") ;
                 }
 #if MEOPT_NARROW

@@ -3,7 +3,7 @@
  * JASSPA MicroEmacs - www.jasspa.com
  * input.c - Various input routines.
  *
- * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ * Copyright (C) 1988-2004 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -374,19 +374,18 @@ bword(meUByte *buf, int *pos, int *len, int state)
 void
 mlDisp(meUByte *prompt, meUByte *buf, meUByte *cont, int cpos)
 {
-    int    len ;               /* offset into current buffer   */
-    char   expbuf[RESTSIZ+1];    /* expanded buf                 */
-    int    start, col, maxCol ;
+    char   expbuf[meMLDISP_SIZE_MAX] ;
+    int    len, start, col, maxCol ;
     int    promsiz ;
     
     col = -1 ;
-    len = expandexp(-1,buf,RESTSIZ,0,(meUByte *)expbuf,cpos,&col,0) ;
+    len = expandexp(-1,buf,meMLDISP_SIZE_MAX-1,0,(meUByte *)expbuf,cpos,&col,0) ;
     if(col < 0)
         col = len ;
     if(cont != NULL)
     {
-        meStrncpy(expbuf+len,cont,RESTSIZ-len);
-        expbuf[RESTSIZ] = '\0' ;
+        meStrncpy(expbuf+len,cont,meMLDISP_SIZE_MAX-len);
+        expbuf[meMLDISP_SIZE_MAX-1] = '\0' ;
         len += strlen(expbuf+len) ;
     }
     /* switch off the status cause we are replacing it */
@@ -634,7 +633,7 @@ isFileIgnored(meUByte *fileName)
             while(((cc=fi[fil]) != ' ') && (cc != '\0'))
                 fil++ ;
             if((fil <= len) &&
-               !curCmpIFunc((char *)fileName+len-fil,(char *)fi,fil))
+               !curCmpIFunc(fileName+len-fil,fi,fil))
                 return meTRUE ;
             fi += fil ;
             if(*fi++ == '\0')
@@ -663,7 +662,7 @@ getFirstLastPos(int noStr,meUByte **strs, meUByte *str, int option,
         register int ii, rr ;
         
         for(ii=0 ; ii<noStr ; ii++)
-            if(!(rr = curCmpIFunc((char *)str,(char *)strs[ii],nn)))
+            if(!(rr = curCmpIFunc(str,strs[ii],nn)))
                 break ;
             else if(rr < 0)
                 return 0 ;
@@ -673,7 +672,7 @@ getFirstLastPos(int noStr,meUByte **strs, meUByte *str, int option,
         
         *fstPos = ii ;
         for(++ii ; ii<noStr ; ii++)
-            if(curCmpIFunc((char *)str,(char *)strs[ii],nn))
+            if(curCmpIFunc(str,strs[ii],nn))
                 break ;
         *lstPos = ii - 1 ;
     }
@@ -978,13 +977,13 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
 
     if(option & MLINSENSCASE)
     {
-        curCmpFunc  = stridif ;
-        curCmpIFunc = strnicmp ;
+        curCmpFunc  = meStridif ;
+        curCmpIFunc = meStrnicmp ;
     }
     else
     {
-        curCmpFunc  = strcmp ;
-        curCmpIFunc = strncmp ;
+        curCmpFunc  = (meIFuncSS) strcmp ;
+        curCmpIFunc = (meIFuncSSI) strncmp ;
     }
     numHist = setupHistory(option, &numPtr, &history) ;
     if(option & MLBUFFER)
@@ -1714,10 +1713,11 @@ mlgs_prevhist:
                 break;
             }
             
-        case CK_FISRCH:
-        case CK_FORSRCH:
+#if MEOPT_ISEARCH
         case CK_BISRCH:
+        case CK_FISRCH:
         case CK_BAKSRCH:
+        case CK_FORSRCH:
             if(option & MLISEARCH)
             {
                 mlfirst = cc ;
@@ -1726,6 +1726,7 @@ mlgs_prevhist:
             }
             TTbell() ;
             break ;
+#endif
 #if MEOPT_MOUSE            
         case CK_CTOMOUSE:
             /* a binding to set-cursor-to-mouse is used to handle mouse
@@ -1814,27 +1815,7 @@ input_addexpand:
     /* Store the history if it is not disabled. */
     if((option & (MLNOHIST|MLNOSTORE)) == 0)
         addHistory(option,buf) ;
-#if 0
-    {
-        meUByte *ss=mlgsStoreBuf ;
-        
-        /* If the number of history buffers is at it's maximum 
-         * then swap out the last history buffer (mlgsStoreBuf is
-         * deleted soon), otherwise the slot will be NULL and
-         * nothing will get freed
-         */
-        mlgsStoreBuf = history[meHISTORY_SIZE-1] ;
-        meStrcpy(ss,buf) ;
-        if(numHist < meHISTORY_SIZE)
-        {
-            numHist++ ;
-            (*numPtr)++ ;
-        }
-        for(ii=numHist-1 ; ii>0 ; ii--)
-            history[ii] = history[ii-1] ;
-        history[0] = ss ;
-    }
-#endif
+    
     mlfreeList(option,noStrs,strList) ;
 
     return meTRUE;

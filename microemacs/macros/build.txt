@@ -7,7 +7,7 @@ Build(2)                          microemacs                           Build(2)
 
 
 BUILD 
-     MicroEmacs '02 may  be compiled  from the  source files  using the command
+     MicroEmacs '04 may  be compiled  from the  source files  using the command
      shell build scripts build (UNIX  Bourne Shell) or build.bat (DOS/Windows).
      A default compile sequence may be achieved with a simple: 
 
@@ -21,12 +21,17 @@ BUILD
      -C   Build clean. Delete all of the object files. 
 
      -d   Build a debugging  version, the  output is  med (or  med32 for 32-bit
-          Windows versions) 
-
-     -g   UNIX only. Builds using  GNU compiler and tools  as opposed to native
-          tools. 
+          Windows versions). 
 
      -h   Display a simple help page 
+
+     -l logfile 
+          Redirect all compilation output to the  logfile, this may not work on
+          DOS or Windows systems. 
+
+     -la logfile 
+          Append all compilation  output to  the end  of logfile,  this may not
+          work on DOS or Windows systems. 
 
      -m makefile 
           Build using  the  specified  makefile.  over-riding  the  auto system
@@ -63,18 +68,21 @@ BUILD
             *  win32v5.mak Microsoft Developer v5.x, 32-bit Windows. 
             *  win32v6.mak Microsoft Developer v6.x, 32-bit Windows. 
 
-     -n   Build a  console  version (i.e.  no  window support).  Constructs the
-          executable men32.exe on Windows, men on Linux. 
-
-     -nu  Build a console  version with URL  support (Windows '95/'98/NT only),
-          constructs the executable menu32.exe. 
-
-     -p <searchpath> 
-          Sets the default system  search path to  <searchpath>, the default is
-          /usr/local/microemacs. Sets the default system search path to 
+     -ne  Build NanoEmacs (a cut  down version aimed as  a vi replacement), the
+          output is ne (or ned32 for 32-bit Windows versions). 
 
      -S   Build spotless. Deletes all of the object files and any backup files,
           tag files etc. 
+
+     -t type 
+          Set the build type, where type can be one of the following: 
+
+            *  c Build  a console  only version  (i.e. no  window support), the
+               output is mec (or mec32 on Windows). 
+            *  w Build a  windows only  version (i.e. no  console support), the
+               output is mew (or mew32 on Windows). 
+            *  cw Build a version which  supports both console and windows, the
+               output is mecw (or mecw32 on Windows). 
 
      -u   Build  a  URL  version  (Windows  '95/'98/NT  only),  constructs  the
           executable meu32.exe. 
@@ -100,19 +108,4 @@ NOTES
      platforms. If  any new  platform ports  are performed  by individuals then
      please submit the  makefiles and any  source changes back  to JASSPA - see
      Contact Information. 
-
-  Search Path 
-     The default search path is defined as "/usr/local/microemacs" for all UNIX
-     type environments. Recently there has been  a move to use the "/usr/share"
-     directory. The search path may  be re-defined through the macro definition
-     "_SEARCH_PATH".  Change   the  C   pre-processor  to   include  the  macro
-     definition.  For  example,   to  use   "/usr/share/jasspa"  with  multiple
-     sub-directories for each of the components:- 
-
-       -D_SEARCH_PATH="\"/usr/share/jasspa/company:\ 
-       /usr/share/jasspa/macros:\ 
-       /usr/share/jasspa/spelling\"" 
-
-     Note due  to the  line  length then  the backslash  (\)  has been  used to
-     continue the lines. 
 

@@ -1,10 +1,10 @@
 > -!- document; fill-mode:both; fill-column:70; -!-
 >
->  Copyright 2001 JASSPA.
+>  Copyright 2001-2004 JASSPA.
 >
 >  Created By    : Jon Green
 >  Created       : Sat Dec 22 09:09:48 2001
->  Last Modified : <020106.1133>
+>  Last Modified : <040106.1540>
 >
 
 This  document  describes  how the GPL  licence  has been  applied  to
@@ -261,9 +261,9 @@ history and application.
 >emf>
     ; -!- emf -!-
     ; JASSPA MicroEmacs - www.jasspa.com
-    ; me.emf - Startup file for MicroEmacs '99 JASSPA Distribution
+    ; me.emf - Startup file for JASSPA MicroEmacs Distribution
     ;
-    ; Copyright (C) JASSPA 1988-2002
+    ; Copyright (C) 1988-2004 JASSPA (www.jasspa.com)
     ;
     ; This program is free software; you can redistribute it and/or modify it
     ; under the terms of the GNU General Public License as published by the Free

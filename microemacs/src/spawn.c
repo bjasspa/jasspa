@@ -3,7 +3,7 @@
  * JASSPA MicroEmacs - www.jasspa.com
  * spawn.c - Routines for launching external process.
  *
- * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ * Copyright (C) 1988-2004 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -1389,16 +1389,16 @@ childSetupTty(void)
 int
 doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
 {
-    meIPipe    *ipipe ;
-    meBuffer     *bp ;
-    meUByte       line[meBUF_SIZE_MAX] ;
-    int         cd ;
+    meIPipe  *ipipe ;
+    meBuffer *bp ;
+    meUByte   line[meBUF_SIZE_MAX] ;
+    int       cd ;
 #ifdef _UNIX
-    int         fds[2], outFds[2], ptyFp ;
-    int         pid;                   /* Child process identity */
+    int       fds[2], outFds[2], ptyFp ;
+    int       pid;                   /* Child process identity */
 #endif
 #ifdef _WIN32
-    int         rr ;
+    int       rr ;
 #endif
     /* get or create the command buffer */
     if(((bp=bfind(bufName,0)) != NULL) && meModeTest(bp->mode,MDPIPE))
@@ -1686,13 +1686,12 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int flags)
         return mlwrite(MWABORT,(meUByte *)"[Failed to create %s buffer]",bufName) ;
     }
     /* setup the buffer */
+    bp->fileName = meStrdup(path) ;
     meStrcpy(line,"cd ") ;
     meStrcat(line,path) ;
-    addLineToEob(bp,line) ;			/* Add string */
-    bp->fileName = meStrdup(path) ;
-    addLineToEob(bp,comStr) ;			/* Add string */
-    addLineToEob(bp,(meUByte *)"") ;		/* Add string */
-    addLineToEob(bp,(meUByte *)"") ;		/* Add string */
+    addLineToEob(bp,line) ;
+    addLineToEob(bp,comStr) ;
+    addLineToEob(bp,(meUByte *)"\n") ;
     bp->dotLine = meLineGetPrev(bp->baseLine) ;
     bp->dotOffset = 0 ;
     bp->dotLineNo = bp->lineCount-1 ;

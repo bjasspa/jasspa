@@ -3,7 +3,7 @@
  * JASSPA MicroEmacs - www.jasspa.com
  * efunc.def - Command name defintions.
  *
- * Copyright (C) JASSPA 1991-2002
+ * Copyright (C) 1991-2004 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -109,8 +109,8 @@ DEFFUNC ("define-help",			0x00, macroHelpDefine,	CK_DEFHELP, &__cmdArray[CK_DEFH
 #endif
 DEFFUNC ("define-macro",		0x00, macroDefine,	CK_DEFMAC, &__cmdArray[CK_DEFMAC+1], 0)
 DEFFUNC ("define-macro-file",		0x00, macroFileDefine,	CK_DEFFMAC, &__cmdArray[CK_DEFFMAC+1], 0)
-DEFFUNC ("delete-blank-lines",		0x04, deblank,		CK_DELBLK, &__cmdArray[CK_DELBLK+1], 0)
-DEFFUNC ("delete-buffer",		0x42, delBuffer,	CK_DELBUF, &__cmdArray[CK_DELBUF+1], 0)
+DEFFUNC ("delete-blank-lines",		0x04, windowDeleteBlankLines,CK_DELBLK, &__cmdArray[CK_DELBLK+1], 0)
+DEFFUNC ("delete-buffer",		0x42, bufferDelete,	CK_DELBUF, &__cmdArray[CK_DELBUF+1], 0)
 #if MEOPT_CMDHASH || MEOPT_SPELL
 DEFFUNC ("delete-dictionary",           0x00, dictionaryDelete, CK_DELDICT, &__cmdArray[CK_DELDICT+1], 0)
 #endif
@@ -121,7 +121,7 @@ DEFFUNC ("delete-other-windows",	0x00, windowDeleteOthers,CK_ONLYWND, &__cmdArra
 #if MEOPT_CMDHASH || MEOPT_REGISTRY
 DEFFUNC ("delete-registry",		0x42, deleteRegistry,	CK_DELREGY, &__cmdArray[CK_DELREGY+1], 0)
 #endif
-DEFFUNC ("delete-some-buffers",		0x42, delSomeBuffers,	CK_DELSBUF, &__cmdArray[CK_DELSBUF+1], 0)
+DEFFUNC ("delete-some-buffers",		0x42, deleteSomeBuffers,CK_DELSBUF, &__cmdArray[CK_DELSBUF+1], 0)
 DEFFUNC ("delete-window",		0x42, windowDelete,	CK_DELWND, &__cmdArray[CK_DELWND+1], 0)
 DEFFUNC ("describe-bindings",		0x42, descBindings,	CK_DESCBIN, &__cmdArray[CK_DESCBIN+1], 0)
 DEFFUNC ("describe-key",		0x42, descKey,		CK_DESCKEY, &__cmdArray[CK_DESCKEY+1], 0)

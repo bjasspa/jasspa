@@ -3,7 +3,7 @@
  * JASSPA MicroEmacs - www.jasspa.com
  * search.c - Search routines.
  *
- * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ * Copyright (C) 1988-2004 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -345,33 +345,6 @@ mere_scanner(int direct, int beg_or_end, int *n, SCANNERPOS *sp)
 
 #endif
 
-
-#if 0
-/* Local copy eq () for search */
-
-static int
-cEq (register int bc, register int pc)
-{
-    
-    if (bc == pc)                       /* Quick test first - think positive */
-        return (meTRUE);                  /* Phew - gambit paid off */
-    if (!exactFlag)                     /* Get exact out the way quick */
-        return (meFALSE);                 /* Failed. !! */
-    
-    /*
-     * We are not in exact mode - if we are dealing with alphabetic then
-     * convert to the same case and compare. 
-     */
-    
-    bc = toLower(bc) ;
-    pc = toLower(pc) ;
-    return (bc == pc);
-}
-
-#define cNotEq(a,b) (!cEq(a,b))
-
-#else
-
 #define cNotEq(a,b)                                                          \
 (((a) != (b)) &&                                                             \
  (!exactFlag || (toggleCase(a) != (b))))
@@ -379,8 +352,6 @@ cEq (register int bc, register int pc)
 #define cEq(a,b)                                                             \
 (((a) == (b)) ||                                                             \
  (exactFlag && (toggleCase(a) == (b))))
-
-#endif
 
 /*
  * scanner -- Search for a pattern in either direction.

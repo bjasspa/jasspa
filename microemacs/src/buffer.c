@@ -3,7 +3,7 @@
  * JASSPA MicroEmacs - www.jasspa.com
  * buffer.c - Buffer operations.
  *
- * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ * Copyright (C) 1988-2004 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -43,15 +43,15 @@ getBufferName(meUByte *prompt, int opt, int defH, meUByte *buf)
      */
     if(defH && (clexec != meTRUE))
     {
-	register meBuffer *bp ;
-	if(defH == 1)
-	    bp = frameCur->bufferCur ;
-	else
-	{
-	    bp = replacebuffer(frameCur->bufferCur) ;
-	    defH = 1 ;
-	}
-	addHistory(MLBUFFER, bp->name) ;
+        register meBuffer *bp ;
+        if(defH == 1)
+            bp = frameCur->bufferCur ;
+        else
+        {
+            bp = replacebuffer(frameCur->bufferCur) ;
+            defH = 1 ;
+        }
+        addHistory(MLBUFFER, bp->name) ;
     }
     return meGetString(prompt,opt|MLBUFFERCASE,defH,buf,meBUF_SIZE_MAX) ;
 }
@@ -107,31 +107,30 @@ addFileHook(int f, int n)
 
 /* Check extent.
    Check the extent string for the filename extent. */
-				
+
 static int
-checkExtent (meUByte *filename, int len, meUByte *sptr, meIFuncSSI cmpFunc)
+checkExtent(meUByte *filename, int len, meUByte *sptr, meIFuncSSI cmpFunc)
 {
     int  extLen ;
     char cc ;
     
     if(sptr == NULL)
-	return 0 ;              /* Exit - fail */
+        return 0 ;              /* Exit - fail */
     filename += len ;
     /*---       Run through the list, checking the extents as we go. */
     for(;;)
     {
-	
-	while(*sptr == ' ')
-	    sptr++ ;
-	extLen = 0 ;
-	while(((cc=sptr[extLen]) != ' ') && ((cc=sptr[extLen]) != '\0'))
-	    extLen++ ;
-	if((extLen <= len) &&
-	   !cmpFunc((char *) sptr,(char *) filename-extLen,extLen))
-	    return 1 ;
-	if(cc == '\0')
-	    return 0 ;
-	sptr += extLen+1 ;
+        while(*sptr == ' ')
+            sptr++ ;
+        extLen = 0 ;
+        while(((cc=sptr[extLen]) != ' ') && ((cc=sptr[extLen]) != '\0'))
+            extLen++ ;
+        if((extLen <= len) &&
+           !cmpFunc(sptr,filename-extLen,extLen))
+            return 1 ;
+        if(cc == '\0')
+            return 0 ;
+        sptr += extLen+1 ;
     }
 }
 
@@ -166,7 +165,7 @@ assignHooks (meBuffer *bp, meUByte *hooknm)
        ((hooknm != rbinHookName) || !triedRbin) &&
        (meStrlen(hooknm) > 6))
     {
-	meUByte fn[meBUF_SIZE_MAX], buff[meBUF_SIZE_MAX] ;             /* Temporary buffer */
+        meUByte fn[meBUF_SIZE_MAX], buff[meBUF_SIZE_MAX] ;             /* Temporary buffer */
 
 	buff[0] = 'h' ;
 	buff[1] = 'k' ;
@@ -239,8 +238,8 @@ setBufferContext(meBuffer *bp)
 	
         /* search for the first non-blank line */
 	for(lp=meLineGetNext(bp->baseLine) ; lp != bp->baseLine ; lp = meLineGetNext(lp))
-	{
-	    for (pp = lp->text; (cc=*pp++) != '\0' ; )
+        {
+            for (pp = lp->text; (cc=*pp++) != '\0' ; )
             {
                 if(!isSpace(cc))
                 {
@@ -275,7 +274,7 @@ setBufferContext(meBuffer *bp)
                     break ;
                 }
             }
-	}
+        }
     }
     if(bp->fhook < 0)
     {
@@ -333,9 +332,9 @@ setBufferContext(meBuffer *bp)
 		if((fileHookArg[ii] == 0) &&
 		   checkExtent(sp,ll,fileHookExt[ii],
 #ifdef _INSENSE_CASE
-			       strnicmp
+			       meStrnicmp
 #else
-			       strncmp
+			       (meIFuncSSI) strncmp
 #endif
 			       ))
 	    {
@@ -997,7 +996,7 @@ zotbuf(register meBuffer *bp, int silent) /* kill the buffer pointed to by bp */
  * line and the buffer header. Bound to "C-X K".
  */
 int
-delBuffer(int f, int n)
+bufferDelete(int f, int n)
 {
     register meBuffer *bp;
     register int s;
@@ -1020,7 +1019,7 @@ delBuffer(int f, int n)
 
 
 int
-delSomeBuffers(int f, int n)
+deleteSomeBuffers(int f, int n)
 {
     meBuffer *bp, *nbp ;
     meUByte   prompt[meBUF_SIZE_MAX] ;
@@ -1065,20 +1064,19 @@ changeBufName(int f, int n)     /*      Rename the current buffer       */
 	/* check for duplicates */
 	if(bfind(bufn,0) != NULL)
 	{
-	    /* if the names the same */
-	    linkBuffer(frameCur->bufferCur) ;
-	    return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[Already exists!]") ;
+            /* if the names the same */
+            linkBuffer(frameCur->bufferCur) ;
+            return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[Already exists!]") ;
 	}
     }
     else
 	/* if bit one is clear then make it a valid name */
 	frameCur->bufferCur->intFlag = (frameCur->bufferCur->intFlag & ~BIFNAME) | makename(bufn,bufn) ;
-    if((nn = meMalloc(meStrlen(bufn)+1)) == NULL)
+    if((nn = meStrdup(bufn)) == NULL)
     {
 	linkBuffer(frameCur->bufferCur) ;
 	return meABORT ;
     }
-    meStrcpy(nn,bufn);   /* copy buffer name to structure */
     meFree(frameCur->bufferCur->name) ;
     frameCur->bufferCur->name = nn ;
     frameAddModeToWindows(WFMODE) ;
@@ -1100,23 +1098,30 @@ changeBufName(int f, int n)     /*      Rename the current buffer       */
 int 
 addLine(register meLine *ilp, meUByte *text)
 {
-    register meLine  *lp ;
-    register int    ntext ;
-    register meUByte *ss ;
+    meUByte cc, *stext ;
+    meLine *lp, *plp ;
+    int len, lineCount=0 ;
     
-    ntext = meStrlen(text);
-    if ((lp=meLineMalloc(ntext,0)) == NULL)
-	return meFALSE ;
-    
-    ss = lp->text ;
-    while((*ss++ = *text++))
-	;
-    
-    ilp->prev->next = lp;
-    lp->prev = ilp->prev;
+    plp = ilp->prev ;
+    do
+    {
+        len = 0 ;
+        stext = text ;
+        while(((cc=*text++) != '\0') && (cc != '\n'))
+            len++ ;
+        if((lp=meLineMalloc(len,0)) == NULL)
+            break ;
+        lp->text[len] = '\0' ;
+        while(--len >= 0)
+            lp->text[len] = stext[len] ;
+        plp->next = lp ;
+        lp->prev = plp ;
+        plp = lp ;
+        lineCount++ ;
+    } while(cc != '\0') ;
     ilp->prev = lp;
     lp->next = ilp ;
-    return meTRUE ;
+    return lineCount ;
 }
 
 /*
@@ -1138,14 +1143,16 @@ makelist(meBuffer *blistp, int verb)
 #if MEOPT_EXTENDED
     if(verb & 0x02)
     {
-        addLineToEob(blistp,(meUByte *)"AC    Size Buffer              File Size  Mem Size   Undo Size") ;
-        addLineToEob(blistp,(meUByte *)"--    ---- ------              ---------  --------   ---------") ;
+        addLineToEob(blistp,(meUByte *)
+                     "AC    Size Buffer              File Size  Mem Size   Undo Size\n"
+                     "--    ---- ------              ---------  --------   ---------") ;
     }
     else
 #endif
     {
-        addLineToEob(blistp,(meUByte *)"AC    Size Buffer          File") ;
-        addLineToEob(blistp,(meUByte *)"--    ---- ------          ----") ;
+        addLineToEob(blistp,(meUByte *)
+                     "AC    Size Buffer          File\n"
+                     "--    ---- ------          ----") ;
     }
         
     bp = bheadp;                            /* For all buffers      */
@@ -1363,9 +1370,8 @@ createBuffer(register meUByte *bname)
     }
     /* set everything to 0 */
     memset(bp,0,sizeof(meBuffer)) ;
-    if((bp->name = meMalloc(meStrlen(bname)+1)) == NULL)
+    if((bp->name = meStrdup(bname)) == NULL)
 	return NULL ;
-    meStrcpy(bp->name, bname);
     linkBuffer(bp) ;
     
     /* and set up the non-zero buffer fields */

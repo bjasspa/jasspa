@@ -3,7 +3,7 @@
  * JASSPA MicroEmacs - www.jasspa.com
  * fileio.c - File reading and writing routines.
  *
- * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ * Copyright (C) 1988-2004 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -183,15 +183,17 @@ meUByte isWordMask=CHRMSK_DEFWORDMSK;
 #define meFIOBUFSIZ 2048              /* File read/write buffer size  */
 
 static int       ffremain ;
-static meUByte   ffbuf[meFIOBUFSIZ+1] ;
-static meUByte  *ffcur ;
-static meUByte   ffcrypt=0 ;
-static meUByte   ffauto=0 ;
-static meUByte   ffautoRet=0 ;
-static meUByte   ffnewFile ;
 static int       ffbinary=0 ;
 static int       ffread ;
 static int       ffoffset ;
+static meUByte   ffbuf[meFIOBUFSIZ+1] ;
+static meUByte  *ffcur ;
+static meUByte   ffauto=0 ;
+static meUByte   ffautoRet=0 ;
+static meUByte   ffnewFile ;
+#if MEOPT_CRYPT
+static meUByte   ffcrypt=0 ;
+#endif
 
 #define meBINARY_BPL   16   /* bytes per line */
 #define meRBIN_BPL    256   /* bytes per line */
@@ -1633,20 +1635,24 @@ ffReadFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
 {
     if(bp != NULL)
     {
+        ffauto   = (meModeTest(bp->mode,MDAUTO) != 0) ;
         if(meModeTest(bp->mode,MDBINRY))
             ffbinary = meBINARY_BPL ;
         else if(meModeTest(bp->mode,MDRBIN))
             ffbinary = meRBIN_BPL ;
         else
             ffbinary = 0 ;
+#if MEOPT_CRYPT
         ffcrypt  = (meModeTest(bp->mode,MDCRYPT) != 0) ;
-        ffauto   = (meModeTest(bp->mode,MDAUTO) != 0) ;
+#endif
     }
     else
     {
-        ffbinary = 0 ;
-        ffcrypt = ((flags & meRWFLAG_CRYPT) != 0) ;
         ffauto = 1 ;
+        ffbinary = 0 ;
+#if MEOPT_CRYPT
+        ffcrypt = ((flags & meRWFLAG_CRYPT) != 0) ;
+#endif
     }        
     ffautoRet= 0 ;
     ffremain = 0 ;
@@ -2086,7 +2092,9 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
             ffbinary = meRBIN_BPL ;
         else
             ffbinary = 0 ;
+#if MEOPT_CRYPT
         ffcrypt  = (meModeTest(bp->mode,MDCRYPT) != 0) ;
+#endif
         if(!ffbinary &&
 #ifdef _CTRLZ
            (!meModeTest(bp->mode,MDAUTO) || meModeTest(bp->mode,MDCTRLZ))
@@ -2119,10 +2127,12 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
     }
     else
     {
-        ffbinary = 0 ;
-        ffcrypt  = ((flags & meRWFLAG_CRYPT) != 0) ;
         ffauto   = 0 ;
         ffautoRet= 0 ;
+        ffbinary = 0 ;
+#if MEOPT_CRYPT
+        ffcrypt  = ((flags & meRWFLAG_CRYPT) != 0) ;
+#endif
     }
 #ifdef _UNIX
 #if MEOPT_SOCKET

@@ -4,7 +4,7 @@
  * hilight.c - Token based hilighting routines.
  *
  * Copyright (C) 1994-2001 Steven Phillips
- * Copyright (C) 2002 JASSPA (www.jasspa.com)
+ * Copyright (C) 2002-2004 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -2581,14 +2581,24 @@ int
 indentLine(void)
 {
     meSchemeSet *blkp;
-    meHilight **bhis ;
+    meHilight **bhilights ;
     meVideoLine vps[2] ;
     meUShort noColChng, fnoz, ii ;
-    meUByte *ss, indent, lindent ;
+    meUByte *ss, indent, lindent, bdisplayTab, bdisplayNewLine, bdisplaySpace ;
     meLine *lp ;
     int lb, ind, cind, coff ;
     
-    bhis = hilights ;
+    /* change the hilights to the indents, must backup the old value and
+     * must also ensure that the hilightLine routine will use a ' ' char,
+     * otherwise the show-white-chars functionality will break it */
+    bhilights = hilights ;
+    bdisplayTab = displayTab ;
+    bdisplayNewLine = displayNewLine ;
+    bdisplaySpace = displaySpace ;    
+    displayTab = ' ';
+    displayNewLine = ' ';
+    displaySpace = ' ';    
+    
     hilights = indents ;
     indent = frameCur->bufferCur->indent ;
     
@@ -2637,7 +2647,7 @@ indentLine(void)
         ind = ((meByte) (fnoz & 0x0ff)) ;
     else
     {
-        int jj, brace=0, contFlag=0, aind, lind, nind, bind=0 ;
+        int jj, brace=0, contFlag=0, aind, lind, nind ;
         
         if((fnoz & INDINDCURLINE) &&
            ((fnoz == blkp[0].scheme) || (cind >= blkp[0].column)))
@@ -2677,7 +2687,7 @@ indentLine(void)
             if(*ss == '\0')
                 continue ;
             /*            printf("Got prev line breakdown %d colour changes ind %d\n",noColChng,ind) ;*/
-            for(ii=0, bind=0 ; ii<noColChng ; ii++)
+            for(ii=0 ; ii<noColChng ; ii++)
             {
                 fnoz = (blkp[ii].scheme & 0xff00) ;
                 if(fnoz == INDNEXTONWARD)
@@ -2736,7 +2746,13 @@ indentLine(void)
             break ;
         }
     }
-    hilights = bhis ;
+    
+    /* restore the hilight setup */
+    hilights = bhilights ;
+    displayTab = bdisplayTab ;
+    displayNewLine = bdisplayNewLine ;
+    displaySpace = bdisplaySpace ;    
+
     /*    printf("\nIndent line to %d\n\n",ind) ;*/
     /* Always do the doto change so the tab on the left hand edge moves
      * the cursor to the first non-white char

@@ -35,14 +35,17 @@
 #
 ##############################################################################
 #
-CAT	= /usr/bin/cat
-RM	= /usr/bin/rm -f
-TAR	= /usr/bin/tar
-ZIP	= /usr/bin/zip
-FIND	= /usr/bin/find
-GREP	= /usr/bin/grep
-UNIQ	= /usr/bin/uniq
-INSTALL	= /usr/bin/install
+CAT	= cat
+RM	= rm -f
+TAR	= gtar
+ZIP	= zip
+FIND	= find
+GREP	= grep
+UNIQ	= uniq
+INSTALL	= ginstall
+DOS2UNIX= me -n "@dos2unix"
+UNIX2DOS= me -n "@unix2dos"
+
 INSTDIR	= ../release
 
 OBJS	= memacros.zip	memacros.tar.gz
@@ -60,7 +63,8 @@ release: $(OBJS)
 
 .ziplist:
 	$(RM) $@.tmp $@
-	dos2unix -U *.e[amrt]f
+	$(DOS2UNIX) *.e[amrt]f
+	$(RM) *~
 	$(FIND) . -name "*.e[admrt]f" -print > $@.tmp
 	$(FIND) . -name "*.txt" -print >> $@.tmp
 	$(FIND) . -name "COPYING" -print >> $@.tmp

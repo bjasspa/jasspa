@@ -5,7 +5,7 @@
  *
  * Originally written by Dave G. Conroy for MicroEmacs
  * Copyright (C) 1987 by Daniel M. Lawrence
- * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ * Copyright (C) 1988-2004 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -97,6 +97,7 @@ static char meHelpPage[]=
 "  -r      : Read-only, all buffers will be in view mode\n"
 "  -s <s>  : Search for string <s> in the next given file\n"
 "  -u <n>  : Set user name to <n> (sets $MENAME)\n"
+"  -V      : Display Version info and exit\n"
 "  -v <v=s>: Set variable <v> to string <s>\n"
 #ifdef _UNIX
 "  -x      : Don't catch signals\n"
@@ -433,7 +434,6 @@ addModesList(meBuffer *bp, register meUByte *buf, meUByte *name, meMode mode,
 static void
 addModesLists(meBuffer *bp, register meUByte *buf, meMode mode)
 {
-    addLineToEob(bp,(meUByte *)"") ;
     addModesList(bp,buf,(meUByte *)"  Modes on  :",mode,1) ;
     addModesList(bp,buf,(meUByte *)"  Modes off :",mode,0) ;
     addLineToEob(bp,(meUByte *)"") ;
@@ -449,7 +449,7 @@ meAbout(int f, int n)
     meInt   numlines ;		/* # of lines in file */
     meInt   predchars ;		/* # chars preceding point */
     meInt   predlines ;		/* # lines preceding point */
-    meUByte   buf[meBUF_SIZE_MAX] ;
+    meUByte buf[meBUF_SIZE_MAX] ;
     int     ii ;
 
     if((wp = meWindowPopup(BaboutN,BFND_CREAT|BFND_CLEAR|WPOP_USESTR,NULL)) == NULL)
@@ -457,9 +457,7 @@ meAbout(int f, int n)
     bp = wp->buffer ;
 
      /* definitions in evers.h */
-    addLineToEob(bp,(meUByte *)ME_FULLNAME " " meVERSION " - Date " meDATE " - " meSYSTEM_NAME) ;
-    addLineToEob(bp,(meUByte *)"") ;
-    addLineToEob(bp,(meUByte *)"Global Status:") ;
+    addLineToEob(bp,(meUByte *)ME_FULLNAME " " meVERSION " - Date " meDATE " - " meSYSTEM_NAME "\n\nGlobal Status:") ;
     tbp = bheadp ;
     ii = 0 ;
     while(tbp != NULL)
@@ -470,18 +468,15 @@ meAbout(int f, int n)
     sprintf((char *)buf,"  # buffers : %d", ii) ;
     addLineToEob(bp,buf) ;
     addModesLists(bp,buf,globMode) ;
-    addLineToEob(bp,(meUByte *)"Current Buffer Status:") ;
-    sprintf((char *)buf,"  Buffer    : %s", frameCur->bufferCur->name) ;
-    addLineToEob(bp,(meUByte *)buf) ;
+    sprintf((char *)buf,"Current Buffer Status:\n  Buffer    : %s", frameCur->bufferCur->name) ;
+    addLineToEob(bp,buf) ;
     sprintf((char *)buf,"  File name : %s",
             (frameCur->bufferCur->fileName == NULL) ? (meUByte *)"":frameCur->bufferCur->fileName) ;
     addLineToEob(bp,buf) ;
-    addLineToEob(bp,(meUByte *)"") ;
 
     getBufferInfo(&numlines,&predlines,&numchars,&predchars) ;
-    sprintf((char *)buf,"  Lines     : Total %6ld, Current %6ld",numlines,predlines) ;
-    addLineToEob(bp,buf) ;
-    sprintf((char *)buf,"  Characters: Total %6ld, Current %6ld",numchars,predchars) ;
+    sprintf((char *)buf,"  Lines     : Total %6ld, Current %6ld\n  Characters: Total %6ld, Current %6ld",
+            numlines,predlines,numchars,predchars) ;
     addLineToEob(bp,buf) ;
 
     addModesLists(bp,buf,frameCur->bufferCur->mode) ;
@@ -930,19 +925,6 @@ sigchild(SIGNAL_PROTOTYPE)
                 else if(WCOREDUMP(status))
                     ipipe->pid = -2 ;
 #endif
-#if 0
-                else
-                {
-                    if(WIFSTOPPED(status))
-                        mlwrite(0,"Process %s has STOPPED",ipipe->buf->name) ;
-#ifdef _IRIX
-                    else if(WIFCONTINUED(status))
-                        mlwrite(0,"Process %s has CONTINUED",ipipe->buf->name) ;
-#endif
-                    else
-                        mlwrite(0,"Process %s sent an UNKNOWN SIGNAL",ipipe->buf->name) ;
-                }
-#endif
             }
             ipipe = ipipe->next ;
         }
@@ -1289,7 +1271,8 @@ mesetup(int argc, char *argv[])
     meRegHead->force = 0 ;
     meRegCurr = meRegHead ;
     /* Initialise the head as this is dumped in list-variables */
-    for(carg = 0 ; carg<meREGISTER_MAX ; carg++)
+    carg = meREGISTER_MAX ;
+    while(--carg >= 0)
         meRegHead->reg[carg][0] = '\0' ;
 
     /* initialize the editor and process the command line arguments */
@@ -1426,6 +1409,17 @@ missing_arg:
                     break;
                 }
 
+             case 'V':
+                sprintf((char *)evalResult,"%s %s - Date %s - %s\n", 
+#ifndef _NANOEMACS
+                         ME_MICROEMACS_FULLNAME,
+#else
+                         ME_NANOEMACS_FULLNAME,
+#endif                         
+                         meVERSION, meDATE, meSYSTEM_NAME) ;
+                mePrintHelpMessage(evalResult) ;
+                meExit(0) ;
+                
             case 'v':
                 {
                     char *ss, *tt, cc ;

@@ -3,7 +3,7 @@
  * JASSPA MicroEmacs - www.jasspa.com
  * eval.c - Expresion evaluation functions.
  *
- * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ * Copyright (C) 1988-2004 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -199,8 +199,7 @@ SetUsrLclCmdVar(meUByte *vname, meUByte *vvalue, register meVarList *varList)
             if(cc == 0)
             {
                 /* found it, replace value */
-                meNullFree(vp->value);
-                vp->value = meStrdup(vvalue) ;
+                meStrrep(&vp->value,vvalue) ;
                 return vp ;
             }
         if(cc > *s2)
@@ -468,8 +467,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             break ;
 #if MEOPT_EXTENDED
         case EVBMDLINE:
-            meNullFree(frameCur->bufferCur->modeLineStr) ;
-            frameCur->bufferCur->modeLineStr = meStrdup(vvalue) ;
+            meStrrep(&frameCur->bufferCur->modeLineStr,vvalue) ;
             frameCur->bufferCur->modeLineFlags = assessModeLine(vvalue) ;
             frameAddModeToWindows(WFMODE) ;
             break ;
@@ -633,14 +631,15 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
 #endif
         case EVCBUFNAME:
             unlinkBuffer(frameCur->bufferCur) ;
-            if((vvalue[0] == '\0') || (bfind(vvalue,0) != NULL))
+            if((vvalue[0] == '\0') || (bfind(vvalue,0) != NULL) ||
+               ((nn = meStrdup(vvalue)) == NULL))
             {
                 /* if the name is used */
                 linkBuffer(frameCur->bufferCur) ;
                 return meABORT ;
             }
             meFree(frameCur->bufferCur->name) ;
-            frameCur->bufferCur->name = meStrdup(vvalue);
+            frameCur->bufferCur->name = nn ;
             frameAddModeToWindows(WFMODE) ;
             linkBuffer(frameCur->bufferCur) ;
             break;
@@ -651,8 +650,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             meUmask = (meUShort) meAtoi(vvalue) ;
             break ;
         case EVCFNAME:
-            meNullFree(frameCur->bufferCur->fileName) ;
-            frameCur->bufferCur->fileName = meStrdup(vvalue);
+            meStrrep(&frameCur->bufferCur->fileName,vvalue);
             frameAddModeToWindows(WFMODE) ;
             break;
 #if MEOPT_DEBUGM
@@ -674,12 +672,10 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             frameAddModeToWindows(WFRESIZE) ;
             break;
         case EVSRCHPATH:
-            meNullFree(searchPath) ;
-            searchPath = meStrdup(vvalue) ;
+            meStrrep(&searchPath,vvalue) ;
             break;
         case EVHOMEDIR:
-            meNullFree(homedir) ;
-            homedir = meStrdup(vvalue) ;
+            meStrrep(&homedir,vvalue) ;
             break;
 #if MEOPT_CFENCE
         case EVCBRACE:
@@ -866,38 +862,30 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
 #endif
 #if MEOPT_FILENEXT
         case EVFILETEMP:
-            meNullFree(flNextFileTemp) ;
-            flNextFileTemp = meStrdup(vvalue) ;
+            meStrrep(&flNextFileTemp,vvalue) ;
             break ;
         case EVLINETEMP:
-            meNullFree(flNextLineTemp) ;
-            flNextLineTemp = meStrdup(vvalue) ;
+            meStrrep(&flNextLineTemp,vvalue) ;
             break ;
 #endif
 #if MEOPT_RCS
         case EVRCSFILE:
-            meNullFree(rcsFile) ;
-            rcsFile = meStrdup(vvalue) ;
+            meStrrep(&rcsFile,vvalue) ;
             break ;
         case EVRCSCICOM:
-            meNullFree(rcsCiStr) ;
-            rcsCiStr = meStrdup(vvalue) ;
+            meStrrep(&rcsCiStr,vvalue) ;
             break ;
         case EVRCSCIFCOM:
-            meNullFree(rcsCiFStr) ;
-            rcsCiFStr = meStrdup(vvalue) ;
+            meStrrep(&rcsCiFStr,vvalue) ;
             break ;
         case EVRCSCOCOM:
-            meNullFree(rcsCoStr) ;
-            rcsCoStr = meStrdup(vvalue) ;
+            meStrrep(&rcsCoStr,vvalue) ;
             break ;
         case EVRCSCOUCOM:
-            meNullFree(rcsCoUStr) ;
-            rcsCoUStr = meStrdup(vvalue) ;
+            meStrrep(&rcsCoUStr,vvalue) ;
             break ;
         case EVRCSUECOM:
-            meNullFree(rcsUeStr) ;
-            rcsUeStr = meStrdup(vvalue) ;
+            meStrrep(&rcsUeStr,vvalue) ;
             break ;
 #endif
         case EVSCROLL:
@@ -905,31 +893,31 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             break ;
 #if MEOPT_EXTENDED
         case EVFILEIGNORE:
-            meNullFree(fileIgnore) ;
-            fileIgnore = meStrdup(vvalue) ;
+            meStrrep(&fileIgnore,vvalue) ;
             break ;
         case EVBNAMES:
-            meNullFree(buffNames.list) ;
-            meNullFree(buffNames.mask) ;
-            if((buffNames.mask = meStrdup(vvalue)) != NULL)
-                buffNames.size = createBuffList(&buffNames.list,0) ;
             buffNames.curr = 0 ;
+            meNullFree(buffNames.list) ;
+            buffNames.list = NULL ;
+            meStrrep(&buffNames.mask,vvalue) ;
+            if(buffNames.mask != NULL)
+                buffNames.size = createBuffList(&buffNames.list,0) ;
             break ;
         case EVCNAMES:
+            commNames.curr = 0 ;
             meNullFree(commNames.list) ;
-            meNullFree(commNames.mask) ;
-            if((commNames.mask = meStrdup(vvalue)) != NULL)
+            commNames.list = NULL ;
+            meStrrep(&commNames.mask,vvalue) ;
+            if(commNames.mask != NULL)
             {
                 commNames.size = createCommList(&commNames.list,1) ;
-                sortStrings(commNames.size,commNames.list,0,strcmp) ;
+                sortStrings(commNames.size,commNames.list,0,(meIFuncSS) strcmp) ;
             }
-            commNames.curr = 0 ;
             break ;
         case EVFNAMES:
             {
                 meUByte *mm, *ss, cc ;
                 
-                meNullFree(fileNames.mask) ;
                 ss = mm = vvalue ;
                 while(((cc=*ss++) != '\0') && (cc != '[') && (*ss != '\0'))
                 {
@@ -940,7 +928,8 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
 #endif
                         mm = ss ;
                 }
-                if((fileNames.mask = meStrdup(mm)) != NULL)
+                meStrrep(&fileNames.mask,mm) ;
+                if(fileNames.mask != NULL)
                 {
                     meUByte buff[meBUF_SIZE_MAX] ;
 #ifdef _DRV_CHAR
@@ -964,17 +953,16 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                 break ;
             }
         case EVMNAMES:
-            meNullFree(modeNames.mask) ;
-            modeNames.mask = meStrdup(vvalue) ;
             modeNames.curr = 0 ;
+            meStrrep(&modeNames.mask,vvalue) ;
             break ;
         case EVVNAMES:
-            if(varbNames.list != NULL)
-                freeFileList(varbNames.size,varbNames.list) ;
-            meNullFree(varbNames.mask) ;
-            if((varbNames.mask = meStrdup(vvalue)) != NULL)
-                varbNames.size = createVarList(&varbNames.list) ;
             varbNames.curr = 0 ;
+            freeFileList(varbNames.size,varbNames.list) ;
+            varbNames.list = NULL ;
+            meStrrep(&varbNames.mask,vvalue) ;
+            if(varbNames.mask != NULL)
+                varbNames.size = createVarList(&varbNames.list) ;
             break ;
 #endif
 #if MEOPT_SPELL
@@ -2068,34 +2056,24 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
     case UFSUB:        return meItoa(meAtoi(arg1) - meAtoi(arg2));
     case UFMUL:        return meItoa(meAtoi(arg1) * meAtoi(arg2));
     case UFDIV:
+    case UFMOD:
         {
             int ii, jj ;
             
-            /* Check for divide by zero, this causes an exception if
+            /* Check for divide/mod by zero, this causes an exception if
              * encountered so we must abort if detected. */
-            ii  = meAtoi(arg1) ;
-            if ((jj = meAtoi(arg2)) == 0)
+            if((jj = meAtoi(arg2)) == 0)
             {
-                mlwrite(MWABORT|MWWAIT,(meUByte *)"[Divide by zero &%s]",fname) ;
+                mlwrite(MWABORT|MWWAIT,(meUByte *) 
+                        ((fnum == UFDIV) ? "[Divide by zero &div]":"[Modulus of zero &mod]")) ;
                 return abortm ;
             }
-            ii /= jj ;
+            ii = meAtoi(arg1) ;
+            if(fnum == UFDIV)
+                ii /= jj ;
+            else
+                ii %= jj ;
             return meItoa(ii) ;
-        }
-     case UFMOD:
-        {
-            int ii, jj;
-            
-            /* Check for divide by zero, this causes an exception if
-             * encountered so we must abort if detected */
-            ii  = meAtoi(arg1) ;
-            if ((jj = meAtoi(arg2)) == 0)
-            {
-                mlwrite(MWABORT|MWWAIT,(meUByte *)"[Modulus of zero &%s]",fname) ;
-                return abortm ;
-            }
-            ii %= jj ;
-            return meItoa(ii);
         }
     case UFNEG:        return meItoa(0-meAtoi(arg1));
     case UFOPT:
@@ -2265,13 +2243,13 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             int len, off=0 ;
             len = meStrlen(arg1) ;
             if((fnum == UFSIN) || (fnum == UFRSIN))
-                cmpIFunc = strncmp ;
+                cmpIFunc = (meIFuncSSI) strncmp ;
             else
-                cmpIFunc = strnicmp ;
+                cmpIFunc = meStrnicmp ;
             
             do
             {
-                if(!cmpIFunc((char *)arg1,(char *)ss,len))
+                if(!cmpIFunc(arg1,ss,len))
                 {
                     lss = ss ;
                     if((fnum == UFSIN) || (fnum == UFISIN))
@@ -2297,13 +2275,13 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             mlen = meStrlen(arg2) ;
             rlen = meStrlen(arg3) ;
             if(fnum == UFREP)
-                cmpIFunc = strncmp ;
+                cmpIFunc = (meIFuncSSI) strncmp ;
             else
-                cmpIFunc = strnicmp ;
+                cmpIFunc = meStrnicmp ;
             
             do
             {
-                ii = cmpIFunc((char *)arg2,(char *)ss,mlen) ;
+                ii = cmpIFunc(arg2,ss,mlen) ;
                 if(!ii)
                 {
                     meStrcpy(evalResult+dlen,arg3) ;
@@ -3109,7 +3087,7 @@ descVariable(int f, int n)      /* describe a variable */
  *    name......... "value"
  */
 static void
-showVariable (meBuffer *bp, meUByte prefix, meUByte *name, meUByte *value)
+showVariable(meBuffer *bp, meUByte prefix, meUByte *name, meUByte *value)
 {
     meUByte buf[meBUF_SIZE_MAX+meSBUF_SIZE_MAX+16] ;
     int len;
@@ -3146,38 +3124,30 @@ listVariables (int f, int n)
         return meFALSE ;
     bp = wp->buffer ;
     
-    addLineToEob(bp,(meUByte *)"Register variables:");
-    addLineToEob(bp,(meUByte *)"") ;
+    addLineToEob(bp,(meUByte *)"Register variables:\n");
     
     buf[0] = 'g';
     buf[2] = '\0';
     for(ii = 0; ii<meREGISTER_MAX ; ii++)
     {
         buf[1] = (int)('0') + ii;
-        showVariable (bp, '#', buf,meRegHead->reg[ii]);
+        showVariable(bp,'#',buf,meRegHead->reg[ii]);
     }
-    addLineToEob(bp,(meUByte *)"") ;
-    sprintf((char *)buf,"Buffer [%s] variables:", frameCur->bufferCur->name);
-    addLineToEob(bp,buf);
-    addLineToEob(bp,(meUByte *)"") ;
+    addLineToEob(bp,(meUByte *)"\nBuffer variables:\n") ;
     tv = frameCur->bufferCur->varList.head ;
     while(tv != NULL)
     {
-        showVariable (bp, ':', tv->name,tv->value);
+        showVariable(bp, ':', tv->name,tv->value);
         tv = tv->next ;
     }
     
-    addLineToEob(bp,(meUByte *)"") ;
-    addLineToEob(bp,(meUByte *)"System variables:");
-    addLineToEob(bp,(meUByte *)"") ;
+    addLineToEob(bp,(meUByte *)"\nSystem variables:\n");
     for (ii = 0; ii < NEVARS; ii++)
-        showVariable (bp, '$', envars [ii],gtenv(envars [ii]));
+        showVariable(bp,'$',envars[ii],gtenv(envars[ii]));
     
-    addLineToEob(bp,(meUByte *)"") ;
-    addLineToEob(bp,(meUByte *)"Global variables:");
-    addLineToEob(bp,(meUByte *)"") ;
+    addLineToEob(bp,(meUByte *)"\nGlobal variables:\n");
     for (tv=usrVarList.head ; tv != NULL ; tv = tv->next)
-        showVariable (bp, '%', tv->name,tv->value);
+        showVariable(bp,'%',tv->name,tv->value);
     
     bp->dotLine = meLineGetNext(bp->baseLine);
     bp->dotOffset = 0 ;

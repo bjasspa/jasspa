@@ -4,7 +4,7 @@
  * osd.c - On-Screen Display routines.
  *
  * Copyright (C) 1997-2001 Jon Green & Steven Phillips    
- * Copyright (C) 2002 JASSPA (www.jasspa.com)
+ * Copyright (C) 2002-2004 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -3020,7 +3020,6 @@ menuConfigure(osdDIALOG *rp, osdDISPLAY *md, int child)
     else if(md->flags & RF_TITLE)
         md->depth++ ;                   /* Add for title bar */
     
-    /* ZZZZZ - some freeing off required! */
     if(!osdDisplaySnapshotCreate(md))
         return NULL ;
     /* safe to let dialogResetDisplays function again */
@@ -5438,7 +5437,7 @@ osd (int f, int n)
         {
             /* Copy in the text data - convert any non-pokable chars to '.' */
             txtlen-- ;
-            for(ii=0, jj=0 ; ii < txtlen ; ii)
+            for(ii=0, jj=0 ; ii < txtlen ; )
             {
                 cc = txtbuf[ii++] ;
                 if(cc == meCHAR_LEADER)

@@ -3,7 +3,7 @@
  * JASSPA MicroEmacs - www.jasspa.com
  * evar.h - Variable, function and derivative definitions.
  *
- * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ * Copyright (C) 1988-2004 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -125,8 +125,11 @@ meUByte funcTypes[] =
 #undef	DEFFUN
 #undef	DEFDER
 
-/**	list of recognized user directives	*/
-
+#if 0
+/* list of recognized user directive names
+ * 
+ * As of ME'04 this list is nolonger used, see docmd in exec.c
+ */
 #define	DEFVAR(s,v)	/* NULL */
 #define	DEFFUN(v,s,t)
 #define	DEFDER(v,s,t)	(meUByte *) s,
@@ -139,7 +142,7 @@ meUByte *derNames[] =
 #undef	DEFVAR
 #undef	DEFFUN
 #undef	DEFDER
-
+#endif
 /**	list of user directive types	*/
 #define DRFLAG_ASGLEXECLVL 0x001
 #define DRFLAG_ADBLEXECLVL 0x002

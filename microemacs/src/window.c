@@ -3,7 +3,7 @@
  * JASSPA MicroEmacs - www.jasspa.com
  * window.c - Window handling routines.
  *
- * Copyright (C) 1988-2002 JASSPA (www.jasspa.com)
+ * Copyright (C) 1988-2004 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -510,7 +510,6 @@ frameAddModeToWindows(int mode)
 {
     register meWindow *wp ;
     
-    /* ZZZZ - all ??? */
     wp = frameCur->windowList;
     while (wp != NULL)
     {
