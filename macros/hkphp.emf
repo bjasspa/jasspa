@@ -60,6 +60,7 @@ set-variable .fhook-php.item-list-r5 "Func \ecB\\1\ecA"
         hilight .hilight.php       0xa0 "#\\?php"  .hilight.phpscript .scheme.prepro
         hilight .hilight.php       0xa0 "//\\?php" .hilight.phpscript .scheme.prepro
         hilight .hilight.php      0x181 "function" .hilight.phpscript .scheme.prepro
+        hilight .hilight.php      0x180 "}"        .hilight.phpscript .scheme.prepro
         hilight .hilight.phptag    0x80 "<\\?"     .hilight.phpscript .scheme.prepro
         hilight .hilight.phptag    0x80 "<\\?php"  .hilight.phpscript .scheme.prepro
         hilight .hilight.phpscript 0x80 "\\?>" 0   .scheme.prepro
