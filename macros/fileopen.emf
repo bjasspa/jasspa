@@ -258,7 +258,7 @@ define-macro osd-fo-okay
     osd .osd.fofm 6 "xMdscfHt" 6 .scheme.osd-entry &spr "%s%n" &lef #l3 .osd.fo-width &sub .osd.fo-width &len #l3 " " .osd.foft
 !emacro
 
-osd .osd.fofm 0 ""
+osd .osd.fofm 0 "d" 3
 osd .osd.fofm 1 "S" " \HFile Name:" 3
 osd .osd.fofm 3 "ExHtfc" 3 .scheme.osd-entry "####################" 1 osd-fo-fileset
 osd .osd.fofm 4 "IbHt" 4 .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fofc
@@ -281,9 +281,9 @@ osd .osd.fobm 50  ""
 osd .osd.fobm 60  ""
 osd .osd.fobm 70  ""
 osd .osd.fobm 90  ""
-osd .osd.fobm 100  "Cpxt" 100 "^[ *] \HShow backups" 1 osd-fo-options
+osd .osd.fobm 100  "Cfpxt" 100 &cat .osd.checkbox-chars "\} \HShow backups" 1 osd-fo-options
 
-osd .osd.fom 0  "batcHR" 3 6 .scheme.osd-title "" osd-fo-resize
+osd .osd.fom 0  "batcdHR" 3 6 .scheme.osd-title 2 "" osd-fo-resize
 osd .osd.fom 1  ""
 osd .osd.fom 2  "Iht" 2 .osd.fofm
 osd .osd.fom 3  "h" " "
@@ -292,7 +292,7 @@ osd .osd.fom 5  "h" " "
 osd .osd.fom 6  "It" 6 .osd.fobm
 
 0 define-macro osd-get-file
-    osd .osd.fom 0  "batcHR" 3 6 .scheme.osd-title .osd-get-file.title osd-fo-resize
+    osd .osd.fom 0  "batcdHR" 3 6 2 .scheme.osd-title .osd-get-file.title osd-fo-resize
     set-variable .osd.fo-path &lef $buffer-fname &rsin "/" $buffer-fname
     !if &seq .osd.fodv "ERROR"
         set-variable .osd.fodv &add .osd.fodc 1
@@ -335,9 +335,9 @@ set-variable .osd-get-file.file-type &cond &seq .osd-get-file.file-type "ERROR" 
 
 define-macro osd-file-open
     osd .osd.fobm 110 ""
-    osd .osd.fobm 120 "Cpxt" 120 "^[ *] \HView File"     8 osd-fo-options
-    osd .osd.fobm 130 "Cpxt" 130 "^[ *] \HBinary File"   2 osd-fo-options
-    osd .osd.fobm 140 "Cpxt" 140 "^[ *] \HEncrypt File"  4 osd-fo-options
+    osd .osd.fobm 120 "Cfpxt" 120 &cat .osd.checkbox-chars "\} \HView File"     8 osd-fo-options
+    osd .osd.fobm 130 "Cfpxt" 130 &cat .osd.checkbox-chars "\} \HBinary File"   2 osd-fo-options
+    osd .osd.fobm 140 "Cfpxt" 140 &cat .osd.checkbox-chars "\} \HEncrypt File"  4 osd-fo-options
     set-variable .osd-get-file.title "Find File"
     set-variable .osd-get-file.file-type ""
     set-variable .osd-get-file.ft .ft

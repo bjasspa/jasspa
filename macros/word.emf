@@ -153,10 +153,10 @@ define-macro describe-word-com
 
 osd .osd.word 0  "batcHsd" 9 3 66 17 -1 -1 30 .scheme.osd-title "Describe Word"
 osd .osd.word 10 ""
-osd .osd.word 15 "Shf" "  \HWord : " 20
-osd .osd.word 20 "ExHfh" .scheme.osd-entry "##############################" 1 describe-word-com
-osd .osd.word 25 "BHcfh" .scheme.osd-ebtt " \HInsert " f void
-osd .osd.word 30 "BHcf"  .scheme.osd-ebtt " E\Hxit "   0 void
+osd .osd.word 15 "Shf" "  \HWord: " 20
+osd .osd.word 20 "ExHfth" 20 .scheme.osd-entry "##############################" 1 describe-word-com
+osd .osd.word 25 "BHcfth" 25 .scheme.osd-ebtt " \HInsert " f void
+osd .osd.word 30 "BHcft"  30 .scheme.osd-ebtt " E\Hxit "   0 void
 osd .osd.word 40 ""
 osd .osd.word 50 "IbHc" .scheme.osd-sbar 60 10 .osd.wordc
 
