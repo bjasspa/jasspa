@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd049.2,v 2.6 2002-10-16 22:28:04 jon Exp $
+.Id $Id: m2cmd049.2,v 2.7 2005-03-20 15:59:25 jon Exp $
 .Im MicroEmacs command
 .so me.tni
 .TH exit-emacs 2
@@ -15,17 +15,64 @@ exit-emacs \- Exit MicroEmacs
 .na
 .I n
 .B exit-emacs
+[
+.I exitCode
+]
 .ad
 .SH DESCRIPTION
 Exit \*(mS back to the operating  system. If no argument  \fIn\fR is given and
 there are any  unwritten,  changed  buffers,  the editor  prompts  the user to
 discard changes. If an argument is specified then \*(mS exits immediately.
+.PP
+The numeric argument is defined as a bit-mask as follows:
+.IP "\fC1\fR"
+Prompting the user before saving any files, writes out all changed  buffers to
+the files they were read from. Saves all  changed  dictionaries,  killing  any
+running  commands  and exits the editor. 
+.IP "\fC2\fR"
+Writes  out all  changed  buffers to the files they were read from,  saves all
+changed  dictionaries, killing any running commands and exits the editor. 
+The behavior is modified by flags \fC8\fR and \fC16\fR.
+.IP "\fC4\fR"
+Define the exit code \fIexitCode\fR from \*(mS, the default when omitted is 0.
+.IP "\fC8\fR"
+Discard  changed  buffers  (except the  history and  registry)  and delete any
+backup files associated with the edited  buffer(s). This mode does not operate
+when bit \fC1\fR is set.
+.IP "\fC16\fR"
+Discard  changed  buffers  (except the history and registry) and create a auto
+save file(s) with the changes from unsaved buffers. This mode does not operate
+when bit \fC1\fR is set.
+.PP
+.B exit-emacs 
+may be used to reproduce the behavior of 
+.Ht save-buffers-exit-emacs 2 
+and
+.Ht quick-exit 2 
+as follows:
+.CS
+3 exit-emacs == save-buffers-exit-emacs
+2 exit-emacs == quick-exit
+.CE 0
+.SH "MACRO INTERACTION"
+If the macro 
+.Ht shut-down 3
+is defined  then it is invoked by the editor when it is closed. A user defined
+shutdown action may be associated with the close  operation. It is the callers
+responsibility  that the macro terminates  correctly otherwise the editor will
+hang.
 .SH NOTES
 All buffers  with a name  starting  with a '\fC*\fR'  are assumed to be system
 buffers (i.e. \fB*scratch*\fR) and are not saved.
+.PP
+Modes \fC8\fR and \fC16\fR may be used where the user wishes to discard edited
+buffers on exiting and does not want to confirm the exit. Dictionaries  should
+be configured to auto-save in 
+.Ht user-setup 3 .
 .SH "SEE ALSO"
 .na
 .Ht quick-exit 2 ,
-.Ht save-buffers-exit-emacs 2 .
+.Ht save-buffers-exit-emacs 2 ,
+.Ht shut-down 3 .
 .ad
 .FH
