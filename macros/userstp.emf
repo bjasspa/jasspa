@@ -749,7 +749,7 @@ set-variable %user-mouse-wheel "||1 scroll-up|5 scroll-up|10 scroll-up|scroll-up
     set-registry "history" "mouse/mouse-pick-1" "mouse-pick-type1"
     set-registry "history" "mouse/mouse-drop-1" "mouse-drop-type1"
     set-registry "history" "mouse/mouse-pick-2" ""
-    set-registry "history" "mouse/mouse-drop-2" "mouse-no-move-yank"
+    set-registry "history" "mouse/mouse-drop-2" "mouse-move-yank"
     set-registry "history" "mouse/mouse-pick-3" ""
     set-registry "history" "mouse/mouse-drop-3" "mouse-osd-multi"
     user-mouse-set-binding
