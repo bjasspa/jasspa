@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1999-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1999-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jun 17 22:26:42 1999
 .\"
-.Id $Id: m2nar007.2,v 2.8 2002-10-16 22:28:04 jon Exp $
+.Id $Id: m2nar007.2,v 2.9 2004-01-10 13:46:37 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .TH "Build" 2
@@ -40,7 +40,9 @@ Build using the specified  makefile.  over-riding  the auto system detect. The
 supplied makefiles include:-
 .RS
 .BS
-\fCaix43.mak\fR IBM AIX 4.3 native
+\fCaix43.mak\fR IBM AIX 4.3 native.
+.BU
+\fCaix43.gmk\fR IBM AIX 4.3 using GNU tools.
 .BU
 \fCcygwin.gmk\fR Cygwin using GNU tools under Windows.
 .BU
@@ -71,6 +73,8 @@ supplied makefiles include:-
 \fCirix6.mak\fR Silicon Graphics IRIX 6.x native
 .BU
 \fClinux2.gmk\fR Linux 2.x using GNU tools
+.BU
+\fCopenbsd.gmk\fR OpenBSD using GNU tools.
 .BU
 \fCopenstep.mak\fR Openstep 4.2 on NeXTstep (BSD 4.3).
 .BU
