@@ -35,10 +35,14 @@
 #
 ##############################################################################
 #
-RM	= rm -f
-TAR	= tar
-ZIP	= zip
-INSTALL	= install
+CAT	= /usr/bin/cat
+RM	= /usr/bin/rm -f
+TAR	= /usr/bin/tar
+ZIP	= /usr/bin/zip
+FIND	= /usr/bin/find
+GREP	= /usr/bin/grep
+UNIQ	= /usr/bin/uniq
+INSTALL	= /usr/bin/install
 INSTDIR	= ../release
 
 OBJS	= memacros.zip	memacros.tar.gz
@@ -46,9 +50,9 @@ OBJS	= memacros.zip	memacros.tar.gz
 all:	$(OBJS)
 
 memacros.zip: .ziplist
-	cat .ziplist | zip -q -9 memacros.zip '-@'
+	$(CAT) .ziplist | zip -q -9 memacros.zip '-@'
 memacros.tar.gz: .ziplist
-	tar cf - -T .ziplist | gzip -9 -c > $@
+	$(TAR) cf - -T .ziplist | gzip -9 -c > $@
 
 release: $(OBJS)
 	mkdir -p $(INSTDIR)
@@ -57,11 +61,11 @@ release: $(OBJS)
 .ziplist:
 	$(RM) $@.tmp $@
 	dos2unix -U *.e[amrt]f
-	find . -name "*.e[admrt]f" -print > $@.tmp
-	find . -name "*.txt" -print >> $@.tmp
-	find . -name "COPYING" -print >> $@.tmp
-	find . -name "tags" -print >> $@.tmp
-	find . -name "null" -print >> $@.tmp
+	$(FIND) . -name "*.e[admrt]f" -print > $@.tmp
+	$(FIND) . -name "*.txt" -print >> $@.tmp
+	$(FIND) . -name "COPYING" -print >> $@.tmp
+	$(FIND) . -name "tags" -print >> $@.tmp
+	$(FIND) . -name "null" -print >> $@.tmp
 	sort $@.tmp | uniq > $@
 	$(RM) $@.tmp
 
