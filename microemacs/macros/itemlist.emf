@@ -191,7 +191,6 @@ define-macro item-list-create
     ; to simple click the function
     buffer-bind-create "bio" "return" "" item-list-find
     buffer-bind-create "bio" "delete" "" item-list-close
-    buffer-bind-create "b"   "esc f7" "" item-list-close
     set-variable :mouse-pick-1 item-list-mouse-pick
     set-variable :mouse-drop-1 item-list-mouse-drop
     set-variable $buffer-hilight .hilight.list-item

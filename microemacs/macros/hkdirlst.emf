@@ -82,9 +82,10 @@ define-macro fhook-dirlst
         3 forward-line
         set-variable :fmpf 32
         insert-string " Attr    Size          Modified Name  <Order by Extension>\n"
-        !if &exi .fhook-dirlst.file-process
-            !force !force execute-line .fhook-dirlst.file-process
-            set-variable :file-process .fhook-dirlst.file-process
+        !if &equ &lget .fhook-dirlst.mode 1 1
+            !force !force cvs-dir-conv            
+        !elif &lget .fhook-dirlst.mode 2
+            !force !force file-browser-filter
         !endif
     !endif
     dirlst-sort-list
@@ -95,27 +96,27 @@ define-macro fhook-dirlst
     set-variable :mouse-drop-1 dirlst-mouse-drop-1
     set-variable :mouse-pick-3 dirlst-mouse-pick-3
     set-variable :mouse-drop-3 dirlst-mouse-drop-3
+    set-variable :dirlst-mode .fhook-dirlst.mode
     buffer-init-hooks
 !emacro
 
 ; buffer-init variables
 set-variable .fhook-dirlst.name "Directory List"
 set-variable .fhook-dirlst.setup &reg "/history" "fhook/dirlst" "ghmop"
-set-variable .fhook-dirlst.setup-mask    "aceghop"
-set-variable .fhook-dirlst.setup-flags   "|c|"
-set-variable .fhook-dirlst.setup-labels  "|CVS menu always available|"
-set-variable .fhook-dirlst.command-flag  "|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|bio|thbio|bio|h|"
-set-variable .fhook-dirlst.command-name  "|file-browser-swap-buffers|file-browser-close||reread-file|dirlst-find-file|dirlist-up-dir|dirlst-tag-toggle|dirlst-tag-remove|dirlst-tag-remove|dirlst-tag-execute|dirlst-tag-execute||"
-set-variable .fhook-dirlst.command-nbind "||||||||||||"
-set-variable .fhook-dirlst.command-kbind "|tab|delete||f5|return|backspace|space|d|D|x|X||"
-set-variable .fhook-dirlst.command-desc  "|Swap Browser \HWindows|\HClose File Browser||\HRefresh|\HOpen File|Goto Parent Directory|Toggle \HSelection|\HDelete All Selections||E\Hxecute Shell Command on Selected||            (%p for path, %f for file & %% for %)|"
+set-variable .fhook-dirlst.setup-mask    "aceghlop"
+set-variable .fhook-dirlst.setup-flags   "|l|c|"
+set-variable .fhook-dirlst.setup-labels  "|Enable filter by default|CVS menu always available|"
+set-variable .fhook-dirlst.command-flag  "|thbio|thbio|th|thbio|thbio|thbio|thbio|bio|thbio|bio|h|"
+set-variable .fhook-dirlst.command-name  "|file-browser-swap-buffers|file-browser-close||dirlst-find-file|dirlist-up-dir|dirlst-tag-toggle|dirlst-tag-remove|dirlst-tag-remove|dirlst-tag-execute|dirlst-tag-execute||"
+set-variable .fhook-dirlst.command-nbind "|||||||||||"
+set-variable .fhook-dirlst.command-kbind "|tab|delete||return|backspace|space|d|D|x|X||"
+set-variable .fhook-dirlst.command-desc  "|Swap Browser \HWindows|\HClose File Browser||\HOpen File|Goto Parent Directory|Toggle \HSelection|\HDelete All Selections||E\Hxecute Shell Command on Selected||            (%p for path, %f for file & %% for %)|"
 
 set-variable .fhook-dirlst.col-name "|Name|Attr|    Size|        Modified|<Order by Extension>|"
 set-variable .fhook-dirlst.col-flag "|0|4|2|1|8|"
 set-variable .fhook-dirlst.sort     "|1|0|"
 set-variable .fhook-dirlst.browser-lock 0
-set-variable .fhook-dirlst.file-process ""
-
+set-variable .fhook-dirlst.mode &cond &sin "l" .fhook-dirlst.setup "|0|1|" "|0|0|"
 set-variable .fhook-dirlst.cvs-enable &sin "c" .fhook-dirlst.setup
 
 !if &not &exist .osd.dirlst
@@ -146,7 +147,7 @@ set-variable .fhook-dirlst.cvs-enable &sin "c" .fhook-dirlst.setup
 ;
 0 define-macro file-browser-close
     1 set-position "\x81"
-    set-variable .fhook-dirlst.file-process ""
+    set-variable .fhook-dirlst.mode &lset .fhook-dirlst.mode 1 0
     osd .osd.dirlst  11 "D"
     !force 0 popup-window "*ftp-console*"
     !if $status
@@ -247,7 +248,7 @@ set-variable .file-browser-close.bn "\CH*directory*\CH*files*\CH*ftp-files*\CH*f
     set-variable $window-line 2
     end-of-line
     insert-string " (Filtered)"
-    set-variable #l0 &spr "^.\\{%d,%d\\}\\(%s\\)$" :fmpf :fmpf .file-browser.filter
+    set-variable #l0 &spr "^.\\{%d,%d\\}\\(%s\\)$" :fmpf :fmpf .fhook-dirlst.filter-mask
     set-variable $window-line 5
     !force search-forward #l0
     !while $status
@@ -260,19 +261,15 @@ set-variable .file-browser-close.bn "\CH*directory*\CH*files*\CH*ftp-files*\CH*f
     -1 buffer-mode "edit"
     1 buffer-mode "view"
 !emacro
-!if &not &exi .file-browser.filter
+!if &not &exi .fhook-dirlst.filter-mask
     set-variable #l0 &rep $file-ignore "./ " ""
     set-variable #l0 &rep #l0 " ./" ""
     str-to-regex #l0
-    set-variable .file-browser.filter &cat "\\./\\|.*" &rep #l0 " " "\\|.*"
+    set-variable .fhook-dirlst.filter-mask &cat "\\./\\|.*" &rep #l0 " " "\\|.*"
 !endif
 
 0 define-macro file-browser-set-filter
-    !if &seq .fhook-dirlst.file-process ""
-        set-variable .fhook-dirlst.file-process "file-browser-filter"
-    !else &seq .fhook-dirlst.file-process "file-browser-filter"
-        set-variable .fhook-dirlst.file-process ""
-    !endif
+    set-variable .fhook-dirlst.mode &lset .fhook-dirlst.mode 2 @#
     dirlst-refresh
 !emacro
 ;
@@ -349,9 +346,9 @@ set-variable .file-browser-close.bn "\CH*directory*\CH*files*\CH*ftp-files*\CH*f
         !force 0 popup-window "*files*"
     !endif
     find-buffer "*files*"
-    !if &not &and &seq #l0 $buffer-fname &seq .fhook-dirlst.file-process :file-process
+    !if &not &and &seq #l0 $buffer-fname &seq .fhook-dirlst.mode :dirlst-mode
         read-file #l0
-        !if &not &seq .fhook-dirlst.file-process :file-process
+        !if &not &seq .fhook-dirlst.mode :dirlst-mode
             ; old buffer with the wrong processing - refresh
             !force 0 delete-buffer $buffer-bname
             find-file #l0 @mna
@@ -382,7 +379,7 @@ set-variable .file-browser-close.bn "\CH*directory*\CH*files*\CH*ftp-files*\CH*f
 !emacro
 
 define-macro file-browser
-    set-variable .fhook-dirlst.file-process ""
+    set-variable .fhook-dirlst.mode &lset .fhook-dirlst.mode 1 0
     @# file-browser-init
     ml-write "MicroEmacs file-browser <delete> to exit"
 !emacro
@@ -458,7 +455,7 @@ define-macro file-browser-swap-buffers
         buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
     !elif &seq &rig #l0 &rsin "/" #l0 ""
         read-file #l0
-        !if &not &seq .fhook-dirlst.file-process :file-process
+        !if &not &seq .fhook-dirlst.mode :dirlst-mode
             ; old buffer with the wrong processing - refresh
             !force 0 delete-buffer $buffer-bname
             find-file #l0 @mna
@@ -1018,10 +1015,10 @@ osd .osd.dirlst 99  ""  "\HInvert Selection"      f dirlst-tag-invert
             osd .osd.dirlst 145 "" &cond .fhook-dirlst.browser-lock "Un\Hlock Browser" "\HLock Browser" f file-browser-lock
             osd .osd.dirlst 150 ""  "Close \HBrowser" f file-browser-close
         !endif
-        !if &seq :file-process ""
-            osd .osd.dirlst 140 "" "Enable Filter" f file-browser-set-filter
-        !elif &seq :file-process "file-browser-filter"
-            osd .osd.dirlst 140 "" "Disable Filter" f file-browser-set-filter
+        !if &lget .fhook-dirlst.mode 2
+            osd .osd.dirlst 140 "" "Disable Filter" 0 file-browser-set-filter
+        !else
+            osd .osd.dirlst 140 "" "Enable Filter" 1 file-browser-set-filter
         !endif
         !if .fhook-dirlst.cvs-enable
             osd .osd.dirlst 11 "M" "C\HVS" .osd.tmp osd-cvs-file-menu
@@ -1295,7 +1292,7 @@ osd .osd.dirlst 99  ""  "\HInvert Selection"      f dirlst-tag-invert
         forward-line
     !done
     !if .filter
-        set-variable #l0 &spr "^\\(%s\\)$" .file-browser.filter
+        set-variable #l0 &spr "^\\(%s\\)$" .fhook-dirlst.filter-mask
         set-variable $window-line 3
         !force search-forward #l0
         !while $status

@@ -7,7 +7,7 @@
 ; Synopsis:    Buffer initialization routines
 ; Authors:     Steven Phillips
 ;
-define-macro-file spellaut auto-spell auto-spell-ignore auto-spell-buffer auto-spell-reset
+define-macro-file spellaut auto-spell auto-spell-menu
 define-macro-file collapse collapse-current collapse-all
 0 define-macro-file fold fold-setup
 0 define-macro-file etfinsrt
@@ -172,11 +172,8 @@ define-macro-file collapse collapse-current collapse-all
     !endif
     !if &sin "s" #l0
         !if &not &seq %language "Default"
-            buffer-bind-create "b" "f5"     0  auto-spell
-            buffer-bind-create "b" "S-f5"   "" auto-spell-buffer 
-            buffer-bind-create "b" "esc f5" "" auto-spell-reset 
-            buffer-bind-create "b" "f6"     1  auto-spell-ignore 
-            buffer-bind-create "b" "S-f6"   2  auto-spell-ignore 
+            buffer-bind-create "b" "S-f7"   0  auto-spell
+            buffer-bind-create "b" "C-f7"   "" auto-spell-menu
             !if &reg "/history" "spell/autospell" "0"
                 1 auto-spell
             !endif

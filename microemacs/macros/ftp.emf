@@ -108,9 +108,9 @@ define-macro ftp-connect
         ; setup the local *files* directory
         !force 0 popup-window "*files*"
         find-buffer "*files*"
-        !if &not &and &seq #l0 $buffer-fname &seq .fhook-dirlst.file-process :file-process
+        !if &not &and &seq #l0 $buffer-fname &seq .fhook-dirlst.mode :dirlst-mode
             read-file #l0
-            !if &not &seq .fhook-dirlst.file-process :file-process
+            !if &not &seq .fhook-dirlst.mode :dirlst-mode
                 ; old buffer with the wrong processing - refresh
                 !force 0 delete-buffer $buffer-bname
                 find-file #l0
