@@ -7,12 +7,12 @@
 %  System        : MicroEmacs
 %  Module        : user Manual
 %  Object Name   : $RCSfile: jasspame.tex,v $
-%  Revision      : $Revision: 1.3 $
-%  Date          : $Date: 2005-03-11 21:12:42 $
+%  Revision      : $Revision: 1.4 $
+%  Date          : $Date: 2005-03-11 23:16:41 $
 %  Author        : $Author: jon $
 %  Created By    : Jon Green
 %  Created       : Mon Oct 25 21:36:13 2004
-%  Last Modified : <050311.2110>
+%  Last Modified : <050311.2313>
 %
 %  Description
 %
@@ -21,6 +21,9 @@
 %  History
 %
 %  $Log: not supported by cvs2svn $
+%  Revision 1.3  2005/03/11 21:12:42  jon
+%  Added desktop integration information.
+%
 %  Revision 1.2  2005/03/11 01:35:24  jon
 %  Added User Setup information.
 %
@@ -43,8 +46,8 @@
 \documentclass[11pt,a4paper,pdftex]{article}
 % Bring in the CVS information.
 \def\CVS$#1: #2 ${\expandafter\def\csname CVS#1\endcsname{#2}}
-\CVS$Revision: 1.3 $ % or any CVS keyword
-\CVS$Date: 2005-03-11 21:12:42 $
+\CVS$Revision: 1.4 $ % or any CVS keyword
+\CVS$Date: 2005-03-11 23:16:41 $
 
 \usepackage{ifthen}                     % Conditional processing.
 
@@ -220,6 +223,11 @@
 \newcommand{\CodeInsert}[1]{%
 \vspace{3pt}
 \colorbox{CodeColor}{\parbox{\textwidth}{\texttt{#1}}}
+\vspace{3pt}
+}
+\newcommand{\CodeInsertW}[2]{%
+\vspace{3pt}
+\colorbox{CodeColor}{\parbox{#1}{\texttt{#2}}}
 \vspace{3pt}
 }
 
@@ -844,38 +852,38 @@ c:> build}
     \end{itemize}
 
   \end{itemize}
-  
+
 \subsection{MicroEmacs Integration}
 
-  This section discusses how MicroEmacs may be integrated with the desktop 
+  This section discusses how MicroEmacs may be integrated with the desktop
   environment and other tools.
 
-\subsubsection{Desktop Integration}    
+\subsubsection{Desktop Integration}
 
   Integration of MicroEmacs with the Window Manager desktop environment.
 
   \begin{itemize}
 
     \item Drag and Drop is supported. When a file(s) is dragged over a buffer
-    window and released then the file(s) is opened in the drop window. 
-    
+    window and released then the file(s) is opened in the drop window.
+
     \textbf{UNIX} environments support \textit{Xdnd}. Under X-Windows the
     MicroEmacs window is not raised following the drop.
-    
+
     \textbf{Microsoft Windows} the MicroEmacs window is raised following
     a drop operation.
 
-    \item Different size bitmaps are provided for the desktop. 
-    
+    \item Different size bitmaps are provided for the desktop.
+
     \textbf{UNIX} icons are provided in
     \texttt{\textit{/path-to}/jasspa/pixmaps} in both \textbf{png} and
     \textbf{pixmap} format. A set of additional file type MicroEmacs icons may
     be downloaded for use with Gnome, KDE and CDE.
 
-    \textbf{Microsoft Windows}  different size bitmaps are provided in the icon executable file
-    \textbf{meicons.exe}. This executable contains the standard JASSPA icon in
-    addition to the file type icons. Select icons from this executable when 
-    assigning MicroEmacs to specific file extensions. 
+    \textbf{Microsoft Windows} different size bitmaps are provided in the icon
+    executable file \textbf{meicons.exe}. This executable contains the
+    standard JASSPA icon in addition to the file type icons. Select icons from
+    this executable when assigning MicroEmacs to specific file extensions.
 
     \item When assigning MicroEmacs to a desktop icon then it is advisable to
     start MicroEmacs with the command line option \textbf{-c}. This option
@@ -887,23 +895,57 @@ c:> build}
     opening a new editor. To enable MicroEmacs reuse and existing session then
     invoke \textbf{me} with the \textbf{-o} command line option and enable the
     \textbf{Client-Server} configuration option (\textbf{Help $\rightarrow$
-    User Setup $\rightarrow$ Platform $\rightarrow$ Client Server}). 
-    
+    User Setup $\rightarrow$ Platform $\rightarrow$ Client Server}).
+
+    \item The size and the position of the MicroEmacs frame position may be
+    defined at startup. There are a number of different methods to set the
+    frame characteristics as follows:-
+
+    \begin{itemize}
+
+      \item \textbf{Frame Size} the simplest method to fix the frame size at
+      start up is to resize the frame to the desired size. Once resizes, With
+      the mouse \textit{Right Click} on the \textit{mode line} and select
+      \textbf{Store Frame Size}. The current frame size is saved and restored
+      the next time the editor is started.
+
+      \item \textbf{UNIX -- Size and Position} may be controlled using the
+      \textbf{.Xdefaults} file e.g.
+
+      \CodeInsertW{5.75in}{MicroEmacs.geometry: 102x65 60 30}
+
+      Defines the frame size to be 102 characters wide, 65 characters deep and
+      should be positioned 60 pixels from the left screen edge and 30 pixels
+      from the top screen edge.
+
+      \item \textbf{Windows -- Size and Position} may be controlled using the
+      \textbf{me32.ini} file e.g.
+
+      \CodeInsertW{5.75in}{[Defaults]\newline
+      \textit{; Define startup screen size.}\newline
+      geometry=102x65+60+30}
+
+      Defines the frame size to be 102 characters wide, 65 characters deep and
+      should be positioned 60 pixels from the left screen edge and 30 pixels
+      from the top screen edge.
+
+    \end{itemize}
+
   \end{itemize}
 
 \subsubsection{Tools Integration}
-    
+
   MicroEmacs may be invoked from other tools as the selected text editor (i.e.
   \textbf{WinZip}). Multiple files may be specified on the command line for
   opening. Where a specific line number is required then the command line
   option \textbf{-l \textit{lineNo}} may be used to open the next file and
   move to the given line number. The \textbf{-l} must always precede the file
-  name, but may appear multiple times in the command line before  each file 
+  name, but may appear multiple times in the command line before  each file
   to be open. e.g.
-  
+
   \CodeInsert{me -l 20 foo.c -l 902 bar.c}
 
-  which opens file \texttt{foo.c} displaying line 20 and opens \texttt{bar.c} 
+  which opens file \texttt{foo.c} displaying line 20 and opens \texttt{bar.c}
   displaying line 902.
-     
+
 \end{document}
