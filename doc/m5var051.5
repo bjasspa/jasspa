@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var051.5,v 2.6 2002-10-16 22:28:04 jon Exp $
+.Id $Id: m5var051.5,v 2.7 2005-02-23 00:20:08 bill Exp $
 .Im MicroEmacs variable|hilight
 .so me.tni
 .TH $window-chars 5
@@ -77,29 +77,29 @@ Osd title bar blank character. Default is '\fB \fR'.
 Osd title bar right corner kill character. Default is '\fBx\fR'.
 .IP "Index 49"
 Osd dialog bottom right corner resize character. Default is '\fB*\fR'.
-.IP "Index 50"
-Osd open button character. Default is '\fB \fR'.
-.IP "Index 51"
-Osd close button character. Default is '\fB \fR'.
-.IP "Index 52"
+.IP "Index 50-53"
+Osd button  characters.  50 & 52 are used for a normal  button, 
+default is '\fB  \fR\fIButton\fR\fB  \fR'. 51 & 53 are used for the  current  default
+button, default is '\fB>\fR\fIButton\fR\fB<\fR'.
+.IP "Index 54"
 Displayed tab character (used when
 .Ht $system 5
 bit 0x80000 is set). Default is '\fB>\fR'.
-.IP "Index 53"
+.IP "Index 55"
 Displayed new-line character (used when
 .Ht $system 5
 bit 0x80000 is set). Default is '\fB\\\fR'.
-.IP "Index 54"
+.IP "Index 56"
 Displayed space character (used when
 .Ht $system 5
 bit 0x80000 is set). Default is '\fB.\fR'.
-.IP "Index 55"
+.IP "Index 57"
 Displayed  truncated  text to left  character  (used when the current  line is
 scrolled to the right). Default is '\fB$\fR'.
-.IP "Index 56"
+.IP "Index 58"
 Displayed  truncated  text to right  character  (used when the current  line is
 longer than the window width). Default is '\fB$\fR'.
-.IP "Index 57"
+.IP "Index 59"
 Inserted end of wrapped line character in an
 .Ht ipipe-shell-command 2
 buffer. Default is '\fB\\\fR'.
