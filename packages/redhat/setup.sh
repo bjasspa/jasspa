@@ -5,11 +5,18 @@
 #
 #  Created By    : Jon Green
 #  Created       : Fri Feb 6 22:33:31 2004
-#  Last Modified : <050219.2116>
+#  Last Modified : <050309.0007>
 #  Description   : Creates the RedHat directory structure for building a RPM
 #                  file.
 #
 ##############################################################################
+TOPDIR=../..
+VER_YEAR="05"
+VER_MONTH="02"
+VER_DAY="19"
+VERSION="20${VER_YEAR}${VER_MONTH}${VER_DAY}"
+METREE=jasspa-metree-${VERSION}.tar.gz
+MESRC=jasspa-mesrc-${VERSION}.tar.gz
 #
 # Create the file ~/.rpmmacro this is required to run as a user rather than
 # root.
@@ -36,26 +43,50 @@ mkdir -p ~/rpmbuild/SRPMS
 #
 cp jasspa.spec ~/rpmbuild/SPECS/
 #
+# Pull the files over from the release and source areas.
+#
+if [ ! -f ${METREE} ] ; then
+    if [ -f ${TOPDIR}/release/www/${METREE} ] ; then
+        cp ${TOPDIR}/release/www/${METREE} .
+    fi
+fi
+if [ ! -f ${MESRC} ] ; then
+    if [ -f ${TOPDIR}/release/www/${MESRC} ] ; then
+        cp ${TOPDIR}/release/www/${MESRC} .
+    fi
+fi
+if [ ! -f ./me.1 ] ; then
+    if [ -f ${TOPDIR}/release/www/me.1 ] ; then
+        gzip -9 -c ${TOPDIR}/release/www/me.1 > me.1.gz
+    fi
+fi
+#
 # Copy the release TAR files to the SOURCES directory
 #
-if [ ! -f ./jasspa-mesrc-20050219.tar.gz ] ; then
-    echo "Cannot find file jasspa-mesrc-20050219.tar.gz"
+if [ ! -f ${MESRC} ] ; then
+    echo "Cannot find file ${MESRC}"
     exit 1
 fi
-cp ./jasspa-mesrc-20050219.tar.gz ~/rpmbuild/SOURCES/
+cp ./${MESRC} ~/rpmbuild/SOURCES/
 #
-if [ ! -f ./jasspa-metree-20050219.tar.gz ] ; then
-    echo "Cannot find file jasspa-metree-20050219.tar.gz"
+if [ ! -f ${METREE} ] ; then
+    echo "Cannot find file ${METREE}"
     exit 1
 fi
-cp ./jasspa-metree-20050219.tar.gz ~/rpmbuild/SOURCES/
+cp ./${METREE} ~/rpmbuild/SOURCES/
+#
+if [ ! -f ./me.1.gz ] ; then
+    echo "Cannot find file me.1.gz"
+    exit 1
+fi
+cp ./me.1.gz ~/rpmbuild/SOURCES/
 #
 # Now make the RPM
 #
 (cd ~/rpmbuild/SPECS; rpmbuild -ba jasspa.spec)
-if [ -f ~/rpmbuild/RPMS/i386/jasspa-me-20050219-1.i386.rpm ] ; then
-    cp ~/rpmbuild/RPMS/i386/jasspa-me-20050219-1.i386.rpm .
+if [ -f ~/rpmbuild/RPMS/i386/jasspa-me-${VERSION}-1.i386.rpm ] ; then
+    cp ~/rpmbuild/RPMS/i386/jasspa-me-${VERSION}-1.i386.rpm .
 fi
-if [ -f ~/rpmbuild/SRPMS/jasspa-me-20050219-1.src.rpm ] ; then
-    cp ~/rpmbuild/SRPMS/jasspa-me-20050219-1.src.rpm .
+if [ -f ~/rpmbuild/SRPMS/jasspa-me-${VERSION}-1.src.rpm ] ; then
+    cp ~/rpmbuild/SRPMS/jasspa-me-${VERSION}-1.src.rpm .
 fi
