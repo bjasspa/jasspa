@@ -83,7 +83,9 @@ define-macro watch
     !else
         set-variable @# @mc1 "Watch method: (1)Reread (2)Reread-append (3)Append [1/2/3] ? " "123"
     !endif
-    !if &les @# 0
+    !if &not @#
+        watch-time
+    !elif &les @# 0
         !if &exi :watch
             unset-variable :watch
             !force unset-variable :watch-size
