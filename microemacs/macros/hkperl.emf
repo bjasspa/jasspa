@@ -1,6 +1,6 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
+; Copyright (C) 1999-2004 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Synopsis:    Perl hook - invoked when a Perl script file is loaded.
@@ -123,7 +123,7 @@ set-variable .fhook-perl.item-list-r1 "Sub  \ecB\\1\ecA"
     hilight .hilight.perl 0    "\\$!"              .scheme.variable
     hilight .hilight.perl 0    "\\$\\*"            .scheme.variable
     ; hash parser for better visibility of the keys
-    hilight .hilight.perl 1 "'[a-zA-Z0-9]+' +=>"  .scheme.header
+    hilight .hilight.perl 1 "'[a-zA-Z0-9_]+' +=>"  .scheme.header
     ; Separators
     hilight .hilight.perl 1    "&"                 .scheme.operator
     hilight .hilight.perl 0    "->"                .scheme.operator
@@ -289,7 +289,7 @@ set-variable .fhook-perl.item-list-r1 "Sub  \ecB\\1\ecA"
     set-variable .hilight.phpscript .hilight.perl
 !endif
 !if &sin "d" .fhook-perl.setup
-    0 indent  .hilight.perl 0 10
+    0 indent  .hilight.perl 0 100
     indent .hilight.perl n "{"  4
     indent .hilight.perl o "}" -4
     indent .hilight.perl e "\"" "\"" "\\"

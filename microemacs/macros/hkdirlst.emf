@@ -1,6 +1,6 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 1997-2002 JASSPA (www.jasspa.com)
+; Copyright (C) 1997-2004 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     Thu Mar 1 2001
@@ -332,7 +332,6 @@ set-variable .file-browser-close.bn "\CH*directory*\CH*files*\CH*ftp-files*\CH*f
     !endif
     !if .toolbar.open
         !force toolbar-make-tool-visible "*directory*"
-        !force toolbar-make-tool-visible "*files*"
     !endif
     !force 0 popup-window "*directory*"
     !if $status
@@ -364,8 +363,11 @@ set-variable .file-browser-close.bn "\CH*directory*\CH*files*\CH*ftp-files*\CH*f
     !if &not &seq #l0 $buffer-fname
         0x0f directory-tree #l0
     !endif
-    ; if part of a toolbar don't mess with the window-flags
-    !if &not &band $window-flags 0x1000
+    ; if part of a toolbar don't mess with the window-flags and don't leave it current, but make sure the buffer is hidden
+    !if &band $window-flags 0x1000
+        1 buffer-mode "hide"
+        1 goto-position "\x82"
+    !else
         set-variable $window-flags &bor 1 .fhook-dirlst.browser-lock
     !endif
 !emacro
@@ -439,9 +441,15 @@ define-macro file-browser-swap-buffers
         !if $status
             buffer-bind-create "bio" "delete" "" file-browser-close
             buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
+            !if .toolbar.open
+                !force toolbar-make-tool-visible "*directory*"
+            !endif
             !force 0 popup-window "*directory*"
             !if $status
                 0x6f directory-tree #l0
+                !if &band $window-flags 0x1000
+                    1 buffer-mode "hide"
+                !endif
                 popup-window "*files*"
             !endif
         !endif
@@ -1091,5 +1099,146 @@ osd .osd.dirlst 130 ""  "\HAuto-Refresh: on "   f dirlst-auto-refresh
     !endif
 !emacro
 
+; toolbar file list ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+0 define-macro toolbar-file-list-command
+    !if &equ @# -2
+        unset-variable .toolbar-file-list-create.dir
+    !elif &equ @# -1
+        set-variable .toolbar-file-list-create.filter &bxor .toolbar-file-list-create.filter 1
+    !elif &les $window-line 3
+        !jump 2
+    !elif &seq &set #l9 @wl ""
+        goto-position "\x82"
+        !return
+    !elif &equ @# 1
+        set-variable .toolbar-file-list-create.dir &stat "a" &cat .toolbar-file-list-create.dir #l9
+    !elif &equ @# 2
+        goto-position "\x82"
+        find-file &cat .toolbar-file-list-create.dir #l9 @mna
+        !return
+    !elif &equ @# 3
+        !force !force osd-xdialog "Delete File" &spr "  Delete file \"%s\"?  " #l9 2 " \HYes " " \HNo "
+        !if &equ $result 1
+            0x20 file-op &cat .toolbar-file-list-create.dir #l9 @mna
+        !endif
+    !endif
+    ; force a toolbar update file list
+    !force 0 delete-buffer $buffer-bname
+    set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x080
+    goto-position "\x82"
+!emacro
+
+0 define-macro toolbar-file-list-mouse-pick-1
+    set-variable .toolbar-file-list-mouse-drop-1.line $window-line
+    goto-position "\x82"
+!emacro
+
+0 define-macro toolbar-file-list-mouse-drop-1
+    !if &equ .line $window-line
+        !if &gre $window-line 2
+            !if &seq &rig @wl &sub &len @wl 1 "/"
+                1 toolbar-file-list-command
+            !else
+                2 toolbar-file-list-command
+            !endif
+            !return
+        !elif &equ $window-line 2
+            -1 toolbar-file-list-command
+            !return
+        !endif
+    !endif
+    goto-position "\x82"
+!emacro
+
+0 define-macro toolbar-file-list-mouse-drop-3
+    -1 osd .osd.tmp
+    osd .osd.tmp 0 b
+    osd .osd.tmp 10 "" "Goto Directory"
+    !if &gre $window-line 2
+        !if &seq &rig @wl &sub &len @wl 1 "/"
+            osd .osd.tmp 10 "" "\HGoto Directory" 1 toolbar-file-list-command
+        !endif
+        osd .osd.tmp 20 "" "\HOpen File"     2 toolbar-file-list-command
+        osd .osd.tmp 30 "" "\HDelete File"   3 toolbar-file-list-command
+    !else
+        osd .osd.tmp 20 "" "Open File"
+        osd .osd.tmp 30 "" "Delete File"
+    !endif
+    osd .osd.tmp 100 "-"
+    osd .osd.tmp 120 "" "Goto Cur \HBuffer Dir" -2 toolbar-file-list-command
+    osd .osd.tmp 130 "" &cat &cond .toolbar-file-list-create.filter "Dis" "En" "able \HFilter" -1 toolbar-file-list-command
+    !force !force .osd.tmp osd
+    !if &not $status
+        goto-position "\x82"
+    !endif
+!emacro
+
+0 define-macro toolbar-file-list-create
+    set-position "\x86"
+    !if &not &exi .dir
+        !if &lfind "|http:/|ftp://|" &lef $buffer-fname 6
+            set-variable .dir &stat "a" "."
+        !elif &seq "" &set .dir &lef $buffer-fname &rsin "/" $buffer-fname
+            set-variable .dir &stat "a" "."
+        !endif
+    !endif
+    find-buffer "*toolbar-files*"
+    &cond &band $system 0x100 -1 1 buffer-mode "exact"
+    -1 buffer-mode "view"
+    -1 buffer-mode "undo"
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    -1 kill-region
+    insert-file .dir
+    beginning-of-buffer
+    22 forward-delete-char
+    -1 yank
+    set-variable $line-scheme .scheme.keyword
+    forward-line
+    set-variable @wl &xrep @wl "  ........ used in \\([0-9]*\\) files and \\([0-9]*\\) dirs" &cat &cond .filter "  FILT" "  NO-F" " \\1Fs \\2Ds"
+    set-variable $line-scheme .scheme.variable
+    forward-line
+    set-mark
+    forward-line
+    -1 kill-region
+    !while &not &seq @wc ""
+        32 forward-delete-char
+        -1 yank
+        forward-line
+    !done
+    !if .filter
+        set-variable #l0 &spr "^\\(%s\\)$" .file-browser.filter
+        set-variable $window-line 3
+        !force search-forward #l0
+        !while $status
+            beginning-of-line
+            set-mark
+            forward-line
+            -1 kill-region
+            !force search-forward #l0
+        !done
+    !endif
+    set-variable $window-line 3
+    set-mark
+    !while &seq &rig @wl &sub &len @wl 1 "/"
+        set-variable $line-scheme .scheme.dir
+        forward-line
+    !done
+    !if &band $system 0x100
+        sort-lines
+        set-mark
+        end-of-buffer
+        sort-lines
+    !endif
+    set-variable :mouse-pick-1 toolbar-file-list-mouse-pick-1
+    set-variable :mouse-drop-1 toolbar-file-list-mouse-drop-1
+    set-variable :mouse-pick-3 void
+    set-variable :mouse-drop-3 toolbar-file-list-mouse-drop-3
+    -1 buffer-mode "edit"
+    1 buffer-mode "view"
+!emacro
+set-variable .toolbar-file-list-create.filter 1
 buffer-init-fhook "dirlst"
 

@@ -1,6 +1,6 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 1997-2002 JASSPA (www.jasspa.com)
+; Copyright (C) 1997-2004 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     Sat Jul 26 1997
@@ -333,7 +333,7 @@ set-variable .undo.count 0
 !emacro
 osd 2  0   "b"
 osd 2  10  ""  "\HUndo       C-x u"         1 osd-undo      ; Undo the last command
-osd 2  20  ""  "Redo"                                      ; Re-do the last osd-undo
+osd 2  20  ""  "Redo"                                       ; Re-do the last osd-undo
 osd 2  25  ""  "Undo \HAll"                 0 osd-undo      ; Undo all changes to last save
 osd 2  30  "-"
 osd 2  40  ""  "\HSet Mark   esc space"     f set-mark      ; Set buffer mark

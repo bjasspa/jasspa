@@ -1,6 +1,6 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 2000-2002 JASSPA (www.jasspa.com)
+; Copyright (C) 2000-2004 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     Thu Nov 23 2000
@@ -12,7 +12,6 @@
 ;
 ;         a auto mode
 ;         b abbreviation
-;         c Viewer or author
 ;         d auto indent
 ;         e exact mode
 ;         f fold support
@@ -35,6 +34,9 @@
 ;         1 Special internal flag indicating that hilighting is used
 ;           for reformatting, i.e. make readable 
 ;         # special flag used to indicate commenting is supported
+;
+;    The following flags can be used by individual buffer hooks (see hkhtml.emf)
+;         c, l, q, r, v, y & z
 ;
 ;    In .setup, a 'A' means disable auto indent, a enables it.
 ;    In .setup-mask a lower case letter must be used.
@@ -62,11 +64,15 @@
 !endif
 
 0 define-macro buffer-setup-option
+    set-variable #l9 &abs @#
+    !if &gre #l9 20
+        set-variable #l0 &lget .buffer-setup.flags &sub #l9 20
+    !else
+        set-variable #l0 &lget &ind &spr ".%s.setup-flags" $buffer-fhook #l9
+    !endif
     !if &les @# 0
-        set-variable @# &abs @#
-        set-variable #l0 &lget .buffer-setup.flags @#
         set-variable #l1 .buffer-setup.nsetup
-        !force @# buffer-setup-option
+        !force #l9 buffer-setup-option
         set-variable #l2 $status
         set-variable #l1 &rep #l1 #l0 ""
         set-variable #l1 &rep #l1 &sup #l0 ""
@@ -75,12 +81,13 @@
         !endif
         set-variable .buffer-setup.nsetup &cat #l1 #l0
     !else
-        set-variable #l0 &lget .buffer-setup.flags @#
         !if &sin #l0 .buffer-setup.nsetup
             !return
         !elif &sin &sup #l0 .buffer-setup.nsetup
             !abort
-        !elif &seq &set #l1 &lget .buffer-setup.modes @# ""
+        !elif &les #l9 21
+            !abort
+        !elif &seq &set #l1 &lget .buffer-setup.modes &sub #l9 20 ""
             !abort
         !elif &not &gmod #l1
             !abort
@@ -135,6 +142,15 @@ define-macro buffer-setup
     -1 osd .osd.buffstp
     osd .osd.buffstp 0 "batcdHs" 9 3 48 10 -1 -1 970 .scheme.osd-title &cat #l9 " Buffer Setup"
     osd .osd.buffstp 5 ""
+    !if &not &seq &set #l1 &ind &spr ".%s.setup-flags" $buffer-fhook "ERROR"
+        set-variable #l2 &ind &spr ".%s.setup-labels" $buffer-fhook
+        set-variable #l0 1
+        !repeat
+            osd .osd.buffstp &add 2 &mul #l0 10 "fh" "  "
+            osd .osd.buffstp &add 5 &mul #l0 10 "Cptfx" #l0 &spr "%s\} %s" .osd.checkbox-chars &lget #l2 #l0 #l0 buffer-setup-option
+        !until &seq &lget #l1 &inc #l0 1 ""
+        osd .osd.buffstp 199 ""
+    !endif
     set-variable #l0 1
     set-variable #l1 0
     set-variable #l3 0
@@ -142,35 +158,35 @@ define-macro buffer-setup
         set-variable #l4 &lget .blank #l0
         !if &not &seq "" &set #l5 &lget .prefix #l0
             set-variable #l2 &cat "      " #l5
-            osd .osd.buffstp &mul #l0 10 "fh" #l2
+            osd .osd.buffstp &add 200 &mul #l0 10 "fh" #l2
         !endif
         !if &sin &lget .flags #l0 .mask
             set-variable #l7 &lget .labels #l0
             set-variable #l6 "Cptfx"
             !if &not &band #l4 6
-                osd .osd.buffstp &add 2 &mul #l0 10 "fh" "  "
+                osd .osd.buffstp &add 202 &mul #l0 10 "fh" "  "
             !elif #l3
-                osd .osd.buffstp &add 2 &mul #l0 10 "fh" &spr "%n" &sub 8 #l3 " "
+                osd .osd.buffstp &add 202 &mul #l0 10 "fh" &spr "%n" &sub 8 #l3 " "
                 set-variable #l3 0
             !else
                 !if &seq "" #l5
-                    osd .osd.buffstp &mul #l0 10 "fh" &spr "%n" &len #l2 " "
+                    osd .osd.buffstp &add 200 &mul #l0 10 "fh" &spr "%n" &len #l2 " "
                 !endif
                 !if &band 4 &lget .blank &add #l0 1
                     set-variable #l3 &sub &len #l7 &cond &sin "\H" #l7 1 0
                     set-variable #l6 &cat #l6 "h"
                 !endif
             !endif
-            osd .osd.buffstp &add 5 &mul #l0 10 #l6 &mul #l0 10 &spr "%s\} %s" .osd.checkbox-chars #l7 #l0 buffer-setup-option
+            osd .osd.buffstp &add 205 &mul #l0 10 #l6 &add 20 #l0 &spr "%s\} %s" .osd.checkbox-chars #l7 &add #l0 20 buffer-setup-option
             set-variable #l1 1
         !endif
         !if &band #l1 #l4
             !if #l3
-                osd .osd.buffstp &add 8 &mul #l0 10 ""
+                osd .osd.buffstp &add 208 &mul #l0 10 ""
                 set-variable #l3 0
             !endif
             !if &band #l4 8
-                osd .osd.buffstp &add 9 &mul #l0 10 ""
+                osd .osd.buffstp &add 209 &mul #l0 10 ""
                 set-variable #l1 0
             !endif
         !endif
@@ -189,11 +205,11 @@ define-macro buffer-setup
     set-variable .nsetup .osetup
     .osd.buffstp osd
 !emacro
-set-variable .buffer-setup.flags  "|p|o|c|n|g|h|d|s|f|b|e|m|a|k|i|j|t|x|u|w|"
-set-variable .buffer-setup.blank  "|0|0|0|9|0|0|0|0|9|9|2|5|2|4|4|4|4|4|4|13|"
-set-variable .buffer-setup.labels "|Create Help \HPage|Create T\Hools Menu|Use Author Mode|Insert \HNew Template|Fence Display|Setup \HHilighting|Setup Auto In\Hdent|Setup Auto Spe\Hll|Setup \HFolding|Add A\Hbbreviations|\HExact|\HMagic|\HAuto|Bac\Hkup|\HIndent|\HJustify|\HTab|Time|\HUndo|\HWrap|"
-set-variable .buffer-setup.prefix "|||||||||||Search Modes: ||Buffer Modes: ||||||||"
-set-variable .buffer-setup.modes  "|||||||||||exact|magic|auto|backup|indent|justify|tab|time|undo|wrap|"
+set-variable .buffer-setup.flags  "|p|o|n|g|h|d|s|f|b|e|m|a|k|i|j|t|x|u|w|"
+set-variable .buffer-setup.blank  "|0|0|9|0|0|0|0|9|9|2|5|2|4|4|4|4|4|4|13|"
+set-variable .buffer-setup.labels "|Create Help \HPage|Create T\Hools Menu|Insert \HNew Template|Fence Display|Setup \HHilighting|Setup Auto In\Hdent|Setup Auto Spe\Hll|Setup \HFolding|Add A\Hbbreviations|\HExact|\HMagic|\HAuto|Bac\Hkup|\HIndent|\HJustify|\HTab|Time|\HUndo|\HWrap|"
+set-variable .buffer-setup.prefix "||||||||||Search Modes: ||Buffer Modes: ||||||||"
+set-variable .buffer-setup.modes  "||||||||||exact|magic|auto|backup|indent|justify|tab|time|undo|wrap|"
 
 ; buffer-help-add-item <command-name> <narg> <desc>
 ; adds the item to the help page (.osd.tmp) using and incrementing

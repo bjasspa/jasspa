@@ -1,6 +1,6 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 2002 JASSPA (www.jasspa.com)
+; Copyright (C) 2002-2004 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     Tue Apr 16 2002
@@ -32,6 +32,7 @@
 ;         0x20000 - Include buffer name in mode-line (suffix)
 ;         0x40000 - Include buffer filename in mode-line (suffix)
 ;        0x100000 - Restore window location after an update
+;        0x200000 - Move position to beginning of buffer after an update
 ;     .toolbar.tool-name - A list defining the name of each tool
 ;     .toolbar.tool-buff - A list defining the name of each tool's buffer
 ;     .toolbar.tool-file - A list defining the macro file containing the tool command
@@ -116,6 +117,9 @@
                         1 goto-position "\x84"
                         !force !force #l7 execute-named-command &lget .toolbar.tool-cmd #l1
                         !force &cond &band #l2 0x100000 0xdf 1 goto-position "\x85"
+                        !if &band #l2 0x200000
+                            beginning-of-buffer
+                        !endif
                     !endif
                     !if &or &sub :tool-width $window-width &band #l2 #l6
                         ; the width of the tool window has changed - update modeline

@@ -1,6 +1,6 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 2000-2002 JASSPA (www.jasspa.com)
+; Copyright (C) 2000-2004 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     Tue Dec 19 2000
@@ -12,7 +12,7 @@
 !endif
 
 -1 osd .osd.melogo
-osd .osd.melogo 0  "batcdH" 3 6 3301 .scheme.osd-title "MicroEmacs"
+osd .osd.melogo 0  "batcdH" 3 6 3301 .scheme.osd-title "MicroEmacs - Copyright (c) 2000-2004 JASSPA"
 osd .osd.melogo    1  ""  ""
 osd .osd.melogo  101  "Sfh"                   "  "
 osd .osd.melogo  102  "SfHh" .scheme.hlblack  "  "
@@ -167,7 +167,7 @@ osd .osd.melogo 3002  "SfHh" .scheme.hlblack  "  "
 osd .osd.melogo 3003  "SfHh" .scheme.hlred    "    "
 osd .osd.melogo 3004  "SfHh" .scheme.hlblack  "  "
 osd .osd.melogo 3005  "Sf"                    "                              "
-osd .osd.melogo 3101  "Sfh"                   "Copyright (c) 2000 JASSPA       "
+osd .osd.melogo 3101  "Sfh"                   "                                "
 osd .osd.melogo 3102  "SfHh" .scheme.hlblack  "    "
 osd .osd.melogo 3103  "Sf"                    "                                "
 osd .osd.melogo 3201  ""  ""

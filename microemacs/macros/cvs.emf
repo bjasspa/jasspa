@@ -1,6 +1,6 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 2001-2002 JASSPA (www.jasspa.com)
+; Copyright (C) 2001-2004 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     Tue Jan 23 2001
@@ -904,10 +904,14 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
     !done
     !force !force &bor #l2 4 cvs-exec-cmd #l1 #l6 .cwd
 *recurse-add-complete
-    !force popup-window #l6
     !if &seq #l6 "*cvs-console*"
+        !if .toolbar.open
+            !force toolbar-make-tool-visible "*cvs-console*"
+        !endif
+        !force popup-window #l6
         end-of-buffer
     !else
+        !force popup-window #l6
         beginning-of-buffer
         !if &seq &lget .names #l9 "Diff"
             set-variable $buffer-hilight .hilight.diff
@@ -1041,7 +1045,7 @@ define-macro cvs-update
     find-buffer @1
     set-variable #l2 @2
     beginning-of-buffer
-    search-forward &spr "^/%s/\\([^/]*\\)/\\(\\(Result of merge\\+\\)?\\w+ +\\(\\w+\\) +\\([0-9]+\\) +\\([0-9]+:[0-9]+\\):[0-9]+ +\\([0-9]+\\)\\|Initial +%s\\)/" #l2 #l2
+    search-forward &spr "^/%s/\\([^/]*\\)/\\(\\(Result of merge\\+\\)?\\w+ +\\(\\w+\\) +\\([0-9]+\\) +\\([0-9]+:[0-9]+\\):[0-9]+ +\\([0-9]+\\)\\|Initial +%s\\|dummy timestamp\\)/" #l2 #l2
     ; get the version
     !if &gre &len @s1 7
         set-variable #p8 &cat "<" &rig @s1 &sub &len @s1 6
@@ -1049,8 +1053,9 @@ define-macro cvs-update
         set-variable #p8 @s1
     !endif
     !if &seq @s4 ""
-        ; initial version
-        set-variable #p9 "Initial Version "
+        ; initial version or dummy timestamp etc
+        set-variable #p9 @s2
+        set-variable #p9 &spr "%s%n " &lef #p9 15 &sub 15 &len #p9 " "
     !else
         ; get the date in YYYY/MM/DD HH:MM form
         set-variable #p9 &spr "%s/%02d/%02d %s" @s7 &lfind "|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|" @s4 @s5 @s6
@@ -1215,7 +1220,7 @@ define-macro cvs
         !force next-window
     !endif
     !if .toolbar.open
-        !force toolbar-make-tool-visible "*ftp-console*"
+        !force toolbar-make-tool-visible "*cvs-console*"
         !tjump &not $status 2
     !else
         1 set-position "\x81"
