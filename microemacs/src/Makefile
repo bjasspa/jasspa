@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040206.1105>
+# Last Modified: <20040207.1409>
 #
 ##############################################################################
 
@@ -99,28 +99,28 @@ all:	build
 #
 # Build Release
 #
-release:	$(RELEASES)
+release:	$(SRCRELDIR)	$(RELEASES)
 
 # Release target files
 $(SRCRELDIR):
 	$(MKDIR) $@
-$(RELSTDHDR): $(STDHDR) $(SRCRELDIR)
+$(RELSTDHDR): $(STDHDR)
 	$(INSTALL_FIL) $(@F) $(@D)
-$(RELSTDDEF): $(STDDEF) $(SRCRELDIR)
+$(RELSTDDEF): $(STDDEF)
 	$(INSTALL_FIL) $(@F) $(@D)
-$(RELSTDSRC): $(STDSRC) $(SRCRELDIR)
+$(RELSTDSRC): $(STDSRC)
 	$(INSTALL_FIL) $(@F) $(@D)
-$(RELPLTSRC): $(PLTSRC) $(SRCRELDIR)
+$(RELPLTSRC): $(PLTSRC)
 	$(INSTALL_FIL) $(@F) $(@D)
-$(RELPLTHDR): $(PLTHDR) $(SRCRELDIR)
+$(RELPLTHDR): $(PLTHDR)
 	$(INSTALL_FIL) $(@F) $(@D)
-$(RELICOSRC): $(ICOSRC) $(SRCRELDIR)
+$(RELICOSRC): $(ICOSRC)
 	$(INSTALL_FIL) $(@F) $(@D)
-$(RELTXTSRC): $(TXTSRC) $(SRCRELDIR)
+$(RELTXTSRC): $(TXTSRC)
 	$(INSTALL_FIL) $(@F) $(@D)
-$(RELMAKSRC): $(MAKSRC) $(SRCRELDIR)
+$(RELMAKSRC): $(MAKSRC)
 	$(INSTALL_FIL) $(@F) $(@D)
-$(RELMAKEXE): $(MAKEXE) $(SRCRELDIR)
+$(RELMAKEXE): $(MAKEXE)
 	$(INSTALL_EXE) $(@F) $(@D)
 $(RELWIN32S): $(WIN32S)
 	$(MKDIR) $(@D)
