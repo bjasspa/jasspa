@@ -194,11 +194,13 @@ set-variable .fhook-cpp.item-list-r6 "Clss \ecB\\1\ecA"
     hilight .hilight.cpp    0 "NULL"         .scheme.prepro
     !if &band .hilight.flags 0x08
         ; hilight constants, e.g. numbers
-        hilight .hilight.cpp 1 "[[:digit:]]+"       .scheme.constant
-        hilight .hilight.cpp 1 "-[[:digit:]]+"      .scheme.constant
-        hilight .hilight.cpp 1 "0[xX][[:xdigit:]]+" .scheme.constant
-        hilight .hilight.cpp 1 "[[:digit:]]+\\.[[:digit:]]+"  .scheme.constant
-        hilight .hilight.cpp 1 "-[[:digit:]]+\\.[[:digit:]]+" .scheme.constant
+        hilight .hilight.cpp 1 "\\d+"        .scheme.constant
+        hilight .hilight.cpp 1 "-\\d+"       .scheme.constant
+        hilight .hilight.cpp 1 "0[xX]\\h+"   .scheme.constant
+        hilight .hilight.cpp 1 "d+\\.d+"     .scheme.constant
+        hilight .hilight.cpp 1 "-d+\\.d+"    .scheme.constant
+        hilight .hilight.cpp 1 "d+\\.d+f"    .scheme.constant
+        hilight .hilight.cpp 1 "-d+\\.d+f"   .scheme.constant
     !endif
 
     ; Doxygen highlighting extensions. Highlights keywords in Doxygen

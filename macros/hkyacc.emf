@@ -15,7 +15,7 @@ define-macro fhook-yacc
 
 ; buffer-init variables
 set-variable .fhook-yacc.name "Lex/Yacc"
-set-variable .fhook-yacc.setup &reg "/history/fhook/yacc" "ghinopx"
+set-variable .fhook-yacc.setup &reg "/history/fhook/yacc" "ghinopxlqv"
 set-variable .fhook-yacc.setup-mask "aeghikmnoptux"
 set-variable .fhook-yacc.comment "|/*| */|*| * | * |f|"
 ; Doxygen comment - //!< ... member detailed text ...
@@ -36,26 +36,33 @@ set-variable .fhook-yacc.comment-5 "|/**<| */|*| *   | * |f|"
 ; Doxygen comment - /*!< ... member detailed text ...
 ;                    *   ... member detailed text ... */
 set-variable .fhook-yacc.comment-6 "|/*!<| */|*| *   | * |f|"
+; Doxygen comment - /** ... detailed text ...
+;                    *  ... detailed text ... */
+set-variable .fhook-yacc.comment-7 "|/**| */|*| * | * |f|"
 ; Fancy C - /*
 ;           ** Comment
 ;           */
-set-variable .fhook-yacc.comment-7 "|/*|*/|*|** | * |f|"
+set-variable .fhook-yacc.comment-8 "|/*|*/|*|** | * |f|"
 ; Fancy C - /*
 ;           ** Comment
 ;            */
-set-variable .fhook-yacc.comment-8 "|/*| */|*|** | * |f|"
+set-variable .fhook-yacc.comment-9 "|/*| */|*|** | * |f|"
 ; Fancy C - /*\
 ;            * Comment
 ;           \*/
-set-variable .fhook-yacc.comment-9 "|/*\\|\\*/|*| * | * |f|"
+set-variable .fhook-yacc.comment-10 "|/*\\|\\*/|*| * | * |f|"
 ; Standard comment - We repeat here incase the default comment style is
 ; over-ridden. 
 ; Standard C - /*
 ;               * ... comment ... 
 ;               */
-set-variable .fhook-yacc.comment-10 "|/*| */|*| * | * |f|"
+set-variable .fhook-yacc.comment-11 "|/*| */|*| * | * |f|"
 ; Standard C++ comment.
-set-variable .fhook-yacc.comment-11 "|//||/|// | //||"
+set-variable .fhook-yacc.comment-12 "|//||/|// | //||"
+
+; Set up menu items for YACC mode.
+set-variable .fhook-yacc.setup-flags   "|l|q|r|v|"
+set-variable .fhook-yacc.setup-labels  "|Doxygen highlighting|<stdint.h> hilighting|Brace highlighting|Bad C highlighting|"
 
 !if &and &sin "h" .fhook-yacc.setup &band .hilight.flags 0x02 
     ; Hi-light LEX/YACC Mode
@@ -70,10 +77,17 @@ set-variable .fhook-yacc.comment-11 "|//||/|// | //||"
     ; the following is strictly C++ commenting - but people don't seem to know the difference
     hilight .hilight.yacc   18 "//"           .scheme.comment
     hilight .hilight.yacc    4 "\"" "\"" "\\" .scheme.string
-    hilight .hilight.yacc    0 "'.'"      .scheme.quote
-    hilight .hilight.yacc    0 "'\\\\.'"  .scheme.quote
+    hilight .hilight.yacc    0 "'.'"          .scheme.quote
+    hilight .hilight.yacc    0 "'\\\\.'"      .scheme.quote
     hilight .hilight.yacc    0 "'\\\\'"       .scheme.error
     hilight .hilight.yacc    0 "'\\\\''"      .scheme.quote
+    ; Special type for LEX patterns to keep hilighting in check.
+    hilight .hilight.yacc    0 "\\\\[\"'ntrb(){}$/*|\\\\!]" .scheme.quote
+    ; Hilight TODO in a comment - Examples
+    ; i.e. /* TODO I need to do this */
+    ; i.e. // TODO I need to do this */
+    hilight .hilight.yacc   20 "/\\*\\s*[tT][oO][dD][oO]" "*/" "" .scheme.error
+    hilight .hilight.yacc   18 "//\\s*[tT][oO][dD][oO]"           .scheme.error
     ; Function names and goto labels
     !if &band .hilight.flags 0x04
         hilight .hilight.yacc    0 "^\\w+\\}\\s(" .scheme.function
@@ -115,6 +129,7 @@ set-variable .fhook-yacc.comment-11 "|//||/|// | //||"
     hilight .hilight.yacc    1 "unsigned"     .scheme.type
     hilight .hilight.yacc    1 "void"         .scheme.type
     hilight .hilight.yacc    1 "volatile"     .scheme.type
+    hilight .hilight.yacc    1 "wchar"        .scheme.type
     ; Add some system types
     hilight .hilight.yacc    1 "FILE"         .scheme.type
     ; Pre-processor directives
@@ -123,6 +138,7 @@ set-variable .fhook-yacc.comment-11 "|//||/|// | //||"
     hilight .hilight.yacc    0 "__LINE__"     .scheme.prepro
     hilight .hilight.yacc    0 "__STDC__"     .scheme.prepro
     hilight .hilight.yacc    0 "__TIME__"     .scheme.prepro
+    hilight .hilight.yacc    1 "NULL"         .scheme.prepro
     ; Add YACC tokens - do not appear in typical 'C' space.
     hilight .hilight.yacc 0x22 "%token"       .scheme.prepro
     hilight .hilight.yacc 0x22 "%union"       .scheme.prepro
@@ -138,17 +154,205 @@ set-variable .fhook-yacc.comment-11 "|//||/|// | //||"
     hilight .hilight.yacc 0x22 "%k"           .scheme.prepro
     hilight .hilight.yacc 0x22 "%n"           .scheme.prepro
     hilight .hilight.yacc 0x22 "%o"           .scheme.prepro
-    hilight .hilight.yacc    1 "\\$[0-9]+"    .scheme.prepro
+    ; Add LEX tokens for multiple states
+    hilight .hilight.yacc 0x22 "%x"           .scheme.prepro
+    hilight .hilight.yacc 0    "<[A-Z_0-9]+>" .scheme.prepro
+    ;
+    hilight .hilight.yacc    1 "\\$[$0-9]+"   .scheme.prepro
     !if &band .hilight.flags 0x08
         ; hilight constants, e.g. numbers
-        hilight .hilight.yacc 1 "[[:digit:]]+"       .scheme.constant
-        hilight .hilight.yacc 1 "-[[:digit:]]+"      .scheme.constant
-        hilight .hilight.yacc 1 "0[xX][[:xdigit:]]+" .scheme.constant
-        hilight .hilight.yacc 1 "[[:digit:]]+\\.[[:digit:]]+"  .scheme.constant
-        hilight .hilight.yacc 1 "-[[:digit:]]+\\.[[:digit:]]+" .scheme.constant
-        hilight .hilight.yacc 1 "[[:digit:]]+\\.[[:digit:]]+f"  .scheme.constant
-        hilight .hilight.yacc 1 "-[[:digit:]]+\\.[[:digit:]]+f" .scheme.constant
+        hilight .hilight.yacc 1 "\\d+"        .scheme.constant
+        hilight .hilight.yacc 1 "-\\d+"       .scheme.constant
+        hilight .hilight.yacc 1 "0[xX]\\h+"   .scheme.constant
+        hilight .hilight.yacc 1 "d+\\.d+"     .scheme.constant
+        hilight .hilight.yacc 1 "-d+\\.d+"    .scheme.constant
+        hilight .hilight.yacc 1 "d+\\.d+f"    .scheme.constant
+        hilight .hilight.yacc 1 "-d+\\.d+f"   .scheme.constant
+    !endif
+    
+    ; Doxygen highlighting extensions. Highlights keywords in Doxygen
+    !if &sin "l" .fhook-yacc.setup
+        ; Create a new doxygen hilighting scheme
+        !if &not &exi .hilight.yaccdoxygen
+            set-variable .hilight.yaccdoxygen &pinc .hilight.next 1
+            set-variable .hilight.yaccppdoxygen &pinc .hilight.next 1
+        !endif
+        ;
+        ; Cater for the /** .. */ type of comment.
+        ;
+        ; Add a hook into the normal 'C' hilighing. We jump into
+        ; cdoxygen when we see an opening "/**" or "/*!".
+        hilight .hilight.yacc 0x80 "/\\*\\*" .hilight.yaccdoxygen  .scheme.comment
+        hilight .hilight.yacc 0x80 "/\\*!"   .hilight.yaccdoxygen  .scheme.comment
+        ; Doxygen hilighting space.
+        0 hilight .hilight.yaccdoxygen  2 50                       .scheme.comment
+        ; "\}" or "@}"
+        hilight .hilight.yaccdoxygen    1 "[\\\\@]}"               .scheme.keyword
+        ; "\{" or "@{"
+        hilight .hilight.yaccdoxygen    1 "[\\\\@]{"               .scheme.keyword
+        ; "\a anyWord" or "@a anyWord"
+        hilight .hilight.yaccdoxygen    1 "[\\\\@]a[ \t]+\\w+"     .scheme.keyword
+        ; "\anyWord" or "@anyWord" - Use branch token and close when not a word!
+        hilight .hilight.yaccdoxygen    4 "[\\\\@]" "\\}\\W" ""    .scheme.keyword
+        ; We must return to C when we see the close of comment "*/"
+        hilight .hilight.yaccdoxygen 0x80 "\\*/" .hilight.yacc     .scheme.comment
+        ;
+        ; Cater for the /// type of comment
+        ;
+        ; Add a hook into the normal C++ hilighing. We jump into cppdoxygen when
+        ; we see an opening "///" or "//!".
+        hilight .hilight.yacc 0x80 "///" .hilight.yaccppdoxygen  .scheme.comment
+        hilight .hilight.yacc 0x80 "//!" .hilight.yaccppdoxygen  .scheme.comment
+        ; Doxygen hilighting space.
+        0 hilight .hilight.yaccppdoxygen   2 50                  .scheme.comment
+        ; "\}" or "@}"
+        hilight .hilight.yaccppdoxygen    1 "[\\\\@]}"           .scheme.keyword
+        ; "\{" or "@{"
+        hilight .hilight.yaccppdoxygen    1 "[\\\\@]{"           .scheme.keyword
+        ; "\a anyWord" or "@a anyWord"
+        hilight .hilight.yaccppdoxygen    1 "[\\\\@]a[ \t]+\\w+" .scheme.keyword
+        ; "\anyWord" or "@anyWord" - Use branch token and close when not a word!
+        hilight .hilight.yaccppdoxygen    4 "[\\\\@]" "\\}\\W" "" .scheme.keyword
+        ; We must return to C when we see the close of comment "*/"
+        hilight .hilight.yaccppdoxygen 0x80 "\n" .hilight.yacc   .scheme.comment
+    !endif
+
+    ; Extend the hilighting for the IEEE Std 1003.1 <stdint.h>
+    ; See http://www.opengroup.org/onlinepubs/007904975/basedefs/stdint.h.html
+    !if &sin "q" .fhook-yacc.setup
+        hilight .hilight.yacc    1 "uint8_t"          .scheme.type
+        hilight .hilight.yacc    1 "int8_t"           .scheme.type
+        hilight .hilight.yacc    1 "uint16_t"         .scheme.type
+        hilight .hilight.yacc    1 "int16_t"          .scheme.type
+        hilight .hilight.yacc    1 "uint32_t"         .scheme.type
+        hilight .hilight.yacc    1 "int32_t"          .scheme.type
+        hilight .hilight.yacc    1 "uint64_t"         .scheme.type
+        hilight .hilight.yacc    1 "int64_t"          .scheme.type
+        ; Minimum with integers
+        hilight .hilight.yacc    1 "int_least8_t"     .scheme.type
+        hilight .hilight.yacc    1 "int_least16_t"    .scheme.type
+        hilight .hilight.yacc    1 "int_least32_t"    .scheme.type
+        hilight .hilight.yacc    1 "int_least64_t"    .scheme.type
+        hilight .hilight.yacc    1 "uint_least8_t"    .scheme.type
+        hilight .hilight.yacc    1 "uint_least16_t"   .scheme.type
+        hilight .hilight.yacc    1 "uint_least32_t"   .scheme.type
+        hilight .hilight.yacc    1 "uint_least64_t"   .scheme.type
+        ; Fastest minimum-width integer types
+        hilight .hilight.yacc    1 "int_fast8_t"      .scheme.type
+        hilight .hilight.yacc    1 "int_fast16_t"     .scheme.type
+        hilight .hilight.yacc    1 "int_fast32_t"     .scheme.type
+        hilight .hilight.yacc    1 "int_fast64_t"     .scheme.type
+        hilight .hilight.yacc    1 "uint_fast8_t"     .scheme.type
+        hilight .hilight.yacc    1 "uint_fast16_t"    .scheme.type
+        hilight .hilight.yacc    1 "uint_fast32_t"    .scheme.type
+        hilight .hilight.yacc    1 "uint_fast64_t"    .scheme.type
+        ; Integer types capable of holding object pointers
+        hilight .hilight.yacc    1 "intptr_t"         .scheme.type
+        hilight .hilight.yacc    1 "uintptr_t"        .scheme.type
+        ; Greatest-width integer types
+        hilight .hilight.yacc    1 "intmax_t"         .scheme.type
+        hilight .hilight.yacc    1 "uintmax_t"        .scheme.type
+        ; Other types
+        hilight .hilight.yacc    1 "ptrdiff_t"        .scheme.type
+        hilight .hilight.yacc    1 "sig_atomic_t"     .scheme.type
+        hilight .hilight.yacc    1 "wchar_t"          .scheme.type
+        hilight .hilight.yacc    1 "wint_t"           .scheme.type
+        ; Limits of exact-width integer types
+        hilight .hilight.yacc    1 "INT8_MIN"         .scheme.prepro
+        hilight .hilight.yacc    1 "INT8_MAX"         .scheme.prepro
+        hilight .hilight.yacc    1 "UINT8_MAX"        .scheme.prepro
+        hilight .hilight.yacc    1 "INT16_MIN"        .scheme.prepro
+        hilight .hilight.yacc    1 "INT16_MAX"        .scheme.prepro
+        hilight .hilight.yacc    1 "UINT16_MAX"       .scheme.prepro
+        hilight .hilight.yacc    1 "INT32_MIN"        .scheme.prepro
+        hilight .hilight.yacc    1 "INT32_MAX"        .scheme.prepro
+        hilight .hilight.yacc    1 "UINT32_MAX"       .scheme.prepro
+        hilight .hilight.yacc    1 "INT64_MIN"        .scheme.prepro
+        hilight .hilight.yacc    1 "INT64_MAX"        .scheme.prepro
+        hilight .hilight.yacc    1 "UINT64_MAX"       .scheme.prepro
+        ; Limits of minimum-width integer types
+        hilight .hilight.yacc    1 "INT_LEAST8_MIN"   .scheme.prepro
+        hilight .hilight.yacc    1 "INT_LEAST8_MAX"   .scheme.prepro
+        hilight .hilight.yacc    1 "UINT_LEAST8_MAX"  .scheme.prepro
+        hilight .hilight.yacc    1 "INT_LEAST16_MIN"  .scheme.prepro
+        hilight .hilight.yacc    1 "INT_LEAST16_MAX"  .scheme.prepro
+        hilight .hilight.yacc    1 "UINT_LEAST16_MAX" .scheme.prepro
+        hilight .hilight.yacc    1 "INT_LEAST32_MIN"  .scheme.prepro
+        hilight .hilight.yacc    1 "INT_LEAST32_MAX"  .scheme.prepro
+        hilight .hilight.yacc    1 "UINT_LEAST32_MAX" .scheme.prepro
+        hilight .hilight.yacc    1 "INT_LEAST64_MIN"  .scheme.prepro
+        hilight .hilight.yacc    1 "INT_LEAST64_MAX"  .scheme.prepro
+        hilight .hilight.yacc    1 "UINT_LEAST64_MAX" .scheme.prepro
+        ; Limits of fastest minimum-width integer types
+        hilight .hilight.yacc    1 "INT_FAST8_MIN"    .scheme.prepro
+        hilight .hilight.yacc    1 "INT_FAST8_MAX"    .scheme.prepro
+        hilight .hilight.yacc    1 "UINT_FAST8_MAX"   .scheme.prepro
+        hilight .hilight.yacc    1 "INT_FAST16_MIN"   .scheme.prepro
+        hilight .hilight.yacc    1 "INT_FAST16_MAX"   .scheme.prepro
+        hilight .hilight.yacc    1 "UINT_FAST16_MAX"  .scheme.prepro
+        hilight .hilight.yacc    1 "INT_FAST32_MIN"   .scheme.prepro
+        hilight .hilight.yacc    1 "INT_FAST32_MAX"   .scheme.prepro
+        hilight .hilight.yacc    1 "UINT_FAST32_MAX"  .scheme.prepro
+        hilight .hilight.yacc    1 "INT_FAST64_MIN"   .scheme.prepro
+        hilight .hilight.yacc    1 "INT_FAST64_MAX"   .scheme.prepro
+        hilight .hilight.yacc    1 "UINT_FAST64_MAX"  .scheme.prepro
+        ; Limits of integer types capable of holding object pointers
+        hilight .hilight.yacc    1 "INTPTR_MIN"       .scheme.prepro
+        hilight .hilight.yacc    1 "INTPTR_MAX"       .scheme.prepro
+        ; Maximum value of pointer-holding unsigned integer type:
+        hilight .hilight.yacc    1 "UINTPTR_MAX"      .scheme.prepro
+        ; Limits of greatest-width integer types
+        hilight .hilight.yacc    1 "INTMAX_MIN"       .scheme.prepro
+        hilight .hilight.yacc    1 "INTMAX_MAX"       .scheme.prepro
+        hilight .hilight.yacc    1 "UINTMAX_MAX"      .scheme.prepro
+        ; Limits of Other Integer Types
+        ; Limits of ptrdiff_t:
+        hilight .hilight.yacc    1 "PTRDIFF_MIN"      .scheme.prepro
+        hilight .hilight.yacc    1 "PTRDIFF_MAX"      .scheme.prepro
+        ; Limits of sig_atomic_t:
+        hilight .hilight.yacc    1 "SIG_ATOMIC_MIN"   .scheme.prepro
+        hilight .hilight.yacc    1 "SIG_ATOMIC_MAX"   .scheme.prepro
+        ; Limit of size_t:
+        hilight .hilight.yacc    1 "SIZE_MAX"         .scheme.prepro
+        ; Limits of wchar_t:
+        hilight .hilight.yacc    1 "WCHAR_MIN"        .scheme.prepro
+        hilight .hilight.yacc    1 "WCHAR_MAX"        .scheme.prepro
+        ; Limits of wint_t:
+        hilight .hilight.yacc    1 "WINT_MIN"         .scheme.prepro
+        hilight .hilight.yacc    1 "WINT_MAX"         .scheme.prepro
+    !endif
+
+    ; Hilight curly braces used when it is difficult to differentiate between a
+    ; round bracket and curly brace.
+    !if &sin "r" .fhook-yacc.setup
+        ; In keyword colour
+        hilight .hilight.yacc 1 "{"                             .scheme.keyword
+        hilight .hilight.yacc 1 "}"                             .scheme.keyword
+    !endif
+
+    ; Pick up bogus 'C' constructs extension
+    !if &sin "v" .fhook-yacc.setup
+        ; Detect a for loop with no body - put semi-colon on next line, i.e.
+        ; for (i = 1; i < 10; i++);
+        ; { ... }
+        hilight .hilight.yacc  2 "\\s\\{for[ \t]*([^()]*)[ \t]*;" .scheme.hlred
+        ; Detect a for loop with no body - put semi-colon on next line, i.e.
+        ; while (i == 1);
+        ; { ... }
+        ; hilight .hilight.yacc  2 "\\s\\{while[ \t]*([^()]*)[ \t]*;" .scheme.hlred
+        ; Detect a bad 'if' statement that is terminated with ';' e.g.
+        ; if (i < x);
+        ; { ... }
+        hilight .hilight.yacc  2 "\\s\\{if[ \t]*([^()]*)[ \t]*;"  .scheme.hlred
+        ; Detect a spurious '\' at the end of the line that is
+        ; not a string or #define. i.e.
+        ; char *d = "This is a " \
+        ;           "Duff string continuation";
+        hilight .hilight.yacc  2 "\\\\$"                   .scheme.hlred
     !endif
 !endif
+
+; setup useful C fuctions to auto-load cmacros
+define-macro-file cmacros c-slashify c-deslashify c-hash-eval c-hash-set-define c-hash-unset-define c-hash-del
 
 buffer-init-fhook "yacc"
