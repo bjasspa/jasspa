@@ -103,10 +103,9 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
 
 #ifdef _DOS
     {
-        union REGS reg ;                /* cpu register for use of DOS calls */
-        int        len ;
+        int ii ;
 
-        if(((len = meStrlen(file)) == 0) ||
+        if(((ii = meStrlen(file)) == 0) ||
            (strchr(file,'*') != NULL) ||
            (strchr(file,'?') != NULL))
         {
@@ -114,25 +113,36 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
                 mlwrite(MWABORT|MWPAUSE,"[%s illegal name]", file);
             return meFILETYPE_NASTY ;
         }
-        if((file[len-1] == DIR_CHAR) || ((len == 2) && (file[1] == _DRV_CHAR)))
+        if((file[ii-1] == DIR_CHAR) || ((ii == 2) && (file[1] == _DRV_CHAR)))
             goto gft_directory ;
-        reg.x.ax = 0x4300 ;
-        reg.x.dx = ((unsigned long) file) ;
-        intdos(&reg, &reg);
-
-        if(reg.x.cflag)
+        
+#ifdef __DJGPP2__
+        ii = meGetFileAttributes(file) ;
+        if(ii < 0)
             return meFILETYPE_NOTEXIST ;
+#else
+        {
+            union REGS reg ;                /* cpu register for use of DOS calls */
+            reg.x.ax = 0x4300 ;
+            reg.x.dx = ((unsigned long) file) ;
+            intdos(&reg, &reg);
+            
+            if(reg.x.cflag)
+                return meFILETYPE_NOTEXIST ;
+            ii = reg.x.cx ;
+        }
+#endif
         if(stats != NULL)
         {
             struct ffblk fblk ;
-            stats->stmode = (reg.x.cx|0x020) ;
+            stats->stmode = ii | meFILE_ATTRIB_ARCHIVE ;
             if(!findfirst(file, &fblk, FA_RDONLY|FA_HIDDEN|FA_SYSTEM|FA_DIREC))
             {
                 stats->stmtime = (((meUInt) fblk.ff_ftime) & 0x0ffff) | (((meUInt) fblk.ff_fdate) << 16) ;
                 stats->stsize = fblk.ff_fsize ;
             }
         }
-        if(reg.x.ax & 0x010)
+        if(ii & meFILE_ATTRIB_DIRECTORY)
         {
 gft_directory:
             if(flag & 2)
@@ -662,6 +672,28 @@ gwd(meUByte drive)
 #endif /* _WIN32 */
 
 #ifdef _DOS
+#ifdef __DJGPP2__
+    unsigned int curDrive=0, newDrive, availDrives ;
+    
+    if(drive != 0)
+    {
+        _dos_getdrive(&curDrive) ;
+        newDrive = toLower(drive) - 'a' + 1 ;
+        if(newDrive == curDrive)
+            _dos_setdrive(newDrive,&availDrives) ;
+        else
+            /* already current drive */
+            curDrive = 0;
+    }
+    
+    if(getcwd(dir,meBUF_SIZE_MAX) == NULL)
+        dir[0] = '\0' ;
+    if(curDrive != 0)
+        /* change the drive back */
+        _dos_setdrive(curDrive,&availDrives) ;
+    fileNameConvertDirChar(dir) ;
+    makestrlow(dir) ;
+#else
     union REGS reg ;                /* cpu register for use of DOS calls */
 
     if(drive == 0)
@@ -680,12 +712,6 @@ gwd(meUByte drive)
     reg.h.dl = drive - 'a' + 1 ;
     reg.x.si = (unsigned long) (dir+3) ;
     (void) intdos(&reg, &reg);
-
-#if DIR_CHAR != '/'
-    /* convert all '/' to '\' for dos etc */
-    p1 = dir+3 ;
-    while((p1=strchr(p1,'/')) != NULL)  /* got a '/', -> '\' */
-        *p1++ = DIR_CHAR ;
 #endif
 #endif  /* _DOS */
 
@@ -2386,6 +2412,7 @@ _meChdir(meUByte *path)
 
     len = strlen (path)-1 ;
 
+#ifndef __DJGPP2__
     if((len > 1) && (path[1] == _DRV_CHAR))
     {
         union REGS reg ;		/* cpu register for use of DOS calls */
@@ -2394,6 +2421,7 @@ _meChdir(meUByte *path)
         reg.h.dl = path[0] - 'a' ;
         intdos(&reg, &reg);
     }
+#endif
     if((len > 3) && (path[len] == DIR_CHAR))
         path[len] = '\0' ;
     else
