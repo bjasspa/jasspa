@@ -1,8 +1,0 @@
-; -!- emf -!-
-; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 1997-2002 JASSPA (www.jasspa.com)
-; See the file me.emf for copying and conditions.
-;
-; Created:     Thu Jul 24 1997
-;
-set-variable %company-name "JASSPA"
