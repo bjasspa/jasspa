@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Tue June 22 16:18:08 1999
-;  Last Modified : <000719.0012>
+;  Last Modified : <010314.0005>
 ;
 ;  Description   : Configures ME for the users keyboard
 ;
@@ -23,9 +23,19 @@ set-variable %keyboard-names "|Default|American|British|Francais|Belgian|Deutsch
 !endif
 
 ; get the users keyboard - currently only French, Belgian and German on win32 do anything
-set-variable #l0 &lget "||||be|be|gr|po|" &lfind %keyboard-names &reg "/history" "keyboard" ""
+set-variable #l0 &lget "||us|uk|be|be|gr|po|" &lfind %keyboard-names &reg "/history" "keyboard" ""
 
-!if &seq #l0 "be"
+!if &seq #l0 "uk"
+    !if &seq $platform "win32"
+        ; UK support
+        translate-key "C-# C-\\" "C-#"
+    !endif
+!if &seq #l0 "us"
+    !if &seq $platform "win32"
+        ; US support
+        translate-key "C-# C-#" "C-#"
+    !endif
+!elif &seq #l0 "be"
     !if &seq $platform "win32"
         ; Belgian support - Thanks to Meyer Jean-Francois
         ; This should also work for French keyboards
