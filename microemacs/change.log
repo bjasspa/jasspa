@@ -4,7 +4,7 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <040206.1830>
+>  Last Modified : <040207.0030>
 >
 
 7th Release - February 2004
@@ -13,7 +13,7 @@
 
     [040206] Fixes for toolbar Buffer Item List update  problem. Thanks to Dr.
              Detlef Groth.
-    
+
     [040206] Added template support for XML. Thanks to Dr. Detlef Groth.
 
     [040204] Re-worked Microsoft Windows "me32.ini" file specification.  Order
@@ -100,7 +100,7 @@
 
     [040128] Fixed re-style for C/C++ comments in vertical alignment.
 
-    [040123] "user-setup"mouse button selection fixed.
+    [040123] "user-setup" mouse button selection fixed.
 
     [040123] "C-x 3" mapped to "split-window-horizontally" , "C-x 5" mapped to
              "create-frame".
@@ -196,7 +196,7 @@
 
     [031120] buffer.c.  Changed  the 'n' arg to list buffer so user can select
              hidden or verbose etc. Added check after exec of "ehook" to catch
-             nasties,  not full proof but  catches  attempts to close tool bar
+             nasties,  not fool proof but  catches  attempts to close tool bar
              etc.
 
     [031120] Fixed a  "goto-line"  bug shown when using grep on a single lined
@@ -474,15 +474,15 @@
 
     [030512] Build fix for SunOS.
 
-    [030512] Ipipe fix for SunOS. Big  return  value  change to get  functions
-             consistent  - found  that the  return  values  of low level  line
-             functions where different to high level functions making the code
-             hard to read and dangerous. Also needed a consistent triple value
-             return (true false and error) so change  meABORT to -1 across the
-             board. changed the line flag  implementation  to be more flexible
-             and variable in size so UE has a smaller  memory usage and ME has
-             line flags  available.  Improved the AMark  setting and deleting.
-             Added a Protected  Line flag and vastly  improved the  narrowing.
+    [030512] Ipipe fix for SunOS.
+
+    [030512] Changedthe  line  flag  implementation  to be more  flexible  and
+             variable in size so UE has a smaller memory usage and ME has line
+             flags available.
+
+    [030512] Improvedthe AMark setting and deleting.
+
+    [030512] Added a Protected  Line flag and vastly  improved the  narrowing.
              Renamed most function in line.c to make them more readable.
 
     [030512] Big return value change to get functions  consistent - found that
