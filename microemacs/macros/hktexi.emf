@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Jon Green
 ;  Created       : Mon Jul 12 21:29:44 1999
-;  Last Modified : <000719.0012>
+;  Last Modified : <010228.1022>
 ;
 ;  Description   : Quick hilight for texinfo files. 
 ;
@@ -26,13 +26,7 @@ set-variable #l1 "abehikmtux"
 !endif
 
 define-macro fhook-texi
-    buffer-modes-init .fhook-texi.setup
-    !if &and &sin "h" .fhook-texi.setup &band .hilight.flags 0x02 
-        set-variable $buffer-hilight .hilight.texi
-    !endif
-    !if &sin "b" .fhook-texi.setup
-        buffer-abbrev-file "texi"
-    !endif
+    buffer-initialize
     ; execute user extensions if enabled
     !if &exist my-fhook-texi
         my-fhook-texi

@@ -1,11 +1,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;  Imakefile hook
 ;
-;  Last Modified : <991125.1029>
+;  Last Modified : <010228.0956>
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/imake" "hinTx"
-set-variable #l1 "aehikmntux"
+set-variable #l0 &reg "/history" "fhook/imake" "hinopTx"
+set-variable #l1 "aehikmnoptux"
 
 !if &and &sin "h" #l0 &band .hilight.flags 0x02 
     !if &not &exist .hilight.imake
@@ -30,52 +30,14 @@ set-variable #l1 "aehikmntux"
     hilight .hilight.imake 1  "\\$\\*"          .scheme.keyword   
     hilight .hilight.imake 1  "\\$<"            .scheme.keyword   
 !endif
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Bunch of macros we may need.
-;
-; comment line ie xxx -> /*xxx*/
-define-macro imake-comment-line
-    !while &gre &pdec @# 1 0
-        beginning-of-line
-        insert-string "/*"
-        end-of-line
-        insert-string "*/"
-        beginning-of-line
-        forward-line
-    !done
-!emacro
-;
-; uncoment line ie /*xxx*/ -> xxx
-define-macro imake-uncomment-line
-    ; The next line store magic state and enables magic
-    &set #l0 &bmod "magic" buffer-mode "magic"
-    !while &gre &pdec @# 1 0
-        search-forward "*/"
-        search-backward "/\\*"
-        forward-delete-char
-        forward-delete-char
-        search-forward "*/"
-        backward-delete-char
-        backward-delete-char
-        beginning-of-line
-        forward-line
-    !done
-    ; restore magic mode
-    #l0 buffer-mode "magic"
-!emacro
 
 define-macro fhook-imake
     ; if arg is 0 this is a new file so add template 
     !if &not @#
-        etfinsrt "imake" .fhook-imake.setup
+        etfinsrt "imake"
     !endif
     set-variable $buffer-mask "luh1"
-    buffer-modes-init .fhook-imake.setup
-    !if &and &sin "h" .fhook-imake.setup &band .hilight.flags 0x02 
-        set-variable $buffer-hilight .hilight.imake
-    !endif
-    buffer-bind-unbound-key imake-comment-line   "C-c C-c"
-    buffer-bind-unbound-key imake-uncomment-line "C-c C-d"
+    buffer-initialize
     ; execute user extensions if enabled
     !if &exist my-fhook-imake
         my-fhook-imake
@@ -83,8 +45,9 @@ define-macro fhook-imake
 !emacro
 set-variable .fhook-imake.setup #l0
 set-variable .fhook-imake.setup-mask #l1
+set-variable .fhook-imake.comment "|/*|*/|*|"
 
-ml-write "[Imakemake file hook loaded]"
+ml-write "[Imake file hook loaded]"
 
 ; load in user extensions if found
 !force execute-file "myimake"

@@ -1,16 +1,19 @@
-;       Binary file hook
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;  Binary file hook
 ;
-;   Last Modified : <991125.1028>
-;
-!if &not &exist .hilight.bin
-    set-variable .hilight.bin &pinc .hilight.next 1
-    set-variable .osd.binary-tool &pinc .osd.next 1
-!endif
+;  Last Modified : <010228.1410>
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; buffer-setup flags
+set-variable #l0 &reg "/history" "fhook/binary" "hop"
+set-variable #l1 "aehkmopu"
 
-!if &band .hilight.flags 0x02
-    0 hilight  .hilight.bin 0            $global-scheme
-    hilight .hilight.bin 0x400  0  9  .scheme.no2
-    hilight .hilight.bin 0x400 58 78  .scheme.no1
+!if &and &sin "h" #l0 &band .hilight.flags 0x02 
+    !if &not &exist .hilight.binary
+        set-variable .hilight.binary &pinc .hilight.next 1
+    !endif
+    0 hilight .hilight.binary 0         $global-scheme
+    hilight .hilight.binary 0x400  0  9 .scheme.no2
+    hilight .hilight.binary 0x400 58 78 .scheme.no1
 !endif
 
 define-macro binary-move-backward
@@ -71,22 +74,6 @@ define-macro binary-swap-section
     !endif
 !emacro
     
-osd .osd.binary-tool 0 "b"
-osd .osd.binary-tool 1 "" "&Swap section   tab"    f binary-swap-section
-osd .osd.binary-tool 2 "-"
-osd .osd.binary-tool 3 "" "Move &backward  A-up"   f binary-move-backward
-osd .osd.binary-tool 4 "" "Move &forward   A-down" f binary-move-forward
-; Add hook to load the OSD binary tools menu.
-0 define-macro osd-ohook-binary
-    osd 7 1 "Md" "Binary &Tools" .osd.binary-tool
-    osd 7 2 "-"
-!emacro
-; Add hook to remove the OSD binary tools menu.
-0 define-macro osd-chook-binary
-    osd 7 1  "D"
-    osd 7 2  "D"
-!emacro
-
 define-macro fhook-binary
     !if &not &bmod "binary"
         !if &seq $buffer-fname ""
@@ -107,17 +94,19 @@ define-macro fhook-binary
         -1 buffer-mode "edit"
         beginning-of-buffer
     !endif
-    !if &band .hilight.flags 0x02
-        set-variable $buffer-hilight .hilight.bin
-    !endif
-    buffer-bind-key binary-swap-section   "tab"
-    buffer-bind-key binary-move-backward  "A-up"
-    buffer-bind-key binary-move-forward   "A-down"
+    buffer-initialize
     ; execute user extensions if enabled
     !if &exist my-fhook-binary
         my-fhook-binary
     !endif
 !emacro
+set-variable .fhook-binary.setup #l0
+set-variable .fhook-binary.setup-mask #l1
+set-variable .fhook-binary.command-flag  "|thbio|th|thbo|thbo|"
+set-variable .fhook-binary.command-name  "|binary-swap-section||binary-move-backward|binary-move-forward|"
+set-variable .fhook-binary.command-nbind "|||||"
+set-variable .fhook-binary.command-kbind "|tab||A-up|A-down|"
+set-variable .fhook-binary.command-desc  "|&Swap section||Move &backward|Move &forward|"
 
 ml-write "[Binary file hook loaded]"
 

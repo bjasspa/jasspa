@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips & Jon Green
 ;  Created       : Sat Jul 18 15:11:54 1998
-;  Last Modified : <001002.1231>
+;  Last Modified : <010227.1530>
 ;
 ;  Description   : Contains buffer formating commands, namely:
 ;                  clean sort-lines-ignore-case tabs-to-spaces restyle-region
@@ -64,6 +64,18 @@ define-macro clean
     !endif
     screen-update
     ml-write "[Cleaned up buffer]"
+!emacro
+;
+; Insert a normal none c-mode/indent tab (still effected by tab mode)
+define-macro normal-tab
+    ; Remember we have set cmode
+    set-variable #l0 &bmod cmode
+    set-variable #l1 $buffer-indent
+    -1 buffer-mode "cmode"
+    set-variable $buffer-indent 0
+    tab
+    set-variable $buffer-indent #l1
+    &cond #l0 1 -1 buffer-mode "cmode"
 !emacro
 ;
 ; tabs-to-spaces - Convert all of the tabs to spaces.

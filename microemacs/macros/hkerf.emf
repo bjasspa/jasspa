@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; erf hook - This file is invoked when a MicroEmacs registry file is loaded.
 ;
-; Last Modified : <010119.1520>
+; Last Modified : <010228.1023>
 ; Copyright (c) 1999 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; buffer-setup flags
@@ -29,13 +29,7 @@ set-variable #l1 "adehikmtux"
 
 define-macro fhook-erf
     set-variable $buffer-mask "luh1"
-    buffer-modes-init .fhook-erf.setup
-    !if &and &sin "h" .fhook-erf.setup &band .hilight.flags 0x02 
-        set-variable $buffer-hilight .hilight.erf
-    !endif
-    !if &sin "d" #l0
-        set-variable $buffer-indent .hilight.erf
-    !endif
+    buffer-initialize
     ; execute user extensions if enabled
     !if &exist my-fhook-erf
         my-fhook-erf

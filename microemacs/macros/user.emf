@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Thu May 14 12:53:29 1998
-;  Last Modified : <010202.1541>
+;  Last Modified : <010221.0945>
 ;
 ;  Description
 ;
@@ -43,6 +43,9 @@ set-variable %scrollb-value "|0|0x13e|0x1be|0x13f|0x1bf|"
 0 exec-file "charset"
 ; Get a list of schemes
 0 exec-file "schemes"
+; Implemented Emulation modes
+set-variable %emulate-names "|<No Emulation>|MicroEmacs v3.8|NEdit v5|"
+set-variable %emulate-value "||me3_8|nedit|"
 
 set-variable .user-setup.name $MENAME
 set-variable .user-setup.path ""
@@ -220,6 +223,7 @@ set-variable .user-setup.path ""
         read-history #l0
     !endif
     set-variable %user-fnumbo "-"
+    user-setup-emulate
     user-setup-backups
     user-setup-keyb
     user-setup-lang
@@ -1186,6 +1190,31 @@ osd .osd.user-gener 380 "fh"  "                      "
 osd .osd.user-gener 390 "MtxmfH" 390 .scheme.osd-ebtt " Sho&w Modes " .osd.user-modes
 
 ; The Start-up menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+0 define-macro user-setup-emulate
+    set-variable #l0 "emulate"
+    !if @?
+        set-variable #l1 &lget %emulate-value @#
+        !if &seq #l1 ""
+            !force delete-registry &cat "/history/" #l0
+        !else
+            set-registry "/history" #l0 #l1
+        !endif
+    !else
+        set-variable #l1 &reg "/history" #l0 ""
+    !endif
+    set-variable #l1 &lget %emulate-names &lfind %emulate-value #l1
+    osd .osd.user-start 140 "MtxmsfHz" 6 .scheme.osd-entry 25 1 #l1 .osd.user-sub user-setup-emulatec
+!emacro
+
+0 define-macro user-setup-emulatec
+    -1 osd .osd.user-sub
+    osd .osd.user-sub 0 "bs" 27 0 0 0
+    set-variable #l0 0
+    !while &not &seq "" &set #l1 &lget %emulate-names &inc #l0 1
+        osd .osd.user-sub #l0 "" #l1 #l0 user-setup-emulate
+    !done
+!emacro
+
 osd .osd.user-start 0   "s" 55 18 -1 -1
 osd .osd.user-start 10  ""
 osd .osd.user-start 20  "c" "Start-up"
@@ -1195,7 +1224,7 @@ osd .osd.user-start 50  "EtRxHfh" 1 .scheme.osd-entry "##############" f user-se
 osd .osd.user-start 53  "hf" "   "
 osd .osd.user-start 57  "BfxH"  .scheme.osd-ebtt "Default &User" f user-set-default
 osd .osd.user-start 60  "Sfh" "         Setup &Path : " 70
-osd .osd.user-start 70  "EtRxHf" 2 .scheme.osd-entry "#######################" f user-set-path
+osd .osd.user-start 70  "EtRxHf" 2 .scheme.osd-entry "#########################" f user-set-path
 osd .osd.user-start 80  ""
 osd .osd.user-start 90  "Sfh" "         Setup &File : " 100
 osd .osd.user-start 100 "EtxHfh" 3 .scheme.osd-entry "##############" 4 user-set-entry
@@ -1204,7 +1233,7 @@ osd .osd.user-start 107 "Ctfx" 4 "^^NY^^" 13 user-set-checkbox
 osd .osd.user-start 110 "Sfh" "       C&ompany File : " 120
 osd .osd.user-start 120 "EtxHf" 5 .scheme.osd-entry "##############" 2 user-set-entry
 osd .osd.user-start 130 "Sfh" "            &Emulate : " 140
-osd .osd.user-start 140 "EtxHf" 6 .scheme.osd-entry "##############" 3 user-set-entry
+osd .osd.user-start 140 "MtxmsfH" 6 .scheme.osd-entry "" .osd.user-sub user-setup-emulate
 osd .osd.user-start 150 "Sfh" "    MS Shift region : "  160
 osd .osd.user-start 160 "Ctfx" 7 "^^NY^^" 12 user-set-checkbox
 osd .osd.user-start 500 ""

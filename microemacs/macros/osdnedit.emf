@@ -1,0 +1,44 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : $Author: jon $
+;  Created By    : Steven Phillips
+;  Created       : Wed Feb 21 09:26:58 2001
+;  Last Modified : <010222.0802>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 2001 JASSPA
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Make the main menus look like NEdits
+; File
+osd 1  10  ""   "&New        C-n"   f osd-1-new      ; Create a new document
+osd 1  20  ""   "&Open       C-o"   f osd-file-open  ; Find a new file
+osd 1  50  ""   "Find file"         f file-browser   ; file browser
+osd 1  55  ""   "FTP"               f ftp            ; ftp browser
+osd 1  60  ""   "&Close      C-w"   f osd-close
+osd 1  90  ""   "&Save       C-s"   f osd-save       ; Save the buffer
+osd 1  100 ""   "Save &As"          f osd-save-as    ; Save new file
+osd 1  140 ""   "&Print      C-p"   f print-buffer   ; Print
+osd 1  180 ""   "E&xit       C-q"   f save-buffers-exit-emacs
+; Edit
+osd 2  10  ""   "&Undo       C-z"   1 osd-undo       ; Undo the last command
+osd 2  40  ""   "&Set mark"         f set-mark       ; Set buffer mark
+osd 2  50  ""   "Cu&t        C-x"   f kill-region    ; Kill off the region
+osd 2  60  ""   "&Copy       C-c"   f copy-region    ; Copy the region
+osd 2  70  ""   "&Paste      C-v"   f yank           ; Paste text
+osd 2  72  ""   "Pa&ste Col  A-C-v" f yank-rectangle ; Paste text
+osd 2  73  ""   "Select &All C-/"   f select-all     ; Paste text
+; Search
+osd 3  10  ""  "&Find               C-f"   1 osd-search
+osd 3  12  ""  "F&ind Again         C-g"   1 osd-search
+osd 3  13  ""  "Fi&nd Incremental"         f isearch-forward
+osd 3  20  ""  "&Replace            C-r"   2 osd-search
+osd 3  40  ""  "Goto &Line Number   C-e"   f osd-goto-line
+osd 3  50  ""  "Goto &Matching (..)"       f goto-matching-fence
+osd 3  60  ""  "Mar&k               C-m"   f set-alpha-mark
+osd 3  70  ""  "G&oto Mark          C-t"   f goto-alpha-mark
+

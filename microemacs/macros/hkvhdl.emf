@@ -2,7 +2,7 @@
 ;
 ;  Author        : Jon Green
 ;  Created       : Thu Jul 24 18:56:17 1997
-;  Last Modified : <991125.1029>
+;  Last Modified : <010228.1023>
 ;
 ;  Description   : VHDL - a hardware simulation language. 
 ;
@@ -143,16 +143,10 @@ set-variable #l1 "aehikmntux"
 define-macro fhook-vhdl
     ; if arg is 0 this is a new file so add template 
     !if &not @#
-        etfinsrt "vhdl" .fhook-vhdl.setup
+        etfinsrt "vhdl"
     !endif
     set-variable $buffer-mask "luh1"
-    buffer-modes-init .fhook-vhdl.setup
-    !if &and &sin "h" .fhook-vhdl.setup &band .hilight.flags 0x02 
-        set-variable $buffer-hilight .hilight.vhdl
-    !endif
-    !if &sin "b" .fhook-vhdl.setup
-        buffer-abbrev-file "vhdl"
-    !endif
+    buffer-initialize
     ; execute user extensions if enabled
     !if &exist my-fhook-vhdl
         my-fhook-vhdl

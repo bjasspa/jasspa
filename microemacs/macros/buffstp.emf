@@ -2,13 +2,13 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : Thu Nov 23 21:19:31 2000
-;  Last Modified : <001203.1638>
+;  Last Modified : <010228.1208>
 ;
 ;  Description
 ;
 ;  Notes
 ;
-;     The following flags are used:
+;     The following flags are used in the .setup & .setup-mask variables:
 ;
 ;         a auto mode
 ;         b abbreviation
@@ -29,8 +29,28 @@
 ;         u undo
 ;         w wrap
 ;         x time mode
+;         > Special internal flag indicating that indentation is
+;           to be done by using cmode buffer mode (only add to .setup-mask).
 ;
-;    A 'A' means disable auto indent, a enables it.
+;    In .setup, a 'A' means disable auto indent, a enables it.
+;    In .setup-mask a lower case letter must be used.
+;
+;    For the buffer bindings, tool menu and help page the following list
+;    variable are required, one item for each component:
+;
+;         .command-flag   - A flag indicating the components use
+;         .command-name   - The command name
+;         .command-nbind  - The numeric argument for the buffer binding
+;         .command-kbind  - The key for the buffer binding
+;         .command-desc   - Brief description of the command
+
+;    The following flags are used for each component of .command-flag:
+;
+;         t Show in tool
+;         h show in help
+;         b binding
+;         o override any existing binding
+;         i ignore emulation key mappings
 ;
 ;  Copyright (c) 2000 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -39,7 +59,7 @@
     set-variable .osd.buffstp &pinc .osd.next 1
 !endif
 
-define-macro buffer-setup-option
+0 define-macro buffer-setup-option
     !if &les @# 0
         set-variable @# &abs @#
         set-variable #l0 &lget .buffer-setup.flags @#
@@ -65,7 +85,7 @@ define-macro buffer-setup-option
         !endif
     !endif
 !emacro
-define-macro buffer-setup-save
+0 define-macro buffer-setup-save
     !if &not &seq .buffer-setup.nsetup .buffer-setup.osetup
         set-registry "/history" &cat "fhook/" &rig $buffer-fhook 6 .buffer-setup.nsetup
         set-variable &ind &spr ".%s.setup" $buffer-fhook .buffer-setup.nsetup
@@ -90,8 +110,12 @@ define-macro buffer-setup
         !abort
     !endif
     set-variable .osetup &ind &spr ".%s.setup" $buffer-fhook
+    set-variable #l9 &ind &spr ".%s.name" $buffer-fhook
+    !if &seq #l9 "ERROR"
+        set-variable #l9 &cat &sup &mid $buffer-fhook 6 1 &rig $buffer-fhook 7
+    !endif
     -1 osd .osd.buffstp
-    osd .osd.buffstp 0 "batcdHs" 9 3 47 10 -1 -1 930 .scheme.osd-title &spr "%s Buffer Setup" &rig $buffer-fhook 6
+    osd .osd.buffstp 0 "batcdHs" 9 3 47 10 -1 -1 930 .scheme.osd-title &cat #l9 " Buffer Setup"
     osd .osd.buffstp 5 ""
     set-variable #l0 1
     set-variable #l1 0
@@ -154,4 +178,184 @@ set-variable .buffer-setup.blank  "|0|0|0|1|0|0|0|1|1|0|0|0|0|0|0|0|0|0|1|"
 set-variable .buffer-setup.labels "|Create Help &Page|Create T&ools Menu|Use Author Mode|Insert &New Template|Setup &Hilighting|Setup Auto In&dent|Setup Auto Spe&ll|Setup &Folding|Add A&bbreviations|Search Modes||Buffer Modes||||||||x|"
 set-variable .buffer-setup.prefix "||||||||||  &Exact|  &Magic|   &Auto| Bac&kup| &Indent|&Justify|    &Tab|   Time|   &Undo|   &Wrap|"
 set-variable .buffer-setup.modes  "||||||||||exact|magic|auto|backup|indent|justify|tab|time|undo|wrap|"
+
+; buffer-help-add-item <command-name> <narg> <desc>
+; adds the item to the help page (.osd.tmp) using and incrementing
+; the osd item counter in #p9
+0 define-macro buffer-help-add-item
+    set-variable #l1 @1
+    set-variable #l2 @2
+    set-variable #l3 @3
+    !if &seq "" #l1
+        set-variable #l8 ""
+    !else
+        !if &seq &set #l8 &kbin #l2 #l1 ""
+            osd .osd.tmp &inc #p9 1 "" &spr "    %s%s%s  " #l2 &con &seq #l2 "" "" " " #l1
+            set-variable #l8 "          - "
+        !else
+            set-variable #l6 &len #l8
+            var-str-sub #l8 "&" "\\&"
+            set-variable #l8 &spr "  %s%n - " #l8 &sub 7 #l6 " "
+        !endif
+    !endif
+    !if &not &seq "" #l3
+        var-str-sub #l3 "\\\\" "\bY"
+        var-str-sub #l3 "\\&" "\bZ"
+        var-str-sub #l3 "&" ""
+        var-str-sub #l3 "\bY" "\\\\"
+        var-str-sub #l3 "\bZ" "\\&"
+        set-variable #l8 &cat #l8 #l3
+    !endif
+    osd .osd.tmp &inc #p9 1 "" &spr "  %s  " #l8
+!emacro
+
+define-macro buffer-help
+    set-variable #l0 &ind &spr ".%s.setup" $buffer-fhook
+    set-variable #l1 &ind &spr ".%s.command-flag"  $buffer-fhook
+    set-variable #l2 &ind &spr ".%s.command-nbind" $buffer-fhook
+    set-variable #l3 &ind &spr ".%s.command-name"  $buffer-fhook
+    set-variable #l4 &ind &spr ".%s.command-desc"  $buffer-fhook
+    !if &not &sin "p" #l0
+        ml-write "[Help page disabled]"
+        !abort
+    !endif
+    set-variable #l9 &ind &spr ".%s.name" $buffer-fhook
+    !if &seq #l9 "ERROR"
+        set-variable #l9 &cat &sup &mid $buffer-fhook 6 1 &rig $buffer-fhook 7
+    !endif
+    -1 osd .osd.tmp
+    osd .osd.tmp 0  "batcdH" 9 3 1001 .scheme.osd-title &cat #l9 " Mode Help"
+    osd .osd.tmp 1  "" 
+    set-variable #l9 10
+    !if &sin "p" #l0
+        buffer-help-add-item "buffer-help" "" "View This Help Page"
+        buffer-help-add-item "" "" ""
+    !endif
+    set-variable #l7 0
+    !while &not &seq "" &set #l5 &lget #l1 &inc #l7 1
+        !if &sin "h" #l5
+            buffer-help-add-item &lget #l3 #l7 &lget #l2 #l7 &lget #l4 #l7
+        !endif
+    !done
+    !if &not &seq &lget &ind &spr ".%s.comment" $buffer-fhook 1 ""
+        buffer-help-add-item "" "" ""
+        buffer-help-add-item "comment-line" "" "Comment Out Line"
+        buffer-help-add-item "uncomment-line" "" "&Delete Comment"
+        buffer-help-add-item "comment-to-end-of-line" "" "Comment to &End of Line"
+    !endif
+    !if &sin "f" #l0
+        buffer-help-add-item "" "" ""
+        buffer-help-add-item "fold-current" "" "Open/Close Current Fold"
+        buffer-help-add-item "fold-all" "" "Open/Close All Folds"
+    !endif
+    !if &sin "s" #l0
+        buffer-help-add-item "" "" ""
+        buffer-help-add-item "auto-spell" "0" "Enable/Disable Auto-Spell"
+        buffer-help-add-item "auto-spell-buffer" "" "Auto-Spell Buffer"
+        buffer-help-add-item "auto-spell-reset" "" "Reset Auto-Spell"
+    !endif
+    !if &exi &ind &spr ".%s.tags" $buffer-fhook
+        buffer-help-add-item "" "" ""
+        buffer-help-add-item "" "" "Tag generation is available under the Tools menu"
+    !endif
+    osd .osd.tmp 1000 "" 
+    osd .osd.tmp 1001 "BcfH" .scheme.osd-ebtt "  &OK  " f void
+    .osd.tmp osd
+!emacro
+
+; buffer-tool-add-item <command-name> <narg> <desc> <desc-len>
+; adds the item to the tool menu (.osd.tmp) using and incrementing
+; the osd item counter in #p9
+0 define-macro buffer-tool-add-item
+    set-variable #l1 @1
+    set-variable #l2 @2
+    set-variable #l3 @3
+    !if &seq "" #l1
+        osd .osd.tmp &inc #p9 1 "-"
+    !else
+        !if &seq "" #l3
+            set-variable #l3 #l1
+        !endif
+        !if &seq &set #l7 #l2 ""
+            set-variable #l7 "f"
+        !endif
+        !if &sin " " #l1
+            osd .osd.tmp &inc #p9 1 "i" #l3 #l7 #l1
+        !else
+            set-variable #l5 #l3
+            var-str-sub #l5 "&" ""
+            set-variable #l5 &spr "%s%n" #l3 &sub @4 &len #l5 " "
+            set-variable #l6 &kbin #l2 #l1
+            !if &not &seq #l6 ""
+                var-str-sub #l6 "&" "\\&"
+                set-variable #l5 &cat #l5 #l6
+            !endif
+            osd .osd.tmp &inc #p9 1 "" #l5 #l7 #l1
+        !endif
+    !endif
+!emacro
+
+0 define-macro buffer-tool
+    set-variable #l0 &ind &spr ".%s.setup" $buffer-fhook
+    set-variable #l5 &ind &spr ".%s.comment" $buffer-fhook
+    set-variable #l1 &ind &spr ".%s.command-flag"  $buffer-fhook
+    set-variable #l2 &ind &spr ".%s.command-nbind" $buffer-fhook
+    set-variable #l3 &ind &spr ".%s.command-name"  $buffer-fhook
+    set-variable #l4 &ind &spr ".%s.command-desc"  $buffer-fhook
+    -1 osd .osd.tmp
+    osd .osd.tmp 0  "b"
+    set-variable #l7 0
+    !if &sin "s" #l0
+        set-variable #l8 25
+    !elif &sin "f" #l0
+        set-variable #l8 23
+    !elif &not &seq &lget #l5 1 ""
+        set-variable #l8 22
+    !elif &sin "p" #l0
+        set-variable #l8 14
+    !else
+        set-variable #l8 0
+    !endif
+    !while &not &seq "" &set #l6 &lget #l1 &inc #l7 1
+        !if &sin "t" #l6
+            set-variable #l6 &lget #l4 #l7
+            var-str-sub #l6 "&" ""
+            !if &gre &set #l6 &len #l6 #l8
+                set-variable #l8 #l6
+            !endif
+        !endif
+    !done
+    set-variable #l8 &add #l8 1
+    set-variable #l9 1
+    !if &sin "p" #l0
+        buffer-tool-add-item "buffer-help" "" "View &Help Page" #l8
+    !endif
+    set-variable #l7 0
+    !while &not &seq "" &set #l6 &lget #l1 &inc #l7 1
+        !if &sin "t" #l6
+            buffer-tool-add-item &lget #l3 #l7 &lget #l2 #l7 &lget #l4 #l7 #l8
+        !endif
+    !done
+    !if &not &seq &lget #l5 1 ""
+        buffer-tool-add-item "" "" "" #l8
+        buffer-tool-add-item "comment-line" "" "Comment Out Line" #l8
+        buffer-tool-add-item "uncomment-line" "" "&Delete Comment" #l8
+        buffer-tool-add-item "comment-to-end-of-line" "" "Comment to &End of Line" #l8
+    !endif
+    !if &sin "f" #l0
+        buffer-tool-add-item "" "" "" #l8
+        buffer-tool-add-item "fold-current" "" "Open/Close Current Fold" #l8
+        buffer-tool-add-item "fold-all" "" "Open/Close All Folds" #l8
+    !endif
+    !if &sin "s" #l0
+        buffer-tool-add-item "" "" "" #l8
+        buffer-tool-add-item "auto-spell" "0" "Enable/Disable Auto-Spell" #l8
+        buffer-tool-add-item "auto-spell-buffer" "" "Auto-Spell Buffer" #l8
+        buffer-tool-add-item "auto-spell-reset" "" "Reset Auto-Spell" #l8
+    !endif
+    !if &exi &ind &spr ".%s.tags" $buffer-fhook
+        buffer-tool-add-item "" "" "" #l8
+        buffer-tool-add-item "generate-tags-file" "0" "Generate &Tags File" #l8
+    !endif
+!emacro
 

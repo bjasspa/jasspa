@@ -1,0 +1,7 @@
+#i "#include <\p>\r\P"
+#d "#define "
+if "if(\p)\r{\r\r}\r\P"
+ef "else if(\p)\r{\r\r}\r\P"
+el "else\r{\r\p\r}\r\P"
+wh "while(\p)\r{\r\r}\r\P"
+sw "switch(\p)\r{\rcase :\rdefault:\r}\r\P"

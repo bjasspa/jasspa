@@ -1,0 +1,97 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : $Author: jon $
+;  Created By    : Steven Phillips
+;  Created       : Mon Feb 26 08:23:33 2001
+;  Last Modified : <010226.1039>
+;
+;  Description   : General comment adding and removing routines
+;
+;  Notes
+;
+;      To use, the current buffer fhook command variable .comment must be set
+;      to a list giving the following:
+;           "|<Comment start>|<Comment end>|<comment pad>|"
+;      e.g. the following are C and emf comments
+;           set-variable .fhook-c.comment "|/*|*/|*|"
+;           set-variable .fhook-emf.comment "|;||;|"
+;
+;  History
+;
+;  Copyright (c) 2001 Parametric Technology Corporation.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; 
+; comment line ie xxx -> <comment start>xxx
+;              or xxx -> <comment start>xxx<comment end>
+define-macro comment-line
+    set-variable #l0 &ind &spr ".%s.comment"  $buffer-fhook
+    !if &seq &set #l1 &lget #l0 1 ""
+        ml-write "[Comments not setup for this buffer]"
+        !abort
+    !endif
+    set-variable  #l2 &lget #l0 2
+    beginning-of-line
+    !while &gre &pdec @# 1 0
+        insert-string #l1
+        !if &not &seq #l2 ""
+            end-of-line
+            insert-string #l2
+        !endif
+        beginning-of-line
+        forward-line
+    !done
+!emacro
+;
+; uncoment line ie <comment start>xxx -> xxx
+;               or <comment start>xxx<comment end> -> xxx
+define-macro uncomment-line
+    set-variable #l0 &ind &spr ".%s.comment"  $buffer-fhook
+    !if &seq &set #l1 &lget #l0 1 ""
+        ml-write "[Comments not setup for this buffer]"
+        !abort
+    !endif
+    set-variable #l3 &bmod "magic"
+    -1 buffer-mode "magic"
+    !if &seq &set #l2 &lget #l0 2 ""
+        beginning-of-line
+        !while &gre &pdec @# 1 0
+            !force -1 search-forward #l1
+            !if $status
+                &len #l1 backward-delete-char
+                -1 yank
+            !endif
+            forward-line
+            beginning-of-line
+        !done
+    !else
+        !while &gre &pdec @# 1 0
+            search-forward #l2
+            search-backward #l1
+            &len #l1 forward-delete-char
+            -1 yank
+            search-forward #l2
+            &len #l2 backward-delete-char
+            -1 yank
+            beginning-of-line
+            forward-line
+        !done
+    !endif
+    ; restore magic mode
+    &cond #l3 1 -1 buffer-mode "magic"
+!emacro
+;
+; fill from the current column to fill-col with <comment pad> and a trailing <comment end>
+define-macro comment-to-end-of-line
+    set-variable #l0 &ind &spr ".%s.comment"  $buffer-fhook
+    !if &seq  &lget #l0 1 ""
+        ml-write "[Comments not setup for this buffer]"
+        !abort
+    !endif
+    !if &not &len &set #l1 &lget #l0 3
+        set-variable #l1 " "
+    !endif
+    set-variable #l2 &lget #l0 2
+    &div &sub &sub $fill-col $window-acol &len #l2 &len #l1 insert-string #l1
+    insert-string #l2
+!emacro
+

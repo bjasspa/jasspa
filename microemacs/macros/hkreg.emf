@@ -1,12 +1,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; *registry* hook - This file is invoked when MicroEmacs's registry is displayed
 ;
-; Last Modified : <000523.0007>
+; Last Modified : <010228.1252>
 ; Copyright (c) 1999 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/reg" "hmp"
-set-variable #l1 "aehkp"
+set-variable #l0 &reg "/history" "fhook/reg" "hmop"
+set-variable #l1 "aehkop"
 
 !if &and &sin "h" #l0 &band .hilight.flags 0x02 
     !if &not &exist .hilight.reg
@@ -74,7 +74,7 @@ set-variable #l1 "aehkp"
     set-variable $window-y-scroll #l3
 !emacro
 
-0 define-macro reg-add-node
+0 define-macro reg-insert-node
     beginning-of-line
     !if &and &gre $buffer-line 1 &les &len @wl 4
         ml-write "[Invalid line]"
@@ -93,7 +93,7 @@ set-variable #l1 "aehkp"
     set-variable $window-y-scroll #l3
 !emacro
 
-0 define-macro reg-del-node
+0 define-macro reg-delete-node
     beginning-of-line
     !if &les &len @wl 4
         ml-write "[Invalid line]"
@@ -158,54 +158,28 @@ set-variable #l1 "aehkp"
     list-registry
 !emacro
 
-!if &sin "p" #l0
-    !if &not &exist .osd.reg-help
-        set-variable .osd.reg-help &pinc .osd.next 1
-    !endif
-    osd .osd.reg-help 0  "batcdH" 9 3 99 .scheme.osd-title "Register Mode Help"
-    osd .osd.reg-help 3  "" 
-    osd .osd.reg-help 4  ""  "  esc h     - View this help page"
-    osd .osd.reg-help 5  "" 
-    osd .osd.reg-help 7  ""  "  space     - Toggle tree visibility state"
-    osd .osd.reg-help 8  ""  "  return    - Set the value of the current node "
-    osd .osd.reg-help 9  ""  "  c         - Copy a node"
-    osd .osd.reg-help 10 ""  "  i, insert - Add a new node"
-    osd .osd.reg-help 11 ""  "  d, delete - Delete a node"
-    osd .osd.reg-help 12 ""  "  m         - Move a node"
-    osd .osd.reg-help 13 "" 
-    osd .osd.reg-help 99 "BcfH" .scheme.osd-ebtt "  &OK  " f void 
-!endif
-
 define-macro fhook-reg
     set-variable $buffer-mask "luh1"
-    buffer-modes-init .fhook-reg.setup
-    !if &and &sin "h" .fhook-reg.setup &band .hilight.flags 0x02 
-        set-variable $buffer-hilight .hilight.reg
-    !endif
-    !if &sin "p" .fhook-reg.setup 
-        .osd.reg-help buffer-bind-key osd "esc h"
-    !endif
+    buffer-initialize
     set-variable :mouse-pick-1 void
     set-variable :mouse-drop-1 reg-toggle-hidden
-    buffer-bind-key reg-toggle-hidden "space"
     set-variable :mouse-pick-3 void
     set-variable :mouse-drop-3 reg-set-node
-    buffer-bind-key reg-set-node  "return"
-    buffer-bind-key reg-copy-node "c"
-    buffer-bind-key reg-del-node  "delete"
-    buffer-bind-key reg-del-node  "d"
-    buffer-bind-key reg-add-node  "insert"
-    buffer-bind-key reg-add-node  "i"
-    buffer-bind-key reg-move-node "m"
     ; execute user extensions if enabled
     !if &exist my-fhook-reg
         my-fhook-reg
     !endif
 !emacro
+set-variable .fhook-reg.name "ME Registry"
 set-variable .fhook-reg.setup #l0
 set-variable .fhook-reg.setup-mask #l1
+set-variable .fhook-reg.command-flag  "|thbio|thbio|thbio|thbio|thbio|bio|thbio|bio|"
+set-variable .fhook-reg.command-name  "|reg-toggle-hidden|reg-set-node|reg-copy-node|reg-move-node|reg-delete-node|reg-delete-node|reg-insert-node|reg-insert-node|"
+set-variable .fhook-reg.command-nbind "|||||||||"
+set-variable .fhook-reg.command-kbind "|space|return|c|m|d|delete|i|insert|"
+set-variable .fhook-reg.command-desc  "|&Toggle Tree Visibility|&Set Value of Current Node|&Copy Current Node|&Move Current Node|&Delete Current Node||&Insert New Node||"
 
-ml-write "[Registry file hook loaded]"
+ml-write "[ME Registry file hook loaded]"
 
 ; load in user extensions if found
 !force execute-file "myreg"

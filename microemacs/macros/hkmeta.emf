@@ -3,7 +3,7 @@
 ;
 ;       Created by Pedro Gomes 99-06-08
 ;
-;   Last Modified : <991125.1029>
+;   Last Modified : <010228.1019>
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; buffer-setup flags
 set-variable #l0 &reg "/history" "fhook/meta" "hix"
@@ -136,18 +136,13 @@ set-variable #l1 "aehikmtux"
 
 define-macro fhook-meta
     set-variable $buffer-mask "luh1"
-    buffer-modes-init .fhook-meta.setup
-    !if &and &sin "h" .fhook-meta.setup &band .hilight.flags 0x02 
-        set-variable $buffer-hilight .hilight.meta
-    !endif
-    !if &band .hilight.flags 0x02
-        set-variable $buffer-hilight .hilight.meta
-    !endif
+    buffer-initialize
     ; execute user extensions if enabled
     !if &exist my-fhook-meta
         my-fhook-meta
     !endif
 !emacro
+set-variable .fhook-meta.name "MetaPost/Font"
 set-variable .fhook-meta.setup #l0
 set-variable .fhook-meta.setup-mask #l1
 

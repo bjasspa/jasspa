@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;       VRML mode hook
 ;
-;   Last Modified : <010119.1520>
+;   Last Modified : <010228.1023>
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; buffer-setup flags
 set-variable #l0 &reg "/history" "fhook/vrml" "dhinx"
@@ -138,14 +138,7 @@ set-variable #l1 "adehikmntux"
 !endif
 define-macro fhook-vrml
     set-variable $buffer-mask "luh1"
-    buffer-modes-init .fhook-vrml.setup
-    !if &and &sin "h" .fhook-vrml.setup &band .hilight.flags 0x02 
-        set-variable $buffer-hilight .hilight.vrml
-    !endif
-    !if &sin "d" .fhook-vrml.setup
-        set-variable $buffer-indent  .hilight.vrml
-    !endif
-    buffer-bind-unbound-key restyle-region "A-C-tab"
+    buffer-initialize
     ; execute user extensions if enabled
     !if &exist my-fhook-vrml
         my-fhook-vrml

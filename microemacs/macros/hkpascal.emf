@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Pascal mode hook
 ;
-; Last Modified : <991125.1029>
+; Last Modified : <010228.1023>
 ; Copyright (c) 2000 JASSPA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; buffer-setup flags
@@ -91,16 +91,10 @@ set-variable #l1 "abehikmntux"
 define-macro fhook-pascal
     ; if arg is 0 this is a new file so add template
     !if &not @#
-        etfinsrt "pascal" .fhook-pascal.setup
+        etfinsrt "pascal"
     !endif
     set-variable $buffer-mask "luh1"
-    buffer-modes-init .fhook-pascal.setup
-    !if &and &sin "h" .fhook-pascal.setup &band .hilight.flags 0x02 
-        set-variable $buffer-hilight .hilight.pascal
-    !endif
-    !if &sin "b" .fhook-pascal.setup
-        buffer-abbrev-file "pascal"
-    !endif
+    buffer-initialize
     ; execute user extensions if enabled
     !if &exist my-fhook-pascal
         my-fhook-pascal

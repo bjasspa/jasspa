@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Jon Green
 ;  Created       : Fri Oct 22 16:44:08 1999
-;  Last Modified : <010119.1518>
+;  Last Modified : <010228.0956>
 ;
 ;  Description   : OMG IDL Syntax hilighting.
 ;
@@ -13,8 +13,8 @@
 ;  Copyright (c) 1999 JASSPA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; buffer-setup flags
-set-variable #l0 &reg "/history" "fhook/idl" "dfhnx"
-set-variable #l1 "adefhikmntux"
+set-variable #l0 &reg "/history" "fhook/idl" "dfhnopx"
+set-variable #l1 "adefhikmnoptux>"
 
 !if &and &sin "h" #l0 &band .hilight.flags 0x02 
     !if &not &exist .hilight.idl
@@ -90,73 +90,17 @@ set-variable #l1 "adefhikmntux"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Bunch of idl macros we may need.
 ;
-; comment line ie xxx -> //xxx
-;
-define-macro idl-comment-line
-    !while &gre &pdec @# 1 0
-        beginning-of-line
-        insert-string "//"
-        beginning-of-line
-        forward-line
-    !done
-!emacro
-;
-; uncoment line ie //xxx -> xxx
-;
-define-macro idl-uncomment-line
-    beginning-of-line
-    !while &gre &pdec @# 1 0
-        search-forward "//"
-        backward-delete-char
-        backward-delete-char
-        beginning-of-line
-        forward-line
-    !done
-!emacro
-;
-; fill from the current column to fill-col with '*'
-;
-define-macro idl-comm-to-end
-    &sub $fill-col $window-acol insert-string "*"
-!emacro
-;
 ; setup fuctions to auto-load from cmacros & cbox
-;
-define-macro-file cmacros c-insert-tab c-slashify c-deslashify c-start-comment c-hash-eval c-hash-set-define c-hash-unset-define c-hash-del
+define-macro-file cmacros c-start-comment
 define-macro-file cbox c-box
-;
-; Set up the variables for 'idl'
-set-variable $c-contcomm " * "
 
 define-macro fhook-idl
     ; if arg is 0 this is a new file so add template
     !if &not @#
-        etfinsrt "idl" .fhook-idl.setup
+        etfinsrt "idl"
     !endif
     set-variable $buffer-mask "luh1"
-    buffer-modes-init .fhook-idl.setup
-    !if &and &sin "h" .fhook-idl.setup &band .hilight.flags 0x02 
-        set-variable $buffer-hilight .hilight.idl
-    !endif
-    !if &sin "d" .fhook-idl.setup
-        1 buffer-mode "cmode"
-    !endif
-    !if &sin "b" .fhook-idl.setup
-        buffer-abbrev-file "idl"
-    !endif
-    fold-init .fhook-idl.setup
-    ; Bind macros
-    !if &sin "p" .fhook-idl.setup 
-        .osd.idl-help buffer-bind-key osd  "esc h"
-    !endif
-    buffer-bind-unbound-key c-start-comment    "esc C-c"
-    buffer-bind-unbound-key idl-comment-line   "C-c C-c"
-    buffer-bind-unbound-key idl-uncomment-line "C-c C-d"
-    buffer-bind-unbound-key idl-comm-to-end    "C-c C-e"
-    buffer-bind-key c-insert-tab               "A-tab"
-    buffer-bind-unbound-key restyle-region     "A-C-i"
-    buffer-bind-key c-box                      "esc q"
-    buffer-bind-key c-box                      "esc o"
+    buffer-initialize
     ; execute user extensions if enabled
     !if &exist my-fhook-idl
         my-fhook-idl
@@ -164,6 +108,12 @@ define-macro fhook-idl
 !emacro
 set-variable .fhook-idl.setup #l0
 set-variable .fhook-idl.setup-mask #l1
+set-variable .fhook-idl.comment "|//||*|"
+set-variable .fhook-idl.command-flag  "|thb|thb|thbo|bo|"
+set-variable .fhook-idl.command-name  "|normal-tab|c-start-comment|c-box|c-box|"
+set-variable .fhook-idl.command-nbind "|||||"
+set-variable .fhook-idl.command-kbind "|A-tab|esc C-c|esc q|esc o|"
+set-variable .fhook-idl.command-desc  "|&Insert tab|Start co&mment|Restyle c&omment||"
 
 set-variable .fhook-idl.fold-open  "^{"
 set-variable .fhook-idl.fold-close "^}"

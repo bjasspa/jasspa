@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Jon Green
 ;  Created       : Thu Sep 10 12:41:38 1998
-;  Last Modified : <000719.0012>
+;  Last Modified : <010228.1023>
 ;
 ;  Description
 ;            Hilighting for ISO 7498 ASN.1. 
@@ -16,14 +16,16 @@
 ;  Copyright (c) 1998 Jasspa.
 ;  This template exists in the public domain.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; buffer-setup flags - note the indentation is not very good so don't enable by default
+set-variable #l0 &reg "/history" "fhook/asn1" "bhinx"
+set-variable #l1 "aebdhikmntux"
+
 !if &not &exist .hilight.asn1
     set-variable .hilight.asn1  &pinc .hilight.next 1
     set-variable .hilight.asn1C &pinc .hilight.next 1
 !endif
-!if &band .hilight.flags 0x02
-    ;
+!if &and &sin "h" #l0 &band .hilight.flags 0x02 
     ; Hilight ASN.1 Mode
-    ; 
     0 hilight  .hilight.asn1  0                   $global-scheme
     hilight .hilight.asn1  0x80 "--" .hilight.asn1C .scheme.comment
     hilight .hilight.asn1  1 "::="             .scheme.operator
@@ -84,32 +86,28 @@
     hilight .hilight.asn1C 0x80 "--"   .hilight.asn1 .scheme.comment
     hilight .hilight.asn1C 0x80 "\n"   .hilight.asn1 .scheme.comment
 !endif
-;
-0 indent   .hilight.asn1 0 50
-indent  .hilight.asn1 N "BEGIN" 4
-indent  .hilight.asn1 O "END" -4
-indent  .hilight.asn1 n "{" 4
-indent  .hilight.asn1 o "}" -4
-;
+!if &sin "d" #l0
+    ; This does not work very well so we do not enable it by default.
+    ; This is becuse of the syntax of the language on a ::=
+    0 indent   .hilight.asn1 0 50
+    indent  .hilight.asn1 N "BEGIN" 4
+    indent  .hilight.asn1 O "END" -4
+    indent  .hilight.asn1 n "{" 4
+    indent  .hilight.asn1 o "}" -4
+!endif
 define-macro fhook-asn1
     ; if arg is 0 this is a new file so add template 
     !if &not @#
         etfinsrt "asn1"
     !endif
-    1 buffer-mode "time"
-    buffer-abbrev-file "asn1"
-    ; Set up the hilight mode
-    !if &band .hilight.flags 0x02
-        set-variable $buffer-hilight .hilight.asn1
-    !endif
-    ; This does not work very well so we do not enable it.
-    ; This is becuse of the syntax of the language on a ::=
-    ;    set-variable $buffer-indent  .hilight.asn1
+    buffer-initialize
     ; execute user extensions if enabled
     !if &exist my-fhook-asn1
         my-fhook-asn1
     !endif
 !emacro
+set-variable .fhook-asn1.setup #l0
+set-variable .fhook-asn1.setup-mask #l1
 ;
 ml-write "[ANS.1 file hook loaded]"
 ; load in user extensions if found

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Pedro Miguel Gomes
 ;  Created       : Mon March 30 19:41:00 1999
-;  Last Modified : <000719.0012>
+;  Last Modified : <010228.1023>
 ;
 ;  Description   : COBOL-85 Hook
 ;
@@ -224,16 +224,10 @@ set-variable #l1 "aebhikmntux"
 define-macro fhook-cobol
     ; if arg is 0 this is a new file so add template
     !if &not @#
-        etfinsrt "cobol" .fhook-cobol.setup
+        etfinsrt "cobol"
     !endif
     set-variable $buffer-mask "luh1"
-    buffer-modes-init .fhook-cobol.setup
-    !if &and &sin "h" .fhook-cobol.setup &band .hilight.flags 0x02 
-        set-variable $buffer-hilight .hilight.cobol
-    !endif
-    !if &sin "b" .fhook-cobol.setup
-        buffer-abbrev-file "cobol"
-    !endif
+    buffer-initialize
     ; execute user extensions if enabled
     !if &exist my-fhook-cobol
         my-fhook-cobol
@@ -241,6 +235,7 @@ define-macro fhook-cobol
 !emacro
 set-variable .fhook-cobol.setup #l0
 set-variable .fhook-cobol.setup-mask #l1
+set-variable .fhook-cobol.comment "|*||*|"
 
 ml-write "[Cobol-85 file hook loaded]"
 

@@ -3,7 +3,7 @@
 ;  Author        : $Author: jon $
 ;  Created By    : Steven Phillips
 ;  Created       : Fri Nov 24 00:09:57 2000
-;  Last Modified : <010119.1519>
+;  Last Modified : <010228.0943>
 ;
 ;  Description
 ;
@@ -17,8 +17,8 @@
 define-macro-file spellaut auto-spell auto-spell-buffer auto-spell-reset
 define-macro-file fold fold-current fold-all
 
-define-macro buffer-modes-init
-    set-variable #l1 @1
+0 define-macro buffer-initialize-modes
+    set-variable #l1 &ind &spr ".%s.setup" $buffer-fhook
     ; setup buffer modes
     !if &sin "e" #l1
         1 buffer-mode "exact"
@@ -32,6 +32,11 @@ define-macro buffer-modes-init
     !endif
     !if &sin "d" #l1
         ; if auto-indent enabled don't enable indent mode
+        !if &sin ">" &ind &spr ".%s.setup-mask" $buffer-fhook
+            1 buffer-mode "cmode"
+        !else
+            set-variable $buffer-indent &ind &cat ".hilight." &rig $buffer-fhook 6
+        !endif
     !elif &sin "i" #l1
         1 buffer-mode "indent"
     !elif &sin "I" #l1
@@ -74,37 +79,77 @@ define-macro buffer-modes-init
     !endif
 !emacro
 
-; setup the auto-spell
-0 define-macro auto-spell-init
-    !force set-variable #l0 @1
-    !if $status
-        !if &not &sin "s" #l0
-            ; auto-spell has been disabled - do nothing 
+; setup buffer bindings
+; Create a buffer binding
+;     buffer-bind-create <flag> <kbind> <narg> <command>
+0 define-macro buffer-bind-create
+    set-variable #l1 @1
+    set-variable #l2 @2
+    !if &not &sin "i" #l1
+        !if &exi .buffer-bind-key.map-from
+            !if &not &set #l0 &lfind .buffer-bind-key.map-from #l2
+                !return
+            !elif &seq &set #l2 &lget .buffer-bind-key.map-to #l0 ""
+                !return
+            !endif
+        !endif
+    !endif
+    !if &not &sin "o" #l1
+        !if &not &seq &cbind #l2 "ERROR"
             !return
         !endif
     !endif
-    ; dont do anything if the current language is default
-    !if &not &seq %language "Default"
-        0 buffer-bind-unbound-key auto-spell      "f5"
-        buffer-bind-unbound-key auto-spell-buffer "S-f5"
-        buffer-bind-unbound-key auto-spell-reset  "f6"
-        !if &reg "/history" "spell/autospell" "0"
-            1 auto-spell
-        !endif
+    set-variable #l3 @3
+    set-variable #l4 @4
+    !if &seq #l3 ""
+        buffer-bind-key #l4 #l2
+    !else
+        #l3 buffer-bind-key #l4 #l2
     !endif
 !emacro
 
-; setup the folding functions.
-define-macro fold-init
-    !force set-variable #l0 @1
-    !if $status
-        !if &not &sin "f" #l0
-            ; folding has been disabled - do nothing 
-            !return
+0 define-macro buffer-initialize
+    set-variable #l0 &ind &spr ".%s.setup" $buffer-fhook
+    set-variable #l1 &ind &spr ".%s.command-flag"  $buffer-fhook
+    set-variable #l2 &ind &spr ".%s.command-kbind" $buffer-fhook
+    set-variable #l3 &ind &spr ".%s.command-nbind" $buffer-fhook
+    set-variable #l4 &ind &spr ".%s.command-name"  $buffer-fhook
+    buffer-initialize-modes
+    !if &and &sin "h" #l0 &band .hilight.flags 0x02 
+        set-variable $buffer-hilight &ind &cat ".hilight." &rig $buffer-fhook 6
+    !endif
+    !if &sin "b" .fhook-emf.setup
+        buffer-abbrev-file &rig $buffer-fhook 6
+    !endif
+    set-variable #l6 0
+    !while &not &seq "" &set #l5 &lget #l1 &inc #l6 1
+        !if &sin "b" #l5
+            !if &not &sin "H" #l5
+                !jump 2
+            !elif &and &sin "h" #l0 &band .hilight.flags 0x02
+                buffer-bind-create #l5 &lget #l2 #l6 &lget #l3 #l6 &lget #l4 #l6
+            !endif
+        !endif
+    !done
+    set-variable #l5 &ind &spr ".%s.comment" $buffer-fhook
+    !if &not &seq &lget #l5 1 ""
+        buffer-bind-create "b" "C-c C-c" "" comment-line
+        buffer-bind-create "b" "C-c C-d" "" uncomment-line
+        buffer-bind-create "b" "C-c C-e" "" comment-to-end-of-line
+    !endif
+    !if &sin "f" #l0
+        buffer-bind-create "b" "f2" "" fold-current 
+        buffer-bind-create "b" "f3" "" fold-all 
+    !endif
+    !if &sin "s" #l0
+        !if &not &seq %language "Default"
+            buffer-bind-create "b" "f5"   0  auto-spell
+            buffer-bind-create "b" "S-f5" "" auto-spell-buffer 
+            buffer-bind-create "b" "f6"   "" auto-spell-reset 
+            !if &reg "/history" "spell/autospell" "0"
+                1 auto-spell
+            !endif
         !endif
     !endif
-    ; Set up folding
-    buffer-bind-unbound-key fold-current "f2"
-    buffer-bind-unbound-key fold-all     "f3"
 !emacro
 

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Jon Green
 ;  Created       : Sat Feb 6 13:05:23 1999
-;  Last Modified : <000719.0012>
+;  Last Modified : <010228.1023>
 ;
 ;  Description   : Simple hilighting of a BNF file.
 ;
@@ -34,10 +34,7 @@ set-variable #l1 "aehikmtux"
 !endif
 
 define-macro fhook-bnf
-    buffer-modes-init .fhook-bnf.setup
-    !if &and &sin "h" .fhook-bnf.setup &band .hilight.flags 0x02 
-        set-variable $buffer-hilight .hilight.bnf
-    !endif
+    buffer-initialize
     ; execute user extensions if enabled
     !if &exi my-fhook-bnf
         my-fhook-bnf

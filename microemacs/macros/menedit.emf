@@ -1,0 +1,101 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : $Author: jon $
+;  Created By    : Steven Phillips
+;  Created       : Wed Feb 21 08:30:22 2001
+;  Last Modified : <010222.0803>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 2001 JASSPA
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro-file osd osd-1-new osd-save osd-save-as osd-close
+define-macro-file search osd-find-tag osd-search osd-goto-line
+define-macro-file osdhelp osd-help
+define-macro select-all
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+!emacro
+define-macro forward-paragraph-start
+    beginning-of-line
+    !force 2 forward-paragraph
+    !if $status
+        backward-paragraph
+    !endif
+!emacro
+define-macro forward-word-start
+    !force 2 forward-word
+    !if $status
+        backward-word
+    !endif
+!emacro
+
+; get rid of all default ME bindings
+-1 global-unbind-key "y"
+; create safety bindings so we can still do things
+1 global-bind-key prefix "C-a"
+global-bind-key execute-named-command "C-a x"
+; NEdit emulation
+global-bind-key abort-command "esc"
+global-bind-key backward-char "left"
+global-bind-key backward-line "up"
+global-bind-key forward-char "right"
+global-bind-key forward-line "down"
+global-bind-key backward-word "C-left"
+global-bind-key backward-paragraph "C-up"
+global-bind-key forward-word-start "C-right"
+global-bind-key forward-paragraph-start "C-down"
+global-bind-key backward-delete-char "backspace"
+151 global-bind-key buffer-mode "insert"
+global-bind-key forward-delete-char "delete"
+global-bind-key beginning-of-line "home"
+global-bind-key beginning-of-buffer "C-home"
+global-bind-key end-of-line "end"
+global-bind-key end-of-buffer "C-end"
+global-bind-key scroll-up "page-up"
+global-bind-key scroll-down "page-down"
+global-bind-key tab "tab"
+global-bind-key newline "return"
+
+global-bind-key select-all "C-/"
+
+global-bind-key copy-region "C-c"
+global-bind-key osd-goto-line "C-e"
+1 global-bind-key osd-search "C-f"
+global-bind-key hunt-forward "C-g"
+global-bind-key help "C-h"
+global-bind-key buffer-help "A-C-h"
+global-bind-key insert-file "C-i"
+global-bind-key ifill-paragraph "C-j"
+global-bind-key lower-case-region "C-l"
+global-bind-key upper-case-region "S-C-l"
+global-bind-key set-alpha-mark "C-m"
+global-bind-key osd-1-new "C-n"
+global-bind-key osd-file-open "C-o"
+global-bind-key print-buffer "C-p"
+global-bind-key save-buffers-exit-emacs "C-q"
+2 global-bind-key osd-search "C-r"
+global-bind-key osd-save "C-s"
+global-bind-key goto-alpha-mark "C-t"
+global-bind-key yank "C-v"
+global-bind-key yank-rectangle "A-C-v"
+global-bind-key osd-close "C-w"
+global-bind-key kill-region "C-x"
+global-bind-key undo "C-z"
+global-bind-key split-window-vertically "C-+"
+global-bind-key delete-window "C--"
+
+; reconfigure the buffer bindings
+set-variable .buffer-bind-key.map-from "|C-c C-c|C-c C-d|"
+set-variable .buffer-bind-key.map-to   "|C-b|C-u|"
+; always want msshift
+!force exec-file msshift
+; redo the mouse
+!force exec-file "mouse"
+
