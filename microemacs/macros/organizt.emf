@@ -41,7 +41,7 @@ set-variable .org.set-day 1
     !else
         set-variable @# &add 1 &reg "/org" "set/initpage" "0"
     !endif
-    osd .osd.orgt 60 "MdtxmsfHz" 2 .scheme.osd-entry 12 1 &lget .org.pages @# .osd.org-m org-setup-pagec
+    osd .osd.orgt 60 "MdtxmsfHz" .scheme.osd-entry 12 1 &lget .org.pages @# .osd.org-m org-setup-pagec
 !emacro
 
 0 define-macro org-setup-pagec
@@ -57,7 +57,7 @@ set-variable .org.set-day 1
     !if @?
         set-variable .org.set-month @#
     !endif
-    osd .osd.orgt 120 "MdhtxmsfHz" 3 .scheme.osd-entry 12 1 &lget .org.months .org.set-month .osd.org-m org-setup-monthc
+    osd .osd.orgt 120 "MdhtxmsfHz" .scheme.osd-entry 12 1 &lget .org.months .org.set-month .osd.org-m org-setup-monthc
 !emacro
 
 0 define-macro org-setup-monthc
@@ -88,7 +88,7 @@ set-variable .org.set-day 1
     !if @?
         set-variable .org.set-day @#
     !endif
-    osd .osd.orgt 160 "MdhtxmsfHz" 4 .scheme.osd-entry 12 1 &lget .org.days .org.set-day .osd.org-m org-setup-dayc
+    osd .osd.orgt 160 "MdhtxmsfHz" .scheme.osd-entry 12 1 &lget .org.days .org.set-day .osd.org-m org-setup-dayc
 !emacro
 
 0 define-macro org-setup-dayc
@@ -125,7 +125,7 @@ set-variable .org.set-day 1
     !else
         set-variable @# &add 1 &lef .org.set 1
     !endif
-    osd .osd.orgt 210 "MdtxmsfHz" 7 .scheme.osd-entry 12 1 &lget .org.days @# .osd.org-m org-setup-1dofwc
+    osd .osd.orgt 210 "MdtxmsfHz" .scheme.osd-entry 12 1 &lget .org.days @# .osd.org-m org-setup-1dofwc
 !emacro
 
 0 define-macro org-setup-1dofwc
@@ -177,7 +177,7 @@ osd .osd.orgt  5  ""
 osd .osd.orgt 10  "c" "General"
 osd .osd.orgt 15  ""
 osd .osd.orgt 20  "Shf" "  Current Organizer File " 30
-osd .osd.orgt 30  "EtxfHz" 1 .scheme.osd-entry 35 1 "" f org-setup-file
+osd .osd.orgt 30  "EtxfHz" .scheme.osd-entry 35 1 "" f org-setup-file
 osd .osd.orgt 40  ""
 osd .osd.orgt 50  "Shf" "  Default start-up page  " 60
 osd .osd.orgt 70  ""
@@ -186,16 +186,16 @@ osd .osd.orgt 90  "c" "Calendar"
 osd .osd.orgt 100 ""
 osd .osd.orgt 110 "Shf" "       Change month name " 120
 osd .osd.orgt 130 "fh" " to "
-osd .osd.orgt 140 "EtxfH" 4 .scheme.osd-entry "##############" f org-setup-monthe
+osd .osd.orgt 140 "EtxfH" .scheme.osd-entry "##############" f org-setup-monthe
 osd .osd.orgt 145 ""
 osd .osd.orgt 150 "Shf" "    Change week day name " 160
 osd .osd.orgt 170 "fh" " to "
-osd .osd.orgt 180 "EtxfH" 6 .scheme.osd-entry "##############" f org-setup-daye
+osd .osd.orgt 180 "EtxfH" .scheme.osd-entry "##############" f org-setup-daye
 osd .osd.orgt 190 ""
 osd .osd.orgt 200 "Shf" "   First day of the week " 210
 osd .osd.orgt 220 ""
 osd .osd.orgt 230 "Shf" "  Minimum days of new year in first week " 240
-osd .osd.orgt 240 "EtxfH" 8 .scheme.osd-entry "####" f org-setup-1wofy
+osd .osd.orgt 240 "EtxfH" .scheme.osd-entry "####" f org-setup-1wofy
 osd .osd.orgt 250 ""
 osd .osd.orgt 260 ""
 osd .osd.orgt 300 "c" "Address Book"
@@ -203,8 +203,8 @@ osd .osd.orgt 310 ""
 osd .osd.orgt 312 "hf" "              "
 osd .osd.orgt 315 "Cfxp" "^[ *] Use extended address book" 0x100 org-setup-aflag-check
 osd .osd.orgt 320 ""
-osd .osd.orgt 330 "BtcfHxh" 18 .scheme.osd-ebtt " Import from file " f org-address-import
-osd .osd.orgt 340 "BtcfHx"  19 .scheme.osd-ebtt " Export to file " f org-address-export
+osd .osd.orgt 330 "BtcfHxh" .scheme.osd-ebtt " Import from file " f org-address-import
+osd .osd.orgt 340 "BtcfHx"  .scheme.osd-ebtt " Export to file " f org-address-export
 osd .osd.orgt 350 ""
 osd .osd.orgt 355 ""
 osd .osd.orgt 360 "c" "Default Address Find Settings"
@@ -221,6 +221,6 @@ osd .osd.orgt 450 "hf" "              "
 osd .osd.orgt 460 "Cfxp"  "^[ *] \HMagic mode" 0x20 org-setup-aflag-check
 osd .osd.orgt 600 "" 
 osd .osd.orgt 605 "" 
-osd .osd.orgt 610 "BtxhcfH" 20 .scheme.osd-ebtt " \HSave " f organizer-save
-osd .osd.orgt 620 "BtcfH"   21 .scheme.osd-ebtt " E\Hxit " 1 void
+osd .osd.orgt 610 "BtxhcfH" .scheme.osd-ebtt " \HSave " f organizer-save
+osd .osd.orgt 620 "BtcfH"   .scheme.osd-ebtt " E\Hxit " 1 void
 

@@ -129,10 +129,10 @@ define-macro charset-user-to-iso
     set-variable #l1 &lget %charset-names &band @# 0xffff
     !if &band @# 0x10000
         set-variable .charset-change.to #l0
-        osd .osd.charset 60  "RMdtxmsfHzi" 2 .scheme.osd-entry 23 1 #l1 .osd.tmp "charset-change-setup 0x10000"
+        osd .osd.charset 60  "RMdtxmsfHzi" .scheme.osd-entry 23 1 #l1 .osd.tmp "charset-change-setup 0x10000"
     !else
         set-variable .charset-change.from #l0
-        osd .osd.charset 30  "RMdtxmsfHzi" 1 .scheme.osd-entry 23 1 #l1 .osd.tmp "charset-change-setup 0x0"
+        osd .osd.charset 30  "RMdtxmsfHzi" .scheme.osd-entry 23 1 #l1 .osd.tmp "charset-change-setup 0x0"
     !endif
 !emacro
 
@@ -159,8 +159,8 @@ osd .osd.charset 40  ""
 osd .osd.charset 50  "Sfh" "           \HTo : " 60
 osd .osd.charset 600 ""
 osd .osd.charset 610 ""
-osd .osd.charset 620 "BthcfH" 10 .scheme.osd-ebtt " \HConvert " f void
-osd .osd.charset 630 "BtcfH"  11 .scheme.osd-ebtt " E\Hxit  "   0 void
+osd .osd.charset 620 "BthcfH" .scheme.osd-ebtt " \HConvert " f void
+osd .osd.charset 630 "BtcfH"  .scheme.osd-ebtt " E\Hxit  "   0 void
 
 ; Get a list of display char sets
 0 exec-file "charset"

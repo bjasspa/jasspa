@@ -845,14 +845,14 @@ define-macro cvs-log-list
     osd .osd.cvsosd &inc #l2 1 "" ""
     !if &gre #l1 2
         osd .osd.cvsosd &inc #l2 1 "Sfh" &spr "        %s %s" &cond &gre #l1 4 "\H1st" "CVS" &cond #l3 "Date: " "Revision/Tag: " &add #l2 1
-        osd .osd.cvsosd &inc #l2 1 "EtxHf" #l2 .scheme.osd-entry "################" &add 1 #l3 cvs-osd-rec
+        osd .osd.cvsosd &inc #l2 1 "EtxHf" .scheme.osd-entry "################" &add 1 #l3 cvs-osd-rec
     !else
         osd .osd.cvsosd &inc #l2 1 "" ""
         osd .osd.cvsosd &inc #l2 1 "D"
     !endif
     !if &gre #l1 4
         osd .osd.cvsosd &inc #l2 1 "fh" &cat "        \H2nd " &cond #l3 "Date: " "Revision/Tag: "
-        osd .osd.cvsosd &inc #l2 1 "EtxHf" #l2 .scheme.osd-entry "################" &add 3 #l3 cvs-osd-rec
+        osd .osd.cvsosd &inc #l2 1 "EtxHf" .scheme.osd-entry "################" &add 3 #l3 cvs-osd-rec
     !else
         osd .osd.cvsosd &inc #l2 1 "" ""
         osd .osd.cvsosd &inc #l2 1 "D"
@@ -885,10 +885,10 @@ set-variable .cvs-osd-compare.values "|Local with Local BASE|Local BASE with CVS
     set-variable #l2 &add &mul #l0 100 110
     !if &equ #l1 3
         osd .osd.cvsosd &inc #l2 1 "Shf" "    D\Hate (yyyy-mm-dd): " &add #l2 1
-        osd .osd.cvsosd &inc #l2 1 "EtxHf" #l2 .scheme.osd-entry "yyyy-mm-dd   " 2 cvs-osd-rec
+        osd .osd.cvsosd &inc #l2 1 "EtxHf" .scheme.osd-entry "yyyy-mm-dd   " 2 cvs-osd-rec
     !elif &equ #l1 2
         osd .osd.cvsosd &inc #l2 1 "Shf" "    Revision/T\Hag: " &add #l2 1
-        osd .osd.cvsosd &inc #l2 1 "EtxHf" #l2 .scheme.osd-entry "##################" 1 cvs-osd-rec
+        osd .osd.cvsosd &inc #l2 1 "EtxHf" .scheme.osd-entry "##################" 1 cvs-osd-rec
     !else
         osd .osd.cvsosd &inc #l2 1 "" ""
         osd .osd.cvsosd &inc #l2 1 "D"
@@ -1016,72 +1016,72 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
             !if &seq #l1 "D"
                 osd .osd.cvsosd &inc #l2 1 "Sf" "    Root Directory:" &add #l2 2
                 osd .osd.cvsosd &inc #l2 1 "fh" "    "
-                osd .osd.cvsosd &inc #l2 1 "EtxHfhz" #l2 .scheme.osd-entry 60 1 "" f cvs-osd-Dec
+                osd .osd.cvsosd &inc #l2 1 "EtxHfhz" .scheme.osd-entry 60 1 "" f cvs-osd-Dec
                 osd .osd.cvsosd &inc #l2 1 "f"  "    "
             !elif &seq #l1 "f"
                 cvs-get-checkout-info
                 osd .osd.cvsosd &inc #l2 1 "Sf" "    \HFile, Directory or Module:" &add #l2 2
                 osd .osd.cvsosd &inc #l2 1 "fh" "    "
-                osd .osd.cvsosd &inc #l2 1 "EtxHfhz" #l2 .scheme.osd-entry 60 1 "" f cvs-osd-fec
+                osd .osd.cvsosd &inc #l2 1 "EtxHfhz" .scheme.osd-entry 60 1 "" f cvs-osd-fec
                 osd .osd.cvsosd &inc #l2 1 "f"  "    "
             !elif &seq #l1 "t"
                 osd .osd.cvsosd &inc #l2 1 "Sfh" "    \HTag Name: " &add #l2 1
-                osd .osd.cvsosd &inc #l2 1 "EtxHfz" #l2 .scheme.osd-entry 20 1 "" f cvs-osd-tec
+                osd .osd.cvsosd &inc #l2 1 "EtxHfz" .scheme.osd-entry 20 1 "" f cvs-osd-tec
             !elif &seq #l1 "m"
                 cvs-get-message-template
                 osd .osd.cvsosd &inc #l2 1 "Sf" "    \HLog message:" &add #l2 2
                 osd .osd.cvsosd &inc #l2 1 "fh" "    "
-                osd .osd.cvsosd &inc #l2 1 "EtNxHfhz" #l2 .scheme.osd-entry 60 10 "" f cvs-osd-mec
+                osd .osd.cvsosd &inc #l2 1 "EtNxHfhz" .scheme.osd-entry 60 10 "" f cvs-osd-mec
                 osd .osd.cvsosd &inc #l2 1 "f"  "    "
             !elif &seq #l1 "v"
                 osd .osd.cvsosd &inc #l2 1 "Sfh" "    \HVersion : " &add #l2 1
-                osd .osd.cvsosd &inc #l2 1 "OtxmsfhHzR" #l2 .scheme.osd-entry 13 1 "" .osd.tmp cvs-osd-version
+                osd .osd.cvsosd &inc #l2 1 "OtxmsfhHzR" .scheme.osd-entry 13 1 "" .osd.tmp cvs-osd-version
                 osd .osd.cvsosd &inc #l2 1 "BdxfhHR" .scheme.osd-ebtt &mid $window-chars 10 1 &sub #l2 1
                 cvs-osd-version-setup
             !elif &seq #l1 "O"
                 osd .osd.cvsosd &inc #l2 1 "Sfh" "    Compare : " &add #l2 1
-                osd .osd.cvsosd &inc #l2 1 "OtxmsfhHzR" #l2 .scheme.osd-entry 28 1 "" .osd.tmp cvs-osd-compare
+                osd .osd.cvsosd &inc #l2 1 "OtxmsfhHzR" .scheme.osd-entry 28 1 "" .osd.tmp cvs-osd-compare
                 osd .osd.cvsosd &inc #l2 1 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 &sub #l2 1
                 cvs-osd-crev-setup
             !elif &seq #l1 "Z"
                 !if .find-file.file-count
                     osd .osd.cvsosd &inc #l2 1 "fh" "    "
-                    osd .osd.cvsosd &inc #l2 1 "Cptfx" #l2 &cat .osd.checkbox-chars "\} Operate on current \Hdirectory" #l0 cvs-osd-cbc
+                    osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Operate on current \Hdirectory" #l0 cvs-osd-cbc
                     set-variable .cvs.values &cat &cat &lef .cvs.values #l0 0 &rig .cvs.values &add #l0 1
                 !endif
             !elif &seq #l1 "k"
                 osd .osd.cvsosd &inc #l2 1 "fh" "    "
-                osd .osd.cvsosd &inc #l2 1 "Cptfx" #l2 &cat .osd.checkbox-chars "\} Add as \HBinary Files" #l0 cvs-osd-cbc
+                osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Add as \HBinary Files" #l0 cvs-osd-cbc
             !elif &seq #l1 "d"
                 osd .osd.cvsosd &inc #l2 1 "fh" "    "
-                osd .osd.cvsosd &inc #l2 1 "Cptfx" #l2 &cat .osd.checkbox-chars "\} Check-out \Hmissing directories" #l0 cvs-osd-cbc
+                osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Check-out \Hmissing directories" #l0 cvs-osd-cbc
             !elif &seq #l1 "R"
                 osd .osd.cvsosd &inc #l2 1 "fh" "    "
-                osd .osd.cvsosd &inc #l2 1 "Cptfx" #l2 &cat .osd.checkbox-chars "\} \HRecurse into sub-directories" #l0 cvs-osd-cbc
+                osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HRecurse into sub-directories" #l0 cvs-osd-cbc
             !elif &seq #l1 "A"
                 osd .osd.cvsosd &inc #l2 1 "fh" "    "
-                osd .osd.cvsosd &inc #l2 1 "Cptfx" #l2 &cat .osd.checkbox-chars "\} \HRecursively add sub-directory files" #l0 cvs-osd-cbc
+                osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HRecursively add sub-directory files" #l0 cvs-osd-cbc
             !elif &seq #l1 "P"
                 osd .osd.cvsosd &inc #l2 1 "fh" "    "
-                osd .osd.cvsosd &inc #l2 1 "Cptfx" #l2 &cat .osd.checkbox-chars "\} \HPrune empty directories" #l0 cvs-osd-cbc
+                osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HPrune empty directories" #l0 cvs-osd-cbc
             !elif &seq #l1 "C"
                 osd .osd.cvsosd &inc #l2 1 "fh" "    "
-                osd .osd.cvsosd &inc #l2 1 "Cptfx" #l2 &cat .osd.checkbox-chars "\} Overwrite locally modified files" #l0 cvs-osd-cbc
+                osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Overwrite locally modified files" #l0 cvs-osd-cbc
             !elif &seq #l1 "c"
                 osd .osd.cvsosd &inc #l2 1 "fh" "    "
-                osd .osd.cvsosd &inc #l2 1 "Cptfx" #l2 &cat .osd.checkbox-chars "\} Conte\Hxt diffs" #l0 cvs-osd-cbc
+                osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Conte\Hxt diffs" #l0 cvs-osd-cbc
             !elif &seq #l1 "w"
                 osd .osd.cvsosd &inc #l2 1 "fh" "    "
-                osd .osd.cvsosd &inc #l2 1 "Cptfx" #l2 &cat .osd.checkbox-chars "\} Ignore \Hwhite spaces" #l0 cvs-osd-cbc
+                osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Ignore \Hwhite spaces" #l0 cvs-osd-cbc
             !elif &seq #l1 "b"
                 osd .osd.cvsosd &inc #l2 1 "fh" "    "
-                osd .osd.cvsosd &inc #l2 1 "Cptfx" #l2 &cat .osd.checkbox-chars "\} Create a \HBranch tag" #l0 cvs-osd-cbc
+                osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Create a \HBranch tag" #l0 cvs-osd-cbc
             !elif &seq #l1 "r"
                 osd .osd.cvsosd &inc #l2 1 "fh" "    "
-                osd .osd.cvsosd &inc #l2 1 "Cptfx" #l2 &cat .osd.checkbox-chars "\} Delete the tag" #l0 cvs-osd-cbc
+                osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Delete the tag" #l0 cvs-osd-cbc
             !elif &seq #l1 "F"
                 osd .osd.cvsosd &inc #l2 1 "fh" "    "
-                osd .osd.cvsosd &inc #l2 1 "Cptfx" #l2 &cat .osd.checkbox-chars "\} \HMove the tag if it exists" #l0 cvs-osd-cbc
+                osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HMove the tag if it exists" #l0 cvs-osd-cbc
             !else
                 osd .osd.cvsosd &inc #l2 1 "" &cat "flag " #l1
             !endif
@@ -1089,8 +1089,8 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
     !until &seq &mid .cvs.options &inc #l0 1 1 ""
     osd .osd.cvsosd 2000 ""
     osd .osd.cvsosd 2010 ""
-    osd .osd.cvsosd 2020 "BtcfHh" 2020 .scheme.osd-ebtt " \HOkay " f void
-    osd .osd.cvsosd 2030 "BtcfH"  2030 .scheme.osd-ebtt " \HCancel " 0 void
+    osd .osd.cvsosd 2020 "BtcfHh" .scheme.osd-ebtt " \HOkay " f void
+    osd .osd.cvsosd 2030 "BtcfH"  .scheme.osd-ebtt " \HCancel " 0 void
     !force !force .osd.cvsosd osd
     !if &not $status
         !abort
@@ -1756,39 +1756,39 @@ osd .osd.cvsstp &inc #l2 1 "" ""
 osd .osd.cvsstp &inc #l2 1 "" "  CVS Command Setup"
 osd .osd.cvsstp &inc #l2 1 "" ""
 osd .osd.cvsstp &inc #l2 1 "Sfh" "        CVS\HROOT: " &add #l2 1
-osd .osd.cvsstp &inc #l2 1 "EtxHfz" #l2 .scheme.osd-entry 50 1 "" 1 cvs-setup-entry
+osd .osd.cvsstp &inc #l2 1 "EtxHfz" .scheme.osd-entry 50 1 "" 1 cvs-setup-entry
 osd .osd.cvsstp &inc #l2 1 "" ""
 osd .osd.cvsstp &inc #l2 1 "Sfh" "        CVS_R\HSH: " &add #l2 2
-osd .osd.cvsstp &inc #l2 1 "EtxHfz" #l2 .scheme.osd-entry 50 1 "" 2 cvs-setup-entry
+osd .osd.cvsstp &inc #l2 1 "EtxHfz" .scheme.osd-entry 50 1 "" 2 cvs-setup-entry
 osd .osd.cvsstp &inc #l2 1 "" ""
 osd .osd.cvsstp &inc #l2 1 "Sfh" "    CVS \HCommand: " &add #l2 2
-osd .osd.cvsstp &inc #l2 1 "EtxHfz" #l2 .scheme.osd-entry 50 1 "" 3 cvs-setup-entry
+osd .osd.cvsstp &inc #l2 1 "EtxHfz" .scheme.osd-entry 50 1 "" 3 cvs-setup-entry
 osd .osd.cvsstp &inc #l2 1 "" ""
 osd .osd.cvsstp &inc #l2 1 "Sfh" "    C\Hompression: " &add #l2 1
-osd .osd.cvsstp &inc #l2 1 "OtxmsfhHzR" #l2 .scheme.osd-entry 16 1 "" .osd.tmp cvs-setup-compression
+osd .osd.cvsstp &inc #l2 1 "OtxmsfhHzR" .scheme.osd-entry 16 1 "" .osd.tmp cvs-setup-compression
 osd .osd.cvsstp &inc #l2 1 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 &sub #l2 1
 osd .osd.cvsstp &inc #l2 1 "" ""
 osd .osd.cvsstp &inc #l2 1 "fh" "    "
-osd .osd.cvsstp &inc #l2 1 "Cptfx" #l2 &cat .osd.checkbox-chars "\} \HQuieter CVS output" 1 cvs-setup-checkbox
+osd .osd.cvsstp &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HQuieter CVS output" 1 cvs-setup-checkbox
 osd .osd.cvsstp &inc #l2 1 "" ""
 osd .osd.cvsstp &inc #l2 1 "" ""
 osd .osd.cvsstp &inc #l2 1 "" "  CVS File Browser"
 osd .osd.cvsstp &inc #l2 1 "" ""
 osd .osd.cvsstp &inc #l2 1 "fh" "    "
-osd .osd.cvsstp &inc #l2 1 "Cptfx" #l2 &cat .osd.checkbox-chars "\} Quick \Hbrowser mode" 2 cvs-setup-checkbox
+osd .osd.cvsstp &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Quick \Hbrowser mode" 2 cvs-setup-checkbox
 osd .osd.cvsstp &inc #l2 1 "" ""
 osd .osd.cvsstp &inc #l2 1 "" ""
 osd .osd.cvsstp &inc #l2 1 "" "  Tool Defaults"
 osd .osd.cvsstp &inc #l2 1 "" ""
 osd .osd.cvsstp &inc #l2 1 "fh" "    "
-osd .osd.cvsstp &inc #l2 1 "Cptfx" #l2 &cat .osd.checkbox-chars "\} \HRecurse into sub-directories" 3 cvs-setup-checkbox
+osd .osd.cvsstp &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HRecurse into sub-directories" 3 cvs-setup-checkbox
 osd .osd.cvsstp &inc #l2 1 "fh" "    "
-osd .osd.cvsstp &inc #l2 1 "Cptfx" #l2 &cat .osd.checkbox-chars "\} Check-out \Hmissing directories" 4 cvs-setup-checkbox
+osd .osd.cvsstp &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Check-out \Hmissing directories" 4 cvs-setup-checkbox
 osd .osd.cvsstp &inc #l2 1 "fh" "    "
-osd .osd.cvsstp &inc #l2 1 "Cptfx" #l2 &cat .osd.checkbox-chars "\} \HPrune empty directories" 5 cvs-setup-checkbox
+osd .osd.cvsstp &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HPrune empty directories" 5 cvs-setup-checkbox
 osd .osd.cvsstp 2000 ""
 osd .osd.cvsstp 2010 ""
-osd .osd.cvsstp 2020 "BtcfHh" 2020 .scheme.osd-ebtt " \HOkay " f void
+osd .osd.cvsstp 2020 "BtcfHh" .scheme.osd-ebtt " \HOkay " f void
 
 define-macro cvs-setup
     .osd.cvsstp osd

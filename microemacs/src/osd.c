@@ -146,7 +146,6 @@ typedef struct osdITEM
     meScheme scheme;                    /* Items scheme */
     meShort  item;                      /* Menu item */
     meShort  cmdIndex;                  /* Command index or string start index */
-    meShort  tab;                       /* Tab order number */
     meShort  len;                       /* Rendered length of the menu */
     meShort  height;                    /* Rendered height of the menu */
     meUByte  iflags;                    /* internal flags */
@@ -4384,14 +4383,15 @@ osdDisplayTabMove(osdDISPLAY *md, int dir, int mustSel)
     if(mustSel || (ii < 0))
         tab = -1 ;
     else
-        tab = md->context[ii].menu->tab ;
+        tab = md->context[ii].menu->item ;
     
     /* loop through the contexts find the closest match
      * (going backwards just for ease) */
     for(ii=md->numContexts ; ii-- ; )
     {
-        /* only allow tab to select the current tab item, ignore the rest */
-        if(((tt=md->context[ii].menu->tab) >= 0) && (tt != tab) &&
+        /* only allow tab to select the current tab-page item, ignore the other pages */
+        if((md->context[ii].menu->flags & MF_TAB) &&
+           ((tt=md->context[ii].menu->item) != tab) &&
            (((md->context[ii].menu->flags & MF_NBPAGE) == 0) ||
             (md->context[ii].menu->argc == md->context[md->nbpContext].menu->argc)))
         {
@@ -5183,7 +5183,7 @@ osd (int f, int n)
         int   id, item, flags ;
         int   txtlen, cmdlen;           /* Command length */
         int   argc, namidx, scheme ;
-        meShort width, depth, tab ;
+        meShort width, depth ;
         
         /* Get the menu identity */
         if ((ii=meGetString((meUByte *)"Identity", 0, 0, buf, 16)) == meFALSE)
@@ -5426,15 +5426,6 @@ osd (int f, int n)
             txtlen = 0 ;
         }
         
-        if(flags & MF_TAB) 
-        {
-            if(meGetString((meUByte *)"Tab", 0, 0, buf, 16) <= 0)
-                return meABORT ;
-            tab = (meShort) meAtoi(buf) ;
-        }
-        else
-            tab = -1 ;
-        
         scheme = rp->mScheme ;
         if(flags & MF_SCHEME) 
         {
@@ -5565,7 +5556,6 @@ osd (int f, int n)
         }
         mp->scheme = scheme ;
         mp->argc = argc ;
-        mp->tab = tab ;
         if(flags & MF_SIZE)
         {
             mp->len = width ;

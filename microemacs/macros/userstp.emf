@@ -384,37 +384,37 @@ osd .osd.user-mail 10  ""
 osd .osd.user-mail 20  "c" &spr "Platform %s E-Mail Setup" $platform
 osd .osd.user-mail 30  ""
 osd .osd.user-mail 40  "Sfh" "  User Mail \HDir:       " 50
-osd .osd.user-mail 50  "EtxHf" 1 .scheme.osd-entry "##############################" 2 user-set-pffile
+osd .osd.user-mail 50  "EtxHf" .scheme.osd-entry "##############################" 2 user-set-pffile
 osd .osd.user-mail 60  "Sfh" "  Send Mail Signa\Hture: " 70
-osd .osd.user-mail 70  "EtxHf" 2 .scheme.osd-entry "############" 7 user-set-entry
+osd .osd.user-mail 70  "EtxHf" .scheme.osd-entry "############" 7 user-set-entry
 osd .osd.user-mail 80  "Sfh" "  Carbon-Copy \HFile:    " 90
-osd .osd.user-mail 90  "EtxHf" 3 .scheme.osd-entry "############" 8 user-set-entry
+osd .osd.user-mail 90  "EtxHf" .scheme.osd-entry "############" 8 user-set-entry
 osd .osd.user-mail 100 "Sfh" "  Insert Data (^C^\HI):  " 110
-osd .osd.user-mail 110 "EtxHf" 4 .scheme.osd-entry "##############################" 2 user-set-pfentry
+osd .osd.user-mail 110 "EtxHf" .scheme.osd-entry "##############################" 2 user-set-pfentry
 osd .osd.user-mail 120 "Sfh" "  Insert Data (^C^\HZ):  " 130
-osd .osd.user-mail 130 "EtxHf" 5 .scheme.osd-entry "##############################" 3 user-set-pfentry
+osd .osd.user-mail 130 "EtxHf" .scheme.osd-entry "##############################" 3 user-set-pfentry
 osd .osd.user-mail 140 "Sfh" "  S\Hend Mail Command:   " 150
-osd .osd.user-mail 150 "EtxHf" 6 .scheme.osd-entry "##############################" 1 user-set-pfentry
+osd .osd.user-mail 150 "EtxHf" .scheme.osd-entry "##############################" 1 user-set-pfentry
 osd .osd.user-mail 153 "Sfh" "                       "
-osd .osd.user-mail 157 "Ctpfx" 7 &cat .osd.checkbox-chars "\} \HQueue Outgoing Mail" 1 user-set-pfcheckbox
+osd .osd.user-mail 157 "Ctpfx" &cat .osd.checkbox-chars "\} \HQueue Outgoing Mail" 1 user-set-pfcheckbox
 osd .osd.user-mail 160 ""
 osd .osd.user-mail 170 "Sfh" "  Chec\Hk Mail Every:    " 180
-osd .osd.user-mail 180 "EtxHfh" 8 .scheme.osd-entry "############" 6 user-set-pfentry
+osd .osd.user-mail 180 "EtxHfh" .scheme.osd-entry "############" 6 user-set-pfentry
 osd .osd.user-mail 193 "Sf" " seconds"
 osd .osd.user-mail 200 "Sfh" "  Get Mail C\Hommand:    " 210
-osd .osd.user-mail 210 "EtxHf" 9 .scheme.osd-entry "##############################" 7 user-set-pfentry
+osd .osd.user-mail 210 "EtxHf" .scheme.osd-entry "##############################" 7 user-set-pfentry
 osd .osd.user-mail 220 "Sfh" "  Incoming Mail \HBox:   " 230
-osd .osd.user-mail 230 "EtxHf" 10 .scheme.osd-entry "##############################" 1 user-set-pffile
+osd .osd.user-mail 230 "EtxHf" .scheme.osd-entry "##############################" 1 user-set-pffile
 osd .osd.user-mail 240 "Sfh" "  \HVM Main In Box:      " 250
-osd .osd.user-mail 250 "EtxHfh" 11 .scheme.osd-entry "############" 9 user-set-entry
+osd .osd.user-mail 250 "EtxHfh" .scheme.osd-entry "############" 9 user-set-entry
 osd .osd.user-mail 253 "Sfh" "  "
-osd .osd.user-mail 257 "Ctpfx" 12 &cat .osd.checkbox-chars "\} VM \HGets Mail" 2 user-set-pfcheckbox
+osd .osd.user-mail 257 "Ctpfx" &cat .osd.checkbox-chars "\} VM \HGets Mail" 2 user-set-pfcheckbox
 osd .osd.user-mail 260 "Sfh" "  \HMime Data Extract:   " 270
-osd .osd.user-mail 270 "EtxHf" 13 .scheme.osd-entry "##############################" 4 user-set-pfentry
+osd .osd.user-mail 270 "EtxHf" .scheme.osd-entry "##############################" 4 user-set-pfentry
 osd .osd.user-mail 280 "Sfh" "  \HUuencode Extract:    " 280
-osd .osd.user-mail 290 "EtxHf" 14 .scheme.osd-entry "##############################" 5 user-set-pfentry
+osd .osd.user-mail 290 "EtxHf" .scheme.osd-entry "##############################" 5 user-set-pfentry
 osd .osd.user-mail 310 "fh"  "                       "
-osd .osd.user-mail 320 "BdtfxH" 15 .scheme.osd-ebtt "\HAuto-Archive" 1 user-mail-filter
+osd .osd.user-mail 320 "BdtfxH" .scheme.osd-ebtt "\HAuto-Archive" 1 user-mail-filter
 
 ; Mouse setup ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 set-variable %user-mouse-but 1
@@ -542,33 +542,33 @@ set-variable .user-mouse-set-button.bnames "|\HLeft|\HMiddle|\HRight|Wheel \HUp|
 osd .osd.user-mouse 0   "s" 55 18 -1 -1
 osd .osd.user-mouse 2   ""
 osd .osd.user-mouse 10  "Sfh" "  "
-osd .osd.user-mouse 12  "Ctpfx" 1 &cat .osd.checkbox-chars "\} \HEnable Mouse" 0x010 user-set-mouse
+osd .osd.user-mouse 12  "Ctpfx" &cat .osd.checkbox-chars "\} \HEnable Mouse" 0x010 user-set-mouse
 osd .osd.user-mouse 15  "Sfh" "      \HNumber of Buttons: " 17
-osd .osd.user-mouse 17  "EtxHf" 2 .scheme.osd-entry "#####" 1 user-set-mouse-nob
+osd .osd.user-mouse 17  "EtxHf" .scheme.osd-entry "#####" 1 user-set-mouse-nob
 osd .osd.user-mouse 20  "Sfh" "                "
-osd .osd.user-mouse 22  "Ctpfx" 3 &cat .osd.checkbox-chars "\} S\Hwap Buttons" 0x020 user-set-mouse
+osd .osd.user-mouse 22  "Ctpfx" &cat .osd.checkbox-chars "\} S\Hwap Buttons" 0x020 user-set-mouse
 osd .osd.user-mouse 24  "Sfh" "                "
-osd .osd.user-mouse 26  "Ctpfx" 4 &cat .osd.checkbox-chars "\} Simulate \H3 Buttons" 3 user-set-pfcheckbox
+osd .osd.user-mouse 26  "Ctpfx" &cat .osd.checkbox-chars "\} Simulate \H3 Buttons" 3 user-set-pfcheckbox
 osd .osd.user-mouse 27  ""
 osd .osd.user-mouse 28  "" "  Mouse Button Bindings"
 osd .osd.user-mouse 29  ""
 osd .osd.user-mouse 30  "Sfh" "      \HButton:   " 25
-osd .osd.user-mouse 40  "OtxmsfhHzR" 5 .scheme.osd-entry 12 1 "" .osd.user-sub user-mouse-set-button
+osd .osd.user-mouse 40  "OtxmsfhHzR" .scheme.osd-entry 12 1 "" .osd.user-sub user-mouse-set-button
 osd .osd.user-mouse 41  "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 40
 osd .osd.user-mouse 50  "Sfh" "      Modifier: "
-osd .osd.user-mouse 60  "Ctpfx" 6 &cat .osd.checkbox-chars "\} S\Hhift" 1 user-mouse-set-checkbox
+osd .osd.user-mouse 60  "Ctpfx" &cat .osd.checkbox-chars "\} S\Hhift" 1 user-mouse-set-checkbox
 osd .osd.user-mouse 70  "Sfh" "                "
-osd .osd.user-mouse 80  "Ctpfx" 7 &cat .osd.checkbox-chars "\} C\Hontrol" 2 user-mouse-set-checkbox
+osd .osd.user-mouse 80  "Ctpfx" &cat .osd.checkbox-chars "\} C\Hontrol" 2 user-mouse-set-checkbox
 osd .osd.user-mouse 90  "Sfh" "                "
-osd .osd.user-mouse 100 "Ctpfx" 8 &cat .osd.checkbox-chars "\} \HAlt" 3 user-mouse-set-checkbox
+osd .osd.user-mouse 100 "Ctpfx" &cat .osd.checkbox-chars "\} \HAlt" 3 user-mouse-set-checkbox
 osd .osd.user-mouse 110 ""
 osd .osd.user-mouse 120 "Sfh" "      Bound \HTo: " 130
-osd .osd.user-mouse 130 "OtxmsfhHzR" 9 .scheme.osd-entry 20 1 "" .osd.user-sub user-setup-mouse-bind
+osd .osd.user-mouse 130 "OtxmsfhHzR" .scheme.osd-entry 20 1 "" .osd.user-sub user-setup-mouse-bind
 osd .osd.user-mouse 140 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 130
 osd .osd.user-mouse 150  "Sfh" "                "
-osd .osd.user-mouse 160 "Ctpfx" 10 &cat .osd.checkbox-chars "\} \HHandle Scroll Bars" f user-mouse-set-auto
+osd .osd.user-mouse 160 "Ctpfx" &cat .osd.checkbox-chars "\} \HHandle Scroll Bars" f user-mouse-set-auto
 osd .osd.user-mouse 600 ""
-osd .osd.user-mouse 610 "BcdtfHxR" 11 .scheme.osd-ebtt " \HDefaults " f user-mouse-defaults
+osd .osd.user-mouse 610 "BcdtfHxR" .scheme.osd-ebtt " \HDefaults " f user-mouse-defaults
 
 ; The Tools menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 0 define-macro user-tool-init
@@ -591,9 +591,9 @@ set-variable .user-tool-init.cur 0
     set-variable #l0 &reg "/history" &spr "%s/tool/%d/flag" $platform @# 0x1a
     !if &band #l0 0x10
         osd .osd.user-tool 370 "Sfh" "    B\Huffer: " 380
-        osd .osd.user-tool 380 "EtxHfh" 380 .scheme.osd-entry "##########" 3 user-tool-set-entry
+        osd .osd.user-tool 380 "EtxHfh" .scheme.osd-entry "##########" 3 user-tool-set-entry
         osd .osd.user-tool 390 "Sfh" "  "
-        osd .osd.user-tool 400 "Ctpfx" 400 &cat .osd.checkbox-chars "\} \HHide" 0x20 user-tool-set-flag
+        osd .osd.user-tool 400 "Ctpfx" &cat .osd.checkbox-chars "\} \HHide" 0x20 user-tool-set-flag
     !else
         osd .osd.user-tool 370 "f" ""
         osd .osd.user-tool 380 "D"
@@ -634,24 +634,24 @@ osd .osd.user-tool 200 ""
 osd .osd.user-tool 210 ""
 osd .osd.user-tool 220 ""
 osd .osd.user-tool 230 "Sfh" "  Tool \HName:      " 240
-osd .osd.user-tool 240 "EtxHf" 240 .scheme.osd-entry "###################" 1 user-tool-set-entry
+osd .osd.user-tool 240 "EtxHf" .scheme.osd-entry "###################" 1 user-tool-set-entry
 osd .osd.user-tool 250 "Sfh" "  Command \HLine:   " 260
-osd .osd.user-tool 260 "EtxHf" 260 .scheme.osd-entry "##################################" 2 user-tool-set-entry
+osd .osd.user-tool 260 "EtxHf" .scheme.osd-entry "##################################" 2 user-tool-set-entry
 osd .osd.user-tool 263 ""    "       Buffer file name = %ff or %fp%fn or %fp%fb%fe"
 osd .osd.user-tool 265 ""
 osd .osd.user-tool 270 "Sfh" "  Current \HBuffer: " 280
-osd .osd.user-tool 280 "Ctpfxh" 280 &cat .osd.checkbox-chars "\} Save" 0x01 user-tool-set-flag
+osd .osd.user-tool 280 "Ctpfxh" &cat .osd.checkbox-chars "\} Save" 0x01 user-tool-set-flag
 osd .osd.user-tool 290 "Sfh" "  "
-osd .osd.user-tool 300 "Ctpfx" 300 &cat .osd.checkbox-chars "\} \HPrompt Before Saving" 0x02 user-tool-set-flag
+osd .osd.user-tool 300 "Ctpfx" &cat .osd.checkbox-chars "\} \HPrompt Before Saving" 0x02 user-tool-set-flag
 osd .osd.user-tool 310 "Sfh" "  \HAll Buffers:    " 320
-osd .osd.user-tool 320 "Ctpfxh" 320 &cat .osd.checkbox-chars "\} Save" 0x04 user-tool-set-flag
+osd .osd.user-tool 320 "Ctpfxh" &cat .osd.checkbox-chars "\} Save" 0x04 user-tool-set-flag
 osd .osd.user-tool 330 "Sfh" "  "
-osd .osd.user-tool 340 "Ctpfx" 340 &cat .osd.checkbox-chars "\} Promp\Ht Before Saving" 0x08 user-tool-set-flag
+osd .osd.user-tool 340 "Ctpfx" &cat .osd.checkbox-chars "\} Promp\Ht Before Saving" 0x08 user-tool-set-flag
 osd .osd.user-tool 350 "Sfh" "  "
-osd .osd.user-tool 360 "Ctpfxh" 360 &cat .osd.checkbox-chars "\} Capture \HOutput" 0x10 user-tool-set-flag
+osd .osd.user-tool 360 "Ctpfxh" &cat .osd.checkbox-chars "\} Capture \HOutput" 0x10 user-tool-set-flag
 !if &band $system 0x800
     osd .osd.user-tool 410 "Sfh" "  "
-    osd .osd.user-tool 420 "Ctpfx" 420 &cat .osd.checkbox-chars "\} \HRun Concurrently" 0x40 user-tool-set-flag
+    osd .osd.user-tool 420 "Ctpfx" &cat .osd.checkbox-chars "\} \HRun Concurrently" 0x40 user-tool-set-flag
 !endif
 
 ; file type setup ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -756,21 +756,21 @@ osd .osd.user-tool 360 "Ctpfxh" 360 &cat .osd.checkbox-chars "\} Capture \HOutpu
 
 osd .osd.user-ftype  0  "s" 55 18 -1 -1 user-filetype-init
 osd .osd.user-ftype  5  "hf" " "
-osd .osd.user-ftype 10  "ItbHf" 1 .scheme.osd-sbar 51 10 .osd.user-ftypec
+osd .osd.user-ftype 10  "ItbHf" .scheme.osd-sbar 51 10 .osd.user-ftypec
 osd .osd.user-ftype 20  ""
 osd .osd.user-ftype 30  "Sfh" "  \HNo. " 50
 osd .osd.user-ftype 33  "Sfh" " Na\Hme             " 70
 osd .osd.user-ftype 36  "Sf"  " \HFile Mask List" 90
 osd .osd.user-ftype 40  "fh" "  "
-osd .osd.user-ftype 50  "EtxHfh" 2 .scheme.osd-entry "###" 3 user-filetype-set
+osd .osd.user-ftype 50  "EtxHfh" .scheme.osd-entry "###" 3 user-filetype-set
 osd .osd.user-ftype 60  "fh" "  "
-osd .osd.user-ftype 70  "EtxHfh" 3 .scheme.osd-entry "################" 1 user-filetype-set
+osd .osd.user-ftype 70  "EtxHfh" .scheme.osd-entry "################" 1 user-filetype-set
 osd .osd.user-ftype 80  "fh" "  "
-osd .osd.user-ftype 90  "EtxHf" 4 .scheme.osd-entry "############################" 2 user-filetype-set
+osd .osd.user-ftype 90  "EtxHf" .scheme.osd-entry "############################" 2 user-filetype-set
 osd .osd.user-ftype 600 ""
-osd .osd.user-ftype 610 "BdtcfhxH" 5 .scheme.osd-ebtt "  \HAdd  "  1 user-filetype-com
-osd .osd.user-ftype 620 "BdtcfhxH" 6 .scheme.osd-ebtt " C\Hhange " 2 user-filetype-com
-osd .osd.user-ftype 630 "BdtcfxH"  7 .scheme.osd-ebtt " \HDelete " 3 user-filetype-com
+osd .osd.user-ftype 610 "BdtcfhxH" .scheme.osd-ebtt "  \HAdd  "  1 user-filetype-com
+osd .osd.user-ftype 620 "BdtcfhxH" .scheme.osd-ebtt " C\Hhange " 2 user-filetype-com
+osd .osd.user-ftype 630 "BdtcfxH"  .scheme.osd-ebtt " \HDelete " 3 user-filetype-com
     
 ; The platform menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 !if &and &seq $platform "win32" &not &band $system 0x01
@@ -899,7 +899,7 @@ osd .osd.user-ftype 630 "BdtcfxH"  7 .scheme.osd-ebtt " \HDelete " 3 user-filety
         osd .osd.user-plat 550 "D"
     !else
         osd .osd.user-plat 540 "Sfh" "             \H# Backups : " 550
-        osd .osd.user-plat 550 "EtxHf" 55 .scheme.osd-entry "#####" 6 user-set-cpfentry
+        osd .osd.user-plat 550 "EtxHf" .scheme.osd-entry "#####" 6 user-set-cpfentry
     !endif
 !emacro
 
@@ -937,89 +937,89 @@ osd .osd.user-plat 0   "s" 55 18 -1 -1
 ; draw the common parts first
 osd .osd.user-plat 10  ""
 osd .osd.user-plat 300 "Sfh" "   \HDisplay Char Set : " 310
-osd .osd.user-plat 310 "OtxmsfhHzR" 82 .scheme.osd-entry 30 1 "" .osd.user-sub user-setup-charset
+osd .osd.user-plat 310 "OtxmsfhHzR" .scheme.osd-entry 30 1 "" .osd.user-sub user-setup-charset
 osd .osd.user-plat 311 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 310
 osd .osd.user-plat 400 "Sfh" "  Draw \HWhite Spaces : " 410
-osd .osd.user-plat 410 "Ctfx" 41 "^^NY^^" 0x80000 user-set-system
+osd .osd.user-plat 410 "Ctfx" "^^NY^^" 0x80000 user-set-system
 osd .osd.user-plat 499 ""
 osd .osd.user-plat 500 "Sfh" "     Enable Toolbar : " 501
-osd .osd.user-plat 501 "Cfhtx" 50 "^^NY^^" 3 user-set-cpfcheckbox
+osd .osd.user-plat 501 "Cfhtx" "^^NY^^" 3 user-set-cpfcheckbox
 osd .osd.user-plat 600 "Sfh" "       \HIgnore Files : " 610
-osd .osd.user-plat 610 "EtxHf" 61 .scheme.osd-entry "###############################" 5 user-set-cpfentry
+osd .osd.user-plat 610 "EtxHf" .scheme.osd-entry "###############################" 5 user-set-cpfentry
 osd .osd.user-plat 700 ""
 osd .osd.user-plat 710 "Sfh" "  Cursor \HBlink Rate : " 720
-osd .osd.user-plat 720 "EtxHfh" 72 .scheme.osd-entry "#######" 1 user-set-cursorblink
+osd .osd.user-plat 720 "EtxHfh" .scheme.osd-entry "#######" 1 user-set-cursorblink
 osd .osd.user-plat 730 "fh" "  "
-osd .osd.user-plat 740 "EtxHf"  74 .scheme.osd-entry "#######" 2 user-set-cursorblink
+osd .osd.user-plat 740 "EtxHf" .scheme.osd-entry "#######" 2 user-set-cursorblink
 osd .osd.user-plat 743 "Sfh" "      Fence Display : " 747
-osd .osd.user-plat 747 "OtxmsfhHzR" 75 .scheme.osd-entry 30 1 "" .osd.user-sub user-setup-fence
+osd .osd.user-plat 747 "OtxmsfhHzR" .scheme.osd-entry 30 1 "" .osd.user-sub user-setup-fence
 osd .osd.user-plat 748 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 747
 osd .osd.user-plat 750 "Sfh" "        Scroll Bars : " 760
-osd .osd.user-plat 760 "OtxmsfhHzR" 76 .scheme.osd-entry 30 1 "" .osd.user-sub user-setup-scrollb
+osd .osd.user-plat 760 "OtxmsfhHzR" .scheme.osd-entry 30 1 "" .osd.user-sub user-setup-scrollb
 osd .osd.user-plat 761 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 760
 osd .osd.user-plat 770 "Sfh" "  \HHorizontal Scroll : " 780
-osd .osd.user-plat 780 "OtxmsfhHzR" 78 .scheme.osd-entry 30 1 "" .osd.user-sub user-setup-hscroll
+osd .osd.user-plat 780 "OtxmsfhHzR" .scheme.osd-entry 30 1 "" .osd.user-sub user-setup-hscroll
 osd .osd.user-plat 781 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 780
 osd .osd.user-plat 790 "Sfh" "    \HVertical Scroll : " 800
-osd .osd.user-plat 800 "OtxmsfhHzR" 80 .scheme.osd-entry 30 1 "" .osd.user-sub user-setup-vscroll
+osd .osd.user-plat 800 "OtxmsfhHzR" .scheme.osd-entry 30 1 "" .osd.user-sub user-setup-vscroll
 osd .osd.user-plat 801 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 800
 osd .osd.user-plat 810 "Sfh" "       Colo\Hr Scheme : " 820
-osd .osd.user-plat 820 "OtxmsfhHzR" 82 .scheme.osd-entry 30 1 "" .osd.user-sub user-setup-color
+osd .osd.user-plat 820 "OtxmsfhHzR" .scheme.osd-entry 30 1 "" .osd.user-sub user-setup-color
 osd .osd.user-plat 821 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 820
 !if &seq $platform "dos"
     osd .osd.user-plat 50 "Sfh" "     Graphic Mode \H# : " 60
-    osd .osd.user-plat 60 "EtxHf" 6 .scheme.osd-entry "####" 1 user-set-cpfentry
+    osd .osd.user-plat 60 "EtxHf" .scheme.osd-entry "####" 1 user-set-cpfentry
     osd .osd.user-plat 70 "fh"  "       Double Lines : "
-    osd .osd.user-plat 80 "Ctxf" 8 "^^NY^^" 1 user-set-cpfcheckbox
+    osd .osd.user-plat 80 "Ctxf" "^^NY^^" 1 user-set-cpfcheckbox
     osd .osd.user-plat 509 ""
 !elif &seq $platform "win32"
-    osd .osd.user-plat 410 "Ctfxh" 41 "^^NY^^" 0x80000 user-set-system
+    osd .osd.user-plat 410 "Ctfxh" "^^NY^^" 0x80000 user-set-system
     osd .osd.user-plat 509 "Sfh" "         Client Server : " 510
-    osd .osd.user-plat 510 "Ctfx" 51 "^^NY^^" 0x20000 user-set-system
+    osd .osd.user-plat 510 "Ctfx" "^^NY^^" 0x20000 user-set-system
     osd .osd.user-plat 520 "Sfh" "     DOS File Names : " 530
-    osd .osd.user-plat 530 "Ctfxh" 53 "^^NY^^" 0x400 user-set-system
+    osd .osd.user-plat 530 "Ctfxh" "^^NY^^" 0x400 user-set-system
     osd .osd.user-plat 540 "f" " "
     !if &band $system 0x01
-        osd .osd.user-plat 410 "Ctfx" 41 "^^NY^^" 0x80000 user-set-system
+        osd .osd.user-plat 410 "Ctfx" "^^NY^^" 0x80000 user-set-system
         osd .osd.user-plat 420 ""
     !else
         osd .osd.user-plat 50  "Sfh" "          \HFont Name : " 60
-        osd .osd.user-plat 60  "EtxHf" 6 .scheme.osd-entry "###############################" 1 user-set-cpfentry
+        osd .osd.user-plat 60  "EtxHf" .scheme.osd-entry "###############################" 1 user-set-cpfentry
         osd .osd.user-plat 70  "Sfh" "      Weight & Si\Hze : " 80
-        osd .osd.user-plat 80  "EtxHfh" 8 .scheme.osd-entry "#####" 4 user-set-cpfentry
+        osd .osd.user-plat 80  "EtxHfh" .scheme.osd-entry "#####" 4 user-set-cpfentry
         osd .osd.user-plat 90  "fh" "  "
-        osd .osd.user-plat 100 "EtxHfh" 10 .scheme.osd-entry "#####" 2 user-set-cpfentry
+        osd .osd.user-plat 100 "EtxHfh" .scheme.osd-entry "#####" 2 user-set-cpfentry
         osd .osd.user-plat 110 "fh" " by "
-        osd .osd.user-plat 120 "EtxHfh" 12 .scheme.osd-entry "#####" 3 user-set-cpfentry
+        osd .osd.user-plat 120 "EtxHfh" .scheme.osd-entry "#####" 3 user-set-cpfentry
         osd .osd.user-plat 130 "Sfh" " \HFonts : " 140
-        osd .osd.user-plat 140 "Ctfx" 14 "^^NY^^" 0x10 user-set-system
+        osd .osd.user-plat 140 "Ctfx" "^^NY^^" 0x10 user-set-system
         osd .osd.user-plat 320 "Sfh" "    \HExtend Char Set : " 330
-        osd .osd.user-plat 330 "Ctfxh" 33 "^^NY^^" 2 user-set-cpfcheckbox
+        osd .osd.user-plat 330 "Ctfxh" "^^NY^^" 2 user-set-cpfcheckbox
         osd .osd.user-plat 340 "fh"  "               "
-        osd .osd.user-plat 350 "BdtfxHR" 35 .scheme.osd-ebtt " Choose Font " f user-set-winfont
-        osd .osd.user-plat 410 "Ctfxh" 41 "^^NY^^" 0x80000 user-set-system
+        osd .osd.user-plat 350 "BdtfxHR" .scheme.osd-ebtt " Choose Font " f user-set-winfont
+        osd .osd.user-plat 410 "Ctfxh" "^^NY^^" 0x80000 user-set-system
         osd .osd.user-plat 420 "Sfh" "     Capture Alt Space : " 430
-        osd .osd.user-plat 430 "Ctfx" 43 "^^NY^^" 0x40000 user-set-system
+        osd .osd.user-plat 430 "Ctfx" "^^NY^^" 0x40000 user-set-system
     !endif
 !else
     ; unix system
     osd .osd.user-plat 509 "Sfh" "         Client Server : " 510
-    osd .osd.user-plat 510 "Ctfx" 51 "^^NY^^" 0x20000 user-set-system
+    osd .osd.user-plat 510 "Ctfx" "^^NY^^" 0x20000 user-set-system
     osd .osd.user-plat 520 "Sfh" "     DOS File Names : " 530
-    osd .osd.user-plat 530 "Ctfxh" 53 "^^NY^^" 0x400 user-set-system
+    osd .osd.user-plat 530 "Ctfxh" "^^NY^^" 0x400 user-set-system
     osd .osd.user-plat 540 "f" " "
     !if &band $system 0x01
         osd .osd.user-plat 50  "Sfh" "      Termca\Hp Color : " 60
-        osd .osd.user-plat 60  "Ctfx" 6 "^^NY^^" 0x04 user-set-system
+        osd .osd.user-plat 60  "Ctfx" "^^NY^^" 0x04 user-set-system
         osd .osd.user-plat 90  "Sfh" "          Use \HFonts : " 100
-        osd .osd.user-plat 100 "Ctfx" 10 "^^NY^^" 0x10 user-set-system
+        osd .osd.user-plat 100 "Ctfx" "^^NY^^" 0x10 user-set-system
     !else
         osd .osd.user-plat 50 "Sfh" "          \HFont Name : " 60
-        osd .osd.user-plat 60 "EtxHf" 6 .scheme.osd-entry "###############################" 1 user-set-cpfentry
+        osd .osd.user-plat 60 "EtxHf" .scheme.osd-entry "###############################" 1 user-set-cpfentry
         osd .osd.user-plat 320 "Sfh" "    \HExtend Char Set : " 330
-        osd .osd.user-plat 330 "Ctfhx" 33 "^^NY^^" 2 user-set-cpfcheckbox
+        osd .osd.user-plat 330 "Ctfhx" "^^NY^^" 2 user-set-cpfcheckbox
         osd .osd.user-plat 340 "Sfh" "      Use \HFonts : " 350
-        osd .osd.user-plat 350 "Ctfx" 35 "^^NY^^" 0x10 user-set-system
+        osd .osd.user-plat 350 "Ctfx" "^^NY^^" 0x10 user-set-system
     !endif
 !endif
 
@@ -1075,52 +1075,52 @@ set-variable $mode-names ".*"
 osd .osd.user-gener 0   "s" 55 18 -1 -1
 osd .osd.user-gener 10  ""
 osd .osd.user-gener 40  "Sfh" "          Full \HName : " 50
-osd .osd.user-gener 50  "EtxHf" 50 .scheme.osd-entry "#######################" 1 user-set-entry
+osd .osd.user-gener 50  "EtxHf" .scheme.osd-entry "#######################" 1 user-set-entry
 osd .osd.user-gener 60  "Sfh" "          \HOrganizer : " 70
-osd .osd.user-gener 70  "EtxHf" 70 .scheme.osd-entry "############" 5 user-set-entry
+osd .osd.user-gener 70  "EtxHf" .scheme.osd-entry "############" 5 user-set-entry
 osd .osd.user-gener 80 ""
 osd .osd.user-gener 90 "Sfh" "     Auto-Sa\Hve Time : " 100
-osd .osd.user-gener 100 "EtxHf" 100 .scheme.osd-entry "############" 10 user-set-entry
+osd .osd.user-gener 100 "EtxHf" .scheme.osd-entry "############" 10 user-set-entry
 osd .osd.user-gener 110 "Sfh" "       Global Modes : "
-osd .osd.user-gener 120 "Ctfxp"  120 &cat .osd.checkbox-chars "\}\HQuiet" 8 user-set-checkbox
+osd .osd.user-gener 120 "Ctfxp" &cat .osd.checkbox-chars "\}\HQuiet" 8 user-set-checkbox
 osd .osd.user-gener 130 "fh"  "       Search Modes : "
-osd .osd.user-gener 140 "Ctfxph" 140 &cat .osd.checkbox-chars "\}\HExact" 4 user-set-checkbox
+osd .osd.user-gener 140 "Ctfxph" &cat .osd.checkbox-chars "\}\HExact" 4 user-set-checkbox
 osd .osd.user-gener 150 "fh"  "  "
-osd .osd.user-gener 160 "Ctfxp"  160 &cat .osd.checkbox-chars "\}\HMagic " 5 user-set-checkbox
+osd .osd.user-gener 160 "Ctfxp" &cat .osd.checkbox-chars "\}\HMagic " 5 user-set-checkbox
 osd .osd.user-gener 170 "Sfh" "       Buffer Modes : "
-osd .osd.user-gener 180 "Ctfxph" 180 &cat .osd.checkbox-chars "\}\HAuto "  6 user-set-checkbox
+osd .osd.user-gener 180 "Ctfxph" &cat .osd.checkbox-chars "\}\HAuto "  6 user-set-checkbox
 osd .osd.user-gener 190 "fh"  "  "
-osd .osd.user-gener 200 "Ctfxp"  200 &cat .osd.checkbox-chars "\}\HBackup" 7 user-set-checkbox
+osd .osd.user-gener 200 "Ctfxp" &cat .osd.checkbox-chars "\}\HBackup" 7 user-set-checkbox
 osd .osd.user-gener 210 "fh"  "                      "
-osd .osd.user-gener 220 "Ctfxph" 220 &cat .osd.checkbox-chars "\}\HTab  " 9 user-set-checkbox
+osd .osd.user-gener 220 "Ctfxph" &cat .osd.checkbox-chars "\}\HTab  " 9 user-set-checkbox
 osd .osd.user-gener 230 "fh"  "  "
-osd .osd.user-gener 240 "Ctfxp"  240 &cat .osd.checkbox-chars "\}\HUndo " 10 user-set-checkbox
+osd .osd.user-gener 240 "Ctfxp" &cat .osd.checkbox-chars "\}\HUndo " 10 user-set-checkbox
 osd .osd.user-gener 245 ""
 osd .osd.user-gener 250 "Sfh" "  \HKeep Undo History : " 260
-osd .osd.user-gener 260 "Ctfhx" 260 "^^NY^^" 0x8000 user-set-system
+osd .osd.user-gener 260 "Ctfhx" "^^NY^^" 0x8000 user-set-system
 osd .osd.user-gener 263 "Sfh" "          \HHide Backups : " 265
-osd .osd.user-gener 265 "Ctfx" 265 "^^NY^^" 0x100000 user-set-system
+osd .osd.user-gener 265 "Ctfx" "^^NY^^" 0x100000 user-set-system
 osd .osd.user-gener 270 "Sfh" "          Main Menu : "  280
-osd .osd.user-gener 280 "Ctfhx" 280 "^^NY^^" 1 user-set-checkbox
+osd .osd.user-gener 280 "Ctfhx" "^^NY^^" 1 user-set-checkbox
 osd .osd.user-gener 290 "Sfh" "      Alt \H-> Main Menu : " 300
-osd .osd.user-gener 300 "Ctfx" 300 "^^NY^^" 0x2000 user-set-system
+osd .osd.user-gener 300 "Ctfx" "^^NY^^" 0x2000 user-set-system
 osd .osd.user-gener 304 "Sfh" "  F-Type Buffer Sel : " 306
-osd .osd.user-gener 306 "Ctfhx" 306 "^^NY^^" 17 user-set-checkbox
+osd .osd.user-gener 306 "Ctfhx" "^^NY^^" 17 user-set-checkbox
 osd .osd.user-gener 310 "Sfh" "      Alt -\H> Esc Prefx : " 320
-osd .osd.user-gener 320 "Ctfx" 320 "^^NY^^" 0x4000 user-set-system
+osd .osd.user-gener 320 "Ctfx" "^^NY^^" 0x4000 user-set-system
 osd .osd.user-gener 321 ""
 osd .osd.user-gener 322 "Sfh" "   Abbrev Expansion : "
-osd .osd.user-gener 323 "Ctfxhp" 323 &cat .osd.checkbox-chars "\}Accent" 14 user-set-checkbox
+osd .osd.user-gener 323 "Ctfxhp" &cat .osd.checkbox-chars "\}Accent" 14 user-set-checkbox
 osd .osd.user-gener 324 "fh"  " "
-osd .osd.user-gener 325 "Ctfxhp" 325 &cat .osd.checkbox-chars "\}Lookbk" 15 user-set-checkbox
+osd .osd.user-gener 325 "Ctfxhp" &cat .osd.checkbox-chars "\}Lookbk" 15 user-set-checkbox
 osd .osd.user-gener 326 "fh"  " "
-osd .osd.user-gener 327 "Ctfxp"  327 &cat .osd.checkbox-chars "\}Dict'n"  16 user-set-checkbox
+osd .osd.user-gener 327 "Ctfxp" &cat .osd.checkbox-chars "\}Dict'n"  16 user-set-checkbox
 osd .osd.user-gener 330 "Sfh" "      Tab To \HIndent : " 340
-osd .osd.user-gener 340 "OtxmsfhHzR" 340 .scheme.osd-entry 18 1 "" .osd.user-sub user-setup-tab-indent
+osd .osd.user-gener 340 "OtxmsfhHzR" .scheme.osd-entry 18 1 "" .osd.user-sub user-setup-tab-indent
 osd .osd.user-gener 341 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 340
 osd .osd.user-gener 370 ""
 osd .osd.user-gener 380 "fh"  "                      "
-osd .osd.user-gener 390 "MdtxmfH" 390 .scheme.osd-ebtt " Sho\Hw Modes " .osd.user-modes
+osd .osd.user-gener 390 "MdtxmfH" .scheme.osd-ebtt " Sho\Hw Modes " .osd.user-modes
 
 ; The Start-up menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 0 define-macro user-setup-emulate-set
@@ -1175,55 +1175,55 @@ osd .osd.user-gener 390 "MdtxmfH" 390 .scheme.osd-ebtt " Sho\Hw Modes " .osd.use
 osd .osd.user-start 0   "s" 55 18 -1 -1
 osd .osd.user-start 10  ""
 osd .osd.user-start 40  "Sfh" "    User \HName:    " 50
-osd .osd.user-start 50  "tRxHf" 50 .scheme.osd-entry &spr "%s%n" $user-name &sub 14 &len $user-name " " f user-set-logname
+osd .osd.user-start 50  "tRxHf" .scheme.osd-entry &spr "%s%n" $user-name &sub 14 &len $user-name " " f user-set-logname
 osd .osd.user-start 60  "Sfh" "    User \HPath:    " 70
-osd .osd.user-start 70  "tRxHf" 70 .scheme.osd-entry &spr "%s%n" $user-path &sub 33 &len $user-path " " f user-set-path
+osd .osd.user-start 70  "tRxHf" .scheme.osd-entry &spr "%s%n" $user-path &sub 33 &len $user-path " " f user-set-path
 osd .osd.user-start 80  ""
 osd .osd.user-start 90  "Sfh" "    Setup \HFile:   " 100
-osd .osd.user-start 100 "EtxHfh" 100 .scheme.osd-entry "##############" 4 user-set-entry
+osd .osd.user-start 100 "EtxHfh" .scheme.osd-entry "##############" 4 user-set-entry
 osd .osd.user-start 103 "fh" "         "
-osd .osd.user-start 105 "Ctpfx" 105 &cat .osd.checkbox-chars "\} E\Hdit" 13 user-set-checkbox
+osd .osd.user-start 105 "Ctpfx" &cat .osd.checkbox-chars "\} E\Hdit" 13 user-set-checkbox
 osd .osd.user-start 110 "Sfh" "    C\Hompany File: " 120
-osd .osd.user-start 120 "EtxHf" 120 .scheme.osd-entry "##############" 2 user-set-entry
+osd .osd.user-start 120 "EtxHf" .scheme.osd-entry "##############" 2 user-set-entry
 osd .osd.user-start 130 "Sfh" "    \HEmulation:    " 140
-osd .osd.user-start 140 "OtxmsfhHzR" 140 .scheme.osd-entry 24 1 "" .osd.user-sub user-setup-emulate
+osd .osd.user-start 140 "OtxmsfhHzR" .scheme.osd-entry 24 1 "" .osd.user-sub user-setup-emulate
 osd .osd.user-start 141 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 140
 osd .osd.user-start 150 "fh" "    Key Bindings: "
-osd .osd.user-start 160 "Ctpfx" 160 &cat .osd.checkbox-chars "\} \HRebind Home Keys" 18 user-set-checkbox
+osd .osd.user-start 160 "Ctpfx" &cat .osd.checkbox-chars "\} \HRebind Home Keys" 18 user-set-checkbox
 osd .osd.user-start 170 "fh" "                  "
-osd .osd.user-start 180 "Ctpfx" 180 &cat .osd.checkbox-chars "\} \HMS Shift Region" 12 user-set-checkbox
+osd .osd.user-start 180 "Ctpfx" &cat .osd.checkbox-chars "\} \HMS Shift Region" 12 user-set-checkbox
 osd .osd.user-start 500 ""
 osd .osd.user-start 510 "c"  "Locale Setup"
 osd .osd.user-start 520 ""
 osd .osd.user-start 530 "Sfh" "    \HKeyboard:     " 540
-osd .osd.user-start 540 "OtxmsfhHzR" 540 .scheme.osd-entry 14 1 "" .osd.user-sub user-setup-keyb
+osd .osd.user-start 540 "OtxmsfhHzR" .scheme.osd-entry 14 1 "" .osd.user-sub user-setup-keyb
 osd .osd.user-start 541 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 540
 osd .osd.user-start 550 "Sfh" "    \HLanguage:     " 560
-osd .osd.user-start 560 "OtxmsfhHzR" 560 .scheme.osd-entry 14 1 "" .osd.user-sub user-setup-lang
+osd .osd.user-start 560 "OtxmsfhHzR" .scheme.osd-entry 14 1 "" .osd.user-sub user-setup-lang
 osd .osd.user-start 561 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 560
 osd .osd.user-start 570 "fh" "    Spelling:     "
-osd .osd.user-start 580 "Ctpfx" 580 &cat .osd.checkbox-chars "\} \HAuto Save Dictionaries" 2 user-set-checkbox
+osd .osd.user-start 580 "Ctpfx" &cat .osd.checkbox-chars "\} \HAuto Save Dictionaries" 2 user-set-checkbox
 osd .osd.user-start 590 "fh" "                  "
-osd .osd.user-start 600 "Ctpfx" 600 &cat .osd.checkbox-chars "\} Enable Au\Hto-Spell" 11 user-set-checkbox
+osd .osd.user-start 600 "Ctpfx" &cat .osd.checkbox-chars "\} Enable Au\Hto-Spell" 11 user-set-checkbox
 
 ; The note-book ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 osd .osd.user-nb 0 "Ns" 57 22 -1 -1
-osd .osd.user-nb 1 "Pft" 1 "Start-Up" .osd.user-start
-osd .osd.user-nb 2 "Pft" 2 "General" .osd.user-gener
-osd .osd.user-nb 3 "Pft" 3 "Platform" .osd.user-plat
-osd .osd.user-nb 4 "Pft" 4 "Mouse" .osd.user-mouse
-osd .osd.user-nb 5 "Pft" 5 "File Types" .osd.user-ftype
-osd .osd.user-nb 6 "Pft" 6 "Tools" .osd.user-tool
-osd .osd.user-nb 7 "Pft" 7 "E-Mail" .osd.user-mail
-osd .osd.user-nb 100 "It" 100 .osd.user-start
+osd .osd.user-nb 1 "Pft" "Start-Up" .osd.user-start
+osd .osd.user-nb 2 "Pft" "General" .osd.user-gener
+osd .osd.user-nb 3 "Pft" "Platform" .osd.user-plat
+osd .osd.user-nb 4 "Pft" "Mouse" .osd.user-mouse
+osd .osd.user-nb 5 "Pft" "File Types" .osd.user-ftype
+osd .osd.user-nb 6 "Pft" "Tools" .osd.user-tool
+osd .osd.user-nb 7 "Pft" "E-Mail" .osd.user-mail
+osd .osd.user-nb 100 "It" .osd.user-start
 
 ; The main menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 osd .osd.user 0  "batcHds" 9 3 59 26 -1 -1 630 .scheme.osd-title &spr "User Setup (%s%s%s)" &sup &lef $platform 1 &rig $platform 1 &cond &band $system 0x01 " Console" ""
-osd .osd.user 100 "It" 1 .osd.user-nb
+osd .osd.user 100 "It" .osd.user-nb
 osd .osd.user 600 ""
-osd .osd.user 620 "BdtcfHhx" 2 .scheme.osd-ebtt " \HSave " f user-set-save
-osd .osd.user 625 "BdtcfHh"  3 .scheme.osd-ebtt " \HCurrent " f user-set-current
-osd .osd.user 630 "BdtcfH"   4 .scheme.osd-ebtt " E\Hxit " f void
+osd .osd.user 620 "BdtcfHhx" .scheme.osd-ebtt " \HSave " f user-set-save
+osd .osd.user 625 "BdtcfHh"  .scheme.osd-ebtt " \HCurrent " f user-set-current
+osd .osd.user 630 "BdtcfH"   .scheme.osd-ebtt " E\Hxit " f void
 
 define-macro user-setup
     !force 0 save-history

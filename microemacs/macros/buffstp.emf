@@ -147,7 +147,7 @@ define-macro buffer-setup
         set-variable #l0 1
         !repeat
             osd .osd.buffstp &add 2 &mul #l0 10 "fh" "  "
-            osd .osd.buffstp &add 5 &mul #l0 10 "Cptfx" #l0 &spr "%s\} %s" .osd.checkbox-chars &lget #l2 #l0 #l0 buffer-setup-option
+            osd .osd.buffstp &add 5 &mul #l0 10 "Cptfx" &spr "%s\} %s" .osd.checkbox-chars &lget #l2 #l0 #l0 buffer-setup-option
         !until &seq &lget #l1 &inc #l0 1 ""
         osd .osd.buffstp 199 ""
     !endif
@@ -192,21 +192,21 @@ define-macro buffer-setup
         !endif
     !until &seq &lget .flags &inc #l0 1 ""
     osd .osd.buffstp 900 "Sfh" "   Tab Width:       " 901
-    osd .osd.buffstp 901 "EtRxHf" 901 .scheme.osd-entry "##########" 3 buffer-setup-fmark
+    osd .osd.buffstp 901 "EtRxHf" .scheme.osd-entry "##########" 3 buffer-setup-fmark
     osd .osd.buffstp 902 "Sfh" "   Indent Width:    " 903
-    osd .osd.buffstp 903 "EtRxHf" 903 .scheme.osd-entry "##########" 4 buffer-setup-fmark
+    osd .osd.buffstp 903 "EtRxHf" .scheme.osd-entry "##########" 4 buffer-setup-fmark
     osd .osd.buffstp 904 ""
     !if &not &seq &lget &ind &spr ".%s.comment" $buffer-fhook 1 ""
         osd .osd.buffstp 909 "Sfh" "   Fold Open\H/Close: " 910
-        osd .osd.buffstp 910 "EtRxHfh" 910 .scheme.osd-entry "##########" 1 buffer-setup-fmark
+        osd .osd.buffstp 910 "EtRxHfh" .scheme.osd-entry "##########" 1 buffer-setup-fmark
         osd .osd.buffstp 915 "hf" "   "
-        osd .osd.buffstp 920 "EtRxHf"  920 .scheme.osd-entry "##########" 2 buffer-setup-fmark
+        osd .osd.buffstp 920 "EtRxHf"  .scheme.osd-entry "##########" 2 buffer-setup-fmark
         osd .osd.buffstp 930 ""
     !endif        
     osd .osd.buffstp 940 ""
-    osd .osd.buffstp 950 "BtcfHhx" 950 .scheme.osd-ebtt " \HSave " 1 buffer-setup-save
-    osd .osd.buffstp 960 "BtcfHh"  960 .scheme.osd-ebtt " \HCurrent " 2 buffer-setup-save
-    osd .osd.buffstp 970 "BtcfH"   970 .scheme.osd-ebtt " E\Hxit " f void
+    osd .osd.buffstp 950 "BtcfHhx" .scheme.osd-ebtt " \HSave " 1 buffer-setup-save
+    osd .osd.buffstp 960 "BtcfHh"  .scheme.osd-ebtt " \HCurrent " 2 buffer-setup-save
+    osd .osd.buffstp 970 "BtcfH"   .scheme.osd-ebtt " E\Hxit " f void
     set-variable .nsetup .osetup
     .osd.buffstp osd
 !emacro

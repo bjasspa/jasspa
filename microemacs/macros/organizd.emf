@@ -27,7 +27,7 @@ set-variable .org.bind-r2 "|1|1|1|1|"
     !done
     ; set teh top line
     osd .osd.orgd 50 "fh" &spr "      %s " &lget .org.days &add 1 &mid .org.info 4 1
-    osd .osd.orgd 70 "Mdtmxsfh" 3 &lget .org.months .org.month .osd.org-m
+    osd .osd.orgd 70 "Mdtmxsfh" &lget .org.months .org.month .osd.org-m
 !emacro     
 
 0 define-macro org-day-change-year
@@ -146,18 +146,18 @@ set-variable .org.bind-r2 "|1|1|1|1|"
 
 osd .osd.orgd 10 ""
 osd .osd.orgd 20 "hf" "    "
-osd .osd.orgd 30 "BtxfRhT" 1 " \H<- " -1 org-day-inc-day
-osd .osd.orgd 60 "Etxfh" 2 "###" f org-day-change-day
+osd .osd.orgd 30 "BtxfRhT" " \H<- " -1 org-day-inc-day
+osd .osd.orgd 60 "Etxfh" "###" f org-day-change-day
 osd .osd.orgd 75 "fh" " "
-osd .osd.orgd 80 "Etxfh" 4 "#####" f org-day-change-year
-osd .osd.orgd 100 "BtxrfRhT" 5 " -\H> "  1 org-day-inc-day
+osd .osd.orgd 80 "Etxfh" "#####" f org-day-change-year
+osd .osd.orgd 100 "BtxrfRhT" " -\H> "  1 org-day-inc-day
 osd .osd.orgd 110 "rf" "    "
 osd .osd.orgd 120 "" 
 osd .osd.orgd 190 "Sf" "    \HNotes" 200 
-osd .osd.orgd 200 "EtNcfHxz" 6 .scheme.osd-entry 56 27 "" f org-day-set-notes
+osd .osd.orgd 200 "EtNcfHxz" .scheme.osd-entry 56 27 "" f org-day-set-notes
 osd .osd.orgd 600 "" 
 osd .osd.orgd 605 "" 
-osd .osd.orgd 610 "BtxhcfH" 7 .scheme.osd-ebtt " \HSave "    f organizer-save
-osd .osd.orgd 620 "BtxhcfH" 8 .scheme.osd-ebtt " Day to \HBuffer "  f org-day-buffer
-osd .osd.orgd 630 "BtcfH"   9 .scheme.osd-ebtt " E\Hxit "    1 void
+osd .osd.orgd 610 "BtxhcfH" .scheme.osd-ebtt " \HSave "    f organizer-save
+osd .osd.orgd 620 "BtxhcfH" .scheme.osd-ebtt " Day to \HBuffer "  f org-day-buffer
+osd .osd.orgd 630 "BtcfH"   .scheme.osd-ebtt " E\Hxit "    1 void
 

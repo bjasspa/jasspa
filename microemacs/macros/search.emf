@@ -159,32 +159,32 @@ set-variable .osd.ftagd 16
     set-variable .osd.ftagw #l0
     set-variable .osd.ftagd #l1
     osd .osd.ftagc 0 "fsS" .scheme.osd-child #l0 #l1 0 -1
-    osd .osd.ftagl 20 "ExHcfzt" 20 .scheme.osd-entry #l0 1 "" 1 osd-find-tag-set
-    osd .osd.ftagl 40 "IbHt" 40 .scheme.osd-sbar #l0 #l1 .osd.ftagc
+    osd .osd.ftagl 20 "ExHcfzt" .scheme.osd-entry #l0 1 "" 1 osd-find-tag-set
+    osd .osd.ftagl 40 "IbHt" .scheme.osd-sbar #l0 #l1 .osd.ftagc
 !emacro
 
 osd .osd.ftagl 0   "d" 20
 osd .osd.ftagl 10  "S" " \HTag or Filter" 20
-osd .osd.ftagl 20  "ExHcfzt" 20 .scheme.osd-entry .osd.ftagw 1 "" 1 osd-find-tag-set
+osd .osd.ftagl 20  "ExHcfzt" .scheme.osd-entry .osd.ftagw 1 "" 1 osd-find-tag-set
 osd .osd.ftagl 30  ""
-osd .osd.ftagl 40  "IbHt" 40 .scheme.osd-sbar .osd.ftagw .osd.ftagd .osd.ftagc
+osd .osd.ftagl 40  "IbHt" .scheme.osd-sbar .osd.ftagw .osd.ftagd .osd.ftagc
 osd .osd.ftagl 50  ""
 
 osd .osd.ftagr 0   ""
 osd .osd.ftagr 5   ""
-osd .osd.ftagr 10  "BHRxt" 10 .scheme.osd-ebtt " \HFilter "          f osd-find-tag-find
+osd .osd.ftagr 10  "BHRxt" .scheme.osd-ebtt " \HFilter "          f osd-find-tag-find
 osd .osd.ftagr 20  ""
-osd .osd.ftagr 30  "BHt" 30 .scheme.osd-ebtt " \HGoto "          f osd-find-tag-goto
+osd .osd.ftagr 30  "BHt" .scheme.osd-ebtt " \HGoto "          f osd-find-tag-goto
 osd .osd.ftagr 40  ""
-osd .osd.ftagr 50  "BHt" 50  .scheme.osd-ebtt " \HCancel "        f void
+osd .osd.ftagr 50  "BHt"  .scheme.osd-ebtt " \HCancel "        f void
 
 -1 osd .osd.ftag
 osd .osd.ftag 0  "batcdHR" 3 6 30 .scheme.osd-title "Find Tag" osd-find-tag-resize
 osd .osd.ftag 10  ""
 osd .osd.ftag 20  "h" " "
-osd .osd.ftag 30  "Iht" 30 .osd.ftagl
+osd .osd.ftag 30  "Iht" .osd.ftagl
 osd .osd.ftag 40  "h" "  "
-osd .osd.ftag 50  "Iht" 50 .osd.ftagr
+osd .osd.ftag 50  "Iht" .osd.ftagr
 osd .osd.ftag 60  "" " "
 
 0 define-macro osd-find-tag
@@ -226,24 +226,24 @@ osd .osd.ftag 60  "" " "
         osd .osd.sar-hll 170 "BhfH" .scheme.osd-dbtt " Above "
         osd .osd.sar-hll 180 "BhfH" .scheme.osd-dbtt " All  "
     !else
-        osd .osd.sar-srr 10  "BcfxHt" 10 .scheme.osd-ebtt " Find \HFirst  "  1 osd-search-search
-        osd .osd.sar-srr 30  "BcfxHt" 30 .scheme.osd-ebtt " Find \HNext   "  3 osd-search-search
-        osd .osd.sar-srr 50  "BcfxHt" 50 .scheme.osd-ebtt " Find \HPrev   " -1 osd-search-search
-        osd .osd.sar-rpr 10  "BcfxHt" 10 .scheme.osd-ebtt " Find \HFirst  "  1 osd-search-search
-        osd .osd.sar-rpr 30  "BcfxHt" 30 .scheme.osd-ebtt " Find \HNext   "  3 osd-search-search
+        osd .osd.sar-srr 10  "BcfxHt" .scheme.osd-ebtt " Find \HFirst  "  1 osd-search-search
+        osd .osd.sar-srr 30  "BcfxHt" .scheme.osd-ebtt " Find \HNext   "  3 osd-search-search
+        osd .osd.sar-srr 50  "BcfxHt" .scheme.osd-ebtt " Find \HPrev   " -1 osd-search-search
+        osd .osd.sar-rpr 10  "BcfxHt" .scheme.osd-ebtt " Find \HFirst  "  1 osd-search-search
+        osd .osd.sar-rpr 30  "BcfxHt" .scheme.osd-ebtt " Find \HNext   "  3 osd-search-search
         !if &seq .osd-search.replace ""
             osd .osd.sar-rpr 50 "BcfH" .scheme.osd-dbtt " Replace     "
             osd .osd.sar-rpr 70 "BcfH" .scheme.osd-dbtt " Replace All "
         !else
-            osd .osd.sar-rpr 50 "BcfxHt" 50 .scheme.osd-ebtt " \HReplace     "  1 osd-search-replace
-            osd .osd.sar-rpr 70 "BcfxHt" 70 .scheme.osd-ebtt " Replace \HAll "  2 osd-search-replace
+            osd .osd.sar-rpr 50 "BcfxHt" .scheme.osd-ebtt " \HReplace     "  1 osd-search-replace
+            osd .osd.sar-rpr 70 "BcfxHt" .scheme.osd-ebtt " Replace \HAll "  2 osd-search-replace
         !endif
-        osd .osd.sar-hlr 10  "BcfxHt" 10 .scheme.osd-ebtt " Find \HFirst  "  1 osd-search-hilight
-        osd .osd.sar-hlr 30  "BcfxHt" 30 .scheme.osd-ebtt " Find \HNext   "  3 osd-search-hilight
-        osd .osd.sar-hlr 50  "BcfxHt" 50 .scheme.osd-ebtt " Find \HPrev   " -1 osd-search-hilight
-        osd .osd.sar-hll 160 "BhfxHt" 160 .scheme.osd-ebtt " \HBelow "        4 osd-search-hilight
-        osd .osd.sar-hll 170 "BhfxHt" 170 .scheme.osd-ebtt " Abo\Hve "       -4 osd-search-hilight
-        osd .osd.sar-hll 180 "BhfxHt" 180 .scheme.osd-ebtt " \HAll  "         5 osd-search-hilight
+        osd .osd.sar-hlr 10  "BcfxHt" .scheme.osd-ebtt " Find \HFirst  "  1 osd-search-hilight
+        osd .osd.sar-hlr 30  "BcfxHt" .scheme.osd-ebtt " Find \HNext   "  3 osd-search-hilight
+        osd .osd.sar-hlr 50  "BcfxHt" .scheme.osd-ebtt " Find \HPrev   " -1 osd-search-hilight
+        osd .osd.sar-hll 160 "BhfxHt" .scheme.osd-ebtt " \HBelow "        4 osd-search-hilight
+        osd .osd.sar-hll 170 "BhfxHt" .scheme.osd-ebtt " Abo\Hve "       -4 osd-search-hilight
+        osd .osd.sar-hll 180 "BhfxHt" .scheme.osd-ebtt " \HAll  "         5 osd-search-hilight
         !if &equ @# -1
             set-variable #l0 $window-col
             !force -1 search-forward .osd-search.search
@@ -286,7 +286,7 @@ osd .osd.ftag 60  "" " "
 0 define-macro osd-search-set-hilight
     set-variable .osd-search.scheme @#
     set-variable #l0 &cat "            " &rep &lget .osd-search.hilnames @# "&" ""
-    osd .osd.sar-hll 50 "MdHmsxfzt" 50 &lget .osd-search.hilschms @# 30 1 #l0 .osd.tmp osd-search-setup-hilight
+    osd .osd.sar-hll 50 "MdHmsxfzt" &lget .osd-search.hilschms @# 30 1 #l0 .osd.tmp osd-search-setup-hilight
 !emacro
 0 define-macro osd-search-setup-hilight
     -1 osd @#
@@ -363,7 +363,7 @@ osd .osd.ftag 60  "" " "
             !force -1 show-region
             !if &gre #g0 -1
                 !if &not #g1
-                    osd .osd.sar-rpr 90 "BcfxHt" 90 .scheme.osd-ebtt " \HUndo Last   "  3 osd-search-replace
+                    osd .osd.sar-rpr 90 "BcfxHt" .scheme.osd-ebtt " \HUndo Last   "  3 osd-search-replace
                 !endif
                 set-variable #g0 &add #g0 1
                 set-variable #g1 #g0
@@ -537,16 +537,16 @@ osd .osd.ftag 60  "" " "
 
 osd .osd.sar-srl 00  "sd" 30 11 -1 -1 20
 osd .osd.sar-srl 10  "Sf" "\HSearch for" 20
-osd .osd.sar-srl 20  "ExfHt" 20 .scheme.osd-entry "##############################" 1 osd-search-set
+osd .osd.sar-srl 20  "ExfHt" .scheme.osd-entry "##############################" 1 osd-search-set
 osd .osd.sar-srl 40  ""
 osd .osd.sar-srl 50  ""
 osd .osd.sar-srl 60  ""
 osd .osd.sar-srl 70  ""
 osd .osd.sar-srl 80  ""
 osd .osd.sar-srl 110 "hf" "  "
-osd .osd.sar-srl 120 "Cfxpt" 120 &cat .osd.checkbox-chars "\} \HCase insensitive" f osd-search-cexact
+osd .osd.sar-srl 120 "Cfxpt" &cat .osd.checkbox-chars "\} \HCase insensitive" f osd-search-cexact
 osd .osd.sar-srl 130 "hf" "  "
-osd .osd.sar-srl 140 "Cfxpt" 140 &cat .osd.checkbox-chars "\} \HMagic mode"       f osd-search-cmagic
+osd .osd.sar-srl 140 "Cfxpt" &cat .osd.checkbox-chars "\} \HMagic mode"       f osd-search-cmagic
 
 osd .osd.sar-srr 0  "s" 13 11 -1 -1
 osd .osd.sar-srr 20 ""
@@ -556,59 +556,59 @@ osd .osd.sar-srr 70  ""
 osd .osd.sar-srr 80  ""
 osd .osd.sar-srr 90  ""
 osd .osd.sar-srr 100 ""
-osd .osd.sar-srr 110 "BcfHt" 110 .scheme.osd-ebtt " E\Hxit        "   1 void
+osd .osd.sar-srr 110 "BcfHt" .scheme.osd-ebtt " E\Hxit        "   1 void
 
 osd .osd.sar-src 00  "sd" 49 13 -1 -1 30
 osd .osd.sar-src 10  ""
 osd .osd.sar-src 20  "h" "  "
-osd .osd.sar-src 30  "Iht" 1 .osd.sar-srl
+osd .osd.sar-src 30  "Iht" .osd.sar-srl
 osd .osd.sar-src 40  "h" "  "
-osd .osd.sar-src 50  "Iht" 2 .osd.sar-srr
+osd .osd.sar-src 50  "Iht" .osd.sar-srr
 osd .osd.sar-src 60  "" " "
 osd .osd.sar-src 70  ""
 
 osd .osd.sar-rpl 00  "sd" 30 11 -1 -1 20
 osd .osd.sar-rpl 10  "Sf" "\HSearch for" 20
-osd .osd.sar-rpl 20  "ExfHt" 20 .scheme.osd-entry "##############################" 1 osd-search-set
+osd .osd.sar-rpl 20  "ExfHt" .scheme.osd-entry "##############################" 1 osd-search-set
 osd .osd.sar-rpl 40  "Sf" "\HReplace with" 50
-osd .osd.sar-rpl 50  "ExfHt" 50 .scheme.osd-entry "##############################" 2 osd-search-set
+osd .osd.sar-rpl 50  "ExfHt" .scheme.osd-entry "##############################" 2 osd-search-set
 osd .osd.sar-rpl 60  ""
 osd .osd.sar-rpl 70  ""
 osd .osd.sar-rpl 80  ""
 osd .osd.sar-rpl 110 "hf" "  "
-osd .osd.sar-rpl 120 "Cfxpt" 120 &cat .osd.checkbox-chars "\} \HCase insensitive" f osd-search-cexact
+osd .osd.sar-rpl 120 "Cfxpt" &cat .osd.checkbox-chars "\} \HCase insensitive" f osd-search-cexact
 osd .osd.sar-rpl 130 "hf" "  "
-osd .osd.sar-rpl 140 "Cfxpt" 140 &cat .osd.checkbox-chars "\} \HMagic mode"       f osd-search-cmagic
+osd .osd.sar-rpl 140 "Cfxpt" &cat .osd.checkbox-chars "\} \HMagic mode"       f osd-search-cmagic
 
 osd .osd.sar-rpr 0   "s" 13 11 -1 -1
 osd .osd.sar-rpr 20  ""
 osd .osd.sar-rpr 40  ""
 osd .osd.sar-rpr 60  ""
 osd .osd.sar-rpr 80  ""
-osd .osd.sar-rpr 90  "BcfHt" 90 .scheme.osd-ebtt " \HUndo Last   "  0 osd-search-replace
+osd .osd.sar-rpr 90  "BcfHt" .scheme.osd-ebtt " \HUndo Last   "  0 osd-search-replace
 osd .osd.sar-rpr 100 ""
-osd .osd.sar-rpr 110 "BcfHt" 110 .scheme.osd-ebtt " E\Hxit        "  1 void
+osd .osd.sar-rpr 110 "BcfHt" .scheme.osd-ebtt " E\Hxit        "  1 void
 
 osd .osd.sar-rpc 00  "sd" 49 13 -1 -1 30
 osd .osd.sar-rpc 10  ""
 osd .osd.sar-rpc 20  "h" "  "
-osd .osd.sar-rpc 30  "Iht" 1 .osd.sar-rpl
+osd .osd.sar-rpc 30  "Iht" .osd.sar-rpl
 osd .osd.sar-rpc 40  "h" "  "
-osd .osd.sar-rpc 50  "Iht" 2 .osd.sar-rpr
+osd .osd.sar-rpc 50  "Iht" .osd.sar-rpr
 osd .osd.sar-rpc 60  "" " "
 osd .osd.sar-rpc 70  ""
 
 osd .osd.sar-hll 00  "sd" 30 11 -1 -1 20
 osd .osd.sar-hll 10  "Sf" "\HSearch for" 20
-osd .osd.sar-hll 20  "ExfHt" 10 .scheme.osd-entry "##############################" 1 osd-search-set
+osd .osd.sar-hll 20  "ExfHt" .scheme.osd-entry "##############################" 1 osd-search-set
 osd .osd.sar-hll 40  "Sf" "\HHilight" 50
 osd .osd.sar-hll 60  ""
 osd .osd.sar-hll 70  ""
 osd .osd.sar-hll 80  ""
 osd .osd.sar-hll 110 "hf" "  "
-osd .osd.sar-hll 120 "Cfxpt" 120 &cat .osd.checkbox-chars "\} \HCase insensitive" f osd-search-cexact
+osd .osd.sar-hll 120 "Cfxpt" &cat .osd.checkbox-chars "\} \HCase insensitive" f osd-search-cexact
 osd .osd.sar-hll 130 "hf" "  "
-osd .osd.sar-hll 140 "Cfxpt" 140 &cat .osd.checkbox-chars "\} \HMagic mode"       f osd-search-cmagic
+osd .osd.sar-hll 140 "Cfxpt" &cat .osd.checkbox-chars "\} \HMagic mode"       f osd-search-cmagic
 osd .osd.sar-hll 150 ""
 osd .osd.sar-hll 165 "hf" "  "
 osd .osd.sar-hll 175 "hf" "  "
@@ -620,27 +620,27 @@ osd .osd.sar-hlr 40  ""
 osd .osd.sar-hlr 60  ""
 osd .osd.sar-hlr 70  ""
 osd .osd.sar-hlr 80  ""
-osd .osd.sar-hlr 90  "BcfHxt" 90 .scheme.osd-ebtt " \HRemove All  "   f osd-search-hilight
+osd .osd.sar-hlr 90  "BcfHxt" .scheme.osd-ebtt " \HRemove All  "   f osd-search-hilight
 osd .osd.sar-hlr 100 ""
-osd .osd.sar-hlr 110 "BcfHt" 110 .scheme.osd-ebtt " E\Hxit        "   1 void
+osd .osd.sar-hlr 110 "BcfHt" .scheme.osd-ebtt " E\Hxit        "   1 void
 
 osd .osd.sar-hlt 00  "sd" 49 13 -1 -1 30
 osd .osd.sar-hlt 10  ""
 osd .osd.sar-hlt 20  "h" "  "
-osd .osd.sar-hlt 30  "Iht" 1 .osd.sar-hll
+osd .osd.sar-hlt 30  "Iht" .osd.sar-hll
 osd .osd.sar-hlt 40  "h" "  "
-osd .osd.sar-hlt 50  "Iht" 2 .osd.sar-hlr
+osd .osd.sar-hlt 50  "Iht" .osd.sar-hlr
 osd .osd.sar-hlt 60  "" " "
 osd .osd.sar-hlt 70  ""
 
 osd .osd.sar-nb 0   "Nsd" 51 14 -1 -1 100
-osd .osd.sar-nb 1   "Ptf" 1 "Search"  .osd.sar-src
-osd .osd.sar-nb 2   "Ptf" 2 "Replace" .osd.sar-rpc
-osd .osd.sar-nb 3   "Ptf" 3 "Hilight" .osd.sar-hlt
-osd .osd.sar-nb 100 "It" 100          .osd.sar-src
+osd .osd.sar-nb 1   "Ptf" "Search"  .osd.sar-src
+osd .osd.sar-nb 2   "Ptf" "Replace" .osd.sar-rpc
+osd .osd.sar-nb 3   "Ptf" "Hilight" .osd.sar-hlt
+osd .osd.sar-nb 100 "It"            .osd.sar-src
 
 osd .osd.sar  0 ""
-osd .osd.sar  10 "It" 10 .osd.sar-nb
+osd .osd.sar  10 "It" .osd.sar-nb
 
 0 define-macro osd-search
     ; if some text is hilighted, use that as the search string
@@ -673,7 +673,7 @@ osd .osd.sar  10 "It" 10 .osd.sar-nb
     !if &or &les &dec @# 1 0 &gre @# 2
         set-variable @# 0
     !endif
-    osd .osd.sar-nb 100 "It" 100 &add .osd.sar-src @#
+    osd .osd.sar-nb 100 "It" &add .osd.sar-src @#
     .osd-search.recenter recenter
     !force -1 osd-search-set-state
     .osd.sar osd

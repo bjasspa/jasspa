@@ -171,6 +171,6 @@ osd .osd.melogo 3101  "Sfh"                   "                                "
 osd .osd.melogo 3102  "SfHh" .scheme.hlblack  "    "
 osd .osd.melogo 3103  "Sf"                    "                                "
 osd .osd.melogo 3201  ""  ""
-osd .osd.melogo 3301  "BtcfHh" 7 .scheme.osd-ebtt " \HOkay " f void
+osd .osd.melogo 3301  "BtcfHh" .scheme.osd-ebtt " \HOkay " f void
 
 .osd.melogo osd

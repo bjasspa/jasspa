@@ -362,7 +362,7 @@ define-macro mail-merge
         set-variable .mmrg.endfld  ","
         set-variable .mmrg.delimit "\""
     !endif
-    osd .osd.fobm 55  "BcftHx"  55 .scheme.osd-ebtt " \HOptions  " .osd.mmrg-opt osd
+    osd .osd.fobm 55 "BcftHx" .scheme.osd-ebtt " \HOptions  " .osd.mmrg-opt osd
     set-variable .osd-get-file.title "Select Merge Data File"
     set-variable .osd-get-file.file-type "|Text file|All files|"
     set-variable .osd-get-file.file-mask "|*.txt|*|"

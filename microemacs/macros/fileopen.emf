@@ -123,7 +123,7 @@ define-macro osd-fo-filelist
 define-macro osd-fo-masksel
     set-variable .osd-get-file.ft @#
     set-variable #l0 &lget .osd-get-file.file-type @#
-    osd .osd.fofm 6 "xMdscfHt" 6 .scheme.osd-entry &spr "%s%n" &lef #l0 .osd.fo-width &sub .osd.fo-width &len #l0 " " .osd.foft
+    osd .osd.fofm 6 "xMdscfHt" .scheme.osd-entry &spr "%s%n" &lef #l0 .osd.fo-width &sub .osd.fo-width &len #l0 " " .osd.foft
     set-variable .osd.fo-mask &lget .osd-get-file.file-mask @#
     set-variable .osd.fo-file .osd.fo-mask
     0 osd-fo-filelist
@@ -155,7 +155,7 @@ define-macro osd-fo-dirlist
         osd .osd.fodc 1 "" " "
     !endif
     !if &band $system 0x200
-        osd .osd.fodm 6 "xMdscfHt" 6 .scheme.osd-entry &spr "%s%n" &lef .osd.fo-path 2 &sub .osd.fo-width 2 " " .osd.fodv
+        osd .osd.fodm 6 "xMdscfHt" .scheme.osd-entry &spr "%s%n" &lef .osd.fo-path 2 &sub .osd.fo-width 2 " " .osd.fodv
     !endif
 !emacro
 
@@ -247,49 +247,49 @@ define-macro osd-fo-okay
         osd .osd.fofc 0 "AsSf" .scheme.osd-child .osd.fo-width .osd.fo-depth -1 -1
         osd .osd.fodc 0 "AsSf" .scheme.osd-child .osd.fo-width .osd.fo-depth -1 -1
     !endif
-    osd .osd.fofm 3 "ExHtfc" 3 .scheme.osd-entry #l2 1 osd-fo-fileset
-    osd .osd.fofm 4 "IbHt" 4 .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fofc
-    osd .osd.fodm 3 "ExHtfc" 3 .scheme.osd-entry #l2 1 osd-fo-dirset
-    osd .osd.fodm 4 "IbHt" 4 .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fodc
+    osd .osd.fofm 3 "ExHtfc" .scheme.osd-entry #l2 1 osd-fo-fileset
+    osd .osd.fofm 4 "IbHt" .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fofc
+    osd .osd.fodm 3 "ExHtfc" .scheme.osd-entry #l2 1 osd-fo-dirset
+    osd .osd.fodm 4 "IbHt" .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fodc
     !if &band $system 0x200
-        osd .osd.fodm 6 "xMdscfHt" 6 .scheme.osd-entry &spr "%s%n" &lef .osd.fo-path 2 &sub .osd.fo-width 2 " " .osd.fodv
+        osd .osd.fodm 6 "xMdscfHt" .scheme.osd-entry &spr "%s%n" &lef .osd.fo-path 2 &sub .osd.fo-width 2 " " .osd.fodv
     !endif
     set-variable #l3 &lget .osd-get-file.file-type .osd-get-file.ft
-    osd .osd.fofm 6 "xMdscfHt" 6 .scheme.osd-entry &spr "%s%n" &lef #l3 .osd.fo-width &sub .osd.fo-width &len #l3 " " .osd.foft
+    osd .osd.fofm 6 "xMdscfHt" .scheme.osd-entry &spr "%s%n" &lef #l3 .osd.fo-width &sub .osd.fo-width &len #l3 " " .osd.foft
 !emacro
 
 osd .osd.fofm 0 "d" 3
 osd .osd.fofm 1 "S" " \HFile Name:" 3
-osd .osd.fofm 3 "ExHtfc" 3 .scheme.osd-entry "####################" 1 osd-fo-fileset
-osd .osd.fofm 4 "IbHt" 4 .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fofc
+osd .osd.fofm 3 "ExHtfc" .scheme.osd-entry "####################" 1 osd-fo-fileset
+osd .osd.fofm 4 "IbHt" .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fofc
 osd .osd.fofm 5 "S" " File \HType:" 6
 
 osd .osd.fodm 0 ""
 osd .osd.fodm 1 "S" " \HDirectories:" 3
-osd .osd.fodm 3 "ExHtfc" 3 .scheme.osd-entry "####################" 1 osd-fo-dirset
-osd .osd.fodm 4 "IbHt" 4 .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fodc
+osd .osd.fodm 3 "ExHtfc" .scheme.osd-entry "####################" 1 osd-fo-dirset
+osd .osd.fodm 4 "IbHt" .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fodc
 !if &band $system 0x200
     osd .osd.fodm 5 "S" " Dri\Hve:" 6
 !endif
 
 osd .osd.fobm 0   ""
 osd .osd.fobm 10  ""
-osd .osd.fobm 20  "BcfxtH" 20 .scheme.osd-ebtt "    \HOK    " .osd.fom osd-fo-okay
+osd .osd.fobm 20  "BcfxtH" .scheme.osd-ebtt "    \HOK    " .osd.fom osd-fo-okay
 osd .osd.fobm 30  ""
-osd .osd.fobm 40  "BcftH"  40 .scheme.osd-ebtt "  \HCancel  " f void
+osd .osd.fobm 40  "BcftH" .scheme.osd-ebtt "  \HCancel  " f void
 osd .osd.fobm 50  ""
 osd .osd.fobm 60  ""
 osd .osd.fobm 70  ""
 osd .osd.fobm 90  ""
-osd .osd.fobm 100  "Cfpxt" 100 &cat .osd.checkbox-chars "\} \HShow backups" 1 osd-fo-options
+osd .osd.fobm 100  "Cfpxt" &cat .osd.checkbox-chars "\} \HShow backups" 1 osd-fo-options
 
 osd .osd.fom 0  "batcdHR" 3 6 .scheme.osd-title 2 "" osd-fo-resize
 osd .osd.fom 1  ""
-osd .osd.fom 2  "Iht" 2 .osd.fofm
+osd .osd.fom 2  "Iht" .osd.fofm
 osd .osd.fom 3  "h" " "
-osd .osd.fom 4  "Iht" 4 .osd.fodm
+osd .osd.fom 4  "Iht" .osd.fodm
 osd .osd.fom 5  "h" " "
-osd .osd.fom 6  "It" 6 .osd.fobm
+osd .osd.fom 6  "It" .osd.fobm
 
 0 define-macro osd-get-file
     osd .osd.fom 0  "batcdHR" 3 6 2 .scheme.osd-title .osd-get-file.title osd-fo-resize
@@ -335,9 +335,9 @@ set-variable .osd-get-file.file-type &cond &seq .osd-get-file.file-type "ERROR" 
 
 define-macro osd-file-open
     osd .osd.fobm 110 ""
-    osd .osd.fobm 120 "Cfpxt" 120 &cat .osd.checkbox-chars "\} \HView File"     8 osd-fo-options
-    osd .osd.fobm 130 "Cfpxt" 130 &cat .osd.checkbox-chars "\} \HBinary File"   2 osd-fo-options
-    osd .osd.fobm 140 "Cfpxt" 140 &cat .osd.checkbox-chars "\} \HEncrypt File"  4 osd-fo-options
+    osd .osd.fobm 120 "Cfpxt" &cat .osd.checkbox-chars "\} \HView File"     8 osd-fo-options
+    osd .osd.fobm 130 "Cfpxt" &cat .osd.checkbox-chars "\} \HBinary File"   2 osd-fo-options
+    osd .osd.fobm 140 "Cfpxt" &cat .osd.checkbox-chars "\} \HEncrypt File"  4 osd-fo-options
     set-variable .osd-get-file.title "Find File"
     set-variable .osd-get-file.file-type ""
     set-variable .osd-get-file.ft .ft

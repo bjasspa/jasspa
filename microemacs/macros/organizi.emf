@@ -145,9 +145,9 @@
     set-variable #l0 &lef &lget .org.imp-field-nms @# 15 
     osd .osd.org-aimp 50  "Hfhz" .scheme.osd-entry 15 1 #l0
     !if &gre &set #l0 &lget .org.imp-field-map @# 0
-        osd .osd.org-aimp 70  "MdtmxsfHzh" 3 .scheme.osd-entry 20 1 &lget .org.addr-lbl #l0 .osd.org-m
+        osd .osd.org-aimp 70  "MdtmxsfHzh" .scheme.osd-entry 20 1 &lget .org.addr-lbl #l0 .osd.org-m
     !else
-        osd .osd.org-aimp 70  "MdtmxsfHzh" 3 .scheme.osd-entry 20 1 "<None>" .osd.org-m
+        osd .osd.org-aimp 70  "MdtmxsfHzh" .scheme.osd-entry 20 1 "<None>" .osd.org-m
     !endif
 !emacro
 
@@ -158,7 +158,7 @@
     !else
         set-variable #l1 "<None>"
     !endif
-    osd .osd.org-aimp 70  "MdtmxsfHzh" 3 .scheme.osd-entry 20 1 #l1 .osd.org-m
+    osd .osd.org-aimp 70  "MdtmxsfHzh" .scheme.osd-entry 20 1 #l1 .osd.org-m
     .org.aimp-field org-aimp-crt-field
 !emacro
 
@@ -265,7 +265,7 @@ osd .osd.org-aieo 160 "BcfH"   .scheme.osd-ebtt "  \HOk  "  1 void
 
 osd .osd.org-aimp  0  "batcHds" 9 3 62 26 -1 -1 630 .scheme.osd-title "Import Address Database"
 osd .osd.org-aimp  5  "hf" " "
-osd .osd.org-aimp 10  "ItbHf" 1 .scheme.osd-sbar 54 20 .osd.org-aimpc
+osd .osd.org-aimp 10  "ItbHf" .scheme.osd-sbar 54 20 .osd.org-aimpc
 osd .osd.org-aimp 20  ""
 osd .osd.org-aimp 30  "fh" "  Import Field     "
 osd .osd.org-aimp 33  "Sfh" "Map To Field          " 70
@@ -274,11 +274,11 @@ osd .osd.org-aimp 37  "Sf"  "Prepend" 90
 osd .osd.org-aimp 40  "fh" "  "
 osd .osd.org-aimp 50  "Hfh" .scheme.osd-entry "               "
 osd .osd.org-aimp 60  "fh" "  "
-osd .osd.org-aimp 70  "MdtmxsfHzh" 3 .scheme.osd-entry 20 1 "" .osd.org-m
+osd .osd.org-aimp 70  "MdtmxsfHzh" .scheme.osd-entry 20 1 "" .osd.org-m
 osd .osd.org-aimp 80  "fh" "  "
-osd .osd.org-aimp 90  "EtxHfh" 4 .scheme.osd-entry "######" 1 org-aimp-set-entry
+osd .osd.org-aimp 90  "EtxHfh" .scheme.osd-entry "######" 1 org-aimp-set-entry
 osd .osd.org-aimp 100 "fh" "  "
-osd .osd.org-aimp 110 "EtxHf" 5 .scheme.osd-entry "#######" 2 org-aimp-set-entry
+osd .osd.org-aimp 110 "EtxHf" .scheme.osd-entry "#######" 2 org-aimp-set-entry
 osd .osd.org-aimp 600 ""
 osd .osd.org-aimp 630 "BhcfxH" .scheme.osd-ebtt " \HStore Settings "   f org-aimp-store
 osd .osd.org-aimp 640 "BhcfH"  .scheme.osd-ebtt " \HImport  " f org-aimp-import
@@ -289,7 +289,7 @@ osd .osd.org-aimp 650 "BhcfH"  .scheme.osd-ebtt " E\Hxit  "   f void
     set-variable .org.aimp-endrec   &reg "/org" "set/aimp-endrec" "\\n"
     set-variable .org.aimp-endfld &reg "/org" "set/aimp-endfld" ","
     set-variable .org.aimp-delimit  &reg "/org" "set/aimp-delimit" "\""
-    osd .osd.fobm 55  "BcftHx"  55 .scheme.osd-ebtt " \HOptions  " 1 org-aie-options
+    osd .osd.fobm 55 "BcftHx" .scheme.osd-ebtt " \HOptions  " 1 org-aie-options
     set-variable .osd-get-file.title "Select Import File"
     set-variable .osd-get-file.file-type "|Text file|All files|"
     set-variable .osd-get-file.file-mask "|*.txt|*|"
@@ -371,9 +371,9 @@ osd .osd.org-aimp 650 "BhcfH"  .scheme.osd-ebtt " E\Hxit  "   f void
     set-variable .org.aexp-delimit &reg "/org" "set/aexp-delimit" "\""
     set-variable .org.aexp-addrfld &reg "/org" "set/aexp-addrfld" "1"
     set-variable .org.aexp-select  0
-    osd .osd.fobm 55  "BcftHx"  55 .scheme.osd-ebtt " \HOptions  " 2 org-aie-options
+    osd .osd.fobm 55 "BcftHx" .scheme.osd-ebtt " \HOptions  " 2 org-aie-options
     osd .osd.fobm 110 ""
-    osd .osd.fobm 120 "Cpxt" 120 "^[ *] \HOnly Selected" 6 org-aexp-options-set
+    osd .osd.fobm 120 "Cpxt" "^[ *] \HOnly Selected" 6 org-aexp-options-set
     set-variable .osd-get-file.title "Select Export File"
     set-variable .osd-get-file.file-type "|Text file|All files|"
     set-variable .osd-get-file.file-mask "|*.txt|*|"

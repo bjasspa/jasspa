@@ -431,13 +431,13 @@ osd .osd.crosswdc 1 ""
 osd .osd.crosswd 0  "batcdH" 3 6 80 .scheme.osd-title "Cross-Word Cracker"
 osd .osd.crosswd 10  ""
 osd .osd.crosswd 20  "Shf" " \HNumber of words " 30
-osd .osd.crosswd 30  "EtxfHh" 1 .scheme.osd-entry "     " 1 crosswd-set-noword
-osd .osd.crosswd 34  "BtrfHh" 2 .scheme.osd-ebtt " \HCompute " f crosswd-compute
+osd .osd.crosswd 30  "EtxfHh" .scheme.osd-entry "     " 1 crosswd-set-noword
+osd .osd.crosswd 34  "BtrfHh" .scheme.osd-ebtt " \HCompute " f crosswd-compute
 osd .osd.crosswd 35  "hf" "  "
-osd .osd.crosswd 36  "BtrfHh" 3 .scheme.osd-ebtt " E\Hxit " f void
+osd .osd.crosswd 36  "BtrfHh" .scheme.osd-ebtt " E\Hxit " f void
 osd .osd.crosswd 37  "f" " "
 osd .osd.crosswd 40  ""
-osd .osd.crosswd 50  "IbHt" 4 .scheme.osd-sbar 50 30 .osd.crosswdc
+osd .osd.crosswd 50  "IbHt" .scheme.osd-sbar 50 30 .osd.crosswdc
 osd .osd.crosswd 60  ""
 
 define-macro cross-word

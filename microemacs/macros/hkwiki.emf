@@ -377,10 +377,10 @@ set-variable .wiki-node-menu.d 25
 osd .osd.wikim 0  "batcdHR" 3 6 20 .scheme.osd-title "Node List" wiki-node-menu-resize
 osd .osd.wikim 10  ""
 osd .osd.wikim 15  "h" "  "
-osd .osd.wikim 20  "IbHht" 20 .scheme.osd-sbar .wiki-node-menu.w .wiki-node-menu.d .osd.tmp
+osd .osd.wikim 20  "IbHht" .scheme.osd-sbar .wiki-node-menu.w .wiki-node-menu.d .osd.tmp
 osd .osd.wikim 25  "" "  "
 osd .osd.wikim 30  ""
-osd .osd.wikim 40  "BHfct" 40 .scheme.osd-ebtt " \HCancel " f void
+osd .osd.wikim 40  "BHfct" .scheme.osd-ebtt " \HCancel " f void
 osd .osd.wikim 50  ""
 
 buffer-init-fhook "wiki"
