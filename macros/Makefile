@@ -53,7 +53,7 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		au3.eaf		\
 	hkspec.emf	hksql.emf	\
 	hktcl.emf	hktexi.emf	hktxt.emf	\
 	hkvb.emf	hkvhdl.emf	hkvrml.emf	\
-	hkxml.emf	hkxmlutil.emf	\
+	hkxml.emf	xmlutil.emf	\
 	hkyacc.emf	\
 	hpux.emf	htmlcore.emf	htmltool.emf	htmlutil.emf	\
 	insdate.emf	irix.emf	itemlist.emf	\
