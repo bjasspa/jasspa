@@ -152,6 +152,7 @@ IDI_ICON_070 ICON DISCARDABLE         "sm.ico"        // 068 Superman file
 IDI_ICON_071 ICON DISCARDABLE         "pso.ico"       // 069 Post script ordering file 
 IDI_ICON_072 ICON DISCARDABLE         "asm.ico"       // 070 Assembler File.
 IDI_ICON_073 ICON DISCARDABLE         "erf.ico"       // 071 erf file.
+IDI_ICON_074 ICON DISCARDABLE         "jst.ico"       // 072 jst file.
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
