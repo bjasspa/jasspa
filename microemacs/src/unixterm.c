@@ -1461,21 +1461,6 @@ meXEventHandler(void)
             ss = event.xkey.state ;
             XLookupString(&event.xkey,keyStr,20,&keySym,NULL);
             /* printf("#1 got key %x, ss=%x \n",(unsigned int) keySym, ss) ;*/
-            /* Map Mod2 which is ALT-GR onto A-C */
-#if (defined _SUNOS)
-            /* SunOS <> mapped tp modifier key 4 */
-            if (ss & (Mod4Mask))
-            {
-                ss &= ~(Mod4Mask);
-                ss |= ControlMask | Mod1Mask;
-            }
-#endif
-#if (defined _LINUX)
-            /* Linux mapped to modifier key 3 */
-            if (ss & (Mod3Mask))
-                ss = (ss & ~(Mod3Mask)) | ControlMask | Mod1Mask;
-#endif
-             
             /* keyStr[19] = '\0' ;
                printf("got key %x, ss=%x [%s]\n",(unsigned int) keySym, ss, keyStr) ;*/
             /* printf("#2 got key %x, ss=%x \n",(unsigned int) keySym, ss) ;*/
