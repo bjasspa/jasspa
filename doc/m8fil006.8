@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m8fil006.8,v 2.5 2002-01-11 21:58:43 jon Exp $
+.Id $Id: m8fil006.8,v 2.6 2004-02-01 23:36:27 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .TH me32.ini 8
@@ -19,16 +19,17 @@ me32.ini \- Microsoft Window's Initialization (ini) File
 .sp
 .B "[Defaults]"
 \fBmepath=\fR\|\fI<directoryPath>\fR
-\fBuserpath=\fR\|\fI<directoryPath>\fR
+\fBmeinstallpath=\fR\|\fI<directoryPath>\fR
+\fBgeometry=\fR\|\fI<width>\fR\|\fBx\fR\|\fI<depth>\fR+\|\fI<xoffset>\fR+\|\fI<yoffset>\fR
 \fBfontfile=\fR\|\fI<fontFileName>\fR
 .sp
 \fB[\fR\|\fI<userName>\fR\|\fB]\fR
-\fI<environmentVariable>\fR\|\fB=\fR\|\fI<value>\fR
-\fI<environmentVariable>\fR\|\fB=\fR\|\fI<value>\fR
+\fBmename\fR\|\fB=\fR\|\fI<value>\fR
+\fBmeuserpath\fR\|\fB=\fR\|\fI<value>\fR
 .sp
 \fB[\fR\|\fI<userName>\fR\|\fB]\fR
-\fI<environmentVariable>\fR\|\fB=\fR\|\fI<value>\fR
-\fI<environmentVariable>\fR\|\fB=\fR\|\fI<value>\fR
+\fBmename\fR\|\fB=\fR\|\fI<value>\fR
+\fBmeuserpath\fR\|\fB=\fR\|\fI<value>\fR
 .sp
 \fB;\fR \fIComments commence with a semi-colon\fR
 .fi
@@ -51,57 +52,47 @@ The  configuration  file may be  considered  to be split into two  sections, a
 which allows environment variables to be defined.
 .SS "User Section"
 The \fBUser  Section\fR is executed prior to the  \fBDefaults  Section\fR. The
-\fBUser Section\fR uses the user name which is defined as follows:-
+\fBUser Section\fR uses the 
+.Ht $user-name 5
+which is defined as follows:-
 .BS
 The  environment  variable
-.Ht $MENAME 5 .
+.Ht $MENAME 5 
 .BU
-The \fIlogin\  name\fR under Windows '95 or NT if \fB$MENAME\fR is not set. If
-the \fIlogin\  name\fR is defined then environment  variable  \fB$MENAME\fR is
-set to this value.
+The \fIlogin\  name\fR under Windows '95 or NT. If the \fIlogin\  name\fR is
+defined then the variable
+.Ht $user-name 5
+is set to this value.
 .BU
 The  environment  variable
 .Ht $LOGNAME 5
 if the \fIlogin\ name\fR cannot be located.
-.BU
-\fBguest\fR if none of the above are defined.
 .BE
 A section  \fB[\fR\|\fIuserName\fR\|\fB]\fR  is looked up, and if located each
-of the entries  \fI<environmentVariable>\fR \fB=\fR \fI<value>\fR is extracted
-and pushed into the execution environment. The  \fB<environmentVariable>\fR is
-automatically  promoted to upper case if  specified as a lower case entry. The
-environment  variables may be  subsequently  used within the \fB.emf\fR macro
-files to configure \*(mE at start up.
-.PP
-Any value may be inserted  into the  environment  including the  \fC$MENAME\fR
-environment variable which is used in the next section.
+of the entries is used to set up the editor.
+.IP "\fBmename\fR"
+The \*(mS 
+.Ht $user-name 5
+to use rather than the login name.
+.IP \fBmeuserpath\fR
+The value of 
+.Ht $user-path 5 .
 .SS "Defaults Section"
 The defaults section, labeled \fB[Defaults]\fR includes the following keys:-
 .IP "\fBmepath\fR"
-The directory (or folder) location of the \*(mE default configuration files.
-.IP "\fBuserpath\fR"
-The directory (or folder)  location of the user(s)  directories.
-.IP
-Given that the \fBuserpath\fR is specified as \fCc:\\me98.5\fR  and the user is
-called \fCfoo\fR, then the directory location  \fCc:\\me98.5\\foo\fR  is considered to
-be the user path.
-.IP
-If the  \fBuserpath\fR  is omitted then the \fBmepath\fR  entry is used as the
-user path.
-.LP
-The \fBuserpath\fR and \fBmepath\fR entries are concatenated  together to form
-the environment  variable
-.Ht $MEPATH 5 ,
-e.g. \fIuserpath\|\fB\\\|\fIlogname\fR\|\fB;\fR\|\fImepath\fR.
-If the entries are omitted the then
-environment variable \fC$MEPATH\fR is used as defined. The \fBmepath\fR and
-\fBuserpath\fR are configured initialy by the
-.B InstallShield
-installation process.
-.IP "\fBfontfile\fR"
-The name of the font file used to render the text to the  screen. The  default
-font file is \fBdosapp.fon\fR, this is a fixed mono font as used in the MS-DOS
-windows.
+Sets the environment variable
+.Ht $MEPATH 5 
+to the  specified  value. This is the  directory  (or folder)  location of the
+\*(mE default configuration files.
+.IP "\fBmeinstallpath\fR"
+Equivalent of setting the environment variable
+.Ht $MEINSTALLPATH 5 
+to define the directory (or folder)  location of the macros  directory.
+.IP "\fBgeometry\fR"
+The  geometry of the window the width and height are  specified in  character,
+the position of the window is specified as an offset.
+.IP \fBfontfile\fR
+A default font file to use to render the font. This is not really required.
 .SS "Location Section"
 The location  section,  labeled  \fB[Location]\fR,  identifies the location of
 \*(mE,  and  is  typically  used  by  other  components  to  find  and  launch
@@ -120,47 +111,27 @@ exe=c:\\Program Files\\JASSPA\\MicroEmacs\\me32.exe
 ; mepath
 ; The location of the MicroEmacs common files.
 ;
-mepath=d:/me98.4/common
+meinstallpath=d:/jasspa
 ;
 ; userpath - The location of the users MicroEmacs directory.
-; The $MENAME is appended as a directory to userpath
 ;
-userpath=d:/me98.4/common
-;
-; fontfile - The name of the font file used as default.
-fontfile=dosapp.fon
-.ne 22
-;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
-; Environment settings for a user.
-; All settings are pushed into the environment.
-;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
-[guest]
-term=8x12
-;
-[jon]
-MENAME=jon
-FOO=bar
-;
-[jnaught]
-MENAME=jon
-FOO=bar
-;
-[bill]
-\.\.\.\.
+meuserpath=d:/jasspa/user
 .CE
 Note that  multiple  users share the same  \fBme32.ini\fR  file, each user may
 include their own  configuration  settings  which may be  interrogated  in the
-configuration  files (e.g. \fC$FOO\fR is assigned the value  \fCbar\fR,  which
-may be extracted from the environment context).
+configuration files.
+.SH NOTES
+As of \*(mS 2004 then the \fBme32.ini\fR  file is depreciated and not normally
+used.
 .SH "SEE ALSO"
 .na
+.Ht user-setup 3 ,
+.Ht $MEINSTALL_PATH 5 
 .Ht $MENAME 5 ,
 .Ht $MEPATH 5 ,
-.Ht user-setup 3 ,
+.Ht $MEUSERPATH 5 ,
+.Ht $user-name 5 ,
+.Ht $user-path 5 ,
 .Ht emf 8 .
 .ad
 .FH

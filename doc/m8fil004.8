@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m8fil004.8,v 2.5 2002-01-11 21:58:43 jon Exp $
+.Id $Id: m8fil004.8,v 2.6 2004-02-01 23:36:27 jon Exp $
 .Im MicroEmacs files
 .so me.tni
 .TH erf 8
@@ -67,9 +67,9 @@ the editor is closed down (or may be saved explicitly using
 .PP
 Every user should have their own personal history file in their personal \*(mS
 directory. The history file is located from the \*(mE search path defined by
-.Ht $MEPATH 5 ,
-and is named by the environment variable
-.Ht $LOGNAME 5 .
+.Ht $user-path 5 ,
+and is named by the variable
+.Ht $user-name 5 .
 .SH NOTES
 .BS
 The registry files are not currently written with a backup.
@@ -105,6 +105,7 @@ Examine the loaded registry using
 .Ht read-registry 2 ,
 .Ht save-history 2 ,
 .Ht save-history 2 ,
-.Ht $MEPATH 5 .
+.Ht $user-name 5 ,
+.Ht $user-path 5 .
 .ad
 .FH
