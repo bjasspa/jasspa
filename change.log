@@ -4,8 +4,20 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <050218.2152>
+>  Last Modified : <050220.2120>
 >
+
+    [050220] Added UNIX Shell and Makefile hilighting to notes(2).
+
+    [050219] Fixed GNU GCC  warnings  in  Makefiles  for  #pragma in X11 files
+             under Sun Solaris and uninitialized variables.
+
+    [050219] OSD. Removed  dialog 'F' flag as it was not  documented,  did not
+             work and only used in one obscure  place. Fixed C-g & Del so they
+             close up to the previous dialog but does close the main menu down
+             in one call - was annoying.
+
+    [050219] Release Candidate 1 - MicroEmacs 2005 (RC1)
 
     [050218] Corrected  UNIX  client-server  socket  file check -- bad test on
              existence of  connection  file, using wrong  variable  with wrong
@@ -20,7 +32,7 @@
 
     [050218] Updated watch  interface and made public.  Created new watch-time
              command and prompt user for watch type when no argument is given.
-    
+
     [050218] Removed  the use of bit  0x1000 in ada string  hilight as this is
              unlikely to be wanted (probably copied from Pascal).
 
@@ -249,7 +261,7 @@
              allows the user to change location in the current entry using the
              mouse.
 
-    [050105] Fixed.  insert-macro undo location was incorrect causing a crash.
+    [050105] Fixed. insert-macro undo location was incorrect causing a crash.
 
     [050103] Spelling  dialog.  Changed the Ignore  button to Continue if word
              becomes   correct  without   changing  (word  added  or  language
@@ -263,7 +275,7 @@
              "$pause-time" is now used for other  MicroEmacs  delay times when
              the user is prompted for information.
 
-    [041224] Fixed  several  usability  issues in the search  replace  dialog.
+    [041224] Fixed several usability issues in the search replace dialog.
 
     [041224] Up-graded printer-setup dialog to new style OSD.
 
@@ -285,8 +297,8 @@
     [041218] auto-spell  key  bindings  are  promoted to global so its easy to
              enable in any buffer.
 
-    [041218]  Corrected  setting of the $home  environment  variable to handle
-              MS-Windows '\\'s, auto terminate with '/'.
+    [041218] Corrected  setting of the $home  environment  variable  to handle
+             MS-Windows '\\'s, auto terminate with '/'.
 
     [041210] Added Enable/Disable Auto-Spell to the context menu.
 
