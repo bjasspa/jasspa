@@ -43,7 +43,7 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
     hilight .hilight.enft  0x001 &cat #l1 "\\{-" .scheme.dir-open
     hilight .hilight.enft  0x44 " \"[[:xdigit:]]+\" = \"" " " "\"$" "" "" $global-scheme
     
-    0 hilight  .hilight.enf 2 50                      $global-scheme
+    0 hilight  .hilight.enf 2 150                     $global-scheme
     hilight .hilight.enf 0x44 "\ecA" "" "\\}\e" "" "" $global-scheme
     hilight .hilight.enf 0x44 "\ecB" "" "\\}\e" "" "" .scheme.under   ; underline
     hilight .hilight.enf 0x44 "\ecC" "" "\\}\e" "" "" .scheme.italic  ; italic
@@ -96,6 +96,10 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
     enf-add-file-support "perl"
     ; Allow TCL Code inserts ...
     enf-add-file-support "tcl"
+    ; Allow UNIX shell code inserts ...
+    enf-add-file-support "shell"
+    ; Allow Makefile code inserts ...
+    enf-add-file-support "make"
 !endif
 
 0 define-macro mark-registry-tree
