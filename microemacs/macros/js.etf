@@ -13,7 +13,6 @@
      Source        : $Source$
      Description	
      Notes
-     $Log$
 */
 var ns4 = document.layers;
 var ie4 = document.all;
