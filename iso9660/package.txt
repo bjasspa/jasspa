@@ -1,0 +1,36 @@
+> -!- document; fill-colum:65; fill-mode:both; -!-
+>
+>  Copyright 2003 Jon Green.
+>
+>  Created By    : Jon Green
+>  Created       : Sun Aug 10 14:00:59 2003
+>  Last Modified : <030810.1658>
+>
+Packages
+
+    This directory contains pre-built packages
+
+    cygwin - Cygwin environment.
+
+             Installation instructions are included in the directory.
+
+    sun_sol9 - Sun solaris 9.
+
+            To add, as root (installs into "/opt/jasspa"):-
+
+                # pkgadd -d jasspa.pkg
+
+            To subsequently remove, as root:
+
+                # pkgrm jasspa
+
+    windows  - Microsoft Windows 95/98/NT/2K/XP installer.
+
+            Run the executable.
+
+    linux  - RPM package for Linux.
+
+            This package was prepared by http://www.hardline.org  and the i386
+            RPM was  built  on  RedHat  7.3.  Other  Linux  architectures  and
+            packages are available from http://www.hardline.org.
+

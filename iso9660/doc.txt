@@ -1,0 +1,39 @@
+> -!- document; fill-colum:65; fill-mode:both; -!-
+>
+>  Copyright 2003 Jon Green.
+>
+>  Created By    : Jon Green
+>  Created       : Sun Aug 10 13:34:35 2003
+>  Last Modified : <030810.1348>
+>
+
+Documentation
+
+    This  directory   contains  the  documentation  for  JASSPA's
+    MicroEmacs,  it includes  both CD readable  and the  original
+    archive files.
+
+  Documentation Sources
+
+    me.html    - HTML browser version on the CD.
+
+    me.hlp     - Microsoft Windows Help file format
+
+    me2002.chm - MicroSoft   Windows   only.   Documentation   in
+                 chm-format.
+
+                 Acknowledgement   to  Dr.   Detlef   Groth   for
+                 generating  this file. See  http://www.dgroth.de
+                 and http://www.microemacs.de
+
+    me2002.pdf - Documentation in Adobe Acrobat format.
+
+                 Acknowledgement   to  Dr.   Detlef   Groth   for
+                 generating  this file. See  http://www.dgroth.de
+                 and http://www.microemacs.de
+
+  Documentation Archives
+
+    mehtm.zip     - HTML documentation in 8.3 format for DOS (*.htm)
+
+    mehtml.tar.gz - HTML documentation in 8.4 format for UNIX (*.html)

@@ -1,0 +1,50 @@
+> -!- document; fill-column:65; fill-mode:both; -!-
+>
+>  Copyright 2003 Jon Green.
+>
+>  Created By    : Jon Green
+>  Created       : Sun Aug 10 12:56:33 2003
+>  Last Modified : <030810.1302>
+>
+
+Spelling Dictionaries
+---------------------
+
+JASSPA's  MicroEmacs  supports  an  automatic  spell  mode,  this
+performs  background  spell  checking  and  highlights  erroneous
+words. This mode may be enabled by:-
+
+      Help -> User Setup -> Startup -> Auto Spell
+
+Multiple  dictionaries may be supported on the same platform. The
+active dictionary may be changed from the dialog of spell buffer.
+
+Files  supplied in the UNIX tar.gz  format may be  downloaded  to
+Microsoft  Windows/DOS  environments,  use Winzip or native  UNIX
+tools to unpack the files. The spelling  dictionaries may be used
+on all supported platforms.
+
+Spelling   dictionaries   are  optional  on  all  platforms.  You
+optionally require one or more of these components for a spelling
+capability.  Multiple  languages  may be  installed  on a  single
+platform.  Select the most suitable down load format, the content
+is the same for both .zip and .tar.gz files.
+
+    ls_enus - American spell rules, base and extended dictionaries.
+
+    ls_engb - British    spell    rules,   base   and    extended
+              dictionaries.
+
+    ls_fifi - Finnish spell rules and dictionary.
+
+    ls_frfr - French spell rules and dictionary.
+
+    ls_dede - German spell rules, base and extended dictionaries.
+
+    ls_itit - Italian spell rules and dictionary.
+
+    ls_plpl - Polish spell rules and dictionary.
+
+    ls_ptpt - Portuguese spell rules and dictionary.
+
+    ls_eses - Spanish spell rules and dictionary.
