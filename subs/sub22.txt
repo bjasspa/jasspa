@@ -1,0 +1,496 @@
+Title:  Fahtzee - A popular game with a very similar name
+Ref:    sub22
+Author: Steven Phillips
+Date:   2002-01-02
+
+==== fahtzee.emf start =================================================
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Steven Phillips
+;  Created       : Wed Feb 9 18:31:42 2000
+;  Last Modified : <020102.1231>
+;
+;  Description   : The game of a similar name.
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 2000 Steve Phillips
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+!if &not &exi .osd.fahtzee
+    set-variable .osd.fahtzee  &pinc .osd.next 1
+    set-variable .osd.fahtzeed &pinc .osd.next 1
+    set-variable .osd.fahtzeen &pinc .osd.next 1
+    set-variable .osd.fahtzeec &pinc .osd.next 1
+    set-variable .osd.fahtzee1 &pinc .osd.next 1
+    set-variable .osd.fahtzee2 &pinc .osd.next 1
+    set-variable .osd.fahtzee3 &pinc .osd.next 1
+    set-variable .osd.fahtzee4 &pinc .osd.next 1
+!endif
+
+define-macro fahtzee
+    !if &seq &reg "/" "fahtzee" "" ""
+        set-variable .file &find "fahtzee" ".eof"
+        !if &seq &set .file &find "fahtzee" ".eof" "ERROR"
+            set-variable #l0 &reg "/" "history" ""
+            set-variable .file &spr "%sfahtzee.eof" &lef #l0 &rsin "/" #l0
+        !endif
+        set-variable .fahtzee.dice "|6|6|6|6|6|"
+        read-registry "fahtzee" .file "cb"
+        !if &seq &reg "/fahtzee" "nop" "" ""
+            !if &seq &reg "/fahtzee" "noh" "" ""
+                set-registry "/fahtzee" "noh" "1"
+                set-registry "/fahtzee" "h1" ""
+            !endif
+            set-variable .nop &reg "/fahtzee" "noh" ""
+            set-variable .curp 0
+            set-variable .visp 1
+            set-variable .throw 0
+        !else
+            set-variable .nop &reg "/fahtzee" "nop" ""
+            set-variable .curp &reg "/fahtzee" "curp" "1"
+            set-variable .curg &reg "/fahtzee" "curg" "1"
+            set-variable .throw &reg "/fahtzee" "throw" "1"
+            set-variable .dice &reg "/fahtzee" "dice" "|1|2|3|4|5|"
+            set-variable .held &reg "/fahtzee" "held" "|0|0|0|0|0|"
+            set-variable .visp .curp
+        !endif
+    !endif
+    fahtzee-setup
+    .osd.fahtzee osd
+!emacro
+
+set-variable .fahtzee.dices "|\n  X|   X\n\n X|   X\n  X\n X| X X\n\n X X| X X\n  X\n X X| X X\n X X\n X X|"
+
+0 define-macro fahtzee-setup
+    set-variable #l1 &cond .fahtzee.curp "Player " "High "
+    -1 osd .osd.fahtzeen
+    osd .osd.fahtzeen 0  "N"
+    set-variable #l0 1
+    !repeat
+        osd .osd.fahtzeen #l0 "Psf" &cat #l1 #l0 &add .osd.fahtzeec #l0
+    !until &gre &inc #l0 1 .fahtzee.nop
+    .fahtzee.visp fahtzee-set-player
+    fahtzee-set-dice
+!emacro
+
+0 define-macro fahtzee-undo
+    set-variable .fahtzee.curp &lget .fahtzee.undo 2
+    !if &not &equ .fahtzee.visp .fahtzee.curp
+        .fahtzee.curp fahtzee-set-player
+    !endif
+    set-variable .fahtzee.dice &lget .fahtzee.undo 1
+    set-variable .fahtzee.throw &lget .fahtzee.undo 3
+    set-registry .fahtzee.visr &cat "box" .fahtzee.curg &lget ..fahtzee.undo 4
+    set-registry .fahtzee.visr &lget .fahtzee.undo 5 &lget .fahtzee.undo 6
+    set-registry .fahtzee.visr &add 70 .fahtzee.curg &lget .fahtzee.undo 7
+    set-registry .fahtzee.visr &add 80 .fahtzee.curg &lget .fahtzee.undo 8
+    set-registry .fahtzee.visr &add 90 .fahtzee.curg &lget .fahtzee.undo 9
+    set-registry .fahtzee.visr &add 170 .fahtzee.curg &lget ..fahtzee.undo 10
+    set-registry .fahtzee.visr &add 180 .fahtzee.curg &lget ..fahtzee.undo 11
+    osd .osd.fahtzee 630 "BxhcfH" .scheme.osd-dbtt " Undo "
+    fahtzee-set-dice
+!emacro
+
+0 define-macro fahtzee-dice-info
+    set-variable #p9 0
+    set-variable #p8 "|0|0|0|0|0|0|"
+    set-variable #l0 5
+    !repeat
+        set-variable #l1 &lget .fahtzee.dice #l0
+        set-variable #p9 &add #p9 #l1
+        set-variable #p8 &lset #p8 #l1 &add &lget #p8 #l1 1
+    !until &not &dec #l0 1
+!emacro
+
+0 define-macro fahtzee-entry
+    !if &les @# 0
+        set-variable @# &abs @#
+        set-variable #l1 &div @# 10
+        osd .osd.fahtzee 630 "BxhcfH" .scheme.osd-ebtt " &Undo " f fahtzee-undo
+        set-variable .fahtzee.undo &spr "\b%s\b%s\b%s\b%s\b%s\b%s\b%s\b%s\b%s\b%s\b%s\b" .fahtzee.dice ..fahtzee.curp .fahtzee.throw &reg .fahtzee.visr &cat "box" .fahtzee.curg "" @# &reg .fahtzee.visr @# "" &reg .fahtzee.visr &add 70 .fahtzee.curg "" &reg .fahtzee.visr &add 80 .fahtzee.curg "" &reg .fahtzee.visr &add 90 .fahtzee.curg "" &reg .fahtzee.visr &add 170 .fahtzee.curg "" &reg ..fahtzee.visr &add 180 .fahtzee.curg ""
+        fahtzee-dice-info
+        !if &les #l1 10
+            ; 1, 2, 3, 4, 5, 6's
+            set-variable #l0 &mul &lget #l8 #l1 #l1
+        !elif &equ #l1 10
+            ; 3 of a kind
+            !if &xse #l8 ".*[345].*"
+                set-variable #l0 #l9
+            !else
+                set-variable #l0 0
+            !endif
+        !elif &equ #l1 11
+            ; 4 of a kind
+            !if &xse #l8 ".*[45].*"
+                set-variable #l0 #l9
+            !else
+                set-variable #l0 0
+            !endif
+        !elif &equ #l1 12
+            ; full house
+            !if &xse #l8 ".*2.*3.*"
+                set-variable #l0 25
+            !elif &xse #l8 ".*3.*2.*"
+                set-variable #l0 25
+            !elif &xse #l8 ".*5.*"
+                set-variable #l0 25
+            !else
+                set-variable #l0 0
+            !endif
+        !elif &equ #l1 13
+            ; low straight
+            set-variable #l0 30
+            !if &xse #l8 ".*[12]|[12]|[12]|[12].*"
+                set-variable #l0 30
+            !else
+                set-variable #l0 0
+            !endif
+        !elif &equ #l1 14
+            ; high straight
+            !if &xse #l8 ".*1|1|1|1|1.*"
+                set-variable #l0 40
+            !else
+                set-variable #l0 0
+            !endif
+        !elif &equ #l1 15
+            ; fahtzee
+            !if &xse #l8 ".*5.*"
+                !if &gre &reg .fahtzee.visr @# "" 0
+                    set-variable #l0 100
+                    set-registry .fahtzee.visr @# &spr "%4d" &add &reg ..fahtzee.visr @# "" #l0
+                    !goto double-fahtzee
+                !endif
+                set-variable #l0 50
+            !else
+                set-variable #l0 0
+            !endif
+        !else
+            ; chance
+            set-variable #l0 &add &lget .fahtzee.dice 1 &add &lget ..fahtzee.dice 2 &add &lget .fahtzee.dice 3 &add &lget .fahtzee.dice 4 &lget .fahtzee.dice 5
+        !endif
+        set-registry .fahtzee.visr &cat "box" .fahtzee.curg &sub &reg ..fahtzee.visr &cat "box" .fahtzee.curg "1" 1
+        !if #l0
+            set-registry .fahtzee.visr @# &spr "%4d" #l0
+*double-fahtzee
+            set-variable #l2 &reg .fahtzee.visr &add 170 .fahtzee.curg ""
+            !if &less @# 100
+                set-variable #l1 &add #l0 &reg .fahtzee.visr &add 70 ..fahtzee.curg ""
+                set-registry .fahtzee.visr &add 70 .fahtzee.curg &spr "%4d" #l1
+                !if &gre #l1 62
+                    set-registry .fahtzee.visr &add 80 .fahtzee.curg "  35"
+                    set-variable #l1 &add #l1 35
+                !endif
+                set-registry .fahtzee.visr &add 90 .fahtzee.curg &spr "%4d" #l1
+            !else
+                set-variable #l1 &reg .fahtzee.visr &add 90 ..fahtzee.curg ""
+                set-variable #l2 &add #l0 #l2
+                set-registry .fahtzee.visr &add 170 .fahtzee.curg &spr "%4d" #l2
+            !endif
+            set-registry .fahtzee.visr &add 180 .fahtzee.curg &spr "%4d" &add #l1 #l2
+        !else
+            set-registry .fahtzee.visr @# "   -"
+        !endif
+        set-variable .fahtzee.throw 1
+        set-variable #l0 .fahtzee.curp
+        set-variable #l1 0
+        !repeat
+            set-variable #l0 &add #l0 1
+            !if &gre #l0 .fahtzee.nop
+                set-variable #l0 1
+                !if &equ 2 &inc #l1 1
+                    set-variable .fahtzee.curg &add .fahtzee.curg 1
+                    set-registry "/fahtzee" "curg" .fahtzee.curg
+                    !goto break-out
+                !endif
+            !endif
+            set-variable #l2 &reg &cat "/fahtzee/" #l0 &cat "box" ..fahtzee.curg ""
+        !until #l2
+*break-out
+        !if &not &equ #l0 .fahtzee.curp
+            set-registry "/fahtzee" "curp" #l0
+            set-variable .fahtzee.curp #l0
+        !endif
+        fahtzee-set-dice
+    !elif &equ @# 8
+        set-variable #l0 &add &add &add &add &add &reg .fahtzee.visr 181 "0" &reg .fahtzee.visr 182 "0" &reg .fahtzee.visr 183 "0" &reg ..fahtzee.visr 184 "0" &reg .fahtzee.visr 185 "0" &reg .fahtzee.visr 186 "0"
+        set-variable $result &cond #l0 &spr "%5d" #l0 ""
+    !else
+        set-variable $result &reg .fahtzee.visr @# ""
+    !endif
+!emacro
+0 define-macro fahtzee-set-player-name
+    !if &les @# 0
+        set-variable #l0 &reg "/" .fahtzee.visr ""
+        set-variable #l0 @ml2 "" #l0
+        set-registry "/" .fahtzee.visr #l0
+    !else
+        set-variable $result &reg "/" .fahtzee.visr ""
+    !endif
+!emacro
+
+0 define-macro fahtzee-dice-turn
+    set-variable #l0 6
+    !repeat
+        !if &not &lget .fahtzee.held #l0
+            set-variable .fahtzee.dice &lset .fahtzee.dice #l0 &add &mod $random 6 1
+        !endif
+    !until &not &dec #l0 1
+!emacro
+
+0 define-macro fahtzee-dice-shake
+    fahtzee-dice-turn
+    osd .osd.fahtzeed 10 "Gfzc" 5 3 &lget .fahtzee.dices &lget ..fahtzee.dice 1
+    osd .osd.fahtzeed 20 "Gfzc" 5 3 &lget .fahtzee.dices &lget ..fahtzee.dice 2
+    osd .osd.fahtzeed 30 "Gfzc" 5 3 &lget .fahtzee.dices &lget ..fahtzee.dice 3
+    osd .osd.fahtzeed 40 "Gfzc" 5 3 &lget .fahtzee.dices &lget ..fahtzee.dice 4
+    osd .osd.fahtzeed 50 "Gfzc" 5 3 &lget .fahtzee.dices &lget ..fahtzee.dice 5
+    -1 osd
+    50 create-callback fahtzee-dice-shake
+!emacro
+
+0 define-macro fahtzee-throw
+    !if &or &not .fahtzee.throw &gre .fahtzee.throw 3
+        !return
+    !endif
+    !if &equ .fahtzee.curg 7
+        fahtzee-abort
+    !endif
+    osd .osd.fahtzee 630 "BxhcfH" .scheme.osd-dbtt " Undo "
+    !if &not &equ .fahtzee.visp .fahtzee.curp
+        .fahtzee.curp fahtzee-set-player
+    !endif
+    fahtzee-dice-shake
+    !repeat
+        set-variable #l0 @cgk
+    !until &not &seq #l0 "mouse-move"
+    !if &seq &lef #l0 10  "mouse-pick"
+        ; get the drop!
+        set-variable #l0 @cgk
+    !endif
+    -1 create-callback fahtzee-dice-shake
+    !if &and &exi .fixed &seq #l0 "f"
+        set-variable .fahtzee.dice .fixed
+    !else
+        fahtzee-dice-turn
+    !endif
+    set-variable .fahtzee.throw &add .fahtzee.throw 1
+    fahtzee-set-dice
+    -1 osd
+!emacro
+
+set-variable .fahtzee-throw.fixed "|5|5|5|5|5|"
+
+0 define-macro fahtzee-hold
+    set-variable .fahtzee.held &lset .fahtzee.held @# &bxor 1 &lget ..fahtzee.held @#
+!emacro
+
+0 define-macro fahtzee-set-dice
+    osd .osd.fahtzeed  3 "c" "\n"
+    !if &not .fahtzee.throw
+        osd .osd.fahtzeed  6 "BxcfH" .scheme.osd-dbtt " THROW "
+        osd .osd.fahtzeed 60 "BxcfH" .scheme.osd-dbtt " THROW "
+    !else
+        ; one gotcha is if the player gets a second Fahtzee, the box must be enabled
+        set-variable #l0 &add .fahtzee.curg 150
+        !if &gre &reg .fahtzee.visr #l0 "" 0
+            !if &xse .fahtzee.dice "|\\(.\\)|\\1|\\1|\\1|\\1|"
+                osd .osd.fahtzeec #l0 "ExGfh" "     " #l0 fahtzee-entry
+            !else
+                osd .osd.fahtzeec #l0 "ESGfh" "     " #l0 fahtzee-entry
+            !endif
+        !endif
+        !if &les .fahtzee.throw 4
+            osd .osd.fahtzeed  6 "BxcfH" .scheme.osd-ebtt " &THROW "   f fahtzee-throw
+            osd .osd.fahtzeed 60 "BxcfH" .scheme.osd-ebtt " &THROW "   f fahtzee-throw
+            !if &gre .fahtzee.throw 1
+                osd .osd.fahtzeed  3 "c" &cat &sub .fahtzee.throw 1 "\n"
+                set-variable #l0 5
+                !repeat
+                    osd .osd.fahtzeed &mul #l0 10 "RGHfxzc" &cond &lget ..fahtzee.held #l0 .scheme.osd-dbtt $osd-scheme 5 3 &lget .fahtzee.dices &lget .fahtzee.dice #l0 #l0 fahtzee-hold
+                !until &not &dec #l0 1
+                !return
+            !endif
+            !if &equ .fahtzee.curg 7
+                osd .osd.fahtzeed  6 "BxcfH" .scheme.osd-ebtt " &CONT. "   f fahtzee-throw
+                osd .osd.fahtzeed 60 "BxcfH" .scheme.osd-ebtt " &CONT. "   f fahtzee-throw
+            !endif
+        !else
+            osd .osd.fahtzeed  6 "BxcfH" .scheme.osd-dbtt " THROW "
+            osd .osd.fahtzeed 60 "BxcfH" .scheme.osd-dbtt " THROW "
+        !endif
+    !endif
+    set-variable .fahtzee.held "|0|0|0|0|0|"
+    osd .osd.fahtzeed 10 "Gfzc" 5 3 &lget .fahtzee.dices &lget ..fahtzee.dice 1
+    osd .osd.fahtzeed 20 "Gfzc" 5 3 &lget .fahtzee.dices &lget ..fahtzee.dice 2
+    osd .osd.fahtzeed 30 "Gfzc" 5 3 &lget .fahtzee.dices &lget ..fahtzee.dice 3
+    osd .osd.fahtzeed 40 "Gfzc" 5 3 &lget .fahtzee.dices &lget ..fahtzee.dice 4
+    osd .osd.fahtzeed 50 "Gfzc" 5 3 &lget .fahtzee.dices &lget ..fahtzee.dice 5
+!emacro
+
+0 define-macro fahtzee-set-player
+    set-variable .fahtzee.visp @#
+    osd .osd.fahtzeen 10 "I" &add .osd.fahtzeec @#
+    !if .fahtzee.curp
+        osd .osd.fahtzeec 4 "EHfxh"  .scheme.osd-entry "###################" f fahtzee-set-player-name
+        set-variable .fahtzee.visr &cat "/fahtzee/" @#
+    !else
+        osd .osd.fahtzeec 4 "EHfSh" .scheme.osd-entry "###################" f fahtzee-set-player-name
+        set-variable .fahtzee.visr &cat "/fahtzee/h" @#
+    !endif
+    !if .curp-last
+        set-variable #l0 &add .curg-last 10
+        !repeat
+            osd .osd.fahtzeec #l0 "ESGfh" "     " #l0 fahtzee-entry
+        !until &gre &inc #l0 10 190
+    !endif
+    !if &set .curp-last &equ .fahtzee.curp @#
+        fahtzee-set-dice
+        set-variable .curg-last .fahtzee.curg
+        !if &gre .fahtzee.throw 1
+            set-variable #l0 &add .fahtzee.curg 10
+            !repeat
+                !if &seq &reg .fahtzee.visr #l0 "" ""
+                    osd .osd.fahtzeec #l0 "ExGfh" "     " #l0 fahtzee-entry
+                !endif
+            !until &gre &inc #l0 10 190
+        !endif
+    !endif
+!emacro
+
+0 define-macro fahtzee-set-player1
+    1 fahtzee-set-player
+!emacro
+0 define-macro fahtzee-set-player2
+    2 fahtzee-set-player
+!emacro
+0 define-macro fahtzee-set-player3
+    3 fahtzee-set-player
+!emacro
+0 define-macro fahtzee-set-player4
+    4 fahtzee-set-player
+!emacro
+
+0 define-macro fahtzee-new
+    set-variable #l0 1
+    osd-entry "Fahtzee" "&Number of Players : " #l0 4
+    !if &or &gre #l0 4 &les #l0 1
+        osd-dialog "Fahtzee" "Error: Invalid number of players!" "  &OK  "
+        !return
+    !endif
+    set-registry "/fahtzee" "nop" #l0
+    set-registry "/fahtzee" "curp" 1
+    set-registry "/fahtzee" "curg" 1
+    set-variable .fahtzee.nop #l0
+    set-variable .fahtzee.curp 1
+    set-variable .fahtzee.curg 1
+    set-variable .fahtzee.visp 1
+    set-variable .fahtzee.throw 1
+    !repeat
+        !force delete-registry &cat "/fahtzee/" #l0
+        set-registry "/fahtzee" #l0 ""
+        set-variable #l2 &cat "/fahtzee/" #l0
+        set-variable #l1 7
+        !while &dec #l1 1
+            set-registry #l2 &cat "box" #l1 "13"
+            set-registry #l2 &add #l1 "70" " "
+            set-registry #l2 &add #l1 "80" " "
+            set-registry #l2 &add #l1 "90" " "
+            set-registry #l2 &add #l1 "170" " "
+            set-registry #l2 &add #l1 "180" " "
+        !done
+    !until &not &dec #l0 1
+    osd .osd.fahtzee 620 "BxhcfH" .scheme.osd-ebtt " Abort Game " f fahtzee-abort
+    fahtzee-setup
+!emacro
+
+0 define-macro fahtzee-abort
+    set-variable #l0 .fahtzee.nop
+    !repeat
+        !force delete-registry &cat "/fahtzee/" #l0
+    !until &not &dec #l0 1
+    !force delete-registry "/fahtzee/curp"
+    !force delete-registry "/fahtzee/curg"
+    !force delete-registry "/fahtzee/nop"
+    osd .osd.fahtzee 620 "BxhcfH" .scheme.osd-dbtt " Abort Game "
+    osd .osd.fahtzee 630 "BxhcfH" .scheme.osd-dbtt " Undo "
+    set-variable .fahtzee.nop &reg "/fahtzee" "noh" ""
+    set-variable .fahtzee.curp 0
+    set-variable .fahtzee.visp 1
+    fahtzee-setup
+!emacro
+
+-1 osd .osd.fahtzeec
+osd .osd.fahtzeec   0 "Gk"
+osd .osd.fahtzeec   2 "fh" "    Player's Name  "
+osd .osd.fahtzeec   6 "fh" "    "
+osd .osd.fahtzeec   8 "EHSf" .scheme.osd-entry "      " 8 fahtzee-entry
+osd .osd.fahtzeec  10 "Gfh" "             Ones  "
+osd .osd.fahtzeec  20 "Gfh" "             Twos  "
+osd .osd.fahtzeec  30 "Gfh" "           Threes  "
+osd .osd.fahtzeec  40 "Gfh" "            Fours  "
+osd .osd.fahtzeec  50 "Gfh" "            Fives  "
+osd .osd.fahtzeec  60 "Gfh" "            Sixes  "
+osd .osd.fahtzeec  70 "Gfh" "            Total  "
+osd .osd.fahtzeec  80 "Gfh" "            Bonus  "
+osd .osd.fahtzeec  90 "Gfh" "    Section Total  "
+osd .osd.fahtzeec 100 "Gfh" "  Three of a Kind  "
+osd .osd.fahtzeec 110 "Gfh" "   Four of a Kind  "
+osd .osd.fahtzeec 120 "Gfh" "       Full House  "
+osd .osd.fahtzeec 130 "Gfh" "     Low Straight  "
+osd .osd.fahtzeec 140 "Gfh" "    High Straight  "
+osd .osd.fahtzeec 150 "Gfh" "          Fahtzee  "
+osd .osd.fahtzeec 160 "Gfh" "           Chance  "
+osd .osd.fahtzeec 170 "Gfh" "    Section Total  "
+osd .osd.fahtzeec 180 "Gfh" "       Game Total  "
+
+osd .osd.fahtzee1 0  "" fahtzee-set-player1
+osd .osd.fahtzee1 10 "It" 1 .osd.fahtzeec
+
+osd .osd.fahtzee2 0  "" fahtzee-set-player2
+osd .osd.fahtzee2 10 "It" 1 .osd.fahtzeec
+
+osd .osd.fahtzee3 0  "" fahtzee-set-player3
+osd .osd.fahtzee3 10 "It" 1 .osd.fahtzeec
+
+osd .osd.fahtzee4 0  "" fahtzee-set-player4
+osd .osd.fahtzee4 10 "It" 1 .osd.fahtzeec
+
+-1 osd .osd.fahtzeed
+osd .osd.fahtzeed  0 "Gs" 11 0 -1 -1
+osd .osd.fahtzeed  1 ""
+osd .osd.fahtzeed  3 "c" "\n"
+osd .osd.fahtzeed  6 "BxcfH" .scheme.osd-dbtt " THROW "
+osd .osd.fahtzeed  9 "Sfc" "&1" 10
+osd .osd.fahtzeed 15 "Sfc" "&2" 20
+osd .osd.fahtzeed 25 "Sfc" "&3" 30
+osd .osd.fahtzeed 35 "Sfc" "&4" 40
+osd .osd.fahtzeed 45 "Sfc" "&5" 50
+osd .osd.fahtzeed 55 ""
+osd .osd.fahtzeed 60 "BxcfH" .scheme.osd-dbtt " THROW "
+
+osd .osd.fahtzee 00 "batcH" 6 3 .scheme.osd-title "Fahtzee"
+osd .osd.fahtzee 10 "Ih" .osd.fahtzeen
+osd .osd.fahtzee 20 "I"  .osd.fahtzeed
+osd .osd.fahtzee 600 ""
+osd .osd.fahtzee 610 "BxhcfH" .scheme.osd-ebtt " &New Game "   f fahtzee-new
+osd .osd.fahtzee 620 "BxhcfH" .scheme.osd-dbtt " Abort Game "
+osd .osd.fahtzee 630 "BxhcfH" .scheme.osd-dbtt " Undo "
+osd .osd.fahtzee 640 "BcfH"   .scheme.osd-ebtt " E&xit "       1 void
+
+set-variable #l0 10
+!repeat
+    set-variable #l1 0
+    !while &les &inc #l1 1 7
+        osd .osd.fahtzeec &add #l0 #l1 "ESGfh" "     " &add #l0 #l1 fahtzee-entry
+    !done
+    osd .osd.fahtzeec &add #l0 7 "f"
+!until &equ &inc #l0 10 190
+
+osd-bind-key .osd.fahtzee void "mouse-pick-3"
+osd-bind-key .osd.fahtzee fahtzee-throw "mouse-drop-3"
+
+==== fahtzee.emf end =================================================
