@@ -1226,9 +1226,14 @@ osd .osd.dirlst 130 ""  "\HAuto-Refresh: on "   f dirlst-auto-refresh
     set-mark
     forward-line
     -1 kill-region
+    ; remove the file stats and symbolic link info
     !while &not &seq @wc ""
         32 forward-delete-char
         -1 yank
+        !if &set #l0 &sin " -> " @wl
+            set-variable @wl &lef @wl &sub #l0 1
+            beginning-of-line
+        !endif
         forward-line
     !done
     !if .filter
