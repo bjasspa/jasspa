@@ -114,6 +114,172 @@ define-macro previous-buffer
     &neg @# next-buffer
 !emacro
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Macro to increase 'n' lines by a tab stop. If a region is hilighted then
+; the whole region is shoved back by a tab stop. If there is no region, or a
+; numeric argument is specified then 'n' lines are indented by a tab stop. 
+define-macro shove-back
+    ; Test the region first before we destroy the region by executing
+    ; some macro commands
+    0 show-region
+    !if &equ &band $result 5 5
+        !if &not &band $result 2
+            3 show-region
+        !endif
+        ; Save the position for later.
+        set-position "\x82"
+        ; Determine if there is a hilight region in effect.
+        -2 show-region
+        set-variable #l0 $window-line
+        set-variable #l2 $window-col
+        2 show-region
+        set-variable #l1 $window-line
+        set-variable #l3 $window-col
+        !if &les #l0 #l1
+            ; If we are in the firat column then back up a line as the
+            ; user will have selected the previous lines not this one.
+            !if &equ #l3 0
+                set-variable #l1 &sub #l1 1
+            !endif
+        !else
+            !if &equ #l2 0
+                set-variable #l0 &sub #l0 1
+            !endif
+            ; Swap #l0<=>#l1, #l2<=>#l3
+            set-variable #l4 #l0
+            set-variable #l0 #l1
+            set-variable #l1 #l4
+        !endif
+        !force -3 show-region
+        !force  3 show-region
+        !force -1 show-region
+    !else
+        ; No region assume a single line.
+        set-position "\x82"
+        set-variable #l0 $window-line
+        set-variable #l1 #l0
+    !endif
+    ; If there is a numeric argument then we loose the region and use the
+    ; numeric argument as the number of lines to process.
+    !if @?
+        goto-position "\x82"
+        set-variable #l0 $window-line
+        !if &les @# 0
+            ; -ve argument then abort.
+            !abort
+        !elif &gre @# 1
+            set-variable #l1 &add #l0 &sub @# 1
+        !endif
+    !endif
+    ; Processing lines #l0 to #l1 inclusive, move back by a tab stop on all
+    ; given lines.
+    !if &not &equ #l0 $window-line
+        goto-line #l0
+    !endif
+    !repeat
+        beginning-of-line
+        set-variable #l5 $tabsize
+        !while &gre &pdec #l5 1 0
+            !if &ise @wc " "
+                forward-delete-char
+            !else
+                ; Any tab is consumed and we stop, any other character and we
+                ; stop.
+                !if &ise @wc "\t"
+                    forward-delete-char
+                !endif
+                set-variable #l5 0
+            !endif
+        !done
+        !force forward-line
+        ; Check for end of buffer.
+        !if &not $status
+            goto-position "\x82"
+            !return
+        !endif
+    !until &gre $window-line #l1
+!emacro
+global-bind-key shove-back "C-x left"
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Macro to decrease 'n' lines by a tab stop. If a region is hilighted then
+; the whole region is indented back by a tab stop. If there is no region, or
+; a numeric argument is specified then 'n' lines are indented by a tab stop.
+define-macro shove-over
+    ; Test the region first before we destroy the region by executing
+    ; some macro commands
+    0 show-region
+    !if &equ &band $result 5 5
+        !if &not &band $result 2
+            3 show-region
+        !endif
+        ; Save the position for later.
+        set-position "\x82"
+        ; Determine if there is a hilight region in effect.
+        -2 show-region
+        set-variable #l0 $window-line
+        set-variable #l2 $window-col
+        2 show-region
+        set-variable #l1 $window-line
+        set-variable #l3 $window-col
+        !if &les #l0 #l1
+            ; If we are in the firat column then back up a line as the
+            ; user will have selected the previous lines not this one.
+            !if &equ #l3 0
+                set-variable #l1 &sub #l1 1
+            !endif
+        !elif &gre #l0 #l1
+            !if &equ #l2 0
+                set-variable #l0 &sub #l0 1
+            !endif
+            ; Swap #l0<=>#l1, #l2<=>#l3
+            set-variable #l4 #l0
+            set-variable #l0 #l1
+            set-variable #l1 #l4
+        !endif
+        !force -3 show-region
+        !force  3 show-region
+        !force -1 show-region
+    !else
+        ; No region assume a single line.
+        set-position "\x82"
+        set-variable #l0 $window-line
+        set-variable #l1 #l0
+    !endif
+    ; If there is a numeric argument then we loose the region and use the
+    ; numeric argument as the number of lines to process.
+    !if @?
+        goto-position "\x82"
+        set-variable #l0 $window-line
+        !if &les @# 0
+            ; -ve argument then abort.
+            !abort
+        !elif &gre @# 1
+            set-variable #l1 &add #l0 &sub @# 1
+        !endif
+    !endif
+    ; processing lines #l0 to #l1 inclusive, move back by a tab stop on all
+    ; given lines.
+    !if &not &equ #l0 $window-line
+        goto-line #l0
+    !endif
+    !repeat
+        ; Go forward first to make sure we are not at end of buffer.
+        !force forward-line
+        ; Check for end of buffer.
+        !if &not $status
+            goto-position "\x82"
+            !return
+        !endif
+        backward-line
+        beginning-of-line
+        $tabsize  insert-string " "
+        beginning-of-line
+        forward-line
+    !until &gre $window-line #l1
+!emacro
+global-bind-key shove-over "C-x right"
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ; If you loose the C-k kill-line key then you are miss-typing and unbinding.
 ;; ; Remove the global-unbind-key binding so this cannot happen.
