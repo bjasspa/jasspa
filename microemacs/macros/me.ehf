@@ -331,6 +331,7 @@ Miscellaneous Information
 
     lslminsert-newline(2)le (cDC-ocA) Insert new line at cursor position 
     lslminsert-tab(2)le (cDC-icA) Insert tab(s) into current buffer 
+    lslmnormal-tab(3)le Insert a normal tab 
     lslmquote-char(2)le (cDC-qcA) Insert literal character 
     lslmreyank(2)le (cDesc ycA) Restore next yank buffer 
     lslmtab(2)le (cDtabcA) Handle the tab key 
@@ -410,6 +411,7 @@ Miscellaneous Information
     lslmexpand-abbrev(2)le Expand an abbreviation 
     lslmexpand-abbrev-handle(3)le (cDesc esccA) Expand an abbreviation handler 
     lslmfind-tag(2)le (cDesc tcA) Find tag, auto-load file and move to tag position 
+    lslmgenerate-tags-file(3)le Generate a tags file 
     lslmglobal-abbrev-file(2)le Set global abbreviation file 
     lslmindent(2)le Manage the auto-indentation methods 
     lslmiso-accents-expand(3)le Expand an ISO accent 
@@ -812,6 +814,7 @@ ehf-scheme
     lslmbuffer-setup(3)le Configures the current buffer settings 
     lslmdescribe-word(3)le Display a dictionary definition of a word 
     lslmfind-word(3)le Find a using spelling dictionaries 
+    lslmgenerate-tags-file(3)le Generate a tags file 
     lslmline-scheme-search(3)le Search and annotate the current buffer 
     lslmMainMenu(3)le The top main menu 
     lslmorganizer(3)le Calendar and address organizer 
@@ -1101,6 +1104,15 @@ ehf-scheme
 
     lslmadd-next-line(2)le Define the searching behavior of command output 
     lslmcompile(3)le Start a compilation process 
+    lslmcvs(3)le MicroEmacs CVS interface 
+    lslmcvs-add(3)le MicroEmacs CVS interface - add file 
+    lslmcvs-commit(3)le MicroEmacs CVS interface - commit changes 
+    lslmcvs-diff(3)le MicroEmacs CVS interface - diff changes 
+    lslmcvs-log(3)le MicroEmacs CVS interface - log changes 
+    lslmcvs-remove(3)le MicroEmacs CVS interface - remove file 
+    lslmcvs-resolve-conflicts(3)le MicroEmacs CVS interface - resolve conflicts 
+    lslmcvs-state(3)le MicroEmacs CVS interface - list state of directory files 
+    lslmcvs-update(3)le MicroEmacs CVS interface - update directory files 
     lslmcygnus(3)le Open a Cygwin BASH window 
     lslmdbx(3)le UNIX Debugger 
     lslmdiff(3)le Difference files or directories 
@@ -1109,6 +1121,7 @@ ehf-scheme
     lslmfilter-buffer(2)le (cDC-x #cA) Filter the current buffer through an O/S command 
     lslmgdb(3)le GNU Debugger 
     lslmgdiff(3)le Graphical file difference 
+    lslmgenerate-tags-file(3)le Generate a tags file 
     lslmget-next-line(2)le (cDC-x `cA) Find the next command line 
     lslmgrep(3)le Execute grep command 
     lslmipipe-kill(2)le Kill a incremental pipe 
@@ -1116,6 +1129,7 @@ ehf-scheme
     system call) 
     lslmipipe-write(2)le Write a string to an incremental pipe 
     lslmishell(3)le Open a Cygwin BASH window 
+    lslmperldb(3)le Perl Debugger 
     lslmpipe-shell-command(2)le (cDesc @cA) Execute a single operating system command 
     lslmrcs-file(2)le (cDC-x C-qcA) Handle Revision Control System (RCS) files 
     lslmrgrep(3)le Execute recursive grep command 
@@ -1637,6 +1651,15 @@ ehf-scheme
     lslmcopy-region(2)le (cDesc wcA) Copy a region of the buffer 
     lslmcount-words(2)le (cDesc C-ccA) Count the number of words in a region 
     lslmcreate-callback(2)le Create a timer callback 
+    lslmcvs(3)le MicroEmacs CVS interface 
+    lslmcvs-add(3)le MicroEmacs CVS interface - add file 
+    lslmcvs-commit(3)le MicroEmacs CVS interface - commit changes 
+    lslmcvs-diff(3)le MicroEmacs CVS interface - diff changes 
+    lslmcvs-log(3)le MicroEmacs CVS interface - log changes 
+    lslmcvs-remove(3)le MicroEmacs CVS interface - remove file 
+    lslmcvs-resolve-conflicts(3)le MicroEmacs CVS interface - resolve conflicts 
+    lslmcvs-state(3)le MicroEmacs CVS interface - list state of directory files 
+    lslmcvs-update(3)le MicroEmacs CVS interface - update directory files 
     lslmcygnus(3)le Open a Cygwin BASH window 
     lslmdefine-help(2)le Define help information 
     lslmdefine-macro(2)le Define a new macro 
@@ -1701,6 +1724,7 @@ ehf-scheme
     lslmforward-word(2)le (cDesc fcA) Move the cursor to the next word 
     lslmftp(3)le Initiate an FTP connection 
     lslmgdiff(3)le Graphical file difference 
+    lslmgenerate-tags-file(3)le Generate a tags file 
     lslmget-next-line(2)le (cDC-x `cA) Find the next command line 
     lslmget-registry(2)le Retrieve a node value from the registry 
     lslmglobal-abbrev-file(2)le Set global abbreviation file 
@@ -1761,6 +1785,7 @@ ehf-scheme
     lslmmail(3)le Compose and send an email 
     lslmmail-check(3)le Check for new email 
     lslmman(3)le UNIX manual page viewer 
+    lslmman-clean(3)le Clean UNIX manual page 
     lslmmark-registry(2)le Modify the operating mode of a registry node 
     lslmml-bind-key(2)le Create key binding for message line 
     lslmml-clear(2)le Clear the message line 
@@ -1774,6 +1799,7 @@ ehf-scheme
     lslmnext-window(2)le (cDC-x ocA) Move the cursor to the next window 
     lslmnext-window-find-buffer(2)le [cDcA] Split the current window and show new buffer 
     lslmnext-window-find-file(2)le (cDC-x 4cA) Split the current window and find file 
+    lslmnormal-tab(3)le Insert a normal tab 
     lslmorganizer(3)le Calendar and address organizer 
     lslmosd(2)le Manage the On-Screen Display 
     lslmosd-bind-key(2)le Create key binding for OSD dialog 
@@ -2157,6 +2183,15 @@ ehf-scheme
     lslmclean(3)le Remove redundant white spaces from the current buffer 
     lslmcompare-windows-exact(3)le Compare buffer windows, with whitespace 
     lslmcompile(3)le Start a compilation process 
+    lslmcvs(3)le MicroEmacs CVS interface 
+    lslmcvs-add(3)le MicroEmacs CVS interface - add file 
+    lslmcvs-commit(3)le MicroEmacs CVS interface - commit changes 
+    lslmcvs-diff(3)le MicroEmacs CVS interface - diff changes 
+    lslmcvs-log(3)le MicroEmacs CVS interface - log changes 
+    lslmcvs-remove(3)le MicroEmacs CVS interface - remove file 
+    lslmcvs-resolve-conflicts(3)le MicroEmacs CVS interface - resolve conflicts 
+    lslmcvs-state(3)le MicroEmacs CVS interface - list state of directory files 
+    lslmcvs-update(3)le MicroEmacs CVS interface - update directory files 
     lslmcygnus(3)le Open a Cygwin BASH window 
     lslmdelete-global-mode(3)le Remove a global buffer mode 
     lslmdelete-indentation(3)le Join 2 lines deleting white spaces 
@@ -2178,6 +2213,7 @@ ehf-scheme
     lslmfold-current(3)le (cDf2cA) (un)Fold a region in the current buffer 
     lslmftp(3)le Initiate an FTP connection 
     lslmgdiff(3)le Graphical file difference 
+    lslmgenerate-tags-file(3)le Generate a tags file 
     lslmgrep(3)le Execute grep command 
     lslmifill-paragraph(3)le (cDesc qcA) Format a paragraph 
     lslminfo(3)le Display a GNU Info database 
@@ -2192,6 +2228,8 @@ ehf-scheme
     lslmmail(3)le Compose and send an email 
     lslmmail-check(3)le Check for new email 
     lslmman(3)le UNIX manual page viewer 
+    lslmman-clean(3)le Clean UNIX manual page 
+    lslmnormal-tab(3)le Insert a normal tab 
     lslmorganizer(3)le Calendar and address organizer 
     lslmosd-dialog(3)le OSD dialog box 
     lslmosd-entry(3)le OSD entry dialog box 
@@ -2360,7 +2398,6 @@ ehf-scheme
     lslm%ftp-flags(5)le Configure the FTP console 
     lslm%gdiff-com(5)le Gdiff command line 
     lslm%grep-com(5)le Grep command line 
-    lslm%html-author(5)le Edit mode of HTML files 
     lslm%http-flags(5)le Configure the HTTP console 
     lslm%http-proxy-addr(5)le Set HTTP proxy server address 
     lslm%http-proxy-port(5)le Set HTTP proxy server port 
@@ -2665,7 +2702,6 @@ ehf-scheme
     lslm%ftp-flags(5)le Configure the FTP console 
     lslm%gdiff-com(5)le Gdiff command line 
     lslm%grep-com(5)le Grep command line 
-    lslm%html-author(5)le Edit mode of HTML files 
     lslm%http-flags(5)le Configure the HTTP console 
     lslm%http-proxy-addr(5)le Set HTTP proxy server address 
     lslm%http-proxy-port(5)le Set HTTP proxy server port 
@@ -2857,6 +2893,15 @@ ehf-scheme
     lslmcsh(9)le C-Shell file 
     lslmctags(3f)le Generate a C tags file 
     lslmctrlz(2m)le File's termination style 
+    lslmcvs(3)le MicroEmacs CVS interface 
+    lslmcvs-add(3)le MicroEmacs CVS interface - add file 
+    lslmcvs-commit(3)le MicroEmacs CVS interface - commit changes 
+    lslmcvs-diff(3)le MicroEmacs CVS interface - diff changes 
+    lslmcvs-log(3)le MicroEmacs CVS interface - log changes 
+    lslmcvs-remove(3)le MicroEmacs CVS interface - remove file 
+    lslmcvs-resolve-conflicts(3)le MicroEmacs CVS interface - resolve conflicts 
+    lslmcvs-state(3)le MicroEmacs CVS interface - list state of directory files 
+    lslmcvs-update(3)le MicroEmacs CVS interface - update directory files 
     lslmcygnus(3)le Open a Cygwin BASH window 
     lslmdbx(3)le UNIX Debugger 
     lslmdef(9)le C or C++ definition file 
@@ -2949,6 +2994,7 @@ ehf-scheme
     lslmgdb(3)le GNU Debugger 
     lslmgdiff(3)le Graphical file difference 
     lslmgdiff(3f)le Command line graphical file difference 
+    lslmgenerate-tags-file(3)le Generate a tags file 
     lslmget-next-line(2)le (cDC-x `cA) Find the next command line 
     lslmget-registry(2)le Retrieve a node value from the registry 
     lslmglobal-abbrev-file(2)le Set global abbreviation file 
@@ -3044,6 +3090,7 @@ ehf-scheme
     lslmmakefile(9)le Make file 
     lslmman(3)le UNIX manual page viewer 
     lslmman(9)le UNIX Manual Page 
+    lslmman-clean(3)le Clean UNIX manual page 
     lslmmark-registry(2)le Modify the operating mode of a registry node 
     lslmme(1)le MicroEmacs '01 text editor 
     lslmme32.ini(8)le Microsoft Window's Initialization (ini) File 
@@ -3065,6 +3112,7 @@ ehf-scheme
     lslmnext-window(2)le (cDC-x ocA) Move the cursor to the next window 
     lslmnext-window-find-buffer(2)le [cDcA] Split the current window and show new buffer 
     lslmnext-window-find-file(2)le (cDC-x 4cA) Split the current window and find file 
+    lslmnormal-tab(3)le Insert a normal tab 
     lslmnroff(9)le UNIX nroff file 
     lslmntags(3f)le Generate a nroff tags file 
     lslmorganizer(3)le Calendar and address organizer 
@@ -3081,6 +3129,7 @@ ehf-scheme
     lslmparagraph-to-line(3)le Convert a paragraph to a single line 
     lslmpas(9)le Pascal File 
     lslmperl(9)le Practical Extraction and Report Language File 
+    lslmperldb(3)le Perl Debugger 
     lslmpipe(2m)le Incremental Pipe running 
     lslmpipe-shell-command(2)le (cDesc @cA) Execute a single operating system command 
     lslmpl(9)le Practical Extraction and Report Language File 
@@ -3345,7 +3394,7 @@ ehf-scheme
     The following contact point may be used to report all problems and request 
     information:- 
 
-        cDEmail:cAcGjasspa@geocities.comcA 
+        cGEmail:support@jasspa.comcA 
 
     Also visit our web site's on the Internet:- 
 
@@ -3373,12 +3422,12 @@ ehf-scheme
     If you want to join the E-Mail reflector then mail a request, with an 
     empty message body to:- 
 
-        cGjasspa-subscribe@yahoogroups.comcA 
+       cG jasspa-subscribe@yahoogroups.comcA 
 
     This should add you to the mailing list. If you want to be subsequently 
     removed from the mailing list then mail an empty message to:- 
 
-        cGjasspa-unsubscribe@yahoogroups.comcA 
+       cG jasspa-unsubscribe@yahoogroups.comcA 
 
     and you will be removed from the lists. There are facilities on the site 
     to allow you to receive digests, rather than multiple posts to the group 
@@ -3721,57 +3770,57 @@ ehf-scheme
     This page contains frequently asked questions submitted to JASSPA. 
 
     lsFAQs(0f)lmFAQsle - FAQ Contact information 
-    lsFAQs(0f)lmfaq00le - New functionality; what is useful to me as an old MicroEmacs user 
+    lsfaq00(0f)lmfaq00le - New functionality; what is useful to me as an old MicroEmacs user 
     ?? 
-    lsFAQs(0f)lmfaq01le - Languages; Are any foreign languages supported other than English 
+    lsfaq01(0f)lmfaq01le - Languages; Are any foreign languages supported other than English 
     ?? 
-    lsFAQs(0f)lmfaq02le - C++ is not default, C is - how do I change this ?? 
-    lsFAQs(0f)lmfaq03le - GNU Emacs; are there any GNU Emacs bindings. ? 
-    lsFAQs(0f)lmfaq04le - Icons are not displayed correctly in Microsoft Windows 
+    lsfaq02(0f)lmfaq02le - C++ is not default, C is - how do I change this ?? 
+    lsfaq03(0f)lmfaq03le - GNU Emacs; are there any GNU Emacs bindings. ? 
+    lsfaq04(0f)lmfaq04le - Icons are not displayed correctly in Microsoft Windows 
     environments !! 
-    lsFAQs(0f)lmfaq05le - ipipes not working on Microsoft Windows network drives ? 
-    lsFAQs(0f)lmfaq06le - Language not supported - will it be ?? 
-    lsFAQs(0f)lmfaq07le - Language file is incomplete 
-    lsFAQs(0f)lmfaq08le - Input locked up and not accepting keys; how do I unlock ? 
-    lsFAQs(0f)lmfaq09le - MicroEmacs Bindings; How do I get the original MicroEmacs bindings 
+    lsfaq05(0f)lmfaq05le - ipipes not working on Microsoft Windows network drives ? 
+    lsfaq06(0f)lmfaq06le - Language not supported - will it be ?? 
+    lsfaq07(0f)lmfaq07le - Language file is incomplete 
+    lsfaq08(0f)lmfaq08le - Input locked up and not accepting keys; how do I unlock ? 
+    lsfaq09(0f)lmfaq09le - MicroEmacs Bindings; How do I get the original MicroEmacs bindings 
     ? 
-    lsFAQs(0f)lmfaq10le - Microsoft Windows Locks up after killing an ipipe. 
-    lsFAQs(0f)lmfaq11le - Mouse support under Microsoft windows is strange !! 
-    lsFAQs(0f)lmfaq12le - Scroll bars too narrow !! 
-    lsFAQs(0f)lmfaq13le - Tab key; Why does the tab key not operate in some windows ?? 
-    lsFAQs(0f)lmfaq14le - Termcap; On a color terminal why is there no color ?? 
-    lsFAQs(0f)lmfaq15le - Termcap; Some of the keys do not work - how can I bind them ? 
-    lsFAQs(0f)lmfaq16le - Timestamp; Format incorrect, how can I change to MMDDYY.hhmm ? 
-    lsFAQs(0f)lmfaq17le - Windows; Component characters rendered incorrectly, how do I fix ? 
-    lsFAQs(0f)lmfaq18le - Windows Autosave and Backup files; are these potentially a problem 
+    lsfaq10(0f)lmfaq10le - Microsoft Windows Locks up after killing an ipipe. 
+    lsfaq11(0f)lmfaq11le - Mouse support under Microsoft windows is strange !! 
+    lsfaq12(0f)lmfaq12le - Scroll bars too narrow !! 
+    lsfaq13(0f)lmfaq13le - Tab key; Why does the tab key not operate in some windows ?? 
+    lsfaq14(0f)lmfaq14le - Termcap; On a color terminal why is there no color ?? 
+    lsfaq15(0f)lmfaq15le - Termcap; Some of the keys do not work - how can I bind them ? 
+    lsfaq16(0f)lmfaq16le - Timestamp; Format incorrect, how can I change to MMDDYY.hhmm ? 
+    lsfaq17(0f)lmfaq17le - Windows; Component characters rendered incorrectly, how do I fix ? 
+    lsfaq18(0f)lmfaq18le - Windows Autosave and Backup files; are these potentially a problem 
     ? 
-    lsFAQs(0f)lmfaq19le - Printing; Why in Windows does the output come out in a buffer ?? 
-    lsFAQs(0f)lmfaq20le - Printing; On Windows which font should I use ?? 
-    lsFAQs(0f)lmfaq21le - Printing; My printer is not supported ? 
-    lsFAQs(0f)lmfaq22le - Alt key maps to the Menu, how do I change ? 
-    lsFAQs(0f)lmfaq23le - me32.ini - Where does it go, how do I know it's being processed ?? 
-    lsFAQs(0f)lmfaq24le - Windows - Where is app850.fon ? 
-    lsFAQs(0f)lmfaq25le - Time; mode line is showing the date in DD/MM/YY format how do I 
+    lsfaq19(0f)lmfaq19le - Printing; Why in Windows does the output come out in a buffer ?? 
+    lsfaq20(0f)lmfaq20le - Printing; On Windows which font should I use ?? 
+    lsfaq21(0f)lmfaq21le - Printing; My printer is not supported ? 
+    lsfaq22(0f)lmfaq22le - Alt key maps to the Menu, how do I change ? 
+    lsfaq23(0f)lmfaq23le - me32.ini - Where does it go, how do I know it's being processed ?? 
+    lsfaq24(0f)lmfaq24le - Windows - Where is app850.fon ? 
+    lsfaq25(0f)lmfaq25le - Time; mode line is showing the date in DD/MM/YY format how do I 
     change ? 
-    lsFAQs(0f)lmfaq26le - C or C++ indentation and effects; how can I turn off ? 
-    lsFAQs(0f)lmfaq27le - fill-paragraph function does not fill ?? 
-    lsFAQs(0f)lmfaq28le - Key modifier which acts as the ESC key; what is it ? 
-    lsFAQs(0f)lmfaq29le - find-file start location; where is it ? 
-    lsFAQs(0f)lmfaq30le - Re-using a MicroEmacs session; how to ?? 
-    lsFAQs(0f)lmfaq31le - Microsoft Drag and Drop; is it supported ?? 
-    lsFAQs(0f)lmfaq32le - Cut and Paste to/from other applications; is it supported ?? 
-    lsFAQs(0f)lmfaq33le - Fonts; how can I change the font ?? 
-    lsFAQs(0f)lmfaq34le - Colors; how can I change screen colors ?? 
-    lsFAQs(0f)lmfaq35le - File Types; how do I interchange between UNIX, Windows and DOS 
+    lsfaq26(0f)lmfaq26le - C or C++ indentation and effects; how can I turn off ? 
+    lsfaq27(0f)lmfaq27le - fill-paragraph function does not fill ?? 
+    lsfaq28(0f)lmfaq28le - Key modifier which acts as the ESC key; what is it ? 
+    lsfaq29(0f)lmfaq29le - find-file start location; where is it ? 
+    lsfaq30(0f)lmfaq30le - Re-using a MicroEmacs session; how to ?? 
+    lsfaq31(0f)lmfaq31le - Microsoft Drag and Drop; is it supported ?? 
+    lsfaq32(0f)lmfaq32le - Cut and Paste to/from other applications; is it supported ?? 
+    lsfaq33(0f)lmfaq33le - Fonts; how can I change the font ?? 
+    lsfaq34(0f)lmfaq34le - Colors; how can I change screen colors ?? 
+    lsfaq35(0f)lmfaq35le - File Types; how do I interchange between UNIX, Windows and DOS 
     files ?? 
-    lsFAQs(0f)lmfaq36le - Non-English Languages; What font should I select ?? 
-    lsFAQs(0f)lmfaq37le - MicroEmacs '99; How do I up-grade from MicroEmacs'98 ?? 
-    lsFAQs(0f)lmfaq38le - Some keys on my foreign keyboard do not work properly, how do I 
+    lsfaq36(0f)lmfaq36le - Non-English Languages; What font should I select ?? 
+    lsfaq37(0f)lmfaq37le - MicroEmacs '99; How do I up-grade from MicroEmacs'98 ?? 
+    lsfaq38(0f)lmfaq38le - Some keys on my foreign keyboard do not work properly, how do I 
     get them working ?? 
-    lsFAQs(0f)lmfaq39le - Tabs; How to change the tab width ?? 
-    lsFAQs(0f)lmfaq40le - Windows/DOS; Where do I get grep/diff etc. ?? 
-    lsFAQs(0f)lmfaq41le - Home/End Keys; How do I change the default bindings ?? 
-    lsFAQs(0f)lmfaq42le - tags; How do I generate a MicroEmacs compatible tags file ?? 
+    lsfaq39(0f)lmfaq39le - Tabs; How to change the tab width ?? 
+    lsfaq40(0f)lmfaq40le - Windows/DOS; Where do I get grep/diff etc. ?? 
+    lsfaq41(0f)lmfaq41le - Home/End Keys; How do I change the default bindings ?? 
+    lsfaq42(0f)lmfaq42le - tags; How do I generate a MicroEmacs compatible tags file ?? 
 
 ! 0ffaq00
 cEcEQUESTION (00) cEcA
@@ -4009,7 +4058,7 @@ ehf-scheme
 cEcESEE ALSO cEcA
 
 
-    lsFAQs(0f)lmFAQ06le 
+    lsfaq06(0f)lmFAQ06le 
 
     lsFrequently Asked Questionslm[FAQ Index]le. 
 
@@ -4987,10 +5036,10 @@ ehf-scheme
 
 
     This document contains frequently asked questions submitted to JASSPA. Use 
-    the E-Mail reflector and associated logs, described in the lsMicroEmacs '01 - Contact InformationlmContact 
-    Informationle section, alternatively questions may be submitted to:- 
+    the E-Mail reflector and associated logs, described in the lsMicroEmacs '01 - Contact InformationlmContactln
+    lnInformationle section, alternatively questions may be submitted to:- 
 
-        cDMailto:jasspa@geocities.comcA 
+        cGEmail:support@jasspa.comcA 
 
     We cannot promise to resolve all questions, but will endeavor to answer 
     most. We would also appreciate comments on how to improve the readability 
@@ -6074,8 +6123,8 @@ $a
     The standard file hook files cDhkcAcCXXXcAcD.emfcA should not be modified. The 
     standard file hooks may be extended with local definitions by defining a 
     file cDmycAcCXXXcAcD.emfcA, which is an extension to the hook file cDhkcAcCXXXcAcD.emfcA. This is 
-    automatically executed after cDhkcAcCXXXcAcD.emfcA. Refer to sections lslanguageTemplates(2)lmLanguage 
-    Templatesle and lsfileHooks(2)lmFile Hooksle for details. 
+    automatically executed after cDhkcAcCXXXcAcD.emfcA. Refer to sections lslanguageTemplates(2)lmLanguageln
+    lnTemplatesle and lsfileHooks(2)lmFile Hooksle for details. 
 
 
 cEFile Extensions cA
@@ -8269,8 +8318,8 @@ $a
 
 
     The cDindentcA command creates and manages the auto-indenting methods, the 
-    process of creating a new indentation method is best described in lslanguageTemplates(2)lmFile 
-    Language Templatesle. The command takes various forms as defined by the 
+    process of creating a new indentation method is best described in lslanguageTemplates(2)lmFileln
+    lnLanguage Templatesle. The command takes various forms as defined by the 
     arguments. Each of the argument configurations is defined as follows:- 
 
 
@@ -9983,7 +10032,8 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslm%tag-file(5)le, lslm%tag-option(5)le, lslm%tag-template(5)le, cDctags(1)cA. 
+    lslm%tag-file(5)le, lslm%tag-option(5)le, lslm%tag-template(5)le, lslmgenerate-tags-file(3)le, 
+    cDctags(1)cA. 
 
 ! 2 get-next-line
 cEcENAME cEcA
@@ -10288,7 +10338,7 @@ $a
 
 
     lslmcmode(2m)le, lslm$buffer-indent(5)le, lslmtab(2m)le, lslmbackward-delete-tab(2)le, 
-    lslminsert-tab(2)le, lslm$tabsize(5)le, lslm$tabwidth(5)le. 
+    lslminsert-tab(2)le, lslmnormal-tab(3)le, lslm$tabsize(5)le, lslm$tabwidth(5)le. 
 
 ! 2 help
 ! 2 help-command
@@ -11115,8 +11165,8 @@ $a
 
 
     The cDhilightcA command creates and manages the buffer hilighting, the process 
-    of creating a new hilighting scheme is best described in lslanguageTemplates(2)lmFile Language 
-    Templatesle. The command takes various forms as defined by the arguments. 
+    of creating a new hilighting scheme is best described in lslanguageTemplates(2)lmFile Languageln
+    lnTemplatesle. The command takes various forms as defined by the arguments. 
     Each of the argument configurations is defined as follows:- 
 
 
@@ -14520,7 +14570,7 @@ $a
     This is particularly useful for email address, e.g. 
 
         | 
-        |JA "\"JASSPA\" <jasspa@geocities.com>" 
+        |JA "\"JASSPA\" <support@jasspa.com>" 
         | 
 
 
@@ -16325,8 +16375,8 @@ $a
     the new file inherits the buffers file characteristics instead of the old 
     file's. 
 
-    On writing the file, if lslmtime(2m)le mode is enabled then the ls$timestamp(5)lmtime stamp 
-    stringle is searched for in the file and modified if located, to reflect the 
+    On writing the file, if lslmtime(2m)le mode is enabled then the ls$timestamp(5)lmtime stampln
+    lnstringle is searched for in the file and modified if located, to reflect the 
     modification date and time. 
 
     If the buffer contains a lslmnarrow(2m)le it will automatically be removed 
@@ -17138,7 +17188,8 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslminsert-space(2)le, lslminsert-string(2)le, lslminsert-newline(2)le, lslmtab(2m)le. 
+    lslminsert-space(2)le, lslminsert-string(2)le, lslminsert-newline(2)le, lslmtab(2)le, 
+    lslmnormal-tab(3)le, lslmtab(2m)le. 
 
 ! 2 read-registry
 cEcENAME cEcA
@@ -19800,8 +19851,8 @@ ehf-scheme
 
 
     The next step to adding a new file type is to get MicroEmacs '01 to 
-    recognize the file as the new type. Recognition is performed by the lsfileHooks(2)lmFile 
-    Hooksle which perform recognition on the file extension and/or the file 
+    recognize the file as the new type. Recognition is performed by the lsfileHooks(2)lmFileln
+    lnHooksle which perform recognition on the file extension and/or the file 
     content. The name of the file type must be determined, this is typically 
     the name of the file prepended by cGhkcA. e.g. a file with extension cCfoocA uses 
     the file cGhkfoo.emfcA for it's language specific definitions. 
@@ -20908,8 +20959,8 @@ ehf-scheme
 cEcESEE ALSO cEcA
 
 
-    lslm$MENAME(5)le, lslm$MEPATH(5)le, lsCompanyProfiles(2)lmCompany Profilesle, lsfileHooks(2)lmFile Hooksle, lslanguageTemplates(2)lmFile Language 
-    Templatesle, lsUserProfiles(2)lmUser Profilesle. 
+    lslm$MENAME(5)le, lslm$MEPATH(5)le, lsCompanyProfiles(2)lmCompany Profilesle, lsfileHooks(2)lmFile Hooksle, lslanguageTemplates(2)lmFile Languageln
+    lnTemplatesle, lsUserProfiles(2)lmUser Profilesle. 
 
 ! 2 CompanyProfiles
 cEcECOMPANY PROFILES cEcA
@@ -21277,8 +21328,8 @@ ehf-scheme
 cEcESEE ALSO cEcA
 
 
-    lslm$MEPATH(5)le, lslm$MENAME(5)le, lslmuser-setup(3)le, lsCompanyProfiles(2)lmCompany Profilesle, lsfileHooks(2)lmFile Hooksle, lslanguageTemplates(2)lmFile 
-    Language Templatesle, lsInstallation(1)lmInstallationle. 
+    lslm$MEPATH(5)le, lslm$MENAME(5)le, lslmuser-setup(3)le, lsCompanyProfiles(2)lmCompany Profilesle, lsfileHooks(2)lmFile Hooksle, lslanguageTemplates(2)lmFileln
+    lnLanguage Templatesle, lsInstallation(1)lmInstallationle. 
 
 ! 2 Interfacing
 cEcEINTERFACING cEcA
@@ -25159,10 +25210,11 @@ $a
     lslmuser-setup(3)le, lslmspell-buffer(3)le, lslmtranslate-key(2)le, lslmset-char-mask(2)le. 
 
 ! 3 man
+! 3 man-clean
 cEcENAME cEcA
 
 
-    man - UNIX manual page viewer. 
+    man - UNIX manual page viewer. man-clean - Clean UNIX manual page. 
 $a
 
 
@@ -25170,6 +25222,7 @@ $a
 
 
     cDmancA 
+    cDman-cleancA 
 
 
 cEcEDESCRIPTION cEcA
@@ -25186,14 +25239,22 @@ $a
     line. The macro invokes the UNIX utility cDman(1)cA to generate the page and 
     displays the results in a window. 
 
-    Selecting another manual page, with the left mouse within the manual page, 
-    then MicroEmacs attempts to load the selected manual page. 
+    Another manual page can be selected by either moving the cursor to the 
+    link and pressing return or double clicking on it with the left mouse 
+    button. MicroEmacs will then attempt to load and display the selected 
+    manual page. 
+
+    cDman-cleancA removes any man-page formatting codes from the current buffer 
+    reducing a manual page to plain text. The formatting codes are used to 
+    create the bold and underline fonts. This allows the page to be treated as 
+    a normal buffer, i.e. string searches and other similar command will work 
+    as expected. 
 
 
 cEcENOTES cEcA
 
 
-    cDmancA is a macro defined in cGhkman.emfcA. 
+    cDmancA and cDman-cleancA are macros defined in cGhkman.emfcA. 
 
     cDmancA is only made available within UNIX environments, the UNIX start up 
     file cGunixterm.emfcA links in the macro. If the cDmancA utility is required on 
@@ -25207,7 +25268,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmuser-setup(3)le, lslmspell-buffer(3)le. 
+    lslmman(9)le, lslmuser-setup(3)le, lslmspell-buffer(3)le. 
 
 ! 3 draw
 cEcENAME cEcA
@@ -26713,8 +26774,8 @@ $a
 cEcESYNOPSIS cEcA
 
 
-    cDgdbcA 
-    cDdbxcA 
+    cDgdbcA "cCprogram-namecA" "cCadditional-argscA" 
+    cDdbxcA "cCprogram-namecA" "cCadditional-argscA" 
 
 
 cEcEDESCRIPTION cEcA
@@ -26723,9 +26784,9 @@ $a
     cDgdbcA and cDdbxcA provide an editor interface to the GNU and native system 
     debuggers, respectively. On running either command then an interactive 
     shell window is opened to the debugger command line interface. MicroEmacs 
-    '01 then interprets the information from the debugger interface and opens 
+    then interprets the information from the debugger interface and opens 
     files and hilights the current line as required. The current line is 
-    maintained while single stepping though the code. 
+    maintained while single stepping through the code. 
 
     Buffers opened and referenced by the debugger have the key cGF9cA bound to 
     setting a break point. 
@@ -26737,19 +26798,10 @@ $a
     cDgdbcA and cDdbxcA are macros defined in file cGhkipipe.emfcA. 
 
 
-cEcEBUGS cEcA
-
-
-    No macro command interface has been provided to enable a remote process to 
-    be debugged. If this is required the changes to cGhkipipe.emfcA are minimal 
-    requiring that the macro prompts for the process identity and invokes the 
-    debugger with the appropriate process arguments. 
-
-
 cEcESEE ALSO cEcA
 
 
-    lslmipipe-shell-command(2)le. 
+    lslmperldb(3)le, lslmipipe-shell-command(2)le. 
 
 ! 3 expand-abbrev-handle
 cEcENAME cEcA
@@ -27140,6 +27192,329 @@ $a
 
     lslmfind-file(2)le, lslmread-file(2)le, lslmview-file(2)le. 
 
+! 3 normal-tab
+cEcENAME cEcA
+
+
+    normal-tab - Insert a normal tab 
+$a
+
+
+cEcESYNOPSIS cEcA
+
+
+    cCncA cDnormal-tabcA 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    cDnormal-tabcA insert a tab into the current buffer by temporarily disabling 
+    any auto indentation schemes. The macro first disables any indentation 
+    rules by setting lslm$buffer-indent(5)le to 0 and disabling the lslmcmode(2m)le, the 
+    command lslmtab(2)le is then called with the given argument cCncA. This means that 
+    the buffer's lslmtab(2m)le mode setting will be respected, i.e. whether a tab 
+    character or spaces are inserted. The initial indentation rules are 
+    restored on exit. 
+
+
+cEcENOTES cEcA
+
+
+    cDnormal-tabcA is a macro implemented in cGformat.emfcA. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmtab(2)le, lslminsert-tab(2)le, lslmtab(2m)le. 
+
+! 3 perldb
+cEcENAME cEcA
+
+
+    perldb - Perl Debugger 
+$a
+
+
+cEcESYNOPSIS cEcA
+
+
+    cCncA cDperldbcA [ "cCscript-namecA" ] "cCscript-argscA" 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    cDperldbcA provides an editor interface to the Perl debugger, on running the 
+    command an interactive shell window is opened to the debugger command line 
+    interface. MicroEmacs then interprets the information from the debugger 
+    interface and opens files and hilights the current line as required. The 
+    current line is maintained while single stepping through the script. 
+
+    Buffers opened and referenced by the debugger have the key cGF9cA bound to 
+    setting a break point, this only works if the buffer contains the current 
+    execution point. 
+
+    If an argument cCncA of 2 is given to cDperldbcA the command assumes that the 
+    current buffer is the script file to debug, the "cGscript-namecA" argument is 
+    not prompted for. 
+
+
+cEcENOTES cEcA
+
+
+    cDperldbcA is a macro defined in file cGhkipipe.emfcA. 
+
+
+cEcEBUGS cEcA
+
+
+    The 'cDRcA' rerun command does not work correctly on Windows platforms, perldb 
+    is rerun in a newly created external dos command window instead of inside 
+    the MicroEmacs ipipe buffer. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmgdb(3)le, lslmipipe-shell-command(2)le. 
+
+! 3 generate-tags-file
+cEcENAME cEcA
+
+
+    generate-tags-file - Generate a tags file 
+$a
+
+
+cEcESYNOPSIS cEcA
+
+
+    cCncA cDgenerate-tags-filecA [ "cCtag-commandcA" ] 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    The cDgenerate-tags-filecA command provides an interface to tag file 
+    generation. Typically the "cCtag-commandcA" argument will not be required as 
+    the current buffer will automatically configure cDgenerate-tags-filecA on how 
+    tags are generated for the current buffer's file type. See the notes below 
+    for more information on configuration. 
+
+    cDgenerate-tags-filecA supports two different methods of tag generation, 
+    firstly via a MicroEmacs macro file and secondly by an external shell 
+    command (such as cDctags(1)cA). It is generally configured in the current 
+    buffer's lsfileHooks(2)lmsetup hookle. 
+
+    If a macro file is used a setup dialog is opened if an argument of 0 is 
+    given to cDgenerate-tagscA. This dialog can be used to configure which type of 
+    tags are required and the starting directory (useful when using recursive 
+    tags over a source tree). Note that not all tag types are available for 
+    all file types. 
+
+    The generated tags file can then be used by the lslmfind-tag(2)le command. 
+
+
+cEcENOTES cEcA
+
+
+    cDgenerate-tags-filecA is a macro defined in file cGgentags.emfcA. 
+
+    cDgenerate-tags-filecA can be configured in one of 2 ways: 
+
+        When a MicroEmacs macro file (such as cGctags.emfcA) is to be used, simply 
+        give the name of the macro file to be run as the "cCtag-commandcA" 
+        argument. Alternatively set the variable cD.cAcC<$buffer-fhook>cAcD.tagscA to this 
+        name, e.g. for C files 
+sB
+                set-variable .fhook-c.tags "ctags" 
+
+sA
+        Note the "cG.emfcA" extension is assumed. 
+
+        When an external shell command is to be used, set the cCtag-commandcA to 
+        the shell command-line prefixed with a 'cG!cA' character, for example to 
+        use cDctags(1)cA try the following: 
+sB
+                set-variable .fhook-c.tags "!ctags *.c *h" 
+
+sA
+        Note that the generate-tags dialog is not available in this mode of 
+        execution. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmfind-tag(2)le. 
+
+! 3 cvs
+! 3 cvs-add
+! 3 cvs-commit
+! 3 cvs-diff
+! 3 cvs-log
+! 3 cvs-remove
+! 3 cvs-resolve-conflicts
+! 3 cvs-state
+! 3 cvs-update
+cEcENAME cEcA
+
+
+|cvs
+    cvs - MicroEmacs CVS interface 
+|cvs-add
+    cvs-add - MicroEmacs CVS interface - add file 
+|cvs-commit
+    cvs-commit - MicroEmacs CVS interface - commit changes 
+|cvs-diff
+    cvs-diff - MicroEmacs CVS interface - diff changes 
+|cvs-log
+    cvs-log - MicroEmacs CVS interface - log changes 
+|cvs-remove
+    cvs-remove - MicroEmacs CVS interface - remove file 
+|cvs-resolve-conflicts
+    cvs-resolve-conflicts - MicroEmacs CVS interface - resolve conflicts 
+|cvs-state
+    cvs-state - MicroEmacs CVS interface - list state of directory files 
+|cvs-update
+    cvs-update - MicroEmacs CVS interface - update directory files 
+$a
+
+
+cEcESYNOPSIS cEcA
+
+
+    cDcvscA 
+
+    cDcvs-addcA 
+    cDcvs-commitcA 
+    cDcvs-diffcA 
+    cDcvs-logcA 
+    cDcvs-removecA 
+    cDcvs-resolve-conflictscA 
+    cDcvs-statecA 
+    cDcvs-updatecA 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    The cvs and sub-commands provide MicroEmacs with an interface to cDcvs(1)cA. 
+    cDCVScA is a version control system; using it, you can record the history of 
+    your source files. CVS is licensed under the GNU General Public License 
+    and is freely available on the internet, see documentation provided with 
+    CVS for more information on its features and use. 
+
+    The MicroEmacs cDcvscA command opens up a modified lslmfile-browser(3)le with an 
+    extra "cG*cvs-console*cA" window underneath, the "cG*files*cA" window has extra 
+    columns giving the CVS state, revision and repository date. The 
+    functionality of the file-browser is the same except for an additional CVS 
+    item in the mouse context mouse menu (opened by clicking the right mouse 
+    button in the cG*files*cA buffer). This menu item opens another sub-menu 
+    giving access to the following items: 
+
+    cDUpdate filescA 
+        Updates the currently selected files, files are selected by clicking 
+        the left button to the left of the required file name, Multiple files 
+        can be selected at once by 'dragging' a hilight region over the 
+        required files. This runs the command "cGcvs update <files>cA". 
+
+    cDCommit filescA 
+        Commits any changes made to the selected files back to the CVS 
+        repository. This runs the command "cGcvs commit <files>cA". 
+
+    cDDiff filescA 
+        Displays any differences between the selected files and the CVS 
+        repository version in the cC*cvs-console*cA window. This runs the command 
+        "cGcvs diff <files>cA". 
+
+    cDLog filescA 
+        Displays the CVS logs for the selected files in the cC*cvs-console*cA 
+        window. This runs the command "cGcvs log <files>cA". 
+
+    cDStatus filescA 
+        Displays the CVS status for each of the selected files in the 
+        cC*cvs-console*cA window. This runs the command "cGcvs status -v <files>cA". 
+
+    cDAdd filescA 
+        Adds the selected files to the CVS repository. Note this command only 
+        performs the local add, a CVS commit is required to make the addition 
+        permanent. This runs the command "cGcvs add <files>cA". 
+
+    cDRemove filescA 
+        This command is deliberately not implemented as its far to dangerous! 
+        Instead it opens a dialog informing the user to use the cDcvs-removecA 
+        command instead. 
+
+    cDGraphical diffcA 
+        This command opens a lslmgdiff(3)le window showing the differences between 
+        the currently selected file and the CVS repository version. Note this 
+        command only works with a single file. 
+
+    cDResolve conflictscA 
+        This command can be used to resolve merge conflicts created by a CVS 
+        update. The command opens a lslmgdiff(3)le window showing the areas of 
+        conflict allowing the user to select the correct version and saving 
+        the resultant version back to the local file. Note this command only 
+        works with a single file. 
+
+    cDClear cvs consolecA 
+        Clears the cC*cvs-console*cA buffer. 
+
+    The cDcvs-addcA command adds the current buffers file to the repository. Note 
+    that this command only performs the local addition, a CVS commit is 
+    required to make the addition permanent. 
+
+    The cDcvs-commitcA command commits any changes made to the currently buffer's 
+    file (including addition) to the repository. The user is prompted for a 
+    commit log message. 
+
+    The cDcvs-diffcA command opens a lslmgdiff(3)le window displaying the differences 
+    between the current buffer's local file and repository version. 
+
+    The cDcvs-logcA command opens a cC*cvs-log*cA window displaying the CVS log of the 
+    current buffer's file. 
+
+    The cDcvs-removecA command removes the current buffer's file from the 
+    repository - PLEASE NOTE THIS CAN LEAD TO LOST DATA!!! This command only 
+    performs the local removal and as it deletes the buffer and file the 
+    cDcvs-commitcA command cannot be used to commit the removal to the CVS 
+    repository. Instead the main cDcvscA file-browser menu or cDcvs(1)cA itself must 
+    be used. 
+
+    The cDcvs-resolve-conflictscA command can be used to resolve any conflicts 
+    created by CVS when the current buffer's file was updated. The command 
+    opens a gdiff window displaying the areas of conflict, the user can then 
+    select the correct version in each case and save the resultant new version 
+    over the local file. 
+
+    The cDcvs-statecA command opens a cC*cvs-state*cA window listing the state of any 
+    file in the current directory which is not up-to-date. Note that unlike 
+    most cvs sub commands this command executes over all files in the current 
+    buffer's file directory. 
+
+    The cDcvs-updatecA command updates all files in the current directory, the 
+    output being reported to a new cC*cvs-update*cA window. Note that unlike most 
+    cvs sub commands this command executes over all files in the current 
+    buffer's file directory. 
+
+
+cEcENOTES cEcA
+
+
+    cDcvscA and sub-commands are macros defined in file cGcvs.emfcA. 
+
+    By default cDcvscA filters out all files ignored by cDcvs(1)cA. This is configured 
+    by the variable cD.cvs.filtercA, setting this to 0 will disable the filtering. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmfile-browser(3)le. 
+
 ! 3 user-setup
 cEcENAME cEcA
 
@@ -27248,7 +27623,7 @@ $a
         generation keys present on foreign keyboards cannot be automatically 
         supported on Windows platforms. MicroEmacs must be informed of the 
         keyboard being used to correctly interpret the keys. If a required 
-        keyboard is not supported please see lsFAQs(0f)lmFAQ38le on how to setup the 
+        keyboard is not supported please see lsfaq38(0f)lmFAQ38le on how to setup the 
         keyboard. 
 
     cGLanguagecA 
@@ -39566,9 +39941,9 @@ $a
         language to be differentiated and rendered in different colors. 
 
     cDAuto LayoutcA 
-        The electric C-Mode lslmcmode(2m)le performs automatic layout of the text, 
-        variables such as ls$c-brace(5)lmc-brace(5)le allow the brace position and text 
-        formation to be modified. 
+        The C-Mode lslmcmode(2m)le performs automatic layout of the text, variables 
+        such as ls$c-brace(5)lmc-brace(5)le allow the brace position and text formation to be 
+        modified. 
 
         lslmrestyle-region(3)le and lslmrestyle-buffer(3)le are available to reformat 
         (re-layout) selected sections of the buffer, or the whole buffer, 
@@ -39581,9 +39956,9 @@ $a
         cCDoccA comment. 
 
     cDTagscA 
-        A C-tags file may be generated within the editor using the cDToolscA -> 
-        cDC-ToolscA -> cDCreate Tag FilecA. lslmfind-tag(2)le takes the user to the file 
-        using the tag information. 
+        A C-tags file may be generated within the editor using the cDToolscA -> cDC 
+        ToolscA -> cDCreate Tag FilecA. lslmfind-tag(2)le takes the user to the file using 
+        the tag information. 
 
         On invoking the tag generator then the user is presented with a dialog 
         box which specifies the generation option of the tags file. The base 
@@ -39602,7 +39977,7 @@ $a
         (un)folds all regions in the file, lslmfold-current(3)le (un)folds the 
         current region. Note that folding does not operate on K&R style code. 
 
-        The cDToolscA -> cDC-ToolscA menu allows cG#definecA's to be evaluated within the 
+        The cDToolscA -> cDC ToolscA menu allows cG#definecA's to be evaluated within the 
         buffer. Where the state of a cG#ifcA is established to be false (using the 
         cG#definecA information) then the disabled region of code is grayed out 
         indicating which regions of the code are active. 
@@ -41029,17 +41404,15 @@ $a
         the manual page in the text and invokes lslmman(3)le to render the page. 
         This provides a crude hyper text mechanism simply using the manual 
         page information itself. 
-
-        cDman-cleancA 
-            The local buffer macro cDman-cleancA takes the current manual page and 
-            removes all of the hilighting characters. This is the typical 
-            method of reducing a manual page to plain text. 
+            The lslmman-clean(3)le command can be used to remove all of the 
+            hilighting characters from the current manual page. This is the 
+            typical method of reducing a manual page to plain text. 
 
 
 cEcESEE ALSO cEcA
 
 
-    lslmman(3)le, 
+    lslmman(3)le, lslmman-clean(3)le, 
 
     lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
 
@@ -41183,6 +41556,10 @@ $a
         cDf2cA - (un)fold the current region 
         cDf3cA - (un)fold all regions 
 
+    cDDebuggingcA 
+        Debugging a perl script can be done inside MicroEmacs by using the 
+        lslmperldb(3)le command. 
+
 
 cEcEBUGS cEcA
 
@@ -41196,14 +41573,13 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmfold-all(3)le, lslmfold-current(3)le, lslmindent(2)le, lslmrestyle-buffer(3)le, 
+    lslmperldb(3)le, lslmfold-all(3)le, lslmfold-current(3)le, lslmindent(2)le, lslmrestyle-buffer(3)le, 
     lslmrestyle-region(3)le, lslmtime(2m)le. 
 
     lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
 
 ! 9 html
 ! 9 htm
-! 5 %html-author
 cEcESYNOPSIS cEcA
 
 
@@ -41243,10 +41619,10 @@ $a
 
     cDGeneral EditingcA 
         HTML files may be edited or processed and rendered into the buffer. 
-        The variable cD%html-authorcA determines the edit mode on loading a HTML 
-        file; a value of cD0cA and the page is rendered, cD1cA and the raw HTML file 
-        is presented. The default state is cG1cA. The author status is modified in 
-        lslmuser-setup(3)le. 
+        The cDUse Author ModecA option in the lslmbuffer-setup(3)le dialog determines 
+        the edit mode on loading a HTML file; when set to 'cGNcA' the page is 
+        rendered, 'cGYcA' and the raw HTML file is presented. The default state is 
+        'cGYcA'. 
 
     cDHilightingcA 
         The hilighting features allow commands, variables, logical, 
@@ -41273,9 +41649,10 @@ $a
         Toggling between rendered and authoring mode, then the buffer should 
         be killed as the translation is only performed when the file is read. 
 
-        The non-author mode can be permanently enabled by setting the 
-        cD%html-authorcA variable to cG0cA. When set to 0 any HTML files loaded are 
-        automatically processed, and rendered according to their HTML content. 
+        The non-author mode can be permanently enabled by setting the cDUse 
+        Author ModecA option in the lslmbuffer-setup(3)le dialog to 'cGNcA'. When set to N 
+        any HTML files loaded are automatically processed, and rendered 
+        according to their HTML content. 
 
 
 cEcENOTES cEcA
@@ -41299,7 +41676,7 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmprint-buffer(2)le, lslmuser-setup(3)le. 
+    lslmprint-buffer(2)le, lslmbuffer-setup(3)le. 
 
     lsMicroEmacs '01 - Supported File TypeslmSupported File Typesle 
 
