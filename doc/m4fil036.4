@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil036.4,v 1.2 2004-01-06 00:50:52 jon Exp $
+.Id $Id: m4fil036.4,v 1.3 2005-03-31 21:10:24 bill Exp $
 .Im MicroEmacs macro;variable
 .so me.tni
 .TH "HistoryGroupVariables" 4
@@ -14,14 +14,14 @@
 .XI "@h3" - "File history string"
 .XI "@h4" - "Search history string"
 .SH NAME
-@h0, @s1, @s2, ... @h4 \- History Group Variables.
+@h0, @h1, @h2, ... @h4 \- History Group Variables.
 .SH SYNOPSIS
 .nf
 .na
 \fB@h0\fR \fIindex\fR \- General history string
 \fB@h1\fR \fIindex\fR \- Buffer history string
 \fB@h2\fR \fIindex\fR \- Command history string
-\fB@h2\fR \fIindex\fR \- File history string
+\fB@h3\fR \fIindex\fR \- File history string
 \fB@h4\fR \fIindex\fR \- Search history string
 .fi
 .ad
@@ -36,7 +36,7 @@ in the history  buffer ad a given  \fIindex\fR.  There are 5 history  buffers,
 .br
 \fC2\fR \- Command history string
 .br
-\fC2\fR \- File history string
+\fC3\fR \- File history string
 .br
 \fC4\fR \- Search history string
 .PP
