@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd085.2,v 2.7 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd085.2,v 2.8 2004-01-22 00:56:47 jon Exp $
 .Im MicroEmacs command|bind|message
 .so me.tni
 .TH ml-bind-key 2
@@ -42,25 +42,27 @@ their associated commands
 .BS
 move backwards 1 character, command:
 .Hl backward-char backward-char 2
-(\fB\*cb\fR)
+(\fB\*cb\fR, \fBleft\fR)
 .BU
 move forwards 1 character, command:
 .Hl forward-char forward-char 2
-(\fB\*cf\fR)
+(\fB\*cf\fR, \fBright\fR)
 .BU
 move backwards 1 word, command:
 .Hl backward-word backward-word 2
+(\fB\*eb\fR)
 .BU
 move forwards 1 word, command:
 .Hl forward-word forward-word 2
+(\fB\*ef\fR)
 .BU
-move to the beginning of buffer, command:
+move to beginning of buffer, command:
 .Hl beginning-of-line beginning-of-line 2
-(\fB\*ca\fR)
+(\fB\*ca\fR, \fBhome\fR)
 .BU
 move to the end of buffer, command:
 .Hl end-of-line end-of-line 2
-(\fB\*ce\fR)
+(\fB\*ce\fR, \fBend\fR)
 .BE 0
 .SS Input
 .BS
@@ -88,10 +90,11 @@ insert current buffers buffer name into the buffer, command:
 .BS
 delete backward 1 character, command:
 .Hl backward-delete-char backward-delete-char 2
-(\fB\*ch\fR)
+(\fB\*ch\fR, \fBbackspace\fR)
 .BU
 delete forward 1 character, command:
 .Hl forward-delete-char forward-delete-char 2
+(\fB\*cd\fR, \fBdelete\fR)
 .BU
 kill text from current position to end of line, command:
 .Hl kill-line kill-line 2
@@ -110,11 +113,11 @@ manipulate the history.
 .BS
 next history list entry (loop through history), command:
 .Hl forward-paragraph forward-paragraph 2
-(\fB\*en\fR)
+(\fB\*en\fR, \fB\*cn\fR, \fBdown\fR)
 .BU
 previous history list entry, command:
-.Hl forward-paragraph forward-paragraph 2
-(\fB\*ep\fR)
+.Hl backward-paragraph backward-paragraph 2
+(\fB\*ep\fR, \fB\*cp\fR, \fBup\fR)
 .BE 0
 .SS Completion
 When  entering a command,  file, buffer or a mode name \*(mE creates a list of
@@ -125,14 +128,14 @@ command: a space (' ') or
 .Hl tab tab 2
 (\fB\*ci\fR).
 .BU
-expand  to  the  previous  completion  (loops  through  the  completion  list,
+expand  to  the  previous  completion  (loops  through  the  completion  list),
 command:
-.Hl backward-line backward-line 2
-(\fB\*cp\fR)
+.Hl scroll-next-window-up scroll-next-window-up 2
+(\fB\*e\*cz\fR)
 .BU
-expand to the next completion (loops through the completion list, command:
-.Hl forward-line forward-line 2
-(\fB\*cn\fR)
+expand to the next completion (loops through the completion list), command:
+.Hl scroll-next-window-down scroll-next-window-down 2
+(\fB\*e\*cv\fR)
 .BU
 create a listing of all  completions,  command:  a double  expansion,  i.e. 2
 spaces or
@@ -141,11 +144,11 @@ The first expands and the second creates the list.
 .BU
 page up the completion list buffer,
 .Hl scroll-up scroll-up 2
-(\fB\*cz\fR)
+(\fB\*cz\fR, \fBpage-up\fR)
 .BU
 page down the completion list buffer,
 .Hl scroll-down scroll-down 2
-(\fB\*cv\fR)
+(\fB\*cv\fR, \fBpage-down\fR)
 .BE 0
 .SS Miscellaneous
 .BS
@@ -159,7 +162,7 @@ re-fresh the message line, command:
 .BU
 finish input, command
 .Hl newline newline 2
-(\fB\*cm\fR, return)
+(\fB\*cm\fR, \fBreturn\fR)
 .BU
 transpose previous character with current character, command:
 .Hl transpose-chars transpose-chars 2
