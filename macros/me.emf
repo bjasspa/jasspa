@@ -287,6 +287,7 @@ add-file-hook ".mod"                                          fhook-mod2
 -1 add-file-hook "-[*!]-[ \t]*pl/?sq?l?.*-[*!]-" fhook-pls    ; -*- pl/sql -*- or -*- pls -*-
 -1 add-file-hook "-[*!]-[ \t]*makefile.*-[*!]-"  fhook-make   ; -!- makefile -!-
 -1 add-file-hook "-[*!]-[ \t]*sh\\(ell\\)?.*-[*!]-" fhook-shell  ; -!- shell -!-
+-1 add-file-hook "-[*!]-[ \t]*mode: wiki.*-[*!]-" fhook-wiki  ; -*- mode: wiki -*-
 -1 add-file-hook "-!-[ \t]*mhg.*-!-"             fhook-mhg    ; -!- mhg -!-
 -1 add-file-hook "-!-[ \t]*msdos.*-!-"           fhook-dos    ; -!- msdos -!-
 -1 add-file-hook "-!-[ \t]*imakefile.*-!-"       fhook-imake  ; -!- imakefile -!-
