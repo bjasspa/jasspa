@@ -1185,7 +1185,7 @@ define-macro cvs-resolve-conflicts
     find-buffer @1
     set-variable #l2 @2
     beginning-of-buffer
-    search-forward &spr "^/%s/\\([^/]*\\)/\\(\\(Result of merge\\+\\)?\\w+ +\\(\\w+\\) +\\([0-9]+\\) +\\([0-9]+:[0-9]+\\):[0-9]+ +\\([0-9]+\\)\\|Initial +%s\\|dummy timestamp\\)/\\([^/\n]*\\)/\\(.*\\)$" #l2 #l2
+    search-forward &spr "^/%s/\\([^/]*\\)/\\([^/]*\\)/\\([^/\n]*\\)/\\(.*\\)$" #l2 #l2
     ; get the version
     !if &gre &len @s1 7
         set-variable #p8 &cat "<" &rig @s1 &sub &len @s1 6
@@ -1193,35 +1193,35 @@ define-macro cvs-resolve-conflicts
         set-variable #p8 @s1
     !endif
     set-variable #p8 &spr "%s%n" #p8 &sub 8 &len #p8 " "
+    !if &set #l3 &sin "-k" @s3
+        set-variable #p7 &cat &lef #p7 1 &mid @s3 &add #l3 1 1
+    !endif
     !if 1
         ; return the tag
-        !if &seq @s9 ""
+        !if &seq @s4 ""
             set-variable #p9 ""
-        !elif &seq &lef @s9 1 "D"
-            set-variable #p9 &mid @s9 1 16
+        !elif &seq &lef @s4 1 "D"
+            set-variable #p9 &mid @s4 1 16
             set-variable #p9 &xrep #p9 "\\(....\\)\\.\\(..\\)\\.\\(..\\)\\.\\(..\\)\\.\\(..\\)" "\\1/\\2/\\3 \\4.\\5"
-        !elif &not &seq &lef @s9 1 "T"
+        !elif &not &seq &lef @s4 1 "T"
             set-variable #p9 "HEAD"
-        !elif &gre &len @s9 17
-            set-variable #p9 &cat "<" &rig @s9 &sub &len @s9 15
+        !elif &gre &len @s4 17
+            set-variable #p9 &cat "<" &rig @s4 &sub &len @s4 15
         !else
-            set-variable #p9 &rig @s9 1
+            set-variable #p9 &rig @s4 1
         !endif
     !else
-        ; return the repository date
-        !if &seq @s4 ""
-            ; initial version or dummy timestamp etc
-            set-variable #p9 @s2
-            set-variable #p9 &spr "%s%n " &lef #p9 15 &sub 15 &len #p9 " "
-        !else
+        ; return the repository date - try to extract one
+        set-variable #l1 @s2
+        !if &xseq #l1 ".*\\(\\w\\w\\w\\) +\\([0-9]+\\) +\\([0-9]+:[0-9]+\\):[0-9]+ +\\([0-9]+\\).*"
             ; get the date in YYYY/MM/DD HH:MM form
-            set-variable #p9 &spr "%s/%02d/%02d %s" @s7 &lfind "|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|" @s4 @s5 @s6
+            set-variable #p9 &spr "%s/%02d/%02d %s" @s4 &lfind "|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|" @s1 @s2 @s3
+        !else
+            ; initial version or dummy timestamp etc
+            set-variable #p9 &lef #l1 16
         !endif
     !endif
     set-variable #p9 &spr "%s%n" #p9 &sub 17 &len #p9 " "
-    !if &set #l3 &sin "-k" @s8
-        set-variable #p7 &cat &lef #p7 1 &mid @s8 &add #l3 1 1
-    !endif
     beginning-of-line
     set-mark
     forward-line
