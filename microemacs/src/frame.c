@@ -348,7 +348,6 @@ meFrameInit(meFrame *sibling)
         frame->mainId = sibling->mainId ;
         frame->width = sibling->width ;
         frame->depth = sibling->depth ;
-        frame->menuDepth = sibling->menuDepth;
         frame->widthMax = sibling->widthMax ;
         frame->depthMax = sibling->depthMax ;
     }
@@ -586,12 +585,24 @@ meFrameMakeCur(meFrame *frame)
             frameCur->mlLine->length = 0 ;
             frameCur->mlLine->flag |= meLINE_CHANGED ;
         }
-        meFrameTermMakeCur(frame) ;
-        if(frame->mainId == frameCur->mainId)
+        /* if frame is not the current frame in this window then make it */
+        if(frame->flags & meFRAME_HIDDEN)
         {
-            frameCur->flags |= meFRAME_HIDDEN ;
-            frame->flags &= ~meFRAME_HIDDEN ;
-        }
+            meFrame *ff ;
+            ff = frameList ;
+            while((ff->mainId != frame->mainId) ||
+                  (ff->flags & meFRAME_HIDDEN))
+                ff = ff->next ;
+            frame->flags = (frame->flags & ~(meFRAME_HIDDEN|meFRAME_NOT_FOCUS)) |
+                      (ff->flags & meFRAME_NOT_FOCUS) ;
+            ff->flags |= meFRAME_HIDDEN ;
+        }            
+        if(frame->mainId != frameCur->mainId)
+            meFrameTermMakeCur(frame) ;
+#if MEOPT_MWFRAME
+        else
+            frameFocus = frame ;
+#endif
         frameCur = frame ;
         sgarbf = meTRUE ;                      /* Garbage the screen */
     }
@@ -602,13 +613,19 @@ frameCreate(int f, int n)
 {
     meFrame *frame, *sf ;
     int menuDepth ;
-
+    
 #if MEOPT_MWFRAME
-    if(n & 0x01)
+    if(!f || (n & 2))
         sf = NULL ;
-    else
-#endif
+    else if(n & 1)
         sf = frameCur ;
+    else
+        return ctrlg(0,1) ;
+#else
+    if((n & 1) == 0)
+        return ctrlg(0,1) ;
+    sf = frameCur ;
+#endif
     
     /* these functions cannot use meMalloc as they are used to init ME,
      * so if they fail we must warn of the malloc failure */
@@ -616,27 +633,16 @@ frameCreate(int f, int n)
        (meFrameInitWindow(frame,frameCur->bufferCur) <= 0))
         return mlwrite(MWCURSOR|MWABORT|MWWAIT,(meUByte *)"[Failed to create new frame]") ;
 #if MEOPT_MWFRAME
-    if((n & 0x01) == 0)
+    if(sf != NULL)
 #endif
-    {
-        frameCur->flags |= meFRAME_HIDDEN ;
-    }
-#if MEOPT_MWFRAME
-    else if(frameCur->mlLine->length > 0)
-    {
-        /* erase the ml line of old current frame */
-        frameCur->mlLine->text[0] = '\0' ;
-        frameCur->mlLine->length = 0 ;
-        frameCur->mlLine->flag |= meLINE_CHANGED ;
-    }
-#endif
+        frame->flags |= meFRAME_HIDDEN ;
     menuDepth = frameCur->menuDepth ;
     frame->next = frameCur->next ;
     restoreWindWSet(frame->windowCur,frameCur->windowCur) ;
     frameCur->next = frame ;
-    frameCur = frame ;
+    meFrameMakeCur(frame) ;
     if(menuDepth)
-        frameSetupMenuLine(1) ;
+        frameSetupMenuLine(menuDepth) ;
     sgarbf = meTRUE;                      /* Garbage the screen */
     
     return meTRUE ;
@@ -654,22 +660,30 @@ int
 frameNext(int f, int n)
 {
     meFrame *frame=frameCur ;
+    
     if(f == meFALSE)
-        n = 3 ;
+        n = 2 ;
     
     for(;;)
     {
         if((frame = frame->next) == NULL)
             frame = frameList ;
         if(frame == frameCur)
-            return meTRUE ;
-        if(((n & 0x01) && (frame->mainId == frameCur->mainId)) ||
-           ((n & 0x02) && (frame->mainId != frameCur->mainId)) )
         {
-            meFrameMakeCur(frame) ;
-            return meTRUE ;
+            if(f)
+                return meTRUE ;
+            /* failed to find an external, try again */
+            f = 1 ;
+            n = 1 ;
         }
+        else if(((n & 0x03) == 3) ||
+                ((n & 0x01) && (frame->mainId == frameCur->mainId)) ||
+                ((n & 0x02) && (frame->mainId != frameCur->mainId) &&
+                 ((frame->flags & meFRAME_HIDDEN) == 0)))
+            break ;
     }
+    meFrameMakeCur(frame) ;
+    return meTRUE ;
 }
 
 #endif

@@ -601,7 +601,7 @@ nextBuffer(int f, int n)   /* switch to the next buffer in the buffer list */
         }
     }
     if(bp == frameCur->bufferCur)
-        return ctrlg(meFALSE,1);
+        return meTRUE ;
     return(swbuffer(frameCur->windowCur,bp));
 }
 

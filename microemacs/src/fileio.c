@@ -719,7 +719,7 @@ int
 ffFtpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByte *file, meUInt rwflag)
 {
     meUByte buff[meBUF_SIZE_MAX] ;
-    int dirlist ;
+    int dirlist, ll ;
     
     /* are we currently connected to this site?? */
     ffurlCreateName(buff,meURLTYPE_FTP,host,port,user,NULL,NULL) ;
@@ -790,8 +790,8 @@ ffFtpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByt
     if(!(rwflag & (meRWFLAG_WRITE|meRWFLAG_READ)))
         return meTRUE ;
     
-    dirlist = meStrlen(file) ;
-    dirlist = (file[dirlist-1] == DIR_CHAR) ;
+    ll = meStrlen(file) ;
+    dirlist = (file[ll-1] == DIR_CHAR) ;
                   
     /* send the read command */
     for(;;)
@@ -805,7 +805,11 @@ ffFtpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByt
         if(rwflag & meRWFLAG_WRITE)
             ftpCommand(1,"STOR %s",file) ;
         else if(dirlist)
-            ftpCommand(1,"LIST %s",file) ;
+        {
+            if(ftpCommand(0,"CWD %s",file) != ftpPOS_COMPLETE)
+                break ;
+            ftpCommand(1,"LIST",file) ;
+        }
         else
             ftpCommand(1,"RETR %s",file) ;
     
@@ -824,14 +828,13 @@ ffFtpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByt
             return meTRUE ;
         }
         if((rwflag & meRWFLAG_WRITE) || dirlist)
-        {
-            ffCloseSockets(0) ;
-            return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to %s file]",
-                           (rwflag & meRWFLAG_WRITE) ? "write":"read");
-        }
+            break ;
         ffCloseSockets(0) ;
         dirlist = 1 ;
     }
+    ffCloseSockets(0) ;
+    return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to %s file]",
+                   (rwflag & meRWFLAG_WRITE) ? "write":"read");
 }
 
 static int

@@ -1461,8 +1461,8 @@ meXEventHandler(void)
             ss = event.xkey.state ;
             XLookupString(&event.xkey,keyStr,20,&keySym,NULL);
             /* printf("#1 got key %x, ss=%x \n",(unsigned int) keySym, ss) ;*/
-            /* keyStr[19] = '\0' ;
-               printf("got key %x, ss=%x [%s]\n",(unsigned int) keySym, ss, keyStr) ;*/
+            /* keyStr[19] = '\0' ;*/
+            /* printf("got key %x, ss=%x [%s]\n",(unsigned int) keySym, ss, keyStr) ;*/
             /* printf("#2 got key %x, ss=%x \n",(unsigned int) keySym, ss) ;*/
             if(keySym > 0xff)
             {

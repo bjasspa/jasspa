@@ -12556,7 +12556,8 @@ $a
 
 
     cCncA cDnarrow-buffercA 
-    n cDnarrow-buffercA cCline-schemecA "cCmarkup-commandcA" 
+    n cDnarrow-buffercA [cCline-schemecA] ["cCout-markup-linecA" | 
+         "cCto-top-markup-linecA" "cCto-bottom-markup-linecA"] ["cCmarkup-commandcA"] 
 
 
 cEcEDESCRIPTION cEcA
@@ -12642,7 +12643,7 @@ $a
           from the lsset-mark(2)lmmarkle position to the current cursor position, opposite to 
           argument cD3cA. 
 
-    The second form of the command takes up to two arguments which are 
+    The second form of the command takes up to four arguments which are 
     determined by the value of cCncA when bits in the range cG0x0ff0cA are defined. 
     These bits are interpreted as a bit-mask and determine how the narrow is 
     to be visually displayed to the user. When these bits are set then a 
@@ -12654,8 +12655,14 @@ $a
         used are defined by the scheme variables cGscheme.fold-opencA and 
         cGscheme.fold-closedcA. 
 
-    cG0x0020cA - "cCmarkup-commandcA" 
-        Bit cG0x0020cA specifies that a mark-up line is to be used to represent 
+    cG0x0020cA - "cCout-markup-linecA" | "cCto-top-markup-linecA" "cCto-bottom-markup-linecA" 
+        Bit cG0x0020cA specifies that a mark-up is used and the text to insert 
+        into the mark-up line is passed into the call. The number of arguments 
+        to pass is determined by the type of markup operation (to/out). The 
+        arguments are placed on the mark-up lines. 
+
+    cG0x0040cA - "cCmarkup-commandcA" 
+        Bit cG0x0040cA specifies that a mark-up line is to be used to represent 
         the narrow region. When the narrow region is created then the 
         cCmarkup-commandcA macro is executed to annotate the narrowed region. The 
         macro is invoked when the narrow is created and is passed a numeric 
@@ -14264,12 +14271,12 @@ $a
 cECursor Movement cA
 
 
-        * move backwards 1 character, command: lsforward-char(2)lmbackward-charle (cDC-bcA) 
-        * move forwards 1 character, command: lsforward-char(2)lmforward-charle (cDC-fcA) 
-        * move backwards 1 word, command: lsforward-word(2)lmbackward-wordle 
-        * move forwards 1 word, command: lsforward-word(2)lmforward-wordle 
-        * move to the beginning of buffer, command: lsbeginning-of-line(2)lmbeginning-of-linele (cDC-acA) 
-        * move to the end of buffer, command: lsbeginning-of-line(2)lmend-of-linele (cDC-ecA) 
+        * move backwards 1 character, command: lsforward-char(2)lmbackward-charle (cDC-bcA, cDleftcA) 
+        * move forwards 1 character, command: lsforward-char(2)lmforward-charle (cDC-fcA, cDrightcA) 
+        * move backwards 1 word, command: lsforward-word(2)lmbackward-wordle (cDesc bcA) 
+        * move forwards 1 word, command: lsforward-word(2)lmforward-wordle (cDesc fcA) 
+        * move to beginning of buffer, command: lsbeginning-of-line(2)lmbeginning-of-linele (cDC-acA, cDhomecA) 
+        * move to the end of buffer, command: lsbeginning-of-line(2)lmend-of-linele (cDC-ecA, cDendcA) 
 
 
 cEInput cA
@@ -14288,8 +14295,10 @@ $a
 cEDeletion cA
 
 
-        * delete backward 1 character, command: lsforward-delete-char(2)lmbackward-delete-charle (cDC-hcA) 
-        * delete forward 1 character, command: lsforward-delete-char(2)lmforward-delete-charle 
+        * delete backward 1 character, command: lsforward-delete-char(2)lmbackward-delete-charle (cDC-hcA, 
+          cDbackspacecA) 
+        * delete forward 1 character, command: lsforward-delete-char(2)lmforward-delete-charle (cDC-dcA, 
+          cDdeletecA) 
         * kill text from current position to end of line, command: lskill-line(2)lmkill-linele 
           (cDC-kcA). 
         * erase whole line, command lskill-region(2)lmkill-regionle (cDC-wcA). Note that in 
@@ -14306,8 +14315,9 @@ $a
     can be used to manipulate the history. 
 
         * next history list entry (loop through history), command: 
-          lsforward-paragraph(2)lmforward-paragraphle (cDesc ncA) 
-        * previous history list entry, command: lsforward-paragraph(2)lmforward-paragraphle (cDesc pcA) 
+          lsforward-paragraph(2)lmforward-paragraphle (cDesc ncA, cDC-ncA, cDdowncA) 
+        * previous history list entry, command: lsforward-paragraph(2)lmbackward-paragraphle (cDesc pcA, 
+          cDC-pcA, cDupcA) 
 
 
 cECompletion cA
@@ -14320,14 +14330,14 @@ $a
         * expand. This completes the given input until the first ambiguous 
           character, command: a space (' ') or lstab(2)lmtable (cDC-icA). 
         * expand to the previous completion (loops through the completion 
-          list, command: lsforward-line(2)lmbackward-linele (cDC-pcA) 
-        * expand to the next completion (loops through the completion list, 
-          command: lsforward-line(2)lmforward-linele (cDC-ncA) 
+          list), command: lsscroll-next-window-down(2)lmscroll-next-window-uple (cDesc C-zcA) 
+        * expand to the next completion (loops through the completion list), 
+          command: lsscroll-next-window-down(2)lmscroll-next-window-downle (cDesc C-vcA) 
         * create a listing of all completions, command: a double expansion, 
           i.e. 2 spaces or lstab(2)lmtabsle. The first expands and the second creates the 
           list. 
-        * page up the completion list buffer, lsscroll-down(2)lmscroll-uple (cDC-zcA) 
-        * page down the completion list buffer, lsscroll-down(2)lmscroll-downle (cDC-vcA) 
+        * page up the completion list buffer, lsscroll-down(2)lmscroll-uple (cDC-zcA, cDpage-upcA) 
+        * page down the completion list buffer, lsscroll-down(2)lmscroll-downle (cDC-vcA, cDpage-downcA) 
 
 
 cEMiscellaneous cA
@@ -14335,7 +14345,7 @@ $a
 
         * abort input, returning failure to the input, lsabort-command(2)lmabort-commandle (cDC-gcA) 
         * re-fresh the message line, command: lsrecenter(2)lmrecenterle (cDC-lcA) 
-        * finish input, command lsnewline(2)lmnewlinele (cDC-mcA, return) 
+        * finish input, command lsnewline(2)lmnewlinele (cDC-mcA, cDreturncA) 
         * transpose previous character with current character, command: 
           lstranspose-chars(2)lmtranspose-charsle (cDC-tcA) 
         * capitalize the next word, command: lscapitalize-word(2)lmcapitalize-wordle (cDesc ccA) 
@@ -31404,6 +31414,45 @@ $a
             proc tixControl:InitWidgetRec {w} { ... } 
 
 
+    Where folding is required using lslmfold-open(3)le then the collapse methods 
+    above are not enacted when folding is enabled. Folding may be enabled as 
+    defined by the lsfileHooks(2)lmFile Hooksle, alternatively the folding may be explicitly 
+    defined using the variable cC.fhook-XXX.foldcA. The cC.fhook-XXX.foldcA variable 
+    argument is defined as "cD|cA cC<literal-open>cA cD|cA cC<literal-close>cA cD|cA 
+    cC<comment-termination>cA cD|cA cC<regex-find-open>cA cD|cA cC<regex-find-close>cA cD|cA. Where 
+    the fields are defined as follows:- 
+
+    cC<literal-open>cA 
+        The literal fold open string. 
+
+    cC<literal-close>cA 
+        The literal fold close string. 
+
+    cC<comment-termination>cA 
+        The comment termination string. 
+
+    cC<regex-find-open>cA 
+        The regular expression to find an open fold. 
+
+    cC<regex-find-close>cA 
+        The regular expression to find a close string. 
+
+    As an example, a language may have the following syntax for defining 
+    folds:- 
+
+        /* {{{ This is an example fold. */ 
+        This is 
+        the body 
+        of the fold 
+        /* }}} */ 
+
+
+    The fold is defined as follows:- 
+sB
+        set-variable fhook-XXX.fold "|/\\* {{{|/\\* }}}|\\*/|/\\*[ \t]*{{{|/\\*[ \t]*}}}|" 
+
+sA
+
 cEItem Lists cA
 
 
@@ -31715,7 +31764,7 @@ $a
 cEcECONFIGURATION cEcA
 
 
-    The toolbar is configured with command variables cDtoolbar.*cA. The size 
+    The toolbar is configured with command variables cD.toolbar.*cA. The size 
     information of the toolbar is defined with the following variables:- 
 
     cC.toolbar.widthcA 
@@ -31730,8 +31779,8 @@ $a
     MUST be the same in each of the variables such that the field content 
     matches the tool that is being defined. 
 
-    cC.toolbar.tool-flagcA 
-        The cDtool-flagcA variable describes the behaviour of the tool, this is 
+    cC.tool-flagcA 
+        The cD.tool-flagcA variable describes the behaviour of the tool, this is 
         defined as a bitmask as follows:- 
 
         cG0x000001cA - Update on creation 
@@ -31767,8 +31816,8 @@ $a
             has focus). 
 
         cG0x000400cA - Tool is hidden 
-            The tool is currently hidden. When in this state then the not 
-            active sub-page cG0x200cA will also be set. 
+            The tool is currently hidden. When in this state the not active 
+            sub-page cG0x200cA will also be set. 
 
         cG0x000800cA - Tool paged window, not first user. 
             The tool is part of a paged window and is not the first tool. 
@@ -31823,7 +31872,7 @@ $a
         then the macros that define the tool are not loaded. 
 
     cC.toolbar.tool-cmdscA 
-        The creation command to run when the command is created. 
+        The creation and update commands to run when the command is created. 
 
 
 cEcEFILES cEcA
@@ -31831,9 +31880,15 @@ $a
 
     Notable toolbox macro files:- 
 
+        * cGtoolbar.emfcA - The main toolbar file. 
+        * cGtoolstp.emfcA - The toolbar setup menu i.e. the right click of the 
+          mouse on the toolbar mode line. 
         * cGtoollist.emfcA - List off tools available in the toolbar. 
         * cGbookmark.emfcA - The bookmark tool. 
         * cGtoolstd.emfcA - Basic tools (Info, Buffer list) 
+        * cGabbrlist.emfcA - The buffer tools and buffer abbreviation tools. 
+        * cGitemlist.emfcA - Buffer item list tool. 
+        * cGkilllist.emfcA - The kill list tool. 
 
 
 cEcESEE ALSO cEcA

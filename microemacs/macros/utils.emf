@@ -7,6 +7,27 @@
 ; Synopsis:    Misc. macros commonly used by other macros.
 ; Authors:     Steven Phillips & Jon Green
 ;
+; frame-handle
+; gets another key from user to determine the frame command
+0 define-macro frame-handle
+    set-variable #l1 @cck
+    !if @?
+        set-variable #l1 &spr "Arg %d: %s" @# #l1
+    !endif
+    !force set-variable #l0 @mc2 #l1
+    !if &not &set #l1 &lfind .key #l0
+        ml-write "[Frame key not bound]"
+        !bell
+        !abort
+    !endif
+    !if &and &seq &set #l3 &lget .n #l1 "" @?
+        set-variable #l3 @#
+    !endif
+    execute-line &spr "%s %s @mna" #l3 &lget .cmd #l1
+!emacro
+set-variable .frame-handle.key "|0|1|2|o|"
+set-variable .frame-handle.n   "||1|||"
+set-variable .frame-handle.cmd "|delete-frame|create-frame|create-frame|next-frame|"
 ; ascii-time
 ; Get the time as an ASCII string. Return in #p9,
 0 define-macro ascii-time
