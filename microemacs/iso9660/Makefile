@@ -7,12 +7,12 @@
 #  System        :
 #  Module        :
 #  Object Name   : $RCSfile: Makefile,v $
-#  Revision      : $Revision: 1.3 $
-#  Date          : $Date: 2003-08-17 22:59:50 $
+#  Revision      : $Revision: 1.4 $
+#  Date          : $Date: 2003-08-18 19:09:12 $
 #  Author        : $Author: jon $
 #  Created By    : Jon Green
 #  Created       : Sun Aug 10 11:57:07 2003
-#  Last Modified : <030817.1802>
+#  Last Modified : <030818.2008>
 #
 #  Description
 #
@@ -21,6 +21,9 @@
 #  History
 #
 #  $Log: not supported by cvs2svn $
+#  Revision 1.3  2003/08/17 22:59:50  jon
+#  Added HP-UX package information
+#
 #  Revision 1.2  2003/08/14 17:09:31  jon
 #  Version 1.1 of CDROM
 #
@@ -124,12 +127,12 @@ FULLMKISOFSFLAGS=-graft-points						\
 	        build.txt=build.hfs					\
 	        build.txt=build.joliet					\
 	        build.txt=build.unix					\
-	        COPYING.txt=copying.hfs					\
-	        COPYING.txt=copying.joliet				\
-	        COPYING.txt=copying.unix				\
-	        CDROM.txt=cdrom.hfs					\
-	        CDROM.txt=cdrom.joliet					\
-	        CDROM.txt=cdrom.unix					\
+	        COPYING.TXT=copying.hfs					\
+	        COPYING.TXT=copying.joliet				\
+	        COPYING.TXT=copying.unix				\
+	        CDROM.TXT=cdrom.hfs					\
+	        CDROM.TXT=cdrom.joliet					\
+	        CDROM.TXT=cdrom.unix					\
 	        license.txt=license.hfs					\
 	        license.txt=license.joliet				\
 	        license.txt=license.unix				\
@@ -177,12 +180,12 @@ EXECMKISOFSFLAGS=-graft-points						\
 	        build.txt=build.hfs					\
 	        build.txt=build.joliet					\
 	        build.txt=build.unix					\
-	        COPYING.txt=copying.hfs					\
-	        COPYING.txt=copying.joliet				\
-	        COPYING.txt=copying.unix				\
-	        CDROM.txt=cdrom.hfs					\
-	        CDROM.txt=cdrom.joliet					\
-	        CDROM.txt=cdrom.unix					\
+	        COPYING.TXT=copying.hfs					\
+	        COPYING.TXT=copying.joliet				\
+	        COPYING.TXT=copying.unix				\
+	        CDROM.TXT=cdrom.hfs					\
+	        CDROM.TXT=cdrom.joliet					\
+	        CDROM.TXT=cdrom.unix					\
 	        license.txt=license.hfs					\
 	        license.txt=license.joliet				\
 	        license.txt=license.unix				\

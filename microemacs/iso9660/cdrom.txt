@@ -21,6 +21,52 @@ CD-ROM
     Any   duplication  of  the  CDs  may  result  in  a  loss  of
     information   without  the  appropriate   master  disk  image
     (jasspa0212.iso).
+    
+HP-UX
+
+    On HP-UX  then the CD-ROM  should be mounted  with  RockRidge
+    extensions,  a straight  forward  mount that results in names
+    "NAME;1"  etc. means that it has not been mounted  correctly.
+    The following notes should get the CD-ROM mounted:-
+    
+    Make a directory to mount the CD-ROM
+
+        % mkdir /cdrom
+
+    If necessary find the device (Normally device 2):-
+
+        % ioscan -fnC disk
+
+    Mount the device
+
+        % mount -r /dev/dsk/c1t2d0 /cdrom
+
+    Does  it  looks   like  squid  ?  Then  need  to  mount  with
+    RockRidge support. See the HPUX-FAQ. Quick notes:-
+    
+    Loopback   must  be   enabled.  As  root,   create  the  file
+    "/etc/pfs_fstab" as follows:-
+
+        #
+        # Create a mount point for the CDROM
+        # See HPUX-FAQ
+        # 
+        /dev/dsk/c1t2d0 /cdrom pfs-rrip xlat=rrip 0 0
+
+    Start daemons:
+    
+        % nohup pfs_mountd &
+        % nohup pfsd &
+        
+    Mount the CD-ROM:
+    
+        % pfs_mount /cdrom
+
+    The CD-ROM should now be readable with long file names.
+        
+    Subsequently unmount:
+              
+        % pfs_umount /cdrom
 
 CD Labels
 
@@ -117,7 +163,7 @@ Revision History
     Version 1.2 - 17th August 2003
     
         Added HP-UX 10.20 (PA-RISC) package
-        Added HP-UX 11.xx (PA-RISC) package
+        Added HP-UX 11.xx (PA-RISC) packages
         Added HP-UX 11.xx experimental binaries.
         
     Version 1.1 - 14th August 2003
@@ -135,8 +181,8 @@ Exec CD Manifest
 _________________________________________________________________
  @
 build.txt                           -- Source build instructions
-cdrom.txt                           -- CDROM information
-COPYING.txt                         -- GNU License
+CDROM.TXT                           -- CDROM information
+COPYING.TXT                         -- GNU License
 faq.txt                             -- Requenctly asked questions
 license.txt                         -- License
 readme.txt                          -- Install information
@@ -190,8 +236,8 @@ Full CD Manifest
 _________________________________________________________________
  @
 build.txt                           -- Source build instructions
-cdrom.txt                           -- CDROM information
-COPYING.txt                         -- GNU License
+CDROM.TXT                           -- CDROM information
+COPYING.TXT                         -- GNU License
 faq.txt                             -- Requenctly asked questions
 license.txt                         -- License
 readme.txt                          -- Install information
