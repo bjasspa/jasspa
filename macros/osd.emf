@@ -435,7 +435,7 @@ osd 8  0   "b"
 osd 8  10  ""  "\HSplit Window V   C-x 2"          f split-window-vertically
 osd 8  20  ""  "\HGrow Window V    C-x z"          1 change-window-depth
 osd 8  30  ""  "S\Hhrink Window V  C-x C-z"       -1 change-window-depth
-osd 8  40  ""  "Spl\Hit Window H   C-x 3"          f split-window-horizontally
+osd 8  40  ""  "Spl\Hit Window H   C-x 5"          f split-window-horizontally
 osd 8  50  ""  "G\Hrow Window H    C-x }"          1 change-window-width
 osd 8  60  ""  "Shr\Hink Window H  C-x {"         -1 change-window-width
 osd 8  70  "-"

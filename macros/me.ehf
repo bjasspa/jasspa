@@ -288,6 +288,12 @@ Miscellaneous Information
     lslmgoto-window(2)le Restore a saved window to the current window (historic) 
     lslmlist-commands(2)le (cDC-h ccA) List available commands 
     lslmlist-variables(2)le (cDC-h vcA) List defined variables 
+    lslmpage-file-backward-line(3)le (cDC-pcA) Move backwards one line in paged buffer 
+    lslmpage-file-beginning-of-buffer(3)le Move to the start of the paged file 
+    lslmpage-file-end-of-buffer(3)le Move to the end of the paged file 
+    lslmpage-file-forward-line(3)le (cDC-ncA) Move forwards one line in paged buffer 
+    lslmpage-file-goto-byte(3)le Page to the buffer byte offset 
+    lslmpage-file-goto-page(3)le Move to page 
     lslmrecenter(2)le (cDC-lcA) Recenter the window (refresh the screen) 
     lslmset-position(2)le Store the current position 
     lslmset-window(2)le Save the current window for restore (historic) 
@@ -523,6 +529,14 @@ Miscellaneous Information
     lslmitem-list-find(3)le Find the selected item in the item list 
     lslmline-scheme-search(3)le Search and annotate the current buffer 
     lslmoccur(3)le Regular expression search for occurrences 
+    lslmpage-file-isearch-backward(3)le (cDC-rcA) Page search backwards incrementally 
+    (interactive) 
+    lslmpage-file-isearch-forward(3)le (cDC-scA) Page search forward incrementally 
+    (interactive) 
+    lslmpage-file-search-backward(3)le (cDC-x rcA) Page search for a string in the 
+    backward direction 
+    lslmpage-file-search-forward(3)le (cDC-x scA) Page search for a string in the 
+    forward direction 
     lslmquery-replace-all-string(3)le Query replace string in a list of files 
     lslmquery-replace-string(2)le (cDesc C-rcA) Search and replace a string - with query 
     lslmRegularExpressions(2)le Regular Expressions 
@@ -677,16 +691,14 @@ Miscellaneous Information
     bindings for the menu should be over-ridden by cCDirect Key BindingscA from 
     the user configuration file i.e. to re-map the default MicroEmacs Alt key 
     to equivalent cGesccA keys then the following keys should be re-bound. 
-emf-scheme
-
+sB
         global-bind-key forward-word "A-f"      ; Over-ride File menu binding 
         :                                       ; For all of the other menu items. 
         : 
         global-bind-key backward-word "A-b"     ; Over-ride the file browser. 
         global-bind-key replace-string "A-r"    ; Over-ride tools binding. 
 
-ehf-scheme
-
+sA
     This creates a higher priority binding which overrides the underlying 
     default. The commands that are displaced would have to be re-bound to 
     different keys if required. 
@@ -780,6 +792,10 @@ ehf-scheme
     lslmftp(3)le Initiate an FTP connection 
     lslminsert-file(2)le (cDC-x C-icA) Insert file into current buffer 
     lslminsert-file-name(2)le (cDC-x C-ycA) Insert filename into current buffer 
+    lslmpage-bfile(3)le Load a large binary file as binary data 
+    lslmpage-file(3)le Load a large file in page mode 
+    lslmpage-file-save-buffer(3)le (cDC-x C-scA) Save contents of a page mode buffer to 
+    file 
     lslmread-file(2)le (cDC-x C-rcA) Find and load file replacing current buffer 
     lslmreread-file(3)le Reload the current buffer's file 
     lslmsave-all(3)le Save all modified files (with query) 
@@ -828,12 +844,15 @@ ehf-scheme
     lslmosd-dialog(3)le OSD dialog box 
     lslmosd-entry(3)le OSD entry dialog box 
     lslmosd-xdialog(3)le OSD Extended dialog box 
-    lslmprint-setup(3)le Configure (*mS's printer interface 
+    lslmprint-setup(3)le Configure MicroEmacs's printer interface 
     lslmscheme-editor(3)le Color Scheme Editor 
     lslmspell-buffer(3)le Spell check the current buffer 
     lslmspell-edit-word(3)le Edits a spell word entry 
     lslmspell-word(3)le (cDesc $cA) Spell check a single word 
     lslmsymbol(3)le Insert an ASCII character 
+    lslmtoolbar(3)le Open the tool bar 
+    lslmtoolbar-close(3)le Close the tool bar 
+    lslmtoolbar-refresh(3)le Update the tool bar 
     lslmuser-setup(3)le Configure MicroEmacs for a specific user 
 
 
@@ -957,6 +976,26 @@ ehf-scheme
     lslmosd-dialog(3)le OSD dialog box 
     lslmosd-entry(3)le OSD entry dialog box 
     lslmosd-xdialog(3)le OSD Extended dialog box 
+    lslmpage-bfile(3)le Load a large binary file as binary data 
+    lslmpage-file(3)le Load a large file in page mode 
+    lslmpage-file-backward-line(3)le (cDC-pcA) Move backwards one line in paged buffer 
+    lslmpage-file-beginning-of-buffer(3)le Move to the start of the paged file 
+    lslmpage-file-end-of-buffer(3)le Move to the end of the paged file 
+    lslmpage-file-forward-line(3)le (cDC-ncA) Move forwards one line in paged buffer 
+    lslmpage-file-goto-byte(3)le Page to the buffer byte offset 
+    lslmpage-file-goto-page(3)le Move to page 
+    lslmpage-file-isearch-backward(3)le (cDC-rcA) Page search backwards incrementally 
+    (interactive) 
+    lslmpage-file-isearch-forward(3)le (cDC-scA) Page search forward incrementally 
+    (interactive) 
+    lslmpage-file-save-buffer(3)le (cDC-x C-scA) Save contents of a page mode buffer to 
+    file 
+    lslmpage-file-scroll-down(3)le (cDC-ncA) Scroll paged buffer down 
+    lslmpage-file-scroll-up(3)le (cDC-pcA) Scroll paged buffer up 
+    lslmpage-file-search-backward(3)le (cDC-x rcA) Page search for a string in the 
+    backward direction 
+    lslmpage-file-search-forward(3)le (cDC-x scA) Page search for a string in the 
+    forward direction 
     lslmpopup-window(2)le Pop-up a window on the screen 
     lslmregex-backward(3)le Search for a magic string in the backward direction 
     lslmregex-forward(3)le Search for a magic string in the forward direction 
@@ -971,6 +1010,7 @@ ehf-scheme
     lslmshut-down(3)le Editor exit callback command 
     lslmspell(2)le Spell checker service provider 
     lslmstart-up(3)le Editor startup callback command 
+    lslmtoolbar-refresh(3)le Update the tool bar 
     lslmunset-variable(2)le Delete a variable 
     lslmvoid(2)le Null command 
 
@@ -997,6 +1037,7 @@ ehf-scheme
     lslm$file-names(5)le Filtered file name list 
     lslm$find-words(5)le Filtered word list 
     lslm$global-fmod(5)le Global file modes (or attributes) 
+    lslm$line-flags(5)le Current buffer line flags 
     lslm$mode-names(5)le Filtered mode name list 
     lslm$mouse(5)le Mouse configuration variable 
     lslm$mouse-x(5)le Mouse X (horizontal) position 
@@ -1238,6 +1279,8 @@ ehf-scheme
     lslmnext-window(2)le (cDC-x ocA) Move the cursor to the next window 
     lslmnext-window-find-buffer(2)le [cDcA] Split the current window and show new buffer 
     lslmnext-window-find-file(2)le (cDC-x 4cA) Split the current window and find file 
+    lslmpage-file-scroll-down(3)le (cDC-ncA) Scroll paged buffer down 
+    lslmpage-file-scroll-up(3)le (cDC-pcA) Scroll paged buffer up 
     lslmprevious-window(2)le (cDC-x pcA) Move the cursor to the previous window 
     lslmresize-all-windows(2)le Resize all windows (automatic change) 
     lslmresize-window-horizontally(2)le Resize current window horizontally 
@@ -1286,7 +1329,7 @@ ehf-scheme
     lslmprint-color(2)le Create a new printer color 
     lslmprint-region(2)le Print region, with formatting 
     lslmprint-scheme(2)le Create a new printer color and font scheme 
-    lslmprint-setup(3)le Configure (*mS's printer interface 
+    lslmprint-setup(3)le Configure MicroEmacs's printer interface 
 !   Introduction to Variable Functions
 cEcEVARIABLE FUNCTIONS cEcA
 
@@ -1476,6 +1519,10 @@ ehf-scheme
     lslmftp(3)le Initiate an FTP connection 
     lslminsert-file(2)le (cDC-x C-icA) Insert file into current buffer 
     lslminsert-file-name(2)le (cDC-x C-ycA) Insert filename into current buffer 
+    lslmpage-bfile(3)le Load a large binary file as binary data 
+    lslmpage-file(3)le Load a large file in page mode 
+    lslmpage-file-save-buffer(3)le (cDC-x C-scA) Save contents of a page mode buffer to 
+    file 
     lslmread-file(2)le (cDC-x C-rcA) Find and load file replacing current buffer 
     lslmreread-file(3)le Reload the current buffer's file 
     lslmsave-all(3)le Save all modified files (with query) 
@@ -1846,6 +1893,26 @@ ehf-scheme
     lslmosd-unbind-key(2)le Remove key binding from OSD dialog 
     lslmosd-xdialog(3)le OSD Extended dialog box 
     lslmPatience(3)le MicroEmacs '04 version of Patience (or Solitaire) 
+    lslmpage-bfile(3)le Load a large binary file as binary data 
+    lslmpage-file(3)le Load a large file in page mode 
+    lslmpage-file-backward-line(3)le (cDC-pcA) Move backwards one line in paged buffer 
+    lslmpage-file-beginning-of-buffer(3)le Move to the start of the paged file 
+    lslmpage-file-end-of-buffer(3)le Move to the end of the paged file 
+    lslmpage-file-forward-line(3)le (cDC-ncA) Move forwards one line in paged buffer 
+    lslmpage-file-goto-byte(3)le Page to the buffer byte offset 
+    lslmpage-file-goto-page(3)le Move to page 
+    lslmpage-file-isearch-backward(3)le (cDC-rcA) Page search backwards incrementally 
+    (interactive) 
+    lslmpage-file-isearch-forward(3)le (cDC-scA) Page search forward incrementally 
+    (interactive) 
+    lslmpage-file-save-buffer(3)le (cDC-x C-scA) Save contents of a page mode buffer to 
+    file 
+    lslmpage-file-scroll-down(3)le (cDC-ncA) Scroll paged buffer down 
+    lslmpage-file-scroll-up(3)le (cDC-pcA) Scroll paged buffer up 
+    lslmpage-file-search-backward(3)le (cDC-x rcA) Page search for a string in the 
+    backward direction 
+    lslmpage-file-search-forward(3)le (cDC-x scA) Page search for a string in the 
+    forward direction 
     lslmparagraph-to-line(3)le Convert a paragraph to a single line 
     lslmpipe-shell-command(2)le (cDesc @cA) Execute a single operating system command 
     lslmpopup-window(2)le Pop-up a window on the screen 
@@ -1855,7 +1922,7 @@ ehf-scheme
     lslmprint-color(2)le Create a new printer color 
     lslmprint-region(2)le Print region, with formatting 
     lslmprint-scheme(2)le Create a new printer color and font scheme 
-    lslmprint-setup(3)le Configure (*mS's printer interface 
+    lslmprint-setup(3)le Configure MicroEmacs's printer interface 
     lslmquery-replace-all-string(3)le Query replace string in a list of files 
     lslmquery-replace-string(2)le (cDesc C-rcA) Search and replace a string - with query 
     lslmquick-exit(2)le (cDesc zcA) Exit the editor writing changes 
@@ -1939,6 +2006,9 @@ ehf-scheme
     lslmtabs-to-spaces(3)le Converts all tabs to spaces 
     lslmtex2nr(3)le Convert a Latex file into nroff 
     lslmtime(3)le Command time evaluator 
+    lslmtoolbar(3)le Open the tool bar 
+    lslmtoolbar-close(3)le Close the tool bar 
+    lslmtoolbar-refresh(3)le Update the tool bar 
     lslmtranslate-key(2)le Translate key 
     lslmtranspose-chars(2)le (cDC-tcA) Exchange (swap) adjacent characters 
     lslmtranspose-lines(2)le (cDC-x C-tcA) Exchange (swap) adjacent lines 
@@ -2285,8 +2355,28 @@ ehf-scheme
     lslmosd-help(3)le GUI based on-line help 
     lslmosd-xdialog(3)le OSD Extended dialog box 
     lslmPatience(3)le MicroEmacs '04 version of Patience (or Solitaire) 
+    lslmpage-bfile(3)le Load a large binary file as binary data 
+    lslmpage-file(3)le Load a large file in page mode 
+    lslmpage-file-backward-line(3)le (cDC-pcA) Move backwards one line in paged buffer 
+    lslmpage-file-beginning-of-buffer(3)le Move to the start of the paged file 
+    lslmpage-file-end-of-buffer(3)le Move to the end of the paged file 
+    lslmpage-file-forward-line(3)le (cDC-ncA) Move forwards one line in paged buffer 
+    lslmpage-file-goto-byte(3)le Page to the buffer byte offset 
+    lslmpage-file-goto-page(3)le Move to page 
+    lslmpage-file-isearch-backward(3)le (cDC-rcA) Page search backwards incrementally 
+    (interactive) 
+    lslmpage-file-isearch-forward(3)le (cDC-scA) Page search forward incrementally 
+    (interactive) 
+    lslmpage-file-save-buffer(3)le (cDC-x C-scA) Save contents of a page mode buffer to 
+    file 
+    lslmpage-file-scroll-down(3)le (cDC-ncA) Scroll paged buffer down 
+    lslmpage-file-scroll-up(3)le (cDC-pcA) Scroll paged buffer up 
+    lslmpage-file-search-backward(3)le (cDC-x rcA) Page search for a string in the 
+    backward direction 
+    lslmpage-file-search-forward(3)le (cDC-x scA) Page search for a string in the 
+    forward direction 
     lslmparagraph-to-line(3)le Convert a paragraph to a single line 
-    lslmprint-setup(3)le Configure (*mS's printer interface 
+    lslmprint-setup(3)le Configure MicroEmacs's printer interface 
     lslmquery-replace-all-string(3)le Query replace string in a list of files 
     lslmregex-backward(3)le Search for a magic string in the backward direction 
     lslmregex-forward(3)le Search for a magic string in the forward direction 
@@ -2313,6 +2403,9 @@ ehf-scheme
     lslmtabs-to-spaces(3)le Converts all tabs to spaces 
     lslmtex2nr(3)le Convert a Latex file into nroff 
     lslmtime(3)le Command time evaluator 
+    lslmtoolbar(3)le Open the tool bar 
+    lslmtoolbar-close(3)le Close the tool bar 
+    lslmtoolbar-refresh(3)le Update the tool bar 
     lslmuniq(3)le Make lines in a sorted list unique 
     lslmunmark-buffer(3)le Remove buffer edited flag 
     lslmuser-setup(3)le Configure MicroEmacs for a specific user 
@@ -2386,6 +2479,7 @@ ehf-scheme
     lslm$home(5)le Users `home' directory location 
     lslm$idle-time(5)le System idle event delay time 
     lslm$kept-versions(5)le Number of backups to be kept 
+    lslm$line-flags(5)le Current buffer line flags 
     lslm$line-scheme(5)le Set the current line color scheme 
     lslm$line-template(5)le Command line regular expression search string 
     lslm$ml-scheme(5)le Message line color scheme 
@@ -2705,6 +2799,7 @@ ehf-scheme
     lslm$home(5)le Users `home' directory location 
     lslm$idle-time(5)le System idle event delay time 
     lslm$kept-versions(5)le Number of backups to be kept 
+    lslm$line-flags(5)le Current buffer line flags 
     lslm$line-scheme(5)le Set the current line color scheme 
     lslm$line-template(5)le Command line regular expression search string 
     lslm$ml-scheme(5)le Message line color scheme 
@@ -3237,6 +3332,26 @@ ehf-scheme
     lslmPatching(1)le Patch a MicroEmacs Installation 
     lslmPatience(3)le MicroEmacs '04 version of Patience (or Solitaire) 
     lslmp(9)le Pascal File 
+    lslmpage-bfile(3)le Load a large binary file as binary data 
+    lslmpage-file(3)le Load a large file in page mode 
+    lslmpage-file-backward-line(3)le (cDC-pcA) Move backwards one line in paged buffer 
+    lslmpage-file-beginning-of-buffer(3)le Move to the start of the paged file 
+    lslmpage-file-end-of-buffer(3)le Move to the end of the paged file 
+    lslmpage-file-forward-line(3)le (cDC-ncA) Move forwards one line in paged buffer 
+    lslmpage-file-goto-byte(3)le Page to the buffer byte offset 
+    lslmpage-file-goto-page(3)le Move to page 
+    lslmpage-file-isearch-backward(3)le (cDC-rcA) Page search backwards incrementally 
+    (interactive) 
+    lslmpage-file-isearch-forward(3)le (cDC-scA) Page search forward incrementally 
+    (interactive) 
+    lslmpage-file-save-buffer(3)le (cDC-x C-scA) Save contents of a page mode buffer to 
+    file 
+    lslmpage-file-scroll-down(3)le (cDC-ncA) Scroll paged buffer down 
+    lslmpage-file-scroll-up(3)le (cDC-pcA) Scroll paged buffer up 
+    lslmpage-file-search-backward(3)le (cDC-x rcA) Page search for a string in the 
+    backward direction 
+    lslmpage-file-search-forward(3)le (cDC-x scA) Page search for a string in the 
+    forward direction 
     lslmparagraph-to-line(3)le Convert a paragraph to a single line 
     lslmpas(9)le Pascal File 
     lslmperl(9)le Practical Extraction and Report Language File 
@@ -3252,7 +3367,7 @@ ehf-scheme
     lslmprint-color(2)le Create a new printer color 
     lslmprint-region(2)le Print region, with formatting 
     lslmprint-scheme(2)le Create a new printer color and font scheme 
-    lslmprint-setup(3)le Configure (*mS's printer interface 
+    lslmprint-setup(3)le Configure MicroEmacs's printer interface 
     lslmprintall(3f)le Formatted print job 
     lslmprofile(9)le Shell user profile 
     lslmpy(9)le Python Language File 
@@ -3368,6 +3483,9 @@ ehf-scheme
     lslmtime(3)le Command time evaluator 
     lslmtk(9)le TK programming language 
     lslmtni(9)le UNIX t/nroff include file 
+    lslmtoolbar(3)le Open the tool bar 
+    lslmtoolbar-close(3)le Close the tool bar 
+    lslmtoolbar-refresh(3)le Update the tool bar 
     lslmtranslate-key(2)le Translate key 
     lslmtranspose-chars(2)le (cDC-tcA) Exchange (swap) adjacent characters 
     lslmtranspose-lines(2)le (cDC-x C-tcA) Exchange (swap) adjacent lines 
@@ -4934,8 +5052,8 @@ ehf-scheme
               them more readable. 
             * Latest versions of build.txt, cygwin.txt, faq.txt and 
               readme.txt. 
-            * Abbreviation, Changed copy-region call to not expand the 
-              narrows. 
+            * Abbreviation, Changed lslmcopy-region(2)le call to not expand the 
+              narrows, numeric argument added to prevent narrow copy. 
             * Buffer setup. Changed fold -> collapse and added proper folding 
               setup entries. 
             * Changed auto-spell hilighting scheme to a new spell-error scheme 
@@ -8749,7 +8867,7 @@ $a
 cEcESYNOPSIS cEcA
 
 
-    cDcopy-regioncA (cDesc wcA) 
+    cCncA cDcopy-regioncA (cDesc wcA) 
 
 
 cEcEDESCRIPTION cEcA
@@ -8762,6 +8880,13 @@ $a
     If the last command also entered text into the kill buffer (or the lslm@cl(4)le 
     variable is set to one of these commands) the cDcopy-regioncA text is appended 
     to the last kill. 
+
+    The numeric argument cCncA determines how the copy operates when a narrow 
+    region, defined by lslmnarrow-buffer(2)le, is encountered. The default 
+    operation, when the number argument is cG1cA, is to copy all of the text 
+    contained within the narrowed region. When the numeric argument is cG0cA then 
+    narrowed region is NOT copied and the text is copied as it appears in the 
+    buffer. 
 
 
 cEcEUSAGE cEcA
@@ -8794,11 +8919,14 @@ $a
     immediately available for a paste operation into another windowing 
     application. 
 
+    The numeric argument cCncA was introduced in the '04 release. 
+
 
 cEcESEE ALSO cEcA
 
 
-    lslmexchange-point-and-mark(2)le, lslmkill-region(2)le, lslmset-mark(2)le, lslmyank(2)le. 
+    lslmexchange-point-and-mark(2)le, lslmkill-region(2)le, lslmnarrow-buffer(2)le, lslmset-mark(2)le, 
+    lslmyank(2)le. 
 ! 2 count-words
 cEcENAME cEcA
 
@@ -11050,7 +11178,7 @@ $a
     make that buffer active in the current window, otherwise attempt to create 
     a new buffer and read the file into it. 
 
-    The numeric argument cCncA can be used to modify the default behaviour of the 
+    The numeric argument cCncA is used to modify the default behavior of the 
     command, where the bits are defined as follows: 
 
     cD0x01cA 
@@ -11199,10 +11327,10 @@ $a
 
 
     lslmauto(2m)le, lslmbinary(2m)le, lslmcrypt(2m)le, lslmrbin(2m)le, lslmtime(2m)le, lslmview(2m)le, 
-    lslmbuffer-mode(2)le, lslmfind-bfile(3)le, lslmftp(3)le, lslm$rcs-file(5)le, lslm%ftp-flags(5)le, 
-    lslm%http-flags(5)le, lslm%http-proxy-addr(5)le, lslmnext-window-find-file(2)le, 
-    lslmread-file(2)le, lslmsave-buffer(2)le, lslmview-file(2)le, lslmwrite-buffer(2)le, lslmfile-op(2)le, 
-    lslmfile-attrib(3)le. 
+    lslmbuffer-mode(2)le, lslmfile-attrib(3)le, lslmfile-op(2)le, lslmfind-bfile(3)le, lslmftp(3)le, 
+    lslmnext-window-find-file(2)le, lslmpage-bfile(3)le, lslmpage-file(3)le, lslmread-file(2)le, 
+    lslmsave-buffer(2)le, lslmview-file(2)le, lslmwrite-buffer(2)le, lslm$rcs-file(5)le, 
+    lslm%ftp-flags(5)le, lslm%http-flags(5)le, lslm%http-proxy-addr(5)le. 
 ! 2 find-tag
 cEcENAME cEcA
 
@@ -11896,7 +12024,7 @@ $a
                 define-macro test-osd 
                     save-buffer 
                     osd 200 2 "" "Save Complete" 
-                    osd 200 4 "BcfH" %osd-ebtt-scheme "  &Okay  " f void 
+                    osd 200 4 "BcfH" %osd-ebtt-scheme "  \HOkay  " f void 
                     osd 
                 !emacro 
 
@@ -11912,7 +12040,7 @@ $a
             The above mechanism is how lslmspell-buffer(3)le operates. 
 
         cDkcA 
-            Disables hot-keys for the dialog. All text strings are copied 
+            Disables hot-keys (\H) for the dialog. All text strings are copied 
             literally. This is useful for dialogs like the tags child dialog 
             as many tags have 'cG&cA's in them. 
 
@@ -12136,7 +12264,7 @@ $a
                     !endif 
                 !emacro 
 
-                osd 200 1  "S" " &Enter text" 2 
+                osd 200 1  "S" " \HEnter text" 2 
                 osd 200 2  "ExHf" %osd-entry-scheme "########" 1 my-entry-set 
 
 sA
@@ -12166,11 +12294,12 @@ $a
             separator. Occasionally a mouse-insensitive item which can be 
             executed is required, typically a text string with a hot key, e.g. 
 sB
-                osd 200 1  "S" " &Enter text" 2 
+                osd 200 1  "S" " \HEnter text" 2 
                 osd 200 2  "ExHf" %osd-entry-scheme "########" 1 my-entry-set 
 
 sA
-            will be drawn as "cG[ Okay ]cA" 
+            will be drawn as "cG[ Okay ]cA". The hot-key is denoted by \H so for 
+            osd item 1 then this is the cDEcA of cCEntercA. 
 
             Item 1 will have a hot-key which executes item 2 (as no command is 
             given), but it will not hi-light if the mouse is placed over it. 
@@ -12192,9 +12321,9 @@ $a
                     !endif 
                 !emacro 
 
-                osd 200 1  "S" " &Enter text" 2 
+                osd 200 1  "S" " \HEnter text" 2 
                 osd 200 2  "ExHf" %osd-entry-scheme "########" 1 my-entry-set 
-                osd 200 3  "BxHcfiR" %osd-ebtt-scheme  " &Reset " f "set-variable %entry-value\"\"" 
+                osd 200 3  "BxHcfiR" %osd-ebtt-scheme  " \HReset " f "set-variable %entry-value\"\"" 
 
 sA
             If item 3 did not have flag cDRcA set when executed, cDosdcA would not 
@@ -12313,32 +12442,126 @@ $a
 
 
     cCncA cDnarrow-buffercA 
+    n cDnarrow-buffercA cCline-schemecA "cCmarkup-commandcA" 
 
 
 cEcEDESCRIPTION cEcA
 
 
+    The cDnarrow-buffercA command allows lines in a buffer to be hidden or folded 
+    up, the scope of the narrow is defined by a region. A region is the text 
+    located between the cDpointcA (the current cursor position) and the cDmarkcA 
+    defined by lsset-mark(2)lmset-markle. 
+
+    cDnarrow-buffercA supports two types of information hiding. A simple cCNarrowcA or 
+    cCNarrowcA cCOutcA hides lines of the region from display and optionally inserts a 
+    new line, called a mark-up line. The mark-up line allows the narrow 
+    position to be annotated with a line scheme color and annotation text 
+    providing a visual representation of the narrow i.e. 
+
+        Before Narrow Out           After Narrow Out 
+        ________________________________________________________________ 
+
+        ... buffer text ...        ... buffer text .. 
+        <region start>              <Optional Narrow Out line mark-up> 
+        .... region text ...       ... more buffer text ... 
+        <region end> 
+        ... more buffer text ... 
+
+
+    The second narrow form is a cCNarrow TocA which hides text around the region 
+    leaving just the region displayed. A cCNarrow OutcA will optionally show a 
+    mark-up line at both the top and bottom of the region. The mark-up line 
+    permits the cCNarrowcA cCTocA position to be annotated in the buffer with a line 
+    scheme color and annotation text providing a visual representation of the 
+    narrow i.e. 
+
+        Before Narrow To            After Narrow To 
+        ________________________________________________________________ 
+
+        ... buffer text ...        <Optional Narrow Out top mark-up> 
+        <region start>              <region start> 
+        .... region text ...       .... region text ... 
+        <region end>                <region end> 
+        ... more buffer text ...   <Optional Narrow Out bottom mark-up> 
+
+
+    Once a narrow has been created and information has been hidden 
+    cDnarrow-buffercA may be used to subsequently reveal the hidden text on a line 
+    or complete buffer basis. 
+
+    Narrowed regions do not delete the text contained within the narrow the 
+    information is simply hidden. Saving the buffer using lslmsave-buffer(2)le, by 
+    default, writes all of the displayed and hidden information contained 
+    within any narrow region but may optionally save only the visible 
+    representation. 
+
+    While information is hidden in a narrow lslmcopy-region(2)le and lslmkill-region(2)le 
+    operate as expected. If a narrow is copied then all of the information 
+    that is contained within the narrow is also copied to the new location. 
+    Similarly killing or deleting a narrow removes all of the information that 
+    is contained within the narrow. 
+
+    cDnarrow-regioncA performs the low-level information hiding and is used within 
+    the macro command language, the command is not generally invoked directly 
+    by the user. Within the macro environment the location of narrows in any 
+    buffer may be determined using the line variable lslm$line-flags(5)le. This 
+    variable allows the narrow state of the current line in a buffer to be 
+    determined. The narrow state of a buffer may be determined with 
+    lslmnarrow(2m)le. When a narrow is created the buffer mode lslmnarrow(2m)le is 
+    automatically set, when the last is removed this mode is deleted. 
+
     The effect of cDnarrow-buffercA depends on the argument given, defined as 
     follows:- 
 
-    1 
-        Removes all narrows in the current buffer (Default). 
+        * Removes all narrows in the current buffer (Default). Aborts if there 
+          are no narrows in the buffer. 
 
-    2 
-        Removes the current line's narrow. 
+        * Removes the current line's narrow. Aborts if there is no narrow at 
+          the current line. 
 
-    3 
-        Narrow to region. Hides all but the lines of test in the current 
-        buffer from the lsset-mark(2)lmmarkle position to the current cursor position, 
-        effectively 'narrowing' the buffer to the remaining text. 
+        * Narrow to region. Hides all but the lines of text in the current 
+          buffer from the lsset-mark(2)lmmarkle position to the current cursor position, 
+          effectively 'narrowing' the buffer to the remaining text. 
 
-    4 
-        Narrow out region. Hides the lines of test in the current buffer from 
-        the lsset-mark(2)lmmarkle position to the current cursor position, opposite to argument 
-        cD3cA. 
+        * Narrow out region. Hides the lines of test in the current buffer 
+          from the lsset-mark(2)lmmarkle position to the current cursor position, opposite to 
+          argument cD3cA. 
 
-    When a narrow is created the buffer mode lslmnarrow(2m)le is automatically set, 
-    when the last is removed this mode is deleted. 
+    The second form of the command takes up to two arguments which are 
+    determined by the value of cCncA when bits in the range cG0x0ff0cA are defined. 
+    These bits are interpreted as a bit-mask and determine how the narrow is 
+    to be visually displayed to the user. When these bits are set then a 
+    mark-up line is created. 
+
+    cG0x0010cA - cCline-schemecA 
+        Bit cG0x0010cA specifies the line lslmhilight(2)le color scheme to be used on 
+        the narrow line when it is an open or closed narrow. The scheme colors 
+        used are defined by the scheme variables cGscheme.fold-opencA and 
+        cGscheme.fold-closedcA. 
+
+    cG0x0020cA - "cCmarkup-commandcA" 
+        Bit cG0x0020cA specifies that a mark-up line is to be used to represent 
+        the narrow region. When the narrow region is created then the 
+        cCmarkup-commandcA macro is executed to annotate the narrowed region. The 
+        macro is invoked when the narrow is created and is passed a numeric 
+        argument cCncA which identifies the operation of the narrow. The numeric 
+        argument to the mark-up macro is defined below, generally a cG+vecA 
+        argument means that a narrow is being added and cG-vecA means that the 
+        narrow is being removed. 
+
+        cG1cA - This is a cCNarrow OutcA line. 
+        cG2cA - This is the top of a cCNarrow TocA. 
+        cG3cA - This is the bottom of a cCNarrow TocA. 
+
+        When the macro is executed then the current line is the start of the 
+        narrow, the text of the line is available in the macro via lslm@wl(4)le. The 
+        cCmarkup-commandcA aborts, using lslm!abort(4)le if the mark-up line is to be 
+        removed, or returns a mark-up line in the variable lslm$result(5)le. 
+
+
+cEcEEXAMPLE cEcA
+
 
     For example, if the buffer contains the following text: 
 
@@ -12351,10 +12574,10 @@ $a
 
 
     If the mark is on line 2 and the current point is on line 4, executing:- 
-
+sB
         4 narrow-buffer 
 
-
+sA
     Creates one narrow, narrowing out line 2 and 3. Line 4 becomes the narrow 
     anchor line, when the narrow is removed lines 2 and 3 will be inserted 
     before line 4. The buffer will become:- 
@@ -12365,10 +12588,10 @@ $a
 
 
     If instead the following was executed:- 
-
+sB
         3 narrow-buffer 
 
-
+sA
     Two narrows are created, the first narrowing out line 4 and 5 (line 6, the 
     last line, being the anchor line) the second narrowing out line 1 (line 2 
     being the anchor line). The buffer will become:- 
@@ -12382,6 +12605,41 @@ $a
     lines, namely 4 in the first example and 2 and 6 in the second. 
 
 
+cEMarking Up cA
+
+
+    A pseudo line may be created by cDnarrow-buffercA which is hilighted and 
+    annotated to show that a narrow exists. This markup is used in the 
+    language templates in the collapse operations (cGcollapse.emfcA) to show that 
+    a narrow exists. The narrow region is applied using the cDnarrow-buffercA 
+    command as follows:- 
+sB
+        0x34 narrow-buffer .scheme.fold-close collapse-markup 
+
+sA
+    This defines a narrow region with a color scheme mark-up, the mark-up line 
+    is annotated by the macro cGcollapse-markupcA once the narrow is created, the 
+    macro is defined as follows:- 
+sB
+        0 define-macro collapse-markup 
+            !if &les @# 0 
+                ; no markup line modificaton 
+                !abort 
+            !endif 
+            set-variable $result &cat &trr &lef @wl 40 " ..." 
+        !emacro 
+
+sA
+    The cGcollapse-markupcA macro process the numeric argument lsMacroArguments(4)lm@#(4)le to determine 
+    the mark-up type to be applied to the buffer. When the numeric argument is 
+    -ve then lslm!abort(4)le is called to remove the mark-up. When the numeric 
+    argument is +ve then a mark-up line annotation is created by taking the 
+    first 40 characters of the line and appending "cG...cA" to indicate that this 
+    is a narrow. The original cDnarrow-buffercA call included a lslmhilight(2)le line 
+    scheme so the resultant mark-up line will be hilighted and show the first 
+    40 characters of the defined followed by an ellipsis. 
+
+
 cEcENOTES cEcA
 
 
@@ -12391,6 +12649,11 @@ $a
 
     lslmget-next-line(2)le operates on the unnarrowed buffer and will remove any 
     narrows hiding the 'next' line. 
+
+    When copying a region containing a narrowed region(s) with lslmcopy-region(2)le 
+    then the content of the narrowed region(s) is also copied. A numeric 
+    argument to lslmcopy-region(2)le may be used to change the behavior to copy the 
+    visual representation only. 
 
 
 cEcEEXAMPLE cEcA
@@ -12407,8 +12670,10 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmnarrow(2m)le, lslmset-mark(2)le, lslmset-alpha-mark(2)le, lslmget-next-line(2)le, 
-    lslmc-hash-eval(3)le, lslmvm(3)le. 
+    lslm!abort(4)le, lslm$line-flags(5)le, lslm$result(5)le, lsMacroArguments(4)lm@#(4)le, lslm@wl(4)le, lslmappend-buffer(2)le, 
+    lslmc-hash-eval(3)le, lslmcopy-region(2)le, lslmget-next-line(2)le, lslmgoto-alpha-mark(2)le, 
+    lslmhilight(2)le, lslmkill-region(2)le, lslmnarrow(2m)le, lslmsave-buffer(2)le, lslmset-alpha-mark(2)le, 
+    lslmset-mark(2)le, lslmvm(3)le, lslmwrite-buffer(2)le. 
 ! 2 hilight
 cEcENAME cEcA
 
@@ -13135,7 +13400,7 @@ $a
 cEcESYNOPSIS cEcA
 
 
-    cCncA cDinsert-filecA "cCfile-namecA" (cDC-x C-icA) 
+    cCncA cDinsert-filecA "cCfile-namecA" [ cCbyte-offsetcA cCbyte-lengthcA ] (cDC-x C-icA) 
 
 
 cEcEDESCRIPTION cEcA
@@ -13143,13 +13408,19 @@ $a
 
     cDinsert-filecA inserts the named file cCfile-namecA cCncA times into the current 
     buffer at the beginning of the current line. The buffer mark is set to the 
-    start of the insertion and the cursor is moved to the end. 
+    start of the insertion and the cursor is moved to the end. If the 
+    cCfile-namecA is a directory then a directory listing is inserted into the 
+    buffer. 
+
+    If the numeric argument cCncA is negative (-ve) then cDinsert-filecA reads and 
+    inserts cCbyte-lengthcA bytes from the byte file offset cCbyte-offsetcA. 
 
 
 cEcESEE ALSO cEcA
 
 
-    lslmset-mark(2)le, lslmfind-file(2)le, lslminsert-file-name(2)le, lslmview-file(2)le. 
+    lslmfind-bfile(3)le, lslmfind-file(2)le, lslminsert-file-name(2)le, lslmpage-bfile(3)le, 
+    lslmpage-file(3)le, lslmset-mark(2)le, lslmview-file(2)le. 
 ! 2 insert-macro
 cEcENAME cEcA
 
@@ -13434,8 +13705,8 @@ $a
 cEcESYNOPSIS cEcA
 
 
-    cDisearch-forwardcA (cDC-scA) 
-    cDisearch-backwardcA (cDC-rcA) 
+    cCncA cDisearch-forwardcA [ "cCargcA" ] (cDC-scA) 
+    cCncA cDisearch-backwardcA [ "cCargcA" ] (cDC-rcA) 
 
 
 cEcEDESCRIPTION cEcA
@@ -13445,7 +13716,8 @@ $a
     This command is similar to lslmsearch-forward(2)le, but it processes the search 
     as each character of the input string is typed in. This allows the user to 
     only use as many key-strokes as are needed to uniquely specify the string 
-    being searched. 
+    being searched. The string argument cCargcA is not supplied when invoked 
+    interactively. 
 
     The follow keys can be used at the start of an incremental search only: 
 
@@ -13482,6 +13754,20 @@ $a
     raised (bell etc.) a further search request (cGC-scA) causes the search to 
     commence from the start of the buffer. 
 
+    The numeric argument cCncA controls the behavior of cDisearch-*cA at the end of 
+    the buffer. When specified as cG0cA then the search exits when the start/end 
+    of the buffer is reached and the search is exhausted. When omitted (or 
+    specified as cG1cA) then the search recommences again at the start/end of the 
+    buffer, this is the default behavior. 
+
+    When cDisearch-*cA is invoked from a macro then the string argument cCargcA 
+    specifies the search string. cDisearchcA is primarily designed for for 
+    interactive use and is not typically used from within a macro. When 
+    embedded in a macro then it is typically invoked with the cG0cA argument so 
+    that the calling macro may handle the start/end of buffer condition. The 
+    macro lslmpage-file(3)le uses cDisearch-*cA and performs exactly this operation, for 
+    a comprehensive example refer to macro file cGpagefile.emfcA. 
+
 
 cEcENOTES cEcA
 
@@ -13489,6 +13775,9 @@ $a
     The lslmml-bind-key(2)le bindings are used. 
 
     The incremental search supports buffer modes lslmexact(2m)le and lslmmagic(2m)le. 
+
+    The numeric argument to cDisearch-*cA was first introduced into MicroEmacs 
+    '04. 
 
 
 cEcEBUGS cEcA
@@ -13503,7 +13792,8 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmexact(2m)le, lslmhunt-forward(2)le, lslmmagic(2m)le, lslmml-bind-key(2)le, lslmsearch-forward(2)le. 
+    lslmexact(2m)le, lslmhunt-forward(2)le, lslmmagic(2m)le, lslmml-bind-key(2)le, lslmpage-file(3)le, 
+    lslmsearch-forward(2)le. 
     lsRegularExpressions(2)lmRegular Expressionsle 
 ! 2 kbd-macro-query
 cEcENAME cEcA
@@ -13622,6 +13912,10 @@ $a
 
     The mark position may be ahead or behind the current cursor position. 
 
+    Where the region contains a narrowed region, defined by lslmnarrow-buffer(2)le, 
+    then cDkill-regioncA deletes all text contained within the narrow, this text 
+    is added to the kill buffer. 
+
 
 cEcEUSAGE cEcA
 
@@ -13658,8 +13952,8 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmcopy-region(2)le, lslmkill-rectangle(2)le, lslmreyank(2)le, lslmset-mark(2)le, lslmundo(2)le, 
-    lslmyank(2)le. 
+    lslmcopy-region(2)le, lslmkill-rectangle(2)le, lslmnarrow-buffer(2)le, lslmreyank(2)le, 
+    lslmset-mark(2)le, lslmundo(2)le, lslmyank(2)le. 
 ! 2 kill-line
 cEcENAME cEcA
 
@@ -15632,7 +15926,8 @@ $a
 
     cD0x02cA 
         Disables the expansion of any narrows (see lslmnarrow-buffer(2)le) before 
-        saving the buffer. 
+        saving the buffer. That is, the buffer is saved as it appears on the 
+        screen and the content of any narrow regions is discarded. 
 
 
 cEcENOTES cEcA
@@ -18860,7 +19155,8 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmset-mark(2)le, lslmkill-region(2)le, lslmyank(2)le, lslmcopy-region(2)le, lslmreyank(2)le, lslmundo(2)le. 
+    lslmcopy-region(2)le, lslmkill-region(2)le, lslmreyank(2)le, lslmset-mark(2)le, 
+    lslmstring-rectangle(3)le, lslmundo(2)le, lslmyank(2)le. 
 ! 2 command-wait
 cEcENAME cEcA
 
@@ -19084,6 +19380,7 @@ $a
     cGC-ycA lsyank(2)lmyankle Restore what was copied or deleted. 
     cGC-zcA lsscroll-down(2)lmscroll-uple Move backward by one screen. 
     cGC-_cA lsundo(2)lmundole Undo the previous edit. 
+    cGC-spacecA lsset-mark(2)lmset-markle Set start of a region. 
     cGC-downcA lsforward-line(2)lmforward-linele Move forward five lines. 
     cGC-leftcA lsforward-word(2)lmbackward-wordle Move one word backward. 
     cGC-page-downcA lsscroll-next-window-down(2)lmscroll-next-window-downle Scroll next window down a page. 
@@ -20017,16 +20314,14 @@ $a
     bindings for the menu should be over-ridden by cCDirect Key BindingscA from 
     the user configuration file i.e. to re-map the default MicroEmacs Alt key 
     to equivalent cGesccA keys then the following keys should be re-bound. 
-emf-scheme
-
+sB
         global-bind-key forward-word "A-f"      ; Over-ride File menu binding 
         :                                       ; For all of the other menu items. 
         : 
         global-bind-key backward-word "A-b"     ; Over-ride the file browser. 
         global-bind-key replace-string "A-r"    ; Over-ride tools binding. 
 
-ehf-scheme
-
+sA
     This creates a higher priority binding which overrides the underlying 
     default. The commands that are displaced would have to be re-bound to 
     different keys if required. 
@@ -21230,13 +21525,15 @@ ehf-scheme
 
 
     This mode can not be set and is used to indicate whether the buffer 
-    contains a narrow, created by the lslmnarrow-buffer(2)le command. 
+    contains a narrow, created by the lslmnarrow-buffer(2)le command. The the 
+    location of any narrow region lines contained within the buffer may be 
+    determined with lslm$line-flags(5)le. 
 
 
 cEcESEE ALSO cEcA
 
 
-    lslmOperating Modesle, lslmnarrow-buffer(2)le. 
+    lslmOperating Modesle, lslm$line-flags(5)le, lslmnarrow-buffer(2)le. 
 ! 2mdel
 cEcENAME cEcA
 
@@ -23794,7 +24091,8 @@ ehf-scheme
         Build using the specified makefile. over-riding the auto system 
         detect. The supplied makefiles include:- 
 
-                * cGaix43.makcA IBM AIX 4.3 native 
+                * cGaix43.makcA IBM AIX 4.3 native. 
+                * cGaix43.gmkcA IBM AIX 4.3 using GNU tools. 
                 * cGcygwin.gmkcA Cygwin using GNU tools under Windows. 
                 * cGdosdj1.makcA Microsoft DOS build using djgpp version 1. 
                 * cGdosdj2.makcA Microsoft DOS build using djgpp version 2. 
@@ -23810,6 +24108,7 @@ ehf-scheme
                 * cGirix6.gmkcA Silicon Graphics IRIX 6.x using GNU tools 
                 * cGirix6.makcA Silicon Graphics IRIX 6.x native 
                 * cGlinux2.gmkcA Linux 2.x using GNU tools 
+                * cGopenbsd.gmkcA OpenBSD using GNU tools. 
                 * cGopenstep.makcA Openstep 4.2 on NeXTstep (BSD 4.3). 
                 * cGsunos55.gmakcA Sun Solaris 5.5 using GNU tools 
                 * cGsunos55.makcA Sun Solaris 5.5 native 
@@ -25186,9 +25485,9 @@ $a
     2) 
         Space characters are removed when the next character is a tab, making 
         the space redundant, e.g. the strings "cG Hello WorldcA" and "cG Hello 
-        WorldcA" will look identical because the tab character ('cC cA') will indent 
-        the text to the 8th column with or without the space so the space can 
-        be removed. 
+        WorldcA" will look identical because the tab character ('cC cA') indents the 
+        text to the 8th column with or without the space so the space can be 
+        removed. 
 
     3) 
         Superfluous empty lines at the end of the buffer are removed, leaving 
@@ -27042,36 +27341,37 @@ $a
     In order to utilize the cDcollapse-current/allcA commands within a buffer, the 
     cCstartcA and cCendcA markers have to be initialized for the syntactical contents 
     of the buffer. This is performed within the hook function for the buffer, 
-    using the hook-name. Buffer specific variables are defined within the 
-    context of the buffer to configure that start and end fold handling. The 
-    buffer specific variables are defined as follows, where cCxxxxcA is the file 
-    hook base name. 
+    using the hook-name, the initialization is performed within 
+    lslmbuffer-init(3)le. Buffer specific variables are defined within the context 
+    of the buffer to configure that start and end fold handling. The buffer 
+    specific variables are defined as follows, where cCXXXcA is the file hook base 
+    name. 
 
-    cCxxxxcAcD-collapse-opencA 
+    cD.fhook-cAcCXXXcAcD-collapse-opencA 
         A regular expression search string used to locate the start of the 
         string. For speed the search string should include a regular 
         expression start or end of line character whenever possible. i.e. in C 
         the open is defined as "cG^{cA". 
 
-    cCxxxxcAcD-collapse-closecA 
+    cD.fhook-cAcCXXXcAcD-collapse-closecA 
         A regular expression search string used to locate the end of the 
         string. For speed the search string should include a regular 
         expression start or end line character whenever possible. i.e. in C 
         the close is defined as "cG^}cA". 
 
-    cCxxxxcAcD-collapse-mopencA 
+    cD.fhook-cAcCXXXcAcD-collapse-mopencA 
         An integer value that denotes the number of lines to move in a forward 
         or (-ve) backward direction from the cCstartcA line located by the search 
         string to the position in the buffer to be folded. If default value 
         when cDmopencA is omitted is 0, starting the fold from the search string 
         line. 
 
-    cCxxxxcAcD-collapse-mclosecA 
+    cD.fhook-cAcCXXXcAcD-collapse-mclosecA 
         The relative displacement from the close fold line to the fold 
         position, this is a positive or negative displacement depending on 
         where the fold is to be positioned. 
 
-    cCxxxxcAcD-collapse-mnextcA 
+    cD.fhook-cAcCXXXcAcD-collapse-mnextcA 
         Specifies the number of lines to advance before the next search is 
         continued on the fold operation. This is only used by cDcollapse-allcA. 
 
@@ -27089,8 +27389,11 @@ $a
     cDCcA and cDC++cA collapse on the open and close brace appearing in the left-hand 
     margin. The collapse variables are defined in cGhkccA/cGhkcpp.emfcA as follows:- 
 sB
-        set-variable %c-collapse-open  "^{" 
-        set-variable %c-collapse-close "^}" 
+        set-variable .fhook-c.collapse-open  "^{" 
+        set-variable .fhook-c.collapse-close "^}" 
+        set-variable .fhook-c.collapse-mopen  "-1" 
+        set-variable .fhook-c.collapse-mclose "1" 
+        set-variable .fhook-c.collapse-mnext "-1" 
 
 sA
     Given a 'C' function definition:- 
@@ -27105,8 +27408,7 @@ $a
     the folded version appears as follows:- 
 
         static void 
-        myfunc (int a, int b) 
-        } 
+        myfunc (int a, int b) ... 
 
 
 cEemf cA
@@ -27115,9 +27417,10 @@ $a
     MicroEmacs macro files cDemfcA support folding of macro definitions, the 
     collapse variables are defined in cGhkemf.emfcA as follows:- 
 sB
-        set-variable %emf-collapse-open  "^0? ?define-macro" 
-        set-variable %emf-collapse-close "^!emacro" 
-        set-variable %emf-collapse-mopen "1" 
+        set-variable .fhook-emf.collapse-open  "^0? ?define-macro[ \t]" 
+        set-variable .fhook-emf.collapse-close "^!emacro" 
+        set-variable .fhook-emf.collapse-mclose "1" 
+        set-variable .fhook-emf.collapse-mnext "-1" 
 
 sA
     Given a macro definition:- 
@@ -27130,8 +27433,7 @@ $a
 sA
     the collapsed version of the macro is defined as:- 
 sB
-        0 define-macro mymacro 
-        !emacro 
+        0 define-macro mymacro ... 
 
 sA
 
@@ -27141,10 +27443,9 @@ $a
     cDnroffcA is configured for manual pages only and folds between cG.SHcA and cG.SScA 
     sections, the hook variables are defined as follows:- 
 sB
-        set-variable %nroff-collapse-open  "^\.S[SH]" 
-        set-variable %nroff-collapse-close "^\.S[SH]" 
-        set-variable %nroff-collapse-mopen "1" 
-        set-variable %nroff-collapse-mnext "-1" 
+        set-variable .fhook-nroff.collapse-open  "^\.S[SH]" 
+        set-variable .fhook-nroff.collapse-close "^\.S[SH]\|\'" 
+        set-variable .fhook-nroff.collapse-mnext "-1" 
 
 sA
     Given an nroff block of text defined as:- 
@@ -27167,9 +27468,10 @@ $a
     cDtcl/tkcA is configured to collapse procedures. The collapse variables are 
     defined as:- 
 sB
-        set-variable %tcl-collapse-open  "^proc " 
-        set-variable %tcl-collapse-close "^}" 
-        set-variable %tcl-collapse-mopen "1" 
+        set-variable .fhook-tcl.collapse-open  "^proc " 
+        set-variable .fhook-tcl.collapse-close "^}" 
+        set-variable .fhook-tcl.collapse-mclose "1" 
+        set-variable .fhook-tcl.collapse-mnext "-1" 
 
 sA
     Given a tcl procedure definition:- 
@@ -27186,8 +27488,7 @@ $a
 
     The collapsed version of the same section appears as:- 
 
-        proc tixControl:InitWidgetRec {w} { 
-        } 
+        proc tixControl:InitWidgetRec {w} { ... 
 
 
 cEcENOTES cEcA
@@ -27205,13 +27506,14 @@ $a
 
     cDcollapsecA is the new name for cDfoldcA appearing in MicroEmacs 2004 version. 
     The existing commands of cDfold-currentcA and cDfold-allcA have been replaced by 
-    cDcollapse-currentcA and cDcollapse-allcA respectively. 
+    cDcollapse-currentcA and cDcollapse-allcA respectively. cDcollapsecA now uses the 
+    private command variables. 
 
 
 cEcESEE ALSO cEcA
 
 
-    lsfileHooks(2)lmFile Hooksle, lslmuser-setup(3)le, lslmnarrow-buffer(2)le. 
+    lsfileHooks(2)lmFile Hooksle, lslmbuffer-init(3)le, lslmuser-setup(3)le, lslmnarrow-buffer(2)le. 
 ! 3 find-bfile
 ! 3 find-cfile
 cEcENAME cEcA
@@ -28063,7 +28365,8 @@ $a
 cEcENOTES cEcA
 
 
-    cDwhichcA is a macro defined in cGtools.emfcA, it used the &which macro directive. 
+    cDwhichcA is a macro defined in cGtools.emfcA, it uses the lslm&which(4)le macro 
+    function. 
 
 
 cEcESEE ALSO cEcA
@@ -28954,12 +29257,10 @@ $a
 
     The cDuser-setupcA configuration simply sets the macro variable 
     cG.expand-word.oncA to TRUE, i.e.: 
-emf-scheme
-
+sB
         set-variable .expand-word.on 1 
 
-ehf-scheme
-
+sA
     It may be subsequently disabled by setting the variable back to 0. 
 
 
@@ -30023,12 +30324,10 @@ $a
 
     The cDuser-setupcA configuration simply sets the macro variable 
     cG.expand-look-back.oncA to TRUE, i.e.: 
-emf-scheme
-
+sB
         set-variable .expand-look-back.on 1 
 
-ehf-scheme
-
+sA
     It may be subsequently disabled by setting the variable back to 0. 
 
 
@@ -30067,7 +30366,8 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmexchange-point-and-mark(2)le, lslmset-mark(2)le. 
+    lslmexchange-point-and-mark(2)le, lslmkill-rectangle(2)le, lslmset-mark(2)le, 
+    lslmyank-rectangle(2)le. 
 ! 3 buffer-init
 ! 3 buffer-init-hooks
 ! 3 buffer-init-fhook
@@ -30393,25 +30693,25 @@ $a
     cC<comment-pad>cA cD|cA cC<mid-box-left>cA cD|cA cC<mid-box-right>cA cD|cA cC<comment-flags>cA cD|cA". 
     Where the fields are defined as follows:- 
 
-    <comment-start> 
+    cC<comment-start>cA 
         The format of the start of the comment or comment open syntax. 
 
-    <comment-end> 
+    cC<comment-end>cA 
         The format of the closing comment, where the comment exists to the end 
         of the line then the field is defined as empty. 
 
-    <comment-pad> 
-        The character to use to pad a comment between the cCcomment-startcA and 
+    cC<comment-pad>cA 
+        The character to use to pad a comment between the cC<comment-start>cA and 
         cC<comment-end>cA characters when creating a line or a box formation. 
 
-    <mid-box-left> 
+    cC<mid-box-left>cA 
         The start of a comment continuation line when creating a box comment. 
 
-    <mid-box-right> 
+    cC<mid-box-right>cA 
         The end of a comment continuation line when creating a box comment and 
         the comment is not closed and continues on the next line. 
 
-    <comment-flags> 
+    cC<comment-flags>cA 
         The comment flags define how the comment should be formatted when 
         re-styled. The flags are defined as single characters that describe 
         the attributes. Re-styling may include the following attributes:- 
@@ -30517,19 +30817,692 @@ $a
             rem Comment to end of line 
 
 
-    NEED TO FINISH FOR 2004 - KNOW ITS NOT FINISHED FOR RC1 
+cECommands and Key Bindings cA
+
+
+    Local buffer commands and key bindings for over-riding key definitions 
+    used within the buffer are defined with the cGfhook-XXX.command-*cA variables. 
+    The variables are defined as a list of keys, commands and bindings each 
+    command is separated by a 'cG|cA' character. The field order in all of the 
+    cGfhook-XXX.command-*cA variables MUST be consistent, so if a command is 
+    defined in field 5, then all definitions associated with that command MUST 
+    be defined in field 5 for all variables. The variables that defined the 
+    commands are defined as follows:- 
+
+    cC.fhook-c.command-flagcA 
+        A configuration flag that defines the components to use for the 
+        command. The flags are set as individual characters and are defined as 
+        follows:- 
+
+                * Show the command in the toolbar. The cG.fhook-XXX.command-desccA 
+                  variable should contain a readable name for the command to 
+                  display in the menu. An optional hot key for selection in 
+                  any lsosd(2)lmosdle is specified by prefixing the character in the 
+                  string with cG\HcA. 
+
+                * Show the command in the help screen. The 
+                  cG.fhook-XXX.command-desccA variable should contain a readable 
+                  name for the command to display in the menu. An optional hot 
+                  key for selection in any lsosd(2)lmosdle is specified by prefixing the 
+                  character in the string with cG\HcA. 
+
+                * Create a buffer key binding for the command, the key to bind 
+                  is defined by the variable cGfhook-XXX.command-kbindcA, if the 
+                  command requires a numerical argument then this is defined 
+                  in the variable cGfhook-XXX.command-nbindcA. The binding is only 
+                  created if the key buffer binding does not already exist, 
+                  the binding may be forced by using the cGocA flag. Where a key 
+                  binding is only to be created if hilighting is enabled then 
+                  the cGbcA flag should be qualified with the cGHcA flag. 
+
+                * Optionally used with the cGbcA and forces the binding to 
+                  over-write any existing binding. 
+
+                * Used with the cGbcA flag, ignores key bindings that are 
+                  emulation mappings. 
+
+                * Used with the cGbcA flag, only performs the key binding if 
+                  hilighting is enabled. 
+
+    cC.fhook-XXX.command-namecA 
+        Specifies the name of the command to execute, this may be a built in 
+        command of a macro. Typically the command is a local macro defined in 
+        the hook file. 
+
+    cC.fhook-XXX.command-nbindcA 
+        The value of the numeric argument to pass to the command defined in 
+        the cC.fhook-XXX.command-namecA field. This field may be empty if no 
+        numeric argument is required. 
+
+    cC.fhook-XXX.command-kbindcA 
+        The local key binding to bind to the command, this field is only 
+        interpreted if the cGbcA is specified, otherwise the field may be empty. 
+        Where multiple key bindings are required to the same command then a 
+        field definition is required for each binding. 
+
+    cC.fhook-c.command-desccA 
+        A short description of the command that is used for the help page (cGhcA) 
+        and toolbar (cGtcA). A hot key for use in the lsosd(2)lmosdle is specified by 
+        prefixing the hot key character with cG\HcA. The field may be empty if the 
+        field is not specified for insertion into the toolbar or help page. 
+
+    As an example, two new commands or bindings may be defined for a template, 
+    the first field is bound to key cGA-qcA which executes macro cGXXX-compcA with a 
+    numerical argument of 2. The command appears in the toolbar and is 
+    described in the help page and uses hot-key cGmcA. The second field binds a 
+    new key to lslmcomment-restyle(3)le. 
+sB
+
+        ..... 
+
+        set-variable .fhook-XXX.command-flag  "|th|bo|" 
+        set-variable .fhook-XXX.command-name  "|XXX-comp|comment-restyle|" 
+        set-variable .fhook-XXX.command-nbind "|2||" 
+        set-variable .fhook-XXX.command-kbind "|A-q|esc o|" 
+        set-variable .fhook-XXX.command-desc  "|Complete co\Hmmand||" 
+
+        ..... 
+
+        ; Local macro definition to perform command completion 
+        define macro XXX-comp 
+            set-variable #l1 @# 
+            ..... 
+        !emacro 
+
+sA
+
+cEInformation Hiding with Collapsing cA
+
+
+    MicroEmacs '04 provides a generic, albeit course, folding mechanism which 
+    is applied to some of the well known file modes. The folding mechanism 
+    allows parts of the buffer to be scrolled up and hidden, leaving a residue 
+    hilighting marker within the buffer indicating a folded region. A folded 
+    buffer typically allows a summary of the buffer contents to be viewed 
+    within several windows, hiding the detail of the buffer. 
+
+    The folding mechanism uses well defined cCstartcA and cCendcA markers which form 
+    part of the syntax of the well known file mode. i.e. in 'C' this is the 
+    open and closed braces that appear on the left-hand margin (cG{cA .. cG}cA). The 
+    intention is that the natural syntax of the text is used to determine the 
+    fold positions, requiring no additional text formating or special text 
+    tags to be inserted by the user. 
+
+    The language template defines the syntax of blocks of information that may 
+    be collapsed and hidden with lsnarrow-buffer(2)lmnarrowle. In order to utilize the 
+    lslmcollapse-current(3)le and lslmcollapse-all(3)le commands within a buffer, the 
+    cCstartcA and cCendcA markers have to be initialized for the syntactical contents 
+    of the buffer. The buffer specific variables are defined as follows, where 
+    cCXXXcA is the file hook base name. The cG.fhook-XXX.collapse-*cA variables define 
+    the regular expression search pattern and line positioning. 
+
+    cD.fhook-cAcCxxxxcAcD-collapse-opencA 
+        A regular expression search string used to locate the start of the 
+        string. For speed the search string should include a regular 
+        expression start or end of line character whenever possible. i.e. in C 
+        the open is defined as "cG^{cA". 
+
+    cD.fhook-cAcCxxxxcAcD-collapse-closecA 
+        A regular expression search string used to locate the end of the 
+        string. For speed the search string should include a regular 
+        expression start or end line character whenever possible. i.e. in C 
+        the close is defined as "cG^}cA". 
+
+    cD.fhook-cAcCxxxxcAcD-collapse-mopencA 
+        An integer value that denotes the number of lines to move in a forward 
+        or (-ve) backward direction from the cCstartcA line located by the search 
+        string to the position in the buffer to be folded. If default value 
+        when cDmopencA is omitted is 0, starting the fold from the search string 
+        line. 
+
+    cD.fhook-cAcCxxxxcAcD-collapse-mclosecA 
+        The relative displacement from the close fold line to the fold 
+        position, this is a positive or negative displacement depending on 
+        where the fold is to be positioned. 
+
+    cD.fhook-cAcCxxxxcAcD-collapse-mnextcA 
+        Specifies the number of lines to advance before the next search is 
+        continued on the fold operation. This is only used by lscollapse-current(3)lmcollapse-allle. 
+
+    The following examples show how the collapse variables are set up in each 
+    of the buffer modes. 
+
+    cDC and C++cA 
+        cDCcA and cDC++cA collapse on the open and close brace appearing in the 
+        left-hand margin. The collapse variables are defined in cGhkccA/cGhkcpp.emfcA 
+        as follows:- 
+sB
+            set-variable .fhook-c.collapse-open  "^{" 
+            set-variable .fhook-c.collapse-close "^}" 
+            set-variable .fhook-c.collapse-mopen  "-1" 
+            set-variable .fhook-c.collapse-mclose "1" 
+            set-variable .fhook-c.collapse-mnext "-1" 
+
+sA
+        Given a 'C' function definition:- 
+
+            static void 
+            myfunc (int a, int b) 
+            { 
+                /* Function body */ 
+            } 
+
+
+        the folded version appears as follows:- 
+
+            static void 
+            myfunc (int a, int b) ... 
+
+
+    cDemfcA 
+        MicroEmacs macro files cDemfcA support folding of macro definitions, the 
+        collapse variables are defined in cGhkemf.emfcA as follows:- 
+sB
+            set-variable .fhook-emf.collapse-open  "^0? ?define-macro[ \t]" 
+            set-variable .fhook-emf.collapse-close "^!emacro" 
+            set-variable .fhook-emf.collapse-mclose "1" 
+            set-variable .fhook-emf.collapse-mnext "-1" 
+
+sA
+        Given a macro definition:- 
+sB
+            0 define-macro mymacro 
+            ; This is the body of the macro 
+            ; ... and some more ... 
+            !emacro 
+
+sA
+        the collapsed version of the macro is defined as:- 
+sB
+            0 define-macro mymacro ... 
+
+sA
+    cDnroffcA 
+        cDnroffcA is configured for manual pages only and folds between cG.SHcA and 
+        cG.SScA sections, the hook variables are defined as follows:- 
+sB
+            set-variable .fhook-nroff.collapse-open  "^\.S[SH]" 
+            set-variable .fhook-nroff.collapse-close "^\.S[SH]\|\'" 
+            set-variable .fhook-nroff.collapse-mnext "-1" 
+
+sA
+        Given an nroff block of text defined as:- 
+
+            .SH SYNOPSIS 
+            .\" Some text 
+            .\" Some more text 
+            .SH DESCRIPTION 
+
+
+        Then the collapsed version appears as: 
+
+            .SH SYNOPSIS 
+            .SH DESCRIPTION 
+
+
+    cDtcl/tkcA 
+        cDtcl/tkcA is configured to collapse procedures. The collapse variables 
+        are defined as:- 
+sB
+            set-variable .fhook-tcl.collapse-open  "^proc " 
+            set-variable .fhook-tcl.collapse-close "^}" 
+            set-variable .fhook-tcl.collapse-mclose "1" 
+            set-variable .fhook-tcl.collapse-mnext "-1" 
+
+sA
+        Given a tcl procedure definition:- 
+
+            proc tixControl:InitWidgetRec {w} { 
+                upvar #0 $w data 
+
+                tixChainMethod $w InitWidgetRec 
+
+                set data(varInited)   0 
+                set data(serial) 0 
+            } 
+
+
+        The collapsed version of the same section appears as:- 
+
+            proc tixControl:InitWidgetRec {w} { ... 
+
+
+cEItem Lists cA
+
+
+    lsitem-list(3)lmItem Listsle perform a regular expression search of a buffer, presenting a 
+    list of the located text and associated types in a separate window which 
+    is presented to the left of the buffer window or more typically in the 
+    toolbar. The command lslmitem-list(3)le is a generic command that interacts with 
+    the buffer environment variables to present abbreviated buffer information 
+    to the user. 
+
+    The regular expression search strings are predefined in the language 
+    templates, using the variables cD.fhook-cAcCxxxxcAcD-item-list-scAcCYcA and 
+    cD.fhook-cAcCxxxxcAcD-item-list-rcAcCYcA and are described more fully in lslmitem-list(3)le. 
+
+
+cEHilighting cA
+
+
+    Buffer hilighting is defined by the lslmhilight(2)le command. Within the context 
+    of cDbuffer-initcA then the standard definitions and name space conventions 
+    should be adhered to:- 
+sB
+        !if &not &exist .hilight.XXX 
+            set-variable .hilight.XXX &pinc .hilight.next 1 
+        !endif 
+        !if &and &sin "h" .fhook-XXX.setup &band .hilight.flags 0x02 
+            ; High-light XXX Mode 
+            0 hilight    .hilight.XXX 0                    $global-scheme 
+            ..... 
+            ; Variable hilighting 
+            !if &band .hilight.flags 0x08 
+                ; hilight constants, e.g. numbers 
+                hilight .hilight.XXX 1 "[[:digit:]]+"       .scheme.constant 
+                ...... 
+            !endif 
+        !endif 
+
+sA
+
+cEIndentation cA
+
+
+    Buffer indentation is defined by the lslmindent(2)le command. Within the context 
+    of cDbuffer-initcA then the standard definitions and name space conventions 
+    should be adhered to. The buffer indentation scheme uses the hilighting 
+    variable, if hilighting is not defined then the variable allocation of 
+    cG.hilight.XXXcA should be performed as defined in the previous Hilighting 
+    section. 
+sB
+        !if &sin "d" .fhook-XXX.setup 
+            0 indent  .hilight.XXX 0 10 
+            indent .hilight.XXX n "{"  4 
+            indent .hilight.XXX o "}" -4 
+            ..... 
+        !endif 
+
+sA
+
+cEcESEE ALSO cEcA
+
+
+    lslm$buffer-hilight(5)le, lslm$buffer-indent(5)le, lslmadd-file-hook(2)le, 
+    lslmbuffer-abbrev-file(2)le, lslmbuffer-setup(3)le, lslmcollapse-all(3)le, 
+    lslmcollapse-current(3)le, lslmctags(3f)le, lslmeaf(8)le, lslmemftags(3f)le, lslmetf(8)le, lslmetfinsrt(3)le, 
+    lslmexecute-buffer(2)le, lslmexpand-abbrev(2)le, lslmglobal-abbrev-file(2)le, lslmhilight(2)le, 
+    lslmindent(2)le, lslmindent(2m)le, lslmitem-list(3)le, lslmnarrow-buffer(2)le, lslmntags(3f)le, 
+    lslmrestyle-buffer(3)le, lslmrestyle-region(3)le, lslmscheme-editor(3)le, lslmtime(2m)le, 
+    lsfileHooks(2)lmFile Hooksle, 
+    lslanguageTemplates(2)lmFile Language Templatesle. 
+! 3 page-file
+! 3 page-bfile
+! 3 page-file-save-buffer
+! 3 page-file-beginning-of-buffer
+! 3 page-file-end-of-buffer
+! 3 page-file-goto-byte
+! 3 page-file-goto-page
+! 3 page-file-scroll-down
+! 3 page-file-scroll-up
+! 3 page-file-forward-line
+! 3 page-file-backward-line
+! 3 page-file-search-forward
+! 3 page-file-search-backward
+! 3 page-file-isearch-forward
+! 3 page-file-isearch-backward
+cEcENAME cEcA
+
+
+|page-file
+    page-file - Load a large file in page mode. 
+|page-bfile
+    page-bfile - Load a large binary file as binary data. 
+|page-file-save-buffer
+    page-file-save-buffer - Save contents of a page mode buffer to file. 
+|page-file-beginning-of-buffer
+    page-file-beginning-of-buffer - Move to the start of the paged file. 
+|page-file-save-buffer
+    page-file-end-of-buffer - Move to the end of the paged file. 
+|page-file-goto-byte
+    page-file-goto-byte - Page to the buffer byte offset. 
+|page-file-goto-page
+    page-file-goto-page - Move to page. 
+|page-file-scroll-down
+    page-file-scroll-down - Scroll paged buffer down. 
+|page-file-scroll-up
+    page-file-scroll-up - Scroll paged buffer up. 
+|page-file-forward-line
+    page-file-forward-line - Move forwards one line in paged buffer. 
+|page-file-backward-line
+    page-file-backward-line - Move backwards one line in paged buffer. 
+|page-file-search-forward
+    page-file-search-forward - Search for a string in the forward direction. 
+|page-file-search-backward
+    page-file-search-backward - Search for a string in the backward direction. 
+|page-file-isearch-forward
+    page-file-isearch-forward - Search forward incrementally (interactive). 
+|page-file-isearch-backward
+    page-file-isearch-backward - Search backwards incrementally (interactive) 
+$a
+
+
+cEcESYNOPSIS cEcA
+
+
+    cCncA cDpage-filecA "cCfile-namecA" 
+    cDpage-bfilecA cCfile-namecA 
+
+    cDpage-file-save-buffercA (cDC-x C-scA) 
+
+    cDpage-file-beginning-of-buffercA 
+    cDpage-file-end-of-buffercA 
+    cDpage-file-goto-bytecA cCbyte-offsetcA 
+    cDpage-file-goto-pagecA cCpage-offsetcA 
+
+    cCncA cDpage-file-scroll-downcA (cDC-ncA) 
+    cCncA cDpage-file-scroll-upcA (cDC-pcA) 
+
+    cCncA cDpage-file-forward-linecA (cDC-ncA) 
+    cCncA cDpage-file-backward-linecA (cDC-pcA) 
+
+    cDpage-file-search-forwardcA (cDC-x scA) 
+    cDpage-file-search-backwardcA (cDC-x rcA) 
+    cDpage-file-isearch-forwardcA (cDC-scA) 
+    cDpage-file-isearch-backwardcA (cDC-rcA) 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    The cDpage-filecA commands allow large files, up to 2GB in size, to be viewed 
+    and edited. cDpage-filecA operates by loading a small part (or cCpagecA) of the 
+    file into a buffer for viewing and editing hence the whole file is not 
+    loaded into memory. The file may be viewed and edited while in a page 
+    mode, MicroEmacs automatically manages the page swapping and updates to 
+    the file. 
+
+    While a file is being paged then a replacement set of commands are used to 
+    navigate through the buffer. These replacement commands automatically load 
+    the next page into the buffer, discarding or saving any edits from 
+    existing pages. 
+
+
+cEFile Loading cA
+
+
+    cDpage-filecA finds the named file cCfile-namecA. If it is already in a buffer, 
+    make that buffer active in the current window, otherwise attempt to create 
+    a new paged buffer and read the file into it. Syntax hilighting is 
+    available following any file loading. cDpage-filecA is the paged equivalent of 
+    lslmfind-file(2)le. 
+
+    The numeric argument cCncA is used to modify the default behavior of the 
+    command, where the bits are defined as follows: 
+
+    cD0x01cA 
+        If the file does not exist and this bit is not set the command fails 
+        at this point. 
+
+    cD0x02cA 
+        If this bit is set the file will be loaded with lslmbinary(2m)le mode 
+        enabled. See help on cDbinarycA mode for more information on editing 
+        binary data files. 
+
+    cDpage-bfilecA loads a file as binary data, providing binary editing 
+    capabilities. The command operate as command lslmpage-file(3)le except that it 
+    loads the given file with lslmbinary(2m)le mode set. 
+
+
+cESaving cA
+
+
+    cDpage-file-save-buffercA saves the contents of the current buffer if the 
+    contents have been changed, writing the buffer back to the file it was 
+    read from. This command is the same as lslmsave-buffer(2)le for a paged file. 
+
+
+cENavigation cA
+
+
+    cDpage-file-beginning-of-buffercA moves to the beginning of the buffer. If any 
+    edits have been performed at the current viewing position that need to be 
+    saved then the user is prompted to save the changes and the new pages are 
+    loaded from the file at the beginning of the buffer. 
+
+    cDpage-file-end-of-buffercA moves to the end of the buffer in a similar way to 
+    cDpage-file-beginning-of-buffercA. 
+
+    cDpage-file-goto-bytecA advances the buffer to the byte offset specified by 
+    cCbyte-offsetcA. If any edits have been performed at the current viewing 
+    position that need to be saved then the user is prompted to save the 
+    changes and the new pages are loaded from the file at the specified file 
+    byte offset. 
+
+    cDpage-file-goto-pagecA advances the buffer to the page offset specified by 
+    cCbyte-offsetcA. The behavior is the same as cDpage-file-goto-bytecA. 
+
+    cDpage-file-scroll-upcA and cDpage-file-scroll-downcA moves the window in the 
+    current buffer down by cCncA lines, the default when cCncA is omitted is 1 windows 
+    worth of lines i.e. a next page operation. The user is prompted to save 
+    changes if a file paging operation is performed. 
+
+    cDpage-file-forward-linecA moves the cursor down cCncA lines, default 1. If the 
+    line is not on the current screen then display the next page and move to 
+    the line. Similarly cDpage-file-backward-linecA moves the cursor up cCncA lines, 
+    if the line is not on the current screen then display the previous page 
+    and move to the line. The user is prompted to save changes if a file 
+    paging operation is performed. 
+
+
+cESearching cA
+
+
+    cDpage-file-search-forwardcA and cDpage-file-search-backwardcA searches for a 
+    string from the current cursor position to the end/start of the file and 
+    is simular to lslmsearch-forward(2)le and lslmsearch-backward(2)le, respectively. If 
+    the search string is not found in the current buffer then the search 
+    continues by paging the file until the start/end of the file is reached. 
+    The user is prompted to save changes if a file paging operation is 
+    performed. 
+
+    cDpage-file-isearch-forwardcA and cDpage-file-isearch-backwardcA perform and 
+    incremental forward and backward search in the paged file and are similar 
+    to lslmisearch-forward(2)le and lslmisearch-backward(2)le, respectively. If the search 
+    string is not found in the current buffer then the search continues by 
+    paging the file until the start/end of the file is reached. The user is 
+    prompted to page and save changes if a file paging operation is performed. 
+
+
+cEcENOTES cEcA
+
+
+    The cDpage-filecA macros are implemented in macro file cGpagefile.emfcA. The 
+    paging is managed in macro space and uses lslminsert-file(2)le to perform the 
+    read. 
 
 
 cEcESEE ALSO cEcA
 
 
-    lslmadd-file-hook(2)le, lslmbuffer-abbrev-file(2)le, lslm$buffer-hilight(5)le, 
-    lslm$buffer-indent(5)le, lslmbuffer-setup(3)le, lslmeaf(8)le, lslmetf(8)le, lslmetfinsrt(3)le, 
-    lslmexecute-buffer(2)le, lslmexpand-abbrev(2)le, lslmglobal-abbrev-file(2)le, lslmhilight(2)le, 
-    lslmindent(2)le, lslmindent(2m)le, lslmrestyle-buffer(3)le, lslmrestyle-region(3)le, 
-    lslmscheme-editor(3)le, lslmtime(2m)le, 
-    lsfileHooks(2)lmFile Hooksle, 
-    lslanguageTemplates(2)lmFile Language Templatesle. 
+    lslmbinary(2m)le, lslmfind-bfile(3)le, lslmfind-file(2)le, lslmisearch-backward(2)le, 
+    lslmisearch-forward(2)le, lslmsave-buffer(2)le, lslmsearch-backward(2)le, lslmsearch-forward(2)le. 
+! 3 toolbar
+! 3 toolbar-close
+! 3 toolbar-refresh
+cEcENAME cEcA
+
+
+|toolbar
+    toolbar - Open the tool bar. 
+|toolbar-close
+    toolbar-close - Close the tool bar 
+|toolbar-refresh
+    toolbar-refresh - Update the tool bar 
+$a
+
+
+cEcESYNOPSIS cEcA
+
+
+    cDtoolbarcA 
+    cDtoolbar-closecA 
+    cDtoolbar-refreshcA 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    The toolbar is one or more fixed buffers that typically appear at the 
+    left-hand edge of the window that contains different tools that assist in 
+    editing the buffer. The toolbar is really a container for tools and short 
+    cuts which are configured by the user depending on the tool that has been 
+    loaded. The tools themselves are buffer context sensitive, the 
+    lslmbuffer-init(3)le command automatically re-configures the toolbar for the 
+    buffer at run time. 
+
+    The configuration of the toolbar is stored in command variables cG.toolvar.*cA 
+    which are used to control the toolbar. The tools that are available in 
+    toolbar are determined from the file cGtoollist.emfcA which is loaded when the 
+    toolbar is started. User defined toolbars may be added by redefinging the 
+    toolbar variables at runtime. 
+
+    cDtoolbarcA initializes and starts the toolbar if it is not already running. 
+    The toolbar is loaded and instantiated in the system. The toolbar may be 
+    subsequently closed using cDtoolbar-closecA. Whilst the toolbar is running 
+    then the content of the tollbar may become out of date, the command 
+    lslmtoolbar-refresh(3)le forces the toolbar to be re-evaluated and the content 
+    is updated. 
+
+
+cEcECONFIGURATION cEcA
+
+
+    The toolbar is configured with command variables cDtoolbar.*cA. The size 
+    information of the toolbar is defined with the following variables:- 
+
+    cC.toolbar.widthcA 
+        Defines the default width of the left-hand vertical toolbar. 
+
+    cC.toolbar.depthcA 
+        Defines the default depth of the top horizontal toolbar. 
+
+    The tools within the toolbar are configured with the following variables. 
+    Each variable is divided into fields, each field represents a single tool. 
+    The fields are separated with the cG\CHcA character. The order of the fields 
+    MUST be the same in each of the variables such that the field content 
+    matches the tool that is being defined. 
+
+    cC.toolbar.tool-flagcA 
+        The cDtool-flagcA variable describes the behaviour of the tool, this is 
+        defined as a bitmask as follows:- 
+
+        cG0x000001cA - Update on creation 
+            Call the tool update command when the tool is created, this is 
+            typically required when the content of the toolbar is generated. 
+
+        cG0x000002cA - Update on redraw 
+            Call the tool update command when a lsrecenter(2)lmredrawle operation has been 
+            performed. 
+
+        cG0x000004cA - Buffer type changed 
+            Call the tool update command when the buffer type has changed, a 
+            change of buffer type requires that a buffer specific tool is 
+            reconfigured. 
+
+        cG0x000008cA - Current buffer changed 
+            Call the tool update command when the current buffer is changed, a 
+            change of buffer buffer requires that a buffer content specific 
+            tool is reconfigured. 
+
+        cG0x000010cA - Current buffer modified or saved 
+            Call the tool update command when the current buffer is modified 
+            or saved. 
+
+        cG0x000080cA - Perform update checks 
+            On an update check the toolbar for changes in content. 
+
+        cG0x000100cA - Lock depth and width 
+            Lock the depth and width of the tool. 
+
+        cG0x000200cA - Tool uses a paged window 
+            The tool uses a paged window in the toolbar (i.e. only one tool 
+            has focus). 
+
+        cG0x000400cA - Tool is hidden 
+            The tool is currently hidden. When in this state then the not 
+            active sub-page cG0x200cA will also be set. 
+
+        cG0x000800cA - Tool paged window, not first user. 
+            The tool is part of a paged window and is not the first tool. 
+
+        cG0x001000cA - position in the left toolbar 
+            The tool is present in the left toolbar, on toolbar creation the 
+            tool is automatically loaded into the toolbar. 
+
+        cG0x002000cA - position in the top toolbar 
+            The tool is present in the top toolbar, on toolbar creation the 
+            tool is automatically loaded into the toolbar. 
+
+        cG0x004000cA - position in the right toolbar 
+            The tool is present in the right toolbar, on toolbar creation the 
+            tool is automatically loaded into the toolbar. 
+
+        cG0x008000cA - position in the bottom toolbar 
+            The tool is present in the bottom toolbar, on toolbar creation the 
+            tool is automatically loaded into the toolbar. 
+
+        cG0x010000cA - Include buffer type in mode-line (Prefix) 
+            The buffer type is included in the toolbar mode line as a prefix. 
+
+        cG0x020000cA - Include buffer name in mode-line (suffix) 
+            The buffer name is included in the toolbar mode line as a suffix. 
+
+        cG0x040000cA - Include buffer filename in mode-line (suffix) 
+            The buffer file name is included in the toolbar mode line as a 
+            suffix. 
+
+        cG0x100000cA - Restore window location after an update 
+            The position of the hilighted line in the toolbar is restored 
+            after an update. 
+
+        cG0x200000cA - Move position to beginning of buffer after an update 
+            The position of the hilighted line is restored to the top of the 
+            buffer following an update. 
+
+    cC.toolbar.tool-namecA 
+        The name of the tool that is displayed to the user. 
+
+    cC.toolbar.tool-descscA 
+        A short description of the tool which is used in the tool selection 
+        dialog. 
+
+    cC.toolbar.tool-buffscA 
+        The name of the buffer which is used to store toolbar information. The 
+        names are usually cD*name*cA so that they are not saved. 
+
+    cC.toolbar.tool-filescA 
+        The macro file to load when the tool is loaded, if a tool is not used 
+        then the macros that define the tool are not loaded. 
+
+    cC.toolbar.tool-cmdscA 
+        The creation command to run when the command is created. 
+
+
+cEcEFILES cEcA
+
+
+    Notable toolbox macro files:- 
+
+        * cGtoollist.emfcA - List off tools available in the toolbar. 
+        * cGbookmark.emfcA - The bookmark tool. 
+        * cGtoolstd.emfcA - Basic tools (Info, Buffer list) 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmosd(2)le, lslmrecenter(2)le. 
 ! 3 user-setup
 cEcENAME cEcA
 
@@ -32543,9 +33516,93 @@ $a
 
 
     cCncA osd 
+    cDtoolbarcA 
 
 
-cEcEDESCRIPTION cEcA
+cEcEFRAME COMPOSIOTION cEcA
+
+
+    The frame composition presented by MicroEmacs is defined as follows:- 
+
+                  +--------------------------------------------+ 
+                  | File  Edit .. .                   Help     | Menu Line 
+                  +-----+-+----------------------------------+-+ 
+                  |     |=|                                  |=|Split Vertically 
+                  |  T  |^|                                  |^| 
+                  |  O  |||         CURRENT WINDOW           |#|Scroll Bar 
+                  |  O  |#|                                  |#| 
+                  |  L  |#|                                  |V| 
+                  |  B  |#||=* file = 17:30 04/1/11 (Aeb) == |*| Mode Line 
+                  |  A  |#|^  Split Horizontally             |^| 
+                  |  R  | |  ^ Buffer edit(*) Read Only(%)   |#| 
+                  |     | |                                  |#| 
+                  |     | |          OTHER WINDOW            | | 
+                  |     |v|                                  |v| 
+                  +<--->+*+|-- file - 17:30 04/1/11 (AeB) ---|*| Mode Line 
+                  |f-isearch..: forw                           | Message Line 
+                  +--------------------------------------------+ 
+
+
+    cDMenu LinecA 
+        The cCMenu LinecA appears at the top of the buffer. A left click of the 
+        mouse on the menu line shows a menu dialog for user selection. 
+
+    cDWindowcA 
+        The windows appear at the center of the frame, typically with a scroll 
+        bar to the right of the window and a cDMode LinecA at the bottom of the 
+        window. The mouse interactions with the window are defined as 
+        follows:- 
+
+        Left mouse in window - Selecting a region 
+            Regions may be selected with the mouse. Select a position with the 
+            left mouse, keep the left button pressed move the mouse to the 
+            desired region end and release the left button. Theregion is 
+            hilighted, the text is copied the user does not need to perform 
+            any other selection operation to copy the text. 
+
+        Right mouse in window - Pop up Dialog 
+            A right mouse click in the window brings up a context sensitive 
+            pop-up menu. A right click on a spelling error, with lslmauto-spell(3)le 
+            enabled shows a list of possible corrections. 
+
+        Right mouse on mode line - Pop up Dialog 
+            A right mouse click on the cDMode LinecA brings up a pop-up menu to 
+            control the buffer. 
+
+        Left mouse on mode line - split and resize window 
+            If the cG|cA character is selected on the cDMode LinecA then the window is 
+            split into two horizontally. If the mode line is dragged with the 
+            mouse then the buffer is re-sized. If the window is dragged into 
+            another window then the other window is deleted. 
+
+        Left mouse on scroll bar - Up/down action 
+            A left click on the scroll bar moves the window up/down. If the cG=cA 
+            component of the scroll bar is selected then the window is split 
+            into two vertically. Dragging the scroll-bar with the mouse 
+            horizontally causes the window to be re-sized. Selecting the cG*cA in 
+            the corner of the window allows the window to be resized both 
+            horizontally and vertically. 
+
+        Right mouse on scroll bar - Scroll bar size 
+            A right click of the mouse on the scroll bar allows the scroll bar 
+            width to be altered. 
+
+    Message Line 
+        The message line is used from command entry and messages. On entering 
+        a command such as lslmisearch-forward(2)le then the user enters text into 
+        the cDMessage LinecA until the command completes. Messages are also 
+        displayed in the message line using lslmml-write(2)le. 
+
+    Toolbar 
+        The toolbar window is displayed if lstoolbar(3)lmtoolbarle mode is enabled in 
+        lslmuser-setup(3)le. The mouse interaction is a little different from a 
+        conventional mode line, a mouse right click on the toolbar cDMode LinecA 
+        allows the tollbar to be configured. A Right click on the cG<cA and cG>cA 
+        characters of the toolbar mode line moves to the next or previous 
+        tool. 
+
+
+cEcEMAIN MENU cEcA
 
 
     The main menu is provided to give an easier access to parts of MicroEmacs 
@@ -32913,7 +33970,7 @@ $a
         Create an new external frame, only available on version which support 
         multiple-window frames. Executes command lslmcreate-frame(2)le. 
 
-    cGCreate New FramecA 
+    cGClose This FramecA 
         Closes the current frame, only available on version which support 
         multiple-window frames. The command will fail if this is the only 
         frame, use File -> Exit to exit MicroEmacs, executes command 
@@ -33421,13 +34478,14 @@ $a
 cEcENOTES cEcA
 
 
-    cDbuffer-setupcA is a macro using lslmosd(2)le, defined in cGbuffstp.emfcA. 
+    cDbuffer-setupcA is a macro using lslmosd(2)le, defined in cGbuffstp.emfcA. This macro 
+    configures the user settings of the cGhkXXX.emfcA files via lslmbuffer-init(3)le. 
 
 
 cEcESEE ALSO cEcA
 
 
-    lslmbuffer-help(3)le, lslmuser-setup(3)le. lsfileHooks(2)lmFile Hooksle. 
+    lslmbuffer-init(3)le, lslmbuffer-help(3)le, lslmuser-setup(3)le. lsfileHooks(2)lmFile Hooksle. 
 ! 3 buffer-help
 cEcENAME cEcA
 
@@ -34524,11 +35582,11 @@ $a
 
     A double cD!forcecA can be used to catch a user termination (via the 
     lslmabort-command(2)le bound to cGC-gcA). A macro command aborted by the user will 
-    be terminated even with a single !force directive, but not with two. See 
+    be terminated even with a single cD!forcecA directive, but not with two. See 
     the example below. 
 
     When specifying a numerical argument with a cCcommandcA, it is placed after 
-    the cC!forcecA directive and before the cCcommandcA i.e. 
+    the cD!forcecA directive and before the cCcommandcA i.e. 
 sB
         !force 1 forward-char 
 
@@ -35237,9 +36295,9 @@ $a
     A default value of 0 is used if no value is specified. At first glance 
     type 1 and 4 appear to be the same. They differ only when a non absolute 
     file name is entered, such as "foobar". Type 1 will turn this into an 
-    absolute path, i.e. if the current directory is "/tmp" then it will return 
-    "/tmp/foobar". Type 4 however will return just "foobar", this is 
-    particularly useful with the lslm&find(4)le directive to then find the file 
+    absolute path, i.e. if the current directory is "cG/tmpcA" then it will return 
+    "cG/tmp/foobarcA". Type 4 however will return just "foobar", this is 
+    particularly useful with the lslm&find(4)le function to then find the file 
     "foobar". 
 
     When a value of cG9cA is used the argument cCcom-listcA must be given which 
@@ -41001,9 +42059,9 @@ $a
 cEcESEE ALSO cEcA
 
 
-    lslmadd-color-scheme(2)le, lslmc-hash-eval(3)le, lslm$buffer-scheme(5)le, 
-    lslm$buffer-hilight(5)le, lslm$mode-line-scheme(5)le, lslm$scroll-bar-scheme(5)le, 
-    lslm$system(5)le. 
+    lslmadd-color-scheme(2)le, lslmc-hash-eval(3)le, lslm$buffer-hilight(5)le, 
+    lslm$buffer-scheme(5)le, lslm$line-flags(5)le, lslm$mode-line-scheme(5)le, 
+    lslm$scroll-bar-scheme(5)le, lslm$system(5)le. 
 ! 5 $search-path
 ! 5 $MEPATH
 cEcENAME cEcA
@@ -42812,6 +43870,93 @@ $a
 
 
     lslmnext-window(2)le, lslmdelete-other-windows(2)le, lslmcompare-windows(2)le. 
+! 5 $line-flags
+cEcENAME cEcA
+
+
+    $line-flags - Current buffer line flags 
+$a
+
+
+cEcESYNOPSIS cEcA
+
+
+    cD$line-flagscA cCbitmaskcA; No default 
+
+
+cEcEDESCRIPTION cEcA
+
+
+    The cD$line-flagscA variable is used to retrieve or define the behavioral 
+    settings of the current line in the buffer. This variable is a bit flag, 
+    the length of the bit flag is variable. In smaller builds of MicroEmacs 
+    where features have been disabled then the field is only 8 bits wide, in a 
+    normal build then the full 16 bits are present. 
+
+    cD0x0001cA 
+        The line has changed as a result of an edit and has not been 
+        re-displayed. The flag is cleared when the change has been displayed. 
+        This bit is read only. 
+
+    cD0x0002cA 
+        The line contains an alpha mark defined by lslmset-alpha-mark(2)le. This bit 
+        is read only. 
+
+    cD0x0004cA 
+        The line contains a narrow region, set by lslmnarrow-buffer(2)le. This bit 
+        is read only. 
+
+    cD0x0008cA 
+        The line contains some other type of anchor. This bit is read only. 
+
+    cD0x0010cA 
+        The line should be saved without a new-line or nil termination 
+        character. 
+
+    cD0x0020cA 
+        The line is a mark-up line used for annotation and should not be saved 
+        on a write operation. This bit permits lines in a buffer to be 
+        inserted for display or annotation purposes which are automatically 
+        discarded when the buffer is written to file. Mark-up lines are 
+        sometimes used by the buffer folding and collapsing to annotate folds. 
+
+    cD0x0040cA 
+        The line is protected. A protected line may be deleted or edited 
+        however it is not possible to split or join a protected line with any 
+        other line. This is used by the folding or collapse mechanisms to 
+        protect lsnarrow-buffer(2)lmnarrrowle regions from editing operations. 
+
+    cD0x0080-0x0800cA 
+        User defined. Users may use the upper most bits from left to right. 
+        JASSPA may use more bits in future releases which shall be consumed 
+        from the lower bits, right to left. 
+
+    cD0xf000cA 
+        The shifted lslm$line-scheme(5)le setting. A value of zero indicates that 
+        there is no line scheme in effect on the line. 
+
+    Where a bit flag is defined as read only then an attempt by the user to 
+    set a read-only bit then the bit setting is ignored, any remaining 
+    writable bits are set as requested. 
+
+
+cEcEEXAMPLE cEcA
+
+
+    Refer to the file cGfold.emfcA for examples of the use of cD$line-flagscA. 
+
+
+cEcENOTES cEcA
+
+
+    cD$line-flagscA was first introduced in MicroEmacs '04. 
+
+
+cEcESEE ALSO cEcA
+
+
+    lslmnarrow-buffer(2)le, lslmset-alpha-mark(2)le, lslmset-variable(2)le, lslm$buffer-hilight(5)le, 
+    lslm$buffer-scheme(5)le lslm$line-scheme(5)le. 
 ! 8 eaf
 cEcENAME cEcA
 
