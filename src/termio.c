@@ -31,7 +31,6 @@
  *     This is not related to the original termio.c in the MicroEMACS 3.8
  *     release, the functions in that file have either been moved or removed.
  */
-
 #include "emain.h"
 #include "eskeys.h"
 #ifndef _WIN32

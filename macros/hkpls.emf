@@ -1,34 +1,25 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2001-2002 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Author        : Jon Green
-;  Created       : Tue Sep 17 21:17:43 2002
-;  Last Modified : <021002.2236>
+; Created:     Tue Sep 17 2002
+; Synopsis:    PL/SQL mode
+; Authors:     Jon Green
+; Notes:       The natural indent is 3.
 ;
-;  Description   : PL/SQL mode
+;    If you want .sql files to be PL/SQL by default then add a new
+;    file hook at the end of your <user.emf> that re-defines the
+;    hook binding i.e.
 ;
-;  Notes         : The natural indent is 3.
+;       add-file-hook ".sql" fhook-pls
 ;
-; To Install
-; ----------
-; Add the following to you <user.emf> to install the appropriate hooks for
-; PL/SQL. Install this file into the MicroEmacs macros directory. The
-; hooks could be added to me.emf
+;    This will cause 'pls' to be invoked rather than the default 'sql' file.
 ;
-;  add-file-hook ".pls" fhook-pls
-;  -1 add-file-hook "-[*!]-[ \t]*pl/?sq?l?.*-[*!]-" fhook-pls  ; -*- pl/sql -*- or -*- pls -*-
-;
-; If you want .sql files to be PL/SQL by default then add a new
-; file hook at the end of your <user.emf> that re-defines the
-; hook binding i.e.
-;
-;  add-file-hook ".sql" fhook-pls
-;
-; This will cause 'pls' to be invoked rather than the default 'sql' file.
-;
-;  History
-;
-;  Copyright (c) 2002 Jasspa - www.jasspa.com
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Search for a proceedure:-
+;    ^proceedure[ \t\n]+[a-zA-Z0-9_]+[ \t]*([^)]*)[ \t\n]*is
+; Search for a declaration:-
+;    ^proceedure[ \t\n]+[a-zA-Z0-9_]+[ \t]*([^)]*)[ \t\n]*;
 
 define-macro fhook-pls
     set-variable $buffer-mask "luh1"
@@ -66,32 +57,21 @@ define-macro fhook-pls
     !endif
 !emacro
 
-;
-; Buffer hook. Modify the fill mode to left only. This ensures that we
-; always fill the line correctly irrespective of the mode of the caller.
-; The likes of centre and justified are not warrented in a TeX buffer.
-;
-0 define-macro bhook-pls
-    ; Save the other context. Restore local context
-    set-variable :otabwidth $tabwidth
-    set-variable $tabwidth  :tabwidth
-    set-variable :otabsize  $tabsize
-    set-variable $tabsize   :tabsize
-!emacro
-;
-0 define-macro ehook-pls
-    ; Restore existing context
-    set-variable :tabwidth $tabwidth
-    set-variable $tabwidth :otabwidth
-    set-variable :tabsize $tabsize
-    set-variable $tabsize :otabsize
-!emacro
-
 ; buffer-initialize variables
 set-variable .fhook-pls.name "PLS"
-set-variable .fhook-pls.setup &reg "/history" "fhook/pls" "ghix"
-set-variable .fhook-pls.setup-mask "aeghikmtux"
+set-variable .fhook-pls.setup &reg "/history" "fhook/pls" "bfhnopx"
+set-variable .fhook-pls.setup-mask "abefghikmtux"
 set-variable .fhook-pls.comment "|/*|*/|*| * | * |f|"
+set-variable .fhook-pls.command-flag  "|bo|bo|"
+set-variable .fhook-pls.command-name  "|comment-restyle|comment-restyle|"
+set-variable .fhook-pls.command-nbind "|||"
+set-variable .fhook-pls.command-kbind "|esc q|esc o|"
+set-variable .fhook-pls.command-desc  "|||"
+
+; Set up the folds for PL/SQL
+set-variable .fhook-pls.fold-open  "^[bB][eE][gG][iI][nN]"
+set-variable .fhook-pls.fold-close "^[eE][nN][dD]"
+set-variable .fhook-pls.fold-mopen "1"
 
 !if &and &sin "h" .fhook-pls.setup &band .hilight.flags 0x02
     !if &not &exist .hilight.pls
@@ -620,6 +600,33 @@ set-variable .fhook-pls.comment "|/*|*/|*| * | * |f|"
         hilight .hilight.c 1 "-[[:digit:]]+\\.[[:digit:]]+"  .scheme.constant
     !endif
 !endif
+
+;
+; Buffer hook. Modify the fill mode to left only. This ensures that we
+; always fill the line correctly irrespective of the mode of the caller.
+; The likes of centre and justified are not warrented in a TeX buffer.
+;
+0 define-macro bhook-pls
+    ; Save the other context. Restore local context
+    set-variable :otabwidth $tabwidth
+    set-variable $tabwidth  :tabwidth
+    set-variable :otabsize  $tabsize
+    set-variable $tabsize   :tabsize
+    !if &exist my-bhook-pls
+        my-bhook-pls
+    !endif
+!emacro
+;
+0 define-macro ehook-pls
+    ; Restore existing context
+    set-variable :tabwidth $tabwidth
+    set-variable $tabwidth :otabwidth
+    set-variable :tabsize $tabsize
+    set-variable $tabsize :otabsize
+    !if &exist my-ehook-pls
+        my-ehook-pls
+    !endif
+!emacro
 
 ml-write "[PL/SQL file hook loaded]"
 

@@ -1274,7 +1274,7 @@ osd .osd.user-start 110 "Sfh" "       C&ompany File : " 120
 osd .osd.user-start 120 "EtxHf" 120 .scheme.osd-entry "##############" 2 user-set-entry
 osd .osd.user-start 130 "Sfh" "            &Emulate : " 140
 osd .osd.user-start 140 "MtxmsfH" 140 .scheme.osd-entry "" .osd.user-sub user-setup-emulate
-osd .osd.user-start 150 "Sfh" "   MS Friendly Keys : "  160
+osd .osd.user-start 150 "Sfh" "   &MS Friendly Keys : "  160
 osd .osd.user-start 160 "Ctfhx" 160 "^^NY^^" 18 user-set-checkbox
 osd .osd.user-start 170 "Sfh" "     MS Shift Region : "  180
 osd .osd.user-start 180 "Ctfx" 180 "^^NY^^" 12 user-set-checkbox

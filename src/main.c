@@ -1411,7 +1411,8 @@ missing_arg:
                         un = argv[carg] + 2 ;
                     meStrcpy(evalResult,"MENAME=") ;
                     meStrcpy(evalResult+7,un) ;
-                    mePutenv(meStrdup(evalResult)) ;
+                    if((un=meStrdup(evalResult)) != NULL)
+                        mePutenv(un) ;
                     break;
                 }
 
@@ -1547,7 +1548,7 @@ missing_arg:
             bp = bp->next ;
         }
         /* send a 'make-current command to server */
-        TTsendClientServer("C:ME:2 popup-window\n") ;
+        TTsendClientServer((meUByte *) "C:ME:2 popup-window\n") ;
         meExit(0) ;
     }
     else if(userClientServer && clientMessage)

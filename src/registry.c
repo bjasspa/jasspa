@@ -357,15 +357,15 @@ regSave (meRegNode *rnp, meUByte *fname)
         flags |= meRWFLAG_BACKUP ;
     if(rnp->mode & meREGMODE_CRYPT)
     {
-        char s1[meFILEBUF_SIZE_MAX], *s2 ;
+        meUByte s1[meFILEBUF_SIZE_MAX], *s2 ;
         int len ;
         meCrypt(NULL,0);
-        strcpy(s1,getFileBaseName(fname)) ;
+        meStrcpy(s1,getFileBaseName(fname)) ;
         len = meStrlen(s1) + 1 ;
         meCrypt(s1,len) ;
         if((s2=meGetenv("MENAME")) == NULL)
-            s2 = "" ;
-        strcpy(s1+len,s2) ;
+            s2 = (meUByte *) "" ;
+        meStrcpy(s1+len,s2) ;
         meCrypt(s1,len+meStrlen(s1+len)+1) ;
         flags |= meRWFLAG_CRYPT ;
     }
@@ -671,15 +671,15 @@ regRead (meUByte *rname, meUByte *fname, int mode)
     hlp.prev = &hlp ;
     if(mode & meREGMODE_CRYPT)
     {
-        char s1[meFILEBUF_SIZE_MAX], *s2 ;
+        meUByte s1[meFILEBUF_SIZE_MAX], *s2 ;
         int len ;
         meCrypt(NULL,0);
-        strcpy(s1,getFileBaseName(fn)) ;
+        meStrcpy(s1,getFileBaseName(fn)) ;
         len = meStrlen(s1) + 1 ;
         meCrypt(s1,len) ;
         if((s2=meGetenv("MENAME")) == NULL)
-            s2 = "" ;
-        strcpy(s1+len,s2) ;
+            s2 = (meUByte *) "" ;
+        meStrcpy(s1+len,s2) ;
         meCrypt(s1,len+meStrlen(s1+len)+1) ;
         flags |= meRWFLAG_CRYPT ;
     }

@@ -71,7 +71,7 @@ set-variable .fhook-c.item-list-r6 "Clss \ecB\\1\ecA"
         hilight .hilight.c    0 "^\\w+\\}\\s (" .scheme.function
         hilight .hilight.c    0 "^\\w+\\}(" .scheme.function
     !endif
-    hilight .hilight.c    0 "^\\w+\\}:" .scheme.link
+    hilight .hilight.c    0 "^\\w+\\}:"    .scheme.link
     ; keywords
     hilight .hilight.c    1 "break"        .scheme.keyword
     hilight .hilight.c    1 "case"         .scheme.keyword
@@ -83,6 +83,7 @@ set-variable .fhook-c.item-list-r6 "Clss \ecB\\1\ecA"
     hilight .hilight.c    1 "goto"         .scheme.keyword
     hilight .hilight.c    1 "if"           .scheme.keyword
     hilight .hilight.c    1 "return"       .scheme.keyword
+    hilight .hilight.c    1 "sizeof"       .scheme.keyword
     hilight .hilight.c    1 "switch"       .scheme.keyword
     hilight .hilight.c    1 "while"        .scheme.keyword
     ; tokens
@@ -99,7 +100,6 @@ set-variable .fhook-c.item-list-r6 "Clss \ecB\\1\ecA"
     hilight .hilight.c    1 "short"        .scheme.type
     hilight .hilight.c    1 "signed"       .scheme.type
     hilight .hilight.c    1 "size_t"       .scheme.type
-    hilight .hilight.c    1 "sizeof"       .scheme.keyword
     hilight .hilight.c    1 "static"       .scheme.type
     hilight .hilight.c    1 "struct"       .scheme.type
     hilight .hilight.c    1 "typedef"      .scheme.type
