@@ -268,7 +268,7 @@ set-variable #l2 &ind &spr ".hilight.%stag" #l0
     0 indent #l1 3 20 #l2
     !if &exist .indent.javascript
         indent #l2 t "<script>" .indent.javascript
-        indent #l1 x "<script>" 2 .indent.javascript
+        indent #l1 x "<script>" t .indent.javascript
         indent #l2 t "<script\\s+language=\"?javascript[^>]*>" .indent.javascript
         indent #l1 x "<script\\s+language=\"?javascript[^>]*>" t .indent.javascript
         indent .indent.javascript w "</script>" -t 0
@@ -281,7 +281,8 @@ set-variable #l2 &ind &spr ".hilight.%stag" #l0
     indent #l2 t "</script>" 0
     indent #l1 o "</script>" -t
     ; Define the indentation tokens
-    indent #l1 e "\"" "\"" "\\"
+    indent #l1 e "<!--" "-->" ""
+    indent #l1 e "<!" ">" ""
     indent #l1 n "<" 1/2t
     indent #l1 n ">" -1/2t
     ;indent #l1 b "<" ">"
