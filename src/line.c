@@ -65,7 +65,7 @@ meLineShrink(meLine *lp, int newlen)
         meLine *nlp ;
         
         unused = meLineMallocSize(newlen+meLINE_BLOCK_SIZE) ;
-        if((nlp = realloc(lp,unused)) != lp)
+        if((nlp = meRealloc(lp,unused)) != lp)
         {
             meWindow *wp ;
             assert (nlp != NULL) ;

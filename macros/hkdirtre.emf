@@ -87,6 +87,8 @@ set-variable .fhook-dirtre.command-desc  "|Swap Browser \HWindows|\HClose File B
             change-buffer-name "*files*"
             buffer-bind-create "bio" "delete" "" file-browser-close
             buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
+        !elif &band .find-file.flags 1
+            0 dirlst-refresh
         !endif
     !endif
     goto-position "\x81"
@@ -157,6 +159,8 @@ set-variable .fhook-dirtre.command-desc  "|Swap Browser \HWindows|\HClose File B
                 change-buffer-name "*files*"
                 buffer-bind-create "bio" "delete" "" file-browser-close
                 buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
+            !elif &band .find-file.flags 1
+                0 dirlst-refresh
             !endif
         !endif
         goto-position "\x81"

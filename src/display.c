@@ -34,6 +34,7 @@
 
 #include "emain.h"
 #include "eskeys.h"		/* External Defintions */
+#include "evers.h"                      /* Version information */
 
 #ifdef _STDARG
 #include <stdarg.h>		/* Variable Arguments */
@@ -519,7 +520,7 @@ renderLine (meUByte *s1, int len, int wid)
         if (wid >= disLineSize)
         {
             disLineSize += 512 ;
-            disLineBuff = realloc(disLineBuff,disLineSize+32) ;
+            disLineBuff = meRealloc(disLineBuff,disLineSize+32) ;
             s2 = disLineBuff + wid ;
         }
         cc = *s1++ ;
@@ -2736,6 +2737,17 @@ mlwrite(int flags, meUByte *fmt, int arg)
     meUByte *mlwant;		/* what we want to be there	*/
     meUByte *s1 ;
 
+    if((alarmState & meALARM_INITIALIZED) == 0)
+    {
+        /* an mlwrite at this stage is fatal - usually a malloc failure,
+         * print message and exit */
+#ifdef _WIN32
+        MessageBox(NULL,(char *) fmt,ME_FULLNAME " '" meVERSION,MB_OK);
+#else
+        printf("%s\n",fmt) ;
+#endif
+        meExit(1) ;
+    }
     if(alarmState & meALARM_PIPED)
         goto mlwrite_exit ;
     if(clexec && (flags & MWCLEXEC))

@@ -153,16 +153,10 @@ define-macro ftp-connect
     buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
 !emacro
 
-0 define-macro toolbar-ftp-file-list-create
-    set-position "\x86"
-    find-buffer "*ftp-files*"
-    !if &seq $buffer-fname ""
-        set-variable :mouse-pick-1 void
-        set-variable :mouse-drop-1 void
-        set-variable :mouse-pick-3 void
-        set-variable :mouse-drop-3 ftp-connect
+0 define-macro ftp-console-tool
+    !if &sin "s" %ftp-flags
+        set-variable %ftp-flags &rep %ftp-flags "s" ""
     !endif
-    goto-position "\x86"
 !emacro
 
 0 define-macro ftp-regfile-entry

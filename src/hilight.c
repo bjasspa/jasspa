@@ -1459,18 +1459,18 @@ findToken(meHilight *root, meUByte *text, meUByte mode,
     if(dstPos >= disLineSize)                                                \
     {                                                                        \
         disLineSize += 512 ;                                                 \
-        disLineBuff = realloc(disLineBuff,disLineSize+32) ;                  \
+        disLineBuff = meRealloc(disLineBuff,disLineSize+32) ;                \
     }                                                                        \
     if(isDisplayable(cc))                                                    \
     {                                                                        \
         if(cc == ' ')                                                        \
             disLineBuff[dstPos++] = displaySpace ;                           \
-        else if(cc == meCHAR_TAB)                                             \
+        else if(cc == meCHAR_TAB)                                            \
             disLineBuff[dstPos++] = displayTab ;                             \
         else                                                                 \
             disLineBuff[dstPos++] = cc ;                                     \
     }                                                                        \
-    else if(cc == meCHAR_TAB)                                                 \
+    else if(cc == meCHAR_TAB)                                                \
     {                                                                        \
         int ii=get_tab_pos(dstPos) ;                                         \
         disLineBuff[dstPos++] = displayTab ;                                 \
@@ -1513,7 +1513,7 @@ hilSchemeChange (meHilight *node, HILDATA *hd)
         {
             hilBlockS += 20 ;
             /* add 2 to hilBlockS to allow for a double trunc-scheme change */
-            hilBlock = realloc(hilBlock, (hilBlockS+2)*sizeof(meSchemeSet)) ;
+            hilBlock = meRealloc(hilBlock, (hilBlockS+2)*sizeof(meSchemeSet)) ;
         }
         blkp = hilBlock + hd->noColChng + 1 ;
     }

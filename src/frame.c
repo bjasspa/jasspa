@@ -339,8 +339,9 @@ meFrameInit(meFrame *sibling)
     int ii, jj ;                        /* Local loop counters */
     
     /* add 2 to hilBlockS to allow for a double trunc-scheme change */
-    if((frame = calloc(1,sizeof(meFrame))) == NULL)
+    if((frame = meMalloc(sizeof(meFrame))) == NULL)
         return NULL ;
+    memset(frame,0,sizeof(meFrame)) ;
     
 #if MEOPT_FRAME
     if(sibling != NULL)
@@ -384,12 +385,13 @@ meFrameInit(meFrame *sibling)
     if(meFrameTermInit(frame,sibling) <= 0)
         return NULL ;
     
-    if(((frame->video.lineArray = calloc(frame->depthMax,sizeof(meVideoLine))) == NULL) ||
+    if(((frame->video.lineArray = meMalloc(frame->depthMax * sizeof(meVideoLine))) == NULL) ||
        ((frame->mlLine = meLineMalloc(frame->widthMax,0)) == NULL) ||
-       ((frame->mlLineStore = malloc(frame->widthMax+1)) == NULL))
+       ((frame->mlLineStore = meMalloc(frame->widthMax+1)) == NULL))
         return NULL ;
 
     /* Initialise the virtual video structure. */
+    memset(frame->video.lineArray,0,frame->depthMax*sizeof(meVideoLine)) ;
     frame->video.lineArray[frame->depth].flag = VFMESSL ;
     frame->video.lineArray[frame->depth].line = frame->mlLine ;
     /* Reset the video list block */
@@ -409,11 +411,11 @@ meFrameInit(meFrame *sibling)
      *
      * Allocate lines in the frame store to hold the video information.
      */
-    if ((frame->store = (meFrameLine *) malloc (sizeof (meFrameLine) * frame->depthMax)) == NULL)
+    if((frame->store = meMalloc(sizeof(meFrameLine) * frame->depthMax)) == NULL)
         return NULL ;
     for (flp = frame->store, ii = 0; ii < frame->depthMax; ii++, flp++)
     {
-        if ((flp->scheme = malloc(frame->widthMax*(sizeof(meUByte)+sizeof(meStyle)))) == NULL)
+        if ((flp->scheme = meMalloc(frame->widthMax*(sizeof(meUByte)+sizeof(meStyle)))) == NULL)
             return NULL ;
         flp->text = (meUByte *) (flp->scheme+frame->widthMax) ;
         /* Fill with data */
@@ -439,9 +441,9 @@ meFrameInitWindow(meFrame *frame, meBuffer *buffer)
     meWindow *wp;
     meLine   *lp, *off;
     
-    if(((wp = (meWindow *) meMalloc(sizeof(meWindow))) == NULL) ||
-       ((lp =meLineMalloc(frame->widthMax,0)) == NULL) ||
-       ((off=meLineMalloc(frame->widthMax,0)) == NULL))
+    if(((wp = meMalloc(sizeof(meWindow))) == NULL) ||
+       ((lp = meLineMalloc(frame->widthMax,0)) == NULL) ||
+       ((off= meLineMalloc(frame->widthMax,0)) == NULL))
         return meFALSE ;
     
     frame->bufferCur   = buffer ;              /* Make this current    */

@@ -361,7 +361,7 @@ regSave (meRegNode *rnp, meUByte *fname)
         meStrcpy(s1,getFileBaseName(fname)) ;
         len = meStrlen(s1) + 1 ;
         meCrypt(s1,len) ;
-        if((s2=meGetenv("MENAME")) == NULL)
+        if((s2=meUserName) == NULL)
             s2 = (meUByte *) "" ;
         meStrcpy(s1+len,s2) ;
         meCrypt(s1,len+meStrlen(s1+len)+1) ;
@@ -675,7 +675,7 @@ regRead (meUByte *rname, meUByte *fname, int mode)
         meStrcpy(s1,getFileBaseName(fn)) ;
         len = meStrlen(s1) + 1 ;
         meCrypt(s1,len) ;
-        if((s2=meGetenv("MENAME")) == NULL)
+        if((s2=meUserName) == NULL)
             s2 = (meUByte *) "" ;
         meStrcpy(s1+len,s2) ;
         meCrypt(s1,len+meStrlen(s1+len)+1) ;

@@ -873,12 +873,6 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             meStrrep(&flNextLineTemp,vvalue) ;
             break ;
 #endif
-        case EVLOGNAME:
-            meStrrep(&loginName,vvalue);
-            break;
-        case EVLOGHOME:
-            meStrrep(&loginHome,vvalue);
-            break;
 #if MEOPT_RCS
         case EVRCSFILE:
             meStrrep(&rcsFile,vvalue) ;
@@ -899,6 +893,9 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             meStrrep(&rcsUeStr,vvalue) ;
             break ;
 #endif
+        case EVUSERPATH:
+            meStrrep(&meUserPath,vvalue);
+            break;
         case EVSCROLL:
             scrollFlag = (meUByte) meAtoi(vvalue) ;
             break ;
@@ -994,7 +991,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                 break ;
             }
         default:
-            /* default includes EVCBUFBACKUP EVMOUSEX EVMOUSEY EVSTATUS EVMACHINE 
+            /* default includes EVUSERNAME EVCBUFBACKUP EVMOUSEX EVMOUSEY EVSTATUS EVMACHINE 
              * EVSYSRET EVUSEX, EVVERSION, EVWMDLINE, EVEOBLINE or system dependant vars
              * where this isn't the system (e.g. use-x) which cant be set
              */
@@ -1022,34 +1019,34 @@ gtenv(meUByte *vname)   /* vname   name of environment variable to retrieve */
     switch(ii)
     {
         /* Fetch the appropriate value */
-    case EVAUTOTIME:    return (meItoa(autotime));
-    case EVKEPTVERS:    return (meItoa(keptVersions));
+    case EVAUTOTIME:    return meItoa(autotime);
+    case EVKEPTVERS:    return meItoa(keptVersions);
     case EVBOXCHRS:     return boxChars;
 #if MEOPT_MOUSE
-    case EVDELAYTIME:   return (meItoa(delaytime));
-    case EVREPEATTIME:  return (meItoa(repeattime));
+    case EVDELAYTIME:   return meItoa(delaytime);
+    case EVREPEATTIME:  return meItoa(repeattime);
 #endif
 #if MEOPT_CALLBACK
-    case EVIDLETIME:    return (meItoa(idletime));
+    case EVIDLETIME:    return meItoa(idletime);
 #endif
     case EVMODELINE:    return modeLineStr ;
     case EVMACHINE:     return machineName ;
-    case EVPROGNM:      return progName ;
-    case EVCURSORX:     return (meItoa(frameCur->mainColumn));
-    case EVCURSORY:     return (meItoa(frameCur->mainRow));
+    case EVPROGNM:      return meProgName ;
+    case EVCURSORX:     return meItoa(frameCur->mainColumn);
+    case EVCURSORY:     return meItoa(frameCur->mainRow);
 #if MEOPT_MOUSE
-    case EVMOUSE:       return (meItoa(meMouseCfg));
-    case EVMOUSEPOS:    return (meItoa(mouse_pos));
-    case EVMOUSEX:      return (meItoa(mouse_X));
-    case EVMOUSEY:      return (meItoa(mouse_Y));
+    case EVMOUSE:       return meItoa(meMouseCfg);
+    case EVMOUSEPOS:    return meItoa(mouse_pos);
+    case EVMOUSEX:      return meItoa(mouse_X);
+    case EVMOUSEY:      return meItoa(mouse_Y);
 #endif
-    case EVSYSTEM:      return (meItoa(meSystemCfg));
+    case EVSYSTEM:      return meItoa(meSystemCfg);
 #if MEOPT_WORDPRO
     case EVFILLBULLET:  return fillbullet;
-    case EVFILLBULLETLEN:return (meItoa(fillbulletlen));
-    case EVFILLCOL:     return (meItoa(fillcol));
+    case EVFILLBULLETLEN:return meItoa(fillbulletlen);
+    case EVFILLCOL:     return meItoa(fillcol);
     case EVFILLEOS:     return filleos;
-    case EVFILLEOSLEN:  return (meItoa(filleoslen));
+    case EVFILLEOSLEN:  return meItoa(filleoslen);
     case EVFILLIGNORE:  return fillignore;
     case EVFILLMODE:
         evalResult[0] = fillmode ;
@@ -1150,43 +1147,43 @@ handle_namesvar:
                      (int) (tp.tv_usec/1000));/* Milliseconds */
             return evalResult;
         }
-    case EVRANDOM:      return (meItoa(rand()));
+    case EVRANDOM:      return meItoa(rand());
 #endif
-    case EVFRMDPTH:     return (meItoa(frameCur->depth + 1));
+    case EVFRMDPTH:     return meItoa(frameCur->depth + 1);
 #if MEOPT_EXTENDED
-    case EVFRMID:       return (meItoa(frameCur->id));
+    case EVFRMID:       return meItoa(frameCur->id);
 #endif
-    case EVFRMWDTH:     return (meItoa(frameCur->width));
-    case EVABSCOL:      return (meItoa(getcwcol()));
-    case EVCURCOL:      return (meItoa(frameCur->windowCur->dotOffset));
-    case EVCURLINE:     return (meItoa(frameCur->windowCur->dotLineNo+1));
+    case EVFRMWDTH:     return meItoa(frameCur->width);
+    case EVABSCOL:      return meItoa(getcwcol());
+    case EVCURCOL:      return meItoa(frameCur->windowCur->dotOffset);
+    case EVCURLINE:     return meItoa(frameCur->windowCur->dotLineNo+1);
 #if MEOPT_EXTENDED
-    case EVABSLINE:     return (meItoa(windowGotoAbsLine(-1)+1));
-    case EVEOBLINE:     return (meItoa(frameCur->bufferCur->lineCount+1));
+    case EVABSLINE:     return meItoa(windowGotoAbsLine(-1)+1);
+    case EVEOBLINE:     return meItoa(frameCur->bufferCur->lineCount+1);
     case EVBMDLINE:
         if(frameCur->bufferCur->modeLineStr == NULL)
             return modeLineStr ;
         return frameCur->bufferCur->modeLineStr ;
-    case EVWXSCROLL:    return (meItoa(frameCur->windowCur->horzScrollRest));
-    case EVWXCLSCROLL:  return (meItoa(frameCur->windowCur->horzScroll));
-    case EVWYSCROLL:    return (meItoa(frameCur->windowCur->vertScroll));
-    case EVWMDLINE:     return (meItoa(frameCur->windowCur->frameRow+frameCur->windowCur->textDepth));
-    case EVWSBAR:       return (meItoa(frameCur->windowCur->frameColumn+frameCur->windowCur->textWidth));
-    case EVWFLAGS:      return (meItoa(frameCur->windowCur->flags));
-    case EVWID:         return (meItoa(frameCur->windowCur->id));
-    case EVWDEPTH:      return (meItoa(frameCur->windowCur->textDepth));
-    case EVWWIDTH:      return (meItoa(frameCur->windowCur->textWidth));
+    case EVWXSCROLL:    return meItoa(frameCur->windowCur->horzScrollRest);
+    case EVWXCLSCROLL:  return meItoa(frameCur->windowCur->horzScroll);
+    case EVWYSCROLL:    return meItoa(frameCur->windowCur->vertScroll);
+    case EVWMDLINE:     return meItoa(frameCur->windowCur->frameRow+frameCur->windowCur->textDepth);
+    case EVWSBAR:       return meItoa(frameCur->windowCur->frameColumn+frameCur->windowCur->textWidth);
+    case EVWFLAGS:      return meItoa(frameCur->windowCur->flags);
+    case EVWID:         return meItoa(frameCur->windowCur->id);
+    case EVWDEPTH:      return meItoa(frameCur->windowCur->textDepth);
+    case EVWWIDTH:      return meItoa(frameCur->windowCur->textWidth);
 #endif
     case EVWINCHRS:     return windowChars;
     case EVCBUFBACKUP:
         if((frameCur->bufferCur->fileName == NULL) || createBackupName(evalResult,frameCur->bufferCur->fileName,'~',0))
-            return (meUByte *) "" ;
+            return emptym ;
 #ifndef _DOS
         if(!(meSystemCfg & meSYSTEM_DOSFNAMES) && (keptVersions > 0))
             meStrcpy(evalResult+meStrlen(evalResult)-1,".~0~") ;
 #endif
         return evalResult ;
-    case EVCBUFNAME:    return (frameCur->bufferCur->name);
+    case EVCBUFNAME:    return frameCur->bufferCur->name ;
 #ifdef _UNIX
     case EVBUFFMOD:
         sprintf((char *)evalResult,"0%o",(int) frameCur->bufferCur->stats.stmode);
@@ -1195,21 +1192,21 @@ handle_namesvar:
         sprintf((char *)evalResult,"0%o",(int) meUmask);
         return evalResult ;
 #else
-    case EVBUFFMOD:     return (meItoa(frameCur->bufferCur->stats.stmode));
-    case EVGLOBFMOD:    return (meItoa(meUmask));
+    case EVBUFFMOD:     return meItoa(frameCur->bufferCur->stats.stmode);
+    case EVGLOBFMOD:    return meItoa(meUmask);
 #endif
-    case EVCFNAME:      return ((frameCur->bufferCur->fileName == NULL) ? (meUByte *)"":frameCur->bufferCur->fileName);
+    case EVCFNAME:      return mePtos(frameCur->bufferCur->fileName) ;
 #if MEOPT_DEBUGM
-    case EVDEBUG:       return (meItoa(macbug));
+    case EVDEBUG:       return meItoa(macbug);
 #endif
-    case EVSTATUS:      return (meLtoa(cmdstatus));
+    case EVSTATUS:      return meLtoa(cmdstatus);
 #if MEOPT_TIMSTMP
     case EVTIMSTMP:     return time_stamp ;
 #endif
-    case EVTABSIZE:     return (meItoa(tabsize));
-    case EVTABWIDTH:    return (meItoa(tabwidth));
-    case EVSRCHPATH:    return searchPath ;
-    case EVHOMEDIR:     return homedir ;
+    case EVTABSIZE:     return meItoa(tabsize);
+    case EVTABWIDTH:    return meItoa(tabwidth);
+    case EVSRCHPATH:    return mePtos(searchPath) ;
+    case EVHOMEDIR:     return mePtos(homedir) ;
 #if MEOPT_CFENCE
     case EVCBRACE:      return meItoa(braceIndent) ;
     case EVCCASE:       return meItoa(caseIndent) ;
@@ -1292,22 +1289,22 @@ hook_jump:
             *ss = '\0' ;
             return evalResult ;
         }
-    case EVFILEIGNORE:  return fileIgnore ;
+    case EVFILEIGNORE:  return mePtos(fileIgnore) ;
 #endif
 #if MEOPT_FILENEXT
-    case EVFILETEMP:    return flNextFileTemp ;
-    case EVLINETEMP:    return flNextLineTemp ;
+    case EVFILETEMP:    return mePtos(flNextFileTemp) ;
+    case EVLINETEMP:    return mePtos(flNextLineTemp) ;
 #endif
-    case EVLOGNAME:     return loginName ;
-    case EVLOGHOME:     return loginHome ;
 #if MEOPT_RCS
-    case EVRCSFILE:     return rcsFile ;
-    case EVRCSCOCOM:    return rcsCoStr ;
-    case EVRCSCOUCOM:   return rcsCoUStr ;
-    case EVRCSCICOM:    return rcsCiStr ;
-    case EVRCSCIFCOM:   return rcsCiFStr ;
-    case EVRCSUECOM:    return rcsUeStr ;
+    case EVRCSFILE:     return mePtos(rcsFile) ;
+    case EVRCSCOCOM:    return mePtos(rcsCoStr) ;
+    case EVRCSCOUCOM:   return mePtos(rcsCoUStr) ;
+    case EVRCSCICOM:    return mePtos(rcsCiStr) ;
+    case EVRCSCIFCOM:   return mePtos(rcsCiFStr) ;
+    case EVRCSUECOM:    return mePtos(rcsUeStr) ;
 #endif
+    case EVUSERNAME:    return mePtos(meUserName) ;
+    case EVUSERPATH:    return mePtos(meUserPath) ;
     case EVSCROLL:      return meItoa(scrollFlag) ;
     }
     if((ret = meGetenv(vname)) == NULL)
@@ -1468,7 +1465,7 @@ getval(meUByte *tkn)   /* find the value of a token */
         }
         else if(tkn[1] == 'h')
         {
-            meUByte buff[meBUF_SIZE_MAX], *ss ;
+            meUByte buff[meBUF_SIZE_MAX] ;
             int ht, hn ;
             
             /* get the history type */
@@ -1482,9 +1479,7 @@ getval(meUByte *tkn)   /* find the value of a token */
                 return abortm ;
             hn = meAtoi(buff) ;
             
-            if((ss = strHist[(ht*meHISTORY_SIZE)+hn]) == NULL)
-                ss = emptym ;
-            return ss ;
+            return mePtos(strHist[(ht*meHISTORY_SIZE)+hn]) ;
         }
         else if(tkn[1] == 'y')
         {
@@ -3107,9 +3102,6 @@ showVariable(meBuffer *bp, meUByte prefix, meUByte *name, meUByte *value)
 {
     meUByte buf[meBUF_SIZE_MAX+meSBUF_SIZE_MAX+16] ;
     int len;
-    
-    if (value == NULL)
-        value = errorm ;
     
     len = sprintf ((char *) buf, "    %c%s ", prefix, name);
     while (len < 35)

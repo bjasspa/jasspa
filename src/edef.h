@@ -48,7 +48,7 @@ extern  mePosition *position ;          /* Position stack head          */
 #endif
 extern  meUShort   hilBlockS ;          /* Hilight - HilBlock array siz */
 extern  meInt      cursorState ;        /* Current state of cursor      */
-extern  meUByte   *progName ;           /* the program name (argv[0])   */
+extern  meUByte   *meProgName ;           /* the program name (argv[0])   */
 extern  meUByte  **ModeLineStr ;        /* modeline line format         */
 extern  meUByte    orgModeLineStr[] ;   /* original modeline line format*/
 extern  meUByte   *modeLineStr ;        /* current modeline format      */
@@ -194,10 +194,11 @@ extern meIPipe  *ipipes ;               /* list of all the current pipes*/
 extern int       noIpipes ;             /* count of all the cur pipes   */
 #endif
 
-#define meALARM_DIE       0x01
-#define meALARM_WINSIZE   0x02
-#define meALARM_VARIABLE  0x04
-#define meALARM_PIPED     0x10
+#define meALARM_DIE          0x01
+#define meALARM_WINSIZE      0x02
+#define meALARM_VARIABLE     0x04
+#define meALARM_INITIALIZED  0x08
+#define meALARM_PIPED        0x10
 
 extern  meUByte   alarmState;           /* Auto-save alarm time         */
 extern  meInt     startTime;            /* me start time. used as offset*/
@@ -309,8 +310,8 @@ extern meUByte    BhelpN[];
 extern meUByte   *fileIgnore ;
 #endif
 
-extern meUByte  *loginName ;
-extern meUByte  *loginHome ;
+extern meUByte   *meUserName ;
+extern meUByte   *meUserPath ;
 
 #if MEOPT_FILENEXT
 extern meUByte   *flNextFileTemp ;
@@ -464,7 +465,7 @@ meColor   noColors=0 ;                  /* No defined colours           */
 meInt     styleTableSize=2 ;            /* Size of the style table      */
 meSchemeSet *hilBlock;                  /* Hilighting style change      */
 meInt     cursorState=0 ;               /* Current state of cursor      */
-meUByte  *progName=NULL ;               /* the program name (argv[0])   */
+meUByte  *meProgName=NULL ;               /* the program name (argv[0])   */
 meUByte   orgModeLineStr[]="%s%r%u " ME_SHORTNAME " (%e) - %l %b (%f) ";
 meUByte  *modeLineStr=orgModeLineStr;   /* current modeline format      */
 meInt     autotime=300 ;                /* auto save time in seconds    */
@@ -757,8 +758,8 @@ meUByte   BserverN[] = "*server*" ;
 meUByte  *fileIgnore=NULL ;
 #endif
 
-meUByte  *loginName=NULL ;
-meUByte  *loginHome=NULL ;
+meUByte  *meUserName=NULL ;
+meUByte  *meUserPath=NULL ;
 
 #if MEOPT_FILENEXT
 meUByte  *flNextFileTemp=NULL ;

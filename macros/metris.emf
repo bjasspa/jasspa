@@ -306,7 +306,7 @@ set-variable %met-level   6
     !endif
     !if &gre :met-score %met-hiscore
         -1 buffer-mode "usr3"
-        set-variable #l0 &spr "%d by %s" :met-score $MENAME
+        set-variable #l0 &spr "%d by %s" :met-score $user-name
         find-file %met-file
         beginning-of-buffer
         !force search-forward "%met-hiscore"

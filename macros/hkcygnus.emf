@@ -10,7 +10,7 @@
 ;     This file contains the necessary hooks to run a Cygnus
 ;     window inside the MicroEmacs editor. The user variable
 ;     %cygnus-bin-path must be set to the cygnus bin directory,
-;     this should be saved in the user setup file ($MENAME.emf),
+;     this should be saved in the user setup file ($user-name.emf),
 ;     this will typically be:
 ;                  
 ;         set-variable %cygnus-bin-path "c:/cygnus/b19/H-i386-cygwin32/bin"

@@ -38,6 +38,7 @@
 #include <assert.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <pwd.h>
 #include <time.h>
 #include <sys/stat.h>
 #include <sys/time.h>
@@ -387,6 +388,183 @@ static meUShort mouseKeys[8] = { 0, 1, 2, 3, 4, 5 } ;
 #endif
 
 
+void
+meSetupPathsAndUser(char *progname)
+{
+    /* Pre-built search path, this is a path built into the executable. The
+     * installation root path of the installation macros searched in the order
+     * specified. Once a directory has been located then it is used as the
+     * default path. */
+#ifndef _SEARCH_PATH
+#define _SEARCH_PATH _DEFAULT_SEARCH_PATH
+#endif
+    static meUByte lpath[] = _SEARCH_PATH ;
+    struct stat dotstat, pwdstat;
+    struct passwd *pwdp;            /* Password structure entry */
+    meUByte *ss, buff[meBUF_SIZE_MAX] ;
+    int ii, ll, gotUserPath ;
+    
+    /* If PWD is accurate, use it instead of calling gwd.
+     * This solves problems with bad ~/ as the shell will
+     * store as /user/.... etc.
+     */
+    if(((ss = meGetenv("PWD")) != NULL) &&
+       (ss[0] == DIR_CHAR) && (stat((char *)ss,&pwdstat) == 0) &&
+       (stat(".", &dotstat) == 0) && (dotstat.st_ino == pwdstat.st_ino) &&
+       (dotstat.st_dev == pwdstat.st_dev))
+    {
+        meUByte cc, *dd ;
+        
+        ll = meStrlen(ss) ;
+        curdir = dd = meMalloc(ll+2) ;
+        while((cc=*ss++) != '\0')
+            *dd++ = cc ;
+        if(dd[-1] != DIR_CHAR)
+            *dd++ = DIR_CHAR ;
+        *dd = 0 ;
+    }
+    else
+        curdir = gwd(0) ;
+    if(curdir == NULL)
+        /* not yet initialised so mlwrite will exit */
+        mlwrite(MWCURSOR|MWABORT|MWWAIT,(meUByte *)"Failed to get cwd\n") ;
+    
+    /* setup the $progname make it an absolute path. */
+    if(executableLookup((meUByte *) progname,evalResult))
+        meProgName = meStrdup(evalResult) ;
+    else
+    {
+#ifdef _ME_FREE_ALL_MEMORY
+        /* stops problems on exit */
+        meProgName = meStrdup(progname) ;
+#else
+        meProgName = (meUByte *)progname ;
+#endif
+    }
+    
+    if((meUserName == NULL) &&
+       ((ss = meGetenv ("MENAME")) != NULL) && (ss[0] != '\0'))
+        meUserName = meStrdup(ss) ;
+    
+    /* Get the user name and home directory from the password file. */
+    pwdp = getpwuid (meUid);        /* Get the password entry */
+    if (pwdp != NULL)
+    {
+        /* Copy out the string information we need and initialise the
+         * string variables. */
+        if(pwdp->pw_dir != NULL)
+            homedir = meStrdup((meUByte *) pwdp->pw_dir) ; 
+        if((pwdp->pw_name != NULL) && (meUserName == NULL))
+            meUserName = meStrdup((meUByte *) pwdp->pw_name) ; 
+        /* Shut down the password retrieval and allow system to relinquish
+         * any resource it may have cached. */
+        endpwent() ;
+    }
+    
+    /* If no name yet then set to default 'user'. */
+    if(meUserName == NULL)
+        meUserName = meStrdup((meUByte *) "user") ;
+    
+    /* get the users home directory, user path and search path */
+    if((homedir == NULL) &&
+       (((ss = meGetenv("HOME")) != NULL) && (ss[0] != '\0')))
+        homedir = meStrdup(ss) ;
+
+    if(((ss = meGetenv ("MEUSERPATH")) != NULL) && (ss[0] != '\0'))
+        meUserPath = meStrdup(ss) ;
+    
+    if(((ss = meGetenv ("MEPATH")) != NULL) && (ss[0] != '\0'))
+    {
+        /* explicit path set by the user, don't need to look at anything else */
+        searchPath = meStrdup(ss) ;
+        /* we just need to add the $user-path to the front */
+        if(meUserPath != NULL)
+        {
+            /* check that the user path is first in the search path, if not add it */
+            ll = meStrlen(meUserPath) ;
+            if(meStrncmp(searchPath,meUserPath,ll) ||
+               ((searchPath[ll] != '\0') && (searchPath[ll] != mePATH_CHAR)))
+            {
+                /* meMalloc will exit if it fails as ME has not finished initialising */
+                ss = meMalloc(ll + meStrlen(searchPath) + 2) ;
+                meStrcpy(ss,meUserPath) ;
+                ss[ll] = mePATH_CHAR ;
+                meStrcpy(ss+ll+1,searchPath) ;
+                meFree(searchPath) ;
+                searchPath = ss ;
+            }
+        }
+    }
+    else
+    {
+        /* construct the search-path */
+        /* put the $user-path first */
+        if((gotUserPath = (meUserPath != NULL)))
+            meStrcpy(evalResult,meUserPath) ;
+        else
+            evalResult[0] = '\0' ;
+        ll = meStrlen(evalResult) ;
+        
+        /* look for the ~/.jasspa directory */
+        if(homedir != NULL)
+        {
+            meStrcpy(buff,homedir) ;
+            meStrcat(buff,"/.jasspa") ;
+            if(((ll = mePathAddSearchPath(ll,evalResult,buff,&gotUserPath)) > 0) && !gotUserPath)
+                /* as this is the user's area, use this directory unless we find
+                 * a .../<$user-name>/ directory */
+                gotUserPath = -1 ;
+        }
+        
+        /* Get the system path of the installed macros. Use $MEINSTPATH as the
+         * MicroEmacs standard macros */
+        if((((ss = meGetenv ("MEINSTALLPATH")) != NULL) && (ss[0] != '\0')) ||
+           (((ss = lpath) != NULL) && (ss[0] != '\0')))
+        {
+            meStrcpy(buff,ss) ;
+            ll = mePathAddSearchPath(ll,evalResult,buff,&gotUserPath) ;
+        }
+        
+        /* also check for directories in the same location as the binary */
+        if((meProgName != NULL) && ((ss=meStrrchr(meProgName,DIR_CHAR)) != NULL))
+        {
+            ii = (((size_t) ss) - ((size_t) meProgName)) ;
+            meStrncpy(buff,meProgName,ii) ;
+            buff[ii] = '\0' ;
+            ll = mePathAddSearchPath(ll,evalResult,buff,&gotUserPath) ;
+        }
+        if(!gotUserPath && (homedir != NULL))
+        {
+            /* We have not found a user path so set ~/ as the user-path
+             * as this is the best place for macros to write to etc. */
+            meStrcpy(buff,homedir) ;
+            if(ll)
+            {
+                ii = meStrlen(buff) ;
+                buff[ii++] = mePATH_CHAR ;
+                meStrcpy(buff+ii,evalResult) ;
+            }
+            searchPath = meStrdup(buff) ;
+        }
+        else if(ll > 0)
+            searchPath = meStrdup(evalResult) ;
+    }
+    if(searchPath != NULL)
+    {
+        if(meUserPath == NULL)
+        {
+            /* no user path yet, take the first path from the search-path, this
+             * should be a sensible directory to use */
+            if((ss = meStrchr(searchPath,mePATH_CHAR)) != NULL)
+                *ss = '\0' ;
+            meUserPath = meStrdup(searchPath) ;
+            if(ss != NULL)
+                *ss = mePATH_CHAR ;
+        }
+    }
+}
+
+    
 void
 sigAlarm(SIGNAL_PROTOTYPE)
 {
@@ -1780,7 +1958,7 @@ special_bound:
                     if((meSystemCfg & meSYSTEM_NOEMPTYANK) && (len == 0))
                         len++ ;
                     if((dataLen <= len) &&
-                       ((ss = malloc(len+1)) != NULL))
+                       ((ss = meMalloc(len+1)) != NULL))
                     {
                         meNullFree(data) ;
                         data = ss ;
@@ -2331,7 +2509,7 @@ TCAPaddColor(meUByte index, meUByte r, meUByte g, meUByte b)
 
     if(noColors <= index)
     {
-        colTable = (meUInt *) realloc(colTable,(index+1)*sizeof(meUInt)) ;
+        colTable = (meUInt *) meRealloc(colTable,(index+1)*sizeof(meUInt)) ;
         memset(colTable+noColors,0, (index-noColors+1)*sizeof(meUInt)) ;
         noColors = index+1 ;
     }
@@ -2668,7 +2846,7 @@ XTERMcreateWindow(meUShort width, meUShort depth)
     Pixmap iconPixmap ;
     XWMHints wmHints ;
     
-    if((frameData = malloc(sizeof(meFrameData))) == NULL)
+    if((frameData = meMalloc(sizeof(meFrameData))) == NULL)
         return NULL ;
     
     sizeHints.x = TTdefaultPosX ;
@@ -3070,10 +3248,8 @@ XTERMaddColor(meColor index, meUByte r, meUByte g, meUByte b)
 
     if(noColors <= index)
     {
-        colTable = (meUInt *) realloc(colTable,
-                                             (index+1)*sizeof(meUInt)) ;
-        memset(colTable+noColors,0,
-               (index-noColors+1)*sizeof(meUInt)) ;
+        colTable = meRealloc(colTable,(index+1)*sizeof(meUInt)) ;
+        memset(colTable+noColors,0,(index-noColors+1)*sizeof(meUInt)) ;
         noColors = index+1 ;
     }
     col.red   = ((meUShort) r) << 8 ;
@@ -3091,7 +3267,7 @@ XTERMaddColor(meColor index, meUByte r, meUByte g, meUByte b)
         {
             /* printf("Warning: Failed to allocate colors, looking up closest\n") ;*/
             if(((noCells = DisplayCells(mecm.xdisplay,xscreen)) > 0) &&
-               ((cells = malloc(noCells*3*sizeof(meUByte))) != NULL))
+               ((cells = meMalloc(noCells*3*sizeof(meUByte))) != NULL))
             {
                 ii = noCells ;
                 ss = cells ;
@@ -3768,7 +3944,7 @@ putenv (const char *string)
     
     /* The variable value does not exist in the environment, make a new entry.
      * First re-size the environment. */
-    if ((p = realloc (meEnviron, (ii+2) * sizeof (char *))) == NULL)
+    if ((p = meRealloc (meEnviron, (ii+2) * sizeof (char *))) == NULL)
         return -1;
     
     /* Inherit the new environment and add the new variable. */

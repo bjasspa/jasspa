@@ -2356,21 +2356,22 @@ use_contcomm:
      * So restyling the above should not change the position of the comments.
      */
     else if ((cc == '/') && 
-             (meLineGetChar(frameCur->windowCur->dotLine,
-                            frameCur->windowCur->dotOffset+1) == '/'))
+             (((ii=meLineGetChar(frameCur->windowCur->dotLine,
+                                frameCur->windowCur->dotOffset+1)) == '/') ||
+              (ii == '*')))
     {
         /* We are in a C++ comment, check the previous line to see if this
          * comments is aligned with the previous line, if it is then we must
          * keep the same alignment. */
         frameCur->windowCur->dotLine = meLineGetPrev(frameCur->windowCur->dotLine) ;
         frameCur->windowCur->dotOffset = 0 ;
-        if (setccol (curInd))            /* Move to position on prev line */
+        if (setccol(curInd))             /* Move to position on prev line */
         {
             /* Checkout the character. */
             if ((meLineGetChar(frameCur->windowCur->dotLine,
                                frameCur->windowCur->dotOffset+0) == '/') &&
                 (meLineGetChar(frameCur->windowCur->dotLine,
-                               frameCur->windowCur->dotOffset+1) == '/'))
+                               frameCur->windowCur->dotOffset+1) == ii))
             {
                 /* Matched our position with the current position, use this as
                  * the indent. */
