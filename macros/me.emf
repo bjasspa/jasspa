@@ -37,6 +37,8 @@
     !endif
 !endif
 !if &seq &find $MENAME ".erf" "ERROR"
+    ; Save the old user name for newuser setup.
+    set-variable %mename $MENAME 
     set-variable $MENAME "guest"
     read-history $MENAME
     ml-write "Welcome to MicroEmacs. ESC ? for help."
