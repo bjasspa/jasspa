@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Steven Phillips
 ;  Created       : 1998
-;  Last Modified : <000929.1922>
+;  Last Modified : <010109.1545>
 ;
 ;  Description   : Command-line macro for creating a C tags file
 ;
@@ -171,8 +171,14 @@ set-char-mask "1" ":~"
             !return
         !else
             backward-char
-            backward-word
-            ctags-add-tag
+            search-backward "[a-zA-Z:,;(){}[]"
+            !if &not &sin @s0 ":,;(){}["
+                forward-char
+                backward-word
+                ctags-add-tag
+            !else
+                forward-char
+            !endif
             ctags-move-to-next "[,;(]"
             !if &seq @s0 "("
                 backward-char
@@ -198,7 +204,7 @@ set-char-mask "1" ":~"
     set-variable #l6 ""
     beginning-of-buffer
     !while 1
-        !force 0 ctags-move-to-next "['\"=,;({]\\|\\<enum\\s-+\\(\\w+\\)?\\s-*{\\|\\<typedef\\>\\|\\<struct\\s-+\\w+\\s-*[{;]\\|\\<class\\s-+\\w+"
+        !force 0 ctags-move-to-next "['\"=,;({]\\|\\<enum\\s-+\\(\\w+\\)?\\s-*{\\|\\<typedef\\>\\|\\<struct\\s-+\\(\\w+\\)?\\s-*[{;]\\|\\<class\\s-+\\w+"
         !if &not $status
             !return
         !elif &sin @s0 "'\""
@@ -328,9 +334,11 @@ set-char-mask "1" ":~"
             !if &sin ";" @s0
                 !cont
             !endif
-            backward-word
+            !if &not &seq @s2 ""
+                backward-word
 *ctag-struct
-            ctags-add-tag-list "{"
+                ctags-add-tag-list "{"
+            !endif
             !if &sin "s" %tag-option
                 ctags-add-struct-tag-list
             !else

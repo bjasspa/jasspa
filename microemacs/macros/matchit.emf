@@ -2,7 +2,7 @@
 ;
 ; Author:           Steven Phillips
 ; Created:          05th June 1997
-; Last Modified:    <990824.1400>
+; Last Modified:    <010109.1449>
 ;
 ; History:
 ;
@@ -693,7 +693,7 @@
         ; lets try going west
         set-variable #g2 #g0
         set-variable #g7 &sub #g4 1
-        !while &and &les &mod #g7 18 18 &seq &mid :mi-tiles #g7 1 "\xfe"
+        !while &and &les &mod #g7 18 17 &seq &mid :mi-tiles #g7 1 "\xfe"
             set-variable #g2 &add #g2 1
             !force mi-path-clear-vh
             !if $status

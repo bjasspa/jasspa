@@ -10,7 +10,7 @@
  *
  *	Author:			Danial Lawrence
  *
- *	Creation Date:		10/05/91 08:27		<000723.1839>
+ *	Creation Date:		10/05/91 08:27		<010109.1401>
  *
  *	Modification date:	%G% : %U%
  *
@@ -985,7 +985,7 @@ getBestGap(void)
 int
 justify(int leftMargin, int leftDoto)
 {
-    unsigned short  len, doto, ndoto, ss ;
+    unsigned short  len, doto, ss ;
     unsigned short  odoto;              /* Starting doto backup */
     unsigned char   cc ;
     char            jmode;              /* Justification mode */
@@ -1041,8 +1041,7 @@ justify(int leftMargin, int leftDoto)
 	curwp->w_doto = doto ;
 	col = leftMargin ;
     }
-    /* If we have been invoked from any unknown source then check for
-     * and trash any TABs on the rest of the line */
+    /* check for and trash any TABs on the rest of the line */
     while((cc=lgetc(curwp->w_dotp,curwp->w_doto)) != '\0')
     {
 	if (cc == TAB)
@@ -1060,27 +1059,6 @@ justify(int leftMargin, int leftDoto)
 	curwp->w_doto++ ;
     }
     len = llength(curwp->w_dotp) - doto + leftMargin ;
-#if 0
-    /* If we have been invoked from any unknown source then trash the 
-     * TABs. We cannot justify correctly with TABs in the line. 
-     * (Well we could but I cannot be bothered).
-     * An unknown source is one which does not know where it's left margin
-     * is supposed to be (i.e. anywhere but fillPara() !!).
-     * Make sure doto is at the end of the line to convert all TABs.
-     * store where the left margin used them and restore at end */
-    if(tabMode < 0)
-	tabMode = (lgetc(curwp->w_dotp,0) == TAB) ;
-    if (leftMargin < 0)
-    {
-        curwp->w_doto = llength(curwp->w_dotp);
-        removeTabs (NULL, undoMode);
-        len = llength(curwp->w_dotp);   /* Get new line length */
-    }
-    
-    /* Count the leading white space */
-    for (doto = 0; lgetc(curwp->w_dotp,doto) == ' '; doto++)
-        /* NULL */;
-#endif
     
     /* If there is leading white space and we are justifying centre
      * or right then delete the white space. */
@@ -1092,8 +1070,9 @@ justify(int leftMargin, int leftDoto)
          * spaces. */
         len = fillcol - len ;
 	if(jmode == 'c')                /* Centre ?? */
-	    len >>= 1 ;                 /* Yes - indent 1/2 the amount */
-	leftMargin += len ;
+            leftMargin = (len + leftMargin) >> 1 ;
+        else
+            leftMargin += len ;
     }
     /* Both left and right margin justification. */
     else if(len < (unsigned short) fillcol)
@@ -1136,19 +1115,6 @@ justify(int leftMargin, int leftDoto)
 
     /* Set the left margin for center and right modes,
      * and change the left margin back to tabs */
-#if 0
-    if((doto != ndoto) || tabMode)
-    {
-	/* force the tab mode depending on whether a tab was found */
-	int tmode;
-	tmode = (meModeTest(curbp->b_mode,MDTAB) == 0) ;
-	if(tabMode ^ tmode)
-	    meModeToggle(curbp->b_mode,MDTAB) ;
-	meLineSetIndent(doto,ndoto,undoMode) ;
-	if(tabMode ^ tmode)
-	    meModeToggle(curbp->b_mode,MDTAB) ;
-    }
-#endif
     if(col != leftMargin)
 	meLineSetIndent(doto,leftMargin,undoMode) ;
 finished:
@@ -1357,7 +1323,6 @@ fillPara(int f, int n)
     
     LINE *eopline;		        /* ptr to line just past EOP	*/
     int32 eoplno;		        /* line no of line just past EOP*/
-    uint8 ibuf[NSTRING];	        /* Buffer for initial string	*/
     uint8 ofillmode;                    /* Old justification mode       */
     uint8 wbuf[NSTRING];	        /* buffer for current word	*/
     int c;			        /* current char durring scan	*/
@@ -1619,7 +1584,6 @@ noIndent:
                     paralen += clength + 1;
 #endif
 		    meLineSetIndent(0,icol,0) ;
-/* ZZZ                   lsinsert(0, ibuf);*/
                     clength = (int) ilength;
                     ccol = (int) icol;
                     fillState &= ~FILL_DOT;

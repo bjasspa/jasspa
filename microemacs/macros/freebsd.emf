@@ -6,5 +6,5 @@
 !force exec-file "unixterm"
 ;
 ; Compile stuff
-add-next-line "*compile*" ""
+0 add-next-line "*compile*"
 add-next-line "*compile*" "%f:%l:"

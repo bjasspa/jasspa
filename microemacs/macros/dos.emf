@@ -29,10 +29,10 @@ reset-def
 set-variable $line-template "[0-9]+"
 set-variable $file-template "[a-zA-Z:]*[0-9a-zA-Z\\\\/_.]+"
 set-variable %grep-com "grep /n"
-add-next-line "*grep*" ""
+0 add-next-line "*grep*"
 add-next-line "*grep*" "%f: %l:"
 ; These definitions are for djgpp gcc compiler
-add-next-line "*compile*" ""
+0 add-next-line "*compile*"
 add-next-line "*compile*" "%f(%l): Error"
 add-next-line "*compile*" "%f(%l): Warn"
 add-next-line "*compile*" "%f:%l:"

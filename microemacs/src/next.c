@@ -5,7 +5,7 @@
  *  Synopsis      : Next file/line goto routines
  *  Created By    : Steven Phillips
  *  Created       : 01/06/1994
- *  Last Modified : <000627.1024>
+ *  Last Modified : <010115.1952>
  *
  *  Description
  *
@@ -52,18 +52,18 @@
 static int
 flNextFind(uint8 *str, uint8 **curFilePtr, int32 *curLine)
 {
-    uint8   pat[MAXBUF] ;
+    uint8   pat[MAXBUF], *ss, cc ;
     uint8  *n=NULL ;
     int     fileRpt=-1, lineRpt=-1, onRpt=0 ;
     int     soff, len ;
-
+    
+    ss = str+1 ;
     soff = 0 ;
-    while((soff < NPAT) && (*str != '\0'))
+    while((soff < NPAT) && ((cc=*ss++) != '\0'))
     {
-        if(*str == '%')
+        if(cc == '%')
         {
-            str++ ;
-            switch(*str)
+            switch((cc=*ss++))
             {
             case 'f':
                 fileRpt = onRpt++ ;
@@ -83,23 +83,22 @@ flNextFind(uint8 *str, uint8 **curFilePtr, int32 *curLine)
             soff += meStrlen(n) ;
             pat[soff++] = '\\' ;
             pat[soff++] = ')' ;
-            str++ ;
             n = NULL ;
         }
         else
-            pat[soff++] = *str++ ;
+            pat[soff++] = cc ;
     }
     if(soff >= NPAT)
         return mlwrite(MWABORT,(uint8 *)"[Search string to long]") ;
     pat[soff] = '\0' ;
 
     if(iscanner(pat,1,ISCANNER_PTBEG|ISCANNER_MAGIC|ISCANNER_EXACT,NULL) != TRUE)
-        return FALSE;
+        return 0 ;
 
-    /*
-     * Found it, so fill in the slots.
-     */
-
+    /* Found it, is it an ignore line? if so return -1 else fill in the slots and return 1. */
+    if(*str == '0')
+        return -1 ;
+    
     soff = curwp->w_doto ;
     if(fileRpt >= 0)
     {
@@ -113,13 +112,13 @@ flNextFind(uint8 *str, uint8 **curFilePtr, int32 *curLine)
     if(lineRpt >= 0)
         *curLine = meAtoi(curwp->w_dotp->l_text+soff+mereRegexGroupStart(lineRpt+1)) ;
 
-    return TRUE ;
+    return 1 ;
 }
 
 int
 getNextLine(int f,int n)
 {
-    uint8   noNextLines, ii, no ;
+    int     noNextLines, ii, no, rr ;
     uint8 **nextLines ;
     uint8  *newName=NULL ;
     int32   curLine=-1 ;
@@ -161,11 +160,22 @@ getNextLine(int f,int n)
     while((curwp->line_no)++,
           (curwp->w_dotp = lforw(curwp->w_dotp)) != bp->b_linep)
     {
-        for(ii=0 ; ii<noNextLines ; ii++)
+        ii = noNextLines ;
+        while(--ii >= 0)
         {
             curwp->w_doto = 0 ;
-            if(flNextFind(nextLines[ii],&newName,&curLine) == TRUE)
+            if((rr=flNextFind(nextLines[ii],&newName,&curLine)) == ABORT)
             {
+                curwp->w_doto = 0 ;
+                curwp->w_flag |= WFMOVEL ;
+                return ABORT ;
+            }
+            if(rr == -1)
+                /* ignore the line */
+                ii = 0 ;
+            else if(rr == 1)
+            {
+                /* matched a line */
                 if(newName != NULL)
                 {
                     uint8 fname[FILEBUF] ;
@@ -208,10 +218,6 @@ getNextLine(int f,int n)
     }
     curwp->w_doto = 0 ;
     curwp->w_flag |= WFMOVEL ;
-#if 0
-    /* swp 24/12/97 - I don't think this is needed */
-    addModeToWindows(WFMODE) ;  /* and update ALL mode lines */
-#endif
     return mlwrite(MWABORT,(uint8 *)"[No more lines found]") ;
 }
 
@@ -221,12 +227,25 @@ addNextLine(int f, int n)
     uint8 name[MAXBUF], line[MAXBUF] ;
     int no, cnt ;
     
-    if((mlreply((uint8 *)"next name",0,0,name,MAXBUF) != TRUE) ||
-       (mlreply((uint8 *)"next line",0,0,line,MAXBUF) != TRUE))
+    if(mlreply((uint8 *)"next name",0,0,name,MAXBUF) != TRUE)
         return FALSE ;
     for(no=0 ; no<noNextLine ; no++)
         if(!meStrcmp(nextName[no],name))
             break ;
+    if(n == 0)
+    {
+        if(no != noNextLine)
+        {
+            cnt = nextLineCnt[no] ;
+            while(cnt--)
+                meFree(nextLineStr[no][cnt]) ;
+            nextLineCnt[no] = 0 ;
+        }
+        return TRUE ;
+    }
+    line[0] = (n < 0) ? '0':'1' ;
+    if(mlreply((uint8 *)"next line",0,0,line+1,MAXBUF) != TRUE)
+        return FALSE ;
     if(no == noNextLine)
     {
         noNextLine++ ;
@@ -242,22 +261,14 @@ addNextLine(int f, int n)
         nextLineStr[no] = NULL ;
     }
     cnt = nextLineCnt[no] ;
-    if(line[0] == '\0')
+
+    if(((nextLineStr[no]=meRealloc(nextLineStr[no],(cnt+1)*sizeof(char *))) == NULL) ||
+       ((nextLineStr[no][cnt]=meStrdup(line)) == NULL))
     {
-        while(cnt--)
-            meFree(nextLineStr[no][cnt]) ;
         nextLineCnt[no] = 0 ;
+        return FALSE ;
     }
-    else
-    {
-        if(((nextLineStr[no]=meRealloc(nextLineStr[no],(cnt+1)*sizeof(char *))) == NULL) ||
-           ((nextLineStr[no][cnt]=meStrdup(line)) == NULL))
-        {
-            noNextLine = 0 ;
-            return FALSE ;
-        }
-        nextLineCnt[no]++ ;
-    }
+    nextLineCnt[no]++ ;
     return TRUE ;
 }
 

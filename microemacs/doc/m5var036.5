@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.Id $Id: m5var036.5,v 1.2 2000-10-21 17:10:53 jon Exp $
+.Id $Id: m5var036.5,v 1.3 2001-01-15 23:48:21 jon Exp $
 .Im MicroEmacs variable|shell
 .so me.tni
 .TH $rcs-file 5
@@ -126,8 +126,18 @@ set-variable $rcs-cou-com  "sccs edit %f"
 set-variable $rcs-ci-com   "sccs delget -y\\"%m\\" %f"
 set-variable $rcs-ci-com   "sccs create %f"
 set-variable $rcs-ue-com   "sccs unedit %f"
-.CE 0
+.CE
 .Me $ehf-scheme
+The following variable definitions can be used for MicroSoft's Visual Source Safe:-
+.Me $emf-scheme
+.CS
+set-variable $rcs-file    "%f"
+set-variable $rcs-cou-com "ss.exe checkout %f"
+set-variable $rcs-co-com  "ss.exe checkout %f"
+set-variable $rcs-ci-com  "ss.exe checkin %f \\"-c%m\\""
+.CE
+.Me $ehf-scheme
+The above definitions can check a file out for edit and commit changes back.
 .SH "SEE ALSO"
 .na
 .Ht find-file 2 ,
