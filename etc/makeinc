@@ -7,9 +7,16 @@ MEMM=02
 MEDD=06
 MEVERS=20$(MEYY)$(MEMM)$(MEDD)
 #
+# Determine make version
+#
+_DUMMY=	AaBbCc	
+_BASE_MAKE=	$(_DUMMY)$(MAKE)
+__BASE_MAKE=	$(_BASE_MAKE:$(_DUMMY)gmake=gmake)
+MAKE_TYPE=	$(__BASE_MAKE:$(_DUMMY)%=make)
+#
 # Include the other files.
 #
-UNAME:sh =uname | tr '[A-Z]' '[a-z]'
+include $(SRCROOT)/etc/makeinc.$(MAKE_TYPE)
 include $(SRCROOT)/etc/makeinc.dir
 include $(SRCROOT)/etc/makeinc.$(UNAME)
 
