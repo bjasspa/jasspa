@@ -46,7 +46,9 @@ LD            = $(CC)
 STRIP         =	strip
 CDEBUG        =	-g  -Wall
 COPTIMISE     =	-O3 -DNDEBUG=1 -Wall
-CDEFS         = -D_CYGWIN -I.
+# Change the default search path for /usr/share/jasspa with components.
+#CDEFS         = -D_CYGWIN -I.
+CDEFS         = -D_CYGWIN -I. -D_SEARCH_PATH="\"/usr/share/jasspa/company:/usr/share/jasspa/macros:/usr/share/jasspa/spelling\""
 LIBS          = -ltermcap
 LDFLAGS       = 
 INSTALL       =	install
