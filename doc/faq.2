@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu May 27 15:30:14 1999
 .\"
-.Id $Id: faq.2,v 2.11 2005-01-16 13:24:01 jon Exp $
+.Id $Id: faq.2,v 2.12 2005-01-16 19:39:04 jon Exp $
 .Im MicroEmacs faq
 .so me.tni
 .TH "FAQs" 0f
@@ -735,11 +735,9 @@ set-variable $mode-line "%s%r%u%k %b %l - %h:%m %M/%D/%Y (%e) - (%f) "
 .SH "QUESTION (\*(Qn)"
 \*(Qu
 .SH ANSWER
-The
-.Ht cmode 2m
-is supposed to make  editing 'C' easier, by forcing the user to
-follow  a  preset  editing  convection.  The  layout  is  pretty  standard,
-following a 4 space indent,  writing  either K&R or standard  'Pascal' type
+The C mode  indentation is supposed to make editing 'C' easier, by forcing the
+user to follow a preset  editing  convection.  The layout is pretty  standard,
+following  a 4 space  indent,  writing  either K&R or standard  'Pascal'  type
 layout, with braces aligning vertically.
 .PP
 The problem  most new users have is the  inability of the tab key to function,
@@ -750,28 +748,14 @@ styles and does help in a project situation, whereby most of the authored code
 roughly  adheres  to the same sort of layout  conventions.  For C++ users then
 edit "\fChkcpp.emf\fR" rather than "\fChkc.emf\fR".
 .SS "To turn off all automatic 'C' layout"
-To disable ALL  automatic  layout then edit "hkc.emf" and turn "cmode" off.
-It is probably  quite useful to apply "indent", this will return the cursor
-to the same  indentation  column  whenever a new line is inserted.  i.e. in
-"fhook-c" of hkc.emf:-
-.Me $emf-scheme
+To disable ALL  automatic  layout in C and C++ files then from the menu
 .CS
-0 buffer-mode "cmode"
-1 buffer-mode "indent"
+help -> Buffer Setup -> Setup Auto Indent
 .CE
-.Me $ehf-scheme
-If you want proper tabs then you may also want to add:-
-.Me $emf-scheme
-.CS
-0 buffer-mode "tab"
-.CE
-.Me $ehf-scheme
-This inserts the <tab> character into the text, rather than  translating to
-spaces. Alternatively disable \fBtab\fR mode for all file type using
-.Ht user-setup 3
-i.e.
-.IP
-\fBHelp\fR -> \fBUser Setup\fR -> \fBGeneral\fR -> \fBTab\fR
+Or from the  command  line  \fB\*ex  buffer-setup\fR  and disable  through the
+dialogue. 
+.PP
+Restart the editor.
 .SS "To re-enable the <tab> key"
 To  retain  the 'C'  layout  aid, but  re-enable  the tab key  operation  then
 disable the \fBTab To Indent\fR option in
@@ -796,10 +780,8 @@ command  (see  \fChkc.emf\fR),  the  indentation  level is  controlled  by the
 variables 
 .Ht $buffer-indent-width 5 
 and
-.Ht $buffer-indent 5 .
-.LP
-These settings may be defined in your \fCmyc.emf\fR to change the default
-layout. Refer to the on-line documentation for details.
+.Ht $buffer-indent 5 
+these may be changed in the \fBBuffer Setup\fR dialog.
 .PP
 .Hl "[FAQ Index]" faq - .
 .\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -946,7 +928,7 @@ i.e.
 .\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 .rm Qu
 .rm Qn
-.ds Qu "Microsoft Drag and Drop; is it supported ??
+.ds Qu "Drag and Drop; is it supported ??
 .ds Qn 31
 .NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
 .XI faq\*(Qn 0f "\*(Qu"
@@ -954,10 +936,11 @@ i.e.
 .SH "QUESTION (\*(Qn)"
 \*(Qu
 .SH ANSWER
-\*(mE supports Microsoft \fIdrag and drop\fR  interaction.  Multiple files and
-directories may be dragged from Microsoft  Explorer (or other application) and
-dropped into a buffer window. The  destination  buffer window is the window in
-which the dropped file(s) are displayed.
+\*(mE supports Microsoft and \s-1UNIX\s0  \s-1XDND\s0  (Gnome/KDE) \fIdrag and
+drop\fR  interaction.  Multiple  files and  directories  may be  dragged  from
+Microsoft  Explorer, Nautilus (or other application) and dropped into a buffer
+window.  The  destination  buffer  window is the  window in which the  dropped
+file(s) are displayed.
 .PP
 \fBNote\fR if the user is currently on the command line, then the command line
 operation is aborted in order to facilitate the \fIdropped\fR files.
