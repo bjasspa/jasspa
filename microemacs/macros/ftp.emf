@@ -251,6 +251,12 @@ define-macro ftp-connect
     !endif
 !emacro
 
+0 define-macro ftp-site-delete
+    delete-registry &cat "/url/ftp/" .ftp.name
+    mark-registry "/url" "u"
+    ftp-site-name-set ""
+!emacro
+
 0 define-macro ftp-site-name-set
     set-variable #l0 @1
     set-variable .ftp.name #l0
@@ -261,10 +267,13 @@ define-macro ftp-connect
         !endif
         !force find-registry &cat "/url/ftp/" #l0 0
         !if &not $status
-            set-registry &cat "/url/ftp" #l0 ""
+            set-registry &cat "/url/ftp/" #l0 ""
             set-registry &spr "/url/ftp/%s/path" #l0 "/"
             mark-registry "/url" "u"
         !endif
+        osd .osd.ftp 75  "BtxcfH" .scheme.osd-ebtt " \HDelete " f ftp-site-delete
+    !else
+        osd .osd.ftp 75  "BtcfH" .scheme.osd-dbtt " Delete "
     !endif
 !emacro
 
@@ -273,24 +282,24 @@ define-macro ftp-connect
     ; should the user/pass/path be enabled/disabled
     !if &seq &reg &spr "/url/ftp/%s/host" .ftp.name "" ""
         osd .osd.ftp 100 "Shf" "  User Name"
-        osd .osd.ftp 101 "Sf" "        Password"
-        osd .osd.ftp 110 "SExHhf" .scheme.osd-entry "#############"
-        osd .osd.ftp 130 "SExHfR" .scheme.osd-entry "#############"
+        osd .osd.ftp 101 "Sf" "          Password"
+        osd .osd.ftp 110 "SExHhf" .scheme.osd-entry "###############"
+        osd .osd.ftp 130 "SExHfR" .scheme.osd-entry "###############"
         osd .osd.ftp 140 "Sf" "  Initial Host Path"
-        osd .osd.ftp 150 "SExHf"  .scheme.osd-entry "##############################"
+        osd .osd.ftp 150 "SExHf"  .scheme.osd-entry "##################################"
     !else
         osd .osd.ftp 100 "Shf" "  \HUser Name" 110
-        osd .osd.ftp 101 "Sf" "        \HPassword" 130
-        osd .osd.ftp 110 "EtxHhf" .scheme.osd-entry "#############" 3 ftp-data-entry
-        osd .osd.ftp 130 "EtxHfR" .scheme.osd-entry "#############" 4 ftp-data-entry
+        osd .osd.ftp 101 "Sf" "          \HPassword" 130
+        osd .osd.ftp 110 "EtxHhf" .scheme.osd-entry "###############" 3 ftp-data-entry
+        osd .osd.ftp 130 "EtxHfR" .scheme.osd-entry "###############" 4 ftp-data-entry
         osd .osd.ftp 140 "Sf" "  \HInitial Host Path" 150
-        osd .osd.ftp 150 "EtxHf"  .scheme.osd-entry "##############################" 5 ftp-data-entry
+        osd .osd.ftp 150 "EtxHf"  .scheme.osd-entry "##################################" 5 ftp-data-entry
     !endif
 !emacro
 
 0 define-macro ftp-host-setup
     -1 osd .osd.tmp
-    osd .osd.tmp 0 "bso" -28 0 30 0 -1 -1
+    osd .osd.tmp 0 "bso" -21 0 23 0 -1 -1
     set-variable #l0 0
     !while 1
         !force find-registry "/url/ftp" &pinc #l0 1
@@ -399,22 +408,22 @@ define-macro ftp-connect
 !emacro
 
 -1 osd .osd.ftp
-osd .osd.ftp 0   "batcDIHs" 3 6 36 0 -1 -1 620 630 .scheme.osd-title "FTP Connection"
+osd .osd.ftp 0   "batcDIHs" 3 6 40 0 -1 -1 620 630 .scheme.osd-title "FTP Connection"
 osd .osd.ftp 10  ""
 osd .osd.ftp 20  "Sf" "  \HRegistry File" 30
 osd .osd.ftp 25  "hf" "  "
-osd .osd.ftp 30  "EtxHf" .scheme.osd-entry "##############################" f ftp-regfile-entry
+osd .osd.ftp 30  "EtxHf" .scheme.osd-entry "##################################" f ftp-regfile-entry
 osd .osd.ftp 35  ""
 osd .osd.ftp 38  "fh" "      "
 osd .osd.ftp 40  "Ctpfx" &cat .osd.checkbox-chars "\} \HDisplay FTP Console" 1 ftp-console-checkbox
 osd .osd.ftp 45  ""
 osd .osd.ftp 50  "Sf" "  \HSite Name" 70
 osd .osd.ftp 55  "hf" "  "
-osd .osd.ftp 60  "EtxHfhR" .scheme.osd-entry "#############################" 1 ftp-data-entry
-osd .osd.ftp 70  "MdmxstfHiR" .scheme.osd-ebtt &mid $window-chars 10 1 .osd.tmp ftp-host-setup
+osd .osd.ftp 60  "EtxHfhR" .scheme.osd-entry "#####################" 1 ftp-data-entry
+osd .osd.ftp 70  "MdmxstfHihR" .scheme.osd-ebtt &mid $window-chars 10 1 .osd.tmp ftp-host-setup
 osd .osd.ftp 80  "Sf" "  \HHost Address" 90
 osd .osd.ftp 85  "hf" "  "
-osd .osd.ftp 90  "EtxHfR"  .scheme.osd-entry "##############################" 2 ftp-data-entry
+osd .osd.ftp 90  "EtxHfR"  .scheme.osd-entry "##################################" 2 ftp-data-entry
 osd .osd.ftp 105 "hf" "  "
 osd .osd.ftp 120 "hf" "    "
 osd .osd.ftp 145 "hf" "  "
