@@ -40,7 +40,7 @@ set-variable %scrollb-value "|0|0x13e|0x1be|0x13f|0x1bf|"
 0 exec-file "schemes"
 ; Implemented Emulation modes
 set-variable %emulate-names "|<No Emulation>|GNU Emacs|CUA (Windows Style)|MicroEmacs v3.8|NEdit v5|"
-set-variable %emulate-value "||gnu|cua|me3_8|nedit|"
+set-variable %emulate-value "||emacs|cua|me3_8|nedit|"
 
 ; general macros ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

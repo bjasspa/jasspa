@@ -64,7 +64,7 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		au3.eaf		\
 	language.emf	langutl.emf	linux.emf	list.emf	\
 	mahjongg.emf	mail.emf	mailmerg.emf	matchit.emf	\
 	me.emf		melogo.emf	\
-	mecua.emf	meme3_8.emf	menedit.emf	megnu.emf	\
+	meemacs.emf	mecua.emf	meme3_8.emf	menedit.emf	\
 	meserver.emf	metris.emf	misc.emf	mouse.emf	\
 	mouseosd.emf	mouserec.emf	msshift.emf	\
 	narrow.emf	newuser.emf	ntags.emf	\
