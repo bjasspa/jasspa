@@ -74,7 +74,13 @@ define-macro find
         ml-write "Error line"
         !abort
     !endif
-    find-file #l0 @nma
+    ; Use the popup-window to manage our buffers, this will keep the *find*
+    ; buffer on screen and split the window if this is the only window. Once
+    ; the file is loaded (if found) then we delete the temporary popup window
+    ; again. 
+    popup-window "*find-temp*"
+    !force find-file #l0 @nma
+    delete-buffer "*find-temp*"
 !emacro
 ; Handle a tar file being read.
 define-macro fhook-find
