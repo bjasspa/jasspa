@@ -378,18 +378,18 @@ define-macro restyle-buffer
         0 buffer-mode "tab"
     !endif
 !emacro
-osd .osd.buffstp  0 "batcdHs" 9 3 30 10 -1 -1 110 .scheme.osd-title "Indentation Setup"
-osd .osd.buffstp 10 ""
-osd .osd.buffstp 20 "Sfh" "  \HTab Width:    " 30
-osd .osd.buffstp 30 "EtRxHf" 30 .scheme.osd-entry "##########" 1 indent-setup-exec
-osd .osd.buffstp 40 ""
-osd .osd.buffstp 50 "Sfh" "  \HIndent Width: " 60
-osd .osd.buffstp 60 "EtRxHf" 60 .scheme.osd-entry "##########" 2 indent-setup-exec
-osd .osd.buffstp 70 ""
-osd .osd.buffstp 80 "fh" "  "
-osd .osd.buffstp 90 "Cptfx" 90 &spr "%s\} \HUse tab characters" .osd.checkbox-chars 3 indent-setup-exec
-osd .osd.buffstp 100 ""
-osd .osd.buffstp 110 "BtcfHh" 110 .scheme.osd-ebtt " \HOkay "  f void
+osd .osd.indstp  0 "batcdHs" 9 3 30 10 -1 -1 110 .scheme.osd-title "Indentation Setup"
+osd .osd.indstp 10 ""
+osd .osd.indstp 20 "Sfh" "  \HTab Width:    " 30
+osd .osd.indstp 30 "EtRxHf" 30 .scheme.osd-entry "##########" 1 indent-setup-exec
+osd .osd.indstp 40 ""
+osd .osd.indstp 50 "Sfh" "  \HIndent Width: " 60
+osd .osd.indstp 60 "EtRxHf" 60 .scheme.osd-entry "##########" 2 indent-setup-exec
+osd .osd.indstp 70 ""
+osd .osd.indstp 80 "fh" "  "
+osd .osd.indstp 90 "Cptfx" 90 &spr "%s\} \HUse tab characters" .osd.checkbox-chars 3 indent-setup-exec
+osd .osd.indstp 100 ""
+osd .osd.indstp 110 "BtcfHh" 110 .scheme.osd-ebtt " \HOkay "  f void
 define-macro indent-setup
-    .osd.buffstp osd
+    .osd.indstp osd
 !emacro
