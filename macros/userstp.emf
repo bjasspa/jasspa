@@ -51,7 +51,7 @@ set-variable .user-setup.path ""
     !else
         set-variable #l1 &reg "/history" "keyboard" &lget %keyboard-names 1
     !endif
-    osd .osd.user-start 540 "MtxmsfH" 6 .scheme.osd-entry &spr "%s%n" #l1 &sub 14 &len #l1 " " .osd.user-keyb
+    osd .osd.user-start 540 "MtxmsfH" 540 .scheme.osd-entry &spr "%s%n" #l1 &sub 14 &len #l1 " " .osd.user-keyb
 !emacro
 0 define-macro user-setup-lang
     !if @?
@@ -60,12 +60,12 @@ set-variable .user-setup.path ""
     !else
         set-variable #l1 &reg "/history" "language" &lget %language-names 1
     !endif
-    osd .osd.user-start 560 "MtxmsfH" 6 .scheme.osd-entry &spr "%s%n" #l1 &sub 14 &len #l1 " " .osd.user-lang
+    osd .osd.user-start 560 "MtxmsfH" 560 .scheme.osd-entry &spr "%s%n" #l1 &sub 14 &len #l1 " " .osd.user-lang
     !if &set #l2 &sin " (Ext)" #l1
         set-variable #l1 &lef #l1 &sub #l2 1
     !endif
     osd .osd.user-start 570 "fh" &spr "%nPers %s &Dic : " &sub 10 &len #l1 " " #l1
-    osd .osd.user-start 580 "EtxHf" 9 .scheme.osd-entry "##############" f user-set-usrdict
+    osd .osd.user-start 580 "EtxHf" 580 .scheme.osd-entry "##############" f user-set-usrdict
 !emacro
 
 0 define-macro user-setup-color
@@ -1197,7 +1197,7 @@ osd .osd.user-gener 390 "MtxmfH" 390 .scheme.osd-ebtt " Sho&w Modes " .osd.user-
         set-variable #l1 &reg "/history" #l0 ""
     !endif
     set-variable #l1 &lget %emulate-names &lfind %emulate-value #l1
-    osd .osd.user-start 140 "MtxmsfHz" 6 .scheme.osd-entry 25 1 #l1 .osd.user-sub user-setup-emulatec
+    osd .osd.user-start 140 "MtxmsfHz" 140 .scheme.osd-entry 25 1 #l1 .osd.user-sub user-setup-emulatec
 !emacro
 
 0 define-macro user-setup-emulatec
@@ -1214,33 +1214,33 @@ osd .osd.user-start 10  ""
 osd .osd.user-start 20  "c" "Start-up"
 osd .osd.user-start 30  ""
 osd .osd.user-start 40  "Sfh" "           Log &Name : " 50
-osd .osd.user-start 50  "EtRxHfh" 1 .scheme.osd-entry "##############" f user-set-logname
+osd .osd.user-start 50  "EtRxHfh" 50 .scheme.osd-entry "##############" f user-set-logname
 osd .osd.user-start 53  "hf" "   "
 osd .osd.user-start 57  "BfxH"  .scheme.osd-ebtt "Default &User" f user-set-default
 osd .osd.user-start 60  "Sfh" "         Setup &Path : " 70
-osd .osd.user-start 70  "EtRxHf" 2 .scheme.osd-entry "#########################" f user-set-path
+osd .osd.user-start 70  "EtRxHf" 70 .scheme.osd-entry "#########################" f user-set-path
 osd .osd.user-start 80  ""
 osd .osd.user-start 90  "Sfh" "         Setup &File : " 100
-osd .osd.user-start 100 "EtxHfh" 3 .scheme.osd-entry "##############" 4 user-set-entry
+osd .osd.user-start 100 "EtxHfh" 100 .scheme.osd-entry "##############" 4 user-set-entry
 osd .osd.user-start 103 "Sfh" "   Edit : " 107
-osd .osd.user-start 107 "Ctfx" 4 "^^NY^^" 13 user-set-checkbox
+osd .osd.user-start 107 "Ctfx" 107 "^^NY^^" 13 user-set-checkbox
 osd .osd.user-start 110 "Sfh" "       C&ompany File : " 120
-osd .osd.user-start 120 "EtxHf" 5 .scheme.osd-entry "##############" 2 user-set-entry
+osd .osd.user-start 120 "EtxHf" 120 .scheme.osd-entry "##############" 2 user-set-entry
 osd .osd.user-start 130 "Sfh" "            &Emulate : " 140
-osd .osd.user-start 140 "MtxmsfH" 6 .scheme.osd-entry "" .osd.user-sub user-setup-emulate
+osd .osd.user-start 140 "MtxmsfH" 140 .scheme.osd-entry "" .osd.user-sub user-setup-emulate
 osd .osd.user-start 150 "Sfh" "    MS Shift region : "  160
-osd .osd.user-start 160 "Ctfx" 7 "^^NY^^" 12 user-set-checkbox
+osd .osd.user-start 160 "Ctfx" 160 "^^NY^^" 12 user-set-checkbox
 osd .osd.user-start 500 ""
 osd .osd.user-start 510 "c"  "Language Setup"
 osd .osd.user-start 520 ""
 osd .osd.user-start 530 "Sfh" "           &Keyboard : " 540
-osd .osd.user-start 540 "MtxmsfH" 6 .scheme.osd-entry "" .osd.user-keyb
+osd .osd.user-start 540 "MtxmsfH" 540 .scheme.osd-entry "" .osd.user-keyb
 osd .osd.user-start 550 "Sfh" "           &Language : " 560
-osd .osd.user-start 560 "MtxmsfH" 6 .scheme.osd-entry "" .osd.user-lang
+osd .osd.user-start 560 "MtxmsfH" 560 .scheme.osd-entry "" .osd.user-lang
 osd .osd.user-start 590 "Sfh" "         Au&to Spell : " 600
-osd .osd.user-start 600 "Ctfhx" 8 "^^NY^^" 11 user-set-checkbox
+osd .osd.user-start 600 "Ctfhx" 600 "^^NY^^" 11 user-set-checkbox
 osd .osd.user-start 610 "Sfh" "      &Auto Save Dics : " 620
-osd .osd.user-start 620 "Ctfx" 7 "^^NY^^" 2 user-set-checkbox
+osd .osd.user-start 620 "Ctfx" 620 "^^NY^^" 2 user-set-checkbox
 
 ; The note-book ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 osd .osd.user-nb 0 "Ns" 57 22 -1 -1

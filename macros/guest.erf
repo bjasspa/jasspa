@@ -6,7 +6,7 @@
 "dos" {
  "blink" = "13107800"
  "file-ignore" = "~ ./"
- "font-mask" = "PC-437"
+ "char-set" = "PC-437"
  "scroll-bar" = "0x1be"
 }
 "file-mask" = "\CH*.c,*.cc,*.cpp\CH*.h,*.hpp,*.def\CHImakefile,Makefile*\CH*.txt,*.doc,*.log\CH*.emf,*.eaf,*.erf,*.etf,*.ehf\CH*.bat,*.sys,*.sh,*.csh,*shrc,.login\CH*.tk,*.tcl\CH*.[0-9],*.tni\CH"
@@ -51,13 +51,15 @@
 }
 "win32" {
  "blink" = "13107800"
+ "char-set" = "Win-ANSI"
+ "color" = "jcolor"
  "file-ignore" = "~ ./"
- "font-mask" = "Win-OEM"
+ "ext-char-set" = "1"
  "scroll-bar" = "0x1be"
 }
 "win32c" {
  "blink" = "13107800"
  "file-ignore" = "~ ./"
- "font-mask" = "Win-OEM"
+ "char-set" = "Win-OEM"
  "scroll-bar" = "0x1be"
 }
