@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20040307.1458>
+# Last Modified: <20040317.2051>
 #
 ##############################################################################
 
@@ -159,7 +159,7 @@ MAC3_060=	$(DOCDIR)m3mac060.3 $(DOCDIR)m3mac061.3 $(DOCDIR)m3mac062.3\
 		$(DOCDIR)m3mac066.3 $(DOCDIR)m3mac067.3 $(DOCDIR)m3mac068.3\
 		$(DOCDIR)m3mac069.3
 MAC3_070=	$(DOCDIR)m3mac070.3 $(DOCDIR)m3mac071.3 $(DOCDIR)m3mac072.3\
-		$(DOCDIR)m3mac073.3 $(DOCDIR)m3mac074.3
+		$(DOCDIR)m3mac073.3 $(DOCDIR)m3mac074.3 $(DOCDIR)m3mac075.3
 #
 OSD3_000=	$(DOCDIR)m3osd000.3 $(DOCDIR)m3osd001.3 $(DOCDIR)m3osd002.3\
 		$(DOCDIR)m3osd003.3 $(DOCDIR)m3osd004.3 $(DOCDIR)m3osd005.3\

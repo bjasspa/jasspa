@@ -1,0 +1,76 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m3mac075.3,v 2.1 2004-03-17 20:58:13 jon Exp $
+.Im MicroEmacs command|shell
+.so me.tni
+.TH find 3
+.XI find - "Execute find command"
+.XI %find-com 5 "Find command line"
+.SH NAME
+find \- Execute find command
+.br
+%find-com \- Find command line
+.Me $a
+.SH SYNOPSIS
+.na
+.Me "|find"
+.I n
+.B find
+"\fIbase-path\fR" "\fIfile-search\fR"
+.sp
+.B %find-com
+"\fIstring\fR"; Default is "\fCfind\fR"
+.ad
+.SH DESCRIPTION
+.B find
+executes the
+.Hr find 1
+command with the  command line set by the
+.Ht %find-com 5
+variable and the user supplied  \fIbase-path\fR and \fIfile-search\fR  regular
+expression.  The output of the command is piped into the  \fB*find*\fR  buffer.
+.PP
+If an argument is given then a
+.Ht pipe-shell-command 2
+is used instead of
+.Ht ipipe-shell-command 2 ,
+this is useful when used in macros as it ensures that  \fBfind\fR has finished
+before the command returns.
+.PP
+The find command is specified by the macro variable
+.B %find-com
+if not defined  then the default  \fCfind\fR  is used. The command line run by
+\fBfind\fR is
+.IP
+\fI%find-com\fR -name "\fIbase-path\fR" -name "\fIfile-search\fR" -print
+.LP
+The resultant files found are displayed in the \fB*find*\fR  buffer and may be
+selected by  double-clicking  with the mouse left button or selecting the line
+with a \fC<RETURN>\fR. The selected file under the cursor is loaded.
+.SH EXAMPLE
+The  \fBfind\fR  command does not typically  need to be set up in  \s-1UNIX\s0
+environments.  In the  Microsoft  Windows  environment  then  the  \s-1UNIX\s0
+\fItools for Windows\fR are recommended, available from:
+.IP
+http://unxutils.sourceforge.net/
+.LP
+The \fBfind\fR command may be set up in the startup files as follows:-
+.Me $emf-scheme
+.CS
+set-variable %find-com "c:/usr/local/wbin/find.exe"
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Ht %grep-com 5 ,
+.Hr find 1 ,
+.Ht find 3 ,
+.Ht get-next-line 2 ,
+.Hr grep 1 ,
+.Ht grep 3 ,
+.Ht rgrep 3 .
+.ad
+.FH

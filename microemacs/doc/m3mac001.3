@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac001.3,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m3mac001.3,v 2.6 2004-03-17 20:58:13 jon Exp $
 .Im MicroEmacs command|shell
 .so me.tni
 .TH grep 3
@@ -11,6 +11,7 @@
 .XI rgrep - "Execute recursive grep command"
 .SH NAME
 grep \- Execute grep command
+.br
 rgrep \- Execute recursive grep command
 .Me $a
 .SH SYNOPSIS
@@ -55,7 +56,12 @@ all directories from \fIbase-path\fR down.
 .Hr grep 1 
 must be executable on the system before grep or rgrep can function,
 .Hr find 1 
-must also be available for rgrep to work.
+must also be available for rgrep to work. 
+The 
+.Hr find 1 
+command is defined by variable
+.Ht %find-com 5 ,
+the default when not defined is \fCfind\fR.
 .SH EXAMPLE
 The \fBgrep\fR command is generally set up in the startup files as follows:-
 .Me $emf-scheme
@@ -75,10 +81,13 @@ add-next-line "*grep*" "%f:%l:"
 .Me $ehf-scheme
 .SH "SEE ALSO"
 .na
-.Hr grep 1 ,
+.Ht %find-com 5 , 
 .Ht %grep-com 5 ,
 .Ht add-next-line 2 ,
-.Ht get-next-line 2 ,
 .Ht compile 3 .
+.Hr find 1 ,
+.Ht find 3 ,
+.Ht get-next-line 2 ,
+.Hr grep 1 .
 .ad
 .FH
