@@ -4,8 +4,10 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <040824.2017>
+>  Last Modified : <040828.0907>
 >
+    
+    [040828] About page includes the century in the date (suggested by -Th)
     
     [040824] Fix for man page hyper-link when includes -/./_ characters.
     

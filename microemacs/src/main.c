@@ -458,7 +458,7 @@ meAbout(int f, int n)
     bp = wp->buffer ;
 
      /* definitions in evers.h */
-    addLineToEob(bp,(meUByte *)ME_FULLNAME " " meVERSION " - Date " meDATE " - " meSYSTEM_NAME "\n\nGlobal Status:") ;
+    addLineToEob(bp,(meUByte *)ME_FULLNAME " " meVERSION " - Date " meCENTURY meDATE " - " meSYSTEM_NAME "\n\nGlobal Status:") ;
     tbp = bheadp ;
     ii = 0 ;
     while(tbp != NULL)
