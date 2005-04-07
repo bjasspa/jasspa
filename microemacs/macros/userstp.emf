@@ -617,13 +617,14 @@ set-variable .user-tool-init.cur 0
     set-variable #l2 &spr "/history/%s/tool/%d/flag" $platform .user-tool-init.cur
     set-variable #l0 &reg #l2 0x1a
     !if &les @# 0
-        !if &band &set #l1 &abs @# 0x10
+        !if &band &set #l1 &abs @# 0x90
             !if &band #l0 0x40
                 !return
             !endif
         !endif
         set-variable #l0 &bxor #l0 #l1
         !if &band #l0 0x40
+            set-variable #l0 &band #l0 0xff7f
             set-variable #l0 &bor #l0 0x10
         !endif
         set-registry #l2 #l0
@@ -650,9 +651,10 @@ osd .osd.user-tool 270 ""    "       Buffer file name = %ff or %fp%fn or %fp%fb%
     osd .osd.user-tool 280 "fh"  "       "
     osd .osd.user-tool 290 "Ctpfx" &cat .osd.checkbox-chars "\} \HRun Concurrently" 0x40 user-tool-set-flag
 !endif
+osd .osd.user-tool 293 "fh"  "       "
+osd .osd.user-tool 295 "Ctpfx" &cat .osd.checkbox-chars "\} R\Heread Current Buffer (non-concurrent)" 0x80 user-tool-set-flag
 osd .osd.user-tool 300 "fh"  "       "
 osd .osd.user-tool 310 "Ctpfx" &cat .osd.checkbox-chars "\} Capture \HOutput" 0x10 user-tool-set-flag
-osd .osd.user-tool 350 ""
 osd .osd.user-tool 360 "Sfh" "  Current \HBuffer: " 370
 osd .osd.user-tool 370 "Ctpfxh" &cat .osd.checkbox-chars "\} Save" 0x01 user-tool-set-flag
 osd .osd.user-tool 380 "Sfh" "  "
