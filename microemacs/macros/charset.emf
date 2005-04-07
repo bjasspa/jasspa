@@ -14,8 +14,8 @@
 ;
 !if &les @# 1
     ; if executed with an argument of 0 or less, return the list
-    set-variable %charset-names  "|ISO-8859|ISO-8859 with box chars|Windows ANSI|Windows OEM|Windows Greek|Windows Turkish|Windows Central Europe|Windows Cyrillic|PC Code Page 437|PC Code Page 850|Cyrillic koi8-r|Plain Text|"
-    set-variable %charset-value  "||ISO-box|Win-ANSI|Win-OEM|Win-GREEK|Win-TURK|Win-CENTEUR|Win-CYR|PC-437|PC-850|koi8-r|plain-text|"
+    set-variable %charset-names  "|ISO-8859|ISO-8859 with box chars|Windows ANSI|Windows OEM|Windows Greek|Windows Turkish|Windows Central Europe|Windows Cyrillic|DOS LatinUS CP437|DOS Latin1 CP850|DOS Cyrillic CP866|Cyrillic koi8-r|Plain Text|"
+    set-variable %charset-value  "||ISO-box|Win-ANSI|Win-OEM|Win-GREEK|Win-TURK|Win-CENTEUR|Win-CYR|PC-437|PC-850|PC-866|koi8-r|plain-text|"
     ; the windows font type
     set-variable %charset-types  "|||0|255|161|162|238|204|||||"
     !return
@@ -69,6 +69,9 @@ set-variable .change-font.type 0
     set-variable $window-chars "=-#*%=\C^± ±\C_\CD==\C^\C^±±  ±±\C_\C_\C[\CZ|\CQ± ±\CP\CD||\CQ\CQ±±  ±±\CP\CP\C[\CZ x* \CP \CQ>\\.$$\\"
     set-variable $system &band $system &bnot 0x10000
     set-variable #l1 0
+!elif &seq #l0 "PC-866"
+    set-char-mask "M" "°\x80±\x81²\x82³\x83´\x84µ\x85¶\x86·\x87¸\x88¹\x89º\x8A»\x8B¼\x8C½\x8D¾\x8E¿\x8FÀ\x90Á\x91Â\x92Ã\x93Ä\x94Å\x95Æ\x96Ç\x97È\x98É\x99Ê\x9AË\x9BÌ\x9CÍ\x9DÎ\x9EÏ\x9F¡\xF0Ğ\xA0Ñ\xA1Ò\xA2Ó\xA3Ô\xA4Õ\xA5Ö\xA6×\xA7Ø\xA8Ù\xA9Ú\xAAÛ\xABÜ\xACİ\xADŞ\xAEß\xAFà\xE0á\xE1â\xE2ã\xE3ä\xE4å\xE5æ\xE6ç\xE7è\xE8é\xE9ê\xEAë\xEBì\xECí\xEDî\xEEï\xEFğ\xFCñ\xF1"
+    set-variable .change-font.type 204
 !elif &seq #l0 "koi8-r"
     set-char-mask "M" "°á±â²÷³ç´äµå¶ö·ú¸é¹êºë»ì¼í½î¾ï¿ğÀòÁóÂôÃõÄæÅèÆãÇşÈûÉıÊÿËùÌøÍüÎàÏñ¡³ĞÁÑÂÒ×ÓÇÔÄÕÅÖÖ×ÚØÉÙÊÚËÛÌÜÍİÎŞÏßĞàÒáÓâÔãÕäÆåÈæÃçŞèÛéİêßëÙìØíÜîÀïÑñ£"
     set-variable .change-font.type 204
