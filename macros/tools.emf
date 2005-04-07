@@ -164,7 +164,9 @@ define-macro execute-tool
         set-variable #l4 $buffer-bname
         set-variable #l5 $buffer-bname
         set-variable #l6 ""
+        set-variable #l7 ""
     !else
+        set-variable #l7 $buffer-bname
         set-variable #l2 $buffer-fname
         !if &seq "" &set #l4 &rig #l2 &rsin "/" #l2
             ; cope with a directory name
@@ -221,6 +223,11 @@ define-macro execute-tool
         #l3 pipe-shell-command #l1 #l2
     !else
         shell-command #l1
+    !endif
+    ;reread the buffer
+    !if &band #l0 0x80
+        popup-window #l7
+        reread-file
     !endif
 !emacro
 
