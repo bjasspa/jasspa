@@ -1,4 +1,5 @@
- "\Lgenerate-tags-file\N" "<FOLD+> \ecCGenerate Tags\ecA"
+ "" "<FOLD+> \ecCGenerate Tags\ecA"
+ "\Lgenerate-tags-file\N" "  Generate"
  "\L0 generate-tags-file\N" "  With Menu..."
  "" ""
  "" "</FOLD><FOLD+> \ecCExecute\ecA"
