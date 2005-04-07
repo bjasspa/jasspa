@@ -271,12 +271,15 @@ define-macro item-list
             split-window-vertically
         !else
             split-window-horizontally
-            change-window-width 25
+            change-window-width .width
         !endif
         find-buffer "*item-list*"
         3 next-window
     !endif
 !emacro
+!if &not &exist .item-list.width
+    set-variable .item-list.width 25
+!endif
 
 define-macro occur
     !force set-variable #l1 @1
