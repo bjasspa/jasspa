@@ -115,8 +115,9 @@ ETFS=	asmx86.etf	asn1.etf	au3.etf		\
 EAFS=	ada.eaf		asp.eaf		\
 	c.eaf		cpp.eaf		\
 	emf.eaf		euphor.eaf	\
-	hkasp.eaf	hkc.eaf		hkemf.eaf	hkhtml.eaf	\
-	hkjsp.eaf	hkjst.eaf	hknroff.eaf	hkphp.eaf	\
+	hkasp.eaf	hkc.eaf		hkcpp.eaf	hkemf.eaf	\
+	hkhtml.eaf	hkjsp.eaf	hkjst.eaf	hknroff.eaf	\
+	hkphp.eaf	\
 	html.eaf	\
 	java.eaf	js.eaf		jsp.eaf		jst.eaf		\
 	latex.eaf	\
