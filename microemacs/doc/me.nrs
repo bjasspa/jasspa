@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.34 2005-03-06 08:45:04 jon Exp $
+.Id $Id: me.nrs,v 2.35 2005-04-09 19:16:25 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -2056,8 +2056,109 @@ etc. are not as slick as they  could be,  certainly  under  Microsoft  Windows
 common editor across all working platforms has been achieved!
 .SS "Development History"
 .\"
-.B "8th Release - March 2005"
+.B "8th Release - May 2005"
 .BS
+[050409] Release Candidate 2 - MicroEmacs 2005 (RC2)
+.BU
+[050408]  Added flag to the  user-setup  Tools to force the  rereading  of the
+current buffer's file, thanks to Bryan Schofield.
+.BU
+[050408]  Added new  .item-list.width  variable  to allow  control of the item
+window list - submitted by Bryan Schofield.
+.BU
+[050408]  Moved  the  generate  tags into the sub  folder  and added a compile
+option to c and cpp - submitted by Bryan Schofield.
+.BU
+[050405] Added support for DOS code page 866 (Cyrillic Russion) - submitted by
+Nicholas Kudriavtsev
+.BU
+[050331] Added support for the setting of the history in macros via @h#.
+.BU
+[050325]  registry.c - removed  compiler  warning  indicating  porting problem
+hilighted  under Darwin. Post  increment of variable on left of assignment and
+same  variable  appeared  on the  right,  split  out the  increment  to reduce
+ambiguity of the statement. 
+.BU
+[050320] UNIX only - add a rule for .dir files found in the X11  directory. We
+do not want this files identified as "dir" info root file
+.BU
+[050320] Added termcap (white) scheme for reverse video operation.
+.BU
+[050320]  Newuser  registry file - added default entry for Apple Mac "darwin".
+Confirmed operation under Mac X-Windows.
+.BU
+[050320]  Extended  ME exit  commands  to support the  discarding  of modified
+buffers '\fC0x8 discard modified buffers\fR' and
+.\"
+\'\fC0x10 discard modified buffers and create recovery file for changes\fR'.
+.BU
+[050320]  Corrected  XML  syntax  for  strings  "\fC...\fR"  to fix indent and
+hilight anomalies. 
+.BU   
+[050319]  Added  \fB-R\fR  command  line  option to reverse the built in video
+schemes - specifically for \fBne\fR(1) also works with \fBme\fR(1).
+.BU
+[050319] Corrected default mode settings. Recent removal of  \fBletter(2m)\fR,
+\fBline(2m)\fR  etc. changed the mode byte assignment of some modes. The built
+in global mode default was not updated for this change in bytes and  incorrect
+global modes  appeared as a result -  specifically  \fBquiet(2m)\fR  which has
+jumped bytes.
+.BU
+[050315] LEX/YACC template - Corrected LEX and YACC  highlighting.  Aligned C,
+C++ and YACC/LEX templates to be consistent.
+.BU
+[050315] C/C++ templates - buffer setup modified for GNU Indent Style setting.
+.BU
+[050315] Added new 
+.Ht browse 3
+command and binding to f3, changed existing  collapse-all  \fBf3\fR binding to
+\fBC-f2\fR.
+.BU    
+[050315] Modified  ME exit  commands to support a bitwise arg n where main
+.Ht exit-emacs 2
+has '\fC0x01  Prompt\fR', 
+.\"
+\'\fC0x02  Save each  buffer/reg/dic (with  prompt if 0x01  set)\fR'
+.\"
+and '\fC0x04  Prompt  for exit code and exit ME with that code.\fR'
+.BU
+[050313]  Latex  template  -  Corrected  the   latex-fill-paragraph.  Set  the
+fill-mode  to  '\fBl\fR'  rather  than  '\fBL\fR'  because  its a pain when it
+selects centre rather than left and messes things up.
+.BU
+[050311]  Directory  list - changed  column sorting so Modified is sorted most
+recent first.
+.BU
+[050311] Fixed perldb pipe operation.
+.BU
+[050310] OSD  simplified  the main context menu and moved paste a cvs items in
+the directory context menu 
+.BU
+[050310] Fixed diff's file name input, was not completing correctly
+.BU
+[050310] CVS changed the default setting of the recursive add to off.
+.BU
+[050310] JASSPA MicroEmacs quick start document released. 
+.BU
+[050309]  Fixed  bug in  regex  multi-line  search  backwards,  searching  for
+"\fCfoo[^a]\fR"   is  a  mult-line  as  \fC[^a]\fR  matches   \fC\\\\n\fR,  if
+"\fCfoob\fR" exists at the start of the line isearch-backward  refuses to move
+on.
+.BU
+[050309]  Catman  pages  added for ne(1) and me(1)  complaints  with gentoo as
+missing. Added to the package builds.
+.BU
+[050308]  Fixed a nasty bug with ftp connect  dialog when the host has a port.
+Changed the default  path to be nothing  which  becomes  \fC/~/\fR to list the
+login  directory.  Change the tab order to not include the password as tabbing
+through the entry will lose the password, must now access via mouse or hot key
+which is not ideal.
+.BU
+[050308] Added support for relative ftp browsing via new \fCftp://???/~/???\fR
+url form. Added file name completion support for ftp
+.BU
+[050306] Corrected the docmacro \fChttp://\fR regular expression.        
+.BU
 [050306]  Changed  the date  format of the  \fB-V\fR  command  line  option to
 include the century, same format as the
 .Ht about 2
@@ -2268,20 +2369,15 @@ is used to create a variable name.
 argument of \fC0\fR it removes all watches  otherwise it resets the main watch
 counter and reports to the user which buffers are watched.  Added new '\fC2\fR
 \fCwatch\fR'  and '\fC3  watch\fR'  which  compares  the file size,  doing the
-following:
-.sp
-\fB-\fR file on disk is smaller than last watch - reloads whole file.
-.br
-\fB-\fR file size is the same - does nothing.
-.br
-\fB-\fR  file on disk is larger - appends to the end of the buffer the tail of
-the file (\fCfile_size\fR \fC-\fR \fCwatch_file_size\fR bytes)
-.sp
-This assumes that the files is always being appended (reasonable assumption in
-most  cases. The only  difference  between 2 and 3 is that 2 forces a complete
-reread of the file on the first file change  (ensuring the buffer is correct),
-3 does not which  allows  the user to trash the first  gigabyte  of the buffer
-before starting the watch.
+following:  \fBa)\fR  file on disk is smaller than last watch - reloads  whole
+file. \fBb)\fR file size is the same - does nothing.  \fBc)\fR file on disk is
+larger  -  appends   to  the  end  of  the   buffer   the  tail  of  the  file
+(\fCfile_size\fR \fC-\fR  \fCwatch_file_size\fR  bytes). This assumes that the
+files is always being appended (reasonable  assumption in most cases. The only
+difference  between 2 and 3 is that 2 forces a complete  reread of the file on
+the first  file  change  (ensuring  the buffer is  correct),  3 does not which
+allows the user to trash the first gigabyte of the buffer before  starting the
+watch.
 .BU
 [050217]  Shell  template - added local and function  keywords and fixed a few
 string highlighting problems.
