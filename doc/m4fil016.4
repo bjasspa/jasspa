@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil016.4,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m4fil016.4,v 2.6 2005-04-09 18:21:47 jon Exp $
 .Im MicroEmacs macro;variable
 .so me.tni
 .TH "CurrentBufferVariables" 4
@@ -20,8 +20,7 @@
 .fi
 .ad
 .SH DESCRIPTION
-Buffer  variables  are  special in that they can only be queried and cannot be
-set.  Buffer  variables  allow  text to be taken from the  current  buffer and
+Buffer  variables  allow  text to be taken from the  current  buffer and
 placed  into a  variable.  Two  types of  extraction  are  provided  \fB@wl\fR
 provides a line extraction  method, \fB@wc\fR provides a character  extraction
 method.
@@ -62,6 +61,10 @@ position is not modified, in general a macro will  interrogate  the  character
 under the  cursor  and then  affect  the  buffer  (i.e. by moving the  cursor,
 deleting  the  character  etc.)  dependent  upon  the  value of the  character
 returned.
+.PP
+Assignment  of the  variables  causes  the  buffer  contents  to be  modified,
+deleting  the pervious  contents and setting the new value. This can be useful
+in certain situations but should be performed with care.
 .SH EXAMPLE
 The  \fB@wc\fR  variable  provides  the most  useful  mechanism  to modify the
 current  buffer. The  following  example is a macro called  \fBsuper-delete\fR

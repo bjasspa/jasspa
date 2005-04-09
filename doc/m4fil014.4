@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil014.4,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m4fil014.4,v 2.6 2005-04-09 18:21:47 jon Exp $
 .Im MicroEmacs macro;variable
 .so me.tni
 .TH "MacroArguments" 4
@@ -78,12 +78,19 @@ On  execution  the macro  writes  the  message
 .IP
 "\fCTest-it %test-var = Hello World\fR"
 .LP
-and will set variable \fC%test-var\fR to "\fCGoodbye World\fR".
+and will set variable  \fC%test-var\fR to "\fCGoodbye World\fR". Note that the
+\fB@1\fR has been used by reference on the  \fBset-variable\fR  rather than by
+value as it is used in an assignment.
 .PP
 The  \fB@p\fR  variable  can be used to obtain the name of the macro  which is
 executing the current macro, i.e. the value of the parent's \fB@0\fR variable.
 If the macro was  executed  directly by the user then there is no parent macro
 and the value of \fB@p\fR is an empty string ("").
+.PP
+The variables \fB@#\fR and \fB@?\fR are automatically set on entry to a macro,
+the values may be  over-written  by the calling macro if required, but
+their assignment values are restricted to being integer values,  assignment of
+a character string causes an error.
 .SH DIAGNOSTICS
 If an  attempt is made to access an  argument  which has not been given then a
 error occurs. This error can be trapped using the
