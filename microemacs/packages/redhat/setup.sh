@@ -5,15 +5,15 @@
 #
 #  Created By    : Jon Green
 #  Created       : Fri Feb 6 22:33:31 2004
-#  Last Modified : <050310.2354>
+#  Last Modified : <050409.1952>
 #  Description   : Creates the RedHat directory structure for building a RPM
 #                  file.
 #
 ##############################################################################
 TOPDIR=../..
 VER_YEAR="05"
-VER_MONTH="02"
-VER_DAY="19"
+VER_MONTH="04"
+VER_DAY="09"
 VERSION="20${VER_YEAR}${VER_MONTH}${VER_DAY}"
 METREE=jasspa-metree-${VERSION}.tar.gz
 MESRC=jasspa-mesrc-${VERSION}.tar.gz
