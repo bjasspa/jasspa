@@ -4,8 +4,34 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <050320.1651>
+>  Last Modified : <050409.2018>
 >
+
+    [050409] Release Candidate 2 - MicroEmacs 2005 (RC2)
+
+    [050408] Added flag to the user-setup  Tools to force the rereading of the
+             current buffer's file, thanks to Bryan Schofield.
+
+    [050408] Added new .item-list.width  variable to allow control of the item
+             window list - submitted by Bryan Schofield.
+
+    [050408] Moved the  generate  tags into the sub folder and added a compile
+             option to c and cpp - submitted by Bryan Schofield.
+
+    [050405] Added  support  for  DOS  code  page  866  (Cyrillic  Russion)  -
+             submitted by Nicholas Kudriavtsev
+
+    [050331] Added support for the setting of the history in macros via @h#.
+
+    [050325] registry.c - removed compiler warning  indicating porting problem
+             hilighted  under  Darwin. Post  increment  of variable on left of
+             assignment and same variable appeared on the right, split out the
+             increment to reduce ambiguity of the statement.
+
+    [050320] UNIX only - add a rule for .dir files found in the X11 directory.
+             We do not want this files identified as "dir" info root file
+
+    [050320] Added termcap (white) scheme for reverse video operation.
 
     [050320] Newuser  registry  file -  added  default  entry  for  Apple  Mac
              "darwin". Confirmed operation under Mac X-Windows.
@@ -15,8 +41,8 @@
              buffers and create recovery file for changes'.
 
     [050320] Corrected  XML syntax for strings "..." to fix indent and hilight
-             anomalies. 
-    
+             anomalies.
+
     [050319] Added -R  command  line  option  to  reverse  the  built in video
              schemes - specifically for ne(1) also works with me(1).
 
@@ -34,7 +60,7 @@
 
     [050315] Added new browse(3)  command and binding to f3, changed  existing
              collapse-all f3 binding to C-f2.
-    
+
     [050315] Modified  ME exit  commands to support a bitwise arg n where main
              exit-emacs  has '0x01  Prompt',  '0x02  Save each  buffer/reg/dic
              (with  prompt if 0x01  set)' and '0x04  Prompt  for exit code and
@@ -50,13 +76,13 @@
     [050311] Fixed perldb pipe operation.
 
     [050310] OSD  simplified the main context menu and moved paste a cvs items
-             in the directory context menu 
+             in the directory context menu
 
     [050310] Fixed diff's file name input, was not completing correctly
 
     [050310] CVS changed the default setting of the recursive add to off.
 
-    [050310] JASSPA MicroEmacs quick start document released. 
+    [050310] JASSPA MicroEmacs quick start document released.
 
     [050309] Fixed bug in regex  multi-line  search  backwards,  searching for
              "foo[^a]" is a mult-line as [^a] matches \\n, if "foob" exists at
@@ -74,18 +100,18 @@
     [050308] Added  support for relative ftp browsing via new  ftp://???/~/???
              url form. Added file name completion support for ftp
 
-    [050306] Corrected the docmacro http:// ling regular expression.        
+    [050306] Corrected the docmacro http:// ling regular expression.
 
     [050306] Changed the date format of the -V command  line option to include
              the century, same format as the about(2) buffer.
 
     [050302] HTLP and PHP - fixed indent problems.
-    
+
     [050302] Perl template - fixed indent  problems caused by not skipping the
              =~ type regex's
 
     [050302] TCL template - fixed continuation and comment indent bug.
-        
+
     [050302] Added support for R/S-plus (.r) files - thanks to Detlef.
 
     [050225] HTML  template  - fixed an  indent  which was fixed at "2" rather
