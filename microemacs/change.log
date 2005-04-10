@@ -4,8 +4,14 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <050409.2018>
+>  Last Modified : <050410.1448>
 >
+
+    [050410] Fixed the -R option for DOS box,  cursor  same as the  foreground
+             color which is not ideal!
+             
+    [050410] Fixed the SunOS x86 makefile to disabled  #pragam  warnings under
+             GCC.
 
     [050409] Release Candidate 2 - MicroEmacs 2005 (RC2)
 
