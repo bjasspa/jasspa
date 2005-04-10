@@ -44,7 +44,7 @@ LD            = $(CC)
 STRIP         =	strip
 INSTALL       =	install
 CDEBUG        =	-g  -Wall
-COPTIMISE     =	-O3 -DNDEBUG=1 -Wall
+COPTIMISE     =	-O3 -DNDEBUG=1 -Wall -Wno-uninitialized -Wno-unknown-pragmas
 CDEFS         = -D_SUNOS_X86 -I.
 CONSOLE_DEFS  = -D_ME_CONSOLE
 WINDOW_DEFS   = -D_ME_WINDOW -I/usr/openwin/include
