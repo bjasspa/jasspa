@@ -108,6 +108,7 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \ecB\\1\ecA"
     
     hilight .hilight.tcl 1 "add"                 .scheme.keyword
     hilight .hilight.tcl 1 "after"               .scheme.keyword
+    hilight .hilight.tcl 1 "append"              .scheme.keyword
     hilight .hilight.tcl 1 "array"               .scheme.keyword
     hilight .hilight.tcl 1 "bind"                .scheme.keyword
     hilight .hilight.tcl 1 "break"               .scheme.keyword
@@ -121,10 +122,12 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \ecB\\1\ecA"
     hilight .hilight.tcl 1 "create"              .scheme.keyword
     hilight .hilight.tcl 1 "delete"              .scheme.keyword
     hilight .hilight.tcl 1 "destroy"             .scheme.keyword
+    hilight .hilight.tcl 1 "dict"                .scheme.keyword
     hilight .hilight.tcl 1 "dpos"                .scheme.keyword
     hilight .hilight.tcl 1 "else"                .scheme.keyword
     hilight .hilight.tcl 1 "elseif"              .scheme.keyword
     hilight .hilight.tcl 1 "entry"               .scheme.keyword
+    hilight .hilight.tcl 1 "error"               .scheme.keyword
     hilight .hilight.tcl 1 "eval"                .scheme.keyword
     hilight .hilight.tcl 1 "exec"                .scheme.keyword
     hilight .hilight.tcl 1 "expr"                .scheme.keyword
@@ -142,9 +145,11 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \ecB\\1\ecA"
     hilight .hilight.tcl 1 "index"               .scheme.keyword
     hilight .hilight.tcl 1 "info"                .scheme.keyword
     hilight .hilight.tcl 1 "insert"              .scheme.keyword
+    hilight .hilight.tcl 1 "interp"              .scheme.keyword
     hilight .hilight.tcl 1 "invoke"              .scheme.keyword
     hilight .hilight.tcl 1 "item"                .scheme.keyword
     hilight .hilight.tcl 1 "label"               .scheme.keyword
+    hilight .hilight.tcl 1 "lassign"             .scheme.keyword
     hilight .hilight.tcl 1 "lindex"              .scheme.keyword
     hilight .hilight.tcl 1 "listbox"             .scheme.keyword
     hilight .hilight.tcl 1 "llength"             .scheme.keyword
@@ -157,13 +162,18 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \ecB\\1\ecA"
     hilight .hilight.tcl 1 "pack"                .scheme.keyword
     hilight .hilight.tcl 1 "puts"                .scheme.keyword
     hilight .hilight.tcl 1 "radiobutton"         .scheme.keyword
+    hilight .hilight.tcl 1 "regsub"              .scheme.keyword
+    hilight .hilight.tcl 1 "rename"              .scheme.keyword
     hilight .hilight.tcl 1 "return"              .scheme.keyword
     hilight .hilight.tcl 1 "scrollbar"           .scheme.keyword
     hilight .hilight.tcl 1 "see"                 .scheme.keyword
     hilight .hilight.tcl 1 "set"                 .scheme.keyword
+    hilight .hilight.tcl 1 "switch"              .scheme.keyword
     hilight .hilight.tcl 1 "tk_menuBar"          .scheme.keyword
     hilight .hilight.tcl 1 "toplevel"            .scheme.keyword
     hilight .hilight.tcl 1 "update"              .scheme.keyword
+    hilight .hilight.tcl 1 "uplevel"             .scheme.keyword
+    hilight .hilight.tcl 1 "upvar"               .scheme.keyword
     hilight .hilight.tcl 1 "variable"            .scheme.keyword
     hilight .hilight.tcl 1 "while"               .scheme.keyword
     hilight .hilight.tcl 1 "wm"                  .scheme.keyword
@@ -171,6 +181,7 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \ecB\\1\ecA"
     hilight .hilight.tcl 0x200 "-"
     hilight .hilight.tcl 1 "-accelerator"        .scheme.type
     hilight .hilight.tcl 1 "-activatecmd"        .scheme.type
+    hilight .hilight.tcl 1 "-all"                .scheme.type
     hilight .hilight.tcl 1 "-allowzero"          .scheme.type
     hilight .hilight.tcl 1 "-anchor"             .scheme.type
     hilight .hilight.tcl 1 "-bd"                 .scheme.type
@@ -182,13 +193,13 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \ecB\\1\ecA"
     hilight .hilight.tcl 1 "-command"            .scheme.type
     hilight .hilight.tcl 1 "-createcmd"          .scheme.type
     hilight .hilight.tcl 1 "-cursor"             .scheme.type
-    hilight .hilight.tcl 1 "-nonewline"          .scheme.type
     hilight .hilight.tcl 1 "-decreasing"         .scheme.type
     hilight .hilight.tcl 1 "-dialogtype"         .scheme.type
     hilight .hilight.tcl 1 "-disable"            .scheme.type
     hilight .hilight.tcl 1 "-editable"           .scheme.type
     hilight .hilight.tcl 1 "-exact"              .scheme.type
     hilight .hilight.tcl 1 "-expand"             .scheme.type
+    hilight .hilight.tcl 1 "-expanded"           .scheme.type
     hilight .hilight.tcl 1 "-fill"               .scheme.type
     hilight .hilight.tcl 1 "-font"               .scheme.type
     hilight .hilight.tcl 1 "-fontset"            .scheme.type
@@ -197,14 +208,20 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \ecB\\1\ecA"
     hilight .hilight.tcl 1 "-highlightthickness" .scheme.type
     hilight .hilight.tcl 1 "-histlimit"          .scheme.type
     hilight .hilight.tcl 1 "-image"              .scheme.type
+    hilight .hilight.tcl 1 "-indices"            .scheme.type
+    hilight .hilight.tcl 1 "-inline"             .scheme.type
     hilight .hilight.tcl 1 "-integer"            .scheme.type
     hilight .hilight.tcl 1 "-itemtype"           .scheme.type
     hilight .hilight.tcl 1 "-justify"            .scheme.type
     hilight .hilight.tcl 1 "-label"              .scheme.type
     hilight .hilight.tcl 1 "-labelside"          .scheme.type
     hilight .hilight.tcl 1 "-left"               .scheme.type
+    hilight .hilight.tcl 1 "-lineanchor"         .scheme.type
+    hilight .hilight.tcl 1 "-linestop"           .scheme.type
     hilight .hilight.tcl 1 "-menu"               .scheme.type
     hilight .hilight.tcl 1 "-msg"                .scheme.type
+    hilight .hilight.tcl 1 "-nocase"             .scheme.type
+    hilight .hilight.tcl 1 "-nonewline"          .scheme.type
     hilight .hilight.tcl 1 "-onvalue"            .scheme.type
     hilight .hilight.tcl 1 "-options"            .scheme.type
     hilight .hilight.tcl 1 "-padx"               .scheme.type
