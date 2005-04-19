@@ -46,7 +46,7 @@
 ;         >
 ;         > Author:       My Self
 ;         > Created:      11/11/97
-;         > Modified:     <050306.0856>
+;         > Modified:     <050418.1728>
 ;         > Location:     /xx/yy/zz.doc
 ; *
 ;         All lines commencing with '*' are assumed to be bullet lists. Bullet
@@ -204,7 +204,7 @@ set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
     !if &not &exi .hilight.tcl
         !force execute-file "hktcl"
     !endif
-    !if &and &sin "h" .fhook-cpp.setup &band .hilight.flags 0x02 
+    !if &and &sin "h" .fhook-tcl.setup &band .hilight.flags 0x02 
         hilight .hilight.doc 0x80 "^>tcl>" .hilight.tcl .scheme.hide
         hilight .hilight.tcl 0x80 "^>doc>" .hilight.doc .scheme.hide
     !endif
