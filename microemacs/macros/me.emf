@@ -277,6 +277,7 @@ add-file-hook ".spec"                                         fhook-spec
 add-file-hook ".sl"                                           fhook-slang
 add-file-hook ".au3"                                          fhook-au3
 add-file-hook ".mod"                                          fhook-mod2
+add-file-hook ".dot"                                          fhook-dot
 add-file-hook ".rb"                                           fhook-ruby
 add-file-hook ".r"                                            fhook-r
 ; Add magic hooks
