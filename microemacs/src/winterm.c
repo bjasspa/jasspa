@@ -3281,6 +3281,14 @@ do_keydown:
                     }
                     /*                cc = ttmodif | (wParam & 0x7f);*/
                 }                    
+                else if ((wParam >= VK_NUMPAD0) && (wParam <= VK_DIVIDE))
+                {
+                    if(wParam <= VK_NUMPAD9)
+                        cc  = ttmodif | /*SKEY_kp_0 */ '0' + (wParam - VK_NUMPAD0);
+                    else
+                        cc  = ttmodif | '*' + (wParam - VK_MULTIPLY);
+                    
+                }
                 else if (wParam == VK_TAB)
                 {
                     cc = SKEY_tab;
