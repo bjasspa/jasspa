@@ -1106,7 +1106,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
                 TTbell();
             break;
         
-        case CK_DOTAB:    /* ^I : Tab character */
+        case CK_DOTAB:    /* tab : Tab character */
 #if MEOPT_OSD
             if(frameCur->mlStatus & MLSTATUS_POSOSD)
             {
@@ -1115,6 +1115,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
                 break;
             }
 #endif
+        case CK_INSTAB:
             cc = '\t' ;    /* ^I for search strings */
             if(!(option & (MLCOMMAND | MLFILE | MLBUFFER | MLVARBL | MLUSER)))
                 goto input_addexpand ;
