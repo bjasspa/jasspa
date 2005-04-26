@@ -191,9 +191,9 @@ ml-bind-key     tab                      "esc esc"
     set-variable $auto-time #l0
 !endif
 ; Setup variables
-set-variable $kept-versions &reg &spr "/history/%s/kept-vers" %platform "0"
 set-variable $mode-line     "%s%r%u%k %b %l - %h:%m %Y/%M/%D (%e) - (%f) "
-set-variable $file-ignore   &reg &spr "/history/%s/file-ignore" %platform ""
+set-variable $kept-versions &reg &spr "/history/%s/kept-vers" $platform "0"
+set-variable $file-ignore   &reg &spr "/history/%s/file-ignore" $platform ""
 set-variable $scroll-bar    &reg &spr "/history/%s/scroll-bar" %platform "0"
 set-variable %tag-file      "tags"
 set-variable %tag-template  "%[^\t]\t%[^\t]\t%[^\n]\n"
