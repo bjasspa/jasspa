@@ -48,14 +48,13 @@ osd .osd.fattr 0  "batcDHs" 10 3 40 0 -1 -1 610 .scheme.osd-title "File attribut
 osd .osd.fattr 10  ""
 osd .osd.fattr 40  ""
 osd .osd.fattr 50  "" "  File Type : "
-osd .osd.fattr 55  "fh" "      "
+osd .osd.fattr 55  "fh" "    "
 osd .osd.fattr 60  "CxfRpht" &cat .osd.checkbox-chars "\} Unix"       1 fattr-type
 osd .osd.fattr 65  "fh" "  "
 osd .osd.fattr 70  "CxfRpht" &cat .osd.checkbox-chars "\} Windows"       2 fattr-type
 osd .osd.fattr 75  "fh" "  "
 osd .osd.fattr 80  "CxfRpt" &cat .osd.checkbox-chars "\} Dos"           3 fattr-type
 osd .osd.fattr 90  ""
-osd .osd.fattr 100 ""
 
 0 define-macro fattr-attr
     !if &les @# 0
@@ -99,23 +98,20 @@ osd .osd.fattr 100 ""
 !else
     osd .osd.fattr 110 "c" "File Permissions"
     osd .osd.fattr 120 ""
-    osd .osd.fattr 130 ""  "  User:"
-    osd .osd.fattr 135 "hf" "      "
+    osd .osd.fattr 130 "hf" "  User:   "
     osd .osd.fattr 140 "CfxRpth" &cat .osd.checkbox-chars "\} Read  "  256 fattr-attr
     osd .osd.fattr 150 "CfxRpth" &cat .osd.checkbox-chars "\} Write  " 128 fattr-attr
-    osd .osd.fattr 160 "CfxRpt"  &cat .osd.checkbox-chars "\} Exec"     64 fattr-attr
+    osd .osd.fattr 160 "CfxRpt"  &cat .osd.checkbox-chars "\} Exec  "  64 fattr-attr
     osd .osd.fattr 170 ""
-    osd .osd.fattr 180 "" "  Group:"
-    osd .osd.fattr 185 "hf" "      "
+    osd .osd.fattr 180 "hf" "  Group:  "
     osd .osd.fattr 190 "CfxRpth" &cat .osd.checkbox-chars "\} Read  "  32 fattr-attr
     osd .osd.fattr 200 "CfxRpth" &cat .osd.checkbox-chars "\} Write  " 16 fattr-attr
-    osd .osd.fattr 210 "CfxRpt"  &cat .osd.checkbox-chars "\} Exec"     8 fattr-attr
+    osd .osd.fattr 210 "CfxRpt"  &cat .osd.checkbox-chars "\} Exec  "   8 fattr-attr
     osd .osd.fattr 220 ""
-    osd .osd.fattr 230 "" "  Global:"
-    osd .osd.fattr 235 "hf" "      "
+    osd .osd.fattr 230 "hf" "  Global: "
     osd .osd.fattr 240 "CfxRpth" &cat .osd.checkbox-chars "\} Read  "  4 fattr-attr
     osd .osd.fattr 250 "CfxRpth" &cat .osd.checkbox-chars "\} Write  " 2 fattr-attr
-    osd .osd.fattr 260 "CfxRpt"  &cat .osd.checkbox-chars "\} Exec"    1 fattr-attr
+    osd .osd.fattr 260 "CfxRpt"  &cat .osd.checkbox-chars "\} Exec  "  1 fattr-attr
 !endif
 
 osd .osd.fattr 590 ""
