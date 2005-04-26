@@ -510,7 +510,7 @@ exitEmacs(int f, int n)
     /* Set the exit code */
     if(n & 4)
     {
-        if(meGetString((meUByte *)"Exit code", 0, 0, buff,128) <= 0)
+        if(meGetString((meUByte *)"Exit code", 0, 0, (meUByte *) buff,128) <= 0)
             return meFALSE ;
         ec = meAtoi(buff) ;
     }
@@ -1468,7 +1468,7 @@ missing_arg:
                             defaultScheme[ii] = meSTYLE_NDEFAULT;
                     }
                     /* Fix the cursor color */
-                    cursorColor = meStyleGetFColor(defaultScheme[meSCHEME_NORMAL]);
+                    cursorColor = (meColor) meStyleGetFColor(defaultScheme[meSCHEME_NORMAL]);
                 }
                 break;
             
