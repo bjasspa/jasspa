@@ -643,7 +643,7 @@ define-macro cvs-log-list
             !if &band .find-file.flags 1
                 dirlst-refresh
             !else
-                dirlst-tag-remove
+                -1 dirlst-tag-set
             !endif
         !endif
         unset-variable .cvs.refresh
@@ -1716,7 +1716,7 @@ define-macro cvs
             2 split-window-vertically
             change-window-depth 15
             find-buffer "*cvs-console*"
-            buffer-bind-create "bio" "delete" "" file-browser-close
+            buffer-bind-create "bio" "f10" "" file-browser-close
             3 previous-window
         !else
             goto-position "\x81"
