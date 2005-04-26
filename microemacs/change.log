@@ -4,12 +4,53 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <050410.1448>
+>  Last Modified : <050426.2354>
 >
+
+    [050427] Major  reworking of main commands in a directory  listing buffer.
+             Implemented typical features found in an OFM standard browser and
+             create  standard  bindings  as  well as  termcap  friendly  ones.
+             Changed  delete binding to delete files rather than close browser
+             which is now bound to f10.
+
+    [050427] osd - Added  numeric bit 8 on osd-entry arg to put the text above
+             the entry.
+
+    [050427] Added C-x k support  to  browser  mode to kill the  buffer,  also
+             added hook for the file-browser's view file.
+
+    [050427] Fixed  user-setup  to  use  only  one  value  of  $file-ignore  &
+             $kept-versions  per  platform  rather than one for window and one
+             for console based versions.
+
+    [050427] Shrunk the size of the file-attrib  dialog to ensure it fits on a
+             termcap screen.
+
+    [050427] Fixed  nasty  bug with  transpose-line  at the end of the  buffer
+             swapping the last line with the first!
+
+    [050427] main.c - Fixed minor compiler warnings.
+
+    [050426] Added a binding for file completion (any key bound to insert-tab)
+             so OSD dialogs can do completion (although awkwardly).
+
+    [050423] Fixed  wiki  edit mode for  Russian  keyboards,  the 'k' flag key
+             mapping was breaking things.
+
+    [050423] Windows - Fixed  windows  Ctrl numeric pad keys, now come through
+             as C-0 ... C-9 C-* C-+ etc.
+
+    [050420] Added new  Dot/Neato  support  fhook (for .dot files) - thanks to
+             Detlef for the submission.
+
+    [050420] TCL - Added more hilight tokens from Detlef.
+
+    [050420] Document  macros - fixed  cpp->tcl  typo - thanks  to Detlef  for
+             spotting this.
 
     [050410] Fixed the -R option for DOS box,  cursor  same as the  foreground
              color which is not ideal!
-             
+
     [050410] Fixed the SunOS x86 makefile to disabled  #pragam  warnings under
              GCC.
 
