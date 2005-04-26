@@ -578,7 +578,7 @@ transLines(int f, int n)
     
     for(i=0,j=abs(n) ; ; )
     {
-        if(((ln1 = frameCur->windowCur->dotLine) == meLineGetPrev(frameCur->bufferCur->baseLine)) ||
+        if(((ln1 = frameCur->windowCur->dotLine) == frameCur->bufferCur->baseLine) ||
            ((ln2 = meLineGetNext(ln1)) == frameCur->bufferCur->baseLine))
             break ;
         meLineGetPrev(meLineGetNext(ln2)) = ln1 ;
