@@ -939,10 +939,11 @@ osd .osd.browse-help 0  "batcDH" 9 3 99 .scheme.osd-title "Browse Mode Help"
 osd .osd.browse-help 3  "" 
 osd .osd.browse-help 4  ""  " esc h     - View this help page"
 osd .osd.browse-help 5  ""  " C-g       - Exit browse mode"
-osd .osd.browse-help 6  ""  " return    - Page down"
-osd .osd.browse-help 7  ""  " space     - Page down"
-osd .osd.browse-help 8  ""  " backspace - Page up"
-osd .osd.browse-help 8  ""  " /         - Search forward"
+osd .osd.browse-help 6  ""  " C-x k     - Delete buffer & exit browse mode"
+osd .osd.browse-help 7  ""  " return    - Page down"
+osd .osd.browse-help 8  ""  " space     - Page down"
+osd .osd.browse-help 9  ""  " backspace - Page up"
+osd .osd.browse-help 10 ""  " /         - Search forward"
 osd .osd.browse-help 13 ""
 osd .osd.browse-help 14 ""  " Normal cursor movement and searching"
 osd .osd.browse-help 15 ""  " key bindings can be used."
@@ -960,9 +961,24 @@ define-macro browse
         set-variable #l2 &nbin #l0
         set-variable #l3 &cond &seq #l2 "" "1" #l2
         !if &sin #l1 "|abort-command|browse|"
+            !if &not &band @# 1
+                !if &not &bmod "edit"
+                    !goto del-quit
+                !else
+                    -1 find-buffer $buffer-bname
+                !endif
+            !endif
             ml-write "Quit browsing mode"
             set-variable $scroll #l8
             !return
+        !elif &seq #l1 "delete-buffer"
+*del-quit
+            !force !force delete-buffer $buffer-bname @mna
+            !if $status
+                ml-write "Quit browsing mode"
+                set-variable $scroll #l8
+                !return
+            !endif
         !elif &seq #l0 "space"
             !force !force scroll-down
         !elif &seq #l0 "/"
