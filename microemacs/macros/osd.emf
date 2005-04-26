@@ -582,12 +582,16 @@ set-variable #l0 0
     execute-line &spr "osd %d 0 \"bcIDtH%s 17 10 %d \"%s\"" .osd.tmp #l6 .scheme.osd-title @1
     osd .osd.tmp 1 ""
     osd .osd.tmp 2 "fh" "  "
+    osd .osd.tmp  3 "Sfh" @2 10
     !if &gre #l2 1
-        osd .osd.tmp  3 "Sf" @2 10
-        osd .osd.tmp  4 "fh" "  "
+        osd .osd.tmp  4 "f" "  "
+        osd .osd.tmp  5 "fh" "  "
         osd .osd.tmp 10 "EtNxHRfhz" .scheme.osd-entry #l0 #l2 "" f osd-entry-value
     !else
-        osd .osd.tmp  3 "Sfh" @2 10
+        !if &band @# 4
+            osd .osd.tmp 4 "f" "  "
+            osd .osd.tmp 5 "fh" "  "
+        !endif
         osd .osd.tmp 10 "EtxHRfhz" .scheme.osd-entry #l0 #l2 "" f osd-entry-value
     !endif
     osd .osd.tmp 15 "f" "  "
