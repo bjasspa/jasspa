@@ -23,7 +23,7 @@ set-variable .fhook-dirtre.setup-mask "aeghop"
 set-variable .fhook-dirtre.command-flag  "|thbio|thbio|th|thbio|thbio|bio|thbio|thbio|bio|"
 set-variable .fhook-dirtre.command-name  "|file-browser-swap-buffers|file-browser-close||dirtre-select-directory|directory-tree|directory-tree|dirtre-select-directory|dirtre-select-directory|dirtre-select-directory|"
 set-variable .fhook-dirtre.command-nbind "||||0x02|0x4e|0x4e|0x66|0xe6|0xe6|"
-set-variable .fhook-dirtre.command-kbind "|tab|delete||space|o|O|return|C-return|C-j|"
+set-variable .fhook-dirtre.command-kbind "|tab|f10||space|o|O|return|C-return|C-j|"
 set-variable .fhook-dirtre.command-desc  "|Swap Browser \HWindows|\HClose File Browser||\HSelect Directory|\HOpen Directory||Open/Close \HDirectory|\HRecursively Open/Close Directory||"
 
 !if &and &sin "h" .fhook-dirtre.setup &band .hilight.flags 0x02 
@@ -85,7 +85,7 @@ set-variable .fhook-dirtre.command-desc  "|Swap Browser \HWindows|\HClose File B
                 find-file #l0
             !endif
             change-buffer-name "*files*"
-            buffer-bind-create "bio" "delete" "" file-browser-close
+            buffer-bind-create "bio" "f10" "" file-browser-close
             buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
         !elif &band .find-file.flags 1
             0 dirlst-refresh
@@ -157,7 +157,7 @@ set-variable .fhook-dirtre.command-desc  "|Swap Browser \HWindows|\HClose File B
                     find-file #l0
                 !endif
                 change-buffer-name "*files*"
-                buffer-bind-create "bio" "delete" "" file-browser-close
+                buffer-bind-create "bio" "f10" "" file-browser-close
                 buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
             !elif &band .find-file.flags 1
                 0 dirlst-refresh

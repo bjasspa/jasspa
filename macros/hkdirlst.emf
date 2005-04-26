@@ -7,6 +7,7 @@
 ; Synopsis:    directory tree buffer hook
 ; Authors:     Steven Phillips
 ;
+; TODO fix context menu
 0 define-macro-file osd osd-close
 0 define-macro-file ftp ftp-rename-buffer
 0 define-macro-file cvs osd-cvs-file-menu
@@ -84,7 +85,7 @@ define-macro fhook-dirlst
         ; current sort column supported in ftp dir-listings?
         !if &band 1 &lget .fhook-dirlst.col-flag &lget .fhook-dirlst.sort 1
             ; No - set this to get a descending Name order
-            set-variable .fhook-dirlst.sort "|1|0|"
+            set-variable .fhook-dirlst.sort "|5|0|"
         !endif
     !elif &seq &lef $buffer-fname 7 "http://"
         ; loading "http://www.jasspa.com/" would call this hook if there's no <html> magic hook as it ends in a '/'
@@ -118,24 +119,29 @@ define-macro fhook-dirlst
 ; buffer-init variables
 set-variable .fhook-dirlst.name "Directory List"
 set-variable .fhook-dirlst.setup &reg "/history/fhook/dirlst" "ghmop"
-set-variable .fhook-dirlst.setup-mask    "aceghlop"
-set-variable .fhook-dirlst.setup-flags   "|l|c|"
-set-variable .fhook-dirlst.setup-labels  "|Enable filter by default|CVS menu always available|"
-set-variable .fhook-dirlst.command-flag  "|thbio|thbio|th|thbio|thbio|thbio|thbio|bio|thbio|bio|h|"
-set-variable .fhook-dirlst.command-name  "|file-browser-swap-buffers|file-browser-close||dirlst-find-file|dirlist-up-dir|dirlst-tag-toggle|dirlst-tag-remove|dirlst-tag-remove|dirlst-tag-execute|dirlst-tag-execute||"
-set-variable .fhook-dirlst.command-nbind "|||||||||||"
-set-variable .fhook-dirlst.command-kbind "|tab|delete||return|backspace|space|d|D|x|X||"
-set-variable .fhook-dirlst.command-desc  "|Swap Browser \HWindows|\HClose File Browser||\HOpen File|Goto Parent Directory|Toggle \HSelection|\HDelete All Selections||E\Hxecute Shell Command on Selected||            (%p for path, %f for file & %% for %)|"
+set-variable .fhook-dirlst.setup-mask    "aceghlopq"
+set-variable .fhook-dirlst.setup-flags   "|q|l|c|"
+set-variable .fhook-dirlst.setup-labels  "|Use OFM Standard key bindings|Enable filter by default|CVS menu always available|"
+set-variable .fhook-dirlst.command-flag  "|thbio|thbio|thbio|bio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|thbio|bio|thbio|thbio|thbio|thbio|thbio|thbio|bio|thbio|h|"
+set-variable .fhook-dirlst.command-name  "|file-browser-swap-buffers|file-browser-close|dirlst-refresh|dirlst-refresh|dirlist-up-dir|dirlst-search|dirlst-search||dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list||dirlst-tag-toggle|dirlst-tag-mask|dirlst-tag-mask|dirlst-tag-invert|dirlst-tag-set|dirlst-tag-set||dirlst-find-file|dirlst-find-file|dirlst-find-file|dirlst-tag-open|dirlst-file-rename|dirlst-tag-file-copy|dirlst-tag-file-copy|dirlst-new-folder|dirlst-tag-file-delete|dirlst-tag-file-delete|dirlst-tag-execute||"
+set-variable .fhook-dirlst.command-nbind "|||||||0||5|6|4|3|2|1|||1|-1||1|-1||0|||||1|0|||||"
+!if &sin "q" .fhook-dirlst.setup
+set-variable .fhook-dirlst.command-kbind "|tab|f10|C-f9|C-f9|backspace|S-f2|S-f3||C-f3|C-f4|C-f5|C-f6|C-f7|C-f8||space|+|-|*|C-+|C--||f3|f4|return|S-f4|f2|f5|f6|f7|f8|delete|S-f5||"
+!else
+set-variable .fhook-dirlst.command-kbind "|tab|f10|l|f5|backspace|s|S||5|6|4|3|2|1||space|+|-|*|a|u||v|o|return|f|r|c|m|n|d|delete|x||"
+!endif
+set-variable .fhook-dirlst.command-desc  "|Swap Browser \HWindows|Close File Browser|Refresh||Goto Parent Directory|\HSearch for File|Search by Name||Sort by Name|Sort by Extension|Sort by Modified|Sort by Size|Sort by Attribute|Sort by Selected||\HToggle Cur File Select|Select Files \H+|Unselect Files \H-|Invert Selection \H*|Select \HAll|\HUnselect All||\HView File|\HOpen File||Open Selected \HFiles|\HRename File|\HCopy Files|\HMove Files|\HNew Folder|\HDelete Files||E\Hxecute Command on Files|            (%p for path, %f for file & %% for %)|"
 
-set-variable .fhook-dirlst.col-name "|Name|Attr|    Size|        Modified|<Order by Extension>|"
-set-variable .fhook-dirlst.col-flag "|0|4|2|1|8|"
-set-variable .fhook-dirlst.sort     "|1|0|"
+set-variable .fhook-dirlst.col-name "| |Attr|    Size|        Modified|Name|<Order by Extension>|"
+set-variable .fhook-dirlst.col-flag "|20|4|2|17|0|8|"
+set-variable .fhook-dirlst.sort     "|5|0|"
 set-variable .fhook-dirlst.browser-lock 0
 set-variable .fhook-dirlst.mode &cond &sin "l" .fhook-dirlst.setup "|0|1|" "|0|0|"
 set-variable .fhook-dirlst.cvs-enable &sin "c" .fhook-dirlst.setup
 
 !if &not &exist .osd.dirlst
     set-variable .osd.dirlst &pinc .osd.next 1
+    set-variable .osd.dirlsts &pinc .osd.next 1
     set-variable .find-file.flags 1
 !endif
 
@@ -280,10 +286,12 @@ set-variable .file-browser-close.bn "\CH*directory*\CH*files*\CH*ftp-files*\CH*f
     1 buffer-mode "view"
 !emacro
 
-set-variable #l0 &rep &trb $file-ignore "./ " ""
-set-variable #l0 &rep #l0 " ./" ""
-str-to-regex #l0
-set-variable .fhook-dirlst.filter-mask &cat "\\./\\|.*" &rep #l0 " " "\\|.*"
+!if &seq "" &set #l0 &rep &rep &trb $file-ignore "./ " "" " ./" ""
+    set-variable .fhook-dirlst.filter-mask ""
+!else
+    str-to-regex #l0
+    set-variable .fhook-dirlst.filter-mask &cat "\\./\\|.*" &rep #l0 " " "\\|.*"
+!endif
 
 0 define-macro file-browser-set-filter
     set-variable .fhook-dirlst.mode &lset .fhook-dirlst.mode 2 @#
@@ -374,7 +382,7 @@ set-variable .fhook-dirlst.filter-mask &cat "\\./\\|.*" &rep #l0 " " "\\|.*"
     !elif &band .find-file.flags 1
         0 dirlst-refresh
     !endif
-    buffer-bind-create "bio" "delete" "" file-browser-close
+    buffer-bind-create "bio" "f10" "" file-browser-close
     buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
     ; if part of a toolbar don't mess with the window-flags
     !if &not &band $window-flags 0x1000
@@ -398,7 +406,7 @@ set-variable .fhook-dirlst.filter-mask &cat "\\./\\|.*" &rep #l0 " " "\\|.*"
 define-macro file-browser
     set-variable .fhook-dirlst.mode &lset .fhook-dirlst.mode 1 0
     @# file-browser-init
-    ml-write "MicroEmacs file-browser <delete> to exit"
+    ml-write "MicroEmacs file-browser \"f10\" to exit"
 !emacro
 
 define-macro file-browser-swap-buffers
@@ -414,7 +422,39 @@ define-macro file-browser-swap-buffers
     !endif
 !emacro
 
-0 define-macro dirlst-get-current-filename
+0 define-macro dirlst-goto-filename
+    set-variable #l0 @1
+    str-to-regex #l0
+    beginning-of-buffer
+    search-buffer &cond &band $system 0x100 "mE" "me" &spr "^.\\{%d\\}%s\\( -> .*\\)?$" :fmpf #l0
+    beginning-of-line
+!emacro
+
+0 define-macro dirlst-get-filename
+    !if &or &les $window-line 5 &les &len @wl :fmpf
+        set-variable @1 ""
+        !if &band @# 1
+            ml-write "[Error: Invalid line]"
+        !endif
+        !abort
+    !endif
+    set-variable #l0 &rig @wl :fmpf
+    !if &sin " -> " #l0
+        set-variable #l0 &lef #l0 &sub &sin " -> " #l0 1
+    !endif
+    set-variable @1 #l0
+    !if &band @# 2
+        beginning-of-line
+        -3 show-region
+        forward-line
+        3 show-region
+        backward-line
+        1 show-region
+        2 screen-update
+    !endif
+!emacro
+
+0 define-macro dirlst-get-current-fullname
     !if &or &les $window-line 5 &les &len @wl :fmpf
         !if &equ $window-line 4
             !force 1 dirlst-get-sort-col
@@ -453,10 +493,10 @@ define-macro file-browser-swap-buffers
 !emacro
 
 0 define-macro dirlst-find-file
-    !if @#
-        dirlst-get-current-filename #l0
-    !else
+    !if &band @# 2
         set-variable #l0 @1
+    !else
+        dirlst-get-current-fullname #l0
     !endif
     !if &seq &lef #l0 6 "ftp://"
         ; it is unknown whether an ftp file is a directory until loaded
@@ -481,7 +521,7 @@ define-macro file-browser-swap-buffers
             find-buffer #l1
             !force change-buffer-name "*ftp-files*"
         !endif
-        buffer-bind-create "bio" "delete" "" file-browser-close
+        buffer-bind-create "bio" "f10" "" file-browser-close
         buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
     !elif &seq &rig #l0 &rsin "/" #l0 ""
         read-file #l0 @mna
@@ -492,7 +532,7 @@ define-macro file-browser-swap-buffers
         !endif
         !force change-buffer-name "*files*"
         !if $status
-            buffer-bind-create "bio" "delete" "" file-browser-close
+            buffer-bind-create "bio" "f10" "" file-browser-close
             buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
             !if .toolbar.open
                 !force toolbar-make-tool-visible "*directory*"
@@ -550,6 +590,9 @@ define-macro file-browser-swap-buffers
             !endif
             goto-position "\x81"
         !endif
+        !if &not &band @# 1
+            0 browse
+        !endif
     !endif
     ; if part of a toolbar update the mode lines
     !if &band $window-flags 0x1000
@@ -561,7 +604,7 @@ define-macro file-browser-swap-buffers
         set-variable #l1 &lef $buffer-fname #l0
         ; if this is the 2nd / of a double / (e.g. current fname is //machine/ or ftp://site/) then fail
         !if &not &seq $mid #l1 &sub #l0 2 1 "/"
-            0 dirlst-find-file #l1
+            3 dirlst-find-file #l1
         !endif
     !endif
 !emacro
@@ -613,7 +656,9 @@ define-macro file-browser-swap-buffers
         set-variable #l1 &sub -1 #l1
     !endif
     ; sort of list column fir
-    !if #l0
+    !if &les #l0 0
+        !force #l1 sort-lines "y"
+    !else
         &cond #l2 &sub -1 #l0 #l0 sort-lines
         set-variable #l3 $window-line
         exchange-point-and-mark
@@ -626,8 +671,6 @@ define-macro file-browser-swap-buffers
             !until &or &equ $window-line #l3 &not &seq #l4 &mid @wl #l0 #l5
             !force #l1 sort-lines "y"
         !done
-    !else
-        !force #l1 sort-lines "y"
     !endif
 !emacro
 0 define-macro dirlst-sort-list-add-ext
@@ -657,17 +700,24 @@ define-macro file-browser-swap-buffers
     !done
 !emacro
 0 define-macro dirlst-sort-list
+    !if &not @?
+        set-variable @# &lget .fhook-dirlst.sort 1
+    !elif &equ @#  &lget .fhook-dirlst.sort 1
+        set-variable .fhook-dirlst.sort &lset .fhook-dirlst.sort 2 &bxor &lget .fhook-dirlst.sort 2 1
+    !else
+        set-variable .fhook-dirlst.sort &spr "|%d|%s|" @# &con &band &lget .fhook-dirlst.col-flag @# 16 "1" "0"
+    !endif
     set-variable #l0 &sub $window-line $window-y-scroll
-    set-alpha-mark "T"
+    set-alpha-mark "\x81"
     -1 buffer-mode "view"
+    1 buffer-mode "edit" "y"
     4 goto-line
-    set-variable #l1 &lget .fhook-dirlst.sort 1
-    set-variable #l2 &lget .fhook-dirlst.col-flag #l1
+    set-variable #l2 &lget .fhook-dirlst.col-flag @#
     !if &band #l2 8
         dirlst-sort-list-add-ext
-        set-variable #l1 1
+        set-variable @# 5
     !endif
-    set-variable #l3 &lget .fhook-dirlst.col-name #l1
+    set-variable #l3 &lget .fhook-dirlst.col-name @#
     set-variable #l4 &sub &sin #l3 @wl 1
     !if &band #l2 4
         set-variable #l5 #l4
@@ -675,7 +725,7 @@ define-macro file-browser-swap-buffers
     !elif &band #l2 2
         set-variable #l5 &add #l4 &len #l3
     !else
-        set-variable #l5 0
+        set-variable #l5 -1
     !endif
     set-variable #l6 &lget .fhook-dirlst.sort 2
     forward-line
@@ -693,34 +743,33 @@ define-macro file-browser-swap-buffers
     !endif
     -1 buffer-mode "edit"
     1 buffer-mode "view"
-    goto-alpha-mark "T"
+    goto-alpha-mark "\x81"
     set-variable $window-y-scroll &sub $window-line #l0
 !emacro
 
 0 define-macro dirlst-get-sort-col
-    set-variable #l0 0
-    !while &not &seq "" &set #l1 &lget .fhook-dirlst.col-name &inc #l0 1
-        set-variable #l2 &sub &sin #l1 @wl 1
-        !if &and &gre &add 1 $window-col #l2 &les $window-col &add #l2 &len #l1
-            !goto got-col
-        !endif
-    !done
-    !abort
+    set-variable #l0 1
+    !if $window-col
+        !while &not &seq "" &set #l1 &lget .fhook-dirlst.col-name &inc #l0 1
+            set-variable #l2 &sub &sin #l1 @wl 1
+            !if &and &gre &add 1 $window-col #l2 &les $window-col &add #l2 &len #l1
+                !goto got-col
+            !endif
+        !done
+        !abort
+    !else
+        set-variable #l1 " "
+        set-variable #l2 0
+    !endif
 *got-col
-    set-variable #l4 &lget .fhook-dirlst.col-flag #l0
     ; column supported in ftp dir-listings?
-    !if &band #l4 1
+    !if &band &lget .fhook-dirlst.col-flag #l0 1
         !if &seq &lef $buffer-fname 6 "ftp://"
             !abort
         !endif
     !endif
     !if @#
-        !if &equ #l0 &lget .fhook-dirlst.sort 1
-            set-variable .fhook-dirlst.sort &lset .fhook-dirlst.sort 2 &bxor &lget .fhook-dirlst.sort 2 1
-        !else
-            set-variable .fhook-dirlst.sort &spr "|%d|%s|" #l0 &con &sin "Modified" #l1 "1" "0"
-        !endif
-        dirlst-sort-list
+        #l0 dirlst-sort-list
     !else
         set-variable $window-col #l2
         -3 show-region
@@ -730,14 +779,13 @@ define-macro file-browser-swap-buffers
 !emacro
 
 0 define-macro dirlst-tag-list
-    set-variable .find-file.flags &band .find-file.flags 0x01
     set-variable #l0 $window-line
     set-variable $window-line 5
     set-variable #l1 0
     !while &not &seq @wc ""
         !if &seq @wc "*"
             !if &and &not @# &seq &mid @wl 1 1 "d"
-                osd-dialog @1 "  Operation not supported  \n      on directories  " " \HCancel "
+                ml-write &spr "[%s Error: Operation not supported on directories]" @1
                 !abort
             !endif
             set-variable #l2 &rig @wl :fmpf
@@ -760,11 +808,12 @@ define-macro file-browser-swap-buffers
     !endif
     beginning-of-line
     -1 buffer-mode "view"
+    1 buffer-mode "edit" "y"
     !if &seq @wc " "
-        insert-string "*" "y"
+        insert-string "*"
         set-variable :tag-count &add :tag-count 1
     !else
-        insert-string " " "y"
+        insert-string " "
         set-variable :tag-count &sub :tag-count 1
     !endif
     forward-delete-char
@@ -772,71 +821,94 @@ define-macro file-browser-swap-buffers
     -1 buffer-mode "edit"
     beginning-of-line
     forward-line
-    set-variable .find-file.flags &band .find-file.flags 0x01
 !emacro
 
 0 define-macro dirlst-tag-open
-    dirlst-tag-list
-    dirlst-tag-remove
-    set-variable .find-file.flags &bor 6 &band .find-file.flags 0x01
+    dirlst-tag-list "Open Files"
+    -1 dirlst-tag-set
     set-variable #l0 &add .find-file.file-count 1
     !while &gre &pdec #l0 1 1
         find-file &cat .find-file.file-dir &ind &cat ".find-file.file" #l0 @mna
     !done
 !emacro
-0 define-macro dirlst-tag-cut
-    0 dirlst-tag-list "Cut Files"
-    set-variable .find-file.flags &bor 6 &band .find-file.flags 0x01
-!emacro
-0 define-macro dirlst-tag-copy
-    0 dirlst-tag-list "Copy Files"
-    set-variable .find-file.flags &bor 2 &band .find-file.flags 0x01
-!emacro
 
-0 define-macro dirlst-tag-remove
+0 define-macro dirlst-tag-set
     set-variable #l0 $window-line
+    set-variable #l1 &cond &les @# 0 " " "*"
     set-variable $window-line 5
     -1 buffer-mode "view"
-    beginning-of-line
+    1 buffer-mode "edit" "y"
     !while &not &seq @wc ""
-        !if &not &seq @wc " "
-            insert-string " "
+        !if &not &seq @wc #l1
+            insert-string #l1
             forward-delete-char
+            set-variable :tag-count &add :tag-count @#
             beginning-of-line
         !endif
         forward-line
     !done
-    set-variable :tag-count 0
     -1 buffer-mode "edit"
      1 buffer-mode "view"
     set-variable $window-line #l0
-    set-variable .find-file.flags &band .find-file.flags 0x01
 !emacro
 
 0 define-macro dirlst-tag-invert
     set-variable #l0 $window-line
     set-variable $window-line 5
     -1 buffer-mode "view"
-    beginning-of-line
+    1 buffer-mode "edit" "y"
     !while &not &seq @wc ""
-        set-variable :tag-count &add :tag-count &cond &seq @wc " " 1 -1
-        insert-string &cond &seq @wc " " "*" " " "y"
+        insert-string &cond &seq @wc " " "*" " "
         forward-delete-char
+        set-variable :tag-count &add :tag-count &cond &seq @wc " " 1 -1
         beginning-of-line
         forward-line
     !done
     -1 buffer-mode "edit"
      1 buffer-mode "view"
     set-variable $window-line #l0
-    set-variable .find-file.flags &band .find-file.flags 0x01
 !emacro
+
+0 define-macro dirlst-tag-mask
+    dirlst-pos -10 -4
+    set-variable #l9 &cond &les @# 0 "Unselect" "Select"
+    set-variable #l0 @ml2 &cat #l9 " Files" .last
+    !if &seq #l0 ""
+        !abort
+    !endif
+    set-variable .last #l0
+    filemask-to-regex #l0
+    set-variable #l0 &spr "^.\\{%d\\}\\(%s\\)\\( -> .*\\)?$" :fmpf &rep #l0 "|" "\\|"
+    set-variable #l1 &cond &les @# 0 " " "*"
+    set-variable #l2 &cond &band $system 0x100 "mE" "me"
+    set-variable #l9 $window-line
+    set-variable $window-line 5
+    -1 buffer-mode "view"
+    1 buffer-mode "edit" "y"
+    !repeat
+        !force search-buffer #l2 #l0
+        !if $status
+            beginning-of-line
+            !if &not &seq @wc #l1
+                insert-string #l1
+                forward-delete-char
+                set-variable :tag-count &add :tag-count @#
+            !endif
+            end-of-line
+        !endif
+    !until &not $status 
+    -1 buffer-mode "edit"
+     1 buffer-mode "view"
+    set-variable $window-line #l9
+!emacro
+set-variable .dirlst-tag-mask.last "*"
 
 0 define-macro dirlst-tag-execute
     !force set-variable #l1 @1
     !if &not $status
         set-variable #l1 @ml "Command to execute"
     !endif
-    dirlst-tag-list
+    dirlst-tag-list "Execute"
     set-variable #l0 0
     !while &les &pinc #l0 1 .find-file.file-count
         set-variable #l2 #l1
@@ -865,6 +937,83 @@ define-macro file-browser-swap-buffers
     ml-write "All done!"
 !emacro
 
+define-macro dirlst-search
+    set-variable #l9 $window-line
+    !if &band @# 1
+        set-variable $window-line 4
+        set-variable #l7 &lget .fhook-dirlst.sort 1
+        set-variable #l8 &con &sin #l7 "1 6" 5 #l7
+        set-variable #l8 &lget .fhook-dirlst.col-name #l8
+        set-variable #l8 &sub &sin #l8 @wl 1
+        set-variable #l7 &lget "||| *|||.*\\.|" #l7
+        set-variable $window-line #l9
+    !else
+        set-variable #l7 ""
+        set-variable #l8 :fmpf
+    !endif
+    !if #l8
+        set-variable #l8 &spr "^.\\{%d\\}%s" #l8 #l7
+    !else
+        set-variable #l8 &cat "^" #l7
+    !endif
+    set-variable #l7 ""
+    set-variable #l6 #l8
+    set-variable #l5 &cond &band $system 0x100 "mE" "me"
+    set-variable #l4 1
+    beginning-of-line
+    !repeat
+        2 screen-update
+        ml-write &spr "** Search for file, SPACE/RETURN to quit: %s%s" #l7 &con #l4 "" " [LOST]"
+        !force !force set-variable #l0 @cgk
+        set-variable #l1 &cbin #l0
+        !if &seq #l1 "abort-command"
+            set-variable $window-line #l9
+            0 ml-write
+            !return
+        !elif &lfind "|space|return|" #l0
+            0 ml-write
+            !return
+        !elif &lfind "|newline|backward-char|forward-char|" #l1
+            0 ml-write
+            !return
+        !elif &lfind "|backward-line|isearch-backward|search-backward|" #l1
+*sba
+            beginning-of-line
+            backward-char
+            !force search-buffer &cat #l5 "b" #l6
+            !if &not &set #l4 $status
+                forward-line
+            !endif
+            beginning-of-line
+        !elif &lfind "|forward-line|isearch-forward|search-forward|" #l1
+*sfa
+            end-of-line
+            !force search-buffer #l5 #l6
+            set-variable #l4 $status
+            beginning-of-line
+        !elif &seq #l1 "beginning-of-buffer"
+            set-variable $window-line 4
+            !goto sfa
+        !elif &seq #l1 "end-of-buffer"
+            end-of-buffer
+            !goto sba
+        !elif &lfind "|backward-delete-char|dirlist-up-dir|" #l1
+            set-variable #l7 &lef #l7 &sub &len #l7 1
+            !goto sf
+        !elif &equ &len #l0 1
+            set-variable #l7 &cat #l7 #l0
+*sf
+            set-variable #l6 #l7
+            str-to-regex #l6
+            set-variable #l6 &cat #l8 #l6
+            beginning-of-line
+            !force search-buffer #l5 #l6
+            set-variable #l4 $status
+            beginning-of-line
+        !endif
+    !until 0
+!emacro
+
 0 define-macro dirlst-pos
     set-variable #l0 0
     !force set-variable #l0 @2
@@ -879,109 +1028,178 @@ define-macro file-browser-swap-buffers
     !endif
 !emacro
 
-0 define-macro dirlst-tag-delete
+0 define-macro dirlst-tag-file-delete
     dirlst-pos -10 -4
-    0 dirlst-tag-list "Delete Files"
-    2 osd-xdialog "Delete Files" &spr "  Delete %d files?  " .find-file.file-count 2 .dirlst-pos.x .dirlst-pos.y " \HYes " " \HNo "
-    !if &equ $result 2
+    !if :tag-count
+        0 dirlst-tag-list "Delete Files"
+        set-variable #l2 .find-file.file-count
+    !else
+        3 dirlst-get-filename #l0
+        set-variable #l2 1
+        set-variable .find-file.file-dir $buffer-fname
+        set-variable .find-file.file1 #l0
+    !endif
+    !if &equ #l2 1
+        set-variable #l3 &spr "Are you sure you want to delete \"%s\" [y/n]? " .find-file.file1
+    !else
+        set-variable #l3 &spr "Are you sure you want to delete %d files [y/n]? " #l2
+    !endif
+    !force !force set-variable #l4 @mc1 #l3 "nNyY"
+    set-variable #l3 $status
+    !force -1 show-region
+    !if &not #l3
+        !abort
+    !elif &iseq #l4 "n"
         !abort
     !endif
     set-variable #l0 0
-    !while &les &pinc #l0 1 .find-file.file-count
+    !while &les &pinc #l0 1 #l2
         0x20 file-op &cat .find-file.file-dir &ind &cat ".find-file.file" #l0 @mna
     !done
     !if &band .find-file.flags 1
         dirlst-refresh
     !else
-        dirlst-tag-remove
+        -1 dirlst-tag-set
     !endif
 !emacro
 
-0 define-macro dirlst-tag-rename
-    dirlst-pos -10 -4
-    0 dirlst-tag-list "Rename File"
-    !if &not &equ .find-file.file-count 1
-        ml-write "[Rename file: something strange happend - abort]"
+0 define-macro dirlst-copy-prompt
+    !if &not &sin " [y/n]?" $result
+        set-variable .state 0
+        set-variable #l0 @mc &spr "[Error: Unexpected prompt \"%s\" <ANY KEY>]" $result
         !abort
-    !endif
-    set-variable #l0 &ind &cat ".find-file.file" 1
-    2 osd-entry "Rename File" "\HNew Name: " #l0 .dirlst-pos.x .dirlst-pos.y 20
-    !if &seq &set #l1 &stat "t" &cat .find-file.file-dir #l0 "R"
-        2 osd-xdialog "Rename File" &spr "  %s already exists, replace?  " #l0 2 .dirlst-pos.x .dirlst-pos.y " \HYes " " \HNo "
-        !if &equ $result 2
-            !abort
-        !endif
-    !elif &not &seq #l1 "X"
-        2 osd-dialog "Rename File" "  Illegal filename entered!  " .dirlst-pos.x .dirlst-pos.y " \HCancel "
-        !abort
-    !endif
-    0x40 file-op &cat .find-file.file-dir &ind &cat ".find-file.file" 1 &cat .find-file.file-dir #l0 @mna
-    !if &band .find-file.flags 1
-        dirlst-refresh
-    !else
-        dirlst-tag-remove
-    !endif
-!emacro
-
-0 define-macro dirlst-tag-paste-prompt
-    !if &equ .dirlst-tag-paste.state 2
+    !elif &equ .state 2
         set-variable $result "y"
         !return
     !endif
-    set-variable #l0 &cat "  " &rep $result " [y/n]?" "?"
-    set-variable #l0 &rep #l0 ", " "  \n\n          "
-    !force !force 2 osd-xdialog "Paste File" #l0 0 .dirlst-pos.x .dirlst-pos.y " \HYes " " Yes to \HAll" " \HNo " " \HAbort "
-    !if &or &not $status &equ $result 4
-        set-variable .dirlst-tag-paste.state 0
+    set-variable #l0 &rep $result " [y/n]?" " [Y]es,[N]o,[A]ll,[^G]Abort?"
+    !force !force set-variable #l1 @mc1 #l0 "nNyYaA"
+    !if &not $status
+        set-variable .state 0
         !abort
+    !elif &iseq #l1 "a"
+        set-variable .state 2
+        set-variable #l1 "y"
     !endif
-    !if &equ $result 2
-        set-variable .dirlst-tag-paste.state 2
-    !endif
-    set-variable $result &lget "|y|y|n|" $result
+    set-variable $result #l1
 !emacro
 
-0 define-macro dirlst-tag-paste
+0 define-macro dirlst-tag-file-copy
     dirlst-pos -10 -4
-    !if &seq .find-file.file-dir $buffer-fname
-        !abort
-    !endif
-    !if &band .find-file.flags 4
-        set-variable #l0 "Cut"
-        set-variable #l1 0x41
+    set-variable #l9 &cond &band @# 1 "Copy" "Move"
+    set-variable #l8 &cond &band @# 1 0x81 0x41
+    !if :tag-count
+        0 dirlst-tag-list &cat #l9 " Files"
+        set-variable #l2 .find-file.file-count
     !else
-        set-variable #l0 "Copy"
-        set-variable #l1 0x81
+        3 dirlst-get-filename #l0
+        set-variable #l2 1
+        set-variable .find-file.file1 #l0
     !endif
-    2 osd-xdialog "Paste Files" &spr "  %s %d files?  " #l0 .find-file.file-count 2 .dirlst-pos.x .dirlst-pos.y " \HYes " " \HNo "
-    !if &equ $result 2
+    !if &equ #l2 1
+        set-variable #l3 &spr "%s file \"%s\" to" #l9 .find-file.file1
+    !else
+        set-variable #l3 &spr "%s %d files to" #l9 #l2
+    !endif
+    !force !force set-variable #l0 @ml21 #l3 $buffer-fname
+    set-variable #l3 $status
+    !force -1 show-region
+    !if &not #l3
+        !abort
+    !elif &sin &set #l1 &stat "t" #l0 "DF"
+        !if &seq #l0 $buffer-fname
+            ml-write &spr "[%s File Error: Destination must be a different directory]" #l9
+            !abort
+        !endif
+        set-variable .dirlst-copy-prompt.state 1
+        set-variable #l1 0
+        !while &and .dirlst-copy-prompt.state &les &pinc #l1 1 #l2
+            ml-write &spr "%s %n" #l9 &mod #l1 40 "."
+            set-variable #l4 &ind &cat ".find-file.file" #l1
+            !force !force #l8 file-op &spr "file:%s%s" $buffer-fname #l4 &spr "file:%s%s" #l0 #l4 @mxa dirlst-copy-prompt
+        !done
+        ml-write &cat #l9 " Complete"
+    !elif &not &sin #l1 "XR"
+        ml-write &spr "[%s File Error: Cannot %s to \"%s\"]" #l9 &slo #l9 #l0
+        !abort
+    !elif &gre #l2 1
+        ml-write &spr "[%s File Error: Destination must be a directory when copying multiple files]" #l9
+        !abort
+    !elif &seq &set #l3 &cat $buffer-fname .find-file.file1 #l0
+        ml-write &spr "[%s File Error: Destination file name must be different]" #l9
+        !abort
+    !else
+        set-variable .dirlst-copy-prompt.state 1
+        ml-write &cat #l9 " ."
+        !force !force #l8 file-op &cat "file:" #l3 &cat "file:" #l0 @mxa dirlst-copy-prompt
+        ml-write &cat #l9 " Complete"
+    !endif
+    !if &not .dirlst-copy-prompt.state
         !abort
     !endif
-    set-variable .state 1
-    set-variable #l0 0
-    !while &and .state &les &pinc #l0 1 .find-file.file-count
-        set-variable #l2 &ind &cat ".find-file.file" #l0
-        !force !force #l1 file-op &spr "file:%s%s" .find-file.file-dir #l2 &spr "file:%s%s" $buffer-fname #l2 @mxa dirlst-tag-paste-prompt
-    !done
     !if &band .find-file.flags 1
         dirlst-refresh
     !endif
-    !if &not .state
+!emacro
+
+0 define-macro dirlst-file-rename
+    dirlst-pos -10 -4
+    3 dirlst-get-filename #l1
+    !if &seq &rig #l1 &sub &len #l1 1 "/"
+        set-variable #l9 "/"
+        set-variable #l1 &lef #l1 &sub &len #l1 1
+        set-variable #l0 &spr "Rename directory \"%s\" to" #l1
+    !else
+        set-variable #l9 ""
+        set-variable #l0 &spr "Rename file \"%s\" to" #l1
+    !endif
+    !force !force set-variable #l0 @ml2 #l0 #l1
+    set-variable #l2 $status
+    -1 show-region
+    !if &not #l2
         !abort
+    !elif &seq &rig #l0 &sub &len #l0 1 "/"
+        set-variable #l0 &lef #l0 &sub &len #l0 1
+    !endif
+    !if &seq #l1 #l0
+        ml-write "[Rename File: No name change]"
+        !return
+    !elif &seq &set #l3 &stat "t" &cat $buffer-fname #l0 "R"
+        set-variable #l4 @mc1 &spr "File \"%s\" already exists, replace [y/n]? " #l0 "nNyY"
+        !if &iseq #l4 "n"
+            !abort
+        !endif
+    !elif &not &seq #l3 "X"
+        ml-write "[Rename File Error: Illegal filename entered]"
+        !abort
+    !endif
+    0x40 file-op &cat $buffer-fname #l1 &cat $buffer-fname #l0 @mna
+    !if &band .find-file.flags 1
+        dirlst-refresh
+        dirlst-goto-filename &cat #l0 #l9
+    !else
+        -1 dirlst-tag-set
     !endif
 !emacro
 
 0 define-macro dirlst-new-folder
     dirlst-pos -10 -4
-    set-variable #l0 ""
-    2 osd-entry "New Folder" "Folder \HName: " #l0 .dirlst-pos.x .dirlst-pos.y 20
+    set-variable #l0 @ml "New folder name"
+    !if &seq &rig #l0 &sub &len #l0 1 "/"
+        set-variable #l0 &lef #l0 &sub &len #l0 1
+    !endif
+    !if &seq #l0 ""
+        !abort
+    !endif
     0x100 file-op #l0
     !if &band .find-file.flags 1
         dirlst-refresh
+        dirlst-goto-filename &cat #l0 "/"
     !endif
 !emacro
 0 define-macro dirlst-refresh
     set-variable #l0 $buffer-bname
+    !force 0 dirlst-get-filename #l1
     !if @#
         read-file $buffer-fname "y" @mna
     !else
@@ -992,8 +1210,11 @@ define-macro file-browser-swap-buffers
     !endif
     change-buffer-name #l0
     !if &seq #l0 "*files*"
-        buffer-bind-create "bio" "delete" "" file-browser-close
+        buffer-bind-create "bio" "f10" "" file-browser-close
         buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
+    !endif
+    !if &not &seq #l1 ""
+        !force dirlst-goto-filename #l1
     !endif
 !emacro
 0 define-macro dirlst-auto-refresh
@@ -1001,28 +1222,48 @@ define-macro file-browser-swap-buffers
     osd .osd.dirlst 130 ""  &cat "\HAuto-Refresh: " &cond &band .find-file.flags 1 "On " "Off" f dirlst-auto-refresh
 !emacro
 
+osd .osd.dirlsts 0  b
+osd .osd.dirlsts 10 ""  "\HToggle Cur File"     f dirlst-tag-toggle
+osd .osd.dirlsts 20 ""  "Select Files \H+"      1 dirlst-tag-mask
+osd .osd.dirlsts 30 ""  "Unselect Files \H-"   -1 dirlst-tag-mask
+osd .osd.dirlsts 40 ""  "Invert Selection \H*"  f dirlst-tag-invert
+osd .osd.dirlsts 50 ""  "Select \HAll"          1 dirlst-tag-set
+osd .osd.dirlsts 60 ""  "\HUnselect All"       -1 dirlst-tag-set
+
+-1 osd .osd.dirlst
 osd .osd.dirlst 0   b
 osd .osd.dirlst 60  "-"
 osd .osd.dirlst 110 ""  "\HNew Folder"          f dirlst-new-folder
 osd .osd.dirlst 120 ""  "Re\Hfresh"             f dirlst-refresh
 osd .osd.dirlst 130 ""  "\HAuto-Refresh: on "   f dirlst-auto-refresh
-osd .osd.dirlst 99  ""  "\HInvert Selection"    f dirlst-tag-invert
+osd .osd.dirlst 90  "M" "File \HSelection"      .osd.dirlsts
 
 0 define-macro dirlst-context-menu
-    !if :tag-count
-        osd .osd.dirlst  10 ""  "\HOpen"         f dirlst-tag-open
-        osd .osd.dirlst  20 ""  "Cu\Ht"          f dirlst-tag-cut
-        osd .osd.dirlst  30 ""  "\HCopy"         f dirlst-tag-copy
-        osd .osd.dirlst  40 ""  "\HDelete"       f dirlst-tag-delete
-        osd .osd.dirlst  90 ""  "E\Hxecute"      f dirlst-tag-execute
-        osd .osd.dirlst 100 ""  "De\Hselect All" f dirlst-tag-remove
+    set-variable #l0 &not &or &les $window-line 5 &les &len @wl :fmpf
+    !if #l0
+        osd .osd.dirlst   5 ""  "\HView File"     0 dirlst-find-file
+        osd .osd.dirlst  10 ""  "\HOpen File"     f dirlst-find-file
+        osd .osd.dirlst  20 ""  "\HRename"        f dirlst-file-rename
     !else
-        osd .osd.dirlst  10 ""  "Open"
-        osd .osd.dirlst  20 ""  "Cut"
-        osd .osd.dirlst  30 ""  "Copy"
-        osd .osd.dirlst  40 ""  "Delete"
-        osd .osd.dirlst  90 ""  "Execute"
-        osd .osd.dirlst 100 ""  "Deselect All"
+        osd .osd.dirlst   5 ""  "View File"
+        osd .osd.dirlst  10 ""  "Open File"
+        osd .osd.dirlst  20 ""  "Rename File"
+    !endif
+    !if &or #l0 :tag-count
+        osd .osd.dirlst  30 ""  "\HCopy Files"    1 dirlst-tag-file-copy
+        osd .osd.dirlst  40 ""  "\HMove Files"    0 dirlst-tag-file-copy
+        osd .osd.dirlst  50 ""  "\HDelete Files"  f dirlst-tag-file-delete
+    !else
+        osd .osd.dirlst  30 ""  "Copy Files"
+        osd .osd.dirlst  40 ""  "Move Files"
+        osd .osd.dirlst  50 ""  "Delete Files"
+    !endif
+    !if :tag-count
+        osd .osd.dirlst  15 ""  "Open Selected"   f dirlst-tag-open
+        osd .osd.dirlst 100 ""  "E\Hxecute"       f dirlst-tag-execute
+    !else
+        osd .osd.dirlst  15 ""  "Open Selected"
+        osd .osd.dirlst 100 ""  "Execute"
     !endif
     osd .osd.dirlst  11 "D"
     osd .osd.dirlst 140 "D"
@@ -1053,16 +1294,6 @@ osd .osd.dirlst 99  ""  "\HInvert Selection"    f dirlst-tag-invert
             osd .osd.dirlst 70 "M" "C\HVS" .osd.tmp osd-cvs-file-menu
             osd .osd.dirlst 80  "-"
         !endif
-    !endif
-    !if &equ :tag-count 1
-        osd .osd.dirlst 50 ""  "\HRename"       f dirlst-tag-rename
-    !else
-        osd .osd.dirlst 50 ""  "Rename"
-    !endif
-    !if &band .find-file.flags 2
-        osd .osd.dirlst 35 ""  "\HPaste"        f dirlst-tag-paste
-    !else
-        osd .osd.dirlst 35 ""  "Paste"
     !endif
     .osd.dirlst osd
 !emacro
@@ -1098,7 +1329,7 @@ osd .osd.dirlst 99  ""  "\HInvert Selection"    f dirlst-tag-invert
     !else
         ; normal buffer, therefore load the file into this window
         goto-position "\x81"
-        dirlst-get-current-filename #l0
+        dirlst-get-current-fullname #l0
         goto-position "\x83"
         find-file #l0 @mna
         !return
@@ -1109,7 +1340,7 @@ osd .osd.dirlst 99  ""  "\HInvert Selection"    f dirlst-tag-invert
         set-variable #l0 ""
         set-variable #l2 &spr "Copy the %d tagged files to" :tag-count
     !else
-        dirlst-get-current-filename #l0
+        dirlst-get-current-fullname #l0
         set-variable #l2 &spr "Copy file %s to" &rig #l0 &rsin "/" #l0
     !endif
     set-variable #l2 &spr "  %n%s  \n\n  %n%s  " &div &sub &len #l1 &len #l2 2 " " #l2 &div &sub &len #l2 &len #l1 2 " " #l1
@@ -1125,14 +1356,14 @@ osd .osd.dirlst 99  ""  "\HInvert Selection"    f dirlst-tag-invert
         !return
     !endif
     !if &seq #l0 ""
-        set-variable .dirlst-tag-paste.state 1
+        set-variable .dirlst-copy-prompt.state 1
         set-variable #l0 0
-        !while &and .dirlst-tag-paste.state &les &pinc #l0 1 .find-file.file-count
+        !while &and .dirlst-copy-prompt.state &les &pinc #l0 1 .find-file.file-count
             set-variable #l2 &ind &cat ".find-file.file" #l0
-            !force !force #l3 file-op &spr "file:%s%s" .find-file.file-dir #l2 &spr "file:%s%s" $buffer-fname #l2 @mxa dirlst-tag-paste-prompt
+            !force !force #l3 file-op &spr "file:%s%s" .find-file.file-dir #l2 &spr "file:%s%s" $buffer-fname #l2 @mxa dirlst-copy-prompt
         !done
     !else
-        !force !force #l3 file-op &spr "file:%s" #l0 &spr "file:%s%s" $buffer-fname &rig #l0 &rsin "/" #l0 @mxa dirlst-tag-paste-prompt
+        !force !force #l3 file-op &spr "file:%s" #l0 &spr "file:%s%s" $buffer-fname &rig #l0 &rsin "/" #l0 @mxa dirlst-copy-prompt
     !endif
 !emacro
 
@@ -1217,7 +1448,7 @@ osd .osd.dirlst 99  ""  "\HInvert Selection"    f dirlst-tag-invert
             set-variable #l0 $window-col
             set-variable #l1 &add #l0 &sin "/" &rig @wl #l0
             set-variable #l2 &mid @wl 22 &sub #l1 22
-            0 dirlst-find-file #l2
+            3 dirlst-find-file #l2
         !endif
     !elif &equ $window-line 4
         !force 1 dirlst-get-sort-col
