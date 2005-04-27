@@ -52,9 +52,9 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \ecB\\1\ecA"
 !if &and &sin "h" .fhook-tcl.setup &band .hilight.flags 0x02 
     ; High-light Tcl Mode
     0 hilight .hilight.tcl 0                     $global-scheme
-    hilight .hilight.tcl 0 "^\\s*\\{#.*"         .scheme.comment
+    hilight .hilight.tcl 0x22 "#"                .scheme.comment
     hilight .hilight.tcl 2 "^#!/"                .scheme.header
-    hilight .hilight.tcl 2 ";#"                  .scheme.comment
+    hilight .hilight.tcl 2 ";\\{\\s*#"           .scheme.comment
     hilight .hilight.tcl 0 "\\\\."               $global-scheme
     hilight .hilight.tcl 4 "\"" "\"" "\\"        .scheme.string
     hilight .hilight.tcl 4 "\\$" "\\}\\W" ""     .scheme.variable
@@ -385,7 +385,7 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \ecB\\1\ecA"
     indent .hilight.tcl b "(" ")"
     indent .hilight.tcl c "\\\\\\s*$" 3/2t
     indent .hilight.tcl i "^\\s*#"
-    indent .hilight.tcl i ";#"
+    indent .hilight.tcl i ";\\s*#"
 !endif
 
 buffer-init-fhook "tcl"
