@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd069.2,v 2.6 2005-03-06 08:48:14 jon Exp $
+.Id $Id: m2cmd069.2,v 2.7 2005-04-27 23:32:15 jon Exp $
 .Im MicroEmacs command|hilight|macrodevelop
 .so me.tni
 .TH hilight 2
@@ -410,7 +410,12 @@ start of the line.
 The token must be at the end of the line, must be the last character.
 .IP "\fB\\\\{\fR"
 Indicates  the start of the hilighted  part of the token, only one may be used
-per token. This token use is different from regex.
+per token. This token use is different from regex. The \fB\\{\fR hilight start
+marker  must be at a fixed  point from the start of the token,  that is a wild
+card sequence may NOT proceed the "\fC\\{\fR" token, i.e.
+"\fCA\\{\ *B\fR"
+is correct,
+"\fCA\ *\\{B\fR" is incorrect as it is proceeded by a wild card character.
 .IP "\fB\\\\}\fR"
 Indicates the end of the hilighted part of the token, only one may be used per
 token.  The rest of the  token  must be  matched  for it to be used but is not
