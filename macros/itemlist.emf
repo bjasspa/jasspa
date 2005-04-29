@@ -55,6 +55,12 @@
 !endif
 
 0 define-macro item-list-order
+    !if &not @?
+    !elif &equ @# .item-list.order
+        set-variable .item-list.order &sub 0 @# 
+    !else
+        set-variable .item-list.order @# 
+    !endif
     -1 buffer-mode "view"
     2 goto-line
     set-mark
@@ -81,11 +87,7 @@
     !abort
 *got-col
     !if @#
-        !if &equ .item-list.order #l0
-            set-variable #l0 &sub 0 #l0
-        !endif
-        set-variable .item-list.order #l0
-        item-list-order
+        #l0 item-list-order
     !else
         set-variable $window-col #l1
         -3 show-region
@@ -136,8 +138,17 @@ define-macro item-list-find
     !if @#
         popup-window #l0
     !else
+        set-variable #l2 $window-id
         goto-position "\x82"
-        find-buffer #l0
+        !if &not &seq $buffer-bname #l2
+            !force 0 popup-window #l0
+            !if $status
+            !elif &equ #l2 $window-id
+                popup-window #l0
+            !else
+                find-buffer #l0
+            !endif
+        !endif
     !endif
     #l1 goto-line
     recenter
@@ -192,6 +203,9 @@ define-macro item-list-create
     ; to simple click the function
     buffer-bind-create "bio" "return" "" item-list-find
     buffer-bind-create "bio" "delete" "" item-list-close
+    buffer-bind-create "bio" "1" "1" item-list-order
+    buffer-bind-create "bio" "2" "2" item-list-order
+    buffer-bind-create "bio" "3" "3" item-list-order
     set-variable :mouse-pick-1 item-list-mouse-pick
     set-variable :mouse-drop-1 item-list-mouse-drop
     set-variable $buffer-hilight .hilight.list-item
@@ -313,10 +327,10 @@ define-macro occur
 !emacro
 
 set-variable .item-list.find 0
-set-variable .item-list.bcol "|14|0|5|"
-set-variable .item-list.ecol "|33|4|9|"
-set-variable .item-list.scol "|0|6|11|"
-set-variable .item-list.order 1
+set-variable .item-list.bcol "|0|5|14|"
+set-variable .item-list.ecol "|4|9|33|"
+set-variable .item-list.scol "|6|11|0|"
+set-variable .item-list.order 3
 
 ;0 add-next-line "*item-list*"
 ;add-next-line "*item-list*" "^ *%l "
