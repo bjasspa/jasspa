@@ -91,7 +91,7 @@
                         set-variable #l1 &add #l1 &sub $window-col #l2
                     !else
                         ; hilight the bad word - must protect . as regex any
-                        set-variable #l2 $result
+                        set-variable #l2 &rep $result "." "\\."
                         !if &inw &rig #l2 &sub &len #l2 1
                             set-variable #l2 &cat &rig #l2 1 "\\}[^[:sword:]]"
                         !else
