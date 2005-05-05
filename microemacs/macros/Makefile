@@ -74,7 +74,7 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		au3.eaf		\
 	osdmisc.emf	osdnedit.emf	osdcua.emf	osf1.emf	\
 	pagefile.emf	patience.emf	perltags.emf	print.emf	\
 	printall.emf	printd.emf	printepc.emf	printers.emf	\
-	printf.emf	printstp.emf	\
+	printf.emf	printstp.emf	python.eaf	python.etf	\
 	rect.emf	\
 	scheme.emf	schemeb.emf	schemebc.emf	\
 	schemebh.emf	schemed.emf	schemej.emf	schemel.emf	\
