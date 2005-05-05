@@ -19,16 +19,15 @@ set-variable .fhook-python.setup-mask "aefghikmnoptux"
 set-variable .fhook-python.comment "|#||#|# | #|r|"
 
 ; Set up collapse for python
-set-variable .fhook-python.collapse-open  "^{"
-set-variable .fhook-python.collapse-close "^}"
-set-variable .fhook-python.collapse-mopen  "-1"
-set-variable .fhook-python.collapse-mclose "1"
+set-variable .fhook-python.collapse-open  "^\\(class \\|def \\)"
+set-variable .fhook-python.collapse-close "^[a-z]\\|\\'"
+set-variable .fhook-python.collapse-mclose "0"
 set-variable .fhook-python.collapse-mnext "-1"
 
 ; setup item-list
 set-variable .fhook-python.item-list-s1 "^[ \t]*def[ \t]+\\(\\w+\\)"
-set-variable .fhook-python.item-list-r1 "Def \ecB\\1\ecA"
-set-variable .fhook-python.item-list-s2 "^[ \t]*class*[ \t]+\\(\\w+\\)\\([ \t]+:\\|[ \t]*{\\|[ \t]*$\\)"
+set-variable .fhook-python.item-list-r1 "Defn \ecB\\1\ecA"
+set-variable .fhook-python.item-list-s2 "^[ \t]*class*[ \t]+\\(\\w+\\)"
 set-variable .fhook-python.item-list-r2 "Class \ecB\\1\ecA"
 
 !if &and &sin "h" .fhook-python.setup &band .hilight.flags 0x02
