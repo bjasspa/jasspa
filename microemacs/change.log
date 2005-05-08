@@ -4,8 +4,28 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <050426.2354>
+>  Last Modified : <050508.1315>
 >
+
+    [050508] JASSPA  MicroEmacs  8th release - final. Core and macro  versions
+             20050505.
+    
+    [050507] Added Finnish support to ne.emf.    
+
+    [050506] Improved python collapse and item-list  support and added eaf and
+             etf for python - thanks to Detlef.
+
+    [050505] Base version numbers reset for next release.
+    
+    [050429] Added  support  for  keybinding  to  item-list  column  ordering,
+             function  is  item-list-order  and  is  bound  to 1, 2  and  3 by
+             default.  Thanks to Bryan  Schofield  for his  submission in this
+             area.
+
+    [050429] Spelling - protect '.'s in the word with \\.
+
+    [050428] Corrected  TCL  hilighting  w.r.t.  comment  at  end  of  line  -
+             submitted by Bryan Schofield.
 
     [050427] Major  reworking of main commands in a directory  listing buffer.
              Implemented typical features found in an OFM standard browser and

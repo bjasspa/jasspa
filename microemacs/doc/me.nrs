@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.35 2005-04-09 19:16:25 jon Exp $
+.Id $Id: me.nrs,v 2.36 2005-05-08 13:45:00 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -2058,6 +2058,70 @@ common editor across all working platforms has been achieved!
 .\"
 .B "8th Release - May 2005"
 .BS
+[050508]  JASSPA  MicroEmacs  8th  release - final.  Core and  macro  versions
+20050505.
+.BU    
+[050507] Added Finnish support to ne.emf. 
+.BU
+[050506] Improved python collapse and item-list  support and added eaf and etf
+for python - thanks to Detlef.
+.BU
+[050505] Base version numbers reset for next release.
+.BU    
+[050429] Added support for keybinding to item-list  column ordering,  function
+is  item-list-order  and is bound to 1, 2 and 3 by  default.  Thanks  to Bryan
+Schofield for his submission in this area.
+.BU
+[050429] Spelling - protect '.'s in the word with \\\\.
+.BU
+[050428] Corrected TCL hilighting w.r.t. comment at end of line - submitted by
+Bryan Schofield.
+.BU
+[050427]  Major  reworking  of main  commands in a directory  listing  buffer.
+Implemented  typical  features  found in an OFM  standard  browser  and create
+standard  bindings as well as termcap friendly ones. Changed delete binding to
+delete files rather than close browser which is now bound to f10.
+.BU
+[050427] osd - Added  numeric bit 8 on osd-entry arg to put the text above the
+entry.
+.BU
+[050427]  Added C-x k support to browser  mode to kill the buffer,  also added
+hook for the file-browser's view file.
+.BU
+[050427]   Fixed   user-setup  to  use  only  one  value  of   $file-ignore  &
+$kept-versions  per  platform  rather  than one for window and one for console
+based versions.
+.BU
+[050427]  Shrunk  the size of the  file-attrib  dialog  to ensure it fits on a
+termcap screen.
+.BU
+[050427] Fixed nasty bug with transpose-line at the end of the buffer swapping
+the last line with the first!
+.BU
+[050427] main.c - Fixed minor compiler warnings.
+.BU
+[050426] Added a binding for file  completion (any key bound to insert-tab) so
+OSD dialogs can do completion (although awkwardly).
+.BU
+[050423] Fixed wiki edit mode for Russian  keyboards, the 'k' flag key mapping
+was breaking things.
+.BU
+[050423]  Windows - Fixed  windows  Ctrl numeric pad keys, now come through as
+C-0 ... C-9 C-* C-+ etc.
+.BU
+[050420] Added new Dot/Neato support fhook (for .dot files) - thanks to Detlef
+for the submission.
+.BU
+[050420] TCL - Added more hilight tokens from Detlef.
+.BU
+[050420] Document macros - fixed cpp->tcl typo - thanks to Detlef for spotting
+this.
+.BU
+[050410] Fixed the -R option for DOS box, cursor same as the foreground  color
+which is not ideal!
+.BU
+[050410] Fixed the SunOS x86 makefile to disabled #pragam warnings under GCC.
+.BU
 [050409] Release Candidate 2 - MicroEmacs 2005 (RC2)
 .BU
 [050408]  Added flag to the  user-setup  Tools to force the  rereading  of the
@@ -2499,12 +2563,12 @@ and only buffer delete problem.
 [050127]  Added  process  tree killing for windows,  tested on win98, 2k & XP,
 would be good to test on win95  (which  should  work) and NT which  should not
 work but hopefully will be no worse than current version.
-.sp 1
+.BU " "
 This is a process  tree  killing  for ipipes, in win32  killing the process we
 create is simply not good enough, all child processes continue unaffected. For
 example, run compile,  kill the buffer in mid compile and it carries on behind
 your back!
-.sp 1
+.BU " "
 For Unix we use a new group and kill the group, DOS does not support ipipe. We
 could have used the new Job concept in ME but this is only  present in win2000
 & XP and the  binaries  are  unlikely  to run on win98 etc. This should run on
@@ -2933,7 +2997,7 @@ which  defines a vulgar  fraction of \'\fCt\fR'  which is the indent width (or
 tabsize) as specified by
 .Ht $buffer-indent-width 5
 defined below.
-.sp 1
+.BU " "
 The global variables
 .Hr $tabsize 5
 renamed
@@ -2943,7 +3007,7 @@ and controls the global indentation size.
 renamed
 .Ht $tab-width 5
 and controls the display size of a literal \s-1TAB\s0 character.
-.sp 1
+.BU " "
 The indentation is now specified on a buffer basis, the variables
 .Ht $buffer-indent-width 5
 and
@@ -3293,7 +3357,7 @@ variable to define the CVS command.
 [040203] XML template extended to include javascript.
 .BU
 [040130] 2nd iteration of prototype and near final revision of new user setup.
-.IP
+.BU " "
 Following  an internal  review of RC3 then it has been  decided to address the
 issues  of user  configuration  prior  to a full  release.  This  specifically
 addresses the location of user MicroEmacs configuration directories and search
@@ -3303,26 +3367,24 @@ directory to store user settings. This is proving  difficult for new users who
 just want to run the editor. RC4 and  subsequent  releases  will address these
 problems by  determining  the correct  location  for  configuration  files and
 create the appropriate files and directories under user control.
-.IP
+.BU " "
 The net result of these changes should significantly simplify installation and
 setup as follows:
-.BE 0
-.RS
-.BS
+.BU "-"
 All  platforms  will be able to run  without  any  manual  user  setup  or the
 requirement for specific MicroEmacs environment variables.
-.BU
+.BU "-"
 User defined  directories and configuration files will be created under editor
 control on detecting a new user.
-.BU
+.BU "-"
 Existing  installations using \fC$MEPATH\fR will be backwards  compatible with
 the new build.
-.BU
+.BU "-"
 All  platforms  now  support a searching  jasspa  sub-directory  structure  of
 \fBcompany\fR / \fBspelling\fR / \fBmacros\fR. This was traditionally  limited
 to the Windows  Install Shield  installation  but has been extended across all
 platforms.
-.BU
+.BU "-"
 Two new  environment  variables are provided for user or system  administrator
 use.
 .Ht $MEINSTALLPATH 5
@@ -3332,38 +3394,36 @@ search path to be overridden.
 defines the location of the user private  configuration  directory  and allows
 the user to  locate  their  private  directory  in  different  location.  In a
 standard install neither of these variables will be required.
-.BU
+.BU "-"
 The Microsoft  Windows system defined  application  path will be used for user
 configuration   files.  This  is  applicable   for  roaming  users  where  the
 application directory is stored on a server.
-.BU
+.BU "-"
 The use of the
 .Ht me32.ini 8
 file  on  MicroSoft  Windows  environments  is  not  required,  but  is  still
 supported.
-.BU
+.BU "-"
 The \s-1UNIX\s0 path searching is improved.  \fC/usr/local/microemacs\fR  will
 be  depreciated  and replaced with  \fC/usr/local/jasspa\fR  in addition other
 standard path locations are supported on a per-platform basis.
-.BU
+.BU "-"
 On  \s-1UNIX\s0  then the  directory  \fC~/.jasspa\fR  shall  contain the user
 configuration   files.  Optionally  the  \fBcompany\fR,   \fBspelling\fR   and
 \fBmacros\fR sub-directories may be included in this directory where access to
 the system directory locations by the user is not permitted.
-.BU
+.BU "-"
 Concept of guest has been removed. \fCguest.emf\fR and \fCguest.erf\fR removed
 replaced with \fInewuser\fR.
 .Ht user-setup 3
 no longer supports setting of name.
-.BU
+.BU "-"
 Internal variables
 .Ht $user-name 5
 and
 .Ht $user-path 5
 are defined.
-.BE 0
-.RE
-.BS
+.BU
 [040128] Fixed re-style for C/C++ comments in vertical alignment.
 .BU
 [040123] "\fIuser-setup\fR" mouse button selection fixed.
@@ -4807,7 +4867,7 @@ Native printer support for the generation of postscript.
 GNU Emacs compatibility macro file.
 .BE 0
 .SS "Release History"
-.IP "\fBMarch 2005\fR"
+.IP "\fBMay 2005\fR"
 8th Major Release \- MicroEmacs '05.
 .IP "\fBJanuary 2004\fR"
 7th Major Release \- MicroEmacs '04.
