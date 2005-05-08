@@ -1,6 +1,6 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 2002 JASSPA (www.jasspa.com)
+; Copyright (C) 2002-2005 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     Sat Jan 5 2002
@@ -137,6 +137,19 @@
         translate-key "A-C-S-X" "è"
     !endif
 
+    !if 0                                   ; Finish
+        ; Thanks to Sebastian Bojers
+        translate-key "A-C-2 A-C-@" "@"
+        translate-key "A-C-3 A-C-£" "£"
+        translate-key "A-C-4 A-C-$" "$"
+        translate-key "A-C-7 A-C-{" "{"
+        translate-key "A-C-8 A-C-[" "["
+        translate-key "A-C-9 A-C-]" "]"
+        translate-key "A-C-0 A-C-}" "}"
+        translate-key "A-C-= A-C-\\" "\\"
+        translate-key "A-C-b A-C-|" "|"
+    !endif
+    
     !if 0                                   ; Portugues
         ; Thanks to Pedro Gomes
         translate-key "C-/" "C-~"
