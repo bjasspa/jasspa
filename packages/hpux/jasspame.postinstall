@@ -12,18 +12,18 @@ then exit
 fi
 
 echo "add /opt/jasspa/bin to the /etc/PATH file and"
-#echo "add /opt/jasspa/man to the /etc/MANPATH file..."
+echo "add /opt/jasspa/man to the /etc/MANPATH file..."
 
 mv /etc/PATH /etc/PATH.old
-#mv /etc/MANPATH /etc/MANPATH.old
+mv /etc/MANPATH /etc/MANPATH.old
 
 awk '{print $1 ":/opt/jasspa/bin" }' < /etc/PATH.old    >/etc/PATH
-#awk '{print $1 ":/opt/jasspa/man" }' < /etc/MANPATH.old >/etc/MANPATH
+awk '{print $1 ":/opt/jasspa/man" }' < /etc/MANPATH.old >/etc/MANPATH
 
 if [ -f /etc/PATH ]
 then rm -f /etc/PATH.old
 fi
 
-#if [ -f /etc/MANPATH ]
-#then rm -f /etc/MANPATH.old
-#fi
+if [ -f /etc/MANPATH ]
+then rm -f /etc/MANPATH.old
+fi

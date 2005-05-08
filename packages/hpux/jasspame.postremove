@@ -6,18 +6,18 @@ PATH=$SW_PATH:/sbin:/usr/bin:/usr/ccs/sbin
 export PATH
 
 echo "removing /opt/jasspa/bin from the /etc/PATH file and"
-#echo "removing /opt/xxx/man from the /etc/MANPATH file..."
+echo "removing /opt/jasspa/man from the /etc/MANPATH file..."
 
 mv /etc/PATH /etc/PATH.old
-#mv /etc/MANPATH /etc/MANPATH.old
+mv /etc/MANPATH /etc/MANPATH.old
 
 sed 's|:/opt/jasspa/bin||g' < /etc/PATH.old    >/etc/PATH
-#sed 's|:/opt//man||g' < /etc/MANPATH.old >/etc/MANPATH
+sed 's|:/opt/jasspa/man||g' < /etc/MANPATH.old >/etc/MANPATH
 
 if [ -f /etc/PATH ]
 then rm -f /etc/PATH.old
 fi
 
-#if [ -f /etc/MANPATH ]
-#then rm -f /etc/MANPATH.old
-#fi
+if [ -f /etc/MANPATH ]
+then rm -f /etc/MANPATH.old
+fi

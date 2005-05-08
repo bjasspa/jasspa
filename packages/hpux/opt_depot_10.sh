@@ -3,25 +3,50 @@
 #  System        : MicroEmacs
 #  Module        : Package Build script.
 #  Object Name   : $RCSfile: opt_depot_10.sh,v $
-#  Revision      : $Revision: 1.5 $
-#  Date          : $Date: 2005-04-09 18:55:16 $
+#  Revision      : $Revision: 1.6 $
+#  Date          : $Date: 2005-05-08 23:14:54 $
 #  Author        : $Author: jon $
 #  Created By    : <unknown>
 #  Created       : Sun Aug 17 12:58:23 2003
-#  Last Modified : <050409.1951>
+#  Last Modified : <050509.0013>
 #
 # Rules to build the HPUX 10.20 depot file. We build the executable only.
 #
 MKDIR=mkdir
 SEARCH_PATH="/opt/jasspa/company:/opt/jasspa/macros:/opt/jasspa/spelling"
 BASEDIR=.
-METREE=jasspa-metree-20050409.tar.gz
-MEBIN=jasspa-me-hpux-pa-10.20-20050409.gz
+TOPDIR=../..
+VER_YEAR="05"
+VER_MONTH="05"
+VER_DAY="05"
+VERSION="20${VER_YEAR}${VER_MONTH}${VER_DAY}"
+METREE=jasspa-metree-${VERSION}.tar.gz
+MEBIN=jasspa-me-hpux-pa-10.20-${VERSION}.gz
 BASEFILESET="${METREE} ${MEBIN}"
 # Set to "mak" for native or "gmk" for GCC
 PLATFORM=`uname`
 MAKEBAS=hpux10
 CCMAK=gmk
+#
+# Pull the files over from the release and source areas.
+#
+if [ ! -f ${METREE} ] ; then
+    if [ -f ${TOPDIR}/release/www/${METREE} ] ; then
+        cp ${TOPDIR}/release/www/${METREE} .
+    fi
+fi
+if [ ! -f me.1 ] ; then
+    if [ -f ${TOPDIR}/release/www/me.1.gz ] ; then
+        gunzip -c ${TOPDIR}/release/www/me.1.gz > me.1
+    fi
+fi
+if [ ! -f ${MEBIN} ] ; then
+    if [ -f ${TOPDIR}/src/${MEBIN} ] ; then
+        cp ${TOPDIR}/src/${MEBIN} ${MEBIN}
+    elif [ -f ${TOPDIR}/src/me ] ; then
+        gzip -9 -c ${TOPDIR}/src/me > ${MEBIN}
+    fi
+fi
 #
 # Test for the starting files.
 #
@@ -70,6 +95,12 @@ done
 ###     mkdir ${BASEDIR}/src
 ### fi
 #
+# Remove the unpacking area.
+#
+if [ -d jasspa ] ; then
+    rm -rf ./jasspa
+fi    
+#
 # Unpack the tree
 #
 gunzip -c ${METREE} | tar xf -
@@ -80,14 +111,20 @@ mkdir -p ${BASEDIR}/jasspa/bin
 gunzip -v -c ${MEBIN} > ${BASEDIR}/jasspa/bin/me
 chmod a+rx ${BASEDIR}/jasspa/bin/me
 #
+# Build the man directory.
+#
+mkdir -p ${BASEDIR}/jasspa/man/cat1
+cp me.1 ${BASEDIR}/jasspa/man/cat1
+chmod a-wx ${BASEDIR}/jasspa/man/cat1/me.1
+#
 # Build the ".prj" file.
 #
 echo "As root run the following command to build the depot"
-echo '/usr/sbin/swpackage -d "| /usr/contrib/bin/gzip -c > jasspa-mepkg-hpux-pa-10.20-20050409.depot.gz" -x target_type=tape -s opt_depot_10.psf'
+echo '/usr/sbin/swpackage -d "| /usr/contrib/bin/gzip -c > jasspa-mepkg-hpux-pa-10.20-'${VERSION}'.depot.gz" -x target_type=tape -s opt_depot_10.psf'
 echo ""
 echo "To install:-"
-echo "/usr/contrib/bin/gunzip -c jasspa-mepkg-hpux-pa-10.20-20050409.depot.gz > jasspa-mepkg-hpux-pa-10.20-20050409.depot"
-echo "/usr/sbin/swinstall -s `pwd`/jasspa-mepkg-hpux-pa-10.20-20050409.depot"
+echo "/usr/contrib/bin/gunzip -c jasspa-mepkg-hpux-pa-10.20-${VERSION}.depot.gz > jasspa-mepkg-hpux-pa-10.20-${VERSION}.depot"
+echo "/usr/sbin/swinstall -s `pwd`/jasspa-mepkg-hpux-pa-10.20-${VERSION}.depot"
 echo ""
 echo "To subsequently remove:-"
 echo "/usr/sbin/swremove jasspa-me"

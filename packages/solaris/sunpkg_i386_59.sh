@@ -8,8 +8,8 @@ SEARCH_PATH="/opt/jasspa/company:/opt/jasspa/macros:/opt/jasspa/spelling"
 BASEDIR=.
 TOPDIR=../..
 VER_YEAR="05"
-VER_MONTH="04"
-VER_DAY="09"
+VER_MONTH="05"
+VER_DAY="05"
 VERSION="20${VER_YEAR}${VER_MONTH}${VER_DAY}"
 METREE=jasspa-metree-${VERSION}.tar.gz
 MEBIN=jasspa-me-sun-i386-59-${VERSION}.gz
@@ -29,7 +29,9 @@ if [ ! -f me.1 ] ; then
     fi
 fi
 if [ ! -f ${MEBIN} ] ; then
-    if [ -f ${TOPDIR}/src/me ] ; then
+    if [ -f ${TOPDIR}/src/${MEBIN} ] ; then
+        cp ${TOPDIR}/src/${MEBIN} ${MEBIN}
+    elif [ -f ${TOPDIR}/src/me ] ; then
         gzip -9 -c ${TOPDIR}/src/me > ${MEBIN}
     fi
 fi
