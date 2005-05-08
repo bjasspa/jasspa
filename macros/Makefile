@@ -15,7 +15,7 @@ include $(TOPDIR)/etc/makeinc
 # Basic macros to release
 #
 # EMFS:sh=ls *.emf
-EMFS=	abbrev.emf	abbrlist.emf	aix.emf		au3.eaf		\
+EMFS=	abbrev.emf	abbrlist.emf	aix.emf		\
 	benchmrk.emf	bookmark.emf	buffinit.emf	buffstp.emf	\
 	calc.emf	charset.emf	charsutl.emf	cmacros.emf	\
 	collapse.emf	comment.emf	crosswd.emf	ctags.emf	\
@@ -74,7 +74,7 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		au3.eaf		\
 	osdmisc.emf	osdnedit.emf	osdcua.emf	osf1.emf	\
 	pagefile.emf	patience.emf	perltags.emf	print.emf	\
 	printall.emf	printd.emf	printepc.emf	printers.emf	\
-	printf.emf	printstp.emf	python.eaf	python.etf	\
+	printf.emf	printstp.emf	\
 	rect.emf	\
 	scheme.emf	schemeb.emf	schemebc.emf	\
 	schemebh.emf	schemed.emf	schemej.emf	schemel.emf	\
@@ -105,6 +105,7 @@ ETFS=	asmx86.etf	asn1.etf	au3.etf		\
 	makefile.etf	mhg.etf		mod2.etf	\
 	newcomp.etf	newuser.etf	nroff.etf	\
 	pascal.etf	perl.etf	pls.etf		psf.etf		\
+	python.etf	\
 	ruby.etf	rul.etf		\
 	spec.etf	\
 	tcl.etf		\
@@ -112,7 +113,7 @@ ETFS=	asmx86.etf	asn1.etf	au3.etf		\
 	xml.etf		\
 	yacc.etf
 #EAFS:sh=ls *.eaf
-EAFS=	ada.eaf		asp.eaf		\
+EAFS=	ada.eaf		asp.eaf		au3.eaf		\
 	c.eaf		cpp.eaf		\
 	emf.eaf		euphor.eaf	\
 	hkasp.eaf	hkc.eaf		hkcpp.eaf	hkemf.eaf	\
@@ -122,6 +123,7 @@ EAFS=	ada.eaf		asp.eaf		\
 	java.eaf	js.eaf		jsp.eaf		jst.eaf		\
 	latex.eaf	\
 	pascal.eaf	perl.eaf	php.eaf		pls.eaf		\
+	python.eaf	\
 	sgml.eaf	\
 	tcl.eaf		txt.eaf		\
 	vhdl.eaf
