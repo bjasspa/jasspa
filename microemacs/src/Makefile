@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20050220.2130>
+# Last Modified: <20050509.2246>
 #
 ##############################################################################
 
@@ -45,7 +45,8 @@ TXTSRC	=	cygwin.txt	infolist.txt
 
 MAKEXE	=	build
 MAKSRC	=	build.bat	\
-		aix43.gmk	aix43.mak	\
+		aix4.gmk	aix4.mak	\
+		aix5.gmk	aix5.mak	\
 		cygwin.gmk	\
 		darwin.gmk	\
 		dosdj1.mak	dosdj2.mak	\
@@ -60,8 +61,7 @@ MAKSRC	=	build.bat	\
 		openbsd.gmk	\
 		openstep.mak	\
 		osf1.gmk	\
-		sunos55.gmk	sunos55.mak	\
-		sunos56.gmk	sunos56.mak	\
+		sunos5.gmk	sunos5.mak	\
 		sunosx86.gmk	sunosx86.mak	\
 		win32b55.mak	win32bc.mak	\
 		win32sv2.mak	win32v2.mak	\

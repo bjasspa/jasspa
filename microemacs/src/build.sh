@@ -27,7 +27,7 @@ do
         echo "        : Append the compile log to the given file"
         echo "   -m <makefile>"
         echo "        : Sets the makefile to use where <makefile> can be"
-        echo "            aix43.mak, freebsd.mak, freebsd.gmk etc."
+        echo "            aix4.mak, freebsd.mak, freebsd.gmk etc."
         echo "   -ne  : for NanoEmacs build (output is ne)."
         echo "   -p <search-path>"
         echo "        : Sets the default system search path to <search-path>,"
@@ -76,7 +76,12 @@ if [ ".$MAKEFILE" = "." ] ; then
     PLATFORM=`uname`
     
     if   [ $PLATFORM = "AIX" ] ; then
-        MAKEBAS=aix43
+        VERSION=`uname -v`
+        if [ $VERSION = 5 ] ; then
+            MAKEBAS=aix5
+        else
+            MAKEBAS=aix4
+        fi
     elif [ `echo $PLATFORM | sed -e "s/^CYGWIN.*/CYGWIN/"` = "CYGWIN" ] ; then
         MAKEBAS=cygwin
         # Check for an X11 install.
@@ -132,12 +137,7 @@ if [ ".$MAKEFILE" = "." ] ; then
             MAKEBAS=sunosx86
         else
             # Must be Sparc Solaris
-            VERSION=`uname -r | cut -b 1-3`
-            if [ $VERSION = 5.5 ] ; then
-                MAKEBAS=sunos55
-            else
-                MAKEBAS=sunos56
-            fi
+            MAKEBAS=sunos5
         fi
     else
         echo "Error: Unrecognized platform - $PLATFORM"
