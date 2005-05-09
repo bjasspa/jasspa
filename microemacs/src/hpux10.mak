@@ -3,7 +3,7 @@
 # JASSPA MicroEmacs - www.jasspa.com
 # hpux10.mak - Make file for HP Hpux v10
 #
-# Copyright (C) 2001-2004 JASSPA (www.jasspa.com)
+# Copyright (C) 2001-2005 JASSPA (www.jasspa.com)
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
