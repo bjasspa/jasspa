@@ -1,7 +1,7 @@
 @echo off
 rem JASSPA MicroEmacs - www.jasspa.com
 rem build - JASSPA MicroEmacs build script for MS windows and dos platforms
-rem Copyright (C) 2001-2004 JASSPA (www.jasspa.com)
+rem Copyright (C) 2001-2005 JASSPA (www.jasspa.com)
 rem See the file main.c for copying and conditions.
 set OPTIONS=
 set LOGFILE=
