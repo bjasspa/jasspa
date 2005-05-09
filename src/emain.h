@@ -131,8 +131,8 @@
 /**************************************************************************
 * UNIX : SunOS Sparc + Intel                                              *
 **************************************************************************/
-/* _SUNOS5? == Sparc Solaris; _SUNOS_X86 == i86 Solaris */
-#if (defined _SUNOS55) || (defined _SUNOS56) || (defined _SUNOS_X86)
+/* _SUNOS5 == Sparc Solaris; _SUNOS_X86 == i86 Solaris */
+#if (defined _SUNOS5) || (defined _SUNOS_X86)
 #define meSYSTEM_NAME  "sunos"          /* Identity name of the system   */
 #define _SUNOS         1                /* This is a sunos box           */
 #define _UNIX          1                /* This is a UNIX system         */
@@ -213,7 +213,9 @@
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
 #define _DRAGNDROP     1                /* Drag and drop supported.      */
+#ifdef _AIX4
 #define _meDEF_SYS_ERRLIST              /* errno.h doesnt def sys_errlist*/
+#endif
 #define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa"
 #endif
 

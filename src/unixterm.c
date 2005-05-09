@@ -50,7 +50,7 @@
 #include <termcap.h>
 #endif
 
-#if (defined _SUNOS55) || (defined _SUNOS56)
+#if (defined _SUNOS5)
 #include <X11/Sunkeysym.h>
 #endif
 
@@ -1695,11 +1695,11 @@ meXEventHandler(void)
                 case XK_Clear:          ii = SKEY_clear; goto special_key;
                 case XK_Return:         ii = SKEY_return; goto special_key;
                     /* Pause, hold */
-#if (defined _SUNOS55) || (defined _SUNOS56)
+#if (defined _SUNOS5)
                 case XK_F21:
 #endif
                 case XK_Pause:          ii = SKEY_pause; goto special_key;
-#if (defined _SUNOS55) || (defined _SUNOS56)
+#if (defined _SUNOS5)
                 case XK_F22:
                 case SunXK_Sys_Req:
 #endif
@@ -1779,7 +1779,7 @@ meXEventHandler(void)
                 case XK_KP_F3:          ii = SKEY_f3; goto special_key;
                 case XK_KP_F4:          ii = SKEY_f4; goto special_key;
 
-#if (defined _SUNOS55) || (defined _SUNOS56)
+#if (defined _SUNOS5)
                 case XK_F27:
 #endif
                 case XK_KP_Home:        ii = SKEY_kp_home; goto special_key;
@@ -1788,16 +1788,16 @@ meXEventHandler(void)
                 case XK_KP_Right:       ii = SKEY_kp_right; goto special_key;
                 case XK_KP_Down:        ii = SKEY_kp_down; goto special_key;
                     /*  case XK_KP_Prior:       ii = SKEY_home;  goto special_key;*/
-#if (defined _SUNOS55) || (defined _SUNOS56)
+#if (defined _SUNOS5)
                 case XK_F29:
 #endif
                 case XK_KP_Page_Up:     ii = SKEY_kp_page_up; goto special_key;
                     /* case XK_KP_Next:        ii = SKEY_end; goto special_key;*/
-#if (defined _SUNOS55) || (defined _SUNOS56)
+#if (defined _SUNOS5)
                 case XK_F35:
 #endif
                 case XK_KP_Page_Down:   ii = SKEY_kp_page_down; goto special_key;
-#if (defined _SUNOS55) || (defined _SUNOS56)
+#if (defined _SUNOS5)
                 case XK_F33:
 #endif
                 case XK_KP_End:         ii = SKEY_kp_end; goto special_key;
@@ -1806,19 +1806,19 @@ meXEventHandler(void)
                 case XK_KP_Delete:      ii = SKEY_kp_delete; goto special_key;
                     /* equals */
                 case XK_KP_Equal:       ii = '='; goto done_key;
-#if (defined _SUNOS55) || (defined _SUNOS56)
+#if (defined _SUNOS5)
                 case XK_F26:
 #endif
                 case XK_KP_Multiply:    ii = '*'; goto done_key;
                 case XK_KP_Add:         ii = '+'; goto done_key;
                     /* separator, often comma */
                 case XK_KP_Separator:   ii = ','; goto done_key;
-#if (defined _SUNOS55) || (defined _SUNOS56)
+#if (defined _SUNOS5)
                 case XK_F24:
 #endif
                 case XK_KP_Subtract:    ii = '-'; goto done_key;
                 case XK_KP_Decimal:     ii = '.'; goto done_key;
-#if (defined _SUNOS55) || (defined _SUNOS56)
+#if (defined _SUNOS5)
                 case XK_F25:
 #endif
                 case XK_KP_Divide:      ii = '/'; goto done_key;
@@ -1858,11 +1858,11 @@ meXEventHandler(void)
                 case XK_F8:             ii = SKEY_f8; goto special_key;
                 case XK_F9:             ii = SKEY_f9; goto special_key;
                 case XK_F10:            ii = SKEY_f10; goto special_key;
-#if (defined _SUNOS55) || (defined _SUNOS56)
+#if (defined _SUNOS5)
                 case SunXK_F36:
 #endif
                 case XK_F11:            ii = SKEY_f11; goto special_key;
-#if (defined _SUNOS55) || (defined _SUNOS56)
+#if (defined _SUNOS5)
                 case SunXK_F37:
 #endif
                 case XK_F12:            ii = SKEY_f12; goto special_key;
@@ -1876,7 +1876,7 @@ meXEventHandler(void)
 
                 case XK_Caps_Lock:      ii = SKEY_caps_lock; goto special_bound;
                 case XK_Num_Lock:       ii = SKEY_num_lock; goto special_bound;
-#if (defined _SUNOS55) || (defined _SUNOS56)
+#if (defined _SUNOS5)
                 case XK_F23:
 #endif
                 case XK_Scroll_Lock:    ii = SKEY_scroll_lock; goto special_bound;
