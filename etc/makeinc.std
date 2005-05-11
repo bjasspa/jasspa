@@ -5,17 +5,21 @@
 # Remove unconditionally + copy
 RM	= rm -f
 CP	= cp
+MV	= mv
 #
 # Directory stuff
 #
 MKDIR	= mkdir -p
 RMDIR	= rm -rf
+CD	= cd
 #
 # Archives - always full compression.
 #
 TAR	= tar
 ZIP	= zip -9
+UNZIP	= unzip -o
 GZIP	= gzip -9
+GUNZIP	= gunzip
 #
 # Install
 #
