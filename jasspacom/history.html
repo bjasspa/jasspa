@@ -44,7 +44,7 @@
   <br/>
   <font size="+1" ><a href="download.html" style="COLOR: black">overview</a>&nbsp;&nbsp;</font>
   <font size="+1" color="#ff0000">history&nbsp;&nbsp;</font>
-  <font size="+1"><a href="down0403.html" style="COLOR: black">March 2004</a>&nbsp;&nbsp;</font>
+  <font size="+1"><a href="down0505.html" style="COLOR: black">May 2005</a>&nbsp;&nbsp;</font>
   <font size="+1"><a href="spelling.html" style="COLOR: black">spelling dictionaries</a>&nbsp;&nbsp;</font>
   <font size="+1"><a href="contrib.html" style="COLOR: black">contributions</a>&nbsp;&nbsp;</font>
   </p>
@@ -105,8 +105,323 @@
   <h2><img src="images/miniicon.gif" width="16" height="16"/> <font color="#0000FF">
   Development History</font></h2>
 
-  <h3>8th Release - 2005</h3>
+  <h3>8th Release - May 2005</h3>
   <ul>
+
+    <li>[050508] JASSPA MicroEmacs 8th release - final. Core and macro
+    versions 20050505.</li>
+    
+    <li>[050507] Added Finnish support to ne.emf. </li>
+
+    <li>[050506] Improved python collapse and <b>item-list</b> support and
+    added <b>eaf</b> and <b>etf</b> for python - thanks to Detlef.</li>
+
+    <li>[050505] Base version numbers reset for next release.</li>
+    
+    <li>[050429] Added support for keybinding to item-list column ordering,
+    function is <b>item-list-order</b> and is bound to <tt>1</tt>, <tt>2</tt>
+    and <tt>3</tt> by default. Thanks to Bryan Schofield for his submission in
+    this area.</li>
+
+    <li>[050429] Spelling - protect '<tt>.</tt>'s in the word with
+    <tt>\\</tt>.</li>
+
+    <li>[050428] Corrected TCL hilighting w.r.t. comment at end of line -
+    submitted by Bryan Schofield.</li>
+
+    <li>[050427] Major reworking of main commands in a directory listing
+    buffer. Implemented typical features found in an OFM standard browser and
+    create standard bindings as well as termcap friendly ones. Changed delete
+    binding to delete files rather than close browser which is now bound to
+    f10.</li>
+
+    <li>[050427] osd - Added numeric bit 8 on <b>osd-entry</b> arg to put the
+    text above the entry.</li>
+
+    <li>[050427] Added <b>C-x&nbsp;k</b> support to browser mode to kill the
+    buffer, also added hook for the <b>file-browser</b>'s view file.</li>
+
+    <li>[050427] Fixed <b>user-setup</b> to use only one value of
+    <b>$file-ignore</b> &amp; $kept-versions per platform rather than one for
+    window and one for console based versions.</li>
+
+    <li>[050427] Shrunk the size of the file-attrib dialog to ensure it fits
+    on a termcap screen.</li>
+
+    <li>[050427] Fixed nasty bug with <b>transpose-line</b> at the end of the
+    buffer swapping the last line with the first!</li>
+
+    <li>[050427] <tt>main.c</tt> - Fixed minor compiler warnings.</li>
+
+    <li>[050426] Added a binding for file completion (any key bound to
+    <b>insert-tab</b>) so OSD dialogs can do completion (although
+    awkwardly).</li>
+
+    <li>[050423] Fixed wiki edit mode for Russian keyboards, the '<tt>k</tt>'
+    flag key mapping was breaking things.</li>
+
+    <li>[050423] Windows - Fixed windows Ctrl numeric pad keys, now come
+    through as <b>C-0</b> ... <b>C-9</b>, <b>C-*</b>, <b>C-+</b> etc.</li>
+
+    <li>[050420] Added new Dot/Neato support fhook (for <tt>.dot</tt> files) -
+    thanks to Detlef for the submission.</li>
+
+    <li>[050420] TCL - Added more hilight tokens from Detlef.</li>
+
+    <li>[050420] Document macros - fixed cpp-&gt;tcl typo - thanks to Detlef
+    for spotting this.</li>
+
+    <li>[050410] Fixed the <b>-R</b> option for DOS box, cursor same as the
+    foreground color which is not ideal!</li>
+
+    <li>[050410] Fixed the SunOS x86 makefile to disabled #pragam warnings
+    under GCC.</li>
+
+    <li>[050409] Release Candidate 2 - MicroEmacs 2005 (RC2)</li>
+
+    <li>[050408] Added flag to the <b>user-setup</b> Tools to force the
+    rereading of the current buffer's file, thanks to Bryan Schofield.</li>
+
+    <li>[050408] Added new <b>.item-list.width</b> variable to allow control
+    of the item window list - submitted by Bryan Schofield.</li>
+
+    <li>[050408] Moved the generate tags into the sub folder and added a
+    compile option to c and cpp - submitted by Bryan Schofield.</li>
+
+    <li>[050405] Added support for DOS code page 866 (Cyrillic Russion) -
+    submitted by Nicholas Kudriavtsev</li>
+
+    <li>[050331] Added support for the setting of the history in macros via
+    <b>@h#</b>.</li>
+
+    <li>[050325] <tt>registry.c</tt> - removed compiler warning indicating
+    porting problem hilighted under Darwin. Post increment of variable on left
+    of assignment and same variable appeared on the right, split out the
+    increment to reduce ambiguity of the statement.</li>
+
+    <li>[050320] UNIX only - add a rule for <tt>.dir</tt> files found in the
+    X11 directory. We do not want this files identified as "<tt>dir</tt>" info
+    root file</li>
+
+    <li>[050320] Added termcap (white) scheme for reverse video
+    operation.</li>
+
+    <li>[050320] Newuser registry file - added default entry for Apple Mac
+    "<i>darwin</i>". Confirmed operation under Mac X-Windows.</li>
+
+    <li>[050320] Extended ME exit commands to support the discarding of
+    modified buffers '<tt>0x8</tt> discard modified buffers' and
+    '<tt>0x10</tt> discard modified buffers and create recovery file for
+    changes'.</li>
+
+    <li>[050320] Corrected XML syntax for strings "<tt>...</tt>" to fix indent
+    and hilight anomalies.</li>
+
+    <li>[050319] Added <b>-R</b> command line option to reverse the built in
+    video schemes - specifically for <b>ne(1)</b> also works with
+    <b>me(1)</b>.</li>
+
+    <li>[050319] Corrected default mode settings. Recent removal of
+    <b>letter(2m)</b>, <b>line(2m)</b> etc. changed the mode byte assignment
+    of some modes. The built in global mode default was not updated for this
+    change in bytes and incorrect global modes appeared as a result -
+    specifically <b>quiet(2m)</b> which has jumped bytes.</li>
+
+    <li>[050315] LEX/YACC template - Corrected LEX and YACC highlighting.
+    Aligned C, C++ and YACC/LEX templates to be consistent.</li>
+
+    <li>[050315] C/C++ templates - buffer setup modified for GNU Indent Style
+    setting.</li>
+
+    <li>[050315] Added new <b>browse(3)</b> command and binding to <b>f3</b>,
+    changed existing <b>collapse-all</b> <b>f3</b> binding to
+    <b>C-f2</b>.</li>
+
+    <li>[050315] Modified ME exit commands to support a bitwise arg <i>n</i>
+    where main <b>exit-emacs</b> has '<tt>0x01 Prompt</tt>', '<tt>0x02 Save
+    each buffer/reg/dic (with prompt if 0x01 set)</tt>' and '<tt>0x04 Prompt
+    for exit code and exit ME with that code.</tt>'</li>
+
+    <li>[050313] Latex template - Corrected the <b>latex-fill-paragraph</b>.
+    Set the fill-mode to '<b>l</b>' rather than '<b>L</b>' because its a pain
+    when it selects centre rather than left and messes things up.</li>
+
+    <li>[050311] Directory list - changed column sorting so <i>Modified</i> is
+    sorted most recent first.</li>
+
+    <li>[050311] Fixed <b>perldb</b> pipe operation.</li>
+
+    <li>[050310] OSD simplified the main context menu and moved paste a cvs
+    items in the directory context menu</li>
+
+    <li>[050310] Fixed diff's file name input, was not completing
+    correctly</li>
+
+    <li>[050310] CVS changed the default setting of the recursive add to
+    off.</li>
+
+    <li>[050310] JASSPA MicroEmacs quick start document released.</li>
+
+    <li>[050309] Fixed bug in regex multi-line search backwards, searching for
+    "<tt>foo[^a]</tt>" is a mult-line as <tt>[^a]</tt> matches <tt>\\n</tt>,
+    if "<b>foob</b>" exists at the start of the line <b>isearch-backward</b>
+    refuses to move on.</li>
+
+    <li>[050309] Catman pages added for <b>ne(1)</b> and <b>me(1)</b>
+    complaints with gentoo as missing. Added to the package builds.</li>
+
+    <li>[050308] Fixed a nasty bug with ftp connect dialog when the host has a
+    port. Changed the default path to be nothing which becomes <b>/~/</b> to
+    list the login directory. Change the tab order to not include the password
+    as tabbing through the entry will lose the password, must now access via
+    mouse or hot key which is not ideal.</li>
+
+    <li>[050308] Added support for relative ftp browsing via new
+    <b>ftp://???/~/???</b> url form. Added file name completion support for
+    <b>ftp</b></li>
+
+    <li>[050306] Corrected the docmacro <b>http://</b>ling regular
+    expression.</li>
+
+    <li>[050306] Changed the date format of the -V command line option to
+    include the century, same format as the about(2) buffer.</li>
+
+    <li>[050302] HTLP and PHP - fixed indent problems.</li>
+
+    <li>[050302] Perl template - fixed indent problems caused by not skipping
+    the <b>=~</b> type regex's</li>
+
+    <li>[050302] TCL template - fixed continuation and comment indent
+    bug.</li>
+
+    <li>[050302] Added support for R/S-plus (.r) files - thanks to
+    Detlef.</li>
+
+    <li>[050225] HTML template - fixed an indent which was fixed at
+    "<tt>2</tt>" rather than "<tt>t</tt>" and added comment skipping indent
+    rules</li>
+
+    <li>[050225] <b>dos2unix</b>, <b>unix2dos</b> and <b>unix2win</b> -
+    Removed use of <b>&amp;spr</b> in favor of <b>&amp;cat</b> so
+    <b>dos2unix</b> etc work in ne.</li>
+
+    <li>[050225] Tracing a problem with hilighting a token of the form
+    "<tt>AB*$</tt>", works if there is a <b>B</b> but fails if there are no
+    '<b>B</b>'s, i.e. only matches "<tt>AB+$</tt>". Found that removing the
+    end of line special case code fixes the problem. I believe the rest of the
+    code has been improved to handle any end-of-line quirks - I hope so!</li>
+
+    <li>[050225] Removed the '<b>start-up</b>' macro function compile option
+    so all versions support this - <b>ne</b> can now do a
+    "<b>@dos2unix</b>"</li>
+
+    <li>[050225] Regular expressions - extended replacement string syntax.
+    Added support for "<b>\c#</b>" "<b>\l#</b>" and "<b>\u#</b>" to change the
+    case of groups, where "<b>\c#</b>" is capitalise, "<b>\l#</b>" is lower
+    "<b>\u#</b>" is upper and "<b>#</b>" is the group number (<b>0-9</b>,
+    <b>&amp;</b>)</li>
+
+    <li>[050225] Regular expressions - changed syntax of "<b>\s?</b>" and
+    "<b>\S?</b>" in favor of perl's simpler "<b>\s</b>" and "<b>\S</b>" for a
+    whitespace char class. Added new character classes "<b>\d</b>" = digits,
+    "<b>\D</b>" != digits "<b>\h</b>" = hexdigits "<b>\H</b>" != hexdigits
+    "<b>\l</b>" = lowercase "<b>\L</b>" != lowercase "<b>\u</b>" = uppercase
+    and "<b>\U</b>" != uppercase. These changes were made to both the main
+    regex search engine and the <b>hilight(2)</b> token matching engine. Added
+    support for char classes within the main regex <b>[...]</b> character
+    class, i.e. now supports regexs like "<b>[\l\u_]</b>" for any lower, upper
+    or '<b>_</b>' char. This is not supported in the hilight which currently
+    has a more simplistic "<b>[...]</b>" char class support.</li>
+
+    <li>[050225] Regular expressions - changed use of "<b>\s&nbsp;</b>",
+    "<b>\s-</b>", "<b>\S&nbsp;</b>" and "<b>\S-</b>" classes to simply
+    "<b>\s</b>" and "<b>\S</b>" which is perl regex compliant (ditching Emacs
+    "<b>\s</b>" syntax as it is cumbersome and not very useful). The only
+    nasty side effect is hilight's miss-use of "\<b>S1</b>" - "<b>\S9</b>" to
+    mean not "<b>\1</b>" - "<b>\9</b>" group char, changed to "<b>\!1</b>" -
+    "<b>\!9</b>"</li>
+
+    <li>[050224] NE set to not auto-save or create backups by default.</li>
+
+    <li>[050224] Added "<b>-a</b>" and "<b>-B</b>" command line options to
+    enable and disable auto-save and backup modes.</li>
+
+    <li>[050224] Tcl template - some more fixes to the item list from
+    Detlef</li>
+
+    <li>[050224] watch - improved the refresh rate of a type 2 or 3 watch by
+    ignoring the <b>:watch time</b> and just look at the <b>:watch-size</b>.
+    Fixed the split line issue with type 2 of 3 watching caused by last line
+    not being complete.</li>
+
+    <li>[050224] <b>M-x ftp</b> - stripped '<i>ftp://</i>' and any trailing
+    '<i>/</i>' of the users entered host name as these break ftp. Improved the
+    dialog's handling of passwords, the user can now tell if a password has
+    been set.</li>
+
+    <li>[050224] Added standard binding for mark-function</li>
+
+    <li>[050224] Fixed the ME token hilighting in the C hook</li>
+
+    <li>[050224] Removed recently added <b>%no_backup</b> variable to disable
+    backup create as new <b>-B</b> option is a much better way of doing
+    it.</li>
+
+    <li>[050224] edef.h - Removed definition of non-existant variable</li>
+
+    <li>[050224] Fixed failure when trying to load
+    "<b>http://www.jasspa.com</b>", there is an implicit trailing '<b>/</b>'
+    which MicroEmacs now adds.</li>
+
+    <li>[050224] Tcl template - major improvement - courtesy of Detlef.</li>
+
+    <li>[050224] Fixed collapse to support the file hooks <b>.exact</b>
+    setting (set to -1 means case insensitive)</li>
+
+    <li>[050224] Added new <b>beginning-of-function</b>,
+    <b>end-of-function</b>, <b>goto-function-line</b> and <b>mark-function</b>
+    macros - thanks to Detlef.</li>
+
+    <li>[050223] Windows MS-dev 6 project - corrected project settings for
+    <tt>_URLSUPP</tt> =&gre; <tt>_SOCKET</tt> in keeping with the socket
+    dynamic library loading.</li>
+
+    <li>[050223] Added exec of wish to the tcl magic hook</li>
+
+    <li>[050223] Fixed <b>$window-chars</b> - added OSD default button
+    chars.</li>
+
+    <li>[050222] Fixed $user-path being more that 35 chars breaking the
+    user-setup dialog.</li>
+
+    <li>[050222] Directory listing - call fhook-html when file is a
+    <b>http://</b> file - this is never a directory listing.</li>
+
+    <li>[050222] Stopped loading of files in dir listing when clicking way to
+    the right, must click on the name (ME kept loading files when just trying
+    to raise the window to the front - annoying).</li>
+
+    <li>[050222] If 0 given to watch call <b>watch-time</b>, this preserves
+    the old interface.</li>
+
+    <li>[050222] Added backup file disabling for "<b>dos2unix</b>" macros via
+    command line defineable variable.</li>
+
+    <li>[050221] Changed the new Windows process tree killing to use
+    LoadLibrary() to detect whether the OS supports this feature (and NT does
+    not). Also moved the URL support over to LoadLibrary() so we can remove
+    the <b>-u</b> builds.</li>
+
+    <li>[050220] Added UNIX Shell and Makefile hilighting to
+    <b>notes(2)</b>.</li>
+
+    <li>[050219] Fixed GNU GCC warnings in Makefiles for #pragma in X11 files
+    under Sun Solaris and uninitialized variables.</li>
+
+    <li>[050219] OSD. Removed dialog '<tt>F</tt>' flag as it was not
+    documented, did not work and only used in one obscure place. Fixed
+    <b>C-g</b> &amp; <b>Del</b> so they close up to the previous dialog but
+    does close the main menu down in one call - was annoying.</li>
 
     <li>[050219] Release Candidate 1 - MicroEmacs 2005 (RC1)</li>
 
@@ -286,11 +601,11 @@
 
     <li>[050127] Added process tree killing for windows, tested on win98, 2k
     &amp; XP, would be good to test on win95 (which should work) and NT which
-    should not work but hopefully will be no worse than current version.<br>
+    should not work but hopefully will be no worse than current version.<br/>
     This is a process tree killing for ipipes, in win32 killing the process we
     create is simply not good enough, all child processes continue unaffected.
     For example, run compile, kill the buffer in mid compile and it carries on
-    behind your back!<br> For Unix we use a new group and kill the group, DOS
+    behind your back!<br/> For Unix we use a new group and kill the group, DOS
     does not support ipipe. We could have used the new Job concept in ME but
     this is only present in win2000 &amp; XP and the binaries are unlikely to
     run on win98 etc. This should run on every win32 platform although it is
@@ -615,12 +930,12 @@
     be defined as an absolute indentation or using a 't' notation. The syntax
     is "<b>[-][[indent][/indent]]t</b>" which defines a vulgar fration of 't'
     which is the indent width (or tabsize) as specified by
-    "<b>$buffer-indent-width</b>" defined below.<br>
+    "<b>$buffer-indent-width</b>" defined below.<br/>
 
     The global variables "<b>$tabsize</b>" renamed "<b>$indent-width</b>" and
     controls the global indentation size. "<b>$tabwidth</b>" renamed
     "<b>$tab-width</b>" and controls the display size of a literal TAB
-    character.<br>
+    character.<br/>
 
     The indentation is now specified on a buffer basis, the variables
     "<b>$buffer-indent-width</b>" and "<b>$buffer-tab-width</b>" define the
