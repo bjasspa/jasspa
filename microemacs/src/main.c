@@ -1004,8 +1004,9 @@ sigchild(SIGNAL_PROTOTYPE)
         }
     }
 #endif
-    /* clear up any zoombie children */
-    meWaitpid(-1,&status,WNOHANG) ;
+    /* clear up any zoombie children if we are not running a piped command */
+    if((alarmState & meALARM_PIPE_COMMAND) == 0)
+        meWaitpid(-1,&status,WNOHANG) ;
     
     /* Reload the signal handler. Note that the child is a special case where
      * the signal is reset at the end of the handler as opposed to the head of
