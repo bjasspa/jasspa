@@ -1998,6 +1998,10 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
         meStrcpy(line+ll,ss) ;
     }
     TTclose();				/* stty to old modes    */
+    /* Must flag to our sigchild handler that we are running a piped command
+     * otherwise it will call waitpid with -1 and loose the exit status of
+     * this process */
+    alarmState |= meALARM_PIPE_COMMAND ;
     ffrp = popen((char *)line, "r");
     if(cd)
         meChdir(curdir) ;
@@ -2029,6 +2033,7 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
         systemRet = WEXITSTATUS(ws) ;
     else
         systemRet = -1 ;
+    alarmState &= ~meALARM_PIPE_COMMAND ;
 #else
     ret = meBufferInsertFile(bp,filnam,meRWFLAG_SILENT,0,0) ;
     /* and get rid of the temporary file */

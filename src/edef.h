@@ -203,6 +203,7 @@ extern int       noIpipes ;             /* count of all the cur pipes   */
 #define meALARM_INITIALIZED  0x08
 #define meALARM_PIPED        0x10
 #define meALARM_PIPED_QUIET  0x20
+#define meALARM_PIPE_COMMAND 0x40
 
 extern  meUByte   alarmState;           /* Auto-save alarm time         */
 extern  meInt     startTime;            /* me start time. used as offset*/
