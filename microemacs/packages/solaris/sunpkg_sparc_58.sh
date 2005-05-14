@@ -12,7 +12,9 @@ VER_MONTH="05"
 VER_DAY="05"
 VERSION="20${VER_YEAR}${VER_MONTH}${VER_DAY}"
 METREE=jasspa-metree-${VERSION}.tar.gz
+MESRC=jasspa-mesrc-${VERSION}.tar.gz
 MEBIN=jasspa-me-sun-sparc-58-${VERSION}.gz
+NEBIN=jasspa-ne-sun-sparc-58-${VERSION}.gz
 BASEFILESET="${METREE} ${MEBIN} me.1"
 
 #
@@ -21,6 +23,11 @@ BASEFILESET="${METREE} ${MEBIN} me.1"
 if [ ! -f ${METREE} ] ; then
     if [ -f ${TOPDIR}/release/www/${METREE} ] ; then
         cp ${TOPDIR}/release/www/${METREE} .
+    fi
+fi
+if [ ! -f ${MESRC} ] ; then
+    if [ -f ${TOPDIR}/release/www/${MESRC} ] ; then
+        cp ${TOPDIR}/release/www/${MESRC} .
     fi
 fi
 if [ ! -f me.1 ] ; then
@@ -33,6 +40,14 @@ if [ ! -f ${MEBIN} ] ; then
         cp ${TOPDIR}/src/${MEBIN} ${MEBIN}
     elif [ -f ${TOPDIR}/src/me ] ; then
         gzip -9 -c ${TOPDIR}/src/me > ${MEBIN}
+    else
+        # Build me
+        gunzip -c ${MESRC} | tar xf -
+        (cd me${VER_YEAR}${VER_MONTH}${VER_DAY}/src; sh build -ne)
+        gzip -9 -c me${VER_YEAR}${VER_MONTH}${VER_DAY}/src/ne > ${NEBIN}
+        (cd me${VER_YEAR}${VER_MONTH}${VER_DAY}/src; sh build)
+        gzip -9 -c me${VER_YEAR}${VER_MONTH}${VER_DAY}/src/me > ${MEBIN}
+        rm -rf me${VER_YEAR}${VER_MONTH}${VER_DAY}
     fi
 fi
 #
@@ -45,33 +60,6 @@ for FILE in $BASEFILESET ; do
         exit 1
     fi
 done
-### #
-### # Build me
-### #
-### if [ ! -f ${BASEDIR}/bin/me ] ; then
-###     if [ ! -f ${BASEDIR}/src/sunos58.${CCMAK} ] ; then
-###         gunzip -c mesrc.tar.gz | (cd ${BASEDIR}/src;  tar xvf - )
-###     fi
-###     MAKECDEFS="-D_SEARCH_PATH=\\"'"'"${SEARCH_PATH}\\"'"'
-###     (cd ${BASEDIR}/src; make -f sunos58.${CCMAK} MAKECDEFS=$MAKECDEFS mecw)
-###     cp ${BASEDIR}/src/mecw ${BASEDIR}/bin/me
-###     (cd ${BASEDIR}; rm -rf ./src)
-###     mkdir ${BASEDIR}/src
-### fi
-### #
-### # Build ne
-### #
-### if [ ! -f ${BASEDIR}/bin/ne ] ; then
-###     if [ ! -f ${BASEDIR}/src/sunos58.${CCMAK} ] ; then
-###         gunzip -c mesrc.tar.gz | (cd ${BASEDIR}/src;  tar xvf - )
-###     fi
-###     MAKECDEFS="-D_SEARCH_PATH=\\"'"'"${SEARCH_PATH}\\"'"'
-###     (cd ${BASEDIR}/src; make -f sunos58.${CCMAK} MAKECDEFS=$MAKECDEFS nec)
-###     cp ${BASEDIR}/src/nec ${BASEDIR}/bin/ne
-###     (cd ${BASEDIR}/src; make -f sunos58.${CCMAK} spotless)
-###     (cd ${BASEDIR}; rm -rf ./src)
-###     mkdir ${BASEDIR}/src
-### fi
 #
 # Unpack the tree
 #

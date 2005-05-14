@@ -5,7 +5,7 @@
 #
 #  Created By    : Jon Green
 #  Created       : Fri Feb 6 22:33:31 2004
-#  Last Modified : <050508.1703>
+#  Last Modified : <050514.1818>
 #  Description   : Creates the RedHat directory structure for building a RPM
 #                  file.
 #
@@ -17,6 +17,8 @@ VER_DAY="05"
 VERSION="20${VER_YEAR}${VER_MONTH}${VER_DAY}"
 METREE=jasspa-metree-${VERSION}.tar.gz
 MESRC=jasspa-mesrc-${VERSION}.tar.gz
+MEBIN=jasspa-me-linux-i386-2.4-${VERSION}.gz
+NEBIN=jasspa-ne-linux-i386-2.4-${VERSION}.gz
 #
 # Create the file ~/.rpmmacro this is required to run as a user rather than
 # root.
@@ -38,6 +40,7 @@ mkdir -p ~/rpmbuild/RPMS/noarch
 mkdir -p ~/rpmbuild/SOURCES
 mkdir -p ~/rpmbuild/SPECS
 mkdir -p ~/rpmbuild/SRPMS
+echo ${MESRC}
 #
 # Copy the spec into the SPECS directory
 #
@@ -80,6 +83,20 @@ if [ ! -f ./me.1.gz ] ; then
     exit 1
 fi
 cp ./me.1.gz ~/rpmbuild/SOURCES/
+#
+# Build me
+# 
+if [ ! -f ${MEBIN} ] ; then
+    rm -rf me${VER_YEAR}${VER_MONTH}${VER_DAY}
+    gunzip -c ${MESRC} | tar xf -
+    rm -f ${NEBIN}
+    (cd me${VER_YEAR}${VER_MONTH}${VER_DAY}/src; sh build -ne)
+    gzip -9 -c me${VER_YEAR}${VER_MONTH}${VER_DAY}/src/ne > ${NEBIN}
+    rm -f ${MEBIN}
+    (cd me${VER_YEAR}${VER_MONTH}${VER_DAY}/src; sh build)
+    gzip -9 -c me${VER_YEAR}${VER_MONTH}${VER_DAY}/src/me > ${MEBIN}
+    rm -rf me${VER_YEAR}${VER_MONTH}${VER_DAY}
+fi    
 #
 # Now make the RPM
 #

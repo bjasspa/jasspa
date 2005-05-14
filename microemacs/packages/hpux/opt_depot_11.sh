@@ -3,12 +3,12 @@
 #  System        : MicroEmacs
 #  Module        : Package Build script.
 #  Object Name   : $RCSfile: opt_depot_11.sh,v $
-#  Revision      : $Revision: 1.8 $
-#  Date          : $Date: 2005-05-08 23:14:54 $
+#  Revision      : $Revision: 1.9 $
+#  Date          : $Date: 2005-05-14 21:24:26 $
 #  Author        : $Author: jon $
 #  Created By    : <unknown>
 #  Created       : Sun Aug 17 12:58:23 2003
-#  Last Modified : <050509.0013>
+#  Last Modified : <040328.0246>
 #
 # Rules to build the HPUX 11.xx depot file. We build the executable only.
 #
@@ -21,7 +21,9 @@ VER_MONTH="05"
 VER_DAY="05"
 VERSION="20${VER_YEAR}${VER_MONTH}${VER_DAY}"
 METREE=jasspa-metree-${VERSION}.tar.gz
+MESRC=jasspa-mesrc-${VERSION}.tar.gz
 MEBIN=jasspa-me-hpux-pa-11.00-${VERSION}.gz
+NEBIN=jasspa-ne-hpux-pa-11.00-${VERSION}.gz
 BASEFILESET="${METREE} ${MEBIN}"
 # Set to "mak" for native or "gmk" for GCC
 PLATFORM=`uname`
@@ -35,6 +37,11 @@ if [ ! -f ${METREE} ] ; then
         cp ${TOPDIR}/release/www/${METREE} .
     fi
 fi
+if [ ! -f ${MESRC} ] ; then
+    if [ -f ${TOPDIR}/release/www/${MESRC} ] ; then
+        cp ${TOPDIR}/release/www/${MESRC} .
+    fi
+fi
 if [ ! -f me.1 ] ; then
     if [ -f ${TOPDIR}/release/www/me.1.gz ] ; then
         gunzip -c ${TOPDIR}/release/www/me.1.gz > me.1
@@ -45,6 +52,14 @@ if [ ! -f ${MEBIN} ] ; then
         cp ${TOPDIR}/src/${MEBIN} ${MEBIN}
     elif [ -f ${TOPDIR}/src/me ] ; then
         gzip -9 -c ${TOPDIR}/src/me > ${MEBIN}
+    else
+        # Build me
+        gunzip -c ${MESRC} | tar xf -
+        (cd me${VER_YEAR}${VER_MONTH}${VER_DAY}/src; sh build -ne -m hpux11.gmk)
+        gzip -9 -c me${VER_YEAR}${VER_MONTH}${VER_DAY}/src/ne > ${NEBIN}
+        (cd me${VER_YEAR}${VER_MONTH}${VER_DAY}/src; sh build -m hpux11.gmk)
+        gzip -9 -c me${VER_YEAR}${VER_MONTH}${VER_DAY}/src/me > ${MEBIN}
+        rm -rf me${VER_YEAR}${VER_MONTH}${VER_DAY}
     fi
 fi
 #
@@ -56,44 +71,6 @@ for FILE in $BASEFILESET ; do
         exit 1
     fi
 done
-### #
-### # Build the directories
-### #
-### if [ ! -d ${BASEDIR} ] ; then
-###     mkdir ${BASEDIR}
-### fi
-### for FILE in $DIRECTORIES ; do
-###     if [ ! -d ${BASEDIR}/${FILE} ] ; then
-###         mkdir ${BASEDIR}/${FILE}
-###     fi
-### done
-### #
-### # Build me
-### #
-### if [ ! -f ${BASEDIR}/bin/me ] ; then
-###     if [ ! -f ${BASEDIR}/src/${MAKEBAS}.${CCMAK} ] ; then
-###         gunzip -c mesrc.tar.gz | (cd ${BASEDIR}/src;  tar xvf - )
-###     fi
-###     MAKECDEFS="-D_SEARCH_PATH=\\"'"'"${SEARCH_PATH}\\"'"'
-###     (cd ${BASEDIR}/src; make -f ${MAKEBAS}.${CCMAK} MAKECDEFS=$MAKECDEFS mecw)
-###     cp ${BASEDIR}/src/mecw ${BASEDIR}/bin/me
-###     (cd ${BASEDIR}; rm -rf ./src)
-###     mkdir ${BASEDIR}/src
-### fi
-### #
-### # Build ne
-### #
-### if [ ! -f ${BASEDIR}/bin/ne ] ; then
-###     if [ ! -f ${BASEDIR}/src/${MAKEBAS}.${CCMAK} ] ; then
-###         gunzip -c mesrc.tar.gz | (cd ${BASEDIR}/src;  tar xvf - )
-###     fi
-###     MAKECDEFS="-D_SEARCH_PATH=\\"'"'"${SEARCH_PATH}\\"'"'
-###     (cd ${BASEDIR}/src; make -f ${MAKEBAS}.${CCMAK} MAKECDEFS=$MAKECDEFS nec)
-###     cp ${BASEDIR}/src/nec ${BASEDIR}/bin/ne
-###     (cd ${BASEDIR}/src; make -f ${MAKEBAS}.${CCMAK} spotless)
-###     (cd ${BASEDIR}; rm -rf ./src)
-###     mkdir ${BASEDIR}/src
-### fi
 #
 # Remove the unpacking area.
 #

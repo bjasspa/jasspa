@@ -12,7 +12,9 @@ VER_MONTH="05"
 VER_DAY="05"
 VERSION="20${VER_YEAR}${VER_MONTH}${VER_DAY}"
 METREE=jasspa-metree-${VERSION}.tar.gz
+MESRC=jasspa-mesrc-${VERSION}.tar.gz
 MEBIN=jasspa-me-sun-i386-59-${VERSION}.gz
+NEBIN=jasspa-ne-sun-i386-59-${VERSION}.gz
 BASEFILESET="${METREE} ${MEBIN} me.1"
 
 #
@@ -21,6 +23,11 @@ BASEFILESET="${METREE} ${MEBIN} me.1"
 if [ ! -f ${METREE} ] ; then
     if [ -f ${TOPDIR}/release/www/${METREE} ] ; then
         cp ${TOPDIR}/release/www/${METREE} .
+    fi
+fi
+if [ ! -f ${MESRC} ] ; then
+    if [ -f ${TOPDIR}/release/www/${MESRC} ] ; then
+        cp ${TOPDIR}/release/www/${MESRC} .
     fi
 fi
 if [ ! -f me.1 ] ; then
@@ -33,6 +40,12 @@ if [ ! -f ${MEBIN} ] ; then
         cp ${TOPDIR}/src/${MEBIN} ${MEBIN}
     elif [ -f ${TOPDIR}/src/me ] ; then
         gzip -9 -c ${TOPDIR}/src/me > ${MEBIN}
+    else
+        gunzip -c ${METREE} | tar xf -
+        (cd me${VER_YEAR}${VER_MONTH}${VER_DAY}/src; sh build -ne)
+        (cd me${VER_YEAR}${VER_MONTH}${VER_DAY}/src; sh build)
+        gzip -9 -c me${VER_YEAR}${VER_MONTH}${VER_DAY}/src/me > ${MEBIN}
+        gzip -9 -c me${VER_YEAR}${VER_MONTH}${VER_DAY}/src/ne > ${NEBIN}
     fi
 fi
 #
