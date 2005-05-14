@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20050509.2300>
+# Last Modified: <20050514.1534>
 #
 ##############################################################################
 
@@ -40,8 +40,6 @@ PLTSRC	=	unixterm.c	dosterm.c	winterm.c	winprint.c	\
 PLTHDR	=	winterm.h	wintermr.h
 
 ICOSRC	=	icon_ne.ico	icon_me.ico	me32.bmp	ne32.bmp
-
-TXTSRC	=	cygwin.txt	infolist.txt
 
 MAKEXE	=	build
 MAKSRC	=	build.bat	\
@@ -83,15 +81,13 @@ RELSTDSRC	=	$(STDSRC:%=$(SRCRELDIR)/%)
 RELPLTSRC	=	$(PLTSRC:%=$(SRCRELDIR)/%)
 RELPLTHDR	=	$(PLTHDR:%=$(SRCRELDIR)/%)
 RELICOSRC	=	$(ICOSRC:%=$(SRCRELDIR)/%)
-RELTXTSRC	=	$(TXTSRC:%=$(MERELDIR)/%)
 RELMAKSRC	=	$(MAKSRC:%=$(SRCRELDIR)/%)
 RELMAKEXE	=	$(MAKEXE:%=$(SRCRELDIR)/%)
 RELWIN32S	=	$(WIN32S:%=$(SRCRELDIR)/%)
 
 RELEASES	=	$(RELSTDHDR)	$(RELSTDDEF)	$(RELSTDSRC)	\
 			$(RELPLTSRC)	$(RELPLTHDR)	$(RELICOSRC)	\
-			$(RELTXTSRC)	$(RELMAKSRC)	$(RELWIN32S)	\
-			$(RELMAKEXE)
+			$(RELMAKSRC)	$(RELWIN32S)	$(RELMAKEXE)
 #
 # Local rules.
 #
@@ -118,8 +114,6 @@ $(RELPLTSRC): $(PLTSRC)
 $(RELPLTHDR): $(PLTHDR)
 	$(INSTALL_FIL) $(@F) $(@D)
 $(RELICOSRC): $(ICOSRC)
-	$(INSTALL_FIL) $(@F) $(@D)
-$(RELTXTSRC): $(TXTSRC)
 	$(INSTALL_FIL) $(@F) $(@D)
 $(RELMAKSRC): $(MAKSRC)
 	$(INSTALL_FIL) $(@F) $(@D)
