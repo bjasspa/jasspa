@@ -1,6 +1,6 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 1998-2004 JASSPA (www.jasspa.com)
+; Copyright (C) 1998-2005 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Synopsis:    Interactive Pipe hook
@@ -122,7 +122,7 @@
                 insert-newline
                 set-position "\x83"
             !endif
-            !if &band $system 0x100
+            !if &or &band $system 0x100 &seq $platform "cygwin"
                 !if &xis #l3 "[ \t]*[a-z]:\\([ \t].*\\)?"
                     set-variable #l4 &slo &lef &trb #l3 1
                     !if &exi &cat ":dir-" #l4
@@ -163,7 +163,7 @@
                     set-variable $buffer-fname #l4
                     !force find-buffer &cat #l0 "-cmd"
                     set-variable $buffer-fname #l5
-                    !if &band $system 0x100
+                    !if &or &band $system 0x100 &seq $platform "cygwin"
                         ; must set the old one as well - the starting path is not 
                         ; automatically stored
                         !if &seq &mid #l5 1 1 ":"
@@ -206,7 +206,7 @@
             !endif
             set-alpha-mark "I"
             set-variable :mode 0
-            !if &band $system 0x100
+            !if &or &band $system 0x100 &seq $platform "cygwin"
                 ipipe-write &spr "%s\CM\CJ" #l3
             !else
                 ipipe-write &spr "%s\CM" #l3
@@ -232,7 +232,7 @@
                 set-variable $window-col #l1
             !endif
             goto-position "\x83"
-            !if &band $system 0x100
+            !if &or &band $system 0x100 &seq $platform "cygwin"
                 ; on windows change '\' to '/'
                 set-variable #l2 &rep #l2 "\\" "/"
             !endif
@@ -248,7 +248,7 @@
                 ; base path is the same, replace with original
                 set-variable #l4 &cat &lef #l2 &rsin "/" #l2 &rig #l4 #l5
             !endif
-            !if &band $system 0x100
+            !if &or &band $system 0x100 &seq $platform "cygwin"
                 ; on windows change '/' to '\'
                 set-variable #l4 &rep #l4 "/" "\\"
             !endif
@@ -343,7 +343,7 @@
         ipipe-write-prompt #l1
     !else
         goto-alpha-mark "I"
-        !if &band $system 0x100
+        !if &or &band $system 0x100 &seq $platform "cygwin"
             set-variable #l1 &rep #l1 "\CM" "\CM\CJ"
         !endif
         ipipe-write #l1
@@ -380,7 +380,7 @@
         ipipe-write-prompt #l1
     !else
         goto-alpha-mark "I"
-        !if &band $system 0x100
+        !if &or &band $system 0x100 &seq $platform "cygwin"
             set-variable #l1 &rep #l1 "\CM" "\CM\CJ"
         !endif
         ipipe-write #l1
@@ -514,7 +514,6 @@ define-macro fhook-ipipe
     buffer-init-hooks
 !emacro
 
-
 define-macro ishell
     set-variable #l0 $buffer-bname
     !force 0 find-buffer "*shell*"
@@ -524,14 +523,22 @@ define-macro ishell
         !if &seq $platform "win32"
             ; For windows DOS shell in a window we need to drop the command
             ; shell (!c!) and run a detached process (!d!). Optionally allow
-            ; the user to run a different command shell %comspec2. This 
-            ; must be a 32-bit app, so if you use a 16-bit 4DOS as the default
-            ; command shell, you will need to set %comspec2 to "command.com"
+            ; the user to run a different command shell %comspec2. This must
+            ; be a 32-bit app, so if you use a 16-bit 4DOS as the default
+            ; command shell, you will need to set %comspec2 to "command.com" 
             4 ipipe-shell-command &cond &seq $ME_ISHELL "ERROR" $COMSPEC $ME_ISHELL "*shell*"
         !else
             0 ipipe-shell-command $COMSPEC "*shell*"
         !endif
+    !elif &seq $platform "cygwin"
+        ; For cygwin then convert the COMSPEC path into a cygwin path for
+        ; pipe execution. This is executed in cygwin space rather than MS-DOS
+        ; space. 
+        set-variable #l1 &xir $COMSPEC "^\\([a-z]\\):" "/cygdrive/\\1"
+        set-variable #l1 &xir #l1 "\\\\" "/"
+        0 ipipe-shell-command #l1  "*shell*"
     !else
+        ; UNIX based platforms then we may simply run the shell.
         0 ipipe-shell-command $SHELL "*shell*"
     !endif
     popup-window "*shell*"

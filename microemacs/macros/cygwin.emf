@@ -1,6 +1,6 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 2001-2004 JASSPA (www.jasspa.com)
+; Copyright (C) 2001-2005 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     Nov 2001
@@ -11,7 +11,50 @@
 !force exec-file "unixterm"
 ; no vt100-nam on linux, this may cause problems in an ishell
 set-variable %ipipe-term "TERM=vt100"
-;
+;--- COMSHELL
+; As command.com's prompt echoing is broken ishell is useless without
+; the following 2 variables which enable ME's command-line support
+; NOTE - if you use a different prompt (i.e. not "PATH>") then you
+; must configure .ishell.prompt appropriately
+set-variable .ishell.prompt "^[^>\n]*>"
+set-variable .ishell.noecho "1"
+;--- CYGWIN
+; Cygwin environment may not have a $SHELL variable defined.
+; Define the shell if not defined.
+!if &seq $SHELL "ERROR"
+    set-variable $SHELL /bin/bash
+!endif
+; Try to find cygwin automatically. We need to identify where cygwin exists
+; in the file system as information received from BASH is DOS drive
+; information that is converted into cygwin space. 
+!if &not &exi %cygwin-path
+    !if &seq "D" &stat "t" "c:/cygwin"
+        set-variable %cygwin-path "c:/cygwin"
+    !endif
+!endif
+; Wrapper to define cygwin macro, this is based on the Win32 version, our
+; path information is a little different so we adjust.
+define-macro cygwin
+    !if &seq %cygwin-path "ERROR"
+        ; Bitch if the environment is not defined.
+        5000 ml-write "[Error: %cygwin-path not set - see hkcygwin.emf]"
+        !abort
+        ; See if bash exists.
+    !elif &seq "R" &stat "t" &cat %cygwin-path "/bin/bash.exe"
+        ; Load the macro file and execute the cygwin session.
+        !force exec-file "hkcygwin"
+        !if $status
+            cygwin
+        !endif
+    !else
+        5000 ml-write &spr "[Error: Cannot find bash program. %s]" "/bin/bash.exe"
+        !abort
+    !endif
+!emacro
+; Define the info path for cygwin.
+!if &not &exi $INFOPATH
+    set-variable $INFOPATH "/usr/share/info"
+!endif
 ; Compile stuff
 0 add-next-line "*compile*"
 add-next-line "*compile*" "%f:%l:"
