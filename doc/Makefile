@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20050320.2319>
+# Last Modified: <20050514.1311>
 #
 ##############################################################################
 
@@ -30,10 +30,11 @@ FAQTXT	=	faq.txt
 BUILDTXT=	build.txt
 PATCHTXT=	patch.txt
 CATMAN1=	me.1.gz ne.1.gz
+MISCTXT=	cygwin.txt	infolist.txt
 #
 # Define components
 #
-TXTS	=	$(READTXT) $(FAQTXT) $(BUILDTXT) $(PATCHTXT)
+TXTS	=	$(READTXT) $(FAQTXT) $(BUILDTXT) $(PATCHTXT) $(MISCTXT)
 #
 RTFS	=	me.rtf me.hpj logo.bmp
 #
