@@ -111,6 +111,24 @@
     <li>[050508] JASSPA MicroEmacs 8th release - final. Core and macro
     versions 20050505.</li>
     
+    <li>[050514] Enabled ipipes under cygwin by default.</li>
+
+    <li>[050514] Fixed win32s build.</li>
+
+    <li>[050514] Fixed mecygwin interactive MS-DOS and cygwin BASH
+    shells.</li>
+
+    <li>[050513] Found the UNIX <b>waitpid(-1,...)</b> in the sigchild handler
+    (which removes any zoombie processes) removes the pipe commands process so
+    the <b>pclose</b> call cannot get the process's exit code (returns
+    -1).</li>
+
+    <li>[050509] Changed the name of <b>aix43</b> make files to <b>aix4</b>
+    and <b>sunos55</b> and <b>sunos56</b> files to a single <b>sunos5</b>
+    makefile</li>
+
+    <li>[050509] Added support for aix v5 (tested on aix v5.1).</li>
+
     <li>[050507] Added Finnish support to ne.emf. </li>
 
     <li>[050506] Improved python collapse and <b>item-list</b> support and
@@ -439,7 +457,7 @@
 
     <li>[050218] Updated <b>watch</b> interface and made public. Created new
     <b>watch-time</b> command and prompt user for watch type when no argument
-    is given.
+    is given.</li>
 
     <li>[050218] Removed the use of bit <tt>0x1000</tt> in ada string
     <b>hilight</b> as this is unlikely to be wanted (probably copied from
