@@ -25,6 +25,10 @@ clean:
 	$(RM) redhat/*.gz
 	$(RM) redhat/*.rpm
 	$(RM) hpux/*.gz
+	$(RM) cygwin/*.1
+	$(RM) cygwin/*.gz
+	$(RM) -r solaris/jasspa
+	$(RM) -r hpux/jasspa
 #
 # Remove all working files.
 #
@@ -32,4 +36,5 @@ spotless: clean
 	$(RM) solaris/*~
 	$(RM) redhat/*~
 	$(RM) hpux/*~
+	$(RM) cygwin/*~
 	$(RM) *~
