@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.37 2005-05-14 12:03:38 jon Exp $
+.Id $Id: me.nrs,v 2.38 2005-05-14 14:24:42 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -2060,6 +2060,11 @@ common editor across all working platforms has been achieved!
 .BS
 [050508]  JASSPA  MicroEmacs  8th  release - final.  Core and  macro  versions
 20050505.
+.BU
+[050514]  Fixed ftp copy  lock-up  (most  noticable on windows)  caused by the
+response  read at the start of a command  also  reading (and  disgarding)  the
+finishing  message  so ME  hangs  at  the  end of the  command  waiting  for a
+response.
 .BU
 [050514] Enabled ipipes under cygwin by default.
 .BU
