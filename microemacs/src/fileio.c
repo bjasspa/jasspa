@@ -218,7 +218,8 @@ static meUByte   ffcrypt=0 ;
 #include <io.h>
 typedef void (*meATEXIT)(void) ;
 
-#define meSOCKET SOCKET
+#define SHUT_RDWR            SD_BOTH
+#define meSOCKET             SOCKET
 #define meBadSocket          INVALID_SOCKET
 #define meSocketIsBad(ss)    ((ss) == meBadSocket)
 
@@ -235,6 +236,7 @@ typedef struct servent FAR *(WSAAPI *meGETSERVBYNAME)(const char FAR *,const cha
 typedef struct hostent FAR *(WSAAPI *meGETHOSTBYNAME)(const char FAR *) ;  
 typedef unsigned long (WSAAPI *meINET_ADDR)(const char   FAR *) ;
 typedef u_short (WSAAPI *meHTONS)(u_short) ;
+typedef int    (WSAAPI *meSOCKETSHUTDOWN)(SOCKET,int) ;
 
 static meSOCKETOPEN     meSocketOpen ;
 static meSOCKETCONNECT  meSocketConnect ;
@@ -243,6 +245,7 @@ static meSOCKETGETERROR meSocketGetError ;
 static meSOCKETSETOPT   meSocketSetOpt ;
 static meSOCKETREAD     meSocketRead ;
 static meSOCKETWRITE    meSocketWrite ;
+static meSOCKETSHUTDOWN meSocketShutdown ;
 static meGETSERVBYNAME  meGetservbyname ;
 static meGETHOSTBYNAME  meGethostbyname ;
 static meINET_ADDR      meInet_addr ;
@@ -262,16 +265,17 @@ static meHTONS          meHtons ;
 #define meSocketIsBad(ss)    ((ss) < 0)
 #define meSocketGetError()   (errno)
 
-#define meSocketOpen    socket
-#define meSocketConnect connect
-#define meSocketClose   close
-#define meSocketSetOpt  setsockopt
-#define meSocketRead    recv
-#define meSocketWrite   send
-#define meGetservbyname getservbyname
-#define meGethostbyname gethostbyname
-#define meInet_addr     inet_addr
-#define meHtons         htons
+#define meSocketOpen     socket
+#define meSocketConnect  connect
+#define meSocketClose    close
+#define meSocketSetOpt   setsockopt
+#define meSocketRead     recv
+#define meSocketWrite    send
+#define meSocketShutdown shutdown
+#define meGetservbyname  getservbyname
+#define meGethostbyname  gethostbyname
+#define meInet_addr      inet_addr
+#define meHtons          htons
 
 #endif
 
@@ -445,8 +449,12 @@ ffurlConsoleAddText(meUByte *str, int flags)
     }
     meBufferUpdateLocation(ffurlBp,(flags & 0x01) ? 0:1,ffurlBp->dotOffset) ;
     
-    if(!(flags & 0x04) && (ffurlFlags & ffURL_SHOW_CONSOLE))
-        screenUpdate(meTRUE,2-sgarbf) ;
+    if(!(flags & 0x04))
+    {
+        if(ffurlFlags & ffURL_SHOW_CONSOLE)
+            screenUpdate(meTRUE,2-sgarbf) ;
+        TTaheadFlush () ;
+    }
 }
 
 static meSOCKET
@@ -466,20 +474,21 @@ ffOpenConnectUrlSocket(meUByte *host, meUByte *port)
     if(!make_inet_addr(host,port,(meUByte *)"tcp"))
         return meBadSocket ;
     
-    if((ss=meSocketOpen(AF_INET,SOCK_STREAM,0)) < 0)
+    if((ss=meSocketOpen(AF_INET,SOCK_STREAM,IPPROTO_TCP)) < 0)
     {
         mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to open socket]") ;
         return meBadSocket ;
     }
+    ii = 1 ;
+    meSocketSetOpt(ss,SOL_SOCKET,SO_REUSEADDR,(char *) &ii,sizeof(int)) ;
+    ii = 1 ;
+    meSocketSetOpt (ss,SOL_SOCKET,SO_KEEPALIVE,(char *) &ii,sizeof(int));
     if(meSocketConnect(ss,(struct sockaddr *) &meSockAddr,sizeof(meSockAddr)) != 0)
     {
         meSocketClose(ss) ;
         mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to connect to %s:%s]",host,port) ;
         return meBadSocket ;
     }
-    
-    ii = 1 ;
-    meSocketSetOpt (ss,SOL_SOCKET,SO_KEEPALIVE,(char *) &ii,sizeof(int));
     
     return ss ;
 }
@@ -489,29 +498,19 @@ static int
 ffReadSocketLine(meSOCKET ss, meUByte *buff)
 {
     meUByte *dd=buff, cc ;
-    
     for(;;)
     {
-        if(ffremain == 0)
-        {
-            ffremain = meSocketRead(ss,(char *) ffbuf,meFIOBUFSIZ,0) ;
-            if(ffremain <= 0)
-                return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to read line]") ;
-            ffbuf[ffremain]='\n' ;
-            ffcur = ffbuf ;
-        }
-        ffremain-- ;
-        cc = *ffcur++ ;
-        if(cc == '\n')
-        {
-            *dd = '\0' ;
-            if(ffurlBp != NULL)
-                ffurlConsoleAddText(buff,0) ;
-            return meTRUE ;
-        }
+        if(meSocketRead(ss,(char *) dd,1,0) <= 0)
+            return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to read line]") ;
+        if((cc=*dd) == '\n')
+            break ;
         if(cc != '\r')
-            *dd++ = cc ;
+            dd++ ;
     }
+    *dd = '\0' ;
+    if(ffurlBp != NULL)
+        ffurlConsoleAddText(buff,0) ;
+    return meTRUE ;
 }
 
 static int
@@ -582,12 +581,14 @@ ffCloseSockets(int logoff)
     
     if(!meSocketIsBad(ffsock))
     {
+        meSocketShutdown(ffsock,SHUT_RDWR);
         meSocketClose(ffsock) ;
         ffsock = meBadSocket ;
     }
     if(logoff && !meSocketIsBad(ffccsk))
     {
         ftpCommand(1,"QUIT") ;
+        meSocketShutdown(ffccsk,SHUT_RDWR);
         meSocketClose(ffccsk) ;
         ffccsk = meBadSocket ;
         if(meNullFree(ffsockAddr))
@@ -653,8 +654,13 @@ ftpGetDataChannel(void)
 static int
 ftpOpenDataChannel(void)
 {
-    if(meSocketIsBad(ffsock = meSocketOpen(AF_INET, SOCK_STREAM, 0)))
+    int ii ;
+    
+    if(meSocketIsBad(ffsock = meSocketOpen(AF_INET, SOCK_STREAM, IPPROTO_TCP)))
         return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to open data channel]") ;
+    
+    ii = 1 ;
+    meSocketSetOpt(ffsock,SOL_SOCKET,SO_REUSEADDR,(char *) &ii,sizeof(int)) ;
     
     if(meSocketConnect(ffsock,(struct sockaddr *) &meSockAddr,sizeof(meSockAddr)) < 0)
         return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to connect data channel]") ;
@@ -1068,6 +1074,7 @@ ffUrlFileOpen(meUByte *urlName, meUByte *user, meUByte *pass, meUInt rwflag)
            ((meSocketSetOpt   = (meSOCKETSETOPT) GetProcAddress(libHandle,"setsockopt")) != NULL) &&
            ((meSocketRead     = (meSOCKETREAD) GetProcAddress(libHandle,"recv")) != NULL) &&
            ((meSocketWrite    = (meSOCKETWRITE) GetProcAddress(libHandle,"send")) != NULL) &&
+           ((meSocketShutdown = (meSOCKETSHUTDOWN) GetProcAddress(libHandle,"shutdown")) != NULL) &&
            ((meGetservbyname  = (meGETSERVBYNAME) GetProcAddress(libHandle,"getservbyname")) != NULL) &&
            ((meGethostbyname  = (meGETHOSTBYNAME) GetProcAddress(libHandle,"gethostbyname")) != NULL) &&
            ((meInet_addr      = (meINET_ADDR) GetProcAddress(libHandle,"inet_addr")) != NULL) &&
@@ -1202,6 +1209,7 @@ ffUrlFileClose(meUByte *fname, meUInt rwflag)
         {
             if(!meSocketIsBad(ffsock))
             {
+                meSocketShutdown(ffsock,SHUT_RDWR);
                 meSocketClose(ffsock) ;
                 ffsock = meBadSocket ;
             }
