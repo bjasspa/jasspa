@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.36 2005-05-08 13:45:00 jon Exp $
+.Id $Id: me.nrs,v 2.37 2005-05-14 12:03:38 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -2060,6 +2060,21 @@ common editor across all working platforms has been achieved!
 .BS
 [050508]  JASSPA  MicroEmacs  8th  release - final.  Core and  macro  versions
 20050505.
+.BU
+[050514] Enabled ipipes under cygwin by default.
+.BU
+[050514] Fixed win32s build.
+.BU
+[050514] Fixed \fBmecygwin\fR interactive MS-DOS and cygwin BASH shells.
+.BU
+[050513] Found the UNIX  \fBwaitpid(-1,...)\fR  in the sigchild handler (which
+removes any zoombie processes) removes the pipe commands process so the pclose
+call cannot get the process's exit code (returns -1).
+.BU
+[050509] Changed  the name of aix43  make  files to aix4 and sunos 55 and 56
+files to a single sunos5 makefile
+.BU
+[050509] Added support for \fBaix\ v5\fR (tested on aix v5.1)
 .BU    
 [050507] Added Finnish support to ne.emf. 
 .BU
