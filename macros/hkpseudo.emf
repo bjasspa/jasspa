@@ -1,6 +1,6 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 2000-2004 JASSPA (www.jasspa.com)
+; Copyright (C) 2000-2005 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     Mon Mar 20 2000
@@ -27,7 +27,7 @@
 ; // -!- pseudo -!-
 ; // Author:       My Self
 ; // Created:      11/11/97
-; // Modified:     <050119.2110>
+; // Modified:     <050514.1330>
 ; // Location:     /xx/xx/zz.doc
 ; //
 ; //____________________________________________________________________________

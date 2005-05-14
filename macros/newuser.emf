@@ -1,5 +1,5 @@
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 2004 JASSPA (www.jasspa.com)
+; Copyright (C) 2004-2005 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     25 Jan 2004
@@ -94,7 +94,7 @@
     !if &not $status
         insert-string "; -!- emf -!-\n"
         insert-string "; This is part of the JASSPA MicroEmacs macro files\n"
-        insert-string "; Copyright (C) 1999-2004 JASSPA (www.jasspa.com)\n"
+        insert-string "; Copyright (C) 1999-2005 JASSPA (www.jasspa.com)\n"
         insert-string "; See the file me.emf for copying and conditions.\n"
         insert-string ";\n"
         insert-string "; Add your private macros and definitions to this file.\n"
@@ -148,7 +148,7 @@
     !if &not $status
         insert-string "; -!- emf -!-\n"
         insert-string "; This is part of the JASSPA MicroEmacs macro files\n"
-        insert-string "; Copyright (C) 1999-2004 JASSPA (www.jasspa.com)\n"
+        insert-string "; Copyright (C) 1999-2005 JASSPA (www.jasspa.com)\n"
         insert-string "; See the file me.emf for copying and conditions.\n"
         insert-string ";\n"
         insert-string "; Add your company macros and definitions to this file.\n"
