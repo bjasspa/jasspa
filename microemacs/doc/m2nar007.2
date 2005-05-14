@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jun 17 22:26:42 1999
 .\"
-.Id $Id: m2nar007.2,v 2.15 2005-05-14 12:53:41 jon Exp $
+.Id $Id: m2nar007.2,v 2.16 2005-05-14 14:11:54 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .TH "Build" 2
@@ -165,6 +165,12 @@ The Windows environment is a little more difficult than \s-1UNIX\s0 because it
 does not have a good native command line environment.  There are two Microsoft
 Developer  options for building. If you have not purchased MS-DEV then use the
 FREE Borland compiler which runs on the command line.
+.SS "MinGW Build"
+A collection of freely  available and freely  distributable  Windows  specific
+header files and import libraries combined with GNU toolsets that allow one to
+produce  native  Windows  programs that do not rely on any 3rd-party C runtime
+DLLs.  Available  from  http://www.mingw.org,  \fBmingw\fR  allows a Microsoft
+Windows version \*(mS to bu built and maintained.
 .SS "MS-Dev GUI Build"
 \*(mS is supplied  with a MS-Dev 6.x project for building.  This has only been
 set up for  debugging  and has limited  build  options, it will also produce a
