@@ -27,8 +27,10 @@ clean:
 	$(RM) hpux/*.gz
 	$(RM) cygwin/*.1
 	$(RM) cygwin/*.gz
+	$(RM) cygwin/*.bz2
 	$(RM) -r solaris/jasspa
 	$(RM) -r hpux/jasspa
+	$(RM) -r cygwin/usr
 #
 # Remove all working files.
 #
