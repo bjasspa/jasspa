@@ -4,11 +4,16 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <050514.1300>
+>  Last Modified : <050514.1522>
 >
 
     [050508] JASSPA  MicroEmacs  8th release - final. Core and macro  versions
              20050505.
+
+    [050514] Fixed ftp copy lock-up (most  noticable on windows) caused by the
+             response  read  at the  start  of a  command  also  reading  (and
+             disgarding)  the finishing  message so ME hangs at the end of the
+             command waiting for a response.
 
     [050514] Enabled ipipes under cygwin by default.
 
