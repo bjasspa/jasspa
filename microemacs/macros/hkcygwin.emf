@@ -1,6 +1,6 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 1998-2004 JASSPA (www.jasspa.com)
+; Copyright (C) 1998-2005 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     Wed Sep 30 1998
@@ -37,6 +37,13 @@
 ;         set-variable %cygwin-prompt "^[a-z]*@[^>]*>"
 ;
 ;  Notes:
+;      Jon 2005-0514
+;      
+;      This file is now used by mecygwin to provide a BASH shell in the 
+;      the UNIX build environment. The notes above reply to run a bash 
+;      shell. The cygwin environment is initialised by settings in 
+;      cygwin.emf these are similar to the win32.emf start up script.
+;
 ;      Jon 2004-02-21 
 ; 
 ;      The old version of cygnus ishell in the B18 era worked well as

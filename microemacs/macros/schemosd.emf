@@ -1,6 +1,6 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 1999-2004 JASSPA (www.jasspa.com)
+; Copyright (C) 1999-2005 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     Sat Mar 13 1999
@@ -505,7 +505,7 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
 0 define-macro schm-osd-store-screen-scheme
     ; create the header
     insert-string "; Generated color scheme file for JASSPA MicroEmacs\n"
-    insert-string "; Copyright (C) 1999-2004 JASSPA (www.jasspa.com)\n"
+    insert-string "; Copyright (C) 1999-2005 JASSPA (www.jasspa.com)\n"
     insert-string "; See the file me.emf for copying and conditions.\n"
     insert-string &spr "; Description: %s\n" .schm-osd.desc
     ; Set the osd cursor flag
@@ -555,7 +555,7 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
 0 define-macro schm-osd-store-print-scheme
     ; create the header
     insert-string "; Generated printer scheme file for JASSPA MicroEmacs\n"
-    insert-string "; Copyright (C) 1999-2004 JASSPA (www.jasspa.com)\n"
+    insert-string "; Copyright (C) 1999-2005 JASSPA (www.jasspa.com)\n"
     insert-string "; See the file me.emf for copying and conditions.\n"
     insert-string &spr "; Description: %s\n" .schm-osd.desc
     ; Setup the printer options
