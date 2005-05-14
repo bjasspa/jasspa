@@ -40,7 +40,7 @@
   </table>
 
   <!-- Section selection -->
-  <p><font size="+3" color="#0000ff"><b>Generic Linux Download</b></font>
+  <p><font size="+3" color="#0000ff"><b>Cygwin Download</b></font>
   <br/>
   <font size="+1"><a href="download.html" style="COLOR: black">overview</a>&nbsp;&nbsp;</font>
   <font size="+1"><a href="history.html" style="COLOR: black">history</a>&nbsp;&nbsp;</font>
@@ -52,7 +52,79 @@
   <p><font size="+1"><b>Last Upload: 10th May 2005</b></font></p>
 
   <HR color="#cccccc" noShade="1" SIZE="1"/>
-
+  
+  <p>As of the final 2005 release of MicroEmacs then the <a
+  href="http://www.cygwin.com" TARGET="_blank">Cygwin</a> now supports
+  incremental pipes. MicroEmacs commands that are available include:-
+  <ul>
+    <li><b>M-x ishell</b> creates a DOS console within a MicroEmacs buffer window.</li>
+    <li><b>M-x cygwin</b> creates a BASH console within a MicroEmacs buffer window.
+    <li><b>M-X grep</b>, <b>M-x find</b>, etc. are supported.</li>
+  </ul>
+  </p>
+  
+  <h2><img src="images/miniicon.gif" width="16" height="16"/>
+  <font color="#0000FF">Complete Package</font></h2>
+  
+  <p>The <a href="http://www.cygwin.com" TARGET="_blank">Cygwin</a> packages
+  follow the conventional Cygwin packaging rules.</p>
+  
+  <center><table border="1" WIDTH="100%">
+    <tr>
+      <td bgcolor="#0000FF">
+        <font color="#FFFF00"><strong>Download Image</strong></font></td>
+      <td bgcolor="#0000FF">
+        <font color="#FFFF00">
+        <strong>Pre-built Installation Files</strong></font></td>
+      <td align="center" bgcolor="#0000FF">
+        <font color="#FFFF00"><strong>Byte<br/>Size</strong></font></td>
+      <td align="center" bgcolor="#0000FF">
+        <font color="#FFFF00"><strong>Last update</strong><br/>yyyy-mm-dd</font></td>
+    </tr>
+    <tr>
+      <td><a href="release_20050505/jasspa-20050505.tar.bz2">jasspa-20050505.tar.bz2</a></td>
+      <td>Cygwin binary package, contains a console image (<b>me</b>) and
+      X-Windows image (<b>mex</b>).</td>
+      <td><center>1224768</center></td>
+      <td><center>2005-05-05</center></td>
+    </tr>
+    <tr>
+      <td><a href="release_20050505/jasspa-20050505-src.tar.bz2">jasspa-20050505-src.tar.bz2</a></td>
+      <td>Cygwin source package.</td>
+      <td><center>598721</center></td>
+      <td><center>2005-05-05</center></td>
+    </tr>
+  </table></center>
+  
+  <h3>Package Installation</h3>
+  
+  <p>Unpack, as <i>administrator</i> if required, and run the following
+  commands to install MicroEmacs:</p>
+  
+  <pre>
+  cd /
+  tar xjvf /path-to-tarball/jasspa-yyyymmdd.tar.bz2
+  # Optionally install the source package.
+  tar xjvf /path-to-tarball/jasspa-yyyymmdd-src.tar.bz2
+  </pre>
+  
+  <p>A console version of MicroEmacs may be executed with the command
+  <b>me</b>. If X-Windows is installed then use <b>mex</b> which supports
+  X-Window and console operation.</p>
+  
+  <h3>Package Removal</h3>
+  <p>Manually remove the installed components:-</p>
+  
+  <pre>
+  rm -rf /usr/share/jasspa
+  rm -rf /usr/doc/jasspa
+  rm -rf /usr/doc/Cygwin/jasspa*
+  rm -rf /usr/src/jasspa*
+  rm -f  /usr/share/man/cat1/me.1
+  rm -f  /usr/bin/me.exe
+  rm -f  /usr/bin/mex.exe
+  </pre>
+  
   <h2><img src="images/miniicon.gif" width="16" height="16"/>
   <font color="#0000FF">Component Install</font></h2>
 
@@ -77,15 +149,15 @@
       <td><center>2005-05-05</center></td>
     </tr>
     <tr>
-      <td><a href="release_20050505/jasspa-me-linux-i386-2.4-20050505.gz">jasspa-me-linux-i386-2.4-20050505.gz</a></td>
-      <td>Linux 2.4 Kernel pre-built executable only.<br/>
+      <td><a href="release_20050505/jasspa-me-cygwin-i386-20050505.gz">jasspa-me-cygwin-i386-20050505.gz</a></td>
+      <td>Console only pre-built executable only.<br/>
         <i>Will also require <tt>metree</tt> to run.</i></td>
-      <td><center>241628</center></td>
+      <td><center>237890</center></td>
       <td><center>2005-05-05</center></td>
     </tr>
     <tr>
-      <td><a href="release_20050505/jasspa-me-linux-i386-2.6-20050505.gz">jasspa-me-linux-i386-2.6-20050505.gz</a></td>
-      <td>Linux 2.6 Kernel pre-built executable only.<br/>
+      <td><a href="release_20050505/jasspa-mex-cygwin-i386-20050505.gz">jasspa-mex-cygwin-i386-20050505.gz</a></td>
+      <td>X-Windows and console pre-built executable only.<br/>
         <i>Will also require <tt>metree</tt> to run.</i></td>
       <td><center>243917</center></td>
       <td><center>2005-05-05</center></td>
@@ -102,60 +174,32 @@
   </table></center>
 
   <h3>System Wide Component Installation</h3>
-
-  <p>As <i>root</i>, unpack <i>metree</i> which creates a directory tree
-  called <tt>jasspa</tt> and install into a suitable directory, typically
-  <tt>/usr/share</tt> or <tt>/usr/local</tt> i.e.</p>
+  
+  <p>Unpack, as <i>administrator</i> if required, and unpack <i>metree</i>
+  which creates a directory tree called <tt>jasspa</tt> and install into a
+  suitable directory, typically <tt>/usr/share</tt> or <tt>/usr/local</tt>
+  i.e.</p>
 
   <pre>
-  cd /usr/local
+  cd /usr/share
   gtar zxvf /path-to-tarball/jasspa-metree-yyyymmdd.tar.gz
   </pre>
 
-  <p>The directory <tt>/usr/local/jasspa</tt> should now exist. Add downloaded
-  spelling dictionaries by unpacking into the <tt>/usr/local/jasspa/spell</tt>
+  <p>The directory <tt>/usr/share/jasspa</tt> should now exist. Add downloaded
+  spelling dictionaries by unpacking into the <tt>/usr/share/jasspa/spell</tt>
   subdirectory.</p>
 
-  <p>Unpack the binary into the new directory.</p>
+  <p>Unpack the binary into the new directory (we assume X-Windows is
+  installed and use the X-Windows version, use the console version if X is not
+  installed).</p>
 
   <pre>
-  cd /usr/local/bin
-  gunzip -c /path-to-tarball/jasspa-me-linux_2.x-yyyymmdd.gz &gt; me
-  chmod a+rx me
+  gunzip -c /path-to-tarball/jasspa-mex-cygwin-i386-yyyymmdd.gz &gt; /usr/bin/me.exe
+  chmod a+rx /usr/bin/me.exe
   </pre>
 
-  <p>The installation is complete and you may now execute your favorite editor
+  <p>The installation is complete and you may now execute the editor using
   <b>me</b>.</p>
-
-  <h3>Single User Component Installation</h3>
-
-  <p>Unpack <i>metree</i> in your home directory, this generates a directory
-  tree called <tt>jasspa</tt>. Once unpacked then rename the directory to
-  <tt>.jasspa</tt>.</p>
-
-  <pre>
-  cd ~
-  gtar zxvf /path-to-tarball/jasspa-metree-yyyymmdd.tar.gz
-  mv jasspa .jasspa
-  </pre>
-
-  <p>Add downloaded spelling dictionaries by unpacking into the
-  <tt>~/.jasspa/spell</tt> subdirectory.</p>
-
-  <p>Install the binary into your local binary directory - we assume
-  <tt>~/bin</tt> i.e.</p>
-
-  <pre>
-  cd ~/bin
-  gunzip -c /path-to-tarball/jasspa-me-linux-2.x-yyyymmdd.gz &gt; me
-  chmod a+rx me
-  </pre>
-
-  <p>Assuming that the binary directory is already on the users path then the
-  installation is complete.</p>
-
-  <p>Now execute your favorite editor <b>me</b> and follow the instructions on
-  setting up your environment.</p>
 
   <!-- NanoEmacs - Package and Binary Downloads -->
 
@@ -183,16 +227,9 @@
     </tr>
     <tr>
       <td valign="top">
-        <a href="release_20050505/jasspa-ne-linux-i386-2.4-20050505.gz">jasspa-ne-linux-i386-2.4-20050505.gz</a></td>
-      <td valign="top">Linux 2.4.x - NanoEmacs console version.</td>
-      <td align="center" valign="top">97642</td>
-      <td align="center" valign="top">2005-05-05</td>
-    </tr>
-    <tr>
-      <td valign="top">
-        <a href="release_20050505/jasspa-ne-linux-i386-2.6-20050505.gz">jasspa-ne-linux-i386-2.6-20050505.gz</a></td>
-      <td valign="top">Linux 2.6.x - NanoEmacs console version.</td>
-      <td align="center" valign="top">98037</td>
+        <a href="release_20050505/jasspa-ne-cygwin-i386-20050505.gz">jasspa-ne-cygwin-i386-20050505.gz</a></td>
+      <td valign="top">Cygwin NanoEmacs console version.</td>
+      <td align="center" valign="top">105343</td>
       <td align="center" valign="top">2005-05-05</td>
     </tr>
   </table></center></p>
@@ -201,10 +238,9 @@
 
   <p>
   <ul>
-    <li>Unpack using <tt>gunzip</tt></li>
-    <li>rename to <b>ne</b></li>
-    <li>Apply execute permissions <b>chmod a+rx ne</b></li>
-    <li>As <i>root</i> copy to the desired binary directory i.e. <tt>/usr/local/bin</tt>.</li>
+    <li>Unpack using <tt>gunzip</tt>.
+    <b>gunzip -c jasspa-ne-cygwin-i386-yyyymmdd.gz &gt; /usr/bin/ne.exe</b></li>
+    <li>Apply execute permissions <b>chmod a+rx /usr/bin/ne.exe</b></li>
   </ul>
   </p>
 
