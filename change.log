@@ -4,12 +4,28 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <050508.1315>
+>  Last Modified : <050514.1300>
 >
 
     [050508] JASSPA  MicroEmacs  8th release - final. Core and macro  versions
              20050505.
-    
+
+    [050514] Enabled ipipes under cygwin by default.
+
+    [050514] Fixed win32s build.
+
+    [050514] Fixed mecygwin interactive MS-DOS and cygwin BASH shells.
+
+    [050513] Found the UNIX  waitpid(-1,...)  in the sigchild  handler  (which
+             removes any zoombie  processes) removes the pipe commands process
+             so the pclose call cannot get the  process's  exit code  (returns
+             -1).
+
+    [050509] Changed  the name of aix43  make  files to aix4 and sunos 55 & 56
+             files to a single sunos5 makefile
+
+    [050509] Added support for aix v5 (tested on aix v5.1)
+
     [050507] Added Finnish support to ne.emf.    
 
     [050506] Improved python collapse and item-list  support and added eaf and
