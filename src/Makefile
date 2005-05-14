@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20050514.1534>
+# Last Modified: <20050514.1920>
 #
 ##############################################################################
 
@@ -35,7 +35,8 @@ STDSRC	=	abbrev.c	basic.c		bind.c		buffer.c	\
 		word.c
 
 PLTSRC	=	unixterm.c	dosterm.c	winterm.c	winprint.c	\
-		me.rc		ne.rc		memsvc20.rc	nec.rc
+		me.rc		ne.rc		memsvc20.rc	nec.rc		\
+		nemsvc20.rc	ncmsvc20.rc
 
 PLTHDR	=	winterm.h	wintermr.h
 
