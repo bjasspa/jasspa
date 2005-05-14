@@ -7,12 +7,12 @@
 #  System        : MicroEmacs
 #  Module        : CD-ROM image
 #  Object Name   : $RCSfile: Makefile,v $
-#  Revision      : $Revision: 1.8 $
-#  Date          : $Date: 2005-05-11 23:20:39 $
+#  Revision      : $Revision: 1.9 $
+#  Date          : $Date: 2005-05-14 21:26:30 $
 #  Author        : $Author: jon $
 #  Created By    : Jon Green
 #  Created       : Sun Aug 10 11:57:07 2003
-#  Last Modified : <050511.2320>
+#  Last Modified : <050514.1735>
 #
 #  Description   : Construct the ISO CD-ROM images of MicroEmacs
 #
@@ -262,6 +262,8 @@ $(FDIR)/ne $(EDIR)/ne:	ne.txt
 	chmod a+rx $@/neaix4
 	$(GUNZIP) -c $(RELDIR)/jasspa-ne-ibm-aix-5-20050505.gz > $@/neaix5
 	chmod a+rx $@/neaix5
+	$(GUNZIP) -c $(RELDIR)/jasspa-ne-cygwin-i386-20050505.gz > $@/necygwin.exe
+	chmod a+rx $@/necygwin.exe
 	$(UNZIP) $(RELDIR)/jasspa-ne-ms-win32-20050505.zip -d $@
 	$(MV) $@/ne32.exe $@/nec32.exe
 	$(UNZIP) $(RELDIR)/jasspa-ne-msdos-djgpp1-20050505.zip -d $@
@@ -276,8 +278,6 @@ $(FDIR)/ne $(EDIR)/ne:	ne.txt
 #	$(MV) $@/new32.exe $@/new32.exe
 #	$(GUNZIP) -c $(RELDIR)/jasspa-ne-openbsd-i386-3.4-20050505.gz > $@/neopenbsd34
 #	chmod a+rx $@/neopenbsd34
-#	$(GUNZIP) -c $(RELDIR)/jasspa-ne-cygwin-20050505.exe.gz > $@/necygwin.exe
-#	chmod a+rx $@/necygwin.exe
 #	$(GUNZIP) -c $(RELDIR)/jasspa-ne-apple-darwin-6.6-20050505.gz > $@/nedarwin
 #	chmod a+rx $@/nedarwin
 #	$(GUNZIP) -c $(RELDIR)/jasspa-ne-sun-i386-59-20050505.gz > $@/nesun86_59
@@ -334,6 +334,10 @@ $(FDIR)/packages:
 	$(CP) $(RELDIR)/jasspa-me-20050505-1.i386.rpm $@/linux24
 	$(CP) $(RELDIR)/fedora/jasspa-me-20050505-1.src.rpm $@/linux26
 	$(CP) $(RELDIR)/fedora/jasspa-me-20050505-1.i386.rpm $@/linux26
+	$(MKDIR) $@/cygwin
+	$(CP) $(RELDIR)/jasspa-20050505-src.tar.bz2 $@/cygwin
+	$(CP) $(RELDIR)/jasspa-20050505.tar.bz2 $@/cygwin
+	$(CP) $(RELDIR)/doc/cygwin.txt $@/cygwin
 	$(CP) package.txt $@/readme.unix
 	$(UNIX2DOS) package.txt $@/readme.joliet
 	$(UNIX2MAC) package.txt $@/readme.hfs
@@ -347,14 +351,14 @@ $(FDIR)/packages:
 #
 $(FDIR)/src:
 	$(MKDIR) $@
-	$(GUNZIP) -c $(RELDIR)/jasspa-mesrc-20050505.tar.gz | ($(CD) $@; tar xvf -)
+	$(GUNZIP) -c $(RELDIR)/jasspa-mesrc-20050505.tar.gz | ($(CD) $@; tar xf -)
 #
 # Executable direcotory.
 #
 $(FDIR)/me $(EDIR)/me: me.txt
 	- $(RMDIR) $@
 	$(MKDIR) $@
-	$(GUNZIP) -c $(RELDIR)/jasspa-metree-20050505.tar.gz | ($(CD) $@; tar xvf -)
+	$(GUNZIP) -c $(RELDIR)/jasspa-metree-20050505.tar.gz | ($(CD) $@; tar xf -)
 	$(MV) $@/jasspa/* $@
 	$(RMDIR) $@/jasspa
 	$(GUNZIP) -c $(RELDIR)/jasspa-me-linux-i386-2.4-20050505.gz > $@/melinux24
@@ -387,6 +391,10 @@ $(FDIR)/me $(EDIR)/me: me.txt
 	$(MV) $@/me.exe $@/medos.exe
 	$(UNZIP) $(RELDIR)/jasspa-me-msdos-djgpp2-20050505.zip -d $@
 	$(MV) $@/me.exe $@/medosdj2.exe
+	$(GUNZIP) -c $(RELDIR)/jasspa-me-cygwin-i386-20050505.gz > $@/mecygwin.exe
+	chmod a+rx $@/mecygwin.exe
+	$(GUNZIP) -c $(RELDIR)/jasspa-mex-cygwin-i386-20050505.gz > $@/mexcygwin.exe
+	chmod a+rx $@/mexcygwin.exe
 	$(CP) me.txt $@/readme.unix
 	$(UNIX2DOS) me.txt $@/readme.joliet
 	$(UNIX2MAC) me.txt $@/readme.hfs
@@ -394,13 +402,8 @@ $(FDIR)/me $(EDIR)/me: me.txt
 #	chmod a+rx $@/mesun86_59
 #	$(GUNZIP) -c $(RELDIR)/jasspa-me-openbsd-i386-3.4-20050505.gz > $@/meopenbsd34
 #	chmod a+rx $@/meopenbsd34
-#	$(GUNZIP) -c $(RELDIR)/jasspa-me-cygwin-20050505.exe.gz > $@/mecygwin.exe
-#	chmod a+rx $@/mecygwin.exe
-#	$(GUNZIP) -c $(RELDIR)/jasspa-mec-cygwin-20050505.exe.gz > $@/meccygwin.exe
-#	chmod a+rx $@/meccygwin.exe
 #	$(GUNZIP) -c $(RELDIR)/jasspa-mec-apple-darwin-6.6-20050505.gz > $@/mecdarwin
 #	chmod a+rx $@/mecdarwin
-#	$(UNZIP) $(RELDIR)/jasspa-meu-ms-win32-20050505.zip -d $@
 	
 #
 # Archive directories.
@@ -441,6 +444,9 @@ $(FDIR)/archive:
 	$(CP) $(RELDIR)/jasspa-ne-sun-sparc-59-20050505.gz $@/bin
 	$(CP) $(RELDIR)/jasspa-new-ms-win32-20050505.zip $@/bin
 	$(CP) $(RELDIR)/jasspa-ne-ms-win32-20050505.zip $@/bin
+	$(CP) $(RELDIR)/jasspa-me-cygwin-i386-20050505.gz $@/bin
+	$(CP) $(RELDIR)/jasspa-mex-cygwin-i386-20050505.gz $@/bin
+	$(CP) $(RELDIR)/jasspa-ne-cygwin-i386-20050505.gz $@/bin
 	$(MKDIR) $@/macros
 	$(CP) $(RELDIR)/jasspa-memacros-20050505.tar.gz $@/macros
 	$(CP) $(RELDIR)/jasspa-memacros-20050505.zip $@/macros
@@ -463,12 +469,8 @@ $(FDIR)/archive:
 #	$(CP) $(RELDIR)/jasspa-me-openbsd-i386-3.4-20050505.gz $@/bin
 #	$(CP) $(RELDIR)/jasspa-me-sun-i386-59-20050505.gz $@/bin
 #	$(CP) $(RELDIR)/jasspa-mec-apple-darwin-6.6-20050505.gz $@/bin
-#	$(CP) $(RELDIR)/jasspa-ne-cygwin-20050505.exe.gz $@/bin
-#	$(CP) $(RELDIR)/jasspa-mec-cygwin-20050505.exe.gz $@/bin
-#	$(CP) $(RELDIR)/jasspa-ne-msdos-djgpp2-20050505.exe $@/bin
 #	$(CP) $(RELDIR)/jasspa-ne-sun-i386-59-20050505.gz $@/bin
 #	$(CP) $(RELDIR)/jasspa-ne-openbsd-i386-3.4-20050505.gz $@/bin
-#	$(CP) $(RELDIR)/jasspa-me-cygwin-20050505.exe.gz $@/bin
 
 #
 # Limited archive.
@@ -503,11 +505,11 @@ $(FDIR)/icons:
 	$(MKDIR) $@/windows
 	$(UNZIP) $(RELDIR)/meicons.zip  -d $@/windows
 	$(RMDIR) $@/png
-	$(GUNZIP) -c $(RELDIR)/meicons-extra.tar.gz | ($(CD) $@; tar xvf -)
+	$(GUNZIP) -c $(RELDIR)/meicons-extra.tar.gz | ($(CD) $@; tar xf -)
 	$(MV) $@/icons $@/png
-	$(GUNZIP) -c $(RELDIR)/meicons.tar.gz | ($(CD) $@; tar xvf -)
+	$(GUNZIP) -c $(RELDIR)/meicons.tar.gz | ($(CD) $@; tar xf -)
 	$(MKDIR) $@/pm
-	$(GUNZIP) -c $(RELDIR)/meicons_pm.tar.gz | ($(CD) $@/pm; tar xvf -)
+	$(GUNZIP) -c $(RELDIR)/meicons_pm.tar.gz | ($(CD) $@/pm; tar xf -)
 	$(CP) $(RELDIR)/../images/nlogo.png $@
 	$(CP) $(RELDIR)/../images/logo.bmp $@
 	$(CP) $(RELDIR)/../images/logo.png $@
