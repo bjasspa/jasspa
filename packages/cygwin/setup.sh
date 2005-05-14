@@ -13,7 +13,9 @@ VER_DAY="05"
 VERSION="20${VER_YEAR}${VER_MONTH}${VER_DAY}"
 METREE=jasspa-metree-${VERSION}.tar.gz
 MESRC=jasspa-mesrc-${VERSION}.tar.gz
-#MEBIN=jasspa-me-sun-sparc-56-${VERSION}.gz
+MEBIN=jasspa-me-cygwin-i386-${VERSION}.gz
+MEXBIN=jasspa-mex-cygwin-i386-${VERSION}.gz
+NEBIN=jasspa-ne-cygwin-i386-${VERSION}.gz
 BASEFILESET="${METREE} ${MEBIN} me.1"
 
 #
@@ -34,13 +36,23 @@ if [ ! -f me.1 ] ; then
         gunzip -c ${TOPDIR}/release/www/me.1.gz > me.1
     fi
 fi
-#if [ ! -f ${MEBIN} ] ; then
-#    if [ -f ${TOPDIR}/src/${MEBIN} ] ; then
-#        cp ${TOPDIR}/src/${MEBIN} ${MEBIN}
-#    elif [ -f ${TOPDIR}/src/me ] ; then
-#        gzip -9 -c ${TOPDIR}/src/me > ${MEBIN}
-#    fi
-#fi
+if [ ! -f ${MEBIN} ] ; then
+    # Build me
+    rm -rf me${VER_YEAR}${VER_MONTH}${VER_DAY} 
+    gunzip -c ${MESRC} | tar xf -
+    (cd me${VER_YEAR}${VER_MONTH}${VER_DAY}/src; sh build -ne)
+    rm -f ${NEBIN}
+    gzip -9 -c me${VER_YEAR}${VER_MONTH}${VER_DAY}/src/ne.exe > ${NEBIN}
+    (cd me${VER_YEAR}${VER_MONTH}${VER_DAY}/src; sh build -S)
+    (cd me${VER_YEAR}${VER_MONTH}${VER_DAY}/src; sh build -t cw)
+    rm -f ${MEXBIN}
+    gzip -9 -c me${VER_YEAR}${VER_MONTH}${VER_DAY}/src/mecw.exe > ${MEXBIN}
+    (cd me${VER_YEAR}${VER_MONTH}${VER_DAY}/src; sh build -S)
+    (cd me${VER_YEAR}${VER_MONTH}${VER_DAY}/src; sh build -t c)
+    rm -f ${MEBIN}
+    gzip -9 -c me${VER_YEAR}${VER_MONTH}${VER_DAY}/src/mec.exe > ${MEBIN}
+    rm -rf me${VER_YEAR}${VER_MONTH}${VER_DAY}
+fi
 #
 # Test for the starting files.
 #
@@ -61,9 +73,9 @@ fi
 # Build the source bundle.
 #
 mkdir -p usr/src
-gunzip -c ${MESRC} | (cd usr/src; tar xvf - )
+gunzip -c ${MESRC} | (cd usr/src; tar xf - )
 mv usr/src/me${VER_YEAR}${VER_MONTH}${VER_DAY} usr/src/jasspa-me-${VERSION}
-tar cvf - ./usr |  bzip2 -9 -c - > jasspa-mesrc-cygwin-${VERSION}.tar.bz2
+tar cf - ./usr |  bzip2 -9 -c - > jasspa-${VERSION}-src.tar.bz2
 #
 # Clean-up.
 # 
@@ -75,7 +87,7 @@ fi
 # 
 mkdir -p usr/doc/jasspa
 mkdir -p usr/share
-gunzip -c ${METREE} | (cd usr/share; tar xvf - )
+gunzip -c ${METREE} | (cd usr/share; tar xf - )
 for NAME in build.txt change.log license.txt readme.txt cygwin.txt faq.txt
 do
     # Copy the file
@@ -102,7 +114,17 @@ cp me.1 usr/share/man/cat1
 #
 # Build the binary
 # 
-tar cvf - ./usr |  bzip2 -9 -c - > jasspa-mepkg-cygwin-${VERSION}.tar.bz2
+mkdir -p usr/bin
+gunzip -c ${MEBIN} > usr/bin/me.exe
+chmod a+rx usr/bin/me.exe
+chmod a-w usr/bin/me.exe
+gunzip -c ${MEXBIN} > usr/bin/mex.exe
+chmod a+rx usr/bin/mex.exe
+chmod a-w usr/bin/mex.exe
+#
+# Construct the archive
+#
+tar cf - ./usr |  bzip2 -9 -c - > jasspa-${VERSION}.tar.bz2
 #
 # Clean-up.
 # 
