@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jun 17 22:26:42 1999
 .\"
-.Id $Id: m2nar007.2,v 2.14 2005-02-22 19:40:40 bill Exp $
+.Id $Id: m2nar007.2,v 2.15 2005-05-14 12:53:41 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .TH "Build" 2
@@ -40,13 +40,17 @@ Build using the specified  makefile.  over-riding  the auto system detect. The
 supplied makefiles include:-
 .RS
 .BS
-\fCaix43.mak\fR IBM AIX 4.3 native.
+\fCaix4.mak\fR IBM AIX 4.x native.
 .BU
-\fCaix43.gmk\fR IBM AIX 4.3 using GNU tools.
+\fCaix5.mak\fR IBM AIX 5.x native.
+.BU
+\fCaix4.gmk\fR IBM AIX 4.x using GNU tools.
+.BU
+\fCaix5.gmk\fR IBM AIX 5.x using GNU tools.
 .BU
 \fCcygwin.gmk\fR Cygwin using GNU tools under Windows.
 .BU
-\fCdarwin.gmk\fR Apple Darwin (console only).
+\fCdarwin.gmk\fR Apple Darwin (console and X-Windows).
 .BU
 \fCdosdj1.mak\fR Microsoft DOS build using djgpp version 1.
 .BU
@@ -86,15 +90,11 @@ supplied makefiles include:-
 .BU
 \fCopenstep.mak\fR Openstep 4.2 on NeXTstep (BSD 4.3).
 .BU
-\fCsunos55.gmak\fR Sun Solaris 5.5 using GNU tools
+\fCsunos5.gmak\fR Sun Solaris 5.5/6/7/8/9/10 using GNU tools
 .BU
-\fCsunos55.mak\fR Sun Solaris 5.5 native
+\fCsunos5.mak\fR Sun Solaris 5.6/7/8/9/10 native
 .BU
-\fCsunos56.gmak\fR Sun Solaris 5.6 using GNU tools
-.BU
-\fCsunos56.mak\fR Sun Solaris 5.6 native
-.BU
-\fCsunosx86.gmk\fR Sun Solarais 2.6 (Intel) using GNU tools.
+\fCsunosx86.gmk\fR Sun Solarais 2.6/7/8/9/10 (Intel) using GNU tools.
 .BU
 \fCwin32bc.mak\fR Borland C, 32-bit Windows version.
 .BU
