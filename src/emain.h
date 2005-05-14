@@ -266,9 +266,7 @@
 #define _CLIENTSERVER  1                /* Client server support         */
 #define _SOCKET        1                /* Supports url reading          */
 #define _DRAGNDROP     1                /* Drag and drop supported.      */
-#if 0
 #define _IPIPES        1                /* platform supports Inc. pipes  */
-#endif
 #define _DEFAULT_SEARCH_PATH "/usr/share/jasspa:/usr/local/jasspa:/usr/local/share/jasspa"
 /* Under cygwin sys_errlist is defined slightly differently - redefine   */
 #define sys_errlist _sys_errlist        /* sys_errlist specially defined */
