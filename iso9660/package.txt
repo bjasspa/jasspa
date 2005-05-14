@@ -4,7 +4,7 @@
 >
 >  Created By    : Jon Green
 >  Created       : Sun Aug 10 14:00:59 2003
->  Last Modified : <040327.1531>
+>  Last Modified : <050514.1727>
 >
 Packages
 
@@ -43,3 +43,25 @@ Packages
             To remove, as root
 
                 # rpm -e jasspa-me
+
+    cygwin - bz2 packages.
+    
+            To install, as Administrator if necessary.
+            
+                # cd /
+                # tar jxvf jasspa-20050505.tar.bz2
+            
+            To install the source.                
+
+                # cd /
+                # tar jxvf jasspa-20050505-src.tar.bz2
+            
+            To remove, as Administrator if necessary.
+            
+                # rm -rf /usr/share/jasspa
+                # rm -rf /usr/doc/jasspa
+                # rm -f /usr/doc/Cygwin/jasspa*
+                # rm -f /usr/bin/me.exe
+                # rm -f /usr/bin/mex.exe
+                # rm -f /usr/share/man/cat1/me.1
+                
