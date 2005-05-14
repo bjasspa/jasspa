@@ -453,7 +453,9 @@ ffurlConsoleAddText(meUByte *str, int flags)
     {
         if(ffurlFlags & ffURL_SHOW_CONSOLE)
             screenUpdate(meTRUE,2-sgarbf) ;
+#ifdef _WIN32
         TTaheadFlush () ;
+#endif
     }
 }
 
