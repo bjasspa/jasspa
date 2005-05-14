@@ -1,0 +1,306 @@
+//Microsoft Developer Studio generated resource script.
+//
+// JASSPA MicroEmacs - www.jasspa.com
+// memsvc20.rc - MS Windows resource script for MSVC v2.0
+//
+// Copyright (C) 1996-2001 Jon Green
+// Copyright (C) 2002-2004 JASSPA (www.jasspa.com)
+//
+// This program is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 2 of the License, or (at your option)
+// any later version.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+// FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+// more details.
+//
+// You should have received a copy of the GNU General Public License along
+// with this program; if not, write to the Free Software Foundation, Inc.,
+// 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+#include "wintermr.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON1               ICON    PRELOAD DISCARDABLE "icon_ne.ico"
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "wintermr.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+#if 0
+IDD_PRINTER_CONFIGURATION DIALOG DISCARDABLE  0, 0, 226, 205
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "MicroEmacs Print Configuration"
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Printer Properties",IDC_STATIC,3,2,217,93
+    EDITTEXT        IDC_PAGE_PROPS,9,36,203,52,ES_MULTILINE | ES_AUTOHSCROLL | 
+                    ES_READONLY | NOT WS_BORDER
+    GROUPBOX        "Page Setup",IDC_STATIC,3,98,217,75
+    RTEXT           "&Width",IDC_STATIC,7,110,20,8
+    COMBOBOX        IDC_WIDTH,33,108,42,67,CBS_DROPDOWN | CBS_AUTOHSCROLL | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_WIDTH_EXACTLY,81,108,56,49,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    RTEXT           "Col&umns",IDC_STATIC,136,110,28,8
+    COMBOBOX        IDC_COLUMNS,170,108,42,67,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    RTEXT           "H&eight",IDC_STATIC,5,127,22,8
+    COMBOBOX        IDC_HEIGHT,33,125,42,68,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_HEIGHT_EXACTLY,81,125,56,52,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    RTEXT           "&Rows",IDC_STATIC,145,127,19,8
+    COMBOBOX        IDC_ROWS,170,125,42,71,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    RTEXT           "Font",IDC_STATIC,12,143,15,8
+    COMBOBOX        IDC_FONTFACE,33,141,104,73,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "&Header",IDC_HEADER,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,14,159,39,10
+    CONTROL         "&Footer",IDC_FOOTER,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,91,159,36,10
+    CONTROL         "&Line Nos.",IDC_LINE_NOS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,165,159,46,10
+    PUSHBUTTON      "&Setup",IDC_PC_PRINTER_SETUP,20,183,51,14
+    PUSHBUTTON      "&Okay",IDC_PC_PRINT,87,183,51,14
+    PUSHBUTTON      "&Cancel",IDC_PC_CANCEL,154,183,51,14
+    CONTROL         "Landscape",IDC_LANDSCAPE,"Button",BS_AUTOCHECKBOX | 
+                    BS_LEFTTEXT | WS_DISABLED | WS_TABSTOP,161,141,51,10
+    CTEXT           "",IDC_PC_PRINTER,11,13,201,16
+END
+
+IDD_ABORT DIALOG DISCARDABLE  0, 0, 188, 58
+STYLE DS_MODALFRAME | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "MicroEmacs Spooler"
+FONT 8, "MS Sans Serif"
+BEGIN
+    PUSHBUTTON      "Abort",IDABORT,69,37,50,14
+    CTEXT           "Processing File",IDC_STATIC,13,7,158,13
+    CTEXT           "Static",IDC_FILE,7,21,174,13
+END
+#endif
+
+#if 1
+IDD_QUITEXIT DIALOG DISCARDABLE  0, 0, 219, 60
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_VISIBLE
+CAPTION "MicroEmacs"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,51,39,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,117,39,50,14
+//    CONTROL         106,IDC_STATIC,"Static",SS_BITMAP,170,2,43,39
+    CTEXT           "Unsaved or active buffers. Quit anyway ?",IDC_STATIC,25,8,166,26
+END
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#if 0
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_PRINTER_CONFIGURATION, DIALOG
+    BEGIN
+        RIGHTMARGIN, 220
+        VERTGUIDE, 33
+        VERTGUIDE, 137
+        VERTGUIDE, 170
+        VERTGUIDE, 212
+        BOTTOMMARGIN, 199
+    END
+
+    IDD_ABORT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 181
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 51
+    END
+END
+#endif    // APSTUDIO_INVOKED
+#endif
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 3,8,3,98
+ PRODUCTVERSION 3,8,3,98
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080904b0"
+        BEGIN
+            VALUE "Comments", "Win32s/Win95/NT Build.\0"
+            VALUE "CompanyName", "Jaspa\0"
+            VALUE "FileDescription", "me97\0"
+            VALUE "FileVersion", "3, 8, 3, 98\0"
+            VALUE "InternalName", "me97\0"
+            VALUE "LegalCopyright", "Copyright © 1998\0"
+            VALUE "OriginalFilename", "me97.exe\0"
+            VALUE "ProductName", "Jaspa me97\0"
+            VALUE "ProductVersion", "3, 8, 3, 98\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x809, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+#if 0
+IDD_PRINTER_CONFIGURATION DLGINIT
+BEGIN
+    IDC_WIDTH, 0x403, 3, 0
+0x3038, "\000" 
+    IDC_WIDTH, 0x403, 4, 0
+0x3631, 0x0030, 
+    IDC_WIDTH_EXACTLY, 0x403, 11, 0
+0x6f44, 0x276e, 0x2074, 0x6143, 0x6572, "\000" 
+    IDC_WIDTH_EXACTLY, 0x403, 8, 0
+0x7845, 0x6361, 0x6c74, 0x0079, 
+    IDC_WIDTH_EXACTLY, 0x403, 8, 0
+0x694d, 0x696e, 0x756d, 0x006d, 
+    IDC_COLUMNS, 0x403, 2, 0
+0x0031, 
+    IDC_COLUMNS, 0x403, 2, 0
+0x0032, 
+    IDC_COLUMNS, 0x403, 2, 0
+0x0033, 
+    IDC_COLUMNS, 0x403, 2, 0
+0x0034, 
+    IDC_COLUMNS, 0x403, 2, 0
+0x0035, 
+    IDC_HEIGHT, 0x403, 3, 0
+0x3636, "\000" 
+    IDC_HEIGHT, 0x403, 4, 0
+0x3331, 0x0032, 
+    IDC_HEIGHT_EXACTLY, 0x403, 11, 0
+0x6f44, 0x276e, 0x2074, 0x6143, 0x6572, "\000" 
+    IDC_HEIGHT_EXACTLY, 0x403, 8, 0
+0x7845, 0x6361, 0x6c74, 0x0079, 
+    IDC_HEIGHT_EXACTLY, 0x403, 8, 0
+0x694d, 0x696e, 0x756d, 0x006d, 
+    IDC_ROWS, 0x403, 2, 0
+0x0031, 
+    IDC_ROWS, 0x403, 2, 0
+0x0032, 
+    IDC_ROWS, 0x403, 2, 0
+0x0033, 
+    IDC_ROWS, 0x403, 2, 0
+0x0034, 
+    IDC_ROWS, 0x403, 2, 0
+0x0035, 
+    IDC_ROWS, 0x403, 2, 0
+0x0036, 
+    IDC_ROWS, 0x403, 2, 0
+0x0037, 
+    IDC_ROWS, 0x403, 2, 0
+0x0038, 
+    0
+END
+#endif
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+#if 1
+IDB_BITMAP1             BITMAP  DISCARDABLE     "ne32.bmp"
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE PRELOAD DISCARDABLE 
+BEGIN
+    IDS_FONTFILE            "dosapp.fon"
+END
+
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
