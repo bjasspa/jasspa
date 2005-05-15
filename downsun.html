@@ -44,18 +44,18 @@
   <br/>
   <font size="+1"><a href="download.html" style="COLOR: black">overview</a>&nbsp;&nbsp;</font>
   <font size="+1"><a href="history.html" style="COLOR: black">history</a>&nbsp;&nbsp;</font>
-  <font size="+1" color="#ff0000"><a href="down0505.html" style="COLOR: black">May 2005</a>&nbsp;&nbsp;</font>
+  <font size="+1" color="#ff0000"><a href="down0505.html">May 2005</a>&nbsp;&nbsp;</font>
   <font size="+1"><a href="spelling.html" style="COLOR: black">spelling dictionaries</a>&nbsp;&nbsp;</font>
   <font size="+1"><a href="contrib.html" style="COLOR: black">contributions</a>&nbsp;&nbsp;</font>
   </p>
-  
+
   <p><font size="+1"><b>Last Upload: 21st April 2005</b></font></p>
-  
+
   <HR color="#cccccc" noShade="1" SIZE="1"/>
-  
+
   <h2><img src="images/miniicon.gif" width="16" height="16"/>
   <font color="#0000FF">Complete Package</font></h2>
-  
+
   <center><table border="1" WIDTH="100%">
     <tr>
       <td bgcolor="#0000FF">
@@ -93,17 +93,17 @@
       <td><center>2005-05-05</center></td>
     </tr>
   </table></center>
-  
+
   <h3>Package Installation</h3>
   <p>Unpack, and as <i>root</i> run the command <tt>pkgadd -d jasspa-me</tt></p>
-  
+
   <h3>Package Removal</h3>
   <p>As <i>root</i> run the command <tt>pkgrm jasspa-me</tt></p>
-  
+
   <!-- NanoEmacs - Package and Binary Downloads -->
 
   <HR color="#cccccc" noShade="1" SIZE="1"/>
-  
+
   <h2><img src="images/miniicon.gif" width="16" height="16"/>
   <font color="#0000FF">NanoEmacs</font></h2>
   <p>Small foot print version of JASSPA MicroEmacs. Runs without macro files.</p>
@@ -153,9 +153,9 @@
       <td align="center" valign="top">2005-05-05</td>
     </tr>
   </table></center></p>
-  
+
   <h3>Installation</h3>
-  
+
   <p>
   <ul>
     <li>Unpack using <tt>gunzip</tt></li>
@@ -164,12 +164,12 @@
     <li>As <i>root</i> copy to the desired binary directory i.e. <tt>/usr/bin</tt>.</li>
   </ul>
   </p>
-     
+
   <HR color="#cccccc" noShade="1" SIZE="1"/>
-  
+
   <h2><img src="images/miniicon.gif" width="16" height="16"/>
   <font color="#0000FF">Component Install</font></h2>
-  
+
   <p>Component download for the Solaris platform. To install:</p>
   <ul>
       <li>Unpack <tt>jasspa-metree-20050505.tar.gz</tt> to <tt>/opt</tt> (forming  <tt>/opt/jasspa/...</tt>).</li>
@@ -177,7 +177,7 @@
       <li>Add <tt>/opt/jasspa/bin</tt> to your path, run the editor <tt>me</tt></li>
   </ul>
   <p></p>
-  
+
   <center><table border="1" WIDTH="100%">
     <tr>
       <td bgcolor="#0000FF">
@@ -235,25 +235,25 @@
       <td><center>2005-05-05</center></td>
     </tr>
   </table></center>
-  
+
   <h3>System Wide Component Installation</h3>
-  
+
   <p>As <i>root</i>, unpack <i>metree</i> which creates a directory tree
   called <tt>jasspa</tt> and install into a suitable directory, typically
   <tt>/opt</tt> or <tt>/usr/local</tt> i.e.</p>
-  
+
   <pre>
   cd /opt
   gtar zxvf /path-to-tarball/jasspa-metree-yyyymmdd.tar.gz
   </pre>
-  
+
   <p>The directory <tt>/opt/jasspa</tt> should now exist. Add downloaded
   spelling dictionaries by unpacking into the <tt>/opt/jasspa/spell</tt>
   subdirectory.</p>
-  
+
   <p>Create a new directory in the <i>jasspa</i> tree to hold the binary.
   Unpack the binary into the new directory.</p>
-  
+
   <pre>
   cd /opt/jasspa
   mkdir bin
@@ -261,11 +261,11 @@
   gunzip -c /path-to-tarball/jasspa-me-sun-ppp-mm.nn-yyyymmdd.gz &gt; me
   chmod a+rx me
   </pre>
-  
+
   <p>Change your path to include the executable (ideally edit
   <tt>/etc/profile</tt> for system wide change) or locally by editing the
   <tt>.profile</tt> or <tt>.cshrc</tt> files i.e.</p>
-  
+
   <pre>
   #
   # Set up JASSPA Microemacs
@@ -275,42 +275,42 @@
   fi
   export PATH
   </pre>
-  
+
   <p>Logout and back in, installation is complete and you may now execute your
   favorite editor <b>me</b>.</p>
-  
+
   <h3>Single User Component Installation</h3>
-  
+
   <p>Unpack <i>metree</i> in your home directory, this generates a directory
   tree called <tt>jasspa</tt>. Once unpacked then rename the directory to
   <tt>.jasspa</tt>.</p>
-  
+
   <pre>
   cd ~
   gtar zxvf /path-to-tarball/jasspa-metree-yyyymmdd.tar.gz
   mv jasspa .jasspa
   </pre>
-  
+
   <p>Add downloaded spelling dictionaries by unpacking into the
   <tt>~/.jasspa/spell</tt> subdirectory.</p>
-  
+
   <p>Install the binary into your local binary directory - we assume
   <tt>~/bin</tt> i.e.</p>
-  
+
   <pre>
   cd ~/bin
   gunzip -c /path-to-tarball/jasspa-me-sun-ppp-mm.nn-yyyymmdd.gz &gt; me
   chmod a+rx me
   </pre>
-  
+
   <p>Assuming that the binary directory is already on the users path then the
   installation is complete.</p>
-  
+
   <p>Now execute your favorite editor <b>me</b> and follow the instructions on
   setting up your environment.</p>
-  
+
   <HR color="#cccccc" noShade="1" SIZE="1"/>
-  
+
   <h1>NO WARRANTY</h1>
 
   <p>This program is licensed free of charge, there is no warranty for the
@@ -339,5 +339,3 @@
   <p><font size="-2"><i>Copyright &copy; 2000-2005 Jasspa</i></font></p>
   </body>
 </html>
-  
-  
