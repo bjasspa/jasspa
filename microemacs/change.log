@@ -4,8 +4,45 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <050514.1522>
+>  Last Modified : <050515.1813>
 >
+
+8th Release - May 2005
+
+  Upgrade Notes
+
+    * Users upgrading from previous releases (including 2005.02 RC1) should be
+      aware that the  search/replace  syntax has changed the syntax of \s? and
+      \S? in favor of Perl's simpler \s and \S for a whitespace char class and
+      should  upgrade  any user  defined  macros.  Very  simply the syntax has
+      changed from \sspace to \s and \Sspace to \S. The only nasty side effect
+      is hilight's  miss-use of \S1-\S9 to mean not \1-\9 group char,  changed
+      to \!1-\!9.
+
+    * New character classes exist for \d = digits, \D != digits \h = hexdigits
+      \H != hexdigits \l = lowercase \L != lowercase \u = uppercase  and \U !=
+      uppercase.  Added  support for character  classes  within the main regex
+      [...]  character  class, i.e. now  supports  regexs like [\l\u_] for any
+      lower,  upper or '_' char. This is not  supported  in the hilight  which
+      currently has a more simplistic [...] character class support.
+
+    * Regular  expressions - extended the  replacement  string  syntax.  Added
+      support for \c#, \l# and \u# to change the case of groups,  where \c# is
+      capitalise,  \l# is lowercase \u# is uppercase and # is the group number
+      (0-9, &)
+
+    * Users upgrading from releases prior to RC1 (2005.02) should delete their
+      user.erf  file and configure as a new user to ensure that the mode flags
+      are correct.
+
+    * ne is now set to not auto-save or create backups by default.  Options -a
+      and -B enable and disable auto-save and backup modes.
+
+    * ne now  supports a new command  line option -R which  reverses the video
+      (also  supported in a DOS/Windows  console) i.e. provides black on white
+      in a black console.
+
+  History
 
     [050508] JASSPA  MicroEmacs  8th release - final. Core and macro  versions
              20050505.
@@ -31,13 +68,13 @@
 
     [050509] Added support for aix v5 (tested on aix v5.1)
 
-    [050507] Added Finnish support to ne.emf.    
+    [050507] Added Finnish support to ne.emf.
 
     [050506] Improved python collapse and item-list  support and added eaf and
              etf for python - thanks to Detlef.
 
     [050505] Base version numbers reset for next release.
-    
+
     [050429] Added  support  for  keybinding  to  item-list  column  ordering,
              function  is  item-list-order  and  is  bound  to 1, 2  and  3 by
              default.  Thanks to Bryan  Schofield  for his  submission in this
