@@ -1,10 +1,10 @@
 > -!- document; fill-mode:both; fill-column:65; -!-
 >
->  Copyright 2004 JASSPA. www.jasspa.com
+>  Copyright (C) 2004-2005 JASSPA (www.jasspa.com)
 >
 >  Created By    : Jon Green
 >  Created       : Sun Aug 10 13:06:00 2003
->  Last Modified : <050515.0124>
+>  Last Modified : <050515.1714>
 >
 
 NanoEmacs
@@ -26,16 +26,17 @@ NanoEmacs
 
     neaix4        - UNIX, IBM AIX 4.x executable, console only.
     neaix5        - UNIX, IBM AIX 5.x executable, console only.
+    nefreebsd52   - FreeBSD 5.2 (i386), console only. 
     nehpux10      - UNIX, HP-UX 10.20 executable, console only.
     nehpux11      - UNIX, HP-UX 11.00 executable, console only.
     neirix6       - UNIX, Silicon Graphics IRIX 6, console only.
     nelinux24     - LINUX, Kernel 2.4.x, console only.
     nelinux24     - LINUX, Kernel 2.6.x, console only.
-    nesunos56     - UNIX, Sun Solaris 2.6 (SPARC), console only.
-    nesunos58     - UNIX, Sun Solaris 8 (SPARC), console only.
-    nesunos59     - UNIX, Sun Solaris 9 (SPARC), console only.
-    nesun86_58    - UNIX, Sun Solaris 8 (i386), console only.
-    neopenbsd34   - OpenBSD, console only.
+    nesunos56     - UNIX, Sun Solaris 2.6/7 (SPARC), console only.
+    nesunos58     - UNIX, Sun Solaris 8/9/10 (SPARC), console only.
+    nesunos59     - UNIX, Sun Solaris 9/9/10 (SPARC), console only.
+    nesun86_58    - UNIX, Sun Solaris 8/9/10 (i386), console only.
+    neopenbsd34   - OpenBSD 3.4 (i386), console only.
 
   Apple
 

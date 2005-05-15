@@ -1,11 +1,12 @@
 > -!- document; fill-colum:65; fill-mode:both; -!-
 >
->  Copyright (c) 2003-2005 JASSPA www.jasspa.com
+>  Copyright (C) 2003-2005 JASSPA (www.jasspa.com)
 >
 >  Created By    : Jon Green
 >  Created       : Sun Aug 10 14:00:59 2003
->  Last Modified : <050515.0127>
+>  Last Modified : <050515.1721>
 >
+
 Packages
 
     This directory contains pre-built packages
@@ -14,7 +15,7 @@ Packages
 
             To add, as root (installs into "/opt/jasspa"):-
 
-                # pkgadd -d jasspa-me
+                # pkgadd -d /<path-to>/jasspa-me-sun-xxxx-20050505.pkg
 
             To subsequently remove, as root:
 
@@ -24,7 +25,7 @@ Packages
 
             To install, as root:-
 
-                # swinstall -s /<path_to>/jasspa-mepkg-hpux-pa-10.20-20040301.depot jasspa-me
+                # swinstall -s /<path_to>/jasspa-mepkg-hpux-pa-10.20-20050505.depot jasspa-me
 
             To subsequently remove:-
 
@@ -38,30 +39,29 @@ Packages
 
             To install, as root
 
-                # rpm -i jasspa-me-20040301-1.i386.rpm
+                # rpm -i jasspa-me-20050505-1.i386.rpm
 
             To remove, as root
 
                 # rpm -e jasspa-me
 
     cygwin - bz2 packages.
-    
+
             To install, as Administrator if necessary.
-            
+
                 # cd /
                 # tar jxvf jasspa-20050505.tar.bz2
-            
-            To install the source.                
+
+            To install the source.
 
                 # cd /
                 # tar jxvf jasspa-20050505-src.tar.bz2
-            
+
             To remove, as Administrator if necessary.
-            
+
                 # rm -rf /usr/share/jasspa
                 # rm -rf /usr/doc/jasspa
                 # rm -f /usr/doc/Cygwin/jasspa*
                 # rm -f /usr/bin/me.exe
                 # rm -f /usr/bin/mex.exe
                 # rm -f /usr/share/man/cat1/me.1
-                
