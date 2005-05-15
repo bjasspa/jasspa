@@ -12,74 +12,88 @@
 ;     from the current working directory, or where $MEPATH
 ;     is defined.
 ;
+
+
 ; Uncomment next line to keep undo history after saves
 ;set-variable $system &bor $system 0x8000
 ; uncomment next line to create multiple backup files
 ;set-variable $kept-versions 10
-; Sort out color schemes and fonts
-!if &band $system 1
-    ; uncomment the next line for termcap consoles supporting ANSI colors
-    ;set-variable $system 0x7885
-    ; Console - WHITE ON BLACK
-    add-color 0 200 200 200
-    add-color 1 0 0 0
-    add-color 2 255 255 255
-    add-color 3 200 0 0
-    add-color 4 0 0 200
-    add-color 5 255 255 0
 
-    add-color-scheme 0 0 1 2 1 0 4 2 4 0 8 0 8 0 8 0 8
-    ; uncomment the next line for termcap consoles using reverse font for region hilighting
-    ;add-color-scheme 0 0 1 2 1 4 0 4 2 0 8 0 8 8 0 9 1
-    add-color-scheme 1 3 0 3 2 4 0 4 2 8 0 9 1 8 0 9 1
-    add-color-scheme 2 2 1 2 1 0 4 2 4 0 8 0 8 0 8 0 8
-
-    set-variable $global-scheme 0
-    set-variable $ml-scheme 0
-    set-variable $mode-line-scheme 1
-    set-variable $trunc-scheme 2
-    set-variable $cursor-color 5
-    ; END WHITE ON BLACK
-!else
-    ; Window - BLACK ON WHITE
-    add-color 0 0 0 0                       ; black
-    add-color 1 255 255 255                 ; white
-    add-color 2 240 240 240                 ; off white
-    add-color 3 150 0 0                     ; dark red mode line
-    add-color 4 200 200 255                 ; light blue region
-    add-color 5 0 0 128                     ; blue cursor
-
-    add-color-scheme 0 0 1 0 2 0 4 0 4 0 8 0 8 0 8 0 8
-    add-color-scheme 1 2 3 1 3 2 4 1 4 0 8 0 8 0 8 0 8
-    add-color-scheme 2 1 0 1 0 2 4 1 4 0 8 0 8 0 8 0 8
-
-    set-variable $global-scheme 0
-    set-variable $ml-scheme 0
-    set-variable $mode-line-scheme 1
-    set-variable $trunc-scheme 0
-    set-variable $cursor-color 5
-    ; END BLACK ON WHITE
-
-    ; Change the font a windows system (not console).
-    !if &seq $platform "win32"
-        1 change-font "Lucida Console" 0 4 7 11
-        change-frame-width 80
-    !endif
-!endif
-
-; Change the keyboard for the appropriate locale. Enable the approriate
-; translation depending on your locale by setting the !if value to 1.
-; For a minimal configuration then delete the language translations you
-; do not need.
+; For Microsoft windows then we need to translate the keys for different
+; countries as this is not built into executable. 
 !if &seq $platform "win32"
+    
+    ; For the Window version then sort out color schemes and fonts to make NE
+    ; a little more usable. If the colour scheme is changed then the -R
+    ; (reverse video) option is over-ridden as the colours have been
+    ; modified. 
+    !if &band $system 1
+        ; Window System.
+        
+        ; uncomment the next line for termcap consoles supporting ANSI colors
+        ;set-variable $system 0x7885
+        ; Console - WHITE ON BLACK
+        add-color 0 200 200 200
+        add-color 1 0 0 0
+        add-color 2 255 255 255
+        add-color 3 200 0 0
+        add-color 4 0 0 200
+        add-color 5 255 255 0
+        
+        add-color-scheme 0 0 1 2 1 0 4 2 4 0 8 0 8 0 8 0 8
+        ; uncomment the next line for termcap consoles using reverse font for region hilighting
+        ;add-color-scheme 0 0 1 2 1 4 0 4 2 0 8 0 8 8 0 9 1
+        add-color-scheme 1 3 0 3 2 4 0 4 2 8 0 9 1 8 0 9 1
+        add-color-scheme 2 2 1 2 1 0 4 2 4 0 8 0 8 0 8 0 8
+        
+        set-variable $global-scheme 0
+        set-variable $ml-scheme 0
+        set-variable $mode-line-scheme 1
+        set-variable $trunc-scheme 2
+        set-variable $cursor-color 5
+        ; END WHITE ON BLACK
+    !elif 0
+        ; Console version - we can change the color scheme if required.
+        ; This code is disabled.
+        
+        ; Window - BLACK ON WHITE
+        add-color 0 0 0 0                       ; black
+        add-color 1 255 255 255                 ; white
+        add-color 2 240 240 240                 ; off white
+        add-color 3 150 0 0                     ; dark red mode line
+        add-color 4 200 200 255                 ; light blue region
+        add-color 5 0 0 128                     ; blue cursor
+        
+        add-color-scheme 0 0 1 0 2 0 4 0 4 0 8 0 8 0 8 0 8
+        add-color-scheme 1 2 3 1 3 2 4 1 4 0 8 0 8 0 8 0 8
+        add-color-scheme 2 1 0 1 0 2 4 1 4 0 8 0 8 0 8 0 8
+        
+        set-variable $global-scheme 0
+        set-variable $ml-scheme 0
+        set-variable $mode-line-scheme 1
+        set-variable $trunc-scheme 0
+        set-variable $cursor-color 5
+        ; END BLACK ON WHITE
+        
+        ; Change the font a windows system (not console).
+        !if &seq $platform "win32"
+            1 change-font "Lucida Console" 0 4 7 11
+            change-frame-width 80
+        !endif
+    !endif
+    
+    ; Change the keyboard for the appropriate locale. Enable the approriate
+    ; translation depending on your locale by setting the !if value to 1. For
+    ; a minimal configuration then delete the language translations you do
+    ; not need. 
     !if 0                                   ; American
         translate-key "C-# C-#" "C-#"
     !endif
-
+    
     !if 0                                   ; British
         translate-key "C-# C-\\" "C-#"
     !endif
-
+    
     !if 0                                   ; Belgian & Francais
         ; Thanks to Meyer Jean-Francois
         translate-key "A-C-9 A-C-{" "{"
@@ -87,7 +101,7 @@
         translate-key "A-C-; A-C-]" "]"
         translate-key "A-C-] A-C-[" "["
     !endif
-
+    
     !if 0                                   ; Deutsch
         ; Thanks to Detlef Groth
         translate-key "A-C-7 A-C-{" "\x7b"
@@ -101,7 +115,7 @@
         translate-key "A-C-2 A-C-≤" "\xb2"
         translate-key "A-C-b A-C-|" "\x7c"
     !endif
-
+    
     !if 0                                   ; Espanol
         ; Thanks to Rodolfo Valeiras
         translate-key "A-C-# A-C-{" "{"
@@ -114,7 +128,7 @@
         translate-key "A-C-3 A-C-#" "#"
         translate-key "A-C-6 A-C-¨" "¨"
     !endif
-
+    
     !if 0                                   ; Polish
         ; Thanks to Piotr Poczta
         translate-key "A-C-S-a" "•"
@@ -136,7 +150,7 @@
         translate-key "A-C-x" "ü"
         translate-key "A-C-S-X" "è"
     !endif
-
+    
     !if 0                                   ; Finish
         ; Thanks to Sebastian Bojers
         translate-key "A-C-2 A-C-@" "@"
