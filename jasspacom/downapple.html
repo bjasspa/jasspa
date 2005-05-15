@@ -7,7 +7,7 @@
     <meta name="keywords" content="jasspa microemacs, microemacs, emacs, uemacs, free, text, editor, JASSPA, me"/>
     <meta name="authors" content="JASSPA"/>
     <meta name="GENERATOR" content="MicroEmacs"/>
-    <title>MicroEmacs JASSPA Distribution - MS-DOS</title>
+    <title>MicroEmacs JASSPA Distribution</title>
     <link REL="icon" HREF="images/menuicon.png" TYPE="image/png"/>
     <!-- BASE HREF="http://www.jasspa.com" -->
 
@@ -40,7 +40,7 @@
   </table>
 
   <!-- Section selection -->
-  <p><font size="+3" color="#0000ff"><b>MS-DOS Download</b></font>
+  <p><font size="+3" color="#0000ff"><b>Apple Mac Download</b></font>
   <br/>
   <font size="+1"><a href="download.html" style="COLOR: black">overview</a>&nbsp;&nbsp;</font>
   <font size="+1"><a href="history.html" style="COLOR: black">history</a>&nbsp;&nbsp;</font>
@@ -77,20 +77,22 @@
       <td><center>2005-05-05</center></td>
     </tr>
     <tr>
-      <td><a href="release_20050505/jasspa-me-msdos-djgpp1-20050505.zip">jasspa-me-msdos-djgpp1-20050505.zip</a></td>
-      <td>MS-DOS pre-built executable only - built with DJGPP v1.
-        <i>This executable has no external library dependencies and runs standalone.</i>
-        <b>Recommended Image</b>.<br/>
-        <i>Will also require <tt>metree</tt> to run.</i></td>
-      <td><center>232967</center></td>
+      <td><a href="release_20050505/jasspa-me-apple-mac-10.3-20050505.gz">jasspa-me-apple-mac-10.3-20050505.gz</a></td>
+      
+      <td>Apple Mac OS-X 10.3.x (Darwin 7.8.x) pre-built executable supporting
+        X-Windows and Console modes. Requires the X-Server to be installed to
+        run. The X-Server may be found on the O/S installation disk or is available
+        via download.<br/>
+      <i>Will also require <tt>metree</tt> to run.</i></td>
+      <td><center>304717</center></td>
       <td><center>2005-05-05</center></td>
     </tr>
     <tr>
-      <td><a href="release_20050505/jasspa-me-msdos-djgpp2-20050505.zip">jasspa-me-msdos-djgpp2-20050505.zip</a></td>
-      <td>MS-DOS pre-built executable only - built with DJGPP v2.
-        <i>This executable has external library dependencies on the installation of DJGPP v2.</i><br/>
+      <td><a href="release_20050505/jasspa-mec-apple-mac-10.3-20050505.gz">jasspa-mec-apple-mac-10.3-20050505.gz</a></td>
+      <td>Apple Mac OS-X 10.3.x (Darwin 7.8.x) pre-built executable supporting
+          Console modes only.<br/>
         <i>Will also require <tt>metree</tt> to run.</i></td>
-      <td><center>250291</center></td>
+      <td><center>279633</center></td>
       <td><center>2005-05-05</center></td>
     </tr>
     <tr>
@@ -104,48 +106,61 @@
     </tr>
   </table></center>
 
-  <h3>Installation</h3>
+  <h3>System Wide Component Installation</h3>
 
-  <p>For MS-DOS then no installation script is provided and a manual
-  installation is performed. Select the installation directory, we shall
-  assume <tt>c:$\backslash$jasspa</tt>.</p>
-
-  <p>Unpack the <tt>metree</tt> zip package to form the macro tree, this
-  creates the directory <i>jasspa</i>.</p>
+  <p>As <i>root</i>, unpack <i>metree</i> which creates a directory tree
+  called <tt>jasspa</tt> and install into the <tt>/usr/share</tt> directory.
+  i.e.</p>
 
   <pre>
-  c:
-  cd \
-  unzip jasspa-metree-yyyymmdd.zip
+  cd /usr/share
+  gtar zxvf /path-to-tarball/jasspa-metree-yyyymmdd.tar.gz
   </pre>
 
-  <p>The binary is placed in the <tt>c:\jasspa</tt> directory. It is important
-  that the binary is placed in the JASSPA tree as this allows the executable
-  to locate the <i>macros</i> and <i>spelling</i> directories without any
-  further configuration. If the binary is placed in a separate location from
-  the tree then the <i>$MExxxPATH</i> environment variables must be defined to
-  enable the editor to locate the tree.</p>
+  <p>The directory <tt>/usr/share/jasspa</tt> should now exist. Add downloaded
+  spelling dictionaries by unpacking into the <tt>/usr/share/jasspa/spell</tt>
+  subdirectory.</p>
 
-  <p>Two different binaries are provided which are built with <b>DJGPP
-  V1.0</b> and <b>V2.0</b>. If you have <b>DJGPP V2.0</b> installed in your
-  system then install the <b>V2.0</b> binary, otherwise install the
-  <b>V1.0</b> binary (as this is a self contained executable and has no
-  run-time library dependencies).
+  <p>Unpack the binary into the <tt>/usr/bin</tt> directory.</p>
 
   <pre>
-  cd \jasspa
-  unzip jasspa-me-msdos-djgpp1-yyyymmdd.zip
+  gunzip -c /path-to-tarball/jasspa-me-apple-mac-10.3-yyyymmdd.gz &gt; /usr/bin/me
+  chmod a+rx /usr/bin/me
   </pre>
 
-  <p>The location of the executable should be added to the <b>autoexec.bat</b>
-  file e.g.</p>
+  <p>MicroEmacs may now be invoked from the command line or via a short cut.
+  On the very first first execution follow the instructions on setting up your
+  environment.</p>
+
+  <h3>Single User Component Installation</h3>
+
+  <p>Unpack <i>metree</i> in your home directory, this generates a directory
+  tree called <tt>jasspa</tt>. Once unpacked then rename the directory to
+  <tt>.jasspa</tt>.</p>
 
   <pre>
-  SET PATH=%PATH%;c:\backslashjasspa
+  cd ~
+  gtar zxvf /path-to-tarball/jasspa-metree-yyyymmdd.tar.gz
+  mv jasspa .jasspa
   </pre>
 
-  <p>The system may be re-booted and the editor should be available on the
-  command line <b>me</b>.</p>
+  <p>Add downloaded spelling dictionaries by unpacking into the
+  <tt>~/.jasspa/spell</tt> subdirectory.</p>
+
+  <p>Install the binary into your local binary directory - we assume
+  <tt>~/bin</tt> i.e.</p>
+
+  <pre>
+  gunzip -c /path-to-tarball/jasspa-me-apple-mac-10.3-yyyymmdd.gz &gt; ~/bin/me
+  chmod a+rx ~/bin/me
+  </pre>
+
+  <p>Assuming that the binary directory <tt>~/bin</tt> is already on the users
+  path then the installation is complete, otherwise the <tt>.bashrc</tt> or
+  shell start-up file should be edited to include the path.</p>
+
+  <p>Now execute your favorite editor <b>me</b> and follow the instructions on
+  setting up your environment.</p>
 
   <!-- NanoEmacs - Package and Binary Downloads -->
 
@@ -173,21 +188,10 @@
     </tr>
     <tr>
       <td valign="top">
-        <a href="release_20050505/jasspa-ne-msdos-djgpp1-20050505.zip">jasspa-ne-msdos-djgpp1-20050505.zip</a></td>
-      <td valign="top">MS-DOS DJGPP V1.0 - NanoEmacs console version.<br/>
-        <b>This image is recommended as there are no library dependencies and
-        will work on all MS-DOS systems.</td>
-    <td align="center" valign="top">135633</td>
-      <td align="center" valign="top">2005-05-05</td>
-    </tr>
-    <tr>
-      <td valign="top">
-        <a href="release_20050505/jasspa-ne-msdos-djgpp2-20050505.zip">jasspa-ne-msdos-djgpp2-20050505.zip</a></td>
-      <td valign="top">MS-DOS DJGPP V2.0 - NanoEmacs console version.<br/>
-        <b>This image requires the an installation of DJGPP V2.0 libraries on
-        the system to run.</b>
-      </td>
-    <td align="center" valign="top">128868</td>
+        <a href="release_20050505/jasspa-ne-apple-mac-10.3-20050505.gz">jasspa-ne-apple-mac-10.3-20050505.gz</a></td>
+      <td valign="top">Apple Mac OS-X 10.3.x (Darwin 7.8.x) pre-built executable supporting
+        Console modes only.</td>
+      <td align="center" valign="top">126622</td>
       <td align="center" valign="top">2005-05-05</td>
     </tr>
   </table></center>
@@ -197,9 +201,17 @@
   <p>
   <ul>
     <li>Unpack using <tt>gunzip</tt></li>
-    <li>Rename to <b>ne.exe</b></li>
-    <li>Copy to the desired binary directory i.e. <tt>c:/bin</tt>.</li>
+    <li>rename to <b>ne</b></li>
+    <li>Apply execute permissions <b>chmod a+rx ne</b></li>
+    <li>As <i>root</i> copy to the desired binary directory i.e. <tt>/usr/local/bin</tt>.</li>
   </ul>
+  
+  <pre>
+  # As root.
+  gunzip -c /path-to-tarball/jasspa-ne-apple-mac-10.3-yyyymmdd.gz &gt; /usr/bin/ne
+  chmod a+rx /usr/bin/ne
+  </pre>
+  
   </p>
 
   <HR color="#cccccc" noShade="1" SIZE="1"/>
