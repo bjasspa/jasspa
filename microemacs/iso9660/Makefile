@@ -7,12 +7,12 @@
 #  System        : MicroEmacs
 #  Module        : CD-ROM image
 #  Object Name   : $RCSfile: Makefile,v $
-#  Revision      : $Revision: 1.9 $
-#  Date          : $Date: 2005-05-14 21:26:30 $
+#  Revision      : $Revision: 1.10 $
+#  Date          : $Date: 2005-05-15 00:20:26 $
 #  Author        : $Author: jon $
 #  Created By    : Jon Green
 #  Created       : Sun Aug 10 11:57:07 2003
-#  Last Modified : <050514.1735>
+#  Last Modified : <050515.0102>
 #
 #  Description   : Construct the ISO CD-ROM images of MicroEmacs
 #
@@ -319,12 +319,13 @@ $(FDIR)/doc: doc.txt
 $(FDIR)/packages:
 	$(MKDIR) $@/windows
 	$(UNZIP) $(RELDIR)/jasspa-mepkg-ms-win32-20050505.zip -d $@/windows
-	$(MKDIR) $@/sunos/sparc9
-	$(UNZIP) $(RELDIR)/jasspa-mepkg-sun-sparc-59-20050505.zip -d $@/sunos/sparc9
-	$(MKDIR) $@/sunos/sparc8
-	$(UNZIP) $(RELDIR)/jasspa-mepkg-sun-sparc-58-20050505.zip -d $@/sunos/sparc8
-	$(MKDIR) $@/sunos/intel8
-	$(UNZIP) $(RELDIR)/jasspa-mepkg-sun-i386-58-20050505.zip -d $@/sunos/intel8
+	$(MKDIR) $@/sunos
+	$(UNZIP) $(RELDIR)/jasspa-mepkg-sun-sparc-59-20050505.zip -d $@/sunos
+	$(MV) $@/sunos/jasspa-me $@/sunos/jasspa-me-sun-sparc-59-20050505.pkg
+	$(UNZIP) $(RELDIR)/jasspa-mepkg-sun-sparc-58-20050505.zip -d $@/sunos
+	$(MV) $@/sunos/jasspa-me $@/sunos/jasspa-me-sun-sparc-58-20050505.pkg
+	$(UNZIP) $(RELDIR)/jasspa-mepkg-sun-i386-58-20050505.zip -d $@/sunos
+	$(MV) $@/sunos/jasspa-me $@/sunos/jasspa-me-sun-i386-58-20050505.pkg
 	$(MKDIR) $@/hpux
 	$(GUNZIP) -c $(RELDIR)/jasspa-mepkg-hpux-pa-10.20-20050505.depot.gz > $@/hpux/jasspa-mepkg-hpux-pa-10.20-20050505.depot
 	$(GUNZIP) -c $(RELDIR)/jasspa-mepkg-hpux-pa-11.00-20050505.depot.gz > $@/hpux/jasspa-mepkg-hpux-pa-11.00-20050505.depot
@@ -341,8 +342,8 @@ $(FDIR)/packages:
 	$(CP) package.txt $@/readme.unix
 	$(UNIX2DOS) package.txt $@/readme.joliet
 	$(UNIX2MAC) package.txt $@/readme.hfs
-# 	$(MKDIR) $@/sunos/intel9
-#	$(UNZIP) $(RELDIR)/jasspa-mepkg-sun-i386-59-20050505.zip -d $@/sunos/intel9
+# 	$(MKDIR) $@/sunos/i386_59
+#	$(UNZIP) $(RELDIR)/jasspa-mepkg-sun-i386-59-20050505.zip -d $@/sunos/i386_59
 #	$(MKDIR) $@/sunos/sparc6
 #	$(UNZIP) $(RELDIR)/jasspa-mepkg-sun-sparc-56-20050505.zip -d $@/sunos/sparc6
 
