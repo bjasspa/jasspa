@@ -1,10 +1,10 @@
 > -!- document; fill-mode:both; fill-column:65; -!-
 >
->  Copyright 2004 JASSPA. www.jasspa.com
+>  Copyright (C) 2004-2005 JASSPA. www.jasspa.com
 >
 >  Created By    : Jon Green
 >  Created       : Sat Mar 27 17:47:06 2004
->  Last Modified : <040327.1918>
+>  Last Modified : <050515.0123>
 >
 
 MicroEmacs
@@ -19,13 +19,14 @@ MicroEmacs
 
   UNIX
 
-    meaix4        - IBM AIX executable.
+    meaix4        - IBM AIX 5.x executable.
+    meaix5        - IBM AIX 4.x executable.
     mehpux10      - HP-UX 10.20 executable.
     mehpux11      - HP-UX 11.00 executable.
     meirix6       - Silicon Graphics IRIX 6.
     melinux24     - LINUX, Kernel 2.4.x.
+    melinux26     - LINUX, Kernel 2.6.x.
     mesun86_58    - Sun Solaris 8 (i386).
-    mesun86_59    - Sun Solaris 9 (i386).
     mesunos56     - Sun Solaris 2.6 (SPARC).
     mesunos58     - Sun Solaris 8 (SPARC).
     mesunos59     - Sun Solaris 9 (SPARC).
@@ -38,15 +39,14 @@ MicroEmacs
   Microsoft Windows
 
     me32.exe      - Microsoft '95/'98/NT/2K/XP, window only
-    meu32.exe     - Microsoft '95/'98/NT/2K/XP, window + URL only
-    meucw32.exe   - Microsoft '95/'98/NT/2K/XP, window + console + URL
-                    (meucw32.exe -n runs console version)
+    mecw32.exe    - Microsoft '95/'98/NT/2K/XP, window + console + URL
+                    (mecw32.exe -n runs console version)
 
     me32s.exe     - Microsoft Win32s, window only.
     methnk16.dll  - Microsoft Win32s, thunking DLL.
 
-    meccygwin.exe - Cygwin, console only.
-    mecygwin.exe  - Cygwin with X11R6 and console support.
+    mecygwin.exe  - Cygwin, console only.
+    mexcygwin.exe - Cygwin with X-Windows and console support.
 
     meicons.exe   - Icon container for Microsoft Windows (win32/win32s).
 

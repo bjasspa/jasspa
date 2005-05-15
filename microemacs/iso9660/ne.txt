@@ -4,7 +4,7 @@
 >
 >  Created By    : Jon Green
 >  Created       : Sun Aug 10 13:06:00 2003
->  Last Modified : <040327.1751>
+>  Last Modified : <050515.0124>
 >
 
 NanoEmacs
@@ -24,16 +24,17 @@ NanoEmacs
 
   UNIX
 
-    neaix4        - UNIX, IBM AIX executable, console only.
-    nehpux10      - UNIX, HP-UX 10.2 executable, console only.
-    nehpux11      - UNIX, HP-UX 11 executable, console only.
+    neaix4        - UNIX, IBM AIX 4.x executable, console only.
+    neaix5        - UNIX, IBM AIX 5.x executable, console only.
+    nehpux10      - UNIX, HP-UX 10.20 executable, console only.
+    nehpux11      - UNIX, HP-UX 11.00 executable, console only.
     neirix6       - UNIX, Silicon Graphics IRIX 6, console only.
     nelinux24     - LINUX, Kernel 2.4.x, console only.
+    nelinux24     - LINUX, Kernel 2.6.x, console only.
     nesunos56     - UNIX, Sun Solaris 2.6 (SPARC), console only.
     nesunos58     - UNIX, Sun Solaris 8 (SPARC), console only.
     nesunos59     - UNIX, Sun Solaris 9 (SPARC), console only.
     nesun86_58    - UNIX, Sun Solaris 8 (i386), console only.
-    nesun86_59    - UNIX, Sun Solaris 9 (i386), console only.
     neopenbsd34   - OpenBSD, console only.
 
   Apple
@@ -42,9 +43,11 @@ NanoEmacs
 
   Microsoft Windows
 
-    ne32.exe      - Windows 95/98/NT/2K/XP, console only.
     necygwin.exe  - Windows, cygwin environment, console only.
+    ne32.exe      - Windows 95/98/NT/2K/XP, console only.
     new32.exe     - Windows 95/98/NT/2K/XP, window only.
+    ne32s.exe     - Windows 3.11, console only.
+    new32s.exe    - Windows 3.11, window only.
 
   MS-DOS
 
