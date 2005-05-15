@@ -1,7 +1,8 @@
 > -!- document; fill-column: 65; fill-mode: full -!-
+> Copyright (C) 2000-2005 JASSPA (www.jasspa.com)
 > Author:   Jon Green
 > Created:  Wed Feb 2 20:23:35 2000
-> Modified: <20000323.0006>
+> Modified: <20050515.1723>
 
 1.0 Overview of the Documentation Modes
 
