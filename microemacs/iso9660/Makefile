@@ -7,12 +7,12 @@
 #  System        : MicroEmacs
 #  Module        : CD-ROM image
 #  Object Name   : $RCSfile: Makefile,v $
-#  Revision      : $Revision: 1.11 $
-#  Date          : $Date: 2005-05-15 16:46:13 $
+#  Revision      : $Revision: 1.12 $
+#  Date          : $Date: 2005-05-15 18:04:41 $
 #  Author        : $Author: jon $
 #  Created By    : Jon Green
 #  Created       : Sun Aug 10 11:57:07 2003
-#  Last Modified : <050515.1722>
+#  Last Modified : <050515.1807>
 #
 #  Description   : Construct the ISO CD-ROM images of MicroEmacs
 #
@@ -92,32 +92,32 @@ UNIX2MAC=	/opt/jon/bin/unix2mac
 ISOEXTRA=	-U
 MKISOFS=	mkisofs -r -J -hfs
 FULLMKISOFSFLAGS=-graft-points						\
-		-hide readme.hfs -hide readme.joliet		\
+		-hide readme.hfs -hide readme.joliet			\
 		-hide-joliet readme.hfs -hide-joliet readme.unix	\
 		-hide-hfs readme.joliet -hide-hfs readme.unix		\
-		-hide faq.hfs -hide faq.joliet			\
+		-hide faq.hfs -hide faq.joliet				\
 		-hide-joliet faq.hfs -hide-joliet faq.unix		\
 		-hide-hfs faq.joliet -hide-hfs faq.unix			\
 		-hide build.hfs -hide build.joliet			\
 		-hide-joliet build.hfs -hide-joliet build.unix		\
 		-hide-hfs build.joliet -hide-hfs build.unix		\
-		-hide copying.hfs -hide copying.joliet		\
+		-hide copying.hfs -hide copying.joliet			\
 		-hide-joliet copying.hfs -hide-joliet copying.unix	\
 		-hide-hfs copying.joliet -hide-hfs copying.unix		\
 		-hide cdrom.hfs -hide cdrom.joliet			\
 		-hide-joliet cdrom.hfs -hide-joliet cdrom.unix		\
 		-hide-hfs cdrom.joliet -hide-hfs cdrom.unix		\
-		-hide license.hfs -hide license.joliet		\
-		-hide-joliet license.hfs -hide-joliet license.unix \
+		-hide license.hfs -hide license.joliet			\
+		-hide-joliet license.hfs -hide-joliet license.unix 	\
 		-hide-hfs license.joliet -hide-hfs license.unix		\
 		-hide doc/readme.hfs -hide doc/readme.joliet		\
 		-hide-joliet doc/readme.hfs -hide-joliet doc/readme.unix \
 		-hide-hfs doc/readme.joliet -hide-hfs doc/readme.unix	\
 		-hide ne/readme.hfs -hide ne/readme.joliet		\
-		-hide-joliet ne/readme.hfs -hide-joliet ne/readme.unix \
+		-hide-joliet ne/readme.hfs -hide-joliet ne/readme.unix	\
 		-hide-hfs ne/readme.joliet -hide-hfs ne/readme.unix	\
 		-hide me/readme.hfs -hide me/readme.joliet		\
-		-hide-joliet me/readme.hfs -hide-joliet me/readme.unix \
+		-hide-joliet me/readme.hfs -hide-joliet me/readme.unix	\
 		-hide-hfs me/readme.joliet -hide-hfs me/readme.unix	\
 		-hide archive/spelling/readme.hfs -hide archive/spelling/readme.joliet		\
 		-hide-joliet archive/spelling/readme.hfs -hide-joliet archive/spelling/readme.unix \
@@ -125,12 +125,18 @@ FULLMKISOFSFLAGS=-graft-points						\
 		-hide packages/readme.hfs -hide packages/readme.joliet \
 		-hide-joliet packages/readme.hfs -hide-joliet packages/readme.unix \
 		-hide-hfs packages/readme.joliet -hide-hfs packages/readme.unix	\
+		-hide change.hfs -hide change.joliet			\
+		-hide-joliet change.hfs -hide-joliet change.unix	\
+		-hide-hfs change.joliet -hide-hfs change.unix		\
 	        readme.txt=readme.hfs					\
 	        readme.txt=readme.joliet				\
 	        readme.txt=readme.unix					\
 	        faq.txt=faq.hfs						\
 	        faq.txt=faq.joliet					\
 	        faq.txt=faq.unix					\
+	        change.log=change.hfs					\
+	        change.log=change.joliet				\
+	        change.log=change.unix					\
 	        build.txt=build.hfs					\
 	        build.txt=build.joliet					\
 	        build.txt=build.unix					\
@@ -155,38 +161,44 @@ FULLMKISOFSFLAGS=-graft-points						\
 	        archive/spelling/readme.txt=archive/spelling/readme.hfs \
 	        archive/spelling/readme.txt=archive/spelling/readme.joliet \
 	        archive/spelling/readme.txt=archive/spelling/readme.unix \
-	        packages/readme.txt=packages/readme.hfs \
-	        packages/readme.txt=packages/readme.joliet \
-	        packages/readme.txt=packages/readme.unix \
+	        packages/readme.txt=packages/readme.hfs 		\
+	        packages/readme.txt=packages/readme.joliet 		\
+	        packages/readme.txt=packages/readme.unix 		\
 
 EXECMKISOFSFLAGS=-graft-points						\
-		-hide readme.hfs -hide readme.joliet		\
+		-hide readme.hfs -hide readme.joliet			\
 		-hide-joliet readme.hfs -hide-joliet readme.unix	\
 		-hide-hfs readme.joliet -hide-hfs readme.unix		\
-		-hide faq.hfs -hide faq.joliet			\
+		-hide faq.hfs -hide faq.joliet				\
 		-hide-joliet faq.hfs -hide-joliet faq.unix		\
 		-hide-hfs faq.joliet -hide-hfs faq.unix			\
 		-hide build.hfs -hide build.joliet			\
 		-hide-joliet build.hfs -hide-joliet build.unix		\
 		-hide-hfs build.joliet -hide-hfs build.unix		\
-		-hide copying.hfs -hide copying.joliet		\
+		-hide copying.hfs -hide copying.joliet			\
 		-hide-joliet copying.hfs -hide-joliet copying.unix	\
 		-hide-hfs copying.joliet -hide-hfs copying.unix		\
 		-hide cdrom.hfs -hide cdrom.joliet			\
 		-hide-joliet cdrom.hfs -hide-joliet cdrom.unix		\
 		-hide-hfs cdrom.joliet -hide-hfs cdrom.unix		\
-		-hide license.hfs -hide license.joliet		\
-		-hide-joliet license.hfs -hide-joliet license.unix \
+		-hide license.hfs -hide license.joliet			\
+		-hide-joliet license.hfs -hide-joliet license.unix	\
 		-hide-hfs license.joliet -hide-hfs license.unix		\
 		-hide ne/readme.hfs -hide ne/readme.joliet		\
-		-hide-joliet ne/readme.hfs -hide-joliet ne/readme.unix \
+		-hide-joliet ne/readme.hfs -hide-joliet ne/readme.unix	\
 		-hide-hfs ne/readme.joliet -hide-hfs ne/readme.unix	\
+		-hide change.hfs -hide change.joliet			\
+		-hide-joliet change.hfs -hide-joliet change.unix	\
+		-hide-hfs change.joliet -hide-hfs change.unix		\
 	        readme.txt=readme.hfs					\
 	        readme.txt=readme.joliet				\
 	        readme.txt=readme.unix					\
 	        faq.txt=faq.hfs						\
 	        faq.txt=faq.joliet					\
 	        faq.txt=faq.unix					\
+	        change.log=change.hfs					\
+	        change.log=change.joliet				\
+	        change.log=change.unix					\
 	        build.txt=build.hfs					\
 	        build.txt=build.joliet					\
 	        build.txt=build.unix					\
@@ -200,7 +212,7 @@ EXECMKISOFSFLAGS=-graft-points						\
 	        license.txt=license.joliet				\
 	        license.txt=license.unix				\
 	        ne/readme.txt=ne/readme.hfs				\
-	        ne/readme.txt=ne/readme.joliet			\
+	        ne/readme.txt=ne/readme.joliet				\
 	        ne/readme.txt=ne/readme.unix				\
 
 all:	$(FZIP) $(EZIP) $(LZIP)
@@ -238,6 +250,9 @@ $(FDIR) $(EDIR):
 	$(CP) cdrom.txt $@/cdrom.unix
 	$(UNIX2DOS) cdrom.txt $@/cdrom.joliet
 	$(UNIX2MAC) cdrom.txt $@/cdrom.hfs
+	$(CP) $(RELDIR)/doc/change.log $@/change.unix
+	$(UNIX2DOS) $(RELDIR)/doc/change.log $@/change.joliet
+	$(UNIX2MAC) $(RELDIR)/doc/change.log $@/change.hfs
 #
 # Nano Emacs excecutable directory.
 #
