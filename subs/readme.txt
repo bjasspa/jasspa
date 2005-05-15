@@ -10,7 +10,7 @@ The content presented here may not have been validated by JASSPA, we accept no
 liability for the material posted. New  contributions may be submitted by mail
 to support@jasspa.com.
 
-sub31.txt  2004/04/11 - Jon Green
+sub31.txt  2004/04/11 - Jon Green (Included from May 2005)
 
     Correct Linux manual page hilighting.
 
@@ -22,15 +22,15 @@ sub29.txt 2004/03/18 - Jon Green
 
      Spotless - Clean all useless white space from file.
 
-sub28.txt 2004/03/18 - Jon Green
+sub28.txt 2004/03/18 - Jon Green (Included from May 2005)
 
     Java hilighting extensions - JavaDoc comment hilighting, TODO's etc.
 
-sub27.txt 2004/03/18 - Jon Green
+sub27.txt 2004/03/18 - Jon Green (Included from May 2005)
 
     C++ hilighting extensions - Doxygen comment hilighting, TODO's etc.
 
-sub26.txt 2004/03/18 - Jon Green
+sub26.txt 2004/03/18 - Jon Green (Included from May 2005)
 
     C hilighting  extensions - Doxygen comment  hilighting,  TODO's, stdint.h,
     etc.
