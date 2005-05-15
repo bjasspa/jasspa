@@ -17,7 +17,7 @@ CD	= cd
 #
 TAR	= tar
 ZIP	= zip -9
-UNZIP	= unzip -o
+UNZIP	= unzip -q -o
 GZIP	= gzip -9
 GUNZIP	= gunzip
 #
