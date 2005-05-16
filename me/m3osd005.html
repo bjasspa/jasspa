@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>scheme-editor(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 scheme-editor(3)</H1>
@@ -21,7 +21,7 @@ scheme-editor(3)</H1>
 <P>The editor can be used to create both screen and printer color/font schemes, they are typically stored in the <TT>macros</TT> directory and are executed as macro files at start up or when printing. The standard screen schemes are called <TT>scheme</TT><I>X</I><TT>.emf</TT> and printer ones <TT>print</TT><I>X</I><TT>.emf</TT>. 
 <P>The <B>scheme-editor</B> is displayed within a single dialog box, tab selections at the top of the dialog box enable <B>color</B> and <B>scheme</B> creation and/or modification. Navigation is typically performed using the mouse, where the mouse is absent then the <TT>TAB</TT> key may be used to move between the fields. The information presented is defined as follows:- 
 <P><B>File Name</B> 
-<BR><UL>The name of the color scheme to be modified. This is the name of the <B>scheme</B><I>X</I><B>.emf</B> file, omitting the file extension. See the <B>FILES</B> section below for a list of standard screen and printer scheme supplied with MicroEmacs '04. </UL>
+<BR><UL>The name of the color scheme to be modified. This is the name of the <B>scheme</B><I>X</I><B>.emf</B> file, omitting the file extension. See the <B>FILES</B> section below for a list of standard screen and printer scheme supplied with MicroEmacs '05. </UL>
 <P><B>Type</B> 
 <BR><UL>Defines whether the scheme is a screen or printer type. </UL>
 <P><B>Description</B> 
@@ -32,18 +32,25 @@ scheme-editor(3)</H1>
 <BR><UL>Available when scheme is a printer type. Defines what components of a scheme is to be used when printing. </UL></UL>
 <H2>Colors </H2>
 <UL><P>The <B>colors</B> tab allows the basic palette colors of the editor to be created and modified. The left-hand side of the dialog contains a scrolling window containing the existing color entries. The right-hand side of the dialog provides the controls to add and change the color assignment. The controls operate on the currently selected palette entry. 
-<P><B>Add</B> 
-<BR><UL>Creates and adds a new color entry into the palette. The new palette entry is created with a default color that may be subsequently modified. </UL>
-<P><B>Change</B> 
-<BR><UL>Commits the current selection color to the palette. </UL>
+<P><B>Cursor</B> 
+<BR><UL>Defines the colour of the text cursor. </UL>
+<P><B>Show in Dialogs</B> 
+<BR><UL>Defines whether the cursor should be displayed in the main OSD dialogs, this improves usability of the dialogs when limited colors are available. Indirectly sets bit <TT>0x20</TT> of 
+<A HREF="m5var047.html">$system(5)</A>. </UL>
 <P><B>Red</B>/<B>Green</B>/<B>Blue</B> 
-<BR><UL>The color entries allow the currently selected palette color entry to be modified. The color values may be changed by direct numeric entry (0..255) or via the ^/v controls; the color is committed to the palette using the <B>Add</B> or <B>Change</B> button. </UL></UL>
+<BR><UL>The color entries allow the currently selected palette color entry to be modified. The color values may be changed by direct numeric entry (0..255) or via the ^/v controls; the color is committed to the palette using the <B>Add</B> or <B>Change</B> button. </UL>
+<P><B>Change</B> 
+<BR><UL>Commits changes to the currently selected color in the palette. </UL>
+<P><B>Add</B> 
+<BR><UL>Creates and adds a new color entry into the palette. The new palette entry is created with a default color that may be subsequently modified. </UL></UL>
 <H2>Schemes </H2>
 <UL><P>The <B>schemes</B> tab allows the schemes to be edited. The left-hand side of the dialog contains a scrolling window of the available color palette (created from the <B>Colors</B> tab). The right-hand side of the window shows the variants of the scheme. 
 <P><B>Selection</B> 
 <BR><UL>The <B>selection</B> item provides a pull-down menu containing gross scheme categories used by the editor. </UL>
 <P><B>Scheme</B> 
 <BR><UL>A pull-down menu containing the schemes of the selection, modifying this entry shows the variants of the scheme in the <B>Normal</B>, <B>Current</B>, <B>Select</B> and <B>Sel-Cur</B> dialogs. </UL>
+<P><B>Reset</B> 
+<BR><UL>Resets the current scheme back to the default <I>Standard Text</I> scheme. </UL>
 <P>There are 4 variants, or styles, for a single scheme; each style is comprised of a foreground and background color, and a row of toggle button to enable/disable fonts, defined as follows. 
 <UL><P><TT>B</TT> - Bold. 
 <BR><TT>I</TT> - Italic. 
@@ -104,7 +111,7 @@ scheme-editor(3)</H1>
 <A HREF="m2cmd129.html">print-scheme(2)</A>, 
 <A HREF="m2cmd066.html">osd(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2004/11/27</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

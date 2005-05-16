@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>!jump(4)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 !jump(4)</H1>
@@ -19,7 +19,7 @@
 <UL><P><B>!jump</B>&nbsp;<I>offset</I> 
 <BR><B>!tjump</B>&nbsp;<I>condition</I>&nbsp;<I>offset</I> </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P>Flow can be controlled within a MicroEmacs '04 macro using the <B>!jump</B> directive. It takes as a numerical argument <I>offset</I>. The <I>offset</I> is a signed relative displacement, it may be a literal numeric value, a variable or an evaluated expression (see 
+<UL><P>Flow can be controlled within a MicroEmacs '05 macro using the <B>!jump</B> directive. It takes as a numerical argument <I>offset</I>. The <I>offset</I> is a signed relative displacement, it may be a literal numeric value, a variable or an evaluated expression (see 
 <A HREF="amicr026.html">Variable Functions</A>). The displacement to jump starts from the current <B>!jump</B> line. (i.e. <B>0 goto</B>) would loop forever as it jumps to itself). Negative <I>offset</I> branches backwards, positive <I>offset</I> forwards. 
 <P>A conditional relative branch, with a numerical displacement is specified using <B>!tjump</B>. This has an additional argument <I>condition</I> which is evaluated and if TRUE (Non-zero) then the branch is taken. The <I>condition</I> may be a variable or an evaluated expression. 
 <P><B>!jump</B> and <B>!tjump</B> are fast equivalents of 
@@ -87,7 +87,7 @@
 <A HREF="m4fil009.html">!tgoto(4)</A>, 
 <A HREF="m4fil011.html">!while(4)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
+<P><I>(c) Copyright JASSPA 2005</I>
 <BR><I>Last Modified: 2004/01/17</I>
-<BR><I>Generated On: 2004/03/26</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

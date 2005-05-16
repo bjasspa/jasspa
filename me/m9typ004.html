@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>latex(9)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 latex(9)</H1>
@@ -16,9 +16,12 @@ latex(9)</H1>
 <UL><P>latex - TeX Documentation </UL>
 <H2><B>FILES </B></H2>
 <UL><P><B>hklatex.emf</B> - Tex File hook definition 
-<BR><B>latex.etf</B> - Template file </UL>
+<BR><B>latex.etf</B> - Template file 
+<BR><B>hkbibtex.emf</B> - TeX Bibliography Files </UL>
 <H2><B>EXTENSIONS </B></H2>
-<UL><P><B>.tex</B> - TeX Documentation </UL>
+<UL><P><B>.tex</B> - TeX Documentation 
+<BR><B>.bib</B> - TeX Bibliography Files 
+<BR><B>.sty</B> - TeX Style file </UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P>The <B>latex</B> file type template handles the hilighting of the TeX files. The hilighting is minimal, hilighting the key words and comments. 
 <P><B>General Editing</B> 
@@ -28,10 +31,26 @@ latex(9)</H1>
 <BR><UL>The hilighting emphasizes the Tex embedded command strings and comments. No special recognition of the command strings is performed. </UL>
 <P><B>Outline Hilighting</B> 
 <BR><UL>The LaTeX content may be viewed with synthetic hilighting such that headers, text in bold and italic are displayed, removing the LaTeX control sequences. </UL>
+<P><B>Folding and Information Hiding</B> 
+<BR><UL>Generic folding is enabled, the folds occur about <B>\section{...}</B> and <B>\subsection{...}</B> constructs. 
+<A HREF="m3mac029.html">collapse-all(3)</A> (un)folds all regions in the file, 
+<A HREF="m3mac029.html">collapse-current(3)</A> (un)folds the current region. </UL>
+<P><B>Spelling</B> 
+<BR><UL>Buffer spell checking is LaTeX aware. </UL>
+<P><B>List Items</B> 
+<BR><UL>Item listing is available and the key constructs of the file may be listed in the <I>item-list</I>. </UL>
+<P><B>Buffer Commands</B> 
+<BR><UL><B>latex-verify</B> verifies the syntax of the (La)TeX from the current position forward, reporting braces that are not matched. </UL>
 <P><B>Short Cuts</B> 
 <BR><UL>The short cut keys used within the buffer are:- </UL>
 <UL><P><B>C-c C-c</B> - Comment out the current line. 
 <BR><B>C-c C-d</B> - Uncomment the current line. 
+<BR><B>C-c C-e</B> - Comment to the end of the line with hash (%). 
+<BR><B>C-c C-o</B> - Format a comment 
+<BR><B>f2</B> - (un)fold the current region 
+<BR><B>f3</B> - (un)fold all regions 
+<BR><B>f6</B> - List items. 
+<BR><B>esc f6</B> - Close list items window. 
 <P>The command <B>latex-compile</B> is available within the buffer which invokes an external process to build the text. </UL></UL>
 <H2><B>BUGS </B></H2>
 <UL><P>No bugs reported </UL>
@@ -41,7 +60,7 @@ latex(9)</H1>
 <P>
 <A HREF="amicr030.html">Supported File Types</A> </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/01/24</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

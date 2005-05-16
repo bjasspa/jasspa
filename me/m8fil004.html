@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>erf(8)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 erf(8)</H1>
@@ -18,7 +18,7 @@ erf(8)</H1>
 <UL><P><I>; Comment to the end of the line</I> 
 <BR><I>&lt;command&gt;</I> ::= <B>&quot;</B><I>&lt;identifier&gt;</I><B>&quot;</B> [ <B>=</B> <B>&quot;</B><I>&lt;string&gt;</I><B>&quot;</B> ][ <B>{</B> <I>&lt;command&gt;</I> <B>}</B> ] * </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P>MicroEmacs '04 registry files are ASCII text files, given the file extension <B>.erf</B>. The registry file is a simple syntax that allows an <I>identifier</I> to be associated with a <I>string</I>. The <I>identifiers</I> are unique and allow a <I>string</I> value to be found when a search for a <I>identifier</I> is made. The <I>string</I> component is optional. 
+<UL><P>MicroEmacs '05 registry files are ASCII text files, given the file extension <B>.erf</B>. The registry file is a simple syntax that allows an <I>identifier</I> to be associated with a <I>string</I>. The <I>identifiers</I> are unique and allow a <I>string</I> value to be found when a search for a <I>identifier</I> is made. The <I>string</I> component is optional. 
 <P>The syntax allows the <I>identifier</I>'s to be hierarchically nested, children of the <I>identifier</I> node are enclosed in a set of curly braces <B>{</B> ... <B>}</B>. The enclosure itself comprises a number of <I>identifiers</I>, which may have their own enclosures, and so on. 
 <P>The backslash character `<TT>\</TT>' is the escape character, the following sequences of escape character are recognized:- 
 <UL><P><TT>\\</TT> - Literal backslash 
@@ -45,7 +45,7 @@ erf(8)</H1>
 </PRE></UL>
 <P>The history file <I>username.erf</I> is a good example of the use of the registry. This file retains historical session information in The history registry file is automatically written at the end of a editing session when the editor is closed down (or may be saved explicitly using 
 <A HREF="m2cmd144.html">save-history(2)</A>). 
-<P>Every user should have their own personal history file in their personal MicroEmacs directory. The history file is located from the MicroEmacs '04 search path defined by 
+<P>Every user should have their own personal history file in their personal MicroEmacs directory. The history file is located from the MicroEmacs '05 search path defined by 
 <A HREF="m5var089.html">$user-path(5)</A>, and is named by the variable 
 <A HREF="m5var088.html">$user-name(5)</A>. </UL>
 <H2><B>NOTES </B></H2>
@@ -71,7 +71,7 @@ erf(8)</H1>
 <A HREF="m5var088.html">$user-name(5)</A>, 
 <A HREF="m5var089.html">$user-path(5)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
+<P><I>(c) Copyright JASSPA 2005</I>
 <BR><I>Last Modified: 2004/02/01</I>
-<BR><I>Generated On: 2004/03/26</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

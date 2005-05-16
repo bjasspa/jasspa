@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>buffer-init(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 buffer-init(3)</H1>
@@ -42,7 +42,7 @@ define-macro&nbsp;fhook-XXX
 
 ;&nbsp;buffer-init&nbsp;variables 
 set-variable&nbsp;.fhook-XXX.name&nbsp;&quot;XXX&nbsp;Macro&quot; 
-set-variable&nbsp;.fhook-XXX.setup&nbsp;&amp;reg&nbsp;&quot;/history&quot;&nbsp;&quot;fhook/XXX&quot;&nbsp;&quot;bdfghnopx&quot; 
+set-variable&nbsp;.fhook-XXX.setup&nbsp;&amp;reg&nbsp;&quot;/history/fhook/XXX&quot;&nbsp;&quot;bdfghnopx&quot; 
 set-variable&nbsp;.fhook-XXX.setup-mask&nbsp;&quot;abdefghikmnoptux&quot; 
 ;&nbsp;Commenting&nbsp;configuration&nbsp;--&nbsp;omit&nbsp;if&nbsp;not&nbsp;defined. 
 set-variable&nbsp;.fhook-XXX.comment&nbsp;&quot;|#||#|#&nbsp;|&nbsp;#||&quot; 
@@ -52,6 +52,9 @@ set-variable&nbsp;.fhook-XXX.command-name&nbsp;&nbsp;&quot;||&quot;
 set-variable&nbsp;.fhook-XXX.command-nbind&nbsp;&quot;||&quot; 
 set-variable&nbsp;.fhook-XXX.command-kbind&nbsp;&quot;||&quot; 
 set-variable&nbsp;.fhook-XXX.command-desc&nbsp;&nbsp;&quot;||&quot; 
+;&nbsp;Define&nbsp;additional&nbsp;buffer&nbsp;setup&nbsp;menu&nbsp;items&nbsp;--&nbsp;omit&nbsp;if&nbsp;not&nbsp;defined 
+set-variable&nbsp;.fhook-c.setup-flags&nbsp;&nbsp;&nbsp;&quot;|c|l|&quot; 
+set-variable&nbsp;.fhook-c.setup-labels&nbsp;&nbsp;&quot;|Option&nbsp;1|Option&nbsp;2|&quot; 
 ;&nbsp;Set&nbsp;up&nbsp;collapse&nbsp;or&nbsp;folding&nbsp;for&nbsp;XXX&nbsp;--&nbsp;omit&nbsp;if&nbsp;not&nbsp;defined 
 set-variable&nbsp;.fhook-XXX.collapse-open&nbsp;&nbsp;&quot;^{&quot; 
 set-variable&nbsp;.fhook-XXX.collapse-close&nbsp;&quot;^}&quot; 
@@ -93,18 +96,25 @@ buffer-init-fhook&nbsp;&quot;XXX&quot;
 <P><B>buffer-init</B> is invoked from the buffer file hook 
 <A HREF="m2cmd202.html">fhook</A> and is invoked with the numerical argument passed to the <I>fhook</I> macro (specified as <TT>$#</TT>). The call takes two arguments, the first is the <I>name</I> of the template or hook, in the example this is <I>XXX</I>. The second argument is the <I>etf</I> template name (see 
 <A HREF="m8fil001.html">etf(8)</A>). The command initializes the buffer, using the <I>.fhook-XXX</I> variable information defined in the file. 
-<P><B>buffer-init-fhooks</B> is invoked from the buffer file hook 
+<P><B>buffer-init-hooks</B> is invoked from the buffer file hook 
 <A HREF="m2cmd202.html">fhook</A> typically following the <B>buffer-init</B> call this macro invokes any user defined file hooks of the form <B>my-fhook-XXX</B>. User defined <B>my-bhook-XXX</B> and <B>my-ehook-XXX</B> are configured into the buffer space ready for execution. 
-<P><B>buffer-init-fhook</B> is placed at the end of the hook file definition and retrieves additional configuration information from the registry and the user settings, it will also locate and load any user additions to the template by loading the file <TT>myXXX.emf</TT>. </UL>
+<P><B>buffer-init-hooks</B> must be placed in all <B>fhook-XXX</B> macros to correctly initialize the file hooks. If this is not added then the &quot;<TT>my-*hook-always</TT>&quot; macros may not be called correctly for buffers where the <B>fhook-XXX</B> has not been configured correctly. 
+<P><B>buffer-init-fhook</B> is placed at the end of the hook file definition and retrieves additional configuration information from the registry and the user settings, it will also locate and load any user additions to the template by loading the file <TT>myXXX.emf</TT>. 
+<P>A set of global default file hooks may be defined of the form <B>my-fhook-always</B>, <B>my-bhook-always</B>, <B>my-ehook-always</B> and <B>my-dhook-always</B>. These file hooks are global and invoked after the </UL>
 <H2>Execution Sequence </H2>
 <UL><P>It is important to understand the execution sequence of the buffer hook files. On identifying a new file hook then the <TT>hkXXX.emf</TT> file is fetched from the file system and executed. Execution causes all of the variables to be defined and finally, when all definitions have been made, <B>buffer-init-fhook</B> is executed to load in any user defined extensions. At this point then the macro <B>fhook-XXX</B> has ONLY been defined it has NOT been executed. This load operation is performed once only and is on demand. 
 <P>The <B>fhook-XXX</B> macro must be defined BEFORE any of the variables associated with the hook as all subsequent variables are command variables and are defined in the context of the macro definition. See 
 <A HREF="m4fil018.html">Variables(4)</A> for more information on macro variables. 
-<P><B>fhook-XXX</B> is invoked to apply hilighting, buffer key bindings, indentation etc. to the newly loaded buffer. </UL>
+<P><B>fhook-XXX</B> is invoked to apply hilighting, buffer key bindings, indentation etc. to a new buffer which has just been created. 
+<P><B>ehook-XXX</B> is invoked when a buffer is swapped out. This may be used to save global variables that have been modified in the context of the buffer. 
+<P><B>bhook-XXX</B> is invoked when a buffer is swapped in. This may be used to restore variables that are specific to a buffer to global variables. 
+<P><B>dhook-XXX</B> is invoked before a buffer is deleted. This may be used to clean up a buffer before it is destroyed. 
+<P><B>Extended file hooks</B> 
+<BR>The buffer hooks <TT>[fbed]hook-XXX</TT> may be extended by user specific configuration in the form <TT>my-[fbed]hook-any</TT>, these are invoked after the primary hook as been invoked and operate on all buffers rather than a specific buffer type. The <I>my-*hook-always</I> mechanism is provided by the <I>buffer-init</I> macros of <TT>buffinit.emf</TT> rather than from the base command set of MicroEmacs. </UL>
 <H2>Configuration Masks </H2>
 <UL><P>Buffer initialization is controlled by the settings of the variables <B>.fhook-XXX.setup</B> and <B>fhook-XXX.setup-mask</B>:- <UL>
-<PRE>set-variable&nbsp;.fhook-XXX.setup&nbsp;&amp;reg&nbsp;&quot;/history&quot;&nbsp;&quot;fhook/XXX&quot;&nbsp;&quot;bdfghnopx&quot; 
-set-variable&nbsp;.fhook-XXX.setup-mask&nbsp;&quot;abdefghikmnoptux&gt;&quot; 
+<PRE>set-variable&nbsp;.fhook-XXX.setup&nbsp;&amp;reg&nbsp;&quot;/history/fhook/XXX&quot;&nbsp;&quot;bdfghnopx&quot; 
+set-variable&nbsp;.fhook-XXX.setup-mask&nbsp;&quot;abdefghikmnoptux&quot; 
 </PRE></UL>
 <P>The variables use an ASCII configuration string that identifies the modes of operation that are required. Upper and lower case alternatives are presented, an uppercase flag disables the mode, lower case enables. Where the flag is not specified then the mode is not changed. 
 <P><TT>a</TT> - Auto mode 
@@ -117,8 +127,7 @@ set-variable&nbsp;.fhook-XXX.setup-mask&nbsp;&quot;abdefghikmnoptux&gt;&quot;
 <BR><UL>Configure 
 <A HREF="m2mod016.html">view(2m)</A> mode for read only or authoring. </UL>
 <P><TT>d</TT> - Auto indentation operation. 
-<BR><UL>Automatic indent is enabled. Where <I>C-mode</I> is required (see 
-<A HREF="m2mod002.html">cmode(2m)</A>) then the flag <TT>&gt;</TT> should be used in conjunction with the <TT>d</TT> flag, otherwise the indentation should be defined in the template using 
+<BR><UL>Automatic indent is enabled using 
 <A HREF="m2cmd033.html">indent(2)</A>. </UL>
 <UL><P>Where 
 <A HREF="m2mod005.html">indent(2m)</A> mode is required then omit the <TT>d</TT> flag and use flag <TT>i</TT> instead. </UL>
@@ -135,8 +144,8 @@ set-variable&nbsp;.fhook-XXX.setup-mask&nbsp;&quot;abdefghikmnoptux&gt;&quot;
 <BR><UL>Support syntax hilighting, when defined then the hilighting scheme defined by <I>.hilight.XXX</I> is attached to the buffer. </UL>
 <P><TT>i</TT> - Automatic indentation 
 <BR><UL>Support indentation using 
-<A HREF="m2mod005.html">indent(2m)</A>. Automatic indentation defined with the <TT>d</TT> and optionally the <TT>&gt;</TT> flag where the in-built <I>C-mode</I> (see 
-<A HREF="m2mod002.html">cmode(2m)</A>) is required. <TT>i</TT> enable indent, <TT>J</TT> disable indent. </UL>
+<A HREF="m2mod005.html">indent(2m)</A>. Automatic indentation (see 
+<A HREF="m2cmd033.html">indent(2)</A>) is defined with the <TT>d</TT> flag. <TT>i</TT> enables indent, <TT>I</TT> disables indent. </UL>
 <P><TT>j</TT> - Justify 
 <BR><UL>Configure paragraph justification using 
 <A HREF="m2mod006.html">justify(2m)</A>. <TT>j</TT> enable justify, <TT>J</TT> disable justify. </UL>
@@ -168,9 +177,6 @@ set-variable&nbsp;.fhook-XXX.setup-mask&nbsp;&quot;abdefghikmnoptux&gt;&quot;
 <P><TT>x</TT> - Time stamping 
 <BR><UL>Configure time stamping as defined by 
 <A HREF="m2mod013.html">time(2m)</A>. </UL>
-<P><TT>&gt;</TT> - Electric-c indentation. 
-<BR><UL>A special internal flag indicating that indentation is to be performed using 
-<A HREF="m2mod002.html">cmode(2m)</A>. This option should only be used when the <TT>d</TT> flag is also defined. The flag should only be present in the <I>.setup-mask</I>. </UL>
 <P><TT>1</TT> - Reformatting hilighting 
 <BR><UL>A special internal flag indicating that hilighting is used for reformatting purposes, i.e. to make readable and hide control text. </UL>
 <P><TT>#</TT> - Commenting 
@@ -180,7 +186,7 @@ set-variable&nbsp;.fhook-XXX.setup-mask&nbsp;&quot;abdefghikmnoptux&gt;&quot;
 <A HREF="m3osd010.html">buffer-setup(3)</A> is tested against the mask, if the mask allows it then the mode is enabled. <B>.fhook-XXX.setup</B> is generally a subset of <B>.fhook-XXX.setup-mask</B>. 
 <P>
 <A HREF="m3osd010.html">buffer-setup(3)</A> operates with the values defined by <B>.fhook-XXX.setup</B> and <B>.fhook-XXX.setup-mask</B>. The initialization of <B>.fhook-XXX.setup</B> is performed using the registry as follows:- <UL>
-<PRE>set-variable&nbsp;.fhook-XXX.setup&nbsp;&amp;reg&nbsp;&quot;/history&quot;&nbsp;&quot;fhook/XXX&quot;&nbsp;&quot;bdfghnopx&quot; 
+<PRE>set-variable&nbsp;.fhook-XXX.setup&nbsp;&amp;reg&nbsp;&quot;/history/fhook/XXX&quot;&nbsp;&quot;bdfghnopx&quot; 
 </PRE></UL>
 <P>This allows the user to configure over-ridding modes via 
 <A HREF="m3osd010.html">buffer-setup(3)</A>. The user configuration is saved to the 
@@ -202,6 +208,40 @@ set-variable&nbsp;.fhook-XXX.setup-mask&nbsp;&quot;abdefghikmnoptux&gt;&quot;
 <PRE>set-variable&nbsp;.fhook-c.tags&nbsp;&quot;ctags&quot; 
 </PRE></UL>
 <P>The presence of a tags generator is not flagged in the setup flags, declaration of the <B>.fhook-XXX.tags</B> variable is sufficient to declare that a tags generator exists. </UL>
+<H2>Private Configuration Extensions </H2>
+<UL><P>The <B>.fhook-XXX.setup</B> may be extended to include local configuration items that are private to a specific buffer. The extensions are added to the 
+<A HREF="m3osd010.html">buffer-setup(3)</A> menu and provide an on/off check-box control to enable and disable specific buffer features. Feature examples include: Enable or disable Doxygen highlighting in a buffer, control hidden file names in a directory listing etc. 
+<P>The configuration extensions are defined using two additional hook variables, these variables are normally omitted and only defined if the extensions are required. 
+<P><B>.fhook-XXX.setup-flags</B> 
+<BR><UL>Defines the alphabetic [<TT>a-z</TT>] setup characters that are used to enable or disable a feature. These are defined as MicroEmacs list variables (see 
+<A HREF="m4fil029.html">&amp;lfind(4)</A>, 
+<A HREF="m4fil029.html">&amp;lget(4)</A>, etc. for the full syntax definition). The characters that may be used are those that are not used by buffer setup i.e. &quot;<TT>clqrvyz</TT>&quot; </UL>
+<P><B>.fhook-XXX.setup-labels</B> 
+<BR><UL>Defines the text labels that are added to the setup menu, the label is associated with the enable button. </UL>
+<P>To add a new feature switch then the the character flags to hold the state are are defined with the <B>.fhook-XXX.setup-flags</B> and <B>.fhook-XXX.setup-labels</B>. The characters defined with the <B>setup-flags</B> should be added to <B>.fhook-XXX.setup-mask</B>. If the option is to be enabled by default then the enabling character is added to <B>.fhook-XXX.setup</B>. 
+<P>To enable/disable the features then 
+<A HREF="m3osd010.html">buffer-setup(3)</A> when invoked modifies the state of the variable <B>.fhook-XXX.setup</B> and then executes the buffer hook again causing the new state to be processed and applied. The modified <B>.fhook-XXX.setup</B> value is stored in the user registry and is applied thereafter when the specified buffer type is loaded. 
+<P>Within the template definition then the additional flags are checked by testing the state of the <B>.fhook-XXX.setup</B> variable. An example is shown below. <UL>
+<PRE>;&nbsp;Add&nbsp;the&nbsp;extra&nbsp;variable&nbsp;to&nbsp;the&nbsp;buffer-init&nbsp;variables 
+;&nbsp;Option&nbsp;1&nbsp;is&nbsp;disabled&nbsp;and&nbsp;Option&nbsp;2&nbsp;is&nbsp;enabled&nbsp;by&nbsp;default&nbsp;here. 
+set-variable&nbsp;.fhook-XXX.setup&nbsp;&amp;reg&nbsp;&quot;/history/fhook/XXX&quot;&nbsp;&quot;bdfghnopxl&quot; 
+set-variable&nbsp;.fhook-XXX.setup-mask&nbsp;&quot;abdefghikmnoptuxcl&quot; 
+
+;&nbsp;Define&nbsp;the&nbsp;additional&nbsp;options. 
+set-variable&nbsp;.fhook-XXX.setup-flags&nbsp;&nbsp;&nbsp;&quot;|c|l|&quot; 
+set-variable&nbsp;.fhook-XXX.setup-labels&nbsp;&nbsp;&quot;|Option&nbsp;1|Option&nbsp;2|&quot; 
+
+;&nbsp;Test&nbsp;for&nbsp;the&nbsp;Option&nbsp;1&nbsp;being&nbsp;enabled. 
+!if&nbsp;&amp;sin&nbsp;&quot;c&quot;&nbsp;.fhook-XXX.setup 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Do&nbsp;Option&nbsp;1&nbsp;configuration. 
+!endif 
+
+;&nbsp;Test&nbsp;for&nbsp;the&nbsp;Option&nbsp;2&nbsp;being&nbsp;enabled. 
+!if&nbsp;&amp;sin&nbsp;&quot;l&quot;&nbsp;.fhook-XXX.setup 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Do&nbsp;Option&nbsp;2&nbsp;configuration. 
+!endif 
+</PRE></UL>
+<P>The templates <TT>hkc.emf</TT>, <TT>hkcpp.emf</TT> and <TT>hkjava.emf</TT> include private extensions which may be used as examples. </UL>
 <H2>Comments </H2>
 <UL><P>The format of comments may be defined in the template using the <B>.fhook-XXX.comment</B> variable. Definition of the comment form allows the comment formatting to be automatically set up. Where the comment format is defined then the following key bindings are automatically added to the template:- 
 <UL><P><TT>C-c C-s</TT> <B>comment-start</B> - start a new comment. 
@@ -352,7 +392,7 @@ set-variable&nbsp;.buffer-bind-key.map-from&nbsp;&quot;|C-c&nbsp;C-c|C-c&nbsp;C-
 set-variable&nbsp;.buffer-bind-key.map-to&nbsp;&nbsp;&nbsp;&quot;|C-b|C-u|&quot; 
 </PRE></UL>
 </UL><H2>Information Hiding with Collapse </H2>
-<UL><P>MicroEmacs '04 provides a generic, albeit coarse, folding mechanism which is applied to some of the well known file modes. The folding mechanism allows parts of the buffer to be scrolled up and hidden, leaving a residue hilighting marker within the buffer indicating a folded region. A folded buffer typically allows a summary of the buffer contents to be viewed within several windows, hiding the detail of the buffer. 
+<UL><P>MicroEmacs '05 provides a generic, albeit coarse, folding mechanism which is applied to some of the well known file modes. The folding mechanism allows parts of the buffer to be scrolled up and hidden, leaving a residue hilighting marker within the buffer indicating a folded region. A folded buffer typically allows a summary of the buffer contents to be viewed within several windows, hiding the detail of the buffer. 
 <P>Note: <B>collapse</B> was called <B>fold</B> in earlier releases but the name was changed when real fold editing support was added, see <TT>fold.emf</TT> for more information. 
 <P>The folding mechanism uses well defined <I>start</I> and <I>end</I> markers which form part of the syntax of the well known file mode. i.e. in 'C' this is the open and closed braces that appear on the left-hand margin (<TT>{</TT> .. <TT>}</TT>). The intention is that the natural syntax of the text is used to determine the fold positions, requiring no additional text formating or special text tags to be inserted by the user. 
 <P>The language template defines the syntax of blocks of information that may be collapsed and hidden with 
@@ -499,7 +539,13 @@ of&nbsp;the&nbsp;fold
 &nbsp;&nbsp;&nbsp;&nbsp;..... 
 !endif 
 </PRE></UL>
-</UL><H2><B>SEE ALSO </B></H2>
+</UL><H2><B>HISTORY </B></H2>
+<UL><P>The January 2005 version of MicroEmacs introduced the following changes: <UL><P>
+<LI>The <TT>my-*hook-always</TT> introduced allowing global file hooks to manipulate operate on any buffer. 
+<LI>The Electric-C indentation previously flagged as <TT>&gt;</TT> was removed, as was <B>cmode(2m)</B>. Indentation configuration for C mode is now performed by the 
+<A HREF="m2cmd033.html">indent(2)</A> command. 
+<LI>Private template configuration using <B>.fhook-XXX.setup-flags</B> and <B>.fhook-XXX.setup-labels</B>. </UL></UL>
+<H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m5var004.html">$buffer-hilight(5)</A>, 
 <A HREF="m5var075.html">$buffer-indent(5)</A>, 
@@ -531,7 +577,7 @@ of&nbsp;the&nbsp;fold
 <BR>
 <A HREF="m2nar000.html">File Language Templates</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2004/03/11</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/02/06</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

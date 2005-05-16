@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>user-setup(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 user-setup(3)</H1>
@@ -29,23 +29,21 @@ user-setup(3)</H1>
 <BR><UL>Quits user-setup, if changes where not <B>Save</B>d or made <B>Current</B> they will be lost. 
 </UL><P>The following pages, which appear in the dialog, are defined as follows:- </UL>
 <H2>Start-up </H2>
-<UL><P><TT>Log Name</TT> 
-<BR><UL>Sets the name of the current user to setup, this can be set to any valid file base name (no extension) which need not be the current user. The rest of the <B>user-setup</B> entries are then initialized to the settings defined for the given user (or standard defaults if not defined). </UL>
-<P><TT>Default User</TT> 
-<BR><UL>The name or profile of the current user, the value is defined by the MicroEmacs variable 
-<A HREF="m5var088.html">$user-name(5)</A>. This field may not be altered. </UL>
-<P><TT>Setup Path</TT> 
-<BR><UL>The location of the user defined macro files, the value is defined by the MicroEmacs variable 
-<A HREF="m5var089.html">$user-path(5)</A>. This field may not be altered. </UL>
+<UL><P><TT>User Name</TT> 
+<BR><UL>Documents the user name currently being configured, this entry cannot be changed in user-setup, see 
+<A HREF="m5var088.html">$user-name(5)</A> for help on changing the MicroEmacs user name. </UL>
+<P><TT>User Path</TT> 
+<BR><UL>Documents the location of the current user's MicroEmacs setup files, this entry cannot be changed in user-setup, see 
+<A HREF="m5var089.html">$user-path(5)</A> for help on changing the user path. </UL>
 <P><TT>Setup File</TT> 
 <BR><UL>Sets the personal user setup macro file name which is executed at start-up. A user macro file should contain all personal settings such as preferred key bindings etc. See 
 <A HREF="m2nar003.html">Setting Up A User Profile</A> for more information. The <B>Edit</B> check box can be used to enable/disable the automatic loading of the setup file ready for editing when the <B>Current</B> button is used. </UL>
 <P><TT>Company File</TT> 
 <BR><UL>Sets the company setup macro file name which is executed at start-up. A company macro file should contain all company wide standard settings such as <TT>%company-name</TT>, No <TT>.emf</TT> extension is supplied. See 
 <A HREF="m2nar002.html">Setting Up a Company Profile</A> for more information. </UL>
-<P><TT>Emulate</TT> 
-<BR><UL>Sets an emulation mode which changes the behaviour on MicroEmacs to emulate another editor/program; this is done by executing a macro file at start-up. An emulation macro file should contain the macro code required to simulate the environment of the other editor. MicroEmacs '04 is released with two emulation modes, MicroEmacs v3.8 which executes macro file <TT>meme3_8.emf</TT> (See 
-<A HREF="m2cmd201.html">Compatibility</A> for more information) and NEdit v5 which is at best a demonstration of what can be achieved, this executes macro file <TT>menedit.emf</TT>. </UL>
+<P><TT>Emulation</TT> 
+<BR><UL>Sets an emulation mode which changes the behaviour on MicroEmacs to emulate another editor/program; this is done by executing a macro file at start-up. An emulation macro file should contain the macro code required to simulate the environment of the other editor. MicroEmacs '05 is released with four emulation modes, GNU Emacs (see macro file <TT>meemacs.emf</TT>), CUA (Windows style key bindings and interface, see <TT>mecua.emf</TT>), MicroEmacs v3.8 (<TT>meme3_8.emf</TT>) and NEdit v5 which is at best a demonstration of what can be achieved via the emulation support (defined in <TT>menedit.emf</TT>). See 
+<A HREF="m2cmd201.html">Compatibility</A> for more information on emulation. </UL>
 <P><TT>Rebind Home Keys</TT> 
 <BR><UL>When enabled the following key bindings are created to ease frustration, particularly for MS users: 
 <P><TT>home</TT> 
@@ -70,27 +68,29 @@ user-setup(3)</H1>
 <P><B>NOTES</B> 
 <BR><UL>Earlier versions MicroEmacs had &quot;<TT>(Ext)</TT>&quot; languages which use extended language dictionaries, vastly increasing the word list. New versions automatically test for and use these dictionaries if available. </UL>
 <UL><P>In earlier versions a personal dictionary name could be set in the next field, this option was removed on Oct 2001. Instead a personal dictionary for each language is automatically created for you, any words or auto-corrected words will be added to the current languages personal dictionary. The name of dictionary is &quot;<TT>lsdp</TT><I>&lt;lang-id&gt;</I><TT>.edf</TT>&quot; where &quot;<I>&lt;lang-id&gt;</I>&quot; is the 4 letter MicroEmacs language name (e.g. &quot;<TT>enus</TT>&quot; for American), simply rename any existing personal dictionary to this new name. </UL>
-<P><TT>Auto Spell</TT> 
+<P><TT>Auto Save Dictionaries</TT> 
+<BR><UL>Enables auto-saving of any changed dictionaries on exit. If this is disabled the user is prompted to save for each changed dictionary. </UL>
+<P><TT>Enable Auto-Spell</TT> 
 <BR><UL>Enables Auto Spell Checking in file types which support this feature (usually text based files such as 
 <A HREF="m9typ003.html">txt(9)</A> or 
-<A HREF="m9typ026.html">nroff(9)</A> files etc). Auto spell detects word breaks as you type and checks the spelling of every completed word hilighting any erroneous words in the error color scheme (usually red). The feature can be manually enabled and disabled by invoking the 
-<A HREF="m3mac039.html">auto-spell(3)</A> command (usually bound to &quot;<TT>f5</TT>&quot;). </UL>
-<P><TT>Auto Save Dics</TT> 
-<BR><UL>Enables auto-saving of any changed dictionaries on exit. If this is disabled the user is prompted to save for each changed dictionary. </UL></UL>
+<A HREF="m9typ026.html">nroff(9)</A> files etc). Auto spell detects word breaks as you type and checks the spelling of every completed word hilighting any erroneous words in the error color scheme (usually red). When auto-spell is enable, right clicking on an erroneous word will add an extra <B>Auto Spell</B> sub-menu to the opened context menu, the sub-menu lists suggested corrections and other useful options; this menu can also be opened by executing the 
+<A HREF="m3mac039.html">auto-spell-menu(3)</A> command (usually bound to &quot;<TT>C-f7</TT>&quot;). The feature can be manually enabled and disabled by invoking the 
+<A HREF="m3mac039.html">auto-spell(3)</A> command. </UL></UL>
 <H2>General </H2>
 <UL><P><TT>Full Name</TT> 
 <BR><UL>This should be set to the user's name and is used in a variety of places, e.g. by 
 <A HREF="m3mac018.html">etfinsrt(3)</A> to set the &quot;Created By&quot; field in a template. </UL>
-<P><TT>Organizer</TT> 
+<P><TT>Organizer File</TT> 
 <BR><UL>Sets the organizer file base name, defaults to the <B>Log Name</B>. When notes and addresses are stored using 
 <A HREF="m3osd001.html">organizer(3)</A> the file &quot;<I>&lt;Organizer&gt;</I><TT>.eof</TT>&quot; is used. </UL>
-<P><TT>Auto-Save Time</TT> 
-<BR><UL>Sets the length of time in seconds between buffer auto-saves, a setting of <TT>0</TT> or an empty string disables auto-saving. The default setting is 300 seconds or 5 minutes. This indirectly sets the 
-<A HREF="m5var000.html">auto-time(5)</A> variable and the 
-<A HREF="m2mod019.html">autosv(2m)</A> global mode. </UL>
 <P><TT>Global Modes</TT> 
 <BR><UL>Sets the initial state of the global 
 <A HREF="m2mod011.html">quiet(2m)</A> mode. This indirectly executes 
+<A HREF="m2cmd005.html">global-mode(2)</A> to set the required modes. </UL>
+<P><TT>Search Modes</TT> 
+<BR><UL>Sets the initial state of the global search modes 
+<A HREF="m2mod004.html">exact(2m)</A> and 
+<A HREF="m2mod009.html">magic(2m)</A>. This indirectly executes 
 <A HREF="m2cmd005.html">global-mode(2)</A> to set the required modes. </UL>
 <P><TT>Buffer Modes</TT> 
 <BR><UL>Sets the initial state of the global modes 
@@ -102,12 +102,11 @@ user-setup(3)</H1>
 <A HREF="m3osd010.html">buffer-setup(3)</A>, also some file hooks override these global settings, such as the 
 <A HREF="m9typ005.html">makefile(9)</A> hook which overrides the <B>tab</B> mode. This indirectly executes 
 <A HREF="m2cmd005.html">global-mode(2)</A> to set the required modes. </UL>
-<P><TT>Search Modes</TT> 
-<BR><UL>Sets the initial state of the global search modes 
-<A HREF="m2mod004.html">exact(2m)</A> and 
-<A HREF="m2mod009.html">magic(2m)</A>. This indirectly executes 
-<A HREF="m2cmd005.html">global-mode(2)</A> to set the required modes. </UL>
-<P><TT>Keep Undo History</TT> 
+<P><TT>Auto-Save Time</TT> 
+<BR><UL>Sets the length of time in seconds between buffer auto-saves, a setting of <TT>0</TT> or an empty string disables auto-saving. The default setting is 300 seconds or 5 minutes. This indirectly sets the 
+<A HREF="m5var000.html">auto-time(5)</A> variable and the 
+<A HREF="m2mod019.html">autosv(2m)</A> global mode. </UL>
+<P><TT>Keep Undo</TT> 
 <BR><UL>If this is enabled the 
 <A HREF="m2cmd136.html">undo</A> history is kept after a save allowing the 
 <A HREF="m2cmd136.html">undo(2)</A> command to back-up changes beyond the last save. When clear the undo history is discarded after the buffer is saved. This indirectly sets bit 0x8000 of the 
@@ -115,25 +114,26 @@ user-setup(3)</H1>
 <P><TT>Hide Backups</TT> 
 <BR><UL>Enables hiding MicroEmacs generated backup files. On Windows and Dos platforms the Hidden file attribute is used to hide the file, whereas on UNIX the backup file name is prepended with a '<TT>.</TT>'. This indirectly sets bit 0x100000 of the 
 <A HREF="m5var047.html">$system(5)</A> variable. </UL>
-<P><TT>Main Menu</TT> 
+<P><TT>Main Menu - Enable</TT> 
 <BR><UL>Enables the top main menu bar. </UL>
-<P><TT>Alt -&gt; Main Menu</TT> 
+<P><TT>F-Type Buffer Sel</TT> 
+<BR><UL>When enabled the main <B>File</B> menu's <B>Buffer</B> selection sub-menu changes from being a simple complete list of buffers to being a list of <B>File Types</B> (as defined by the <B>File Types</B> section below). Selecting one of these file types opens a further sub-menu listing all buffers of this type; this option is useful when the current session of MicroEmacs has a large number of buffers. </UL>
+<P><TT>Alt Action - Esc Prfx</TT> 
+<BR><UL>If enabled the Alt key acts as a 
+<A HREF="m2cmd028.html">prefix 1</A> modifier key when no direct binding exists. By default '<TT>A-n</TT>' is not bound, with this bit set the key is inferred to '<TT>esc n</TT>' which is bound to <B>forward-paragraph</B>. Note that global, local and menu hot-key bindings override these. This indirectly sets bit 0x4000 of the 
+<A HREF="m5var047.html">$system(5)</A> variable. </UL>
+<P><TT>Alt Action - Main Menu Hot-keys</TT> 
 <BR><UL>If enabled the main menu Alt hot-key bindings are enabled. These are dynamic bindings automatically generated from the main menu. Typically the first item in the main menu is &quot;<TT>File</TT>&quot; with a hot key of '<B>F</B>', with this enabled '<TT>A-f</TT>' will open this menu item. Note that global and local key bindings override these. This indirectly sets bit 0x2000 of the 
 <A HREF="m5var047.html">$system(5)</A> variable. </UL>
-<P><TT>Alt -&gt; Esc Prefx</TT> 
-<BR><UL>If enabled the Alt key acts as a 
-<A HREF="m2cmd028.html">prefix 1</A> modifier key. By default '<TT>A-n</TT>' is not bound, with this bit set the key is inferred to '<TT>esc n</TT>' which is bound to <B>forward-paragraph</B>. Note that global, local and menu hot-key bindings override these. This indirectly sets bit 0x4000 of the 
-<A HREF="m5var047.html">$system(5)</A> variable. </UL>
-<P><TT>Abbrev Expansion</TT> 
-<BR><UL>Configures which expansion methods are enabled by default when the 
+<P><TT>Abbrev Setup</TT> 
+<BR><UL>Configures which abbreviation expansion methods are enabled by default when the 
 <A HREF="m3mac047.html">expand-abbrev-handle(3)</A> is executed. <B>Accent</B> enables 
-<A HREF="m3mac045.html">expand-iso-accents(3)</A>, <B>Lookbk</B> enables 
+<A HREF="m3mac045.html">expand-iso-accents(3)</A>, <B>Lookback</B> enables 
 <A HREF="m3mac062.html">expand-look-back(3)</A> and <B>Dict'n</B> enables 
 <A HREF="m3mac048.html">expand-word(3)</A>. </UL>
 <P><TT>Tab To Indent</TT> 
 <BR><UL>Sets the 
-<A HREF="m2cmd064.html">tab(2)</A> behavior in a buffer which has 
-<A HREF="m2mod002.html">cmode(2m)</A> enabled or an 
+<A HREF="m2cmd064.html">tab(2)</A> behavior in a buffer which has an 
 <A HREF="m2cmd033.html">indentation</A> method. This indirectly sets bits <TT>0x1000</TT> and <TT>0x200000</TT> of the 
 <A HREF="m5var047.html">$system(5)</A> variable. </UL>
 <P><TT>Show Modes</TT> 
@@ -163,13 +163,14 @@ user-setup(3)</H1>
 <BR><UL>Enables the drawing of visible white spaces, i.e. space, tab and new-line characters. This indirectly sets bit <TT>0x80000</TT> of the 
 <A HREF="m5var047.html">$system(5)</A> variable. </UL>
 <P><TT>Enable Toolbar</TT> 
-<BR><UL>Enables the Toolbar - configurable, managed windows giving easy access to many features and tools. </UL>
+<BR><UL>Enables the Toolbar - configurable, managed windows giving easy access to many features and tools. When enabled the toolbar is opened and displayed at start-up, when disabled the toolbar is not displayed but it can be opened by simply executing the 
+<A HREF="m3mac066.html">toolbar(3)</A> command. </UL>
 <P><TT>Client Server</TT> 
 <BR><UL>The client/server enables the file based external macro command driver to be enabled - see 
 <A HREF="m2nar005.html">Client-Server</A>. This by default is disabled, when enabled it is used by 
 <A HREF="m1cmd000.html">command-line</A> options <B>-m</B> and <B>-o</B>. </UL>
 <P><TT>DOS File Names</TT> 
-<BR><UL>DOS has a restricted 8.3 file naming system (i.e. &quot;<TT>BBBBBBBB.XXX</TT>&quot;), if this option is enabled the MicroEmacs '04 will adhere to this system for auto-save and backup file names whenever possible. See 
+<BR><UL>DOS has a restricted 8.3 file naming system (i.e. &quot;<TT>BBBBBBBB.XXX</TT>&quot;), if this option is enabled the MicroEmacs '05 will adhere to this system for auto-save and backup file names whenever possible. See 
 <A HREF="m5var000.html">$auto-time(5)</A> for more information on the naming convention used. This indirectly sets bit 0x400 of the 
 <A HREF="m5var047.html">$system(5)</A> variable. </UL>
 <P><TT># Backups</TT> 
@@ -205,14 +206,16 @@ user-setup(3)</H1>
 <A HREF="m3osd005.html">scheme-editor(3)</A> dialog. </UL></UL>
 <H2>Platform - UNIX Console Setup </H2>
 <UL><P>Only present on UNIX platforms when using the termcap interface, all the Console platform settings are kept independent of the X interface settings. 
+<P><TT>Display Char Set</TT> 
+<BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
 <P><TT>Termcap Color</TT> 
 <BR><UL>This option determines whether Termcap based colors should be used. These are typically the standard eight colors and may not be supported on all terminals. If this option is disabled Termcap fonts (such as bold) are used instead to create a primitive hi-lighting. This indirectly sets bit 0x004 of the 
 <A HREF="m5var047.html">$system(5)</A> variable. </UL>
 <P><TT>Use Fonts</TT> 
 <BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
-<P><TT>Display Char Set</TT> 
-<BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
 <P><TT>Draw White Spaces</TT> 
+<BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
+<P><TT>Enable Toolbar</TT> 
 <BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
 <P><TT>Client Server</TT> 
 <BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
@@ -223,6 +226,8 @@ user-setup(3)</H1>
 <P><TT>Ignore Files</TT> 
 <BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
 <P><TT>Cursor Blink Rate</TT> 
+<BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
+<P><TT>Fence Display</TT> 
 <BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
 <P><TT>Scroll Bars</TT> 
 <BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
@@ -239,8 +244,8 @@ user-setup(3)</H1>
 <A HREF="m2cmd027.html">change-font(2)</A> with the given font name. MicroEmacs may only use a Fixed Mono Font, either an OEM font as used by the MS-DOS command line, or the more conventional ANSI fonts. The fonts are selected using the <B>Change</B> <B>Font</B> button which invokes a dialog to allow the available fonts to be selected. True-Type mono fonts such as <TT>Courier New</TT> or <TT>Lucida Console</TT> are typically used. </UL>
 <P><TT>Weight &amp; Size</TT> 
 <BR><UL>Allows the size and weight of the font to be selected, specified as <I>weight</I>, <I>width</I> and <I>height</I>. The <I>weight</I> is typically 4, this corresponds to a regular weighting, 7 is bold. <I>width</I> is the width of the font in pixels, this may be 0 when the height is specified as -ve. <I>height</I> is the height of the font, typically a -ve value (where the <I>width</I> is 0), which produces a proportionally sized font, values of in the range -11 .. -14 generally produce reasonably sized fonts. The <I>hight</I> and <I>width</I> may be specified as +ve values and allow explicit font dimensions to be specified, generally used to achieve a precise font size requirement. </UL>
-<P><TT>Use Fonts</TT> 
-<BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
+<P><TT>Fonts</TT> 
+<BR><UL>See <TT>Use Fonts</TT> in <B>Platform UNIX Setup</B> above. </UL>
 <P><TT>Display Char Set</TT> 
 <BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
 <P><TT>Extend Char Set</TT> 
@@ -251,6 +256,8 @@ user-setup(3)</H1>
 <BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
 <P><TT>Capture Alt Space</TT> 
 <BR><UL>Used to enable/disable the capture and interpretation of the '<TT>A-space</TT>' key sequence. If this key sequence is not captured by MicroEmacs it is passed back to Windows which opens the top left window menu, allow keyboard access to Window commands like Maximize. </UL>
+<P><TT>Enable Toolbar</TT> 
+<BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
 <P><TT>Client Server</TT> 
 <BR><UL>See <B>Platform UNIX Setup</B> above. Note that on windows based systems the client/server is also used by 
 <A HREF="m1cmd001.html">memsdev(1)</A> to drive the editor from the Microsoft Developer environment. </UL>
@@ -261,6 +268,8 @@ user-setup(3)</H1>
 <P><TT>Ignore Files</TT> 
 <BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
 <P><TT>Cursor Blink Rate</TT> 
+<BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
+<P><TT>Fence Display</TT> 
 <BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
 <P><TT>Scroll Bars</TT> 
 <BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
@@ -276,6 +285,8 @@ user-setup(3)</H1>
 <BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
 <P><TT>Draw White Spaces</TT> 
 <BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
+<P><TT>Enable Toolbar</TT> 
+<BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
 <P><TT>Client Server</TT> 
 <BR><UL>See <B>Platform Win32 Setup</B> above. </UL>
 <P><TT>DOS File Names</TT> 
@@ -285,6 +296,8 @@ user-setup(3)</H1>
 <P><TT>Ignore Files</TT> 
 <BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
 <P><TT>Cursor Blink Rate</TT> 
+<BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
+<P><TT>Fence Display</TT> 
 <BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
 <P><TT>Scroll Bars</TT> 
 <BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
@@ -301,11 +314,17 @@ user-setup(3)</H1>
 <A HREF="m2cmd027.html">change-font(2)</A> with the given font name. </UL>
 <P><TT>Display Char Set</TT> 
 <BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
+<P><TT>Double Lines</TT> 
+<BR><UL>In some graphic modes the number of text lines can be doubled via a dos terminal call, this option is worth trying if more visible text lines are required. </UL>
 <P><TT>Draw White Spaces</TT> 
+<BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
+<P><TT>Enable Toolbar</TT> 
 <BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
 <P><TT>Ignore Files</TT> 
 <BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
 <P><TT>Cursor Blink Rate</TT> 
+<BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
+<P><TT>Fence Display</TT> 
 <BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
 <P><TT>Scroll Bars</TT> 
 <BR><UL>See <B>Platform UNIX Setup</B> above. </UL>
@@ -316,7 +335,7 @@ user-setup(3)</H1>
 <P><TT>Color Scheme</TT> 
 <BR><UL>See <B>Platform UNIX Setup</B> above. </UL></UL>
 <H2>Mouse </H2>
-<UL><P>The mouse device creates keys in a similar way to regular keyboard keys and, like keyboard keysm they must be bound before they are used. MicroEmacs '04 does not have the mouse functionality hard coded into the editor, it provides a macro interface to the mouse for ultimate flexibility and a set of default functionality which can be bound to the mouse in a variety of ways. 
+<UL><P>The mouse device creates keys in a similar way to regular keyboard keys and, like keyboard keysm they must be bound before they are used. MicroEmacs '05 does not have the mouse functionality hard coded into the editor, it provides a macro interface to the mouse for ultimate flexibility and a set of default functionality which can be bound to the mouse in a variety of ways. 
 <P>All the mouse controlling macros are stored in <TT>mouse.emf</TT> and <TT>mouseosd.emf</TT> although some buffers have local functionality over-rides, such as 
 <A HREF="m3mac027.html">file-browser(3)</A>. The user can expand the range of mouse functionality but how this is achieved is beyond the scope of this documentation. 
 <P>The <B>user-setup</B> dialog allows the user to configure the mouse to use the default functionality, as follows:- 
@@ -334,23 +353,27 @@ user-setup(3)</H1>
 </UL><P>The following four fields determine which mouse button binding the user wishes to view and change:- 
 <P><TT>Button</TT> 
 <BR><UL>The mouse button, <TT>Left</TT>, <TT>Right</TT> or <TT>Middle</TT> for the normal buttons and <TT>Whell Up</TT> or <TT>Whell Down</TT> for the pilot wheel events. </UL>
-<P><TT>Shift Pressed</TT> 
+<P><TT>Modifier - Shift</TT> 
 <BR><UL>The action of the mouse can be different for every modifier key setting, if this is enabled then the binding being modified is for the <B>Button</B> being pressed with the <B>Shift</B> key held down. </UL>
-<P><TT>Control Pressed</TT> 
+<P><TT>Modifier - Control</TT> 
 <BR><UL>If enabled then modifying the action when the <B>Button</B> is pressed with the <B>Control</B> key held down. </UL>
-<P><TT>Alt Pressed</TT> 
+<P><TT>Modifier - Alt</TT> 
 <BR><UL>If enabled then modifying the action when the <B>Button</B> is pressed with the <B>Alt</B> key held down. 
 </UL><P>The following two fields determine the functionality of the button defined by the previous four fields:- 
-<P><TT>Handle Scroll</TT> 
-<BR><UL>When enabled, if the button is pressed with the mouse on the main menu, a scroll bar or mode-line the standard action is performed, such as opening the main menu or scrolling up or down the window etc. The <B>bound To</B> command is only called if the mouse is in a main window. If disabled, the <B>Bound To</B> command is always called. </UL>
 <P><TT>Bound To</TT> 
 <BR><UL>The function to be performed. The functions available depend on the type of button being bound, the following is a list of functions available for normal buttons:- 
-<P><TT>Not bound</TT> 
+<P><TT>&lt;not bound&gt;</TT> 
 <BR><UL>The Button is not bound. </UL>
 <P><TT>Drag region</TT> 
 <BR><UL>
 <A HREF="m2cmd121.html">set-mark(2)</A> is called at the pick location, until the button is dropped, the area of text between this point and the current mouse position is hi-lighted. When the mouse button is dropped, if the drop position is the same as the pick then the double click is tested for, if a double click is entered then the <B>Select Word</B> function is executed, otherwise the cursor is simply moved to the drop position. If the pick and drop position are different then the enclosed text is copied to the kill buffer using 
 <A HREF="m2cmd022.html">copy-region(2)</A>. Note this behaviour is altered by the setting of <B>MS Shift Region</B> on the <B>Start-Up</B> page. </UL>
+<P><TT>Copy Rectangle</TT> 
+<BR><UL>One corner of a rectangle is defined on the pick and the diagonally opposite corner is defined when the button is dropped, the text enclosed within the rectangle is copied to the kill buffer using 
+<A HREF="m3mac072.html">copy-rectangle(3)</A>. </UL>
+<P><TT>Kill Rectangle</TT> 
+<BR><UL>The same as <TT>Copy Rectangle</TT> except the text is killed using 
+<A HREF="m2cmd159.html">kill-rectangle(2)</A>. </UL>
 <P><TT>Select Word</TT> 
 <BR><UL>Also executed from a double click bound to <B>Drag Region</B>, <B>Select Word</B> copies the word under the mouse into the kill buffer using 
 <A HREF="m2cmd022.html">copy-region(2)</A>, unless a double click is entered in which case the whole line is copied. </UL>
@@ -358,6 +381,8 @@ user-setup(3)</H1>
 <BR><UL>While the mouse button is pressed the current buffer pans with any mouse movement. </UL>
 <P><TT>MS Pan</TT> 
 <BR><UL>MicroSoft style Pan; while the mouse button is pressed the current buffer pans vertically according to the mouse position relative to the point where the button was pressed. </UL>
+<P><TT>Find Buffer</TT> 
+<BR><UL>Opens a buffer selection dialog, the buffer selected is displayed in the window. </UL>
 <P><TT>Find Tag</TT> 
 <BR><UL>Executes 
 <A HREF="m2cmd057.html">find-tag(2)</A> with the word currently under the mouse. </UL>
@@ -367,32 +392,37 @@ user-setup(3)</H1>
 <P><TT>Undo</TT> 
 <BR><UL>Simply executes 
 <A HREF="m2cmd136.html">undo(2)</A> without moving the cursor to the position of the mouse. Subsequent calls to this binding will undo multiple edits. </UL>
-<P><TT>No move yank</TT> 
+<P><TT>No Move Yank</TT> 
 <BR><UL>Simply executes 
 <A HREF="m2cmd146.html">yank(2)</A> without moving the cursor to the position of the mouse. </UL>
-<P><TT>Replace yank</TT> 
+<P><TT>Replace Yank</TT> 
 <BR><UL>Simplar to &quot;<TT>No move yank</TT>&quot; except when the is a current region (typically defined by &quot;<TT>Drag region</TT>&quot; above), in which case the region is first deleted. </UL>
-<P><TT>Move to yank</TT> 
+<P><TT>Move to Yank</TT> 
 <BR><UL>Moves the cursor to the current position of the mouse and executes 
 <A HREF="m2cmd146.html">yank(2)</A>. </UL>
 <P><TT>Reyank</TT> 
 <BR><UL>Executes 
 <A HREF="m2cmd111.html">reyank(2)</A> without moving the cursor. Note, to enable this functionality some sanity checks have had to be removed, as a result it should not be misused as seeming bizarre things can occur. </UL>
-<P><TT>Fold current</TT> 
-<BR><UL>Toggles the fold status of the current block, only applicable in buffers supporting 
+<P><TT>Rectangle Yank</TT> 
+<BR><UL>Moves the cursor to the current position of the mouse and executes 
+<A HREF="m2cmd159.html">yank-rectangle(2)</A>. </UL>
+<P><TT>Collapse Current</TT> 
+<BR><UL>Toggles the collapse status of the current block, only applicable in buffers supporting 
 <A HREF="m3mac029.html">collapse-current(3)</A>, such as c and emf files. </UL>
-<P><TT>Fold all</TT> 
-<BR><UL>Toggles the fold status of the whole buffer, opening or closing all found blocks. Only applicable in buffers supporting 
+<P><TT>Collapse All</TT> 
+<BR><UL>Toggles the collapse status of the whole buffer, opening or closing all found blocks. Only applicable in buffers supporting 
 <A HREF="m3mac029.html">collapse-all(3)</A>, such as c and emf files. </UL>
-<P><TT>Main menu</TT> 
+<P><TT>Main Menu</TT> 
 <BR><UL>Simply opens the main menu from any where on the screen. </UL>
-<P><TT>Multi-Menu</TT> 
+<P><TT>Context Menu</TT> 
 <BR><UL>Opens a context sensitive menu dependent on the position of the mouse, i.e. opens the main menu if over it, opens a different menu when executed on the mode-line etc. 
 </UL><P>The following is a list of functions available for pilot wheel events:- 
 <P><TT>Not bound</TT> 
 <BR><UL>The Button is not bound. </UL>
 <P><TT>Scroll Up 1 Line</TT> .... 
 <BR><UL>Scrolls the current buffer by the specified amount. </UL></UL>
+<P><TT>Handle Scroll Bars</TT> 
+<BR><UL>When enabled, if the button is pressed with the mouse on the main menu, a scroll bar or mode-line the standard action is performed, such as opening the main menu or scrolling up or down the window etc. The <B>bound To</B> command is only called if the mouse is in a main window. If disabled, the <B>Bound To</B> command is always called. </UL>
 <P><TT>Defaults</TT> 
 <BR><UL>Rests the mouse configuration to the default settings. </UL></UL>
 <H2>File Types </H2>
@@ -416,7 +446,7 @@ user-setup(3)</H1>
 <P>The lower half of the dialog configures the currently selected tool, as follows:- 
 <P><TT>Tool Name</TT> 
 <BR><UL>Sets the displayed name of the tool. The tool name is used in the buttons in the top half of this dialog and in the MicroEmacs Main Tools Menu. </UL>
-<P><TT>Tool Command Line</TT> 
+<P><TT>Command Line</TT> 
 <BR><UL>Sets the system command-line to be launched whenever the tool is executed, the following special tokens may be used in the command-line which are substituted at execution:- 
 <P><B>%ff</B> 
 <BR><UL>The current buffer's full file name, including the path. </UL>
@@ -429,10 +459,9 @@ user-setup(3)</H1>
 <P><B>%fe</B> 
 <BR><UL>The current buffer's file extension with the '<I>.</I>' (e.g. &quot;<I>.emf</I>&quot;), set to the empty string if the file name does not have an extension. </UL></UL>
 <UL><P>Note that &quot;<B>%ff</B>&quot; is always the same as &quot;<B>%fp%fn</B>&quot; and &quot;<B>%fp%fb%fe</B>&quot;. If any of these tokens are used, the tool will fail to execute if the current buffer does not have a file name. </UL>
-<P><TT>Save Current Buffer</TT> and <TT>Prompt</TT> 
-<BR><UL>If the current buffer has been edited, enabling <TT>Save Current Buffer</TT> will automatically save the current buffer before executing the tool. This is particularly useful when the tool operates on the current buffer's file (e.g. compiles the file). If <TT>Prompt</TT> is also enabled the user will be prompted before the file is saved. </UL>
-<P><TT>Save All Buffers</TT> and <TT>Prompt</TT> 
-<BR><UL>If <TT>Save All Buffers</TT> is enabled, all edited buffers will be automatically saved before executing the tool. This is particularly useful when the tool may operate on multiple files (e.g. compilation of a project). If <TT>Prompt</TT> is also enabled the user will be prompted before each file is saved. </UL>
+<P><TT>Run Concurrently</TT> 
+<BR><UL>If enabled, when the tool is executed the command is launched and run concurrently, allowing the user to continue working in MicroEmacs during the tools execution. This option is not available for all versions on MicroEmacs and forces the output to be captured. Enabling this option will force the use of command 
+<A HREF="m2cmd077.html">ipipe-shell-command(2)</A> to launch the tool. </UL>
 <P><TT>Capture Output</TT> 
 <BR><UL>If enabled any output produced from the execution of the tool will be captured and inserted into a new buffer. When enabled the following two items, <TT>Buffer</TT> and <TT>Hide</TT>, may be specified. When disabled the command used to execute the tool is 
 <A HREF="m2cmd131.html">shell-command(2)</A>, otherwise the command used is either 
@@ -448,11 +477,12 @@ user-setup(3)</H1>
 <BR><UL>The current buffer's file extension with the '<I>.</I>' (e.g. &quot;<I>.emf</I>&quot;), set to the empty string if the current buffer does not have a file name or it does not have an extension. </UL>Note that &quot;<B>%fn</B>&quot; is always the same as &quot;<B>%fb%fe</B>&quot;. Default buffer name when this field is left empty is &quot;<I>*command*</I>&quot;, or &quot;<I>*icommand*</I>&quot; if <TT>Run Concurrently</TT> is enabled. </UL>
 <P><TT>Hide</TT> 
 <BR><UL>When enabled the tool output capture buffer is hidden, this option is only visible when <TT>Capture Output</TT> is enabled. </UL>
-<P><TT>Run Concurrently</TT> 
-<BR><UL>If enabled, when the tool is executed the command is launched and run concurrently, allowing the user to continue working in MicroEmacs during the tools execution. This option is not available for all versions on MicroEmacs and forces the output to be captured. Enabling this option will force the use of command 
-<A HREF="m2cmd077.html">ipipe-shell-command(2)</A> to launch the tool. </UL></UL>
+<P>Current Buffer - <TT>Save</TT> and <TT>Prompt Before Saving</TT> 
+<BR><UL>If the current buffer has been edited, enabling <TT>Save Current Buffer</TT> will automatically save the current buffer before executing the tool. This is particularly useful when the tool operates on the current buffer's file (e.g. compiles the file). If <TT>Prompt</TT> is also enabled the user will be prompted before the file is saved. </UL>
+<P>All Buffers - <TT>Save</TT> and <TT>Prompt Before Saving</TT> 
+<BR><UL>If <TT>Save All Buffers</TT> is enabled, all edited buffers will be automatically saved before executing the tool. This is particularly useful when the tool may operate on multiple files (e.g. compilation of a project). If <TT>Prompt</TT> is also enabled the user will be prompted before each file is saved. </UL></UL>
 <H2>E-Mail </H2>
-<UL><P>MicroEmacs '04 provides a simple E-Mail manager, see 
+<UL><P>MicroEmacs '05 provides a simple E-Mail manager, see 
 <A HREF="m3mac028.html">vm(3)</A> for more information and example entries. It must be stressed that <B>vm</B> has only been tested in one environment, caution should be used as system differences may cause problems, such as loss of data, which the author does not except any responsibility for. 
 <P>The <B>E-Mail Setup</B> dialog configures a user to use part or all of the <B>vm</B> E-Mail manager, as follows:- </UL>
 <H2>Platform ALL Mail Setup </H2>
@@ -501,7 +531,7 @@ user-setup(3)</H1>
 <A HREF="m5var088.html">$user-name(5)</A>, 
 <A HREF="m5var089.html">$user-path(5)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2004/02/03</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/02/10</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

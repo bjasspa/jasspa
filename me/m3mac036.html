@@ -1,9 +1,9 @@
 <HTML>
-<HEAD><TITLE>regex-forward(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<HEAD><TITLE>copy-registry(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
-regex-forward(3)</H1>
+copy-registry(3)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
 <A HREF="amicr031.html">[Commands]</A>
@@ -13,39 +13,27 @@ regex-forward(3)</H1>
 </FONT>
 <HR>
 <H2><B>NAME </B></H2>
-<UL><P>regex-forward - Search for a magic string in the forward direction 
-<BR>regex-backward - Search for a magic string in the backward direction </UL>
+<UL><P>copy-registry - Recursive copy of registry subtree </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><I>n</I> <B>regex-forward</B> &quot;<I>string</I>&quot; 
-<BR><I>n</I> <B>regex-backward</B> &quot;<I>string</I>&quot; </UL>
+<UL><P><B>copy-registry</B> &quot;<I>from</I>&quot; &quot;<I>to</I>&quot; </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P><B>regex-forward</B> searches for a regular expression string from the current cursor position to the end of the file. A case insensitive regular expression search is performed regardless of the 
-<A HREF="m2mod009.html">magic(2m)</A> and 
-<A HREF="m2mod004.html">exact(2m)</A> mode settings. 
-<P>The numeric argument <I>n</I> is interpreted as follows:- 
-<P><B>n &gt; 0</B> 
-<BR><UL>The <I>n</I>th occurrence of the <I>string</I> is located. </UL>
-<P><B>n &lt; 0</B> 
-<BR><UL>The first occurrence of the <I>string</I> is located in the next <I>n</I> lines. 
-</UL><P><B>regex-backward</B> searches backwards in the file. In all other ways it is like <B>regex-forward</B>. </UL>
-<H2><B>DIAGNOSTICS </B></H2>
-<UL><P>The command returns a status of <TT>FALSE</TT> if the <I>string</I> could not be located (or <I>n</I>th <I>string</I> where <I>n</I> occurrences are requested). If the <I>string</I> is found within the given search criteria the return status is <TT>TRUE</TT>. </UL>
+<UL><P><B>copy-registry</B> is a macro language construct only that performs a recursive copy of a registry subtree, copying all child nodes of <I>from</I> and recreating the subtree at <I>to</I>, where <I>from</I> and <I>to</I> defines the paths to the registry tree. </UL>
 <H2><B>NOTES </B></H2>
-<UL><P>The <B>regex-forward</B> and <B>regex-backward</B> commands are not publically available from the command line, but may be used within macros to perform regular expression searches regardless of the user mode settings. 
-<P>These commands are implemented as macros in <TT>utils.emf</TT>. </UL>
+<UL><P>The <B>copy-registry</B> command is not publically available from the command line, but may be used within macros to perform the copy. 
+<P>This command is implemented as a recursive macro in <TT>utils.emf</TT>. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
-<A HREF="m2cmd006.html">buffer-mode(2)</A>, 
-<A HREF="m2mod004.html">exact(2m)</A>, 
-<A HREF="m2cmd078.html">isearch-forward(2)</A>, 
-<A HREF="m2mod009.html">magic(2m)</A>, 
-<A HREF="m2cmd109.html">replace-string(2)</A>, 
-<A HREF="m2cmd116.html">search-backward(2)</A>, 
-<A HREF="m2cmd116.html">search-forward(2)</A>. 
-<BR>
-<A HREF="m2nar006.html">Regular Expressions</A> </UL>
+<A HREF="m2cmd114.html">delete-registry(2)</A>, 
+<A HREF="m2cmd072.html">find-registry(2)</A>, 
+<A HREF="m2cmd025.html">list-registry(2)</A>, 
+<A HREF="m2cmd154.html">mark-registry(2)</A>, 
+<A HREF="m2cmd157.html">read-registry(2)</A>, 
+<A HREF="m2cmd144.html">save-history(2)</A>, 
+<A HREF="m2cmd042.html">set-registry(2)</A>, 
+<A HREF="m4fil028.html">&amp;reg(4)</A>, 
+<A HREF="m8fil004.html">erf(8)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/10/16</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/01/23</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

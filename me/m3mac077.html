@@ -1,0 +1,50 @@
+<HTML>
+<HEAD><TITLE>watch(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
+watch(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>watch - Watch a file </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>watch</B> 
+<BR><I>n</I> <B>watch-reset</B> 
+<BR><B>watch-time</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>watch</B> monitors a file on the file system by periodically polling the file and reacquiring the contents into a buffer. The command is typically used to monitor build and logging files as their output changes under control of a background process. Any number of files may be watched simultaneously, however to minimize the number of file system transfers, only those buffers that are being viewed in a window are updated. 
+<P><B>watch</B> operates in three different modes:- 
+<P><B>Mode 1 (Reload)</B> 
+<BR><UL>On a re-fresh the existing buffer is emptied and the file contents are re-read in their entirety from the file system if the file has changed. This is the default mode of operation. </UL>
+<P><B>Mode 2 (Reload, Append)</B> 
+<BR><UL>On enabling the watch then the complete file is re-read, changes are subsequently read as deltas from the end of the file. This mode ensures that the buffer contents are up to date before incrementally reading the file. </UL>
+<P><B>Mode 3 (Append)</B> 
+<BR><UL>On enabling the watch then only the end of the file that has not been read before is appended to the end of the buffer. This method is ideal for large log files. </UL>
+<P>The operational mode may be selected by passing a numeric value of <TT>1</TT>, <TT>2</TT> or <TT>3</TT> to the <B>watch</B> command. If no numeric argument is provided then the user is prompted for the operational mode. 
+<P>Whilst running in an append mode (<TT>2</TT> or <TT>3</TT>) then byte offset of the end of the file is retained for the next read. On the next read then any new information from the last saved byte offset to the end of the file is read, irrespective of any edits made to the buffer. Therefore if the buffer contents have been deleted on the next <I>append</I> read then the buffer will contain the appended information only and not reacquire the information that has been deleted. Where the complete buffer is to be re-acquired then use <B>Mode 1</B>. 
+<P>The buffer mode line is modified to show the watch state. i.e. <UL>
+<PRE>==W&nbsp;&lt;buffer-name&gt;&nbsp;============== 
+</PRE></UL>
+<P>Invocation of <B>watch</B> in a buffer that is being watched disables the watch. All watches may be removed from all buffers using <TT>0 watch-reset</TT>. 
+<P><B>watch-time</B> modifies the poll time of a watch. The user is prompted for the time period which is entered in seconds. 
+<P><B>watch-reset</B> re-evaluates the watches that are on the buffers reporting the number of files that are bing watched. When invoked with a <TT>0</TT> argument then any outstanding watch commands are removed. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P><B>watch</B> is a macro implemented in <TT>watch.emf</TT>. 
+<P>The commands <B>watch-reset</B> and <B>watch-time</B> are not available until a <B>watch</B> command has been executed. </UL>
+<H2><B>HISTORY </B></H2>
+<UL><P><B>watch</B> was developed in 2000 and appeared in MicroEmacs releases after this date however the comand was not exported to the user. The <B>watch</B> command was fully integrated in the 2005 release. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m3osd004.html">line-scheme-search(3)</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/02/18</I>
+<BR><I>Generated On: 2005/05/14</I>
+</BODY></HMTL>
