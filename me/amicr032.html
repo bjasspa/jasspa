@@ -1,8 +1,8 @@
 <HTML>
-<HEAD><TITLE>MicroEmacs '04 - Split Command Glossary</TITLE></HEAD>
+<HEAD><TITLE>MicroEmacs - Split Command Glossary</TITLE></HEAD>
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
-MicroEmacs '04 - Split Command Glossary</H1>
+MicroEmacs - Split Command Glossary</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
 <A HREF="amicr031.html">[Commands]</A>
@@ -12,7 +12,7 @@ MicroEmacs '04 - Split Command Glossary</H1>
 </FONT>
 <HR>
 <H2><B>SPLIT COMMAND GLOSSARY </B></H2>
-<UL><P>The following is a list of all of the built in commands provided by <B>MicroEmacs '04</B> [See 
+<UL><P>The following is a list of all of the built in commands provided by <B>MicroEmacs</B> [See 
 <A HREF="amicr031.html">mixed listing</A>]: 
 <P>
 <A HREF="m2cmd000.html">abort-command(2)</A> (<B>C-g</B>)&nbsp;Abort command 
@@ -64,8 +64,6 @@ MicroEmacs '04 - Split Command Glossary</H1>
 <A HREF="m2cmd015.html">capitalize-word(2)</A> (<B>esc c</B>)&nbsp;Capitalize word 
 <BR>
 <A HREF="m2cmd088.html">change-buffer-name(2)</A> (<B>esc C-n</B>)&nbsp;Change name of current buffer 
-<BR>
-<A HREF="m2cmd016.html">change-directory(2)</A> [<B>C-x&nbsp;C-d</B>] Change the current working directory 
 <BR>
 <A HREF="m2cmd017.html">change-file-name(2)</A> (<B>C-x&nbsp;n</B>)&nbsp;Change the file name of the current buffer 
 <BR>
@@ -179,8 +177,6 @@ MicroEmacs '04 - Split Command Glossary</H1>
 <BR>
 <A HREF="m2cmd058.html">get-next-line(2)</A> (<B>C-x&nbsp;`</B>)&nbsp;Find the next command line 
 <BR>
-<A HREF="m2cmd042.html">get-registry(2)</A> Retrieve a node value from the registry 
-<BR>
 <A HREF="m2cmd117.html">global-abbrev-file(2)</A> Set global abbreviation file 
 <BR>
 <A HREF="m2cmd013.html">global-bind-key(2)</A> (<B>esc k</B>)&nbsp;Bind a key to a named command or macro 
@@ -268,8 +264,6 @@ MicroEmacs '04 - Split Command Glossary</H1>
 <A HREF="m2cmd154.html">mark-registry(2)</A> Modify the operating mode of a registry node 
 <BR>
 <A HREF="m2cmd085.html">ml-bind-key(2)</A> Create key binding for message line 
-<BR>
-<A HREF="m2cmd019.html">ml-clear(2)</A> Clear the message line 
 <BR>
 <A HREF="m2cmd085.html">ml-unbind-key(2)</A> Remove key binding from message line 
 <BR>
@@ -371,6 +365,8 @@ MicroEmacs '04 - Split Command Glossary</H1>
 <BR>
 <A HREF="m2cmd116.html">search-backward(2)</A> (<B>C-x&nbsp;r</B>)&nbsp;Search for a string in the backward direction 
 <BR>
+<A HREF="m2cmd019.html">search-buffer(2)</A> Search the current buffer for a string 
+<BR>
 <A HREF="m2cmd116.html">search-forward(2)</A> (<B>C-x&nbsp;s</B>)&nbsp;Search for a string in the forward direction 
 <BR>
 <A HREF="m2cmd118.html">set-alpha-mark(2)</A> (<B>C-x&nbsp;C-a</B>)&nbsp;Place an alphabetic marker in the buffer 
@@ -446,7 +442,7 @@ MicroEmacs '04 - Split Command Glossary</H1>
 <A HREF="m2cmd146.html">yank(2)</A> (<B>C-y</B>)&nbsp;Paste (copy) kill buffer contents into buffer 
 <BR>
 <A HREF="m2cmd159.html">yank-rectangle(2)</A> (<B>esc C-y</B>)&nbsp;Insert a column of text 
-<P>The following is a list of documented macro commands provided by <B>MicroEmacs '04</B>: 
+<P>The following is a list of documented macro commands provided by <B>MicroEmacs</B>: 
 <P>
 <A HREF="m3mac067.html">abbrev-list(3)</A> Create a list of abbreviations 
 <BR>
@@ -466,7 +462,11 @@ MicroEmacs '04 - Split Command Glossary</H1>
 <BR>
 <A HREF="m3mac039.html">auto-spell-ignore(3)</A> Auto-spell ignore current word 
 <BR>
+<A HREF="m3mac039.html">auto-spell-menu(3)</A> Auto-spell context menu 
+<BR>
 <A HREF="m3mac039.html">auto-spell-reset(3)</A> Auto-spell hilight reset 
+<BR>
+<A HREF="m3mac079.html">browse(3)</A> Browse a file or buffer in view mode 
 <BR>
 <A HREF="m3osd011.html">buffer-help(3)</A> Displays help page for current buffer 
 <BR>
@@ -514,6 +514,8 @@ MicroEmacs '04 - Split Command Glossary</H1>
 <BR>
 <A HREF="m3mac072.html">copy-rectangle(3)</A> Copy a rectangular region of text 
 <BR>
+<A HREF="m3mac036.html">copy-registry(3)</A> Recursive copy of registry subtree 
+<BR>
 <A HREF="m3mac057.html">cvs(3)</A> MicroEmacs CVS interface 
 <BR>
 <A HREF="m3mac057.html">cvs-add(3)</A> MicroEmacs CVS interface - add file 
@@ -531,6 +533,8 @@ MicroEmacs '04 - Split Command Glossary</H1>
 <A HREF="m3mac057.html">cvs-remove(3)</A> MicroEmacs CVS interface - remove file 
 <BR>
 <A HREF="m3mac057.html">cvs-resolve-conflicts(3)</A> MicroEmacs CVS interface - resolve conflicts 
+<BR>
+<A HREF="m3mac057.html">cvs-setup(3)</A> MicroEmacs CVS interface setup 
 <BR>
 <A HREF="m3mac057.html">cvs-state(3)</A> MicroEmacs CVS interface - list state of directory files 
 <BR>
@@ -616,6 +620,8 @@ MicroEmacs '04 - Split Command Glossary</H1>
 <BR>
 <A HREF="m3mac026.html">ifill-paragraph(3)</A> (<B>esc q</B>)&nbsp;Format a paragraph 
 <BR>
+<A HREF="m3osd014.html">indent-setup(3)</A> Locally modify buffer indentation 
+<BR>
 <A HREF="m3mac043.html">info(3)</A> Display a GNU Info database 
 <BR>
 <A HREF="m3mac043.html">info-goto-link(3)</A> Display Info on a given link 
@@ -628,13 +634,13 @@ MicroEmacs '04 - Split Command Glossary</H1>
 <BR>
 <A HREF="m3osd004.html">line-scheme-search(3)</A> Search and annotate the current buffer 
 <BR>
-<A HREF="m3mac012.html">Mahjongg(3)</A> MicroEmacs '04 version of the solitaire Mah Jongg game 
+<A HREF="m3mac012.html">Mahjongg(3)</A> MicroEmacs '05 version of the solitaire Mah Jongg game 
 <BR>
 <A HREF="m3osd006.html">MainMenu(3)</A> The top main menu 
 <BR>
-<A HREF="m3mac013.html">Match-It(3)</A> MicroEmacs '04 version of the Match-It game 
+<A HREF="m3mac013.html">Match-It(3)</A> MicroEmacs '05 version of the Match-It game 
 <BR>
-<A HREF="m3mac014.html">Metris(3)</A> MicroEmacs '04 version of the falling blocks game 
+<A HREF="m3mac014.html">Metris(3)</A> MicroEmacs '05 version of the falling blocks game 
 <BR>
 <A HREF="m3mac028.html">mail(3)</A> Compose and send an email 
 <BR>
@@ -650,6 +656,14 @@ MicroEmacs '04 - Split Command Glossary</H1>
 <BR>
 <A HREF="m3mac054.html">normal-tab(3)</A> Insert a normal tab 
 <BR>
+<A HREF="m3mac078.html">notes(3)</A> Tagged hierarchical database of notes 
+<BR>
+<A HREF="m3mac078.html">notes-close(3)</A> Close the notes window 
+<BR>
+<A HREF="m3mac078.html">notes-file(3)</A> Open a notes database file 
+<BR>
+<A HREF="m3mac078.html">notes-import-skwyrul(3)</A> Import a Skwyrul index file (skwyrul_l.htm) 
+<BR>
 <A HREF="m3mac071.html">open-line(3)</A> (<B>C-o</B>)&nbsp;Open new line at cursor position 
 <BR>
 <A HREF="m3osd001.html">organizer(3)</A> Calendar and address organizer 
@@ -662,7 +676,7 @@ MicroEmacs '04 - Split Command Glossary</H1>
 <BR>
 <A HREF="m3mac037.html">osd-xdialog(3)</A> OSD Extended dialog box 
 <BR>
-<A HREF="m3mac015.html">Patience(3)</A> MicroEmacs '04 version of Patience (or Solitaire) 
+<A HREF="m3mac015.html">Patience(3)</A> MicroEmacs '05 version of Patience (or Solitaire) 
 <BR>
 <A HREF="m3mac065.html">page-bfile(3)</A> Load a large binary file as binary data 
 <BR>
@@ -699,10 +713,6 @@ MicroEmacs '04 - Split Command Glossary</H1>
 <A HREF="m3osd012.html">print-setup(3)</A> Configure MicroEmacs's printer interface 
 <BR>
 <A HREF="m3mac007.html">query-replace-all-string(3)</A> Query replace string in a list of files 
-<BR>
-<A HREF="m3mac036.html">regex-backward(3)</A> Search for a magic string in the backward direction 
-<BR>
-<A HREF="m3mac036.html">regex-forward(3)</A> Search for a magic string in the forward direction 
 <BR>
 <A HREF="m3mac020.html">replace-all-pairs(3)</A> Replace string pairs in a list of files 
 <BR>
@@ -742,7 +752,7 @@ MicroEmacs '04 - Split Command Glossary</H1>
 <BR>
 <A HREF="m3osd003.html">symbol(3)</A> Insert an ASCII character 
 <BR>
-<A HREF="m3mac016.html">Triangle(3)</A> MicroEmacs '04 version of Triangle patience game 
+<A HREF="m3mac016.html">Triangle(3)</A> MicroEmacs '05 version of Triangle patience game 
 <BR>
 <A HREF="m3mac008.html">tabs-to-spaces(3)</A> Converts all tabs to spaces 
 <BR>
@@ -764,13 +774,21 @@ MicroEmacs '04 - Split Command Glossary</H1>
 <BR>
 <A HREF="m3mac028.html">vm(3)</A> Email viewer 
 <BR>
+<A HREF="m3mac077.html">watch(3)</A> Monitor a changing file 
+<BR>
+<A HREF="m3mac077.html">watch-reset(3)</A> Reset the watch command counters 
+<BR>
+<A HREF="m3mac077.html">watch-time(3)</A> Change the watch command poll time 
+<BR>
 <A HREF="m3mac038.html">which(3)</A> Program finder 
+<BR>
+<A HREF="m3mac076.html">write-region(3)</A> Write contents of region to named (new) file 
 <BR>
 <A HREF="m3mac072.html">yank-rectangle-overwrite(3)</A> Insert a column of text with overwrite 
 <BR>
 <A HREF="m3mac040.html">zfile-setup(3)</A> Compressed file support setup </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2004/03/26</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/05/14</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>set-char-mask(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 set-char-mask(2)</H1>
@@ -36,7 +36,7 @@ set-char-mask(2)</H1>
 <A HREF="m2cmd101.html">print-buffer(2)</A> or 
 <A HREF="m2cmd101.html">print-region(2)</A>. Any character not in this set is printed in a similar fashion to <B>d</B>. </UL>
 <P><B>M</B> 
-<BR><UL>Character font Map. Internally MicroEmacs uses ISO-8859-1 (Latin 1) to configure alphabetic classes and the spell-checker, however the system font being by the native platform may not be the same, for example a small 'e' acute is character 0xe9 in ISO-8859-1 but character 0x82 in Windows OEM fonts. To change the characteristics of the 'e' acute character (such as making it an alphabetic character), the ISO-8859-1 character should always be used, but a correct mapping of ISO-8859-1 to the display font (such as Windows OEM) must also be supplied. </UL>
+<BR><UL>Character font Map. Internally MicroEmacs uses ISO-8859-1 (Latin 1) to configure alphabetic classes and the spell-checker, however the system font being used by the native platform may not be the same, for example a small 'e' acute is character 0xe9 in ISO-8859-1 but character 0x82 in Windows OEM fonts. To change the characteristics of the 'e' acute character (such as making it an alphabetic character), the ISO-8859-1 character should always be used, but a correct mapping of ISO-8859-1 to the display font (such as Windows OEM) must also be supplied. </UL>
 <UL><P>Unlike other sets, this set cannot be incrementally altered, any calls to alter this set leads to the resetting of all the character tables so the character mapping must be performed first and in a single call. No other set may be altered in the same call. When setting, the &quot;<I>value</I>&quot; must supply pairs of characters, an ISO-8859-1 character followed by its system font equivalent. </UL>
 <P><B>L</B> 
 <BR><UL>ISO-8859-1 (Latin 1) character map list. This set cannot be altered using this flag, character mappings must be set up using flag <B>M</B>. The order of the characters in the returned <B>$result</B> string is the same as the order for flag <B>U</B>. </UL>
@@ -61,7 +61,10 @@ set-char-mask(2)</H1>
 <P><B>1</B>, <B>2</B>, <B>3</B> &amp; <B>4</B> 
 <BR><UL>Is in Word. These user definable sets are used to add characters to a buffer's word character set, affecting the operation of commands like 
 <A HREF="m2cmd096.html">forward-word(2)</A>. Many different file types operate better with a different word character set, e.g. it is preferable to include the '<TT>_</TT>' character when editing C files. See variable 
-<A HREF="m5var007.html">$buffer-mask(5)</A>. 
+<A HREF="m5var007.html">$buffer-mask(5)</A>. </UL>
+<P><B>k</B> 
+<BR><UL>Keyboard character map. This flag is used to configure a mapping from a foreign non-latin keyboard (such as Russian) to Latin characters, setting the mapping correctly can greatly improve usability in MicroEmacs as changing keyboards is required less frequently. The mapping is used by character input routines which first check the main key typed (e.g. the Cyrillic character) and if not bound or invalid MicroEmacs uses this keyboard mapping to translate the character into a Latin character. This allows the user to execute binding such as &quot;<TT>C-x k</TT>&quot; or responding to &quot;<TT>[y/n]</TT>&quot; prompts without having to change keyboards. </UL>
+<UL><P>As with flag <B>M</B>, this cannot be incrementally altered, any call to set this mapping first resets the mapping table so the mapping must be performed in a single call. No other set may be altered in the same call. When setting, the &quot;<I>value</I>&quot; must supply pairs of characters, the ISO-8859 non-latin character followed by its latin character mapping. 
 </UL><P>Unless stated otherwise, multiple flags may be specified at the same time returning a combined character set or setting multiple properties for the given &quot;<I>value</I>&quot; characters. </UL>
 <H2><B>EXAMPLE </B></H2>
 <UL><P>For many UNIX XTerm fonts the best characters to use for 
@@ -114,9 +117,9 @@ set-char-mask&nbsp;&quot;M&quot;&nbsp;&quot;\xC0A\xC1AAA\xE0\x85\xE1\xA0&quot;
 <A HREF="m5var007.html">$buffer-mask(5)</A>, 
 <A HREF="m2cmd099.html">screen-poke(2)</A>, 
 <A HREF="m2cmd125.html">spell(2)</A>, 
-<A HREF="m5var043.html">$tabwidth(5)</A>. </UL>
+<A HREF="m5var043.html">$buffer-tab-width(5)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/01/15</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

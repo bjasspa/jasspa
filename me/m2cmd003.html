@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>add-file-hook(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 add-file-hook(2)</H1>
@@ -87,7 +87,7 @@ define-macro&nbsp;ehook-doc
 <UL><P><TT>-*-</TT> <I>mode</I> <TT>-*</TT> 
 <BR><TT>-*-</TT> <B>Mode:</B> <I>mode</I>; ... <TT>-*-</TT> 
 <BR><TT>-!-</TT> <I>mode</I> <TT>-!-</TT> </UL>
-<P>The <TT>-*-</TT> notation belongs to GNU Emacs, but MicroEmacs '04 recognizes the construct and extracts the string correctly. The <TT>-!-</TT> notation is MicroEmacs '04 specific and is provided so as not to cause conflict with GNU Emacs. MicroEmacs '04 searches for either construct on the first non-blank line of the file. 
+<P>The <TT>-*-</TT> notation belongs to GNU Emacs, but MicroEmacs '05 recognizes the construct and extracts the string correctly. The <TT>-!-</TT> notation is MicroEmacs '05 specific and is provided so as not to cause conflict with GNU Emacs. MicroEmacs '05 searches for either construct on the first non-blank line of the file. 
 <P>The explicit strings are defined with a negative numerical argument <I>n</I>, which identifies them as <B>explicit</B> rather than <B>magic</B> text strings. The <I>string</I> should be defined in lower case and matches a case insensitive string take from the file. e.g. to define a file hook for a make file: <UL>
 <PRE>#_____________________________-!-Makefile-!-________________________________ 
 # 
@@ -103,7 +103,7 @@ define-macro&nbsp;ehook-doc
 <UL><P>-1 <B>add-file-hook</B> &quot;-!-[ \t]*makefile.*-!-&quot; fhook-make </UL></UL>
 <H2><B>NOTES </B></H2>
 <H2>Automatic Macro File Loading </H2>
-<UL><P><B>add-file-hook</B> performs an automatic load of a macro file if the <B>fhook</B> macro is not present in memory. The file name of the command file containing the macro is automatically derived from the <I>name</I> component of the <B>fhook</B> macro name. The <B>fhook-</B> part of the name is stripped off and prepended with <B>hk</B> and suffixed with <B>.emf</B>. Hence, macro <B>fhook-doc</B> would be searched for in file <TT>hkdoc.emf</TT> within the MicroEmacs '04 directory. The command file is automatically loaded and executed. 
+<UL><P><B>add-file-hook</B> performs an automatic load of a macro file if the <B>fhook</B> macro is not present in memory. The file name of the command file containing the macro is automatically derived from the <I>name</I> component of the <B>fhook</B> macro name. The <B>fhook-</B> part of the name is stripped off and prepended with <B>hk</B> and suffixed with <B>.emf</B>. Hence, macro <B>fhook-doc</B> would be searched for in file <TT>hkdoc.emf</TT> within the MicroEmacs '05 directory. The command file is automatically loaded and executed. 
 <P>In cases where the fhook macro is not located in an equivalent hook file, the file location of the macro may be explicitly defined for auto loading via a 
 <A HREF="m2cmd147.html">define-macro-file(2)</A> invocation. 
 <P>As an example, consider the C-mode file hook, used to load <TT>.c</TT> files. The loading of a C header file (<TT>.h</TT>) utilizes the same highlighting modes, but it's startup sequence is slightly different when handling new files. In this case the <B>fhook-cmode</B> for <TT>.c</TT> and <B>fhook-hmode</B> for <TT>.h</TT> files are located in the same hook file namely <TT>hkcmode.emf</TT>. <UL>
@@ -113,14 +113,14 @@ add-file-hook&nbsp;&quot;.c&nbsp;.cc&nbsp;.cpp&nbsp;.def&nbsp;.l&nbsp;.y&nbsp;.i
 add-file-hook&nbsp;&quot;.h&nbsp;.hpp&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;fhook-hmode&quot; 
 </PRE></UL>
 <P>In this case the 
-<A HREF="m2cmd147.html">define-macro-file</A> has been used to inform MicroEmacs '04 of the location of the <B>fhook-hmode</B> macro thereby overriding the automatic load of a file called <B>hkhmode.emf</B>. The <B>fhook-cmode</B> macro requires no such definition as it is located in a hook file that matches the mode name, <TT>hkcmode.emf</TT>. </UL>
+<A HREF="m2cmd147.html">define-macro-file</A> has been used to inform MicroEmacs '05 of the location of the <B>fhook-hmode</B> macro thereby overriding the automatic load of a file called <B>hkhmode.emf</B>. The <B>fhook-cmode</B> macro requires no such definition as it is located in a hook file that matches the mode name, <TT>hkcmode.emf</TT>. </UL>
 <H2>Extending a standard hook definition </H2>
 <UL><P>The standard file hook files <B>hk</B><I>XXX</I><B>.emf</B> should not be modified. The standard file hooks may be extended with local definitions by defining a file <B>my</B><I>XXX</I><B>.emf</B>, which is an extension to the hook file <B>hk</B><I>XXX</I><B>.emf</B>. This is automatically executed after <B>hk</B><I>XXX</I><B>.emf</B>. Refer to sections 
 <A HREF="m2nar000.html">Language Templates</A> and 
 <A HREF="m2cmd202.html">File Hooks</A> for details. </UL>
 <H2>File Extensions </H2>
 <UL><P>The file extensions are specified as a space separated list of file name endings. Back-up file endings such as tilde (<TT>~</TT>) are not classed as correct file endings and are skipped by the file hook search, hence a file ending &quot;<TT>.c~</TT>&quot; invokes the same hook function as a &quot;<TT>.c</TT>&quot; file. It is therefore not necessary to add the backup and auto-save endings to the file hook definition. 
-<P>The extension separator, usually dot (<TT>.</TT>), is typically added to the <I>extensions</I> list, they may be omitted with effect where a file always ends in the same set of characters. A notable example is &quot;<TT>makefile</TT>&quot; which includes no extension, as such, MicroEmacs '04 applies the same hook function to a file called <TT>Imakefile</TT> as the endings are the same. </UL>
+<P>The extension separator, usually dot (<TT>.</TT>), is typically added to the <I>extensions</I> list, they may be omitted with effect where a file always ends in the same set of characters. A notable example is &quot;<TT>makefile</TT>&quot; which includes no extension, as such, MicroEmacs '05 applies the same hook function to a file called <TT>Imakefile</TT> as the endings are the same. </UL>
 <H2>Binary Files </H2>
 <UL><P>It is sometimes useful to associate file types as binary files, so that they are immediately loaded in binary. In this case, both file extension and content recognition methods (i.e. of a magic string) are applicable. In both cases the file is bound to the well known hook <TT>fhook-binary</TT> which automatically loads the file in a binary mode. 
 <P>Note, that for the content recognition process for a binary hook, the load time is doubled as the file is initially loaded in the default text mode, the binary hook function forces a second load operation in binary. </UL>
@@ -137,7 +137,7 @@ add-file-hook&nbsp;&quot;.h&nbsp;.hpp&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&
 <LI>When the buffer containing the known file is entered (i.e. gains focus), then entry macro <B>bhook-xxxx</B> is executed. 
 <LI>When the buffer containing the known file is exited (i.e. looses focus), then the exit macro <B>ehook-xxxx</B> is executed. </UL></UL>
 <H2><B>EXAMPLE </B></H2>
-<UL><P>The standard set of supported file types by MicroEmacs '04, at the time of writing, is defined as:- <UL>
+<UL><P>The standard set of supported file types by MicroEmacs '05, at the time of writing, is defined as:- <UL>
 <PRE>;&nbsp;reset&nbsp;the&nbsp;file&nbsp;hook&nbsp;list 
 0&nbsp;add-file-hook 
 ;&nbsp;Add&nbsp;file&nbsp;extension&nbsp;hooks. 
@@ -202,7 +202,7 @@ add-file-hook&nbsp;&quot;.erf&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb
 <A HREF="m5var002.html">$buffer-ehook(5)</A>, 
 <A HREF="m5var002.html">$buffer-fhook(5)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
+<P><I>(c) Copyright JASSPA 2005</I>
 <BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2004/03/26</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>buffer-mode(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 buffer-mode(2)</H1>
@@ -25,7 +25,7 @@ buffer-mode(2)</H1>
 <BR><B>delete-mode</B> &quot;<I>mode</I>&quot; 
 <BR><B>unmark-buffer</B> </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P><B>buffer-mode</B> changes the state of a given buffer mode, affecting only the current buffer. A buffer's mode affects the behavior of MicroEmacs '04. The 
+<UL><P><B>buffer-mode</B> changes the state of a given buffer mode, affecting only the current buffer. A buffer's mode affects the behavior of MicroEmacs '05. The 
 <A HREF="m2cmd148.html">about(2)</A> command gives a list of the current global and buffer modes. Refer to 
 <A HREF="amicr021.html">Operating Modes</A> for a description of the buffer modes. 
 <P>The argument <I>n</I> when given, has the following meaning: <UL>
@@ -36,42 +36,39 @@ buffer-mode(2)</H1>
 &nbsp;&nbsp;-3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;131&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;autosv 
 &nbsp;&nbsp;-4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;132&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;backup 
 &nbsp;&nbsp;-5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;133&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;binary 
-&nbsp;&nbsp;-6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;134&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmode 
-&nbsp;&nbsp;-7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;135&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;crlf 
-&nbsp;&nbsp;-8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;136&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;crypt 
-&nbsp;&nbsp;-9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;137&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ctrlz 
-&nbsp;&nbsp;-10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;138&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;del 
-&nbsp;&nbsp;-11&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;139&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dir 
-&nbsp;&nbsp;-12&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;140&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;edit 
-&nbsp;&nbsp;-13&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;13&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;141&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exact 
-&nbsp;&nbsp;-14&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;14&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;142&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fence 
-&nbsp;&nbsp;-15&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;15&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;143&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hide 
-&nbsp;&nbsp;-16&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;144&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indent 
-&nbsp;&nbsp;-17&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;17&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;145&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;justify 
-&nbsp;&nbsp;-18&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;18&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;146&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;letter 
-&nbsp;&nbsp;-19&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;19&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;147&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line 
-&nbsp;&nbsp;-20&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;148&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lock 
-&nbsp;&nbsp;-21&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;21&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;149&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;magic 
-&nbsp;&nbsp;-22&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;22&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;150&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nact 
-&nbsp;&nbsp;-23&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;23&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;151&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;narrow 
-&nbsp;&nbsp;-24&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;24&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;152&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;over 
-&nbsp;&nbsp;-25&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;25&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;153&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pipe 
-&nbsp;&nbsp;-26&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;26&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;154&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;quiet 
-&nbsp;&nbsp;-27&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;27&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;155&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rbin 
-&nbsp;&nbsp;-28&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;28&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;156&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;save 
-&nbsp;&nbsp;-29&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;29&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;157&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tab 
-&nbsp;&nbsp;-30&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;30&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;158&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;time 
-&nbsp;&nbsp;-31&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;31&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;159&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;undo 
-&nbsp;&nbsp;-32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;160&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;usr1 
-&nbsp;&nbsp;-33&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;33&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;161&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;usr2 
-&nbsp;&nbsp;-34&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;34&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;162&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;usr3 
-&nbsp;&nbsp;-35&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;35&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;163&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;usr4 
-&nbsp;&nbsp;-36&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;36&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;164&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;usr5 
-&nbsp;&nbsp;-37&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;37&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;165&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;usr6 
-&nbsp;&nbsp;-38&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;38&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;166&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;usr7 
-&nbsp;&nbsp;-39&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;39&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;167&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;usr8 
-&nbsp;&nbsp;-40&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;40&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;168&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;view 
-&nbsp;&nbsp;-41&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;41&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;169&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;wrap 
+&nbsp;&nbsp;-6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;134&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;crlf 
+&nbsp;&nbsp;-7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;135&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;crypt 
+&nbsp;&nbsp;-8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;136&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ctrlz 
+&nbsp;&nbsp;-9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;137&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;del 
+&nbsp;&nbsp;-10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;138&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dir 
+&nbsp;&nbsp;-11&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;139&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;edit 
+&nbsp;&nbsp;-12&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;140&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exact 
+&nbsp;&nbsp;-13&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;13&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;141&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fence 
+&nbsp;&nbsp;-14&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;14&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;142&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hide 
+&nbsp;&nbsp;-15&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;15&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;143&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indent 
+&nbsp;&nbsp;-16&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;144&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;justify 
+&nbsp;&nbsp;-17&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;17&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;145&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lock 
+&nbsp;&nbsp;-18&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;18&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;146&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;magic 
+&nbsp;&nbsp;-19&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;19&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;147&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nact 
+&nbsp;&nbsp;-20&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;20&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;148&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;narrow 
+&nbsp;&nbsp;-21&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;21&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;149&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;over 
+&nbsp;&nbsp;-22&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;22&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;150&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pipe 
+&nbsp;&nbsp;-23&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;23&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;151&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;quiet 
+&nbsp;&nbsp;-24&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;24&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;152&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rbin 
+&nbsp;&nbsp;-25&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;25&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;153&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;save 
+&nbsp;&nbsp;-26&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;26&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;154&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tab 
+&nbsp;&nbsp;-27&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;27&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;155&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;time 
+&nbsp;&nbsp;-28&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;28&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;156&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;undo 
+&nbsp;&nbsp;-29&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;29&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;157&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;usr1 
+&nbsp;&nbsp;-30&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;30&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;158&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;usr2 
+&nbsp;&nbsp;-31&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;31&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;159&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;usr3 
+&nbsp;&nbsp;-32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;32&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;160&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;usr4 
+&nbsp;&nbsp;-33&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;33&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;161&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;usr5 
+&nbsp;&nbsp;-34&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;34&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;162&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;usr6 
+&nbsp;&nbsp;-35&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;35&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;163&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;usr7 
+&nbsp;&nbsp;-36&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;36&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;164&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;usr8 
+&nbsp;&nbsp;-37&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;37&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;165&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;view 
+&nbsp;&nbsp;-38&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;38&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;166&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;wrap 
 </PRE></UL>
 <P>Note that when omitted the default argument is 0, i.e. prompt for and toggle a mode. 
 <P><B>named-buffer-mode</B> changes the state of a given buffer mode for a given buffer which may not be the current buffer. 
@@ -94,7 +91,7 @@ buffer-mode(2)</H1>
 <A HREF="m2cmd148.html">about(2)</A>, 
 <A HREF="m4fil005.html">&amp;bmode(4)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2004/01/05</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2004/12/10</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

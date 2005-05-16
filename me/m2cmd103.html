@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>quick-exit(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 quick-exit(2)</H1>
@@ -16,19 +16,56 @@ quick-exit(2)</H1>
 <UL><P>quick-exit - Exit the editor writing changes 
 <BR>save-buffers-exit-emacs - Exit the editor prompt user to write changes </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><B>quick-exit</B> (<B>esc z</B>)&nbsp; 
-<BR><B>save-buffers-exit-emacs</B> (<B>C-x&nbsp;C-c</B>)&nbsp; </UL>
+<UL><P><I>n</I> <B>quick-exit</B> (<B>esc z</B>)&nbsp; [<I>exitCode</I>] 
+<BR><I>n</I> <B>save-buffers-exit-emacs</B> (<B>C-x&nbsp;C-c</B>)&nbsp; [<I>exitCode</I>] </UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P><B>quick-exit</B> writes out all changed buffers to the files they were read from, saves all changed dictionaries, killing any running commands and exits the editor. 
-<P><B>save-buffers-exit-emacs</B> operates a <B>quick-exit</B> only prompts the user before saving any files. </UL>
-<H2><B>NOTES </B></H2>
+<P><B>save-buffers-exit-emacs</B> operates a <B>quick-exit</B> only prompts the user before saving any files. 
+<P>The numeric argument is defined as a bit-mask as follows: 
+<P><TT>0x00</TT> 
+<BR><UL>A zero numeric argument then the editor is closed down and any unsaved buffers are lost. </UL>
+<P><TT>0x01</TT> 
+<BR><UL>Prompting the user before saving any files, writes out all changed buffers to the files they were read from. Saves all changed dictionaries, killing any running commands and exits the editor. This bit is ignored on <B>quick-exit</B>. </UL>
+<P><TT>0x02</TT> 
+<BR><UL>Writes out all changed buffers to the files they were read from, saves all changed dictionaries, killing any running commands and exits the editor. The behavior is modified by flags <TT>8</TT> and <TT>16</TT>. This bit is always applied irrespective of the numeric argument. </UL>
+<P><TT>0x04</TT> 
+<BR><UL>Define the exit code <I>exitCode</I> from MicroEmacs, the default when omitted is 0. </UL>
+<P><TT>0x08</TT> 
+<BR><UL>Discard changed buffers (except the history and registry) and delete any backup files associated with the edited buffer(s). Only valid with <B>quick-exit</B>. </UL>
+<P><TT>0x10</TT> 
+<BR><UL>Discard changed buffers (except the history and registry) and create a auto save file(s) with the changes from unsaved buffers. Only valid with <B>quick-exit</B>. </UL></UL>
+<H2><B>MACRO INTERACTION </B></H2>
+<UL><P>If the macro 
+<A HREF="m3mac024.html">shut-down(3)</A> is defined then it is invoked by the editor when it is closed. A user defined shutdown action may be associated with the close operation. It is the callers responsibility that the macro terminates correctly otherwise the editor will hang. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The exit code (<TT>22</TT> in this example) may be usefully set as follows, which allows the exit code to be specified and any user prompts are maintained. <UL>
+<PRE>7&nbsp;save-buffers-exit-emacs&nbsp;&quot;22&quot;&nbsp;@mna 
+</PRE></UL>
+<P>The behavior of the exit command may be changed, the following example replaces the standard binding with a new exit command. The new command always prompts the user to confirm the exit. Note that <B>save-buffers-exit-emacs</B> is invoked with argument 
+<A HREF="m4fil015.html">@mna(4)</A> which runs the command as if executed from the command line. This allows the command line interaction if any buffers are to be saved. <UL>
+<PRE>define-macro&nbsp;my-exit-emacs 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;iseq&nbsp;@mc1&nbsp;&quot;Exit&nbsp;Emacs&nbsp;-&nbsp;Are&nbsp;you&nbsp;sure&nbsp;[y/n]&nbsp;?&nbsp;&quot;&nbsp;&quot;yYnN&quot;&nbsp;&quot;y&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;save-buffers-exit-emacs&nbsp;@mna 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+!emacro 
+global-bind-key&nbsp;my-exit-emacs&nbsp;&quot;esc&nbsp;z&quot; 
+global-bind-key&nbsp;my-exit-emacs&nbsp;&quot;C-x&nbsp;C-c&quot; 
+</PRE></UL>
+<P>To discard unsaved buffers without prompting then the exit command key binding may be redefined:- <UL>
+<PRE>8&nbsp;global-bind-key&nbsp;quick-exit&nbsp;&quot;esc&nbsp;z&quot; 
+</PRE></UL>
+<P>If the unsaved buffers should be saved as a recovery file(s) then the binding may be defined as:- <UL>
+<PRE>16&nbsp;global-bind-key&nbsp;quick-exit&nbsp;&quot;esc&nbsp;z&quot; 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
 <UL><P>All buffers with a name starting with a '<B>*</B>' are assumed to be system buffer (i.e. <B>*scratch*</B>) and are not saved. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m2cmd049.html">exit-emacs(2)</A>, 
-<A HREF="m2cmd113.html">save-buffer(2)</A>. </UL>
+<A HREF="m2cmd113.html">save-buffer(2)</A>, 
+<A HREF="m3mac024.html">shut-down(3)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/03/20</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

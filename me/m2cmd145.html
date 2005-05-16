@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>ml-write(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 ml-write(2)</H1>
@@ -15,22 +15,55 @@ ml-write(2)</H1>
 <H2><B>NAME </B></H2>
 <UL><P>ml-write - Write message on message line </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><I>n</I> <B>ml-write</B> &quot;<I>message</I>&quot; </UL>
+<UL><P><I>0</I> <B>ml-write</B> 
+<BR><I>n</I> <B>ml-write</B> &quot;<I>message</I>&quot; </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P><B>ml-write</B> writes the given <I>message</I> to the message line. If a positive argument <I>n</I> is given then there will be an <I>n</I> millisecond uninterruptible delay, giving the user time to see the message. 
-<P>A call to <B>ml-write</B> from a callback macro can erase a message line which is currently being used (to enter a buffer name say). A call to 
-<A HREF="m2cmd019.html">ml-clear(2)</A> restores the previous message-line. </UL>
+<UL><P><B>ml-write</B> writes the argument &quot;<I>message</I>&quot; to the message line. If a positive numeric argument <I>n</I> is specified then the message is displayed with a <I>n</I> milliseconds uninterruptible delay allowing the user time to see the message. 
+<P>The arguments to <B>ml-write</B> are defined as follows:- 
+<P><I>No argument</I> 
+<BR><UL>The default form, writes a <I>message</I> to the command line with no delay. </UL>
+<P><I>+ve</I> 
+<BR><UL>Displays the <I>message</I> on the message line and waits <I>n</I> milliseconds before proceeding with the next command. </UL>
+<P><TT>0</TT> 
+<BR><UL>the <I>message</I> argument is not required and the command clears the message line. This may be used to clear any previous message from the last command(s) in a script and is equivalent to the old MicroEmacs command <B>ml-clear</B>. </UL>
+<P><TT>-1</TT> 
+<BR><UL>Writes the <I>message</I> to <I>standard out</I>. A carriage return (<TT>'\n'</TT>) is automatically added to the end of the <I>message</I> to create a line on the given stream. </UL>
+<P><TT>-2</TT> 
+<BR><UL>Writes the <I>message</I> to <I>standard error</I>, the behaviour is the same as standard output (<TT>-1</TT> option) </UL></UL>
+<H2><B>NOTES </B></H2>
+<UL><P>If the argument value is not <TT>-1</TT> or <TT>-2</TT> calls to <B>ml-write</B> are ignored in standard MicroEmacs piped mode (command-line option <B>-p</B>). They are printed to <I>standard error</I> when debug piped mode is used (command-line option <B>-P</B>, see 
+<A HREF="m1cmd000.html">me(1)</A>), making the debugging and maintenance of macro based piped processing easier. 
+<P>In previous releases the command <B>ml-clear</B> was used to clear the message line, this command was replaced by <TT>0 ml-write</TT> in December 2004. </UL>
 <H2><B>EXAMPLE </B></H2>
-<UL><P>The following call displays a message on the message-line with a fixed 2 second pause: <UL>
+<UL><P>The following call displays a message on the message-line with a 2 second pause: <UL>
 <PRE>2000&nbsp;ml-write&nbsp;&quot;Hello&nbsp;World!&quot; 
 </PRE></UL>
-</UL><H2><B>SEE ALSO </B></H2>
+<P>The following 
+<A HREF="m3mac024.html">start-up(3)</A> macro may be used to add a header and footer line to a file piped to <I>standard in</I>, writing the output to <I>standard out</I>. <UL>
+<PRE>define-macro&nbsp;start-up 
+&nbsp;&nbsp;&nbsp;&nbsp;find-buffer&nbsp;&quot;*stdin*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&amp;spr&nbsp;&quot;DEBUG:&nbsp;Read&nbsp;%d&nbsp;lines&nbsp;from&nbsp;stdin&quot;&nbsp;$window-eline 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&amp;spr&nbsp;&quot;DEBUG:&nbsp;About&nbsp;to&nbsp;write&nbsp;header&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;ml-write&nbsp;&quot;&lt;&lt;&lt;HEADER&gt;&gt;&gt;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&amp;spr&nbsp;&quot;DEBUG:&nbsp;About&nbsp;to&nbsp;write&nbsp;body&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;save-buffer 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&amp;spr&nbsp;&quot;DEBUG:&nbsp;About&nbsp;to&nbsp;write&nbsp;footer&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;ml-write&nbsp;&quot;&lt;&lt;&lt;FOOTER&gt;&gt;&gt;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;-2&nbsp;ml-write&nbsp;&amp;spr&nbsp;&quot;%d&nbsp;lines&nbsp;written&nbsp;to&nbsp;stdout&quot;&nbsp;&amp;add&nbsp;$window-eline&nbsp;2 
+&nbsp;&nbsp;&nbsp;&nbsp;quick-exit 
+!emacro 
+</PRE></UL>
+<P>To run this example save this macro in a new macro file (such as <TT>mlwrite_test.emf</TT>) and in a shell run: <UL>
+<PRE>cat&nbsp;input_file&nbsp;|&nbsp;me&nbsp;-n&nbsp;-p&nbsp;@mlwrite_test&nbsp;-&nbsp;&gt;&nbsp;output_file 
+</PRE></UL>
+<P>Note the <TT>DEBUG</TT> lines will be printed if <B>-P</B> option is used. </UL>
+<H2><B>SEE ALSO </B></H2>
 <UL><P>
-<A HREF="m2cmd019.html">ml-clear(2)</A>, 
 <A HREF="m2cmd160.html">command-wait(2)</A>, 
-<A HREF="m2cmd024.html">create-callback(2)</A>. </UL>
+<A HREF="m2cmd024.html">create-callback(2)</A>, 
+<A HREF="m1cmd000.html">me(1)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/01/15</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

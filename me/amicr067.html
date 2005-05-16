@@ -14,20 +14,14 @@ FAQ(26) - C or C++ indentation and effects; how can I turn off ?</H1>
 <H2><B>QUESTION (26) </B></H2>
 <UL><P>C or C++ indentation and effects; how can I turn off ? </UL>
 <H2><B>ANSWER </B></H2>
-<UL><P>The 
-<A HREF="m2mod002.html">cmode(2m)</A> is supposed to make editing 'C' easier, by forcing the user to follow a preset editing convection. The layout is pretty standard, following a 4 space indent, writing either K&amp;R or standard 'Pascal' type layout, with braces aligning vertically. 
+<UL><P>The C mode indentation is supposed to make editing 'C' easier, by forcing the user to follow a preset editing convection. The layout is pretty standard, following a 4 space indent, writing either K&amp;R or standard 'Pascal' type layout, with braces aligning vertically. 
 <P>The problem most new users have is the inability of the tab key to function, or more simply do not want to be 'forced' to write in a particular style (GNU writers will probably not like this either - conversely they will be using GNU emacs !!). However the constrained layout can be configured to create most styles and does help in a project situation, whereby most of the authored code roughly adheres to the same sort of layout conventions. For C++ users then edit &quot;<TT>hkcpp.emf</TT>&quot; rather than &quot;<TT>hkc.emf</TT>&quot;. </UL>
 <H2>To turn off all automatic 'C' layout </H2>
-<UL><P>To disable ALL automatic layout then edit &quot;hkc.emf&quot; and turn &quot;cmode&quot; off. It is probably quite useful to apply &quot;indent&quot;, this will return the cursor to the same indentation column whenever a new line is inserted. i.e. in &quot;fhook-c&quot; of hkc.emf:- <UL>
-<PRE>0&nbsp;buffer-mode&nbsp;&quot;cmode&quot; 
-1&nbsp;buffer-mode&nbsp;&quot;indent&quot; 
+<UL><P>To disable ALL automatic layout in C and C++ files then from the menu <UL>
+<PRE>help&nbsp;-&gt;&nbsp;Buffer&nbsp;Setup&nbsp;-&gt;&nbsp;Setup&nbsp;Auto&nbsp;Indent 
 </PRE></UL>
-<P>If you want proper tabs then you may also want to add:- <UL>
-<PRE>0&nbsp;buffer-mode&nbsp;&quot;tab&quot; 
-</PRE></UL>
-<P>This inserts the &lt;tab&gt; character into the text, rather than translating to spaces. Alternatively disable <B>tab</B> mode for all file type using 
-<A HREF="m3osd000.html">user-setup(3)</A> i.e. 
-<UL><P><B>Help</B> -&gt; <B>User Setup</B> -&gt; <B>General</B> -&gt; <B>Tab</B> </UL></UL>
+<P>Or from the command line <B>esc x buffer-setup</B> and disable through the dialogue. 
+<P>Restart the editor. </UL>
 <H2>To re-enable the &lt;tab&gt; key </H2>
 <UL><P>To retain the 'C' layout aid, but re-enable the tab key operation then disable the <B>Tab To Indent</B> option in 
 <A HREF="m3osd000.html">user-setup(3)</A> i.e. 
@@ -37,19 +31,14 @@ FAQ(26) - C or C++ indentation and effects; how can I turn off ?</H1>
 <A HREF="m3osd000.html">user-setup(3)</A> i.e. 
 <UL><P><B>Help</B> -&gt; <B>User Setup</B> -&gt; <B>General</B> -&gt; <B>Tab</B> </UL></UL>
 <H2>To change the 'C' Indentation Layout </H2>
-<UL><P>The 'C' layout indentation is controlled from the system variables:- 
-<UL><P>
-<A HREF="m5var014.html">$c-case(5)</A>, 
-<A HREF="m5var015.html">$c-contcomm(5)</A>, 
-<A HREF="m5var018.html">$c-continue(5)</A>, 
-<A HREF="m5var016.html">$c-margin(5)</A>, 
-<A HREF="m5var013.html">$c-brace(5)</A>, 
-<A HREF="m5var017.html">$c-statement(5)</A>. </UL>
-<P>These settings may be defined in your &lt;user&gt;.emf to change the default layout. Refer to the on-line documentation for details. 
+<UL><P>The 'C' layout indentation is controlled from the 
+<A HREF="m2cmd033.html">indent(2)</A> command (see <TT>hkc.emf</TT>), the indentation level is controlled by the variables 
+<A HREF="m5var091.html">$buffer-indent-width(5)</A> and 
+<A HREF="m5var075.html">$buffer-indent(5)</A> these may be changed in the <B>Buffer Setup</B> dialog. 
 <P>
 <A HREF="amicr040.html">[FAQ Index]</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2004/01/17</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/01/16</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

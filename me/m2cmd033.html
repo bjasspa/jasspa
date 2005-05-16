@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>indent(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 indent(2)</H1>
@@ -15,7 +15,7 @@ indent(2)</H1>
 <H2><B>NAME </B></H2>
 <UL><P>indent - Manage the auto-indentation methods </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><I>0</I> <B>indent</B> &quot;<I>ind-no</I>&quot; &quot;<I>flags</I>&quot; &quot;<I>look-back</I>&quot; [ &quot;<I>indent-scheme</I>&quot; ] 
+<UL><P><I>0</I> <B>indent</B> &quot;<I>ind-no</I>&quot; &quot;<I>flags</I>&quot; [ &quot;<I>look-back</I>&quot; ] [ &quot;<I>indent-scheme</I>&quot; ] 
 <P><B>indent</B> &quot;<I>ind-no</I>&quot; &quot;<I>type</I>&quot; &quot;<I>token</I>&quot; [ &quot;<I>close</I>&quot; &quot;<I>ignore</I>&quot; ] [ &quot;<I>indent</I>&quot; ] 
 <BR><B>indent</B> &quot;<I>ind-no</I>&quot; &quot;<B>t</B>&quot; &quot;<I>token</I>&quot; &quot;<I>indent-scheme</I>&quot; 
 <BR><B>indent</B> &quot;<I>ind-no</I>&quot; &quot;<B>x</B>&quot; | &quot;<B>w</B>&quot; &quot;<I>token</I>&quot; &quot;<I>indent</I>&quot; &quot;<I>indent-scheme</I>&quot; </UL>
@@ -32,15 +32,211 @@ indent(2)</H1>
 <P><TT>0x02</TT> 
 <BR><UL>Defines a <B>fast look-back</B> indentation scheme to be used in conjunction with the current indentation scheme. The fast look-back scheme is used to identify a change in the current buffer's indent scheme, for example the starting of embedded script in html. The <I>indent-scheme</I> argument is required when this flag bit is set and identifies the handle of the fast look-back indentation scheme to be used. </UL>
 <UL><P>This feature is only used when indent is required to support multiple complex indentation schemes within a single file, for example indentation of scripts within html, asp or php pages etc. When defined the given <I>indent-scheme</I> must also be defined using <B>indent</B>, the scheme's <I>look-back</I> argument is typically set to look back a long way to ensure correctness, i.e. 500 lines, but it should therefore contain few tokens to maintain performance. </UL>
+<P><TT>0x04</TT> 
+<BR><UL>Defines C mode of indentation. C styling is built into the editor and is enabled through the <B>indent</B> command. The C form is discussed in more detail in the next section. </UL>
+<P><TT>0x08</TT> 
+<BR><UL>Ring the bell if 
+<A HREF="m2cmd061.html">goto-matching-fence(2)</A> fails. </UL>
+<P><TT>0x10</TT> 
+<BR><UL>Comment continuation mode. This is only valid when C mode is defined and is defined further in the next section. </UL>
 <P><I>look-back</I> specifies the maximum number of lines, prior to the current line, considered when calculating the indentation of a line, i.e. if there are <I>look-back</I> number of lines between the line to be indented and the previous non-blank line then the current indentation is lost. 
 <P>If <I>look-back</I> is set to 0 then the indentation is effectively disabled as the current indentation can never be found. The maximum value has been increase as of January 2004 from 255 to an integer (large number), a value of 10 is typically sufficient for a normal indent scheme and 500 for a fast look-back scheme. </UL>
-<H2>Indentation Rule Creation </H2>
+<H2>C Indentation </H2>
+<UL><P><I>0</I> <B>indent</B> &quot;<I>ind-no</I>&quot; &quot;<I>flags</I>&quot; 
+<BR><B>indent</B> <TT>s</TT> &quot;<I>statement</I>&quot; 
+<BR><B>indent</B> <TT>c</TT> &quot;<I>continue</I>&quot; 
+<BR><B>indent</B> <TT>x</TT> &quot;<I>max</I>&quot; 
+<BR><B>indent</B> <TT>b</TT> &quot;<I>brace</I>&quot; 
+<BR><B>indent</B> <TT>e</TT> &quot;<I>braceStatement</I>&quot; 
+<BR><B>indent</B> <TT>w</TT> &quot;<I>switch</I>&quot; 
+<BR><B>indent</B> <TT>a</TT> &quot;<I>case</I>&quot; 
+<BR><B>indent</B> <TT>m</TT> &quot;<I>margin</I>&quot; 
+<BR><B>indent</B> <TT>u</TT> &quot;<I>comcont</I>&quot; 
+<P>C mode is built into the editor by default and is enabled by setting the indent intialization flag bit <TT>0x04</TT>. With this bit enabled then the indentation for 'C' mode is defined through the additional arguments. <I>ind-no</I> and <I>flags</I> have the same meaning as defined in the previous section. C mode is typically initialized with the value 12. The remaining C arguments are defined as follows: 
+<P><B>indent</B> <TT>&quot;s&quot;</TT> <I>statement</I> (=t) 
+<BR><UL>The indent of the current line is derived from <I>statement</I> value plus the indent of the last c token (<I>if</I>, <I>else</I>, <I>while</I> etc.) or the last '<TT>{</TT>' (which ever was found first). i.e. if the last '<TT>{</TT>' was found at column 16 then the current line will be indented to 20:- <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xxxxxxxxxx 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xxxxxxxxxx 
+</PRE></UL>
+</UL><UL><P>or <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(xxxxx) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xxxxxxxxxx 
+</PRE></UL>
+</UL><UL><P>C tokens are only used to indent the next line, whereas '<TT>{</TT>' are used in indenting every line to it's partnering '<TT>}</TT>'. </UL>
+<P><B>indent</B> <TT>&quot;c&quot;</TT> <I>continue</I> (=3/2t) 
+<BR><UL><I>continue</I> sets the indent to be added to a split line, i.e. for an indent of 20, a continued statement would be indented to 30. A continued statement is a single c statement which is spread over 2 or more lines, the 2nd and any following lines would be indented to 30. For example <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;thisIsAVeryLongVariableWhichMeansAssignmentsAreSplit&nbsp;= 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ThisIsTheFirstContinuedStatementLine&nbsp;+ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ThisIsTheSecondContinuedStatementLine&nbsp;+&nbsp;etc&nbsp;; 
+</PRE></UL>
+</UL><UL><P>The indent is changed if there is an open bracket, continued statements are indented to the depth of the open bracket plus one, e.g. <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;func(firstFuncArg, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;secondFuncArg, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;anotherBracketForFun(firstAnotherBracketForFunArg, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;secondAnotherBracketForFunArg), 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;thirdFuncArg)&nbsp;; 
+</PRE></UL>
+</UL><P><B>indent</B> <TT>&quot;x&quot;</TT> <I>max</I> 
+<BR><UL><I>max</I> sets an upper limit of the indentation where an open bracket is encountered, in the case where the leading indent of the function name and open bracket exceeds <I>max</I>, then the continuation is reduced to the continuation indent. </UL>
+<UL><P>The effect of <I>max</I> is described as follows; if <I>max</I> is set to a large value then the default open brace offset appearence is:- <UL>
+<PRE>longVariable&nbsp;=&nbsp;LongFunctionNameWhichMeans(isSoFar, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OverAndYouRunOutOfRoom)&nbsp;; 
+</PRE></UL>
+</UL><UL><P>Setting <I>max</I> to 16 gives: <UL>
+<PRE>longVariable&nbsp;=&nbsp;LongFunctionNameWhichMeans(isSoFar, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;overAndYouRunOutOfRoom)&nbsp;; 
+</PRE></UL>
+</UL><UL><P>Where by the second argument indent has been artificially reduced because of it's length. </UL>
+<P><B>indent</B> <TT>&quot;b&quot;</TT> <I>brace</I> (=0) 
+<BR><UL>Sets the indent of a '<TT>{</TT>' and a '<TT>}</TT>' on a new line from the current statement indent. For example, a value of 0 results in the following <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(xxxxxx) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xxxxxxxxxx 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xxxxxxxxxx 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} 
+</PRE></UL>
+</UL><UL><P>With a setting of 2, this would become:- <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(xxxxxx) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xxxxxxxxxx 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xxxxxxxxxx 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} 
+</PRE></UL>
+</UL><UL><P>This works in conjunction with <I>statement</I> and <I>braceStatement</I> a change to <I>statement</I> will change the position of '<TT>{</TT>'s. In summary: <UL>
+<PRE>if&nbsp;(condition)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(condition)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(condition) 
+{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;statement;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;statement;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;statement; 
+}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} 
+
+brace&nbsp;=&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;brace&nbsp;=&nbsp;4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;brace&nbsp;=&nbsp;2 
+</PRE></UL>
+</UL><P><B>indent</B> <TT>&quot;e&quot;</TT> <I>braceStatement</I> (t) 
+<BR><UL>The <I>braceStatement</I> defines the indentation following a curly brace '<TT>{</TT>' which follows a statement. </UL>
+<P><B>indent</B> <TT>&quot;w&quot;</TT> <I>switch</I> (=0) 
+<BR><UL>The additional indent to be applied after a <B>switch</B> statement, the <I>statement</I> indent is applied in addition to the <I>switch</I> indent. See the <I>case</I> argument. </UL>
+<P><B>indent</B> <TT>&quot;a&quot;</TT> <I>case</I> (=-t) 
+<BR><UL><I>switch</I> value sets the offset of a &quot;<TT>case</TT>&quot; entry statement from the opening brace left margin position. The default value is zero. e.g. <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;switch(xxxxxxxxx) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case&nbsp;1: 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xxxxxxxxxx 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xxxxxxxxxx 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case&nbsp;2: 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xxxxxxxxxx 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} 
+</PRE></UL>
+</UL><UL><P>Setting the value to 4, increases the leading space on the &quot;<TT>case</TT>&quot; statement, e.g. <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;switch(xxxxxxxxx) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case&nbsp;1: 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xxxxxxxxxx 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xxxxxxxxxx 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case&nbsp;2: 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xxxxxxxxxx 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} 
+</PRE></UL>
+</UL><UL><P><I>case</I> sets the offset of the lines following a &quot;<TT>case</TT>&quot; statement, from the current indent. For example, using the default settings, if the current indent was 20 then a line starting with a &quot;<TT>case</TT>&quot; would be indented to 16, i.e. <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xxxxxxxxxx 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case&nbsp;xxxxxxxxxx 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xxxxxxxxxx 
+</PRE></UL>
+</UL><UL><P>This is used inside &quot;<TT>switch</TT>&quot; statements, the default setting give the following lay-out:- <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;switch(xxxxxxxxxx) 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case&nbsp;1: 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xxxxxxxxxx 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xxxxxxxxxx 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case&nbsp;2: 
+</PRE></UL>
+</UL><UL><P>This works in conjunction with the <I>statement</I> variable, a change to <I>statement</I> will change the position of '<TT>{</TT>'s. </UL>
+<UL><P>In summary: <UL>
+<PRE>switch&nbsp;(variable)&nbsp;&nbsp;&nbsp;switch&nbsp;(variable) 
+{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ 
+case&nbsp;1:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case&nbsp;1: 
+&nbsp;&nbsp;&nbsp;&nbsp;break;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break; 
+default:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;default: 
+&nbsp;&nbsp;&nbsp;&nbsp;break;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break; 
+}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} 
+
+&nbsp;&nbsp;switch&nbsp;=&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;switch&nbsp;=&nbsp;t 
+&nbsp;&nbsp;case&nbsp;=&nbsp;-t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case&nbsp;=&nbsp;-t 
+</PRE></UL>
+</UL><P><B>indent</B> <TT>&quot;m&quot;</TT> <I>margin</I> (=-1) 
+<BR><UL>If inserting a comment at the end of a C line, it is tedious typing <I>x</I> number of spaces to the comment column (by default tab does not insert a tab when 
+<A HREF="m2cmd033.html">indent(2)</A> is enabled, it reformats the indentation of the line regardless of the cursor position). This variable sets the indent column of these comments. So with the default settings and the following line, <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xxxxxx&nbsp;;/ 
+</PRE></UL>
+</UL><UL><P>when a '*' is entered the line becomes <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xxxxxx&nbsp;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/* 
+</PRE></UL>
+</UL><UL><P>The indenting of the &quot;<TT>/*</TT>&quot; occurs only if there is text on the line before it, and none after it. If the current column is already past <I>margin</I> then it is indented to the next tab stop. </UL>
+<UL><P>A value of -1 disables this feature. </UL>
+<UL><P>In summary: <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;statement;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/*&nbsp;Comment&nbsp;*/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;statement;&nbsp;/*&nbsp;Comment&nbsp;*/ 
+
+&nbsp;&nbsp;&nbsp;&nbsp;margin&nbsp;=&nbsp;40&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;margin&nbsp;=&nbsp;-1 
+</PRE></UL>
+</UL><P><B>indent</B> <TT>&quot;u&quot;</TT> <I>comcont</I> &quot;<TT> * </TT>&quot; 
+<BR><UL>This argument is only specified if <I>flags</I> bit <TT>0x10</TT> is set. This defines the string which is inserted when a new line is started while in a comment. The string is only inserted if the cursor is at the end of the line when the 
+<A HREF="m2cmd090.html">newline(2)</A> command is given. For example, for the default settings, if a <B>newline</B> was entered at the end of the first line, the second line would initialize to:- <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/*&nbsp;xxxxxxxxxx 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@ 
+</PRE></UL>
+</UL><UL><P>where '<TT>@</TT>' is the current cursor position. With a setting of &quot;<TT> * </TT>&quot;, then:- <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/*&nbsp;xxxxxxxxxx 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@ 
+</PRE></UL>
+</UL><UL><P>In summary: <UL>
+<PRE>/*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/*&nbsp;Comment 
+&nbsp;*&nbsp;Comment&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**&nbsp;Comment&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Comment&nbsp;*/ 
+&nbsp;*&nbsp;Comment&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**&nbsp;Comment 
+&nbsp;*/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/ 
+&nbsp;comcont&nbsp;=&nbsp;&quot;&nbsp;*&nbsp;&quot;&nbsp;&nbsp;&nbsp;&nbsp;comcont&nbsp;=&nbsp;&quot;**&nbsp;&quot;&nbsp;&nbsp;&nbsp;comcont&nbsp;=&nbsp;&quot;&nbsp;&nbsp;&nbsp;&quot; 
+</PRE></UL>
+</UL><P>The standard indent rule for setting up C and Java is defined as:- <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;indent&nbsp;.hilight.c&nbsp;12 
+&nbsp;&nbsp;&nbsp;&nbsp;indent&nbsp;.hilight.c&nbsp;&quot;s&quot;&nbsp;t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Default&nbsp;may&nbsp;be&nbsp;omitted 
+&nbsp;&nbsp;&nbsp;&nbsp;indent&nbsp;.hilight.c&nbsp;&quot;e&quot;&nbsp;t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Default&nbsp;may&nbsp;be&nbsp;omitted 
+&nbsp;&nbsp;&nbsp;&nbsp;indent&nbsp;.hilight.c&nbsp;&quot;c&quot;&nbsp;3/2t&nbsp;&nbsp;;&nbsp;Default&nbsp;may&nbsp;be&nbsp;omitted 
+&nbsp;&nbsp;&nbsp;&nbsp;indent&nbsp;.hilight.c&nbsp;&quot;x&quot;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Default&nbsp;may&nbsp;be&nbsp;omitted 
+&nbsp;&nbsp;&nbsp;&nbsp;indent&nbsp;.hilight.c&nbsp;&quot;b&quot;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Default&nbsp;may&nbsp;be&nbsp;omitted 
+&nbsp;&nbsp;&nbsp;&nbsp;indent&nbsp;.hilight.c&nbsp;&quot;w&quot;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Default&nbsp;may&nbsp;be&nbsp;omitted 
+&nbsp;&nbsp;&nbsp;&nbsp;indent&nbsp;.hilight.c&nbsp;&quot;a&quot;&nbsp;-t&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Default&nbsp;may&nbsp;be&nbsp;omitted 
+&nbsp;&nbsp;&nbsp;&nbsp;indent&nbsp;.hilight.c&nbsp;&quot;m&quot;&nbsp;-1&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Default&nbsp;may&nbsp;be&nbsp;omitted 
+&nbsp;&nbsp;&nbsp;&nbsp;indent&nbsp;.hilight.c&nbsp;&quot;u&quot;&nbsp;&quot;&nbsp;*&nbsp;&quot; 
+</PRE></UL>
+<P>This is typically written with the defaults omitted. <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;indent&nbsp;.hilight.c&nbsp;12 
+&nbsp;&nbsp;&nbsp;&nbsp;indent&nbsp;.hilight.c&nbsp;&quot;u&quot;&nbsp;&quot;&nbsp;*&nbsp;&quot; 
+</PRE></UL>
+<P>If GNU Emacs indentation is required then the following definition may be used:- <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;indent&nbsp;.hilight.c&nbsp;12&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;if&nbsp;(a&nbsp;==&nbsp;b) 
+&nbsp;&nbsp;&nbsp;&nbsp;indent&nbsp;.hilight.c&nbsp;&quot;e&quot;&nbsp;t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;indent&nbsp;.hilight.c&nbsp;&quot;b&quot;&nbsp;t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c&nbsp;=&nbsp;d; 
+&nbsp;&nbsp;&nbsp;&nbsp;indent&nbsp;.hilight.c&nbsp;&quot;s&quot;&nbsp;t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;&nbsp;&nbsp;} 
+&nbsp;&nbsp;&nbsp;&nbsp;indent&nbsp;.hilight.c&nbsp;&quot;u&quot;&nbsp;&quot;&nbsp;*&nbsp;&quot; 
+</PRE></UL>
+<P>The default configuration scheme is defined as:- <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;indent&nbsp;.hilight.c&nbsp;12&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;if&nbsp;(a&nbsp;==&nbsp;b) 
+&nbsp;&nbsp;&nbsp;&nbsp;indent&nbsp;.hilight.c&nbsp;&quot;e&quot;&nbsp;t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;indent&nbsp;.hilight.c&nbsp;&quot;b&quot;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;&nbsp;&nbsp;c&nbsp;=&nbsp;d; 
+&nbsp;&nbsp;&nbsp;&nbsp;indent&nbsp;.hilight.c&nbsp;&quot;s&quot;&nbsp;t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;} 
+&nbsp;&nbsp;&nbsp;&nbsp;indent&nbsp;.hilight.c&nbsp;&quot;u&quot;&nbsp;&quot;&nbsp;*&nbsp;&quot; 
+</PRE></UL>
+<P>Where comments are to be aligned at the end of a statement then the margin parameter may be defined in <TT>&lt;user&gt;.emf</TT>. <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;indent&nbsp;.hilight.c&nbsp;&quot;m&quot;&nbsp;40 
+</PRE></UL>
+</UL><H2>Indentation Rule Creation </H2>
 <UL><P><B>indent</B> &quot;<I>ind-no</I>&quot; &quot;<I>type</I>&quot; &quot;<I>token</I>&quot; [ &quot;<I>close</I>&quot; [ &quot;<I>ignore</I>&quot; ]] [ &quot;<I>indent</I>&quot; ] [ &quot;<I>indent-scheme</I>&quot; ] 
 <P>With the default argument of <TT>1</TT>, <B>indent</B> creates a new rule for the indentation method <I>ind-no</I> which must have previously been defined and initialized. 
 <P>The indentation of a line in a buffer, which is using an indentation method, is affected by the token types matched on the line (<I>type</I> <TT>f</TT>, <TT>o</TT>, <TT>s</TT>) and the current indentation (if line is not of type <TT>f</TT>). 
 <P>The current indentation is determined by searching the previous lines (look-back) for the indentation of the last indented line. This may not simply be the indentation of the last non-blank line, the exact indentation is determined by searching for tokens in the line and assessing their effect on the indentation of the current line. 
 <P>The format of the regex valid in the &quot;<I>token</I>&quot; and &quot;<I>close</I>&quot; arguments are the same as at used by hilight token creation, see 
 <A HREF="m2cmd069.html">hilight(2)</A> for more information. 
+<P>The <I>indent</I> argument specifies the indent to apply in characters. The indent may be specified as a literal integer value, a +ve value increases the indent a -ve value reduces the indent. The <I>indent</I> may be specified in terms of buffer specific generic value 
+<A HREF="m5var091.html">$buffer-indent-width(5)</A> using the value <B>t</B>, indicating a tab width. The value of <B>t</B> may be prefixed with a signed integer or vulgar fraction which adjusts the size of the indentation width by the appropriate amount. Modifying the value of 
+<A HREF="m5var091.html">$buffer-indent-width</A> modifies the indent width that is applied allowing the indentation method to be specified independently of the indentation width. 
 <P>The indent tokens may be assigned one of the following types, using the <I>type</I> argument. If the type is specified in upper case then the token must be surrounded by non-alpha-numeric characters: 
 <P><B>Fixed</B> (<I>type</I> = '<TT>f</TT>' or '<TT>F</TT>') 
 <BR><UL>A line containing a fixed indent token will be indented to the given <I>indent</I> column from the left-hand edge. <I>indent</I> is the only argument specified. e.g. MicroEmacs macro <TT>!goto</TT> labels:- <UL>
@@ -54,27 +250,30 @@ indent(2)</H1>
 <P>The fixed token must be the first non-white character on the line, the rest of the line is ignored. The indentation of the previous line has no effect. </UL>
 <P><B>Indent-from-next-line-onward</B> (<I>type</I> = '<TT>n</TT>' or '<TT>N</TT>') 
 <BR><UL>The indentation changes by <I>indent</I> from the next line onwards from the current line. <I>indent</I> is the only argument specified. e.g. MicroEmacs macro <TT>!if</TT>:- <UL>
-<PRE>indent&nbsp;.hilight.emf&nbsp;n&nbsp;&quot;!if&quot;&nbsp;4 
+<PRE>indent&nbsp;.hilight.emf&nbsp;n&nbsp;&quot;!if&quot;&nbsp;t 
 </PRE></UL>
-<P>Keeps the indentation of the <TT>!if</TT> line the same as the previous indentation, change the indentation on the following lines by an extra 4 characters, to produce: <UL>
+<P>Keeps the indentation of the <TT>!if</TT> line the same as the previous indentation, change the indentation on the following lines by an extra 
+<A HREF="m5var091.html">$buffer-indent-width</A> characters, to produce: <UL>
 <PRE>.... 
 !if 
 &nbsp;&nbsp;&nbsp;&nbsp;.... 
 </PRE></UL>
 </UL><P><B>Indent-from-current-line-onward</B> (<I>type</I> = '<TT>o</TT>' or '<TT>O</TT>') 
 <BR><UL>Increment the current and following lines indentation by <I>indent</I>. <I>indent</I> is the only argument specified. e.g. MicroEmacs macro <TT>!endif</TT> <UL>
-<PRE>indent&nbsp;.hilight.emf&nbsp;o&nbsp;&quot;!endif&quot;&nbsp;-4 
+<PRE>indent&nbsp;.hilight.emf&nbsp;o&nbsp;&quot;!endif&quot;&nbsp;-t 
 </PRE></UL>
-<P>decrement the indent of the <TT>!endif</TT> line and following lines by 4 spaces producing: <UL>
+<P>decrement the indent of the <TT>!endif</TT> line and following lines by 
+<A HREF="m5var091.html">$buffer-indent-width</A> spaces producing: <UL>
 <PRE>&nbsp;&nbsp;&nbsp;&nbsp;.... 
 !endif 
 .... 
 </PRE></UL>
 </UL><P><B>Indent-single</B> (<I>type</I> = '<TT>s</TT>' or '<TT>S</TT>') 
 <BR><UL>Changes the indentation of the current line ONLY by <I>indent</I>. <I>indent</I> is the only argument specified. e.g. MicroEmacs macro <TT>!elif</TT>:- <UL>
-<PRE>indent&nbsp;.hilight.emf&nbsp;o&nbsp;&quot;!elif&quot;&nbsp;-4 
+<PRE>indent&nbsp;.hilight.emf&nbsp;o&nbsp;&quot;!elif&quot;&nbsp;-t 
 </PRE></UL>
-<P>decrements the indentation of the <TT>!elif</TT> line by 4 characters, but restores the previous indentation after the current line, producing: <UL>
+<P>decrements the indentation of the <TT>!elif</TT> line by 
+<A HREF="m5var091.html">$buffer-indent-width</A> characters, but restores the previous indentation after the current line, producing: <UL>
 <PRE>&nbsp;&nbsp;&nbsp;&nbsp;.... 
 !elif 
 &nbsp;&nbsp;&nbsp;&nbsp;.... 
@@ -97,7 +296,7 @@ indent(2)</H1>
 </PRE></UL>
 </UL><P><B>Continue</B> (<I>type</I> = '<TT>c</TT>' or '<TT>C</TT>') 
 <BR><UL>Indicates that when <I>token</I> is found on the current line, the next line is a continuation of the current line. The indentation of the next line is the indentation of the first continuation line plus the given <I>indent</I>. <I>indent</I> is the only argument specified. e.g. tcl's '\' <UL>
-<PRE>indent&nbsp;.hilight.tcl&nbsp;c&nbsp;&quot;\\&quot;&nbsp;10 
+<PRE>indent&nbsp;.hilight.tcl&nbsp;c&nbsp;&quot;\\&quot;&nbsp;3/2t 
 </PRE></UL>
 <P>A simple example is <UL>
 <PRE>.... 
@@ -184,29 +383,36 @@ indent&nbsp;.hilight.xml&nbsp;o&nbsp;&quot;/&gt;&quot;&nbsp;&nbsp;&nbsp;&nbsp;-2
 ... 
 
 0&nbsp;indent&nbsp;&nbsp;.hilight.emf&nbsp;0&nbsp;10 
-indent&nbsp;.hilight.emf&nbsp;N&nbsp;&quot;define-macro&quot;&nbsp;4 
-indent&nbsp;.hilight.emf&nbsp;n&nbsp;&quot;!if&quot;&nbsp;4 
-indent&nbsp;.hilight.emf&nbsp;s&nbsp;&quot;!eli&quot;&nbsp;-4 
-indent&nbsp;.hilight.emf&nbsp;s&nbsp;&quot;!els&quot;&nbsp;-4 
-indent&nbsp;.hilight.emf&nbsp;o&nbsp;&quot;!end&quot;&nbsp;-4 
-indent&nbsp;.hilight.emf&nbsp;n&nbsp;&quot;!whi&quot;&nbsp;4 
-indent&nbsp;.hilight.emf&nbsp;o&nbsp;&quot;!don&quot;&nbsp;-4 
-indent&nbsp;.hilight.emf&nbsp;n&nbsp;&quot;!rep&quot;&nbsp;4 
-indent&nbsp;.hilight.emf&nbsp;o&nbsp;&quot;!until&quot;&nbsp;-4 
-indent&nbsp;.hilight.emf&nbsp;o&nbsp;&quot;!ema&quot;&nbsp;-4 
+indent&nbsp;.hilight.emf&nbsp;N&nbsp;&quot;define-macro&quot;&nbsp;t 
+indent&nbsp;.hilight.emf&nbsp;n&nbsp;&quot;!if&quot;&nbsp;t 
+indent&nbsp;.hilight.emf&nbsp;s&nbsp;&quot;!eli&quot;&nbsp;-t 
+indent&nbsp;.hilight.emf&nbsp;s&nbsp;&quot;!els&quot;&nbsp;-t 
+indent&nbsp;.hilight.emf&nbsp;o&nbsp;&quot;!end&quot;&nbsp;-t 
+indent&nbsp;.hilight.emf&nbsp;n&nbsp;&quot;!whi&quot;&nbsp;t 
+indent&nbsp;.hilight.emf&nbsp;o&nbsp;&quot;!don&quot;&nbsp;-t 
+indent&nbsp;.hilight.emf&nbsp;n&nbsp;&quot;!rep&quot;&nbsp;t 
+indent&nbsp;.hilight.emf&nbsp;o&nbsp;&quot;!until&quot;&nbsp;-t 
+indent&nbsp;.hilight.emf&nbsp;o&nbsp;&quot;!ema&quot;&nbsp;-t 
 indent&nbsp;.hilight.emf&nbsp;e&nbsp;&quot;\&quot;&quot;&nbsp;&quot;\&quot;&quot;&nbsp;&quot;\\&quot; 
 indent&nbsp;.hilight.emf&nbsp;i&nbsp;&quot;;&quot; 
 indent&nbsp;.hilight.emf&nbsp;f&nbsp;&quot;*&quot;&nbsp;0 
 </PRE></UL>
 <P>Note that a <B>.hilight</B> command variable is typically used as a buffer with indentation rules will almost certainly have hilighting and the same variable is used to define the hilighting scheme. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>The variables 
+<A HREF="m5var091.html">$indent-width(5)</A>, 
+<A HREF="m5var091.html">$buffer-indent-width(5)</A> and the <B>t</B> indent notation were introduced in the November 2004 version of MicroEmacs. 
+<P>The electric C mode <B>cmode(2m)</B> was removed in December 2004, as were the variables <B>$c-brace(5)</B>, <B>$c-case(5)</B>, <B>$c-contcomm(5)</B>, <B>$c-continue(5)</B>, <B>$c-margin(5)</B> and <B>$c-statement(5)</B>. All replaced by the C Indent initialisation method. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m2nar000.html">File Language Templates</A>, 
 <A HREF="m5var075.html">$buffer-indent(5)</A>, 
+<A HREF="m5var091.html">$buffer-indent-width(5)</A>, 
+<A HREF="m5var091.html">$indent-width(5)</A>, 
 <A HREF="m2cmd003.html">add-file-hook(2)</A>, 
 <A HREF="m2cmd069.html">hilight(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2004/03/24</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/02/10</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

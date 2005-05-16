@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>me(1)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 me(1)</H1>
@@ -13,32 +13,54 @@ me(1)</H1>
 </FONT>
 <HR>
 <H2><B>NAME </B></H2>
-<UL><P>me - MicroEmacs '04 text editor </UL>
+<UL><P>me - MicroEmacs '05 text editor </UL>
 <H2><B>SYNOPSIS </B></H2>
 <UL><P><B>me</B> [<I>options</I>] [<I>files ...</I>] 
-<P><B>me</B> [<B>@</B><I>startupFile</I>] [<B>-b</B>&nbsp;<I>file</I>] [<B>-c</B>] [<B>-d</B>] [<B>-h</B>] [<B>-i</B>] [<B>-k</B>[<I>key</I>]&nbsp;<I>file</I>] [<B>-l</B><I>lineNo</I>] [<B>-m</B><I>command</I>] [<B>-n</B>] [<B>-o</B>] [<B>-0</B><I>file</I>] [<B>-p</B>] [<B>-r</B>] [<B>-s</B><I>string</I>] [<B>-u</B><I>username</I>] [<B>-v</B><I>variable=string</I>] [<B>-V</B>] [<B>-x</B>] [<B>-y</B>&nbsp;<I>file</I>] <I>files...</I> </UL>
+<P><B>me</B> [<B>@</B><I>startupFile</I>] [<B>-</B>] [<B>-a</B>] [<B>-b</B>&nbsp;<I>file</I>] [<B>-B</B>] [<B>-c</B>] [<B>-d</B>] [<B>-h</B>] [<B>-i</B>] [<B>-k</B>[<I>key</I>]&nbsp;<I>file</I>] [<B>-l</B><I>lineNo</I>] [<B>-m</B><I>command</I>] [<B>-n</B>] [<B>-o</B>] [<B>-0</B><I>file</I>] [<B>-p</B>&nbsp;[<B>-P</B>]&nbsp;] [<B>-R</B>] [<B>-r</B>] [<B>-s</B><I>string</I>] [<B>-u</B><I>username</I>] [<B>-v</B><I>variable=string</I>] [<B>-V</B>] [<B>-x</B>] [<B>-y</B>&nbsp;<I>file</I>] <I>files...</I> </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P><B>MicroEmacs '04</B> is a cut down version of the EMACS text editor, based on Danial Lawrences MicroEmacs. <B>MicroEmacs '04</B> is a tool for creating and changing documents, programs, and other text files. It is both relatively easy for the novice to use, but also very powerful in the hands of an expert. MicroEmacs '04 can be extensively customized for the needs of the individual user. 
-<P><B>MicroEmacs '04</B> allows multiple files to be edited at the same time. The screen may be split into different windows and screens, and text may be moved freely from one window on any screen to the next. Depending on the type of file being edited, <B>MicroEmacs '04</B> can change how it behaves to make editing simple. Editing standard text files, program files and word processing documents are all possible at the same time. 
+<UL><P><B>MicroEmacs '05</B> is a cut down version of the EMACS text editor, based on Danial Lawrences MicroEmacs. <B>MicroEmacs '05</B> is a tool for creating and changing documents, programs, and other text files. It is both relatively easy for the novice to use, but also very powerful in the hands of an expert. MicroEmacs '05 can be extensively customized for the needs of the individual user. 
+<P><B>MicroEmacs '05</B> allows multiple files to be edited at the same time. The screen may be split into different windows and screens, and text may be moved freely from one window on any screen to the next. Depending on the type of file being edited, <B>MicroEmacs '05</B> can change how it behaves to make editing simple. Editing standard text files, program files and word processing documents are all possible at the same time. 
 <P>There are extensive capabilities to make word processing and editing easier. These include commands for string searching and replacing, paragraph reformatting and deleting, automatic word wrapping, word move and deletes, easy case controlling, and automatic word counts. 
-<P>For complex and repetitive editing tasks editing macros can be written. These macros allow the user a great degree of flexibility in determining how <B>MicroEmacs '04</B> behaves. Also, any and all the commands can be used by any key stroke by changing, or rebinding, what commands various keys invoke. 
+<P>For complex and repetitive editing tasks editing macros can be written. These macros allow the user a great degree of flexibility in determining how <B>MicroEmacs '05</B> behaves. Also, any and all the commands can be used by any key stroke by changing, or rebinding, what commands various keys invoke. 
 <P>Special features are also available to perform a diverse set of operations such as file encryption, automatic backup file generation, entabbing and detabbing lines, executing operating system commands and filtering of text through other programs. 
-<P>The command line options to <B>MicroEmacs '04</B> are defined as follows:- 
+<P>The command line options to <B>MicroEmacs '05</B> are defined as follows:- 
 <P><B>@</B><I>startFile</I> 
-<BR><UL>Initialize MicroEmacs '04 using <I>startFile</I>[<B>.emf</B>]. The default when omitted is <B>me.emf</B>. See 
+<BR><UL>Initialize MicroEmacs '05 using <I>startFile</I>[<B>.emf</B>]. The default when omitted is <B>me.emf</B>. See 
 <A HREF="m3mac024.html">start-up(3)</A> and 
 <A HREF="amicr007.html">Command Line Filters</A> for more information. </UL>
+<P><B>-</B> 
+<BR><UL>Pipe <I>stdin</I> into buffer <B>*stdin*</B>, when the buffer is saved the output is written <I>stdout</I>. Following is a simple example which changes '<TT>a</TT>'s to '<TT>b</TT>'s: 
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;define-macro&nbsp;start-up 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;find-buffer&nbsp;&quot;*stdin*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;beginning-of-buffer 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;replace-string&nbsp;&quot;a&quot;&nbsp;&quot;b&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;save-buffer 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;quick-exit 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!emacro 
+</PRE></UL>
+<UL><P>This can be used in the following manner: 
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;me&nbsp;&quot;@testpipe.emf&quot;&nbsp;&lt;&nbsp;foo.a&nbsp;&gt;&nbsp;foo.b 
+</PRE></UL>
+<P>See <B>-p</B> for disabling user interaction. 
+<P><B>-a</B> 
+<BR><UL>Toggle the auto-save mode, this toggles the 
+<A HREF="m2mod000.html">auto(2m)</A> mode. </UL>
+<UL><P><B>Note:</B> that NanoEmacs disables auto save mode by default and MicroEmacs enables auto save mode by default. The behavior of <B>-a</B> is therefore different between the two editors. </UL>
 <P><B>-b</B> 
 <BR><UL>Load next file as a binary file (binary editor mode, uses 
 <A HREF="m2mod018.html">binary(2m)</A> buffer mode). </UL>
+<P><B>-B</B> 
+<BR><UL>Toggle the backup mode, this toggles the 
+<A HREF="m2mod001.html">backup(2m)</A> mode. </UL>
+<UL><P><B>Note:</B> that NanoEmacs disables backup mode by default and MicroEmacs enables backup mode by default. The behavior of <B>-B</B> is therefore different between the two editors. </UL>
 <P><B>-c</B> 
-<BR><UL>Continuation mode. Load <B>MicroEmacs '04</B> last edit session, restoring the buffers to their previous loaded state and position. Note that history mode must be enabled. The <B>-c</B> option is generally used with windowing interfaces (X-Windows/Microsoft Windows) as the shortcut icon invocation. </UL>
+<BR><UL>Continuation mode. Load <B>MicroEmacs '05</B> last edit session, restoring the buffers to their previous loaded state and position. Note that history mode must be enabled. The <B>-c</B> option is generally used with windowing interfaces (X-Windows/Microsoft Windows) as the shortcut icon invocation. </UL>
 <P><B>-d</B> 
 <BR><UL>Enable debug mode (for macro files). </UL>
 <P><B>-h</B> 
 <BR><UL>Show the help page (does not start the editor). </UL>
 <P><B>-i</B> 
-<BR><UL>MS-DOS versions of <B>MicroEmacs '04</B> only. Insert the contents of the current screen into the <B>*scratch*</B> buffer </UL>
+<BR><UL>MS-DOS versions of <B>MicroEmacs '05</B> only. Insert the contents of the current screen into the <B>*scratch*</B> buffer </UL>
 <P><B>-k</B>[<I>key</I>] 
 <BR><UL>Load next file as an encrypted file (uses 
 <A HREF="m2mod003.html">crypt(2m)</A> buffer mode). The optional adjoining argument can be used to specify the decrypting key, if this argument is not specify the user will be prompted for it on start-up. </UL>
@@ -57,56 +79,50 @@ me&nbsp;-m&nbsp;&quot;C:ME:ml-write&nbsp;\&quot;Hello&nbsp;world\&quot;
 </PRE></UL>
 </UL><UL><P>The absolute path is specified in this type of transaction as the current working directory of the active MicroEmacs session is unknown. The <B>-m</B> option de-iconize's the existing editor session and bring it to the foreground. </UL>
 <P><B>-n</B> 
-<BR><UL>UNIX X-Windows environments only and MicroSoft Windows NT console versions. Execute <B>MicroEmacs '04</B> using termcap rather than X-Windows for UNIX; typically used within an <B>xterm</B> shell to fire up <B>MicroEmacs '04</B> for a quick edit. For Microsoft Windows, a console window is started as opposed to a GUI window. </UL>
+<BR><UL>UNIX X-Windows environments only and MicroSoft Windows NT console versions. Execute <B>MicroEmacs '05</B> using termcap rather than X-Windows for UNIX; typically used within an <B>xterm</B> shell to fire up <B>MicroEmacs '05</B> for a quick edit. For Microsoft Windows, a console window is started as opposed to a GUI window. </UL>
 <P><B>-o</B><I>&lt;file&gt;</I> 
-<BR><UL>Use already running version of MicroEmacs '04 to load the <I>&lt;file&gt;</I>, if it exists, otherwise start a new editor session. This uses the <I>client-server</I> interface to push the new file into the existing editor session. Refer to the 
+<BR><UL>Use already running version of MicroEmacs '05 to load the <I>&lt;file&gt;</I>, if it exists, otherwise start a new editor session. This uses the <I>client-server</I> interface to push the new file into the existing editor session. Refer to the 
 <A HREF="m2nar005.html">Client-Server Interface</A> for details. </UL>
 <P><B>-p</B> 
-<BR><UL>Pipe <I>stdin</I> into buffer <B>*stdin*</B>, when saved output to <I>stdout</I>, following is a simple example which changes '<TT>a</TT>'s to '<TT>b</TT>'s: 
-<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;define-macro&nbsp;start-up 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;find-buffer&nbsp;&quot;*stdin*&quot; 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;beginning-of-buffer 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;replace-string&nbsp;&quot;a&quot;&nbsp;&quot;b&quot; 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;save-buffer 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;quick-exit 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!emacro 
-</PRE></UL>
-<UL><P>This can be used in the following manner: 
-<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;me&nbsp;&quot;@testpipe.emf&quot;&nbsp;&lt;&nbsp;foo.a&nbsp;&gt;&nbsp;foo.b 
-</PRE></UL>
+<BR><UL>Used with the <B>-</B> which inputs from <I>stdin</I> and disables user interaction within MicroEmacs. To debug then the <B>-P</B> option may be used to enable debug on <I>stderr</I>. </UL>
+<P><B>-P</B> 
+<BR><UL>Used with the <B>-p</B> option and is used for debugging the pipe mode, 
+<A HREF="m2cmd145.html">ml-write(2)</A> messages are displayed on <I>stderr</I>. </UL>
+<P><B>-R</B> 
+<BR><UL>Reverse the default video color scheme. The default foreground color becomes the background color and vice versa. This only affects the built in scheme and not any schemes defined in any start-up file. </UL>
 <P><B>-r</B> 
 <BR><UL>Read-only, all buffers will be in view mode </UL>
 <P><B>-s</B><I>string</I> 
-<BR><UL>Search for string &quot;<I>string</I>&quot; in the current buffer. e.g. <TT>me -sfoo bar</TT> starts <B>MicroEmacs '04</B>, loads file <TT>bar</TT> and initiates a search for <I>foo</I>. The cursor is left at the end of the string if located, otherwise at the top of the buffer. </UL>
+<BR><UL>Search for string &quot;<I>string</I>&quot; in the current buffer. e.g. <TT>me -sfoo bar</TT> starts <B>MicroEmacs '05</B>, loads file <TT>bar</TT> and initiates a search for <I>foo</I>. The cursor is left at the end of the string if located, otherwise at the top of the buffer. </UL>
 <P><B>-u</B><I>username</I> 
 <BR><UL>Set the current user name 
 <A HREF="m5var088.html">$user-name(5)</A> to <I>username</I> before MicroEmacs is initialized. </UL>
 <P><B>-v</B><I>variable=string</I> 
-<BR><UL>Assign the MicroEmacs '04 <I>variable</I> with <I>string</I>. The assignment is performed before the buffers are loaded. Typically used to change the start-up characteristics of the startup file(s). </UL>
+<BR><UL>Assign the MicroEmacs '05 <I>variable</I> with <I>string</I>. The assignment is performed before the buffers are loaded. Typically used to change the start-up characteristics of the startup file(s). </UL>
 <P><B>-V</B> 
 <BR><UL>Print the name and version of MicroEmacs. i.e. </UL>
 <UL><P><TT>orac% me -V</TT> 
-<BR><TT>MicroEmacs 04 - Date 04/02/01 - sunos</TT> </UL>
+<BR><TT>MicroEmacs 05 - Date 2005/02/24 - sunos</TT> </UL>
 <P><B>-x</B> 
-<BR><UL>UNIX environments. Disable the capture of signals. <B>MicroEmacs '04</B> by default captures an handles all illicit signal interrupts. The option is enabled when debugging the source code allowing exception conditions to be trapped within the debugger. </UL>
+<BR><UL>UNIX environments. Disable the capture of signals. <B>MicroEmacs '05</B> by default captures an handles all illicit signal interrupts. The option is enabled when debugging the source code allowing exception conditions to be trapped within the debugger. </UL>
 <P><B>-y</B> 
 <BR><UL>Load next file as a reduced binary file (uses 
 <A HREF="m2mod031.html">rbin(2m)</A> buffer mode). </UL></UL>
 <H2><B>ENVIRONMENT </B></H2>
-<UL><P>The following environment variables are used by <B>MicroEmacs '04</B>. 
+<UL><P>The following environment variables are used by <B>MicroEmacs '05</B>. 
 <P><B>DISPLAY</B> 
 <BR><UL>UNIX environments running X-Windows only. The identity of the X-Windows server. Typically set to <B>unix:0.0</B>, refer to the X-Windows documentation for details of this environment variable. </UL>
 <P><B>MENAME</B> 
 <BR><UL>
 <A HREF="m5var076.html">$MENAME(5)</A> is used to override the identity of the user 
-<A HREF="m5var088.html">$user-name(5)</A>. The variable may be used to determine which start-up configuration to use in the initialization of <B>MicroEmacs '04</B> (<I>$user-name</I>.erf). This is ignored if the <B>-u</B> option is specified on the command line. </UL>
+<A HREF="m5var088.html">$user-name(5)</A>. The variable may be used to determine which start-up configuration to use in the initialization of <B>MicroEmacs '05</B> (<I>$user-name</I>.erf). This is ignored if the <B>-u</B> option is specified on the command line. </UL>
 <UL><P>Non-UNIX platforms usually need to explicitly set the <B>$MENAME</B> environment variable to identify the aforementioned files. for MS-DOS and early versions of Microsoft Windows this is typically performed in the <TT>AUTOEXEC.BAT</TT> file. </UL>
 <P><B>PATH</B> 
-<BR><UL>The <B>$PATH</B> environment variable is used on most operating systems as a search path for executable files. This <B>$PATH</B> environment variable must be defined with <B>MicroEmacs '04</B> on the search path. Under UNIX this is set in the <TT>.login</TT>, <TT>.cshrc</TT> or <TT>.profile</TT> file i.e. 
+<BR><UL>The <B>$PATH</B> environment variable is used on most operating systems as a search path for executable files. This <B>$PATH</B> environment variable must be defined with <B>MicroEmacs '05</B> on the search path. Under UNIX this is set in the <TT>.login</TT>, <TT>.cshrc</TT> or <TT>.profile</TT> file i.e. 
 <UL><P>export PATH $PATH:/usr/name/me </UL></UL>
 <UL><P>Within MS-DOS or Microsoft Windows environments it is defined in the <TT>AUTOEXEC.BAT</TT> file. e.g. 
 <UL><P>set PATH=%PATH%;c:\me </UL></UL>
-<UL><P><B>MicroEmacs '04</B> utilizes information in the <B>$PATH</B> environment variable to locate the start-up files, dictionaries etc. </UL>
+<UL><P><B>MicroEmacs '05</B> utilizes information in the <B>$PATH</B> environment variable to locate the start-up files, dictionaries etc. </UL>
 <P><B>TERM</B> 
 <BR><UL>The terminal identification sting. In UNIX environments the environment variable <B>$TERM</B> is set to &quot;<TT>vt...</TT>&quot;, in this case it is assumed that the machine is a server, and the host cannot support X (see command line option <B>-n</B>). </UL>
 <UL><P>In MS-DOS the environment variable is usually set to define the graphics adapter mode. <B>%TERM</B> is assigned a string, understood by the <TT>me.emf</TT> start-up file, to set the graphics mode. Predefined strings include:- 
@@ -134,7 +150,7 @@ me&nbsp;-m&nbsp;&quot;C:ME:ml-write&nbsp;\&quot;Hello&nbsp;world\&quot;
 <UL><P>
 <A HREF="m5var090.html">$MEUSERPATH(5)</A> is the preferred method used to defined the user directory. </UL>
 <P><B>INFOPATH</B> 
-<BR><UL>MicroEmacs '04 uses the environment variable <TT>$INFOPATH</TT> as the directory(s) used to search for GNU <B>Info</B> files. Within the UNIX <TT>$INFOPATH</TT> is a semi-colon separated list of directories which are used to search for the MicroEmacs '04 macro files. The path is searched from left to right. The environment variable is typically defined in the in the <TT>.login</TT>, <TT>.cshrc</TT> or <TT>.profile</TT> file i.e. 
+<BR><UL>MicroEmacs '05 uses the environment variable <TT>$INFOPATH</TT> as the directory(s) used to search for GNU <B>Info</B> files. Within the UNIX <TT>$INFOPATH</TT> is a semi-colon separated list of directories which are used to search for the MicroEmacs '05 macro files. The path is searched from left to right. The environment variable is typically defined in the in the <TT>.login</TT>, <TT>.cshrc</TT> or <TT>.profile</TT> file i.e. 
 <UL><P>export INFOPATH /usr/local/info:$HOME/info </UL></UL>
 <UL><P>The default when omitted is <TT>/usr/local/info</TT>. </UL>
 <UL><P>Within MS-DOS or Microsoft Windows environments it is defined in the <TT>AUTOEXEC.BAT</TT> file. e.g. 
@@ -145,16 +161,16 @@ me&nbsp;-m&nbsp;&quot;C:ME:ml-write&nbsp;\&quot;Hello&nbsp;world\&quot;
 <UL><P>All of the macro files and dictionaries are located in the <B>MicroEmacs</B> home directory. The standard file extensions that are utilized are:- 
 <P>
 <A HREF="m8fil000.html">.eaf</A> 
-<BR><UL><B>MicroEmacs '04</B> abbreviation file, defines completion definitions for buffer dependent text expansion. </UL>
+<BR><UL><B>MicroEmacs '05</B> abbreviation file, defines completion definitions for buffer dependent text expansion. </UL>
 <P>
 <A HREF="m8fil002.html">.edf</A> 
-<BR><UL>A <B>MicroEmacs '04</B> spelling dictionary. <I>&lt;language&gt;</I><B>.edf</B> provide language specific dictionaries; <I>$LOGNAME</I><B>.edf</B> is personal spelling dictionary. </UL>
+<BR><UL>A <B>MicroEmacs '05</B> spelling dictionary. <I>&lt;language&gt;</I><B>.edf</B> provide language specific dictionaries; <I>$LOGNAME</I><B>.edf</B> is personal spelling dictionary. </UL>
 <P>
 <A HREF="m8fil005.html">.ehf</A> 
-<BR><UL><B>MicroEmacs '04</B> help file information. On-line help information for emacs, the main file is <TT>me.ehf</TT>. </UL>
+<BR><UL><B>MicroEmacs '05</B> help file information. On-line help information for emacs, the main file is <TT>me.ehf</TT>. </UL>
 <P>
 <A HREF="m8fil003.html">.emf</A> 
-<BR><UL>A <B>MicroEmacs '04</B> macro file. The following classes of macro file exist: 
+<BR><UL>A <B>MicroEmacs '05</B> macro file. The following classes of macro file exist: 
 <P><B>me.emf</B> 
 <BR><UL>The default startup file. </UL>
 <P><I>&lt;platform&gt;.emf</I> 
@@ -169,7 +185,10 @@ me&nbsp;-m&nbsp;&quot;C:ME:ml-write&nbsp;\&quot;Hello&nbsp;world\&quot;
 <BR><UL>Template files used to seed new files. Typically contains standard header information, copyright notices etc. that are placed at the head of files. The 'C' programming language is called <TT>c.etf</TT> </UL></UL>
 <H2><B>MICROSOFT WINDOWS </B></H2>
 <UL><P>Microsoft Windows environments should refer to 
-<A HREF="m8fil006.html">me32.ini(8)</A> for a method of setting up the environment variables without editing the <TT>AUTOEXEC.BAT</TT> configuration file. </UL>
+<A HREF="m8fil006.html">me32.ini(8)</A> for a method of setting up the environment variables without editing the <TT>AUTOEXEC.BAT</TT> configuration file. 
+<P>Drag and drop support is provided in the Windowing version of MicroEmacs. The editor window is brought into focus following the drop. </UL>
+<H2><B>UNIX </B></H2>
+<UL><P>Xdnd drag and drop support is provided in the X-Windows version of MicroEmacs. The editor window is not raised or brought into focus following the drop as expected in the UNIX environment. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m5var090.html">$MEINSTALLPATH(5)</A>, 
@@ -178,13 +197,14 @@ me&nbsp;-m&nbsp;&quot;C:ME:ml-write&nbsp;\&quot;Hello&nbsp;world\&quot;
 <A HREF="m5var090.html">$MEUSERPATH(5)</A>, 
 <A HREF="m8fil003.html">emf(8)</A>, 
 <A HREF="m8fil004.html">erf(8)</A>, 
-<A HREF="m5var026.html">$home(5)</A>, <B>emacs(1)</B> [GNU], <B>more(1)</B>, <B>vi(1)</B>. 
+<A HREF="m5var026.html">$home(5)</A>, <B>emacs(1)</B> [GNU], <B>more(1)</B>, 
+<A HREF="m1cmd002.html">ne(1)</A>, <B>vi(1)</B>. 
 <BR>
 <A HREF="m2nar005.html">Client-Server Interface</A>. 
 <BR>
 <A HREF="amicr007.html">Command Line Filters</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2004/02/03</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/03/19</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

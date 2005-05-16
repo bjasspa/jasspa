@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>kill-paragraph(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 kill-paragraph(2)</H1>
@@ -17,24 +17,30 @@ kill-paragraph(2)</H1>
 <H2><B>SYNOPSIS </B></H2>
 <UL><P><I>n</I> <B>kill-paragraph</B> </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P><B>kill-paragraph</B> deletes the next <I>n</I> paragraphs, if <I>n</I> is +ve then the paragraph the cursor is currently in and the next <I>n</I>-1 paragraphs are killed. If <I>n</I> is -ve then the current paragraph and the previous <I>n</I>-1 paragraphs are killed. If <I>n</I> is zero the command simply returns. The default value for <I>n</I> is 1. </UL>
+<UL><P><B>kill-paragraph</B> deletes the next <I>n</I> paragraphs from the current cursor position, the paragraphs that are killed are added to the kill buffer. If the cursor is in the middle of a paragraph then the text from the current cursor position to the end (or start, depending on direction) of the paragraph is deleted. 
+<P>If <I>n</I> is +ve then the kill direction is forwards, if <I>n</I> is -ve then the kill direction is backwards. If <I>n</I> is <TT>0</TT> (zero) the command simply returns. The default value for <I>n</I> is <TT>+1</TT>. </UL>
 <H2><B>DIAGNOSTICS </B></H2>
 <UL><P>The following errors can be generated, in each case the command returns a FALSE status: 
 <P><B>[end of buffer]</B> 
-<BR><UL>The given argument <I>n</I> was greater that the number of remaining paragraphs, all the remaining paragraphs are still removed. </UL>
+<BR><UL>The +ve argument <I>n</I> is greater than the number of remaining paragraphs, all of the remaining paragraphs to the end of the buffer are still removed. </UL>
 <P><B>[top of buffer]</B> 
-<BR><UL>A negative argument <I>n</I> was given requesting more paragraphs to be killed then are present before the cursor. All the paragraphs before the cursor are still removed. </UL></UL>
+<BR><UL>The -ve argument <I>n</I> is greater than the number of previous paragraphs, all of the previous paragraphs to the top of the buffer are still removed. </UL></UL>
 <H2><B>NOTES </B></H2>
-<UL><P>A paragraph is terminated by a blank line. All text residing between two blank lines is considered to be a paragraph - regardless of the text layout. 
-<P>The distinction between killed text and deleted text is that text which is killed is placed into the yank buffer so that it can be pasted into any buffer using 
-<A HREF="m2cmd146.html">yank(2)</A>. </UL>
+<UL><P>A paragraph is terminated by a blank line. All text residing between two blank lines is considered to be a paragraph - regardless of the text layout. </UL>
+<H2><B>HISTORY </B></H2>
+<UL><P>The behavior of <B>kill-paragraph</B> was modified in November 2004 after which the numeric argument <I>n</I> was interpreted to control the number and direction of paragraphs to delete. Previous releases interpreted a -ve value as a control to disable the deleted text from entering the kill buffer. If the existing behavior is required then 
+<A HREF="m2cmd081.html">kill-region(2)</A> with a -ve argument should be used to delete a region of marked text, 
+<A HREF="m2cmd094.html">forward-paragraph(2)</A> and 
+<A HREF="m2cmd094.html">backward-paragraph(2)</A> may be used to move to the appropriate kill position. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m2cmd094.html">backward-paragraph(2)</A>, 
 <A HREF="m2cmd094.html">forward-paragraph(2)</A>, 
-<A HREF="m2cmd081.html">kill-region(2)</A>. </UL>
+<A HREF="m2cmd081.html">kill-region(2)</A>, 
+<A HREF="m2cmd136.html">undo(2)</A>, 
+<A HREF="m2cmd146.html">yank(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/02/06</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

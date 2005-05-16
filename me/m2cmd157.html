@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>read-registry(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 read-registry(2)</H1>
@@ -42,15 +42,16 @@ read-registry(2)</H1>
 <BR><UL>The registry file is merged with the contents of any existing registry node. (i.e. the existing registry tree nodes are not deleted if they already exist). See also the reload flag (<B>r</B>). </UL>
 <P><B>h</B> - Hidden 
 <BR><UL>The registry node is created in the <I>Hidden</I> state. (i.e. children will not be shown in 
-<A HREF="m2cmd025.html">list-registry(2)</A> output). </UL>
+<A HREF="m2cmd025.html">list-registry(2)</A> output). Refer to 
+<A HREF="m2cmd154.html">mark-registry(2)</A> for hiding modes. </UL>
 <P><B>u</B> - Updated 
 <BR><UL>Marks the registry as modified. The modified bit is removed when the registry file is saved. If the modified bit is applied to a registry node the user will be prompted to save the registry when it is deleted (or it will be automatically saved when the <I>Autosave</I> mode is used). </UL></UL>
 <UL><P>Multiple modes may be applied. </UL></UL>
 <H2><B>EXAMPLE </B></H2>
 <UL><P>The following example is a typical call made from a macro using a registry file where the user may edit the registry file. In this case this a reload of the registry is forced to ensure that the most up-to-date contents are retrieved. Note that the name of the registry file is actually retrieved from the <I>history</I> registry. <UL>
-<PRE>set-variable&nbsp;#l1&nbsp;&amp;reg&nbsp;&quot;/history&quot;&nbsp;&quot;address&quot;&nbsp;$user-name 
+<PRE>set-variable&nbsp;#l1&nbsp;&amp;reg&nbsp;&quot;/history/address&quot;&nbsp;$user-name 
 !if&nbsp;&amp;seq&nbsp;&amp;set&nbsp;#l0&nbsp;&amp;find&nbsp;#l1&nbsp;&quot;.ab&quot;&nbsp;&quot;ERROR&quot; 
-&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;&amp;reg&nbsp;&quot;/&quot;&nbsp;&quot;history&quot;&nbsp;&quot;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;&amp;reg&nbsp;&quot;/history&quot;&nbsp;&quot;&quot; 
 &nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;&amp;spr&nbsp;&quot;%s%s.ab&quot;&nbsp;&amp;lef&nbsp;#l0&nbsp;&amp;rsin&nbsp;&quot;/&quot;&nbsp;#l0&nbsp;#l1 
 !endif 
 read-registry&nbsp;&quot;AddressBook&quot;&nbsp;#l0&nbsp;&quot;rc&quot; 
@@ -59,13 +60,18 @@ read-registry&nbsp;&quot;AddressBook&quot;&nbsp;#l0&nbsp;&quot;rc&quot;
 <UL><P>At exit only registry nodes attached to the root are saved. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
-<A HREF="m2cmd008.html">save-registry(2)</A>, 
+<A HREF="m3mac036.html">copy-registry(3)</A>, 
+<A HREF="m2cmd114.html">delete-registry(2)</A>, 
+<A HREF="m2cmd072.html">find-registry(2)</A>, 
 <A HREF="m2cmd025.html">list-registry(2)</A>, 
 <A HREF="m2cmd154.html">mark-registry(2)</A>, 
+<A HREF="m2cmd008.html">save-registry(2)</A>, 
+<A HREF="m2cmd042.html">set-registry(2)</A>, 
+<A HREF="m4fil028.html">&amp;reg(4)</A>, 
 <A HREF="m5var057.html">$search-path(5)</A>, 
 <A HREF="m8fil004.html">erf(8)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2004/02/01</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/01/23</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

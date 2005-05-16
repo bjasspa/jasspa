@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>Bindings(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 Bindings(2)</H1>
@@ -133,6 +133,8 @@ Bindings(2)</H1>
 <H2>esc  Prefix Sequences </H2>
 <UL><P><TT>esc !</TT> 
 <A HREF="m2cmd098.html">pipe-shell-command</A> Pipe a shell command to a buffer. 
+<BR><TT>esc %</TT> 
+<A HREF="m2cmd102.html">query-replace-string</A> Search and replace a string - with query. 
 <BR><TT>esc $</TT> 
 <A HREF="m3osd002.html">spell-word</A> Spell a word. 
 <BR><TT>esc .</TT> 
@@ -245,11 +247,13 @@ Bindings(2)</H1>
 <BR><TT>C-x&nbsp;2</TT> 
 <A HREF="m2cmd128.html">split-window-vertically</A> Split the current window into two. 
 <BR><TT>C-x&nbsp;3</TT> 
-<A HREF="m2cmd126.html">next-window-find-buffer</A> Find a buffer into the next window, split if necessary. 
-<BR><TT>C-x&nbsp;4</TT> 
-<A HREF="m2cmd127.html">next-window-find-file</A> Load a file into the next window, split if necessary. 
-<BR><TT>C-x&nbsp;5</TT> 
-<A HREF="m2cmd151.html">split-window-horizontally</A> Split the current window horizontally into two. 
+<A HREF="m2cmd151.html">split-window-horizontally</A> Split current window horizontally into two. 
+<BR><TT>C-x&nbsp;5-1</TT> 
+<A HREF="m2cmd161.html">create-frame</A> Create a new internal frame. 
+<BR><TT>C-x&nbsp;5-2</TT> 
+<A HREF="m2cmd161.html">create-frame</A> Create a new external frame. 
+<BR><TT>C-x&nbsp;8</TT> 
+<A HREF="m3mac030.html">find-cfile</A> Find and load an encrypted file for editing. 
 <BR><TT>C-x&nbsp;9</TT> 
 <A HREF="m3mac030.html">find-bfile</A> Find and load a file for binary editing. 
 <BR><TT>C-x&nbsp;&lt;</TT> 
@@ -315,9 +319,7 @@ Bindings(2)</H1>
 <BR><TT>C-x&nbsp;C-b</TT> 
 <A HREF="m2cmd083.html">list-buffers</A> Display buffer list. 
 <BR><TT>C-x&nbsp;C-c</TT> 
-<A HREF="m2cmd103.html">save-buffer-exit-emacs</A> Exit MicroEmacs '04. 
-<BR><TT>C-x&nbsp;C-d</TT> 
-<A HREF="m2cmd016.html">change-directory</A> Change the current working directory. 
+<A HREF="m2cmd103.html">save-buffer-exit-emacs</A> Exit MicroEmacs '05. 
 <BR><TT>C-x&nbsp;C-e</TT> 
 <A HREF="m2cmd046.html">execute-kbd-macro</A> Execute a macro. 
 <BR><TT>C-x&nbsp;C-f</TT> 
@@ -376,7 +378,7 @@ Bindings(2)</H1>
 <BR><TT>C-h&nbsp;C-v</TT> 
 <A HREF="m2cmd065.html">help-variable</A> Display variable help information. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2004/01/11</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/01/15</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>magic(2m)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 magic(2m)</H1>
@@ -21,7 +21,7 @@ magic(2m)</H1>
 <UL><P><B>magic</B> mode enables the regular expression search capability used in the search and the replace commands such as 
 <A HREF="m2cmd116.html">search-forward(2)</A> and 
 <A HREF="m2cmd102.html">query-replace-string(2)</A>. 
-<P>In the magic mode of MicroEmacs '04, certain characters gain special meanings when used in a search pattern. Collectively they are know as regular expressions, and a limited number of them are supported in MicroEmacs '04. They grant greater flexibility when using the search commands (note that they also affect 
+<P>In the magic mode of MicroEmacs '05, certain characters gain special meanings when used in a search pattern. Collectively they are know as regular expressions, and a limited number of them are supported in MicroEmacs '05. They grant greater flexibility when using the search commands (note that they also affect 
 <A HREF="m2cmd078.html">isearch-forward(2)</A> commands). 
 <P>The symbols that have special meaning in magic mode are <TT>^</TT>, <TT>$</TT>, <TT>.</TT>, <TT>\|</TT>, <TT>*</TT>, <TT>[</TT> <TT>]</TT>, <TT>\(</TT> <TT>\)</TT>, <TT>\{</TT> <TT>\}</TT> and <TT>\</TT>. 
 <P>The characters <TT>^</TT> and <TT>$</TT> fix the search pattern to the beginning and end of line, respectively. The <TT>^</TT> character must appear at the beginning of the search string, and the <TT>$</TT> must appear at the end, otherwise they loose their meaning and are treated just like any other character. For example, in magic mode, searching for the pattern &quot;<TT>t$</TT>&quot; would put the cursor at the end of any line that ended with the letter '<TT>t</TT>'. Note that this is different than searching for &quot;<TT>t&lt;NL&gt;</TT>&quot;, that is, '<TT>t</TT>' followed by a newline character. The character <TT>$</TT> (and <TT>^</TT>, for that matter) matches a position, not a character, so the cursor remains at the end of the line. But a newline is a character that must be matched, just like any other character, which means that the cursor is placed just after it - on the beginning of the next line. 
@@ -76,7 +76,7 @@ magic(2m)</H1>
 <BR>
 <A HREF="m2nar006.html">Regular Expressions</A> </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
+<P><I>(c) Copyright JASSPA 2005</I>
 <BR><I>Last Modified: 2004/01/05</I>
-<BR><I>Generated On: 2004/03/26</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

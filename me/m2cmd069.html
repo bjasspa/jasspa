@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>hilight(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 hilight(2)</H1>
@@ -30,7 +30,7 @@ hilight(2)</H1>
 <H2>Hilight Scheme Creation </H2>
 <UL><P><I>0</I> <B>hilight</B> &quot;<I>hil-no</I>&quot; &quot;<I>flags</I>&quot; [ &quot;<I>nol</I>&quot; ] [ &quot;<I>buffer-scheme</I>&quot; [ &quot;<I>trunc-scheme</I>&quot; ] ] 
 <P>With an argument of <TT>0</TT>, <B>hilight</B> initializes or re-initializes the hilight scheme <I>hil-no</I> (1-255). Every buffer has a hilight scheme, the default is 0 which means no hi-lighting and only the 
-<A HREF="m5var024.html">$global-scheme(5)</A> etc. are used. The hilighting scheme must be defined before use and is used to specify how the buffer is to be hilighted. MicroEmacs '04 supports the following hilighting concepts:- <UL><P>
+<A HREF="m5var024.html">$global-scheme(5)</A> etc. are used. The hilighting scheme must be defined before use and is used to specify how the buffer is to be hilighted. MicroEmacs '05 supports the following hilighting concepts:- <UL><P>
 <LI><B>hilight string</B>, a user specified string is hilighted in any color scheme. 
 <LI><B>Tokens</B>, same as a hilight string except that the string must be enclosed in non alpha-numeric characters. 
 <LI><B>Start-of-line hilights</B>, the start of the hilight must be the first non-white character of the line. 
@@ -138,6 +138,8 @@ hilight&nbsp;1&nbsp;20&nbsp;&quot;/\\*&quot;&nbsp;&quot;*/&quot;&nbsp;&quot;&quo
 <BR><UL>This is a column hilighting token, which allows absolute columns within a window to be hilighted (irrespective of the contents). This bit takes precedence over all other bits and all other bits are ignored. Column highlighting is a different concept to token in that it requires a &quot;<I>from-col</I>&quot; and a &quot;<I>to-col</I>&quot; column positions and a line will be hilighted in the given scheme between these two columns. </UL>
 <P><B>0x800</B> 
 <BR><UL>The flag is used with bracket tokens (<TT>0x04</TT>) and indicates that the bracket is typically contained on a single line. This information is used by MicroEmacs in trying to avoid hilighting anomalies caused when the start and end tokens of the bracket are the same (e.g. a string's start and end token is '<TT>&quot;</TT>'). Problems arise when the bracket starts on one line and closes on a later line, even with a large look-back, eventually the start bracket will become too far back and only the end bracket is found. But as this is the same as the open token it is mistaken for an open bracket and the strings become out of synch. This test can reset this if further down the file an open and close bracket is found on the same line. For this to have any effect, the hilighting scheme must use look-back (flag <TT>0x02</TT> of <B>Hilight Creation</B>). </UL>
+<P><B>0x1000</B> 
+<BR><UL>Flag is typically used with a branch token (<TT>0x04</TT>) and indicates that the hilight exists to the end of the line or is terminated by the new line (i.e. encountering the end of line will removes the branch hilight). </UL>
 <P>Note that <TT>0x004</TT>, <TT>0x008</TT> and <TT>0x080</TT> are mutually exclusive and more than 1 should not be set in any one hilight token, if 2 or more are set the effect is undefined. Other than this there is no restrictions placed on the types of token used, although strange combinations like <TT>0x006</TT> may lead to unexpected results -- hopefully not a core dump, but not guaranteed ! 
 <P>The token and close token of brackets may contain a limited subset of regular expression tokens as follows:- 
 <P><B>^</B> 
@@ -145,11 +147,12 @@ hilight&nbsp;1&nbsp;20&nbsp;&quot;/\\*&quot;&nbsp;&quot;*/&quot;&nbsp;&quot;&quo
 <P><B>$</B> 
 <BR><UL>The token must be at the end of the line, must be the last character. </UL>
 <P><B>\{</B> 
-<BR><UL>Indicates the start of the hilighted part of the token, only one may be used per token. This token use is different from regex. </UL>
+<BR><UL>Indicates the start of the hilighted part of the token, only one may be used per token. This token use is different from regex. The <B>\{</B> hilight start marker must be at a fixed point from the start of the token, that is a wild card sequence may NOT proceed the &quot;<TT>\{</TT>&quot; token, i.e. &quot;<TT>A\{&nbsp;*B</TT>&quot; is correct, &quot;<TT>A&nbsp;*\{B</TT>&quot; is incorrect as it is proceeded by a wild card character. </UL>
 <P><B>\}</B> 
 <BR><UL>Indicates the end of the hilighted part of the token, only one may be used per token. The rest of the token must be matched for it to be used but is not considered part of the token, i.e. hilighting continues on the character immediately after the &quot;<I>\}</I>&quot;, not at the end of the token. Similar to the <B>\&lt;</B> token, the length of the rest of the token must be fixed. This token use is different from regex. </UL>
 <P><B>\(.\)</B> 
 <BR><UL>Groups are supported in hilighting, but they must only enclose a single character, closures ('*', '?' and '+') must come after the closure, i.e. use &quot;\(.\)*&quot;, not &quot;\(.*\)&quot;. Alternatives (&quot;<TT>\|</TT>&quot;) are not supported. </UL>
+<UL><P>Groups are used to capture a single, this single character may be tested again within the string using the syntax <TT>\1</TT>..<TT>\9</TT> as with regular expressions. Where the inverse character is required then the syntax <TT>\!1</TT>..<TT>\!9</TT> may be used. This NOT syntax is special to highlighting and is not present in the regular expression general syntax. </UL>
 <P><B>.</B> 
 <BR><UL>Matches any character. </UL>
 <P><B>[...]</B> 
@@ -184,24 +187,29 @@ hilight&nbsp;1&nbsp;20&nbsp;&quot;/\\*&quot;&nbsp;&quot;*/&quot;&nbsp;&quot;&quo
 <P><TT>[[:sword:]]</TT> 
 <BR><UL>A spell word character. </UL>
 <P><B>[^...]</B> 
-<BR><UL>Matches all characters except the given range of characters, e.g. &quot;<TT>[^[:space:]]</TT>&quot;. </UL>
+<BR><UL>Matches all characters except the given range of characters, e.g. &quot;<TT>[^[:space:]]</TT>&quot;. </UL></UL>
 <P><TT>\#</TT> 
 <BR><UL>The same character which matched the #th group token. This functionality is best explained using UNIX <B>man(1)</B> output as an example, to create a bold character '<B>X</B>' it produces &quot;<TT>X\CHX</TT>&quot; where <TT>\CH</TT> is a backspace character thereby overstriking the first '<TT>X</TT>' with another creating a bold character. This can be checked for and simulated in MicroEmacs using the following: <UL>
 <PRE>hilight&nbsp;1&nbsp;64&nbsp;&quot;\\(.\\)\CH\\1&quot;&nbsp;&quot;\\1&quot;&nbsp;.scheme.bold 
 </PRE></UL>
-</UL><P>The use of &quot;<TT>\1</TT>&quot; in the search string ensures that the second character is the same as the first. This is replace by a single character drawn in the bold scheme. </UL>
+</UL><UL><P>The use of &quot;<TT>\1</TT>&quot; in the search string ensures that the second character is the same as the first. This is replace by a single character drawn in the bold scheme. </UL>
+<P><TT>\!#</TT> 
+<BR><UL>The inverse character that matched the #th group token, i.e. NOT <TT>\1</TT>. </UL>
 <P><B>?</B> <B>+</B> <B>*</B> 
-<BR><UL>Matches 0 or 1, 1 or more and 0 or more of the previous character or character range respectively. 
+<BR><UL>Matches 0 or 1, 1 or more and 0 or more of the previous character or character range respectively. </UL>
+<P><TT>\w \W \l \L \u \U \d \D \x \X \s \S</TT> 
+<BR><UL>Marches the special word characters (<TT>w</TT>)ord, (<TT>l</TT>)ower, (<TT>u</TT>)pper, (<TT>d</TT>)igit, (<TT>x</TT>)digit, white(<TT>s</TT>)pace. The uppercase letters are the inverse. (see 
+<A HREF="m2nar006.html">Regular Expressions</A>). 
 </UL><P>Following is a list of hilighting regular expression restrictions: 
 <UL><P>The number of characters to the left of a <B>\{</B> and to the right of a <B>\}</B> token must be fixed, i.e. the '<B>?</B>', '<B>+</B>' and '<B>*</B>' tokens cannot be used before this token. Consider the hilighting of a C function name defined to be a token at the start of a line followed by 0 or more spaces followed by a '('. The following hilight token looks valid but the variable space match is incorrect as it is to the right of the <B>\}</B>: <UL>
-<PRE>hilight&nbsp;1&nbsp;0&nbsp;&quot;^\\w+\\}\\s-*(&quot;&nbsp;.scheme.function 
+<PRE>hilight&nbsp;1&nbsp;0&nbsp;&quot;^\\w+\\}\\s*(&quot;&nbsp;.scheme.function 
 </PRE></UL>
 <P>Instead either the space match must be include in the function token hilighting (which may cause problems, particularly if printing with underlining) or by fixing the number of spaces as follows: <UL>
 <PRE>;&nbsp;include&nbsp;the&nbsp;spaces&nbsp;in&nbsp;the&nbsp;function&nbsp;hilighting 
-hilight&nbsp;1&nbsp;0&nbsp;&quot;^\\w+\\s-*\\}(&quot;&nbsp;.scheme.function 
+hilight&nbsp;1&nbsp;0&nbsp;&quot;^\\w+\\s*\\}(&quot;&nbsp;.scheme.function 
 ;&nbsp;or&nbsp;fix&nbsp;the&nbsp;number&nbsp;of&nbsp;spaces&nbsp;to&nbsp;0,&nbsp;1&nbsp;... 
 hilight&nbsp;.hilight.c&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&quot;^\\w+\\}(&quot;&nbsp;.scheme.function 
-hilight&nbsp;.hilight.c&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&quot;^\\w+\}\\s-(&quot;&nbsp;.scheme.function 
+hilight&nbsp;.hilight.c&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&quot;^\\w+\}\\s(&quot;&nbsp;.scheme.function 
 </PRE></UL>
 </UL><UL><P>The <B>+</B> and <B>*</B> tokens match the longest string and do not narrow, e.g. consider the hilighting of a C goto label which takes the form of an alpha-numerical name at the start of a line followed by a ':' character. The token &quot;<TT>^.*:</TT>&quot; cannot be used as <TT>.</TT> will also match and move past the ending ':', ending only at the end of the line. As no narrowing is performed the final '<TT>:</TT>' in the token will not match and the label will not be hilighted. Instead a character range which excludes a ':' character must be used, e.g. &quot;<B>^[^:]*:</B>&quot;. </UL>
 <UL><P>A group should not be followed by a <B>?</B> or <B>*</B> closure, it should either be a fixed single character or followed by a <B>+</B> closure (in which case the last matching character is stored). 
@@ -211,7 +219,7 @@ hilight&nbsp;.hilight.c&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&quot;^\\w+\}\\s-(&quot;&n
 <P><B>0x02</B> 
 <BR><UL>&quot;<TT>????.*</TT>&quot; </UL>
 <P><B>0x20</B> 
-<BR><UL>&quot;<TT>^\s-*\{????</TT>&quot; - (note that this is strictly incorrect as the <TT>\s-*</TT> is to the left of the <TT>\{</TT>, it is correctly handled for the ease of use). </UL>
+<BR><UL>&quot;<TT>^\s*\{????</TT>&quot; - (note that this is strictly incorrect as the <TT>\s*</TT> is to the left of the <TT>\{</TT>, it is correctly handled for the ease of use). </UL>
 <P><B>0x100</B> 
 <BR><UL>&quot;<TT>^????</TT>&quot; </UL></UL>
 <H2>Hilight Scheme Token Deletion </H2>
@@ -253,11 +261,16 @@ hilight&nbsp;.hilight.man&nbsp;64&nbsp;&quot;\\(.\\)\CH\\1\CH\\1\CH\\1\\}[^\CH]&
 hilight&nbsp;.hilight.man&nbsp;64&nbsp;&quot;_\CH_\CH_\CH_\CH_\\}[^\CH]&quot;&nbsp;&quot;_&quot;&nbsp;.scheme.italic 
 hilight&nbsp;.hilight.man&nbsp;64&nbsp;&quot;_\CH\\(.\\)\CH\\1\CH\\1\CH\\1\\}[^\CH]&quot;&nbsp;&quot;\\1&quot;&nbsp;.scheme.italic 
 </PRE></UL>
-<P>This replaces the complex nroff character string with a single hi-lighted character (don't believe me, try it!). </UL>
+<P>This replaces the complex nroff character string with a single hi-lighted character (if you do not believe me then try it!). </UL>
 <H2><B>NOTES </B></H2>
-<UL><P>MicroEmacs hilight was written with speed and flexibility in mind, as a result the user is assumed to know what they are doing, if not the effects can be fatal. </UL>
+<UL><P>MicroEmacs hilight was written with speed and flexibility in mind, as a result the user is assumed to know what they are doing, if not the effects can sometimes be fatal. 
+<P>Within MicroEmacs macro language then a single backslash &quot;<TT>\</TT>&quot; is the escape character of the macro pre-processor. When writing a regular expression search string in the macro language then search string backslashes should be escaped. Hence a regular expression defined as &quot;<TT>\x41\\x41</TT>&quot; searches for the character '<TT>A</TT>' ('<TT>A</TT>' is hexadecimal 0x41 i.e. &quot;<TT>\x41</TT>&quot;) followed by a single hexadecimal character (&quot;<TT>\\x</TT>) followed by the literal string &quot;<TT>41</TT>&quot;. </UL>
+<H2><B>HISTORY </B></H2>
+<UL><P>The March 2005 release modified the NOT replacement pattern with &quot;<TT>\s!D</TT>&quot; where <TT>D</TT> is the numeric group identifier <TT>1..9</TT>. 
+<P>The token <TT>0x1000</TT> was undocumented before March 2005 and is now a fully supported hilight mode. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
+<A HREF="m2nar006.html">Regular Expressions</A>, 
 <A HREF="m2nar000.html">File Language Templates</A>, 
 <A HREF="m5var004.html">$buffer-hilight(5)</A>, 
 <A HREF="m2cmd003.html">add-file-hook(2)</A>, 
@@ -267,7 +280,7 @@ hilight&nbsp;.hilight.man&nbsp;64&nbsp;&quot;_\CH\\(.\\)\CH\\1\CH\\1\CH\\1\\}[^\
 <A HREF="m5var047.html">$system(5)</A>, 
 <A HREF="m2cmd101.html">print-buffer(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/04/27</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

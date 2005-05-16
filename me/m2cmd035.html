@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>forward-kill-word(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 forward-kill-word(2)</H1>
@@ -20,19 +20,23 @@ forward-kill-word(2)</H1>
 <BR><I>n</I> <B>backward-kill-word</B> (<B>esc backspace</B>)&nbsp; </UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P><B>forward-kill-word</B> deletes the next <I>n</I> words starting at the current cursor position, the deleted text is added to the kill buffer. See 
-<A HREF="m2cmd096.html">forward-word(2)</A> for a description of word boundaries. If the argument <I>n</I> is <TT>0</TT> the command has no effect. If a -ve argument is specified, +<I>n</I> words are deleted and the text is not added to the kill buffer. 
+<A HREF="m2cmd096.html">forward-word(2)</A> for a description of word boundaries. If the argument <I>n</I> is <TT>0</TT> the command has no effect. If a -ve argument is specified, <I>n</I> words are deleted backwards (i.e. this is the same as <B>-n backward-kill-word</B>). 
 <P><B>backward-kill-word</B> deletes the previous <I>n</I> words before the cursor, the deleted text is added to the kill buffer. The numeric argument has the same effect as with <B>forward-kill-word</B>. </UL>
 <H2><B>NOTES </B></H2>
 <UL><P><B>backward-kill-word</B> is also bound to <B>esc backspace</B>. 
-<P>The -ve argument is typically used from macro scripts where the kill buffer is more precisely controlled. </UL>
+<P>The -ve argument is typically used by macro scripts where the kill buffer is more precisely controlled. </UL>
+<H2><B>HISTORY </B></H2>
+<UL><P>The interpretation of the numeric argument was changed in the 2005 release to kill <I>n</I> words in a forwards or backwards direction. In previous releases then the -ve argument controlled the kill buffer behavior. If kill buffer control is required then 
+<A HREF="m2cmd081.html">kill-region(2)</A> should be used instead. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m2cmd034.html">backward-delete-char(2)</A>, 
 <A HREF="m2cmd034.html">forward-delete-char(2)</A>, 
 <A HREF="m2cmd096.html">forward-word(2)</A>, 
+<A HREF="m2cmd081.html">kill-region(2)</A>, 
 <A HREF="m2cmd146.html">yank(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/02/19</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

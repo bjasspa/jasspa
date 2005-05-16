@@ -1,0 +1,135 @@
+<HTML>
+<HEAD><TITLE>ne(1)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
+ne(1)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>ne - NanoEmacs '05 text editor </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>ne</B> [<I>options</I>] [<I>files ...</I>] 
+<P><B>ne</B> [<B>@</B><I>startupFile</I>] [<B>-a</B>] [<B>-b</B>&nbsp;<I>file</I>] [<B>-B</B>] [<B>-c</B>] [<B>-h</B>] [<B>-k</B>[<I>key</I>]&nbsp;<I>file</I>] [<B>-l</B><I>lineNo</I>] [<B>-R</B>] [<B>-r</B>] [<B>-s</B><I>string</I>] [<B>-u</B><I>username</I>] [<B>-v</B><I>variable=string</I>] [<B>-V</B>] [<B>-x</B>] [<B>-y</B>&nbsp;<I>file</I>] <I>files...</I> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>NanoEmacs '05</B> is a cut down version of <B>MicroEmacs '05</B> EMACS text editor, based on Danial Lawrences MicroEmacs. 
+<P><B>NanoEmacs '05</B> provides the basic EMACS editor functions, allowing multiple files to be edited at the same time. The screen may be split into different windows and screens, and text may be moved freely from one window on any screen to the next. The editor typically runs in a console mode and is set up for basic system administration work or system bring up, macro files are not expected to be present, the system is still capable of running a macro file (with limited capability), the default start-up file is <TT>ne.emf</TT> and is executed at start-up if present. 
+<P>The command line options to <B>NanoEmacs '05</B> are defined as follows:- 
+<P><B>@</B><I>startFile</I> 
+<BR><UL>Initialize NanoEmacs '05 using <I>startFile</I>[<B>.emf</B>]. The default when omitted is <B>ne.emf</B>. See 
+<A HREF="m3mac024.html">start-up(3)</A> and 
+<A HREF="amicr007.html">Command Line Filters</A> for more information. </UL>
+<P><B>-a</B> 
+<BR><UL>Toggle the auto-save mode, this toggles the 
+<A HREF="m2mod000.html">auto(2m)</A> mode. </UL>
+<UL><P><B>Note:</B> that NanoEmacs disables auto save mode by default and MicroEmacs enables auto save mode by default. The behavior of <B>-a</B> is therefore different between the two editors. </UL>
+<P><B>-b</B> 
+<BR><UL>Load next file as a binary file (binary editor mode, uses 
+<A HREF="m2mod018.html">binary(2m)</A> buffer mode). </UL>
+<P><B>-B</B> 
+<BR><UL>Toggle the backup mode, this toggles the 
+<A HREF="m2mod001.html">backup(2m)</A> mode. </UL>
+<UL><P><B>Note:</B> that NanoEmacs disables backup mode by default and MicroEmacs enables backup mode by default. The behavior of <B>-B</B> is therefore different between the two editors. </UL>
+<P><B>-c</B> 
+<BR><UL>Continuation mode. Load <B>NanoEmacs '05</B> last edit session, restoring the buffers to their previous loaded state and position. Note that history mode must be enabled. The <B>-c</B> option is generally used with windowing interfaces (X-Windows/Microsoft Windows) as the shortcut icon invocation. </UL>
+<P><B>-h</B> 
+<BR><UL>Show the help page (does not start the editor). </UL>
+<P><B>-k</B>[<I>key</I>] 
+<BR><UL>Load next file as an encrypted file (uses 
+<A HREF="m2mod003.html">crypt(2m)</A> buffer mode). The optional adjoining argument can be used to specify the decrypting key, if this argument is not specify the user will be prompted for it on start-up. </UL>
+<P><B>-l</B><I>lineNo</I> 
+<BR><UL>Go to line <I>lineNo</I> in the next given file. Typically used with utilities such a <B>more(1)</B> where an external editor may be invoked from other viewer. </UL>
+<P><B>-n</B> 
+<BR><UL>UNIX X-Windows environments only and MicroSoft Windows NT console versions. Execute <B>MicroEmacs '05</B> using termcap rather than X-Windows for UNIX; typically used within an <B>xterm</B> shell to fire up <B>MicroEmacs '05</B> for a quick edit. For Microsoft Windows, a console window is started as opposed to a GUI window. This option is not present if a console version of the application has been built. </UL>
+<P><B>-R</B> 
+<BR><UL>Reverse the default video color scheme. The default foreground color becomes the background color and vice versa. This only affects the built in scheme and not any schemes defined in any start-up file. </UL>
+<P><B>-r</B> 
+<BR><UL>Read-only, all buffers will be in view mode </UL>
+<P><B>-s</B><I>string</I> 
+<BR><UL>Search for string &quot;<I>string</I>&quot; in the current buffer. e.g. <TT>ne -sfoo bar</TT> starts <B>MicroEmacs '05</B>, loads file <TT>bar</TT> and initiates a search for <I>foo</I>. The cursor is left at the end of the string if located, otherwise at the top of the buffer. </UL>
+<P><B>-u</B><I>username</I> 
+<BR><UL>Set the current user name 
+<A HREF="m5var088.html">$user-name(5)</A> to <I>username</I> before NanoEmacs is initialized. </UL>
+<P><B>-v</B><I>variable=string</I> 
+<BR><UL>Assign the MicroEmacs '05 <I>variable</I> with <I>string</I>. The assignment is performed before the buffers are loaded. Typically used to change the start-up characteristics of the startup file(s). </UL>
+<P><B>-V</B> 
+<BR><UL>Print the name and version of NanoEmacs. i.e. </UL>
+<UL><P><TT>orac% ne -V</TT> 
+<BR><TT>NanoEmacs 05 - Date 2005/02/24 - sunos</TT> </UL>
+<P><B>-x</B> 
+<BR><UL>UNIX environments. Disable the capture of signals. <B>MicroEmacs '05</B> by default captures an handles all illicit signal interrupts. The option is enabled when debugging the source code allowing exception conditions to be trapped within the debugger. </UL>
+<P><B>-y</B> 
+<BR><UL>Load next file as a reduced binary file (uses 
+<A HREF="m2mod031.html">rbin(2m)</A> buffer mode). </UL></UL>
+<H2><B>ENVIRONMENT </B></H2>
+<UL><P>The following environment variables are used by <B>NanoEmacs '05</B>. 
+<P><B>DISPLAY</B> 
+<BR><UL>UNIX environments running X-Windows only. The identity of the X-Windows server. Typically set to <B>unix:0.0</B>, refer to the X-Windows documentation for details of this environment variable. </UL>
+<P><B>MENAME</B> 
+<BR><UL>
+<A HREF="m5var076.html">$MENAME(5)</A> is used to override the identity of the user 
+<A HREF="m5var088.html">$user-name(5)</A>. The variable may be used to determine which start-up configuration to use in the initialization of <B>MicroEmacs '05</B> (<I>$user-name</I>.erf). This is ignored if the <B>-u</B> option is specified on the command line. </UL>
+<UL><P>Non-UNIX platforms usually need to explicitly set the <B>$MENAME</B> environment variable to identify the aforementioned files. for MS-DOS and early versions of Microsoft Windows this is typically performed in the <TT>AUTOEXEC.BAT</TT> file. </UL>
+<P><B>PATH</B> 
+<BR><UL>The <B>$PATH</B> environment variable is used on most operating systems as a search path for executable files. This <B>$PATH</B> environment variable must be defined with <B>MicroEmacs '05</B> on the search path. Under UNIX this is set in the <TT>.login</TT>, <TT>.cshrc</TT> or <TT>.profile</TT> file i.e. 
+<UL><P>export PATH $PATH:/usr/name/ne </UL></UL>
+<UL><P>Within MS-DOS or Microsoft Windows environments it is defined in the <TT>AUTOEXEC.BAT</TT> file. e.g. 
+<UL><P>set PATH=%PATH%;c:\ne </UL></UL>
+<UL><P><B>MicroEmacs '05</B> utilizes information in the <B>$PATH</B> environment variable to locate the start-up files, dictionaries etc. </UL>
+<P><B>TERM</B> 
+<BR><UL>The terminal identification sting. In UNIX environments the environment variable <B>$TERM</B> is set to &quot;<TT>vt...</TT>&quot;, in this case it is assumed that the machine is a server, and the host cannot support X (see command line option <B>-n</B>). </UL>
+<UL><P>In MS-DOS the environment variable is usually set to define the graphics adapter mode. <B>%TERM</B> is assigned a string, understood by the <TT>me.emf</TT> start-up file, to set the graphics mode. Predefined strings include:- 
+<P><B>E80x50</B> 
+<BR><UL>Initiates an 80 column by 50 line screen. </UL>
+<P><B>E80x25</B> 
+<BR><UL>Initiates an 80 column by 25 line screen. </UL>
+<P><I>userDefined</I> 
+<BR><UL>A user defined string to set an explicit graphics card mode. The operation is dependent upon the support offered by the graphics adapter. </UL></UL>
+<P>
+<A HREF="m5var090.html">$MEINSTALLPATH(5)</A> 
+<BR><UL>is an environment variable that overrides any internally defined search path for NanoEmacs system macros and defines the root directory(s) of the NanoEmacs system macros. The presence of the environment variable affects 
+<A HREF="m5var057.html">$search-path(5)</A>. </UL>
+<P>
+<A HREF="m5var090.html">$MEUSERPATH(5)</A> 
+<BR><UL>is an environment variable that defines the users private directory where user configuration files such as 
+<A HREF="m5var088.html">$user-name</A><B>.emf</B>, 
+<A HREF="m5var088.html">$user-name</A><B>.erf</B> and personal spelling dictionaries are stored. This is an absolute directory path. The environment variable sets the NanoEmacs variable 
+<A HREF="m5var089.html">$user-path(5)</A>. </UL>
+<P><B>MEPATH</B> 
+<BR><UL>
+<A HREF="m5var090.html">$MEPATH(5)</A> is an environment variable that may be used to define the absolute search path for NanoEmacs macro files and affects the setting of <B>$search-path</B>. The path should include the system macros location(s) and should include the user directory location 
+<A HREF="m5var089.html">$user-path(5)</A> as the first path when the environment variable 
+<A HREF="m5var090.html">$MEUSERPATH(5)</A> is not defined. If <B>$MEUSERPATH</B> is defined then this path name appears before the <B>$MEPATH</B> variable to define the user directory location. <B>$MEPATH</B> is not searching, so ALL directories to be searched must be included in the path specification. </UL>
+<UL><P>
+<A HREF="m5var090.html">$MEUSERPATH(5)</A> is the preferred method used to defined the user directory. </UL></UL>
+<H2><B>FILES </B></H2>
+<UL><P>All of the macro files and dictionaries are located in the <B>NanoEmacs</B> home directory. The standard file extensions that are utilized are:- 
+<P>
+<A HREF="m8fil003.html">.emf</A> 
+<BR><UL>A <B>MicroEmacs '05</B> macro file. The following classes of macro file exist: 
+<P><B>ne.emf</B> 
+<BR><UL>The default startup file. </UL></UL></UL>
+<H2><B>MICROSOFT WINDOWS </B></H2>
+<UL><P>Microsoft Windows environments should refer to 
+<A HREF="m8fil006.html">me32.ini(8)</A> for a method of setting up the environment variables without editing the <TT>AUTOEXEC.BAT</TT> configuration file. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var090.html">$MEINSTALLPATH(5)</A>, 
+<A HREF="m5var076.html">$MENAME(5)</A>, 
+<A HREF="m5var090.html">$MEPATH(5)</A>, 
+<A HREF="m5var090.html">$MEUSERPATH(5)</A>, 
+<A HREF="m8fil003.html">emf(8)</A>, <B>emacs(1)</B> [GNU], <B>more(1)</B>, 
+<A HREF="m1cmd000.html">me(1)</A>, <B>vi(1)</B>. 
+<BR>
+<A HREF="amicr007.html">Command Line Filters</A>. </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/03/19</I>
+<BR><I>Generated On: 2005/05/14</I>
+</BODY></HMTL>
