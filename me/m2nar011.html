@@ -1,0 +1,99 @@
+<HTML>
+<HEAD><TITLE>macroDebugging(4)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
+macroDebugging(4)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>MACRO DEBUGGING </B></H2>
+<UL><P>In writing new macros then you need to debug them, there are various strategies as follows:- </UL>
+<H2>Tracing </H2>
+<UL><P>The simplest method is to add debugging information that is printed on the message line that traces the execution sequence as it progresses through the macro. 
+<P>Use 
+<A HREF="m2cmd145.html">ml-write(2)</A> to print out values as you go, use <UL>
+<PRE>1000&nbsp;ml-write&nbsp;&amp;spr&nbsp;&quot;Got&nbsp;here,&nbsp;value&nbsp;[%s]&quot;&nbsp;#l1 
+</PRE></UL>
+<P>to see the values. The integer argument is a delay in milliseconds, the command above will print the message and then wait 1 second before continuing with execution. The wait allows you to see the message. 
+<P>Once the macro is debugged then delete or comment out the trace messages. </UL>
+<H2>Debugger </H2>
+<UL><P>The macro debugger is a built in debugger that allows the macro execution sequence to be traced and debugged. The debugger is operation is controlled by the variable 
+<A HREF="m5var011.html">$debug(5)</A> by default the value is <TT>0</TT> which disables the debugger. The debugger displays the next command to execute in the message line and the user may single step through the macro and interrogate the variables. 
+<P>Use the <B>$debug</B> variable for interactive debugging. The best way is to insert the following line somewhere BEFORE the problem occurs where the macro needs to be debugged: <UL>
+<PRE>set-variable&nbsp;$debug&nbsp;1 
+</PRE></UL>
+<P>As soon as this variable is set then it drops the user into debug mode. If we applied this to our tutorial example then we would define it as: <UL>
+<PRE>define-macro&nbsp;write-region 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$debug&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Enable&nbsp;debugger 
+&nbsp;&nbsp;&nbsp;&nbsp;copy-region 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;$buffer-fname 
+&nbsp;&nbsp;&nbsp;&nbsp;set-position&nbsp;&quot;\x88&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;delete-buffer&nbsp;&quot;*write-region-tmp*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;find-buffer&nbsp;&quot;*write-region-tmp*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;yank 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$buffer-fname&nbsp;#l0 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;set-variable&nbsp;#l1&nbsp;@1 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;!force&nbsp;@#&nbsp;write-buffer&nbsp;#l1&nbsp;@mna 
+&nbsp;&nbsp;&nbsp;&nbsp;!else 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;!force&nbsp;@#&nbsp;write-buffer&nbsp;@mna 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;delete-buffer&nbsp;$buffer-bname 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;goto-position&nbsp;&quot;\x88&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!abort 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;delete-buffer&nbsp;$buffer-bname 
+&nbsp;&nbsp;&nbsp;&nbsp;goto-position&nbsp;&quot;\x88&quot; 
+!emacro 
+</PRE></UL>
+<P>so as soon as we execute <B>write-region</B> then we drop into debug mode. The mode line appears as follows:- <UL>
+<PRE>macro-name:position:number&nbsp;[line]&nbsp;? 
+</PRE></UL>
+<P>where <B>macro-name</B> is the name of the macro that is executing, <B>position</B> is the line from the start of the macro definition. <B>line</B> is the macro line that is being executed. i.e. <UL>
+<PRE>display-matching-fenc:22:0&nbsp;[4&nbsp;show&nbsp;region]&nbsp;? 
+</PRE></UL>
+<P>At the prompt the commands that are available are:- 
+<P><TT>?</TT> 
+<BR><UL>Help, display the debugger commands. </UL>
+<P><TT>^G</TT> 
+<BR><UL>Abort the macro. Immediately terminates the macro sequence, the state of the buffers is undefined and leaves the windows in the state when the macro was aborted. </UL>
+<P><TT>^L</TT> 
+<BR><UL>Redraws the current screen. </UL>
+<P><TT>!</TT> 
+<BR><UL>Continues macro execution the value of $debug is set to 0. Execution continues without user interaction up until the next <B>$debug</B> change. </UL>
+<P><TT>s</TT> 
+<BR><UL>Single steps through the macro, if another macro is invoked then debugging with continue in the new sub-macro. </UL>
+<P><TT>v</TT> 
+<BR><UL>Display the value of a variable. The user is prompted for a variable value to show, once entered, the value of the variable is displayed. </UL>
+<P><I>any</I> 
+<BR><UL>Any other key will step onto the next instruction, unlike <I>step</I> then any macros that are invoked are not debugged. </UL>
+<P>See the 
+<A HREF="m5var011.html">$debug(5)</A> help page for more information. 
+<P>It is important that you SAVE ALL YOUR WORK before starting to debug macros. It is possible to sometimes crash the editor up while developing macros, prior to the January 2005 build then the following example of infinite recursion would destroy the editor: <UL>
+<PRE>define-macro&nbsp;Test 
+&nbsp;&nbsp;&nbsp;&nbsp;Test 
+!emacro 
+</PRE></UL>
+<P>This macro nesting is now caught the nesting is limited to 20 calling macros. 
+<P>For everyday macros that the typical user will write MicroEmacs will be robust and is not likely to result in any damage. If you start writing macros with for deeply nested macro hooks from the core of MicroEmacs (i.e. ipipe callbacks) then deleting buffers under the editor will cause stability problems when mistakes are made. For performance reasons it is not possible to check for all permutations of every command that could be issued that may possibly change the state of the editor and then recover. Provided that the calls are used within their calling remit then no ill effects will be observed. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var011.html">$debug(5)</A>, 
+<BR>
+<A HREF="amicr034.html">Macro Glossary</A> 
+<BR>
+<A HREF="m2nar012.html">MicroEmacs Macro Language at a Glance.</A> 
+<BR>
+<A HREF="m2nar010.html">Writing MicroEmacs Macros</A> </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/02/19</I>
+<BR><I>Generated On: 2005/05/14</I>
+</BODY></HMTL>

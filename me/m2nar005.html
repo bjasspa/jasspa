@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>Client-Server(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 Client-Server(2)</H1>
@@ -13,9 +13,9 @@ Client-Server(2)</H1>
 </FONT>
 <HR>
 <H2><B>CLIENT-SERVER </B></H2>
-<UL><P>This sections describes how MicroEmacs '04 may be interfaced to external components through the <B>Client-Server</B> interface. 
-<P>The <B>Client-Server</B> interface of MicroEmacs '04 provides a capability for other applications to inject commands into a running version of the editor, which are interpreted and executed. The interface is only available on multi-tasking operating systems such as UNIX and Microsoft Windows; it is not available on MS-DOS systems. 
-<P>Within the following discussions, the <B>Server</B> is a running version of the MicroEmacs '04 editor; the <B>client</B> is the application (or shell script) that communicates a new command to the <I>server</I>. 
+<UL><P>This sections describes how MicroEmacs '05 may be interfaced to external components through the <B>Client-Server</B> interface. 
+<P>The <B>Client-Server</B> interface of MicroEmacs '05 provides a capability for other applications to inject commands into a running version of the editor, which are interpreted and executed. The interface is only available on multi-tasking operating systems such as UNIX and Microsoft Windows; it is not available on MS-DOS systems. 
+<P>Within the following discussions, the <B>Server</B> is a running version of the MicroEmacs '05 editor; the <B>client</B> is the application (or shell script) that communicates a new command to the <I>server</I>. 
 <P>The <B>Client-Server</B> interface may provide a bidirectional interface such that a <I>client</I> may submit a command to the <I>server</I> and may also retrieve a response to that command. </UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P>The <B>Client-Server</B> interface operates by making an external interface available which is continually monitored by the <I>server</I>. The external interface may be provided by a file, named pipe or socket (depending upon the platform) with a well know location in the file system. Typically two files are provided, an input file into which the <I>client</I> writes commands (<I>$TEMP</I><B>/me</B><I>$MENAME</I><B>.cmd</B>); and an output file where responses to those commands my be read (<I>$TEMP</I><B>/me</B><I>$MENAME</I><B>.rsp</B>). 
@@ -59,7 +59,7 @@ Client-Server(2)</H1>
 !endif 
 </PRE></UL>
 <P>This binds a MicroEmacs macro called <I>server-input</I> to handle the client commands as they arrive on the input, an 
-<A HREF="m2cmd059.html">alpha-mark</A> is used to record the processed position at the end of the buffer. The pipe handler itself decodes the client request and executes it. The default handler supplied with MicroEmacs '04 is defined within the macro file <TT>meserver.emf</TT> 
+<A HREF="m2cmd059.html">alpha-mark</A> is used to record the processed position at the end of the buffer. The pipe handler itself decodes the client request and executes it. The default handler supplied with MicroEmacs '05 is defined within the macro file <TT>meserver.emf</TT> 
 <P>Responses to the client are inserted into the response file by writing directly into the ipipe buffer (<TT>*server*</TT>) using the 
 <A HREF="m2cmd077.html">ipipe-write(2)</A> command. It is the calling macros responsibility to ensure that the response string adheres to the format outlined above in the previous sections. </UL>
 <H2><B>NOTES </B></H2>
@@ -70,13 +70,13 @@ Client-Server(2)</H1>
 <BR><I>$TEMP</I><B>/me</B><I>$MENAME</I><B>.cmd</B> - Command file. 
 <BR><I>$TEMP</I><B>/me</B><I>$MENAME</I><B>.rsp</B> - Response file. </UL>
 <H2><B>BUGS </B></H2>
-<UL><P>The first MicroEmacs '04 session that executes becomes the editor server, additional editor sessions that are executed do not become server processes. In the event that the <I>server</I> editor is terminated, any other sessions do not take over the role of server. Subsequently issuing a client command may fail, or invoke a new editor session which adopts the role of server. </UL>
+<UL><P>The first MicroEmacs '05 session that executes becomes the editor server, additional editor sessions that are executed do not become server processes. In the event that the <I>server</I> editor is terminated, any other sessions do not take over the role of server. Subsequently issuing a client command may fail, or invoke a new editor session which adopts the role of server. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m1cmd000.html">me(1)</A>, 
 <A HREF="m2cmd077.html">ipipe-shell-command(2)</A> </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
+<P><I>(c) Copyright JASSPA 2005</I>
 <BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2004/03/26</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>
