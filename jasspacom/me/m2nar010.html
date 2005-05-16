@@ -1,0 +1,405 @@
+<HTML>
+<HEAD><TITLE>macroWriting(4)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
+macroWriting(4)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>MACROS </B></H2>
+<UL><P><B>MicroEmacs</B> is based on a core set of built in commands and variables that provide a a basic set of functionality, almost all of the visible features of MicroEmacs are implemented or controlled by its macro language. <B>NanoEmacs</B> is quite simply this base set of commands of MicroEmacs with no macro support and provides a basic Emacs editor. 
+<P>MicroEmacs is extended with an interpreted script file that allows new commands to be defined using the base level commands and variables which is referred to as a Macro. Once a macro command has been defined then it appears as a built in command to the user, and as with the existing commands, may have a key binding to invoke the new command. 
+<P>In addition to the base commands, the macro language includes control statements and logical operators which allow loops and conditional command sequences to control the sequence of operations. </UL>
+<H2>Starting to write Macros </H2>
+<UL><P>For new users to MicroEmacs writing macros can be quite daunting, some of the macros shipped with MicroEmacs are complex and have evolved over many years. Beginners should start with simple macros which has verifiable output and can be performed interactively. This makes the task of writing and testing easier, some of the <I>behind the scene</I> macros like the mouse driver and auto-spell checker are difficult to get working and requires a greater understanding of MicroEmacs and experience in macro debugging. 
+<P>A good starting point is to try to write a macro to do something that you find yourself doing all the time, for example reread-file, write-region etc. 
+<P><B>TIP:</B> 
+<BR><UL>Remember when you write a macro you are placing the editor in control of your macro, when testing a new macro then start a new MicroEmacs session or make sure that if things go wrong you will not loose any work. If you loose control of the editor then <B>abort</B> (<TT>C-g</TT>) will typically regain control again. </UL></UL>
+<H2>Developing your First Macro </H2>
+<UL><P>In the following example then we walk through the steps to create a macro that saves a region of text to a file (i.e. the text between <B>point</B> and <B>mark</B>). The resultant macro will be called <B>write-region</B>, note that this macro already exists in MicroEmacs. 
+<P>The first thing to do is walk through the macro that you wish to write interactively in MicroEmacs. Whilst doing this you should decide which approach to take and the commands (or keys) used. Our <B>write-region</B> could either use narrows or copy the region to a temporary buffer, a decision has to be made which approach is best to use. Narrows would be more efficient but there are more complications (such as restoring edit mode, avoid changing the <B>undo</B> stack etc.). For the moment then the temporary buffer approach is probably the best solution. 
+<P>Walking through the sequence of steps required to save a region of text then the following command sequence would be executed (assuming a marked up region has been selected):- <UL>
+<PRE>esc&nbsp;w&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Copy&nbsp;the&nbsp;region. 
+C-x&nbsp;b&nbsp;&quot;tmp-buffer&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Create&nbsp;a&nbsp;new&nbsp;temporary&nbsp;buffer. 
+C-y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Yank&nbsp;copied&nbsp;region&nbsp;into&nbsp;temporary&nbsp;buffer. 
+C-x&nbsp;C-w&nbsp;&quot;write_region_file&quot;&nbsp;;&nbsp;Save&nbsp;the&nbsp;buffer&nbsp;to&nbsp;a&nbsp;file. 
+C-x&nbsp;k&nbsp;RETURN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Kill&nbsp;the&nbsp;temporary&nbsp;buffer. 
+</PRE></UL>
+<P>This is a fairly easy sequence of steps, the history of key presses can be viewed in the variable 
+<A HREF="m5var077.html">$recent-keys(5)</A>, the command 
+<A HREF="m2cmd086.html">list-variables(2)</A> includes this variable in its output. 
+<P>Macros are not written in key sequences, instead the commands associated with the key bindings are used. A key binding command name may be determined using 
+<A HREF="m2cmd039.html">describe-key(2)</A> and 
+<A HREF="m2cmd038.html">describe-bindings(2)</A>. Some command bindings include a numeric argument, the numeric argument is important (both the value and absence/presence of the argument) and can change the behavior of the command. <TT>C-up</TT> is not '<B>backward-line</B>', it is '<B>5</B> <B>backward-line</B>' to go back 5 lines, if you supply a numerical value to the command as well, e.g. '<TT>esc 3 C-up</TT>' you must multiply the user argument with the numerical argument of the binding: <UL>
+<PRE>3&nbsp;up&nbsp;&nbsp;&nbsp;-&gt;&nbsp;3&nbsp;&nbsp;&nbsp;'backward-line'&nbsp;-&gt;&nbsp;3&nbsp;*&nbsp;1&nbsp;backward-line&nbsp;-&gt;&nbsp;&nbsp;3&nbsp;backward-line 
+3&nbsp;C-up&nbsp;-&gt;&nbsp;3&nbsp;'5&nbsp;backward-line'&nbsp;-&gt;&nbsp;3&nbsp;*&nbsp;5&nbsp;backward-line&nbsp;-&gt;&nbsp;15&nbsp;backward-line 
+</PRE></UL>
+<P>Translating the keys that we used into commands then our <B>write-region</B> process becomes:- <UL>
+<PRE>copy-region 
+find-buffer&nbsp;&quot;tmp-buffer&quot; 
+yank 
+write-buffer&nbsp;&quot;write_region_file&quot; 
+delete-buffer&nbsp;RETURN 
+</PRE></UL>
+<P><B>TIP:</B> 
+<BR><UL>If you are in an MicroEmacs macro buffer (e.g. <TT>foo.emf</TT>) use the <B>emf-quote-command</B> command (bound to <TT>A-q</TT>) to make this process trivial. This converts the key binding into a command which is inserted into the buffer. 
+</UL><P>The obvious problem here is the last line, <TT>'delete-buffer RETURN'</TT>. When running interactively you can simply press RETURN to delete the current buffer however you cannot do this in a macro so you must explicitly specify the buffer name to delete: <UL>
+<PRE>delete-buffer&nbsp;&nbsp;&quot;write_region_file&quot; 
+</PRE></UL>
+<P>The the process of writing the buffer has the side effect of changing the buffer name to reflect the output file name, as <B>delete-buffer</B> follows the <B>write-buffer</B> then the name will have changed. 
+<P>Correcting the delete buffer name, the sequence of commands is wrapped with a macro definition, which binds a name to the command sequence, and a terminator which terminates the macro. <UL>
+<PRE>define-macro&nbsp;write-region 
+&nbsp;&nbsp;&nbsp;&nbsp;copy-region 
+&nbsp;&nbsp;&nbsp;&nbsp;find-buffer&nbsp;&quot;tmp-buffer&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;yank 
+&nbsp;&nbsp;&nbsp;&nbsp;write-buffer&nbsp;&quot;write_region_file&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;delete-buffer&nbsp;&quot;write_region_file&quot; 
+!emacro 
+</PRE></UL>
+<P>This macro works but is not very effective as the output filename has been fixed, this creates a file &quot;<TT>write_region_file</TT>&quot; in the MicroEmacs start up directory - probably not what is required. The specific macro that has been created must be made interactive, this means it must get filenames from the user, cope with a failure and the user doing silly things. So what must we cope with ? The list of defects is surprisingly long considering we are doing so little: <P>
+<DL COMPACT>
+<DT>1. <DD>The temp buffer used (&quot;<TT>tmp-buffer</TT>&quot;) is not a temporary buffer, temporary buffers must always commence with a '<TT>*</TT>' and should be identifiable with the generating macro.<B>Note:</B> knowledge that a buffer is temporary allows MicroEmacs to discard content when shutting down without prompting the user to save. 
+<DT>2. <DD>What happens if the &quot;<TT>tmp-buffer</TT>&quot; already exists ? 
+<DT>3. <DD>What happens if the &quot;<TT>write_region_file</TT>&quot; buffer already exists ? 
+<DT>4. <DD>We need to get the filename to write from the user. 
+<DT>5. <DD>What happens if the user aborts during the macro ? 
+<DT>6. <DD>What happens if the write fails (disk full or file exists etc.) ? 
+<DT>7. <DD>What happens if the user has the current buffer displayed in more than one window ? 
+<DT>8. <DD>Does this fit in with other MicroEmacs commands amd macros ? Do we want to use this new command from another context ? 
+</DL><P>The list of issues is a re-occurring theme, once you have got the hang of this it does become easier. In short reliable macros must: <UL><P>
+<LI>Check inputs 
+<LI>Check outputs 
+<LI>Handle errors 
+<LI>Where appropriate handle an unexpected failure. </UL><P>The last one is really reserved for low level drivers (i.e. mouse, directory listings etc.) which must be bomb proof. </UL>
+<H2>Generalising Macros </H2>
+<UL><P>In the previous section we have created a basic macro to save a region of text, in this section we look at that macro is transformed from a static sequence to commands to a fully interactive robust command. Reference should be made to 
+<A HREF="m2nar012.html">MicroEmacs Macro Language at a Glance</A> for a quick tour of the language syntax. </UL>
+<H2>1. The temp buffer used is not a temporary buffer... </H2>
+<UL><P>Forming a temporary buffer is simply a naming issue, temporary buffer names are simply started with a &quot;<TT>*</TT>&quot;, by convention for a simple buffer name then they are terminated with a &quot;<TT>*</TT>&quot; as well. The temporary buffer name should reflect the name of the original macro hence the buffer name should be something like <TT>*write-region-tmp*</TT> <UL>
+<PRE>define-macro&nbsp;write-region 
+&nbsp;&nbsp;&nbsp;&nbsp;copy-region 
+&nbsp;&nbsp;&nbsp;&nbsp;find-buffer&nbsp;&quot;*write-region-tmp*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;yank 
+&nbsp;&nbsp;&nbsp;&nbsp;write-buffer&nbsp;&quot;write_region_file&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;delete-buffer&nbsp;&quot;write_region_file&quot; 
+!emacro 
+</PRE></UL>
+</UL><H2>2. What happens if the 'tmp-buffer' already exists ? </H2>
+<UL><P>Looking at the current implementation if the write fails the temporary buffer will be left lying around. This is very likely to happen and if it does then we will get the last region as well as the next region in the output file. The simple solution is to delete the temporary buffer first, our first attempt to correct this: <UL>
+<PRE>define-macro&nbsp;write-region 
+&nbsp;&nbsp;&nbsp;&nbsp;copy-region 
+&nbsp;&nbsp;&nbsp;&nbsp;delete-buffer&nbsp;&quot;*write-region-tmp*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;find-buffer&nbsp;&quot;*write-region-tmp*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;.... 
+!emacro 
+</PRE></UL>
+<P>Unfortunately this fails if the buffer does not exist, so we must tell MicroEmacs to ignore the failure by <B>forcing</B> the execution: <UL>
+<PRE>define-macro&nbsp;write-region 
+&nbsp;&nbsp;&nbsp;&nbsp;copy-region 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;delete-buffer&nbsp;&quot;*write-region-tmp*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;find-buffer&nbsp;&quot;*write-region-tmp*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;yank 
+&nbsp;&nbsp;&nbsp;&nbsp;write-buffer&nbsp;&quot;write_region_file&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;delete-buffer&nbsp;&quot;write_region_file&quot; 
+!emacro 
+</PRE></UL>
+</UL><H2>3. What happens if the 'write_region_file' buffer already exists ? </H2>
+<UL><P>If the <B>write_region_file</B> buffer already exists the buffer being written is renamed to &quot;<B>write_region_file&lt;1&gt;</B>&quot; rather than &quot;write_region_file&quot; and so the <B>delete-buffer</B> will delete the wrong buffer. Therefore rather than delete an explicitly named buffer the environment variables are used to query the name of the current buffer. The variable 
+<A HREF="m5var003.html">$buffer-bname(5)</A> returns the current buffer's buffer name and may be used instead of an explicit name. <UL>
+<PRE>define-macro&nbsp;write-region 
+&nbsp;&nbsp;&nbsp;&nbsp;copy-region 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;delete-buffer&nbsp;&quot;*write-region-tmp*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;find-buffer&nbsp;&quot;*write-region-tmp*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;yank 
+&nbsp;&nbsp;&nbsp;&nbsp;write-buffer&nbsp;&quot;write_region_file&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;delete-buffer&nbsp;$buffer-bname 
+!emacro 
+</PRE></UL>
+<P>Macro variables may be used to get just about any information you could possibly want. For example 
+<A HREF="m5var003.html">$buffer-fname(5)</A> could be used after the <B>buffer-write</B> to get the file name, 
+<A HREF="m5var048.html">$window-line(5)</A> provides the current line number etc. See 
+<UL><P>Help -&gt; 
+<A HREF="amicr033.html">Variable Glossary</A> </UL>
+<P>for a full list of system variables. There are also <B>Macro Variables</B> (<TT>@</TT>,<TT>#</TT>,...) which are also very useful, e.g. 
+<A HREF="m4fil016.html">@wl</A> gives the text on the current line as a string, see the 
+<A HREF="amicr034.html">Macro Language Glossary</A> for a full list of these and other macro features such as functions and directives. </UL>
+<H2>4. We need to get the destination filename from the user. </H2>
+<UL><P>Getting input from the user is always dangerous, most macros run so quickly that the user will not have sufficient time to abort the process (<TT>C-g</TT>) and if they do there is not much that can be done. When collecting input from the user the macro must wait for some input, at this point the user can and should be able to abort the process which must be handled. If the user has not aborted the user still has this uncanny ability of doing the unexpected and the input has to be checked, better still get MicroEmacs to get the input and check it. 
+<P>There are two approaches to the input problem: <UL><P>
+<LI>We get the filename ourselves and pass this to the <B>write-buffer</B> command. 
+<LI>Make <B>write-buffer</B> get the input from the user itself as the command would when run from the command key binding. </UL><P>We would need to use the first approach if we needed the entered value multiple times, in this case we are not so we can use the simpler second approach but for the sake of this document lets consider the first approach. 
+<P>First stab: <UL>
+<PRE>set-variable&nbsp;$write-region-file-name&nbsp;@ml&nbsp;&quot;Write-region&nbsp;file&quot; 
+write-buffer&nbsp;$write-region-file-name 
+</PRE></UL>
+<P>This does work but you really do not want to do this ! Consider what happens if the user aborts while entering the file name ? The user would be left in the &quot;<TT>*write-buffer-tmp*</TT>&quot; buffer and would have to clear up the mess themselves. This may be fixed by catching the abort from the input and deleting the buffer. <UL>
+<PRE>!force&nbsp;!force&nbsp;set-variable&nbsp;$write-region-file-name&nbsp;@ml&nbsp;&quot;Write-region&nbsp;file&quot; 
+!if&nbsp;&amp;not&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;delete-buffer&nbsp;$buffer-bname 
+&nbsp;&nbsp;&nbsp;&nbsp;!abort 
+!endif 
+write-buffer&nbsp;$write-region-file-name 
+</PRE></UL>
+<P><B>NOTE:</B> 
+<BR><UL>The call to 
+<A HREF="m2cmd122.html">set-variable</A> requires a double 
+<A HREF="m4fil007.html">!force</A>, a single <B>!force</B> allows a macro to continue after a failed command but not after a user interrupt (i.e. a <TT>C-g</TT> abort), to continue after this requires a double <B>!force</B>. </UL>
+<P>The second problem is with the input type, the 
+<A HREF="m4fil015.html">@ml</A> does not indicate that a file name is required. The type of input should be qualified to first check the input type and to provide other features such as file completion on file name entry. Specifying the input type correctly: <UL>
+<PRE>!force&nbsp;!force&nbsp;set-variable&nbsp;$write-region-file-name&nbsp;@ml04&nbsp;&quot;Write-region&nbsp;file&quot; 
+!if&nbsp;&amp;not&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;delete-buffer&nbsp;$buffer-bname 
+&nbsp;&nbsp;&nbsp;&nbsp;!abort 
+!endif 
+write-buffer&nbsp;$write-region-file-name 
+</PRE></UL>
+<P><B>TIP:</B> 
+<BR><UL>How did we find out about 
+<A HREF="m4fil015.html">@ml04</A> ? The best way to find out how to do something is find another macro (or command) that does something very similar and copy it, in this case the 
+<A HREF="m3mac035.html">diff</A> macro has to perform a similar operation. If you cannot find anything then look in the command documents, the documents generally provide this sort of information (for example see 
+<A HREF="m4fil015.html">@ml(4)</A>). If all else fails then use the News Group, somebody will be able to provide an answer to your question. </UL>
+<P>In progressing through the example we have used the basic system variables (<TT>$var</TT>) as they are simple. Other variables exist: user (<TT>%var</TT>), buffer (<TT>:var</TT>) or command (<TT>.var</TT>). All of the previously mentioned variables use valuable system resource and consideration should be given as to whether the value is required once the macro has completed execution. In our case the file name is temporary and is not required outside of the scope of the macro, rather than waste memory then a register variable is preferred as they have zero cost and execute faster than the other variables. Re-writing the macro with register (<TT>#lx</TT>) variables: <UL>
+<PRE>!force&nbsp;!force&nbsp;set-variable&nbsp;#l1&nbsp;@ml04&nbsp;&quot;Write-region&nbsp;file&quot; 
+!if&nbsp;&amp;not&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;delete-buffer&nbsp;$buffer-bname 
+&nbsp;&nbsp;&nbsp;&nbsp;!abort 
+!endif 
+write-buffer&nbsp;#l1 
+</PRE></UL>
+<P><B>TIP:</B> 
+<BR><UL>Avoid using the global variables (<TT>#g1</TT> etc.) as these could be altered by other macros. Sub-macros (i.e. macros called by other macros) can pass values back to their calling macro via the parent's register variables (<TT>#p1</TT> etc.). When using parent register variables then ensure that the sub-macro does not destroy some context of the parent macro through altering a register variable that has been used for another purpose. </UL>
+<P>At the start of this section we said that there were two techniques by which we could get user input, we selected the first (which was less desirable than the second). The approach that we have taken of passing the filename to <B>write-buffer</B> appears to be correct, however the <B>write-buffer</B> command probably expects a reasonable filename -- what happens if the user enters a directory name ? There are other potential esoteric problems with our current approach, all of which may be overcome, but not here. 
+<P>The second technique, which is by far the best solution, is to simply get the command 
+<A HREF="m2cmd143.html">write-buffer(2)</A> to get its input directly from the user. The command does this by default when bound to a key and run from the command line however when run from a macro the behavior is different as there is no command line. We can force this behavior by asking the command to be executed as if it were run from the command line:- <UL>
+<PRE>write-buffer&nbsp;@mn 
+</PRE></UL>
+<P>When <B>write-buffer</B> asks the MicroEmacs macro processor for a file name the 
+<A HREF="m4fil015.html">@mn</A> argument tells it to go directly to the user even though ME is currently running a macro. This will only get a single argument from the user, if the file already exits <B>write-buffer</B> asks for confirmation that over-writing the existing file is okay, but this argument has not been given so the command fails. To fix this we could do: <UL>
+<PRE>write-buffer&nbsp;@mn&nbsp;&quot;y&quot; 
+</PRE></UL>
+<P>However this has now created even more issues, what happens if this file is already loaded into MicroEmacs, should we allow the user to decide ? We could allow the command line to handle all of the cases: <UL>
+<PRE>write-buffer&nbsp;@mn&nbsp;@mn&nbsp;@mn&nbsp;@mn&nbsp;.... 
+</PRE></UL>
+<P>Which is rapidly becoming very messy for each individual argument, instead we use 
+<A HREF="m4fil015.html">@mna</A> to ask the command to handle all input associated with the command: <UL>
+<PRE>write-buffer&nbsp;@mna 
+</PRE></UL>
+<P>Note that we should have used this for the first method to protect <B>write-buffer</B>: <UL>
+<PRE>write-buffer&nbsp;#l1&nbsp;@mna 
+</PRE></UL>
+<P>In this case the file name is provided by the argument <TT>#l1</TT> but the remaining arguments are handled internally by the command itself as if invoked from the command line. 
+<P>Moreover, there is one subtle problem here that can cause a lot of problems especially for other macros trying to use this macro (uses tend to spot the problem themselves and correct it causing only minor frustration). The macro creates a new temporary buffer which has no file name, this means that saving to &quot;<TT>./file</TT>&quot; will write the region to &quot;<TT>file</TT>&quot; in the startup directory rather than in the current buffer's file path. For example, if you start MicroEmacs from &quot;<TT>/bin</TT>&quot;, load file &quot;<TT>/tmp/foo.txt</TT>&quot; and <TT>write-region</TT> &quot;<TT>./bar.txt</TT>&quot; you will create the file &quot;<TT>/bin/bar.txt</TT>&quot; not &quot;<TT>/tmp/bar.txt</TT>&quot;. 
+<P>To solve this directory issue the file name of the temporary buffer has to be set to the same filename as the current buffer we are copying from. This is safe as this is a temporary buffer (starts with a '<TT>*</TT>') so MicroEmacs will not attempt to auto save or allow the buffer to be saved using 
+<A HREF="m2cmd143.html">write-buffer</A> and is performed as follows: <UL>
+<PRE>define-macro&nbsp;write-region 
+&nbsp;&nbsp;&nbsp;&nbsp;copy-region 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;$buffer-fname&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;ADDED&nbsp;to&nbsp;fix&nbsp;directory&nbsp;location 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;delete-buffer&nbsp;&quot;*write-region-tmp*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;find-buffer&nbsp;&quot;*write-region-tmp*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;yank 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$buffer-fname&nbsp;#l0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;ADDED&nbsp;to&nbsp;fix&nbsp;directory&nbsp;location 
+&nbsp;&nbsp;&nbsp;&nbsp;write-buffer&nbsp;@mna 
+&nbsp;&nbsp;&nbsp;&nbsp;delete-buffer&nbsp;$buffer-bname 
+!emacro 
+</PRE></UL>
+<P>After all of that, the solution is in fact very simple, however the underlying complexity of the user expectations as to the behavior of the command are complicated. </UL>
+<H2>5. What happens if the user aborts during the macro ? </H2>
+<UL><P>This issue has already been touched on in the previous sections, by using the <B>@mna</B> only the <B>write-buffer</B> is likely to be aborted while the user is prompted for a file name etc. and if the user manages to abort elsewhere there really is not much that can be done about it without severely impacting the complexity of the macro. Practically it is only necessary to catch the exception when the user is being prompted on the command line with <B>write-buffer</B>, as with our existing user input a double <B>!force</B> is required to catch an abort at a prompt. <UL>
+<PRE>define-macro&nbsp;write-region 
+&nbsp;&nbsp;&nbsp;&nbsp;copy-region 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;$buffer-fname 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;delete-buffer&nbsp;&quot;*write-region-tmp*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;find-buffer&nbsp;&quot;*write-region-tmp*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;yank 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$buffer-fname&nbsp;#l0 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;!force&nbsp;write-buffer&nbsp;@mna 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;delete-buffer&nbsp;$buffer-bname 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!abort 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;delete-buffer&nbsp;$buffer-bname 
+!emacro 
+</PRE></UL>
+<P>The 
+<A HREF="m5var040.html">$status(5)</A> variable allows us to catch the exit state of the forced command and test for an abort condition following the forced statement. Note that the <B>$status</B> value is only valid immediately after the last executed command, executing another command changes the value of <B>$status</B>. If the status is required after execution of another command then it may be saved in a variable and used later. </UL>
+<H2>6. what happens if the write fails (disk full or file exists etc) ? </H2>
+<UL><P>As the <B>write-buffer</B> command should handle write file failures sensibly, and we have enabled it to get input from the user, then the command will automatically handle the failure conditions. Within our macro then it is simply a case of detecting and handling the failure condition -- we have already done this by handling the user input so no additions are required to the macro. </UL>
+<H2>7. What happens if the current buffer displayed in more than one window ? </H2>
+<UL><P>If the user has the current buffer displayed only once then the action of deleting the temporary buffer returns the current window to the previous buffer, as required. If however the buffer is displayed more than once then when the temporary buffer is deleted MicroEmacs will select a different non-displayed buffer to become the current window (unless this is the only buffer) and so the user will not be returned back to their original buffer. 
+<P>This may be fixed by storing the initial buffer name and explicitly returning to it after the <B>delete-buffer</B>: <UL>
+<PRE>define-macro&nbsp;write-region 
+&nbsp;&nbsp;&nbsp;&nbsp;copy-region 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;$buffer-fname 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l1&nbsp;$buffer-bname 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;delete-buffer&nbsp;&quot;*write-region-tmp*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;find-buffer&nbsp;&quot;*write-region-tmp*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;yank 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$buffer-fname&nbsp;#l0 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;!force&nbsp;write-buffer&nbsp;@mna 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;delete-buffer&nbsp;$buffer-bname 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;find-buffer&nbsp;#l1 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!abort 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;delete-buffer&nbsp;$buffer-bname 
+&nbsp;&nbsp;&nbsp;&nbsp;find-buffer&nbsp;#l1 
+!emacro 
+</PRE></UL>
+<P>However, when there are two windows into the same buffer the command may inherit the other window's buffer location, i.e. if the current window is on line 100 and the other window display this buffer is at line 200 the above version will leave the user at line 200 and a different region. The commands 
+<A HREF="m2cmd110.html">set-position(2)</A> and 
+<A HREF="m2cmd110.html">goto-position(2)</A> allow the current position to be saved and later restored, the commands both take a single character which identifies the saved position, this allows multiple positions to be saved. Re-writing our macro to save and restore the buffer position we get: <UL>
+<PRE>define-macro&nbsp;write-region 
+&nbsp;&nbsp;&nbsp;&nbsp;copy-region 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;$buffer-fname 
+&nbsp;&nbsp;&nbsp;&nbsp;set-position&nbsp;&quot;P&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;delete-buffer&nbsp;&quot;*write-region-tmp*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;find-buffer&nbsp;&quot;*write-region-tmp*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;yank 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$buffer-fname&nbsp;#l0 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;!force&nbsp;write-buffer&nbsp;@mna 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;delete-buffer&nbsp;$buffer-bname 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;goto-position&nbsp;&quot;P&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!abort 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;delete-buffer&nbsp;$buffer-bname 
+&nbsp;&nbsp;&nbsp;&nbsp;goto-position&nbsp;&quot;P&quot; 
+!emacro 
+</PRE></UL>
+</UL><H2>8. Does this fit in with other MicroEmacs commands and macros ? </H2>
+<UL><P>Finally we should consider how to make the macro more like a built in command so that other users and macros can take advantage of this new feature. Firstly let us consider supporting the numerical argument which is passed to all commands and macros. Considering <B>write-buffer</B> the command permits an invocation from the command line of: <UL>
+<PRE>esc&nbsp;0&nbsp;C-x&nbsp;C-w 
+</PRE></UL>
+<P>or from a macro: <UL>
+<PRE>0&nbsp;write-buffer 
+</PRE></UL>
+<P>The <TT>0</TT> argument disables validity checks and therefore forces the write. It would be reasonable to expect that a new command that writes a region to a file behaves in exactly the same way, where the commands have consistent behavior it makes it far easier for the user to guess how like commands operate. Unfortunately this behavior is absent from our current macro command. To support the numerical argument then the 
+<A HREF="m4fil014.html">@?</A> and 
+<A HREF="m4fil014.html">@#</A> variables are used to test for and retrieve the numerical argument. <UL>
+<PRE>define-macro&nbsp;write-region 
+&nbsp;&nbsp;&nbsp;&nbsp;copy-region 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;$buffer-fname 
+&nbsp;&nbsp;&nbsp;&nbsp;set-position&nbsp;&quot;P&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;delete-buffer&nbsp;&quot;*write-region-tmp*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;find-buffer&nbsp;&quot;*write-region-tmp*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;yank 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$buffer-fname&nbsp;#l0 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;@? 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;!force&nbsp;@#&nbsp;write-buffer&nbsp;@mna 
+&nbsp;&nbsp;&nbsp;&nbsp;!else 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;!force&nbsp;write-buffer&nbsp;@mna 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;delete-buffer&nbsp;$buffer-bname 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;goto-position&nbsp;&quot;P&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!abort 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;delete-buffer&nbsp;$buffer-bname 
+&nbsp;&nbsp;&nbsp;&nbsp;goto-position&nbsp;&quot;P&quot; 
+!emacro 
+</PRE></UL>
+<P><B>Note:</B> 
+<BR><UL>that the <B>!else</B> and <B>!endif</B> directive lines do not effect the setting of <B>$status</B> so this is safe, only the execution of commands effect this variable. </UL>
+<P>We can optimize the macro a little by noting that the default behavior of &quot;<B>write-buffer</B>&quot; is the same as &quot;<B>1 write-buffer</B>&quot; (this is not always the case), re-writing: <UL>
+<PRE>define-macro&nbsp;write-region 
+&nbsp;&nbsp;&nbsp;&nbsp;copy-region 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;$buffer-fname 
+&nbsp;&nbsp;&nbsp;&nbsp;set-position&nbsp;&quot;P&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;delete-buffer&nbsp;&quot;*write-region-tmp*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;find-buffer&nbsp;&quot;*write-region-tmp*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;yank 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$buffer-fname&nbsp;#l0 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;!force&nbsp;@#&nbsp;write-buffer&nbsp;@mna 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;delete-buffer&nbsp;$buffer-bname 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;goto-position&nbsp;&quot;P&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!abort 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;delete-buffer&nbsp;$buffer-bname 
+&nbsp;&nbsp;&nbsp;&nbsp;goto-position&nbsp;&quot;P&quot; 
+!emacro 
+</PRE></UL>
+<P>After all of this work there are still some compatibility problems to be resolved for our macro to be a true command replacement. Considering our use of <B>write-buffer</B>, we have effectively have: <UL>
+<PRE>write-buffer&nbsp;&quot;myfile&quot; 
+</PRE></UL>
+<P>The command gets the filename from the macro line and allow us to invoke the command in our own macros. So what about our new <B>write-region</B> macro ? It is not unreasonable to expect that some macro developer in the future will want to write the current region out to a file and if we write this one correctly they will be able to use this command directly. At the moment a command invocation of <UL>
+<PRE>write-region&nbsp;&quot;myfile&quot; 
+</PRE></UL>
+<P>in another macro will not have the desired effect. The &quot;<TT>myfile</TT>&quot; argument is ignored and the user is always prompted for the file name. This can be solved by providing an optional parameter to be passed to the command using the /Hl @1 @1 4 variable as follows: <UL>
+<PRE>define-macro&nbsp;write-region 
+&nbsp;&nbsp;&nbsp;&nbsp;copy-region 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;$buffer-fname 
+&nbsp;&nbsp;&nbsp;&nbsp;set-position&nbsp;&quot;P&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;delete-buffer&nbsp;&quot;*write-region-tmp*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;find-buffer&nbsp;&quot;*write-region-tmp*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;yank 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$buffer-fname&nbsp;#l0 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;set-variable&nbsp;#l1&nbsp;@1 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;!force&nbsp;@#&nbsp;write-buffer&nbsp;#l1&nbsp;@mna 
+&nbsp;&nbsp;&nbsp;&nbsp;!else 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;!force&nbsp;@#&nbsp;write-buffer&nbsp;@mna 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;delete-buffer&nbsp;$buffer-bname 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;goto-position&nbsp;&quot;P&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!abort 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;delete-buffer&nbsp;$buffer-bname 
+&nbsp;&nbsp;&nbsp;&nbsp;goto-position&nbsp;&quot;P&quot; 
+!emacro 
+</PRE></UL>
+<P>Setting the register variable <TT>#l1</TT> to the first argument passed to the command will fail if no argument was given, so we use a <B>!force</B> to stop the macro from quitting and change the <B>$status</B> of the <B>set-variable</B> command. If the assignment fails then we get the filename from the user as before, if it succeeds then the calling macro has provided the file name. 
+<P>The <B>write-region</B> macro is now complete and provides both a command line and macro interface. It is important to note that there is a subtle difference between macros and built in commands even though their capabilities are the same. To execute <B>write-buffer</B> in a macro and get the user to supply a file name you must do: <UL>
+<PRE>write-buffer&nbsp;@mna 
+</PRE></UL>
+<P>However for a macro, it is not itself a command and you cannot ask a macro to behave like a command. For a macro you must call it as: <UL>
+<PRE>write-region 
+</PRE></UL>
+<P>The use of '<TT>@mna</TT>' is only valid for commands, this perhaps is a quirk of the language which should really be fixed in the future. </UL>
+<H2>Concluding </H2>
+<UL><P>We started this tutorial with a unusable 5 line macro and now have a 20 line version which should be indistinguishable from a built in MicroEmacs command. The same command is available as part of the macro release and this document was written as part of the process of writing that macro. The only change to be made in making it part of the macro release is to change the <B>set-position</B> label from &quot;<TT>P</TT>&quot;, which a user could use, to something like &quot;<TT>\x88</TT>&quot; which is much safer to use. 
+<P>The final macro release version becomes: <UL>
+<PRE>define-macro&nbsp;write-region 
+&nbsp;&nbsp;&nbsp;&nbsp;copy-region 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;$buffer-fname 
+&nbsp;&nbsp;&nbsp;&nbsp;set-position&nbsp;&quot;\x88&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;delete-buffer&nbsp;&quot;*write-region-tmp*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;find-buffer&nbsp;&quot;*write-region-tmp*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;yank 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$buffer-fname&nbsp;#l0 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;set-variable&nbsp;#l1&nbsp;@1 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;!force&nbsp;@#&nbsp;write-buffer&nbsp;#l1&nbsp;@mna 
+&nbsp;&nbsp;&nbsp;&nbsp;!else 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;!force&nbsp;@#&nbsp;write-buffer&nbsp;@mna 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;delete-buffer&nbsp;$buffer-bname 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;goto-position&nbsp;&quot;\x88&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!abort 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;delete-buffer&nbsp;$buffer-bname 
+&nbsp;&nbsp;&nbsp;&nbsp;goto-position&nbsp;&quot;\x88&quot; 
+!emacro 
+</PRE></UL>
+<P>It is perhaps surprising the number of steps it has taken to write something that appears to be simple, however in writing macros there are many re-occurring themes and once familiar with the concepts then then you will typically get them right first time. Creating a macro like this takes approximately half an hour. 
+<P>We have to question whether it is worth writing these extensions. If you find yourself doing the same thing all the time then definitely yes, it will save time and you will have less aches and pains in your hand. Spending the extra time to write a good macro saves time in the long run, it also provides a better base on which more sophisticated macros may be based. MicroEmacs has actually evolved like this. Hopefully this tutorial will encourage rather than frighten off budding macro writers. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="amicr034.html">Macro Glossary</A> 
+<BR>
+<A HREF="m2nar011.html">Macro Debugging - A Crash Course</A> 
+<BR>
+<A HREF="m2nar012.html">MicroEmacs Macro Language at a Glance</A> </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/02/19</I>
+<BR><I>Generated On: 2005/05/14</I>
+</BODY></HMTL>

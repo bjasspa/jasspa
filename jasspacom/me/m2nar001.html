@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>Installation(1)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 Installation(1)</H1>
@@ -13,7 +13,7 @@ Installation(1)</H1>
 </FONT>
 <HR>
 <H2><B>INSTALLATION </B></H2>
-<UL><P>This page describes introductory notes for the installation and setup of MicroEmacs '04. </UL>
+<UL><P>This page describes introductory notes for the installation and setup of MicroEmacs '05. </UL>
 <H2>Quick Install </H2>
 <UL><P>The quickest way to install MicroEmacs for testing without reading the rest of this document is to:- <UL><P>
 <LI>Create a new directory i.e. <TT>jasspa</TT>. 
@@ -35,57 +35,72 @@ Installation(1)</H1>
 <H2>Distribution </H2>
 <UL><P>MicroEmacs is distributed in the following files:- 
 <P><B>Complete Installations </B>
-<BR><UL>The Microsoft '95/'98/NT platforms may be installed using the <B>Install</B> <B>Shield</B> installation utility and do not require the components specified in later sections. <TT>jasspame.exe</TT>&nbsp;-&nbsp;'95/'98/NT&nbsp;Self&nbsp;Extracting&nbsp;Install&nbsp;Shield&nbsp;Installation </UL>
+<BR><UL>The Microsoft 95/98/NT/2K/XP, Solaris, HP-UX, Linux and the more popular platforms may be installed using a package and do not require the components specified in later sections as these are all bundled together (these packages do not include spelling). 
+<P><TT>jasspa-me-YYYYMMDD-1.i386.rpm</TT>&nbsp;-&nbsp;Linux&nbsp;RedHat&nbsp;9.x&nbsp;package. 
+<BR><TT>jasspa-me-YYYYMMDD-1.src.rpm</TT>&nbsp;-&nbsp;Linux&nbsp;RedHat&nbsp;9.x&nbsp;source&nbsp;package. 
+<BR><TT>jasspa-mepkg-hpux-pa-10.20-YYYYMMDD.depot.gz</TT>&nbsp;-&nbsp;HP-UX&nbsp;10&nbsp;package. 
+<BR><TT>jasspa-mepkg-hpux-pa-11.00-YYYYMMDD.depot.gz</TT>&nbsp;-&nbsp;HP-UX&nbsp;11&nbsp;package. 
+<BR><TT>jasspa-mepkg-ms-win32-2004030.zip</TT>&nbsp;&nbsp;-&nbsp;95/98/NT/2K/XP&nbsp;Install&nbsp;Shield 
+<BR><TT>jasspa-mepkg-sun-i386-58-YYYYMMDD.zip</TT>&nbsp;-&nbsp;Sun&nbsp;2.8(i386)&nbsp;package. 
+<BR><TT>jasspa-mepkg-sun-i386-59-YYYYMMDD.zip</TT>&nbsp;-&nbsp;Sun&nbsp;2.9(i386)&nbsp;package. 
+<BR><TT>jasspa-mepkg-sun-sparc-56-YYYYMMDD.zip</TT>&nbsp;-&nbsp;Sun&nbsp;2.6(Sparc)&nbsp;package. 
+<BR><TT>jasspa-mepkg-sun-sparc-58-YYYYMMDD.zip</TT>&nbsp;-&nbsp;Sun&nbsp;2.8(Sparc)&nbsp;package. 
+<BR><TT>jasspa-mepkg-sun-sparc-59-YYYYMMDD.zip</TT>&nbsp;-&nbsp;Sun&nbsp;2.9(Sparc)&nbsp;package. </UL>
 <P><B>Executable Source Code </B>
-<BR><UL>The source code release for MicroEmacs '04 contains makefiles (<TT>*.mak</TT>) for all supported platforms. Microsoft '95/'98/NT/2K/XP makefiles contain options at the top of the makefile to enable/disable console and URL support. <TT>mesrc.zip</TT>&nbsp;-&nbsp;Source&nbsp;code&nbsp;for&nbsp;all&nbsp;platforms 
-<BR><TT>mesrc.tar.gz</TT>&nbsp;-&nbsp;Source&nbsp;code </UL>
+<BR><UL>The source code release for MicroEmacs '05 contains makefiles (<TT>*.mak</TT>) for all supported platforms. Microsoft '95/'98/NT/2K/XP makefiles contain options at the top of the makefile to enable/disable console and URL support. 
+<P><TT>jasspa-mesrc-YYYYMMDD.zip</TT>&nbsp;-&nbsp;Source&nbsp;code&nbsp;for&nbsp;all&nbsp;platforms 
+<BR><TT>jasspa-mesrc-YYYYMMDD.tar.gz</TT>&nbsp;-&nbsp;Source&nbsp;code </UL>
 <P><B>Executable Images </B>
-<BR><UL><TT>medos.zip</TT>&nbsp;-&nbsp;DOS&nbsp;Executable 
-<BR><TT>mewin32.zip</TT>&nbsp;-&nbsp;Windows&nbsp;32'&nbsp;(95/98/NT)&nbsp;Executable 
-<BR><TT>mewin32s.zip</TT>&nbsp;-&nbsp;Windows&nbsp;win32s&nbsp;(Win3.1/3.11)&nbsp;Executable 
-<BR><TT>meirix6.gz</TT>&nbsp;-&nbsp;Silicon&nbsp;Graphics&nbsp;Irix&nbsp;6&nbsp;Executable 
-<BR><TT>meaix43.gz</TT>&nbsp;-&nbsp;IBM's&nbsp;AIX&nbsp;4.3&nbsp;Executable 
-<BR><TT>mehpux10.gz</TT>&nbsp;-&nbsp;Hewlett&nbsp;Packard&nbsp;HP-UX&nbsp;10&nbsp;Executable 
-<BR><TT>mehpux11.gz</TT>&nbsp;-&nbsp;Hewlett&nbsp;Packard&nbsp;HP-UX&nbsp;11&nbsp;Executable 
-<BR><TT>mesunos55.gz</TT>&nbsp;-&nbsp;Sun&nbsp;OS&nbsp;5.5&nbsp;Executable 
-<BR><TT>mesunos56.gz</TT>&nbsp;-&nbsp;Sun&nbsp;OS&nbsp;5.5&nbsp;Executable 
-<BR><TT>mesolx86.gz</TT>&nbsp;-&nbsp;Sun&nbsp;Solaris&nbsp;2.6&nbsp;Intel&nbsp;Platform&nbsp;Executable 
-<BR><TT>melinux20.gz</TT>&nbsp;-&nbsp;Linux&nbsp;2.0.0&nbsp;Executable 
-<BR><TT>mefreebsd.gz</TT>&nbsp;-&nbsp;Free&nbsp;BSD&nbsp;Executable 
-<BR><TT>mepenbsd.gz</TT>&nbsp;-&nbsp;Open&nbsp;BSD&nbsp;Executable 
-<BR><TT>meosf1.gz</TT>&nbsp;-&nbsp;OSF1&nbsp;Executable 
-<BR><TT>mezaraus.gz</TT>&nbsp;-&nbsp;Zauraus&nbsp;Palm&nbsp;Executable </UL>
+<BR><UL><TT>jasspa-me-cygwin-YYYYMMDD.exe.gz</TT>&nbsp;-&nbsp;Cygwin&nbsp;Executable&nbsp;(X-Windows) 
+<BR><TT>jasspa-me-hpux-pa-10.20-YYYYMMDD.gz</TT>&nbsp;-&nbsp;Hewlett&nbsp;Packard&nbsp;HP-UX&nbsp;10&nbsp;Executable 
+<BR><TT>jasspa-me-hpux-pa-11.00-YYYYMMDD.gz</TT>&nbsp;-&nbsp;Hewlett&nbsp;Packard&nbsp;HP-UX&nbsp;11&nbsp;Executable 
+<BR><TT>jasspa-me-ibm-aix-4-YYYYMMDD.gz</TT>&nbsp;-&nbsp;IBM's&nbsp;AIX&nbsp;4.3&nbsp;Executable 
+<BR><TT>jasspa-me-linux-i386-2.4-YYYYMMDD.gz</TT>&nbsp;-&nbsp;Linux&nbsp;2.2.x/2.4.x&nbsp;Executable 
+<BR><TT>jasspa-me-linux-i386-2.6-YYYYMMDD.gz</TT>&nbsp;-&nbsp;Linux&nbsp;2.6.x&nbsp;Executable 
+<BR><TT>jasspa-me-ms-win32-YYYYMMDD.zip</TT>&nbsp;-&nbsp;Windows&nbsp;32'&nbsp;(95/98/NT/2K/XP)&nbsp;Executable 
+<BR><TT>jasspa-me-ms-win32s-YYYYMMDD.zip</TT>&nbsp;-&nbsp;Windows&nbsp;win32s&nbsp;(Win3.1/3.11)&nbsp;Executable 
+<BR><TT>jasspa-me-msdos-djgpp1-YYYYMMDD.zip</TT>&nbsp;-&nbsp;DOS&nbsp;Executable&nbsp;(DJGPP&nbsp;v1.x) 
+<BR><TT>jasspa-me-msdos-djgpp2-YYYYMMDD.zip</TT>&nbsp;-&nbsp;DOS&nbsp;Executable&nbsp;(DJGPP&nbsp;v2.x) 
+<BR><TT>jasspa-me-openbsd-i386-3.4-YYYYMMDD.gz</TT>&nbsp;-&nbsp;Open&nbsp;BSD&nbsp;3.4&nbsp;Executable 
+<BR><TT>jasspa-me-sgi-irix-6-YYYYMMDD.gz</TT>&nbsp;-&nbsp;Silicon&nbsp;Graphics&nbsp;Irix&nbsp;6&nbsp;Executable 
+<BR><TT>jasspa-me-sun-i386-58-YYYYMMDD.gz</TT>&nbsp;-&nbsp;Sun&nbsp;Solaris&nbsp;2.8&nbsp;Intel&nbsp;Platform&nbsp;Executable 
+<BR><TT>jasspa-me-sun-i386-59-YYYYMMDD.gz</TT>&nbsp;-&nbsp;Sun&nbsp;Solaris&nbsp;2.9&nbsp;Intel&nbsp;Platform&nbsp;Executable 
+<BR><TT>jasspa-me-sun-sparc-56-YYYYMMDD.gz</TT>&nbsp;-&nbsp;Sun&nbsp;OS&nbsp;5.5&nbsp;Executable 
+<BR><TT>jasspa-me-sun-sparc-58-YYYYMMDD.gz</TT>&nbsp;-&nbsp;Sun&nbsp;OS&nbsp;5.8&nbsp;Executable 
+<BR><TT>jasspa-me-sun-sparc-59-YYYYMMDD.gz</TT>&nbsp;-&nbsp;Sun&nbsp;OS&nbsp;5.9&nbsp;Executable 
+<BR><TT>jasspa-mec-apple-darwin-6.6-YYYYMMDD.gz</TT>&nbsp;-&nbsp;Apple&nbsp;console&nbsp;Executable 
+<BR><TT>jasspa-mec-cygwin-YYYYMMDD.exe.gz</TT>&nbsp;-&nbsp;Cygwin&nbsp;Executable&nbsp;(Console) </UL>
 <P><B>Help File Images</B> (all platforms) 
-<BR><UL><TT>mewinhlp.zip</TT>&nbsp;-&nbsp;Windows&nbsp;Help&nbsp;file 
-<BR><TT>mehtm.zip</TT>&nbsp;&nbsp;-&nbsp;HTML&nbsp;Help&nbsp;files&nbsp;for&nbsp;8.3&nbsp;file&nbsp;systems&nbsp;(.htm) 
-<BR><TT>mehtml.tar.gz</TT>&nbsp;-&nbsp;HTML&nbsp;Help&nbsp;files&nbsp;(.html) </UL>
+<BR><UL><TT>jasspa-mewinhlp-YYYYMMDD.zip</TT>&nbsp;-&nbsp;Windows&nbsp;Help&nbsp;file 
+<BR><TT>jasspa-mehtm-YYYYMMDD.zip</TT>&nbsp;&nbsp;-&nbsp;HTML&nbsp;Help&nbsp;files&nbsp;for&nbsp;8.3&nbsp;file&nbsp;systems&nbsp;(.htm) 
+<BR><TT>jasspa-mehtml-YYYYMMDD.tar.gz</TT>&nbsp;-&nbsp;HTML&nbsp;Help&nbsp;files&nbsp;(.html) </UL>
 <P><B>Macro File Images</B> (all platforms) 
-<BR><UL><TT>memacros.zip</TT>&nbsp;-&nbsp;Macro&nbsp;files 
-<BR><TT>memacros.tar.gz</TT>&nbsp;-&nbsp;Macro&nbsp;files </UL>
+<BR><UL><TT>jasspa-memacros-YYYYMMDD.tar.gz</TT>&nbsp;-&nbsp;Macro&nbsp;files 
+<BR><TT>jasspa-memacros-YYYYMMDD.zip</TT>&nbsp;-&nbsp;Macro&nbsp;files 
+<P><TT>jasspa-metree-YYYYMMDD.tar.gz</TT>&nbsp;-&nbsp;Complete&nbsp;install&nbsp;tree&nbsp;+&nbsp;help 
+<BR><TT>jasspa-metree-YYYYMMDD.zip</TT>&nbsp;-&nbsp;Complete&nbsp;install&nbsp;tree&nbsp;+&nbsp;help </UL>
 <P><B>Spelling Dictionaries</B> (all platforms) 
 <BR><UL>One of the following base dictionaries is required for spelling. The extended dictionaries require the base dictionary and are recommended for a more comprehensive spelling list. Other languages are supported. </UL>
-<UL><P><TT>lsdmenus.zip</TT>&nbsp;-&nbsp;American&nbsp;rules&nbsp;and&nbsp;base&nbsp;dictionary. 
-<BR><TT>lsdxenus.zip</TT>&nbsp;-&nbsp;American&nbsp;extended&nbsp;dictionary. 
-<BR><TT>lsdmengb.zip</TT>&nbsp;-&nbsp;British&nbsp;rules&nbsp;and&nbsp;base&nbsp;dictionary. 
-<BR><TT>lsdxengb.zip</TT>&nbsp;-&nbsp;British&nbsp;extended&nbsp;dictionary. 
-<BR><TT>lsdmfrfr.zip</TT>&nbsp;-&nbsp;French&nbsp;rules&nbsp;and&nbsp;dictionary. 
-<BR><TT>lsdmdede.zip</TT>&nbsp;-&nbsp;German&nbsp;rules&nbsp;and&nbsp;base&nbsp;dictionary. 
-<BR><TT>lsdxdede.zip</TT>&nbsp;-&nbsp;German&nbsp;extended&nbsp;dictionary. 
-<BR><TT>lsdmitit.zip</TT>&nbsp;-&nbsp;Italian&nbsp;rules&nbsp;and&nbsp;dictionary 
-<BR><TT>lsdmplpl.zip</TT>&nbsp;-&nbsp;Polish&nbsp;rules&nbsp;and&nbsp;dictionary. 
-<BR><TT>lsdmptpt.zip</TT>&nbsp;-&nbsp;Portuguese&nbsp;rules&nbsp;and&nbsp;dictionary. 
-<BR><TT>lsdmeses.zip</TT>&nbsp;-&nbsp;Spanish&nbsp;rules&nbsp;and&nbsp;dictionary. 
-<P><TT>lsdmenus.tar.gz</TT>&nbsp;-&nbsp;American&nbsp;rules&nbsp;and&nbsp;base&nbsp;dictionary. 
-<BR><TT>lsdxenus.gz</TT>&nbsp;-&nbsp;American&nbsp;extended&nbsp;dictionary. 
-<BR><TT>lsdmengb.tar.gz</TT>&nbsp;-&nbsp;British&nbsp;rules&nbsp;and&nbsp;base&nbsp;dictionary. 
-<BR><TT>lsdxengb.gz</TT>&nbsp;-&nbsp;British&nbsp;extended&nbsp;dictionary. 
-<BR><TT>lsdmfrfr.tar.gz</TT>&nbsp;-&nbsp;French&nbsp;rules&nbsp;and&nbsp;dictionary. 
-<BR><TT>lsdmdede.tar.gz</TT>&nbsp;-&nbsp;German&nbsp;rules&nbsp;and&nbsp;base&nbsp;dictionary. 
-<BR><TT>lsdxdede.gz</TT>&nbsp;-&nbsp;German&nbsp;extended&nbsp;dictionary. 
-<BR><TT>lsdmitit.tar.gz</TT>&nbsp;-&nbsp;Italian&nbsp;rules&nbsp;and&nbsp;dictionary 
-<BR><TT>lsdmplpl.tar.gz</TT>&nbsp;-&nbsp;Polish&nbsp;rules&nbsp;and&nbsp;dictionary. 
-<BR><TT>lsdmptpt.tar.gz</TT>&nbsp;-&nbsp;Portuguese&nbsp;rules&nbsp;and&nbsp;dictionary. 
-<BR><TT>lsdmeses.tar.gz</TT>&nbsp;-&nbsp;Spanish&nbsp;rules&nbsp;and&nbsp;dictionary. </UL>
+<UL><P><TT>ls_dede.zip</TT>&nbsp;-&nbsp;German&nbsp;rules&nbsp;and&nbsp;base&nbsp;+&nbsp;extended&nbsp;dictionary. 
+<BR><TT>ls_engb.zip</TT>&nbsp;-&nbsp;British&nbsp;rules&nbsp;and&nbsp;base&nbsp;+&nbsp;extended&nbsp;dictionary. 
+<BR><TT>ls_enus.zip</TT>&nbsp;-&nbsp;American&nbsp;rules&nbsp;and&nbsp;base&nbsp;+&nbsp;extended&nbsp;dictionary. 
+<BR><TT>ls_eses.zip</TT>&nbsp;-&nbsp;Spanish&nbsp;rules&nbsp;and&nbsp;dictionary. 
+<BR><TT>ls_frfr.zip</TT>&nbsp;-&nbsp;French&nbsp;rules&nbsp;and&nbsp;dictionary. 
+<BR><TT>ls_itit.zip</TT>&nbsp;-&nbsp;Italian&nbsp;rules&nbsp;and&nbsp;dictionary 
+<BR><TT>ls_plpl.zip</TT>&nbsp;-&nbsp;Polish&nbsp;rules&nbsp;and&nbsp;dictionary. 
+<BR><TT>ls_ptpt.zip</TT>&nbsp;-&nbsp;Portuguese&nbsp;rules&nbsp;and&nbsp;dictionary. 
+<BR><TT>ls_ruye.zip</TT>&nbsp;-&nbsp;Russian&nbsp;YE&nbsp;rules&nbsp;and&nbsp;dictionary. 
+<BR><TT>ls_ruyo.zip</TT>&nbsp;-&nbsp;Russian&nbsp;YO&nbsp;rules&nbsp;and&nbsp;dictionary. 
+<P><TT>ls_dede.tar.gz</TT>&nbsp;-&nbsp;German&nbsp;rules&nbsp;and&nbsp;base&nbsp;+&nbsp;extended&nbsp;dictionary. 
+<BR><TT>ls_engb.tar.gz</TT>&nbsp;-&nbsp;British&nbsp;rules&nbsp;and&nbsp;base&nbsp;+&nbsp;extended&nbsp;dictionary. 
+<BR><TT>ls_enus.tar.gz</TT>&nbsp;-&nbsp;American&nbsp;rules&nbsp;and&nbsp;base&nbsp;+&nbsp;extended&nbsp;dictionary. 
+<BR><TT>ls_eses.tar.gz</TT>&nbsp;-&nbsp;Spanish&nbsp;rules&nbsp;and&nbsp;dictionary. 
+<BR><TT>ls_frfr.tar.gz</TT>&nbsp;-&nbsp;French&nbsp;rules&nbsp;and&nbsp;dictionary. 
+<BR><TT>ls_itit.tar.gz</TT>&nbsp;-&nbsp;Italian&nbsp;rules&nbsp;and&nbsp;dictionary 
+<BR><TT>ls_plpl.tar.gz</TT>&nbsp;-&nbsp;Polish&nbsp;rules&nbsp;and&nbsp;dictionary. 
+<BR><TT>ls_ptpt.tar.gz</TT>&nbsp;-&nbsp;Portuguese&nbsp;rules&nbsp;and&nbsp;dictionary. 
+<BR><TT>ls_ruye.tar.gz</TT>&nbsp;-&nbsp;Russian&nbsp;YE&nbsp;rules&nbsp;and&nbsp;dictionary. 
+<BR><TT>ls_ruyo.tar.gz</TT>&nbsp;-&nbsp;Russian&nbsp;YO&nbsp;rules&nbsp;and&nbsp;dictionary. </UL>
 <UL><P><B>NOTE:</B> The binary versions of the executables held on the site include the platform name as part of the executable name i.e. <B>me</B> for <TT>DOS</TT> is called <B>medos.exe</B>. On installing the binaries onto the target machine, you should rename the executable to <B>me</B> or <B>me.exe</B>, whatever is appropriate. The ONLY exception to this rule is the Microsoft Windows executable where <B>mewin32.exe</B> should be renamed to <B>me32.exe</B>. Our reason for this naming is to allow the executables to be unpacked in the same directory and not be confused with each other. </UL></UL>
 <H2>Installation Directories </H2>
 <UL><P>The suggested installation structure for all platforms is defined as:- <UL>
@@ -107,10 +122,10 @@ Installation(1)</H1>
 <H2>UNIX Installation (System Wide) </H2>
 <UL><P>A system wide installation on UNIX for multiple users adheres to conventional package installation methods. 
 <P><B>Distribution Components Required:</B> 
-<BR><TT>me</TT><I>&lt;unix&gt;</I><TT>.gz</TT> 
-<BR><TT>memacros.tar.gz</TT> 
+<BR><TT>jasspa-me-</TT><I>&lt;unix&gt;</I><TT>-YYYYMMDD.gz</TT> 
+<BR><TT>jasspa-metree-YYYYMMDD.tar.gz</TT> 
 <BR><I>&lt;spelling&gt;</I><TT>.gz</TT> 
-<BR><TT>html.tar.gz</TT> (optional) 
+<BR><TT>jasspa-mehtml-YYYYMMDD.tar.gz</TT> (optional) 
 <P><B>Installation:</B> 
 <BR>It is recommended that the macro files are placed in a standard shared system directory. The standard directory locations searched by MicroEmacs are defined on a per-platform basis, only one of the directory locates is selected, as follows: <UL>
 <PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HP-UX&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SunOS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AIX&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cygwin 
@@ -122,8 +137,8 @@ Installation(1)</H1>
 </PRE></UL>
 <UL><P>
 <LI>Create the directory <TT>/usr/local/jasspa</TT>. 
-<LI>Create the sub-directory <TT>/usr/local/jasspa/macros</TT>. Unpack and install the <TT>memacros.tar.gz</TT> into this directory 
-<LI>If spelling dictionaries are required then create the directory <TT>/usr/local/jasspa/spelling</TT>. Unpack and install the <TT>spelling</TT> into this directory. 
+<LI>Unpack and install the <TT>jasspa-metree-YYYYMMDD.tar.gz</TT> into this directory. 
+<LI>If spelling dictionaries are required then place them in the <I>spelling</I> sub-directory created when <I>metree</I> was unpacked. Unpack and install the <TT>spelling</TT> into this directory. 
 <LI>If the standard icons are required for Gnome, KDE or some other window manager then create the sub-directory <TT>/usr/local/jasspa/icons</TT> and unpack and install the icons into the new directory. 
 <LI>Unpack (or build) the executable and place in &quot;<TT>/usr/local/bin</TT>&quot; </UL><P>The executable may now be run by all users. If the macros are placed in a non-standard directory location then the environment variable 
 <A HREF="m5var090.html">MEINSTALLPATH(5)</A> to define the root jasspa tree. 
@@ -135,8 +150,8 @@ Installation(1)</H1>
 <H2>UNIX Installation (Single User) </H2>
 <UL><P>Where the user is not permitted to install 3rd party applications in the system directories then MicroEmacs may be installed locally as follows:- <UL><P>
 <LI>Create the directory <TT>~/.jasspa</TT>. 
-<LI>Create the sub-directory <TT>~.jasspa/macros</TT>. Unpack and install the <TT>memacros.tar.gz</TT> into this directory 
-<LI>If spelling dictionaries are required then create the directory <TT>~/.jasspa/spelling</TT>. Unpack and install the <TT>spelling</TT> into this directory. 
+<LI>Unpack and install the <TT>jasspa-metree-YYYYMMDD.tar.gz</TT> into this directory. 
+<LI>If spelling dictionaries are required then place them in the <I>spelling</I> sub-directory created when <I>metree</I> was unpacked. Unpack and install the <TT>spelling</TT> into this directory. 
 <LI>If the standard icons are required for Gnome, KDE or some other window manager then create the sub-directory <TT>~/.jasspa/icons</TT> and unpack and install the icons into the new directory. 
 <LI>The user files will be placed in the <TT>~/.jasspa</TT> directory by default. To keep the user macros separate then the directory <TT>~/.jasspa/$LOGNAME</TT> may be created and will identified as the users home directory. 
 <LI>Unpack (or build) the executable and place in &quot;<TT>~/bin</TT>&quot; </UL><P>MicroEmacs may be executed after it has been re-hashed (depending on the shell). </UL>
@@ -145,8 +160,8 @@ Installation(1)</H1>
 <P><B>Executable:</B> 
 <BR>Compiled with DJGPP V1.0 
 <P>Distribution components required: 
-<BR><UL><TT>medos.zip</TT> 
-<BR><TT>memacros.zip</TT> 
+<BR><UL><TT>jasspa-me-msdos-djgpp1-YYYYMMDD.zip</TT> 
+<BR><TT>jasspa-metree-YYYYMMDD.zip</TT> 
 <BR><I>&lt;spelling&gt;</I><TT>.zip</TT> 
 <P><TT>mewinhlp.zip</TT> if you are using windows 3.1/3.11 </UL>
 <P>Recommended installed components: 
@@ -156,8 +171,8 @@ Installation(1)</H1>
 </UL><P><B>Installation:</B> 
 <BR>This installation relies on the executable position. <UL><P>
 <LI>Create the directory <TT>c:\jasspa</TT> (or other location) 
-<LI>Create the sub-directory <TT>c:\jasspa\macros</TT>. Unpack and install the <TT>memacros.zip</TT> into this directory 
-<LI>If spelling dictionaries are required then create the directory <TT>c:\jasspa\spelling</TT>. Unpack and install the <TT>spelling</TT> into this directory. 
+<LI>Unpack and install the <TT>jasspa-metree-YYYYMMDD.zip</TT> into this directory. 
+<LI>If spelling dictionaries are required then place them in the <I>spelling</I> sub-directory created when <I>metree</I> was unpacked. Unpack and install the <TT>spelling</TT> into this directory. 
 <LI>Unzip the executable and place it in the jasspa root directory <TT>c:\jasspa</TT>. 
 <LI>Edit &quot;<TT>c:\autoexec.bat</TT>&quot; and add the following lines:- </UL><P><UL>
 <PRE>&nbsp;&nbsp;&nbsp;&nbsp;SET&nbsp;PATH=%PATH%;c:\jasspa 
@@ -180,9 +195,9 @@ Installation(1)</H1>
 <A HREF="m2cmd098.html">pipe-shell-command(2)</A> in a synchronous manner. This should be installed into the <TT>C:\WINDOWS\SHELL</TT> directory. This (rather inelegantly) gets around the problems of spawning a process under <B>win32s</B> due to a number of Microsoft bugs in the operating system. Note: that on a spawn operation a <TT>MS-DOS</TT> window is visible, this is due to the nature of the command shell on this platform which has a tendency to prompt the user at every opportunity, hence a certain amount of interaction (which is out of our control) is necessary. 
 <P>The helper DLL is compiled with a 16-bit Windows compiler - MSVC 1.5. 
 <P><B>Distribution components required:</B> 
-<UL><P><TT>mewin32s.zip</TT> 
-<BR><TT>memacros.zip</TT> 
-<BR><TT>mewinhlp.zip</TT> 
+<UL><P><TT>jasspa-me-ms-win32s-YYYYMMDD.zip</TT> 
+<BR><TT>jasspa-metree-YYYYMMDD.zip</TT> 
+<BR><TT>jasspa-mewinhlp-YYYYMMDD.zip</TT> 
 <BR><I>&lt;spelling&gt;</I><TT>.zip</TT> 
 </UL><P><B>Recommended installed components:</B> 
 <UL><P><TT>4dos</TT> - command shell (giving <I>stderr</I> redirection) 
@@ -192,19 +207,16 @@ Installation(1)</H1>
 <UL><P>If<B>win32s</B> is a requirement on this platform, typically taken from <B>pw1118.exe</B> which freely available on the Internet. 
 </UL><P><B>Installation:</B> 
 <BR>This version of Windows does not have a <I>install</I> directory as '95/'98 and it is expected that the <TT>MS-DOS</TT> version will coexist. No <I>Install</I> <I>Shield</I> installation is provided. Install in a directory structure similar to <TT>MS-DOS</TT>. Install the helper DLL <B>methnk16.dll</B> in the <TT>C:\WINDOWS\SHELL</TT> directory. Create a 
-<A HREF="m8fil006.html">me32.ini(8)</A> file in the <TT>C:\WINDOWS</TT> directory to identify the location of the MicroEmacs '04 components, this much the same as the '95/'98 file, change the directory paths to suite the install base. 
+<A HREF="m8fil006.html">me32.ini(8)</A> file in the <TT>C:\WINDOWS</TT> directory to identify the location of the MicroEmacs '05 components, this much the same as the '95/'98 file, change the directory paths to suite the install base. 
 <P><B>Support Status:</B> 
 <BR>The <B>win32s</B> release has not been used with vengeance, although no specific problems have been reported with this release. </UL>
-<H2>Windows '95/'98/NT/2K/XP </H2>
+<H2>Windows 95/98/NT/2K/XP </H2>
 <UL><P><B>Executable:</B> 
 <UL><P>Compiled with Microsoft Developer 6.x </UL>
 <P><B>Install Shield</B> 
 <UL><P>An <B>Install Shield</B> version of MicroEmacs is available which includes all of the distribution components. </UL>
 <P><B>Distribution components required:</B> 
-<UL><P><TT>mewin32.zip</TT> 
-<BR><TT>memacros.zip</TT> 
-<BR><I>&lt;spelling&gt;</I><TT>.zip</TT> 
-<BR><TT>mewinhlp.zip</TT> (optional) </UL>
+<UL><P><TT>jasspa-mepkg-ms-win32-2004030.zip</TT> </UL>
 <P><B>Recommended installed components:</B> 
 <UL><P><TT>grep</TT> - Version of grep (GNU port of grep recommended) 
 <BR><TT>diff</TT> - Version of diff (GNU port of grep recommended) 
@@ -234,7 +246,7 @@ Installation(1)</H1>
 [HKEY_CLASSES_ROOT\MicroEmacs_foo\Shell\open\command] 
 &quot;C:\Program&nbsp;File\JASSPA\MicroEmacs\me32.exe&nbsp;-o&nbsp;&quot;%1&quot;&quot; 
 </PRE></UL>
-<P>In the previous example the <I>DefaultIcon</I> entry is the icon assigned to the file. This may be an icon taken from <TT>meicons.exe</TT> (in this case icon number 23), or may be some other icon. The open action in the example uses the <B>-o</B> option of the <I>client-server</I>, which loads the file into the current MicroEmacs '04 session, alternatively the <B>-c</B> option may be used to retain the previous context, or no option if a new session with no other files loaded is started. 
+<P>In the previous example the <I>DefaultIcon</I> entry is the icon assigned to the file. This may be an icon taken from <TT>meicons.exe</TT> (in this case icon number 23), or may be some other icon. The open action in the example uses the <B>-o</B> option of the <I>client-server</I>, which loads the file into the current MicroEmacs '05 session, alternatively the <B>-c</B> option may be used to retain the previous context, or no option if a new session with no other files loaded is started. 
 <P>A generic open for ALL files may be defined using a wild-card, this may be used to place a <I>MicroEmacs</I> edit entry in the right-click pop-up menu, as follows:- <UL>
 <PRE>[HKEY_CLASSES_ROOT\*\shell] 
 [HKEY_CLASSES_ROOT\*\shell\MicroEmacs] 
@@ -277,7 +289,7 @@ Installation(1)</H1>
 <A HREF="m2nar000.html">File Language Templates</A>, 
 <A HREF="m2nar003.html">User Profiles</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2004/02/04</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/01/16</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

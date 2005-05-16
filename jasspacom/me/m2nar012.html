@@ -1,0 +1,187 @@
+<HTML>
+<HEAD><TITLE>macroOverview(4)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
+macroOverview(4)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>MACRO LANGUAGE OVERVIEW </B></H2>
+<UL><P>MicroEmacs macro language is a run-time interpreted language and uses a prefix notation form, that is operators appear before their arguments, sometimes known as Polish notation, i.e. '<TT>+ 3 4</TT>' rather than the more conventional infix notation '<TT>3 + 4</TT>'). 
+<P>Every line is self contained, you cannot make a single command span multiple line (by using something like a '\' character as in C or tcl). 
+<P>Comments start with semi-colon '<TT>;</TT>', anything to the right of an unquoted semi-colon is ignored. <UL>
+<PRE>;&nbsp;I'm&nbsp;a&nbsp;comment&nbsp;and&nbsp;exist&nbsp;to&nbsp;the&nbsp;end&nbsp;of&nbsp;line. 
+set-variable&nbsp;#l1&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;I'm&nbsp;a&nbsp;comment&nbsp;to&nbsp;the&nbsp;end&nbsp;of&nbsp;line. 
+</PRE></UL>
+<P>There are three types of line <UL><P>
+<LI>Blank or comment line 
+<LI>Process flow control lines using directives (i.e. '<TT>!if #l1</TT>') 
+<LI>Executable command lines (i.e. <TT>forward-line</TT>) </UL><P>The first letter of any word or token on a line is very important and informs MicroEmacs and the user what type of token it is. The basic token start characters are: 
+<UL><P><TT>;</TT> Comment 
+<BR><TT>$</TT> System or environment variable 
+<BR><TT>%</TT> User variable 
+<BR><TT>:</TT> Buffer variable 
+<BR><TT>.</TT> Command variable 
+<BR><TT>#</TT> Register variable 
+<BR><TT>@</TT> Macro variable 
+<BR><TT>!</TT> Directive 
+<BR><TT>&amp;</TT> Function 
+<BR><TT>&quot;</TT> A string, which finishes at the next unquoted <TT>&quot;</TT>. 
+<BR><TT>0-9</TT> A number, which is read as a string 
+<BR><TT>*</TT> A goto label </UL>
+<UL><P>If its not one of the above then it must be the first letter of a command name. </UL></UL>
+<H2>Comments </H2>
+<UL><P>Comments may appear anywhere on a line and everything to the right of the semi-colon to the end of the line is ignored: <UL>
+<PRE>;&nbsp;this&nbsp;is&nbsp;a&nbsp;comment 
+set-variable&nbsp;#l0&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;this&nbsp;part&nbsp;of&nbsp;the&nbsp;line&nbsp;is&nbsp;a&nbsp;comment. 
+</PRE></UL>
+</UL><H2>System or environment variables </H2>
+<UL><P>MicroEmacs system variables start with '<TT>$</TT>' and are used to configure most aspects of the editor (such as tab widths, window drawing characters etc.). There are a fixed list of system variables, see 
+<A HREF="amicr034.html">MicroEmacs - Macro Language Glossary</A>. 
+<P>If a given variable name is not a recognised system variable (e.g. <TT>$PATH</TT>) then MicroEmacs treats it as an environment variable, using 
+<A HREF="m2cmd122.html">set-variable(2)</A> to change an environment variable. This is useful when used in conjunction with one of MicroEmacs's shell commands. If the environment variable does not exist its value is returned as the string &quot;<TT>ERROR</TT>&quot;. </UL>
+<H2>User variables </H2>
+<UL><P>User variables commence with a percentage character '<TT>%</TT>' and have a global context within the editor, but unlike the <I>system</I> <I>variables</I> they do not span into the environment space (i.e. private to MicroEmacs). 
+<P>The use of <B>User Variables</B> is discouraged because of their scope, historically MicroEmacs only supported system and user variables. If two different macros use the same variable then things go wrong which is principally why they are no longer used. Macros have become a very large part of JASSPA's MicroEmacs and therefore they must be reliable by the nature of their global scope they are considered unreliable. 
+<P>A few commands still use them but this is more for historical reasons, for example grep's 
+<A HREF="m5var025.html">%grep-com(5)</A> variable to set the default grep command would be better implemented as the command variable <TT>.grep.com</TT>, see below. </UL>
+<H2>Buffer Variables </H2>
+<UL><P>Buffer variables are set in the context of a buffer, each buffer has its own independent list of buffer variables so this type of variable is used by macros which need to store buffer context information. As an example, the text file hook allows each buffer to have its own 
+<A HREF="m5var021.html">$fill-col(5)</A>, it stores each buffer's own fill column in the variable <TT>:fill-col</TT>. This is private to the buffer. Referencing the variable <TT>:fill-col</TT> will retrieve the current buffer's <TT>:fill-col</TT> variable, if it not set its value is returned as &quot;<TT>ERROR</TT>&quot;. Referencing <TT>:*scratch*:fill-col</TT> retrieves the &quot;<TT>*scratch*</TT>&quot; buffer's <TT>:fill-col</TT> value. 
+<P>The operator 
+<A HREF="m4fil005.html">&amp;exist(4)</A> may be used to determine if the buffer variable has been created and set. </UL>
+<H2>Command Variables </H2>
+<UL><P>Command variables are set in the context of a command or macro and are similar to buffer variables. <TT>.var</TT> retrieves the the current macros command variable whereas <TT>.hilight.var</TT> will get command <B>hilight</B> command variable. 
+<P>It is important to understand that these variables are stored with the command and the command must exist before the variable is used. As an example of the command variable scope, consider the following macro definitions. <UL>
+<PRE>define-macro&nbsp;Test1 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&amp;spr&nbsp;&quot;Test1&nbsp;.foo&nbsp;is&nbsp;[%s]&quot;&nbsp;.foo 
+!emacro 
+set-variable&nbsp;.Test1.foo&nbsp;&quot;hello&nbsp;world&quot; 
+define-macro&nbsp;Test2 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&amp;spr&nbsp;&quot;Test1&nbsp;.foo&nbsp;is&nbsp;[%s]&quot;&nbsp;.Test1.foo 
+!emacro 
+</PRE></UL>
+<P>On running <B>Test1</B> and <B>Test2</B> both will print &quot;<TT>Test1</TT> <TT>.foo</TT> <TT>is</TT> <TT>[hello</TT> <TT>world]</TT>&quot;. The initialisation of <TT>.Test1.foo</TT> is performed outside of the macro and is done only once, once the variable has been initialized the line is discarded. This discard reduces the run-time memory overhead. </UL>
+<H2>Register Variables </H2>
+<UL><P>Most variables are used to store temporary information, once a macro completes the variable is no longer required. 
+<A HREF="amicr034.html">Register variables</A> are used for this purpose, their scope is only the current macro's execution as such they are the most efficient variables to use. 
+<P>A new set of registers is created every time that a macro is executed, called <TT>#l0</TT> through to <TT>#l9</TT>. Where macros are nested then the parent registers are effectively stacked and may be access through <TT>#p0</TT> through to <TT>#p9</TT>, this is especially useful when writing recursive macros or macros which must return values as they may return a processed result in the parents register. A single set of registers always exists which is the global registers <TT>#g0</TT> through to <TT>#g9</TT>, for a first level macro then this forms its parent register variable. </UL>
+<H2>Macro variables </H2>
+<UL><P>
+<A HREF="amicr034.html">Macro variables</A> commence with a at-sign <TT>@</TT> and are only available in the context of a macro and are used to retrieve the numeric argument, parameters etc. The variables include:- 
+<UL><P><B>@?</B> - Boolean determines if a numeric argument was supplied 
+<BR><B>@#</B> - The value of the numeric argument 
+<P><B>@0</B> - The name of the macro 
+<BR><B>@1</B> - The first argument of macro 
+<BR><B>@2</B> - The second argument of macro 
+<BR><B>@3</B> ... <B>@</B><I>n</I> 
+<P><B>@p</B> - The name of the calling (or parent) macro. </UL></UL>
+<H2>Directives </H2>
+<UL><P>The 
+<A HREF="amicr034.html">Macro Directives</A> are denoted by a <B>!</B> prefix and provide control over the command sequence. Directives are used to define macros and affect the macro execution sequence. i.e. <UL>
+<PRE>define-macro&nbsp;if-test 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;1 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;#l0 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;you&nbsp;will&nbsp;see&nbsp;this&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!return 
+&nbsp;&nbsp;&nbsp;&nbsp;!elif&nbsp;&amp;not&nbsp;#l0 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;you&nbsp;will&nbsp;not&nbsp;see&nbsp;this&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!abort 
+&nbsp;&nbsp;&nbsp;&nbsp;!else 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;you&nbsp;will&nbsp;not&nbsp;see&nbsp;this&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!abort 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+!emacro 
+</PRE></UL>
+<P>The common directives are:- 
+<P><B>!abort</B> 
+<BR><UL>
+<A HREF="m4fil010.html">!abort</A> terminates a macro and exits with a <I>false</I> status. </UL>
+<P><B>!return</B> 
+<BR><UL>
+<A HREF="m4fil010.html">!return</A> terminates a macro and exits with a <I>true</I> status. </UL>
+<P><B>!while</B>/<B>!continue</B>/<B>!done</B> 
+<BR><UL>
+<A HREF="m4fil011.html">!while</A> defines a conditional loop that is tested before entry to the loop, the 
+<A HREF="m4fil011.html">!continue</A> statement within the loop allows the loop to be broken. <B>!while</B> loops may not be nested, but may be contained within a 
+<A HREF="m4fil012.html">!repeat/!until</A> construct. </UL>
+<P><B>!repeat/!until</B> 
+<BR><UL>
+<A HREF="m4fil012.html">!repeat</A> defines a conditional loop that is tested on exit from the loop. <B>!repeat</B> loops may not be nested, but may be contained within a 
+<A HREF="m4fil011.html">!while/!done</A> construct. </UL>
+<P><B>define-macro/!emacro</B> 
+<BR><UL>
+<A HREF="m2cmd029.html">define-macro</A> defines a new macro which is terminated with a 
+<A HREF="m4fil006.html">!emacro</A>. </UL>
+<P>!if/!elif/!else/!endif 
+<BR><UL>
+<A HREF="m4fil008.html">!if</A> defines a conditional statement, where there is more than one condition then the 
+<A HREF="m4fil008.html">!elif</A> directive may continue the conditional test. </UL>
+<P><B>!goto/!tgoto</B> 
+<BR><UL>
+<A HREF="m4fil009.html">!goto</A> and 
+<A HREF="m4fil009.html">!tgoto</A> provide an absolute unconditional and conditional jump to a <B>*label</B> in a file, respectively. A <B>!goto</B> label is defined as line commencing with a <TT>*</TT> followed by a name i.e. <B>*label</B>. </UL>
+<P><B>!force</B> <I>command</I> 
+<BR><UL>
+<A HREF="m4fil007.html">!force</A> ignores the return status of a <I>command</I> while executing a macro, thereby ignoring any exceptions which would otherwise halt macro execution. </UL></UL>
+<H2>Functions </H2>
+<UL><P>All 
+<A HREF="amicr026.html">functions</A> are denoted by a <B>&amp;</B> prefix, they are perhaps miss named and should be called operators as they operate on variables and literal strings to produce a new result. 
+<P>There are different type of functions: <UL><P>
+<LI>Numeric - interprets arguments as numbers i.e. add two numbers 
+<A HREF="m4fil001.html">&amp;add(4)</A>. 
+<LI>String - interprets arguments as strings i.e. to concatenate two strings together 
+<A HREF="m4fil002.html">&amp;cat(4)</A>. 
+<LI>Logical - boolean operators i.e. greater than 
+<A HREF="m4fil003.html">&amp;great(4)</A>. 
+<LI>Key - key bindings i.e. key binding of command 
+<A HREF="m4fil026.html">kbind(4)</A>. 
+<LI>Bitwise - bit-wise numerical operators i.e. bitwise AND 
+<A HREF="m4fil021.html">&amp;band(4)</A>. 
+<LI>File - file interaction i.e. find a file 
+<A HREF="m4fil024.html">&amp;find(4)</A>. 
+<LI>Lists - string item lists i.e. find item in list 
+<A HREF="m4fil029.html">&amp;lfind(4)</A>. 
+<LI>Miscellaneous - miscellaneous functions to which query and return information to the caller i.e. registry query 
+<A HREF="m4fil028.html">&amp;reg(4)</A>. </UL><P>The functions use a postfix notation as the <I>function</I> appears before the arguments. <UL>
+<PRE>set-variable&nbsp;#l0&nbsp;2 
+set-variable&nbsp;#l1&nbsp;1 
+!if&nbsp;&amp;gre&nbsp;#l0&nbsp;#l1 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;#l0&nbsp;is&nbsp;greater&nbsp;than&nbsp;#l1&quot; 
+!endif 
+
+ml-write&nbsp;&amp;cat&nbsp;&quot;#l0&nbsp;+&nbsp;#l1&nbsp;=&nbsp;&quot;&nbsp;&amp;add&nbsp;#l0&nbsp;#l1 
+</PRE></UL>
+<P>The interpretation of strings and numbers is discussed in the next section. </UL>
+<H2>Strings and Numbers </H2>
+<UL><P>All variables are treated as strings within MicroEmacs so the integer value of 102 is the string <TT>&quot;102&quot;</TT>. Where functions require an integer argument (i.e. 
+<A HREF="m4fil001.html">&amp;add</A>) the strings are converted to integers, operated on and converted back to a string result. Floating point notation is not understood. 
+<P>Integers may be expressed in different bases: 
+<UL><P><TT>0xXXX</TT> - Hexadecimal notation i.e. <I>0x12af</I>. 
+<BR><TT>0oooo</TT> - Octal notation requires a leading <I>012673</I>. 
+<BR><TT>ddddd</TT> - Decimal notation <I>12345</I>. </UL>
+<P>Strings do not necessarily need to be quoted, provided that the string is unambiguous and does not include any special characters then all input between white spaces is considered to be a string. Strings may be quoted '<TT>&quot;string&quot;</TT>', within a quoted string then a backslash '<TT>\</TT>'is used as an escape character. the escape sequences that are interpreted include: 
+<UL><P><TT>\\</TT> - A backslash character. 
+<BR><TT>\t</TT> - A literal TAB character. 
+<BR><TT>\n</TT> - A literal NEWLINE character. 
+<BR><TT>\xx</TT> - A hexadecimal character. </UL></UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="amicr026.html">Introduction to Variable Functions</A> 
+<BR>
+<A HREF="amicr034.html">Macro Glossary</A> 
+<BR>
+<A HREF="m2nar011.html">Macro Debugging Crash Course</A> 
+<BR>
+<A HREF="m2nar010.html">Writing MicroEmacs Macros</A> </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/02/13</I>
+<BR><I>Generated On: 2005/05/14</I>
+</BODY></HMTL>

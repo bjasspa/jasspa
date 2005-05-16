@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>Build(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 Build(2)</H1>
@@ -13,7 +13,7 @@ Build(2)</H1>
 </FONT>
 <HR>
 <H2><B>BUILD </B></H2>
-<UL><P>MicroEmacs '04 may be compiled from the source files using the command shell build scripts <I>build</I> (UNIX Bourne Shell) or <I>build.bat</I> (DOS/Windows). A default compile sequence may be achieved with a simple: <UL>
+<UL><P>MicroEmacs '05 may be compiled from the source files using the command shell build scripts <I>build</I> (UNIX Bourne Shell) or <I>build.bat</I> (DOS/Windows). A default compile sequence may be achieved with a simple: <UL>
 <PRE>build 
 </PRE></UL>
 <P>from the command line. The build script attempts to detect the host system and available compiler and build the editor. 
@@ -30,9 +30,12 @@ Build(2)</H1>
 <BR><UL>Append all compilation output to the end of <I>logfile</I>, this may not work on DOS or Windows systems. </UL>
 <P><B>-m</B> <I>makefile</I> 
 <BR><UL>Build using the specified makefile. over-riding the auto system detect. The supplied makefiles include:- <UL><UL><P>
-<LI><TT>aix43.mak</TT> IBM AIX 4.3 native. 
-<LI><TT>aix43.gmk</TT> IBM AIX 4.3 using GNU tools. 
+<LI><TT>aix4.mak</TT> IBM AIX 4.x native. 
+<LI><TT>aix5.mak</TT> IBM AIX 5.x native. 
+<LI><TT>aix4.gmk</TT> IBM AIX 4.x using GNU tools. 
+<LI><TT>aix5.gmk</TT> IBM AIX 5.x using GNU tools. 
 <LI><TT>cygwin.gmk</TT> Cygwin using GNU tools under Windows. 
+<LI><TT>darwin.gmk</TT> Apple Darwin (console and X-Windows). 
 <LI><TT>dosdj1.mak</TT> Microsoft DOS build using djgpp version 1. 
 <LI><TT>dosdj2.mak</TT> Microsoft DOS build using djgpp version 2. 
 <LI><TT>freebsd.gmk</TT> Free BSD using GNU tools. 
@@ -46,21 +49,23 @@ Build(2)</H1>
 <LI><TT>irix5.mak</TT> Silicon Graphics IRIX 5.x native 
 <LI><TT>irix6.gmk</TT> Silicon Graphics IRIX 6.x using GNU tools 
 <LI><TT>irix6.mak</TT> Silicon Graphics IRIX 6.x native 
-<LI><TT>linux2.gmk</TT> Linux 2.x using GNU tools 
+<LI><TT>linux2.gmk</TT> Linux 2.2/4 kernels using GNU tools 
+<LI><TT>linux26.gmk</TT> Linux 2.6 kernels using GNU tools 
+<LI><TT>mingw.gmk</TT> minGW http://www.MinGW.org using GNU tools. 
+<LI><TT>osf1.gmk</TT> OSF1 using GNU tools. 
 <LI><TT>openbsd.gmk</TT> OpenBSD using GNU tools. 
 <LI><TT>openstep.mak</TT> Openstep 4.2 on NeXTstep (BSD 4.3). 
-<LI><TT>sunos55.gmak</TT> Sun Solaris 5.5 using GNU tools 
-<LI><TT>sunos55.mak</TT> Sun Solaris 5.5 native 
-<LI><TT>sunos56.gmak</TT> Sun Solaris 5.6 using GNU tools 
-<LI><TT>sunos56.mak</TT> Sun Solaris 5.6 native 
-<LI><TT>sunosx86.gmk</TT> Sun Solarais 2.6 (Intel) using GNU tools. 
+<LI><TT>sunos5.gmak</TT> Sun Solaris 5.5/6/7/8/9/10 using GNU tools 
+<LI><TT>sunos5.mak</TT> Sun Solaris 5.6/7/8/9/10 native 
+<LI><TT>sunosx86.gmk</TT> Sun Solarais 2.6/7/8/9/10 (Intel) using GNU tools. 
 <LI><TT>win32bc.mak</TT> Borland C, 32-bit Windows version. 
 <LI><TT>win32b55.mak</TT> Borland C 5.5, 32-bit Windows version (Free compiler). 
 <LI><TT>win32sv2.mak</TT> Microsoft Developer v2.x, Win32s (for Win 3.xx) 
 <LI><TT>win32sv4.mak</TT> Microsoft Developer v4.2, Win32s (for Win 3.xx) 
 <LI><TT>win32v2.mak</TT> Microsoft Developer v2.x, 32-bit Windows. 
 <LI><TT>win32v5.mak</TT> Microsoft Developer v5.x, 32-bit Windows. 
-<LI><TT>win32v6.mak</TT> Microsoft Developer v6.x, 32-bit Windows. </UL></UL></UL>
+<LI><TT>win32v6.mak</TT> Microsoft Developer v6.x, 32-bit Windows. 
+<LI><TT>zaurus.gmk</TT> Zauras palm using GNU tools. </UL></UL></UL>
 <P><B>-ne</B> 
 <BR><UL>Build NanoEmacs (a cut down version aimed as a vi replacement), the output is <TT>ne</TT> (or <TT>ned32</TT> for 32-bit Windows versions). </UL>
 <P><B>-S</B> 
@@ -69,9 +74,7 @@ Build(2)</H1>
 <BR><UL>Set the build type, where <I>type</I> can be one of the following: <UL><UL><P>
 <LI><TT>c</TT> Build a console only version (i.e. no window support), the output is <TT>mec</TT> (or <TT>mec32</TT> on Windows). 
 <LI><TT>w</TT> Build a windows only version (i.e. no console support), the output is <TT>mew</TT> (or <TT>mew32</TT> on Windows). 
-<LI><TT>cw</TT> Build a version which supports both console and windows, the output is <TT>mecw</TT> (or <TT>mecw32</TT> on Windows). </UL></UL></UL>
-<P><B>-u</B> 
-<BR><UL>Build a URL version (Windows '95/'98/NT only), constructs the executable <TT>meu32.exe</TT>. </UL></UL>
+<LI><TT>cw</TT> Build a version which supports both console and windows, the output is <TT>mecw</TT> (or <TT>mecw32</TT> on Windows). </UL></UL></UL></UL>
 <H2>Makefiles </H2>
 <UL><P>The supplied makefiles are provided in two forms:- <UL><P>
 <LI><B>.gmk</B> - GNU make, using gcc. 
@@ -79,12 +82,16 @@ Build(2)</H1>
 <LI><B>all</B> - Default build. 
 <LI><B>clean</B> - Removes intermediate files. 
 <LI><B>spotless</B> - Removes intermediate files and any backup files. 
+<LI><B>me</B> - Builds the default MicroEmacs executable. 
 <LI><B>med</B> - Builds a debugging version. 
-<LI><B>men</B> - Builds console version (Windows only). 
-<LI><B>men</B> - Builds a URL version (Windows only). 
-<LI><B>menu</B> - Builds console and URL version (Windows only). </UL></UL>
+<LI><B>mec</B> - Builds a console only version. 
+<LI><B>mew</B> - Builds a windows only version. 
+<LI><B>mecw</B> - Builds a version which supports both console and windows. 
+<LI><B>ne</B> - Builds NanoEmacs executable. </UL></UL>
 <H2><B>WINDOWS ENVIRONMENT </B></H2>
 <UL><P>The Windows environment is a little more difficult than UNIX because it does not have a good native command line environment. There are two Microsoft Developer options for building. If you have not purchased MS-DEV then use the FREE Borland compiler which runs on the command line. </UL>
+<H2>MinGW Build </H2>
+<UL><P>A collection of freely available and freely distributable Windows specific header files and import libraries combined with GNU toolsets that allow one to produce native Windows programs that do not rely on any 3rd-party C runtime DLLs. Available from http://www.mingw.org, <B>mingw</B> allows a Microsoft Windows version MicroEmacs to bu built and maintained. </UL>
 <H2>MS-Dev GUI Build </H2>
 <UL><P>MicroEmacs is supplied with a MS-Dev 6.x project for building. This has only been set up for debugging and has limited build options, it will also produce a large executable image. The MS-Windows images shipped by JASSPA are built using the command line build environment which is detailed in a later section. </UL>
 <H2>MS-Dev Command Line Build </H2>
@@ -134,7 +141,7 @@ Variable&nbsp;Value:&nbsp;C:\PROGRA~1\MICROS~3\VC98\LIB;
 <UL><P>Other UNIX ports should be fairly easy from the base set of ported platforms. If any new platform ports are performed by individuals then please submit the makefiles and any source changes back to JASSPA - see 
 <A HREF="amicr038.html">Contact Information</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2004/01/18</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/05/14</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>
