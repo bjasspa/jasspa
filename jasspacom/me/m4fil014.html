@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>MacroArguments(4)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 MacroArguments(4)</H1>
@@ -46,8 +46,9 @@ Test-it&nbsp;&quot;%test-var&quot;&nbsp;&quot;Goodbye&nbsp;World&quot;
 </PRE></UL>
 <P>On execution the macro writes the message 
 <UL><P>&quot;<TT>Test-it %test-var = Hello World</TT>&quot; </UL>
-<P>and will set variable <TT>%test-var</TT> to &quot;<TT>Goodbye World</TT>&quot;. 
-<P>The <B>@p</B> variable can be used to obtain the name of the macro which is executing the current macro, i.e. the value of the parent's <B>@0</B> variable. If the macro was executed directly by the user then there is no parent macro and the value of <B>@p</B> is an empty string (&quot;&quot;). </UL>
+<P>and will set variable <TT>%test-var</TT> to &quot;<TT>Goodbye World</TT>&quot;. Note that the <B>@1</B> has been used by reference on the <B>set-variable</B> rather than by value as it is used in an assignment. 
+<P>The <B>@p</B> variable can be used to obtain the name of the macro which is executing the current macro, i.e. the value of the parent's <B>@0</B> variable. If the macro was executed directly by the user then there is no parent macro and the value of <B>@p</B> is an empty string (&quot;&quot;). 
+<P>The variables <B>@#</B> and <B>@?</B> are automatically set on entry to a macro, the values may be over-written by the calling macro if required, but their assignment values are restricted to being integer values, assignment of a character string causes an error. </UL>
 <H2><B>DIAGNOSTICS </B></H2>
 <UL><P>If an attempt is made to access an argument which has not been given then a error occurs. This error can be trapped using the 
 <A HREF="m4fil007.html">!force(4)</A> directive, enabling the macro to take appropriate action, see example. </UL>
@@ -96,7 +97,7 @@ Test-it&nbsp;&quot;%test-var&quot;&nbsp;&quot;Goodbye&nbsp;World&quot;
 <A HREF="m3mac006.html">replace-all-string(3)</A>, 
 <A HREF="m4fil007.html">!force(4)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/04/09</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

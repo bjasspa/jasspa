@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>dos2unix(3f)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 dos2unix(3f)</H1>
@@ -15,19 +15,35 @@ dos2unix(3f)</H1>
 <H2><B>NAME </B></H2>
 <UL><P>dos2unix - Convert DOS format files to UNIX format files </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><B>me</B> &quot;@dos2unix&quot; <I>&lt;files&gt;</I> </UL>
+<UL><P><B>me</B> &quot;@dos2unix&quot; <I>&lt;files&gt;</I> 
+<BR><B>me</B> &quot;@unix2dos&quot; <I>&lt;files&gt;</I> 
+<BR><B>me</B> &quot;@unix2win&quot; <I>&lt;files&gt;</I> </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P>The start-up file <TT>dos2unix.emf</TT> may be invoked from the command line as a filter to convert all files in MS-DOS (or Windows) format into the correct UNIX format. 
-<P>Each file specified on the command line is interrogated and the line ending modified to UNIX. </UL>
+<UL><P>The start-up file <TT>dos2unix.emf</TT> may be invoked from the command line as a filter to convert all files in MS-DOS or Windows format into the correct UNIX format. 
+<P>Each file specified on the command line is interrogated and the line ending modified to UNIX. 
+<P><TT>unix2dos</TT> and <TT>unix2win</TT> similarly operate to provide the inverse conversion from UNIX to the Microsoft MS-DOS or Windows file formats. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>When using ME as a command line filter then it is advisable to control the backup command line options. Typically the backups and auto-save are disabled so that no backup files are generated i.e. <UL>
+<PRE>me&nbsp;-a&nbsp;-B&nbsp;&quot;@unix2dos&quot;&nbsp;files... 
+</PRE></UL>
+<P>Performs a conversion from UNIX to MS-DOS and disables the generation of auto-save files and backups. 
+<P>NE may be used to run the filters, by default NE runs without backup and auto-save mode enabled and the flags should NOT be used. <UL>
+<PRE>ne&nbsp;&quot;@unix2dos&quot;&nbsp;files... 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
+<UL><P><TT>MS-DOS</TT> files are defined to use a line ending of <TT>\r\n</TT>, the file is terminated with <TT>ctrl-z</TT>. 
+<P>Microsoft Windows files are defined to use a line ending of <TT>\r\n</TT>, there is no special end of file character. 
+<P>UNIX files are defined to use a line ending of <TT>\n</TT>, there is no special end of file character. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
+<A HREF="m1cmd000.html">me(1)</A>, 
 <A HREF="m3mac024.html">start-up(3)</A>, 
 <A HREF="m3fcl012.html">filetype(3f)</A>, 
 <A HREF="m2mod000.html">auto(2m)</A>, 
 <A HREF="m2mod024.html">crlf(2m)</A>, 
 <A HREF="m2mod030.html">ctrlz(2m)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2004/03/26</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/03/06</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

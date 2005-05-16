@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>describe-word(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 describe-word(3)</H1>
@@ -64,7 +64,7 @@ Aardvark&nbsp;(n.)&nbsp;An&nbsp;edentate&nbsp;mammal...
 <BR><UL>Only required for the second mode, for use with <B>describe-word</B>'s own GUI, the setting of another variable is required, the presence of this variable determines which mode is to be used. </UL>
 <UL><P>The variable <TT>.describe-word.</TT><I>&lt;language&gt;</I><TT>-search</TT> must be set to a 
 <A HREF="m2nar006.html">regex search pattern</A> which will match the required definition(s) in the command out put, the first group (&quot;<TT>\(...\)</TT>&quot;) must enclose the required definition, again &quot;<TT>%s</TT>&quot; can be used in place of the word and &quot;<TT>%%</TT>&quot; for a single &quot;<TT>%</TT>&quot;. <B>describe-word</B> simply uses 
-<A HREF="m3mac036.html">regex-forward(3)</A> repeatedly to find all definitions of the current word, it then uses the value of the variable 
+<A HREF="m2cmd019.html">search-buffer(2)</A> repeatedly to find all definitions of the current word, it then uses the value of the variable 
 <A HREF="m4fil033.html">@s1(4)</A> to get the individual definitions. For example for the first example the following is required: <UL>
 <PRE>set-variable&nbsp;.describe-word.american-search&nbsp;&nbsp;&quot;^\(%s&nbsp;(.*\)\n&quot; 
 </PRE></UL>
@@ -75,7 +75,7 @@ Aardvark&nbsp;(n.)&nbsp;An&nbsp;edentate&nbsp;mammal...
 <UL><P>
 <A HREF="m3osd002.html">spell-buffer(3)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/01/23</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

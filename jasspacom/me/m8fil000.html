@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>eaf(8)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 eaf(8)</H1>
@@ -20,7 +20,7 @@ eaf(8)</H1>
 <BR><I>&lt;pattern&gt;&nbsp;&lt;insertionString&gt;</I> 
 <BR><I>&lt;pattern&gt;&nbsp;&lt;insertionString&gt;</I> </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P>The MicroEmacs '04 abbreviation file, typically given the extension <B>.eaf</B>, defines a set of shorthand expansion strings which are used by the command 
+<UL><P>The MicroEmacs '05 abbreviation file, typically given the extension <B>.eaf</B>, defines a set of shorthand expansion strings which are used by the command 
 <A HREF="m2cmd051.html">expand-abbrev(2)</A>. 
 <A HREF="m2cmd117.html">buffer-abbrev-file(2)</A> defines the abbreviation file. 
 <P>The abbreviation file line based, with one abbreviation per line, with no intervening blank lines. Each line comprises of two columns, the first column <I>&lt;pattern&gt;</I> identifies the source pattern to be expanded, the second column <I>&lt;insertionString&gt;</I> defines the replacement text. The two text columns are separated by a space character. 
@@ -93,7 +93,7 @@ sw&nbsp;\m&quot;switch(\CX\CAP)\CM{\CMcase&nbsp;:\CMdefault:\CM}\CM\CXaP\CX)&quo
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end; 
 </PRE></UL>
 <P>Similarly the &quot;\b&quot; is typically used when 
-<A HREF="m2mod005.html">indent(2m)</A> is enabled, but when the tab spacing is known. Consider the following example used in the MicroEmacs '04 <B>.emf</B> files to define a help entry. In this case the indent is known to be 5 characters. Hence to move the cursor back 5 characters then a sequence of <B>\b</B>'s are used:- <UL>
+<A HREF="m2mod005.html">indent(2m)</A> is enabled, but when the tab spacing is known. Consider the following example used in the MicroEmacs '05 <B>.emf</B> files to define a help entry. In this case the indent is known to be 5 characters. Hence to move the cursor back 5 characters then a sequence of <B>\b</B>'s are used:- <UL>
 <PRE>!h&nbsp;def&nbsp;..&nbsp;\rSEE&nbsp;ALSO\r&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;cross&nbsp;references&gt;\r\b\b\b\b\b!ehelp 
 </PRE></UL>
 <P>the expansion in this case is:- <UL>
@@ -106,8 +106,8 @@ SEE&nbsp;ALSO
 !ehelp 
 </PRE></UL>
 </UL><H2><B>FILES </B></H2>
-<UL><P>The default abbreviation files are located in the MicroEmacs '04 <I>home</I> directory. 
-<P>User's may specify their own abbreviation files by shadowing the <I>home</I> directory file with their own file located in a personal MicroEmacs '04 directory. See 
+<UL><P>The default abbreviation files are located in the MicroEmacs '05 <I>home</I> directory. 
+<P>User's may specify their own abbreviation files by shadowing the <I>home</I> directory file with their own file located in a personal MicroEmacs '05 directory. See 
 <A HREF="m5var089.html">$user-path(5)</A>. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
@@ -117,7 +117,7 @@ SEE&nbsp;ALSO
 <A HREF="m3mac045.html">iso-accents-mode(3)</A>, 
 <A HREF="m5var089.html">$user-path(5)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
+<P><I>(c) Copyright JASSPA 2005</I>
 <BR><I>Last Modified: 2004/02/01</I>
-<BR><I>Generated On: 2004/03/26</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

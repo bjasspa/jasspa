@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>&reg(4)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 &reg(4)</H1>
@@ -15,25 +15,31 @@
 <H2><B>NAME </B></H2>
 <UL><P>&amp;reg - Retrieve a registry value (with default) </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><B>&amp;reg</B> <I>root</I> <I>subkey</I> <I>default</I> </UL>
+<UL><P><B>&amp;reg</B> <I>root</I> <I>default</I> </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P><B>&amp;reg</B> retrieves the value of a node defined by <I>root</I>/<I>subkey</I> from the registry. The node name is specified in two components, typically required when iterating over a registry tree, where the <I>root</I> component is static and the <I>subkey</I> is dynamic, <I>subkey</I> may be specified as the null string (<TT>&quot;&quot;</TT>) if an absolute registry path is specified. 
+<UL><P><B>&amp;reg</B> retrieves the value of a node defined by <I>root</I> from the registry, this is an absolute path. 
 <P>The <I>default</I> value is the value of the node to return if the registry node does not exist. </UL>
 <H2><B>EXAMPLE </B></H2>
 <UL><P>The following example is taken from <TT>me.emf</TT> and uses the registry to retrieve some of the default configuration files: <UL>
 <PRE>;&nbsp;Load&nbsp;in&nbsp;the&nbsp;color&nbsp;setup 
-!force&nbsp;execute-file&nbsp;&amp;reg&nbsp;&quot;/history&quot;&nbsp;&amp;cat&nbsp;$platform&nbsp;&quot;/color&quot;&nbsp;&quot;color&quot; 
+!force&nbsp;execute-file&nbsp;&amp;reg&nbsp;&amp;spr&nbsp;&quot;/history/%s/color&quot;&nbsp;$platform&nbsp;&quot;color&quot; 
 ;&nbsp;execute&nbsp;company&nbsp;setup 
-!if&nbsp;&amp;not&nbsp;&amp;seq&nbsp;&amp;set&nbsp;#l0&nbsp;&amp;reg&nbsp;&quot;/history&quot;&nbsp;&quot;company&quot;&nbsp;&quot;&quot;&nbsp;&quot;&quot; 
+!if&nbsp;&amp;not&nbsp;&amp;seq&nbsp;&amp;set&nbsp;#l0&nbsp;&amp;reg&nbsp;&quot;/history/company&quot;&nbsp;&quot;&quot; 
 &nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;execute-file&nbsp;#l0 
 !endif 
 </PRE></UL>
 </UL><H2><B>SEE ALSO </B></H2>
 <UL><P>
-<A HREF="m2cmd042.html">get-registry(2)</A>, 
-<A HREF="m2cmd042.html">set-registry(2)</A>. </UL>
+<A HREF="m3mac036.html">copy-registry(3)</A>, 
+<A HREF="m2cmd114.html">delete-registry(2)</A>, 
+<A HREF="m2cmd072.html">find-registry(2)</A>, 
+<A HREF="m2cmd025.html">list-registry(2)</A>, 
+<A HREF="m2cmd154.html">mark-registry(2)</A>, 
+<A HREF="m2cmd157.html">read-registry(2)</A>, 
+<A HREF="m2cmd042.html">set-registry(2)</A>. 
+<A HREF="m8fil004.html">erf(8)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/01/23</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

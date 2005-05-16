@@ -1,9 +1,9 @@
 <HTML>
-<HEAD><TITLE>$tabsize(5)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<HEAD><TITLE>$tab-width(5)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
-$tabsize(5)</H1>
+$tab-width(5)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
 <A HREF="amicr031.html">[Commands]</A>
@@ -13,23 +13,31 @@ $tabsize(5)</H1>
 </FONT>
 <HR>
 <H2><B>NAME </B></H2>
-<UL><P>$tabsize - Tab character width </UL>
+<UL><P>$tab-width - Global tab character width </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><B>$tabsize</B> <I>integer</I>; Default is <TT>4</TT> 
+<UL><P><B>$tab-width</B> <I>integer</I>; Default is <TT>8</TT> 
 <P>-0 &lt; <I>integer</I> &lt;= <I>n</I> </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P><B>$tabsize</B> defines the width of a tab character. 
-<P>Setting tabs to arbitrary widths is possible in MicroEmacs '04 but you must be aware of a subtle difference that it makes to your file and hence to your editing. When you start MicroEmacs '04, the tab width is set to the default (usually every 8th column) for the tab character (<TT>CTRL-I</TT>). As long as you stay with the default, every time you insert the tab character, a CTRL-I get inserted. Hence, you logically have a single character which might appear to be several spaces on the screen (or the output) depending upon the column location of the tab character. This means that to remove the spacing you have to delete a <I>single</I> character -- the tab character. 
-<P>On the other hand, the moment you explicitly set the tab interval (even if it is to the default value), MicroEmacs '04 handles the tab character by expanding the character into the required number of spaces to move you to the appropriate column. In this case, to remove the spacing you have to delete the appropriate number of spaces inserted by M-e to get you to the right column. 
+<UL><P><B>$tab-width</B> defines the default width of a tab character specified in spaces. The default value is used when new files are loaded and created and seeds the variable 
+<A HREF="m5var043.html">$buffer-tab-width(5)</A>. 
+<P>Setting tabs to arbitrary widths is possible in MicroEmacs '05 but you must be aware of a subtle difference that it makes to your file and hence to your editing. When you start MicroEmacs '05, the tab width is set to the default (usually every 8th column) for the tab character (<TT>CTRL-I</TT>). As long as you stay with the default, every time you insert the tab character, a CTRL-I get inserted. Hence, you logically have a single character which might appear to be several spaces on the screen (or the output) depending upon the column location of the tab character. This means that to remove the spacing you have to delete a <I>single</I> character -- the tab character. 
+<P>On the other hand, the moment you explicitly set the tab interval (even if it is to the default value), MicroEmacs '05 handles the tab character by expanding the character into the required number of spaces to move you to the appropriate column. In this case, to remove the spacing you have to delete the appropriate number of spaces inserted by M-e to get you to the right column. 
 <P>The operating mode of the tab expansion is controlled by the 
-<A HREF="m2mod012.html">tab(2m)</A>mode. </UL>
+<A HREF="m2mod012.html">tab(2m)</A> mode. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P>The November 2004 version of MicroEmacs removed the existing variables <B>$tabwidth</B> and <B>$tabsize</B> which were ambiguous. The existing variable scope was global which caused problems when moving to buffers with different tab width properties. The variables have been replaced with <B>$tab-width</B> and 
+<A HREF="m5var043.html">$buffer-tab-width(5)</A>. The indentation which was previously controlled by the tab width has been replaced with 
+<A HREF="m5var091.html">$indent-width(5)</A> and 
+<A HREF="m5var091.html">$buffer-indent-width(5)</A>. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
-<A HREF="m2cmd006.html">buffer-mode(2)</A> 
+<A HREF="m2cmd006.html">buffer-mode(2)</A>, 
 <A HREF="m2mod012.html">tab(2m)</A>, 
-<A HREF="m5var043.html">$tabwidth(5)</A>. </UL>
+<A HREF="m5var091.html">$buffer-indent-width(5)</A>, 
+<A HREF="m5var043.html">$buffer-tab-width(5)</A>, 
+<A HREF="m5var091.html">$indent-width(5)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/01/15</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

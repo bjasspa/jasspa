@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>etf(8)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 etf(8)</H1>
@@ -17,7 +17,7 @@ etf(8)</H1>
 <H2><B>SYNOPSIS </B></H2>
 <UL><P><I>&lt;Free Form Text&gt;</I> </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P>The MicroEmacs '04 template file, typically given the extension <B>.etf</B>, is a file template for a new file and defines common text that is automatically included when a new file is created. 
+<UL><P>The MicroEmacs '05 template file, typically given the extension <B>.etf</B>, is a file template for a new file and defines common text that is automatically included when a new file is created. 
 <P>The file inclusion is usually performed by macro 
 <A HREF="m3mac018.html">etfinsrt(3)</A>, called from the 
 <A HREF="m2cmd202.html">File Hooks</A>. The template file has no specific format, although <B>etfinsrt</B> replaces key strings with relevant information. </UL>
@@ -33,7 +33,6 @@ etf(8)</H1>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;etfinsrt&nbsp;&quot;c&quot; 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!endif 
 &nbsp;&nbsp;&nbsp;&nbsp;!endif 
-&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;buffer-mode&nbsp;&quot;cmode&quot; 
 &nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;buffer-mode&nbsp;&quot;time&quot; 
 &nbsp;&nbsp;&nbsp;&nbsp;. 
 &nbsp;&nbsp;&nbsp;&nbsp;. 
@@ -41,7 +40,7 @@ etf(8)</H1>
 </PRE></UL>
 <P>See 
 <A HREF="m3mac018.html">etfinsrt(3)</A> for more information on how the template file is located and inserted into the buffer. 
-<P>The default MicroEmacs '04 'C' mode template is defined as follows, but may be replaced with any other text:- <UL>
+<P>The default MicroEmacs '05 'C' mode template is defined as follows, but may be replaced with any other text:- <UL>
 <PRE>/*&nbsp;-*-&nbsp;C&nbsp;-*-&nbsp;**************************************************************** 
 &nbsp;* 
 &nbsp;*&nbsp;&nbsp;			Copyright&nbsp;$YEAR$&nbsp;$COMPANY_NAME$. 
@@ -73,12 +72,12 @@ etf(8)</H1>
 &nbsp;* 
 &nbsp;****************************************************************************/ 
 
-static&nbsp;const&nbsp;char&nbsp;rcsid[]&nbsp;=&nbsp;&quot;@(#)&nbsp;:&nbsp;$Id: m8fil001.html,v 1.4 2004-03-27 12:52:41 jon Exp $&quot;; 
+static&nbsp;const&nbsp;char&nbsp;rcsid[]&nbsp;=&nbsp;&quot;@(#)&nbsp;:&nbsp;$Id: m8fil001.html,v 1.5 2005-05-16 23:33:10 jon Exp $&quot;; 
 
 </PRE></UL>
 </UL><H2><B>FILES </B></H2>
-<UL><P>The default template files are located in the MicroEmacs '04 <I>home</I> directory. 
-<P>User's may specify their own template files by shadowing the <I>home</I> directory file with their own file located in a personal MicroEmacs '04 directory. See 
+<UL><P>The default template files are located in the MicroEmacs '05 <I>home</I> directory. 
+<P>User's may specify their own template files by shadowing the <I>home</I> directory file with their own file located in a personal MicroEmacs '05 directory. See 
 <A HREF="m5var089.html">$user-path(5)</A>. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
@@ -88,7 +87,7 @@ static&nbsp;const&nbsp;char&nbsp;rcsid[]&nbsp;=&nbsp;&quot;@(#)&nbsp;:&nbsp;$Id:
 <A HREF="m4fil024.html">&amp;find(4)</A>, 
 <A HREF="m5var089.html">$user-path(5)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2004/02/01</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/01/16</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

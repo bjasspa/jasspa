@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>auto-spell(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 auto-spell(3)</H1>
@@ -14,6 +14,7 @@ auto-spell(3)</H1>
 <HR>
 <H2><B>NAME </B></H2>
 <UL><P>auto-spell - Auto-spell support 
+<BR>auto-spell-menu - Auto-spell context menu 
 <BR>auto-spell-buffer - Auto-spell whole buffer 
 <BR>auto-spell-reset - Auto-spell hilight reset 
 <BR>auto-spell-ignore - Auto-spell ignore current word </UL>
@@ -25,6 +26,7 @@ auto-spell(3)</H1>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P><B>auto-spell</B> enables and disables the auto spell checking of the current buffer. Auto spell detects word breaks as you type and checks the spelling of every completed word hilighting any erroneous words in the error color scheme (usually red). 
 <P>The argument <I>n</I> determines whether auto-spell is enabled or disabled, a +ve argument enables and a -ve argument disables. If no argument or <I>0</I> is supplied the auto-spell state is toggled. 
+<P><B>auto-spell-menu</B> opens the auto-spell context menu which lists suggested corrections for the current word and other useful auto-spell commands and configuration options. This menu can also be accessed via the main mouse context menu when the current buffer has auto spell enabled. 
 <P><B>auto-spell-buffer</B> checks all words within the current buffer for spell, hilighting any unknown or miss-spelled words found. 
 <P><B>auto-spell-reset</B> resets the buffer hilighting scheme, removing any added erroneous words. 
 <P><B>auto-spell-ignore</B> gets the current word and deletes the erroneous hilighting and adds the word to the current temporary ignore dictionary, auto-spell and the spelling-checker will now ignore the word. If an argument <B>n</B> of 2 is given to the command the word is added to the users personal dictionary instead of the temporary ignore dictionary so the word is 'ignored' in all future sessions of MicroEmacs as well. </UL>
@@ -36,7 +38,7 @@ auto-spell(3)</H1>
 <A HREF="m3osd002.html">spell-buffer(3)</A>, 
 <A HREF="m2cmd125.html">spell(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/10/16</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2004/12/09</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

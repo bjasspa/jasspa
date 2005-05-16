@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>HistoryGroupVariables(4)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 HistoryGroupVariables(4)</H1>
@@ -13,19 +13,19 @@ HistoryGroupVariables(4)</H1>
 </FONT>
 <HR>
 <H2><B>NAME </B></H2>
-<UL><P>@h0, @s1, @s2, ... @h4 - History Group Variables. </UL>
+<UL><P>@h0, @h1, @h2, ... @h4 - History Group Variables. </UL>
 <H2><B>SYNOPSIS </B></H2>
 <UL><P><B>@h0</B>&nbsp;<I>index</I>&nbsp;-&nbsp;General&nbsp;history&nbsp;string 
 <BR><B>@h1</B>&nbsp;<I>index</I>&nbsp;-&nbsp;Buffer&nbsp;history&nbsp;string 
 <BR><B>@h2</B>&nbsp;<I>index</I>&nbsp;-&nbsp;Command&nbsp;history&nbsp;string 
-<BR><B>@h2</B>&nbsp;<I>index</I>&nbsp;-&nbsp;File&nbsp;history&nbsp;string 
+<BR><B>@h3</B>&nbsp;<I>index</I>&nbsp;-&nbsp;File&nbsp;history&nbsp;string 
 <BR><B>@h4</B>&nbsp;<I>index</I>&nbsp;-&nbsp;Search&nbsp;history&nbsp;string </UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P>The history group variables <B>@h</B><I>n</I> <I>index</I> return the strings in the history buffer ad a given <I>index</I>. There are 5 history buffers, <I>n</I>, as follows:- 
 <P><TT>0</TT> - General history string 
 <BR><TT>1</TT> - Buffer history string 
 <BR><TT>2</TT> - Command history string 
-<BR><TT>2</TT> - File history string 
+<BR><TT>3</TT> - File history string 
 <BR><TT>4</TT> - Search history string 
 <P>Each history buffer contains 20 slots which contain the history information. The history slot is selected with the <I>index</I> argument which is valid in the range <TT>0..19</TT>, index <TT>0</TT> is the most recent history slot in the history group. 
 <P>The history slots are automatically modified on the entry of a new command, search string etc. 
@@ -49,7 +49,7 @@ HistoryGroupVariables(4)</H1>
 <A HREF="m2cmd107.html">read-history(2)</A>, 
 <A HREF="m2cmd144.html">save-history(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2004/01/06</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/03/31</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

@@ -1,0 +1,63 @@
+<HTML>
+<HEAD><TITLE>xml(9)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
+xml(9)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P>xml - Extensible Markup Language File. </UL>
+<H2><B>FILES </B></H2>
+<UL><P><B>hkxml.emf</B> - Extensible Markup Language file hook definition </UL>
+<H2><B>EXTENSIONS </B></H2>
+<UL><P><B>.xml</B> - Extensible Markup Language File. 
+<BR><B>.xsl</B> - Extensible Stylesheet Language file. 
+<BR><B>.xul</B> - XML User Interface Language file. </UL>
+<H2><B>MAGIC STRINGS </B></H2>
+<UL><P><B>&lt;?xml&gt;</B> 
+<BR><UL>MicroEmacs '05 recognizes the magic string on any of the first line of the file. The XML files may be extension-less and are still recognized. </UL></UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The <B>xml</B> file type template provides simple hilighting of XML files. 
+<P><B>General Editing</B> 
+<BR><UL>On creating a new file, a new header is automatically included into the file. 
+<A HREF="m2mod013.html">time(2m)</A> is by default enabled, allowing the modification time-stamp to be maintained in the header. </UL>
+<P><B>Hilighting</B> 
+<BR><UL>The hilighting features allow commands, variables, logical, preprocessor definitions, comments, strings and characters of the language to be differentiated and rendered in different colors. </UL>
+<P><B>Embedded Languages</B> 
+<BR><UL>Support is provided for embedded code fragments in Java and Visual Basic. </UL>
+<P><B>Folding and Information Hiding</B> 
+<BR><UL>Generic folding is enabled, the folds occur about bracketed constructs <B>&lt;...&gt;</B>...<B>&lt;/...&gt;</B> located on the left-hand margin. 
+<A HREF="m3mac029.html">collapse-all(3)</A> (un)folds all regions in the file, 
+<A HREF="m3mac029.html">collapse-current(3)</A> (un)folds the current region. </UL>
+<P><B>Buffer Commands</B> 
+<BR><UL><B>xml-forward-tag</B> and <B>xml-backward-tag</B> are provided to advance to the next <TT>&lt;..&gt;</TT> tag in the buffer. </UL>
+<UL><P><B>xml-goto-matching-tag</B> finds the tag that matches the current tag. </UL>
+<UL><P><B>xml-verify</B> verifies the syntax of the XML reporting tags that are not matched in addition to syntax errors in the tag attributes. </UL>
+<P><B>Spelling</B> 
+<BR><UL>Buffer spell checking is XML aware. </UL>
+<P><B>Completion</B> 
+<BR><UL>Completion is enabled, <TT>&lt;/</TT><B>esc  esc </B> will expand to the closing tag for the last tag that remains open. </UL>
+<P><B>Short Cuts</B> 
+<BR><UL>The short cut keys used within the buffer are:- </UL>
+<UL><P><B>esc h</B> - Key binding help information. 
+<BR><B>C-c C-c</B> - Comment out the current line. 
+<BR><B>C-c C-d</B> - Uncomment the current line. 
+<BR><B>C-c C-e</B> - Comment to the end of the line with hash (#). 
+<BR><B>C-c C-o</B> - Format a comment </UL></UL>
+<H2><B>BUGS </B></H2>
+<UL><P>None reported. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="amicr030.html">Supported File Types</A> </UL>
+<HR>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/01/23</I>
+<BR><I>Generated On: 2005/05/14</I>
+</BODY></HMTL>

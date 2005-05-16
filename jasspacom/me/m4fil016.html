@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>CurrentBufferVariables(4)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 CurrentBufferVariables(4)</H1>
@@ -18,7 +18,7 @@ CurrentBufferVariables(4)</H1>
 <UL><P><B>@wl</B> 
 <BR><B>@wc</B> </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P>Buffer variables are special in that they can only be queried and cannot be set. Buffer variables allow text to be taken from the current buffer and placed into a variable. Two types of extraction are provided <B>@wl</B> provides a line extraction method, <B>@wc</B> provides a character extraction method. 
+<UL><P>Buffer variables allow text to be taken from the current buffer and placed into a variable. Two types of extraction are provided <B>@wl</B> provides a line extraction method, <B>@wc</B> provides a character extraction method. 
 <P>For example, if the current buffer contains the following text: <UL>
 <PRE>Richmond 
 Lafayette 
@@ -39,7 +39,8 @@ Bloomington
 Gary 
 =*&nbsp;me&nbsp;(BE..)&nbsp;==&nbsp;rigel2&nbsp;==&nbsp;(c:/data/rigel2.txt)&nbsp;=================== 
 </PRE></UL>
-<P>The buffer command <B>@wc</B> gets the current character in the buffer, it does not change the buffer position. It is important to stress that the cursor position is not modified, in general a macro will interrogate the character under the cursor and then affect the buffer (i.e. by moving the cursor, deleting the character etc.) dependent upon the value of the character returned. </UL>
+<P>The buffer command <B>@wc</B> gets the current character in the buffer, it does not change the buffer position. It is important to stress that the cursor position is not modified, in general a macro will interrogate the character under the cursor and then affect the buffer (i.e. by moving the cursor, deleting the character etc.) dependent upon the value of the character returned. 
+<P>Assignment of the variables causes the buffer contents to be modified, deleting the pervious contents and setting the new value. This can be useful in certain situations but should be performed with care. </UL>
 <H2><B>EXAMPLE </B></H2>
 <UL><P>The <B>@wc</B> variable provides the most useful mechanism to modify the current buffer. The following example is a macro called <B>super-delete</B> which is bound to <TT>&lt;CTRL-del&gt;</TT>. The macro deletes characters under the cursor in blocks. If a white space character is under the cursor then all characters up until the next non-white space character are deleted. If a non-white space character is under the cursor then all non-white space characters up until the next white space character are deleted, then the white space is deleted. White space in this context is a <TT>SPACE</TT>, <TT>tab</TT> or <TT>CR</TT> character. <UL>
 <PRE>; 
@@ -62,7 +63,7 @@ global-bind-key&nbsp;super-delete&nbsp;&quot;C-delete&quot;
 <UL><P>
 <A HREF="m2cmd029.html">define-macro(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/04/09</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>print-setup(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 print-setup(3)</H1>
@@ -19,14 +19,14 @@ print-setup(3)</H1>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P><B>print-setup</B> provides a dialog interface for configuring MicroEmacs's printing interface. <B>print-setup</B> may be invoked from the main <I>File</I> menu or directly from the command line using 
 <A HREF="m2cmd047.html">execute-named-command(2)</A>. 
-<P>The <B>print-setup</B> dialog is broken down into three pages of configuration options, on all pages the following buttons are available at the bottom of the dialog:- 
+<P>The <B>print-setup</B> dialog is broken down into three pages of configuration options, the following buttons are available at the bottom of each dialog:- 
 <P><TT>Print</TT> 
 <BR><UL>Prints the current buffer using the current configuration. </UL>
 <P><TT>Exit</TT> 
-<BR><UL>Quits <B>print-setup</B>, changes made to the configuration will be saved. 
+<BR><UL>Quits <B>print-setup</B>, changes made to the configuration are saved. 
 </UL><P>The following pages appear in the dialog:- </UL>
 <H2>Printer </H2>
-<UL><P>The <B>Printer</B> page is used to configure the type, style and location of the printer, the items on this page are defined as follows:- 
+<UL><P>The <B>Printer</B> page is used to configure the <I>type</I>, <I>style</I> and <I>location</I> of the printer, the items on this page are defined as follows:- 
 <P><TT>Driver</TT> 
 <BR><UL>Sets the printer type to be used, selecting this item creates a drop down list of available printer drivers. The drivers inform MicroEmacs which fonts and colors are available and how to enable/disable them, these are usually special character sequences. The following special drivers are defined:- 
 <P>Default Plain Text 
@@ -36,51 +36,51 @@ print-setup(3)</H1>
 <P>Windows 
 <BR><UL>This utilizes MicroEmacs's built-in Windows printer interface (Windows platforms only). When selected MicroEmacs communicates directly to the MS Printer Manager. </UL></UL>
 <P><TT>Print Scheme</TT> 
-<BR><UL>Sets the color and font scheme to be used, selecting this item creates a drop down list of available printer schemes - choose one appropriated for your printer. The Default Plain Text scheme does not use any color or fonts so should work for all drivers. see the next item for scheme creation and editing. </UL>
+<BR><UL>Defines the color and font scheme to be used, selecting this item creates a drop down list of available printer schemes - choose the most appropriate one for your printer. The <I>Default Plain Text</I> scheme does not use any color or fonts and should work for all drivers. See the next item for scheme creation and editing. </UL>
 <P><TT>Edit</TT> 
 <BR><UL>Opens the 
-<A HREF="m3osd005.html">scheme-editor(3)</A> dialog box to edit the currently selected printer scheme, the editor may also be used to create and install new printer schemes. </UL>
+<A HREF="m3osd005.html">scheme-editor(3)</A> dialog box to edit the currently selected printer scheme. The editor may be used to create and install new printer schemes. </UL>
 <P><TT>Destination</TT> 
-<BR><UL>Specifies the resultant print output, when selected a drop down menu appears containing the following items: 
+<BR><UL>Specifies the destination print output, when selected a drop down menu appears with the following items: 
 <P>To buffer only 
-<BR><UL>Creates a &quot;<TT>*printer*</TT>&quot; buffer and prints to the buffer. </UL>
+<BR><UL>Creates a &quot;<TT>*printer*</TT>&quot; buffer and prints to that buffer. </UL>
 <P>To file only 
 <BR><UL>Creates a new temporary file and prints to it. </UL>
 <P>To file &amp; print 
-<BR><UL>Prints to a temporary file and then executes the command-line (see next item) to print the resultant file (option not available when using the Windows printer driver). </UL>
+<BR><UL>Prints to a temporary file and then executes the <TT>command-line</TT> (see next item) to print the resultant file. This option is not available when using the Windows printer driver. </UL>
 <P>Direct to printer 
-<BR><UL>Output is sent directly to the printer, option only available when using the Windows driver. </UL></UL>
+<BR><UL>Output is sent directly to the printer. The option is only available when using the Windows driver. </UL></UL>
 <P><TT>Command-line</TT> 
-<BR><UL>Sets the command-line required to print a generated print file (option not available when the Windows driver is selected as printing is done by talking to MS Print Manager directly). The command-line should be a single shell command using &quot;<TT>%f</TT>&quot; whenever the name of the file to be printed is required, e.g. on UNIX systems <B>lp(1)</B> or <B>lpr(1)</B> can usually be used as follows:- <UL>
+<BR><UL>Sets the command-line required to print a generated print file (option not available when the Windows driver is selected as printing is performed directly by the MS Print Manager). The command-line should be a single shell command using &quot;<TT>%f</TT>&quot; to reference the name of the file to be printed, e.g. on UNIX systems <B>lp(1)</B> or <B>lpr(1)</B> may be used as follows:- <UL>
 <PRE>lp&nbsp;-s&nbsp;%f 
 </PRE></UL>
-<P>On MS-DOS machines this can usually be achieved by copying the file to the <TT>PRN</TT> device, as follows: <UL>
+<P>On MS-DOS machines this may be performed by copying the file to the <TT>PRN</TT> device, as follows: <UL>
 <PRE>copy&nbsp;%f&nbsp;PRN 
 </PRE></UL>
-</UL><P><TT>Page Size</TT> 
-<BR><UL>Displays the currently configured page size in the form: 
+</UL><P><TT>Page Layout</TT> 
+<BR><UL>Displays the current page configuration in the form: 
 <UL><P><I>Columns</I><B>x</B><I>Rows</I> <I>Chars-Wide</I><B>x</B><I>Chars-High</I> 
-</UL><P>the field cannot be edited directly, the settings <B>Page Setup</B> affect these values. </UL></UL>
+</UL><P>the fields cannot be edited directly, the settings in <B>Page Setup</B> affect these values. </UL></UL>
 <H2>Page Setup </H2>
 <UL><P><TT>Paper Size</TT> 
-<BR><UL>Sets the size of the printer paper, selecting this item will produce a pop down menu listing all available paper sizes unless the Windows printer driver is being used in which case this field cannot be selected and the <B>Edit</B> button must be used. </UL>
-<P><TT>Character Size</TT> 
-<BR><UL>Sets the size of a character within the page, expressed in terms of the number of characters which will fit on the paper (<I>width</I><B>x</B><I>height</I>). When selected a drop down menu lists all available sizes for the current paper size unless the Windows driver is selected in which case this field cannot be selected and the <B>Edit</B> button must be used. </UL>
-<P><TT>Edit</TT> (Windows only) 
-<BR><UL>Opens a Windows printer dialog box allowing the user to specify the windows printer, paper size and character size etc. </UL>
-<P><TT>No. of Columns</TT> and <TT>Rows</TT> 
-<BR><UL>Sets the number of sub-columns and rows to divide the page into, creating pages within a page. </UL>
-<P><TT>Line Numbers</TT> 
-<BR><UL>When enabled, prints the line number at the left hand edge for each line. </UL>
-<P><TT>Split Line ID</TT> 
-<BR><UL>When enabled the last right hand text column is reserved for a split identifier. Whenever a line is too long to fit on a single line it is split over two or more lines, if this option is enabled the right edge will be set to the split character (usually a '<TT>\</TT>' char) to clearly indicate that the line is split. </UL>
+<BR><UL>Defines the size of the printer paper, selecting this item produces a pop down menu listing of all available paper sizes. If the the Windows printer driver is being used this field cannot be selected and the <B>Edit</B> button is used instead. </UL>
 <P><TT>Page Size</TT> 
-<BR><UL>As with the <B>Printer</B> <B>Page Size</B> it displays the current page size, the field cannot be edited. </UL></UL>
+<BR><UL>Defines the printable size of the page in terms of the number of characters which will fit on the paper (<I>width</I><B>x</B><I>height</I>). When selected a drop down menu lists all available sizes for the current paper size. This option is not available with the Windows driver and the <B>Edit</B> button should be used. </UL>
+<P><TT>Edit</TT> (Windows only) 
+<BR><UL>Opens a Windows printer dialog box allowing the user to specify the windows printer, paper size and character size, etc. </UL>
+<P><TT>No. of Columns</TT> and <TT>Rows</TT> 
+<BR><UL>Defines the page subdivision in terms of sub-columns and rows, thereby creating sub-pages within a page. </UL>
+<P><TT>Print Line Numbers</TT> 
+<BR><UL>When enabled, prints the line number at the left hand edge of each line. </UL>
+<P><TT>Print Split Line IDs</TT> 
+<BR><UL>When enabled the last right hand text column is reserved for a split line identifier. Whenever a line is too long to fit on a single line it is split over two or more lines, if this option is enabled the right edge will be set to the split character (usually a '<TT>\</TT>' char) to clearly indicate that the line is split. </UL>
+<P><TT>Page Layout</TT> 
+<BR><UL>As with the <B>Printer</B> <B>Page Layout</B>, displays the current page configuration, the field cannot be edited. </UL></UL>
 <H2>Layout </H2>
 <UL><P><TT>Margins</TT> 
-<BR><UL>Configures the top, bottom, left and right margins in characters. </UL>
-<P><TT>Header</TT> 
-<BR><UL>Sets whether a header should be printed and if so what it should be, the following special strings can be used: 
+<BR><UL>Configures the top, bottom, left and right margins of the page in terms of characters. </UL>
+<P><TT>Print Header</TT> 
+<BR><UL>Defines whether a header should be printed and its format. The following escape sequence is interpreted: 
 <P><TT>%%</TT> 
 <BR><UL>Print a '<TT>%</TT>' character. </UL>
 <P><TT>%b</TT> 
@@ -103,20 +103,22 @@ print-setup(3)</H1>
 <BR><UL>Print the current year as a 2 digit number. </UL>
 <P><TT>%y</TT> 
 <BR><UL>Print the current year as a 4 digit number. </UL></UL>
-<P><TT>Footer</TT> 
-<BR><UL>Sets whether a footer should be printed and if so what it should be, the same special strings can be used as for the header. </UL></UL>
+<P><TT>Print Footer</TT> 
+<BR><UL>Defines whether a footer should be printed at the end of the page and the format. The header escape sequence characters are used. </UL></UL>
 <H2><B>NOTES </B></H2>
-<UL><P><B>user-setup</B> is a macro using 
+<UL><P><B>print-setup</B> is a macro using 
 <A HREF="m2cmd066.html">osd(2)</A>, defined in <TT>printstp.emf</TT>. 
-<P>The list of available printer drivers and print schemes is stored in the macro file <TT>printers.emf</TT>. Using the <B>Install</B> option of the 
-<A HREF="m3osd005.html">scheme-editor(3)</A> automatically adds the new scheme to the print schemes list. To create a new printer driver a new configuration registry file (<TT>erf</TT> file - see <TT>print*.erf</TT> for examples) must be created and added to the printer driver lists within <TT>printer.emf</TT>. </UL>
+<P>The list of available printer drivers and print schemes is stored in the macro file <TT>printers.emf</TT>. To create a new printer driver a new configuration registry file (<TT>erf</TT> file - see <TT>print*.erf</TT> for examples) must be created and added to the printer driver lists within <TT>printer.emf</TT>. 
+<P>The <TT>printers.emf</TT> file also contains a list of printing schemes, using the <B>Install</B> option of the 
+<A HREF="m3osd005.html">scheme-editor(3)</A>. 
+<A HREF="m3osd005.html">scheme-editor(3)</A> automatically adds the new scheme to the print schemes list. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m2cmd101.html">print-buffer(2)</A>, 
 <A HREF="m3osd005.html">scheme-editor(3)</A>, 
 <A HREF="m2cmd066.html">osd(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2004/01/11</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/01/15</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>
