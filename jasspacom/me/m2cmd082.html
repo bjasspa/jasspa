@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>kill-line(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 kill-line(2)</H1>
@@ -17,24 +17,34 @@ kill-line(2)</H1>
 <H2><B>SYNOPSIS </B></H2>
 <UL><P><I>n</I> <B>kill-line</B> (<B>C-k</B>)&nbsp; </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P><B>kill-line</B>, when used with no argument <I>n</I>, deletes all text from the cursor to the end of a line, the end of line character is also deleted if the cursor is in the first column and the 
-<A HREF="m2mod008.html">line(2m)</A> mode is disabled. The deleted text is placed in the kill buffer, see 
-<A HREF="m2cmd146.html">yank(2)</A> for more information on the kill buffer. When used on a blank line, it always deletes it. 
-<P>If a +ve argument <I>n</I> is supplied the specified number of lines is deleted, the setting of the <B>line</B> mode is ignore. If <I>n</I> is <TT>0</TT> the command has no effect. If a -ve argument is given, +<I>n</I> lines are deleted but the text is NOT added to the kill buffer. </UL>
+<UL><P><B>kill-line</B>, when used with no argument <I>n</I>, deletes all text from the cursor to the end of a line, the end of line character is NOT deleted. The deleted text is placed in the kill buffer, see 
+<A HREF="m2cmd146.html">yank(2)</A> for more information on the kill buffer. If the line is blank then the whole line is deleted, including the end of line character. 
+<P>If a +ve argument <I>n</I> is supplied the specified number of lines are deleted. If a -ve argument is specified the previous -<I>n</I> lines are deleted. If <I>n</I> is <TT>0</TT> the command has no effect. </UL>
 <H2><B>NOTES </B></H2>
-<UL><P>If a line is accidentally removed then 
-<A HREF="m2cmd146.html">yank</A> the text back immediately or use 
+<UL><P>If a line is accidentally removed then use 
+<A HREF="m2cmd146.html">yank</A> to restore the text or use 
 <A HREF="m2cmd136.html">undo(2)</A>. 
-<P>The -ve argument is typically used in macro scripts where the yank buffer is more precisely controlled by the script. </UL>
+<P>The Emacs Key binding for kill line ((<B>C-k</B>)&nbsp;) may be re-bound to affect the behavior of the command. <UL>
+<PRE>;&nbsp;MicroEmacs&nbsp;binding.&nbsp;Bind&nbsp;to&nbsp;kill&nbsp;the&nbsp;end&nbsp;of&nbsp;line&nbsp;character 
+1&nbsp;global-bind-key&nbsp;kill-line&nbsp;&quot;C-k&quot; 
+
+;&nbsp;GNU&nbsp;Emacs&nbsp;binding.&nbsp;Bind&nbsp;to&nbsp;leave&nbsp;the&nbsp;end&nbsp;of&nbsp;line&nbsp;character 
+&nbsp;&nbsp;global-bind-key&nbsp;kill-line&nbsp;&quot;C-k&quot; 
+</PRE></UL>
+</UL><H2><B>HISTORY </B></H2>
+<UL><P>The behavior of <B>kill-line</B> was modified in November 2004. <B>kill-line</B> now interprets the numeric argument <I>n</I> in both a +ve and -ve direction. The existing implementation did not operated in a -ve direction, the -ve argument controlled the kill buffer behavior of the line. The kill behavior is no longer an option to <B>kill-line</B> and the line(s) are always added to the kill buffer, control of the kill buffer is required then deletion should be performed with 
+<A HREF="m2cmd081.html">kill-region(2)</A>. 
+<P>The behavior of the end of line kill used to be controlled by a <B>line(2m)</B> mode, this behavior may be replicated by modification of the binding as described in the previous section. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
+<A HREF="m2cmd035.html">forward-kill-word(2)</A>, 
+<A HREF="m2cmd013.html">global-bind-key(2)</A>, 
+<A HREF="m2cmd080.html">kill-paragraph(2)</A>, 
 <A HREF="m2cmd081.html">kill-region(2)</A>, 
-<A HREF="m2mod008.html">line(2m)</A>, 
 <A HREF="m2cmd136.html">undo(2)</A>, 
-<A HREF="m2cmd146.html">yank(2)</A>, 
-<A HREF="m2cmd035.html">forward-kill-word(2)</A>. </UL>
+<A HREF="m2cmd146.html">yank(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/01/16</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

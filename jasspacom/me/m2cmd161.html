@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>create-frame(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 create-frame(2)</H1>
@@ -17,11 +17,11 @@ create-frame(2)</H1>
 <H2><B>SYNOPSIS </B></H2>
 <UL><P><I>n</I> <B>create-frame</B> (<B>C-x&nbsp;5&nbsp;1</B>, <B>C-x&nbsp;5&nbsp;2</B>)&nbsp; </UL>
 <H2><B>INTODUCTION </B></H2>
-<UL><P>A <B>frame</B> in MicroEmacs is the screen canvas on which all of the windows are attached. MicroEmacs allows the creation of new frames which creates a new blank canvas which is can then be populated with new windows. Frames may be swapped and when swapped the window layout for a given frame is preserved until the frame is displayed again. There are two types of frame: 
+<UL><P>A <B>frame</B> in MicroEmacs is the screen canvas on which all of the windows are attached. MicroEmacs allows the creation of new frames, creating a new blank canvas, which may be populated with new windows. Frames may be swapped and the window layout for a given frame is preserved until the frame is displayed again. There are two types of frame: 
 <P>Internal 
-<BR><UL>An internal frame uses the same OS window or console hiding any other frames. This means that any existing frame is hidden and a new frame blank takes its place. Internal frames are supported on all platforms. </UL>
+<BR><UL>An internal frame uses the same display window (or console) hiding any other frames. On creation, any existing frame is hidden and a new frame blank takes its place. Internal frames are supported on all platforms. </UL>
 <P>External 
-<BR><UL>An external frame creates a new OS window allowing both the original frame and new frame to be visible in different windows. External frames are only available under windowing platforms such as X-Windows and Microsoft Windows. External frames may also be paged with internal frames. </UL>
+<BR><UL>An external frame creates a new display window allowing both the original frame and new frame to be visible in different windows. External frames are only available on windowing platforms such as X-Windows and Microsoft Windows. External frames may include internal frames which are paged. </UL>
 <P>This is shown in the following diagram:- <UL>
 <PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+-----------------+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+-----------------+ 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+-+ 
@@ -42,9 +42,9 @@ create-frame(2)</H1>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P><B>create-frame</B> creates a new frame for the current MicroEmacs session, the new frame is assigned a unique identity 
 <A HREF="m5var086.html">$frame-id(5)</A> which exists for the life of the frame. 
-<P>The numeric argument <I>n</I> defines the type of frame to be created. If an argument of <TT>1</TT> is given (the default argument) an external frame is created. An internal frame is created with an argument of <TT>0</TT>. </UL>
+<P>The numeric argument <I>n</I> defines the type of frame to be created. An argument of <TT>2</TT> creates an external frame, an internal frame is created with an argument of <TT>1</TT>. Where no argument is specified an external frame is created by default on systems which support them otherwise an internal frame is created. </UL>
 <H2><B>NOTES </B></H2>
-<UL><P>MicroEmacs is not multi-threaded and only one frame may be active at any one time (the complexity of being able to run a command in one frame while editing in another would rapidly lead it away from the 'Micro' status). This means that if a command is left active (such as a search) in one frame and the focus is changed to another the input is <I>sent</I> to the frame with the active command and the message <TT>[NOT FOCUS]</TT> appears in the message-line of the frame with the OS focus. 
+<UL><P>MicroEmacs is not multi-threaded and only one frame may be active at any one time (the complexity of being able to run a command in one frame while editing in another would rapidly lead it away from the 'Micro' status). Therefore if a command is left active (such as a search) in one frame and the focus is changed to another frame the input is <I>sent</I> to the frame with the active command and the message <TT>[NOT FOCUS]</TT> appears in the message-line of the frame with the focus. 
 <P><B>create-frame</B> is useful in macros that rely on a window layout, as the macro can preserve the users current window layout by creating a new internal frame in which to run. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
@@ -52,7 +52,7 @@ create-frame(2)</H1>
 <A HREF="m2cmd163.html">next-frame(2)</A>, 
 <A HREF="m5var086.html">$frame-id(5)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2004/02/13</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/01/15</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

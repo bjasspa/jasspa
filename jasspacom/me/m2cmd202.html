@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>fileHooks(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 fileHooks(2)</H1>
@@ -25,7 +25,7 @@ fileHooks(2)</H1>
 <P>Consider a file hook definition of the form; <UL>
 <PRE>add-file-hook&nbsp;&quot;.c&nbsp;.h&quot;&nbsp;&quot;fhook-c&quot; 
 </PRE></UL>
-<P>which binds the file hook <B>fhook-c</B> to any files that are loaded with the extension <B>.c</B> and <B>.h</B>. The operations undertaken by MicroEmacs '04 are defined as follows when a file <TT>foo.c</TT> is loaded:- <UL><P>
+<P>which binds the file hook <B>fhook-c</B> to any files that are loaded with the extension <B>.c</B> and <B>.h</B>. The operations undertaken by MicroEmacs '05 are defined as follows when a file <TT>foo.c</TT> is loaded:- <UL><P>
 <LI>Attempt to load file <TT>foo.c</TT>, if <TT>foo.c</TT> is not found then create a new buffer and assign file name <TT>foo.c</TT>. <P>
 <LI>If <TT>foo.c</TT> is found then load file into buffer. Search the first line(s) of the buffer for magic hook text (<I>add-file-hook</I> with argument). <P>
 <LI>If magic hook was not found then determine hook name from the file extension (<I>add-file-hook</I> information). <P>
@@ -72,14 +72,14 @@ fileHooks(2)</H1>
 <P>Note that in both cases the 
 <A HREF="m2cmd029.html">define-macro(2)</A> invocation is defined as zero, this merely hides the macro from the command line since both are private macros not normally invoked by the user. </UL>
 <H2><B>FILE HOOK SELECTION </B></H2>
-<UL><P>MicroEmacs '04 may be reconfigured to operate in different modes (referred to a <I>Major Modes</I> in GNU <B>emacs(1)</B>) using the 
+<UL><P>MicroEmacs '05 may be reconfigured to operate in different modes (referred to a <I>Major Modes</I> in GNU <B>emacs(1)</B>) using the 
 <A HREF="m2cmd003.html">macro file hooks</A>. The file hooks allow the working environment to be customized for the editing of text of a particular sort, by importing text specific macros, key rebinding and highlighting. 
-<P>MicroEmacs '04, by default, loads a file into a buffer with default global modes with no highlighting. There are no mode specific key bindings, variable settings, macros or highlights, buffer interaction behaves in it's default state. The state of the buffer interaction may be modified through the use of the buffer modes (see 
-<A HREF="amicr021.html">Operating Modes</A>), for example the 'C' programming language 
-<A HREF="m2mod002.html">cmode(2m)</A> changes the characteristics of the <TT>tab</TT> character and performs language specific indentation of statements. When a text specific set of highlighting rules are applied to the buffer, the text becomes emphasized through the use of color applied selectively to the text i.e. comments, keywords, strings are shown in different colors, allowing them to be differentiated without studying the content. 
-<P>Setting the operating mode of the buffer would be tedious to perform from the command line, instead MicroEmacs '04 uses three different prioritized criteria to endeavor to select the correct operating mode. The operating mode is applied to the buffer by execution of a set of file specific macros, referred to a hook commands. The selection criteria of the hook commands is performed as follows, ordered in lowest to highest priority:- 
+<P>MicroEmacs '05, by default, loads a file into a buffer with default global modes with no highlighting. There are no mode specific key bindings, variable settings, macros or highlights, buffer interaction behaves in it's default state. The state of the buffer interaction may be modified through the use of the buffer modes (see 
+<A HREF="amicr021.html">Operating Modes</A>), for example the 'C' programming language automatic indent 
+<A HREF="m2cmd033.html">indent(2)</A> changes the characteristics of the <TT>tab</TT> character and performs language specific indentation of statements. When a text specific set of highlighting rules are applied to the buffer, the text becomes emphasized through the use of color applied selectively to the text i.e. comments, keywords, strings are shown in different colors, allowing them to be differentiated without studying the content. 
+<P>Setting the operating mode of the buffer would be tedious to perform from the command line, instead MicroEmacs '05 uses three different prioritized criteria to endeavor to select the correct operating mode. The operating mode is applied to the buffer by execution of a set of file specific macros, referred to a hook commands. The selection criteria of the hook commands is performed as follows, ordered in lowest to highest priority:- 
 <P><B>File Name</B> 
-<BR><UL>MicroEmacs '04 uses the filename and/or the file extension to select a start-up hook command. File names and extensions are bound to a set of macro hooks in a space separated list e.g. 
+<BR><UL>MicroEmacs '05 uses the filename and/or the file extension to select a start-up hook command. File names and extensions are bound to a set of macro hooks in a space separated list e.g. 
 <UL><P>
 <A HREF="m2cmd003.html">add-file-hook</A> &quot;<B>c cpp</B>&quot; &quot;<B>fhook-cmode</B>&quot; 
 <BR>
@@ -87,7 +87,7 @@ fileHooks(2)</H1>
 <UL><P>The space separated list of names are interpreted as either file extensions or filenames. In this case any file with the extension <B>.c</B>, <B>.cpp</B> is bound to a file hook called <B>fhook-cmode</B> e.g. <TT>foo.c</TT>. Similarly files with the extension <B>.doc</B> or <B>.txt</B> are interpreted as plain text documents and are bound to <B>fhook-doc</B>. e.g. <TT>foo.txt</TT>. The entry <B>README</B> that exists in the documentation hook list may refer to a file <TT>README</TT> and also <TT>foo.README</TT>, both cases invoke the document hook. </UL>
 <UL><P>The file selection is the lowest priority selection criteria but usually satisfies most mode selection requirements. </UL>
 <P><B>Magic Strings</B> 
-<BR><UL>There are cases when file extensions may be omitted from files, typically these files include an identifier, or magic string, on the first line of the file which is used to identify the file to the operating system or application e.g. shell scripts under UNIX. MicroEmacs '04 automatically interrogates the top of every file that is loaded to locate some form of identification string. The identification strings are defined in a similar way to the file name hooks, except instead of defining a file extension the location and text content of the identifier is defined: 
+<BR><UL>There are cases when file extensions may be omitted from files, typically these files include an identifier, or magic string, on the first line of the file which is used to identify the file to the operating system or application e.g. shell scripts under UNIX. MicroEmacs '05 automatically interrogates the top of every file that is loaded to locate some form of identification string. The identification strings are defined in a similar way to the file name hooks, except instead of defining a file extension the location and text content of the identifier is defined: 
 <UL><P>1 
 <A HREF="m2cmd003.html">add-file-hook</A> &quot;<B>#!/bin/sh</B>&quot; &quot;<B>fhook-shell</B>&quot; 
 <BR>1 
@@ -101,7 +101,7 @@ fileHooks(2)</H1>
 </PRE></UL>
 </UL><UL><P>A match on a string identifier is assigned a higher priority than the file extension. It is recommended that magic strings are only used where there are no predefined file extensions, or conflicts exist between files with the same extension containing data interpreted in a different context. </UL>
 <P><B>Explicit Strings</B> 
-<BR><UL>The last method allows an explicit identifier string to be embedded into the text of the file informing MicroEmacs '04 which mode it should adopt. GNU Emacs supports this (see <B>Major Mode</B> in the GNU Emacs documentation) type of operation by insertion of strings of the form: 
+<BR><UL>The last method allows an explicit identifier string to be embedded into the text of the file informing MicroEmacs '05 which mode it should adopt. GNU Emacs supports this (see <B>Major Mode</B> in the GNU Emacs documentation) type of operation by insertion of strings of the form: 
 <UL><P><B>-*-</B> <I>mode</I> <B>-*-</B> </UL></UL>
 <UL><P>Where <I>mode</I> represents the major mode within GNU Emacs. The same format as used by <B>Magic Strings</B> can be used to find and extract the <I>mode</I>, e.g.: 
 <UL><P><B>-1</B> 
@@ -111,8 +111,8 @@ fileHooks(2)</H1>
 <BR>.TH&nbsp;man&nbsp;1 
 <BR>.SH&nbsp;NAME 
 <BR>... </UL></UL>
-<UL><P>It should be stressed that the <B>-*-</B> syntax belongs to GNU Emacs and NOT MicroEmacs '04, MicroEmacs '04 provides a mechanism to locate, extract and interpret the string. The <B>-*-</B> syntax should only be applied to files if it is known that the <I>mode</I> is a GNU mode. </UL>
-<UL><P>A MicroEmacs '04 specific string is also provided, defined as: 
+<UL><P>It should be stressed that the <B>-*-</B> syntax belongs to GNU Emacs and NOT MicroEmacs '05, MicroEmacs '05 provides a mechanism to locate, extract and interpret the string. The <B>-*-</B> syntax should only be applied to files if it is known that the <I>mode</I> is a GNU mode. </UL>
+<UL><P>A MicroEmacs '05 specific string is also provided, defined as: 
 <UL><P><B>-!-</B>&nbsp;<I>mode</I>&nbsp;<B>-!-</B> </UL></UL>
 <UL><P>where <I>mode</I> is an arbitrary string defined by <I>add-file-hook</I>. User defined modes may be created and assigned to files with this syntax, this does not conflict with the GNU Emacs command. For example to assign a new mode <I>mymode</I> to a file we would define the following:- 
 <UL><P><B>-1</B> 
@@ -173,7 +173,7 @@ define-macro&nbsp;fhook-mode
 <A HREF="m2cmd117.html">buffer-abbrev-file(2)</A> command and the buffer hi-lighting enabled by assignment of the 
 <A HREF="m5var004.html">$buffer-hilight(5)</A> variable. </UL>
 <H2><B>MODIFYING FILE HOOKS </B></H2>
-<UL><P>The standard hook files supplied with MicroEmacs '04 should not be modified, changes to the file hooks may be applied using a separate macro file called <B>my</B><I>XXX.emf</I>, this is automatically executed after the <B>hk</B><I>XXX.emf</I> file is executed. 
+<UL><P>The standard hook files supplied with MicroEmacs '05 should not be modified, changes to the file hooks may be applied using a separate macro file called <B>my</B><I>XXX.emf</I>, this is automatically executed after the <B>hk</B><I>XXX.emf</I> file is executed. 
 <P>The extended hook functions may be defined company wide, or by the user, to over-ride some of the standard hook functions, or to extend the syntax of the base files with locally defined extensions. As an example, consider the following file <B>myc.emf</B> which extends the basic <B>hkc.emf</B> file set of hi-lighting tokens for the 'C' Language. <UL>
 <PRE>;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
 ; 
@@ -238,9 +238,9 @@ hilight&nbsp;.hilight.c&nbsp;1&nbsp;&quot;meMODE&quot;&nbsp;&nbsp;&nbsp;&nbsp;&n
 <A HREF="amicr021.html">Operating Modes</A>, 
 <A HREF="m2nar000.html">Language Templates</A>, 
 <A HREF="m2cmd003.html">add-file-hook(2)</A>, 
-<A HREF="m2mod002.html">cmode(2m)</A>. </UL>
+<A HREF="m2cmd033.html">indent(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/01/16</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

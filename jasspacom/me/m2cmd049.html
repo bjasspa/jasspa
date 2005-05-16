@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>exit-emacs(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 exit-emacs(2)</H1>
@@ -15,17 +15,40 @@ exit-emacs(2)</H1>
 <H2><B>NAME </B></H2>
 <UL><P>exit-emacs - Exit MicroEmacs </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><I>n</I> <B>exit-emacs</B> </UL>
+<UL><P><I>n</I> <B>exit-emacs</B> [<I>exitCode</I>] </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P>Exit MicroEmacs back to the operating system. If no argument <I>n</I> is given and there are any unwritten, changed buffers, the editor prompts the user to discard changes. If an argument is specified then MicroEmacs exits immediately. </UL>
+<UL><P>Exit MicroEmacs back to the operating system. If no argument <I>n</I> is given and there are any unwritten, changed buffers, the editor prompts the user to discard changes. If an argument is specified then MicroEmacs exits immediately. 
+<P>The numeric argument is defined as a bit-mask as follows: 
+<P><TT>0x01</TT> 
+<BR><UL>Prompting the user before saving any files, writes out all changed buffers to the files they were read from. Saves all changed dictionaries, killing any running commands and exits the editor. </UL>
+<P><TT>0x02</TT> 
+<BR><UL>Writes out all changed buffers to the files they were read from, saves all changed dictionaries, killing any running commands and exits the editor. The behavior is modified by flags <TT>8</TT> and <TT>16</TT>. </UL>
+<P><TT>0x04</TT> 
+<BR><UL>Define the exit code <I>exitCode</I> from MicroEmacs, the default when omitted is 0. </UL>
+<P><TT>0x08</TT> 
+<BR><UL>Discard changed buffers (except the history and registry) and delete any backup files associated with the edited buffer(s). This mode does not operate when bit <TT>1</TT> is set. </UL>
+<P><TT>0x10</TT> 
+<BR><UL>Discard changed buffers (except the history and registry) and create a auto save file(s) with the changes from unsaved buffers. This mode does not operate when bit <TT>1</TT> is set. 
+</UL><P><B>exit-emacs</B> may be used to reproduce the behavior of 
+<A HREF="m2cmd103.html">save-buffers-exit-emacs(2)</A> and 
+<A HREF="m2cmd103.html">quick-exit(2)</A> as follows: <UL>
+<PRE>3&nbsp;exit-emacs&nbsp;==&nbsp;save-buffers-exit-emacs 
+2&nbsp;exit-emacs&nbsp;==&nbsp;quick-exit 
+</PRE></UL>
+</UL><H2><B>MACRO INTERACTION </B></H2>
+<UL><P>If the macro 
+<A HREF="m3mac024.html">shut-down(3)</A> is defined then it is invoked by the editor when it is closed. A user defined shutdown action may be associated with the close operation. It is the callers responsibility that the macro terminates correctly otherwise the editor will hang. </UL>
 <H2><B>NOTES </B></H2>
-<UL><P>All buffers with a name starting with a '<TT>*</TT>' are assumed to be system buffers (i.e. <B>*scratch*</B>) and are not saved. </UL>
+<UL><P>All buffers with a name starting with a '<TT>*</TT>' are assumed to be system buffers (i.e. <B>*scratch*</B>) and are not saved. 
+<P>Modes <TT>8</TT> and <TT>16</TT> may be used where the user wishes to discard edited buffers on exiting and does not want to confirm the exit. Dictionaries should be configured to auto-save in 
+<A HREF="m3osd000.html">user-setup(3)</A>. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m2cmd103.html">quick-exit(2)</A>, 
-<A HREF="m2cmd103.html">save-buffers-exit-emacs(2)</A>. </UL>
+<A HREF="m2cmd103.html">save-buffers-exit-emacs(2)</A>, 
+<A HREF="m3mac024.html">shut-down(3)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/10/16</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/03/20</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

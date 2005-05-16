@@ -14,9 +14,8 @@ FAQ(39) - Tabs; How to change the tab width ??</H1>
 <H2><B>QUESTION (39) </B></H2>
 <UL><P>Tabs; How to change the tab width ?? </UL>
 <H2><B>ANSWER </B></H2>
-<UL><P>There are two variables that change the width of the tab 
-<A HREF="m5var043.html">$tabwidth(5)</A> and 
-<A HREF="m5var042.html">$tabsize(5)</A> they control the size of a displayed tab character (number of spaces) and the simulated tab character size, where the user entered tab character is replaced by a number of space characters. The latter is only used when 
+<UL><P>
+<A HREF="m5var042.html">$tab-width(5)</A> controls the size of the displayed tab character (number of spaces) and the simulated tab character size, where the user entered tab character is replaced by a number of space characters. The latter is only used when 
 <A HREF="m2mod012.html">tab(2m)</A> mode is enabled (it is typically enabled by default). 
 <P>To change the tab character width then the 
 <A HREF="m2cmd122.html">set-variable(2)</A> command is used: <UL>
@@ -24,29 +23,21 @@ FAQ(39) - Tabs; How to change the tab width ??</H1>
 </PRE></UL>
 <P>You will then be prompted for the remaining arguments. <TT>&lt;TAB&gt;</TT> is the completion so:- <UL>
 <PRE>esc&nbsp;x&nbsp;set-v&lt;TAB&gt; 
-$tabw&lt;TAB&gt; 
+$tab-width&lt;TAB&gt; 
 2 
 </PRE></UL>
 <P>If this is the setting that you always want to use then it is easier if you put this in your &lt;user.emf&gt; as:- <UL>
-<PRE>set-variable&nbsp;$tabwidth&nbsp;2 
+<PRE>set-variable&nbsp;$tab-width&nbsp;2 
 </PRE></UL>
-<P>then whenever you start a new session you will always have the $tabwidth defined as you want it. 
-<P>We would recommend that 
-<A HREF="m5var043.html">$tabwidth(5)</A> is not modified because it turns the all tab's to 2 so when you read it into something like Microsoft notepad the indentation is not as you like it because it displays tabs as 8 characters. 
-<P>Instead, set the <B>$tabsize</B> to 2, and run with 
-<A HREF="m2mod012.html">tab(2m)</A> enabled (this is the default). This turns <TT>&lt;TAB&gt;</TT>'s to spaces, hence the layout is retained. This makes the file slightly larger, but the presentation is maintained. 
+<P>then whenever you start a new session you will always have the $tab-width defined as you want it. 
 <P>If you are reading in a file with TAB's embedded then you can convert all of the &lt;TAB&gt;'s to spaces using 
 <A HREF="m3mac008.html">tabs-to-spaces(3)</A>: <UL>
 <PRE>esc&nbsp;x&nbsp;tabs-to-spaces 
 </PRE></UL>
-<P>If these TAB's are 8 characters, and they should be displayed as 2, then prior to conversion change the tabwidth, convert and then restore. <UL><P>
-<LI>Change the $tabwidth to 2 
-<LI>tabs-to-spaces 
-<LI>Restore the $tabwidth to 8 </UL>
 <P>
 <A HREF="amicr040.html">[FAQ Index]</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2004/01/17</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/01/16</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

@@ -1,9 +1,9 @@
 <HTML>
-<HEAD><TITLE>ml-clear(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<HEAD><TITLE>search-buffer(2)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
-ml-clear(2)</H1>
+search-buffer(2)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
 <A HREF="amicr031.html">[Commands]</A>
@@ -13,20 +13,90 @@ ml-clear(2)</H1>
 </FONT>
 <HR>
 <H2><B>NAME </B></H2>
-<UL><P>ml-clear - Clear the message line </UL>
+<UL><P>search-buffer - Search the current buffer for a string </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><B>ml-clear</B> </UL>
+<UL><P><I>n</I> <B>search-buffer</B> &quot;<I>flags</I>&quot; &quot;<I>string</I>&quot; </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P><B>ml-clear</B> clears the message line during script execution. This is useful so as not to leave a confusing message from the last command(s) in a script. 
-<P>Callback macros which may interrupt the user at any point in time are handled by <B>ml-clear</B>. The callback macro for instance may interrupt the user while entering a new file name, and any 
-<A HREF="m2cmd145.html">ml-write(2)</A> erases the message-line which may currently be in use. MicroEmacs '04 stores the line and when 
-<A HREF="m2cmd019.html">ml-clear(2)</A> is invoked, instead of clearing the message line the current input line is restored. </UL>
+<UL><P><B>search-buffer</B> searches for a <I>string</I> from the current cursor position, in a forwards or backwards direction, to the end or start of the buffer, respectively. The search direction and mode is specified by the by <I>flags</I> argument. 
+<P>The <B>search-buffer</B> command is designed to be used from the macro language rather than the command line as the search may be defined independently of the buffer setting of 
+<A HREF="m2mod009.html">magic(2m)</A> mode, which allows regular expression pattern matching, or 
+<A HREF="m2mod004.html">exact(2m)</A> mode, which makes the search case sensitive. The <I>flags</I> argument is used to explicitly set the 
+<A HREF="m2mod009.html">magic(2m)</A> and 
+<A HREF="m2mod004.html">exact(2m)</A> search modes. 
+<P>The <I>flags</I> argument is defined as a character string which defines the search behavior: 
+<P><TT>b</TT> - backward search 
+<BR><UL>Specifies the direction of the search as backwards, when omitted then a forward search is performed. </UL>
+<P><TT>e</TT> - enable exact search 
+<BR><UL>A 
+<A HREF="m2mod004.html">exact(2m)</A> mode search is performed, the characters are matched case sensitively. </UL>
+<P><TT>E</TT> - disable exact search 
+<BR><UL>A 
+<A HREF="m2mod004.html">exact(2m)</A> mode search is not performed, the characters are matched case insensitively. </UL>
+<P><TT>m</TT> - enable magic 
+<BR><UL>A 
+<A HREF="m2mod009.html">magic(2m)</A> mode search is performed, the search <I>string</I> is interpreted as a regular expression. </UL>
+<P><TT>M</TT> - disable magic 
+<BR><UL>A 
+<A HREF="m2mod009.html">magic(2m)</A> mode search is not performed, the search string is searched for literally. </UL>
+<P>When the <I>flags</I> are not specified then the default behavior is to search in a forwards direction inheriting the 
+<A HREF="m2mod004.html">exact(2m)</A> and 
+<A HREF="m2mod009.html">magic(2m)</A> modes of the buffer. Within macros it is suggested that the search modes are explicitly specified unless the buffer modes are to be inherited. 
+<P>The numeric argument <I>n</I> is interpreted in the same way as a 
+<A HREF="m2cmd116.html">search-forward(2)</A> command:- 
+<P><B>n &gt; 0</B> 
+<BR><UL>The <I>n</I>th occurrence of the <I>string</I> is located. </UL>
+<P><B>n &lt; 0</B> 
+<BR><UL>The first occurrence of the <I>string</I> is located in the next <I>n</I> lines. </UL></UL>
+<H2><B>DIAGNOSTICS </B></H2>
+<UL><P>The command returns a status of <TT>FALSE</TT> if the <I>string</I> could not be located (or <I>n</I>th <I>string</I> where <I>n</I> occurrences are requested). If the <I>string</I> is found within the given search criteria the return status is <TT>TRUE</TT>. </UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>The following examples show the use of the <B>search-buffer</B> command. The <B>search-buffer</B> is usually used with the 
+<A HREF="m4fil007.html">!force(4)</A> directive which traps any <TT>FALSE</TT> return status and may be subsequently tested using the 
+<A HREF="m4fil008.html">!if(4)</A> directive on the status 
+<A HREF="m5var040.html">$status(5)</A> variable. If the <B>!force</B> directive is omitted then the macro will abort with a failure status if the search fails (sometimes this behavior may be required). 
+<P>Case sensitive search forward for the word &quot;<TT>foo</TT>&quot;, this is not a magic regular expression. <UL>
+<PRE>!force&nbsp;search-buffer&nbsp;&quot;eM&quot;&nbsp;&quot;foo&quot; 
+!if&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;found&nbsp;string 
+!else 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;not&nbsp;found 
+!endif 
+</PRE></UL>
+<P>Case sensitive search bacward for the word &quot;<TT>foo</TT>&quot;, this is not a magic regular expression. <UL>
+<PRE>search-buffer&nbsp;&quot;beM&quot;&nbsp;&quot;foo&quot; 
+</PRE></UL>
+<P>Regular expression search forward for `<TT>&lt;</TT>' or `<TT>&gt;</TT>'. <UL>
+<PRE>search-buffer&nbsp;&quot;m&quot;&nbsp;&quot;[&lt;&gt;]&quot; 
+</PRE></UL>
+<P>Regular expression search catching the regular expression. A[a-z]*. The macro variable <B>@s1</B> returns the regular expression string that has been found. <UL>
+<PRE>!force&nbsp;search-buffer&nbsp;&quot;em&quot;&nbsp;&quot;\\(A[a-z]*\\)&quot; 
+!if&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;found&nbsp;string 
+&nbsp;&nbsp;&nbsp;&nbsp;1000&nbsp;ml-write&nbsp;&amp;spr&nbsp;&quot;Found&nbsp;string&nbsp;'%s'&quot;&nbsp;@s1 
+!else 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;not&nbsp;found 
+!endif 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
+<UL><P><B>Search-buffer</B> was added in November 2004 to simplify macro writing and to speed up macro execution. It replaces the macro commands <B>regex-forward(3)</B> and <B>regex-backward(3)</B>. The command simplifies macro development by allowing the 
+<A HREF="m2mod004.html">exact(2m)</A> and 
+<A HREF="m2mod009.html">magic(2m)</A> modes to be specified on the command line, this ensures that the buffer mode does not need to be saved, set and then restored in order to modify the behaviour of a search operation. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
-<A HREF="m2cmd024.html">create-callback(2)</A>, 
-<A HREF="m2cmd145.html">ml-write(2)</A>. </UL>
+<A HREF="m2cmd006.html">buffer-mode(2)</A>, 
+<A HREF="m2mod004.html">exact(2m)</A>, 
+<A HREF="m2cmd070.html">hunt-backward(2)</A>, 
+<A HREF="m2cmd070.html">hunt-forward(2)</A>, 
+<A HREF="m2cmd078.html">isearch-forward(2)</A>, 
+<A HREF="m3mac074.html">narrow-search-forward(3)</A>, 
+<A HREF="m2mod009.html">magic(2m)</A>, 
+<A HREF="m2cmd109.html">replace-string(2)</A>, 
+<A HREF="m2cmd116.html">search-backward(2)</A>, 
+<A HREF="m2cmd116.html">search-forward(2)</A>. 
+<BR>
+<A HREF="m2nar006.html">Regular Expressions</A> </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/01/15</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>global-abbrev-file(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 global-abbrev-file(2)</H1>
@@ -31,7 +31,7 @@ global-abbrev-file(2)</H1>
 <BR></UL>etc. 
 <P>An abbreviation file is an ordinary text file with a strict format, it is loaded only once at the first call to 
 <A HREF="m2cmd051.html">expand-abbrev(2)</A>, from then on it reminds buffered. An abbreviation file has an abbreviation per line, they cannot use multiple lines. This is not a draw back as the expansion string is executed using 
-<A HREF="m2cmd048.html">execute-string(2)</A> so any MicroEmacs '04 command may also be called. 
+<A HREF="m2cmd048.html">execute-string(2)</A> so any MicroEmacs '05 command may also be called. 
 <P>For example the following expansion string inserts the string &quot;<TT>!continue</TT>&quot; and a newline:- <UL>
 <P>&quot;<TT>!abort\r</TT>&quot; </UL>
 <P>Note that '<TT>\r</TT>' is used instead of '<TT>\n</TT>' as <B>C-m</B> is bound to 
@@ -59,7 +59,7 @@ global-abbrev-file(2)</H1>
 |JA&nbsp;&quot;\&quot;JASSPA\&quot;&nbsp;&lt;support@jasspa.com&gt;&quot; 
 | 
 </PRE></UL>
-<P>The following example is MicroEmacs '04 C-Mode abbreviation file for constructing C files. Remember <B>\p</B> is where the cursor is positioned following the expansion. <UL>
+<P>The following example is MicroEmacs '05 C-Mode abbreviation file for constructing C files. Remember <B>\p</B> is where the cursor is positioned following the expansion. <UL>
 <PRE>#i&nbsp;&quot;#include&nbsp;&lt;\p&gt;\r\P&quot; 
 #d&nbsp;&quot;#define&nbsp;&quot; 
 if&nbsp;&quot;if(\p)\r{\r\r}\r\P&quot; 
@@ -69,7 +69,7 @@ wh&nbsp;&quot;while(\p)\r{\r\r}\r\P&quot;
 sw&nbsp;&quot;switch(\p)\r{\rcase&nbsp;:\rdefault:\r}\r\P&quot; 
 </PRE></UL>
 </UL><H2><B>NOTES </B></H2>
-<UL><P>Abbreviation files are given the extension <B>.eaf</B> in the MicroEmacs '04 home directory. 
+<UL><P>Abbreviation files are given the extension <B>.eaf</B> in the MicroEmacs '05 home directory. 
 <P>One of the easiest ways to create more complex abbreviations is to record a keyboard macro, name it and then insert the resultant macro. See notes on commands 
 <A HREF="m2cmd011.html">start-kbd-macro(2)</A>, 
 <A HREF="m2cmd089.html">name-kbd-macro(2)</A> and 
@@ -87,7 +87,7 @@ sw&nbsp;&quot;switch(\p)\r{\rcase&nbsp;:\rdefault:\r}\r\P&quot;
 <A HREF="m2cmd011.html">start-kbd-macro(2)</A>, 
 <A HREF="m8fil000.html">eaf(8)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
+<P><I>(c) Copyright JASSPA 2005</I>
 <BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2004/03/26</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

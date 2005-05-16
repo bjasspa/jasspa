@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>keyNames(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Feb  7 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 keyNames(2)</H1>
@@ -13,12 +13,12 @@ keyNames(2)</H1>
 </FONT>
 <HR>
 <H2><B>KEY BINDING NAMES </B></H2>
-<UL><P>Every key which can be generated in MicroEmacs '04 has a character string or name representation which can be used to bind and unbind the key to a command. The name of simple keys like &quot;<TT>a</TT>&quot; or &quot;<TT>$</TT>&quot; is simply the character, i.e. &quot;<TT>a</TT>&quot; and &quot;<TT>$</TT>&quot;. Following is a list of other parts to a key name. </UL>
+<UL><P>Every key which can be generated in MicroEmacs '05 has a character string or name representation which can be used to bind and unbind the key to a command. The name of simple keys like &quot;<TT>a</TT>&quot; or &quot;<TT>$</TT>&quot; is simply the character, i.e. &quot;<TT>a</TT>&quot; and &quot;<TT>$</TT>&quot;. Following is a list of other parts to a key name. </UL>
 <H2>Modify Keys </H2>
 <UL><P>There are 3 modifying keys, Shift, Control and Alt, these are represented as &quot;<TT>S-</TT>&quot;, &quot;<TT>C-</TT>&quot;, &quot;<TT>A-</TT>&quot; respectively. For example the key &quot;<TT>A-C-S-up</TT>&quot; is generated when the up cursor key is pressed when Shift, Control and Alt keys where also pressed. 
 <P>The Control and Alt modifiers are case insensitive so <TT>C-a</TT> is the same as <TT>C-A</TT> and <TT>C-S-a</TT>. </UL>
 <H2>Prefix Keys </H2>
-<UL><P>Many binding are single stroke key sequences (e.g. &quot;<TT>C-a</TT>&quot; =&gt; beginning-of-line). However MicroEmacs '04 has a 
+<UL><P>Many binding are single stroke key sequences (e.g. &quot;<TT>C-a</TT>&quot; =&gt; beginning-of-line). However MicroEmacs '05 has a 
 <A HREF="m2cmd028.html">prefix(2)</A> command which can be used to bind up to 8 single stroke keys, turning them into two stroke keys; this greatly increasing the number of available bindable key sequences. For example <B>prefix 1</B> is bound to the escape character (<TT>esc</TT>), this allows key sequences like &quot;<TT>esc a</TT>&quot; to be used. Following is a list of prefixes and their default bindings <UL>
 <P>
 <A HREF="m2cmd028.html">prefix 1</A> =&gt; <TT>esc</TT> 
@@ -94,7 +94,7 @@ global-bind-key&nbsp;replace-string&nbsp;&quot;A-r&quot;&nbsp;&nbsp;&nbsp;&nbsp;
 <P>As a result it is advised that any long term macro should avoid named keys like <TT>up</TT> in favor of using a standard key binding such as <TT>C-p</TT>. See help on 
 <A HREF="m2cmd048.html">execute-string(2)</A> for more information. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
+<P><I>(c) Copyright JASSPA 2005</I>
 <BR><I>Last Modified: 2004/01/11</I>
-<BR><I>Generated On: 2004/03/26</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>

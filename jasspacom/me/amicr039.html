@@ -1,8 +1,8 @@
 <HTML>
-<HEAD><TITLE>MicroEmacs '04 - Origins</TITLE></HEAD>
+<HEAD><TITLE>MicroEmacs - Origins</TITLE></HEAD>
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
-MicroEmacs '04 - Origins</H1>
+MicroEmacs - Origins</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
 <A HREF="amicr031.html">[Commands]</A>
@@ -13,12 +13,396 @@ MicroEmacs '04 - Origins</H1>
 <HR>
 <H2><B>ORIGINS </B></H2>
 <UL><P>This version of MicroEmacs is based on an early <I>MicroEmacs</I> release of 3.8 in 1988, the origins of which are unknown, except to say it was delivered on a unmarked 5 1/2&quot; floppy disk. 
-<P>The program was originally ported to a Motorola MVME147 UNIX box as an alternative to <B>vi</B>. Reliability of the program proved to be a problem as it constantly crashed. In an attempt to rectify the problems the development of MicroEmacs '04 commenced. 
-<P>Development has continued from 1988 through to today, on the whole oblivious to further developments of the existing <B>MicroEmacs</B> program. This was due to no Internet access. It was not until 1996 the next version of <B>MicroEmacs</B> and <B>mewin</B> (Microsoft Windows (TM) port of the same program) was downloaded from the Internet and compared. By this time MicroEmacs '04 was radically different and we were not about to mesh the two together - that would be a step backwards. 
-<P>Development of MicroEmacs '04 has been biased towards the UNIX platform, as most of the early development was performed in the UNIX domain. The first of the window servers was X-Windows, which in turn has shaped the implementation of the Microsoft Windows port. Latterly, we have seen the resurgence of the IBM-PC platform which is now commonplace. For the return port to the DOS environment, and subsequent development of the Microsoft Windows port, a UNIX like interface was required. Most existing users could not abide the primitive editors found on these machines; Microsoft Windows was an alien and hostile environment when compared with UNIX. Hence, the MicroEmacs '04 interface utilizes UNIX style cut and paste across all platforms. 
-<P>For portability, MicroEmacs '04 utilizes character rendering on all platforms regardless of the window manager. Under X-Windows and Microsoft Windows, the display is still treated as a character based display, the subtle difference is that the display pane is re-sizable. This means that the scroll bars, fonts etc. are not as slick as they could be, certainly under Microsoft Windows MicroEmacs '04 looks positively primitive!! Regardless of the look, the goal of a common editor across all working platforms has been achieved! </UL>
+<P>The program was originally ported to a Motorola MVME147 UNIX box as an alternative to <B>vi</B>. Reliability of the program proved to be a problem as it constantly crashed. In an attempt to rectify the problems the development of MicroEmacs commenced. 
+<P>Development has continued from 1988 through to today, on the whole oblivious to further developments of the existing <B>MicroEmacs</B> program. This was due to no Internet access. It was not until 1996 the next version of <B>MicroEmacs</B> and <B>mewin</B> (Microsoft Windows (TM) port of the same program) was downloaded from the Internet and compared. By this time MicroEmacs was radically different and we were not about to mesh the two together - that would be a step backwards. 
+<P>Development of MicroEmacs has been biased towards the UNIX platform, as most of the early development was performed in the UNIX domain. The first of the window servers was X-Windows, which in turn has shaped the implementation of the Microsoft Windows port. Latterly, we have seen the resurgence of the IBM-PC platform which is now commonplace. For the return port to the DOS environment, and subsequent development of the Microsoft Windows port, a UNIX like interface was required. Most existing users could not abide the primitive editors found on these machines; Microsoft Windows was an alien and hostile environment when compared with UNIX. Hence, the MicroEmacs interface utilizes UNIX style cut and paste across all platforms. 
+<P>For portability, MicroEmacs utilizes character rendering on all platforms regardless of the window manager. Under X-Windows and Microsoft Windows, the display is still treated as a character based display, the subtle difference is that the display pane is re-sizable. This means that the scroll bars, fonts etc. are not as slick as they could be, certainly under Microsoft Windows MicroEmacs looks positively primitive!! Regardless of the look, the goal of a common editor across all working platforms has been achieved! </UL>
 <H2>Development History </H2>
-<UL><P><B>7th Release - March 2004</B> <UL><P>
+<UL><P><B>8th Release - May 2005</B> <UL><P>
+<LI>[050508] JASSPA MicroEmacs 8th release - final. Core and macro versions 20050505. 
+<LI>[050514] Fixed ftp copy lock-up (most noticable on windows) caused by the response read at the start of a command also reading (and disgarding) the finishing message so ME hangs at the end of the command waiting for a response. 
+<LI>[050514] Enabled ipipes under cygwin by default. 
+<LI>[050514] Fixed win32s build. 
+<LI>[050514] Fixed <B>mecygwin</B> interactive MS-DOS and cygwin BASH shells. 
+<LI>[050513] Found the UNIX <B>waitpid(-1,...)</B> in the sigchild handler (which removes any zoombie processes) removes the pipe commands process so the pclose call cannot get the process's exit code (returns -1). 
+<LI>[050509] Changed the name of aix43 make files to aix4 and sunos 55 and 56 files to a single sunos5 makefile 
+<LI>[050509] Added support for <B>aix&nbsp;v5</B> (tested on aix v5.1) 
+<LI>[050507] Added Finnish support to ne.emf. 
+<LI>[050506] Improved python collapse and item-list support and added eaf and etf for python - thanks to Detlef. 
+<LI>[050505] Base version numbers reset for next release. 
+<LI>[050429] Added support for keybinding to item-list column ordering, function is item-list-order and is bound to 1, 2 and 3 by default. Thanks to Bryan Schofield for his submission in this area. 
+<LI>[050429] Spelling - protect '.'s in the word with \\. 
+<LI>[050428] Corrected TCL hilighting w.r.t. comment at end of line - submitted by Bryan Schofield. 
+<LI>[050427] Major reworking of main commands in a directory listing buffer. Implemented typical features found in an OFM standard browser and create standard bindings as well as termcap friendly ones. Changed delete binding to delete files rather than close browser which is now bound to f10. 
+<LI>[050427] osd - Added numeric bit 8 on osd-entry arg to put the text above the entry. 
+<LI>[050427] Added C-x k support to browser mode to kill the buffer, also added hook for the file-browser's view file. 
+<LI>[050427] Fixed user-setup to use only one value of $file-ignore &amp; $kept-versions per platform rather than one for window and one for console based versions. 
+<LI>[050427] Shrunk the size of the file-attrib dialog to ensure it fits on a termcap screen. 
+<LI>[050427] Fixed nasty bug with transpose-line at the end of the buffer swapping the last line with the first! 
+<LI>[050427] main.c - Fixed minor compiler warnings. 
+<LI>[050426] Added a binding for file completion (any key bound to insert-tab) so OSD dialogs can do completion (although awkwardly). 
+<LI>[050423] Fixed wiki edit mode for Russian keyboards, the 'k' flag key mapping was breaking things. 
+<LI>[050423] Windows - Fixed windows Ctrl numeric pad keys, now come through as C-0 ... C-9 C-* C-+ etc. 
+<LI>[050420] Added new Dot/Neato support fhook (for .dot files) - thanks to Detlef for the submission. 
+<LI>[050420] TCL - Added more hilight tokens from Detlef. 
+<LI>[050420] Document macros - fixed cpp-&gt;tcl typo - thanks to Detlef for spotting this. 
+<LI>[050410] Fixed the -R option for DOS box, cursor same as the foreground color which is not ideal! 
+<LI>[050410] Fixed the SunOS x86 makefile to disabled #pragam warnings under GCC. 
+<LI>[050409] Release Candidate 2 - MicroEmacs 2005 (RC2) 
+<LI>[050408] Added flag to the user-setup Tools to force the rereading of the current buffer's file, thanks to Bryan Schofield. 
+<LI>[050408] Added new .item-list.width variable to allow control of the item window list - submitted by Bryan Schofield. 
+<LI>[050408] Moved the generate tags into the sub folder and added a compile option to c and cpp - submitted by Bryan Schofield. 
+<LI>[050405] Added support for DOS code page 866 (Cyrillic Russion) - submitted by Nicholas Kudriavtsev 
+<LI>[050331] Added support for the setting of the history in macros via @h#. 
+<LI>[050325] registry.c - removed compiler warning indicating porting problem hilighted under Darwin. Post increment of variable on left of assignment and same variable appeared on the right, split out the increment to reduce ambiguity of the statement. 
+<LI>[050320] UNIX only - add a rule for .dir files found in the X11 directory. We do not want this files identified as &quot;dir&quot; info root file 
+<LI>[050320] Added termcap (white) scheme for reverse video operation. 
+<LI>[050320] Newuser registry file - added default entry for Apple Mac &quot;darwin&quot;. Confirmed operation under Mac X-Windows. 
+<LI>[050320] Extended ME exit commands to support the discarding of modified buffers '<TT>0x8 discard modified buffers</TT>' and '<TT>0x10 discard modified buffers and create recovery file for changes</TT>'. 
+<LI>[050320] Corrected XML syntax for strings &quot;<TT>...</TT>&quot; to fix indent and hilight anomalies. 
+<LI>[050319] Added <B>-R</B> command line option to reverse the built in video schemes - specifically for <B>ne</B>(1) also works with <B>me</B>(1). 
+<LI>[050319] Corrected default mode settings. Recent removal of <B>letter(2m)</B>, <B>line(2m)</B> etc. changed the mode byte assignment of some modes. The built in global mode default was not updated for this change in bytes and incorrect global modes appeared as a result - specifically <B>quiet(2m)</B> which has jumped bytes. 
+<LI>[050315] LEX/YACC template - Corrected LEX and YACC highlighting. Aligned C, C++ and YACC/LEX templates to be consistent. 
+<LI>[050315] C/C++ templates - buffer setup modified for GNU Indent Style setting. 
+<LI>[050315] Added new 
+<A HREF="m3mac079.html">browse(3)</A> command and binding to f3, changed existing collapse-all <B>f3</B> binding to <B>C-f2</B>. 
+<LI>[050315] Modified ME exit commands to support a bitwise arg n where main 
+<A HREF="m2cmd049.html">exit-emacs(2)</A> has '<TT>0x01 Prompt</TT>', '<TT>0x02 Save each buffer/reg/dic (with prompt if 0x01 set)</TT>' and '<TT>0x04 Prompt for exit code and exit ME with that code.</TT>' 
+<LI>[050313] Latex template - Corrected the latex-fill-paragraph. Set the fill-mode to '<B>l</B>' rather than '<B>L</B>' because its a pain when it selects centre rather than left and messes things up. 
+<LI>[050311] Directory list - changed column sorting so Modified is sorted most recent first. 
+<LI>[050311] Fixed perldb pipe operation. 
+<LI>[050310] OSD simplified the main context menu and moved paste a cvs items in the directory context menu 
+<LI>[050310] Fixed diff's file name input, was not completing correctly 
+<LI>[050310] CVS changed the default setting of the recursive add to off. 
+<LI>[050310] JASSPA MicroEmacs quick start document released. 
+<LI>[050309] Fixed bug in regex multi-line search backwards, searching for &quot;<TT>foo[^a]</TT>&quot; is a mult-line as <TT>[^a]</TT> matches <TT>\\n</TT>, if &quot;<TT>foob</TT>&quot; exists at the start of the line isearch-backward refuses to move on. 
+<LI>[050309] Catman pages added for ne(1) and me(1) complaints with gentoo as missing. Added to the package builds. 
+<LI>[050308] Fixed a nasty bug with ftp connect dialog when the host has a port. Changed the default path to be nothing which becomes <TT>/~/</TT> to list the login directory. Change the tab order to not include the password as tabbing through the entry will lose the password, must now access via mouse or hot key which is not ideal. 
+<LI>[050308] Added support for relative ftp browsing via new <TT>ftp://???/~/???</TT> url form. Added file name completion support for ftp 
+<LI>[050306] Corrected the docmacro <TT>http://</TT> regular expression. 
+<LI>[050306] Changed the date format of the <B>-V</B> command line option to include the century, same format as the 
+<A HREF="m2cmd148.html">about(2)</A> buffer. 
+<LI>[050302] HTLP and PHP - fixed 
+<A HREF="m2cmd033.html">indent(2)</A> problems. 
+<LI>[050302] Perl template - fixed indent problems caused by not skipping the <TT>=~</TT> type regular expressions. 
+<LI>[050302] TCL template - fixed continuation and comment indent bug. 
+<LI>[050302] Added support for R/S-plus (.r) files - thanks to Detlef. 
+<LI>[050225] HTML template - fixed an indent which was fixed at &quot;<TT>2</TT>&quot; rather than &quot;<TT>t</TT>&quot; and added comment skipping indent rules 
+<LI>[050225] 
+<A HREF="m3fcl002.html">dos2unix(3f)</A>, 
+<A HREF="m3fcl002.html">unix2dos(3f)</A> and 
+<A HREF="m3fcl002.html">unix2win(3f)</A> - Removed use of <B>&amp;spr</B> in favor of <B>&amp;cat</B> so <TT>dos2unix</TT> etc. work in 
+<A HREF="m1cmd002.html">ne(1)</A>. [050225] Tracing a problem with hilighting a token of the form &quot;<TT>AB*$</TT>&quot;, works if there is a '<TT>B</TT>' but fails if there are no '<TT>B</TT>'s, i.e. only matches &quot;<TT>AB+$</TT>&quot;. Found that removing the end of line special case code fixes the problem. I believe the rest of the code has been improved to handle any end-of-line quirks - I hope so! 
+<LI>[050225] Removed the '<TT>start-up</TT>' macro function compile option so all versions support this - &quot;<TT>ne</TT>&quot; can now do a &quot;<TT>@dos2unix</TT>&quot; 
+<LI>[050225] Regular expressions - extended replacement string syntax. Added support for &quot;<TT>\c#</TT>&quot; &quot;<TT>\l#</TT>&quot; and &quot;<TT>\u#</TT>&quot; to change the case of groups, where &quot;<TT>\c#</TT>&quot; is capitalise, &quot;<TT>\l#</TT>&quot; is lower &quot;<TT>\u#</TT>&quot; is upper and &quot;<TT>#</TT>&quot; is the group number (<TT>0-9</TT>, <TT>&amp;</TT>) 
+<LI>[050225] Regular expressions - changed syntax of &quot;<TT>\s?</TT>&quot; and &quot;<TT>\S?</TT>&quot; in favor of Perl's simpler &quot;<TT>\s</TT>&quot; and &quot;<TT>\S</TT>&quot; for a whitespace char class. Added new character classes &quot;<TT>\d</TT>&quot; = digits, &quot;<TT>\D</TT>&quot; != digits &quot;<TT>\h</TT>&quot; = hexdigits &quot;<TT>\H</TT>&quot; != hexdigits &quot;<TT>\l</TT>&quot; = lowercase &quot;<TT>\L</TT>&quot; != lowercase &quot;<TT>\u</TT>&quot; = uppercase and &quot;<TT>\U</TT>&quot; != uppercase. These changes were made to both the main regex search engine and the 
+<A HREF="m2cmd069.html">hilight(2)</A> token matching engine. Added support for char classes within the main regex <TT>[...]</TT> character class, i.e. now supports regexs like &quot;<TT>[\l\u_]</TT>&quot; for any lower, upper or '<TT>_</TT>' char. This is not supported in the hilight which currently has a more simplistic &quot;<TT>[...]</TT>&quot; char class support. 
+<LI>[050225] Regular expressions - changed use of &quot;<TT>\s </TT>&quot;, &quot;<TT>\s-</TT>&quot;, &quot;<TT>\S </TT>&quot; and &quot;<TT>\S-</TT>&quot; classes to simply &quot;<TT>\s</TT>&quot; and &quot;<TT>\S</TT>&quot; which is perl regex compliant (ditching Emacs &quot;<TT>\s</TT>&quot; syntax as it is cumbersome and not very useful). The only nasty side effect is hilight's miss-use of &quot;<TT>\S1</TT>&quot; - &quot;<TT>\S9</TT>&quot; to mean not &quot;<TT>\1</TT>&quot; - &quot;<TT>\9</TT>&quot; group char, changed to &quot;<TT>\!1</TT>&quot; - &quot;<TT>\!9</TT>&quot; 
+<LI>[050224] 
+<A HREF="m1cmd002.html">ne(1)</A> set to not auto-save or create backups by default. 
+<LI>[050224] Added &quot;<TT>-a</TT>&quot; and &quot;<TT>-B</TT>&quot; command line options to enable and disable auto-save 
+<A HREF="m2mod000.html">auto(2m)</A> and 
+<A HREF="m2mod001.html">backup(2m)</A> modes. 
+<LI>[050224] Tcl template - some more fixes to the item list from Detlef 
+<LI>[050224] 
+<A HREF="m3mac077.html">watch(3)</A> improved the refresh rate of a type 2 or 3 watch by ignoring the <TT>:watch-time</TT> and just look at the <TT>:watch-size</TT>. Fixed the split line issue with type 2 of 3 watching caused by last line not being complete. 
+<LI>[050224] <B>M-x</B> <B>ftp</B> - stripped '<TT>ftp://</TT>' and any trailing '<TT>/</TT>' of the users entered host name as these break ftp. Improved the dialog's handling of passwords, the user can now tell if a password has been set. 
+<LI>[050224] Added standard binding for mark-function 
+<LI>[050224] Fixed the ME token hilighting in the C hook 
+<LI>[050224] Removed recently added <TT>%no_backup</TT> variable to disable backup create as new <B>-B</B> option is a much better way of doing it. 
+<LI>[050224] <TT>edef.h</TT> - Removed definition of non-existant variable 
+<LI>[050224] Fixed failure when trying to load &quot;<TT>http://www.jasspa.com</TT>&quot;, there is an implicit trailing '<TT>/</TT>' which MicroEmacs now adds. 
+<LI>[050224] Tcl template - major improvement - courtesy of Detlef. 
+<LI>[050224] Fixed <B>collapse</B>to support the file hooks .exact setting (set to -1 means case insensitive) 
+<LI>[050224] Added new <B>beginning-of-function</B>, <B>end-of-function</B>, <B>goto-function-line</B> and <B>mark-function macros</B> - thanks to Detlef. 
+<LI>[050223] Windows MS-dev 6 project - corrected project settings for <TT>_URLSUPP</TT> to <TT>_SOCKET</TT> in keeping with the socket dynamic library loading. 
+<LI>[050223] Added exec of wish to the tcl magic hook 
+<LI>[050223] Fixed 
+<A HREF="m5var051.html">$window-chars(5)</A> - added OSD default button chars. 
+<LI>[050222] Fixed 
+<A HREF="m5var089.html">$user-path(5)</A> being more that 35 chars breaking the 
+<A HREF="m3osd000.html">user-setup(3)</A> dialog. 
+<LI>[050222] Directory listing - call <TT>fhook-html</TT> when file is a <TT>http://</TT> file - this is never a directory listing. 
+<LI>[050222] Stopped loading of files in dir listing when clicking way to the right, must click on the name (MicroEmacs kept loading files when just trying to raise the window to the front - annoying). 
+<LI>[050222] If 0 given to 
+<A HREF="m3mac077.html">watch(3)</A> call watch-time, this preserves the old interface. 
+<LI>[050222] Added backup file disabling for 
+<A HREF="m3fcl002.html">dos2unix(3f)</A> macros via command line defineable variable. 
+<LI>[050221] Changed the new Windows process tree killing to use <TT>LoadLibrary()</TT> to detect whether the OS supports this feature (and NT does not). Also moved the URL support over to <TT>LoadLibrary()</TT> so we can remove the <B>-u</B> builds. 
+<LI>[050220] Added UNIX Shell and Makefile hilighting to 
+<A HREF="m3mac078.html">notes(3)</A>). 
+<LI>[050219] Fixed GNU GCC warnings in Makefiles for #pragma in X11 files under Sun Solaris and uninitialized variables. 
+<LI>[050219] 
+<A HREF="m2cmd066.html">osd(2)</A>. Removed dialog '<TT>F</TT>' flag as it was not documented, did not work and only used in one obscure place. Fixed <B>C-g</B> and <B>Del</B> so they close up to the previous dialog but does close the main menu down in one call - was annoying. 
+<LI>[050219] Release Candidate 1 - MicroEmacs 2005 (RC1) 
+<LI>[050218] Corrected UNIX 
+<A HREF="m2nar005.html">client-server</A> socket file check -- bad test on existence of connection file, using wrong variable with wrong test sense. 
+<LI>[050218] Added site delete button to <B>ftp-connect</B> dialog. 
+<LI>[050218] Fixed abbreviation and exec-string &quot;<TT>\\p</TT>&quot; and &quot;<TT>\\P</TT>&quot; store and goto position problem when the <TT>C-x</TT> <TT>C-a</TT> or <TT>C-x</TT> a keys are rebound. Fixed by replacing with '<B>esc</B> <B>x</B> <B>set-alpha-mark</B> <B>P</B>' (where <B>esc-x</B> is a safe internal special key). 
+<LI>[050218] Updated 
+<A HREF="m3mac077.html">watch(3)</A> interface and made public. Created new 
+<A HREF="m3mac077.html">watch-time(3)</A> command and prompt user for watch type when no argument is given. 
+<LI>[050218] Removed the use of bit <TT>0x1000</TT> in Ada string hilight as this is unlikely to be wanted (probably copied from Pascal). 
+<LI>[050218] Changed the registry parser to abort on error rather than trying to carry on (a very painful process for a badly decrypted registry file). 
+<LI>[050218] Fixed highlighting minor issues. 
+<A HREF="m2cmd069.html">hilight(2)</A> scheme now returns back to EOL scheme after a bracket. A branch tag on an EOL line removes the EOL flag so it hilights correctly. Branch tag now supports the <TT>0x1000</TT> single line hilight. Lookback now supports <TT>0x800</TT> on a branch tag. 
+<LI>[050217] HTML highlighting. Fixed some really grizzly scripted html page highlighting issues, predominantly with php. 
+<LI>[050217] Change ftp so it opens the <B>ftp-connect</B> dialog if the current buffer is <TT>*ftp-files*</TT>. 
+<LI>[050217] Fixed ftp dir list column detection and highlighting issue with windows ftp servers (time given as <TT>9:15</TT> not <TT>09:15</TT>) 
+<LI>[050217] Fixed bug in 
+<A HREF="m2cmd122.html">set-variable(2)</A> and 
+<A HREF="m2cmd122.html">unset-variable(2)</A> when 
+<A HREF="m4fil004.html">&amp;sprintf(4)</A> is used to create a variable name. 
+<LI>[050217] Watch command (watch.emf). Improved the watch command, made '<TT>0</TT> <TT>watch</TT>' call <B>watch-reset</B>, changed <B>watch-reset</B> so with an argument of <TT>0</TT> it removes all watches otherwise it resets the main watch counter and reports to the user which buffers are watched. Added new '<TT>2</TT> <TT>watch</TT>' and '<TT>3 watch</TT>' which compares the file size, doing the following: <B>a)</B> file on disk is smaller than last watch - reloads whole file. <B>b)</B> file size is the same - does nothing. <B>c)</B> file on disk is larger - appends to the end of the buffer the tail of the file (<TT>file_size</TT> <TT>-</TT> <TT>watch_file_size</TT> bytes). This assumes that the files is always being appended (reasonable assumption in most cases. The only difference between 2 and 3 is that 2 forces a complete reread of the file on the first file change (ensuring the buffer is correct), 3 does not which allows the user to trash the first gigabyte of the buffer before starting the watch. 
+<LI>[050217] Shell template - added local and function keywords and fixed a few string highlighting problems. 
+<LI>[050216] Made the dir-listing's (Filtered) label on line 2 pick-able, changing the filter status when picked Made CVS's CVS-Quick label pick-able doing a full reread when picked. 
+<LI>[050216] Fixed a couple of silly register bugs introduced with last 
+<A HREF="m2cmd072.html">find-registry(2)</A> concat root and sub-key change. Improved behavior when ftp erf file is missing, now create a new one in memory and flags as changed so should be saved on exit. 
+<LI>[050216] Do not abort <TT>me.emf</TT> execution if ftp erf file is missing or bad. 
+<LI>[050216] Fixed by removing the '<TT>startup</TT>' function, the main init now uses dofile directly and it checks for either a NULL or <TT>&quot;&quot;</TT> as a filname and replaces with &quot;<B>me</B>&quot; or (&quot;<B>ne</B>&quot; and does not complain) if found to be empty. This means that give 
+<A HREF="m2cmd045.html">execute-file(2)</A> an empty string executes either &quot;<B>me</B>&quot; or &quot;<B>ne</B>&quot;, i.e. resets me - nice side effect. Changed '<TT>dofile()</TT>' to <TT>execFile()</TT> and changed <TT>execFile()</TT> to <TT>executeFile()</TT> (as is function for command <B>execute-file(2)</B>) and change the other exec command function names for consistency. 
+<LI>[050216] Fixed an annoyance reported by Bruno, ne should not complain if it fails to find <TT>ne.emf</TT> - fair enough. 
+<LI>[050215] Fixed crash caused by using <TT>-c</TT> option with all files hidden (comment when browsing ftp dirs as cache dir lists are hidden) The startup process knows the history created buffers but the replacement was none of these and due to the toolbar it was a buffer without a file name and bang! Fixed in 2 ways, first check the replacement has a file name, second do not put hidden files into the history - they're hidden. 
+<LI>[050210] Improved movement between items using the cursor in the search dialog. 
+<LI>[050210] Fixed cvs dialog default settings. 
+<LI>[050210] Corrected search path expansion, incorrectly handling a <TT>PATH_CHAR</TT> at the start of the string. 
+<LI>[050209] Up-dated 
+<A HREF="m3osd000.html">user-setup(3)</A> platform page to new style and added 
+<A HREF="m2cmd159.html">yank-rectangle(2)</A> binding. 
+<LI>[050209] Fixed no-color termcap 
+<A HREF="m5var051.html">$window-chars(5)</A> variable setting 
+<LI>[050209] Fixed hot keys (were 3 'U's) in <TT>osdmisc.emf</TT>. 
+<LI>[050209] Added new <I>BraceStatement</I> 
+<A HREF="m2cmd033.html">indent(2)</A> value to support GNU C indentation style. 
+<LI>[050209] Fixed the <TT>osdDisp()</TT> function required a <TT>TTflush()</TT> otherwise the cursor is left in the wrong position on termcap systems. 
+<LI>[050209] Fixed the default 
+<A HREF="m5var051.html">$window-chars(5)</A> variable setting. 
+<LI>[050209] Fixed the DOS home directory setting and compiler warnings. 
+<LI>[050208] Changed the C indent definition to be the same format as the existing indent definitions i.e. uses flag &amp; indent value, this makes it more flexible and extendible. Updated macro files. 
+<LI>[050205] Password generation macros added to <TT>contrib</TT> directory. 
+<LI>[050205] Added JavaDoc highlighting to Java template. Enablement via 
+<A HREF="m3osd010.html">buffer-setup(3)</A>. Removed the existing &quot;<TT>my</TT>&quot; extensions from contrib. 
+<LI>[050205] Added <B>Doxygen(1)</B>, <I>&lt;stdint.h&gt;</I> and error highlighting to C/C++ templates. Enablement via 
+<A HREF="m3osd010.html">buffer-setup(3)</A>. Removed the existing &quot;<TT>my</TT>&quot; extensions from <TT>contrib</TT>. 
+<LI>[050204] osd - Fixed problems with the <I>cursor shows current item</I> feature of osd caused by the cursor position going outside of the window. 
+<LI>[050202] Added an initial item number to the favorite and buffer menus. 
+<LI>[050203] Standardized narrow anchor and line flag movement behaviors with respect to deleting and inserting text. Enforced to effectively exist at character column -1 and been strict about maintaining a protected line. Made undo cope with markup lines that are lost. These changes may be a little to severe - we'll see. 
+<LI>[050202] Fixed <B>C-g</B> close osd dialog crash. 
+<LI>[050202] Directory listing - fixed nasty bug cause by the directory changing on disk before the hook has managed to do anything leading to a failure - this has been annoying Jon for some time! 
+<LI>[050127] <TT>hkemf.emf</TT> - Fixed <TT>!until</TT> indent rule. 
+<LI>[050127] First revision of <B>notes</B>. 
+<LI>[050127] Fixed positional problems with mouse rectangle regions and added a mouse rectangle yank to user-setup. 
+<LI>[050127] cvs - Set the initial osd dialog item to be the first item rather than the Okay button (with is still the default button). 
+<LI>[050127] Fixed <TT>*scratch*</TT> hook assignment issues, initial startup buffer and only buffer delete problem. 
+<LI>[050127] Added process tree killing for windows, tested on win98, 2k &amp; XP, would be good to test on win95 (which should work) and NT which should not work but hopefully will be no worse than current version. 
+<LI>This is a process tree killing for ipipes, in win32 killing the process we create is simply not good enough, all child processes continue unaffected. For example, run compile, kill the buffer in mid compile and it carries on behind your back! 
+<LI>For Unix we use a new group and kill the group, DOS does not support ipipe. We could have used the new Job concept in ME but this is only present in win2000 &amp; XP and the binaries are unlikely to run on win98 etc. This should run on every win32 platform although it is unlikely to do anything positive on an NT box (works in win2k) 
+<LI>[050126] Changed the location of the <B>fhook-default</B> macro so its only defined if using <B>buffinit</B> (i.e. if running main <TT>me.emf</TT>) 
+<LI>[050126] Fixed osd button repeat issue when current focus is an entry. 
+<LI>[050126] Changed <B>insert-file-name</B> to insert buffer name if a -ve arg is given, bound to <B>C-x y</B> on the mode line, this replaces ml-lines <B>esc</B> <B>y</B> feature. 
+<LI>[050123] Fixed a crash caused by too many closed fences, the recursive nature of the <TT>findfence()</TT> function triggers a stack crash at around 22000 on windows. Set limit to 256 nested fences. 
+<LI>[050122] Fixed 
+<A HREF="m2mod028.html">dir(2m)</A> mode loss on a directory re-read, this caused a number of side effects including loss of highlighting and user prompt to reload the directory when it had changed. 
+<LI>[050119] Removed the &quot;<I>sub-key</I>&quot; argument from all registry related calls (see 
+<A HREF="m4fil028.html">&amp;reg(4)</A> and 
+<A HREF="m2cmd042.html">set-registry(2)</A>). The registry calls used to comprise two arguments &quot;<I>root</I>&quot; and &quot;<I>sub-key</I>&quot;, the &quot;<I>sub-key</I>&quot; is really redundant and the same effect may be achieved by a simple string concatenation of the &quot;<I>sub-key</I>&quot; to the &quot;<I>root</I>&quot;. 
+<LI>[050119] Added &quot;<TT>my-*hook-always</TT>&quot; macro checks in the buffer hook switching of 
+<A HREF="m3mac064.html">buffer-init(3)</A> to permit global file hooks to be defined, this allows a file hook to operate on all buffers. &quot;<TT>my-*hook-always</TT>&quot; is executed after the language file hooks of &quot;<TT>*hook-XXX</TT>&quot; and &quot;<TT>my-*hook-XXX</TT>&quot;. 
+<LI>[050116] Added &quot;<TT>TODO</TT>&quot; highlighting rule for Makefile comments. 
+<LI>[050114] Fixed 
+<A HREF="m2cmd068.html">narrow-buffer(2)</A> type numeric argument not processed correctly. 
+<LI>[050113] Added tool bar tool mouse select region command. 
+<LI>[050113] Added bindings for the cvs and ftp console tools. 
+<LI>[050113] Fixed 
+<A HREF="m3osd001.html">organizer(3)</A> duplicate index bug. 
+<LI>[050111] Deleted the <B>get-registry(2)</B> command, this has been depreciated and 
+<A HREF="m4fil028.html">&amp;reg(4)</A> should be used instead. 
+<LI>[050111] Extended the 
+<A HREF="m2cmd157.html">read-registry(2)</A> and 
+<A HREF="m2cmd008.html">save-registry(2)</A> commands to permit reading and writing from a buffer based registry (rather than file). 
+<LI>[050111] Extended 
+<A HREF="m2cmd025.html">list-registry(2)</A> to permit listing of specific nodes, the output buffer of the registry listing may be specified. Added a invisible flag to a registry node which hides the node completely (but can be toggled). 
+<LI>[050111] Fixed windows server command file polling of up to 60 times a second by making the adder of the command responsible for 'waking' MicroEmacs by sending a <TT>WM_USER</TT> message. This is not a problem for UNIX as it is possible to wait on file input and <TT>EOF</TT> is not reported. 
+<LI>[050105] Fixed several narrow-to 
+<A HREF="m2cmd068.html">narrow-buffer(2)</A> usability issues, with these fixes the top and bottom narrow cannot be removed without a markup line and the order cannot get muddled. 
+<LI>[050105] Fixed a problem with the anchor position up-date when inserting a whole line. 
+<LI>[050105] Changed the osd entry mouse handling to always refocus, this allows the user to change location in the current entry using the mouse. 
+<LI>[050105] Fixed. 
+<A HREF="m2cmd074.html">insert-macro(2)</A> undo location was incorrect causing a crash. 
+<LI>[050103] Spelling dialog. Changed the Ignore button to Continue if word becomes correct without changing (word added or language changed). 
+<LI>[050103] Fixed. CVS osd dialog with bad hot-key. 
+<LI>[050102] Added setting of 
+<A HREF="m5var077.html">$recent-keys(5)</A> variable. 
+<LI>[041231] Variable <B>$fmatchdelay(5)</B> renamed to 
+<A HREF="m5var023.html">$pause-time(5)</A>. <I>$pause-time</I> is now used for other MicroEmacs delay times when the user is prompted for information. 
+<LI>[041224] Fixed several usability issues in the search replace dialog. 
+<LI>[041224] Up-graded printer-setup dialog to new style OSD. 
+<LI>[041224] CVS dialog - added read-only option to checkout and update. 
+<LI>[041224] Fixed 
+<A HREF="m2cmd060.html">goto-line(2)</A> offset which as always going to the previous line (one out). <B>u</B> [041221] Added support for proper kill buffer use in message line, i.e. 
+<A HREF="m2cmd121.html">set-mark(2)</A>, 
+<A HREF="m2cmd081.html">kill-region(2)</A>, 
+<A HREF="m2cmd022.html">copy-region(2)</A>, 
+<A HREF="m2cmd146.html">yank(2)</A> and 
+<A HREF="m2cmd111.html">reyank(2)</A> all work in the same way as a normal buffer. 
+<LI>[041221] Fixed registry node deletion when the node is modified. 
+<LI>[041221] Removed 
+<A HREF="m2cmd066.html">osd(2)</A> <TT>osd 0</TT> '<I>d</I>' flag and added '<I>I</I>' initial item and '<I>D</I>' default button flags, existing osd dialogs which use '<I>d</I>' will fail to load and need are migrated to use the <I>D</I> and <I>I</I> flags. 
+<LI>[041218] 
+<A HREF="m3mac039.html">auto-spell(3)</A> key bindings are promoted to global so its easy to enable in any buffer. 
+<LI>[041218] Corrected setting of the 
+<A HREF="m5var026.html">$home(5)</A> environment variable to handle MS-Windows '<TT>\\</TT>'s, auto terminate with '<TT>/</TT>'. 
+<LI>[041210] Added Enable/Disable Auto-Spell to the context menu. 
+<LI>[041210] Rearranged the 
+<A HREF="m3osd001.html">organizer(3)</A> dialog to be a little easier to navigate through. 
+<LI>[041210] Fixed nedit emulation insert binding. 
+<LI>[041210] Removed <B>ml-clear(2)</B> command, replaced with 
+<A HREF="m2cmd145.html">ml-write(2)</A> option &quot;<TT>0 ml-write</TT>&quot;. 
+<LI>[041210] Removed the <B>change-directory(2)</B> command, a change in directory is achieved by changing the 
+<A HREF="m5var003.html">$buffer-fname(5)</A> value such that the path defines the location of the command. All macros operated relative to the buffer location and never explicitly changed the directory location. 
+<LI>[041210] Fixed CUA emulation insert binding. 
+<LI>[041210] Deleted <B>letter(2m)</B> mode. Use the default binding of 
+<A HREF="m2cmd034.html">forward-delete-char(2)</A> for letter mode off, where single deleted characters are to be added to the kill buffer then the existing <B>letter(2m)</B> mode may be achieved by binding as &quot;<TT>1 forward-delete-char</TT>&quot;. Similarly for backspace, 
+<A HREF="m2cmd034.html">backward-delete-char(2)</A>. 
+<LI>[041210] Deleted <B>line(2m)</B> mode. Use a binding with 
+<A HREF="m2cmd082.html">kill-line(2)</A> of &quot;<TT>1 kill-line</TT>&quot; to mimic the line mode enabled and &quot;<TT>kill-line</TT>&quot; for line mode disabled. 
+<LI>[041210] Deleted <B>cmode(2m)</B>. Electric-c is now configured with 
+<A HREF="m2cmd033.html">indent(2)</A>. C and C++ indent styles can be different, can also have a GNU C style etc, can change the indent width as new indent rule supports '<I>t</I>', consistent 
+<A HREF="m5var075.html">$buffer-indent(5)</A> interface. 
+<LI>[041210] Created new osd file &quot;<TT>osdmisc.emf</TT>&quot; for miscellaneous OSD macros, this removes the OSD dependency when the MicroEmacs is executed in special start up modes with startup files. Moved search and new 
+<A HREF="m3osd014.html">indent-setup(3)</A> commands out of &quot;<TT>search.emf</TT>&quot; and &quot;<TT>format.emf</TT>&quot; into a new &quot;<TT>osdmisc.emf</TT>&quot; as they cause problems with utils that do not run &quot;<TT>me.emf</TT>&quot; (e.g. &quot;<TT>ehftools.emf</TT>&quot;) 
+<LI>[041210] Introduced a GNU emacs emulation mode, emulation file is &quot;<TT>meemacs.emf</TT>&quot;. 
+<LI>[041209] Fixed <B>newuser</B> &quot;<TT>$user-name.emf</TT>&quot; conflict issue with an existing macro (e.g. <TT>zaurus.emf</TT>) by testing for it and prefixing a digit to make the file unique. 
+<LI>[041209] Added <TT>esc C-\</TT> binding to 
+<A HREF="m3mac025.html">restyle-buffer(3)</A>. 
+<LI>[041209] Fixed some issues with the Tools user-setup dialog. 
+<LI>[041128] Added MinGW makefile posted to JASSPA group by Patrick Anderson, forms part of the release makefiles. 
+<LI>[041126] Added '<TT>k</TT>' keyboard setup to 
+<A HREF="m2cmd134.html">set-char-mask(2)</A> which is used to translates foreign keys to a latin char. 
+<LI>[041126] Changed the internal LEADER byte to <TT>0x1c</TT> as <TT>0xff</TT> is a valid Russian char and it badly breaks <I>$vars</I> and <I>macros</I>. 
+<LI>[041126] Fixed spell dump word which was not translating the words to the users char-set. 
+<LI>[041126] Added support for Russian language. 
+<LI>[041126] Improved the aff ispell conversion routines (almost works automatically). 
+<LI>[041126] Stopped 
+<A HREF="m3mac039.html">auto-spell(3)</A> from triggering the no dictionaries error, leave it to 
+<A HREF="m3osd002.html">spell-buffer(3)</A> etc. 
+<LI>[041125] Fixed OSD multi-line <TT>C-k</TT> <B>kill-line</B> behavior and implemented &quot;<TT>-1</TT> <TT>kill-line</TT>&quot; support. 
+<LI>[041125] Added basic support for Verilog programming language. 
+<LI>[041123] Fixed ftp OSD (auto entering entries broke the password field) and modernized. 
+<LI>[041028] Fixed. <TT>*find*</TT> buffer exhibits the same behavior as <TT>*grep*</TT> buffer. i.e. the <TT>*find*</TT> buffer remains on screen and a pop-up window is used to show the file. 
+<LI>[041028] Fixed. <TT>*grep*</TT> buffer does not load file when selected with <TT>&lt;RETURN&gt;</TT>. 
+<LI>[041027] Spruced up old &quot;<TT>apache.conf</TT>&quot; highlighting rules and added to release. 
+<LI>[041022] Fixed very obscure cvs load-up bug. 
+<LI>[041122] Updated schemes to set '<I>Show cursor in osd</I>' suitably and to make sure the cursor is not red as this conflicts with the match fence display. 
+<LI>[041120] Fixed 
+<A HREF="m2cmd135.html">transpose-lines(2)</A> crash when 
+<A HREF="m2mod014.html">undo(2m)</A> mode is disabled. 
+<LI>[041120] Removed the OSD explicit tab order value as this was not constructively used and causes many item order problems. 
+<LI>[041119] Many improvements to OSD dialog user interface following suggestions for news group. Updated most of the osd dialogs to use the new <TT>[*]</TT> check-box chars. Fixed tabbing orders and moved some items over to combo-boxes. Added osd-cursor visibility support to scheme-edit. Made the displaying of the cursor in an osd dialog a 
+<A HREF="m5var047.html">$system(5)</A> bit set by the highlight scheme and fixed the position when in a child dialog. 
+<LI>[041118] Added a macro recursion depth limit of 20 to avoid blowing up MicroEmacs when the user has created an infinitely recursive macro. 
+<LI>[041112] Added Paul Boekholt's suggested GNU Emacs key bindings. 
+<LI>[041107] 
+<A HREF="m2cmd080.html">kill-paragraph(2)</A>, 
+<A HREF="m2cmd052.html">fill-paragraph(2)</A>, 
+<A HREF="m2cmd094.html">forward-paragraph(2)</A> and 
+<A HREF="m2cmd094.html">backward-paragraph(2)</A> commands redefined. <B>kill-paragraph</B> now kills forward and backward rather than control the kill buffer. Paragraph movement now defined blank-line to blank-line rather than the first/last paragraph line. 
+<LI>[041105] Fixed 
+<A HREF="m2cmd082.html">kill-line(2)</A>, 
+<A HREF="m2cmd035.html">forward-kill-word(2)</A> and 
+<A HREF="m2cmd035.html">backward-kill-word(2)</A> numerical argument implementation. 
+<LI>[041104] Removed <B>regex-forward(3)</B> and <B>regex-backward(3)</B> macros and moved uses of them over to 
+<A HREF="m2cmd019.html">search-buffer(2)</A>. 
+<LI>[041104] Added 
+<A HREF="m2cmd019.html">search-buffer(2)</A> command which replaces the macro commands <B>regex-forward(3)</B> and <B>regex-backward(3)</B>. Simplifies macro processing of searching by providing a search that explicitly sets the 
+<A HREF="m2mod004.html">exact(2m)</A> and 
+<A HREF="m2mod009.html">magic(2m)</A> modes. The default is to respect buffers exact and magic mode and flags must have <TT>E</TT> or <TT>M</TT> to ensure they are disabled. 
+<LI>[041104] Changed any use of 
+<A HREF="m2cmd082.html">kill-line(2)</A> to &quot;<TT>1</TT> <TT>kill-line</TT>&quot; as this should maintain its required behavior. A <B>kill-line</B> with no numeric argument kills to the end of the line but excludes the end of line character (GNU Emacs compatibility). The default binding is the &quot;<TT>1</TT> <TT>kill-line</TT>&quot; form, re-bind the key to &quot;<TT>kill-line</TT>&quot; if the end of line is not to be killed. 
+<LI>[041104] Removed <B>line(2m)</B> and <B>letter(2m)</B> buffer modes as these can be done using numerical arguments to bindings. See the the 
+<A HREF="m2cmd082.html">kill-line(2)</A> binding which replaces <I>line</I> mode. See 
+<A HREF="m2cmd034.html">forward-delete-char(2)</A> and 
+<A HREF="m2cmd034.html">backward-delete-char(2)</A> binding which replaces <I>letter</I> mode. 
+<LI>[041104] Changed the 
+<A HREF="m2cmd035.html">forward-kill-word(2)</A> and 
+<A HREF="m2cmd035.html">backward-kill-word(2)</A> commands to be more consistent with GNU Emacs. 
+<LI>[041102] Moved winterm over to using <TT>addKeyToBufferOnce()</TT> for mouse move and time, also done same for UNIX mouse time event. This minimizes the number of mouse moved events that are processed by the system. 
+<LI>[041101] MS Windows. Fixed mouse cursor disappearing after using a <I>Shift</I> or <I>Control</I> mouse button event. 
+<LI>[041101] Auto reload the directory even if it is changed (<TT>hkdirlst.emf</TT>). 
+<LI>[041030] MS-Windows. Removed the &quot;<TT>WM_INPUTLANGCHANGE</TT>&quot; message handler as this did the wrong thing (use <TT>Alt-Shift</TT> to change between two different keyboards e.g. US and Russian) 
+<LI>[041030] MS-Windows. Changed the method used to get the APPDATA path to use <TT>SHGetSpecialFolderLocation()</TT> as this is available in all versions of Windows. 
+<LI>[041030] UNIX. Fixed the mouse movement which caused a rendering anomaly. Mouse moved commands are only added to the key buffer if the key is not already present in the key queue. This alleviates a large build up of redundant mouse move keys on the queue. (Added function <TT>addKeyToBufferOnce()</TT>), 
+<LI>[041030] Added mouse rectangle region selection methods, 
+<A HREF="m3mac072.html">copy-rectangle(3)</A> and 
+<A HREF="m2cmd159.html">kill-rectangle(2)</A>. 
+<LI>[041029] Hardened 
+<A HREF="m9typ000.html">cpp(9)</A> C++ commenting on <TT>//</TT> alignment when the previous line is a solid <TT>//////////</TT> when re-styling buffer. 
+<LI>[041029] Fixed 
+<A HREF="m3mac075.html">find(3)</A> &quot;<TT>*find*</TT>&quot; buffer operation so that it operates like &quot;<TT>*grep*</TT>&quot; on file selection. Keyboard file section enabled within the &quot;<TT>*grep*</TT>&quot; and &quot;<TT>*find*</TT>&quot; buffer. 
+<LI>[041026] Spruced up old &quot;<TT>smb.conf</TT>&quot; highlighting rules, brought them up to date with latest keywords and added to release. 
+<LI>[041026] Fixed 
+<A HREF="m3osd014.html">indent-setup(3)</A> osd dialog. 
+<LI>[041024] Macro/source compatibility macro and source versions updated to &quot;<TT>20041001</TT>&quot;. 
+<LI>[041024] Fixed the 
+<A HREF="m3mac057.html">cvs-diff(3)</A> options, local with HEAD was not correct. 
+<LI>[041024] 
+<A HREF="m9typ004.html">latex(9)</A> template extended. Buffer bindings for underscore and quote keys. Search tools to determine current context. 
+<LI>[041023] Extended the buffer setup for the 
+<A HREF="m2cmd033.html">indent(2)</A> mechanism. May now specify the default buffer <I>indent-width</I>and <I>tabsize</I> in the 
+<A HREF="m3osd010.html">buffer-setup(3)</A> dialog. 
+<LI>[041022] Revised indentation implementation. The templates now define indent width independent rules. The 
+<A HREF="m2cmd033.html">indent(2)</A> command '<I>indent</I>' parameter may be defined as an absolute indentation or using a '<TT>t</TT>' notation. The syntax is &quot;<TT>[-][[indent][/indent]]t</TT>&quot; which defines a vulgar fraction of '<TT>t</TT>' which is the indent width (or tabsize) as specified by 
+<A HREF="m5var091.html">$buffer-indent-width(5)</A> defined below. 
+<LI>The global variables <B>$tabsize(5)</B> renamed 
+<A HREF="m5var091.html">$indent-width(5)</A> and controls the global indentation size. <B>$tabwidth(5)</B> renamed 
+<A HREF="m5var042.html">$tab-width(5)</A> and controls the display size of a literal TAB character. 
+<LI>The indentation is now specified on a buffer basis, the variables 
+<A HREF="m5var091.html">$buffer-indent-width(5)</A> and 
+<A HREF="m5var043.html">$buffer-tab-width(5)</A> define the indentation and TAB width on a per buffer basis. These are seeded from the aforementioned global variables. 
+<LI>[041022] Fixed spelling mistake in user interface of XML macros. 
+<LI>[041022] Removed CVS &quot;<TT>Log:</TT>&quot; field from all of the template files - undesirable. 
+<LI>[041022] Added HTTP highlighting to the text document template. 
+<LI>[041021] Enhanced Wiki language template. 
+<LI>[041021] Added Windows CUA emulation mode. 
+<LI>[041019] Fixed insert binding for Nedit emulation mode 
+<LI>[041019] Fixed 
+<A HREF="m9typ024.html">perl(9)</A> highlighting rules. Using incorrect syntax. 
+<LI>[041016] Fixed UNIX make files for building NE in debug mode. 
+<LI>[041016] Fixed termcap entry for <B>^@</B> key (<TT>C-space</TT>). (Thanks to Bob Paddock for noting ommission) 
+<LI>[041016] Added <B>M-%</B> binding to 
+<A HREF="m2cmd102.html">query-replace-string(2)</A> as built in binding. (Thanks to Bob Paddock) 
+<LI>[041016] Added Ruby programming language support. 
+<LI>[041015] Corrected problem with directory listing loosing highlighting (a 
+<A HREF="m4fil015.html">@mna(4)</A> problem). 
+<LI>[041014] Within OSD, fixed spelling mistake. <I>Loose</I> -&gt; <I>Lose</I>. 
+<LI>[041014] Fixed 
+<A HREF="m3mac070.html">delete-hilight-lines(3)</A> failure when buffer file has changed. 
+<LI>[041009] Fixed osd entry scheme as the cursor was not visible in MS Dev-Studio Colors. 
+<LI>[041009] Added Wiki language template 
+<LI>[041003] Wheel mouse binding added as default. 
+<LI>[041003] Catch long lines from cut and paste, resolve crash. 
+<LI>[041002] Added X-Windows drag and drop support using <B>xdnd</B>. 
+<LI>[040930] Added HTML, XML and SGML close bracket auto expansion. 
+<LI>[040930] Added XML and HTML verification macro. Added XML utilities macros to allow next and previous tag to be matched. The XML utilities are also used by SGML. 
+<LI>[040930] Added <TT>xxxx-pre-expand-abbrev</TT> hook so that macros may add their own expansion methods. 
+<LI>[040917] Added <TT>&lt;...&gt;</TT> as supported fences. 
+<LI>[040917] Fixed the <TT>-1</TT> 
+<A HREF="m2cmd007.html">add-next-line(2)</A> ignore line feature. 
+<LI>[040915] 
+<A HREF="m3mac057.html">cvs-add(3)</A> looks for a Tags file in the CVS directory and sets the GUI state appropriately. Added server to the 
+<A HREF="m3mac057.html">cvs-state(3)</A> line mangling. 
+<LI>[040909] 
+<A HREF="m3mac057.html">cvs(3)</A> GUI updated with new features. Added repository set up to the UI. Reduced wait time on long commands by using ipipe. Allowed <TT>-z</TT> option to be used with 
+<A HREF="m3mac057.html">%cvs-com(5)</A>. 
+<LI>[040828] 
+<A HREF="m2cmd148.html">About</A> page includes the century in the date (suggested by -Th). 
+<LI>[040824] Fix for man page hyper-link when includes <TT>-/./_</TT> characters. 
+<LI>[040814] Linux manual page formatting fixes. </UL><P><B>Minor Patch - July 2004</B> <UL><P>
+<LI>[040728] Released patches. 
+<LI>[040728] Corrected Linux kernel 2.6 pty allocation. 
+<LI>[040630] Linux manual page formatting fixes. 
+<LI>[040518] Comment definition corrections for C, C++ and java, notable Doxygen comment formation omitted. 
+<LI>[040518] Corrected block comment formatting, adding an extra space at the end of the comment. </UL><P><B>7th Release - March 2004</B> <UL><P>
 <LI>[040326] Release wrapped - public release tag is <B>20040301</B> for executable and macros. 
 <LI>[040326] Support for MAC O/S Darwin image. Console only (no build machine available for X-11 version). 
 <LI>[040326] Introduction of UPX on Windows and DOS executables for <B>ne</B> only. 
@@ -56,7 +440,7 @@ MicroEmacs '04 - Origins</H1>
 <A HREF="m3mac033.html">cygwin(3)</A> BASH shell support under Windows. Corrected the shell operation with macro layer for echo and completion. 
 <LI>[040224] Add new <I>narrow out unhilighted lines</I> feature. 
 <LI>[040223] Add new buffer tab list toolbar tool for rapid access to buffers via a top or bottom toolbar. 
-<LI>[040223] Add <TT>&lt;&gt;</TT> buttons to toolbar mode lines to scroll left and right. 
+<LI>[040223] Add <TT>&lt;&gt;</TT> buttons to tool-bar mode lines to scroll left and right. 
 <LI>[040223] Fixed. Calender day is off by one when going backwards to before 2004. 
 <LI>[040223] Fixed. Executing 'me' (<B>user-setup</B> <B>-&gt;</B> <B>Current</B>) breaks 
 <A HREF="m3mac039.html">auto-spell(3)</A> until a main spell command , 
@@ -91,8 +475,8 @@ MicroEmacs '04 - Origins</H1>
 <A HREF="m5var066.html">$progname(5)</A> may not be fully expanded (has just &quot;me&quot;) which may lead to a ctags generation error and an alternate fix to 
 <A HREF="m5var057.html">$search-path(5)</A>. 
 <LI>[040210] Fixed. On UNIX, 
-<A HREF="m2cmd056.html">find-file(2)</A> of a symbolic link which points to a directory results in a bad dir listing. The list of files is correct but the stats are all wrong (found on sunos 5.8). 
-<LI>[040210] Fix subtle ftp bug with alias ftp addressed. Create an ftp site &quot;<TT>ftp://test/</TT>&quot; say with user name foo and passwd bar and then load in &quot;<TT>ftp://test/dir1/</TT>&quot; the buffer file name is correctly set as &quot;<TT>ftp://test/dir1/</TT>&quot; but the 'Directory listing of:' line is set to &quot;<TT>ftp://foo@test/dir1/</TT>&quot;. Firstly the user may wish the '<I>foo</I>' to be hidden but secondly with the introduction of being able to click on the '<I>Directory</I> <I>listing of:</I>' line this has introduced a subtle inefficiency/bug, if I click on the '<TT>foo@test</TT>' ME will load &quot;<TT>ftp://foo@test/</TT>&quot; not &quot;<TT>ftp://test/</TT>&quot; which to ME is a completely different file. This can in turn lead to &quot;<TT>ftp://foo@test/dir1/</TT>&quot; being loaded so you can end up with 2 copies of every dir being loaded! The fix is to make the '<I>Directory listing of:</I>' line the same, i.e. &quot;<TT>ftp://test/dir1/</TT>&quot; 
+<A HREF="m2cmd056.html">find-file(2)</A> of a symbolic link which points to a directory results in a bad dir listing. The list of files is correct but the statistics are all wrong (found on SunOS 5.8). 
+<LI>[040210] Fix subtle ftp bug with alias ftp addressed. Create an ftp site &quot;<TT>ftp://test/</TT>&quot; say with user name foo and password bar and then load in &quot;<TT>ftp://test/dir1/</TT>&quot; the buffer file name is correctly set as &quot;<TT>ftp://test/dir1/</TT>&quot; but the 'Directory listing of:' line is set to &quot;<TT>ftp://foo@test/dir1/</TT>&quot;. Firstly the user may wish the '<I>foo</I>' to be hidden but secondly with the introduction of being able to click on the '<I>Directory</I> <I>listing of:</I>' line this has introduced a subtle inefficiency/bug, if I click on the '<TT>foo@test</TT>' ME will load &quot;<TT>ftp://foo@test/</TT>&quot; not &quot;<TT>ftp://test/</TT>&quot; which to ME is a completely different file. This can in turn lead to &quot;<TT>ftp://foo@test/dir1/</TT>&quot; being loaded so you can end up with 2 copies of every dir being loaded! The fix is to make the '<I>Directory listing of:</I>' line the same, i.e. &quot;<TT>ftp://test/dir1/</TT>&quot; 
 <LI>[040208] Fixed. &quot;<B>-n</B>&quot; command line option to a console build causes a option failure and the executable does not run. 
 <LI>[040208] Corrected UNIX jasspa tree search when executable is in CWD and there is no executable path. 
 <LI>[040206] <B>RC4 - Release Candidate 4 - MicroEmacs '04</B> 
@@ -107,8 +491,8 @@ MicroEmacs '04 - Origins</H1>
 <A HREF="m3mac057.html">%cvs-com(5)</A> variable to define the CVS command. 
 <LI>[040203] XML template extended to include javascript. 
 <LI>[040130] 2nd iteration of prototype and near final revision of new user setup. 
-<UL><P>Following an internal review of RC3 then it has been decided to address the issues of user configuration prior to a full release. This specifically addresses the location of user MicroEmacs configuration directories and search paths. User configuration has traditionally required the setting of external environment variables such as &quot;$MEPATH&quot; and for the user to create a private directory to store user settings. This is proving difficult for new users who just want to run the editor. RC4 and subsequent releases will address these problems by determining the correct location for configuration files and create the appropriate files and directories under user control. </UL>
-<UL><P>The net result of these changes should significantly simplify installation and setup as follows: <UL><P>
+<LI>Following an internal review of RC3 then it has been decided to address the issues of user configuration prior to a full release. This specifically addresses the location of user MicroEmacs configuration directories and search paths. User configuration has traditionally required the setting of external environment variables such as &quot;$MEPATH&quot; and for the user to create a private directory to store user settings. This is proving difficult for new users who just want to run the editor. RC4 and subsequent releases will address these problems by determining the correct location for configuration files and create the appropriate files and directories under user control. 
+<LI>The net result of these changes should significantly simplify installation and setup as follows: 
 <LI>All platforms will be able to run without any manual user setup or the requirement for specific MicroEmacs environment variables. 
 <LI>User defined directories and configuration files will be created under editor control on detecting a new user. 
 <LI>Existing installations using <TT>$MEPATH</TT> will be backwards compatible with the new build. 
@@ -125,7 +509,7 @@ MicroEmacs '04 - Origins</H1>
 <A HREF="m3osd000.html">user-setup(3)</A> no longer supports setting of name. 
 <LI>Internal variables 
 <A HREF="m5var088.html">$user-name(5)</A> and 
-<A HREF="m5var089.html">$user-path(5)</A> are defined. </UL></UL><UL><P>
+<A HREF="m5var089.html">$user-path(5)</A> are defined. 
 <LI>[040128] Fixed re-style for C/C++ comments in vertical alignment. 
 <LI>[040123] &quot;<I>user-setup</I>&quot; mouse button selection fixed. 
 <LI>[040123] <TT>C-x 3</TT> mapped to 
@@ -160,7 +544,7 @@ MicroEmacs '04 - Origins</H1>
 <A HREF="m3mac025.html">restyle-buffer(3)</A> fix when mode defined - thanks to Pedro Gomes. 
 <LI>[040113] 
 <A HREF="m2cmd161.html">create-frame(2)</A> canvas size fix on creating internal frame 
-<LI>[040112] Hilighting fix for toolbar Dir Files list with symbolic links 
+<LI>[040112] Highlighting fix for tool-bar Dir Files list with symbolic links 
 <LI>[040109] <B>RC2 - Release Candidate 2 - MicroEmacs '04</B> 
 <LI>[040109] PHP template added. 
 <LI>[040108] <B>RC1 - Release candidate 1 - MicroEmacs '04</B> 
@@ -240,14 +624,14 @@ MicroEmacs '04 - Origins</H1>
 <LI>[030610] Package making files for SunOS. 
 <LI>[030608] Changed the mouse default behavior to do a move yank. 
 <LI>[030608] Tools. Removed superfluous endif. 
-<LI>[030608] Toolbar. Only update the toolbar if its the top level command, i.e. the screen-update is not required due to spell-buffer (say). 
+<LI>[030608] Toolbar. Only update the tool-bar if its the top level command, i.e. the screen-update is not required due to spell-buffer (say). 
 <LI>[030608] MS-Shift region. Check for 
 <A HREF="m2cmd159.html">kill-rectangle(2)</A> and treat like we do the 
 <A HREF="m2cmd081.html">kill-region(2)</A>. 
 <LI>[030608] Added new -ve argument to 
 <A HREF="m2cmd073.html">insert-file(2)</A> which inserts only a section of the file. Optimized the 
 <A HREF="m2cmd158.html">file-op(2)</A> move command to try just moving the file first. 
-<LI>[030608] Changed the addLine function so it always flags the line as changed, this avoids some bizarre issues when macros delete an insert lines of text (best shown by the buffer-info toolbar tool). 
+<LI>[030608] Changed the addLine function so it always flags the line as changed, this avoids some bizarre issues when macros delete an insert lines of text (best shown by the buffer-info tool-bar tool). 
 <LI>[030608] Added new macro oriented buffer-info numeric argument. Fixed bug in the ignore white-space buffer compare. 
 <LI>[030608] Fixed default printer selection issues - not complete. 
 <LI>[030608] Fixed a minor debug build issue in undo.c. 
@@ -321,7 +705,7 @@ MicroEmacs '04 - Origins</H1>
 <LI>[021013] Updated mode change to use just a buffer type change flag. 
 <LI>[021013] Added 
 <A HREF="m4fil015.html">@mna(4)</A> to all find-files incase there are problems. 
-<LI>[021013] Broke the toolbar tools out of the abbrev eaf file into there own tool eaf file. 
+<LI>[021013] Broke the tool-bar tools out of the abbrev eaf file into there own tool eaf file. 
 <LI>[021013] Added item-list and tag generation support to VB, fixed a few hilight issues. 
 <LI>[021013] Shrunk the combo button size now that osd works better. 
 <LI>[021013] Added &quot;<B>!force</B>&quot;s to all &quot;unbind&quot;'s to avoid bells. 
@@ -352,13 +736,13 @@ MicroEmacs '04 - Origins</H1>
 <LI>[020723] Directory list - check for and fail on urls! 
 <LI>[020723] Added new &quot;<TT>\\L</TT>&quot; -&gt; x-line, &quot;<TT>\\X</TT>&quot; -&gt; x-command special keys to improve eaf file read and portability. 
 <LI>[020711] Added a system clipboard interaction disable flag to 
-<A HREF="m5var047.html">$system(5)</A> so the toolbar can stop messing up the clipboard whenever it updates. 
+<A HREF="m5var047.html">$system(5)</A> so the tool-bar can stop messing up the clipboard whenever it updates. 
 <LI>[020711] Fixed an uninitialized variable bug breaking the FTP logoff operation of 
 <A HREF="m2cmd158.html">file-op(2)</A>. 
 <LI>[020629] HTML Added table creation and external preview commands. 
-<LI>[020629] Fixed system clipboard being trashed problem by disabling interaction with it during toolbar updates. 
+<LI>[020629] Fixed system clipboard being trashed problem by disabling interaction with it during tool-bar updates. 
 <LI>[020629] Changed the List Functions to List Items in buffer setup. 
-<LI>[020629] Added new kill list tool to the toolbar. 
+<LI>[020629] Added new kill list tool to the tool-bar. 
 <LI>[020629] Added drag and drop support to directory view. Can now use this to load and copy/move files. 
 <LI>[020629] Changed the FOLDER tags to FOLD and improved the eaf files. 
 <LI>[020629] Added support for item-lists to C++ and added support for classes to C as the header is commonly used. 
@@ -431,7 +815,7 @@ MicroEmacs '04 - Origins</H1>
 <LI>[011115] Reworked the buffer hooks such that mybhook/myehook can be defined. 
 <LI>[011031] Fixed a corking crash! (load random.c and do 2222 replace-string &quot;\n&quot; &quot;&quot;). 
 <LI>[011029] hklatex.emf item-list support (hit &quot;f7&quot;). 
-<LI>[011028] hklatex.emf has a greatly improved pseudo hilighting. 
+<LI>[011028] hklatex.emf has a greatly improved pseudo highlighting. 
 <LI>[011028] Tweaked the &quot;@fs&quot; variable to improve its usability. 
 <LI>[011028] set-position can now store the mark position. 
 <LI>[011028] Fixes to windows file times. 
@@ -441,7 +825,7 @@ MicroEmacs '04 - Origins</H1>
 <LI>[011025] Utilized the latest screen-update improvements to make the gdiff screen update rock solid. 
 <LI>[011025] mlGetChar fix. The key &quot;return&quot; was the 78th special char, i.e. &quot;SKEY_SPEC&quot;|'N' and as the mlGetChar did not check the &quot;SKEY_SPEC&quot; bits, pressing return was like pressing 'N' so on a &quot;Y/N&quot; prompt try pressing return, its like saying No! . 
 <LI>[011016] Spelling dictionaries renamed with ISO naming scheme. Because of the language changes, you need to rename your personal dictionary to lsdpengb.edf for British and lsdpenus.edf for American. 
-<LI>[011016] Hilighting brackets/braces as requested from user base. The hilight braces required some other subtle changes to screen-update and show-region and the addition of the &quot;rbin&quot; mode means that this version is incompatible with the last in quite a few areas. 
+<LI>[011016] Highlighting brackets/braces as requested from user base. The highlight braces required some other subtle changes to screen-update and show-region and the addition of the &quot;rbin&quot; mode means that this version is incompatible with the last in quite a few areas. 
 <LI>[011016] Fixed mouse handler (turns out that if the pick event was lost (use &quot;@cg&quot; or an error) then me would lock!). 
 <LI>[011016] Extended control on indent tab and return behavior (can disable the tab behavior). 
 <LI>[011016] C++ name space indentation support. 
@@ -508,7 +892,7 @@ MicroEmacs '04 - Origins</H1>
 <LI>[000503] Color printer support (Lexmark). </UL><P><B>2nd Release - Alpha patch - March 2000</B> <UL><P>
 <LI>[000322] FIRST PUBLIC RELEASE OF RENDERED FONT SUPPORT . 
 <LI>[000322] Alpha build revision contains version information for 2000/03/22 
-<LI>[000322] Internal re-organisation of platform option selection. 
+<LI>[000322] Internal reorganization of platform option selection. 
 <LI>[000322] Minor fixes X-Windows color selection. 
 <LI>[000322] Minor fixes in the OSD. 
 <LI>[000322] Reviewed the documentation mode. A text description of the using the documentation modes is included in the distribution in the text directory. 
@@ -524,12 +908,12 @@ MicroEmacs '04 - Origins</H1>
 <A HREF="m3mac049.html">uniq(3)</A> operates as the UNIX of the same name. used with sort, and reduces to unique lines. 
 <LI>[000126] Character translation; addition of character translation macros when moving between character sets. Accessible from Menu -&gt; Format -&gt; Change Buffer Char Set. 
 <LI>[000126] Support for additional character sets, Windows GREEK, Windows TURKISH. 
-<LI>[000126] Line hilighting selection with the use of the mouse and auto search. When using the mouse selection to set up the line hilighting when invoked from a <TT>right-mouse -&gt; Hilight Line -&gt; color/remove</TT> selection; the macro determines the mouse selected region and makes an appropriate decision as to how the line hilighting scheme is to be applied. The following rules apply to the mouse selection:- <UL><P>
-<LI>Point in line selected (i.e. mark == point) Hilight the line only. 
+<LI>[000126] Line highlighting selection with the use of the mouse and auto search. When using the mouse selection to set up the line highlighting when invoked from a <TT>right-mouse -&gt; Hilight Line -&gt; color/remove</TT> selection; the macro determines the mouse selected region and makes an appropriate decision as to how the line highlighting scheme is to be applied. The following rules apply to the mouse selection:- <UL><P>
+<LI>Point in line selected (i.e. mark == point) Highlight the line only. 
 <LI>Region in the line selected. Both point and mark are on the same line. Extract the selected text and hilight all lines that match the search pattern. The color &quot;remove&quot; is also pattern matched to selectively remove lines. 
-<LI>Region selected mark &amp; point on different lines Block up the region with appropriate hilight. 
-<LI>Note that line hilighting may be safely used in a folded buffer. </UL><P></UL><UL><P>
-<LI>[000126] Addition of special rendered space character. You may toggle this from the keyboard using a macro in your user.emf as follows:- 
+<LI>Region selected mark &amp; point on different lines Block up the region with appropriate highlight. 
+<LI>Note that line highlighting may be safely used in a folded buffer. </UL><P></UL><UL><P>
+<LI>[000126] Addition of special rendered space character. You may toggle this from the keyboard using a macro in your user.emf as follows:- <UL>
 <PRE>;&nbsp;Macro&nbsp;to&nbsp;enable&nbsp;the&nbsp;display&nbsp;of&nbsp;TAB/CR.&nbsp;Note&nbsp;that&nbsp;we 
 ;&nbsp;force&nbsp;the&nbsp;screen&nbsp;to&nbsp;be&nbsp;updated. 
 define-macro&nbsp;tab-display 
@@ -575,7 +959,7 @@ add-spell-rule&nbsp;&quot;*&quot;&nbsp;&quot;-?\\([0-9]*.\\)?[0-9]+\\(Kg\\|Kb\\|
 <LI>[991101] Modified compare-windows to ignore white space by default, compare-windows-exact performs an exact character for character comparison. 
 <LI>[991101] Enhanced the tags support to handle multiple tags and recursive directory tree searching. 
 <LI>[991101] Implemented osd-help, a gui front end to the on-line help. Required changes to the help system which gives macros access to the on-line help buffer, needed for the index and search. 
-<LI>[991101] Over-hauled the hilighting scheme files and editor to support the disabling of buffer hilighting. 
+<LI>[991101] Over-hauled the highlighting scheme files and editor to support the disabling of buffer highlighting. 
 <LI>[991101] Many bugs fixed on all platforms, in particular unix cutting and pasting (crashes exceed) and focus problems and NT exit delay. 
 <LI>[991101] Added tab and newline character printing in buffers. 
 <LI>[991101] Introduced message line variables &quot;@mx&quot; and &quot;@mxa&quot;. 
@@ -615,9 +999,9 @@ add-spell-rule&nbsp;&quot;*&quot;&nbsp;&quot;-?\\([0-9]*.\\)?[0-9]+\\(Kg\\|Kb\\|
 <LI>[990101] Implemented Auto-Spell utility. 
 <LI>[990101] Introduction of private macro variables of the form &quot;.name&quot; and &quot;.macro.name&quot;. 
 <LI>[990101] Port to Sun Solaris Intel platform (2.6). 
-<LI>[990101] Merged the init-hilight and hilight-token into the single hilight command. Similarly for indent. 
+<LI>[990101] Merged the init-hilight and hilight-token into the single highlight command. Similarly for indent. 
 <LI>[990101] Enhanced the regexp support in hilight tokens, vastly improving it capability and usability. Similarly for indent tokens. 
-<LI>[990101] Reorganized the hilighting files. Introduction of the scheme-editor and Hilight Search OSD's. 
+<LI>[990101] Reorganized the highlighting files. Introduction of the scheme-editor and Highlight Search OSD's. 
 <LI>[990101] Implemented box character override support ($system bit 0x10000) on Win32 and Xterm platforms. 
 <LI>[990101] Microsoft Windows native console support. </UL><P><B>Minor Patch - October 1998</B> <UL><P>
 <LI>[981001] Enhanced the operation of the Window pipes. 
@@ -687,13 +1071,15 @@ add-spell-rule&nbsp;&quot;*&quot;&nbsp;&quot;-?\\([0-9]*.\\)?[0-9]+\\(Kg\\|Kb\\|
 <LI>Daniel Lawrence turned MicroEmacs into an editor for the masses, it is his work that ultimately made MicroEmacs so popular. Daniel did a tremendous amount of work, both adding features and supporting other platforms resulting in the MicroEmacs v3.8 release on which JASSPA's MicroEmacs is based. </UL><P><B>Late 1985/early 1986</B> <UL><P>
 <LI>Dave Conroy, the original author, first developed the original code base for private use. Various people asked Dave for a copy of the program and it was distributed without concern for copyrights or ownership as was the custom of that era. </UL></UL>
 <H2>Work In Progress or Planned </H2>
-<UL><P>Development of MicroEmacs '04 is an on-going process, follows is a list of work items which is currently being undertaken or planned:- <UL><P>
+<UL><P>Development of MicroEmacs is an on-going process, follows is a list of work items which is currently being undertaken or planned:- <UL><P>
 <LI>Horizontal scroll bars. 
 <LI>On-line tutorial to help beginners get up and running. 
 <LI>Native printer support for the generation of postscript. 
 <LI>GNU Emacs compatibility macro file. </UL></UL>
 <H2>Release History </H2>
-<UL><P><B>January 2004</B> 
+<UL><P><B>May 2005</B> 
+<BR><UL>8th Major Release - MicroEmacs '05. </UL>
+<P><B>January 2004</B> 
 <BR><UL>7th Major Release - MicroEmacs '04. </UL>
 <P><B>December 2002</B> 
 <BR><UL>6th Major Release - MicroEmacs '02. </UL>
@@ -719,7 +1105,7 @@ add-spell-rule&nbsp;&quot;*&quot;&nbsp;&quot;-?\\([0-9]*.\\)?[0-9]+\\(Kg\\|Kb\\|
 <H2>Documentation </H2>
 <UL><P>The documentation is all written in UNIX <B>nroff(1)</B> and converted to HTML, Microsoft Windows Help File format and MicroEmacs Help file format. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2004</I>
-<BR><I>Last Modified: 2004/03/26</I>
-<BR><I>Generated On: 2004/03/26</I>
+<P><I>(c) Copyright JASSPA 2005</I>
+<BR><I>Last Modified: 2005/05/14</I>
+<BR><I>Generated On: 2005/05/14</I>
 </BODY></HMTL>
