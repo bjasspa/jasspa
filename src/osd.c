@@ -5749,6 +5749,7 @@ do_control_inter:
     }
     clexec = oldClexec ;
     TTallKeys = oldAllKeys ;
+    TTallKeysFlush() ;
     
     return ii ;
 }

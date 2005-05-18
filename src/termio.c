@@ -948,6 +948,32 @@ addKeyToBufferOnce (meUShort cc)
         addKeyToBuffer (cc);
 }
 
+/* when TTallKeys is set to 1 all mouse move events are added to the key stack
+ * even if the key is not bound. Due to the speed at which windows generates
+ * mouse move events, after exiting an OSD dialog mouse move keys can still be
+ * in the buffer and this will generate problems as the keys are not bound (e.g.
+ * breaks the main menus repeat undo function) - remove the extras.
+ */
+void
+TTallKeysFlush(void)
+{
+    meUByte nidx ;
+    meInt cc ;
+    
+    while(TTnoKeys > 0)
+    {
+        if(!TTnextKeyIdx)
+            nidx = KEYBUFSIZ ;
+        else
+            nidx = TTnextKeyIdx - 1 ;
+        cc = (TTkeyBuf[nidx] & (ME_SPECIAL|0x0ff)) ;
+        if((cc < (ME_SPECIAL|SKEY_mouse_move)) || (cc > (ME_SPECIAL|SKEY_mouse_move_5)))
+            break ;
+        TTnextKeyIdx = nidx ;
+        TTnoKeys-- ;
+    }
+}
+
 #ifdef _ME_CONSOLE
 #ifdef _TCAP
 #ifndef _USETPARM
