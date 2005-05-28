@@ -7,12 +7,12 @@
 #  System        : MicroEmacs
 #  Module        : CD-ROM image
 #  Object Name   : $RCSfile: Makefile,v $
-#  Revision      : $Revision: 1.12 $
-#  Date          : $Date: 2005-05-15 18:04:41 $
+#  Revision      : $Revision: 1.13 $
+#  Date          : $Date: 2005-05-28 15:26:03 $
 #  Author        : $Author: jon $
 #  Created By    : Jon Green
 #  Created       : Sun Aug 10 11:57:07 2003
-#  Last Modified : <050515.1807>
+#  Last Modified : <050524.2354>
 #
 #  Description   : Construct the ISO CD-ROM images of MicroEmacs
 #
@@ -258,8 +258,12 @@ $(FDIR) $(EDIR):
 #
 $(FDIR)/ne $(EDIR)/ne:	ne.txt
 	$(MKDIR) $@
+	$(GUNZIP) -c $(RELDIR)/jasspa-ne-linux-i386-2.2-20050505.gz > $@/nelinux22
+	chmod a+rx $@/nelinux22
 	$(GUNZIP) -c $(RELDIR)/jasspa-ne-linux-i386-2.4-20050505.gz > $@/nelinux24
 	chmod a+rx $@/nelinux24
+	$(GUNZIP) -c $(RELDIR)/jasspa-ne-linux-i386-2.4-ncurses-20050505.gz > $@/nelinux24c
+	chmod a+rx $@/nelinux24c
 	$(GUNZIP) -c $(RELDIR)/jasspa-ne-linux-i386-2.6-20050505.gz > $@/nelinux26
 	chmod a+rx $@/nelinux26
 	$(GUNZIP) -c $(RELDIR)/jasspa-ne-sun-i386-58-20050505.gz > $@/nesun86_58
@@ -386,8 +390,12 @@ $(FDIR)/me $(EDIR)/me: me.txt
 	$(GUNZIP) -c $(RELDIR)/jasspa-metree-20050505.tar.gz | ($(CD) $@; tar xf -)
 	$(MV) $@/jasspa/* $@
 	$(RMDIR) $@/jasspa
+	$(GUNZIP) -c $(RELDIR)/jasspa-me-linux-i386-2.2-20050505.gz > $@/melinux22
+	chmod a+rx $@/melinux22
 	$(GUNZIP) -c $(RELDIR)/jasspa-me-linux-i386-2.4-20050505.gz > $@/melinux24
 	chmod a+rx $@/melinux24
+	$(GUNZIP) -c $(RELDIR)/jasspa-me-linux-i386-2.4-ncurses-20050505.gz > $@/melinux24c
+	chmod a+rx $@/melinux24c
 	$(GUNZIP) -c $(RELDIR)/jasspa-me-linux-i386-2.6-20050505.gz > $@/melinux26
 	chmod a+rx $@/melinux26
 	$(GUNZIP) -c $(RELDIR)/jasspa-me-sun-sparc-56-20050505.gz > $@/mesunos56
@@ -447,7 +455,9 @@ $(FDIR)/archive:
 	$(CP) $(RELDIR)/jasspa-me-hpux-pa-11.00-20050505.gz $@/bin
 	$(CP) $(RELDIR)/jasspa-me-ibm-aix-4-20050505.gz $@/bin
 	$(CP) $(RELDIR)/jasspa-me-ibm-aix-5-20050505.gz $@/bin
+	$(CP) $(RELDIR)/jasspa-me-linux-i386-2.2-20050505.gz $@/bin
 	$(CP) $(RELDIR)/jasspa-me-linux-i386-2.4-20050505.gz $@/bin
+	$(CP) $(RELDIR)/jasspa-me-linux-i386-2.4-ncurses-20050505.gz $@/bin
 	$(CP) $(RELDIR)/jasspa-me-linux-i386-2.6-20050505.gz $@/bin
 	$(CP) $(RELDIR)/jasspa-me-ms-win32-20050505.zip $@/bin
 	$(CP) $(RELDIR)/jasspa-me-ms-win32s-20050505.zip $@/bin
@@ -469,7 +479,9 @@ $(FDIR)/archive:
 	$(CP) $(RELDIR)/jasspa-ne-hpux-pa-11.00-20050505.gz $@/bin
 	$(CP) $(RELDIR)/jasspa-ne-ibm-aix-4-20050505.gz $@/bin
 	$(CP) $(RELDIR)/jasspa-ne-ibm-aix-5-20050505.gz $@/bin
+	$(CP) $(RELDIR)/jasspa-ne-linux-i386-2.2-20050505.gz $@/bin
 	$(CP) $(RELDIR)/jasspa-ne-linux-i386-2.4-20050505.gz $@/bin
+	$(CP) $(RELDIR)/jasspa-ne-linux-i386-2.4-ncurses-20050505.gz $@/bin
 	$(CP) $(RELDIR)/jasspa-ne-linux-i386-2.6-20050505.gz $@/bin
 	$(CP) $(RELDIR)/jasspa-ne-msdos-djgpp1-20050505.zip $@/bin
 	$(CP) $(RELDIR)/jasspa-ne-msdos-djgpp2-20050505.zip $@/bin
