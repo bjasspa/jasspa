@@ -5,7 +5,7 @@
 #
 #  Created By    : Jon Green
 #  Created       : Fri Feb 6 22:33:31 2004
-#  Last Modified : <050514.1818>
+#  Last Modified : <050524.2234>
 #  Description   : Creates the RedHat directory structure for building a RPM
 #                  file.
 #
@@ -17,8 +17,11 @@ VER_DAY="05"
 VERSION="20${VER_YEAR}${VER_MONTH}${VER_DAY}"
 METREE=jasspa-metree-${VERSION}.tar.gz
 MESRC=jasspa-mesrc-${VERSION}.tar.gz
-MEBIN=jasspa-me-linux-i386-2.4-${VERSION}.gz
-NEBIN=jasspa-ne-linux-i386-2.4-${VERSION}.gz
+KERNEL_MAJOR=`uname -r | cut -c 1-1`
+KERNEL_MINOR=`uname -r | cut -c 3-3`
+KERNEL_VERSION=${KERNEL_MAJOR}.${KERNEL_MINOR}
+MEBIN=jasspa-me-linux-i386-${KERNEL_VERSION}-${VERSION}.gz
+NEBIN=jasspa-ne-linux-i386-${KERNEL_VERSION}-${VERSION}.gz
 #
 # Create the file ~/.rpmmacro this is required to run as a user rather than
 # root.
