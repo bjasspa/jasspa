@@ -4,9 +4,10 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <050515.1813>
+>  Last Modified : <050524.2247>
 >
 
+    
 8th Release - May 2005
 
   Upgrade Notes
@@ -43,6 +44,24 @@
       in a black console.
 
   History
+
+    [050525] Re-released 20050505 source + Fedora + 2.6 + CD distribution.
+
+    [050524] Linux  2.6  changed  to   libncurses   by  default   rather  than
+             libtermcap.  Would  appear  that  some  Linux  distributions  are
+             dropping libtermcap installation.
+
+    [050522] Re-released 20050505 source + CD distribution.
+
+    [050522] NE build correction for osd bug, conditional compilation required
+             to for mouse only code.
+    
+    [050518] Re-released 20050505 Windows builds
+    
+    [050518] Fixed  windows  osd bug which break the main menus undo  feature,
+             extra  mouse-move keys generated  during OSD interaction  trashes
+             the @cl (last  command)  value so the menu undo only ever  undoes
+             the last. (Reported post release)
 
     [050508] JASSPA  MicroEmacs  8th release - final. Core and macro  versions
              20050505.
