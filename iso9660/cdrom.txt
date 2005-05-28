@@ -3,10 +3,10 @@
 >
 >  Created By    : Jon Green
 >  Created       : Sun Aug 10 16:10:17 2003
->  Last Modified : <050515.1725>
+>  Last Modified : <050525.0108>
 
 THE JASSPA CDROM
-Version 1.4 - 15th May 2005
+Version 1.4 - 24th May 2005
 
 Introduction
 
@@ -193,7 +193,7 @@ Revision History
 
     Version 1.4 -  5th May 2005
 
-        9th Release. MicroEamcs '05 (May)
+        8th Release. MicroEamcs '05 (May)
 
     Version 1.3 - 27th March 2004
 
@@ -252,7 +252,9 @@ me/medosdj2.exe                       -- MS-DOS DJGPP v2.x (long names)
 me/mehpux10                           -- HP-UX 10.20+ executable
 me/mehpux11                           -- HP-UX 11.00+ executable
 me/meirix6                            -- SGI IRIX 6 executable
-me/melinux24                          -- Linux 2.4.x executable
+me/melinux22                          -- Linux 2.2.x executable
+me/melinux24                          -- Linux 2.4.x (libtermcap) executable 
+me/melinux24c                         -- Linux 2.4.x (libncurses) executable
 me/melinux26                          -- Linux 2.6.x executable
 me/memac10_3                          -- Apple Mac OS-X 10.3 console executable
 me/mexmac10_3                         -- Apple Mac OS-X 10.3 console + X-Winoows executable
@@ -277,7 +279,9 @@ ne/nedosdj2.exe                       -- MS-DOS DJGPP v2.x (long names)
 ne/nehpux10                           -- HP-UX 10.20+ executable
 ne/nehpux11                           -- HP-UX 11.00+ executable
 ne/neirix6                            -- SGI IRIX 6 executable
-ne/nelinux24                          -- Linux 2.4.x executable
+ne/nelinux22                          -- Linux 2.2.x executable
+ne/nelinux24                          -- Linux 2.4.x (libtermcap) executable
+ne/nelinux24c                         -- Linux 2.4.x (libncurses) executable
 ne/nelinux26                          -- Linux 2.6.x executable
 ne/nemac10_3                          -- Apple Mac OS-X 10.3 console executable
 me/meopenbsd34                        -- OpenBSD 3.4 executable
@@ -312,7 +316,9 @@ archive/bin/jasspa-me-hpux-pa-10.20-20050505.gz
 archive/bin/jasspa-me-hpux-pa-11.00-20050505.gz
 archive/bin/jasspa-me-ibm-aix-4-20050505.gz
 archive/bin/jasspa-me-ibm-aix-5-20050505.gz
+archive/bin/jasspa-me-linux-i386-2.2-20050505.gz
 archive/bin/jasspa-me-linux-i386-2.4-20050505.gz
+archive/bin/jasspa-me-linux-i386-2.4-ncurses-20050505.gz
 archive/bin/jasspa-me-linux-i386-2.6-20050505.gz
 archive/bin/jasspa-me-ms-win32-20050505.zip
 archive/bin/jasspa-me-ms-win32s-20050505.zip
@@ -334,7 +340,9 @@ archive/bin/jasspa-ne-hpux-pa-10.20-20050505.gz
 archive/bin/jasspa-ne-hpux-pa-11.00-20050505.gz
 archive/bin/jasspa-ne-ibm-aix-4-20050505.gz
 archive/bin/jasspa-ne-ibm-aix-5-20050505.gz
+archive/bin/jasspa-ne-linux-i386-2.2-20050505.gz
 archive/bin/jasspa-ne-linux-i386-2.4-20050505.gz
+archive/bin/jasspa-ne-linux-i386-2.4-ncurses-20050505.gz
 archive/bin/jasspa-ne-linux-i386-2.6-20050505.gz
 archive/bin/jasspa-ne-ms-win32-20050505.zip
 archive/bin/jasspa-ne-msdos-djgpp1-20050505.zip
@@ -424,7 +432,9 @@ me/mefreebsd52                        -- FreeBSD 5.2 executable
 me/mehpux10                           -- HP-UX 10.20+ executable
 me/mehpux11                           -- HP-UX 11.00+ executable
 me/meirix6                            -- SGI IRIX 6 executable
-me/melinux24                          -- Linux 2.4.x executable
+me/melinux22                          -- Linux 2.2.x executable
+me/melinux24                          -- Linux 2.4.x (libtermcap) executable
+me/melinux24c                         -- Linux 2.4.x (libncurses) executable
 me/melinux26                          -- Linux 2.6.x executable
 me/memac10_3                          -- Apple Mac OS-X 10.3 console executable
 me/mexmac10_3                         -- Apple Mac OS-X 10.3 console + X-Winoows executable
@@ -447,7 +457,10 @@ me/mefreebsd52                        -- FreeBSD 5.2 executable
 ne/nehpux10                           -- HP-UX 10.20+ executable
 ne/nehpux11                           -- HP-UX 11.00+ executable
 ne/neirix6                            -- SGI IRIX 6 executable
-ne/nelinux24                          -- Linux 2.4.x executable
+ne/nelinux22                          -- Linux 2.2.x executable
+ne/nelinux24                          -- Linux 2.4.x (libtermcap) executable
+ne/nelinux24c                         -- Linux 2.4.x (libncurses) executable
+ne/nelinux26                          -- Linux 2.6.x executable
 ne/nemac10_3                          -- Apple Mac OS-X 10.3 console executable
 me/meopenbsd34                        -- OpenBSD 3.4 executable
 ne/nesunos56                          -- Sun Solaris 2.6/7 (SPARC) executable
@@ -515,4 +528,4 @@ NO WARRANTY
 
 Prepared by JASSPA on a SunBlade 100 running Sun Solaris 9.
 Copyright (C) 1998-2005 JASSPA (www.jasspa.com)
-15th May 2005
+24th May 2005
