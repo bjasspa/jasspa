@@ -97,7 +97,11 @@ extern int        TTahead(void) ;
 #define TTinflush()   (TTahead(),TTlastKeyIdx=TTnextKeyIdx,TTnoKeys=0)
 extern void       addKeyToBuffer(meUShort cc) ;
 extern void       addKeyToBufferOnce(meUShort cc) ;
+#if MEOPT_MOUSE
 extern void       TTallKeysFlush(void) ;
+#else
+#define TTallKeysFlush(void) /* Nothing */
+#endif
 #if MEOPT_CALLBACK
 extern void       doIdlePickEvent(void) ;
 #endif
