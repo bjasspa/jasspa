@@ -948,6 +948,7 @@ addKeyToBufferOnce (meUShort cc)
         addKeyToBuffer (cc);
 }
 
+#if MEOPT_MOUSE
 /* when TTallKeys is set to 1 all mouse move events are added to the key stack
  * even if the key is not bound. Due to the speed at which windows generates
  * mouse move events, after exiting an OSD dialog mouse move keys can still be
@@ -973,6 +974,7 @@ TTallKeysFlush(void)
         TTnoKeys-- ;
     }
 }
+#endif
 
 #ifdef _ME_CONSOLE
 #ifdef _TCAP
