@@ -7,12 +7,12 @@
 #  System        : MicroEmacs
 #  Module        : CD-ROM image
 #  Object Name   : $RCSfile: Makefile,v $
-#  Revision      : $Revision: 1.13 $
-#  Date          : $Date: 2005-05-28 15:26:03 $
+#  Revision      : $Revision: 1.14 $
+#  Date          : $Date: 2005-05-30 19:42:09 $
 #  Author        : $Author: jon $
 #  Created By    : Jon Green
 #  Created       : Sun Aug 10 11:57:07 2003
-#  Last Modified : <050524.2354>
+#  Last Modified : <050530.2017>
 #
 #  Description   : Construct the ISO CD-ROM images of MicroEmacs
 #
@@ -357,12 +357,12 @@ $(FDIR)/packages:
 	$(MKDIR) $@/hpux
 	$(GUNZIP) -c $(RELDIR)/jasspa-mepkg-hpux-pa-10.20-20050505.depot.gz > $@/hpux/jasspa-mepkg-hpux-pa-10.20-20050505.depot
 	$(GUNZIP) -c $(RELDIR)/jasspa-mepkg-hpux-pa-11.00-20050505.depot.gz > $@/hpux/jasspa-mepkg-hpux-pa-11.00-20050505.depot
-	$(MKDIR) $@/linux24
-	$(MKDIR) $@/linux26
-	$(CP) $(RELDIR)/jasspa-me-20050505-1.src.rpm $@/linux24
-	$(CP) $(RELDIR)/jasspa-me-20050505-1.i386.rpm $@/linux24
-	$(CP) $(RELDIR)/fedora/jasspa-me-20050505-1.src.rpm $@/linux26
-	$(CP) $(RELDIR)/fedora/jasspa-me-20050505-1.i386.rpm $@/linux26
+	$(MKDIR) $@/linux
+	$(CP) $(RELDIR)/jasspa-me-20050505-1.src.rpm $@/linux
+	$(CP) $(RELDIR)/jasspa-me-20050505-1.i386.rpm $@/linux
+	$(CP) $(RELDIR)/jasspa-me_20050505_i386.deb $@/linux
+	$(CP) $(RELDIR)/fedora/jasspa-me-20050505-1.src.rpm $@/linux/jasspa-me-fedora-20050505-1.src.rpm
+	$(CP) $(RELDIR)/fedora/jasspa-me-20050505-1.i386.rpm $@/linux/jasspa-me-fedora-20050505-1.i386.rpm
 	$(MKDIR) $@/cygwin
 	$(CP) $(RELDIR)/jasspa-20050505-src.tar.bz2 $@/cygwin
 	$(CP) $(RELDIR)/jasspa-20050505.tar.bz2 $@/cygwin
