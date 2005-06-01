@@ -82,8 +82,7 @@ typedef struct HILDATA {
 #define meHIL_TEST_WORD    0x0c
 #define meHIL_TEST_ANY     0x0d
 #define meHIL_TEST_MASK    0x0f
-#define meHIL_TEST_NOCLASS (meHIL_TEST_ANY-meHIL_TEST_CLASS)
-#define meHIL_TEST_NOFIXED (meHIL_TEST_ANY-meHIL_TEST_CLASS)
+#define meHIL_TEST_NOCLASS (1+meHIL_TEST_ANY-meHIL_TEST_SPACE)
 
 #define meHIL_TEST_INVERT        0x10
 #define meHIL_TEST_MATCH_NONE    0x20
