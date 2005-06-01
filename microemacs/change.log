@@ -4,10 +4,15 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <050524.2247>
+>  Last Modified : <050601.2247>
 >
 
+    [050601] Corrected ne.emf, broke Window mode in disabling console mode for
+             ne -R option change.
     
+    [050601] Corrected   crash  on  hilight   with   alpha-numerics   of  form
+             [[:digit:]] when spelt incorrectly.
+
 8th Release - May 2005
 
   Upgrade Notes
@@ -44,6 +49,8 @@
       in a black console.
 
   History
+  
+    [050530] Debian package support added to CD distribution.
 
     [050525] Re-released 20050505 source + Fedora + 2.6 + CD distribution.
 
