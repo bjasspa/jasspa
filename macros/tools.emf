@@ -112,8 +112,8 @@ define-macro diff
     !if $status
         set-variable #l0 @1
     !else
-        set-variable #l0 @ml01 "Old File"
-        set-variable #l1 @ml01 "New File"
+        set-variable #l0 @ml01 "Old Version"
+        set-variable #l1 @ml01 "New Version"
     !endif
     ; Winsows/DOS ONLY: If the file name ends with a '/' for a directory diff
     ; then remove it. Correct the forward slash to backslash.
@@ -123,8 +123,12 @@ define-macro diff
         set-variable #l1 &rep #l1 "/" "\\"
         set-variable #l1 &xrep #l1 "\\\\$" ""
     !endif
-    4 ipipe-shell-command &spr "%s \"%s\" \"%s\"" %diff-com #l0 #l1 "*diff*"
+    4 ipipe-shell-command &spr "%s%s \"%s\" \"%s\"" %diff-com &cond &band @# 2 " -r" "" #l0 #l1 "*diff*"
     !force popup-window  "*diff*"
+!emacro
+
+define-macro rdiff
+    3 diff @1 @2
 !emacro
 
 define-macro diff-changes
