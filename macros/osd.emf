@@ -287,11 +287,10 @@ set-variable #l1 0
 0 define-macro osd-undo
     !if &seq @cl "undo" 
         set-variable .undo.count &add .undo.count 1
-        set-variable @cl undo
     !else
         set-variable .undo.count 1
-        set-variable @cl @cl
     !endif
+    set-variable @cl @cl
     @# undo
     set-variable @cc undo
 !emacro
