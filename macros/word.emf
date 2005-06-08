@@ -43,8 +43,8 @@
 ;
 ;    The required variables could be set as follows:
 ;
-;          set-variable .describe-word.american-command &cat "grep -i \"^%s (\" " &find "american" ".ewf"
-;          set-variable .describe-word.american-search  "^\\(%s (.*\\)\n"
+;          set-variable .describe-word.enus-command &cat "grep -i \"^%s (\" " &find "american" ".ewf"
+;          set-variable .describe-word.enus-search  "^\\(%s (.*\\)\n"
 ;
 ;    Note that the grep -i handles case problems and the &find is used so that
 ;    the american.ewf file can exist anywhere in the ME $search-path
