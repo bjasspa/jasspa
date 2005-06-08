@@ -3,17 +3,20 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac035.3,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m3mac035.3,v 2.6 2005-06-08 21:05:41 bill Exp $
 .Im MicroEmacs shell|comparison
 .so me.tni
 .TH diff 3
 .XI diff - "Difference files or directories" command|shell
 .XI diff-changes - "Find the differences from a previous edit session" command|shell
+.XI rdiff - "Recursively compare files or directories" command|shell
 .XI %diff-com 5 "Diff command line" variable
 .SH NAME
 diff \- Difference files or directories
 .br
 diff-changes \- Find the differences from a previous edit session
+.br
+rdiff \- Recursively compare files or directories
 .br
 %diff-com \- Diff command line
 .Me $a
@@ -21,11 +24,16 @@ diff-changes \- Find the differences from a previous edit session
 .na
 .Me "|diff"
 .B diff
-"\fIoldFile\fR"
-"\fInewFile\fR"
+"\fIold-version\fR"
+"\fInew-version\fR"
 .br
 .Me "|diff-changes"
 .B diff-changes
+.br
+.Me "|rdiff"
+.B rdiff
+"\fIold-version\fR"
+"\fInew-version\fR"
 .br
 .Me "|%diff-com"
 \fC%diff-com\fR "\fIstring\fR"; Default is "\fCdiff\fR"
@@ -36,7 +44,7 @@ executes the
 .Hr diff 1
 command with the command line set by the
 .Ht %diff-com 5
-variable and the user supplied  \fIoldFile\fR and \fInewFile\fR.
+variable and the user supplied  \fIold-version\fR and \fInew-version\fR.
 The output of the command is piped into the \fB*diff*\fR buffer
 and is hilighted to show the changes (GNU diff only).
 .PP
@@ -48,6 +56,13 @@ will determine whether it is possible to difference directories.
 is a simple macro that  differences  the current buffer and the last backup of
 the  associated  file. It is a quick way to determine  what has been  modified
 recently. This macro only works if a backup file exists.
+.PP
+.B rdiff
+operates in the same way as \fBdiff\fR except it launches the
+.Hr diff 1 
+command with an extra \fI-r\fR  option which enables  recursive  compare (i.e.
+compares the contents of  sub-directories as well). Your version of \fBdiff\fR
+must support this option for \fBrdiff\fR to operate correctly.
 .PP
 .B %diff-com
 is the command line that is used to execute a 
@@ -62,7 +77,7 @@ diff --context --minimal --ignore-space-change \\
 which  should be  defined in your  personal  user  configuration.  This is the
 default for Linux.
 .SH NOTES
-\fBdiff\fR and \fBdif-changes\fR are macros defined in \fCtools.emf\fR.
+\fBdiff\fR, \fBdiff-changes\fR and \fBrdiff\fR are macros defined in \fCtools.emf\fR.
 .PP
 .Hr diff 1 
 must be executable on the system before diff or diff-changes can function.
