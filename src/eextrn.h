@@ -367,24 +367,25 @@ extern  void    fileNameCorrect(meUByte *oldName, meUByte *newName, meUByte **ba
 extern  void    getDirectoryList(meUByte *pathName, meDirList *dirList) ;
 
 /* fileio.c externals */
-#define meRWFLAG_FMOD       0x0000ffff
-#define meRWFLAG_SILENT     0x00010000
-#define meRWFLAG_READ       0x00020000
-#define meRWFLAG_INSERT     0x00040000
-#define meRWFLAG_WRITE      0x00080000
-#define meRWFLAG_BACKUP     0x00100000
-#define meRWFLAG_OPENEND    0x00200000
-#define meRWFLAG_OPENTRUNC  0x00400000
-#define meRWFLAG_AUTOSAVE   0x00800000
-#define meRWFLAG_CHKBREAK   0x01000000
-#define meRWFLAG_IGNRNRRW   0x02000000
-#define meRWFLAG_CRYPT      0x04000000
-/* following using in ffCopyFile to remove the source file & create a dir */
-#define meRWFLAG_DELETE     0x08000000
-#define meRWFLAG_MKDIR      0x10000000
-#define meRWFLAG_FTPCLOSE   0x20000000
-#define meRWFLAG_FTPCLOSENC 0x2001ffff
-#define meRWFLAG_FTPNLST    0x40000000
+#define meRWFLAG_SILENT     0x00001
+#define meRWFLAG_READ       0x00002
+#define meRWFLAG_INSERT     0x00004
+#define meRWFLAG_WRITE      0x00008
+#define meRWFLAG_BACKUP     0x00010
+#define meRWFLAG_OPENEND    0x00020
+#define meRWFLAG_OPENTRUNC  0x00040
+#define meRWFLAG_AUTOSAVE   0x00080
+#define meRWFLAG_CHKBREAK   0x00100
+#define meRWFLAG_IGNRNRRW   0x00200
+#define meRWFLAG_CRYPT      0x00400
+/* following using in ffFileOp to remove files & create a dir etc */
+#define meRWFLAG_DELETE     0x00800
+#define meRWFLAG_MKDIR      0x01000
+#define meRWFLAG_FTPCLOSE   0x02000
+#define meRWFLAG_NOCONSOLE  0x04000
+#define meRWFLAG_FTPNLST    0x08000
+#define meRWFLAG_NODIRLIST  0x10000
+#define meRWFLAG_STAT       0x20000
 
 extern int      ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
                            meInt offset, meInt length) ;
@@ -1137,7 +1138,7 @@ extern int _getdrive(void) ;
 /* Can't read if doesn't exist or its a directory */
 #define meTestRead(fn)      (GetFileAttributes(fn) & FILE_ATTRIBUTE_DIRECTORY)
 /* Can't write if exists and its readonly or a directory */
-#define meTestWrite(fn)     ((((int) GetFileAttributes(fn)) & 0xffff8011) > 0)
+#define meTestWrite(fn)     ((((int) GetFileAttributes(fn)) & 0xffff8001) > 0)
 /* File is a directory */
 #define meTestDir(fn)       ((GetFileAttributes(fn) & (0xf0000000|FILE_ATTRIBUTE_DIRECTORY)) != FILE_ATTRIBUTE_DIRECTORY)
 extern int meTestExecutable(meUByte *fileName) ;
@@ -1165,7 +1166,7 @@ extern int  _meChdir(meUByte *path) ;
 /* Can't read if doesn't exist or its a directory */
 #define meTestRead(fn)      (meGetFileAttributes(fn) & 0x10)
 /* Can't write if exists and its readonly or a directory */
-#define meTestWrite(fn)     ((meGetFileAttributes(fn) & 0xffff8011) > 0)
+#define meTestWrite(fn)     ((meGetFileAttributes(fn) & 0xffff8001) > 0)
 /* File is a directory */
 #define meTestDir(fn)       ((meGetFileAttributes(fn) & 0xf0000010) != 0x010)
 extern int meTestExecutable(meUByte *fileName) ;

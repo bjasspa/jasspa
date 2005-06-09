@@ -940,23 +940,20 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                 meStrrep(&fileNames.mask,mm) ;
                 if(fileNames.mask != NULL)
                 {
-                    meUByte buff[meBUF_SIZE_MAX] ;
+                    meUByte buff[meBUF_SIZE_MAX], path[meBUF_SIZE_MAX] ;
 #ifdef _DRV_CHAR
                     if((isAlpha(mm[0]) || (mm[0] == '.' )) && (mm[1] == _DRV_CHAR))
-                    {
-                        resultStr[0] = '\0' ;
-                        meStrcpy(buff,mm) ;
-                        getDirectoryList(resultStr,&fileNames) ;
-                    }
+                        path[0] = '\0' ;
                     else
 #endif
                     {
                         *mm = '\0' ;
                         getFilePath(frameCur->bufferCur->fileName,buff) ;
                         meStrcat(buff,vvalue) ;
-                        pathNameCorrect(buff,PATHNAME_COMPLETE,resultStr,NULL) ;
-                        getDirectoryList(resultStr,&fileNames) ;
+                        pathNameCorrect(buff,PATHNAME_COMPLETE,path,NULL) ;
                     }
+                    getDirectoryList(path,&fileNames) ;
+                    meStrcpy(resultStr,path) ;
                 }
                 fileNames.curr = 0 ;
                 break ;
@@ -2813,6 +2810,75 @@ get_flag:
                 ftype = meFiletimeToInt(stats.stmtime) ;
                 break ;
                 
+            case 'i':
+                {
+                    /* file information in list form as follows:
+                     *  |<url-type>|<file-type>|<link-file-type>|<attrib>|<size-upper>|<size-lower>|
+                     * Note:
+                     *   - this version differs from 't' as links have a file
+                     *     type of 'L' and ftp files return the file type not 'F'
+                     *   - The fourth value will be the file attributes (n.y.i.)
+                     *   - The size has an upper int and lower int value to handle
+                     *     large files
+                     *   - The file modification time will be the 7th value (n.y.i.)
+                     */ 
+                    meUByte v1, v2, v3='\0', v5=0, *dd ;
+                    meUInt v51, v52 ;
+                    
+                    if(ftype == meFILETYPE_HTTP)
+                        v1 = v2 = 'H' ;
+                    else if(ftype == meFILETYPE_FTP)
+                    {
+                        v1 = 'F' ;
+                        if(ffFileOp(arg2,NULL,meRWFLAG_STAT|meRWFLAG_SILENT) > 0)
+                        {
+                            v2 = evalResult[0] ;
+                            if(evalResult[1] != '\0')
+                            {
+                                v5 = 1 ;
+                                v51 = 0 ;
+                                v52 = meAtoi(evalResult+1) ;
+                            }
+                        }
+                        else
+                            v2 = 'N' ;
+                    }
+                    else
+                    {
+                        v1 = 'L' ;
+                        if(evalResult[0] != '\0')
+                        {
+                            meStat lstats ;
+                            v2 = 'L' ;
+                            v3 = typeRet[getFileStats(evalResult,0,&lstats,NULL)] ;
+                        }
+                        else
+                            v2 =  typeRet[ftype] ;
+                        if(ftype != meFILETYPE_NOTEXIST)
+                        {
+                            v5 = 1 ;
+                            v51 = 0 ;
+                            v52 = stats.stsize ;
+                        }
+                    }
+                    dd = evalResult ;
+                    *dd++ = '\b' ;
+                    *dd++ = v1 ;
+                    *dd++ = '\b' ;
+                    *dd++ = v2 ;
+                    *dd++ = '\b' ;
+                    if(v3 != '\0')
+                        *dd++ = v1 ;
+                    *dd++ = '\b' ;
+                    *dd++ = '\b' ;
+                    if(v5)
+                        dd += sprintf((char *)dd,"%d\b%d",v51,v52) ;
+                    else
+                        *dd++ = '\b' ;
+                    *dd++ = '\b' ;
+                    *dd = '\0' ;
+                    return evalResult;
+                }
             case 'm':
                 {
                     /* file modified date stamp in a useable form */
@@ -2889,14 +2955,6 @@ get_flag:
                 break ;
             case 't':
                 /* File type - use look up table, see first comment */
-                if((ftype == meFILETYPE_DIRECTORY) &&
-#ifdef _UNIX
-                   meFiletimeIsInit(stats.stmtime)
-#else
-                   meTestDir(arg2)
-#endif
-                   )
-                    ftype = meFILETYPE_NOTEXIST ;
                 evalResult[0] = typeRet[ftype] ;
                 evalResult[1] = '\0' ;
                 return evalResult ;
