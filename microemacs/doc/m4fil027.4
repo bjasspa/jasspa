@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil027.4,v 2.6 2004-03-23 20:50:56 jon Exp $
+.Id $Id: m4fil027.4,v 2.7 2005-06-09 22:06:24 bill Exp $
 .Im MicroEmacs macro;function;miscellaneous
 .so me.tni
 .TH &stat 4
@@ -26,6 +26,54 @@ i.e. on unix if the  filename is a symbolic  link it returns the file name the
 link points to (recursive), otherwise returns the file name.
 .IP \fBd\fR
 Returns the file's  modification time stamp as an integer, larger values indicate a later time.
+.IP \fBi\fR
+Returns information on the file in a
+.Hl "\*(mS list" &lset 4
+formatted string. The fields within the list are defined as follows:
+.RS
+.IP 1
+File  location, which will be one of the following:
+.CS
+    F   File is an ftp URL file (see note).
+    H   File is a http URL link (see note).
+    L   File is a local file.
+.CE 0
+.IP 2
+File type, which will be one of the following:
+.CS
+    D   File is a directory.
+    H   File is a http URL link (no further information is known).
+    L   File is a symbolic link (UNIX).
+    N   File is an untouchable system file.
+    R   File is a regular file.
+    X   File does not exist.
+.CE 0
+.IP
+Note the information returned here is different to the '\fCt\fR' flag below as
+the type of an ftp file is evaluated, i.e. \fCD\fR, \fCR\fR or \fCX\fR will be
+returned.
+.IP 3
+Symbolic  file type, which will be the empty string unless the file type above
+is '\fCL\fR' in which case it will be one of the following:
+.CS
+    D   File is a directory.
+    L   File is a symbolic link (UNIX).
+    N   File is an untouchable system file.
+    R   File is a regular file.
+    X   File does not exist.
+.CE 0
+.IP
+Note this field has not yet been implemented.
+.IP 4
+File permissions or attributes, this field has not yet been implemented.
+.IP "5 and 6"
+File size given as an upper and lower 32 bit integers for large file  support,
+these  values  will  be  the  empty  string  if the  file  size  could  not be
+determined.
+.IP 7
+File modification time given as "\fCYYYYMMDDhhmmss\fR",  this field has not yet been
+implemented.
+.RE
 .IP \fBm\fR
 Returns  the  file's  modification  time stamp as a string,  the format of the
 string is the same as
