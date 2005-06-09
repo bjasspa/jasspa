@@ -1500,11 +1500,13 @@ define-macro cvs-resolve-conflicts
     !endif
 !emacro
 
-0 define-macro cvs-dir-conv
-    !if &seq &lef $buffer-fname 6 "ftp://"
-        ; ftp directories not supported
-        !return
+0 define-macro cvs-dirlst-detect
+    !if &not &seq &stat "t" &cat $buffer-fname "CVS/" "D"
+        !abort
     !endif
+!emacro
+
+0 define-macro cvs-dirlst-format
     set-position "\x83"
     set-variable #l1 $buffer-bname
     set-variable #l2 $buffer-fname
@@ -1512,9 +1514,7 @@ define-macro cvs-resolve-conflicts
     !if &not $status
         ; not a cvs directory
         goto-position "\x83"
-        !if &lget .fhook-dirlst.mode 2
-            !force !force file-browser-filter
-        !endif
+        !force !force file-browser-filter
         !return
     !endif
     cvs-get-tag-info #l2 #l7
@@ -1553,7 +1553,10 @@ define-macro cvs-resolve-conflicts
             !goto pad-line
         !elif &set #l4 &seq &rig #l3 &sub &len #l3 1 "/"
             !if &seq #l3 "CVS/"
-                !goto rmv-line
+                !if &lget .fhook-dirlst.mode 2
+                    !goto rmv-line
+                !endif
+                !goto pad-line
             !elif &seq #l3 "./"
                 !goto rmv-line
             !elif &seq #l3 "../"
@@ -1590,10 +1593,10 @@ define-macro cvs-resolve-conflicts
             !endif
             !goto pad-line
         !elif &seq #l7 "--"
-*rmv-line
             !if &not &lget .fhook-dirlst.mode 2
                 !goto pad-line
             !endif
+*rmv-line
             beginning-of-line
             set-mark
             forward-line
@@ -1699,11 +1702,8 @@ define-macro cvs-full-reread
 !emacro
 
 define-macro cvs
-    set-variable .fhook-dirlst.mode &lset .fhook-dirlst.mode 1 1
-    set-variable .fhook-dirlst.cvs-enable 1
-    !if &band $window-flags 0x1000
-        ; if this is a toolbar window move to the next normal window
-        !force next-window
+    !if &not .fhook-dirlst.cvs-enable
+        cvs-init
     !endif
     !if .toolbar.open
         !force toolbar-make-tool-visible "*cvs-console*"
@@ -1722,7 +1722,15 @@ define-macro cvs
             goto-position "\x81"
         !endif
     !endif
-    @# file-browser-init
+    &bor @# 2 file-browser
+!emacro
+
+0 define-macro cvs-init
+    set-variable .fhook-dirlst.cvs-enable 1
+    !if &not &lfind .fhook-dirlst.sc-detect "cvs-dirlst-detect"
+        set-variable .fhook-dirlst.sc-detect &lins .fhook-dirlst.sc-detect -1 "cvs-dirlst-detect"
+        set-variable .fhook-dirlst.sc-format &lins .fhook-dirlst.sc-format -1 "cvs-dirlst-format"
+    !endif
 !emacro
 
 0 define-macro cvs-console-tool
