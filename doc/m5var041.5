@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var041.5,v 2.6 2005-01-23 15:28:54 jon Exp $
+.Id $Id: m5var041.5,v 2.7 2005-06-09 22:26:16 bill Exp $
 .Im MicroEmacs variable|shell|macrodevelop
 .so me.tni
 .TH $result 5
@@ -29,6 +29,9 @@ selection dialog is used (Windows systems only).
 .Ht count-words 2 
 \fB$result\fR  is set to the same output string as printed to the message-line
 by this command.
+.TP
+.Ht file-op 2 
+\fB$result\fR is used to return an error code when the command fails.
 .TP
 .Ht find-registry 2 
 \fB$result\fR  is used to return  the name of a registry  child node given the
@@ -92,6 +95,7 @@ input.
 .Ht buffer-info 2 ,
 .Ht change-font 2 ,
 .Ht count-words 2 ,
+.Ht file-op 2 ,
 .Ht find-registry 2 ,
 .Ht mark-registry 2 ,
 .Ht osd 2 ,

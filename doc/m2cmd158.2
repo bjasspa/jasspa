@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd158.2,v 2.7 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd158.2,v 2.8 2005-06-09 22:26:15 bill Exp $
 .Im MicroEmacs command|file|macrodevelop
 .so me.tni
 .TH file-op 2
@@ -31,7 +31,8 @@ Log-off  and close down the current ftp connect  (not a file system  operation
 but functionality was required and it had to go somewhere).
 .IP \fB0x020\fR
 When this bit is set the command  functionality is changed to delete-file, the
-single argument  \fIdelete-file\fR  is deleted.
+single  argument  \fIdelete-file\fR  is deleted.  Note this can also  delete a
+directory if the directory is empty.
 .IP \fB0x040\fR
 When this bit is set the command  functionality  is changed to move-file,  the
 specified   \fIfrom-file\fR   is  moved  to  \fIto-file\fR.
@@ -56,22 +57,54 @@ always succeed wherever possible.
 Creates a backup of any file about to be deleted or over-written. Set help on
 .Ht $buffer-backup 5
 for backup file-name generation.
+.IP \fB0x04\fR
+When validity  checks are enabled (see bit 0x01 above) and this bit is set, if
+a problem is found the command aborts rather than prompting the user. Also see
+the error return codes in the notes section below.
 .SH NOTES
 \fBhttp\fR  files are not  supported  except as the source file when  copying.
 \fBftp\fR files are fully supported with the restriction  that the from and to
-files cannot both be url (http or ftp) files.
+files  cannot  both be url (http or ftp) files. The one  exception  to this is
+when  moving a file on the same ftp site in which case ME will  attempt to use
+an ftp rename command.
 .PP
 The command is used by
 .Ht file-browser 3
 and
 .Ht ftp 3
 which provides an easy to use interfaces for file manipulation.
+.PP
+When the command fails an error code is returned in the
+.Ht $result 5
+variable, which will be one of the following:
+.IP \fB0\fR
+User aborted.
+.IP \fB1\fR
+General error.
+.IP \fB2\fR
+Failure due to a read error.
+.IP \fB3\fR
+Failure due to a write error.
+.IP \fB4\fR
+Failure due to a directory creation error.
+.IP \fB5\fR
+Failure due to a file or directory deletion error.
+.IP \fB6\fR
+Failure due to file write checks, i.e. file already exists etc.
+.IP \fB7\fR
+Failure due to directory  creation  checks, i.e. the directory or file already
+exists.
+.IP \fB8\fR
+Failure due to file delete checks, i.e. file is read only.
+.IP \fB9\fR
+Failure due to source and destination files are URLs.
 .SH "SEE ALSO"
 .na
 .Ht file-browser 3 ,
 .Ht ftp 3 ,
 .Ht find-file 2 ,
 .Ht write-buffer 2 ,
+.Ht $result 5 ,
 .Ht $temp-name 5 .
 .ad
 .FH
