@@ -84,27 +84,23 @@
 int
 backWord(int f, int n)
 {
-    if (n < 0)
-        return (forwWord(f, -n));
-    if (meWindowBackwardChar(frameCur->windowCur, 1) == meFALSE)
-        return (meFALSE);
+    if(n < 0)
+        return forwWord(f,-n) ;
+    if(meWindowBackwardChar(frameCur->windowCur, 1) == meFALSE)
+        return meErrorBob() ;
     while (n--)
     {
-        while (inWord() == meFALSE)
-        {
-            if (meWindowBackwardChar(frameCur->windowCur, 1) == meFALSE)
-                return (meFALSE);
-        }
-        while (inWord() != meFALSE)
-        {
-            if (meWindowBackwardChar(frameCur->windowCur, 1) == meFALSE)
+        while(inWord() == meFALSE)
+            if(meWindowBackwardChar(frameCur->windowCur, 1) == meFALSE)
+                return meErrorBob() ;
+        while(inWord() != meFALSE)
+            if(meWindowBackwardChar(frameCur->windowCur, 1) == meFALSE)
                 /* We can't move back any more cos we're at the start,
                  * BUT as we have moved and we are in the buffers first word, 
                  * we should succeed */
                 return meTRUE ;
-        }
     }
-    return (meWindowForwardChar(frameCur->windowCur, 1));
+    return meWindowForwardChar(frameCur->windowCur,1) ;
 }
 
 /*
@@ -114,22 +110,19 @@ backWord(int f, int n)
 int
 forwWord(int f, int n)
 {
-    if (n < 0)
-        return (backWord(f, -n));
-    while (n--)
+    if(n < 0)
+        return backWord(f,-n) ;
+    while(n--)
     {
-        while (inWord() == meFALSE)
+        while(!inWord())
         {
-            if (meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
-                return (meFALSE);
+            if(meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
+                return meErrorEob() ;
         }
-        while (inWord() != meFALSE)
-        {
-            if (meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
-                return (meFALSE);
-        }
+        while(inWord())
+            meWindowForwardChar(frameCur->windowCur,1) ;
     }
-    return(meTRUE);
+    return meTRUE ;
 }
 
 /*
@@ -260,24 +253,24 @@ capWord(int f, int n)
                     meLineSetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset,c);
                 }
                 if (meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
-                    return (meFALSE);
+                    return meFALSE ;
             }
         }
     }
-    return (meTRUE);
+    return meTRUE ;
 }
 
 /*
  * Kill forward by "n" words. Remember the location of dot. Move forward by
  * the right number of words. Put dot back where it was and issue the kill
- * command for the right number of characters. Bound to "M-D".
+ * command for the right number of characters. Bound to "M-d".
  */
 int
 forwDelWord(int f, int n)
 {
-    register meLine   *dotp;
-    register int    doto, delType ;
-    meInt           size, lineno ;
+    meLine  *dotp ;
+    meInt    size, lineno ;
+    meUShort doto ;    
     
     if(n == 0)
         return meTRUE ;
@@ -291,37 +284,34 @@ forwDelWord(int f, int n)
     lineno = frameCur->windowCur->dotLineNo ;
     size = 0;
     do {
-        /* inWord returns 0 if not in word - BUT if in word its return
-         * value is only defined as non-zero, so must test if 0
-         */
-        delType = (inWord() == 0) ;
-        do {
-            if(meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
-            {
-                n = 1 ;
-                break ;
-            }
-            ++size;
-        } while((inWord() == 0) == delType) ;
+        while(!inWord() && (meWindowForwardChar(frameCur->windowCur, 1) > 0))
+            size++ ;
+        if(!inWord())
+            break ;
+        while(inWord())
+        {
+            meWindowForwardChar(frameCur->windowCur, 1) ;
+            size++ ;
+        }
     } while(--n) ;
 
     frameCur->windowCur->dotLine = dotp;
     frameCur->windowCur->dotOffset = doto;
     frameCur->windowCur->dotLineNo = lineno ;
-    return ldelete(size,3) ;
+    if(ldelete(size,3) <= 0)
+        return meFALSE ;
+    return ((n) ? meErrorEob():meTRUE) ;
 }
 
 /*
  * Kill backwards by "n" words. Move backwards by the desired number of words,
  * counting the characters. When dot is finally moved to its resting place,
- * fire off the kill command. Bound to "M-Rubout" and to "M-Backspace".
+ * fire off the kill command. Bound to "M-Backspace".
  */
 int
 backDelWord(int f, int n)
 {
-    meUByte delType ;
     meInt size;
-    int moveForw=meTRUE ;
     
     if(n == 0)
         return meTRUE ;
@@ -331,23 +321,25 @@ backDelWord(int f, int n)
     if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
         return meABORT ;
     if(meWindowBackwardChar(frameCur->windowCur, 1) == meFALSE)
-        return meFALSE ;
+        return meErrorBob() ;
     size = 0;
     do {
-        /* inWord returns 0 if not in word - BUT if in word its return
-         * value is only defined as non-zero, so must test if 0
-         */
-        delType = (inWord() == 0) ;
-        do
-            ++size;
-        while(((moveForw=meWindowBackwardChar(frameCur->windowCur, 1)) > 0) &&
-              ((inWord() == 0) == delType)) ;
-        
-    } while((moveForw > 0) && --n) ;
+        while(!inWord() && (meWindowBackwardChar(frameCur->windowCur, 1) > 0))
+            size++ ;
+        if(!inWord())
+        {
+            size++ ;
+            break ;
+        }
+        while(inWord() && (meWindowBackwardChar(frameCur->windowCur, 1) > 0))
+            size++ ;
+    } while(--n) ;
 
-    if(moveForw > 0)
+    if((n == 0) && !inWord())
         meWindowForwardChar(frameCur->windowCur, 1) ;
-    return ldelete(size,3) ;
+    if(ldelete(size,3) <= 0)
+        return meFALSE ;
+    return ((n) ? meErrorBob():meTRUE) ;
 }
 
 #if MEOPT_WORDPRO
