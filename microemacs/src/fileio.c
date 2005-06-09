@@ -646,23 +646,11 @@ ftpGetDataChannel(void)
     ppc[0] = (meUByte) ppi[0] ;
     ppc[1] = (meUByte) ppi[1] ;
 
-    return meTRUE ;
-}
-
-/*
- * Need to start a listen on the data channel before we send the command,
- * otherwise the server's connect may fail.
- */
-static int
-ftpOpenDataChannel(void)
-{
-    int ii ;
-    
     if(meSocketIsBad(ffsock = meSocketOpen(AF_INET, SOCK_STREAM, IPPROTO_TCP)))
         return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to open data channel]") ;
     
-    ii = 1 ;
-    meSocketSetOpt(ffsock,SOL_SOCKET,SO_REUSEADDR,(char *) &ii,sizeof(int)) ;
+    aai[0] = 1 ;
+    meSocketSetOpt(ffsock,SOL_SOCKET,SO_REUSEADDR,(char *) aai,sizeof(int)) ;
     
     if(meSocketConnect(ffsock,(struct sockaddr *) &meSockAddr,sizeof(meSockAddr)) < 0)
         return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to connect data channel]") ;
@@ -707,8 +695,9 @@ ffurlGetInfo(int type, meUByte **host, meUByte **port, meUByte **user, meUByte *
         if(*pass == NULL)
         {
             meUByte buff[meSBUF_SIZE_MAX] ;
-            
-            if((meGetString((meUByte *)"Password", MLNOHIST|MLHIDEVAL, 0, buff, meSBUF_SIZE_MAX) <= 0) ||
+            /* Always get the password from the user even when running a macro.
+             * This is important for &stat which may trigger a password request */
+            if((meGetStringFromUser((meUByte *)"Password", MLNOHIST|MLHIDEVAL, 0, buff, meSBUF_SIZE_MAX) <= 0) ||
                ((ffpasswdReg = regSet(root,(meUByte *)"pass",buff)) == NULL))
                 return meFALSE ;
             ffpasswdReg->mode |= meREGMODE_INTERNAL ;
@@ -832,72 +821,103 @@ ffFtpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByt
         file = buff ;
     }
             
+    if(rwflag & meRWFLAG_WRITE)
+        ss = (meUByte *) "Writing: " ;
+    else if(rwflag & meRWFLAG_READ)
+        ss = (meUByte *) "Reading: " ;
+    else if(rwflag & meRWFLAG_DELETE)
+        ss = (meUByte *) "Deleting: " ;
+    else if(rwflag & meRWFLAG_MKDIR)
+        ss = (meUByte *) "Mkdir: " ;
+    else
+        ss = (meUByte *) "Stating: " ;
     if(ffurlBp != NULL)
     {
         meUByte lbuff[meBUF_SIZE_MAX] ;
         ffurlConsoleAddText((meUByte *)"",0x04) ;
-        if(rwflag & meRWFLAG_WRITE)
-            meStrcpy(lbuff,"Writing: ");
-        else if(rwflag & meRWFLAG_READ)
-            meStrcpy(lbuff,"Reading: ");
-        else
-            meStrcpy(lbuff,"Deleting: ");
+        meStrcpy(lbuff,ss);
         meStrcat(lbuff,file);
-        ffurlConsoleAddText(buff,0) ;
+        ffurlConsoleAddText(lbuff,0) ;
     }
-    mlwrite(MWCURSOR,(meUByte *)"[Connected, %sing %s]",
-            (rwflag & meRWFLAG_WRITE) ? "writ":
-            (rwflag & meRWFLAG_READ)  ? "read":"delet",file);
+    mlwrite(MWCURSOR,(meUByte *)"[Connected, %s %s]",ss,file);
     if(rwflag & meRWFLAG_BACKUP)
     {
         /* try to back-up the existing file - no error checking! */
         meUByte filename[meBUF_SIZE_MAX] ;
         
-        if(!createBackupName(filename,file,'~',1) &&
-           (ftpCommand(0,"RNFR %s",file) == ftpPOS_INTERMED))
-            ftpCommand(0,"RNTO %s",filename) ;
+        if(createBackupName(filename,file,'~',1) ||
+           ((ftpCommand(0,"RNFR %s",file) == ftpPOS_INTERMED) &&
+            (ftpCommand(0,"RNTO %s",filename) != ftpPOS_COMPLETE) &&
+            ((ftpCommand(0,"DELE %s",filename) != ftpPOS_COMPLETE) ||
+             (ftpCommand(0,"RNFR %s",file) != ftpPOS_INTERMED) ||
+             (ftpCommand(0,"RNTO %s",filename) != ftpPOS_COMPLETE))))
+            mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to backup file %s]",file) ;
     }
-    if(rwflag & meRWFLAG_DELETE)
+    if((rwflag & meRWFLAG_DELETE) && !(rwflag & meRWFLAG_BACKUP))
     {
         /* if backing up as well the file is already effectively deleted */
-        if(!(rwflag & meRWFLAG_BACKUP))
-            ftpCommand(0,"DELE %s",file) ;
+        ll = meStrlen(file) ;
+        if(file[ll-1] == '/')
+        {
+            if((ftpCommand(0,"CWD %s..",file) != ftpPOS_COMPLETE) ||
+               (ftpCommand(0,"RMD %s",file) != ftpPOS_COMPLETE))
+                return -5 ;
+        }
+        else if((ftpCommand(0,"DELE %s",file) != ftpPOS_COMPLETE) &&
+                ((ftpCommand(0,"CWD %s/..",file) != ftpPOS_COMPLETE) ||
+                 (ftpCommand(0,"RMD %s",file) != ftpPOS_COMPLETE)))
+            return -5 ;
     }
     if(rwflag & meRWFLAG_MKDIR)
-        ftpCommand(0,"MKD %s",file) ;
-    
+    {
+        if(ftpCommand(0,"MKD %s",file) != ftpPOS_COMPLETE)
+            return -4 ;
+    }
+    if(rwflag & meRWFLAG_STAT)
+    {
+        evalResult[1] = '\0' ;
+        if(ftpCommand(0,"CWD %s",file) == ftpPOS_COMPLETE)
+            /* this is a directory */
+            evalResult[0] = 'D' ;
+        else if(ftpCommand(0,"SIZE %s",file) == ftpPOS_COMPLETE)
+        {
+            /* this is a regular file */
+            evalResult[0] = 'R' ;
+            if(meStrlen(resultStr) > 3) 
+                meStrcpy(evalResult+1,resultStr+4) ;
+        }
+        else
+            /* does not exist */
+            evalResult[0] = 'X' ;
+    }
     if(!(rwflag & (meRWFLAG_WRITE|meRWFLAG_READ)))
         return meTRUE ;
     
     ll = meStrlen(file) ;
-    dirlist = (file[ll-1] == DIR_CHAR) ;
-                  
+    if(rwflag & meRWFLAG_FTPNLST)
+        dirlist = -1 ;
+    else if(file[ll-1] == DIR_CHAR)
+        dirlist = 1 ;
+    else
+        dirlist = 0 ;
+    
     /* send the read command */
     for(;;)
     {
+        if(dirlist && (ftpCommand(0,"CWD %s",file) != ftpPOS_COMPLETE))
+            break ;
+        
         if(ftpGetDataChannel() <= 0)
-        {
-            ffCloseSockets(0) ;
-            return meFALSE ;
-        }
+            break ;
         
         if(rwflag & meRWFLAG_WRITE)
             ftpCommand(1,"STOR %s",file) ;
+        else if(rwflag & meRWFLAG_FTPNLST)
+            ftpCommand(1,(dirlist < 0) ? "NLST -a":"NLST") ;
         else if(dirlist)
-        {
-            if(ftpCommand(0,"CWD %s",file) != ftpPOS_COMPLETE)
-                break ;
-            ftpCommand(1,(rwflag & meRWFLAG_FTPNLST) ? "NLST":"LIST",file) ;
-        }
+            ftpCommand(1,"LIST") ;
         else
             ftpCommand(1,"RETR %s",file) ;
-    
-        /* open up the read channel */
-        if(ftpOpenDataChannel() <= 0)
-        {
-            ffCloseSockets(0) ;
-            return meFALSE ;
-        }
         
         /* find out if all's well */
         if(ftpReadReply() == ftpPOS_PRELIMIN)
@@ -906,16 +926,16 @@ ffFtpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByt
                 meModeSet(ffurlReadBp->mode,MDDIR) ;
             return meTRUE ;
         }
-        if((rwflag & meRWFLAG_WRITE) || dirlist)
+        if((rwflag & (meRWFLAG_WRITE|meRWFLAG_NODIRLIST)) || (dirlist > 0))
             break ;
         ffCloseSockets(0) ;
         dirlist = 1 ;
     }
     ffCloseSockets(0) ;
-    if(rwflag & meRWFLAG_SILENT)
-        return meABORT ;
-    return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to %s file]",
-                   (rwflag & meRWFLAG_WRITE) ? "write":"read");
+    if(!(rwflag & meRWFLAG_SILENT))
+        mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Failed to %s file]",
+                (rwflag & meRWFLAG_WRITE) ? "write":"read");
+    return (rwflag & meRWFLAG_WRITE) ? -3:-2 ;
 }
 
 static int
@@ -1054,7 +1074,7 @@ ffUrlFileSetupFlags(meUInt rwflag)
 static int
 ffUrlFileOpen(meUByte *urlName, meUByte *user, meUByte *pass, meUInt rwflag)
 {
-    meUByte buff[meBUF_SIZE_MAX+32], sockAddr[meBUF_SIZE_MAX], *host, *port, *ss, *dd, *ee, cc ;
+    meUByte buff[meBUF_SIZE_MAX+32], sockAddr[meBUF_SIZE_MAX], *host, *port, *ss, *dd, *ee, *uu, cc ;
     int ii ;
     
 #ifdef _WIN32
@@ -1112,22 +1132,17 @@ ffUrlFileOpen(meUByte *urlName, meUByte *user, meUByte *pass, meUInt rwflag)
     ss = (fftype == meURLTYPE_FTP) ? urlName+6:urlName+7 ;
     dd = buff ;
     ee = sockAddr ;
+    uu = port = NULL ;
     host = dd ;
-    port = NULL ;
     while(((cc=*ss++) != '\0') && (cc != DIR_CHAR))
     {
         *dd++ = cc ;
         *ee++ = cc ;
         if(cc == ':')
-        {
-            dd[-1] = '\0' ;
             port = dd ;
-        }
         else if(cc == '@')
         {
-            dd[-1] = '\0' ;
-            user = buff ;
-            pass = port ;
+            uu = buff ;
             host = dd ;
             port = NULL ;
         }
@@ -1138,6 +1153,13 @@ ffUrlFileOpen(meUByte *urlName, meUByte *user, meUByte *pass, meUInt rwflag)
     
     if(port != NULL)
         port[-1] = '\0' ;
+    if(uu != NULL)
+    {
+        host[-1] = '\0' ;
+        user = uu ;
+        if((pass = meStrchr(uu,':')) != NULL)
+            *pass++ = '\0' ;
+    }
     
     if(ffurlGetInfo(fftype,&host,&port,&user,&pass) <= 0)
         return meFALSE ;
@@ -1413,7 +1435,7 @@ createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag)
             }
             while(--ii >= 0)
             {
-                if(ffWriteFileOpen(filename,meRWFLAG_MKDIR,NULL) <= 0)
+                if(ffWriteFileOpen(filename,meRWFLAG_MKDIR|meRWFLAG_SILENT,NULL) <= 0)
                     return 1 ;
                 filename[meStrlen(filename)] = DIR_CHAR ;
             }
@@ -1780,17 +1802,18 @@ ffReadFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
         if(isUrlLink(fname))
         {
 #if MEOPT_SOCKET
+            int rr ;
 #ifdef _UNIX
             /* must stop any signals or the connection will fail */
             meSigHold() ;
 #endif
             ffurlReadBp = bp ;
-            if(ffUrlFileOpen(fname,NULL,NULL,flags) <= 0)
+            if((rr=ffUrlFileOpen(fname,NULL,NULL,flags)) <= 0)
             {
 #ifdef _UNIX
                 meSigRelease() ;
 #endif
-                return meABORT ;
+                return rr ;
             }
             /* cannot return here, must do ffrsetup */
 #else
@@ -1809,7 +1832,7 @@ ffReadFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
                 if(!(flags & meRWFLAG_SILENT))
                     /* File not found.      */
                     mlwrite(MWCLEXEC,(meUByte *)"[%s: No such file]", fname);
-                return meABORT ;
+                return -2 ;
             }
         }
     }
@@ -2000,6 +2023,8 @@ ffputBuf(void)
 int
 ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
 {
+    int ii ;
+    
     ffwerror = 0 ;
     if(bp != NULL)
     {
@@ -2024,21 +2049,20 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
         /* must stop any signals or the connection will fail */
         meSigHold() ;
 #endif
-        if(ffUrlFileOpen(fname,NULL,NULL,(flags & (meRWFLAG_WRITE|meRWFLAG_BACKUP|meRWFLAG_DELETE|meRWFLAG_MKDIR))) <= 0)
+        if((ii=ffUrlFileOpen(fname,NULL,NULL,(flags & (meRWFLAG_WRITE|meRWFLAG_BACKUP|meRWFLAG_DELETE|meRWFLAG_MKDIR|meRWFLAG_STAT|meRWFLAG_SILENT)))) <= 0)
         {
 #ifdef _UNIX
             meSigRelease() ;
 #endif
-            return meABORT ;
+            return ii ;
         }
         if(!(flags & meRWFLAG_WRITE))
         {
-            int rr ;
-            rr = ffUrlFileClose(fname,flags & (meRWFLAG_WRITE|meRWFLAG_BACKUP|meRWFLAG_DELETE|meRWFLAG_MKDIR)) ;
+            ii = ffUrlFileClose(fname,flags & (meRWFLAG_WRITE|meRWFLAG_BACKUP|meRWFLAG_DELETE|meRWFLAG_MKDIR|meRWFLAG_STAT|meRWFLAG_SILENT)) ;
 #ifdef _UNIX
             meSigRelease() ;
 #endif
-            return rr ;
+            return ii ;
         }
         ffnewFile = 0 ;
 #else
@@ -2052,7 +2076,6 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
             if(flags & meRWFLAG_BACKUP)
             {
                 meUByte filename[meBUF_SIZE_MAX] ;
-                int ii ;
                 
                 ii = createBackupName(filename,fname,'~',1) ;
                 if(!ii)
@@ -2141,8 +2164,25 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
                     else if(meRename(filenameOld,filename) && (ffFileOp(filenameOld,filename,meRWFLAG_DELETE) <= 0))
                         mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to backup file to %s (%d - %s)]", 
                                 filename,errno,sys_errlist[errno]) ;
-                    else if(flags & 0xffff)
-                        meChmod(filename,(flags & 0xffff)) ;
+                    else if(bp != NULL)
+                    {
+                        meUShort ss;
+#ifdef _DOS
+                        ss = bp->stats.stmode & ~(meFILE_ATTRIB_READONLY|meFILE_ATTRIB_HIDDEN) ;
+                        if(meSystemCfg & meSYSTEM_HIDEBCKUP)
+                            ss |= meFILE_ATTRIB_HIDDEN ;
+#endif
+#ifdef _WIN32
+                        ss = bp->stats.stmode & ~(FILE_ATTRIBUTE_HIDDEN|FILE_ATTRIBUTE_READONLY) ;
+                        if((meSystemCfg & (meSYSTEM_DOSFNAMES|meSYSTEM_HIDEBCKUP)) == meSYSTEM_HIDEBCKUP)
+                            ss |= FILE_ATTRIBUTE_HIDDEN ;
+#endif
+#ifdef _UNIX
+                        ss = bp->stats.stmode | S_IWUSR ;
+#endif
+                        if(ss != bp->stats.stmode)
+                            meChmod(filename,ss) ;
+                    }
                 }
                 else
                     mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to backup file %s]",fname) ;
@@ -2150,8 +2190,25 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
             else if(flags & meRWFLAG_DELETE)
             {
                 /* if backing up as well the file is already effectively deleted */
-                if(meUnlink(fname))
-                    return meABORT ;
+#ifdef _WIN32
+                if(meTestWrite(fname))
+                    meChmod(fname,FILE_ATTRIBUTE_NORMAL) ;
+#endif
+                if(!meTestDir(fname))
+                {
+#ifdef _WIN32
+                    ii = (RemoveDirectory(fname) == 0) ;
+#else
+                    ii = rmdir((char *) fname) ;
+#endif
+                }
+                else
+                    ii = meUnlink(fname) ;
+                if(ii)
+                {
+                    mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Failed to delete file \"%s\"]",fname) ;
+                    return -5 ;
+                }
             }
         }
         if(!(flags & meRWFLAG_WRITE))
@@ -2160,16 +2217,17 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
             {
 #ifdef _WIN32
                 if(CreateDirectory(fname,NULL) == 0)
-                    return meABORT ;
 #else
 #ifdef _DOS
                 if(mkdir((char *)fname,0) != 0)
-                    return meABORT ;
 #else
                 if(mkdir((char *)fname,meXUmask) != 0)
-                    return meABORT ;
 #endif
 #endif
+                {
+                    mlwrite(MWABORT,(meUByte *)"[Failed to create directory \"%s\"]",fname) ;
+                    return -4 ;
+                }
             }
             return meTRUE ;
         }
@@ -2182,13 +2240,21 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
                 create = OPEN_ALWAYS ;
             else
                 create = CREATE_ALWAYS ;
+            
+            /* cannot write to a readonly file */
+            if(!ffnewFile && meTestWrite(fname))
+                meChmod(fname,FILE_ATTRIBUTE_NORMAL) ;
+            
             /* Windows must open the file with the correct permissions to support the
              * compress attribute
              */
             if((ffwp=CreateFile(fname,GENERIC_WRITE,FILE_SHARE_READ,NULL,create,
                                ((bp == NULL) ? meUmask:bp->stats.stmode),
                                NULL)) == INVALID_HANDLE_VALUE)
-                return mlwrite(MWABORT,(meUByte *)"[Cannot open file \"%s\" for writing - %d]",fname,GetLastError());
+            {
+                mlwrite(MWABORT,(meUByte *)"[Cannot open file \"%s\" for writing - %d]",fname,GetLastError());
+                return -3 ;
+            }
             if(flags & meRWFLAG_OPENEND)
                 SetFilePointer(ffwp,0,NULL,FILE_END) ;
         }
@@ -2200,7 +2266,10 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
             else
                 ss = "wb" ;
             if((ffwp=fopen((char *)fname,ss)) == NULL)
-                return mlwrite(MWABORT,(meUByte *)"Cannot open file [%s] for writing",fname);
+            {
+                mlwrite(MWABORT,(meUByte *)"[Cannot open file \"%s\" for writing]",fname);
+                return -3 ;
+            }
         }
 #endif
         mlwrite(MWCURSOR|MWCLEXEC,(meUByte *)"[%sriting %s]",
@@ -2432,44 +2501,86 @@ ffWriteFile(meUByte *fname, meUInt flags, meBuffer *bp)
 int
 ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags)
 {
-    int rr=meTRUE ;
-    if((dfname != NULL) && (dFlags & meRWFLAG_DELETE))
+    int rr=meTRUE, r1 ;
+    if(dfname != NULL)
     {
-        /* simply move the file if the source is to be deleted and they are
-         * regular files, the WriteOpen will handle backups etc */
-        if(ffWriteFileOpen(dfname,meRWFLAG_DELETE|(dFlags & meRWFLAG_BACKUP),NULL) <= 0)
-            return meABORT ;
-        if(!meRename(sfname,dfname))
+        int sft, dft ;
+        meUByte *ftpAddr ;
+        
+        if(((sft=isFtpLink(sfname)) == 0) && isHttpLink(sfname))
+           sft = 2 ;
+        if(((dft=isFtpLink(dfname)) == 0) && isHttpLink(dfname))
+           dft = 2 ;
+#if MEOPT_SOCKET
+        if(sft && dft &&
+           ((sft != 1) || (dft != 1) || ((dFlags & meRWFLAG_DELETE) == 0) ||
+            ((ftpAddr=meStrchr(sfname+6,'/')) == NULL) ||
+            meStrncmp(sfname,dfname,(((size_t) ftpAddr)- ((size_t) sfname)) + 1)))
         {
-            dFlags &= ~meRWFLAG_DELETE ;
-            dfname = NULL ;
+            mlwrite(MWABORT,(meUByte *)"[Cannot read and write to URL at the same time]") ;
+            return -9 ;
+        }
+#endif
+        if(dFlags & meRWFLAG_DELETE)
+        {
+            /* simply move the file if the source is to be deleted and they are
+             * regular files, the WriteOpen will handle backups etc */
+            if((rr=ffWriteFileOpen(dfname,(dFlags & meRWFLAG_DELETE|meRWFLAG_BACKUP|meRWFLAG_SILENT),NULL)) <= 0)
+                return rr ;
+            
+            if(!sft && !dft && !meRename(sfname,dfname))
+            {
+                dFlags &= ~meRWFLAG_DELETE ;
+                dfname = NULL ;
+            }
+#if MEOPT_SOCKET
+            else if(sft && dft)
+            {
+                /* special case, moving a file on an ftp site (e.g. rename a file) */
+                if(ffReadFileOpen(sfname,(dFlags & meRWFLAG_SILENT),NULL) <= 0)
+                    return meABORT ;
+                
+                ftpAddr++ ;
+                dfname += (((size_t) ftpAddr)- ((size_t) sfname)) ;
+                if((ftpCommand(0,"RNFR %s",ftpAddr) != ftpPOS_INTERMED) ||
+                   (ftpCommand(0,"RNTO %s",dfname) != ftpPOS_COMPLETE))
+                    rr = mlwrite(MWABORT,(meUByte *)"[Failed to rename ftp file]") ;
+#ifdef _UNIX
+                meSigRelease() ;
+#endif
+                dFlags &= ~meRWFLAG_DELETE ;
+                dfname = NULL ;
+            }
+#endif
         }
     }
     if(dfname != NULL)
     {
-        if(ffReadFileOpen(sfname,meRWFLAG_READ,NULL) <= 0)
-            return meABORT ;
-        if(ffWriteFileOpen(dfname,meRWFLAG_WRITE|(dFlags & meRWFLAG_BACKUP),NULL) <= 0)
+        if((rr=ffReadFileOpen(sfname,meRWFLAG_READ|(dFlags & meRWFLAG_NODIRLIST|meRWFLAG_SILENT),NULL)) <= 0)
+            return rr ;
+        if((rr=ffWriteFileOpen(dfname,meRWFLAG_WRITE|(dFlags & meRWFLAG_BACKUP|meRWFLAG_SILENT),NULL)) <= 0)
         {
-            ffReadFileClose(sfname,meRWFLAG_READ) ;
-            return meABORT ;
+            ffReadFileClose(sfname,meRWFLAG_READ|(dFlags & meRWFLAG_SILENT)) ;
+            return rr ;
         }
         for(;;)
         {
-            if((rr=ffgetBuf()) <= 0)
+            if((r1=ffgetBuf()) <= 0)
                 break ;
             if(ffremain < 0)
                 break ;
-           if(ffputBuf() < 0)
+            if(ffputBuf() < 0)
                 break ;
         }
-        ffReadFileClose(sfname,meRWFLAG_READ) ;
+        ffReadFileClose(sfname,meRWFLAG_READ|(dFlags & meRWFLAG_SILENT)) ;
         ffremain = 0 ;
-        rr = ffWriteFileClose(dfname,meRWFLAG_WRITE,NULL) ;
+        rr = ffWriteFileClose(dfname,meRWFLAG_WRITE|(dFlags & meRWFLAG_SILENT),NULL) ;
+        if(r1 <= 0)
+            rr = r1 ;
     }
-    if((rr > 0) && (dFlags & (meRWFLAG_DELETE|meRWFLAG_MKDIR)))
+    if((rr > 0) && (dFlags & (meRWFLAG_DELETE|meRWFLAG_MKDIR|meRWFLAG_STAT)))
     {
-        rr = ffWriteFileOpen(sfname,dFlags & (meRWFLAG_DELETE|meRWFLAG_MKDIR|meRWFLAG_BACKUP),NULL) ;
+        rr = ffWriteFileOpen(sfname,dFlags & (meRWFLAG_DELETE|meRWFLAG_MKDIR|meRWFLAG_STAT|meRWFLAG_BACKUP|meRWFLAG_SILENT),NULL) ;
     }
 #if MEOPT_SOCKET
     if((rr > 0) && (dFlags & meRWFLAG_FTPCLOSE) && !meSocketIsBad(ffccsk))
@@ -2477,7 +2588,7 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags)
 #ifdef _UNIX
         meSigHold() ;
 #endif
-        if(dFlags != meRWFLAG_FTPCLOSENC)
+        if(!(dFlags & meRWFLAG_NOCONSOLE))
             ffUrlFileSetupFlags(dFlags) ;
         ffCloseSockets(1) ;
 #ifdef _UNIX

@@ -111,7 +111,7 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
         {
             if(flag & 1)
                 mlwrite(MWABORT|MWPAUSE,"[%s illegal name]", file);
-            return meFILETYPE_NASTY ;
+            return meFILETYPE_NOTEXIST ;
         }
         if((file[ii-1] == DIR_CHAR) || ((ii == 2) && (file[1] == _DRV_CHAR)))
             goto gft_directory ;
@@ -162,7 +162,7 @@ gft_directory:
         {
             if(flag & 1)
                 mlwrite(MWABORT|MWPAUSE,"[%s illegal name]", file);
-            return meFILETYPE_NASTY ;
+            return meFILETYPE_NOTEXIST ;
         }
         if(stats != NULL)
         {
@@ -1818,13 +1818,17 @@ viewFile(int f, int n)	/* visit a file in VIEW mode */
     return ss ;
 }
 
+#define meWRITECHECK_CHECK    0x001
+#define meWRITECHECK_BUFFER   0x002
+#define meWRITECHECK_NOPROMPT 0x004
+
 /*
  * writeCheck
- * This performs some sime access checks to determine if we
+ * This performs some simple access checks to determine if we
  * can write the file.
  */
 static int
-writeCheck (meUByte *pathname, int flags, meStat *statp)
+writeCheck(meUByte *pathname, int flags, meStat *statp)
 {
     meUByte dirbuf [meBUF_SIZE_MAX];
 #if MEOPT_SOCKET
@@ -1843,16 +1847,16 @@ writeCheck (meUByte *pathname, int flags, meStat *statp)
         return mlwrite (MWABORT,(meUByte *)"Read Only Directory: %s", dirbuf);
 #endif
     /* See if there is an existing file */
-    if ((flags & 1) == 0)           /* Validity check enabled ?? */
-        return meTRUE;                /* No - quit. */
-    if (meTestExist (pathname))     /* Does it exist ?? */
-        return meTRUE;                /* No - quit */
-    if ((statp != NULL) && !meStatTestWrite(*statp))
+    if((flags & meWRITECHECK_CHECK) == 0)       /* Validity check enabled ?? */
+        return meTRUE;                          /* No - quit. */
+    if(meTestExist(pathname))                   /* Does it exist ?? */
+        return meTRUE;                          /* No - quit */
+    if((statp != NULL) && !meStatTestWrite(*statp))
     {
         /* No - advised read only - see if the users wants to write */
-        sprintf((char *)dirbuf, "%s is read only. Try anyway", pathname);
-        if(mlyesno(dirbuf) <= 0)
-            return mlwrite (MWABORT,(meUByte *)"File not written.");
+        sprintf((char *)dirbuf, "%s is read only, overwrite", pathname);
+        if((flags & meWRITECHECK_NOPROMPT) || (mlyesno(dirbuf) <= 0))
+            return ctrlg(meFALSE,1);
     }
     return meTRUE;
 }
@@ -1880,50 +1884,54 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
         )
         return NULL ;
     fn = (lfname[0] == '\0') ? dfname:lfname ;
-    if(flags & 0x01)
+    if(flags & meWRITECHECK_CHECK)
     {
         meUByte prompt[meBUF_SIZE_MAX+48];
-        meBuffer *bp ;
 
         /* Check for write-out filename problems */
         if(s == meFILETYPE_REGULAR)
         {
-            sprintf((char *)prompt,"File %s already exists, overwrite",fn) ;
-            if(mlyesno(prompt) <= 0)
+            sprintf((char *)prompt,"%s already exists, overwrite",fn) ;
+            if((flags & meWRITECHECK_NOPROMPT) || (mlyesno(prompt) <= 0))
             {
                 ctrlg(meFALSE,1);
                 return NULL ;
             }
         }
         /* Quick check on the file write condition */
-        if(writeCheck (fn, flags, &stats) <= 0)
+        if(writeCheck(fn, flags, &stats) <= 0)
             return NULL ;
-        /*
-         * Check to see if the new filename conflicts with the filenames for any
-         * other buffer and produce a warning if so.
-         */
-        bp=bheadp ;
-        while(bp != NULL)
+        
+        if(flags & meWRITECHECK_CHECK)
         {
-            if((bp != frameCur->bufferCur) &&
-#ifdef _UNIX
-               (!fnamecmp(bp->fileName,fn) ||
-                ((stats.stdev != (dev_t)(-1)) &&
-                 (bp->stats.stdev == stats.stdev) &&
-                 (bp->stats.stino == stats.stino) &&
-                 (bp->stats.stsize == stats.stsize))))
-#else
-               !fnamecmp(bp->fileName,fn))
-#endif
+            /*
+             * Check to see if the new filename conflicts with the filenames for any
+             * other buffer and produce a warning if so.
+             */
+            meBuffer *bp = bheadp ;
+            
+            while(bp != NULL)
             {
-                sprintf((char *)prompt, "Buffer %s is the same file, overwrite",bp->name) ;
-                if(mlyesno(prompt) <= 0)
+                if((bp != frameCur->bufferCur) &&
+#ifdef _UNIX
+                   (!fnamecmp(bp->fileName,fn) ||
+                    ((stats.stdev != (dev_t)(-1)) &&
+                     (bp->stats.stdev == stats.stdev) &&
+                     (bp->stats.stino == stats.stino) &&
+                     (bp->stats.stsize == stats.stsize))))
+#else
+                   !fnamecmp(bp->fileName,fn))
+#endif
                 {
-                    ctrlg(meFALSE,1);
-                    return NULL ;
+                    sprintf((char *)prompt, "Buffer %s is the same file, overwrite",bp->name) ;
+                    if(mlyesno(prompt) <= 0)
+                    {
+                        ctrlg(meFALSE,1);
+                        return NULL ;
+                    }
                 }
+                bp = bp->next ;
             }
-            bp = bp->next ;
         }
     }
     return fn ;
@@ -1931,32 +1939,38 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
 
 #if MEOPT_EXTENDED
 
-#define meFILEOP_CHECK    0x001
-#define meFILEOP_BACKUP   0x002
-#define meFILEOP_FTPCLOSE 0x010
-#define meFILEOP_DELETE   0x020
-#define meFILEOP_MOVE     0x040
-#define meFILEOP_COPY     0x080
-#define meFILEOP_MKDIR    0x100
+#define meFILEOP_CHECK     0x001
+#define meFILEOP_BACKUP    0x002
+#define meFILEOP_NOPROMPT  0x004
+#define meFILEOP_FTPCLOSE  0x010
+#define meFILEOP_DELETE    0x020
+#define meFILEOP_MOVE      0x040
+#define meFILEOP_COPY      0x080
+#define meFILEOP_MKDIR     0x100
+#define meFILEOP_WC_MASK   0x005
+
 int
 fileOp(int f, int n)
 {
     meUByte sfname[meBUF_SIZE_MAX], dfname[meBUF_SIZE_MAX], lfname[meBUF_SIZE_MAX], *fn=NULL ;
-    int dFlags=0 ;
+    int rr=meTRUE, dFlags=0 ;
 
     if((n & (meFILEOP_FTPCLOSE|meFILEOP_DELETE|meFILEOP_MOVE|meFILEOP_COPY|meFILEOP_MKDIR)) == 0)
-        return mlwrite(MWABORT,(meUByte *)"[No operation set]") ;
-
-    if(n & meFILEOP_DELETE)
+        rr = mlwrite(MWABORT,(meUByte *)"[No operation set]") ;
+    else if(n & meFILEOP_DELETE)
     {
         if (inputFileName((meUByte *)"Delete file", sfname,1) <= 0)
-            return meABORT ;
-        if(n & meFILEOP_CHECK)
+            rr = 0 ;
+        else if(isHttpLink(sfname))
+            rr = mlwrite(MWABORT,(meUByte *)"[Cannot delete %s]",sfname);
+        else if((n & meFILEOP_CHECK) && !isFtpLink(sfname) && meTestWrite(sfname))
         {
-            meUByte prompt[meBUF_SIZE_MAX];
-            sprintf((char *)prompt, "%s: Delete file",sfname) ;
-            if(mlyesno(prompt) <= 0)
-                return ctrlg(meFALSE,1);
+            sprintf((char *)lfname, "%s is read only, delete",sfname) ;
+            if((n & meFILEOP_NOPROMPT) || (mlyesno(lfname) <= 0))
+            {
+                ctrlg(meFALSE,1);
+                rr = -8 ;
+            }
         }
         dFlags = meRWFLAG_DELETE ;
     }
@@ -1977,40 +1991,43 @@ fileOp(int f, int n)
             prompt[3] = 'y' ;
         }
         prompt[9] = '\0' ;
-        if (inputFileName(prompt, sfname,1) <= 0)
-            return meABORT ;
-        prompt[9] = ' ' ;
-        if (inputFileName(prompt, dfname,1) <= 0)
-            return meABORT ;
-#if MEOPT_SOCKET
-        if(isUrlLink(sfname) && isUrlLink(dfname))
-            return mlwrite (MWABORT,(meUByte *)"[Cannot read and write to URL at the same time]") ;
-#endif
-        if((fn=writeFileChecks(dfname,sfname,lfname,n)) == NULL)
-            return meABORT ;
-        /* can this be done by a simple rename? */
-        if(((n & (meFILEOP_BACKUP|meFILEOP_MOVE)) == meFILEOP_MOVE) && !meRename(sfname,fn))
-            return meTRUE ;
+        if((inputFileName(prompt, sfname,1) <= 0) ||
+           ((prompt[9] = ' '),(inputFileName(prompt, dfname,1) <= 0)))
+            rr = 0 ;
+        else if((fn=writeFileChecks(dfname,sfname,lfname,(n & meFILEOP_WC_MASK))) == NULL)
+            rr = -6 ;
+        dFlags |= meRWFLAG_NODIRLIST ;
     }
     else if(n & meFILEOP_MKDIR)
     {
         int s ;
         if (inputFileName((meUByte *)"Create dir", sfname,1) <= 0)
-            return meABORT ;
+            rr = 0 ;
         /* check that nothing of that name currently exists */
-        if (((s=getFileStats(sfname,0,NULL,NULL)) != meFILETYPE_NOTEXIST)
+        else if (((s=getFileStats(sfname,0,NULL,NULL)) != meFILETYPE_NOTEXIST)
 #if MEOPT_SOCKET
             && (s != meFILETYPE_FTP)
 #endif
-            )
-            return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[%s already exists]",sfname);
-        dFlags = meRWFLAG_MKDIR ;
+                 )
+        {
+            mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[%s already exists]",sfname);
+            rr = -7 ;
+        }
+        else
+            dFlags = meRWFLAG_MKDIR ;
     }
-    if(n & meFILEOP_BACKUP)
-        dFlags |= meRWFLAG_BACKUP ;
-    if(n & meFILEOP_FTPCLOSE)
-        dFlags |= meRWFLAG_FTPCLOSE ;
-    return ffFileOp(sfname,fn,dFlags) ;
+    if(rr > 0)
+    {
+        if(n & meFILEOP_BACKUP)
+            dFlags |= meRWFLAG_BACKUP ;
+        if(n & meFILEOP_FTPCLOSE)
+            dFlags |= meRWFLAG_FTPCLOSE ;
+        if((rr = ffFileOp(sfname,fn,dFlags)) > 0)
+            return meTRUE ;
+    }
+    resultStr[0] = '0' - rr ;
+    resultStr[1] = '\0' ;
+    return meABORT ;
 }
 #endif
 
@@ -2082,30 +2099,8 @@ autowriteremove(register meBuffer *bp)
 int
 writeOut(register meBuffer *bp, meUInt flags, meUByte *fn)
 {
-#if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
-    /* Add write permission to backup file. */
     if(meModeTest(bp->mode,MDBACK))
-    {
-        register meUInt ss;
-
-#ifdef _DOS
-        ss = bp->stats.stmode & ~(meFILE_ATTRIB_READONLY|meFILE_ATTRIB_HIDDEN) ;
-        if(meSystemCfg & meSYSTEM_HIDEBCKUP)
-            ss |= meFILE_ATTRIB_HIDDEN ;
-#endif
-#ifdef _WIN32
-        ss = bp->stats.stmode & ~(FILE_ATTRIBUTE_HIDDEN|FILE_ATTRIBUTE_READONLY) ;
-        if((meSystemCfg & (meSYSTEM_DOSFNAMES|meSYSTEM_HIDEBCKUP)) == meSYSTEM_HIDEBCKUP)
-            ss |= FILE_ATTRIBUTE_HIDDEN ;
-#endif
-#ifdef _UNIX
-        ss = bp->stats.stmode | S_IWUSR ;
-#endif
-        if(ss == bp->stats.stmode)
-            ss = 0 ;
-        flags |= meRWFLAG_BACKUP | ss ;
-    }
-#endif
+        flags |= meRWFLAG_BACKUP ;
 #if MEOPT_TIMSTMP
     set_timestamp(bp);			/* Perform time stamping */
 #endif
@@ -2249,9 +2244,9 @@ writeBuffer(int f, int n)
     else
         fn = NULL ;
 
-    if((fn=writeFileChecks(fname,fn,lname,n)) == NULL)
+    if((fn=writeFileChecks(fname,fn,lname,(n & 0x01)|meWRITECHECK_BUFFER)) == NULL)
         return meABORT ;
-
+    
     if(!writeOut(frameCur->bufferCur,((n & 0x02) ? meRWFLAG_IGNRNRRW:0),fn))
         return meFALSE ;
 
