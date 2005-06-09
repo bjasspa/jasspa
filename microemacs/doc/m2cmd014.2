@@ -3,8 +3,8 @@
 .\" Copyright (c) 1988-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd014.2,v 2.5 2002-01-11 21:58:41 jon Exp $
-.Im MicroEmacs command|buffer
+.Id $Id: m2cmd014.2,v 2.6 2005-06-09 22:32:06 bill Exp $
+.Im MicroEmacs command|buffer|macrodevelop
 .ds C0 "(\fB\*(cX=\fR)\ \&
 .so me.tni
 .TH buffer-info 2
@@ -14,6 +14,7 @@ buffer-info \- Status information on current buffer position
 .Me $a
 .SH SYNOPSIS
 .na
+.I n
 \fBbuffer-info\fR \*(C0
 .ad
 .SH DESCRIPTION
@@ -28,7 +29,11 @@ Line 1845/3955 Col 0.0 Char 78267/167172 (46%) Win Line 99/48 Col/0/0 char = 0xA
 .CE 0
 .PP
 .Ht $result 5
-is set to the same output string.
+is set to the same output  string  unless a numeric  value of zero is given to
+the command in which case the values are given in a
+.Hl "\*(mS list" &lset 4
+format and not printed to the message line; this  information can be useful in
+macros.
 .SH "SEE ALSO"
 .na
 .Ht $result 5 ,
