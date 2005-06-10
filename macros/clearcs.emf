@@ -846,7 +846,7 @@ osd .osd.ccstp 2020 "BtcfHh" .scheme.osd-ebtt " \HOkay " f void
 define-macro cc-setup
     0 cc-setup-add-view
     .osd.ccstp osd
-    exec-file "clearcase"
+    exec-file "clearcs"
 !emacro
 
 ; ClearCase directory list context menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
