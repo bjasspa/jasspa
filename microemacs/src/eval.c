@@ -2872,7 +2872,7 @@ get_flag:
                     *dd++ = '\b' ;
                     *dd++ = '\b' ;
                     if(v5)
-                        dd += sprintf((char *)dd,"%d\b%d",v51,v52) ;
+                        dd += sprintf((char *)dd,"%lu\b%lu",v51,v52) ;
                     else
                         *dd++ = '\b' ;
                     *dd++ = '\b' ;

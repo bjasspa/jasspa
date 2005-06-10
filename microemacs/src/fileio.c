@@ -2525,7 +2525,7 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags)
         {
             /* simply move the file if the source is to be deleted and they are
              * regular files, the WriteOpen will handle backups etc */
-            if((rr=ffWriteFileOpen(dfname,(dFlags & meRWFLAG_DELETE|meRWFLAG_BACKUP|meRWFLAG_SILENT),NULL)) <= 0)
+            if((rr=ffWriteFileOpen(dfname,(dFlags & (meRWFLAG_DELETE|meRWFLAG_BACKUP|meRWFLAG_SILENT)),NULL)) <= 0)
                 return rr ;
             
             if(!sft && !dft && !meRename(sfname,dfname))
@@ -2556,9 +2556,9 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags)
     }
     if(dfname != NULL)
     {
-        if((rr=ffReadFileOpen(sfname,meRWFLAG_READ|(dFlags & meRWFLAG_NODIRLIST|meRWFLAG_SILENT),NULL)) <= 0)
+        if((rr=ffReadFileOpen(sfname,meRWFLAG_READ|(dFlags & (meRWFLAG_NODIRLIST|meRWFLAG_SILENT)),NULL)) <= 0)
             return rr ;
-        if((rr=ffWriteFileOpen(dfname,meRWFLAG_WRITE|(dFlags & meRWFLAG_BACKUP|meRWFLAG_SILENT),NULL)) <= 0)
+        if((rr=ffWriteFileOpen(dfname,meRWFLAG_WRITE|(dFlags & (meRWFLAG_BACKUP|meRWFLAG_SILENT)),NULL)) <= 0)
         {
             ffReadFileClose(sfname,meRWFLAG_READ|(dFlags & meRWFLAG_SILENT)) ;
             return rr ;
