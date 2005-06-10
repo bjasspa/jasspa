@@ -10,17 +10,27 @@
 !if &not &exi dirlst-sort-list
     0 exec-file "hkdirlst"
 !endif
-!if &not &sin "Revis'n" .fhook-dirlst.col-name
-    set-variable #l0 &lef .fhook-dirlst.col-name 1
-    set-variable .fhook-dirlst.col-name &spr "%sRevis'n%sTag / Date      %s" .fhook-dirlst.col-name #l0 #l0
-    set-variable .fhook-dirlst.col-flag &spr "%s1%1%s" .fhook-dirlst.col-flag #l0 #l0
-!endif
 
 !if &not &exi .osd.cvsosd
     set-variable .osd.cvsosd &pinc .osd.next 1
     set-variable .osd.cvsstp &pinc .osd.next 1
     define-macro cvs
     !emacro
+!endif
+0 define-macro cvs-init
+!emacro
+
+!if &not &lfind .fhook-dirlst.sc-name "CVS"
+    set-variable #l0 &lef .fhook-dirlst.col-name 1
+    set-variable .fhook-dirlst.col-name &spr "%sRevis'n%sTag / Date      %s" .fhook-dirlst.col-name #l0 #l0
+    set-variable .fhook-dirlst.col-flag &spr "%s1%1%s" .fhook-dirlst.col-flag #l0 #l0
+    set-variable .fhook-dirlst.sc-name &lins .fhook-dirlst.sc-name -1 "CVS"
+    set-variable .fhook-dirlst.sc-menu &lins .fhook-dirlst.sc-menu -1 "osd-cvs-file-menu"
+    set-variable .fhook-dirlst.sc-detect &lins .fhook-dirlst.sc-detect -1 "cvs-dirlst-detect"
+    set-variable .fhook-dirlst.sc-format &lins .fhook-dirlst.sc-format -1 "cvs-dirlst-format"
+    set-variable .fhook-dirlst.modefunc-lbl &lins .fhook-dirlst.modefunc-lbl -1 "CVS-Quick"
+    set-variable .fhook-dirlst.modefunc-cmd &lins .fhook-dirlst.modefunc-cmd -1 "cvs-full-reread"
+    set-variable .file-browser-close.bn &lins .file-browser-close.bn -1 "*cvs-console*"
 !endif
 
 set-variable .cvs.names   "|Add|Checkout|Commit|Diff|Graphical Diff|Log|Remove|State|Status|Tag|Update|Annotate|Resolve Conflicts|"
@@ -401,13 +411,18 @@ define-macro cvs-log-list
     
 0 define-macro cvs-get-message-template
     !force 0 find-file "./CVS/Template"
+    !if &not $status
+        !if &not &seq &set #l0 &find "cvsci" ".etf" "ERROR" 
+            !force 0 find-file #l0
+        !endif
+    !endif
     !if $status
         beginning-of-buffer
         set-mark
         end-of-buffer
         backward-char
         copy-region
-        set-variable .cvs.message &cat "\n" @y
+        set-variable .cvs.message @y
         -1 yank
         0 delete-buffer $buffer-bname
     !endif
@@ -1501,7 +1516,7 @@ define-macro cvs-resolve-conflicts
 !emacro
 
 0 define-macro cvs-dirlst-detect
-    !if &not &seq &stat "t" &cat $buffer-fname "CVS/" "D"
+    !if &not &seq &stat "t" &cat $buffer-fname "CVS/." "D"
         !abort
     !endif
 !emacro
@@ -1702,9 +1717,6 @@ define-macro cvs-full-reread
 !emacro
 
 define-macro cvs
-    !if &not .fhook-dirlst.cvs-enable
-        cvs-init
-    !endif
     !if .toolbar.open
         !force toolbar-make-tool-visible "*cvs-console*"
         !tjump &not $status 2
@@ -1723,14 +1735,6 @@ define-macro cvs
         !endif
     !endif
     &bor @# 2 file-browser
-!emacro
-
-0 define-macro cvs-init
-    set-variable .fhook-dirlst.cvs-enable 1
-    !if &not &lfind .fhook-dirlst.sc-detect "cvs-dirlst-detect"
-        set-variable .fhook-dirlst.sc-detect &lins .fhook-dirlst.sc-detect -1 "cvs-dirlst-detect"
-        set-variable .fhook-dirlst.sc-format &lins .fhook-dirlst.sc-format -1 "cvs-dirlst-format"
-    !endif
 !emacro
 
 0 define-macro cvs-console-tool
