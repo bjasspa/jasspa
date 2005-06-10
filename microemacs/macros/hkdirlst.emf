@@ -10,7 +10,7 @@
 0 define-macro-file osd osd-close
 0 define-macro-file ftp ftp-rename-buffer
 0 define-macro-file cvs cvs-init
-0 define-macro-file clearcase cc-init
+0 define-macro-file clearcs cc-init
 !if &not &exi fhook-html
     define-macro-file hkhtml fhook-html
 !endif

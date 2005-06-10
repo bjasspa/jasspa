@@ -17,9 +17,9 @@ include $(TOPDIR)/etc/makeinc
 # EMFS:sh=ls *.emf
 EMFS=	abbrev.emf	abbrlist.emf	aix.emf		\
 	benchmrk.emf	bookmark.emf	buffinit.emf	buffstp.emf	\
-	calc.emf	charset.emf	charsutl.emf	cmacros.emf	\
-	collapse.emf	comment.emf	crosswd.emf	ctags.emf	\
-	cvs.emf		cygwin.emf	\
+	calc.emf	charset.emf	charsutl.emf	clearcs.emf	\
+	cmacros.emf	collapse.emf	comment.emf	crosswd.emf	\
+	ctags.emf	cvs.emf		cygwin.emf	\
 	darwin.emf	dmf.emf		docmacro.emf	docutl.emf	\
 	dos.emf		dos2unix.emf	draw.emf	\
 	ehftools.emf	emftags.emf	etfinsrt.emf	\
