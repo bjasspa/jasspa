@@ -19,11 +19,23 @@ set-variable .fhook-nroff.setup &reg "/history/fhook/nroff" "bfghijnopswx"
 set-variable .fhook-nroff.setup-mask "abefghijkmnopstuwx"
 set-variable .fhook-nroff.tags "ntags"
 set-variable .fhook-nroff.comment "|.\\\"||*|.\\\" | \"\\||"
-set-variable .fhook-nroff.command-flag  "|thbo|bo|thb|thb|th|thb|thb|thb|thb|th|thb|thb|thb|th|thbH|t|"
-set-variable .fhook-nroff.command-name  "|nroff-para|nroff-para|nroff-add-padding|nroff-remove-padding||nroff-bold|nroff-italic|nroff-mono|nroff-roman||nroff-bold-region|nroff-mono-region|nroff-italic-region||nroff-swap-hilight|tex2nr|"
-set-variable .fhook-nroff.command-nbind "|||||||||||||||||"
-set-variable .fhook-nroff.command-kbind "|esc q|esc o|C-c &|C-x &||C-c C-b|C-c C-i|C-c C-m|C-c C-n||C-c b|C-c m|C-c i||C-c C-h||"
-set-variable .fhook-nroff.command-desc  "|\HFill paragraph||\HAdd Padding|Remove \HPadding||Change to \HBold|Change to \HItalic|Change to \HMono (Courier)|Change to \HNormal (Roman)||R\Hegion to Bold|Region to Mono|Re\Hgion to Italic||T\Hoggle hilighting|Convert Tex to Nroff|"
+
+; Define the buffer commands.
+set-variable .fhook-nroff.command-0  "|thbo||nroff-para|esc q|\HFill paragraph|"
+set-variable .fhook-nroff.command-1  "|bo||nroff-para|esc o||"
+set-variable .fhook-nroff.command-2  "|thb||nroff-add-padding|C-c &|\HAdd Padding|"
+set-variable .fhook-nroff.command-3  "|thb||nroff-remove-padding|C-x &|Remove \HPadding|"
+set-variable .fhook-nroff.command-4  "|thb||nroff-bold|C-c C-b|Change to \HBold|"
+set-variable .fhook-nroff.command-5  "|thb||nroff-italic|C-c C-i|Change to \HItalic|"
+set-variable .fhook-nroff.command-6  "|thb||nroff-mono|C-c C-m|Change to \HMono (Courier)|"
+set-variable .fhook-nroff.command-7  "|thb||nroff-roman|C-c C-n|Change to \HNormal (Roman)|"
+set-variable .fhook-nroff.command-8  "|thb||nroff-size|C-c +|Change \HSize|"
+set-variable .fhook-nroff.command-9  "|thb||nroff-bold-region|C-c b|R\Hegion to Bold|"
+set-variable .fhook-nroff.command-10 "|thb||nroff-mono-region|C-c m|Region to Mono|"
+set-variable .fhook-nroff.command-11 "|thb||nroff-italic-region|C-c i|Re\Hgion to Italic|"
+set-variable .fhook-nroff.command-12 "|th|||||"
+set-variable .fhook-nroff.command-13 "|thbH||nroff-swap-hilight|C-c C-h|T\Hoggle hilighting|"
+set-variable .fhook-nroff.command-14 "|t||tex2nr||Convert Tex to Nroff|"
 
 ; setup nroff collapsing
 set-variable .fhook-nroff.collapse-open  "^\\.S[SH]"
@@ -34,7 +46,7 @@ set-variable .fhook-nroff.collapse-mnext "-1"
 set-variable .fhook-nroff.item-list-s1 "^\\.\\(S[SH]\\)[ \t]+\"?\\([^\"\n]*\\)"
 set-variable .fhook-nroff.item-list-r1 "\\1  \ecB\\2\ecA"
 
-!if &and &sin "h" .fhook-nroff.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-nroff.setup &band .hilight.flags 0x02
     !if &not &exist .hilight.nroff
         set-variable .hilight.nroff &pinc .hilight.next 1
         set-variable .hilight.roffR &pinc .hilight.next 1
@@ -142,9 +154,10 @@ set-variable .fhook-nroff.item-list-r1 "\\1  \ecB\\2\ecA"
     hilight .hilight.nroff 3   "^[.']SS"               .scheme.header
     hilight .hilight.nroff 3   "^[.']Me"               .scheme.prepro
     hilight .hilight.nroff 3   "^[.']vs"               .scheme.keyword
-    
+
     0 hilight  .hilight.roffR 2 40                     $global-scheme
     hilight-nroff-common                    .hilight.roffR $global-scheme
+    hilight .hilight.roffR 0x040 "\\\\fP" ""           $global-scheme
     hilight .hilight.roffR 0x040 "\\\\fR" ""           $global-scheme
     hilight .hilight.roffR 0x040 "\\\\f1" ""           $global-scheme
     hilight .hilight.roffR 0x0c0 "\\\\fI" ""  .hilight.roffI  .scheme.italic
@@ -210,19 +223,19 @@ set-variable .fhook-nroff.item-list-r1 "\\1  \ecB\\2\ecA"
     hilight .hilight.roffR 0x42  "^[.']SH " ""         .scheme.header
     hilight .hilight.roffR 0x42  "^[.']SS " ""         .scheme.header
     hilight .hilight.roffR 0xc3  "^[.']CS" "" .hilight.roffC .scheme.string
-    
+
     0 hilight .hilight.roffB 0                             .scheme.bold
     hilight-nroff-common                    .hilight.roffB .scheme.bold
     hilight .hilight.roffB 0x080 "\\}\\\\f" .hilight.roffR $global-scheme
-    
+
     0 hilight .hilight.roffI 0                             .scheme.italic
     hilight-nroff-common                    .hilight.roffI .scheme.italic
     hilight .hilight.roffI 0x080 "\\}\\\\f" .hilight.roffR $global-scheme
-    
+
     0 hilight .hilight.roffM 0                             .scheme.string
     hilight-nroff-common                    .hilight.roffM .scheme.string
     hilight .hilight.roffM 0x080 "\\}\\\\f" .hilight.roffR $global-scheme
-    
+
     0 hilight .hilight.roffC 0                              .scheme.string
     hilight .hilight.roffC 0x040 "\\\\." "\\1"              .scheme.string
     hilight .hilight.roffC 0x0c0 "[.']CE" "" .hilight.roffR .scheme.string
@@ -243,29 +256,214 @@ set-variable .fhook-nroff.item-list-r1 "\\1  \ecB\\2\ecA"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Nroff specific macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 0 define-macro nroff-italic
-    insert-string "\\fI"
+    ; If it is a region then italic the region, otherwise insert a italic
+    ; character.
+    0 show-region
+    set-variable #l0 $result
+    !if &equ &band #l0 5 5
+        ; a region is hilighted
+        !if &not &band $result 2
+            3 show-region
+        !endif
+        ; Find start/end of region.
+        -2 show-region
+        set-variable #l0 $window-line
+        set-variable #l1 $window-col
+        set-position "\x82"
+        2 show-region
+        set-position "\x83"
+        set-variable #l2 $window-line
+        ; Determine start of region.
+        !if &or &gre #l0 #l2 &gre $window-col $window-col
+            set-variable #l3 1
+        !else
+            set-variable #l3 0
+        !endif
+        ; italic the region.
+        goto-position &cond #l3 "\x83" "\x82"
+        insert-string "\\fI"
+        goto-position &cond #l3 "\x82" "\x83"
+        insert-string "\\fP"
+    !else
+        ; No region hilighted, insert italic.
+        insert-string "\\fI"
+    !endif
 !emacro
 
 0 define-macro nroff-size
-    insert-string "\\s0"
+    ; If it is a region then size the region, otherwise insert a size
+    ; character.
+    0 show-region
+    set-variable #l0 $result
+    !if &equ &band #l0 5 5
+        ; a region is hilighted
+        !if &not &band $result 2
+            3 show-region
+        !endif
+        ; Find start/end of region.
+        -2 show-region
+        set-variable #l0 $window-line
+        set-variable #l1 $window-col
+        set-position "\x82"
+        2 show-region
+        set-position "\x83"
+        set-variable #l2 $window-line
+        ; Determine start of region.
+        !if &or &gre #l0 #l2 &gre $window-col $window-col
+            set-variable #l3 1
+        !else
+            set-variable #l3 0
+        !endif
+        ; size the region.
+        goto-position &cond #l3 "\x83" "\x82"
+        insert-string "\\s-1"
+        goto-position &cond #l3 "\x82" "\x83"
+        insert-string "\\s0"
+    !else
+        ; No region hilighted, insert size
+        insert-string "\\s0"
+    !endif
 !emacro
 
 0 define-macro nroff-roman
-    insert-string "\\fR"
+    ; If it is a region then roman the region, otherwise insert a roman
+    ; character.
+    0 show-region
+    set-variable #l0 $result
+    !if &equ &band #l0 5 5
+        ; a region is hilighted
+        !if &not &band $result 2
+            3 show-region
+        !endif
+        ; Find start/end of region.
+        -2 show-region
+        set-variable #l0 $window-line
+        set-variable #l1 $window-col
+        set-position "\x82"
+        2 show-region
+        set-position "\x83"
+        set-variable #l2 $window-line
+        ; Determine start of region.
+        !if &or &gre #l0 #l2 &gre $window-col $window-col
+            set-variable #l3 1
+        !else
+            set-variable #l3 0
+        !endif
+        ; roman the region.
+        goto-position &cond #l3 "\x83" "\x82"
+        insert-string "\\fR"
+        goto-position &cond #l3 "\x82" "\x83"
+        insert-string "\\fP"
+    !else
+        ; No region hilighted, insert roman.
+        insert-string "\\fR"
+    !endif
 !emacro
 
 0 define-macro nroff-bold
-    insert-string "\\fB"
+    ; If it is a region then roman the region, otherwise insert a roman
+    ; character.
+    0 show-region
+    set-variable #l0 $result
+    !if &equ &band #l0 5 5
+        ; a region is hilighted
+        !if &not &band $result 2
+            3 show-region
+        !endif
+        ; Find start/end of region.
+        -2 show-region
+        set-variable #l0 $window-line
+        set-variable #l1 $window-col
+        set-position "\x82"
+        2 show-region
+        set-position "\x83"
+        set-variable #l2 $window-line
+        ; Determine start of region.
+        !if &or &gre #l0 #l2 &gre $window-col $window-col
+            set-variable #l3 1
+        !else
+            set-variable #l3 0
+        !endif
+        ; bold the region.
+        goto-position &cond #l3 "\x83" "\x82"
+        insert-string "\\fB"
+        goto-position &cond #l3 "\x82" "\x83"
+        insert-string "\\fP"
+    !else
+        ; No region hilighted, insert bold
+        insert-string "\\fB"
+    !endif
 !emacro
 
 0 define-macro nroff-mono
-    insert-string "\\fC"
+    ; If it is a region then mono the region, otherwise insert a mono
+    ; character.
+    0 show-region
+    set-variable #l0 $result
+    !if &equ &band #l0 5 5
+        ; a region is hilighted
+        !if &not &band $result 2
+            3 show-region
+        !endif
+        ; Find start/end of region.
+        -2 show-region
+        set-variable #l0 $window-line
+        set-variable #l1 $window-col
+        set-position "\x82"
+        2 show-region
+        set-position "\x83"
+        set-variable #l2 $window-line
+        ; Determine start of region.
+        !if &or &gre #l0 #l2 &gre $window-col $window-col
+            set-variable #l3 1
+        !else
+            set-variable #l3 0
+        !endif
+        ; mono the region.
+        goto-position &cond #l3 "\x83" "\x82"
+        insert-string "\\fC"
+        goto-position &cond #l3 "\x82" "\x83"
+        insert-string "\\fP"
+    !else
+        ; No region hilighted, insert mono.
+        insert-string "\\fC"
+    !endif
 !emacro
 
 0 define-macro nroff-prev
-    insert-string "\\fP"
+    ; If it is a region then prev the region, otherwise insert a prev
+    ; character.
+    0 show-region
+    set-variable #l0 $result
+    !if &equ &band #l0 5 5
+        ; a region is hilighted
+        !if &not &band $result 2
+            3 show-region
+        !endif
+        ; Find start/end of region.
+        -2 show-region
+        set-variable #l0 $window-line
+        set-variable #l1 $window-col
+        set-position "\x82"
+        2 show-region
+        set-position "\x83"
+        set-variable #l2 $window-line
+        ; Determine start of region.
+        !if &or &gre #l0 #l2 &gre $window-col $window-col
+            set-variable #l3 1
+        !else
+            set-variable #l3 0
+        !endif
+        ; prev the region.
+        goto-position &cond #l3 "\x83" "\x82"
+        insert-string "\\fP"
+        goto-position &cond #l3 "\x82" "\x83"
+        insert-string "\\fP"
+    !else
+        ; No region hilighted, insert prev.
+        insert-string "\\fP"
+    !endif
 !emacro
 
 0 define-macro nroff-para
@@ -590,4 +788,3 @@ define-macro-file hkman aman
 !endif
 
 buffer-init-fhook "nroff"
-
