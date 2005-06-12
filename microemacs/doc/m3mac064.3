@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac064.3,v 1.14 2005-06-12 11:57:21 jon Exp $
+.Id $Id: m3mac064.3,v 1.15 2005-06-12 12:11:35 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH buffer-init 3
@@ -86,8 +86,8 @@ set-variable .fhook-XXX.command-nbind "||"
 set-variable .fhook-XXX.command-kbind "||"
 set-variable .fhook-XXX.command-desc  "||"
 ; OR define the commands one per line uniquely numbered from 0.
-set-variable .fhook-XXX.command-0  "|bo|tex-para||esc o||"
-set-variable .fhook-XXX.command-1  "|bo|tex-para||esc q||"
+set-variable .fhook-XXX.command-0  "|bo||xxx-para|esc o||"
+set-variable .fhook-XXX.command-1  "|bo||xxx-para|esc q||"
 ; Define additional buffer setup menu items -- omit if not defined
 set-variable .fhook-c.setup-flags   "|c|l|"
 set-variable .fhook-c.setup-labels  "|Option 1|Option 2|"
@@ -747,7 +747,7 @@ together.  Once the  \fCcommand-n\fR  variables  are  processed  then they are
 deleted  from the  environment.  The  general  syntax  of the  \fCcommand-n\fR
 variable is defined as a list:
 .IP
-\fC|command-flag|command-name|command-nbind|command-kbind|command-desc|\fR
+\fC|command-flag|command-nbind|command-name|command-kbind|command-desc|\fR
 .LP
 The command variables are defined as follows:-
 .TP
@@ -855,8 +855,8 @@ as:-
 .CS
 \.....
 
-set-variable .fhook-XXX.command-0 "|th|XXX-comp|2|A-q|Complete command|"
-set-variable .fhook-XXX.command-1 "|bo|comment-restyle||esc o||"
+set-variable .fhook-XXX.command-0 "|th|2|XXX-comp|A-q|Complete command|"
+set-variable .fhook-XXX.command-1 "|bo||comment-restyle|esc o||"
 
 \.....
 
