@@ -15,16 +15,36 @@ define-macro fhook-latex
     buffer-init-hooks
 !emacro
 
+; Set up the buffer.
 set-variable .fhook-latex.name "LaTeX"
 set-variable .fhook-latex.setup &reg "/history/fhook/latex" "bfghinopsx"
 set-variable .fhook-latex.setup-mask "abefghijkmnopstuwx"
 set-variable .fhook-latex.tags "textags"
 set-variable .fhook-latex.comment "|%||%|% | %||"
-set-variable .fhook-latex.command-flag  "|bo|bo|bo|bo|thb|thb|thb|th|thb|th|th|thbH|bo|bo|bo|bo|bo|bo|"
-set-variable .fhook-latex.command-name  "|latex-para|latex-para|latex-backward-paragraph|latex-forward-paragraph|latex-ref-goto-label|latex-ref-go-back|latex-list-label||latex-popup|latex-compile|latex-view|latex-swap-hilight|tex-insert-braces|tex-insert-quote|tex-close-latex-block|tex-goto-last-unclosed-latex-block|tex-up-list|tex-insert-underscore|"
-set-variable .fhook-latex.command-nbind "|||||||||||||||||||"
-set-variable .fhook-latex.command-kbind "|esc o|esc q|esc p|esc n|C-c l|C-c C-l|C-f7||C-6|||C-c C-h|C-c {|\"|C-c C-e|C-c C-u|C-c }|_|"
-set-variable .fhook-latex.command-desc  "|||||\HGoto Reference Label|\HReturn to Reference|List \HLabels||\HInsert Token|Com\Hpile Buffer|\HView Buffer|T\Hoggle hilighting|Insert \HBraces|Insert \HQuote|Close Block|Goto opening block|Up list|Insert Underscore|"
+
+; Define the buffer command extensions.
+set-variable .fhook-latex.command-0  "|bo||latex-para|esc o||"
+set-variable .fhook-latex.command-1  "|bo||latex-para|esc q||"
+set-variable .fhook-latex.command-2  "|bo||latex-backward-paragraph|esc p||"
+set-variable .fhook-latex.command-3  "|bo||latex-forward-paragraph|esc n||"
+set-variable .fhook-latex.command-4  "|btho||latex-bold|C-c C-b|Insert Bold Font||"
+set-variable .fhook-latex.command-5  "|btho||latex-italic|C-c C-i|Insert Italic Font||"
+set-variable .fhook-latex.command-6  "|bo||latex-italic|C-c tab|||"
+set-variable .fhook-latex.command-7  "|bo||latex-mono|C-c C-m|||"
+set-variable .fhook-latex.command-8  "|btho||latex-mono|C-c C-t|Insert Mono Font||"
+set-variable .fhook-latex.command-9  "|thb||latex-ref-goto-label|C-c l|\HGoto Reference Label|"
+set-variable .fhook-latex.command-10 "|thb||latex-ref-go-back|C-c C-l|\HReturn to Reference|"
+set-variable .fhook-latex.command-11 "|thb||latex-list-label|C-f7|List \HLabels|"
+set-variable .fhook-latex.command-12 "|thb||latex-popup|C-6|\HInsert Token|"
+set-variable .fhook-latex.command-13 "|th||latex-compile||Com\Hpile Buffer|"
+set-variable .fhook-latex.command-14 "|th||latex-view||\HView Buffer|"
+set-variable .fhook-latex.command-15 "|thbH||latex-swap-hilight|C-c C-h|T\Hoggle hilighting|"
+set-variable .fhook-latex.command-16 "|bo||tex-insert-braces|C-c {|Insert \HBraces|"
+set-variable .fhook-latex.command-17 "|bo||tex-insert-quote|\"||"
+set-variable .fhook-latex.command-18 "|bo||tex-close-latex-block|C-c C-e|Close Block|"
+set-variable .fhook-latex.command-19 "|bo||tex-goto-last-unclosed-latex-block|C-c C-u|Goto opening block|"
+set-variable .fhook-latex.command-20 "|bo||tex-up-list|C-c }|Up list|"
+set-variable .fhook-latex.command-21 "|bo||tex-insert-underscore|_||"
 
 ; setup item-list
 set-variable .fhook-latex.item-list-s1 "^[ \t]*\\\\chapter\\*?{\\([^}]*\\)}"
@@ -1636,8 +1656,39 @@ define-macro tex-insert-underscore
 
 ; Insert a set of brackets, typically bound to "C-c {"
 define-macro tex-insert-braces
-    insert-string "{}"
-    backward-char
+    ; If it is a region then brace the region, otherwise insert a brace pair.
+    ; character. 
+    0 show-region
+    set-variable #l0 $result
+    !if &equ &band #l0 5 5
+        ; a region is hilighted
+        !if &not &band $result 2
+            3 show-region
+        !endif
+        ; Find start/end of region.
+        -2 show-region
+        set-variable #l0 $window-line
+        set-variable #l1 $window-col
+        set-position "\x82"
+        2 show-region
+        set-position "\x83"
+        set-variable #l2 $window-line
+        ; Determine start of region.
+        !if &or &gre #l0 #l2 &gre $window-col $window-col
+            set-variable #l3 1
+        !else
+            set-variable #l3 0
+        !endif
+        ; bold the region.
+        goto-position &cond #l3 "\x83" "\x82"
+        insert-string "{"
+        goto-position &cond #l3 "\x82" "\x83"
+        insert-string "}"
+    !else
+        ; No region hilighted, insert bold and move to center of brackets. 
+        insert-string "{}"
+        backward-char
+    !endif
 !emacro
 
 ; Move to the next set of braces, typically bound to "C-c }".
@@ -1675,6 +1726,114 @@ define-macro tex-up-list
             !endif
             set-variable #l1 &sub #l1 1
         !done
+    !endif
+!emacro
+
+define-macro latex-italic
+    ; If it is a region then italic the region, otherwise insert a italic
+    ; character.
+    0 show-region
+    set-variable #l0 $result
+    !if &equ &band #l0 5 5
+        ; a region is hilighted
+        !if &not &band $result 2
+            3 show-region
+        !endif
+        ; Find start/end of region.
+        -2 show-region
+        set-variable #l0 $window-line
+        set-variable #l1 $window-col
+        set-position "\x82"
+        2 show-region
+        set-position "\x83"
+        set-variable #l2 $window-line
+        ; Determine start of region.
+        !if &or &gre #l0 #l2 &gre $window-col $window-col
+            set-variable #l3 1
+        !else
+            set-variable #l3 0
+        !endif
+        ; italic the region.
+        goto-position &cond #l3 "\x83" "\x82"
+        insert-string "\\textit{"
+        goto-position &cond #l3 "\x82" "\x83"
+        insert-string "}"
+    !else
+        ; No region hilighted, insert italic and move to center of brackets. 
+        insert-string "\\textit{}"
+        backward-char
+    !endif
+!emacro
+
+define-macro latex-bold
+    ; If it is a region then bold the region, otherwise insert a bold
+    ; character.
+    0 show-region
+    set-variable #l0 $result
+    !if &equ &band #l0 5 5
+        ; a region is hilighted
+        !if &not &band $result 2
+            3 show-region
+        !endif
+        ; Find start/end of region.
+        -2 show-region
+        set-variable #l0 $window-line
+        set-variable #l1 $window-col
+        set-position "\x82"
+        2 show-region
+        set-position "\x83"
+        set-variable #l2 $window-line
+        ; Determine start of region.
+        !if &or &gre #l0 #l2 &gre $window-col $window-col
+            set-variable #l3 1
+        !else
+            set-variable #l3 0
+        !endif
+        ; bold the region.
+        goto-position &cond #l3 "\x83" "\x82"
+        insert-string "\\textbf{"
+        goto-position &cond #l3 "\x82" "\x83"
+        insert-string "}"
+    !else
+        ; No region hilighted, insert bold and move to center of brackets. 
+        insert-string "\\textbf{}"
+        backward-char
+    !endif
+!emacro
+
+define-macro latex-mono
+    ; If it is a region then mono the region, otherwise insert a mono
+    ; character.
+    0 show-region
+    set-variable #l0 $result
+    !if &equ &band #l0 5 5
+        ; a region is hilighted
+        !if &not &band $result 2
+            3 show-region
+        !endif
+        ; Find start/end of region.
+        -2 show-region
+        set-variable #l0 $window-line
+        set-variable #l1 $window-col
+        set-position "\x82"
+        2 show-region
+        set-position "\x83"
+        set-variable #l2 $window-line
+        ; Determine start of region.
+        !if &or &gre #l0 #l2 &gre $window-col $window-col
+            set-variable #l3 1
+        !else
+            set-variable #l3 0
+        !endif
+        ; mono the region.
+        goto-position &cond #l3 "\x83" "\x82"
+        insert-string "\\texttt{"
+        goto-position &cond #l3 "\x82" "\x83"
+        insert-string "}"
+    !else
+        ; No region hilighted, insert mono and move to center of brackets. 
+        insert-string "\\texttt{}"
+        backward-char
     !endif
 !emacro
 
