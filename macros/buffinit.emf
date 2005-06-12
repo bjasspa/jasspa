@@ -103,9 +103,51 @@ define-macro-file collapse collapse-current collapse-all beginning-of-function e
     !endif
 !emacro
 
+; Build the .fhook-xxx.command-flag/name/nbind/kbind/desc lists. We convert
+; from the numeric command lists .fhook-xxx.command-n into the specific
+; command lists and then delete the command-n variables when we have
+; completed. Note that if the template is executed again then the command-n
+; variables are reinstated and a new set of command variables are constructed.
+0 define-macro buffer-command-setup
+    set-variable #l0 0
+    ; If a .fhook-xxx.command-1 variable exists then delete all of the
+    ; .fhook-xxx.command-yyyy variables and re-load.
+    !if &exi &spr ".%s.command-%d" $buffer-fhook #l0
+        ; Delete the existing variables if they exist - this only happens on
+        ; a re-load of the template.
+        set-variable &spr ".%s.command-flag"  $buffer-fhook "||"
+        set-variable &spr ".%s.command-name"  $buffer-fhook "||"
+        set-variable &spr ".%s.command-nbind" $buffer-fhook "||"
+        set-variable &spr ".%s.command-kbind" $buffer-fhook "||"
+        set-variable &spr ".%s.command-desc"  $buffer-fhook "||"
+        ; Create the new command list.
+        !repeat
+            ; Generate the command lame and increment for &lset index.
+            set-variable #l1 &spr ".%s.command-%d" $buffer-fhook #l0
+            set-variable #l0 &add #l0 1
+            ; Add command item to the command lists.
+            set-variable #l2 &spr ".%s.command-flag"  $buffer-fhook
+            set-variable &ind #l2 &lset &ind #l2 #l0 &lget &ind #l1 1 ""
+            set-variable #l2 &spr ".%s.command-name"  $buffer-fhook
+            set-variable &ind #l2 &lset &ind #l2 #l0 &lget &ind #l1 2 ""
+            set-variable #l2 &spr ".%s.command-nbind"  $buffer-fhook
+            set-variable &ind #l2 &lset &ind #l2 #l0 &lget &ind #l1 3 ""
+            set-variable #l2 &spr ".%s.command-kbind"  $buffer-fhook
+            set-variable &ind #l2 &lset &ind #l2 #l0 &lget &ind #l1 4 ""
+            set-variable #l2 &spr ".%s.command-desc"  $buffer-fhook
+            set-variable &ind #l2 &lset &ind #l2 #l0 &lget &ind #l1 5 ""
+            ; Delete the existing command item now that it is added. If the
+            ; template is re-executed then the variable is re-created and
+            ; will be evaluated next time.
+            !force unset-variable &ind #l1
+        !until &not &exi &spr ".%s.command-%d" $buffer-fhook #l0
+    !endif
+!emacro
+
 0 define-macro buffer-init
     set-variable #l9 $result
     set-variable $buffer-fhook &cat "fhook-" @1
+    buffer-command-setup
     set-variable #l0 &ind &spr ".%s.setup" $buffer-fhook
     !if &not @#
         !if &sin "n" #l0
