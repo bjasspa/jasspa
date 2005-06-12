@@ -3,7 +3,7 @@
 ;  Author        : $Author: jon $
 ;  Created By    : Steven Phillips
 ;  Created       : Thu Jan 15 20:27:13 2004
-;  Last Modified : <040116.2042>
+;  Last Modified : <050612.2337>
 ;
 ;  Description
 ;
@@ -30,7 +30,7 @@ define-macro ehf-doc-test
     ml-write "[Extracting tags from ehf file]"
     find-buffer #l2
     beginning-of-buffer
-    !force regex-forward "^!.[2-5]"
+    !force search-buffer "m" "^!.[2-5]"
     !while $status
         beginning-of-line
         set-mark
@@ -39,14 +39,14 @@ define-macro ehf-doc-test
         find-buffer "*ehf-tmp*"
         yank
         find-buffer #l2
-        !force regex-forward "^!.[2-5]"
+        !force search-buffer "m" "^!.[2-5]"
     !done
     ml-write "[Processing Commands]"
     find-buffer "*ehf-tmp*"
     set-variable $command-names ".*"
     !while &not &seq &set #l4 $command-names ""
         beginning-of-buffer
-        !force regex-forward &spr "^!.[23] %s$" #l4
+        !force search-buffer "m" &spr "^!.[23] %s$" #l4
         !if $status
             beginning-of-line
             kill-line
@@ -60,7 +60,7 @@ define-macro ehf-doc-test
     insert-string "\nDead Commands\n\n"
     find-buffer "*ehf-tmp*"
     beginning-of-buffer
-    !force regex-forward "^!.[23] "
+    !force search-buffer "m" "^!.[23] "
     !while $status
         beginning-of-line
         4 forward-delete-char
@@ -69,7 +69,7 @@ define-macro ehf-doc-test
         find-buffer "*ehf-result*"
         insert-string &spr "    %s" @y
         find-buffer "*ehf-tmp*"
-        !force regex-forward "^!.[23] "
+        !force search-buffer "m" "^!.[23] "
     !done
     ml-write "[Processing Modes]"
     find-buffer "*ehf-result*"
@@ -78,7 +78,7 @@ define-macro ehf-doc-test
     set-variable $mode-names ".*"
     !while &not &seq &set #l4 $mode-names ""
         beginning-of-buffer
-        !force regex-forward &spr "^!.2m%s$" #l4
+        !force search-buffer "m" &spr "^!.2m%s$" #l4
         !if $status
             beginning-of-line
             kill-line
@@ -92,7 +92,7 @@ define-macro ehf-doc-test
     insert-string "\nDead Modes\n\n"
     find-buffer "*ehf-tmp*"
     beginning-of-buffer
-    !force regex-forward "^!.2m"
+    !force search-buffer "m" "^!.2m"
     !while $status
         beginning-of-line
         4 forward-delete-char
@@ -101,7 +101,7 @@ define-macro ehf-doc-test
         find-buffer "*ehf-result*"
         insert-string &spr "    %s" @y
         find-buffer "*ehf-tmp*"
-        !force regex-forward "^!.2m"
+        !force search-buffer "m" "^!.2m"
     !done
     ml-write "[Processing Variables]"
     find-buffer "*ehf-result*"
@@ -110,7 +110,7 @@ define-macro ehf-doc-test
     set-variable $variable-names ".*"
     !while &not &seq &set #l4 $variable-names ""
         beginning-of-buffer
-        !force regex-forward &spr "^!.5 \\%s$" #l4
+        !force search-buffer "m" &spr "^!.5 \\%s$" #l4
         !if $status
             beginning-of-line
             kill-line
@@ -124,7 +124,7 @@ define-macro ehf-doc-test
     insert-string "\nDead Variables\n\n"
     find-buffer "*ehf-tmp*"
     beginning-of-buffer
-    !force regex-forward "^!.5 "
+    !force search-buffer "m" "^!.5 "
     !while $status
         beginning-of-line
         4 forward-delete-char
@@ -133,7 +133,7 @@ define-macro ehf-doc-test
         find-buffer "*ehf-result*"
         insert-string &spr "    %s" @y
         find-buffer "*ehf-tmp*"
-        !force regex-forward "^!.5 "
+        !force search-buffer "m" "^!.5 "
     !done
     ;DEFFUN (UFXSEQ,    "xse", DYNAMIC)
     ml-write "[Processing Functions]"
@@ -141,16 +141,16 @@ define-macro ehf-doc-test
     insert-string "\nUndocumented Functions\n\n"
     find-buffer #l3
     beginning-of-buffer
-    !force regex-forward "DEFFUN"
+    !force search-buffer "m" "DEFFUN"
     !while $status
-        !force regex-forward "\""
+        !force search-buffer "m" "\""
         set-variable #l4 $window-col
-        !force regex-forward "\""
+        !force search-buffer "m" "\""
         backward-char
         set-variable #l4 &mid @wl #l4 &sub $window-col #l4
         find-buffer "*ehf-tmp*"
         beginning-of-buffer
-        !force regex-forward &spr "^!.4 &%s" #l4
+        !force search-buffer "m" &spr "^!.4 &%s" #l4
         !if $status
             beginning-of-line
             kill-line
@@ -159,13 +159,13 @@ define-macro ehf-doc-test
             insert-string &spr "    &%s\n" #l4
         !endif
         find-buffer #l3
-        !force regex-forward "DEFFUN"
+        !force search-buffer "m" "DEFFUN"
     !done
     find-buffer "*ehf-result*"
     insert-string "\nDead Functions\n\n"
     find-buffer "*ehf-tmp*"
     beginning-of-buffer
-    !force regex-forward "^!.4 &"
+    !force search-buffer "m" "^!.4 &"
     !while $status
         beginning-of-line
         4 forward-delete-char
@@ -174,7 +174,7 @@ define-macro ehf-doc-test
         find-buffer "*ehf-result*"
         insert-string &spr "    %s" @y
         find-buffer "*ehf-tmp*"
-        !force regex-forward "^!.4 &"
+        !force search-buffer "m" "^!.4 &"
     !done
     ;DEFDER (DRABORT,   "abo", 0x00)
     ml-write "[Processing Directives]"
@@ -182,16 +182,16 @@ define-macro ehf-doc-test
     insert-string "\nUndocumented Functions\n\n"
     find-buffer #l3
     beginning-of-buffer
-    !force regex-forward "DEFDER"
+    !force search-buffer "m" "DEFDER"
     !while $status
-        !force regex-forward "\""
+        !force search-buffer "m" "\""
         set-variable #l4 $window-col
-        !force regex-forward "\""
+        !force search-buffer "m" "\""
         backward-char
         set-variable #l4 &mid @wl #l4 &sub $window-col #l4
         find-buffer "*ehf-tmp*"
         beginning-of-buffer
-        !force regex-forward &spr "^!.4 !%s" #l4
+        !force search-buffer "m" &spr "^!.4 !%s" #l4
         !if $status
             beginning-of-line
             kill-line
@@ -200,13 +200,13 @@ define-macro ehf-doc-test
             insert-string &spr "    !%s\n" #l4
         !endif
         find-buffer #l3
-        !force regex-forward "DEFDER"
+        !force search-buffer "m" "DEFDER"
     !done
     find-buffer "*ehf-result*"
     insert-string "\nDead Directives\n\n"
     find-buffer "*ehf-tmp*"
     beginning-of-buffer
-    !force regex-forward "^!.4 !"
+    !force search-buffer "m" "^!.4 !"
     !while $status
         beginning-of-line
         4 forward-delete-char
@@ -215,14 +215,14 @@ define-macro ehf-doc-test
         find-buffer "*ehf-result*"
         insert-string &spr "    %s" @y
         find-buffer "*ehf-tmp*"
-        !force regex-forward "^!.4 !"
+        !force search-buffer "m" "^!.4 !"
     !done
     ml-write "[Processing Interactive Variables]"
     find-buffer "*ehf-result*"
     insert-string "\nInteractive Variable List\n\n"
     find-buffer "*ehf-tmp*"
     beginning-of-buffer
-    !force regex-forward "^!.4 @"
+    !force search-buffer "m" "^!.4 @"
     !while $status
         beginning-of-line
         4 forward-delete-char
@@ -231,14 +231,14 @@ define-macro ehf-doc-test
         find-buffer "*ehf-result*"
         insert-string &spr "    %s" @y
         find-buffer "*ehf-tmp*"
-        !force regex-forward "^!.4 @"
+        !force search-buffer "m" "^!.4 @"
     !done
     ml-write "[Processing Unknown]"
     find-buffer "*ehf-result*"
     insert-string "\nUnknown List\n\n"
     find-buffer "*ehf-tmp*"
     beginning-of-buffer
-    !force regex-forward "^!"
+    !force search-buffer "m" "^!"
     !while $status
         beginning-of-line
         2 forward-delete-char
@@ -247,7 +247,7 @@ define-macro ehf-doc-test
         find-buffer "*ehf-result*"
         insert-string &spr "    %s" @y
         find-buffer "*ehf-tmp*"
-        !force regex-forward "^!"
+        !force search-buffer "m" "^!"
     !done
     delete-buffer "*ehf-tmp*"
     find-buffer "*ehf-result*"
