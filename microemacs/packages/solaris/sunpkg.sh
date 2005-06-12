@@ -11,16 +11,28 @@ VER_YEAR="05"
 VER_MONTH="05"
 VER_DAY="05"
 VERSION="20${VER_YEAR}${VER_MONTH}${VER_DAY}"
+# Processor type
+PROCESSOR=`uname -p`
+OSVERSION=`uname -r`
+# Package name
+PKGNAME=jasspa-me
+#
+MESRC=jasspa-mesrc-${VERSION}.tar.gz
 METREE=jasspa-metree-${VERSION}.tar.gz
-MEBIN=jasspa-me-sun-sparc-56-${VERSION}.gz
+MEBIN=jasspa-me-sun-${PROCESSOR}-${OSVERSION}-${VERSION}.gz
+NEBIN=jasspa-ne-sun-${PROCESSOR}-${OSVERSION}-${VERSION}.gz
 BASEFILESET="${METREE} ${MEBIN} me.1"
-
 #
 # Pull the files over from the release and source areas.
 #
 if [ ! -f ${METREE} ] ; then
     if [ -f ${TOPDIR}/release/www/${METREE} ] ; then
         cp ${TOPDIR}/release/www/${METREE} .
+    fi
+fi
+if [ ! -f ${MESRC} ] ; then
+    if [ -f ${TOPDIR}/release/www/${MESRC} ] ; then
+        cp ${TOPDIR}/release/www/${MESRC} .
     fi
 fi
 if [ ! -f me.1 ] ; then
@@ -33,6 +45,14 @@ if [ ! -f ${MEBIN} ] ; then
         cp ${TOPDIR}/src/${MEBIN} ${MEBIN}
     elif [ -f ${TOPDIR}/src/me ] ; then
         gzip -9 -c ${TOPDIR}/src/me > ${MEBIN}
+    else
+        # Build me
+        gunzip -c ${MESRC} | tar xf -
+        (cd me${VER_YEAR}${VER_MONTH}${VER_DAY}/src; sh build -ne)
+        gzip -9 -c me${VER_YEAR}${VER_MONTH}${VER_DAY}/src/ne > ${NEBIN}
+        (cd me${VER_YEAR}${VER_MONTH}${VER_DAY}/src; sh build)
+        gzip -9 -c me${VER_YEAR}${VER_MONTH}${VER_DAY}/src/me > ${MEBIN}
+        rm -rf me${VER_YEAR}${VER_MONTH}${VER_DAY}
     fi
 fi
 #
@@ -45,33 +65,6 @@ for FILE in $BASEFILESET ; do
         exit 1
     fi
 done
-### #
-### # Build me
-### #
-### if [ ! -f ${BASEDIR}/bin/me ] ; then
-###     if [ ! -f ${BASEDIR}/src/sunos56.${CCMAK} ] ; then
-###         gunzip -c mesrc.tar.gz | (cd ${BASEDIR}/src;  tar xvf - )
-###     fi
-###     MAKECDEFS="-D_SEARCH_PATH=\\"'"'"${SEARCH_PATH}\\"'"'
-###     (cd ${BASEDIR}/src; make -f sunos56.${CCMAK} MAKECDEFS=$MAKECDEFS mecw)
-###     cp ${BASEDIR}/src/mecw ${BASEDIR}/bin/me
-###     (cd ${BASEDIR}; rm -rf ./src)
-###     mkdir ${BASEDIR}/src
-### fi
-### #
-### # Build ne
-### #
-### if [ ! -f ${BASEDIR}/bin/ne ] ; then
-###     if [ ! -f ${BASEDIR}/src/sunos56.${CCMAK} ] ; then
-###         gunzip -c mesrc.tar.gz | (cd ${BASEDIR}/src;  tar xvf - )
-###     fi
-###     MAKECDEFS="-D_SEARCH_PATH=\\"'"'"${SEARCH_PATH}\\"'"'
-###     (cd ${BASEDIR}/src; make -f sunos56.${CCMAK} MAKECDEFS=$MAKECDEFS nec)
-###     cp ${BASEDIR}/src/nec ${BASEDIR}/bin/ne
-###     (cd ${BASEDIR}/src; make -f sunos56.${CCMAK} spotless)
-###     (cd ${BASEDIR}; rm -rf ./src)
-###     mkdir ${BASEDIR}/src
-### fi
 #
 # Unpack the tree
 #
@@ -95,9 +88,9 @@ find ${BASEDIR}/jasspa -print | pkgproto | sed -e "s/jon users/bin bin/g" >> pro
 #
 # Build the package info file
 #
-echo 'PKG="jasspa-me"' > pkginfo
+echo 'PKG="'${PKGNAME}'"' > pkginfo
 echo 'NAME="JASSPA MicroEmacs"' >> pkginfo
-echo 'ARCH="sparc"' >> pkginfo
+echo 'ARCH="'${PROCESSOR}'"' >> pkginfo
 echo 'VERSION="'${VER_YEAR}.${VER_MONTH}.${VER_DAY}'"'  >> pkginfo
 echo 'SUNW_PKGVERS="1.0"' >> pkginfo
 echo 'CATEGORY="application"' >> pkginfo
@@ -107,39 +100,19 @@ echo 'PSTAMP="Jon Green"'  >> pkginfo
 echo 'BASEDIR="/opt"' >> pkginfo
 echo 'CLASSES="none"' >> pkginfo
 #
-# Build all of the information into the /tmp directory.
+# Build the package.
 #
-if [ -d /tmp/jasspapkg ] ; then
-    (cd /tmp; rm -rf jasspapkg)
-fi
-mkdir /tmp/jasspapkg
-# Copy information.
-cp pkginfo /tmp/jasspapkg
-cp prototype /tmp/jasspapkg
-cp -r jasspa /tmp/jasspapkg
-#
-# Now echo what we have to do.
-#
-echo "Now contine the rest as root...."
-echo "  cd /tmp/jasspapkg"
-echo "  pkgmk -r /tmp/jasspapkg"
-echo "  cd /var/spool/pkg"
-echo "  pkgtrans -s /var/spool/pkg /tmp/jasspa-me"
-echo "  rm -rf ./jasspa-me"
-echo "  cd /tmp"
-echo "  rm -rf ./jasspapkg"
-echo "  zip -9 jasspa-mepkg-sun-sparc-56-${VERSION}.zip jasspa-me"
-echo "To test:-"
-echo "  mkdir jasspa"
-echo "  cd ./jasspa"
-echo "  unzip ../jasspa-mepkg-sun-sparc-56-${VERSION}.zip"
-echo "  pkgadd -d jasspa-me"
-echo "To subsequently remove"
-echo "  pkgrm jasspa-me"
-echo ""
+rm -rf ./${PKGNAME}
+rm -f ${PKGNAME}-sun-${PROCESSOR}-${OSVERSION}-${VERSION}.pkg
+rm -f ${PKGNAME}pkg-sun-${PROCESSOR}-${OSVERSION}-${VERSION}.zip
+/usr/bin/pkgmk -d . -b . -r . -f ./prototype ${PKGNAME}
+/usr/bin/pkgtrans -o -s . ${PKGNAME}-sun-${PROCESSOR}-${OSVERSION}-${VERSION}.pkg ${PKGNAME}
+zip -9 ${PKGNAME}pkg-sun-${PROCESSOR}-${OSVERSION}-${VERSION}.zip ${PKGNAME}-sun-${PROCESSOR}-${OSVERSION}-${VERSION}.pkg
 #
 # Clean up
 #
 rm -f prototype
 rm -f pkginfo
 rm -rf ./jasspa
+rm -rf ./${PKGNAME}
+rm -f ${PKGNAME}-sun-${PROCESSOR}-${OSVERSION}-${VERSION}.pkg
