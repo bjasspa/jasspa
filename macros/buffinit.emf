@@ -128,9 +128,9 @@ define-macro-file collapse collapse-current collapse-all beginning-of-function e
             ; Add command item to the command lists.
             set-variable #l2 &spr ".%s.command-flag"  $buffer-fhook
             set-variable &ind #l2 &lset &ind #l2 #l0 &lget &ind #l1 1 ""
-            set-variable #l2 &spr ".%s.command-name"  $buffer-fhook
-            set-variable &ind #l2 &lset &ind #l2 #l0 &lget &ind #l1 2 ""
             set-variable #l2 &spr ".%s.command-nbind"  $buffer-fhook
+            set-variable &ind #l2 &lset &ind #l2 #l0 &lget &ind #l1 2 ""
+            set-variable #l2 &spr ".%s.command-name"  $buffer-fhook
             set-variable &ind #l2 &lset &ind #l2 #l0 &lget &ind #l1 3 ""
             set-variable #l2 &spr ".%s.command-kbind"  $buffer-fhook
             set-variable &ind #l2 &lset &ind #l2 #l0 &lget &ind #l1 4 ""
