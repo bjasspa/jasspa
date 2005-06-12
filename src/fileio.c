@@ -2505,8 +2505,9 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags)
     if(dfname != NULL)
     {
         int sft, dft ;
+#if MEOPT_SOCKET
         meUByte *ftpAddr ;
-        
+#endif        
         if(((sft=isFtpLink(sfname)) == 0) && isHttpLink(sfname))
            sft = 2 ;
         if(((dft=isFtpLink(dfname)) == 0) && isHttpLink(dfname))
