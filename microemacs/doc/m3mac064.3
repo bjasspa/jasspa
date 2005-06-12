@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac064.3,v 1.13 2005-02-06 14:32:23 jon Exp $
+.Id $Id: m3mac064.3,v 1.14 2005-06-12 11:57:21 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH buffer-init 3
@@ -85,6 +85,9 @@ set-variable .fhook-XXX.command-name  "||"
 set-variable .fhook-XXX.command-nbind "||"
 set-variable .fhook-XXX.command-kbind "||"
 set-variable .fhook-XXX.command-desc  "||"
+; OR define the commands one per line uniquely numbered from 0.
+set-variable .fhook-XXX.command-0  "|bo|tex-para||esc o||"
+set-variable .fhook-XXX.command-1  "|bo|tex-para||esc q||"
 ; Define additional buffer setup menu items -- omit if not defined
 set-variable .fhook-c.setup-flags   "|c|l|"
 set-variable .fhook-c.setup-labels  "|Option 1|Option 2|"
@@ -482,6 +485,7 @@ set-variable .fhook-XXX.setup-labels  "|Option 1|Option 2|"
     ; Do Option 2 configuration.
 !endif
 .CE
+.Me $ehf-scheme
 The templates  \fChkc.emf\fR,  \fChkcpp.emf\fR  and  \fChkjava.emf\fR  include
 private extensions which may be used as examples.
 .SS Comments
@@ -730,7 +734,22 @@ field order in all of the
 .C fhook-XXX.command-*
 variables  MUST be consistent, so if a command is defined in field 5, then all
 definitions  associated  with that  command MUST be defined in field 5 for all
-variables. The command variables are defined as follows:-
+variables.
+.PP
+To make the command definitions easier then the syntax 
+.C fhook-XXX.command-n
+may be used where  \fIn\fR is an integer from  \fI0..n-1\fR. The 
+.C fhook-XXX.command-n
+statements are used to construct the 
+.C fhook-XXX.command-* 
+lists, the advantage  being that the command and key bindings etc. are defined
+together.  Once the  \fCcommand-n\fR  variables  are  processed  then they are
+deleted  from the  environment.  The  general  syntax  of the  \fCcommand-n\fR
+variable is defined as a list:
+.IP
+\fC|command-flag|command-name|command-nbind|command-kbind|command-desc|\fR
+.LP
+The command variables are defined as follows:-
 .TP
 \fI.fhook-c.command-flag\fR
 .\"
@@ -809,10 +828,9 @@ As an example, two new commands or bindings may be defined for a template, the
 first field is bound to key \fCA-q\fR which executes macro \fCXXX-comp\fR with
 a numerical argument of 2. The second field binds a new key to
 .Ht comment-restyle 3 .
-.ne 17
+.ne 16
 .Me $emf-scheme
 .CS
-
 \.....
 
 set-variable .fhook-XXX.command-flag  "|th|bo|"
@@ -820,6 +838,25 @@ set-variable .fhook-XXX.command-name  "|XXX-comp|comment-restyle|"
 set-variable .fhook-XXX.command-nbind "|2||"
 set-variable .fhook-XXX.command-kbind "|A-q|esc o|"
 set-variable .fhook-XXX.command-desc  "|Complete command||"
+
+\.....
+
+; Local macro definition to perform command completion
+define-macro XXX-comp
+    set-variable #l1 @#
+    \.....
+!emacro
+.CE
+.Me $ehf-scheme
+The alternative form of definition using the \fCcommand-n\fR syntax is defined
+as:-
+.ne 13
+.Me $emf-scheme
+.CS
+\.....
+
+set-variable .fhook-XXX.command-0 "|th|XXX-comp|2|A-q|Complete command|"
+set-variable .fhook-XXX.command-1 "|bo|comment-restyle||esc o||"
 
 \.....
 
@@ -1144,6 +1181,10 @@ command.
 .BU
 Private  template   configuration   using   \fB.fhook-XXX.setup-flags\fR   and
 \fB.fhook-XXX.setup-labels\fR.
+.BU
+The 
+.C fhook-XXX.command-n
+syntax was introduced in June 2005 to simplify the command list definitions.
 .BE 0
 .SH "SEE ALSO"
 .na
