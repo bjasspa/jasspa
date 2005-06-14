@@ -5170,7 +5170,7 @@ TTsleep (int msec, int intable, meVarList *waitVarList)
             meMessageHandler(&msg) ;
         }
 #endif /* _ME_WINDOW */
-    } while (!isTimerExpired(SLEEP_TIMER_ID));
+    } while((msec < 0) || !isTimerExpired(SLEEP_TIMER_ID));
 
     timerKill(SLEEP_TIMER_ID);              /* Kill off the timer */
 }
