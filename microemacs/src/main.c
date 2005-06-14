@@ -1967,33 +1967,39 @@ commandWait(int f, int n)
         clexec = f ;
         return meTRUE ;
     }
-    if((meRegCurr->commandName != NULL) &&
-       ((f=decode_fncname(meRegCurr->commandName,1)) >= 0))
-        varList = &(cmdTable[f]->varList) ;
+    if((meRegCurr->commandName == NULL) ||
+       ((f=decode_fncname(meRegCurr->commandName,1)) < 0) ||
+       ((varList = &(cmdTable[f]->varList)) == NULL))
+        return meTRUE ;
+        
     if(n == 0)
     {
-        if(varList != NULL)
-            TTsleep(-1,0,varList) ;
-        return meTRUE ;
+        TTsleep(-1,0,varList) ;
     }
-    clexecSv = clexec;
-    execlevelSv = execlevel ;
-    clexec = meFALSE ;
-    execlevel = 0 ;
-    do
+    else
     {
-        doOneKey() ;
-        if(TTbreakFlag)
+        clexecSv = clexec;
+        execlevelSv = execlevel ;
+        clexec = meFALSE ;
+        execlevel = 0 ;
+        do
         {
-            TTinflush() ;
-            if((selhilight.flags & (SELHIL_ACTIVE|SELHIL_KEEP)) == SELHIL_ACTIVE)
-                selhilight.flags &= ~SELHIL_ACTIVE ;
-            TTbreakFlag = 0 ;
-        }
-    } while((varList != NULL) && 
-            ((ss=getUsrLclCmdVar((meUByte *)"wait",varList)) != errorm) && meAtoi(ss)) ;
-    clexec = clexecSv ;
-    execlevel = execlevelSv ;
+            TTsleep(-1,1,varList) ;
+            if(((ss=getUsrLclCmdVar((meUByte *)"wait",varList)) == errorm) || !meAtoi(ss))
+                break ;
+            doOneKey() ;
+            if(TTbreakFlag)
+            {
+                TTinflush() ;
+                if((selhilight.flags & (SELHIL_ACTIVE|SELHIL_KEEP)) == SELHIL_ACTIVE)
+                    selhilight.flags &= ~SELHIL_ACTIVE ;
+                TTbreakFlag = 0 ;
+            }
+        } while((varList != NULL) && 
+                ((ss=getUsrLclCmdVar((meUByte *)"wait",varList)) != errorm) && meAtoi(ss)) ;
+        clexec = clexecSv ;
+        execlevel = execlevelSv ;
+    }
     return meTRUE ;
 }
 #endif
