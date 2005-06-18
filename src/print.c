@@ -1566,7 +1566,7 @@ printSection (meWindow *wp, long sLineNo, long numLines, meLine *sLine, meLine *
              * used cause its return value is correctly evaluated and
              * on unix a " </dev/null" safety arg is added to the cmdLine
              */
-            if((status=doShellCommand(cmdLine)) > 0)
+            if((status=doShellCommand(cmdLine,0)) > 0)
                 status = (resultStr[0] == '0') ? meTRUE:meFALSE ;
             if(status <= 0)
                 mlwrite(MWABORT,(meUByte *)"[Failed to print file %s]",fname);

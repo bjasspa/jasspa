@@ -894,8 +894,9 @@ extern void mkTempCommName(meUByte *filename, meUByte *basename) ;
 #define LAUNCH_FILTER        0x0400
 #define LAUNCH_PIPE          0x0800
 #define LAUNCH_IPIPE         0x1000
+#define LAUNCH_NOWAIT        0x2000
 extern	int	meShell(int f, int n);
-extern	int	doShellCommand(meUByte *cmdstr) ;
+extern	int	doShellCommand(meUByte *cmdstr, int flags) ;
 extern	int	meShellCommand(int f, int n);
 extern  int     doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, 
                               int ipipe, int silent) ;

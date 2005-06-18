@@ -2129,6 +2129,8 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
 #endif
                   int *sysRet)
 {
+    static meUByte *compSpecName=NULL ;
+    static int compSpecLen ;
     PROCESS_INFORMATION mePInfo ;
     STARTUPINFO meSuInfo ;
     meUByte  cmdLine[meBUF_SIZE_MAX+102], *cp ;  /* Buffer for the command line */
@@ -2141,10 +2143,6 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
 #else
     HANDLE inHdl, outHdl, dumHdl ;
 #endif
-
-#if 1
-    static meUByte *compSpecName=NULL ;
-    static int compSpecLen ;
 
     /* Get the comspec */
     if (((flags & LAUNCH_NOCOMSPEC) == 0) && (compSpecName == NULL))
@@ -2160,17 +2158,6 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
         }
         compSpecLen = strlen(compSpecName) ;
     }
-#else
-    meUByte *compSpecName ;
-    if((compSpecName = meGetenv("COMSPEC")) == NULL)
-    {
-        /* If no COMSPEC setup the default */
-        if(platformId == VER_PLATFORM_WIN32_NT)
-            compSpecName = "cmd.exe" ;
-        else
-            compSpecName = "command.com";
-    }
-#endif
 
 #ifdef _WIN32s
     /* If the pipe to stderr is not defined then get the value. Note that this
@@ -2449,7 +2436,7 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
                       cp,
                       NULL,
                       NULL,
-                      ((flags & LAUNCH_SHELL) ? meFALSE:meTRUE),
+                      ((flags & (LAUNCH_SHELL|LAUNCH_NOWAIT)) ? meFALSE:meTRUE),
                       ((flags & LAUNCH_DETACHED) ? DETACHED_PROCESS : CREATE_NEW_CONSOLE),
                       NULL,
                       NULL,
@@ -2462,7 +2449,7 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
         if((flags & LAUNCH_IPIPE) == 0)
         {
             /* For shells we must close the process handle but we dont wait for it */
-            if((flags & LAUNCH_SHELL) == 0)
+            if((flags & (LAUNCH_SHELL|LAUNCH_NOWAIT)) == 0)
             {
                 /* Wait for filter, system and pipe process to end */
                 for (;;)
@@ -2648,16 +2635,6 @@ WinShutdown (void)
 #if MEOPT_CLIENTSERVER
     /* Close & delete the client file */
     TTkillClientServer ();
-#endif
-#if 0
-    /* SWP 16/10/2000 - found that this disables all me32's from accepting drag 'n' drop
-     * events, e.g. start an me32 and it drag 'n' drops okay, now start another and exit
-     * it. Now try and drag 'n' drop in the first again, it fails! taken out this code */
-#ifdef _DRAGNDROP
-    /* Disable drag and drop handling */
-    if (meFrameGetWinHandle(frameCur))
-        DragAcceptFiles (meFrameGetWinHandle(frameCur), meFALSE);
-#endif
 #endif
 #ifdef _ME_WINDOW
 #ifdef _ME_CONSOLE
@@ -6069,16 +6046,7 @@ MainWndProc (HWND hWnd, UINT message, UINT wParam, LONG lParam)
     {
     case WM_SETFOCUS:
         if((frame = meMessageGetFrame(hWnd)) != NULL)
-        {
-#if 0
-            if(frame != frameCur)
-            {
-                meFrameKillFocus(frameCur) ;
-                frameCur = frame ;
-            }
-#endif
             meFrameGainFocus(frame) ;
-        }
         break;
 
     case WM_KILLFOCUS:

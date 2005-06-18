@@ -254,7 +254,7 @@ meShell(int f, int n)
 /* Note: the given string cmdstr must be large enough to strcat
  * " </dev/null" on the end */
 int
-doShellCommand(meUByte *cmdstr)
+doShellCommand(meUByte *cmdstr, int flags)
 {
     meUByte path[meBUF_SIZE_MAX] ;		/* pathfrom where to execute */
     int  systemRet ;                    /* return value of last system  */
@@ -267,7 +267,7 @@ doShellCommand(meUByte *cmdstr)
     cd = (meStrcmp(path,curdir) && (meChdir(path) != -1)) ;
 
 #ifdef _WIN32
-    ss = WinLaunchProgram(cmdstr,LAUNCH_SYSTEM, NULL, NULL, 
+    ss = WinLaunchProgram(cmdstr,LAUNCH_SYSTEM|flags, NULL, NULL, 
 #if MEOPT_IPIPES
                           NULL,
 #endif
@@ -277,6 +277,8 @@ doShellCommand(meUByte *cmdstr)
     /* if no data is piped in then pipe in /dev/null */
     if(meStrchr(cmdstr,'<') == NULL)
         meStrcat(cmdstr," </dev/null") ;
+    if(flags & LAUNCH_NOWAIT)
+        meStrcat(cmdstr," &") ;
     ss = system((char *)cmdstr) ;
     ws = (meWAIT_STATUS)(ss);
     if(WIFEXITED(ws))
@@ -319,7 +321,11 @@ meShellCommand(int f, int n)
     /* get the line wanted */
     if((meGetString((meUByte *)"System", 0, 0, cmdstr, meBUF_SIZE_MAX)) <= 0)
         return meABORT ;
-    return doShellCommand(cmdstr) ;
+    f = (n & (LAUNCH_NOCOMSPEC|LAUNCH_DETACHED|LAUNCH_LEAVENAMES|LAUNCH_SHOWWINDOW)) ;
+    if((n & 0x01) == 0)
+        f |= LAUNCH_NOWAIT ;
+          
+    return doShellCommand(cmdstr,f) ;
 }
 
 #if MEOPT_IPIPES
