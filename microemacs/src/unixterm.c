@@ -1569,32 +1569,14 @@ meXEventHandler(void)
             int rtr ;
             XGetInputFocus(mecm.xdisplay,&fwin,&rtr) ;
             if(fwin == meFrameGetXWindow(frame))
-            {
-#if 0
-                if(frame != frameCur)
-                {
-                    meFrameKillFocus(frameCur) ;
-                    frameCur = frame ;
-                }
-#endif
                 meFrameGainFocus(frame) ;
-            }
         }
         break ;
 
     case FocusIn:
         if(((frame = meXEventGetFrame(&event)) != NULL) &&
            (frame->flags & meFRAME_NOT_FOCUS))
-        {
-#if 0
-            if(frame != frameCur)
-            {
-                meFrameKillFocus(frameCur) ;
-                frameCur = frame ;
-            }
-#endif
             meFrameGainFocus(frame) ;
-	}
         break ;
 
     case LeaveNotify:

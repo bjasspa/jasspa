@@ -204,17 +204,6 @@ gft_directory:
                 mlwrite(MWABORT|MWPAUSE,"[%s directory]", file);
             return meFILETYPE_DIRECTORY ;
         }
-#if 0
-        /* FILE_ATTRIBUTE_SYSTEM
-         * The file or directory is part of, or is used exclusively by,
-         * the operating system. */
-        else if (status & FILE_ATTRIBUTE_SYSTEM)
-        {
-            if(flag & 1)
-                mlwrite(MWABORT|MWPAUSE,"[%s operating system file]", file);
-            return meFILETYPE_NASTY ;
-        }
-#endif
         /* FILE_ATTRIBUTE_ARCHIVE
          * The file or directory is an archive file or directory.
          * Applications use this flag to mark files for backup or removal.
