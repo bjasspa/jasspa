@@ -47,8 +47,8 @@ define-macro display-matching-fence
     !elif &equ #l9 5
         4 show-region
     !endif
-    !if &band @# 32
-        !if &and $window-col &sin &set #l3 &mid @wl &sub $window-col 1 1 "})]"
+    !if &and &band @# 32 $window-col
+        !if &sin &set #l3 &mid @wl &sub $window-col 1 1 "})]"
             backward-char
             set-variable #l4 &sub $cursor-x 1
         !elif &sin &set #l3 @wc "{([])}"
