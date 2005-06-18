@@ -2130,6 +2130,8 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             meUByte *dd, *ss, cc ;
             int ii=meAtoi(arg2) ;
             ss = arg1 ;
+            if(ii < 0)
+                ii = strlen(ss) + ii ;
             dd = evalResult ;
             while(--ii >= 0)
             {
@@ -2150,6 +2152,8 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             meUByte *dd, *ss, cc ;
             int ii=meAtoi(arg2) ;
             ss = arg1 ;
+            if(ii < 0)
+                ii = strlen(ss) + ii ;
             while(--ii >= 0)
             {
                 if((cc=*ss++) == meCHAR_LEADER)
@@ -2173,6 +2177,8 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             
             ll = meAtoi(arg3) ;
             ii = meAtoi(arg2) ;
+            if(ii < 0)
+                ii = strlen(ss) + ii ;
             if(ii > 0)
             {
                 do
