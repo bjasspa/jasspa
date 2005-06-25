@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.38 2005-05-14 14:24:42 jon Exp $
+.Id $Id: me.nrs,v 2.39 2005-06-25 13:49:18 bill Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -717,13 +717,13 @@ The buffer modes may be shown on the
 .Hl "mode line" modeline -
 as single letter mnemonics as follows:-
 .IP
-\fBA\fRuto, \fBa\fRutosv, \fBB\fRackup, \fBb\fRinary, \fBC\fRmode, \fBc\fRrlf,
-cr\fBY\fRpt,   ctrl\fBz\fR,  \fBd\fRel,  \fBD\fRir,  \fBe\fRdit,  \fBE\fRxact,
-\fBH\fRide, \fBI\fRndent, \fBJ\fRustify, \fBl\fRetter, \fBL\fRine, loc\fBk\fR,
-\fBM\fRagic,  \fBn\fRact,  \fBN\fRarrow,  \fBO\fRver, \fBP\fRipe, \fBQ\fRuiet,
-\fBS\fRave,  \fBT\fRab,  \fBt\fRime,   \fBU\fRndo,   usr\fB1\fR,   usr\fB2\fR,
-usr\fB3\fR,   usr\fB4\fR,   usr\fB5\fR,  usr\fB6\fR,  usr\fB7\fR,  usr\fB8\fR,
-\fBV\fRiew, \fBW\fRrap.
+\fBA\fRuto, \fBa\fRutosv, \fBB\fRackup, \fBb\fRinary, \fBc\fRrlf, cr\fBY\fRpt,
+ctrl\fBz\fR,  \fBd\fRel,  \fBD\fRir,  \fBe\fRdit,  \fBE\fRxact,  \fBf\fRence,
+\fBH\fRide, \fBI\fRndent, \fBJ\fRustify, loc\fBk\fR,  \fBM\fRagic,  \fBn\fRact,
+\fBN\fRarrow,  \fBO\fRver, \fBP\fRipe, \fBQ\fRuiet,  \fBr\fRbin,  \fBS\fRave,
+\fBT\fRab,  \fBt\fRime,   \fBU\fRndo,   usr\fB1\fR,   usr\fB2\fR,  usr\fB3\fR,
+usr\fB4\fR,   usr\fB5\fR,  usr\fB6\fR,  usr\fB7\fR,  usr\fB8\fR,  \fBV\fRiew,
+\fBW\fRrap.
 .NH ShellCommands - "Shell and Command Controls"
 .SH "SHELL AND COMMAND CONTROLS"
 Operating system and external system call invocations:
