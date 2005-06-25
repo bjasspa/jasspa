@@ -3137,12 +3137,13 @@ descVariable(int f, int n)      /* describe a variable */
 {
     meUByte  var[meSBUF_SIZE_MAX]; /* name of variable to fetch */
     meUByte *ss ;
-    int    status ;
+    int ii ;
     
     /* first get the variable to describe */
-    if((status = meGetString((meUByte *)"Show variable",MLVARBL,0,var,meSBUF_SIZE_MAX)) <= 0)
-        return(status);
-    if((ss = getval(var)) == NULL)
+    if((ii = meGetString((meUByte *)"Show variable",MLVARBL,0,var,meSBUF_SIZE_MAX)) <= 0)
+        return ii ;
+    if((((ii=getMacroTypeS(var)) != TKREG) && (ii != TKVAR) && (ii != TKENV) && (ii != TKLVR) && (ii != TKCVR)) ||
+       ((ss = getval(var)) == NULL))
         return mlwrite(MWABORT,(meUByte *)"Unknown variable type") ;
     mlwrite(0,(meUByte *)"Current setting is \"%s\"", ss) ;
     return meTRUE ;
