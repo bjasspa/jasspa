@@ -181,16 +181,18 @@ typedef struct
 
 typedef struct
 {
-    MINMAXINFO minMaxInfo;              /* Window extent information */
     CharMetrics cell;                   /* Metrics of a character cell */
-    meShort cellDepthCount;             /* Screen cell number of rows */
-    meShort cellWidthCount;             /* Screen cell number of columns */
+    HFONT fontdef[meFONT_MAX];          /* Definition of the font. */
+    PaletteInfo pInfo;                  /* Emacs colour palette tables */
     meShort *cellRowPos;                /* Character cell position in Y */
     meShort *cellColPos;                /* Character cell position in X */
     meUByte *cellColTmpPos;             /* Temporary X position */
-    INT   *cellSpacing;                 /* Spacing of cells */
-    HFONT fontdef[meFONT_MAX];          /* Definition of the font. */
-    PaletteInfo pInfo;                  /* Emacs colour palette tables */
+    INT     *cellSpacing;               /* Spacing of cells */
+    meShort  cellDepthCount;            /* Screen cell number of rows */
+    meShort  cellWidthCount;            /* Screen cell number of columns */
+    int      maxDepth;                  /* Window maximum depth */
+    int      borderDepth;               /* Window border depth */
+    int      borderWidth;               /* Window border width */
 } CellMetrics;
 
 CellMetrics eCellMetrics={0};           /* Cell metrics */
@@ -4637,6 +4639,7 @@ meFrameTermInit(meFrame *frame, meFrame *sibling)
 #ifdef _ME_WINDOW
         {
             meFrameData *frameData ;
+            RECT wRect, cRect ;
             
             if((frameData = meMalloc(sizeof(meFrameData))) == NULL)
                 return meFALSE ;
@@ -4656,6 +4659,12 @@ meFrameTermInit(meFrame *frame, meFrame *sibling)
             meFrameSetWindowSize(frame) ;
             ShowWindow(frameData->hwnd, ttshowState);    /* Create the window */
             UpdateWindow(frameData->hwnd);               /* Show it off - ready for errors */
+            
+            /* calc the boarder sizes by differencing the window and the client area */
+            GetWindowRect(frameData->hwnd, &wRect);
+            GetClientRect(frameData->hwnd, &cRect);
+            eCellMetrics.borderWidth = (wRect.right - wRect.left) - cRect.right;
+            eCellMetrics.borderDepth = (wRect.bottom - wRect.top) - cRect.bottom;
         }
 #endif /* _ME_WINDOW */
     }
@@ -5153,6 +5162,61 @@ TTsleep (int msec, int intable, meVarList *waitVarList)
 }
 
 
+static void
+meFrameSetWindowSizeInternal(meFrame *frame)
+{
+    int ii, width, depth ;
+
+    /* get the new canvas area and invalidate it. */
+    GetClientRect (meFrameGetWinHandle(frame), &meFrameGetWinCanvas(frame)); /* Get the new canvas size */
+    InvalidateRect (meFrameGetWinHandle(frame), &meFrameGetWinCanvas(frame), meFALSE);
+    meFrameGetWinPaintAll(frame) = 1 ;
+    
+    /* Set up the frame store */
+    width = frame->width ;
+    if(width > eCellMetrics.cellWidthCount)
+    {
+        /* Set up the column cell LUT positions. Note allocate a single
+         * array and split into two for re-use */
+        eCellMetrics.cellColPos = meRealloc(eCellMetrics.cellColPos,
+                                            sizeof (meShort) * (width + 1));
+        /* Construct the cell spacing. This is the  width of the characters. */
+        eCellMetrics.cellSpacing = meRealloc(eCellMetrics.cellSpacing,
+                                             sizeof (INT) * (width + 1));
+        /* Construct the temporary rendering buffer */
+        eCellMetrics.cellColTmpPos = meRealloc(eCellMetrics.cellColTmpPos, width+1);
+        eCellMetrics.cellWidthCount = width ;
+    }
+    /* Initialise the column cell LUT tables - this must always be done as only the font may have changed. */
+    for (ii = 0; ii <= width; ii++)
+    {
+        eCellMetrics.cellColPos [ii] = colToClient (ii) ;
+        eCellMetrics.cellSpacing [ii] = eCellMetrics.cell.sizeX;
+    }
+    
+    /* Grow the existing rows */
+    depth = frame->depth+1 ;
+    if (depth > eCellMetrics.cellDepthCount)
+    {
+        /* Set up the row cell LUT positions. Note allocate a single
+         * array and split into 4 for re-use. */
+        eCellMetrics.cellRowPos = meRealloc(eCellMetrics.cellRowPos, sizeof (meShort) * 2 * (depth + 1));
+        eCellMetrics.cellDepthCount = depth;
+    }
+    /* Initialise the row cell LUT tables - this must always be done as only the font may have changed. */
+    for (ii = 0; ii <= depth; ii++)
+        eCellMetrics.cellRowPos [ii] = rowToClient (ii) ;
+    
+    /* resize the frame specific data */
+    if(depth > meFrameGetWinPaintDepth(frame))
+    {
+        meFrameGetWinPaintStartCol(frame) = meRealloc(meFrameGetWinPaintStartCol(frame), sizeof (meShort) * 2 * (depth + 1));
+        meFrameGetWinPaintEndCol(frame)   = &(meFrameGetWinPaintStartCol(frame)[depth+1]) ;
+        meFrameGetWinPaintDepth(frame)    = depth ;
+    }
+    screenUpdate(meTRUE,2-sgarbf) ;
+}
+
 /*
  * meFrameSetWindowSize
  * 
@@ -5204,125 +5268,47 @@ meFrameSetWindowSize(meFrame *frame)
 #endif /* _ME_CONSOLE */
 #ifdef _ME_WINDOW
     {
-        int dWindow;                        /* Depth of Window in pixels */
-        int wWindow;                        /* Width of Window in pixels */
-        int dBorder;                        /* Depth of the border */
-        int wBorder;                        /* Width of the boarder */
         RECT wRect;                         /* Window rectangle */
         RECT cRect;                         /* Client rectangle */
-        int ii ;
+        int dBorder;                        /* Depth of the border */
+        int wBorder;                        /* Width of the boarder */
+        int ndepth;                         /* The new depth */
+        int nwidth;                         /* The new width */
         
         /* Get the current screen widths */
         GetWindowRect (meFrameGetWinHandle(frame), &wRect);
         GetClientRect (meFrameGetWinHandle(frame), &cRect);
         
+        /* calc the boarder sizes by differencing the window and the client area */
+        wBorder = (wRect.right - wRect.left) - cRect.right;
+        dBorder = (wRect.bottom - wRect.top) - cRect.bottom;
+        
         /* Compute the new window widths in terms of pixels */
         /* Resize the x axis if requested.
-         * Compute the desired window width, if a resize is requested. */
-        wWindow = (width * eCellMetrics.cell.sizeX) ;
+         * Compute the desired window width, no horizontal size restriction */
+        nwidth = (width * eCellMetrics.cell.sizeX) + wBorder ;
         
-        /* Add on the boarders by differencing the window and the client area */
-        wBorder = (wRect.right - wRect.left) - cRect.right;
-        wWindow += wBorder;
-        
-        /* Re-size in place if possible */
-        if ((wWindow + eCellMetrics.cell.sizeX - 1) > eCellMetrics.minMaxInfo.ptMaxSize.x)
+        /* Resize the y axis if requested. If the requested size is greater
+         * than the screen depth then refuse, maximum depth is the screen depth */
+        ndepth = (depth * eCellMetrics.cell.sizeY) + dBorder ;
+        if (ndepth > eCellMetrics.maxDepth)
         {
-             wRect.left = eCellMetrics.minMaxInfo.ptMaxPosition.x;
-            wRect.right = wRect.left + eCellMetrics.minMaxInfo.ptMaxSize.x;
-        }
-        else
-        {
-            wRect.right = wRect.left + wWindow;
-            if (wRect.right > (eCellMetrics.minMaxInfo.ptMaxSize.x +
-                               eCellMetrics.minMaxInfo.ptMaxPosition.x))
-            {
-                wRect.right = (eCellMetrics.minMaxInfo.ptMaxSize.x +
-                               eCellMetrics.minMaxInfo.ptMaxPosition.x);
-                wRect.left = wRect.right - wWindow;
-            }
-            else if (wRect.left < eCellMetrics.minMaxInfo.ptMaxPosition.x)
-                wRect.left = eCellMetrics.minMaxInfo.ptMaxPosition.x;
+            ndepth = (eCellMetrics.maxDepth - dBorder) / eCellMetrics.cell.sizeY ;
+            meFrameChangeDepth(frame,ndepth) ;
+            ndepth = (ndepth * eCellMetrics.cell.sizeY) + dBorder ;
         }
         
-        /* Resize the y axis if requested. If an explicit size is requested the
-         * assume that size. Otherwise take the client area as is. */
-        dWindow = (depth * eCellMetrics.cell.sizeY) ;
-        
-        /* Re-align the vertical window - reposition if necessary
-         * Add on the boarders by differencing the window and the client area. */
-        dBorder =  (wRect.bottom - wRect.top) - cRect.bottom;
-        dWindow += dBorder;
-        
-        /* Re-size in place if possible */
-        if ((dWindow + eCellMetrics.cell.sizeY - 1) > eCellMetrics.minMaxInfo.ptMaxSize.y)
+        if((nwidth != (wRect.right - wRect.left)) ||
+           (ndepth != (wRect.bottom - wRect.top)))
+            
         {
-            wRect.top = eCellMetrics.minMaxInfo.ptMaxPosition.y;
-            wRect.bottom = wRect.top + eCellMetrics.minMaxInfo.ptMaxSize.y;
+            /* fprintf(logfp,"SetWindowPos - %d %d -> %d %d (%d)\n",width,depth,nwidth,ndepth,eCellMetrics.maxDepth) ;*/
+            /* fflush(logfp) ;*/
+            SetWindowPos (meFrameGetWinHandle(frame),NULL,0,0,nwidth,ndepth,
+                          SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
+            meFrameSetWindowSizeInternal(frame) ;
         }
-        else
-        {
-            wRect.bottom = wRect.top + dWindow;
-            if (wRect.bottom > (eCellMetrics.minMaxInfo.ptMaxSize.y +
-                                eCellMetrics.minMaxInfo.ptMaxPosition.y))
-            {
-                wRect.bottom = (eCellMetrics.minMaxInfo.ptMaxSize.y +
-                                eCellMetrics.minMaxInfo.ptMaxPosition.y);
-                wRect.top = wRect.bottom - dWindow;
-            }
-            else if (wRect.top < eCellMetrics.minMaxInfo.ptMaxPosition.y)
-                wRect.top = eCellMetrics.minMaxInfo.ptMaxPosition.y;
-        }
-        
-        /* Change the position of the window and get the new client area. */
-        SetWindowPos (meFrameGetWinHandle(frame), NULL, wRect.left, wRect.top,
-                      wRect.right - wRect.left,
-                      wRect.bottom - wRect.top,
-                      SWP_NOZORDER);
-        GetClientRect (meFrameGetWinHandle(frame), &meFrameGetWinCanvas(frame)); /* Get the new canvas size */
-        InvalidateRect (meFrameGetWinHandle(frame), &meFrameGetWinCanvas(frame), meFALSE);
-        meFrameGetWinPaintAll(frame) = 1 ;
-
-        /* Set up the frame store */
-        if(width > eCellMetrics.cellWidthCount)
-        {
-            /* Set up the column cell LUT positions. Note allocate a single
-             * array and split into two for re-use */
-            eCellMetrics.cellColPos = meRealloc(eCellMetrics.cellColPos,
-                                                sizeof (meShort) * (width + 1));
-            /* Construct the cell spacing. This is the  width of the characters. */
-            eCellMetrics.cellSpacing = meRealloc(eCellMetrics.cellSpacing,
-                                                 sizeof (INT) * (width + 1));
-            /* Construct the temporary rendering buffer */
-            eCellMetrics.cellColTmpPos = meRealloc(eCellMetrics.cellColTmpPos, width+1);
-            eCellMetrics.cellWidthCount = width ;
-        }
-        /* Initialise the column cell LUT tables - this must always be done as only the font may have changed. */
-        for (ii = 0; ii <= width; ii++)
-        {
-            eCellMetrics.cellColPos [ii] = colToClient (ii) ;
-            eCellMetrics.cellSpacing [ii] = eCellMetrics.cell.sizeX;
-        }
-
-        /* Grow the existing rows */
-        if (depth > eCellMetrics.cellDepthCount)
-        {
-            /* Set up the row cell LUT positions. Note allocate a single
-             * array and split into 4 for re-use. */
-            eCellMetrics.cellRowPos = meRealloc(eCellMetrics.cellRowPos, sizeof (meShort) * 2 * (depth + 1));
-            eCellMetrics.cellDepthCount = depth;
-        }
-        /* Initialise the row cell LUT tables - this must always be done as only the font may have changed. */
-        for (ii = 0; ii <= depth; ii++)
-            eCellMetrics.cellRowPos [ii] = rowToClient (ii) ;
-        
-        /* resize the frame specific data */
-        if(depth > meFrameGetWinPaintDepth(frame))
-        {
-            meFrameGetWinPaintStartCol(frame) = meRealloc(meFrameGetWinPaintStartCol(frame), sizeof (meShort) * 2 * (depth + 1));
-            meFrameGetWinPaintEndCol(frame)   = &(meFrameGetWinPaintStartCol(frame)[depth+1]) ;
-            meFrameGetWinPaintDepth(frame)    = depth ;
-        }
+            
     }
 #endif /* _ME_WINDOW */
 }
@@ -5696,7 +5682,7 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
 #endif
 
     /* if(logfp == NULL)*/
-    /*    logfp = fopen("log","w+") ;*/
+    /*     logfp = fopen("log","w+") ;*/
 
 #ifdef _ME_WINDOW
     /* Initialise the window data and register window class */
@@ -6220,44 +6206,58 @@ MainWndProc (HWND hWnd, UINT message, UINT wParam, LONG lParam)
 
     case WM_SIZE:
         /* Resize the window when requested. */
-        if((frame = meMessageGetFrame(hWnd)) != NULL)
+        if((wParam != SIZE_MINIMIZED) && ((frame = meMessageGetFrame(hWnd)) != NULL))
         {
-            switch (wParam)
-            {
-            case SIZE_MAXIMIZED:
+            RECT cRect ;
+            int nrow, ncol, setSize=0 ;
+            if(wParam == SIZE_MAXIMIZED)
                 meFrameGetWinMaximized(frame) = 1; /* Set the maximized state */
-                goto do_window_resize;
-            case SIZE_RESTORED:
+            else if(wParam == SIZE_RESTORED)
                 meFrameGetWinMaximized(frame) = 0; /* Release the minimised state */
-do_window_resize:
-                if(HIWORD(lParam) == 0)
-                {
-                    RECT wRect;                         /* Window rectangle */
-                    RECT cRect;                         /* Client rectangle */
-        
-                    /* Get the current sizes */
-                    GetWindowRect(hWnd, &wRect);
-                    GetClientRect(hWnd, &cRect);
-        
-                    /* Change the position of the window and get the new client area. */
-                    SetWindowPos (hWnd, NULL, wRect.left, wRect.top,
-                                  wRect.right - wRect.left,
-                                  wRect.bottom - wRect.top - cRect.bottom,
-                                  SWP_NOZORDER);
-                    break ;
-                }
-                meFrameResizeWindow(frame) ;
-            case SIZE_MINIMIZED:            /* Minimized - ignore this case
-                                             * Do not re-size the screen */
-            default:
-                break;
+            /* Inform Emacs window S/W that the window has changed size */
+            GetClientRect(hWnd, &cRect);
+            nrow = cRect.bottom / eCellMetrics.cell.sizeY ;
+            ncol = cRect.right / eCellMetrics.cell.sizeX ;
+            /* fprintf(logfp,"WM_SIZE - %x %x %d %d -> %d %d\n",wParam,lParam,cRect.right,cRect.bottom,ncol,nrow) ;*/
+            /* fflush(logfp) ;*/
+            if(ncol != frame->width)
+            {
+                meFrameChangeWidth(frame,ncol) ;
+                setSize = 1 ;
             }
+            if(nrow != (frame->depth+1))
+            {
+                meFrameChangeDepth(frame,nrow) ;
+                setSize = 1 ;
+            }
+            if(setSize)
+                meFrameSetWindowSizeInternal(frame) ;
         }
         break;
 
+    case WM_WINDOWPOSCHANGING:
+        if(meMessageGetFrame(hWnd) != NULL)
+        {
+            LPWINDOWPOS pos = (WINDOWPOS *) lParam;
+            
+            if((pos->flags & SWP_NOSIZE) == 0)
+            {
+                int col, row ;
+                
+                col = (pos->cx - eCellMetrics.borderWidth) / eCellMetrics.cell.sizeX ;
+                row = (pos->cy - eCellMetrics.borderDepth) / eCellMetrics.cell.sizeY ;
+                /* fprintf(logfp,"WM_WINDOWPOSCHANGING - %x %x - %d %d - %d %d -> %d %d\n",wParam,lParam,eCellMetrics.borderWidth,eCellMetrics.borderDepth,pos->cx,pos->cy,col,row) ;*/
+                /* fflush(logfp) ;*/
+                pos->cx = (col * eCellMetrics.cell.sizeX) + eCellMetrics.borderWidth ;
+                pos->cy = (row * eCellMetrics.cell.sizeY) + eCellMetrics.borderDepth ;
+            }
+        }
+        goto unhandled_message;
+    
     case WM_GETMINMAXINFO:
-        /* Pick up the maximise and minimize information */
-        eCellMetrics.minMaxInfo = *((LPMINMAXINFO)(lParam));
+        /* Get the maximum depth and extend the maximum width */
+        eCellMetrics.maxDepth = ((LPMINMAXINFO) lParam)->ptMaxTrackSize.y ;
+        ((LPMINMAXINFO) lParam)->ptMaxTrackSize.x = eCellMetrics.cell.sizeX * 400;
         break;
 
     case WM_RENDERALLFORMATS:           /* Clipboard data requests */
