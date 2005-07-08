@@ -342,7 +342,7 @@ define-macro fhook-default
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-default.setup &reg "/history/fhook/default" "bgiopx"
-set-variable .fhook-default.setup-mask "abegikmoptux"
+set-variable .fhook-default.setup &reg "/history/fhook/default" "bgix"
+set-variable .fhook-default.setup-mask "abegikmtux"
 
 buffer-init-fhook "default"
