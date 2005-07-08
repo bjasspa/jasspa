@@ -47,9 +47,9 @@ set-variable .cc-init.vsep &reg "/history/clearcase/vsep" "@@"
 set-variable .cc-init.vsepr .cc-init.vsep
 str-to-regex .cc-init.vsepr
 
-set-variable .cc-init.names "|State|Update|Checkout|Checkin|Add|Diff|Uncheckout|"
-set-variable .cc-init.flags "|VZRFS|VZOQS*|CUS*!|CS*!|CDS*!|WXS!|KS*!|"
-set-variable .cc-init.etfs  "|||ccco|ccci|ccadd|||"
+set-variable .cc-init.names "|State|Update|Checkout|Checkin|Add|Diff|Uncheckout|Annotate|Log|"
+set-variable .cc-init.flags "|VZRFS|VZOQS*|CUS*!|CS*!|CDS*!|WXS!|KS*!|!|!|"
+set-variable .cc-init.etfs  "|||ccco|ccci|ccadd|||||"
 
 !if &band .hilight.flags 0x02
     !if &not &exi .hilight.diff
@@ -1128,6 +1128,26 @@ define-macro cc-uncheckout
 !emacro
 set-variable .cc-uncheckout.values "|1|"
 
+; ClearCase Annotate ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro cc-annotate
+    8 cc-osd .cc-annotate.values
+    set-variable #l2 &cat .cc-init.com " ann -out - -f -nhe "
+    &len #l2 cc-get-file-list #l0 0 0
+    8 cc-cleartool 3 $buffer-fname &cat #l2 #l0
+!emacro
+set-variable .cc-annotate.values "|"
+
+; ClearCase Log ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro cc-log
+    8 cc-osd .cc-log.values
+    set-variable #l2 &cat .cc-init.com " ann -out - -nda "
+    &len #l2 cc-get-file-list #l0 0 0
+    8 cc-cleartool 3 $buffer-fname &cat #l2 #l0
+!emacro
+set-variable .cc-log.values "|"
+
 ; ClearCase clear console ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro cc-clear-console
@@ -1253,12 +1273,16 @@ define-macro cc-setup
         osd @# 50 "" "Check\Hin files"     f cc-checkin
         osd @# 60 "" "\HDiff files"        f cc-diff
         osd @# 70 "" "\HAdd files"         f cc-add
+        osd @# 80 "" "Annotate"            f cc-annotate
+        osd @# 90 "" "Log"                 f cc-log
     !else
         osd @# 30 "" "Checkout files"
         osd @# 40 "" "Uncheckout files"
         osd @# 50 "" "Checkin files"
         osd @# 60 "" "Diff files"
         osd @# 70 "" "Add files"
+        osd @# 80 "" "Annotate"
+        osd @# 90 "" "Log"
     !endif
     !if @?
     !elif :tag-count
