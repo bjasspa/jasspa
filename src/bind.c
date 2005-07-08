@@ -963,7 +963,7 @@ mlUnbind(int f, int n)
 /* type  	true = full list,   false = partial list */
 /* mstring	match string if a partial list */
 static int
-buildlist(int type, int n, meUByte *mstring)
+buildlist(int n, meUByte *mstring)
 {
     meCommand    *cmd ;
     meBind   *ktp;	        /* pointer into the command table */
@@ -990,31 +990,32 @@ buildlist(int type, int n, meUByte *mstring)
     /* build the contents of this window, inserting it line by line */
     for(cmd=cmdHead ; cmd != NULL ; cmd=cmd->anext)
     {
-        /*---	If we are  executing an  apropos command  and current string
-        doesn't include the search string */
-        if ((type == meFALSE) && !regexStrCmp(cmd->name,mstring,meRSTRCMP_WHOLE))
+        /* Skip command if its a hidden macro (and bit 1 of arg n is set) or
+         * we are executing an apropos command and current string doesn't
+         * include the search string */
+        if(((n & 0x01) && (cmd->id >= CK_MAX) && (((meMacro *) cmd)->hlp->flag & meMACRO_HIDE)) ||
+           ((mstring != NULL) && !regexStrCmp(cmd->name,mstring,meRSTRCMP_WHOLE)))
             continue;		/* Do next loop */
-        /*---	Add in the command name */
+        /* Add in the command name */
         meStrcpy(outseq, cmd->name);
         curidx = cmd->id ;
         cpos = meStrlen(outseq);
         
-        /*---	Search down any keys bound to this */
+        /* Search down any keys bound to this */
         
         for (ktp = &keytab[0] ; ktp->code != ME_INVALID_KEY ; ktp++)
         {
             if (ktp->index == curidx)
             {
-                /*---	Padd out some  spaces.  If we  are on a line
-                with a  string then  pad  with '.'  else use
-                space's */
+                /* Padd out some spaces. If we are on a line with a string
+                 * then pad with '.' else use space's */
                 op_char = ((cpos) ? '.' : ' ');
                 outseq[cpos++] = ' ';
                 while (cpos < 31)
                     outseq[cpos++] = op_char;
                 outseq[cpos++] = ' ';
                 outseq[cpos++] = '"';
-                /*---	Add in the command sequence */
+                /* Add in the command sequence */
                 meGetStringFromKey(ktp->code, &outseq[cpos]);
                 meStrcat(outseq+cpos,"\"");
                 
@@ -1043,7 +1044,7 @@ buildlist(int type, int n, meUByte *mstring)
 int
 listCommands(int f, int n)
 {
-    return (buildlist(meTRUE, n, (meUByte *) ""));
+    return buildlist(n,NULL) ;
 }
 
 int
@@ -1058,7 +1059,7 @@ commandApropos(int f, int n)	/* Apropos (List functions that match a substring) 
     mstring[0] = '.' ;
     mstring[1] = '*' ;
     meStrcat(mstring,".*") ;
-    return buildlist(meFALSE, n, mstring);
+    return buildlist(n, mstring);
 }
 #endif
 
