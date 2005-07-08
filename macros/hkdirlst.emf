@@ -7,6 +7,7 @@
 ; Synopsis:    directory tree buffer hook
 ; Authors:     Steven Phillips
 ;
+0 define-macro-file filetool file-tool-menu file-tool-setup
 0 define-macro-file osd osd-close
 0 define-macro-file ftp ftp-rename-buffer
 0 define-macro-file cvs cvs-init
@@ -605,6 +606,7 @@ define-macro file-browser-swap-buffers
             goto-position "\x81"
         !endif
         !if &not &band @# 1
+            buffer-bind-key "browse" "v"
             0 browse
         !endif
     !endif
@@ -1463,6 +1465,7 @@ osd .osd.dirlst 110 ""  "\HNew Folder"          f dirlst-new-folder
 osd .osd.dirlst 120 ""  "Re\Hfresh"             f dirlst-refresh
 osd .osd.dirlst 130 ""  "\HAuto-Refresh: on "   f dirlst-auto-refresh
 osd .osd.dirlst 90  "M" "File \HSelection"      .osd.dirlsts
+osd .osd.dirlst 160 ""  "File Tools Setup"      f file-tool-setup
 
 0 define-macro dirlst-context-menu
     set-variable #l0 &not &or &les $window-line 5 &les &len @wl :fmpf
@@ -1479,10 +1482,12 @@ osd .osd.dirlst 90  "M" "File \HSelection"      .osd.dirlsts
         osd .osd.dirlst  30 ""  "\HCopy Files"    1 dirlst-tag-file-copy
         osd .osd.dirlst  40 ""  "\HMove Files"    0 dirlst-tag-file-copy
         osd .osd.dirlst  50 ""  "\HDelete Files"  f dirlst-tag-file-delete
+        osd .osd.dirlst  13 "M" "\HTools"  .osd.tmp file-tool-menu
     !else
         osd .osd.dirlst  30 ""  "Copy Files"
         osd .osd.dirlst  40 ""  "Move Files"
         osd .osd.dirlst  50 ""  "Delete Files"
+        osd .osd.dirlst  13 ""  "Tools"
     !endif
     !if :tag-count
         osd .osd.dirlst  15 ""  "Open Selected"   f dirlst-tag-open
