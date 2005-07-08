@@ -1986,16 +1986,11 @@ menuRenderItem (osdDISPLAY *md, int offset, int flags)
         else if(!(mp->flags & MF_DISPTYPE) && (mp->flags & MF_SUBMNU))
         {
             /* Add menu annotaion */
+            *txtp++ = ' ';
             if (mp->flags & MF_MANUAL)
-            {
-                *txtp++ = ' ';
-                *txtp = '>';
-            }
+                *txtp = '+';
             else
-            {
-                *txtp++ = '.';
-                *txtp = '.';
-            }
+                *txtp = windowChars[WCHSBDOWN] ;
         }
     }
     /* Draw the text region to screen if required */
