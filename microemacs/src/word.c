@@ -283,18 +283,28 @@ forwDelWord(int f, int n)
     doto   = frameCur->windowCur->dotOffset;
     lineno = frameCur->windowCur->dotLineNo ;
     size = 0;
-    do {
+    /* if no argument was given then only kill the white space before the word */
+    if(!f && !inWord())
+    {
         while(!inWord() && (meWindowForwardChar(frameCur->windowCur, 1) > 0))
             size++ ;
-        if(!inWord())
-            break ;
-        while(inWord())
-        {
-            meWindowForwardChar(frameCur->windowCur, 1) ;
-            size++ ;
-        }
-    } while(--n) ;
-
+        if(size)
+            n = 0 ;
+    }
+    else
+    {
+        do {
+            while(!inWord() && (meWindowForwardChar(frameCur->windowCur, 1) > 0))
+                size++ ;
+            if(!inWord())
+                break ;
+            while(inWord())
+            {
+                meWindowForwardChar(frameCur->windowCur, 1) ;
+                size++ ;
+            }
+        } while(--n) ;
+    }
     frameCur->windowCur->dotLine = dotp;
     frameCur->windowCur->dotOffset = doto;
     frameCur->windowCur->dotLineNo = lineno ;
@@ -323,20 +333,34 @@ backDelWord(int f, int n)
     if(meWindowBackwardChar(frameCur->windowCur, 1) == meFALSE)
         return meErrorBob() ;
     size = 0;
-    do {
-        while(!inWord() && (meWindowBackwardChar(frameCur->windowCur, 1) > 0))
+    /* if no argument was given then only kill the white space before the word */
+    if(!f && !inWord())
+    {
+        do
             size++ ;
-        if(!inWord())
-        {
-            size++ ;
-            break ;
-        }
-        while(inWord() && (meWindowBackwardChar(frameCur->windowCur, 1) > 0))
-            size++ ;
-    } while(--n) ;
+        while((meWindowBackwardChar(frameCur->windowCur, 1) > 0) && !inWord()) ;
+        if(inWord())
+            meWindowForwardChar(frameCur->windowCur, 1) ;
+        n = 0 ;
+    }
+    else
+    {
+        do {
+            while(!inWord() && (meWindowBackwardChar(frameCur->windowCur, 1) > 0))
+                size++ ;
+            if(!inWord())
+            {
+                size++ ;
+                break ;
+            }
+            while(inWord() && (meWindowBackwardChar(frameCur->windowCur, 1) > 0))
+                size++ ;
+        } while(--n) ;
+        
+        if((n == 0) && !inWord())
+            meWindowForwardChar(frameCur->windowCur, 1) ;
+    }
 
-    if((n == 0) && !inWord())
-        meWindowForwardChar(frameCur->windowCur, 1) ;
     if(ldelete(size,3) <= 0)
         return meFALSE ;
     return ((n) ? meErrorBob():meTRUE) ;
