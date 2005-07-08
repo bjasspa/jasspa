@@ -5323,7 +5323,7 @@ osd (int f, int n)
              * 0x02         Define the menu line string.
              */
             
-            if (meGetString((meUByte *)"Flags", 0, 0, buf, 16) == meABORT)
+            if (meGetString((meUByte *)"Flags", 0, 0, buf, 16) <= 0)
                 return meABORT ;
             flags = meAtoi(buf) ;
             if (flags == 0)
@@ -5363,7 +5363,7 @@ osd (int f, int n)
         }
         
         /* Get the menu index */
-        if ((meGetString((meUByte *)"Item", 0, 0, buf, 16) == meABORT) ||
+        if ((meGetString((meUByte *)"Item", 0, 0, buf, 16) <= 0) ||
             (((item = meAtoi(buf)) < 0) || (item > 32767)))
             return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Invalid item identity [%s]", buf);
         
@@ -5445,7 +5445,7 @@ osd (int f, int n)
                 }
                 else
                     rp->tScheme = rp->mScheme ;
-                if(meGetString((meUByte *)"Text", 0, 0, txtbuf, meBUF_SIZE_MAX) > 0)
+                if(meGetString((meUByte *)"Text", MLEXECNOUSER, 0, txtbuf, meBUF_SIZE_MAX) > 0)
                     rp->strData = meStrdup(txtbuf) ;
             }
             /* get the resize command if there is one */
@@ -5465,7 +5465,7 @@ osd (int f, int n)
             else
                 rp->cntIndex = -1 ;
             /* get the initialize command if there is one */
-            if ((ii = meGetString((meUByte *)"Command", MLCOMMAND, 0, buf, meBUF_SIZE_MAX)) < 0)
+            if ((ii = meGetString((meUByte *)"Command", MLCOMMAND|MLEXECNOUSER, 0, buf, meBUF_SIZE_MAX)) < 0)
                 return meABORT ;
             rp->cmdIndex = -1 ;                     /* Assume no command */
             if (ii > 0)
@@ -5541,7 +5541,7 @@ osd (int f, int n)
         {
             flags &= ~MF_SCRLBOX ;
             /* Get the string field - not needed if deleting a non alpha item */
-            if ((ii = meGetString((meUByte *)"Text", MLFFZERO, 0, txtbuf, meBUF_SIZE_MAX)) == meABORT)
+            if ((ii = meGetString((meUByte *)"Text", MLFFZERO|MLEXECNOUSER, 0, txtbuf, meBUF_SIZE_MAX)) == meABORT)
                 return meABORT ;
             else if (ii == meFALSE)
             {
@@ -5556,7 +5556,7 @@ osd (int f, int n)
         /* Get the numeric argument. Check for 'f' which means false or
          * a value which means true. */
         argc = 1 ;
-        if ((ii = meGetString((meUByte *)"Argument", 0, 0, buf, 16)) < 0)
+        if ((ii = meGetString((meUByte *)"Argument", MLEXECNOUSER, 0, buf, 16)) < 0)
             return meABORT ;
         if (ii > 0)
         {
@@ -5570,7 +5570,7 @@ osd (int f, int n)
             flags |= MF_SEP ;
 
         /* Get the command */
-        if((ii = meGetString((meUByte *)"Command", MLCOMMAND, 0, buf, meBUF_SIZE_MAX)) < 0)
+        if((ii = meGetString((meUByte *)"Command", MLCOMMAND|MLEXECNOUSER, 0, buf, meBUF_SIZE_MAX)) < 0)
             return meABORT ;
         namidx = -1;              /* Assume no sub-command */
         cmdlen = 0;                     /* Assume no command string */
@@ -5860,4 +5860,3 @@ void osdFreeMemory(void)
 #endif
 
 #endif
-
