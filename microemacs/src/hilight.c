@@ -943,14 +943,14 @@ hilight(int f, int n)
                 return meABORT ;
             root->ignore = (meUByte) meAtoi(buf) ;
         }
-        if((ii=meGetString((meUByte *)"Scheme",0,0,buf,meBUF_SIZE_MAX)) == meABORT)
+        if((ii=meGetString((meUByte *)"Scheme",MLEXECNOUSER,0,buf,meBUF_SIZE_MAX)) == meABORT)
             return meABORT ;
         if(ii == meFALSE)
             ii = globScheme ;
         else if((ii=convertUserScheme(meAtoi(buf), -1)) < 0)
             return meFALSE ;
         root->scheme = (meScheme) ii ;
-        if((ii=meGetString((meUByte *)"Trunc scheme",0,0,buf,meBUF_SIZE_MAX)) == meABORT)
+        if((ii=meGetString((meUByte *)"Trunc scheme",MLEXECNOUSER,0,buf,meBUF_SIZE_MAX)) == meABORT)
             return meABORT ;
         if(ii == meFALSE)
             ii = trncScheme ;

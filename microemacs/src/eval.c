@@ -1473,7 +1473,7 @@ getval(meUByte *tkn)   /* find the value of a token */
                 ht = 0 ;
             
             /* Get and evaluate the next argument - this is the history number */
-            if(meGetString((meUByte *) "@h",0,0,buff,meBUF_SIZE_MAX) <= 0)
+            if(meGetString(NULL,0,0,buff,meBUF_SIZE_MAX) <= 0)
                 return abortm ;
             hn = meAtoi(buff) ;
             
@@ -1621,13 +1621,13 @@ getval(meUByte *tkn)   /* find the value of a token */
                     cc = 0 ;
                 
                 /* Get and evaluate the next argument - this is the prompt */
-                if(meGetString((meUByte *) "@ml",0,0,prompt,meBUF_SIZE_MAX) <= 0)
+                if(meGetString(NULL,0,0,prompt,meBUF_SIZE_MAX) <= 0)
                     return abortm ;
                 if(flag & 0x01)
                 {
                     /* Get and evaluate the next argument - this is the default
                      * value */
-                    if(meGetString((meUByte *) "@ml",0,0,buff,meBUF_SIZE_MAX) <= 0)
+                    if(meGetString(NULL,0,0,buff,meBUF_SIZE_MAX) <= 0)
                         return abortm ;
                     addHistory(option,buff) ;
                     defH = 1 ;
@@ -1638,7 +1638,7 @@ getval(meUByte *tkn)   /* find the value of a token */
                 {
                     /* Get and evaluate the next argument - this is the ml
                      * line init value */
-                    if(meGetString((meUByte *) "@ml",0,0,buff,meBUF_SIZE_MAX) <= 0)
+                    if(meGetString(NULL,0,0,buff,meBUF_SIZE_MAX) <= 0)
                         return abortm ;
                     option |= MLNORESET ;
                 }
@@ -1653,7 +1653,7 @@ getval(meUByte *tkn)   /* find the value of a token */
                 {
                     /* Get and evaluate the next argument - this is the
                      * completion list */
-                    if(meGetString((meUByte *) "@ml",0,0,comp,meBUF_SIZE_MAX) <= 0)
+                    if(meGetString(NULL,0,0,comp,meBUF_SIZE_MAX) <= 0)
                         return abortm ;
                     if(flag & 0x200)
                     {
@@ -1706,10 +1706,8 @@ getval(meUByte *tkn)   /* find the value of a token */
                     option &= MLHIDEVAL ;
                     option |= MLFILECASE|MLNORESET|MLMACNORT ;
 
-                    clexec = meFALSE ;
-                    if((ret = meGetString(prompt,option,0,buff,meBUF_SIZE_MAX)) > 0)
+                    if((ret = meGetStringFromUser(prompt,option,0,buff,meBUF_SIZE_MAX)) > 0)
                         fileNameCorrect(buff,evalResult,NULL) ;
-                    clexec = meTRUE ;
                 }
                 else
                 {
@@ -1735,13 +1733,13 @@ getval(meUByte *tkn)   /* find the value of a token */
                     ret -= '0' ;
                 
                 /* Get and evaluate the next argument - this is the prompt */
-                if(meGetString((meUByte *) "@mc",0,0,prompt,meBUF_SIZE_MAX) <= 0)
+                if(meGetString(NULL,0,0,prompt,meBUF_SIZE_MAX) <= 0)
                     return abortm ;
                 if(ret & 0x01)
                 {
                     /* Get and evaluate the next argument - this is valid
                      * values list */
-                    if(meGetString((meUByte *) "@mc",0,0,buff,meBUF_SIZE_MAX) <= 0)
+                    if(meGetString(NULL,0,0,buff,meBUF_SIZE_MAX) <= 0)
                         return abortm ;
                     ss = buff ;
                 }
@@ -1775,9 +1773,9 @@ getval(meUByte *tkn)   /* find the value of a token */
             int row, col ;
             
             /* Get and evaluate the arguments */
-            if((meGetString((meUByte *) "@fs",0,0,buff,meBUF_SIZE_MAX) <= 0) ||
+            if((meGetString(NULL,0,0,buff,meBUF_SIZE_MAX) <= 0) ||
                ((row = meAtoi(buff)) < 0) || (row > frameCur->depth) ||
-               (meGetString((meUByte *) "@fs",0,0,buff,meBUF_SIZE_MAX) <= 0) ||
+               (meGetString(NULL,0,0,buff,meBUF_SIZE_MAX) <= 0) ||
                ((col = meAtoi(buff)) < 0) || (col >= frameCur->width))
                 evalResult[0] = 0 ;
             else if(tkn[3] == 's')
@@ -2131,7 +2129,7 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             int ii=meAtoi(arg2) ;
             ss = arg1 ;
             if(ii < 0)
-                ii = strlen(ss) + ii ;
+                ii = meStrlen(ss) + ii ;
             dd = evalResult ;
             while(--ii >= 0)
             {
@@ -2153,7 +2151,7 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             int ii=meAtoi(arg2) ;
             ss = arg1 ;
             if(ii < 0)
-                ii = strlen(ss) + ii ;
+                ii = meStrlen(ss) + ii ;
             while(--ii >= 0)
             {
                 if((cc=*ss++) == meCHAR_LEADER)
@@ -2178,7 +2176,7 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             ll = meAtoi(arg3) ;
             ii = meAtoi(arg2) ;
             if(ii < 0)
-                ii = strlen(ss) + ii ;
+                ii = meStrlen(ss) + ii ;
             if(ii > 0)
             {
                 do

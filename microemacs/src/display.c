@@ -2939,12 +2939,15 @@ mlwrite(int flags, meUByte *fmt, int arg)
         /* Change the value of frameCur->mlStatus to MLSTATUS_KEEP cos we want to keep
          * the string till we get a key
          */
-        meUByte scheme=(globScheme/meSCHEME_STYLES), oldMlStatus = frameCur->mlStatus ;
+        meUByte scheme=(globScheme/meSCHEME_STYLES), oldMlStatus = frameCur->mlStatus, oldkbdmode=kbdmode ;
         pokeScreen(POKE_NOMARK+0x10,frameCur->depth,frameCur->width-9,&scheme,
                    (meUByte *) "<ANY KEY>") ;
         vp1->endp = frameCur->width ;
         frameCur->mlStatus = MLSTATUS_KEEP ;
+        /* avoid any recursive call to an idle macro */
+        kbdmode = meSTOP ;
         TTgetc() ;
+        kbdmode = oldkbdmode ;
         frameCur->mlStatus = oldMlStatus ;
         mlerase(0) ;
     }
@@ -2956,10 +2959,6 @@ mlwrite_exit:
     if(!(flags & MWABORT))
         return meTRUE ;
 
-#if MEOPT_DEBUGM
-    if(macbug < -2)
-        macbug = 1 ;
-#endif
     return meABORT ;
 }
 
@@ -3097,7 +3096,7 @@ addColorScheme(int f, int n)
         {
             meStrcpy(prompt,schmPromptM[ii]) ;
             meStrcat(prompt,schmPromptP[jj]) ;
-            if(meGetString(prompt,0,0,buf,meBUF_SIZE_MAX) <= 0)
+            if(meGetString(prompt,MLEXECNOUSER,0,buf,meBUF_SIZE_MAX) <= 0)
                 break;
             scheme[ii][jj] = ((meUByte) meAtoi(buf)) & meFONT_MASK ;
         }

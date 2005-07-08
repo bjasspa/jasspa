@@ -325,7 +325,10 @@ meGetString(meUByte *prompt, int option, int defnum, meUByte *buffer, int size)
             execstr = token(execstr, buff);
             if(cc == 'a')
                 execstr = ss ;
-            meStrcpy(resultStr,prompt) ;
+            if(prompt == NULL)
+                resultStr[0] = '\0' ;
+            else
+                meStrcpy(resultStr,prompt) ;
             if(lineExec (0, 1, buff) <= 0)
                 return meABORT ;
             meStrncpy(buffer,resultStr,size-1) ;
@@ -336,40 +339,48 @@ meGetString(meUByte *prompt, int option, int defnum, meUByte *buffer, int size)
         {
             /* evaluate it */
             res = getval(buff) ;
-            if(res == (meUByte *) abortm)
+            if(res != (meUByte *) abortm)
+            {
+                ss = buffer ;
+                if(option & MLMACNORT)
+                {
+                    while((*ss))
+                    {
+                        ss++ ;
+                        size-- ;
+                    }
+                }
+                if(option & MLFFZERO)
+                {
+                    while((--size > 0) && ((cc = *res++) != '\0'))
+                        *ss++ = cc ;
+                }
+                else
+                {
+                    for(; ((--size) > 0) && ((cc = *res++) != '\0') ; )
+                    {
+                        if((cc == meCHAR_LEADER) && ((cc = *res++) != meCHAR_TRAIL_LEADER))
+                            break ;
+                        *ss++ = cc ;
+                    }
+                }
+                *ss = '\0' ;
+                return meTRUE ;
+            }
+            if(((buff[0] != '\0') && (buff[0] != ';')) || (option & MLEXECNOUSER))
             {
                 *buffer = '\0' ;
                 return meFALSE ;
             }
-            ss = buffer ;
-            if(option & MLMACNORT)
-            {
-                while((*ss))
-                {
-                    ss++ ;
-                    size-- ;
-                }
-            }
-            if(option & MLFFZERO)
-            {
-                while((--size > 0) && ((cc = *res++) != '\0'))
-                    *ss++ = cc ;
-            }
-            else
-            {
-                for(; ((--size) > 0) && ((cc = *res++) != '\0') ; )
-                {
-                    if((cc == meCHAR_LEADER) && ((cc = *res++) != meCHAR_TRAIL_LEADER))
-                        break ;
-                    *ss++ = cc ;
-                }
-            }
-            *ss = '\0' ;
-            return meTRUE ;
         }
         /* if @mna (get all input from user) then rewind the execstr */
-        if(buff[3] == 'a')
+        else if(buff[3] == 'a')
             execstr = ss ;
+    }
+    if(prompt == NULL)
+    {
+        *buffer = '\0' ;
+        return ctrlg(meFALSE,1) ;
     }
     return meGetStringFromUser(prompt, option, defnum, buffer, size) ;
 }
@@ -382,7 +393,7 @@ macarg(meUByte *tok)               /* get a macro line argument */
     
     savcle = clexec;            /* save execution mode */
     clexec = meTRUE;              /* get the argument */
-    status = meGetString((meUByte *)"", MLNOHIST|MLFFZERO, 0, tok, meBUF_SIZE_MAX) ;
+    status = meGetString(NULL,MLNOHIST|MLFFZERO,0,tok,meBUF_SIZE_MAX) ;
     clexec = savcle;            /* restore execution mode */
     
     return status ;
@@ -695,7 +706,7 @@ elif_jump:
                 execlevel += 2 ;
             if(dirType & DRFLAG_ARG)
             {
-                if(macarg(tkn) <= 0)
+                if(meGetString(NULL,MLNOHIST|MLFFZERO|MLEXECNOUSER,0,tkn,meBUF_SIZE_MAX) <= 0)
                 {
                     if(!(dirType & DRFLAG_OPTARG))
                         return meFALSE ;
@@ -738,6 +749,8 @@ elif_jump:
                 TTdoBell(n) ;
                 return meTRUE ;
             case DRRETURN:
+                /* Stop the debugger kicking in on a !return, a macro doing !return 0 is okay */
+                meRegCurr->force = 1 ;
                 return (n) ? DRRETURN:meFALSE ;
             }
         }
@@ -825,6 +838,27 @@ elif_jump:
 /* bp - buffer to execute */
 static meLine *errorLine=NULL ;
 
+static long
+macroPrintError(meLine *hlp, meUByte *macName)
+{
+    meLine *lp ;
+    long  ln ;
+    
+    if(errorLine == NULL)
+        /* Quit if there is no error line */
+        return -1 ;
+    
+    lp=meLineGetNext(hlp) ;
+    ln=0 ;
+    while(lp != errorLine)
+    {
+        lp = meLineGetNext(lp) ;
+        ln++ ;
+    }
+    mlwrite(MWABORT|MWWAIT,(meUByte *)"[%s:: Error executing %s, line %d]",errorLine->text,macName,ln+1) ;
+    return ln ;
+}
+
 static int
 dobuf(meLine *hlp)
 {
@@ -854,78 +888,75 @@ dobuf(meLine *hlp)
            gets echoed and a key needs to be pressed to continue
            ^G will abort the command */
         
-        if(macbug > 0)
+        if((macbug > 1) && (!execlevel || (macbug > 2)))
         {
-            if((macbug > 1) || (macbug && !execlevel))
-            {
-                meUByte dd=macbug, outline[meBUF_SIZE_MAX];   /* string to hold debug line text */
-                meLine *tlp=hlp ;
-                meUShort cc ;
-                int lno=0 ;
-                
-                /* force debugging off while we are getting input from the user,
-                 * if we don't and any macro is executed (idle-pick macro) then
-                 * ME will spin and crash!! */
-                macbug = 0 ;
-                
-                /*---   Generate the debugging line for the 'programmer' !! */
-                do 
-                    lno++ ;
-                while ((tlp=meLineGetNext(tlp)) != lp)
-                    ;
-                sprintf((char *)outline,"%s:%d:%d [%s] ?",meRegCurr->commandName,lno,execlevel,tline) ;
+            meUByte dd=macbug, outline[meBUF_SIZE_MAX];   /* string to hold debug line text */
+            meLine *tlp=hlp ;
+            meUShort cc ;
+            int lno=0 ;
+            
+            /* force debugging off while we are getting input from the user,
+             * if we don't and any macro is executed (idle-pick macro) then
+             * ME will spin and crash!! */
+            macbug = 0 ;
+            
+            /*---   Generate the debugging line for the 'programmer' !! */
+            do 
+                lno++ ;
+            while ((tlp=meLineGetNext(tlp)) != lp)
+                ;
+            sprintf((char *)outline,"%s:%d:%d [%s] ?",meRegCurr->commandName,lno,execlevel,tline) ;
 loop_round2:
-                mlwrite(MWSPEC,outline);        /* Write out the debug line */
-                /* Cannot do update as if this calls a macro then
-                 * we will end up in an infinite loop, the best we can do is
-                 * call the screenUpdate function
-                 */
-                screenUpdate(meTRUE,2-sgarbf) ;
-                /* reset garbled status */
-                sgarbf = meFALSE ;
-                if(dd <= 2)
-                {
+            mlwrite(MWSPEC,outline);        /* Write out the debug line */
+            /* Cannot do update as if this calls a macro then
+             * we will end up in an infinite loop, the best we can do is
+             * call the screenUpdate function
+             */
+            screenUpdate(meTRUE,2-sgarbf) ;
+            /* reset garbled status */
+            sgarbf = meFALSE ;
+            if(dd <= 2)
+            {
 loop_round:
-                    /* and get the keystroke */
-                    cc = meGetKeyFromUser(meFALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE) ;
-                    switch(cc)
+                /* and get the keystroke */
+                cc = meGetKeyFromUser(meFALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE) ;
+                switch(cc)
+                {
+                case '?':
+                    mlwrite(MWSPEC,__dobufStr1) ;       /* Write out the debug line */
+                    goto loop_round ;
+                case 'L'-'@':
+                    goto loop_round2 ;
+                case 'v':
                     {
-                    case '?':
-                        mlwrite(MWSPEC,__dobufStr1) ;       /* Write out the debug line */
+                        meUByte mlStatusStore ;
+                        mlStatusStore = frameCur->mlStatus ;
+                        frameCur->mlStatus = 0 ;
+                        clexec = meFALSE ;
+                        descVariable(meFALSE,1) ;
+                        clexec = meTRUE ;
+                        frameCur->mlStatus = mlStatusStore ;
                         goto loop_round ;
-                    case 'L'-'@':
-                        goto loop_round2 ;
-                    case 'v':
-                        {
-                            meUByte mlStatusStore ;
-                            mlStatusStore = frameCur->mlStatus ;
-                            frameCur->mlStatus = 0 ;
-                            clexec = meFALSE ;
-                            descVariable(meFALSE,1) ;
-                            clexec = meTRUE ;
-                            frameCur->mlStatus = mlStatusStore ;
-                            goto loop_round ;
-                        }
-                    default:
-                        if(cc == breakc)
-                        {
-                            /* Abort - Must exit the usual way so that macro
-                             * storing and execlevel are corrected */
-                            ctrlg(meFALSE,1) ;
-                            status = meABORT ;
-                            errorLine = lp ;
-                            macbug = dd ;
-                            goto dobuf_exit ;
-                        }
-                        debug = dd ;
-                    case '!':
-                        dd = 0 ;
-                    case 's':
-                        break;
                     }
+                default:
+                    if(cc == breakc)
+                    {
+                        /* Abort - Must exit the usual way so that macro
+                         * storing and execlevel are corrected */
+                        ctrlg(meFALSE,1) ;
+                        status = meABORT ;
+                        errorLine = lp ;
+                        macbug = dd ;
+                        goto dobuf_exit ;
+                    }
+                    debug = dd ;
+                case '!':
+                    dd = 0 ;
+                case 's':
+                    break;
                 }
-                macbug = dd ;
             }
+            macbug = dd ;
         }
 #endif
         if(TTbreakTest(0))
@@ -1056,6 +1087,20 @@ loop_round:
         {
             /* in any case set the buffer . */
             errorLine = lp;
+            if(macbug > 0)
+            {
+                /* check if the failure is handled by a !force */
+                meRegister *rr ;
+                rr = meRegCurr ;
+                for(;; rr = rr->prev)
+                {
+                    if(rr->force)
+                        goto dobuf_exit ;
+                    if(rr == meRegHead) 
+                        break ;
+                }
+                macroPrintError(hlp,meRegCurr->commandName) ;
+            }
             goto dobuf_exit ;
         }
         
@@ -1268,10 +1313,15 @@ execFuncHidden(int keyCode, int index, meUInt arg)
     }
     if((ii=frameCur->bufferCur->inputFunc) >= 0)
     {
-        meUByte *ss ;
+        meUByte *ss, ff ;
+        /* set a force value for the execution as the macro is allowed to
+         * fail and we don't want to kick in the macro debugging */
+        ff = meRegHead->force ;
+        meRegHead->force = 1 ;
         if((execFunc(ii,f,n) > 0) ||
            ((ss=getUsrLclCmdVar((meUByte *)"status",&(cmdTable[ii]->varList))) == errorm) || meAtoi(ss))
             index = -1 ;
+        meRegHead->force = ff ;
     }
     if(index >= 0)
         execFunc(index,f,n);
@@ -1361,27 +1411,6 @@ execBufferFunc(meBuffer *bp, int index, int flags, int n)
     thisCommand = tc ;
     cmdstatus = cs ;
     return ret ;
-}
-
-static long
-macroPrintError(meLine *hlp, meUByte *macName)
-{
-    meLine *lp ;
-    long  ln ;
-    
-    if(errorLine == NULL)
-        /* Quit if there is no error line */
-        return -1 ;
-    
-    lp=meLineGetNext(hlp) ;
-    ln=0 ;
-    while(lp != errorLine)
-    {
-        lp = meLineGetNext(lp) ;
-        ln++ ;
-    }
-    mlwrite(MWABORT|MWWAIT,(meUByte *)"[Error executing %s, line %d]",macName,ln+1) ;
-    return ln ;
 }
 
 /* executeBuffer:     Execute the contents of a buffer of commands    */
@@ -1547,7 +1576,7 @@ lineExec (int f, int n, meUByte *cmdstr)
     meUByte *oldestr;                     /* original exec string */
     meUByte  oldcle ;                     /* old contents of clexec flag */
     meUByte  tkn[meTOKENBUF_SIZE_MAX] ;
-    int oldexec, oldF, oldN, oldForce ;
+    int oldexec, oldF, oldN, oldForce, prevForce ;
     
     /* save the arguments */
     oldcle = clexec;
@@ -1556,6 +1585,12 @@ lineExec (int f, int n, meUByte *cmdstr)
     oldF = meRegCurr->f ;
     oldN = meRegCurr->n ;
     oldForce = meRegCurr->force ;
+    /* store the execute-line's !force count on the prev registry if greater,
+     * the docmd resets the force count so a !force !force execute-line "..."
+     * effectively loses the !force's during the execution which can allow the
+     * debugger to kick in unexpectedly */
+    if((prevForce=meRegCurr->prev->force) < oldForce)
+        meRegCurr->prev->force = oldForce ;
     
     clexec = meTRUE;                      /* in cline execution */
     execstr = NULL ;
@@ -1572,6 +1607,7 @@ lineExec (int f, int n, meUByte *cmdstr)
     meRegCurr->f = oldF ;
     meRegCurr->n = oldN ;
     meRegCurr->force = oldForce ;
+    meRegCurr->prev->force = prevForce ;
     
     return status ;
 }    

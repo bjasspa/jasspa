@@ -158,7 +158,7 @@ createMacro(meUByte *name)
     
     /* If the macro name has not been give then try and get one */
     if((name == NULL) && 
-       (meGetString((meUByte *)"Enter macro name", MLCOMMAND, 0, buff, meBUF_SIZE_MAX) > 0) && (buff[0] != '\0'))
+       (meGetString((meUByte *)"Macro name",MLCOMMAND|MLEXECNOUSER, 0, buff, meBUF_SIZE_MAX) > 0) && (buff[0] != '\0'))
         name = buff ;
     
     if((name == NULL) || ((hlp = meLineMalloc(0,0)) == NULL))
