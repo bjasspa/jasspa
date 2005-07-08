@@ -23,7 +23,7 @@ define-macro next-line
     @# forward-line
 !emacro
 define-macro previous-line
-    @# previous-line
+    @# backward-line
 !emacro
 ; trim whitespace around point
 define-macro delete-horizontal-space
@@ -43,8 +43,11 @@ define-macro delete-horizontal-space
 ; C-k kill-line binding should kill to the end of line only
 global-bind-key kill-line "C-k"
 
+; kill words should kill the whitespace as well.
+1 global-bind-key forward-kill-word "esc d"
+1 global-bind-key backward-kill-word "esc backspace"
+
 global-bind-key kill-region "S-delete"
-; All bindings to "delete" map to backspace.
 global-bind-key backward-delete-char "delete"
 
 global-bind-key backward-paragraph "C-up"
