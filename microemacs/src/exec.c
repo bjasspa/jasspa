@@ -915,7 +915,7 @@ loop_round2:
             screenUpdate(meTRUE,2-sgarbf) ;
             /* reset garbled status */
             sgarbf = meFALSE ;
-            if(dd <= 2)
+            if(dd <= 3)
             {
 loop_round:
                 /* and get the keystroke */
