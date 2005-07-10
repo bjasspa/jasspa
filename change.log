@@ -4,8 +4,130 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <050601.2247>
+>  Last Modified : <050710.1016>
 >
+
+    [050710] Fixed old $debug interface, found a long forgotton mode 3 (now 4)
+             which simply prints the current line without waiting, this broken
+             the new mode 3.
+
+    [050709] Removed the -d command line option - pointless.
+
+    [050709] Improved  the macro  command  argument  handling  to get  missing
+             arguments  from the user, i.e. having a macro line of:  fine-file
+             Works okay. 
+
+    [050709] Vastly improved the macro debugging, the $debug value of 1 is now
+             2, 2 -> 3, a  value  of 1 now  tells  the  user of any  unhandled
+             failures.
+
+    [050709] Fixed the  Windows  window  resizing  behaviour  to be a lot more
+             usable. The window size now  increases  in  character  size steps
+             rather  than  bouncing  around  and the  window is refresh as its
+             changed. The Horizontal width limit of the window has effectively
+             been removed (set to 400 chars) the depth is still  restricted to
+             the screen size, issue raised by Tom Hundt.
+
+    [050709] Added new file tools interface,  creating  windows  explorer type
+             file name based tools (e.g. extracting a zip file).
+
+    [050709] Added ClearCase cc-log & cc-annotate (similar to cvs's commands)
+
+    [050709] Stopped the default file hook from creating a bogus tool menu and
+             help page.
+
+    [050709] Fixed the previous-line macro and the kill-word key bindings.
+
+    [050709] Changed the menu items which open a sub dialog to having '...' in
+             their name as per the gui standard, issue raised by Tom Hundt.
+
+    [050708] Changed  sub-menu display chars, auto open menus are now ' >' and
+             manual are ' +', issue raised by Tom Hundt.
+
+    [050708] Got  thoroughly fed up with the emacs style  kill-word - useless.
+             Came up with a  compromise,  if no  numeric  arg is given then it
+             works  the old way, if an  argument  is given  (i.e. 1, 2 ...) it
+             works in like emacs  (which  makes  sense as you are asking it to
+             kill 1 word etc.)
+
+    [050708] Changed  list-commands  and  command-apropros  to not list hidden
+             macros  by  default.  They can be listed if bit 1 of the  numeric
+             argument is clear (aka list-buffers)
+    
+    [050625] Updated mode line letter  mnemonics which were out of date, issue
+             raised by Tom Hundt.
+    
+    [050625] Stop me crashing when  describe-variable  is given something like
+             "&or", now restricted to variables of type #, $, %, :, . only.
+
+    [050618] Added  support for -ve offests to &lef &mid &rig  functions to go
+             from the end of the string.
+
+    [050618] Created a 'no wait' option to  shell-command  so processes can be
+             launched  and  forgotten  about. Also added  support  for all the
+             other  process  launch  flags  present  in pipe and  ipipe  shell
+             commands. Removed some very dead code.
+
+    [050618] Avoided  a '&mid  -1' in  display  matching  fence  (dmf.emf)  by
+             restructuring the logic a bit. 
+
+    [050616] Revision 3 of ClearCase support.
+
+    [050614] Second rev of clearcase  support.  restructured  the execution of
+             cleartool  so ipipes  are used (even  though  the user may not be
+             able to edit) giving  feedback on progress.  Implemented  a basic
+             diff  which  can only  diff one file at a time and only  with its
+             predecessor but at least it supports a context output of sorts!
+
+    [050614] Fixed command-wait when no arg is given to return when a callback
+             sets the .wait  variable.  Command now returns  imediately if the
+             .wait variable is not defined. Fixed windows sleep function which
+             was managing to break out before it should.
+
+    [050612] latex added macros for bold/italic/mono character formatting.
+
+    [050612] nroff region support for character formating.
+
+    [050612] .fhook-xxx.command-n  syntax  added to  buffer-init  to  simplify
+             comamnd definition.
+
+    [050610] Removed  "C-c C-g" key  binding in document  macros and  replaced
+             with "C-c <" because of C-g issue.
+
+    [050610] CVS added support for a cvsco.etf checkin template.
+
+    [050610] First  revision  of  ClearCase   support,  very   incomplete  and
+             primative but the hooks required in the rest of the system are in
+             place. 
+
+    [050609] Changed the directory  listing so '.' is removed and .. is always
+             the first  'file' and cannot be  selected.  Fixed some  directory
+             display annoying refresh issues.
+    
+    [050609] First  implementation of directory  deletion, copying and moving,
+             including  support for ftp directories  etc. Areas of concern are
+             still copied file's permissions and to a lesser degree ownership.
+             Also the  copies  behaviour  with  symbolic  links,  this must be
+             tested further.
+
+    [050609] Fixed file permissions and ftp minor issues a couple of major ftp
+             bugs and $file-names working for ftp directories.
+    
+    [050609] Added new &stat "i" flag and  argument  bit 4 to file-op to abort
+             on a problem rather than prompt, it also returns an error code in
+             $result.
+
+    [050609] Changed  the kill word  commands  so have the same word  boundary
+             behaviour as  forward-word  and Emacs (was killing word only then
+             whitespaces  only  etc).  Corrected  word  movement  and  killing
+             command's EOB and BOB error handling.
+
+    [050608] Added new rdiff (recursive diff) command
+
+    [050608] Updated  string-rectangle  and  space-rectangle  to  improve  its
+             usability.
+
+    [050608] Updated describe-word setup comment.
 
     [050601] Corrected ne.emf, broke Window mode in disabling console mode for
              ne -R option change.
