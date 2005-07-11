@@ -173,10 +173,10 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*%\\|^[ \t]*$\\|^[ \t]*\
         hilight #l1 64 "\\\\label{[^}]*}" "" #l2
         hilight #l1 64 "\\\\plabel{[^}]*}" "" #l2
         hilight #l1 64 "\\\\pdfbookmark\\[[^]]*]{[^}]*}{[^}]*}" "" #l2
-        hilight #l1 68 "\\\\cite\\[" "[Cite: " "]{[^}]*}" "]" #l2
-        hilight #l1 68 "\\\\citet\\[" "[Citet: " "]{[^}]*}" "]" #l2
-        hilight #l1 68 "\\\\cite{" "[Cite: " "}" "]" #l2
-        hilight #l1 68 "\\\\citet{" "[Citet: " "}" "]" #l2
+        hilight #l1 68 "\\\\cite\\[" "[Cite: " "]{[^}]*}" "]" "" #l2
+        hilight #l1 68 "\\\\citet\\[" "[Citet: " "]{[^}]*}" "]" "" #l2
+        hilight #l1 68 "\\\\cite{" "[Cite: " "}" "]" "" #l2
+        hilight #l1 68 "\\\\citet{" "[Citet: " "}" "]" "" #l2
         hilight #l1 68 "\\\\ref{" "" "}" "" "" .scheme.link
         hilight #l1 68 "\\\\pref{" "" "}" "" "" .scheme.link
         hilight #l1 68 "\\\\includegraphics{" "[Image: " "}" "]" "" .scheme.keyword
@@ -1657,7 +1657,7 @@ define-macro tex-insert-underscore
 ; Insert a set of brackets, typically bound to "C-c {"
 define-macro tex-insert-braces
     ; If it is a region then brace the region, otherwise insert a brace pair.
-    ; character. 
+    ; character.
     0 show-region
     set-variable #l0 $result
     !if &equ &band #l0 5 5
@@ -1685,7 +1685,7 @@ define-macro tex-insert-braces
         goto-position &cond #l3 "\x82" "\x83"
         insert-string "}"
     !else
-        ; No region hilighted, insert bold and move to center of brackets. 
+        ; No region hilighted, insert bold and move to center of brackets.
         insert-string "{}"
         backward-char
     !endif
@@ -1759,7 +1759,7 @@ define-macro latex-italic
         goto-position &cond #l3 "\x82" "\x83"
         insert-string "}"
     !else
-        ; No region hilighted, insert italic and move to center of brackets. 
+        ; No region hilighted, insert italic and move to center of brackets.
         insert-string "\\textit{}"
         backward-char
     !endif
@@ -1795,7 +1795,7 @@ define-macro latex-bold
         goto-position &cond #l3 "\x82" "\x83"
         insert-string "}"
     !else
-        ; No region hilighted, insert bold and move to center of brackets. 
+        ; No region hilighted, insert bold and move to center of brackets.
         insert-string "\\textbf{}"
         backward-char
     !endif
@@ -1831,7 +1831,7 @@ define-macro latex-mono
         goto-position &cond #l3 "\x82" "\x83"
         insert-string "}"
     !else
-        ; No region hilighted, insert mono and move to center of brackets. 
+        ; No region hilighted, insert mono and move to center of brackets.
         insert-string "\\texttt{}"
         backward-char
     !endif
