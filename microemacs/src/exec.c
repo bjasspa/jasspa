@@ -1087,6 +1087,7 @@ loop_round:
         {
             /* in any case set the buffer . */
             errorLine = lp;
+#if     MEOPT_DEBUGM
             if(macbug > 0)
             {
                 /* check if the failure is handled by a !force */
@@ -1101,6 +1102,7 @@ loop_round:
                 }
                 macroPrintError(hlp,meRegCurr->commandName) ;
             }
+#endif
             goto dobuf_exit ;
         }
         
