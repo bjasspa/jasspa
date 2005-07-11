@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var011.5,v 2.6 2005-02-13 00:50:40 jon Exp $
+.Id $Id: m5var011.5,v 2.7 2005-07-11 21:56:39 jon Exp $
 .Im MicroEmacs variable|macrodevelop|macro
 .so me.tni
 .TH $debug 5
@@ -14,21 +14,31 @@ $debug \- Macro debugging flag
 .SH SYNOPSIS
 \fB$debug\fR \fIdebugLevel\fR; Default is \fC0\fR
 .sp
--2 <= \fIdebugLevel\fR <= 2
+-3 <= \fIdebugLevel\fR <= 3
 .SH DESCRIPTION
 .B $debug
-is a flag to trigger macro debugging. A setting of 1 or 2 enables debugging, 0
-disables  debugging  (default). A  \fB$debug\fR  setting of 2 debugs all macro
-lines encountered, whereas a setting of 1 debugs only the lines executed, i.e.
-if a false \fB!if\fR was  encountered the lines within the \fB!if\fR would not
-be  printed.   Problems  arise  with   \fB!elif\fR   and   \fB!else\fR  and  a
-\fIdebugLevel\fR  setting of 1 as the  \fB!elif\fR  and \fB!else\fR  lines are
-never printed.
+is a flag to  trigger  macro  debugging.  The flag  settings  are  defined  as
+follows:
+.IP "\fC0\fR"
+Disables debugging, this is the default.
+.IP "\fC1\fR"
+Invokes the debugger when there are un-handled  exceptions,  this is useful to
+locate problems in the macro code i.e. missing arguments etc. This setting may
+be used in  normal  running  and macro  execution  is halted  when an error is
+encountered,  it is  non-intrusive  up until  the point of  failure.  Enabling
+slightly slows execution but is not typically noticeable on modern processors.
+.IP "\fC2\fR"
+Debugs all executed macro lines, i.e. if a false \fB!if\fR was encountered the
+lines  within  the  \fB!if\fR  would  not  be  printed.  Problems  arise  with
+\fB!elif\fR  and  \fB!else\fR  and  a  \fIdebugLevel\fR  setting  of 1 as  the
+\fB!elif\fR and \fB!else\fR lines are never printed.
+.IP "\fC3\fR"
+Debugs all macro lines encountered, including those that are not executed.
 .PP
 A \-ve setting disables debugging and has no immediate effect. However as soon
-as the  bell is rung  the  value  is  inverted  (\-1 to 1, \-2 to 2)  enabling
-debugging.  This can be  invaluable  when tracing  problems,  for example the
-following macro code will loop infinitely:-
+as the  bell is rung  the  value  is  inverted  (\-1 to 1, \-2 to 2, \-3 to 3)
+enabling  debugging. This can be invaluable when tracing problems, for example
+the following macro code will loop infinitely:-
 .Me $emf-scheme
 .CS
 !repeat
