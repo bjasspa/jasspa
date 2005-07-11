@@ -1097,7 +1097,7 @@ define-macro dirlst-search
 
 0 define-macro dirlst-tag-list-delete
     set-variable .find-file.dir-count 0
-    set-variable .dirlst-tag-list-delete-file.mode 0x29
+    set-variable .dirlst-tag-list-delete-file.mode 0x25
     set-variable .dirlst-tag-list-delete-file.state 0
     set-variable #l0 0
     !while &les &pinc #l0 1 .find-file.file-count
@@ -1259,7 +1259,7 @@ define-macro dirlst-search
         set-variable #p9 1
         set-variable #l5 #l0
     !endif
-    set-variable .dirlst-tag-list-copy-file.mode &cond &band @# 1 0x89 0x49
+    set-variable .dirlst-tag-list-copy-file.mode &cond &band @# 1 0x85 0x45
     set-variable .dirlst-tag-list-copy-file.state 0
     set-variable .find-file.dir-count 0
     set-variable #l1 0
