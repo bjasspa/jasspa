@@ -85,7 +85,7 @@ set-variable #l0 0
     !if &not &exi .hilight.diff
         !force execute-file "hkdiff"
     !endif
-    set-variable .cvs.schemes &lset .cvs.schemes &lfind .cvs.names "Diff" .hilight.gdiff
+    set-variable .cvs.schemes &lset .cvs.schemes &lfind .cvs.names "Diff" .hilight.diff
     
     ; scheme for the console which simply swaps to the different tool schemes
     0 hilight .hilight.cvscon 2 100 $global-scheme

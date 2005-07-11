@@ -208,7 +208,7 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd|||||"
                 set-variable #l3 &con #l3 #l3 #l2
             !elif &seq #l1 "X"
                 osd .osd.ccosd &inc #l2 1 "fh" "    "
-                osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Conte\Hxt diffs" #l0 cc-osd-cbc
+                osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use e\Hxternal diff" #l0 cc-osd-cbc
                 set-variable #l3 &con #l3 #l3 #l2
             !elif &seq #l1 "Z"
                 !if .find-file.file-count
@@ -946,11 +946,8 @@ set-variable .cc-add.values "||0|"
 
 ; ClearCase Diff ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-0 define-macro cc-diff-context
-    !if &not &seq "R" &stat t &set #l0 &cat $buffer-fname @1
-        ml-write &spr "[ClearCase diff: Error failed to located source file \"%s\"]" #l0
-        !abort
-    !endif
+0 define-macro cc-diff-create-old-file
+    set-variable #l0 @1
     set-variable #l1 $buffer-bname
     -1 find-buffer #l1
     !force 0 delete-buffer "*cc-diff-temp*"
@@ -966,106 +963,76 @@ set-variable .cc-add.values "||0|"
             !abort
         !else
             set-variable #l2 @s1
-            !if &seq &set #l3 @s3 ""
-                set-variable #l3 #l2
-            !endif
-            set-variable #l4 @s5
-            !if &seq &set #l5 @s7 ""
-                set-variable #l5 #l4
-            !endif
-            set-variable #l6 @s4
-            !if &seq #l6 "a"
-                set-variable #l3 &sub #l3 1
-                set-variable #l6 "+"
-            !elif &seq #l6 "d"
-                set-variable #l4 &add #l4 1
-                set-variable #l6 "-"
-            !else
-                set-variable #l6 "!"
+            set-variable #l3 @s4
+            !if &seq #l3 "a"
+                set-variable #l2 &add #l2 1
             !endif
             find-buffer "*cc-diff-temp*"
-            !force set-variable $window-line #l4
-            set-variable #l7 $window-line
-            set-mark
-            !force 3 backward-line
-            copy-region
-            set-variable #l7 &sub #l7 $window-line
-            !force set-variable $window-line #l5
-            !if #l5
-                !force forward-line
-            !endif
-            set-variable #l8 $window-line
-            set-mark
-            !force 3 forward-line
-            copy-region
-            set-variable #l8 &sub $window-line #l8
+            !force set-variable $window-line #l2
             find-buffer #l1
-            set-variable @wl "***************"
             beginning-of-line
             forward-line
-            insert-string &spr "*** %d,%d ***\n" &sub #l2 #l7 &add #l3 #l8
-            !if &not &seq #l6 "+"
-                yank
-                reyank
-                #l7 backward-line
-                set-variable #l9 #l7
-                !while &pdec #l9 1
-                    2 insert-space
-                    beginning-of-line
-                    forward-line
-                !done
+            !if &not &seq #l3 "a"
                 !while &seq @wc "<"
-                    set-variable @wc #l6 
-                    forward-line
-                !done
-                yank
-                #l8 backward-line
-                set-variable #l9 #l8
-                !while &pdec #l9 1
-                    2 insert-space
+                    2 forward-char
+                    set-mark
                     beginning-of-line
                     forward-line
+                    copy-region
+                    find-buffer "*cc-diff-temp*"
+                    yank
+                    -1 yank
+                    find-buffer #l1
                 !done
             !endif
-            !if &seq @wc "-"
-                set-mark
+            !if &seq #l3 "c"
+                !if &not &seq @wc "-"
+                    !force 0 delete-buffer "*cc-diff-temp*"
+                    ml-write "[ClearCase diff: Error strange divide line found]"
+                    !abort
+                !endif
                 forward-line
-                -1 kill-region
             !endif
-            insert-string &spr "--- %d,%d ---\n" &sub #l4 #l7 &add #l5 #l8
-            !if &not &seq #l6 "-"
-                yank
-                reyank
-                #l7 backward-line
-                set-variable #l9 #l7
-                !while &pdec #l9 1
-                    2 insert-space
-                    beginning-of-line
-                    forward-line
-                !done
+            !if &not &seq #l3 "d"
                 !while &seq @wc ">"
-                    set-variable @wc #l6 
                     forward-line
-                !done
-                yank
-                #l8 backward-line
-                set-variable #l9 #l8
-                !while &pdec #l9 1
-                    2 insert-space
-                    beginning-of-line
+                    find-buffer "*cc-diff-temp*"
+                    set-mark
                     forward-line
+                    -1 kill-region
+                    find-buffer #l1
                 !done
             !endif
-            -2 yank
         !endif
     !until &gre &add $window-line 3 $window-eline
-    !force 0 delete-buffer "*cc-diff-temp*"
+!emacro
+
+0 define-macro cc-diff-context
+    !if &not &seq "R" &stat t &set #l0 &cat $buffer-fname @1
+        ml-write &spr "[ClearCase diff: Error failed to located source file \"%s\"]" #l0
+        !abort
+    !endif
+    cc-diff-create-old-file #l0
+    set-variable #l2 $buffer-bname
+    find-buffer "*cc-diff-temp*"
+    set-variable #l1 $temp-name
+    write-buffer #l1
+    !force 0 delete-buffer $buffer-bname
+    !if &band $system 0x100
+        set-variable #l0 &rep #l0 "/" "\\"
+        set-variable #l1 &rep #l1 "/" "\\"
+    !endif
+    find-buffer #l2
+    4 pipe-shell-command &spr "%s \"%s\" \"%s\"" %diff-com #l1 #l0 #l2
 !emacro
 
 define-macro cc-diff
     6 cc-osd .cc-diff.values
     set-variable #l9 &lef $buffer-fname &rsin "/" $buffer-fname
-    set-variable #l2 &spr "%s diff -diff -pred%s " .cc-init.com &con &lget .values 1 " -opt -b" ""
+    set-variable #l2 &cat .cc-init.com " diff -diff -pred "
+    !if &and &lget .values 1 &not &lget .values 2
+        set-variable #l2 &cat #l2 " -opt -b"
+    !endif
     0 cc-get-file-list #l0 0 0
     !force 0 delete-buffer "*cc-diff-res*"
     set-variable #l8 1
@@ -1076,26 +1043,44 @@ define-macro cc-diff
             set-variable #l4 &cat &cat "\"" #l4 "\""
         !endif
         !force !force !force 6 cc-cleartool 7 #l9 &cat #l2 #l4
-        set-variable #l8 $status
-        popup-window "*cc-diff*"
-        !if &lget .values 2
+        !if &not &set #l8 $status
+            !goto dump-diff
+        !elif &and &lget .values 2 &not &seq &rig #l3 -1 "/"
+            ; use external diff command on a normal file
+            popup-window "*cc-diff*"
             !force !force cc-diff-context #l3
-        !endif
-        set-variable $window-line 4
-        set-mark
-        end-of-buffer
-        !if #l8
-            2 backward-line
-            set-variable @wl "***************"
+            !tgoto &not &set #l8 $status dump-diff
+            set-variable $window-line 5
+            set-mark
+            end-of-buffer
+            copy-region
+            find-buffer "*cc-diff-res*"
+            end-of-buffer
+            insert-string &spr "\n*** %s	Predecessor\n" #l3
+            yank
+            -1 yank
+            insert-string "***************"
             beginning-of-line
             forward-line
+        !else
+*dump-diff
+            popup-window "*cc-diff*"
+            set-variable $window-line 4
+            set-mark
+            end-of-buffer
+            !if #l8
+                2 backward-line
+                set-variable @wl "***************"
+                beginning-of-line
+                forward-line
+            !endif
+            copy-region
+            find-buffer "*cc-diff-res*"
+            end-of-buffer
+            insert-string &spr "\n*** %s	Predecessor\n--- %s\n" #l3 #l3
+            yank
+            -1 yank
         !endif
-        copy-region
-        find-buffer "*cc-diff-res*"
-        end-of-buffer
-        insert-string &spr "\n*** %s Pred\n--- %s\n" #l3 #l3
-        yank
-        -1 yank
         find-buffer "*cc-diff*"
         !tjump &not #l8 2
     !done
@@ -1103,17 +1088,14 @@ define-macro cc-diff
     !force 0 delete-buffer "*cc-diff*"
     find-buffer "*cc-diff-res*"
     change-buffer-name "*cc-diff*"
+    set-variable $buffer-fname #l9
     !if #l8
         end-of-buffer
         insert-string "\n*****ClearCase Diff completed successfully*****"
     !endif
     beginning-of-buffer
     insert-string &spr "cd %s\nClearCase diff -pred%s\n" #l9 &rep #l0 "\b" " "
-    !if &lget .values 2
-        set-variable $buffer-hilight .hilight.gdiff
-    !else
-        set-variable $buffer-hilight .hilight.diff
-    !endif
+    set-variable $buffer-hilight .hilight.diff
     beginning-of-buffer
 !emacro
 set-variable .cc-diff.values "|1|1|"

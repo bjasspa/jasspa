@@ -13,35 +13,21 @@
 ;
 !if &not &exi .hilight.diff
     set-variable .hilight.diff  &pinc .hilight.next 1
-    set-variable .hilight.gdiff &pinc .hilight.next 1
 !endif
 
 !if &band .hilight.flags 0x02
-    ; Gnu diff utility, uses --context
-    0 hilight .hilight.gdiff 0                $global-scheme
-    hilight .hilight.gdiff 0x102 "!"          .scheme.no1
-    hilight .hilight.gdiff 0x102 "+"          .scheme.no1
-    hilight .hilight.gdiff 0x102 "-"          .scheme.no1
-    hilight .hilight.gdiff 0x102 "*\\*\\*\\*" .scheme.no2
-    hilight .hilight.gdiff 0x102 "*\\*\\* "   .scheme.no2
-    hilight .hilight.gdiff 0x102 "----"       .scheme.prepro
-    hilight .hilight.gdiff 0x102 "--- "       .scheme.prepro
-    hilight .hilight.gdiff 0x102 "Only"       .scheme.comment
-    hilight .hilight.gdiff 0x102 "Files"      .scheme.comment
-    ; Regular diff utility. May be a bit too colored !!
     0 hilight .hilight.diff 0                 $global-scheme
-    hilight .hilight.diff 0x102 "<"           .scheme.no2
-    hilight .hilight.diff 0x102 ">"           .scheme.no1
-    hilight .hilight.diff 0x102 "-"           .scheme.prepro
-    hilight .hilight.diff 0x102 "[[:digit:]]" .scheme.no1
-    ;
+    ; Gnu diff utility, uses --context
     hilight .hilight.diff 0x102 "!"           .scheme.no1
     hilight .hilight.diff 0x102 "+"           .scheme.no1
     hilight .hilight.diff 0x102 "-"           .scheme.no1
-    hilight .hilight.diff 0x102 "*\\*\\*\\*"  .scheme.no2
-    hilight .hilight.diff 0x102 "*\\*\\* "    .scheme.no2
-    hilight .hilight.diff 0x102 "----"        .scheme.prepro
-    hilight .hilight.diff 0x102 "--- "        .scheme.prepro
+    ; Regular diff utility. May be a bit too colored !!
+    hilight .hilight.diff 0x102 "<"           .scheme.no2
+    hilight .hilight.diff 0x102 ">"           .scheme.no1
+    hilight .hilight.diff 0x102 "[[:digit:]]" .scheme.no1
+    ; Common
+    hilight .hilight.diff 0x102 "*\\*\\*"     .scheme.no2
+    hilight .hilight.diff 0x102 "---"         .scheme.prepro
     hilight .hilight.diff 0x102 "Only"        .scheme.comment
     hilight .hilight.diff 0x102 "Files"       .scheme.comment
 
@@ -50,18 +36,8 @@
 define-macro fhook-diff
     ; Set up the buffer modes
     -1 buffer-mode "time"
-
     !if &band .hilight.flags 0x02
-        ; Work out what kind of diff utility that we have.
-        ; Note that if %diff-com is not defined then regular
-        ; diff hilighting is selected.
-        !if &sin " --context" %diff-com
-            set-variable $buffer-hilight .hilight.gdiff
-        !elif &sin " -c" %diff-com
-            set-variable $buffer-hilight .hilight.gdiff
-        !else
-            set-variable $buffer-hilight .hilight.diff
-        !endif
+        set-variable $buffer-hilight .hilight.diff
     !endif
     buffer-init-hooks
 !emacro
