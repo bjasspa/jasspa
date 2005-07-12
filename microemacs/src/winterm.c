@@ -5162,6 +5162,7 @@ TTsleep (int msec, int intable, meVarList *waitVarList)
 }
 
 
+#ifdef _ME_WINDOW
 static void
 meFrameSetWindowSizeInternal(meFrame *frame)
 {
@@ -5216,6 +5217,7 @@ meFrameSetWindowSizeInternal(meFrame *frame)
     }
     screenUpdate(meTRUE,2-sgarbf) ;
 }
+#endif /* _ME_WINDOW */
 
 /*
  * meFrameSetWindowSize
