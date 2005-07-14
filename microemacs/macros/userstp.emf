@@ -909,7 +909,7 @@ osd .osd.user-ftype 630 "BtcfxH"  .scheme.osd-ebtt " \HDelete " 3 user-filetype-
         osd .osd.user-plat 550 "D"
     !else
         osd .osd.user-plat 540 "Sfh" "              \H# Backups: " 550
-        osd .osd.user-plat 550 "EtxHf" .scheme.osd-entry "######" 9 user-set-cpfentry
+        osd .osd.user-plat 550 "EtxHf" .scheme.osd-entry "######" 9 user-set-pfentry
     !endif
 !emacro
 
@@ -957,7 +957,7 @@ osd .osd.user-plat 500 "fh" "    "
 osd .osd.user-plat 501 "Cftxph" &cat .osd.checkbox-chars "\} Enable Toolbar" 3 user-set-cpfcheckbox
 osd .osd.user-plat 509 ""
 osd .osd.user-plat 600 "Sfh" "  \HIgnore Files:      " 610
-osd .osd.user-plat 610 "EtxHf" .scheme.osd-entry "################################" 8 user-set-cpfentry
+osd .osd.user-plat 610 "EtxHf" .scheme.osd-entry "################################" 8 user-set-pfentry
 osd .osd.user-plat 700 ""
 osd .osd.user-plat 710 "Sfh" "  Cursor \HBlink Rate: " 720
 osd .osd.user-plat 720 "EtxHfh" .scheme.osd-entry "#######" 1 user-set-cursorblink
