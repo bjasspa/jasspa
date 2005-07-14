@@ -600,6 +600,15 @@ meSetupPathsAndUser(char *progname)
     }
 }
 
+meInt
+meFileGetAttributes(meUByte *fname)
+{
+    struct stat statbuf;
+    if(stat((char *)fname, &statbuf) != 0)
+        return -1 ;
+    return statbuf.st_mode ;
+}
+
 void
 sigAlarm(SIGNAL_PROTOTYPE)
 {
@@ -3909,7 +3918,7 @@ TTopenClientServer (void)
             return ;
         }
         /* Change socket permissions so only the user can send commands */
-        meChmod((char *) cssa.sun_path,0700);
+        meFileSetAttributes((char *) cssa.sun_path,0700);
         /* Create the ipipe buffer */
         meModeCopy(sglobMode,globMode) ;
         meModeSet(globMode,MDPIPE) ;

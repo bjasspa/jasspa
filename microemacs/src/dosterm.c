@@ -264,7 +264,7 @@ TTdump(meBuffer *bp)
 ** test file exists and return attributes
 */
 int
-meGetFileAttributes(meUByte *fname)
+meFileGetAttributes(meUByte *fname)
 {
 #ifdef __DJGPP2__
     return _chmod(fname,0,0) ;
@@ -294,7 +294,7 @@ meGetFileAttributes(meUByte *fname)
 }
 
 void
-_meChmod(meUByte *fn, meUShort attr)
+meFileSetAttributes(meUByte *fn, meUShort attr)
 {
 #ifdef __DJGPP2__
     _chmod(fn,1,attr) ;

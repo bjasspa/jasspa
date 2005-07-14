@@ -2109,7 +2109,7 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
                         filenameOld = filenameOldB ;
                         if(!meTestExist(filenameOld) && meUnlink(filenameOld))
                             mlwrite(MWABORT|MWPAUSE,"[Unable to remove backup file %s]", filenameOld) ;
-                        else if(meRename(fname,filenameOld) && (ffFileOp(fname,filenameOld,meRWFLAG_DELETE) <= 0))
+                        else if(meRename(fname,filenameOld) && (ffFileOp(fname,filenameOld,meRWFLAG_DELETE,-1) <= 0))
                             mlwrite(MWABORT|MWPAUSE,"[Unable to backup file to %s]",filenameOld) ;
                     }
                     else
@@ -2145,7 +2145,7 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
                             {
                                 sprintf((char *)filename2+ll,"%d~",ii--) ;
                                 sprintf((char *)filename+ll,"%d~",ii) ;
-                                if(meRename(filename,filename2) && (ffFileOp(filename,filename2,meRWFLAG_DELETE) <= 0))
+                                if(meRename(filename,filename2) && (ffFileOp(filename,filename2,meRWFLAG_DELETE,-1) <= 0))
                                 {
                                     mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to backup file to %s (%d - %s)]", 
                                             filename2,errno,sys_errlist[errno]) ;
@@ -2161,7 +2161,7 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
 #endif
                     if(!meTestExist(filename) && meUnlink(filename))
                         mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to remove backup file %s]", filename) ;
-                    else if(meRename(filenameOld,filename) && (ffFileOp(filenameOld,filename,meRWFLAG_DELETE) <= 0))
+                    else if(meRename(filenameOld,filename) && (ffFileOp(filenameOld,filename,meRWFLAG_DELETE,-1) <= 0))
                         mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to backup file to %s (%d - %s)]", 
                                 filename,errno,sys_errlist[errno]) ;
                     else if(bp != NULL)
@@ -2181,7 +2181,7 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
                         ss = bp->stats.stmode | S_IWUSR ;
 #endif
                         if(ss != bp->stats.stmode)
-                            meChmod(filename,ss) ;
+                            meFileSetAttributes(filename,ss) ;
                     }
                 }
                 else
@@ -2192,7 +2192,7 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
                 /* if backing up as well the file is already effectively deleted */
 #ifdef _WIN32
                 if(meTestWrite(fname))
-                    meChmod(fname,FILE_ATTRIBUTE_NORMAL) ;
+                    meFileSetAttributes(fname,FILE_ATTRIBUTE_NORMAL) ;
 #endif
                 if(!meTestDir(fname))
                 {
@@ -2243,7 +2243,7 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
             
             /* cannot write to a readonly file */
             if(!ffnewFile && meTestWrite(fname))
-                meChmod(fname,FILE_ATTRIBUTE_NORMAL) ;
+                meFileSetAttributes(fname,FILE_ATTRIBUTE_NORMAL) ;
             
             /* Windows must open the file with the correct permissions to support the
              * compress attribute
@@ -2499,15 +2499,16 @@ ffWriteFile(meUByte *fname, meUInt flags, meBuffer *bp)
 }
 
 int
-ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags)
+ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
 {
+#if MEOPT_SOCKET
+    meUByte *ftpAddr ;
+    int notFtpWrite ;
+#endif        
     int rr=meTRUE, r1 ;
     if(dfname != NULL)
     {
         int sft, dft ;
-#if MEOPT_SOCKET
-        meUByte *ftpAddr ;
-#endif        
         if(((sft=isFtpLink(sfname)) == 0) && isHttpLink(sfname))
            sft = 2 ;
         if(((dft=isFtpLink(dfname)) == 0) && isHttpLink(dfname))
@@ -2564,6 +2565,9 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags)
             ffReadFileClose(sfname,meRWFLAG_READ|(dFlags & meRWFLAG_SILENT)) ;
             return rr ;
         }
+#if MEOPT_SOCKET
+        notFtpWrite = (ffwp != ffpInvalidVal) ;
+#endif
         for(;;)
         {
             if((r1=ffgetBuf()) <= 0)
@@ -2578,6 +2582,12 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags)
         rr = ffWriteFileClose(dfname,meRWFLAG_WRITE|(dFlags & meRWFLAG_SILENT),NULL) ;
         if(r1 <= 0)
             rr = r1 ;
+        else if((rr > 0) && (fileMode >= 0)
+#if MEOPT_SOCKET
+                && notFtpWrite
+#endif
+                )
+            meFileSetAttributes(dfname,fileMode) ;
     }
     if((rr > 0) && (dFlags & (meRWFLAG_DELETE|meRWFLAG_MKDIR|meRWFLAG_STAT)))
     {
