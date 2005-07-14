@@ -2821,20 +2821,21 @@ get_flag:
                      * Note:
                      *   - this version differs from 't' as links have a file
                      *     type of 'L' and ftp files return the file type not 'F'
-                     *   - The fourth value will be the file attributes (n.y.i.)
+                     *   - The fourth value is the file attributes (-1 == not available)
                      *   - The size has an upper int and lower int value to handle
                      *     large files
                      *   - The file modification time will be the 7th value (n.y.i.)
                      */ 
                     meUByte v1, v2, v3='\0', v5=0, *dd ;
                     meUInt v51, v52 ;
+                    int v4=-1 ;
                     
                     if(ftype == meFILETYPE_HTTP)
                         v1 = v2 = 'H' ;
                     else if(ftype == meFILETYPE_FTP)
                     {
                         v1 = 'F' ;
-                        if(ffFileOp(arg2,NULL,meRWFLAG_STAT|meRWFLAG_SILENT) > 0)
+                        if(ffFileOp(arg2,NULL,meRWFLAG_STAT|meRWFLAG_SILENT,-1) > 0)
                         {
                             v2 = evalResult[0] ;
                             if(evalResult[1] != '\0')
@@ -2860,6 +2861,7 @@ get_flag:
                             v2 =  typeRet[ftype] ;
                         if(ftype != meFILETYPE_NOTEXIST)
                         {
+                            v4 = meFileGetAttributes(arg2) ;
                             v5 = 1 ;
                             v51 = 0 ;
                             v52 = stats.stsize ;
@@ -2872,8 +2874,9 @@ get_flag:
                     *dd++ = v2 ;
                     *dd++ = '\b' ;
                     if(v3 != '\0')
-                        *dd++ = v1 ;
+                        *dd++ = v3 ;
                     *dd++ = '\b' ;
+                    dd += sprintf((char *)dd,"%d",v4) ;
                     *dd++ = '\b' ;
                     if(v5)
                         dd += sprintf((char *)dd,"%lu\b%lu",v51,v52) ;

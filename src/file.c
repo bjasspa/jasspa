@@ -117,7 +117,7 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
             goto gft_directory ;
         
 #ifdef __DJGPP2__
-        ii = meGetFileAttributes(file) ;
+        ii = meFileGetAttributes(file) ;
         if(ii < 0)
             return meFILETYPE_NOTEXIST ;
 #else
@@ -1936,15 +1936,16 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
 #define meFILEOP_MOVE      0x040
 #define meFILEOP_COPY      0x080
 #define meFILEOP_MKDIR     0x100
+#define meFILEOP_CHMOD     0x200
 #define meFILEOP_WC_MASK   0x005
 
 int
 fileOp(int f, int n)
 {
     meUByte sfname[meBUF_SIZE_MAX], dfname[meBUF_SIZE_MAX], lfname[meBUF_SIZE_MAX], *fn=NULL ;
-    int rr=meTRUE, dFlags=0 ;
+    int rr=meTRUE, dFlags=0, fileMask=-1 ;
 
-    if((n & (meFILEOP_FTPCLOSE|meFILEOP_DELETE|meFILEOP_MOVE|meFILEOP_COPY|meFILEOP_MKDIR)) == 0)
+    if((n & (meFILEOP_FTPCLOSE|meFILEOP_DELETE|meFILEOP_MOVE|meFILEOP_COPY|meFILEOP_MKDIR|meFILEOP_CHMOD)) == 0)
         rr = mlwrite(MWABORT,(meUByte *)"[No operation set]") ;
     else if(n & meFILEOP_DELETE)
     {
@@ -1965,7 +1966,7 @@ fileOp(int f, int n)
     }
     else if(n & (meFILEOP_MOVE|meFILEOP_COPY))
     {
-        static meUByte prompt[]="Copy file to" ;
+        static meUByte prompt[]="Copy file" ;
         if(n & meFILEOP_MOVE)
         {
             prompt[0] = 'M' ;
@@ -1979,12 +1980,13 @@ fileOp(int f, int n)
             prompt[2] = 'p' ;
             prompt[3] = 'y' ;
         }
-        prompt[9] = '\0' ;
         if((inputFileName(prompt, sfname,1) <= 0) ||
-           ((prompt[9] = ' '),(inputFileName(prompt, dfname,1) <= 0)))
+           (inputFileName((meUByte *)"To", dfname,1) <= 0))
             rr = 0 ;
         else if((fn=writeFileChecks(dfname,sfname,lfname,(n & meFILEOP_WC_MASK))) == NULL)
             rr = -6 ;
+        else
+            fileMask = meFileGetAttributes(sfname) ;
         dFlags |= meRWFLAG_NODIRLIST ;
     }
     else if(n & meFILEOP_MKDIR)
@@ -2005,13 +2007,32 @@ fileOp(int f, int n)
         else
             dFlags = meRWFLAG_MKDIR ;
     }
+    else if(n & meFILEOP_CHMOD)
+    {
+        int s ;
+        if((inputFileName((meUByte *)"Chmod", sfname,1) <= 0) ||
+           (meGetString((meUByte *)"To",0,0,dfname,meBUF_SIZE_MAX) <= 0))
+            rr = 0 ;
+        /* check that nothing of that name currently exists */
+        else if(((s=getFileStats(sfname,0,NULL,NULL)) != meFILETYPE_REGULAR) &&
+                (s != meFILETYPE_DIRECTORY))
+        {
+            mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[%s not a file or directory]",sfname);
+            rr = -6 ;
+        }
+        else
+        {
+            meFileSetAttributes(sfname,meAtoi(dfname)) ;
+            return meTRUE ;
+        }
+    }
     if(rr > 0)
     {
         if(n & meFILEOP_BACKUP)
             dFlags |= meRWFLAG_BACKUP ;
         if(n & meFILEOP_FTPCLOSE)
             dFlags |= meRWFLAG_FTPCLOSE ;
-        if((rr = ffFileOp(sfname,fn,dFlags)) > 0)
+        if((rr = ffFileOp(sfname,fn,dFlags,fileMask)) > 0)
             return meTRUE ;
     }
     resultStr[0] = '0' - rr ;
@@ -2122,7 +2143,7 @@ writeOut(register meBuffer *bp, meUInt flags, meUByte *fn)
 #ifndef _WIN32
         /* set the right file attributes */
         if(bp->stats.stmode != meUmask)
-            meChmod(fn,bp->stats.stmode) ;
+            meFileSetAttributes(fn,bp->stats.stmode) ;
 #ifdef _UNIX
         /* If we are the root then restore the existing settings on the
          * file. This should really be done using a $system flag - but

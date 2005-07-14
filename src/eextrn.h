@@ -398,7 +398,7 @@ extern int      ffWriteFileWrite(register int len,
                                         register meUByte *buff, int eolFlag) ;
 extern int      ffWriteFileClose(meUByte *fname, meUInt flags, meBuffer *bp) ;
 extern int      ffWriteFile(meUByte *fname, meUInt flags, meBuffer *bp) ;
-extern int	ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags) ;
+extern int	ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode) ;
 
 /* frame.c externals */
 extern	int     meFrameChangeWidth(meFrame *frame, int ww);
@@ -1147,35 +1147,34 @@ extern int meTestExecutable(meUByte *fileName) ;
 #define meStatTestRead(st)  (((st).stmode & FILE_ATTRIBUTE_DIRECTORY) == 0)
 #define meStatTestWrite(st) (((st).stmode & (FILE_ATTRIBUTE_DIRECTORY|FILE_ATTRIBUTE_READONLY)) == 0)
 #define meStatTestSystem(st) (((st).stmode & FILE_ATTRIBUTE_SYSTEM) == 0)
-#define meChmod(fn,mode)    (SetFileAttributes(fn,mode))
+#define meFileGetAttributes GetFileAttributes
+#define meFileSetAttributes SetFileAttributes
 extern void WinShutdown (void);
 #define meExit(status)      (WinShutdown(), ExitProcess(status))
 #endif
 
 #ifdef _DOS
-extern int  unlink(const char *file) ;
-extern int  meGetFileAttributes(meUByte *fn) ;
+extern int   unlink(const char *file) ;
+extern meInt meFileGetAttributes(meUByte *fn) ;
 #define meFILE_ATTRIB_READONLY  0x01
 #define meFILE_ATTRIB_HIDDEN    0x02
 #define meFILE_ATTRIB_SYSTEM    0x04
 #define meFILE_ATTRIB_VOLLABEL  0x08
 #define meFILE_ATTRIB_DIRECTORY 0x10
 #define meFILE_ATTRIB_ARCHIVE   0x20
-extern void _meChmod(meUByte *fn,meUShort attr) ;
-extern int  _meChdir(meUByte *path) ;
+extern void  meFileSetAttributes(meUByte *fn, meUShort attr) ;
+extern int   meChdir(meUByte *path) ;
 /* Doesn't exist if function returns -1 */
-#define meTestExist(fn)     (meGetFileAttributes(fn) < 0)
+#define meTestExist(fn)     (meFileGetAttributes(fn) < 0)
 /* Can't read if doesn't exist or its a directory */
-#define meTestRead(fn)      (meGetFileAttributes(fn) & 0x10)
+#define meTestRead(fn)      (meFileGetAttributes(fn) & 0x10)
 /* Can't write if exists and its readonly or a directory */
-#define meTestWrite(fn)     ((meGetFileAttributes(fn) & 0xffff8001) > 0)
+#define meTestWrite(fn)     ((meFileGetAttributes(fn) & 0xffff8001) > 0)
 /* File is a directory */
-#define meTestDir(fn)       ((meGetFileAttributes(fn) & 0xf0000010) != 0x010)
-extern int meTestExecutable(meUByte *fileName) ;
+#define meTestDir(fn)       ((meFileGetAttributes(fn) & 0xf0000010) != 0x010)
+extern int   meTestExecutable(meUByte *fileName) ;
 #define meStatTestRead(st)  (((st).stmode & 0x10) == 0)
 #define meStatTestWrite(st) (((st).stmode & 0x11) == 0)
-#define meChmod _meChmod
-#define meChdir _meChdir
 #endif
 
 #ifdef _UNIX
@@ -1246,6 +1245,7 @@ extern int meTestExecutable(meUByte *fileName) ;
 #endif
 
 /* File modes defined in terms of POSIX tests */
+extern meInt meFileGetAttributes(meUByte *fn) ;
 extern int meGidInGidList(gid_t gid) ;
 #define meStatTestRead(st)                                                   \
 ((((st).stuid == meUid) && ((st).stmode & S_IRUSR)) ||                       \
@@ -1307,8 +1307,8 @@ extern int meGidInGidList(gid_t gid) ;
 #ifndef meTestDir
 #define meTestDir(fn) (getFileStats(fn,0,NULL,NULL) != meFILETYPE_DIRECTORY)
 #endif
-#ifndef meChmod
-#define meChmod(fn,attr) chmod((char *)(fn),attr)
+#ifndef meFileSetAttributes
+#define meFileSetAttributes(fn,attr) chmod((char *)(fn),attr)
 #endif
 #ifndef meExit
 extern void exit(int i) ;

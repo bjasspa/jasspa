@@ -502,7 +502,7 @@ handleTimerExpired(void)
         TThandleBlink(0);               /* Initiate a cursor blink */
 #if MEOPT_SOCKET
     if(isTimerExpired(SOCKET_TIMER_ID)) /* socket connection time-out */
-        ffFileOp(NULL,NULL,meRWFLAG_FTPCLOSE|meRWFLAG_SILENT) ;
+        ffFileOp(NULL,NULL,meRWFLAG_FTPCLOSE|meRWFLAG_SILENT,-1) ;
 #endif
 }
 
