@@ -642,6 +642,8 @@ windowSwapDotAndMark(int f, int n)
     return (meTRUE);
 }
 
+#if MEOPT_IPIPES || MEOPT_SOCKET
+
 static meLine  *orgLpp, *orgLnp ;
 static meUShort orgLo ;
 static meInt  orgLn ;
@@ -713,4 +715,4 @@ meBufferUpdateLocation(meBuffer *bp, meUInt noLines, meUShort newOff)
     meFrameLoopEnd() ;
 }
 
-
+#endif
