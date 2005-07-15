@@ -2061,9 +2061,9 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
     /* Issue the callback if required. */
 #if MEOPT_IPIPES
     ipipeFunc = bp->ipipeFunc;
-#endif 
     if ((flags & LAUNCH_BUFIPIPE) && (ipipeFunc >= 0))
         execBufferFunc(bp,ipipeFunc,(meEBF_ARG_GIVEN|meEBF_USE_B_DOT|meEBF_HIDDEN),0) ;
+#endif 
     meStrcpy(resultStr,meItoa(systemRet)) ;
     return ret ;
 }
