@@ -97,47 +97,21 @@ define-macro c-hash-eval
                 set-mark
                 set-variable $window-line #l1
                 0x34 narrow-buffer .scheme.hide &cat &lef @wl 60 " ..."
+                forward-line
             !endif
         !else
             !if &seq &lef @wl 3 "#if"
                 set-variable $line-scheme .scheme.hide
                 beginning-of-line
-                set-variable #l0 @wl
+                set-variable #l0 &xre &xre @wl "/\\*\\([^*]\\|\\*[^//]\\)*\\(\\*/\\)?" "" "//.*" ""
+                set-variable #l0 &rep #l0 "#ifdef"  "\"ERROR\" != "
+                set-variable #l0 &rep #l0 "#ifndef" "\"ERROR\" == "
+                set-variable #l0 &rep #l0 "#if" ""
+                set-variable #l0 &rep #l0 "defined" "\"ERROR\" != "
+                set-variable #l0 &xrep #l0 "[ \t]\\([_A-Za-z]\\)" " %cd\\1"
                 !force 0 delete-buffer "*calc*"
                 find-buffer "*calc*"
-                1 buffer-mode "hide"
-                1 buffer-mode "magic"
                 insert-string #l0
-                beginning-of-buffer
-                !force search-forward "/\\*"
-                !if $status
-                    2 backward-char
-                    set-variable #l1 $window-line
-                    !force search-forward "*/"
-                    !if $status
-                        -1 kill-region
-                        !jump -7
-                    !endif
-                    1 kill-line
-                    -1 yank
-                !endif
-                beginning-of-buffer
-                !force search-forward "//"
-                !if $status
-                    2 backward-char
-                    1 kill-line
-                    -1 yank
-                !endif
-                beginning-of-buffer
-                replace-string "#ifdef" "\"ERROR\" != "
-                beginning-of-buffer
-                replace-string "#ifndef" "\"ERROR\" == "
-                beginning-of-buffer
-                replace-string "#if" ""
-                beginning-of-buffer
-                replace-string "defined" "\"ERROR\" != "
-                beginning-of-buffer
-                replace-string "[ \t]\\([_A-Za-z]\\)" " %cd\\1"
                 2 calc-buffer
                 -1 find-buffer $buffer-bname
                 set-variable #l0 &cond .calc.result 0 1
@@ -174,6 +148,8 @@ define-macro c-hash-eval
                     set-variable #l5 &lef #l5 &sub &sin "\t" #l5 1
                 !endif
                 set-variable &ind #l4 #l5
+            !elif &xseq @wl "#undef[ \t]+\\(\\w+\\)"
+                !force unset-variable &cat "%cd" @s1
             !else
                 set-variable $line-scheme -1
             !endif
