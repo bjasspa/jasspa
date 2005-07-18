@@ -5271,7 +5271,7 @@ osd (int f, int n)
 
     /* If no arguments are defined then a menu is being
      * defined. */
-    if ((f == meFALSE) || (n < 0))
+    if((f == meFALSE) || (n < 0))
     {
         osdDIALOG *rp;                  /* Pointer to container root */
         meUByte txtbuf [meBUF_SIZE_MAX];          /* Text string buffer */
@@ -5281,32 +5281,28 @@ osd (int f, int n)
         int   argc, namidx, scheme ;
         meShort width, depth ;
         
-        /* Get the menu identity */
-        if ((ii=meGetString((meUByte *)"Identity", 0, 0, buf, 16)) == meFALSE)
+        if(n < -1)
         {
-            pmd = osdCurMd ;
-            if(n < 0)
+            if(((pmd = osdCurMd) == NULL) ||
+               ((n == -4) && !(pmd->flags & RF_NOPOP)))
+                return meABORT ;
+            if(n == -2)
+                pmd->flags |= RF_REDRAW ;
+            else if(n == -3)
+                osdDisplayHd->flags |= RF_REDRAW ;
+            if(osdDisplayRedraw() < 0)
+                /* Failed to redraw - quit */
+                return meABORT ;
+            if(n == -4)
             {
-                /* redraw dialog(s) */
-                if((n == -1) && (pmd != NULL))
-                    pmd->flags |= RF_REDRAW ;
-                else if(osdDisplayHd != NULL)
-                    osdDisplayHd->flags |= RF_REDRAW ;
-                else
-                    return meABORT ;
-                return (osdDisplayRedraw() < 0) ? meABORT:meTRUE ;
-            }
-            if((pmd != NULL) && (pmd->flags & RF_NOPOP))
-            {
-                if(osdDisplayRedraw() < 0)
-                    /* Failed to redraw - quit */
-                    return meABORT ;
                 pmd = pmd->prev ;
                 noDis = 0 ;
                 goto do_control_inter ;
             }
+            return meTRUE ;
         }
-        if ((ii <= 0) || (buf[0] == 'E'))
+        /* Get the menu identity */
+        if(((ii=meGetString((meUByte *)"Identity", 0, 0, buf, 16)) <= 0) || (buf[0] == '\0') || (buf[0] == 'E'))
             /* The 'E' test is to catch the string "ERROR", returned when the user
              * gives an undefined variable, e.g. %undefined. This is a common occurance */
             return meABORT ;

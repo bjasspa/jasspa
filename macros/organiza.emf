@@ -69,28 +69,27 @@ set-variable .org.addr-lbl  "|Record No|First Name|Surname|Nick Name|Selected|No
 0 define-macro org-addr-set-check
     set-variable #l2 &lget .org.addr-reg &abs @#
     set-variable #l0 &reg &spr "/org/addr/%d/%s" .org.addr #l2 ""
-    !if &les @# 0
-        !if &seq .org.addr "*"
-            set-variable .org.addr .org.naddr
+    !if &gre @# 0
+        !return &len #l0
+    !endif
+    !if &seq .org.addr "*"
+        set-variable .org.addr .org.naddr
+    !endif
+    !if &seq #l0 ""
+        set-registry &spr "/org/addr/%d/%s" .org.addr #l2 "*"
+    !else
+        delete-registry &spr "/org/addr/%d/%s" .org.addr #l2
+    !endif
+    mark-registry "/org" "u"
+    !if &equ .org.addr .org.naddr
+        set-variable .org.naddr &add .org.addr 1
+        set-registry "/org/addr/naddr" .org.naddr
+        !if &gre .org.iaddr -1
+            set-variable #l3 &lset &reg &spr "/org/addr/i%d" &div .org.addr 128 "|" &band .org.addr 127 .org.addr
+            set-registry &spr "/org/addr/i%d" &div .org.addr 128 #l3
+            set-variable .org.iaddr .org.naddr
+            org-addr-dec-recno
         !endif
-        !if &seq #l0 ""
-            set-registry &spr "/org/addr/%d/%s" .org.addr #l2 "*"
-        !else
-            delete-registry &spr "/org/addr/%d/%s" .org.addr #l2
-        !endif
-        mark-registry "/org" "u"
-        !if &equ .org.addr .org.naddr
-            set-variable .org.naddr &add .org.addr 1
-            set-registry "/org/addr/naddr" .org.naddr
-            !if &gre .org.iaddr -1
-                set-variable #l3 &lset &reg &spr "/org/addr/i%d" &div .org.addr 128 "|" &band .org.addr 127 .org.addr
-                set-registry &spr "/org/addr/i%d" &div .org.addr 128 #l3
-                set-variable .org.iaddr .org.naddr
-                org-addr-dec-recno
-            !endif
-        !endif
-    !elif &seq #l0 ""
-        !abort
     !endif
 !emacro
 
@@ -271,7 +270,7 @@ set-variable .org.addr-lbl  "|Record No|First Name|Surname|Nick Name|Selected|No
     mark-registry "/org" "u"
     set-variable .org.addr 0
     org-addr-inc-recno
-    -2 osd
+    -3 osd
 !emacro
 
 0 define-macro org-addr-sort-field-set
@@ -378,7 +377,7 @@ osd .osd.orga-o 660 "f" " "
                 !endif
                 !if #l4
                     osd .osd.orga-f 70 "" &cat "    Found in Record " .org.addr
-                    -2 osd
+                    -3 osd
                     !return
                 !endif
             !endif
@@ -393,7 +392,7 @@ osd .osd.orga-o 660 "f" " "
                     !endif
                     !if #l4
                         osd .osd.orga-f 70 "" &cat "    Found in Record " .org.addr
-                        -2 osd
+                        -3 osd
                         !return
                     !endif
                 !endif
@@ -408,7 +407,7 @@ osd .osd.orga-o 660 "f" " "
 
 0 define-macro org-addr-find-exec
     osd .osd.orga-f 70 "" "    Searching..."
-    -1 osd
+    -2 osd
     set-variable #l1 .org.addr
     set-variable #l0 $mouse
     set-variable $mouse &bor 0x50000 &band 0xffff #l0

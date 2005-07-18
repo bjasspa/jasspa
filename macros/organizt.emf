@@ -77,7 +77,7 @@ set-variable .org.set-day 1
             set-variable .org.months &lset .org.months .org.set-month #l0
             set-registry "/org/set/months" .org.months
             mark-registry "/org" "u"
-            -1 osd
+            -2 osd
         !endif
     !else
         set-variable $result &lget .org.months .org.set-month
@@ -108,7 +108,7 @@ set-variable .org.set-day 1
             set-variable .org.days &lset .org.days .org.set-day #l0
             set-registry "/org/set/days" .org.days
             mark-registry "/org" "u"
-            -1 osd
+            -2 osd
         !endif
     !else
         set-variable $result &lget .org.days .org.set-day

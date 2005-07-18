@@ -178,7 +178,7 @@ define-macro ftp-connect
         ; me file name entered remove the .e?f extension, if found must force an osd update
         !if &xis &rig #l0 &sub &len #l0 4 "\\.e.f"
             set-variable #l0 &lef #l0 &sub &len #l0 4
-            -1 osd
+            -2 osd
         !endif
         ; is it a base name or full path? set #l0 to base and #l1 to full file name
         !if &sin "/" #l0
@@ -202,12 +202,12 @@ define-macro ftp-connect
                 !if &equ $result 1
                     !force save-registry "/url" "" @mna
                     !if &not $status
-                        -1 osd
+                        -2 osd
                         !return
                     !endif
                 !endif
                 !if &equ $result 3
-                    -1 osd
+                    -2 osd
                     !return
                 !endif
             !endif
@@ -231,7 +231,7 @@ define-macro ftp-connect
         !endif
         set-registry "/history/url-file" #l1
         ; force an osd update
-        -1 osd
+        -2 osd
     !else
         set-variable $result &reg "/history/url-file" ""
     !endif
@@ -389,7 +389,7 @@ define-macro ftp-connect
         !until &equ &pinc #l0 1 5
         mark-registry "/url" "u"
         ftp-data-entry-setup
-        -1 osd
+        -2 osd
     !else
         set-variable $result #l0
     !endif

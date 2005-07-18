@@ -281,7 +281,7 @@
     !if &set #l0 &lfind &ind &cat ".org.bind-k" .org.page @cck
         execute-line &spr "!nma %s" &lget &ind &cat ".org.bind-c" .org.page #l0
         !if &lget &ind &cat ".org.bind-r" .org.page #l0
-            -1 osd
+            -2 osd
         !endif
     !endif
 !emacro
