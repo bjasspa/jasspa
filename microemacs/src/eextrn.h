@@ -128,7 +128,6 @@ extern	int	swbuffer(meWindow *wp, meBuffer *bp);
 extern	int	bufferDelete(int f, int n);
 extern	int	deleteSomeBuffers(int f, int n);
 extern  meBuffer *replacebuffer(meBuffer *oldbuf) ;
-extern	int	HideBuffer(meBuffer *bp, int forceAll) ;
 extern  void    linkBuffer(meBuffer *bp) ;
 extern  void    unlinkBuffer(meBuffer *bp) ;
 extern	int	zotbuf(meBuffer *bp, int silent);

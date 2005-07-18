@@ -57,6 +57,17 @@ getBufferName(meUByte *prompt, int opt, int defH, meUByte *buf)
 }
 
 #if MEOPT_FILEHOOK
+static meUByte    fileHookCount ;
+static meUByte  **fileHookExt ;
+static meUByte  **fileHookFunc ;
+static meShort   *fileHookArg ;
+static meUByte    defaultHookName[] = "fhook-default" ;
+static meUByte    binaryHookName[]  = "fhook-binary" ;
+static meUByte    rbinHookName[]    = "fhook-rbin" ;
+static meUByte    triedDefault=0 ;
+static meUByte    triedBinary=0 ;
+static meUByte    triedRbin=0 ;
+
 int
 addFileHook(int f, int n)
 {
@@ -142,14 +153,6 @@ checkExtent(meUByte *filename, int len, meUByte *sptr, meIFuncSSI cmpFunc)
  * Note that the hookname (hooknm) is modified, ultimatly
  * returning the 'f' prefixed name.
  */
-
-static meUByte defaultHookName[] = "fhook-default" ;
-static meUByte binaryHookName[]  = "fhook-binary" ;
-static meUByte rbinHookName[]    = "fhook-rbin" ;
-static meUByte triedDefault=0 ;
-static meUByte triedBinary=0 ;
-static meUByte triedRbin=0 ;
-
 static void
 assignHooks (meBuffer *bp, meUByte *hooknm)
 {
@@ -512,6 +515,58 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
     return meTRUE ;
 }
 
+
+static int
+HideBuffer(meBuffer *bp, int forceAll)
+{
+    meBuffer *bp1 ;
+    meWindow *wp ;
+    
+    if(bp->windowCount > 0)
+    {
+#if MEOPT_FRAME
+        meFrame *fc=frameCur ;
+        for(frameCur=frameList ; frameCur!=NULL ; frameCur=frameCur->next)
+        {
+#endif
+            for(wp = frameCur->windowList; wp != (meWindow*) NULL; wp = wp->next)
+            {
+                if(wp->buffer == bp)
+                {
+                    
+#if MEOPT_EXTENDED
+                    if(forceAll || ((wp->flags & meWINDOW_LOCK_BUFFER) == 0))
+#endif
+                    {
+                        /* find a replacement buffer */
+                        /* if its the same then can't replace so return */
+                        if((bp1 = replacebuffer(bp)) == bp)
+                        {
+                            /* this is true if only *scratch* is left, ensure
+                             * the buffer hooks are correctly setup and
+                             * executed */
+#if MEOPT_FILEHOOK
+                            setBufferContext(bp) ;
+#endif
+                            return meFALSE ;
+                        }
+                        
+                        if(swbuffer(wp, bp1) <= 0)
+                            return meFALSE ;
+                    }
+                }
+            }
+#if MEOPT_FRAME
+        }
+        frameCur = fc ;
+#endif
+    }
+    bp->histNo = 0 ;
+    
+    return meTRUE ;
+}
+
+
 /*
  * Attach a buffer to a window. The
  * values of dot and mark come from the buffer
@@ -664,57 +719,6 @@ replacebuffer(meBuffer *oldbuf)
 	best = bfind(BmainN,BFND_CREAT) ;
     
     return best ;
-}
-
-
-int
-HideBuffer(meBuffer *bp, int forceAll)
-{
-    meBuffer *bp1 ;
-    meWindow *wp ;
-    
-    if(bp->windowCount > 0)
-    {
-#if MEOPT_FRAME
-        meFrame *fc=frameCur ;
-        for(frameCur=frameList ; frameCur!=NULL ; frameCur=frameCur->next)
-        {
-#endif
-            for(wp = frameCur->windowList; wp != (meWindow*) NULL; wp = wp->next)
-            {
-                if(wp->buffer == bp)
-                {
-                    
-#if MEOPT_EXTENDED
-                    if(forceAll || ((wp->flags & meWINDOW_LOCK_BUFFER) == 0))
-#endif
-                    {
-                        /* find a replacement buffer */
-                        /* if its the same then can't replace so return */
-                        if((bp1 = replacebuffer(bp)) == bp)
-                        {
-                            /* this is true if only *scratch* is left, ensure
-                             * the buffer hooks are correctly setup and
-                             * executed */
-#if MEOPT_FILEHOOK
-                            setBufferContext(bp) ;
-#endif
-                            return meFALSE ;
-                        }
-                        
-                        if(swbuffer(wp, bp1) <= 0)
-                            return meFALSE ;
-                    }
-                }
-            }
-#if MEOPT_FRAME
-        }
-        frameCur = fc ;
-#endif
-    }
-    bp->histNo = 0 ;
-    
-    return meTRUE ;
 }
 
 
