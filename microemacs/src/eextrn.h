@@ -1366,17 +1366,20 @@ extern int      putenv(const char *s);
 #define isPrint(c)       (charMaskTbl1[((meUByte) (c))] & CHRMSK_PRINTABLE)
 #define isSpace(c)       (charMaskTbl1[((meUByte) (c))] & CHRMSK_SPACE)
 
-#define isDigit(c)       (((c) >= '0') && ((c) <= '9'))
+#define inWord()         (isWord(meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset)))
+#define inPWord()        ((meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset)) > ' ')
+
+#if MEOPT_EXTENDED
+/* with extended option enable set-char-mask can be used to configure the char sets */
 #define isLower(c)       (charMaskTbl2[((meUByte) (c))] & CHRMSK_LOWER)
 #define isUpper(c)       (charMaskTbl2[((meUByte) (c))] & CHRMSK_UPPER)
 #define isAlpha(c)       (charMaskTbl2[((meUByte) (c))] & CHRMSK_ALPHA)
+#define isDigit(c)       (((c) >= '0') && ((c) <= '9'))
 #define isXDigit(c)      (charMaskTbl2[((meUByte) (c))] & CHRMSK_HEXDIGIT)
 #define isAlphaNum(c)    (charMaskTbl2[((meUByte) (c))] & CHRMSK_ALPHANUM)
-#define isSpllExt(c)     (charMaskTbl2[((meUByte) (c))] & CHRMSK_SPLLEXT)
 #define isWord(c)        (charMaskTbl2[((meUByte) (c))] & isWordMask)
+#define isSpllExt(c)     (charMaskTbl2[((meUByte) (c))] & CHRMSK_SPLLEXT)
 #define isSpllWord(c)    (charMaskTbl2[((meUByte) (c))] & (CHRMSK_ALPHANUM|CHRMSK_SPLLEXT))
-#define inWord()         (isWord(meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset)))
-#define inPWord()        ((meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset)) > ' ')
 
 #define toLower(c)       (isUpper(c) ? (charCaseTbl[((meUByte) (c))]):c)
 #define toUpper(c)       (isLower(c) ? (charCaseTbl[((meUByte) (c))]):c)
@@ -1384,6 +1387,22 @@ extern int      putenv(const char *s);
 
 #define toUserFont(c)    (charLatinUserTbl[((meUByte) c)])
 #define toLatinFont(c)   (charUserLatinTbl[((meUByte) c)])
+
+#else
+
+#define isLower(c)       (((c) >= 'a') && ((c) <= 'z'))
+#define isUpper(c)       (((c) >= 'A') && ((c) <= 'Z'))
+#define isAlpha(c)       (((c) >= 'A') && ((c) <= 'z') && (((c) <= 'Z') || ((c) >= 'a')))
+#define isDigit(c)       (((c) >= '0') && ((c) <= '9'))
+#define isXDigit(c)      (isDigit(c) || (((c) >= 'a') && ((c) <= 'f')) || (((c) >= 'A') && ((c) <= 'F')))
+#define isAlphaNum(c)    (isDigit(c) || isAlpha(c))
+#define isWord(c)        (isAlphaNum(c) || ((c) == '_'))
+
+#define toLower(c)       (isUpper(c) ? ((c) ^ 0x20):c)
+#define toUpper(c)       (isLower(c) ? ((c) ^ 0x20):c)
+#define toggleCase(c)    (isAlpha(c) ? ((c) ^ 0x20):c)
+
+#endif
 
 #define	hexToNum(c)      ((c <= '9') ? (c^0x30)   : \
                           (c >= 'a') ? (c-'a'+10) : \
