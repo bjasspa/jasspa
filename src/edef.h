@@ -314,13 +314,6 @@ extern meUByte   *nextLineCnt ;
 extern meUByte ***nextLineStr ;
 #endif
 
-#if MEOPT_FILEHOOK
-extern meUByte    fileHookCount ;
-extern meUByte  **fileHookExt ;
-extern meUByte  **fileHookFunc ;
-extern meShort   *fileHookArg ;
-#endif
-
 #if MEOPT_RCS
 extern meUByte   *rcsFile ;
 extern meUByte   *rcsCoStr ;
@@ -756,11 +749,6 @@ meUByte  **nextName=NULL ;
 meUByte   *nextLineCnt=NULL ;
 meUByte ***nextLineStr=NULL ;
 #endif
-
-meUByte   fileHookCount=0 ;
-meUByte **fileHookExt=NULL ;
-meUByte **fileHookFunc=NULL ;
-meShort  *fileHookArg=NULL ;
 
 #if MEOPT_RCS
 meUByte  *rcsFile=NULL ;
