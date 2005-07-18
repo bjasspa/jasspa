@@ -61,7 +61,7 @@ set-variable %emulate-value "||emacs|cua|me3_8|nedit|"
             ; me file name entered remove the .e?f extension, if found must force an osd update
             !if &xis &rig #l0 &sub &len #l0 4 "\\.e.f"
                 set-variable #l0 &lef #l0 &sub &len #l0 4
-                -1 osd
+                -2 osd
             !endif
         !endif
         set-registry #l2 #l0
@@ -235,7 +235,7 @@ set-variable %emulate-value "||emacs|cua|me3_8|nedit|"
             !if &not &seq &rig #l0 &sub &len #l0 1 "/"
                 set-variable #l0 &cat #l0 "/"
                 set-registry #l2 #l0
-                -1 osd
+                -2 osd
             !endif
         !endif
         set-registry #l2 #l0
@@ -936,7 +936,7 @@ osd .osd.user-ftype 630 "BtcfxH"  .scheme.osd-ebtt " \HDelete " 3 user-filetype-
             !endif
             set-registry #l2 #l0
         !endif
-        -1 osd
+        -2 osd
     !else
         set-variable $result #l1
     !endif

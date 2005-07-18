@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jul 16 23:13:14 1998
 .\"
-.Id $Id: m2cmd066.2,v 2.12 2005-02-19 21:46:07 bill Exp $
+.Id $Id: m2cmd066.2,v 2.13 2005-07-18 23:44:41 bill Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH osd 2
@@ -16,15 +16,13 @@ osd \- Manage the On-Screen Display
 .Me $a
 .SH SYNOPSIS
 .na
-\fBosd\fR
+\fI-4\fR \fBosd\fR
 .br
-\fI-1\fR \fBosd\fR
+\fI-3\fR \fBosd\fR
 .br
 \fI-2\fR \fBosd\fR
 .br
-\fIn\fR \fBosd\fR
-.br
-\fB\-1\fR \fBosd\fR \fIn\fR
+\fI-1\fR \fBosd\fR \fIn\fR
 .br
 \fBosd\fR \fB\-1\fR \fIflag\fR
 .br
@@ -50,6 +48,8 @@ osd \- Manage the On-Screen Display
 ["\fIwidth\fR"\ "\fIdepth\fR"]
 ["\fItext\fR"]
 ["\fIargument\fR"\ "\fIcommand\fR"]
+.br
+\fIn\fR \fBosd\fR
 .ad
 .SH DESCRIPTION
 The \fBosd\fR  command  manages the  On-Screen  Display, menu and dialogs. The
@@ -239,7 +239,7 @@ define-macro test-osd
     save-buffer
     osd 200 2 "" "Save Complete"
     osd 200 4 "BcfH" %osd-ebtt-scheme "  \\HOkay  " f void
-    osd
+    -4 osd
 !emacro
 
 osd 200 0 "btcHC" %osd-title-scheme "Saving Buffer" test-osd
@@ -591,7 +591,7 @@ This invocation with a single positive numeric argument executes the \fIn\fRth
 dialog.
 .SS "Returning Command Control"
 .na
-\fBosd\fR
+\fI-4\fR \fBosd\fR
 .ad
 .PP
 An invocation of \fBosd\fR with no arguments
@@ -600,7 +600,7 @@ the \fBC\fR flag in the  create/reset  dialog  property for information and an
 example.
 .SS "Current Dialog Redraw"
 .na
-\fI-1\fR \fBosd\fR
+\fI-2\fR \fBosd\fR
 .ad
 .PP
 Calling  osd  with  an  argument  of \-1  forces  the  complete  redrawing  of
@@ -608,7 +608,7 @@ current dialog and any sub-dialogs.  This is very useful when the execution of
 one item may effect the appearance of another.
 .SS "Redraw All Active Dialogs"
 .na
-\fI-2\fR \fBosd\fR
+\fI-3\fR \fBosd\fR
 .ad
 .PP
 Calling  osd with an  argument  of \-2 forces the  complete  redrawing  of all

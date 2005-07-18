@@ -608,7 +608,7 @@ set-variable .spell.check-wordo ""
             osd .osd.spell-guess 1 ""
             .spell.recenter recenter
             screen-update
-            !force osd
+            !force -4 osd
             set-variable #l0 $status
             ; must restore some of the buttons
             osd .osd.spell-chkr 20 "BHcfS"  .scheme.osd-dbtt " Replace All "
@@ -632,7 +632,7 @@ set-variable .spell.check-wordo ""
             .spell.recenter recenter
             1 show-region
             spell-check-set-guess
-            !force osd
+            !force -4 osd
             !if &not $status
                 !if #g3
                     ; not a real abort, just had to get out of osd
