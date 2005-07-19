@@ -2294,7 +2294,6 @@ saveBuffer(int f, int n)
 }
 
 #if MEOPT_EXTENDED
-
 int
 appendBuffer(int f, int n)
 {
@@ -2328,11 +2327,7 @@ appendBuffer(int f, int n)
     return ffWriteFile(fname,flags,frameCur->bufferCur) ;
 }
 
-#endif
-
-/*
- * save-some-buffers, query saves all modified buffers
- */
+/* save-some-buffers, query saves all modified buffers */
 int
 saveSomeBuffers(int f, int n)
 {
@@ -2406,6 +2401,8 @@ changeFileName(int f, int n)
 
     return (meTRUE);
 }
+#endif
+
 
 #ifdef _DOS
 int

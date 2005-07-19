@@ -118,24 +118,27 @@ extern int      addFileHook(int f, int n) ;
 #endif
 #if MEOPT_EXTENDED
 extern	int	nextWndFindBuf(int f, int n);
+extern	int	deleteSomeBuffers(int f, int n);
+extern	int	changeBufName(int f,int n);
+extern	int	namedBufferMode(int f, int n);
 #else
 #define nextWndFindBuf notAvailable
+#define deleteSomeBuffers notAvailable
+#define changeBufName notAvailable
+#define namedBufferMode notAvailable
 #endif
 extern	int	findBuffer(int f, int n);
 extern	int	nextBuffer(int f, int n);
 extern  void    setBufferContext(meBuffer *bp) ;
 extern	int	swbuffer(meWindow *wp, meBuffer *bp);
 extern	int	bufferDelete(int f, int n);
-extern	int	deleteSomeBuffers(int f, int n);
 extern  meBuffer *replacebuffer(meBuffer *oldbuf) ;
 extern  void    linkBuffer(meBuffer *bp) ;
 extern  void    unlinkBuffer(meBuffer *bp) ;
 extern	int	zotbuf(meBuffer *bp, int silent);
-extern	int	changeBufName(int f,int n);
 extern	int	adjustMode(meBuffer *bp, int nn);
 extern	int	bufferMode(int f, int n);
 extern	int	globalMode(int f, int n);
-extern	int	namedBufferMode(int f, int n);
 extern  int     addLine(register meLine *ilp, meUByte *text) ;
 #define addLineToBob(bp,text) (bp->lineCount += addLine(bp->dotLine,text))
 #define addLineToEob(bp,text) (bp->lineCount += addLine(bp->baseLine,text))
@@ -200,11 +203,9 @@ extern	int     showRegion(int f, int n) ;
 
 #define POKE_NOMARK   0x01      /* Don't mark the poke */
 #define POKE_NOFLUSH  0x02      /* Don't flush the poke */
-#if MEOPT_POKE
 #define POKE_COLORS   0x04      /* The fore & back args are color strings */
-#endif
 extern  void    pokeScreen(int flags, int row, int col, meUByte *scheme, meUByte *str) ;
-#if MEOPT_POKE
+#if MEOPT_EXTENDED
 extern	int	screenPoke(int f, int n) ;
 #else
 #define screenPoke notAvailable
@@ -258,15 +259,16 @@ extern	meVariable *SetUsrLclCmdVar(meUByte *vname, meUByte *vvalue,
                                            register meVarList *varList) ;
 extern	int	setVar(meUByte *vname, meUByte *vvalue, meRegister *regs) ;
 extern	int	setVariable(int f, int n);
-extern	int	unsetVariable(int f, int n);
 extern	meUByte *meItoa(int i);
 #define mePtos(pp) (((pp) == NULL) ? emptym:(pp))
 extern	meUByte *getval(meUByte *token);
 extern	int	descVariable(int f, int n);
 #if MEOPT_EXTENDED
 extern	int	listVariables(int f, int n);
+extern	int	unsetVariable(int f, int n);
 #else
 #define listVariables notAvailable
+#define unsetVariable notAvailable
 #endif
 
 /* exec.c externals */
@@ -336,16 +338,17 @@ extern  void    autowriteremove(meBuffer *bp) ;
 extern	int     nextWndFindFile(int f, int n);
 extern	int     fileOp(int f, int n);
 extern	int	appendBuffer(int f, int n);
+extern	int     saveSomeBuffers(int f, int n) ;
 #else
 #define nextWndFindFile notAvailable
 #define fileOp notAvailable
 #define appendBuffer notAvailable
+#define saveSomeBuffers notAvailable
 #endif
 extern	int	writeBuffer(int f, int n);
 extern	int	saveBuffer(int f, int n);
 extern  int     writeOut(register meBuffer *bp, meUInt flags, meUByte *fn) ;
 extern	int	writeout(meBuffer *bp, int flags, meUByte *fn);
-extern	int     saveSomeBuffers(int f, int n) ;
 extern	void	resetBufferNames(meBuffer *bp, meUByte *fname);
 extern	int	changeFileName(int f, int n);
 #ifdef _CONVDIR_CHAR
@@ -397,7 +400,11 @@ extern int      ffWriteFileWrite(register int len,
                                         register meUByte *buff, int eolFlag) ;
 extern int      ffWriteFileClose(meUByte *fname, meUInt flags, meBuffer *bp) ;
 extern int      ffWriteFile(meUByte *fname, meUInt flags, meBuffer *bp) ;
+#if MEOPT_EXTENDED
 extern int	ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode) ;
+#else
+#define ffFileOp(s,d,f,m) 0
+#endif
 
 /* frame.c externals */
 extern	int     meFrameChangeWidth(meFrame *frame, int ww);
@@ -582,8 +589,8 @@ extern  void    meLineLoopFree(meLine *lp, int flag) ;
 
 /* macro.c externals */
 extern	int	macroDefine(int f, int n);
-extern	int	macroFileDefine(int f, int n);
 #if MEOPT_EXTENDED
+extern	int	macroFileDefine(int f, int n);
 extern	int	macroHelpDefine(int f, int n);
 extern  void    helpBufferReset(meBuffer *bp);
 extern	int	help(int f, int n);
@@ -595,6 +602,7 @@ extern	int	macroQuery(int f, int n);
 extern  meMacro *userGetMacro(meUByte *buf, int len) ;
 extern  int     insMacro(int f, int n) ;
 #else
+#define macroFileDefine notAvailable
 #define macroHelpDefine notAvailable
 #define help notAvailable
 #define helpItem notAvailable
@@ -749,10 +757,15 @@ extern	int	transLines(int f, int n);
 extern	int	quoteKeyToChar(meUShort c) ;
 extern	int	quote(int f, int n);
 extern	int	meTab(int f, int n);
+#if MEOPT_EXTENDED
 extern	int	meBacktab(int f, int n);
+extern	int	windowDeleteBlankLines(int f, int n);
+#else
+#define meBacktab notAvailable
+#define windowDeleteBlankLines notAvailable
+#endif
 extern	int	meLineSetIndent(int curInd, int newInd, int undo);
 extern	int	meNewline(int f, int n);
-extern	int	windowDeleteBlankLines(int f, int n);
 extern	int	forwDelChar(int f, int n);
 extern	int	backDelChar(int f, int n);
 extern	int	killLine(int f, int n);

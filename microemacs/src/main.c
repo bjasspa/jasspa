@@ -74,7 +74,9 @@ static char meHelpPage[]=
 "  -B      : Disable back-up file creation\n"
 #endif
 "  -b      : Load next file as a binary file\n"
+#if MEOPT_REGISTRY
 "  -c      : Continuation mode (last edit, must have history setup)\n"
+#endif
 "  -h      : For this help page\n"
 #ifdef _DOS
 "  -i      : Insert the current screen into the *scratch* buffer\n"
@@ -286,6 +288,7 @@ execute(register int c, register int f, register int n)
      * The method chosen is to check the command variable status if the macro 
      * aborted, if .status is set to "0" then its not handled the input
      */
+#if MEOPT_EXTENDED
     if((ii=frameCur->bufferCur->inputFunc) >= 0)
     {
         meUByte *ss, ff ;
@@ -299,6 +302,7 @@ execute(register int c, register int f, register int n)
         meRegHead->force = ff ;
     }
     if(index >= 0)
+#endif
         return (cmdstatus = (execFunc(index,f,n) > 0)) ;
     if(selhilight.flags)
     {
@@ -509,6 +513,7 @@ exitEmacs(int f, int n)
     int s, ec=0 ;
     char buff[128] ;
         
+#if MEOPT_EXTENDED
     /* Set the exit code */
     if(n & 4)
     {
@@ -516,7 +521,7 @@ exitEmacs(int f, int n)
             return meFALSE ;
         ec = meAtoi(buff) ;
     }
-    
+#endif    
     /* Discard changed buffers - mark all changed buffers as not changed. */
     if (((n & (8|16)) != 0) && ((n & 1) == 0))
     {
@@ -537,6 +542,7 @@ exitEmacs(int f, int n)
         }
     }
     
+#if MEOPT_EXTENDED
     /* Unconditionally save buffers, dictionary and registry files */
     if((n & 2) &&
        ((saveSomeBuffers(f,(n & 0x01)) <= 0)
@@ -548,6 +554,7 @@ exitEmacs(int f, int n)
 #endif
        ))
         return meFALSE ;
+#endif
     
     s = 1 ;
     if(n & 1)
@@ -885,6 +892,7 @@ exitEmacs(int f, int n)
 }
 
 
+#if MEOPT_EXTENDED
 /*
  * Better quit command, query saves buffers and then queries the exit
  * if modified buffers still exist
@@ -894,6 +902,7 @@ saveExitEmacs(int f, int n)
 {
     return exitEmacs(1,(n & 7)|2) ;
 }
+#endif
 
 /*
  * Fancy quit command, as implemented by Norm. If the any buffer has
@@ -1341,7 +1350,9 @@ mesetup(int argc, char *argv[])
     meRegHead->prev = meRegHead ;
     meRegHead->commandName = NULL ;
     meRegHead->execstr = NULL ;
+#if MEOPT_EXTENDED
     meRegHead->varList = NULL ;
+#endif
     meRegHead->force = 0 ;
     meRegHead->depth = 0 ;
     meRegCurr = meRegHead ;
@@ -1382,10 +1393,11 @@ mesetup(int argc, char *argv[])
                 argv[rarg++] = argv[carg] ;
                 break ;
 
+#if MEOPT_REGISTRY
             case 'c':
                 HistNoFilesLoaded = -1 ;
                 break ;
-
+#endif
             case 'h':
                 mePrintMessage(meHelpPage,argc) ;
                 meExit(0) ;
@@ -1803,16 +1815,19 @@ handle_stdin:
         bufHistNo = obufHistNo + rarg ;
     }
 
+#if MEOPT_REGISTRY
     /* load-up the com-line or -c first and second files */
     if(!noFiles)
         noFiles = HistNoFilesLoaded ;
     else
         HistNoFilesLoaded = 0 ;
+#endif
     
     if(noFiles > 0)
     {
         if((frameCur->bufferCur == mainbp) && ((bp = replacebuffer(NULL)) != mainbp) && (bp->fileName != NULL))
         {
+#if MEOPT_REGISTRY
             if(HistNoFilesLoaded && isUrlLink(bp->fileName))
             {
                 meUByte prompt[meBUF_SIZE_MAX+16] ;
@@ -1824,6 +1839,7 @@ handle_stdin:
                     noFiles = 0 ;
                 }
             }
+#endif
 	}
         else
             bp = NULL ;
@@ -1835,7 +1851,9 @@ handle_stdin:
         if((noFiles > 1) && ((bp = replacebuffer(NULL)) != mainbp) &&
            (bp->fileName != NULL))
         {
+#if MEOPT_REGISTRY
             if(!HistNoFilesLoaded && !isUrlLink(bp->fileName))
+#endif
             {
                 windowSplitDepth(meTRUE,2) ;
                 swbuffer(frameCur->windowCur,replacebuffer(NULL)) ;

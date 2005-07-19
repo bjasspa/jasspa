@@ -131,15 +131,17 @@ DEFVAR ("mode-line-scheme",    EVMDLNSCHM)      /* Mode line colour */
 #endif
 #if MEOPT_EXTENDED
 DEFVAR ("mode-names",          EVMNAMES)        /* mode names access variable */
-#endif
 DEFVAR ("mouse",               EVMOUSE)         /* mouse config variable */
 DEFVAR ("mouse-pos",           EVMOUSEPOS)      /* decoded last mouse position */
 DEFVAR ("mouse-x",             EVMOUSEX)        /* last mouse x position */
 DEFVAR ("mouse-y",             EVMOUSEY)        /* last mouse y position */
+#endif
 #if MEOPT_COLOR && MEOPT_OSD
 DEFVAR ("osd-scheme",          EVOSDSCHM)       /* Main osd color scheme */
 #endif
+#if MEOPT_EXTENDED
 DEFVAR ("pause-time",          EVPAUSETIME)     /* Pause time (used in Fence matching etc) */
+#endif
 DEFVAR ("platform",            EVMACHINE)       /* the name of the platform */ 
 DEFVAR ("progname",            EVPROGNM)        /* argv[0] */ 
 #if MEOPT_EXTENDED
@@ -175,7 +177,9 @@ DEFVAR ("tab-width",           EVTABWIDTH)      /* TAB width in spaces */
 DEFVAR ("temp-name",           EVTEMPNAME)      /* Temporary file name */
 DEFVAR ("time",                EVTIME)          /* Current time */
 #endif
+#if MEOPT_TIMSTMP
 DEFVAR ("timestamp",           EVTIMSTMP)       /* Time stamp string */
+#endif
 #if MEOPT_COLOR
 DEFVAR ("trunc-scheme",        EVTRNCSCHM)      /* Truncate colour  */
 #endif

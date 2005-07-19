@@ -549,7 +549,9 @@ typedef struct meCommand {
 #if MEOPT_CMDHASH
     struct meCommand  *hnext ;                  /* next command in hash table   */
 #endif
+#if MEOPT_EXTENDED
     meVarList          varList ;                /* command variables list       */
+#endif
     meUByte           *name ;                   /* name of command              */
     int                id ;                     /* command id number            */
     meIFuncII          func ;                   /* function name is bound to    */
@@ -560,12 +562,16 @@ typedef struct meMacro {
 #if MEOPT_CMDHASH
     meCommand         *hnext ;                  /* next command in hash table   */
 #endif
+#if MEOPT_EXTENDED
     meVarList          varList ;                /* command variables list       */
+#endif
     meUByte           *name ;                   /* name of macro                */
     int                id ;                     /* command id number            */
-    meUByte           *fname ;                  /* file name for file-macros    */
     meLine            *hlp ;                    /* Head line of macro           */
+#if MEOPT_EXTENDED
+    meUByte           *fname ;                  /* file name for file-macros    */
     meInt              callback ;               /* callback time for macro      */
+#endif
 } meMacro ;
 
 #define meMACRO_HIDE  meLINE_ANCHOR_AMARK       /* Hide the function            */
@@ -685,7 +691,9 @@ typedef struct  meBuffer {
 #if MEOPT_NARROW
     meNarrow          *narrow ;                 /* pointer to narrow structures */
 #endif
+#if MEOPT_EXTENDED
     meVarList          varList ;                /* User local buffer variables  */
+#endif
     meStat             stats ;                  /* file stats - inc. mod time   */
     meLine            *dotLine;                 /* Link to "." meLine structure */
     meLine            *markLine;                /* The same as the above two,   */
@@ -714,7 +722,9 @@ typedef struct  meBuffer {
     int                dhook;                   /* d buffer hook function       */
     int                ehook;                   /* e buffer hook function       */
 #endif
+#if MEOPT_EXTENDED
     int                inputFunc;               /* input handle function        */
+#endif
 #if MEOPT_IPIPES
     int                ipipeFunc;               /* ipipe input handle function  */
 #endif
@@ -1197,7 +1207,9 @@ typedef struct meUndoNarrow {
 #define meREGISTER_MAX 10
 typedef struct meRegister {
     struct meRegister *prev ;
+#if MEOPT_EXTENDED
     meVarList         *varList ;
+#endif
     meUByte           *commandName ;
     meUByte           *execstr ;
     int                f ;

@@ -660,7 +660,11 @@ createVarList(meUByte ***listPtr)
     int     ii, nn ;
     meUByte  **list ;
 
+#if MEOPT_EXTENDED
     nn = NEVARS + usrVarList.count + frameCur->bufferCur->varList.count ;
+#else
+    nn = NEVARS ;
+#endif
     
     if((list = (meUByte **) meMalloc(sizeof(meUByte *) * nn)) == NULL)
         return 0 ;
@@ -673,6 +677,7 @@ createVarList(meUByte ***listPtr)
         list[ii][0] = '$' ;
         meStrcpy(list[ii]+1,envars[ii]) ;
     }
+#if MEOPT_EXTENDED
     for(vptr=usrVarList.head ; vptr != NULL ; vptr = vptr->next,ii++)
     {
         if((list[ii] = meMalloc(meStrlen(vptr->name)+2)) == NULL)
@@ -687,6 +692,7 @@ createVarList(meUByte ***listPtr)
         list[ii][0] = ':' ;
         meStrcpy(list[ii]+1,vptr->name) ;
     }
+#endif
     return ii ;
 }
     
@@ -1093,7 +1099,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
                 changed=1 ;
             }
             break;
-            
+#if MEOPT_EXTENDED
         case CK_DELTAB:
 #if MEOPT_OSD
             if(frameCur->mlStatus & MLSTATUS_POSOSD)
@@ -1105,7 +1111,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
 #endif
                 TTbell();
             break;
-        
+#endif        
         case CK_DOTAB:    /* tab : Tab character */
 #if MEOPT_OSD
             if(frameCur->mlStatus & MLSTATUS_POSOSD)

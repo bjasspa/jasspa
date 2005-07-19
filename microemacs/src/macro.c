@@ -177,11 +177,13 @@ createMacro(meUByte *name)
         mac = getMacro(idx) ;
         if(!(mac->hlp->flag & meMACRO_EXEC))
         {
+#if MEOPT_EXTENDED
             if(mac->hlp->flag & meMACRO_FILE)
             {
                 if(meNullFree(mac->fname))
                     mac->fname = NULL ;
             }
+#endif
             meLineLoopFree(mac->hlp,1) ;
         }
     }
@@ -205,11 +207,13 @@ createMacro(meUByte *name)
             meFree(hlp) ;
             return NULL ;
         }
+        mac->id = cmdTableSize ;
+#if MEOPT_EXTENDED
         mac->varList.head = NULL ;
         mac->varList.count = 0 ;
-        mac->id = cmdTableSize ;
         mac->fname = NULL ;
         mac->callback = -1 ;
+#endif
         cmdTable[cmdTableSize++] = (meCommand *) mac ;
         /* insert macro into the alphabetic list */
         cmd = &(cmdHead) ;
@@ -255,10 +259,11 @@ macroDefine(int f, int n)
     return meTRUE ;
 }
 
+#if MEOPT_EXTENDED
+
 /* macroFileDefine:
  * Set up a macro buffer and flag to store all
  * executed command lines there			*/
-
 int
 macroFileDefine(int f, int n)
 {
@@ -287,8 +292,6 @@ macroFileDefine(int f, int n)
     return meTRUE ;
 }
 
-
-#if MEOPT_EXTENDED
 
 /*
  * Asks the user if they wish to continue macro execution.

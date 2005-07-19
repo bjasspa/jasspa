@@ -402,7 +402,6 @@
 #define MEOPT_SPAWN     1       /* enable spawning                       */
 #define MEOPT_SCROLL    1       /* enable scroll bars                    */
 #define MEOPT_HSPLIT    1       /* enable vertical window                */ 
-#define MEOPT_POKE      1       /* enable poke screen                    */
 #define MEOPT_FRAME     1       /* enable multiple frames                */
 #if MEOPT_FRAME && (defined _MULTI_WINDOW)
 #define MEOPT_MWFRAME   1       /* enable multiple window frames         */
@@ -446,7 +445,7 @@
  *************************************************************************/
 #define MEOPT_TYPEAH    1       /* type ahead causes update to be skipped*/
 #define MEOPT_DEBUGM    0       /* enable macro debugging $debug         */
-#define MEOPT_TIMSTMP   1       /* Enable time stamping of files on write*/
+#define MEOPT_TIMSTMP   0       /* Enable time stamping of files on write*/
 #define MEOPT_COLOR     1       /* color commands and windows            */
 #define MEOPT_HILIGHT   0       /* color hilighting                      */
 #define MEOPT_ISEARCH   1       /* Incremental searches like ITS EMACS   */
@@ -474,7 +473,6 @@
 #define MEOPT_SPAWN     0       /* enable spawning                       */
 #define MEOPT_SCROLL    0       /* enable scroll bars                    */
 #define MEOPT_HSPLIT    0       /* enable vertical window                */ 
-#define MEOPT_POKE      0       /* enable poke screen                    */
 #define MEOPT_FRAME     0       /* enable multiple frames                */
 #if MEOPT_FRAME && (defined _MULTI_WINDOW)
 #define MEOPT_MWFRAME   0       /* enable multiple window frames         */

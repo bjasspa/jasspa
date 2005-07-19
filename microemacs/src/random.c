@@ -757,6 +757,7 @@ meTab(int f, int n)
     return ii ;
 }
 
+#if MEOPT_EXTENDED
 /* backward-delete-tab. If the previous character was a <TAB> then delete. If
  * the pseudo tabs are in operation then delete spaces to the next tab stop
  * position. Normally bound to S-tab */
@@ -832,6 +833,40 @@ meBacktab(int f, int n)
     }
     return (meFALSE);		/* Nothing to remove !!! */
 }
+
+/* delete-blank-lines. What this command does depends if dot is sitting on a
+ * blank line. If dot is sitting on a blank line, this command deletes all the
+ * blank lines above and below the current line. If it is sitting on a non
+ * blank line then it deletes all of the blank lines after the line. Normally
+ * this command is bound to C-x C-o. */
+int
+windowDeleteBlankLines(int f, int n)
+{
+    register meLine   *lp1;
+    register meLine   *lp2;
+    long     nld, lld=0 ;
+    
+    lp1 = frameCur->windowCur->dotLine;
+    while (meLineGetLength(lp1)==0 && (lp2=meLineGetPrev(lp1))!=frameCur->bufferCur->baseLine)
+    {
+        lp1 = lp2;
+        lld++ ;
+    }
+    lp2 = lp1;
+    nld = 0;
+    while ((lp2=meLineGetNext(lp2))!=frameCur->bufferCur->baseLine && meLineGetLength(lp2)==0)
+        ++nld;
+    if (nld == 0)
+        return (meTRUE);
+    if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
+        return meABORT ;
+    frameCur->windowCur->dotLine = meLineGetNext(lp1);
+    frameCur->windowCur->dotOffset = 0;
+    frameCur->windowCur->dotLineNo -= lld-1 ;
+    return (ldelete(nld,2));
+}
+
+#endif
 
 #if MEOPT_WORDPRO
 int
@@ -1021,39 +1056,6 @@ meNewline(int f, int n)
     
     return meTRUE ;
 }
-
-/* delete-blank-lines. What this command does depends if dot is sitting on a
- * blank line. If dot is sitting on a blank line, this command deletes all the
- * blank lines above and below the current line. If it is sitting on a non
- * blank line then it deletes all of the blank lines after the line. Normally
- * this command is bound to C-x C-o. */
-int
-windowDeleteBlankLines(int f, int n)
-{
-    register meLine   *lp1;
-    register meLine   *lp2;
-    long     nld, lld=0 ;
-    
-    lp1 = frameCur->windowCur->dotLine;
-    while (meLineGetLength(lp1)==0 && (lp2=meLineGetPrev(lp1))!=frameCur->bufferCur->baseLine)
-    {
-        lp1 = lp2;
-        lld++ ;
-    }
-    lp2 = lp1;
-    nld = 0;
-    while ((lp2=meLineGetNext(lp2))!=frameCur->bufferCur->baseLine && meLineGetLength(lp2)==0)
-        ++nld;
-    if (nld == 0)
-        return (meTRUE);
-    if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
-        return meABORT ;
-    frameCur->windowCur->dotLine = meLineGetNext(lp1);
-    frameCur->windowCur->dotOffset = 0;
-    frameCur->windowCur->dotLineNo -= lld-1 ;
-    return (ldelete(nld,2));
-}
-
 
 /* forward-delete-char. This is real easy, because the basic delete routine
  * does all of the work. Watches for negative arguments, and does the right

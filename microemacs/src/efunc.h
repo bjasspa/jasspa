@@ -104,10 +104,18 @@ meUByte commandFlag[] =
 };
 #undef  DEFFUNC
 
+#if MEOPT_EXTENDED
 #if MEOPT_CMDHASH
 #define DEFFUNC(s,t,f,r,n,h)          {(meCommand *) n, (meCommand *) h, { (meVariable *) 0, 0}, (meUByte *)s, r, f} ,
 #else
 #define DEFFUNC(s,t,f,r,n,h)          {(meCommand *) n, { (meVariable *) 0, 0}, (meUByte *)s, r, f} ,
+#endif
+#else
+#if MEOPT_CMDHASH
+#define DEFFUNC(s,t,f,r,n,h)          {(meCommand *) n, (meCommand *) h, (meUByte *)s, r, f} ,
+#else
+#define DEFFUNC(s,t,f,r,n,h)          {(meCommand *) n, (meUByte *)s, r, f} ,
+#endif
 #endif
 
 meCommand __cmdArray[CK_MAX] = 

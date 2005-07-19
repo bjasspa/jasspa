@@ -58,7 +58,9 @@ DEFFUNC ("append-buffer",               0x42, appendBuffer,	CK_APPBUF, &__cmdArr
 #endif
 DEFFUNC ("backward-char",		0xc8, windowBackwardChar,CK_BAKCHR, &__cmdArray[CK_BAKCHR+1], 0)
 DEFFUNC ("backward-delete-char",	0x04, backDelChar,	CK_DELBAK, &__cmdArray[CK_DELBAK+1], 0)
+#if MEOPT_CMDHASH || MEOPT_EXTENDED
 DEFFUNC ("backward-delete-tab",		0x04, meBacktab,	CK_DELTAB, &__cmdArray[CK_DELTAB+1], 0)
+#endif
 DEFFUNC ("backward-kill-word",		0x04, backDelWord,	CK_DELWBAK, &__cmdArray[CK_DELWBAK+1], 0)
 DEFFUNC ("backward-line",		0xc8, windowBackwardLine,CK_BAKLIN, &__cmdArray[CK_BAKLIN+1], 0)
 #if MEOPT_CMDHASH || MEOPT_WORDPRO
@@ -79,8 +81,10 @@ DEFFUNC ("buffer-mode",			0x00, bufferMode,	CK_BUFMOD, &__cmdArray[CK_BUFMOD+1],
 DEFFUNC ("buffer-unbind-key",		0x00, bufferUnbindKey,	CK_LCLUNBD, &__cmdArray[CK_LCLUNBD+1], 0)
 #endif
 DEFFUNC ("capitalize-word",		0x04, capWord,		CK_CAPWRD, &__cmdArray[CK_CAPWRD+1], 0)
+#if MEOPT_CMDHASH || MEOPT_EXTENDED
 DEFFUNC ("change-buffer-name",		0x00, changeBufName,	CK_NAMBUF, &__cmdArray[CK_NAMBUF+1], 0)
 DEFFUNC ("change-file-name",		0x00, changeFileName,	CK_CHGFIL, &__cmdArray[CK_CHGFIL+1], 0)
+#endif
 DEFFUNC ("change-font",                 0x00, changeFont,       CK_CHGFONT,&__cmdArray[CK_CHGFONT+1], 0)
 DEFFUNC ("change-frame-depth",		0x00, frameChangeDepth, CK_FRMDPTH, &__cmdArray[CK_FRMDPTH+1], 0)
 DEFFUNC ("change-frame-width",		0x00, frameChangeWidth, CK_FRMWDTH, &__cmdArray[CK_FRMWDTH+1], 0)
@@ -107,8 +111,10 @@ DEFFUNC ("create-frame",                0x00, frameCreate,      CK_CRTFRAME, &__
 DEFFUNC ("define-help",			0x00, macroHelpDefine,	CK_DEFHELP, &__cmdArray[CK_DEFHELP+1], 0)
 #endif
 DEFFUNC ("define-macro",		0x00, macroDefine,	CK_DEFMAC, &__cmdArray[CK_DEFMAC+1], 0)
+#if MEOPT_CMDHASH || MEOPT_EXTENDED
 DEFFUNC ("define-macro-file",		0x00, macroFileDefine,	CK_DEFFMAC, &__cmdArray[CK_DEFFMAC+1], 0)
 DEFFUNC ("delete-blank-lines",		0x04, windowDeleteBlankLines,CK_DELBLK, &__cmdArray[CK_DELBLK+1], 0)
+#endif
 DEFFUNC ("delete-buffer",		0x42, bufferDelete,	CK_DELBUF, &__cmdArray[CK_DELBUF+1], 0)
 #if MEOPT_CMDHASH || MEOPT_SPELL
 DEFFUNC ("delete-dictionary",           0x00, dictionaryDelete, CK_DELDICT, &__cmdArray[CK_DELDICT+1], 0)
@@ -120,7 +126,9 @@ DEFFUNC ("delete-other-windows",	0x00, windowDeleteOthers,CK_ONLYWND, &__cmdArra
 #if MEOPT_CMDHASH || MEOPT_REGISTRY
 DEFFUNC ("delete-registry",		0x42, deleteRegistry,	CK_DELREGY, &__cmdArray[CK_DELREGY+1], 0)
 #endif
+#if MEOPT_CMDHASH || MEOPT_EXTENDED
 DEFFUNC ("delete-some-buffers",		0x42, deleteSomeBuffers,CK_DELSBUF, &__cmdArray[CK_DELSBUF+1], 0)
+#endif
 DEFFUNC ("delete-window",		0x42, windowDelete,	CK_DELWND, &__cmdArray[CK_DELWND+1], 0)
 DEFFUNC ("describe-bindings",		0x42, descBindings,	CK_DESCBIN, &__cmdArray[CK_DESCBIN+1], 0)
 DEFFUNC ("describe-key",		0x42, descKey,		CK_DESCKEY, &__cmdArray[CK_DESCKEY+1], 0)
@@ -251,8 +259,8 @@ DEFFUNC ("ml-unbind-key",		0x00, mlUnbind,		CK_MLUNBD, &__cmdArray[CK_MLUNBD+1],
 DEFFUNC ("ml-write",			0x00, mlWrite,		CK_WRTMSG, &__cmdArray[CK_WRTMSG+1], 0)
 #if MEOPT_CMDHASH || MEOPT_EXTENDED
 DEFFUNC ("name-kbd-macro",		0x00, nameKbdMacro,	CK_NAMMAC, &__cmdArray[CK_NAMMAC+1], 0)
-#endif
 DEFFUNC ("named-buffer-mode",	        0x42, namedBufferMode,	CK_NBUFMOD, &__cmdArray[CK_NBUFMOD+1], 0)
+#endif
 #if MEOPT_CMDHASH || MEOPT_NARROW
 DEFFUNC ("narrow-buffer",	        0x04, narrowBuffer,	CK_NRRWBUF, &__cmdArray[CK_NRRWBUF+1], 0)
 #endif
@@ -301,7 +309,9 @@ DEFFUNC ("replace-string",		0x42, replaceStr,	CK_STRREP, &__cmdArray[CK_STRREP+1
 DEFFUNC ("resize-all-windows",          0x00, frameResizeWindows,CK_RESIZEALL, &__cmdArray[CK_RESIZEALL+1], 0)
 DEFFUNC ("reyank",			0x39, reyank,		CK_REYANK, &__cmdArray[CK_REYANK+1], 0)
 DEFFUNC ("save-buffer",			0x42, saveBuffer,	CK_SAVBUF, &__cmdArray[CK_SAVBUF+1], 0)
+#if MEOPT_CMDHASH || MEOPT_EXTENDED
 DEFFUNC ("save-buffers-exit-emacs",	0x00, saveExitEmacs,	CK_QUIT, &__cmdArray[CK_QUIT+1], 0)
+#endif
 #if MEOPT_CMDHASH || MEOPT_SPELL
 DEFFUNC ("save-dictionary",             0x42, dictionarySave,  	CK_SVDICTS, &__cmdArray[CK_SVDICTS+1], 0)
 #endif
@@ -309,8 +319,8 @@ DEFFUNC ("save-dictionary",             0x42, dictionarySave,  	CK_SVDICTS, &__c
 DEFFUNC ("save-history",		0x42, saveHistory,	CK_WRTHIST, &__cmdArray[CK_WRTHIST+1], 0)
 DEFFUNC ("save-registry",		0x42, saveRegistry,	CK_SAVREGY, &__cmdArray[CK_SAVREGY+1], 0)
 #endif
+#if MEOPT_CMDHASH || MEOPT_EXTENDED
 DEFFUNC ("save-some-buffers",		0x42, saveSomeBuffers,	CK_SAVSBUF, &__cmdArray[CK_SAVSBUF+1], 0)
-#if MEOPT_CMDHASH || MEOPT_POKE
 DEFFUNC ("screen-poke",			0x00, screenPoke,	CK_PKSCRN, &__cmdArray[CK_PKSCRN+1], 0)
 #endif
 DEFFUNC ("screen-update",		0x00, screenUpdate,	CK_UPDATE, &__cmdArray[CK_UPDATE+1], 0)
@@ -374,7 +384,9 @@ DEFFUNC ("transpose-lines",	        0x04, transLines,	CK_TRNLINE, &__cmdArray[CK
 DEFFUNC ("undo",			0x04, meUndo,		CK_UNDO, &__cmdArray[CK_UNDO+1], 0)
 #endif
 DEFFUNC ("universal-argument",		0x00, uniArgument,	CK_UNVARG, &__cmdArray[CK_UNVARG+1], 0)
+#if MEOPT_CMDHASH || MEOPT_EXTENDED
 DEFFUNC ("unset-variable",		0x00, unsetVariable,	CK_UNSET, &__cmdArray[CK_UNSET+1], 0)
+#endif
 DEFFUNC ("upper-case-region",		0x04, upperRegion,	CK_RCASHI, &__cmdArray[CK_RCASHI+1], 0)
 DEFFUNC ("upper-case-word",		0x04, upperWord,	CK_HIWRD, &__cmdArray[CK_HIWRD+1], 0)
 DEFFUNC ("view-file",			0x42, viewFile,		CK_VIWFIL, &__cmdArray[CK_VIWFIL+1], 0)
