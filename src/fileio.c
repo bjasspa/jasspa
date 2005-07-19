@@ -1272,6 +1272,17 @@ ffUrlFileClose(meUByte *fname, meUInt rwflag)
 
 #endif
 
+#ifdef _DOS
+#define MEOPT_EXTENDED_BACKUP 0
+#else
+#if MEOPT_EXTENDED
+#define MEOPT_EXTENDED_BACKUP 1
+#else
+#define MEOPT_EXTENDED_BACKUP 0
+#endif
+#endif
+
+#if MEOPT_EXTENDED_BACKUP
 meUByte *
 createBackupNameStrcpySub(meUByte *dd, meUByte *ss, int subCount, meUByte **subFrom, meUByte **subTo)
 {
@@ -1307,6 +1318,7 @@ createBackupNameStrcpySub(meUByte *dd, meUByte *ss, int subCount, meUByte **subF
     }
     return dd ;
 }
+#endif
 
 /*
  * creates the standard bckup name with the extra
@@ -1318,7 +1330,7 @@ int
 createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag)
 {
     meUByte *s, *t ;
-#ifndef _DOS
+#if MEOPT_EXTENDED_BACKUP
     static int     backupPathFlag=0 ;
     static meUByte  *backupPath=NULL ;
     static int     backupSubCount=0 ;
@@ -1394,7 +1406,7 @@ createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag)
     }
     else
 #endif
-#ifndef _DOS
+#if MEOPT_EXTENDED_BACKUP
     if((backupPathFlag > 0) && !isUrlLink(fn))
     {
         if(backupPathFlag == 1)
@@ -2121,7 +2133,7 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
 #else
 #define filenameOld fname
 #endif
-#ifndef _DOS
+#if MEOPT_EXTENDED_BACKUP
                     if(!(meSystemCfg & meSYSTEM_DOSFNAMES) && (keptVersions > 0))
                     {
                         int ll ;
@@ -2502,6 +2514,7 @@ ffWriteFile(meUByte *fname, meUInt flags, meBuffer *bp)
     return meFALSE ;
 }
 
+#if MEOPT_EXTENDED
 int
 ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
 {
@@ -2613,3 +2626,4 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
 #endif
     return rr ;
 }
+#endif

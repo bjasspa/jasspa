@@ -2312,7 +2312,7 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
         if((len += col) <= 0)
             return ;
         str -= col ;
-#if MEOPT_POKE
+#if MEOPT_EXTENDED
         if(flags & POKE_COLORS)
             scheme -= col ;
 #endif
@@ -2362,7 +2362,7 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
 #endif /* _ME_WINDOW */
 #endif /* _WIN32 */
 
-#if MEOPT_POKE
+#if MEOPT_EXTENDED
     /* Write to the screen */
     if(flags & POKE_COLORS)
     {
@@ -2644,7 +2644,7 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
         TTflush() ;                         /* Force update of screen */
 }
 
-#if MEOPT_POKE
+#if MEOPT_EXTENDED
 /*
  * screenPoke.
  * The macro interface to the pokeScreen function. This accepts a

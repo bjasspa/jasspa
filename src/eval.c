@@ -246,6 +246,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             meStrcpy(regs->reg[cc],vvalue) ;
             break ;
         }
+#if MEOPT_EXTENDED
     case TKVAR:
         if(SetUsrLclCmdVar(nn,vvalue,&usrVarList) == NULL)
             return meFALSE ;
@@ -410,6 +411,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
         else
             return mlwrite(MWABORT,(meUByte *)"[Cannot set variable %s]",vname);
         break ;
+#endif
     
     case TKENV:
         /* set an environment variable */
@@ -418,9 +420,6 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
         {
         case EVAUTOTIME:
             autoTime = meAtoi(vvalue);
-            break;
-        case EVPAUSETIME:
-            pauseTime = (meShort) meAtoi (vvalue);
             break;
 #if MEOPT_CALLBACK
         case EVIDLETIME:
@@ -441,27 +440,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                 repeatTime = 10;
             break;
 #endif
-        case EVKEPTVERS:
-            if(!(meSystemCfg & meSYSTEM_DOSFNAMES) && 
-               ((keptVersions = meAtoi(vvalue)) < 0))
-                keptVersions = 0 ;
-            break;
-        case EVBOXCHRS:
-            {
-                meUByte cc ;
-                int len;
-                len = meStrlen(vvalue);
-                if (len > BCLEN)
-                    len = BCLEN;
-                while(--len >= 0)
-                {
-                    cc = vvalue[len] ;
-                    if(!isPokable(cc))
-                        cc = '.' ;
-                    boxChars[len] = cc ;
-                }
-            }
-            break;
+#if MEOPT_EXTENDED
             /* always allow the user to set the mouse position as termcap
              * does not support the mouse but context menus need to be positioned sensibly */
         case EVMOUSE:
@@ -478,6 +457,31 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             break;
         case EVMOUSEY:
             mouse_Y = (meShort) meAtoi(vvalue) ;
+            break;
+        case EVPAUSETIME:
+            pauseTime = (meShort) meAtoi (vvalue);
+            break;
+        case EVKEPTVERS:
+            if(!(meSystemCfg & meSYSTEM_DOSFNAMES) && 
+               ((keptVersions = meAtoi(vvalue)) < 0))
+                keptVersions = 0 ;
+            break;
+#endif
+        case EVBOXCHRS:
+            {
+                meUByte cc ;
+                int len;
+                len = meStrlen(vvalue);
+                if (len > BCLEN)
+                    len = BCLEN;
+                while(--len >= 0)
+                {
+                    cc = vvalue[len] ;
+                    if(!isPokable(cc))
+                        cc = '.' ;
+                    boxChars[len] = cc ;
+                }
+            }
             break;
         case EVMODELINE:
             if(modeLineStr != orgModeLineStr)
@@ -497,8 +501,10 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             {
                 meSystemCfg = (meSystemCfg & ~meSYSTEM_MASK) | 
                           (meAtoi(vvalue)&meSYSTEM_MASK) ;
+#if MEOPT_EXTENDED
                 if(meSystemCfg & meSYSTEM_DOSFNAMES)
                     keptVersions = 0 ;
+#endif
                 if(meSystemCfg & meSYSTEM_SHOWWHITE)
                 {
                     displayTab = windowChars[WCDISPTAB];
@@ -786,9 +792,6 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             frameCur->bufferCur->ipipeFunc = decode_fncname(vvalue,1) ;
             break ;
 #endif
-        case EVBUFINP:
-            frameCur->bufferCur->inputFunc = decode_fncname(vvalue,1) ;
-            break ;
 #if MEOPT_FILEHOOK
         case EVBUFBHK:
             frameCur->bufferCur->bhook = decode_fncname(vvalue,1) ;
@@ -804,6 +807,9 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             break ;
 #endif
 #if MEOPT_EXTENDED
+        case EVBUFINP:
+            frameCur->bufferCur->inputFunc = decode_fncname(vvalue,1) ;
+            break ;
         case EVLINEFLAGS:
             frameCur->windowCur->dotLine->flag = (meAtoi(vvalue) & meLINE_SET_MASK) |
                       (frameCur->windowCur->dotLine->flag & ~meLINE_SET_MASK) ;
@@ -1025,7 +1031,6 @@ gtenv(meUByte *vname)   /* vname   name of environment variable to retrieve */
     {
         /* Fetch the appropriate value */
     case EVAUTOTIME:    return meItoa(autoTime);
-    case EVPAUSETIME:   return meItoa(pauseTime);
 #if MEOPT_MOUSE
     case EVDELAYTIME:   return meItoa(delayTime);
     case EVREPEATTIME:  return meItoa(repeatTime);
@@ -1033,17 +1038,12 @@ gtenv(meUByte *vname)   /* vname   name of environment variable to retrieve */
 #if MEOPT_CALLBACK
     case EVIDLETIME:    return meItoa(idleTime);
 #endif
-    case EVKEPTVERS:    return meItoa(keptVersions);
     case EVBOXCHRS:     return boxChars;
     case EVMODELINE:    return modeLineStr ;
     case EVMACHINE:     return machineName ;
     case EVPROGNM:      return meProgName ;
     case EVCURSORX:     return meItoa(frameCur->mainColumn);
     case EVCURSORY:     return meItoa(frameCur->mainRow);
-    case EVMOUSE:       return meItoa(meMouseCfg);
-    case EVMOUSEPOS:    return meItoa(mouse_pos);
-    case EVMOUSEX:      return meItoa(mouse_X);
-    case EVMOUSEY:      return meItoa(mouse_Y);
     case EVSYSTEM:      return meItoa(meSystemCfg);
 #if MEOPT_WORDPRO
     case EVFILLBULLET:  return fillbullet;
@@ -1058,6 +1058,12 @@ gtenv(meUByte *vname)   /* vname   name of environment variable to retrieve */
         return evalResult ;
 #endif
 #if MEOPT_EXTENDED
+    case EVPAUSETIME:   return meItoa(pauseTime);
+    case EVKEPTVERS:    return meItoa(keptVersions);
+    case EVMOUSE:       return meItoa(meMouseCfg);
+    case EVMOUSEPOS:    return meItoa(mouse_pos);
+    case EVMOUSEX:      return meItoa(mouse_X);
+    case EVMOUSEY:      return meItoa(mouse_Y);
     case EVBNAMES:
         mv = &buffNames ;
         goto handle_namesvar ;
@@ -1182,9 +1188,11 @@ handle_namesvar:
     case EVCBUFBACKUP:
         if((frameCur->bufferCur->fileName == NULL) || createBackupName(evalResult,frameCur->bufferCur->fileName,'~',0))
             return emptym ;
+#if MEOPT_EXTENDED
 #ifndef _DOS
         if(!(meSystemCfg & meSYSTEM_DOSFNAMES) && (keptVersions > 0))
             meStrcpy(evalResult+meStrlen(evalResult)-1,".~0~") ;
+#endif
 #endif
         return evalResult ;
     case EVCBUFNAME:    return frameCur->bufferCur->name ;
@@ -1243,9 +1251,6 @@ handle_namesvar:
         ii = frameCur->bufferCur->ipipeFunc ;
         goto hook_jump ;
 #endif
-    case EVBUFINP:
-        ii = frameCur->bufferCur->inputFunc ;
-        goto hook_jump ;
 #if MEOPT_FILEHOOK
     case EVBUFBHK:
         ii = frameCur->bufferCur->bhook ;
@@ -1258,21 +1263,17 @@ handle_namesvar:
         goto hook_jump ;
     case EVBUFFHK:    
         ii = frameCur->bufferCur->fhook ;
+        goto hook_jump ;
 #endif
+#if MEOPT_EXTENDED
+    case EVBUFINP:
+        ii = frameCur->bufferCur->inputFunc ;
 hook_jump:
         if(ii < 0)
             evalResult[0] = '\0';
         else
             meStrcpy(evalResult,getCommandName(ii)) ;
         return evalResult ;
-
-#if MEOPT_HILIGHT
-    case EVLINESCHM:    return meItoa(meLineIsSchemeSet(frameCur->windowCur->dotLine) ? 
-                                      (frameCur->bufferCur->lscheme[meLineGetSchemeIndex(frameCur->windowCur->dotLine)]/meSCHEME_STYLES):-1) ;
-    case EVBUFHIL:      return meItoa(frameCur->bufferCur->hilight);
-    case EVBUFIND:      return meItoa(frameCur->bufferCur->indent);
-#endif
-#if MEOPT_EXTENDED
     case EVLINEFLAGS:   return meItoa(frameCur->windowCur->dotLine->flag) ;
     case EVBUFMASK:
         {
@@ -1285,6 +1286,12 @@ hook_jump:
             return evalResult ;
         }
     case EVFILEIGNORE:  return mePtos(fileIgnore) ;
+#endif
+#if MEOPT_HILIGHT
+    case EVLINESCHM:    return meItoa(meLineIsSchemeSet(frameCur->windowCur->dotLine) ? 
+                                      (frameCur->bufferCur->lscheme[meLineGetSchemeIndex(frameCur->windowCur->dotLine)]/meSCHEME_STYLES):-1) ;
+    case EVBUFHIL:      return meItoa(frameCur->bufferCur->hilight);
+    case EVBUFIND:      return meItoa(frameCur->bufferCur->indent);
 #endif
 #if MEOPT_FILENEXT
     case EVFILETEMP:    return mePtos(flNextFileTemp) ;
@@ -1812,6 +1819,7 @@ getval(meUByte *tkn)   /* find the value of a token */
             break ;
         }
     
+#if MEOPT_EXTENDED
     case TKVAR:
         if(alarmState & meALARM_VARIABLE)
             return tkn ;
@@ -1860,6 +1868,7 @@ getval(meUByte *tkn)   /* find the value of a token */
                 return abortm ;
             return getUsrLclCmdVar(tt,meRegCurr->varList) ;
         }
+#endif
     case TKENV:
         if(alarmState & meALARM_VARIABLE)
             return tkn ;
@@ -3011,6 +3020,7 @@ get_flag:
 }
 
 
+#if MEOPT_EXTENDED
 /* numeric arg can overide prompted value */
 int
 unsetVariable(int f, int n)     /* Delete a variable */
@@ -3105,6 +3115,7 @@ unsetVariable(int f, int n)     /* Delete a variable */
     /* If its not legal....bitch */
     return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No such variable]") ;
 }
+#endif
 
 int
 setVariable(int f, int n)       /* set a variable */

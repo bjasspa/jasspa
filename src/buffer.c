@@ -855,6 +855,7 @@ bclear(register meBuffer *bp)
 #if MEOPT_UNDO
     meUndoRemove(bp) ;
 #endif
+#if MEOPT_EXTENDED
     /* Clean out the local buffer variables */
     if (bp->varList.head != NULL)
     {
@@ -870,6 +871,7 @@ bclear(register meBuffer *bp)
 	bp->varList.head = NULL ;
 	bp->varList.count = 0 ;
     }
+#endif
     mk = bp->anchorList;
     while(mk != NULL)
     {
@@ -1029,6 +1031,7 @@ bufferDelete(int f, int n)
 }
 
 
+#if MEOPT_EXTENDED
 int
 deleteSomeBuffers(int f, int n)
 {
@@ -1095,6 +1098,7 @@ changeBufName(int f, int n)     /*      Rename the current buffer       */
     
     return meTRUE ;
 }
+#endif
 
 
 /*
@@ -1402,8 +1406,8 @@ createBuffer(register meUByte *bname)
 #if MEOPT_IPIPES
     bp->ipipeFunc = -1 ;
 #endif
-    bp->inputFunc = -1 ;
 #if MEOPT_EXTENDED
+    bp->inputFunc = -1 ;
     bp->isWordMask = CHRMSK_DEFWORDMSK ;
 #endif
 #if MEOPT_FILEHOOK
@@ -1691,6 +1695,7 @@ globalMode(int f, int n)        /* prompt and set a global editor mode */
     return adjustMode(NULL,(f) ? n:0);
 }
 
+#if MEOPT_EXTENDED
 int     
 namedBufferMode(int f, int n)   /* prompt and set an editor mode */
 {
@@ -1706,4 +1711,5 @@ namedBufferMode(int f, int n)   /* prompt and set an editor mode */
 	return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No such buffer %s]", bufn);
     return adjustMode(bp,(f) ? n:0) ;
 }
+#endif
 

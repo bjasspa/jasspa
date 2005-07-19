@@ -1151,7 +1151,9 @@ donbuf(meLine *hlp, meVarList *varList, meUByte *commandName, int f, int n)
     rp.prev = meRegCurr ;
     rp.commandName = commandName ;
     rp.execstr = execstr ;
+#if MEOPT_EXTENDED
     rp.varList = varList ;
+#endif
     rp.f = f ;
     rp.n = n ;
     rp.depth = meRegCurr->depth + 1 ;
@@ -1248,6 +1250,7 @@ execFunc(int index, int f, int n)
         
         mac = getMacro(index) ;
         hlp = mac->hlp ;
+#if MEOPT_EXTENDED
         if(!(hlp->flag & meMACRO_EXEC))
         {
             if(hlp->flag & meMACRO_FILE)
@@ -1275,6 +1278,9 @@ execFunc(int index, int f, int n)
             else
                 hlp->flag &= ~meMACRO_EXEC ;
         }
+#else
+        status = donbuf(hlp,NULL,mac->name,f,n) ;
+#endif
     }
     
     return status ;
@@ -1313,6 +1319,7 @@ execFuncHidden(int keyCode, int index, meUInt arg)
         f = 0 ;
         n = 1 ;
     }
+#if MEOPT_EXTENDED
     if((ii=frameCur->bufferCur->inputFunc) >= 0)
     {
         meUByte *ss, ff ;
@@ -1326,6 +1333,7 @@ execFuncHidden(int keyCode, int index, meUInt arg)
         meRegHead->force = ff ;
     }
     if(index >= 0)
+#endif
         execFunc(index,f,n);
     if(sv)
         alarmState |= meALARM_VARIABLE ;

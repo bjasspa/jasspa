@@ -57,9 +57,11 @@ extern  meInt      keptVersions;        /* No. of kept backup versions  */
 #if MEOPT_EXTENDED
 extern  meInt      nextFrameId;         /* frame-id of the next create  */
 extern  meInt      nextWindowId;        /* window-id of the next create */
+extern  meShort    pauseTime;           /* Fence matching delay length  */
+#else
+#define pauseTime 2000
 #endif
 extern  meInt      autoTime;            /* auto save time in seconds    */
-extern  meShort    pauseTime;           /* Fence matching delay length  */
 #if MEOPT_MOUSE
 extern  meUInt     delayTime;           /* mouse-time delay time        */
 extern  meUInt     repeatTime;          /* mouse-time repeat time       */
@@ -278,7 +280,6 @@ extern  meUByte   errorm[];             /* error literal                */
 extern  meUByte   abortm[];             /* abort literal                */
 extern  meUByte   truem[];              /* true literal         */
 extern  meUByte   falsem[];             /* false litereal               */
-extern  meVarList usrVarList;           /* user variables list          */
 
 /* global buffer names */
 extern meUByte    BvariablesN[];
@@ -298,6 +299,7 @@ extern meUByte    BmainN[];
 extern meUByte    BhelpN[];
 
 #if MEOPT_EXTENDED
+extern meVarList  usrVarList;           /* user variables list          */
 extern meUByte   *fileIgnore ;
 #endif
 
@@ -334,7 +336,9 @@ extern  meUByte **buffHist ;            /* etc.                           */
 extern  meUByte **commHist ;
 extern  meUByte **fileHist ;
 extern  meUByte **srchHist ;
+#if MEOPT_REGISTRY
 extern  meShort   HistNoFilesLoaded ;   /* Count of no files loaded by hist */
+#endif
 
 #if MEOPT_HILIGHT
 extern meUByte     noHilights ;
@@ -458,11 +462,6 @@ meUByte  *meProgName=NULL ;               /* the program name (argv[0])   */
 meUByte   orgModeLineStr[]="%s%r%u " ME_SHORTNAME " (%e) - %l %b (%f) ";
 meUByte  *modeLineStr=orgModeLineStr;   /* current modeline format      */
 meInt     autoTime=300 ;                /* auto save time in seconds    */
-meInt     keptVersions=0 ;              /* No. of kept backup versions  */
-#if MEOPT_EXTENDED
-meInt     nextFrameId=0 ;               /* frame-id of the next create  */
-meInt     nextWindowId=0 ;              /* window-id of the next create */
-#endif
 #if MEOPT_WORDPRO
 meUByte   fillbullet[16]="*)].-";       /* Fill bullet character class  */
 meShort   fillbulletlen = 15;           /* Fill lookahead limit         */
@@ -472,9 +471,14 @@ meShort   filleoslen=1;                 /* Fill E-O-S ' ' insert len    */
 meUByte   fillignore[16]=">_@";         /* Fill Ignore character class  */
 meUByte   fillmode='B';                 /* Justification mode           */
 #endif
+#if MEOPT_EXTENDED
+meInt     keptVersions=0 ;              /* No. of kept backup versions  */
+meInt     nextFrameId=0 ;               /* frame-id of the next create  */
+meInt     nextWindowId=0 ;              /* window-id of the next create */
+meShort   pauseTime = 2000;             /* Fence matching sleep length  */
+#endif
 meUByte   indentWidth = 4;              /* Virtual Tab size             */
 meUByte   tabWidth = 8;                 /* Real TAB size                */
-meShort   pauseTime = 2000;             /* Fence matching sleep length  */
 meUByte  *searchPath=NULL;              /* emf search path              */
 meUByte  *homedir=NULL;                 /* Home directory               */
 meUByte  *curdir=NULL;                  /* current working directory    */
@@ -706,7 +710,6 @@ meUByte   errorm[]  = "ERROR";          /* error literal                   */
 meUByte   abortm[]  = "ABORT";          /* abort literal                   */
 meUByte   truem[]   = "1";              /* true literal            */
 meUByte   falsem[]  = "0";              /* false litereal                  */
-meVarList usrVarList={NULL,0} ;         /* user variables list             */
 
 /* global buffer names */
 meUByte   BvariablesN[] = "*variables*" ;
@@ -734,6 +737,7 @@ meUByte   BserverN[] = "*server*" ;
 #endif
 
 #if MEOPT_EXTENDED
+meVarList usrVarList={NULL,0} ;         /* user variables list             */
 meUByte  *fileIgnore=NULL ;
 #endif
 
@@ -770,7 +774,9 @@ meUByte **buffHist ;                    /* etc.                           */
 meUByte **commHist ;
 meUByte **fileHist ;
 meUByte **srchHist ;
+#if MEOPT_REGISTRY
 meShort   HistNoFilesLoaded = 0 ;       /* Count of no files loaded by hist */
+#endif
 
 #if MEOPT_HILIGHT
 meUByte     noHilights=0 ;
