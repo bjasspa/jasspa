@@ -608,7 +608,7 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
     delete-buffer "*schm-osd temp buffer*"
     find-buffer .schm-osd.buffer
     1 execute-named-command .schm-osd.redraw
-    -2 osd
+    -3 osd
 !emacro
 
 0 define-macro schm-osd-save
