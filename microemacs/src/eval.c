@@ -1438,6 +1438,7 @@ getval(meUByte *tkn)   /* find the value of a token */
                 return abortm ;
             return ss ;
         }
+#if MEOPT_EXTENDED
         else if((tkn[1] == 's') && isDigit(tkn[2]))
         {
             int ii ;
@@ -1794,6 +1795,7 @@ getval(meUByte *tkn)   /* find the value of a token */
             }
         }
         else
+#endif
         {
             mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unknown argument %s]",tkn);
             return abortm ;
@@ -2325,8 +2327,6 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             evalResult[dlen] = '\0' ;
             return evalResult ;
         }
-#endif
-#if MEOPT_MAGIC
     case UFXREP:
     case UFXIREP:
         {
@@ -2406,8 +2406,6 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             evalResult[dlen] = '\0' ;
             return evalResult ;
         }
-#endif
-#if MEOPT_EXTENDED
     case UFNBMODE:
         {
             meBuffer *bp ;
@@ -2433,11 +2431,9 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
     case UFSLESS:      return(meLtoa(meStrcmp(arg1,arg2) < 0));
     case UFSGREAT:     return(meLtoa(meStrcmp(arg1,arg2) > 0));
     case UFISEQUAL:    return(meLtoa(meStricmp(arg1,arg2) == 0));
-#if MEOPT_MAGIC
+#if MEOPT_EXTENDED
     case UFXSEQ:       return(meLtoa(regexStrCmp(arg1,arg2,meRSTRCMP_WHOLE|meRSTRCMP_USEMAIN) == 1));
     case UFXISEQ:      return(meLtoa(regexStrCmp(arg1,arg2,meRSTRCMP_ICASE|meRSTRCMP_WHOLE|meRSTRCMP_USEMAIN) == 1));
-#endif
-#if MEOPT_EXTENDED
     case UFLDEL:
         {
             int  index=meAtoi(arg2) ;
