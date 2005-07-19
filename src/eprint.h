@@ -30,10 +30,6 @@
 #ifndef __EPRINT_H
 #define __EPRINT_H
 
-#if defined(__cplusplus) || defined(c_plusplus)
-extern "C" {
-#endif
-
 /* Local printer types include
  * mePD_INT   0x01     Integer data
  * mePD_STR   0x00     String data
@@ -115,7 +111,4 @@ extern PRINTER printer;
 #define mePrintColorSetGreen(cc,gg) (cc | (((meUInt) (gg & 0xff)) << 8))
 #define mePrintColorSetBlue(cc,bb)  (cc | ((meUInt) (bb & 0xff)))
 
-#if defined(__cplusplus) || defined(c_plusplus)
-}
-#endif
 #endif /* __EPRINT_H */

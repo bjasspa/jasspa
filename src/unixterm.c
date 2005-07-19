@@ -2506,7 +2506,7 @@ TCAPopen(void)
     setbuffer (stdout, termOutBuf, sizeof (termOutBuf));
 #endif /* _BSD */
 
-#if (defined(NTTYDISC) && defined(TIOCSETD))
+#if (defined NTTYDISC) && (defined TIOCSETD)
      /* Set the line discipline to the new Berkley standard */
      {
          int ldisc = NTTYDISC;

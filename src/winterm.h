@@ -32,10 +32,6 @@
 #ifndef __WINTERM_H__
 #define __WINTERM_H__
 
-#if defined(__cplusplus) || defined(c_plusplus)
-extern "C" {
-#endif
-
 /* Font type settings */
 extern LOGFONT ttlogfont;               /* Current logical font */
 
@@ -48,8 +44,5 @@ typedef struct
     int midY;                           /* Mid position of the cell */
 }  CharMetrics;
 
-#if defined(__cplusplus) || defined(c_plusplus)
-}
-#endif
 #endif /* __WINTERM_H__ */
 

@@ -40,10 +40,12 @@
 #include <sys/stat.h>
 #ifdef _WIN32
 #include <direct.h>                     /* Directory entries */
-#elif (defined _DIRENT)
+#else
+#ifdef _DIRENT
 #include <dirent.h>
 #else
 #include <sys/dir.h>
+#endif
 #endif
 #include <time.h>
 #endif
