@@ -537,13 +537,13 @@
 /**************************************************************************
 * BSD[UNIX] : Include definitions (Support for BSD 4.2/3 only)            *
 **************************************************************************/
-#if ((defined(_BSD_43)) || (defined(_BSD42)))
+#if (defined _BSD_43) || (defined _BSD42)
 /* Additional definitions for BSD4.2 and BSD4.3 */
 #define _BSD                1           /* This is version of BSD        */
 #ifndef _POSIX_SIGNALS
 #define _BSD_SIGNALS        1           /* Use BSD Signals               */
 #endif  /* _POSIX_SIGNALS */
-#endif  /* ((defined(_BSD_43)) || (defined(_BSD42)) */
+#endif  /* (defined _BSD_43) || (defined _BSD42) */
 
 #ifdef _BSD
 #include <signal.h>                     /* Required for signal(2)        */

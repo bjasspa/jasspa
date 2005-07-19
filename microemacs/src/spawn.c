@@ -1282,7 +1282,7 @@ ipipeSetSize(meWindow *wp, meBuffer *bp)
             wp->updateFlags |= WFMOVEL ;
         }
 #ifdef _UNIX
-#if ((defined(TIOCSWINSZ)) || (defined(TIOCGWINSZ)))
+#if ((defined TIOCSWINSZ) || (defined TIOCGWINSZ))
         {
             /* BSD-style.  */
             struct winsize size;
@@ -1589,7 +1589,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
         meUByte *ss ;
 
         /* Dissassociate the new process from the controlling terminal */
-#if ((defined(_BSD)) && (defined(TIOCNOTTY)))
+#if (defined _BSD) && (defined TIOCNOTTY)
         /* Under BSD then we allocate a dummy tty and then immediatly shut it.
          * This has the desired effect of dissassociating the terminal */
         if (ptyFp >= 0)
@@ -1626,7 +1626,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
         setpgid (0,0);                  /* Newer UNIX systems */
 #endif        
         /* Not sure what the hell this does, why is it here ?? */
-#if (defined (TIOCSCTTY) && (defined (_LINUX_BASE) || defined (_FREEBSD_BASE)))
+#if (defined TIOCSCTTY) && ((defined _LINUX_BASE) || (defined _FREEBSD_BASE))
         if((ptyFp >= 0) && (outFds[0] >= 0))
             ioctl (outFds[0],TIOCSCTTY,0);
 #endif
@@ -1635,7 +1635,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
          * disciplines for communication, especially if we are a pty otherwise
          * we will get some problems with the shell. For simple pipes we do
          * not need to bother. */
-#if (defined (_BSD) && defined (NTTYDISC) && defined (TIOCSETD))
+#if (defined _BSD) && (defined NTTYDISC) && (defined TIOCSETD)
         if ((ptyFp >= 0) && (outFds[0] >= 0))
         {
             /* Use new line discipline.  */

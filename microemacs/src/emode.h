@@ -34,10 +34,6 @@
 #ifndef __EMODE_H
 #define __EMODE_H
 
-#if defined(__cplusplus) || defined(c_plusplus)
-extern "C" {
-#endif
-
 /* Expand the mode definitions from the .def file */
 #define DEFMODE(varnam,strnam,chrnam,masklbl,maskval) varnam,
 enum
@@ -128,7 +124,4 @@ meMode modeLineDraw = {
 
 #endif /* INC_MODE_DEF */
 
-#if defined(__cplusplus) || defined(c_plusplus)
-}
-#endif
 #endif /* __EMODE_H */

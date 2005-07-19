@@ -189,9 +189,9 @@ extern int meSigLevel ;                 /* signal level */
 #endif /* _UNIX */
 
 /* Environment Variables */
-#if ((defined(_UNIX)) && (defined(_NOPUTENV)))
+#if (defined _UNIX) && (defined _NOPUTENV)
 extern char    **meEnviron;             /* Our own environment */
-#endif /* ((defined(_UNIX)) && (defined(_NOPUTENV))) */
+#endif /* (defined _UNIX) && (defined _NOPUTENV) */
 
 #if MEOPT_IPIPES
 /* Incremental pipe variables */
@@ -667,9 +667,9 @@ int       meSigLevel = 0;               /* signal level */
 #endif /* _UNIX */
 
 /* Environment Variables */
-#if ((defined(_UNIX)) && (defined(_NOPUTENV)))
+#if (defined _UNIX) && (defined _NOPUTENV)
 char    **meEnviron = NULL;             /* Our own environment */
-#endif /* ((defined(_UNIX)) && (defined(_NOPUTENV))) */
+#endif /* (defined _UNIX) && (defined _NOPUTENV) */
 
 #if MEOPT_IPIPES
 meIPipe  *ipipes=NULL ;                 /* list of all the current pipes*/
