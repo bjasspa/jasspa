@@ -48,6 +48,7 @@
 0 define-macro-file utils frame-handle ascii-time var-str-sub str-to-regex filemask-to-regex copy-registry create-file-path
 define-macro-file cvs cvs cvs-setup cvs-add cvs-annotate cvs-checkout cvs-commit cvs-diff cvs-gdiff cvs-log cvs-remove cvs-resolve-conflicts cvs-state cvs-status cvs-tag cvs-update 
 define-macro-file format clean sort-lines-ignore-case normal-tab tabs-to-spaces paragraph-to-line delete-indentation restyle-region restyle-buffer ifill-paragraph
+define-macro-file clearcs cc-state cc-update cc-checkout cc-checkin cc-add cc-diff cc-uncheckout cc-annotate cc-vtree cc-explorer cc-add-view cc-setup
 define-macro-file tools compile grep rgrep which diff rdiff diff-changes execute-tool uniq reread-file find-bfile find-cfile
 define-macro-file misc save-all open-line check-line-length time compare-windows-exact display-white-chars write-region
 define-macro-file abbrev expand-abbrev-handle expand-iso-accents expand-look-back expand-word iso-accents-mode
