@@ -107,10 +107,15 @@
 !emacro
 
 0 define-macro file-tool-menu
+    !if &not @?
+        set-variable @# .osd.tmp
+        set-variable $mouse-x $cursor-x
+        set-variable $mouse-y &add $cursor-y 1
+    !endif
     !if :tag-count
-        !force 1 dirlst-tag-list "File Tools"
+        !force 6 dirlst-tag-list "File Tools"
     !else
-        !force 0 dirlst-get-filename
+        !force 2 dirlst-get-filename
     !endif
     -1 osd @#
     osd @# 0 "b"
@@ -122,7 +127,8 @@
             set-variable #l3 .find-file.file-count
             !if &xis &ind &cat ".find-file.file" &pdec #l3 1 #l1
                 !tjump #l3 -1
-                osd @# &inc #l4 1 "" #l2 #l0 file-tool-exec
+                execute-line &spr "set-variable #l2 \"%s\"" #l2 
+                osd @# &inc #l4 1 "" &rep #l2 "&" "\H" #l0 file-tool-exec
             !endif
         !done
         !if &not #l4
@@ -130,6 +136,9 @@
         !endif
     !else
         osd @# 10 "" "<no files selected>"
+    !endif
+    !if &not @?
+        .osd.tmp osd
     !endif
 !emacro
 
