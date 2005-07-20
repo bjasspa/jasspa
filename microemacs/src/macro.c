@@ -192,7 +192,7 @@ createMacro(meUByte *name)
         meCommand **cmd ;
         if((cmdTableSize & 0x1f) == 0)
         {
-            /* run out of room in hte command table, malloc more */
+            /* run out of room in the command table, malloc more */
             meCommand **nt ;
             if((nt = (meCommand **) meMalloc((cmdTableSize+0x20)*sizeof(meCommand *))) == NULL)
                 return NULL ;
