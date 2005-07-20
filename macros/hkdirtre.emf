@@ -20,11 +20,11 @@ define-macro fhook-dirtre
 set-variable .fhook-dirtre.name "Directory Tree"
 set-variable .fhook-dirtre.setup &reg "/history/fhook/dirtre" "ghmop"
 set-variable .fhook-dirtre.setup-mask "aeghop"
-set-variable .fhook-dirtre.command-flag  "|thbio|thbio|th|thbio|thbio|bio|thbio|thbio|bio|"
-set-variable .fhook-dirtre.command-name  "|file-browser-swap-buffers|file-browser-close||dirtre-select-directory|directory-tree|directory-tree|dirtre-select-directory|dirtre-select-directory|dirtre-select-directory|"
-set-variable .fhook-dirtre.command-nbind "||||0x02|0x4e|0x4e|0x66|0xe6|0xe6|"
-set-variable .fhook-dirtre.command-kbind "|tab|f10||space|o|O|return|C-return|C-j|"
-set-variable .fhook-dirtre.command-desc  "|Swap Browser \HWindows|\HClose File Browser||\HSelect Directory|\HOpen Directory||Open/Close \HDirectory|\HRecursively Open/Close Directory||"
+set-variable .fhook-dirtre.command-flag  "|thbio|thbio|th|thbio|thbio|bio|bio|thbio|bio|bio|thbio|thbio|bio|"
+set-variable .fhook-dirtre.command-name  "|file-browser-swap-buffers|file-browser-close||dirtre-select-directory|directory-tree|directory-tree|directory-tree|directory-tree|directory-tree|directory-tree|dirtre-select-directory|dirtre-select-directory|dirtre-select-directory|"
+set-variable .fhook-dirtre.command-nbind "||||0x02|0x4e|0x4e|0x4e|0x12|0x12|0x12|0x66|0xe6|0xe6|"
+set-variable .fhook-dirtre.command-kbind "|tab|f10||space|o|O|+|c|C|-|return|C-return|C-j|"
+set-variable .fhook-dirtre.command-desc  "|Swap Browser \HWindows|Close File \HBrowser||\HSelect Directory|\HOpen Directory|||\HClose Directory|||Open/Close \HDirectory|\HRecursively Open/Close Directory||"
 
 !if &and &sin "h" .fhook-dirtre.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.dirtre
