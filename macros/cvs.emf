@@ -945,12 +945,12 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
         !abort
     !endif
     !force unset-variable .cvs.refresh
-    !if &set #l9 &seq $buffer-fhook "fhook-dirlst"
+    !if &bmod "dir"
         !if &lfind "|11|3|1|7|2|" @#
             ; if update, commit remove or add then refresh or drop tags
             set-variable .cvs.refresh $buffer-bname
         !endif
-        dirlst-tag-list
+        6 dirlst-tag-list
         goto-position "\x82"
     !elif &seq $buffer-bname "*cvs-state*"
         set-variable #l9 2
