@@ -2794,17 +2794,18 @@ WinMouse(HWND hwnd, UINT message, UINT wParam, LONG lParam)
             if(!mouseInFrame && !mouseButs)
                 return meFALSE ;
             
-            /* Check for a mouse-move key */
-            cc = ME_SPECIAL | ttmodif | (SKEY_mouse_move+mouseKeys[mouseState&MOUSE_STATE_BUTTONS]) ;
-            /* Are we after all movements or mouse-move bound ?? */
-            if((!TTallKeys && (decode_key(cc,&arg) != -1)) || (TTallKeys & 0x1))
-                addKeyToBufferOnce(cc) ;        /* Add key to keyboard buffer */
+            /* Found that on NT ME continually gets MOUSEMOVE messages even
+             * though the mouse hasn't moved! I wonder if thats why it runs
+             * so slow? To stop the mouse cursor reappearing & generating
+             * continuous mouse_move 'keys' store the last position and only
+             * do something if the mouse really has moved. */
             if(lParam != lastPos)
             {
-                /* Found that on NT ME continually gets MOUSEMOVE messages even though
-                 * the mouse hasn't moved! I wonder if thats why it runs so slow?
-                 * To stop the mouse cursor reappearing store the last position and
-                 * only show the mouse if it has moved. */ 
+                /* Check for a mouse-move key */
+                cc = ME_SPECIAL | ttmodif | (SKEY_mouse_move+mouseKeys[mouseState&MOUSE_STATE_BUTTONS]) ;
+                /* Are we after all movements or mouse-move bound ?? */
+                if((!TTallKeys && (decode_key(cc,&arg) != -1)) || (TTallKeys & 0x1))
+                    addKeyToBufferOnce(cc) ;        /* Add key to keyboard buffer */
                 mouseShow() ;
                 lastPos = lParam ;
             }
