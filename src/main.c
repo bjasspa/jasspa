@@ -301,8 +301,8 @@ execute(register int c, register int f, register int n)
             return cmdstatus ;
         meRegHead->force = ff ;
     }
-    if(index >= 0)
 #endif
+    if(index >= 0)
         return (cmdstatus = (execFunc(index,f,n) > 0)) ;
     if(selhilight.flags)
     {
