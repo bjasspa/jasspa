@@ -424,7 +424,7 @@ extern struct s_DragAndDrop *dadHead;   /* Drag and drop list */
 
 /* initialized global definitions */
 #ifdef _INSENSE_CASE
-meDirList curDirList={0,0,NULL,NULL,0,NULL,0} ;
+meDirList curDirList={0,0,NULL,NULL,0,NULL} ;
 #else
 meDirList curDirList={1,0,NULL,NULL,0,NULL,0} ;
 #endif

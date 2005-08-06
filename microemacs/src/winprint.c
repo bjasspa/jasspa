@@ -746,8 +746,8 @@ pcdChange (HWND hWnd)
     SendMessage (dWnd, WM_GETTEXT, 30, (LPARAM)(buf));
 
     /* Copy the new font into the registry immediatly */
-    printer.param [mePI_FONTFACE].p =
-              regGetString (regSet (regPrint, printNames[mePI_FONTFACE], buf),"Courier New");
+    printer.param[mePI_FONTFACE].p =
+              regGetString (regSet (regPrint, printNames[mePI_FONTFACE], buf),(meUByte *) "Courier New");
 
     /* Compute the size of the font */
     pcdComputeFont (&pd,

@@ -639,7 +639,7 @@ gwd(meUByte drive)
         int curDrive;
 
         curDrive = _getdrive ();
-        drive = tolower (drive) - 'a' + 1;
+        drive = toLower (drive) - 'a' + 1;
         if ((drive == curDrive) || (_chdrive (drive) != 0))
             drive = 0;             /* Failed drive change or same drive */
         else

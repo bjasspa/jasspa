@@ -256,9 +256,9 @@ meShell(int f, int n)
 int
 doShellCommand(meUByte *cmdstr, int flags)
 {
-    meUByte path[meBUF_SIZE_MAX] ;		/* pathfrom where to execute */
-    int  systemRet ;                    /* return value of last system  */
-    int  cd, ss ;
+    meUByte path[meBUF_SIZE_MAX] ;	/* pathfrom where to execute */
+    meInt systemRet ;                   /* return value of last system  */
+    int cd, ss ;
 #ifdef _UNIX
     meWAIT_STATUS ws;
 #endif
@@ -660,7 +660,7 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff)
 #endif
     if(ipipe->flag & meIPIPE_CHILD_EXIT)
     {
-        GetExitCodeProcess(ipipe->process,&(ipipe->exitCode)) ;
+        GetExitCodeProcess(ipipe->process,(LPDWORD) &(ipipe->exitCode)) ;
         CloseHandle(ipipe->process);
         ipipe->pid = -4 ;
         return ipipe->pid ;
@@ -838,7 +838,7 @@ ipipeRead(meIPipe *ipipe)
         {
 
             if(ipipe->pid == -4)
-                sprintf((char *) p1,"[EXIT %d]",ipipe->exitCode) ;
+                sprintf((char *) p1,"[EXIT %d]",(int) ipipe->exitCode) ;
             else
             {
                 meUByte *ins ;
@@ -1904,7 +1904,8 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
 {
     register meBuffer *bp;	/* pointer to buffer to zot */
     meUByte line[meBUF_SIZE_MAX+256] ;    /* new com line with "> command" (+256 to allow for the >.... */
-    int cd, ret, systemRet ;
+    meInt systemRet ;
+    int cd, ret ;
 #ifdef _DOS
     static meByte pipeStderr=0 ;
     meUByte cc, *ss, *dd ;

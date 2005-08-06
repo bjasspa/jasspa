@@ -1117,7 +1117,7 @@ typedef struct meIPipe {
     meBuffer          *bp ;
     struct meIPipe    *next ;
     int                pid ;
-    int                exitCode ;
+    meInt              exitCode ;
 #ifdef _WIN32
     HANDLE             rfd ;
     HANDLE             outWfd ;

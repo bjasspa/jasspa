@@ -656,11 +656,11 @@ createBuffList(meUByte ***listPtr, int noHidden)
 int
 createVarList(meUByte ***listPtr)
 {
-    meVariable *vptr;     	/* User variable pointer */
     int     ii, nn ;
     meUByte  **list ;
-
 #if MEOPT_EXTENDED
+    meVariable *vptr;     	/* User variable pointer */
+
     nn = NEVARS + usrVarList.count + frameCur->bufferCur->varList.count ;
 #else
     nn = NEVARS ;

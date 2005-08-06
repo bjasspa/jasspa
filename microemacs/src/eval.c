@@ -58,7 +58,7 @@ static time_t timeOffset=0 ;            /* Time offset in seconds */
 
 #ifdef _INSENSE_CASE
 meNamesList buffNames={0,0,NULL,NULL,0} ;
-meDirList  fileNames={0,0,NULL,NULL,0,NULL,0} ;
+meDirList  fileNames={0,0,NULL,NULL,0,NULL} ;
 #else
 meNamesList buffNames={1,0,NULL,NULL,0} ;
 meDirList  fileNames={1,0,NULL,NULL,0,NULL,0} ;
@@ -2929,7 +2929,7 @@ get_flag:
                     {
                         doy = meGetDayOfYear(tmp.wYear,tmp.wMonth,tmp.wDay) ;
                         sprintf((char *)evalResult, "%4d%3d%2d%2d%1d%2d%2d%2d%3d",
-                                tmp.wYear,doy,tmp.wMonth,tmp.wDay,tmp.wDayOfWeek,tmp.wHour,
+                                tmp.wYear,(int) doy,tmp.wMonth,tmp.wDay,tmp.wDayOfWeek,tmp.wHour,
                                 tmp.wMinute,tmp.wSecond,tmp.wMilliseconds) ;
                     }
                     else

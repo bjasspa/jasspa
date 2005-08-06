@@ -1244,13 +1244,12 @@ execFunc(int index, int f, int n)
     }
     else
     {
-        meMacro *mac ;
+        meMacro *mac = getMacro(index) ;
+#if MEOPT_EXTENDED
         meUByte firstExec ;                    /* set if this is first */
         meLine *hlp ;
         
-        mac = getMacro(index) ;
         hlp = mac->hlp ;
-#if MEOPT_EXTENDED
         if(!(hlp->flag & meMACRO_EXEC))
         {
             if(hlp->flag & meMACRO_FILE)
@@ -1279,7 +1278,7 @@ execFunc(int index, int f, int n)
                 hlp->flag &= ~meMACRO_EXEC ;
         }
 #else
-        status = donbuf(hlp,NULL,mac->name,f,n) ;
+        status = donbuf(mac->hlp,NULL,mac->name,f,n) ;
 #endif
     }
     

@@ -57,6 +57,7 @@ set MAKE=nmake
 if "%MAKEFILE%." == "." goto build_auto
 if "%MAKEFILE%" == "dosdj1.mak"  set MAKE=make
 if "%MAKEFILE%" == "dosdj2.mak"  set MAKE=make
+if "%MAKEFILE%" == "mingw32.gmk" set MAKE=mingw32-make
 
 goto build
 
@@ -154,6 +155,7 @@ echo     -m {makefile}
 echo            Sets the makefile to use where {makefile} can be:-
 echo              dosdj1.mak   Dos build using djgpp version 1 
 echo              dosdj2.mak   Dos build using djgpp version 2 
+echo              mingw32.gmk  Win32 build using MinGW GNU GCC
 echo              win32bc.mak  Win32 build using Borland C
 echo              win32v2.mak  Win32 build using MS VC version 2
 echo              win32v5.mak  Win32 build using MS VC version 5
