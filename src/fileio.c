@@ -189,10 +189,10 @@ meUByte *charKeyboardMap=NULL ;
 
 #define meFIOBUFSIZ 2048              /* File read/write buffer size  */
 
-static int       ffremain ;
+static meInt     ffremain ;
+static meInt     ffread ;
+static meInt     ffoffset ;
 static int       ffbinary=0 ;
-static int       ffread ;
-static int       ffoffset ;
 static meUByte   ffbuf[meFIOBUFSIZ+1] ;
 static meUByte  *ffcur ;
 static meUByte   ffwerror ;
@@ -300,7 +300,7 @@ static meRegNode *ffpasswdReg=NULL ;
 static int fftype=meURLTYPE_FILE ;
 
 static struct sockaddr_in meSockAddr ;
-static int ffsize ;
+static meInt ffsize ;
 static int ffstartTime ;
 #define ffURL_CONSOLE        0x01
 #define ffURL_SHOW_CONSOLE   0x02
@@ -1255,9 +1255,9 @@ ffUrlFileClose(meUByte *fname, meUInt rwflag)
             if(dwldtime <= 0)
                 dwldtime = 1 ;
             sprintf((char *)buff,"%d bytes %s in %d.%d seconds (%d.%d Kbytes/s)",
-                    ffread,(rwflag & meRWFLAG_WRITE) ? "sent":"received",
+                    (int) ffread,(rwflag & meRWFLAG_WRITE) ? "sent":"received",
                     dwldtime/1000,(dwldtime/100) % 10,
-                    ffread/dwldtime,((ffread*100)/dwldtime)% 100) ;
+                    (int) (ffread/dwldtime),(int) (((ffread*100)/dwldtime) % 100)) ;
             ffurlConsoleAddText(buff,0x04) ;
             ffurlConsoleAddText((meUByte *)"",0) ;
             ffurlBp = NULL ;
@@ -1988,7 +1988,7 @@ ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
         }
     }
     if(length > 0)
-        sprintf((char *)resultStr,"|%d|%d|",ffoffset,ffoffset+ffread-ffremain) ;
+        sprintf((char *)resultStr,"|%d|%d|",(int) ffoffset,(int) (ffoffset+ffread-ffremain)) ;
     return ss ;
 }
 
@@ -2015,7 +2015,7 @@ ffputBuf(void)
 #endif
 #ifdef _WIN32
     {
-        int written ;
+        meInt written ;
         if((WriteFile(ffwp,ffbuf,ffremain,&written,NULL) == 0) || (written != ffremain))
         {
             ffwerror = 1 ;
@@ -2115,7 +2115,6 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
                      * 
                      * This is done for all flavours of windows as these drives can be networked
                      */
-                    extern int platformId;
                     meUByte filenameOldB[meBUF_SIZE_MAX], *filenameOld ;
                     
                     if(!(meSystemCfg & meSYSTEM_DOSFNAMES))

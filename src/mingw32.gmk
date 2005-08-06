@@ -1,7 +1,7 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# mingw.gmk - Make file for Windows using MinGW GNU GCC.
+# mingw32.gmk - Make file for Windows using MinGW GNU GCC.
 #
 # Copyright (C) 2004-2005 JASSPA (www.jasspa.com)
 #
@@ -25,26 +25,26 @@
 # Synopsis:    Make file for Windows using MinGW GNU GCC (http://www.mingw.org).
 # Authors:     Patrick Anderson, Steven Phillips
 # Notes:
-#       This makefile is for use within a MinGW MSYS shell, use mingw32.gmk
-#       when using an MS command prompt.
+#       This makefile is for use within a MS Command pompt, use mingw.gmk
+#       when using a MinGW MSYS shell.
 #       Build from the command line using MinGW make. 
 #
-#	Run "mingw32-make -f mingw.gmk"      for optimised build produces ./me32.exe
-#	Run "mingw32-make -f mingw.gmk mec"  for console support          ./mec32.exe
-#	Run "mingw32-make -f mingw.gmk med"  for debug build produces     ./med32.exe
+#	Run "mingw32-make -f mingw32.gmk"      for optimised build produces ./me32.exe
+#	Run "mingw32-make -f mingw32.gmk mec"  for console support          ./mec32.exe
+#	Run "mingw32-make -f mingw32.gmk med"  for debug build produces     ./med32.exe
 #
-#	Run "mingw32-make -f mingw.gmk clean"      to clean source directory
-#	Run "mingw32-make -f mingw.gmk spotless"   to clean source directory even more
+#	Run "mingw32-make -f mingw32.gmk clean"      to clean source directory
+#	Run "mingw32-make -f mingw32.gmk spotless"   to clean source directory even more
 #
 ##############################################################################
 #
 # Installation Directory
-INSTDIR	      = /usr/local/bin
+INSTDIR	      = c:\emacs
 INSTPROGFLAGS = -s -o root -g root -m 0775
 #
 # Local Definitions
-CP            = cp
-RM            = - rm -f
+CP            = copy
+RM            = - erase
 RC            =	windres
 CC            = gcc
 LD            = $(CC)
@@ -154,14 +154,41 @@ install: me
 	@echo "install done"
 
 clean:
-	$(RM) $(PLTMRES) $(PLTNRES) $(PLTNCRES)
-	$(RM) me32.exe mec32.exe mew32.exe mecw32.exe ne32.exe nec32.exe new32.exe necw32.exe
-	$(RM) med32.exe medc32.exe medw32.exe medcw32.exe ned32.exe nedc32.exe nedw32.exe nedcw32.exe
-	$(RM) *.oc *.ow *.ob *.on *.ov *.oe
-	$(RM) *.odc *.odw *.odb *.odn *.odv *.ode
+	$(RM) $(PLTMRES)
+	$(RM) $(PLTNRES)
+	$(RM) $(PLTNCRES)
+	$(RM) me32.exe
+	$(RM) mec32.exe
+	$(RM) mew32.exe
+	$(RM) mecw32.exe
+	$(RM) ne32.exe
+	$(RM) nec32.exe
+	$(RM) new32.exe
+	$(RM) necw32.exe
+	$(RM) med32.exe
+	$(RM) medc32.exe
+	$(RM) medw32.exe
+	$(RM) medcw32.exe
+	$(RM) ned32.exe
+	$(RM) nedc32.exe
+	$(RM) nedw32.exe
+	$(RM) nedcw32.exe
+	$(RM) *.oc
+	$(RM) *.ow
+	$(RM) *.ob
+	$(RM) *.on
+	$(RM) *.ov
+	$(RM) *.oe
+	$(RM) *.odc
+	$(RM) *.odw
+	$(RM) *.odb
+	$(RM) *.odn
+	$(RM) *.odv
+	$(RM) *.ode
 
 spotless: clean
-	$(RM) tags *~
+	$(RM) tags
+	$(RM) *~
 
 mec:	mec32.exe
 mec32.exe: $(OBJ_C) $(PLTMRES)

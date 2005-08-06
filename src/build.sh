@@ -82,18 +82,6 @@ if [ ".$MAKEFILE" = "." ] ; then
         else
             MAKEBAS=aix4
         fi
-    elif [ `echo $PLATFORM | sed -e "s/^CYGWIN.*/CYGWIN/"` = "CYGWIN" ] ; then
-        MAKEBAS=cygwin
-        # Check for an X11 install.
-        if [ "$OPTIONS" = "" ] ; then
-            if [ ! -f /usr/X11R6/lib/libX11-6.dll.a ] ; then
-                echo "No X-11 support found, forcing terminal only."
-                METYPE=c
-            else
-                echo "Found version of X11 installed"                
-            fi
-            sleep 5
-        fi
     elif [ $PLATFORM = "Darwin" ] ; then
         MAKEBAS=darwin
     elif [ $PLATFORM = "FreeBSD" ] ; then
@@ -139,6 +127,20 @@ if [ ".$MAKEFILE" = "." ] ; then
             # Must be Sparc Solaris
             MAKEBAS=sunos5
         fi
+    elif [ `echo $PLATFORM | sed -e "s/^CYGWIN.*/CYGWIN/"` = "CYGWIN" ] ; then
+        MAKEBAS=cygwin
+        # Check for an X11 install.
+        if [ "$OPTIONS" = "" ] ; then
+            if [ ! -f /usr/X11R6/lib/libX11-6.dll.a ] ; then
+                echo "No X-11 support found, forcing terminal only."
+                METYPE=c
+            else
+                echo "Found version of X11 installed"                
+            fi
+            sleep 5
+        fi
+    elif [ `echo $PLATFORM | sed -e "s/^MINGW.*/MINGW/"` = "MINGW" ] ; then
+        MAKEBAS=mingw
     else
         echo "Error: Unrecognized platform - $PLATFORM"
         exit 1

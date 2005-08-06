@@ -510,7 +510,7 @@ extern int  WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte 
 #if MEOPT_IPIPES
                               meIPipe *ipipe,
 #endif
-                              int *sysRet);
+                              meInt *sysRet);
 
 #endif /* _WIN32 */
 

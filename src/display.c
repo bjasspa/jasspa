@@ -2877,7 +2877,7 @@ mlwrite(int flags, meUByte *fmt, int arg)
     {
 #ifdef _WIN32
         HANDLE fp ;
-        int written ;
+        DWORD written ;
         if(flags & MWSTDOUTWRT)
             fp = GetStdHandle(STD_OUTPUT_HANDLE) ;
         else

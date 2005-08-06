@@ -195,7 +195,7 @@ typedef struct
     int      borderWidth;               /* Window border width */
 } CellMetrics;
 
-CellMetrics eCellMetrics={0};           /* Cell metrics */
+CellMetrics eCellMetrics;               /* Cell metrics */
 RECT   ttRect;                          /* Area of screen to update */
 #endif /* _ME_WINDOW */
 
@@ -232,7 +232,7 @@ static meUByte consoleColors[consoleNumColors*3] =
 } ;
 
 /* Function prototypes */
-HANDLE
+static HANDLE
 WinKillToClipboard (void);
 #endif
 /***************************************************************************/
@@ -511,7 +511,7 @@ TTopenClientServer(void)
         meBuffer *bp ;
         meMode sglobMode ;
         meUByte fname [meBUF_SIZE_MAX];
-        int ii ;
+        meInt ii ;
 
         /* create the response file name */
         mkTempName (fname, meUserName, ".rsp");
@@ -579,7 +579,7 @@ TTopenClientServer(void)
         {
             meUByte buff[meBUF_SIZE_MAX] ;
 
-            ii = sprintf((char *)buff,"%d\n",baseHwnd) ;
+            ii = sprintf((char *)buff,"%d\n",(int) baseHwnd) ;
             WriteFile(clientHandle,buff,ii,&ii,NULL) ;
 
             sprintf((char *)buff,"Client Server: %s\n\n",fname) ;
@@ -2129,7 +2129,7 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
 #if MEOPT_IPIPES
                   meIPipe *ipipe,
 #endif
-                  int *sysRet)
+                  meInt *sysRet)
 {
     static meUByte *compSpecName=NULL ;
     static int compSpecLen ;
@@ -2472,7 +2472,7 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
                         status = meTRUE;
                     /* If we're interested in the result, get it */
                     if(sysRet != NULL)
-                        GetExitCodeProcess(mePInfo.hProcess,sysRet) ;
+                        GetExitCodeProcess(mePInfo.hProcess, (LPDWORD) sysRet) ;
                     break;
                 }
             }
@@ -3264,9 +3264,9 @@ do_keydown:
                 else if ((wParam >= VK_NUMPAD0) && (wParam <= VK_DIVIDE))
                 {
                     if(wParam <= VK_NUMPAD9)
-                        cc  = ttmodif | /*SKEY_kp_0 */ '0' + (wParam - VK_NUMPAD0);
+                        cc  = ttmodif | ('0' + wParam - VK_NUMPAD0);
                     else
-                        cc  = ttmodif | '*' + (wParam - VK_MULTIPLY);
+                        cc  = ttmodif | ('*' + wParam - VK_MULTIPLY);
                     
                 }
                 else if (wParam == VK_TAB)
@@ -3283,7 +3283,7 @@ do_keydown:
             }
             else if ((wParam >= VK_NUMPAD0) && (wParam <= VK_NUMPAD9))
             {
-                cc  = ttmodif | ME_SPECIAL | /*SKEY_kp_0 */ '0' + (wParam - VK_NUMPAD0);
+                cc  = ttmodif | ME_SPECIAL | ('0' + wParam - VK_NUMPAD0);
             }
             else if (wParam == VK_MULTIPLY)
                 cc  = ttmodif | '*' /* ME_SPECIAL | SKEY_kp_multiply*/ ;
@@ -3582,7 +3582,9 @@ TTaddColor(meColor index, meUByte r, meUByte g, meUByte b)
         ss = consoleColors ;
         for(ii=0 ; ii<consoleNumColors ; ii++)
         {
-            idif = abs(r - *ss++) + abs(g - *ss++) + abs(b - *ss++) ;
+            idif  = abs(r - *ss++) ;
+            idif += abs(g - *ss++) ;
+            idif += abs(b - *ss++) ;
             if(idif < jdif)
             {
                 jdif = idif ;
@@ -3819,8 +3821,8 @@ TTchangeFont (meUByte *fontName, int fontType, int fontWeight,
                 /* SWP - if the user cancelled just return false leaving the font alone */
                 return meFALSE ;
             /* Save the values in $result */
-            sprintf(resultStr,"%1d%4d%4d%4d%s",(logfont.lfWeight/100),logfont.lfWidth,
-                    logfont.lfHeight,logfont.lfCharSet,logfont.lfFaceName) ;
+            sprintf(resultStr,"%1d%4d%4d%4d%s",(int) (logfont.lfWeight/100),(int) logfont.lfWidth,
+                    (int) logfont.lfHeight,logfont.lfCharSet,logfont.lfFaceName) ;
             if (fontType < -2)
                 /* if a -ve argument was past to changeFont then don't set the font */
                 return meTRUE ;
@@ -4310,7 +4312,7 @@ meGetMessage(MSG *msg, int mode)
                                               (LPDWORD) NULL, &doRead, (LPDWORD) NULL) == meFALSE)
                         {
                             /* If peek failed, wipe our hands of it. Close the process */
-                            GetExitCodeProcess(ipipe->process,&(ipipe->exitCode)) ;
+                            GetExitCodeProcess(ipipe->process,(LPDWORD) &(ipipe->exitCode)) ;
                             CloseHandle(ipipe->process);
                             ipipe->pid = -4 ;
                         }
@@ -4325,7 +4327,7 @@ meGetMessage(MSG *msg, int mode)
                             (!GetExitCodeProcess(ipipe->process,&doRead) || (doRead != STILL_ACTIVE)))
                     {
                         /* Win95 fails to spot the exit state some times, this fixes it */
-                        GetExitCodeProcess(ipipe->process,&ipipe->exitCode) ;
+                        GetExitCodeProcess(ipipe->process,(LPDWORD) &ipipe->exitCode) ;
                         CloseHandle(ipipe->process);
                         ipipe->pid = -4 ;
                         pp = ipipe ;
@@ -4682,6 +4684,7 @@ meFrameTermInit(meFrame *frame, meFrame *sibling)
  * Start the EMACS window environment. This is called once at the start
  * when it creates the Window and determines the initial text metrics.
  */
+int
 TTstart (void)
 {
 #ifdef _ME_CONSOLE
@@ -5320,7 +5323,7 @@ static void
 meSetupUserName(void)
 {
     char *nn, buff[128] ;
-    int ii ;
+    DWORD ii ;
     
     /* Decide on a name. */
     if(((nn = meGetenv ("MENAME")) == NULL) || (nn[0] == '\0'))
