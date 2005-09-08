@@ -23,9 +23,9 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		\
 	darwin.emf	dmf.emf		docmacro.emf	docutl.emf	\
 	dos.emf		dos2unix.emf	draw.emf	\
 	ehftools.emf	emftags.emf	etfinsrt.emf	\
-	fattrib.emf	favorite.emf	fileopen.emf	find.emf	\
-	findbuff.emf	fold.emf	format.emf	freebsd.emf	\
-	ftp.emf		\
+	fattrib.emf	favorite.emf	fileopen.emf	filetool.emf	\
+	find.emf	findbuff.emf	fold.emf	format.emf	\
+	freebsd.emf	ftp.emf		\
 	games.emf	gdiff.emf	gentags.emf	\
 	hkada.emf	hkapache.emf	hkasmx86.emf	hkasn1.emf	\
 	hkasp.emf	hkau3.emf	hkawk.emf	\
@@ -78,9 +78,9 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		\
 	rect.emf	\
 	scheme.emf	schemeb.emf	schemebc.emf	\
 	schemebh.emf	schemed.emf	schemej.emf	schemel.emf	\
-	schemelj.emf	schememd.emf	schemepd.emf	schemepl.emf	\
-	schemes.emf	schemesf.emf	schemetb.emf	schemetw.emf	\
-	schemevi.emf	schemosd.emf	\
+	schemelj.emf	schememd.emf	schememw.emf	schemepd.emf	\
+	schemepl.emf	schemes.emf	schemesf.emf	schemetb.emf	\
+	schemetw.emf	schemevi.emf	schemosd.emf	\
 	search.emf	spell.emf	spellaut.emf	\
 	spellutl.emf	ssaver.emf	sunos.emf	\
 	tcltags.emf	textags.emf	toolbar.emf	tooldef.emf	\
