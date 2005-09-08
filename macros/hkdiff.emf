@@ -18,16 +18,16 @@
 !if &band .hilight.flags 0x02
     0 hilight .hilight.diff 0                 $global-scheme
     ; Gnu diff utility, uses --context
-    hilight .hilight.diff 0x102 "!"           .scheme.no1
-    hilight .hilight.diff 0x102 "+"           .scheme.no1
-    hilight .hilight.diff 0x102 "-"           .scheme.no1
+    hilight .hilight.diff 0x102 "! "          .scheme.no1
+    hilight .hilight.diff 0x102 "+ "          .scheme.no1
+    hilight .hilight.diff 0x102 "- "          .scheme.no1
     ; Regular diff utility. May be a bit too colored !!
     hilight .hilight.diff 0x102 "<"           .scheme.no2
-    hilight .hilight.diff 0x102 ">"           .scheme.no1
-    hilight .hilight.diff 0x102 "[[:digit:]]" .scheme.no1
+    hilight .hilight.diff 0x102 ">"           .scheme.prepro
     ; Common
+    hilight .hilight.diff 0x102 "*\\*\\*\\*"  .scheme.keyword
     hilight .hilight.diff 0x102 "*\\*\\*"     .scheme.no2
-    hilight .hilight.diff 0x102 "---"         .scheme.prepro
+    hilight .hilight.diff 0x102 "--- "        .scheme.prepro
     hilight .hilight.diff 0x102 "Only"        .scheme.comment
     hilight .hilight.diff 0x102 "Files"       .scheme.comment
 
