@@ -10,6 +10,9 @@
 !if &not &exi dirlst-sort-list
     0 exec-file "hkdirlst"
 !endif
+!if &not &exi %diff-com
+    0 exec-file "tools"
+!endif
 !if &not &exi .osd.ccosd
     set-variable .osd.ccosd  &pinc .osd.next 1
     set-variable .osd.ccstp  &pinc .osd.next 1
@@ -1137,7 +1140,7 @@ define-macro cc-uncheckout
     set-variable #l2 &spr "%s unco -%s " .cc-init.com &con &lget .values 1 "keep" "rm"
     &len #l2 cc-get-file-list #l0 0 0
     7 cc-cleartool 3 $buffer-fname &cat #l2 #l0
-    !if &not &bmod "dir"
+    !if &not &or &or &seq &lef $buffer-bname 1 "*" &seq $buffer-fname "" &bmod "dir"
         reread-file
     !endif
 !emacro
