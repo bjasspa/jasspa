@@ -77,13 +77,17 @@
         set-variable #l0 &spr "%s%s%s" #l0 #l7 #l8
     !endif
     set-variable #l0 &rep &rep &rep &rep #l0 "\bA" "%" "\bB" "[" "\bC" "|" "\bD" "]"
-    ml-write #l0
-    set-variable #g1 #l0
-    0x24 shell-command #l0
+    ml-write &spr "[Launching: %s]" #l0
+    !if &seq &lef #l0 1 "*"
+        !force execute-line &rig #l0 1
+    !else
+        @2 shell-command #l0
+    !endif
 !emacro
 
 0 define-macro file-tool-exec
     set-variable #l0 &reg &spr "/history/%s/file-tool/%d/cmd" $platform @# ""
+    set-variable #l9 &cond &reg &spr "/history/%s/file-tool/%d/hide" $platform @# "0" 0x04 0x24
     !if &not &or &sin "%f" #l0 &sin "%b" #l0
         ml-write &spr "[Error: badly formed command-line \"%s\"]" #l0
         !abort
@@ -91,9 +95,9 @@
         ml-write "[Error: No files selected]"
         !abort
     !elif &sin "%*[" #l0
-        file-tool-run #l0
+        file-tool-run #l0 #l9
     !elif &equ .find-file.file-count 1
-        1 file-tool-run #l0
+        1 file-tool-run #l0 #l9
     !else
         set-variable #l1 @mc1 &spr "Launch %d separate processes [y/n]? " .find-file.file-count "yYnN"
         !if &not &iseq #l1 "y"
@@ -101,9 +105,29 @@
         !endif
         set-variable #l1 0
         !while &les &pinc #l1 1 .find-file.file-count
-            #l1 file-tool-run #l0
+            #l1 file-tool-run #l0 #l9
         !done
     !endif
+!emacro
+
+0 define-macro file-tool-exec-default
+    set-variable #l0 @1
+    !if &not &seq &set #l1 &rig #l0 &rsin "/" #l0 ""
+        set-variable #l2 0
+        !while &not &seq &reg &set #l3 &spr "/history/%s/file-tool/%d" $platform &inc #l2 1 "" ""
+            !if &reg &cat #l3 "/default" "0"
+                set-variable #l4 &reg &cat #l3 "/mask" ""
+                !if &xis #l1 #l4
+                    set-variable .find-file.file-count 1
+                    set-variable .find-file.file-dir &lef #l0 &rsin "/" #l0
+                    set-variable .find-file.file1 #l1
+                    !force #l2 file-tool-exec
+                    !return
+                !endif
+            !endif
+        !done
+    !endif
+    !abort
 !emacro
 
 0 define-macro file-tool-menu
@@ -128,7 +152,7 @@
             !if &xis &ind &cat ".find-file.file" &pdec #l3 1 #l1
                 !tjump #l3 -1
                 execute-line &spr "set-variable #l2 \"%s\"" #l2 
-                osd @# &inc #l4 1 "" &rep #l2 "&" "\H" #l0 file-tool-exec
+                osd @# &inc #l4 1 "" #l2 #l0 file-tool-exec
             !endif
         !done
         !if &not #l4
@@ -149,20 +173,30 @@
 !endif
 
 0 define-macro file-tool-set-flds
+    osd .osd.file-tool 200 "BfhH" .scheme.osd-dbtt "  Up  "
+    osd .osd.file-tool 220 "BfhH" .scheme.osd-dbtt " Down "
     !if &set .file-tool-setup.cur @#
         osd .osd.file-tool 40 "fh" &spr "  %2d  " @#
         set-variable .file-tool-setup.name &reg &set #l1 &spr "/history/%s/file-tool/%d" $platform @# ""
         set-variable .file-tool-setup.mask &reg &cat #l1 "/mask" "" 
         set-variable .file-tool-setup.cmd  &reg &cat #l1 "/cmd" "" 
-        osd .osd.file-tool 620 "BcfhxH" .scheme.osd-ebtt " \HChange " 2 file-tool-setup-com
-        osd .osd.file-tool 630 "BcfhxH" .scheme.osd-ebtt " \HDelete " 3 file-tool-setup-com
+        set-variable .file-tool-setup.default &reg &cat #l1 "/default" "0" 
+        set-variable .file-tool-setup.hide &reg &cat #l1 "/hide" "0" 
+        osd .osd.file-tool 620 "BfhxH" .scheme.osd-ebtt " \HChange " 2 file-tool-setup-com
+        osd .osd.file-tool 630 "BfhxH" .scheme.osd-ebtt " \HDelete " 3 file-tool-setup-com
+        !if &gre @# 1
+            osd .osd.file-tool 200 "BfhxH" .scheme.osd-ebtt "  \HUp  "  4 file-tool-setup-com
+        !endif
+        !if &les @# .file-tool-setup.count
+            osd .osd.file-tool 220 "BfhxH" .scheme.osd-ebtt " \HDown "  5 file-tool-setup-com
+        !endif
     !else
         osd .osd.file-tool 40 "fh" "   ?  "
         set-variable .file-tool-setup.name ""
         set-variable .file-tool-setup.mask ".*\\..*"
         set-variable .file-tool-setup.cmd  ""
-        osd .osd.file-tool 620 "BcfhH" .scheme.osd-dbtt " Change "
-        osd .osd.file-tool 630 "BcfhH" .scheme.osd-dbtt " Delete "
+        osd .osd.file-tool 620 "BfhH" .scheme.osd-dbtt " Change "
+        osd .osd.file-tool 630 "BfhH" .scheme.osd-dbtt " Delete "
     !endif
 !emacro
 
@@ -177,13 +211,24 @@
     !endif
 !emacro
 
+0 define-macro file-tool-set-chk
+    set-variable #l0 &cat ".file-tool-setup." &lget "|default|hide|" &abs @#
+    set-variable #l1 &ind #l0
+    !if &les @# 0
+        set-variable #l1 &bxor #l1 1
+        set-variable &ind #l0 #l1
+    !elif &not #l1
+        !abort
+    !endif
+!emacro
+
 0 define-macro file-tool-create
     -1 osd .osd.file-toolc
-    osd .osd.file-toolc 0 "sS" .scheme.osd-child 50 10 -1 -1 file-tool-create
+    osd .osd.file-toolc 0 "sS" .scheme.osd-child 56 10 -1 -1 file-tool-create
     set-variable #l0 0
     !while &not &seq &set #l2 &reg &set #l1 &spr "/history/%s/file-tool/%d" $platform &inc #l0 1 "" ""
         set-variable #l1 &reg &cat #l1 "/mask" ""
-        osd .osd.file-toolc #l0 "x" &spr "%2d  %s%n  %s%n" #l0 #l2 &sub 20 &len #l2 " " #l1 &sub 24 &len #l1 " " #l0 file-tool-set-flds
+        osd .osd.file-toolc #l0 "x" &spr "%2d%s %s%n  %s%n" #l0 &cond &equ #l0 .file-tool-setup.cur "*" " " #l2 &sub 20 &len #l2 " " #l1 &sub 30 &len #l1 " " #l0 file-tool-set-flds
     !done
     !if &not &set .file-tool-setup.count &dec #l0 1
         osd .osd.file-toolc 1 ""
@@ -202,6 +247,13 @@
             set-variable #l0 &sub #l0 1
         !endif
         #l0 file-tool-set-flds
+    !elif &gre @# 3
+        ; 4 = up, 5 = down
+        set-variable #l0 &add .file-tool-setup.cur &cond &equ @# 4 -1 1
+        !force 2 set-registry &spr "/history/%s/file-tool/%d" $platform #l0 "temp"
+        !force 2 set-registry &spr "/history/%s/file-tool/%d" $platform .file-tool-setup.cur #l0
+        !force 2 set-registry &spr "/history/%s/file-tool/temp" $platform .file-tool-setup.cur
+        #l0 file-tool-set-flds
     !else
         !if &seq .file-tool-setup.name ""
             ml-write "[Name field is empty]" 
@@ -219,6 +271,8 @@
         set-registry &set #l1 &spr "/history/%s/file-tool/%d" $platform .file-tool-setup.cur .file-tool-setup.name
         set-registry &cat #l1 "/mask" .file-tool-setup.mask
         set-registry &cat #l1 "/cmd" .file-tool-setup.cmd
+        set-registry &cat #l1 "/default" .file-tool-setup.default
+        set-registry &cat #l1 "/hide" .file-tool-setup.hide
         !if &equ @# 1
             .file-tool-setup.cur file-tool-set-flds
         !endif
@@ -227,24 +281,37 @@
 !emacro
 
 -1 osd .osd.file-tool
-osd .osd.file-tool 0 "batcHIs" 9 3 56 0 -1 -1 640 .scheme.osd-title "File Tools Setup"
+osd .osd.file-tool 0 "batcHIs" 9 3 62 0 -1 -1 640 .scheme.osd-title "File Tools Setup"
 osd .osd.file-tool 10 ""
 osd .osd.file-tool 15 "fh" " "
-osd .osd.file-tool 20 "IbHfh" .scheme.osd-sbar 50 10 .osd.file-toolc
+osd .osd.file-tool 20 "IbHfh" .scheme.osd-sbar 56 10 .osd.file-toolc
 osd .osd.file-tool 22 "" " "
 osd .osd.file-tool 25 ""
-osd .osd.file-tool 30 "" "   #  Name:                 File Mask:"
+osd .osd.file-tool 30 "fh" "   #  "
+osd .osd.file-tool 31 "Sfh" "\HName:                 " 70
+osd .osd.file-tool 32 "Sf" "File \HMask:" 90
 osd .osd.file-tool 70 "ExHfh" .scheme.osd-entry "####################" 1 file-tool-set-fld
 osd .osd.file-tool 80 "fh" "  "
-osd .osd.file-tool 90 "ExHf" .scheme.osd-entry "########################" 2 file-tool-set-fld
+osd .osd.file-tool 90 "ExHf" .scheme.osd-entry "##############################" 2 file-tool-set-fld
 osd .osd.file-tool 100 ""
-osd .osd.file-tool 110 "" "   Command:  Use %p, %P, %f, %b, %e, %i, %1, %*"
+osd .osd.file-tool 110 "S" "   \HCommand:  Use %p, %P, %f, %b, %e, %i, %1, %*" 130
 osd .osd.file-tool 120 "fh" "   "
-osd .osd.file-tool 130 "ExHf" .scheme.osd-entry "#################################################" 3 file-tool-set-fld
+osd .osd.file-tool 130 "ExHf" .scheme.osd-entry "#######################################################" 3 file-tool-set-fld
 osd .osd.file-tool 140 ""
+osd .osd.file-tool 150 "hf" "   "
+osd .osd.file-tool 160 "Ctpfhx" &cat .osd.checkbox-chars "\} Default Open" 1 file-tool-set-chk
+osd .osd.file-tool 170 "hf" "  "
+osd .osd.file-tool 180 "Ctpfhx" &cat .osd.checkbox-chars "\} Hide Window" 2 file-tool-set-chk
+osd .osd.file-tool 190 "hf" "   "
+osd .osd.file-tool 210 "hf" "   "
+osd .osd.file-tool 230 "f" "  "
 osd .osd.file-tool 600 ""
-osd .osd.file-tool 610 "BcfhxH" .scheme.osd-ebtt "  \HAdd  "  1 file-tool-setup-com
-osd .osd.file-tool 640 "BcfH"   .scheme.osd-ebtt " E\Hxit "   f void
+osd .osd.file-tool 605 "fh" "   "
+osd .osd.file-tool 610 "BfhxH" .scheme.osd-ebtt "  \HAdd  "  1 file-tool-setup-com
+osd .osd.file-tool 615 "fh" "   "
+osd .osd.file-tool 625 "fh" "   "
+osd .osd.file-tool 635 "fh" "            "
+osd .osd.file-tool 640 "BfH"   .scheme.osd-ebtt " E\Hxit "   f void
 file-tool-create
 0 file-tool-set-flds
     

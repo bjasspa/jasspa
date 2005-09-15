@@ -7,7 +7,7 @@
 ; Synopsis:    directory tree buffer hook
 ; Authors:     Steven Phillips
 ;
-0 define-macro-file filetool file-tool-menu file-tool-setup
+0 define-macro-file filetool file-tool-menu file-tool-setup file-tool-exec-default
 0 define-macro-file osd osd-close
 0 define-macro-file ftp ftp-rename-buffer
 0 define-macro-file cvs cvs-init
@@ -133,7 +133,7 @@ set-variable .fhook-dirlst.setup-flags   "|q|l|c|r|"
 set-variable .fhook-dirlst.setup-labels  "|Use OFM Standard key bindings|Enable filter by default|CVS menu always available|ClearCase menu always available|"
 set-variable .fhook-dirlst.command-flag  "|thbio|thbio|thbio|bio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|thbio|bio|thbio|thbio|thbio|thbio|thbio|thbio|bio|thbio|thbio|h|t|"
 set-variable .fhook-dirlst.command-name  "|file-browser-swap-buffers|file-browser-close|dirlst-refresh|dirlst-refresh|dirlist-up-dir|dirlst-search|dirlst-search||dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list||dirlst-tag-toggle|dirlst-tag-mask|dirlst-tag-mask|dirlst-tag-invert|dirlst-tag-set|dirlst-tag-set||dirlst-find-file|dirlst-find-file|dirlst-find-file|dirlst-tag-open|dirlst-file-rename|dirlst-tag-file-copy|dirlst-tag-file-copy|dirlst-new-folder|dirlst-tag-file-delete|dirlst-tag-file-delete|file-tool-menu|dirlst-tag-execute||file-tool-setup|"
-set-variable .fhook-dirlst.command-nbind "|||||||0||5|6|4|3|2|1|||1|-1||1|-1||0|||||1|0|||||||"
+set-variable .fhook-dirlst.command-nbind "|||||||0||5|6|4|3|2|1|||1|-1||1|-1||0|1|5|||1|0|||||||"
 !if &sin "q" .fhook-dirlst.setup
 set-variable .fhook-dirlst.command-kbind "|tab|f10|C-f9|C-f9|backspace|S-f2|S-f3||C-f3|C-f4|C-f5|C-f6|C-f7|C-f8||space|+|-|*|C-+|C--||f3|f4|return|S-f4|S-f6|f5|f6|f7|f8|delete|f2|S-f5|||"
 !else
@@ -548,7 +548,7 @@ define-macro file-browser-swap-buffers
         !endif
         buffer-bind-create "bio" "f10" "" file-browser-close
         buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
-    !elif &seq &rig #l0 &rsin "/" #l0 ""
+    !elif &seq &rig #l0 -1 "/"
         read-file #l0 @mna
         !if &not &seq .fhook-dirlst.mode :dirlst-mode
             ; old buffer with the wrong processing - refresh
@@ -572,6 +572,12 @@ define-macro file-browser-swap-buffers
             !endif
         !endif
     !else
+        !if &band @# 4
+            !force file-tool-exec-default #l0
+            !if $status
+                !return
+            !endif
+        !endif
         ; pre-pend a file:/ to ensure we get the local file, not an ftp:/ file
         set-variable #l0 &cat "file:" #l0
         set-variable #l1 1
@@ -1728,7 +1734,7 @@ osd .osd.dirlst 160 ""  "File Tools Setup"      f file-tool-setup
         !endif
     !elif &and &not :fmpt &equ :fmpl $window-line
         !if &not &seq @wc "\n"
-            dirlst-find-file
+            5 dirlst-find-file
         !endif
     !endif
 !emacro
