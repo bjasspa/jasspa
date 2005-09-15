@@ -236,7 +236,7 @@ hilight .hilight.zfile 0x44 "\eE" "" "\\}\e" "" "" .scheme.file
 ; Extract a file from a compressed single file archive
 ; 
 0 define-macro zfile-extract
-    set-variable #l4 &stat "a" @1
+    set-variable #l4 @1
     !if &seq "" &set #l9 &reg &spr "/history/%s/zfile/%s-extract" $platform @2 ""
         ml-write &spr "[find-zfile error: Registry entry \"/history/%s/%s-extract\" not setup]" $platform @2
         !abort
@@ -310,7 +310,9 @@ hilight .hilight.zfile 0x44 "\eE" "" "\\}\e" "" "" .scheme.file
 
 define-macro find-zfile
     !force set-variable #l0 @1
-    !if &not $status
+    !if $status
+        set-variable #l0 &stat "a" &cat &lef $buffer-fname &rsin "/" $buffer-fname #l0
+    !else
         set-variable #l0 @ml01 "Find zfile"
     !endif
     ; Loop and get the extension
@@ -332,10 +334,6 @@ define-macro find-zfile
             !return
         !endif
     !endif
-    ;
-    ; get the absolute file name
-    ;
-    set-variable #l0 &stat "a" #l0
     ; see if this has already been loaded
     set-variable #l2 $buffer-bname
     set-variable $buffer-names "[*].*"
