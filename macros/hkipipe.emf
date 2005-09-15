@@ -391,28 +391,30 @@
     -1 buffer-mode "usr2"
     -1 buffer-mode "usr3"
     -1 buffer-mode "usr4"
+    !if &not @?
+        set-variable @# &con &seq $buffer-input "" 1 2
+    !endif
     !if &equ @# 1
         set-variable $buffer-input ipipe-output
         1 buffer-mode "lock"
         1 buffer-mode "usr3"
         goto-alpha-mark "I"
+        ml-write "[Input mode set to semi-immersion - f3 to change]"
     !elif &equ @# 2
         set-variable $buffer-input ""
         1 buffer-mode "lock"
         1 buffer-mode "usr4"
         goto-alpha-mark "I"
+        ml-write "[Input mode set to full-immersion - f3 to change]"
         !repeat
-            2 screen-update
+            screen-update
             set-variable #l0 @cqk
             !if &not &bmo "pipe"
                 !return
             !elif &equ &len #l0 1
                 ipipe-write #l0
-            !elif &seq #l0 "f2"
-                0 ipipe-mode
-                !return
             !elif &seq #l0 "f3"
-                1 ipipe-mode
+                0 ipipe-mode
                 !return
             !endif
         !until 0
@@ -420,6 +422,7 @@
         set-variable $buffer-input ""
         -1 buffer-mode "lock"
         1 buffer-mode "usr2"
+        ml-write "[Input mode set to browse - f3 to change]"
     !endif
 !emacro
 
@@ -428,9 +431,7 @@
         ; process has ended, clear-up
         set-variable $buffer-input ""
         set-variable $buffer-ipipe ""
-        !force buffer-unbind-key &kbin "0" ipipe-mode
-        !force buffer-unbind-key &kbin "1" ipipe-mode
-        !force buffer-unbind-key &kbin "2" ipipe-mode
+        !force buffer-unbind-key &kbin "" ipipe-mode
     !endif
     !if &bmo "usr4"
         2 screen-update
@@ -453,13 +454,12 @@
 define-macro fhook-ipipe
     set-variable $buffer-mask "luh1"
     set-variable $buffer-fhook "fhook-ipipe"
-    buffer-bind-create "b" "C-c C-k" ""   ipipe-kill
-    buffer-bind-create "b" "C-c C-c" "2"  ipipe-kill
+    buffer-bind-create "bo" "C-c C-k" ""  ipipe-kill
+    buffer-bind-create "bo" "C-c C-c" "2" ipipe-kill
     buffer-bind-create "bo" "C-return" "" ipipe-rerun
     buffer-bind-create "bo" "C-j" ""      ipipe-rerun
     !if &seq $buffer-bname "*shell*"
         set-variable $buffer-ipipe ipipe-input
-        buffer-bind-create "b" "f4" "2"   ipipe-mode
     !elif &seq $buffer-bname "*gdb*"
         set-variable $buffer-dhook debug-reset-line
         set-variable $buffer-ipipe gdb-input
@@ -469,7 +469,6 @@ define-macro fhook-ipipe
         set-variable :last-line 1
     !elif &seq $buffer-bname "*dbx*"
         set-variable $buffer-dhook debug-reset-line
-        set-variable $buffer-ipipe dbx-input
         !if &band .hilight.flags 0x02
             set-variable $buffer-hilight .hilight.gdb
         !endif
@@ -508,8 +507,7 @@ define-macro fhook-ipipe
     !endif
     -1 buffer-mode "wrap"
     1 buffer-mode "magic"
-    buffer-bind-create "b" "f2" "0" ipipe-mode
-    buffer-bind-create "b" "f3" "1" ipipe-mode
+    buffer-bind-create "bo" "f3" "" ipipe-mode
     1 ipipe-mode
     buffer-init-hooks
 !emacro
@@ -654,16 +652,39 @@ define-macro gdb
     set-variable #l2 $buffer-bname
     goto-alpha-mark "I"
     beginning-of-line
-    !force &sub -1 &sub $window-line :last-line search-backward "stopped at"
+    !force &sub -1 &sub $window-line :last-line search-buffer "bem" "stopped in \\S+ at line \\(\\d+\\) in file \"\\([^\n]+\\)\""
     !if $status
         debug-reset-line
-        set-variable #l0 &rig @wl $window-col
-        set-variable #l0 &rig #l0 &sin "[" #l0
-        set-variable #l1 &lef #l0 &sin " " #l0
-        set-variable %gdbdbx2 &rig #l1 &rsin ":" #l1
-        set-variable #l0 &rig #l0 &sin " " #l0
-        set-variable #l0 &rig #l0 &sin " " #l0
-        set-variable #l0 &lef #l0 &sub &sin "]" #l0 1
+        set-variable %gdbdbx2 @s1
+        set-variable #l0 @s2
+        popup-window ""
+        find-file #l0 @mna
+        set-variable %gdbdbx1 $buffer-bname
+        !force 0 goto-line %gdbdbx2
+        !if $status
+            set-variable $line-scheme .scheme.trace
+            recenter
+        !endif
+        popup-window #l2
+    !endif
+    goto-alpha-mark  "I"
+    set-variable :last-line $window-line
+    !if &not @#
+        ; process has ended, clear-up
+        debug-reset-line
+        0 ipipe-input
+    !endif
+!emacro
+
+0 define-macro dbx-input-irix
+    set-variable #l2 $buffer-bname
+    goto-alpha-mark "I"
+    beginning-of-line
+    !force &sub -1 &sub $window-line :last-line search-buffer "bem" "stopped at \\[[^:\n]*:\\(\\d+\\)\\s+\\S+\\s+\\([^]\n]+\\)]"
+    !if $status
+        debug-reset-line
+        set-variable %gdbdbx2 @s1
+        set-variable #l0 @s2
         popup-window ""
         find-file #l0 @mna
         set-variable %gdbdbx1 $buffer-bname
@@ -700,9 +721,16 @@ define-macro dbx
     popup-window "*dbx*"
     fhook-ipipe
     set-variable :mode 0
-    set-variable :prompt "^(dbx) "
-    ipipe-write "set $showfilename=2\CMset $repeatmode=1\CM"
-    ; ipipe-write "alias n `next`\CMalias s `step`\CMalias p `print`\CMalias c `cont`\CMalias b `stop in`\CM"
+    set-variable :prompt "^\\((dbx) \\)+"
+    !if &seq $platform "irix"
+        set-variable $buffer-ipipe dbx-input-irix
+        ipipe-write "set $showfilename=2\CMset $repeatmode=1\CM"
+        ipipe-write "alias n `next`\CMalias s `step`\CMalias p `print`\CMalias c `cont`\CMalias b `stop in`\CM"
+    !else
+        set-variable $buffer-ipipe dbx-input
+        ipipe-write "dbxenv output_short_file_name off\CM"
+        ipipe-write "alias n=next\CMalias s=step\CMalias p=print\CMalias c=cont\CMalias b=\"stop in\"\CM"
+    !endif
     global-bind-key dbx-add-breakpoint "f9"
 !emacro
 
