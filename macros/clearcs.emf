@@ -699,14 +699,14 @@ define-macro cc-edit-config-spec
     set-variable #l0 $window-line
     goto-line :ccs-last
     !while &gre #l0 $window-line
-        !if &set #l2 &sin " Rule: " @wl
+        !if &and &set #l3 &sin .cc-init.vsep @wl &set #l2 &sin " Rule: " @wl
             !if &seq &rig @wl &add #l2 6 "CHECKEDOUT"
                 set-variable #l3 "c "
-            !elif &sin "[hijacked]" @wl
+            !elif &sin "[hijacked]" &rig @wl #l3
                 set-variable #l3 "h "
-            !elif &sin "[loaded but missing]" @wl
+            !elif &sin "[loaded but missing]" &rig @wl #l3
                 set-variable #l3 "m "
-            !elif &sin "[" @wl
+            !elif &sin "[" &rig @wl #l3
                 set-variable #l3 "? "
             !else
                 !goto rmv-line
