@@ -298,7 +298,10 @@ execute(register int c, register int f, register int n)
         meRegHead->force = 1 ;
         if(((cmdstatus = (execFunc(ii,f,n) > 0))) ||
            ((ss=getUsrLclCmdVar((meUByte *)"status",&(cmdTable[ii]->varList))) == errorm) || meAtoi(ss))
+        {
+            meRegHead->force = ff ;
             return cmdstatus ;
+        }
         meRegHead->force = ff ;
     }
 #endif
@@ -1998,6 +2001,9 @@ commandWait(int f, int n)
         execlevel = 0 ;
         do
         {
+            /* Fix up the screen before waiting for input otherwise TTahead
+             * will be true and the screen will never be refreshed - test with gdiff */
+            update(meFALSE);
             TTsleep(-1,1,varList) ;
             if(((ss=getUsrLclCmdVar((meUByte *)"wait",varList)) == errorm) || !meAtoi(ss))
                 break ;
