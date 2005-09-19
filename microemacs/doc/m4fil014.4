@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil014.4,v 2.6 2005-04-09 18:21:47 jon Exp $
+.Id $Id: m4fil014.4,v 2.7 2005-09-19 19:27:20 bill Exp $
 .Im MicroEmacs macro;variable
 .so me.tni
 .TH "MacroArguments" 4
@@ -66,7 +66,7 @@ then enclose it in quotes, e.g.
 .CS
 set-variable %test-var "Hello World"
 
-efine-macro Test-it
+define-macro Test-it
     ml-write &cat &cat &cat &cat @0 " " @1 " = " &ind @1
     set-variable  @1 @2
 !emacro
