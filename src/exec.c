@@ -839,7 +839,7 @@ elif_jump:
 static meLine *errorLine=NULL ;
 
 static long
-macroPrintError(meLine *hlp, meUByte *macName)
+macroPrintError(meInt type, meLine *hlp, meUByte *macName)
 {
     meLine *lp ;
     long  ln ;
@@ -855,7 +855,7 @@ macroPrintError(meLine *hlp, meUByte *macName)
         lp = meLineGetNext(lp) ;
         ln++ ;
     }
-    mlwrite(MWABORT|MWWAIT,(meUByte *)"[%s:: Error executing %s, line %d]",errorLine->text,macName,ln+1) ;
+    mlwrite(MWABORT|MWWAIT,(meUByte *)"[%s:: %s executing %s, line %d]",errorLine->text,(type) ? "Halt":"Error",macName,ln+1) ;
     return ln ;
 }
 
@@ -888,13 +888,14 @@ dobuf(meLine *hlp)
            gets echoed and a key needs to be pressed to continue
            ^G will abort the command */
         
-        if((macbug > 1) && (!execlevel || (macbug > 2)))
+        if((macbug & 0x02) && (!execlevel || (macbug & 0x04)))
         {
-            meUByte dd=macbug, outline[meBUF_SIZE_MAX];   /* string to hold debug line text */
+            meUByte dd, outline[meBUF_SIZE_MAX];   /* string to hold debug line text */
             meLine *tlp=hlp ;
             meUShort cc ;
             int lno=0 ;
             
+            dd = macbug & ~0x80 ;
             /* force debugging off while we are getting input from the user,
              * if we don't and any macro is executed (idle-pick macro) then
              * ME will spin and crash!! */
@@ -915,7 +916,7 @@ loop_round2:
             screenUpdate(meTRUE,2-sgarbf) ;
             /* reset garbled status */
             sgarbf = meFALSE ;
-            if(dd <= 3)
+            if((dd & 0x08) == 0)
             {
 loop_round:
                 /* and get the keystroke */
@@ -951,7 +952,7 @@ loop_round:
                     }
                     debug = dd ;
                 case '!':
-                    dd = 0 ;
+                    dd &= ~0x02 ;
                 case 's':
                     break;
                 }
@@ -1083,12 +1084,12 @@ loop_round:
             }
         }
         /* check for a command error */
-        if (status <= 0)
+        if(status <= 0)
         {
             /* in any case set the buffer . */
             errorLine = lp;
 #if     MEOPT_DEBUGM
-            if(macbug > 0)
+            if(macbug & 0x01)
             {
                 /* check if the failure is handled by a !force */
                 meRegister *rr ;
@@ -1100,11 +1101,19 @@ loop_round:
                     if(rr == meRegHead) 
                         break ;
                 }
-                macroPrintError(hlp,meRegCurr->commandName) ;
+                macroPrintError(0,hlp,meRegCurr->commandName) ;
             }
 #endif
             goto dobuf_exit ;
         }
+#if     MEOPT_DEBUGM
+        if(macbug & 0x80)
+        {
+            errorLine = lp;
+            macroPrintError(1,hlp,meRegCurr->commandName) ;
+            macbug &= ~0x80 ;
+        }
+#endif
         
         /* on to the next line */
         lp = lp->next;
@@ -1442,7 +1451,7 @@ executeBuffer(int f, int n)
     
     /* and now execute it as asked */
     if(((s = donbuf(bp->baseLine,&varList,bp->name,f,n)) <= 0) &&
-       ((ln = macroPrintError(bp->baseLine,bufn)) >= 0))
+       ((ln = macroPrintError(0,bp->baseLine,bufn)) >= 0))
     {
         /* the execution failed lets go to the line that caused the grief */
         bp->dotLine  = errorLine ;
@@ -1519,7 +1528,7 @@ execFile(meUByte *fname, int f, int n)
     /* go execute it! */
     if((status = donbuf(&hlp,&varList,fn,f,n)) <= 0)
         /* the execution failed lets go to the line that caused the grief */
-        macroPrintError(&hlp,fn) ;
+        macroPrintError(0,&hlp,fn) ;
     meLineLoopFree(&hlp,0) ;
     /* free off any command variables */
     if(varList.head != NULL)
