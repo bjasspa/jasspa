@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var011.5,v 2.7 2005-07-11 21:56:39 jon Exp $
+.Id $Id: m5var011.5,v 2.8 2005-09-20 21:03:49 bill Exp $
 .Im MicroEmacs variable|macrodevelop|macro
 .so me.tni
 .TH $debug 5
@@ -17,28 +17,39 @@ $debug \- Macro debugging flag
 -3 <= \fIdebugLevel\fR <= 3
 .SH DESCRIPTION
 .B $debug
-is a flag to  trigger  macro  debugging.  The flag  settings  are  defined  as
-follows:
-.IP "\fC0\fR"
-Disables debugging, this is the default.
-.IP "\fC1\fR"
-Invokes the debugger when there are un-handled  exceptions,  this is useful to
-locate problems in the macro code i.e. missing arguments etc. This setting may
-be used in  normal  running  and macro  execution  is halted  when an error is
-encountered,  it is  non-intrusive  up until  the point of  failure.  Enabling
-slightly slows execution but is not typically noticeable on modern processors.
-.IP "\fC2\fR"
-Debugs all executed macro lines, i.e. if a false \fB!if\fR was encountered the
-lines  within  the  \fB!if\fR  would  not  be  printed.  Problems  arise  with
-\fB!elif\fR  and  \fB!else\fR  and  a  \fIdebugLevel\fR  setting  of 1 as  the
-\fB!elif\fR and \fB!else\fR lines are never printed.
-.IP "\fC3\fR"
-Debugs all macro lines encountered, including those that are not executed.
-.PP
-A \-ve setting disables debugging and has no immediate effect. However as soon
-as the  bell is rung  the  value  is  inverted  (\-1 to 1, \-2 to 2, \-3 to 3)
-enabling  debugging. This can be invaluable when tracing problems, for example
+is used to control  macro  debugging, it is a bit based flag where:
+.IP "\fC0x01\fR"
+Displays an error message when an un-handled exception is encountered, this is
+useful to locate  problems in the macro code i.e. missing  arguments etc. This
+setting may be used in normal  running and macro  execution  is halted when an
+error is  encountered,  it is  non-intrusive  up until  the point of  failure.
+Enabling  slightly slows  execution but is not typically  noticeable on modern
+processors.
+.IP "\fC0x02\fR"
+Setting this bit enables the macro  debugger.  With macro  debugging  enabled,
+before a line of macro code is  executed  the line and its  location  is first
+print on the message line with a prompt  allowing the user to view  variables,
+abort execution, dive into sub macros etc. The behaviour of the macro debugger
+can be altered by bits \fC0x04\fR and \fC0x08\fR.
+.IP "\fC0x04\fR"
+When set all macro lines  encountered  are  printed.  When this bit is not set
+only  the  lines  of code  that  are  executed  are  printed,  i.e. if a false
+\fB!if\fR was encountered the lines within the \fB!if\fR would not be printed.
+Problems arise with \fB!elif\fR and \fB!else\fR  lines and this bit is not set
+as the \fB!elif\fR and \fB!else\fR lines are never printed.
+.IP "\fC0x08\fR"
+When set the debug  prompt is  disabled  so the macro  line is  printed on the
+message line and then  immediately  executed.  This allows the user to see the
+execution  flow  of the  macro  code  while  still  executing  the  code  at a
+reasonable pace.
+.IP "\fC0x10\fR"
+Setting this bit has no immediate effect. However as soon
+as the  key bound to
+.Ht abort-command 2
+(typically  "\fCC-g\fR")  is pressed the macro  debugger is enabled,  i.e. bit
+\fC0x02\fR is set. This can be invaluable  when tracing  problems, for example
 the following macro code will loop infinitely:-
+.RS
 .Me $emf-scheme
 .CS
 !repeat
@@ -46,14 +57,26 @@ the following macro code will loop infinitely:-
     backward-char
     !force forward-line
 !until &not $status
-.CE
+.CE 0
 .Me $ehf-scheme
+.PP
 This is a fairly  obvious bug, but if buried in a thousand lines of macro code
 it could be very  difficult to spot and to find it during  execution  would be
-very tedious if not  impossible. But by setting  \fB$debug\fR to \-1 the macro
-can be  executed  as  normal  and as soon as the  macro is stuck  the user can
-simply press "\fCC-g\fR" (\fBabort-command\fR) which rings the bell and starts
-macro debugging at the current execution point.
+very tedious if not impossible. But by setting  \fB$debug\fR to \fC0x10\fR the
+macro can be executed as normal and as soon as the macro is stuck the user can
+simply press  "\fCC-g\fR"  to start macro  debugging at the current  execution
+point.
+.PP
+Note that the "\fCC-g\fR" which triggers the macro debugger is discarded so it
+does not cause the current command to abort.
+.RE
+.IP "\fC0x20\fR"
+Setting this bit is similar to \fC0x10\fR except the macro debugger is enabled
+by the ringing of the bell. When some commands fail they always print an error
+message and ring the bell as the error needs  handling (e.g. missing  argument
+in a  \fB!if\fR  statement).  However  if the  macro  has been  called  with a
+\fB!force\fR  the execution will not be aborted so tracing this issue could be
+difficult without this setting.
 .SH "SEE ALSO"
 .na
 .Ht execute-file 2 .
