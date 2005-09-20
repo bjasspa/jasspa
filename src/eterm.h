@@ -100,7 +100,7 @@ extern void       addKeyToBufferOnce(meUShort cc) ;
 #if MEOPT_MOUSE
 extern void       TTallKeysFlush(void) ;
 #else
-#define TTallKeysFlush(void) /* Nothing */
+#define TTallKeysFlush() /* Nothing */
 #endif
 #if MEOPT_CALLBACK
 extern void       doIdlePickEvent(void) ;
