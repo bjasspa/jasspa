@@ -96,8 +96,8 @@ TTdoBell(int n)
 #endif
     
 #if MEOPT_DEBUGM
-    if(macbug < -1)
-        macbug = 2 ;
+    if(macbug & 0x20)
+        macbug |= 0x82 ;
 #endif
 #if MEOPT_CALLBACK
     if((index = decode_key(ME_SPECIAL|SKEY_bell,&arg)) >= 0)
@@ -898,9 +898,9 @@ addKeyToBuffer(meUShort cc)
     if(cc == breakc)
     {
 #if MEOPT_DEBUGM
-        if(macbug < 0)
+        if(macbug & 0x10)
         {
-            macbug = 2 ;
+            macbug |= 0x82 ;
             return ;
         }
 #endif

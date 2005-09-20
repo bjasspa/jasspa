@@ -101,7 +101,7 @@ extern  meUByte    mcStore;             /* storing text to macro flag   */
 extern  meUByte    cmdstatus;           /* last command status          */
 extern  meUByte    kbdmode;             /* current keyboard macro mode  */
 #if MEOPT_DEBUGM
-extern  meByte     macbug;              /* macro debuging flag          */
+extern  meUByte    macbug;              /* macro debuging flag          */
 #endif
 extern  meUByte    thisflag;            /* Flags, this command          */
 extern  meUByte    lastflag;            /* Flags, last command          */
@@ -597,7 +597,7 @@ meUByte   sgarbf = meTRUE;              /* meTRUE if screen is garbage    */
 meUByte   clexec = meFALSE;             /* command line execution flag  */
 meUByte   mcStore = meFALSE;            /* storing text to macro flag   */
 #if MEOPT_DEBUGM
-meByte    macbug = 0 ;                  /* macro debuging flag          */
+meUByte   macbug = 0 ;                  /* macro debuging flag          */
 #endif
 meUByte   cmdstatus = meTRUE;           /* last command status          */
 meUByte   kbdmode=meSTOP;               /* current keyboard macro mode  */
