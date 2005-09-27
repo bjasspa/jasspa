@@ -943,24 +943,94 @@ osd .osd.browse-help 6  ""  " C-x k     - Delete buffer & exit browse mode"
 osd .osd.browse-help 7  ""  " return    - Page down"
 osd .osd.browse-help 8  ""  " space     - Page down"
 osd .osd.browse-help 9  ""  " backspace - Page up"
-osd .osd.browse-help 10 ""  " /         - Search forward"
-osd .osd.browse-help 13 ""
+osd .osd.browse-help 10 ""  " w         - Toggle wrap mode"
+osd .osd.browse-help 11 ""  " /         - Search forward"
+osd .osd.browse-help 12 ""
 osd .osd.browse-help 14 ""  " Normal cursor movement and searching"
 osd .osd.browse-help 15 ""  " key bindings can be used."
 osd .osd.browse-help 16 ""
 osd .osd.browse-help 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void 
 
+define-macro browse-wrap-line
+    !repeat
+        !force set-variable $window-acol $window-width
+        !if $status
+            2 backward-char
+            insert-string &cat &mid $window-chars 59 1 "\n"
+        !endif
+    !until &not $status
+    beginning-of-line
+    forward-line
+!emacro
+define-macro browse-wrap-window-lines
+    set-alpha-mark "\x81"
+    3 screen-update
+    set-variable #l9 $window-y-scroll
+    set-variable #l8 $window-line
+    set-variable $window-line &add #l9 1
+    set-variable #l0 $window-depth
+    !repeat
+        !if &seq @wc ""
+            goto-alpha-mark "\x81"
+            set-variable $window-y-scroll &sub $window-line &sub #l8 #l9
+            !return
+        !endif
+        browse-wrap-line
+    !until &not &dec #l0 1
+    goto-alpha-mark "\x81"
+    set-variable $window-y-scroll &sub $window-line &sub #l8 #l9
+!emacro
+
+define-macro browse-wrap-change
+    set-variable #l0 .browse.wrap
+    !if &band @# 1
+        set-variable #l1 0
+    !elif &band @# 2
+        set-variable #l1 1
+    !elif &band @# 4
+        set-variable #l1 #l0
+        set-variable #l0 0
+    !else
+        set-variable #l1 &bxor #l0 1
+    !endif
+    !if &band @# 0x10
+        !jump 2
+    !elif &bxor #l0 #l1
+        !if #l1
+            set-variable .mode &spr "|%d|%d|" &bmod "undo" &bmod "view" 
+            -1 buffer-mode "view"
+            1 buffer-mode "undo"
+            set-variable @cl void
+            !force insert-string "" "y"
+        !else
+            set-alpha-mark "\x81"
+            undo
+            goto-alpha-mark "\x81"
+            &cond &lget .mode 1 1 -1 buffer-mode "undo" 
+            &cond &lget .mode 2 1 -1 buffer-mode "view" 
+        !endif
+    !endif
+    !if &band @# 0x20
+        set-variable .browse.wrap #l1
+    !endif
+!emacro
+
 define-macro browse
     set-variable #l8 $scroll
     set-variable $scroll 3
+    0x4 browse-wrap-change
     !repeat
+        !if .wrap
+            browse-wrap-window-lines
+        !endif
         2 screen-update
-        ml-write "** BROWSE MODE, C-g to quit. RETURN/SPACE - down, BACKSPACE - up, / - search **"
+        ml-write "** BROWSE MODE, C-g to quit. RETURN/SPACE - down, BACKSPACE - up, w - toggle wrap mode, / - search **"
         !force !force set-variable #l0 @cgk
         set-variable #l1 &cbin #l0
         set-variable #l2 &nbin #l0
         set-variable #l3 &cond &seq #l2 "" "1" #l2
         !if &sin #l1 "|abort-command|browse|"
+            0x1 browse-wrap-change
             !if &not &band @# 1
                 !if &not &bmod "edit"
                     !goto del-quit
@@ -973,16 +1043,22 @@ define-macro browse
             !return
         !elif &seq #l1 "delete-buffer"
 *del-quit
+            0x1 browse-wrap-change
             !force !force delete-buffer $buffer-bname @mna
             !if $status
                 ml-write "Quit browsing mode"
                 set-variable $scroll #l8
                 !return
             !endif
+            0x4 browse-wrap-change
         !elif &seq #l0 "space"
             !force !force scroll-down
+        !elif &iseq #l0 "w"
+            0x20 browse-wrap-change
         !elif &seq #l0 "/"
+            0x1 browse-wrap-change
             !force !force isearch-forward @mna
+            0x4 browse-wrap-change
         !elif &seq #l1 "newline"
             !force !force scroll-down
         !elif &seq #l1 "backward-delete-char"
@@ -997,10 +1073,17 @@ define-macro browse
             !force !force  &mul #l3 4 scroll-right
         !elif &sin #l1 "|beginning-of-buffer|end-of-buffer|beginning-of-line|end-of-line|scroll-left|scroll-right|scroll-up|scroll-down|"
             !force !force execute-line &spr "%s %s @mna" #l2 #l1
-        !elif &sin #l1 "|goto-line|isearch-forward|isearch-backward|search-forward|search-backward|reread-file|"
+        !elif &sin #l1 "|goto-line|isearch-forward|isearch-backward|search-forward|search-backward|"
+            0x1 browse-wrap-change
             !force !force execute-line &spr "%s %s @mna" #l2 #l1
+            0x4 browse-wrap-change
+        !elif &sin #l1 "|reread-file|"
+            0x1 browse-wrap-change
+            !force !force execute-line &spr "%s %s @mna" #l2 #l1
+            0x4 browse-wrap-change
         !elif &seq #l0 "esc h"
             !force !force .osd.browse-help osd
         !endif
     !until 0
 !emacro
+set-variable .browse.wrap 0
