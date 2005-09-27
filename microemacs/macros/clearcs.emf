@@ -1150,7 +1150,7 @@ set-variable .cc-uncheckout.values "|1|"
 
 define-macro cc-annotate
     8 cc-osd .cc-annotate.values
-    set-variable #l2 &spr "%s ann -out - %s%s%s " .cc-init.com &con &lget .values 1 "" "-nhe " &con &lget .values 2 "-f" "-nda" &con &lget .values 3 " -rm" ""
+    set-variable #l2 &spr "%s ann -nco -out - %s%s%s " .cc-init.com &con &lget .values 1 "" "-nhe " &con &lget .values 2 "-f" "-nda" &con &lget .values 3 " -rm" ""
     &len #l2 cc-get-file-list #l0 0 0
     8 cc-cleartool 3 $buffer-fname &cat #l2 #l0
 !emacro
