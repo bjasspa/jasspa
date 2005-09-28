@@ -1031,18 +1031,10 @@ define-macro browse
         set-variable #l3 &cond &seq #l2 "" "1" #l2
         !if &sin #l1 "|abort-command|browse|"
             0x1 browse-wrap-change
-            !if &not &band @# 1
-                !if &not &bmod "edit"
-                    !goto del-quit
-                !else
-                    -1 find-buffer $buffer-bname
-                !endif
-            !endif
             ml-write "Quit browsing mode"
             set-variable $scroll #l8
             !return
         !elif &seq #l1 "delete-buffer"
-*del-quit
             0x1 browse-wrap-change
             !force !force delete-buffer $buffer-bname @mna
             !if $status
