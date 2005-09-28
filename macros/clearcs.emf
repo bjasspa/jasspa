@@ -134,7 +134,7 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd|||||"
     !endif
     !force unset-variable .cc-init.refresh
     !if &bmod "dir"
-        6 dirlst-tag-list
+        10 dirlst-tag-list
         goto-position "\x82"
     !elif &seq $buffer-bname "*cc-state*"
         cc-state-tag-list

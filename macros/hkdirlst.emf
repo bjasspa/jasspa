@@ -441,7 +441,7 @@ define-macro file-browser-swap-buffers
     beginning-of-line
 !emacro
 
-; 0x01 - report errors  0x02 - directories supported  0x04 hilight the line
+; 0x01 - report errors,  0x02 - directories supported,  0x04 - ../ supported,  0x08 - hilight the line
 0 define-macro dirlst-get-filename
     set-variable .find-file.file-count 0
     !if &or &les $window-line 5 &les &len @wl :fmpf
@@ -451,24 +451,31 @@ define-macro file-browser-swap-buffers
         !endif
         !abort
     !endif
+    set-variable #l0 &rig @wl :fmpf
+    !if &sin " -> " #l0
+        set-variable #l0 &lef #l0 &sub &sin " -> " #l0 1
+    !endif
     !if &seq &mid @wl 1 1 "d"
         !if &not &band @# 2
             !if &band @# 1
                 ml-write &spr "[%s Error: Operation not supported on directories]" @1
             !endif
             !abort
+        !elif &seq #l0 "../"
+            !if &not &band @# 4
+                !if &band @# 1
+                    ml-write &spr "[%s Error: Operation not supported on ../]" @1
+                !endif
+                !abort
+            !endif
         !endif
         set-variable .find-file.file-dcount 1
-    !endif
-    set-variable #l0 &rig @wl :fmpf
-    !if &sin " -> " #l0
-        set-variable #l0 &lef #l0 &sub &sin " -> " #l0 1
     !endif
     set-variable .find-file.file-count 1
     set-variable .find-file.file-dcount &seq &mid @wl 1 1 "d"
     set-variable .find-file.file-dir $buffer-fname
     set-variable .find-file.file1 #l0
-    !if &band @# 4
+    !if &band @# 8
         beginning-of-line
         -3 show-region
         forward-line
@@ -582,7 +589,7 @@ define-macro file-browser-swap-buffers
         set-variable #l0 &cat "file:" #l0
         set-variable #l1 1
 *open-file
-        1 set-position "\x81"
+        set-position "\x84"
         ; if the browser is lock and there are other windows open this file in another window
         !if &band $window-flags 4
             ; loop through all windows to find a suitable one
@@ -595,7 +602,7 @@ define-macro file-browser-swap-buffers
                 !force 2 next-window
             !until &not $status
             set-variable #l1 &bor #l1 7
-            goto-position "\x81"
+            1 goto-position "\x84"
         !endif
         !if &band #l1 1
             file-browser-close
@@ -611,7 +618,7 @@ define-macro file-browser-swap-buffers
         find-file #l0 @mna
         set-variable #l3 $buffer-bname
         !if &band #l1 4
-            1 set-position "\x81"
+            set-position "\x81"
             previous-window
             find-buffer #l3
             !if &band #l1 8
@@ -619,11 +626,17 @@ define-macro file-browser-swap-buffers
             !else
                 file-browser-init
             !endif
-            goto-position "\x81"
+            1 goto-position "\x81"
         !endif
         !if &not &band @# 1
             buffer-bind-key "browse" "v"
-            0 browse
+            browse
+            !if &bmod "edit"
+                -1 find-buffer $buffer-bname
+            !else
+                !force !force delete-buffer $buffer-bname
+            !endif
+            goto-position "\x84"
         !endif
     !endif
     ; if part of a toolbar update the mode lines
@@ -813,7 +826,7 @@ define-macro file-browser-swap-buffers
     !endif
 !emacro
 
-; 0x01 - report errors  0x02 - directories supported  0x04 move to closest tagged
+; 0x01 - report errors,  0x02 - directories supported,  0x04 - ../ supported,  0x08 - move to closest tagged
 0 define-macro dirlst-tag-list
     set-variable .find-file.file-count 0
     set-variable #l0 $window-line
@@ -821,21 +834,28 @@ define-macro file-browser-swap-buffers
     set-variable #l1 0
     set-variable #l3 0
     set-variable #l4 #l0
-    set-variable #l5 &cond &band @# 4 $window-eline 0
+    set-variable #l5 &cond &band @# 8 $window-eline 0
     !while &not &seq @wc ""
         !if &seq @wc "*"
+            set-variable #l2 &rig @wl :fmpf
+            !if &sin " -> " #l2
+                set-variable #l2 &lef #l2 &sub &sin " -> " #l2 1
+            !endif
             !if &seq &mid @wl 1 1 "d"
                 !if &not &band @# 2
                     !if &band @# 1
                         ml-write &spr "[%s Error: Operation not supported on directories]" @1
                     !endif
                     !abort
+                !elif &seq #l2 "../"
+                    !if &not &band @# 4
+                        !if &band @# 1
+                            ml-write &spr "[%s Error: Operation not supported on ../]" @1
+                        !endif
+                        !abort
+                    !endif
                 !endif
                 set-variable #l3 &add #l3 1
-            !endif
-            set-variable #l2 &rig @wl :fmpf
-            !if &sin " -> " #l2
-                set-variable #l2 &lef #l2 &sub &sin " -> " #l2 1
             !endif
             set-variable &ind &cat ".find-file.file" &inc #l1 1 #l2
             !if &les &set #l6 &abs &sub $window-line #l0 #l5
@@ -849,7 +869,7 @@ define-macro file-browser-swap-buffers
     set-variable .find-file.file-count #l1
     set-variable .find-file.file-dcount #l3
     set-variable $window-line #l4
-    !if &band @# 4
+    !if &band @# 8
         2 screen-update
     !endif
 !emacro
@@ -884,7 +904,7 @@ define-macro file-browser-swap-buffers
 !emacro
 
 0 define-macro dirlst-tag-open
-    7 dirlst-tag-list "Open Files"
+    11 dirlst-tag-list "Open Files"
     -1 dirlst-tag-set
     set-variable #l0 &add .find-file.file-count 1
     !while &gre &pdec #l0 1 1
@@ -970,7 +990,7 @@ set-variable .dirlst-tag-mask.last "*"
     !if &not $status
         set-variable #l1 @ml "Command to execute"
     !endif
-    7 dirlst-tag-list "Execute"
+    11 dirlst-tag-list "Execute"
     set-variable #l0 0
     !while &les &pinc #l0 1 .find-file.file-count
         set-variable #l2 #l1
@@ -1164,9 +1184,9 @@ define-macro dirlst-search
 0 define-macro dirlst-tag-file-delete
     !if &not @#
     !elif :tag-count
-        7 dirlst-tag-list "Delete Files"
+        11 dirlst-tag-list "Delete Files"
     !else
-        7 dirlst-get-filename
+        11 dirlst-get-filename "Delete Files"
     !endif
     !if &les .find-file.file-count 1
         ml-write "[Delete Files Error: No files selected]"
@@ -1360,9 +1380,9 @@ define-macro dirlst-search
 0 define-macro dirlst-tag-file-copy
     set-variable #l8 &cond &band @# 1 "Copy" "Move"
     !if :tag-count
-        7 dirlst-tag-list &cat #l8 " Files"
+        11 dirlst-tag-list &cat #l8 " Files"
     !else
-        7 dirlst-get-filename
+        11 dirlst-get-filename &cat #l8 " Files"
     !endif
     !if &equ .find-file.file-count 1
         set-variable #l3 &spr "%s \"%s\" to" #l8 .find-file.file1
@@ -1397,7 +1417,7 @@ define-macro dirlst-search
 !emacro
 
 0 define-macro dirlst-file-rename
-    7 dirlst-get-filename
+    11 dirlst-get-filename "Rename File"
     set-variable #l1 .find-file.file1
     !if &seq &rig #l1 &sub &len #l1 1 "/"
         set-variable #l9 "/"
@@ -1452,7 +1472,7 @@ define-macro dirlst-search
 !emacro
 0 define-macro dirlst-refresh
     set-variable #l0 $buffer-bname
-    !force 2 dirlst-get-filename
+    !force 6 dirlst-get-filename "Refresh"
     !if @#
         read-file $buffer-fname "y" @mna
     !else
@@ -1599,10 +1619,10 @@ osd .osd.dirlst 160 ""  "File Tools Setup"      f file-tool-setup
     !endif
     goto-position "\x81"
     !if :tag-count
-        7 dirlst-tag-list "File Browser"
+        11 dirlst-tag-list "File Browser"
         set-variable #l2 &spr "Copy the %d tagged files to" :tag-count
     !else
-        7 dirlst-get-filename
+        11 dirlst-get-filename "Copy File"
         set-variable #l2 &spr "Copy file %s to" .find-file.file1
     !endif
     set-variable #l2 &spr "  %n%s  \n\n  %n%s  " &div &sub &len #l1 &len #l2 2 " " #l2 &div &sub &len #l2 &len #l1 2 " " #l1
