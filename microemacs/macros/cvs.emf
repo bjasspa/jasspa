@@ -950,7 +950,7 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
             ; if update, commit remove or add then refresh or drop tags
             set-variable .cvs.refresh $buffer-bname
         !endif
-        6 dirlst-tag-list
+        10 dirlst-tag-list
         goto-position "\x82"
     !elif &seq $buffer-bname "*cvs-state*"
         set-variable #l9 2

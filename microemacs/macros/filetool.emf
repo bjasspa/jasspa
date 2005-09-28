@@ -137,9 +137,9 @@
         set-variable $mouse-y &add $cursor-y 1
     !endif
     !if :tag-count
-        !force 6 dirlst-tag-list "File Tools"
+        !force 10 dirlst-tag-list "File Tools"
     !else
-        !force 2 dirlst-get-filename
+        !force 2 dirlst-get-filename "File Tools"
     !endif
     -1 osd @#
     osd @# 0 "b"
