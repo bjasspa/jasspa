@@ -2,7 +2,7 @@
 ; Copyright (C) 1999-2005 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ; Description: Mirkwood
-; Comment: Author: Bruno Sabin <brunosabin AT yahoo DOT com>\n\nHeavily inspired by the Trebuchet scheme I used to\nuse on GNU Emacs. Credit, I believe, needs to go\nto at least Marius Sundbakken <marius AT fix DOT no>\nand Jan "Amos" Borsodi <jb AT ez DOT no>
+; Comment: Author: Bruno Sabin <brunosabin AT yahoo DOT com>\n\nHeavily inspired by the Trebuchet scheme I used\nto use on GNU Emacs.\nCredit, I believe, needs to go to at least\nMarius Sundbakken <marius AT fix DOT no>\nand Jan "Amos" Borsodi <jb AT ez DOT no>\n
 set-variable $system &band $system &bnot 0x020
 set-variable .hilight.flags 15
 ; Create the colors first
@@ -78,7 +78,7 @@ add-color-scheme .scheme.italic-under .col0 .col1 .col0 .col2 .col0 .col3 .col0 
 add-color-scheme .scheme.bold-italic-under .col0 .col1 .col0 .col2 .col0 .col3 .col0 .col3 19 27 19 27 19 27 19 27
 add-color-scheme .scheme.spell-error .col8 .col1 .col8 .col2 .col8 .col3 .col8 .col3 16 24 16 24 16 24 16 24
 ; Directory Listings
-add-color-scheme .scheme.file .col0 .col1 .col0 .col2 .col0 .col3 .col0 .col3 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.file .col25 .col1 .col25 .col2 .col25 .col3 .col25 .col3 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.select .col10 .col1 .col10 .col2 .col10 .col3 .col10 .col3 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.dir .col12 .col1 .col12 .col2 .col12 .col3 .col12 .col3 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.dir-select .col15 .col1 .col15 .col2 .col15 .col3 .col15 .col3 0 8 0 8 0 8 0 8
@@ -116,7 +116,7 @@ add-color-scheme .scheme.mjg2 .col7 .col17 .col7 .col19 .col7 .col18 .col7 .col4
 add-color-scheme .scheme.mi1 .col10 .col10 .col20 .col10 .col17 .col1 .col17 .col3 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.mi2 .col3 .col1 .col8 .col10 .col0 .col1 .col0 .col3 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.mi3 .col4 .col17 .col4 .col12 .col12 .col1 .col12 .col3 0 8 0 8 0 8 0 8
-add-color-scheme .scheme.met-back .col20 .col0 .col17 .col0 .col12 .col0 .col12 .col0 0 8 0 8 0 8 0 8
-add-color-scheme .scheme.met-fore1 .col11 .col0 .col14 .col0 .col9 .col0 .col19 .col0 0 8 0 8 0 8 0 8
-add-color-scheme .scheme.met-fore2 .col5 .col0 .col4 .col0 .col13 .col0 .col8 .col0 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.met-back .col20 .col1 .col17 .col1 .col12 .col1 .col12 .col1 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.met-fore1 .col2 .col4 .col14 .col4 .col9 .col4 .col19 .col4 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.met-fore2 .col5 .col2 .col4 .col2 .col13 .col2 .col8 .col2 0 8 0 8 0 8 0 8
 
