@@ -236,7 +236,8 @@
 
 0 define-macro buffer-list-create
     set-position "\x86"
-    find-buffer "*buffer-list*" 
+    set-variable #l0 $buffer-bname
+    goto-position "\x85"
     -1 buffer-mode "undo"
     -1 buffer-mode "view"
     beginning-of-buffer
@@ -244,15 +245,20 @@
     end-of-buffer
     -1 kill-region
     insert-string "AC Buffer List\n"
+    set-variable #l1 1
     set-variable $buffer-names ".*"
     !while &not &seq &set #l9 $buffer-names ""
-        !if &not &nbmod #l9 "hide"
+        !if &seq #l9 #l0
+            set-variable #l1 $window-line
+            buffer-list-create-single
+        !elif &not &nbmod #l9 "hide"
             buffer-list-create-single
         !endif
     !done
     backward-delete-char
     beginning-of-buffer
     set-variable $line-scheme .scheme.header
+    set-variable $window-line #l1
     set-variable :mouse-pick-1 buffer-list-mouse-pick-1
     set-variable :mouse-drop-1 buffer-list-mouse-drop-1
     set-variable :mouse-pick-3 void
