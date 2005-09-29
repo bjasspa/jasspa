@@ -1097,11 +1097,12 @@ define-macro dirlst-search
 !emacro
 
 0 define-macro dirlst-tag-list-delete-file
-    set-variable #l3 @1
-    !if &xseq #l3 "\\(.*/\\)?\\.?\\./"
+    set-variable #l1 @1
+    set-variable #l3 @2
+    !if &xseq #l3 "\\(.*/\\)?\\.?\\./?"
     !else
 *retry
-        !force !force .mode file-op &cat .find-file.file-dir #l3 @mna
+        !force !force .mode file-op &cat #l1 #l3 @mna
         !if &and &not $status &equ $result 8
             ; read only file
             !if &band .state 2
@@ -1114,14 +1115,14 @@ define-macro dirlst-search
                     !if &iseq #l4 "a"
                         set-variable .mode 0x20
                     !endif
-                    !force !force 0x20 file-op &cat .find-file.file-dir #l3 @mna
+                    !force !force 0x20 file-op &cat #l1 #l3 @mna
                 !endif
             !endif
         !endif
         !if &not $status
             !if &equ $result 5
                 ; delete failed
-                !if &seq &set #l4 &lget &stat "i" &cat .find-file.file-dir #l3 2 "D"
+                !if &seq &set #l4 &lget &stat "i" &cat #l1 #l3 2 "D"
                     !if &not &seq &rig #l3 &sub &len #l3 1 "/"
                         set-variable #l3 &cat #l3 "/"
                     !endif
@@ -1144,6 +1145,11 @@ define-macro dirlst-search
 !emacro
 
 0 define-macro dirlst-tag-list-delete
+    set-variable #l1 .find-file.file-dir
+    !if &seq &lef #l1 6 "ftp://"
+    !elif &not &seq &lef #l1 5 "file:"
+        set-variable #l1 &cat "file:" #l1
+    !endif
     set-variable .find-file.dir-count 0
     set-variable .dirlst-tag-list-delete-file.mode 0x25
     set-variable .dirlst-tag-list-delete-file.state 0
@@ -1151,22 +1157,22 @@ define-macro dirlst-search
     !while &les &pinc #l0 1 .find-file.file-count
         ml-write &spr "Delete %n" &mod #l0 40 "."
         set-variable #l3 &ind &cat ".find-file.file" #l0
-        dirlst-tag-list-delete-file #l3
+        dirlst-tag-list-delete-file #l1 #l3
     !done
     !if .find-file.dir-count
         set-variable #l8 0
         !repeat
             set-variable #l7 &ind &cat ".find-file.dir" &inc #l8 1
-            set-variable $file-names &cat &cat .find-file.file-dir #l7 ".*"
+            set-variable $file-names &cat &cat #l1 #l7 ".*"
             !while &not &seq &set #l3 $file-names ""
                 ml-write &spr "Delete %n" &mod &inc #l0 1 40 "."
                 set-variable #l3 &cat #l7 #l3
-                !force !force dirlst-tag-list-delete-file #l3
+                !force !force dirlst-tag-list-delete-file #l1 #l3
                 !if &not $status
                     ; delete failed - still remove all directories we have already emptied
                     !while &dec #l8 1
                         set-variable #l3 &ind &cat ".find-file.dir" #l8
-                        !force !force 0x20 file-op &cat .find-file.file-dir #l3 @mna
+                        !force !force 0x20 file-op &cat #l1 #l3 @mna
                     !done
                     !abort
                 !endif
@@ -1175,7 +1181,7 @@ define-macro dirlst-search
         ; now the directories should be empty, remove them.
         !while #l8
             set-variable #l3 &ind &cat ".find-file.dir" &pdec #l8 1
-            !force !force 0x20 file-op &cat .find-file.file-dir #l3 @mna
+            !force !force 0x20 file-op &cat #l1 #l3 @mna
         !done
     !endif
     ml-write "Delete complete"
@@ -1224,14 +1230,15 @@ define-macro dirlst-search
 !emacro
 
 0 define-macro dirlst-tag-list-copy-file
-    set-variable #l1 @1
+    set-variable #l0 @1
+    set-variable #l1 @2
     !if &xseq #l1 "\\(.*/\\)?\\.?\\./?"
     !elif &seq &rig #l1 &sub &len #l1 1 "/"
         set-variable &cat ".find-file.dir" &inc .find-file.dir-count 1 #l1
     !else
-        set-variable #l2 @2
+        set-variable #l2 @3
 *retry
-        !force !force .mode file-op &cat .find-file.file-dir #l1 #l2 @mna
+        !force !force .mode file-op &cat #l0 #l1 #l2 @mna
         !if &and &not $status &equ $result 6
             ; write file check failure, dest already exists
             !if &not &band .state 4
@@ -1243,14 +1250,14 @@ define-macro dirlst-search
                     !if &iseq #l4 "a"
                         set-variable .mode #l5
                     !endif
-                    !force !force #l5 file-op &cat .find-file.file-dir #l1 #l2 @mna
+                    !force !force #l5 file-op &cat #l0 #l1 #l2 @mna
                 !endif
             !endif
         !endif
         !if &not $status
             !if &equ $result 2
                 ; failed to open src for reading
-                !if &seq &set #l4 &lget &stat "i" &cat .find-file.file-dir #l1 2 "D"
+                !if &seq &set #l4 &lget &stat "i" &cat #l0 #l1 2 "D"
                     set-variable #l1 &cat #l1 "/"
                     set-variable &cat ".find-file.dir" &inc .find-file.dir-count 1 #l1
                 !elif &seq #l4 "X"
@@ -1282,25 +1289,35 @@ define-macro dirlst-search
 
 0 define-macro dirlst-tag-list-copy
     set-variable #l0 @1
+    set-variable #l1 .find-file.file-dir
     set-variable #l9 &cond &band @# 1 "Copy" "Move"
-    !if &and &seq &lef #l0 6 "ftp://" &seq &lef .find-file.file-dir 6 "ftp://"
-        ml-write &spr "[%s File Error: Both source and destination cannot be URLs]" #l9
-        !abort
-    !elif &seq &set #l1 &lget &stat "i" #l0 2 "D"
-        !if &seq #l0 .find-file.file-dir
+    !if &seq &lef #l0 6 "ftp://"
+        !if &seq &lef #l1 6 "ftp://"
+            ml-write &spr "[%s File Error: Both source and destination cannot be URLs]" #l9
+            !abort
+        !endif
+    !elif &not &seq &lef #l0 5 "file:"
+        set-variable #l0 &cat "file:" #l0
+    !endif
+    !if &seq &lef #l1 6 "ftp://"
+    !elif &not &seq &lef #l1 5 "file:"
+        set-variable #l1 &cat "file:" #l1
+    !endif
+    !if &seq &set #l2 &lget &stat "i" #l0 2 "D"
+        !if &seq #l0 #l1
             ml-write &spr "[%s File Error: Destination must be a different directory]" #l9
             !abort
         !elif &not &seq &rig #l0 &sub &len #l0 1 "/"
             set-variable #l0 &cat #l0 "/"
         !endif
         set-variable #p9 0
-    !elif &not &sin #l1 "XR"
+    !elif &not &sin #l2 "XR"
         ml-write &spr "[%s File Error: Cannot %s to \"%s\"]" #l9 &slo #l9 #l0
         !abort
     !elif &gre .find-file.file-count 1
         ml-write &spr "[%s File Error: Destination must be a directory when copying multiple files]" #l9
         !abort
-    !elif &seq &set #l3 &cat .find-file.file-dir .find-file.file1 #l0
+    !elif &seq &set #l3 &cat #l1 .find-file.file1 #l0
         ml-write &spr "[%s File Error: Destination file name must be different]" #l9
         !abort
     !else
@@ -1310,15 +1327,15 @@ define-macro dirlst-search
     set-variable .dirlst-tag-list-copy-file.mode &cond &band @# 1 0x85 0x45
     set-variable .dirlst-tag-list-copy-file.state 0
     set-variable .find-file.dir-count 0
-    set-variable #l1 0
+    set-variable #l2 0
     !repeat
-        ml-write &spr "%s %n" #l9 &mod &inc #l1 1 40 "."
-        set-variable #l4 &ind &cat ".find-file.file" #l1
+        ml-write &spr "%s %n" #l9 &mod &inc #l2 1 40 "."
+        set-variable #l4 &ind &cat ".find-file.file" #l2
         !if &not #p9
             set-variable #l5 &cat #l0 #l4
         !endif
-        dirlst-tag-list-copy-file #l4 #l5
-    !until &equ #l1 .find-file.file-count
+        dirlst-tag-list-copy-file #l1 #l4 #l5
+    !until &equ #l2 .find-file.file-count
     !if .find-file.dir-count
         !if #p9
             !if &not &seq &rig #l0 &sub &len #l0 1 "/"
@@ -1337,12 +1354,12 @@ define-macro dirlst-search
 *dir_retry
             !force 0x100 file-op &lef #l6 &sub &len #l6 1
             !if &seq &lget &stat "i" #l6 2 "D"
-                set-variable $file-names &cat &cat .find-file.file-dir #l7 ".*"
+                set-variable $file-names &cat &cat #l1 #l7 ".*"
                 !while &not &seq &set #l3 $file-names ""
-                    ml-write &spr "%s %n" #l9 &mod &inc #l1 1 40 "."
+                    ml-write &spr "%s %n" #l9 &mod &inc #l2 1 40 "."
                     set-variable #l4 &cat #l7 #l3
                     set-variable #l5 &cat #l6 #l3
-                    !force !force dirlst-tag-list-copy-file #l4 #l5
+                    !force !force dirlst-tag-list-copy-file #l1 #l4 #l5
                     !if &not $status
                         !goto dir-tidy
                     !endif
@@ -1355,7 +1372,7 @@ define-macro dirlst-search
                     !if &not &band @# 1
                         !while &dec #l8 1
                             set-variable #l3 &ind &cat ".find-file.dir" #l8
-                            !force !force 0x20 file-op &cat .find-file.file-dir #l3 @mna
+                            !force !force 0x20 file-op &cat #l1 #l3 @mna
                         !done
                     !endif
                     !abort
@@ -1370,7 +1387,7 @@ define-macro dirlst-search
             ; moved the files, the directories should be empty, remove them.
             !while #l8
                 set-variable #l3 &ind &cat ".find-file.dir" &pdec #l8 1
-                !force !force 0x20 file-op &cat .find-file.file-dir #l3 @mna
+                !force !force 0x20 file-op &cat #l1 #l3 @mna
             !done
         !endif    
     !endif    
