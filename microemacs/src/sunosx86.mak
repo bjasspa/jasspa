@@ -40,12 +40,12 @@ INSTPROGFLAGS =	-n -o root -g users -m 0775
 CP            = cp
 MV            = mv
 RM            = rm -f
-CC            = gcc
+CC            = cc
 LD            = $(CC)
 STRIP         =	strip
 INSTALL       =	install
-CDEBUG        =	-g  -Wall
-COPTIMISE     =	-O3 -DNDEBUG=1 -Wall
+CDEBUG        =	-g
+COPTIMISE     =	-xO3 -DNDEBUG=1
 CDEFS         = -D_SUNOS_X86 -I.
 CONSOLE_DEFS  = -D_ME_CONSOLE
 WINDOW_DEFS   = -D_ME_WINDOW -I/usr/openwin/include
