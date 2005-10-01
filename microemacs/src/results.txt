@@ -4,7 +4,7 @@
 >
 >  Created By    : Jon Green
 >  Created       : Sat Aug 9 23:47:20 2003
->  Last Modified : <040108.2235>
+>  Last Modified : <051001.1901>
 >
 
 The  following are benchmark  figures for  MicroEmacs  running on
@@ -76,3 +76,55 @@ Running % me "@benchmrk" results.txt
     Test7:    106      128
     Test8:     67       92
     Test9:     69       91
+
+1.5 SunBlade 2500 (SPARC IIIi 1.6GHz) - Solaris 10 - 2005-05-05 - Forte 10.0 Compiler (-x03)
+
+    @      Get(sec) Set(sec)
+    Test1:     19       18
+    Test2:     26       30
+    Test3:     26       30
+    Test4:     27       31
+    Test5:     27       31
+    Test6:     28       32
+    Test7:     28       32
+    Test8:     21       26
+    Test9:     21       25
+
+1.6 SunBlade 2500 (SPARC IIIi 1.6GHz) - Solaris 10 - 2005-05-05 - GCC 2.95.3 (-O2)
+
+    @      Get(sec) Set(sec)
+    Test1:     23       22
+    Test2:     31       32
+    Test3:     30       32
+    Test4:     31       36
+    Test5:     30       35
+    Test6:     31       36
+    Test7:     30       36
+    Test8:     24       28
+    Test9:     25       28
+
+1.7 Sun Solaris 10 - Pentium 4 (Intel 3.2GHz) - 2005-05-05 - GCC 3.4.3 (-O2)
+
+    @      Get(sec) Set(sec)
+    Test1:     10       10
+    Test2:     22       24
+    Test3:     30       32
+    Test4:     22       24
+    Test5:     30       31
+    Test6:     23       25
+    Test7:     31       32
+    Test8:     11       13
+    Test9:     11       13
+
+1.7 Sun  Solaris  10 - Pentium 4 (Intel  3.2GHz) - 2005-05-05 - Forte 10.0
+
+    @      Get(sec) Set(sec)
+    Test1:     10       10
+    Test2:     22       24
+    Test3:     30       31
+    Test4:     23       24
+    Test5:     30       32
+    Test6:     23       24
+    Test7:     32       32
+    Test8:     11       13
+    Test9:     11       13
