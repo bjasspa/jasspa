@@ -229,7 +229,7 @@ getNextLine(int f,int n)
                     if(swbuffer(frameCur->windowCur,bp) <= 0)
                         return meFALSE ;
                 }
-                else if(findSwapFileList(nextFile,(BFND_CREAT|BFND_MKNAM),0) <= 0)
+                else if(findSwapFileList(nextFile,(BFND_CREAT|BFND_MKNAM),0,0) <= 0)
                     return meFALSE ;
                 if(curLine < 0)
                     return mlwrite(MWABORT,(meUByte *)"[No Line number]") ;

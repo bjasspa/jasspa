@@ -1541,7 +1541,7 @@ makename(meUByte *bname, meUByte *fname)
  (strchr((char *)fileName,'[') != NULL))
 
 static int
-findFileSingle(meUByte *fname, int bflag, meInt lineno)
+findFileSingle(meUByte *fname, int bflag, meInt lineno, meUShort colno)
 {
     meBuffer *bp ;
     int   gft ;
@@ -1616,6 +1616,7 @@ findFileSingle(meUByte *fname, int bflag, meInt lineno)
             meModeClear(bp->mode,MDRBIN) ;
         }
         bp->dotLineNo = lineno ;
+        bp->dotOffset = colno ;
     }
     else if(!meModeTest(bp->mode,MDNACT))
         bp->intFlag |= BIFLOAD ;
@@ -1661,7 +1662,7 @@ fileMaskToRegex(meUByte *dfname, meUByte *sfname)
 }
 
 int
-findFileList(meUByte *fname, int bflag, meInt lineno)
+findFileList(meUByte *fname, int bflag, meInt lineno, meUShort colno)
 {
     register int nofiles=0, ii ;
     meUByte fileName[meBUF_SIZE_MAX], *baseName ;
@@ -1689,23 +1690,23 @@ findFileList(meUByte *fname, int bflag, meInt lineno)
 #endif
             {
                 meStrcpy(baseName,ss) ;
-                nofiles += findFileSingle(fileName,bflag,lineno) ;
+                nofiles += findFileSingle(fileName,bflag,lineno,colno) ;
             }
         }
     }
     else
-        nofiles += findFileSingle(fileName,bflag,lineno) ;
+        nofiles += findFileSingle(fileName,bflag,lineno,colno) ;
     return nofiles ;
 }
 
 int
-findSwapFileList(meUByte *fname, int bflag, meInt lineno)
+findSwapFileList(meUByte *fname, int bflag, meInt lineno, meUShort colno)
 {
     meBuffer *bp ;
     int     ret ;
 
     bufHistNo += 2 ;
-    if(!findFileList(fname,bflag,lineno))
+    if(!findFileList(fname,bflag,lineno,colno))
         return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[Failed to find file %s]",fname);
     for(bp=bheadp ; bp->histNo!=bufHistNo ; bp=bp->next)
         ;
@@ -1749,7 +1750,7 @@ findFile(int f, int n)
     if(inputFileName(prompt,fname,0) <= 0)
         return meABORT ;
     n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN)) | BFND_MKNAM ;
-    return findSwapFileList(fname,n,0) ;
+    return findSwapFileList(fname,n,0,0) ;
 }
 
 #if MEOPT_EXTENDED
@@ -1771,7 +1772,7 @@ nextWndFindFile(int f, int n)
     if(meWindowPopup(NULL,WPOP_MKCURR,NULL) == NULL)
         return meFALSE ;
     n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN)) | BFND_MKNAM ;
-    return findSwapFileList(fname,n,0) ;
+    return findSwapFileList(fname,n,0,0) ;
 }
 #endif
 
@@ -1785,7 +1786,7 @@ readFile(int f, int n)
         return meABORT ;
     n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN)) | BFND_MKNAM ;
     if((s=zotbuf(frameCur->bufferCur,clexec)) > 0)
-        s = findSwapFileList(fname,n,0) ;
+        s = findSwapFileList(fname,n,0,0) ;
     return s ;
 }
 
@@ -1802,7 +1803,7 @@ viewFile(int f, int n)	/* visit a file in VIEW mode */
      * with view mode */
     vv = meModeTest(globMode,MDVIEW) ;
     meModeSet(globMode,MDVIEW) ;
-    ss = findSwapFileList(fname,n,0) ;
+    ss = findSwapFileList(fname,n,0,0) ;
     /* if view mode was not set globally restore it */
     if(!vv)
         meModeClear(globMode,MDVIEW) ;

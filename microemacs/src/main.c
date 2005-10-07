@@ -82,8 +82,10 @@ static char meHelpPage[]=
 "  -i      : Insert the current screen into the *scratch* buffer\n"
 #endif
 "  -k[key] : Load next file as a crypted file optionally giving the <key>\n"
-"  +<n> or\n"
-"  -l <n>  : Go to line <n> in the next given file\n"
+"  -l <n> or +<n>\n"
+"          : Go to line <n> in the next given file\n"
+"  -l <n>:<c> or +<n>:<c>\n"
+"          : Go to line <n> column <c> in the next given file\n"
 #if MEOPT_CLIENTSERVER
 "  -m <msg>: Post message <msg> to " ME_FULLNAME " server\n"
 #endif
@@ -1580,8 +1582,10 @@ missing_arg:
 #if MEOPT_CLIENTSERVER
     if(userClientServer && TTconnectClientServer())
     {
-        int     binflag=0 ;         /* load next file as a binary file*/
-        int     gline = 0 ;         /* what line? (-g option)         */
+        int      binflag=0 ;         /* load next file as a binary file*/
+        meInt    gline = 0 ;         /* what line? (-l option)         */
+        meUShort gcol = 0 ;
+        char    *ss ;
 
         for(carg=1 ; carg < rarg ; carg++)
         {
@@ -1592,9 +1596,12 @@ missing_arg:
                 {
                 case 'l':    /* -l for initial goto line */
                     if (argv[carg][2] == 0)
-                        gline = meAtoi(argv[++carg]);
+                        ss = argv[++carg] ;
                     else
-                        gline = meAtoi((argv[carg])+2);
+                        ss = (argv[carg])+2 ;
+                    gline = meAtoi(ss);
+                    if((ss=strchr(ss,':')) != NULL)
+                        gcol = (meUShort) meAtoi(ss+1) ;
                     break;
                 case 'b':    /* -b bin flag */
                     binflag |= BFND_BINARY ;
@@ -1613,12 +1620,17 @@ missing_arg:
                 }
             }
             else if (argv[carg][0] == '+')
+            {
                 gline = meAtoi((argv[carg])+1);
+                if((ss=strchr(argv[carg],':')) != NULL)
+                    gcol = (meUShort) meAtoi(ss+1) ;
+            }
             else
             {
                 /* set up a buffer for this file */
-                noFiles += findFileList((meUByte *)argv[carg],(BFND_CREAT|BFND_MKNAM|binflag),gline) ;
+                noFiles += findFileList((meUByte *)argv[carg],(BFND_CREAT|BFND_MKNAM|binflag),gline,gcol) ;
                 gline = 0 ;
+                gcol = 0 ;
                 binflag = 0 ;
             }
         }
@@ -1703,10 +1715,12 @@ missing_arg:
     
     {
         meUByte  *searchStr=NULL, *cryptStr=NULL ;
-        int     binflag=0 ;         /* load next file as a binary file*/
-        int     gline = 0 ;         /* what line? (-g option)         */
-        int     stdinflag=0 ;
-        int     obufHistNo ;
+        int       binflag=0 ;         /* load next file as a binary file*/
+        meInt     gline = 0 ;         /* what line? (-l option)         */
+        meUShort  gcol = 0 ;
+        char     *ss ;
+        int       stdinflag=0 ;
+        int       obufHistNo ;
         
         obufHistNo = bufHistNo ;
 
@@ -1736,9 +1750,12 @@ missing_arg:
 #endif
                 case 'l':    /* -l for initial goto line */
                     if (argv[carg][2] == 0)
-                        gline = meAtoi(argv[++carg]);
+                        ss = argv[++carg] ;
                     else
-                        gline = meAtoi((argv[carg])+2);
+                        ss = (argv[carg])+2 ;
+                    gline = meAtoi(ss);
+                    if((ss=strchr(ss,':')) != NULL)
+                        gcol = (meUShort) meAtoi(ss+1) ;
                     break;
                 case 'b':    /* -b bin flag */
                     binflag |= BFND_BINARY ;
@@ -1761,13 +1778,17 @@ missing_arg:
                 }
             }
             else if(argv[carg][0] == '+')
+            {
                 gline = meAtoi((argv[carg])+1);
+                if((ss=strchr(argv[carg],':')) != NULL)
+                    gcol = (meUShort) meAtoi(ss+1) ;
+            }
             else
             {
                 /* set up a buffer for this file - force the history so the first file
                  * on the command-line has the highest bufHistNo so is shown first */
                 bufHistNo = obufHistNo + rarg - carg ;
-                noFiles += findFileList((meUByte *)argv[carg],(BFND_CREAT|BFND_MKNAM|binflag),gline) ;
+                noFiles += findFileList((meUByte *)argv[carg],(BFND_CREAT|BFND_MKNAM|binflag),gline,gcol) ;
                 if((cryptStr != NULL) || (searchStr != NULL))
                 {
 #if MEOPT_EXTENDED
@@ -1810,6 +1831,7 @@ handle_stdin:
                     cryptStr = NULL ;
                     searchStr = NULL ;
                 }
+                gcol = 0 ;
                 gline = 0 ;
                 binflag = 0 ;
                 stdinflag = 0 ;

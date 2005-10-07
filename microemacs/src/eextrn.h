@@ -321,8 +321,8 @@ extern  int inputFileName(meUByte *prompt, meUByte *fn, int corFlag);
 extern	int meBufferInsertFile(meBuffer *bp, meUByte *fname, meUInt flags,
                                meInt offest, meInt length);
 extern	int insertFile(int f, int n);
-extern  int findFileList(meUByte *seed, int bflag, meInt lineno) ;
-extern  int findSwapFileList(meUByte *seed, int bflag, meInt lineno) ;
+extern  int findFileList(meUByte *seed, int bflag, meInt lineno, meUShort colno) ;
+extern  int findSwapFileList(meUByte *seed, int bflag, meInt lineno, meUShort colno) ;
 extern	int findFile(int f, int n);
 extern	int readFile(int f, int n);
 extern	int viewFile(int f, int n);
