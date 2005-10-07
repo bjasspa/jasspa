@@ -445,7 +445,6 @@ define-macro file-browser-swap-buffers
 0 define-macro dirlst-get-filename
     set-variable .find-file.file-count 0
     !if &or &les $window-line 5 &les &len @wl :fmpf
-        set-variable @1 ""
         !if &band @# 1
             ml-write "[Error: Invalid line]"
         !endif
