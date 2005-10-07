@@ -59,7 +59,7 @@ set-variable .cc-init.vsepr .cc-init.vsep
 str-to-regex .cc-init.vsepr
 
 set-variable .cc-init.names "|State|Update|Checkout|Checkin|Add|Diff|Uncheckout|Annotate|VTree|SetConfigSpec|"
-set-variable .cc-init.flags "|VZRFS|VZOQS*|CUhrS*!|CrS*!|CDrS*!|WXS!|KrS*!|HLM!|s^|*^|"
+set-variable .cc-init.flags "|ZRFS|VZOQS*|CUhrS*!|CrS*!|CDrS*!|WXS!|KrS*!|HLM!|s^|*^|"
 set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
 
 !if &band .hilight.flags 0x02
@@ -235,7 +235,7 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
                 set-variable #l3 &con #l3 #l3 #l2
             !elif &seq #l1 "V"
                 osd .osd.ccosd &inc #l2 1 "fh" "    "
-                osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Operate on entire \HVOB" #l0 cc-osd-cbc
+                osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Operate on entire \HView" #l0 cc-osd-cbc
                 set-variable #l3 &con #l3 #l3 #l2
             !elif &seq #l1 "W"
                 osd .osd.ccosd &inc #l2 1 "fh" "    "
@@ -328,6 +328,13 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
     !endif
 !emacro
 
+0 define-macro cc-console-tool
+    find-buffer "*cc-console*"
+    -1 buffer-mode "view"
+    set-variable :mouse-pick-1 "toolbar-mouse-region-pick"
+    set-variable :mouse-drop-1 "toolbar-mouse-region-drop"
+!emacro
+
 0 define-macro clearcase
     !if .toolbar.open
         !force toolbar-make-tool-visible "*cc-console*"
@@ -340,6 +347,7 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
             2 split-window-vertically
             change-window-depth 15
             find-buffer "*cc-console*"
+            -1 buffer-mode "view"
             buffer-bind-create "bio" "f10" "" file-browser-close
             3 previous-window
         !else
@@ -565,6 +573,7 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
         set-variable #l0 "exited with unknown status"
         forward-line
     !endif
+    -1 buffer-mode "view"
     -1 kill-region
     !if &or &not #l9 .cc-cleartool.exit
         insert-string &spr "\n*****ClearCase %s %s*****" &lget .cc-init.names :lock #l0
@@ -574,22 +583,33 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
         set-mark
         beginning-of-buffer
         copy-region
-        set-variable #l2 $buffer-bname
+        set-variable #l1 &spr "*cc-%s*" &slo &lget .cc-init.names :lock
+        !force 0 delete-buffer #l1
+        change-buffer-name #l1
         find-buffer "*cc-console-safe*"
+        change-buffer-name "*cc-console*"
+        !if .toolbar.open
+            set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x080
+        !endif
         end-of-buffer
+        -1 buffer-mode "view"
         !if &gre $window-line 1
             insert-newline
         !endif
         yank
+        -1 buffer-mode "edit"
+        1 buffer-mode "view"
         backward-line
         -1 yank
-        find-buffer #l2
+        find-buffer #l1
     !else
         beginning-of-line
     !endif
     !if &exi &cat "cc-cleartool-complete" :lock
         !force execute-named-command &cat "cc-cleartool-complete" :lock
     !endif
+    !if &not #l9
+        
 !emacro
 
 0 define-macro cc-cleartool-ipipe
@@ -638,10 +658,17 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
     set-position "\x83"
     !force 0 popup-window #l0
     !if &not $status
-        !force 0 popup-window "*cc-console*"
-        !if $status
-            find-buffer #l0
-        !else
+        !if &not &seq #l0 "*cc-console*"
+            !force 0 popup-window "*cc-console*"
+            !if &and $status &not &band $window-flags 0x1000
+                find-buffer #l0
+            !endif
+        !elif .toolbar.open
+            !force toolbar-make-tool-visible "*cc-console*"
+            !force 0 popup-window "*cc-console*"
+        !endif
+        !if &not &seq $buffer-bname #l0
+            1 goto-position "\x83"
             delete-other-windows
             !force 2 split-window-vertically
             !force change-window-depth 15
@@ -673,9 +700,8 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
         !force !force !force command-wait
         set-variable $buffer-input ""
         !if #l9
-            !force 0 delete-buffer #l0
-            find-buffer "*cc-console-safe*"
-            change-buffer-name "*cc-console*" 
+            !force 0 delete-buffer $buffer-bname
+            find-buffer "*cc-console*"
         !endif
         !if &equ .exit -9999
             !jump 2
@@ -696,8 +722,11 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
             !force unset-variable .cc-init.lock
             !if &seq .exit "0"
                 end-of-buffer
+                -1 buffer-mode "view"
                 insert-string &spr "\n*****ClearCase %s completed successfully*****" &lget .cc-init.names @#
                 beginning-of-line
+                -1 buffer-mode "edit"
+                1 buffer-mode "view"
             !endif
             ml-write &spr "[ClearCase: %s successful]" &lget .cc-init.names @#
         !endif
@@ -716,6 +745,8 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
         !endif
         set-variable $window-line 3
         insert-string "\n A  Name"
+        -1 buffer-mode "edit"
+        1 buffer-mode "view"
         buffer-bind-create "bio" "return" "" cc-state-find-file
         buffer-bind-create "bio" "delete" "" cc-state-delete
         buffer-bind-create "bio" "1"     "1" cc-state-sort
@@ -738,6 +769,8 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
     !if &equ $window-line :ccs-last
         !return
     !endif
+    -1 buffer-mode "view"
+    1 buffer-mode "edit" "y"
     set-variable #l0 $window-line
     goto-line :ccs-last
     !while &gre #l0 $window-line
@@ -787,6 +820,8 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
         !endif
     !done
     goto-alpha-mark  "I"
+    1 buffer-mode "view"
+    -1 buffer-mode "edit"
     set-variable :ccs-last $window-line
 !emacro
 
@@ -794,6 +829,7 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
     end-of-buffer
     backward-line
     !if &seq &lef @wl 4 "****"
+        -1 buffer-mode "view"
         set-variable #l0 @wl
         backward-line
         !tjump &seq &trr @wl "" -1
@@ -804,9 +840,9 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
         set-variable $window-line 2
         end-of-line
         insert-string &cat "   " #l0
+        -1 buffer-mode "edit"
+        1 buffer-mode "view"
     !endif
-    -1 buffer-mode "edit"
-    1 buffer-mode "view"
     set-variable #l4 $window-id
     !repeat
         !if &seq $buffer-bname "*cc-state*"
@@ -829,7 +865,6 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
     search-buffer "meb" "^[ *].  "
     forward-line
     -1 buffer-mode "view"
-    1 buffer-mode "edit" "y"
     !force #l0 sort-lines "y"
     -1 buffer-mode "edit"
      1 buffer-mode "view"
@@ -1367,8 +1402,10 @@ define-macro cc-clear-console
     beginning-of-buffer
     set-mark
     end-of-buffer
+    -1 buffer-mode "view"
     -1 kill-region
     -1 buffer-mode "edit"
+    1 buffer-mode "view"
     goto-position "\x82"
 !emacro
 
