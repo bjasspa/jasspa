@@ -5906,7 +5906,7 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
 #endif
 
                 /* Find the file into buffer */
-                findSwapFileList (dadp->fname,BFND_CREAT|BFND_MKNAM,0);
+                findSwapFileList(dadp->fname,BFND_CREAT|BFND_MKNAM,0,0);
 
                 /* Destruct the list */
                 dadHead = dadp->next;

@@ -359,8 +359,9 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
 {
     meWindow *twp ;
     meBuffer *tbp ;
-    long lineno=0 ;
-    int reload=0 ;
+    meInt     lineno=0 ;
+    meUShort  colno=0 ;
+    int       reload=0 ;
     
     if(meModeTest(bp->mode,MDNACT))
     {   
@@ -370,6 +371,8 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
 	    /* The buffer is linked to a file, load it in */
 	    lineno = bp->dotLineNo ;
 	    bp->dotLineNo = 0 ;
+            colno = bp->dotOffset;
+            bp->dotOffset = 0;
 	    readin(bp,bp->fileName);
             /* if this is also the current buffer then we have an out-of-date
              * buffer being reloaded. We must be careful of what hooks we
@@ -448,7 +451,16 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
 	    wp->markLineNo = 0;
         }            
 	if(lineno > 0)
+        {
 	    windowGotoLine(meTRUE,lineno) ;
+            if(colno > 0)
+            {
+                if(colno > meLineGetLength(frameCur->windowCur->dotLine))
+                    frameCur->windowCur->dotOffset = meLineGetLength(frameCur->windowCur->dotLine) ;
+                else
+                    frameCur->windowCur->dotOffset = colno-1 ;
+            }
+        }
         /* on a reload reset all other windows displaying this buffer to the tob */
         if(reload && (bp->windowCount > 1))
         {
