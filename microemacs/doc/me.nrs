@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.39 2005-06-25 13:49:18 bill Exp $
+.Id $Id: me.nrs,v 2.40 2005-10-08 10:40:06 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -1916,8 +1916,8 @@ and you will be removed  from the lists. There are  facilities  on the site to
 allow you to receive digests, rather than multiple posts to the group once you
 have subscribed.
 .PP
-The mailing list is hosted by  \fBYAHOO! Groups\fR.  General help information on the
-mailgroup is available at their site:-
+The mailing list is hosted by \fBYAHOO! Groups\fR. General help information on
+the mailgroup is available at their site:-
 .IP
 \fChttp://groups.yahoo.com\fR
 .SS "Help, FAQ and other queries"
@@ -2056,6 +2056,303 @@ etc. are not as slick as they  could be,  certainly  under  Microsoft  Windows
 common editor across all working platforms has been achieved!
 .SS "Development History"
 .\"
+.B "9th Release - In progress"
+.BS
+[051007] Integrated Ric Yeates command line \fB-l <line>:<col>\fR submission -
+thanks for the submission.
+.BU
+[051007] ClearCase. Removed VOB option from \fBcc-state\fR as it did not work.
+Made  \fBcc-console\fR read only and better integrated including supporting it
+as a toolbar tool (like cvs-console).
+.BU
+[051007] Fixed bad variable assignment in directory list macros.
+.BU
+[051001] Corrected Sun Solaris x86 makefile to use the Sun Native compiler.
+.BU
+[050930]  ClearCase.  Fixed  \fBcc-state\fR  to check  the  state of  selected
+directories,  which  requires a double  cleartool  call (horrid  command-line)
+Added support for  config-spec  viewing and editing. Added  directory  refresh
+option for  checkin/out  add etc. Added many  improvements  to cc-state buffer
+support,  hilighting, file listing style sorting and selection (i.e. following
+are bound \fC1\fR,\fC2\fR,\fC3\fR,\fC+\fR,\fC-\fR,\fCu\fR,\fCa\fR,\fC*\fR)
+.BU
+[050930]  \fBfile-tool\fR,  changed the buffer list  toolbar  tool to keep the
+current line to the current buffer when using \fBfind-buffer\fR etc.
+.BU
+[050930] Latest \fIMirkwood\fR update from Bruno.
+.BU
+[050930] Fixed ftp drag'n'drop copy bug, the source dir needed an file: prefix
+to remove the  \fCftp://\fR  of the current  buffer. While test I blew away my
+home  directory,  nasty way to  discover  that ftp can return  \fC".."\fR  not
+\fC"../"\fR and \fC".."\fR is not ignored when deleting! Fixed.
+.BU
+[050929]  File  listing,  stopped  copy,  move  etc  commands  from  accepting
+\fC'../'\fR  when its the current  line Fixed  \fC'v'\fR  browse file open and
+close.
+.BU
+[050928] browse, removed the delete buffer flag from browse - wrong way to
+do this.
+.BU
+[050928]  ClearCase,  make  \fBcc-annotate\fR  work  if  file is  checked  out
+(cleartool  command-line  is awful,  why do you have to pay  money to use this
+rubbish?)
+.BU
+[050928] Added wrap feature to \fBbrowse\fR mode.
+.BU
+[050928]  Changed  \fIMirkwood\fR  main OSD scheme to make current  focus item
+more visible.
+.BU
+[050920]  Changed  the $debug  variable to be bit based as its old values just
+could implement the required functionality.
+.BU
+[050920]  Latest  \fIMirkwood\fR  highlight  scheme  - added  underlining  for
+spelling errors
+.BU
+[050920]  OAD, added a comment  tab to the  scheme  editor and  up-graded  the
+scheme selectors to use combo-boxes.
+.BU
+[050920] Fixed compile error on macos caused by bad macro definition.
+.BU
+[050919] Fixed 2 bugs: meRegHead's  force could be left set to 1 which has the
+side effect of \fCC-g\fR  not hiding the active  region. Due to last change to
+\fBcommand-wait\fR  the  screen  is  not  up-dated  before  waiting  for a key
+breaking \fBgdiff\fR.
+.BU
+[050919] Readability update to \fIMirkwood\fR highlight scheme.
+.BU
+[050919] Changed ClearCase \fBcc-state\fR to handle file names with '\fC[\fR's
+in them.
+.BU
+[050915]  Added  Up,  Down,  Hide  window  and  default  open  options  to the
+\fBfile-tool\fR  setup GUI. Added  support for a default open to the directory
+listing,  pressing  return  now  checks  for a  \fBfile-tool\fR  default  open
+(explorerish), '\fCo\fR' for open always loads the file into me.
+.BU
+[050915]  Added  support for dbx on sunos.  Changed the ipipe input mode to be
+toggled using \fCf3\fR rather than set via \fCf2\fR, \fCf3\fR or \fCf4\fR.
+.BU
+[050915]  \fBzfile\fR,  fixed  filename -> absolute file name when given as an
+macro arg - should be based off current buffer's path.
+.BU
+[050908] Added \fBfile-tool\fR.
+.BU
+[050908]   ClearCase,   fixed    \fC%diff-com\fR    definition   problem   and
+\fBcc-uncheckout\fR   buffer  update  problem.  Fixed   \fBcc-checkout\fR  and
+\fBcc-checkin\fR buffer update problems as well.
+.BU
+[050908] Improved the diff highlight, more readable and correct.
+.BU
+[050908] Added new \fIMirkwood\fR highlight scheme.
+.BU
+[050806] Added better  support for MinGW. Fixed the console color bug and most
+of the compiler  warnings. Added support for the MSYS shell by creating a unix
+style   \fCmingw.gmk\fR  (uses  rm  instead  of  del  etc)  updating  the  old
+\fCmingw.gmk\fR and renamed to \fCmingw32.gmk\fR and added support to the unix
+build script.
+.BU
+[050803]  Fixed \fBne\fR crash when an unbound key is pressed, bug  introduced
+with last commits.
+.BU
+[050721] Fixed  annoying  mouse refocus in osd dialog even though mouse is not
+moved - another windows nasty.
+.BU
+[050720]  File  browser,  added  directory  closing  binding to '\fCc\fR'  and
+\'\fC+\fR' \'\fC-\fR' windows compatible bindings.
+.BU
+[050720] Pop-up menus, shifted the context menu down one line when opened by a
+key.
+.BU
+[050720]  Directory listing. Changed the tag file list macro to support moving
+to the  closest  selected  so the user can see which files they are  deleting!
+Improved the file-tool so \fC\\\\H\fR will see a hot-key,  '\fC\\\\\fR'  chars
+and  '\fC"\fR'  must be quoted (i.e.  '\fC\\\\\\\\\fR'  &  '\fC\\"\fR')  Bound
+\'\fCt\fR' to open the file tool menu directly so tools can be easily executed
+without use of the mouse.
+.BU
+[050720]  Source code  reorganisation.  Standardized  the # preprocess  forms,
+removed 2 uses of #elif and  cplusplus  and changed odd  '\fCdefined(_BSD)\fR'
+style bracketing which the \fBc-hash-eval\fR does not handle.
+.BU
+[050720] Removed unused functionality from NE. Made the following available as
+extended functionality:  \fBbackward-delete-tab\fR,  \fBchange-buffer-name\fR,
+\fBchange-file-name\fR,   \fBdefine-macro-file\fR,   \fBdelete-blank-lines\fR,
+\fBdelete-some-buffers\fR,  \fBnamed-buffer-mode\fR,  \fBsave-some-buffers\fR,
+\fBsave-buffers-exit-emacs\fR,      user(\fC%\fR),     buffer(\fC:\fR)     and
+command(\fC.\fR)   variables,    \fB$buffer-input\fR,    \fB$kept-versions\fR,
+\fB$mouse*\fR.  \fB$pause-time\fR,  \fB$MEBACKUPPATH\fR. Removed \fB-c\fR from
+ne's  help  page as this is not  supported.  Moved  macro  regex  \fB&xseq\fR,
+\fB&xrep\fR   based   directives  and  most  \fB@\fR   variables  to  extended
+functionality.
+.BU
+[050719]  Organiser  address  search  broken  due to recent  changes  to macro
+argument getting. Fixed by changing the numeric argument which was ambiguously
+defined.
+.BU
+[050718]  Source  code  reorganisation.  Made  the  file  hook  variables  and
+HideBuffer  function  statics. Changed ne to use fixed char groups for isUpper
+etc   rather   than   the   large   look-up   tables   as  it  does  not  have
+\fBset-char-mask\fR to configure them anyway.
+.BU
+[050718] C template. Fixed and greatly simplified the #if handling in the hash
+eval code. Added support for \fC#undef\fR.
+.BU
+[050715] Source code  organisation.  Removed unused code when there's no ipipe
+support.  Hashed out location  functions  which are only required by socket or
+ipipe support.
+.BU
+[050714]   Combined   \fBcc-log\fR   and   \fBcc-annotate\fR   into  a  single
+\fBcc-annotate\fR cammon with GUI. Added \fBcc-vtree\fR and \fBcc-explorer\fR.
+.BU
+[050714] Fixed \fBuser-setup\fR  setting of number of backups and Ignore files
+settings.
+.BU
+[050714]  Fixed  \fBfile-op\fR  copy  so  the  source  file's  attributes  are
+preserved  (i.e.  remains  read  only  etc).  Implemented  the  4th  parameter
+(attribs) in \fB&stat\ i\fR  Implemented a  \fBfile-op\fR  chmod using arg bit
+\fC0x200\fR.
+.BU
+[050712]  Corrected NE build under Windows,  console build  including  windows
+calls.
+.BU
+[050712]   Directory  listing,  fixed  delete  copy  and  move  prompts,  flag
+\fC0x08\fR got changed to \fC0x04\fR in \fBfile-op\fR.
+.BU
+[050712]  Implemented a proper  ClearCase  context diff by recreating  the old
+file from the diff and then calling a real diff program.
+.BU
+[050712]  Changed the diff hilighting to be just one scheme as a CC diff could
+contain a gdiff style for files and diff style for directories.
+.BU
+[050712] Corrected NE build problem with macro debugging.
+.BU
+[050711]  Corrected Latex template load error in  \fChklatex.emf\fR  (detected
+with \fC$debug=1\fR).
+.BU
+[050710] Fixed old \fC$debug\fR  interface, found a long forgotton mode 3 (now
+4) which simply  prints the current line without  waiting, this broken the new
+mode 3.
+.BU
+[050709] Removed the \fB-d\fR command line option - pointless.
+.BU
+[050709] Improved the macro command argument handling to get missing arguments
+from the user, i.e. having a macro line of: \fBfine-file\fR Works okay.
+.BU
+[050709] Vastly improved the macro  debugging, the \fB$debug\fR  value of 1 is
+now 2, 2 -> 3, a value of 1 now tells the user of any unhandled failures.
+.BU
+[050709] Fixed the Windows window resizing  behaviour to be a lot more usable.
+The window size now  increases  in character  size steps rather than  bouncing
+around and the window is refresh as its changed. The Horizontal width limit of
+the window has effectively  been removed (set to 400 chars) the depth is still
+restricted to the screen size, issue raised by Tom Hundt.
+.BU
+[050709] Added new file tools interface,  creating  windows explorer type file
+name based tools (e.g. extracting a zip file).
+.BU
+[050709] Added ClearCase \fBcc-log\fR and \fBcc-annotate\fR  (similar to cvs's
+commands)
+.BU
+[050709]  Stopped  the default  file hook from  creating a bogus tool menu and
+help page.
+.BU
+[050709] Fixed the previous-line macro and the kill-word key bindings.
+.BU
+[050709] Changed the menu items which open a sub dialog to having  '\fC...\fR'
+in their name as per the gui standard, issue raised by Tom Hundt.
+.BU
+[050708]  Changed  sub-menu  display chars, auto open menus are now ' \fC>\fR'
+and manual are '\fC+\fR', issue raised by Tom Hundt.
+.BU
+[050708] Got thoroughly fed up with the emacs style \fBkill-word\fR - useless.
+Came up with a  compromise,  if no numeric  arg is given then it works the old
+way, if an  argument  is given  (i.e. 1, 2 ...) it works in like emacs  (which
+makes sense as you are asking it to kill 1 word etc.)
+.BU
+[050708] Changed  \fBlist-commands\fR and  \fBcommand-apropros\fR  to not list
+hidden macros by default. They can be listed if bit 1 of the numeric  argument
+is clear (aka \fBlist-buffers\fR)
+.BU
+[050625]  Updated  mode line  letter  mnemonics  which were out of date, issue
+raised by Tom Hundt.
+.BU
+[050625]  Stop me crashing  when  describe-variable  is given  something  like
+"\fB&or\fR",  now restricted to variables of type \fC#\fR,  \fC$\fR,  \fC%\fR,
+\fC:\fR, \fC.\fR only.
+.BU
+[050618] Added support for -ve offests to \fB&lef\fR,  \fB&mid\fR,  \fB&rig\fR
+functions to go from the end of the string.
+.BU
+[050618]  Created a \fIno wait\fR option to  \fBshell-command\fR  so processes
+can be  launched  and  forgotten  about. Also added  support for all the other
+process  launch flags present in pipe and ipipe shell  commands.  Removed some
+very dead code.
+.BU
+[050618] Avoided a '\fB&mid -1\fR' in display  matching fence  (\fCdmf.emf\fR)
+by restructuring the logic a bit.
+.BU
+[050616] Revision 3 of ClearCase support.
+.BU
+[050614]  Second rev of  clearcase  support.  restructured  the  execution  of
+cleartool  so ipipes  are used (even  though the user may not be able to edit)
+giving feedback on progress.  Implemented a basic diff which can only diff one
+file at a time  and  only  with its  predecessor  but at least it  supports  a
+context output of sorts!
+.BU
+[050614]  Fixed  \fBcommand-wait\fR  when no arg is  given  to  return  when a
+callback sets the \fC.wait\fR  variable. Command now returns imediately if the
+\fC.wait\fR  variable is not defined. Fixed windows sleep  function  which was
+managing to break out before it should.
+.BU
+[050612] latex added macros for bold/italic/mono character formatting.
+.BU
+[050612] nroff region support for character formating.
+.BU
+[050612]  \fB.fhook-xxx.command-n\fR  syntax  added  to  \fBbuffer-init\fR  to
+simplify comamnd definition.
+.BU
+[050610]  Removed "\fBC-c C-g\fR" key binding in document  macros and replaced
+with "\fBC-c <\fR" because of \fBC-g\fR issue.
+.BU
+[050610] CVS added support for a \fBcvsco.etf\fR checkin template.
+.BU
+[050610] First  revision of ClearCase  support, very  incomplete and primative
+but the hooks required in the rest of the system are in place.
+.BU
+[050609] Changed the directory listing so '\fC.\fR' is removed and \fC..\fR is
+always  the first  \fIfile\fR  and cannot be  selected.  Fixed some  directory
+display annoying refresh issues.
+.BU
+[050609]  First  implementation  of  directory  deletion,  copying and moving,
+including  support for ftp directories  etc. Areas of concern are still copied
+file's permissions and to a lesser degree ownership. Also the copies behaviour
+with symbolic links, this must be tested further.
+.BU
+[050609]  Fixed file  permissions  and ftp minor  issues a couple of major ftp
+bugs and \fB$file-names\fR working for ftp directories.
+.BU
+[050609]  Added  new  \fB&stat\fR   "\fCi\fR"  flag  and  argument  bit  4  to
+\fBfile-op\fR  to abort on a problem  rather than  prompt, it also  returns an
+error code in \fI$result\fR.
+.BU
+[050609]  Changed  the  kill  word  commands  so have the same  word  boundary
+behaviour  as  \fBforward-word\fR  and  Emacs  (was  killing  word  only  then
+whitespaces  only etc). Corrected word movement and killing  command's EOB and
+BOB error handling.
+.BU
+[050608] Added new \fBrdiff\fR (recursive diff) command
+.BU
+[050608] Updated  \fBstring-rectangle\fR  and \fBspace-rectangle\fR to improve
+its usability.
+.BU
+[050608] Updated \fBdescribe-word\fR setup comment.
+.BU
+[050601] Corrected  \fCne.emf\fR,  broke Window mode in disabling console mode
+for \fBne\ -R\fR option change.
+.BU
+[050601]   Corrected   crash   on   hilight   with   alpha-numerics   of  form
+\fC[[:digit:]]\fR when spelt incorrectly.
+.BE
+.\"
 .B "8th Release - May 2005"
 .BS
 [050508]  JASSPA  MicroEmacs  8th  release - final.  Core and  macro  versions
@@ -2080,14 +2377,14 @@ call cannot get the process's exit code (returns -1).
 files to a single sunos5 makefile
 .BU
 [050509] Added support for \fBaix\ v5\fR (tested on aix v5.1)
-.BU    
-[050507] Added Finnish support to ne.emf. 
+.BU
+[050507] Added Finnish support to ne.emf.
 .BU
 [050506] Improved python collapse and item-list  support and added eaf and etf
 for python - thanks to Detlef.
 .BU
 [050505] Base version numbers reset for next release.
-.BU    
+.BU
 [050429] Added support for keybinding to item-list  column ordering,  function
 is  item-list-order  and is bound to 1, 2 and 3 by  default.  Thanks  to Bryan
 Schofield for his submission in this area.
@@ -2161,7 +2458,7 @@ Nicholas Kudriavtsev
 [050325]  registry.c - removed  compiler  warning  indicating  porting problem
 hilighted  under Darwin. Post  increment of variable on left of assignment and
 same  variable  appeared  on the  right,  split  out the  increment  to reduce
-ambiguity of the statement. 
+ambiguity of the statement.
 .BU
 [050320] UNIX only - add a rule for .dir files found in the X11  directory. We
 do not want this files identified as "dir" info root file
@@ -2177,8 +2474,8 @@ buffers '\fC0x8 discard modified buffers\fR' and
 \'\fC0x10 discard modified buffers and create recovery file for changes\fR'.
 .BU
 [050320]  Corrected  XML  syntax  for  strings  "\fC...\fR"  to fix indent and
-hilight anomalies. 
-.BU   
+hilight anomalies.
+.BU
 [050319]  Added  \fB-R\fR  command  line  option to reverse the built in video
 schemes - specifically for \fBne\fR(1) also works with \fBme\fR(1).
 .BU
@@ -2193,14 +2490,14 @@ C++ and YACC/LEX templates to be consistent.
 .BU
 [050315] C/C++ templates - buffer setup modified for GNU Indent Style setting.
 .BU
-[050315] Added new 
+[050315] Added new
 .Ht browse 3
 command and binding to f3, changed existing  collapse-all  \fBf3\fR binding to
 \fBC-f2\fR.
-.BU    
+.BU
 [050315] Modified  ME exit  commands to support a bitwise arg n where main
 .Ht exit-emacs 2
-has '\fC0x01  Prompt\fR', 
+has '\fC0x01  Prompt\fR',
 .\"
 \'\fC0x02  Save each  buffer/reg/dic (with  prompt if 0x01  set)\fR'
 .\"
@@ -2216,13 +2513,13 @@ recent first.
 [050311] Fixed perldb pipe operation.
 .BU
 [050310] OSD  simplified  the main context menu and moved paste a cvs items in
-the directory context menu 
+the directory context menu
 .BU
 [050310] Fixed diff's file name input, was not completing correctly
 .BU
 [050310] CVS changed the default setting of the recursive add to off.
 .BU
-[050310] JASSPA MicroEmacs quick start document released. 
+[050310] JASSPA MicroEmacs quick start document released.
 .BU
 [050309]  Fixed  bug in  regex  multi-line  search  backwards,  searching  for
 "\fCfoo[^a]\fR"   is  a  mult-line  as  \fC[^a]\fR  matches   \fC\\\\n\fR,  if
@@ -2241,32 +2538,32 @@ which is not ideal.
 [050308] Added support for relative ftp browsing via new \fCftp://???/~/???\fR
 url form. Added file name completion support for ftp
 .BU
-[050306] Corrected the docmacro \fChttp://\fR regular expression.        
+[050306] Corrected the docmacro \fChttp://\fR regular expression.
 .BU
 [050306]  Changed  the date  format of the  \fB-V\fR  command  line  option to
 include the century, same format as the
 .Ht about 2
 buffer.
 .BU
-[050302] HTLP and PHP - fixed 
-.Ht indent 2 
+[050302] HTLP and PHP - fixed
+.Ht indent 2
 problems.
 .BU
 [050302]  Perl  template - fixed  indent  problems  caused by not skipping the
 \fC=~\fR type regular expressions.
 .BU
 [050302] TCL template - fixed continuation and comment indent bug.
-.BU        
+.BU
 [050302] Added support for R/S-plus (.r) files - thanks to Detlef.
 .BU
 [050225] HTML  template - fixed an indent which was fixed at "\fC2\fR"  rather
 than "\fCt\fR" and added comment skipping indent rules
 .BU
-[050225] 
+[050225]
 .Ht dos2unix 3f ,
 .Ht unix2dos 3f
 and
-.Ht unix2win 3f 
+.Ht unix2win 3f
 \- Removed use of  \fB&spr\fR  in favor of \fB&cat\fR so  \fCdos2unix\fR  etc.
 work in
 .Ht ne 1 .
@@ -2289,7 +2586,7 @@ in favor of Perl's simpler  "\fC\\s\fR" and "\fC\\S\fR" for a whitespace  char
 class. Added new character classes "\fC\\d\fR" = digits, "\fC\\D\fR" != digits
 "\fC\\h\fR"  = hexdigits  "\fC\\H\fR"  !=  hexdigits  "\fC\\l\fR"  = lowercase
 "\fC\\L\fR" != lowercase "\fC\\u\fR" = uppercase and "\fC\\U\fR" != uppercase.
-These changes were made to both the main regex search engine and the 
+These changes were made to both the main regex search engine and the
 .Ht hilight 2
 token  matching  engine. Added support for char classes  within the main regex
 \fC[...]\fR  character class, i.e. now supports regexs like  "\fC[\\l\\u_]\fR"
@@ -2303,21 +2600,21 @@ cumbersome  and not very  useful).  The only  nasty side  effect is  hilight's
 miss-use of  "\fC\\S1\fR" - "\fC\\S9\fR" to mean not "\fC\\1\fR" - "\fC\\9\fR"
 group char, changed to "\fC\\!1\fR" - "\fC\\!9\fR"
 .BU
-[050224] 
-.Ht ne 1 
+[050224]
+.Ht ne 1
 set to not auto-save or create backups by default.
 .BU
 [050224]  Added  "\fC-a\fR" and "\fC-B\fR"  command line options to enable and
-disable auto-save 
-.Ht auto 2m 
+disable auto-save
+.Ht auto 2m
 and
-.Ht backup 2m 
+.Ht backup 2m
 modes.
 .BU
 [050224] Tcl template - some more fixes to the item list from Detlef
 .BU
-[050224] 
-.Ht watch 3 
+[050224]
+.Ht watch 3
 improved   the  refresh  rate  of  a  type  2  or  3  watch  by  ignoring  the
 \fC:watch-time\fR and just look at the \fC:watch-size\fR. Fixed the split line
 issue with type 2 of 3 watching caused by last line not being complete.
@@ -2353,13 +2650,13 @@ loading.
 .BU
 [050223] Added exec of wish to the tcl magic hook
 .BU
-[050223] Fixed 
+[050223] Fixed
 .Ht $window-chars 5
 - added OSD default button chars.
 .BU
-[050222] Fixed 
+[050222] Fixed
 .Ht $user-path 5
-being more that 35 chars breaking the 
+being more that 35 chars breaking the
 .Ht user-setup 3
 dialog.
 .BU
@@ -2370,12 +2667,12 @@ dialog.
 right, must click on the name (\*(mS kept  loading  files when just  trying to
 raise the window to the front - annoying).
 .BU
-[050222] If 0 given  to 
+[050222] If 0 given  to
 .Ht watch 3
 call watch-time, this preserves the old interface.
 .BU
-[050222] Added backup file disabling for 
-.Ht dos2unix 3f 
+[050222] Added backup file disabling for
+.Ht dos2unix 3f
 macros via command line defineable variable.
 .BU
 [050221]   Changed   the   new   Windows   process   tree   killing   to   use
@@ -2383,13 +2680,13 @@ macros via command line defineable variable.
 does not). Also moved the URL support  over to  \fCLoadLibrary()\fR  so we can
 remove the \fB-u\fR builds.
 .BU
-[050220] Added UNIX Shell and Makefile hilighting to 
+[050220] Added UNIX Shell and Makefile hilighting to
 .Ht notes 3 ).
 .BU
 [050219]  Fixed GNU GCC  warnings in Makefiles  for #pragma in X11 files under
 Sun Solaris and uninitialized variables.
 .BU
-[050219] 
+[050219]
 .Ht osd 2 .
 Removed dialog  '\fCF\fR' flag as it was not documented, did not work and only
 used in one obscure  place. Fixed  \fBC-g\fR and \fBDel\fR so they close up to
@@ -2398,7 +2695,7 @@ annoying.
 .BU
 [050219] Release Candidate 1 - MicroEmacs 2005 (RC1)
 .BU
-[050218]  Corrected  \s-1UNIX\s0  
+[050218]  Corrected  \s-1UNIX\s0
 .Hl client-server Client-Server 2
 socket file check -- bad test on  existence  of  connection  file, using wrong
 variable with wrong test sense.
@@ -2411,19 +2708,19 @@ keys   are   rebound.   Fixed   by   replacing   with    '\fBesc\fR    \fBx\fR
 \fBset-alpha-mark\fR  \fBP\fR' (where  \fBesc-x\fR is a safe internal  special
 key).
 .BU
-[050218] Updated 
+[050218] Updated
 .Ht watch 3
-interface and made public. Created new 
+interface and made public. Created new
 .Ht watch-time 3
 command and prompt user for watch type when no argument is given.
-.BU    
+.BU
 [050218]  Removed the use of bit \fC0x1000\fR in Ada string hilight as this is
 unlikely to be wanted (probably copied from Pascal).
 .BU
 [050218]  Changed the registry  parser to abort on error rather than trying to
 carry on (a very painful process for a badly decrypted registry file).
 .BU
-[050218] Fixed  highlighting minor issues. 
+[050218] Fixed  highlighting minor issues.
 .Ht hilight 2
 scheme now returns back
 to EOL scheme after a bracket. A branch tag on an \s-1EOL\s0 line
@@ -2520,7 +2817,7 @@ variable setting
 .BU
 [050209] Fixed hot keys (were 3 'U's) in \fCosdmisc.emf\fR.
 .BU
-[050209] Added new \fIBraceStatement\fR 
+[050209] Added new \fIBraceStatement\fR
 .Ht indent 2
 value to support GNU C indentation style.
 .BU
