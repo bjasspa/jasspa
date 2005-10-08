@@ -4,8 +4,183 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <050710.1016>
+>  Last Modified : <051008.1044>
 >
+
+    [051007] Integrated Ric Yeates command line "-l <line>:<col>" submission -
+             thanks for the submission.
+
+    [051007] ClearCase.  Removed VOB option from  cc-state as it didn't  work.
+             Made  cc-console  read  only  and  better  integrated   including
+             supporting it as a toolbar tool (like cvs-console)
+
+    [051007] Fixed bad variable assignment in directory list macros.
+
+    [051001] Corrected  Sun  Solaris  x86  makefile  to  use  the  Sun  Native
+             compiler.
+
+    [050930] ClearCase.   Fixed  cc-state  to  check  the  state  of  selected
+             directories,  which  requires  a double  cleartool  call  (horrid
+             command-line) Added support for config-spec  viewing and editing.
+             Added  directory  refresh option for  checkin/out  add etc. Added
+             many  improvements to cc-state buffer support,  hilighting,  file
+             listing  style  sorting and selection  (i.e.  following are bound
+             1,2,3,+,-,u,a,*)
+
+    [050930] file-tool,  changed  the  buffer  list  toolbar  tool to keep the
+             current line to the current buffer when using find-buffer etc.
+
+    [050930] Latest Mirkwood update from Bruno.
+
+    [050930] Fixed ftp  drag'n'drop  copy bug, the  source dir needed an file:
+             prefix to remove the ftp:// of the current  buffer.  While test I
+             blew away my home  directory,  nasty way to discover that ftp can
+             return  ".." not  "../" and ".." is not  ignored  when  deleting!
+             Fixed.
+
+    [050929] File  listing,  stopped  copy, move etc commands  from  accepting
+             '../' when its the  current  line Fixed 'v' browse  file open and
+             close.
+
+    [050928] browse, removed the delete buffer flag from browse - wrong way to
+             do this.
+
+    [050928] ClearCase,  make   cc-annotate   work  if  file  is  checked  out
+             (cleartool command-line is awful, why do you have to pay money to
+             use this rubbish?)
+
+    [050928] Added wrap feature to browse mode.
+
+    [050928] Changed  Mirkwood main OSD scheme to make current focus item more
+             visible.
+
+    [050920] Changed  the $debug  variable  to be bit based as its old  values
+             just could implement the required functionality.
+
+    [050920] Latest Mirkwood highlight scheme - added underlining for spelling
+             errors
+
+    [050920] OAD, added a comment tab to the scheme  editor and  up-graded the
+             scheme selectors to use combo-boxes.
+
+    [050920] Fixed compile error on macos caused by bad macro definition.
+
+    [050919] Fixed 2 bugs: meRegHead's  force could be left set to 1 which has
+             the side effect of C-g not hiding the active  region. Due to last
+             change to command-wait  the screen is not up-dated before waiting
+             for a key breaking gdiff.
+
+    [050919] Readability update to Mirkwood highlight scheme.
+
+    [050919] Changed  ClearCase  cc-state  to handle  file  names with '['s in
+             them.
+
+    [050915] Added Up, Down, Hide  window  and  default  open  options  to the
+             file-tool  setup  gui. Added  support  for a default  open to the
+             directory  listing,  pressing  return now checks for a  file-tool
+             default  open  (explorerish),  'o' for open always loads the file
+             into me.
+
+    [050915] Added  support for dbx on sunos.  Changed the ipipe input mode to
+             be toggled using f3 rather than set via f2 f3 or f4.
+
+    [050915] zfile,  fixed  filename  ->  absolute  file name when given as an
+             macro arg - should be based off current buffer's path.
+
+    [050908] Added file-tool.
+
+    [050908] ClearCase, fixed %diff-com  definition  problem and cc-uncheckout
+             buffer  update  problem.  Fixed  cc-checkout & cc-checkin  buffer
+             update problems as well.
+
+    [050908] Improved the diff highlight, more readable and correct.
+
+    [050908] Added new Mirkwood highlight scheme.
+
+    [050806] Added better  support for MinGW. Fixed the console  color bug and
+             most of the compiler  warnings.  Added support for the MSYS shell
+             by creating a unix style  mingw.gmk  (uses rm instead of del etc)
+             updating the old mingw.gmk and renamed to  mingw32.gmk  and added
+             support to the unix build script.
+
+    [050803] Fixed ne crash when an unbound  key is  pressed,  bug  introduced
+             with last commits.
+
+    [050721] Fixed  annoying  mouse refocus in osd dialog even though mouse is
+             not moved - another windows nasty.
+
+    [050720] File browser, added directory  closing binding to 'c' and '+' '-'
+             windows compatible bindings.
+
+    [050720] Pop-up menus,  shifted the context menu down one line when opened
+             by a key.
+
+    [050720] Directory  listing.  Changed  the tag file list  macro to support
+             moving to the  closest  selected  so the user can see which files
+             they  are  deleting!  Improved  the  file-tool  so \\H will see a
+             hot-key,  '\\' chars and '"' must be quoted  (i.e. '\\\\' & '\"')
+             Bound 't' to open the file  tool  menu  directly  so tools can be
+             easily executed without use of the mouse.
+
+    [050720] Source code reorganisation.  Standardized the # preprocess forms,
+             removed  2  uses  of  #elif  and   cplusplus   and   changed  odd
+             'defined(_BSD)'  style  bracketing which the c-hash-eval does not
+             handle.
+
+    [050720] Removed  unused   functionality   from  NE.  Made  the  following
+             available   as   extended   functionality:   backward-delete-tab,
+             change-buffer-name,      change-file-name,     define-macro-file,
+             delete-blank-lines,     delete-some-buffers,    named-buffer-mode
+             save-some-buffers  save-buffers-exit-emacs  user (%),  buffer (:)
+             and command (.) variables  $buffer-input  $kept-versions  $mouse*
+             $pause-time $MEBACKUPPATH. Removed -c from ne's help page as this
+             is not supported. Moved macro regex &xseq &xrep based  directives
+             and most @ variables to extended functionality.
+
+    [050719] Organiser  address  search broken due to recent  changes to macro
+             argument  getting. Fixed by changing the numeric  argument  which
+             was ambiguously defined.
+
+    [050718] Source  code  reorganisation.  Made the file hook  variables  and
+             HideBuffer  function statics. Changed ne to use fixed char groups
+             for isUpper etc rather than the large  look-up  tables as it does
+             not have set-char-mask to configure them anyway.
+
+    [050718] C template. Fixed and greatly  simplified the #if handling in the
+             hash eval code. Added support for #undef.
+
+    [050715] Source code  organisation.  Removed  unused code when  there's no
+             ipipe  support.  Hashed  out  location  functions  which are only
+             required by socket or ipipe support.
+
+    [050714] Combined cc-log and cc-annotate into a single  cc-annotate cammon
+             with gui. Added cc-vtree and cc-explorer.
+
+    [050714] Fixed  user-setup  setting of number of backups and Ignore  files
+             settings.
+
+    [050714] Fixed file-op copy so the source file's  attributes are preserved
+             (i.e.  remains  read only  etc).  Implemented  the 4th  parameter
+             (attribs) in &stat i  Implemented  a file-op  chmod using arg bit
+             0x200
+
+    [050712] Corrected NE build under Windows, console build including windows
+             calls.
+
+    [050712] Directory  listing, fixed delete copy and move prompts, flag 0x08
+             got changed to 0x04 in file-op.
+
+    [050712] Implemented a proper ClearCase context diff by recreating the old
+             file from the diff and then calling a real diff program.
+
+    [050712] Changed  the diff  hilighting  to be just one scheme as a CC diff
+             could  contain  a gdiff  style  for  files  and  diff  style  for
+             directories.
+
+    [050712] Corrected NE build problem with macro debugging.
+
+    [050711] Corrected Latex template load error in hklatex.emf (detected with
+             $debug=1)
 
     [050710] Fixed old $debug interface, found a long forgotton mode 3 (now 4)
              which simply prints the current line without waiting, this broken
@@ -15,7 +190,7 @@
 
     [050709] Improved  the macro  command  argument  handling  to get  missing
              arguments  from the user, i.e. having a macro line of:  fine-file
-             Works okay. 
+             Works okay.
 
     [050709] Vastly improved the macro debugging, the $debug value of 1 is now
              2, 2 -> 3, a  value  of 1 now  tells  the  user of any  unhandled
@@ -31,7 +206,8 @@
     [050709] Added new file tools interface,  creating  windows  explorer type
              file name based tools (e.g. extracting a zip file).
 
-    [050709] Added ClearCase cc-log & cc-annotate (similar to cvs's commands)
+    [050709] Added  ClearCase   cc-log  and  cc-annotate   (similar  to  cvs's
+             commands)
 
     [050709] Stopped the default file hook from creating a bogus tool menu and
              help page.
@@ -53,10 +229,10 @@
     [050708] Changed  list-commands  and  command-apropros  to not list hidden
              macros  by  default.  They can be listed if bit 1 of the  numeric
              argument is clear (aka list-buffers)
-    
+
     [050625] Updated mode line letter  mnemonics which were out of date, issue
              raised by Tom Hundt.
-    
+
     [050625] Stop me crashing when  describe-variable  is given something like
              "&or", now restricted to variables of type #, $, %, :, . only.
 
@@ -69,7 +245,7 @@
              commands. Removed some very dead code.
 
     [050618] Avoided  a '&mid  -1' in  display  matching  fence  (dmf.emf)  by
-             restructuring the logic a bit. 
+             restructuring the logic a bit.
 
     [050616] Revision 3 of ClearCase support.
 
@@ -98,12 +274,12 @@
 
     [050610] First  revision  of  ClearCase   support,  very   incomplete  and
              primative but the hooks required in the rest of the system are in
-             place. 
+             place.
 
     [050609] Changed the directory  listing so '.' is removed and .. is always
              the first  'file' and cannot be  selected.  Fixed some  directory
              display annoying refresh issues.
-    
+
     [050609] First  implementation of directory  deletion, copying and moving,
              including  support for ftp directories  etc. Areas of concern are
              still copied file's permissions and to a lesser degree ownership.
@@ -112,7 +288,7 @@
 
     [050609] Fixed file permissions and ftp minor issues a couple of major ftp
              bugs and $file-names working for ftp directories.
-    
+
     [050609] Added new &stat "i" flag and  argument  bit 4 to file-op to abort
              on a problem rather than prompt, it also returns an error code in
              $result.
@@ -131,7 +307,7 @@
 
     [050601] Corrected ne.emf, broke Window mode in disabling console mode for
              ne -R option change.
-    
+
     [050601] Corrected   crash  on  hilight   with   alpha-numerics   of  form
              [[:digit:]] when spelt incorrectly.
 
@@ -171,7 +347,7 @@
       in a black console.
 
   History
-  
+
     [050530] Debian package support added to CD distribution.
 
     [050525] Re-released 20050505 source + Fedora + 2.6 + CD distribution.
@@ -184,9 +360,9 @@
 
     [050522] NE build correction for osd bug, conditional compilation required
              to for mouse only code.
-    
+
     [050518] Re-released 20050505 Windows builds
-    
+
     [050518] Fixed  windows  osd bug which break the main menus undo  feature,
              extra  mouse-move keys generated  during OSD interaction  trashes
              the @cl (last  command)  value so the menu undo only ever  undoes
