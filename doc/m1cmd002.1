@@ -5,7 +5,7 @@
 .\"
 .\" Created By: Jon Green
 .\"
-.Id $Id: m1cmd002.1,v 1.2 2005-03-19 17:47:49 jon Exp $
+.Id $Id: m1cmd002.1,v 1.3 2005-10-08 10:02:28 jon Exp $
 .Im MicroEmacs function
 .so me.tni
 .TH ne 1
@@ -26,7 +26,7 @@ ne - \*(nE text editor
 [\|\fB\-c\fR\|]
 [\|\fB\-h\fR\|]
 [\|\fB\-k\fR[\|\fIkey\fR\|]\ \|\fIfile\fR\|]
-[\|\fB\-l\fR\|\fIlineNo\fR\|]
+[\|\fB\-l\fR\|\fIlineNo\fR\|[\fB:\fIcolumn\|\fR]]
 [\|\fB\-R\fR\|]
 [\|\fB\-r\fR\|]
 [\|\fB\-s\fR\|\fIstring\fR\|]
@@ -98,8 +98,9 @@ buffer  mode). The  optional  adjoining  argument  can be used to specify  the
 decrypting  key, if this argument is not specify the user will be prompted for
 it on start-up. 
 .IP \fB\-l\fR\|\fIlineNo\fR
-Go to line  \fIlineNo\fR in the next given file. Typically used with utilities
-such a
+Go to line \fIlineNo\fR in the next given file and optionally to the specified
+column number. The column may be omitted if not required.  Typically used with
+utilities such a
 .Hr more 1
 where an external editor may be invoked from other viewer.
 .IP \fB\-n\fR
