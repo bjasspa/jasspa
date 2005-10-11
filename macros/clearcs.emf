@@ -59,7 +59,7 @@ set-variable .cc-init.vsepr .cc-init.vsep
 str-to-regex .cc-init.vsepr
 
 set-variable .cc-init.names "|State|Update|Checkout|Checkin|Add|Diff|Uncheckout|Annotate|VTree|SetConfigSpec|"
-set-variable .cc-init.flags "|ZRFS|VZOQS*|CUhrS*!|CrS*!|CDrS*!|WXS!|KrS*!|HLM!|s^|*^|"
+set-variable .cc-init.flags "|ZRFS|VZOQS*|CUhrS*!|CcrS*!|CDrS*!|WXS!|KrS*!|HLM!|s^|*^|"
 set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
 
 !if &band .hilight.flags 0x02
@@ -82,6 +82,27 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
     hilight .hilight.cc-state 0x102 "[ *]m " .scheme.no2
 !endif
 
+0 define-macro cc-osd-get-comment
+    set-position "\x83"
+    set-variable #l1 &cat .find-file.file-dir .find-file.file1
+    !if &sin " " #l1
+        set-variable #l1 &spr "\"%s\"" #l1
+    !endif
+    6 pipe-shell-command &spr "%s describe -fmt \"%%c\" %s" .cc-init.com #l1 "*cc-comtemp*"
+    find-buffer "*cc-comtemp*"
+    !if &gre $window-eline 4
+        set-variable $window-line 4
+        set-mark
+        end-of-buffer
+        backward-char
+        copy-region
+        set-variable .cc-init.comment @y
+        -1 yank
+    !endif
+    !force 0 delete-buffer "*cc-comtemp*"
+    osd .osd.ccosd @# "BfH" .scheme.osd-dbtt " Get Comment "
+    goto-position "\x83"
+!emacro
 0 define-macro cc-init-comment
     set-variable .cc-init.comment ""
     set-variable .cc-init.cominit ""
@@ -186,7 +207,15 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
             osd .osd.ccosd &inc #l2 1 ""
             !if &seq #l1 "C"
                 @# cc-init-comment
-                osd .osd.ccosd &inc #l2 1 "Sf" "    \HComment:" &add #l2 2
+                osd .osd.ccosd &inc #l2 1 "Sfh" "    \HComment:    " &add #l2 3
+                !if &seq "c" &mid #l9 #l0 1
+                    !if .find-file.file-count
+                        osd .osd.ccosd &inc #l2 1 "BRtfHx" .scheme.osd-ebtt " \HGet Comment " #l2 cc-osd-get-comment
+                    !endif
+                    set-variable #l0 &add #l0 1
+                !else
+                    osd .osd.ccosd &inc #l2 1 "" ""
+                !endif
                 osd .osd.ccosd &inc #l2 1 "fh" "    "
                 osd .osd.ccosd &inc #l2 1 "EtNxHfhz" .scheme.osd-entry 60 10 "" f cc-osd-mec
                 !if &not &seq .cc-init.comment ""
@@ -263,7 +292,7 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
                 !endif
             !elif &seq #l1 "r"
                 osd .osd.ccosd &inc #l2 1 "fh" "    "
-                osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Refresh directory listing" #l0 cc-osd-cbc
+                osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Refresh directory \Hlisting" #l0 cc-osd-cbc
                 set-variable #l3 &con #l3 #l3 #l2
             !else
                 osd .osd.ccosd &inc #l2 1 "" &cat "flag " #l1
@@ -758,12 +787,13 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
         buffer-bind-create "bio" "*"      "" dirlst-tag-invert
         buffer-bind-create "bio" "a"     "1" dirlst-tag-set
         buffer-bind-create "bio" "u"    "-1" dirlst-tag-set
-        set-variable :mouse-pick-1 cc-state-mouse-pick-1
-        set-variable :mouse-drop-1 cc-state-mouse-drop-1
+        set-variable :mouse-pick-1 dirlst-mouse-pick-1
+        set-variable :mouse-drop-1 dirlst-mouse-drop-1
         set-variable :mouse-pick-3 void
         set-variable :mouse-drop-3 cc-state-mouse-drop-3
         set-variable :tag-count 0
         set-variable :ccs-last 5
+        set-variable :fmpf 4
     !endif
     goto-alpha-mark "I"
     !if &equ $window-line :ccs-last
@@ -1024,8 +1054,8 @@ define-macro cc-checkout
         set-variable #l2 &cat #l2 "-nc "
     !else
         set-variable #l2 &spr "%s-c \"%s\" " #l2 &rep &rep &trb .cc-init.comment "\\" "\\\\" "\"" "\\\""
-        set-variable .cc-init.comment3 .cc-init.comment
     !endif
+    set-variable .cc-init.comment3 .cc-init.comment
     &len #l2 cc-get-file-list #l0 0 0
     3 cc-cleartool 3 $buffer-fname &cat #l2 #l0
     !if &seq $buffer-fname ""
@@ -1048,8 +1078,8 @@ define-macro cc-checkin
         set-variable #l2 &cat #l2 "-nc "
     !else
         set-variable #l2 &spr "%s-c \"%s\" " #l2 &rep &rep &trb .cc-init.comment "\\" "\\\\" "\"" "\\\""
-        set-variable .cc-init.comment4 .cc-init.comment
     !endif
+    set-variable .cc-init.comment4 .cc-init.comment
     &len #l2 cc-get-file-list #l0 0 0
     4 cc-cleartool 3 $buffer-fname &cat #l2 #l0
     !if &seq $buffer-fname ""
@@ -1096,8 +1126,8 @@ define-macro cc-add
         set-variable #l2 &cat #l2 "-nc"
     !else
         set-variable #l2 &spr "%s-c \"%s\"" #l2 &rep &rep &trb .cc-init.comment "\\" "\\\\" "\"" "\\\""
-        set-variable .cc-init.comment5 .cc-init.comment
     !endif
+    set-variable .cc-init.comment5 .cc-init.comment
     ; Add all directories first
     !if &not &seq #l3 ""
         set-variable #l4 &con &seq #l5 "" 3 1        
