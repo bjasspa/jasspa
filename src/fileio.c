@@ -43,6 +43,10 @@
 #define meFileGetError()   (errno)
 #endif
 
+#ifdef _UNIX
+#include <utime.h>
+#endif
+
 /*
  * char-mask lookup tables
  * 
@@ -2574,12 +2578,35 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
     }
     if(dfname != NULL)
     {
+#ifdef _UNIX
+        struct utimbuf fileTimes ;
+#endif
+#ifdef _WIN32
+        FILETIME creationTime, lastAccessTime, lastWriteTime ;
+#endif
+        int presTimeStamp ;
+        
         if((rr=ffReadFileOpen(sfname,meRWFLAG_READ|(dFlags & (meRWFLAG_NODIRLIST|meRWFLAG_SILENT)),NULL)) <= 0)
             return rr ;
         if((rr=ffWriteFileOpen(dfname,meRWFLAG_WRITE|(dFlags & (meRWFLAG_BACKUP|meRWFLAG_SILENT)),NULL)) <= 0)
         {
             ffReadFileClose(sfname,meRWFLAG_READ|(dFlags & meRWFLAG_SILENT)) ;
             return rr ;
+        }
+        presTimeStamp = ((dFlags & meRWFLAG_PRESRVTS) && (ffrp != ffpInvalidVal) && (ffwp != ffpInvalidVal)) ;
+        if(presTimeStamp)
+        {
+#ifdef _UNIX
+            struct stat stt ;
+            if((presTimeStamp = (fstat(fileno(ffrp),&stt) == 0)))
+            {
+                fileTimes.actime = stt.st_atime ;
+                fileTimes.modtime = stt.st_mtime ;
+            }
+#endif
+#ifdef _WIN32
+            presTimeStamp = GetFileTime(ffrp,&creationTime,&lastAccessTime,&lastWriteTime) ;
+#endif
         }
 #if MEOPT_SOCKET
         notFtpWrite = (ffwp != ffpInvalidVal) ;
@@ -2595,6 +2622,10 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
         }
         ffReadFileClose(sfname,meRWFLAG_READ|(dFlags & meRWFLAG_SILENT)) ;
         ffremain = 0 ;
+#ifdef _WIN32
+        if(presTimeStamp)
+            SetFileTime(ffwp,&creationTime,&lastAccessTime,&lastWriteTime) ;
+#endif
         rr = ffWriteFileClose(dfname,meRWFLAG_WRITE|(dFlags & meRWFLAG_SILENT),NULL) ;
         if(r1 <= 0)
             rr = r1 ;
@@ -2604,6 +2635,10 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
 #endif
                 )
             meFileSetAttributes(dfname,fileMode) ;
+#ifdef _UNIX
+        if(presTimeStamp)
+            utime((char *) dfname,&fileTimes) ;
+#endif
     }
     if((rr > 0) && (dFlags & (meRWFLAG_DELETE|meRWFLAG_MKDIR|meRWFLAG_STAT)))
     {

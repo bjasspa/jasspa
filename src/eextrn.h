@@ -388,6 +388,7 @@ extern  void    getDirectoryList(meUByte *pathName, meDirList *dirList) ;
 #define meRWFLAG_FTPNLST    0x08000
 #define meRWFLAG_NODIRLIST  0x10000
 #define meRWFLAG_STAT       0x20000
+#define meRWFLAG_PRESRVTS   0x40000
 
 extern int      ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
                            meInt offset, meInt length) ;
