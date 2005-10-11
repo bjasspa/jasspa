@@ -675,7 +675,7 @@ TTconnectClientServer (void)
         DWORD ii ;
 
         /* Create the file name, if the file exists, or deleting it
-         * succeeds then there is no server, fial */
+         * succeeds then there is no server, fail */
         mkTempName (fname, meUserName, ".cmd");
         if(meTestExist(fname) || DeleteFile (fname))
             return 0 ;
@@ -4599,10 +4599,26 @@ meFrameTermMakeCur(meFrame *frame)
     if(!(meSystemCfg & meSYSTEM_CONSOLE))
 #endif /* _ME_CONSOLE */
     {
+        DWORD ThreadID1, ThreadID2;
+        HWND cwHwnd ;
         if (IsIconic (meFrameGetWinHandle(frame)))
             ShowWindow (meFrameGetWinHandle(frame), SW_SHOWNORMAL);
-        else
-            SetForegroundWindow(meFrameGetWinHandle(frame));
+        else if((cwHwnd = GetForegroundWindow()) != meFrameGetWinHandle(frame))
+        {
+            /* To get the require permissions to set the foreground
+             * window ME needs to attach to the current thread */
+            if((cwHwnd != NULL) &&
+               ((ThreadID1 = GetWindowThreadProcessId(cwHwnd, NULL)),
+                (ThreadID2 = GetWindowThreadProcessId(meFrameGetWinHandle(frame), NULL)),
+                (ThreadID1 != ThreadID2)))
+            {
+                AttachThreadInput(ThreadID1, ThreadID2, TRUE);
+                SetForegroundWindow(meFrameGetWinHandle(frame)) ; 
+                AttachThreadInput(ThreadID1, ThreadID2, FALSE);
+            }
+            else
+                SetForegroundWindow(meFrameGetWinHandle(frame));
+        }
     }
 }
 
