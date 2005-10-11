@@ -2107,7 +2107,7 @@ main(int argc, char *argv[])
 #endif
 
                 /* Find the file into buffer */
-                findSwapFileList (dadp->fname,BFND_CREAT|BFND_MKNAM,0);
+                findSwapFileList (dadp->fname,BFND_CREAT|BFND_MKNAM,0,0);
 
                 /* Destruct the list */
                 dadHead = dadp->next;
