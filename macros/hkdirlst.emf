@@ -1323,7 +1323,7 @@ define-macro dirlst-search
         set-variable #p9 1
         set-variable #l5 #l0
     !endif
-    set-variable .dirlst-tag-list-copy-file.mode &cond &band @# 1 0x85 0x45
+    set-variable .dirlst-tag-list-copy-file.mode &cond &band @# 1 0x8d 0x4d
     set-variable .dirlst-tag-list-copy-file.state 0
     set-variable .find-file.dir-count 0
     set-variable #l2 0
@@ -1452,7 +1452,10 @@ define-macro dirlst-search
         set-variable #l0 &lef #l0 &sub &len #l0 1
     !endif
     !if &seq #l1 #l0
-        ml-write "[Rename File: No name change]"
+        ml-write "[Rename File Error: No name change]"
+        !return
+    !elif &and &band $system 0x100 &iseq #l1 #l0
+        ml-write "[Rename File Error: No name change (case insensitive)]"
         !return
     !elif &seq &set #l3 &lget &stat "i" &cat $buffer-fname #l0 2 "R"
         set-variable #l4 @mc1 &spr "File \"%s\" already exists, replace [y/n]? " #l0 "nNyY"
@@ -1463,7 +1466,7 @@ define-macro dirlst-search
         ml-write "[Rename File Error: Illegal filename entered]"
         !abort
     !endif
-    0x40 file-op &cat $buffer-fname #l1 &cat $buffer-fname #l0 @mna
+    0x48 file-op &cat $buffer-fname #l1 &cat $buffer-fname #l0 @mna
     !if &band .find-file.flags 1
         dirlst-refresh
         dirlst-goto-filename &cat #l0 #l9
