@@ -1934,6 +1934,7 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
 #define meFILEOP_CHECK     0x001
 #define meFILEOP_BACKUP    0x002
 #define meFILEOP_NOPROMPT  0x004
+#define meFILEOP_PRESRVTS  0x008
 #define meFILEOP_FTPCLOSE  0x010
 #define meFILEOP_DELETE    0x020
 #define meFILEOP_MOVE      0x040
@@ -1991,6 +1992,8 @@ fileOp(int f, int n)
         else
             fileMask = meFileGetAttributes(sfname) ;
         dFlags |= meRWFLAG_NODIRLIST ;
+        if(n & meFILEOP_PRESRVTS)
+            dFlags |= meRWFLAG_PRESRVTS ;
     }
     else if(n & meFILEOP_MKDIR)
     {
