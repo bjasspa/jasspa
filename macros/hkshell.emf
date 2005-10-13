@@ -50,6 +50,9 @@ set-variable .fhook-shell.comment "|#||#|# | #|r|"
     ; Comments. Note "#!" is the very first line
     hilight .hilight.shell 2     "\\s\\{#"        .scheme.comment
     hilight .hilight.shell 2     "^#!"             .scheme.header
+    ; Strings are not necessarily escaped in quotes, pick up on an escaped
+    ; character. 
+    hilight .hilight.shell 0     "\\\\."           .scheme.string
     ; Variables.
     hilight .hilight.shell 4     "\\$" "\\}\\W" "" .scheme.variable
     hilight .hilight.shell 0x80  "\\${" .hilight.shellV .scheme.variable
