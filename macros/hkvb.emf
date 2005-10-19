@@ -47,8 +47,11 @@ set-variable .fhook-vb.collapse-mnext "-1"
     hilight .hilight.vb 0 "^\\w+:"       .scheme.link
     ; Operators
     hilight .hilight.vb 0 "<>"           .scheme.operator
-    hilight .hilight.vb 1 "Not"          .scheme.operator
+    hilight .hilight.vb 1 "And"          .scheme.operator
     hilight .hilight.vb 1 "Is"           .scheme.operator
+    hilight .hilight.vb 1 "Not"          .scheme.operator
+    hilight .hilight.vb 1 "Or"           .scheme.operator
+    hilight .hilight.vb 1 "Xor"          .scheme.operator
     ; Constants
     hilight .hilight.vb 1 "True"         .scheme.prepro
     hilight .hilight.vb 1 "False"        .scheme.prepro
