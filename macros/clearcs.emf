@@ -778,6 +778,7 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
         1 buffer-mode "view"
         buffer-bind-create "bio" "return" "" cc-state-find-file
         buffer-bind-create "bio" "delete" "" cc-state-delete
+        buffer-bind-create "bio" "C-k"    "" cc-state-delete-line
         buffer-bind-create "bio" "1"     "1" cc-state-sort
         buffer-bind-create "bio" "2"     "2" cc-state-sort
         buffer-bind-create "bio" "3"     "3" cc-state-sort
@@ -947,6 +948,20 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
 0 define-macro cc-state-mouse-drop-3
     osd-cc-file-menu
     !force !force .osd.tmp osd
+!emacro
+
+0 define-macro cc-state-delete-line
+    !if &xseq @wl "[ *][chmp]  .+"
+        -1 buffer-mode "view"
+        beginning-of-line
+        set-mark
+        forward-line
+        -1 kill-region
+        -1 buffer-mode "edit"
+        1 buffer-mode "view"
+    !else
+        ml-write "[Invalid line]"
+    !endif
 !emacro
 
 0 define-macro cc-state-delete
@@ -1274,6 +1289,7 @@ define-macro cc-diff
             end-of-buffer
             !if #l8
                 2 backward-line
+                -1 buffer-mode "view"
                 set-variable @wl "***************"
                 beginning-of-line
                 forward-line
@@ -1544,7 +1560,7 @@ define-macro cc-setup
     osd @# 20  "" "\HUpdate files"     f cc-update
     osd @# 95  "-"
     osd @# 100 "" "E\Hxplorer"         f cc-explorer
-    osd @# 105 "" "\HConfig Spec"      f cc-config-spec
+    osd @# 110 "" "\HConfig Spec"      f cc-config-spec
     osd @# 150 "-"
     osd @# 160 "" "Clear CC console"   f cc-clear-console
     osd @# 170 "" "ClearCase Setup"    f cc-setup
@@ -1568,8 +1584,10 @@ define-macro cc-setup
         osd @# 70 "" "Add files"
         osd @# 80 "" "Annotate"
     !endif
-    !if @?
-    !elif :tag-count
-        osd @# 140 "" "Delete files"   f cc-state-delete
+    !if &not @?
+        osd @# 130 "" "Delete line C-\Hk"  f cc-state-delete-line
+        !if :tag-count
+            osd @# 140 "" "Delete files"   f cc-state-delete
+        !endif
     !endif
 !emacro
