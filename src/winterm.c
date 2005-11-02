@@ -2135,12 +2135,11 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
     static int compSpecLen ;
     PROCESS_INFORMATION mePInfo ;
     STARTUPINFO meSuInfo ;
-    meUByte  cmdLine[meBUF_SIZE_MAX+102], *cp ;  /* Buffer for the command line */
+    meUByte  *cmdLine=NULL, *cp ;                /* Buffer for the command line */
     meUByte  dummyInFile[meBUF_SIZE_MAX] ;       /* Dummy input file */
     meUByte  pipeOutFile[meBUF_SIZE_MAX] ;       /* Pipe output file */
     int    status ;
 #ifdef _WIN32s
-    meUByte *endOfComString = NULL;              /* End of the com string */
     static int pipeStderr = 0;                   /* Remember the stderr state */
 #else
     HANDLE inHdl, outHdl, dumHdl ;
@@ -2183,22 +2182,32 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
     else
     {
         /* Create the command line */
-        meUByte c1, c2, *dd, *ss, *s2 ;
+        meUByte c1, c2, *dd, *ss ;
+        
         ss = cmd ;
-        dd = dummyInFile ;
-        c1 = *ss++ ;
-        if(c1 != '"')
+        while(((c1 = *ss) == ' ') || (c1 == '\t'))
+            *ss++ ;
+        if(c1 == '\0')
+            return meFALSE ;
+        
+        if((outFile == NULL) && ((flags & (LAUNCH_SYSTEM|LAUNCH_FILTER|LAUNCH_IPIPE)) == 0))
         {
-            *dd++ = c1 ;
-            c1 = ' ' ;
+            /* Create the output file */
+            mkTempCommName(pipeOutFile,COMMAND_FILE) ;
+            outFile = pipeOutFile ;
         }
-        while(((c2=*ss)) && (c2 != c1))
-        {
-            *dd++ = c2 ;
-            ss++ ;
-        }
-        *dd = '\0' ;
+#ifdef _WIN32s
+        status = strlen(ss) + strlen(outFile) + 16 ;
+        if(flags & LAUNCH_FILTER)
+            status += strlen(inFile) + 4 ;
+#else
+        status = strlen(ss) + compSpecLen + 16 ;
+#endif        
+        if((cmdLine = meMalloc(status)) == NULL)
+            return meFALSE ;
         cp = dd = cmdLine ;
+        
+#ifndef _WIN32s
         /* If there is no command spec then skip */
         if ((flags & LAUNCH_NOCOMSPEC) == 0)
         {
@@ -2207,35 +2216,33 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
             /* copy in the <shell> /c */
             strncpy(dd," /c ",4) ;
             dd += 4 ;
-#ifdef _WIN32s
-            endOfComString = dd;            /* End of the COM string */
-#endif
+            if(platformId == VER_PLATFORM_WIN32_NT)
+                *dd++ = '"';
         }
+#endif
 
-
-        if((((int) dd)-((int)cmdLine)+strlen(cmd)) >= meBUF_SIZE_MAX+100)
-            return meFALSE ;
-        if((platformId == VER_PLATFORM_WIN32_NT) &&
-           ((flags & LAUNCH_NOCOMSPEC) == 0))
-            *dd++ = '"';
-        if(c1 == '"')
-            *dd++ = '"' ;
-        s2 = dummyInFile ;
-        if ((flags & LAUNCH_LEAVENAMES) == 0)
+        if((flags & LAUNCH_LEAVENAMES) == 0)
         {
-            /* Convert directory separators to windows complient characters */
-            while((c2=*s2++))
+            if(c1 != '"')
+                c1 = ' ' ;
+            while(((c2=*ss++)) && (c2 != c1))
             {
                 if(c2 == '/')
                     c2 = '\\' ;
                 *dd++ = c2 ;
             }
+            ss-- ;
         }
         strcpy(dd,ss) ;
+        
         if((platformId == VER_PLATFORM_WIN32_NT) &&
            ((flags & LAUNCH_NOCOMSPEC) == 0))
             strcat (dd,"\"");
-        if ((flags & LAUNCH_SHOWWINDOW) == 0)
+        
+/*        fprintf(fp,"Running [%s]\n",cp) ;*/
+/*        fflush(fp) ;*/
+
+        if((flags & LAUNCH_SHOWWINDOW) == 0)
         {
             meSuInfo.wShowWindow = SW_HIDE;
             meSuInfo.dwFlags |= STARTF_USESHOWWINDOW ;
@@ -2246,9 +2253,6 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
         meSuInfo.hStdInput  = INVALID_HANDLE_VALUE ;
         meSuInfo.hStdOutput = INVALID_HANDLE_VALUE ;
         meSuInfo.hStdError  = INVALID_HANDLE_VALUE ;
-
-/*        fprintf(fp,"Running [%s]\n",cp) ;*/
-/*        fflush(fp) ;*/
 
         /* If its a system call then we don't care about input or output */
         if((flags & LAUNCH_SYSTEM) == 0)
@@ -2262,20 +2266,23 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
             if(flags & LAUNCH_FILTER)
             {
 #ifdef _WIN32s
-                strcat (cp, " <");
-                strcat (cp, inFile);
-                strcat (cp, " >");
-                strcat (cp, outFile);
-                strcpy (pipeOutFile, outFile);
+                strcat(cp, " <");
+                strcat(cp, inFile);
+                strcat(cp, " >");
+                strcat(cp, outFile);
 #else
                 HANDLE h ;
                 if((meSuInfo.hStdInput=CreateFile(inFile,GENERIC_READ,FILE_SHARE_READ,&sbuts,
                                                   OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL)) == INVALID_HANDLE_VALUE)
+                {
+                    meFree(cmdLine) ;
                     return meFALSE ;
+                }
                 if((meSuInfo.hStdOutput=CreateFile(outFile,GENERIC_WRITE,FILE_SHARE_READ,&sbuts,
                                                    OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL)) == INVALID_HANDLE_VALUE)
                 {
                     CloseHandle(meSuInfo.hStdInput) ;
+                    meFree(cmdLine) ;
                     return meFALSE ;
                 }
                 if(CreatePipe(&meSuInfo.hStdError,&h,&sbuts,0) != 0)
@@ -2287,10 +2294,14 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
             {
                 /* Its an IPIPE so create the pipes */
                 if(CreatePipe(&meSuInfo.hStdInput,&inHdl,&sbuts,0) == 0)
+                {
+                    meFree(cmdLine) ;
                     return meFALSE ;
+                }
                 if(CreatePipe(&outHdl,&meSuInfo.hStdOutput,&sbuts,0) == 0)
                 {
                     CloseHandle(meSuInfo.hStdInput) ;
+                    meFree(cmdLine) ;
                     return meFALSE ;
                 }
                 /* Duplicate stdout => stderr, don't really care if this fails */
@@ -2301,24 +2312,21 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
 #endif
             else
             {
-                /* if an output file name has been given, use that, else create one */
-                if(outFile == NULL)
-                {
-                     /* Create the output file */
-                    mkTempCommName(pipeOutFile,COMMAND_FILE) ;
-                    outFile = pipeOutFile ;
-                }
+                /* the output file name will be set as either one was given or we have created one */
 #ifdef _WIN32s
-                if (pipeStderr > 0)
-                    strcat (cp, " >& ");
+                if(pipeStderr > 0)
+                    strcat(cp, " >& ");
                 else
-                    strcat (cp, " > ");
-                strcat (cp, outFile);
+                    strcat(cp, " > ");
+                strcat(cp, outFile);
 #else
                 meSuInfo.hStdOutput=CreateFile(outFile,GENERIC_WRITE,FILE_SHARE_WRITE,
                                                &sbuts,CREATE_ALWAYS,FILE_ATTRIBUTE_TEMPORARY,NULL) ;
                 if(meSuInfo.hStdOutput == INVALID_HANDLE_VALUE)
+                {
+                    meFree(cmdLine) ;
                     return meFALSE ;
+                }
                 /* Under Windows 95 (and I assume win32s) if there is no
                  * standard input then create an empty file as stdin. This
                  * allows commands such as Grep to not lock up when they
@@ -2354,6 +2362,7 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
                 {
                     DeleteFile(dummyInFile) ;
                     CloseHandle(meSuInfo.hStdOutput) ;
+                    meFree(cmdLine) ;
                     return meFALSE;
                 }
                 meSuInfo.hStdInput = dumHdl;
@@ -2385,6 +2394,7 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
             {
                 DeleteFile(dummyInFile) ;
                 CloseHandle(meSuInfo.hStdOutput) ;
+                meFree(cmdLine) ;
                 return meFALSE;
             }
             meSuInfo.hStdInput = dumHdl;
@@ -2393,45 +2403,41 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
 #endif
     }
 #ifdef _WIN32s
+    if((cmdLine == NULL) || (flags & LAUNCH_NOCOMSPEC))
+        status = SynchSpawn(cp, /*SW_HIDE*/SW_SHOWNORMAL);
+    else
     {
-        meUByte curDirectory[1024];
-        meUByte cmd [1024];
-        meUByte batname [1024];
+        meUByte buff[1024];
         FILE *fp;
-
-        if (endOfComString == NULL)
-            status = SynchSpawn (cmd, /*SW_HIDE*/SW_SHOWNORMAL);
-        else
+        
+        /* Get the current directory in the 32-bit world */
+        _getcwd(buff,1024);
+        
+        /* Create a BAT file to hold the command */
+        mkTempName(dummyInFile,NULL, ".bat");
+        
+        if ((fp = fopen (batname, "w")) != NULL)
         {
-            /* Get the current directory in the 32-bit world */
-            _getcwd (curDirectory, sizeof (curDirectory));
-
-            /* Create a BAT file to hold the command */
-            mkTempName (batname,NULL, ".bat");
-
-            if ((fp = fopen (batname, "w")) != NULL)
-            {
-                /* Change drive */
-                fprintf (fp, "%c:\n", curDirectory [0]);
-                /* Change directory */
-                fprintf (fp, "cd %s\n", curDirectory);
-                /* Do the command */
-                fprintf (fp, "%s\n", endOfComString);
-                fclose (fp);
-
-                /* Append the command to run the exec file to the end of the
-                 * command string */
-                strcpy (endOfComString, batname);
-
-                status = SynchSpawn (cp, /*SW_HIDE*/SW_SHOWNORMAL);
-            }
-            else
-                status = 0;
+            /* Change drive */
+            fprintf (fp, "%c:\n", buff[0]);
+            /* Change directory */
+            fprintf (fp, "cd %s\n", buff);
+            /* Do the command */
+            fprintf (fp, "%s\n", cp);
+            fclose (fp);
+            
+            strcpy(buff,compSpecName) ;
+            strcat(buff," /c ") ;
+            strcat(buff,dummyInFile);
+            
+            status = SynchSpawn(buff, /*SW_HIDE*/SW_SHOWNORMAL);
         }
-        /* Correct the status frpom the call */
-        if (status != 1)
-            status = meFALSE;
+        else
+            status = 0;
     }
+    /* Correct the status frpom the call */
+    if (status != 1)
+        status = meFALSE;
 #else /* ! _WIN32s */
     /* start the process and get a handle on it */
     if(CreateProcess (NULL,
@@ -2548,6 +2554,7 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
         /* Delete the dummy stdin file if there is one. */
         DeleteFile(dummyInFile) ;
     }
+    meNullFree(cmdLine) ;
     return status ;
 }
 #endif /* MEOPT_SPAWN */

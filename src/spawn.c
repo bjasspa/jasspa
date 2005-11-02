@@ -261,6 +261,7 @@ doShellCommand(meUByte *cmdstr, int flags)
     int cd, ss ;
 #ifdef _UNIX
     meWAIT_STATUS ws;
+    meUByte *cmdline, *pp ; 
 #endif
 
     getFilePath(frameCur->bufferCur->fileName,path) ;
@@ -275,11 +276,19 @@ doShellCommand(meUByte *cmdstr, int flags)
 #else
 #ifdef _UNIX
     /* if no data is piped in then pipe in /dev/null */
-    if(meStrchr(cmdstr,'<') == NULL)
-        meStrcat(cmdstr," </dev/null") ;
-    if(flags & LAUNCH_NOWAIT)
-        meStrcat(cmdstr," &") ;
-    ss = system((char *)cmdstr) ;
+    if(((pp=meStrchr(cmdstr,'<')) == NULL) || (flags & LAUNCH_NOWAIT))
+    {
+        if((cmdline = meMalloc(meStrlen(cmdstr)+16)) == NULL)
+            return meFALSE ;
+        meStrcpy(cmdline,cmdstr) ;
+        if(pp == NULL)
+            meStrcat(cmdline," </dev/null") ;
+        if(flags & LAUNCH_NOWAIT)
+            meStrcat(cmdline," &") ;
+    }
+    else
+        cmdline = cmdstr ;
+    ss = system((char *)cmdline) ;
     ws = (meWAIT_STATUS)(ss);
     if(WIFEXITED(ws))
     {
@@ -291,6 +300,8 @@ doShellCommand(meUByte *cmdstr, int flags)
         systemRet = -1 ;
         ss = meFALSE ;
     }
+    if(cmdline != cmdstr)
+        meFree(cmdline) ;
 #else
     systemRet = system(cmdstr) ;
 #ifdef _DOS
@@ -316,15 +327,24 @@ doShellCommand(meUByte *cmdstr, int flags)
 int
 meShellCommand(int f, int n)
 {
-    meUByte cmdstr[meBUF_SIZE_MAX+20];		/* string holding command to execute */
-
+    meUByte *cmdstr, cmdbuff[meBUF_SIZE_MAX+20];
+    meBuffer *bp ;
+    
     /* get the line wanted */
-    if((meGetString((meUByte *)"System", 0, 0, cmdstr, meBUF_SIZE_MAX)) <= 0)
+    if((meGetString((meUByte *)"System", 0, 0, cmdbuff, meBUF_SIZE_MAX)) <= 0)
         return meABORT ;
-    f = (n & (LAUNCH_NOCOMSPEC|LAUNCH_DETACHED|LAUNCH_LEAVENAMES|LAUNCH_SHOWWINDOW)) ;
-    if((n & 0x01) == 0)
+    if(n & LAUNCH_BUFCMDLINE)
+    {
+        if((bp=bfind(cmdbuff,0)) == NULL)
+            return mlwrite(MWABORT,(meUByte *)"[%s: no such buffer]",cmdbuff);
+        cmdstr = meLineGetText(meLineGetNext(bp->baseLine)) ;
+    }
+    else
+        cmdstr = cmdbuff ;
+    f = (n & LAUNCH_USER_FLAGS) ;
+    if((n & LAUNCH_WAIT) == 0)
         f |= LAUNCH_NOWAIT ;
-          
+    
     return doShellCommand(cmdstr,f) ;
 }
 
@@ -1840,20 +1860,29 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
 int
 ipipeCommand(int f, int n)
 {
-    meUByte lbuf[meBUF_SIZE_MAX];	/* command line send to shell */
+    meBuffer *bp ;
+    meUByte lbuf[meBUF_SIZE_MAX], *cl ;	/* command line send to shell */
     meUByte nbuf[meBUF_SIZE_MAX], *bn ;	/* buffer name */
     meUByte pbuf[meBUF_SIZE_MAX] ;
     int ipipeFunc ;                     /* ipipe-buffer function. */
     int ss ;
 
     if(!(meSystemCfg & meSYSTEM_IPIPES))
-    {
         /* No ipipes flagged so just do a normal pipe */
         return pipeCommand(f,n) ;
-    }
-    /*---	Get the command to pipe in */
+    
+    /* Get the command to pipe in */
     if((ss=meGetString((meUByte *)"Ipipe", 0, 0, lbuf, meBUF_SIZE_MAX)) <= 0)
         return ss ;
+    if(n & LAUNCH_BUFCMDLINE)
+    {
+        if((bp=bfind(lbuf,0)) == NULL)
+            return mlwrite(MWABORT,(meUByte *)"[%s: no such buffer]",lbuf);
+        cl = meLineGetText(meLineGetNext(bp->baseLine)) ;
+    }
+    else
+        cl = lbuf ;
+    
     if((n & LAUNCH_BUFFERNM) == 0)
     {
         /* prompt for and get the new buffer name */
@@ -1877,7 +1906,7 @@ ipipeCommand(int f, int n)
         ipipeFunc = -1;
     
     getFilePath(frameCur->bufferCur->fileName,pbuf) ;
-    return doIpipeCommand(lbuf,pbuf,bn,ipipeFunc,(n & LAUNCH_USER_FLAGS)) ;
+    return doIpipeCommand(cl,pbuf,bn,ipipeFunc,(n & LAUNCH_USER_FLAGS)) ;
 }
 
 int
@@ -1903,33 +1932,39 @@ int
 doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, int flags)
 {
     register meBuffer *bp;	/* pointer to buffer to zot */
-    meUByte line[meBUF_SIZE_MAX+256] ;    /* new com line with "> command" (+256 to allow for the >.... */
+    meUByte buff[meBUF_SIZE_MAX+3] ;
     meInt systemRet ;
     int cd, ret ;
 #ifdef _DOS
     static meByte pipeStderr=0 ;
-    meUByte cc, *ss, *dd ;
+    meUByte cc, *dd, *cl, *ss ;
     int gotPipe=0 ;
 #endif
 #ifdef _UNIX
     meWAIT_STATUS ws;
+    meUByte *cl, *ss ;
+    int ll ;
 #else
     meUByte filnam[meBUF_SIZE_MAX] ;
 
-    mkTempCommName (filnam,COMMAND_FILE) ;
+    mkTempCommName(filnam,COMMAND_FILE) ;
 #endif
 
     /* get rid of the output buffer if it exists and create new */
-    if((bp=bfind(bufName,BFND_CREAT|BFND_CLEAR)) == meFALSE)
+    if((bp=bfind(bufName,BFND_CREAT|BFND_CLEAR)) == NULL)
         return meFALSE ;
     cd = (meStrcmp(path,curdir) && (meChdir(path) != -1)) ;
 
 #ifdef _DOS
     if(!pipeStderr)
         pipeStderr = (meGetenv("ME_PIPE_STDERR") != NULL) ? 1 : -1 ;
-    /* convert '/' to '\' in program name */
-    dd = line ;
+    
+    if((cl = meMalloc(meStrlen(comStr) + meStrlen(filnam) + 4)) == NULL)
+        return meFALSE ;
+        
+    dd = cl ;
     ss = comStr ;
+    /* convert '/' to '\' in program name */
     while((cc=*ss++) && (cc != ' '))
     {
         if(cc == '/')
@@ -1946,6 +1981,7 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
             *dd++ = cc ;
         }
     }
+    *dd = '\0' ;
     if(!gotPipe)
     {
         *dd++ = ' ' ;
@@ -1956,70 +1992,68 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
     }
     if((flags & LAUNCH_SILENT) == 0)
         mlerase(MWERASE|MWCURSOR);
-    systemRet = system(line);
+    systemRet = system(cl) ;
     if(cd)
         meChdir(curdir) ;
     /* Call TTopen as we can't guarantee whats happend to the terminal */
     TTopen();
+    meFree(cl) ;
     if(meTestExist(filnam))
         return meFALSE;
 #endif
 #ifdef _WIN32
-    {
-        int ss ;
-        ss = WinLaunchProgram(comStr,(LAUNCH_PIPE|flags), NULL, filnam,
+    
+    ret = WinLaunchProgram(comStr,(LAUNCH_PIPE|flags), NULL, filnam,
 #if MEOPT_IPIPES
-                              NULL, 
+                           NULL, 
 #endif
-                              &systemRet) ;
-        if(cd)
-            meChdir(curdir) ;
-        if(ss == meFALSE)
-            return meFALSE ;
-    }
+                           &systemRet) ;
+    if(cd)
+        meChdir(curdir) ;
+    if(ret == meFALSE)
+        return meFALSE ;
+
 #endif
 #ifdef _UNIX
+    ll = meStrlen(comStr) ;
+    if((cl = meMalloc(ll + 17)) == NULL)
+        return meFALSE ;
+    
+    if((ss=meStrchr(comStr,'|')) == NULL)
+        ss = comStr + ll ;
+    else
+        ll = (int) ss - (int) comStr ;
+    
+    meStrncpy(cl,comStr,ll) ;
+    cl[ll] = '\0' ;
+    /* if no data is piped in then pipe in /dev/null */
+    if(meStrchr(cl,'<') == NULL)
     {
-        meUByte *ss ;
-        int ll ;
-
-        if((ss=meStrchr(comStr,'|')) == NULL)
-        {
-            ll = meStrlen(comStr) ;
-            ss = comStr + ll ;
-        }
-        else
-            ll = (int) ss - (int) comStr ;
-
-        meStrncpy(line,comStr,ll) ;
-        line[ll] = '\0' ;
-        /* if no data is piped in then pipe in /dev/null */
-        if(meStrchr(line,'<') == NULL)
-        {
-            meStrncpy(line+ll," </dev/null",11) ;
-            ll += 11 ;
-        }
-        /* merge stderr and stdout */
-        meStrncpy(line+ll," 2>&1",5) ;
-        ll += 5 ;
-        meStrcpy(line+ll,ss) ;
+        meStrncpy(cl+ll," </dev/null",11) ;
+        ll += 11 ;
     }
+    /* merge stderr and stdout */
+    meStrncpy(cl+ll," 2>&1",5) ;
+    ll += 5 ;
+    meStrcpy(cl+ll,ss) ;
+    
     TTclose();				/* stty to old modes    */
     /* Must flag to our sigchild handler that we are running a piped command
      * otherwise it will call waitpid with -1 and loose the exit status of
      * this process */
     alarmState |= meALARM_PIPE_COMMAND ;
-    ffrp = popen((char *)line, "r");
+    ffrp = popen((char *) cl, "r") ;
     if(cd)
         meChdir(curdir) ;
     TTopen();
     TTflush();
+    meFree(cl) ;
 #endif
     if ((flags & LAUNCH_RAW) == 0)
     {
-        meStrcpy(line,"cd ") ;
-        meStrcat(line,path) ;
-        addLineToEob(bp,line) ;
+        meStrcpy(buff,"cd ") ;
+        meStrcpy(buff+3,path) ;
+        addLineToEob(bp,buff) ;
         addLineToEob(bp,comStr) ;
         addLineToEob(bp,(meUByte *)"") ;
     }
@@ -2077,13 +2111,23 @@ int
 pipeCommand(int f, int n)
 {
     register int ss ;
-    meUByte line[meBUF_SIZE_MAX];	        /* command line send to shell */
+    meBuffer *bp ;
+    meUByte lbuf[meBUF_SIZE_MAX], *cl ; /* command line send to shell */
     meUByte nbuf[meBUF_SIZE_MAX], *bn ;	/* buffer name */
     meUByte pbuf[meBUF_SIZE_MAX] ;
 
     /* get the command to pipe in */
-    if((ss=meGetString((meUByte *)"Pipe", 0, 0, line, meBUF_SIZE_MAX)) <= 0)
+    if((ss=meGetString((meUByte *)"Pipe", 0, 0, lbuf, meBUF_SIZE_MAX)) <= 0)
         return ss ;
+    if(n & LAUNCH_BUFCMDLINE)
+    {
+        if((bp=bfind(lbuf,0)) == NULL)
+            return mlwrite(MWABORT,(meUByte *)"[%s: no such buffer]",lbuf);
+        cl = meLineGetText(meLineGetNext(bp->baseLine)) ;
+    }
+    else
+        cl = lbuf ;
+    
     if((n & LAUNCH_BUFFERNM) == 0)
     {
         /* prompt for and get the new buffer name */
@@ -2096,7 +2140,7 @@ pipeCommand(int f, int n)
 
     getFilePath(frameCur->bufferCur->fileName,pbuf) ;
 
-    return doPipeCommand(line,pbuf,bn,-1,(n & LAUNCH_USER_FLAGS)) ;
+    return doPipeCommand(cl,pbuf,bn,-1,(n & LAUNCH_USER_FLAGS)) ;
 }
 
 #if MEOPT_EXTENDED
