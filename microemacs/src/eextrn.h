@@ -894,15 +894,17 @@ extern void mkTempCommName(meUByte *filename, meUByte *basename) ;
 #define COMMAND_FILE         "stdout.~~~"
 #define DUMMY_STDIN_FILE     "stdin.~~~" 
 
-#define LAUNCH_BUFFERNM      0x0001      /* Do not use the comspec    */
-#define LAUNCH_SILENT        0x0002      /* Do not use the comspec    */
+#define LAUNCH_BUFFERNM      0x0001      /* Use *command* buffer      */
+#define LAUNCH_WAIT          0x0001      /* shell-com wait -> LAUNCH_NOWAIT */
+#define LAUNCH_SILENT        0x0002      /* Hide the output buffer    */
 #define LAUNCH_NOCOMSPEC     0x0004      /* Do not use the comspec    */
 #define LAUNCH_DETACHED      0x0008      /* Detached process launch   */
 #define LAUNCH_LEAVENAMES    0x0010      /* Leave the names untouched */
-#define LAUNCH_SHOWWINDOW    0x0020      /* Dont hide the new window  */
+#define LAUNCH_SHOWWINDOW    0x0020      /* Dont hide the new cmd wdw */
 #define LAUNCH_RAW           0x0040      /* Raw pipe output           */
 #define LAUNCH_BUFIPIPE      0x0080      /* Ipipe function provided   */
-#define LAUNCH_USER_FLAGS    0x00EF      /* User flags bitmask        */
+#define LAUNCH_BUFCMDLINE    0x0100      /* Ipipe function provided   */
+#define LAUNCH_USER_FLAGS    0x00FE      /* User flags bitmask        */
 #define LAUNCH_SHELL         0x0100
 #define LAUNCH_SYSTEM        0x0200
 #define LAUNCH_FILTER        0x0400
