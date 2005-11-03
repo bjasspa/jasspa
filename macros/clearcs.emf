@@ -16,7 +16,9 @@
 !if &not &exi .osd.ccosd
     set-variable .osd.ccosd  &pinc .osd.next 1
     set-variable .osd.ccstp  &pinc .osd.next 1
-    set-variable .osd.ccstpv &pinc .osd.next 1
+    set-variable .osd.ccgen  &pinc .osd.next 1
+    set-variable .osd.ccgenv &pinc .osd.next 1
+    set-variable .osd.ccnb   &pinc .osd.next 11
 !endif
 !if &not &lfind .fhook-dirlst.sc-name "ClearCase"
     set-variable #l0 &lef .fhook-dirlst.col-name 1
@@ -58,9 +60,35 @@ set-variable .cc-init.vsep &reg "/history/clearcase/vsep" "@@"
 set-variable .cc-init.vsepr .cc-init.vsep
 str-to-regex .cc-init.vsepr
 
-set-variable .cc-init.names "|State|Update|Checkout|Checkin|Add|Diff|Uncheckout|Annotate|VTree|SetConfigSpec|"
-set-variable .cc-init.flags "|ZRFS|VZOQS*|CUhrS*!|CcrS*!|CDrS*!|WXS!|KrS*!|HLM!|s^|*^|"
-set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
+set-variable .cc-init.names  "|State|Update|Checkout|Checkin|Add|Diff|Uncheckout|Annotate|Delete|Rename|ConfigSpec|VTree|"
+set-variable .cc-init.flags  "|ZRFS|VZOQS*|CUhrS*!|CcrS*!|CDrS*!|WXS!|KrS*!|HLM!|||*^|Ss^|"
+set-variable .cc-init.defs1  "|0|1|1|1|"
+set-variable .cc-init.defs2  "|0|1|0|1|"
+set-variable .cc-init.defs3  "||1|0|0|"
+set-variable .cc-init.defs4  "||0|"
+set-variable .cc-init.defs5  "||0|0|"
+set-variable .cc-init.defs6  "|1|1|"
+set-variable .cc-init.defs7  "|1|0|"
+set-variable .cc-init.defs8  "|1|1|0|"
+set-variable .cc-init.defs9  "|"
+set-variable .cc-init.defs10 "|"
+set-variable .cc-init.defs11 "|"
+set-variable .cc-init.defs12 "|"
+set-variable #l9 12
+!repeat
+    set-variable #l8 &lget .cc-init.flags #l9
+    set-variable #l7 &ind &cat ".cc-init.defs" #l9
+    set-variable #l0 0
+    !while &not &seq "" &set #l1 &mid #l8 &pinc #l0 1 1
+        !if &seq #l1 "C"
+            set-variable &ind &cat ".cc-init.ctf" #l9 &reg &spr "/history/clearcase/%d_C" #l9 ""
+        !elif &not &seq "" &set #l2 &reg &spr "/history/clearcase/%d_%s" #l9 #l1 ""
+            set-variable #l7 &lset #l7 #l0 #l2
+        !endif
+    !done
+    set-variable &ind &cat ".cc-init.defs" #l9 #l7
+    set-variable &ind &cat ".cc-init.values" #l9 #l7
+!until &not &dec #l9 1
 
 !if &band .hilight.flags 0x02
     !if &not &exi .hilight.diff
@@ -109,7 +137,8 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
     !if &exi &cat ".cc-init.comment" @#
         set-variable .cc-init.comment &ind &cat ".cc-init.comment" @#
     !endif
-    !if &not &seq &set #l0 &find &lget .cc-init.etfs @# ".etf" "ERROR" 
+    !if &seq "" &set #l0 &reg &spr "/history/clearcase/%d_C" @# ""
+    !elif &not &seq "ERROR" &set #l0 &find #l0 ""
         !force 0 find-file #l0
         !if $status
             !if &not &seq .cc-init.comment ""
@@ -152,7 +181,7 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
         !endif
     !endif
     set-variable #l9 &lget .cc-init.flags @#
-    set-variable .values @1
+    set-variable .values &ind &cat ".cc-init.values" @#
     !if &seq $buffer-fname ""
         osd-dialog &cat "ClearCase - " &lget .cc-init.names @# "    Current buffer has no file name!    " "  \HAbort  "
         !abort
@@ -314,47 +343,68 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
             set-variable .cc-init.comment ""
         !endif
     !endif
-    set-variable @1 .values
+    set-variable &ind &cat ".cc-init.values" @# .values
 !emacro
 
 0 define-macro cc-get-file-list
-    set-variable #l1 ""
-    set-variable #l2 ""
-    !if @2
-    !elif &or &not .find-file.file-count @3
-        set-variable #l1 "\b."
-        set-variable #l2 "\b."
+    !force 0 delete-buffer "*cc-cmdline*"
+    find-buffer "*cc-cmdline*"
+    1 buffer-mode "magic"
+    !if @1
+        set-variable .fcount 0
+    !elif &or &not .find-file.file-count @2
+        insert-string "\b."
+        set-variable .fcount 1
+        !if &band @# 8
+            insert-string "\n\b."
+            set-variable .dcount 1
+        !endif
     !else
+        2 insert-newline
+        beginning-of-buffer
         set-variable #l0 0
-        set-variable #l3 @#
+        set-variable .dcount 0
         !while &les &pinc #l0 1 .find-file.file-count
             set-variable #l4 &ind &cat ".find-file.file" #l0
             !if &seq "/" &rig #l4 &sub &len #l4 1
                 set-variable #l4 &lef #l4 -1
-                !if &and @# &sin " " #l4
+                !if &and &band @# 1 &sin " " #l4
                     set-variable #l4 &rep &rep #l4 "\\" "\\\\" "\"" "\\\""
                     set-variable #l4 &cat &cat "\"" #l4 "\""
                 !endif
-                set-variable #l2 &cat #l2 &cat "\b" #l4
-            !elif &and @# &sin " " #l4
+                !if &band @# 8
+                    set-variable $window-line 2
+                    end-of-line
+                    insert-string &cat "\b" #l4
+                    set-variable $window-line 1
+                    end-of-line
+                    set-variable .dcount &add .dcount 1
+                    !if &band @# 16
+                        !continue
+                    !endif
+                !endif
+            !elif &and &band @# 1 &sin " " #l4
                 set-variable #l4 &rep &rep #l4 "\\" "\\\\" "\"" "\\\""
                 set-variable #l4 &cat &cat "\"" #l4 "\""
             !endif
-            !if &gre &add #l3 &len #l4 1020
-                ml-write "[ClearCase Error: Command-line has become too long]"
-                !abort
-            !endif
-            set-variable #l1 &cat #l1 &cat "\b" #l4
-            set-variable #l3 &add #l3 &add &len #l4 1
+            insert-string &cat "\b" #l4
         !done
+        set-variable .fcount .find-file.file-count
     !endif
-    !if @#
-        set-variable @1 &trl &rep #l1 "\b" " "
-        set-variable .dlist &trl &rep #l2 "\b" " "
+    beginning-of-buffer
+    !if &band @# 2
+        replace-string "\b" " "
+        beginning-of-buffer
+        replace-string "^ +" ""
     !else
-        set-variable @1 &cat #l1 "\b"
-        set-variable .dlist &cat #l2 "\b"
+        2 replace-string "$" "\b"
     !endif
+    !if &band @# 4
+        beginning-of-buffer
+        insert-string @3
+    !endif
+    beginning-of-buffer
+    goto-position "\x82"
 !emacro
 
 0 define-macro cc-console-tool
@@ -677,14 +727,12 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
 0 define-macro cc-cleartool
     set-variable .cc-init.lock @#
     set-variable #l2 @2
-    set-variable #l3 @3
     ml-write &spr "[ClearCase %s: Processing...]" &lget .cc-init.names @# 
     !if &set #l9 &sin "*" &lget .cc-init.flags @#
         set-variable #l0 "*cc-console*"
     !else
         set-variable #l0 &spr "*cc-%s*" &slo &lget .cc-init.names @# 
     !endif
-    set-position "\x83"
     !force 0 popup-window #l0
     !if &not $status
         !if &not &seq #l0 "*cc-console*"
@@ -697,13 +745,13 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
             !force 0 popup-window "*cc-console*"
         !endif
         !if &not &seq $buffer-bname #l0
-            1 goto-position "\x83"
+            1 goto-position "\x82"
             delete-other-windows
             !force 2 split-window-vertically
             !force change-window-depth 15
             find-buffer #l0
             previous-window
-            set-position "\x83"
+            set-position "\x82"
             next-window
         !endif
     !endif
@@ -715,12 +763,12 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
     set-variable .wait &sin "!" &lget .cc-init.flags @#
     set-variable #l1 $buffer-fname
     set-variable $buffer-fname #l2
-    !force !force !force 0x86 ipipe-shell-command #l3 #l0 cc-cleartool-ipipe
+    !force !force !force 0x186 ipipe-shell-command "*cc-cmdline*" #l0 cc-cleartool-ipipe
     set-variable #l2 $status
     set-variable $buffer-fname #l1
     find-buffer #l0
     !if &not #l2
-        1 goto-position "\x83"
+        1 goto-position "\x82"
         ml-write "[ClearCase Warning: failed to run cleartool]"
         !abort
     !elif &sin "!" &lget .cc-init.flags @#
@@ -736,7 +784,7 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
             !jump 2
         !elif &not &or &band @1 4 &seq .exit "0"
             unset-variable .cc-init.lock
-            1 goto-position "\x83"
+            1 goto-position "\x82"
             !if &not &exi .exit
                 ml-write "[ClearCase Error: cleartool exit status not set]"
             !elif &equ .exit -9999
@@ -746,7 +794,7 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
             !else
                 ml-write &spr "[ClearCase Warning: cleartool exited with code %d]" .exit
             !endif
-            !abort
+            !return 0
         !elif &band @1 2
             !force unset-variable .cc-init.lock
             !if &seq .exit "0"
@@ -762,7 +810,7 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
     !else
         set-variable $buffer-dhook cc-cleartool-end
     !endif
-    1 goto-position "\x83"
+    1 goto-position "\x82"
 !emacro
 
 ; ClearCase State ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -828,7 +876,7 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
             !goto rmv-line
         !elif &seq "[" @wc
             forward-line
-        !elif &not &lget .cc-state.values 4
+        !elif &not &lget .cc-init.values1 4
             !goto pfl-line
         !elif &xse @wl .fhook-dirlst.filter-mask
 *rmv-line
@@ -990,36 +1038,38 @@ set-variable .cc-init.etfs  "|||ccco|ccci|ccadd||||||"
 !emacro
 
 define-macro cc-state
-    1 cc-osd .cc-state.values
-    &add &len .cc-init.com 10 cc-get-file-list #l0 &lget .values 1 &lget .values 2
-    !if &seq #l0 ""
-        cc-get-vob-base-path #l1
-        set-variable #l2 &spr "%s ls -rec %s" .cc-init.com #l1
-    !else
-        set-variable #l1 $buffer-fname
-        !if &not &and &lget .values 3 &len .cc-get-file-list.dlist
-            !if &not &seq #l0 "."
-                set-variable #l2 &spr "%s ls -d %s" .cc-init.com #l0
-            !elif &band $system 0x100
-                set-variable #l2 &spr "cmd /c %s ls -d . & %s ls ." .cc-init.com .cc-init.com
-            !else
-                set-variable #l2 &spr "%s ls -d . ; %s ls ." .cc-init.com .cc-init.com
-            !endif
-        !elif &band $system 0x100
-            set-variable #l2 &spr "cmd /c %s ls -d %s & %s ls -rec %s" .cc-init.com #l0 .cc-init.com .cc-get-file-list.dlist
+    1 cc-osd
+    11 cc-get-file-list 0 &lget .cc-init.values1 1
+    set-variable #l1 $buffer-fname
+    find-buffer "*cc-cmdline*"
+    !if &and &lget .cc-init.values1 2 .cc-get-file-list.dcount
+        !if &band $system 0x100
+            insert-string &spr "cmd /c %s ls -d " .cc-init.com
+            end-of-line
+            insert-string &spr " & %s ls -rec " .cc-init.com
+            forward-delete-char
         !else
-            set-variable #l2 &spr "%s ls -d %s ; %s ls -rec %s" .cc-init.com #l0 .cc-init.com .cc-get-file-list.dlist
+            insert-string &cat .cc-init.com " ls -d "
+            end-of-line
+            insert-string &spr " ; %s ls -rec " .cc-init.com
+            forward-delete-char
         !endif
+    !elif &not &seq @wl "."
+        insert-string &cat .cc-init.com " ls -d "
+    !elif &band $system 0x100
+        insert-string &spr "cmd /c %s ls -d . & %s ls " .cc-init.com .cc-init.com
+    !else
+        insert-string &spr "%s ls -d . ; %s ls " .cc-init.com .cc-init.com
     !endif
-    1 cc-cleartool 0 #l1 #l2
+    goto-position "\x82"
+    1 cc-cleartool 0 #l1
     set-variable .cc-state.sort "99"
 !emacro
-set-variable .cc-state.values "|0|1|1|1|"
 
 ; ClearCase Update ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 0 define-macro cc-cleartool-ipipe2
-    !if &not &lget .cc-update.values 4
+    !if &not &lget .cc-init.values2 4
         !return
     !elif &not &exi :ccu-last
         set-variable :ccu-last 4
@@ -1044,18 +1094,17 @@ set-variable .cc-state.values "|0|1|1|1|"
     set-variable :ccu-last $window-line
 !emacro
 define-macro cc-update
-    2 cc-osd .cc-update.values
-    set-variable #l2 &spr "%s update%s " .cc-init.com &con &lget .values 3 " -overwrite" ""
-    &len #l2 cc-get-file-list #l0 &lget .values 1 &lget .values 2
-    2 cc-cleartool 0 $buffer-fname &cat #l2 #l0
+    2 cc-osd
+    set-variable #l2 &spr "%s update%s " .cc-init.com &con &lget .cc-init.values2 3 " -overwrite" ""
+    7 cc-get-file-list &lget .cc-init.values2 1 &lget .cc-init.values2 2 #l2
+    2 cc-cleartool 0 $buffer-fname
 !emacro
-set-variable .cc-update.values "|0|1|0|1|"
 
 ; ClearCase Checkout ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro cc-checkout
-    3 cc-osd .cc-checkout.values
-    !if &and &not &bmod "dir" &lget .values 3
+    3 cc-osd
+    !if &and &not &bmod "dir" &lget .cc-init.values3 3
         -1 buffer-mode "view"
         !if &band $system 0x100
             set-variable $buffer-fmod &band $buffer-fmod 0xfffffe
@@ -1064,30 +1113,29 @@ define-macro cc-checkout
         !endif
         !return
     !endif
-    set-variable #l2 &spr "%s co%s " .cc-init.com &con &lget .values 2 " -unr" ""
+    set-variable #l2 &spr "%s co%s " .cc-init.com &con &lget .cc-init.values3 2 " -unr" ""
     !if &seq .cc-init.comment ""
         set-variable #l2 &cat #l2 "-nc "
     !else
         set-variable #l2 &spr "%s-c \"%s\" " #l2 &rep &rep &trb .cc-init.comment "\\" "\\\\" "\"" "\\\""
     !endif
     set-variable .cc-init.comment3 .cc-init.comment
-    &len #l2 cc-get-file-list #l0 0 0
-    3 cc-cleartool 3 $buffer-fname &cat #l2 #l0
+    7 cc-get-file-list 0 0 #l2
+    3 cc-cleartool 3 $buffer-fname
     !if &seq $buffer-fname ""
     !elif &bmod "dir"
-        !if &lget .values 4
+        !if &lget .cc-init.values3 4
             dirlst-refresh
         !endif
     !elif &not &seq &lef $buffer-bname 1 "*"
         reread-file
     !endif
 !emacro
-set-variable .cc-checkout.values "||1|0|0|"
 
 ; ClearCase Checkin ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro cc-checkin
-    4 cc-osd .cc-checkin.values
+    4 cc-osd
     set-variable #l2 &cat .cc-init.com " ci "
     !if &seq .cc-init.comment ""
         set-variable #l2 &cat #l2 "-nc "
@@ -1095,47 +1143,27 @@ define-macro cc-checkin
         set-variable #l2 &spr "%s-c \"%s\" " #l2 &rep &rep &trb .cc-init.comment "\\" "\\\\" "\"" "\\\""
     !endif
     set-variable .cc-init.comment4 .cc-init.comment
-    &len #l2 cc-get-file-list #l0 0 0
-    4 cc-cleartool 3 $buffer-fname &cat #l2 #l0
+    7 cc-get-file-list 0 0 #l2
+    4 cc-cleartool 3 $buffer-fname
     !if &seq $buffer-fname ""
     !elif &bmod "dir"
-        !if &lget .values 2
+        !if &lget .cc-init.values4 2
             dirlst-refresh
         !endif
     !elif &not &seq &lef $buffer-bname 1 "*"
         reread-file
     !endif
 !emacro
-set-variable .cc-checkin.values "||0|"
 
 ; ClearCase Add ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro cc-add
-    5 cc-osd .cc-add.values
-    !if &lget .values 2
+    5 cc-osd
+    !if &lget .cc-init.values5 2
         ml-write "[ClearCase Error: Checking out parent directory not yet implemented]"
         !abort
     !endif
-    0 cc-get-file-list #l0 0 0
-    set-variable #l1 0
-    set-variable #l3 ""
-    set-variable #l5 ""
-    !while &not &seq &set #l4 &lget #l0 &inc #l1 1 ""
-        !if &seq &rig #l4 &sub &len #l4 1 "/"
-            set-variable #l4 &lef #l4 &sub &len #l4 1
-            !if &sin " " #l4
-                set-variable #l4 &rep &rep #l4 "\\" "\\\\" "\"" "\\\""
-                set-variable #l4 &cat &cat "\"" #l4 "\""
-            !endif
-            set-variable #l3 &spr "%s %s" #l3 #l4
-        !else
-            !if &sin " " #l4
-                set-variable #l4 &rep &rep #l4 "\\" "\\\\" "\"" "\\\""
-                set-variable #l4 &cat &cat "\"" #l4 "\""
-            !endif
-            set-variable #l5 &spr "%s %s" #l5 #l4
-        !endif
-    !done
+    25 cc-get-file-list 0 0
     set-variable #l2 &cat .cc-init.com " mkelem "
     !if &seq .cc-init.comment ""
         set-variable #l2 &cat #l2 "-nc"
@@ -1143,21 +1171,32 @@ define-macro cc-add
         set-variable #l2 &spr "%s-c \"%s\"" #l2 &rep &rep &trb .cc-init.comment "\\" "\\\\" "\"" "\\\""
     !endif
     set-variable .cc-init.comment5 .cc-init.comment
+    find-buffer "*cc-cmdline*"
+    replace-string "\b" " "
+    beginning-of-buffer
     ; Add all directories first
-    !if &not &seq #l3 ""
+    !if .cc-get-file-list.dcount
+        transpose-lines
+        beginning-of-buffer
+        insert-string #l2
+        goto-position "\x82"
         set-variable #l4 &con &seq #l5 "" 3 1        
-        5 cc-cleartool #l4 $buffer-fname &cat #l2 #l3
+        5 cc-cleartool #l4 $buffer-fname
+        find-buffer "*cc-cmdline*"
+        transpose-lines
+        beginning-of-buffer
     !endif
+    insert-string #l2
+    goto-position "\x82"
     ; Now add all the files
-    !if &not &seq #l5 ""
-        5 cc-cleartool 3 $buffer-fname &cat #l2 #l5
+    !if &sub .cc-get-file-list.fcount .cc-get-file-list.dcount
+        5 cc-cleartool 3 $buffer-fname
     !endif
     !if &seq $buffer-fname ""
-    !elif &and &bmod "dir" &lget .values 3
+    !elif &and &bmod "dir" &lget .cc-init.values5 3
         dirlst-refresh
     !endif
 !emacro
-set-variable .cc-add.values "||0|0|"
 
 ; ClearCase Diff ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1245,25 +1284,34 @@ set-variable .cc-add.values "||0|0|"
 !emacro
 
 define-macro cc-diff
-    6 cc-osd .cc-diff.values
+    6 cc-osd
     set-variable #l9 &lef $buffer-fname &rsin "/" $buffer-fname
     set-variable #l2 &cat .cc-init.com " diff -diff -pred "
-    !if &and &lget .values 1 &not &lget .values 2
+    !if &and &lget .cc-init.values6 1 &not &lget .cc-init.values6 2
         set-variable #l2 &cat #l2 "-opt -b "
     !endif
-    0 cc-get-file-list #l0 0 0
+    0 cc-get-file-list 0 0
     !force 0 delete-buffer "*cc-diff-res*"
+    find-buffer "*cc-cmdline*"
     set-variable #l8 1
-    set-variable #l1 0
-    !while &not &seq &set #l3 &lget #l0 &inc #l1 1 ""
-        !if &sin " " &set #l4 #l3
-            set-variable #l4 &rep &rep #l4 "\\" "\\\\" "\"" "\\\""
-            set-variable #l4 &cat &cat "\"" #l4 "\""
+    set-variable #l1 .cc-get-file-list.fcount
+    !while &pdec #l1 1
+        2 search-buffer "Me" "\b"
+        backward-char
+        insert-newline
+        beginning-of-buffer
+        forward-delete-char
+        set-variable #l3 @wl
+        !if &sin " " #l3
+            set-variable @wl &cat &cat "\"" &rep &rep @wl "\\" "\\\\" "\"" "\\\"" "\""
+            beginning-of-buffer
         !endif
-        !force !force !force 6 cc-cleartool 7 #l9 &cat #l2 #l4
+        insert-string #l2
+        goto-position "\x82"
+        !force !force !force 6 cc-cleartool 7 #l9
         !if &not &set #l8 $status
             !goto dump-diff
-        !elif &and &lget .values 2 &not &seq &rig #l3 -1 "/"
+        !elif &and &lget .cc-init.values6 2 &not &seq &rig #l3 -1 "/"
             ; use external diff command on a normal file
             popup-window "*cc-diff*"
             !tgoto &les $window-eline 7 dump-diff
@@ -1303,7 +1351,13 @@ define-macro cc-diff
         !endif
         find-buffer "*cc-diff*"
         !tjump &not #l8 2
+        find-buffer "*cc-cmdline*"
+        beginning-of-buffer
+        set-mark
+        forward-line
+        -1 kill-region
     !done
+    goto-position "\x82"
     popup-window "*cc-diff*"
     !force 0 delete-buffer "*cc-diff*"
     find-buffer "*cc-diff-res*"
@@ -1318,49 +1372,45 @@ define-macro cc-diff
     set-variable $buffer-hilight .hilight.diff
     beginning-of-buffer
 !emacro
-set-variable .cc-diff.values "|1|1|"
 
 ; ClearCase Uncheckout ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro cc-uncheckout
-    7 cc-osd .cc-uncheckout.values
-    set-variable #l2 &spr "%s unco -%s " .cc-init.com &con &lget .values 1 "keep" "rm"
-    &len #l2 cc-get-file-list #l0 0 0
-    7 cc-cleartool 3 $buffer-fname &cat #l2 #l0
+    7 cc-osd
+    set-variable #l2 &spr "%s unco -%s " .cc-init.com &con &lget .cc-init.values7 1 "keep" "rm"
+    7 cc-get-file-list 0 0 #l2
+    7 cc-cleartool 3 $buffer-fname
     !if &seq $buffer-fname ""
     !elif &bmod "dir"
-        !if &lget .values 2
+        !if &lget .cc-init.values7 2
             dirlst-refresh
         !endif
     !elif &not &seq &lef $buffer-bname 1 "*"
         reread-file
     !endif
 !emacro
-set-variable .cc-uncheckout.values "|1|0|"
 
 ; ClearCase Annotate ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro cc-annotate
-    8 cc-osd .cc-annotate.values
-    set-variable #l2 &spr "%s ann -nco -out - %s%s%s " .cc-init.com &con &lget .values 1 "" "-nhe " &con &lget .values 2 "-f" "-nda" &con &lget .values 3 " -rm" ""
-    &len #l2 cc-get-file-list #l0 0 0
-    8 cc-cleartool 3 $buffer-fname &cat #l2 #l0
+    8 cc-osd
+    set-variable #l2 &spr "%s ann -nco -out - %s%s%s " .cc-init.com &con &lget .cc-init.values8 1 "" "-nhe " &con &lget .cc-init.values8 2 "-f" "-nda" &con &lget .cc-init.values8 3 " -rm" ""
+    7 cc-get-file-list 0 0 #l2
+    8 cc-cleartool 3 $buffer-fname
 !emacro
-set-variable .cc-annotate.values "|1|1|0|"
 
 ; ClearCase VTree ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro cc-vtree
-    9 cc-osd .cc-vtree.values
+    12 cc-osd
     !if &band $system 0x100
         set-variable #l2 &spr "\"%sclearvtree\" " .cc-init.path
     !else
         set-variable #l2 &spr "\"%sxlsvtree\" " .cc-init.path
     !endif
-    &len #l2 cc-get-file-list #l0 0 0
-    0x24 shell-command &cat #l2 #l0
+    7 cc-get-file-list 0 0 #l2
+    0x124 shell-command "*cc-cmdline*"
 !emacro
-set-variable .cc-vtree.values "|"
 
 ; ClearCase Explorer ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1378,7 +1428,7 @@ define-macro cc-explorer
 
 ; ClearCase Config Spec ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-0 define-macro cc-cleartool-complete10
+0 define-macro cc-cleartool-complete11
     ml-write &cat "Removing " .cc-config-spec-set.tmp
     0x20 file-op .cc-config-spec-set.tmp
 !emacro
@@ -1398,7 +1448,7 @@ define-macro cc-explorer
     set-variable .tmp $temp-name
     4 append-buffer .tmp
     set-variable #l2 &spr "%s setcs -tag \"%s\" \"%s\"" .cc-init.com #l0 .tmp
-    10 cc-cleartool 0 $buffer-fname #l2
+    11 cc-cleartool 0 $buffer-fname #l2
     set-variable #l1 $buffer-bname
     find-buffer "*cc-console*"
     !if &bmod "pipe"
@@ -1492,14 +1542,14 @@ define-macro cc-add-view
         !force !force cc-add-view
     !endif
     !if $status
-        -1 osd .osd.ccstpv
-        osd .osd.ccstpv 0 &cond &band $system 0x100 "AisSf" "AsSf" .scheme.osd-child 60 6 -1 -1
+        -1 osd .osd.ccgenv
+        osd .osd.ccgenv 0 &cond &band $system 0x100 "AisSf" "AsSf" .scheme.osd-child 60 6 -1 -1
         set-variable #l1 0
         !while &not &seq "" &set #l2 &reg &cat "/history/clearcase/" &inc #l1 1 ""
-            osd .osd.ccstpv 1 "xBd" #l2 f cc-setup-del-view
+            osd .osd.ccgenv 1 "xBd" #l2 f cc-setup-del-view
         !done
         !if &equ #l1 1
-            osd .osd.ccstpv 1 "" "<no views added>"
+            osd .osd.ccgenv 1 "" "<no views added>"
         !endif
     !endif
 !emacro
@@ -1524,23 +1574,150 @@ define-macro cc-add-view
     !endif
 !emacro
 
+0 define-macro cc-setup-ctf
+    set-variable #l2 &spr "/history/clearcase/%d_C" &abs @#
+    set-variable #l0 &reg #l2 ""
+    !if &les @# 0
+        set-variable #l1 @ml24 "" #l0
+        !if &seq #l0 #l1
+        !elif &seq #l1 ""
+            !force delete-registry #l2
+        !else
+            set-registry #l2 #l1
+        !endif
+    !else
+        set-variable $result #l0
+    !endif
+!emacro
+
+0 define-macro cc-setup-cbc
+    set-variable #l0 &band &abs @# 0x0fff
+    set-variable #l1 &div  &abs @# 0x1000
+    set-variable #l2 &cat ".cc-init.defs" #l1
+    set-variable #l3 &ind #l2
+    !if &les @# 0
+        set-variable &ind #l2 &lset #l3 #l0 &set #l4 &bxor 1 &lget #l3 #l0
+        set-registry &spr "/history/clearcase/%d_%s" #l1 &mid &lget .cc-init.flags #l1 &sub #l0 1 1 #l4
+    !elif &not &lget #l3 #l0
+        !abort
+    !endif
+!emacro
+
+0 define-macro cc-setup-page
+    set-variable #l8 &add .osd.ccnb @#
+    set-variable #l9 &lget .cc-init.flags @#
+    -1 osd #l8
+    osd #l8 0 "s" 66 15 -1 -1
+    osd #l8 1 ""
+    osd #l8 2 "" &spr "  ClearCase %s Default Settings" &lget .cc-init.names @#
+    set-variable #l0 0
+    set-variable #l4 &mul @# 0x1000
+    !while &not &seq "" &set #l1 &mid #l9 &pinc #l0 1 1
+        !if &not &sin #l1 "cSs*!"
+            set-variable #l2 &mul #l0 100
+            osd #l8 &inc #l2 1 ""
+            !if &seq #l1 "C"
+                osd #l8 &inc #l2 1 "fh" "    \HComment template file: " &add #l2 1
+                osd #l8 &inc #l2 1 "EtxHfz" .scheme.osd-entry 36 1 "" @# cc-setup-ctf
+            !elif &seq #l1 "D"
+                osd #l8 &inc #l2 1 "fh" "    "
+                osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Checkout parent \Hdirectory if required" &bor #l4 #l0 cc-setup-cbc
+            !elif &seq #l1 "F"
+                osd #l8 &inc #l2 1 "fh" "    "
+                osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HEnable file filter" &bor #l4 #l0 cc-setup-cbc
+            !elif &seq #l1 "H"
+                osd #l8 &inc #l2 1 "fh" "    "
+                osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Output \Hheader information" &bor #l4 #l0 cc-setup-cbc
+            !elif &seq #l1 "K"
+                osd #l8 &inc #l2 1 "fh" "    "
+                osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HKeep current version" &bor #l4 #l0 cc-setup-cbc
+            !elif &seq #l1 "L"
+                osd #l8 &inc #l2 1 "fh" "    "
+                osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Output file \Hline information" &bor #l4 #l0 cc-setup-cbc
+            !elif &seq #l1 "M"
+                osd #l8 &inc #l2 1 "fh" "    "
+                osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Include \Hremoved lines" &bor #l4 #l0 cc-setup-cbc
+            !elif &seq #l1 "O"
+                osd #l8 &inc #l2 1 "fh" "    "
+                osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Overwrite \Hhijacked files" &bor #l4 #l0 cc-setup-cbc
+            !elif &seq #l1 "Q"
+                osd #l8 &inc #l2 1 "fh" "    "
+                osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HSensible amount of logging please!" &bor #l4 #l0 cc-setup-cbc
+            !elif &seq #l1 "R"
+                osd #l8 &inc #l2 1 "fh" "    "
+                osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HRecurse into sub-directories" &bor #l4 #l0 cc-setup-cbc
+            !elif &seq #l1 "U"
+                osd #l8 &inc #l2 1 "fh" "    "
+                osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HUnreserved checkout" &bor #l4 #l0 cc-setup-cbc
+            !elif &seq #l1 "V"
+                osd #l8 &inc #l2 1 "fh" "    "
+                osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Operate on entire \HView" &bor #l4 #l0 cc-setup-cbc
+            !elif &seq #l1 "W"
+                osd #l8 &inc #l2 1 "fh" "    "
+                osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Ignore \Hwhite spaces" &bor #l4 #l0 cc-setup-cbc
+            !elif &seq #l1 "X"
+                osd #l8 &inc #l2 1 "fh" "    "
+                osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use e\Hxternal diff" &bor #l4 #l0 cc-setup-cbc
+            !elif &seq #l1 "Z"
+                osd #l8 &inc #l2 1 "fh" "    "
+                osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Operate on current \Hdirectory" &bor #l4 #l0 cc-setup-cbc
+            !elif &seq #l1 "h"
+                osd #l8 &inc #l2 1 "fh" "    "
+                osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Hijack current file" &bor #l4 #l0 cc-setup-cbc
+            !elif &seq #l1 "r"
+                osd #l8 &inc #l2 1 "fh" "    "
+                osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Refresh directory \Hlisting" &bor #l4 #l0 cc-setup-cbc
+            !else
+                osd #l8 &inc #l2 1 "" &cat "flag " #l1
+            !endif
+        !endif
+    !done
+!emacro
+
+-1 osd .osd.ccgen
+osd .osd.ccgen 0 "s" 66 15 -1 -1
+osd .osd.ccgen 10 "" ""
+osd .osd.ccgen 20 "Sfh" "  \HCleartool Command: " 30
+osd .osd.ccgen 30 "EtxHfz" .scheme.osd-entry 42 1 "" 1 cc-setup-entry
+osd .osd.ccgen 40 "" ""
+osd .osd.ccgen 50 "Sfh" "  Version \HSeparator: " 60
+osd .osd.ccgen 60 "EtxHfz" .scheme.osd-entry 10 1 "" 2 cc-setup-entry
+osd .osd.ccgen 70 "" ""
+osd .osd.ccgen 80 "fh" "  \HViews:             "
+osd .osd.ccgen 90 "BtfHx" .scheme.osd-ebtt " \HAdd " f cc-setup-add-view
+osd .osd.ccgen 100 "fh" "  "
+osd .osd.ccgen 110 "IbHt" .scheme.osd-sbar 60 6 .osd.ccgenv
+
+-1 osd .osd.ccnb
+osd .osd.ccnb 0 "NsI" 68 21 -1 -1 1
+osd .osd.ccnb 1 "Pft" "General" .osd.ccgen
+5 cc-setup-page
+osd .osd.ccnb 2 "Pft" "Add" &add .osd.ccnb 5
+8 cc-setup-page
+osd .osd.ccnb 3 "Pft" "Annotate" &add .osd.ccnb 8
+4 cc-setup-page
+osd .osd.ccnb 4 "Pft" "Checkin" &add .osd.ccnb 4
+3 cc-setup-page
+osd .osd.ccnb 5 "Pft" "Checkout" &add .osd.ccnb 3
+9 cc-setup-page
+osd .osd.ccnb 6 "Pft" "Delete" &add .osd.ccnb 9
+6 cc-setup-page
+osd .osd.ccnb 7 "Pft" "Diff" &add .osd.ccnb 6
+10 cc-setup-page
+osd .osd.ccnb 8 "Pft" "Rename" &add .osd.ccnb 10
+osd .osd.ccnb 100 "It" .osd.ccgen
+1 cc-setup-page
+osd .osd.ccnb 201 "Pft" "State" &add .osd.ccnb 1
+7 cc-setup-page
+osd .osd.ccnb 202 "Pft" "Uncheckout" &add .osd.ccnb 7
+2 cc-setup-page
+osd .osd.ccnb 203 "Pft" "Update" &add .osd.ccnb 2
+
 -1 osd .osd.ccstp
-osd .osd.ccstp 0 "batcDHs" 9 3 68 4 -1 -1 2020 .scheme.osd-title "ClearCase Setup"
-set-variable #l2 10
-osd .osd.ccstp &inc #l2 1 "" ""
-osd .osd.ccstp &inc #l2 1 "Sfh" "  \HCleartool Command: " &add #l2 1
-osd .osd.ccstp &inc #l2 1 "EtxHfz" .scheme.osd-entry 42 1 "" 1 cc-setup-entry
-osd .osd.ccstp &inc #l2 1 "" ""
-osd .osd.ccstp &inc #l2 1 "Sfh" "  Version \HSeparator: " &add #l2 1
-osd .osd.ccstp &inc #l2 1 "EtxHfz" .scheme.osd-entry 10 1 "" 2 cc-setup-entry
-osd .osd.ccstp &inc #l2 1 "" ""
-osd .osd.ccstp &inc #l2 1 "fh" "  \HViews:             "
-osd .osd.ccstp &inc #l2 1 "BtfHx" .scheme.osd-ebtt " \HAdd " f cc-setup-add-view
-osd .osd.ccstp &inc #l2 1 "fh" "  "
-osd .osd.ccstp &inc #l2 1 "IbHt" .scheme.osd-sbar 60 6 .osd.ccstpv
+osd .osd.ccstp 0 "batcDIHs" 9 3 70 25 -1 -1 2010 100 .scheme.osd-title "ClearCase Setup"
+osd .osd.ccstp 100 "It" .osd.ccnb
 osd .osd.ccstp 2000 ""
-osd .osd.ccstp 2010 ""
-osd .osd.ccstp 2020 "BtcfHh" .scheme.osd-ebtt " \HOkay " f void
+osd .osd.ccstp 2010 "BtcfHh" .scheme.osd-ebtt " \HOkay " f void
 
 define-macro cc-setup
     0 cc-setup-add-view
