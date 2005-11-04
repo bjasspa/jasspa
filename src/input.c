@@ -105,7 +105,12 @@ mlCharReply(meUByte *prompt, int mask, meUByte *validList, meUByte *helpStr)
                 /* evaluate it */
                 meUByte *res = getval(buff) ;
                 if(res == abortm)
-                    return -1 ;
+                {
+                    if((buff[0] != '\0') && (buff[0] != ';'))
+                        return -1 ;
+                    inpType = 1 ;
+                    continue ;
+                }
                 cc = *res ;
             }
         }
