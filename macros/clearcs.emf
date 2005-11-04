@@ -17,8 +17,12 @@
     set-variable .osd.ccosd  &pinc .osd.next 1
     set-variable .osd.ccstp  &pinc .osd.next 1
     set-variable .osd.ccgen  &pinc .osd.next 1
+    set-variable .osd.ccnb   &pinc .osd.next 1
     set-variable .osd.ccgenv &pinc .osd.next 1
-    set-variable .osd.ccnb   &pinc .osd.next 11
+    set-variable .osd.cctl   &pinc .osd.next 1
+    set-variable .osd.cctll  &pinc .osd.next 1
+    set-variable .osd.cctlc  &pinc .osd.next 1
+    set-variable .osd.cctlo  &pinc .osd.next 1
 !endif
 !if &not &lfind .fhook-dirlst.sc-name "ClearCase"
     set-variable #l0 &lef .fhook-dirlst.col-name 1
@@ -61,15 +65,15 @@ set-variable .cc-init.vsepr .cc-init.vsep
 str-to-regex .cc-init.vsepr
 
 set-variable .cc-init.names  "|State|Update|Checkout|Checkin|Add|Diff|Uncheckout|Annotate|Delete|Rename|ConfigSpec|VTree|"
-set-variable .cc-init.flags  "|ZRFS|VZOQS*|CUhrS*!|CcrS*!|CDrS*!|WXS!|KrS*!|HLM!|||*^|Ss^|"
-set-variable .cc-init.defs1  "|0|1|1|1|"
+set-variable .cc-init.flags  "|ZRFS|VZOQS*|ChUJrS*!|CcrS*!|CDrS*!|WXS!|KrS*!|HLM!|||*^|Ss^|"
+set-variable .cc-init.defs1  "|1|1|1|1|"
 set-variable .cc-init.defs2  "|0|1|0|1|"
-set-variable .cc-init.defs3  "||1|0|0|"
-set-variable .cc-init.defs4  "||0|"
-set-variable .cc-init.defs5  "||0|0|"
-set-variable .cc-init.defs6  "|1|1|"
-set-variable .cc-init.defs7  "|1|0|"
-set-variable .cc-init.defs8  "|1|1|0|"
+set-variable .cc-init.defs3  "||0|0|1|1|"
+set-variable .cc-init.defs4  "||0|1|"
+set-variable .cc-init.defs5  "||1|1|"
+set-variable .cc-init.defs6  "|1|0|"
+set-variable .cc-init.defs7  "|1|1|"
+set-variable .cc-init.defs8  "|1|0|0|"
 set-variable .cc-init.defs9  "|"
 set-variable .cc-init.defs10 "|"
 set-variable .cc-init.defs11 "|"
@@ -263,6 +267,10 @@ set-variable #l9 12
                 osd .osd.ccosd &inc #l2 1 "fh" "    "
                 osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Output \Hheader information" #l0 cc-osd-cbc
                 set-variable #l3 &con #l3 #l3 #l2
+            !elif &seq #l1 "J"
+                osd .osd.ccosd &inc #l2 1 "fh" "    "
+                osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use local Hi\Hjacked file as co file" #l0 cc-osd-cbc
+                set-variable #l3 &con #l3 #l3 #l2
             !elif &seq #l1 "K"
                 osd .osd.ccosd &inc #l2 1 "fh" "    "
                 osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HKeep current version" #l0 cc-osd-cbc
@@ -306,7 +314,7 @@ set-variable #l9 12
             !elif &seq #l1 "Z"
                 !if .find-file.file-count
                     osd .osd.ccosd &inc #l2 1 "fh" "    "
-                    osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Operate on current \Hdirectory" #l0 cc-osd-cbc
+                    osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Operate on \Hdirectory (ignore selection)" #l0 cc-osd-cbc
                     set-variable #l3 &con #l3 #l3 #l2
                 !else
                     osd .osd.ccosd #l2 "D"
@@ -316,7 +324,7 @@ set-variable #l9 12
                     osd .osd.ccosd #l2 "D"
                 !else
                     osd .osd.ccosd &inc #l2 1 "fh" "    "
-                    osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Hijack current file" #l0 cc-osd-cbc
+                    osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HHijack current file" #l0 cc-osd-cbc
                     set-variable #l3 &con #l3 #l3 #l2
                 !endif
             !elif &seq #l1 "r"
@@ -375,7 +383,7 @@ set-variable #l9 12
                 !if &band @# 8
                     set-variable $window-line 2
                     end-of-line
-                    insert-string &cat "\b" #l4
+                    -1 insert-string &cat "\b" #l4
                     set-variable $window-line 1
                     end-of-line
                     set-variable .dcount &add .dcount 1
@@ -387,7 +395,7 @@ set-variable #l9 12
                 set-variable #l4 &rep &rep #l4 "\\" "\\\\" "\"" "\\\""
                 set-variable #l4 &cat &cat "\"" #l4 "\""
             !endif
-            insert-string &cat "\b" #l4
+            -1 insert-string &cat "\b" #l4
         !done
         set-variable .fcount .find-file.file-count
     !endif
@@ -401,7 +409,7 @@ set-variable #l9 12
     !endif
     !if &band @# 4
         beginning-of-buffer
-        insert-string @3
+        -1 insert-string @3
     !endif
     beginning-of-buffer
     goto-position "\x82"
@@ -695,11 +703,16 @@ set-variable #l9 12
     !if &not &exi :lock
         set-variable :lock .cc-init.lock
         -1 buffer-mode "wrap"
+        !if &sin "%c" $mode-line
+            ; on unix the cursor can be temporarily left in mid line, if the column is used in the mode-line this leads to annoying refreshes.
+            set-variable $buffer-mode-line &rep $mode-line "%c" "C"
+        !endif
     !endif
     !if &exi &cat "cc-cleartool-ipipe" :lock
         !force execute-named-command &cat "cc-cleartool-ipipe" :lock
     !endif
     !if &not @#
+        !force set-variable $buffer-mode-line $mode-line
         cc-cleartool-complete
     !endif
 !emacro
@@ -824,6 +837,8 @@ set-variable #l9 12
         insert-string "\n A  Name"
         -1 buffer-mode "edit"
         1 buffer-mode "view"
+        buffer-bind-create "bio" "C-return" "" cc-state
+        buffer-bind-create "bio" "C-j" ""    cc-state
         buffer-bind-create "bio" "return" "" cc-state-find-file
         buffer-bind-create "bio" "delete" "" cc-state-delete
         buffer-bind-create "bio" "C-k"    "" cc-state-delete-line
@@ -1044,22 +1059,22 @@ define-macro cc-state
     find-buffer "*cc-cmdline*"
     !if &and &lget .cc-init.values1 2 .cc-get-file-list.dcount
         !if &band $system 0x100
-            insert-string &spr "cmd /c %s ls -d " .cc-init.com
+            -1 insert-string &spr "cmd /c %s ls -d " .cc-init.com
             end-of-line
-            insert-string &spr " & %s ls -rec " .cc-init.com
+            -1 insert-string &spr " & %s ls -rec " .cc-init.com
             forward-delete-char
         !else
-            insert-string &cat .cc-init.com " ls -d "
+            -1 insert-string &cat .cc-init.com " ls -d "
             end-of-line
-            insert-string &spr " ; %s ls -rec " .cc-init.com
+            -1 insert-string &spr " ; %s ls -rec " .cc-init.com
             forward-delete-char
         !endif
     !elif &not &seq @wl "."
-        insert-string &cat .cc-init.com " ls -d "
+        -1 insert-string &cat .cc-init.com " ls -d "
     !elif &band $system 0x100
-        insert-string &spr "cmd /c %s ls -d . & %s ls " .cc-init.com .cc-init.com
+        -1 insert-string &spr "cmd /c %s ls -d . & %s ls " .cc-init.com .cc-init.com
     !else
-        insert-string &spr "%s ls -d . ; %s ls " .cc-init.com .cc-init.com
+        -1 insert-string &spr "%s ls -d . ; %s ls " .cc-init.com .cc-init.com
     !endif
     goto-position "\x82"
     1 cc-cleartool 0 #l1
@@ -1102,9 +1117,43 @@ define-macro cc-update
 
 ; ClearCase Checkout ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+0 define-macro cc-cleartool-ipipe3
+    !if &not &lget .cc-init.values3 4
+        !return
+    !elif &not &exi :ccco-last
+        .cc-get-file-list.fcount ipipe-write &cond &band $system 0x100 "YES\CJ" "YES\CM"
+        set-variable :ccco-last 4
+    !endif
+    ; this may be needed on unix to improve the look
+    goto-alpha-mark "I"
+    !if &equ $window-line :ccco-last
+        !return
+    !endif
+    set-variable #l0 $window-line
+    goto-line :ccco-last
+    !while &gre #l0 $window-line
+        !if &seq &rig @wl -3 "YES"
+            end-of-line
+            3 backward-char
+            set-mark
+            forward-line
+            beginning-of-line
+            -1 kill-region
+            set-variable #l0 &sub #l0 1
+        !elif &set #l1 &sin " [yes] " @wl
+            set-variable $window-col &add #l1 6
+            insert-string "yes\n"
+            set-variable #l0 &add #l0 1
+        !else
+            forward-line
+        !endif
+    !done
+    goto-alpha-mark  "I"
+    set-variable :ccco-last $window-line
+!emacro
 define-macro cc-checkout
     3 cc-osd
-    !if &and &not &bmod "dir" &lget .cc-init.values3 3
+    !if &and &not &bmod "dir" &lget .cc-init.values3 2
         -1 buffer-mode "view"
         !if &band $system 0x100
             set-variable $buffer-fmod &band $buffer-fmod 0xfffffe
@@ -1113,7 +1162,7 @@ define-macro cc-checkout
         !endif
         !return
     !endif
-    set-variable #l2 &spr "%s co%s " .cc-init.com &con &lget .cc-init.values3 2 " -unr" ""
+    set-variable #l2 &spr "%s co%s%s " .cc-init.com &con &lget .cc-init.values3 3 " -unr" "" &con &lget .cc-init.values3 4 "" " -nq"
     !if &seq .cc-init.comment ""
         set-variable #l2 &cat #l2 "-nc "
     !else
@@ -1124,7 +1173,7 @@ define-macro cc-checkout
     3 cc-cleartool 3 $buffer-fname
     !if &seq $buffer-fname ""
     !elif &bmod "dir"
-        !if &lget .cc-init.values3 4
+        !if &lget .cc-init.values3 5
             dirlst-refresh
         !endif
     !elif &not &seq &lef $buffer-bname 1 "*"
@@ -1178,7 +1227,7 @@ define-macro cc-add
     !if .cc-get-file-list.dcount
         transpose-lines
         beginning-of-buffer
-        insert-string #l2
+        -1 insert-string #l2
         goto-position "\x82"
         set-variable #l4 &con &seq #l5 "" 3 1        
         5 cc-cleartool #l4 $buffer-fname
@@ -1186,7 +1235,7 @@ define-macro cc-add
         transpose-lines
         beginning-of-buffer
     !endif
-    insert-string #l2
+    -1 insert-string #l2
     goto-position "\x82"
     ; Now add all the files
     !if &sub .cc-get-file-list.fcount .cc-get-file-list.dcount
@@ -1306,7 +1355,7 @@ define-macro cc-diff
             set-variable @wl &cat &cat "\"" &rep &rep @wl "\\" "\\\\" "\"" "\\\"" "\""
             beginning-of-buffer
         !endif
-        insert-string #l2
+        -1 insert-string #l2
         goto-position "\x82"
         !force !force !force 6 cc-cleartool 7 #l9
         !if &not &set #l8 $status
@@ -1453,7 +1502,7 @@ define-macro cc-explorer
     find-buffer "*cc-console*"
     !if &bmod "pipe"
         ; cleartool setcs may prompt and there's no command-line argument to stop it!!
-        ipipe-write "yes\CM"
+        ipipe-write &cond &band $system 0x100 "YES\CJ" "YES\CM"
     !endif
     find-buffer #l1
     -1 buffer-mode "edit"
@@ -1604,12 +1653,16 @@ define-macro cc-add-view
 !emacro
 
 0 define-macro cc-setup-page
-    set-variable #l8 &add .osd.ccnb @#
+    osd .osd.cctlc .cur "RxBd" &lget .cc-init.names &lget .order .cur .cur cc-setup-page
+    set-variable .cur @#
+    set-variable @# &lget .order @#
+    osd .osd.cctlc .cur "RxBdH" .scheme.osd-entry &lget .cc-init.names @# .cur cc-setup-page
+    set-variable #l8 .osd.cctlo
     set-variable #l9 &lget .cc-init.flags @#
     -1 osd #l8
-    osd #l8 0 "s" 66 15 -1 -1
+    osd #l8 0 "s" 49 15 -1 -1
     osd #l8 1 ""
-    osd #l8 2 "" &spr "  ClearCase %s Default Settings" &lget .cc-init.names @#
+    osd #l8 2 "" &spr "  %s Default Settings:" &lget .cc-init.names @#
     set-variable #l0 0
     set-variable #l4 &mul @# 0x1000
     !while &not &seq "" &set #l1 &mid #l9 &pinc #l0 1 1
@@ -1617,7 +1670,8 @@ define-macro cc-add-view
             set-variable #l2 &mul #l0 100
             osd #l8 &inc #l2 1 ""
             !if &seq #l1 "C"
-                osd #l8 &inc #l2 1 "fh" "    \HComment template file: " &add #l2 1
+                osd #l8 &inc #l2 1 "Sf" "    \HComment template file:" &add #l2 2
+                osd #l8 &inc #l2 1 "fh" "        "
                 osd #l8 &inc #l2 1 "EtxHfz" .scheme.osd-entry 36 1 "" @# cc-setup-ctf
             !elif &seq #l1 "D"
                 osd #l8 &inc #l2 1 "fh" "    "
@@ -1628,6 +1682,9 @@ define-macro cc-add-view
             !elif &seq #l1 "H"
                 osd #l8 &inc #l2 1 "fh" "    "
                 osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Output \Hheader information" &bor #l4 #l0 cc-setup-cbc
+            !elif &seq #l1 "J"
+                osd #l8 &inc #l2 1 "fh" "    "
+                osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use local \HHijacked file as co file" &bor #l4 #l0 cc-setup-cbc
             !elif &seq #l1 "K"
                 osd #l8 &inc #l2 1 "fh" "    "
                 osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HKeep current version" &bor #l4 #l0 cc-setup-cbc
@@ -1660,7 +1717,7 @@ define-macro cc-add-view
                 osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use e\Hxternal diff" &bor #l4 #l0 cc-setup-cbc
             !elif &seq #l1 "Z"
                 osd #l8 &inc #l2 1 "fh" "    "
-                osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Operate on current \Hdirectory" &bor #l4 #l0 cc-setup-cbc
+                osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Operate on \Hdirectory (ignore selection)" &bor #l4 #l0 cc-setup-cbc
             !elif &seq #l1 "h"
                 osd #l8 &inc #l2 1 "fh" "    "
                 osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Hijack current file" &bor #l4 #l0 cc-setup-cbc
@@ -1673,6 +1730,29 @@ define-macro cc-add-view
         !endif
     !done
 !emacro
+set-variable .cc-setup-page.cur 1
+set-variable .cc-setup-page.order "|5|8|4|3|9|6|10|1|7|2|"
+
+-1 osd .osd.cctlc
+osd .osd.cctlc 0 "sS" .scheme.osd-child 10 10 -1 -1
+set-variable #l9 0
+!while &not &seq "" &set #l8 &lget .cc-setup-page.order &inc #l9 1
+    osd .osd.cctlc #l9 "RxBd" &lget .cc-init.names #l8 #l9 cc-setup-page
+!done
+
+-1 osd .osd.cctll
+osd .osd.cctll 0 "s" 17 15 -1 -1
+osd .osd.cctll 10 "" ""
+osd .osd.cctll 20 "S" "  Select Tool:" 50
+osd .osd.cctll 40 "fh" "  "
+osd .osd.cctll 50 "IbHt" .scheme.osd-sbar 10 10 .osd.cctlc
+
+1 cc-setup-page
+
+-1 osd .osd.cctl
+osd .osd.cctl 0 "s" 66 15 -1 -1
+osd .osd.cctl 20 "Ith" .osd.cctll
+osd .osd.cctl 40 "It" .osd.cctlo
 
 -1 osd .osd.ccgen
 osd .osd.ccgen 0 "s" 66 15 -1 -1
@@ -1689,32 +1769,13 @@ osd .osd.ccgen 100 "fh" "  "
 osd .osd.ccgen 110 "IbHt" .scheme.osd-sbar 60 6 .osd.ccgenv
 
 -1 osd .osd.ccnb
-osd .osd.ccnb 0 "NsI" 68 21 -1 -1 1
+osd .osd.ccnb 0 "NsI" 68 19 -1 -1 1
 osd .osd.ccnb 1 "Pft" "General" .osd.ccgen
-5 cc-setup-page
-osd .osd.ccnb 2 "Pft" "Add" &add .osd.ccnb 5
-8 cc-setup-page
-osd .osd.ccnb 3 "Pft" "Annotate" &add .osd.ccnb 8
-4 cc-setup-page
-osd .osd.ccnb 4 "Pft" "Checkin" &add .osd.ccnb 4
-3 cc-setup-page
-osd .osd.ccnb 5 "Pft" "Checkout" &add .osd.ccnb 3
-9 cc-setup-page
-osd .osd.ccnb 6 "Pft" "Delete" &add .osd.ccnb 9
-6 cc-setup-page
-osd .osd.ccnb 7 "Pft" "Diff" &add .osd.ccnb 6
-10 cc-setup-page
-osd .osd.ccnb 8 "Pft" "Rename" &add .osd.ccnb 10
+osd .osd.ccnb 2 "Pft" "Tools" .osd.cctl
 osd .osd.ccnb 100 "It" .osd.ccgen
-1 cc-setup-page
-osd .osd.ccnb 201 "Pft" "State" &add .osd.ccnb 1
-7 cc-setup-page
-osd .osd.ccnb 202 "Pft" "Uncheckout" &add .osd.ccnb 7
-2 cc-setup-page
-osd .osd.ccnb 203 "Pft" "Update" &add .osd.ccnb 2
 
 -1 osd .osd.ccstp
-osd .osd.ccstp 0 "batcDIHs" 9 3 70 25 -1 -1 2010 100 .scheme.osd-title "ClearCase Setup"
+osd .osd.ccstp 0 "batcDIHs" 9 3 70 23 -1 -1 2010 100 .scheme.osd-title "ClearCase Setup"
 osd .osd.ccstp 100 "It" .osd.ccnb
 osd .osd.ccstp 2000 ""
 osd .osd.ccstp 2010 "BtcfHh" .scheme.osd-ebtt " \HOkay " f void
