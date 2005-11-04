@@ -528,8 +528,8 @@ dictionaryAdd(int f, int n)
         if((meSpellInitDictionaries() <= 0) ||
            (lineInsertString(0,(meUByte *)"Dictionary: ") <= 0) ||
            (lineInsertString(0,dict->fname) <= 0) ||
-           (lineInsertNewline(meFALSE) <= 0) ||
-           (lineInsertNewline(meFALSE) <= 0))
+           (lineInsertNewline(0) <= 0) ||
+           (lineInsertNewline(0) <= 0))
             return meABORT ;
         
         tableSize = dict->tableSize ;
@@ -549,7 +549,7 @@ dictionaryAdd(int f, int n)
                 {
                     meDictWordDump(ent,buff) ;
                     if((lineInsertString(0,buff) <= 0) ||
-                       (lineInsertNewline(meFALSE) <= 0))
+                       (lineInsertNewline(0) <= 0))
                         return meABORT ;
                 }
             }
@@ -2003,7 +2003,7 @@ spellWord(int f, int n)
             if(wordCheck(wd) > 0)
             {
                 lineInsertString(0,wd) ;
-                lineInsertNewline(meFALSE) ;
+                lineInsertNewline(0) ;
             }
             for(ii=0 ; ii<NOSPELLRULES ; ii++)
             {
@@ -2023,7 +2023,7 @@ spellWord(int f, int n)
                         if(wordCheck(word) > 0)
                         {
                             lineInsertString(0,nwd) ;
-                            lineInsertNewline(meFALSE) ;
+                            lineInsertNewline(0) ;
                             if(meRuleFlags[ii] == (RULE_PREFIX|RULE_MIXABLE))
                             {
                                 meSpellRule  *sr ;
@@ -2042,7 +2042,7 @@ spellWord(int f, int n)
                                                 if(wordCheck(word) > 0)
                                                 {
                                                     lineInsertString(0,nwd) ;
-                                                    lineInsertNewline(meFALSE) ;
+                                                    lineInsertNewline(0) ;
                                                 }
                                                 wordSuffixRuleRemove(swd,sr) ;
                                             }

@@ -970,7 +970,7 @@ replaces(int kind, int ff, int nn)
                     return mlwrite(MWABORT,(meUByte *)"[ERROR while deleting]");
                 
 		/* And put in the old one. */
-                i = bufferInsertText(dpat,meFALSE) ;
+                i = bufferInsertText(dpat,0) ;
 #if MEOPT_UNDO
                 meUndoAddReplaceEnd(i) ;
 #endif
@@ -1099,7 +1099,7 @@ replaces(int kind, int ff, int nn)
                                 if(tmpc != meCHAR_NL)
                                     status = lineInsertChar(1, tmpc);
                                 else
-                                    status = lineInsertNewline(meFALSE);
+                                    status = lineInsertNewline(0);
                             }
                         }
                         /* subtract one from insert length as one is added at
@@ -1117,7 +1117,7 @@ replaces(int kind, int ff, int nn)
                         if (tmpc != meCHAR_NL)
                             status = lineInsertChar(1, tmpc);
                         else
-                            status = lineInsertNewline(meFALSE);
+                            status = lineInsertNewline(0);
                     }
                 }
                 else
@@ -1126,7 +1126,7 @@ replaces(int kind, int ff, int nn)
                     if (tmpc != meCHAR_NL)
                         status = lineInsertChar(1, tmpc);
                     else
-                        status = lineInsertNewline(meFALSE);
+                        status = lineInsertNewline(0);
                 }
                 /* Insertion error ? */
                 if (status <= 0) 

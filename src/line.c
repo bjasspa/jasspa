@@ -438,7 +438,7 @@ lineInsertString(register int n, register meUByte *cp)
  * split forces more updating.
  */
 int
-lineInsertNewline(meInt undoCall)
+lineInsertNewline(meInt flags)
 {
     meLine   *lp1;
     meLine   *lp2;
@@ -452,8 +452,8 @@ lineInsertNewline(meInt undoCall)
     lflag = meLineGetFlag(lp1) ;
 #if MEOPT_EXTENDED
     if((lflag & meLINE_PROTECT) == 0)
-        undoCall = 0 ;
-    else if(!undoCall)
+        flags = 0 ;
+    else if(!(flags & meBUFINSFLAG_UNDOCALL))
         return mlwrite(MWABORT,(meUByte *)"[Protected Line!]") ;
 #endif
     lineSetChanged(WFMOVEL|WFMAIN|WFSBOX);
@@ -489,7 +489,7 @@ lineInsertNewline(meInt undoCall)
 #if MEOPT_EXTENDED
         /* special case: when undoing the PROTECTed flag is overridden, but if the
          * offest is 0 the anchors must remain on the original line */
-        if(doto || !undoCall)
+        if(doto || !(flags & meBUFINSFLAG_UNDOCALL))
 #endif
         {
             /* sort out the line anchors */ 
@@ -535,7 +535,7 @@ lineInsertNewline(meInt undoCall)
     }
 #if MEOPT_EXTENDED
     /* scheme & user set flags should remain on the top line even if offset was 0 - important for narrows etc */ 
-    if(doto || !undoCall)
+    if(doto || !(flags & meBUFINSFLAG_UNDOCALL))
     {
         lp1->flag |= lflag & (meLINE_MARKUP|meLINE_PROTECT|meLINE_SET_MASK|meLINE_SCHEME_MASK) ;
         lp2->flag &= ~(meLINE_MARKUP|meLINE_PROTECT|meLINE_SET_MASK|meLINE_SCHEME_MASK) ;
@@ -600,18 +600,19 @@ bufferIsTextInsertLegal(meUByte *str)
  * Note - this function avoids any meLINE_PROTECT issues, it assumes that
  * the legality of the action is already checked */
 int
-bufferInsertText(meUByte *str, meInt undoCall)
+bufferInsertText(meUByte *str, meInt flags)
 {
-    meUByte *ss=str, cc ;
+    meUByte *ss=str, cc, ccnl ;
     meInt status, lineCount=0, lineNo, len, tlen=0 ;
     meLine *line ;
     
     if(str[0] == '\0')
         return 0 ;
     
+    ccnl = (flags & meBUFINSFLAG_LITERAL) ? '\0':meCHAR_NL ;
     for(;;)
     {
-        while(((cc=*ss++) != '\0') && (cc != meCHAR_NL))
+        while(((cc=*ss++) != '\0') && (cc != ccnl))
             ;
         ss-- ;
         len = (((size_t) ss) - ((size_t) str)) ;
@@ -632,7 +633,7 @@ bufferInsertText(meUByte *str, meInt undoCall)
             if(len && (lineInsertString(len,str) <= 0))
                 break ;
             tlen += len ;
-            if(lineInsertNewline(undoCall) <= 0)
+            if(lineInsertNewline(flags) <= 0)
                 break ;
             tlen++ ;
         }
@@ -648,7 +649,7 @@ bufferInsertText(meUByte *str, meInt undoCall)
             *ss = meCHAR_NL ;
             if(status <= 0)
                 break ;
-            if(!tlen & !undoCall)
+            if(!tlen & !(flags & meBUFINSFLAG_UNDOCALL))
             {
                 /* Update the position of any anchors at the start of the line, these are left behind */
                 if(frameCur->windowCur->dotLine->flag & meLINE_ANCHOR)
@@ -749,9 +750,17 @@ bufferInsertString(int f, int n)
     if((status=bufferSetEdit()) <= 0)   /* Check we can change the buffer */
         return status ;
     
+    if(n < 0)
+    {
+        status = meBUFINSFLAG_LITERAL ;
+        n = -n ;
+    }
+    else
+        status = 0 ;
+    
     /* insert it */
     for(; n>0 ; n--)
-        count += bufferInsertText(tstring,meFALSE) ;
+        count += bufferInsertText(tstring,status) ;
 
 #if MEOPT_UNDO
     meUndoAddInsChars(count) ;
@@ -777,7 +786,7 @@ bufferInsertNewline(int f, int n)
         return s ;
     i = n;                                  /* Insert newlines.     */
     do 
-        s = lineInsertNewline(meFALSE) ;
+        s = lineInsertNewline(0) ;
     while((s > 0) && --i);
 #if MEOPT_UNDO
     meUndoAddInsChars(n-i) ;
@@ -1447,7 +1456,7 @@ yankfrom(struct meKill *pklist)
     killp = pklist->kill;
     while (killp != NULL)
     {
-        len += bufferInsertText(killp->data,meFALSE) ;
+        len += bufferInsertText(killp->data,0) ;
         killp = killp->next;
     }
     return len ;
