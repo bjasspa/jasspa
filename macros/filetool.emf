@@ -64,7 +64,7 @@
         set-variable #l6 $buffer-bname
         !force 0 delete-buffer "*file-tool-temp*"
         find-buffer "*file-tool-temp*"
-        insert-string &lef #l0 &sub #l7 1
+        -1 insert-string &lef #l0 &sub #l7 1
         set-variable #l9 0
         !while &les &pinc #l9 1 .find-file.file-count
             set-variable #l1 &rep &ind &cat ".find-file.file" #l9 "%" "\bA"
@@ -77,9 +77,9 @@
             !else
                 set-variable #l2 &rep &rep #l2 "%b" #l1 "%e" ""
             !endif
-            insert-string #l2
+            -1 insert-string #l2
         !done
-        insert-string #l8
+        -1 insert-string #l8
         beginning-of-buffer
         !if &seq @wc "*"
             set-variable @wc " "
