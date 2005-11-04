@@ -573,8 +573,10 @@ extern	void	lineSetChanged(int flag);
 extern  meUByte *lineMakeSpace(int n);
 extern	int	lineInsertChar(int n, int c);
 extern	int	lineInsertString(int n, meUByte *cp);
-extern	int	lineInsertNewline(meInt undoCall);
-extern	int     bufferInsertText(meUByte *str, meInt undoCall) ;
+#define meBUFINSFLAG_UNDOCALL   0x01
+#define meBUFINSFLAG_LITERAL    0x02
+extern	int	lineInsertNewline(meInt flags);
+extern	int     bufferInsertText(meUByte *str, meInt flags) ;
 extern	int	bufferInsertSpace(int f, int n);
 extern	int	bufferInsertTab(int f, int n);
 extern	int	bufferInsertString(int f, int n);

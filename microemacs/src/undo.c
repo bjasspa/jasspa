@@ -637,7 +637,7 @@ meUndo(int f, int n)
                 {
                     ss += ccount ;
                     if((cc = *ss++) == meCHAR_NL)
-                        lineInsertNewline(meTRUE);
+                        lineInsertNewline(meBUFINSFLAG_UNDOCALL);
                     else if (cc != '\0')
                         lineInsertChar(1, cc);
                     meUndoAddInsChar() ;
@@ -645,7 +645,7 @@ meUndo(int f, int n)
                 else
                 {
                     /* Deal with a multiple character undo. */
-                    count = bufferInsertText(ss,meTRUE) ;
+                    count = bufferInsertText(ss,meBUFINSFLAG_UNDOCALL) ;
                     if(count > 0)
                         meUndoAddInsChars(count) ;
                 }

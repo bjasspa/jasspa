@@ -691,7 +691,7 @@ quote(int f, int n)
     {
         f = n ;
         do 
-            s = lineInsertNewline(meFALSE);
+            s = lineInsertNewline(0);
         while((s > 0) && --n);
 #if MEOPT_UNDO
         meUndoAddInsChars(f-n) ;
@@ -896,7 +896,7 @@ winsert(void)	/* insert a newline and indentation for Wrap indent mode */
         i++ ;
     }
     /* put in the newline */
-    if (lineInsertNewline(meFALSE) <= 0)
+    if (lineInsertNewline(0) <= 0)
         return meFALSE ;
     
     if(i && (i != tptr))
@@ -927,7 +927,7 @@ indentInsert(void)
     indentLine(&inComment) ;
     
     /* put in the newline */
-    if (lineInsertNewline(meFALSE) <= 0)
+    if (lineInsertNewline(0) <= 0)
         return meFALSE ;
 #if MEOPT_UNDO
     meUndoAddInsChar() ;
@@ -1037,7 +1037,7 @@ meNewline(int f, int n)
         else
 #endif
         {
-            s = lineInsertNewline(meFALSE) ;
+            s = lineInsertNewline(0) ;
 #if MEOPT_UNDO
             if (s > 0)
                 meUndoAddInsChar() ;

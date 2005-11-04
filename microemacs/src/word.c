@@ -445,7 +445,7 @@ wrapWord(int f, int n)
         cnt = winsert() ;
     else
     {
-        cnt = lineInsertNewline(meFALSE) ;
+        cnt = lineInsertNewline(0) ;
 #if MEOPT_UNDO
         if(cnt > 0)
             meUndoAddInsChars(n) ;
@@ -1191,7 +1191,7 @@ noIndent:
                         if(fillState & FILL_SPACE)
                             /* the saved space is not required, delete it */
                             ldelete(1L,0);
-                        lineInsertNewline(meFALSE);
+                        lineInsertNewline(0);
                         if (fillState & FILL_JUSTIFY)
                         {
                             ccol = justify (icol,fdoto);
@@ -1221,14 +1221,14 @@ noIndent:
                 {
                     if (fillState & FILL_JUSTIFY)
                     {
-                        lineInsertNewline(meFALSE);
+                        lineInsertNewline(0);
                         ccol = justify (icol,fdoto);
                         fdoto = -1 ;
                     }
                     else
                     {
                         ccol = frameCur->windowCur->dotOffset;
-                        lineInsertNewline(meFALSE);
+                        lineInsertNewline(0);
                     }
 #if MEOPT_UNDO
                     paralen += ccol + 1;
@@ -1261,7 +1261,7 @@ noIndent:
 #if MEOPT_UNDO
             paralen += frameCur->windowCur->dotOffset + 1;
 #endif
-            lineInsertNewline(meFALSE);
+            lineInsertNewline(0);
         }
 #if MEOPT_UNDO
         meUndoAddReplaceEnd(paralen);
