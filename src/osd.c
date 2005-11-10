@@ -629,7 +629,7 @@ menuExecute(osdITEM *mp, int flags, int n)
     meUByte *p, *q;                        /* Local character pointers */
     int   cc, f, mpflags ;              /* Immediate character */
     meUByte mlStatusStore ;
-    meUByte oldAllKeys ;
+    meUByte oldAllKeys, oldForce ;
     meUByte oldUseMlBinds ;
     
 	/* NOTE - we must cache the mp->flags as the item may not
@@ -656,6 +656,7 @@ menuExecute(osdITEM *mp, int flags, int n)
     if(mp->cmdIndex < 0)
         return meABORT;
 
+    oldForce = meRegHead->force ;
     oldAllKeys = TTallKeys ;
     TTallKeys = 0 ;
     if (mpflags & MF_ENTRY)
@@ -706,6 +707,11 @@ menuExecute(osdITEM *mp, int flags, int n)
                     *q++ = cc;
             } while(cc != '\0') ;
         }
+        if((mpflags & MF_CHECK) && (n == 1))
+            /* set a force value for the execution as the macro is allowed to
+             * fail to clear the checkbox and we don't want to kick in the
+             * macro debugging */
+            meRegHead->force = 1 ;
     }
     
     /* Get the f and n out */
@@ -735,6 +741,7 @@ menuExecute(osdITEM *mp, int flags, int n)
         useMlBinds = oldUseMlBinds ;
     }
     TTallKeys = oldAllKeys ;
+    meRegHead->force = oldForce ;
     return f;
 }
 
