@@ -888,7 +888,7 @@ dobuf(meLine *hlp)
            gets echoed and a key needs to be pressed to continue
            ^G will abort the command */
         
-        if((macbug & 0x02) && (!execlevel || (macbug & 0x04)))
+        if((macbug & 0x02) && (!execlevel || (macbug & 0x04) || ((execlevel == 1) && !meStrncmp(tline,"!el",3))))
         {
             meUByte dd, outline[meBUF_SIZE_MAX];   /* string to hold debug line text */
             meLine *tlp=hlp ;
