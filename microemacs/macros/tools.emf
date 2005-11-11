@@ -126,11 +126,6 @@ define-macro diff
     4 ipipe-shell-command &spr "%s%s \"%s\" \"%s\"" %diff-com &cond &band @# 2 " -r" "" #l0 #l1 "*diff*"
     !force popup-window  "*diff*"
 !emacro
-
-define-macro rdiff
-    3 diff @1 @2
-!emacro
-
 define-macro diff-changes
     !if &seq $buffer-fname ""
         ml-write "[Current buffer has no file name]"
@@ -147,6 +142,44 @@ define-macro diff-changes
     set-variable #l1 $buffer-backup
     diff #l1 #l0
 !emacro
+define-macro rdiff
+    3 diff @1 @2
+!emacro
+define-macro xdiff
+    !if &not &exi %xdiff-com
+        ml-write "[Error: %xdiff-com variable not set]"
+        !abort
+    !endif
+    !force set-variable #l2 @2
+    !if $status
+        set-variable #l1 @1
+    !else
+        set-variable #l1 @ml01 "Left file"
+        set-variable #l2 @ml01 "Right file"
+    !endif
+    !if &sin " " #l1
+        set-variable #l1 &cat &cat "\"" &rep &rep #l1 "\\" "\\\\" "\"" "\\\"" "\""
+    !endif
+    !if &sin " " #l2
+        set-variable #l2 &cat &cat "\"" &rep &rep #l2 "\\" "\\\\" "\"" "\\\"" "\""
+    !endif
+    !force set-variable #l3 @3
+    !if &or &not $status &seq "" #l3
+        set-variable #l3 #l1
+    !elif &sin " " #l3
+        set-variable #l3 &cat &cat "\"" &rep &rep #l3 "\\" "\\\\" "\"" "\\\"" "\""
+    !endif
+    !force set-variable #l4 @4
+    !if &or &not $status &seq "" #l4
+        set-variable #l4 #l2
+    !elif &sin " " #l4
+        set-variable #l4 &cat &cat "\"" &rep &rep #l4 "\\" "\\\\" "\"" "\\\"" "\""
+    !endif
+    set-variable #l0 &rep &rep %xdiff-com "%lf" #l1 "%rf" #l2
+    set-variable #l0 &rep &rep #l0 "%lt" #l3 "%rt" #l4
+    !force 0x4 shell-command #l0
+!emacro
+
 define-macro execute-tool
     !if @?
         set-variable #l9 @#
