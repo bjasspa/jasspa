@@ -1512,6 +1512,25 @@ define-macro dirlst-search
         set-variable $window-line 5
     !endif
 !emacro
+0 define-macro dirlst-cmp-files
+    !if :tag-count
+        11 dirlst-tag-list "Compare Files"
+    !else
+        3 dirlst-get-filename "Compare Files"
+    !endif
+    !if &not @#
+        set-variable .f1 &cat .find-file.file-dir .find-file.file1
+        !return
+    !elif &equ @# 1
+        set-variable #l1 .f1 
+        set-variable #l2 &cat .find-file.file-dir .find-file.file1
+    !else
+        set-variable #l1 &cat .find-file.file-dir .find-file.file1
+        set-variable #l2 &cat .find-file.file-dir .find-file.file2
+    !endif
+    !force unset-variable .f1
+    diff #l1 #l2
+!emacro
 0 define-macro dirlst-auto-refresh
     set-variable .find-file.flags &bxor .find-file.flags 0x01
     osd .osd.dirlst 130 ""  &cat "\HAuto-Refresh: " &cond &band .find-file.flags 1 "On " "Off" f dirlst-auto-refresh
@@ -1527,7 +1546,7 @@ osd .osd.dirlsts 60 ""  "\HUnselect All"       -1 dirlst-tag-set
 
 -1 osd .osd.dirlst
 osd .osd.dirlst 0   b
-osd .osd.dirlst 60  "-"
+osd .osd.dirlst 65  "-"
 osd .osd.dirlst 110 ""  "\HNew Folder"          f dirlst-new-folder
 osd .osd.dirlst 120 ""  "Re\Hfresh"             f dirlst-refresh
 osd .osd.dirlst 130 ""  "\HAuto-Refresh: on "   f dirlst-auto-refresh
@@ -1563,6 +1582,17 @@ osd .osd.dirlst 160 ""  "File Tools Setup"      f file-tool-setup
         osd .osd.dirlst  15 ""  "Open Selected"
         osd .osd.dirlst 100 ""  "Execute"
     !endif
+    osd .osd.dirlst  56 "D"
+    !if &equ :tag-count 2
+        osd .osd.dirlst  55 ""  "Compare Files"   2 dirlst-cmp-files
+    !elif &or &equ :tag-count 1 &and &not :tag-count #l0
+        osd .osd.dirlst  55 ""  "Select for Compare" 0 dirlst-cmp-files
+        !if &exi .dirlst-cmp-files.f1
+            osd .osd.dirlst  56 "" &cat "Compare with " &rig .dirlst-cmp-files.f1 &rsin "/" &lef .dirlst-cmp-files.f1 -1 1 dirlst-cmp-files
+        !endif
+    !else
+        osd .osd.dirlst  55 "D"
+    !endif
     osd .osd.dirlst  11 "D"
     osd .osd.dirlst 140 "D"
     osd .osd.dirlst 141 "D"
@@ -1592,7 +1622,7 @@ osd .osd.dirlst 160 ""  "File Tools Setup"      f file-tool-setup
         !while &not &seq "" &set #l2 &lget .fhook-dirlst.sc-detect &inc #l1 1
             !force execute-named-command #l2
             !if $status
-                !force osd .osd.dirlst &add 70 #l2 "M" &lget .fhook-dirlst.sc-name #l1 .osd.tmp &lget .fhook-dirlst.sc-menu #l1
+                !force osd .osd.dirlst &add 70 #l1 "M" &lget .fhook-dirlst.sc-name #l1 .osd.tmp &lget .fhook-dirlst.sc-menu #l1
                 osd .osd.dirlst 89  "-"
             !endif
         !done
