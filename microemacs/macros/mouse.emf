@@ -232,7 +232,7 @@
         !return
     !elif &seq @cck "callback"
         !if &not &seq @cc "mouse-drop-t1"
-            execute-named-command @cc
+            !force execute-named-command @cc
             !return
         !endif
     !elif &seq @cck "idle-pick"
