@@ -369,7 +369,7 @@ set-variable %gdiff-com &cond &seq %gdiff-com "ERROR" "diff -c -w" %gdiff-com
         @# screen-update
         !return
     !elif &seq @cck "callback"
-        execute-named-command @cc
+        !force execute-named-command @cc
         !return
     !endif
     !if &lfi "|esc h|" @cck
@@ -424,15 +424,15 @@ define-macro gdiff
     !if $status
         set-variable .fnold @1
     !elif &band @# 1
-        set-variable .fnold @ml04 "First version file"
-        set-variable .fnnew @ml04 "Second version file"
+        set-variable .fnold @ml01 "Left file"
+        set-variable .fnnew @ml01 "Right file"
     !else
-        set-variable .osd-get-file.title "First Version"
+        set-variable .osd-get-file.title "Gdiff - Left File"
         set-variable .osd-get-file.flags 0
         set-variable .osd-get-file.ft 1
         osd-get-file
         set-variable .fnold .osd-get-file.result
-        set-variable .osd-get-file.title "Second Version"
+        set-variable .osd-get-file.title "Gdiff - Right File"
         osd-get-file
         set-variable .fnnew .osd-get-file.result
     !endif
