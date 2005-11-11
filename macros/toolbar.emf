@@ -297,7 +297,7 @@
 
 define-macro toolbar-close
     1 set-position "\x84"
-    !force global-unbind-key "redraw"
+    !force global-bind-key screen-update "redraw"
     7 next-window
     !repeat
         !if &band $window-flags 0x1000
