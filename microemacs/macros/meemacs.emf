@@ -39,6 +39,9 @@ define-macro delete-horizontal-space
         forward-char
     !endif
 !emacro
+define-macro ediff
+    @# gdiff @1 @2 @3 @4
+!emacro
 
 ; C-k kill-line binding should kill to the end of line only
 global-bind-key kill-line "C-k"
