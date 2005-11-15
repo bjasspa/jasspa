@@ -362,10 +362,31 @@ set-variable %gdiff-com &cond &seq %gdiff-com "ERROR" "diff -c -w" %gdiff-com
 0 define-macro gdiff-input
     !if &seq @cck "redraw"
         3 screen-update
-        0xce set-position "\x81"
+        0xcf set-position "\x81"
+        set-variable #l2 $window-xcl-scroll
+        !if &not &set #l4 &equ $window-id .gdiff.wid
+            previous-window
+        !endif
+        !force 0xce goto-position "\x81"
+        set-variable #l0 @wl
         next-window
-        goto-position "\x81"
-        previous-window
+        !force 0xce goto-position "\x81"
+        set-variable #l1 @wl
+        next-window
+        !if #l4
+            set-variable $window-line 2
+            set-variable @wl #l1
+            backward-line
+            set-variable @wl #l0
+        !else
+            beginning-of-buffer
+            set-variable @wl #l0
+            forward-line
+            set-variable @wl #l1
+        !endif
+        !force set-variable $window-x-scroll #l2
+        !force set-variable $window-xcl-scroll #l2
+        !force 0xc1 goto-position "\x81"
         @# screen-update
         !return
     !elif &seq @cck "callback"
@@ -379,7 +400,13 @@ set-variable %gdiff-com &cond &seq %gdiff-com "ERROR" "diff -c -w" %gdiff-com
     !elif &lfi "|save-buffers-exit-emacs|" @cc
         0 gdiff-exit
     !elif &lfi "|tab|" @cck
-        next-window
+        !jump 2
+    !elif &lfi "|next-window|previous-window|" @cc
+        !if &equ $window-id .gdiff.wid
+            next-window
+        !else
+            previous-window
+        !endif
     !elif &lfi "|C-up|" @cck
         -1 gdiff-next
     !elif &lfi "|C-down|" @cck
@@ -410,7 +437,7 @@ set-variable %gdiff-com &cond &seq %gdiff-com "ERROR" "diff -c -w" %gdiff-com
         1 scroll-left
     !elif &lfi "|forward-char|" @cc
         1 scroll-right
-    !elif &lfi "|mouse-wheel-event|backward-line|forward-line|scroll-down|scroll-up|scroll-left|scroll-right|beginning-of-buffer|end-of-buffer|goto-line|backward-paragraph|forward-paragraph|next-window|previous-window|recenter|set-scroll-with-mouse|isearch-forward|isearch-backward|search-forward|search-backward|hunt-forward|hunt-backward|display-white-chars|" @cc
+    !elif &lfi "|mouse-wheel-event|backward-line|forward-line|scroll-down|scroll-up|scroll-left|scroll-right|beginning-of-buffer|end-of-buffer|goto-line|backward-paragraph|forward-paragraph|recenter|set-scroll-with-mouse|isearch-forward|isearch-backward|search-forward|search-backward|hunt-forward|hunt-backward|display-white-chars|" @cc
         execute-line &spr "!nma %s %s" &cond @? @# "" @cc
     !endif
 !emacro
@@ -718,7 +745,15 @@ define-macro gdiff
         !force search-backward "^--- [0-9]*,[0-9]* ---"
     !done
     goto-alpha-mark "l"
-    split-window-horizontally
+    2 split-window-vertically
+    change-window-depth 2
+    !force 0 delete-buffer "*gdiff current lines*"
+    find-buffer "*gdiff current lines*"
+    2 insert-newline
+    2 backward-line
+    previous-window
+    1 split-window-horizontally
+    set-variable .wid $window-id
     find-buffer .bnold
     beginning-of-buffer
     -1 buffer-mode "edit"
@@ -754,7 +789,8 @@ define-macro gdiff
         ml-write "[No differences found]"
     !endif
     set-variable .wait 1
-    command-wait
+    !force !force command-wait
+    !force 0 delete-buffer "*gdiff current lines*"
 !emacro
 
 define-macro-file osdmisc osd-search
