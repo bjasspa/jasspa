@@ -65,13 +65,13 @@ set-variable .cc-init.vsepr .cc-init.vsep
 str-to-regex .cc-init.vsepr
 
 set-variable .cc-init.names  "|State|Update|Checkout|Checkin|Add|Diff|Uncheckout|Annotate|Delete|Move|ConfigSpec|VTree|"
-set-variable .cc-init.flags  "|ZRFS|VZOQS*|ChUJrS*!|CcrS*!|CDrS*!|WXS!|KrS*!|HLM!||CNDrS*!|*^|Ss^|"
+set-variable .cc-init.flags  "|ZRFS|VZOQS*|ChUJrS*!|CcrS*!|CDrS*!|WXxS!|KrS*!|HLM!||CNDrS*!|*^|Ss^|"
 set-variable .cc-init.defs1  "|1|1|1|1|"
 set-variable .cc-init.defs2  "|0|1|0|1|"
 set-variable .cc-init.defs3  "||0|0|1|1|"
 set-variable .cc-init.defs4  "||0|1|"
 set-variable .cc-init.defs5  "||1|1|"
-set-variable .cc-init.defs6  "|1|0|"
+set-variable .cc-init.defs6  "|1|0|0|"
 set-variable .cc-init.defs7  "|1|1|"
 set-variable .cc-init.defs8  "|1|0|0|"
 set-variable .cc-init.defs9  "|"
@@ -175,6 +175,23 @@ set-variable #l9 12
     !else
         set-variable $result .cc-init.name
     !endif
+!emacro
+0 define-macro cc-osd-diffX
+    !if &les @# 0
+        set-variable #l0 &abs @#
+        -1 osd #l0
+        osd #l0 0 "bs" 20 0 0 0
+        set-variable #l1 0
+        !while &not &seq "" &set #l2 &lget .cc-osd-diffX.t &inc #l1 1
+            osd #l0 #l1 "" #l2 #l1 cc-osd-diffX-set
+        !done
+    !else
+        set-variable $result &lget .cc-osd-diffX.t &add 1 &lget .cc-osd.values .cc-osd.X
+    !endif
+!emacro
+set-variable .cc-osd-diffX.t "|Cleartool Diff|ME diff tool|ME gdiff tool|ME xdiff tool|"
+0 define-macro cc-osd-diffX-set
+    set-variable .cc-osd.values &lset .cc-osd.values .cc-osd.X &sub @# 1
 !emacro
 0 define-macro cc-osd-cbc
     !if &les @# 0
@@ -328,9 +345,21 @@ set-variable #l9 12
                 osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Ignore \Hwhite spaces" #l0 cc-osd-cbc
                 set-variable #l3 &con #l3 #l3 #l2
             !elif &seq #l1 "X"
-                osd .osd.ccosd &inc #l2 1 "fh" "    "
-                osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use e\Hxternal diff" #l0 cc-osd-cbc
-                set-variable #l3 &con #l3 #l3 #l2
+                set-variable .X 0
+                !if &equ .find-file.file-count 1
+                    !if &not &seq "D" &stat "t" &cat .find-file.file-dir .find-file.file1
+                        osd .osd.ccosd &inc #l2 1 "fh" "         Use: "
+                        osd .osd.ccosd &inc #l2 1 "OtxmsfhHR" .scheme.osd-entry "##################" .osd.tmp cc-osd-diffX
+                        osd .osd.ccosd &inc #l2 1 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 &sub #l2 1
+                        set-variable .X #l0
+                    !endif
+                !endif
+            !elif &seq #l1 "x"
+                !if &not .X
+                    osd .osd.ccosd &inc #l2 1 "fh" "    "
+                    osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use e\Hxternal diff" #l0 cc-osd-cbc
+                    set-variable #l3 &con #l3 #l3 #l2
+                !endif
             !elif &seq #l1 "Z"
                 !if .find-file.file-count
                     osd .osd.ccosd &inc #l2 1 "fh" "    "
@@ -1338,19 +1367,27 @@ define-macro cc-add
     set-variable #l1 $temp-name
     write-buffer #l1
     !force 0 delete-buffer $buffer-bname
-    !if &band $system 0x100
-        set-variable #l0 &rep #l0 "/" "\\"
-        set-variable #l1 &rep #l1 "/" "\\"
+    set-variable #l4 @2
+    !if &equ #l4 2
+        gdiff #l1 #l0 &cat &rig #l0 &rsin "/" #l0 " Predecessor" #l0
+    !elif &equ #l4 3
+        xdiff #l1 #l0 &cat &rig #l0 &rsin "/" #l0 " Predecessor" #l0
+    !else
+        !if &band $system 0x100
+            set-variable #l0 &rep #l0 "/" "\\"
+            set-variable #l1 &rep #l1 "/" "\\"
+        !endif
+        find-buffer #l2
+        4 pipe-shell-command &spr "%s \"%s\" \"%s\"" %diff-com #l1 #l0 #l2
     !endif
-    find-buffer #l2
-    4 pipe-shell-command &spr "%s \"%s\" \"%s\"" %diff-com #l1 #l0 #l2
 !emacro
 
 define-macro cc-diff
     6 cc-osd
     set-variable #l9 &lef $buffer-fname &rsin "/" $buffer-fname
+    set-variable #l4 &cond .cc-osd.x &lget .cc-init.values6 3 &lget .cc-init.values6 2
     set-variable #l2 &cat .cc-init.com " diff -diff -pred "
-    !if &and &lget .cc-init.values6 1 &not &lget .cc-init.values6 2
+    !if &and &lget .cc-init.values6 1 &not #l4
         set-variable #l2 &cat #l2 "-opt -b "
     !endif
     0 cc-get-file-list 0 0
@@ -1374,12 +1411,13 @@ define-macro cc-diff
         !force !force !force 6 cc-cleartool 7 #l9
         !if &not &set #l8 $status
             !goto dump-diff
-        !elif &and &lget .cc-init.values6 2 &not &seq &rig #l3 -1 "/"
+        !elif &and #l4 &not &seq &rig #l3 -1 "/"
             ; use external diff command on a normal file
             popup-window "*cc-diff*"
             !tgoto &les $window-eline 7 dump-diff
-            !force !force cc-diff-context #l3
+            !force !force cc-diff-context #l3 #l4
             !tgoto &not &set #l8 $status dump-diff
+            !tgoto &gre #l4 1 dump-diff
             set-variable $window-line 5
             set-mark
             end-of-buffer
@@ -1703,7 +1741,31 @@ define-macro cc-add-view
         set-variable $result #l0
     !endif
 !emacro
-
+0 define-macro cc-setup-diffX
+    set-variable #l0 &band .cc-setup-page.diffXi 0x0fff
+    set-variable #l1 &div  .cc-setup-page.diffXi 0x1000
+    set-variable #l2 &cat ".cc-init.defs" #l1
+    set-variable #l3 &ind #l2
+    !if &les @# 0
+        set-variable #l0 &abs @#
+        -1 osd #l0
+        osd #l0 0 "bs" 20 0 0 0
+        set-variable #l1 0
+        !while &not &seq "" &set #l2 &lget .cc-osd-diffX.t &inc #l1 1
+            osd #l0 #l1 "" #l2 #l1 cc-set-diffX
+        !done
+    !else
+        set-variable $result &lget .cc-osd-diffX.t &add 1 &lget #l3 #l0
+    !endif
+!emacro
+0 define-macro cc-set-diffX
+    set-variable #l0 &band .cc-setup-page.diffXi 0x0fff
+    set-variable #l1 &div  .cc-setup-page.diffXi 0x1000
+    set-variable #l2 &cat ".cc-init.defs" #l1
+    set-variable #l3 &ind #l2
+    set-variable &ind #l2 &lset #l3 #l0 &set #l4 &sub @# 1
+    set-registry &spr "/history/clearcase/%d_%s" #l1 &mid &lget .cc-init.flags #l1 &sub #l0 1 1 #l4
+!emacro
 0 define-macro cc-setup-cbc
     set-variable #l0 &band &abs @# 0x0fff
     set-variable #l1 &div  &abs @# 0x1000
@@ -1781,6 +1843,13 @@ define-macro cc-add-view
                 osd #l8 &inc #l2 1 "fh" "    "
                 osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Ignore \Hwhite spaces" &bor #l4 #l0 cc-setup-cbc
             !elif &seq #l1 "X"
+                set-variable .diffXi &bor #l4 #l0
+                osd #l8 &inc #l2 1 "f" "    Single File:"
+                osd #l8 &inc #l2 1 "fh" "        Use: "
+                osd #l8 &inc #l2 1 "OtxmsfhHR" .scheme.osd-entry "##################" .osd.tmp cc-setup-diffX
+                osd #l8 &inc #l2 1 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 &sub #l2 1
+            !elif &seq #l1 "x"
+                osd #l8 &inc #l2 1 "f" "    Multiple Files: "
                 osd #l8 &inc #l2 1 "fh" "    "
                 osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use e\Hxternal diff" &bor #l4 #l0 cc-setup-cbc
             !elif &seq #l1 "Z"
