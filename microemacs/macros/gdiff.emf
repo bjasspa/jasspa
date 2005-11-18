@@ -433,10 +433,8 @@ set-variable %gdiff-com &cond &seq %gdiff-com "ERROR" "diff -c -w" %gdiff-com
         gdiff-save
     !elif &lfi "|write-buffer|" @cc
         gdiff-save-as
-    !elif &lfi "|backward-char|" @cc
-        1 scroll-left
-    !elif &lfi "|forward-char|" @cc
-        1 scroll-right
+    !elif &lfi "|backward-char|forward-char|backward-word|forward-word|" @cc
+        &mul &cond &sin "forward" @cc 1 -1 &cond &sin "char" @cc 4 &div $window-width 2 scroll-right
     !elif &lfi "|mouse-wheel-event|backward-line|forward-line|scroll-down|scroll-up|scroll-left|scroll-right|beginning-of-buffer|end-of-buffer|goto-line|backward-paragraph|forward-paragraph|recenter|set-scroll-with-mouse|isearch-forward|isearch-backward|search-forward|search-backward|hunt-forward|hunt-backward|display-white-chars|" @cc
         execute-line &spr "!nma %s %s" &cond @? @# "" @cc
     !endif
