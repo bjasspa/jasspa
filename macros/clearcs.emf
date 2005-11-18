@@ -116,7 +116,6 @@ set-variable #l9 12
 !endif
 
 0 define-macro cc-osd-get-comment
-    set-position "\x83"
     set-variable #l1 &cat .find-file.file-dir .find-file.file1
     !if &sin " " #l1
         set-variable #l1 &spr "\"%s\"" #l1
@@ -133,12 +132,18 @@ set-variable #l9 12
         -1 yank
     !endif
     !force 0 delete-buffer "*cc-comtemp*"
+    goto-position "\x82"
     osd .osd.ccosd @# "BfH" .scheme.osd-dbtt " Get Comment "
-    goto-position "\x83"
 !emacro
 0 define-macro cc-init-comment
     set-variable .cc-init.comment ""
     set-variable .cc-init.cominit ""
+    !if @1
+        @1 cc-osd-get-comment
+        !if &not &seq .cc-init.comment ""
+            !return
+        !endif
+    !endif
     !if &exi &cat ".cc-init.comment" @#
         set-variable .cc-init.comment &ind &cat ".cc-init.comment" @#
     !endif
@@ -264,16 +269,17 @@ set-variable .cc-osd-diffX.t "|Cleartool Diff|ME diff tool|ME gdiff tool|ME xdif
             set-variable #l2 &mul #l0 100
             osd .osd.ccosd &inc #l2 1 ""
             !if &seq #l1 "C"
-                @# cc-init-comment
                 osd .osd.ccosd &inc #l2 1 "Sfh" "    \HComment:    " &add #l2 3
-                !if &seq "c" &mid #l9 #l0 1
+                !if &set #l4 &seq "c" &mid #l9 #l0 1
                     !if .find-file.file-count
                         osd .osd.ccosd &inc #l2 1 "BRtfHx" .scheme.osd-ebtt " \HGet Comment " #l2 cc-osd-get-comment
                     !endif
                     set-variable #l0 &add #l0 1
+                    set-variable #l4 &cond &lget .cc-osd.values #l0 #l2 0
                 !else
                     osd .osd.ccosd &inc #l2 1 "" ""
                 !endif
+                @# cc-init-comment #l4
                 osd .osd.ccosd &inc #l2 1 "fh" "      "
                 osd .osd.ccosd &inc #l2 1 "EtNxHfhz" .scheme.osd-entry 60 10 "" f cc-osd-mec
                 !if &not &seq .cc-init.comment ""
@@ -789,6 +795,7 @@ set-variable .cc-osd-diffX.t "|Cleartool Diff|ME diff tool|ME gdiff tool|ME xdif
 
 0 define-macro cc-cleartool
     set-variable .cc-init.lock @#
+    set-variable #l1 @1
     set-variable #l2 @2
     ml-write &spr "[ClearCase %s: Processing...]" &lget .cc-init.names @# 
     !if &set #l9 &sin "*" &lget .cc-init.flags @#
@@ -824,11 +831,14 @@ set-variable .cc-osd-diffX.t "|Cleartool Diff|ME diff tool|ME gdiff tool|ME xdif
     !endif
     !force 0 delete-buffer #l0
     set-variable .wait &sin "!" &lget .cc-init.flags @#
-    set-variable #l1 $buffer-fname
+    set-variable #l3 $buffer-fname
     set-variable $buffer-fname #l2
     !force !force !force 0x186 ipipe-shell-command "*cc-cmdline*" #l0 cc-cleartool-ipipe
     set-variable #l2 $status
-    set-variable $buffer-fname #l1
+    !if &band #l1 1
+        !force 0 delete-buffer "*cc-cmdline*"
+    !endif
+    set-variable $buffer-fname #l3
     find-buffer #l0
     !if &not #l2
         1 goto-position "\x82"
@@ -845,7 +855,7 @@ set-variable .cc-osd-diffX.t "|Cleartool Diff|ME diff tool|ME gdiff tool|ME xdif
         !endif
         !if &equ .exit -9999
             !jump 2
-        !elif &not &or &band @1 4 &seq .exit "0"
+        !elif &not &or &band #l1 4 &seq .exit "0"
             unset-variable .cc-init.lock
             1 goto-position "\x82"
             !if &not &exi .exit
@@ -858,7 +868,7 @@ set-variable .cc-osd-diffX.t "|Cleartool Diff|ME diff tool|ME gdiff tool|ME xdif
                 ml-write &spr "[ClearCase Warning: cleartool exited with code %d]" .exit
             !endif
             !return 0
-        !elif &band @1 2
+        !elif &band #l1 2
             !force unset-variable .cc-init.lock
             !if &seq .exit "0"
                 end-of-buffer
@@ -1121,7 +1131,7 @@ define-macro cc-state
         -1 insert-string &spr "%s ls -d . ; %s ls " .cc-init.com .cc-init.com
     !endif
     goto-position "\x82"
-    1 cc-cleartool 0 #l1
+    1 cc-cleartool 1 #l1
     set-variable .cc-state.sort "99"
 !emacro
 
@@ -1156,7 +1166,7 @@ define-macro cc-update
     2 cc-osd
     set-variable #l2 &spr "%s update%s " .cc-init.com &con &lget .cc-init.values2 3 " -overwrite" ""
     7 cc-get-file-list &lget .cc-init.values2 1 &lget .cc-init.values2 2 #l2
-    2 cc-cleartool 0 $buffer-fname
+    2 cc-cleartool 1 $buffer-fname
 !emacro
 
 ; ClearCase Checkout ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1272,7 +1282,7 @@ define-macro cc-add
         beginning-of-buffer
         -1 insert-string #l2
         goto-position "\x82"
-        set-variable #l4 &con &seq #l5 "" 3 1        
+        set-variable #l4 &con &seq #l5 "" 2 0        
         5 cc-cleartool #l4 $buffer-fname
         find-buffer "*cc-cmdline*"
         transpose-lines
@@ -1408,7 +1418,7 @@ define-macro cc-diff
         !endif
         -1 insert-string #l2
         goto-position "\x82"
-        !force !force !force 6 cc-cleartool 7 #l9
+        !force !force !force 6 cc-cleartool 6 #l9
         !if &not &set #l8 $status
             !goto dump-diff
         !elif &and #l4 &not &seq &rig #l3 -1 "/"
@@ -1459,6 +1469,7 @@ define-macro cc-diff
         -1 kill-region
     !done
     goto-position "\x82"
+    !force 0 delete-buffer "*cc-cmdline*"
     popup-window "*cc-diff*"
     !force 0 delete-buffer "*cc-diff*"
     find-buffer "*cc-diff-res*"
@@ -1607,7 +1618,7 @@ define-macro cc-explorer
     find-buffer "*cc-cmdline*"
     -1 insert-string &spr "%s setcs -tag \"%s\" \"%s\"" .cc-init.com #l0 .tmp
     goto-position "\x82"
-    11 cc-cleartool 0 $buffer-fname
+    11 cc-cleartool 1 $buffer-fname
     -1 buffer-mode "edit"
 !emacro
 
@@ -1793,7 +1804,7 @@ define-macro cc-add-view
     set-variable #l0 0
     set-variable #l4 &mul @# 0x1000
     !while &not &seq "" &set #l1 &mid #l9 &pinc #l0 1 1
-        !if &not &sin #l1 "cNSs*!"
+        !if &not &sin #l1 "NSs*!"
             set-variable #l2 &mul #l0 100
             osd #l8 &inc #l2 1 ""
             !if &seq #l1 "C"
