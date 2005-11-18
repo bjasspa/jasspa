@@ -1059,13 +1059,11 @@ define-macro browse
             !force !force &mul #l3 4 scroll-up
         !elif &seq #l1 "forward-line"
             !force !force &mul #l3 4 scroll-down
-        !elif &seq #l1 "backward-char"
-            !force !force  &mul #l3 4 scroll-left
-        !elif &seq #l1 "forward-char"
-            !force !force  &mul #l3 4 scroll-right
-        !elif &sin #l1 "|beginning-of-buffer|end-of-buffer|beginning-of-line|end-of-line|scroll-left|scroll-right|scroll-up|scroll-down|"
+        !elif &lfi "|backward-char|forward-char|backward-word|forward-word|" #l1
+            &mul &cond &sin "forward" #l1 1 -1 &cond &sin "char" #l1 4 &div $window-width 2 scroll-right
+        !elif &lfi "|beginning-of-buffer|end-of-buffer|beginning-of-line|end-of-line|scroll-left|scroll-right|scroll-up|scroll-down|" #l1
             !force !force execute-line &spr "%s %s @mna" #l2 #l1
-        !elif &sin #l1 "|goto-line|isearch-forward|isearch-backward|search-forward|search-backward|"
+        !elif &lfi "|goto-line|isearch-forward|isearch-backward|search-forward|search-backward|" #l1
             0x1 browse-wrap-change
             !force !force execute-line &spr "%s %s @mna" #l2 #l1
             0x4 browse-wrap-change
