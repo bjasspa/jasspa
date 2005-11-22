@@ -360,6 +360,9 @@ set-variable .cc-osd-diffX.t "|Cleartool Diff|ME diff tool|ME gdiff tool|ME xdif
                         set-variable .X #l0
                     !endif
                 !endif
+                !if &not .X
+                    osd .osd.ccosd #l2 "D"
+                !endif
             !elif &seq #l1 "x"
                 !if &not .X
                     osd .osd.ccosd &inc #l2 1 "fh" "    "
@@ -1395,7 +1398,7 @@ define-macro cc-add
 define-macro cc-diff
     6 cc-osd
     set-variable #l9 &lef $buffer-fname &rsin "/" $buffer-fname
-    set-variable #l4 &cond .cc-osd.x &lget .cc-init.values6 3 &lget .cc-init.values6 2
+    set-variable #l4 &cond .cc-osd.X &lget .cc-init.values6 2 &lget .cc-init.values6 3
     set-variable #l2 &cat .cc-init.com " diff -diff -pred "
     !if &and &lget .cc-init.values6 1 &not #l4
         set-variable #l2 &cat #l2 "-opt -b "
