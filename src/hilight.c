@@ -1063,8 +1063,8 @@ get_scheme:
 #define findTokenCharTest(ret,lastChar,srcText,tokTest,testStr)              \
 do {                                                                         \
     meUByte *__ts, ftctcc ;                                                  \
+    lastChar='\0';                                                           \
     if((ftctcc=*srcText++) == '\0') ftctcc=meCHAR_NL ;                       \
-                                                                             \
     switch(tokTest & meHIL_TEST_MASK)                                        \
     {                                                                        \
     case meHIL_TEST_BACKREF:                                                 \
@@ -1324,7 +1324,7 @@ findToken(meHilight *root, meUByte *text, meUByte mode,
         /* note that findTokenCharTest may not set lstc even if it does 
          * match as the ? & * may match 0 chars - so theres no last!
          * Therefore initialize to a sensible value */
-        meUByte dd, lstc=1 ;
+        meUByte dd, lstc ;
         mid = 0 ;
         
         for( ; mid < hi ; mid++)
@@ -1820,7 +1820,13 @@ BracketJump:
                             if(ss == meCHAR_NL)
                             {
                                 if((tt=*c2) != '\0')
-                                    break ;
+                                {
+                                    if((tt != meCHAR_LEADER) || (c2[1] != (meHIL_TEST_VALID|meHIL_TEST_EOL)) ||
+                                       (c2[3] != '\0'))
+                                        break ;
+                                    c2 += 3 ;
+                                    tt = '\0' ;
+                                }
                                 if(!node->clsEndOff)
                                     s2-- ;
                             }
@@ -2252,7 +2258,13 @@ column_token:
                             if(ss == '\0')
                             {
                                 if((tt=*c2) != '\0')
-                                    break ;
+                                {
+                                    if((tt != meCHAR_LEADER) || (c2[1] != (meHIL_TEST_VALID|meHIL_TEST_EOL)) ||
+                                       (c2[3] != '\0'))
+                                        break ;
+                                    c2 += 3 ;
+                                    tt = '\0' ;
+                                }
                                 if(!node->clsEndOff)
                                     s2-- ;
                             }
