@@ -144,7 +144,7 @@ set-variable .fhook-dirlst.command-desc  "|Swap Browser \HWindows|Close File Bro
 set-variable .fhook-dirlst.modefunc-lbl "|Not-Filtered|Filtered|"
 set-variable .fhook-dirlst.modefunc-cmd "|file-browser-set-filter|file-browser-set-filter|"
 set-variable .fhook-dirlst.col-name "| |Attr|    Size|        Modified|Name|<Order by Extension>|"
-set-variable .fhook-dirlst.col-flag "|20|4|2|17|0|8|"
+set-variable .fhook-dirlst.col-flag "|20|4|18|17|0|8|"
 set-variable .fhook-dirlst.sort     "|5|0|"
 set-variable .fhook-dirlst.browser-lock 0
 set-variable .fhook-dirlst.mode &cond &sin "l" .fhook-dirlst.setup "|0|1|" "|0|0|"
