@@ -2552,7 +2552,7 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
                             p1 = p1+3 ;
                     }
                 }
-                else if(homedir != NULL)
+                else
                     p = p1 ;
             }
 #ifdef _DRV_CHAR
@@ -2586,18 +2586,54 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
             *p1++ = DIR_CHAR ;
             *p1 = '\0' ;
         }
-        else if((flag == 0) && (homedir != NULL) && (p[0] == '~'))
+        else if((flag == 0) && (p[0] == '~'))
         {
-            meStrcpy(p1,homedir) ;
-            p1 += meStrlen(p1) - 1 ;
-            if(p[1] != DIR_CHAR)
+            p++ ;
             {
-                *p1++ = DIR_CHAR ;
-                *p1++ = '.' ;
-                *p1++ = '.' ;
-                *p1++ = DIR_CHAR ;
+#if MEOPT_REGISTRY
+                meRegNode *reg=NULL ;
+                meUByte *pe ;
+                int ll ;
+            
+                if((p[0] != '\0') && (p[0] != DIR_CHAR) && ((reg = regFind(NULL,(meUByte *)"history/alias-path")) != NULL) &&
+                   ((reg = regGetChild(reg)) != NULL))
+                {
+                    /* look for an alias/abbrev path */
+                    if((pe = meStrchr(p,DIR_CHAR)) == NULL)
+                        ll = meStrlen(p) ;
+                    else
+                        ll = (int) (((size_t) pe) - ((size_t) (p))) ;
+                    
+                    while((reg != NULL) && (((int) meStrlen(reg->name) != ll) || meStrncmp(p,reg->name,ll)))
+                        reg = regGetNext(reg) ;
+                }
+                if(reg != NULL)
+                {
+                    if(reg->value != NULL)
+                    {
+                        meStrcpy(p1,reg->value) ;
+                        p1 += meStrlen(p1) - 1 ;
+                        if(p1[0] != DIR_CHAR)
+                            p1++ ;
+                    }
+                    p += ll ;
+                }
+                else
+#endif
+                {
+                    meAssert(homedir != NULL) ;
+                    meStrcpy(p1,homedir) ;
+                    p1 += meStrlen(p1) - 1 ;
+                    if((p[0] != '\0') && (p[0] != DIR_CHAR))
+                    {
+                        *p1++ = DIR_CHAR ;
+                        *p1++ = '.' ;
+                        *p1++ = '.' ;
+                        *p1++ = DIR_CHAR ;
+                    }
+                }
+                meStrcpy(p1,p) ;
             }
-            meStrcpy(p1,p+1) ;
         }
 	else if(flag)
             meStrcpy(p1,p) ;
