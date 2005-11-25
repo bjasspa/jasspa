@@ -940,6 +940,8 @@ set-variable .cc-osd-diffX.t "|Cleartool Diff|ME diff tool|ME gdiff tool|ME xdif
                 set-variable #l3 " h  "
             !elif &sin "[loaded but missing]" &rig @wl #l3
                 set-variable #l3 " m  "
+            !elif &sin "[not loaded]" &rig @wl #l3
+                set-variable #l3 " n  "
             !elif &sin "[" &rig @wl #l3
                 set-variable #l3 " ?  "
             !else
@@ -1045,7 +1047,7 @@ set-variable .cc-osd-diffX.t "|Cleartool Diff|ME diff tool|ME gdiff tool|ME xdif
     set-variable .find-file.file-dcount 0
     beginning-of-buffer
     !repeat
-        !force search-buffer "me" "^\\*[chMmp]  \\(.+\\)"
+        !force search-buffer "me" "^\\*[chMmnp]  \\(.+\\)"
         !if $status
             set-variable &ind &cat ".find-file.file" &inc .find-file.file-count 1 @s1
             !if &seq &rig @s1 &sub &len @s1 1 "/"
@@ -1058,7 +1060,7 @@ set-variable .cc-osd-diffX.t "|Cleartool Diff|ME diff tool|ME gdiff tool|ME xdif
 !emacro
 
 0 define-macro cc-state-find-file
-    !if &xseq @wl "[ *][chMmp]  \\(.+\\)"
+    !if &xseq @wl "[ *][chMmnp]  \\(.+\\)"
         find-file @s1
     !else
         ml-write "[Invalid line]"
@@ -1071,7 +1073,7 @@ set-variable .cc-osd-diffX.t "|Cleartool Diff|ME diff tool|ME gdiff tool|ME xdif
 !emacro
 
 0 define-macro cc-state-delete-line
-    !if &xseq @wl "[ *][chMmp]  .+"
+    !if &xseq @wl "[ *][chMmnp]  .+"
         -1 buffer-mode "view"
         beginning-of-line
         set-mark
@@ -1091,7 +1093,7 @@ set-variable .cc-osd-diffX.t "|Cleartool Diff|ME diff tool|ME gdiff tool|ME xdif
         set-alpha-mark "\x81"
         beginning-of-buffer
         !repeat
-            !force search-buffer "me" "^\\*\\([chMmp]\\)  ."
+            !force search-buffer "me" "^\\*\\([chMmnp]\\)  ."
             !if $status
                 beginning-of-line
                 !if &seq @s1 "p"
