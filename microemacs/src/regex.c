@@ -954,6 +954,7 @@ meRegexItemGet(meRegex *regex, meRegexItem *lastItem,
                         if((kk != 0) ^ invert)
                             meRegexClassSet(item->data.cclass,jj) ;
                     } while(--jj > 0) ;
+                    continue ;
                 }
                 else
                     meRegexItemGetBackslashChar(rs,cc) ;
