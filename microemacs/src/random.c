@@ -1181,7 +1181,7 @@ mlWrite(int f, int n)
 #if MEOPT_FENCE
 
 /* List of fense id chars, close (or move backward) first then open */
-meUByte fenceString[] = "##/*><)(}{][" ; /* */
+meUByte fenceString[] = "##/*><)(}{][\"'" ; /* */
 #define meFENCE_BRACKET_OFFSET 6
 
 meUByte
@@ -1631,7 +1631,9 @@ findfence(meUByte ch, meUByte forwFlag, meInt depth)
     /* safe-guard ME crash caused by too many fences creating recursion nightmare */ 
     if(++depth > 255)
         return mlwrite(MWABORT,(meUByte *)"[Too many nested fences]") ;
-    /* Separate hash case as we can really optimise this */
+    /* Separate ', ' & # cases as we can really optimise these */
+    if((ch == '"') || (ch == '\''))
+        return findQuoteFence(ch,forwFlag) ;
     if(ch == '#')
     {
         register meLine *lp ;
@@ -1864,6 +1866,12 @@ gotoFence(int f, int n)
                 ret = meFALSE ;
                 goto exit_fence ;
             }
+        }
+        else if((ch == '"') || (ch == '\''))
+        {
+            /* rely on the numeric arg to determine direction */
+            if(n & 4)
+                forwFlag = 0 ;
         }
         else
         {
