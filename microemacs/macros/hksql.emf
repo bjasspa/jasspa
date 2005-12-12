@@ -34,7 +34,7 @@ set-variable .fhook-sql.comment-2 "|rem|||rem |||"
     hilight .hilight.sql 4 "'" "'" ""          .scheme.string
     
     hilight .hilight.sql 1 "absolute"          .scheme.keyword
-    hilight .hilight.sql 1 "action"
+    hilight .hilight.sql 1 "action"            .scheme.keyword
     hilight .hilight.sql 1 "actor"             .scheme.keyword
     hilight .hilight.sql 1 "add"               .scheme.keyword
     hilight .hilight.sql 1 "after"             .scheme.keyword
