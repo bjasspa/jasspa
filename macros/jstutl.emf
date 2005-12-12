@@ -150,6 +150,7 @@
 
 0 define-macro jst-prepare-inserts
     set-variable #l9 $buffer-bname
+    set-variable #l8 $fill-col
     !if .fhook-jst.insert-emphasis
         read-registry "print" &find "jstprint" ".erf" "r"
         execute-file "printf"
@@ -210,6 +211,7 @@
                 -1 yank
             !endif
         !endif
+        set-variable $fill-col #l8
         set-mark
         !force search-backward "\\S"
         forward-char
