@@ -1,0 +1,36 @@
+% pargap.sty
+% implement a non-indented with gaps between paragraphs style
+%
+% david shepherd
+% 30may89
+%
+% nb various odds and ends in some styles may take some time before
+% they get spotted
+
+\parindent=0pt
+\parskip=0.5\baselineskip plus 1pt
+\listparindent=0pt
+
+% need to change parindent and skip in footnote macro
+% [DES] 15jun89
+\long\def\@makefntext#1{\parindent 0pt\parskip 0.5\baselineskip
+ \noindent 
+ \hbox to 1.8em{\hss$^{\@thefnmark}$}#1}
+
+% no indents in quotations -- esp abtract !!
+% [DES] 7aug89
+\def\quotation{\list{}{\listparindent 0pt
+ \itemindent\listparindent
+ \rightmargin\leftmargin\parsep 0.5\baselineskip plus 1pt}\item[]}
+
+% no indents + gap in parboxen
+\def\@arrayparboxrestore{\let\par\@@par
+    \let\-\@dischyph
+    \let\'\@acci \let\`\@accii \let\=\@acciii
+    \parindent\z@
+    \parskip=0.5\baselineskip plus 1pt
+    \everypar{}\linewidth\hsize 
+    \@totalleftmargin\z@ \leftskip\z@ \rightskip\z@ \@rightskip\z@ 
+    \parfillskip\@flushglue \lineskip\normallineskip 
+    \baselineskip\normalbaselineskip\sloppy}
+

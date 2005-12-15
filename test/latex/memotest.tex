@@ -1,0 +1,36 @@
+
+%\documentclass[12pt]{article}
+\documentclass{article}
+\usepackage{a4,anysize,palatino}
+\usepackage{memo}
+
+\begin{document} 
+\memo{John Harvey, Michael Rygol} 
+        {Audio Work} 
+        {Mark Greening}
+
+
+\section*{Actor}
+\subsection*{Fixed group handling}
+Group processing is currently disabled in the audio actor. 
+When group processing is an integrated part of VC, the necessary
+support should be added to the actor.
+\subsection*{Test Mode}
+Is it worth adding a test mode that allows configurations to be tested
+without the rest of the {\em dVS} system running?  
+The test mode would configure the audio setup and allow voice files to
+be loaded and activated.
+\subsection*{Simple Spatialisation}
+We should be able to support simple spatialisation by panning sounds
+and attentuating the volume.
+Any device which allows the left and right channel volume to be
+controlled independently whilst the sample is being played back should
+be able to support this. 
+\subsection*{ARS Integration}
+At the moment the ARS support is a fudge in the Acoustetron II device
+support. 
+The support for the ARS element needs to be moved up into the actor,
+and the actor/device interface defined and implemented. 
+We need to work out how best to support this.
+\end{document}
+

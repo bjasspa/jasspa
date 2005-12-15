@@ -1,0 +1,28 @@
+-*- mode: wiki; -*-
+
+* Commands in wiki-mode:
+
+    SPACE     Scroll down
+    DEL       Scroll up
+    RET       Follow hyperlink under cursor
+    n         Next node
+    p         Previous node
+    b         Go to beginning of node
+    g         Go to node by name
+    l         Get node list (in popup-window)
+    TAB       Move cursor to the next hyperlink
+    M-TAB     Move cursor  to the previous hyperlink
+    e (C-c e) Toggle edit mode
+    ?         Show wiki mode line with the name of current node
+
+* List command
+
+'Get node list command' works like 'occur' command: it displays
+node list in a separate buffer *List*.
+
+The buffer *List* contaning the output serves as a menu. Switch to
+the buffer *List*, position point to a node and type <Enter>.
+This switches to the buffer that was searched and moves point to
+the original line of the chosen node.
+
+Go back: :wiki1#Contents:

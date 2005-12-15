@@ -1,0 +1,69 @@
+<document>
+  <head>
+    <pagetitle>Java Book List</pagetitle>
+  </head>
+  <body>
+    <h1>Java Book List</h1>
+    <p>
+      
+      Here are some books currently in print and soon anticipated
+      about Java.  All books that are in print and which I've 
+      had an opportunity to review get one of three ratings:
+    </p>
+    <dl>
+      <dt>Buy It</dt>
+      <dd>
+        An essential book for any Java programmer.
+      </dd>
+      <dt>Browse It</dt>
+      <dd>
+        
+        This book may be useful for some people. Skim through it in 
+        your local bookstore to see if you like it before laying out
+        your cash.
+      </dd>
+      <dt>Recycle It</dt>
+      <dd>
+        
+        Toss it in the recycling bin.  ("Burn it" would have been
+        more alliterative here, but I have a general aversion to 
+        advocating book burning, even in jest. I also considered 
+        "bag it" and "barf on it" at which I point I decided
+        alliteration wasn't that important.). 
+      </dd>
+    </dl>
+    <p>
+      
+      Note that these ratings are mutable depending on the 
+      competition and the comparison between the book and the 
+      current release of Java.  Generally a book's rating will 
+      go down over time except when a new edition is released.
+    </p>
+    <bookcategory>
+      <categoryname>In Print</categoryname>
+      <book>
+        <title>Java Secrets</title>
+        <author>Elliotte Rusty Harold</author>
+        <publisher>IDG Books Worldwide</publisher>
+        <isbn>0-764-58007-8</isbn>
+        <pagecount>900</pagecount>
+        <price>$59.99</price>
+        <pubdate>May, 1997</pubdate>
+        <recommendation>Buy It</recommendation>
+	<blurb>
+          
+          The Java virtual machine, byte code, the sun packages, 
+          native methods, stand-alone applications, and a few more 
+          naughty bits.
+        </blurb>
+      </book>
+    </bookcategory>
+    <signature>
+      <copyright> 1997 Elliotte Rusty Harold</copyright>
+      <email>elharo@sunsite.unc.edu</email>
+      <lastmodified> 
+        Thursday, February 19, 1998 11:34:58 AM
+      </lastmodified>
+    </signature>
+  </body>
+</document>

@@ -1,0 +1,7 @@
+function someCode()
+
+{
+
+alert("Hey!");
+
+}

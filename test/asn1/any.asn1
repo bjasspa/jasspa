@@ -1,0 +1,101 @@
+ANY-TEST DEFINITIONS ::= BEGIN
+
+--
+-- use the SNMP OBJECT type to define the correlation between
+-- the identifying INTEGER/OBJECT IDENTIFIER
+-- and the ANY DEFINED BY type
+--
+
+intId OBJECT-TYPE
+       SYNTAX  INTEGER
+       ACCESS  read-write
+       STATUS  mandatory
+       ::= 1
+
+boolId OBJECT-TYPE
+       SYNTAX  BOOLEAN
+       ACCESS  read-write
+       STATUS  mandatory
+       ::= 2
+
+octsId OBJECT-TYPE
+       SYNTAX  [PRIVATE 2] IMPLICIT OCTET STRING
+       ACCESS  read-write
+       STATUS  mandatory
+       ::= 3
+
+bitsId OBJECT-TYPE
+       SYNTAX  [PRIVATE 1] BIT STRING
+       ACCESS  read-write
+       STATUS  mandatory
+       ::= 4
+
+realId OBJECT-TYPE
+       SYNTAX  REAL
+       ACCESS  read-write
+       STATUS  mandatory
+       ::= 5
+
+--
+-- note that the following OBJECT-TYPE OBJECT IDENTIFIER values 
+-- reference the previous OBJECT-TYPE INTEGER values
+
+intOid OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-write
+        STATUS  mandatory
+        ::= { 0 1 2 3 4 intId}
+
+boolOid OBJECT-TYPE
+        SYNTAX  BOOLEAN
+        ACCESS  read-write
+        STATUS  mandatory
+        ::= { 0 1 2 3 4 boolId}
+
+octsOid OBJECT-TYPE
+        SYNTAX  OCTET STRING
+        ACCESS  read-write
+        STATUS  mandatory
+        ::= { 0 1 2 3 4 octsId}
+
+bitsOid OBJECT-TYPE
+        SYNTAX  BIT STRING
+        ACCESS  read-write
+        STATUS  mandatory
+        ::= { 0 1 2 3 4 bitsId}
+
+realOid OBJECT-TYPE
+        SYNTAX  REAL
+        ACCESS  read-write
+        STATUS  mandatory
+        ::= { 0 1 2 3 4 realId}
+
+
+-- this type tests both the INTEGER and OBJECT IDENTIFIER mapping
+AnyTestType ::= --snacc isPdu:"TRUE" -- SEQUENCE
+{
+    intMap TSeq1,
+    oidMap TSeq2
+}
+
+TSeq1 ::= SEQUENCE OF AttrValue1
+
+
+AttrValue1 ::= SEQUENCE
+{
+    id INTEGER,
+    ANY DEFINED BY id
+}
+
+TSeq2 ::= SEQUENCE OF AttrValue2
+
+AttrValue2 ::= SEQUENCE
+{
+    id OBJECT IDENTIFIER,
+    ANY DEFINED BY id
+}
+
+END
+
+
+

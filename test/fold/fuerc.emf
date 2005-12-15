@@ -1,0 +1,290 @@
+;	.fuerc:		Standard micro Startup program
+;			for MicroEMACS 3.10.21e and above
+;			(C)opyright 1987 by Daniel M Lawrence
+;			Last Modified: D A Nicole
+;			Last Update: 8/Apr/94
+
+set $discmd FALSE
+write-message "[Setting up....]"
+
+;{{{  Rebind the Function key group
+bind-to-key searchfold-forward		FN1
+bind-to-key searchfold-reverse		FN2
+bind-to-key hunt-forward		FN3
+bind-to-key hunt-backward		FN4
+bind-to-key execute-macro-1		FN5
+bind-to-key execute-macro-2		FN6
+bind-to-key next-window			FN7
+bind-to-key execute-macro-3		FN8
+bind-to-key save-file			FN9
+bind-to-key exit-emacs			FN0
+
+bind-to-key execute-macro-10		^XFN1
+bind-to-key execute-macro-11		^XFN2
+bind-to-key execute-macro-12		^XFN3
+bind-to-key execute-macro-13		^XFN4
+bind-to-key execute-macro-14		^XFN5
+bind-to-key execute-macro-15		^XFN6
+bind-to-key execute-macro-16		^XFN7
+bind-to-key execute-macro-17		^XFN8
+bind-to-key execute-macro-18		^XFN9
+bind-to-key execute-macro-19		^XFN0
+;}}}
+;{{{  Set standard fold marks
+  set-fold-marks "trafo"   "/*{{{  "   "/*}}}*/"   "*/"
+  set-fold-marks "ebnf"    "/*{{{  "   "/*}}}*/"   "*/"
+  set-fold-marks "bnf"     "/*{{{  "   "/*}}}*/"   "*/"
+  set-fold-marks "lalr"    "/*{{{  "   "/*}}}*/"   "*/"
+  set-fold-marks "ast"     "/*{{{  "   "/*}}}*/"   "*/"
+  set-fold-marks "c"       "/*{{{  "   "/*}}}*/"   "*/"
+  set-fold-marks "h"       "/*{{{  "   "/*}}}*/"   "*/"
+  set-fold-marks "y"       "/*{{{  "   "/*}}}*/"   "*/"
+  set-fold-marks "ag"      "/*{{{  "   "/*}}}*/"   "*/"
+  set-fold-marks "attr"    "/*{{{  "   "/*}}}*/"   "*/"
+  set-fold-marks "f"   "C{{{  "    "C}}}"      ""
+  set-fold-marks "f90"   "!{{{  "    "!}}}"      ""
+  set-fold-marks "u"   "C{{{  "    "C}}}"      ""
+  set-fold-marks "occ" "--{{{  "   "--}}}"     ""
+  set-fold-marks "lbb" "--{{{  "   "--}}}"     ""
+  set-fold-marks "inc" "--{{{  "   "--}}}"     ""
+  set-fold-marks "pgm" "--{{{  "   "--}}}"     ""
+  set-fold-marks "cfg" "--{{{  "   "--}}}"     ""
+  set-fold-marks "ndl" "--{{{  "   "--}}}"     ""
+  set-fold-marks "cfs" "/*{{{  "   "/*}}}*/"   "*/"
+  set-fold-marks "tex" "%%{{{  "   "%%}}}"     ""
+  set-fold-marks "bib" "%%{{{  "   "%%}}}"     ""
+  set-fold-marks "mak" "#{{{  "    "#}}}"      ""
+  set-fold-marks "hpr" "#{{{  "    "#}}}"      ""
+  set-fold-marks "tt"  "/*{{{  "   "/*}}}*/"   "*/"
+  set-fold-marks "cmd"  ";{{{  "    ";}}}"      ""
+  set-fold-marks "fuerc"  ";{{{  "    ";}}}"      ""
+  set-fold-marks "*"    "#{{{  "    "#}}}  "      ""
+;}}}
+;{{{  1 store-macro Toggle function key window display
+1	store-macro
+	!if %rcfkeys
+		!goto rcfoff
+	!endif
+
+;	toggle function key window on
+	save-window
+	1 next-window
+	!if &sequal $cbufname "fue.hlp"
+		delete-window
+	!endif
+	!if &not &sequal $cbufname "Function Keys"
+		1 split-current-window
+		1 select-buffer "Function Keys"
+		!force 5 resize-window
+		1 goto-line
+	!endif
+	set %rcfkeys TRUE
+	!force restore-window
+	!if &sequal $cbufname "Function Keys"
+		next-window
+	!endif
+	write-message "[Function key window ON]"
+	!return
+
+	;Toggle the function key window off
+*rcfoff
+	save-window
+	1 next-window
+	!if &sequal "Function Keys" $cbufname
+		delete-window
+	!endif
+	!force restore-window
+	write-message "[Function key window OFF]"
+	set %rcfkeys FALSE
+!endm
+;}}}
+;{{{  2 store-macro Toggle HELP file onscreen
+2 store-macro
+	1 next-window
+
+	;Make sure the function key window isn't up!
+	!if &sequal $cbufname "Function Keys"
+		delete-window
+	!endif
+	set %rcfkeys FALSE
+
+	;Bring up page 1
+	!if &not &seq $cbufname "fue.hlp"
+		help
+		8 resize-window
+		beginning-of-file
+		2 forward-character
+	!endif
+
+*rchelp
+
+	write-message "[PgUp(^Z)/PgDn(^V)] Page   [FN6] EXIT   ^G Exit, keeping page"
+	update-screen
+	set %rctmp &gtcmd
+	!if &or &seq %rctmp ^Z &seq %rctmp FNZ
+		beginning-of-line
+		!force search-reverse "=>"
+		1 redraw-display
+		!goto rchelp
+	!endif
+	!if &or &seq %rctmp ^V &seq %rctmp FNV
+		beginning-of-line
+		2 forward-character
+		!force search-forward "=>"
+		1 redraw-display
+		!goto rchelp
+	!endif
+	!if &seq %rctmp FN6
+		delete-window
+		!if &seq %rcfkeys TRUE
+			set %rcfkeys FALSE
+			execute-macro-1
+		!endif
+		write-message "[Help Exited]"
+		!return
+	!endif
+	!if &seq %rctmp ^G
+		next-window
+		set %rcfkeys FALSE
+		write-message "[Help Aborted]"
+		!return
+	!endif
+	!goto rchelp
+!endm
+;}}}
+;{{{  3 store-macro Load a new page
+3	store-macro
+	!if &seq &find newpage.cmd ""
+		write-message "[Cannot find NEWPAGE.CMD]"
+		!return
+	!endif
+	execute-file newpage.cmd
+!endm
+;}}}
+;{{{  store-procedure clean clean out the current page (which is nothing now)
+store-procedure	clean
+	; nothing by default
+!endm
+;}}}
+;{{{  20 store-macro Set up auto .c .h and .tex mode
+20	store-macro
+	set %buftmp &sin $cfname "."
+	!if &equ %buftmp 0
+		!return
+	!endif
+	set %buftmp &mid $cfname &add %buftmp 1 5
+	!if &or &seq %buftmp "c" &seq %buftmp "h"
+		add-mode cmode
+		2 handle-tab
+                write-message "[C mode]"
+		!return
+	!endif
+	!if &or &seq %buftmp "occ" &seq %buftmp "inc"
+		2 handle-tab
+                write-message "[occam mode]"
+		!return
+	!endif
+	!if &or &seq %buftmp "tex" &seq %buftmp "txt"
+		add-mode wrap
+                write-message "[text mode]"
+		!return
+	!endif
+!endm
+;}}}
+set $bufhook execute-macro-20
+;{{{  21 store-macro Activate mouse in function key window
+21	store-macro
+
+	;remember where we started, and do the mouse movement
+	save-window
+	!force mouse-move-down
+
+	;If not in the function key window... leave
+	!if &not &sequal $cbufname "Function Keys"
+		!return
+	!endif
+
+        ;First pos is a screen reposition, let it through
+        !if &and &equ $xpos 0 &equ $ypos 0
+                restore-window
+                !return
+        !endif
+
+	;Find out what function key were gonna do
+	add-mode magic
+	2 forward-character
+	set %rctmp $search
+	!force search-reverse "[fF][0-9]"
+	!if &seq $status FALSE
+		delete-mode magic
+		set $search %rctmp
+		!return
+	!endif
+
+	;we are on the "f" or "F".  Get the function key type and number now
+	set $search %rctmp
+	set %fcase lower
+	!if &equ $curchar 70
+		set %fcase upper
+	!endif
+	1 forward-character
+	set %fnum &chr $curchar
+	1 forward-character
+	set %fnum &cat %fnum &chr $curchar
+	set %fnum &add %fnum 0
+	!if &equ %fnum 10
+		set %fnum "0"
+	!endif
+	set %fname &cat "FN" %fnum
+	!if &seq %fcase upper
+		set %fname &cat "^X" %fname
+	!endif
+
+	;save the function
+	set %rccmd &bind %fname
+	delete-mode MAGIC
+
+	;swallow the up-button
+	set %rctmp &gtc
+
+	;restore the window and exit
+	restore-window
+
+	;and then execute it
+	execute-named-command &ind %rccmd
+!endm	
+;}}}
+bind-to-key execute-macro-21 MSa
+;{{{  29 store-macro Activate middle mouse key for open/close/enter fold
+29	store-macro
+	mouse-move-down
+	set %rctmp &gtc
+	!if &seq $ltype LSOFOLD
+		!if &les $curcol 3
+			enter-fold
+		!else
+			open-fold
+		!endif
+	!else
+		!if &seq $ltype LSOEFOLD
+			close-fold
+		!endif
+	!endif
+!endm
+;}}}
+bind-to-key execute-macro-29 MSc
+;{{{  bring up the function key window
+	1 split-current-window
+	select-buffer "Function Keys"
+	insert-string "f1 search-> f2 <-search [    MicroEMACS:  Text Editor~n"
+	insert-string "f3 hunt->   f4 <-hunt   [ ~n"
+	insert-string "f5 fkeys    f6 help     [  Available function key Pages include:~n"
+	insert-string "f7 nxt wind f8 pg[    ] [    WORD  BOX  EMACS  PASCAL  C   COBOL~n"
+	insert-string "f9 save     f10 exit    [  [use the f8 key to load Pages]~n"
+	unmark-buffer
+	delete-window
+	set %rcfkeys FALSE
+	execute-macro-1
+	set $discmd TRUE
+;}}}
+

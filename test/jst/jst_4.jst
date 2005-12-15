@@ -1,0 +1,630 @@
+=c [vs title "JST Format Definition"]
+[vns author "Steven Phillips"]
+
+= Requirements
+
+*. Easy to remember
+
+.  Must be easily readable and can be hilighted well in MicroEmacs
+
+.  Well defined, i.e. not ambiguous so formating errors can be generated
+
+.  Expandable
+
+.  Can be automatically reformatted
+
+.  Can handle things like figure references and internal anchor & references.
+
+.  Html and LaTeX output, possibly rtf and text.
+
+= Definition
+
+== Quoting
+
+:. \\\\
+
+    A '\\' char
+
+:. \\*
+
+    A '*' char
+
+e.g. *\\*Bold*\\* ~ *\*Bold*\*
+
+== Basic Style Formating
+
+@@\"\"quote - raw or verbatim text\"\"@@ - ""quote - raw or verbatim text""
+
+@@""**Bold**""@@ - **Bold**
+
+@@""//Italic//""@@ - //Italic//
+
+@@""__Underline__""@@ - __Underline__
+
+@@""@@mono-space font@@""@@ - @@mono-space font@@
+
+@@""``super script``""@@ - ``super script``
+
+@@"",,sub script,,""@@ - ,,sub script,,
+
+
+The style end token does not have to be on the same line as the start  token -
+important for  reformatting, an error is reported if the end token is missing.
+The order in which  styles are ended  should be in the reverse  order they are
+started, i.e. **//""this raw text is **bold** and //italicised//""//**
+
+To get raw text with a double quote use:
+
+    @@"\"raw with a "\"\\"\\"\"\" in it"\"@@
+    
+Or use a style paragraph, see below.
+
+=== [a stylepab] Styling Paragraphs and Blocks
+
+!* A '!' at the  start  of a  paragraph  can be  followed  by 1 or more  style
+letters to enable the style for the  paragraph, for example this  baragraph is
+bold as it started with a '@@!*@@'.
+
+To be consistent  with basic style  setting, you can use a double style letter
+(i.e. '*\*') if you wish but this is not required and will not be hilighted.
+
+!"@ This paragraph  started with '!"@' so it is quoted and mono-spaced  style,
+i.e. @@, "" or ** is ignored.
+
+!/
+
+You can  enable a style over a block of text by having a '!' style  definition
+with no further  text to the right. The block is  terminated  by a '@@!end!@@'
+tag on its own line, note that '@@>end>@@' will also terminate the style.
+
+It is recommended  that you insert a blank line after the '!' definition so it
+is not affect the filling of the following paragraph.
+
+!end!
+
+== [a just] Justification of Paragraphs and Blocks
+
+> This paragraph will not be reformatted
+because it starts with a '>', the
+output will respect the position of the new lines.
+
+>c To center text
+use '@@>c@@'.
+
+>r To right justify
+use '@@>r@@'.
+
+        >c Note the initial indent level is important
+        as the text is
+        centered w.r.t. the remainder.
+
+>* Similar to [l #stylepab]styling[l], any style
+attached to an initial '>' is applied to the paragraph,
+so this paragraph is bold.
+
+>@" This paragraph is raw mono-font as it
+starts with >@"
+
+>jst> File styles can also be used, this is using '@@>jst>@@'.
+
+>c> /* this is C, using >c> - code hilighting is not supported
+       in single paragraphs */
+
+>*
+If there is no other text to the right of the '>' tag the
+style is applied  until a '@@>end>@@' tag.
+
+You must not mix up style and justification blocks, i.e.
+@@!end!@@ and @@>end>@@ are not interchangeable.
+>end>
+
+>jst>
+File  style blocks are done by having a the style tag '@@>style-name>@@'  and
+terminated via the '@@>end>@@'. The text with the tags should be considered raw.
+>end>
+
+For example, to insert '**C**' code use:
+ 
+>c>
+/* Move the cursor to the beginning of the current line. Trivial. */
+int
+windowGotoBol(int f, int n)
+{
+    frameCur->windowCur->dotOffset  = 0;
+    frameCur->windowCur->updateFlags |= WFMOVEC ;
+    return (meTRUE);
+}
+>end>
+
+
+== [a indent] Indentation
+
+Indentation is implicitly  defined by the indentation of the first line of the
+paragraph, each paragraph is effectively  independent  w.r.t.  determining the
+indentation level.
+
+The  indentation  level  is  defined  to  be  the  the  column  of  the  first
+non-white-space  character  of the first line divided by the Indent Width (see
+indent-setup) rounded up.
+
+    For  example  this the first  non-white  of this  paragraph  is the 'F' at
+    column 4, with an  indent  width of 4 (the  default)  this is a an  indent
+    level of 1.
+    
+      This line started with 6 spaces so it has an indent level of 2 (6 / 4 ==
+      1.5 which is rounded up to 2)
+      
+    Rounding  up  allows  item  lists  to work  with  little  effort,  without
+    introducing ambiguity, for example:
+    
+    *. This is naturally how you would type a bullet item.
+    
+       This is at column 7, its in line with the previous bullet item text and
+       due to the indentation level calculation it will be considered a
+       continuation of it.
+       
+    This paragraph terminates the item list as it is at the same indentation
+    level as the item list.
+
+The indentation of code fragments are determined by the indentation of the
+initial style tag, for example:
+
+    >"@
+    >c>
+    int myVariable ;
+    >end> 
+>end> 
+
+Generates an indent level of 0, i.e.:
+
+>c>
+int myVariable ;
+>end> 
+
+Whereas:
+
+    >"@
+            >c>
+    int myVariable ;
+    >end> 
+>end> 
+
+Has an  indentation  of 2, i.e.:
+
+        >c>
+int myVariable ;
+>end> 
+
+Note that the code has its own indentation, what effect that has on the output
+is yet to be defined.
+
+== Headings
+
+""= Top Heading""
+
+""== Sub Heading""
+
+""=== Sub-Sub Heading""
+
+Headings can be centered or right [l #just]justified[l]:
+
+    ""=c Top Heading""
+
+
+== Item Lists
+
+1.  This is the start of an item list,  every  subsequent  item must  continue
+    with a single '@@.@@' at the same indentation  level as the first item. If
+    the next paragraph is indented further (1 or more indentation levels - see
+    [l #indent]Indentation[l]) then the paragraph is part of the current item.
+
+    For example this is part of the item 1's description.
+
+        This is also part of item 1, but its further indented.
+
+.   This is item 2 in the item list, item  lists can be nested,  i.e. sub item
+    lists are supported, for example:
+
+    *. This is the start of a bulletted sub item list
+
+      This is a continuation of item 1.
+
+    > . This is item 2
+
+      And this is the second paragraph of item 2
+
+.   This is item 3 of the main item list.
+
+:.  JST Items
+
+    This is a  definition  of the term **JST  Items**, the first item list has
+    been  terminated  by  the  start  of  this  item  definition  at the  same
+    indentation level.
+
+:.  Bold
+
+    This is the  definition  of the term  **bold**,  unlike bullet or numbered
+    item lists a, a definition item is always  considered  standalone, this is
+    because:
+
+    *.  The @@:.@@ tag at the start of the line  given  with every  definition
+        can be used to hilight the line.
+
+    .   The  definition  list  is  not  numbered  so a  'continuation'  is not
+        required.
+
+Item lists support the following styles:
+
+:.  @@*.@@
+    Bulleted item list.
+
+:.  @@1.@@
+    Numeric item list.
+
+:.  @@a.@@
+    Lower case letter item list.
+
+:.  @@A.@@
+    Upper case letter item list.
+
+:.  @@i.@@
+    Roman numeral item list.
+
+:.  @@I.@@
+    Upper case roman numeral item list.
+
+:.  @@:.@@
+    Definition item.
+
+== Tables
+
+To define a 3 by 2 table do:
+
+>jst>
+] 3 2
+
+] Row 1 col 1
+
+] Row 1 col 2
+
+] Row 1 col 3
+
+] Row 2 col 1
+
+] Row 2 col 2
+
+] Row 2 col 3
+>end>
+
+The initial ']' line has the form:
+
+    !" ]crh <# columns> <# rows>
+
+Where 'c' and 'r' are  optional and center or right  justify the table and 'h'
+hides the table lines.
+
+] 2 2
+
+]   The JST text within a table field does not have many restrictions
+
+    The indentation of the initial ']' is important and must align
+    
+    ] 2 2
+    
+    ] As JST supports
+    
+    ] tables within tables
+    
+    ] You can also:
+    
+        *. Use item lists
+        
+        . Like this
+        
+        !c Center text
+        
+        !r Right justify text
+        
+        and embed [id logo.png 20] images
+        
+    ] You must get the right  number of  elements  before  you set the  indent
+    back.
+    
+]   Possible enhancements:
+
+    1.  Specifying  the  column  widths,  this  could  be  done  on the  table
+        definition line as follows:
+    
+            !" ]w 2 2 200 600
+        
+        The width definition is the same used by images 
+        
+    .   Join columns by defining the first cell as ']>' and join rows by using
+        ']v'; multiple cells can be joined by using multiple '>' or 'v' flags,
+        i.e.
+    
+            >jst>
+            ] 3 3
+            
+            ]>> Single top row with 3 columns joined
+
+            ]v 2 rows joined in the first column
+
+            ]> 2nd row 2nd and 3rd column joined
+
+            ] 3rd row 2nd column
+
+            ] 3rd row 3rd column
+>end>
+            
+        This is easy in html,  but if this is  introduced  other  formats  may
+        struggle.
+
+]   Defining  tables as a list of elements  does not have the visual impact of
+    other  methods  used in  formats  like  text2tags  but it gives the author
+    complete  control  of the  layout of text  within  each cell,  allows  the
+    embedding  of a table  within a table and the author does not have to mess
+    around reformatting the visual look of the table when editing the text. 
+
+]   What formats can support  tables? Text could by simply carving up the fill
+    column  width by the number of columns and  rendering  the content of each
+    cell in turn.  Tables  are  pretty  simple  in html,  rft is a  nightmare,
+    latex??
+
+
+== Special Characters and Symbols
+
+:. ""[[nl]]""
+
+    New Line.
+    
+:. ""[[np]]""
+
+    New Page (not supported in html or text).
+
+:. ""[[nf]]""
+
+    New File, the effect of this is dependent on the target output format:
+    
+    :. html
+    
+        Starts a new html  file,  typical  use of this is when the first  file
+        contains  the TOC with links to the  subsequent  files.
+
+    :. latex
+    
+        Just starts a new page, i.e. same as @@""[[np]]""@@.
+        
+    :. rtf
+    
+        Just starts a new page, i.e. same as @@""[[np]]""@@.
+        
+    :. text
+    
+        Ignored.
+    
+
+:. ""[[toc]]""
+        
+    The auto-generated table of contents
+            
+:. ---
+
+    Horizontal line, must be the only text on the line.
+  
+
+== Tags
+
+Most of the more complex formatting is done via tags.
+
+General format
+
+    \[**<tag-id>**//<options>// //<args>//]
+
+    If a argument contains a space or a ] it must be quoted, e.g.:
+
+        >jst>
+        [c this-is-okay]
+        [c "this is okay"]
+        [c "this [\"is\"] okay"]
+>end>
+
+    A tag may support numerous options, the order of the options is not
+    important but the order of their arguments is as specified in the
+    docs, not the order given with the tag, e.g.:
+
+        >jst> [idw <image> <depth> <width>]
+
+    is still
+
+        >jst> [iwd <image> <depth> <width>]
+
+Note that text that actually appears in the document should not appear in
+a tag as the spelling check should skip the contents of a tag. This means
+that a link should take the html form of encasing the text label with
+start and end tags rather than being in the tag itself. One exception
+would be the setting of a variable.
+
+=== Comment Tag
+
+\[c <0+args>]
+
+    There can be any number of arguments, the whole tag is ignored. As the
+    comment ends with a ']' and ']' char in the comment must be quoted,
+    i.e.:
+
+        >jst> [c this is a comment with a "]" "char[23]" in it]
+
+=== Anchor Tag
+
+\[a <name>]
+
+    An anchor tag can be placed anywhere and referenced by a link
+
+=== Link Tag
+
+\[l <url>] .... \[l]
+
+    Creates a hyperlink  with the text with '....' going to the <url>,  format
+    of the url is as per html, a link  starting  with a '#' is  assumed  to be
+    local and a warning  will be issued if the  corresponding  anchor point is
+    not found. An error is generated if the \[l] is missing.
+
+    Note that urls like  'http:/\/www.jasspa.com' are automatically turned into
+    links. To avoid this quote the string, i.e. ""http://www.jasspa.com""
+
+
+=== Image Tag
+
+\[i <image-name>]
+
+    Inserts image <image-name>, for example \[i me.png]
+    
+    >c [i logo.png]
+
+Options:
+
+    \[idw <image-name> <depth> <width>]
+
+    :.  d
+    
+        depth of image
+
+    :.  w
+    
+        width of image
+
+    e.g.
+
+        \[iw test.jpg 60]
+
+    The size is given in pixels and the conversion variable 'image-ppi' is
+    used to convert is a physical paper size. The width can also be given as a
+    percentage, e.g. 50%.
+
+
+=== Use Tag
+
+\[u <file-name>]
+
+    Inserts  <file-name> into the current location and processes it as if part
+    of the original docuement.
+
+    For example @@\[u insert.jst]@@ produces:
+
+        [u insert.jst]
+     
+
+=== Variable Tag
+
+\[v <variable-name>]
+
+    Inserts the current value of variable  <variable-name>, variable names can
+    contain only alpha numeric characters and '-'.
+
+Options
+
+    \[vdinrs <variable-name> <value> <increment> <reference-name>]
+
+    :.  d
+    
+        Define the reference <reference-name> for the current value.
+
+    :.  i
+        
+        Pre-increment the variable value by <increment>
+
+    :.  n
+    
+        Do not insert the variable value.
+
+    :.  r
+    
+        Insert the <reference-name> value.
+
+    :.  s
+    
+        Set the value to <value> first.
+
+    e.g. to implement figure labels and reference them do:
+
+        >jst>
+        [vsn figure 0]
+
+        [i figure1.jpg]
+        Figure [vid figure 1 figA] - my first figure
+        
+        some more text
+        
+        [i figure2.jpg]
+        Figure [vid figure 1 figB] - my second figure
+
+        To see  **figure [vr figure  figA]** //my first  figure// and **figure
+        [vr figure figB]** //my second figure//. 
+
+        To see  **figure [vr figure  figA]** //my first  figure// and **figure
+        [vr figure figB]** //my second figure//. 
+>end>
+
+    An  undefined  variable has a value of  "@@ERROR@@",  it can be defined by
+    using either  option '@@s@@' or '@@i@@' in which case the value is 0, i.e.
+    the following can be used
+
+        >@ = Chapter [vi chapter 1]: Will be 1 at the top of the doc
+
+    Special Variables
+
+        :. title
+        
+            The document title
+
+        :. author
+        
+            The author
+
+        :. image-ppi
+        
+            Image pixels per inch resolution setting.
+
+
+=== Output Dump Tag
+
+\[o <out-type> <raw-text>]
+
+    Dumps  <raw-text> into the output if the target output type is <out-type>,
+    where <out-type> can be:
+
+        all
+
+        html
+
+        latex
+
+        rtf
+
+        text
+
+=== Dump Tag
+
+\[d <out-type> <text>]
+
+    Similar  to Output  Dump Tag  except  this is done  first so the <text> is
+    processed, this can be used to define output specific formatting, e.g.
+
+        >jst>
+        [d html "[vsn large-font-start \"..html def..\"][vsn large-font-end \"..html def..\"]"]
+        [d latex "[vsn large-font-start \"..latex def..\"][vsn large-font-end \"..latex def..\"]"]
+        [d text "[vsn large-font-start \"\"][vsn large-font-end \"\"]"]
+>end>
+
+    so in the main body of the text:
+
+        >jst> [v large-font-start] Large Text [v large-font-end]
+
+    This is a complex  concept  and should be beyond most users  requirements,
+    but making this kind of thing  possible means that users should be able to
+    do whatever they need to.
+
+
+
+= Examples

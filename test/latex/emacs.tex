@@ -1,0 +1,2756 @@
+%% start-fold:  preamble   
+\documentstyle[]{report}
+\title{Folding $\mu$EMACS User Guide}
+\author{Mike Burrow}
+\date{\today}
+\begin{document}
+\maketitle
+%% end-fold
+%% start-fold:  chapter 1 - Introduction   
+\chapter{Introduction}
+
+%% start-fold:  Emacs is..   
+$\mu$EMACS is a tool for creating and changing documents, programs, and
+other text files. It is both relatively easy for the novice to use, but
+also very powerful in the hands of an expert. $\mu$EMACS can be
+extensively customized for the needs of the individual user.
+
+%% end-fold
+%% start-fold:  Emacs allows..   
+$\mu$EMACS allows several files to be edited at the same time. The
+screen can be split into different windows, and text may be moved
+freely from one window to the next. Depending on the type of file being
+edited, $\mu$EMACS can change how it behaves to make editing simple.
+Editing standard text files, program files and word processing
+documents are all possible at the same time.
+
+%% end-fold
+%% start-fold:  There are..   
+There are extensive capabilities to make word processing and editing
+easier. These include commands for string searching and replacing,
+paragraph reformatting and deleting, automatic word wrapping, word move
+and deletes, easy case controlling, and automatic word counts.
+
+%% end-fold
+%% start-fold:  For complex..   
+For complex and repetitive editing tasks editing macros can be
+written. These macros allow the user a great degree of flexibility in
+determining how $\mu$EMACS behaves. Also, any and all the commands can
+be used by any keystroke by changing, or rebinding, what commands
+various keys invoke.
+
+%% end-fold
+%% start-fold:  Special features..   
+Special features are also available to perform a diverse set of
+operations such as file encryption, automatic backup file generation,
+entabbing and detabbing lines, executing operating system commands and
+filtering of text through other programs (like SORT to allow sorting
+text).
+
+%% end-fold
+%% start-fold:  In September..
+In September 1989 INMOS added the features of folding to $\mu$EMACS
+v3.10, to aid the manipulation of large files.
+%% end-fold
+%% end-fold
+%% start-fold:  chapter 2 - Basic Concepts   
+\chapter{Basic Concepts}
+%% start-fold:  Keys and the keyboard   
+\section{Keys and the Keyboard}
+
+%% start-fold:  Many times..
+Many times throughout this manual we will be talking about commands and
+the keys on the keyboard needed to use them. There are a number of
+``special'' keys which can be used and are listed here:
+
+%% end-fold
+%% start-fold:  Special keys
+{\sc [NL]} NewLine which is also called RETURN or ENTER, this key is used to
+end different commands.
+
+{\sc \verb+^+} The control key can be used before any alphabetic
+character and some symbols. For example, \verb+^+C means to hold down the
+[CONTROL] key and type the C key at the same time.
+
+{\sc \verb+^+X} The CONTROL-X key is used at the beginning of many different
+commands.
+
+{\sc META} or {\sc M-} This is a special $\mu$EMACS key used to begin many
+commands as well. This key is pressed and then released before typing
+the next character. On most systems, this is the [ESC] key, but it can
+be changed.
+
+%% end-fold
+%% start-fold:  When a..
+When a command is described, the manual will list the actual
+key strokes needed to execute it in {\bf boldface} using the above
+conventions, and also the name of the command in {\it italics}.
+
+%% end-fold
+%% end-fold
+%% start-fold:  Getting started   
+\section{Getting Started}
+
+In order to use $\mu$EMACS, you must call it up from your system or
+computer's command prompt. On UNIX and MSDOS machines, just type
+``ue'' from the main command prompt and follow it with the [RETURN]
+or [ENTER] key (we will refer to this key as [NL] for ``new-line'' for
+the remainder of this manual). 
+
+%% end-fold
+%% start-fold:  Parts and pieces   
+\section{Parts and Pieces}
+
+%% start-fold:  The screen..
+The screen is divided into a number of areas or windows. On some
+systems the top window contains a function list of unshifted and
+shifted function keys. Below them is an $\mu$EMACS mode line which, as
+we will see, informs you of the present mode of operation of the editor
+--- for example ``(WRAP)'' if you set $\mu$EMACS to wrap at the end of
+each line. Under the mode line is the text window where text appears
+and is manipulated. Since each window has its own mode line, below the
+text window is it's mode line. The last line of the screen is the
+command line where $\mu$EMACS takes commands and reports on what it is
+doing.
+
+%% end-fold
+%% start-fold:  EMACS screen
+\begin{verbatim}
+======================================================
+f1 search> f2 <search | MicroEMACS: Text Editor
+f3 hunt>   f4 <hunt   |
+f5 fkeys   f6 help    | Available function key Pages:
+f7 nxt win f8 pg[ ]   | WORD BOX EMACS PASCAL C
+f9 save    f10 exit   | [use the f8 key to load Pages]
+======================================================
+- uEMACS 3.10.5 ()       Function Keys
+======================================================
+
+
+
+
+======================================================
+- uEMACS 3.10.5 ()       Main
+----------------------------------------------
+======================================================
+
+             Fig 1: EMACS screen on an IBM-PC
+\end{verbatim}
+
+%% end-fold
+%% end-fold
+%% start-fold:  Entering text   
+\section{Entering Text}
+
+%% start-fold:  Entering text..
+Entering text in $\mu$EMACS is simple. Type the following sentence
+fragment:
+
+\begin{verbatim}
+Fang Rock lighthouse, center of a series of
+mysterious and
+\end{verbatim}
+
+The text is displayed at the top of the text window. Now type:
+
+\begin{verbatim}
+terrifying events at the turn of the century
+\end{verbatim}
+
+%% end-fold
+%% start-fold:  Notice that..
+Notice that some of your text has dissapeared off the left side of the
+screen. Don't panic --- your text is safe!!! You've just discovered
+that $\mu$EMACS doesn't ``wrap'' text to the next line like most word
+processors unless you hit [NL]. But since $\mu$EMACS is used for both
+word processing, and text editing, it has a bit of a dual personality.
+You can change the way it works by setting various modes. In this case,
+you need to set WRAP mode, using the {\it add-mode} command, by typing
+{\bf \verb+^+XM}. The command line at the base of the screen will prompt
+you for the mode you wish to add. Type wrap followed by the [NL] key
+and any text you now enter will be wrapped. However, the command
+doesn't wrap text already entered. To get rid of the long line, press
+and hold down the [BACKSPACE] key until the line is gone. Now type in
+the words you deleted, watch how $\mu$EMACS goes down to the next line
+at the right time.
+
+%% end-fold
+%% start-fold:  Now lets..
+Now let's type a longer insert. Hit [NL] a couple of times to tab down
+from the text you just entered. Now type the following paragraphs.
+Press [NL] twice to indicate a paragraph break.
+
+\begin{verbatim}
+Fang Rock lighthouse, center of a series of
+mysterious and terrifying events at the turn of
+the century, is built on a rocky island a few
+miles off the Channel coast. So small is the
+island that wherever you stand its rocks are wet
+with sea spray.
+
+The lighthouse tower is in the center of the
+island. A steep flight of steps leads to the
+heavy door in its base. Winding stairs lead up to
+the crew room.
+\end{verbatim}
+
+%% end-fold
+%% end-fold
+%% start-fold:  Basic cursor movement   
+\section{Basic cursor movement}
+
+%% start-fold:  To move..
+To move the cursor back a word at a time enter {\bf M-B} {\it
+previous-word}. To move forward a word at a time enter {\bf M-F} {\it
+next-word}.
+
+%% end-fold
+%% start-fold:  To move..
+To move the cursor up one line, enter {\bf\verb+^+P} {\it
+previous-line}, to move it down one line enter {\bf \verb+^+N} {\it
+next-line}.
+
+%% end-fold
+%% start-fold:  The cursor..
+The cursor may also be moved forward or backward in smaller increments.
+To move forward by one character, enter {\bf \verb+^+F} {\it
+forward-character}, to move backward, {\bf \verb+^+B} {\it
+backward-character}. $\mu$EMACS also allows you to specify a number
+which is normally used to tell a command to execute many times. To
+repeat most commands, press {\bf META} and then the number before you
+enter the command. Thus, the command {\bf META 5 \verb+^+F
+(M-5\verb+^+F)} will move the cursor forward by five characters.
+
+%% end-fold
+%% start-fold:  Four other..
+Four other simple cursor commands that are useful to move around in the
+text are {\bf M-N} {\it next-paragraph}, {\bf M-P} {\it
+previous-paragraph}, {\bf \verb+^+A} {\it beginning-of-line}, and {\bf
+\verb+^+E} {\it end-of-line}.
+
+%% end-fold
+%% start-fold:  Finally, the..
+Finally, the cursor may be moved from any point in the file to the end
+or beginning of the file. Entering {\bf M-\verb+>+} {\it end-of-file}
+moves the cursor to the end of the buffer, {\bf M-\verb+<+} {\it
+beginning-of-file} to the first character of the file.
+
+%% end-fold
+%% start-fold:  On many..
+On many machines, the cursor keys can also be used to move the cursor.
+
+%% end-fold
+%% end-fold
+%% start-fold:  Saving your text   
+\section{Saving your text}
+
+%% start-fold:  When you've..
+When you've finished editing, save your file. Your file currently
+resides in a BUFFER. The buffer is a temporary storage area for your
+text, and is lost when the computer is turned off. You can save the
+buffer to a file by entering {\bf \verb+^+X\verb+^+S} {\it save-file}.
+Notice that $\mu$EMACS informs you that your file has no name and will
+not let you save it.
+
+%% end-fold
+%% start-fold:  To save..
+To save your buffer to a file with a different name than it's current
+one (which is empty), press {\bf \verb+^+X\verb+^+W} {\it write-file}.
+$\mu$EMACS will prompt you for the filename you wish to write. Enter
+the name fang.txt and press return. $\mu$EMACS will inform you it is
+writing the file. When it finishes, it will inform you of the number of
+lines it has written to the disk.
+
+%% end-fold
+%% end-fold
+%% end-fold
+%% start-fold:  chapter 3 - Basic Editing   
+\chapter{Basic Editing --- Insertions and Deletions}
+
+%% start-fold:  A word about windows, buffers, screens and modes   
+\section{A Word About Windows, Buffers, Screens, and Modes}
+
+%% start-fold:  Call up..
+Call up $\mu$EMACS by typing in the following command.
+
+\begin{verbatim}
+ue fang.txt
+\end{verbatim}
+
+%% end-fold
+%% start-fold:  Shortly after..
+Shortly after you invoke $\mu$EMACS, the text should appear on the
+screen ready for you to edit. The text you are looking at currently
+resides in a buffer. A buffer is a temporary area of computer memory
+which is the primary unit internal to $\mu$EMACS The mode line at the
+bottom of the screen lists the buffer name, fang.txt and the name of
+the file with which this buffer is associated, fang.txt
+
+%% end-fold
+%% start-fold:  The screen..
+The screen usually has an area of 24 lines each of 80 characters
+across. You can use $\mu$EMACS to subdivide the screen into several
+separate work areas, or windows, each of which can be ``looking into''
+different files or sections of text. Using windows, you can work on
+several related texts at one time, copying and moving blocks of text
+between windows with ease. To keep track of what you are editing, each
+window is identified by a mode line on the last line of the window
+which lists the name of the buffer which it is looking into, the file
+from which the text was read, and how the text is being edited.
+
+%% end-fold
+%% start-fold:  A MicroEmacs..
+A $\mu$EMACS mode tells $\mu$EMACS how to deal with user input. As we
+have already seen, the mode ``WRAP'' controls how $\mu$EMACS deals with
+long lines while the user is typing them in. The ``VIEW'' mode, allows
+you to read a file without modifying it. Modes are associated with
+buffers and not with files; hence, a mode needs to be explicitly set or
+removed every time you edit a file. A new file read into a buffer with
+a previously specified mode will be edited under this mode. If you use
+specific modes frequently, $\mu$EMACS allows you to set the modes which
+are used by all new buffers, called global modes.
+
+%% end-fold
+%% end-fold
+%% start-fold:  Insertions   
+\section{Insertions}
+
+%% start-fold:  Your previously..
+Your previously-saved text should look like this:
+
+\begin{verbatim}
+
+Fang Rock lighthouse, center of a series of
+mysterious and terrifying events at the turn of
+the century, is built on a rocky island a few
+miles off the Channel coast. So small is the
+island that wherever you stand its rocks are wet
+with sea spray.
+
+The lighthouse tower is in the center of the
+island. A steep flight of steps leads to the
+heavy door in its base. Winding stairs lead up to
+the crew room.
+
+\end{verbatim}
+
+%% end-fold
+%% start-fold:  Let's assume..
+Let's assume you want to add a sentence in the second paragraph after
+the word ``base.'' Move the cursor until it is on the ``W'' of
+``Winding''. Now type the following:
+
+\begin{verbatim}
+This gives entry to the lower floor where the big
+steam generator throbs steadily away, providing
+power for the electric lantern.
+\end{verbatim}
+
+%% end-fold
+%% start-fold:  If the..
+If the line fails to wrap and you end up with a ``\$'' sign in the right
+margin, just enter {\bf M-Q} {\it fill-paragraph} to reformat the
+paragraph. This new command attempts to fill out a paragraph. 
+
+%% end-fold
+%% start-fold:  Notice that..
+Notice that all visible $\mu$EMACS characters are self-inserting with a
+few exceptions discussed later, all non-printing characters (such as
+control or escape sequences) are commands. To insert spaces, simply use
+the space bar. Now move to the first line of the file and type {\bf
+\verb+^+O} {\it open-line} (Oh, not zero). You've just learned how to
+insert a blank line in your text.
+
+%% end-fold
+%% end-fold
+%% start-fold:  Deletions   
+\section{Deletions}
+
+$\mu$EMACS offers a number of deletion options. For example, move the
+cursor until it's under the period at the end of the insertion you just
+did. Press the backspace key. Notice the ``n'' on ``lantern''
+disappeared. The backspace implemented on $\mu$EMACS is called a
+destructive backspace --- it removes text immediately before the
+current cursor position from the buffer. Now type {\bf \verb+^+H} {\it
+delete-previous-character}. Notice that the cursor moves back and
+obliterates the ``r'' --- either command will backspace the cursor.
+
+Type in the two letters you erased to restore your text and move the
+cursor to the beginning of the buffer {\bf M-\verb+>+} {\it
+beginning-of-file}. Move the cursor down one line to the beginning of
+the first paragraph.
+
+To delete the forward character, type {\bf \verb+^+D} {\it
+delete-next-character}. The ``F'' of ``Fang'' disappears. Continue to
+type {\bf \verb+^+D} until the whole word is erased $\mu$EMACS also
+permits the deletion of larger elements of text. Move the cursor to the
+word ``center'' in the first line of text. Pressing {\bf M-[backspace]}
+{\it delete-previous-word} kills the word immediately before the
+cursor. {\bf M-\verb+^+H} has the same effect.
+
+Notice that the commands are very similar to the control commands you
+used to delete individual letters. As a general rule in $\mu$EMACS,
+control sequences affect small areas of text, META sequences larger
+areas. The word forward of the cursor position can therefore be deleted
+by typing {\bf M-D} {\it delete-next-word}. Now let's take out the
+remainder of the first line by typing {\bf \verb+^+K} {\it
+kill-to-end-of-line}. You now have a blank line at the top of your
+screen. Typing {\bf \verb+^+K} again or {\bf \verb+^+X\verb+^+O} {\it
+delete-blank-lines} deletes the blank line and flushes the second line
+to the top of the text. Now exit $\mu$EMACS by typing {\bf
+\verb+^+X\verb+^+C} {\it exit-emacs}. Notice $\mu$EMACS reminds you
+that you have not saved your buffer. Ignore the warning and exit.
+
+%% end-fold
+%% end-fold
+%% start-fold:  chapter 4 - Using Regions   
+\chapter{Using Regions}
+
+%% start-fold:  Defining and deleting a region   
+\section{Defining and Deleting a Region}
+
+%% start-fold:  At this..
+At this point its time to familiarize ourselves with two more $\mu$EMACS
+terms, the point and the mark. The point is located directly behind the
+current cursor position. The mark is user defined. These two elements
+together are called the current region and limit the region of text on
+which $\mu$EMACS performs many of its editing functions.
+
+%% end-fold
+%% start-fold:  Start MicroEMACS..
+Start $\mu$EMACS and open a file called publish.txt. Type in the following
+text:
+
+\begin{verbatim}
+One of the largest growth areas in personal
+computing is electronic publishing. There are
+packages available for practically every machine
+from elegantly simple programs for the humble
+Commodore 64 to sophisticated professional
+packages for PC and Macintosh computers.
+
+Electronic publishing is as revolutionary in its
+way as the Gutenburg press. Whereas the printing
+press allowed the mass production and
+distribution of the written word, electronic
+publishing puts the means of production in the
+hands of nearly every individual. From the class
+magazine to the corporate report, electronic
+publishing is changing the way we produce and
+disseminate information.
+
+Personal publishing greatly increases the utility
+of practically every computer. Thousands of
+people who joined the computer revolution of this
+decade only to hide their machines unused in
+closets have discovered a new use for them as
+dedicated publishing workstations.
+\end{verbatim}
+
+%% end-fold
+%% start-fold:  The last..
+The last paragraph seems a little out of place. To see what the
+document looks like without it we can cut it from the text by moving
+the cursor to the beginning of the paragraph. Enter {\bf M-[space]}
+{\it set-mark}. $\mu$EMACS will respond with ``[Mark set]''. Now move
+the cursor to the end of the paragraph. You have just defined a region
+of text. To remove this text from the screen, type {\bf \verb+^+W} {\it
+kill-region}. The paragraph disappears from the screen.
+
+%% end-fold
+%% start-fold:  On further..
+On further consideration, however, perhaps the paragraph we cut wasn't
+so bad after all. The problem may have been one of placement. If we
+could tack it on to the end of the first paragraph it might work quite
+well to support and strengthen the argument. Move the cursor to the end
+of the first paragraph and enter {\bf \verb+^+Y} {\it yank}. Your text
+should now look like this:
+
+\begin{verbatim} 
+One of the largest growth areas in personal
+computing is electronic publishing. There are
+packages available for practically every machine
+from elegantly simple programs for the humble
+Commodore 64 to sophisticated professional
+packages for PC and Macintosh computers. Personal
+publishing greatly increases the utility of
+practically every computer. Thousands of people
+who joined the computer revolution of this decade
+only to hide their machines unused in closets
+have discovered a new use for them as dedicated
+publishing workstations.
+
+Electronic publishing is as revolutionary in its
+way as the Gutenburg press. Whereas the printing
+press allowed the mass production and
+distribution of the written word, electronic
+publishing puts the means of production in the
+hands of nearly every individual. From the class
+magazine to the corporate report, electronic
+publishing is changing the way we produce and
+disseminate information.
+\end{verbatim}
+
+%% end-fold
+%% end-fold
+%% start-fold:  Yanking a region   
+\section{Yanking a Region}
+
+%% start-fold:  The text..
+The text you cut initially didn't simply just disappear, it was cut
+into a buffer that retains the ``killed'' text appropriately called the
+kill buffer. {\bf \verb+^+Y} ``yanks'' the text back from this buffer
+into the current buffer. 
+
+%% end-fold
+%% start-fold:  There are..
+There are other uses to which the kill buffer can be put. Using the
+method we've already learned, define the last paragraph as a region.
+Now type {\bf M-W} {\it copy-region}. Nothing seems to have happened;
+the cursor stays blinking at the point. But things have changed, even
+though you may not be able to see any alteration.
+
+%% end-fold
+%% start-fold:  To see..
+To see what has happened to the contents of the kill buffer, move the
+cursor down a couple of lines and ``yank'' the contents of the kill
+buffer back with {\bf \verb+^+Y}. Notice the last paragraph is now
+repeated. The region you defined is ``tacked on'' to the end of your file
+because {\bf M-W} copies a region to the kill buffer while leaving the
+original text in your working buffer. Some caution is needed however,
+because the contents of the kill buffer are updated when you delete any
+regions, lines or words. If you are moving large quantities of text,
+complete the operation before you do any more deletions or you could
+find that the text you want to move has been replaced by the most
+recent deletion. Delete the section of text we just added and save the
+file to disk.
+
+%% end-fold
+%% end-fold
+%% end-fold
+%% start-fold:  chapter 5 - Folding   
+\chapter{Folding}
+
+%% start-fold:  Introduction   
+\section{Introduction}
+
+%% start-fold:  Folding, as..
+Folding, as the name implies is the action of  hiding a section of text
+under a fold line. A {\em closed} fold line is identified by a
+closed-fold symbol (...\verb*+  +) followed by an optional editable
+user comment to  identify the contents of the fold, eg.
+
+\begin{verbatim}
+        ...  standard header.   
+        ...  function initialise().   
+        ...  function filecopy().   
+        ...  main().   
+\end{verbatim}
+
+%% end-fold
+%% start-fold:  When a..
+When a fold is {\em opened}, the text is displayed surrounded by the
+start-open-fold symbol(\{\{\{\verb*+  +) and the  end-open-fold symbol
+(\}\}\}\verb*+  +),  the comment remains unchanged, eg.
+
+\begin{verbatim}
+        ...  standard header.   
+        {{{  function initialise().   
+            int initialise()
+            {
+                    if (init_display() &&
+                       init_keyboard() &&
+                       init_mouse())
+                            return(TRUE);
+                    else
+                            return(FALSE);
+            }
+        }}}
+        ...  function filecopy().   
+        ...  main().   
+\end{verbatim}
+
+%% end-fold
+%% start-fold:  One or..
+One or more {\em entire} lines can be folded. The fold symbols cannot
+be edited. Moving the fold identifier to the right (with spaces or
+tabs) or left (with delete) has the effect of moving the contents of
+the fold (opened or closed) by the corresponding amount. Changing the
+position of a closed-fold symbol in the  file, moves the fold contents
+to that position. Folds can be nested. No characters can be entered to
+the left of the margin in an open fold, the margin is defined as the
+column containing the first character of the start-open-fold and
+end-open-fold symbols.
+
+
+%% end-fold
+%% end-fold
+%% start-fold:  Set fold marks
+\section{Set fold marks}
+
+%% start-fold:  Folds are..
+Folds are saved in source files as a set of textual markers. These are
+designed to be hidden from software tools such as compilers by
+enclosing them in language specific comment characters. When reading a
+file $\mu$EMACS selects the markers to use from the file extension.
+
+%% end-fold
+%% start-fold:  An example..
+An example of some C source:
+
+\begin{verbatim}
+/* start-fold:  function initialise() */
+int initialise()
+{
+        if (init_display() &&
+           init_keyboard() &&
+           init_mouse())
+                return(TRUE);
+        else
+                return(FALSE);
+}
+/* end-fold */
+\end{verbatim}
+
+%% end-fold
+%% start-fold:  From the..
+From the above it can be seen that fold markers consist of three
+parts:
+
+\begin{itemize}
+\item The {\em start} which introduces a fold region upto the user comment.
+\item The {\em end} which terminates the folded region.
+\item The {\em after-comment} which closes the user comment.
+\end{itemize}
+
+%% end-fold
+%% start-fold:  The command..
+The command {\it set-fold-marks} allows the user to specify the text to
+be used for these markers for a file of a particular type.  The
+following set of defaults will always exist:
+
+\begin{verbatim}
+ext        start              end        after
+----------------------------------------------
+.c    /* start-fold:     /* end-fold */   */
+.h    /* start-fold:     /* end-fold */   */
+.p    (* start-fold:     (* end-fold *)   *)
+.pas  (* start-fold:     (* end-fold *)   *)
+.for  C start-fold:      C end-fold
+.bcp  // start-fold:     // end-fold
+.occ  -- start-fold:     -- end-fold
+.tex  % start-fold:      % end-fold
+.asm  ; start-fold:      ; end-fold
+.inc  ; start-fold:      ; end-fold
+.sc   ; start-fold:      ; end-fold
+\end{verbatim}
+
+%% end-fold
+%% end-fold
+%% start-fold:  Open a fold   
+\section{Open a fold}
+
+Typing {\bf M-O}, {\it open-fold} causes the
+folded text, surrounded by the begin-open-fold symbol and end-open-fold
+symbol to be displayed in place of the closed-fold symbol.
+
+%% end-fold
+%% start-fold:  Enter a fold   
+\section{Enter a fold} 
+
+Typing {\bf M-I}, {\it enter-fold} causes all
+but the contents of the fold become invisible and unchangable. The fold
+contents are justified to the left. Only a closed fold can be entered.
+
+%% end-fold
+%% start-fold:  Folding a region
+\section{Folding a region}
+
+Typing {\bf M-J}, {\it fold-region} folds a region, and replaces it
+with the closed-fold symbol. The cursor is positioned at the end of the
+line ready for the entry of the user comment.
+
+%% end-fold
+%% start-fold:  Close a fold   
+\section{Close a fold}
+
+Typing {\bf M-\verb+^+O}, {\it close-fold}, causes the displayed text
+within a fold, the begin-open-fold symbol and the end-open-fold symbol
+to be replaced by the closed-fold symbol. Any open folds within the
+fold being closed are also closed.
+
+%% end-fold
+%% start-fold:  Exit a fold   
+\section{Exit a fold} 
+
+Typing {\bf M-\verb+^+I}, {\it exit-fold} exits the current entered
+fold, replaces it with the closed-fold symbol, and makes the
+surrounding text visible again.
+
+%% end-fold
+%% start-fold:  Exit all folds   
+\section{Exit all folds}
+
+Typing {\bf M-T}, {\it exit-all-folds}, closes and exits all the folds
+entered by the user, and makes the top level of the file visible again
+
+%% end-fold
+%% start-fold:  Remove a fold   
+\section{Remove a fold}
+
+Typing {\bf M-\verb+^+J}, {\it remove-fold}, removes the fold
+information surrounding  an area of text, causing it to be displayed
+normally. Only a closed fold can be removed.
+
+%% end-fold
+%% start-fold:  Delete a fold   
+\section{Delete a fold}
+
+Typing {\bf M-\verb+^+D}, {\it delete-fold} deletes a closed-fold
+symbol and all its  associated contents. The text is written to the
+kill buffer.
+
+%% end-fold
+%% start-fold:  Search forward through folds   
+\section{Search forward through folds}
+
+Typing {\bf M-\verb+^+A}, {\it searchfold-forward}, searchs forward for
+a specified string, and open any folds necessary to display the
+location of the match. The existing search-forward command will not
+descend into folds.
+
+%% end-fold
+%% start-fold:  Search backward through folds   
+\section{Search back through folds}
+
+Typing {\bf M-\verb+^+B}, {\it searchfold-reverse} searchs backwards
+for a specified string, and open any folds necessary to display the
+location of the match. The existing search-reverse command will not
+descend into folds.
+%% end-fold
+%% end-fold
+%% start-fold:  chapter 6 - Search and Replace   
+\chapter{Search and Replace}
+
+%% start-fold:  Forward Search   
+\section{Forward Search}
+
+%% start-fold:  Load MicroEMACS..
+Load $\mu$EMACS and bring in the file publish.txt Your file should look
+like the one below.
+
+\begin{verbatim}
+One of the largest growth areas in personal
+computing is electronic publishing. There are
+packages available for practically every machine
+from elegantly simple programs for the humble
+Commodore 64 to sophisticated professional
+packages for PC and Macintosh computers. Personal
+publishing greatly increases the utility of
+practically every computer. Thousands of people
+who joined the computer revolution of this decade
+only to hide their machines unused in closets
+have discovered a new use for them as dedicated
+publishing workstations.
+
+Electronic publishing is as revolutionary in its
+way as the Gutenburg press. Whereas the printing
+press allowed the mass production and
+distribution of the written word, electronic
+publishing puts the means of production in the
+hands of nearly every individual. From the class
+magazine to the corporate report, electronic
+publishing is changing the way we produce and
+disseminate information.
+\end{verbatim}
+
+%% end-fold
+%% start-fold:  Let's use..
+Let's use $\mu$EMACS to search for the word ``revolutionary'' in the
+second paragraph. Because $\mu$EMACS searches from the current cursor
+position toward the end of buffers, and we intend to search forward,
+move the cursor to the beginning of the text. Enter {\bf \verb+^+S}
+{\it search-forward}. Note that the command line now reads
+
+``Search [ ] \verb+<+META\verb+>+:''
+
+$\mu$EMACS is prompting you to enter the search string.  Enter the word
+revolutionary and hit the META key. The cursor moves to the end of the
+word ``revolutionary.''
+
+%% end-fold
+%% start-fold:  Notice that..
+Notice that you must enter the META key to start the search. If you
+simply press [NL] the command line responds with ``[NL]''. Although this
+may seem infuriating to users who are used to pressing the return key
+to execute any command, $\mu$EMACS' use of META to begin searches allows
+it to pinpoint text with great accuracy. After every line wrap or
+carriage return, $\mu$EMACS ``sees'' a new line character ([NL]). If you need
+to search for a word at the end of a line, you can specify this word
+uniquely in $\mu$EMACS.
+
+%% end-fold
+%% start-fold:  If you..
+If you wish $\mu$EMACS to search into closed folds use {\bf
+M-\verb+^+A}, {\it searchfold-forward}. This will open those folds
+necessary to display a match.
+
+%% end-fold
+%% end-fold
+%% start-fold:  Exact Searches   
+\section{Exact Searches}
+
+If the mode EXACT is active in the current buffer, $\mu$EMACS searches on a
+case sensitive basis. Thus, for example you could search for Publishing
+as distinct from publishing.
+
+%% end-fold
+%% start-fold:  Backward Searchs   
+\section{Backward Searchs}
+
+Backward searching is very similar to forward searching except that it
+is implemented in the reverse direction. To implement a reverse search,
+type {\bf \verb+^+R} {\it search-reverse}. Because $\mu$EMACS makes no
+distinction between forward and backward stored search strings, the
+last search item you entered appears as the default string. When an
+item is found, the point moves to the beginning of the found string
+(i.e., the cursor appears under the first letter of the search item).
+
+If you wish $\mu$EMACS to search into closed folds use {\bf
+M-\verb+^+B},  {\it searchfold-reverse}. This will open those folds
+necessary to display a match.
+
+%% end-fold
+%% start-fold:  Searching and Replacing   
+\section{Searching and Replacing}
+
+Searching and replacing is a powerful and quick way of making changes
+to your text. Our sample text is about electronic publishing, but the
+correct term is ``desktop'' publishing. To make the necessary changes
+we need to replace all occurrences of the word ``electronic'' with
+``desktop.'' First, move the cursor to the top of the current buffer
+with the {\bf M-\verb+<+} command. Then type {\bf M-R} {\it replace-string}.
+The command line responds:
+
+``Replace [ ]\verb+<+META\verb+>+:''
+
+where the square brackets enclose the default string. Type the word
+electronic and hit META. The command line responds:
+
+``with [ ]\verb+<+META\verb+>+''
+
+type desktop META. $\mu$EMACS replaces all instances of the original
+word with your revision. 
+
+In a folded file, all necessary folds will be opened to display the 
+modifications.
+%% end-fold
+%% start-fold:  Query-Replace   
+\section{Query-Replace}
+
+%% start-fold:  You may..
+You may also replace text on a case by case basis. The {\bf
+M-\verb+^+R} {\it query-replace-string} command causes $\mu$EMACS to
+pause at each instance of the found string.
+
+%% end-fold
+%% start-fold:  For example..
+For example, assume we want to replace some instances of the word
+``desktop'' with the word ``personal.'' Go back to the beginning of the
+current buffer and enter the {\bf M-\verb+^+R} {\it query-replace}
+command. The procedure is very similar to that which you followed in
+the unconditional search/replace option. When the search begins
+however, you will notice that $\mu$EMACS pauses at each instance of
+``publishing'' and asks whether you wish to replace it with the
+replacement string. You have a number of options available for
+response:
+
+%% end-fold
+%% start-fold:  o Y(es)
+\begin{itemize}
+\item Y(es) Make the current replacement and skip to the next
+occurrence of the search string
+\item N(o) Do not make this replacement but continue
+\item ! Do the rest of the replacements with no more queries
+\item U(ndo) Undo just the last replacement and query for it
+again (This can only go back ONE time)
+\item \verb+^+G Abort the replacement command
+\item . Same effect as \verb+^+G, but cursor returns to the point at
+which the replacement command was given
+\item ? This lists help for the query replacement command
+\end{itemize}
+
+%% end-fold
+%% start-fold:  In a..
+In a folded file, all necessary folds will be opened to display the 
+possible modification.
+%% end-fold
+
+%% end-fold
+%% end-fold
+%% start-fold:  chapter 7 - Windows   
+\chapter{Windows}
+
+%% start-fold:  Creating Windows   
+\section{Creating Windows}
+
+%% start-fold:  We have..
+We have already met windows in an earlier chapter. In this chapter, we
+will explore one of $\mu$EMACS' more powerful features, text
+manipulation through multiple windowing. Windows offer you a powerful
+and easy way to edit text. By manipulating a number of windows and
+buffers on the screen simultaneously, you can perform complete edits
+and revisions on the computer screen while having your draft text or
+original data available for reference in another window.
+
+%% end-fold
+%% start-fold:  You will..
+You will recall that windows are areas of buffer text that you can see
+on the screen. Because $\mu$EMACS can support several screen windows
+simultaneously you can use them to look into different places in the
+same buffer. You can also use them to look at text in different
+buffers. In effect, you can edit several files at the same time.
+
+%% end-fold
+%% start-fold:  Let's invoke..
+Let's invoke $\mu$EMACS and pull back our file on desktop publishing by
+typing
+
+emacs publish.txt
+
+%% end-fold
+%% start-fold:  When the..
+When the text appears, type the {\bf \verb+^+X2} {\it
+split-current-window} command. The window splits into two windows. The
+window where the cursor resides is called the current window. Notice
+that each window has a text area and a mode line. The command line is
+however, common to all windows on the screen.
+
+%% end-fold
+%% start-fold:  The two..
+The two windows on your screen are virtually mirror images of each
+other because the new window is opened into the same buffer as the one
+you are in when you issue the open-window command. All commands issued
+to $\mu$EMACS are executed on the current buffer in the current window.
+
+%% end-fold
+%% start-fold:  To move..
+To move the cursor to the other window type {\bf \verb+^+XP} {\it
+previous-window}. Notice the cursor moves to the upper or previous
+window. Entering {\bf \verb+^+XO} {\it next-window} moves to the next
+window.
+
+%% end-fold
+%% start-fold:  Now move..
+Now move to the upper window. Let's open a new file. On the $\mu$EMACS disk
+is a tutorial file. Let's call it into the upper window by typing:
+
+{\bf \verb+^+X\verb+^+F}
+
+Enter the filename emacs.tut.
+
+%% end-fold
+%% start-fold:  In a..
+In a short time, the tutorial file will appear in the window. We now
+have two windows on the screen, each looking into different buffers. We
+have just used the {\bf \verb+^+X\verb+^+F} {\it find-file} command to
+find a file and bring it into our current window.
+
+%% end-fold
+%% start-fold:  You can..
+You can scroll any window up and down with the commands we've learned
+so far. However, because the area of visible text in each window is
+relatively small, you can scroll the current window a line at a time.
+
+Type {\bf \verb+^+X\verb+^+N} {\it move-window-down}
+
+%% end-fold
+%% start-fold:  The current..
+The current window scrolls down by one line, the top line of text
+scrolls out of view, and the bottom line moves towards the top of the
+screen. You can imagine, if you like, the whole window slowly moving
+down to the end of the buffer in increments of one line. The command
+{\bf \verb+^+X\verb+^+P} {\it move-window-up} scrolls the window in
+the opposite direction.
+
+%% end-fold
+%% start-fold:  As we..
+As we have seen, $\mu$EMACS editing commands are executed in the
+current window, but the program does support a useful feature that
+allows you to scroll the next window. {\bf M-\verb+^+Z} {\it
+scroll-next-up} scrolls the next window up, {\bf M-\verb+^+V} {\it
+scroll-next-down} scrolls it downward. 
+
+%% end-fold
+%% start-fold:  If more..
+If more than one view to a folded file is open, then if a fold is
+modified, (entered, removed etc.) the change will appear in all the
+views.
+%% end-fold
+%% end-fold
+%% start-fold:  Deleting Windows   
+\section{Deleting Windows}
+
+%% start-fold:  Windows allow..
+Windows allow you to perform complex editing tasks with ease. However,
+they become an inconvenience when your screen is cluttered with open
+windows you have finished using. The simplest solution is to delete
+unneeded windows. The command {\bf \verb+^+X0} {\it delete-window} will
+delete the window you are currently working in and move you to the next
+window.
+
+%% end-fold
+%% start-fold:  If you
+If you have a number of windows open, you can delete all but the
+current window by entering {\bf \verb+^+X1} {\it delete-other-windows}.
+
+%% end-fold
+%% end-fold
+%% start-fold:  Resizing Windows   
+\section{Resizing Windows}
+
+%% start-fold:  During complex..
+During complex editing tasks, you will probably find it convenient to
+have a number of windows on the screen simultaneously. However this
+situation may present inconveniences because the more windows you have
+on the screen the smaller they are; in some cases, a window may show
+only a couple of lines of text. To increase the flexibility and utility
+of the window environment, $\mu$EMACS allows you to resize the window you
+are working in to a convenient size.
+
+%% end-fold
+%% start-fold:  Let's try..
+Let's try an example. Load in any $\mu$EMACS text file and split the
+current window into two. Now type {\bf \verb+^+X\verb+^+} (Shift-6),
+{\it grow-window}. Your current window  increases in size upwards by
+one line. If you are in the upper window, it increases in size in a
+downward direction. The command {\bf \verb+^+X\verb+^+Z}, {\it
+shrink-window} correspondingly decreases window size by one line at a
+time.
+
+%% end-fold
+%% start-fold:  MicroEMACS also..
+$\mu$EMACS also allows you to resize a window more precisely by
+entering a numeric argument specifying the size of the window in lines.
+To resize the window this way, press the META key and enter a numeric
+argument then press {\bf \verb+^+XW} {\it resize-window}. The current
+window will be enlarged or shrunk to the number of lines specified in
+the numeric argument. For example entering:
+
+{\bf M-8 \verb+^+XW}
+
+will resize the current window to 8 lines.
+
+%% end-fold
+%% end-fold
+%% start-fold:  Repositioning within a Window   
+\section{Repositioning within a Window}
+
+%% start-fold:  The cursor..
+The cursor may be centered within a window by entering {\bf M-!} or
+{\bf M-\verb+^+L} {\it redraw-display}. You can also use this command
+to move the line containing the cursor to any position within the
+current window. This is done by using a numeric argument before the
+command. Type {\bf M-\verb+<+n\verb+>+ M-\verb+^+L} where
+\verb+<+n\verb+>+ is the number of the line within the window that you
+wish the current line to be displayed.
+
+%% end-fold
+%% start-fold:  The ^L..
+The {\bf \verb+^+L} {\it Refresh-screen} command is useful for
+``cleaning up'' a ``messy'' screen that can result of using $\mu$EMACS
+on a mainframe system and being interrupted by a system message.
+
+%% end-fold
+%% end-fold
+%% end-fold
+%% start-fold:  chapter 8 - Buffers   
+\chapter{Buffers}
+
+%% start-fold:  Advanced users..   
+Advanced users of $\mu$EMACS frequently have a number of buffers in the
+computer's memory simultaneously. If you deal with complex text files
+--- say, sectioned chapters of a book, you may have five or six buffers
+in the computer's memory. You could select different buffers by simply
+calling up the file with {\bf \verb+^+X\verb+^+F} {\it find-file}, and
+let $\mu$EMACS open or reopen the buffer. However, $\mu$EMACS offers
+fast and sophisticated buffering techniques that you will find much
+more convenient to use.
+
+%% end-fold
+%% start-fold:  Let's begin..   
+Let's begin by opening three buffers. You can open any three you
+choose, for example call the following files into memory: fang.txt,
+publish.txt, and emacs.tut in the order listed here. When you've
+finished this process, you'll be looking at a screen showing the $\mu$EMACS
+tutorial. Let's assume that you want to move to the fang.txt buffer.
+Enter:
+
+{\bf \verb+^+XX} {\it next-buffer}
+
+%% end-fold
+%% start-fold:  This command..   
+This command moves you to the next buffer. Because $\mu$EMACS cycles
+through the buffer list, which is alphabetized, you will now be in the
+fang.txt buffer. Using {\bf \verb+^+XX} again places you in the
+publish.txt buffer. Using {\bf \verb+^+XX} one last time cycles you
+back to the beginning of the list.
+
+%% end-fold
+%% start-fold:  If you..   
+If you have a large number of buffers to deal with, this cycling
+process may be slow and inconvenient. The command {\bf \verb+^+XB} {\it
+select-buffer} allows you to specify the buffer you wish to be switched
+to. When the command is entered, $\mu$EMACS prompts, ``Use buffer:''.
+Simply enter the buffer name, and that buffer will then become the
+current buffer. If you type in part of the file name and press the
+space bar, $\mu$EMACS will attempt to complete the name from the list
+of current buffers. If it succeeds, it will print the rest of the name
+and you can hit [NL] to switch to that buffer. If $\mu$EMACS beeps the
+bell, there is no such buffer, and you may continue editing the name on
+the command line.
+
+%% end-fold
+%% start-fold:  Multiple buffer..   
+Multiple buffer manipulation and editing is a complex activity, and you
+will probably find it very inconvenient to re-save each buffer as you
+modify it. The command {\bf \verb+^+X\verb+^+B} {\it list-buffers}
+creates a new window that gives details about all the buffers currently
+known to $\mu$EMACS. Buffers that have been modified are identified by the
+``buffer changed'' indicator (an asterisk in the second column). You can
+thus quickly and easily identify buffers that need to be saved to files
+before you exit $\mu$EMACS. The buffer window also provides other
+information To close this window, simply type the {\it close-windows}
+command, {\bf \verb+^+X1}.
+
+%% end-fold
+%% start-fold:  The write-modified-files..   
+The {\it write-modified-files} {\bf M-Z} function, writes each modified
+buffer into the file associated with it. This command saves ALL
+modified buffers. {\bf If you tend to edit many files and chop pieces
+out of them to add to the file you are working on do NOT use this
+command to save your work, or you will find all your files rewritten
+with the ``holes'' in them!}
+
+%% end-fold
+%% start-fold:  To delete..   
+To delete any buffer, type {\bf \verb+^+XK} {\it delete-buffer}.
+$\mu$EMACS prompts you ``Kill buffer:''. Enter the buffer name you want
+to delete. As this is destructive command, $\mu$EMACS will ask for
+confirmation if the buffer was changed and not saved. Answer Y(es) or
+N(o). As usual {\bf \verb+^+G} cancels the command.
+%% end-fold
+%% end-fold
+%% start-fold:  chapter 9 - Modes   
+\chapter{Modes}
+
+%% start-fold:  Introduction   
+\section{Introduction}
+
+%% start-fold:  MicroEMACS allows..
+$\mu$EMACS allows you to change the way it works in order to customized
+it to the style of editing you are using. It does this by providing a
+number of different modes. These modes can effect either a single
+buffer, or any new buffer that is created. To add a mode to the current
+buffer, type {\bf \verb+^+XM} {\it add-mode}. $\mu$EMACS will then
+prompt you for the name of a mode to add. When you type in a legal mode
+name, and type a [NL], $\mu$EMACS will add the mode name to the list of
+current mode names in the mode line of the current buffer.
+
+%% end-fold
+%% start-fold:  To remove..
+To remove an existing mode, typing the {\bf \verb+^+X\verb+^+M} {\it
+delete-mode} will cause $\mu$EMACS to prompt you for the name of a mode to
+delete from the current buffer. This will remove that mode from the
+mode list on the current mode line.
+
+%% end-fold
+%% start-fold:  Global modes..
+Global modes are the modes which are inherited by any new buffers which
+are created. For example, if you wish to always do string searching
+with character case being significant, you would want global mode EXACT
+to be set so that any new files read in inherent the EXACT mode. Global
+modes are set with the {\bf M-M} {\it add-global-mode} command, and
+unset with the {\bf M-\verb+^+M} {\it delete-global-mode} command.
+Also, the current global modes are displayed in the first line of a
+{\bf \verb+^+X\verb+^+B} {\it list-buffers} command.
+
+%% end-fold
+%% end-fold
+%% start-fold:  ASAVE   
+\section{ASAVE mode}
+
+Automatic Save mode tells $\mu$EMACS to automatically write out the
+current buffer to its associated file on a regular basis. Normally this
+will be every 256 characters typed into the file. ASAVE mode is disabled
+if the user enters a fold.
+
+%% end-fold
+%% start-fold:  CMODE   
+\section{CMODE mode}
+
+CMODE is useful to C programmers. When CMODE is active, $\mu$EMACS will
+try to assist the user in a number of ways.
+
+%% end-fold
+%% start-fold:  CRYPT   
+\section{CRYPT mode}
+
+%% start-fold:  When a..
+When a buffer is in CRYPT mode, it is encrypted whenever it is written
+to a file, and decrypted when it is read from the file. The encryption
+key can be specified on the command line with the -k switch, or with
+the {\bf M-E} {\it set-encryption-key} command.
+
+%% end-fold
+%% start-fold:  The encryption..
+The encryption algorithm used changes all characters into normal
+printing characters, thus the resulting file is suitable for sending
+via electronic mail. All version of $\mu$EMACS should be able decrypt
+the resulting file regardless of what machine encrypted it.
+
+%% end-fold
+%% end-fold
+%% start-fold:  EXACT   
+\section{EXACT mode}
+
+All string searches and replacements will take upper/lower case into
+account. Normally the case of a string during a search or replace is
+not taken into account.
+
+%% end-fold
+%% start-fold:  MAGIC   
+\section{MAGIC mode}
+
+%% start-fold:  In the..
+In the MAGIC mode certain characters gain special meanings when used in
+a search pattern. Collectively they are know as regular expressions,
+and a limited number of them are supported in $\mu$Emacs. They grant
+greater flexibility when using the search command. However, they do not
+affect the incremental search command.
+
+%% end-fold
+%% start-fold:  The symbols..
+The symbols that have special meaning in MAGIC mode are  \verb+^+, \$, .,
+\&, *, [ and ].
+
+%% end-fold
+%% start-fold:  The characters..
+The characters \verb+^+ and \$ fix the search pattern to the beginning
+and end of line, respectively. The \verb+^+ character must appear at the
+beginning of the search string, and the \$ must appear at the end,
+otherwise they loose their meaning and are treated just like any other
+character.
+
+%% end-fold
+%% start-fold:  The character..
+The character . has a very simple meaning, it matches any single
+character, except the newline. Thus a search for ``bad.er'' could match
+``badger'', ``badder'' (slang), or up to the ``r'' of ``bad error''.
+
+%% end-fold
+%% start-fold:  The character..
+The character * is known as closure, and means that zero or more of the
+preceding character will match. If there is no character preceding, *
+has no special meaning, and since it will not match with a newline, *
+will have no special meaning if preceded by the beginning of line
+symbol \verb+^+ or the literal newline character [NL].
+
+%% end-fold
+%% start-fold:  The character..
+The character [ indicates the beginning of a character class. It is
+similar to the ``any'' character \., but you get to choose which
+characters you want to match. The character class is ended with the
+character ]. So, while a search for ``ba.e'' will match ``bane'',
+``bade'', ``bale'', ``bate'', et cetera, you can limit it to matching
+``babe'' and ``bake'' by searching for ``ba[bk]e''. Only one of the
+characters inside the [ and ] will match a character. If in fact you
+want to match any character except those in the character class, you
+can put a \verb+^+ as the first character. It must be the first
+character of the class, or else it has no special meaning. So, a search
+for [\verb+^+aeiou] will match any character except a vowel, but a
+search for [aeiou\verb+^+] will match any vowel or a \verb+^+.
+
+%% end-fold
+%% start-fold:  If you..
+If you have a lot of characters in order that you want to put in the
+character class, you may use a dash (-) as a range character. So, [a-z]
+will match any letter (or any lower case letter if EXACT mode is on),
+and [0-9a-f] will match any digit or any letter ``a'' through ``f'',
+which happen to be the characters for hexadecimal numbers. If the dash
+is at the beginning or end of a character class, it is taken to be just
+a dash.
+
+%% end-fold
+%% start-fold:  The character..
+The character \& (ampersand) is a replacement character, and represents
+the characters which matched the search string. When used in the {\bf
+M-R} {\it replace-string} or the {\bf M-\verb+^+R} {\it
+query-replace-string} commands, the \& will be substituted for the
+search string.
+
+%% end-fold
+%% start-fold:  The escape..
+The escape character \verb+\+ is for those times when you want to be in MAGIC
+mode, but also want to use a regular expression character to be just a
+character. It turns off the special meaning of the character. So a
+search for ``it\verb+\+.'' will search for a line with ``it.'', and not
+``it'' followed by any other character. The escape character will also
+let you put \verb+^+, -, or ] inside a character class with no special
+side effects.
+
+%% end-fold
+%% end-fold
+%% start-fold:  OVER   
+\section{OVER mode}
+
+OVER mode stands for overwrite mode. In this mode, when characters are
+typed, instead of simply inserting them into the file, $\mu$EMACS will
+attempt to overwrite an existing character past the point.
+
+%% end-fold
+%% start-fold:  WRAP   
+\section{WRAP mode}
+
+Wrap mode is used when typing in continuous text. Whenever the cursor
+is past the currently set fill column and the user types a space or a
+[NL], the last word of the line is brought down to the beginning of the
+next line. Using this, one just types a continuous stream of words and
+$\mu$EMACS automatically inserts [NL]s at appropriate places.
+
+%% end-fold
+%% start-fold:  VIEW   
+\section{VIEW mode}
+
+VIEW mode disables all commands which can change the current buffer.
+$\mu$EMACS will display an error message and ring the bell every time you
+attempt to change a buffer in VIEW mode.
+%% end-fold
+%% end-fold
+%% start-fold:  chapter 10 - Files   
+\chapter{Files}
+
+%% start-fold:  A file..   
+A file is simply a collection of related data. In $\mu$EMACS we are
+dealing with text files. You will recall that the major entities
+$\mu$EMACS deals with are buffers. Disk-based versions of files are
+only active in $\mu$EMACS when you are reading into or writing out of
+buffers. As we have already seen, buffers and physical files are linked
+by associated file names. For example, the buffer ``ch7.txt'' which is
+associated with the physical disk file ``ch7.txt.''
+
+%% end-fold
+%% start-fold:  IMPORTANT..   
+IMPORTANT --- If you do not explicitly save your buffer to a file, all
+your edits will be lost when you leave $\mu$EMACS (although $\mu$EMACS will
+prompt you when you are about to lose edits by exiting). In addition,
+$\mu$EMACS does not protect your disk-based files from overwriting when it
+saves files. Thus when you instruct $\mu$EMACS to save a file to disk, it
+will create a file if the specified file doesn't exist, or it will
+overwrite the previously saved version of the file thus replacing it.
+
+%% end-fold
+%% start-fold:  If you..   
+If you are at all unsure about your edits, or if (for any reason) you
+wish to keep previous versions of a file, you can change the name of
+the associated file with the command {\bf \verb+^+XN} {\it
+change-file-name}. When this file is saved to disk, $\mu$EMACS will
+create a new physical file under the new name. The earlier disk file
+will be preserved.
+
+%% end-fold
+%% start-fold:  An alternative..   
+An alternative method is to write the file directly to disk under a new
+filename. Type {\bf \verb+^+X\verb+^+W} {\it write-file}. $\mu$EMACS
+will prompt you ``write file:''. Enter an alternate filename to save
+the file to.
+
+%% end-fold
+%% end-fold
+%% start-fold:  chapter 11 - Screen Formatting   
+\chapter{Screen Formatting}
+%% start-fold:  Wrapping Text   
+\section{Wrapping Text}
+
+%% start-fold:  As we..
+As we learned in the introduction, $\mu$EMACS is not a word processor,
+but an editor. Some simple formatting options are available however,
+although in most cases they will not affect the appearance of the
+finished text when it is run through the formatter. We have already
+encountered WRAP mode which wraps lines longer than a certain length.
+
+%% end-fold
+%% start-fold:  You can..
+You can also set your own wrap margin with the command {\bf \verb+^+XF}
+{\it set-fill-column}. The set wrap margin command must be preceded by
+a numeric argument or $\mu$EMACS sets it to the first column.
+
+%% end-fold
+%% start-fold:  For example..
+For example to set the wrap column to 50 characters, press the META key
+and enter 50. $\mu$EMACS will respond ``Arg: 50''. Now press {\bf
+\verb+^+XF}. $\mu$EMACS will respond with ``[Fill column is 50]''.
+%% end-fold
+%% end-fold
+%% start-fold:  Reformatting Paragraphs   
+\section{Reformatting Paragraphs}
+
+After an intensive editing session, you may find that you have
+paragraphs containing lines of differing lengths. Although this
+disparity will not affect the formatted text, aesthetic and technical
+concerns may make it desirable to have consistent paragraph blocks on
+the screen. You can reformat a paragraph with the command {\bf M-Q}
+{\it fill-paragraph}. This command ``fills'' the current paragraph
+reformatting it so all the lines are filled and wrap logically.
+
+%% end-fold
+%% start-fold:  Changing Case   
+\section{Changing Case}
+
+%% start-fold:  Ther may..
+There may be occasions when you find it necessary to change the case of
+the text you've entered. $\mu$EMACS allows you to change the case of even
+large amounts of text with ease. Let's try and convert a few of the
+office traditionalists to the joy of word processing. Type in the
+following text:
+
+\begin{verbatim}
+Throw away your typewriter and learn to use a
+word processor. Word processing is relatively
+easy to learn and will increase your productivity
+enormously. Enter the Computer Age and find out
+just how much fun it can be!!
+\end{verbatim}
+
+%% end-fold
+%% start-fold:  Let's give..
+Let's give it a little more impact by capitalizing the first four
+words. The first step is to define the region of text just as you would
+if you were doing an extensive deletion. Set the mark at the beginning
+of the paragraph with {\bf M-[space]} {\it set-mark} and move the
+cursor to the space beyond ``typewriter.'' Now enter {\bf
+\verb+^+X\verb+^+U} {\it case-region-upper}. Your text should now look
+like this:
+
+\begin{verbatim}
+THROW AWAY YOUR TYPEWRITER and learn to use a
+word processor. Word processing is relatively
+easy to learn and will increase your productivity
+enormously. Enter the Computer Age and find out
+just how much fun it can be!!
+\end{verbatim}
+
+%% end-fold
+%% start-fold:  If you..
+If you want to change the text back to lower case, type {\bf
+\verb+^+X\verb+^+L} {\it case-region-lower}. You can also capitalize
+individual words. To capitalize the word ``fun'', position the cursor
+in front of the word and type {\bf M-U} {\it case-word-upper}. The word
+is now capitalized. To change it back to lower case, move the cursor
+back to the beginning of the word and type {\bf M-L} {\it
+case-word-lower}.
+
+%% end-fold
+%% start-fold:  You may..
+You may also capitalize individual letters in $\mu$EMACS. The command
+{\bf M-C} {\it case-word-capitalize} capitalizes the first letter after
+the point. This command would normally be issued with the cursor
+positioned in front of the first letter of the word you wish to
+capitalize. If you issue it in the middle of a word, you can end up
+with some strAnge looking text.
+%% end-fold
+%% end-fold
+%% start-fold:  Tabs   
+\section{Tabs}
+
+%% start-fold:  When MicroEMACS..
+When $\mu$EMACS is first started, it sets the default tab to every
+eighth column. As long as you stay with default, every time you press
+the tab key a tab character, \verb+^+I is inserted. This character,
+like other control characters, is invisible.
+
+%% end-fold
+%% start-fold:  The default..
+The default value may be changed by entering a numeric argument before
+pressing the tab key. As we saw earlier, pressing the META key and
+entering a number allows you to specify how $\mu$EMACS performs a given
+action.
+
+%% end-fold
+%% start-fold:  The ^I..
+The {\bf \verb+^+I} {\it handle-tab} function deals with
+tabbing in two distinct ways. In default conditions, or if
+the numeric argument of zero is used, handle-tab inserts a
+true tab character. If, however, a non-zero numeric
+argument is specified, {\it handle-tab} inserts the correct
+number of spaces needed to position the cursor at the next
+specified tab position. It does NOT insert the single tab
+character and hence any editing functions should take
+account of the number of spaces between tabbed columns.
+
+%% end-fold
+%% start-fold:  The distance..
+The distance which a true tab character moves the cursor can be
+modified by changing the value of the \$hardtab environment variable.
+Initially set to 8, this will determine how far each tab stop is placed
+from the previous one. (Use the {\bf \verb+^+XA} {\it set} command to
+set the value of an environment variable).
+
+%% end-fold
+%% start-fold:  Many times..
+Many times you would like to take text which has been created using the
+tab character and change it to use just spaces. The command {\bf
+\verb+^+X\verb+^+D} {\it detab-region} changes any tabs in the currently
+selected region into the right number of spaces so the text does not
+change. This is very useful for times when the file must be printed or
+transferred to a machine which does not understand tabs.
+
+%% end-fold
+%% start-fold:  Also, the..
+Also, the inverse command, {\bf \verb+^+X\verb+^+E} {\it entab-region}
+changes multiple spaces to tabs where possible. Both of these commands
+can take a numeric argument which will be interpreted as the number of
+lines to en/detab.
+
+%% end-fold
+%% start-fold:  Another function..
+Another function, related to those above is provided for by the {\bf
+\verb+^+X\verb+^+T} {\it trim-region} when invoked will delete any
+trailing white space in the selected region. A preceding numeric
+argument will do this for that number of lines.
+
+%% end-fold
+%% end-fold
+%% end-fold
+%% start-fold:  chapter 12 - Access to the Outside World   
+\chapter{Access to the Outside World}
+
+%% start-fold:  EMACS has..   
+$\mu$EMACS has the ability to interface to other programs and the
+environment of the computer outside of itself. It does this through a
+series of commands that allow it to talk to the computer's command
+processor or shell. Just what this is varies between different
+computers. Under MSDOS or PCDOS this is the command.com command
+processor. Under UNIX it is the csh shell.
+
+%% end-fold
+%% start-fold:  The ^X!..   
+The {\bf \verb+^+X!} {\it shell-command} command prompts the user for a
+command line to send out to the shell to execute. $\mu$EMACS gives control
+to the shell, which executed the command, and then types [END] and
+waits for the user to type a character before redrawing the screen and
+resuming editing.
+
+%% end-fold
+%% start-fold:  ^X@ pipe-command..   
+{\bf \verb+^+X@} {\it pipe-command} command allows $\mu$EMACS to
+execute a shell command, and if the particular computer allows it, send
+the results into a buffer which is automatically displayed on the
+screen. The resulting buffer, called ``command'' can be manipulated
+just like any other editing buffer. Text can be copied out of it or
+rearranged as needed. This buffer is originally created in VIEW mode.
+
+%% end-fold
+%% start-fold:  Many computers..   
+Many computers provide tools which will allow you to filter text,
+making some modifications to it along the way. A very common tool is
+the SORT program which accepts a file, sorts it, and prints the result
+out. The $\mu$EMACS command, {\bf \verb+^+X\#} {\it filter-buffer} sends
+the current buffer through such a filter. Therefore, if you wished to
+sort the current buffer on a system which supplied a sort filter, you
+would type {\bf \verb+^+X\#sort[NL]}. You can also create your own
+filters by writing programs and utilities which read text from the
+keyboard and display the results. $\mu$EMACS will use any of these
+which would normally be available from the current shell.
+
+%% end-fold
+%% start-fold:  If you..   
+If you would like to execute another program directly, without the
+overhead of an intervening shell, you can use the {\bf \verb+^+X\$} {\it
+execute-program} command. It will prompt you for an external program
+and its arguments and attempt to execute it.  On some systems that
+don't support this function, {\bf \verb+^+X\$} will be equivalent to
+{\bf \verb+^+X!} shell-command.
+
+%% end-fold
+%% start-fold:  Sometimes, you..   
+Sometimes, you would like to get back to the shell and execute other
+commands, without losing the current contents of $\mu$EMACS. The {\bf
+\verb+^+XC} {\it i-shell} command shells out of $\mu$EMACS, leaving $\mu$EMACS
+in the computer and executing another command shell. Most systems would
+allow you to return to $\mu$EMACS with the ``exit'' command.
+
+%% end-fold
+%% start-fold:  On some..   
+On some systems, mainly advanced versions of UNIX, you can direct
+$\mu$EMACS to ``go into the background'' with the {\bf \verb+^+XD} {\it
+suspend-emacs} command. This places $\mu$EMACS in the background
+returning you to the original command shell. $\mu$EMACS can then be
+returned to at any time with the ``fg'' foreground command.
+%% end-fold
+%% end-fold
+%% start-fold:  chapter 13 - Keyboard Macros   
+\chapter{Keyboard Macros}
+
+%% start-fold:  In many..   
+In many applications, it may be necessary to repeat a series of
+characters or commands frequently. For example, a paper may require the
+frequent repetition of a complex formula or a long name. You may also
+have a series of $\mu$EMACS commands that you invoke frequently.
+Keyboard macros offer a convenient method of recording and repeating
+these commands.
+
+%% end-fold
+%% start-fold:  Imagine, for..   
+Imagine, for example, you are writing a scholarly paper on Asplenium
+platyneuron, the spleenwort fern. Even the dedicated botanist would
+probably find it a task bordering on the agonizing to type Asplenium
+platyneuron frequently throughout the paper. An alternative method is
+``record'' the name in a keyboard macro.
+
+%% end-fold
+%% start-fold:  The command..   
+
+The command {\bf \verb+^+X(} {\it begin-macro} starts recording the all
+the keystrokes and commands you input. To stop the recording, type {\bf
+\verb+^+X)} {\it end-macro}. $\mu$EMACS stores all the keystrokes
+between the two commands. To repeat the stored keystrokes, just enter
+{\bf \verb+^+XE} {\it execute-macro}. You can repeat this action as
+often as you want, and of course as with any $\mu$EMACS command, you
+may precede it with a numerical argument.
+
+%% end-fold
+%% start-fold:  Because EMACS..   
+Because $\mu$EMACS records keystrokes, you may freely intermix commands
+and text. Unfortunately, you can only store one macro at a time. Thus,
+if you begin to record another macro, the previously defined macro is
+lost.
+%% end-fold
+%% end-fold
+%% start-fold:  chapter 14 - Key Bindings
+\chapter{Key Bindings}
+
+%% start-fold:  One of..
+One of the features which makes $\mu$EMACS very adaptable is its
+ability to use different keystrokes to execute different commands. The
+process of changing the particular command a key invokes is called
+rebinding. This allows us to make the editor look like other popular
+editors and programs.
+
+%% end-fold
+%% start-fold:  Each command..
+Each command in $\mu$EMACS has a name which is used for binding
+purposes. For example, the command to move the cursor down one page is
+called {\it next-line} and is normally bound to the {\bf \verb+^+N}
+key. If you decided that you also wanted to use the {\bf \verb+^+D} key
+to move the cursor down one line, you would use the {\bf M-K} {\it
+bind-to-key} command. $\mu$EMACS would respond with ``: bind-to-key ''
+on the command line and allow you to type in a command name. Then type
+in the name of the command you want to change, in this case next-line,
+followed by the [NL] key. $\mu$EMACS will then wait for you to type in
+the keys you want to activate the named function. Type a single {\bf
+\verb+^+D}. From now on, typing {\bf \verb+^+D} will cause $\mu$EMACS
+to move down one line, rather than its original function of deleting
+characters.
+
+%% end-fold
+%% start-fold:  To find..
+To find out the name of a command, consult the list of valid $\mu$EMACS
+commands in Appendix A. Also, you can use the {\bf \verb+^+X?} {\it
+describe-key} command to look up the name of a command. Type {\bf
+\verb+^+X?} and then the key to use that command, and $\mu$EMACS will
+show you the name of the command.
+
+%% end-fold
+%% start-fold:  After you..
+After you have experimented with changing your key bindings, you may
+decide that you want to change some bindings permanently. To have $\mu$EMACS
+rebind keys to your pleasure each time you start $\mu$EMACS, you can add
+statements to the end of your startup file (emacs.rc or .emacsrc
+depending on the system). For example,
+
+\begin{verbatim}
+bind-to-key next-line ^D
+\end{verbatim}
+
+%% end-fold
+%% start-fold:  Notice, that..
+Notice, that the control D character in the startup file is represented
+visibly as an uparrow key followed by a capital D. To know how to
+represent any keys you want to bind, use the describe-key command on
+the key, and use the sequence that is displayed.
+
+\begin{verbatim}
+bind-to-key split-current-window FN1
+\end{verbatim}
+
+This example would make function key 1 activate the command that splits
+the current window in two.
+
+%% end-fold
+%% start-fold:  MicroEmacs will..
+$\mu$EMACS will let you define a large number of keys, but will report
+``Binding table FULL!'' when it runs out of space to bind keys. Normally
+$\mu$EMACS will allow up to 512 key bindings (including approx. 300
+originally bound keys).
+
+%% end-fold
+%% start-fold:  If you..
+If you want to get a current listing of all the commands and the keys
+bound to them, use the {\it describe-bindings} command. Notice, that
+this command is not bound to any keys!
+%% end-fold
+
+
+%% end-fold
+%% start-fold:  chapter 15 - MicroEMACS Macros
+\chapter{$\mu$EMACS Macros}
+
+%% start-fold:  Introduction
+\section{Introduction}
+
+%% start-fold:  Macros are..
+Macros are programs that are used to customize the editor and to
+perform complicated editing tasks. They may be stored in files or
+buffers and may be executed using an appropriate command, or bound to a
+particular keystroke. Portions of the standard startup file are
+implemented via macros. The {\it execute-macro-\verb+<+n\verb+>+}
+commands cause the macro, numbered from 1 to 40, to be executed. The
+{\it execute-file} command allows you to execute a macro stored in a
+file, and the {\it execute-buffer} command allows you to execute a
+macro stored in a buffer. Macros are stored for easy execution by
+executing files that contain the {\it store-macro} command.
+
+%% end-fold
+%% start-fold:  If you..
+If you need more than 40 macros, named macros, called procedures, can
+be used. The {\it store-procedure} command takes a string argument
+which is the name of a procedure to store. These procedures then can be
+executed with the {\bf M-\verb+^+E} {\it execute-procedure} or the run
+commands. Also, giving the name of a stored procedure within another
+macro will executed that named procedure as if it had been called up
+with the run command.
+
+%% end-fold
+%% start-fold:  There are..
+There are many different aspects to the macro language within
+$\mu$EMACS. Editor commands are the various commands that manipulate
+text, buffers, windows, et cetera, within the editor. Directives are
+commands which control what lines get executed within a macro. Also
+there are various types of variables. Environmental variables both
+control and report on different aspects of the editor. User variables
+hold string values which may be changed and inspected. Buffer variables
+allow text to be placed into variables. Interactive variables allow the
+program to prompt the user for information. Functions can be used to
+manipulate all these variables.
+
+%% end-fold
+%% end-fold
+%% start-fold:  Constants
+\section{Constants}
+
+%% start-fold:  Wherever statements..
+Wherever statements need to have arguments, it is legal to place
+constants. A constant is a double quote character, followed by a string
+of characters, and terminated by another double quote character. To
+represent various special characters within a constant, the tilde
+character is used. The character following the tilde is interpreted
+according to the following table:
+
+\begin{verbatim}
+        Sequence Result
+        --------------------------
+        ~n       Newline
+        ~r       Carriage return
+        ~l       Linefeed
+        ~~       Tilde
+        ~b       Backspace
+        ~f       Formfeed
+        ~t       Tab
+        ~"       Quote
+\end{verbatim}
+
+%% end-fold
+%% start-fold:  Any character..
+Any character not in the table which follows a tilde will be passed
+unmodified. This action is similar to the {\bf \verb+^+Q} {\it
+quote-character} command available from the keyboard.
+
+%% end-fold
+%% start-fold:  MicroEMACS may..
+$\mu$EMACS may use different characters for line terminators on different
+computers. The \verb+~+n combination will always get the proper line
+terminating sequence for the current system.
+
+%% end-fold
+%% start-fold:  The double..
+The double quotes around constants are not needed if the constant
+contains no internal white space and it also does not happen to meet
+the rules for any other $\mu$EMACS commands, directives, variables, or
+functions. This is reasonable useful for numeric constants.
+
+%% end-fold
+%% end-fold
+%% start-fold:  Variables
+\section{Variables}
+
+%% start-fold:  Variables in..
+Variables in $\mu$EMACS can be used to return values within
+expressions, as repeat counts to editing commands, or as text to be
+inserted into buffers and messages. The value of these variables is set
+using the {\it set} {\bf \verb+^+XA} command. For example, to set the
+current fill column to 64 characters, the following macro line would be
+used:
+
+\begin{verbatim}
+set $fillcol 64
+\end{verbatim}
+
+or to have the contents of \%name inserted at the point in the current
+buffer, the command to use would be:
+
+\begin{verbatim}
+insert-string %name
+\end{verbatim}
+
+%% end-fold
+%% start-fold:  Environmental Variables
+\subsection{Environmental Variables}
+
+``What good is a quote if you can't change it?''
+
+These variables are used to change different aspects of the way the
+editor works. Also they will return the current settings if used as
+part of an expression. All environmental variable names begin with a
+dollar sign (\$) and are in lower case.
+
+{\bf \$acount}: The countdown of inserted characters until the next save-file.
+
+{\bf \$asave}: The number of characters between automatic file-saves.
+
+{\bf \$bufhook}: The function run when a buffer is entered.
+
+{\bf \$cbflags}: Current buffer attribute flags.
+
+{\bf \$cbufname}: Name of the current buffer.
+
+{\bf \$cfname}: File name of the current buffer.
+
+{\bf \$cmdhook}: Name of function run before accepting a command.
+
+{\bf \$cmode}: Integer containing the mode of the current buffer.
+
+{\bf \$curchar}: Ascii value of the character currently at the point.
+
+{\bf \$curcol}: Current column of point in current buffer.
+
+{\bf \$curline}: Current line of point in current buffer.
+
+{\bf \$curwidth}: Number of columns used currently.
+
+{\bf \$cwline}: Current display line in current window.
+
+{\bf \$debug}: Trigger macro debugging.
+
+{\bf \$diagflag}: If TRUE, diagonal dragging of lines is enabled.
+
+{\bf \$discmd}: Echo messages on the command line.
+
+{\bf \$disinp}: Echo characters during command line input.
+
+{\bf \$exbhook}: Name of function run when switching buffers.
+
+{\bf \$fcol}: The line position displayed in the first column.
+
+{\bf \$fillcol}: Current fill column.
+
+{\bf \$flicker}: Flicker Flag set to TRUE if IBM CGA.
+
+{\bf \$gflags}: Global flags controlling some $\mu$EMACS internal functions.
+
+{\bf \$gmode}: Global mode flags.
+
+{\bf \$hardtab}: Number of spaces between hard tab stops.
+
+{\bf \$hjump}: How many columns to scroll the screen horizontally.
+
+{\bf \$hscroll}: Scroll the entire current window horizontally.
+
+{\bf \$kill}: Contains the first 127 characters of the kill buffer.
+
+{\bf \$language}: The language in which messages will displayed.
+
+{\bf \$lastkey}: Last keyboard character typed.
+
+{\bf \$lastmesg}: The last message written on the command line.
+
+{\bf \$line}: The current line in the current buffer.
+
+{\bf \$lwidth}: The number of characters in the current line.
+
+{\bf \$match}: Last string matched in a magic mode search.
+
+{\bf \$modeflag}: Determines if mode lines are currently displayed.
+
+{\bf \$msflag}: If TRUE, the mouse is active.
+
+{\bf \$pagelen}: Number of screen lines used currently.
+
+{\bf \$palette}: The palette register settings on graphics versions.
+
+{\bf \$pending}: TRUE if there are keystrokes waiting to be processed.
+
+{\bf \$progname}: The string ``MicroEMACS'' for standard $\mu$EMACS.
+
+{\bf \$readhook}: The name of a function to run whenever a file is read.
+
+{\bf \$replace}: Current default replace string.
+
+{\bf \$rval}: The return value from the last subprocess.
+
+{\bf \$search}: Current default search string.
+
+{\bf \$seed}: Integer seed of the random number generator.
+
+{\bf \$softtab}: Number of spaces inserted by {\it handle-tab}.
+
+{\bf \$sres}: Current screen resolution.
+
+{\bf \$ssave}: If TRUE, save via a temporary file.
+
+{\bf \$sscroll}: Smoothly scroll windows.
+
+{\bf \$status}: Status of the success of the last command.
+
+{\bf \$sterm}: The character used to terminate search strings.
+
+{\bf \$target}: Current target for line moves.
+
+{\bf \$time}: String corresponding to the current date and time.
+
+{\bf \$tpause}: The length of the pause to display a matched fence.
+
+{\bf \$version}: Contains the current $\mu$EMACS version number.
+
+{\bf \$wline}: Number of display lines in current window.
+
+{\bf \$wraphook}: The name of function run when a buffer wrapped.
+
+{\bf \$writehook}: The function run whenever a file is written.
+
+{\bf \$xpos} The column the mouse was on at the last mouse button press.
+
+{\bf \$ypos} The line the mouse was on at the last mouse button press.
+
+%% end-fold
+%% start-fold:  User Variables
+\subsection{User Variables}
+
+User variables allow you, the user, to store strings and manipulate
+them.  These variables can be combined, tested, inserted into buffers,
+and otherwise used to control the way your macros execute. At the
+moment, up to 255 user variables may be in use in one editing session.
+All users variable names must begin with a percent sign (\%) and may
+contain any printing characters. Only the first 10 characters are
+significant. Most operators will truncate strings to a length of 128
+characters.
+
+%% end-fold
+%% start-fold:  Buffer Variables
+\subsection{Buffer Variables}
+
+Buffer variables are special in that they can only be queried and
+cannot be set. What buffer variables are is a way to take text from a
+buffer and place it in a variable. For example, if I have a buffer by
+the name of rigel2, and it contains the text:
+
+\begin{verbatim}
+Richmond
+Lafayette
+<*>Bloomington (where <*> is the current point)
+Indianapolis
+Gary
+=* uEMACS 3.10 == rigel2 == File: /data/rigel2.txt
+=====
+\end{verbatim}
+
+and within a command I reference \#rigel2, like:
+
+\begin{verbatim}
+insert-string #rigel2
+\end{verbatim}
+
+$\mu$EMACS would start at the current point in the rigel2 buffer
+and grab all the text up to the end of that line and pass that back.
+Then it would advance the point to the beginning of the next line.
+Thus, after our last command executes, the string ``Bloomington'' gets
+inserted into the current buffer, and the buffer rigel2 now looks like
+this:
+
+\begin{verbatim}
+Richmond
+Lafayette
+Bloomington
+<*>Indianapolis (where <*> is the current point)
+Gary
+=* uEMACS 3.10 == rigel2 == File: /data/rigel2.txt
+=====
+\end{verbatim}
+
+as you have probably noticed, a buffer variable consists of the buffer
+name, preceded by a hash sign (\#).
+
+%% end-fold
+%% start-fold:  Interactive Variables
+\subsection{Interactive Variables}
+
+Interactive variables are actually a method to prompt the user for a
+string. This is done by using an at sign (@) followed either with a
+quoted string, or a variable containing a string. The string is then
+placed on the bottom line, and the editor waits for the user to type in
+a string. Then the string typed in by the user is returned as the
+value of the interactive variable. For example:
+
+\begin{verbatim}
+set %quest "What file? "
+find-file @%quest
+\end{verbatim}
+
+will ask the user for a file name, and then attempt to find it. Note
+also that complex expressions can be built up with these operators,
+such as:
+
+\begin{verbatim}
+@&cat &cat "File to decode[" %default "]: "
+\end{verbatim}
+
+which prompts the user with the concatenated string.
+
+%% end-fold
+%% end-fold
+%% start-fold:  Functions
+\section{Functions}
+
+%% start-fold:  Functions can..
+Functions can be used to manipulate variables in various ways.
+Functions can have one, two, or three arguments. These arguments will
+always be placed after the function on the current command line. For
+example, if we wanted to increase the current fill column by two, using
+$\mu$Emacs's {\it set} {\bf \verb+^+XA} command, we would write:
+
+\begin{verbatim}
+set $fillcol &add $fillcol 2
+\end{verbatim}
+
+%% end-fold
+%% start-fold:  Function names..
+Function names always begin with the ampersand (\&) character, and are
+only significant to the first three characters after the ampersand.
+Functions will normal expect one of three types of arguments, and will
+automatically convert types when needed.
+
+\verb+<+num\verb+>+ an ascii string of digits which is interpreted as a
+numeric value. Any string which does not start with a digit or a minus
+sign (-) will be considered zero.
+
+\verb+<+str\verb+>+ An arbitrary string of characters. At the moment,
+strings are limited to 128 characters in length.
+
+\verb+<+log\verb+>+ A logical value consisting of the string ``TRUE''
+or ``FALSE''. Numeric strings will also evaluate to ``FALSE'' if they
+are equal to zero, and ``TRUE'' if they are non-zero. Arbitrary text
+strings will have the value of ``FALSE''.
+
+%% end-fold
+%% start-fold:  A list..
+A list of the currently available functions follows:
+Functions are always used in lower case, the uppercase letters in the
+function table are the short form of the function (ie. \&div for
+\&divide).
+
+\begin{verbatim}
+%% end-fold
+%% start-fold:  Numeric functions
+Numeric Functions: (returns <num>)
+----------------------------------
+
+&ADD    <num> <num> Add 2 numbers
+&SUB    <num> <num> Subtract the 2nd number from the 1st
+&TIMes  <num> <num> Multiply 2 numbers
+&DIVide <num> <num> Divide the 1st number by the 2nd
+&MOD    <num> <num> Return the reminder of the above
+&NEGate <neg>       Multiply the arg by -1
+&LENgth <str>       Returns length of string
+&SINdex <str> <str> Finds position of 2nd string in 1st
+&ASCii  <str>       Return the ascii code of the 1st char
+&RND    <num>       Return random int between 1 and <num>
+&ABS    <num>       Return the absolute value of <num>
+&BANd   <num> <num> Bitwise AND function
+&BOR    <num> <num> Bitwise OR function
+&BXOr   <num> <num> Bitwise XOR function
+&BNOt   <num>       Bitwise NOT function
+
+%% end-fold
+%% start-fold:  String manipulation functions
+String manipulation functions: (returns <str>)
+----------------------------------------------
+
+&CAT   <str> <str>         Concatenate the two strings
+&LEFt  <str> <num>         Return <num> leftmost chars
+&RIGht <str> <num>         Return <num> rightmost chars
+&MID   <str> <num1> <num2> Return <str>[<num1>..<num2>]
+&UPPer <str>               Uppercase <str>
+&LOWer <str>               Lowercase <str>
+&CHR   <num>               Returns char for ascii code
+&GTC                       Returns command input
+&GTK                       Returns a keystroke
+&ENV   <str>               Returns environment string
+&BIND  <str>               Returns function bound to key
+&FINd  <str>               Returns full pathname of file
+&TRIM  <str>               Trim the whitespace from <str>
+
+%% end-fold
+%% start-fold:  Logical testing functions
+Logical Testing functions: (returns <log>)
+------------------------------------------
+
+&NOT      <log>         Returns the opposite value
+&AND      <log1> <log2> TRUE if <log1> = <log2> = TRUE
+&OR       <log1> <log2> TRUE if <log1> or <log2> is TRUE
+&EQUal    <num1> <num2> TRUE if <num1> = <num2>
+&LESs     <num1> <num2> TRUE if <num1> < <num2>
+&GREater  <num1> <num2> TRUE if <num1> >= <num2>
+&SEQual   <str1> <str2> TRUE if <str1> = <str2>
+&SLEss    <str1> <str2> TRUE if <str1> < <str2>
+&SGReater <str1> <str2> TRUE if <str1> >= <str2>
+&EXIst    <str>         TRUE if file <str> exists
+
+%% end-fold
+%% start-fold:  Special functions
+Special Functions:
+------------------
+
+&INDirect <str> Evaluate <str> as a variable.
+\end{verbatim}
+
+%% end-fold
+%% start-fold:  This last..
+This last function deserves more explanation. The \&IND function
+evaluates its argument, takes the resulting string, and then uses it as
+a variable name. For example, given the following code sequence:
+
+\begin{verbatim}
+; set up reference table
+
+set %one "elephant"
+set %two "giraffe"
+set %three "donkey"
+
+set %index "two"
+insert-string &ind %index
+\end{verbatim}
+
+the string ``giraffe'' would have been inserted at the point in the
+current buffer. This indirection can be safely nested up to about 10
+levels.
+
+%% end-fold
+%% end-fold
+%% start-fold:  Directives
+\section{Directives}
+
+%% start-fold:  Directives are..
+Directives are commands which only operate within an executing macro,
+ie. they do not make sense as a single command. As such, they cannot be
+called up singly or bound to keystroke. Used within macros, they
+control what lines are executed and in what order.
+
+%% end-fold
+%% start-fold:  Directives always..
+Directives always start with the exclamation mark (!) character and
+must be the first thing placed on a line. Directives executed
+interactively (via the {\it execute-command-line} command) will be ignored.
+
+%% end-fold
+%% start-fold:  !ENDM
+\subsection{!ENDM Directive}
+
+This directive is used to terminate a macro being stored. For example,
+if a file is being executed contains the text:
+
+\begin{verbatim}
+; Read in a file in view mode, and make the window red
+
+26 store-macro
+find-file @"File to view: "
+add-mode "view"
+add-mode "red"
+!endm
+
+write-message "[Consult macro has been loaded]"
+\end{verbatim}
+
+only the lines between the {\it store-macro} command and the !ENDM directive
+are stored in macro 26. Both numbered macros and named procedures (via
+the store-procedure command) should be terminated with this directive.
+
+%% end-fold
+%% start-fold:  !FORCE
+\subsection{!FORCE Directive}
+
+When $\mu$EMACS executes a macro, if any command fails, the macro is
+terminated at that point. If a line is preceded by a !FORCE directive,
+execution continues whether the command succeeds or not. For example:
+
+\begin{verbatim}
+; Merge the top two windows
+
+save-window ;remember what window we are at
+1 next-window ;go to the top window
+delete-window ;merge it with the second window
+!force restore-window ;This will continue regardless
+add-mode "red"
+\end{verbatim}
+
+%% end-fold
+%% start-fold:  !IF
+\subsection{!IF, !ELSE, and !ENDIF Directives}
+
+This directive allows statements only to be executed if a condition
+specified in the directive is met. Every line following the !IF
+directive, until the first !ELSE or !ENDIF directive, is only executed
+if the expression following the !IF directive evaluates to a TRUE
+value. For example, the following macro segment creates the portion of
+a text file automatically.
+
+\begin{verbatim}
+!if &sequal %curplace "timespace vortex"
+insert-string "First, rematerialize~n"
+!endif
+!if &sequal %planet "earth" ;If on Earth
+!if &sequal %time "late 20th century" ;and 20th C
+write-message "Contact U.N.I.T."
+!else
+insert-string "Investigate the situation....~n"
+insert-string "(SAY 'stay here Sara')~n"
+!endif
+!else
+set %conditions @"Atmosphere conditions outside? "
+!if &sequal %conditions "safe"
+insert-string &cat "Go outside......" "~n"
+insert-string "lock the door~n"
+!else
+insert-string "Dematerialize..try somewhen
+else"
+newline
+!endif
+!endif
+\end{verbatim}
+
+%% end-fold
+%% start-fold:  !GOTO
+\subsection{!GOTO Directive}
+
+Flow can be controlled within a $\mu$EMACS macro using the !GOTO
+directive. It takes as an argument a label. A label consists of a line
+starting with an asterisk (\verb+*+) and then an alphanumeric label. Only
+labels in the currently executing macro can be jumped to, and trying to
+jump to a non-existing label terminates execution of a macro. For
+example:
+
+\begin{verbatim}
+;Create a block of DATA statements
+;for a BASIC program
+
+insert-string "1000 DATA "
+set %linenum 1000
+
+*nxtin
+update-screen ;make sure we see the changes
+set %data @"Next number: "
+!if &equal %data 0
+!goto finish
+!endif
+
+!if &greater $curcol 60
+2 delete-previous-character
+newline
+set %linenum &add %linenum 10
+insert-string &cat %linenum " DATA "
+!endif
+
+insert-string &cat %data ", "
+!goto nxtin
+
+*finish
+
+2 delete-previous-character
+newline
+\end{verbatim}
+
+%% end-fold
+%% start-fold:  !WHILE
+\subsection{!WHILE and !ENDWHILE Directives}
+
+This directive allows you to set up repetitive tasks easily and
+efficiently. If a group of statements need to be executed while a
+certain condition is true, enclose them with a while loop. For example:
+
+\begin{verbatim}
+!while &less $curcol 70
+insert-string &cat &cat "[" #stuff "]"
+!endwhile
+\end{verbatim}
+
+places items from buffer ``item'' in the current line until the cursor is
+at or past column 70. While loops may be nested and can contain and be
+the targets of !GOTOs with no ill effects. Using a while loop to
+enclose a repeated task will run much faster than the corresponding
+construct using !IFs.
+
+%% end-fold
+%% start-fold:  !BREAK
+\subsection{!BREAK Directive}
+
+This directive allows the user to abort out of the currently most inner
+while loop, regardless of the condition. It is often used to abort
+processing for error conditions. For example:
+
+\begin{verbatim}
+; Read in files and 
+; substitute "begining" with "beginning"
+
+set %filename #list
+!while &not &seq %filename "<end>"
+!force find-file %filename
+!if &seq $status FALSE
+write-message "[File read error]"
+!break
+!endif
+beginning-of-file
+replace-string "begining" "beginning"
+save-file
+set %filename #list
+!endwhile
+\end{verbatim}
+
+This while loop will process files until the list is exhausted or there
+is an error while reading a file.
+
+%% end-fold
+%% start-fold:  !RETURN
+\subsection{!RETURN Directive}
+
+The !RETURN Directive causes the current macro to exit, either
+returning to the caller (if any) or to interactive mode. For example:
+
+\begin{verbatim}
+; Check the monitor type and set %mtyp
+
+!if &sres "CGA"
+set %mtyp 1
+!return
+!else
+set %mtyp 2
+!endif
+
+insert-string "You are on a MONOCHROME machine!~n"
+\end{verbatim}
+
+%% end-fold
+%% end-fold
+%% end-fold
+%% start-fold:  appendix a - MicroEMACS Bindings   
+\appendix
+\chapter{MicroEMACS Bindings}
+
+Below is a complete list of the key bindings used in $\mu$EMACS.
+
+\begin{verbatim}
+
+Default Key Bindings for MicroEmacs 3.10
+
+^A   beginning-of-line            Move to start of line
+^B   backward-character           Move b/w by characters
+^C   insert-space                 Insert space
+^D   delete-next-character        F/w delete
+^E   end-of-line                  Goto end of line
+^F   forward-character            Move f/w by characters
+^G   abort-command                Abort out of things
+^H   delete-previous-character    B/w delete
+^I   handle-tab                   Insert tab/Set tab
+^J   newline-and-indent           Insert [NL], & indent
+^K   kill-to-end-of-line          Kill f/w
+^L   clear-and-redraw             Refresh the screen
+^M   newline                      Insert [NL]
+^N   next-line                    Move f/w by lines
+^O   open-line                    Open up a blank line
+^P   previous-line                Move b/w by lines
+^Q   quote-character              Insert literal
+^R   search-reverse               Search b/w
+^S   search-forward               Search f/w
+^T   transpose-chararacters       Transpose characters
+^U   universal-argument           Repeat command 4 times
+^V   next-page                    Move f/w by pages
+^W   kill-region                  Kill region
+^Y   yank                         Yank from killbuffer
+^Z   previous-page                Move b/w by pages
+
+ESC A   apropos                   List some commands
+ESC B   previous-word             Backup by words
+ESC C   case-word-capitalize      Initial capitalize word
+ESC D   delete-next-word          Delete f/w word
+ESC E   set-encryption-key        Reset Encryption Key
+ESC F   next-word                 Advance by words
+ESC G   goto-line                 Go to a line
+ESC I   open-fold                 Open fold
+ESC J   fold-region               Fold a region
+ESC K   bind-to-key               Bind Key to function
+ESC L   case-word-lower           Lower case word
+ESC M   add-global-mode           Add global mode
+ESC N   next-paragraph            Goto End paragraph
+ESC O   open-fold                 Open fold
+ESC P   previous-paragraph        Goto start of paragraph
+ESC Q   fill-paragraph            Fill current paragraph
+ESC R   replace-string            Search and replace
+ESC S   suspend-emacs             Suspend (BSD only)
+ESC T   exit-all-folds            Exit all folds
+ESC U   case-word-upper           Upper case word
+ESC V   previous-page             Move b/w by pages
+ESC W   copy-region               Copy to kill buffer
+ESC X   execute-named-command     Execute named command
+ESC Z   quick-exit                Save buffers and exit
+
+ESC ^A   searchfold-forward       Search f/w into folds
+ESC ^B   searchfold-reverse       Search b/w into folds
+ESC ^C   count-words              Count words in region
+ESC ^D   delete-fold              Delete a fold
+ESC ^E   execute-procedure        Execute named procedure
+ESC ^F   goto-matching-fence      Goto matching fence
+ESC ^G   goto-mark                Goto mark
+ESC ^H   delete-previous-word     Delete b/w word
+ESC ^I   exit-fold                Exit fold
+ESC ^J   remove-fold              Remove fold
+ESC ^K   undbind-key              Unbind Key
+ESC ^L   redraw-display           Reposition window
+ESC ^M   delete-global-mode       Delete global mode
+ESC ^N   name-buffer              Rename current buffer
+ESC ^O   close-fold               Close fold
+ESC ^R   query-replace-string     Replace w/query 
+ESC ^S   source                   Source command file
+ESC ^V   scroll-next-down         Scroll next window down
+ESC ^W   kill-paragraph           Delete Paragraph
+ESC ^X   execute-command-line     Execute command line
+ESC ^Z   scroll-next-up           Scroll next window up
+
+ESC ?   help                      Help
+ESC ~   unmark-bufer              Unmark current buffer
+ESC !   redraw-display            Reposition window
+ESC <   beginning-of-file         Move to start of buffer
+ESC >   end-of-file               Move to end of buffer
+ESC .   set-mark                  Set mark
+ESC [ ] set-mark                  Set mark
+ESC <X] delete-previous-word      Delete b/w word
+
+<X]     delete-previous-character B/w delete
+
+^X A   set                        Set variable value
+^X B   select-buffer              Switch window to buffer
+^X C   i-shell                    Start new command shell
+^X D   suspend-emacs              Suspend MicroEMACS
+^X E   execute-macro              Execute macro
+^X F   set-fill-column            Set fill column
+^X K   delete-buffer              Delete buffer
+^X M   add-mode                   Add a mode
+^X N   change-file-name           Rename current filename
+^X O   next-window                Move to the next window
+^X P   previous-window            Move to previous window
+^X R   reverse-incremental-search Incremental b/w search
+^X S   incremental-search         Incremental f/w search
+^X W   resize-window              Resize Window
+^X X   next-buffer                Use next buffer
+^X Z   grow-window                Enlarge display window
+
+^X ^B   list-buffers              Display buffer list
+^X ^C   exit-emacs                Exit MicroEMACS
+^X ^D   detab-region              Detab line
+^X ^E   entab-region              Entab line
+^X ^F   find-file                 Find file
+^X ^I   insert-file               Insert file
+^X ^K   macro-to-key              Bind macro to key
+^X ^L   case-region-lower         Lower case region
+^X ^M   delete-mode               Delete Mode
+^X ^N   move-window-down          Move window down
+^X ^O   delete-blank-lines        Delete blank lines
+^X ^P   move-window-up            Move window up
+^X ^R   read-file                 Get a file from disk
+^X ^S   save-file                 Save current file
+^X ^T   trim-region               Trim lines
+^X ^U   case-region-upper         Upper case region
+^X ^V   view-file                 View file
+^X ^W   write-file                Write a file to disk
+^X ^X   exchange-point-and-mark   Swap "." and mark
+^X ^Z   shrink-window             Shrink window
+
+^X <   narrow-to-region           Narrow region
+^X >   widen-from-region          Widen region
+^X =   buffer-position            Show cursor position
+^X ^   grow-window                Enlarge display window
+^X 0   delete-window              Delete current window
+^X 1   delete-other-widows        Delete other windows
+^X 2   split-current-window       Split current window
+^X ?   describe-key               Describe a key
+^X !   shell-command              Run command in a shell
+^X @   pipe-command               Pipe command to buffer
+^X #   filter-buffer              Pass buffer thru filter
+^X $   execute-program            Run external program
+^X (   begin-macro                Begin macro
+^X )   end-macro                  End macro
+
+Usable Modes
+WRAP Lines going past right margin "wrap" to a new line
+VIEW Read-Only mode where no modifications are allowed
+CMODE Change behavior of some commands to format C
+EXACT Exact case matching on search strings
+OVER Overwrite typed characters instead of inserting
+CRYPT Current buffer will be encrypted
+MAGIC Use regular expression matching in searches
+ASAVE Save the file every 256 inserted characters
+
+WHITE/CYAN/MAGENTA/YELLOW/BLUE/RED/GREEN/BLACK
+     Sets foreground color
+white/cyan/magenta/yellow/blue/red/green/black 
+     Sets background color
+
+
+WINDOW MOVEMENT:
+----------------
+^V Scroll down   M-< Begining of file
+^Z Scroll up     M-> End of file
+
+
+MOVING THE CURSOR:
+------------------
+^F Forward character    M-F Forward word 
+^B Backward character   M-B Backward word
+^A Front of line        M-G Goto a line
+^E End of line 
+^N Next line            M-N Front of paragraph
+^P Previous line        M-P End of paragraph
+
+
+FOLDING:
+--------
+M-O Open a fold         M-^O Close a fold
+M-I Enter a fold        M-^I Exit a fold
+M-J Make fold           M-^J Remove a fold
+M-T Exit all folds      M-^D Delete a fold
+
+
+DELETING & INSERTING:
+---------------------
+<--      Delete previous character
+^D       Delete next character
+^C       Insert a space
+M-<X]    Delete previous word
+M-D      Delete next word
+^K       Delete to end of line
+[NL]     Insert a newline 
+[Tab]    Advance to next tab stop
+^J       Insert a newline and indent 
+M-^W     Delete paragraph
+^O       Open line
+^W       Delete region
+M-W      Copy region to kill buffer
+^X^O     Delete blank lines around cursor
+
+
+SEARCHING:
+----------
+^S   Search forward from cursor position.
+^R   Reverse search from cursor position.
+^XS  Forward incremental search
+^XR  Reverse incremental search
+M-^A Forward search into folds
+M-^B Backward search into folds
+
+
+REPLACING:
+----------
+M-R  Replace all instances of first typed-in string with 
+     second typed-in string. End each string with ESC.
+M-^R Replace with query. Answer with:
+     ^G cancel                . exit to entry point
+     ! replace the rest       Y replace & continue
+     ? Get a list of options  N no replacement & continue
+
+
+CAPITALIZING & TRANSPOSING:
+---------------------------
+^T   Transpose characters
+M-U  UPPERCASE word
+M-C  Capitalize word
+M-L  lowercase word
+^X^L lowercase region
+^X^U uppercase region
+^Q   Quote next entry, so that control codes may be
+     entered into text
+
+
+REGIONS & THE KILL BUFFER:
+--------------------------
+M-[ ]   set MARK at current position
+^X^X    eXchange mark and cursor
+
+A REGION will then be continuously-defined as the
+area between the  mark and the current cursor
+position. The KILL BUFFER is the text which has
+been most recently saved or deleted.
+
+
+COPYING AND MOVING:
+-------------------
+^W  Delete region 
+M-W Copy region to KILL buffer
+^Y  Yankback save buffer at cursor
+
+
+MODES OF OPERATION:
+-------------------
+^XM         Add mode in buffer 
+^X^M        Delete mode in buffer 
+M-M         Add global mode
+M-^M        Delete global mode
+OVER        Overwrites rather than inserts characters
+WRAP        Turns on word wrap (automatic newlines)
+VIEW        Allows viewing file without modification
+CMODE       Automatic indenting for C program entry
+EXACT/MAGIC Changes how search and replace commands work
+
+
+SEARCH AND REPLACE MODES:
+-------------------------
+EXACT Uppper/lower case is not ignored in searches
+MAGIC Regular pattern matching characters are active
+.     Matches any one character
+*     Matches any any number of the preceding character
+^     Beginning of line 
+[ ]   Character class enclosure
+$     End of line 
+\     Quote next character
+
+
+ON-SCREEN FORMATTING:
+---------------------
+^XF      Set fill column
+Mn-[Tab] Set tab spacing to n characters
+M-Q      Format paragraph
+^X=      Position report of line/column/char
+M-^C     Count words/lines/chars in marked region
+
+
+MULTIPLE WINDOWS:
+-----------------
+^X2  Split the current window in 2 
+^X0  Delete current window         
+^X1  Delete all other windows      
+^XO  Change to next window
+^XP  Change to previous window
+M-^V Page down next window
+M-^Z Page up other window
+
+
+CONTROLLING WINDOWS AND THE SCREEN:
+-----------------------------------
+^X^       Enlarge current window 
+M-<n> ^XW Resize window to <n> lines
+^X^Z      Shrink current window
+^X^N      Move window down
+^X^P      Move window up
+M-^L      Reposition window
+^L        Refresh the screen
+
+
+MULTIPLE BUFFERS:
+-----------------
+^XB  Switch to another buffer.
+^XX  Switch to next buffer in buffer list
+M-^N Change name of current buffer
+^XK  Delete a non-displayed buffer.
+^X^B Display buffer directory in a window
+
+
+READING FROM DISK:
+------------------
+^X^F Find file; read into a new buffer
+^X^R Read file into current buffer
+^X^I Insert file into buffer at dot
+^X^V Find a file to make current in VIEW mode
+
+
+SAVING BUFFERS AND REGIONS TO DISK:
+-----------------------------------
+^X^S Save current buffer to disk
+^X^W Write current buffer to disk
+^XN  Change file name of current buffer
+M-Z  Write out all changed buffers and exit 
+^X<  Make everything outside region invisable
+^X>  Restore invisible text
+
+
+ACCESSING THE OPERATING SYSTEM:
+-------------------------------
+^X!  Send command to the operating system and return
+^X@  Pipe DOS command results to buffer
+^X#  Filter buffer through DOS filter program
+^XC  Start a new command processor under MicroEMACS
+^XD  Suspend MicroEMACS into the background
+^X^C Exit MicroEMACS
+
+
+KEY BINDINGS AND COMMANDS:
+--------------------------
+M-K  Bind a key to a command
+M-A  Describe a class of commands
+M-^K Unbind a key from a command
+^X?  Describe command bound to a key
+M-X  Execute a named (and possibly unbound) command
+
+{Describe-bindings} List of all key bindings
+
+
+COMMAND EXECUTION:
+------------------
+Commands can be specified as command lines in the form:
+<repeat count> {command-name} <arguments>
+
+{Execute-command-line} execute a command line
+{Execute-buffer}       executes commands in a buffer
+{Execute-file}         executes commands from a file
+{clear-message-line}   clears the message line
+
+M-~ Clears the modified flag for a buffer
+
+
+MACRO EXECUTION:
+----------------
+^X( Start recording keyboard macro
+^X) Stop recording keyboard macro
+^XE Execute keyboard macro
+
+M-<n> {store-macro} Start recording named macro
+!endm               Stop recording named macro
+{execute-macro-n}   Execute macro n 
+
+
+SPECIAL KEYS:
+-------------
+^G        Cancel current command
+^U        Universal repeat.
+M-<digit> Repeats the next command that many times.
+M-X       Execute a named command
+\end{verbatim}
+%% end-fold
+%% start-fold:  end   
+\end{document}
+%% end-fold

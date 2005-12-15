@@ -1,0 +1,1380 @@
+-*- mode: wiki; mode: fill; fill-column: 67; -*-
+
+* TOP
+                          eEmacs ver.4.0
+                         
+                         REFERENCE MANUAL
+
+
+           Emacs-like screen editor editor for Epoc EMX
+              based on Ersatz-Emacs and uEmacs/PK 4.0
+              and bound together by Dmitri Brechalov.
+              
+                     (last changed 2004-09-18)
+
+
+CONTENTS
+  :#Top:
+  :#About:
+    :#Copyright notices:
+    :#Original statement of copying policy:
+  :#Introduction:
+  :#How to start:
+  :#How to get help and how to exit:
+  :#Screen, windows and buffers:
+  :#How to type in commands:
+    :#Universal Argument:
+  :#The command list:
+    :#Moving the cursor:
+    :#Deleting and inserting:
+    :#Searching:
+    :#Replacing:
+    :#Regular expression search:
+    :#Regular expression replace:
+    :#Capitalizing and transposing:
+    :#Regions and the kill buffer:
+    :#Copying and moving, kill ring:
+    :#Undoing:
+    :#On-screen formatting:
+    :#Multiple windows:
+    :#Controlling windows:
+    :#Multiple buffers:
+    :#Reading from disk:
+    :#Automatic file and buffer name completion:
+    :#Saving to disk:
+    :#End-of-line mode:
+    :#Getting info and help:
+    :#Keyboard macro execution:
+    :#Modes and customization:
+  :#Modes:
+    :#Auto Fill Mode:
+    :#Auto Indent Mode:
+    :#Case Sensitive Mode:
+    :#Match Parenthesis Mode:
+    :#Special Mode (Word Wrap Mode):
+    :#Inverted Cursor Mode:
+    :#View mode:
+    :#Wiki-mode:
+    :#Local Variables in Files:
+  :#Working with national keyboards:
+  :#Coding systems:
+  :#Syntax of regular expressions:
+
+
+* ABOUT
+
+Ersatz EMACS is made by Chris Baird on the base of MicroEMACS 3.6
+as released to mod.sources and the Public Domain by Daniel Lawrence
+in 1986, and was itself based on the work of Steve Wilhite and
+George Jones to MicroEMACS 2.0 (then also public domain) by Dave
+Conroy.
+
+uEmacs/PK 4.0 is written by Dave G. Conroy
+greatly modified by Daniel M. Lawrence
+modified by Petri H. Kutvonen
+
+This manual is based on uEmacs/PK 4.0 manual reference and
+partially on GNU Emacs manual.
+
+
+** Copyright notices 
+
+Ersatz-Emacs: All source code of this program is in the Public
+Domain. I am a rabid Stallmanite weenie, but it would be improper
+to publish this under a different licence than it was given to me
+with. (Chris Baird)
+
+MicroEMACS 3.9e (c) Copyright 1987 by Daniel M. Lawrence. Reference
+Manual Copyright 1987 by Brian Straight and Daniel M. Lawrence. All
+Rights Reserved. No copyright claimed for modifications made by
+Petri H. Kutvonen.
+
+
+** Original statement of copying policy
+
+MicroEMACS 3.9e can be copied and distributed freely for any
+non-commercial purposes. MicroEMACS 3.9e can only be corporated
+into commercial software with the permission of the current author
+[Daniel M. Lawrence].
+
+
+* INTRODUCTION
+
+eEmacs is a screen editor for programming and word processing. It
+is available for the Psion Series 5 compatible handheld computers
+with Epoc EMX system installed. Some of its capabilities include:
+
+o	:#Multiple windows: on screen at one time
+
+o	Multiple files in the editor at once
+ 	(see :#Multiple buffers:)
+
+o	Limited :#on-screen formatting: of text
+
+This manual is designed as a reference manual. All the commands in
+eEmacs are listed, in functional groups, along with detailed
+descriptions of what each command does.
+(see :#The command list:)
+
+
+* HOW TO START
+
+eEmacs is invoked from the operating system command level with a
+command of the form:
+
+	eemacs [option] [filename ...]
+
+where option may be:
+
++n	Go directly to line n of the first file.
+
+
+* HOW TO GET HELP AND HOW TO EXIT
+
+<Esc> H (or actually <Meta> h as you soon will learn) will bring up
+a short summary of all eEmacs commands.
+
+Don't panic if you get stuck within eEmacs. Ctrl-G will abort
+almost any operation and Ctrl-X Ctrl-C will get you out of eEmacs.
+
+(See also :#Getting info and help:)
+
+
+* SCREEN, WINDOWS AND BUFFERS
+
+When you started eEmacs you can see the modeline (often inversed)
+at the bottom of the screen and the echo-area below it. The rest of
+the screen is a window where you edit texts.
+
+You can edit more than one file at a time. Each time you open new
+file for editing using C-X C-F eEmacs creates new buffer, loads the
+file into it and displays the buffer in the current window. You can
+switch between buffers using C-X B or C-X X. The key sequence C-X
+C-B shows the list of existing buffers. Unused buffers can be
+closed using C-X K command.
+
+There is a default buffer, *scratch*. You can use it for temporary
+stored text. This buffer is not linked to any file and the text in
+it will be lost when you exit eEmacs.
+
+eEmacs (like other Emacs-like editors) can split the whole screen
+between two or more windows. You can see for example two different
+files or two different pieces of the same file at the time in two
+windows. Each window has its own modeline.
+
+Modeline consists of the folowing parts:
+
+o Flag of changes: '*' means that the buffer has not saved changes,
+  '%' means that the buffer is read-only (see :#view mode:) and '@'
+  means :#wiki-mode:;
+
+o The name of the editor, 'eEmacs';
+
+o Buffer name (often equals to filename);
+
+o Mode indicators: 'F' for autofill mode, 'I' for autoindent mode
+  and 'C' for case sensitive search (see :#modes:);
+  
+o Name of encoding (if the file encoding differs from the "native"
+  -- see :#Coding systems: for details):
+
+o Point position: the number after 'L' shows the current line and
+  the number after 'C' shows the current column.
+
+
+* HOW TO TYPE IN COMMANDS
+
+Most commands in eEmacs are a single keystroke, or a keystroke
+preceded by a command prefix. Control commands appear in the
+documentation like C-A which means to depress the <Ctrl> key and
+while holding it down, type the A character. Meta commands appear
+as M-A which means to strike the <Meta> key (<Esc> on most
+computers) and then after releasing it, type the A character.
+Control-X commands usually appear as C-x A which means to hold down
+the control key and type the x character then type the A character.
+Both meta commands and control-X commands can be control characters
+as well, for example, C-x C-s (the save file command) means to hold
+down <Ctrl>, type x, keep holding down <Ctrl> and type the s
+character.
+
+Note, that there is no difference between C-a and C-A, both means
+to hold down <Ctrl> and type 'a', because eEmacs does not use
+<Ctrl><Shift> combinations.
+
+
+** Universal Argument
+
+Many commands in eEmacs can be executed a number of times. In order
+to make one command repeat many times, type <Ctrl> U followed by a
+number, and then the command. for example:
+
+	C-u 12 C-k
+
+will delete 12 lines starting at the cursor and going down.
+Sometimes, the repeat count is used as an argument to the command
+as in the set fill column command where the repeat count is used to
+set the right margin of the text.
+
+In eEmacs you can use M-number instead of C-u number. Thus, M-12 C-k
+does the same as the previous command. "M-" means that you should press
+the <Meta> (<Esc>) key and then type "12".
+
+Default value for the universal argument is 4. It means that if you
+type C-u immediately folowing a command, it can be repeated four
+times. For example, C-u <Space> inserts four spaces. Note, that
+M-Space has a different sense!
+
+
+* THE COMMAND LIST
+
+The following is a list of all the commands in eEmacs. Listed is
+the command name, the keystrokes used to invoke it, and a
+description of what the command does.
+
+
+** Moving the cursor
+
+Previous Page	M-V	PgUp
+
+	Move one screen towards the beginning of the file.
+
+Next Page	C-V	PgDn
+
+	Move one screen towards the end of the file.
+
+Top Of File	M-<	M-Home
+
+	Place the cursor at the beginning of the file.
+
+End Of Fole	M->	M-End
+
+	Place the cursor at the end of the file.
+
+
+Forward Char	C-F	Right arrow
+
+	Move the cursor one character to the right. Go down to the
+	beginning of the next line if the cursor was already at the end of
+	the current line.
+
+Backward Char	C-B	Left arrow
+
+	Move the cursor one character to the left. Go to the end of
+	the previous line if the cursor was at the beginning of the
+	current line.
+
+Next Word	M-F
+
+	Place the cursor at the beginning of the next word.
+
+Previous Word	M-B
+
+	Place the cursor at the beginning of the previous word.
+
+Beginning Of Line	C-A	Home
+
+	Move cursor to the beginning of the current line.
+
+End Of Line	C-E	End
+
+	Move the cursor to the end of the current line.
+
+Next Line	C-N	Down arrow
+
+	Move the cursor down one line.
+
+Previous Line	C-P	Up arrow
+
+	Move the cursor up one line.
+
+Goto Line	M-G
+
+	Goto a specific line in the file. I.e. M-65 M-G would put
+	the cursor on the 65th line of the current buffer.
+
+Next Paragraph	M-N
+
+	Put the cursor at the first end of paragraph after the
+	cursor.
+
+Previous Paragraph	M-P
+
+	Put the cursor at the first beginning of paragraph before
+	the cursor.
+
+
+
+** Deleting and inserting
+
+Delete Prev. Character	C-H	<- (Del)
+
+	Delete the character immediately to the left of the cursor.
+	If the cursor is at the beginning of a line, this will join the
+	current line on the end of the previous one.
+
+Delete Next Character	C-D
+
+	Delete the character the cursor is on. If the cursor is at
+	the end of a line, the next line is put at the end of the current
+	one.
+
+Delete Previous Word	M-C-H	M-Del
+
+	Delete the word before the cursor.
+
+Delete Next Word	M-D
+
+	Delete the word starting at the cursor.
+
+Kill To End Of Line	C-K
+
+	When used with no argument, this command deletes all text
+	from the cursor to the end of a line. When used on a blank line,
+	it deletes the blank line. When used with an argument, it deletes
+	the specified number of lines.
+
+Newline		C-M	Enter
+
+	Insert a newline into the text, move the cursor down to the
+	beginning of the next physical line, carrying any text that was
+	after it with it. If autoindent mode is on C-M is equivalent to
+	C-J.
+
+Newline And Indent	C-J
+
+	Insert a newline into the text, and indent the new line the
+	same as the previous line.
+
+Indent Line	C-I	Tab
+
+	Indent line.
+
+
+Kill Region	C-W
+
+	Delete all the characters from the cursor to the mark set
+	with the set-mark command.
+
+Copy Region	M-W
+
+	Copy all the characters between the cursor and the mark set
+	with the set-mark command into the kill buffer (so they can later
+	be yanked elsewhere).
+
+Open Line	C-O
+
+	Insert a newline at the cursor, but do not move the cursor.
+
+
+** Searching
+
+Search Forward	C-X S
+
+	Search for a string from the current cursor position to the
+	end of the file. The string is typed on on the bottom line of the
+	screen, and terminated with the <Enter> key. Special characters
+	can be typed in by preceding them with a C-Q. On successive
+	searches, hitting <Enter> alone causes the last search string to
+	be reused.
+
+Search Reverse	C-X R
+
+	This command searches backwards in the file. In all other
+	ways it is like search-forward.
+
+Incremental Search	C-S
+
+	Incremental search. This command is similar to
+	forward-search, but it processes the search as each character of
+	the input string is typed in. This allows the user to only use as
+	many keystrokes as are needed to uniquely specify the string being
+	searched. Several control characters are active while i-searching:
+
+	C-S or C-X Skip to the next occurrence of the current
+	string
+
+	C-R        Skip to the last occurrence of the current string
+
+	C-H or ?   Back up to the last match (possibly deleting the 
+	           last character on the search string)
+
+	C-W        Copy a rest of the found word to the current search
+	           string
+
+	C-G        Abort the search, return to start
+
+	Enter      End the search, stay here
+
+	Always remember to terminate the search by hitting <Enter>
+	(or C-G).
+
+Reverse Incremental Search	C-R
+
+	Reverse incremental search. This command is the same as
+	incremental search, but it starts in the reverse direction.
+	
+Match parenthsis		C-X M
+
+	When the point is at on of the following characters: {[(<>)]}
+	the command moves it to the matched parenthesis if any.
+
+
+** Replacing
+
+Replace String	M-R
+
+	This command allows you to replace all occurrences of one
+	string with another string. The replacement starts at the current
+	location of the cursor and goes to the end of the current buffer.
+	A numeric argument will limit the number of strings replaced.
+
+Query Replace String	C-X %
+
+	Like the replace-string command, this command will replace
+	one string with another. However, it allows you to step through
+	each string and ask you if you wish to make the replacement. When
+	the computer asks if you wish to make the replacement, the
+	following answers are allowed:
+
+	Y    Make the replacement and continue on to the next string
+	N    Don't make the replacement, then continue
+	!    Replace the rest of the strings without asking
+	C-G  Stop the command
+	.    Go back to place the command started
+	?    Get a list of options
+
+** Regular expression search
+
+Search Regexp Forward	M-C-S
+
+	Search for a regexp from the current cursor position to the
+	end of the file. The string is typed on on the bottom line of the
+	screen, and terminated with the <Enter> key. Special characters
+	can be typed in by preceding them with a C-Q. On successive
+	searches, hitting <Enter> alone causes the last search string to
+	be reused.
+
+Search Regexp Reverse	M-C-R
+
+	This command searches backwards in the file. In all other
+	ways it is like search-forward.
+	
+List Lines Matching Regexp (Occur)	M-O
+
+	Display a list showing each line in the buffer that
+	contains a match for regexp.
+	
+	The buffer *List* contaning the output serves as a menu for
+	finding the occurences in their original context. Switch to the
+	buffer *List*, position point to an occurence and type <Enter>.
+	This switches to the buffer that was searched and moves point to
+	the original line of the chosen occurence.
+	
+See also :#Syntax of regular expressions:
+
+
+** Regular expression replace
+
+Query Replace Regexp	M-%
+
+	Like the query-replace-string command, this command will
+	replace one string with another. However, it allows you to use
+	regular expressions for search string. See Regular Expressions for
+	more info how to use them. When the computer asks if you wish to
+	make the replacement, the following answers are allowed: 
+
+	Y     Make the replacement and continue on to the next 
+	      string
+	N     Don't make the replacement, then continue 
+	U     Undo last replacement
+	!     Replace the rest of the strings without asking 
+	C-G   Stop the command 
+	.     Go back to place the command started 
+	?     Get a list of options
+	
+See also :#Syntax of regular expressions:
+
+
+** Capitalizing and transposing
+
+Case Word Uper		M-U
+
+	Change the following word into upper case.
+
+Case Word Capitalize	M-C
+
+	Capitalize the following word.
+
+Case Word Lower		M-L
+
+	Change the following word to lower case.
+
+Transpose Characters	C-T
+
+	Swap the last and second last characters behind the cursor.
+
+Quote Character		C-Q
+
+	Insert the next typed character, ignoring the fact that it
+	may be a command character.
+
+** Regions and the kill buffer
+
+Set Mark	C-Space	M-Space
+
+	This command is used to delimit the beginning of a marked
+	region. Many commands are effective for a region of text. A region
+	is defined as the text between the mark and the current cursor
+	position. To delete a section of text, for example, one moves the
+	cursor to the beginning of the text to be deleted, issues the
+	set-mark command by typing <Ctrl> <Space>, moves the cursor to the
+	end of the text to be deleted, and then deletes it by using the
+	kill-region (C-W) command. Only one mark can be set in one window
+	or one buffer at a time, and eEmacs will try to remember a mark
+	set in an offscreen buffer when it is called back on screen.
+
+Exchange Point And Mark	C-X C-X
+
+	This command moves the cursor to the current marked
+	position in the current window and moves the mark to where the
+	cursor was. This is very useful in finding where a mark was, or in
+	returning to a position previously marked.
+
+
+** Copying and moving, kill ring
+
+Kill Region	C-W
+
+	This command is used to copy the current region (as defined
+	by the current mark and the cursor) into the kill buffer.
+
+Yank		C-Y
+
+	This copies the contents of the kill buffer into the text
+	at the current cursor position. This does not clear the kill
+	buffer, and thus may be used to make multiple copies of a section
+	of text.
+
+Copy Region	M-W
+
+	This command copies the contents of the current region into
+	the kill buffer without deleting it from the current buffer.
+
+Yank prev. value from kill ring		M-y
+
+	Immediately after the yank command repleces the last yanked
+	text with the previous text in the kill ring. Kill ring stores
+	some previously killed (or copied) text chunks. Type M-y again to
+	replace the text with more recent value.
+	
+** Undoing
+
+Undo		C-X U	C-Z	C-/
+
+	Undo last change. eEmacs stores up to 100 undos for each buffer
+	(this behaviour can be changed by using 'undo-level' parameter in
+	~/.eemacs file; 0 means "no limits for undo list, other value > 0
+	limits undo list up to the given value).
+	Pressing C-x u (or C-z) you can sequently undo some previous
+	changes. Note, that eEmacs considers continuous typing as a single
+	change. The newline command (Enter) starts a new one. 
+	
+	Note, that by default the editor clears all undos after you have
+	save the file. You can change this behavior, setting
+	'undo-after-save' to 1 in your ~/.eemacs file.
+	
+	Also you can change undo limit in your ~/.eemacs file, setting
+	'undo-level' to appropriate value (zero means no limits).
+
+** On-screen formatting
+
+Set Fill Column	C-X F
+
+	Sets the column used by Wrap mode and fill-paragraph and
+	justify-paragraph commands.
+
+Indent Line	C-I	Tab
+
+	This command indents the current line adding the same
+	leading space as previous line has. If the previous line is empty
+	the leading space will be empty.
+
+Fill Paragraph	M-Q
+
+	This takes all the text in the current paragraph (as
+	defined by surrounding blank lines, or a leading indent) and
+	attempt to fill it from the left margin to the current fill
+	column.
+	
+Center line	M-S
+
+	This command centers the current line, trimming it and inserting
+	aproprite number of leading spaces.
+
+Buffer Position	C-X =
+
+	This command reports on the current and total lines and
+	characters of the current buffer. It also gives the hexadecimal
+	code of the character currently under the cursor.
+
+
+** Multiple windows
+
+Split Current Window	C-X 2
+
+	If possible, this command splits the current window into
+	two near equal windows, each displaying the buffer displayed by
+	the original window.
+
+Delete Windows		C-X 0 (number 'zero')
+
+	This command attempts to switch to the next window and
+	delete all others. Note, that it is not standard behavor of this
+	command.
+
+Delete Other Windows	C-X 1
+
+	All other windows are deleted by this command. The current
+	window becomes the only window, using the entire available screen.
+
+Next Window		C-X O (letter 'o')
+
+	Make the next window down the current window.
+
+Scroll Next Down	M-C-V
+
+	Scroll the next window down a page.
+
+Scroll Next Up		M-C-Z
+
+	Scroll the next window up a page.
+
+
+** Controlling windows
+
+Grow Window		C-X ^
+
+	Enlarge the current window by the argument number of lines
+	(1 by default).
+
+Clear And Redraw	C-L
+
+	Clear the screen, redraw the entire display and scroll
+	current line to the center of window.
+	
+Zoom or Resize 	C-X C-L
+
+	This command has a different meaning depending on operating
+	system. On Epoc it switches between zoom levels (up to 4 levels
+	should be defined in your ~/.eemacs file), but on Linux and other
+	systems it resizes the eEmacs screen (useful after changing
+	terminal window's size).
+	
+	Zoom levels should be defined in ~/.eemacs in this way:
+	
+	    zoom 0
+	    columns 57
+	    lines 12
+	    zoom 1
+	    columns 66
+	    lines 14
+	    zoom 2
+	    columns 79
+	    lines 20
+	    
+	There are three zoom levels defined here. When the edtitor started
+	the last one will be active.
+
+
+** Multiple buffers
+
+Select Buffer		C-X B
+
+	Switch to using another buffer in the current window.
+	eEmacs will prompt you for the name of the buffer to use.
+
+Next Buffer		C-X X
+
+	Switch to using the next buffer in the buffer list in the
+	current window.
+
+Name Buffer		M-C-N
+
+	Change the name of the current buffer.
+
+Delete Buffer		C-X K
+
+	Dispose of an undisplayed buffer in the editor and reclaim
+	the space. This does not delete the file the buffer was read from.
+
+List Buffers		C-X C-B
+
+	Split the current window and in one half bring up a list of
+	all the buffers currently existing in the editor. The change flag,
+	and active flag for each buffer is also displayed. (The change
+	flag is an * if the buffer has been changed and not written out.
+	The active flag is not an @ if the file had been specified on the
+	command line, but has not been read in yet since nothing has
+	switched to that buffer.)
+	
+	The buffer *List* serves as a menu. When you type C-X C-B
+	the buffer *List* becomes current. Now you can position point to
+	the line with a buffer description and type <Enter>. This switches
+	to the selected buffer.
+
+
+** Reading from disk
+
+Find File		C-X C-F
+
+	Find the named file. If it is already in a buffer, make
+	that buffer active in the current window, otherwise attempt to
+	create a new buffer and read the file into it.
+
+Read File		C-X C-R
+
+	Read the named file into the current buffer (overwriting
+	the previous contents of the current buffer. If the change flag is
+	set, a confirmation will be asked). When given no filename, reload
+	current file (all changes will be lost). This may be used to
+	return to the saved version of the file instead of multiple undo.
+
+Insert File		C-X C-I
+
+	Insert the named file into the current position of the
+	current buffer.
+	
+
+** Automatic file and buffer name completion
+
+File name completion can be used with all file and buffer oriented
+commands (C-X C-F, C-X B ...). It is invoked by a <Tab>. If there
+exist more than one possible completions they are displayed one by
+one.
+
+The character '~' at the beginning of file path represents the home
+directory (and will be changed to the value of $HOME after the
+first TAB).
+
+Note, that eEmacs 4.0 uses a path from the current buffer filename
+(if any) as default path. This is a common behavior of Emacs-like
+editors. You can use C-u to clear the command line if you don't
+need default path.
+
+
+** Saving to disk
+
+Save File		C-X C-S
+
+	If the contents of the current buffer have been changed,
+	write it back to the file it was read from.
+
+Write File		C-X C-W
+
+	Write the contents of the current file to the named file,
+	this also changes the file name associated with the current buffer
+	to the new file name.
+
+Change File Name	C-X N
+
+	Change the name associated with the current buffer to the
+	file name given.
+
+Quick Exit		M-Z
+
+	Write out all changed buffers to the files they were read
+	from and exit the editor. This is the normal way to exit eEmacs.
+
+
+Exit eEmacs		C-X C-C
+
+	Exit eEmacs back to the operating system. If there are any
+	unwritten, changed buffers, the editor will promt to discard
+	changes.
+	
+** End-of-line mode
+
+Toggle end-of-line	C-C L
+
+	When in DOS mode ("D" at the beginning of the status line), the
+	file will be saved with DOS end-of-lines (\r\n), in UNIX mode only
+	'\n' will be used as end-of-line character.
+
+	The right mode will be set up automatically when you open (visit)
+	a file. But when you going to a create new one, you can switch the
+	end-of-line mode. Also you can switch the mode of any existing
+	file.
+	
+By default new files are created in UNIX mode. To change this
+behaviour add in your ~/.eemacs file the next line:
+
+	dos-end-of-line 1
+	
+
+** Getting info and help
+
+Show help		M-H
+
+	Shows help file with a short keys description.
+
+Show Version		C-X ?
+
+	This command shows the version information of eEmacs.
+	
+Show file name		M-?
+
+	Shows the name of the file loaded into the current buffer.
+
+
+** Keyboard macro execution
+
+Also available is one keyboard macro, which allows you to record a
+number of commands as they are executed and play them back.
+
+Begin Macro		C-X (
+
+	Start recording keyboard macro.
+
+End Macro		C-X )
+
+	Stop recording keyboard macro.
+
+Execute Macro		C-X E
+
+	Execute keyboard macro.
+
+
+** Modes and customization
+
+Autofill mode	C-C C-F
+
+	In this mode, when the cursor crosses the current fill
+	column (which defaults to 72) it will, at the next word break,
+	automatically insert a newline, dragging the last word down with
+	it. This makes typing prose much easier since the newline
+	(<Enter>) only needs to be used between paragraphs.
+
+Case sensitive mode	C-C C-C
+
+	Normally case is insignificant during the various search
+	commands. This forces all matching to take character case into
+	account.
+
+Autoindent mode		C-C O
+
+	Autoindent mode changes behavor of <Enter> key. When
+	Autoindent mode is on, eEmacs will insert a leading space equal to
+	the previous line (Just like C-J does). Autoindent mode makes
+	typing of source code more comfortable.
+
+Show parenthesis mode C-C M
+
+	eEmacs can help you matching parenthesis. If this mode in
+	on, when you type one of the characters: ')', ']', '}' the editor
+	shows an matching open parenthesis. If it is on the screen, cursor
+	will be moved to it for about one second, if it is off the screen,
+	the editor shows the line with an open parenthesis in the echo
+	area. If no matching parenthesis the message "Unmatched" will be
+	shown.
+
+* MODES
+
+Modes are used to customize behavour of the editor. Modes can be
+global and local. Global modes are saved to your .eemacs file, the
+local modes can be set up usiong `-*-' notation at the first line
+of the file.
+
+The local modes can be: auto fill, auto indent and special (word
+wrap modes) and :#wiki-mode:. 
+
+See :#Local Variables in Files: section below.
+
+
+** Auto Fill Mode
+
+File Local Mode: -*- mode: fill; -*-
+
+Fill mode causes newlines to be added automatically at word breaks
+when text is added at the end of a line, extending past the right
+margin. Auto fill is useful for editing text and documentation
+files.
+
+
+** Auto Indent Mode
+
+File Local Mode: -*- mode: indent; -*-
+
+Indent mode binds RET so that each new line is indented to the same
+level as the preceeding line. This mode is useful for editing code.
+
+
+** Case Sensitive Mode
+
+Toggles case sensitivity in search and replace operations
+(including regular expressions).
+
+
+** Match Parenthesis Mode
+
+If this mode in on, when you type one of the characters: ')', ']',
+'}' the editor shows an matching open parenthesis. If it is on the
+screen, cursor will be moved to it for about one second, if it is
+off the screen, the editor shows the line with an open parenthesis
+in the echo area. If no matching parenthesis the message
+"Unmatched" will be shown.
+
+
+** Special Mode (Word Wrap Mode)
+
+File Local Mode: -*- mode: wrap; -*-
+
+Many text editors save text files in format "one paragraph--one
+line". eEmacs has no word wrap mode and there was no oportunity to
+edit such files with very long lines. But since version 2.6 eEmacs
+has "special mode" when long lines are broken into several lines
+each per fillcol characters with blank lines between paragraph when
+reading from file. And they are bounded together into one line when
+file has been saved.
+
+Thus you can freely edit these files, re-format paragraphs etc.
+When file has been saved each paragraph has been convert into a
+single line.
+
+To turn special mode on press C-C ! key before one of file
+read/write command. Then find file C-X C-F and edit it. In the mode
+line you will see `W' when special mode is on. Press C-X C-S or C-X
+C-W to save it.
+
+This mode can be local only.
+
+Also you can convert files from formatted form (like this) to "one
+paragraph--one line" and vice versa. Simply toggle special mode
+before saving file.
+
+
+** Inverted Cursor Mode
+
+By default eEmacs since version 2.5 has a bold inverted cursor
+which may be useful on the small screen sizes. But if you do not
+want to use it, you can switch this mode off. Save `.eemacs' file,
+open it in the editor, change parameter `inverted-cursor' to zero,
+save the file and relaunch eEmacs.
+
+
+** View mode
+
+When the current buffer is read-only the editor switches to View
+mode. In this mode you can use Spacebar or Enter instead of C-V or
+Page Down key and DEL key instead of M-V or Page Up. This works for
+all read-only buffers including *Help*.
+
+
+** Wiki-mode
+
+Wiki-mode simulates wiki-pages (editable HTML-pages) and is
+similar to Info mode and Wiki mode of GNU Emacs.
+
+Buffer in wiki-mode is read-only. You can browse it using
+cursor keys and special commands.
+
+Text in wiki-style document is splitted on nodes. Each node has a
+headline. Headlines are the lines with asterisks at the first
+position. The rest of the line is the node name. Node name must
+begin and end with non-space character. Node name can contain any
+characters except new-line.
+
+Text can contain hyperlinks to other node. Hyperlink begins
+and end with ':'. No spaces allowed between ':' and first
+or last character of the hyperlink. Hyperlink can contain another
+file name and/or node name inside current or another file.
+
+Hyperlink format is similar to URL: filename#nodename. For example,
+the link :eEmacsRefMan: is a link to the file, :eEmacsRefMan#About:
+is a link to the node About in eEmacsRefMan, and finally :#About:
+is a local link to the node About in the current file.
+
+To turn wiki-mode on immediately after file is loaded, put
+the following line to the first line of the file:
+
+    -*- mode: wiki; -*-
+
+See also :#Local Variables in Files: section below.
+You can turn wiki-mode on and off manually using C-c e.
+
+Commands in wiki-mode:
+
+    SPACE     Scroll down
+    DEL       Scroll up
+    RET       Follow hyperlink under cursor
+    n         Next node
+    p         Previous node
+    b         Go to beginning of node
+    g         Go to node by name
+    l         Get node list (in popup-window)
+    TAB       Move cursor to the next hyperlink
+    M-TAB     Move cursor  to the previous hyperlink
+    e (C-c e) Toggle edit mode
+    ?         Show wiki mode line with the name of current node
+    
+'Get node list command' works like 'occur' command: it displays
+node list in a separate buffer *List*.
+
+The buffer *List* contaning the output serves as a menu. Switch to
+the buffer *List*, position point to a node and type <Enter>.
+This switches to the buffer that was searched and moves point to
+the original line of the chosen node.
+
+
+** Local Variables in Files
+
+eEmacs has a limited file local variables support.
+
+A file can specify local variable values for use when you edit the
+file with eEmacs. Visiting the file checks for local variable
+specifications; it automatically makes these variables local to the
+buffer, and sets them to the values specified in the file.
+
+There are only one way to specify local variable values: in the
+first line. Here's how to specify them:
+
+    -*- mode: MODENAME; VAR: VALUE; ... -*-
+
+You can specify any number of variables/value pairs in this way,
+each pair with a colon and semicolon as shown above. `mode:
+MODENAME;' specifies the major mode. Here is an example that
+specifies autofill mode and sets fill column with 50:
+
+     -*- mode: fill; fill-column: 50; -*-
+     
+This text should occure at the first line (or at the second if the
+file begins with "#!"). If there is a source code you can put it
+into the comment like this:
+
+     /* -*- mode: fill; fill-column: 50; -*- */
+     
+or even
+
+     <html> <!-- -*- mode: fill; fill-bcolumn: 50; -*- -->
+     
+You can turn on the following modes:
+    wrap     Turn on "special mode"
+    fill     Turn on autofill mode
+    indent   Turn on autoindent
+    wiki     Turn on wiki-mode
+
+Customizable variables:
+    fill-column  Set fill column
+    coding       Set coding system for the file (see :#Coding systems:)
+    wiki-head    Set wiki-mode node headline mark (default '*')
+    wiki-href    Set wiki-mode hyperlink mark (default ':')
+    wiki-link    Set wiki-mode separator between filename and node
+                 name in hyperlinks
+
+* WORKING WITH NATIONAL KEYBOARDS
+
+Since version 2.9 eEmacs allows to customize recoding of command
+letters. In the earlier versions when you switches keyboard to your
+national layout (for example, Russian), you cannot use many of the
+eEmacs commands (such as M-<letter> or C-x <letter>). The program
+says "Key not bound". And you need constantly toggle the keyboard
+between latin and national layouts. 
+
+Now you can tell eEmacs what letters of your national alphabet
+bound to the same key of letters of latin alphabet on your keyboard
+(for example, Russian letter 'I-kratkiy' bound to the same key as
+latin 'Q', Russian 'F' bound to the same key as latin 'A' and so
+on).
+
+The way to switch this recoding on is your `~/.eemacs' file. Create
+this file if it does not exist (launch eEmacs and press C-c C-s),
+then open it for editing, and write down parameter `translate' with
+the string of characters. This string should contain upper case
+letters of your national alphabet in accordance with latin
+alphabet, i.e. the first should be the letter bound to the same key
+as latin 'A', the second -- 'B' etc. If no national letter accorded
+to the latin put asterisk, dash or the latin letter itself.
+
+
+* CODING SYSTEMS
+
+The latests versions of eEmacs allow edit files in different
+encodings. There is one default "native" encoding (depending on the
+platform it can be "win" or "koi8").
+
+There are two commands to switch between encodings:
+
+    C-c c    Set default encoding (used for new buffers)
+    C-c f    Set encoding for the file in the current buffer
+    
+All encodings are stored in ~/.eemacs.enc file. Or you can put all
+content of this file into your ~/.eemacs file.
+
+You can set default encoding in your ~/.eemacs file this way:
+    coding encoding-name
+    
+The local variable 'coding' can be used to set encoding for the
+file. See :#Local variables in files:. This is the common way to
+set file coding system in GNU Emacs and eEmacs.
+
+
+Format of the ~/.eemacs.enc
+
+There are two directives in the file: encoding and alias. The first
+one defines coding system and looks like
+
+    encoding name XXXXXXX...XXX
+    
+where name is the name of encoding and XXXXX is characters
+(128-255) to decode from the encoding to the native encoding
+(for Russians Windows-1251 for Epoc and KOI-8 for Linux).
+
+An alias is another name of an encoding. It looks like this:
+
+    alias alias_name encoding_name
+
+
+* SYNTAX OF REGULAR EXPRESSIONS
+
+Regular expressions have a syntax in which a few characters are
+special constructs and the rest are "ordinary". An ordinary
+character is a simple regular expression which matches that same
+character and nothing else. The special characters are `$', `^',
+`.', `*', `+', `?', `[', `]' and `\'. Any other character appearing
+in a regular expression is ordinary, unless a `\' precedes it.
+
+For example, `f' is not a special character, so it is ordinary, and
+therefore `f' is a regular expression that matches the string `f'
+and no other string. (It does _not_ match the string `ff'.)
+Likewise, `o' is a regular expression that matches only `o'. (When
+case distinctions are being ignored, these regexps also match `F'
+and `O', but we consider this a generalization of "the same
+string," rather than an exception.)
+
+Any two regular expressions A and B can be concatenated. The result
+is a regular expression which matches a string if A matches some
+amount of the beginning of that string and B matches the rest of
+the string.
+
+As a simple example, we can concatenate the regular expressions `f'
+and `o' to get the regular expression `fo', which matches only the
+string `fo'. Still trivial. To do something nontrivial, you need to
+use one of the special characters. Here is a list of them.
+
+`. (Period)'
+     is a special character that matches any single character
+     except a newline. Using concatenation, we can make regular
+     expressions like `a.b', which matches any three-character
+     string that begins with `a' and ends with `b'.
+
+`*'
+     is not a construct by itself; it is a postfix operator that
+     means to match the preceding regular expression repetitively
+     as many times as possible. Thus, `o*' matches any number of
+     `o's (including no `o's).
+
+     `*' always applies to the _smallest_ possible preceding
+     expression. Thus, `fo*' has a repeating `o', not a repeating
+     `fo'. It matches `f', `fo', `foo', and so on.
+
+     The matcher processes a `*' construct by matching,
+     immediately, as many repetitions as can be found. Then it
+     continues with the rest of the pattern. If that fails,
+     backtracking occurs, discarding some of the matches of the
+     `*'-modified construct in case that makes it possible to match
+     the rest of the pattern. For example, in matching `ca*ar'
+     against the string `caaar', the `a*' first tries to match all
+     three `a's; but the rest of the pattern is `ar' and there is
+     only `r' left to match, so this try fails. The next
+     alternative is for `a*' to match only two `a's. With this
+     choice, the rest of the regexp matches successfully.
+
+`+'
+     is a postfix operator, similar to `*' except that it must
+     match the preceding expression at least once. So, for example,
+     `ca+r' matches the strings `car' and `caaaar' but not the
+     string `cr', whereas `ca*r' matches all three strings.
+
+`?'
+     is a postfix operator, similar to `*' except that it can match
+     the preceding expression either once or not at all. For
+     example, `ca?r' matches `car' or `cr'; nothing else.
+
+`[ ... ]'
+     is a "character set", which begins with `[' and is terminated
+     by `]'. In the simplest case, the characters between the two
+     brackets are what this set can match.
+
+     Thus, `[ad]' matches either one `a' or one `d', and `[ad]*'
+     matches any string composed of just `a's and `d's (including
+     the empty string), from which it follows that `c[ad]*r'
+     matches `cr', `car', `cdr', `caddaar', etc.
+
+     You can also include character ranges in a character set, by
+     writing the starting and ending characters with a `-' between
+     them. Thus, `[a-z]' matches any lower-case ASCII letter.
+     Ranges may be intermixed freely with individual characters, as
+     in `[a-z$%.]', which matches any lower-case ASCII letter or
+     `$', `%' or period.
+
+     Note that the usual regexp special characters are not special
+     inside a character set. A completely different set of special
+     characters exists inside character sets: `]', `-' and `^'.
+
+     To include a `]' in a character set, you must make it the
+     first character. For example, `[]a]' matches `]' or `a'. To
+     include a `-', write `-' as the first or last character of the
+     set, or put it after a range. Thus, `[]-]' matches both `]'
+     and `-'.
+
+     To include `^' in a set, put it anywhere but at the beginning
+     of the set. (At the beginning, it complements the set--see
+     below.)
+
+     When you use a range in case-insensitive search, you should
+     write both ends of the range in upper case, or both in lower
+     case, or both should be non-letters. The behavior of a
+     mixed-case range such as `A-z' is somewhat ill-defined.
+
+`[^ ... ]'
+     `[^' begins a "complemented character set", which matches any
+     character except the ones specified. Thus, `[^a-z0-9A-Z]'
+     matches all characters _except_ ASCII letters and digits.
+
+     `^' is not special in a character set unless it is the first
+     character. The character following the `^' is treated as if it
+     were first (in other words, `-' and `]' are not special
+     there).
+
+     A complemented character set can match a newline, unless
+     newline is mentioned as one of the characters not to match.
+     This is in contrast to the handling of regexps in programs
+     such as `grep'.
+
+`^'
+     is a special character that matches the empty string, but only
+     at the beginning of a line in the text being matched.
+     Otherwise it fails to match anything. Thus, `^foo' matches a
+     `foo' that occurs at the beginning of a line.
+
+`$'
+     is similar to `^' but matches only at the end of a line. Thus,
+     `x+$' matches a string of one `x' or more at the end of a
+     line.
+
+`\'
+     has two functions: it quotes the special characters (including
+     `\'), and it introduces additional special constructs.
+
+     Because `\' quotes special characters, `\$' is a regular
+     expression that matches only `$', and `\[' is a regular expression
+     that matches only `[', and so on.
+
+Note: for historical compatibility, special characters are treated
+as ordinary ones if they are in contexts where their special
+meanings make no sense. For example, `*foo' treats `*' as ordinary
+since there is no preceding expression on which the `*' can act. It
+is poor practice to depend on this behavior; it is better to quote
+the special character anyway, regardless of where it appears.
+
+For the most part, `\' followed by any character matches only that
+character. However, there are several exceptions: two-character
+sequences starting with `\' that have special meanings. The second
+character in the sequence is always an ordinary character when used
+on its own. Here is a table of `\' constructs.
+
+`\|'
+     specifies an alternative. Two regular expressions A and B with
+     `\|' in between form an expression that matches some text if
+     either A matches it or B matches it. It works by trying to
+     match A, and if that fails, by trying to match B.
+
+     Thus, `foo\|bar' matches either `foo' or `bar' but no other
+     string.
+
+     `\|' applies to the largest possible surrounding expressions.
+     Only a surrounding `\( ... \)' grouping can limit the grouping
+     power of `\|'.
+
+     Full backtracking capability exists to handle multiple uses of
+     `\|'.
+
+`\( ... \)'
+     is a grouping construct that serves three purposes:
+
+       1. To enclose a set of `\|' alternatives for other
+          operations. Thus, `\(foo\|bar\)x' matches either `foox'
+          or `barx'.
+
+       2. To enclose a complicated expression for the postfix
+          operators `*', `+' and `?' to operate on. Thus,
+          `ba\(na\)*' matches `bananana', etc., with any (zero or
+          more) number of `na' strings.
+
+       3. To record a matched substring for future reference.
+
+     This last application is not a consequence of the idea of a
+     parenthetical grouping; it is a separate feature that is
+     assigned as a second meaning to the same `\( ... \)'
+     construct. In practice there is usually no conflict between
+     the two meanings.
+
+`\`'
+     matches the empty string, but only at the beginning of the
+     buffer or string being matched against.
+
+`\''
+     matches the empty string, but only at the end of the buffer or
+     string being matched against.
+
+`\b'
+     matches the empty string, but only at the beginning or end of
+     a word. Thus, `\bfoo\b' matches any occurrence of `foo' as a
+     separate word. `\bballs?\b' matches `ball' or `balls' as a
+     separate word.
+
+     `\b' matches at the beginning or end of the buffer regardless
+     of what text appears next to it.
+
+`\B'
+     matches the empty string, but _not_ at the beginning or end of
+     a word.
+
+`\<'
+     matches the empty string, but only at the beginning of a word.
+     `\<' matches at the beginning of the buffer only if a
+     word-constituent character follows.
+
+`\>'
+     matches the empty string, but only at the end of a word. `\>'
+     matches at the end of the buffer only if the contents end with
+     a word-constituent character.
+
+`\w'
+     matches any word-constituent character. The syntax table
+     determines which characters these are.
+
+`\W'
+     matches any character that is not a word-constituent.
+
+The constructs that pertain to words and syntax are controlled by
+the setting of the syntax table.
+
+Here is a complicated regexp, that can be used to recognize the end
+of a sentence together with any whitespace that follows. 
+
+     "[.?!][]"')]*\($\| $\|^I\|  \)[ ^I^J]*"
+     
+This contains four parts in succession: a character set matching
+period, `?', or `!'; a character set matching close-brackets,
+quotes, or parentheses, repeated zero or more times; a set of
+alternatives within backslash-parentheses that matches either
+end-of-line, a space at the end of a line, a tab, or two spaces;
+and a character set matching whitespace characters, repeated any
+number of times.
+
+To enter the same regexp you would type <TAB> to enter a tab, and
+`C-j' to enter a newline. (<TAB> and `C-j' should be preceded by a
+`C-q', to prevent eEmacs from running the command bound to a
+newline.)
+
+                        --- END OF FILE ---
