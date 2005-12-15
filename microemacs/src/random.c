@@ -567,7 +567,7 @@ int
 transLines(int f, int n)
 {
     meLine *ln1, *ln2 ;
-    meInt i, j ;
+    meInt i, j, ret ;
     
     if((n<0) && (windowBackwardLine(meTRUE, 1) <= 0))
         return meFALSE ;
@@ -598,6 +598,7 @@ transLines(int f, int n)
             /* move back over one swapped aswell */
             break ;
     }
+    ret = (i == j) ;
 #if MEOPT_UNDO
     if(i > 0)
     {
@@ -623,7 +624,7 @@ transLines(int f, int n)
     }
 #endif
     update(meFALSE) ;
-    return (i == j) ? meTRUE:meFALSE ;
+    return ret ;
 }
 
 int
