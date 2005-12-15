@@ -53,10 +53,10 @@ set-variable .fhook-jst.comment "|>||>|> | <||"
 set-variable .fhook-jst.insert-emphasis 1
 
 set-variable .fhook-jst.command-flag  "|bo|bo|thb|hb|thb|th|th|th|th|th|h|h|thb|thb|thb|thb|thb|h|h|th|h|h|thb|thb|thb|thb|thb|"
-set-variable .fhook-jst.command-name  "|jst-fill-paragraph|jst-fill-paragraph|doc-mode-state|spell-buffer|paragraph-to-line|jst-to-html|jst-to-latex|jst-to-rtf|jst-to-text||||fill-paragraph-both|fill-paragraph-center|fill-paragraph-left|fill-paragraph-gutter|fill-paragraph-right|fill-paragraph|ifill-paragraph||||doc-set-justify|doc-set-justify|doc-set-justify|doc-set-justify|doc-set-justify|"
+set-variable .fhook-jst.command-name  "|jst-fill-paragraph|jst-fill-paragraph|doc-mode-state|spell-buffer|paragraph-to-line|jst-to-htm|jst-to-html|jst-to-latex|jst-to-rtf||||fill-paragraph-both|fill-paragraph-center|fill-paragraph-left|fill-paragraph-gutter|fill-paragraph-right|fill-paragraph|ifill-paragraph||||doc-set-justify|doc-set-justify|doc-set-justify|doc-set-justify|doc-set-justify|"
 set-variable .fhook-jst.command-nbind "|||||||||||||||||||||||0|1|2|3|4|"
 set-variable .fhook-jst.command-kbind "|esc q|esc o|C-c C-h|C-c C-s|C-c o||||||||C-c C-b|C-c C-c|C-c C-l|C-c C-g|C-c C-r||||||C-c a|C-c b|C-c c|C-c l|C-c n|"
-set-variable .fhook-jst.command-desc  "|||\HShow Current Settings|Spell Check Buffer|Fill Paragraph for WP Export|Export to HTML|Export to LaTeX|Export to RTF|Export to Plain Text||To format current paragraph:||Justify Both Margins|Justify Center|Justify Left|Justify Gutter (on left margin)|Justify Right|Format Paragraph in Current Mode|Intelligently Format Paragraph||To change justification mode:||Change to auto justification [DEFAULT]|Change to both justification|Change to center justification|Change to left justification|Change to none justification|"
+set-variable .fhook-jst.command-desc  "|||\HShow Current Settings|Spell Check Buffer|Fill Paragraph for WP Export|Export to HTM|Export to HTML|Export to LaTeX|Export to RTF||To format current paragraph:||Justify Both Margins|Justify Center|Justify Left|Justify Gutter (on left margin)|Justify Right|Format Paragraph in Current Mode|Intelligently Format Paragraph||To change justification mode:||Change to auto justification [DEFAULT]|Change to both justification|Change to center justification|Change to left justification|Change to none justification|"
 
 ; setup item-list
 set-variable .fhook-jst.item-list-s1 "^[ \t]*\\([0-9]+\\)\\.0[ \t]+\\(\\S.*\\)"
@@ -69,86 +69,204 @@ set-variable .fhook-jst.item-list-s4 "^[ \t]*Appendix \\([[:alpha:]].*\\)"
 set-variable .fhook-jst.item-list-r4 "Appx \ecB\\1\ecA"
 
 !if &sin "f" .fhook-jst.setup
-    set-variable .fhook-jst.collapse-open  "^[ \t]*\\(Appendix[ \t]+[[:alpha:]]\\|[0-9]\\.[0-9.]*\\)[ \t]+\\w"
-    set-variable .fhook-jst.collapse-close "^[ \t]*\\(Appendix[ \t]+[[:alpha:]]\\|[0-9]\\.[0-9.]*\\)[ \t]+\\w\\|\\'"
+    set-variable .fhook-jst.collapse-open  "^=\\(c? .+ \\|=c? .+ =\\|==c? .+ ==\\)=$"
+    set-variable .fhook-jst.collapse-close "^=\\(c? .+ \\|=c? .+ =\\|==c? .+ ==\\)=$\\|\\'"
     set-variable .fhook-jst.collapse-mnext "-1"
 !endif
 
 !if &and &sin "h" .fhook-jst.setup &band .hilight.flags 0x02 
     !if &not &exist .hilight.jst
         set-variable .hilight.jst  &pinc .hilight.next 1
-        set-variable .hilight.jst1 &pinc .hilight.next 1
-        set-variable .hilight.jst2 &pinc .hilight.next 1
-        set-variable .hilight.jst3 &pinc .hilight.next 1
+        set-variable .hilight.jstT &pinc .hilight.next 1
+        set-variable .hilight.jstM &pinc .hilight.next 1
+        set-variable .hilight.jstB &pinc .hilight.next 1
+        set-variable .hilight.jstI &pinc .hilight.next 1
+        set-variable .hilight.jstU &pinc .hilight.next 1
+        set-variable .hilight.jstBI &pinc .hilight.next 1
+        set-variable .hilight.jstBU &pinc .hilight.next 1
+        set-variable .hilight.jstIU &pinc .hilight.next 1
+        set-variable .hilight.jstBIU &pinc .hilight.next 1
     !endif
     ; Define the hilighting. Note that we use a look back so that
     ; we can process the inserted schemes if necessary. Ordinarily
     ; we do not need it. This will only hurt branch tokens, as there
     ; are none below then there is no adverse effect.
     0 hilight  .hilight.jst 2 100                               $global-scheme
-    hilight .hilight.jst 0x22 "[0-9]+\\.[0-9.]+[ \t]+\\S"       .scheme.header
-    hilight .hilight.jst 0x22 "Appendix [[:alpha:]]"            .scheme.header
-    hilight .hilight.jst 0x22 "===+$"                           .scheme.header
-    hilight .hilight.jst 0x22 "---+$"                           .scheme.header
-    hilight .hilight.jst 0x20 "*\\}[ \t]+\\S"                   .scheme.no1
-    hilight .hilight.jst 0x20 "[0-9]+[]).]\\}[ \t]+\\S"         .scheme.no1
-    hilight .hilight.jst 0x20 "[a-z][]).]\\}[ \t]+\\S"          .scheme.no1
-    hilight .hilight.jst 0x20 "[A-Z][]).]\\}[ \t]+\\S"          .scheme.no1
-    hilight .hilight.jst 0x20 "[IVXLC]+[]).]\\}[ \t]+\\S"       .scheme.no1
-    hilight .hilight.jst 0x20 "[ivxlc]+[]).]\\}[ \t]+\\S"       .scheme.no1
-    hilight .hilight.jst 0x20 "\\[\\S[^]\n]*]"                  .scheme.no1
-    hilight .hilight.jst 0x22 "^___+$"                          .scheme.no1
-    hilight .hilight.jst 0x40 "^\x0c$" "<<Page-Break>>"         .scheme.keyword
-    hilight .hilight.jst 0x00 "\\*\\S[^*\n]*\\*"                .scheme.bold
-    hilight .hilight.jst 0x00 "~\\S[^~\n]*~"                    .scheme.italic
-    hilight .hilight.jst 0x00 "_\\S[^_\n]*_"                    .scheme.under
-    hilight .hilight.jst 0x00 "@\\S[^@\n]*@"                    .scheme.no2
-    hilight .hilight.jst 0x04 "`" "'" ""                        .scheme.bold-italic
-    hilight .hilight.jst 0x00 "^\\s*\\[\\w*\\]"                 .scheme.no1
-;    hilight .hilight.jst 0x804 "\"" "\"" "\\"                   .scheme.string
-;    hilight .hilight.jst 0x00 "'.'"                             .scheme.quote
-;    hilight .hilight.jst 0x00 "'\\\\.'"                         .scheme.quote
-    hilight .hilight.jst 0x02 "^>"                              .scheme.comment
-    hilight .hilight.jst 0x80 "^>!" .hilight.jst2               .scheme.hide
-    hilight .hilight.jst 0x04 "^>!>" "^>end>" ""                $global-scheme
-    hilight .hilight.jst 0x80 "^>@" .hilight.jst1               .scheme.no2
-    hilight .hilight.jst 0x04 "^>@>" "^>end>" ""                .scheme.no2
-    hilight .hilight.jst 0x80 "^>@\\." .hilight.jst1            .scheme.no2
-    hilight .hilight.jst 0x04 "^>@\\.>" "^>end>" ""             .scheme.no2
-    hilight .hilight.jst 0x00 "^>\\."                           .scheme.hide
-    hilight .hilight.jst 0x00 "^>\\.>"                          .scheme.hide
-    hilight .hilight.jst 0x00 "^>\\.@"                          .scheme.hide
-    hilight .hilight.jst 0x00 "^>\\.@>"                         .scheme.hide
-    hilight .hilight.jst 0x00 "^>jst>"                          .scheme.hide
+    hilight .hilight.jst 0 "\\\\."                              $global-scheme
+    hilight .hilight.jst 0x890 "\\*\\*" .hilight.jstB           .scheme.hide
+    hilight .hilight.jst 0x890 "//" .hilight.jstI               .scheme.hide
+    hilight .hilight.jst 0x890 "__" .hilight.jstU               .scheme.hide
+    hilight .hilight.jst 0x890 "@@" .hilight.jstM               .scheme.hide
+    hilight .hilight.jst 0x814 "\"\"" "\"\"" ""                 .scheme.quote
+    hilight .hilight.jst 0x814 "``" "``" "\\"                   .scheme.no2
+    hilight .hilight.jst 0x814 ",," ",," "\\"                   .scheme.no2
+    ; style paragraphs
+    hilight .hilight.jst 0x020 "!"                              .scheme.hide
+    hilight .hilight.jst 0x020 "!\\S+"                          .scheme.error
+    hilight .hilight.jst 0x024 "!\\* ." "^\\s*$" ""             .scheme.bold
+    hilight .hilight.jst 0x024 "!/ ." "^\\s*$" ""               .scheme.italic
+    hilight .hilight.jst 0x024 "!_ ." "^\\s*$" ""               .scheme.under
+    hilight .hilight.jst 0x024 "!\\*/ ." "^\\s*$" ""            .scheme.bold-italic
+    hilight .hilight.jst 0x024 "!\\*_ ." "^\\s*$" ""            .scheme.bold-under
+    hilight .hilight.jst 0x024 "!/_ ." "^\\s*$" ""              .scheme.italic-under
+    hilight .hilight.jst 0x024 "!\\*/_ ." "^\\s*$" ""           .scheme.bold-italic-under
+    hilight .hilight.jst 0x024 "!@ ." "^\\s*$" ""               .scheme.no2
+    hilight .hilight.jst 0x024 "!\" ." "^\\s*$" ""              .scheme.quote
+    hilight .hilight.jst 0x024 "!\\*\" ." "^\\s*$" ""           .scheme.bold
+    hilight .hilight.jst 0x024 "!\"@ ." "^\\s*$" ""             .scheme.no2
+    hilight .hilight.jst 0x024 "!@\" ." "^\\s*$" ""             .scheme.no2
+    ; style blocks
+    hilight .hilight.jst 0x00 "^!end!"                          .scheme.hide
+    hilight .hilight.jst 0x8b0 "!\\*$" .hilight.jstB            .scheme.hide
+    hilight .hilight.jst 0x8b0 "!/$" .hilight.jstI              .scheme.hide
+    hilight .hilight.jst 0x8b0 "!_$" .hilight.jstU              .scheme.hide
+    hilight .hilight.jst 0x8b0 "!\\*/$" .hilight.jstBI          .scheme.hide
+    hilight .hilight.jst 0x8b0 "!\\*_$" .hilight.jstBU          .scheme.hide
+    hilight .hilight.jst 0x8b0 "!/_$" .hilight.jstIU            .scheme.hide
+    hilight .hilight.jst 0x8b0 "!\\*/_$" .hilight.jstBIU        .scheme.hide
+    hilight .hilight.jst 0x8b0 "!@$" .hilight.jstM              .scheme.hide
+    hilight .hilight.jst 0x024 "!\"$" "^[!>]end[!>]" ""         .scheme.quote
+    hilight .hilight.jst 0x024 "!\\*\"$" "^[!>]end[!>]" ""      .scheme.bold
+    hilight .hilight.jst 0x024 "!@\"$" "^[!>]end[!>]" ""        .scheme.no2
+    hilight .hilight.jst 0x024 "!\"@$" "^[!>]end[!>]" ""        .scheme.no2
+    ; justification paragraphs
+    hilight .hilight.jst 0x020 ">"                              .scheme.hide
+    hilight .hilight.jst 0x020 ">\\S+"                          .scheme.error
+    hilight .hilight.jst 0x020 ">c"                             .scheme.hide
+    hilight .hilight.jst 0x020 ">r"                             .scheme.hide
+    hilight .hilight.jst 0x024 ">\\* ." "^\\s*$" ""             .scheme.bold
+    hilight .hilight.jst 0x024 ">/ ." "^\\s*$" ""               .scheme.italic
+    hilight .hilight.jst 0x024 ">_ ." "^\\s*$" ""               .scheme.under
+    hilight .hilight.jst 0x024 ">\\*/ ." "^\\s*$" ""            .scheme.bold-italic
+    hilight .hilight.jst 0x024 ">\\*_ ." "^\\s*$" ""            .scheme.bold-under
+    hilight .hilight.jst 0x024 ">/_ ." "^\\s*$" ""              .scheme.italic-under
+    hilight .hilight.jst 0x024 ">\\*/_ ." "^\\s*$" ""           .scheme.bold-italic-under
+    hilight .hilight.jst 0x024 ">@ ." "^\\s*$" ""               .scheme.no2
+    hilight .hilight.jst 0x024 ">\" ." "^\\s*$" ""              .scheme.quote
+    hilight .hilight.jst 0x024 ">\\*\" ." "^\\s*$" ""           .scheme.bold
+    hilight .hilight.jst 0x024 ">\"@ ." "^\\s*$" ""             .scheme.no2
+    hilight .hilight.jst 0x024 ">@\" ." "^\\s*$" ""             .scheme.no2
+    ; justification blocks
+    hilight .hilight.jst 0x20 ">jst>"                           .scheme.hide
     hilight .hilight.jst 0x00 "^>end>"                          .scheme.hide
-    hilight .hilight.jst 0x00 "<<>>"                            .scheme.hide
-    hilight .hilight.jst 0x00 "<<.>>"                           $global-scheme
-    hilight .hilight.jst 0x04 "<<fb>>" "<</fb>>" ""             .scheme.bold
-    hilight .hilight.jst 0x04 "<<fe>>" "<</fe>>" ""             .scheme.bold-italic
-    hilight .hilight.jst 0x04 "<<fi>>" "<</fi>>" ""             .scheme.italic
-    hilight .hilight.jst 0x04 "<<fm>>" "<</fm>>" ""             .scheme.no2
-    hilight .hilight.jst 0x04 "<<fu>>" "<</fu>>" ""             .scheme.under
-    hilight .hilight.jst 0x80 "<<[[:alnum:]]*:?" .hilight.jst3  .scheme.keyword
-    hilight .hilight.jst 0x80 "<</[[:alnum:]]*:?" .hilight.jst3 .scheme.keyword
+    hilight .hilight.jst 0x8b0 ">\\*$" .hilight.jstB            .scheme.hide
+    hilight .hilight.jst 0x8b0 ">/$" .hilight.jstI              .scheme.hide
+    hilight .hilight.jst 0x8b0 ">_$" .hilight.jstU              .scheme.hide
+    hilight .hilight.jst 0x8b0 ">\\*/$" .hilight.jstBI          .scheme.hide
+    hilight .hilight.jst 0x8b0 ">\\*_$" .hilight.jstBU          .scheme.hide
+    hilight .hilight.jst 0x8b0 ">/_$" .hilight.jstIU            .scheme.hide
+    hilight .hilight.jst 0x8b0 ">\\*/_$" .hilight.jstBIU        .scheme.hide
+    hilight .hilight.jst 0x8b0 ">@$" .hilight.jstM              .scheme.hide
+    hilight .hilight.jst 0x024 ">\"$" "^>end>" ""               .scheme.quote
+    hilight .hilight.jst 0x024 ">\\*\"$" "^>end>" ""            .scheme.bold
+    hilight .hilight.jst 0x024 ">@\"$" "^>end>" ""              .scheme.no2
+    hilight .hilight.jst 0x024 ">\"@$" "^>end>" ""              .scheme.no2
+    ; Headings
+    hilight .hilight.jst 0x22 "= ."                             .scheme.header
+    hilight .hilight.jst 0x22 "=c ."                            .scheme.header
+    hilight .hilight.jst 0x22 "== ."                            .scheme.header
+    hilight .hilight.jst 0x22 "==c ."                           .scheme.header
+    hilight .hilight.jst 0x22 "=== ."                           .scheme.header
+    hilight .hilight.jst 0x22 "===c ."                          .scheme.header
+    ; Symbols
+    hilight .hilight.jst 0x00  "\\[\\[nf]]"                     .scheme.prepro
+    hilight .hilight.jst 0x00  "\\[\\[nl]]"                     .scheme.prepro
+    hilight .hilight.jst 0x00  "\\[\\[np]]"                     .scheme.prepro
+    hilight .hilight.jst 0x00  "\\[\\[toc]]"                    .scheme.prepro
+    hilight .hilight.jst 0x22 "---+$"                           .scheme.prepro
+    ; Tag
+    hilight .hilight.jst 0x00  "\\[\\w+]"                       .scheme.no1
+    hilight .hilight.jst 0x890 "\\[\\w+ " .hilight.jstT         .scheme.no1
+    0 hilight .hilight.jstT 0                                   .scheme.variable
+    hilight .hilight.jstT 0x80 "]" .hilight.jst                 .scheme.no1
+    hilight .hilight.jstT 0x804 "\"" "\"" "\\"                  .scheme.variable
+    
+    ; Item lists
+    hilight .hilight.jst 0x20 "\\.\\} "                         .scheme.keyword
+    hilight .hilight.jst 0x20 "\\*\\.\\} "                      .scheme.keyword
+    hilight .hilight.jst 0x20 "1\\.\\} "                        .scheme.keyword
+    hilight .hilight.jst 0x20 "a\\.\\} "                        .scheme.keyword
+    hilight .hilight.jst 0x20 "A\\.\\} "                        .scheme.keyword
+    hilight .hilight.jst 0x20 "i\\.\\} "                        .scheme.keyword
+    hilight .hilight.jst 0x20 "I\\.\\} "                        .scheme.keyword
+    hilight .hilight.jst 0x32 ":\\.\\} "                        .scheme.keyword
+    
     ; HTTP links etc.
-    hilight .hilight.jst 0    "http:[-@~_a-zA-Z%\\.:\\/0-9]*"   .scheme.link
-    hilight .hilight.jst 0    "https:[-@~_a-zA-Z%\\.:\\/0-9]*"  .scheme.link
-    hilight .hilight.jst 0    "ftp:[-@_a-zA-Z%\\.:\\/0-9]+"     .scheme.link
-    hilight .hilight.jst 0    "mailto:[-@_a-zA-Z%\\.:\\/0-9]+"  .scheme.link
-    hilight .hilight.jst 0    "news:[-_a-zA-Z%\\.:\\\\/@0-9]+"  .scheme.link 
-    ; >@ block
-    0 hilight .hilight.jst1 0                                   .scheme.no2
-    hilight   .hilight.jst1 0x80 "^[ \t]*\n" .hilight.jst       $global-scheme
-    ; >! block
-    0 hilight .hilight.jst2 0                                   $global-scheme
-    hilight   .hilight.jst2 0x80 "^[ \t]*\n" .hilight.jst       $global-scheme
-    ; <<..>> block
-    0 hilight .hilight.jst3 0                                   .scheme.type
-    hilight .hilight.jst3 0x04 "<<" ">>" ""                     .scheme.keyword
-    hilight .hilight.jst3 0x00 "<<>>"                           .scheme.hide
-    hilight .hilight.jst3 0x00 "<<.>>"                          .scheme.type
-    hilight .hilight.jst3 0x04 "<<" ">>" ""                     .scheme.keyword
-    hilight .hilight.jst3 0x80 ">>" .hilight.jst                .scheme.keyword
+    hilight .hilight.jst 0    "http:[-@~_a-zA-Z#%\\.:\\/0-9]+"   .scheme.link
+    hilight .hilight.jst 0    "https:[-@~_a-zA-Z#%\\.:\\/0-9]+"  .scheme.link
+    hilight .hilight.jst 0    "ftp:[-@~_a-zA-Z#%\\.:\\/0-9]+"    .scheme.link
+    hilight .hilight.jst 0    "mailto:[-@~_a-zA-Z#%\\.:\\/0-9]+" .scheme.link
+    hilight .hilight.jst 0    "news:[-@~_a-zA-Z#%\\.:\\/0-9]+"   .scheme.link 
+    ; Style schemes
+    0 hilight .hilight.jstM 0                                   .scheme.no2
+    hilight   .hilight.jstM 0 "\\\\."                           .scheme.no2
+    hilight   .hilight.jstM 0x80 "@@" .hilight.jst              .scheme.hide
+    hilight   .hilight.jstM 0x804 "\"\"" "\"\"" ""              .scheme.no2
+    hilight   .hilight.jstM 0x80 "^>end>" .hilight.jst          .scheme.hide
+    hilight   .hilight.jstM 0x80 "^!end!" .hilight.jst          .scheme.hide
+    0 hilight .hilight.jstB 0                                   .scheme.bold
+    hilight   .hilight.jstB 0 "\\\\."                           .scheme.bold
+    hilight   .hilight.jstB 0x80 "\\*\\*" .hilight.jst          .scheme.hide
+    hilight   .hilight.jstB 0x80 "//" .hilight.jstBI            .scheme.hide
+    hilight   .hilight.jstB 0x80 "__" .hilight.jstBU            .scheme.hide
+    hilight   .hilight.jstB 0x804 "@@" "@@" "\\"                .scheme.no2
+    hilight   .hilight.jstB 0x804 "\"\"" "\"\"" ""              .scheme.bold
+    hilight   .hilight.jstB 0x80 "^>end>" .hilight.jst          .scheme.hide
+    hilight   .hilight.jstB 0x80 "^!end!" .hilight.jst          .scheme.hide
+    0 hilight .hilight.jstI 0                                   .scheme.italic
+    hilight   .hilight.jstI 0 "\\\\."                           .scheme.italic
+    hilight   .hilight.jstI 0x80 "\\*\\*" .hilight.jstBI        .scheme.hide
+    hilight   .hilight.jstI 0x80 "//" .hilight.jst              .scheme.hide
+    hilight   .hilight.jstI 0x80 "__" .hilight.jstIU            .scheme.hide
+    hilight   .hilight.jstI 0x804 "@@" "@@" "\\"                .scheme.no2
+    hilight   .hilight.jstI 0x804 "\"\"" "\"\"" ""              .scheme.italic
+    hilight   .hilight.jstI 0x80 "^>end>" .hilight.jst          .scheme.hide
+    hilight   .hilight.jstI 0x80 "^!end!" .hilight.jst          .scheme.hide
+    0 hilight .hilight.jstU 0                                   .scheme.under
+    hilight   .hilight.jstU 0 "\\\\."                           .scheme.under
+    hilight   .hilight.jstU 0x80 "\\*\\*" .hilight.jstBU        .scheme.hide
+    hilight   .hilight.jstU 0x80 "//" .hilight.jstIU            .scheme.hide
+    hilight   .hilight.jstU 0x80 "__" .hilight.jst              .scheme.hide
+    hilight   .hilight.jstU 0x804 "@@" "@@" "\\"                .scheme.no2
+    hilight   .hilight.jstU 0x804 "\"\"" "\"\"" ""              .scheme.under
+    hilight   .hilight.jstU 0x80 "^>end>" .hilight.jst          .scheme.hide
+    hilight   .hilight.jstU 0x80 "^!end!" .hilight.jst          .scheme.hide
+    0 hilight .hilight.jstBI 0                                  .scheme.bold-italic
+    hilight   .hilight.jstBI 0 "\\\\."                          .scheme.bold-italic
+    hilight   .hilight.jstBI 0x80 "\\*\\*" .hilight.jstI        .scheme.hide
+    hilight   .hilight.jstBI 0x80 "//" .hilight.jstB            .scheme.hide
+    hilight   .hilight.jstBI 0x80 "__" .hilight.jstBIU          .scheme.hide
+    hilight   .hilight.jstBI 0x804 "@@" "@@" "\\"               .scheme.no2
+    hilight   .hilight.jstBI 0x804 "\"\"" "\"\"" ""             .scheme.bold-italic
+    hilight   .hilight.jstBI 0x80 "^>end>" .hilight.jst         .scheme.hide
+    hilight   .hilight.jstBI 0x80 "^!end!" .hilight.jst         .scheme.hide
+    0 hilight .hilight.jstBU 0                                  .scheme.bold-under
+    hilight   .hilight.jstBU 0 "\\\\."                          .scheme.bold-under
+    hilight   .hilight.jstBU 0x80 "\\*\\*" .hilight.jstU        .scheme.hide
+    hilight   .hilight.jstBU 0x80 "//" .hilight.jstBIU          .scheme.hide
+    hilight   .hilight.jstBU 0x80 "__" .hilight.jstB            .scheme.hide
+    hilight   .hilight.jstBU 0x804 "@@" "@@" "\\"               .scheme.no2
+    hilight   .hilight.jstBU 0x804 "\"\"" "\"\"" ""             .scheme.bold-under
+    hilight   .hilight.jstBU 0x80 "^>end>" .hilight.jst         .scheme.hide
+    hilight   .hilight.jstBU 0x80 "^!end!" .hilight.jst         .scheme.hide
+    0 hilight .hilight.jstIU 0                                  .scheme.italic-under
+    hilight   .hilight.jstIU 0 "\\\\."                          .scheme.italic-under
+    hilight   .hilight.jstIU 0x80 "\\*\\*" .hilight.jstBIU      .scheme.hide
+    hilight   .hilight.jstIU 0x80 "//" .hilight.jstU            .scheme.hide
+    hilight   .hilight.jstIU 0x80 "__" .hilight.jstI            .scheme.hide
+    hilight   .hilight.jstIU 0x804 "@@" "@@" "\\"               .scheme.no2
+    hilight   .hilight.jstIU 0x804 "\"\"" "\"\"" ""             .scheme.italic-under
+    hilight   .hilight.jstIU 0x80 "^>end>" .hilight.jst         .scheme.hide
+    hilight   .hilight.jstIU 0x80 "^!end!" .hilight.jst         .scheme.hide
+    0 hilight .hilight.jstBIU 0                                 .scheme.bold-italic-under
+    hilight   .hilight.jstBIU 0 "\\\\."                         .scheme.bold-italic-under
+    hilight   .hilight.jstBIU 0x80 "\\*\\*" .hilight.jstIU      .scheme.hide
+    hilight   .hilight.jstBIU 0x80 "//" .hilight.jstBU          .scheme.hide
+    hilight   .hilight.jstBIU 0x80 "__" .hilight.jstBI          .scheme.hide
+    hilight   .hilight.jstBIU 0x804 "@@" "@@" "\\"              .scheme.no2
+    hilight   .hilight.jstBIU 0x804 "\"\"" "\"\"" ""            .scheme.bold-italic-under
+    hilight   .hilight.jstBIU 0x80 "^>end>" .hilight.jst        .scheme.hide
+    hilight   .hilight.jstBIU 0x80 "^!end!" .hilight.jst        .scheme.hide
     
     ; Allow inserts into the jst mode. You may add to the
     ; available inserts by adding to your myjst.emf file
@@ -162,9 +280,13 @@ set-variable .fhook-jst.item-list-r4 "Appx \ecB\\1\ecA"
         !endif
         ; If the hilighting mode is loaded then modify it.
         !if &and &sin "h" &ind &spr ".fhook-%s.setup" #l0 &band .hilight.flags 0x02 
-            hilight .hilight.jst 0x80 &spr "^>%s>" #l0 &ind &cat ".hilight." #l0 .scheme.hide
+            hilight .hilight.jst 0xa0 &spr ">%s>" #l0 &ind &cat ".hilight." #l0 .scheme.hide
             hilight &ind &cat ".hilight." #l0 0x80 "^>end>" .hilight.jst .scheme.hide
+        !else
+            hilight .hilight.jst 0x024 &spr ">%s> ." #l0 "^>end>" "" .scheme.quote
         !endif
+        ; handle single paragraph style
+        hilight .hilight.jst 0x024 &spr ">%s> ." #l0 "^\\s*$" ""    .scheme.quote
     !emacro
     
     ; Allow MicroEmacs Macro .emf inserts
@@ -201,12 +323,15 @@ set-variable .fhook-jst.item-list-r4 "Appx \ecB\\1\ecA"
     set-variable #l1 &cond &les @# 0 -1 1
     set-variable #l2 &abs @#
     !repeat
-        !if &xseq @wl ">[^ \t\n>]+>.*"
-            !if &seq &lef @wl 5 ">end>"
+        !if &seq &trr @wl ""
+            forward-line
+        !endif
+        !if &xseq @wl "[ \t]*\\(>[^ \t]*\\)"
+            !if &seq @wl ">end>"
                 ml-write "[Unexpected >end> tag]"
                 !abort
             !endif
-            !force search-buffer "em" "^>end>"
+            !force search-buffer "em" "^>end>$"
             !if &not $status
                 beginning-of-line
                 ml-write "[Missing >end> tag]"
@@ -237,10 +362,10 @@ define-macro jst-fill-paragraph
     ; Save the starting paragraph separator state - if the numeric argument
     ; is false then this will be used to determine if we restore the current
     ; position. 
-    set-variable #l9 &xseq @wl "^[ \t]*$"
-    !force search-buffer "bem" "^>[^ \t\n>]*>"
+    set-variable #l9 &seq &trr @wl ""
+    !force search-buffer "bem" "^[ \t]*\\(>[^ \t\n]*\\)$"
     !if $status
-        !if &seq @s0 ">end>"
+        !if &seq @wl ">end>"
             goto-position "\x81"
             beginning-of-line
             forward-paragraph
@@ -262,6 +387,6 @@ define-macro jst-fill-paragraph
 ; load docutl.emf to get the doc support macros
 execute-file "docutl"
 
-define-macro-file jstutl jst-to-html jst-to-latex jst-to-rtf jst-to-text
+define-macro-file jstutl jst-to-htm jst-to-html jst-to-latex jst-to-rtf
 
 buffer-init-fhook "jst"
