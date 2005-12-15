@@ -1,0 +1,1065 @@
+=c [vs title "JST Format Test"]
+[vns author "Steven Phillips"]
+[c created:  Wed Nov 30 2005]
+
+= [a intro] Introduction
+
+This document aims to test every feature of JST v4, its very dull.
+
+== [a quote] Quoting
+
+\> quoting '>' at the start of a paragraph.
+
+\= quoting '=' at the start of a paragraph.
+
+\! quoting '!' at the start of a paragraph.
+
+\. quoting '.' at the start of a paragraph.
+
+The @\@quick@\@  *\*brown*\* fox \[jumped] over "\"the"\" lazy dog quite a few
+times as this _\_sentence_\_ needs to be \"""\more\""\" then one line of text.
+
+
+== [a basic] Basic Style Formating
+
+The  ""**quick//""  **brown**  //fox//  __jumped__  @@over the lazy@@  ``dog``
+,,quite,,  a  **//few//**    **__times__**  **@@as this@@**   **``sentence``**
+**,,needs,,** //__to__// //@@be@@// //``more``// //,,then,,// __@@one line@@__
+__``of``__   __,,text,,__.   **//__The__   @@quick@@   ``brown``   ,,fox,,//**
+//__@@jumped over@@ ``the``  ,,lazy,,__//  **//__@@dog quite@@ ``a few`` times
+,,as this,,__//** sentence needs to be more then one line of text.
+
+
+=== [a style] Styling Paragraphs and Blocks
+
+! The quick  **brown** fox //jumped//  over the lazy __dog__ quite a few times
+as this sentence needs to be more then one line of text.
+
+!* The quick brown fox  //jumped//  over the lazy __dog__ quite a few times as
+this sentence needs to be more then one line of text.
+
+!/ The quick  **brown**  fox jumped over the lazy __dog__ quite a few times as
+this sentence needs to be more then one line of text.
+
+!_ The quick  **brown** fox //jumped//  over the lazy dog quite a few times as
+this sentence needs to be more then one line of text.
+
+!@ The quick  **brown** fox //jumped// over the lazy __dog__ quite a few times
+as this sentence needs to be more then one line of text.
+
+!" The quick  **brown** fox //jumped// over the lazy __dog__ quite a few times
+as this sentence needs to be more then one line of text.
+
+!` The quick  **brown** fox //jumped// over the lazy __dog__ quite a few times
+as this sentence needs to be more then one line of text.
+
+!, The quick  **brown** fox //jumped// over the lazy __dog__ quite a few times
+as this sentence needs to be more then one line of text.
+
+!*/_ The  quick  brown  fox  jumped  over the lazy dog  quite a few times as this
+sentence needs to be more then one line of text.
+
+!*/_@ The  quick  brown  fox  jumped  over the lazy dog  quite a few times as this
+sentence needs to be more then one line of text.
+
+!*/_, The  quick  brown  fox  jumped  over the lazy dog  quite a few times as this
+sentence needs to be more then one line of text.
+
+!*/_, The  quick  brown  fox  jumped  over the lazy dog  quite a few times as this
+sentence needs to be more then one line of text.
+
+
+!*
+
+1 The  quick  brown  fox  //jumped//  over the lazy __dog__  quite a few times as this
+sentence needs to be more then one line of text.
+
+2 The  quick  brown  fox  jumped  over the lazy dog.
+
+!end!
+
+!*/_
+
+1 The  quick  brown  fox  jumped  over the lazy dog  quite a few times as this
+sentence needs to be more then one line of text.
+
+2 The  quick  brown  fox  jumped  over the lazy dog.
+
+!end!
+
+
+== [a just] Justification of Paragraphs and Blocks
+
+> The  quick  **brown**  fox  //jumped//  over the lazy __dog__
+quite a few times as this sentence needs
+to be more then one line of text.
+
+>* The  quick  brown  fox  //jumped//  over the lazy __dog__
+quite a few times as this sentence needs
+to be more then one line of text.
+
+>" The  quick  **brown**  fox  //jumped//  over the lazy __dog__
+quite a few times as this sentence needs
+to be more then one line of text.
+
+>*/_ The  quick  brown  fox  jumped  over the lazy dog
+quite a few times as this sentence needs
+to be more then one line of text.
+
+>*/_` The  quick  brown  fox  jumped  over the lazy dog
+quite a few times as this sentence needs
+to be more then one line of text.
+
+>c The  quick  **brown**  fox  //jumped//  over the lazy __dog__
+quite a few times as this sentence needs
+to be more then one line of text.
+
+>c*/_ The  quick  brown  fox  jumped  over the lazy dog
+quite a few times as this sentence needs
+to be more then one line of text.
+
+>r The  quick  **brown**  fox  //jumped//  over the lazy __dog__
+quite a few times as this sentence needs
+to be more then one line of text.
+
+>r*/_ The  quick  brown  fox  jumped  over the lazy dog
+quite a few times as this sentence needs
+to be more then one line of text.
+
+>
+The quick **brown** fox //jumped// over the lazy __dog__
+quite a few times as this sentence needs
+to be more then one line of text.
+
+The  quick  brown  fox  jumped  over the lazy dog.
+>end>
+
+>*
+The quick brown fox //jumped// over the lazy __dog__
+quite a few times as this sentence needs
+to be more then one line of text.
+
+The  quick  brown  fox  jumped  over the lazy dog.
+>end>
+
+>*/_
+The  quick  brown  fox  jumped  over the lazy dog
+quite a few times as this sentence needs
+to be more then one line of text.
+
+The  quick  brown  fox  jumped  over the lazy dog.
+>end>
+
+>*/_,
+The  quick  brown  fox  jumped  over the lazy dog
+quite a few times as this sentence needs
+to be more then one line of text.
+
+The  quick  brown  fox  jumped  over the lazy dog.
+>end>
+
+>c
+The quick **brown** fox //jumped// over the lazy __dog__
+quite a few times as this sentence needs
+to be more then one line of text.
+
+The  quick  brown  fox  jumped  over the lazy dog.
+>end>
+
+>c*/_
+The  quick  brown  fox  jumped  over the lazy dog
+quite a few times as this sentence needs
+to be more then one line of text.
+
+The  quick  brown  fox  jumped  over the lazy dog.
+>end>
+
+>r
+The quick **brown** fox //jumped// over the lazy __dog__
+quite a few times as this sentence needs
+to be more then one line of text.
+
+The  quick  brown  fox  jumped  over the lazy dog.
+>end>
+
+>r*/_
+The  quick  brown  fox  jumped  over the lazy dog
+quite a few times as this sentence needs
+to be more then one line of text.
+
+The  quick  brown  fox  jumped  over the lazy dog.
+>end>
+
+>c>
+/* Move the cursor to the beginning of the current line. Trivial. */
+int
+windowGotoBol(int f, int n)
+{
+    frameCur->windowCur->dotOffset  = 0;
+    frameCur->windowCur->updateFlags |= WFMOVEC ;
+    return (meTRUE);
+}
+>end>
+
+
+== [a indent] Indentation
+
+The  quick  brown  fox  jumped  over  the lazy dog  quite a few  times as this
+sentence needs to be more then one line of text.
+
+ The  quick  brown  fox  jumped  over the lazy dog  quite a few  times as this
+ sentence needs to be more then one line of text.
+
+  The  quick  brown  fox  jumped  over the lazy dog  quite a few times as this
+  sentence needs to be more then one line of text.
+
+   The  quick  brown  fox  jumped  over the lazy dog quite a few times as this
+   sentence needs to be more then one line of text.
+
+    The  quick  brown fox  jumped  over the lazy dog quite a few times as this
+    sentence needs to be more then one line of text.
+
+      The quick  brown fox jumped  over the lazy dog quite a few times as this
+      sentence needs to be more then one line of text.
+
+        The quick brown fox jumped over the lazy dog quite a few times as this
+        sentence needs to be more then one line of text.
+
+           The quick  brown fox jumped  over the lazy dog quite a few times as
+           this sentence needs to be more then one line of text.
+
+ The  quick  brown  fox  jumped  over the lazy dog  quite a few  times as this
+ sentence needs to be more then one line of text.
+
+                  The  quick  brown fox  jumped  over the lazy dog quite a few
+                  times  as this  sentence  needs to be more  then one line of
+                  text.
+
+The  quick  brown  fox  jumped  over  the lazy dog  quite a few  times as this
+sentence needs to be more then one line of text.
+
+    > The  quick  brown  fox  jumped  over the lazy dog
+quite a few times as this sentence needs
+to be more then one line of text.
+
+            > The  quick  brown  fox  jumped  over the lazy dog
+quite a few times as this sentence needs
+to be more then one line of text.
+
+        >
+The  quick  brown  fox  jumped  over the lazy dog
+quite a few times as this sentence needs
+to be more then one line of text.
+
+The quick brown fox jumped over the lazy dog.
+>end>
+
+== Headings
+
+= Top Heading
+
+=c Top Heading Centered
+
+=r Top Heading Right
+
+== Sub Heading
+
+==*/ Sub Heading
+
+==c Sub Heading Centered
+
+==r Sub Heading Right
+
+=== Sub-Sub Heading
+
+===*/ Sub-Sub Heading
+
+===c Sub-Sub Heading Centered
+
+===r Sub-Sub Heading Right
+
+
+== Item Lists
+
+1. The 1 quick  brown fox  jumped  over the lazy dog quite a few times as this
+   sentence needs to be more then one line of text.
+
+. The 2 quick  brown fox  jumped  over the lazy dog quite a few times as this
+sentence needs to be more then one line of text.
+
+.       The 3 quick  brown fox  jumped  over the lazy dog quite a few times as this
+sentence needs to be more then one line of text.
+
+    1.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
+        this sentence needs to be more then one line of text.
+
+        The quick brown fox jumped over the lazy dog.
+
+    .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+        this sentence needs to be more then one line of text.
+
+        1.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
+            this sentence needs to be more then one line of text.
+
+        .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+            this sentence needs to be more then one line of text.
+
+            The quick brown fox jumped over the lazy dog.
+
+            1.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
+                this sentence needs to be more then one line of text.
+    
+            .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+                this sentence needs to be more then one line of text.
+    
+                1.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
+                    this sentence needs to be more then one line of text.
+        
+                .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+                    this sentence needs to be more then one line of text.
+        
+                .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+                    this sentence needs to be more then one line of text.
+        
+            .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+                this sentence needs to be more then one line of text.
+
+        .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+            this sentence needs to be more then one line of text.
+
+    .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+        this sentence needs to be more then one line of text.
+
+        The quick brown fox jumped over the lazy dog.
+
+.   The 4 quick  brown fox jumped  over the lazy dog quite a few times as this
+    sentence needs to be more then one line of text.
+
+
+*. The 1 quick  brown fox  jumped  over the lazy dog quite a few times as this
+   sentence needs to be more then one line of text.
+
+. The 2 quick  brown fox  jumped  over the lazy dog quite a few times as this
+sentence needs to be more then one line of text.
+
+.       The 3 quick  brown fox  jumped  over the lazy dog quite a few times as this
+sentence needs to be more then one line of text.
+
+    *.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
+        this sentence needs to be more then one line of text.
+
+        The quick brown fox jumped over the lazy dog.
+
+    .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+        this sentence needs to be more then one line of text.
+
+        *.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
+            this sentence needs to be more then one line of text.
+
+        .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+            this sentence needs to be more then one line of text.
+
+            The quick brown fox jumped over the lazy dog.
+
+            *.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
+                this sentence needs to be more then one line of text.
+    
+            .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+                this sentence needs to be more then one line of text.
+    
+                *.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
+                    this sentence needs to be more then one line of text.
+        
+                .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+                    this sentence needs to be more then one line of text.
+        
+                .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+                    this sentence needs to be more then one line of text.
+        
+            .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+                this sentence needs to be more then one line of text.
+
+        .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+            this sentence needs to be more then one line of text.
+
+    .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+        this sentence needs to be more then one line of text.
+
+        The quick brown fox jumped over the lazy dog.
+
+.   The 4 quick  brown fox jumped  over the lazy dog quite a few times as this
+    sentence needs to be more then one line of text.
+
+
+a. The 1 quick  brown fox  jumped  over the lazy dog quite a few times as this
+   sentence needs to be more then one line of text.
+
+. The 2 quick  brown fox  jumped  over the lazy dog quite a few times as this
+sentence needs to be more then one line of text.
+
+.       The 3 quick  brown fox  jumped  over the lazy dog quite a few times as this
+sentence needs to be more then one line of text.
+
+    a.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
+        this sentence needs to be more then one line of text.
+
+        The quick brown fox jumped over the lazy dog.
+
+    .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+        this sentence needs to be more then one line of text.
+
+        a.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
+            this sentence needs to be more then one line of text.
+
+        .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+            this sentence needs to be more then one line of text.
+
+            The quick brown fox jumped over the lazy dog.
+
+            a.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
+                this sentence needs to be more then one line of text.
+    
+            .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+                this sentence needs to be more then one line of text.
+    
+                a.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
+                    this sentence needs to be more then one line of text.
+        
+                .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+                    this sentence needs to be more then one line of text.
+        
+                .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+                    this sentence needs to be more then one line of text.
+        
+            .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+                this sentence needs to be more then one line of text.
+
+        .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+            this sentence needs to be more then one line of text.
+
+    .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+        this sentence needs to be more then one line of text.
+
+        The quick brown fox jumped over the lazy dog.
+
+.   The 4 quick  brown fox jumped  over the lazy dog quite a few times as this
+    sentence needs to be more then one line of text.
+
+
+A. The 1 quick  brown fox  jumped  over the lazy dog quite a few times as this
+   sentence needs to be more then one line of text.
+
+. The 2 quick  brown fox  jumped  over the lazy dog quite a few times as this
+sentence needs to be more then one line of text.
+
+.       The 3 quick  brown fox  jumped  over the lazy dog quite a few times as this
+sentence needs to be more then one line of text.
+
+    A.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
+        this sentence needs to be more then one line of text.
+
+        The quick brown fox jumped over the lazy dog.
+
+    .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+        this sentence needs to be more then one line of text.
+
+        A.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
+            this sentence needs to be more then one line of text.
+
+        .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+            this sentence needs to be more then one line of text.
+
+            The quick brown fox jumped over the lazy dog.
+
+            A.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
+                this sentence needs to be more then one line of text.
+    
+            .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+                this sentence needs to be more then one line of text.
+    
+                A.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
+                    this sentence needs to be more then one line of text.
+        
+                .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+                    this sentence needs to be more then one line of text.
+        
+                .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+                    this sentence needs to be more then one line of text.
+        
+            .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+                this sentence needs to be more then one line of text.
+
+        .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+            this sentence needs to be more then one line of text.
+
+    .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+        this sentence needs to be more then one line of text.
+
+        The quick brown fox jumped over the lazy dog.
+
+.   The 4 quick  brown fox jumped  over the lazy dog quite a few times as this
+    sentence needs to be more then one line of text.
+
+
+i. The 1 quick  brown fox  jumped  over the lazy dog quite a few times as this
+   sentence needs to be more then one line of text.
+
+. The 2 quick  brown fox  jumped  over the lazy dog quite a few times as this
+sentence needs to be more then one line of text.
+
+.       The 3 quick  brown fox  jumped  over the lazy dog quite a few times as this
+sentence needs to be more then one line of text.
+
+    i.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
+        this sentence needs to be more then one line of text.
+
+        The quick brown fox jumped over the lazy dog.
+
+    .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+        this sentence needs to be more then one line of text.
+
+        i.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
+            this sentence needs to be more then one line of text.
+
+        .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+            this sentence needs to be more then one line of text.
+
+            The quick brown fox jumped over the lazy dog.
+
+            i.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
+                this sentence needs to be more then one line of text.
+    
+            .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+                this sentence needs to be more then one line of text.
+    
+                i.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
+                    this sentence needs to be more then one line of text.
+        
+                .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+                    this sentence needs to be more then one line of text.
+        
+                .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+                    this sentence needs to be more then one line of text.
+        
+            .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+                this sentence needs to be more then one line of text.
+
+        .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+            this sentence needs to be more then one line of text.
+
+    .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+        this sentence needs to be more then one line of text.
+
+        The quick brown fox jumped over the lazy dog.
+
+.   The 4 quick  brown fox jumped  over the lazy dog quite a few times as this
+    sentence needs to be more then one line of text.
+
+
+I. The 1 quick  brown fox  jumped  over the lazy dog quite a few times as this
+   sentence needs to be more then one line of text.
+
+. The 2 quick  brown fox  jumped  over the lazy dog quite a few times as this
+sentence needs to be more then one line of text.
+
+.       The 3 quick  brown fox  jumped  over the lazy dog quite a few times as this
+sentence needs to be more then one line of text.
+
+    I.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
+        this sentence needs to be more then one line of text.
+
+        The quick brown fox jumped over the lazy dog.
+
+    .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+        this sentence needs to be more then one line of text.
+
+        I.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
+            this sentence needs to be more then one line of text.
+
+        .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+            this sentence needs to be more then one line of text.
+
+            The quick brown fox jumped over the lazy dog.
+
+            I.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
+                this sentence needs to be more then one line of text.
+    
+            .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+                this sentence needs to be more then one line of text.
+    
+                I.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
+                    this sentence needs to be more then one line of text.
+        
+                .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+                    this sentence needs to be more then one line of text.
+        
+                .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+                    this sentence needs to be more then one line of text.
+        
+            .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+                this sentence needs to be more then one line of text.
+
+        .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+            this sentence needs to be more then one line of text.
+
+    .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+        this sentence needs to be more then one line of text.
+
+        The quick brown fox jumped over the lazy dog.
+
+.   The 4 quick  brown fox jumped  over the lazy dog quite a few times as this
+    sentence needs to be more then one line of text.
+
+
+:.  **Brown fox**
+
+    The 4 quick  brown fox jumped  over the lazy dog quite a few times as this
+    sentence needs to be more then one line of text.
+
+    The quick brown fox jumped over the lazy dog.
+
+:.  //Lazy dog//
+
+    The 4 quick  brown fox jumped  over the lazy dog quite a few times as this
+    sentence needs to be more then one line of text.
+
+    The quick brown fox jumped over the lazy dog.
+
+    :.  **Brown fox**
+
+        The 4 quick  brown fox jumped  over the lazy dog quite a few times as this
+        sentence needs to be more then one line of text.
+    
+        The quick brown fox jumped over the lazy dog.
+
+    :.  //Lazy dog//
+
+        The 4 quick  brown fox jumped  over the lazy dog quite a few times as this
+        sentence needs to be more then one line of text.
+    
+        The quick brown fox jumped over the lazy dog.
+
+:.  __TEST ALL__
+
+    First line of a definition can't be an item list
+    
+  1. The 1 quick  brown fox  jumped  over the lazy dog quite a few times as this
+     sentence needs to be more then one line of text.
+
+  . The 2 quick  brown fox  jumped  over the lazy dog quite a few times as this
+  sentence needs to be more then one line of text.
+
+  .       The 3 quick  brown fox  jumped  over the lazy dog quite a few times as this
+  sentence needs to be more then one line of text.
+
+      A.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
+          this sentence needs to be more then one line of text.
+
+          The quick brown fox jumped over the lazy dog.
+  
+      .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+          this sentence needs to be more then one line of text.
+
+          I.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
+              this sentence needs to be more then one line of text.
+
+          .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+              this sentence needs to be more then one line of text.
+
+              The quick brown fox jumped over the lazy dog.
+  
+              a.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
+                  this sentence needs to be more then one line of text.
+    
+              .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+                  this sentence needs to be more then one line of text.
+    
+                  *.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
+                      this sentence needs to be more then one line of text.
+        
+                  .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+                      this sentence needs to be more then one line of text.
+        
+                      i.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
+                          this sentence needs to be more then one line of text.
+        
+                      .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+                          this sentence needs to be more then one line of text.
+        
+                      .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+                          this sentence needs to be more then one line of text.
+        
+                  .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+                      this sentence needs to be more then one line of text.
+        
+              .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+                  this sentence needs to be more then one line of text.
+
+          .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+              this sentence needs to be more then one line of text.
+
+      .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+          this sentence needs to be more then one line of text.
+
+          The quick brown fox jumped over the lazy dog.
+  
+  .   The 4 quick  brown fox jumped  over the lazy dog quite a few times as this
+      sentence needs to be more then one line of text.
+
+
+== Table
+
+] 3 2
+
+] Row 1 col 1
+
+] Row 1 col 2
+  
+  1 , 2 second para
+
+] Row 1 col 3
+
+] Row 2 col 1
+
+] Row 2 col 2
+
+] Row 2 col 3
+
+
+]hc 3 2
+
+] Row 1 col 1
+
+] Row 1 col 2
+  
+  1 , 2 second para
+
+] Row 1 col 3
+
+] Row 2 col 1
+
+] Row 2 col 2
+
+] Row 2 col 3
+
+**Much harder test **
+
+] 2 2
+
+]   The JST text within a table field does not have many restrictions
+
+    The indentation of the initial ']' is important and must align
+    
+    ] 2 2
+    
+    ] As JST supports
+    
+    ] tables within tables
+    
+    ] You can also:
+    
+        *. Use item lists
+        
+        . Like this
+        
+        and embed [id logo.png 20] images
+        
+    ] You can also justify text, i.e.:
+    
+        !c Center text
+        
+        !r Right justify text
+        
+        You must get the right number of elements before you set the indent
+        back.
+    
+]   Possible enhancements:
+
+    1.  Specifying  the  column  widths,  this  could  be  done  on the  table
+        definition line as follows:
+    
+            !" ]w 2 2 200 600
+        
+        The width definition is the same used by images 
+        
+    .   Join cells by defining the first cell as ]j, i.e.
+    
+            >jst>
+            ] 2 2
+            
+            ] 1, 1
+
+            ] 2, 1
+
+            ]j
+            
+            ] 1 and 2, 2
+>end>
+            
+        This is easy in html,  but if this is  introduced  other  formats  may
+        struggle.
+
+]   Defining  tables as a list of elements  does not have the visual impact of
+    other  methods  used in  formats  like  text2tags  but it gives the author
+    complete  control  of the  layout of text  within  each cell,  allows  the
+    embedding  of a table  within a table and the author does not have to mess
+    around reformatting the visual look of the table when editing the text. 
+
+]   What formats can support  tables? Text could by simply carving up the fill
+    column  width by the number of columns and  rendering  the content of each
+    cell in turn.  Tables  are  pretty  simple  in html,  rft is a  nightmare,
+    latex??
+
+=== Using tables
+
+]hw 2 1 30% 30%
+
+] > You can use
+a table with
+justification.
+
+] >r To get text
+on both sides
+of the screen
+at the same time.
+
+== Special Characters and Symbols
+
+:. ""[[nl]]"" - New Line:
+
+    The 4 quick  brown fox jumped  over the lazy dog quite a few times as this
+    sentence[[nl]]needs[[nl]]to be more[[nl]]then one line of text.
+
+    
+:. ""[[np]]"" - New Page:
+
+    The end of a Page.
+    
+[[np]]
+
+    The start of a new page.
+
+:. [a nf1]""[[nf]]"" - New File.
+
+    Follow this [l #nf2]link[l] to the new file.
+
+[[nf]]
+
+    [a nf2]Follow this [l #nf1]link[l] to return to the previous page.
+
+:. ""[[toc]]"" - Table of Content:
+    
+    [[toc]]
+    
+            
+:. --- - Horizontal line:
+
+    Lets have a horizontal line right across:
+    
+---
+
+    This one is indented
+
+            ---
+
+    
+== Tags
+
+
+=== Comment Tag
+
+The quick [c brown fox jumped]  over [c **the  lazy// dog] quite \[c a] few [c
+times "]\"as]"] this sentence needs to be more then one line of text.
+
+=== Anchor Tag
+
+Every main heading has an anchor - see [l link]link[l].
+
+=== foreground and Background Color Tag
+
+The [f #b08000]quick brown fox[f] jumped [b #b08000]over the[b] lazy [f #b08000]dog quite [f #0000a0]a few[f] times as this
+[f #b08000]sentence [b #5050ff]needs to[f] be more[b] then one line of text.
+
+=== [a link]Link Tag
+
+Implicit links
+
+    http://www.jasspa.com
+
+    http://www.jasspa.com/faq.html#q17
+
+    http://www.bbc.co.uk/tv/
+
+
+Explicit Links
+
+    This  is a link to the  main [l  http://www.jasspa.com]JASSPA[l]  site. [l
+    http://www.jasspa.com/faq.html#q17]This[l] is a link to a timestamp faq.
+
+    The following a internal links:
+    
+    *.  [l #intro]Introduction[l]
+    
+    .   [l #quote]**Quoting**[l]
+    
+    .   [l #basic]//Basic Style Formating//[l]
+    
+    .   **//[l #style]Styling Paragraphs and Blocks[l]//**
+    
+    .   [l #just]Justification of Paragraphs and Blocks[l]
+
+    .   [l #indent]Indentation[l]
+    
+=== Image Tag
+
+Left and indented image:
+
+[i logo.png]
+
+    [i logo.png]
+
+Center and right justified:
+
+>c [i logo.png]
+
+>r [i logo.png]
+
+Center with large indent
+
+                        >c [i logo.png]
+
+Images with text:
+
+The  quick  brown  fox  jumped  over  the lazy dog  quite a few  times as this
+sentence needs to be more then one line of text. [i logo.png]
+
+The quick brown fox jumped over the lazy dog quite a few [i logo.png] times as
+this sentence needs to be more then one line of text.
+
+[i logo.png] The quick brown fox jumped over the lazy dog quite a few times as
+this sentence needs to be more then one line of text.
+
+[id logo.png 50] Image depth set to 50.
+
+[iw logo.png 20] Image width set to 20.
+
+[idw logo.png 50 20] Image depth set to 50 and width to 20.
+
+[iw logo.png 50%] Image width set to 50%.
+
+=== Use Tag
+
+[u insert.jst]
+
+The quick brown fox jumped [u insert.jst] over the lazy dog quite a few times as
+this sentence needs to be more then one line of text.
+
+The quick brown fox **jumped [u insert.jst] over** the lazy dog quite a few times as
+this sentence needs to be more then one line of text.
+
+!* The quick brown fox jumped [u insert.jst] over the lazy dog quite a few times as
+this sentence needs to be more then one line of text.
+
+
+=== Variable Tag
+
+\[v <variable-name>]
+
+    Inserts the current value of variable  <variable-name>, variable names can
+    contain only alpha numeric characters and '-'.
+
+Options
+
+    \[vdinrs <variable-name> <value> <increment> <reference-name>]
+
+    :.  d
+    
+        Define the reference <reference-name> for the current value.
+
+    :.  i
+        
+        Pre-increment the variable value by <increment>
+
+    :.  n
+    
+        Do not insert the variable value.
+
+    :.  r
+    
+        Insert the <reference-name> value.
+
+    :.  s
+    
+        Set the value to <value> first.
+
+    e.g. to implement figure labels and reference them do:
+
+        >jst>
+        [vsn figure 0]
+
+        [i figure1.jpg]
+        Figure [vid figure 1 figA] - my first figure
+        
+        some more text
+        
+        [i figure2.jpg]
+        Figure [vid figure 1 figB] - my second figure
+
+        To see  **figure [vr figure  figA]** //my first  figure// and **figure
+        [vr figure figB]** //my second figure//. 
+
+        To see  **figure [vr figure  figA]** //my first  figure// and **figure
+        [vr figure figB]** //my second figure//. 
+>end>
+
+    An  undefined  variable has a value of  "@@ERROR@@",  it can be defined by
+    using either  option '@@s@@' or '@@i@@' in which case the value is 0, i.e.
+    the following can be used
+
+        >@ = Chapter [vi chapter 1]: Will be 1 at the top of the doc
+
+    Special Variables
+
+        :. title
+        
+            The document title
+
+        :. author
+        
+            The author
+
+        :. toc
+        
+            The auto-generated table of contents
+            
+        :. image-ppi
+        
+            Image pixels per inch resolution setting.
+
+
+=== Output Dump Tag
+
+[o all "You should see this with all output types - //it __is__ **verbatim"]
+
+[o html "You should only see this when generating html output"]
+
+[o latex "You should only see this when generating latex output"]
+
+[o rtf "You should only see this when generating rtf output"]
+
+[o text "You should only see this when generating plain text output"]
+
+        
+
+=== Dump Tag
+
+[d all "You should see this with all output types - //it// __is__ processed"]
+
+[d html "You should only see this when generating **html** output"]
+
+[d latex "You should only see this when generating **latex** output"]
+
+[d rtf "You should only see this when generating **rtf** output"]
+
+[d text "You should only see this when generating **plain text** output"]
+

@@ -1,0 +1,330 @@
+#!/usr/local/bin/zsh
+
+### The basics: a temp area and which VOB to ruin
+#export WORKDIR="/disk/121/tmp"
+#export VOBBASE="/ccsrc/viz"
+#export VOBNAME="vis_test09"
+export VOBDIR="${VOBBASE}/${VOBNAME}"
+### Use "-c" to work only on the current view (do not cycle through config specs)
+### The list of branches is required for this script to work.
+if [[ "$1" == "-c" ]]; then
+    currentViewOnly="yes"
+    if [[ -z "$2" ]]; then
+        echo "TIDY UP ERROR: the \"-c\" parameter requires a branch argument."
+        exit 1
+    else
+        set -A BRANCHLIST $2
+        shift 2
+    fi
+else
+    currentViewOnly="no"
+    if [[ ! -f "${WORKDIR}/branches.lst" ]]; then
+        echo "TIDY UP ERROR: \"${WORKDIR}/branches.lst\" does not exist"
+        echo "TIDY UP ERROR: This script needs a list of branches to operate upon."
+        exit 1
+    else
+        set -A BRANCHLIST `cat ${WORKDIR}/branches.lst`
+    fi
+fi
+### Set the following to "yes" *only* for AdminVOB which were not pre-loaded with all types
+loadAdminVOB="no"
+if [[ "${loadAdminVOB}" == "yes" ]]; then
+    export BRANCHTYPES="${WORKDIR}/CC_branchtypes_${VOBNAME}.lst"
+    cleartool lstype -kind brtype | awk '/branch type/ {print $5}' | sed -e 's/\"//g' > ${BRANCHTYPES}
+fi
+### Set the following to work on the current directly or on the whole current VOB
+wholeVOB="no"
+### This controls whether we automatically screw up the view or not
+confirmCheckin="no"
+### Where should we store all the config specs we are going to produce?
+export VUPROFDIR="${WORKDIR}/viz_configspecs"
+if [[ ! -d ${VUPROFDIR} ]]; then
+    mkdir -p ${VUPROFDIR}
+    if [[ "${status}" != "0" ]]; then
+        echo "TIDY UP ERROR: Could not create the config_specs directory: ${VUPROFDIR}"
+    else
+        echo "TIDY UP: Created new config_spec directory: ${VUPROFDIR}"
+    fi
+fi
+### This is where it all starts from ... unless you specified 
+export SAVEDPWD=`pwd`
+echo
+echo "TIDY UP: $0 $* STARTED on `date` from `pwd`"
+echo "TIDY UP: loadAdminVOB=${loadAdminVOB} - wholeVOB=${wholeVOB} - confirmCheckin=${confirmCheckin}"
+echo "TIDY UP: BRANCHLIST=${BRANCHLIST}"
+
+for branch in ${BRANCHLIST}; do
+
+    typeset -i numErrors=0
+    typeset -i numCheckouts=0
+    typeset -i numRmname=0
+
+    if [[ "${wholeVOB}" == "yes" ]]; then
+        cd ${VOBDIR}
+    else
+        cd ${SAVEDPWD}
+    fi
+
+    echo
+    echo
+    echo "TIDY UP: =============================================================="
+    echo "TIDY UP: STARTING THE PROCESS FOR \"${branch}\" on `date`"
+    echo "TIDY UP: SETTING THE CONFIGSPEC for \"${branch}\""
+
+    if [[ "${branch}" == "main" ]]; then
+        #echo "cleartool setcs -default"
+        cleartool setcs -default
+    else
+        ### Create the config spec and save it for later
+        ### I should really consider using MultiLevel AutoMakeBranch here
+        ### aka. nested branching for pview_7_0 -> pview_7_0_10 -> pview_7_0_10_hf2
+        ### since this follows our current CVS development style
+        ### See my note about this in Skwyrul.
+        rm -f ${VUPROFDIR}/${branch}
+        echo "element * CHECKEDOUT" > ${VUPROFDIR}/${branch}
+        echo "element * .../${branch}/LATEST" >> ${VUPROFDIR}/${branch}
+        echo "element * ${branch}_CCEXPORT -mkbranch ${branch}" >> ${VUPROFDIR}/${branch}
+        echo "element * /main/0 -mkbranch ${branch}" >> ${VUPROFDIR}/${branch}
+
+        #echo "cleartool setcs ${VUPROFDIR}/${branch}"
+        cleartool setcs ${VUPROFDIR}/${branch}
+        if [[ "${status}" != "0" ]]; then
+            echo "TIDY UP ERROR [${branch}]: Could not set the view config spec for branch: \"${branch}\""
+            continue
+        fi
+        ### The following gives a little kick to the view_server
+        sleep 2
+        ls -l . > /dev/null 2>&1
+    fi
+
+    if [[ "${loadAdminVOB}" == "yes" ]]; then
+        /usr/local/bin/grep -w "${branch}" ${BRANCHTYPES} >& /dev/null
+        if [[ "${status}" == "1" ]]; then
+            echo "TIDY UP: CREATING THE BRANCH TYPE: ${branch}"
+            #echo "cleartool mkbrtype -global -acquire -nc ${branch}"
+            cleartool mkbrtype -global -acquire -nc ${branch}
+            if [[ "${status}" != "0" ]]; then
+                echo "TIDY UP ERROR [${branch}]: Could not create the global branch type ${branch}"
+                continue
+            fi
+        fi
+    fi
+
+    echo "TIDY UP: CREATING THE DEADSTUFF list on `date`"
+    export DEADSTUFF="${WORKDIR}/deadstuff_${VOBNAME}_${branch}.lst"
+    ### Preserve older lists of dead stuff for reference
+    if [[ -f ${DEADSTUFF} ]]; then
+        [[ ! -d ${WORKDIR}/ARCHIVES/DEADSTUFF ]] && mkdir -p ${WORKDIR}/ARCHIVES/DEADSTUFF
+        mv ${DEADSTUFF} ${WORKDIR}/ARCHIVES/DEADSTUFF/`basename ${DEADSTUFF}`_`stat -c "%y" ${DEADSTUFF} | awk -F. '{print $1}' | sed -e "s/ /_/g"`
+    fi
+    ### Find all the elements marked as dead by CVS and the elements selected by the /main/0 rule
+    if [[ "${wholeVOB}" == "yes" ]]; then
+        cleartool find -all -visible -cview -nxname -version 'attr_sub(CVS_STATE,==,"dead") || version(/main/0)' -print > ${DEADSTUFF}
+    else
+        cleartool find ${SAVEDPWD} -cview -nxname -version 'attr_sub(CVS_STATE,==,"dead") || version(/main/0)' -print > ${DEADSTUFF}
+    fi
+    if [[ "${status}" != "0" ]]; then
+        echo "TIDY UP ERROR [${branch}]: Could not create the DEADSTUFF list"
+        let numErrors++
+        continue
+    fi
+    ### Bring some order to this potential mess (depends on the type of "find" used)
+    cat ${DEADSTUFF} | sort | uniq > ${DEADSTUFF}.tmp && mv ${DEADSTUFF}.tmp ${DEADSTUFF}
+    if [[ ! -s "${DEADSTUFF}" ]]; then
+        echo "TIDY UP ERROR [${branch}]: The list of dead stuff is empty."
+    fi
+    echo "TIDY UP: COMPLETED THE DEADSTUFF list on `date`"
+
+    echo "TIDY UP: STARTING THE RMNAME LOOP on `date`"
+    for i in "${(f)"$(<${DEADSTUFF})"}"; do    #FIXME: broken syntax hilighting needs this extra \"
+        if [[ -z ${i} ]]; then
+            #echo "TIDY UP ERROR [${branch}]: Cannot process an empty string. Skipping"
+            continue
+        fi
+        if [[ "${wholeVOB}" == "yes" ]]; then
+            cd ${VOBDIR}
+        else
+            cd ${SAVEDPWD}
+        fi
+        echo "Processing \"${i}\""
+        DIR="`dirname "${i}"`"
+        FIL="`basename "${i}"`"
+        ### The following had better work ...
+        cd ${DIR}
+        if [[ "${status}" != "0" ]]; then
+            echo "TIDY UP ERROR [${branch}]: Could not change directory to ${DIR}"
+            let numErrors++
+            continue
+        fi
+        ### Checkout the current directory only if not already checked out
+        cleartool lsco -d . | grep '"."' >& /dev/null
+        if [[ "${status}" == "1" ]]; then
+            echo "cleartool co -c \"Removing files marked as CVS_STATE=dead from branch: \\\"${branch}\\\".\" . (${DIR})"
+            cleartool co -c "Removing files marked as CVS_STATE=dead from branch: \"${branch}\"" .
+            if [[ "${status}" != "0" ]]; then
+                echo "TIDY UP ERROR [${branch}]: Could not checkout ${DIR}"
+                let numErrors++
+                continue
+            fi
+            let numCheckouts++
+        else
+            #echo "TIDY UP: ${DIR} is already checked out"
+        fi
+        ### Remove the accursed element from this blinking view
+        echo "cleartool rmname -c \"CVS dead element removed from branch \\\"${branch}\\\" after initial import.\" ${FIL}"
+        cleartool rmname -c "CVS dead element removed from branch \"${branch}\" after initial import." ${FIL}
+        if [[ "${status}" != "0" ]]; then
+            echo "TIDY UP ERROR [${branch}]: Could not rmname ${FIL} from ${DIR}"
+            let numErrors++
+            continue
+        fi
+        let numRmname++
+    done
+    echo "TIDY UP: COMPLETED THE RMNAME LOOP on `date`"
+
+    echo "TIDY UP: PRUNING EMPTY DIRECTORIES on `date`"
+    if [[ "${wholeVOB}" == "yes" ]]; then
+        cd ${VOBDIR}
+    else
+        cd ${SAVEDPWD}
+    fi
+    ### Create a nice list of all the directories which we could have messed up
+    for i in "${(f)"$(find . -type d -depth -print)"}"; do
+        if [[ "${wholeVOB}" == "yes" ]]; then
+            cd ${VOBDIR}
+        else
+            cd ${SAVEDPWD}
+        fi
+        typeset -i numFiles
+        numFiles=`ls -A "${i}" | wc -l`
+        ### Anything looks like empty ... get at it!
+        if [[ ${numFiles} == 0  ]]; then
+            #echo "TIDY UP: REMOVING empty directory: \"${i}\""
+            DIR="`dirname "${i}"`"
+            FIL="`basename "${i}"`"
+            cd ${DIR}
+            ### Checkout the current directory only if not already checked out
+            cleartool lsco -d . | grep '"."' >& /dev/null
+            if [[ "${status}" == "1" ]]; then
+                echo "cleartool co -c \"Pruning empty directories from branch: \\\"${branch}\\\".\" . (${DIR})"
+                cleartool co -c "Pruning empty directories from branch: \"${branch}\"" .
+                if [[ "${status}" != "0" ]]; then
+                    echo "TIDY UP ERROR [${branch}]: Could not checkout ${DIR}"
+                    let numErrors++
+                    continue
+                fi
+                let numCheckouts++
+            else
+                #echo "TIDY UP: ${DIR} is already checked out"
+            fi
+            ### Remove the this directory from the current view
+            echo "cleartool rmname -c \"Pruning empty directories from branch \\\"${branch}\\\" after initial import.\" ${FIL}"
+            cleartool rmname -c "Pruning empty directories from branch \"${branch}\" after initial import." ${FIL}
+            if [[ "${status}" != "0" ]]; then
+                echo "TIDY UP ERROR [${branch}]: Could not rmname ${FIL} from ${DIR}"
+                let numErrors++
+                continue
+            fi
+            let numRmname++
+        fi
+    done
+    echo "TIDY UP: COMPLETED EMPTY DIRECTORIES on `date`"
+
+    if [[ "${wholeVOB}" == "yes" ]]; then
+        cd ${VOBDIR}
+    else
+        cd ${SAVEDPWD}
+    fi
+    ### So ... we might have a rather broken view now ... do you still want it?
+    typeset -i numFinalErrors=0
+    if [[ ${numCheckouts} != 0 || ${numErrors} != 0 ]]; then
+        echo
+        echo "TIDY UP: --------------------------------------------------------------"
+        echo "TIDY UP: There were ${numCheckouts} checkouts, ${numRmname} rmname and ${numErrors} errors on branch \"${branch}\"."
+        unset agreed reply leftover
+        if [[ "${confirmCheckin}" == "yes" ]]; then
+            while [[ -z ${agreed} ]]; do
+                echo -n "Do you wish to commit the modifications to the branch: \"${branch}\"? [Y/n]: "
+                read reply leftover
+                case ${reply} in
+                    y* | Y*)
+                        agreed=1;;
+                    n* | N*)
+                        echo
+                        echo "You chose to abort the tidy up process on branch: ${branch}."
+                        echo "You can press Enter to carry on with the next branch or Ctrl-C to abort."
+                        echo "In any case, you must do the cleartool uncheckout yourself on the view."
+                        echo "If you abort, you will be exiting in the current view (config_spec below)."
+                        echo
+                        cleartool catcs
+                        echo
+                        echo "Ctrl-C to abort or Enter to carry on with the next branch?"
+                        read
+                        continue;;
+                esac
+            done
+            echo
+        elif [[ ${numErrors} == 0 ]]; then
+            agreed=1
+        fi
+        if [[ -n ${agreed} ]]; then
+            ### Ha Ha! *you* said yes ... wasn't the script whodunnit.
+            echo "TIDY UP: STARTING THE CHECKIN LOOP on `date`"
+            if [[ "${wholeVOB}" == "yes" ]]; then
+                cd ${VOBDIR}
+            else
+                cd ${SAVEDPWD}
+            fi
+            for i in "${(f)"$(cleartool lsco -r -s | sort -r)"}"; do
+                echo "cleartool ci -nc \"${i}\""
+                cleartool ci -nc "${i}"
+                if [[ "${status}" != "0" ]]; then
+                    echo "TIDY UP ERROR [${branch}]: Could not checkin \"${i}\""
+                    ### not used beyond this point :(
+                    let numFinalErrors++
+                    continue
+                fi
+            done
+            echo "TIDY UP: COMPLETED THE CHECKIN LOOP on `date`"
+        elif [[ ${numCheckouts} != 0 && ${numErrors} != 0 ]]; then
+            ### There were some checkouts AND some errors. Let us uncheckout this mess
+            echo "TIDY UP: STARTING UNCHECKOUT PROCESS for branch \"${branch}\" on `date`"
+            echo "TIDY UP: ${numErrors} error(s) detected and ${numCheckouts} checkouts are left behind."
+            if [[ "${wholeVOB}" == "yes" ]]; then
+                cd ${VOBDIR}
+            else
+                cd ${SAVEDPWD}
+            fi
+            for i in "${(f)"$(cleartool lsco -all -s | sort -r)"}"; do
+                echo "cleartool unco -rm \"${i}\""
+                cleartool unco -rm "${i}"
+                if [[ "${status}" != "0" ]]; then
+                    echo "TIDY UP ERROR [${branch}]: Problems cancelling the checkout for: \"${i}\""
+                    let numFinalErrors++
+                    continue
+                fi
+            done
+            echo "TIDY UP: COMPLETED UNCHECKOUT PROCESS for branch \"${branch}\" on `date`"
+        fi
+    fi
+
+    echo "TIDY UP: COMPLETED THE PROCESS for \"${branch}\" on `date`"
+    echo "TIDY UP: =============================================================="
+    if [[ ${numFinalErrors} != 0 ]]; then
+        echo
+        echo "TIDY UP ERROR [${branch}]: You need to manually fix the VOB ... if possible."
+        echo "At least ${numFinalErrors} checkin or uncheckout FAILED. It is strongly"
+        echo "suggested that you aborted and reverted the changes in the current view."
+        echo "Exiting now will take you to: (config_spec below)."
+        echo
+        cleartool catcs
+        echo
+        echo "Ctrl-C to abort or Enter to carry on with the next branch (*risky*) ?"
+        read
+    fi
+
+done
+
+### Let's go home and have a rest...
+cd ${SAVEDPWD}
+cleartool setcs -default

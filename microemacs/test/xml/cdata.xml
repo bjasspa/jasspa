@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<script>
+<![CDATA[
+function matchwo(a,b)
+{
+if (a < b && a < 0) then
+   {
+   return 1
+   }
+else
+   {
+   return 0
+   }
+}
+]]>
+</script>

@@ -1,0 +1,26 @@
+--
+--  This is an example ASN.1 module used in the documentation
+--
+--  MS 92
+--
+
+EX1 DEFINITIONS ::= 
+BEGIN
+
+anOidVal      OBJECT IDENTIFIER ::= { joint-iso-ccitt 40 foobar(29) } 
+theSameOidVal OBJECT IDENTIFIER ::= { 2 40 29 } 
+anIntVal      INTEGER ::= 1
+aBoolVal      BOOLEAN ::= TRUE
+
+T1 ::= SEQUENCE
+{
+   INTEGER OPTIONAL,
+   OCTET STRING OPTIONAL,
+   ENUMERATED { a(0), b(1), c(2) },
+   SEQUENCE OF INTEGER,
+   SEQUENCE { id OBJECT IDENTIFIER, value OCTET STRING },
+   CHOICE { INTEGER, OBJECT IDENTIFIER }
+}
+
+
+END

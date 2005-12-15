@@ -1,0 +1,85 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE document SYSTEM "document.dtd">
+<document>
+  <header>
+    <title>Music Publishers</title>
+    <author>Elliotte Rusty Harold</author>
+    <created>3/10/1998</created>
+    <modified>3/10/1998</modified>
+    <keyword>women composers</keyword>
+    <keyword>classical music</keyword>
+    <keyword>new music</keyword>
+    <description>
+     This page contains basic contact
+     information for publishers who publish
+     the works of NYWC members.
+    </description>
+  </header>
+
+ <body>
+  <p>
+    Publishers are noted in report by name. 
+    When no name is given the composer acts as publisher. 
+  </p>
+    <publisher>
+      <name> ACA - American Composers Alliance</name>
+      <email>info@composers.com</email>
+      <homepage>http://www.composers.com/</homepage>
+      <address>
+        <street>170 West 74th St.</street> 
+        <city>NY</city> 
+        <state>NY</state> 
+        <zip>10023</zip>
+      </address>
+      <voice>212-362-8900</voice>
+      <fax>212-874-8605</fax>
+    </publisher>
+   <publisher>
+     <name>Alfred Publishing</name>
+     <address>
+       <street>15535 Morrison</street>
+       <city>South Oaks</city>
+       <state>CA</state>
+       <zip>91403</zip>
+     </address>
+   </publisher>
+   <publisher>
+     <name>Music 70</name>
+     <address>
+       <street>250 West 57th Street</street>
+       <street># 232</street> 
+       <city>NY</city> <state>NY</state> 
+       <zip>10107</zip>
+     </address>
+   </publisher>
+
+  <p>
+    If a publisher does not respond, please write or 
+    call the composer or NYWC. Addresses are the latest we have.
+  </p>
+
+ </body>
+
+  <footer>
+    <navbar>
+      <link>
+        <url>/nywc/</url>
+        <target>Home</target>
+      </link>
+      <link>
+        <url>bios.html</url>
+        <target>Biographies</target>
+      </link>
+      <link>
+        <url>updates.html</url>
+        <target>Updates</target>
+      </link>
+    </navbar>
+    <signature>
+      <copyright>1998 New York Women Composers</copyright>
+      <authorEmail>elharo@metalab.unc.edu</authorEmail>
+      <lastmodified>3/10/1998</lastmodified>
+   </signature>
+  </footer>
+ 
+</document>

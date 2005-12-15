@@ -1,0 +1,212 @@
+#!/usr/local/bin/zsh -f
+
+### Setup script functions
+function abortBuild ()
+{
+    local this_msg=$*
+    local this_machine="`hostname`"
+    local this_date="`date`"
+
+    echo "ABORTED BUILD ${BUILD} on ${this_machine} on ${this_date}"
+    echo "\n$0: ${LINENO}\n\t\t***FATAL***:\n${this_msg}\n"
+
+    local MAIL_MESSAGE="From: BUILD Notification <newbuild@vast.ptcnet.ptc.com>"
+    local MAIL_MESSAGE="${MAIL_MESSAGE}\nTo: BUILD Administrators <newbuild@vast.ptcnet.ptc.com>"
+    local MAIL_MESSAGE="${MAIL_MESSAGE}\nImportance: High"
+    local MAIL_MESSAGE="${MAIL_MESSAGE}\nSubject: (${this_machine}@${this_date}) BUILD ABORTED"
+    local MAIL_MESSAGE="${MAIL_MESSAGE}\nABORTED BUILD ${BUILD} on ${this_machine} on ${this_date}\n"
+    echo "${MAIL_MESSAGE} ${this_msg}" | /usr/lib/sendmail -t ${BUILD_ADMINS}
+
+    exit 1
+}
+
+if [[ -z $PTC_SYSTEM ]]; then
+    source ~/.zprofile
+fi
+
+if [[ ! -d ${HOME}/buildlogs/admin ]]; then
+    mkdir -p ${HOME}/buildlogs/admin
+fi
+
+local thisHost="`hostname`"
+local buildToRun=`date +%d%b%y`
+local phaseBuildOnly="no"
+local isNotPhase
+local branchTag
+local buildHarness
+
+if [[ -n $1 ]]; then
+    buildToRun=$1
+    shift
+    if [[ $buildToRun == "phase" ]]; then
+        phaseBuildOnly="yes"
+        if [[ -n $1 ]]; then
+            buildToRun=$1
+            shift
+        else
+            buildToRun=`date +%d%b%y`
+        fi
+    fi
+fi
+
+if [[ ! -f ${HOME}/buildjobs/${buildToRun} ]]; then
+    ### could not find a buildjob either as specified or using default date. try another one
+    buildToRun=`date +%A`
+    if [[ ! -f ${HOME}/buildjobs/${buildToRun} ]]; then
+        ### no build job found exiting
+        exit
+    fi
+fi
+
+### use the GNU grep command
+if [[ -x "/usr/xpg4/bin/grep" ]]; then
+    grepCmd="/usr/xpg4/bin/grep"
+elif [[ -x "/usr/local/bin/grep" ]]; then
+    grepCmd="/usr/local/bin/grep"
+else
+    grepCmd="grep"
+fi
+
+${grepCmd} "PHASE_BUILD=yes" ${HOME}/buildjobs/${buildToRun} > /dev/null 2>&1
+isNotPhase=$?
+if [[ $isNotPhase == 0 && $phaseBuildOnly != "yes" ]]; then
+    ### this job is a phase build but we were not asked to spawn a phase
+    exit
+elif [[ $isNotPhase == 1 && $phaseBuildOnly == "yes" ]]; then
+    ### this job is not a phase build and we were asked to spawn a phase only
+    exit
+fi
+
+### use the GNU grep command
+branchTag=`${grepCmd} -E "^export CHECKOUT_BRANCH_TAG=[\$\{\}a-zA-Z0-9_]+" ${HOME}/buildjobs/${buildToRun} | sed s/export\ CHECKOUT_BRANCH_TAG=//g`
+if [[ "${branchTag}" == "\${BUILD}" ]]; then
+    branchTag=`${grepCmd} -E "^export BUILD=[a-zA-Z0-9_]+" ${HOME}/buildjobs/${buildToRun} | sed s/export\ BUILD=//g`
+elif [[ -z ${branchTag} ]]; then
+    branchTag=main
+fi
+export ADMIN_LOG=${HOME}/buildlogs/admin/build_setup_`date +%d%b%y_%H:%M`.lgg
+echo > ${ADMIN_LOG}
+echo "Nightly Cronjob Logfile for ${thisHost}: `date`" >> ${ADMIN_LOG}
+echo >> ${ADMIN_LOG}
+echo "An overnight build experience is about to start from ${thisHost} on `date`" >> ${ADMIN_LOG}
+
+### this the path to our harness snapshot view
+buildArea=${HOME}/buildarea/${branchTag}
+
+### we cannot proceed unless we have access to "cleartool"
+echo >> ${ADMIN_LOG}
+echo -n "Checking that the cleartool command is available ... " >> ${ADMIN_LOG}
+cleartool help > /dev/null 2>&1
+if [[ $? != 0 ]]; then
+    echo "Nope!" >> ${ADMIN_LOG}
+    abortBuild "The cleartool command does not appear to be available in the current PATH.\n\n
+    \$PATH: ${PATH}\n\n
+    You need to ensure that you do the needful in you ${HOME}/.zprofile." >> ${ADMIN_LOG}
+else
+    echo "Yup!" >> ${ADMIN_LOG}
+fi
+
+### if a view tag does not already exist, then create a view
+echo >> ${ADMIN_LOG}
+export harnessViewName=${LOGNAME}_${branchTag}_snap
+echo "cleartool lsview ${harnessViewName}" >> ${ADMIN_LOG}
+cleartool lsview ${harnessViewName}
+if [[ $? != 0 ]]; then
+    echo >> ${ADMIN_LOG}
+    ### if the snapshot directory already exists ...
+    if [[ -d ${buildArea} ]]; then
+        if [[ -f ${buildArea}/.view.dat ]]; then
+            ### it is a view directory, but without a registered tag. too much to handle?
+            abortBuild "The directory ${buildArea} seems to be a view directory.\n\n
+            However, there is no existing view registered for the tag \"${harnessViewName}\".\n
+            You need to sort this mess out manually." >> ${ADMIN_LOG}
+        else
+            ### otherwise it is just a directory, so remove it
+            echo "I need to blow away the ${buildArea} view directory first." >> ${ADMIN_LOG}
+            rm -fr ${buildArea} >> ${ADMIN_LOG} 2>&1
+        fi
+    fi
+    ### create the official snapshot view tag for this stream's build_harness
+    echo "I need to create the ${buildArea} view directory first." >> ${ADMIN_LOG}
+    echo "cleartool mkview -tag ${harnessViewName} -snapshot -stgloc ${LOGNAME}_vu_stg ${buildArea}" >> ${ADMIN_LOG}
+    cleartool mkview -tag ${harnessViewName} -snapshot -stgloc ${LOGNAME}_vu_stg ${buildArea} >> ${ADMIN_LOG} 2>&1
+    if [[ $? != 0 ]]; then
+        abortBuild "Uhuh ... some troubles when attempting to create the view tag ${harnessViewName} on ${thisHost} on `date`\n\n
+            cleartool mkview -tag ${harnessViewName} -snapshot -stgloc ${LOGNAME}_vu_stg ${buildArea}" >> ${ADMIN_LOG} 2>&1
+    fi
+    echo >> ${ADMIN_LOG}
+fi
+
+### we should now go into the snapshot directory before applying the config spec
+echo "cd ${buildArea}" >> ${ADMIN_LOG}
+cd ${buildArea} >> ${ADMIN_LOG} 2>&1
+if [[ $? != 0 ]]; then
+    abortBuild "Uhuh ... some troubles when attempting to change directory to the buildarea on ${thisHost} on `date`\n\n
+    cd ${buildArea}" >> ${ADMIN_LOG} 2>&1
+fi
+
+### make the config spec for this build stream from a template
+branchConfigSpec="${buildArea}/${branchTag}.cs"
+echo >> ${ADMIN_LOG}
+echo -n "#----------------------------------------------------------------------------
+#                 Build Label: N/A for build_harness
+#          Development Branch: ${branchTag}
+#----------------------------------------------------------------------------
+
+#----------------------------------------------------------------------------
+# If a version is CHECKEDOUT in this view, then load that version
+#----------------------------------------------------------------------------
+element * CHECKEDOUT
+
+#----------------------------------------------------------------------------
+# build_harness: Labeled version on \"${branchTag}\" branch
+#----------------------------------------------------------------------------
+" > ${branchConfigSpec}
+
+if [[ "${branchTag}" == "main" ]]; then
+    echo "element * /main/LATEST -time `date "+%d-%b.%H:%M"`" >> ${branchConfigSpec}
+else
+    echo "element * .../${branchTag}/LATEST -time `date "+%d-%b.%H:%M"`" >> ${branchConfigSpec}
+    echo "element * /main/0 -mkbranch ${branchTag}" >> ${branchConfigSpec}
+fi
+
+echo "
+#----------------------------------------------------------------------------
+# VOB's to load
+#----------------------------------------------------------------------------
+load /ccsrc/viz/viz_integ/build_harness
+
+#----------------------------------------------------------------------------
+
+" >> ${branchConfigSpec}
+
+echo "Setting the config spec to the following:" >> ${ADMIN_LOG}
+cat ${branchConfigSpec} >> ${ADMIN_LOG} 2>&1
+echo >> ${ADMIN_LOG}
+
+### set the config spec, which automatically triggers an update -noverwrite
+echo >> ${ADMIN_LOG}
+echo "cleartool setcs -tag ${harnessViewName} ${branchConfigSpec}" >> ${ADMIN_LOG}
+echo >> ${ADMIN_LOG}
+cleartool setcs -tag ${harnessViewName} ${branchConfigSpec} >> ${ADMIN_LOG} 2>&1
+if [[ $? != 0 ]]; then
+    abortBuild "Uhuh ... some troubles when attempting to get stuff checked out on ${thisHost} on `date`\n\n
+    cleartool setcs -tag ${harnessViewName} ${branchConfigSpec}" >> ${ADMIN_LOG} 2>&1
+fi
+
+### let's get busy ...
+buildHarness=${buildArea}/ccsrc/viz/viz_integ/build_harness
+export PATH=${buildHarness}:${buildHarness}/${PTC_SYSTEM}/obj:${HOME}/scripts:${PATH}
+echo >> ${ADMIN_LOG}
+echo >> ${ADMIN_LOG}
+echo "Calling the build_setup script with the command:-" >> ${ADMIN_LOG}
+echo >> ${ADMIN_LOG}
+echo "    ${buildHarness}/build_setup ${buildToRun}" >> ${ADMIN_LOG}
+echo >> ${ADMIN_LOG}
+${buildHarness}/build_setup ${buildToRun} >> ${ADMIN_LOG} 2>&1
+
+### all done
+echo >> ${ADMIN_LOG}
+echo >> ${ADMIN_LOG}
+echo "${buildToRun} job has completed on ${thisHost} on `date`" >> ${ADMIN_LOG}
+echo >> ${ADMIN_LOG}

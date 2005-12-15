@@ -1,0 +1,44 @@
+-*- mode: wiki; -*-
+
+* Contents
+  :#Description:
+  :#Hyperlinks:
+  :#Mode-line:
+  :wiki2#Commands in wiki-mode:
+     :wiki2#List command:
+
+* Description
+
+Wiki-mode simulates wiki-pages (editable HTML-pages) and is
+similar to Info mode and Wiki mode of GNU Emacs.
+
+Buffer in wiki-mode is read-only. You can browse it using
+cursor keys and special commands.
+
+Text in wiki-style can document is splitted on nodes. Each node has
+a headline. Headlines are the lines with asterisks at the first
+position. The rest of the line is the node name. Node name must
+begin and end with non-space character. Node name can contain any
+characters except new-line.
+
+* Hyperlinks
+
+Text can contain hyperlinks to other node. Hyperlink begins
+and end with ':'. No spaces allowed between ':' and first
+or last character of the hyperlink. Hyperlink can contain another
+file name and/or node name inside current or another file.
+
+Hyperlink format is similar to URL: filename#nodename. For example,
+the link :eEmacsRefMan: is a link to the file, :eEmacsRefMan#About:
+is a link to the node About in eEmacsRefMan, and finally :#About:
+is a local link to the node About in the current file.
+
+* Mode-line
+
+To turn wiki-mode on immediately after file is loaded, put
+the following line to the first line of the file:
+
+    -*- mode: wiki; -*-
+
+See also :#Local Variables in Files: section below.
+You can turn wiki-mode on and off manually using C-c e.

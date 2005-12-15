@@ -1,0 +1,58 @@
+%From:    cytron@cs.wustl.edu (Ron K. Cytron)
+%To:      wiseb@cs.rpi.edu
+%Date:    Sun, 17 Mar 1996 08:56:40 -0600
+%Subject: moreepsf.sty
+%
+%-------------------------------------------------
+% The following macros size a picture to be the largest that can
+% fit in the specified box, without changing the picture's aspect ratio.
+%
+\newbox\PicStressWidth
+\newbox\PicStressHeight
+\newdimen\WantWidth
+\newdimen\WantHeight
+\newdimen\GotWidth
+\newdimen\GotHeight
+%\def\PicTry#1{\noindent\makebox[0pt]{\rule{0pt}{0pt}}\epsffile{FIGS/#1.ps}}
+\def\PicTry#1{\noindent\epsffile{FIGS/#1.ps}}
+\def\PicPlace#1{\noindent\makebox[0pt]{\rule{0pt}{0pt}}
+\begin{center}
+\leavevmode\epsffile{FIGS/#1.ps} 
+\end{center} 
+}
+\def\PICGET#1#2#3{%
+\WantWidth=#1\WantHeight=#2%
+%\message{Want width \the\WantWidth}\message{Want height \the\WantHeight}
+%
+\setbox\PicStressHeight=\hbox{\epsfxsize=0pt\epsfysize=#2\relax\PicTry{#3}}
+%
+\GotWidth=\wd\PicStressHeight \GotHeight=\ht\PicStressHeight
+%\message{Stressing Height, have width \the\GotWidth and height \the\GotHeight}
+%
+\setbox\PicStressWidth=\hbox{\epsfysize=0pt\epsfxsize=#1\relax\PicTry{#3}}
+%
+\GotWidth=\wd\PicStressWidth \GotHeight=\ht\PicStressWidth
+%\message{Stressing Width, have width \the\GotWidth and height \the\GotHeight}
+\ifdim\wd\PicStressHeight>#1 \hbox{\box\PicStressWidth}
+\else\hbox{\box\PicStressHeight}\fi
+}
+\def\PICCENT#1#2#3{%
+\begin{center}
+\leavevmode\PICGET{#1}{#2}{#3}
+\end{center}
+\smallskip
+\nointerlineskip
+}
+\def\PICSQUEEZE#1#2#3{%
+\begin{center}
+\leavevmode\epsfxsize=#1\epsfysize=#2\epsffile{FIGS/#3.ps}
+\end{center}
+}
+\def\piccent#1#2#3{%
+\begin{center}
+\leavevmode\vbox to #2 {\hsize=#1\hrule \vfill {\sl #3}\vfill\hrule}
+\end{center}
+\smallskip
+\nointerlineskip
+}
+
