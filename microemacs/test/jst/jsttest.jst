@@ -782,7 +782,7 @@ sentence needs to be more then one line of text.
         
         The width definition is the same used by images 
         
-    .   Join cells by defining the first cell as ]j, i.e.
+    .   Join cell columns by defining the cell as ]>, i.e.
     
             >jst>
             ] 2 2
@@ -791,9 +791,7 @@ sentence needs to be more then one line of text.
 
             ] 2, 1
 
-            ]j
-            
-            ] 1 and 2, 2
+            ]> 1 and 2, 2
 >end>
             
         This is easy in html,  but if this is  introduced  other  formats  may
@@ -877,8 +875,13 @@ Every main heading has an anchor - see [l link]link[l].
 
 === foreground and Background Color Tag
 
-The [f #b08000]quick brown fox[f] jumped [b #b08000]over the[b] lazy [f #b08000]dog quite [f #0000a0]a few[f] times as this
-[f #b08000]sentence [b #5050ff]needs to[f] be more[b] then one line of text.
+The  quick [f  #b08000]brown  fox[f]  jumped [b  #b08000]over  the[b]  lazy [f
+#b08000]dog  quite [f #5050ff]a  few[f] times as this [f  #b08000]sentence  [b
+#5050ff]needs to[f] be more[b] then one line of text.
+
+The [fd brown #b08000][bd lblue  #5050ff]quick [f brown]brown fox[f] jumped [b
+brown]over  the[b] lazy [f brown]dog  quite [f lblue]a few[f] times as this [f
+brown]sentence [b lblue]needs to[f] be more[b] then one line of text.
 
 === [a link]Link Tag
 
@@ -1045,8 +1048,6 @@ Options
 
 [o latex "You should only see this when generating latex output"]
 
-[o rtf "You should only see this when generating rtf output"]
-
 [o text "You should only see this when generating plain text output"]
 
         
@@ -1058,8 +1059,6 @@ Options
 [d html "You should only see this when generating **html** output"]
 
 [d latex "You should only see this when generating **latex** output"]
-
-[d rtf "You should only see this when generating **rtf** output"]
 
 [d text "You should only see this when generating **plain text** output"]
 
