@@ -176,7 +176,7 @@ set-variable .fhook-jst.item-list-r4 "Appx \ecB\\1\ecA"
     hilight .hilight.jst 0x22 "---+$"                           .scheme.prepro
     ; Tag
     hilight .hilight.jst 0x00  "\\[\\w+]"                       .scheme.no1
-    hilight .hilight.jst 0x890 "\\[\\w+ " .hilight.jstT         .scheme.no1
+    hilight .hilight.jst 0x890 "\\[\\w+\\s" .hilight.jstT       .scheme.no1
     0 hilight .hilight.jstT 0                                   .scheme.variable
     hilight .hilight.jstT 0x80 "]" .hilight.jst                 .scheme.no1
     hilight .hilight.jstT 0x804 "\"" "\"" "\\"                  .scheme.variable

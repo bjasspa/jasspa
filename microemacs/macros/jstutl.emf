@@ -922,10 +922,6 @@ define-macro jst-to-neutral
     beginning-of-buffer
     replace-string "\bfU" "</U>"
     beginning-of-buffer
-    replace-string "\bFM" "<FONT FACE=\"Courier New\">"
-    beginning-of-buffer
-    replace-string "\bfM" "</FONT>"
-    beginning-of-buffer
     replace-string "\bFp" "<SUP>"
     beginning-of-buffer
     replace-string "\bfp" "</SUP>"
@@ -934,13 +930,57 @@ define-macro jst-to-neutral
     beginning-of-buffer
     replace-string "\bfb" "</SUB>"
     beginning-of-buffer
-    replace-string "\bDD\bDF\\(\\h+\\)\bDB\\(\\h+\\)\bdD" "<FONT color=\"#\\1\" bgcolor=\"#\\2\">"
-    beginning-of-buffer
-    replace-string "\bDD\bDF\\(\\h+\\)\bdD" "<FONT color=\"#\\1\">"
-    beginning-of-buffer
-    replace-string "\bDD\bDB\\(\\h+\\)\bdD" "<FONT bgcolor=\"#\\1\">"
-    beginning-of-buffer
-    replace-string "\bDd" "</FONT>"
+    set-variable #l2 ""
+    set-variable #l3 ""
+    set-variable #l4 ""
+    set-variable #l5 ""
+    !repeat
+        !force search-buffer "me" "\b\\(FM\\|fM\\|DD\\(\bDF\\h+\\)?\\(\bDB\\h+\\)?\bdD\\|Dd\\)"
+        !if $status
+            !if &seq "FM" &set #l6 &lef @s1 2 
+                set-variable #l3 "font-family: monospace"
+            !elif &seq "fM" #l6
+                set-variable #l3 ""
+            !elif &seq "DD" #l6
+                !if &not &seq "" &set #l4 @s2
+                    set-variable #l4 &cat "color:#" &rig #l4 3
+                !endif
+                !if &not &seq "" &set #l5 @s3
+                    set-variable #l5 &cat "background-color:#" &rig #l5 3
+                !endif
+            !elif &seq "Dd" #l6
+                set-variable #l4 ""
+                set-variable #l5 ""
+            !endif
+            set-mark
+            &len @s0 backward-char
+            -1 kill-region
+            set-variable #l6 #l3
+            !if &not &seq "" #l4
+                !if &seq "" #l6
+                    set-variable #l6 #l4
+                !else
+                    set-variable #l6 &spr "%s; %s" #l6 #l4
+                !endif
+            !endif
+            !if &not &seq "" #l5
+                !if &seq "" #l6
+                    set-variable #l6 #l5
+                !else
+                    set-variable #l6 &spr "%s; %s" #l6 #l5
+                !endif
+            !endif
+            !if &not &seq #l2 #l6
+                !if &not &seq "" #l2
+                    insert-string "</SPAN>"
+                !endif
+                !if &not &seq "" #l6
+                    insert-string &spr "<SPAN style=\"%s\">" #l6
+                !endif
+                set-variable #l2 #l6
+            !endif
+        !endif
+    !until &not $status
     ; Special symbols
     beginning-of-buffer
     replace-string "\bST" "<BR><B>TOC Not yet implemented</B><BR>"
