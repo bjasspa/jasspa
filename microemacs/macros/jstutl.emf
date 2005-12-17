@@ -137,7 +137,7 @@
         !jump 2
     !elif &seq #l1 "f"
         ; foreground color
-        !if &sin "d" .a0
+        !if &sin "s" .a0
             ; defining a color
             !if &sub #l0 3
                 set-variable #p9 "Wrong number of arguments for color definition tag"
