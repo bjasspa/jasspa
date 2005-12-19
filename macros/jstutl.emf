@@ -673,6 +673,7 @@
     set-variable .jst-to-neutral-tag.link 0
     set-variable .jst-to-neutral-tag.fcol ""
     set-variable .jst-to-neutral-tag.bcol ""
+    set-variable .jst-insert-neutral-toc.ano 0
     !repeat
         !force search-buffer "me" "\\\\\\|\\([\"*/_@`,]\\)\\1\\|\\(https?\\|ftp\\|mailto\\|news\\)[-@~_a-zA-Z#%\\.:\\/0-9]+\\|\\[[^]\\s]\\|^[ \t]*\n[ \t]*\\S"
         !if $status
@@ -791,7 +792,7 @@
     ml-write &spr "[Exporting to %s]" #l1
 !emacro
 
-define-macro jst-to-neutral
+0 define-macro jst-to-neutral
     set-variable .target @1
     set-position "\x82"
     @# jst-get-output-name #l0 @2
@@ -833,9 +834,70 @@ define-macro jst-to-neutral
     beginning-of-buffer
 !emacro
 
+0 define-macro jst-insert-neutral-toc
+    set-variable #l8 &sub &sub &len @wl &len &rep @wl "\bPI" "PI" 1
+    beginning-of-line
+    !if &xse @wl "\\(\bPI\\)*\bPL\bST\bpL.*"
+        set-mark
+        search-buffer "Me" "\bpL"
+        -1 kill-region
+    !else
+        search-buffer "Me" "\bST"
+        3 backward-delete-char
+        -1 yank
+        end-of-line
+        2 insert-newline
+    !endif
+    set-variable #l7 $window-line
+    set-variable #l0 #l7
+    beginning-of-buffer
+    !repeat
+        !force search-buffer "me" "\bH\\(\\d\\)\\(.+\\)\bh\\1"
+        !if $status
+            set-variable #l1 $window-line
+            set-variable #l2 @s1
+            set-variable #l3 @s2
+            !if &xseq #l3 "\\(.*\\)\bTA\\(.*\\)\btA\\(.*\\)"
+                set-variable #l4 @s2
+                set-variable #l3 &cat @s1 @s3
+            !else
+                set-variable #l4 &spr "JST_TOC_%d" &inc .ano 1
+                search-buffer "Meb" "\bH"
+                3 forward-char
+                insert-string &spr "\bTA%s\btA" #l4
+            !endif
+            set-variable $window-line &pinc #l0 1
+            insert-string &spr "%n\bTL#%s\btL%s\bTl\n" &add #l2 #l8 "\bPI" #l4 #l3
+            set-variable $window-line #l1
+            !if &gre #l1 #l0
+                forward-line
+            !endif
+            end-of-line
+        !endif
+    !until &not $status
+    set-variable $window-line #l7
+    !if &gre #l0 #l7
+        search-buffer "Me" "\bTL"
+        3 backward-char
+        insert-string "\bPN"
+        set-variable $window-line #l0
+        backward-delete-char
+        insert-string "\bpN"
+    !endif
+    end-of-line
+!emacro
+
 0 define-macro jst-to-html-int
     set-variable #l1 $buffer-bname
     @# jst-to-neutral "html" @1
+    ; expand any toc's to verbose neutral format
+    beginning-of-buffer
+    !repeat
+        !force search-buffer "me" "\bST"
+        !if $status
+            jst-insert-neutral-toc
+        !endif
+    !until &not $status
     ; special chars
     beginning-of-buffer
     replace-string "&" "&amp;"
