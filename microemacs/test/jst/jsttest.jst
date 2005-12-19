@@ -2,11 +2,11 @@
 [vns author "Steven Phillips"]
 [c created:  Wed Nov 30 2005]
 
-= [a intro] Introduction
+= [a intro][vi chapter 1] Introduction
 
 This document aims to test every feature of JST v4, its very dull.
 
-== [a quote] Quoting
+= [a quote][vi chapter 1] Quoting
 
 \> quoting '>' at the start of a paragraph.
 
@@ -20,7 +20,7 @@ The @\@quick@\@  *\*brown*\* fox \[jumped] over "\"the"\" lazy dog quite a few
 times as this _\_sentence_\_ needs to be \"""\more\""\" then one line of text.
 
 
-== [a basic] Basic Style Formating
+= [a basic][vi chapter 1] Basic Style Formating
 
 The  ""**quick//""  **brown**  //fox//  __jumped__  @@over the lazy@@  ``dog``
 ,,quite,,  a  **//few//**    **__times__**  **@@as this@@**   **``sentence``**
@@ -30,7 +30,7 @@ __``of``__   __,,text,,__.   **//__The__   @@quick@@   ``brown``   ,,fox,,//**
 ,,as this,,__//** sentence needs to be more then one line of text.
 
 
-=== [a style] Styling Paragraphs and Blocks
+== [a style] Styling Paragraphs and Blocks
 
 ! The quick  **brown** fox //jumped//  over the lazy __dog__ quite a few times
 as this sentence needs to be more then one line of text.
@@ -88,7 +88,7 @@ sentence needs to be more then one line of text.
 !end!
 
 
-== [a just] Justification of Paragraphs and Blocks
+= [a just][vi chapter 1] Justification of Paragraphs and Blocks
 
 > The  quick  **brown**  fox  //jumped//  over the lazy __dog__
 quite a few times as this sentence needs
@@ -202,7 +202,7 @@ windowGotoBol(int f, int n)
 >end>
 
 
-== [a indent] Indentation
+= [a indent][vi chapter 1] Indentation
 
 The  quick  brown  fox  jumped  over  the lazy dog  quite a few  times as this
 sentence needs to be more then one line of text.
@@ -254,7 +254,7 @@ to be more then one line of text.
 The quick brown fox jumped over the lazy dog.
 >end>
 
-== Headings
+= [vi chapter 1] Headings
 
 = Top Heading
 
@@ -279,7 +279,7 @@ The quick brown fox jumped over the lazy dog.
 ===r Sub-Sub Heading Right
 
 
-== Item Lists
+= Item Lists
 
 1. The 1 quick  brown fox  jumped  over the lazy dog quite a few times as this
    sentence needs to be more then one line of text.
@@ -707,7 +707,7 @@ sentence needs to be more then one line of text.
       sentence needs to be more then one line of text.
 
 
-== Table
+= [vi chapter 1] Tables
 
 ] 3 2
 
@@ -808,7 +808,7 @@ sentence needs to be more then one line of text.
     cell in turn.  Tables  are  pretty  simple  in html,  rft is a  nightmare,
     latex??
 
-=== Using tables
+== Using tables
 
 ]hw 2 1 30% 30%
 
@@ -821,7 +821,7 @@ on both sides
 of the screen
 at the same time.
 
-== Special Characters and Symbols
+= [vi chapter 1] Special Characters and Symbols
 
 :. ""[[nl]]"" - New Line:
 
@@ -847,8 +847,12 @@ at the same time.
 
 :. ""[[toc]]"" - Table of Content:
     
-    [[toc]]
+    Following is the table of content:
     
+        [[toc]]
+
+    This  version is  embedded  [[toc]] in a line - nasty,  should be inserted
+    after this line.
             
 :. --- - Horizontal line:
 
@@ -861,19 +865,19 @@ at the same time.
             ---
 
     
-== Tags
+= [vi chapter 1] Tags
 
 
-=== Comment Tag
+== Comment Tag
 
 The quick [c brown fox jumped]  over [c **the  lazy// dog] quite \[c a] few [c
 times "]\"as]"] this sentence needs to be more then one line of text.
 
-=== Anchor Tag
+== Anchor Tag
 
 Every main heading has an anchor - see [l link]link[l].
 
-=== foreground and Background Color Tag
+== Foreground and Background Color Tag
 
 The  quick [f  #b08000]brown  fox[f]  jumped [b  #b08000]over  the[b]  lazy [f
 #b08000]dog  quite [f #5050ff]a  few[f] times as this [f  #b08000]sentence  [b
@@ -914,7 +918,7 @@ Explicit Links
 
     .   [l #indent]Indentation[l]
     
-=== Image Tag
+== Image Tag
 
 Left and indented image:
 
@@ -951,7 +955,7 @@ this sentence needs to be more then one line of text.
 
 [iw logo.png 50%] Image width set to 50%.
 
-=== Use Tag
+== Use Tag
 
 [u insert.jst]
 
@@ -965,83 +969,40 @@ this sentence needs to be more then one line of text.
 this sentence needs to be more then one line of text.
 
 
-=== Variable Tag
+== Variable Tag
 
-\[v <variable-name>]
-
-    Inserts the current value of variable  <variable-name>, variable names can
-    contain only alpha numeric characters and '-'.
-
-Options
-
-    \[vdinrs <variable-name> <value> <increment> <reference-name>]
-
-    :.  d
+    All  chapter  titles  start with a number  defined  using the  **chapter**
+    variable,  this is chapter [v chapter].  An  undefined  variable  which is
+    defined by an inc of 8 has the value [vi not-def2 8] and if inc'd by 7 has
+    a value of [vi not-def2 7]. We can silently inc this by 3 [vin not-def2 3]
+    and then insert [v not-def2].
     
-        Define the reference <reference-name> for the current value.
+    Following is a fig labelling and reference example
+     
+    [vsn figure 0] This line had the figure variable set to 0. 
 
-    :.  i
+    Lets create links to both [l  #figA]**figure  [vr figure  figA]**  //First
+    figure//[l] and [l #figB]**figure [vr figure figB]** //Second figure//[l].
+
+    Here is figure A:
+     
+    >c [a figA][i logo.png]
+    Figure [vid figure 1 figA] - First figure (figA) 
         
-        Pre-increment the variable value by <increment>
+    Lets create links to both [l  #figA]**figure  [vr figure  figA]**  //First
+    figure//[l] and [l #figB]**figure [vr figure figB]** //Second figure//[l].
 
-    :.  n
-    
-        Do not insert the variable value.
-
-    :.  r
-    
-        Insert the <reference-name> value.
-
-    :.  s
-    
-        Set the value to <value> first.
-
-    e.g. to implement figure labels and reference them do:
-
-        >jst>
-        [vsn figure 0]
-
-        [i figure1.jpg]
-        Figure [vid figure 1 figA] - my first figure
+    Here is figure B:
+     
+    >c [a figB][i logo.png]
+    Figure [vid figure 1 figB] - Secondt figure (figB) 
         
-        some more text
+    And again, lets create links to both [l #figA]**figure  [vr figure figA]**
+    //First  figure//[l]  and [l  #figB]**figure  [vr figure figB]**  //Second
+    figure//[l].
         
-        [i figure2.jpg]
-        Figure [vid figure 1 figB] - my second figure
 
-        To see  **figure [vr figure  figA]** //my first  figure// and **figure
-        [vr figure figB]** //my second figure//. 
-
-        To see  **figure [vr figure  figA]** //my first  figure// and **figure
-        [vr figure figB]** //my second figure//. 
->end>
-
-    An  undefined  variable has a value of  "@@ERROR@@",  it can be defined by
-    using either  option '@@s@@' or '@@i@@' in which case the value is 0, i.e.
-    the following can be used
-
-        >@ = Chapter [vi chapter 1]: Will be 1 at the top of the doc
-
-    Special Variables
-
-        :. title
-        
-            The document title
-
-        :. author
-        
-            The author
-
-        :. toc
-        
-            The auto-generated table of contents
-            
-        :. image-ppi
-        
-            Image pixels per inch resolution setting.
-
-
-=== Output Dump Tag
+== Output Dump Tag
 
 [o all "You should see this with all output types - //it __is__ **verbatim"]
 
@@ -1053,7 +1014,7 @@ Options
 
         
 
-=== Dump Tag
+== Dump Tag
 
 [d all "You should see this with all output types - //it// __is__ processed"]
 
