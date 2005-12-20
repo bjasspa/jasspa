@@ -169,6 +169,9 @@ set-variable .fhook-jst.item-list-r4 "Appx \ecB\\1\ecA"
     hilight .hilight.jst 0x22 "=== ."                           .scheme.header
     hilight .hilight.jst 0x22 "===c ."                          .scheme.header
     ; Symbols
+    hilight .hilight.jst 0x00  "\\[\\[new-file]]"               .scheme.prepro
+    hilight .hilight.jst 0x00  "\\[\\[new-line]]"               .scheme.prepro
+    hilight .hilight.jst 0x00  "\\[\\[new-page]]"               .scheme.prepro
     hilight .hilight.jst 0x00  "\\[\\[nf]]"                     .scheme.prepro
     hilight .hilight.jst 0x00  "\\[\\[nl]]"                     .scheme.prepro
     hilight .hilight.jst 0x00  "\\[\\[np]]"                     .scheme.prepro
