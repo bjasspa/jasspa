@@ -484,7 +484,8 @@
                 set-variable #l6 0
                 !while &les &pinc #l6 1 &lget #l1 2
                     set-variable #l7 &lget #l1 &add #l6 3
-                    !if &not &gre #l7 0
+                    !if &seq #l7 "-"
+                    !elif &not &gre #l7 0
                         set-variable #p9 "Invalid column width"
                         !return 0
                     !elif &not &equ #l4 &seq "%" &rig #l7 -1
@@ -494,13 +495,19 @@
                     set-variable #l5 &add #l5 #l7
                     set-variable #l3 &lin #l3 -1 #l7 
                 !done
-                !if #l4
-                    !if &gre #l5 100
+                !if &sin "-" #l3
+                    !if &and #l4 &gre #l5 99
+                        set-variable #p9 "Sum of column widths is to great for '-' column"
+                        !return 0
+                    !endif
+                    set-variable #l3 &spr "|%s|-%s" &lget #l1 2 #l3
+                !else
+                    !if &and #l4 &gre #l5 100
                         set-variable #p9 "Sum of column widths is greater than 100%%"
                         !return 0
                     !endif
+                    set-variable #l3 &spr "|%s|%s%s%s" &lget #l1 2 #l5 &con #l4 "%" "" #l3
                 !endif
-                set-variable #l3 &spr "|%s|%s%s%s" &lget #l1 2 #l5 &con #l4 "%" "" #l3
             !else
                 set-variable #l3 ""
             !endif
@@ -922,7 +929,11 @@
             !endif
             insert-string "<TABLE"
             !if &sin "w" #l3
-                insert-string &cat " width=" &lget #l4 2
+                !if &seq &lget #l4 2 "-"
+                    insert-string " width=100%"
+                !else
+                    insert-string &cat " width=" &lget #l4 2
+                !endif
             !endif
             !if &sin "h" #l3
                 insert-string " border=0 cellpadding=6 cellspacing=0>"
@@ -938,10 +949,12 @@
                 !endif
                 set-variable #l5 0
                 !while &les &pinc #l5 1 &lget #l4 1
-                    !if #l6
-                        insert-string &spr "<COL width=%d%%>" &div &mul 100 &lget #l4 &add #l5 2 #l6
+                    !if &seq "-" &set #l7 &lget #l4 &add #l5 2
+                        insert-string &spr "<COL>" #l7
+                    !elif #l6
+                        insert-string &spr "<COL width=%d%%>" &div &mul 100 #l7 #l6
                     !else
-                        insert-string &spr "<COL width=%s>" &lget #l4 &add #l5 2
+                        insert-string &spr "<COL width=%s>" #l7
                     !endif
                 !done
             !endif
