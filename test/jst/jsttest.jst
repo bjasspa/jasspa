@@ -1,6 +1,10 @@
 =c [vs title "JST Format Test"]
 [vns author "Steven Phillips"]
-[c created:  Wed Nov 30 2005]
+[c created  Wed Nov 30 2005]
+
+= Table of Content
+
+    [[toc]]
 
 = [a intro][vi chapter 1] Introduction
 
@@ -821,6 +825,22 @@ on both sides
 of the screen
 at the same time.
 
+]w 3 1 20% - 20%
+
+] Narrow 20% column
+
+] The remainder which should be around 60% or there abouts.
+
+] Narrow 20% column
+
+]w 3 1 50 - 70
+
+] Narrow 50 pixel column
+
+] The remainder which should be around the width of the page -120 pixels!
+
+] Narrow 70 pixel column
+
 = [vi chapter 1] Special Characters and Symbols
 
 :. ""[[nl]]"" - New Line:
@@ -828,14 +848,19 @@ at the same time.
     The 4 quick  brown fox jumped  over the lazy dog quite a few times as this
     sentence[[nl]]needs[[nl]]to be more[[nl]]then one line of text.
 
+    The 4 quick  brown fox jumped  over the lazy dog quite a few times as this
+    sentence[[new-line]]needs[[new-line]]to  be more[[new-line]]then  one line
+    of text.
     
 :. ""[[np]]"" - New Page:
 
-    The end of a Page.
+    The end of a Page using ""[[np]]"".
     
 [[np]]
 
-    The start of a new page.
+    The start of a new page. Now check the long form ""[[new-page]]"".
+
+[[new-page]]
 
 :. [a nf1]""[[nf]]"" - New File.
 
@@ -843,7 +868,14 @@ at the same time.
 
 [[nf]]
 
-    [a nf2]Follow this [l #nf1]link[l] to return to the previous page.
+    [a nf2]Follow  this [l  #nf1]link[l]  to return to the previous  page. Now
+    check the long form  ""[[new-file]]"",  follow this [l #nf3]link[l] to the
+    next file.
+
+[[new-file]]
+
+    [a nf3]Follow this [l #nf2]link[l] to return to the previous page.
+
 
 :. ""[[toc]]"" - Table of Content:
     
@@ -875,7 +907,7 @@ times "]\"as]"] this sentence needs to be more then one line of text.
 
 == Anchor Tag
 
-Every main heading has an anchor - see [l link]link[l].
+Every main heading has an anchor - see [l #link]link[l].
 
 == Foreground and Background Color Tag
 
@@ -955,6 +987,16 @@ this sentence needs to be more then one line of text.
 
 [iw logo.png 50%] Image width set to 50%.
 
+Now test the image-ppi variable setting:
+
+    image-ppi set to [vs image-ppi 100]: width 100 [iw logo.png 100]
+
+    image-ppi set to [vs image-ppi 200]: width 100 [iw logo.png 100]
+
+    image-ppi set to [vs image-ppi 200]: width 10% [iw logo.png 10%]
+
+    image-ppi set to [vs image-ppi 0]: width 100 [iw logo.png 100]
+
 == Use Tag
 
 [u insert.jst]
@@ -971,13 +1013,13 @@ this sentence needs to be more then one line of text.
 
 == Variable Tag
 
-    All  chapter  titles  start with a number  defined  using the  **chapter**
-    variable,  this is chapter [v chapter].  An  undefined  variable  which is
-    defined by an inc of 8 has the value [vi not-def2 8] and if inc'd by 7 has
-    a value of [vi not-def2 7]. We can silently inc this by 3 [vin not-def2 3]
-    and then insert [v not-def2].
+All chapter titles start with a number defined using the **chapter** variable,
+this is chapter [v chapter]. An undefined  variable which is defined by an inc
+of 8 has the  value  [vi  not-def2  8] and if  inc'd  by 7 has a value  of [vi
+not-def2 7]. We can silently inc this by 3 [vin not-def2 3] and then insert [v
+not-def2].
     
-    Following is a fig labelling and reference example
+Following is a fig labelling and reference example
      
     [vsn figure 0] This line had the figure variable set to 0. 
 
@@ -1010,6 +1052,8 @@ this sentence needs to be more then one line of text.
 
 [o latex "You should only see this when generating latex output"]
 
+[o rtf "You should only see this when generating rtf output"]
+
 [o text "You should only see this when generating plain text output"]
 
         
@@ -1021,6 +1065,8 @@ this sentence needs to be more then one line of text.
 [d html "You should only see this when generating **html** output"]
 
 [d latex "You should only see this when generating **latex** output"]
+
+[d rtf "You should only see this when generating **rtf** output"]
 
 [d text "You should only see this when generating **plain text** output"]
 
