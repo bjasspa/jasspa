@@ -103,7 +103,9 @@
         kill-region
         set-variable #l1 @y
         !if &seq &lef #l1 1 "\""
-            set-variable #l1 &xrep &mid #l1 1 &sub &len #l1 2 "\\\\\\(.\\)" "\\1"
+            set-variable #l2 &xrep #l1 "\\\\{\\([^}]+\\)}" "\" :JV\\1 \""
+            set-variable #l1 &spr "set-variable #l1 %n%s" &div &sub &len #l2 &len #l1 5 "&cat &cat &cat " #l2
+            execute-line #l1
         !endif
         set-variable &cat ".a" &pinc #l0 1 #l1
         -1 yank
@@ -832,6 +834,16 @@
     goto-position "\x82"
     find-buffer "*jst-conv*"
     set-variable $buffer-fname #l0
+    set-variable :JVoutput-file-name #l0
+    set-variable :JVoutput-path &lef #l0 &rsin "/" #l0
+    set-variable #l1 &rig $buffer-fname &len :JVoutput-path
+    !if &set #l2 &rsin "." #l1
+        set-variable #l2 &sub #l2 1 
+    !else
+        set-variable #l2 &len #l2
+    !endif
+    set-variable :JVoutput-base-name &lef #l1 #l2
+    set-variable :JVoutput-extension &rig #l1 #l2
     yank
     -1 yank
     -1 buffer-mode "edit"
