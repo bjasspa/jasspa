@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20060114.1143>
+# Last Modified: <20060114.1151>
 #
 ##############################################################################
 
@@ -508,11 +508,9 @@ clean::
 # Build the nroff pages
 #
 me.1: m1cmd000.1 $(TNIS) tmac.ad
-	$(CAT) tmac.ad me.tni > $@
-	$(SED) -e "s/so me.tni/\\\\\" Removed definition file inclusion/g" m1cmd000.1 >> $@
+	$(SED) -e "s/so me.tni/\\\\\" Removed definition file inclusion/g" tmac.ad me.tni m1cmd000.1 > $@
 ne.1: m1cmd002.1 $(TNIS) tmac.ad
-	$(CAT) tmac.ad me.tni > $@
-	$(SED) -e "s/so me.tni/\\\\\" Removed definition file inclusion/g" m1cmd002.1 >> $@
+	$(SED) -e "s/so me.tni/\\\\\" Removed definition file inclusion/g" tmac.ad me.tni m1cmd002.1 > $@
 #
 # Build the catman pages
 #
