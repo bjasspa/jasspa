@@ -20,6 +20,8 @@ ZIP	= zip -9
 UNZIP	= unzip -q -o
 GZIP	= gzip -9
 GUNZIP	= gunzip
+CAT	= cat
+SED	= sed
 #
 # Install
 #
