@@ -1,0 +1,61 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1988-2005 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.\" Created By: Jon Green
+.\"
+.\" $Id: tmac.ad,v 1.1 2006-01-14 11:47:13 jon Exp $
+.\"
+.\" Identification
+.de Id
+.\" Ignore
+..
+.\" Index definition
+.de Im
+.\" Ignore
+..
+.\" Reference definition.
+.de XI
+.\" Ignore
+..
+.\" Footer
+.de FH
+.\" Ignore
+..
+.\" Hyper-link to manual page.
+.de Ht
+.B \\$1(\\$2)\\$3
+..
+.\" Hyper-link to other item
+.de Hl
+.B \\$1
+..
+.\" Hyper-reference to manual page.
+.de Hr
+.B \\$1(\\$2)\\$3
+..
+.\" MicroEmacs code.
+.de Me
+.\" Ignore
+..
+.\" Code start
+.de CS
+.sp \\$1
+.ft CW
+.nf
+.na
+..
+.\" Code end
+.de CE
+.ft R
+.fi
+.ad
+.sp \\$1
+..
+.\" Constant width
+.de C
+\fC\\$1\\$2\\$3\\$4\\$5\\$6\fP
+..
+.\" End of definitions.
+.\" No space on the end of the file please!
