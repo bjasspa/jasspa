@@ -5,7 +5,7 @@
 .\"
 .\" Created By: Jon Green
 .\"
-.Id $Id: m1cmd002.1,v 1.3 2005-10-08 10:02:28 jon Exp $
+.Id $Id: m1cmd002.1,v 1.4 2006-01-14 13:16:43 jon Exp $
 .Im MicroEmacs function
 .so me.tni
 .TH ne 1
@@ -163,7 +163,7 @@ Non-\s-1UNIX\s0  platforms  usually need to explicitly  set the  \fB$MENAME\fR
 environment  variable to identify the aforementioned  files. for \s-1MS-DOS\s0
 and early  versions of  Microsoft  Windows this is typically  performed in the
 \fCAUTOEXEC.BAT\fR file.
-.IP \fBPATH\fR
+.IP "\fBPATH\fR"
 The \fB$PATH\fR  environment  variable is used on most operating  systems as a
 search path for executable files. This \fB$PATH\fR  environment  variable must
 be defined with \fB\*(mE\fR on the search path. Under \s-1UNIX\s0 this is
@@ -201,13 +201,13 @@ Initiates an 80 column by 25 line screen.
 A user defined string to set an explicit  graphics card mode. The operation is
 dependent upon the support offered by the graphics adapter.
 .RE
-.TP \fB$MEINSTALLPATH\fR
+.IP \fBMEINSTALLPATH\fR
 .Ht $MEINSTALLPATH 5 
 is an environment  variable that overrides any internally  defined search path
 for \*(nS system macros and defines the root  directory(s) of the \*(nS system
 macros. The presence of the environment variable affects 
 .Ht $search-path 5 .
-.TP \fB$MEUSERPATH\fR
+.IP \fBMEUSERPATH\fR
 .Ht $MEUSERPATH 5
 is an  environment  variable  that defines the users  private  directory  
 where user configuration files such as
@@ -216,7 +216,7 @@ where user configuration files such as
 and personal spelling  dictionaries are stored. This is an absolute  directory
 path. The environment variable sets the \*(nS variable
 .Ht $user-path 5 .
-.IP \fBMEPATH\fR
+.IP "\fBMEPATH\fR"
 .Ht $MEPATH 5
 is an environment variable that may be used to define the absolute search path
 for \*(nS macro files and affects the setting of
@@ -237,12 +237,10 @@ is the preferred method used to defined the user directory.
 .SH FILES
 All of the macro files and  dictionaries  are located in the \fB\*(nS\fR  home
 directory. The standard file extensions that are utilized are:-
-.TP
-.Hl ".emf" emf 8
-.\"
+.IP "\fB.emf\fP"
 A \fB\*(mE\fR macro file. The following classes of macro file exist:
 .RS
-.IP \fBne.emf\fR
+.IP "\fBne.emf\fR"
 The default startup file.
 .RE
 .SH "MICROSOFT WINDOWS"

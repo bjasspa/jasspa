@@ -5,7 +5,7 @@
 .\"
 .\" Created By: Jon Green
 .\"
-.Id $Id: m1cmd000.1,v 2.14 2005-10-08 10:02:28 jon Exp $
+.Id $Id: m1cmd000.1,v 2.15 2006-01-14 13:16:43 jon Exp $
 .Im MicroEmacs function
 .so me.tni
 .TH me 1
@@ -292,13 +292,13 @@ Initiates an 80 column by 25 line screen.
 A user defined string to set an explicit  graphics card mode. The operation is
 dependent upon the support offered by the graphics adapter.
 .RE
-.TP \fB$MEINSTALLPATH\fR
+.IP \fBMEINSTALLPATH\fR
 .Ht $MEINSTALLPATH 5 
 is an environment  variable that overrides any internally  defined search path
 for \*(mS system macros and defines the root  directory(s) of the \*(mS system
 macros. The presence of the environment variable affects 
 .Ht $search-path 5 .
-.TP \fB$MEUSERPATH\fR
+.IP \fBMEUSERPATH\fR
 .Ht $MEUSERPATH 5
 is an  environment  variable  that defines the users  private  directory  
 where user configuration files such as
@@ -354,28 +354,20 @@ file.
 .SH FILES
 All of the macro files and  dictionaries  are located in the  \fB\*(mS\fR
 home directory. The standard file extensions that are utilized are:-
-.TP
-.Hl ".eaf" eaf 8
-.\"
+.IP "\fB.eaf\fR"
 \fB\*(mE\fR  abbreviation file, defines completion definitions for buffer
 dependent text expansion.
-.TP
-.Hl ".edf" edf 8
-.\"
+.IP "\fB.edf\fR"
 A \fB\*(mE\fR spelling dictionary. \fI<language>\fR\fB.edf\fR provide language
 specific   dictionaries;   \fI$LOGNAME\fR\fB.edf\fR   is   personal   spelling
 dictionary.
-.TP
-.Hl ".ehf" ehf 8
-.\"
+.IP "\fB.ehf\fR"
 \fB\*(mE\fR  help file  information.  On-line help information for emacs,
 the main file is \fCme.ehf\fR.
-.TP
-.Hl ".emf" emf 8
-.\"
+.IP "\fB.emf\fR"
 A \fB\*(mE\fR macro file. The following classes of macro file exist:
 .RS
-.IP \fBme.emf\fR
+.IP "\fBme.emf\fR"
 The default startup file.
 .IP \fI<platform>.emf\fR
 A  platform   specify   startup  file,  these  include   \s-1UNIX   generic\s0
@@ -388,14 +380,10 @@ highlighting  appropriate  to the contents of the file type. e.g. 'C' language
 editing  (\fChkc.emf\fR),  N/Troff typesetting  (\fChknroff.emf\fR),  UNIX
 Manual page display (\fChkman.emf\fR), Makefiles (\fChkmake.emf\fR), etc.
 .RE
-.TP
-.Hl ".erf" erf 8
-.\"
+.IP "\fB.erf\fR"
 Registry files, used to retain personal information, users history in the file
 etc.
-.TP
-.Hl ".etf" etf 8
-.\"
+.IP "\fB.etf\fR"
 Template  files used to seed new files.  Typically  contains  standard  header
 information,  copyright notices etc. that are placed at the head of files. The
 \'C' programming language is called \fCc.etf\fR

@@ -5,7 +5,7 @@
 .\"
 .\" Created By: Jon Green
 .\"
-.\" $Id: tmac.ad,v 1.1 2006-01-14 11:47:13 jon Exp $
+.\" $Id: tmac.ad,v 1.2 2006-01-14 13:16:43 jon Exp $
 .\"
 .\" Identification
 .de Id
@@ -25,15 +25,15 @@
 ..
 .\" Hyper-link to manual page.
 .de Ht
-.B \\$1(\\$2)\\$3
+\fB\\$1(\\$2)\fP\\$3
 ..
 .\" Hyper-link to other item
-.de Hl
-.B \\$1
+.de Hl 
+\fB\\$1\fP\\$4
 ..
 .\" Hyper-reference to manual page.
 .de Hr
-.B \\$1(\\$2)\\$3
+\fB\\$1(\\$2)\fP\\$3
 ..
 .\" MicroEmacs code.
 .de Me
