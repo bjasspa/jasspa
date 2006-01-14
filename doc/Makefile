@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20050514.1311>
+# Last Modified: <20060114.1143>
 #
 ##############################################################################
 
@@ -29,7 +29,7 @@ READTXT	=	readme.txt
 FAQTXT	=	faq.txt
 BUILDTXT=	build.txt
 PATCHTXT=	patch.txt
-CATMAN1=	me.1.gz ne.1.gz
+CATMAN1=	me.1 ne.1 me.1.gz ne.1.gz
 MISCTXT=	cygwin.txt	infolist.txt
 #
 # Define components
@@ -505,19 +505,32 @@ $(READTXT): m2nar001.2 m2nar003.2 m2nar002.2
 clean::
 	$(RM) $(READTXT)
 #
+# Build the nroff pages
+#
+me.1: m1cmd000.1 $(TNIS) tmac.ad
+	$(CAT) tmac.ad me.tni > $@
+	$(SED) -e "s/so me.tni/\\\\\" Removed definition file inclusion/g" m1cmd000.1 >> $@
+ne.1: m1cmd002.1 $(TNIS) tmac.ad
+	$(CAT) tmac.ad me.tni > $@
+	$(SED) -e "s/so me.tni/\\\\\" Removed definition file inclusion/g" m1cmd002.1 >> $@
+#
 # Build the catman pages
 #
 me.1.gz: m1cmd000.1 $(TNIS)
-	    $(DROFF) -c JASSPA -o me.1 m1cmd000.1
-	    $(GZIP) me.1
+	    $(DROFF) -c JASSPA -o catme.1 m1cmd000.1
+	    $(GZIP) -c -n catme.1 > $@
+	    $(RM) catme.1
 ne.1.gz: m1cmd002.1 $(TNIS)
-	    $(DROFF) -c JASSPA -o ne.1 m1cmd002.1
-	    $(GZIP) ne.1
+	    $(DROFF) -c JASSPA -o catne.1 m1cmd002.1
+	    $(GZIP) -c -n catne.1 > $@
+	    $(RM) catne.1
 clean::
 	$(RM) me.1
 	$(RM) ne.1
 	$(RM) me.1.gz
 	$(RM) ne.1.gz
+	$(RM) catme.1
+	$(RM) catne.1
 $(BUILDTXT): m2nar007.2
 	    $(DROFF) -l10000 -c JASSPA -p -o $@ m2nar007.2
 clean::
