@@ -2165,7 +2165,7 @@ special_bound:
                     int savcle ;
                     savcle = clexec ;
                     clexec = meFALSE ;
-                    saveExitEmacs(0,1) ;
+                    exitEmacs(1,3) ;
                     clexec = savcle ;
                 }
             }
