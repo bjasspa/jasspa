@@ -924,10 +924,17 @@ meGetConsoleMessage(MSG *msg, int mode)
         /* if we filled in a message, then success! */
         if (msg->message != 0)
         {
-            /* Set up the ALT key state also */
-            if ((kr->dwControlKeyState & LEFT_ALT_PRESSED) ||
-                (kr->dwControlKeyState & RIGHT_ALT_PRESSED))
+            /* Set up the modifier key state */
+            ttmodif = 0;
+            if(kr->dwControlKeyState & (LEFT_ALT_PRESSED|RIGHT_ALT_PRESSED))
+            {
                 msg->lParam |= 1<<29;
+                ttmodif |= ME_ALT;
+            }
+            if(kr->dwControlKeyState & SHIFT_PRESSED)
+                ttmodif |= ME_SHIFT;
+            if(kr->dwControlKeyState & (LEFT_CTRL_PRESSED|RIGHT_CTRL_PRESSED))
+                ttmodif |= ME_CONTROL;
             if(kr->dwControlKeyState & ENHANCED_KEY)
                 msg->lParam |= 0x01000000 ;
             return meTRUE ;
@@ -1002,11 +1009,12 @@ meGetConsoleMessage(MSG *msg, int mode)
                 if (mr->dwButtonState & RIGHTMOST_BUTTON_PRESSED)
                     msg->wParam |= MK_RBUTTON;
             }
-            if ((mr->dwControlKeyState & RIGHT_CTRL_PRESSED) ||
-                (mr->dwControlKeyState & LEFT_CTRL_PRESSED))
-                msg->wParam |= MK_CONTROL;
-            if (mr->dwControlKeyState & SHIFT_PRESSED)
-                msg->wParam |= MK_SHIFT;
+            if(mr->dwControlKeyState & (LEFT_ALT_PRESSED|RIGHT_ALT_PRESSED))
+                ttmodif |= ME_ALT;
+            if(mr->dwControlKeyState & SHIFT_PRESSED)
+                ttmodif |= ME_SHIFT;
+            if(mr->dwControlKeyState & (LEFT_CTRL_PRESSED|RIGHT_CTRL_PRESSED))
+                ttmodif |= ME_CONTROL;
             /* Set up mouse position */
             msg->lParam = ((mr->dwMousePosition.Y) << 16) | mr->dwMousePosition.X;
 
@@ -1829,6 +1837,33 @@ WinQuitExit (HWND hwndDlg,     /* window handle of dialog box     */
 
     }
 }
+
+static void
+meModifierUpdate(void)
+{
+#if 0
+    ttmodif = 0 ;
+    if(GetKeyState(VK_SHIFT))
+        ttmodif |= ME_SHIFT;
+    if(GetKeyState(VK_CONTROL))
+        ttmodif |= ME_CONTROL;
+    if(GetKeyState(VK_MENU))
+        ttmodif |= ME_ALT;
+#else        
+    BYTE keyBuf [256];          /* Keyboard buffer */
+    
+    GetKeyboardState (keyBuf);
+    
+    ttmodif = 0;
+    if (keyBuf [VK_SHIFT] & 0x80)
+        ttmodif |= ME_SHIFT;
+    if (keyBuf [VK_MENU] & 0x80)
+        ttmodif |= ME_ALT;
+    if (keyBuf [VK_CONTROL] & 0x80)
+        ttmodif |= ME_CONTROL;
+#endif
+}
+
 #endif /* _ME_WINDOW */
 
 
@@ -2773,6 +2808,13 @@ WinMouse(HWND hwnd, UINT message, UINT wParam, LONG lParam)
         }
         return meFALSE ;
     }
+#ifdef _ME_WINDOW
+#ifdef _ME_CONSOLE
+    if(!(meSystemCfg & meSYSTEM_CONSOLE))
+#endif /* _ME_CONSOLE */
+        meModifierUpdate() ;
+#endif /* _ME_WINDOW */
+    
     switch (message)
     {
     case WM_MOUSEMOVE:
@@ -2934,6 +2976,7 @@ WinMouse(HWND hwnd, UINT message, UINT wParam, LONG lParam)
 }
 #endif
 
+
 /*
  * WinKeyboard
  * Handle keyboard message types.
@@ -2948,6 +2991,12 @@ WinKeyboard (HWND hwnd, UINT message, UINT wParam, LONG lParam)
     if((frame = meMessageGetFrame(hwnd)) == NULL)
         return meFALSE ;
         
+#ifdef _ME_WINDOW
+#ifdef _ME_CONSOLE
+    if(!(meSystemCfg & meSYSTEM_CONSOLE))
+#endif /* _ME_CONSOLE */
+        meModifierUpdate() ;
+#endif /* _ME_WINDOW */
 #ifdef _WIN_KEY_DEBUGGING
     {
         FILE *fp = NULL;
@@ -2981,8 +3030,8 @@ WinKeyboard (HWND hwnd, UINT message, UINT wParam, LONG lParam)
                 break;
             }
             
-            fprintf (fp, "%s::%d(0x%08x). wParam = %d(%04x) lParam = %d(%08x)\n",
-                     name, message, message, wParam, wParam, lParam, lParam);
+            fprintf (fp, "%s::%d(0x%08x). wParam = %d(%04x) lParam = %d(%08x) modif %x\n",
+                     name, message, message, wParam, wParam, lParam, lParam, ttmodif);
             fclose (fp);
         }
     }
@@ -3007,28 +3056,14 @@ WinKeyboard (HWND hwnd, UINT message, UINT wParam, LONG lParam)
                 }
             }
 #endif /* _ME_WINDOW */
-
-            ttmodif |= ME_ALT;              /* The ALT key is pressed */
-            goto done_syskeydown;
         }
     case WM_KEYDOWN:
-        /* Get the ALT key status */
-        if (lParam & (1<<29))
-            ttmodif |= ME_ALT;
-        else
-            ttmodif &= ~ME_ALT;
-done_syskeydown:
         /* Determine the special keyboard character we are handling */
         switch (wParam)
         {
         case VK_SHIFT:
-            ttmodif |= ME_SHIFT;
-            break;
         case VK_CONTROL:
-            ttmodif |= ME_CONTROL;
-            break;
         case VK_MENU:
-            ttmodif |= ME_ALT;
             break;
         case VK_LEFT:
             /* Distinguish cursor/number-pad keys */
@@ -3400,25 +3435,17 @@ do_keydown:
     case WM_KEYUP:
         switch (wParam)
         {
-        case VK_MENU:    ttmodif &= ~ME_ALT;   break;
-        case VK_SHIFT:   ttmodif &= ~ME_SHIFT; break;
-        case VK_CONTROL: ttmodif &= ~ME_CONTROL;  break;
+        case VK_MENU:
+        case VK_SHIFT:
+        case VK_CONTROL:
+            break;
         default:
             return (meFALSE);
         }
         break;
 
     case WM_SYSCHAR:
-        ttmodif |= ME_ALT;              /* MUST be an ALT key input */
-        goto done_syschar;
-
     case WM_CHAR:
-        /* Detect the ALT key */
-        if (lParam & (1<<29))
-            ttmodif |= ME_ALT;
-        else
-            ttmodif &= ~ME_ALT;
-done_syschar:
         /* Handle any special keys here */
         switch (wParam)
         {
@@ -5952,8 +5979,6 @@ meFrameGainFocus(meFrame *frame)
     /* have we not got the focus? */
     if(frame->flags & meFRAME_NOT_FOCUS)
     {
-        BYTE keyBuf [256];          /* Keyboard buffer */
-        
         /* Record the fact we have focus */
         frame->flags &= ~meFRAME_NOT_FOCUS ;
 #if MEOPT_MWFRAME
@@ -5969,16 +5994,6 @@ meFrameGainFocus(meFrame *frame)
          * own the clipboard contents*/
         clipState &= ~CLIP_OWNER ;
         
-        /* Get the state of the keyboard keys into sync */
-        GetKeyboardState (keyBuf);
-        
-        ttmodif = 0;
-        if (keyBuf [VK_SHIFT] & 0x80)
-            ttmodif |= ME_SHIFT;
-        if (keyBuf [VK_MENU] & 0x80)
-            ttmodif |= ME_ALT;
-        if (keyBuf [VK_CONTROL] & 0x80)
-            ttmodif |= ME_CONTROL;
         /* Make sure the cursor is ok
          * This must be done whether MEOPT_MOUSE is enabled or not */
         SetCursor (meCursors[meCurCursor]);
@@ -6359,10 +6374,10 @@ MainWndProc (HWND hWnd, UINT message, UINT wParam, LONG lParam)
                                (DLGPROC) WinQuitExit) == meFALSE)
                     return meFALSE ;
             }
-            meDie ();
+            exitEmacs(1,8) ;
         }
         break;
-
+        
     case WM_DESTROY:
         /* if just closing down a frame the frame will already be unlinked so
          * we won't find the frame */

@@ -236,12 +236,12 @@ extern  int     doRedrawEvent(void);
 extern  int     mlwrite(int flags, meUByte *fmt, ...) ;
 #ifdef _WIN32
 #ifdef _ME_WINDOW
-#define mePrintMessage(mm,dummyInt) MessageBox(NULL,(char *) mm,ME_FULLNAME " '" meVERSION,MB_OK);
+#define mePrintMessage(mm) MessageBox(NULL,(char *) mm,ME_FULLNAME " '" meVERSION,MB_OK);
 #else
-#define mePrintMessage(mm,dummyInt) WriteFile(GetStdHandle(STD_ERROR_HANDLE),mm,meStrlen(mm),&dummyInt,NULL)
+#define mePrintMessage(mm) do{ int dummyInt; WriteFile(GetStdHandle(STD_ERROR_HANDLE),mm,meStrlen(mm),&dummyInt,NULL); } while(0)
 #endif
 #else
-#define mePrintMessage(mm,dummyInt) write(2,mm,meStrlen(mm))
+#define mePrintMessage(mm) write(2,mm,meStrlen(mm))
 #endif
 
 /* eval.c externals */
