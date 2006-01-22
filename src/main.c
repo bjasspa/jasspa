@@ -1072,7 +1072,8 @@ meDie(void)
     
     /* Make a noisy BELL */
     meModeClear(globMode,MDQUIET) ;
-    mlwrite(MWCURSOR|MWABORT,(meUByte *)"*** Emergency quit ***");
+    TTbell() ;
+    mePrintMessage((meUByte *)"*** Emergency quit ***");
 #ifdef _ME_CONSOLE
 #ifdef _TCAP
     TCAPputc('\n');
@@ -1404,7 +1405,7 @@ mesetup(int argc, char *argv[])
                 break ;
 #endif
             case 'h':
-                mePrintMessage(meHelpPage,argc) ;
+                mePrintMessage(meHelpPage) ;
                 meExit(0) ;
 #ifdef _DOS
             case 'i':
@@ -1423,7 +1424,7 @@ mesetup(int argc, char *argv[])
 missing_arg:
                         sprintf((char *)evalResult,"%s Error: Argument expected with option %s\nOption -h gives further help\n",
                                 argv[0],argv[carg]);
-                        mePrintMessage(evalResult,argc) ;
+                        mePrintMessage(evalResult) ;
                         meExit(1);
                     }
                     argv[rarg++] = argv[++carg] ;
@@ -1514,7 +1515,7 @@ missing_arg:
              case 'V':
                 sprintf((char *)evalResult,"%s %s - Date %s%s - %s\n", 
                         ME_FULLNAME, meVERSION, meCENTURY, meDATE, meSYSTEM_NAME) ;
-                mePrintMessage(evalResult,argc) ;
+                mePrintMessage(evalResult) ;
                 meExit(0) ;
                 
             case 'v':
@@ -1531,7 +1532,7 @@ missing_arg:
                     if((tt = strchr(ss,'=')) == NULL)
                     {
                         sprintf((char *)evalResult,"%s Error: Mal-formed -v option\n",argv[0]) ;
-                        mePrintMessage(evalResult,argc) ;
+                        mePrintMessage(evalResult) ;
                         meExit(1) ;
                     }
                     
@@ -1540,7 +1541,7 @@ missing_arg:
                     {
                         *tt = '\0' ;
                         sprintf((char *)evalResult,"%s Error: Cannot set variable [%s] from the command-line\n",argv[0],ss) ;
-                        mePrintMessage(evalResult,argc) ;
+                        mePrintMessage(evalResult) ;
                         meExit(1) ;
                     }
                     if((tt = strchr(ss,'=')) != NULL)
@@ -1549,7 +1550,7 @@ missing_arg:
                         if(setVar((meUByte *)ss,(meUByte *)tt,meRegCurr) <= 0)  /* set a variable */
                         {
                             sprintf((char *)evalResult,"%s Error: Unable to set variable [%s]\n",argv[0],ss) ;
-                            mePrintMessage(evalResult,argc) ;
+                            mePrintMessage(evalResult) ;
                             meExit(1) ;
                         }
                         execstr = NULL ;
@@ -1566,7 +1567,7 @@ missing_arg:
             default:
                 {
                     sprintf((char *)evalResult,"%s Error: Unknown option %s\nOption -h gives further help\n",argv[0],argv[carg]) ;
-                    mePrintMessage(evalResult,argc) ;
+                    mePrintMessage(evalResult) ;
                     meExit(1) ;
                 }
             }
@@ -1670,7 +1671,7 @@ missing_arg:
     else if(userClientServer && clientMessage)
     {
         sprintf((char *)evalResult,"%s Error: Unable to connect to server\n",argv[0]) ;
-        mePrintMessage(evalResult,argc) ;
+        mePrintMessage(evalResult) ;
         meExit(1) ;
     }
 #endif

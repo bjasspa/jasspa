@@ -2741,7 +2741,7 @@ mlwrite(int flags, meUByte *fmt, int arg)
     {
         /* an mlwrite at this stage is fatal - usually a malloc failure,
          * print message and exit */
-        mePrintMessage(fmt,flags) ;
+        mePrintMessage(fmt) ;
         meExit(1) ;
     }
     if((alarmState & meALARM_PIPED_QUIET) && ((flags & MWSTDALLWRT) == 0))
