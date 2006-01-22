@@ -88,7 +88,11 @@ set-variable %gdiff-com &cond &seq %gdiff-com "ERROR" "diff -c -w" %gdiff-com
         set-variable $line-scheme &cond @# .scheme.gdfsel .scheme.gdfrej
     !endif
     forward-line
-    next-window
+    !if &equ $window-id .gdiff.wid
+        next-window
+    !else
+        previous-window
+    !endif
     set-variable $window-line #l0
     !if &or &or &equ $line-scheme .scheme.gdfpad &equ $line-scheme .scheme.gdfselpad &equ $line-scheme .scheme.gdfrejpad
         set-variable $line-scheme .scheme.gdfrejpad
@@ -96,7 +100,11 @@ set-variable %gdiff-com &cond &seq %gdiff-com "ERROR" "diff -c -w" %gdiff-com
         set-variable $line-scheme .scheme.gdfrej
     !endif
     forward-line
-    next-window
+    !if &equ $window-id .gdiff.wid
+        next-window
+    !else
+        previous-window
+    !endif
 !emacro
 
 0 define-macro gdiff-line-select
@@ -138,8 +146,11 @@ set-variable %gdiff-com &cond &seq %gdiff-com "ERROR" "diff -c -w" %gdiff-com
 0 define-macro gdiff-menu-select
     set-variable #l1 &band @# 3
     !if #l1
-        set-variable #l0 &cond &band #l1 1 .gdiff.bnold .gdiff.bnnew
-        !if &not &seq $buffer-bname #l0
+        !if &band #l1 1
+            !if &not &equ $window-id .gdiff.wid
+                previous-window
+            !endif
+        !elif &equ $window-id .gdiff.wid
             next-window
         !endif
     !endif
@@ -283,7 +294,12 @@ set-variable %gdiff-com &cond &seq %gdiff-com "ERROR" "diff -c -w" %gdiff-com
     delete-other-windows
     !force !force gdiff-create-comb1
     set-variable #l3 $status
-    split-window-horizontally
+    2 split-window-vertically
+    change-window-depth 2
+    find-buffer "*gdiff current lines*"
+    previous-window
+    1 split-window-horizontally
+    set-variable .gdiff.wid $window-id
     find-buffer .gdiff.bnold
     !if #l3
         set-variable $window-line #l0
