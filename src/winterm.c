@@ -6350,7 +6350,7 @@ MainWndProc (HWND hWnd, UINT message, UINT wParam, LONG lParam)
                 int savcle ;
                 savcle = clexec ;
                 clexec = meFALSE ;
-                saveExitEmacs(0,1) ;
+                exitEmacs(1,3) ;
                 clexec = savcle ;
                 return meFALSE ;
             }
