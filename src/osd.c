@@ -4552,12 +4552,11 @@ osdDisplayKeyMove(int dir)
             if((osdNewMd = osdCurChild->next) != NULL)
             {
                 osdCurChild->newContext = osdCurChild->curContext ;
+                osdNewChild = osdNewMd ;
                 posBest[1] = -1 ;
                 posCur[0] = osdNewMd->x - osdNewMd->dialog->x ;
                 posCur[1] = osdNewMd->y - osdNewMd->dialog->y ;
-                if(osdDisplayFindClosest(dir,osdNewMd,NULL,posCur,posBest) < 0)
-                    osdNewChild = osdNewMd ;
-                return 1 ;
+                return osdDisplayFindClosest(dir,osdNewMd,NULL,posCur,posBest) ;
             }
         }
         /* user may be backing out of the current sub-menu */
