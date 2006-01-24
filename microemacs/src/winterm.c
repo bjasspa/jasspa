@@ -1841,15 +1841,6 @@ WinQuitExit (HWND hwndDlg,     /* window handle of dialog box     */
 static void
 meModifierUpdate(void)
 {
-#if 0
-    ttmodif = 0 ;
-    if(GetKeyState(VK_SHIFT))
-        ttmodif |= ME_SHIFT;
-    if(GetKeyState(VK_CONTROL))
-        ttmodif |= ME_CONTROL;
-    if(GetKeyState(VK_MENU))
-        ttmodif |= ME_ALT;
-#else        
     BYTE keyBuf [256];          /* Keyboard buffer */
     
     GetKeyboardState (keyBuf);
@@ -1861,7 +1852,6 @@ meModifierUpdate(void)
         ttmodif |= ME_ALT;
     if (keyBuf [VK_CONTROL] & 0x80)
         ttmodif |= ME_CONTROL;
-#endif
 }
 
 #endif /* _ME_WINDOW */
