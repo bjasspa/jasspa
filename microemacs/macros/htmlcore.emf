@@ -51,12 +51,9 @@ set-variable #l2 &ind &spr ".hilight.%stag" #l0
     hilight #l1 4 "</" ">" ""                .scheme.keyword
     hilight #l1 4 "<!--" "-->" ""            .scheme.comment
     hilight #l1 4 "<!" ">" ""                .scheme.comment
-    hilight #l1 0 "&\\w\\w;"                 .scheme.variable
-    hilight #l1 0 "&\\w\\w\\w;"              .scheme.variable
-    hilight #l1 0 "&\\w\\w\\w\\w;"           .scheme.variable
-    hilight #l1 0 "&\\w\\w\\w\\w\\w;"        .scheme.variable
-    hilight #l1 0 "&\\w\\w\\w\\w\\w;"        .scheme.variable
-    hilight #l1 0 "&\\w\\w\\w\\w\\w\\w;"     .scheme.variable
+    hilight #l1 0 "&[[:alpha:]]+;"           .scheme.variable
+    hilight #l1 0 "&#\\d+;"                  .scheme.variable
+    hilight #l1 0 "&#x\\h+;"                 .scheme.variable
     hilight #l1 0 "\""                       .scheme.string
     hilight #l1 4 "<script" "</script>" ""   .scheme.keyword
     hilight #l1 4 "<%" "%>" ""               .scheme.keyword
