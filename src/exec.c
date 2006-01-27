@@ -195,11 +195,11 @@ quote_spec_key1:
                     *dd++ = key >> 8 ;
                     *dd++ = key & 0xff ;
                     break;
-                case 'a':   *dd++ = 0x07; break;
                 case 'b':   *dd++ = 0x08; break;
                 case 'd':   *dd++ = 0x7f; break;
                 case 'e':   *dd++ = 0x1b; break;
                 case 'f':   *dd++ = 0x0c; break;
+                case 'g':   *dd++ = 0x07; break;
                 case 'i':
                     *dd++ = meCHAR_LEADER ;
                     *dd++ = meCHAR_TRAIL_SPECIAL ;  
