@@ -309,6 +309,9 @@ extern void XTERMsetBgcol(void) ;
 /* Some extra function, only available to xterms */
 extern void meFrameSetWindowTitle(meFrame *frame, meUByte *str) ;
 extern void meFrameSetWindowSize(meFrame *frame) ;
+#if MEOPT_EXTENDED
+#define meFrameRepositionWindow(f,r) 
+#endif
 
 #ifdef _CLIPBRD
 extern void TTgetClipboard(void);
@@ -476,6 +479,9 @@ extern void meFrameTermMakeCur(meFrame *frame) ;
 extern int  meFrameTermInit(meFrame *frame, meFrame *sibling) ;
 extern void meFrameSetWindowTitle(meFrame *frame, meUByte *str) ;
 extern void meFrameSetWindowSize(meFrame *frame) ;
+#if MEOPT_EXTENDED
+extern void meFrameRepositionWindow(meFrame *frame, int resize) ;
+#endif
 extern void meFrameShowCursor(meFrame *frame) ;
 extern void meFrameHideCursor(meFrame *frame) ;
 
