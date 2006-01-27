@@ -137,6 +137,7 @@ meRegexFree(meRegex *regex) ;
 #define isLower(c)       (islower(c))
 #define isUpper(c)       (isupper(c))
 #define isAlpha(c)       (isalpha(c))
+#define isAlphaNum(c)    (isalnum(c))
 #define isWord(c)        (isalnum(c) || ((c) == '_'))
 #define isXDigit(c)      (isxdigit(c))
 #define isSpace(c)       (isspace(c))
@@ -183,12 +184,16 @@ enum {
     meREGEXITEM_DOUBLE,
     meREGEXITEM_CLASS,
     meREGEXITEM_ANYCHR,
+    meREGEXITEM_ALPHACHR,
+    meREGEXITEM_NALPHACHR,
     meREGEXITEM_DIGITCHR,
     meREGEXITEM_NDIGITCHR,
     meREGEXITEM_XDIGITCHR,
     meREGEXITEM_NXDIGITCHR,
     meREGEXITEM_LOWERCHR,
     meREGEXITEM_NLOWERCHR,
+    meREGEXITEM_ALNUMCHR,
+    meREGEXITEM_NALNUMCHR,
     meREGEXITEM_SPACECHR,
     meREGEXITEM_NSPACECHR,
     meREGEXITEM_UPPERCHR,
@@ -329,6 +334,14 @@ do { \
         if((string[offset] != '\0') && (string[offset] != '\n')) \
             retOffset = offset+1 ; \
         break ; \
+    case meREGEXITEM_ALPHACHR: \
+        if((string[offset] != '\0') && isAlpha(string[offset])) \
+            retOffset = offset+1 ; \
+        break ; \
+    case meREGEXITEM_NALPHACHR: \
+        if((string[offset] != '\0') && !isAlpha(string[offset])) \
+            retOffset = offset+1 ; \
+        break ; \
     case meREGEXITEM_DIGITCHR: \
         if((string[offset] != '\0') && isDigit(string[offset])) \
             retOffset = offset+1 ; \
@@ -351,6 +364,14 @@ do { \
         break ; \
     case meREGEXITEM_NLOWERCHR: \
         if((string[offset] != '\0') && !isLower(string[offset])) \
+            retOffset = offset+1 ; \
+        break ; \
+    case meREGEXITEM_ALNUMCHR: \
+        if((string[offset] != '\0') && isAlphaNum(string[offset])) \
+            retOffset = offset+1 ; \
+        break ; \
+    case meREGEXITEM_NALNUMCHR: \
+        if((string[offset] != '\0') && !isAlphaNum(string[offset])) \
             retOffset = offset+1 ; \
         break ; \
     case meREGEXITEM_SPACECHR: \
@@ -835,6 +856,12 @@ meRegexItemGet(meRegex *regex, meRegexItem *lastItem,
         case '>':
             item->type = meREGEXITEM_ENDWORD ;
             break ;
+        case 'a':
+            item->type = meREGEXITEM_ALPHACHR ;
+            break ;
+        case 'A':
+            item->type = meREGEXITEM_NALPHACHR ;
+            break ;
         case 'b':
             item->type = meREGEXITEM_WORDBND ;
             break ;
@@ -858,6 +885,12 @@ meRegexItemGet(meRegex *regex, meRegexItem *lastItem,
             break ;
         case 'L':
             item->type = meREGEXITEM_NLOWERCHR ;
+            break ;
+        case 'm':
+            item->type = meREGEXITEM_ALNUMCHR ;
+            break ;
+        case 'M':
+            item->type = meREGEXITEM_NALNUMCHR ;
             break ;
         case 's':
             item->type = meREGEXITEM_SPACECHR ;
@@ -1204,10 +1237,14 @@ meRegexItemStartComp(meRegex *regex, meRegexItem *item, int first)
         }
         gotStart = 1 ;
         break ;
+    case meREGEXITEM_ALPHACHR:
+    case meREGEXITEM_NALPHACHR:
     case meREGEXITEM_XDIGITCHR:
     case meREGEXITEM_NXDIGITCHR:
     case meREGEXITEM_LOWERCHR:
     case meREGEXITEM_NLOWERCHR:
+    case meREGEXITEM_ALNUMCHR:
+    case meREGEXITEM_NALNUMCHR:
     case meREGEXITEM_SPACECHR:
     case meREGEXITEM_NSPACECHR:
     case meREGEXITEM_UPPERCHR:
@@ -1225,12 +1262,16 @@ meRegexItemStartComp(meRegex *regex, meRegexItem *item, int first)
                 type = meREGEXITEM_SPACECHR ;
             else if((invert = (type == meREGEXITEM_NWORDCHR)))
                 type = meREGEXITEM_WORDCHR ;
+            else if((invert = (type == meREGEXITEM_NXDIGITCHR)))
+                type = meREGEXITEM_XDIGITCHR ;
             else if((invert = (type == meREGEXITEM_NLOWERCHR)))
                 type = meREGEXITEM_LOWERCHR ;
             else if((invert = (type == meREGEXITEM_NUPPERCHR)))
                 type = meREGEXITEM_UPPERCHR ;
-            else if((invert = (type == meREGEXITEM_NXDIGITCHR)))
-                type = meREGEXITEM_XDIGITCHR ;
+            else if((invert = (type == meREGEXITEM_NALNUMCHR)))
+                type = meREGEXITEM_ALNUMCHR ;
+            else if((invert = (type == meREGEXITEM_NALPHACHR)))
+                type = meREGEXITEM_ALPHACHR ;
             
             /* don't bother with '\0' - can never match */
             do
@@ -1239,12 +1280,16 @@ meRegexItemStartComp(meRegex *regex, meRegexItem *item, int first)
                     jj = isSpace(ii) ;
                 else if(type == meREGEXITEM_WORDCHR)
                     jj = isWord(ii) ;
+                else if(type == meREGEXITEM_XDIGITCHR)
+                    jj = isXDigit(ii) ;
                 else if(type == meREGEXITEM_LOWERCHR)
                     jj = isLower(ii) ;
                 else if(type == meREGEXITEM_UPPERCHR)
                     jj = isUpper(ii) ;
+                else if(type == meREGEXITEM_ALNUMCHR)
+                    jj = isAlphaNum(ii) ;
                 else
-                    jj = isXDigit(ii) ;
+                    jj = isAlpha(ii) ;
                 if((jj != 0) ^ invert)
                     meRegexClassSet(regex->start,ii) ;
             } while(--ii > 0) ;

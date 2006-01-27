@@ -454,6 +454,11 @@ meHiltItemCompile(meUByte *dest, meUByte **token,
             *dest++ = meHIL_TEST_DEF_GROUP ;
             *dest++ = cc ;
             break ;
+        case 'A':
+            *dest++ = meCHAR_LEADER ;
+            *dest++ = meHIL_TEST_VALID|meHIL_TEST_INVERT|meHIL_TEST_ALPHA ;
+            *dest++ = meHIL_TEST_DEF_GROUP ;
+            break ;
         case 'D':
             *dest++ = meCHAR_LEADER ;
             *dest++ = meHIL_TEST_VALID|meHIL_TEST_INVERT|meHIL_TEST_DIGIT ;
@@ -467,6 +472,11 @@ meHiltItemCompile(meUByte *dest, meUByte **token,
         case 'L':
             *dest++ = meCHAR_LEADER ;
             *dest++ = meHIL_TEST_VALID|meHIL_TEST_INVERT|meHIL_TEST_LOWER ;
+            *dest++ = meHIL_TEST_DEF_GROUP ;
+            break ;
+        case 'M':
+            *dest++ = meCHAR_LEADER ;
+            *dest++ = meHIL_TEST_VALID|meHIL_TEST_INVERT|meHIL_TEST_ALNUM ;
             *dest++ = meHIL_TEST_DEF_GROUP ;
             break ;
         case 'S':
@@ -484,7 +494,11 @@ meHiltItemCompile(meUByte *dest, meUByte **token,
             *dest++ = meHIL_TEST_VALID|meHIL_TEST_INVERT|meHIL_TEST_WORD ;
             *dest++ = meHIL_TEST_DEF_GROUP ;
             break ;
-        case 'a':   *dest++ = 0x07; break;
+        case 'a':
+            *dest++ = meCHAR_LEADER ;
+            *dest++ = meHIL_TEST_VALID|meHIL_TEST_ALPHA ;
+            *dest++ = meHIL_TEST_DEF_GROUP ;
+            break ;
         case 'd':
             *dest++ = meCHAR_LEADER ;
             *dest++ = meHIL_TEST_VALID|meHIL_TEST_DIGIT ;
@@ -492,6 +506,7 @@ meHiltItemCompile(meUByte *dest, meUByte **token,
             break ;
         case 'e':   *dest++ = 0x1b; break;
         case 'f':   *dest++ = 0x0c; break;
+        case 'g':   *dest++ = 0x07; break;
         case 'h':
             *dest++ = meCHAR_LEADER ;
             *dest++ = meHIL_TEST_VALID|meHIL_TEST_XDIGIT ;
@@ -500,6 +515,11 @@ meHiltItemCompile(meUByte *dest, meUByte **token,
         case 'l':
             *dest++ = meCHAR_LEADER ;
             *dest++ = meHIL_TEST_VALID|meHIL_TEST_LOWER ;
+            *dest++ = meHIL_TEST_DEF_GROUP ;
+            break ;
+        case 'm':
+            *dest++ = meCHAR_LEADER ;
+            *dest++ = meHIL_TEST_VALID|meHIL_TEST_ALNUM ;
             *dest++ = meHIL_TEST_DEF_GROUP ;
             break ;
         case 'n':   *dest++ = 0x0a; break;
