@@ -93,6 +93,7 @@
 #include "wintermr.h"                   /* Windows resource file */
 
 #include <process.h>
+#include <shellapi.h>
 
 /*FILE *logfp=NULL ;*/
 
@@ -193,6 +194,10 @@ typedef struct
     int      maxDepth;                  /* Window maximum depth */
     int      borderDepth;               /* Window border depth */
     int      borderWidth;               /* Window border width */
+    int      monWidth;                  /* primary(?) monitor size and */
+    int      monDepth;                  /* position info for reposition */
+    int      monPosX;
+    int      monPosY;
 } CellMetrics;
 
 CellMetrics eCellMetrics;               /* Cell metrics */
@@ -5359,6 +5364,110 @@ meFrameSetWindowSize(meFrame *frame)
 #endif /* _ME_WINDOW */
 }
 
+#if MEOPT_EXTENDED
+void
+meFrameRepositionWindow(meFrame *frame, int resize)
+{
+#ifdef _ME_WINDOW
+    if(!meFrameGetWinMaximized(frame)
+#ifdef _ME_CONSOLE
+    /* If in console mode... */
+       && !(meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_CONSOLE */
+       )
+    {
+        RECT wRect, mRect ;
+        int left, top, width, depth, ii ;
+        
+        /* the monitor window sizes do not allow for the boarder which is not shown, we must allow for it */ 
+        ii = eCellMetrics.borderWidth >> 1 ;
+        mRect.left = eCellMetrics.monPosX + ii ;
+        mRect.right = eCellMetrics.monPosX + eCellMetrics.monWidth - ii ;
+        mRect.top = eCellMetrics.monPosY + ii ;
+        mRect.bottom = eCellMetrics.monPosY + eCellMetrics.monDepth - ii ;
+        
+        {
+            APPBARDATA abd;
+            UINT uState ;
+            abd.cbSize=sizeof(abd) ;
+            uState = (UINT) SHAppBarMessage(ABM_GETSTATE, &abd); 
+
+            if((uState & ABS_ALWAYSONTOP) &&
+               SHAppBarMessage(ABM_GETTASKBARPOS,&abd))
+            {
+                if(uState & ABS_AUTOHIDE)
+                {
+                    /* allow 2 pixels for the hidden taskbar */
+                    switch(abd.uEdge)
+                    {
+                    case ABE_BOTTOM:
+                        mRect.bottom -= 2 ;
+                        break ;
+                    case ABE_LEFT:
+                        mRect.left += 2 ;
+                        break ;
+                    case ABE_RIGHT:
+                        mRect.right -= 2 ;
+                        break ;
+                    case ABE_TOP:
+                        mRect.top += 2 ;
+                        break ;
+                    }
+                }
+                else
+                {
+                    switch(abd.uEdge)
+                    {
+                    case ABE_BOTTOM:
+                        mRect.bottom = abd.rc.top ;
+                        break ;
+                    case ABE_LEFT:
+                        mRect.left = abd.rc.right ;
+                        break ;
+                    case ABE_RIGHT:
+                        mRect.right = abd.rc.left ;
+                        break ;
+                    case ABE_TOP:
+                        mRect.top = abd.rc.bottom ;
+                        break ;
+                    }
+                }
+            }
+        }
+        /* Always reposition so the top left is visible and as much of the window */
+        GetWindowRect(meFrameGetWinHandle(frame),&wRect) ;
+        
+        left = wRect.left ;
+        width = wRect.right - left ;
+        if(wRect.right > mRect.right)
+            left = mRect.right - width ;
+        if(left < mRect.left)
+            left = mRect.left ;
+        
+        top = wRect.top ;
+        depth = wRect.bottom - top ;
+        if(wRect.bottom > mRect.bottom)
+            top = mRect.bottom - depth ;
+        if(top < mRect.top)
+            top = mRect.top ;
+        
+        if(resize && (((left + width) > mRect.right) || ((top + depth) > mRect.bottom)))
+        {
+            if((left + width) > mRect.right)
+                width = mRect.right - left ;
+            if((top + depth) > mRect.bottom)
+                depth = mRect.bottom - top ;
+            SetWindowPos(meFrameGetWinHandle(frame),NULL,left,top,width,depth,
+                         SWP_NOZORDER | SWP_NOACTIVATE);
+        }
+        else if((left != wRect.left) || (top != wRect.top))
+            SetWindowPos(meFrameGetWinHandle(frame),NULL,left,top,0,0,
+                         SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
+    }
+#endif /* _ME_WINDOW */
+}
+#endif
+
 static void
 meSetupUserName(void)
 {
@@ -6291,6 +6400,10 @@ MainWndProc (HWND hWnd, UINT message, UINT wParam, LONG lParam)
     case WM_GETMINMAXINFO:
         /* Get the maximum depth and extend the maximum width */
         eCellMetrics.maxDepth = ((LPMINMAXINFO) lParam)->ptMaxTrackSize.y ;
+        eCellMetrics.monWidth = ((LPMINMAXINFO) lParam)->ptMaxSize.x ;
+        eCellMetrics.monDepth = ((LPMINMAXINFO) lParam)->ptMaxSize.y ;
+        eCellMetrics.monPosX = ((LPMINMAXINFO) lParam)->ptMaxPosition.x ;
+        eCellMetrics.monPosY = ((LPMINMAXINFO) lParam)->ptMaxPosition.y ;
         ((LPMINMAXINFO) lParam)->ptMaxTrackSize.x = eCellMetrics.cell.sizeX * 400;
         break;
 

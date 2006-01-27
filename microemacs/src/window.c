@@ -1886,10 +1886,21 @@ windowPopup(int f, int n)
     meUByte bufn[meBUF_SIZE_MAX], *nn ;
     int s ;
     
-    /* temporary arg 2 to popup frame */
-    if(n & 2)
+    if(n == 2)
     {
+        /* arg == 2 - popup frame window */
         meFrameTermMakeCur(frameCur) ;
+        return meTRUE ;
+    }
+    if(n > 2)
+    {
+        /* arg == 3 - reposition frame window if required */
+        /* arg == 4 - reposition & resize frame window if required */
+#if MEOPT_EXTENDED
+#ifdef _WINDOW
+        meFrameRepositionWindow(frameCur,(n == 4)) ;
+#endif
+#endif
         return meTRUE ;
     }
     if((s = getBufferName((meUByte *)"Popup buffer", 0, 2, bufn)) <= 0)
