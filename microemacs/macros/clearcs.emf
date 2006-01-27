@@ -65,15 +65,15 @@ set-variable .cc-init.vsepr .cc-init.vsep
 str-to-regex .cc-init.vsepr
 
 set-variable .cc-init.names  "|State|Update|Checkout|Checkin|Add|Diff|Uncheckout|Annotate|Delete|Move|ConfigSpec|VTree|"
-set-variable .cc-init.flags  "|ZRFS|VZOQS*|ChUJrS*!|CcrS*!|CDrS*!|WXxS!|KrS*!|HLM!||CNDrS*!|*^|Ss^|"
-set-variable .cc-init.defs1  "|1|1|1|1|"
+set-variable .cc-init.flags  "|ZRFwS|VZOQS*|ChUJrS*!|CcrS*!|CDrS*!|WXxwS!|KrS*!|HLMw!|CDrS*!|CNDrS*!|*^|Ss^|"
+set-variable .cc-init.defs1  "|1|1|1|0|"
 set-variable .cc-init.defs2  "|0|1|0|1|"
 set-variable .cc-init.defs3  "||0|0|1|1|"
 set-variable .cc-init.defs4  "||0|1|"
 set-variable .cc-init.defs5  "||0|1|"
-set-variable .cc-init.defs6  "|1|0|0|"
+set-variable .cc-init.defs6  "|1|0|0|0|"
 set-variable .cc-init.defs7  "|1|1|"
-set-variable .cc-init.defs8  "|1|0|0|"
+set-variable .cc-init.defs8  "|1|0|0|0|"
 set-variable .cc-init.defs9  "|"
 set-variable .cc-init.defs10 "|||1|1|"
 set-variable .cc-init.defs11 "|"
@@ -106,6 +106,7 @@ set-variable #l9 12
     
     !if &not &exi .hilight.cc-state
         set-variable .hilight.cc-state &pinc .hilight.next 1
+        set-variable .hilight.cc-con &pinc .hilight.next 1
     !endif
     0 hilight .hilight.cc-state 2 100      $global-scheme
     hilight .hilight.cc-state 0x102 " A  Name" .scheme.header
@@ -113,6 +114,12 @@ set-variable #l9 12
     hilight .hilight.cc-state 0x102 "[ *]h " .scheme.no1
     hilight .hilight.cc-state 0x102 "[ *]m " .scheme.no2
     hilight .hilight.cc-state 0x102 "[ *]M " .scheme.hlred
+    hilight .hilight.cc-state 0x102 "\\*\\*\\*\\*\\*ClearCase [^ ]+ completed successfully" .scheme.no1
+    hilight .hilight.cc-state 0x102 "\\*\\*\\*\\*\\*ClearCase" .scheme.error
+    
+    0 hilight .hilight.cc-con 2 100 $global-scheme
+    hilight .hilight.cc-con 0x102 "\\*\\*\\*\\*\\*ClearCase [^ ]+ completed successfully" .scheme.no1
+    hilight .hilight.cc-con 0x102 "\\*\\*\\*\\*\\*ClearCase" .scheme.error
 !endif
 
 0 define-macro cc-osd-get-comment
@@ -191,10 +198,10 @@ set-variable #l9 12
             osd #l0 #l1 "" #l2 #l1 cc-osd-diffX-set
         !done
     !else
-        set-variable $result &lget .cc-osd-diffX.t &add 1 &lget .cc-osd.values .cc-osd.X
+        set-variable $result &rep &lget .cc-osd-diffX.t &add 1 &lget .cc-osd.values .cc-osd.X "\H" ""
     !endif
 !emacro
-set-variable .cc-osd-diffX.t "|Cleartool Diff|ME diff tool|ME gdiff tool|ME xdiff tool|"
+set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|ME \Hxdiff tool|"
 0 define-macro cc-osd-diffX-set
     set-variable .cc-osd.values &lset .cc-osd.values .cc-osd.X &sub @# 1
 !emacro
@@ -350,11 +357,15 @@ set-variable .cc-osd-diffX.t "|Cleartool Diff|ME diff tool|ME gdiff tool|ME xdif
                 osd .osd.ccosd &inc #l2 1 "fh" "    "
                 osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Ignore \Hwhite spaces" #l0 cc-osd-cbc
                 set-variable #l3 &con #l3 #l3 #l2
+            !elif &seq #l1 "w"
+                osd .osd.ccosd &inc #l2 1 "fh" "    "
+                osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use \Hsingle window" #l0 cc-osd-cbc
+                set-variable #l3 &con #l3 #l3 #l2
             !elif &seq #l1 "X"
                 set-variable .X 0
                 !if &equ .find-file.file-count 1
                     !if &not &seq "D" &stat "t" &cat .find-file.file-dir .find-file.file1
-                        osd .osd.ccosd &inc #l2 1 "fh" "         Use: "
+                        osd .osd.ccosd &inc #l2 1 "fh" "        \HUse: " &add #l2 1
                         osd .osd.ccosd &inc #l2 1 "OtxmsfhHR" .scheme.osd-entry "##################" .osd.tmp cc-osd-diffX
                         osd .osd.ccosd &inc #l2 1 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 &sub #l2 1
                         set-variable .X #l0
@@ -364,9 +375,11 @@ set-variable .cc-osd-diffX.t "|Cleartool Diff|ME diff tool|ME gdiff tool|ME xdif
                     osd .osd.ccosd #l2 "D"
                 !endif
             !elif &seq #l1 "x"
-                !if &not .X
+                !if .X
+                    osd .osd.ccosd #l2 "D"
+                !else
                     osd .osd.ccosd &inc #l2 1 "fh" "    "
-                    osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use e\Hxternal diff" #l0 cc-osd-cbc
+                    osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use \HME diff tool" #l0 cc-osd-cbc
                     set-variable #l3 &con #l3 #l3 #l2
                 !endif
             !elif &seq #l1 "Z"
@@ -665,8 +678,10 @@ set-variable .cc-osd-diffX.t "|Cleartool Diff|ME diff tool|ME gdiff tool|ME xdif
     goto-position "\x83"
     -1 buffer-mode "edit"
     set-variable :fmpf 85
-    buffer-bind-create "b" "0" "" cc-dirlst-ver-rule-toggle
-    buffer-bind-create "b" "S-f5" "" cc-state
+    buffer-bind-create "bio" "0" "" cc-dirlst-ver-rule-toggle
+    buffer-bind-create "bio" "C-delete" "" cc-delete
+    buffer-bind-create "bio" "S-f5" "" cc-state
+    buffer-bind-create "bio" "k" "" cc-context-menu
     !force 0 delete-buffer "*cc-temp*"
     0 ml-write
 !emacro
@@ -742,10 +757,11 @@ set-variable .cc-osd-diffX.t "|Cleartool Diff|ME diff tool|ME gdiff tool|ME xdif
             insert-newline
         !endif
         yank
+        -1 yank
+        backward-line
         -1 buffer-mode "edit"
         1 buffer-mode "view"
-        backward-line
-        -1 yank
+        set-variable $buffer-hilight .hilight.cc-con
         find-buffer #l1
     !else
         beginning-of-line
@@ -808,40 +824,50 @@ set-variable .cc-osd-diffX.t "|Cleartool Diff|ME diff tool|ME gdiff tool|ME xdif
     !endif
     !force 0 popup-window #l0
     !if &not $status
-        !if &not &seq #l0 "*cc-console*"
-            !force 0 popup-window "*cc-console*"
-            !if &and $status &not &band $window-flags 0x1000
-                find-buffer #l0
+        !if &seq #l0 "*cc-console*"
+            !if .toolbar.open
+                !force toolbar-make-tool-visible "*cc-console*"
+                !force 0 popup-window "*cc-console*"
             !endif
-        !elif .toolbar.open
-            !force toolbar-make-tool-visible "*cc-console*"
-            !force 0 popup-window "*cc-console*"
         !endif
         !if &not &seq $buffer-bname #l0
             1 goto-position "\x82"
             delete-other-windows
-            !force 2 split-window-vertically
-            !force change-window-depth 15
+            !if &set #l3 &sin "w" &lget .cc-init.flags @#
+                set-variable #l3 &lget &ind &cat ".cc-init.values" @# #l3
+            !endif
+            !if #l3
+                set-position "\x82"
+            !else
+                !force 2 split-window-vertically
+                !if #l9
+                    !force change-window-depth 15
+                !endif
+                previous-window
+                set-position "\x82"
+                next-window
+            !endif
             find-buffer #l0
-            previous-window
+        !endif
+    !elif &set #l3 &sin "w" &lget .cc-init.flags @#
+        !if &lget &ind &cat ".cc-init.values" @# #l3
+            delete-other-windows
             set-position "\x82"
-            next-window
         !endif
     !endif
     !if #l9
         !force 0 delete-buffer "*cc-console-safe*"
         change-buffer-name "*cc-console-safe*"
     !endif
+    find-buffer "*cc-cmdline*"
     !force 0 delete-buffer #l0
-    set-variable .wait &sin "!" &lget .cc-init.flags @#
-    set-variable #l3 $buffer-fname
     set-variable $buffer-fname #l2
+    set-variable .wait &sin "!" &lget .cc-init.flags @#
     !force !force !force 0x186 ipipe-shell-command "*cc-cmdline*" #l0 cc-cleartool-ipipe
     set-variable #l2 $status
     !if &band #l1 1
         !force 0 delete-buffer "*cc-cmdline*"
     !endif
-    set-variable $buffer-fname #l3
     find-buffer #l0
     !if &not #l2
         1 goto-position "\x82"
@@ -904,10 +930,12 @@ set-variable .cc-osd-diffX.t "|Cleartool Diff|ME diff tool|ME gdiff tool|ME xdif
         buffer-bind-create "bio" "C-j" ""    cc-state
         buffer-bind-create "bio" "return" "" cc-state-find-file
         buffer-bind-create "bio" "delete" "" cc-state-delete
+        buffer-bind-create "bio" "C-delete" "" cc-delete
         buffer-bind-create "bio" "C-k"    "" cc-state-delete-line
         buffer-bind-create "bio" "1"     "1" cc-state-sort
         buffer-bind-create "bio" "2"     "2" cc-state-sort
         buffer-bind-create "bio" "3"     "3" cc-state-sort
+        buffer-bind-create "bio" "k"      "" cc-context-menu
         buffer-bind-create "bio" "space"  "" dirlst-tag-toggle
         buffer-bind-create "bio" "+"     "1" dirlst-tag-mask
         buffer-bind-create "bio" "-"    "-1" dirlst-tag-mask
@@ -916,8 +944,8 @@ set-variable .cc-osd-diffX.t "|Cleartool Diff|ME diff tool|ME gdiff tool|ME xdif
         buffer-bind-create "bio" "u"    "-1" dirlst-tag-set
         set-variable :mouse-pick-1 dirlst-mouse-pick-1
         set-variable :mouse-drop-1 dirlst-mouse-drop-1
-        set-variable :mouse-pick-3 void
-        set-variable :mouse-drop-3 cc-state-mouse-drop-3
+        set-variable :mouse-pick-3 ""
+        set-variable :mouse-drop-3 "0 cc-context-menu"
         set-variable :tag-count 0
         set-variable :ccs-last 5
         set-variable :fmpf 4
@@ -967,7 +995,7 @@ set-variable .cc-osd-diffX.t "|Cleartool Diff|ME diff tool|ME gdiff tool|ME xdif
             set-variable @wl &cat " M  " #l4
             beginning-of-line
             forward-line
-        !elif &not &lget .cc-init.values1 4
+        !elif &not &lget .cc-init.values1 3
             !goto pfl-line
         !elif &xse @wl .fhook-dirlst.filter-mask
 *rmv-line
@@ -999,19 +1027,9 @@ set-variable .cc-osd-diffX.t "|Cleartool Diff|ME diff tool|ME gdiff tool|ME xdif
     end-of-buffer
     backward-line
     !if &seq &lef @wl 4 "****"
-        -1 buffer-mode "view"
-        set-variable #l0 @wl
+        set-variable $line-flags &bor $line-flags 0x20
         backward-line
-        !tjump &seq &trr @wl "" -1
-        forward-line
-        set-mark
-        end-of-buffer
-        -1 kill-region
-        set-variable $window-line 2
-        end-of-line
-        insert-string &cat "   " #l0
-        -1 buffer-mode "edit"
-        1 buffer-mode "view"
+        set-variable $line-flags &bor $line-flags 0x20
     !endif
     set-variable #l4 $window-id
     !repeat
@@ -1067,8 +1085,14 @@ set-variable .cc-osd-diffX.t "|Cleartool Diff|ME diff tool|ME gdiff tool|ME xdif
         !abort
     !endif
 !emacro
-0 define-macro cc-state-mouse-drop-3
-    osd-cc-file-menu
+0 define-macro cc-context-menu
+    !if @#
+        set-variable $mouse-x $cursor-x
+        set-variable $mouse-y &add $cursor-y 1
+        0x21 set-position "\x82"
+    !endif
+    .osd.tmp osd-cc-file-menu
+    goto-position "\x82"
     !force !force .osd.tmp osd
 !emacro
 
@@ -1091,6 +1115,7 @@ set-variable .cc-osd-diffX.t "|Cleartool Diff|ME diff tool|ME gdiff tool|ME xdif
     !if .find-file.file-count
         0 dirlst-tag-file-delete
         set-alpha-mark "\x81"
+        -1 buffer-mode "view"
         beginning-of-buffer
         !repeat
             !force search-buffer "me" "^\\*\\([chMmnp]\\)  ."
@@ -1107,6 +1132,8 @@ set-variable .cc-osd-diffX.t "|Cleartool Diff|ME diff tool|ME gdiff tool|ME xdif
                 !endif
             !endif
         !until &not $status
+        -1 buffer-mode "edit"
+        1 buffer-mode "view"
         goto-alpha-mark "\x81"
     !endif
 !emacro
@@ -1294,7 +1321,7 @@ define-macro cc-add
         beginning-of-buffer
     !endif
     -1 insert-string #l2
-    goto-position "\x82"
+    !force goto-position "\x82"
     ; Now add all the files
     !if &sub .cc-get-file-list.fcount .cc-get-file-list.dcount
         5 cc-cleartool 3 $buffer-fname
@@ -1422,7 +1449,7 @@ define-macro cc-diff
             beginning-of-buffer
         !endif
         -1 insert-string #l2
-        goto-position "\x82"
+        !force goto-position "\x82"
         !force !force !force 6 cc-cleartool 6 #l9
         !if &not &set #l8 $status
             !goto dump-diff
@@ -1473,9 +1500,11 @@ define-macro cc-diff
         forward-line
         -1 kill-region
     !done
-    goto-position "\x82"
+    !force goto-position "\x82"
     !force 0 delete-buffer "*cc-cmdline*"
-    popup-window "*cc-diff*"
+    !if &not &lget .cc-init.values6 4
+        popup-window "*cc-diff*"
+    !endif
     !force 0 delete-buffer "*cc-diff*"
     find-buffer "*cc-diff-res*"
     change-buffer-name "*cc-diff*"
@@ -1514,6 +1543,38 @@ define-macro cc-annotate
     set-variable #l2 &spr "%s ann -nco -out - %s%s%s " .cc-init.com &con &lget .cc-init.values8 1 "" "-nhe " &con &lget .cc-init.values8 2 "-f" "-nda" &con &lget .cc-init.values8 3 " -rm" ""
     7 cc-get-file-list 0 0 #l2
     8 cc-cleartool 3 $buffer-fname
+!emacro
+
+; ClearCase Delete ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro cc-delete
+    ; only supported from a dir or state listing
+    !if &bmod "dir"
+    !elif &seq $buffer-bname "*cc-state*"
+    !else
+        osd-dialog "ClearCase - Delete" "    Deleting a file from ClearCase is only supported from a    \n        directory listing or *cc-state* buffer!" "  \HAbort  "
+        !abort
+    !endif
+    9 cc-osd
+    !if &lget .cc-init.values9 2
+        ml-write "[ClearCase Error: Checking out parent directory not yet implemented]"
+        !abort
+    !endif
+    set-variable #l2 &spr "%s rmname " .cc-init.com
+    !if &seq .cc-init.comment ""
+        set-variable #l2 &cat #l2 "-nc "
+    !else
+        set-variable #l2 &spr "%s-c \"%s\" " #l2 &rep &rep &trb .cc-init.comment "\\" "\\\\" "\"" "\\\""
+    !endif
+    set-variable .cc-init.comment9 .cc-init.comment
+    7 cc-get-file-list 0 0 #l2
+    9 cc-cleartool 3 $buffer-fname
+    !if &seq $buffer-fname ""
+    !elif &bmod "dir"
+        !if &lget .cc-init.values9 3
+            dirlst-refresh
+        !endif
+    !endif
 !emacro
 
 ; ClearCase Move ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1771,7 +1832,7 @@ define-macro cc-add-view
             osd #l0 #l1 "" #l2 #l1 cc-set-diffX
         !done
     !else
-        set-variable $result &lget .cc-osd-diffX.t &add 1 &lget #l3 #l0
+        set-variable $result &rep &lget .cc-osd-diffX.t &add 1 &lget #l3 #l0 "\H" ""
     !endif
 !emacro
 0 define-macro cc-set-diffX
@@ -1858,16 +1919,19 @@ define-macro cc-add-view
             !elif &seq #l1 "W"
                 osd #l8 &inc #l2 1 "fh" "    "
                 osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Ignore \Hwhite spaces" &bor #l4 #l0 cc-setup-cbc
+            !elif &seq #l1 "w"
+                osd #l8 &inc #l2 1 "fh" "    "
+                osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use \Hsingle window" &bor #l4 #l0 cc-setup-cbc
             !elif &seq #l1 "X"
                 set-variable .diffXi &bor #l4 #l0
                 osd #l8 &inc #l2 1 "f" "    Single File:"
-                osd #l8 &inc #l2 1 "fh" "        Use: "
+                osd #l8 &inc #l2 1 "fh" "        \HUse: " &add #l2 1
                 osd #l8 &inc #l2 1 "OtxmsfhHR" .scheme.osd-entry "##################" .osd.tmp cc-setup-diffX
                 osd #l8 &inc #l2 1 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 &sub #l2 1
             !elif &seq #l1 "x"
                 osd #l8 &inc #l2 1 "f" "    Multiple Files: "
                 osd #l8 &inc #l2 1 "fh" "    "
-                osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use e\Hxternal diff" &bor #l4 #l0 cc-setup-cbc
+                osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use \HME diff tool" &bor #l4 #l0 cc-setup-cbc
             !elif &seq #l1 "Z"
                 osd #l8 &inc #l2 1 "fh" "    "
                 osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Operate on \Hdirectory (ignore selection)" &bor #l4 #l0 cc-setup-cbc
@@ -1942,9 +2006,6 @@ define-macro cc-setup
 ; ClearCase directory list context menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 0 define-macro osd-cc-file-menu
-    !if &not @?
-        set-variable @# .osd.tmp
-    !endif
     -1 osd @#
     osd @# 0 "b"
     osd @# 10  "" "Current \HState"    f cc-state
