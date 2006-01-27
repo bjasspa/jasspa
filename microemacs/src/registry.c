@@ -1135,13 +1135,14 @@ findRegistry (int f, int n)
     if((rnp = regFind (&root, rootbuf)) == NULL)
         return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Cannot find node %s]",rootbuf);
     /* Find the node that is indexed */
+    f = index ;
     rnp = rnp->child;
     while((--index >= 0) && rnp)
         rnp = rnp->next;
     if(rnp == NULL)
     {
         resultStr [0] ='\0';
-        return mlwrite (MWCLEXEC|MWABORT,(meUByte *)"Cannot find node at index %d", index);
+        return mlwrite (MWCLEXEC|MWABORT,(meUByte *)"Cannot find node at index %d", f);
     }
     meStrncpy(resultStr, rnp->name, meBUF_SIZE_MAX-1);
     resultStr[meBUF_SIZE_MAX-1] = '\0';
