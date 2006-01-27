@@ -1077,3 +1077,133 @@ define-macro browse
     !until 0
 !emacro
 set-variable .browse.wrap 0
+
+; alias-path setup gui ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+!if &not &exi .osd.alias-path
+    set-variable .osd.alias-path &pinc .osd.next 1
+    set-variable .osd.alias-pathc &pinc .osd.next 1
+!endif
+
+0 define-macro alias-path-set-flds
+    !if &set .alias-path-setup.cur @#
+        !force find-registry "/history/alias-path" &sub @# 1
+        !if $status
+            set-variable .alias-path-setup.alias $result
+            set-variable .alias-path-setup.path &reg &cat "/history/alias-path/" $result "" 
+            osd .osd.alias-path 620 "BfhxHt" .scheme.osd-ebtt " \HChange " 2 alias-path-setup-com
+            osd .osd.alias-path 630 "BfhxHt" .scheme.osd-ebtt " \HDelete " 3 alias-path-setup-com
+            !return
+        !endif
+    !endif
+    set-variable .alias-path-setup.cur 0
+    set-variable .alias-path-setup.alias ""
+    set-variable .alias-path-setup.path ""
+    osd .osd.alias-path 620 "BfhH" .scheme.osd-dbtt " Change "
+    osd .osd.alias-path 630 "BfhH" .scheme.osd-dbtt " Delete "
+!emacro
+
+0 define-macro alias-path-set-fld
+    set-variable #l0 &cat ".alias-path-setup." &lget "|alias|path|" &abs @#
+    !if &les @# 0
+        set-variable #l1 &ind #l0
+        set-variable #l1 @ml2 "" #l1
+        set-variable &ind #l0 #l1
+    !else
+        set-variable $result &ind #l0
+    !endif
+!emacro
+
+0 define-macro alias-path-create
+    -1 osd .osd.alias-pathc
+    osd .osd.alias-pathc 0 "sS" .scheme.osd-child 56 10 -1 -1 alias-path-create
+    set-variable #l0 0
+    !repeat
+        !force find-registry "/history/alias-path" &pinc #l0 1
+        !if $status
+            set-variable #l1 $result
+            set-variable #l2 &reg &cat "/history/alias-path/" #l1 ""
+            osd .osd.alias-pathc #l0 "x" &spr " %s %s%n %s%n" &cond &equ #l0 .alias-path-setup.cur "*" " " #l1 &sub 11 &len #l1 " " #l2 &sub 30 &len #l2 " " #l0 alias-path-set-flds
+        !endif
+    !until &not $status
+    !if &not &set .alias-path-setup.count &sub #l0 1
+        osd .osd.alias-pathc 1 ""
+    !endif
+!emacro
+
+0 define-macro alias-path-setup-com
+    !if &equ @# 3
+        !force find-registry "/history/alias-path" &sub &set #l0 .alias-path-setup.cur 1
+        !if $status
+            delete-registry &cat "/history/alias-path/" $result
+            !if &equ #l0 &pdec .alias-path-setup.count 1
+                set-variable #l0 &sub #l0 1
+            !endif
+        !endif
+        #l0 alias-path-set-flds
+    !else
+        !if &seq .alias-path-setup.alias ""
+            ml-write "[Alias field is empty]" 
+            !return
+        !elif &seq .alias-path-setup.path ""
+            ml-write "[Path field is empty]" 
+            !return
+        !endif
+        !if &equ @# 1
+            !if &not &seq "" &reg &cat "/history/alias-path/" .alias-path-setup.alias ""
+                ml-write &spr "[Alias \"%s\" already exists]" .alias-path-setup.alias
+                !return
+            !endif
+        !else
+            !force find-registry "/history/alias-path" &sub .alias-path-setup.cur 1
+            !if &not $status
+                ml-write "[ERROR: Failed to get current alias]" 
+                !return
+            !endif
+            !if &not &seq .alias-path-setup.alias &set #l0 $result
+                2 set-registry &cat "/history/alias-path/" #l0 .alias-path-setup.alias
+            !endif
+        !endif
+        set-registry &cat "/history/alias-path/" .alias-path-setup.alias .alias-path-setup.path
+        set-variable #l0 0
+        !repeat
+            !force find-registry "/history/alias-path" &pinc #l0 1
+            !if &not $status
+                set-variable .alias-path-setup.cur 0
+                set-variable #l0 0
+            !elif &seq .alias-path-setup.alias $result
+                set-variable .alias-path-setup.cur #l0
+                set-variable #l0 0
+            !endif
+        !until &not #l0
+        .alias-path-setup.cur alias-path-set-flds
+    !endif
+    alias-path-create
+!emacro
+
+-1 osd .osd.alias-path
+osd .osd.alias-path 0 "batcHIs" 9 3 62 0 -1 -1 640 .scheme.osd-title "Alias Path Setup"
+osd .osd.alias-path 10 ""
+osd .osd.alias-path 15 "fh" " "
+osd .osd.alias-path 20 "IbHtfh" .scheme.osd-sbar 56 10 .osd.alias-pathc
+osd .osd.alias-path 22 "" " "
+osd .osd.alias-path 25 ""
+osd .osd.alias-path 30 "fh" "     "
+osd .osd.alias-path 40 "Sfh" "\HAlias:      " 70
+osd .osd.alias-path 50 "Sf" "File \HPath:" 90
+osd .osd.alias-path 60 "fh" "     "
+osd .osd.alias-path 70 "ExHtfh" .scheme.osd-entry "##########" 1 alias-path-set-fld
+osd .osd.alias-path 80 "fh" "  "
+osd .osd.alias-path 90 "ExHtf" .scheme.osd-entry "#########################################" 2 alias-path-set-fld
+osd .osd.alias-path 600 ""
+osd .osd.alias-path 605 "fh" "   "
+osd .osd.alias-path 610 "BHxtfh" .scheme.osd-ebtt "  \HAdd  "  1 alias-path-setup-com
+osd .osd.alias-path 615 "fh" "   "
+osd .osd.alias-path 625 "fh" "   "
+osd .osd.alias-path 635 "fh" "            "
+osd .osd.alias-path 640 "BHtf"   .scheme.osd-ebtt " E\Hxit "   f void
+    
+define-macro alias-path-setup
+    alias-path-create
+    0 alias-path-set-flds
+    .osd.alias-path osd
+!emacro
