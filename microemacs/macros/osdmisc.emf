@@ -40,6 +40,14 @@ define-macro osd-search
     set-variable .osd.indstp &pinc .osd.next 1
     ; browse
     set-variable .osd.browse-help &pinc .osd.next 1
+    ; alias-path-setup
+    set-variable .osd.alias-path &pinc .osd.next 1
+    set-variable .osd.alias-pathc &pinc .osd.next 1
+    ; file-type-setup
+    set-variable .osd.file-type &pinc .osd.next 1
+    set-variable .osd.file-typec &pinc .osd.next 1
+    ; shell-tool-setup
+    set-variable .osd.shell-tool &pinc .osd.next 1
 !endif
 ;
 ; symbol
@@ -1079,10 +1087,6 @@ define-macro browse
 set-variable .browse.wrap 0
 
 ; alias-path setup gui ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-!if &not &exi .osd.alias-path
-    set-variable .osd.alias-path &pinc .osd.next 1
-    set-variable .osd.alias-pathc &pinc .osd.next 1
-!endif
 
 0 define-macro alias-path-set-flds
     !if &set .alias-path-setup.cur @#
@@ -1181,7 +1185,7 @@ set-variable .browse.wrap 0
 !emacro
 
 -1 osd .osd.alias-path
-osd .osd.alias-path 0 "batcHIs" 9 3 62 0 -1 -1 640 .scheme.osd-title "Alias Path Setup"
+osd .osd.alias-path 0 "batcHIs" 7 4 62 0 -1 -1 640 .scheme.osd-title "Alias Path Setup"
 osd .osd.alias-path 10 ""
 osd .osd.alias-path 15 "fh" " "
 osd .osd.alias-path 20 "IbHtfh" .scheme.osd-sbar 56 10 .osd.alias-pathc
@@ -1206,4 +1210,244 @@ define-macro alias-path-setup
     alias-path-create
     0 alias-path-set-flds
     .osd.alias-path osd
+!emacro
+
+; file type setup ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+0 define-macro file-type-set-fields
+    set-variable .file-type-com.idxo @#
+    set-variable .file-type-com.idx @#
+    !if @#
+        set-variable .file-type-com.type &lget &reg "/history/file-type" "\b" @#
+        set-variable .file-type-com.mask &lget &reg "/history/file-mask" "\b" @#
+    !else
+        set-variable .file-type-com.type ""
+        set-variable .file-type-com.mask ""
+        set-variable .file-type-com.idx ""
+    !endif
+!emacro
+
+0 define-macro file-type-create
+    -1 osd .osd.file-typec
+    osd .osd.file-typec 0 "sS" .scheme.osd-child 52 10 -1 -1
+    set-variable #l3 0
+    set-variable #l4 &reg "/history/file-type" "\b"
+    set-variable #l5 &reg "/history/file-mask" "\b"
+    !if &gre &len #l4 1
+        !while &not &seq &set #l0 &lget #l4 &inc #l3 1 "" 
+            set-variable #l1 &lget #l5 #l3
+            osd .osd.file-typec #l3 "Rx" &spr "%s%n  %s%n  %s" #l3 &sub 3 &len #l3 " " #l0 &sub 16 &len #l0 " " #l1 #l3 file-type-set-fields
+        !done
+    !else
+        osd .osd.file-typec 1 ""
+    !endif
+!emacro
+        
+0 define-macro file-type-set
+    !if   &equ &abs @# 3
+        set-variable #l0 ".file-type-com.idx"
+    !elif &equ &abs @# 2
+        set-variable #l0 ".file-type-com.mask"
+    !else
+        set-variable #l0 ".file-type-com.type"
+    !endif
+    !if &les @# 0
+        set-variable #l1 &ind #l0
+        set-variable #l1 @ml2 "" #l1
+        set-variable &ind #l0 #l1
+    !else
+        set-variable $result &ind #l0
+    !endif
+!emacro
+
+0 define-macro file-type-com
+    set-variable #l4 &reg "/history/file-type" "\b"
+    set-variable #l5 &reg "/history/file-mask" "\b"
+    !if   &equ @# 3
+        ; delete the entry
+        !if &not .idx
+            ml-write "[No entry selected]" 
+            !return
+        !endif
+        set-variable #l4 &lde #l4 .idx
+        set-variable #l5 &lde #l5 .idx
+    !else
+        !if &seq .type ""
+            ml-write "[Type field is empty]" 
+            !return
+        !endif
+        !if &seq .mask ""
+            ml-write "[Mask field is empty]" 
+            !return
+        !endif
+        !if &equ @# 2
+            ; change the entry
+            !if &not .idx
+                ml-write "[No entry selected]" 
+                !return
+            !endif
+            ; delete the old
+            !if .idxo
+                set-variable #l4 &lde #l4 .idxo
+                set-variable #l5 &lde #l5 .idxo
+            !endif
+            ; insert the new
+            set-variable #l4 &lin #l4 .idx .type
+            set-variable #l5 &lin #l5 .idx .mask
+        !else
+            ; add the entry
+            set-variable .idx &sub &len #l4 &len &rep #l4 &lef #l4 1 ""
+            set-variable #l4 &lse #l4 -1 .type
+            set-variable #l5 &lse #l5 -1 .mask
+        !endif
+    !endif
+    set-registry "/history/file-type" #l4
+    set-registry "/history/file-mask" #l5
+    !if &seq &lget #l4 .idx ""
+        !if &seq &lget #l4 &dec .idx 1 ""
+            set-variable .idx 0
+        !endif
+    !endif
+    file-type-create
+    .idx file-type-set-fields
+!emacro
+
+osd .osd.file-type  0  "batcHIs" 9 4 58 0 -1 -1 640 .scheme.osd-title "File Type Setup"
+osd .osd.file-type  2  ""
+osd .osd.file-type  5  "hf" " "
+osd .osd.file-type 10  "ItbHf" .scheme.osd-sbar 52 10 .osd.file-typec
+osd .osd.file-type 20  ""
+osd .osd.file-type 30  "Sfh" "  \HNo. " 50
+osd .osd.file-type 33  "Sfh" " Na\Hme             " 70
+osd .osd.file-type 36  "Sf"  " \HFile Mask List" 90
+osd .osd.file-type 40  "fh" "  "
+osd .osd.file-type 50  "EtxHfh" .scheme.osd-entry "###" 3 file-type-set
+osd .osd.file-type 60  "fh" "  "
+osd .osd.file-type 70  "EtxHfh" .scheme.osd-entry "################" 1 file-type-set
+osd .osd.file-type 80  "fh" "  "
+osd .osd.file-type 90  "EtxHf" .scheme.osd-entry "#############################" 2 file-type-set
+osd .osd.file-type 600 ""
+osd .osd.file-type 605 "fh" "  "
+osd .osd.file-type 610 "BtfhxH" .scheme.osd-ebtt "  \HAdd  "  1 file-type-com
+osd .osd.file-type 615 "fh" "  "
+osd .osd.file-type 620 "BtfhxH" .scheme.osd-ebtt " C\Hhange " 2 file-type-com
+osd .osd.file-type 625 "fh" "  "
+osd .osd.file-type 630 "BtfhxH" .scheme.osd-ebtt " \HDelete " 3 file-type-com
+osd .osd.file-type 635 "fh" "          "
+osd .osd.file-type 640 "BtfH"   .scheme.osd-ebtt " E\Hxit "   f void
+    
+define-macro file-type-setup
+    file-type-create
+    0 file-type-set-fields
+    .osd.file-type osd
+!emacro
+
+; shell tools setup ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+0 define-macro shell-tool-set-cur
+    set-variable .shell-tool-setup.cur @#
+    osd .osd.shell-tool 210 "c" &spr "Command %d Setup" @#
+    set-variable #l0 &reg &spr "/history/%s/tool/%d/flag" $platform @# 0x1a
+    !if &band #l0 0x10
+        osd .osd.shell-tool 320 "Sfh" "           B\Huffer: " 320
+        osd .osd.shell-tool 330 "EtxHfh" .scheme.osd-entry "##################" 3 shell-tool-set-entry
+        osd .osd.shell-tool 335 "Sfh" "  "
+        osd .osd.shell-tool 340 "Ctpfx" &cat .osd.checkbox-chars "\} \HHide" 0x20 shell-tool-set-flag
+    !else
+        osd .osd.shell-tool 320 "f" ""
+        osd .osd.shell-tool 330 "D"
+        osd .osd.shell-tool 335 "D"
+        osd .osd.shell-tool 340 "D"
+    !endif
+!emacro
+
+0 define-macro shell-tool-set-entry
+    set-variable #l2 &spr "/history/%s/tool/%d/%s" $platform .shell-tool-setup.cur &lget "|name|command|bname|" &abs @#
+    !if &les @# 0
+        set-variable #l0 &reg #l2 ""
+        set-variable #l0 @ml2 "" #l0
+        set-registry #l2 #l0
+        !if &equ @# -1
+            set-variable #l1 &spr "\H%d %s%n" .shell-tool-setup.cur #l0 &sub 19 &len #l0 " "
+            osd .osd.shell-tool &add 100 &mul .shell-tool-setup.cur 10 "Rfhxc" #l1 .shell-tool-setup.cur shell-tool-set-cur
+        !endif
+    !else
+        set-variable $result &reg #l2 ""
+    !endif
+!emacro
+
+0 define-macro shell-tool-set-flag
+    set-variable #l2 &spr "/history/%s/tool/%d/flag" $platform .shell-tool-setup.cur
+    set-variable #l0 &reg #l2 0x1a
+    !if &les @# 0
+        !if &band &set #l1 &abs @# 0x90
+            !if &band #l0 0x40
+                !return
+            !endif
+        !endif
+        set-variable #l0 &bxor #l0 #l1
+        !if &band #l0 0x40
+            set-variable #l0 &band #l0 0xff7f
+            set-variable #l0 &bor #l0 0x10
+        !endif
+        set-registry #l2 #l0
+        !if &band #l1 0x50
+            .shell-tool-setup.cur shell-tool-set-cur
+        !endif
+    !elif &not &band #l0 @#
+        !abort
+    !endif
+!emacro
+
+-1 osd .osd.shell-tool
+osd .osd.shell-tool 0   "batcHIs" 9 4 58 0 -1 -1 610 .scheme.osd-title "Shell Tools Setup"
+osd .osd.shell-tool 10  ""
+osd .osd.shell-tool 200 ""
+osd .osd.shell-tool 210 ""
+osd .osd.shell-tool 220 ""
+osd .osd.shell-tool 230 "Sfh" "  Tool \HName:      " 240
+osd .osd.shell-tool 240 "REtxHf" .scheme.osd-entry "###################" 1 shell-tool-set-entry
+osd .osd.shell-tool 250 "Sfh" "  Command \HLine:   " 260
+osd .osd.shell-tool 260 "EtxHf" .scheme.osd-entry "##################################" 2 shell-tool-set-entry
+osd .osd.shell-tool 270 ""    "       Buffer file name = %ff or %fp%fn or %fp%fb%fe"
+!if &band $system 0x800
+    osd .osd.shell-tool 280 "fh"  "       "
+    osd .osd.shell-tool 290 "Ctpfx" &cat .osd.checkbox-chars "\} \HRun Concurrently" 0x40 shell-tool-set-flag
+!endif
+osd .osd.shell-tool 293 "fh"  "       "
+osd .osd.shell-tool 295 "Ctpfx" &cat .osd.checkbox-chars "\} R\Heread Current Buffer (non-concurrent)" 0x80 shell-tool-set-flag
+osd .osd.shell-tool 300 "fh"  "       "
+osd .osd.shell-tool 310 "Ctpfx" &cat .osd.checkbox-chars "\} Capture \HOutput" 0x10 shell-tool-set-flag
+osd .osd.shell-tool 360 "Sfh" "  Current \HBuffer: " 370
+osd .osd.shell-tool 370 "Ctpfxh" &cat .osd.checkbox-chars "\} Save" 0x01 shell-tool-set-flag
+osd .osd.shell-tool 380 "Sfh" "  "
+osd .osd.shell-tool 390 "Ctpfx" &cat .osd.checkbox-chars "\} \HPrompt Before Saving" 0x02 shell-tool-set-flag
+osd .osd.shell-tool 400 "Sfh" "  \HAll Buffers:    " 410
+osd .osd.shell-tool 410 "Ctpfxh" &cat .osd.checkbox-chars "\} Save" 0x04 shell-tool-set-flag
+osd .osd.shell-tool 420 "Sfh" "  "
+osd .osd.shell-tool 430 "Ctpfx" &cat .osd.checkbox-chars "\} Promp\Ht Before Saving" 0x08 shell-tool-set-flag
+osd .osd.shell-tool 600 ""
+osd .osd.shell-tool 610 "BtcfH"   .scheme.osd-ebtt " E\Hxit "   f void
+
+define-macro shell-tool-setup
+    set-variable #l0 0
+    !repeat
+        set-variable #l1 &reg &spr "/history/%s/tool/%d/name" $platform #l0 ""
+        set-variable #l2 &spr "\H%d %s%n" #l0 #l1 &sub 19 &len #l1 " "
+        osd .osd.shell-tool &add 100 &mul #l0 10 "Rfhxc" #l2 #l0 shell-tool-set-cur
+        !if &band #l0 0x01
+            osd .osd.shell-tool &add 101 &mul #l0 10 "f" ""
+        !endif
+    !until &equ &inc #l0 1 10
+    0 shell-tool-set-cur
+    !force .osd.shell-tool osd
+    set-variable #l0 0
+    !repeat
+        !if &not &seq "" &set #l1 &reg &spr "/history/%s/tool/%d/name" $platform #l0 ""
+            osd 7 &add 200 #l0 "" &spr "\H%d %s" #l0 #l1 #l0 execute-tool
+            osd 7 290 "-"
+        !else
+            osd 7 &add 200 #l0 "D"
+        !endif
+    !until &equ &inc #l0 1 10
 !emacro

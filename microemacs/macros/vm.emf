@@ -10,9 +10,13 @@
     execute-file "mail"
 !endif
 !if &seq .hilight.vm "ERROR"
-    set-variable .hilight.vm   &pinc .hilight.next 1
+    set-variable .hilight.vm &pinc .hilight.next 1
     set-variable .hilight.vmhl &pinc .hilight.next 1
-    set-variable .osd.vm-help  &pinc .osd.next 1
+    set-variable .osd.vm-help &pinc .osd.next 1
+    set-variable .osd.mails &pinc .osd.next 1
+    set-variable .osd.mailf &pinc .osd.next 1
+    set-variable .osd.mailff &pinc .osd.next 1
+    set-variable .osd.mailfc &pinc .osd.next 1
 !endif
 
 0 hilight  .hilight.vm 0         .scheme.no1
@@ -1366,7 +1370,7 @@ define-macro vm
         !bell
         !abort
     !endif
-    !if &seq &set %vm-mail-box &reg "/history/mail/box" "" ""
+    !if &seq &set %vm-mail-box &reg &spr "/history/%s/mail-box" $platform "" ""
         ml-write "[Main mail box not setup! Use Help/User setup]"
         !bell
         !abort
@@ -1469,4 +1473,229 @@ osd .osd.vm-help 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void
 0 define-macro vm-list-mouse
     vm-setup-list
     popup-window &cat %vm-curbuf "-list"
+!emacro
+
+
+; Mail Filter Setup ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+0 define-macro mailf-set-fields
+    set-variable .mail-filter.cur @#
+    !if @#
+        osd .osd.mailf 40 "fh" &spr " %2d  " @#
+        set-variable #l0 &mid $result 4 7
+        set-variable .mail-filter.field &trr #l0
+        osd .osd.mailf 50 "xMdsHfh" .scheme.osd-entry #l0 .osd.mailff
+        set-variable .mail-filter.match &lget &reg &cat .mail-filter.reg "match" "\b" @#
+        set-variable .mail-filter.box   &lget &reg &cat .mail-filter.reg "box"   "\b" @#
+    !else
+        set-variable .mail-filter.field "subject"
+        set-variable .mail-filter.match ""
+        set-variable .mail-filter.box ""
+        osd .osd.mailf 40 "fh" "  ?  "
+        osd .osd.mailf 50 "xMdsHfh" .scheme.osd-entry "subject" .osd.mailff
+    !endif
+!emacro
+
+0 define-macro mailf-set-field
+    set-variable .mail-filter.field $result
+    osd .osd.mailf 50 "xMdsHfh" .scheme.osd-entry $result .osd.mailff
+!emacro
+
+0 define-macro maila-set
+    !if &equ &abs @# 2
+        set-variable #l0 ".mail-filter.box"
+    !else
+        set-variable #l0 ".mail-filter.match"
+    !endif
+    !if &les @# 0
+        set-variable #l1 &ind #l0
+        set-variable #l1 @ml2 "" #l1
+        set-variable &ind #l0 #l1
+    !else
+        set-variable $result &ind #l0
+    !endif
+!emacro
+
+0 define-macro maila-create
+    -1 osd .osd.mailfc
+    osd .osd.mailfc 0 "sS" .scheme.osd-child 53 5 -1 -1 maila-create
+    set-variable #l3 0
+    set-variable #l4 &reg &cat .mail-filter.reg "field" "\b"
+    set-variable #l5 &reg &cat .mail-filter.reg "match" "\b"
+    set-variable #l6 &reg &cat .mail-filter.reg "box"   "\b"
+    !if &gre &len #l4 1
+        !while &not &seq &set #l0 &lget #l4 &inc #l3 1 "" 
+            set-variable #l1 &lget #l5 #l3
+            set-variable #l2 &lget #l6 #l3
+            osd .osd.mailfc #l3 "x" &spr "%2d  %s%n %s%n  %s" #l3 #l0 &sub 9 &len #l0 " " #l1 &sub 22 &len #l1 " " #l2 #l3 mailf-set-fields
+        !done
+    !else
+        osd .osd.mailfc 1 ""
+    !endif
+!emacro
+
+0 define-macro maila-com
+    set-variable #l4 &reg &cat .mail-filter.reg "field" "\b"
+    set-variable #l5 &reg &cat .mail-filter.reg "match" "\b"
+    set-variable #l6 &reg &cat .mail-filter.reg "box"   "\b"
+    !if   &equ @# 3
+        ; delete the entry
+        !if &not .mail-filter.cur
+            ml-write "[No entry selected]" 
+            !return
+        !endif
+        set-variable #l4 &lde #l4 .mail-filter.cur
+        set-variable #l5 &lde #l5 .mail-filter.cur
+        set-variable #l6 &lde #l6 .mail-filter.cur
+    !else
+        !if &seq .mail-filter.match ""
+            ml-write "[Match field is empty]" 
+            !return
+        !endif
+        !if &equ @# 2
+            ; change the entry
+            !if &not .mail-filter.cur
+                ml-write "[No entry selected]" 
+                !return
+            !endif
+            set-variable #l4 &lse #l4 .mail-filter.cur .mail-filter.field
+            set-variable #l5 &lse #l5 .mail-filter.cur .mail-filter.match
+            set-variable #l6 &lse #l6 .mail-filter.cur .mail-filter.box
+        !else
+            ; add the entry
+            set-variable #l4 &lse #l4 -1 .mail-filter.field
+            set-variable #l5 &lse #l5 -1 .mail-filter.match
+            set-variable #l6 &lse #l6 -1 .mail-filter.box
+        !endif
+    !endif
+    set-registry &cat .mail-filter.reg "field" #l4
+    set-registry &cat .mail-filter.reg "match" #l5
+    set-registry &cat .mail-filter.reg "box"   #l6
+    maila-create
+!emacro
+
+osd .osd.mailff 0  "b"
+osd .osd.mailff 10 "x" "subject" f mailf-set-field
+osd .osd.mailff 20 "x" "from"    f mailf-set-field
+osd .osd.mailff 30 "x" "to"      f mailf-set-field
+
+-1 osd .osd.mailf
+osd .osd.mailf 0 "batcHIs" 9 3 56 0 -1 -1 640 .scheme.osd-title "E-Mail Auto-Archive Setup"
+osd .osd.mailf 10 ""
+osd .osd.mailf 20  "IbH" .scheme.osd-sbar 53 5 .osd.mailfc
+osd .osd.mailf 25  ""
+osd .osd.mailf 30  "" "  #  Field     Search String           Mail Box "
+osd .osd.mailf 35  ""
+osd .osd.mailf 40  "fh" "  ?  "
+osd .osd.mailf 50  "MdxsHfh" .scheme.osd-entry "subject" .osd.mailff
+osd .osd.mailf 60  "hf" "   "
+osd .osd.mailf 70  "ExHfh" .scheme.osd-entry "######################" 1 maila-set
+osd .osd.mailf 80  "fh" "  "
+osd .osd.mailf 90  "ExHf" .scheme.osd-entry "###############" 2 maila-set
+osd .osd.mailf 600 ""
+osd .osd.mailf 610 "BcfhxH" .scheme.osd-ebtt "  \HAdd  "  1 maila-com
+osd .osd.mailf 620 "BcfhxH" .scheme.osd-ebtt " \HChange " 2 maila-com
+osd .osd.mailf 630 "BcfhxH" .scheme.osd-ebtt " \HDelete " 3 maila-com
+osd .osd.mailf 640 "BcfH"   .scheme.osd-ebtt " E\Hxit "   f void
+
+0 define-macro mail-filter
+    !if @#
+        osd .osd.mailf 0 "batcHIs" 10 5 56 0 -1 -1 640 .scheme.osd-title "E-Mail Auto-Archive Setup"
+        set-variable .reg "/history/mail/archive/"
+    !else
+        osd .osd.mailf 0 "batcHIs" 10 5 56 0 -1 -1 640 .scheme.osd-title "E-Mail Pre-Filter Setup"
+        set-variable .reg "/history/mail/filter/"
+    !endif
+    maila-create
+    0 mailf-set-fields
+    .osd.mailf osd
+!emacro
+
+; E-Mail setup ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+0 define-macro mail-set-pfentry
+    set-variable #l2 &spr "/history/%s/mail-%s" $platform &lget "|send|insert1|insert2|base64|uuencode|check|get|box|sig|fcc|" &abs @#
+    !if &les @# 0
+        set-variable #l0 &reg #l2 ""
+        set-variable #l0 @ml2 "" #l0
+        set-registry #l2 #l0
+    !else
+        set-variable $result &reg #l2 ""
+    !endif
+!emacro
+    
+0 define-macro mail-set-pfcheckbox
+    set-variable #l2 &spr "/history/%s/mail-%s" $platform &lget "|queue|vmget|" &abs @#
+    set-variable #l0 &lget "|0|1|" &abs @#
+    set-variable #l0 &reg #l2 #l0
+    !if &les @# 0
+        set-variable #l0 &bxor #l0 1
+        set-registry #l2 #l0
+    !elif &not #l0
+        !abort
+    !endif
+!emacro
+
+0 define-macro mail-set-pffile
+    set-variable #l2 &spr "/history/%s/mail-%s" $platform &lget "|src|dir|" &abs @#
+    !if &les @# 0
+        set-variable #l0 &reg #l2 ""
+        set-variable #l0 @ml21 "" #l0
+        !if &equ @# -2
+            ; the mail-dir must have a trailing '/'
+            !if &not &seq &rig #l0 &sub &len #l0 1 "/"
+                set-variable #l0 &cat #l0 "/"
+                set-registry #l2 #l0
+                -2 osd
+            !endif
+        !endif
+        set-registry #l2 #l0
+    !else
+        set-variable $result &reg #l2 ""
+    !endif
+!emacro
+
+-1 osd .osd.mails
+osd .osd.mails 0   "batcHIs" 9 4 58 0 -1 -1 630 .scheme.osd-title &spr "E-Mail Setup (%s%s)" &sup &lef $platform 1 &rig $platform 1
+osd .osd.mails 30  ""
+osd .osd.mails 40  "Sfh" "  User Mail \HDir:       " 50
+osd .osd.mails 50  "EtxHf" .scheme.osd-entry "###############################" 2 mail-set-pffile
+osd .osd.mails 55  ""
+osd .osd.mails 60  "Sfh" "  Send Mail Signa\Hture: " 70
+osd .osd.mails 70  "EtxHf" .scheme.osd-entry "############" 9 mail-set-pfentry
+osd .osd.mails 80  "Sfh" "  Carbon-Copy \HFile:    " 90
+osd .osd.mails 90  "EtxHf" .scheme.osd-entry "############" 10 mail-set-pfentry
+osd .osd.mails 100 "Sfh" "  Insert Data (^C^\HI):  " 110
+osd .osd.mails 110 "EtxHf" .scheme.osd-entry "###############################" 2 mail-set-pfentry
+osd .osd.mails 120 "Sfh" "  Insert Data (^C^\HZ):  " 130
+osd .osd.mails 130 "EtxHf" .scheme.osd-entry "###############################" 3 mail-set-pfentry
+osd .osd.mails 140 "Sfh" "  S\Hend Mail Command:   " 150
+osd .osd.mails 150 "EtxHf" .scheme.osd-entry "###############################" 1 mail-set-pfentry
+osd .osd.mails 153 "Sfh" "                       "
+osd .osd.mails 157 "Ctpfx" &cat .osd.checkbox-chars "\} \HQueue Outgoing Mail" 1 mail-set-pfcheckbox
+osd .osd.mails 160 ""
+osd .osd.mails 170 "Sfh" "  Chec\Hk Mail Every:    " 180
+osd .osd.mails 180 "EtxHfh" .scheme.osd-entry "############" 6 mail-set-pfentry
+osd .osd.mails 193 "Sf" " seconds"
+osd .osd.mails 200 "Sfh" "  Get Mail C\Hommand:    " 210
+osd .osd.mails 210 "EtxHf" .scheme.osd-entry "###############################" 7 mail-set-pfentry
+osd .osd.mails 220 "Sfh" "  Incoming Mail \HBox:   " 230
+osd .osd.mails 230 "EtxHf" .scheme.osd-entry "###############################" 1 mail-set-pffile
+osd .osd.mails 240 "Sfh" "  \HVM Main In Box:      " 250
+osd .osd.mails 250 "EtxHfh" .scheme.osd-entry "############" 8 mail-set-pfentry
+osd .osd.mails 253 "Sfh" "  "
+osd .osd.mails 257 "Ctpfx" &cat .osd.checkbox-chars "\} VM \HGets Mail" 2 mail-set-pfcheckbox
+osd .osd.mails 260 "Sfh" "  \HMime Data Extract:   " 270
+osd .osd.mails 270 "EtxHf" .scheme.osd-entry "###############################" 4 mail-set-pfentry
+osd .osd.mails 280 "Sfh" "  \HUuencode Extract:    " 280
+osd .osd.mails 290 "EtxHf" .scheme.osd-entry "###############################" 5 mail-set-pfentry
+osd .osd.mails 600 ""
+osd .osd.mails 605 "fh" "  "
+osd .osd.mails 610 "BHtfxh" .scheme.osd-ebtt " Pre-Filter " 0 mail-filter
+osd .osd.mails 615 "fh" "  "
+osd .osd.mails 620 "BHtfxh" .scheme.osd-ebtt " \HAuto-Archive " 1 mail-filter
+osd .osd.mails 625 "fh" "          "
+osd .osd.mails 630 "BcfH"   .scheme.osd-ebtt " E\Hxit "   f void
+
+define-macro mail-setup
+    .osd.mails osd
 !emacro

@@ -14,14 +14,9 @@
     set-variable .osd.user-plat &pinc .osd.next 1
     set-variable .osd.user-gener &pinc .osd.next 1
     set-variable .osd.user-mouse &pinc .osd.next 1
-    set-variable .osd.user-ftype &pinc .osd.next 1
-    set-variable .osd.user-ftypec &pinc .osd.next 1
-    set-variable .osd.user-sub &pinc .osd.next 1
-    set-variable .osd.user-subc &pinc .osd.next 1
+    set-variable .osd.user-misc &pinc .osd.next 1
+    set-variable .osd.user-miscc &pinc .osd.next 1
     set-variable .osd.user-modes &pinc .osd.next 1
-    set-variable .osd.user-tool &pinc .osd.next 1
-    set-variable .osd.user-mail &pinc .osd.next 1
-    set-variable .osd.user-mailf &pinc .osd.next 1
 !endif
 
 ; fence, horizontal and vertical scrolling names
@@ -41,6 +36,15 @@ set-variable %scrollb-value "|0|0x13e|0x1be|0x13f|0x1bf|"
 ; Implemented Emulation modes
 set-variable %emulate-names "|<No Emulation>|GNU Emacs|CUA (Windows Style)|MicroEmacs v3.8|NEdit v5|"
 set-variable %emulate-value "||emacs|cua|me3_8|nedit|"
+; List of available mouse bindings
+set-variable %user-mouse-bname "|<not bound>|Drag region|Copy Rectangle|Kill Rectangle|Select Word|Default Pan|MS Pan|Find Buffer|Find Tag|Find ME Help|Undo|No Move Yank|Replace Yank|Move to Yank|Reyank|Rectangle Yank|Collapse Current|Collapse All|Main Menu|Context Menu|"
+set-variable %user-mouse-bpick "||mouse-pick-type1|mouse-pick-rectangle|mouse-pick-rectangle|mouse-pick-type1|mouse-pan-pick|mouse-mspan-pick|void|void|void|mouse-keepcl|||void|void|mouse-keepcl|void|void|||"
+set-variable %user-mouse-bdrop "||mouse-drop-type1|1 mouse-drop-rectangle|0 mouse-drop-rectangle|mouse-drop-type2|mouse-pan-drop|mouse-mspan-drop|0 osd-find-buffer|!nma find-tag|mouse-emacs-help|mouse-undo|mouse-no-move-yank|mouse-no-move-replace-yank|mouse-move-yank|mouse-reyank|mouse-yank-rectangle|collapse-current|collapse-all|mouse-osd|mouse-osd-multi|"
+set-variable %user-mouse-wname "|<not bound>|Scroll Up 1 Line|Scroll Up 5 Lines|Scroll Up 10 Line|Scroll Up 1 Page|Scroll Down 1 Line|Scroll Down 5 Lines|Scroll Down 10 Line|Scroll Down 1 Page|Scroll Left 1 Char|Scroll Left 10 Chars|Scroll Right 1 Char|Scroll Right 10 Chars|"
+set-variable %user-mouse-wheel "||1 mouse-wup-scroll|5 mouse-wup-scroll|10 mouse-wup-scroll|mouse-wup-scroll|1 mouse-wdown-scroll|5 mouse-wdown-scroll|10 mouse-wdown-scroll|mouse-wdown-scroll|1 mouse-wleft-scroll|10 mouse-wleft-scroll|1 mouse-wright-scroll|10 mouse-wright-scroll|"
+; Misc setup list
+set-variable %user-misc-name "|Alias Path  - Configure ~<alias>/ completion|File Tools  - Configure tools available for files in directory listings|Shell Tools - Configure external program launching|E-Mail      - Configure sending and receiving e-mail|CVS         - Configure CVS settings|ClearCase   - Configure ClearCase settings|"
+set-variable %user-misc-cmd  "|alias-path-setup|file-tool-setup|shell-tool-setup|mail-setup|cvs-setup|cc-setup|"
 
 ; general macros ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -51,13 +55,13 @@ set-variable %emulate-value "||emacs|cua|me3_8|nedit|"
     osd-dialog "User Setup" "  The User Path cannot be change by user-setup\n\n  See help page for $user-path for information  \n        on how to change your user path" "  \HOK  "
 !emacro
 0 define-macro user-set-entry
-    set-variable #l2 &cat "/history/" &lget "|user-name|company|emulate|setup-file|organizer|spell/default|mail/sig|mail/fcc|mail/box|autosv|" &abs @#
-    set-variable #l0 &lget "|-1||||-1|-1||||300|" &abs @#
+    set-variable #l2 &cat "/history/" &lget "|user-name|organizer|company|setup-file|autosv|" &abs @#
+    set-variable #l0 &lget "|-1|-1|||300|" &abs @#
     set-variable #l0 &cond &equ #l0 -1 $user-name #l0
     !if &les @# 0
         set-variable #l0 &reg #l2 #l0
         set-variable #l0 @ml2 "" #l0
-        !if &lget "|0|1|1|1|1|1|0|0|0|" &abs @#
+        !if &lget "|0|1|1|1|0|" &abs @#
             ; me file name entered remove the .e?f extension, if found must force an osd update
             !if &xis &rig #l0 &sub &len #l0 4 "\\.e.f"
                 set-variable #l0 &lef #l0 &sub &len #l0 4
@@ -71,7 +75,7 @@ set-variable %emulate-value "||emacs|cua|me3_8|nedit|"
 !emacro
 
 0 define-macro user-set-pfentry
-    set-variable #l2 &spr "/history/%s/%s" $platform &lget "|mail-send|mail-insert1|mail-insert2|mail-base64|mail-uuencode|mail-check|mail-get|file-ignore|kept-vers|" &abs @#
+    set-variable #l2 &spr "/history/%s/%s" $platform &lget "|file-ignore|kept-vers|" &abs @#
     !if &les @# 0
         set-variable #l0 &reg #l2 ""
         set-variable #l0 @ml2 "" #l0
@@ -82,9 +86,8 @@ set-variable %emulate-value "||emacs|cua|me3_8|nedit|"
 !emacro
     
 0 define-macro user-set-pfcheckbox
-    set-variable #l2 &spr "/history/%s/%s" $platform &lget "|mail-queue|mail-vmget|mouse2to3|" &abs @#
-    set-variable #l0 &lget "|0|1|" &abs @#
-    set-variable #l0 &reg #l2 #l0
+    set-variable #l2 &spr "/history/%s/%s" $platform &lget "|mouse2to3|" &abs @#
+    set-variable #l0 &reg #l2 0
     !if &les @# 0
         set-variable #l0 &bxor #l0 1
         set-registry #l2 #l0
@@ -152,7 +155,7 @@ set-variable %emulate-value "||emacs|cua|me3_8|nedit|"
         !abort
     !endif
 !emacro
-0 define-macro user-set-save
+0 define-macro user-setup-okay
     !if &seq $user-name ""
         ml-write "[No user-name!]"
         !return
@@ -210,244 +213,58 @@ set-variable %emulate-value "||emacs|cua|me3_8|nedit|"
             save-buffer
         !endif
     !endif
-!emacro
-
-0 define-macro user-set-current
-    !if &seq $user-name ""
-        ml-write "[No user-name!]"
-        !return
-    !endif
-    user-set-save
     exec-file "me"
     !if &exi .spell.language
         ; make sure spelling is setup otherwise auto-spell will fail
         spell-rules-init
     !endif
+    set-variable .user-setup.loop @#
 !emacro
 
-0 define-macro user-set-pffile
-    set-variable #l2 &spr "/history/%s/%s" $platform &lget "|mail-src|mail-dir|" &abs @#
-    !if &les @# 0
-        set-variable #l0 &reg #l2 ""
-        set-variable #l0 @ml21 "" #l0
-        !if &equ @# -2
-            ; the mail-dir must have a trailing '/'
-            !if &not &seq &rig #l0 &sub &len #l0 1 "/"
-                set-variable #l0 &cat #l0 "/"
-                set-registry #l2 #l0
-                -2 osd
-            !endif
-        !endif
-        set-registry #l2 #l0
-    !else
-        set-variable $result &reg #l2 ""
-    !endif
+; Miscellaneous Setup ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+define-macro-file filetool file-tool-setup
+
+0 define-macro user-setup-misc
+    !force !force execute-line &lget %user-misc-cmd @#
 !emacro
 
-; Mail Filter Setup ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-0 define-macro user-mailf-set-fields
-    set-variable %user-numb @#
-    !if @#
-        osd .osd.user-sub 40 "fh" &spr " %2d  " @#
-        set-variable #l0 &mid $result 4 7
-        set-variable %user-field &trr #l0
-        osd .osd.user-sub 50 "xMdsHfh" .scheme.osd-entry #l0 .osd.user-mailf
-        set-variable %user-match &lget &reg &cat #g0 "match" "\b" @#
-        set-variable %user-box   &lget &reg &cat #g0 "box"   "\b" @#
-    !else
-        set-variable %user-field "subject"
-        set-variable %user-match ""
-        set-variable %user-box ""
-        osd .osd.user-sub 40 "fh" "  ?  "
-        osd .osd.user-sub 50 "xMdsHfh" .scheme.osd-entry "subject" .osd.user-mailf
-    !endif
-!emacro
-
-0 define-macro user-mailf-set-field
-    set-variable %user-field &trr $result
-    osd .osd.user-sub 50 "xMdsHfh" .scheme.osd-entry $result .osd.user-mailf
-!emacro
-
-0 define-macro user-maila-set
-    !if   &equ &abs @# 2
-        set-variable #l0 "%user-box"
-    !else
-        set-variable #l0 "%user-match"
-    !endif
-    !if &les @# 0
-        set-variable #l1 &ind #l0
-        set-variable #l1 @ml2 "" #l1
-        set-variable &ind #l0 #l1
-    !else
-        set-variable $result &ind #l0
-    !endif
-!emacro
-
-0 define-macro user-maila-create
-    -1 osd .osd.user-subc
-    osd .osd.user-subc 0 "sS" .scheme.osd-child 53 5 -1 -1 user-maila-create
-    set-variable #l3 0
-    set-variable #l4 &reg &cat #g0 "field" "\b"
-    set-variable #l5 &reg &cat #g0 "match" "\b"
-    set-variable #l6 &reg &cat #g0 "box"   "\b"
-    !if &gre &len #l4 1
-        !while &not &seq &set #l0 &lget #l4 &inc #l3 1 "" 
-            set-variable #l1 &lget #l5 #l3
-            set-variable #l2 &lget #l6 #l3
-            osd .osd.user-subc #l3 "x" &spr "%2d  %s%n %s%n  %s" #l3 #l0 &sub 9 &len #l0 " " #l1 &sub 22 &len #l1 " " #l2 #l3 user-mailf-set-fields
-        !done
-    !else
-        osd .osd.user-subc 1 ""
-    !endif
-    set-variable %user-archn #l3
-!emacro
-
-0 define-macro user-maila-com
-    set-variable #l4 &reg &cat #g0 "field" "\b"
-    set-variable #l5 &reg &cat #g0 "match" "\b"
-    set-variable #l6 &reg &cat #g0 "box"   "\b"
-    !if   &equ @# 3
-        ; delete the entry
-        !if &not %user-numb
-            ml-write "[No entry selected]" 
-            !return
-        !endif
-        set-variable #l4 &lde #l4 %user-numb
-        set-variable #l5 &lde #l5 %user-numb
-        set-variable #l6 &lde #l6 %user-numb
-    !else
-        !if &seq %user-match ""
-            ml-write "[Match field is empty]" 
-            !return
-        !endif
-        !if &equ @# 2
-            ; change the entry
-            !if &not %user-numb
-                ml-write "[No entry selected]" 
-                !return
-            !endif
-            set-variable #l4 &lse #l4 %user-numb %user-field
-            set-variable #l5 &lse #l5 %user-numb %user-match
-            set-variable #l6 &lse #l6 %user-numb %user-box
-        !else
-            ; add the entry
-            set-variable #l4 &lse #l4 -1 %user-field
-            set-variable #l5 &lse #l5 -1 %user-match
-            set-variable #l6 &lse #l6 -1 %user-box
-        !endif
-    !endif
-    set-registry &cat #g0 "field" #l4
-    set-registry &cat #g0 "match" #l5
-    set-registry &cat #g0 "box"   #l6
-    user-maila-create
-!emacro
-
-0 define-macro user-mail-filter
-    -1 osd .osd.user-sub
-    !if @#
-        osd .osd.user-sub 0 "batcHIs" 9 3 56 0 -1 -1 640 .scheme.osd-title "E-Mail Auto-Archive Setup"
-        set-variable #g0 "/history/mail/archive/"
-    !else
-        osd .osd.user-sub 0 "batcHIs" 9 3 56 0 -1 -1 640 .scheme.osd-title "E-Mail Pre-filter Setup"
-        set-variable #g0 "/history/mail/filter/"
-    !endif
-    osd .osd.user-sub 10 ""
-    osd .osd.user-sub 20  "IbH" .scheme.osd-sbar 53 5 .osd.user-subc
-    osd .osd.user-sub 25  ""
-    osd .osd.user-sub 30  "" "  #  Field     Search String           Mail Box "
-    osd .osd.user-sub 35  ""
-    osd .osd.user-sub 40  "fh" "  ?  "
-    osd .osd.user-sub 50  "MdxsHfh" .scheme.osd-entry "subject" .osd.user-mailf
-    osd .osd.user-sub 60  "hf" "   "
-    osd .osd.user-sub 70  "ExHfh" .scheme.osd-entry "######################" 1 user-maila-set
-    osd .osd.user-sub 80  "fh" "  "
-    osd .osd.user-sub 90  "ExHf" .scheme.osd-entry "###############" 2 user-maila-set
-    osd .osd.user-sub 600 ""
-    osd .osd.user-sub 610 "BcfhxH" .scheme.osd-ebtt "  \HAdd  "  1 user-maila-com
-    osd .osd.user-sub 620 "BcfhxH" .scheme.osd-ebtt " \HChange " 2 user-maila-com
-    osd .osd.user-sub 630 "BcfhxH" .scheme.osd-ebtt " \HDelete " 3 user-maila-com
-    osd .osd.user-sub 640 "BcfH"   .scheme.osd-ebtt " E\Hxit "   f void
-    user-maila-create
-    0 user-mailf-set-fields
-    .osd.user-sub osd
-!emacro
-
-; E-Mail setup ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-osd .osd.user-mailf 0  "b"
-osd .osd.user-mailf 10 "x" "subject" f user-mailf-set-field
-osd .osd.user-mailf 20 "x" "from   " f user-mailf-set-field
-osd .osd.user-mailf 30 "x" "to     " f user-mailf-set-field
-
-osd .osd.user-mail 0   "s" 55 18 -1 -1
-osd .osd.user-mail 10  ""
-osd .osd.user-mail 20  "c" &spr "Platform %s E-Mail Setup" $platform
-osd .osd.user-mail 30  ""
-osd .osd.user-mail 40  "Sfh" "  User Mail \HDir:       " 50
-osd .osd.user-mail 50  "EtxHf" .scheme.osd-entry "##############################" 2 user-set-pffile
-osd .osd.user-mail 60  "Sfh" "  Send Mail Signa\Hture: " 70
-osd .osd.user-mail 70  "EtxHf" .scheme.osd-entry "############" 7 user-set-entry
-osd .osd.user-mail 80  "Sfh" "  Carbon-Copy \HFile:    " 90
-osd .osd.user-mail 90  "EtxHf" .scheme.osd-entry "############" 8 user-set-entry
-osd .osd.user-mail 100 "Sfh" "  Insert Data (^C^\HI):  " 110
-osd .osd.user-mail 110 "EtxHf" .scheme.osd-entry "##############################" 2 user-set-pfentry
-osd .osd.user-mail 120 "Sfh" "  Insert Data (^C^\HZ):  " 130
-osd .osd.user-mail 130 "EtxHf" .scheme.osd-entry "##############################" 3 user-set-pfentry
-osd .osd.user-mail 140 "Sfh" "  S\Hend Mail Command:   " 150
-osd .osd.user-mail 150 "EtxHf" .scheme.osd-entry "##############################" 1 user-set-pfentry
-osd .osd.user-mail 153 "Sfh" "                       "
-osd .osd.user-mail 157 "Ctpfx" &cat .osd.checkbox-chars "\} \HQueue Outgoing Mail" 1 user-set-pfcheckbox
-osd .osd.user-mail 160 ""
-osd .osd.user-mail 170 "Sfh" "  Chec\Hk Mail Every:    " 180
-osd .osd.user-mail 180 "EtxHfh" .scheme.osd-entry "############" 6 user-set-pfentry
-osd .osd.user-mail 193 "Sf" " seconds"
-osd .osd.user-mail 200 "Sfh" "  Get Mail C\Hommand:    " 210
-osd .osd.user-mail 210 "EtxHf" .scheme.osd-entry "##############################" 7 user-set-pfentry
-osd .osd.user-mail 220 "Sfh" "  Incoming Mail \HBox:   " 230
-osd .osd.user-mail 230 "EtxHf" .scheme.osd-entry "##############################" 1 user-set-pffile
-osd .osd.user-mail 240 "Sfh" "  \HVM Main In Box:      " 250
-osd .osd.user-mail 250 "EtxHfh" .scheme.osd-entry "############" 9 user-set-entry
-osd .osd.user-mail 253 "Sfh" "  "
-osd .osd.user-mail 257 "Ctpfx" &cat .osd.checkbox-chars "\} VM \HGets Mail" 2 user-set-pfcheckbox
-osd .osd.user-mail 260 "Sfh" "  \HMime Data Extract:   " 270
-osd .osd.user-mail 270 "EtxHf" .scheme.osd-entry "##############################" 4 user-set-pfentry
-osd .osd.user-mail 280 "Sfh" "  \HUuencode Extract:    " 280
-osd .osd.user-mail 290 "EtxHf" .scheme.osd-entry "##############################" 5 user-set-pfentry
-osd .osd.user-mail 310 "fh"  "                       "
-osd .osd.user-mail 320 "BtfxH" .scheme.osd-ebtt " \HAuto-Archive " 1 user-mail-filter
+-1 osd .osd.user-miscc
+osd .osd.user-miscc 0 "sS" .scheme.osd-child 52 12 -1 -1
+set-variable #l3 0
+!while &not &seq &set #l0 &lget %user-misc-name &inc #l3 1 "" 
+    osd .osd.user-miscc #l3 "Rx" #l0 #l3 user-setup-misc
+!done
+    
+-1 osd .osd.user-misc
+osd .osd.user-misc  0 "s" 55 18 -1 -1
+osd .osd.user-misc 10 ""
+osd .osd.user-misc 20 "" "  Select an item below to configure"
+osd .osd.user-misc 30 ""
+osd .osd.user-misc 40 "hf" " "
+osd .osd.user-misc 50 "ItbHf" .scheme.osd-sbar 52 12 .osd.user-miscc
 
 ; Mouse setup ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-set-variable %user-mouse-but 1
-set-variable %user-mouse-S ""
-set-variable %user-mouse-C ""
-set-variable %user-mouse-A ""
-
-set-variable %user-mouse-bname "|<not bound>|Drag region|Copy Rectangle|Kill Rectangle|Select Word|Default Pan|MS Pan|Find Buffer|Find Tag|Find ME Help|Undo|No Move Yank|Replace Yank|Move to Yank|Reyank|Rectangle Yank|Collapse Current|Collapse All|Main Menu|Context Menu|"
-set-variable %user-mouse-bpick "||mouse-pick-type1|mouse-pick-rectangle|mouse-pick-rectangle|mouse-pick-type1|mouse-pan-pick|mouse-mspan-pick|void|void|void|mouse-keepcl|||void|void|mouse-keepcl|void|void|||"
-set-variable %user-mouse-bdrop "||mouse-drop-type1|1 mouse-drop-rectangle|0 mouse-drop-rectangle|mouse-drop-type2|mouse-pan-drop|mouse-mspan-drop|0 osd-find-buffer|!nma find-tag|mouse-emacs-help|mouse-undo|mouse-no-move-yank|mouse-no-move-replace-yank|mouse-move-yank|mouse-reyank|mouse-yank-rectangle|collapse-current|collapse-all|mouse-osd|mouse-osd-multi|"
-set-variable %user-mouse-wname "|<not bound>|Scroll Up 1 Line|Scroll Up 5 Lines|Scroll Up 10 Line|Scroll Up 1 Page|Scroll Down 1 Line|Scroll Down 5 Lines|Scroll Down 10 Line|Scroll Down 1 Page|Scroll Left 1 Char|Scroll Left 10 Chars|Scroll Right 1 Char|Scroll Right 10 Chars|"
-set-variable %user-mouse-wheel "||1 mouse-wup-scroll|5 mouse-wup-scroll|10 mouse-wup-scroll|mouse-wup-scroll|1 mouse-wdown-scroll|5 mouse-wdown-scroll|10 mouse-wdown-scroll|mouse-wdown-scroll|1 mouse-wleft-scroll|10 mouse-wleft-scroll|1 mouse-wright-scroll|10 mouse-wright-scroll|"
 
 0 define-macro user-mouse-set-button
     !if &les @# 0
-        -1 osd .osd.user-sub
-        osd .osd.user-sub 0 "bs"14 0 0 0
+        -1 osd .osd.tmp
+        osd .osd.tmp 0 "bs"14 0 0 0
         set-variable #l0 0
         !while &not &seq "" &set #l1 &lget .bnames &inc #l0 1
-            osd .osd.user-sub #l0 "i" #l1 #l0 "set-variable %user-mouse-but @#"
+            osd .osd.tmp #l0 "i" #l1 #l0 "set-variable .user-set-mouse.but @#"
         !done
     !else
-        set-variable $result &rep &lget .bnames %user-mouse-but "\H" ""
+        set-variable $result &rep &lget .bnames .user-set-mouse.but "\H" ""
     !endif
 !emacro
 set-variable .user-mouse-set-button.bnames "|\HLeft|\HMiddle|\HRight|Wheel \HUp|Wheel \HDown|"
 
 0 define-macro user-setup-mouse-bind-set
-    !if &gre %user-mouse-but 3
-        set-variable #l0 &spr "%s%s%smouse-w%s" %user-mouse-A %user-mouse-C %user-mouse-S &cond &equ 4 %user-mouse-but "up" "down"
+    !if &gre .user-set-mouse.but 3
+        set-variable #l0 &spr "%s%s%smouse-w%s" .user-set-mouse.A .user-set-mouse.C .user-set-mouse.S &cond &equ 4 .user-set-mouse.but "up" "down"
         set-registry &cat "/history/mouse/" #l0 &lget %user-mouse-wheel @#
     !else
-        set-variable #l0 &spr "%s%s%smouse-%%s-%s" %user-mouse-A %user-mouse-C %user-mouse-S %user-mouse-but
+        set-variable #l0 &spr "%s%s%smouse-%%s-%s" .user-set-mouse.A .user-set-mouse.C .user-set-mouse.S .user-set-mouse.but
         set-registry &cat "/history/mouse/" &spr #l0 "pick" &lget %user-mouse-bpick @#
         set-registry &cat "/history/mouse/" &spr #l0 "drop" &lget %user-mouse-bdrop @#
     !endif
@@ -455,24 +272,24 @@ set-variable .user-mouse-set-button.bnames "|\HLeft|\HMiddle|\HRight|Wheel \HUp|
 
 0 define-macro user-setup-mouse-bind
     !if &les @# 0
-        -1 osd .osd.user-sub
-        osd .osd.user-sub 0 "bs" 22 0 0 0
-        set-variable #l9 &cond &gre %user-mouse-but 3 %user-mouse-wname %user-mouse-bname
+        -1 osd .osd.tmp
+        osd .osd.tmp 0 "bs" 22 0 0 0
+        set-variable #l9 &cond &gre .user-set-mouse.but 3 %user-mouse-wname %user-mouse-bname
         set-variable #l0 0
         !while &not &seq "" &set #l1 &lget #l9 &inc #l0 1
-            osd .osd.user-sub #l0 "" #l1 #l0 user-setup-mouse-bind-set
+            osd .osd.tmp #l0 "" #l1 #l0 user-setup-mouse-bind-set
         !done
-    !elif &gre %user-mouse-but 3
-        set-variable #l0 &spr "/history/mouse/%s%s%smouse-w%s" %user-mouse-A %user-mouse-C %user-mouse-S &cond &equ 4 %user-mouse-but "up" "down"
+    !elif &gre .user-set-mouse.but 3
+        set-variable #l0 &spr "/history/mouse/%s%s%smouse-w%s" .user-set-mouse.A .user-set-mouse.C .user-set-mouse.S &cond &equ 4 .user-set-mouse.but "up" "down"
         set-variable $result &lget %user-mouse-wname &lfind %user-mouse-wheel &reg #l0 ""
     !else
-        set-variable #l0 &spr "/history/mouse/%s%s%smouse-drop-%s" %user-mouse-A %user-mouse-C %user-mouse-S %user-mouse-but
+        set-variable #l0 &spr "/history/mouse/%s%s%smouse-drop-%s" .user-set-mouse.A .user-set-mouse.C .user-set-mouse.S .user-set-mouse.but
         set-variable $result &lget %user-mouse-bname &lfind %user-mouse-bdrop &reg #l0 ""
     !endif
 !emacro
 
 0 define-macro user-mouse-set-auto
-    set-variable #l2 &spr "/history/mouse/%s%s%smouse-auto-%s" %user-mouse-A %user-mouse-C %user-mouse-S %user-mouse-but
+    set-variable #l2 &spr "/history/mouse/%s%s%smouse-auto-%s" .user-set-mouse.A .user-set-mouse.C .user-set-mouse.S .user-set-mouse.but
     set-variable #l0 &reg #l2 "0"
     !if &les @# 0
         set-variable #l0 &bxor #l0 1
@@ -515,7 +332,7 @@ set-variable .user-mouse-set-button.bnames "|\HLeft|\HMiddle|\HRight|Wheel \HUp|
 
 0 define-macro user-mouse-set-checkbox
     set-variable #l0 &lget "|S|C|A|" &abs @#
-    set-variable #l2 &cat "%user-mouse-" #l0
+    set-variable #l2 &cat ".user-set-mouse." #l0
     !if &les @# 0
         !if &seq &ind #l2 ""
             set-variable &ind #l2 &cat #l0 "-"
@@ -548,240 +365,32 @@ osd .osd.user-mouse 17  "EtxHf" .scheme.osd-entry "#####" 1 user-set-mouse-nob
 osd .osd.user-mouse 20  "Sfh" "                "
 osd .osd.user-mouse 22  "Ctpfx" &cat .osd.checkbox-chars "\} S\Hwap Buttons" 0x020 user-set-mouse
 osd .osd.user-mouse 24  "Sfh" "                "
-osd .osd.user-mouse 26  "Ctpfx" &cat .osd.checkbox-chars "\} Simulate \H3 Buttons" 3 user-set-pfcheckbox
+osd .osd.user-mouse 26  "Ctpfx" &cat .osd.checkbox-chars "\} Simulate \H3 Buttons" 1 user-set-pfcheckbox
 osd .osd.user-mouse 27  ""
 osd .osd.user-mouse 28  "" "  Mouse Button Bindings"
 osd .osd.user-mouse 29  ""
 osd .osd.user-mouse 30  "Sfh" "      \HButton:   " 25
-osd .osd.user-mouse 40  "OtxmsfhHzR" .scheme.osd-entry 12 1 "" .osd.user-sub user-mouse-set-button
+osd .osd.user-mouse 40  "OtxmsfhHzR" .scheme.osd-entry 12 1 "" .osd.tmp user-mouse-set-button
 osd .osd.user-mouse 41  "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 40
 osd .osd.user-mouse 50  "Sfh" "      Modifier: "
 osd .osd.user-mouse 60  "CRtpfx" &cat .osd.checkbox-chars "\} S\Hhift" 1 user-mouse-set-checkbox
 osd .osd.user-mouse 70  "Sfh" "                "
-osd .osd.user-mouse 80  "CRtpfx" &cat .osd.checkbox-chars "\} C\Hontrol" 2 user-mouse-set-checkbox
+osd .osd.user-mouse 80  "CRtpfx" &cat .osd.checkbox-chars "\} Cont\Hrol" 2 user-mouse-set-checkbox
 osd .osd.user-mouse 90  "Sfh" "                "
-osd .osd.user-mouse 100 "CRtpfx" &cat .osd.checkbox-chars "\} \HAlt" 3 user-mouse-set-checkbox
+osd .osd.user-mouse 100 "CRtpfx" &cat .osd.checkbox-chars "\} A\Hlt" 3 user-mouse-set-checkbox
 osd .osd.user-mouse 110 ""
 osd .osd.user-mouse 120 "Sfh" "      Bound \HTo: " 130
-osd .osd.user-mouse 130 "OtxmsfhHzR" .scheme.osd-entry 20 1 "" .osd.user-sub user-setup-mouse-bind
+osd .osd.user-mouse 130 "OtxmsfhHzR" .scheme.osd-entry 20 1 "" .osd.tmp user-setup-mouse-bind
 osd .osd.user-mouse 140 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 130
 osd .osd.user-mouse 150  "Sfh" "                "
 osd .osd.user-mouse 160 "Ctpfx" &cat .osd.checkbox-chars "\} \HHandle Scroll Bars" f user-mouse-set-auto
 osd .osd.user-mouse 600 ""
 osd .osd.user-mouse 610 "BctfHxR" .scheme.osd-ebtt " \HDefaults " f user-mouse-defaults
+set-variable .user-set-mouse.but 1
+set-variable .user-set-mouse.S ""
+set-variable .user-set-mouse.C ""
+set-variable .user-set-mouse.A ""
 
-; The Tools menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-0 define-macro user-tool-init
-    set-variable #l0 0
-    !repeat
-        set-variable #l1 &reg &spr "/history/%s/tool/%d/name" $platform #l0 ""
-        set-variable #l2 &spr "\H%d %s%n" #l0 #l1 &sub 19 &len #l1 " "
-        !if &band #l0 0x01
-            osd .osd.user-tool &add 100 &mul #l0 10 "Rfxc"  #l2 #l0 user-tool-setup
-        !else
-            osd .osd.user-tool &add 100 &mul #l0 10 "Rfhxc" #l2 #l0 user-tool-setup
-        !endif
-    !until &equ &inc #l0 1 10
-!emacro
-set-variable .user-tool-init.cur 0
-
-0 define-macro user-tool-setup
-    set-variable .user-tool-init.cur @#
-    osd .osd.user-tool 210 "c" &spr "Command %d Setup" @#
-    set-variable #l0 &reg &spr "/history/%s/tool/%d/flag" $platform @# 0x1a
-    !if &band #l0 0x10
-        osd .osd.user-tool 320 "Sfh" "           B\Huffer: " 320
-        osd .osd.user-tool 330 "EtxHfh" .scheme.osd-entry "##################" 3 user-tool-set-entry
-        osd .osd.user-tool 335 "Sfh" "  "
-        osd .osd.user-tool 340 "Ctpfx" &cat .osd.checkbox-chars "\} \HHide" 0x20 user-tool-set-flag
-    !else
-        osd .osd.user-tool 320 "f" ""
-        osd .osd.user-tool 330 "D"
-        osd .osd.user-tool 335 "D"
-        osd .osd.user-tool 340 "D"
-    !endif
-!emacro
-
-0 define-macro user-tool-set-entry
-    set-variable #l2 &spr "/history/%s/tool/%d/%s" $platform .user-tool-init.cur &lget "|name|command|bname|" &abs @#
-    !if &les @# 0
-        set-variable #l0 &reg #l2 ""
-        set-variable #l0 @ml2 "" #l0
-        set-registry #l2 #l0
-    !else
-        set-variable $result &reg #l2 ""
-    !endif
-!emacro
-
-0 define-macro user-tool-set-flag
-    set-variable #l2 &spr "/history/%s/tool/%d/flag" $platform .user-tool-init.cur
-    set-variable #l0 &reg #l2 0x1a
-    !if &les @# 0
-        !if &band &set #l1 &abs @# 0x90
-            !if &band #l0 0x40
-                !return
-            !endif
-        !endif
-        set-variable #l0 &bxor #l0 #l1
-        !if &band #l0 0x40
-            set-variable #l0 &band #l0 0xff7f
-            set-variable #l0 &bor #l0 0x10
-        !endif
-        set-registry #l2 #l0
-        !if &band #l1 0x50
-            .user-tool-init.cur user-tool-setup
-        !endif
-    !elif &not &band #l0 @#
-        !abort
-    !endif
-!emacro
-
--1 osd .osd.user-tool
-osd .osd.user-tool 0   "s" 55 18 -1 -1 user-tool-init
-osd .osd.user-tool 10  ""
-osd .osd.user-tool 200 ""
-osd .osd.user-tool 210 ""
-osd .osd.user-tool 220 ""
-osd .osd.user-tool 230 "Sfh" "  Tool \HName:      " 240
-osd .osd.user-tool 240 "EtxHf" .scheme.osd-entry "###################" 1 user-tool-set-entry
-osd .osd.user-tool 250 "Sfh" "  Command \HLine:   " 260
-osd .osd.user-tool 260 "EtxHf" .scheme.osd-entry "##################################" 2 user-tool-set-entry
-osd .osd.user-tool 270 ""    "       Buffer file name = %ff or %fp%fn or %fp%fb%fe"
-!if &band $system 0x800
-    osd .osd.user-tool 280 "fh"  "       "
-    osd .osd.user-tool 290 "Ctpfx" &cat .osd.checkbox-chars "\} \HRun Concurrently" 0x40 user-tool-set-flag
-!endif
-osd .osd.user-tool 293 "fh"  "       "
-osd .osd.user-tool 295 "Ctpfx" &cat .osd.checkbox-chars "\} R\Heread Current Buffer (non-concurrent)" 0x80 user-tool-set-flag
-osd .osd.user-tool 300 "fh"  "       "
-osd .osd.user-tool 310 "Ctpfx" &cat .osd.checkbox-chars "\} Capture \HOutput" 0x10 user-tool-set-flag
-osd .osd.user-tool 360 "Sfh" "  Current \HBuffer: " 370
-osd .osd.user-tool 370 "Ctpfxh" &cat .osd.checkbox-chars "\} Save" 0x01 user-tool-set-flag
-osd .osd.user-tool 380 "Sfh" "  "
-osd .osd.user-tool 390 "Ctpfx" &cat .osd.checkbox-chars "\} \HPrompt Before Saving" 0x02 user-tool-set-flag
-osd .osd.user-tool 400 "Sfh" "  \HAll Buffers:    " 410
-osd .osd.user-tool 410 "Ctpfxh" &cat .osd.checkbox-chars "\} Save" 0x04 user-tool-set-flag
-osd .osd.user-tool 420 "Sfh" "  "
-osd .osd.user-tool 430 "Ctpfx" &cat .osd.checkbox-chars "\} Promp\Ht Before Saving" 0x08 user-tool-set-flag
-
-; file type setup ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-0 define-macro user-filetype-set-fields
-    set-variable %user-fnumbo @#
-    set-variable %user-fnumb @#
-    !if @#
-        set-variable %user-ftype &lget &reg "/history/file-type" "\b" @#
-        set-variable %user-fmask &lget &reg "/history/file-mask" "\b" @#
-    !else
-        set-variable %user-ftype ""
-        set-variable %user-fmask ""
-        set-variable %user-fnumb ""
-    !endif
-!emacro
-
-0 define-macro user-filetype-create
-    -1 osd .osd.user-ftypec
-    osd .osd.user-ftypec 0 "sS" .scheme.osd-child 51 10 -1 -1
-    set-variable #l3 0
-    set-variable #l4 &reg "/history/file-type" "\b"
-    set-variable #l5 &reg "/history/file-mask" "\b"
-    !if &gre &len #l4 1
-        !while &not &seq &set #l0 &lget #l4 &inc #l3 1 "" 
-            set-variable #l1 &lget #l5 #l3
-            osd .osd.user-ftypec #l3 "Rx" &spr "%s%n  %s%n  %s" #l3 &sub 3 &len #l3 " " #l0 &sub 16 &len #l0 " " #l1 #l3 user-filetype-set-fields
-        !done
-    !else
-        osd .osd.user-ftypec 1 ""
-    !endif
-    set-variable %user-farchn #l3
-!emacro
-        
-0 define-macro user-filetype-set
-    !if   &equ &abs @# 3
-        set-variable #l0 "%user-fnumb"
-    !elif &equ &abs @# 2
-        set-variable #l0 "%user-fmask"
-    !else
-        set-variable #l0 "%user-ftype"
-    !endif
-    !if &les @# 0
-        set-variable #l1 &ind #l0
-        set-variable #l1 @ml2 "" #l1
-        set-variable &ind #l0 #l1
-    !else
-        set-variable $result &ind #l0
-    !endif
-!emacro
-
-0 define-macro user-filetype-com
-    set-variable #l4 &reg "/history/file-type" "\b"
-    set-variable #l5 &reg "/history/file-mask" "\b"
-    !if   &equ @# 3
-        ; delete the entry
-        !if &not %user-fnumb
-            ml-write "[No entry selected]" 
-            !return
-        !endif
-        set-variable #l4 &lde #l4 %user-fnumb
-        set-variable #l5 &lde #l5 %user-fnumb
-    !else
-        !if &seq %user-ftype ""
-            ml-write "[Type field is empty]" 
-            !return
-        !endif
-        !if &seq %user-fmask ""
-            ml-write "[Mask field is empty]" 
-            !return
-        !endif
-        !if &equ @# 2
-            ; change the entry
-            !if &not %user-fnumb
-                ml-write "[No entry selected]" 
-                !return
-            !endif
-            ; delete the old
-            !if %user-fnumbo
-                set-variable #l4 &lde #l4 %user-fnumbo
-                set-variable #l5 &lde #l5 %user-fnumbo
-            !endif
-            ; insert the new
-            set-variable #l4 &lin #l4 %user-fnumb %user-ftype
-            set-variable #l5 &lin #l5 %user-fnumb %user-fmask
-        !else
-            ; add the entry
-            set-variable #l4 &lse #l4 -1 %user-ftype
-            set-variable #l5 &lse #l5 -1 %user-fmask
-        !endif
-    !endif
-    set-registry "/history/file-type" #l4
-    set-registry "/history/file-mask" #l5
-    user-filetype-create
-!emacro
-
-0 define-macro user-filetype-init
-    !if &seq %user-fnumbo "-"
-        user-filetype-create
-        0 user-filetype-set-fields
-    !endif
-!emacro
-
-osd .osd.user-ftype  0  "s" 55 18 -1 -1 user-filetype-init
-osd .osd.user-ftype  5  "hf" " "
-osd .osd.user-ftype 10  "ItbHf" .scheme.osd-sbar 51 10 .osd.user-ftypec
-osd .osd.user-ftype 20  ""
-osd .osd.user-ftype 30  "Sfh" "  \HNo. " 50
-osd .osd.user-ftype 33  "Sfh" " Na\Hme             " 70
-osd .osd.user-ftype 36  "Sf"  " \HFile Mask List" 90
-osd .osd.user-ftype 40  "fh" "  "
-osd .osd.user-ftype 50  "EtxHfh" .scheme.osd-entry "###" 3 user-filetype-set
-osd .osd.user-ftype 60  "fh" "  "
-osd .osd.user-ftype 70  "EtxHfh" .scheme.osd-entry "################" 1 user-filetype-set
-osd .osd.user-ftype 80  "fh" "  "
-osd .osd.user-ftype 90  "EtxHf" .scheme.osd-entry "############################" 2 user-filetype-set
-osd .osd.user-ftype 600 ""
-osd .osd.user-ftype 610 "BtcfhxH" .scheme.osd-ebtt "  \HAdd  "  1 user-filetype-com
-osd .osd.user-ftype 620 "BtcfhxH" .scheme.osd-ebtt " C\Hhange " 2 user-filetype-com
-osd .osd.user-ftype 630 "BtcfxH"  .scheme.osd-ebtt " \HDelete " 3 user-filetype-com
-    
 ; The platform menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 !if &and &seq $platform "win32" &not &band $system 0x01
     0 define-macro user-set-winfont
@@ -807,11 +416,11 @@ osd .osd.user-ftype 630 "BtcfxH"  .scheme.osd-ebtt " \HDelete " 3 user-filetype-
 
 0 define-macro user-setup-charset
     !if &les @# 0
-        -1 osd .osd.user-sub
-        osd .osd.user-sub 0 "bs" 33 0 0 0
+        -1 osd .osd.tmp
+        osd .osd.tmp 0 "bs" 33 0 0 0
         set-variable #l0 0
         !while &not &seq "" &set #l1 &lget %charset-names &inc #l0 1
-            osd .osd.user-sub #l0 "" #l1 #l0 user-setup-charset-set
+            osd .osd.tmp #l0 "" #l1 #l0 user-setup-charset-set
         !done
     !else
         set-variable $result &lget %charset-names &lfind %charset-value &reg &spr "/history/%s/char-set" %platform &lget %charset-value 1
@@ -826,11 +435,11 @@ osd .osd.user-ftype 630 "BtcfxH"  .scheme.osd-ebtt " \HDelete " 3 user-filetype-
 
 0 define-macro user-setup-hscroll
     !if &les @# 0
-        -1 osd .osd.user-sub
-        osd .osd.user-sub 0 "bs" 33 0 0 0
+        -1 osd .osd.tmp
+        osd .osd.tmp 0 "bs" 33 0 0 0
         set-variable #l0 0
         !while &not &seq "" &set #l1 &lget %hscroll-names &inc #l0 1
-            osd .osd.user-sub #l0 "" #l1 #l0 user-setup-hscroll-set
+            osd .osd.tmp #l0 "" #l1 #l0 user-setup-hscroll-set
         !done
     !else
         set-variable $result &lget %hscroll-names &add &band &reg &spr "/history/%s/scroll" %platform "1" 0x0f 1
@@ -845,11 +454,11 @@ osd .osd.user-ftype 630 "BtcfxH"  .scheme.osd-ebtt " \HDelete " 3 user-filetype-
 
 0 define-macro user-setup-vscroll
     !if &les @# 0
-        -1 osd .osd.user-sub
-        osd .osd.user-sub 0 "bs" 32 0 0 0
+        -1 osd .osd.tmp
+        osd .osd.tmp 0 "bs" 32 0 0 0
         set-variable #l0 0
         !while &not &seq "" &set #l1 &lget %vscroll-names &inc #l0 1
-            osd .osd.user-sub #l0 "" #l1 #l0 user-setup-vscroll-set
+            osd .osd.tmp #l0 "" #l1 #l0 user-setup-vscroll-set
         !done
     !else
         set-variable $result &lget %vscroll-names &add &div &reg &spr "/history/%s/scroll" %platform "1" 16 1
@@ -862,11 +471,11 @@ osd .osd.user-ftype 630 "BtcfxH"  .scheme.osd-ebtt " \HDelete " 3 user-filetype-
 
 0 define-macro user-setup-scrollb
     !if &les @# 0
-        -1 osd .osd.user-sub
-        osd .osd.user-sub 0 "bs" 32 0 0 0
+        -1 osd .osd.tmp
+        osd .osd.tmp 0 "bs" 32 0 0 0
         set-variable #l0 0
         !while &not &seq "" &set #l1 &lget %scrollb-names &inc #l0 1
-            osd .osd.user-sub #l0 "" #l1 #l0 user-setup-scrollb-set
+            osd .osd.tmp #l0 "" #l1 #l0 user-setup-scrollb-set
         !done
     !else
         set-variable $result &lget %scrollb-names &lfind %scrollb-value &reg &spr "/history/%s/scroll-bar" %platform "0"
@@ -875,11 +484,11 @@ osd .osd.user-ftype 630 "BtcfxH"  .scheme.osd-ebtt " \HDelete " 3 user-filetype-
 
 0 define-macro user-setup-fence
     !if &les @# 0
-        -1 osd .osd.user-sub
-        osd .osd.user-sub 0 "bs" 32 0 0 0
+        -1 osd .osd.tmp
+        osd .osd.tmp 0 "bs" 32 0 0 0
         set-variable #l0 0
         !while &not &seq "" &set #l1 &lget %fence-names &inc #l0 1
-            osd .osd.user-sub #l0 "i" #l1 &sub #l0 1 &spr "set-registry \"/history/%s/fence\" @#" %platform
+            osd .osd.tmp #l0 "i" #l1 &sub #l0 1 &spr "set-registry \"/history/%s/fence\" @#" %platform
         !done
     !else
         set-variable $result &lget %fence-names &add &reg &spr "/history/%s/fence" %platform "1" 1
@@ -892,11 +501,11 @@ osd .osd.user-ftype 630 "BtcfxH"  .scheme.osd-ebtt " \HDelete " 3 user-filetype-
 
 0 define-macro user-setup-color
     !if &les @# 0
-        -1 osd .osd.user-sub
-        osd .osd.user-sub 0 "bs" 32 0 0 0
+        -1 osd .osd.tmp
+        osd .osd.tmp 0 "bs" 32 0 0 0
         set-variable #l0 0
         !while &not &seq "" &set #l1 &lget .scheme.scheme-names &inc #l0 1
-            osd .osd.user-sub #l0 "" #l1 #l0 user-setup-color-set
+            osd .osd.tmp #l0 "" #l1 #l0 user-setup-color-set
         !done
     !else
         set-variable $result &lget .scheme.scheme-names &lfind .scheme.scheme-files &reg &spr "/history/%s/scheme" %platform &lget .scheme.scheme-files 1
@@ -909,7 +518,7 @@ osd .osd.user-ftype 630 "BtcfxH"  .scheme.osd-ebtt " \HDelete " 3 user-filetype-
         osd .osd.user-plat 550 "D"
     !else
         osd .osd.user-plat 540 "Sfh" "              \H# Backups: " 550
-        osd .osd.user-plat 550 "EtxHf" .scheme.osd-entry "######" 9 user-set-pfentry
+        osd .osd.user-plat 550 "EtxHf" .scheme.osd-entry "######" 2 user-set-pfentry
     !endif
 !emacro
 
@@ -947,7 +556,7 @@ osd .osd.user-plat 0   "s" 55 18 -1 -1
 ; draw the common parts first
 osd .osd.user-plat 10  ""
 osd .osd.user-plat 300 "Sfh" "  \HDisplay Char Set:  " 310
-osd .osd.user-plat 310 "OtxmsfhHzR" .scheme.osd-entry 31 1 "" .osd.user-sub user-setup-charset
+osd .osd.user-plat 310 "OtxmsfhHzR" .scheme.osd-entry 31 1 "" .osd.tmp user-setup-charset
 osd .osd.user-plat 311 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 310
 osd .osd.user-plat 400 "fh" "    "
 osd .osd.user-plat 410 "Ctfxph" &cat .osd.checkbox-chars "\} Draw \HWhite Spaces" 0x80000 user-set-system
@@ -957,26 +566,26 @@ osd .osd.user-plat 500 "fh" "    "
 osd .osd.user-plat 501 "Cftxph" &cat .osd.checkbox-chars "\} Enable Toolbar" 3 user-set-cpfcheckbox
 osd .osd.user-plat 509 ""
 osd .osd.user-plat 600 "Sfh" "  \HIgnore Files:      " 610
-osd .osd.user-plat 610 "EtxHf" .scheme.osd-entry "################################" 8 user-set-pfentry
+osd .osd.user-plat 610 "EtxHf" .scheme.osd-entry "################################" 1 user-set-pfentry
 osd .osd.user-plat 700 ""
 osd .osd.user-plat 710 "Sfh" "  Cursor \HBlink Rate: " 720
 osd .osd.user-plat 720 "EtxHfh" .scheme.osd-entry "#######" 1 user-set-cursorblink
 osd .osd.user-plat 730 "fh" "  "
 osd .osd.user-plat 740 "EtxHf" .scheme.osd-entry "#######" 2 user-set-cursorblink
 osd .osd.user-plat 743 "Sfh" "  Fence Display:     " 747
-osd .osd.user-plat 747 "OtxmsfhHzR" .scheme.osd-entry 31 1 "" .osd.user-sub user-setup-fence
+osd .osd.user-plat 747 "OtxmsfhHzR" .scheme.osd-entry 31 1 "" .osd.tmp user-setup-fence
 osd .osd.user-plat 748 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 747
 osd .osd.user-plat 750 "Sfh" "  Scroll Bars:       " 760
-osd .osd.user-plat 760 "OtxmsfhHzR" .scheme.osd-entry 31 1 "" .osd.user-sub user-setup-scrollb
+osd .osd.user-plat 760 "OtxmsfhHzR" .scheme.osd-entry 31 1 "" .osd.tmp user-setup-scrollb
 osd .osd.user-plat 761 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 760
 osd .osd.user-plat 770 "Sfh" "  \HHorizontal Scroll: " 780
-osd .osd.user-plat 780 "OtxmsfhHzR" .scheme.osd-entry 31 1 "" .osd.user-sub user-setup-hscroll
+osd .osd.user-plat 780 "OtxmsfhHzR" .scheme.osd-entry 31 1 "" .osd.tmp user-setup-hscroll
 osd .osd.user-plat 781 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 780
 osd .osd.user-plat 790 "Sfh" "  \HVertical Scroll:   " 800
-osd .osd.user-plat 800 "OtxmsfhHzR" .scheme.osd-entry 31 1 "" .osd.user-sub user-setup-vscroll
+osd .osd.user-plat 800 "OtxmsfhHzR" .scheme.osd-entry 31 1 "" .osd.tmp user-setup-vscroll
 osd .osd.user-plat 801 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 800
 osd .osd.user-plat 810 "Sfh" "  Colo\Hr Scheme:      " 820
-osd .osd.user-plat 820 "OtxmsfhHzR" .scheme.osd-entry 31 1 "" .osd.user-sub user-setup-color
+osd .osd.user-plat 820 "OtxmsfhHzR" .scheme.osd-entry 31 1 "" .osd.tmp user-setup-color
 osd .osd.user-plat 821 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 820
 !if &seq $platform "dos"
     osd .osd.user-plat 50  "Sfh" "  Graphic Mode \H#:    " 60
@@ -1060,11 +669,11 @@ set-variable $mode-names ".*"
 
 0 define-macro user-setup-tab-indent
     !if &les @# 0
-        -1 osd .osd.user-sub
-        osd .osd.user-sub 0 "bs" 20 0 0 0
-        osd .osd.user-sub 1 "" "\HAlways Indent"     1 user-setup-tab-indent-set
-        osd .osd.user-sub 2 "" "\HFirst Column Only" 2 user-setup-tab-indent-set
-        osd .osd.user-sub 3 "" "\HNever Indent"      3 user-setup-tab-indent-set
+        -1 osd .osd.tmp
+        osd .osd.tmp 0 "bs" 20 0 0 0
+        osd .osd.tmp 1 "" "\HAlways Indent"     1 user-setup-tab-indent-set
+        osd .osd.tmp 2 "" "\HFirst Column Only" 2 user-setup-tab-indent-set
+        osd .osd.tmp 3 "" "\HNever Indent"      3 user-setup-tab-indent-set
     !else
         set-variable #l0 &reg "/history/system" $system 
         !if &band #l0 0x1000
@@ -1082,8 +691,8 @@ osd .osd.user-gener 0   "s" 55 18 -1 -1
 osd .osd.user-gener 10  ""
 osd .osd.user-gener 40  "Sfh" "  Full \HName:      " 50
 osd .osd.user-gener 50  "EtxHf" .scheme.osd-entry "#######################" 1 user-set-entry
-osd .osd.user-gener 60  "Sfh" "  \HOrganizer File: " 70
-osd .osd.user-gener 70  "EtxHf" .scheme.osd-entry "############" 5 user-set-entry
+osd .osd.user-gener 60  "Sfh" "  Organi\Hzer File: " 70
+osd .osd.user-gener 70  "EtxHf" .scheme.osd-entry "############" 2 user-set-entry
 osd .osd.user-gener 80 ""
 osd .osd.user-gener 110 "fh" "  Global Modes:   "
 osd .osd.user-gener 120 "Ctfxp" &cat .osd.checkbox-chars "\}\HQuiet" 8 user-set-checkbox
@@ -1092,7 +701,7 @@ osd .osd.user-gener 140 "Ctfxph" &cat .osd.checkbox-chars "\}\HExact" 4 user-set
 osd .osd.user-gener 150 "fh" "    "
 osd .osd.user-gener 160 "Ctfxp" &cat .osd.checkbox-chars "\}\HMagic " 5 user-set-checkbox
 osd .osd.user-gener 170 "fh" "  Buffer Modes:   "
-osd .osd.user-gener 180 "Ctfxph" &cat .osd.checkbox-chars "\}\HAuto "  6 user-set-checkbox
+osd .osd.user-gener 180 "Ctfxph" &cat .osd.checkbox-chars "\}Auto "  6 user-set-checkbox
 osd .osd.user-gener 190 "fh" "    "
 osd .osd.user-gener 200 "Ctfxp" &cat .osd.checkbox-chars "\}\HBackup" 7 user-set-checkbox
 osd .osd.user-gener 210 "fh" "                  "
@@ -1100,7 +709,7 @@ osd .osd.user-gener 220 "Ctfxph" &cat .osd.checkbox-chars "\}\HTab  " 9 user-set
 osd .osd.user-gener 230 "fh" "    "
 osd .osd.user-gener 240 "Ctfxp" &cat .osd.checkbox-chars "\}\HUndo " 10 user-set-checkbox
 osd .osd.user-gener 243 "Sfh" "  Auto-Sa\Hve Time: " 245
-osd .osd.user-gener 245 "EtxHfh" .scheme.osd-entry "########" 10 user-set-entry
+osd .osd.user-gener 245 "EtxHfh" .scheme.osd-entry "########" 5 user-set-entry
 osd .osd.user-gener 247 "hf" "    "
 osd .osd.user-gener 260 "Ctfxp" &cat .osd.checkbox-chars "\}\HKeep Undo" 0x8000 user-set-system
 osd .osd.user-gener 263 "hf" "                              "
@@ -1121,7 +730,7 @@ osd .osd.user-gener 325 "Ctfxhp" &cat .osd.checkbox-chars "\}Lookback" 15 user-s
 osd .osd.user-gener 326 "fh"  " "
 osd .osd.user-gener 327 "Ctfxp" &cat .osd.checkbox-chars "\}Dict'n"  16 user-set-checkbox
 osd .osd.user-gener 330 "Sfh" "  Tab To \HIndent:  " 340
-osd .osd.user-gener 340 "OtxmsfhHzR" .scheme.osd-entry 18 1 "" .osd.user-sub user-setup-tab-indent
+osd .osd.user-gener 340 "OtxmsfhHzR" .scheme.osd-entry 18 1 "" .osd.tmp user-setup-tab-indent
 osd .osd.user-gener 341 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 340
 osd .osd.user-gener 370 ""
 osd .osd.user-gener 380 "fh"  "                      "
@@ -1139,11 +748,11 @@ osd .osd.user-gener 390 "MdtxmfH" .scheme.osd-ebtt " Sho\Hw Modes " .osd.user-mo
 
 0 define-macro user-setup-emulate
     !if &les @# 0
-        -1 osd .osd.user-sub
-        osd .osd.user-sub 0 "bs" 26 0 0 0
+        -1 osd .osd.tmp
+        osd .osd.tmp 0 "bs" 26 0 0 0
         set-variable #l0 0
         !while &not &seq "" &set #l1 &lget %emulate-names &inc #l0 1
-            osd .osd.user-sub #l0 "" #l1 #l0 user-setup-emulate-set
+            osd .osd.tmp #l0 "" #l1 #l0 user-setup-emulate-set
         !done
     !else
         set-variable $result &lget %emulate-names &lfind %emulate-value &reg "/history/emulate" ""
@@ -1152,11 +761,11 @@ osd .osd.user-gener 390 "MdtxmfH" .scheme.osd-ebtt " Sho\Hw Modes " .osd.user-mo
 
 0 define-macro user-setup-keyb
     !if &les @# 0
-        -1 osd .osd.user-sub
-        osd .osd.user-sub 0 "Abs" 16 0 0 0
+        -1 osd .osd.tmp
+        osd .osd.tmp 0 "Abs" 16 0 0 0
         set-variable #l0 0
         !while &not &seq "" &set #l1 &lget %keyboard-names &inc #l0 1
-            osd .osd.user-sub 1 "i" #l1 #l0 "set-registry \"/history/keyboard\" &lget %keyboard-names @#"
+            osd .osd.tmp 1 "i" #l1 #l0 "set-registry \"/history/keyboard\" &lget %keyboard-names @#"
         !done
     !else
         set-variable $result &reg "/history/keyboard"  &lget %keyboard-names 1
@@ -1165,11 +774,11 @@ osd .osd.user-gener 390 "MdtxmfH" .scheme.osd-ebtt " Sho\Hw Modes " .osd.user-mo
 
 0 define-macro user-setup-lang
     !if &les @# 0
-        -1 osd .osd.user-sub
-        osd .osd.user-sub 0 "Abs" 16 0 0 0
+        -1 osd .osd.tmp
+        osd .osd.tmp 0 "Abs" 16 0 0 0
         set-variable #l0 0
         !while &not &seq "" &set #l1 &lget %language-names &inc #l0 1
-            osd .osd.user-sub 1 "i" #l1 #l0 "set-registry \"/history/language\" &lget %language-names @#"
+            osd .osd.tmp 1 "i" #l1 #l0 "set-registry \"/history/language\" &lget %language-names @#"
         !done
     !else
         set-variable $result &reg "/history/language"  &lget %language-names 1
@@ -1191,10 +800,10 @@ osd .osd.user-start 90  "Sfh" "  Setup \HFile:   " 100
 osd .osd.user-start 100 "EtxHfh" .scheme.osd-entry "##############" 4 user-set-entry
 osd .osd.user-start 103 "fh" "         "
 osd .osd.user-start 105 "Ctpfx" &cat .osd.checkbox-chars "\} E\Hdit" 13 user-set-checkbox
-osd .osd.user-start 110 "Sfh" "  C\Hompany File: " 120
-osd .osd.user-start 120 "EtxHf" .scheme.osd-entry "##############" 2 user-set-entry
+osd .osd.user-start 110 "Sfh" "  Compan\Hy File: " 120
+osd .osd.user-start 120 "EtxHf" .scheme.osd-entry "##############" 3 user-set-entry
 osd .osd.user-start 130 "Sfh" "  \HEmulation:    " 140
-osd .osd.user-start 140 "OtxmsfhHzR" .scheme.osd-entry 24 1 "" .osd.user-sub user-setup-emulate
+osd .osd.user-start 140 "OtxmsfhHzR" .scheme.osd-entry 24 1 "" .osd.tmp user-setup-emulate
 osd .osd.user-start 141 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 140
 osd .osd.user-start 150 "fh" "  Key Bindings: "
 osd .osd.user-start 160 "Ctpfx" &cat .osd.checkbox-chars "\} \HRebind Home Keys" 18 user-set-checkbox
@@ -1204,13 +813,13 @@ osd .osd.user-start 500 ""
 osd .osd.user-start 510 "c"  "Locale Setup"
 osd .osd.user-start 520 ""
 osd .osd.user-start 530 "Sfh" "  \HKeyboard:     " 540
-osd .osd.user-start 540 "OtxmsfhHzR" .scheme.osd-entry 14 1 "" .osd.user-sub user-setup-keyb
+osd .osd.user-start 540 "OtxmsfhHzR" .scheme.osd-entry 14 1 "" .osd.tmp user-setup-keyb
 osd .osd.user-start 541 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 540
 osd .osd.user-start 550 "Sfh" "  \HLanguage:     " 560
-osd .osd.user-start 560 "OtxmsfhHzR" .scheme.osd-entry 14 1 "" .osd.user-sub user-setup-lang
+osd .osd.user-start 560 "OtxmsfhHzR" .scheme.osd-entry 14 1 "" .osd.tmp user-setup-lang
 osd .osd.user-start 561 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 560
 osd .osd.user-start 570 "fh" "  Spelling:     "
-osd .osd.user-start 580 "Ctpfx" &cat .osd.checkbox-chars "\} \HAuto Save Dictionaries" 2 user-set-checkbox
+osd .osd.user-start 580 "Ctpfx" &cat .osd.checkbox-chars "\} Auto \HSave Dictionaries" 2 user-set-checkbox
 osd .osd.user-start 590 "fh" "                "
 osd .osd.user-start 600 "Ctpfx" &cat .osd.checkbox-chars "\} Enable Au\Hto-Spell" 11 user-set-checkbox
 
@@ -1220,24 +829,26 @@ osd .osd.user-nb 1 "Pft" "Start-Up" .osd.user-start
 osd .osd.user-nb 2 "Pft" "General" .osd.user-gener
 osd .osd.user-nb 3 "Pft" "Platform" .osd.user-plat
 osd .osd.user-nb 4 "Pft" "Mouse" .osd.user-mouse
-osd .osd.user-nb 5 "Pft" "File Types" .osd.user-ftype
-osd .osd.user-nb 6 "Pft" "Tools" .osd.user-tool
-osd .osd.user-nb 7 "Pft" "E-Mail" .osd.user-mail
+osd .osd.user-nb 5 "Pft" "Miscellaneous" .osd.user-misc
 osd .osd.user-nb 100 "It" .osd.user-start
 
 ; The main menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-osd .osd.user 0  "batcHDIs" 9 3 59 26 -1 -1 625 630 .scheme.osd-title &spr "User Setup (%s%s%s)" &sup &lef $platform 1 &rig $platform 1 &cond &band $system 0x01 " Console" ""
+osd .osd.user 0  "batcHDIs" 8 2 59 26 -1 -1 620 640 .scheme.osd-title &spr "User Setup (%s%s%s)" &sup &lef $platform 1 &rig $platform 1 &cond &band $system 0x01 " Console" ""
 osd .osd.user 100 "It" .osd.user-nb
 osd .osd.user 600 ""
-osd .osd.user 620 "BtcfHhx" .scheme.osd-ebtt " \HSave " f user-set-save
-osd .osd.user 625 "BtcfHh"  .scheme.osd-ebtt " \HCurrent " f user-set-current
-osd .osd.user 630 "BtcfH"   .scheme.osd-ebtt " E\Hxit " f void
+osd .osd.user 620 "BtrfHh" .scheme.osd-ebtt " \HOkay " 0 user-setup-okay
+osd .osd.user 625 "fh" "   "
+osd .osd.user 630 "BtrfHh"  .scheme.osd-ebtt " \HApply " 1 user-setup-okay
+osd .osd.user 635 "fh" "   "
+osd .osd.user 640 "BtrfHh"   .scheme.osd-ebtt " \HCancel " f void
+osd .osd.user 645 "f" "   "
 
 define-macro user-setup
-    !force 0 save-history
-    set-variable %user-fnumbo "-"
-    user-setup-backups
-    0 user-tool-setup
-    !force .osd.user osd
+    !repeat
+        !force 0 save-history
+        user-setup-backups
+        set-variable .loop 0
+        !force !force .osd.user osd
+    !until &not .loop
     !force 0 read-history
 !emacro

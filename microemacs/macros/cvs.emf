@@ -1877,7 +1877,7 @@ define-macro cvs
 !emacro
 
 -1 osd .osd.cvsstp
-osd .osd.cvsstp 0 "batcDHs" 9 3 74 4 -1 -1 2020 .scheme.osd-title "CVS Setup"
+osd .osd.cvsstp 0 "batcDHs" 5 4 74 4 -1 -1 2020 .scheme.osd-title "CVS Setup"
 set-variable #l2 10
 osd .osd.cvsstp &inc #l2 1 "" ""
 osd .osd.cvsstp &inc #l2 1 "" "  CVS Command Setup"
