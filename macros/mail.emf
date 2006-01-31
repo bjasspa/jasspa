@@ -357,11 +357,11 @@ define-macro mail
     set-variable $buffer-hilight .hilight.mail
     insert-string "To:      \n"
     insert-string "Subject: \n"
-    !if &not &seq &set #l1 &reg "/history/mail/fcc" "" ""
+    !if &not &seq &set #l1 &reg &spr "/history/%s/mail-fcc" $platform "" ""
         insert-string &spr "Fcc:     %s%s\n" %vm-mail-dir #l1
     !endif
     insert-string "--text follows this line--\n"
-    !if &not &seq &set #l1 &reg "/history/mail/sig" "" ""
+    !if &not &seq &set #l1 &reg &spr "/history/%s/mail-sig" $platform "" ""
         end-of-buffer
         !force insert-file &cat %vm-mail-dir #l1
         !if &not $status

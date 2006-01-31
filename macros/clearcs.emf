@@ -1458,7 +1458,7 @@ define-macro cc-diff
             popup-window "*cc-diff*"
             !tgoto &les $window-eline 7 dump-diff
             !force !force cc-diff-context #l3 #l4
-            !tgoto &not &set #l8 $status dump-diff
+            !tgoto &not $status dump-diff
             !tgoto &gre #l4 1 dump-diff
             set-variable $window-line 5
             set-mark
@@ -1992,7 +1992,7 @@ osd .osd.ccnb 2 "Pft" "Tools" .osd.cctl
 osd .osd.ccnb 100 "It" .osd.ccgen
 
 -1 osd .osd.ccstp
-osd .osd.ccstp 0 "batcDIHs" 9 3 70 23 -1 -1 2010 100 .scheme.osd-title "ClearCase Setup"
+osd .osd.ccstp 0 "batcDIHs" 5 4 70 23 -1 -1 2010 100 .scheme.osd-title "ClearCase Setup"
 osd .osd.ccstp 100 "It" .osd.ccnb
 osd .osd.ccstp 2000 ""
 osd .osd.ccstp 2010 "BtcfHh" .scheme.osd-ebtt " \HOkay " f void

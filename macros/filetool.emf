@@ -298,7 +298,7 @@
 !emacro
 
 -1 osd .osd.file-tool
-osd .osd.file-tool 0 "batcHIs" 9 3 62 0 -1 -1 640 .scheme.osd-title "File Tools Setup"
+osd .osd.file-tool 0 "batcHIs" 7 4 62 0 -1 -1 640 .scheme.osd-title "File Tools Setup"
 osd .osd.file-tool 10 ""
 osd .osd.file-tool 15 "fh" " "
 osd .osd.file-tool 20 "IbHtfh" .scheme.osd-sbar 56 10 .osd.file-toolc
@@ -332,6 +332,6 @@ osd .osd.file-tool 640 "BHtf"   .scheme.osd-ebtt " E\Hxit "   f void
 file-tool-create
 0 file-tool-set-flds
     
-0 define-macro file-tool-setup
+define-macro file-tool-setup
     .osd.file-tool osd
 !emacro
