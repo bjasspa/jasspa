@@ -30,7 +30,6 @@
     set-variable .fhook-dirlst.sc-format &lins .fhook-dirlst.sc-format -1 "cvs-dirlst-format"
     set-variable .fhook-dirlst.modefunc-lbl &lins .fhook-dirlst.modefunc-lbl -1 "CVS-Quick"
     set-variable .fhook-dirlst.modefunc-cmd &lins .fhook-dirlst.modefunc-cmd -1 "cvs-full-reread"
-    set-variable .file-browser-close.bn &lins .file-browser-close.bn -1 "*cvs-console*"
 !endif
 
 set-variable .cvs.names   "|Add|Checkout|Commit|Diff|Graphical Diff|Log|Remove|State|Status|Tag|Update|Annotate|Resolve Conflicts|"

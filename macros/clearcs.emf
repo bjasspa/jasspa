@@ -34,7 +34,6 @@
     set-variable .fhook-dirlst.sc-format &lins .fhook-dirlst.sc-format -1 "cc-dirlst-format"
     set-variable .fhook-dirlst.modefunc-lbl &lins .fhook-dirlst.modefunc-lbl -1 "ConfigSpec"
     set-variable .fhook-dirlst.modefunc-cmd &lins .fhook-dirlst.modefunc-cmd -1 "cc-config-spec"
-    set-variable .file-browser-close.bn &lins .file-browser-close.bn -1 "*cc-console*"
 !endif
 0 define-macro cc-init
 !emacro
@@ -365,7 +364,7 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
                 set-variable .X 0
                 !if &equ .find-file.file-count 1
                     !if &not &seq "D" &stat "t" &cat .find-file.file-dir .find-file.file1
-                        osd .osd.ccosd &inc #l2 1 "fh" "        \HUse: " &add #l2 1
+                        osd .osd.ccosd &inc #l2 1 "Sfh" "        \HUse: " &add #l2 1
                         osd .osd.ccosd &inc #l2 1 "OtxmsfhHR" .scheme.osd-entry "##################" .osd.tmp cc-osd-diffX
                         osd .osd.ccosd &inc #l2 1 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 &sub #l2 1
                         set-variable .X #l0
@@ -1925,7 +1924,7 @@ define-macro cc-add-view
             !elif &seq #l1 "X"
                 set-variable .diffXi &bor #l4 #l0
                 osd #l8 &inc #l2 1 "f" "    Single File:"
-                osd #l8 &inc #l2 1 "fh" "        \HUse: " &add #l2 1
+                osd #l8 &inc #l2 1 "Sfh" "        \HUse: " &add #l2 1
                 osd #l8 &inc #l2 1 "OtxmsfhHR" .scheme.osd-entry "##################" .osd.tmp cc-setup-diffX
                 osd #l8 &inc #l2 1 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 &sub #l2 1
             !elif &seq #l1 "x"
