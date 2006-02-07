@@ -36,7 +36,7 @@ do
         echo "   -t <type>"
         echo "        : Sets build type:"
         echo "             c  Console support only (Termcap)"
-        echo "             w  Wondow support only (XTerm)"
+        echo "             w  Window support only (XTerm)"
         echo "             cw Console and window support (default)"
         echo ""
         exit 1
