@@ -310,7 +310,7 @@ extern void XTERMsetBgcol(void) ;
 extern void meFrameSetWindowTitle(meFrame *frame, meUByte *str) ;
 extern void meFrameSetWindowSize(meFrame *frame) ;
 #if MEOPT_EXTENDED
-#define meFrameRepositionWindow(f,r) 
+extern void meFrameRepositionWindow(meFrame *frame, int resize) ;
 #endif
 
 #ifdef _CLIPBRD
