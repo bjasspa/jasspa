@@ -467,6 +467,16 @@ updCursor(register meWindow *wp)
     {
         wp->horzScroll = (meUShort) jj;    /* Scrolled line offset */
         wp->updateFlags |= WFDOT ;
+        /* must make sure the disLineBuff is at least as long as the current scroll
+         * otherwise if the horizontal scroll is set to 2 and the first line is short
+         * updateline will scribble as it assumes the buffer is long enough */
+        if(jj >= disLineSize)
+        {
+            do
+                disLineSize += 512 ;
+            while(disLineSize < jj) ;
+            disLineBuff = meRealloc(disLineBuff,disLineSize+32) ;
+        }
     }
     switch(scrollFlag & 0x0f)
     {
