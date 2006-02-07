@@ -1424,6 +1424,8 @@ meXEventHandler(void)
             /* Get the width and heigth back and setup the frame->depthMax etc */
             int ww, hh ;
 
+            sizeHints.x = event.xconfigure.x ;
+            sizeHints.y = event.xconfigure.y ;
             sizeHints.height = event.xconfigure.height ;
             sizeHints.width  = event.xconfigure.width ;
             hh = event.xconfigure.height / mecm.fdepth ;
@@ -3531,6 +3533,62 @@ meFrameSetWindowSize(meFrame *frame)
         XResizeWindow(mecm.xdisplay,meFrameGetXWindow(frame),sizeHints.width,sizeHints.height) ;
     }
 }
+
+#if MEOPT_EXTENDED
+void
+meFrameRepositionWindow(meFrame *frame, int resize)
+{
+#ifdef _ME_WINDOW
+#ifdef _ME_CONSOLE
+    if(!(meSystemCfg & meSYSTEM_CONSOLE))
+#endif /* _ME_CONSOLE */
+    {
+        int xx, yy, wbs, tbs ;
+        unsigned int ww, hh ;
+        Window rw ;
+        
+        xx = sizeHints.x ;
+        yy = sizeHints.y ;
+        ww = sizeHints.width ;
+        hh = sizeHints.height ;
+        /* Getting the real window border and title-bar size is a little tricky - guess for now.
+         * Also there is a little confusion and disagreement on what an XMoveWindow to x,y should do,
+         * move the WM frame to x,y or the window to x,y (frame to x-fx,y-fy). Judging by the ICCCM
+         * the window should be moved to x,y (i.e. same as if there is no WM) so this assumes this behaviour */
+        wbs = 4 ;
+        tbs = 20 ;
+        
+        if((xx + ww + wbs) > sizeHints.max_width)
+            xx = sizeHints.max_width - ww - wbs ;
+        if(xx < wbs)
+            xx = wbs ;
+        
+        if((yy + hh + wbs) > sizeHints.max_height)
+            yy = sizeHints.max_height - hh - wbs ;
+        if(yy < (tbs + wbs))
+            yy = tbs + wbs ;
+        
+        if(resize && (((xx + ww + wbs) > sizeHints.max_width) || 
+                      ((yy + hh + wbs) > sizeHints.max_height)))
+        {
+            sizeHints.x = xx ;
+            sizeHints.y = yy ;
+            if((xx + ww + wbs) > sizeHints.max_width)
+                ww = sizeHints.max_width - xx - wbs ;
+            if((yy + hh + wbs) > sizeHints.max_height)
+                hh = sizeHints.max_height - yy - wbs ;
+            XMoveResizeWindow(mecm.xdisplay,meFrameGetXWindow(frame),sizeHints.x,sizeHints.y,ww,hh) ;
+        }
+        else if((xx != sizeHints.x) || (yy != sizeHints.y))
+        {
+            sizeHints.x = xx ;
+            sizeHints.y = yy ;
+            XMoveWindow(mecm.xdisplay,meFrameGetXWindow(frame),sizeHints.x,sizeHints.y) ;
+        }
+    }
+#endif /* _ME_WINDOW */
+}
+#endif
 
 /* meFrameSetWindowTitle
  *
