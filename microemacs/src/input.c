@@ -32,6 +32,9 @@
 #include "evar.h"
 #include "eskeys.h"
 
+meUByte **mlgsStrList ;
+int    mlgsStrListSize ;
+
 /*
  * Ask a yes or no question in the message line. Return either meTRUE, meFALSE, or
  * meABORT. The meABORT status is returned if the user bumps out of the question
@@ -724,60 +727,6 @@ createCommList(meUByte ***listPtr, int noHidden)
 }
 
 
-#if MEOPT_LOCALBIND
-meUByte oldUseMlBinds ;
-#endif
-meUByte **mlgsStrList ;
-int    mlgsStrListSize ;
-static meWindow *mlgsOldCwp=NULL ;
-static meBuffer *mlgsOldWBp=NULL ;
-static meUByte  *mlgsStoreBuf=NULL ;
-static meInt     mlgsSingWind=0 ;
-#if MEOPT_EXTENDED
-static int      mlgsCursorState=0 ;
-#endif
-
-static void
-mlfreeList(int option, int noStrs, meUByte **strList)
-{
-    frameCur->mlStatus = MLSTATUS_CLEAR ;
-#if MEOPT_LOCALBIND
-    useMlBinds = oldUseMlBinds ;
-#endif
-    if(mlgsStoreBuf != NULL)
-    {
-        meFree(mlgsStoreBuf) ;
-        mlgsStoreBuf = NULL ;
-    }
-    if(strList != NULL)
-    {
-        if(option & MLVARBL)
-            freeFileList(noStrs,strList) ;
-        else if(option & (MLBUFFER|MLCOMMAND))
-            meFree(strList) ;
-    }
-    if(mlgsOldCwp != NULL)
-    {
-        meBuffer *bp=frameCur->bufferCur ;
-        if(mlgsOldWBp == NULL)
-        {
-            /* was no replacement so the window was split */
-            windowDelete(meFALSE,1) ;
-            frameCur->windowCur->vertScroll = mlgsSingWind-1 ;
-        }
-        else
-        {
-            swbuffer(frameCur->windowCur,mlgsOldWBp) ;
-            meWindowMakeCurrent(mlgsOldCwp) ;
-        }
-        zotbuf(bp,1) ;
-        mlgsOldCwp = NULL ;
-    }
-#if MEOPT_EXTENDED
-    if(mlgsCursorState < 0)
-        showCursor(meTRUE,mlgsCursorState) ;
-#endif
-}
 
 #if MEOPT_MOUSE
 static int
@@ -785,8 +734,7 @@ mlHandleMouse(meUByte *inpBuf, int inpBufSz, int compOff)
 {
     int row, col ;
     
-    if((mlgsOldCwp != NULL) &&
-       ((row=mouse_Y-frameCur->windowCur->frameRow) >= 0) && (row < frameCur->windowCur->depth-1) &&
+    if(((row=mouse_Y-frameCur->windowCur->frameRow) >= 0) && (row < frameCur->windowCur->depth-1) &&
        ((col=mouse_X-frameCur->windowCur->frameColumn) >= 0) && (col < frameCur->windowCur->width))
     {
         if (col >= frameCur->windowCur->textWidth)
@@ -882,27 +830,31 @@ meUByte *compFtpComp  = (meUByte *)" [FTP completion?]" ;
 int
 meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int nbuf)
 {
-    register int cc ;
+#if MEOPT_LOCALBIND
+    meUByte  oldUseMlBinds ;
+#endif
+    meWindow *mlgsOldCwp=NULL ;
+    meBuffer *mlgsOldWBp=NULL ;
+    meInt    mlgsSingWind=0 ;
+#if MEOPT_EXTENDED
+    int     oldCursorState=0 ;
+    int     curPos ;
+#endif
+    int     cc ;
     int     ii ;
     int     ipos ;                      /* input position in buffer */
     int     ilen ;                      /* number of chars in buffer */
     int     cont_flag ;                 /* Continue flag */
-    meKill   *lastYank ;
+    meKill  *lastYank ;
     meUByte **history ;
-    meUByte   onHist, numHist, *numPtr ;
-    meUByte  *defaultStr ;
-    meUByte   prom[meBUF_SIZE_MAX] ;
-    meUByte   ch, **strList ;
-    meUByte  *contstr=NULL ;
+    meUByte onHist, numHist, *numPtr ;
+    meUByte *defaultStr ;
+    meUByte prom[meBUF_SIZE_MAX], storeBuf[meBUF_SIZE_MAX] ;
+    meUByte ch, **strList ;
+    meUByte *contstr=NULL ;
     int     gotPos=1, fstPos, lstPos, mrkPos=0, noStrs ;
     int     changed=1, compOff=0 ;
-#if MEOPT_EXTENDED
-    int     curPos ;
-#endif
     
-    if((mlgsStoreBuf = meMalloc(nbuf)) == NULL)
-       return meABORT ;
-
     /* Blank line to force update
      * Don't do this if in an osd dialog as the osd cursor position is not
      * calculated until the first call to osdDisp, osdCol is likely to be -1
@@ -996,10 +948,10 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
     useMlBinds = 1 ;
 #endif
 #if MEOPT_EXTENDED
-    if((mlgsCursorState=cursorState) < 0)
+    if((oldCursorState=cursorState) < 0)
         showCursor(meFALSE,1) ;
 #endif
-    for (cont_flag = 1; cont_flag != 0;)
+    for(cont_flag=0 ; cont_flag == 0 ;)
     {
         meUInt arg ;
         int idx ;
@@ -1089,8 +1041,8 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
             break;
             
         case CK_ABTCMD: /* ^G : Abort input and return */
-            mlfreeList(option,noStrs,strList) ;
-            return ctrlg(meFALSE,1);
+            cont_flag = 5 ;
+            break ;
             
         case CK_DELBAK:    /* ^H : backwards delete. */
             if(ipos && ii)
@@ -1110,7 +1062,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
             if(frameCur->mlStatus & MLSTATUS_POSOSD)
             {
                 mlfirst = cc ;
-                cont_flag = 0;
+                cont_flag = 3 ;
             }
             else
 #endif
@@ -1122,7 +1074,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
             if(frameCur->mlStatus & MLSTATUS_POSOSD)
             {
                 mlfirst = cc ;
-                cont_flag = 0;
+                cont_flag = 3 ;
                 break;
             }
 #endif
@@ -1335,7 +1287,7 @@ input_expand:
             if(frameCur->mlStatus & MLSTATUS_POSOSD)
             {
                 mlfirst = cc ;
-                cont_flag = 0;
+                cont_flag = 3 ;
                 break ;
             }
 #endif
@@ -1348,13 +1300,13 @@ input_expand:
                 if(onHist > numHist)
                 {
                     /* if on current then save */
-                    meStrcpy(mlgsStoreBuf,buf) ;
+                    meStrcpy(storeBuf,buf) ;
                     onHist = 0 ;
                 }
                 else
                     ++onHist ;
                 if(onHist > numHist)
-                    meStrcpy(buf,mlgsStoreBuf) ;
+                    meStrcpy(buf,storeBuf) ;
                 else if(onHist == numHist)
                 {
                     meStrcpy(prom+meStrlen(prompt),": ") ;
@@ -1394,7 +1346,7 @@ input_expand:
             if(frameCur->mlStatus & MLSTATUS_POSOSD)
             {
                 mlfirst = cc ;
-                cont_flag = 0;
+                cont_flag = 3 ;
                 break ;
             }
 #endif
@@ -1410,11 +1362,11 @@ input_expand:
             {
                 if(onHist > numHist)
                     /* if on current then save */
-                    meStrcpy(mlgsStoreBuf,buf) ;
+                    meStrcpy(storeBuf,buf) ;
                 if(onHist == 0)
                 {
                     onHist = numHist+1 ;
-                    meStrcpy(buf,mlgsStoreBuf) ;
+                    meStrcpy(buf,storeBuf) ;
                 }
                 else if(onHist > numHist)
                 {
@@ -1487,7 +1439,7 @@ input_expand:
             if(frameCur->mlStatus & MLSTATUS_POSOSD)
                 mlfirst = cc ;
 #endif
-            cont_flag = 0;
+            cont_flag = 3 ;
             break;
             
 #if MEOPT_EXTENDED
@@ -1749,10 +1701,10 @@ ml_yank:
             if(option & MLISEARCH)
             {
                 mlfirst = cc ;
-                mlfreeList(option,noStrs,strList) ;
-                return meTRUE ;
+                cont_flag = 1 ;
             }
-            TTbell() ;
+            else
+                TTbell() ;
             break ;
 #endif
 #if MEOPT_MOUSE            
@@ -1770,23 +1722,23 @@ ml_yank:
                     if(osdDisplayMouseLocate(1) > 0)
                     {
                         mlfirst = cc ;
-                        cont_flag = 0;
+                        cont_flag = 3 ;
                     }
                 }
-                else
+                else if(mlgsOldCwp != NULL)
 #endif
                     mlHandleMouse(NULL,0,0) ;
             }
             /* a drop event */
-            else if(
+            else if((mlgsOldCwp != NULL) &&
 #if MEOPT_OSD
-                    !(frameCur->mlStatus & MLSTATUS_POSOSD) && 
+                    ((frameCur->mlStatus & MLSTATUS_POSOSD) == 0) && 
 #endif            
                     ((cc=mlHandleMouse(buf,nbuf,compOff)) != 0))
             {
                 ipos = ilen = meStrlen(buf) ;
                 if(cc == 2)
-                    cont_flag = 0;
+                    cont_flag = 3 ;
                 else
                     changed = 1 ;
             }
@@ -1836,22 +1788,56 @@ input_addexpand:
             TTbell();
         }
     }
-
-    /*---    Terminate the input. */
-    if(ilen == 0)
+    
+    if(cont_flag & 0x02)
     {
-        if(defaultStr != NULL)
+        /* if no string has been given and there's a default then return this */
+        if((ilen == 0) && (defaultStr != NULL))
         {
             meStrncpy(buf,defaultStr,nbuf) ;
             buf[nbuf-1] = '\0' ;
         }
+        /* Store the history if it is not disabled. */
+        if((option & (MLNOHIST|MLNOSTORE)) == 0)
+            addHistory(option,buf) ;
     }
     
-    /* Store the history if it is not disabled. */
-    if((option & (MLNOHIST|MLNOSTORE)) == 0)
-        addHistory(option,buf) ;
     
-    mlfreeList(option,noStrs,strList) ;
+    frameCur->mlStatus = MLSTATUS_CLEAR ;
+#if MEOPT_LOCALBIND
+    useMlBinds = oldUseMlBinds ;
+#endif
+    if(strList != NULL)
+    {
+        if(option & MLVARBL)
+            freeFileList(noStrs,strList) ;
+        else if(option & (MLBUFFER|MLCOMMAND))
+            meFree(strList) ;
+    }
+    if(mlgsOldCwp != NULL)
+    {
+        meBuffer *bp=frameCur->bufferCur ;
+        if(mlgsOldWBp == NULL)
+        {
+            /* was no replacement so the window was split */
+            windowDelete(meFALSE,1) ;
+            frameCur->windowCur->vertScroll = mlgsSingWind-1 ;
+        }
+        else
+        {
+            swbuffer(frameCur->windowCur,mlgsOldWBp) ;
+            meWindowMakeCurrent(mlgsOldCwp) ;
+        }
+        zotbuf(bp,1) ;
+        mlgsOldCwp = NULL ;
+    }
+#if MEOPT_EXTENDED
+    if(oldCursorState < 0)
+        showCursor(meTRUE,oldCursorState) ;
+#endif
+    
+    if(cont_flag & 0x04)
+        return ctrlg(meFALSE,1);
 
     return meTRUE;
 }
