@@ -1433,7 +1433,7 @@ missing_arg:
 
 #if MEOPT_CLIENTSERVER
             case 'm':    /* -m send a client server message */
-                userClientServer = 1 ;
+                userClientServer |= 1 ;
                 if(argv[carg][2] == '\0')
                 {
                     if (carg == argc-1)
@@ -1453,7 +1453,7 @@ missing_arg:
 #endif /* _ME_CONSOLE */
 #if MEOPT_CLIENTSERVER
             case 'o':
-                userClientServer=1 ;
+                userClientServer |= 2 ;
                 break ;
 #endif
 #if MEOPT_EXTENDED
@@ -1586,6 +1586,8 @@ missing_arg:
         int      binflag=0 ;         /* load next file as a binary file*/
         meInt    gline = 0 ;         /* what line? (-l option)         */
         meUShort gcol = 0 ;
+        meUByte  buff[meBUF_SIZE_MAX+32] ;
+        int      nn ;
         char    *ss ;
 
         for(carg=1 ; carg < rarg ; carg++)
@@ -1636,14 +1638,25 @@ missing_arg:
             }
         }
         if(clientMessage != NULL)
-            TTsendClientServer(clientMessage) ;
+        {
+            buff[0] = '"' ;
+            meStrncpy(buff+1,clientMessage,meBUF_SIZE_MAX) ;
+            meStrcat(buff+1,"\"") ;
+            token(buff,resultStr) ;
+            nn = strlen(resultStr) ;
+            if((nn <= 1) || (resultStr[nn-1] != '\n'))
+            {
+                resultStr[nn++] = '\n' ;
+                resultStr[nn] = '\0' ;
+            }
+            TTsendClientServer(resultStr+1) ;
+        }
         bp = bheadp ;
         while(bp != NULL)
         {
             if(bp->fileName != NULL)
             {
-                meUByte buff[meBUF_SIZE_MAX+32] ;
-                int nn=1 ;
+                nn = 1 ;
                 if(meModeTest(bp->mode,MDBINRY))
                     nn |= BFND_BINARY ;
                 if(meModeTest(bp->mode,MDCRYPT))
@@ -1660,15 +1673,16 @@ missing_arg:
             }
             bp = bp->next ;
         }
-        /* send a 'make-current command to server */
-        TTsendClientServer((meUByte *) "C:ME:2 popup-window\n") ;
+        if(userClientServer & 2)
+            /* send a 'make-current' command to server */
+            TTsendClientServer((meUByte *) "C:ME:2 popup-window\n") ;
 #ifdef _WIN32
         /* send a WM_USR message to the main window to wake ME up */ 
         SendMessage(baseHwnd,WM_USER,1,0) ;
 #endif
               meExit(0) ;
     }
-    else if(userClientServer && clientMessage)
+    else if(userClientServer & 1)
     {
         sprintf((char *)evalResult,"%s Error: Unable to connect to server\n",argv[0]) ;
         mePrintMessage(evalResult) ;
