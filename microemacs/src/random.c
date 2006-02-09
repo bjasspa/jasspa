@@ -936,7 +936,7 @@ indentInsert(void)
     if(indentLine(&inComment) <= 0)
         return meFALSE ;
     
-    if(inComment && ((comCont=indents[frameCur->bufferCur->indent]->rtoken) != NULL))
+    if(inComment && ((comCont=meIndentGetCommentContinue(indents[frameCur->bufferCur->indent])) != NULL))
     {
         doto = frameCur->windowCur->dotOffset ;
         if(gotoFrstNonWhite() == 0)
@@ -1721,7 +1721,7 @@ findfence(meUByte ch, meUByte forwFlag, meInt depth)
             frameCur->windowCur->dotOffset += (forwFlag) ? 1:-1 ;
     }
 #if MEOPT_HILIGHT
-    else if(frameCur->bufferCur->indent && (indents[frameCur->bufferCur->indent]->type & HICMODE))
+    else if(frameCur->bufferCur->indent && (meHilightGetFlags(indents[frameCur->bufferCur->indent]) & HICMODE))
         inCom = 0 ;
 #endif
     else

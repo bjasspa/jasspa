@@ -144,9 +144,9 @@ createHilight(meUByte hilno, meInt size, meUByte *noHils , meHilight ***hTbl)
         if((root=(*hTbl)[hilno]) != NULL)
         {
             meHilight *hn ;
-            while((hn = (meHilight *) root->rclose) != NULL)
+            while((hn = meHilightGetColumnHilight(root)) != NULL)
             {
-                root->rclose = hn->rclose ;
+                meHilightGetColumnHilight(root) = meHilightGetColumnHilight(hn) ;
                 meFree(hn) ;
             }
             root->close = NULL ;
@@ -775,7 +775,7 @@ meHiltTokenAddSearchString(meHilight *root, meHilight *node, meUByte *token, int
         }
         ss++ ;
     }
-    if((lastItem=meHiltStringCompile(dd,ss,(meUByte) ((root->type & HFCASE) != 0),
+    if((lastItem=meHiltStringCompile(dd,ss,(meUByte) ((meHilightGetFlags(root) & HFCASE) != 0),
                                      retValues)) == NULL)
         return NULL ;
     len = retValues[0] ;
@@ -928,7 +928,7 @@ meHiltTokenAddReplaceString(meHilight *root, meHilight *node, meUByte *token, in
     if(len != node->scheme)
     {
         node->type |= HLRPLCDIFF ;
-        root->type |= HFRPLCDIFF ;
+        meHilightGetFlags(root) |= HFRPLCDIFF ;
     }
     return node ;
 }
@@ -956,12 +956,12 @@ hilight(int f, int n)
         
         /* force a complete update next time */ 
         sgarbf = meTRUE ;
-        root->type = type ;
+        meHilightGetFlags(root) = (meUByte) type ;
         if(type & HFLOOKB)
         {
             if(meGetString((meUByte *)"Lines",0,0,buf,meBUF_SIZE_MAX) <= 0)
                 return meABORT ;
-            root->ignore = (meUByte) meAtoi(buf) ;
+            meHilightGetLookBackLines(root) = meAtoi(buf) ;
         }
         if((ii=meGetString((meUByte *)"Scheme",MLEXECNOUSER,0,buf,meBUF_SIZE_MAX)) == meABORT)
             return meABORT ;
@@ -976,7 +976,7 @@ hilight(int f, int n)
             ii = trncScheme ;
         else if((ii=convertUserScheme(meAtoi(buf), -1)) < 0)
             return meFALSE ;
-        root->close = (meUByte *) ii ;
+        meHilightGetTruncScheme(root) = ii ;
         hilights[hilno] = root ;
         return meTRUE ;
     }
@@ -999,13 +999,14 @@ hilight(int f, int n)
             ((meGetString((meUByte *)"To",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
              ((toCol = (meUByte) meAtoi(buf)) < fmCol))))
             return meFALSE ;
-        while(((node = (meHilight *) root->rclose) != NULL) && (((int) node->close) < fmCol))
+        while(((node = meHilightGetColumnHilight(root)) != NULL) && (meHilightGetFromColumn(node) < fmCol))
             root = node ;
-        if((node != NULL) && ((int) node->close) == fmCol)
+        if((node != NULL) && (meHilightGetFromColumn(node) == fmCol))
         {
             if(n & ADDTOKEN_REMOVE)
             {
-                root->rclose = node->rclose ;
+                /* free off the column hilight */ 
+                meHilightGetColumnHilight(root) = meHilightGetColumnHilight(node) ;
                 meFree(node) ;
                 return meTRUE ;
             }
@@ -1018,11 +1019,11 @@ hilight(int f, int n)
         {
             memset(node,0,sizeof(meHilight)) ;
             node->type = HLCOLUMN ;
-            node->close = (meUByte *) fmCol ;
-            node->rclose = root->rclose ;
-            root->rclose = (meUByte *) node ;
+            meHilightGetFromColumn(node) = fmCol ;
+            meHilightGetColumnHilight(node) = meHilightGetColumnHilight(root) ;
+            meHilightGetColumnHilight(root) = node ;
         }
-        node->rtoken = (meUByte *) toCol ;
+        meHilightGetToColumn(node) = toCol ;
         goto get_scheme ;
     }
     
@@ -1728,7 +1729,7 @@ hilightLine(meVideoLine *vp1)
         }
     }
     
-    mode = (meHIL_MODESTTLN|meHIL_MODESTART|(hd.root->type&(HFCASE|HFTOKEWS))) ;
+    mode = (meHIL_MODESTTLN|meHIL_MODESTART|(meHilightGetFlags(hd.root) & (HFCASE|HFTOKEWS))) ;
     if(vp1->bracket != NULL)
     {
         node = vp1->bracket ;
@@ -1739,19 +1740,19 @@ hilightLine(meVideoLine *vp1)
     
     for(;;)
     {
-        node = (meHilight *) hd.root->rclose ;
+        node = meHilightGetColumnHilight(hd.root) ;
         while(node != NULL)
         {
-            if((int) node->close == hd.srcPos)
+            if(meHilightGetFromColumn(node) == hd.srcPos)
             {
-                if((len = (int) node->rtoken) > srcWid)
+                if((len = meHilightGetToColumn(node)) > srcWid)
                     len = srcWid ;
                 len -= hd.srcPos ;
                 goto column_token ;
             }
-            else if((int) node->close > hd.srcPos)
+            else if(meHilightGetFromColumn(node) > hd.srcPos)
                 break ;
-            node = (meHilight *) node->rclose ;
+            node = meHilightGetColumnHilight(node) ;
         }
         if((node = findToken(hd.root,srcText+hd.srcPos,mode,cc,&len)) != NULL)
         {
@@ -1790,7 +1791,7 @@ column_token:
                 hd.blkp->column = dstPos ;
             }
             if(node->type & HLREPLACE)
-                dstPos = hilCopyReplaceString(dstPos, (meUByte *) node->rtoken,len,&hd) ;
+                dstPos = hilCopyReplaceString(dstPos,node->rtoken,len,&hd) ;
             else if(len)
                 dstPos = hilCopyLenString(dstPos,srcText+hd.srcPos,len,&hd) ;
             
@@ -1883,8 +1884,7 @@ BracketJump:
                 if(node->clsEndOff)
                     len -= node->clsEndOff ;
                 if(node->type & HLREPLACE)
-                    dstPos = hilCopyReplaceString(dstPos,(meUByte *) node->rclose,
-                                                  len,&hd) ;
+                    dstPos = hilCopyReplaceString(dstPos,node->rclose,len,&hd) ;
                 else
                     dstPos = hilCopyLenString(dstPos,s1,len,&hd) ;
                 hd.srcPos += len ;
@@ -2022,7 +2022,7 @@ hilightLookBack(meWindow *wp)
     bracket = NULL ;
     
     ii = wp->vertScroll - wp->dotLineNo ;
-    jj = root->ignore ;
+    jj = meHilightGetLookBackLines(root) ;
     lp = wp->dotLine ;
     while(ii < jj)
     {
@@ -2179,7 +2179,7 @@ hilightCurLineOffsetEval(meWindow *wp)
     
     root = hilights[hilno];          /* Root of the hilighting */
     
-    mode = (meHIL_MODESTTLN|meHIL_MODESTART|(root->type&HFCASE)) ;
+    mode = (meHIL_MODESTTLN|meHIL_MODESTART|(meHilightGetFlags(root) & HFCASE)) ;
     /*    if(vp1->bracket != NULL)*/
     /*    {*/
     /*        node = vp1->bracket ;*/
@@ -2188,19 +2188,19 @@ hilightCurLineOffsetEval(meWindow *wp)
     /*    }*/
     for(;;)
     {
-        node = (meHilight *) root->rclose ;
+        node = meHilightGetColumnHilight(root) ;
         while(node != NULL)
         {
-            if((int) node->close == srcPos)
+            if(meHilightGetFromColumn(node) == srcPos)
             {
-                if((len = (int) node->rtoken) > srcWid)
+                if((len = meHilightGetToColumn(node)) > srcWid)
                     len = srcWid ;
                 len -= srcPos ;
                 goto column_token ;
             }
-            else if((int) node->close > srcPos)
+            else if(meHilightGetFromColumn(node) > srcPos)
                 break ;
-            node = (meHilight *) node->rclose ;
+            node = meHilightGetColumnHilight(node) ;
         }
         if((node = findToken(root,srcText+srcPos,mode,cc,&len)) != NULL)
         {
@@ -2228,7 +2228,7 @@ column_token:
                     srcPos += node->tknSttOff ;
                     len -= node->tknSttOff ;
                 }
-                dstPos = hilOffsetReplaceString(&off,dstPos,&dstJmp,(meUByte *) node->rtoken,len,tw) ;
+                dstPos = hilOffsetReplaceString(&off,dstPos,&dstJmp,node->rtoken,len,tw) ;
                 if(*off)
                     cc = *off ;
             }
@@ -2320,8 +2320,7 @@ column_token:
                         srcPos += node->clsSttOff ;
                         len -= node->clsSttOff ;
                     }
-                    dstPos = hilOffsetReplaceString(&off,dstPos,&dstJmp,
-                                                    (meUByte *) node->rclose,len,tw) ;
+                    dstPos = hilOffsetReplaceString(&off,dstPos,&dstJmp,node->rclose,len,tw) ;
 					if(*off)
 						cc = *off ;
                 }
@@ -2393,7 +2392,6 @@ hiline_exit:
 }
 
 
-#define HIGOTCONT     0x8000
 
 #define INDINDCURLINE 0x0100
 #define INDINDONWARD  0x0200
@@ -2428,7 +2426,7 @@ hiline_exit:
 #define INDNUMOFFSETSHIFT 2             /* The implied decimal point position */
 #define INDNUMMASK        0xff          /* Number mask */
 
-static meUByte
+static meInt
 indentLookBack(meLine *lp, meUShort offset)
 {
     meVideoLine vps[2] ;
@@ -2436,7 +2434,7 @@ indentLookBack(meLine *lp, meUShort offset)
     meUByte lindent ;
     
     meAssert(hilights == indents) ;
-    lindent = indents[frameCur->bufferCur->indent]->tknSttOff ;
+    lindent = meHilightGetLookBackScheme(indents[frameCur->bufferCur->indent]) ;
     vps[0].hilno = lindent ;
     vps[0].wind = frameCur->windowCur ;
     vps[0].line = lp ;
@@ -2447,15 +2445,10 @@ indentLookBack(meLine *lp, meUShort offset)
     {
         if((hilBlock[noColChng].scheme & INDFILETYPE) &&
            (hilBlock[noColChng].column < offset))
-        {
-            lindent = (meByte) (hilBlock[noColChng].scheme & 0xff) ;
-            if(lindent == 0)
-                lindent = frameCur->bufferCur->indent ;
-            return lindent ;
-        }
+            return (meInt) (hilBlock[noColChng].scheme & 0xff) ;
         noColChng-- ;
     }
-    return 0 ;
+    return -1 ;
 }
 
 /* Retrieve the indent value given the indent mask and the indentWidth to be used
@@ -2564,7 +2557,7 @@ indent(int f, int n)
         if((root = createHilight(indno,(itype & HICMODE) ? meHICMODE_SIZE:0,
                                            &noIndents,&indents)) == NULL)
             return meFALSE ;
-        root->type = itype ;
+        meIndentGetFlags(root) = itype ;
         if(itype & HICMODE)
         {
             /* Initialise to t 0 t 3/2t 0 0 -t -1 and no CommentContinue */
@@ -2579,14 +2572,14 @@ indent(int f, int n)
         }
         else
         {
-            root->close = (meUByte *) meAtoi(buf) ;
+            meIndentGetLookBackLines(root) = meAtoi(buf) ;
             if(itype & HILOOKB)
             {
                 if((meGetString((meUByte *)"Ind no",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
                    ((lindno = (meUByte) meAtoi(buf)) == 0) ||
                    (lindno >= noIndents) || (indents[lindno] == NULL))
                     return meABORT ;
-                root->tknSttOff = lindno ;
+                meHilightGetLookBackScheme(root) = lindno ;
             }
         }
         indents[indno] = root ;
@@ -2595,24 +2588,26 @@ indent(int f, int n)
     if(n == 2)
     {
         if(((indno = frameCur->bufferCur->indent) != 0) &&
-           (indents[indno]->type & HILOOKB))
+           (meIndentGetFlags(indents[indno]) & HILOOKB))
         {
             meHilight **bhis ;
             meLine *lp ;
+            int ii ;
             bhis = hilights ;
             hilights = indents ;
-            lindno = indents[indno]->tknSttOff ;
             lp = frameCur->windowCur->dotLine ;
             htype = frameCur->windowCur->dotOffset ;
-            itype = (int) indents[lindno]->close ;
+            lindno = meHilightGetLookBackScheme(indents[indno]) ;
+            ii = (int) meIndentGetLookBackLines(indents[lindno]) ;
             do {
-                if(((indno = indentLookBack(lp,htype)) != 0) ||
-                   ((lp = meLineGetPrev(lp)) == frameCur->bufferCur->baseLine))
+                if((itype = indentLookBack(lp,htype)) >= 0)
+                {
+                    if(itype != 0)
+                        indno = itype ;
                     break ;
+                }
                 htype = 0xffff ;
-            } while (--itype >= 0) ;
-            if(indno == 0)
-                indno = frameCur->bufferCur->indent ;
+            } while((--ii >= 0) && ((lp = meLineGetPrev(lp)) != frameCur->bufferCur->baseLine)) ;
             hilights = bhis ;
         }
         meStrcpy(resultStr,meItoa(indno)) ;
@@ -2627,7 +2622,7 @@ indent(int f, int n)
        ((root  = indents[indno]) == NULL))
         return meFALSE ;
     
-    if(root->type & HICMODE)
+    if(meIndentGetFlags(root) & HICMODE)
     {
         if((itype = mlCharReply((meUByte *)"Type: ",0,ctypesChar,NULL)) == -1)
               return meFALSE ;
@@ -2681,7 +2676,7 @@ indent(int f, int n)
     node->scheme = typesFlag[itype] ;
     
     if(itype == 1)
-        root->type |= HIGOTCONT ;
+        meIndentGetFlags(root) |= HIGOTCONT ;
     else if(itype <= 2)
     {
         if(meGetString((meUByte *)"Close",0,0,buf,meBUF_SIZE_MAX) <= 0)
@@ -2730,7 +2725,7 @@ indentLine(int *inComment)
     int lb, ind, cind, coff ;
     
     indent = frameCur->bufferCur->indent ;
-    if(indents[indent]->type & HICMODE)
+    if(meIndentGetFlags(indents[indent]) & HICMODE)
         return doCindent(indents[indent],inComment) ;
     
     /* change the hilights to the indents, must backup the old value and
@@ -2748,18 +2743,20 @@ indentLine(int *inComment)
     
     *inComment = 0 ;
     lindent = 0 ;
-    if(indents[indent]->type & HILOOKB)
+    if(meIndentGetFlags(indents[indent]) & HILOOKB)
     {
-        lindent = indents[indent]->tknSttOff ;
+        lindent = meIndentGetLookBackScheme(indents[indent]) ;
         lp = frameCur->windowCur->dotLine ;
-        for(lb = (int) indents[lindent]->close ; --lb >= 0 ; )
+        lb = meHilightGetLookBackLines(indents[lindent]) ;
+        while((--lb >= 0) && ((lp = meLineGetPrev(lp)) != frameCur->bufferCur->baseLine))
         {
-            if(((lp = meLineGetPrev(lp)) == frameCur->bufferCur->baseLine) ||
-               ((indent = indentLookBack(lp,0xffff)) != 0))
+            if((coff = indentLookBack(lp,0xffff)) >= 0)
+            {
+                if(coff != 0)
+                    indent = coff ;
                 break ;
+            }
         }
-        if(indent == 0)
-            indent = frameCur->bufferCur->indent ;
     }
     
     lp = frameCur->windowCur->dotLine ;
@@ -2799,24 +2796,26 @@ indentLine(int *inComment)
             aind = meIndentGetIndent((meUByte) fnoz, frameCur->bufferCur->indentWidth);
         else
             aind = 0 ;
-        jj = (int) indents[indent]->close ;
+        jj = (int) meHilightGetLookBackLines(indents[indent]) ;
         for(ind=0 ; (--jj >=0) ; )
         {
             if((lp = meLineGetPrev(lp)) == frameCur->bufferCur->baseLine)
                 break ;
             vps[0].line = lp ;
-            if((lindent != 0) && (indentLookBack(lp,0xffff) != 0))
+            if((lindent != 0) && (indentLookBack(lp,0xffff) >= 0))
             {
                 /* theres a file type change on this line, look back to what its changed from */
-                indent = 0 ;
-                for(lb = (int) indents[lindent]->close ; --lb >= 0 ; )
+                indent = frameCur->bufferCur->indent ;
+                lb = meHilightGetLookBackLines(indents[lindent]) ;
+                while((--lb >= 0) && ((lp = meLineGetPrev(lp)) != frameCur->bufferCur->baseLine))
                 {
-                    if(((lp = meLineGetPrev(lp)) == frameCur->bufferCur->baseLine) ||
-                       ((indent = indentLookBack(lp,0xffff)) != 0))
+                    if((coff = indentLookBack(lp,0xffff)) >= 0)
+                    {
+                        if(coff != 0)
+                            indent = coff ;
                         break ;
+                    }
                 }
-                if(indent == 0)
-                    indent = frameCur->bufferCur->indent ;
                 lp = vps[0].line ;
             }
             vps[0].hilno = indent ;
@@ -2861,7 +2860,7 @@ indentLine(int *inComment)
             }
             if(brace < 0)
             {
-                if((contFlag == 0) && (indents[indent]->type & HIGOTCONT))
+                if((contFlag == 0) && (meIndentGetFlags(indents[indent]) & HIGOTCONT))
                     contFlag = 0x07 ;
                 nind = ind = 0 ;
                 continue ;
@@ -2876,7 +2875,7 @@ indentLine(int *inComment)
                     ind += nind ;
                 nind = ind ;
                 ind += ss - disLineBuff + aind ;
-                if((contFlag == 0) && (indents[indent]->type & HIGOTCONT))
+                if((contFlag == 0) && (meIndentGetFlags(indents[indent]) & HIGOTCONT))
                     contFlag = 0x07 ;
             }
             if(ind < 0)

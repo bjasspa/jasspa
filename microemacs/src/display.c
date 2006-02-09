@@ -362,7 +362,7 @@ windCurLineOffsetEval(meWindow *wp)
 #if MEOPT_COLOR
 #if MEOPT_HILIGHT
     if((wp->buffer->hilight != 0) &&
-       (hilights[wp->buffer->hilight]->type & HFRPLCDIFF))
+       (meHilightGetFlags(hilights[wp->buffer->hilight]) & HFRPLCDIFF))
         hilightCurLineOffsetEval(wp) ;
     else
 #endif
@@ -470,11 +470,11 @@ updCursor(register meWindow *wp)
         /* must make sure the disLineBuff is at least as long as the current scroll
          * otherwise if the horizontal scroll is set to 2 and the first line is short
          * updateline will scribble as it assumes the buffer is long enough */
-        if(jj >= disLineSize)
+        if(((int) jj) >= disLineSize)
         {
             do
                 disLineSize += 512 ;
-            while(disLineSize < jj) ;
+            while(disLineSize < ((int) jj)) ;
             disLineBuff = meRealloc(disLineBuff,disLineSize+32) ;
         }
     }
@@ -631,7 +631,7 @@ updateline(register int row, register meVideoLine *vp1, meWindow *window)
 
             /* Export the information from the higlighting request */
             blkp = hilBlock + 1 ;
-            scheme = (meScheme) ((size_t) hilights[vp1->hilno]->close) ;
+            scheme = meHilightGetTruncScheme(hilights[vp1->hilno]) ;
         }
         else
 #endif
@@ -1222,7 +1222,7 @@ updateWindow(meWindow *wp)
         }
         if(wp->updateFlags & WFLOOKBK)
         {
-            if(hilights[bp->hilight]->ignore)
+            if(meHilightGetLookBackLines(hilights[bp->hilight]))
                 hilightLookBack(wp) ;
             wp->updateFlags &= ~WFLOOKBK ;
         }
