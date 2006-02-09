@@ -1280,7 +1280,7 @@ define-macro cc-checkin
     4 cc-cleartool 3 $buffer-fname
     !if &seq $buffer-fname ""
     !elif &bmod "dir"
-        !if &lget .cc-init.values4 2
+        !if &lget .cc-init.values4 3
             dirlst-refresh
         !endif
     !elif &not &seq &lef $buffer-bname 1 "*"
