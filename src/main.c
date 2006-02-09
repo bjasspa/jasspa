@@ -360,7 +360,7 @@ execute(register int c, register int f, register int n)
         return (cmdstatus = meFALSE) ;
 
 #if MEOPT_HILIGHT
-    if(frameCur->bufferCur->indent && (indents[frameCur->bufferCur->indent]->type & HIGFBELL))
+    if(frameCur->bufferCur->indent && (meHilightGetFlags(indents[frameCur->bufferCur->indent]) & HIGFBELL))
     {
         meHilight *indent=indents[frameCur->bufferCur->indent] ;
         if((c == '}') || (c == '#'))
@@ -408,7 +408,7 @@ execute(register int c, register int f, register int n)
     {
         frameCur->windowCur->dotOffset-- ;
         /* flag for delay move and only bell in cmode */
-        gotoFence(meTRUE,(frameCur->bufferCur->indent && (indents[frameCur->bufferCur->indent]->type & HIGFBELL)) ? 3:2) ;
+        gotoFence(meTRUE,(frameCur->bufferCur->indent && (meHilightGetFlags(indents[frameCur->bufferCur->indent]) & HIGFBELL)) ? 3:2) ;
         frameCur->windowCur->dotOffset++ ;
     }
 #endif

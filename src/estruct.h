@@ -865,9 +865,16 @@ typedef struct meKill {
 #define HFCASE     0x01
 #define HFLOOKB    0x02
 #define HFTOKEWS   0x04   /* treat a token end as a white space */
-
 /* hilight init internal flags */
-#define HFRPLCDIFF 0x8000
+#define HFRPLCDIFF 0x80
+
+#define meHilightGetFlags(root)          ((root)->ignore)
+#define meHilightGetTruncScheme(root)    ((root)->type)
+#define meHilightGetLookBackLines(root)  ((int) ((size_t) ((root)->close)))
+#define meHilightGetLookBackScheme(root) ((root)->tknSttOff)
+#define meHilightGetColumnHilight(root)  ((meHilight *) ((root)->rclose))
+#define meHilightGetFromColumn(root)     ((int) ((node)->close))
+#define meHilightGetToColumn(root)       ((int) ((node)->rtoken))
 
 /* hilight token flags */
 #define HLTOKEN    0x0001
@@ -895,8 +902,13 @@ typedef struct meKill {
 #define HILOOKB    0x02   /* this indent has a lookback indent scheme */
 #define HICMODE    0x04   /* this indent uses the built in cmode      */
 #define HIGFBELL   0x08   /* Ring bell if gotoFence fails             */
+/* internal indent flags */
+#define HIGOTCONT  0x80
 
 #define meHICMODE_SIZE 8
+#define meIndentGetFlags(ind)                meHilightGetFlags(ind)
+#define meIndentGetLookBackLines(ind)        meHilightGetLookBackLines(ind)
+#define meIndentGetLookBackScheme(ind)       meHilightGetLookBackScheme(ind)
 #define meIndentGetStatementIndent(ind)      meIndentGetIndent(ind->token[0],frameCur->bufferCur->indentWidth)
 #define meIndentGetBraceIndent(ind)          meIndentGetIndent(ind->token[1],frameCur->bufferCur->indentWidth)
 #define meIndentGetBraceStatementIndent(ind) meIndentGetIndent(ind->token[2],frameCur->bufferCur->indentWidth)
@@ -905,7 +917,7 @@ typedef struct meKill {
 #define meIndentGetSwitchIndent(ind)         meIndentGetIndent(ind->token[5],frameCur->bufferCur->indentWidth)
 #define meIndentGetCaseIndent(ind)           meIndentGetIndent(ind->token[6],frameCur->bufferCur->indentWidth)
 #define meIndentGetCommentMargin(ind)        meIndentGetIndent(ind->token[7],frameCur->bufferCur->indentWidth)
-#define meIndentGetCommentContinue(ind) ((ind)->rtoken)
+#define meIndentGetCommentContinue(ind)      ((ind)->rtoken)
 
 typedef struct meHilight {
     struct meHilight **list ;
