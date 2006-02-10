@@ -45,8 +45,55 @@ set-variable &ind &cat #l9 ".item-list-r4" "H4+  \ecB\\2\ecA"
 !endif
 set-variable #l1 &ind &cat ".hilight." #l0
 set-variable #l2 &ind &spr ".hilight.%stag" #l0
+!if &sin "d" &ind &cat #l9 ".setup"
+    0 indent #l2 1 500
+    0 indent #l1 3 20 #l2
+    !if &exist .indent.javascript
+        indent #l2 t "<script>" .indent.javascript
+        indent #l1 x "<script>" t .indent.javascript
+        indent #l2 t "<script\\s+language=\"?javascript[^>]*>" .indent.javascript
+        indent #l1 x "<script\\s+language=\"?javascript[^>]*>" t .indent.javascript
+        indent .indent.javascript w "</script>" -t 0
+    !endif
+    !if &exist .indent.vbscript
+        indent #l2 t "<script\\s+language=\"?vbscript[^>]*>" .indent.vbscript
+        indent #l1 x "<script\\s+language=\"?vbscript[^>]*>" t .indent.vbscript
+        indent .indent.vbscript w "</script>" -t 0
+    !endif
+    indent #l2 t "</script>" 0
+    indent #l2 e "<!--" "-->" ""
+    indent #l1 o "</script>" -t
+    ; Define the indentation tokens
+    indent #l1 e "<!--" "-->" ""
+    indent #l1 n "-->" 0
+    indent #l1 e "<!DOCTYPE" ">" ""
+    indent #l1 n "<" 1/2t
+    indent #l1 n ">" -1/2t
+    ;indent #l1 b "<" ">"
+    indent #l1 n "<html>" t
+    indent #l1 o "</html>" -t
+    indent #l1 n "<head" 3/2t
+    indent #l1 o "</head>" -t
+    indent #l1 n "<ul" 3/2t
+    indent #l1 o "</ul>" -t
+    indent #l1 n "<ol" 3/2t
+    indent #l1 o "</ol>" -t
+    indent #l1 n "<dl" 3/2t
+    indent #l1 o "</dl>" -t
+    indent #l1 n "<table" 3/2t
+    indent #l1 o "</table>" -t
+    indent #l1 n "<tr" 3/2t
+    indent #l1 o "</tr>" -t
+    indent #l1 n "<td" 3/2t
+    indent #l1 o "</td>" -t
+    indent #l1 n "<span" 3/2t
+    indent #l1 o "</span>" -t
+    indent #l1 n "<select" 3/2t
+    indent #l1 o "</select>" -t
+    indent #l1 n "%>" -1/2t
+!endif
 !if &and &sin "h" &ind &cat #l9 ".setup" &band .hilight.flags 0x02
-    0 hilight #l1 3 200                      $global-scheme
+    0 hilight #l1 11 20 #l2                  $global-scheme
     hilight #l1 0x80 "<\\w*" #l2             .scheme.keyword
     hilight #l1 4 "</" ">" ""                .scheme.keyword
     hilight #l1 4 "<!--" "-->" ""            .scheme.comment
@@ -259,53 +306,6 @@ set-variable #l2 &ind &spr ".hilight.%stag" #l0
         hilight #l1  0x80 "<script\\s+language=\"?vbscript[^>]*>" .hilight.vbscript .scheme.prepro
         hilight .hilight.vbscript 0x80 "</script>" 0     .scheme.prepro
     !endif
-!endif
-!if &sin "d" &ind &cat #l9 ".setup"
-    0 indent #l2 1 500
-    0 indent #l1 3 20 #l2
-    !if &exist .indent.javascript
-        indent #l2 t "<script>" .indent.javascript
-        indent #l1 x "<script>" t .indent.javascript
-        indent #l2 t "<script\\s+language=\"?javascript[^>]*>" .indent.javascript
-        indent #l1 x "<script\\s+language=\"?javascript[^>]*>" t .indent.javascript
-        indent .indent.javascript w "</script>" -t 0
-    !endif
-    !if &exist .indent.vbscript
-        indent #l2 t "<script\\s+language=\"?vbscript[^>]*>" .indent.vbscript
-        indent #l1 x "<script\\s+language=\"?vbscript[^>]*>" t .indent.vbscript
-        indent .indent.vbscript w "</script>" -t 0
-    !endif
-    indent #l2 t "</script>" 0
-    indent #l2 e "<!--" "-->" ""
-    indent #l1 o "</script>" -t
-    ; Define the indentation tokens
-    indent #l1 e "<!--" "-->" ""
-    indent #l1 n "-->" 0
-    indent #l1 e "<!DOCTYPE" ">" ""
-    indent #l1 n "<" 1/2t
-    indent #l1 n ">" -1/2t
-    ;indent #l1 b "<" ">"
-    indent #l1 n "<html>" t
-    indent #l1 o "</html>" -t
-    indent #l1 n "<head" 3/2t
-    indent #l1 o "</head>" -t
-    indent #l1 n "<ul" 3/2t
-    indent #l1 o "</ul>" -t
-    indent #l1 n "<ol" 3/2t
-    indent #l1 o "</ol>" -t
-    indent #l1 n "<dl" 3/2t
-    indent #l1 o "</dl>" -t
-    indent #l1 n "<table" 3/2t
-    indent #l1 o "</table>" -t
-    indent #l1 n "<tr" 3/2t
-    indent #l1 o "</tr>" -t
-    indent #l1 n "<td" 3/2t
-    indent #l1 o "</td>" -t
-    indent #l1 n "<span" 3/2t
-    indent #l1 o "</span>" -t
-    indent #l1 n "<select" 3/2t
-    indent #l1 o "</select>" -t
-    indent #l1 n "%>" -1/2t
 !endif
 
 0 define-macro &cat "chook-" #l0

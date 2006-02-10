@@ -22,6 +22,7 @@ set-variable .fhook-phps.name "PHP Script"
 set-variable .fhook-phps.setup &reg "/history/fhook/phps" "bdfghinopx"
 set-variable .fhook-phps.setup-mask "abdefghikmnoptux"
 set-variable .fhook-phps.comment "|//||/|// | //|r|"
+set-variable .fhook-phps.indent-width 2
 
 ; Setup collapse
 set-variable .fhook-phps.collapse-open  "^function[ \t]"
@@ -412,6 +413,8 @@ set-variable .fhook-phps.item-list-r1 "Func \ecB\\1\ecA"
     hilight .hilight.phpsS 4   "\\${" "}" ""       .scheme.variable
     hilight .hilight.phpsS 4   "\\$(" ")" ""       .scheme.variable
     hilight .hilight.phpsS 0x80 "\"" .hilight.phps .scheme.string
+    ; the next tag fixes hilighting problems caused by strings spanning multiple lines by resetting the hilight on the next blank line during the look-back.
+    hilight .hilight.phpsS 0xa80 "^\\s*\\{$" .hilight.phps $global-scheme
     ; Shell variable hilighting
     0 hilight .hilight.phpsV 0                     .scheme.variable
     hilight .hilight.phpsV 0   ":-"                $global-scheme

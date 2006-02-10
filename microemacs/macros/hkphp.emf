@@ -22,11 +22,12 @@ set-variable .fhook-php.command-name  "|"
 set-variable .fhook-php.command-nbind "|"
 set-variable .fhook-php.command-kbind "|"
 set-variable .fhook-php.command-desc  "|"
+set-variable .fhook-php.indent-width  2
 
 ; load in php script & the html core
 !if &not &exist fhook-phps
-!endif
     !force exec-file "hkphps"
+!endif
 !force execute-file "htmlcore" "php" 
 
 ; add php functions to item-list
@@ -71,14 +72,14 @@ set-variable .fhook-php.item-list-r5 "Func \ecB\\1\ecA"
         indent .hilight.phptag t "<\\?php" .indent.phpscript
         indent .hilight.phptag t "^[\t ]*#\\?php" .indent.phpscript
         indent .hilight.phptag t "^[\t ]*//\\?php" .indent.phpscript
-        indent .hilight.phptag t "^}$"     .indent.phpscript
+        indent .hilight.phptag t "^\\s*\\{}$"     .indent.phpscript
         indent .hilight.phptag t "\\?>"    .hilight.php
         indent .hilight.phptag e "'" "'" "\\"
         indent .hilight.phptag e "`" "`" "\\"
         indent .hilight.phptag e "\"" "\"" "\\"
         
-        indent .hilight.php x "^<\\?php" 0 .indent.phpscript
-        indent .hilight.php x "<\\?"     t .indent.phpscript
+        indent .hilight.php x "^<\\?"    0 .indent.phpscript
+        indent .hilight.php x ".<\\?"    t .indent.phpscript
         indent .hilight.phpscript w "\\?>" -t 0
         ; picking up the </script> seems wrong, but the look-back phptag can incorrectly
         ; identify javascript as php, this limits the damage (hopefully)
