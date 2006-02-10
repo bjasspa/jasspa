@@ -53,7 +53,7 @@ define-macro time
         set-variable #l4 &add 1000 #l4
     !endif
     set-variable .msec &add &mul &sub #l3 #l2 1000 #l4
-    ml-write &spr "Command took %d sec %d msec" &sub #l3 #l2 #l4
+    ml-write &spr "Command took %d.%03d sec" &sub #l3 #l2 #l4
 !emacro
 
 ; The default compare-windows ignores white space. The -exact extension checks
