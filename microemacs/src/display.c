@@ -626,7 +626,7 @@ updateline(register int row, register meVideoLine *vp1, meWindow *window)
              * and then restore the previous setting. */
             tempIsWordMask = isWordMask;
             isWordMask = window->buffer->isWordMask;
-            noColChng = hilightLine(vp1) ;
+            noColChng = hilightLine(vp1,0) ;
             isWordMask = tempIsWordMask;
 
             /* Export the information from the higlighting request */
@@ -1222,7 +1222,7 @@ updateWindow(meWindow *wp)
         }
         if(wp->updateFlags & WFLOOKBK)
         {
-            if(meHilightGetLookBackLines(hilights[bp->hilight]))
+            if(meHilightGetFlags(hilights[bp->hilight]) & (HFLOOKBLN|HFLOOKBSCH))
                 hilightLookBack(wp) ;
             wp->updateFlags &= ~WFLOOKBK ;
         }

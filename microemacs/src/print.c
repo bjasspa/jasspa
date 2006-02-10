@@ -1195,7 +1195,7 @@ printAddLine (meBuffer *bp, meLine *lp)
 #if MEOPT_HILIGHT
     if (vps[0].hilno)
     {
-        noColChng = hilightLine (vps);
+        noColChng = hilightLine(vps,0);
         blkp = hilBlock + 1;
         wid = blkp[noColChng-1].column;
     }
