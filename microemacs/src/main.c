@@ -1643,7 +1643,7 @@ missing_arg:
             meStrncpy(buff+1,clientMessage,meBUF_SIZE_MAX) ;
             meStrcat(buff+1,"\"") ;
             token(buff,resultStr) ;
-            nn = strlen(resultStr) ;
+            nn = meStrlen(resultStr) ;
             if((nn <= 1) || (resultStr[nn-1] != '\n'))
             {
                 resultStr[nn++] = '\n' ;
