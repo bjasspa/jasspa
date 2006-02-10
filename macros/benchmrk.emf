@@ -176,9 +176,13 @@ define-macro start-up
 !emacro
 
 define-macro disptest
-    set-variable #l0 1000
+    set-variable #l0 2000
     !while &dec #l0 1
         1 screen-update
+        !force 1 scroll-down
+        !if &not $status
+            beginning-of-buffer
+        !endif
     !done
 !emacro
 
