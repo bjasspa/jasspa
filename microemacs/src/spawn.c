@@ -926,7 +926,10 @@ ipipeRead(meIPipe *ipipe)
         case 27:
             if(getNextCharFromPipe(ipipe,cc,rbuff,curROff,curRRead))
             {
-                int gotN=0, gotQ=0 ;
+#ifndef NDEBUG
+                int gotQ=0 ;
+#endif
+                int gotN=0 ;
 
                 na=0 ;
                 nb=-1 ;
@@ -949,7 +952,9 @@ get_another:
                             na = 0 ;
                             goto get_another ;
                         case '?':
+#ifndef NDEBUG
                             gotQ = 1 ;
+#endif
                             goto get_another ;
                         case '@':
                             if(!gotN)
