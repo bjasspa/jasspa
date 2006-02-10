@@ -3545,7 +3545,6 @@ meFrameRepositionWindow(meFrame *frame, int resize)
     {
         int xx, yy, wbs, tbs ;
         unsigned int ww, hh ;
-        Window rw ;
         
         xx = sizeHints.x ;
         yy = sizeHints.y ;
