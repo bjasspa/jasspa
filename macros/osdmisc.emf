@@ -1059,6 +1059,18 @@ define-macro browse
             0x1 browse-wrap-change
             !force !force isearch-forward @mna
             0x4 browse-wrap-change
+        !elif &seq #l0 "mouse-pick-1"
+            0x3f set-position "\x82"
+            set-cursor-to-mouse
+            set-mark
+            goto-position "\x82"
+        !elif &seq #l0 "mouse-drop-1"
+            0x21 set-position "\x82"
+            set-cursor-to-mouse
+            0x1 browse-wrap-change
+            copy-region
+            0x4 browse-wrap-change
+            goto-position "\x82"
         !elif &seq #l1 "newline"
             !force !force scroll-down
         !elif &seq #l1 "backward-delete-char"
@@ -1075,7 +1087,7 @@ define-macro browse
             0x1 browse-wrap-change
             !force !force execute-line &spr "%s %s @mna" #l2 #l1
             0x4 browse-wrap-change
-        !elif &sin #l1 "|reread-file|"
+        !elif &sin #l1 "|reread-file|save-buffers-exit-emacs|quick-exit|exit-emacs|"
             0x1 browse-wrap-change
             !force !force execute-line &spr "%s %s @mna" #l2 #l1
             0x4 browse-wrap-change
