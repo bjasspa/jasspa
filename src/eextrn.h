@@ -521,7 +521,7 @@ extern	void	mlerase(int flag);
 extern	int	hilight(int f, int n);
 extern  void    hilightCurLineOffsetEval(meWindow *wp) ;
 extern  int     indentLine(int *inComment) ;
-extern  meUShort hilightLine(meVideoLine *vp1) ;
+extern  meUShort hilightLine(meVideoLine *vp1, meUByte mode) ;
 extern  void    hilightLookBack(meWindow *) ;
 extern	int	meIndentGetIndent(meUByte indent, meUShort bIndentWidth) ;
 extern	int	indent(int f, int n);

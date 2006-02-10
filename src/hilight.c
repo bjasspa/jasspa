@@ -100,6 +100,7 @@ static meUByte *meHilTestNames[meHIL_TEST_NOCLASS]={
 } ;
 
 #define meHIL_MODECASE   0x001
+#define meHIL_MODELOOKB  0x002
 #define meHIL_MODETOKEWS 0x004
 #define meHIL_MODESTART  0x008
 #define meHIL_MODESTTLN  0x010
@@ -146,7 +147,7 @@ createHilight(meUByte hilno, meInt size, meUByte *noHils , meHilight ***hTbl)
             meHilight *hn ;
             while((hn = meHilightGetColumnHilight(root)) != NULL)
             {
-                meHilightGetColumnHilight(root) = meHilightGetColumnHilight(hn) ;
+                meHilightSetColumnHilight(root,meHilightGetColumnHilight(hn)) ;
                 meFree(hn) ;
             }
             root->close = NULL ;
@@ -789,7 +790,7 @@ meHiltTokenAddSearchString(meHilight *root, meHilight *node, meUByte *token, int
     {
         meUByte  sttTst, endTst ;
         ss = buff ;
-        /* if the token starts with "^[[:space:]]*\\{" then we can
+        /* if the token starts with "^\\s*\\{" then we can
          * optimize this to HLSTTLINE */
         if(l1 && (len || l2) && (flags & HLSOL) && (ss[0] == meCHAR_LEADER) &&
            (ss[1] == (meHIL_TEST_VALID|meHIL_TEST_MATCH_NONE|meHIL_TEST_MATCH_MULTI|meHIL_TEST_SPACE)))
@@ -957,11 +958,18 @@ hilight(int f, int n)
         /* force a complete update next time */ 
         sgarbf = meTRUE ;
         meHilightGetFlags(root) = (meUByte) type ;
-        if(type & HFLOOKB)
+        if(type & HFLOOKBLN)
         {
             if(meGetString((meUByte *)"Lines",0,0,buf,meBUF_SIZE_MAX) <= 0)
                 return meABORT ;
-            meHilightGetLookBackLines(root) = meAtoi(buf) ;
+            meHilightSetLookBackLines(root,meAtoi(buf)) ;
+        }
+        if(type & HFLOOKBSCH)
+        {
+            if((meGetString((meUByte *)"Ind no",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
+               ((ii = meAtoi(buf)) <= 0) || (ii >= noIndents) || (indents[ii] == NULL))
+                return meABORT ;
+            meHilightGetLookBackScheme(root) = (meUByte) ii ;
         }
         if((ii=meGetString((meUByte *)"Scheme",MLEXECNOUSER,0,buf,meBUF_SIZE_MAX)) == meABORT)
             return meABORT ;
@@ -1006,7 +1014,7 @@ hilight(int f, int n)
             if(n & ADDTOKEN_REMOVE)
             {
                 /* free off the column hilight */ 
-                meHilightGetColumnHilight(root) = meHilightGetColumnHilight(node) ;
+                meHilightSetColumnHilight(root,meHilightGetColumnHilight(node)) ;
                 meFree(node) ;
                 return meTRUE ;
             }
@@ -1019,11 +1027,11 @@ hilight(int f, int n)
         {
             memset(node,0,sizeof(meHilight)) ;
             node->type = HLCOLUMN ;
-            meHilightGetFromColumn(node) = fmCol ;
-            meHilightGetColumnHilight(node) = meHilightGetColumnHilight(root) ;
-            meHilightGetColumnHilight(root) = node ;
+            meHilightSetFromColumn(node,fmCol) ;
+            meHilightSetColumnHilight(node,meHilightGetColumnHilight(root)) ;
+            meHilightSetColumnHilight(root,node) ;
         }
-        meHilightGetToColumn(node) = toCol ;
+        meHilightSetToColumn(node,toCol) ;
         goto get_scheme ;
     }
     
@@ -1038,7 +1046,7 @@ hilight(int f, int n)
         return meFALSE ;
     type = node->type ;
     
-    if(!(type & HLVALID))
+    if((type & (HLVALID|HLONELNBT)) != HLVALID)
     {
         if(((type & HLREPLACE) && 
             ((meGetString((meUByte *)"Replace",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
@@ -1326,10 +1334,10 @@ findToken(meHilight *root, meUByte *text, meUByte mode,
                 *len += s1-text ;
                 return node ;
             }
-            if(!(type & HLVALID) && 
-               (!(mode & meHIL_MODETOEOL) || (type & HLBRINEOL)) &&
-               (!(type & HLSTTLINE) || (mode & meHIL_MODESTTLN)) &&
-               (!(type & HLSOL) || (mode & meHIL_MODESTART)) &&
+            if((((type & HLVALID) == 0) || ((type & HLONELNBT) && (mode & meHIL_MODELOOKB))) && 
+               (((mode & meHIL_MODETOEOL) == 0) || (type & HLBRINEOL)) &&
+               (((type & HLSTTLINE) == 0) || (mode & meHIL_MODESTTLN)) &&
+               (((type & HLSOL) == 0) || (mode & meHIL_MODESTART)) &&
                (findTokenSingleCharTest(lastChar,nn->tknSttTst) ||
                 ((mode & meHIL_MODETOKEWS) && (mode & meHIL_MODETOKEND) &&
                  findTokenSingleCharTest(' ',nn->tknSttTst))) &&
@@ -1402,10 +1410,10 @@ findToken(meHilight *root, meUByte *text, meUByte mode,
                         *len += s1-text ;
                         return node ;
                     }
-                    if(!(type & HLVALID) && 
-                       (!(mode & meHIL_MODETOEOL) || (type & HLBRINEOL)) &&
-                       (!(type & HLSTTLINE) || (mode & meHIL_MODESTTLN)) &&
-                       (!(type & HLSOL) || (mode & meHIL_MODESTART)) &&
+                    if((((type & HLVALID) == 0) || ((type & HLONELNBT) && (mode & meHIL_MODELOOKB))) &&
+                       (((mode & meHIL_MODETOEOL) == 0) || (type & HLBRINEOL)) &&
+                       (((type & HLSTTLINE) == 0) || (mode & meHIL_MODESTTLN)) &&
+                       (((type & HLSOL) == 0) || (mode & meHIL_MODESTART)) &&
                        (findTokenSingleCharTest(lastChar,nn->tknSttTst) ||
                         ((mode & meHIL_MODETOKEWS) && (mode & meHIL_MODETOKEND) &&
                          findTokenSingleCharTest(' ',nn->tknSttTst))) &&
@@ -1660,10 +1668,10 @@ hilHandleCallback (int dstPos, struct HILDATA *hd)
 }
 
 meUShort 
-hilightLine(meVideoLine *vp1)
+hilightLine(meVideoLine *vp1, meUByte mode)
 {
     meUByte *srcText=vp1->line->text ;
-    meUByte  hilno = vp1->hilno, cc=meCHAR_NL, mode ;
+    meUByte  hilno = vp1->hilno, cc=meCHAR_NL ;
     meHilight *node;
     meUShort len ;
     register int srcWid=vp1->line->length, dstPos=0 ;
@@ -1729,7 +1737,7 @@ hilightLine(meVideoLine *vp1)
         }
     }
     
-    mode = (meHIL_MODESTTLN|meHIL_MODESTART|(meHilightGetFlags(hd.root) & (HFCASE|HFTOKEWS))) ;
+    mode |= (meHIL_MODESTTLN|meHIL_MODESTART|(meHilightGetFlags(hd.root) & (HFCASE|HFTOKEWS))) ;
     if(vp1->bracket != NULL)
     {
         node = vp1->bracket ;
@@ -2004,82 +2012,6 @@ hiline_exit:
         vp1[1].bracket = node ;
     }
     return hd.noColChng ;
-}
-
-void
-hilightLookBack(meWindow *wp)
-{
-    meVideoLine  *vptr ;
-    meBuffer *bp ;
-    register meLine *lp, *blp ;
-    meUByte  hilno ;
-    meHilight *root, *bracket ;
-    int ii, jj ;
-    
-    bp = wp->buffer ;
-    hilno=bp->hilight ;
-    root = hilights[hilno] ;
-    bracket = NULL ;
-    
-    ii = wp->vertScroll - wp->dotLineNo ;
-    jj = meHilightGetLookBackLines(root) ;
-    lp = wp->dotLine ;
-    while(ii < jj)
-    {
-        if((blp=meLineGetPrev(lp)) == bp->baseLine)
-            break ;
-        lp = blp ;
-        ii++ ;
-    }
-    if(ii > 0)
-    {
-        meVideoLine vps[2] ;
-        
-        /* the flag is used only to set the current line, do the select hilighting
-         * and flag the next line as changed if in a bracket, therefore init to 
-         * 0 and forget about */
-        vps[0].wind = wp ;
-        vps[0].hilno = hilno ;
-        vps[0].bracket = NULL ;
-        vps[0].flag = 0 ;
-        vps[1].hilno = hilno ;
-        vps[1].bracket = NULL ;
-        vps[1].flag = 0 ;
-        for(;;)
-        {
-            vps[0].line = lp ;
-            if(hilightLine(vps) > 1)
-            {
-                if((vps[0].bracket != NULL) && (vps[0].bracket == vps[1].bracket) &&
-                   (vps[0].bracket->type & (HLONELNBT|HLSNGLLNBT)))
-                    vps[1].bracket = NULL ;
-                if(vps[1].hilno != hilno)
-                {
-                    if((vps[0].hilno == vps[1].hilno) &&
-                       (meHilightBranchType & (HLONELNBT|HLSNGLLNBT)))
-                    {
-                        vps[1].hilno = hilno ;
-                        vps[1].bracket = NULL ;
-                    }
-                    meHilightBranchType = 0 ;
-                }
-            }
-            if(--ii == 0)
-                break ;
-            vps[0].hilno = vps[1].hilno ;
-            vps[0].bracket = vps[1].bracket ;
-            lp = meLineGetNext(lp) ;
-        }
-        hilno = vps[1].hilno ;
-        bracket = vps[1].bracket ;
-    }
-    vptr  = wp->video->lineArray + wp->frameRow ;  /* Video block */
-    if((vptr->hilno != hilno) || (vptr->bracket != bracket))
-    {
-        vptr->hilno = hilno ;
-        vptr->bracket = bracket ;
-        vptr->flag |= VFCHNGD ;
-    }
 }
 
 #define hilOffsetChar(off,dstPos,dstJmp,cc,tw)                               \
@@ -2440,7 +2372,7 @@ indentLookBack(meLine *lp, meUShort offset)
     vps[0].line = lp ;
     vps[0].flag = 0 ;
     vps[0].bracket = NULL ;
-    noColChng = hilightLine(vps) ;
+    noColChng = hilightLine(vps,0) ;
     while(noColChng > 0)
     {
         if((hilBlock[noColChng].scheme & INDFILETYPE) &&
@@ -2449,6 +2381,111 @@ indentLookBack(meLine *lp, meUShort offset)
         noColChng-- ;
     }
     return -1 ;
+}
+
+void
+hilightLookBack(meWindow *wp)
+{
+    meVideoLine  *vptr ;
+    meBuffer *bp ;
+    register meLine *lp, *blp ;
+    meUByte  hilno ;
+    meHilight *root, *bracket ;
+    int ii, jj ;
+    
+    bp = wp->buffer ;
+    hilno = bp->hilight ;
+    root = hilights[hilno] ;
+    bracket = NULL ;
+    blp = wp->dotLine ;
+    ii = wp->dotLineNo - wp->vertScroll ;
+    while(--ii >= 0)
+        blp=meLineGetPrev(blp) ;
+    
+    if(meHilightGetFlags(root) & HFLOOKBSCH)
+    {
+        meHilight **bhis ;
+        bhis = hilights ;
+        hilights = indents ;
+        lp = blp ;
+        ii = meHilightGetLookBackLines(indents[meHilightGetLookBackScheme(root)]) ;
+        while((--ii >= 0) && ((lp = meLineGetPrev(lp)) != frameCur->bufferCur->baseLine))
+        {
+            if((jj = indentLookBack(lp,0xffff)) >= 0)
+            {
+                if(jj != 0)
+                {
+                    hilno = jj ;
+                    root = bhis[hilno] ;
+                }
+                break ;
+            }
+        }
+        hilights = bhis ;
+    }
+    
+    if(meHilightGetFlags(root) & HFLOOKBLN)
+    {
+        ii = 0 ;
+        jj = meHilightGetLookBackLines(root) ;
+        lp = blp ;
+        while(ii < jj)
+        {
+            if((blp=meLineGetPrev(lp)) == bp->baseLine)
+                break ;
+            lp = blp ;
+            ii++ ;
+        }
+        if(ii > 0)
+        {
+            meVideoLine vps[2] ;
+            
+            /* the flag is used only to set the current line, do the select hilighting
+             * and flag the next line as changed if in a bracket, therefore init to 
+             * 0 and forget about */
+            vps[0].wind = wp ;
+            vps[0].hilno = hilno ;
+            vps[0].bracket = NULL ;
+            vps[0].flag = 0 ;
+            vps[1].hilno = hilno ;
+            vps[1].bracket = NULL ;
+            vps[1].flag = 0 ;
+            for(;;)
+            {
+                vps[0].line = lp ;
+                if(hilightLine(vps,meHIL_MODELOOKB) > 1)
+                {
+                    if((vps[0].bracket != NULL) && (vps[0].bracket == vps[1].bracket) &&
+                       (vps[0].bracket->type & (HLONELNBT|HLSNGLLNBT)))
+                        vps[1].bracket = NULL ;
+                    if(vps[1].hilno != hilno)
+                    {
+                        if((vps[0].hilno == vps[1].hilno) &&
+                           (meHilightBranchType & (HLONELNBT|HLSNGLLNBT)))
+                        {
+                            vps[1].hilno = hilno ;
+                            vps[1].bracket = NULL ;
+                        }
+                        meHilightBranchType = 0 ;
+                    }
+                }
+                if(--ii == 0)
+                    break ;
+                vps[0].hilno = vps[1].hilno ;
+                vps[0].bracket = vps[1].bracket ;
+                lp = meLineGetNext(lp) ;
+            }
+            hilno = vps[1].hilno ;
+            bracket = vps[1].bracket ;
+        }
+    }
+    vptr  = wp->video->lineArray + wp->frameRow ;  /* Video block */
+    if((vptr->hilno != hilno) || (vptr->bracket != bracket))
+    {
+        vptr->hilno = hilno ;
+        vptr->bracket = bracket ;
+        vptr->flag |= VFCHNGD ;
+    }
 }
 
 /* Retrieve the indent value given the indent mask and the indentWidth to be used
@@ -2572,14 +2609,14 @@ indent(int f, int n)
         }
         else
         {
-            meIndentGetLookBackLines(root) = meAtoi(buf) ;
-            if(itype & HILOOKB)
+            meIndentSetLookBackLines(root,meAtoi(buf)) ;
+            if(itype & HILOOKBSCH)
             {
                 if((meGetString((meUByte *)"Ind no",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
                    ((lindno = (meUByte) meAtoi(buf)) == 0) ||
                    (lindno >= noIndents) || (indents[lindno] == NULL))
                     return meABORT ;
-                meHilightGetLookBackScheme(root) = lindno ;
+                meIndentGetLookBackScheme(root) = lindno ;
             }
         }
         indents[indno] = root ;
@@ -2588,7 +2625,7 @@ indent(int f, int n)
     if(n == 2)
     {
         if(((indno = frameCur->bufferCur->indent) != 0) &&
-           (meIndentGetFlags(indents[indno]) & HILOOKB))
+           (meIndentGetFlags(indents[indno]) & HILOOKBSCH))
         {
             meHilight **bhis ;
             meLine *lp ;
@@ -2743,7 +2780,7 @@ indentLine(int *inComment)
     
     *inComment = 0 ;
     lindent = 0 ;
-    if(meIndentGetFlags(indents[indent]) & HILOOKB)
+    if(meIndentGetFlags(indents[indent]) & HILOOKBSCH)
     {
         lindent = meIndentGetLookBackScheme(indents[indent]) ;
         lp = frameCur->windowCur->dotLine ;
@@ -2769,7 +2806,7 @@ indentLine(int *inComment)
     vps[0].bracket = NULL ;
     vps[0].flag = 0 ;
     
-    noColChng = hilightLine(vps) ;
+    noColChng = hilightLine(vps,0) ;
     blkp = hilBlock + 1 ;
     /*    printf("Got %d colour changes\n",noColChng) ;*/
     /*    for(ii=0 ; ii<noColChng ; ii++)*/
@@ -2820,7 +2857,7 @@ indentLine(int *inComment)
             }
             vps[0].hilno = indent ;
             vps[0].bracket = NULL ;
-            noColChng = hilightLine(vps) ;
+            noColChng = hilightLine(vps,0) ;
             blkp = hilBlock + 1 ;
             if((blkp[0].scheme & 0xff00) == INDFIXED)
                 continue ;
