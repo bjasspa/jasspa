@@ -2359,14 +2359,12 @@ hiline_exit:
 #define INDNUMMASK        0xff          /* Number mask */
 
 static meInt
-indentLookBack(meLine *lp, meUShort offset)
+indentLookBack(meLine *lp, meUByte lindent, meUShort offset)
 {
     meVideoLine vps[2] ;
     meUShort noColChng ;
-    meUByte lindent ;
     
     meAssert(hilights == indents) ;
-    lindent = meHilightGetLookBackScheme(indents[frameCur->bufferCur->indent]) ;
     vps[0].hilno = lindent ;
     vps[0].wind = frameCur->windowCur ;
     vps[0].line = lp ;
@@ -2411,7 +2409,7 @@ hilightLookBack(meWindow *wp)
         ii = meHilightGetLookBackLines(indents[meHilightGetLookBackScheme(root)]) ;
         while((--ii >= 0) && ((lp = meLineGetPrev(lp)) != frameCur->bufferCur->baseLine))
         {
-            if((jj = indentLookBack(lp,0xffff)) >= 0)
+            if((jj = indentLookBack(lp,meHilightGetLookBackScheme(root),0xffff)) >= 0)
             {
                 if(jj != 0)
                 {
@@ -2637,7 +2635,7 @@ indent(int f, int n)
             lindno = meHilightGetLookBackScheme(indents[indno]) ;
             ii = (int) meIndentGetLookBackLines(indents[lindno]) ;
             do {
-                if((itype = indentLookBack(lp,htype)) >= 0)
+                if((itype = indentLookBack(lp,lindno,htype)) >= 0)
                 {
                     if(itype != 0)
                         indno = itype ;
@@ -2787,7 +2785,7 @@ indentLine(int *inComment)
         lb = meHilightGetLookBackLines(indents[lindent]) ;
         while((--lb >= 0) && ((lp = meLineGetPrev(lp)) != frameCur->bufferCur->baseLine))
         {
-            if((coff = indentLookBack(lp,0xffff)) >= 0)
+            if((coff = indentLookBack(lp,lindent,0xffff)) >= 0)
             {
                 if(coff != 0)
                     indent = coff ;
@@ -2839,14 +2837,14 @@ indentLine(int *inComment)
             if((lp = meLineGetPrev(lp)) == frameCur->bufferCur->baseLine)
                 break ;
             vps[0].line = lp ;
-            if((lindent != 0) && (indentLookBack(lp,0xffff) >= 0))
+            if((lindent != 0) && (indentLookBack(lp,lindent,0xffff) >= 0))
             {
                 /* theres a file type change on this line, look back to what its changed from */
                 indent = frameCur->bufferCur->indent ;
                 lb = meHilightGetLookBackLines(indents[lindent]) ;
                 while((--lb >= 0) && ((lp = meLineGetPrev(lp)) != frameCur->bufferCur->baseLine))
                 {
-                    if((coff = indentLookBack(lp,0xffff)) >= 0)
+                    if((coff = indentLookBack(lp,lindent,0xffff)) >= 0)
                     {
                         if(coff != 0)
                             indent = coff ;
