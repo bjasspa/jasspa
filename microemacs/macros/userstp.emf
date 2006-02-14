@@ -353,6 +353,8 @@ set-variable .user-mouse-set-button.bnames "|\HLeft|\HMiddle|\HRight|Wheel \HUp|
     set-registry "/history/mouse/mouse-drop-2" "mouse-move-yank"
     set-registry "/history/mouse/mouse-pick-3" ""
     set-registry "/history/mouse/mouse-drop-3" "mouse-osd-multi"
+    set-registry "/history/mouse/mouse-wdown"  "5 mouse-wdown-scroll"
+    set-registry "/history/mouse/mouse-wup"    "5 mouse-wup-scroll"
 !emacro
 
 -1 osd .osd.user-mouse
