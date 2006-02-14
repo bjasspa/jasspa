@@ -68,12 +68,16 @@ set-variable .fhook-php.item-list-r5 "Func \ecB\\1\ecA"
 !endif
 !if &sin "d" .fhook-php.setup
     !if &exist .indent.phpscript
-        indent .hilight.phptag t "<\\?"    .indent.phpscript
-        indent .hilight.phptag t "<\\?php" .indent.phpscript
-        indent .hilight.phptag t "^[\t ]*#\\?php" .indent.phpscript
-        indent .hilight.phptag t "^[\t ]*//\\?php" .indent.phpscript
-        indent .hilight.phptag t "^\\s*\\{}$"     .indent.phpscript
-        indent .hilight.phptag t "\\?>"    .hilight.php
+        indent .hilight.phptag t "<\\?"              .indent.phpscript
+        indent .hilight.phptag t "<\\?php"           .indent.phpscript
+        indent .hilight.phptag t "^\\s*\\{#\\?php"   .indent.phpscript
+        indent .hilight.phptag t "^\\s*\\{//\\?php"  .indent.phpscript
+        indent .hilight.phptag t "^\\s*\\{}\\s*$"    .indent.phpscript
+        indent .hilight.phptag t "^\\s*\\{}\\s*//"   .indent.phpscript
+        indent .hilight.phptag t "^\\s*\\{}\\s*/\\*" .indent.phpscript
+        indent .hilight.phptag t "^function "        .indent.phpscript
+        indent .hilight.phptag t "^class "           .indent.phpscript
+        indent .hilight.phptag t "\\?>"              .hilight.php
         indent .hilight.phptag e "'" "'" "\\"
         indent .hilight.phptag e "`" "`" "\\"
         indent .hilight.phptag e "\"" "\"" "\\"
