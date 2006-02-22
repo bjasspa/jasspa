@@ -1045,12 +1045,11 @@ meDie(void)
 #endif /* _XTERM */
 #endif /* _ME_WINDOW */
     
-    /*
-     * To get here we have received a signal and am about to die!
-     * Warn the user.
-     */
-    /* we know about the signal and we're dealing with it */
-    alarmState = 0 ;
+    /* To get here we have received a signal and am about to die! Ensure that
+     * we are in a DIE state to prevent any output on the display which is
+     * being torn down. Our main purpose is to preserve the session
+     * information and history. */
+    alarmState = meALARM_DIE ;
 
 #ifdef _ME_WINDOW
 #ifdef _XTERM
@@ -1070,27 +1069,12 @@ meDie(void)
 #endif /* _XTERM */
 #endif /* _ME_WINDOW */
     
-    /* Make a noisy BELL */
-    meModeClear(globMode,MDQUIET) ;
-    TTbell() ;
-    mePrintMessage((meUByte *)"*** Emergency quit ***");
-#ifdef _ME_CONSOLE
-#ifdef _TCAP
-    TCAPputc('\n');
-#endif /* _TCAP */
-#endif /* _ME_CONSOLE */
-
     bp = bheadp;
     while (bp != NULL)
     {
         if(bufferNeedSaving(bp))
         {
             autowriteout(bp) ;
-#ifdef _ME_CONSOLE
-#ifdef _TCAP
-            TCAPputc('\n');
-#endif /* _TCAP */
-#endif /* _ME_CONSOLE */
         }
         bp = bp->next;            /* on to the next buffer */
     }
@@ -1103,12 +1087,6 @@ meDie(void)
     while(ipipes != NULL)
         ipipeRemove(ipipes) ;
 #endif
-
-#ifdef _ME_CONSOLE
-#ifdef _TCAP
-    TCAPputc('\n');
-#endif /* _TCAP */
-#endif /* _ME_CONSOLE */
 
 #ifdef _ME_WINDOW
 #ifdef _XTERM
