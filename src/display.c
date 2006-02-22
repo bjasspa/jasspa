@@ -2746,7 +2746,14 @@ mlwrite(int flags, meUByte *fmt, int arg)
     meUByte  mlw[meBUF_SIZE_MAX];		/* what we want to be there	*/
     meUByte *mlwant;		/* what we want to be there	*/
     meUByte *s1 ;
-
+    
+    /* If this is a termination request then exit immediately as the output
+     * terminal window may have been destroyed so there is no canvas onto
+     * which the message may be written. */
+    if (alarmState & meALARM_DIE) 
+        goto mlwrite_exit ;
+    /* If the system is not initialised then the output window does not
+     * exist, attempt to write on the console. */
     if((alarmState & meALARM_INITIALIZED) == 0)
     {
         /* an mlwrite at this stage is fatal - usually a malloc failure,
