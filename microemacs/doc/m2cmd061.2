@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd061.2,v 2.6 2005-01-01 15:02:11 bill Exp $
+.Id $Id: m2cmd061.2,v 2.7 2006-03-09 20:52:27 bill Exp $
 .Im MicroEmacs command|cursor
 .ds C0 "(\fB\*e\*cf\fR)\ \&
 .so me.tni
@@ -14,20 +14,44 @@ goto-matching-fence \- Move the cursor to specified line
 .Me $a
 .SH SYNOPSIS
 .na
-\fBgoto-matching-fence\fR \*(C0
+\fIn\fR \fBgoto-matching-fence\fR \*(C0
 .ad
 .SH DESCRIPTION
 .B goto-matching-fence
 moves the cursor to the opposing  fence  character of the character  currently
-under the cursor. The set of fence characters  include \fC[]\fR,  \fC{}\fR and
-\fC()\fR.   i.e.  if  the  character   under  the  cursor  is  `\fC{\fR'  then
-\fBgoto-matching-fence\fR moves the cursor to the opening fence `\fC}\fR', and
-visa versa.
+under the cursor. The set of fence characters  include \fC[ ... ]\fR,
+\fC{ ... }\fR, \fC( ... )\fR and \fC< ... >\fR. i.e. if the character  under the cursor
+is `\fC{\fR' then  \fBgoto-matching-fence\fR  moves the cursor to the matching
+closing `\fC}\fR' fence, and visa versa.
 .PP
 .B goto-matching-fence
-can also be used to move the cursor to matching C/C++ \fC#if\fR,  \fC#elif\fR,
-\fC#else\fR  and  \fC#endif\fR  constructs,  cycling through them in the given
-order.
+can also be used to move to a matching  \fC' ... '\fR and \fC" ... "\fR fence,
+but, as the  start and end fence is the same, bit  \fC0x04\fR  must be used to
+indicate whether the current fence is the open or close fence, see below. 
+.PP
+.B goto-matching-fence
+can also be used to move the cursor between the start and end of
+a C/C++ \fC/* ... */\fR style comment. It can also be used to move to matching
+C/C++ \fC#if\fR,  \fC#elif\fR, \fC#else\fR  and  \fC#endif\fR  constructs,
+cycling  through them in the given order.
+.PP
+The  numeric  argument  \fIn\fR is used to modify the default  behavior of the
+command, where the bits are defined as follows:
+.IP \fB0x01\fR
+When this bit is set (the  default) the terminal  bell is rung if the matching
+fence cannot be found. 
+.IP \fB0x02\fR
+When  this bit is set the  command  moves the  cursor to the  matching  fence,
+updates the screen and pauses for 
+.Ht $pause-time 5
+before  moving hte cursor back again. When  omitted the cursor is simply moved
+to the matching fence.
+.IP \fB0x04\fR
+When this bit is set the fence the  cursor is  current  at is  treated  as the
+close  fence so  \fBgoto-matching-fence\fR  moves  backwards  through the file
+looking  for the  matching  open fence. When this bit is omitted  the fence is
+assumed to be the open  fence,  this bit is only used for  \fC'\fR and \fC"\fR
+type fences.
 .PP
 When the
 .Ht fence 2m
