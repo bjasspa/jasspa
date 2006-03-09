@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil002.4,v 2.6 2005-09-19 19:27:20 bill Exp $
+.Id $Id: m4fil002.4,v 2.7 2006-03-09 20:55:10 bill Exp $
 .Im MicroEmacs macro;function;string
 .so me.tni
 .TH &cat 4
@@ -69,7 +69,8 @@ Concatenate  two string  \fIstr1\fR with \fIstr2\fR to form a new string. i.e.
 .IP "\fB&lef\fR \fIstr\fR \fIlen\fR"
 Return  \fIlen\fR  leftmost  characters from \fIstr\fR. If \fIstr\fR length is
 shorter than \fIlen\fR then the string itself is returned. A \fIlen\fR of zero
-returns the empty string.
+returns  the empty  string. A -ve  \fIlen\fR  returns all but the  0-\fIlen\fR
+rightmost characters from \fIstr\fR.
 .IP "\fB&rig\fR \fIstr\fR \fIindex\fR"
 Returns the rightmost  characters of string \fIstr\fR from index  \fIindex\fR.
 This function causes some confusion,  consider \fB&lef\fR and \fB&rig\fR to be
@@ -78,10 +79,12 @@ the string equivalents of their integer counterparts
 and
 .Hl &mod &mod 4 ;
 \fB&rig\fR  returns  the  remainder  of the  equivalent  \fB&lef\fR  function.
-Invocation with \fIindex\fR set to zero returns \fIstr\fR.
+Invocation with  \fIindex\fR set to zero returns  \fIstr\fR. A -ve \fIindex\fR
+returns the 0-\fIindex\fR rightmost characters from \fIstr\fR.
 .IP "\fB&mid\fR \fIstr\fR \fIindex\fR \fIlen\fR"
 Extracts a sub-string from string \fIstr\fR, starting at position  \fIindex\fR
-of length \fIlen\fR.
+of length  \fIlen\fR. A -ve  \fIindex\fR  extracts  the string  starting  from
+0-\fIindex\fR from the end of \fIstr\fR with a length of \fIlen\fR.
 .IP "\fB&len\fR \fIstr\fR"
 Returns the integer length of the string (number of characters).
 .IP "\fB&slower\fR \fIstr\fR"
@@ -147,12 +150,12 @@ To retrieve the rightmost character from the string:
 .Me $emf-scheme
 .CS
 set-variable %foo "abcdef"
+; using -ve argument
+set-variable %result &rig %foo -1
+; using &len 
 set-variable %result &rig %foo &sub &len %foo 1
-.CE
-.Me $ehf-scheme
-or the same result could be achieved using \fB&mid\fR:
-.Me $emf-scheme
-.CS
+; using &mid to do the same thing 
+set-variable %result &mid %foo -1 1
 set-variable %result &mid %foo &sub &len %foo 1 1
 .CE
 .Me $ehf-scheme
