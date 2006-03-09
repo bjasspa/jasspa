@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd077.2,v 2.8 2005-01-15 14:52:25 jon Exp $
+.Id $Id: m2cmd077.2,v 2.9 2006-03-09 21:38:31 bill Exp $
 .Im MicroEmacs command|shell
 .ds C0 "(\fB\*e backslash\fR)\ \&
 .so me.tni
@@ -78,7 +78,8 @@ Disable the command  name  mangling (MS Win32  versions  only). By default any
 \&'\fC/\fR' characters found in the command name (the first argument only) are
 converted to '\fC\\\fR' characters to make it Windows compliant.
 .IP \fB0x20\fR
-Displays the new process window, by default the window is hidden.
+Displays the new process window (win32  versions  only), by default the window
+is hidden.
 .IP \fB0x40\fR
 Raw ipipe,  disable  text  annotation  at the start and end of the pipe output
 and force
@@ -92,6 +93,12 @@ variable
 but  allows  the  pipe to be set  when  the  ipipe  is  created.  Setting  the
 \fI$buffer-ipipe\fR  on  invocation  allows the pipe exit status to be trapped
 properly.
+.IP \fB0x100\fR
+When set the command-line to be run is the first line of buffer  \fIstring\fR,
+this feature can be used to overcome the default 1024  character  command-line
+limit. When a  multiple-line command-line is required, a -ve  argument  can be
+given to
+.Ht insert-string 2 .
 .PP
 Many other macro commands (see
 .Ht compile 3 ,
