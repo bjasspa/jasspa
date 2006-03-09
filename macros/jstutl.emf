@@ -24,6 +24,7 @@
 ;    \bSF  - Start new file
 ;    \bSL  - Start new line
 ;    \bSP  - Start new page
+;    \bSN  - No-text symbol
 ;    \bST  - Insert the table of content (temporary)
 ;    \bPI  - Indent level
 ;    \bPT  - Indent tab level (used only in generated TOC)
@@ -551,21 +552,37 @@
             !endif
             insert-string "\bCC"
             forward-delete-char
-            set-mark
-            !if &seq @wc "j"
-                insert-string "\bCJ"
-                forward-paragraph
-                backward-char
-                -1 kill-region
-            !else
-                search-buffer "me" "\\S"
-                backward-char
-                -1 kill-region
-                insert-newline
-                insert-newline
-                &mul &add #l0 1 $buffer-indent-width insert-space
-                goto-alpha-mark "P"
+            !while &not &sin @wc " \n\t"
+                !if &seq @wc "!"
+                !elif &seq @wc ">"
+                    set-variable #p9 "Multiple column spanning not yet implemented"
+                    !return 0
+                !elif &seq @wc "V"
+                    set-variable #p9 "Multiple row spanning not yet implemented"
+                    !return 0
+                !endif
+                forward-delete-char
+            !done
+            !while &sin @wc " \t"
+                forward-delete-char
+            !done
+            !if &seq @wc "\n"
+                forward-char
+                !if &seq &trr @wl ""
+                    backward-char
+                    insert-string "\bSN"
+                !else
+                    backward-char
+                    set-mark
+                    search-buffer "me" "\\S"
+                    backward-char
+                    -1 kill-region
+                !endif
             !endif
+            insert-newline
+            insert-newline
+            &mul &add #l0 1 $buffer-indent-width insert-space
+            goto-alpha-mark "P"
         !endif
         !return
     !endif
@@ -939,7 +956,7 @@
     !if &exi :JVtitle
         insert-string &spr "<TITLE>%s</TITLE>\n" :JVtitle
     !else
-        insert-string &spr "<TITLE>%s</TITLE>\n" &rig &rsin "/" $buffer-fname
+        insert-string &spr "<TITLE>%s</TITLE>\n" &rig $buffer-fname &rsin "/" $buffer-fname
     !endif
     !if &exi :JVauthor
         insert-string &spr "<META NAME=\"Author\" CONTENT=\"%s\">\n" :JVauthor
@@ -984,15 +1001,17 @@
     replace-string "<" "&lt;"
     beginning-of-buffer
     replace-string ">" "&gt;"
+    beginning-of-buffer
+    replace-string "\bSN" "&nbsp;"
     ; Handle tables first - there is an extra \bPI for each para in a table - remove
     end-of-buffer
     !repeat
-        !force search-buffer "meb" "\bCT.*\bCt\\(.*\\)\bct"
+        !force search-buffer "meb" "\bCT\\(.*\\)\bCt\\(.*\\)\bct"
         !if $status
-            set-variable #l3 @s0
-            set-variable #l4 @s1
+            set-variable #l3 @s1
+            set-variable #l4 @s2
             set-mark
-            &len #l3 forward-char
+            &len @s0 forward-char
             -1 kill-region
             !if &sin "c" #l3
                 insert-string "<CENTER>"
@@ -1043,7 +1062,7 @@
             !endif
             set-variable #l3 $window-line
             set-variable $window-line &add #l2 1
-            &sub #l2 #l3 replace-string  "\bPI\\(\bPI\\)*" "\\1"
+            &sub #l2 #l3 replace-string  "\bPI\\(\\(\bPI\\)*\\)" "\\1"
             set-variable $window-line #l2
         !endif
     !until &not $status
