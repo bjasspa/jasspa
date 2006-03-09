@@ -933,21 +933,6 @@ osd .osd.notes-mn 0   b
 !emacro
 
 define-macro notes
-    !force 0 notes-get-frame
-    !if &not $status
-        @# notes-file
-    !else
-        !force 0 find-buffer .current
-        !if &and $status &exi :notes-cur
-            notes-create-display
-        !else
-            notes-close
-            @# notes-file
-        !endif
-    !endif
-!emacro
-
-define-macro notes
     ; See if user already has a notes file loaded
     !force 0 notes-get-frame
     !if $status

@@ -1,9 +1,5 @@
-> -!- jst -!-
->
->  Copyright $YEAR$ $COMPANY_NAME$.
->
-> Title:    
-> Author:   $USER_NAME$
-> Created:  $ASCII_TIME$
-> Modified: <20020114.1413>
->
+[c -!- jst -!-]
+[c Copyright: $YEAR$ $COMPANY_NAME$]
+[c Created:   $ASCII_TIME$]
+[vns title "$FILE_BASENAME$"]     
+[vns author "$USER_NAME$"]
