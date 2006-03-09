@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd131.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd131.2,v 2.6 2006-03-09 21:38:32 bill Exp $
 .Im MicroEmacs command|shell
 .so me.tni
 .TH shell-command 2
@@ -13,6 +13,7 @@ shell-command \- Perform an operating system command
 .Me $a
 .SH SYNOPSIS
 .na
+.I n
 .B shell-command
 "\fIstring\fR"
 .ad
@@ -22,6 +23,42 @@ performs an operating system call with the given \fIstring\fR as its argument.
 The command only fails if the shell-command call returns \-1. The
 .Ht $result 5
 variable is set the return value and can be used to test the result.
+.PP
+The  argument  \fIn\fR  can be used to  change  the  default  behavior  of the
+shell-command, \fIn\fR is a bit based flag where:-
+.IP \fB0x01\fR
+When set shell-command  waits for the command to complete, this is the default
+behavior. When not set the command is launched and forgotten  about, the value
+returned in
+.Ht $result 5
+will not reflect the exit code of the executed process itself.
+.IP \fB0x04\fR
+Disable the use of the  command-line  processor  to launch the program  (win32
+versions  only). By default the  "\fBcommand\fR"  is launched by executing the
+command:
+.CS
+    %COMSPEC% /c command 
+.CE 0
+.IP
+Where  \fC%COMSPEC%\fR  is  typically  command.com.  If this  bit is set,  the
+"\fBcommand\fR" is launched directly.
+.IP \fB0x08\fR
+Detach the launched  process from \*(mS (win32  versions only). By default the
+command is launched as a child  process of \*(mS with a new console. With this
+bit set the process is completely detached from \*(mS instead.
+.IP \fB0x10\fR
+Disable  the  command  name  mangling  (win32  versions  only). By default any
+\&'\fC/\fR' characters found in the command name (the first argument only) are
+converted to '\fC\\\fR' characters to make it Windows compliant.
+.IP \fB0x20\fR
+Displays the new process window (win32  versions  only), by default the window
+is hidden.
+.IP \fB0x100\fR
+When set the command-line to be run is the first line of buffer  \fIstring\fR,
+this feature can be used to overcome the default 1024  character  command-line
+limit. When a  multiple-line command-line is required, a -ve  argument  can be
+given to
+.Ht insert-string 2 .
 .SH "SEE ALSO"
 .na
 .Ht $result 5 ,
