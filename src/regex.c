@@ -695,9 +695,9 @@ meRegexGroupComp(meRegex *regex, meRegexItem **head, unsigned char **regStr) ;
 do {                                                                         \
     switch(cc)                                                               \
     {                                                                        \
-    case 'a':   cc = 0x07; break;                                            \
     case 'e':   cc = 0x1b; break;                                            \
     case 'f':   cc = 0x0c; break;                                            \
+    case 'g':   cc = 0x07; break;                                            \
     case 'n':   cc = 0x0a; break;                                            \
     case 'r':   cc = 0x0d; break;                                            \
     case 't':   cc = 0x09; break;                                            \
@@ -960,7 +960,7 @@ meRegexItemGet(meRegex *regex, meRegexItem *lastItem,
                 return meREGEX_ERROR_OCLASS ;
             if(cc == '\\')
             {
-                static char *classChar="dDhHlLsSuUwW" ;
+                static char *classChar="aAdDhHlLmMsSuUwW" ;
                 char *ss ;
                 cc = *rs++ ;
                 if((ss=strchr(classChar,cc)) != NULL)
@@ -973,14 +973,18 @@ meRegexItemGet(meRegex *regex, meRegexItem *lastItem,
                     do
                     {
                         if(ii == 0)
-                            kk = isDigit(jj) ;
+                            kk = isAlpha(jj) ;
                         else if(ii == 1)
-                            kk = isXDigit(jj) ;
+                            kk = isDigit(jj) ;
                         else if(ii == 2)
-                            kk = isLower(jj) ;
+                            kk = isXDigit(jj) ;
                         else if(ii == 3)
-                            kk = isSpace(jj) ;
+                            kk = isLower(jj) ;
                         else if(ii == 4)
+                            kk = isAlphaNum(jj) ;
+                        else if(ii == 5)
+                            kk = isSpace(jj) ;
+                        else if(ii == 6)
                             kk = isUpper(jj) ;
                         else
                             kk = isWord(jj) ;
