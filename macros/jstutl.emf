@@ -554,6 +554,10 @@
             forward-delete-char
             !while &not &sin @wc " \n\t"
                 !if &seq @wc "!"
+                    !if &not &equ 1 &mod &lget .tbl-cell #l7 &lget .tbl-col #l7
+                        set-variable #p9 &spr "Table cell(s) missing according to row start '!' flag"
+                        !return 0
+                    !endif
                 !elif &seq @wc ">"
                     set-variable #p9 "Multiple column spanning not yet implemented"
                     !return 0
