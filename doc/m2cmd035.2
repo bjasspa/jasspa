@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd035.2,v 2.7 2005-02-19 10:56:30 jon Exp $
+.Id $Id: m2cmd035.2,v 2.8 2006-03-09 20:51:29 bill Exp $
 .Im MicroEmacs command|delete
 .ds C0 "(\fB\*ed\fR)\ \&
 .ds C1 "(\fB\*e\*(bS\fR)\ \&
@@ -32,9 +32,11 @@ backward-kill-word \- Delete previous word at the cursor position
 deletes the next \fIn\fR words  starting at the current  cursor  position, the
 deleted text is added to the kill buffer. See
 .Ht forward-word  2
-for a description of word  boundaries. If the argument  \fIn\fR is \fC0\fR the
-command has no effect. If a \-ve  argument is  specified,  \fIn\fR  words are
-deleted backwards (i.e. this is the same as 
+for a description of word  boundaries. If no argument \fIn\fR is given and the
+current  character is a non-word  character then only the characters  from the
+current  position to the start of the next word are  removed. If the  argument
+\fIn\fR is \fC0\fR the command has no effect. If a \-ve argument is specified,
+\fIn\fR words are deleted backwards (i.e. this is the same as 
 .BR "-n backward-kill-word" ).
 .PP
 .B backward-kill-word
