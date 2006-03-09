@@ -1932,7 +1932,7 @@ define-macro cc-add-view
                 osd #l8 &inc #l2 1 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 &sub #l2 1
             !elif &seq #l1 "x"
                 osd #l8 &inc #l2 1 "f" "    Multiple Files: "
-                osd #l8 &inc #l2 1 "fh" "    "
+                osd #l8 &inc #l2 1 "fh" "        "
                 osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use \HME diff tool" &bor #l4 #l0 cc-setup-cbc
             !elif &seq #l1 "Z"
                 osd #l8 &inc #l2 1 "fh" "    "
