@@ -905,7 +905,7 @@ extern void mkTempCommName(meUByte *filename, meUByte *basename) ;
 #define LAUNCH_SHOWWINDOW    0x0020      /* Dont hide the new cmd wdw */
 #define LAUNCH_RAW           0x0040      /* Raw pipe output           */
 #define LAUNCH_BUFIPIPE      0x0080      /* Ipipe function provided   */
-#define LAUNCH_BUFCMDLINE    0x0100      /* Ipipe function provided   */
+#define LAUNCH_BUFCMDLINE    0x0100      /* cmd to run is 1st line of buf */
 #define LAUNCH_USER_FLAGS    0x00FE      /* User flags bitmask        */
 #define LAUNCH_SHELL         0x0100
 #define LAUNCH_SYSTEM        0x0200
