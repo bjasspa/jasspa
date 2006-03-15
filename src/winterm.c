@@ -839,24 +839,28 @@ TTend (void)
         CONSOLE_CURSOR_INFO CursorInfo;
         COORD dwCursorPosition;
         
-        /* restore the console buffer size */
-        SetConsoleScreenBufferSize(hOutput, OldConsoleSize);
-
         /* Restore the console mode and title */
         if(hInput != INVALID_HANDLE_VALUE)
             SetConsoleMode(hInput, OldConsoleMode);
-        SetConsoleTitle(chConsoleTitle);
-
+        
         /* Show the cursor */
         GetConsoleCursorInfo (hOutput, &CursorInfo);
         CursorInfo.bVisible = meTRUE;
         SetConsoleCursorInfo (hOutput, &CursorInfo);
+#if MEOPT_EXTENDED
+        if((alarmState & meALARM_PIPED) == 0)
+#endif
+        {
+            /* restore the console buffer size */
+            SetConsoleScreenBufferSize(hOutput, OldConsoleSize);
 
-        /* Set cursor to bottom of screen, and print a newline */
-        dwCursorPosition.X = 0;
-        dwCursorPosition.Y = TTdepthDefault - 1;
-        SetConsoleCursorPosition(hOutput, dwCursorPosition);
-        putchar ('\n');
+            /* Set cursor to bottom of screen, and print a newline */
+            dwCursorPosition.X = 0;
+            dwCursorPosition.Y = TTdepthDefault - 1;
+            SetConsoleCursorPosition(hOutput, dwCursorPosition);
+            putchar ('\n');
+        }
+        SetConsoleTitle(chConsoleTitle);
     }
     return meTRUE ;
 }
@@ -1042,7 +1046,10 @@ meGetConsoleMessage(MSG *msg, int mode)
         size.X = Console.srWindow.Right-Console.srWindow.Left+1;
         size.Y = Console.srWindow.Bottom-Console.srWindow.Top+1;
         
-        SetConsoleScreenBufferSize(hOutput, size);
+#if MEOPT_EXTENDED
+        if((alarmState & meALARM_PIPED) == 0)
+#endif
+            SetConsoleScreenBufferSize(hOutput, size);
 
         /* Tell micro-emacs about it */
         frameCur->width = size.X ;
@@ -4777,12 +4784,17 @@ TTstart (void)
             TTwidthDefault = 8 ;
         if(TTdepthDefault < 4)
             TTdepthDefault = 4 ;
-        /* now fix the window buffer size to this window size to
-         * get rid of the horrid scroll bars! */
-        coord.X = TTwidthDefault ;
-        coord.Y = TTdepthDefault ;
-        SetConsoleScreenBufferSize(hOutput,coord);
-
+        
+#if MEOPT_EXTENDED
+        if((alarmState & meALARM_PIPED) == 0)
+#endif
+        {
+            /* now fix the window buffer size to this window size to
+             * get rid of the horrid scroll bars! */
+            coord.X = TTwidthDefault ;
+            coord.Y = TTdepthDefault ;
+            SetConsoleScreenBufferSize(hOutput,coord);
+        }
         consolePaintArea.Right = consolePaintArea.Bottom = 0 ;
         consolePaintArea.Left = consolePaintArea.Top = (SHORT) 0x7fff ;
 
@@ -5369,11 +5381,12 @@ void
 meFrameRepositionWindow(meFrame *frame, int resize)
 {
 #ifdef _ME_WINDOW
-    if(!meFrameGetWinMaximized(frame)
+    if(
 #ifdef _ME_CONSOLE
     /* If in console mode... */
-       && !(meSystemCfg & meSYSTEM_CONSOLE)
+       !(meSystemCfg & meSYSTEM_CONSOLE) &&
 #endif /* _ME_CONSOLE */
+       !meFrameGetWinMaximized(frame)
        )
     {
         RECT wRect, mRect ;
