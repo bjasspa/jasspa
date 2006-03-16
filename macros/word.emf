@@ -77,19 +77,10 @@ define-macro describe-word-find
         set-variable &ind &cat ".describe-word.desc" .describe-word.descn #l3
         !force search-buffer "Em" #l1
     !done
+    0 ml-write
 !emacro
 
-define-macro describe-word-com
-    !if &les @# 0
-        set-variable #l0 @ml2 "" .describe-word.word
-        !if &seq #l0 .describe-word.word
-            !return
-        !endif
-        set-variable .describe-word.word #l0
-    !elif &gre @# 0
-        set-variable $result .describe-word.word
-        !return
-    !endif
+0 define-macro describe-word-lup
     -1 osd .osd.wordc
     osd .osd.wordc 0 "sS" .scheme.osd-child 60 10 -1 -1
     !if &seq .describe-word.word ""
@@ -130,6 +121,14 @@ define-macro describe-word-com
     set-variable $window-col #l9
 !emacro
 
+0 define-macro describe-word-com
+    !if &les @# 0
+        set-variable .describe-word.word @ml2 "" .describe-word.word
+    !elif &gre @# 0
+        set-variable $result .describe-word.word
+    !endif
+!emacro
+
 0 define-macro describe-word-pick
     set-variable #l0 $mouse-y
     set-variable #l1 $mouse-x
@@ -147,18 +146,23 @@ define-macro describe-word-com
             !jump -3
         !endif
         set-variable .describe-word.word #l2
-        0 describe-word-com
+        describe-word-lup
     !endif
 !emacro
 
-osd .osd.word 0  "batcHsD" 9 3 66 17 -1 -1 30 .scheme.osd-title "Describe Word"
+osd .osd.word 0  "batcHsID" 9 3 66 17 -1 -1 30 20 .scheme.osd-title "Describe Word"
 osd .osd.word 10 ""
 osd .osd.word 15 "Shf" "  \HWord: " 20
 osd .osd.word 20 "ExHfth" .scheme.osd-entry "##############################" 1 describe-word-com
-osd .osd.word 25 "BHcfth" .scheme.osd-ebtt " \HInsert " f void
-osd .osd.word 30 "BHcft"  .scheme.osd-ebtt " E\Hxit "   0 void
+osd .osd.word 25 "fh" "    "
+osd .osd.word 30 "BHfxt"  .scheme.osd-ebtt " \HLook Up " f describe-word-lup
 osd .osd.word 40 ""
 osd .osd.word 50 "IbHc" .scheme.osd-sbar 60 10 .osd.wordc
+osd .osd.word 60 ""
+osd .osd.word 70 "BHrfth" .scheme.osd-ebtt " \HInsert " f void
+osd .osd.word 80 "fh" "    "
+osd .osd.word 90 "BHrfth"  .scheme.osd-ebtt " E\Hxit "   0 void
+osd .osd.word 95 "f" "    "
 
 define-macro describe-word
     !if &not &exi &ind &spr ".%s-command" .spell.language
@@ -180,6 +184,7 @@ define-macro describe-word
     !else
         set-variable .word ""
     !endif
+    describe-word-lup
     ; if the search variable is not set then we are simply lanching the look-up
     !if &not &exi &ind &spr ".%s-search" .spell.language
         !if &seq .word ""
@@ -197,6 +202,8 @@ define-macro describe-word
         !return &not @#
     !endif
     !if @#
+        beginning-of-line
+        set-mark
         set-variable #l0 0
         !while &gre .descn &pinc #l0 1
             insert-string &ind &cat ".desc" #l0
