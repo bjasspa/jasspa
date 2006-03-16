@@ -5,7 +5,7 @@
 .\"
 .\" Created By: Jon Green
 .\"
-.Id $Id: m1cmd000.1,v 2.15 2006-01-14 13:16:43 jon Exp $
+.Id $Id: m1cmd000.1,v 2.16 2006-03-16 22:01:33 bill Exp $
 .Im MicroEmacs function
 .so me.tni
 .TH me 1
@@ -108,7 +108,9 @@ This can be used in the following manner:
 .CS
         me "@testpipe.emf" < foo.a > foo.b
 .CE 
-See \fB\-p\fR for disabling user interaction.
+See \fB\-p\fR for disabling user interaction and the help page for command
+.Ht ml-write 2
+for a further example.
 .IP \fB-a\fR
 Toggle the auto-save mode, this toggles the 
 .Ht auto 2m 
@@ -196,7 +198,11 @@ for details.
 .IP \fB\-p\fR
 Used with the  \fB\-\fR  which  inputs  from  \fIstdin\fR  and  disables  user
 interaction  within \*(mS. To debug then the  \fB\-P\fR  option may be used to
-enable debug on \fIstderr\fR.
+enable debug on \fIstderr\fR. See the help pages for commands
+.Ht ml-write 2
+and
+.Ht command-wait 2
+for examples of this option's use.
 .IP \fB-P\fR
 Used with the \fB\-p\fR option and is used for debugging the pipe mode,
 .Ht ml-write 2

@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd160.2,v 2.4 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd160.2,v 2.5 2006-03-16 22:01:33 bill Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH command-wait 2
@@ -23,16 +23,21 @@ argument is given, \fBcommand-wait\fR waits for \-\fIn\fR milliseconds but the
 command  will  return if the user  interrupts  with any input  activity  (i.e.
 presses a key).
 .PP
-When no  argument is given  \fBcommand-wait\fR  loops  getting and  processing
-events  (user input,  screen  updates etc) until  either the calling  commands
-\fB.wait\fR command variable is undefined or set to false (\fC0\fR). This more
-complex  use of the  command  is used when a main macro must wait and  process
-input  until an exit  criteria  has been met, the input is best  processed  by
-setting the
+When no argument or an argument of 0 is given  \fBcommand-wait\fR  waits until
+either the calling command's  \fB.wait\fR  command variable is undefined or it
+is set to false  (\fC0\fR).  When no  argument  is given  events  such as user
+input, screen  updates etc. are still  processed,  this interface is best used
+when a main macro must wait and process  input until an exit criteria has been
+met, the user input is best processed by setting the
 .Ht $buffer-input 5
 variable to a second macro. The macro
 .Ht gdiff 3
-uses this command in this way.
+uses this command in this way, also see a comprehensive example below.
+.PP
+When no  argument is given user input and screen  update  events are  ignored,
+this is typically used when \*(mS is used in pipe mode, see option \fB-p\fR of
+.Ht me 1 ,
+see the example below.
 .SH EXAMPLE
 The  following  macro code will  display a message on the screen for a fixed 5
 seconds:
@@ -48,8 +53,113 @@ or till the user presses a key:
 .CS
 16 screen-poke 10 10 0 "Hello World!"
 -5000 command-wait
-.CE 0
+.CE
 .Me $ehf-scheme
+The  following  example  shows  how  command-wait  can be used to run a system
+process making \*(mS wait until the process has completed  before  continuing,
+yet giving feedback from the process to the user and allowing the user to kill
+the launched process. The process run is a recursive  directory  listing which
+will take a long time and give a lot of feed back, to kill the process  with a
+prompt use delete-buffer  (bound to '\fCC-x k\fR') or use abort-command (bound
+to '\fBC-g\fR') to kill immediately:
+.Me $emf-scheme
+.CS
+0 define-macro test-ipipe-macro
+    ; add extra macro code to process output here
+    !if &not @#
+        ; the process has finished
+        set-variable .test.wait 0
+    !endif
+!emacro
+
+0 define-macro test-input-macro
+    !if &seq @cck "redraw"
+        @# screen-update
+        !return
+    !elif &seq @cck "callback"
+        !force execute-named-command @cc
+        !return
+    !elif &seq @cck "idle-pick"
+        !abort
+    !elif &seq @cc "delete-buffer"
+        !force !force set-variable #l0 @mc1 "Abort test [y/n]? " "nNyY"
+        !if &and &iseq #l0 "y" .test.wait
+            !force ipipe-kill
+        !endif
+    !elif &seq @cc "abort-command"
+        !force ipipe-kill
+        set-variable .test.wait 0
+    !endif
+!emacro
+
+define-macro test
+    set-variable #l0 &con &band $system 0x100 "dir /s c:\\" "ls -R /"
+    set-variable .wait 1
+    !force !force !force 0x82 ipipe-shell-command #l0 "*test*" test-ipipe-macro
+    set-variable #l2 $status
+    !if &band #l1 1
+        !force 0 delete-buffer "*cc-cmdline*"
+    !endif
+    find-buffer "*test*"
+    set-variable $buffer-input test-input-macro
+    !force !force !force command-wait
+    set-variable $buffer-input ""
+    ml-write "[test complete]"
+!emacro
+.CE
+.Me $ehf-scheme
+The following macro code  demonstrates how \*(mS can be used as a command-line
+tool,  piping the output of another  sub-process  as it goes. In this  example
+\*(mS  executes a system  directory  listing  command and prints the output to
+stdout using ml-write.
+.Me $emf-scheme
+.CS
+ml-write "Loading pipetest.emf"
+
+define-macro pipetest-ipipe
+    !if &not @#
+        end-of-buffer
+    !else
+        goto-alpha-mark "I"
+    !endif
+    ml-write &spr "In pipetest-ipipe %d %d %d" @# .line $window-line
+    set-variable #l0 $window-line
+    set-variable $window-line .line
+    !while &les $window-line #l0
+        -1 ml-write @wl
+        forward-line
+    !done
+    set-variable .line $window-line
+    !if &not @#
+        -2 ml-write "Process finished"
+        set-variable .start-up.wait 0
+    !endif
+!emacro
+
+
+define-macro start-up
+    ml-write "Got into start-up"
+    set-variable .wait 1
+    set-variable .pipetest-ipipe.line 1
+    set-variable #l0 &con &band $system 0x100 "dir" "ls -l"
+    -2 ml-write &cat "About to execute: " #l0
+    0xc0 ipipe-shell-command #l0 "*test*" pipetest-ipipe
+    0 command-wait
+    ml-write "start-up continues"
+    exit-emacs
+!emacro
+
+ml-write "Loading pipetest.emf complete"
+.CE
+.Me $ehf-scheme
+To run this example, save the above macro code to \fCpipetest.emf\fR  and then
+run:
+.IP
+\fBme -n -p @pipetest.emf\fR
+.PP
+Use the \fB-P\fR option for additional debug lines, printed to stderr. Windows
+users  must  use a  console  capable  version  of  \*(mS,  i.e.  mec32.exe  or
+mecw32.exe.
 .SH "SEE ALSO"
 .na
 .Ht ml-write 2 ,
