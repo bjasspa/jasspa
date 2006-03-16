@@ -747,7 +747,7 @@ osd .osd.sar-nb 0 "NsDI" 51 14 -1 -1 100 100
 osd .osd.sar-nb 1 "Ptf" "Search"  .osd.sar-src
 osd .osd.sar-nb 2 "Ptf" "Replace" .osd.sar-rpc
 osd .osd.sar-nb 3 "Ptf" "Hilight" .osd.sar-hlt
-osd .osd.sar-nb 100 "It"            .osd.sar-src
+osd .osd.sar-nb 100 "It"          .osd.sar-src
 
 osd .osd.sar  0 ""
 osd .osd.sar  10 "It" .osd.sar-nb
