@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd145.2,v 2.10 2005-01-15 14:37:43 jon Exp $
+.Id $Id: m2cmd145.2,v 2.11 2006-03-16 22:01:33 bill Exp $
 .Im MicroEmacs command|message
 .so me.tni
 .TH ml-write 2
@@ -93,7 +93,9 @@ To  run  this   example  save  this  macro  in  a  new  macro  file  (such  as
 .CS
 cat input_file | me -n -p @mlwrite_test - > output_file
 .CE
-Note the \fCDEBUG\fR lines will be printed if \fB-P\fR option is used.
+Note the  \fCDEBUG\fR  lines will be printed if \fB-P\fR  option is used. Also
+see example given for
+.Ht command-wait 2 .
 .SH "SEE ALSO"
 .na
 .Ht command-wait 2 ,
