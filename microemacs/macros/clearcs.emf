@@ -62,9 +62,10 @@ set-variable .cc-init.path &reg &spr "/history/%s/clearcase/path" $platform ""
 set-variable .cc-init.vsep &reg "/history/clearcase/vsep" "@@"
 set-variable .cc-init.vsepr .cc-init.vsep
 str-to-regex .cc-init.vsepr
+set-variable .cc-init.fver ""
 
-set-variable .cc-init.names  "|State|Update|Checkout|Checkin|Add|Diff|Uncheckout|Annotate|Delete|Move|ConfigSpec|VTree|"
-set-variable .cc-init.flags  "|ZRFwS|VZOQS*|ChUJrS*!|CcrS*!|CDrS*!|WXxwS!|KrS*!|HLMw!|CDrS*!|CNDrS*!|*^|Ss^|"
+set-variable .cc-init.names  "|State|Update|Checkout|Checkin|Add|Diff|Uncheckout|Annotate|Delete|Move|ConfigSpec|VTree|Merge|"
+set-variable .cc-init.flags  "|ZRFwS|VZOQS*|ChUJrS*!|CcrS*!|CDrS*!|WXxwS!|KrS*!|HLMw!|CDrS*!|CNDrS*!|*^|Ss^|CvaGRrS*!|"
 set-variable .cc-init.defs1  "|1|1|1|0|"
 set-variable .cc-init.defs2  "|0|1|0|1|"
 set-variable .cc-init.defs3  "||0|0|1|1|"
@@ -73,11 +74,13 @@ set-variable .cc-init.defs5  "||0|1|"
 set-variable .cc-init.defs6  "|1|0|0|0|"
 set-variable .cc-init.defs7  "|1|1|"
 set-variable .cc-init.defs8  "|1|0|0|0|"
-set-variable .cc-init.defs9  "|"
-set-variable .cc-init.defs10 "|||1|1|"
+set-variable .cc-init.defs9  "||0|1|"
+set-variable .cc-init.defs10 "|||0|1|"
 set-variable .cc-init.defs11 "|"
 set-variable .cc-init.defs12 "|"
-set-variable #l9 12
+set-variable .cc-init.defs13 "|||1|1|1|"
+set-variable .cc-init.count  13
+set-variable #l9 .cc-init.count
 !repeat
     set-variable #l8 &lget .cc-init.flags #l9
     set-variable #l7 &ind &cat ".cc-init.defs" #l9
@@ -185,6 +188,19 @@ set-variable #l9 12
         set-variable .cc-init.name @ml24 "" .cc-init.name
     !else
         set-variable $result .cc-init.name
+    !endif
+!emacro
+0 define-macro cc-osd-fver
+    !if &les @# 0
+        set-variable #l0 @ml2 "" .cc-init.fver
+        set-variable #l0 &rep #l0 "\\" "/"
+        !if &seq #l0 "/main/LATEST"
+        !elif &seq &lef #l0 1 "/"
+            set-variable #l0 &cat "..." #l0
+        !endif
+        set-variable .cc-init.fver #l0
+    !else
+        set-variable $result .cc-init.fver
     !endif
 !emacro
 0 define-macro cc-osd-diffX
@@ -300,6 +316,10 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
                 osd .osd.ccosd &inc #l2 1 "fh" "    "
                 osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HEnable file filter" #l0 cc-osd-cbc
                 set-variable #l3 &con #l3 #l3 #l2
+            !elif &seq #l1 "G"
+                osd .osd.ccosd &inc #l2 1 "fh" "    "
+                osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Enable \Hgraphical merge" #l0 cc-osd-cbc
+                set-variable #l3 &con #l3 #l3 #l2
             !elif &seq #l1 "H"
                 osd .osd.ccosd &inc #l2 1 "fh" "    "
                 osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Output \Hheader information" #l0 cc-osd-cbc
@@ -325,9 +345,9 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
                     set-variable .cc-init.name ""
                 !endif
                 osd .osd.ccosd &inc #l2 1 "fh" "      "
-                osd .osd.ccosd &inc #l2 1 "EtxHfz" .scheme.osd-entry 60 1 "" #l0 cc-osd-name
-                osd .osd.ccosd &inc #l2 1 "f"  "    "
+                osd .osd.ccosd &inc #l2 1 "EtxHfhz" .scheme.osd-entry 60 1 "" #l0 cc-osd-name
                 set-variable #l3 &con #l3 #l3 #l2
+                osd .osd.ccosd &inc #l2 1 "f"  "    "
             !elif &seq #l1 "M"
                 osd .osd.ccosd &inc #l2 1 "fh" "    "
                 osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Include \Hremoved lines" #l0 cc-osd-cbc
@@ -389,6 +409,10 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
                 !else
                     osd .osd.ccosd #l2 "D"
                 !endif
+            !elif &seq #l1 "a"
+                osd .osd.ccosd &inc #l2 1 "fh" "    "
+                osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Enable \Hauto merge" #l0 cc-osd-cbc
+                set-variable #l3 &con #l3 #l3 #l2
             !elif &seq #l1 "h"
                 !if &bmod "dir"
                     osd .osd.ccosd #l2 "D"
@@ -401,6 +425,12 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
                 osd .osd.ccosd &inc #l2 1 "fh" "    "
                 osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Refresh directory \Hlisting" #l0 cc-osd-cbc
                 set-variable #l3 &con #l3 #l3 #l2
+            !elif &seq #l1 "v"
+                osd .osd.ccosd &inc #l2 1 "Sf" "    Merge \HVersion:" &add #l2 2
+                osd .osd.ccosd &inc #l2 1 "fh" "      "
+                osd .osd.ccosd &inc #l2 1 "EtxHfhz" .scheme.osd-entry 60 1 "" #l0 cc-osd-fver
+                set-variable #l3 &con #l3 #l3 #l2
+                osd .osd.ccosd &inc #l2 1 "f"  "    "
             !else
                 osd .osd.ccosd &inc #l2 1 "" &cat "flag " #l1
             !endif
@@ -1583,6 +1613,10 @@ define-macro cc-delete
 
 define-macro cc-move
     10 cc-osd
+    !if &seq "" &trr .cc-init.name
+        osd-dialog "ClearCase - Move" "    A valid file name must be given!    " "  \HAbort  "
+        !abort
+    !endif
     set-variable #l2 &spr "%s mv " .cc-init.com
     !if &seq .cc-init.comment ""
         set-variable #l2 &cat #l2 "-nc "
@@ -1613,6 +1647,87 @@ define-macro cc-vtree
     !endif
     7 cc-get-file-list 0 0 #l2
     0x124 shell-command "*cc-cmdline*"
+!emacro
+
+; ClearCase Merge ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro cc-merge
+    13 cc-osd
+    !if &seq "" &trr .cc-init.fver
+        osd-dialog "ClearCase - Merge" "    A valid findmerge version must be given!    " "  \HAbort  "
+        !abort
+    !endif
+    25 cc-get-file-list 0 0
+    set-variable #l5 &sub .cc-get-file-list.fcount .cc-get-file-list.dcount
+    set-variable #l2 &cat .cc-init.com " findmerge "
+    set-variable #l3 &spr " -fversion \"%s\" -nzero -abort " &rep &rep &trb .cc-init.fver "\\" "\\\\" "\"" "\\\""
+    !if &lget .cc-init.values13 5
+        ; recursive - must do -type f on directories
+        set-variable #l5 1
+    !else
+        set-variable #l3 &cat #l3 "-nr "
+    !endif
+    !if &lget .cc-init.values13 3
+        set-variable #l3 &cat #l3 "-merge "
+        !if &lget .cc-init.values13 4
+            set-variable #l3 &cat #l3 "-gmerge "
+        !endif
+    !elif &lget .cc-init.values13 4
+        set-variable #l3 &cat #l3 "-gmerge "
+    !else
+        set-variable #l3 &cat #l3 "-print "
+    !endif
+    !if &seq .cc-init.comment ""
+        set-variable #l3 &cat #l3 "-nc"
+    !else
+        set-variable #l3 "%s-c \"%s\"" #l3 &rep &rep &trb .cc-init.comment "\\" "\\\\" "\"" "\\\""
+    !endif
+    set-variable .cc-init.comment13 .cc-init.comment
+    find-buffer "*cc-cmdline*"
+    replace-string "\b" " "
+    beginning-of-buffer
+    ; merge all directories first
+    !if .cc-get-file-list.dcount
+        forward-line
+        set-mark
+        forward-line
+        copy-region
+        beginning-of-buffer
+        yank
+        -1 yank
+        beginning-of-buffer
+        -1 insert-string #l2
+        end-of-line
+        insert-string " -type d"
+        -1 insert-string #l3
+        goto-position "\x82"
+        set-variable #l4 &con #l5 0 3        
+        13 cc-cleartool #l4 $buffer-fname
+        !if #l5
+            find-buffer "*cc-cmdline*"
+            beginning-of-buffer
+            set-mark
+            forward-line
+            -1 kill-region
+        !endif
+    !endif
+    !if #l5
+        ; Now add all the files
+        -1 insert-string #l2
+        end-of-line
+        !if &lget .cc-init.values13 5
+            forward-delete-char
+            end-of-line
+        !endif
+        insert-string " -type f"
+        -1 insert-string #l3
+        !force goto-position "\x82"
+        13 cc-cleartool 3 $buffer-fname
+    !endif
+    !if &seq $buffer-fname ""
+    !elif &and &bmod "dir" &lget .cc-init.values13 6
+        dirlst-refresh
+    !endif
 !emacro
 
 ; ClearCase Explorer ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1774,7 +1889,7 @@ define-macro cc-add-view
     !endif
     !if $status
         -1 osd .osd.ccgenv
-        osd .osd.ccgenv 0 &cond &band $system 0x100 "AisSf" "AsSf" .scheme.osd-child 60 6 -1 -1
+        osd .osd.ccgenv 0 &cond &band $system 0x100 "AisSf" "AsSf" .scheme.osd-child 60 7 -1 -1
         set-variable #l1 0
         !while &not &seq "" &set #l2 &reg &cat "/history/clearcase/" &inc #l1 1 ""
             osd .osd.ccgenv 1 "xBd" #l2 f cc-setup-del-view
@@ -1859,10 +1974,9 @@ define-macro cc-add-view
 !emacro
 
 0 define-macro cc-setup-page
-    osd .osd.cctlc .cur "RxBd" &lget .cc-init.names &lget .order .cur .cur cc-setup-page
+    osd .osd.cctlc &lget .order .cur "RxBd" &lget .cc-init.names .cur .cur cc-setup-page
     set-variable .cur @#
-    set-variable @# &lget .order @#
-    osd .osd.cctlc .cur "RxBdH" .scheme.osd-entry &lget .cc-init.names @# .cur cc-setup-page
+    osd .osd.cctlc &lget .order @# "RxBdH" .scheme.osd-entry &lget .cc-init.names @# @# cc-setup-page
     set-variable #l8 .osd.cctlo
     set-variable #l9 &lget .cc-init.flags @#
     -1 osd #l8
@@ -1872,7 +1986,7 @@ define-macro cc-add-view
     set-variable #l0 0
     set-variable #l4 &mul @# 0x1000
     !while &not &seq "" &set #l1 &mid #l9 &pinc #l0 1 1
-        !if &not &sin #l1 "NSs*!"
+        !if &not &sin #l1 "NSsv*!"
             set-variable #l2 &mul #l0 100
             osd #l8 &inc #l2 1 ""
             !if &seq #l1 "C"
@@ -1888,6 +2002,9 @@ define-macro cc-add-view
             !elif &seq #l1 "F"
                 osd #l8 &inc #l2 1 "fh" "    "
                 osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HEnable file filter" &bor #l4 #l0 cc-setup-cbc
+            !elif &seq #l1 "G"
+                osd #l8 &inc #l2 1 "fh" "    "
+                osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Enable \Hgraphical merge" &bor #l4 #l0 cc-setup-cbc
             !elif &seq #l1 "H"
                 osd #l8 &inc #l2 1 "fh" "    "
                 osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Output \Hheader information" &bor #l4 #l0 cc-setup-cbc
@@ -1937,6 +2054,9 @@ define-macro cc-add-view
             !elif &seq #l1 "Z"
                 osd #l8 &inc #l2 1 "fh" "    "
                 osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Operate on \Hdirectory (ignore selection)" &bor #l4 #l0 cc-setup-cbc
+            !elif &seq #l1 "a"
+                osd #l8 &inc #l2 1 "fh" "    "
+                osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Enable \Hauto merge" &bor #l4 #l0 cc-setup-cbc
             !elif &seq #l1 "h"
                 osd #l8 &inc #l2 1 "fh" "    "
                 osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Hijack current file" &bor #l4 #l0 cc-setup-cbc
@@ -1950,31 +2070,33 @@ define-macro cc-add-view
     !done
 !emacro
 set-variable .cc-setup-page.cur 1
-set-variable .cc-setup-page.order "|5|8|4|3|9|6|10|1|7|2|"
+set-variable .cc-setup-page.order "|10|12|4|3|1|7|11|2|6|9|||8|"
 
 -1 osd .osd.cctlc
-osd .osd.cctlc 0 "sS" .scheme.osd-child 10 10 -1 -1
-set-variable #l9 0
-!while &not &seq "" &set #l8 &lget .cc-setup-page.order &inc #l9 1
-    osd .osd.cctlc #l9 "RxBd" &lget .cc-init.names #l8 #l9 cc-setup-page
-!done
+osd .osd.cctlc 0 "sS" .scheme.osd-child 10 11 -1 -1
+set-variable #l9 .cc-init.count
+!repeat
+    !if &not &seq "" &set #l8 &lget .cc-setup-page.order #l9
+        osd .osd.cctlc #l8 "RxBd" &lget .cc-init.names #l9 #l9 cc-setup-page
+    !endif
+!until &not &dec #l9 1
 
 -1 osd .osd.cctll
-osd .osd.cctll 0 "s" 17 15 -1 -1
+osd .osd.cctll 0 "s" 17 16 -1 -1
 osd .osd.cctll 10 "" ""
 osd .osd.cctll 20 "S" "  Select Tool:" 50
 osd .osd.cctll 40 "fh" "  "
-osd .osd.cctll 50 "IbHt" .scheme.osd-sbar 10 10 .osd.cctlc
+osd .osd.cctll 50 "IbHt" .scheme.osd-sbar 10 11 .osd.cctlc
 
-1 cc-setup-page
+5 cc-setup-page
 
 -1 osd .osd.cctl
-osd .osd.cctl 0 "s" 66 15 -1 -1
+osd .osd.cctl 0 "s" 66 16 -1 -1
 osd .osd.cctl 20 "Ith" .osd.cctll
 osd .osd.cctl 40 "It" .osd.cctlo
 
 -1 osd .osd.ccgen
-osd .osd.ccgen 0 "s" 66 15 -1 -1
+osd .osd.ccgen 0 "s" 66 16 -1 -1
 osd .osd.ccgen 10 "" ""
 osd .osd.ccgen 20 "Sfh" "  \HCleartool Command: " 30
 osd .osd.ccgen 30 "EtxHfz" .scheme.osd-entry 42 1 "" 1 cc-setup-entry
@@ -1985,16 +2107,16 @@ osd .osd.ccgen 70 "" ""
 osd .osd.ccgen 80 "fh" "  \HViews:             "
 osd .osd.ccgen 90 "BtfHx" .scheme.osd-ebtt " \HAdd " f cc-setup-add-view
 osd .osd.ccgen 100 "fh" "  "
-osd .osd.ccgen 110 "IbHt" .scheme.osd-sbar 60 6 .osd.ccgenv
+osd .osd.ccgen 110 "IbHt" .scheme.osd-sbar 60 7 .osd.ccgenv
 
 -1 osd .osd.ccnb
-osd .osd.ccnb 0 "NsI" 68 19 -1 -1 1
+osd .osd.ccnb 0 "NsI" 68 20 -1 -1 1
 osd .osd.ccnb 1 "Pft" "General" .osd.ccgen
 osd .osd.ccnb 2 "Pft" "Tools" .osd.cctl
 osd .osd.ccnb 100 "It" .osd.ccgen
 
 -1 osd .osd.ccstp
-osd .osd.ccstp 0 "batcDIHs" 5 4 70 23 -1 -1 2010 100 .scheme.osd-title "ClearCase Setup"
+osd .osd.ccstp 0 "batcDIHs" 5 4 70 24 -1 -1 2010 100 .scheme.osd-title "ClearCase Setup"
 osd .osd.ccstp 100 "It" .osd.ccnb
 osd .osd.ccstp 2000 ""
 osd .osd.ccstp 2010 "BtcfHh" .scheme.osd-ebtt " \HOkay " f void
@@ -2030,6 +2152,7 @@ define-macro cc-setup
         osd @# 60 "" "\HDiff files"        f cc-diff
         osd @# 70 "" "\HAdd files"         f cc-add
         osd @# 80 "" "Anno\Htate"          f cc-annotate
+        osd @# 85 "" "\HMerge files"       f cc-merge
     !else
         osd @# 30 "" "Checkout files"
         osd @# 40 "" "Uncheckout files"
@@ -2037,6 +2160,7 @@ define-macro cc-setup
         osd @# 60 "" "Diff files"
         osd @# 70 "" "Add files"
         osd @# 80 "" "Annotate"
+        osd @# 85 "" "Merge files"
     !endif
     !if &not @?
         osd @# 130 "" "Delete line C-\Hk"  f cc-state-delete-line
