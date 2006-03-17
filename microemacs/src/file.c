@@ -819,7 +819,7 @@ typedef struct FILENODE {
     meUByte  *fname;                        /* Name of the file */
     meUByte  *lname;                        /* Linkname */
     meUByte   attrib[FILENODE_ATTRIBLEN] ;
-    meInt   size ;
+    meUInt    size ;
 #ifdef _UNIX
     time_t  mtime ;
 #endif
@@ -963,7 +963,7 @@ getDirectoryInfo(meUByte *fname)
             curFile->attrib[1] = (statTestRead(sbuf))  ? 'r' : '-' ;
             curFile->attrib[2] = (statTestWrite(sbuf)) ? 'w' : '-' ;
             curFile->attrib[3] = (statTestExec(sbuf))  ? 'x' : '-' ;
-            curFile->size = sbuf.st_size ;
+            curFile->size = (meUInt) sbuf.st_size ;
             curFile->mtime = sbuf.st_mtime ;
         }
         closedir(dirp) ;
@@ -992,7 +992,7 @@ getDirectoryInfo(meUByte *fname)
         makestrlow(ff) ;
         curFile->fname = ff ;
         curFile->lname = NULL ;
-        curFile->size  = fblk.ff_fsize ;
+        curFile->size  = (meUInt) fblk.ff_fsize ;
         curFile->mtime = (((meUInt) fblk.ff_ftime) & 0x0ffff) | (((meUInt) fblk.ff_fdate) << 16) ;
         /* construct attribute string */
         if(fblk.ff_attrib & FA_DIREC)
@@ -1077,7 +1077,7 @@ readDirectory(meUByte *fname, meBuffer *bp, meLine *blp)
     FILETIME ftmp ;
 #endif
     meUByte buf[meBUF_SIZE_MAX];                  /* Working line buffer */
-    meInt totSize=0 ;
+    meUInt totSize=0 ;
     int len, dirs=0, files=0 ;
 
     if((fnode=getDirectoryInfo(fname)) == NULL)
