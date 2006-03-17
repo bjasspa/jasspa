@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd160.2,v 2.5 2006-03-16 22:01:33 bill Exp $
+.Id $Id: m2cmd160.2,v 2.6 2006-03-17 16:53:26 bill Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH command-wait 2
@@ -93,7 +93,7 @@ to '\fBC-g\fR') to kill immediately:
 !emacro
 
 define-macro test
-    set-variable #l0 &con &band $system 0x100 "dir /s c:\\" "ls -R /"
+    set-variable #l0 &con &band $system 0x100 "dir /s c:\\\\" "ls -R /"
     set-variable .wait 1
     !force !force !force 0x82 ipipe-shell-command #l0 "*test*" test-ipipe-macro
     set-variable #l2 $status
