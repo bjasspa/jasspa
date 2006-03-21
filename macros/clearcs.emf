@@ -64,8 +64,8 @@ set-variable .cc-init.vsepr .cc-init.vsep
 str-to-regex .cc-init.vsepr
 set-variable .cc-init.fver ""
 
-set-variable .cc-init.names  "|State|Update|Checkout|Checkin|Add|Diff|Uncheckout|Annotate|Delete|Move|ConfigSpec|VTree|Merge|"
-set-variable .cc-init.flags  "|ZRFwS|VZOQS*|ChUJrS*!|CcrS*!|CDrS*!|WXxwS!|KrS*!|HLMw!|CDrS*!|CNDrS*!|*^|Ss^|CvaGRrS*!|"
+set-variable .cc-init.names  "|State|Update|Checkout|Checkin|Add|Diff|Uncheckout|Annotate|Delete|Move|ConfigSpec|VTree|Merge|Describe|"
+set-variable .cc-init.flags  "|ZRFwS|VZOQS*|ChUJrS*!|CcrS*!|CDrS*!|WXxwS!|KrS*!|HLMw!|CDrS*!|CNDrS*!|*^|Ss^|CvaGRrS*!|lwS!|"
 set-variable .cc-init.defs1  "|1|1|1|0|"
 set-variable .cc-init.defs2  "|0|1|0|1|"
 set-variable .cc-init.defs3  "||0|0|1|1|"
@@ -79,7 +79,8 @@ set-variable .cc-init.defs10 "|||0|1|"
 set-variable .cc-init.defs11 "|"
 set-variable .cc-init.defs12 "|"
 set-variable .cc-init.defs13 "|||1|1|1|"
-set-variable .cc-init.count  13
+set-variable .cc-init.defs14 "|0|0|"
+set-variable .cc-init.count  14
 set-variable #l9 .cc-init.count
 !repeat
     set-variable #l8 &lget .cc-init.flags #l9
@@ -421,6 +422,10 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
                     osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HHijack current file" #l0 cc-osd-cbc
                     set-variable #l3 &con #l3 #l3 #l2
                 !endif
+            !elif &seq #l1 "l"
+                osd .osd.ccosd &inc #l2 1 "fh" "    "
+                osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Output detailed \Hinformation" #l0 cc-osd-cbc
+                set-variable #l3 &con #l3 #l3 #l2
             !elif &seq #l1 "r"
                 osd .osd.ccosd &inc #l2 1 "fh" "    "
                 osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Refresh directory \Hlisting" #l0 cc-osd-cbc
@@ -1664,8 +1669,6 @@ define-macro cc-merge
     !if &lget .cc-init.values13 5
         ; recursive - must do -type f on directories
         set-variable #l5 1
-    !else
-        set-variable #l3 &cat #l3 "-nr "
     !endif
     !if &lget .cc-init.values13 3
         set-variable #l3 &cat #l3 "-merge "
@@ -1698,6 +1701,9 @@ define-macro cc-merge
         beginning-of-buffer
         -1 insert-string #l2
         end-of-line
+        !if &not &lget .cc-init.values13 5
+            insert-string " -d"
+        !endif
         insert-string " -type d"
         -1 insert-string #l3
         goto-position "\x82"
@@ -1718,6 +1724,8 @@ define-macro cc-merge
         !if &lget .cc-init.values13 5
             forward-delete-char
             end-of-line
+        !else
+            insert-string " -nr"
         !endif
         insert-string " -type f"
         -1 insert-string #l3
@@ -1728,6 +1736,15 @@ define-macro cc-merge
     !elif &and &bmod "dir" &lget .cc-init.values13 6
         dirlst-refresh
     !endif
+!emacro
+
+; ClearCase Describe ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro cc-describe
+    14 cc-osd
+    set-variable #l2 &spr "%s describe %s" .cc-init.com &con &lget .cc-init.values8 1 "-long " ""
+    7 cc-get-file-list 0 0 #l2
+    14 cc-cleartool 3 $buffer-fname
 !emacro
 
 ; ClearCase Explorer ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2060,6 +2077,9 @@ define-macro cc-add-view
             !elif &seq #l1 "h"
                 osd #l8 &inc #l2 1 "fh" "    "
                 osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Hijack current file" &bor #l4 #l0 cc-setup-cbc
+            !elif &seq #l1 "l"
+                osd #l8 &inc #l2 1 "fh" "    "
+                osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Output detailed \Hinformation" &bor #l4 #l0 cc-setup-cbc
             !elif &seq #l1 "r"
                 osd #l8 &inc #l2 1 "fh" "    "
                 osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Refresh directory \Hlisting" &bor #l4 #l0 cc-setup-cbc
@@ -2070,10 +2090,10 @@ define-macro cc-add-view
     !done
 !emacro
 set-variable .cc-setup-page.cur 1
-set-variable .cc-setup-page.order "|10|12|4|3|1|7|11|2|6|9|||8|"
+set-variable .cc-setup-page.order "|11|13|4|3|1|8|12|2|6|10|||9|7|"
 
 -1 osd .osd.cctlc
-osd .osd.cctlc 0 "sS" .scheme.osd-child 10 11 -1 -1
+osd .osd.cctlc 0 "sS" .scheme.osd-child 10 12 -1 -1
 set-variable #l9 .cc-init.count
 !repeat
     !if &not &seq "" &set #l8 &lget .cc-setup-page.order #l9
@@ -2086,7 +2106,7 @@ osd .osd.cctll 0 "s" 17 16 -1 -1
 osd .osd.cctll 10 "" ""
 osd .osd.cctll 20 "S" "  Select Tool:" 50
 osd .osd.cctll 40 "fh" "  "
-osd .osd.cctll 50 "IbHt" .scheme.osd-sbar 10 11 .osd.cctlc
+osd .osd.cctll 50 "IbHt" .scheme.osd-sbar 10 12 .osd.cctlc
 
 5 cc-setup-page
 
@@ -2133,39 +2153,47 @@ define-macro cc-setup
     -1 osd @#
     osd @# 0 "b"
     osd @# 10  "" "Current \HState"    f cc-state
-    osd @# 20  "" "\HUpdate files"     f cc-update
-    osd @# 95  "-"
-    osd @# 100 "" "E\Hxplorer"         f cc-explorer
-    osd @# 110 "" "\HConfig Spec"      f cc-config-spec
-    osd @# 150 "-"
-    osd @# 160 "" "Clear CC console"   f cc-clear-console
-    osd @# 170 "" "ClearCase Setup"    f cc-setup
-    !if &equ :tag-count 1
-        osd @# 90 "" "\HVersion Tree"  f cc-vtree
-    !else
-        osd @# 90 "" "Version Tree"
-    !endif
-    !if :tag-count
-        osd @# 30 "" "Check\Hout files"    f cc-checkout
-        osd @# 40 "" "U\Hncheckout files"  f cc-uncheckout
-        osd @# 50 "" "Check\Hin files"     f cc-checkin
-        osd @# 60 "" "\HDiff files"        f cc-diff
-        osd @# 70 "" "\HAdd files"         f cc-add
-        osd @# 80 "" "Anno\Htate"          f cc-annotate
-        osd @# 85 "" "\HMerge files"       f cc-merge
-    !else
-        osd @# 30 "" "Checkout files"
-        osd @# 40 "" "Uncheckout files"
-        osd @# 50 "" "Checkin files"
-        osd @# 60 "" "Diff files"
-        osd @# 70 "" "Add files"
-        osd @# 80 "" "Annotate"
-        osd @# 85 "" "Merge files"
-    !endif
-    !if &not @?
-        osd @# 130 "" "Delete line C-\Hk"  f cc-state-delete-line
-        !if :tag-count
-            osd @# 140 "" "Delete files"   f cc-state-delete
+    osd @# 20  "" "\HUpdate elements"  f cc-update
+    osd @# 500  "-"
+    osd @# 510 "" "CC E\Hxplorer"      f cc-explorer
+    osd @# 520 "" "\HConfig Spec"      f cc-config-spec
+    osd @# 530 "" "Clear CC console"   f cc-clear-console
+    osd @# 540 "" "ClearCase Setup"    f cc-setup
+    !if &seq $buffer-bname "*cc-state*"
+        cc-state-tag-list
+        goto-position "\x82"
+        osd @# 700 "-"
+        osd @# 710 "" "Delete line    C-\Hk"   f cc-state-delete-line
+        !if .find-file.file-count
+            osd @# 720 "" "Delete files"       f cc-state-delete
         !endif
+    !endif
+    !if &equ .find-file.file-count 1
+        osd @# 80 "" "\HVersion Tree"  f cc-vtree
+    !else
+        osd @# 80 "" "Version Tree"
+    !endif
+    !if .find-file.file-count
+        osd @# 30  "" "\HMerge elements"       f cc-merge
+        osd @# 40  "" "Check\Hout elements"    f cc-checkout
+        osd @# 50  "" "U\Hncheckout elements"  f cc-uncheckout
+        osd @# 60  "" "\HDiff elements"        f cc-diff
+        osd @# 70  "" "Check\Hin elements"     f cc-checkin
+        osd @# 90  "" "\HDescribe elements"    f cc-describe
+        osd @# 100 "" "Anno\Htate elements"    f cc-annotate
+        osd @# 110 "" "\HAdd elements"         f cc-add
+        osd @# 120 "" "Mov\He element"         f cc-move
+        osd @# 130 "" "Delete elements"        f cc-delete
+    !else
+        osd @# 30  "" "Merge elements"
+        osd @# 40  "" "Checkout elements"
+        osd @# 50  "" "Uncheckout elements"
+        osd @# 60  "" "Diff elements"
+        osd @# 70  "" "Checkin elements"
+        osd @# 90  "" "Describe elements"
+        osd @# 100 "" "Annotate elements"
+        osd @# 110 "" "Add elements"
+        osd @# 120 "" "Move element"
+        osd @# 130 "" "Delete elements"
     !endif
 !emacro
