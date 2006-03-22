@@ -694,7 +694,8 @@ define-macro notes-tree-isearch-backward
     set-variable :mouse-drop-1 notes-tree-mouse-select
     set-variable :mouse-pick-3 void
     set-variable :mouse-drop-3 notes-tree-context-menu
-    buffer-bind-key notes-close "C-x k"
+    buffer-bind-key notes-close "f10"
+    buffer-bind-key notes-delete "C-x k"
     buffer-bind-key notes-find-buffer "C-x b"
     buffer-bind-key notes-swap-window "tab"
     buffer-bind-key notes-swap-window "C-tab"
@@ -736,7 +737,8 @@ define-macro notes-tree-isearch-backward
         1 buffer-mode "undo"
     !endif
     set-variable $buffer-mode-line &rep $mode-line "%b" &spr "*%s: %s*" #l1 &reg #l4 "" 
-    buffer-bind-key notes-close "C-x k"
+    buffer-bind-key notes-close "f10"
+    buffer-bind-key notes-delete "C-x k"
     buffer-bind-key notes-find-buffer "C-x b"
     buffer-bind-key notes-swap-window "C-tab"
     previous-window
@@ -749,6 +751,14 @@ define-macro notes-close
         !if &equ #l0 $frame-id
             1 next-frame
         !endif
+    !endif
+!emacro
+
+define-macro notes-delete
+    set-variable #l0 @mc1 &spr "Delete notes \"%s\" [y/n]? " .notes.current "nNyY"
+    !if &iseq #l0 "y"
+        delete-buffer .notes.current
+        notes-close
     !endif
 !emacro
 
