@@ -35,19 +35,26 @@ set-variable %gdiff-com &cond &seq %gdiff-com "ERROR" "diff -c -w" %gdiff-com
 !emacro
     
 0 define-macro gdiff-next-unassigned
-    set-variable #l0 $window-line
+    !if &les @# 0
+        !if &equ $window-line 1
+            end-of-buffer
+        !endif
+    !elif &seq @wc ""
+        beginning-of-buffer
+    !endif
     !while &not &equ $line-scheme -1
         !force @# forward-line
         !if &not $status
-            execute-named-command &cond &les @# 0 end-of-buffer beginning-of-buffer
+            ml-write "[No more unassigned differences found]"
+            !bell
+            !abort
         !endif
     !done
     !while &not &or &or &equ $line-scheme .scheme.gdfpad &equ $line-scheme .scheme.gdfadd &equ $line-scheme .scheme.gdfchange
         !force @# forward-line
         !if &not $status
-            execute-named-command &cond &les @# 0 end-of-buffer beginning-of-buffer
-        !endif
-        !if &equ #l0 $window-line
+            ml-write "[No more unassigned differences found]"
+            !bell
             !abort
         !endif
     !done
@@ -58,19 +65,26 @@ set-variable %gdiff-com &cond &seq %gdiff-com "ERROR" "diff -c -w" %gdiff-com
 !emacro
 
 0 define-macro gdiff-next
-    set-variable #l0 $window-line
+    !if &les @# 0
+        !if &equ $window-line 1
+            end-of-buffer
+        !endif
+    !elif &seq @wc ""
+        beginning-of-buffer
+    !endif
     !while &not &equ $line-scheme -1
         !force @# forward-line
         !if &not $status
-            execute-named-command &cond &les @# 0 end-of-buffer beginning-of-buffer
+            ml-write "[No more differences found]"
+            !bell
+            !abort
         !endif
     !done
     !while &equ $line-scheme -1
         !force @# forward-line
         !if &not $status
-            execute-named-command &cond &les @# 0 end-of-buffer beginning-of-buffer
-        !endif
-        !if &equ #l0 $window-line
+            ml-write "[No more differences found]"
+            !bell
             !abort
         !endif
     !done
@@ -427,11 +441,19 @@ set-variable %gdiff-com &cond &seq %gdiff-com "ERROR" "diff -c -w" %gdiff-com
         -1 gdiff-next
     !elif &lfi "|C-down|" @cck
         1 gdiff-next
+    !elif &lfi "|esc up|" @cck
+        -1 gdiff-next-unassigned
+    !elif &lfi "|esc down|" @cck
+        1 gdiff-next-unassigned
     !elif &lfi "|mouse-pick-1|" @cck
         gdiff-mouse-pick-1
     !elif &lfi "|mouse-drop-1|" @cck
         gdiff-mouse-drop-1
-    !elif &lfi "|mouse-drop-3|f1|" @cck
+    !elif &lfi "|menu|f1|" @cck
+        set-variable $mouse-x $cursor-x
+        set-variable $mouse-y &add $cursor-y 1
+        .osd.gdiff osd
+    !elif &lfi "|mouse-drop-3|" @cck
         .osd.gdiff osd
     !elif &lfi "|g|" @cck
        gdiff-global-select
