@@ -1556,7 +1556,7 @@ osd .osd.dirlsts 50 ""  "Select \HAll"          1 dirlst-tag-set
 osd .osd.dirlsts 60 ""  "\HUnselect All"       -1 dirlst-tag-set
 
 -1 osd .osd.dirlst
-osd .osd.dirlst 0   b
+osd .osd.dirlst 0   bBo -1 1
 osd .osd.dirlst 65  "-"
 osd .osd.dirlst 110 ""  "\HNew Folder"          f dirlst-new-folder
 osd .osd.dirlst 120 ""  "Refresh \HList"        f dirlst-refresh
@@ -1881,7 +1881,7 @@ osd .osd.dirlst 160 ""  "File Tools Setup"      f file-tool-setup
 
 0 define-macro toolbar-file-list-mouse-drop-3
     -1 osd .osd.tmp
-    osd .osd.tmp 0 b
+    osd .osd.tmp 0 bBo -1 1
     osd .osd.tmp 10 "" "Goto Directory"
     !if &gre $window-line 2
         !if &seq &rig @wl &sub &len @wl 1 "/"

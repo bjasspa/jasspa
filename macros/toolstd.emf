@@ -217,7 +217,7 @@
 
 0 define-macro buffer-list-mouse-drop-3
     -1 osd .osd.tmp
-    osd .osd.tmp 0 b
+    osd .osd.tmp 0 bBo -1 1
     !if &gre $window-line 1
         osd .osd.tmp 10 "" "Switch to \HBuffer"   3 buffer-list-command
         osd .osd.tmp 20 "" "\HClose Buffer"      -1 buffer-list-command

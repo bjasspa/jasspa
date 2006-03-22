@@ -85,7 +85,7 @@
 0 define-macro kill-list-mouse-drop-3
     !if &les $window-line $window-eline
         -1 osd .osd.tmp
-        osd .osd.tmp 0 b
+        osd .osd.tmp 0 bBo -1 1
         osd .osd.tmp 10 "" "\HStore current kill"   1 kill-list-command
         osd .osd.tmp 20 "" "Make \Hcurrent kill"    2 kill-list-command
         osd .osd.tmp 30 "" "\HPaste"                3 kill-list-command
