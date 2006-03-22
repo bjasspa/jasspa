@@ -2151,7 +2151,7 @@ define-macro cc-setup
 
 0 define-macro osd-cc-file-menu
     -1 osd @#
-    osd @# 0 "b"
+    osd @# 0 "bBo" -1 1
     osd @# 10  "" "Current \HState"    f cc-state
     osd @# 20  "" "\HUpdate elements"  f cc-update
     osd @# 500  "-"

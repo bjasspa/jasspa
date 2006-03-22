@@ -1435,7 +1435,7 @@ define-macro cvs-resolve-conflicts
 
 0 define-macro osd-cvs-file-menu
     -1 osd @#
-    osd @# 0 "b"
+    osd @# 0 "bBo" -1 1
     osd @# 1  "" "Current \HState"     8 cvs-osd
     osd @# 5  "" "Check\Hout files"    2 cvs-osd
     osd @# 10 "" "\HUpdate files"     11 cvs-osd

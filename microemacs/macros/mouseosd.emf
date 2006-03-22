@@ -123,7 +123,7 @@ osd 28 2  "" "\HIgnore Case"          f sort-lines-ignore-case
 define-macro context-menu
     !if @#
         set-variable $mouse-x $cursor-x
-        set-variable $mouse-y &add $cursor-y 1
+        set-variable $mouse-y $cursor-y
         0x21 set-position "\x82"
         !if &exi :mouse-pick-3
             !force !force execute-line :mouse-pick-3
