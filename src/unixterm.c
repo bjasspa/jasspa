@@ -3667,10 +3667,7 @@ TTstart(void)
 {
     char *tt ;
 
-    if((meSystemCfg & meSYSTEM_CONSOLE) ||
-       (meGetenv("DISPLAY") == NULL) ||
-       (((tt = meGetenv("TERM")) != NULL) &&
-        (tt[0] == 'v') && (tt[1] == 't')))
+    if((meSystemCfg & meSYSTEM_CONSOLE) || (meGetenv("DISPLAY") == NULL))
         return TCAPstart() ;
     return XTERMstart() ;
 }
