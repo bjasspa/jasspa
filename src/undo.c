@@ -518,7 +518,7 @@ meUndo(int f, int n)
                     {
                         autowriteremove(frameCur->bufferCur) ;
                         meModeClear(frameCur->bufferCur->mode,MDEDIT) ;
-                        frameCur->windowCur->updateFlags |= WFMODE ;
+                        frameAddModeToWindows(WFMODE) ;  /* update ALL mode lines */
                     }
                 }
                 else if(meUndoIsLineSort(cun))
