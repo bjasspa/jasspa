@@ -197,6 +197,7 @@ hilight .hilight.zfile 0x44 "\eE" "" "\\}\e" "" "" .scheme.file
     set-variable #l7 &reg &spr "/history/%s/zfile/%s-remove" $platform :zftype ""
     set-variable #l2 &mid @wl &add #l0 1 &sub #l1 &add #l0 2
     set-variable #l4 $buffer-fname
+    set-variable #l6 $buffer-bname
     ; get a tmp file name and use the path of it as our scratch area
     ; use &stat to get '/'s in a windows and dos system
     set-variable #l0 &stat "a" $temp-name
@@ -215,6 +216,7 @@ hilight .hilight.zfile 0x44 "\eE" "" "\\}\e" "" "" .scheme.file
     ; create a temporary buffer, set the filename to the path and kick off extract
     find-buffer "*zfile log*"
     set-variable $buffer-fname #l0
+    set-variable #l8 &lef #l4 &rsin "/" #l4 
     set-variable #l9 &rep #l9 "%zb" &rig #l4 &rsin "/" #l4 
     !if &band $system 0x100
         set-variable #l4 &rep #l4 "/" "\\"
@@ -222,14 +224,16 @@ hilight .hilight.zfile 0x44 "\eE" "" "\\}\e" "" "" .scheme.file
     set-variable #l9 &rep &rep #l9 "%zf" #l4 "%fb" #l2
     0 pipe-shell-command #l9 "*zfile log*" @mna
     find-file #l3 @mna
-    set-variable $buffer-fname ""
-    set-variable #l5 $buffer-bname
+    0 change-buffer-name &spr "%s:%s" #l6 &rep #l2 "/" ":"
+    set-variable #l5  $buffer-bname
+    set-variable $buffer-fname #l8
     find-buffer "*zfile log*"
     !if &not &seq #l7 ""
         shell-command &rep #l7 "%fb" #l2
     !endif
     set-variable $buffer-fname ""
     -1 find-buffer "*zfile log*"
+    find-buffer #l5
     0 ml-write
 !emacro
 ;
@@ -335,14 +339,10 @@ define-macro find-zfile
         !endif
     !endif
     ; see if this has already been loaded
-    set-variable #l2 $buffer-bname
-    set-variable $buffer-names "[*].*"
-    !while &not &seq &set #l3 $buffer-names ""
-        find-buffer #l3
-        !if &seq $buffer-fname #l0
-            !return
-        !endif
-    !done
+    !force 2 find-buffer #l0
+    !if $status
+        !return
+    !endif
     ; create a unique buffer name
     set-variable #l2 &rig #l0 &rsin "/" #l0
     set-variable #l3  #l2
