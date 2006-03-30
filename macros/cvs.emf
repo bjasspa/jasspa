@@ -521,10 +521,10 @@ define-macro cvs-log-list
 0 define-macro cvs-context-menu
     !if @#
         set-variable $mouse-x $cursor-x
-        set-variable $mouse-y &add $cursor-y 1
+        set-variable $mouse-y $cursor-y
         0x21 set-position "\x82"
     !endif
-    .osd.tmp osd-cvs-file-menu
+    &neg .osd.tmp osd-cvs-file-menu
     goto-position "\x82"
     !force !force .osd.tmp osd
 !emacro
@@ -1434,8 +1434,13 @@ define-macro cvs-resolve-conflicts
 !emacro
 
 0 define-macro osd-cvs-file-menu
-    -1 osd @#
-    osd @# 0 "bBo" -1 1
+    !if &les @# 0
+        -1 osd &set @# &neg @#
+        osd @# 0 "bBo" -1 1
+    !else
+        -1 osd @#
+        osd @# 0 "bB"
+    !endif
     osd @# 1  "" "Current \HState"     8 cvs-osd
     osd @# 5  "" "Check\Hout files"    2 cvs-osd
     osd @# 10 "" "\HUpdate files"     11 cvs-osd
@@ -1606,193 +1611,201 @@ define-macro cvs-resolve-conflicts
 !emacro
 
 0 define-macro cvs-dirlst-format
-    set-position "\x83"
-    set-variable #l1 $buffer-bname
-    set-variable #l2 $buffer-fname
-    !force cvs-read-entries #l2 "*cvs-temp2*"
-    !if &not $status
-        ; not a cvs directory
-        goto-position "\x83"
-        !force !force file-browser-filter
-        !return
-    !endif
-    cvs-get-tag-info #l2 #l7
-    ; make sure that the main window is only displayed once
-    -1 find-buffer #l1
-    0x10 goto-position "\x83"
-    !if .cvs.browse-mode
-        ; in quick mode we cannot do proper cvs filtering so use the normal browser filter
-        set-variable .filter &spr "^.\\{%d,%d\\}\\(%s\\)$" :fmpf :fmpf .fhook-dirlst.filter-mask
-        !force 0 delete-buffer "*cvs-temp*"
-        find-buffer "*cvs-temp*"
-        find-buffer #l1
-        set-variable #l7 &cat #l7 " - CVS-Quick"
-    !else
-        6 pipe-shell-command &cat .cvs.com " -nq update -l" "*cvs-temp*"
-        set-variable #l7 &cat #l7 " - CVS"
-    !endif
-    -1 buffer-mode "view"
-    !if &lget .fhook-dirlst.mode 2
-        set-variable #l7 &cat #l7 " - Filtered" 
-    !else
-        set-variable #l7 &cat #l7 " - Not-Filtered" 
-    !endif
-    2 goto-line
-    end-of-line
-    insert-string &spr " (%s)" #l7
-    4 goto-line
-    set-variable $window-col 6
-    insert-string "  Revis'n Tag / Date       "
-    beginning-of-line
-    forward-line
-    !while &not &seq @wl ""
-        set-variable #l7 "--"
-        set-variable #l3 &rig @wl 32
-        !if &sin " -> " #l3
-            !goto pad-line
-        !elif &set #l4 &seq &rig #l3 &sub &len #l3 1 "/"
-            !if &seq #l3 "CVS/"
-                !if &lget .fhook-dirlst.mode 2
-                    !goto rmv-line
-                !endif
-                !goto pad-line
-            !elif &seq #l3 "./"
-                !goto rmv-line
-            !elif &seq #l3 "../"
-                !goto pad-line
-            !endif
-            set-variable #l3 &lef #l3 &sub &len #l3 1
-        !endif
-        filemask-to-regex #l3
-        !if .cvs.browse-mode
-            set-variable #l7 "Q-"
-        !else
-            !force cvs-get-status-info "*cvs-temp*" #l3
-        !endif
-        !if #l4
-            !force cvs-get-dir-entries-info "*cvs-temp2*" #l3
-        !else
-            !force cvs-get-file-entries-info "*cvs-temp2*" #l3
-        !endif
-        set-variable #l5 $status
-        find-buffer #l1
-        !if #l5
-            2 forward-char
-            insert-string #l7
-            set-variable $window-col 8
-            insert-string #l8  
-            insert-string #l9
-            beginning-of-line
-            forward-line
-        !elif &seq #l7 "Q-"
-            !if &lget .fhook-dirlst.mode 2
-                !if  &xse @wl .filter
-                    !goto rmv-line
-                !endif
-            !endif
-            !goto pad-line
-        !elif &seq #l7 "--"
-            !if &not &lget .fhook-dirlst.mode 2
-                !goto pad-line
-            !endif
-*rmv-line
-            beginning-of-line
-            set-mark
-            forward-line
-            -1 kill-region
-        !else
-*pad-line
-            2 forward-char
-            insert-string #l7
-            set-variable $window-col 8
-            insert-string "                         "
-            beginning-of-line
-            forward-line
-        !endif
-    !done
-    ; find any cvs or locally deleted files and add these to the end of the list
-    find-buffer "*cvs-temp2*"
-    beginning-of-buffer
-    !force search-forward "^/\\([^/\n]+\\)/"
-    !while $status
-        set-variable #l3 @s1
-        set-variable #l4 #l3
-        filemask-to-regex #l3
-        find-buffer "*cvs-temp*"
-        beginning-of-buffer
-        !force search-forward &spr "^\\(.\\) %s$" #l3
+    !if @#
+        ml-write "[CVS: processing directory...]"
+        set-position "\x83"
+        set-variable #l1 $buffer-bname
+        set-variable #l2 $buffer-fname
+        !force cvs-read-entries #l2 "*cvs-temp2*"
         !if &not $status
-            set-variable #l7 "?"
-        !elif &seq @s1 "U"
-            set-variable #l7 "L"
-        !else
-            set-variable #l7 @s1
+            ; not a cvs directory
+            goto-position "\x83"
+            set-variable @# 0
+            0 ml-write
         !endif
-        set-variable #l7 &cat #l7 "-"
-        ; this really should work, if not then we are likely to spin!
-        !force cvs-get-file-entries-info "*cvs-temp2*" #l3
-        set-variable #l5 $status
-        find-buffer #l1
-        !if #l5
-            insert-string &spr " -%s--- %s%s      -                   %s" #l7 #l8 #l9 #l4
+    !endif
+    !if @#
+        cvs-get-tag-info #l2 #l7
+        ; make sure that the main window is only displayed once
+        -1 find-buffer #l1
+        0x10 goto-position "\x83"
+        !if .cvs.browse-mode
+            ; in quick mode we cannot do proper cvs filtering so use the normal browser filter
+            set-variable .filter &spr "^.\\{%d,%d\\}\\(%s\\)$" :fmpf :fmpf .fhook-dirlst.filter-mask
+            !force 0 delete-buffer "*cvs-temp*"
+            find-buffer "*cvs-temp*"
+            find-buffer #l1
+            set-variable #l7 &cat #l7 " - CVS-Quick"
         !else
-            insert-string &spr " -%s--- CVS Error - status failure on this file:           %s" #l7 #l4
-            !goto del-break-out
+            6 pipe-shell-command &cat .cvs.com " -nq update -l" "*cvs-temp*"
+            set-variable #l7 &cat #l7 " - CVS"
         !endif
+        -1 buffer-mode "view"
+        !if &lget .fhook-dirlst.mode 2
+            set-variable #l7 &cat #l7 " - Filtered" 
+        !else
+            set-variable #l7 &cat #l7 " - Not-Filtered" 
+        !endif
+        2 goto-line
+        end-of-line
+        insert-string &spr " (%s)" #l7
+        4 goto-line
+        set-variable $window-col 6
+        insert-string "  Revis'n Tag / Date       "
         beginning-of-line
         forward-line
+        !while &not &seq @wl ""
+            set-variable #l7 "--"
+            set-variable #l3 &rig @wl 32
+            !if &sin " -> " #l3
+                !goto pad-line
+            !elif &set #l4 &seq &rig #l3 &sub &len #l3 1 "/"
+                !if &seq #l3 "CVS/"
+                    !if &lget .fhook-dirlst.mode 2
+                        !goto rmv-line
+                    !endif
+                    !goto pad-line
+                !elif &seq #l3 "./"
+                    !goto rmv-line
+                !elif &seq #l3 "../"
+                    !goto pad-line
+                !endif
+                set-variable #l3 &lef #l3 &sub &len #l3 1
+            !endif
+            filemask-to-regex #l3
+            !if .cvs.browse-mode
+                set-variable #l7 "Q-"
+            !else
+                !force cvs-get-status-info "*cvs-temp*" #l3
+            !endif
+            !if #l4
+                !force cvs-get-dir-entries-info "*cvs-temp2*" #l3
+            !else
+                !force cvs-get-file-entries-info "*cvs-temp2*" #l3
+            !endif
+            set-variable #l5 $status
+            find-buffer #l1
+            !if #l5
+                2 forward-char
+                insert-string #l7
+                set-variable $window-col 8
+                insert-string #l8  
+                insert-string #l9
+                beginning-of-line
+                forward-line
+            !elif &seq #l7 "Q-"
+                !if &lget .fhook-dirlst.mode 2
+                    !if  &xse @wl .filter
+                        !goto rmv-line
+                    !endif
+                !endif
+                !goto pad-line
+            !elif &seq #l7 "--"
+                !if &not &lget .fhook-dirlst.mode 2
+                    !goto pad-line
+                !endif
+*rmv-line
+                beginning-of-line
+                set-mark
+                forward-line
+                -1 kill-region
+            !else
+*pad-line
+                2 forward-char
+                insert-string #l7
+                set-variable $window-col 8
+                insert-string "                         "
+                beginning-of-line
+                forward-line
+            !endif
+        !done
+        ; find any cvs or locally deleted files and add these to the end of the list
         find-buffer "*cvs-temp2*"
         beginning-of-buffer
         !force search-forward "^/\\([^/\n]+\\)/"
-    !done
-    ; find any cvs or locally deleted dirs
-    find-buffer #l1
-    5 goto-line
-    find-buffer "*cvs-temp2*"
-    beginning-of-buffer
-    !force search-forward "^D/\\([^/\n]+\\)/"
-    !while $status
-        set-variable #l3 @s1
-        set-variable #l4 #l3
-        filemask-to-regex #l3
-        find-buffer "*cvs-temp*"
-        beginning-of-buffer
-        !force search-forward &spr "^\\(.\\) %s$" #l3
-        !if &not $status
-            set-variable #l7 "L"
-        !elif &seq @s1 "U"
-            set-variable #l7 "L"
-        !else
-            set-variable #l7 @s1
-        !endif
-        set-variable #l7 &cat #l7 "-"
-        ; this really should work, if not then we are likely to spin!
-        !force cvs-get-dir-entries-info "*cvs-temp2*" #l3
-        set-variable #l5 $status
+        !while $status
+            set-variable #l3 @s1
+            set-variable #l4 #l3
+            filemask-to-regex #l3
+            find-buffer "*cvs-temp*"
+            beginning-of-buffer
+            !force search-forward &spr "^\\(.\\) %s$" #l3
+            !if &not $status
+                set-variable #l7 "?"
+            !elif &seq @s1 "U"
+                set-variable #l7 "L"
+            !else
+                set-variable #l7 @s1
+            !endif
+            set-variable #l7 &cat #l7 "-"
+            ; this really should work, if not then we are likely to spin!
+            !force cvs-get-file-entries-info "*cvs-temp2*" #l3
+            set-variable #l5 $status
+            find-buffer #l1
+            !if #l5
+                insert-string &spr " -%s--- %s%s      -                   %s" #l7 #l8 #l9 #l4
+            !else
+                insert-string &spr " -%s--- CVS Error - status failure on this file:           %s" #l7 #l4
+                !goto del-break-out
+            !endif
+            beginning-of-line
+            forward-line
+            find-buffer "*cvs-temp2*"
+            beginning-of-buffer
+            !force search-forward "^/\\([^/\n]+\\)/"
+        !done
+        ; find any cvs or locally deleted dirs
         find-buffer #l1
-        !if #l5
-            insert-string &spr " d%s--- %s%s      -                   %s/\n" #l7 #l8 #l9 #l4
-        !else
-            insert-string &spr " d%s--- CVS Error - status failure on this dir:            %s/\n" #l7 #l4
-            !goto del-break-out
-        !endif
-        beginning-of-line
-        !force forward-line
+        5 goto-line
         find-buffer "*cvs-temp2*"
         beginning-of-buffer
         !force search-forward "^D/\\([^/\n]+\\)/"
-    !done
+        !while $status
+            set-variable #l3 @s1
+            set-variable #l4 #l3
+            filemask-to-regex #l3
+            find-buffer "*cvs-temp*"
+            beginning-of-buffer
+            !force search-forward &spr "^\\(.\\) %s$" #l3
+            !if &not $status
+                set-variable #l7 "L"
+            !elif &seq @s1 "U"
+                set-variable #l7 "L"
+            !else
+                set-variable #l7 @s1
+            !endif
+            set-variable #l7 &cat #l7 "-"
+            ; this really should work, if not then we are likely to spin!
+            !force cvs-get-dir-entries-info "*cvs-temp2*" #l3
+            set-variable #l5 $status
+            find-buffer #l1
+            !if #l5
+                insert-string &spr " d%s--- %s%s      -                   %s/\n" #l7 #l8 #l9 #l4
+            !else
+                insert-string &spr " d%s--- CVS Error - status failure on this dir:            %s/\n" #l7 #l4
+                !goto del-break-out
+            !endif
+            beginning-of-line
+            !force forward-line
+            find-buffer "*cvs-temp2*"
+            beginning-of-buffer
+            !force search-forward "^D/\\([^/\n]+\\)/"
+        !done
 *del-break-out
-    !force 0 delete-buffer "*cvs-temp*"
-    !force 0 delete-buffer "*cvs-temp2*"
-    goto-position "\x83"
+        !force 0 delete-buffer "*cvs-temp*"
+        !force 0 delete-buffer "*cvs-temp2*"
+        goto-position "\x83"
+        -1 buffer-mode "edit"
+        set-variable :fmpf 59
+        0 ml-write
+    !else
+        0 file-browser-filter
+    !endif
     buffer-bind-create "bio" "C-delete" "" cvs-remove
     buffer-bind-create "bio" "C-f5"   "" cvs-full-reread
     buffer-bind-create "b"   "S-f5"   "" cvs-state
     buffer-bind-create "b"   "esc f5" "" cvs-diff
     buffer-bind-create "bio" "k"      "" cvs-context-menu
-    -1 buffer-mode "edit"
-    set-variable :fmpf 59
 !emacro
 
 define-macro cvs-full-reread

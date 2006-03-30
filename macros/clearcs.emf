@@ -576,91 +576,125 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
 !emacro
 
 0 define-macro cc-dirlst-format
-    ml-write "[CC: processing directory...]"
-    set-position "\x83"
-    set-variable #l1 $buffer-bname
-    6 pipe-shell-command &cat .cc-init.com " ls -l ." "*cc-temp*"
-    find-buffer "*cc-temp*"
-    !force 4 goto-line
-    !if &or &not $status &seq &lef @wl 17 "cleartool: Error:"
-        ; not a CC directory
-        goto-position "\x83"
-        !force 0 delete-buffer "*cc-temp*"
-        !force !force file-browser-filter
-        !return
-    !endif
-    find-buffer #l1
-    2 goto-line
-    end-of-line
-    -1 buffer-mode "view"
-    1 buffer-mode "edit" @mna
-    !if &lget .fhook-dirlst.mode 2
-        set-variable #l9 &spr "^.\\{%d,%d\\}\\(%s\\)$" :fmpf :fmpf .fhook-dirlst.filter-mask
-        set-variable #l8 ""
-    !else
-        set-variable #l8 "Not-"
-    !endif
-    insert-string &spr " (CC: ConfigSpec - %sFiltered)" #l8
-    4 goto-line
-    7 forward-char
-    insert-string "\eCTRule                    Version                   "
-    beginning-of-line
-    forward-line
-    !while &not &seq @wl ""
-        set-variable #l7 "-"
-        set-variable #l3 &rig @wl 32
-        !if &set #l4 &sin " -> " #l3
-            set-variable #l3 &lef #l3 &sub #l4 1
-        !endif
-        !if &seq &rig #l3 &set #l4 &sub &len #l3 1 "/"
-            !if &seq #l3 "./"
-                !goto rmv-line
-            !elif &seq #l3 "../"
-                !goto pad-line
-            !endif
-            set-variable #l3 &lef #l3 #l4
-        !endif
-        str-to-regex #l3
+    !if @#
+        ml-write "[CC: processing directory...]"
+        set-position "\x83"
+        set-variable #l1 $buffer-bname
+        6 pipe-shell-command &cat .cc-init.com " ls -l ." "*cc-temp*"
         find-buffer "*cc-temp*"
-        set-variable $window-line 4
-        !force search-buffer "me" &spr "^view private object +%s$" #l3
-        !if $status
-            find-buffer #l1
-            set-variable #l7 "p"
-*flt-line
-            !if &not &lget .fhook-dirlst.mode 2
-                !goto pad-line
-            !elif &xse @wl #l9
-*rmv-line
-                beginning-of-line
-                set-mark
-                forward-line
-                -1 kill-region
-            !else
-*pad-line
-                2 forward-char
-                insert-string #l7
-                4 forward-char
-                insert-string &spr "\eC%s                                                 " &mid @wl 1 1
-                beginning-of-line
-                forward-line
-            !endif
+        !force 4 goto-line
+        !if &or &not $status &seq &lef @wl 17 "cleartool: Error:"
+            ; not a CC directory
+            goto-position "\x83"
+            !force 0 delete-buffer "*cc-temp*"
+            !force !force file-browser-filter
+            !return
+        !endif
+        find-buffer #l1
+        2 goto-line
+        end-of-line
+        -1 buffer-mode "view"
+        1 buffer-mode "edit" @mna
+        !if &lget .fhook-dirlst.mode 2
+            set-variable #l9 &spr "^.\\{%d,%d\\}\\(%s\\)$" :fmpf :fmpf .fhook-dirlst.filter-mask
+            set-variable #l8 ""
         !else
-            !force search-buffer "me" &spr "^\\(directory \\)?version +%s%s\\([^ \n]+\\) +\\(.*\\)? Rule: \\(.*\\)$" #l3 .cc-init.vsepr
+            set-variable #l8 "Not-"
+        !endif
+        insert-string &spr " (CC: ConfigSpec - %sFiltered)" #l8
+        4 goto-line
+        7 forward-char
+        insert-string "\eCTRule                    Version                   "
+        beginning-of-line
+        forward-line
+        !while &not &seq @wl ""
+            set-variable #l7 "-"
+            set-variable #l3 &rig @wl 32
+            !if &set #l4 &sin " -> " #l3
+                set-variable #l3 &lef #l3 &sub #l4 1
+            !endif
+            !if &seq &rig #l3 &set #l4 &sub &len #l3 1 "/"
+                !if &seq #l3 "./"
+                    !goto rmv-line
+                !elif &seq #l3 "../"
+                    !goto pad-line
+                !endif
+                set-variable #l3 &lef #l3 #l4
+            !endif
+            str-to-regex #l3
+            find-buffer "*cc-temp*"
+            set-variable $window-line 4
+            !force search-buffer "me" &spr "^view private object +%s$" #l3
+            !if $status
+                find-buffer #l1
+                set-variable #l7 "p"
+*flt-line
+                !if &not &lget .fhook-dirlst.mode 2
+                    !goto pad-line
+                !elif &xse @wl #l9
+*rmv-line
+                    beginning-of-line
+                    set-mark
+                    forward-line
+                    -1 kill-region
+                !else
+*pad-line
+                    2 forward-char
+                    insert-string #l7
+                    4 forward-char
+                    insert-string &spr "\eC%s                                                 " &mid @wl 1 1
+                    beginning-of-line
+                    forward-line
+                !endif
+            !else
+                !force search-buffer "me" &spr "^\\(directory \\)?version +%s%s\\([^ \n]+\\) +\\(.*\\)? Rule: \\(.*\\)$" #l3 .cc-init.vsepr
+                !if $status
+                    set-variable #l2 &con &seq @s1 "" "-" "d"
+                    set-variable #l3 &rep &trr @s2 "\\" "/"
+                    set-variable #l4 &trb @s3
+                    set-variable #l5 &rep &trb @s4 "\\" "/"
+                    find-buffer #l1
+                    !if &seq #l4 "[hijacked]"
+                        set-variable #l7 "h"
+                    !elif &seq #l5 "CHECKEDOUT"
+                        set-variable #l7 "c"
+                        !if &seq &lef #l4 5 "from "
+                            set-variable #l3 &rep &trr &rig #l4 5 "\\" "/"
+                        !endif
+                    !endif
+                    !if &gre &len #l3 24
+                        set-variable #l3 &cat ">" &rig #l3 &sub &len #l3 23
+                    !else
+                        set-variable #l3 &cat #l3 &lef "                         " &sub 24 &len #l3
+                    !endif
+                    !if &gre &len #l5 24
+                        set-variable #l5 &cat ">" &rig #l5 &sub &len #l5 23
+                    !else
+                        set-variable #l5 &cat #l5 &lef "                         " &sub 24 &len #l5
+                    !endif
+                    2 forward-char
+                    insert-string #l7
+                    4 forward-char
+                    insert-string &spr "\eC%s%s%s " #l2 #l5 #l3
+                    beginning-of-line
+                    forward-line
+                !else
+                    find-buffer #l1
+                    set-variable #l7 "E"
+                    !goto pad-line
+                !endif
+            !endif
+        !done
+        set-variable #l8 &spr "^\\(directory \\)?version +\\(.*\\)%s\\([^ \n]+\\) +\\[loaded but missing] +Rule: \\(.*\\)$" .cc-init.vsepr
+        find-buffer "*cc-temp*"
+        beginning-of-buffer
+        !repeat
+            !force search-buffer "me" #l8
             !if $status
                 set-variable #l2 &con &seq @s1 "" "-" "d"
-                set-variable #l3 &rep &trr @s2 "\\" "/"
-                set-variable #l4 &trb @s3
+                set-variable #l4 &trl @s2
+                set-variable #l3 &rep &trr @s3 "\\" "/"
                 set-variable #l5 &rep &trb @s4 "\\" "/"
-                find-buffer #l1
-                !if &seq #l4 "[hijacked]"
-                    set-variable #l7 "h"
-                !elif &seq #l5 "CHECKEDOUT"
-                    set-variable #l7 "c"
-                    !if &seq &lef #l4 5 "from "
-                        set-variable #l3 &rep &trr &rig #l4 5 "\\" "/"
-                    !endif
-                !endif
                 !if &gre &len #l3 24
                     set-variable #l3 &cat ">" &rig #l3 &sub &len #l3 23
                 !else
@@ -671,53 +705,23 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
                 !else
                     set-variable #l5 &cat #l5 &lef "                         " &sub 24 &len #l5
                 !endif
-                2 forward-char
-                insert-string #l7
-                4 forward-char
-                insert-string &spr "\eC%s%s%s " #l2 #l5 #l3
-                beginning-of-line
-                forward-line
-            !else
                 find-buffer #l1
-                set-variable #l7 "E"
-                !goto pad-line
+                end-of-buffer
+                insert-string &spr " %sm--- \eC%s%s%s       -  ----/--/-- --:-- %s" #l2 #l2 #l5 #l3 #l4
             !endif
-        !endif
-    !done
-    set-variable #l8 &spr "^\\(directory \\)?version +\\(.*\\)%s\\([^ \n]+\\) +\\[loaded but missing] +Rule: \\(.*\\)$" .cc-init.vsepr
-    find-buffer "*cc-temp*"
-    beginning-of-buffer
-    !repeat
-        !force search-buffer "me" #l8
-        !if $status
-            set-variable #l2 &con &seq @s1 "" "-" "d"
-            set-variable #l4 &trl @s2
-            set-variable #l3 &rep &trr @s3 "\\" "/"
-            set-variable #l5 &rep &trb @s4 "\\" "/"
-            !if &gre &len #l3 24
-                set-variable #l3 &cat ">" &rig #l3 &sub &len #l3 23
-            !else
-                set-variable #l3 &cat #l3 &lef "                         " &sub 24 &len #l3
-            !endif
-            !if &gre &len #l5 24
-                set-variable #l5 &cat ">" &rig #l5 &sub &len #l5 23
-            !else
-                set-variable #l5 &cat #l5 &lef "                         " &sub 24 &len #l5
-            !endif
-            find-buffer #l1
-            end-of-buffer
-            insert-string &spr " %sm--- \eC%s%s%s       -  ----/--/-- --:-- %s" #l2 #l2 #l5 #l3 #l4
-        !endif
-    !until &not $status
-    goto-position "\x83"
-    -1 buffer-mode "edit"
-    set-variable :fmpf 85
-    buffer-bind-create "bio" "0" "" cc-dirlst-ver-rule-toggle
+        !until &not $status
+        goto-position "\x83"
+        -1 buffer-mode "edit"
+        set-variable :fmpf 85
+        !force 0 delete-buffer "*cc-temp*"
+        buffer-bind-create "bio" "0" "" cc-dirlst-ver-rule-toggle
+        0 ml-write
+    !else
+        0 file-browser-filter
+    !endif
     buffer-bind-create "bio" "C-delete" "" cc-delete
     buffer-bind-create "bio" "S-f5" "" cc-state
     buffer-bind-create "bio" "k" "" cc-context-menu
-    !force 0 delete-buffer "*cc-temp*"
-    0 ml-write
 !emacro
 
 0 define-macro cc-dirlst-ver-rule-toggle
@@ -1122,10 +1126,10 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
 0 define-macro cc-context-menu
     !if @#
         set-variable $mouse-x $cursor-x
-        set-variable $mouse-y &add $cursor-y 1
+        set-variable $mouse-y $cursor-y
         0x21 set-position "\x82"
     !endif
-    .osd.tmp osd-cc-file-menu
+    &neg .osd.tmp osd-cc-file-menu
     goto-position "\x82"
     !force !force .osd.tmp osd
 !emacro
@@ -1348,6 +1352,7 @@ define-macro cc-add
         transpose-lines
         beginning-of-buffer
         -1 insert-string #l2
+        insert-string " -mkpath"
         goto-position "\x82"
         set-variable #l4 &con #l5 0 3        
         5 cc-cleartool #l4 $buffer-fname
@@ -2150,8 +2155,13 @@ define-macro cc-setup
 ; ClearCase directory list context menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 0 define-macro osd-cc-file-menu
-    -1 osd @#
-    osd @# 0 "bBo" -1 1
+    !if &les @# 0
+        -1 osd &set @# &neg @#
+        osd @# 0 "bBo" -1 1
+    !else
+        -1 osd @#
+        osd @# 0 "bB"
+    !endif
     osd @# 10  "" "Current \HState"    f cc-state
     osd @# 20  "" "\HUpdate elements"  f cc-update
     osd @# 500  "-"
