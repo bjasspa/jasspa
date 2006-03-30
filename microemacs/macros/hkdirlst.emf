@@ -21,8 +21,7 @@ define-macro fhook-dirlst
     ; load other files and launch processes, it can get into a strange state
     ; where the buffer is out of date (dir already changed) and inserting text
     ; can prompt the user 'do you really want to edit' - care is needed
-    !if &seq $buffer-fname ""
-        ; toolbar creates an empty *files* buffer - ignore it
+    !if &les $window-eline 4
         !return
     !elif &exi :tag-count
         ; dont process the dir twice as it changes the buffer
@@ -100,17 +99,16 @@ define-macro fhook-dirlst
         set-variable :fmpf 32
         insert-string " Attr    Size          Modified Name  <Order by Extension>\n"
         set-variable #l3 "file-browser-filter"
-        !if &lget .fhook-dirlst.mode 1
-            set-variable #l1 0
-            !while &not &seq "" &set #l2 &lget .fhook-dirlst.sc-detect &inc #l1 1
-                !force execute-named-command #l2
-                !if $status
-                    set-variable #l3 &lget .fhook-dirlst.sc-format #l1
-                    set-variable #l1 -1
-                !endif
-            !done
-        !endif
-        !force !force execute-named-command #l3
+        set-variable #l1 0
+        !while &not &seq "" &set #l2 &lget .fhook-dirlst.sc-detect &inc #l1 1
+            !force execute-named-command #l2
+            !if $status
+                set-variable #l3 &lget .fhook-dirlst.sc-format #l1
+                set-variable :sc #l1
+                set-variable #l1 -1
+            !endif
+        !done
+        !force !force &lget .fhook-dirlst.mode 1 execute-named-command #l3
     !endif
     dirlst-sort-list
     beginning-of-buffer
@@ -1635,14 +1633,10 @@ osd .osd.dirlst 160 ""  "File Tools Setup"      f file-tool-setup
             !until &not &dec .sc-count 1
             osd .osd.dirlst 89  "D"
         !endif
-        set-variable #l1 0
-        !while &not &seq "" &set #l2 &lget .fhook-dirlst.sc-detect &inc #l1 1
-            !force execute-named-command #l2
-            !if $status
-                !force osd .osd.dirlst &add 70 &inc .sc-count 1 "M" &cat &lget .fhook-dirlst.sc-name #l1 " (\Hk)" .osd.tmp &lget .fhook-dirlst.sc-menu #l1
-                osd .osd.dirlst 89  "-"
-            !endif
-        !done
+        !if &exi :sc
+            !force osd .osd.dirlst &add 70 &inc .sc-count 1 "M" &cat &lget .fhook-dirlst.sc-name :sc " (\Hk)" .osd.tmp &lget .fhook-dirlst.sc-menu :sc
+            osd .osd.dirlst 89  "-"
+        !endif
     !endif
     .osd.dirlst osd
 !emacro
