@@ -594,14 +594,36 @@ findBuffer(int f, int n)
 
     if((s = getBufferName((meUByte *)"Find buffer",0,2,bufn)) <= 0)
 	return s ;
-    if(n > 0)
-	f = BFND_CREAT ;
+#if MEOPT_EXTENDED
+    if(n == 2)
+    {
+	bp = bheadp;
+	while(bp != NULL)
+	{
+            if((bp->fileName != NULL) &&
+#ifdef _INSENSE_CASE
+               (meStricmp(bp->fileName,bufn) == 0)
+#else
+               (meStrcmp(bp->fileName,bufn) == 0)
+#endif
+               )
+                break ;
+	    bp = bp->next;
+	}
+    }
     else
-	f = 0 ;
-    if((bp=bfind(bufn,f)) == NULL)
-	return meFALSE ;
+#endif
+    {
+        if(n > 0)
+            f = BFND_CREAT ;
+        else
+            f = 0 ;
+        bp = bfind(bufn,f) ;
+    }
+    if(bp == NULL)
+        return meFALSE ;
     if(n < 0)
-	return HideBuffer(bp,(n < -1) ? 1:0) ;
+        return HideBuffer(bp,(n < -1) ? 1:0) ;
     return swbuffer(frameCur->windowCur, bp) ;
 }
 
