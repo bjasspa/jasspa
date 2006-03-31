@@ -295,7 +295,7 @@ add-file-hook ".r"                                            fhook-r
  1 add-file-hook "^#VRML"                        fhook-vrml   ; VRML or wrl files
  1 add-file-hook "^#Inventor"                    fhook-vrml   ; Use the VRML hook for iv files
 -2 add-file-hook "This is Info file"             fhook-info   ; GNU info file
--1 add-file-hook "<?xml"                         fhook-xml    ; <?xml version="1.0" standalone="no"?>
+-1 add-file-hook "<\\?xml"                       fhook-xml    ; <?xml version="1.0" standalone="no"?>
 -1 add-file-hook "-[*!]-[ \t]*c.*-[*!]-"         fhook-c      ; -*- C -*-
 -1 add-file-hook "-[*!]-[ \t]*c\\+\\+.*-[*!]-"   fhook-cpp    ; -*- C++ -*-
 -1 add-file-hook "-[*!]-[ \t]*f.*-[*!]-"         fhook-f90    ; -*- f -*-
