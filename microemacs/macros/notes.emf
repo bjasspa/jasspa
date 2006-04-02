@@ -226,6 +226,7 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
     !if &equ #l0 $window-id
         notes-create-display
     !endif
+    set-variable .notes-close-test.ok 1
 !emacro
 
 0 define-macro notes-tree-set-cur
@@ -654,6 +655,38 @@ define-macro notes-tree-isearch-backward
     !endif
 !emacro
 
+0 define-macro notes-close-test
+    !if &not .ok
+        !force set-position "\x81"
+        set-variable #l0 $window-id
+        !if &not &equ $frame-id .notes.frame-id
+        !elif &seq $buffer-bname .notes.current
+            next-window
+            set-variable .ok &seq $buffer-bname &cat "*" .notes.current
+        !elif &seq $buffer-bname &cat "*" .notes.current
+            next-window
+            set-variable .ok &seq $buffer-bname .notes.current
+        !endif
+        !if .ok
+            next-window
+            set-variable .ok &equ #l0 $window-id
+        !endif
+        !if .ok
+            goto-position "\x81"
+        !else
+            !force set-position "\x81"
+            !force notes-close
+            !force 0xbe goto-position "\x81"
+        !endif
+    !endif
+    set-variable .ok 0
+    -1 create-callback notes-close-test
+!emacro
+
+0 define-macro notes-ehook
+    0 create-callback notes-close-test
+!emacro
+
 0 define-macro notes-create-display
     notes-get-frame
     find-buffer .notes.current
@@ -694,9 +727,8 @@ define-macro notes-tree-isearch-backward
     set-variable :mouse-drop-1 notes-tree-mouse-select
     set-variable :mouse-pick-3 void
     set-variable :mouse-drop-3 notes-tree-context-menu
+    set-variable $buffer-ehook notes-ehook
     buffer-bind-key notes-close "f10"
-    buffer-bind-key notes-delete "C-x k"
-    buffer-bind-key notes-find-buffer "C-x b"
     buffer-bind-key notes-swap-window "tab"
     buffer-bind-key notes-swap-window "C-tab"
     buffer-bind-key notes-tree-set-cur "space"
@@ -737,11 +769,11 @@ define-macro notes-tree-isearch-backward
         1 buffer-mode "undo"
     !endif
     set-variable $buffer-mode-line &rep $mode-line "%b" &spr "*%s: %s*" #l1 &reg #l4 "" 
+    set-variable $buffer-ehook notes-ehook
     buffer-bind-key notes-close "f10"
-    buffer-bind-key notes-delete "C-x k"
-    buffer-bind-key notes-find-buffer "C-x b"
     buffer-bind-key notes-swap-window "C-tab"
     previous-window
+    set-variable .notes-close-test.ok 1
 !emacro
 
 define-macro notes-close
@@ -752,21 +784,6 @@ define-macro notes-close
             1 next-frame
         !endif
     !endif
-!emacro
-
-define-macro notes-delete
-    set-variable #l0 @mc1 &spr "Delete notes \"%s\" [y/n]? " .notes.current "nNyY"
-    !if &iseq #l0 "y"
-        delete-buffer .notes.current
-        notes-close
-    !endif
-!emacro
-
-0 define-macro notes-find-buffer
-    @# find-buffer @mna
-    set-variable #l0 $buffer-bname
-    notes-close
-    find-buffer #l0
 !emacro
 
 define-macro notes-file
