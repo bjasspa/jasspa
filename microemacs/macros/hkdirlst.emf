@@ -21,7 +21,7 @@ define-macro fhook-dirlst
     ; load other files and launch processes, it can get into a strange state
     ; where the buffer is out of date (dir already changed) and inserting text
     ; can prompt the user 'do you really want to edit' - care is needed
-    !if &les $window-eline 4
+    !if &les $window-eline 2
         !return
     !elif &exi :tag-count
         ; dont process the dir twice as it changes the buffer
@@ -630,7 +630,8 @@ define-macro file-browser-swap-buffers
         !if &not &band @# 1
             buffer-bind-key "browse" "v"
             browse
-            !if &bmod "edit"
+            !if &not &seq $buffer-bname #l3
+            !elif &bmod "edit"
                 -1 find-buffer $buffer-bname
             !else
                 !force !force delete-buffer $buffer-bname
@@ -1245,6 +1246,7 @@ define-macro dirlst-search
         set-variable &cat ".find-file.dir" &inc .find-file.dir-count 1 #l1
     !else
         set-variable #l2 @3
+        set-variable #l6 2
 *retry
         !force !force .mode file-op &cat #l0 #l1 #l2 @mna
         !if &and &not $status &equ $result 6
@@ -1269,6 +1271,9 @@ define-macro dirlst-search
                     set-variable #l1 &cat #l1 "/"
                     set-variable &cat ".find-file.dir" &inc .find-file.dir-count 1 #l1
                 !elif &seq #l4 "X"
+                !elif #l6
+                    set-variable #l6 &sub #l6 1
+                    !goto retry
                 !elif &not &band .state 1
                     set-variable #l4 @mc1 &spr "Cannot read \"%s\": [R]etry,[S]kip,Skip [A]ll? " #l1 "aArRsS"
                     !if &iseq #l4 "r"
