@@ -37,7 +37,7 @@ set-variable .fhook-php.item-list-r5 "Func \ecB\\1\ecA"
 !if &and &sin "h" .fhook-php.setup &band .hilight.flags 0x02 
     hilight .hilight.phptag 4 "=\\{[^ \t\n<>]*<\\?php" "\\?>[^ \t\n>]*" ""  .scheme.string
     hilight .hilight.phptag 4 "=\\{\"[^\"\n<]*<\\?php" "\\?>[^\"]*\"" ""  .scheme.string
-    ; only php programmers would be mean enough to use script inside a script token! You know who you are
+    ; use hilight scheme to handle script inside a script token
     !if &not &exist .hilight.phpJS
         set-variable .hilight.phpJS &pinc .hilight.next 1
     !endif
