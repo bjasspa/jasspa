@@ -2411,10 +2411,10 @@ hilightLookBack(meWindow *wp)
         {
             if((jj = indentLookBack(lp,meHilightGetLookBackScheme(root),0xffff)) >= 0)
             {
-                if(jj != 0)
+                if((jj != 0) && (bhis[jj] != NULL))
                 {
                     hilno = jj ;
-                    root = bhis[hilno] ;
+                    root = bhis[jj] ;
                 }
                 break ;
             }
@@ -2787,7 +2787,7 @@ indentLine(int *inComment)
         {
             if((coff = indentLookBack(lp,lindent,0xffff)) >= 0)
             {
-                if(coff != 0)
+                if((coff != 0) && (hilights[coff] != NULL))
                     indent = coff ;
                 break ;
             }
@@ -2846,7 +2846,7 @@ indentLine(int *inComment)
                 {
                     if((coff = indentLookBack(lp,lindent,0xffff)) >= 0)
                     {
-                        if(coff != 0)
+                        if((coff != 0) && (hilights[coff] != NULL))
                             indent = coff ;
                         break ;
                     }
