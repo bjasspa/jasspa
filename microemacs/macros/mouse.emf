@@ -227,7 +227,12 @@
 
 0 define-macro mouse-drop-t1
     set-variable .status "1"
-    !if &seq @cck "redraw"
+    !if &seq @cc "abort-command"
+        set-variable $buffer-input &con &seq .input "mouse-drop-t1" "" .input
+        -1 create-callback mouse-drop-t1
+        set-variable .status "0"
+        !abort
+    !elif &seq @cck "redraw"
         @# execute-named-command @cc
         !return
     !elif &seq @cck "callback"
