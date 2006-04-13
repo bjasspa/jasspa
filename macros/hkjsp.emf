@@ -36,10 +36,15 @@ set-variable .fhook-jsp.command-desc  "|"
     hilight .hilight.jsp 4 "<%@" "%>" ""      .scheme.prepro
     hilight .hilight.jsptag 4 "=\\{[^ \t\n<>]*<%" "%>[^ \t\n>]*" ""  .scheme.string
     hilight .hilight.jsptag 4 "=\\{\"[^\"\n<]*<%" "%>[^\"]*\"" ""  .scheme.string
-    !if &exist .hilight.javascript
+    !if &exist .hilight.java
         hilight .hilight.jsp        0x80 "<%" .hilight.java .scheme.prepro
         hilight .hilight.jsptag     0x80 "<%" .hilight.java .scheme.prepro
         hilight .hilight.java       0x80 "%>" 0 .scheme.prepro
+    !endif
+    !if &exist .hilight.javascript
+        ; %> does not terminate a javascript block but a java section can
+        ; be classed as javascript due to the fast lookback tokens
+        hilight .hilight.javascript 0x80 "%>" 0 .scheme.prepro
     !endif
 !endif
 !if &sin "d" .fhook-jsp.setup
@@ -47,8 +52,17 @@ set-variable .fhook-jsp.command-desc  "|"
         indent .hilight.jsptag t "<%" .indent.java
         indent .hilight.jsptag t "%>" .hilight.jsp
         
-        indent .hilight.jsp x "<%" t .indent.java
+        indent .hilight.jsp x "^<%" 0 .indent.java
+        indent .hilight.jsp x ".<%" t .indent.java
         indent .indent.java w "%>" -t 0
+    !endif
+    !if &exist .indent.javascript
+        indent .indent.javascript t "^\\s*\\{}\\s*$"  .indent.javascript
+        indent .indent.javascript t "^\\s*\\{}\\s*//" .indent.javascript
+        indent .indent.javascript t "^function " .indent.javascript
+        ; %> does not terminate a javascript block but a java section can
+        ; be classed as javascript due to the fast lookback tokens
+        indent .indent.javascript w "%>" -t 0
     !endif
 !endif
 

@@ -9,6 +9,9 @@
 define-macro fhook-java
     set-variable $buffer-mask "luh1"
     @# buffer-init "java"
+    !if &equ $buffer-indent .indent.java
+        set-variable $buffer-indent &add $buffer-indent 1
+    !endif
     buffer-init-hooks
 !emacro
 
@@ -37,8 +40,7 @@ set-variable .fhook-java.item-list-s2 "^[ \t]*\\(public[ \t]+\\|private[ \t]+\\)
 set-variable .fhook-java.item-list-r2 "Clss \ecB\\2\ecA"
 
 !if &not &exist .hilight.java
-    set-variable .hilight.java &pinc .hilight.next 1
-    set-variable .indent.java &pinc .hilight.next 1
+    set-variable .hilight.java &pinc .hilight.next 2
 !endif
 !if &and &sin "h" .fhook-java.setup &band .hilight.flags 0x02
     ; High-light Java Mode
@@ -163,10 +165,9 @@ set-variable .fhook-java.item-list-r2 "Clss \ecB\\2\ecA"
     hilight .hilight.javadoc 0x80 "\\*/" .hilight.java    .scheme.comment
 !endif
 !if &sin "d" .fhook-java.setup
-    ; create main indent scheme
-    0 indent .hilight.java 12
-    indent .hilight.java "u" " * "
     ; create a simple indentation rule for javascript - real java files use the built in C indentation
+    ; note: for the jsp lookback to work correctly .hilight.java must equal .indent.java
+    set-variable .indent.java .hilight.java
     0 indent .indent.java 1 20
     indent .indent.java n "{"  t
     indent .indent.java o "}" -t
@@ -176,6 +177,9 @@ set-variable .fhook-java.item-list-r2 "Clss \ecB\\2\ecA"
     indent .indent.java b "(" ")"
     indent .indent.java b "/\\*" "\\*/"
     indent .indent.java i "//"
+    ; create main indent scheme as .indent.java + 1, the fhook-java sets the indent correctly
+    0 indent &add .indent.java 1 12
+    indent &add .hilight.java 1 "u" " * "
 !endif
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Begin hook - entering the buffer - save the current fill-ignore characters
