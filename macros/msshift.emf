@@ -13,7 +13,11 @@
 
 0 define-macro msshift-input
     set-variable .status "0"
-    !if &seq @cck "redraw"
+    !if &seq @cc "abort-command"
+        ; ensure a breakout if C-g is pressed
+        set-variable $buffer-input &con &seq .msshift.input "msshift-input" "" .msshift.input
+        !abort
+    !elif &seq @cck "redraw"
         ; abort to tell ME to handle the actual input
         !abort
     !elif &seq @cck "callback"
