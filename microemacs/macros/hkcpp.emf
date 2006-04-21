@@ -109,7 +109,7 @@ set-variable .fhook-cpp.item-list-r6 "Clss \ecB\\1\ecA"
     ; High-light C++ Mode
     0 hilight .hilight.cpp  2 50             $global-scheme
     hilight .hilight.cpp 0x3a "#" "\\"       .scheme.prepro
-    hilight .hilight.cpp   18 "//"           .scheme.comment
+    hilight .hilight.cpp    2 "//"           .scheme.comment
     hilight .hilight.cpp   20 "/\\*" "*/" "" .scheme.comment
     hilight .hilight.cpp    4 "\"" "\"" "\\" .scheme.string
     hilight .hilight.cpp    0 "'.'"          .scheme.quote
