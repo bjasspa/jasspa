@@ -36,6 +36,23 @@ set-variable .fhook-jsp.command-desc  "|"
     hilight .hilight.jsp 4 "<%@" "%>" ""      .scheme.prepro
     hilight .hilight.jsptag 4 "=\\{[^ \t\n<>]*<%" "%>[^ \t\n>]*" ""  .scheme.string
     hilight .hilight.jsptag 4 "=\\{\"[^\"\n<]*<%" "%>[^\"]*\"" ""  .scheme.string
+    ; use hilight scheme to handle script inside a script token
+    !if &not &exist .hilight.jspjs
+        set-variable .hilight.jspjs &pinc .hilight.next 1
+    !endif
+    -1 hilight .hilight.jsp 0x80 "<script\\s+language=\"?javascript[^>]*>"
+    hilight .hilight.jsp 0x80 "<script\\s+language\{=javascript" .hilight.jspjs .scheme.prepro
+    hilight .hilight.jsp 0x80 "<script\\s+language\{=\"javascript\"" .hilight.jspjs .scheme.prepro
+    
+    0 hilight .hilight.jspjs 1                          $global-scheme
+    hilight .hilight.jspjs 4 "=\\{\"" "\"" "\\"         .scheme.string
+    hilight .hilight.jspjs 4 "=\\{" "\\}[ \t\n>]" ""    .scheme.string
+    hilight .hilight.jspjs 4 "=\\{[^ \t\n<>]*<\\?php" "\\?>[^ \t\n>]*" "" .scheme.string
+    hilight .hilight.jspjs 4 "=\\{\"[^\"\n<]*<\\?php" "\\?>[^\"]*\"" "" .scheme.string
+    hilight .hilight.jspjs 1 "type"                     .scheme.operator
+    hilight .hilight.jspjs 1 "src"                      .scheme.operator
+    hilight .hilight.jspjs 0x80 ">" .hilight.javascript .scheme.keyword
+    
     !if &exist .hilight.java
         hilight .hilight.jsp        0x80 "<%" .hilight.java .scheme.prepro
         hilight .hilight.jsptag     0x80 "<%" .hilight.java .scheme.prepro
