@@ -186,15 +186,47 @@
     !endif
 !emacro
 
+0 define-macro mouse-type1-hpan
+    !if &exi .n
+        !if &set #l0 &sub $mouse-x .x
+            set-variable .n 0
+            set-variable #l0 &add #l0 &cond &gre #l0 0 -1 1
+            !tjump #l0 2
+        !elif &set #l0 .n
+            !force #l0 scroll-right
+            screen-update
+        !endif
+        $repeat-time create-callback mouse-type1-hpan
+    !endif
+!emacro
+
 0 define-macro mouse-pick-type1
+    set-variable .mouse-event.scroll $scroll
+    set-variable .mouse-drop-t1.sl $window-line
+    set-variable .mouse-drop-t1.sc $window-col
+    !if &equ @fss $mouse-y $mouse-x $trunc-scheme
+        !if &seq &set #l0 @fs $mouse-y $mouse-x &mid $window-chars 58 1
+            !if &equ $mouse-x &sub $window-scroll-bar 1
+                set-variable .mouse-type1-hpan.x $mouse-x
+                set-variable .mouse-type1-hpan.n 1
+                mouse-type1-hpan
+                !return
+            !endif
+        !endif
+        !if &seq #l0 &mid $window-chars 57 1
+            !if &equ $mouse-x &sub $window-scroll-bar $window-width
+                set-variable .mouse-type1-hpan.x $mouse-x
+                set-variable .mouse-type1-hpan.n -1
+                mouse-type1-hpan
+                !return
+            !endif
+        !endif
+    !endif
     ; set the cursor position to the mouse position
     0x21 set-position "\x82"
     set-mark
     set-variable $delay-time $repeat-time
-    set-variable .mouse-drop-t1.sl $window-line
-    set-variable .mouse-drop-t1.sc $window-col
     ; Scroll the screen if we are marking.
-    set-variable .mouse-event.scroll $scroll
     set-variable $scroll 2
     global-bind-key mouse-mark-window &spr .mouse-event.mask "time"
 !emacro
@@ -228,6 +260,10 @@
 0 define-macro mouse-drop-t1
     set-variable .status "1"
     !if &seq @cc "abort-command"
+        !jump 2
+    !elif &not &exi ".sl"
+        set-variable $delay-time 500
+        set-variable $scroll .mouse-event.scroll
         set-variable $buffer-input &con &seq .input "mouse-drop-t1" "" .input
         -1 create-callback mouse-drop-t1
         set-variable .status "0"
@@ -270,15 +306,15 @@
         !endif
     !endif
     ; show the region
-    set-variable $window-line .sl
-    set-variable $window-col .sc
+    !force set-variable $window-line .sl
+    !force set-variable $window-col .sc
     &bxor .dir 1 mouse-drop-set-pos
     set-variable #l0 $window-line
     set-variable #l1 $window-col
     set-mark
     -3 show-region
-    set-variable $window-line .el
-    set-variable $window-col .ec
+    !force set-variable $window-line .el
+    !force set-variable $window-col .ec
     .dir mouse-drop-set-pos
     3 show-region
     !if &seq .pick @cck
@@ -340,7 +376,14 @@
 !emacro
 
 0 define-macro mouse-drop-type1
-    0 mouse-drop-set-region
+    !if &exi .mouse-type1-hpan.n
+        0 create-callback mouse-type1-hpan
+        unset-variable .mouse-type1-hpan.n
+        1 goto-position "\x82"
+        &cond &les .mouse-type1-hpan.n 0 1 -1 forward-char
+    !else
+        0 mouse-drop-set-region
+    !endif
 !emacro
 
 0 define-macro mouse-drop-type2
