@@ -596,7 +596,9 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             frameCur->windowCur->dotOffset = status ;
             return meTRUE ;
         case EVCURLINE:
-            return windowGotoLine(meTRUE, meAtoi(vvalue));
+            if((status=meAtoi(vvalue)) <= 0)
+                return meFALSE ;
+            return windowGotoLine(meTRUE,status) ;
         case EVWINCHRS:
             {
                 meUByte cc ;
