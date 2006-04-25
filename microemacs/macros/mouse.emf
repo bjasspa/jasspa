@@ -240,11 +240,19 @@
             !if #l0
                 forward-word
             !endif
+            !if $window-xcl-scroll
+                !if &les $window-acol &add $window-xcl-scroll 1
+                    &sub $window-acol &add $window-xcl-scroll 1 scroll-right
+                !endif
+            !endif
         !else
             !force backward-char
             forward-word
             !if #l0
                 backward-word
+            !endif
+            !if &gre &add $window-acol 2 &add $window-xcl-scroll $window-width
+                &sub &add $window-acol 2 &add $window-xcl-scroll $window-width scroll-right
             !endif
         !endif
     !elif .mouse-drop-t1.type

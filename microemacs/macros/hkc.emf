@@ -110,7 +110,7 @@ set-variable .fhook-c.item-list-r6 "Clss \ecB\\1\ecA"
     0 hilight .hilight.c  2 50
     ; comments, strings and quotes
     hilight .hilight.c 0x3a "#" "\\"       .scheme.prepro
-    hilight .hilight.c   20 "/\\*" "*/" ""   .scheme.comment
+    hilight .hilight.c   20 "/\\*" "*/" "" .scheme.comment
     ; the following is strictly C++ commenting - but people don't seem to know the difference
     hilight .hilight.c    2 "//"           .scheme.comment
     hilight .hilight.c    4 "\"" "\"" "\\" .scheme.string
