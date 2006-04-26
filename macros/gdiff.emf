@@ -783,6 +783,7 @@ define-macro gdiff
     goto-alpha-mark "l"
     2 split-window-vertically
     change-window-depth 2
+    set-variable $window-flags &bor $window-flags 2
     !force 0 delete-buffer "*gdiff current lines*"
     find-buffer "*gdiff current lines*"
     2 insert-newline

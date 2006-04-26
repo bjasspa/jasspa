@@ -168,6 +168,7 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
         !jump -5
     !endif
     6 next-window
+    set-variable $window-flags &bor $window-flags 1
 !emacro
 
                 
