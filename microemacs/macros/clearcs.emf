@@ -1136,6 +1136,9 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
 
 0 define-macro cc-state-delete-line
     !if &xseq @wl "[ *][chMmnp]  .+"
+        !if &seq &lef @wl 1 "*"
+            set-variable :tag-count &sub :tag-count 1
+        !endif
         -1 buffer-mode "view"
         beginning-of-line
         set-mark
@@ -1168,6 +1171,7 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
                     forward-char
                     set-variable @wc "m"
                 !endif
+                set-variable :tag-count &sub :tag-count 1
             !endif
         !until &not $status
         -1 buffer-mode "edit"
@@ -2174,16 +2178,16 @@ define-macro cc-setup
         goto-position "\x82"
         osd @# 700 "-"
         osd @# 710 "" "Delete line    C-\Hk"   f cc-state-delete-line
-        !if .find-file.file-count
+        !if :tag-count
             osd @# 720 "" "Delete files"       f cc-state-delete
         !endif
     !endif
-    !if &equ .find-file.file-count 1
+    !if &equ :tag-count 1
         osd @# 80 "" "\HVersion Tree"  f cc-vtree
     !else
         osd @# 80 "" "Version Tree"
     !endif
-    !if .find-file.file-count
+    !if :tag-count
         osd @# 30  "" "\HMerge elements"       f cc-merge
         osd @# 40  "" "Check\Hout elements"    f cc-checkout
         osd @# 50  "" "U\Hncheckout elements"  f cc-uncheckout
