@@ -2624,6 +2624,21 @@ gotoAlphaMark(int f, int n)
      */
     meInt cc ;
     
+    if(n == 0)
+    {
+        meAnchor *p = frameCur->bufferCur->anchorList;
+        meUByte  *s = resultStr ;
+        
+        while(p != NULL)
+        {
+            if(p->name < 128)
+                *s++ = (meUByte) p->name;
+            p = p->next;
+        }
+        *s = '\0' ;
+        return meTRUE ;
+    }
+        
     if((cc = mlCharReply((meUByte *)"Goto mark: ",mlCR_QUIT_ON_USER,NULL,NULL)) == -2)
         cc = mlCharReply((meUByte *)"Goto mark: ",mlCR_ALPHANUM_CHAR,NULL,NULL) ;
     
