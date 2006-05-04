@@ -125,6 +125,7 @@ meBufferCreateNarrow(meBuffer *bp, meLine *slp, meLine *elp, meInt sln, meInt el
     nrrw->slp = slp ;
     nrrw->elp = meLineGetPrev(elp) ;
     nrrw->sln = sln ;
+    nrrw->expanded = meFALSE ;
     slp->prev->next = elp ;
     elp->prev = slp->prev ;
     bp->lineCount -= nln ;
@@ -178,6 +179,8 @@ meBufferExpandNarrow(meBuffer *bp, register meNarrow *nrrw, meUByte *firstLine, 
     meLine *lp1, *lp2 ;
     meInt noLines, markup ;
     
+    meAssert(nrrw->expanded == meFALSE) ;
+
     if(!undoCall)
         meAnchorGet(bp,nrrw->name) ;
 
@@ -201,6 +204,7 @@ meBufferExpandNarrow(meBuffer *bp, register meNarrow *nrrw, meUByte *firstLine, 
     nrrw->elp->next = lp2 ;
     lp2->prev = nrrw->elp ;
     bp->lineCount += noLines ;
+    nrrw->expanded = meTRUE ;
     
     meFrameLoopBegin() ;
     for (wp=loopFrame->windowList; wp!=NULL; wp=wp->next)
@@ -365,8 +369,8 @@ meBufferRemoveNarrow(meBuffer *bp, register meNarrow *nrrw, meUByte *firstLine, 
     meFree(nrrw) ;
 }
 
-int
-meLineRemoveNarrow(meBuffer *bp, meLine *lp)
+static meNarrow *
+meLineGetNarrow(meBuffer *bp, meLine *lp)
 {
     meNarrow *nrrw ;
     meAnchor *aa ;
@@ -374,19 +378,21 @@ meLineRemoveNarrow(meBuffer *bp, meLine *lp)
     nrrw = frameCur->bufferCur->narrow ;
     while(nrrw != NULL)
     {
-        aa = frameCur->bufferCur->anchorList;
-        while(aa != NULL)
+        if(!nrrw->expanded)
         {
-            if((nrrw->name == aa->name) && (aa->line == lp))
+            aa = frameCur->bufferCur->anchorList;
+            while(aa != NULL)
             {
-                meBufferRemoveNarrow(bp,nrrw,NULL,0) ;
-                return meTRUE ;
+                if((nrrw->name == aa->name) && (aa->line == lp))
+                {
+                    return nrrw ;
+                }
+                aa = aa->next;
             }
-            aa = aa->next;
         }
         nrrw = nrrw->next ;
     }
-    return meFALSE ;
+    return NULL ;
 }
 
 void
@@ -421,37 +427,116 @@ meBufferCollapseNarrowAll(meBuffer *bp)
     
     do
     {
-        noLines = nrrw->noLines ;
-        if(nrrw->markupLine != NULL)
+        if(nrrw->expanded)
         {
-            meAssert(meLineGetPrev(nrrw->markupLine) == nrrw->slp->prev) ;
-            meAssert(meLineGetNext(nrrw->markupLine) == nrrw->elp->next) ;
-            meLineGetNext(meLineGetPrev(nrrw->markupLine)) = nrrw->markupLine ;
-            meLineGetPrev(meLineGetNext(nrrw->markupLine)) = nrrw->markupLine ;
-            noLines-- ;
+            noLines = nrrw->noLines ;
+            if(nrrw->markupLine != NULL)
+            {
+                meAssert(meLineGetPrev(nrrw->markupLine) == nrrw->slp->prev) ;
+                meAssert(meLineGetNext(nrrw->markupLine) == nrrw->elp->next) ;
+                meLineGetNext(meLineGetPrev(nrrw->markupLine)) = nrrw->markupLine ;
+                meLineGetPrev(meLineGetNext(nrrw->markupLine)) = nrrw->markupLine ;
+                noLines-- ;
+            }
+            else
+            {
+                nrrw->slp->prev->next = nrrw->elp->next ;
+                nrrw->elp->next->prev = nrrw->slp->prev ;
+            }
+            bp->lineCount -= noLines ;
+            nrrw->expanded = meFALSE ;
+            meAnchorGet(bp,nrrw->name) ;
+            meFrameLoopBegin() ;
+            for (wp=loopFrame->windowList; wp!=NULL; wp=wp->next)
+            {
+                if (wp->buffer == bp)
+                {
+                    if(wp->dotLineNo >= bp->dotLineNo)
+                        wp->dotLineNo -= noLines ;
+                    if(wp->markLineNo >= bp->dotLineNo)
+                        wp->markLineNo -= noLines ;
+                    wp->updateFlags |= WFMAIN|WFMOVEL ;
+                }
+            }
+            meFrameLoopEnd() ;
+        }
+        nrrw = nrrw->prev ;
+    } while(nrrw != NULL) ;
+}
+
+meInt
+meBufferRegionExpandNarrow(meBuffer *bp, meLine **startLine, meUShort soffset, meLine *endLine, meUShort eoffset, meInt remove)
+{
+    /* the kill probably includes one or more narrows, find them, expand then and
+     * add them to the size of the kill */
+    meLine *slp, *plp, *clp, *nlp, *elp ;
+    meNarrow *nrrw ;
+    meInt len, adjLen=0 ;
+    
+    clp = *startLine ;
+    if(clp == endLine)
+        return 0 ;
+    slp = meLineGetPrev(clp) ;
+    
+    /* if at the start of the line and this is a narrow markup line then this narrow should be included */
+    if((soffset == 0) && (clp != bp->baseLine) &&
+       ((meLineGetFlag(clp) & (meLINE_ANCHOR_NARROW|meLINE_MARKUP|meLINE_PROTECT)) == (meLINE_ANCHOR_NARROW|meLINE_MARKUP|meLINE_PROTECT)) &&
+       ((nrrw = meLineGetNarrow(bp,clp)) != NULL) && nrrw->markupCmd)
+    {
+        plp = slp ;
+        elp = meLineGetNext(clp) ;
+        adjLen -= meLineGetLength(clp) + 1 ;
+        if(remove)
+            meBufferRemoveNarrow(bp,nrrw,NULL,0) ;
+        else
+            meBufferExpandNarrow(bp,nrrw,NULL,0) ;
+        meAssert(meLineGetPrev(elp) != clp) ; /* check it was a markup */
+        nlp = meLineGetNext(plp) ;
+    }
+    else
+    {
+        plp = clp ;
+        nlp = meLineGetNext(clp) ;
+        elp = NULL ;
+    }
+    if(eoffset)
+        endLine = meLineGetNext(endLine) ;
+    while((clp = nlp) != endLine)
+    {
+        if(elp == clp)
+            /* reached the end of the narrowed out section */
+            elp = NULL ;
+        nlp = meLineGetNext(clp) ;
+        len = meLineGetLength(clp) ;
+        if((meLineGetFlag(clp) & meLINE_ANCHOR_NARROW) &&
+           ((nrrw = meLineGetNarrow(bp,clp)) != NULL))
+        {
+            if(remove)
+                meBufferRemoveNarrow(bp,nrrw,NULL,0) ;
+            else
+                meBufferExpandNarrow(bp,nrrw,NULL,0) ;
+            if(meLineGetPrev(nlp) == clp)
+                /* the current line was not  a narrow markup line */
+                nlp = clp ;
+            else if(elp == NULL)
+                /* the current line was a narrow markup line that was
+                 * counted as part of the original kill, subtract the
+                 * length of this from the kill */
+                adjLen -= len + 1 ;
+            if(elp == NULL)
+                elp = nlp ;
+            nlp = meLineGetNext(plp) ;
         }
         else
         {
-            nrrw->slp->prev->next = nrrw->elp->next ;
-            nrrw->elp->next->prev = nrrw->slp->prev ;
+            if(elp != NULL)
+                /* currently trundling down a narrowed out section add to adjLen */
+                adjLen += len + 1 ;
+            plp = clp ;
         }
-        bp->lineCount -= noLines ;
-        meAnchorGet(bp,nrrw->name) ;
-        meFrameLoopBegin() ;
-        for (wp=loopFrame->windowList; wp!=NULL; wp=wp->next)
-        {
-            if (wp->buffer == bp)
-            {
-                if(wp->dotLineNo >= bp->dotLineNo)
-                    wp->dotLineNo -= noLines ;
-                if(wp->markLineNo >= bp->dotLineNo)
-                    wp->markLineNo -= noLines ;
-                wp->updateFlags |= WFMAIN|WFMOVEL ;
-            }
-        }
-        meFrameLoopEnd() ;
-        nrrw = nrrw->prev ;
-    } while(nrrw != NULL) ;
+    }
+    *startLine = meLineGetNext(slp) ;
+    return adjLen ;
 }
 
 int
@@ -479,8 +564,11 @@ narrowBuffer(int f, int n)
     else if(n == 2)
     {
         if((frameCur->windowCur->dotLine->flag & meLINE_ANCHOR_NARROW) &&
-           (meLineRemoveNarrow(frameCur->bufferCur,frameCur->windowCur->dotLine) > 0))
+           ((nrrw=meLineGetNarrow(frameCur->bufferCur,frameCur->windowCur->dotLine)) != NULL))
+        {
+            meBufferRemoveNarrow(frameCur->bufferCur,nrrw,NULL,0) ;
             return meTRUE ;
+        }
         return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No narrow on current line]") ;
     }
     else if((n != 3) && (n != 4))
