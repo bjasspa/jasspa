@@ -1692,7 +1692,7 @@ define-macro cc-merge
     !if &seq .cc-init.comment ""
         set-variable #l3 &cat #l3 "-nc"
     !else
-        set-variable #l3 "%s-c \"%s\"" #l3 &rep &rep &trb .cc-init.comment "\\" "\\\\" "\"" "\\\""
+        set-variable #l3 &spr "%s-c \"%s\"" #l3 &rep &rep &trb .cc-init.comment "\\" "\\\\" "\"" "\\\""
     !endif
     set-variable .cc-init.comment13 .cc-init.comment
     find-buffer "*cc-cmdline*"
