@@ -64,6 +64,7 @@ define-macro-file narrow narrow-search-forward narrow-search-backward
 define-macro-file toolbar toolbar toolbar-close toolbar-mode-line
 define-macro-file buffstp buffer-setup buffer-help buffer-tool
 define-macro-file itemlist item-list item-list-close occur
+define-macro-file notes notes notes-instant notes-context
 define-macro-file mail mail mail-check stop-mail-check
 define-macro-file fileopen osd-file-open osd-get-file
 define-macro-file spellaut auto-spell auto-spell-menu
@@ -83,7 +84,6 @@ define-macro-file userstp user-setup
 define-macro-file word describe-word
 define-macro-file vm vm mail-setup
 define-macro-file watch
-define-macro-file notes
 define-macro-file gdiff
 define-macro-file calc
 define-macro-file draw
@@ -164,6 +164,9 @@ global-bind-key item-list-close          "esc f6"
 global-bind-key spell-buffer             "f7"
 0 global-bind-key auto-spell             "S-f7"
 global-bind-key auto-spell-menu          "C-f7"
+global-bind-key notes                    "f9"
+global-bind-key notes-instant            "S-f9"
+global-bind-key notes-context            "C-f9"
 global-bind-key file-browser             "f10"
 global-bind-key ftp                      "S-f10"
 3 global-bind-key file-browser           "C-f10"
