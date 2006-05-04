@@ -1535,39 +1535,38 @@ reyank(int f, int n)
          * would loose text with no hope of recovering it.
          */
         return mlwrite(MWABORT,(meUByte *)"[reyank must IMMEDIATELY follow a yank or reyank]");
-
-    reyankLastYank = reyankLastYank->next;
-    /*
-     * Delete the current region.
-     */
+    
+    if(((reyankLastYank = reyankLastYank->next) == NULL) && (n < 0))
+        /* Fail if got to the end and n is -ve */
+        return meFALSE ;
+        
+    /* Get the current region */
     if((ret = getregion(&region)) <= 0)
-        return(ret);
-
+        return ret ;
+    
+    /* Delete the current region. */
     frameCur->windowCur->dotLine  = region.line;
     frameCur->windowCur->dotOffset = region.offset;
     frameCur->windowCur->dotLineNo = region.lineNo;
     ldelete(region.size,6);
 
-    /*
-     * Set the mark here so that we can delete the region in the next
-     * reyank command.
-     */
+    /* Set the mark here so that we can delete the region in the next
+     * reyank command. */
     windowSetMark(meFALSE, meFALSE);
 
-    /*
-     * If we've fallen off the end of the klist and there are no more
+    /* If we've fallen off the end of the klist and there are no more
      * elements, wrap around to the most recent delete. This makes it
      * appear as if the linked list of kill buffers is actually
      * implemented as the GNU style "kill ring".
-     *
-     * Put out a warning as well.
      */
     if(reyankLastYank == (meKill*) NULL)
     {
         mlwrite(MWABORT,(meUByte *)"[start of kill-ring]");
         reyankLastYank = klhead;
     }
-
+    
+    if(n < 0)
+        n = 0 - n ;
     while(n--)
     {
         if((ret = yankfrom(reyankLastYank)) < 0)
@@ -1581,7 +1580,7 @@ reyank(int f, int n)
     /* Remember that this is a reyank command for next time. */
     thisflag = meCFRYANK;
 
-    return(meTRUE);
+    return meTRUE ;
 }
 
 void
