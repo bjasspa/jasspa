@@ -1272,7 +1272,7 @@ ldelete(meInt nn, int kflag)
     meLine *ll ;
     meUByte *kstring ;
     meLineFlag lflag=0 ;
-    meInt ret ;
+    meInt len, ret ;
     
     /* A quick test to make failure handling easier */
     ll = frameCur->windowCur->dotLine ;
@@ -1280,7 +1280,7 @@ ldelete(meInt nn, int kflag)
         return meFALSE ;
     
     /* Must get the # chars we can delete */
-    if((ret = nn + frameCur->windowCur->dotOffset - meLineGetLength(ll)) > 0)
+    if((len = nn + frameCur->windowCur->dotOffset - meLineGetLength(ll)) > 0)
     {
         do
         {
@@ -1292,37 +1292,38 @@ ldelete(meInt nn, int kflag)
                  * offset is 0
                  */
                 if(frameCur->windowCur->dotOffset == 0)
-                    ret-- ;
+                    len-- ;
                 break ;
             }
-            ret -= meLineGetLength(ll)+1 ;
-        } while(ret > 0) ;
+            len -= meLineGetLength(ll)+1 ;
+        } while(len > 0) ;
     }
 #if MEOPT_EXTENDED
     if((frameCur->windowCur->dotLine != ll) &&
        ((frameCur->windowCur->dotOffset && 
          (frameCur->windowCur->dotLine->flag & meLINE_PROTECT)) ||
         ((ll->flag & meLINE_PROTECT) &&
-         (frameCur->windowCur->dotOffset || (meLineGetLength(ll) != -ret)))))
+         (frameCur->windowCur->dotOffset || (meLineGetLength(ll) != -len)))))
     {
         mlwrite(MWABORT,(meUByte *)"[Protected Line!]") ;
         return meFALSE ;
     }
 #endif
-    if(ret > 0)
+    if(len > 0)
     {
-        nn -= ret ;
+        nn -= len ;
         /* This is a bit grotty, we cannot remove the last \n, so the count has
          * been adjusted appropriately, but neither should we generate an error.
          * So only generate an error if the number of chars we want to delete but
          * can't is greater that 1
          */
-        if(ret > 1)
+        if(len > 1)
             ret = meFALSE ;
         else
             ret = meTRUE ;
+        len = 0 ;
     }
-    else if((((long) frameCur->windowCur->dotOffset) - ret) > 0xfff0)
+    else if((((long) frameCur->windowCur->dotOffset) - len) > 0xfff0)
     {
         /* The last line will be too long - dont remove the last \n and the offset
          * on the last line, i.e. if G is a wanted char and D is a char that should
@@ -1338,70 +1339,41 @@ ldelete(meInt nn, int kflag)
          * GGGGGG
          * DDDDDDDGGGGGGGG
          * 
-         * All we have to do is reduce the no chars appropriately
+         * All we have to do is reduce the no chars appropriately.
+         * 
+         * Note: if there is a narrow on the last line we should that that too so set
+         * len to 1.
          */
-        nn -= meLineGetLength(ll)+ret+1 ;
+        nn -= meLineGetLength(ll)+len+1 ;
         mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Line too long!]") ;
         ret = meFALSE ;
+        len = 1 ;
     }        
     else
+    {
         ret = meTRUE ;
+        len += meLineGetLength(ll) ;
+    }
 #if MEOPT_NARROW
-    if(lflag & meLINE_ANCHOR_NARROW)
+    if((lflag & meLINE_ANCHOR_NARROW) ||
+       (len && (meLineGetFlag(ll) & meLINE_ANCHOR_NARROW)))
+
     {
         /* the kill probably includes one or more narrows, find them, expand then and
          * add them to the size of the kill */
-        meLine *slp, *clp, *plp, *nlp, *elp=NULL ;
-        meInt len, lineNo ;
+        meLine *slp, *dlp ;
+        meInt dln ;
         
-        plp = frameCur->windowCur->dotLine ;
-        /* if at the start of the line and this is a narrow markup line then kill
-         * the narrow at the start of the line as well - note the line flag test is not fully conclusive */ 
-        if((frameCur->windowCur->dotOffset == 0) &&
-           ((meLineGetFlag(plp) & (meLINE_ANCHOR_NARROW|meLINE_MARKUP|meLINE_PROTECT)) == (meLINE_ANCHOR_NARROW|meLINE_MARKUP|meLINE_PROTECT)))
+        slp = frameCur->windowCur->dotLine ;
+        nn += meBufferRegionExpandNarrow(frameCur->bufferCur,&slp,frameCur->windowCur->dotOffset,ll,(meUShort) len,1) ;
+        if((dlp = frameCur->windowCur->dotLine) != slp)
         {
-            slp = plp = meLineGetPrev(plp) ;
-            lineNo = frameCur->windowCur->dotLineNo ;
-        }
-        else
-            slp = NULL ;
-        nlp = meLineGetNext(plp) ;
-        while((clp = nlp) != ll)
-        {
-            if(elp == clp)
-                /* reached the end of the narrowed out section */
-                elp = NULL ;
-            nlp = meLineGetNext(clp) ;
-            len = meLineGetLength(clp) ;
-            if((meLineGetFlag(clp) & meLINE_ANCHOR_NARROW) &&
-               (meLineRemoveNarrow(frameCur->bufferCur,clp) == meTRUE))
-            {
-                if(meLineGetPrev(nlp) == clp)
-                    /* the current line was not  a narrow markup line */
-                    nlp = clp ;
-                else if(elp == NULL)
-                    /* the current line was a narrow markup line that was
-                     * counted as part of the original kill, subtract the
-                     * length of this from the kill */
-                    nn -= len + 1 ;
-                if(elp == NULL)
-                    elp = nlp ;
-                nlp = meLineGetNext(plp) ;
-            }
-            else
-            {
-                if(elp != NULL)
-                    /* currently trundling down a narrowed out section add
-                     * length to kill size */
-                    nn += len + 1 ;
-                plp = clp ;
-            }
-        }
-        if(slp != NULL)
-        {
-            frameCur->windowCur->dotLine = meLineGetNext(slp) ;
-            frameCur->windowCur->dotLineNo = lineNo ;
-            frameCur->windowCur->dotOffset = 0 ;
+            dln = frameCur->windowCur->dotLineNo ;
+            do
+                dln-- ;
+            while((dlp = meLineGetPrev(dlp)) != slp) ;
+            frameCur->windowCur->dotLine = dlp ;
+            frameCur->windowCur->dotLineNo = dln ;
         }
     }
 #endif

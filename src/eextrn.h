@@ -663,10 +663,11 @@ meBufferCreateNarrow(meBuffer *bp, meLine *slp, meLine *elp, meInt sln, meInt el
                      meInt name, meScheme scheme, meUByte *markupLine, meInt markupCmd, meInt undoCall) ;
 extern void
 meBufferRemoveNarrow(meBuffer *bp, register meNarrow *nrrw, meUByte *firstLine, meInt undoCall) ;
-extern void meBufferExpandNarrowAll(meBuffer *bp) ;
-extern void meBufferCollapseNarrowAll(meBuffer *bp) ;
-extern int  meLineRemoveNarrow(meBuffer *bp, meLine *lp) ;
-extern int  narrowBuffer(int f, int n) ;
+extern void  meBufferExpandNarrowAll(meBuffer *bp) ;
+extern void  meBufferCollapseNarrowAll(meBuffer *bp) ;
+extern meInt meBufferRegionExpandNarrow(meBuffer *bp, meLine **startLine, meUShort soffset,
+                                        meLine *endLine, meUShort eoffset, meInt remove) ;
+extern int   narrowBuffer(int f, int n) ;
 #else
 #define narrowBuffer notAvailable
 #endif

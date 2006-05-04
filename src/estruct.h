@@ -656,6 +656,7 @@ typedef struct meNarrow {
     meInt              name ;                   /* anchor name                               */
     meInt              markupCmd ;              /* Command called to create markup line text */
     meUByte            scheme ;                 /* Line scheme used                          */
+    meUByte            expanded ;               /* Flag whether it is temporarily expanded   */
 } meNarrow ;
 
 /* the following is encoded in the narrow name */

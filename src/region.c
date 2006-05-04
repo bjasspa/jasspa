@@ -130,100 +130,52 @@ copyRegion(int f, int n)
     meRegion region ;
     meLine *line;
     meUByte  *ss, *dd ;
-    int left, ii, ret ;
+    meInt left, ii, ret ;
 #if MEOPT_NARROW
+    meUShort eoffset ;
+    meLine *markLine, *dotLine, *elp ;
+    meInt markLineNo, dotLineNo, expandNarrows=meFALSE ;
     meUShort markOffset, dotOffset ;
-    meLine *markLine, *dotLine ;
-    meInt markLineNo, dotLineNo, expandNarrows=meFALSE ; ;
 #endif
     
     if(getregion(&region) <= 0)
         return meFALSE ;
+    left = region.size ;
+    line = region.line ;
 #if MEOPT_NARROW
     if((n & 0x01) && (frameCur->bufferCur->narrow != NULL) &&
        (frameCur->windowCur->dotLine != frameCur->windowCur->markLine))
     {
-        /* expand narrows, this can get messy so check the operation is legal first.
-         * take the easy option, the dot and mark points move with the narrow expansion,
-         * but anchor points dont so drop anchors for the dot and mark to maintain the
-         * region and if the offset of these change (i.e. set to 0 due to being on a
-         * narrow markup line) then fail the copy */
-        if(frameCur->windowCur->dotLineNo > frameCur->windowCur->markLineNo)
+        /* expand narrows that are within the region */
+        expandNarrows = meTRUE ;
+        dotLine = frameCur->windowCur->dotLine ;
+        dotLineNo = frameCur->windowCur->dotLineNo ;
+        dotOffset = frameCur->windowCur->dotOffset ;
+        markLine = frameCur->windowCur->markLine ;
+        markLineNo = frameCur->windowCur->markLineNo ;
+        markOffset = frameCur->windowCur->markOffset ;
+        if(line == dotLine)
         {
-            line = frameCur->windowCur->markLine ;
-            ii = frameCur->windowCur->dotLineNo - frameCur->windowCur->markLineNo ;
+            elp = markLine ;
+            eoffset = markOffset ;
         }
         else
         {
-            line = frameCur->windowCur->dotLine ;
-            ii = frameCur->windowCur->markLineNo - frameCur->windowCur->dotLineNo ;
+            elp = dotLine ;
+            eoffset = dotOffset ;
         }
-        do {
-            if(line->flag & meLINE_ANCHOR_NARROW)
-                break ;
-            line = meLineGetNext(line) ;
-        } while(--ii >= 0) ;
-        if(ii >= 0)
+        left += meBufferRegionExpandNarrow(frameCur->bufferCur,&line,region.offset,elp,eoffset,0) ;
+        if(((frameCur->windowCur->dotLine != dotLine) && dotOffset) ||
+           ((frameCur->windowCur->markLine != markLine) && markOffset))
         {
-            expandNarrows = meTRUE ;
-            dotLine = frameCur->windowCur->dotLine ;
-            dotLineNo = frameCur->windowCur->dotLineNo ;
-            dotOffset = frameCur->windowCur->dotOffset ;
-            markLine = frameCur->windowCur->markLine ;
-            markLineNo = frameCur->windowCur->markLineNo ;
-            markOffset = frameCur->windowCur->markOffset ;
-            meBufferExpandNarrowAll(frameCur->bufferCur) ;
-            if(((frameCur->windowCur->dotLine != dotLine) && dotOffset) ||
-               ((frameCur->windowCur->markLine != markLine) && markOffset))
-            {
-                ret = mlwrite(MWABORT,(meUByte *)"[Bad region definition]") ;
-                goto copy_region_exit ;
-            }
-            if(frameCur->windowCur->dotLine != dotLine)
-            {
-                /* dot was at the start of a narrow markup line, find the narrow */
-                meNarrow *nn ;
-                nn = frameCur->bufferCur->narrow ;
-                while(nn->markupLine != dotLine)
-                {
-                    nn = nn->next ;
-                    meAssert(nn != NULL) ;
-                }
-                line = frameCur->windowCur->dotLine ;
-                while(line != nn->slp)
-                {
-                    line = meLineGetPrev(line) ;
-                    frameCur->windowCur->dotLineNo-- ;
-                }
-                meAssert(frameCur->windowCur->dotLineNo >= 0) ;
-                frameCur->windowCur->dotLine = line ;
-            }
-            if(frameCur->windowCur->markLine != markLine)
-            {
-                /* mark was at the start of a narrow markup line, find the narrow */
-                meNarrow *nn ;
-                nn = frameCur->bufferCur->narrow ;
-                while(nn->markupLine != markLine)
-                {
-                    nn = nn->next ;
-                    meAssert(nn != NULL) ;
-                }
-                line = frameCur->windowCur->markLine ;
-                while(line != nn->slp)
-                {
-                    line = meLineGetPrev(line) ;
-                    frameCur->windowCur->markLineNo-- ;
-                }
-                meAssert(frameCur->windowCur->markLineNo >= 0) ;
-                frameCur->windowCur->markLine = line ;
-            }
-            getregion(&region) ;
+            ret = mlwrite(MWABORT,(meUByte *)"[Bad region definition]") ;
+            goto copy_region_exit ;
         }
     }
 #endif
     if(lastflag != meCFKILL)                /* Kill type command.   */
         killSave();
-    if((left=region.size) == 0)
+    if(left == 0)
     {
         thisflag = meCFKILL ;
         ret =  meTRUE ;
@@ -235,7 +187,6 @@ copyRegion(int f, int n)
         ret = meFALSE ;
         goto copy_region_exit ;
     }
-    line = region.line;                 /* Current line.        */
     if((ii = region.offset) == meLineGetLength(line))
         goto add_newline ;                 /* Current offset.      */
     ss = line->text+ii ;
