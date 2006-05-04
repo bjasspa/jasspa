@@ -1387,6 +1387,12 @@ define-macro cc-add
     !force 0 delete-buffer "*cc-diff-temp*"
     find-buffer "*cc-diff-temp*"
     insert-file #l0
+    0 buffer-info
+    ; work out whether the source has \r\n line termination
+    set-variable #l2 $result
+    set-variable #l2 &add &lget #l2 6 &div &lget #l2 2 2
+    set-variable #l3 &stat "s" #l0
+    &cond &gre #l2 #l3 -1 1 buffer-mode "crlf"
     find-buffer #l1
     !if &les $window-eline 7
         !return
