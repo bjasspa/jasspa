@@ -309,6 +309,7 @@ static int ffstartTime ;
 #define ffURL_CONSOLE        0x01
 #define ffURL_SHOW_CONSOLE   0x02
 #define ffURL_SHOW_PROGRESS  0x04
+#define ffURL_CLOSE_PROGRESS 0x08
 static int ffurlFlags=ffURL_CONSOLE ;
 static meBuffer *ffurlBp=NULL ;
 static meBuffer *ffurlReadBp ;
@@ -470,33 +471,35 @@ ffurlConsoleAddText(meUByte *str, int flags)
 static meSOCKET
 ffOpenConnectUrlSocket(meUByte *host, meUByte *port)
 {
+    meUByte buff[meBUF_SIZE_MAX] ;
     meSOCKET ss ;
     int ii ;
     
+    sprintf((char *)buff,"[Connecting to %s:%s]",host,port);
     if(ffurlBp != NULL)
-    {
-        meUByte buff[meBUF_SIZE_MAX] ;
-        sprintf((char *)buff,"Connecting to: %s",host);
         ffurlConsoleAddText(buff,0) ;
-    }
-    mlwrite(MWCURSOR,(meUByte *)"[Connecting to %s]",host);
+    mlwrite(MWCURSOR|MWSPEC,buff);
     
     if(!make_inet_addr(host,port,(meUByte *)"tcp"))
         return meBadSocket ;
     
     if((ss=meSocketOpen(AF_INET,SOCK_STREAM,IPPROTO_TCP)) < 0)
     {
-        mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to open socket]") ;
+        sprintf((char *)buff,"[Failed to open socket - %d]",meSocketGetError()) ;
+        if(ffurlBp != NULL)
+            ffurlConsoleAddText(buff,0) ;
+        mlwrite(MWABORT|MWPAUSE|MWSPEC,buff) ;
         return meBadSocket ;
     }
     ii = 1 ;
     meSocketSetOpt(ss,SOL_SOCKET,SO_REUSEADDR,(char *) &ii,sizeof(int)) ;
-    ii = 1 ;
-    meSocketSetOpt (ss,SOL_SOCKET,SO_KEEPALIVE,(char *) &ii,sizeof(int));
     if(meSocketConnect(ss,(struct sockaddr *) &meSockAddr,sizeof(meSockAddr)) != 0)
     {
         meSocketClose(ss) ;
-        mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to connect to %s:%s]",host,port) ;
+        sprintf((char *)buff,"[Failed to connect to %s:%s - %d]",host,port,meSocketGetError()) ;
+        if(ffurlBp != NULL)
+            ffurlConsoleAddText(buff,0) ;
+        mlwrite(MWABORT|MWPAUSE|MWSPEC,buff) ;
         return meBadSocket ;
     }
     
@@ -511,7 +514,12 @@ ffReadSocketLine(meSOCKET ss, meUByte *buff)
     for(;;)
     {
         if(meSocketRead(ss,(char *) dd,1,0) <= 0)
-            return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to read line]") ;
+        {
+            sprintf((char *)buff,"[Failed to read line - %d]",meSocketGetError()) ;
+            if(ffurlBp != NULL)
+                ffurlConsoleAddText(buff,0) ;
+            return mlwrite(MWABORT|MWPAUSE|MWSPEC,buff) ;
+        }
         if((cc=*dd) == '\n')
             break ;
         if(cc != '\r')
@@ -576,7 +584,10 @@ ftpCommand(int flags, char *fmt, ...)
     ffbuf[ii]   = '\0' ;
     if(meSocketWrite(ffccsk,(char *)ffbuf,ii,0) <= 0)
     {
-        mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to send command]") ;
+        sprintf((char *)ffbuf,"[Failed to send command - %d]",meSocketGetError()) ;
+        if(ffurlBp != NULL)
+            ffurlConsoleAddText(ffbuf,0) ;
+        mlwrite(MWABORT|MWPAUSE|MWSPEC,ffbuf) ;
         return ftpERROR ;
     }
     if(flags & 0x01)
@@ -640,11 +651,16 @@ ftpGetDataChannel(void)
     int aai[4], ppi[2] ;
     meUByte *ss ;
     
-    if((ftpCommand(0,"PASV") != ftpPOS_COMPLETE) ||
-       ((ss=meStrchr(resultStr,'(')) == NULL) || 
+    if(ftpCommand(0,"PASV") != ftpPOS_COMPLETE)
+        return meABORT ;
+    if(((ss=meStrchr(resultStr,'(')) == NULL) || 
        (sscanf((char *)ss,"(%d,%d,%d,%d,%d,%d)",aai,aai+1,aai+2,aai+3,ppi,ppi+1) != 6))
-        return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to get PASSIVE address]") ;
-    
+    {
+        ss = (meUByte *) "[Failed to extract PASSIVE address]" ;
+        if(ffurlBp != NULL)
+            ffurlConsoleAddText(ss,0) ;
+        return mlwrite(MWABORT|MWPAUSE|MWSPEC,ss) ;
+    }    
     aac = (meUByte *)&meSockAddr.sin_addr;
     ppc = (meUByte *)&meSockAddr.sin_port;
     aac[0] = (meUByte) aai[0] ;
@@ -655,14 +671,23 @@ ftpGetDataChannel(void)
     ppc[1] = (meUByte) ppi[1] ;
 
     if(meSocketIsBad(ffsock = meSocketOpen(AF_INET, SOCK_STREAM, IPPROTO_TCP)))
-        return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to open data channel]") ;
+    {
+        sprintf((char *)resultStr,"[Failed to open data channel - %d]",meSocketGetError()) ;
+        if(ffurlBp != NULL)
+            ffurlConsoleAddText(resultStr,0) ;
+        return mlwrite(MWABORT|MWPAUSE|MWSPEC,resultStr) ;
+    }
     
     aai[0] = 1 ;
     meSocketSetOpt(ffsock,SOL_SOCKET,SO_REUSEADDR,(char *) aai,sizeof(int)) ;
     
     if(meSocketConnect(ffsock,(struct sockaddr *) &meSockAddr,sizeof(meSockAddr)) < 0)
-        return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to connect data channel]") ;
-    
+    {
+        sprintf((char *)resultStr,"[Failed to connect data channel - %d]",meSocketGetError()) ;
+        if(ffurlBp != NULL)
+            ffurlConsoleAddText(resultStr,0) ;
+        return mlwrite(MWABORT|MWPAUSE|MWSPEC,resultStr) ;
+    }
     return meTRUE ;
 }
 
@@ -770,7 +795,7 @@ static int ffUrlFileOpen(meUByte *urlName, meUByte *user, meUByte *pass, meUInt 
 int
 ffFtpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByte *file, meUInt rwflag)
 {
-    meUByte buff[meBUF_SIZE_MAX], *ss ;
+    meUByte buff[meBUF_SIZE_MAX], lbuff[meBUF_SIZE_MAX+32], *ss ;
     int dirlist, ll ;
     
     /* are we currently connected to this site?? */
@@ -830,24 +855,22 @@ ffFtpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByt
     }
             
     if(rwflag & meRWFLAG_WRITE)
-        ss = (meUByte *) "Writing: " ;
+        ss = (meUByte *) "writing" ;
     else if(rwflag & meRWFLAG_READ)
-        ss = (meUByte *) "Reading: " ;
+        ss = (meUByte *) "reading" ;
     else if(rwflag & meRWFLAG_DELETE)
-        ss = (meUByte *) "Deleting: " ;
+        ss = (meUByte *) "deleting" ;
     else if(rwflag & meRWFLAG_MKDIR)
-        ss = (meUByte *) "Mkdir: " ;
+        ss = (meUByte *) "mkdir" ;
     else
-        ss = (meUByte *) "Stating: " ;
+        ss = (meUByte *) "stating" ;
+    sprintf((char *)lbuff,"[Connected, %s %s]",ss,file);
     if(ffurlBp != NULL)
     {
-        meUByte lbuff[meBUF_SIZE_MAX] ;
         ffurlConsoleAddText((meUByte *)"",0x04) ;
-        meStrcpy(lbuff,ss);
-        meStrcat(lbuff,file);
         ffurlConsoleAddText(lbuff,0) ;
     }
-    mlwrite(MWCURSOR,(meUByte *)"[Connected, %s %s]",ss,file);
+    mlwrite(MWCURSOR|MWSPEC,(meUByte *)lbuff);
     if(rwflag & meRWFLAG_BACKUP)
     {
         /* try to back-up the existing file - no error checking! */
@@ -968,13 +991,13 @@ ffHttpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUBy
     if(meSocketIsBad(ffsock=ffOpenConnectUrlSocket(thost,tport)))
         return meFALSE ;
        
+    sprintf((char *)buff,"[Connected, reading %s]",file);
     if(ffurlBp != NULL)
     {
         ffurlConsoleAddText((meUByte *)"",0x04) ;
-        sprintf((char *)buff,"Reading: %s",file);
         ffurlConsoleAddText(buff,0) ;
     }
-    mlwrite(MWCURSOR,(meUByte *)"[Connected, reading %s]", file);
+    mlwrite(MWCURSOR|MWSPEC,buff);
 
     /* send GET message to http */
     meStrcpy(buff,"GET ") ;
@@ -1222,7 +1245,10 @@ ffUrlFileOpen(meUByte *urlName, meUByte *user, meUByte *pass, meUInt rwflag)
         {
             struct meTimeval tp ;
             if(ffurlFlags & ffURL_SHOW_PROGRESS)
-                ffurlConsoleAddText((meUByte *)"Progress: ",0x02) ;
+            {
+                ffurlConsoleAddText((meUByte *)"[Progress: ",0x02) ;
+                ffurlFlags |= ffURL_CLOSE_PROGRESS ;
+            }
             gettimeofday(&tp,NULL) ;
             ffstartTime = (tp.tv_sec * 1000) + (tp.tv_usec/1000) ;
         }
@@ -1235,6 +1261,11 @@ ffUrlFileOpen(meUByte *urlName, meUByte *user, meUByte *pass, meUInt rwflag)
 static int
 ffUrlFileClose(meUByte *fname, meUInt rwflag)
 {
+    if(ffurlFlags & ffURL_CLOSE_PROGRESS)
+    {
+        ffurlConsoleAddText((meUByte *)"]",0x03) ;
+        ffurlFlags &= ~ffURL_CLOSE_PROGRESS ;
+    }
     if(rwflag & (meRWFLAG_READ|meRWFLAG_WRITE))
     {
         if(fname[0] == 'f')
@@ -1253,15 +1284,28 @@ ffUrlFileClose(meUByte *fname, meUInt rwflag)
         {
             meUByte buff[meBUF_SIZE_MAX] ;
             struct meTimeval tp ;
-            int dwldtime ;
+            int dwldtime, kbsec, kbhsec ;
             gettimeofday(&tp,NULL) ;
             dwldtime = ((tp.tv_sec * 1000) + (tp.tv_usec/1000)) - ffstartTime ;
             if(dwldtime <= 0)
                 dwldtime = 1 ;
-            sprintf((char *)buff,"%d bytes %s in %d.%d seconds (%d.%d Kbytes/s)",
+            if(ffread > 0x1000000)
+            {
+                kbsec = (ffread / 128) * 125 ;
+                if(dwldtime > 100)
+                    kbhsec = (kbsec/(dwldtime/100)) % 100 ;
+                else
+                    kbhsec = 0 ;
+            }
+            else
+            {
+                kbsec = (ffread * 125) / 128 ;
+                kbhsec = ((kbsec*100)/dwldtime) % 100 ;
+            }
+            kbsec /= dwldtime ;
+            sprintf((char *)buff,"[Complete, %d bytes %s in %d.%02d seconds (%d.%02d Kbytes/s)]",
                     (int) ffread,(rwflag & meRWFLAG_WRITE) ? "sent":"received",
-                    dwldtime/1000,(dwldtime/100) % 10,
-                    (int) (ffread/dwldtime),(int) (((ffread*100)/dwldtime) % 100)) ;
+                    dwldtime/1000,(dwldtime/10) % 100,kbsec,kbhsec) ;
             ffurlConsoleAddText(buff,0x04) ;
             ffurlConsoleAddText((meUByte *)"",0) ;
             ffurlBp = NULL ;
@@ -1543,8 +1587,7 @@ ffgetBuf(void)
             ffremain = -1 ;
             return meTRUE ;
         }
-        if((ffurlBp != NULL) &&
-           (ffurlFlags & ffURL_SHOW_PROGRESS))
+        if(ffurlFlags & ffURL_CLOSE_PROGRESS)
             ffurlConsoleAddText((meUByte *)"#",(meLineGetLength(ffurlBp->dotLine) >= frameCur->width - 2) ? 0x02:0x03) ;
     }
     else
@@ -2012,20 +2055,19 @@ ffputBuf(void)
             ffwerror = 1 ;
             return mlwrite(MWABORT,(meUByte *)"[Send failed - %d]",meSocketGetError()) ;
         }
-        else if((ffurlBp != NULL) && (ffurlFlags & ffURL_SHOW_PROGRESS))
+        else if(ffurlFlags & ffURL_CLOSE_PROGRESS)
             ffurlConsoleAddText((meUByte *)"#",(meLineGetLength(ffurlBp->dotLine) >= frameCur->width - 2) ? 0x02:0x03) ;
     }
     else
 #endif
-#ifdef _WIN32
     {
+#ifdef _WIN32
         meInt written ;
         if((WriteFile(ffwp,ffbuf,ffremain,&written,NULL) == 0) || (written != ffremain))
         {
             ffwerror = 1 ;
             return mlwrite(MWABORT,(meUByte *)"[Write failed - %d]",meFileGetError());
         }
-    }
 #else
         if(((int) fwrite(ffbuf,1,ffremain,ffwp)) != ffremain)
         {
@@ -2033,6 +2075,7 @@ ffputBuf(void)
             return mlwrite(MWABORT,(meUByte *)"[Write failed - %d]",meFileGetError());
         }
 #endif
+    }
     ffremain = 0 ;
     return 0 ;
 }
