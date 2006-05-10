@@ -1612,10 +1612,11 @@ osd .osd.dirlst 160 ""  "File Tools Setup"      f file-tool-setup
     osd .osd.dirlst 141 "D"
     osd .osd.dirlst 145 "D"
     osd .osd.dirlst 150 "D"
-    !if &seq $buffer-bname "*ftp-files*"
+    !if &seq &lef $buffer-fname 6 "ftp://"
         osd .osd.dirlst 140 "" "FTP Connect"    f ftp-connect
         osd .osd.dirlst 141 "" "FTP Logout"  0x10 file-op
-        !if &not &band $window-flags 0x1000
+        !if &band $window-flags 0x1000
+        !elif &seq $buffer-bname "*ftp-files*"
             osd .osd.dirlst 145 "" &cond .fhook-dirlst.browser-lock "Un\Hlock Browser" "\HLock Browser" f file-browser-lock
             osd .osd.dirlst 150 ""  "Close \HBrowser" f file-browser-close
         !endif
