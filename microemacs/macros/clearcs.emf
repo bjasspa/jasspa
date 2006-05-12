@@ -1462,17 +1462,21 @@ define-macro cc-add
     write-buffer #l1
     !force 0 delete-buffer $buffer-bname
     set-variable #l4 @2
-    !if &equ #l4 2
-        gdiff #l1 #l0 &cat &rig #l0 &rsin "/" #l0 " Predecessor" #l0
-    !elif &equ #l4 3
+    !if &equ #l4 3
         xdiff #l1 #l0 &cat &rig #l0 &rsin "/" #l0 " Predecessor" #l0
     !else
-        !if &band $system 0x100
-            set-variable #l0 &rep #l0 "/" "\\"
-            set-variable #l1 &rep #l1 "/" "\\"
+        !if &equ #l4 2
+            !force gdiff #l1 #l0 &cat &rig #l0 &rsin "/" #l0 " Predecessor" #l0
+        !else
+            !if &band $system 0x100
+                set-variable #l0 &rep #l0 "/" "\\"
+                set-variable #l1 &rep #l1 "/" "\\"
+            !endif
+            find-buffer #l2
+            4 pipe-shell-command &spr "%s \"%s\" \"%s\"" %diff-com #l1 #l0 #l2
         !endif
-        find-buffer #l2
-        4 pipe-shell-command &spr "%s \"%s\" \"%s\"" %diff-com #l1 #l0 #l2
+        ; remove the temp file
+        0x20 file-op #l1
     !endif
 !emacro
 
@@ -1906,8 +1910,8 @@ define-macro cc-add-view
         !endif
     !done
     set-variable #l2 &spr "  Delete View \"%s\"?  " #l2
-    0 osd-xdialog "ClearCase Setup" #l2 2 "  \HYes  " "  \HNo  "
-    !if $status
+    !force !force osd-xdialog "ClearCase Setup" #l2 2 "  \HYes  " "  \HNo  "
+    !if &equ $result 1
         !while &not &seq "" &set #l2 &reg &cat "/history/clearcase/" &inc #l1 1 ""
             set-registry &cat "/history/clearcase/" &sub #l1 1 #l2
         !done
