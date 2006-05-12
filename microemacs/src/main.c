@@ -520,7 +520,7 @@ exitEmacs(int f, int n)
         
 #if MEOPT_EXTENDED
     /* Set the exit code */
-    if(n & 4)
+    if(n & 0x04)
     {
         if(meGetString((meUByte *)"Exit code", 0, 0, (meUByte *) buff,128) <= 0)
             return meFALSE ;
@@ -528,7 +528,7 @@ exitEmacs(int f, int n)
     }
 #endif    
     /* Discard changed buffers - mark all changed buffers as not changed. */
-    if (((n & (8|16)) != 0) && ((n & 1) == 0))
+    if (((n & 0x18) != 0) && ((n & 0x01) == 0))
     {
         meBuffer *bp = bheadp;          /* scanning pointer to buffers */
         while (bp != NULL)
@@ -536,7 +536,7 @@ exitEmacs(int f, int n)
             if(bufferNeedSaving(bp))
             {
 		/* Save a backup */
-                if (n & 16)
+                if (n & 0x10)
                     autowriteout(bp) ;
                 /* Remove the backup */
                 else
@@ -549,7 +549,7 @@ exitEmacs(int f, int n)
     
 #if MEOPT_EXTENDED
     /* Unconditionally save buffers, dictionary and registry files */
-    if((n & 2) &&
+    if((n & 0x02) &&
        ((saveSomeBuffers(f,(n & 0x01)) <= 0)
 #if MEOPT_SPELL
         || (dictionarySave(f,2|(n & 0x01)) <= 0)
@@ -562,7 +562,7 @@ exitEmacs(int f, int n)
 #endif
     
     s = 1 ;
-    if(n & 1)
+    if(n & 0x01)
     {
         if(anyChangedBuffer())
             strcpy(buff,"Modified buffer") ;
@@ -602,6 +602,10 @@ exitEmacs(int f, int n)
         meBuffer *bp, *nbp ;
 
         /* User says it's OK.   */
+#if MEOPT_REGISTRY
+        if(!(n & 0x20))
+            saveHistory(meTRUE,0) ;
+#endif
 #if MEOPT_CLIENTSERVER
         /* the client-server is a psuedo ipipe but it needs
          * to be stopped properly, therefore stop it first as
@@ -629,9 +633,6 @@ exitEmacs(int f, int n)
 #endif
             bp = nbp ;
         }
-#if MEOPT_REGISTRY
-        saveHistory(meTRUE,0) ;
-#endif
 #if MEOPT_CALLBACK
         {
             /* call the shut-down command if its defined */
@@ -905,7 +906,7 @@ exitEmacs(int f, int n)
 int
 saveExitEmacs(int f, int n)
 {
-    return exitEmacs(1,(n & 7)|2) ;
+    return exitEmacs(1,3) ;
 }
 #endif
 
@@ -916,7 +917,13 @@ saveExitEmacs(int f, int n)
 int
 quickExit(int f, int n)
 {
-    return exitEmacs(1,(n & 0x1c)|2) ;
+    if(n == 0)
+        n = 0x28 ;
+    else if(n == 2)
+        n = 0x10 ;
+    else
+        n = 0x02 ;
+    return exitEmacs(1,n) ;
 }
 
 /*
