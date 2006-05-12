@@ -125,6 +125,9 @@ DEFVAR ("line-template",       EVLINETEMP)      /* file next line template   */
 #if MEOPT_COLOR
 DEFVAR ("ml-scheme",           EVMLSCHM)        /* Message line color scheme */
 #endif
+#if MEOPT_EXTENDED
+DEFVAR ("mode-chars",          EVMODECHRS)      /* buffer mode id chars */
+#endif
 DEFVAR ("mode-line",           EVMODELINE)      /* mode-line format string */
 #if MEOPT_COLOR
 DEFVAR ("mode-line-scheme",    EVMDLNSCHM)      /* Mode line colour */
