@@ -73,6 +73,7 @@ meUByte *modeName[] = {                  /* name of modes                */
 meUByte modeCode[] =
 {
 #include "emode.def"
+    '\0'
 };
 #undef DEFMODE
 

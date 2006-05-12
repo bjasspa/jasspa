@@ -1224,6 +1224,7 @@ handle_namesvar:
     case EVSRCHPATH:    return mePtos(searchPath) ;
     case EVHOMEDIR:     return mePtos(homedir) ;
 #if MEOPT_EXTENDED
+    case EVMODECHRS:    return modeCode ;
     case EVSHWMDS:
         {
             ret = evalResult;
