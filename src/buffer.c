@@ -1100,35 +1100,55 @@ int
 changeBufName(int f, int n)     /*      Rename the current buffer       */
 {
     meUByte bufn[meBUF_SIZE_MAX], *nn;     /* buffer to hold buffer name */
-    register int s ;
+    meBuffer *bp1, *bp2 ;
+    int s ;
     
     /* prompt for and get the new buffer name */
     if((s = getBufferName((meUByte *)"New buffer name", 0, 0, bufn)) <= 0)
 	return s ;
-
-    unlinkBuffer(frameCur->bufferCur) ;
-    if(n & 1)
+    
+    bp1 = frameCur->bufferCur ;
+    unlinkBuffer(bp1) ;
+    
+    /* check for duplicates */
+    if((bp2 = bfind(bufn,0)) != NULL)
     {
-	/* check for duplicates */
-	if(bfind(bufn,0) != NULL)
-	{
+        if(n & 1)
+        {
             /* if the names the same */
-            linkBuffer(frameCur->bufferCur) ;
+            linkBuffer(bp1) ;
             return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[Already exists!]") ;
-	}
+        }
+        /* if bit one is clear then make it a valid name by generating a
+         * valid name or by moving the other buffer out of the way */
+        nn = bufn ;
+        if(n & 2)
+        {
+            char *name ;
+            unlinkBuffer(bp2) ;
+            name = bp1->name ;
+            bp1->name = bp2->name ;
+            bp2->name = name ;
+            linkBuffer(bp1) ;
+            bp1 = bp2 ;
+            if(bp1->fileName != NULL)
+                nn = bp1->fileName ;
+            else if((bp1->intFlag & BIFNAME) &&
+                    ((name=meStrrchr(bufn+1,'<')) != NULL)) 
+                name[-1] = '\0' ;
+        }
+        bp1->intFlag = (bp1->intFlag & ~BIFNAME) | makename(bufn,nn) ;
     }
-    else
-	/* if bit one is clear then make it a valid name */
-	frameCur->bufferCur->intFlag = (frameCur->bufferCur->intFlag & ~BIFNAME) | makename(bufn,bufn) ;
+    
+    frameAddModeToWindows(WFMODE) ;
     if((nn = meStrdup(bufn)) == NULL)
     {
-	linkBuffer(frameCur->bufferCur) ;
-	return meABORT ;
+        linkBuffer(bp1) ;
+        return meABORT ;
     }
-    meFree(frameCur->bufferCur->name) ;
-    frameCur->bufferCur->name = nn ;
-    frameAddModeToWindows(WFMODE) ;
-    linkBuffer(frameCur->bufferCur) ;
+    meFree(bp1->name) ;
+    bp1->name = nn ;
+    linkBuffer(bp1) ;
     
     return meTRUE ;
 }
@@ -1209,8 +1229,8 @@ makelist(meBuffer *blistp, int verb)
     /* output the list of buffers */
     while (bp != NULL)
     {
-	if((verb & 0x01) && meModeTest(bp->mode,MDHIDE))
-	{
+        if((verb & 0x01) && meModeTest(bp->mode,MDHIDE))
+        {
 	    bp = bp->next;
 	    continue;
 	}
