@@ -52,13 +52,13 @@ define-macro-file format clean sort-lines-ignore-case normal-tab tabs-to-spaces 
 define-macro-file tools compile grep rgrep which diff rdiff xdiff diff-changes execute-tool uniq reread-file find-bfile find-cfile
 define-macro-file misc save-all open-line check-line-length time compare-windows-exact display-white-chars write-region
 define-macro-file abbrev expand-abbrev-handle expand-iso-accents expand-look-back expand-word iso-accents-mode
+define-macro-file osdmisc symbol indent-setup alarm browse alias-path-setup file-type-setup shell-tool-setup
 define-macro-file comment comment-line uncomment-line comment-to-end-of-line comment-start comment-restyle
 define-macro-file rect string-rectangle space-rectangle copy-rectangle yank-rectangle-overwrite
 define-macro-file search replace-all-string query-replace-all-string replace-all-pairs
 define-macro-file hkdirlst file-browser file-browser-close file-browser-swap-buffers
 define-macro-file charsutl charset-change charset-iso-to-user charset-user-to-iso
 define-macro-file games cross-word Metris Patience Triangle Mahjongg Match-It
-define-macro-file osdmisc symbol indent-setup alarm browse alias-path-setup
 define-macro-file spell spell-word spell-buffer spell-edit-word find-word
 define-macro-file narrow narrow-search-forward narrow-search-backward
 define-macro-file toolbar toolbar toolbar-close toolbar-mode-line
