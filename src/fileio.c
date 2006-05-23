@@ -730,7 +730,11 @@ ffurlGetInfo(int type, meUByte **host, meUByte **port, meUByte **user, meUByte *
             meUByte buff[meSBUF_SIZE_MAX] ;
             /* Always get the password from the user even when running a macro.
              * This is important for &stat which may trigger a password request */
-            if((meGetStringFromUser((meUByte *)"Password", MLNOHIST|MLHIDEVAL, 0, buff, meSBUF_SIZE_MAX) <= 0) ||
+            meStrcpy(buff,*user) ;
+            meStrcat(buff,"@") ;
+            meStrcat(buff,*host) ;
+            meStrcat(buff," password") ;
+            if((meGetStringFromUser(buff, MLNOHIST|MLHIDEVAL, 0, buff, meSBUF_SIZE_MAX) <= 0) ||
                ((ffpasswdReg = regSet(root,(meUByte *)"pass",buff)) == NULL))
                 return meFALSE ;
             ffpasswdReg->mode |= meREGMODE_INTERNAL ;
