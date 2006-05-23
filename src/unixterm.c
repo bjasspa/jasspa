@@ -3665,8 +3665,6 @@ TTgetClipboard(void)
 int
 TTstart(void)
 {
-    char *tt ;
-
     if((meSystemCfg & meSYSTEM_CONSOLE) || (meGetenv("DISPLAY") == NULL))
         return TCAPstart() ;
     return XTERMstart() ;
