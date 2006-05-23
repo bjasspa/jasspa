@@ -47,7 +47,9 @@ setBufferCryptKey(meBuffer *bp, meUByte *key)
     if(key == NULL)
     {
 	/* get the string to use as an encrytion string */
-        if(meGetString((meUByte *)"Encryption String",MLNOHIST|MLHIDEVAL,0,keybuf,meSBUF_SIZE_MAX) <= 0)
+        meStrcpy(keybuf,(bp->fileName != NULL) ? bp->fileName:bp->name) ;
+        meStrcat(keybuf," password") ;
+        if(meGetString(keybuf,MLNOHIST|MLHIDEVAL,0,keybuf,meSBUF_SIZE_MAX) <= 0)
             return meFALSE ;
         key = keybuf ;
         mlerase(MWCLEXEC);		/* clear it off the bottom line */
