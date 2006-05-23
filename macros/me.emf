@@ -61,14 +61,15 @@ define-macro-file charsutl charset-change charset-iso-to-user charset-user-to-is
 define-macro-file games cross-word Metris Patience Triangle Mahjongg Match-It
 define-macro-file spell spell-word spell-buffer spell-edit-word find-word
 define-macro-file narrow narrow-search-forward narrow-search-backward
+define-macro-file notes notes notes-file notes-instant notes-context
 define-macro-file toolbar toolbar toolbar-close toolbar-mode-line
 define-macro-file buffstp buffer-setup buffer-help buffer-tool
 define-macro-file itemlist item-list item-list-close occur
-define-macro-file notes notes notes-instant notes-context
 define-macro-file mail mail mail-check stop-mail-check
 define-macro-file fileopen osd-file-open osd-get-file
 define-macro-file spellaut auto-spell auto-spell-menu
 define-macro-file hkinfo info info-on info-goto-link
+define-macro-file session session-load session-save
 define-macro-file pagefile page-file page-bfile
 define-macro-file zfile find-zfile zfile-setup
 define-macro-file gentags generate-tags-file
