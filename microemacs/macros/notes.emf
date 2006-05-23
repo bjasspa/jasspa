@@ -10,6 +10,8 @@
 !if &not &exist .osd.notes-mn
     set-variable .osd.notes-mn &pinc .osd.next 1
     set-variable .osd.notes-tmn &pinc .osd.next 1
+    set-variable .osd.notes-sc &pinc .osd.next 1
+    set-variable .osd.notes-sm &pinc .osd.next 1
 !endif
 define-macro fhook-enf
     @# buffer-init "enf"
@@ -419,9 +421,11 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
     !endif
     set-variable #l1 @s1
     set-variable #l0 $window-line
-    2 osd-xdialog "Delete Note" &spr "  Delete note \"%s\"?  " #l1 2 $cursor-x &add $cursor-y 1 " \HYes " " \HNo "
-    !if &equ $result 2
-        !abort
+    !if @#
+        2 osd-xdialog "Delete Note" &spr "  Delete note \"%s\"?  " #l1 2 $cursor-x &add $cursor-y 1 " \HYes " " \HNo "
+        !if &equ $result 2
+            !abort
+        !endif
     !endif
     find-buffer .notes.current
     #l0 mark-registry :notes-root "?"
@@ -1189,114 +1193,6 @@ define-macro notes-context
     end-of-buffer
 !emacro
 
-define-macro notes-session-save
-    set-variable #l0 $frame-id
-    set-position "\x88"    
-    ascii-time
-    set-variable #l1 #l9
-    osd-entry "Save Session" "Session \HName : " #l1 30
-    !if &seq #l1 ""
-        ml-write &spr "Invalid context: %s]" #l8
-        !abort
-    !endif
-    notes-file $user-name
-    notes-set-to-root
-    notes-get-create-note "Sessions"
-    !force 0 notes-get-create-note #l1
-    !if $status
-        set-variable #l2 &spr "Over write existing \"%s\" session?" #l1
-        osd-xdialog "Save Session" #l2 1 "  \HYes  " "  \HNo  "
-        !if &equ $result 2
-            !return
-        !endif
-    !else
-        notes-get-create-note #l1
-    !endif
-    find-buffer .notes.current
-    beginning-of-buffer
-    set-mark
-    end-of-buffer
-    -1 kill-region
-    insert-string &spr "Created:  %s\n\n" #l9
-    set-variable #l9 &cat "\b\benfs\b\b" $time
-    insert-string &cat #l9 "\b\bhist\b\b\n"
-    set-variable #l2 0
-    !repeat
-        set-variable #l3 19
-        insert-string &spr "\b%d\b%d\b%s\b\n" #l2 #l3 &ind &spr "@h%d" #l2 #l3
-        !tjump &pdec #l3 1 -1
-    !until &equ &inc #l2 1 5
-    insert-string &cat #l9 "\b\bbuff\b\b\n"
-    set-variable $buffer-names ".*"
-    !while &not &seq &set #l1 $buffer-names ""
-        !if &or &nbmod #l1 "nact" &nbmod #l1 "hide"
-        !elif &seq &lef #l1 1 "*"
-            !tgoto &seq #l1 "*files*" nss-buff 
-            !tgoto &seq #l1 "*ftp-files*" nss-buff 
-        !else
-*nss-buff
-            find-buffer #l1
-            !if &seq &set #l2 $buffer-fname ""
-                find-buffer .notes.current
-            !else
-                set-position "\x89"    
-                set-variable #l3 &spr "\n\b%s\b%d\b%d\b%d\b%d\b%d\b" $buffer-bname $window-xcl-scroll $window-x-scroll $window-y-scroll $window-aline $window-col
-                !force exchange-point-and-mark
-                !if $status
-                    set-variable #l3 &spr "%s%d\b%d\b" #l3 $window-aline $window-col
-                    !force exchange-point-and-mark
-                !else
-                    set-variable #l3 &cat #l3 "0\b0\b"
-                !endif
-                set-variable $mode-names ".*"
-                !if &not &seq &set #l4 $mode-names ""
-                    set-variable #l3 &cat #l3 &bmod #l4
-                    !jump -2
-                !endif
-                set-variable #l4 "\b"
-                0 goto-alpha-mark
-                set-variable #l5 $result
-                !if &not &seq #l5 ""
-                    !force goto-alpha-mark &left #l5 1
-                    !if $status
-                        set-variable #l4 &spr "%s%s\b%d\b%d\b" #l4 &left #l5 1 $window-aline $window-col
-                    !endif
-                    set-variable #l5 &rig #l5 1
-                    !jump -6
-                !endif
-                find-buffer .notes.current
-                insert-string #l2
-                insert-string &cat #l3 "\b\n"
-                insert-string &cat #l4 "\b\n"
-            !endif
-        !endif
-    !done
-    insert-string &cat #l9 "\b\bkill\b\b\n"
-    set-variable #l1 -1
-    !force yank
-    !repeat
-        !tjump &inc #l1 1 1
-        !force -1 reyank
-    !until &not $status
-    insert-newline
-    !while &pdec #l1 1
-        insert-string &cat #l9 "\b\bkill\b\b\n"
-        set-variable #l2 #l1
-        yank
-        !if &pdec #l2 1
-            !force reyank
-            !jump -2
-        !endif
-        insert-newline
-    !done
-    insert-string &cat #l9 "\b\bend\b\b\n"
-    !while &not &equ #l0 $frame-id
-        3 next-frame
-    !done
-    goto-position "\x88"    
-!emacro
-    
-    
 define-macro notes
     ; if notes frame is currently visible then close notes
     !if &equ $frame-id .notes.frame-id
