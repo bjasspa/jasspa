@@ -184,6 +184,7 @@
         !endif
         set-variable .mouse-event.x $mouse-x
     !endif
+    set-variable .mouse-event.drop-cmd "1 goto-position \"\x82\""
 !emacro
 
 0 define-macro mouse-type1-hpan
@@ -620,6 +621,8 @@
                 !force change-window-width 4
                 set-variable .mouse-event.mode &bor 3 &band $mouse-pos 0x30
             !endif
+        !else
+            set-variable .mouse-event.drop-cmd "void"
         !endif
         ; Either case; always perform a window re-szie operation.
         ; The modified mode determines if this is vertical or
