@@ -63,8 +63,8 @@
                     !jump -2
                 !endif
             !endif
-            set-registry "/history/toolbar/size" .toolbar.size
         !done
+        set-registry "/history/toolbar/size" .toolbar.size
         ; don't need to reset the toolbar
         set-variable #l9 0
     !elif &equ @# 6
