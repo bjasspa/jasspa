@@ -235,7 +235,7 @@
     !elif &seq #l1 "l"
         ; link
         !if .link
-            !if &not #l0 1 
+            !if &sub #l0 1
                 set-variable #p9 "Probable missing close link - no args should be given"
                 !return 0
             !endif
@@ -476,7 +476,7 @@
             !if &les #l0 &lget .tbl-ind #l7
                 !jump 2
             !elif &and &equ #l0 &lget .tbl-ind #l7 &gre #l5 -1
-                set-variable #p9 &spr "Table cells missing, another %d required" &sub &mul &lget .tbl-row #l7 &lget .tbl-col #l7 &lget .tbl-cell #l7
+                set-variable #p9 &spr "Table cells missing, another %d required" &add 1 &sub &mul &lget .tbl-row #l7 &lget .tbl-col #l7 &lget .tbl-cell #l7
                 !return 0
             !endif
         !endif
@@ -783,8 +783,13 @@
             !endif
         !endif
     !until &not $status
-    ; remove the temporary start and end markers
     end-of-buffer
+    ; check all is well
+    !if .jst-to-neutral-tag.link
+        set-variable #p9 "Missing [l] close link"
+        !return 0
+    !endif
+    ; remove the temporary start and end markers
     set-mark
     3 backward-line
     -1 kill-region
