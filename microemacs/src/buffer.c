@@ -1124,7 +1124,7 @@ changeBufName(int f, int n)     /*      Rename the current buffer       */
         nn = bufn ;
         if(n & 2)
         {
-            char *name ;
+            meUByte *name ;
             unlinkBuffer(bp2) ;
             name = bp1->name ;
             bp1->name = bp2->name ;
