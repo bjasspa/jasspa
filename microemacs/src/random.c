@@ -2418,7 +2418,8 @@ use_contcomm:
         addInd -= meIndentGetBraceStatementIndent(indentDef) ;
         onBrace = 1 ;
     }
-    else if (cc == ':')
+    else if((cc == ':') &&
+            (meLineGetChar(frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset+1) != ':'))
     {
          /* C++ ':' starting the next line. Indent the current line
           * temporarily. Found in statements such as:-
