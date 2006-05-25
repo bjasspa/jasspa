@@ -150,8 +150,9 @@ extern  meBuffer *createBuffer(register meUByte *bname) ;
 #define BFND_BINARY 0x02
 #define BFND_CRYPT  0x04
 #define BFND_RBIN   0x08
-#define BFND_MKNAM  0x10
-#define BFND_CLEAR  0x20
+#define BFND_NOHOOK 0x10
+#define BFND_MKNAM  0x20
+#define BFND_CLEAR  0x40
 
 extern	meBuffer *bfind(meUByte *bname, int cflag);
 extern	void    resetBufferWindows(meBuffer *bp) ;
