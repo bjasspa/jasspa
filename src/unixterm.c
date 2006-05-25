@@ -1422,7 +1422,7 @@ meXEventHandler(void)
         if((frame = meXEventGetFrame(&event)) != NULL)
         {
             /* Get the width and heigth back and setup the frame->depthMax etc */
-            int ww, hh ;
+            int ww, hh, sizeSet ;
 
             sizeHints.x = event.xconfigure.x ;
             sizeHints.y = event.xconfigure.y ;
@@ -1438,8 +1438,17 @@ meXEventHandler(void)
              * are split. Allow the new sizes to be computed and then inform
              * the server in one invocation. */
             disableResize = 1;            /* Disable X reconfiguration */
-            meFrameChangeWidth(frame,ww); /* Change width */
-            meFrameChangeDepth(frame,hh); /* Change depth */
+            sizeSet = 0 ;
+            if(ww != frame->width)
+            {
+                meFrameChangeWidth(frame,ww); /* Change width */
+                sizeSet = 1 ;
+            }
+            if(hh != (frame->depth+1))
+            {
+                meFrameChangeDepth(frame,hh); /* Change depth */
+                sizeSet = 1 ;
+            }
             disableResize = 0;            /* Re-enable the resize */
 
             /* Change the size of the window now that both sizes have been
@@ -1447,6 +1456,8 @@ meXEventHandler(void)
              * change */
             if ((hh != frame->depth+1) || (ww != frame->width))
                 meFrameSetWindowSize(frame) ;
+            if(sizeSet)
+                screenUpdate(meTRUE,2-sgarbf) ;
         }
         break;
     case Expose:
