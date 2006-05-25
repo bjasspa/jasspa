@@ -507,28 +507,42 @@ define-macro gdiff
         ; if this is a toolbar window move to the next normal window
         !force next-window
     !endif
-    !force 0 find-file .fnold
+    !force 2 find-buffer .fnold
+    !if $status
+        !if &bmod "edit"
+            screen-update
+            set-variable #l0 @mc1 "Save left file first [y/n]? " "nNyY"
+            !if &iseq #l0 "y"
+                save-buffer
+            !endif
+        !endif
+    !endif
+    !force 2 find-buffer .fnnew
+    !if $status
+        !if &bmod "edit"
+            screen-update
+            set-variable #l0 @mc1 "Save right file first [y/n]? " "nNyY"
+            !if &iseq #l0 "y"
+                save-buffer
+            !endif
+        !endif
+    !endif
+    ; get the files
+    find-buffer .bnold
+    !force insert-file .fnold
     !if &not $status
         ml-write &spr "[Failed to load %s]" .fnold
         !abort
-    !elif &bmod "edit"
-        ml-write "[First file already loaded and edited - save first]"
-        !abort
     !endif
-    set-variable $buffer-bname .bnold
-    -1 buffer-mode "view"
-    !force 0 find-file .fnnew
+    set-variable $buffer-fname .fnold
+    find-buffer .bnnew
+    !force insert-file .fnnew
     !if &not $status
         !force 0 delete-buffer .bnold
         ml-write &spr "[Failed to load %s]" .fnnew
         !abort
-    !elif &bmod "edit"
-        !force 0 delete-buffer .bnold
-        ml-write "[Second file already loaded and edited - save first]"
-        !abort
     !endif
-    set-variable $buffer-bname .bnnew
-    -1 buffer-mode "view"
+    set-variable $buffer-fname .fnnew
     0 pipe-shell-command &spr "%s \"%s\" \"%s\"" %gdiff-com .fnold .fnnew .bndiff @mna
     delete-other-windows
     set-variable .status 0
@@ -842,6 +856,7 @@ osd .osd.gdiff 70  "Mi" "\HRegion"  .osd.gdiff-s "16 gdiff-menu-sel"
 osd .osd.gdiff 80  "Mi" "\HLine"    .osd.gdiff-s "32 gdiff-menu-sel"
 osd .osd.gdiff 90  "-"
 osd .osd.gdiff 100 ""   "\HSearch"           1 osd-search
+osd .osd.gdiff 105 ""   "Set tab width"      f indent-setup
 osd .osd.gdiff 110 "-"
 osd .osd.gdiff 120 ""   "Save \HLeft"       -1 gdiff-save
 osd .osd.gdiff 130 ""   "Save \HRight"       1 gdiff-save
@@ -878,8 +893,8 @@ osd .osd.gdiff-help 25 ""
 osd .osd.gdiff-help 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void 
 
 set-variable .gdiff.bndiff "*gdiff diff*"
-set-variable .gdiff.bnold  "*gdiff 1st*"
-set-variable .gdiff.bnnew  "*gdiff 2nd*"
+set-variable .gdiff.bnold  "*gdiff left*"
+set-variable .gdiff.bnnew  "*gdiff right*"
 set-variable .gdiff.bncom  "*gdiff com*"
 
 !if .start-up
