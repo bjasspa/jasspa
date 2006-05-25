@@ -10,8 +10,6 @@
 !if &not &exist .osd.notes-mn
     set-variable .osd.notes-mn &pinc .osd.next 1
     set-variable .osd.notes-tmn &pinc .osd.next 1
-    set-variable .osd.notes-sc &pinc .osd.next 1
-    set-variable .osd.notes-sm &pinc .osd.next 1
 !endif
 define-macro fhook-enf
     @# buffer-init "enf"
