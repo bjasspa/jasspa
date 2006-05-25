@@ -416,3 +416,33 @@ define-macro fold-remove
     buffer-bind-key fold-idle "idle-pick"
 !emacro
 ;CLOSE 
+
+;OPEN fold-hook-remove
+0 define-macro fold-hook-remove
+    !if &exi :fold
+        !if &bmod "narrow"
+            1 narrow-buffer
+        !endif
+        beginning-of-buffer
+        set-variable #l1  &spr "^[ \t]*\\(%s\\|%s\\)" &lget :fold 4 &lget :fold 5
+        !repeat
+            !force search-buffer "m" #l1
+            !if $status
+                set-variable $line-flags &band $line-flags &bnot 0x40
+                set-variable $line-scheme -1
+            !endif
+        !until &not $status
+        buffer-bind-remove "bo" "f2"       "" fold-open
+        buffer-bind-remove "bo" "esc f2"   "" fold-close
+        buffer-bind-remove "bo" "C-f2"     "" fold-create
+        buffer-bind-remove "bo" "esc C-f2" "" fold-remove
+        buffer-bind-remove "bo" "f3"       "" fold-enter
+        buffer-bind-remove "bo" "esc f3"   "" fold-exit
+        buffer-bind-remove "bo" "esc C-f3" "" fold-exit-all
+        buffer-bind-remove "bo" "C-x C-k"  "" fold-kill
+        buffer-unbind-key "idle-pick"
+        !force unset-variable :fold-idle
+        unset-variable :fold
+    !endif
+!emacro
+;CLOSE
