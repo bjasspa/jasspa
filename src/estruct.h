@@ -764,6 +764,7 @@ typedef struct  meBuffer {
 #define BIFNAME    0x08                         /* The buffer name has a <?> extension  */
 #define BIFFILE    0x10                         /* The buffer is a file - used at creation only */
 #define BIFNODEL   0x20                         /* The buffer cannot be deleted         */
+#define BIFNOHOOK  0x40                         /* Don't apply any context file hook    */
 
 
 /*

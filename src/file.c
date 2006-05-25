@@ -1749,7 +1749,7 @@ findFile(int f, int n)
     *ss   = '\0' ;
     if(inputFileName(prompt,fname,0) <= 0)
         return meABORT ;
-    n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN)) | BFND_MKNAM ;
+    n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN|BFND_NOHOOK)) | BFND_MKNAM ;
     return findSwapFileList(fname,n,0,0) ;
 }
 
@@ -1771,7 +1771,7 @@ nextWndFindFile(int f, int n)
         return meABORT ;
     if(meWindowPopup(NULL,WPOP_MKCURR,NULL) == NULL)
         return meFALSE ;
-    n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN)) | BFND_MKNAM ;
+    n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN|BFND_NOHOOK)) | BFND_MKNAM ;
     return findSwapFileList(fname,n,0,0) ;
 }
 #endif
@@ -1784,7 +1784,7 @@ readFile(int f, int n)
 
     if(inputFileName((meUByte *)"Read file", fname,0) <= 0)
         return meABORT ;
-    n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN)) | BFND_MKNAM ;
+    n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN|BFND_NOHOOK)) | BFND_MKNAM ;
     if((s=zotbuf(frameCur->bufferCur,clexec)) > 0)
         s = findSwapFileList(fname,n,0,0) ;
     return s ;
@@ -1798,7 +1798,7 @@ viewFile(int f, int n)	/* visit a file in VIEW mode */
 
     if (inputFileName((meUByte *)"View file", fname,0) <= 0)
         return meABORT ;
-    n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN)) | BFND_MKNAM ;
+    n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN|BFND_NOHOOK)) | BFND_MKNAM ;
     /* Add view mode globally so any new buffers will be created
      * with view mode */
     vv = meModeTest(globMode,MDVIEW) ;
