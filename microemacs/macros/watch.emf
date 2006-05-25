@@ -30,6 +30,10 @@
 ;   * Use the watch-reset command with a n argument of 0 to stop all watches.
 ;
 0 define-macro watch-callback
+    !if &seq &lef @cl 8 "isearch-"
+        .watch.time create-callback watch-callback
+        !return
+    !endif
     0 show-region
     set-variable #l8 &band $result 0x07
     set-variable #l0 $window-id
