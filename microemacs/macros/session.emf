@@ -1,19 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2006 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Author        : $Author: bill $
-;  Created By    : Steven Phillips
-;  Created       : 2006-05-16 10:07:42
-;  Last Modified : <060522.2316>
+; Created:     2006-05-16 10:07:42
+; Synopsis:    ME Session saving & restoring
+; Authors:     Steven Phillips
 ;
-;  Description
-;
-;  Notes
-;
-;  History
-;
-;  Copyright (c) 2006 PTC.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 !if &not &exi .osd.sssnc
     set-variable .osd.sssnc &pinc .osd.next 1
     set-variable .osd.sssnl &pinc .osd.next 1
@@ -617,6 +610,7 @@ define-macro session-load
     !force .osd.sssnl osd
 !emacro
 
-0 define-macro shut-down
+0 define-macro session-shut-down
     !force !force 2 session-update
 !emacro
+global-bind-key session-shut-down "shut-down"
