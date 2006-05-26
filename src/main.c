@@ -622,6 +622,14 @@ exitEmacs(int f, int n)
         while(ipipes != NULL)
             ipipeRemove(ipipes) ;
 #endif
+#if MEOPT_FILEHOOK
+        /* execute ehooks for all current buffers */
+        meFrameLoopBegin() ;
+        if(loopFrame->bufferCur->ehook >= 0)
+            execBufferFunc(loopFrame->bufferCur,loopFrame->bufferCur->ehook,0,1) ;
+        meFrameLoopEnd() ;
+#endif
+        /* For all buffers remove the autosave and execute the dhook */
         bp = bheadp ;
         while(bp != NULL)
         {
@@ -635,10 +643,23 @@ exitEmacs(int f, int n)
         }
 #if MEOPT_CALLBACK
         {
-            /* call the shut-down command if its defined */
-            int func = decode_fncname((meUByte *)"shut-down",1) ;
-            if(func >= 0)
-                execFunc(func,meFALSE,1) ;
+            /* call the shut-down command if its bound */
+            meUInt arg ;
+            int index ;
+            if((index = decode_key(ME_SPECIAL|SKEY_shut_down,&arg)) >= 0)
+            {
+                if(arg != 0)
+                {
+                    f = 1 ;
+                    n = (int) (arg + 0x80000000) ;
+                }
+                else
+                {
+                    f = 0 ;
+                    n = 1 ;
+                }
+                execFunc(index,f,n) ;
+            }
         }
 #endif
 #if MEOPT_SOCKET
