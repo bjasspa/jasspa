@@ -127,6 +127,9 @@ DEFSKEY ("right",        "kr", "\033[C",  SKEY_right )
 DEFSKEY ("scroll-lock",  NULL, NULL,      SKEY_scroll_lock )
 DEFSKEY ("select",       NULL, NULL,      SKEY_select )
 DEFSKEY ("shift-lock",   NULL, NULL,      SKEY_shift_lock )
+#if MEOPT_CALLBACK
+DEFSKEY ("shut-down",    NULL, NULL,      SKEY_shut_down )
+#endif
 DEFSKEY ("space",        NULL, NULL,      SKEY_space )
 DEFSKEY ("sys-req",      NULL, NULL,      SKEY_sys_req )
 DEFSKEY ("tab",          NULL, "\011",    SKEY_tab )
@@ -134,4 +137,3 @@ DEFSKEY ("undo",         NULL, NULL,      SKEY_undo )
 DEFSKEY ("up",           "ku", "\033[A",  SKEY_up )
 DEFSKEY ("x-command",    NULL, NULL,      SKEY_x_command )
 DEFSKEY ("x-line",       NULL, NULL,      SKEY_x_line )
-
