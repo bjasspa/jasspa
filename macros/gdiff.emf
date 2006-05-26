@@ -394,15 +394,25 @@ set-variable %gdiff-com &cond &seq %gdiff-com "ERROR" "diff -c -w" %gdiff-com
         3 screen-update
         0xcf set-position "\x81"
         set-variable #l2 $window-xcl-scroll
+        set-variable #l3 $buffer-tab-width
         !if &not &set #l4 &equ $window-id .gdiff.wid
             previous-window
+        !endif
+        !if &sub #l3 $buffer-tab-width
+            set-variable $buffer-tab-width #l3
         !endif
         !force 0xce goto-position "\x81"
         set-variable #l0 @wl
         next-window
+        !if &sub #l3 $buffer-tab-width
+            set-variable $buffer-tab-width #l3
+        !endif
         !force 0xce goto-position "\x81"
         set-variable #l1 @wl
         next-window
+        !if &sub #l3 $buffer-tab-width
+            set-variable $buffer-tab-width #l3
+        !endif
         !if #l4
             set-variable $window-line 2
             set-variable @wl #l1
