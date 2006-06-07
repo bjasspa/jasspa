@@ -141,7 +141,8 @@ token(meUByte *src, meUByte *tok)
                     goto quote_spec_key1 ;
                 case 'C':
                     /* Control key - \C? */
-                    *dd++ = *ss++ - '@'; 
+                    if((*dd++ = *ss++ - '@') == meCHAR_LEADER)
+                        *dd++ = meCHAR_TRAIL_LEADER ;
                     break;
                 case 'D':
                     /* Delete key - replace with delete */
