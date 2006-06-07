@@ -11,9 +11,28 @@
 ;    set up the color scheme variables - this fixes the color scheme table
 ;    so changing to different color scheme works!
 ;
-0 define-macro scheme
+define-macro scheme
+    !if &not @#
+        set-variable #l0 &reg &spr "/history/%s/scheme" %platform "schemed"
+    !else
+        !force set-variable #l0 @1
+        !if &not $status
+            !if &not &exi .scheme.scheme-names
+                0 exec-file "schemes"
+            !endif
+            !if &set #l0 &lfind .scheme.scheme-files .current
+                set-variable #l0 @ml19 "Color Scheme" &lget .scheme.scheme-names #l0 .scheme.scheme-names
+            !else
+                set-variable #l0 @ml09 "Color Scheme" .scheme.scheme-names
+            !endif
+        !endif
+        !if &set #l1 &lfind .scheme.scheme-names #l0
+            set-variable #l0 &lget .scheme.scheme-files #l1
+        !endif
+    !endif
     ; Execute the required color scheme creator macro file:
-    !force -1 exec-file &reg &spr "/history/%s/scheme" %platform "schemed"
+    !force -1 exec-file #l0
+    set-variable .current #l0
 !emacro
 ; The LAST color is set by .scheme.next below.
 !if &not &exi .scheme.next
