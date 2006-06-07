@@ -107,7 +107,10 @@
         insert-string &spr "\b%s\b%s\n" #l2 &ind #l2
     !done
     !if .update
-        insert-string &spr "\b.update\b1\n"
+        insert-string "\b.update\b1\n"
+    !endif
+    !if &exi .scheme.current
+        insert-string &spr "\b.scheme\b%s\n" .scheme.current
     !endif
     insert-string &cat #l9 "\b\bhist\b\b\n"
     set-variable #l2 0
@@ -425,7 +428,11 @@ define-macro session-save
                 set-variable #l8 1
             !elif &seq #l1 "vars"
                 !while &xse @wl "^\b\\([^\b]+\\)\b\\(.*\\)"
-                    !if &not &lfin "|$platform|$system|" @s1
+                    !if &lfin "|$platform|$system|" @s1
+                    !elif &seq ".scheme" @s1
+                        set-variable #l2 @s2
+                        scheme #l2
+                    !else
                         set-variable &ind @s1 @s2
                     !endif
                     forward-line
