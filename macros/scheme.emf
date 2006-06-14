@@ -11,7 +11,9 @@
 ;    set up the color scheme variables - this fixes the color scheme table
 ;    so changing to different color scheme works!
 ;
-define-macro scheme
+0 define-macro scheme
+!emacro
+define-macro change-scheme
     !if &not @#
         set-variable #l0 &reg &spr "/history/%s/scheme" %platform "schemed"
     !else
