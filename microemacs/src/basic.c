@@ -623,9 +623,9 @@ windowSetMark(int f, int n)
 int
 windowSwapDotAndMark(int f, int n)
 {
-    register meLine  *odotp ;
-    register int    odoto ;
-    register long   lineno ;
+    meLine   *odotp ;
+    meUShort  odoto ;
+    meInt     lineno ;
 
     if (frameCur->windowCur->markLine == NULL)
         return noMarkSet() ;
