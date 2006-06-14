@@ -1069,6 +1069,8 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
         backward-line
         set-variable $line-flags &bor $line-flags 0x20
     !endif
+    1 buffer-mode "view"
+    -1 buffer-mode "edit"
     set-variable #l4 $window-id
     !repeat
         !if &seq $buffer-bname "*cc-state*"
