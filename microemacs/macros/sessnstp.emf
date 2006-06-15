@@ -1,0 +1,55 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2006 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     2006-06-09
+; Synopsis:    ME Session setup dialog
+; Authors:     Steven Phillips
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+!if &not &exi .osd.sssnc
+    set-variable .osd.sssn &pinc .osd.next 1
+!endif
+
+0 define-macro session-setup-entry
+    !if &les @# 0
+        set-variable %session-name @ml2 "" %session-name
+    !else
+        set-variable $result %session-name
+    !endif
+!emacro
+0 define-macro session-setup-cb
+    set-variable #l0 &ind &set #l1 &cat ".session." &lget "|kill|amark|update|" &abs @#
+    !if &les @# 0
+        set-variable &ind #l1 &bxor #l0 1
+    !elif &not #l0
+        !abort
+    !endif
+!emacro
+
+-1 osd .osd.sssn
+osd .osd.sssn 0  "batcDHs" 3 6 52 8 -1 -1 520 .scheme.osd-title "Session Setup"
+osd .osd.sssn 10  ""
+osd .osd.sssn 15  ""
+osd .osd.sssn 20  "Sfh" "  \HName: " 30
+osd .osd.sssn 30  "EtxHf" .scheme.osd-entry "###############################" 1 session-setup-entry
+osd .osd.sssn 50  ""
+osd .osd.sssn 60  "hf" "       "
+osd .osd.sssn 70  "Ctpfx" &cat .osd.checkbox-chars "\} Save \Hkill chain" 1 session-setup-cb
+osd .osd.sssn 80  ""
+osd .osd.sssn 90  "hf" "       "
+osd .osd.sssn 100 "Ctpfx" &cat .osd.checkbox-chars "\} Save buffer \Hbookmarks" 2 session-setup-cb
+osd .osd.sssn 110  ""
+osd .osd.sssn 120 "hf" "       "
+osd .osd.sssn 130 "Ctpfx" &cat .osd.checkbox-chars "\} Auto \HUpdate" 3 session-setup-cb
+osd .osd.sssn 500 ""
+osd .osd.sssn 510 ""
+osd .osd.sssn 520 "BtcfHh" .scheme.osd-ebtt " \HOkay " f void
+
+define-macro session-setup
+    !if &not &exi %session-name
+        set-variable %session-name $user-name
+    !endif
+    !force .osd.sssn osd
+!emacro

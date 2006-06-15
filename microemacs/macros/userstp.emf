@@ -160,7 +160,8 @@ set-variable %user-misc-cmd  "|alias-path-setup|file-tool-setup|shell-tool-setup
         ml-write "[No user-name!]"
         !return
     !endif
-    save-history &spr "%s%s.erf" $user-path $user-name
+    !force set-registry "/history" &spr "%s%s.erf" $user-path $user-name
+    save-registry "/history" ""
     !if &not &seq &set #l0 &reg "/history/company" "" ""
         ; Must use &find first for the company as this could be anywhere
         !if &seq &find #l0 ".emf" "ERROR"
@@ -847,10 +848,14 @@ osd .osd.user 645 "f" "   "
 
 define-macro user-setup
     !repeat
-        !force 0 save-history
+        !if &not &seq &find $user-name ".erf" "ERROR"
+            !force read-registry "/history" $user-name "cb"
+        !endif
         user-setup-backups
         set-variable .loop 0
         !force !force .osd.user osd
     !until &not .loop
-    !force 0 read-history
+    !if &not &seq &find $user-name ".erf" "ERROR"
+        !force read-registry "/history" $user-name "cb"
+    !endif
 !emacro

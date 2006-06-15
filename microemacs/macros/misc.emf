@@ -14,12 +14,7 @@ define-macro save-all
     @# save-some-buffers @mna
     &bor 2 @# save-registry @mna
     &bor 2 @# save-dictionary @mna
-    !if &not @?
-        set-variable #l0 @mc1 "Save default history [y/n]? " "nNyY"
-        !if &iseq #l0 "y"
-            0 save-history
-        !endif
-    !endif
+    ml-write "[Save all complete]"
 !emacro
 ; Emacs open-line implementation
 define-macro open-line
