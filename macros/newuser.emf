@@ -54,7 +54,7 @@
     !if &exi .newuser.company
         set-registry "/history/company" .newuser.company
     !endif
-    !force save-history #l1
+    !force save-registry "/history" ""
     !if &not $status
         insert-string "[ERROR]\n"
         insert-string &spr "ERROR: Failed to save registry file \"%s\" - file permissions?\n" #l1

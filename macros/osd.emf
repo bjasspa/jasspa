@@ -217,12 +217,6 @@ define-macro-file osdhelp osd-help
     ; can't do registry and dictionaries in macro code
     2 save-registry @mna
     2 save-dictionary @mna
-    3 osd-xdialog "Save All" "  Save default history  " 1 10 8 " \HYes " " \HNo " " \HCancel "
-    !if &equ $result 3
-        !abort
-    !elif &equ $result 1
-        0 save-history
-    !endif
 !emacro
 0 define-macro osd-close
     !if &bmod "edit"

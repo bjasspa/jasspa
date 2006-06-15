@@ -26,8 +26,7 @@
 !endif
 ; If <$user-name>.erf registry file isn't found then this is a new user
 !if &seq &find $user-name ".erf" "ERROR"
-    read-history "newuser"
-    ml-write "Welcome to MicroEmacs. ESC ? for help."
+    !force read-registry "/history" "newuser" "cb"
     0 define-macro-file newuser
     define-macro start-up
         !if &seq $buffer-bname "*scratch*"
@@ -36,7 +35,7 @@
         !endif
     !emacro
 !else
-    1 read-history $user-name
+    !force read-registry "/history" $user-name "cb"
     ml-write &cat "Setting up for user " $user-name
 !endif
 ;
@@ -68,7 +67,6 @@ define-macro-file mail mail mail-check stop-mail-check
 define-macro-file fileopen osd-file-open osd-get-file
 define-macro-file spellaut auto-spell auto-spell-menu
 define-macro-file hkinfo info info-on info-goto-link
-define-macro-file session session-load session-save
 define-macro-file pagefile page-file page-bfile
 define-macro-file zfile find-zfile zfile-setup
 define-macro-file gentags generate-tags-file
@@ -77,13 +75,13 @@ define-macro-file etfinsrt insert-template
 define-macro-file schemosd scheme-editor
 define-macro-file mouseosd context-menu
 define-macro-file printstp print-setup
+define-macro-file scheme change-scheme
 define-macro-file abbrlist abbrev-list
 define-macro-file fattrib file-attrib
 define-macro-file organize organizer
 define-macro-file userstp user-setup
 define-macro-file word describe-word
 define-macro-file vm vm mail-setup
-define-macro-file scheme
 define-macro-file watch
 define-macro-file gdiff
 define-macro-file calc
@@ -130,7 +128,7 @@ set-variable #l0 &reg &spr "/history/%s/fence" %platform "1"
     0 global-bind-key display-matching-fence "idle-pick"
 !endif
 ; Setup the color scheme
-0 scheme
+!force 0 change-scheme
 ;
 ; key bindings
 0x1 global-bind-key spell-word           "esc $"
@@ -381,6 +379,10 @@ osd -1 &cond &reg "/history/main-menu" "1" "1" "-1"
 !if &set #l0 &reg &spr "/history/%s/frame-depth" %platform "0"
     change-frame-depth #l0
 !endif
+!if &not &exi session
+    !force exec-file session
+    !force &bor &mul 8 &ban @# 1 &con &exi %session-name &con &seq %session-name "" 20 16 30 read-session
+!endif
 3 popup-window
 ; Setup the Client Server
 !if &band $system 0x20000
@@ -398,4 +400,3 @@ osd -1 &cond &reg "/history/main-menu" "1" "1" "-1"
 !if &reg &spr "/history/%s/mail-check" $platform "0"
     60000 create-callback mail-check
 !endif
-
