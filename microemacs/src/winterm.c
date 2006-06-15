@@ -1950,9 +1950,9 @@ TTsetClipboard (void)
      * when we own it but another application has aquired our clipboard data.
      * In this case we need to reset the clipboard so that the application may
      * aquire our next data block that has changed. */
-    if((!(clipState & CLIP_OWNER) || (clipState & CLIP_STALE)) &&
-       !(meSystemCfg & meSYSTEM_NOCLIPBRD) && (kbdmode != mePLAY) &&
-       OpenClipboard(baseHwnd))
+    if((!(clipState & CLIP_OWNER) || (clipState & CLIP_STALE)) && 
+       !(clipState & CLIP_DISABLED) && !(meSystemCfg & meSYSTEM_NOCLIPBRD) && 
+       (kbdmode != mePLAY) && OpenClipboard(baseHwnd))
     {
         if(clipState & CLIP_OWNER)
             /* if we are currently the owner of the clipboard, the call to EmptyClipboard
@@ -1980,7 +1980,7 @@ TTgetClipboard(void)
 
     /* Check the standard clipboard status, if owner or it has
      * been disabled then there's nothing to do */
-    if((clipState & CLIP_OWNER) || (kbdmode == mePLAY) ||
+    if((clipState & (CLIP_OWNER|CLIP_DISABLED)) || (kbdmode == mePLAY) ||
        (meSystemCfg & meSYSTEM_NOCLIPBRD) || !OpenClipboard(baseHwnd))
         return ;
 
@@ -5276,7 +5276,8 @@ meFrameSetWindowSizeInternal(meFrame *frame)
         meFrameGetWinPaintEndCol(frame)   = &(meFrameGetWinPaintStartCol(frame)[depth+1]) ;
         meFrameGetWinPaintDepth(frame)    = depth ;
     }
-    screenUpdate(meTRUE,2-sgarbf) ;
+    if(!screenUpdateDisabledCount)
+        screenUpdate(meTRUE,2-sgarbf) ;
 }
 #endif /* _ME_WINDOW */
 

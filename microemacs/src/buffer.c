@@ -359,20 +359,24 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
 {
     meWindow *twp ;
     meBuffer *tbp ;
-    meInt     lineno=0 ;
-    meUShort  colno=0 ;
+    meInt     dotLineNo=0, markLineNo ;
+    meUShort  dotCol, markCol ;
     int       reload=0 ;
     
-    if(meModeTest(bp->mode,MDNACT))
+    if(meModeTest(bp->mode,MDNACT) && ((bp->intFlag & BIFNACT) == 0))
     {   
 	/* buffer not active yet */
 	if(bp->intFlag & BIFFILE)
 	{
 	    /* The buffer is linked to a file, load it in */
-	    lineno = bp->dotLineNo ;
+	    dotLineNo = bp->dotLineNo ;
+            dotCol = bp->dotOffset;
+	    markLineNo = bp->markLineNo ;
+            markCol = bp->markOffset;
 	    bp->dotLineNo = 0 ;
-            colno = bp->dotOffset;
             bp->dotOffset = 0;
+	    bp->markLineNo = 0 ;
+            bp->markOffset = 0;
 	    readin(bp,bp->fileName);
             /* if this is also the current buffer then we have an out-of-date
              * buffer being reloaded. We must be careful of what hooks we
@@ -453,15 +457,28 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
 	    wp->markOffset = 0;
 	    wp->markLineNo = 0;
         }            
-	if(lineno > 0)
+	if(dotLineNo > 0)
         {
-	    windowGotoLine(meTRUE,lineno) ;
-            if(colno > 0)
+            if(markLineNo > 0)
             {
-                if(colno > meLineGetLength(frameCur->windowCur->dotLine))
+                windowGotoLine(meTRUE,markLineNo) ;
+                frameCur->windowCur->markLine = frameCur->windowCur->dotLine;
+                frameCur->windowCur->markLineNo = frameCur->windowCur->dotLineNo;
+                if(markCol > 0)
+                {
+                    if(markCol > meLineGetLength(frameCur->windowCur->markLine))
+                        frameCur->windowCur->markOffset = meLineGetLength(frameCur->windowCur->markLine) ;
+                    else
+                        frameCur->windowCur->markOffset = markCol ;
+                }
+            }
+	    windowGotoLine(meTRUE,dotLineNo) ;
+            if(dotCol > 0)
+            {
+                if(dotCol > meLineGetLength(frameCur->windowCur->dotLine))
                     frameCur->windowCur->dotOffset = meLineGetLength(frameCur->windowCur->dotLine) ;
                 else
-                    frameCur->windowCur->dotOffset = colno-1 ;
+                    frameCur->windowCur->dotOffset = dotCol ;
             }
         }
         /* on a reload reset all other windows displaying this buffer to the tob */
@@ -504,13 +521,15 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
         execBufferFunc(frameCur->bufferCur,frameCur->bufferCur->bhook,0,1) ;
 #endif        
     
-    if(bp->intFlag & BIFLOAD)
+    if(bp->intFlag & BIFNACT)
+        bp->intFlag &= ~BIFNACT ;
+    else if(bp->intFlag & BIFLOAD)
     {
         bp->intFlag &= ~BIFLOAD ;
 	if(bufferOutOfDate(bp))
 	{
             update(meTRUE) ;
-            lineno = wp->dotLineNo ;
+            dotLineNo = wp->dotLineNo ;
             if((meModeTest(bp->mode,MDDIR) || (mlyesno((meUByte *)"File changed on disk, reload") > 0)) &&
                (bclear(bp) > 0))
             {
@@ -520,7 +539,7 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
                 /* SWP 7/7/98 - If the file did not exist to start with, i.e. new file,
                  * and now it does then we need to set the BIFFILE flag */
                 bp->intFlag |= BIFFILE ;
-                bp->dotLineNo = lineno+1 ;
+                bp->dotLineNo = dotLineNo+1 ;
 		return swbuffer(wp,bp) ;
 	    }
 	}
@@ -597,8 +616,10 @@ findBuffer(int f, int n)
 
     if((s = getBufferName((meUByte *)"Find buffer",0,2,bufn)) <= 0)
 	return s ;
+    if(n < 0)
+        n = 8 ;
 #if MEOPT_EXTENDED
-    if(n == 2)
+    if(n & 2)
     {
 	bp = bheadp;
 	while(bp != NULL)
@@ -613,20 +634,30 @@ findBuffer(int f, int n)
                 break ;
 	    bp = bp->next;
 	}
+        if(bp == NULL)
+        {
+            if(((n & 5) != 5) ||
+               ((bp = bfind(bufn,BFND_CREAT)) == NULL))
+                return meFALSE ;
+            meModeSet(bp->mode,MDNACT) ;
+            bp->fileName = meStrdup(bufn) ;
+            bp->intFlag |= BIFFILE ;
+        }
     }
     else
 #endif
     {
-        if(n > 0)
+        if(n & 1)
             f = BFND_CREAT ;
         else
             f = 0 ;
-        bp = bfind(bufn,f) ;
+        if((bp = bfind(bufn,f)) == NULL)
+            return meFALSE ;
     }
-    if(bp == NULL)
-        return meFALSE ;
-    if(n < 0)
+    if(n & 8)
         return HideBuffer(bp,(n < -1) ? 1:0) ;
+    if((n & 4) && meModeTest(bp->mode,MDNACT))
+       bp->intFlag |= BIFNACT ;
     return swbuffer(frameCur->windowCur, bp) ;
 }
 

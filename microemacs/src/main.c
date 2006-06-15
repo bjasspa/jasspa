@@ -74,8 +74,8 @@ static char meHelpPage[]=
 "  -B      : Disable back-up file creation\n"
 #endif
 "  -b      : Load next file as a binary file\n"
-#if MEOPT_REGISTRY
-"  -c      : Continuation mode (last edit, must have history setup)\n"
+#if MEOPT_EXTENDED
+"  -c[name]: Continue session (default session is $user-name)\n"
 #endif
 "  -h      : For this help page\n"
 #ifdef _DOS
@@ -526,29 +526,12 @@ exitEmacs(int f, int n)
             return meFALSE ;
         ec = meAtoi(buff) ;
     }
-#endif    
-    /* Discard changed buffers - mark all changed buffers as not changed. */
-    if (((n & 0x18) != 0) && ((n & 0x01) == 0))
-    {
-        meBuffer *bp = bheadp;          /* scanning pointer to buffers */
-        while (bp != NULL)
-        {
-            if(bufferNeedSaving(bp))
-            {
-		/* Save a backup */
-                if (n & 0x10)
-                    autowriteout(bp) ;
-                /* Remove the backup */
-                else
-                    autowriteremove(bp) ;
-		meModeClear(bp->mode,MDEDIT) ;
-            }
-            bp = bp->next;            /* on to the next buffer */
-        }
-    }
+    else
+#endif
+        if(n & 0x20)
+            ec = 1 ;
     
-#if MEOPT_EXTENDED
-    /* Unconditionally save buffers, dictionary and registry files */
+    /* (Un)conditionally save buffers, dictionary and registry files */
     if((n & 0x02) &&
        ((saveSomeBuffers(f,(n & 0x01)) <= 0)
 #if MEOPT_SPELL
@@ -559,7 +542,6 @@ exitEmacs(int f, int n)
 #endif
        ))
         return meFALSE ;
-#endif
     
     s = 1 ;
     if(n & 0x01)
@@ -601,10 +583,32 @@ exitEmacs(int f, int n)
     {
         meBuffer *bp, *nbp ;
 
-        /* User says it's OK.   */
-#if MEOPT_REGISTRY
-        if(!(n & 0x20))
-            saveHistory(meTRUE,0) ;
+#ifdef _CLIPBRD
+        /* don't mess with the system clipboard from this point - could be a problem for a shut-down macro */
+        clipState |= CLIP_DISABLED ;
+#endif
+        /* If bit 0x08 is set then create autosaves for any changed buffers,
+         * otherwise remove any autosaves */
+        bp = bheadp ;
+        while (bp != NULL)
+        {
+            if(bufferNeedSaving(bp))
+            {
+                if (n & 0x08)
+                    autowriteout(bp) ;
+                else
+                    autowriteremove(bp) ;
+            }
+            bp = bp->next;            /* on to the next buffer */
+        }
+#if MEOPT_CALLBACK
+        {
+            /* call the shut-down command if its bound */
+            meUInt arg ;
+            int index ;
+            if((index = decode_key(ME_SPECIAL|SKEY_shut_down,&arg)) >= 0)
+                execFunc(index,1,n) ;
+        }
 #endif
 #if MEOPT_CLIENTSERVER
         /* the client-server is a psuedo ipipe but it needs
@@ -634,34 +638,12 @@ exitEmacs(int f, int n)
         while(bp != NULL)
         {
             nbp = bp->next ;
-            autowriteremove(bp) ;
 #if MEOPT_FILEHOOK
             if(!meModeTest(bp->mode,MDNACT) && (bp->dhook >= 0))
                 execBufferFunc(bp,bp->dhook,0,1) ;     /* Execute the delete hook */
 #endif
             bp = nbp ;
         }
-#if MEOPT_CALLBACK
-        {
-            /* call the shut-down command if its bound */
-            meUInt arg ;
-            int index ;
-            if((index = decode_key(ME_SPECIAL|SKEY_shut_down,&arg)) >= 0)
-            {
-                if(arg != 0)
-                {
-                    f = 1 ;
-                    n = (int) (arg + 0x80000000) ;
-                }
-                else
-                {
-                    f = 0 ;
-                    n = 1 ;
-                }
-                execFunc(index,f,n) ;
-            }
-        }
-#endif
 #if MEOPT_SOCKET
         ffFileOp(NULL,NULL,meRWFLAG_NOCONSOLE|meRWFLAG_FTPCLOSE,-1) ;
 #endif
@@ -669,7 +651,7 @@ exitEmacs(int f, int n)
 
 #ifdef _ME_CONSOLE
 #ifdef _TCAP
-        if(!(alarmState & meALARM_PIPED)
+        if(!(alarmState & (meALARM_PIPED|meALARM_DIE))
 #ifdef _ME_WINDOW
            && (meSystemCfg & meSYSTEM_CONSOLE)
 #endif /* _ME_WINDOW */
@@ -939,9 +921,9 @@ int
 quickExit(int f, int n)
 {
     if(n == 0)
-        n = 0x28 ;
-    else if(n == 2)
         n = 0x10 ;
+    else if(n == 2)
+        n = 0x08 ;
     else
         n = 0x02 ;
     return exitEmacs(1,n) ;
@@ -1065,67 +1047,13 @@ sigchild(SIGNAL_PROTOTYPE)
 int
 meDie(void)
 {
-    register meBuffer *bp;    /* scanning pointer to buffers */
-
-#ifdef _ME_WINDOW
-#ifdef _XTERM
-    int      usedX = 0 ;
-#endif /* _XTERM */
-#endif /* _ME_WINDOW */
-    
     /* To get here we have received a signal and am about to die! Ensure that
      * we are in a DIE state to prevent any output on the display which is
      * being torn down. Our main purpose is to preserve the session
      * information and history. */
     alarmState = meALARM_DIE ;
-
-#ifdef _ME_WINDOW
-#ifdef _XTERM
-    /* As the X window will always go, always output to the console
-     * or terminal, so if using X, do some grotty stuff.
-     * This is really important if the X-term window is destroyed,
-     * see waitForEvent in unixterm.c. This is because the windows
-     * already gone, so we can't use it!
-     */
-#ifdef _ME_CONSOLE
-    if(!(meSystemCfg & meSYSTEM_CONSOLE))
-#endif /* _ME_CONSOLE */
-    {
-        usedX = 1 ;
-        meSystemCfg |= meSYSTEM_CONSOLE ;
-    }
-#endif /* _XTERM */
-#endif /* _ME_WINDOW */
     
-    bp = bheadp;
-    while (bp != NULL)
-    {
-        if(bufferNeedSaving(bp))
-        {
-            autowriteout(bp) ;
-        }
-        bp = bp->next;            /* on to the next buffer */
-    }
-#if MEOPT_REGISTRY
-    saveHistory(1,0) ;
-    saveRegistry(1,2) ;
-#endif
-#if MEOPT_IPIPES
-    /* try to kill any child processes */
-    while(ipipes != NULL)
-        ipipeRemove(ipipes) ;
-#endif
-
-#ifdef _ME_WINDOW
-#ifdef _XTERM
-    /* Don't bother with the TTend if this was an xterm, to dangerous */
-    if(!usedX)
-#endif /* _XTERM */
-#endif /* _ME_WINDOW */
-        TTend();
-
-    meExit(1) ;
-    return 0;
+    return exitEmacs(1,0x28) ;
 }
 #endif
 
@@ -1395,6 +1323,7 @@ mesetup(int argc, char *argv[])
 
 #if MEOPT_EXTENDED
             case 0:      /* -  get input from stdin */
+                noFiles = 1 ;
 #endif                
             case 'b':    /* -b bin flag */
             case 'k':    /* -k crypt flag */
@@ -1404,12 +1333,11 @@ mesetup(int argc, char *argv[])
                  */
                 argv[rarg++] = argv[carg] ;
                 break ;
-
-#if MEOPT_REGISTRY
+#if MEOPT_EXTENDED
             case 'c':
-                HistNoFilesLoaded = -1 ;
+                SetUsrLclCmdVar((meUByte *) "session-name",(meUByte *) (argv[carg] + 2),&usrVarList) ;
                 break ;
-#endif
+#endif                
             case 'h':
                 mePrintMessage(meHelpPage) ;
                 meExit(0) ;
@@ -1583,7 +1511,10 @@ missing_arg:
         else if((argv[carg][0] == '+') && (argv[carg][1] == '\0'))
             goto missing_arg ;
         else
+        {
             argv[rarg++] = argv[carg] ;
+            noFiles = 1 ;
+        }
     }
     meSetupPathsAndUser(argv[0]) ;
 #if MEOPT_CLIENTSERVER
@@ -1637,7 +1568,7 @@ missing_arg:
             else
             {
                 /* set up a buffer for this file */
-                noFiles += findFileList((meUByte *)argv[carg],(BFND_CREAT|BFND_MKNAM|binflag),gline,gcol) ;
+                findFileList((meUByte *)argv[carg],(BFND_CREAT|BFND_MKNAM|binflag),gline,gcol) ;
                 gline = 0 ;
                 gcol = 0 ;
                 binflag = 0 ;
@@ -1686,7 +1617,7 @@ missing_arg:
         /* send a WM_USR message to the main window to wake ME up */ 
         SendMessage(baseHwnd,WM_USER,1,0) ;
 #endif
-              meExit(0) ;
+        meExit(0) ;
     }
     else if(userClientServer & 1)
     {
@@ -1709,8 +1640,10 @@ missing_arg:
 #endif
 
     mlerase(0);                /* Delete command line */
+    /* disable screen updates to reduce the flickering and startup time */
+    screenUpdateDisabledCount = -9999 ;
     /* run me.emf unless an @... arg was given in which case run that */
-    execFile(file,meFALSE,1) ;
+    execFile(file,meTRUE,noFiles) ;
 
     /* initalize *scratch* colors & modes to global defaults & check for a hook */
     if((mainbp=bfind(BmainN,0)) != NULL)
@@ -1733,6 +1666,11 @@ missing_arg:
         ipipes->bp->scheme = globScheme;
 #endif
 #endif
+    screenUpdateDisabledCount = 0 ;
+#ifdef _CLIPBRD
+    /* allow interaction with the clipboard now that me has initialized */
+    clipState &= ~CLIP_DISABLED ;
+#endif
     
     {
         meUByte  *searchStr=NULL, *cryptStr=NULL ;
@@ -1744,7 +1682,7 @@ missing_arg:
         int       obufHistNo ;
         
         obufHistNo = bufHistNo ;
-
+        noFiles = 0 ;
         /* scan through the command line and get the files to edit */
         for(carg=1 ; carg < rarg ; carg++)
         {
@@ -1755,6 +1693,7 @@ missing_arg:
                 {
 #if MEOPT_EXTENDED
                 case 0:
+                    bufHistNo = obufHistNo + rarg - carg ;
                     bp = bfind(BstdinN,BFND_CREAT|binflag);
                     bp->dotLineNo = gline ;
                     bufHistNo = obufHistNo + rarg - carg + 1 ;
@@ -1861,45 +1800,13 @@ handle_stdin:
         bufHistNo = obufHistNo + rarg ;
     }
 
-#if MEOPT_REGISTRY
-    /* load-up the com-line or -c first and second files */
-    if(!noFiles)
-        noFiles = HistNoFilesLoaded ;
-    else
-        HistNoFilesLoaded = 0 ;
-#endif
-    
     if(noFiles > 0)
     {
-        if((frameCur->bufferCur == mainbp) && ((bp = replacebuffer(NULL)) != mainbp) && (bp->fileName != NULL))
-        {
-#if MEOPT_REGISTRY
-            if(HistNoFilesLoaded && isUrlLink(bp->fileName))
-            {
-                meUByte prompt[meBUF_SIZE_MAX+16] ;
-                meStrcpy(prompt,"Reload file ") ;
-                meStrcat(prompt,bp->fileName) ;
-                if(mlyesno(prompt) <= 0)
-                {
-                    bp = NULL ;
-                    noFiles = 0 ;
-                }
-            }
-#endif
-	}
-        else
-            bp = NULL ;
-        if(bp != NULL)
+        if((bp = replacebuffer(NULL)) != mainbp)
         {
             swbuffer(frameCur->windowCur,bp) ;
 	    mainbp->histNo = -1 ;
-        }
-        if((noFiles > 1) && ((bp = replacebuffer(NULL)) != mainbp) &&
-           (bp->fileName != NULL))
-        {
-#if MEOPT_REGISTRY
-            if(!HistNoFilesLoaded && !isUrlLink(bp->fileName))
-#endif
+            if((noFiles > 1) && ((bp = replacebuffer(NULL)) != mainbp))
             {
                 windowSplitDepth(meTRUE,2) ;
                 swbuffer(frameCur->windowCur,replacebuffer(NULL)) ;
@@ -1983,21 +1890,13 @@ _meAssert (char *file, int line)
     for (;;)
     {
         cc = (meUByte) TTgetc() ;         /* Get character from keyboard */
-        /* Try and perform an emergency save for the user - no guarantees
-         * here I am afraid - we may be totally screwed at this point in
-         * time. */
         if (cc == 'S')
         {
-            register meBuffer *bp;        /* scanning pointer to buffers */
-
-            bp = bheadp;
-            while (bp != NULL)
-            {
-                if(bufferNeedSaving(bp))
-                    autowriteout(bp) ;
-                bp = bp->next;        /* on to the next buffer */
-            }
-            saveHistory(meTRUE,0) ;
+            /* Try and perform an emergency save for the user - no guarantees
+             * here I am afraid - we may be totally screwed at this point in
+             * time. */
+            alarmState = meALARM_DIE ;
+            exitEmacs(1,0x28) ;
         }
         else if (cc == 'Q')
             meExit (1);                 /* Die the death */

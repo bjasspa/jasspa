@@ -973,10 +973,8 @@ saveRegistry (int f, int n)
         rnp = root.child ;
         while (rnp != NULL)
         {
-            /* we don't what to save the history this way */
-            if(meStrcmp(rnp->name,"history") &&
-               ((f=regTestSave(rnp,n)) <= 0))
-                    return f ;
+            if((f=regTestSave(rnp,n)) <= 0)
+                return f ;
             rnp = rnp->next ;
         }
         return meTRUE ;
@@ -1015,9 +1013,7 @@ anyChangedRegistry(void)
     rnp = root.child ;
     while (rnp != NULL)
     {
-        /* we don't consider the history here */
-        if(meStrcmp(rnp->name,"history") && (rnp->mode & meREGMODE_FROOT) && 
-           (rnp->mode & meREGMODE_CHANGE) && !(rnp->mode & meREGMODE_DISCARD))
+        if((rnp->mode & (meREGMODE_FROOT|meREGMODE_CHANGE|meREGMODE_DISCARD)) == (meREGMODE_FROOT|meREGMODE_CHANGE))
             return meTRUE ;
         rnp = rnp->next ;
     }

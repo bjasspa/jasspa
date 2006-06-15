@@ -206,6 +206,8 @@ DEFVAR ("window-id",           EVWID)           /* current window id */
 #endif
 DEFVAR ("window-line",         EVCURLINE)       /* current line # in file */
 #if MEOPT_EXTENDED
+DEFVAR ("window-mark-col",     EVWMRKCOL)       /* current mark column #  */
+DEFVAR ("window-mark-line",    EVWMRKLINE)      /* current mark line # */
 DEFVAR ("window-mode-line",    EVWMDLINE)       /* window depth  */
 DEFVAR ("window-scroll-bar",   EVWSBAR)         /* window right scroll bar position */
 DEFVAR ("window-width",        EVWWIDTH)        /* Width of the current window */
