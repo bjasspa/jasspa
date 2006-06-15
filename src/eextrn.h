@@ -332,22 +332,21 @@ extern  void freeFileList(int noStr, meUByte **files) ;
 extern	int	resetkey(meBuffer *bp);
 #endif
 extern	int	readin(meBuffer *, meUByte *fname);
-extern	meUByte   makename(meUByte *bname, meUByte *fname);
+extern	meUByte makename(meUByte *bname, meUByte *fname);
 extern  void    autowriteout(register meBuffer *bp) ;
 extern  void    autowriteremove(meBuffer *bp) ;
 #if MEOPT_EXTENDED
 extern	int     nextWndFindFile(int f, int n);
 extern	int     fileOp(int f, int n);
 extern	int	appendBuffer(int f, int n);
-extern	int     saveSomeBuffers(int f, int n) ;
 #else
 #define nextWndFindFile notAvailable
 #define fileOp notAvailable
 #define appendBuffer notAvailable
-#define saveSomeBuffers notAvailable
 #endif
-extern	int	writeBuffer(int f, int n);
 extern	int	saveBuffer(int f, int n);
+extern	int     saveSomeBuffers(int f, int n) ;
+extern	int	writeBuffer(int f, int n);
 extern  int     writeOut(register meBuffer *bp, meUInt flags, meUByte *fn) ;
 extern	int	writeout(meBuffer *bp, int flags, meUByte *fn);
 extern	void	resetBufferNames(meBuffer *bp, meUByte *fname);
@@ -535,13 +534,6 @@ extern	int	indent(int f, int n);
 extern  void    initHistory(void) ;
 extern  int     setupHistory(int option, meUByte **numPtr, meUByte ***list) ;
 extern  void    addHistory(int option, meUByte *str) ;
-#if MEOPT_REGISTRY
-extern  int     readHistory(int f, int n) ;
-extern  int     saveHistory(int f, int n) ;
-#else
-#define readHistory notAvailable
-#define saveHistory notAvailable
-#endif
 
 /* isearch.c externals */
 #if MEOPT_ISEARCH

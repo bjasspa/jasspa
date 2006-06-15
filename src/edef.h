@@ -239,6 +239,7 @@ extern  meUShort  breakc;               /* current abort-command char*/
 #define CLIP_IGNORE_DC  0x04            /* Ignore the next DESTROYCLIP  */
 #define CLIP_RECEIVING  0x08            /* Currently receiving clipboard*/
 #define CLIP_RECEIVED   0x10            /* Clipboard has been obtained  */
+#define CLIP_DISABLED   0x20            /* Currently disabled Start&end */
 extern  meUByte   clipState;            /* clipboard status flag        */
 #endif
 extern  meUInt    cursorBlink;          /* cursor-blink blink time      */
@@ -336,9 +337,6 @@ extern  meUByte **buffHist ;            /* etc.                           */
 extern  meUByte **commHist ;
 extern  meUByte **fileHist ;
 extern  meUByte **srchHist ;
-#if MEOPT_REGISTRY
-extern  meShort   HistNoFilesLoaded ;   /* Count of no files loaded by hist */
-#endif
 
 #if MEOPT_HILIGHT
 extern meUByte     noHilights ;
@@ -385,6 +383,7 @@ extern meUByte   *charKeyboardMap ;
 extern meUByte    isWordMask ;
 
 /* the following are global variables but not defined in this file */
+extern int        screenUpdateDisabledCount ;
 extern int        mlfirst;              /* initial command, set by respawn() */
 extern meUByte    meCopyright[] ;
 
@@ -774,9 +773,6 @@ meUByte **buffHist ;                    /* etc.                           */
 meUByte **commHist ;
 meUByte **fileHist ;
 meUByte **srchHist ;
-#if MEOPT_REGISTRY
-meShort   HistNoFilesLoaded = 0 ;       /* Count of no files loaded by hist */
-#endif
 
 #if MEOPT_HILIGHT
 meUByte     noHilights=0 ;
@@ -811,7 +807,7 @@ meUShort  keyTableSize;                 /* The current size of the key table */
 meUByte   resultStr[meBUF_SIZE_MAX];    /* Result string from commands  */
 
 #ifdef _CLIPBRD
-meUByte   clipState=0;                  /* clipboard status flag        */
+meUByte   clipState=CLIP_DISABLED;      /* clipboard status flag        */
 #endif
 
 #ifdef _DRAGNDROP

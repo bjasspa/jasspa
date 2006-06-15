@@ -299,9 +299,6 @@ DEFFUNC ("rcs-file",			0x42, rcsCiCoFile,	CK_RCSCOCI, &__cmdArray[CK_RCSCOCI+1],
 #endif
 DEFFUNC ("read-file",		        0x42, readFile,		CK_REDFILE, &__cmdArray[CK_REDFILE+1], 0)
 #if MEOPT_CMDHASH || MEOPT_REGISTRY
-DEFFUNC ("read-history",		0x42, readHistory,	CK_REDHIST, &__cmdArray[CK_REDHIST+1], 0)
-#endif
-#if MEOPT_CMDHASH || MEOPT_REGISTRY
 DEFFUNC ("read-registry",		0x42, readRegistry,	CK_REDREGY, &__cmdArray[CK_REDREGY+1], 0)
 #endif
 DEFFUNC ("recenter",		        0x42, windowRecenter,	CK_RECENT, &__cmdArray[CK_RECENT+1], 0)
@@ -316,11 +313,10 @@ DEFFUNC ("save-buffers-exit-emacs",	0x00, saveExitEmacs,	CK_QUIT, &__cmdArray[CK
 DEFFUNC ("save-dictionary",             0x42, dictionarySave,  	CK_SVDICTS, &__cmdArray[CK_SVDICTS+1], 0)
 #endif
 #if MEOPT_CMDHASH || MEOPT_REGISTRY
-DEFFUNC ("save-history",		0x42, saveHistory,	CK_WRTHIST, &__cmdArray[CK_WRTHIST+1], 0)
 DEFFUNC ("save-registry",		0x42, saveRegistry,	CK_SAVREGY, &__cmdArray[CK_SAVREGY+1], 0)
 #endif
-#if MEOPT_CMDHASH || MEOPT_EXTENDED
 DEFFUNC ("save-some-buffers",		0x42, saveSomeBuffers,	CK_SAVSBUF, &__cmdArray[CK_SAVSBUF+1], 0)
+#if MEOPT_CMDHASH || MEOPT_EXTENDED
 DEFFUNC ("screen-poke",			0x00, screenPoke,	CK_PKSCRN, &__cmdArray[CK_PKSCRN+1], 0)
 #endif
 DEFFUNC ("screen-update",		0x00, screenUpdate,	CK_UPDATE, &__cmdArray[CK_UPDATE+1], 0)

@@ -1998,7 +1998,7 @@ pokeUpdate (void)
  */
 /* screenUpdate:	user routine to force a screen update
 		always finishes complete update		*/
-static int screenUpdateDisabledCount=0 ;
+int screenUpdateDisabledCount=0 ;
 
 int
 screenUpdate(int f, int n)

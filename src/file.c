@@ -2299,6 +2299,38 @@ saveBuffer(int f, int n)
     return (s);
 }
 
+/* save-some-buffers, query saves all modified buffers */
+int
+saveSomeBuffers(int f, int n)
+{
+    register meBuffer *bp;    /* scanning pointer to buffers */
+    register int status=meTRUE ;
+    meUByte prompt[meBUF_SIZE_MAX] ;
+
+    bp = bheadp;
+    while (bp != NULL)
+    {
+        if(bufferNeedSaving(bp))
+        {
+            if(n & 1)
+            {
+                if(bp->fileName != NULL)
+                    sprintf((char *)prompt, "Save file %s", bp->fileName) ;
+                else
+                    sprintf((char *)prompt, "Save buffer %s", bp->name) ;
+                if((status = mlyesno(prompt)) < 0)
+                    return meABORT ;
+            }
+            if((status > 0) &&
+               (writeout(bp, 0, bp->fileName) <= 0))
+                return meABORT ;
+        }
+        bp = bp->next;            /* on to the next buffer */
+    }
+    frameAddModeToWindows(WFMODE) ;  /* and update ALL mode lines */
+    return meTRUE ;
+}
+
 #if MEOPT_EXTENDED
 int
 appendBuffer(int f, int n)
@@ -2331,38 +2363,6 @@ appendBuffer(int f, int n)
     if(n & 0x02)
         flags |= meRWFLAG_IGNRNRRW ;
     return ffWriteFile(fname,flags,frameCur->bufferCur) ;
-}
-
-/* save-some-buffers, query saves all modified buffers */
-int
-saveSomeBuffers(int f, int n)
-{
-    register meBuffer *bp;    /* scanning pointer to buffers */
-    register int status=meTRUE ;
-    meUByte prompt[meBUF_SIZE_MAX] ;
-
-    bp = bheadp;
-    while (bp != NULL)
-    {
-        if(bufferNeedSaving(bp))
-        {
-            if(n & 1)
-            {
-                if(bp->fileName != NULL)
-                    sprintf((char *)prompt, "Save file %s", bp->fileName) ;
-                else
-                    sprintf((char *)prompt, "Save buffer %s", bp->name) ;
-                if((status = mlyesno(prompt)) < 0)
-                    return meABORT ;
-            }
-            if((status > 0) &&
-               (writeout(bp, 0, bp->fileName) <= 0))
-                return meABORT ;
-        }
-        bp = bp->next;            /* on to the next buffer */
-    }
-    frameAddModeToWindows(WFMODE) ;  /* and update ALL mode lines */
-    return meTRUE ;
 }
 
 /*

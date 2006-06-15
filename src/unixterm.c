@@ -1456,7 +1456,7 @@ meXEventHandler(void)
              * change */
             if ((hh != frame->depth+1) || (ww != frame->width))
                 meFrameSetWindowSize(frame) ;
-            if(sizeSet)
+            if(sizeSet && !screenUpdateDisabledCount)
                 screenUpdate(meTRUE,2-sgarbf) ;
         }
         break;
@@ -3629,7 +3629,7 @@ void
 TTsetClipboard(void)
 {
     if(!(meSystemCfg & (meSYSTEM_CONSOLE|meSYSTEM_NOCLIPBRD)) &&
-       !(clipState & (CLIP_OWNER|CLIP_RECEIVING)) && (kbdmode != mePLAY))
+       !(clipState & (CLIP_OWNER|CLIP_RECEIVING|CLIP_DISABLED)) && (kbdmode != mePLAY))
     {
         XSetSelectionOwner(mecm.xdisplay,XA_PRIMARY,meFrameGetXWindow(frameCur),CurrentTime) ;
         if(XGetSelectionOwner(mecm.xdisplay,XA_PRIMARY) == meFrameGetXWindow(frameCur))
@@ -3641,7 +3641,7 @@ void
 TTgetClipboard(void)
 {
     if(!(meSystemCfg & (meSYSTEM_CONSOLE|meSYSTEM_NOCLIPBRD)) &&
-       !(clipState & CLIP_OWNER) && (kbdmode != mePLAY))
+       !(clipState & (CLIP_OWNER|CLIP_DISABLED)) && (kbdmode != mePLAY))
     {
         /* Add the CLIP_RECEIVING flag. This is really important if increment
          * copy texts are being used. If they are and this flag is set after receiving

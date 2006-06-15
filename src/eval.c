@@ -581,6 +581,52 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
 #if MEOPT_EXTENDED
         case EVABSLINE:
             return windowGotoAbsLine(meAtoi(vvalue));
+        case EVWMRKCOL:
+            if((status=meAtoi(vvalue)) < 0)
+            {
+                frameCur->windowCur->markOffset = 0 ;
+                return meFALSE ;
+            }
+            else if(status && !meModeTest(frameCur->bufferCur->mode,MDNACT) &&
+                    (frameCur->windowCur->markLine != NULL) &&
+                    (status > meLineGetLength(frameCur->windowCur->markLine)))
+            {
+                frameCur->windowCur->markOffset = meLineGetLength(frameCur->windowCur->markLine) ;
+                return meFALSE ;
+            }
+            frameCur->windowCur->markOffset = status ;
+            return meTRUE ;
+        case EVWMRKLINE:
+            if((status=meAtoi(vvalue)) < 0)
+                return meFALSE ;
+            frameCur->windowCur->markOffset = 0 ;
+            if(status == 0)
+            {
+                frameCur->windowCur->markLine = NULL ;
+                frameCur->windowCur->markLineNo = 0 ;
+            }
+            else if(!meModeTest(frameCur->bufferCur->mode,MDNACT))
+            {
+                meLine   *odotp ;
+                meUShort  odoto ;
+                meInt     lineno ;
+
+                odotp = frameCur->windowCur->dotLine ;
+                lineno = frameCur->windowCur->dotLineNo ;
+                odoto = frameCur->windowCur->dotOffset ;
+                if((status = windowGotoLine(meTRUE,status)) > 0)
+                {
+                    frameCur->windowCur->markLine = frameCur->windowCur->dotLine ;
+                    frameCur->windowCur->markLineNo = frameCur->windowCur->dotLineNo ;
+                }
+                frameCur->windowCur->dotLine = odotp ;
+                frameCur->windowCur->dotLineNo = lineno ;
+                frameCur->windowCur->dotOffset = odoto ;
+                return status ;
+            }
+            else
+                frameCur->windowCur->markLineNo = status ;
+            return meTRUE ;
 #endif
         case EVCURCOL:
             if((status=meAtoi(vvalue)) < 0)
@@ -588,7 +634,8 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                 frameCur->windowCur->dotOffset = 0 ;
                 return meFALSE ;
             }
-            else if(status > meLineGetLength(frameCur->windowCur->dotLine))
+            else if(status && !meModeTest(frameCur->bufferCur->mode,MDNACT) &&
+                    (status > meLineGetLength(frameCur->windowCur->dotLine)))
             {
                 frameCur->windowCur->dotOffset = meLineGetLength(frameCur->windowCur->dotLine) ;
                 return meFALSE ;
@@ -598,7 +645,10 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
         case EVCURLINE:
             if((status=meAtoi(vvalue)) <= 0)
                 return meFALSE ;
-            return windowGotoLine(meTRUE,status) ;
+            if(!meModeTest(frameCur->bufferCur->mode,MDNACT))
+                return windowGotoLine(meTRUE,status) ;
+            frameCur->windowCur->dotLineNo = status ;
+            return meTRUE ;
         case EVWINCHRS:
             {
                 meUByte cc ;
@@ -1172,6 +1222,8 @@ handle_namesvar:
 #if MEOPT_EXTENDED
     case EVABSLINE:     return meItoa(windowGotoAbsLine(-1)+1);
     case EVEOBLINE:     return meItoa(frameCur->bufferCur->lineCount+1);
+    case EVWMRKCOL:     return meItoa(frameCur->windowCur->markOffset);
+    case EVWMRKLINE:    return meItoa((frameCur->windowCur->markLine == NULL) ? 0:frameCur->windowCur->markLineNo+1);
     case EVBMDLINE:
         if(frameCur->bufferCur->modeLineStr == NULL)
             return modeLineStr ;
