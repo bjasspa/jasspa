@@ -1510,7 +1510,7 @@ insertFile(int f, int n)
  * I suppose that this information could be put in
  * a better place than a line of code.
  */
-meUByte
+void
 makename(meUByte *bname, meUByte *fname)
 {
     register meUByte *cp1 ;
@@ -1533,7 +1533,6 @@ makename(meUByte *bname, meUByte *fname)
          */
         sprintf((char *)cp2, "<%d>", i);
     }
-    return (i == 1) ? 0:BIFNAME ;
 }
 
 #define fileNameWild(fileName)                                                        \
@@ -2229,7 +2228,7 @@ resetBufferNames(meBuffer *bp, meUByte *fname)
         meUByte buf[meBUF_SIZE_MAX], *bb ;
         meStrrep(&bp->fileName,fname) ;
         unlinkBuffer(bp) ;
-        bp->intFlag = (bp->intFlag & ~BIFNAME) | makename(buf, fname) ;
+        makename(buf, fname) ;
         if((bb = meStrdup(buf)) != NULL)
         {
             meFree(bp->name) ;

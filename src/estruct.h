@@ -759,10 +759,9 @@ typedef struct  meBuffer {
 
 
 #define BIFBLOW    0x01                         /* Buffer is to be blown away (bclear)  */
-#define BIFNACT    0x01                         /* Keep buffer inactive (swbuffer)      */
 #define BIFLOAD    0x02                         /* Used on a reload to check tim        */
 #define BIFLOCK    0x04                         /* Used in ipipe to flag a lock         */
-#define BIFNAME    0x08                         /* The buffer name has a <?> extension  */
+#define BIFNACT    0x08                         /* The buffer is inactive               */
 #define BIFFILE    0x10                         /* The buffer is a file - used at creation only */
 #define BIFNODEL   0x20                         /* The buffer cannot be deleted         */
 #define BIFNOHOOK  0x40                         /* Don't apply any context file hook    */
