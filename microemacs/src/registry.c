@@ -685,6 +685,8 @@ regRead(meUByte *rname, meUByte *fname, int mode)
     meUInt flags ;
     
     /* Find the registry entry */
+    if(*rname == '/')
+        rname++;
     if ((rnp = rnodeFind (&root, rname)) != NULL)
     {
         /* if not merging or reloading then we've can use the existing node */
