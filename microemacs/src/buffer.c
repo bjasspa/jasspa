@@ -290,20 +290,19 @@ setBufferContext(meBuffer *bp)
 	    hooknm = rbinHookName ;
 	else
 	{
-	    meUByte *sp ;
-	    int    ll ;
+	    meUByte *sp, *bn ;
+	    int ll, bnll ;
 	    
-	    sp = bp->name ;
-	    /* Find the length of the string to pass into check_extension.
-	     * Check if its name has a <?> and/or a backup ~, if so reduce
-	     * the length so '<?>' & '~'s not inc.
-	     */
-	    ll = meStrlen(sp) ;
-	    if(bp->intFlag & BIFNAME)
-	    {
-		while(sp[--ll] != '<')
-		    ;
-	    }
+            /* Find the length of the string to pass into check_extension.
+             * Check if its name has a <?> and/or a backup ~, if so reduce
+             * the length so '<?>' & '~'s not inc. */
+            sp = bp->name ;
+            ll = meStrlen(sp) ;
+	    if((sp[ll-1] == '>') && (bp->fileName != NULL) &&
+               ((bn = getFileBaseName(bp->fileName)) != NULL) &&
+               ((bnll = meStrlen(bn)) > 0) && (ll > bnll) &&
+               (sp[bnll] == '<')  && !meStrncmp(sp,bn,bnll))
+                ll = bnll ;
 	    if(sp[ll-1] == '~')
 		ll-- ;
             if(ll)
@@ -419,6 +418,7 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
     }
 #endif
     tbp->histNo = ++bufHistNo ;
+    tbp->intFlag &= ~BIFNACT ;
     if((--tbp->windowCount == 0) && !reload)
     {
         /* don't do this on a reload as the bclear means the window state is
@@ -521,9 +521,7 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
         execBufferFunc(frameCur->bufferCur,frameCur->bufferCur->bhook,0,1) ;
 #endif        
     
-    if(bp->intFlag & BIFNACT)
-        bp->intFlag &= ~BIFNACT ;
-    else if(bp->intFlag & BIFLOAD)
+    if((bp->intFlag & (BIFLOAD|BIFNACT)) == BIFLOAD)
     {
         bp->intFlag &= ~BIFLOAD ;
 	if(bufferOutOfDate(bp))
@@ -1167,11 +1165,8 @@ changeBufName(int f, int n)     /*      Rename the current buffer       */
             bp1 = bp2 ;
             if(bp1->fileName != NULL)
                 nn = bp1->fileName ;
-            else if((bp1->intFlag & BIFNAME) &&
-                    ((name=meStrrchr(bufn+1,'<')) != NULL)) 
-                name[-1] = '\0' ;
         }
-        bp1->intFlag = (bp1->intFlag & ~BIFNAME) | makename(bufn,nn) ;
+        makename(bufn,nn) ;
     }
     
     frameAddModeToWindows(WFMODE) ;
@@ -1536,7 +1531,7 @@ bfind(register meUByte *bname, int cflag)
     
     if(cflag & BFND_MKNAM)
     {
-	intFlag = makename(bn,bname) ;
+	makename(bn,bname) ;
 	bnm = bn ;
     }
     else

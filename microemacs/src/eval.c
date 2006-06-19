@@ -587,7 +587,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                 frameCur->windowCur->markOffset = 0 ;
                 return meFALSE ;
             }
-            else if(status && !meModeTest(frameCur->bufferCur->mode,MDNACT) &&
+            else if(status && ((frameCur->bufferCur->intFlag & BIFNACT) == 0) &&
                     (frameCur->windowCur->markLine != NULL) &&
                     (status > meLineGetLength(frameCur->windowCur->markLine)))
             {
@@ -605,7 +605,9 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                 frameCur->windowCur->markLine = NULL ;
                 frameCur->windowCur->markLineNo = 0 ;
             }
-            else if(!meModeTest(frameCur->bufferCur->mode,MDNACT))
+            else if(frameCur->bufferCur->intFlag & BIFNACT)
+                frameCur->windowCur->markLineNo = status ;
+            else
             {
                 meLine   *odotp ;
                 meUShort  odoto ;
@@ -624,8 +626,6 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                 frameCur->windowCur->dotOffset = odoto ;
                 return status ;
             }
-            else
-                frameCur->windowCur->markLineNo = status ;
             return meTRUE ;
 #endif
         case EVCURCOL:
@@ -634,7 +634,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                 frameCur->windowCur->dotOffset = 0 ;
                 return meFALSE ;
             }
-            else if(status && !meModeTest(frameCur->bufferCur->mode,MDNACT) &&
+            else if(status && ((frameCur->bufferCur->intFlag & BIFNACT) == 0) &&
                     (status > meLineGetLength(frameCur->windowCur->dotLine)))
             {
                 frameCur->windowCur->dotOffset = meLineGetLength(frameCur->windowCur->dotLine) ;
@@ -645,10 +645,12 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
         case EVCURLINE:
             if((status=meAtoi(vvalue)) <= 0)
                 return meFALSE ;
-            if(!meModeTest(frameCur->bufferCur->mode,MDNACT))
-                return windowGotoLine(meTRUE,status) ;
-            frameCur->windowCur->dotLineNo = status ;
-            return meTRUE ;
+            if(frameCur->bufferCur->intFlag & BIFNACT)
+            {
+                frameCur->windowCur->dotLineNo = status ;
+                return meTRUE ;
+            }
+            return windowGotoLine(meTRUE,status) ;
         case EVWINCHRS:
             {
                 meUByte cc ;

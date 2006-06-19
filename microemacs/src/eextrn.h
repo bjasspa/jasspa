@@ -332,7 +332,7 @@ extern  void freeFileList(int noStr, meUByte **files) ;
 extern	int	resetkey(meBuffer *bp);
 #endif
 extern	int	readin(meBuffer *, meUByte *fname);
-extern	meUByte makename(meUByte *bname, meUByte *fname);
+extern	void    makename(meUByte *bname, meUByte *fname);
 extern  void    autowriteout(register meBuffer *bp) ;
 extern  void    autowriteremove(meBuffer *bp) ;
 #if MEOPT_EXTENDED
