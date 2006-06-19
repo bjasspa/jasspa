@@ -443,57 +443,59 @@ define-macro read-session
                     forward-line
                     set-variable #l5 $window-line
                     set-variable #l6 &lget #l3 9
-                    !if &seq &lget #l4 1 ""
-                        ; no amarks, create an inactive buffer
-                        !force 7 find-buffer #l2 @mna
-                        !if $status
-                            !force 2 change-buffer-name &lget #l3 1
-                            set-variable #l1 0
-                            set-variable $mode-names ".*"
-                            !if &not &seq &set #l2 $mode-names ""
-                                !if &not &lfind "|dir|edit|pipe|nact|narrow|quiet|" #l2
-                                    !force &con &sin &mid $mode-chars #l1 1 #l6 1 -1 buffer-mode #l2
+                    !if &not &seq "X" &stat t #l2
+                        !if &seq &lget #l4 1 ""
+                            ; no amarks, create an inactive buffer
+                            !force 7 find-buffer #l2 @mna
+                            !if $status
+                                !force 2 change-buffer-name &lget #l3 1
+                                set-variable #l1 0
+                                set-variable $mode-names ".*"
+                                !if &not &seq &set #l2 $mode-names ""
+                                    !if &not &lfind "|dir|edit|pipe|nact|narrow|quiet|" #l2
+                                        !force &con &sin &mid $mode-chars #l1 1 #l6 1 -1 buffer-mode #l2
+                                    !endif
+                                    set-variable #l1 &add #l1 1
+                                    !jump -5
                                 !endif
-                                set-variable #l1 &add #l1 1
-                                !jump -5
+                                !force set-variable $window-mark-line &lget #l3 7
+                                !force set-variable $window-mark-col &lget #l3 8
+                                !force set-variable $window-line &lget #l3 5
+                                !force set-variable $window-col &lget #l3 6
                             !endif
-                            !force set-variable $window-mark-line &lget #l3 7
-                            !force set-variable $window-mark-col &lget #l3 8
-                            !force set-variable $window-line &lget #l3 5
-                            !force set-variable $window-col &lget #l3 6
-                        !endif
-                    !else
-                        set-variable #l1 &add &add &cond &sin "b" #l6 2 0 &cond &sin "Y" #l6 4 0 &cond &sin "r" #l6 8 0
-                        !force #l1 find-file #l2 @mna
-                        !if $status
-                            !force 2 change-buffer-name &lget #l3 1
-                            set-variable #l1 0
-                            set-variable $mode-names ".*"
-                            !if &not &seq &set #l2 $mode-names ""
-                                !if &not &lfind "|binary|dir|edit|pipe|rbin|nact|narrow|quiet|" #l2
-                                    !force &con &sin &mid $mode-chars #l1 1 #l6 1 -1 buffer-mode #l2
+                        !else
+                            set-variable #l1 &add &add &cond &sin "b" #l6 2 0 &cond &sin "Y" #l6 4 0 &cond &sin "r" #l6 8 0
+                            !force #l1 find-file #l2 @mna
+                            !if $status
+                                !force 2 change-buffer-name &lget #l3 1
+                                set-variable #l1 0
+                                set-variable $mode-names ".*"
+                                !if &not &seq &set #l2 $mode-names ""
+                                    !if &not &lfind "|binary|dir|edit|pipe|rbin|nact|narrow|quiet|" #l2
+                                        !force &con &sin &mid $mode-chars #l1 1 #l6 1 -1 buffer-mode #l2
+                                    !endif
+                                    set-variable #l1 &add #l1 1
+                                    !jump -5
                                 !endif
-                                set-variable #l1 &add #l1 1
-                                !jump -5
+                                set-variable #l1 0
+                                !if &not &seq &set #l2 &lget #l4 &inc #l1 1 ""
+                                    !force set-variable $window-aline &lget #l4 &inc #l1 1
+                                    !force set-variable $window-col &lget #l4 &inc #l1 1
+                                    set-alpha-mark #l2
+                                    !jump -4
+                                !endif
+                                !if &lget #l3 7
+                                    !force set-variable $window-aline &lget #l3 7
+                                    !force set-variable $window-col &lget #l3 8
+                                    set-mark
+                                !endif
+                                !force set-variable $window-aline &lget #l3 5
+                                !force set-variable $window-col &lget #l3 6
                             !endif
-                            set-variable #l1 0
-                            !if &not &seq &set #l2 &lget #l4 &inc #l1 1 ""
-                                !force set-variable $window-aline &lget #l4 &inc #l1 1
-                                !force set-variable $window-col &lget #l4 &inc #l1 1
-                                set-alpha-mark #l2
-                                !jump -4
-                            !endif
-                            !if &lget #l3 7
-                                !force set-variable $window-aline &lget #l3 7
-                                !force set-variable $window-col &lget #l3 8
-                                set-mark
-                            !endif
-                            !force set-variable $window-aline &lget #l3 5
-                            !force set-variable $window-col &lget #l3 6
                         !endif
-                    !endif
-                    !if &lget #l3 2
-                        set-variable #l0 &lget #l3 1
+                        !if &lget #l3 2
+                            set-variable #l0 &lget #l3 1
+                        !endif
                     !endif
                     find-buffer "*session_tmp*"
                     set-variable $window-line #l5
@@ -521,11 +523,11 @@ define-macro read-session
                 ; resize the frame
                 set-variable #l4 &sub &lget #l2 3 &lget #l2 1
                 set-variable #l5 &sub &lget #l2 4 &lget #l2 2
-                !if &set #l6 &sub #l4 $window-width
-                    !force #l6 change-frame-width
-                !endif
                 !if &set #l6 &sub #l5 $window-depth
                     !force #l6 change-frame-depth
+                !endif
+                !if &set #l6 &sub #l4 $window-width
+                    !force #l6 change-frame-width
                 !endif
                 !if &not &band @# 8
                     set-variable #l7 0
