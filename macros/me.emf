@@ -372,16 +372,18 @@ osd -1 &cond &reg "/history/main-menu" "1" "1" "-1"
 !if &not &seq &set #l0 &reg "/history/setup-file" "" ""
     !force exec-file #l0
 !endif
-; now we have the right font etc. set the frame size
-!if &set #l0 &reg &spr "/history/%s/frame-width" %platform "0"
-    change-frame-width #l0
-!endif
-!if &set #l0 &reg &spr "/history/%s/frame-depth" %platform "0"
-    change-frame-depth #l0
-!endif
 !if &not &exi session
     !force exec-file session
-    !force &bor &mul 8 &ban @# 1 &con &exi %session-name &con &seq %session-name "" 20 16 30 read-session
+    set-variable #l1 &bor &mul 8 &ban @# 1 &con &exi %session-name &con &seq %session-name "" 20 16 30
+    !force #l1 read-session
+    !if &band #l1 6
+        !if &set #l0 &reg &spr "/history/%s/frame-width" %platform "0"
+            change-frame-width #l0
+        !endif
+        !if &set #l0 &reg &spr "/history/%s/frame-depth" %platform "0"
+            change-frame-depth #l0
+        !endif
+    !endif
 !endif
 3 popup-window
 ; Setup the Client Server

@@ -333,5 +333,15 @@ file-tool-create
 0 file-tool-set-flds
     
 define-macro file-tool-setup
-    .osd.file-tool osd
+    !if &band @# 1
+        ; reread the setup if not run from user-setup
+        !force read-registry "/history" $user-name "cbr"
+    !endif
+    !force !force .osd.file-tool osd
+    !if &not &band @# 1
+    !elif $status
+        save-registry "/history" ""
+    !else
+        !force read-registry "/history" $user-name "cbr"
+    !endif
 !emacro
