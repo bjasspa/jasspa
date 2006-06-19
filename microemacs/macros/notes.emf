@@ -759,6 +759,10 @@ define-macro notes-tree-isearch-backward
             goto-position "\x81"
         !else
             !force set-position "\x81"
+            !force 0 find-buffer .notes.current
+            !if &not $status
+                !force find-buffer &cat "*" .notes.current
+            !endif
             !force notes-close
             !force 0xbe goto-position "\x81"
         !endif
