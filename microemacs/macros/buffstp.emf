@@ -113,9 +113,13 @@
         set-registry &cat "/history/fhook/" &rig $buffer-fhook 6 .buffer-setup.nsetup
         set-variable &ind &spr ".%s.setup" $buffer-fhook .buffer-setup.nsetup
         set-variable .buffer-setup.osetup .buffer-setup.nsetup
+        !if &band @# 1
+            ; save changes if not run from user-setup
+            save-registry "/history" ""
+        !endif
     !endif
-    !if &gre @# 1
-        !force @# execute-file &cat "hk" &rig $buffer-fhook 6
+    !if &band @# 4
+        !force execute-file &cat "hk" &rig $buffer-fhook 6
         !if $status
             set-variable $buffer-hilight 0
             set-variable $buffer-indent 0
@@ -126,6 +130,10 @@
     !endif
 !emacro
 define-macro buffer-setup
+    !if &band @# 1
+        ; reread the setup if not run from user-setup
+        !force read-registry "/history" $user-name "cbr"
+    !endif
     set-variable .mask &ind &spr ".%s.setup-mask" $buffer-fhook
     !if &seq .mask "ERROR"
         !bell
@@ -202,8 +210,8 @@ define-macro buffer-setup
         osd .osd.buffstp 930 ""
     !endif        
     osd .osd.buffstp 940 ""
-    osd .osd.buffstp 950 "BtcfHhx" .scheme.osd-ebtt " \HSave " 1 buffer-setup-save
-    osd .osd.buffstp 960 "BtcfHh"  .scheme.osd-ebtt " \HCurrent " 2 buffer-setup-save
+    osd .osd.buffstp 950 "BtcfHhx" .scheme.osd-ebtt " \HSave " &bor 2 &band @# 1 buffer-setup-save
+    osd .osd.buffstp 960 "BtcfHh"  .scheme.osd-ebtt " \HCurrent " &bor 6 &band @# 1 buffer-setup-save
     osd .osd.buffstp 970 "BtcfH"   .scheme.osd-ebtt " E\Hxit " f void
     set-variable .nsetup .osetup
     .osd.buffstp osd

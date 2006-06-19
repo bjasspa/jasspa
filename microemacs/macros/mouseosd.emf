@@ -20,8 +20,10 @@
 !endif
 ;
 0 define-macro store-frame-size
+    !force read-registry "/history" $user-name "cbr"
     set-registry &spr "/history/%s/frame-width" %platform $frame-width 
     set-registry &spr "/history/%s/frame-depth" %platform $frame-depth 
+    save-registry "/history" ""
 !emacro
 ; MENU #23 - MODE LINE pop-up menu
 ; The mode line pop-up menu is invoked when the mouse is right clicked

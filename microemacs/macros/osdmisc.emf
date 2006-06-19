@@ -1220,9 +1220,19 @@ osd .osd.alias-path 635 "fh" "            "
 osd .osd.alias-path 640 "BHtf"   .scheme.osd-ebtt " E\Hxit "   f void
     
 define-macro alias-path-setup
+    !if &band @# 1
+        ; reread the setup if not run from user-setup
+        !force read-registry "/history" $user-name "cbr"
+    !endif
     alias-path-create
     0 alias-path-set-flds
-    .osd.alias-path osd
+    !force !force .osd.alias-path osd
+    !if &not &band @# 1
+    !elif $status
+        save-registry "/history" ""
+    !else
+        !force read-registry "/history" $user-name "cbr"
+    !endif
 !emacro
 
 ; file type setup ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1350,9 +1360,19 @@ osd .osd.file-type 635 "fh" "          "
 osd .osd.file-type 640 "BtfH"   .scheme.osd-ebtt " E\Hxit "   f void
     
 define-macro file-type-setup
+    !if &band @# 1
+        ; reread the setup if not run from user-setup
+        !force read-registry "/history" $user-name "cbr"
+    !endif
     file-type-create
     0 file-type-set-fields
-    .osd.file-type osd
+    !force !force .osd.file-type osd
+    !if &not &band @# 1
+    !elif $status
+        save-registry "/history" ""
+    !else
+        !force read-registry "/history" $user-name "cbr"
+    !endif
 !emacro
 
 ; shell tools setup ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1443,6 +1463,10 @@ osd .osd.shell-tool 600 ""
 osd .osd.shell-tool 610 "BtcfH"   .scheme.osd-ebtt " E\Hxit "   f void
 
 define-macro shell-tool-setup
+    !if &band @# 1
+        ; reread the setup if not run from user-setup
+        !force read-registry "/history" $user-name "cbr"
+    !endif
     set-variable #l0 0
     !repeat
         set-variable #l1 &reg &spr "/history/%s/tool/%d/name" $platform #l0 ""
@@ -1453,14 +1477,21 @@ define-macro shell-tool-setup
         !endif
     !until &equ &inc #l0 1 10
     0 shell-tool-set-cur
-    !force .osd.shell-tool osd
-    set-variable #l0 0
-    !repeat
-        !if &not &seq "" &set #l1 &reg &spr "/history/%s/tool/%d/name" $platform #l0 ""
-            osd 7 &add 200 #l0 "" &spr "\H%d %s" #l0 #l1 #l0 execute-tool
-            osd 7 290 "-"
-        !else
-            osd 7 &add 200 #l0 "D"
+    !force !force .osd.shell-tool osd
+    !if $status
+        !if &band @# 1
+            save-registry "/history" ""
         !endif
-    !until &equ &inc #l0 1 10
+        set-variable #l0 0
+        !repeat
+            !if &not &seq "" &set #l1 &reg &spr "/history/%s/tool/%d/name" $platform #l0 ""
+                osd 7 &add 200 #l0 "" &spr "\H%d %s" #l0 #l1 #l0 execute-tool
+                osd 7 290 "-"
+            !else
+                osd 7 &add 200 #l0 "D"
+            !endif
+        !until &equ &inc #l0 1 10
+    !elif &band @# 1
+        !force read-registry "/history" $user-name "cbr"
+    !endif
 !emacro
