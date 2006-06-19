@@ -179,7 +179,7 @@ meFrameChangeDepth(meFrame *frame, int dd)
         dd = 400 ;
         
     /* Already this size ?? Nothing to do */
-    if(frame->depth+1 == dd)
+    if((frame->depth+1) == dd)
         return meTRUE;
     
     meFrameLoopBegin() ;
@@ -306,7 +306,7 @@ frameChangeDepth(int f, int n)
     {
         meUByte buff[meSBUF_SIZE_MAX] ;
         
-        if (meGetString((meUByte *)"New width", 0, 0, buff, meSBUF_SIZE_MAX) <= 0) 
+        if (meGetString((meUByte *)"New depth", 0, 0, buff, meSBUF_SIZE_MAX) <= 0) 
             return meFALSE ;
         n = meAtoi(buff) ;
     }
@@ -315,7 +315,7 @@ frameChangeDepth(int f, int n)
         n = frameCur->depth + 1 + n ;
     if ((n < 4) || (n > 400))           /* Argument in range ?? */
         return mlwrite(MWABORT,(meUByte *)"[Screen depth %d out of range]", n);
-    if (n == frameCur->depth+1)
+    if (n == (frameCur->depth+1))
         return meTRUE;                    /* Already the right size */
     
     if(meFrameChangeDepth(frameCur,n) <= 0)
@@ -324,7 +324,6 @@ frameChangeDepth(int f, int n)
 #ifdef _WINDOW
     meFrameSetWindowSize(frameCur) ;    /* Change the size of the window */
 #endif
-    
     return meTRUE ;
 }
 
