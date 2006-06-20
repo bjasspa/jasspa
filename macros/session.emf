@@ -523,11 +523,13 @@ define-macro read-session
                 ; resize the frame
                 set-variable #l4 &sub &lget #l2 3 &lget #l2 1
                 set-variable #l5 &sub &lget #l2 4 &lget #l2 2
-                !if &set #l6 &sub #l5 $window-depth
-                    !force #l6 change-frame-depth
-                !endif
-                !if &set #l6 &sub #l4 $window-width
-                    !force #l6 change-frame-width
+                !if &not &band $system 1
+                    !if &set #l6 &sub #l5 $window-depth
+                        !force #l6 change-frame-depth
+                    !endif
+                    !if &set #l6 &sub #l4 $window-width
+                        !force #l6 change-frame-width
+                    !endif
                 !endif
                 !if &not &band @# 8
                     set-variable #l7 0
