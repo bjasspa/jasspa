@@ -110,7 +110,7 @@ define-macro wiki-edit-mode
 define-macro wiki-help
     wiki-edit-key @p @? @#
     !if #l9
-        buffer-help
+        major-mode-help
     !endif
 !emacro
 
