@@ -53,7 +53,7 @@ define-macro-file osdhelp osd-help
     set-variable #l0 &ind &spr ".%s.setup" $buffer-fhook
     !if &sin "p" #l0
         set-variable #l1 &rig $buffer-fhook 6
-        osd 9 10 "" &spr "View %s \HHelp %n%s" #l1 &sub 10 &len #l1 " " &kbind "" buffer-help f buffer-help
+        osd 9 10 "" &spr "View %s \HHelp %n%s" #l1 &sub 10 &len #l1 " " &kbind "" major-mode-help f major-mode-help
     !else
         osd 9 10 "D"
     !endif
@@ -62,7 +62,7 @@ define-macro-file osdhelp osd-help
         !if &seq #l9 "ERROR"
             set-variable #l9 &cat &sup &mid $buffer-fhook 6 1 &rig $buffer-fhook 7
         !endif
-        osd 7 1 "M" &cat #l9 " \HTools" .osd.tmp buffer-tool
+        osd 7 1 "M" &cat #l9 " \HTools" .osd.tmp major-mode-tool
         osd 7 2 "-"
     !else
         osd 7 1  "D"
@@ -71,7 +71,7 @@ define-macro-file osdhelp osd-help
     !if &seq &ind &spr ".%s.setup-mask" $buffer-fhook "ERROR"
         osd 9 145 "D"
     !else
-        osd 9 145 "" "Buffer \HSetup..." f buffer-setup
+        osd 9 145 "" "Major Mode \HSetup..." f major-mode-setup
     !endif
     ; let the current buffer type modify the menu
     !if &exi &set #l0 &cat "osd-ohook-" &rig $buffer-fhook 6

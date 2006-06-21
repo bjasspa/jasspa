@@ -63,8 +63,8 @@ set-variable .session.kill 1
     !while &not &seq &set #l1 $buffer-names ""
         !if &nbmod #l1 "hide"
         !elif &seq &lef #l1 1 "*"
-            !tgoto &seq #l1 "*files*" nss-buff 
-            !tgoto &seq #l1 "*ftp-files*" nss-buff 
+            !tgoto &seq #l1 "*files*" nss-buff
+            !tgoto &seq #l1 "*ftp-files*" nss-buff
         !else
 *nss-buff
             4 find-buffer #l1
@@ -106,7 +106,7 @@ set-variable .session.kill 1
                 !if .session.amark
                     0 goto-alpha-mark
                     !if &not &seq &set #l5 $result ""
-                        set-position "\x89"    
+                        set-position "\x89"
                         !repeat
                             !force goto-alpha-mark &left #l5 1
                             !if $status
@@ -114,7 +114,7 @@ set-variable .session.kill 1
                             !endif
                             set-variable #l5 &rig #l5 1
                         !until &seq #l5 ""
-                        goto-position "\x89"    
+                        goto-position "\x89"
                     !endif
                 !endif
                 find-buffer "*session_tmp*"
@@ -155,7 +155,7 @@ set-variable .session.kill 1
             !done
             ; store the current toolbar state
             !force 5 toolbar-setup-cmd
-            goto-position "\x88"    
+            goto-position "\x88"
             find-buffer "*session_tmp*"
             ; store the state and restore
             set-variable #l1 0
@@ -171,7 +171,7 @@ set-variable .session.kill 1
             !done
         !endif
     !endif
-    goto-position "\x88"    
+    goto-position "\x88"
     set-variable #l1 $window-id
     set-variable #l2 0
     4 next-window
@@ -186,7 +186,7 @@ set-variable .session.kill 1
         !endif
         !force 0 next-window
     !until &not $status
-    goto-position "\x88"    
+    goto-position "\x88"
     find-buffer "*session_tmp*"
     insert-string &cat #l9 "\b\bwin\b\b\n"
     insert-string &cat #l3 "\n"
@@ -205,7 +205,7 @@ set-variable .session.kill 1
     insert-string &cat #l9 "\b\bend\b\b\n"
     0 write-buffer &spr "%s%s.esf" $user-path %session-name
     !force 0 delete-buffer $buffer-bname
-    goto-position "\x88"    
+    goto-position "\x88"
     !if &equ #l8 .notes.frame-id
         !repeat
             3 next-frame
@@ -291,7 +291,7 @@ define-macro save-session
         !return
     !endif
     ;1000 ml-write "[*** Recovering from emergency quit ***]"
-    !while &not &seq @wc "" 
+    !while &not &seq @wc ""
         !if &seq &trb @wl ""
         !elif &not &seq @wl "\b\bme-quit\b\b"
             !force !force find-file @wl @mna
@@ -388,7 +388,7 @@ define-macro read-session
             forward-line
             !if &seq #l1 "end"
                 ; handle emergancy quit sections
-                read-session-me-quit                
+                read-session-me-quit
                 !force 0 delete-buffer "*session_tmp*"
                 goto-position "\x88"
                 !if &band @# 8
@@ -580,7 +580,7 @@ define-macro read-session
         !while &not &seq &set #l1 $buffer-names ""
             !if &seq &lef #l1 1 "*"
             !elif &nbmod #l1 "edit"
-                ; we need to do something, if this is the first create the temp buffer 
+                ; we need to do something, if this is the first create the temp buffer
                 !if &not &pinc #l0 1
                     !force 0 delete-buffer "*session_tmp*"
                     find-buffer "*session_tmp*"

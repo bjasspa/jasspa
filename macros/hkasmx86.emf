@@ -13,17 +13,14 @@ define-macro fhook-asmx86
     buffer-init-hooks
 !emacro
 
-; buffer-setup variables
 set-variable .fhook-asmx86.name "x86 Assembler"
 set-variable .fhook-asmx86.setup &reg "/history/fhook/asmx86" "dfghnopx"
 set-variable .fhook-asmx86.setup-mask "adefghikmnoptux"
 set-variable .fhook-asmx86.comment "|;||;|; | ;|r|"
 
-; setup item-list
 set-variable .fhook-asmx86.item-list-s1 "^[ \t]*proc*[ \t]+\\(\\w+\\)"
 set-variable .fhook-asmx86.item-list-r1 "Proc \ecB\\1\ecA"
 
-; setup.asmx86 collapse support
 set-variable .fhook-asmx86.collapse-open  "^proc "
 set-variable .fhook-asmx86.collapse-close "^endp"
 set-variable .fhook-asmx86.collapse-mclose "1"

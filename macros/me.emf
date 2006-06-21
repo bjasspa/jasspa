@@ -21,7 +21,7 @@
 ; Authors:     Steven Phillips & Jon Green
 ;
 ; Is this macro release compatible with the binary?
-!if &les $version "20060222"
+!if &les $version "20060606"
     5000 ml-write "[Warning: The MicroEmacs executable is not compatible with this macro release]"
 !endif
 ; If <$user-name>.erf registry file isn't found then this is a new user
@@ -53,6 +53,7 @@ define-macro-file abbrev expand-abbrev-handle expand-iso-accents expand-look-bac
 define-macro-file osdmisc symbol indent-setup alarm browse alias-path-setup file-type-setup shell-tool-setup
 define-macro-file comment comment-line uncomment-line comment-to-end-of-line comment-start comment-restyle
 define-macro-file rect string-rectangle space-rectangle copy-rectangle yank-rectangle-overwrite
+define-macro-file majormod buffer-major-mode major-mode-setup major-mode-help major-mode-tool
 define-macro-file search replace-all-string query-replace-all-string replace-all-pairs
 define-macro-file hkdirlst file-browser file-browser-close file-browser-swap-buffers
 define-macro-file charsutl charset-change charset-iso-to-user charset-user-to-iso
@@ -61,7 +62,6 @@ define-macro-file spell spell-word spell-buffer spell-edit-word find-word
 define-macro-file narrow narrow-search-forward narrow-search-backward
 define-macro-file notes notes notes-file notes-instant notes-context
 define-macro-file toolbar toolbar toolbar-close toolbar-mode-line
-define-macro-file buffstp buffer-setup buffer-help buffer-tool
 define-macro-file itemlist item-list item-list-close occur
 define-macro-file mail mail mail-check stop-mail-check
 define-macro-file fileopen osd-file-open osd-get-file
@@ -77,6 +77,7 @@ define-macro-file mouseosd context-menu
 define-macro-file printstp print-setup
 define-macro-file scheme change-scheme
 define-macro-file abbrlist abbrev-list
+define-macro-file buffstp buffer-setup
 define-macro-file fattrib file-attrib
 define-macro-file organize organizer
 define-macro-file userstp user-setup
@@ -147,7 +148,7 @@ global-bind-key replace-all-string       "A-C-r"
 global-bind-key query-replace-all-string "esc A-C-r"
 global-bind-key restyle-buffer           "esc C-\\"
 4 global-bind-key find-tag               "esc C-t"
-global-bind-key buffer-help              "esc h"
+global-bind-key major-mode-help          "esc h"
 global-bind-key ifill-paragraph          "esc q"
 global-bind-key delete-indentation       "esc ^"
 0xa0000 global-bind-key osd              "esc ="

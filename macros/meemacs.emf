@@ -64,7 +64,7 @@ global-bind-key expand-look-back "esc /"
 global-bind-key delete-horizontal-space "esc \\"
 
 ; help
-global-bind-key buffer-help "C-h m"
+global-bind-key major-mode-help "C-h m"
 global-bind-key help-command "C-h f"
 global-bind-key info "C-h i"
 global-bind-key describe-variable "C-h v"

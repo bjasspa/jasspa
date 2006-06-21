@@ -1,0 +1,573 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2000-2005 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     Thu Nov 23 2000
+; Synopsis:    major-mode-setup macros & GUI
+; Authors:     Steven Phillips
+; Notes:
+;
+;     The following flags are used in the .setup & .setup-mask variables:
+;
+;         a auto mode
+;         b abbreviation
+;         d auto indent
+;         e exact mode
+;         f fold support
+;         g fence mode
+;         h hilight
+;         i indent
+;         j justify
+;         k backup
+;         m magic mode
+;         n New buffer header
+;         o tool menu
+;         p Help page
+;         s auto spell
+;         t tab mode
+;         u undo
+;         w wrap
+;         x time mode
+;         1 Special internal flag indicating that hilighting is used
+;           for reformatting, i.e. make readable 
+;         # special flag used to indicate commenting is supported (set at runtime)
+;
+;    The following flags can be used by individual buffer hooks (see hkhtml.emf)
+;         c, l, q, r, v, y & z
+;
+;    In .setup, a 'A' means disable auto indent, a enables it.
+;    In .setup-mask a lower case letter must be used.
+;
+;    For the buffer bindings, tool menu and help page the following list
+;    variable are required, one item for each component:
+;
+;         .command-flag   - A flag indicating the components use
+;         .command-name   - The command name
+;         .command-nbind  - The numeric argument for the buffer binding
+;         .command-kbind  - The key for the buffer binding
+;         .command-desc   - Brief description of the command
+;
+;    The following flags are used for each component of .command-flag:
+;
+;         t Show in tool
+;         h show in help
+;         b binding
+;         o override any existing binding
+;         i ignore emulation key mappings
+;         H Only create binding if Hilighting is enabled
+;
+!if &not &exi .osd.mjrmdstp
+    set-variable .osd.mjrmdstp &pinc .osd.next 1
+!endif
+
+0 define-macro major-mode
+    !if &not &and @# &exi .list
+        set-variable .list "\b"
+        set-variable #l0 &con &band $system 0x200 ";" ":"
+        set-variable #l1 $search-path
+        !while &not &seq #l1 ""
+            !if &set #l3 &sin #l0 #l1
+                set-variable #l2 &lef #l1 &sub #l3 1
+                set-variable #l1 &rig #l1 #l3
+            !else
+                set-variable #l2 #l1
+                set-variable #l1 ""
+            !endif
+            !if &not &seq #l2 ""
+                set-variable $file-names &cat #l2 &cond &seq "/" &rig #l2 -1 "hk.*\\.emf" "/hk.*\\.emf"
+                !if &not &seq &set #l3 $file-names ""
+                    set-variable .list &lins .list -1 &rig &lef #l3 -4 2
+                    !jump -2
+                !endif
+            !endif
+        !done
+    !endif
+!emacro
+
+0 define-macro major-mode-setup-option
+    set-variable #l9 &abs @#
+    !if &gre #l9 20
+        set-variable #l0 &lget .major-mode-setup.flags &sub #l9 20
+    !else
+        set-variable #l0 &lget &ind &spr ".%s.setup-flags" $buffer-fhook #l9
+    !endif
+    !if &les @# 0
+        set-variable #l1 .major-mode-setup.nsetup
+        !force #l9 major-mode-setup-option
+        set-variable #l2 $status
+        set-variable #l1 &rep #l1 #l0 ""
+        set-variable #l1 &rep #l1 &sup #l0 ""
+        !if #l2
+            set-variable #l0 &sup #l0
+        !endif
+        set-variable .major-mode-setup.nsetup &cat #l1 #l0
+    !else
+        !if &sin #l0 .major-mode-setup.nsetup
+            !return
+        !elif &sin &sup #l0 .major-mode-setup.nsetup
+            !abort
+        !elif &les #l9 21
+            !abort
+        !elif &seq &set #l1 &lget .major-mode-setup.modes &sub #l9 20 ""
+            !abort
+        !elif &not &gmod #l1
+            !abort
+        !endif
+    !endif
+!emacro
+0 define-macro major-mode-setup-fmark
+    set-variable #l0 &spr "/history/fhook/%s-%s" &rig $buffer-fhook 6 &lget "|fomark|fcmark|tab-width|indent-width|" &abs @#
+    set-variable #l1 &reg #l0 ""
+    !if &les @# 0
+        set-variable #l2 @ml2 "" #l1
+        !if &not &seq #l2 #l1
+            !if &seq #l2 ""
+                !force delete-registry #l0
+            !else
+                set-registry #l0 #l2
+            !endif
+        !endif
+    !else
+        set-variable $result #l1
+    !endif
+!emacro
+0 define-macro major-mode-setup-save
+    !if &not &seq .major-mode-setup.nsetup .major-mode-setup.osetup
+        set-registry &cat "/history/fhook/" &rig $buffer-fhook 6 .major-mode-setup.nsetup
+        set-variable &ind &spr ".%s.setup" $buffer-fhook .major-mode-setup.nsetup
+        set-variable .major-mode-setup.osetup .major-mode-setup.nsetup
+        !if &band @# 1
+            ; save changes if not run from user-setup
+            save-registry "/history" ""
+        !endif
+    !endif
+    !if &band @# 4
+        !force execute-file &cat "hk" &rig $buffer-fhook 6
+        !if $status
+            set-variable $buffer-hilight 0
+            set-variable $buffer-indent 0
+            execute-named-command $buffer-fhook
+        !else
+            osd-dialog "Major Mode Setup" "Failed to re-initialize buffer hook!" "  \HOK  "
+        !endif
+    !endif
+!emacro
+define-macro major-mode-setup
+    !if &band @# 1
+        ; reread the setup if not run from user-setup
+        !force read-registry "/history" $user-name "cbr"
+    !endif
+    set-variable .mask &ind &spr ".%s.setup-mask" $buffer-fhook
+    !if &seq .mask "ERROR"
+        !bell
+        ml-write "[major-mode-setup not supported by current buffer's major mode]"
+        !abort
+    !endif
+    set-variable .osetup &ind &spr ".%s.setup" $buffer-fhook
+    set-variable #l9 &ind &spr ".%s.name" $buffer-fhook
+    !if &seq #l9 "ERROR"
+        set-variable #l9 &cat &sup &mid $buffer-fhook 6 1 &rig $buffer-fhook 7
+    !endif
+    -1 osd .osd.mjrmdstp
+    osd .osd.mjrmdstp 0 "batcDIHs" 9 3 48 10 -1 -1 960 970 .scheme.osd-title &cat #l9 " Major Mode Setup"
+    osd .osd.mjrmdstp 5 ""
+    !if &not &seq &set #l1 &ind &spr ".%s.setup-flags" $buffer-fhook "ERROR"
+        set-variable #l2 &ind &spr ".%s.setup-labels" $buffer-fhook
+        set-variable #l0 1
+        !repeat
+            osd .osd.mjrmdstp &add 2 &mul #l0 10 "fh" "  "
+            osd .osd.mjrmdstp &add 5 &mul #l0 10 "Cptfx" &spr "%s\} %s" .osd.checkbox-chars &lget #l2 #l0 #l0 major-mode-setup-option
+        !until &seq &lget #l1 &inc #l0 1 ""
+        osd .osd.mjrmdstp 199 ""
+    !endif
+    set-variable #l0 1
+    set-variable #l1 0
+    set-variable #l3 0
+    !repeat
+        set-variable #l4 &lget .blank #l0
+        !if &not &seq "" &set #l5 &lget .prefix #l0
+            set-variable #l2 &cat "      " #l5
+            osd .osd.mjrmdstp &add 200 &mul #l0 10 "fh" #l2
+        !endif
+        !if &sin &lget .flags #l0 .mask
+            set-variable #l7 &lget .labels #l0
+            set-variable #l6 "Cptfx"
+            !if &not &band #l4 6
+                osd .osd.mjrmdstp &add 202 &mul #l0 10 "fh" "  "
+            !elif #l3
+                osd .osd.mjrmdstp &add 202 &mul #l0 10 "fh" &spr "%n" &sub 8 #l3 " "
+                set-variable #l3 0
+            !else
+                !if &seq "" #l5
+                    osd .osd.mjrmdstp &add 200 &mul #l0 10 "fh" &spr "%n" &len #l2 " "
+                !endif
+                !if &band 4 &lget .blank &add #l0 1
+                    set-variable #l3 &sub &len #l7 &cond &sin "\H" #l7 1 0
+                    set-variable #l6 &cat #l6 "h"
+                !endif
+            !endif
+            osd .osd.mjrmdstp &add 205 &mul #l0 10 #l6 &spr "%s\} %s" .osd.checkbox-chars #l7 &add #l0 20 major-mode-setup-option
+            set-variable #l1 1
+        !endif
+        !if &band #l1 #l4
+            !if #l3
+                osd .osd.mjrmdstp &add 208 &mul #l0 10 ""
+                set-variable #l3 0
+            !endif
+            !if &band #l4 8
+                osd .osd.mjrmdstp &add 209 &mul #l0 10 ""
+                set-variable #l1 0
+            !endif
+        !endif
+    !until &seq &lget .flags &inc #l0 1 ""
+    osd .osd.mjrmdstp 900 "Sfh" "   Tab Width:       " 901
+    osd .osd.mjrmdstp 901 "EtRxHf" .scheme.osd-entry "##########" 3 major-mode-setup-fmark
+    osd .osd.mjrmdstp 902 "Sfh" "   Indent Width:    " 903
+    osd .osd.mjrmdstp 903 "EtRxHf" .scheme.osd-entry "##########" 4 major-mode-setup-fmark
+    osd .osd.mjrmdstp 904 ""
+    !if &not &seq &lget &ind &spr ".%s.comment" $buffer-fhook 1 ""
+        osd .osd.mjrmdstp 909 "Sfh" "   Fold Open\H/Close: " 910
+        osd .osd.mjrmdstp 910 "EtRxHfh" .scheme.osd-entry "##########" 1 major-mode-setup-fmark
+        osd .osd.mjrmdstp 915 "hf" "   "
+        osd .osd.mjrmdstp 920 "EtRxHf"  .scheme.osd-entry "##########" 2 major-mode-setup-fmark
+        osd .osd.mjrmdstp 930 ""
+    !endif        
+    osd .osd.mjrmdstp 940 ""
+    osd .osd.mjrmdstp 950 "BtcfHhx" .scheme.osd-ebtt " \HSave " &bor 2 &band @# 1 major-mode-setup-save
+    osd .osd.mjrmdstp 960 "BtcfHh"  .scheme.osd-ebtt " \HCurrent " &bor 6 &band @# 1 major-mode-setup-save
+    osd .osd.mjrmdstp 970 "BtcfH"   .scheme.osd-ebtt " E\Hxit " f void
+    set-variable .nsetup .osetup
+    .osd.mjrmdstp osd
+!emacro
+set-variable .major-mode-setup.flags  "|p|o|n|g|h|d|s|f|b|e|m|a|k|i|j|t|x|u|w|"
+set-variable .major-mode-setup.blank  "|0|0|9|0|0|0|0|9|9|2|5|2|4|4|4|4|4|4|13|"
+set-variable .major-mode-setup.labels "|Create Help \HPage|Create T\Hools Menu|Insert \HNew Template|Fence Display|Setup \HHilighting|Setup Auto In\Hdent|Setup Auto Spe\Hll|Setup \HFolding|Add A\Hbbreviations|\HExact|\HMagic|\HAuto|Bac\Hkup|\HIndent|\HJustify|\HTab|Time|\HUndo|\HWrap|"
+set-variable .major-mode-setup.prefix "||||||||||Search Modes: ||Buffer Modes: ||||||||"
+set-variable .major-mode-setup.modes  "||||||||||exact|magic|auto|backup|indent|justify|tab|time|undo|wrap|"
+
+; major-mode-help-add-item <command-name> <narg> <desc>
+; adds the item to the help page (.osd.tmp) using and incrementing
+; the osd item counter in #p9
+0 define-macro major-mode-help-add-item
+    set-variable #l1 @1
+    set-variable #l2 @2
+    set-variable #l3 @3
+    !if &seq "" #l1
+        set-variable #l8 ""
+    !else
+        !if &seq &set #l8 &kbin #l2 #l1 ""
+            osd .osd.tmp &inc #p9 1 "" &spr "    %s%s%s  " #l2 &con &seq #l2 "" "" " " #l1
+            set-variable #l8 "          - "
+        !else
+            set-variable #l6 &len #l8
+            set-variable #l8 &spr "  %s%n - " #l8 &sub 7 #l6 " "
+        !endif
+    !endif
+    !if &not &seq "" #l3
+        set-variable #l8 &cat #l8 &rep #l3 "\H" ""
+    !endif
+    osd .osd.tmp &inc #p9 1 "" &spr "  %s  " #l8
+!emacro
+
+define-macro major-mode-help
+    !if &exi &set #l1 &cat  "chook-" &set #l5 &rig $buffer-fhook 6
+        !force execute-named-command #l1
+    !endif
+    !if &exi :chook
+        set-variable #l5 :chook
+    !endif
+    set-variable #l0 &ind &spr ".fhook-%s.setup" #l5
+    set-variable #l1 &ind &spr ".fhook-%s.command-flag" #l5
+    set-variable #l2 &ind &spr ".fhook-%s.command-nbind" #l5
+    set-variable #l3 &ind &spr ".fhook-%s.command-name" #l5
+    set-variable #l4 &ind &spr ".fhook-%s.command-desc" #l5
+    !if &not &sin "p" #l0
+        !if &sin "p" &ind &spr ".fhook-%s.setup-mask" #l5
+            ml-write "[Help page disabled]"
+        !else
+            ml-write "[Help page not available for this buffer]"
+        !endif
+        !abort
+    !endif
+    set-variable #l9 &ind &spr ".fhook-%s.name" #l5
+    !if &seq #l9 "ERROR"
+        set-variable #l9 &cat &sup &lef #l5 1 &rig #l5 1
+    !endif
+    -1 osd .osd.tmp
+    osd .osd.tmp 0  "batcDIH" 9 3 1001 1001 .scheme.osd-title &cat #l9 " Mode Help"
+    osd .osd.tmp 1  "" 
+    set-variable #l9 10
+    !if &sin "p" #l0
+        major-mode-help-add-item "major-mode-help" "" "View This Help Page"
+        major-mode-help-add-item "" "" ""
+    !endif
+    !if &sin "d" #l0
+        major-mode-help-add-item "normal-tab" "" "Insert a Normal Tab"
+    !endif
+    set-variable #l7 0
+    !while &not &seq "" &set #l6 &lget #l1 &inc #l7 1
+        !if &sin "h" #l6
+            major-mode-help-add-item &lget #l3 #l7 &lget #l2 #l7 &lget #l4 #l7
+        !endif
+    !done
+    !if &not &seq &lget &ind &spr ".fhook-%s.comment" #l5 1 ""
+        major-mode-help-add-item "" "" ""
+        major-mode-help-add-item "comment-start" "" "Start Comment"
+        major-mode-help-add-item "comment-line" "" "Comment Out Line"
+        major-mode-help-add-item "uncomment-line" "" "Delete Comment"
+        major-mode-help-add-item "comment-to-end-of-line" "" "Comment to End of Line"
+        major-mode-help-add-item "comment-restyle" "" "Restyle Current Comment"
+    !endif
+    !if &sin "f" #l0
+        major-mode-help-add-item "" "" ""
+        major-mode-help-add-item "collapse-current" "" "Open/Close Current Collapse"
+        major-mode-help-add-item "collapse-all" "" "Open/Close All Collapses"
+    !endif
+    !if &sin "s" #l0
+        major-mode-help-add-item "" "" ""
+        major-mode-help-add-item "auto-spell" "0" "Enable/Disable Auto-Spell"
+        major-mode-help-add-item "auto-spell-menu" "" "Auto-Spell Context Menu"
+    !endif
+    !if &exi &ind &spr ".fhook-%s.item-list-s1" #l5
+        major-mode-help-add-item "" "" ""
+        major-mode-help-add-item "item-list" "" "List Items"
+        major-mode-help-add-item "item-list-close" "" "Close List Items window"
+    !endif
+    !if &exi &ind &spr ".fhook-%s.tags" #l5
+        major-mode-help-add-item "" "" ""
+        major-mode-help-add-item "" "" "Tag generation is available under the Tools menu"
+    !endif
+    osd .osd.tmp 1000 "" 
+    osd .osd.tmp 1001 "BcfH" .scheme.osd-ebtt "  \HOK  " f void
+    .osd.tmp osd
+!emacro
+
+; major-mode-tool-add-item <command-name> <narg> <desc> <desc-len>
+; adds the item to the tool menu (.osd.tmp) using and incrementing
+; the osd item counter in #p9
+0 define-macro major-mode-tool-add-item
+    set-variable #l1 @1
+    set-variable #l2 @2
+    set-variable #l3 @3
+    set-variable #l4 @4
+    !if &seq "" #l1
+        !if &seq #l2 "L"
+            osd .osd.tmp &inc #p9 1 "" #l3
+        !elif &seq "" #l3
+            osd .osd.tmp &inc #p9 1 "-"
+        !else
+            osd .osd.tmp &inc #p9 1 "c-" &spr " %s "#l3
+        !endif
+    !else
+        !if &seq "" #l3
+            set-variable #l3 #l1
+        !endif
+        !if &seq &set #l7 #l2 ""
+            set-variable #l7 "f"
+        !endif
+        !if &sin " " #l1
+            osd .osd.tmp &inc #p9 1 "i" #l3 #l7 #l1
+        !else
+            set-variable #l5 &sub #l4 &len &rep #l3 "\H" ""
+            set-variable #l5 &spr "%s%n" #l3 &cond &gre #l5 0 #l5 1 " "
+            set-variable #l6 &kbin #l2 #l1
+            !if &not &seq #l6 ""
+                set-variable #l5 &cat #l5 #l6
+            !endif
+            osd .osd.tmp &inc #p9 1 "" #l5 #l7 #l1
+        !endif
+    !endif
+!emacro
+
+0 define-macro major-mode-tool
+    !if &exi &set #l1 &cat  "chook-" &set #l5 &rig $buffer-fhook 6
+        !force execute-named-command #l1
+    !endif
+    !if &exi :chook
+        set-variable #l5 :chook
+    !endif
+    set-variable #l0 &ind &spr ".fhook-%s.setup" #l5
+    set-variable #l1 &ind &spr ".fhook-%s.command-flag" #l5
+    set-variable #l2 &ind &spr ".fhook-%s.command-nbind" #l5
+    set-variable #l3 &ind &spr ".fhook-%s.command-name" #l5
+    set-variable #l4 &ind &spr ".fhook-%s.command-desc" #l5
+    !if &not &seq &lget &ind &spr ".fhook-%s.comment" #l5 1 ""
+        set-variable #l0 &cat #l0 "#"
+    !endif
+    -1 osd .osd.tmp
+    osd .osd.tmp 0  "b"
+    set-variable #l7 0
+    !if &sin "s" #l0
+        set-variable #l8 25
+    !elif &sin "f" #l0
+        set-variable #l8 23
+    !elif &sin "#" #l0
+        set-variable #l8 22
+    !elif &sin "d" #l0
+        set-variable #l8 19
+    !elif &sin "p" #l0
+        set-variable #l8 14
+    !else
+        set-variable #l8 0
+    !endif
+    !while &not &seq "" &set #l6 &lget #l1 &inc #l7 1
+        !if &sin "t" #l6
+            set-variable #l6 &rep &lget #l4 #l7 "\H" ""
+            !if &gre &set #l6 &len #l6 #l8
+                set-variable #l8 #l6
+            !endif
+        !endif
+    !done
+    set-variable #l8 &add #l8 1
+    set-variable #l9 1
+    !if &not &seq #l5 &rig $buffer-fhook 6 
+        set-variable #l6 &ind &spr ".fhook-%s.name" #l5
+        !if &seq #l6 "ERROR"
+            set-variable #l6 &cat &sup &lef #l5 1 &rig #l5 1
+        !endif
+        major-mode-tool-add-item "" "L" &cat #l6 " Tools:" #l8
+        major-mode-tool-add-item "" "L" "" #l8
+    !endif
+    !if &sin "p" #l0
+        major-mode-tool-add-item "major-mode-help" "" "View \HHelp Page" #l8
+    !endif
+    !if &sin "d" #l0
+        major-mode-tool-add-item "normal-tab" "" "Insert a Normal Tab" #l8
+    !endif
+    set-variable #l7 0
+    !while &not &seq "" &set #l6 &lget #l1 &inc #l7 1
+        !if &sin "t" #l6
+            major-mode-tool-add-item &lget #l3 #l7 &lget #l2 #l7 &lget #l4 #l7 #l8
+        !endif
+    !done
+    !if &sin "#" #l0
+        major-mode-tool-add-item "" "" "" #l8
+        major-mode-tool-add-item "comment-start" "" "Start Comment" #l8
+        major-mode-tool-add-item "comment-line" "" "Comment Out Line" #l8
+        major-mode-tool-add-item "uncomment-line" "" "\HDelete Comment" #l8
+        major-mode-tool-add-item "comment-to-end-of-line" "" "Comment to \HEnd of Line" #l8
+        major-mode-tool-add-item "comment-restyle" "" "Restyle Comment" #l8
+    !endif
+    !if &sin "f" #l0
+        major-mode-tool-add-item "" "" "" #l8
+        major-mode-tool-add-item "collapse-current" "" "Open/Close Current Collapse" #l8
+        major-mode-tool-add-item "collapse-all" "" "Open/Close All Collapses" #l8
+    !endif
+    !if &sin "s" #l0
+        major-mode-tool-add-item "" "" "" #l8
+        major-mode-tool-add-item "auto-spell" "0" "Enable/Disable Auto-Spell" #l8
+        major-mode-tool-add-item "auto-spell-menu" "" "Auto-Spell Context Menu" #l8
+    !endif
+    !if &set #l7 &exi &ind &spr ".fhook-%s.item-list-s1" #l5
+        major-mode-tool-add-item "" "" "" #l8
+        major-mode-tool-add-item "item-list" "" "List Items" #l8
+        major-mode-tool-add-item "item-list-close" "" "Close List Items" #l8
+    !endif
+    !if &exi &ind &spr ".%s.tags" $buffer-fhook
+        !if &not #l7
+            major-mode-tool-add-item "" "" "" #l8
+        !endif
+        major-mode-tool-add-item "generate-tags-file" "0" "Generate \HTags File" #l8
+    !endif
+!emacro
+
+;     buffer-bind-remove <flag> <kbind> <narg> <command>
+0 define-macro buffer-bind-remove
+    set-variable #l1 @1
+    set-variable #l2 @2
+    !if &not &sin "i" #l1
+        !if &exi .buffer-bind-key.map-from
+            !if &not &set #l0 &lfind .buffer-bind-key.map-from #l2
+                !return
+            !elif &seq &set #l2 &lget .buffer-bind-key.map-to #l0 ""
+                !return
+            !endif
+        !endif
+    !endif
+    !if &equ &nbind #l2 @3
+        !if &seq &cbind #l2 @4
+            !force buffer-unbind-key #l2
+        !endif
+    !endif
+!emacro
+
+0 define-macro buffer-major-mode-remove
+    set-variable #l0 &ind &spr ".%s.setup" $buffer-fhook
+    set-variable #l1 &ind &spr ".%s.command-flag"  $buffer-fhook
+    set-variable #l2 &ind &spr ".%s.command-kbind" $buffer-fhook
+    set-variable #l3 &ind &spr ".%s.command-nbind" $buffer-fhook
+    set-variable #l4 &ind &spr ".%s.command-name"  $buffer-fhook
+    set-variable #l6 0
+    !while &not &seq "" &set #l5 &lget #l1 &inc #l6 1
+        !if &sin "b" #l5
+            !force buffer-bind-remove #l5 &lget #l2 #l6 &lget #l3 #l6 &lget #l4 #l6
+        !endif
+    !done
+    !if &sin "d" #l0
+        buffer-bind-remove "bi" "C-tab" "" normal-tab
+    !endif
+    set-variable #l5 &ind &spr ".%s.comment" $buffer-fhook
+    !if &not &seq &lget #l5 1 ""
+        buffer-bind-remove "b" "C-c C-s" "" comment-start
+        buffer-bind-remove "b" "C-c C-c" "" comment-line
+        buffer-bind-remove "b" "C-c C-d" "" uncomment-line
+        buffer-bind-remove "b" "C-c C-e" "" comment-to-end-of-line
+        buffer-bind-remove "b" "C-c C-o" "" comment-restyle
+        buffer-bind-remove "bo" "esc o" "" comment-restyle
+        buffer-bind-remove "bo" "esc q" "" comment-restyle
+    !endif
+    !if &exi :fold
+        fold-hook-remove
+    !elif &sin "f" #l0
+        buffer-bind-remove "b" "f2" "" collapse-current 
+        buffer-bind-remove "b" "C-f2" "" collapse-all 
+        buffer-bind-remove "b" "esc C-a" "" beginning-of-function
+        buffer-bind-remove "b" "esc C-e" "" end-of-function
+        buffer-bind-remove "b" "esc C-h" "" mark-function
+    !endif
+    !if &seq $buffer-input "auto-spell-input"
+        -1 auto-spell
+    !endif
+    set-variable $buffer-bhook ""
+    set-variable $buffer-dhook ""
+    set-variable $buffer-ehook ""
+    set-variable $buffer-fhook ""
+    set-variable $buffer-tab-width $tab-width
+    set-variable $buffer-indent-width $indent-width
+    set-variable $buffer-hilight 0
+    set-variable $buffer-indent 0
+    set-variable $buffer-mask "luh"
+    set-variable $mode-names ".*"
+    !while &not &seq "" &set #l1 $mode-names
+        !force &con &gmod #l1 1 -1 buffer-mode #l1
+    !done
+    0 ml-write
+!emacro
+
+define-macro buffer-major-mode
+    !if &les @# 0
+        set-variable #l0 ""
+    !elif @#
+        !force set-variable #l0 @1
+        !if &not $status
+            major-mode
+            set-variable #l0 @ml09 "New major mode" .major-mode.list
+        !endif
+    !else
+        set-variable #l0 "default"
+    !endif
+    !if &not &seq $buffer-fhook ""
+        buffer-major-mode-remove
+    !endif
+    !if &not &seq #l0 ""
+        !if &not &exi &set #l1 &cat "fhook-" #l0
+            exec-file &cat "hk" #l0
+        !endif
+        !if &not &exi #l1
+            ml-write &spr "[Failed to locate definition of major mode \"%s\"]" #l0
+            !abort
+        !endif
+        execute-named-command #l1
+    !endif
+!emacro
