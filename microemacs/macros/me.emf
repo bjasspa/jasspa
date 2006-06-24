@@ -75,7 +75,6 @@ define-macro-file etfinsrt insert-template
 define-macro-file schemosd scheme-editor
 define-macro-file mouseosd context-menu
 define-macro-file printstp print-setup
-define-macro-file scheme change-scheme
 define-macro-file abbrlist abbrev-list
 define-macro-file buffstp buffer-setup
 define-macro-file fattrib file-attrib
@@ -117,7 +116,8 @@ set-variable $mouse &reg &spr "/history/%s/mouse" %platform $mouse
 set-variable $scroll &reg &spr "/history/%s/scroll" %platform $scroll
 set-variable $show-modes &reg "/history/show-modes" $show-modes
 set-variable $cursor-blink &reg &spr "/history/%s/blink" %platform $cursor-blink
-; setup the display char set, keyboard and language
+; setup the display scheme, char set, keyboard and language
+!force exec-file "scheme"
 !force exec-file "charset"
 !force exec-file "keyboard"
 !force exec-file "language"
@@ -128,9 +128,6 @@ set-variable #l0 &reg &spr "/history/%s/fence" %platform "1"
     set-variable .display-matching-fence.dmf &lget "|0|37|45|61|" #l0
     0 global-bind-key display-matching-fence "idle-pick"
 !endif
-; Setup the color scheme
-!force 0 change-scheme
-;
 ; key bindings
 0x1 global-bind-key spell-word           "esc $"
 global-bind-key frame-handle             "C-x 5" 
@@ -385,7 +382,10 @@ osd -1 &cond &reg "/history/main-menu" "1" "1" "-1"
             change-frame-depth #l0
         !endif
     !endif
+!else
+    !force 0 change-scheme
 !endif
+;
 3 popup-window
 ; Setup the Client Server
 !if &band $system 0x20000

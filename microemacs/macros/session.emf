@@ -23,13 +23,75 @@ set-variable .session.update 1
 set-variable .session.amark 0
 set-variable .session.kill 1
 
-0 define-macro update-session
-    !if &or &not &exi %session-name &seq %session-name ""
-        set-variable %session-name $user-name
+0 define-macro update-session-buff
+    !if &nbmod &set #l1 @1 "hide"
+        !return
+    !elif &not &seq &lef #l1 1 "*"
+    !elif &seq #l1 "*files*"
+    !elif &not &seq #l1 "*ftp-files*"
+        !return
     !endif
-    set-variable #l0 $buffer-bname
+    4 find-buffer #l1
+    !if &seq &set #l2 $buffer-fname ""
+    !elif &bmod "nact"
+        set-variable #l3 &spr "\n\b%s\b0\b\b\b%d\b%d\b%d\b%d\b" $buffer-bname $window-line $window-col $window-mark-line $window-mark-col
+        set-variable #l5 0
+        set-variable $mode-names ".*"
+        !if &not &seq &set #l4 $mode-names ""
+            !if &bmod #l4
+                set-variable #l3 &cat #l3 &mid $mode-chars #l5 1
+            !endif
+            set-variable #l5 &add #l5 1
+            !jump -5
+        !endif
+        find-buffer "*session_tmp*"
+        insert-string #l2
+        insert-string &cat #l3 "\b\n\b\b\n"
+    !else
+        set-variable #l3 &spr "\n\b%s\b\b\b\b%d\b%d\b" $buffer-bname $window-aline $window-col
+        !force exchange-point-and-mark
+        !if $status
+            set-variable #l3 &spr "%s%d\b%d\b" #l3 $window-aline $window-col
+            !force exchange-point-and-mark
+        !else
+            set-variable #l3 &cat #l3 "0\b0\b"
+        !endif
+        set-variable #l5 0
+        set-variable $mode-names ".*"
+        !if &not &seq &set #l4 $mode-names ""
+            !if &bmod #l4
+                set-variable #l3 &cat #l3 &mid $mode-chars #l5 1
+            !endif
+            set-variable #l5 &add #l5 1
+            !jump -5
+        !endif
+        set-variable #l4 "\b"
+        !if .session.amark
+            0 goto-alpha-mark
+            !if &len &set #l5 $result
+                set-position "\x89"
+                !while &len #l5
+                    !force goto-alpha-mark &left #l5 1
+                    !if $status
+                        set-variable #l4 &spr "%s%s\b%d\b%d\b" #l4 &left #l5 1 $window-aline $window-col
+                    !endif
+                    set-variable #l5 &rig #l5 1
+                !done
+                goto-position "\x89"
+            !endif
+        !endif
+        find-buffer "*session_tmp*"
+        insert-string #l2
+        insert-string &cat #l3 "\b\n"
+        insert-string &cat #l4 "\b\n"
+    !endif
+!emacro
+
+0 define-macro update-session
     !if &and &band @# 1 &not .session.update
         !return
+    !elif &or &not &exi %session-name &seq %session-name ""
+        set-variable %session-name $user-name
     !endif
     set-position "\x88"
     ml-write &spr "[Saving session \"%s\"...]" %session-name
@@ -44,12 +106,23 @@ set-variable .session.kill 1
     insert-string &spr "\b.session.update\b%s\n" .session.update
     insert-string &spr "\b.session.amark\b%s\n" .session.amark
     insert-string &spr "\b.session.kill\b%s\n" .session.kill
-    !if &exi .change-scheme.current
-        insert-string &spr "\b.scheme\b%s\n" .change-scheme.current
+    !if &band $system 0x01
+        set-variable #l1 ".session.schemec"
+    !else
+        set-variable #l1 ".session.schemew"
+        set-variable .session.framew $frame-width
+        set-variable .session.framed $frame-depth
+    !endif
+    !force unset-variable &ind #l1
+    !if &not &exi .change-scheme.current
+    !elif &not &seq .change-scheme.current &reg &spr "/history/%s/scheme" %platform "schemed"
+        set-variable &ind #l1 .change-scheme.current
     !endif
     set-variable #l1 0
     !while &not &seq "" &set #l2 &lget .var &inc #l1 1
-        insert-string &spr "\b%s\b%s\n" #l2 &ind #l2
+        !if &exi &ind #l2
+            insert-string &spr "\b%s\b%s\n" #l2 &ind #l2
+        !endif
     !done
     insert-string &cat #l9 "\b\bhist\b\b\n"
     set-variable #l2 0
@@ -59,71 +132,16 @@ set-variable .session.kill 1
         !tjump &pdec #l3 1 -1
     !until &equ &inc #l2 1 5
     insert-string &cat #l9 "\b\bbuff\b\b\n"
+    goto-position "\x88"
+    set-variable #l0 $buffer-bname
+    update-session-buff #l0
     set-variable $buffer-names ".*"
     !while &not &seq &set #l1 $buffer-names ""
-        !if &nbmod #l1 "hide"
-        !elif &seq &lef #l1 1 "*"
-            !tgoto &seq #l1 "*files*" nss-buff
-            !tgoto &seq #l1 "*ftp-files*" nss-buff
-        !else
-*nss-buff
-            4 find-buffer #l1
-            !if &seq &set #l2 $buffer-fname ""
-                find-buffer "*session_tmp*"
-            !elif &bmod "nact"
-                set-variable #l3 &spr "\n\b%s\b0\b\b\b%d\b%d\b%d\b%d\b" $buffer-bname $window-line $window-col $window-mark-line $window-mark-col
-                set-variable #l5 0
-                set-variable $mode-names ".*"
-                !if &not &seq &set #l4 $mode-names ""
-                    !if &bmod #l4
-                        set-variable #l3 &cat #l3 &mid $mode-chars #l5 1
-                    !endif
-                    set-variable #l5 &add #l5 1
-                    !jump -5
-                !endif
-                find-buffer "*session_tmp*"
-                insert-string #l2
-                insert-string &cat #l3 "\b\n\b\b\n"
-            !else
-                set-variable #l3 &spr "\n\b%s\b%d\b\b\b%d\b%d\b" $buffer-bname &seq $buffer-bname #l0 $window-aline $window-col
-                !force exchange-point-and-mark
-                !if $status
-                    set-variable #l3 &spr "%s%d\b%d\b" #l3 $window-aline $window-col
-                    !force exchange-point-and-mark
-                !else
-                    set-variable #l3 &cat #l3 "0\b0\b"
-                !endif
-                set-variable #l5 0
-                set-variable $mode-names ".*"
-                !if &not &seq &set #l4 $mode-names ""
-                    !if &bmod #l4
-                        set-variable #l3 &cat #l3 &mid $mode-chars #l5 1
-                    !endif
-                    set-variable #l5 &add #l5 1
-                    !jump -5
-                !endif
-                set-variable #l4 "\b"
-                !if .session.amark
-                    0 goto-alpha-mark
-                    !if &not &seq &set #l5 $result ""
-                        set-position "\x89"
-                        !repeat
-                            !force goto-alpha-mark &left #l5 1
-                            !if $status
-                                set-variable #l4 &spr "%s%s\b%d\b%d\b" #l4 &left #l5 1 $window-aline $window-col
-                            !endif
-                            set-variable #l5 &rig #l5 1
-                        !until &seq #l5 ""
-                        goto-position "\x89"
-                    !endif
-                !endif
-                find-buffer "*session_tmp*"
-                insert-string #l2
-                insert-string &cat #l3 "\b\n"
-                insert-string &cat #l4 "\b\n"
-            !endif
+        !if &not &seq #l1 #l0
+            update-session-buff #l1
         !endif
     !done
+    find-buffer "*session_tmp*"
     !if .session.kill
         insert-string &cat #l9 "\b\bkill\b\b\n"
         set-variable #l1 -1
@@ -213,7 +231,7 @@ set-variable .session.kill 1
     !endif
     ml-write "[Session saved]"
 !emacro
-set-variable .update-session.var "|$platform|$system|$scroll|$scroll-bar|"
+set-variable .update-session.var "|$platform|$system|$scroll|$scroll-bar|.session.schemec|.session.schemew|.session.framew|.session.framed|"
 set-variable .update-session.tv "|size|tool-name|tool-buff|tool-file|tool-size|tool-flag|tool-cmd|"
 
 define-macro save-session
@@ -349,6 +367,10 @@ define-macro read-session
     set-variable .session.update 1
     set-variable .session.amark 0
     set-variable .session.kill 1
+    !force unset-variable .session.schemec
+    !force unset-variable .session.schemew
+    !force unset-variable .session.framew
+    !force unset-variable .session.framed
     !force 0 delete-buffer "*session_tmp*"
     find-buffer "*session_tmp*"
     insert-file #l1
@@ -391,6 +413,8 @@ define-macro read-session
                 read-session-me-quit
                 !force 0 delete-buffer "*session_tmp*"
                 goto-position "\x88"
+                set-variable #l2 &cat ".session.scheme" &cond &band $system 0x01 "c" "w"
+                &exi &ind #l2 change-scheme &ind #l2
                 !if &band @# 8
                 !elif &exi .notes
                     notes-file .notes
@@ -406,9 +430,6 @@ define-macro read-session
             !elif &seq #l1 "vars"
                 !while &xse @wl "^\b\\([^\b]+\\)\b\\(.*\\)"
                     !if &lfin "|$platform|$system|" @s1
-                    !elif &seq ".scheme" @s1
-                        set-variable #l2 @s2
-                        change-scheme #l2
                     !else
                         set-variable &ind @s1 @s2
                     !endif
@@ -493,7 +514,7 @@ define-macro read-session
                                 !force set-variable $window-col &lget #l3 6
                             !endif
                         !endif
-                        !if &lget #l3 2
+                        !if &seq #l0 ""
                             set-variable #l0 &lget #l3 1
                         !endif
                     !endif
@@ -521,37 +542,27 @@ define-macro read-session
                     forward-line
                 !done
                 ; resize the frame
-                set-variable #l4 &sub &lget #l2 3 &lget #l2 1
-                set-variable #l5 &sub &lget #l2 4 &lget #l2 2
                 !if &not &band $system 1
-                    !if &set #l6 &sub #l5 $window-depth
-                        !force #l6 change-frame-depth
+                    !if &exi .session.framed
+                        !force change-frame-depth .session.framed
                     !endif
-                    !if &set #l6 &sub #l4 $window-width
-                        !force #l6 change-frame-width
+                    !if &exi .session.framew
+                        !force change-frame-width .session.framew
                     !endif
                 !endif
                 !if &not &band @# 8
                     set-variable #l7 0
-                    !if &sub #l4 $window-width
-                        ml-write "[Failed to restore the frame width - cannot recreate window layout]"
-                    !elif &sub #l5 $window-depth
-                        ml-write "[Failed to restore the frame depth - cannot recreate window layout]"
+                    !if &sub &sub &lget #l2 3 &lget #l2 1 $window-width
+                        ml-write "[Frame width not correct - cannot recreate window layout]"
+                    !elif &sub &sub &lget #l2 4 &lget #l2 2 $window-depth
+                        ml-write "[Frame depth not correct - cannot recreate window layout]"
                     !else
                         ; correct frame size - restore the window layout
                         !force read-session-win 0 #l3 #l2
                         set-variable #l7 $status
                     !endif
                     !if &not #l7
-                        goto-position "\x88"
-                        delete-other-windows
-                        set-variable #l4 #l3
-                        !while &pdec #l4 1
-                            !if &lget &ind ".v" #l4 1
-                                !force read-session-win #l4 1
-                                set-variable #l4 0
-                            !endif
-                        !done
+                        set-variable @# &bor @# 4
                     !endif
                     goto-position "\x88"
                     find-buffer "*session_tmp*"
