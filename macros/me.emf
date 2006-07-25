@@ -57,11 +57,11 @@ define-macro-file majormod buffer-major-mode major-mode-setup major-mode-help ma
 define-macro-file search replace-all-string query-replace-all-string replace-all-pairs
 define-macro-file hkdirlst file-browser file-browser-close file-browser-swap-buffers
 define-macro-file charsutl charset-change charset-iso-to-user charset-user-to-iso
+define-macro-file toolbar toolbar toolbar-close toolbar-open toolbar-mode-line
 define-macro-file games cross-word Metris Patience Triangle Mahjongg Match-It
 define-macro-file spell spell-word spell-buffer spell-edit-word find-word
 define-macro-file narrow narrow-search-forward narrow-search-backward
 define-macro-file notes notes notes-file notes-instant notes-context
-define-macro-file toolbar toolbar toolbar-close toolbar-mode-line
 define-macro-file itemlist item-list item-list-close occur
 define-macro-file mail mail mail-check stop-mail-check
 define-macro-file fileopen osd-file-open osd-get-file
@@ -323,33 +323,24 @@ add-file-hook ".r"                                            fhook-r
 -1 add-file-hook "-!-[ \t]*text.*-!-"            fhook-txt    ; -!- text -!-
 -1 add-file-hook "-!-[ \t]*msvb.*-!-"            fhook-vb     ; -!- msvb -!-
 ; Initialize the top menu line
-osd 0  0  "asM" 0 0 -1 0 0 0 osd-main
-osd 0  5   "fh" " "
-osd 0  10  "Mdfsh" "\HFile   "   1
-osd 0  15  "fh" " "
-osd 0  20  "Mdfsh" "\HEdit   "   2
-osd 0  25  "fh" " "
-osd 0  30  "Mdfsh" "\HSearch  "  3
-osd 0  35  "fh" " "
-osd 0  40  "Mdfsh" "\HInsert  "  4
-osd 0  45  "fh" " "
-osd 0  50  "Mdfsh" "F\Hormat  "  5
-osd 0  55  "fh" " "
-osd 0  60  "Mdfsh" "E\Hxecute "  6
-osd 0  65  "fh" " "
-osd 0  70  "Mdfsh" "\HTools   "  7
-osd 0  75  "fh" " "
-osd 0  80  "Mdfsh" "\HWindow  "  8
-osd 0  85  "fh" " "
-osd 0  90  "Mdfsr" "\HHelp "     9
-osd -1 &cond &reg "/history/main-menu" "1" "1" "-1"
+osd 0 0  "asM" 0 0 -1 0 0 0 osd-main
+osd 0 10 "Mdfsh" " \HFile   "   1
+osd 0 20 "Mdfsh" " \HEdit   "   2
+osd 0 30 "Mdfsh" " \HSearch  "  3
+osd 0 40 "Mdfsh" " \HView   "   4
+osd 0 50 "Mdfsh" " Fo\Hrmat  "  5
+osd 0 60 "Mdfsh" " \HTools   "  6
+osd 0 70 "Mdfsh" " \HAdvanced " 7
+osd 0 80 "Mdfsh" " \HWindow  "  8
+osd 0 90 "Mdfsr" " \HHelp "     9
+osd -1 &cond &set .osd.menu &reg "/history/main-menu" "1" "1" "0"
 ; Load in the mouse handling routines if required
 !if &band $mouse 0x10
     !force exec-file "mouse"
 !endif
 ; setup the toolbar
 !if &reg &spr "/history/%s/toolbar" %platform "0"
-    toolbar
+    toolbar-open
 !endif
 ; load in the platform specific stuff if found
 !force exec-file $platform
