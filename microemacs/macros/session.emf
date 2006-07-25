@@ -529,7 +529,7 @@ define-macro read-session
                 !done
                 !if .toolbar.open
                     goto-position "\x88"
-                    !force !force 0 toolbar
+                    !force !force 0 toolbar-open
                     set-position "\x88"
                     find-buffer "*session_tmp*"
                 !endif

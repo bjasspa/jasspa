@@ -1084,7 +1084,7 @@
     set-variable $scroll-bar 0
     !if .Match-It.toolbar
         ; note - we cannot open/close the toolbar directly as this changes the window layout which must not be done in an bhook
-        -1 create-callback toolbar
+        -1 create-callback toolbar-open
         !if .toolbar.open
             1 create-callback toolbar-close
         !endif
@@ -1104,7 +1104,7 @@
         ; note - we cannot open/close the toolbar directly as this changes the window layout which must not be done in an ehook
         -1 create-callback toolbar-close
         !if &not .toolbar.open
-            1 create-callback toolbar
+            1 create-callback toolbar-open
         !endif
     !endif
     !if &equ :mi-status 1

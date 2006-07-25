@@ -295,34 +295,19 @@
     goto-position "\x84"
 !emacro
 
-define-macro toolbar-close
-    1 set-position "\x84"
-    !force global-bind-key screen-update "redraw"
-    7 next-window
-    !repeat
-        !if &band $window-flags 0x1000
-            !force 2 delete-window
-        !else
-            !force 2 next-window
-        !endif
-    !until &not $status
-    set-variable .toolbar.open 0
-    goto-position "\x84"
-!emacro
-
 define-macro toolbar-refresh
     set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x002
 !emacro
 
-define-macro toolbar
+define-macro toolbar-open
     !if @#
-        set-variable .size &reg "/history/toolbar/size" "|20|15|20|15|"
-        set-variable .tool-name &reg "/history/toolbar/tool-name" "\CHToolbar\CH"
-        set-variable .tool-buff &reg "/history/toolbar/tool-buff" "\CH*toolbar-left*\CH"
-        set-variable .tool-file &reg "/history/toolbar/tool-file" "\CHtooldef\CH"
-        set-variable .tool-size &reg "/history/toolbar/tool-size" "\CH100\CH"
-        set-variable .tool-flag &reg "/history/toolbar/tool-flag" "\CH0x1001\CH"
-        set-variable .tool-cmd  &reg "/history/toolbar/tool-cmd"  "\CHtoolbar-default\CH"
+        set-variable .toolbar.size &reg "/history/toolbar/size" "|20|15|20|15|"
+        set-variable .toolbar.tool-name &reg "/history/toolbar/tool-name" "\CHToolbar\CH"
+        set-variable .toolbar.tool-buff &reg "/history/toolbar/tool-buff" "\CH*toolbar-left*\CH"
+        set-variable .toolbar.tool-file &reg "/history/toolbar/tool-file" "\CHtooldef\CH"
+        set-variable .toolbar.tool-size &reg "/history/toolbar/tool-size" "\CH100\CH"
+        set-variable .toolbar.tool-flag &reg "/history/toolbar/tool-flag" "\CH0x1001\CH"
+        set-variable .toolbar.tool-cmd  &reg "/history/toolbar/tool-cmd"  "\CHtoolbar-default\CH"
     !endif
     !if &seq "" &lget .toolbar.tool-flag 1
         ml-write "[Error: No registered tools]"
@@ -330,7 +315,7 @@ define-macro toolbar
     !endif
     3 delete-other-windows
     set-variable $window-flags 0
-    set-variable .flag "||||||"
+    set-variable .toolbar.flag "||||||"
     set-variable #l9 "|||||"
     set-variable #l0 0
     !while &not &seq "" &set #l1 &lget .toolbar.tool-flag &inc #l0 1
@@ -338,32 +323,32 @@ define-macro toolbar
         !if &not &exi &ind #l2
             0 define-macro-file &lget .toolbar.tool-file #l0 #l2
         !endif
-        !if &set #l2 &lfind .conv &band #l1 0xf000
-            set-variable .flag &lset .flag #l2 &add &lget .flag #l2 1
+        !if &set #l2 &lfind .toolbar.conv &band #l1 0xf000
+            set-variable .toolbar.flag &lset .toolbar.flag #l2 &add &lget .toolbar.flag #l2 1
             !if &not &band #l1 0x400
                 set-variable #l9 &lset #l9 #l2 &add &lget #l9 #l2 &lget .toolbar.tool-size #l0
             !endif
         !endif
     !done
-    set-variable .tool-wid "|"
+    set-variable .toolbar.tool-wid "|"
     set-variable #l8 "|||||"
     set-variable #l7 "|||||"
     set-variable #l6 "|||||"
     set-variable #l0 0
     !while &not &seq "" &set #l1 &lget .toolbar.tool-flag &inc #l0 1
         !if &not &band #l1 0x400
-            !if &set #l2 &lfind .conv &band #l1 0xf000
+            !if &set #l2 &lfind .toolbar.conv &band #l1 0xf000
                 !if &seq &set #l3 &lget #l6 #l2 ""
                     ; first tool on this tool bar
-                    set-variable .flag &lset .flag 5 &add &lget .flag 5 1
+                    set-variable .toolbar.flag &lset .toolbar.flag 5 &add &lget .toolbar.flag 5 1
                     5 next-window
                     !if &band #l2 1
                         &cond &band #l2 2 2 1 split-window-horizontally
-                        change-window-width &lget .size #l2
+                        change-window-width &lget .toolbar.size #l2
                         set-variable #l7 &lset #l7 #l2 $window-depth
                     !else
                         &cond &band #l2 4 2 1 split-window-vertically
-                        change-window-depth  &lget .size #l2
+                        change-window-depth  &lget .toolbar.size #l2
                         set-variable #l7 &lset #l7 #l2 $window-width
                     !endif
                 !else
@@ -384,22 +369,22 @@ define-macro toolbar
                     !endif
                     next-window
                 !endif
-                set-variable .tool-wid &lset .tool-wid #l0 $window-id
+                set-variable .toolbar.tool-wid &lset .toolbar.tool-wid #l0 $window-id
                 set-variable $window-flags &cond &band #l1 0x100 0x11ff &sub 0x11fe &band #l2 1 
                 find-buffer &lget .toolbar.tool-buff #l0
                 set-variable #l8 &lset #l8 #l2 &lget .toolbar.tool-size #l0
                 set-variable #l6 &lset #l6 #l2 $buffer-bname
             !endif
         !elif &band #l1 0x800
-            set-variable .tool-wid &lset .tool-wid #l0 &lget .tool-wid &sub #l0 1
+            set-variable .toolbar.tool-wid &lset .toolbar.tool-wid #l0 &lget .toolbar.tool-wid &sub #l0 1
         !else
-            set-variable .tool-wid &lset .tool-wid #l0 ""
+            set-variable .toolbar.tool-wid &lset .toolbar.tool-wid #l0 ""
         !endif
     !done
     ; fill in any missing window ids (hidden tools)
     !while &gre &dec #l0 1 0
-        !if &seq &lget .tool-wid #l0 ""
-            set-variable .tool-wid &lset .tool-wid #l0 &lget .tool-wid &add #l0 1
+        !if &seq &lget .toolbar.tool-wid #l0 ""
+            set-variable .toolbar.tool-wid &lset .toolbar.tool-wid #l0 &lget .toolbar.tool-wid &add #l0 1
         !endif
     !done
     5 next-window
@@ -410,6 +395,32 @@ define-macro toolbar
     global-bind-key toolbar-redraw "redraw"
     ; this odd line ensures the toolbar is redrawn if this is called via a callback.
     set-variable $trunc-scheme $trunc-scheme
+!emacro
+
+define-macro toolbar-close
+    1 set-position "\x84"
+    !force global-bind-key screen-update "redraw"
+    7 next-window
+    !repeat
+        !if &band $window-flags 0x1000
+            !force 2 delete-window
+        !else
+            !force 2 next-window
+        !endif
+    !until &not $status
+    set-variable .toolbar.open 0
+    goto-position "\x84"
+!emacro
+
+define-macro toolbar
+    !if &not @?
+        set-variable @# &bxor .toolbar.open 1
+    !endif
+    !if @#
+        toolbar-open
+    !else
+        toolbar-close
+    !endif
 !emacro
 set-variable .toolbar.conv "|4096|8192|16384|32768|"
 
