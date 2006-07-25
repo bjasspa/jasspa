@@ -1248,7 +1248,7 @@ moveToNonWhite(meUByte forwFlag, meUByte *flags, meInt depth)
                             break ;
                     if(ch == '\0')
                         continue ;
-                    if((ch == '#') && ((*flags) & MTNW_NOTINHASH))
+                    if((ch == '#') && ((*flags) & MTNW_NOTINHASH) && !((*flags) & MTNW_SIMPLE))
                     {
                         if((ss[0] == 'e') && (ss[1] == 'l'))
                         {
@@ -1511,7 +1511,7 @@ hash_skip:
 }
 
 static int
-findQuoteFence(meUByte qtype, meUByte forwFlag)
+findQuoteFence(meUByte qtype, meUByte flags, meUByte forwFlag)
 {
     register meUByte c ;  	/* current character in scan */
     meLine *comlp;	        /* comment line pointer */
@@ -1528,7 +1528,11 @@ findQuoteFence(meUByte qtype, meUByte forwFlag)
          */
         if(forwFlag)
         {
-            if(frameCur->windowCur->dotOffset >= meLineGetLength(frameCur->windowCur->dotLine))
+            if(frameCur->windowCur->dotOffset < meLineGetLength(frameCur->windowCur->dotLine))
+                (frameCur->windowCur->dotOffset)++ ;
+            else if(flags & MTNW_SIMPLE)
+                return meFALSE ;
+            else
             {
                 register meLine *lp ;
                 register meInt ii=0 ;
@@ -1542,12 +1546,14 @@ findQuoteFence(meUByte qtype, meUByte forwFlag)
                 frameCur->windowCur->dotOffset = 0 ;
                 frameCur->windowCur->dotLineNo += ii ;
             }
-            else
-                (frameCur->windowCur->dotOffset)++ ;
         }
         else
         {
-            if(frameCur->windowCur->dotOffset == 0)
+            if(frameCur->windowCur->dotOffset > 0)
+                (frameCur->windowCur->dotOffset)-- ;
+            else if(flags & MTNW_SIMPLE)
+                return meFALSE ;
+            else
             {
                 register meLine *lp ;
                 register meInt ii=0 ;
@@ -1568,8 +1574,6 @@ findQuoteFence(meUByte qtype, meUByte forwFlag)
                 frameCur->windowCur->dotOffset = meLineGetLength(lp) - 1 ;
                 frameCur->windowCur->dotLineNo -= ii ;
             }
-            else
-                (frameCur->windowCur->dotOffset)-- ;
         }
         c=meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset) ;
         if(c == qtype)
@@ -1634,7 +1638,7 @@ findfence(meUByte ch, meUByte forwFlag, meInt depth)
         return mlwrite(MWABORT,(meUByte *)"[Too many nested fences]") ;
     /* Separate ', ' & # cases as we can really optimise these */
     if((ch == '"') || (ch == '\''))
-        return findQuoteFence(ch,forwFlag) ;
+        return findQuoteFence(ch,0,forwFlag) ;
     if(ch == '#')
     {
         register meLine *lp ;
@@ -1772,8 +1776,26 @@ findfence(meUByte ch, meUByte forwFlag, meInt depth)
              */
             if((cc == '"') || (cc == '\''))
             {
-                if(findQuoteFence(cc,forwFlag) == meFALSE)
-                    return -1 ;
+                meLine *qlp;
+                meUShort qoff;
+                meInt qlno;
+
+                qlp  = frameCur->windowCur->dotLine ;
+                qoff = frameCur->windowCur->dotOffset ;
+                qlno = frameCur->windowCur->dotLineNo ;
+                if(findQuoteFence(cc,inCom,forwFlag) == meFALSE)
+                {
+                    
+                    if(!(inCom & MTNW_SIMPLE))
+                        return -1 ;
+                    /* in a simple buffer (not C) if we failed to find the
+                     * end quote on hte same line then it is more likely this
+                     * was a single quote, i.e it's like that. Handle them by
+                     * ignoring them */
+                    frameCur->windowCur->dotLine = qlp ;
+                    frameCur->windowCur->dotOffset = qoff ;
+                    frameCur->windowCur->dotLineNo = qlno ;
+                }
             }
             else if((ss = meStrchr(fenceString+meFENCE_BRACKET_OFFSET,cc)) != NULL)
             {
@@ -2151,7 +2173,7 @@ find_bracket_fence:
         case '"' :
             /* only return if findQuoteFence returns meFALSE, returns
              * -1 if we could be in a comment */
-            if(findQuoteFence(cc,0) == meFALSE)
+            if(findQuoteFence(cc,mtnwFlag,0) == meFALSE)
                 return 0 ;
             break ;
         default:
