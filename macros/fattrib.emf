@@ -49,11 +49,11 @@ osd .osd.fattr 10  ""
 osd .osd.fattr 40  ""
 osd .osd.fattr 50  "" "  File Type : "
 osd .osd.fattr 55  "fh" "    "
-osd .osd.fattr 60  "CxfRpht" &cat .osd.checkbox-chars "\} Unix"       1 fattr-type
+osd .osd.fattr 60  "CxfRpht" &cat .osd.checkbox-chars "\} \HUnix"    1 fattr-type
 osd .osd.fattr 65  "fh" "  "
-osd .osd.fattr 70  "CxfRpht" &cat .osd.checkbox-chars "\} Windows"       2 fattr-type
+osd .osd.fattr 70  "CxfRpht" &cat .osd.checkbox-chars "\} \HWindows" 2 fattr-type
 osd .osd.fattr 75  "fh" "  "
-osd .osd.fattr 80  "CxfRpt" &cat .osd.checkbox-chars "\} Dos"           3 fattr-type
+osd .osd.fattr 80  "CxfRpt"  &cat .osd.checkbox-chars "\} \HDos"     3 fattr-type
 osd .osd.fattr 90  ""
 
 0 define-macro fattr-attr
@@ -68,50 +68,50 @@ osd .osd.fattr 90  ""
 !if &seq $platform "dos"
     osd .osd.fattr 110 ""   "  Attributes:"
     osd .osd.fattr 115 "fh" "      "
-    osd .osd.fattr 120 "CfxRpt" &cat .osd.checkbox-chars "\} Read-only"  1  fattr-attr
+    osd .osd.fattr 120 "CfxRpt" &cat .osd.checkbox-chars "\} \HRead-only"  1  fattr-attr
     osd .osd.fattr 125 "fh" "      "
-    osd .osd.fattr 130 "CfxRpt" &cat .osd.checkbox-chars "\} Hidden   "  2  fattr-attr
+    osd .osd.fattr 130 "CfxRpt" &cat .osd.checkbox-chars "\} \HHidden   "  2  fattr-attr
     osd .osd.fattr 135 "fh" "      "
-    osd .osd.fattr 140 "CfxRpt" &cat .osd.checkbox-chars "\} System   "  4  fattr-attr
+    osd .osd.fattr 140 "CfxRpt" &cat .osd.checkbox-chars "\} S\Hystem   "  4  fattr-attr
     osd .osd.fattr 145 "fh" "      "
-    osd .osd.fattr 150 "SCfxRp" &cat .osd.checkbox-chars "\} Directory"  16 fattr-attr
+    osd .osd.fattr 150 "SCfxRp" &cat .osd.checkbox-chars "\} Directory"    16 fattr-attr
     osd .osd.fattr 155 "fh" "      "
-    osd .osd.fattr 160 "CfxRpt" &cat .osd.checkbox-chars "\} Archive  "  32 fattr-attr
+    osd .osd.fattr 160 "CfxRpt" &cat .osd.checkbox-chars "\} \HArchive  "  32 fattr-attr
 !elif &seq $platform "win32"
     osd .osd.fattr 110 "" "  Attributes:"
     osd .osd.fattr 115 "fh" "      "
-    osd .osd.fattr 120 "CfxRpt" &cat .osd.checkbox-chars "\} Read-only "    1 fattr-attr
+    osd .osd.fattr 120 "CfxRpt" &cat .osd.checkbox-chars "\} \HRead-only "    1 fattr-attr
     osd .osd.fattr 125 "fh" "      "
-    osd .osd.fattr 130 "CfxRpt" &cat .osd.checkbox-chars "\} Hidden    "    2 fattr-attr
+    osd .osd.fattr 130 "CfxRpt" &cat .osd.checkbox-chars "\} \HHidden    "    2 fattr-attr
     osd .osd.fattr 135 "fh" "      "
-    osd .osd.fattr 140 "CfxRpt" &cat .osd.checkbox-chars "\} System    "    4 fattr-attr
+    osd .osd.fattr 140 "CfxRpt" &cat .osd.checkbox-chars "\} S\Hystem    "    4 fattr-attr
     osd .osd.fattr 145 "fh" "      "
-    osd .osd.fattr 150 "SCfxRp" &cat .osd.checkbox-chars "\} Directory "   16 fattr-attr
+    osd .osd.fattr 150 "SCfxRp" &cat .osd.checkbox-chars "\} Directory "     16 fattr-attr
     osd .osd.fattr 155 "fh" "      "
-    osd .osd.fattr 160 "CfxRpt" &cat .osd.checkbox-chars "\} Archive   "   32 fattr-attr
+    osd .osd.fattr 160 "CfxRpt" &cat .osd.checkbox-chars "\} \HArchive   "   32 fattr-attr
     osd .osd.fattr 165 "fh" "      "
-    osd .osd.fattr 170 "CfxRpt" &cat .osd.checkbox-chars "\} Normal    "  128 fattr-attr
+    osd .osd.fattr 170 "CfxRpt" &cat .osd.checkbox-chars "\} \HNormal    "  128 fattr-attr
     osd .osd.fattr 175 "fh" "      "
-    osd .osd.fattr 180 "CfxRpt" &cat .osd.checkbox-chars "\} Temporary "  256 fattr-attr
+    osd .osd.fattr 180 "CfxRpt" &cat .osd.checkbox-chars "\} \HTemporary "  256 fattr-attr
     osd .osd.fattr 185 "fh" "      "
-    osd .osd.fattr 190 "CfxRpt" &cat .osd.checkbox-chars "\} Compressed" 2048 fattr-attr
+    osd .osd.fattr 190 "CfxRpt" &cat .osd.checkbox-chars "\} \HCompressed" 2048 fattr-attr
 !else
     osd .osd.fattr 110 "c" "File Permissions"
     osd .osd.fattr 120 ""
     osd .osd.fattr 130 "hf" "  User:   "
-    osd .osd.fattr 140 "CfxRpth" &cat .osd.checkbox-chars "\} Read  "  256 fattr-attr
-    osd .osd.fattr 150 "CfxRpth" &cat .osd.checkbox-chars "\} Write  " 128 fattr-attr
-    osd .osd.fattr 160 "CfxRpt"  &cat .osd.checkbox-chars "\} Exec  "  64 fattr-attr
+    osd .osd.fattr 140 "CfxRpth" &cat .osd.checkbox-chars "\} Read(\H1) "  256 fattr-attr
+    osd .osd.fattr 150 "CfxRpth" &cat .osd.checkbox-chars "\} Write(\H2) " 128 fattr-attr
+    osd .osd.fattr 160 "CfxRpt"  &cat .osd.checkbox-chars "\} Exec(\H3)  "  64 fattr-attr
     osd .osd.fattr 170 ""
     osd .osd.fattr 180 "hf" "  Group:  "
-    osd .osd.fattr 190 "CfxRpth" &cat .osd.checkbox-chars "\} Read  "  32 fattr-attr
-    osd .osd.fattr 200 "CfxRpth" &cat .osd.checkbox-chars "\} Write  " 16 fattr-attr
-    osd .osd.fattr 210 "CfxRpt"  &cat .osd.checkbox-chars "\} Exec  "   8 fattr-attr
+    osd .osd.fattr 190 "CfxRpth" &cat .osd.checkbox-chars "\} Read(\H4) "  32 fattr-attr
+    osd .osd.fattr 200 "CfxRpth" &cat .osd.checkbox-chars "\} Write(\H5) " 16 fattr-attr
+    osd .osd.fattr 210 "CfxRpt"  &cat .osd.checkbox-chars "\} Exec(\H6)  "  8 fattr-attr
     osd .osd.fattr 220 ""
     osd .osd.fattr 230 "hf" "  Global: "
-    osd .osd.fattr 240 "CfxRpth" &cat .osd.checkbox-chars "\} Read  "  4 fattr-attr
-    osd .osd.fattr 250 "CfxRpth" &cat .osd.checkbox-chars "\} Write  " 2 fattr-attr
-    osd .osd.fattr 260 "CfxRpt"  &cat .osd.checkbox-chars "\} Exec  "  1 fattr-attr
+    osd .osd.fattr 240 "CfxRpth" &cat .osd.checkbox-chars "\} Read(\H7) "  4 fattr-attr
+    osd .osd.fattr 250 "CfxRpth" &cat .osd.checkbox-chars "\} Write(\H8) " 2 fattr-attr
+    osd .osd.fattr 260 "CfxRpt"  &cat .osd.checkbox-chars "\} Exec(\H9)  " 1 fattr-attr
 !endif
 
 osd .osd.fattr 590 ""
