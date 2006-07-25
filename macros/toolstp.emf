@@ -164,7 +164,7 @@
     !if #l9
         goto-position "\x82"
         toolbar-close
-        toolbar
+        toolbar-open
         5 next-window
         0x21 set-position "\x82"
     !endif
