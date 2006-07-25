@@ -105,13 +105,13 @@
 0 define-macro file-tool-exec
     set-variable #l0 &reg &spr "/history/%s/file-tool/%d/cmd" $platform @# ""
     set-variable #l9 &cond &reg &spr "/history/%s/file-tool/%d/hide" $platform @# "0" 0x04 0x24
-    !if &not &or &sin "%f" #l0 &sin "%b" #l0
-        ml-write &spr "[Error: badly formed command-line \"%s\"]" #l0
-        !abort
-    !elif &not .find-file.file-count
-        ml-write "[Error: No files selected]"
-        !abort
-    !elif &sin "%*[" #l0
+    !if &not .find-file.file-count
+        !if &or &or &sin "%f" #l0 &sin "%b" #l0 &sin "%e" #l0
+            ml-write "[Error: No files selected]"
+            !abort
+        !endif
+    !endif
+    !if &sin "%*[" #l0
         file-tool-run #l0 #l9
     !elif &equ .find-file.file-count 1
         1 file-tool-run #l0 #l9
