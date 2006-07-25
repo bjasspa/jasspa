@@ -172,79 +172,103 @@ set-variable .osd.ftagd 16
 !emacro
 
 0 define-macro osd-find-tag-find
-    !if &seq .osd.tag-cur ""
-        !bell
-        !return
-    !endif
-    ; construct the tag file name
-    set-variable #l4 $buffer-bname
-    set-variable #l1 &cat &lef $buffer-fname &rsin "/" $buffer-fname "tags"
-    0 find-file #l1 "y"
-    ; search for the string
-    beginning-of-buffer
-    set-variable #l9 .osd.tag-cur
-    set-variable #l1 0
-    !while &set #l2 &sin "?" &rig #l9 #l1
-        set-variable #l2 &add #l1 #l2
-        set-variable #l5 &cat &lef #l9 &sub #l2 1 "[^\CI]"
-        set-variable #l1 &len #l5
-        set-variable #l9 &cat #l5 &rig #l9 #l2
-    !done
-    set-variable #l1 0
-    !while &set #l2 &sin "*" &rig #l9 #l1
-        set-variable #l2 &add #l1 #l2
-        set-variable #l5 &cat &lef #l9 &sub #l2 1 "[^\CI]*"
-        set-variable #l1 &len #l5
-        set-variable #l9 &cat #l5 &rig #l9 #l2
-    !done
-    set-variable #l9 &spr "^[^\CI]*%s[^\CI]*\CI" #l9
+    ; construct a search for the filter
+    set-variable #l9 &rep &rep .osd.tag-cur "?" "[^\t\n]" "*" "[^\t\n]*"
+    set-variable #l9 &spr "^[^\t\n]*%s[^\t\n]*\t" #l9
+    set-position "\x81"
+    find-buffer "*osd-find-tag*"
+    set-variable .osd-find-tag-parse.state 3
     -1 osd .osd.ftagc
     osd .osd.ftagc 0 "fsS" .scheme.osd-child .osd.ftagw .osd.ftagd 0 -1 
     set-variable #l0 0
-    !force search-forward #l9
-    !while $status
-        set-variable #l2 &lef @wl &sub &sin "\t" @wl 1
-        osd .osd.ftagc &inc #l0 1 "RxBd" #l2 1 "osd-find-tag-goto"
-        !force search-forward #l9
-    !done
+    set-variable #l1 ""
+    beginning-of-buffer
+    !repeat
+        !force search-buffer "mE" #l9
+        !if &not $status
+        !elif &seq "" &set #l2 &lef @wl &sub &sin "\t" @wl 1
+        !elif &not &seq #l1 #l2
+            osd .osd.ftagc &inc #l0 1 "RxBd" #l2 1 "osd-find-tag-goto"
+            set-variable #l1 #l2
+        !endif
+    !until &not $status
     !if &not #l0
         osd .osd.ftagc 1 ""
     !endif
     -1 find-buffer $buffer-bname
-    find-buffer #l4
-    set-variable .osd.tag-last ""
+    goto-position "\x81"
 !emacro
     
 0 define-macro osd-find-tag-parse
     ; construct the tag file name
-    set-variable #l4 $buffer-bname
-    set-variable #l1 &cat &lef $buffer-fname &rsin "/" $buffer-fname "tags"
-    0 find-file #l1 "y"
-    !if &and &seq #l1 .osd.tag-last &seq &set #l3 &stat "d" #l1 :date
-        ; the same as last time so return
-        -1 find-buffer $buffer-bname
-        !return
+    set-variable #l0 $buffer-fname
+    !while &sin "/" #l0
+        set-variable #l1 &cat &set #l0 &lef #l0 &rsin "/" #l0 "tags"
+        !if &seq &set #l2 &stat "t" #l1 "R"
+            !goto got-file
+        !elif &not &seq #l2 "X"
+            osd-dialog "Find Tag Error" "  Failed to find a \"tags\" file!  " "  \HOK  "
+            !abort
+        !endif
+        set-variable #l0 &lef #l0 -2
+    !done
+    osd-dialog "Find Tag Error" "  Failed to find a \"tags\" file!  " "  \HOK  "
+    !abort
+*got-file
+    !if &and &seq &set #l3 &stat "d" #l1 .date &seq #l1 .fname
+        ; the same as last time so nothing to do other than handle big tags file
+        !if &equ .state 1
+            3 find-tag @ml2 "Enter Tag" .osd.tag-cur
+            !abort
+        !elif &equ .state 2
+            !return
+        !endif
+        set-position "\x81"
+        !force 0 find-buffer "*osd-find-tag*"
+        !tjump &not $status 2
+    !else
+        set-position "\x81"
+        !force 0 delete-buffer "*osd-find-tag*"
+        find-buffer "*osd-find-tag*"
+        !force insert-file #l1
+        !if &not $status
+            !force 0 delete-buffer "*osd-find-tag*"
+            goto-position "\x81"
+            osd-dialog "Find Tag Error" "  Failed to load tags file!  " "  \HOK  "
+            !abort
+        !endif
+        set-variable .fname #l1
+        set-variable .date #l3
+        !if &gre $window-eline 30000
+            ; too many tags to use an osd dialog, use the base command
+            set-variable .state 1
+            !force 0 delete-buffer "*osd-find-tag*"
+            goto-position "\x81"
+            3 find-tag @ml1 "Enter Tag" .osd.tag-cur
+            !abort
+        !endif
+        1 buffer-mode "hide"
     !endif
     ml-write "[Processing tags file...]"
-    1 buffer-mode "hide"
-    1 buffer-mode "magic"
-    -1 buffer-mode "exact"
+    set-variable .state 2
     -1 osd .osd.ftagc
     osd .osd.ftagc 0 "fsS" .scheme.osd-child .osd.ftagw .osd.ftagd 0 -1 
     set-variable #l0 0
+    set-variable #l1 ""
     beginning-of-buffer
     !while &not &seq @wc ""
-        set-variable #l2 &lef @wl &sub &sin "\t" @wl 1
-        osd .osd.ftagc &inc #l0 1 "RxBd" #l2 1 "osd-find-tag-goto"
+        !if &seq "" &set #l2 &lef @wl &sub &sin "\t" @wl 1
+        !elif &not &seq #l1 #l2
+            osd .osd.ftagc &inc #l0 1 "RxBd" #l2 1 "osd-find-tag-goto"
+            set-variable #l1 #l2
+        !endif
         forward-line
     !done
     !if &not #l0
         osd .osd.ftagc 1 ""
     !endif
-    set-variable .osd.tag-last $buffer-fname
-    set-variable :date #l3
     -1 find-buffer $buffer-bname
-    find-buffer #l4
+    goto-position "\x81"
     0 ml-write
 !emacro
 
