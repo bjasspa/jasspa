@@ -158,18 +158,15 @@
         !endif
         forward-line
     !done
+    !if &equ #l0 1
+        osd @# 10 "" "<no favorites>"
+    !endif
 !emacro
 
 0 define-macro osd-favorites
-    set-variable #l0 $buffer-bname
-    set-variable #l1 $window-line
-    set-variable #l2 $window-y-scroll
-    set-variable #l3 $window-col
+    set-position "\x81"
     !force @# osd-favorites-set
-    find-buffer #l0
-    set-variable $window-line #l1
-    set-variable $window-y-scroll #l2
-    set-variable $window-col #l3
+    goto-position "\x81"
 !emacro
 
 
