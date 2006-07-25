@@ -2258,8 +2258,10 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
                     }
                 } while(--ii > 0) ;
             }
-            else
+            else if(ll >= 0)
                 ll += ii ;
+            if(ll < 0)
+                ll = meStrlen(ss) + ll ;
             dd = evalResult ;
             while(--ll >= 0)
             {
