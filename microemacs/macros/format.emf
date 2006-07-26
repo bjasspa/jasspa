@@ -365,3 +365,62 @@ define-macro restyle-buffer
     restyle-region
     goto-alpha-mark "\x81"
 !emacro
+
+define-macro indent-increase
+    !if &not @?
+        set-variable @# $buffer-indent-width
+    !endif
+    0 show-region
+    !if &set #l0 &equ &band $result 5 5
+        !if &not &band $result 2
+            3 show-region
+        !endif
+        set-alpha-mark "\x81"
+        set-variable #l2 $window-line
+        -2 show-region
+        set-alpha-mark "\x82"
+        set-variable #l1 $window-line
+        !if &les #l2 #l1
+            set-variable #l2 #l1
+            set-variable #l1 $window-line
+        !endif
+        set-variable #l2 &sub #l2 1
+    !else
+        set-alpha-mark "\x81"
+        set-variable #l1 &set #l2 $window-line
+    !endif
+    set-variable $window-line #l1
+    !repeat
+        beginning-of-line
+        search-buffer "em" "[^ \t]"
+        backward-char
+        set-variable #l3 &add $window-acol @#
+        !if $window-col
+            $window-col backward-delete-char
+            -1 yank
+        !endif
+        !if &les #l3 1
+        !elif &bmod "tab"
+            #l3 insert-space
+        !else
+            insert-string &spr "%n%n" &div #l3 $tab-width "\t" &mod #l3 $tab-width " "
+        !endif
+        forward-line
+    !until &gre $window-line #l2
+    !if #l0
+        goto-alpha-mark "\x82"
+        -3 show-region
+        goto-alpha-mark "\x81"
+        !force show-region
+    !else
+        goto-alpha-mark "\x81"
+    !endif
+!emacro
+
+
+define-macro indent-decrease
+    !if &not @?
+        set-variable @# $buffer-indent-width
+    !endif
+    &neg @# indent-increase
+!emacro
