@@ -353,6 +353,7 @@ define-macro read-session
     !if &not &seq "R" &stat t &set #l1 &spr "%s%s.esf" $user-path #l0
         !if &band @# 16
             set-variable %session-name #l0
+            0 change-scheme
             !return
         !endif
         ml-write &spr "[Session Error: cannot read session file \"%s\"]" #l1
