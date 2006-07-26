@@ -447,13 +447,13 @@ set-variable %gdiff-com &cond &seq %gdiff-com "ERROR" "diff -c -w" %gdiff-com
         !else
             previous-window
         !endif
-    !elif &lfi "|C-up|" @cck
+    !elif &lfi "|C-up|p|" @cck
         -1 gdiff-next
-    !elif &lfi "|C-down|" @cck
+    !elif &lfi "|C-down|n|" @cck
         1 gdiff-next
-    !elif &lfi "|esc up|" @cck
+    !elif &lfi "|esc up|P|" @cck
         -1 gdiff-next-unassigned
-    !elif &lfi "|esc down|" @cck
+    !elif &lfi "|esc down|N|" @cck
         1 gdiff-next-unassigned
     !elif &lfi "|mouse-pick-1|" @cck
         gdiff-mouse-pick-1
