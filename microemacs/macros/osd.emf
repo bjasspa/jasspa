@@ -44,8 +44,7 @@ define-macro-file osdhelp osd-help
     !endif
     set-variable #l0 &ind &spr ".%s.setup" $buffer-fhook
     !if &sin "p" #l0
-        set-variable #l1 &rig $buffer-fhook 6
-        osd 9 10 "" &spr "View %s \HHelp %n%s" #l1 &sub 10 &len #l1 " " &kbind "" major-mode-help f major-mode-help
+        osd 9 10 "" "\HMajor Mode Help      esc h" f major-mode-help
     !else
         osd 9 10 "D"
     !endif
@@ -61,9 +60,9 @@ define-macro-file osdhelp osd-help
         osd 6 2  "D"
     !endif
     !if &seq &ind &spr ".%s.setup-mask" $buffer-fhook "ERROR"
-        osd 7 180 "D"
+        osd 6 170 "D"
     !else
-        osd 7 180 "" "\HMajor Mode Setup..." f major-mode-setup
+        osd 6 170 "" "\HMajor Mode Setup..." f major-mode-setup
     !endif
     ; let the current buffer type modify the menu
     !if &exi &set #l0 &cat "osd-ohook-" &rig $buffer-fhook 6
@@ -374,22 +373,24 @@ osd 4 190 "i" "\HScroll Bars"                    f "&set $scroll-bar &bxor $scro
 osd 5 0   "bo" 1 0
 osd 5 10  ""  "Restyle \HBuffer"                   f restyle-buffer
 osd 5 20  ""  "Restyle \HRegion"                   f restyle-region
-osd 5 30  "-"
-osd 5 40  ""  "I\HQ Fill Paragraph"                f ifill-paragraph
-osd 5 50  ""  "\HFill Paragraph           esc q"   f fill-paragraph
-osd 5 60  ""  "Fill \HAll Paragraphs"          65536 fill-paragraph
-osd 5 70  ""  "Para\Hgraph to Line"                f paragraph-to-line
-osd 5 80  ""  "All Paragraphs to Li\Hnes"      65536 paragraph-to-line
-osd 5 90  "-"
-osd 5 100 ""  "C\Hhange Character Set..."          f charset-change
-osd 5 110 ""  "\HTabs to Spaces"                   f tabs-to-spaces
-osd 5 120 ""  "\HClean Buffer"                     f clean
-osd 5 130 "-"
-osd 5 140 ""  "Capitali\Hze Word          esc c"   f capitalize-word
-osd 5 150 ""  "\HLower Case Word          esc l"   f lower-case-word
-osd 5 160 ""  "\HUpper Case Word          esc u"   f upper-case-word
-osd 5 170 ""  "L\Hower Case Region        C-x C-l" f lower-case-region
-osd 5 180 ""  "U\Hpper Case Region        C-x C-u" f upper-case-region
+osd 5 30  ""  "\HIncrease Indent"                  f indent-increase
+osd 5 40  ""  "\HDecrease Indent"                  f indent-decrease
+osd 5 50  "-"
+osd 5 60  ""  "I\HQ Fill Paragraph"                f ifill-paragraph
+osd 5 70  ""  "\HFill Paragraph           esc q"   f fill-paragraph
+osd 5 80  ""  "Fill \HAll Paragraphs"          65536 fill-paragraph
+osd 5 90  ""  "Para\Hgraph to Line"                f paragraph-to-line
+osd 5 90  ""  "All Paragraphs to Li\Hnes"      65536 paragraph-to-line
+osd 5 100 "-"
+osd 5 110 ""  "C\Hhange Character Set..."          f charset-change
+osd 5 120 ""  "\HTabs to Spaces"                   f tabs-to-spaces
+osd 5 130 ""  "\HClean Buffer"                     f clean
+osd 5 140 "-"
+osd 5 150 ""  "Capitali\Hze Word          esc c"   f capitalize-word
+osd 5 160 ""  "\HLower Case Word          esc l"   f lower-case-word
+osd 5 170 ""  "\HUpper Case Word          esc u"   f upper-case-word
+osd 5 180 ""  "L\Hower Case Region        C-x C-l" f lower-case-region
+osd 5 190 ""  "U\Hpper Case Region        C-x C-u" f upper-case-region
 ;
 ; MENU #6 - TOOLS sub-menu
 ; Start at item 10 so buffer specific tool menus can be inserted
@@ -407,16 +408,12 @@ osd 6 110 "-"
 osd 6 120 ""  "Sort \HLines"                      f sort-lines
 osd 6 130 ""  "Sort Lines (\HIgnore Case)"        f sort-lines-ignore-case
 osd 6 140 ""  "\HUniq Lines"                      f uniq
-; Setup the users tools
-set-variable #l0 0
-!repeat
-    !if &not &seq "" &set #l1 &reg &spr "/history/%s/tool/%d/name" $platform #l0 ""
-        osd 6 200 "-"
-        osd 6 &add 201 #l0 "" &spr "\H%d %s" #l0 #l1 #l0 execute-tool
-    !endif
-!until &equ &inc #l0 1 10
+osd 6 150 "-"
+osd 6 160 ""  "\HBuffer Setup..."                 f indent-setup
+osd 6 180 ""  "\HUser Setup..."                   f user-setup
+osd 6 190 ""  "Scheme \HEditor..."                f scheme-editor
 ;
-; MENU #8 - ADVANCED sub-menu
+; MENU #7 - ADVANCED sub-menu
 ;
 osd 7 0   "bo" 1 0
 osd 7 10  ""  "\HRecord Macro        C-x ("       f osd-record-macro
@@ -427,19 +424,23 @@ osd 7 50  ""  "E\Hxecute Command...  esc x"       f execute-named-command
 osd 7 60  ""  "Execute \HFile...     esc /"       f execute-file
 osd 7 70  "-"
 osd 7 80  ""  "\HCalculate"                       f calc
-osd 7 90  ""  "\HNotes               f9"          f notes
+osd 7 90  ""  "\HNotes               f8"          f notes
 osd 7 100 ""  "\HOrganizer..."                    f organizer
 osd 7 110 ""  "\HSend Mail"                       f mail
 osd 7 120 ""  "\HView Mail"                       f vm
 osd 7 130 "-"
 osd 7 140 ""  "\HIpipe Command...    esc \\"      f ipipe-shell-command
 osd 7 150 ""  "S\Hhell               C-x c"       f shell
-osd 7 160 "-"
-osd 7 170 ""  "\HBuffer Setup..."                 f indent-setup
-osd 7 190 ""  "\HUser Setup..."                   f user-setup
-osd 7 200 ""  "Scheme E\Hditor..."                f scheme-editor
+; Setup the users tools
+set-variable #l0 0
+!repeat
+    !if &not &seq "" &set #l1 &reg &spr "/history/%s/tool/%d/name" $platform #l0 ""
+        osd 7 200 "-"
+        osd 7 &add 201 #l0 "" &spr "\H%d %s" #l0 #l1 #l0 execute-tool
+    !endif
+!until &equ &inc #l0 1 10
 ;
-; MENU #7 - WINDOW sub-menu
+; MENU #8 - WINDOW sub-menu
 ;
 osd 8 0   "bo" 1 0
 osd 8 10  ""  "\HSplit Window V      C-x 2"       f split-window-vertically
@@ -465,14 +466,14 @@ osd 8 120 ""  "\HNext Window         C-x C-o"     f next-window
 ; MENU #9 - HELP sub-window
 ;
 osd 9 0   "b"
-osd 9 20  ""  "General Help         esc \H?"      f osd-help
+osd 9 20  ""  "General \HHelp         esc ?"      f osd-help
 osd 9 30  "-"
 osd 9 40  ""  "List \HBindings        C-h b"      f describe-bindings
 osd 9 50  ""  "List Bu\Hffers         C-x C-b"    f list-buffers
 osd 9 60  ""  "List \HCommands        C-h c"      f list-commands
 osd 9 70  ""  "List \HRegistry"                   f list-registry
 osd 9 80  ""  "List \HVariables       C-h v"      f list-variables
-osd 9 90  ""  "Command \HApropos...   C-h a"      f command-apropos
+osd 9 90  ""  "Command Apropo\Hs...   C-h a"      f command-apropos
 osd 9 100 "-"
 osd 9 110 ""  "Describe \HKey...      C-h k"      f describe-key
 osd 9 120 ""  "Describe Var\Hiable... C-h d"      f describe-variable
@@ -482,7 +483,7 @@ osd 9 150 ""  "Help on Variab\Hle...  C-h C-v"    f help-variable
 osd 9 160 "-"
 osd 9 170 "M" "\HGames"                          21
 osd 9 180 "i" "\HProduct Support"                 f "help-item \"Contact\""
-osd 9 190 ""  "About \HMicroEmacs"                f about
+osd 9 190 ""  "\HAbout MicroEmacs"                f about
 ;
 ; MENU #19 - Quick-open
 ; if the file-type is found in the registry then add entry to menu 1
