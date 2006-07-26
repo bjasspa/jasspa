@@ -184,13 +184,13 @@ DEFFUNC	("global-abbrev-file",		0x00, globalAbbrev,	CK_GLOBABBREV, &__cmdArray[C
 DEFFUNC ("global-bind-key",		0x00, globalBindKey,	CK_BINDKEY, &__cmdArray[CK_BINDKEY+1], 0)
 DEFFUNC ("global-mode",			0x00, globalMode,	CK_GLOBMOD, &__cmdArray[CK_GLOBMOD+1], 0)
 DEFFUNC ("global-unbind-key",		0x00, globalUnbindKey,	CK_UBNDKEY, &__cmdArray[CK_UBNDKEY+1], 0)
-DEFFUNC	("goto-alpha-mark",		0x42, gotoAlphaMark,	CK_GOAMRK, &__cmdArray[CK_GOAMRK+1], 0)
-DEFFUNC ("goto-line",			0x42, windowGotoLine,	CK_GOLIN, &__cmdArray[CK_GOLIN+1], 0)
+DEFFUNC	("goto-alpha-mark",		0x48, gotoAlphaMark,	CK_GOAMRK, &__cmdArray[CK_GOAMRK+1], 0)
+DEFFUNC ("goto-line",			0x48, windowGotoLine,	CK_GOLIN, &__cmdArray[CK_GOLIN+1], 0)
 #if MEOPT_CMDHASH || MEOPT_FENCE
 DEFFUNC ("goto-matching-fence",		0x48, gotoFence,	CK_GOFNC, &__cmdArray[CK_GOFNC+1], 0)
 #endif
 #if MEOPT_CMDHASH || MEOPT_POSITION
-DEFFUNC ("goto-position",		0x42, positionGoto,	CK_GOTOPOS, &__cmdArray[CK_GOTOPOS+1], 0)
+DEFFUNC ("goto-position",		0x48, positionGoto,	CK_GOTOPOS, &__cmdArray[CK_GOTOPOS+1], 0)
 #endif
 #if MEOPT_CMDHASH || MEOPT_EXTENDED
 DEFFUNC ("help",			0x42, help,		CK_HELP, &__cmdArray[CK_HELP+1], 0)
