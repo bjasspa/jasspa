@@ -49,8 +49,8 @@ define-macro-file cvs cvs cvs-setup cvs-add cvs-annotate cvs-checkout cvs-commit
 define-macro-file format clean sort-lines-ignore-case normal-tab tabs-to-spaces paragraph-to-line delete-indentation restyle-region restyle-buffer ifill-paragraph indent-increase indent-decrease
 define-macro-file tools compile grep rgrep which diff rdiff xdiff diff-changes execute-tool uniq reread-file find-bfile find-cfile
 define-macro-file misc save-all open-line check-line-length time compare-windows-exact display-white-chars write-region
+define-macro-file osdmisc insert-symbol buffer-setup alarm browse alias-path-setup file-type-setup shell-tool-setup
 define-macro-file abbrev expand-abbrev-handle expand-iso-accents expand-look-back expand-word iso-accents-mode
-define-macro-file osdmisc symbol indent-setup alarm browse alias-path-setup file-type-setup shell-tool-setup
 define-macro-file comment comment-line uncomment-line comment-to-end-of-line comment-start comment-restyle
 define-macro-file rect string-rectangle space-rectangle copy-rectangle yank-rectangle-overwrite
 define-macro-file majormod buffer-major-mode major-mode-setup major-mode-help major-mode-tool
@@ -76,7 +76,6 @@ define-macro-file schemosd scheme-editor
 define-macro-file mouseosd context-menu
 define-macro-file printstp print-setup
 define-macro-file abbrlist abbrev-list
-define-macro-file buffstp buffer-setup
 define-macro-file fattrib file-attrib
 define-macro-file organize organizer
 define-macro-file userstp user-setup
@@ -168,8 +167,13 @@ global-bind-key file-browser             "f10"
 global-bind-key ftp                      "S-f10"
 3 global-bind-key file-browser           "C-f10"
 global-bind-key display-white-chars      "f11"
+global-bind-key toolbar                  "S-f11"
 global-bind-key expand-abbrev-handle     "esc esc"
 ml-bind-key     tab                      "esc esc"
+!if &reg "/history/clearcase/rep-rcs" "0"
+    0 define-macro-file clearcs cc-coci
+    global-bind-key cc-coci              "C-x C-q"
+!endif
 ; if using MS friendly key bindings create them now
 !if &reg "/history/mskeys" "0"
     global-bind-key beginning-of-line    "home"

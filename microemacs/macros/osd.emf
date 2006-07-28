@@ -53,16 +53,16 @@ define-macro-file osdhelp osd-help
         !if &seq #l9 "ERROR"
             set-variable #l9 &cat &sup &mid $buffer-fhook 6 1 &rig $buffer-fhook 7
         !endif
-        osd 6 1 "M" &cat #l9 " \HTools" .osd.tmp major-mode-tool
-        osd 6 2 "-"
+        osd 6 10 "M" &cat #l9 " \HTools" .osd.tmp major-mode-tool
+        osd 6 20 "-"
     !else
-        osd 6 1  "D"
-        osd 6 2  "D"
+        osd 6 10 "D"
+        osd 6 20 "D"
     !endif
     !if &seq &ind &spr ".%s.setup-mask" $buffer-fhook "ERROR"
-        osd 6 170 "D"
+        osd 6 180 "D"
     !else
-        osd 6 170 "" "\HMajor Mode Setup..." f major-mode-setup
+        osd 6 180 "" "\HMajor Mode Setup..." f major-mode-setup
     !endif
     ; let the current buffer type modify the menu
     !if &exi &set #l0 &cat "osd-ohook-" &rig $buffer-fhook 6
@@ -85,7 +85,6 @@ define-macro-file osdhelp osd-help
         set-variable #l0 &add #l0 1
     !until 0
 !emacro
-
 ;
 ; Handle the Buffer menu. Construct a new list of buffer from the
 ; buffer list. This is menu 20
@@ -291,35 +290,37 @@ osd 1 120 "-"
 osd 1 130 ""  "Print Set\Hup..."            f print-setup
 osd 1 140 ""  "\HPrint"                     f print-buffer
 osd 1 150 "-"
-osd 1 160 ""  "File Browser    f10"         f file-browser
-osd 1 170 ""  "FTP Browser     S-f10"       f ftp
+osd 1 160 ""  "File \HBrowser    f10"       f file-browser
+osd 1 170 ""  "FTP Bro\Hwser     S-f10"     f ftp
 osd 1 180 "-"
-osd 1 190 ""   "E\Hxit            C-x C-c"  f save-buffers-exit-emacs
+osd 1 190 ""  "Load S\Hession"              f read-session
+osd 1 200 "-"
+osd 1 210 ""  "E\Hxit            C-x C-c"   f save-buffers-exit-emacs
 ;
 ; MENU #2 - EDIT sub-menu
 ;
 osd 2 0   "bo" 1 0
 osd 2 10  ""  "\HUndo                C-x u"      1 osd-undo      ; Undo the last command
 osd 2 20  ""  "Redo"                                             ; Re-do the last osd-undo
-osd 2 25  ""  "Undo \HAll"                       0 osd-undo      ; Undo all changes to last save
-osd 2 30  "-"
-osd 2 40  ""  "\HSet Mark            esc space"  f set-mark
+osd 2 30  ""  "Undo \HAll"                       0 osd-undo      ; Undo all changes to last save
+osd 2 40  "-"
+osd 2 50  ""  "\HSet Mark            esc space"  f set-mark
 osd 2 60  ""  "\HCopy Region         esc w"      f copy-region
-osd 2 50  ""  "\HKill Region         C-w"        f kill-region
-osd 2 65  ""  "\HDelete Region"                 -1 kill-region
-osd 2 70  ""  "\HPaste               C-y"        f yank
-osd 2 80  ""  "Cut R\Hectangle       esc C-w"    f kill-rectangle
-osd 2 90  ""  "C\Hopy Rectangle"                 f copy-rectangle
-osd 2 100 ""  "Paste Rectan\Hgle     esc C-y"    f yank-rectangle
-osd 2 110 "-"
-osd 2 120 ""  "Insert S\Hymbol..."               f symbol
-osd 2 130 "M" "Insert Date/\HTime"              31 osd-insert-date
-osd 2 140 ""  "Insert File \HName    C-x C-y"    f insert-file-name
-osd 2 150 ""  "Insert \HFile...      C-x C-i"    f insert-file
-osd 2 160 ""  "Draw \HLines"                     f draw
-osd 2 170 "-"
-osd 2 180 ""  "Toggle \HInsert mode  insert"   149 buffer-mode
-osd 2 190 ""  "Toggle \HView mode"             165 buffer-mode
+osd 2 70  ""  "\HKill Region         C-w"        f kill-region
+osd 2 80  ""  "\HDelete Region"                 -1 kill-region
+osd 2 90  ""  "\HPaste               C-y"        f yank
+osd 2 100 ""  "Cut R\Hectangle       esc C-w"    f kill-rectangle
+osd 2 110 ""  "C\Hopy Rectangle"                 f copy-rectangle
+osd 2 120 ""  "Paste Rectan\Hgle     esc C-y"    f yank-rectangle
+osd 2 130 "-"
+osd 2 140 ""  "Insert S\Hymbol..."               f insert-symbol
+osd 2 150 "M" "Insert Date/\HTime"              31 osd-insert-date
+osd 2 160 ""  "Insert File \HName    C-x C-y"    f insert-file-name
+osd 2 170 ""  "Insert \HFile...      C-x C-i"    f insert-file
+osd 2 180 ""  "Draw \HLines"                     f draw
+osd 2 190 "-"
+osd 2 200 ""  "Toggle \HInsert mode  insert"   149 buffer-mode
+osd 2 210 ""  "Toggle \HView mode"             165 buffer-mode
 ;
 ; MENU #3 - SEARCH sub-menu
 ;
@@ -344,26 +345,27 @@ osd 3 160 ""  "Goto \HTag...          esc t"     f "osd-find-tag"
 ; MENU #4 - VIEW sub-menu
 ;
 osd 4 0   "bo" 1 0
-osd 4 10  ""  "Narrow \HOut"                     1 osd-narrow-buffer
+osd 4 10  ""  "Narrow O\Hut"                     1 osd-narrow-buffer
 osd 4 20  ""  "\HNarrow To"                      0 osd-narrow-buffer
 osd 4 30  ""  "\HRemove Single Narrow"           2 narrow-buffer
 osd 4 40  ""  "Remove \HAll Narrows"             1 narrow-buffer
 osd 4 50  "-"
 osd 4 60  ""  "Buffer \HInfo           C-x ="    f buffer-info
 osd 4 70  ""  "Word \HCount            esc C-c"  f count-words
-osd 4 80  "-"
+osd 4 80  ""  "\HOccurrences           S-f6"     f occur
+osd 4 90  "-"
 osd 4 150 "-"
-osd 4 160 ""  "\HWhite Characters      f11"      f display-white-chars
-osd 4 170 "i" "\HMain Menu"                      f "osd -1 &set .osd.menu &bxor .osd.menu 1"
-osd 4 180 ""  "\HToolbar"                        f toolbar
-osd 4 190 "i" "\HScroll Bars"                    f "&set $scroll-bar &bxor $scroll-bar 0x100"
+osd 4 160 "i" "\HMain Menu"                      f "osd -1 &set .osd.menu &bxor .osd.menu 1"
+osd 4 170 "i" "\HScroll Bars"                    f "&set $scroll-bar &bxor $scroll-bar 0x100"
+osd 4 180 ""  "\HToolbar               S-f11"    f toolbar
+osd 4 190 ""  "\HWhite Characters      f11"      f display-white-chars
 !if &reg "/history/find-buffer" "0"
     !if &not &exi .osd.find-buffer
         set-variable .osd.find-buffer &pinc .osd.next 1
         0 define-macro-file findbuff osd-find-buffer
     !endif
     osd 4 100 "M" "\HBuffer (All)          C-x b" 20 osd-1-buffer
-    osd 4 110 "M" "B\Huffer (by type)" .osd.find-buffer osd-find-buffer
+    osd 4 110 "M" "Bu\Hffer (by type)" .osd.find-buffer osd-find-buffer
 !else
     osd 4 100 "M" "\HBuffer                C-x b" 20 osd-1-buffer
 !endif
@@ -395,23 +397,23 @@ osd 5 190 ""  "U\Hpper Case Region        C-x C-u" f upper-case-region
 ; MENU #6 - TOOLS sub-menu
 ; Start at item 10 so buffer specific tool menus can be inserted
 osd 6 0   "bo" 1 0
-osd 6 20  ""  "Spell \HWord          esc $"       1 spell-word
-osd 6 30  ""  "\HSpell Buffer...     f7"          f spell-buffer
-osd 6 40  ""  "Word Complete"                     f expand-word
-osd 6 50  "-"
-osd 6 60  ""  "Com\Hpare Windows"                 f compare-windows
-osd 6 70  ""  "Di\Hff Changes        f4"          f diff-changes
-osd 6 80  ""  "\HDiff..."                         f diff
-osd 6 90  ""  "G\Hraphical Diff..."               0 gdiff
-osd 6 100 ""  "\HCompile"                         f compile
-osd 6 110 "-"
-osd 6 120 ""  "Sort \HLines"                      f sort-lines
-osd 6 130 ""  "Sort Lines (\HIgnore Case)"        f sort-lines-ignore-case
-osd 6 140 ""  "\HUniq Lines"                      f uniq
-osd 6 150 "-"
-osd 6 160 ""  "\HBuffer Setup..."                 f indent-setup
-osd 6 180 ""  "\HUser Setup..."                   f user-setup
-osd 6 190 ""  "Scheme \HEditor..."                f scheme-editor
+osd 6 30  ""  "Spell \HWord          esc $"       1 spell-word
+osd 6 40  ""  "\HSpell Buffer...     f7"          f spell-buffer
+osd 6 50  ""  "Word Complete"                     f expand-word
+osd 6 60  "-"
+osd 6 70  ""  "Com\Hpare Windows"                 f compare-windows
+osd 6 80  ""  "Di\Hff Changes        f4"          f diff-changes
+osd 6 90  ""  "\HDiff..."                         f diff
+osd 6 100 ""  "G\Hraphical Diff..."               0 gdiff
+osd 6 110 ""  "\HCompile"                         f compile
+osd 6 120 "-"
+osd 6 130 ""  "Sort \HLines"                      f sort-lines
+osd 6 140 ""  "Sort Lines (\HIgnore Case)"        f sort-lines-ignore-case
+osd 6 150 ""  "Uni\Hq Lines"                      f uniq
+osd 6 160 "-"
+osd 6 170 ""  "\HBuffer Setup..."                 f buffer-setup
+osd 6 190 ""  "\HUser Setup..."                   f user-setup
+osd 6 200 ""  "Scheme \HEditor..."                f scheme-editor
 ;
 ; MENU #7 - ADVANCED sub-menu
 ;

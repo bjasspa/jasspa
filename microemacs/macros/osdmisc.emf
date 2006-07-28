@@ -36,8 +36,8 @@ define-macro osd-search
     set-variable .osd-search.scheme 1
     set-variable .osd-search.hilnames "|Remove |White  |Black  |Red    |Green  |Yellow |Blue   |Magenta|Cyan   |"
     set-variable .osd-search.hilschms &spr "|%d|%d|%d|%d|%d|%d|%d|%d|%d|" $global-scheme .scheme.hlwhite .scheme.hlblack .scheme.hlred .scheme.hlgreen .scheme.hlyellow .scheme.hlblue .scheme.hlmagenta .scheme.hlcyan
-    ; indent-setup
-    set-variable .osd.indstp &pinc .osd.next 1
+    ; buffer-setup
+    set-variable .osd.buffstp &pinc .osd.next 1
     ; browse
     set-variable .osd.browse-help &pinc .osd.next 1
     ; alias-path-setup
@@ -78,11 +78,11 @@ osd .osd.symbol 600 ""
 osd .osd.symbol 610 ""
 osd .osd.symbol 620 "BcfH" .scheme.osd-ebtt " Cancel " f void
 
-define-macro symbol
+define-macro insert-symbol
     .osd.symbol osd
 !emacro
 
-0 define-macro indent-setup-exec
+0 define-macro buffer-setup-exec
     !if &equ @# 5
         !return $buffer-hilight
     !elif &equ @# 4
@@ -115,35 +115,35 @@ define-macro symbol
         !endif
     !endif
 !emacro
--1 osd .osd.indstp
-osd .osd.indstp  0 "batcDIHs" 9 3 30 10 -1 -1 150 30 .scheme.osd-title "Indentation Setup"
-osd .osd.indstp 10 ""
-osd .osd.indstp 20 "Sfh" "  \HTab Width:    " 30
-osd .osd.indstp 30 "EtRxHf" .scheme.osd-entry "##########" 1 indent-setup-exec
-osd .osd.indstp 40 ""
-osd .osd.indstp 50 "Sfh" "  \HIndent Width: " 60
-osd .osd.indstp 60 "EtRxHf" .scheme.osd-entry "##########" 2 indent-setup-exec
-osd .osd.indstp 70 ""
-osd .osd.indstp 80 "fh" "  "
-osd .osd.indstp 90 "Cptfx" &cat .osd.checkbox-chars "\} \HUse tab characters" 3 indent-setup-exec
-osd .osd.indstp 140 ""
-osd .osd.indstp 150 "BtcfHh" .scheme.osd-ebtt " \HOkay "  f void
-define-macro indent-setup
+-1 osd .osd.buffstp
+osd .osd.buffstp  0 "batcDIHs" 9 3 30 10 -1 -1 150 30 .scheme.osd-title "Buffer Setup"
+osd .osd.buffstp 10 ""
+osd .osd.buffstp 20 "Sfh" "  \HTab Width:    " 30
+osd .osd.buffstp 30 "EtRxHf" .scheme.osd-entry "##########" 1 buffer-setup-exec
+osd .osd.buffstp 40 ""
+osd .osd.buffstp 50 "Sfh" "  \HIndent Width: " 60
+osd .osd.buffstp 60 "EtRxHf" .scheme.osd-entry "##########" 2 buffer-setup-exec
+osd .osd.buffstp 70 ""
+osd .osd.buffstp 80 "fh" "  "
+osd .osd.buffstp 90 "Cptfx" &cat .osd.checkbox-chars "\} \HUse tab characters" 3 buffer-setup-exec
+osd .osd.buffstp 140 ""
+osd .osd.buffstp 150 "BtcfHh" .scheme.osd-ebtt " \HOkay "  f void
+define-macro buffer-setup
     !if &or $buffer-indent &exi :buffer-indent
-        osd .osd.indstp 100 "fh" "  "
-        osd .osd.indstp 110 "Cptfx" &cat .osd.checkbox-chars "\} Use \Hauto-indentation" 4 indent-setup-exec
+        osd .osd.buffstp 100 "fh" "  "
+        osd .osd.buffstp 110 "Cptfx" &cat .osd.checkbox-chars "\} Use \Hauto-indentation" 4 buffer-setup-exec
     !else
-        osd .osd.indstp 100 "D"
-        osd .osd.indstp 110 "D"
+        osd .osd.buffstp 100 "D"
+        osd .osd.buffstp 110 "D"
     !endif
     !if &or $buffer-hilight &exi :buffer-hilight
-        osd .osd.indstp 120 "fh" "  "
-        osd .osd.indstp 130 "Cptfx" &cat .osd.checkbox-chars "\} Use \Hhilighting" 5 indent-setup-exec
+        osd .osd.buffstp 120 "fh" "  "
+        osd .osd.buffstp 130 "Cptfx" &cat .osd.checkbox-chars "\} Use \Hhilighting" 5 buffer-setup-exec
     !else
-        osd .osd.indstp 120 "D"
-        osd .osd.indstp 130 "D"
+        osd .osd.buffstp 120 "D"
+        osd .osd.buffstp 130 "D"
     !endif
-    .osd.indstp osd
+    .osd.buffstp osd
 !emacro
 
 set-variable .osd.ftagw 32
