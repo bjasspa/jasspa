@@ -459,7 +459,7 @@ set-variable %gdiff-com &cond &seq %gdiff-com "ERROR" "diff -c -w" %gdiff-com
         gdiff-mouse-pick-1
     !elif &lfi "|mouse-drop-1|" @cck
         gdiff-mouse-drop-1
-    !elif &lfi "|menu|f1|" @cck
+    !elif &lfi "|context-menu|" @cc
         set-variable $mouse-x $cursor-x
         set-variable $mouse-y &add $cursor-y 1
         .osd.gdiff osd
@@ -866,7 +866,7 @@ osd .osd.gdiff 70  "Mi" "\HRegion"  .osd.gdiff-s "16 gdiff-menu-sel"
 osd .osd.gdiff 80  "Mi" "\HLine"    .osd.gdiff-s "32 gdiff-menu-sel"
 osd .osd.gdiff 90  "-"
 osd .osd.gdiff 100 ""   "\HSearch"           1 osd-search
-osd .osd.gdiff 105 ""   "Set tab width"      f indent-setup
+osd .osd.gdiff 105 ""   "Set tab width"      f buffer-setup
 osd .osd.gdiff 110 "-"
 osd .osd.gdiff 120 ""   "Save \HLeft"       -1 gdiff-save
 osd .osd.gdiff 130 ""   "Save \HRight"       1 gdiff-save
@@ -877,28 +877,26 @@ osd .osd.gdiff 170 ""   "E\Hxit Gdiff"       f gdiff-exit
 
 osd .osd.gdiff-help 0  "batcDH" 9 3 99 .scheme.osd-title "Graphical Diff Help"
 osd .osd.gdiff-help 3  "" 
-osd .osd.gdiff-help 4  ""  "    esc h   - View this help page"
+osd .osd.gdiff-help 4  ""  "  esc h     - View this help page"
 osd .osd.gdiff-help 5  "" 
-osd .osd.gdiff-help 6  ""  "    tab     - Swap between windows"
-osd .osd.gdiff-help 6  ""  "    C-up    - Move to previous difference"
-osd .osd.gdiff-help 7  ""  "    C-down  - Move to next difference"
+osd .osd.gdiff-help 6  ""  "  tab       - Swap between buffers"
+osd .osd.gdiff-help 6  ""  "  p, C-up   - Move to previous difference"
+osd .osd.gdiff-help 7  ""  "  n, C-down - Move to next difference"
 osd .osd.gdiff-help 8  "" 
-osd .osd.gdiff-help 9  ""  "    g       - Global select current version"
-osd .osd.gdiff-help 10 ""  "    G       - Global select neither version"
+osd .osd.gdiff-help 9  ""  "  g         - Global: Select all differences from active buffer"
+osd .osd.gdiff-help 10 ""  "  G         - Global: Select no version (remove difference text)"
 osd .osd.gdiff-help 11 "" 
-osd .osd.gdiff-help 12 ""  "    space, enter"
-osd .osd.gdiff-help 13 ""  "    r       - Region select current version"
-osd .osd.gdiff-help 14 ""  "    R       - Region select neither version"
+osd .osd.gdiff-help 13 ""  "  r, space  - Region: Select current difference from active buffer  "
+osd .osd.gdiff-help 14 ""  "  R         - Region: Select no version (remove difference text)"
 osd .osd.gdiff-help 15 "" 
-osd .osd.gdiff-help 16 ""  "    l       - Line select current version"
-osd .osd.gdiff-help 17 ""  "    L       - Line select neither version"
+osd .osd.gdiff-help 16 ""  "  l         - Line: Select current difference from active buffer"
+osd .osd.gdiff-help 17 ""  "  L         - Line: Select no version (remove difference text)"
 osd .osd.gdiff-help 18 "" 
-osd .osd.gdiff-help 19 ""  "    C-x C-s - Save as current side"
-osd .osd.gdiff-help 20 ""  "    C-x C-w - Save as"
-osd .osd.gdiff-help 21 "" 
-osd .osd.gdiff-help 22 ""  "    C-x k   - Exit graphical diff"
+osd .osd.gdiff-help 19 ""  "  C-x C-s   - Save as active buffer"
+osd .osd.gdiff-help 20 ""  "  C-x C-w   - Save as..."
+osd .osd.gdiff-help 22 ""  "  C-x k     - Exit graphical diff"
 osd .osd.gdiff-help 23 "" 
-osd .osd.gdiff-help 24 ""  "  Right mouse button activates a menu"
+osd .osd.gdiff-help 24 ""  "  menu, esc + or right mouse button activates a context menu"
 osd .osd.gdiff-help 25 "" 
 osd .osd.gdiff-help 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void 
 
