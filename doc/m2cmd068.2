@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd068.2,v 2.14 2005-01-15 13:10:29 jon Exp $
+.Id $Id: m2cmd068.2,v 2.15 2006-07-28 16:35:04 jon Exp $
 .Im MicroEmacs command|buffer
 .so me.tni
 .TH narrow-buffer 2
@@ -151,8 +151,8 @@ region. When the narrow region is created then the
 macro is executed to annotate  the narrowed  region. The macro is invoked when
 the  narrow  is  created  and is  passed  a  numeric  argument  \fIn\fR  which
 identifies  the  operation of the narrow. The numeric  argument to the mark-up
-macro is defined below, generally a \fC+ve\fR  argument means that a narrow is
-being added and \fC-ve\fR means that the narrow is being removed.
+macro is defined below,  generally a positive  argument means that a narrow is
+being added and negative means that the narrow is being removed.
 .IP
 \fC1\fR \- This is a \fINarrow Out\fR line.
 .br
@@ -243,10 +243,10 @@ The
 macro process the numeric argument
 .Ht @# 4
 to  determine  the mark-up  type to be applied to the buffer. When the numeric
-argument is \-ve then
+argument is negative then
 .Ht !abort 4
-is called to remove the mark-up. When the numeric argument is +ve then
-a mark-up line  annotation is created by taking the first 40 characters of the
+is called to remove the mark-up. When the numeric  argument is positive then a
+mark-up line  annotation  is created by taking the first 40  characters of the
 line and appending "\fC...\fR" to indicate that this is a narrow. The original
 .B narrow-buffer
 call included a

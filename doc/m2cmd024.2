@@ -3,7 +3,7 @@
 .\" Copyright (c) 1988-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd024.2,v 2.5 2002-01-11 21:58:41 jon Exp $
+.Id $Id: m2cmd024.2,v 2.6 2006-07-28 16:35:05 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH create-callback 2
@@ -24,8 +24,8 @@ back in  \fIn\fR  milliseconds  time. This can be used by the user to  monitor
 system  events (such as incoming  mail). The command is called only once, but
 if the command creates a callback of itself a loop is created.
 .PP
-If a -ve argument \fIn\fR is given any pending  callback for  \fIcommand\fR is
-cancelled.
+If a negative argument \fIn\fR is given any pending callback for \fIcommand\fR
+is cancelled.
 .SH EXAMPLE
 The following example creates a callback that is invoked every 10 minutes.
 .Me $emf-scheme

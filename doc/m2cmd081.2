@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd081.2,v 2.8 2005-02-06 13:07:41 jon Exp $
+.Id $Id: m2cmd081.2,v 2.9 2006-07-28 16:35:03 jon Exp $
 .Im MicroEmacs command|delete|region
 .ds C0 "(\fB\*cw\fR)\ \&
 .so me.tni
@@ -23,9 +23,9 @@ deletes all characters from the cursor  to the mark set with the
 command.  The  characters  removed  are copied into the kill buffer and may be
 extracted using
 .Ht yank 2 .
-If a numeric argument of \fC0\fR is given the command has no effect. If a \-ve
-argument is given the characters are not placed in the kill buffer,  therefore
-the text is effectively lost (this does not effect the
+If a numeric  argument  of  \fC0\fR is given the  command  has no effect. If a
+negative  argument is given the  characters are not placed in the kill buffer,
+therefore the text is effectively lost (this does not effect the
 .Ht undo 2
 operation).
 .PP

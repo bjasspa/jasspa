@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd084.2,v 2.7 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd084.2,v 2.8 2006-07-28 16:35:02 jon Exp $
 .Im MicroEmacs command|bind
 .so me.tni
 .TH buffer-bind-key 2
@@ -39,8 +39,8 @@ The message line input is not effected by the current buffers local bindings.
 .PP
 .B buffer-unbind-key
 unbinds a user  created  local key  binding,  this  command  effects  only the
-current  buffer. If a \-ve argument is given to  \fBbuffer-unbind-key\fR  then
-all the current buffer's bindings are removed.
+current  buffer. If a negative  argument  is given to  \fBbuffer-unbind-key\fR
+then all the current buffer's bindings are removed.
 .SH NOTES
 The prefix commands cannot be rebound with this command.
 .PP

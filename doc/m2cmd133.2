@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd133.2,v 2.6 2002-10-16 22:28:04 jon Exp $
+.Id $Id: m2cmd133.2,v 2.7 2006-07-28 16:35:01 jon Exp $
 .Im MicroEmacs command|bind
 .so me.tni
 .TH translate-key 2
@@ -26,7 +26,7 @@ evaluate  keyboard  bindings, so it may be used to solve a variety of keyboard
 problems  such as special  language  characters  and UNIX termcap key sequence
 bindings (see below).
 .PP
-If a +ve  numeric  argument  \fIn\fR  is  given  it is used to set the time in
+If a positive  numeric argument \fIn\fR is given it is used to set the time in
 milliseconds  \*(mS waits for another key to be pressed before continuing, the
 default time use when no argument is supplied is 250ms.
 .PP
@@ -172,11 +172,11 @@ translate-key "esc [ 5 ^" "C-page-up"
 .CE 0
 .Me $ehf-scheme
 .SH EXAMPLE
-Using the +ve numeric argument it is possible to reduce the delay and there by
-increase usability is some features. For instance, in the Mouse  configuration
-of  \fBuser-setup\fR  there  is  an  option  to  'Simulate  3  Buttons'  which
-translates  a rapid left and right  button press into a middle  button  press.
-This is implemented using \fBtranslate-key\fR as follows:
+Using the  positive  numeric  argument  it is possible to reduce the delay and
+there by increase  usability  is some  features.  For  instance,  in the Mouse
+configuration of  \fBuser-setup\fR  there is an option to 'Simulate 3 Buttons'
+which  translates  a rapid left and right  button  press into a middle  button
+press. This is implemented using \fBtranslate-key\fR as follows:
 .Me $emf-scheme
 .CS
 10 translate-key "mouse-pick-1 mouse-pick-3" "mouse-pick-2"
@@ -193,8 +193,9 @@ too  long. By  giving  a  argument  of 10ms  the  delay is long  enough  for a
 simultaneous  left and right button press but short enough for the left button
 to still be usable on its own.
 .PP
-The +ve numeric  argument  can be very useful for delaying  \*(mS as well, for
-example, the character  string "\fC'e\fR" can be converted to e-accute using
+The positive  numeric  argument can be very useful for delaying \*(mS as well,
+for example, the  character  string  "\fC'e\fR"  can be  converted to e-accute
+using
 .Ht expand-iso-accents 3 .
 This could be performed automatically using translate-key as follows:
 .Me $emf-scheme

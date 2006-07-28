@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd035.2,v 2.8 2006-03-09 20:51:29 bill Exp $
+.Id $Id: m2cmd035.2,v 2.9 2006-07-28 16:35:04 jon Exp $
 .Im MicroEmacs command|delete
 .ds C0 "(\fB\*ed\fR)\ \&
 .ds C1 "(\fB\*e\*(bS\fR)\ \&
@@ -35,7 +35,7 @@ deleted text is added to the kill buffer. See
 for a description of word  boundaries. If no argument \fIn\fR is given and the
 current  character is a non-word  character then only the characters  from the
 current  position to the start of the next word are  removed. If the  argument
-\fIn\fR is \fC0\fR the command has no effect. If a \-ve argument is specified,
+\fIn\fR is \fC0\fR the command has no effect. If a negative argument is specified,
 \fIn\fR words are deleted backwards (i.e. this is the same as 
 .BR "-n backward-kill-word" ).
 .PP
@@ -47,13 +47,13 @@ added to the kill  buffer. The  numeric  argument has the same  effect as with
 .B backward-kill-word
 is also bound to \fB\*e\*(bS\fR.
 .PP
-The \-ve argument is typically  used by macro scripts where the kill buffer is
-more precisely controlled.
+The negative argument is typically used by macro scripts where the kill buffer
+is more precisely controlled.
 .SH HISTORY
-The  interpretation  of the numeric  argument  was changed in the 2005 release
-to kill  \fIn\fR  words in a forwards  or  backwards  direction.  In  previous
-releases  then the \-ve  argument  controlled  the kill  buffer  behavior.  If
-kill buffer control is required then 
+The  interpretation of the numeric argument was changed in the 2005 release to
+kill \fIn\fR words in a forwards or backwards  direction. In previous releases
+then the negative argument controlled the kill buffer behavior. If kill buffer
+control is required then 
 .Ht kill-region 2
 should be used instead.
 .SH "SEE ALSO"

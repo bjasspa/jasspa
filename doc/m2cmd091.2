@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd091.2,v 2.6 2002-10-16 22:28:04 jon Exp $
+.Id $Id: m2cmd091.2,v 2.7 2006-07-28 16:35:02 jon Exp $
 .Im MicroEmacs command|buffer
 .ds C0 "(\fB\*(cXx\fR)\ \&
 .ds C1 "(\fB\*(cXb\fR)\ \&
@@ -37,13 +37,13 @@ than the number of buffers is specified then the command fails.
 .B find-buffer
 switches to buffer  "\fIbuffer-name\fR"  in the current  window. If the buffer
 does not exist and a zero argument \fIn\fR is supplied then the command fails.
-If the buffer  does not exist but no  argument  or a +ve  argument  \fIn\fR is
+If the buffer does not exist but no argument or a positive argument \fIn\fR is
 specified  then a new  buffer is  created,  at which  point the  file-hook  is
 evaluated.
 .PP
-If a -ve argument \fIn\fR is given to  \fBfind-buffer\fR  then the buffer will
-be hidden. Any window displaying  "\fIbuffer-name\fR" will find another buffer
-to display. This functionality is often used with the
+If a negative argument \fIn\fR is given to  \fBfind-buffer\fR  then the buffer
+will be hidden. Any window  displaying  "\fIbuffer-name\fR"  will find another
+buffer to display. This functionality is often used with the
 .Ht hide 2m
 buffer mode. If a value of -1 is given then the buffer will not be hidden in a
 window whose

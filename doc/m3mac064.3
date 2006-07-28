@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac064.3,v 1.15 2005-06-12 12:11:35 jon Exp $
+.Id $Id: m3mac064.3,v 1.16 2006-07-28 16:35:00 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH buffer-init 3
@@ -929,9 +929,10 @@ speed the search string should include a regular  expression start or end line
 character whenever possible. i.e. in C the close is defined as "\fC^}\fR".
 .IP "\fB.fhook-\fR\|\fIXXX\fR\|\fB-collapse-mopen\fR"
 An  integer  value  that  denotes  the number of lines to move in a forward or
-(\-ve)  backward  direction  from the  \fIstart\fR  line located by the search
-string to the  position  in the  buffer to be folded. If  default  value  when
-\fBmopen\fR is omitted is 0, starting the fold from the search string line.
+(negative  n) backward  direction  from the  \fIstart\fR  line  located by the
+search  string to the  position  in the buffer to be folded. If default  value
+when  \fBmopen\fR  is omitted is 0, starting  the fold from the search  string
+line.
 .IP "\fB.fhook-\fR\|\fIXXX\fR\|\fB-collapse-mclose\fR"
 The relative  displacement from the close fold line to the fold position, this
 is a positive or negative  displacement  depending  on where the fold is to be

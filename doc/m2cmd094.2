@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd094.2,v 2.6 2005-02-06 13:07:41 jon Exp $
+.Id $Id: m2cmd094.2,v 2.7 2006-07-28 16:35:02 jon Exp $
 .Im MicroEmacs command|cursor|paragraph
 .ds C0 "(\fB\*en\fR)\ \&
 .ds C1 "(\fB\*ep\fR)\ \&
@@ -28,13 +28,13 @@ backward-paragraph \- Move the cursor to the previous paragraph
 .B forward-paragraph
 moves  forwards  \fIn\fR  paragraphs.  The  cursor is placed at the end of the
 \fIn\fRth  paragraph at the start of the blank paragraph  separation line. The
-default  value  of  \fIn\fR  is 1, if  \fIn\fR  is -ve then the  direction  is
+default  value of \fIn\fR is 1, if \fIn\fR is negative  then the  direction is
 backwards.
 .PP
 .B backward-paragraph
 similarly  moves  backwards  \fIn\fR  paragraphs.  The cursor is placed at the
 start of the blank paragraph  separation line. The default value of \fIn\fR is
-1, if \fIn\fR is -ve then the direction is forwards.
+1, if \fIn\fR is negative then the direction is forwards.
 .SH DIAGNOSTICS
 .PP
 The  following  errors can be  generated,  in each case the command  returns a

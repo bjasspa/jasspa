@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Jul 25 00:00:27 1998
 .\"
-.Id $Id: m2cmd033.2,v 2.12 2005-02-10 22:45:13 jon Exp $
+.Id $Id: m2cmd033.2,v 2.13 2006-07-28 16:35:04 jon Exp $
 .Im MicroEmacs command|indent|scuts
 .so me.tni
 .TH indent 2
@@ -545,9 +545,9 @@ are the same as at used by hilight token creation, see
 for more information.
 .PP
 The  \fIindent\fR  argument  specifies the indent to apply in characters.  The
-indent may be specified as a literal  integer value, a +ve value increases the
-indent a \-ve value reduces the indent. The  \fIindent\fR  may be specified in
-terms of buffer specific generic value
+indent may be specified as a literal integer value, a positive value increases
+the indent a negative  value  reduces  the  indent.  The  \fIindent\fR  may be
+specified in terms of buffer specific generic value
 .Ht $buffer-indent-width 5
 using the value  \fBt\fR,  indicating a tab width. The value of \fBt\fR may be
 prefixed with a signed  integer or vulgar  fraction  which adjusts the size of

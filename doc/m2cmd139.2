@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd139.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd139.2,v 2.6 2006-07-28 16:35:01 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .ds C0 "(\fB\*(rD\fR)\ \&
 .so me.tni
@@ -20,7 +20,7 @@ screen-update \- Force screen update
 .B screen-update
 updates the current  screen,  usually used in macros. The argument  \fIn\fR
 can be used to change the behaviour of this command as follows:
-.IP \fC-ve\fR
+.IP "\fInegative n\fR"
 Disables the next  -\fIn\fR  screen  updates, i.e. if \fIn\fR is \fC-1\fR then
 the next time the screen needs to be redrawn nothing will happen.
 .IP \fC0\fR

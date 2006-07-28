@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var036.5,v 2.5 2002-01-11 21:58:43 jon Exp $
+.Id $Id: m5var036.5,v 2.6 2006-07-28 16:34:59 jon Exp $
 .Im MicroEmacs variable|shell
 .so me.tni
 .TH $rcs-file 5
@@ -101,10 +101,10 @@ command line. For example, one possible \fB$rcs-ci-com\fR setting is
 .Hr ci 1
 program with the \fB-m\fR option to give a check in message.
 .PP
-If  \fBrcs-file\fR  is given a \-ve argument instead of checking in or out the
-current buffer's file it executes the command  specified by  \fB$rcs-ue-com\fR
-to unedit or abort any  changes  made to the file. After the  command has been
-executed the file is reloaded. 
+If  \fBrcs-file\fR is given a negative  argument instead of checking in or out
+the   current   buffer's   file  it   executes   the  command   specified   by
+\fB$rcs-ue-com\fR  to unedit or abort any changes  made to the file. After the
+command has been executed the file is reloaded. 
 .SH NOTES
 The  \s-1RCS\s0  variables  are by  default  undefined  and must be explicitly
 enabled in the start-up files.
