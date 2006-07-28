@@ -132,6 +132,7 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
     1 create-frame
     set-variable .notes.frame-id $frame-id
 *get-windows
+    set-variable #l2 $window-id
     6 next-window
     set-variable #l0 $window-id
     set-variable #l1 &sub $window-mode-line $window-depth
@@ -139,7 +140,9 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
     !if &and $status &equ #l1 &sub $window-mode-line $window-depth
         !force 2 next-window
         !if &not $status
-            6 next-window
+            !if &or @# &sub #l2 $window-id
+                6 next-window
+            !endif
             !return
         !endif
     !endif
@@ -1204,10 +1207,18 @@ define-macro notes
     ; See if user already has a notes file loaded
     !force 0 notes-get-frame
     !if $status
-        !force 0 find-buffer .current
-        !if &and $status &exi :notes-cur
-            notes-create-display
-            !return
+        set-variable #l0 $window-id
+        6 next-window
+        !force 0 find-buffer &cat "*" .notes.current
+        !if $status
+            2 next-window
+            !force 0 find-buffer .current
+            !if &and $status &exi :notes-cur
+                !if &sub #l0 $window-id
+                    6 next-window
+                !endif
+                !return
+            !endif
         !endif
         notes-close
     !endif
