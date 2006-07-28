@@ -1859,7 +1859,7 @@ define-macro cvs
 !emacro
 
 0 define-macro cvs-setup-checkbox
-    set-variable #l2 &cat "/history/cvs/" &lget "|q|browse-mode|opt-R|opt-d|opt-P|" &abs @#
+    set-variable #l2 &cat "/history/cvs/" &lget "|q|browse-mode|opt-R|opt-d|opt-P|en-strt|" &abs @#
     set-variable #l0 &lget "|0|0|1|0|0|" &abs @#
     set-variable #l0 &reg #l2 #l0
     !if &les @# 0
@@ -1889,20 +1889,17 @@ define-macro cvs
 !emacro
 
 -1 osd .osd.cvsstp
-osd .osd.cvsstp 0 "batcDHs" 5 4 74 4 -1 -1 2020 .scheme.osd-title "CVS Setup"
+osd .osd.cvsstp 0 "batcDHs" 5 4 62 4 -1 -1 2020 .scheme.osd-title "CVS Setup"
 set-variable #l2 10
 osd .osd.cvsstp &inc #l2 1 "" ""
 osd .osd.cvsstp &inc #l2 1 "" "  CVS Command Setup"
 osd .osd.cvsstp &inc #l2 1 "" ""
-osd .osd.cvsstp &inc #l2 1 "Sfh" "        CVS\HROOT: " &add #l2 1
-osd .osd.cvsstp &inc #l2 1 "EtxHfz" .scheme.osd-entry 50 1 "" 1 cvs-setup-entry
-osd .osd.cvsstp &inc #l2 1 "" ""
-osd .osd.cvsstp &inc #l2 1 "Sfh" "        CVS_R\HSH: " &add #l2 2
-osd .osd.cvsstp &inc #l2 1 "EtxHfz" .scheme.osd-entry 50 1 "" 2 cvs-setup-entry
-osd .osd.cvsstp &inc #l2 1 "" ""
+osd .osd.cvsstp &inc #l2 1 "Sfh" "    CVS\HROOT:     " &add #l2 1
+osd .osd.cvsstp &inc #l2 1 "EtxHfz" .scheme.osd-entry 38 1 "" 1 cvs-setup-entry
+osd .osd.cvsstp &inc #l2 1 "Sfh" "    CVS_R\HSH:     " &add #l2 2
+osd .osd.cvsstp &inc #l2 1 "EtxHfz" .scheme.osd-entry 38 1 "" 2 cvs-setup-entry
 osd .osd.cvsstp &inc #l2 1 "Sfh" "    CVS \HCommand: " &add #l2 2
-osd .osd.cvsstp &inc #l2 1 "EtxHfz" .scheme.osd-entry 50 1 "" 3 cvs-setup-entry
-osd .osd.cvsstp &inc #l2 1 "" ""
+osd .osd.cvsstp &inc #l2 1 "EtxHfz" .scheme.osd-entry 38 1 "" 3 cvs-setup-entry
 osd .osd.cvsstp &inc #l2 1 "Sfh" "    Compr\Hession: " &add #l2 1
 osd .osd.cvsstp &inc #l2 1 "OtxmsfhHzR" .scheme.osd-entry 16 1 "" .osd.tmp cvs-setup-compression
 osd .osd.cvsstp &inc #l2 1 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 &sub #l2 1
@@ -1910,12 +1907,12 @@ osd .osd.cvsstp &inc #l2 1 "" ""
 osd .osd.cvsstp &inc #l2 1 "fh" "    "
 osd .osd.cvsstp &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HQuieter CVS output" 1 cvs-setup-checkbox
 osd .osd.cvsstp &inc #l2 1 "" ""
-osd .osd.cvsstp &inc #l2 1 "" ""
 osd .osd.cvsstp &inc #l2 1 "" "  CVS File Browser"
 osd .osd.cvsstp &inc #l2 1 "" ""
 osd .osd.cvsstp &inc #l2 1 "fh" "    "
+osd .osd.cvsstp &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Enable Support on Start-Up" 6 cvs-setup-checkbox
+osd .osd.cvsstp &inc #l2 1 "fh" "    "
 osd .osd.cvsstp &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Quick \Hbrowser mode" 2 cvs-setup-checkbox
-osd .osd.cvsstp &inc #l2 1 "" ""
 osd .osd.cvsstp &inc #l2 1 "" ""
 osd .osd.cvsstp &inc #l2 1 "" "  Tool Defaults"
 osd .osd.cvsstp &inc #l2 1 "" ""
