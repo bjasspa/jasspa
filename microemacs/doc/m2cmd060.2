@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd060.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd060.2,v 2.6 2006-07-28 16:35:04 jon Exp $
 .Im MicroEmacs command|cursor
 .ds C0 "(\fB\*eg\fR)\ \&
 .so me.tni
@@ -29,8 +29,8 @@ an absolute line number  (\fInumber\fR).  If the number is preceded by \fC+\fR
 or \fC\-\fR then this is treated as a relative  displacement  from the current
 line, otherwise it is an absolute line number.
 .PP
-If a +ve  argument  \fIn\fR is supplied,  \fBgoto-line\fR  moves to this line,
-e.g. to move the cursor to line 240:
+If a positive  argument  \fIn\fR is  supplied,  \fBgoto-line\fR  moves to this
+line, e.g. to move the cursor to line 240:
 .Me $emf-scheme
 .CS
 240 goto-line
@@ -46,7 +46,7 @@ expanded. See
 .Ht narrow-buffer 2
 for more information on narrowing.
 .PP
-Supplying a \-ve argument to goto-line results in an error.
+Supplying a negative argument to goto-line results in an error.
 .SH NOTES
 After successfully calling goto-line, variable
 .Ht $window-line 5

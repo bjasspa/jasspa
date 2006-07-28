@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd082.2,v 2.7 2005-01-16 16:47:35 jon Exp $
+.Id $Id: m2cmd082.2,v 2.8 2006-07-28 16:35:02 jon Exp $
 .Im MicroEmacs command|delete
 .ds C0 "(\fB\*ck\fR)\ \&
 .so me.tni
@@ -26,8 +26,8 @@ placed in the kill buffer, see
 for more  information  on the kill buffer. If the line is blank then the whole
 line is deleted, including the end of line character.
 .PP
-If a +ve  argument  \fIn\fR  is  supplied  the  specified  number of lines are
-deleted. If a \-ve  argument is  specified  the  previous  -\fIn\fR  lines are
+If a positive  argument \fIn\fR is supplied the specified  number of lines are
+deleted. If a negative  argument is specified the previous  -\fIn\fR lines are
 deleted. If \fIn\fR is \fC0\fR the command has no effect.
 .SH NOTES
 If a line is accidentally removed then use
@@ -48,12 +48,12 @@ behavior of the command.
 .Me $ehf-scheme
 .SH HISTORY
 The behavior of \fBkill-line\fR was modified in November 2004. \fBkill-line\fR
-now interprets the numeric  argument  \fIn\fR in both a +ve and -ve direction.
-The  existing  implementation  did not  operated in a -ve  direction,  the -ve
-argument controlled the kill buffer behavior of the line. The kill behavior is
-no longer an option to \fBkill-line\fR and the line(s) are always added to the
-kill buffer,  control of the kill buffer is required  then deletion  should be
-performed with
+now  interprets the numeric  argument  \fIn\fR in both a positive and negative
+direction.  The  existing  implementation  did  not  operated  in  a  negative
+direction, the negative  argument  controlled the kill buffer  behavior of the
+line. The kill  behavior  is no  longer an option to  \fBkill-line\fR  and the
+line(s) are always  added to the kill  buffer,  control of the kill  buffer is
+required then deletion should be performed with
 .Ht kill-region 2 .
 .PP
 The behavior of the end of line kill used to be controlled by a

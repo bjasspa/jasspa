@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd087.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd087.2,v 2.6 2006-07-28 16:35:02 jon Exp $
 .Im MicroEmacs command|window
 .ds C0 "(\fB\*cn\fR)\ \&
 .ds C1 "(\fB\*cp\fR)\ \&
@@ -28,12 +28,12 @@ scroll-up \- Move the window up (scrolling)
 .B scroll-down
 moves the window in the current buffer down by \fIn\fR lines, the default when
 \fIn\fR is omitted is 1 windows  worth of lines i.e. a next page  operation. A
-\-ve value of \fIn\fR causes the window to move up.
+negative value of \fIn\fR causes the window to move up.
 .PP
 .B scroll-up
 moves the  window in the  current  buffer up by \fIn\fR  lines,  default  when
 \fIn\fR  is  omitted  is 1  windows  worth  of  lines,  i.e. a  previous  page
-operation. A \-ve value of \fIn\fR causes the window to move down.
+operation. A negative value of \fIn\fR causes the window to move down.
 .SH "SEE ALSO"
 .na
 .Ht scroll-left 2 ,

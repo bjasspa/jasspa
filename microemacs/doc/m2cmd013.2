@@ -3,7 +3,7 @@
 .\" Copyright (c) 1988-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd013.2,v 2.7 2002-01-11 21:58:41 jon Exp $
+.Id $Id: m2cmd013.2,v 2.8 2006-07-28 16:35:05 jon Exp $
 .Im MicroEmacs command|bind
 .ds C0 "(\fB\*ek\fR)\ \&
 .ds C1 "(\fB\*e\*ck\fR)\ \&
@@ -53,10 +53,10 @@ command,   the   prefix   binding   and   any    sub-bindings   are   removed.
 \fBglobal-bind-key\fR  calls  \fBglobal-unbind-key\fR  first  if the key to be
 bound is already bound to something else.
 .PP
-If a \-ve argument is given to  \fBglobal-unbind-key\fR  then all bindings are
-removed,  \fBcaution\fR - removing all bindings  interactively will render the
-current \*(mS session unusable. This can only be used within macro development
-where new bindings are created immediately afterwards.  
+If a negative argument is given to  \fBglobal-unbind-key\fR  then all bindings
+are removed,  \fBcaution\fR - removing all bindings  interactively will render
+the  current  \*(mS  session  unusable.  This  can only be used  within  macro
+development where new bindings are created immediately afterwards. 
 .PP
 The \fBglobal-bind-key\fR  command, currently bound to \fC\*ek\fR, prompts the
 user for the named  command  and the key to which it is to be bound. This help

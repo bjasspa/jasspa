@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd027.2,v 2.6 2002-10-16 22:28:04 jon Exp $
+.Id $Id: m2cmd027.2,v 2.7 2006-07-28 16:35:04 jon Exp $
 .Im MicroEmacs command|hilight
 .so me.tni
 .TH change-font 2
@@ -162,9 +162,9 @@ Time to start digging out your graphics card manual!
 The Microsoft  Windows  environments  utilize font files to drive the display.
 When
 .B change-font
-is  invoked  with  no  arguments,  or a \-ve  argument  then a font  dialog  is
-presented  to the user to allow the font to be  selected.  The current font is
-not changed if a \-ve argument is given, in both cases the variable
+is invoked with no  arguments,  or a negative  argument  then a font dialog is
+presented  to the user to allow the font to be selected.  The current  font is
+not changed if a negative argument is given, in both cases the variable
 .Ht $result 5
 is set the the user  selected  font. The format of the  returned  string is
 "\fCOWwwwwhhhhhFontName\fR", where:-
@@ -179,7 +179,7 @@ The font height.
 .IP \fBFontName\fR
 The font name.
 .PP
-If a +ve argument is specified with
+If a positive argument is specified with
 .B change-font
 then the arguments are explicitly entered, arguments are defined as follows:-
 .IP \fIfont\fR

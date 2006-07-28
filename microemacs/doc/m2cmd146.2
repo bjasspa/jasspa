@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd146.2,v 2.6 2005-01-19 00:10:58 jon Exp $
+.Id $Id: m2cmd146.2,v 2.7 2006-07-28 16:35:01 jon Exp $
 .Im MicroEmacs command|insert
 .ds C0 "(\fB\*cy\fR)\ \&
 .so me.tni
@@ -31,8 +31,8 @@ then the  \fIyanked\fR  text is replaced by text of the next entry in the kill
 ring. (another  \fBreyank\fR  replaces the text with the previous  reyank text
 and so on).
 .PP
-If an \-ve argument is given, \fByank\fR removes the last 0-\fIn\fR items from
-the kill ring.
+If an negative argument is given, \fByank\fR  removes the last 0-\fIn\fR items
+from the kill ring.
 .PP
 Text is inserted into the kill buffer by one of the following commands:-
 .IP

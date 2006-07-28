@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd076.2,v 2.6 2006-03-09 20:53:50 bill Exp $
+.Id $Id: m2cmd076.2,v 2.7 2006-07-28 16:35:03 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH insert-string 2
@@ -37,11 +37,11 @@ special escape characters are interpreted in the \fIstring\fR, as follows:
 .ad
 .fi
 .SH "NOTES"
-If a -ve argument \fIn\fR is given to \fBinsert-string\fR  the given string
-is inserted 0-\fIn\fR times into the buffer. The behavior is the same as if a
-+ve argument is given except that if the string contains a new-line  character
-(ascii char 0x0a), rather than  splitting  the string over multiple  lines the
-character is inserted into a single line of the buffer.
+If a  negative  argument  \fIn\fR  is given to  \fBinsert-string\fR  the given
+string is inserted  0-\fIn\fR  times into the buffer. The behavior is the same
+as if a  positive  argument  is given  except  that if the  string  contains a
+new-line  character  (ascii char 0x0a), rather than  splitting the string over
+multiple lines the character is inserted into a single line of the buffer.
 .PP
 This is highly  irregular  and can break \*(mS (for example
 .Ht undo 2

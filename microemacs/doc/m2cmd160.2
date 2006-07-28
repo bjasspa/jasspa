@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd160.2,v 2.6 2006-03-17 16:53:26 bill Exp $
+.Id $Id: m2cmd160.2,v 2.7 2006-07-28 16:35:00 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH command-wait 2
@@ -17,8 +17,8 @@ command-wait \- Conditional wait command
 .B command-wait
 .ad
 .SH DESCRIPTION
-When a +ve  argument  \fIn\fR is given  \fBcommand-wait\fR  waits for  \fIn\fR
-milliseconds  before  returning,  this wait  cannot be  interrupted.  If a -ve
+When a positive argument \fIn\fR is given \fBcommand-wait\fR waits for \fIn\fR
+milliseconds  before returning, this wait cannot be interrupted. If a negative
 argument is given, \fBcommand-wait\fR waits for \-\fIn\fR milliseconds but the
 command  will  return if the user  interrupts  with any input  activity  (i.e.
 presses a key).
