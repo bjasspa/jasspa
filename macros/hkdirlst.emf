@@ -127,8 +127,8 @@ define-macro fhook-dirlst
 set-variable .fhook-dirlst.name "Directory List"
 set-variable .fhook-dirlst.setup &reg "/history/fhook/dirlst" "ghmop"
 set-variable .fhook-dirlst.setup-mask    "aceghlopq"
-set-variable .fhook-dirlst.setup-flags   "|q|l|c|r|"
-set-variable .fhook-dirlst.setup-labels  "|Use OFM Standard key bindings|Enable filter by default|CVS menu always available|ClearCase menu always available|"
+set-variable .fhook-dirlst.setup-flags   "|q|l|"
+set-variable .fhook-dirlst.setup-labels  "|Use OFM Standard key bindings|Enable filter by default|"
 set-variable .fhook-dirlst.command-flag  "|thbio|thbio|thbio|thbio|bio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|h|thbio|thbio|thbio|thbio|thbio|thbio|thbio|thbio|bio|thbio|thbio|h|t|"
 set-variable .fhook-dirlst.command-name  "|file-browser-swap-buffers|file-browser-close|dirlist-up-dir|dirlst-refresh|dirlst-refresh|file-browser-set-filter|dirlst-search|dirlst-search||dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list||dirlst-tag-toggle|dirlst-tag-mask|dirlst-tag-mask|dirlst-tag-invert|dirlst-tag-set|dirlst-tag-set||dirlst-find-file||dirlst-find-file|dirlst-tag-open|dirlst-find-file|dirlst-file-rename|dirlst-tag-file-copy|dirlst-tag-file-copy|dirlst-new-folder|dirlst-tag-file-delete|dirlst-tag-file-delete|file-tool-menu|dirlst-tag-execute||file-tool-setup|"
 set-variable .fhook-dirlst.command-nbind "||||||-1||0||5|6|4|3|2|1|||1|-1||1|-1||5||1||0||1|0||||||||"
@@ -645,11 +645,13 @@ define-macro file-browser-swap-buffers
     !endif
 !emacro
 0 define-macro dirlist-up-dir
-    !if &set #l0 &rsin "/" &lef $buffer-fname &sub &len $buffer-fname 1
+    !if &set #l0 &rsin "/" &lef $buffer-fname -1
         set-variable #l1 &lef $buffer-fname #l0
         ; if this is the 2nd / of a double / (e.g. current fname is //machine/ or ftp://site/) then fail
         !if &not &seq $mid #l1 &sub #l0 2 1 "/"
+            set-variable #l2 &rig $buffer-fname #l0
             3 dirlst-find-file #l1
+            dirlst-goto-filename #l2
         !endif
     !endif
 !emacro
@@ -1974,10 +1976,10 @@ osd .osd.dirlst 160 ""  "File Tools Setup"      f file-tool-setup
 !emacro
 set-variable .toolbar-file-list-create.filter 1
 
-!if &sin "c" .fhook-dirlst.setup
+!if &reg "/history/cvs/en-strt" "0"
     cvs-init
 !endif
-!if &sin "r" .fhook-dirlst.setup
+!if &reg "/history/clearcase/en-strt" "0"
     cc-init
 !endif
 buffer-init-fhook "dirlst"

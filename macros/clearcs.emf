@@ -48,7 +48,6 @@
         cc-checkin
     !endif
 !emacro
-global-bind-key cc-coci "C-x C-q"
 
 set-variable .cc-init.com &reg &spr "/history/%s/clearcase/com" $platform "cleartool"
 set-variable .cc-init.path &reg &spr "/history/%s/clearcase/path" $platform ""
@@ -2010,6 +2009,15 @@ define-macro cc-add-view
         !abort
     !endif
 !emacro
+0 define-macro cc-setup-gcbc
+    set-variable #l0 &cat "/history/clearcase/" &lget "|en-strt|rep-rcs|" &abs @#
+    set-variable #l1 &reg #l0 "0"
+    !if &les @# 0
+        set-registry #l0 &bxor #l1 1
+    !elif &not #l1
+        !abort
+    !endif
+!emacro
 
 0 define-macro cc-setup-page
     osd .osd.cctlc &lget .order .cur "RxBd" &lget .cc-init.names .cur .cur cc-setup-page
@@ -2122,7 +2130,6 @@ set-variable #l9 .cc-init.count
     !endif
 !until &not &dec #l9 1
 
--1 osd .osd.cctll
 osd .osd.cctll 0 "s" 17 16 -1 -1
 osd .osd.cctll 10 "" ""
 osd .osd.cctll 20 "S" "  Select Tool:" 50
@@ -2131,32 +2138,31 @@ osd .osd.cctll 50 "IbHt" .scheme.osd-sbar 10 12 .osd.cctlc
 
 5 cc-setup-page
 
--1 osd .osd.cctl
 osd .osd.cctl 0 "s" 66 16 -1 -1
 osd .osd.cctl 20 "Ith" .osd.cctll
 osd .osd.cctl 40 "It" .osd.cctlo
 
--1 osd .osd.ccgen
 osd .osd.ccgen 0 "s" 66 16 -1 -1
-osd .osd.ccgen 10 "" ""
-osd .osd.ccgen 20 "Sfh" "  \HCleartool Command: " 30
-osd .osd.ccgen 30 "EtxHfz" .scheme.osd-entry 42 1 "" 1 cc-setup-entry
-osd .osd.ccgen 40 "" ""
-osd .osd.ccgen 50 "Sfh" "  Version \HSeparator: " 60
-osd .osd.ccgen 60 "EtxHfz" .scheme.osd-entry 10 1 "" 2 cc-setup-entry
-osd .osd.ccgen 70 "" ""
-osd .osd.ccgen 80 "fh" "  \HViews:             "
-osd .osd.ccgen 90 "BtfHx" .scheme.osd-ebtt " \HAdd " f cc-setup-add-view
-osd .osd.ccgen 100 "fh" "  "
-osd .osd.ccgen 110 "IbHt" .scheme.osd-sbar 60 7 .osd.ccgenv
+osd .osd.ccgen 10  "" ""
+osd .osd.ccgen 20  "Sfh" "  \HCleartool Command: " 30
+osd .osd.ccgen 30  "EtxHfz" .scheme.osd-entry 42 1 "" 1 cc-setup-entry
+osd .osd.ccgen 40  "Sfh" "  Version \HSeparator: " 60
+osd .osd.ccgen 50  "EtxHfz" .scheme.osd-entry 10 1 "" 2 cc-setup-entry
+osd .osd.ccgen 60  "" ""
+osd .osd.ccgen 70  "fh" "    "
+osd .osd.ccgen 80  "Cptfhx" &cat .osd.checkbox-chars "\} \HEnable Support on Start-Up    " 1 cc-setup-gcbc
+osd .osd.ccgen 90  "Cptfx"  &cat .osd.checkbox-chars "\} \HReplace RCS Support" 2 cc-setup-gcbc
+osd .osd.ccgen 100 "" ""
+osd .osd.ccgen 110 "fh" "  \HViews:             "
+osd .osd.ccgen 120 "BtfHx" .scheme.osd-ebtt " \HAdd " f cc-setup-add-view
+osd .osd.ccgen 130 "fh" "  "
+osd .osd.ccgen 140 "IbHt" .scheme.osd-sbar 60 7 .osd.ccgenv
 
--1 osd .osd.ccnb
 osd .osd.ccnb 0 "NsI" 68 20 -1 -1 1
 osd .osd.ccnb 1 "Pft" "General" .osd.ccgen
 osd .osd.ccnb 2 "Pft" "Tools" .osd.cctl
 osd .osd.ccnb 100 "It" .osd.ccgen
 
--1 osd .osd.ccstp
 osd .osd.ccstp 0 "batcDIHs" 5 4 70 24 -1 -1 2010 100 .scheme.osd-title "ClearCase Setup"
 osd .osd.ccstp 100 "It" .osd.ccnb
 osd .osd.ccstp 2000 ""
