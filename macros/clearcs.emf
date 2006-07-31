@@ -454,6 +454,10 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
         !if &seq .cc-init.cominit .cc-init.comment
             set-variable .cc-init.comment ""
         !endif
+        set-variable .cc-init.comquot &rep &rep &trb .cc-init.comment "\\" "\\\\" "\"" "\\\""
+        !if &seq &rig $SHELL -3 "csh"
+            set-variable .cc-init.comquot &rep .cc-init.comquot "\n" "\\\n"
+        !endif
     !endif
     set-variable &ind &cat ".cc-init.values" @# .values
 !emacro
@@ -1294,7 +1298,7 @@ define-macro cc-checkout
     !if &seq .cc-init.comment ""
         set-variable #l2 &cat #l2 "-nc "
     !else
-        set-variable #l2 &spr "%s-c \"%s\" " #l2 &rep &rep &trb .cc-init.comment "\\" "\\\\" "\"" "\\\""
+        set-variable #l2 &spr "%s-c \"%s\" " #l2 .cc-init.comquot
     !endif
     set-variable .cc-init.comment3 .cc-init.comment
     7 cc-get-file-list 0 0 #l2
@@ -1317,7 +1321,7 @@ define-macro cc-checkin
     !if &seq .cc-init.comment ""
         set-variable #l2 &cat #l2 "-nc "
     !else
-        set-variable #l2 &spr "%s-c \"%s\" " #l2 &rep &rep &trb .cc-init.comment "\\" "\\\\" "\"" "\\\""
+        set-variable #l2 &spr "%s-c \"%s\" " #l2 .cc-init.comquot
     !endif
     set-variable .cc-init.comment4 .cc-init.comment
     7 cc-get-file-list 0 0 #l2
@@ -1345,7 +1349,7 @@ define-macro cc-add
     !if &seq .cc-init.comment ""
         set-variable #l2 &cat #l2 "-nc"
     !else
-        set-variable #l2 &spr "%s-c \"%s\"" #l2 &rep &rep &trb .cc-init.comment "\\" "\\\\" "\"" "\\\""
+        set-variable #l2 &spr "%s-c \"%s\"" #l2 .cc-init.comquot
     !endif
     set-variable .cc-init.comment5 .cc-init.comment
     set-variable #l5 &sub .cc-get-file-list.fcount .cc-get-file-list.dcount
@@ -1621,7 +1625,7 @@ define-macro cc-delete
     !if &seq .cc-init.comment ""
         set-variable #l2 &cat #l2 "-nc "
     !else
-        set-variable #l2 &spr "%s-c \"%s\" " #l2 &rep &rep &trb .cc-init.comment "\\" "\\\\" "\"" "\\\""
+        set-variable #l2 &spr "%s-c \"%s\" " #l2 .cc-init.comquot
     !endif
     set-variable .cc-init.comment9 .cc-init.comment
     7 cc-get-file-list 0 0 #l2
@@ -1646,7 +1650,7 @@ define-macro cc-move
     !if &seq .cc-init.comment ""
         set-variable #l2 &cat #l2 "-nc "
     !else
-        set-variable #l2 &spr "%s-c \"%s\" " #l2 &rep &rep &trb .cc-init.comment "\\" "\\\\" "\"" "\\\""
+        set-variable #l2 &spr "%s-c \"%s\" " #l2 .cc-init.comquot
     !endif
     set-variable .cc-init.comment10 .cc-init.comment
     7 cc-get-file-list 0 0 #l2
@@ -1703,7 +1707,7 @@ define-macro cc-merge
     !if &seq .cc-init.comment ""
         set-variable #l3 &cat #l3 "-nc"
     !else
-        set-variable #l3 &spr "%s-c \"%s\"" #l3 &rep &rep &trb .cc-init.comment "\\" "\\\\" "\"" "\\\""
+        set-variable #l3 &spr "%s-c \"%s\"" #l3 .cc-init.comquot
     !endif
     set-variable .cc-init.comment13 .cc-init.comment
     find-buffer "*cc-cmdline*"
