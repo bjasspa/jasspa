@@ -240,18 +240,19 @@ hilight .hilight.zfile 0x44 "\eE" "" "\\}\e" "" "" .scheme.file
 ; Extract a file from a compressed single file archive
 ; 
 0 define-macro zfile-extract
-    set-variable #l4 @1
-    !if &seq "" &set #l9 &reg &spr "/history/%s/zfile/%s-extract" $platform @2 ""
-        ml-write &spr "[find-zfile error: Registry entry \"/history/%s/%s-extract\" not setup]" $platform @2
+    set-variable #l4 &set #l7 @1
+    set-variable #l8 @2
+    !if &seq "" &set #l9 &reg &spr "/history/%s/zfile/%s-extract" $platform #l8 ""
+        ml-write &spr "[find-zfile error: Registry entry \"/history/%s/%s-extract\" not setup]" $platform #l8
         !abort
     !endif
     ; get a tmp file name and use the path of it as our scratch area
     ; use &stat to get '/'s in a windows and dos system
     set-variable #l0 &stat "a" $temp-name
-    set-variable #l0 &lef #l0 &ris "/" #l0
+    set-variable #l0 &lef #l0 &rsin "/" #l0
     ; create the output file name and check if it exists
-    set-variable #l2 &rig #l4 &ris "/" #l4
-    set-variable #l2 &lef #l2 &sub &len #l2 &add 1 &len @2
+    set-variable #l2 &rig #l4 &rsin "/" #l4
+    set-variable #l2 &lef #l2 &sub &len #l2 &add 1 &len #l8
     set-variable #l3 &cat #l0 #l2
     !if &seq &set #l5 &stat "t" #l3 "R"
         !if &iseq @mc1 &spr "Over-write file %s (y/n) ? " #l3 "yYnN" "n"
@@ -264,23 +265,25 @@ hilight .hilight.zfile 0x44 "\eE" "" "\\}\e" "" "" .scheme.file
     ; create a temporary buffer, set the filename to the path and kick off extract
     find-buffer "*zfile log*"
     set-variable $buffer-fname #l0
-    set-variable #l9 &rep #l9 "%zb" &rig #l4 &rsin "/" #l4 
+    set-variable #l9 &rep #l9 "%zb" &rig #l4 &rsin "/" #l4
     !if &band $system 0x100
         set-variable #l4 &rep #l4 "/" "\\"
     !endif
     set-variable #l9 &rep &rep #l9 "%zf" #l4 "%fb" #l3
     0 pipe-shell-command #l9 "*zfile log*" @mna
     find-file #l3 @mna
-    set-variable $buffer-fname ""
+    0 change-buffer-name &spr "*%s:%s" &rig #l7 &rsin "/" #l7 &rig #l3 &rsin "/" #l3
+    set-variable $buffer-fname &lef #l7 &rsin "/" #l7
     set-variable #l5 $buffer-bname
     find-buffer "*zfile log*"
     ; Get the remove action if there is one.
-    set-variable #l7 &reg &spr "/history/%s/zfile/%s-remove" $platform @2 ""
+    set-variable #l7 &reg &spr "/history/%s/zfile/%s-remove" $platform #l8 ""
     !if &not &seq #l7 ""
         shell-command &rep #l7 "%fb" #l3
     !endif
     set-variable $buffer-fname ""
     -1 find-buffer "*zfile log*"
+    find-buffer #l5
 !emacro
 
 0 define-macro zfile-mouse-pick-1
