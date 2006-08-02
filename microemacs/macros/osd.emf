@@ -78,8 +78,10 @@ define-macro-file osdhelp osd-help
     set-variable #l0 1
     !repeat
         !force 0 find-buffer &set #l1 &spr "new%d" #l0
-        !if &not $status
-            find-buffer #l1
+        !if $status
+        !elif &not &seq "X" &stat "t" &set #l2 &cat $user-path #l1 
+        !elif &seq "X" &stat "t" &cat #l2 "#" 
+            find-file #l2
             !return
         !endif
         set-variable #l0 &add #l0 1
@@ -201,6 +203,12 @@ define-macro-file osdhelp osd-help
     ; can't do registry and dictionaries in macro code
     2 save-registry @mna
     2 save-dictionary @mna
+    3 osd-xdialog "Save All" "  Save current session  " 1 10 8 " \HYes " " \HNo " " \HCancel "
+    !if &equ $result 3
+        !abort
+    !elif &equ $result 1
+        0 save-session
+    !endif
 !emacro
 0 define-macro osd-close
     !if &bmod "edit"
