@@ -384,7 +384,7 @@ define-macro read-session
     !endif
     set-variable #l9 @s1
     !if &not &band @# 6
-        !if &equ $frame-id .notes.frame-id
+        !if &seq $frame-id .notes.frame-id
             !force notes-close
             set-position "\x88"
         !endif
