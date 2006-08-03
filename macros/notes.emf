@@ -748,19 +748,19 @@ define-macro notes-tree-isearch-backward
         set-variable #l0 $window-id
         !if &not &equ $frame-id .notes.frame-id
         !elif &seq $buffer-bname .notes.current
+            set-variable #l1 &bmo "narrow"
             next-window
             set-variable .ok &seq $buffer-bname &cat "*" .notes.current
         !elif &seq $buffer-bname &cat "*" .notes.current
             next-window
+            set-variable #l1 &bmo "narrow"
             set-variable .ok &seq $buffer-bname .notes.current
         !endif
         !if .ok
             next-window
             set-variable .ok &equ #l0 $window-id
         !endif
-        !if .ok
-            goto-position "\x81"
-        !else
+        !if &not .ok
             !force set-position "\x81"
             !force 0 find-buffer .notes.current
             !if &not $status
@@ -768,6 +768,11 @@ define-macro notes-tree-isearch-backward
             !endif
             !force notes-close
             !force 0xbe goto-position "\x81"
+        !elif #l1
+            goto-position "\x81"
+        !else
+            notes-file .notes.current
+            screen-update
         !endif
     !endif
     set-variable .ok 0
