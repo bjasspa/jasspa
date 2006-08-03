@@ -310,16 +310,16 @@ osd .osd.ohlpsl 1 "" ""
 
 osd .osd.ohlps 0   ""
 osd .osd.ohlps 5   ""
-osd .osd.ohlps 10  "Sfh" "  S\Hcope:      " 15
+osd .osd.ohlps 10  "Sfh" "  Sco\Hpe:      " 15
 osd .osd.ohlps 15  "OtxmsfhHR" .scheme.osd-entry "################" .osd.tmp osd-help-scope
 osd .osd.ohlps 16  "BdxfHhR" .scheme.osd-ebtt &mid $window-chars 10 1 15
-osd .osd.ohlps 20  "BtfHhr" .scheme.osd-ebtt " E\Hxit "  f void
+osd .osd.ohlps 20  "BtfHhr" .scheme.osd-ebtt " \HClose "  f void
 osd .osd.ohlps 25  "fr" "  "
 osd .osd.ohlps 30  ""
-osd .osd.ohlps 35  "Sfh" "  \HSearch For: " 40
+osd .osd.ohlps 35  "Sfh" "  Search \HFor: " 40
 osd .osd.ohlps 45  ""
 osd .osd.ohlps 50  "fh" "  "
-osd .osd.ohlps 55  "BtfHhx" .scheme.osd-ebtt " Sea\Hrch " f osd-help-search-list-crt
+osd .osd.ohlps 55  "BtfHhx" .scheme.osd-ebtt " \HSearch " f osd-help-search-list-crt
 osd .osd.ohlps 60  "hf" "  "
 osd .osd.ohlps 65  "Ctfxph" &cat .osd.checkbox-chars "\} \HExact" 1 osd-help-search-flag
 osd .osd.ohlps 70  "hf" " "
@@ -343,10 +343,10 @@ set-variable .osd-help-index-crt.scope 0
 
 osd .osd.ohlpi 0   ""
 osd .osd.ohlpi 10  ""
-osd .osd.ohlpi 20  "Sfh" "  \HScope: " 30
+osd .osd.ohlpi 20  "Sfh" "  Sco\Hpe: " 30
 osd .osd.ohlpi 30  "OtxmsfhHR" .scheme.osd-entry "################" .osd.tmp osd-help-index-scope
 osd .osd.ohlpi 31  "BdxfHhR" .scheme.osd-ebtt &mid $window-chars 10 1 30
-osd .osd.ohlpi 40  "BtrfHh" .scheme.osd-ebtt " E\Hxit " f void
+osd .osd.ohlpi 40  "BtrfHh" .scheme.osd-ebtt " \HClose " f void
 osd .osd.ohlpi 45  "rf" "  "
 osd .osd.ohlpi 50  ""
 osd .osd.ohlpi 70  ""
@@ -408,7 +408,7 @@ osd .osd.ohlpi 70  ""
 
 osd .osd.ohlpc 0   ""
 osd .osd.ohlpc 2   ""
-osd .osd.ohlpc 4   "BtrfHh" .scheme.osd-ebtt " E\Hxit " f void
+osd .osd.ohlpc 4   "BtrfHh" .scheme.osd-ebtt " \HClose " f void
 osd .osd.ohlpc 6   "rf" " "
 osd .osd.ohlpc 10  ""
 osd .osd.ohlpc 30  ""

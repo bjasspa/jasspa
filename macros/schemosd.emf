@@ -722,7 +722,7 @@ osd .osd.schm-cc 0   "s" 30 18 -1 -1
 osd .osd.schm-cc 10  ""
 osd .osd.schm-cc 12 "Sfh" "  C\Hursor: " 13
 osd .osd.schm-cc 15 "fh"  "          "
-osd .osd.schm-cc 16 "Ctpfx" &cat .osd.checkbox-chars "\} S\Hhow in Dialogs" f schm-osd-set-osd-cursor
+osd .osd.schm-cc 16 "Ctpfx" &cat .osd.checkbox-chars "\} Sho\Hw in Dialogs" f schm-osd-set-osd-cursor
 osd .osd.schm-cc 18  ""
 osd .osd.schm-cc 20  "Hc" 127 ""
 osd .osd.schm-cc 35  "fh"  "          "
@@ -757,8 +757,8 @@ osd .osd.schm-cc 103 "RTfxh" #l1 0x38a schm-osd-inc-colcomp
 osd .osd.schm-cc 104 "RTfx"  #l1 0x381 schm-osd-inc-colcomp
 osd .osd.schm-cc 120 "Hc" 127 ""
 osd .osd.schm-cc 130 ""
-osd .osd.schm-cc 610 "RBtcfHhx" .scheme.osd-ebtt " \HChange " f schm-osd-color-change
-osd .osd.schm-cc 620 "BtcfHx"   .scheme.osd-ebtt " \HAdd " f schm-osd-color-add
+osd .osd.schm-cc 610 "RBtcfHhx" .scheme.osd-ebtt " \HModify " f schm-osd-color-change
+osd .osd.schm-cc 620 "BtcfHx"   .scheme.osd-ebtt "  \HAdd  " f schm-osd-color-add
 
 -1 osd .osd.schm-c
 osd .osd.schm-c 0   "s" 55 18 -1 -1 schm-osd-color-init
@@ -845,7 +845,7 @@ osd .osd.schm-nb 2   "Pft" "Schemes" .osd.schm-s
 osd .osd.schm-nb 3   "Pft" "Comment" .osd.schm-d
 osd .osd.schm-nb 100 "It" .osd.schm-c
 
-osd .osd.schm 0   "batcHIs" 9 3 59 31 -1 -1 630 .scheme.osd-title "Color Scheme Editor" 
+osd .osd.schm 0   "batcHIDs" 9 3 59 31 -1 -1 630 630 .scheme.osd-title "Color Scheme Editor" 
 osd .osd.schm 10  ""
 osd .osd.schm 20  "Sfh" "  \HFile Name:      " 30
 osd .osd.schm 30  "EtxHfh" .scheme.osd-entry "############" 1 schm-osd-set-fname
@@ -854,16 +854,16 @@ osd .osd.schm 35  "OtxmsfhHR" .scheme.osd-entry "########" .osd.tmp schm-osd-set
 osd .osd.schm 37  "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 35
 osd .osd.schm 40  "Sfh" "  \HDecription:     " 50
 osd .osd.schm 50  "EtxHf" .scheme.osd-entry "###############################" 1 schm-osd-set-desc
-osd .osd.schm 60  "Sfh" "  \HBuffer Hilight: " 70
+osd .osd.schm 60  "Sfh" "  Buffer \HHilight: " 70
 osd .osd.schm 70  "OtxmsfhHRz" .scheme.osd-entry 30 1 "" .osd.tmp schm-osd-setup-flags
 osd .osd.schm 72  "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 70
 osd .osd.schm 80  ""
 osd .osd.schm 100 "It" .osd.schm-nb
 osd .osd.schm 600 ""
-osd .osd.schm 610 "BtcfHhx" .scheme.osd-ebtt " \HCurrent " f schm-osd-current
+osd .osd.schm 610 "BtcfHhx" .scheme.osd-ebtt " A\Hpply " f schm-osd-current
 osd .osd.schm 620 "BtcfHhx" .scheme.osd-ebtt " \HSave " f schm-osd-save
 osd .osd.schm 625 "BtcfHhx" .scheme.osd-ebtt " \HInstall " f schm-osd-install
-osd .osd.schm 630 "BtcfH"   .scheme.osd-ebtt " E\Hxit " f void
+osd .osd.schm 630 "BtcfH"   .scheme.osd-ebtt " \HClose " f void
 
 define-macro scheme-editor
     set-variable .schm-osd.buffer $buffer-bname

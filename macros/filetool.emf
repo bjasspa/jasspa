@@ -199,20 +199,20 @@
         set-variable .file-tool-setup.cmd  &reg &cat #l1 "/cmd" "" 
         set-variable .file-tool-setup.default &reg &cat #l1 "/default" "0" 
         set-variable .file-tool-setup.hide &reg &cat #l1 "/hide" "0" 
-        osd .osd.file-tool 620 "BfhxHt" .scheme.osd-ebtt " \HChange " 2 file-tool-setup-com
+        osd .osd.file-tool 620 "BfhxHt" .scheme.osd-ebtt " \HModify " 2 file-tool-setup-com
         osd .osd.file-tool 630 "BfhxHt" .scheme.osd-ebtt " \HDelete " 3 file-tool-setup-com
         !if &gre @# 1
             osd .osd.file-tool 200 "BfhxHt" .scheme.osd-ebtt "  \HUp  "  4 file-tool-setup-com
         !endif
         !if &les @# .file-tool-setup.count
-            osd .osd.file-tool 220 "BfhxHt" .scheme.osd-ebtt " \HDown "  5 file-tool-setup-com
+            osd .osd.file-tool 220 "BfhxHt" .scheme.osd-ebtt " Do\Hwn "  5 file-tool-setup-com
         !endif
     !else
         osd .osd.file-tool 40 "fh" "   ?  "
         set-variable .file-tool-setup.name ""
         set-variable .file-tool-setup.mask ".*\\..*"
         set-variable .file-tool-setup.cmd  ""
-        osd .osd.file-tool 620 "BfhH" .scheme.osd-dbtt " Change "
+        osd .osd.file-tool 620 "BfhH" .scheme.osd-dbtt " Modify "
         osd .osd.file-tool 630 "BfhH" .scheme.osd-dbtt " Delete "
     !endif
 !emacro
@@ -306,19 +306,19 @@ osd .osd.file-tool 22 "" " "
 osd .osd.file-tool 25 ""
 osd .osd.file-tool 30 "fh" "   #  "
 osd .osd.file-tool 31 "Sfh" "\HName:                 " 70
-osd .osd.file-tool 32 "Sf" "File \HMask:" 90
+osd .osd.file-tool 32 "Sf" "\HFile Mask:" 90
 osd .osd.file-tool 70 "ExHtfh" .scheme.osd-entry "####################" 1 file-tool-set-fld
 osd .osd.file-tool 80 "fh" "  "
 osd .osd.file-tool 90 "ExHtf" .scheme.osd-entry "##############################" 2 file-tool-set-fld
 osd .osd.file-tool 100 ""
-osd .osd.file-tool 110 "S" "   \HCommand:  Use %p, %P, %f, %b, %e, %i, %1, %*" 130
+osd .osd.file-tool 110 "S" "   C\Hommand:  Use %p, %P, %f, %b, %e, %i, %1, %*" 130
 osd .osd.file-tool 120 "fh" "   "
 osd .osd.file-tool 130 "ExHtf" .scheme.osd-entry "#######################################################" 3 file-tool-set-fld
 osd .osd.file-tool 140 ""
 osd .osd.file-tool 150 "hf" "   "
-osd .osd.file-tool 160 "Ctpfthx" &cat .osd.checkbox-chars "\} Default Open" 1 file-tool-set-chk
+osd .osd.file-tool 160 "Ctpfthx" &cat .osd.checkbox-chars "\} D\Hefault Open" 1 file-tool-set-chk
 osd .osd.file-tool 170 "hf" "  "
-osd .osd.file-tool 180 "Ctpfthx" &cat .osd.checkbox-chars "\} Hide Window" 2 file-tool-set-chk
+osd .osd.file-tool 180 "Ctpfthx" &cat .osd.checkbox-chars "\} \HHide Window" 2 file-tool-set-chk
 osd .osd.file-tool 190 "hf" "   "
 osd .osd.file-tool 210 "hf" "   "
 osd .osd.file-tool 230 "f" "  "
@@ -327,8 +327,8 @@ osd .osd.file-tool 605 "fh" "   "
 osd .osd.file-tool 610 "BHxtfh" .scheme.osd-ebtt "  \HAdd  "  1 file-tool-setup-com
 osd .osd.file-tool 615 "fh" "   "
 osd .osd.file-tool 625 "fh" "   "
-osd .osd.file-tool 635 "fh" "            "
-osd .osd.file-tool 640 "BHtf"   .scheme.osd-ebtt " E\Hxit "   f void
+osd .osd.file-tool 635 "fh" "           "
+osd .osd.file-tool 640 "BHtf"   .scheme.osd-ebtt " \HClose "   f void
 file-tool-create
 0 file-tool-set-flds
     

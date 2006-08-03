@@ -159,8 +159,10 @@ osd .osd.charset 40  ""
 osd .osd.charset 50  "Sfh" "           \HTo : " 60
 osd .osd.charset 600 ""
 osd .osd.charset 610 ""
-osd .osd.charset 620 "BthcfH" .scheme.osd-ebtt " \HConvert " f void
-osd .osd.charset 630 "BtcfH"  .scheme.osd-ebtt " E\Hxit  "   0 void
+osd .osd.charset 620 "BthrfH" .scheme.osd-ebtt " C\Honvert " f void
+osd .osd.charset 625 "hf" "  "
+osd .osd.charset 630 "BthrfH" .scheme.osd-ebtt " \HCancel "  0 void
+osd .osd.charset 640 "f" "  "
 
 ; Get a list of display char sets
 0 exec-file "charset"

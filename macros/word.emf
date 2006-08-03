@@ -161,13 +161,13 @@ osd .osd.word 50 "IbHc" .scheme.osd-sbar 60 10 .osd.wordc
 osd .osd.word 60 ""
 osd .osd.word 70 "BHrfth" .scheme.osd-ebtt " \HInsert " f void
 osd .osd.word 80 "fh" "    "
-osd .osd.word 90 "BHrfth"  .scheme.osd-ebtt " E\Hxit "   0 void
+osd .osd.word 90 "BHrfth"  .scheme.osd-ebtt " \HClose "   0 void
 osd .osd.word 95 "f" "    "
 
 define-macro describe-word
     !if &not &exi &ind &spr ".%s-command" .spell.language
         set-variable #l0 &spr "  Not setup for current language (%s),  \n    see word.emf for more information." .spell.language
-        osd-dialog "Describe Word" #l0 "E\Hxit"
+        osd-dialog "Describe Word" #l0 " \HOkay "
         !abort
     !endif
     !force set-variable #l3 @1

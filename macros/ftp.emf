@@ -500,8 +500,10 @@ osd .osd.ftp 120 "hf" "    "
 osd .osd.ftp 145 "hf" "  "
 osd .osd.ftp 600 ""
 osd .osd.ftp 610 ""
-osd .osd.ftp 620 "BthcfH" .scheme.osd-ebtt " \HConnect " f ftp-do-connect
-osd .osd.ftp 630 "BtcfH"  .scheme.osd-ebtt " E\Hxit  "   f void
+osd .osd.ftp 620 "BthrfH" .scheme.osd-ebtt " C\Honnect " f ftp-do-connect
+osd .osd.ftp 625 "hf" "   "
+osd .osd.ftp 630 "BthrfH" .scheme.osd-ebtt " \HCancel "   f void
+osd .osd.ftp 640 "f" "  "
 
 !if &seq &reg "/url" "" ""
     !if &not &seq &set #l0 &reg "/history/url-file" "" ""
