@@ -81,7 +81,7 @@
         osd .osd.prtstp-pag  60  "ESsfhHz" .scheme.osd-entry 23 1  "" 2 print-setup-display-page-size
         osd .osd.prtstp-pag  65  "BtHcfixR" .scheme.osd-ebtt " \HEdit "  f print-setup-setup-page
     !else
-        osd .osd.prtstp-prt 120  "Sfh" "  \HCommand line : " 130
+        osd .osd.prtstp-prt 120  "Sfh" "  C\Hommand line : " 130
         osd .osd.prtstp-prt 130  "EtfxH" .scheme.osd-entry "#######################" 9 print-setup-set-entry
         osd .osd.prtstp-prt 140  "f"   "                 (%f=file)"
         osd .osd.prtstp-prt 150  ""
@@ -291,7 +291,7 @@ osd .osd.prtstp-pag  50 "Shf" "  Page \HSize:     " 60
 osd .osd.prtstp-pag  70 ""
 osd .osd.prtstp-pag  80 "Shf" "  Page Division: "
 osd .osd.prtstp-pag  90 "EtfhxHR" .scheme.osd-entry "#####" 1 print-setup-set-entry
-osd .osd.prtstp-pag  95 "Sf" " \HColumn(s)" 90
+osd .osd.prtstp-pag  95 "Sf" " C\Holumn(s)" 90
 osd .osd.prtstp-pag 100 "Shf" "                 " 110
 osd .osd.prtstp-pag 110 "EtfhxHR" .scheme.osd-entry "#####" 2 print-setup-set-entry
 osd .osd.prtstp-pag 115 "Sf" " \HRow(s)" 110
@@ -336,8 +336,10 @@ osd .osd.prtstp-nb 100 "It"             .osd.prtstp-prt
 osd .osd.prtstp 0 "batcDHs" 6 3 56 19 -1 -1 120 .scheme.osd-title "Printer Setup"
 osd .osd.prtstp 10 "It" .osd.prtstp-nb
 osd .osd.prtstp 100 ""
-osd .osd.prtstp 110 "BtHhcf" .scheme.osd-ebtt " \HPrint " f print-buffer
-osd .osd.prtstp 120 "BtHcf"  .scheme.osd-ebtt " E\Hxit "  1 void
+osd .osd.prtstp 110 "BtHhfr" .scheme.osd-ebtt " \HPrint " f print-buffer
+osd .osd.prtstp 115 "hf" "   "
+osd .osd.prtstp 120 "BtHhfr"  .scheme.osd-ebtt " \HClose "  1 void
+osd .osd.prtstp 125 "f" "  "
 
 define-macro print-setup
     !force exec-file "print"

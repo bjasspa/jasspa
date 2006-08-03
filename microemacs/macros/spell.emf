@@ -86,7 +86,7 @@ set-variable .spell.gscore 2
             osd .osd.spell-editl 50 "h" "        Correct word"
         !else
             osd .osd.spell-editl 50 "h" "        New word"
-            osd .osd.spell-editl 55 "BHrfx" .scheme.osd-ebtt " Auto-\HCorrect "  f spell-edit-word-auto
+            osd .osd.spell-editl 55 "BHrfx" .scheme.osd-ebtt " Au\Hto-Correct "  f spell-edit-word-auto
         !endif
         -1 osd .osd.spell-editd
         osd .osd.spell-editd 0 ""
@@ -173,7 +173,7 @@ osd .osd.spell-editr 30  ""
 osd .osd.spell-editr 50  ""
 osd .osd.spell-editr 70  ""
 osd .osd.spell-editr 90  ""
-osd .osd.spell-editr 100 "BHcf" .scheme.osd-ebtt " E\Hxit      " 1 void
+osd .osd.spell-editr 100 "BHcf" .scheme.osd-ebtt " \HClose     " 1 void
 osd .osd.spell-editr 110 ""
 0 spell-edit-word-setbutt
 
@@ -326,7 +326,7 @@ osd .osd.spell-fndr 10 "BHcf" .scheme.osd-dbtt " \HInsert " f void
 osd .osd.spell-fndr 15 ""
 osd .osd.spell-fndr 20 "BHSc" .scheme.osd-dbtt " Next   "
 osd .osd.spell-fndr 25 ""
-osd .osd.spell-fndr 30 "BHcf" .scheme.osd-ebtt " E\Hxit   " 0 abort-command
+osd .osd.spell-fndr 30 "BHcf" .scheme.osd-ebtt " \HClose  " 0 abort-command
 
 set-variable .spell.check-wordo ""
 
@@ -601,7 +601,7 @@ set-variable .spell.check-wordo ""
             osd .osd.spell-chkr 10 "BHcfS"  .scheme.osd-dbtt " Replace     "
             osd .osd.spell-chkr 20 "BHcft"  .scheme.osd-ebtt " \HDelete 2nd  " 4 spell-check-replace
             osd .osd.spell-chkr 40 "BHcft"  .scheme.osd-ebtt " \HIgnore      " 4 spell-check-ignore
-            osd .osd.spell-chkr 50 "BHcfti" .scheme.osd-ebtt " Disable \HChk " f "set-variable #g4 2"
+            osd .osd.spell-chkr 50 "BHcfti" .scheme.osd-ebtt " Disable Ch\Hk " f "set-variable #g4 2"
             osd .osd.spell-chkr 60 "BHcfS"  .scheme.osd-dbtt " Add         "
             -1 osd .osd.spell-guess
             osd .osd.spell-guess 0 "sS" .scheme.osd-child 22 9 -1 -1
@@ -759,7 +759,7 @@ osd .osd.spell-chkr 80 "BcfHxt" .scheme.osd-ebtt " \HFind        " 1 spell-check
 osd .osd.spell-chkr 85 ""
 osd .osd.spell-chkr 87 "BcfSH"  .scheme.osd-dbtt " Undo Last   "
 osd .osd.spell-chkr 88 ""
-osd .osd.spell-chkr 90 "BcfHt"  .scheme.osd-ebtt " E\Hxit        " 0 abort-command
+osd .osd.spell-chkr 90 "BcfHt"  .scheme.osd-ebtt " \HClose       " 0 abort-command
 osd .osd.spell-chkr 92 ""
 osd .osd.spell-chkr 95 "hf" " "
 osd .osd.spell-chkr 96 "Exfht"  "###" f spell-check-set-gscore
