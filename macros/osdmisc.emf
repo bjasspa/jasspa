@@ -11,6 +11,7 @@
 define-macro osd-search
 !emacro
 !if &not &exi .osd.symbol
+    0 define-macro-file majormod major-mode
     set-variable .osd.symbol  &pinc .osd.next 1
     set-variable .osd.alarm   &pinc .osd.next 1
     set-variable .osd.ftag    &pinc .osd.next 1
@@ -38,6 +39,7 @@ define-macro osd-search
     set-variable .osd-search.hilschms &spr "|%d|%d|%d|%d|%d|%d|%d|%d|%d|" $global-scheme .scheme.hlwhite .scheme.hlblack .scheme.hlred .scheme.hlgreen .scheme.hlyellow .scheme.hlblue .scheme.hlmagenta .scheme.hlcyan
     ; buffer-setup
     set-variable .osd.buffstp &pinc .osd.next 1
+    set-variable .osd.buffstpm &pinc .osd.next 1
     ; browse
     set-variable .osd.browse-help &pinc .osd.next 1
     ; alias-path-setup
@@ -82,6 +84,47 @@ define-macro insert-symbol
     .osd.symbol osd
 !emacro
 
+0 define-macro buffer-setup-ms
+    !if @?
+        !force unset-variable :buffer-indent
+        !force unset-variable :buffer-hilight
+        buffer-major-mode &lget .major-mode.list @#
+        screen-update
+    !endif
+    !if &or $buffer-indent &exi :buffer-indent
+        osd .osd.buffstp 140 "fh" "  "
+        osd .osd.buffstp 150 "Cptfx" &cat .osd.checkbox-chars "\} Use \Hauto-indentation" 4 buffer-setup-exec
+    !else
+        osd .osd.buffstp 140 "D"
+        osd .osd.buffstp 150 "D"
+    !endif
+    !if &or $buffer-hilight &exi :buffer-hilight
+        osd .osd.buffstp 160 "fh" "  "
+        osd .osd.buffstp 170 "Cptfx" &cat .osd.checkbox-chars "\} Use \Hhilighting" 5 buffer-setup-exec
+    !else
+        osd .osd.buffstp 160 "D"
+        osd .osd.buffstp 170 "D"
+    !endif
+!emacro
+0 define-macro buffer-setup-mm
+    !if &les @# 0
+        major-mode
+        -1 osd .osd.tmp
+        osd .osd.tmp 0 "Asf" 16 20 0 0
+        set-variable #l0 0
+        set-variable #l2 1
+        !while &not &seq "" &set #l1 &lget .major-mode.list &inc #l0 1
+            osd .osd.tmp 1 "" #l1 #l0 buffer-setup-ms
+            !if &seq #l1 &rig $buffer-fhook 6
+                set-variable #l2 #l0
+            !endif
+        !done
+        osd .osd.tmp 0 "AsfI" 16 20 0 0 #l2
+        ml-write &spr "[Default set to %d]" #l2
+    !else
+        set-variable $result &rig $buffer-fhook 6
+    !endif
+!emacro
 0 define-macro buffer-setup-exec
     !if &equ @# 5
         !return $buffer-hilight
@@ -115,34 +158,29 @@ define-macro insert-symbol
         !endif
     !endif
 !emacro
+-1 osd .osd.buffstpm
+osd .osd.buffstpm 0 "osI" -1 0 18 0 0 0 10
+osd .osd.buffstpm 10 "IbHt" .scheme.osd-sbar 16 20 .osd.tmp
+
 -1 osd .osd.buffstp
-osd .osd.buffstp  0 "batcDIHs" 9 3 30 10 -1 -1 150 30 .scheme.osd-title "Buffer Setup"
+osd .osd.buffstp  0 "batcDIHs" 9 3 40 10 -1 -1 510 510 .scheme.osd-title "Buffer Setup"
 osd .osd.buffstp 10 ""
-osd .osd.buffstp 20 "Sfh" "  \HTab Width:    " 30
-osd .osd.buffstp 30 "EtRxHf" .scheme.osd-entry "##########" 1 buffer-setup-exec
-osd .osd.buffstp 40 ""
-osd .osd.buffstp 50 "Sfh" "  \HIndent Width: " 60
-osd .osd.buffstp 60 "EtRxHf" .scheme.osd-entry "##########" 2 buffer-setup-exec
-osd .osd.buffstp 70 ""
-osd .osd.buffstp 80 "fh" "  "
-osd .osd.buffstp 90 "Cptfx" &cat .osd.checkbox-chars "\} \HUse tab characters" 3 buffer-setup-exec
-osd .osd.buffstp 140 ""
-osd .osd.buffstp 150 "BtcfHh" .scheme.osd-ebtt " \HOkay "  f void
+osd .osd.buffstp 20 "Sfh" "  \HMajor Mode:   " 30
+osd .osd.buffstp 30 "OtxmsfhHzR" .scheme.osd-entry 16 1 "" .osd.buffstpm buffer-setup-mm
+osd .osd.buffstp 40 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 30
+osd .osd.buffstp 50 ""
+osd .osd.buffstp 60 "Sfh" "  \HTab Width:    " 30
+osd .osd.buffstp 70 "EtRxHf" .scheme.osd-entry "##########" 1 buffer-setup-exec
+osd .osd.buffstp 80 ""
+osd .osd.buffstp 90 "Sfh" "  \HIndent Width: " 60
+osd .osd.buffstp 100 "EtRxHf" .scheme.osd-entry "##########" 2 buffer-setup-exec
+osd .osd.buffstp 110 ""
+osd .osd.buffstp 120 "fh" "  "
+osd .osd.buffstp 130 "Cptfx" &cat .osd.checkbox-chars "\} \HUse tab characters" 3 buffer-setup-exec
+osd .osd.buffstp 500 ""
+osd .osd.buffstp 510 "BtcfHh" .scheme.osd-ebtt " \HOkay "  f void
 define-macro buffer-setup
-    !if &or $buffer-indent &exi :buffer-indent
-        osd .osd.buffstp 100 "fh" "  "
-        osd .osd.buffstp 110 "Cptfx" &cat .osd.checkbox-chars "\} Use \Hauto-indentation" 4 buffer-setup-exec
-    !else
-        osd .osd.buffstp 100 "D"
-        osd .osd.buffstp 110 "D"
-    !endif
-    !if &or $buffer-hilight &exi :buffer-hilight
-        osd .osd.buffstp 120 "fh" "  "
-        osd .osd.buffstp 130 "Cptfx" &cat .osd.checkbox-chars "\} Use \Hhilighting" 5 buffer-setup-exec
-    !else
-        osd .osd.buffstp 120 "D"
-        osd .osd.buffstp 130 "D"
-    !endif
+    buffer-setup-ms
     .osd.buffstp osd
 !emacro
 
@@ -663,9 +701,9 @@ osd .osd.sar-srl 60  ""
 osd .osd.sar-srl 70  ""
 osd .osd.sar-srl 80  ""
 osd .osd.sar-srl 110 "hf" "  "
-osd .osd.sar-srl 120 "Cfxpt" &cat .osd.checkbox-chars "\} \HCase insensitive" f osd-search-cexact
+osd .osd.sar-srl 120 "Cfxpt" &cat .osd.checkbox-chars "\} Case \HInsensitive" f osd-search-cexact
 osd .osd.sar-srl 130 "hf" "  "
-osd .osd.sar-srl 140 "Cfxpt" &cat .osd.checkbox-chars "\} \HMagic mode"       f osd-search-cmagic
+osd .osd.sar-srl 140 "Cfxpt" &cat .osd.checkbox-chars "\} \HMagic Mode"       f osd-search-cmagic
 
 osd .osd.sar-srr 0 "sD" 13 11 -1 -1 30
 osd .osd.sar-srr 5 ""
@@ -679,7 +717,7 @@ osd .osd.sar-srr 70 ""
 osd .osd.sar-srr 80 ""
 osd .osd.sar-srr 90 ""
 osd .osd.sar-srr 100 ""
-osd .osd.sar-srr 110 "BcfHt" .scheme.osd-ebtt " E\Hxit        "   1 void
+osd .osd.sar-srr 110 "BcfHt" .scheme.osd-ebtt " \HClose       "   1 void
 
 osd .osd.sar-src 0 "sID" 49 13 -1 -1 50 30
 osd .osd.sar-src 10 ""
@@ -699,9 +737,9 @@ osd .osd.sar-rpl 60 ""
 osd .osd.sar-rpl 70 ""
 osd .osd.sar-rpl 80 ""
 osd .osd.sar-rpl 110 "hf" "  "
-osd .osd.sar-rpl 120 "Cfxpt" &cat .osd.checkbox-chars "\} \HCase insensitive" f osd-search-cexact
+osd .osd.sar-rpl 120 "Cfxpt" &cat .osd.checkbox-chars "\} Case \HInsensitive" f osd-search-cexact
 osd .osd.sar-rpl 130 "hf" "  "
-osd .osd.sar-rpl 140 "Cfxpt" &cat .osd.checkbox-chars "\} \HMagic mode"       f osd-search-cmagic
+osd .osd.sar-rpl 140 "Cfxpt" &cat .osd.checkbox-chars "\} \HMagic Mode"       f osd-search-cmagic
 
 osd .osd.sar-rpr 0 "sD" 13 11 -1 -1 30
 osd .osd.sar-rpr 5 ""
@@ -714,7 +752,7 @@ osd .osd.sar-rpr 70 "BcfxHt" .scheme.osd-ebtt " Replace \HAll "  2 osd-search-re
 osd .osd.sar-rpr 80 ""
 osd .osd.sar-rpr 90 "BcfHt" .scheme.osd-ebtt " \HUndo Last   "  0 osd-search-replace
 osd .osd.sar-rpr 100 ""
-osd .osd.sar-rpr 110 "BcfHt" .scheme.osd-ebtt " E\Hxit        "  1 void
+osd .osd.sar-rpr 110 "BcfHt" .scheme.osd-ebtt " \HClose       "  1 void
 
 osd .osd.sar-rpc 0 "sID" 49 13 -1 -1 50 30
 osd .osd.sar-rpc 10 ""
@@ -733,9 +771,9 @@ osd .osd.sar-hll 60 ""
 osd .osd.sar-hll 70 ""
 osd .osd.sar-hll 80 ""
 osd .osd.sar-hll 110 "hf" "  "
-osd .osd.sar-hll 120 "Cfxpt" &cat .osd.checkbox-chars "\} \HCase insensitive" f osd-search-cexact
+osd .osd.sar-hll 120 "Cfxpt" &cat .osd.checkbox-chars "\} Case \HInsensitive" f osd-search-cexact
 osd .osd.sar-hll 130 "hf" "  "
-osd .osd.sar-hll 140 "Cfxpt" &cat .osd.checkbox-chars "\} \HMagic mode"       f osd-search-cmagic
+osd .osd.sar-hll 140 "Cfxpt" &cat .osd.checkbox-chars "\} \HMagic Mode"       f osd-search-cmagic
 osd .osd.sar-hll 150 ""
 osd .osd.sar-hll 155 ""
 osd .osd.sar-hll 160 "BhfxHt" .scheme.osd-ebtt " \HBelow "        4 osd-search-hilight
@@ -757,7 +795,7 @@ osd .osd.sar-hlr 70 ""
 osd .osd.sar-hlr 80 ""
 osd .osd.sar-hlr 90 "BcfHxt" .scheme.osd-ebtt " \HRemove All  "   f osd-search-hilight
 osd .osd.sar-hlr 100 ""
-osd .osd.sar-hlr 110 "BcfHt" .scheme.osd-ebtt " E\Hxit        "   1 void
+osd .osd.sar-hlr 110 "BcfHt" .scheme.osd-ebtt " \HClose       "   1 void
 
 osd .osd.sar-hlt 0 "sID" 49 13 -1 -1 50 30
 osd .osd.sar-hlt 10 ""
@@ -930,7 +968,7 @@ osd .osd.gline 7  ""
 osd .osd.gline 8  "BhcfHi" .scheme.osd-ebtt " \HJump "    f "goto-line .osd.gline-str"
 osd .osd.gline 9  "BhcfH"  .scheme.osd-ebtt " \HFirst "   f beginning-of-buffer
 osd .osd.gline 10 "BhcfH"  .scheme.osd-ebtt " \HLast "    1 end-of-buffer
-osd .osd.gline 11 "BcfH"   .scheme.osd-ebtt " E\Hxit "    1 void
+osd .osd.gline 11 "BcfH"   .scheme.osd-ebtt " \HClose "   1 void
 
 0 define-macro osd-goto-line
     set-variable .osd.gline-str ""
@@ -1131,7 +1169,7 @@ set-variable .browse.wrap 0
         !if $status
             set-variable .alias-path-setup.alias $result
             set-variable .alias-path-setup.path &reg &cat "/history/alias-path/" $result "" 
-            osd .osd.alias-path 620 "BfhxHt" .scheme.osd-ebtt " \HChange " 2 alias-path-setup-com
+            osd .osd.alias-path 620 "BfhxHt" .scheme.osd-ebtt " \HModify " 2 alias-path-setup-com
             osd .osd.alias-path 630 "BfhxHt" .scheme.osd-ebtt " \HDelete " 3 alias-path-setup-com
             !return
         !endif
@@ -1139,7 +1177,7 @@ set-variable .browse.wrap 0
     set-variable .alias-path-setup.cur 0
     set-variable .alias-path-setup.alias ""
     set-variable .alias-path-setup.path ""
-    osd .osd.alias-path 620 "BfhH" .scheme.osd-dbtt " Change "
+    osd .osd.alias-path 620 "BfhH" .scheme.osd-dbtt " Modify "
     osd .osd.alias-path 630 "BfhH" .scheme.osd-dbtt " Delete "
 !emacro
 
@@ -1229,7 +1267,7 @@ osd .osd.alias-path 20 "IbHtfh" .scheme.osd-sbar 56 10 .osd.alias-pathc
 osd .osd.alias-path 22 "" " "
 osd .osd.alias-path 25 ""
 osd .osd.alias-path 30 "fh" "     "
-osd .osd.alias-path 40 "Sfh" "\HAlias:      " 70
+osd .osd.alias-path 40 "Sfh" "A\Hlias:      " 70
 osd .osd.alias-path 50 "Sf" "File \HPath:" 90
 osd .osd.alias-path 60 "fh" "     "
 osd .osd.alias-path 70 "ExHtfh" .scheme.osd-entry "##########" 1 alias-path-set-fld
@@ -1241,7 +1279,7 @@ osd .osd.alias-path 610 "BHxtfh" .scheme.osd-ebtt "  \HAdd  "  1 alias-path-setu
 osd .osd.alias-path 615 "fh" "   "
 osd .osd.alias-path 625 "fh" "   "
 osd .osd.alias-path 635 "fh" "            "
-osd .osd.alias-path 640 "BHtf"   .scheme.osd-ebtt " E\Hxit "   f void
+osd .osd.alias-path 640 "BHtf"   .scheme.osd-ebtt " \HClose "   f void
     
 define-macro alias-path-setup
     !if &band @# 1
@@ -1364,8 +1402,8 @@ osd .osd.file-type  2  ""
 osd .osd.file-type  5  "hf" " "
 osd .osd.file-type 10  "ItbHf" .scheme.osd-sbar 52 10 .osd.file-typec
 osd .osd.file-type 20  ""
-osd .osd.file-type 30  "Sfh" "  \HNo. " 50
-osd .osd.file-type 33  "Sfh" " Na\Hme             " 70
+osd .osd.file-type 30  "Sfh" "  N\Ho. " 50
+osd .osd.file-type 33  "Sfh" " \HName             " 70
 osd .osd.file-type 36  "Sf"  " \HFile Mask List" 90
 osd .osd.file-type 40  "fh" "  "
 osd .osd.file-type 50  "EtxHfh" .scheme.osd-entry "###" 3 file-type-set
@@ -1377,11 +1415,11 @@ osd .osd.file-type 600 ""
 osd .osd.file-type 605 "fh" "  "
 osd .osd.file-type 610 "BtfhxH" .scheme.osd-ebtt "  \HAdd  "  1 file-type-com
 osd .osd.file-type 615 "fh" "  "
-osd .osd.file-type 620 "BtfhxH" .scheme.osd-ebtt " C\Hhange " 2 file-type-com
+osd .osd.file-type 620 "BtfhxH" .scheme.osd-ebtt " \HModify " 2 file-type-com
 osd .osd.file-type 625 "fh" "  "
 osd .osd.file-type 630 "BtfhxH" .scheme.osd-ebtt " \HDelete " 3 file-type-com
 osd .osd.file-type 635 "fh" "          "
-osd .osd.file-type 640 "BtfH"   .scheme.osd-ebtt " E\Hxit "   f void
+osd .osd.file-type 640 "BtfH"   .scheme.osd-ebtt " \HClose "   f void
     
 define-macro file-type-setup
     !if &band @# 1
@@ -1484,7 +1522,7 @@ osd .osd.shell-tool 410 "Ctpfxh" &cat .osd.checkbox-chars "\} Save" 0x04 shell-t
 osd .osd.shell-tool 420 "Sfh" "  "
 osd .osd.shell-tool 430 "Ctpfx" &cat .osd.checkbox-chars "\} Promp\Ht Before Saving" 0x08 shell-tool-set-flag
 osd .osd.shell-tool 600 ""
-osd .osd.shell-tool 610 "BtcfH"   .scheme.osd-ebtt " E\Hxit "   f void
+osd .osd.shell-tool 610 "BtcfH"   .scheme.osd-ebtt " \HClose "   f void
 
 define-macro shell-tool-setup
     !if &band @# 1
