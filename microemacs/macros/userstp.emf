@@ -156,10 +156,6 @@ set-variable %user-misc-cmd  "|session-setup|alias-path-setup|file-type-setup|fi
     !endif
 !emacro
 0 define-macro user-setup-okay
-    !if &seq $user-name ""
-        ml-write "[No user-name!]"
-        !return
-    !endif
     !force set-registry "/history" &spr "%s%s.erf" $user-path $user-name
     save-registry "/history" ""
     !if &not &seq &set #l0 &reg "/history/company" "" ""
@@ -213,6 +209,10 @@ set-variable %user-misc-cmd  "|session-setup|alias-path-setup|file-type-setup|fi
             !endif
             save-buffer
         !endif
+    !endif
+    !if &seq $frame-id .notes.frame-id
+        ; close notes otherwise we break the notes frame
+        !force notes-close
     !endif
     exec-file "me"
     !if &exi .spell.language
