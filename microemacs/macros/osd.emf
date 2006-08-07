@@ -60,9 +60,9 @@ define-macro-file osdhelp osd-help
         osd 6 20 "D"
     !endif
     !if &seq &ind &spr ".%s.setup-mask" $buffer-fhook "ERROR"
-        osd 6 180 "D"
+        osd 6 190 "D"
     !else
-        osd 6 180 "" "\HMajor Mode Setup..." f major-mode-setup
+        osd 6 190 "" "\HMajor Mode Setup..." f major-mode-setup
     !endif
     ; let the current buffer type modify the menu
     !if &exi &set #l0 &cat "osd-ohook-" &rig $buffer-fhook 6
@@ -276,7 +276,8 @@ set-variable .undo.count 0
     !endif
 !emacro
 0 define-macro osd-record-macro
-    osd-dialog "Record Macro" "  Note: The mouse cannot be used during macro recording,  \n        use the key binding \"C-x )\" to stop." "  \HOK  "
+    set-variable #l0 &spr "  Note: The mouse cannot be used during macro recording,  \n        use the key binding \"%s\" to stop." &kbin "" end-kbd-macro
+    osd-dialog "Record Macro" #l0 "  \HOK  "
     start-kbd-macro
 !emacro
 ;
@@ -348,7 +349,7 @@ osd 3 120 ""  "Set \HBookmark         C-x C-a"   f set-alpha-mark
 osd 3 130 ""  "\HGoto Bookmark        C-x a"     f goto-alpha-mark
 osd 3 140 ""  "Goto Fen\Hce           esc C-i"   f goto-matching-fence
 osd 3 150 ""  "Goto \HLine...         esc g"     f osd-goto-line
-osd 3 160 ""  "Goto \HTag...          esc t"     f "osd-find-tag"
+osd 3 160 ""  "Goto \HTag...          esc t"     f osd-find-tag
 ;
 ; MENU #4 - VIEW sub-menu
 ;
@@ -362,6 +363,7 @@ osd 4 60  ""  "Buffer \HInfo           C-x ="    f buffer-info
 osd 4 70  ""  "Word \HCount            esc C-c"  f count-words
 osd 4 80  ""  "\HOccurrences           S-f6"     f occur
 osd 4 90  "-"
+osd 4 100 "M" "\HBuffer                C-x b" 20 osd-1-buffer
 osd 4 150 "-"
 osd 4 160 "i" "\HMain Menu"                      f "osd -1 &set .osd.menu &bxor .osd.menu 1"
 osd 4 170 "i" "\HScroll Bars"                    f "&set $scroll-bar &bxor $scroll-bar 0x100"
@@ -372,10 +374,7 @@ osd 4 190 ""  "\HWhite Characters      f11"      f display-white-chars
         set-variable .osd.find-buffer &pinc .osd.next 1
         0 define-macro-file findbuff osd-find-buffer
     !endif
-    osd 4 100 "M" "\HBuffer (All)          C-x b" 20 osd-1-buffer
     osd 4 110 "M" "Bu\Hffer (by type)" .osd.find-buffer osd-find-buffer
-!else
-    osd 4 100 "M" "\HBuffer                C-x b" 20 osd-1-buffer
 !endif
 ;
 ; MENU #5 - FORMAT sub-menu
@@ -419,8 +418,8 @@ osd 6 130 ""  "Sort \HLines"                      f sort-lines
 osd 6 140 ""  "Sort Lines (\HIgnore Case)"        f sort-lines-ignore-case
 osd 6 150 ""  "Uni\Hq Lines"                      f uniq
 osd 6 160 "-"
-osd 6 170 ""  "\HBuffer Setup..."                 f buffer-setup
-osd 6 190 ""  "\HUser Setup..."                   f user-setup
+osd 6 170 ""  "\HUser Setup..."                   f user-setup
+osd 6 180 ""  "\HBuffer Setup..."                 f buffer-setup
 osd 6 200 ""  "Scheme \HEditor..."                f scheme-editor
 ;
 ; MENU #7 - ADVANCED sub-menu
@@ -591,7 +590,7 @@ osd 21 60  ""  "\HTriangle"   f Triangle
     execute-line &spr "osd %d 0 \"bcIDtH%s 17 10 %d \"%s\"" .osd.tmp #l6 .scheme.osd-title @1
     osd .osd.tmp 1 ""
     osd .osd.tmp 2 "fh" "  "
-    osd .osd.tmp  3 "Sfh" @2 10
+    osd .osd.tmp 3 "Sfh" @2 10
     !if &gre #l2 1
         osd .osd.tmp  4 "f" "  "
         osd .osd.tmp  5 "fh" "  "
