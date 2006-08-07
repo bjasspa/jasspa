@@ -16,7 +16,7 @@ include $(TOPDIR)/etc/makeinc
 #
 # EMFS:sh=ls *.emf
 EMFS=	abbrev.emf	abbrlist.emf	aix.emf		\
-	benchmrk.emf	bookmark.emf	buffinit.emf	buffstp.emf	\
+	benchmrk.emf	bookmark.emf	buffinit.emf	\
 	calc.emf	charset.emf	charsutl.emf	clearcs.emf	\
 	cmacros.emf	collapse.emf	comment.emf	crosswd.emf	\
 	ctags.emf	cvs.emf		cygwin.emf	\
@@ -24,8 +24,8 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		\
 	dos.emf		dos2unix.emf	draw.emf	\
 	ehftools.emf	emftags.emf	etfinsrt.emf	\
 	fattrib.emf	favorite.emf	fileopen.emf	filetool.emf	\
-	find.emf	findbuff.emf	fold.emf	format.emf	\
-	freebsd.emf	ftp.emf		\
+	filetype.emf	find.emf	findbuff.emf	fold.emf	\
+	format.emf	freebsd.emf	ftp.emf		\
 	games.emf	gdiff.emf	gentags.emf	\
 	hkada.emf	hkapache.emf	hkasmx86.emf	hkasn1.emf	\
 	hkasp.emf	hkau3.emf	hkawk.emf	\
@@ -35,7 +35,7 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		\
 	hkdiff.emf	hkdirlst.emf	hkdirtre.emf	hkdoc.emf	\
 	hkdos.emf	hkdot.emf	\
 	hkehf.emf	hkemf.emf	hkerf.emf	hkeuphor.emf	\
-	hkf90.emf	filetype.emf	hkfvwm.emf	\
+	hkf90.emf	hkfvwm.emf	\
 	hkhtml.emf	\
 	hkidl.emf	hkimake.emf	hkinfo.emf	hkini.emf	\
 	hkipipe.emf	\
@@ -61,17 +61,17 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		\
 	jst2text.emf	jstags.emf	jstutl.emf	\
 	keyboard.emf	killlist.emf	\
 	language.emf	langutl.emf	linux.emf	list.emf	\
-	mahjongg.emf	mail.emf	mailmerg.emf	matchit.emf	\
-	me.emf		melogo.emf	\
-	meemacs.emf	mecua.emf	meme3_8.emf	menedit.emf	\
+	mahjongg.emf	mail.emf	mailmerg.emf	majormod.emf	\
+	matchit.emf	me.emf		mecua.emf	\
+	meemacs.emf	melogo.emf	meme3_8.emf	menedit.emf	\
 	meserver.emf	metris.emf	misc.emf	mouse.emf	\
 	mouseosd.emf	mouserec.emf	msshift.emf	\
 	narrow.emf	newuser.emf	notes.emf	notesutl.emf	\
 	ntags.emf	\
 	openbsd.emf	openstep.emf	organiza.emf	organizd.emf	\
 	organize.emf	organizi.emf	organizl.emf	organizm.emf	\
-	organizt.emf	organizw.emf	osd.emf		osdhelp.emf	\
-	osdmisc.emf	osdnedit.emf	osdcua.emf	osf1.emf	\
+	organizt.emf	organizw.emf	osd.emf		osdcua.emf	\
+	osdhelp.emf	osdmisc.emf	osdnedit.emf	osf1.emf	\
 	pagefile.emf	patience.emf	perltags.emf	print.emf	\
 	printall.emf	printd.emf	printepc.emf	printers.emf	\
 	printf.emf	printstp.emf	\
@@ -81,8 +81,8 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		\
 	schemelj.emf	schememd.emf	schememw.emf	schemepd.emf	\
 	schemepl.emf	schemes.emf	schemesf.emf	schemetb.emf	\
 	schemetw.emf	schemevi.emf	schemosd.emf	\
-	search.emf	spell.emf	spellaut.emf	\
-	spellutl.emf	ssaver.emf	sunos.emf	\
+	search.emf	session.emf	sessnstp.emf	spell.emf	\
+	spellaut.emf	spellutl.emf	ssaver.emf	sunos.emf	\
 	tcltags.emf	textags.emf	toolbar.emf	tooldef.emf	\
 	toollist.emf	tools.emf	toolstd.emf	toolstp.emf	\
 	triangle.emf	\
