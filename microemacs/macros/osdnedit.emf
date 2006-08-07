@@ -11,30 +11,86 @@
 ;
 ; Make the main menus look like NEdits
 ; File
-osd 1  10  ""   "\HNew        C-n"   f osd-new-buffer ; Create a new document
-osd 1  20  ""   "\HOpen       C-o"   f osd-file-open  ; Find a new file
-osd 1  50  ""   "Find file"         f file-browser   ; file browser
-osd 1  55  ""   "FTP"               f ftp            ; ftp browser
-osd 1  60  ""   "\HClose      C-w"   f osd-close
-osd 1  90  ""   "\HSave       C-s"   f osd-save       ; Save the buffer
-osd 1  100 ""   "Save \HAs"          f osd-save-as    ; Save new file
-osd 1  140 ""   "\HPrint      C-p"   f print-buffer   ; Print
-osd 1  180 ""   "E\Hxit       C-q"   f save-buffers-exit-emacs
+osd 1 10  ""  "\HNew             C-n"   f osd-new-buffer
+osd 1 20  ""  "\HOpen...         C-o"   f osd-file-open
+osd 1 160 ""  "File \HBrowser"          f file-browser
+osd 1 170 ""  "FTP Bro\Hwser"           f ftp
+osd 1 50  ""  "\HClose           C-w"   f osd-close
+osd 1 80  ""  "\HSave            C-s"   f osd-save
+osd 1 90  ""  "Save \HAs..."            f osd-save-as
+osd 1 140 ""  "\HPrint           C-p"   f print-buffer
+osd 1 210 ""  "E\Hxit            C-q"   f save-buffers-exit-emacs
 ; Edit
-osd 2  10  ""   "\HUndo       C-z"   1 osd-undo       ; Undo the last command
-osd 2  40  ""   "\HSet mark"         f set-mark       ; Set buffer mark
-osd 2  50  ""   "Cu\Ht        C-x"   f kill-region    ; Kill off the region
-osd 2  60  ""   "\HCopy       C-c"   f copy-region    ; Copy the region
-osd 2  70  ""   "\HPaste      C-v"   f yank           ; Paste text
-osd 2  72  ""   "Pa\Hste Col  A-C-v" f yank-rectangle ; Paste text
-osd 2  73  ""   "Select \HAll C-/"   f select-all     ; Paste text
+osd 2 10  ""  "\HUndo                C-z"    1 osd-undo
+osd 2 50  ""  "\HSet Mark"                   f set-mark
+osd 2 60  ""  "Cu\Ht                 C-x"    f kill-region
+osd 2 70  ""  "\HCopy                C-c"    f copy-region
+osd 2 80  ""  "\HPaste               C-v"    f yank
+osd 2 90  ""  "Pa\Hste Col           A-C-v"  f yank-rectangle
+osd 2 100 ""  "Cl\Hear"                     -1 kill-region
+osd 2 110 ""  "Select \HAll          C-/"    f select-all
+osd 2 120 "D"
+osd 2 150 "M" "Insert Date/Time"            31 osd-insert-date
+osd 2 160 ""  "Insert File \HName"          f insert-file-name
+osd 2 170 ""  "Insert \HFile...      C-i"   f insert-file
 ; Search
-osd 3  10  ""  "\HFind               C-f"   1 osd-search
-osd 3  12  ""  "F\Hind Again         C-g"   1 osd-search
-osd 3  13  ""  "Fi\Hnd Incremental"         f isearch-forward
-osd 3  20  ""  "\HReplace            C-r"   2 osd-search
-osd 3  40  ""  "Goto \HLine Number   C-e"   f osd-goto-line
-osd 3  50  ""  "Goto \HMatching (..)"       f goto-matching-fence
-osd 3  60  ""  "Mar\Hk               C-m"   f set-alpha-mark
-osd 3  70  ""  "G\Hoto Mark          C-t"   f goto-alpha-mark
-
+osd 3 10  ""  "Incremental \HSearch"         f isearch-forward
+osd 3 40  ""  "\HFind...              C-f"   1 osd-search
+osd 3 50  ""  "Find \HNext"                  f hunt-forward
+osd 3 60  ""  "Find \HPrev"                  f hunt-backward
+osd 3 70  ""  "\HReplace...           C-r"   2 osd-search
+osd 3 120 ""  "Set \HBookmark         A-m"   f set-alpha-mark
+osd 3 130 ""  "\HGoto Bookmark        A-G"   f goto-alpha-mark
+osd 3 140 ""  "Goto Mat\Hching (..)"         f goto-matching-fence
+osd 3 150 ""  "Goto \HLine...         C-l"   f osd-goto-line
+osd 3 160 ""  "Goto \HTag..."                f osd-find-tag
+; View
+osd 4 60  ""  "Buffer \HInfo"                f buffer-info
+osd 4 70  ""  "Word \HCount"                 f count-words
+osd 4 100 "M" "\HBuffer"                    20 osd-1-buffer
+; Format
+osd 5 70  ""  "\HFill Paragraph           C-j" f fill-paragraph
+osd 5 150 ""  "Capitali\Hze Word"              f capitalize-word
+osd 5 160 ""  "\HLower Case Word"              f lower-case-word
+osd 5 170 ""  "\HUpper Case Word"              f upper-case-word
+osd 5 180 ""  "L\Hower Case Region        C-^" f lower-case-region
+osd 5 190 ""  "U\Hpper Case Region"            f upper-case-region
+; Tools
+osd 6 30  ""  "Spell \HWord"         1 spell-word
+; Advanced
+osd 7 10  ""  "\HRecord Macro        A-k" f osd-record-macro
+osd 7 20  ""  "\HExecute Macro       C-k" f execute-kbd-macro
+osd 7 50  ""  "E\Hxecute Command..." f execute-named-command
+osd 7 60  ""  "Execute \HFile..."    f execute-file
+osd 7 140 ""  "\HIpipe Command..."   f ipipe-shell-command
+osd 7 150 ""  "S\Hhell"              f shell
+; Window
+osd 8 10  ""  "\HSplit Window V      C-2" f split-window-vertically
+osd 8 20  ""  "\HGrow Window V"        1 change-window-depth
+osd 8 30  ""  "S\Hhrink Window V"     -1 change-window-depth
+osd 8 40  ""  "Spl\Hit Window H"       f split-window-horizontally
+osd 8 50  ""  "G\Hrow Window H"        1 change-window-width
+osd 8 60  ""  "Shr\Hink Window H"     -1 change-window-width
+osd 8 80  ""  "\HOne Window"           f delete-other-windows
+osd 8 90  ""  "\HDelete Window       C-1" f delete-window
+osd 8 110 ""  "\HPrevious Window"      f previous-window
+osd 8 120 ""  "\HNext Window"          f next-window
+!if &and &not &band $system 0x01 &opt "mwf"
+    ; running a version that can support multiple frames
+    osd 8 150 "-"
+    osd 8 160 ""  "Create New \HFrame" f create-frame
+    osd 8 170 ""  "\HClose This Frame" f delete-frame
+    osd 8 180 ""  "Ne\Hxt Frame"       f next-frame
+!endif
+; Help
+osd 9 20  ""  "General \HHelp         C-h" f osd-help
+osd 9 40  ""  "List \HBindings"            f describe-bindings
+osd 9 50  ""  "List Bu\Hffers"             f list-buffers
+osd 9 60  ""  "List \HCommands"            f list-commands
+osd 9 80  ""  "List \HVariables"           f list-variables
+osd 9 90  ""  "Command Apropo\Hs..."       f command-apropos
+osd 9 110 ""  "Describe \HKey..."          f describe-key
+osd 9 120 ""  "Describe Var\Hiable..."     f describe-variable
+osd 9 130 ""  "Describe \HWord..."         f describe-word
+osd 9 140 ""  "Help on C\Hommand..."       f help-command
+osd 9 150 ""  "Help on Variab\Hle..."      f help-variable
