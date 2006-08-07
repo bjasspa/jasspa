@@ -117,30 +117,36 @@
     !endif
 !emacro
 0 define-macro major-mode-setup-fmark
-    set-variable #l0 &spr "/history/fhook/%s-%s" &rig $buffer-fhook 6 &lget "|fomark|fcmark|tab-width|indent-width|" &abs @#
-    set-variable #l1 &reg #l0 ""
+    set-variable #l1 &lget .major-mode-setup.nedit &abs @#
     !if &les @# 0
         set-variable #l2 @ml2 "" #l1
-        !if &not &seq #l2 #l1
-            !if &seq #l2 ""
-                !force delete-registry #l0
-            !else
-                set-registry #l0 #l2
-            !endif
-        !endif
+        set-variable .major-mode-setup.nedit &lset .major-mode-setup.nedit &abs @# #l2
     !else
         set-variable $result #l1
     !endif
 !emacro
 0 define-macro major-mode-setup-save
-    !if &not &seq .major-mode-setup.nsetup .major-mode-setup.osetup
+    !if &set #l0 &not &seq .major-mode-setup.nsetup .major-mode-setup.osetup
         set-registry &cat "/history/fhook/" &rig $buffer-fhook 6 .major-mode-setup.nsetup
         set-variable &ind &spr ".%s.setup" $buffer-fhook .major-mode-setup.nsetup
         set-variable .major-mode-setup.osetup .major-mode-setup.nsetup
-        !if &band @# 1
-            ; save changes if not run from user-setup
-            save-registry "/history" ""
-        !endif
+    !endif
+    !if &not &seq .major-mode-setup.nedit .major-mode-setup.oedit
+        set-variable #l4 &spr "/history/fhook/%s-" &rig $buffer-fhook 6
+        set-variable #l1 0
+        !while &not &seq "" &set #l2 &lget .major-mode-setup.ledit &inc #l1 1
+            !if &seq "" &set #l3 &lget .major-mode-setup.nedit #l1 
+                !force delete-registry &cat #l4 #l2
+            !else
+                set-registry &cat #l4 #l2 #l3
+            !endif
+        !done
+        set-variable .major-mode-setup.oedit .major-mode-setup.nedit
+        set-variable #l0 1
+    !endif
+    !if &and #l0 &band @# 1
+        ; save changes if not run from user-setup
+        save-registry "/history" ""
     !endif
     !if &band @# 4
         !force execute-file &cat "hk" &rig $buffer-fhook 6
@@ -165,6 +171,12 @@ define-macro major-mode-setup
         !abort
     !endif
     set-variable .osetup &ind &spr ".%s.setup" $buffer-fhook
+    set-variable #l1 0
+    set-variable #l3 "\b"
+    !while &not &seq "" &set #l2 &lget .ledit &inc #l1 1
+        set-variable #l3 &lins #l3 -1 &reg &spr "/history/fhook/%s-%s" &rig $buffer-fhook 6 #l2 ""
+    !done
+    set-variable .oedit #l3
     set-variable #l9 &ind &spr ".%s.name" $buffer-fhook
     !if &seq #l9 "ERROR"
         set-variable #l9 &cat &sup &mid $buffer-fhook 6 1 &rig $buffer-fhook 7
@@ -241,8 +253,10 @@ define-macro major-mode-setup
     osd .osd.mjrmdstp 970 "BtrfHh"  .scheme.osd-ebtt " \HCancel " f void
     osd .osd.mjrmdstp 975 "f" "   "
     set-variable .nsetup .osetup
+    set-variable .nedit .oedit
     .osd.mjrmdstp osd
 !emacro
+set-variable .major-mode-setup.ledit  "|fomark|fcmark|tab-width|indent-width|"
 set-variable .major-mode-setup.flags  "|p|o|n|g|h|d|s|f|b|e|m|a|k|i|j|t|x|u|w|"
 set-variable .major-mode-setup.blank  "|0|0|9|0|0|0|0|9|9|2|5|2|4|4|4|4|4|4|13|"
 set-variable .major-mode-setup.labels "|Create Help \HPage|C\Hreate Tools Menu|Insert \HNew Template|Fence Display|Setup \HHilighting|Setup Auto In\Hdent|Setup Auto Spe\Hll|Setup \HFolding|Add A\Hbbreviations|\HExact|\HMagic|Aut\Ho|Bac\Hkup|\HIndent|\HJustify|\HTab|Time|\HUndo|\HWrap|"
