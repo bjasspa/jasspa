@@ -121,7 +121,6 @@ osd .osd.fattr 610 "BHcft"   .scheme.osd-ebtt "  \HOK  "         1 void
 
 define-macro file-attrib
     ; correct the main osd entry now we know the menu number
-    !force osd 1 80 "" "Att\Hributes" .osd.fattr file-attrib
     osd .osd.fattr 20  "" &cat "  Buffer : " $buffer-bname 
     !if &gre &set #l1 &len &set #l0 $buffer-fname 70
         set-variable #l0 &cat "..." &rig #l0 &sub #l1 67
