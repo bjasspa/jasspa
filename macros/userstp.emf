@@ -614,8 +614,8 @@ osd .osd.user-plat 821 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 820
         osd .osd.user-plat 140 "Ctfxp" &cat .osd.checkbox-chars "\} \HFonts" 0x10 user-set-system
         osd .osd.user-plat 320 "fh" "    "
         osd .osd.user-plat 330 "Ctfxph" &cat .osd.checkbox-chars "\} \HExtend Char Set" 2 user-set-cpfcheckbox
-        osd .osd.user-plat 340 "fh"  "               "
-        osd .osd.user-plat 350 "BtfxHR" .scheme.osd-ebtt " Choose Font " f user-set-winfont
+        osd .osd.user-plat 340 "fh"  "             "
+        osd .osd.user-plat 350 "BtfxHR" .scheme.osd-ebtt " Choose Font.. " f user-set-winfont
         osd .osd.user-plat 420 "fh" "       "
         osd .osd.user-plat 430 "Ctfxp" &cat .osd.checkbox-chars "\} Capture Alt Space" 0x40000 user-set-system
     !endif
@@ -736,8 +736,8 @@ osd .osd.user-gener 330 "Sfh" "  Tab To \HIndent:  " 340
 osd .osd.user-gener 340 "OtxmsfhHzR" .scheme.osd-entry 18 1 "" .osd.tmp user-setup-tab-indent
 osd .osd.user-gener 341 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 340
 osd .osd.user-gener 370 ""
-osd .osd.user-gener 380 "fh"  "                      "
-osd .osd.user-gener 390 "MdtxmfH" .scheme.osd-ebtt " Sho\Hw Modes " .osd.user-modes
+osd .osd.user-gener 380 "fh"  "                  "
+osd .osd.user-gener 390 "MdtxmfH" .scheme.osd-ebtt &cat "Sho\Hw Modes  " &mid $window-chars 31 1 .osd.user-modes
 
 ; The Start-up menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 0 define-macro user-setup-emulate-set
