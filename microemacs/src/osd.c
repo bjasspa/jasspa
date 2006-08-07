@@ -3386,7 +3386,7 @@ osdDisplayPush(int id, int flags)
     }
     
     osdDisplaySetDefaultContext(md) ;
-    osdDisplayUpdate(md,0) ;
+    osdDisplayUpdate(md,osdRENDITEM_REFOCUS) ;
     
           
     /* Snapshot the region occupied by the menu. */
@@ -4311,6 +4311,13 @@ osdDisplaySelectFirstLetter(int cc, osdDISPLAY *md)
     if (best == -1)
         return 0 ;             /* Not found */
     md->newContext = best ;
+    osdNewChild = md ;
+    while(md->flags & RF_CHILD)
+    {
+        md = md->prev ;
+        md->newContext = md->curContext ;
+    }
+    osdNewMd = md ;
     return 1 ;                 /* Found */
 }
 
@@ -4543,7 +4550,7 @@ osdDisplayKeyMove(int dir)
     {
         /* no obvious item to go to, handle moving in and out of children */
         /* if moving forward and current item is a sub-menu go into it */
-        if((dir & (osdMOVE_DOWN|osdMOVE_RIGHT)) &&
+        if(((dir & (osdMOVE_DOWN|osdMOVE_RIGHT)) || ((osdCurMd->dialog->id == osdMainMenuId) && (dir & osdMOVE_UP))) &&
            ((osdCurChild->curContext < 0) ||
             (osdCurChild->context[osdCurChild->curContext].menu->flags & MF_SUBMNU)))
         {
@@ -5020,19 +5027,28 @@ menuInteraction (int *retState)
                 /* Close current sub-menu's up to the first real dialog (one
                  * with a title bar) if one is open, otherwise follow through
                  * and close whole dialog */
-                osdNewMd = osdCurMd ;
-                while(((osdNewMd = osdNewMd->prev) != NULL) &&
-                      ((osdNewMd->flags & RF_TITLE) == 0))
-                    ;
-                if((osdNewMd == NULL) || (osdNewMd->flags & RF_DISABLE))
-                    state = meOSD_QUIT_MENU ;
+                if((osdCurChild->curContext >= 0) &&
+                   (osdCurChild->context[osdCurChild->curContext].menu->flags & MF_MANUAL) &&
+                   (osdCurMd->next != NULL))
+                {
+                    osdDisplayPop(osdCurMd->next);
+                }
                 else
                 {
-                    osdNewChild = osdNewMd ;
-                    while(((osdNewChild->newContext = osdNewChild->curContext) >= 0) &&
-                          (osdNewChild->context[osdNewChild->newContext].menu->flags & MF_CHILD))
-                        osdNewChild = osdNewChild->context[osdNewChild->newContext].child->display ;
-                    nit = 1 ;
+                    osdNewMd = osdCurMd ;
+                    while(((osdNewMd = osdNewMd->prev) != NULL) &&
+                          ((osdNewMd->flags & RF_TITLE) == 0))
+                        ;
+                    if((osdNewMd == NULL) || (osdNewMd->flags & RF_DISABLE))
+                        state = meOSD_QUIT_MENU ;
+                    else
+                    {
+                        osdNewChild = osdNewMd ;
+                        while(((osdNewChild->newContext = osdNewChild->curContext) >= 0) &&
+                              (osdNewChild->context[osdNewChild->newContext].menu->flags & MF_CHILD))
+                            osdNewChild = osdNewChild->context[osdNewChild->newContext].child->display ;
+                        nit = 1 ;
+                    }
                 }
                 break;
                 
