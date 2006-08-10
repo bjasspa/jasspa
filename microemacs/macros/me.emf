@@ -367,7 +367,7 @@ osd -1 &cond &set .osd.menu &reg "/history/main-menu" "1" "1" "0"
 !endif
 !if &not &exi session
     !force exec-file session
-    set-variable #l1 &bor &mul 8 &ban @# 1 &con &exi %session-name &con &seq %session-name "" 20 16 30
+    set-variable #l1 &bor &mul 16 &ban @# 1 &con &exi %session-name &con &seq %session-name "" 42 34 62
     !force #l1 read-session
     !if &band #l1 6
         !if &set #l0 &reg &spr "/history/%s/frame-width" %platform "0"

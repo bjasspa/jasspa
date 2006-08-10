@@ -327,16 +327,20 @@ define-macro save-session
     !force !force 0 write-buffer &spr "%s%s.esf" $user-path %session-name
     set-variable $buffer-bname #l1
 !emacro
-; 0x01 get session name from user
-; 0x02 don't load buffer info (i.e. buffer list, 0x2 ~= 0x0e)
-; 0x04 don't load frame info (i.e. frame size and toolbar, 0x4 ~= 0x0c)
-; 0x08 don't load window info (i.e. window layout & visible buffer)
-; 0x10 don't error if esf file is not found
+; 0x01 merge into current session
+; 0x02 don't get session name from user, reload current
+; 0x04 don't load buffer info (i.e. buffer list, 0x2 ~= 0x0e)
+; 0x08 don't load frame info (i.e. frame size and toolbar, 0x4 ~= 0x0c)
+; 0x10 don't load window info (i.e. window layout & visible buffer)
+; 0x20 don't error if esf file is not found
 define-macro read-session
     !if &or &not &exi %session-name &seq %session-name ""
         set-variable %session-name $user-name
     !endif
-    !if &band @# 1
+    !if &band @# 2
+        ; use the default session
+        set-variable #l0 %session-name
+    !else
         !force set-variable #l0 @1
         !if &not $status
             session
@@ -346,12 +350,9 @@ define-macro read-session
             !endif
             set-variable #l0 @ml19 "Read session" %session-name .session.list
         !endif
-    !else
-        ; use the default session
-        set-variable #l0 %session-name
     !endif
     !if &not &seq "R" &stat t &set #l1 &spr "%s%s.esf" $user-path #l0
-        !if &band @# 16
+        !if &band @# 32
             set-variable %session-name #l0
             0 change-scheme
             !return
@@ -359,8 +360,38 @@ define-macro read-session
         ml-write &spr "[Session Error: cannot read session file \"%s\"]" #l1
         !abort
     !endif
-    !if &not &seq %session-name #l0
-        !force update-session
+    !if &band @# 1
+        save-some-buffers
+        set-variable #l3 0
+        set-variable #l4 0
+        set-variable $buffer-names ".*"
+        !while &not &seq &set #l2 $buffer-names ""
+            !if &and &nbmod #l2 "edit" &not &seq &lef #l2 1 "*" 
+                set-variable #l3 &add #l3 1
+            !elif &nbmod #l2 "pipe"
+                set-variable #l4 &add #l4 1
+            !endif
+        !done
+        !if &add #l3 #l4
+            set-variable #l5 &con #l3 &spr "%d modified buffer%s" #l3 &con &equ #l3 1 "" "s" ""
+            !if #l4
+                set-variable #l5 &spr "%s%s%d active process%s" #l5 &con &len #l5 " and " "" #l4 &con &equ #l4 1 "" "es"
+            !endif
+            set-variable #l5 @mc1 &spr "%s exist%s, continue anyway [y/n]?" #l5 &con &equ &add #l3 #l4 1 "s" "" "yYnN"
+            !if &seq &slo #l5 "n"
+                !abort
+            !endif
+        !endif
+        !if &not &seq %session-name #l0
+            !force update-session
+        !endif
+        set-variable $buffer-names ".*"
+        !while &not &seq &set #l2 $buffer-names ""
+            !if &not &seq #l2 $buffer-bname
+                !force 0 delete-buffer #l2
+            !endif
+        !done
+        !force 0 delete-buffer $buffer-bname
     !endif
     ml-write &spr "[Loading session \"%s\"...]" #l0
     set-position "\x88"
@@ -383,7 +414,7 @@ define-macro read-session
         !abort
     !endif
     set-variable #l9 @s1
-    !if &not &band @# 6
+    !if &not &band @# 12
         !if &seq $frame-id .notes.frame-id
             !force notes-close
             set-position "\x88"
@@ -416,11 +447,11 @@ define-macro read-session
                 goto-position "\x88"
                 set-variable #l2 &cat ".session.scheme" &cond &band $system 0x01 "c" "w"
                 &exi &ind #l2 change-scheme &ind #l2
-                !if &band @# 8
+                !if &band @# 16
                 !elif &exi .notes
                     notes-file .notes
                     !force unset-variable .notes
-                !elif &and &band @# 4 &not &seq #l0 ""
+                !elif &and &band @# 8 &not &seq #l0 ""
                     find-buffer #l0
                 !endif
                 ml-write &spr "[Session read]"
@@ -449,7 +480,7 @@ define-macro read-session
                     beginning-of-line
                     forward-line
                 !done
-            !elif &band @# 2
+            !elif &band @# 4
             !elif &seq #l1 "buff"
                 !while &sgr @wc " "
                     set-mark
@@ -522,7 +553,7 @@ define-macro read-session
                     find-buffer "*session_tmp*"
                     set-variable $window-line #l5
                 !done
-            !elif &band @# 4
+            !elif &band @# 8
             !elif &seq #l1 "toolbar"
                 !while &xse @wl "^\b\\([^\b]+\\)\b\\(.*\\)"
                     set-variable &ind &cat ".toolbar." @s1 @s2
@@ -551,7 +582,7 @@ define-macro read-session
                         !force change-frame-width .session.framew
                     !endif
                 !endif
-                !if &not &band @# 8
+                !if &not &band @# 16
                     set-variable #l7 0
                     !if &sub &sub &lget #l2 3 &lget #l2 1 $window-width
                         ml-write "[Frame width not correct - cannot recreate window layout]"
@@ -563,7 +594,7 @@ define-macro read-session
                         set-variable #l7 $status
                     !endif
                     !if &not #l7
-                        set-variable @# &bor @# 4
+                        set-variable @# &bor @# 8
                     !endif
                     goto-position "\x88"
                     find-buffer "*session_tmp*"
