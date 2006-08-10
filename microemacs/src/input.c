@@ -163,7 +163,7 @@ mlyesno(meUByte *prompt)
 
     ret = mlCharReply(buf,mlCR_LOWER_CASE,(meUByte *)"yn",NULL) ;
     
-    if(ret == -1)
+    if(ret < 0)
         return ctrlg(meFALSE,1) ;
     else if(ret == 'n')
         return meFALSE ;
