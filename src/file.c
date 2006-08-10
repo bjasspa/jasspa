@@ -2314,11 +2314,19 @@ saveSomeBuffers(int f, int n)
             if(n & 1)
             {
                 if(bp->fileName != NULL)
-                    sprintf((char *)prompt, "Save file %s", bp->fileName) ;
+                    sprintf((char *)prompt, "Save file %s [y/n/a]? ", bp->fileName) ;
                 else
-                    sprintf((char *)prompt, "Save buffer %s", bp->name) ;
-                if((status = mlyesno(prompt)) < 0)
-                    return meABORT ;
+                    sprintf((char *)prompt, "Save buffer %s [y/n/a]? ", bp->name) ;
+                if((status = mlCharReply(prompt,mlCR_LOWER_CASE,(meUByte *)"yna",NULL)) < 0)
+                    return ctrlg(meFALSE,1) ;
+                else if(status == 'n')
+                    status = meFALSE ;
+                else
+                {
+                    if(status == 'a')
+                        n ^= 1 ;
+                    status = meTRUE ;
+                }
             }
             if((status > 0) &&
                (writeout(bp, 0, bp->fileName) <= 0))
