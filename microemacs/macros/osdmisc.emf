@@ -32,11 +32,6 @@ define-macro osd-search
     set-variable .osd.sar-rpr &pinc .osd.next 1
     set-variable .osd.sar-hll &pinc .osd.next 1
     set-variable .osd.sar-hlr &pinc .osd.next 1
-    set-variable .osd-search.search ""
-    set-variable .osd-search.replace ""
-    set-variable .osd-search.scheme 1
-    set-variable .osd-search.hilnames "|Remove |White  |Black  |Red    |Green  |Yellow |Blue   |Magenta|Cyan   |"
-    set-variable .osd-search.hilschms &spr "|%d|%d|%d|%d|%d|%d|%d|%d|%d|" $global-scheme .scheme.hlwhite .scheme.hlblack .scheme.hlred .scheme.hlgreen .scheme.hlyellow .scheme.hlblue .scheme.hlmagenta .scheme.hlcyan
     ; buffer-setup
     set-variable .osd.buffstp &pinc .osd.next 1
     set-variable .osd.buffstpm &pinc .osd.next 1
@@ -126,12 +121,16 @@ define-macro insert-symbol
     !endif
 !emacro
 0 define-macro buffer-setup-exec
-    !if &equ @# 5
+    !if &gre &abs @# 128
+        !if &gre @# 0
+            !return &bmod &trb $result
+        !endif
+        ml-write &spr "Got [%s]" $result
+        0 buffer-mode &trb $result
+    !elif &equ @# 5
         !return $buffer-hilight
     !elif &equ @# 4
         !return $buffer-indent
-    !elif &equ @# 3
-        !return &not &bmod "tab"
     !elif &equ @# 2
         set-variable $result $buffer-indent-width
     !elif &equ @# 1
@@ -140,8 +139,6 @@ define-macro insert-symbol
         set-variable $buffer-tab-width @ml2 "" $buffer-tab-width
     !elif &equ @# -2
         set-variable $buffer-indent-width @ml2 "" $buffer-indent-width
-    !elif &equ @# -3
-        0 buffer-mode "tab"
     !elif &equ @# -4
         !if $buffer-indent
             set-variable :buffer-indent $buffer-indent
@@ -164,19 +161,28 @@ osd .osd.buffstpm 10 "IbHt" .scheme.osd-sbar 16 20 .osd.tmp
 
 -1 osd .osd.buffstp
 osd .osd.buffstp  0 "batcDIHs" 9 3 40 10 -1 -1 510 510 .scheme.osd-title "Buffer Setup"
-osd .osd.buffstp 10 ""
-osd .osd.buffstp 20 "Sfh" "  \HMajor Mode:   " 30
-osd .osd.buffstp 30 "OtxmsfhHzR" .scheme.osd-entry 16 1 "" .osd.buffstpm buffer-setup-mm
-osd .osd.buffstp 40 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 30
-osd .osd.buffstp 50 ""
-osd .osd.buffstp 60 "Sfh" "  \HTab Width:    " 30
-osd .osd.buffstp 70 "EtRxHf" .scheme.osd-entry "##########" 1 buffer-setup-exec
-osd .osd.buffstp 80 ""
-osd .osd.buffstp 90 "Sfh" "  \HIndent Width: " 60
+osd .osd.buffstp 10  ""
+osd .osd.buffstp 20  "Sfh" "  \HMajor Mode:   " 30
+osd .osd.buffstp 30  "OtxmsfhHzR" .scheme.osd-entry 16 1 "" .osd.buffstpm buffer-setup-mm
+osd .osd.buffstp 40  "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 30
+osd .osd.buffstp 50  ""
+osd .osd.buffstp 60  "Sfh" "  \HTab Width:    " 70
+osd .osd.buffstp 70  "EtRxHf" .scheme.osd-entry "##########" 1 buffer-setup-exec
+osd .osd.buffstp 80  ""
+osd .osd.buffstp 90  "Sfh" "  \HIndent Width: " 100
 osd .osd.buffstp 100 "EtRxHf" .scheme.osd-entry "##########" 2 buffer-setup-exec
 osd .osd.buffstp 110 ""
-osd .osd.buffstp 120 "fh" "  "
-osd .osd.buffstp 130 "Cptfx" &cat .osd.checkbox-chars "\} \HUse tab characters" 3 buffer-setup-exec
+osd .osd.buffstp 190 ""
+osd .osd.buffstp 200 "f"  "  Buffer Modes:"
+osd .osd.buffstp 201 "fh"  "  "
+set-variable #l0 0
+!while &not &seq "" &set #l1 &lget "\bautosv\bbackup\bcrlf\bcrypt\bctrlz\bedit\bexact\bindent\bjustify\bmagic\bover\btab\btime\bundo\bview\bwrap\b" &inc #l0 1
+    osd .osd.buffstp &add 200 &mul #l0 3 "Cptfhx" &spr "%s\} %s%n" .osd.checkbox-chars #l1 &sub 9 &len #l1 " " &add 128 #l0 buffer-setup-exec
+    !if &not &mod #l0 4
+        osd .osd.buffstp &add 201 &mul #l0 3 "f"  "  "
+        osd .osd.buffstp &add 202 &mul #l0 3 "fh"  "  "
+    !endif
+!done
 osd .osd.buffstp 500 ""
 osd .osd.buffstp 510 "BtcfHh" .scheme.osd-ebtt " \HOkay "  f void
 define-macro buffer-setup
@@ -781,7 +787,6 @@ osd .osd.sar-hll 165 "hf" "  "
 osd .osd.sar-hll 170 "BhfxHt" .scheme.osd-ebtt " Abo\Hve "       -4 osd-search-hilight
 osd .osd.sar-hll 175 "hf" "  "
 osd .osd.sar-hll 180 "BhfxHt" .scheme.osd-ebtt " \HAll  "         5 osd-search-hilight
-.osd-search.scheme osd-search-set-hilight
 
 osd .osd.sar-hlr 0 "sD" 13 11 -1 -1 30
 osd .osd.sar-hlr 5 ""
@@ -851,6 +856,12 @@ osd .osd.sar  10 "It" .osd.sar-nb
     !force -1 osd-search-set-state
     .osd.sar osd
 !emacro
+set-variable .osd-search.search ""
+set-variable .osd-search.replace ""
+set-variable .osd-search.scheme 1
+set-variable .osd-search.hilnames "|Remove |White  |Black  |Red    |Green  |Yellow |Blue   |Magenta|Cyan   |"
+set-variable .osd-search.hilschms &spr "|%d|%d|%d|%d|%d|%d|%d|%d|%d|" $global-scheme .scheme.hlwhite .scheme.hlblack .scheme.hlred .scheme.hlgreen .scheme.hlyellow .scheme.hlblue .scheme.hlmagenta .scheme.hlcyan
+.osd-search.scheme osd-search-set-hilight
 
 ; line-scheme & osd-line-scheme external interfaces, used by the multi-menu code
 define-macro line-scheme
