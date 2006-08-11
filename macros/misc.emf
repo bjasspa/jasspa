@@ -31,7 +31,7 @@ define-macro open-line
 define-macro check-line-length
     !repeat
         end-of-line
-        !if &gre $window-acol $fill-col
+        !if &gre $window-acol $buffer-fill-col
             ml-write "[line too long]"
             !abort
         !endif

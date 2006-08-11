@@ -22,7 +22,7 @@
 ; 100  - Got an LI
 ; 200  - Got an LI and a newline added - 2 added to #p1
 0 define-macro html-add-newline
-    !if &and &and &not &band #p5 0x60 #p0 &gre &add #p1 #p4 :fill-col
+    !if &and &and &not &band #p5 0x60 #p0 &gre &add #p1 #p4 $buffer-fill-col
         set-mark
         set-variable $window-col #p7
         insert-newline
@@ -122,7 +122,7 @@
         !elif &sin @wc "\t "
             forward-delete-char
             !if &band #l5 0x24
-                !if &and &not &band #l5 0x60 &and #l0 &gre &add #l1 #l4 :fill-col
+                !if &and &not &band #l5 0x60 &and #l0 &gre &add #l1 #l4 $buffer-fill-col
                     set-mark
                     set-variable $window-col #l7
                     insert-newline
@@ -316,7 +316,7 @@
                             !endif
                         !elif &iseq #l3 "HR>"
                             html-add-newline
-                            :fill-col insert-string &rig $box-chars 10
+                            $buffer-fill-col insert-string &rig $box-chars 10
                             html-add-newline
                         !endif
                     !elif &iseq &lef #l3 1 "D"

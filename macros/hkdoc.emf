@@ -19,15 +19,6 @@ set-variable .fhook-doc.setup &reg "/history/fhook/doc" "fghijnopswx"
 set-variable .fhook-doc.setup-mask "aefghijkmnopstuwx"
 set-variable .fhook-doc.name "Document"
 
-; Set up for documentation mode.
-define-macro bhook-doc
-    doc-buffer-context
-!emacro
-
-define-macro ehook-doc
-    doc-global-context
-!emacro
-
 ; load docmacro.emf passing the doc setup flags
 execute-file "docmacro" "doc"
 

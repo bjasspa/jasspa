@@ -858,8 +858,8 @@ define-macro cvs-log-list
         exchange-point-and-mark
         beginning-of-line
         !repeat
-            !while &gre &len @wl $fill-col
-                set-variable $window-col $fill-col
+            !while &gre &len @wl $buffer-fill-col
+                set-variable $window-col $buffer-fill-col
                 !force search-backward " "
                 forward-char
                 insert-newline
