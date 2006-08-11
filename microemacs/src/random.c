@@ -732,8 +732,9 @@ meTab(int f, int n)
      * negative, wrap mode is enabled, and we are now past fill column,
      * and we are not read-only, perform word wrap.
      */
-    if(meModeTest(frameCur->bufferCur->mode,MDWRAP) && (fillcol > 0) &&
-       (getccol() > fillcol))
+    if(meModeTest(frameCur->bufferCur->mode,MDWRAP) &&
+       (frameCur->bufferCur->fillcol > 0) &&
+       (getccol() > frameCur->bufferCur->fillcol))
         wrapWord(meFALSE, 1);
 #endif
     if(!meModeTest(frameCur->bufferCur->mode,MDTAB))
@@ -1015,12 +1016,13 @@ meNewline(int f, int n)
      * negative, wrap mode is enabled, and we are now past fill column,
      * and we are not read-only, perform word wrap.
      */
-    if(meModeTest(frameCur->bufferCur->mode,MDWRAP) && (fillcol > 0) &&
-       (getccol() > fillcol))
+    if(meModeTest(frameCur->bufferCur->mode,MDWRAP) &&
+       (frameCur->bufferCur->fillcol > 0) &&
+       (getccol() > frameCur->bufferCur->fillcol))
         wrapWord(meFALSE, 1);
     
     if(meModeTest(frameCur->bufferCur->mode,MDJUST) &&
-       ((fillmode == 'c') || (fillmode == 'r')))
+       ((frameCur->bufferCur->fillmode == 'c') || (frameCur->bufferCur->fillmode == 'r')))
         f = 1 ;
     else
         f = 0 ;
@@ -1050,7 +1052,7 @@ meNewline(int f, int n)
         if(f)
         {
             f = 0 ;
-            justify(-1,-1) ;
+            justify(-1,-1,frameCur->bufferCur->fillmode) ;
         }
 #endif
     }

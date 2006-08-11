@@ -534,22 +534,41 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                 break;
             }
 #if MEOPT_WORDPRO
+        case EVBUFFILLCOL:
+            {
+                meInt col=meAtoi(vvalue);
+                if(col <= 0)
+                    frameCur->bufferCur->fillcol = 0 ;
+                else
+                    frameCur->bufferCur->fillcol = (meUShort) col ;
+                break;
+            }
+        case EVBUFFILLMODE:
+            frameCur->bufferCur->fillmode = *vvalue ;
+            break;
         case EVFILLBULLET:
             meStrncpy(fillbullet,vvalue,15);
             fillbullet[15] = '\0' ;
             break;
         case EVFILLBULLETLEN:
-            fillbulletlen = (meShort) meAtoi (vvalue);
+            fillbulletlen = (meUByte) meAtoi (vvalue);
             break;
         case EVFILLCOL:
-            fillcol = (meShort) meAtoi(vvalue);
+            {
+                meInt col=meAtoi(vvalue);
+                if(col <= 0)
+                    fillcol = 0 ;
+                else
+                    fillcol = (meUShort) col ;
+                break;
+            }
             break;
         case EVFILLEOS:
             meStrncpy(filleos,vvalue,15);
             filleos[15] = '\0' ;
             break;
         case EVFILLEOSLEN:
-            filleoslen = (meShort) meAtoi (vvalue);
+            filleoslen = (meUByte) meAtoi (vvalue);
             break;
         case EVFILLIGNORE:
             meStrncpy(fillignore,vvalue,15);
@@ -1100,6 +1119,11 @@ gtenv(meUByte *vname)   /* vname   name of environment variable to retrieve */
     case EVCURSORY:     return meItoa(frameCur->mainRow);
     case EVSYSTEM:      return meItoa(meSystemCfg);
 #if MEOPT_WORDPRO
+    case EVBUFFILLCOL:  return meItoa(frameCur->bufferCur->fillcol) ;
+    case EVBUFFILLMODE:
+        evalResult[0] = frameCur->bufferCur->fillmode ;
+        evalResult[1] = '\0' ;
+        return evalResult ;
     case EVFILLBULLET:  return fillbullet;
     case EVFILLBULLETLEN:return meItoa(fillbulletlen);
     case EVFILLCOL:     return meItoa(fillcol);
