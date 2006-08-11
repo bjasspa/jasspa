@@ -350,7 +350,8 @@ execute(register int c, register int f, register int n)
 
     if(meModeTest(frameCur->bufferCur->mode,MDWRAP) &&
        ((c == ' ') || (meStrchr(filleos,c) != NULL)) &&
-       (fillcol > 0) && (n >= 0) && (getccol() > fillcol) &&
+       (frameCur->bufferCur->fillcol > 0) && (n >= 0) && 
+       (getccol() > frameCur->bufferCur->fillcol) &&
        !meModeTest(frameCur->bufferCur->mode,MDVIEW))
         wrapWord(meFALSE, 1);
 #endif

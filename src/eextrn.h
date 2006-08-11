@@ -1090,7 +1090,7 @@ extern	int	forwDelWord(int f, int n);
 extern	int	backDelWord(int f, int n);
 #if MEOPT_WORDPRO
 extern	int	wrapWord(int f, int n);
-extern	int	justify(int leftMargin, int leftDoto);
+extern	int	justify(int leftMargin, int leftDoto, meUByte jmode);
 extern	int	fillPara(int f, int n);
 extern	int	killPara(int f, int n);
 extern	int	countWords(int f, int n);

@@ -44,6 +44,10 @@ DEFVAR ("buffer-dhook",        EVBUFDHK)        /* Buffer dhook  */
 DEFVAR ("buffer-ehook",        EVBUFEHK)        /* Buffer ehook  */
 DEFVAR ("buffer-fhook",        EVBUFFHK)        /* Buffer fhook  */
 #endif
+#if MEOPT_WORDPRO
+DEFVAR ("buffer-fill-col",     EVBUFFILLCOL)    /* buffer fill column */
+DEFVAR ("buffer-fill-mode",    EVBUFFILLMODE)   /* buffer Justify mode */
+#endif
 DEFVAR ("buffer-fmod",         EVBUFFMOD)       /* file mod or attributes */
 DEFVAR ("buffer-fname",        EVCFNAME)        /* current file name */
 #if MEOPT_HILIGHT

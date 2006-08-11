@@ -71,10 +71,10 @@ extern  meUInt     idleTime;            /* idle-time delay time         */
 #endif
 #if MEOPT_WORDPRO
 extern  meUByte    fillbullet[];        /* Fill bullet character class  */
-extern  meShort    fillbulletlen;       /* Fill lookahead limit         */
-extern  meShort    fillcol;             /* Fill column                  */
+extern  meUByte    fillbulletlen;       /* Fill lookahead limit         */
+extern  meUShort   fillcol;             /* Fill column                  */
 extern  meUByte    filleos[];           /* Fill E-O-S character class   */
-extern  meShort    filleoslen;          /* Fill E-O-S ' ' insert len    */
+extern  meUByte    filleoslen;          /* Fill E-O-S ' ' insert len    */
 extern  meUByte    fillignore[];        /* Fill Ignore character class  */
 extern  meUByte    fillmode;            /* Justify mode                 */
 #endif
@@ -463,10 +463,10 @@ meUByte  *modeLineStr=orgModeLineStr;   /* current modeline format      */
 meInt     autoTime=300 ;                /* auto save time in seconds    */
 #if MEOPT_WORDPRO
 meUByte   fillbullet[16]="*)].-";       /* Fill bullet character class  */
-meShort   fillbulletlen = 15;           /* Fill lookahead limit         */
-meShort   fillcol = 78;                 /* Current fill column          */
+meUByte   fillbulletlen = 15;           /* Fill lookahead limit         */
+meUShort  fillcol = 78;                 /* Current fill column          */
 meUByte   filleos[16]=".!?";            /* Fill E-O-S character class   */
-meShort   filleoslen=1;                 /* Fill E-O-S ' ' insert len    */
+meUByte   filleoslen=1;                 /* Fill E-O-S ' ' insert len    */
 meUByte   fillignore[16]=">_@";         /* Fill Ignore character class  */
 meUByte   fillmode='B';                 /* Justification mode           */
 #endif

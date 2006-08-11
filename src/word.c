@@ -405,7 +405,7 @@ wrapWord(int f, int n)
         return meABORT ;
     
     /* Make sure we are not in no fill mode */
-    if (toLower (fillmode) == 'n')
+    if (toLower(frameCur->bufferCur->fillmode) == 'n')
         return meTRUE;
     
     /* back up until we aren't in a word,
@@ -421,7 +421,7 @@ wrapWord(int f, int n)
                 cnt = frameCur->windowCur->dotOffset+1 ;
             last = 0 ;
         }
-        else if(!last && (getccol() < fillcol))
+        else if(!last && (getccol() < frameCur->bufferCur->fillcol))
             break ;
         else
             last = 1 ;
@@ -452,7 +452,7 @@ wrapWord(int f, int n)
 #endif
     }    
     if(meModeTest(frameCur->bufferCur->mode,MDJUST))
-        justify(-1,-1) ;
+        justify(-1,-1,frameCur->bufferCur->fillmode) ;
     
     frameCur->windowCur->dotOffset = meLineGetLength(frameCur->windowCur->dotLine) - off ;
     return cnt ;
@@ -534,7 +534,7 @@ getBestGap(void)
     
 }	/* End of "goto_gap" */
 
-/* justify	
+/* justify
  * This routine will justify a block of text. The start of the text is at
  * doto, and the scaller specifies the length of the text to be justified, as
  * well as the new required length. This routine assumes the caller has
@@ -545,22 +545,21 @@ getBestGap(void)
  * 
  * leftMargin is a instruction from fillPara() to inform justify where it's
  * left margin is. justify() determines it's own left margin and tabMode if
- * passed a -ve values. 
+ * passed a -ve values.
  * 
- * This is required for the bulleted "* " or "a) " and "ii -  " type
+ * This is required for the bulleted "* " or "a) " and "ii - " type
  * indentation where a leading space must not be altered.
  * 
- * Note that on first inspection justify appears to be doing too much work
- * in cleaning up the line. This is true for a fillPara() invocation but
- * it is not true for any other invocation. 
+ * Note that on first inspection justify appears to be doing too much work in
+ * cleaning up the line. This is true for a fillPara() invocation but it is
+ * not true for any other invocation.
  */
 int
-justify(int leftMargin, int leftDoto)
+justify(int leftMargin, int leftDoto, meUByte jmode)
 {
     meUShort  len, doto, ss ;
     meUShort  odoto;              /* Starting doto backup */
     meUByte   cc ;
-    char      jmode;              /* Justification mode */
     int       undoMode;           /* Undo operation */
     int       col ;               /* left indent with tab expansion */
     
@@ -570,8 +569,10 @@ justify(int leftMargin, int leftDoto)
     (frameCur->windowCur->dotLineNo)-- ;
     undoMode = (leftMargin < 0) ? 2:0;  /* Compute the undo mode */ 
     
+    /* lowercase the given jmode to remove the auto-detect */
+    jmode = toLower(jmode);
+    
     /* We are always filling the previous line */
-    jmode = toLower (fillmode);         /* Get justification mode */
     len = meLineGetLength(frameCur->windowCur->dotLine) ; 
     ss = len ;
     
@@ -632,20 +633,19 @@ justify(int leftMargin, int leftDoto)
     }
     len = meLineGetLength(frameCur->windowCur->dotLine) - doto + leftMargin ;
     
-    /* If there is leading white space and we are justifying centre
-     * or right then delete the white space. */
+    /* If there is leading white space and we are justifying centre or right
+     * then delete the white space. */
     if(jmode != 'b')
     {
-        /* Centre and right justification are pretty similar. For
-         * right justification we insert "fillcol-linelen" spaces.
-         * For centre justification we insert "fillcol-linelen/2"
-         * spaces. */
-        if(len > fillcol)
+        /* Centre and right justification are pretty similar. For right
+         * justification we insert "fillcol-linelen" spaces. For centre
+         * justification we insert "fillcol-linelen/2" spaces. */
+        if(len > frameCur->bufferCur->fillcol)
         {
-            /* line is already too long - this can happen when filling
-             * a paragraph to the right and the first line is not the
-             * longest - pull back minimum to stay within the fillcol */
-            len -= fillcol ;
+            /* line is already too long - this can happen when filling a
+             * paragraph to the right and the first line is not the longest -
+             * pull back minimum to stay within the fillcol */
+            len -= frameCur->bufferCur->fillcol ;
             if(leftMargin < len)
                 leftMargin = 0 ;
             else
@@ -653,7 +653,7 @@ justify(int leftMargin, int leftDoto)
         }
         else
         {
-            len = fillcol - len ;
+            len = frameCur->bufferCur->fillcol - len ;
             if(jmode == 'c')                /* Centre ?? */
                 leftMargin = (len + leftMargin) >> 1 ;
             else
@@ -661,17 +661,17 @@ justify(int leftMargin, int leftDoto)
         }
     }
     /* Both left and right margin justification. */
-    else if(len < (meUShort) fillcol)
+    else if(len < frameCur->bufferCur->fillcol)
     {
         int gaps ;			/* The number of gaps in the line */
         
-        ss = fillcol - len ;
+        ss = frameCur->bufferCur->fillcol - len ;
         frameCur->windowCur->dotOffset = doto ;	        /* Save doto position */
         gaps = countGaps() ;	        /* Get number of gaps */
         
         if(gaps == 0)			/* No gaps ?? */
         {
-            lineInsertChar(ss, ' ') ;		/* Fill at end */
+            lineInsertChar(ss, ' ') ;	/* Fill at end */
 #if MEOPT_UNDO
             if (undoMode)
                 meUndoAddInsChars(ss) ;
@@ -765,7 +765,7 @@ lookahead(meInt fillState)
              * troubling the user */
             if (fillState & FILL_AUTO)
             {
-                meLine *temp_dotp;        /* Save our current line */
+                meLine *temp_dotp;      /* Save our current line */
                 
                 /* Move to the next line and scan it */
                 temp_dotp = frameCur->windowCur->dotLine;  
@@ -788,8 +788,8 @@ lookahead(meInt fillState)
                      * does not match the current line expectation. Or the
                      * current line is liable to spill onto the next line
                      * which is empty */
-                    if ((jj == ii) ||       /* Next line indented to 'ii' */
-                        ((jj == jlen) && (meLineGetLength(temp_dotp) <= (meUShort) fillcol)))
+                    if ((jj == ii) ||   /* Next line indented to 'ii' */
+                        ((jj == jlen) && (meLineGetLength(temp_dotp) <= frameCur->bufferCur->fillcol)))
                     {
                         frameCur->windowCur->dotOffset = ii; /* Assume position 'i' */
                         status = 0;     /* Disable prompt */
@@ -847,7 +847,7 @@ lookahead(meInt fillState)
                 else
                     frameCur->windowCur->dotOffset = temp_doto;	/* Restore */
             }
-            return fillState ;  /* Return potentially modified fillState */
+            return fillState ;          /* Return potentially modified fillState */
         }
         else
             last_c = c;
@@ -874,7 +874,7 @@ fillAutoDetect (char mode)
     mode = toLower (mode);              /* Align mode to regular operation */
     
     /* Test for centre */
-    if (len < fillcol )                 /* On the right margin */
+    if (len < frameCur->bufferCur->fillcol)   /* On the right margin */
     {
         int sdiff;                      /* Start difference */
         int ediff;                      /* End difference */
@@ -882,27 +882,27 @@ fillAutoDetect (char mode)
         /* Check for balanced line. We expect the start and end of the
          * line to be approximatly balanced. Allow a margin of error of
          * 6 characters */
-        sdiff = (fillcol >> 1) - (doto + (textLen >> 1));
+        sdiff = (frameCur->bufferCur->fillcol >> 1) - (doto + (textLen >> 1));
         if (sdiff < 0)                  /* Quick abs !! */
             sdiff = -sdiff;
-        ediff = (fillcol >> 1) - (len  - (textLen >> 1));
+        ediff = (frameCur->bufferCur->fillcol >> 1) - (len  - (textLen >> 1));
         if (ediff < 0)                  /* Quick abs !! */
             ediff = -ediff;
         sdiff += ediff;
         
         if ((sdiff == 0) ||             /* We are certain !! */
-            ((sdiff < 2) && (textLen < fillcol/2)))
+            ((sdiff < 2) && (textLen < (frameCur->bufferCur->fillcol >> 1))))
             return ('c');               /* We are centred */
     }
     
     /* Test for right aligned text */
-    if ((len >= fillcol) && (doto > (fillcol/2)))
+    if ((len >= frameCur->bufferCur->fillcol) && (doto > (frameCur->bufferCur->fillcol >> 1)))
         return ('r');                   /* We are right */
     
     /* Check for text on the left-hand edge of line. If it meets our
      * criteria for not filling the whole paragraph then apply 'n' which
      * formats each line separately. */
-    if ((doto == 0) && (len <= (fillcol/2)))
+    if ((doto == 0) && (len <= (frameCur->bufferCur->fillcol >> 1)))
         return ('n');                   /* No justification for left */
     
     return mode ;                       /* Returned modified mode */
@@ -915,7 +915,7 @@ fillPara(int f, int n)
     meLine *eopline;		        /* ptr to line just past EOP	*/
     meInt eoplno;		        /* line no of line just past EOP*/
     meInt ilength;			/* Initial line length          */
-    meUByte ofillmode;                  /* Old justification mode       */
+    meUByte jmode;                      /* justification mode           */
     register meInt fillState;           /* State of the fill            */
     int c, lastc;		        /* current char durring scan	*/
     int ccol;				/* position on line during fill	*/
@@ -928,9 +928,9 @@ fillPara(int f, int n)
     int paralen ;
 #endif
     
-    if (fillcol == 0)                   /* Fill column set ??*/
+    if (frameCur->bufferCur->fillcol == 0)  /* Fill column set ??*/
         return mlwrite(MWABORT,(meUByte *)"No fill column set");
-    if ((c=bufferSetEdit()) <= 0)           /* Check we can change the buffer */
+    if ((c=bufferSetEdit()) <= 0)       /* Check we can change the buffer */
         return c ;
     
     /* A -ve cont indicates that we do not want to be prompted for indentation
@@ -950,20 +950,20 @@ fillPara(int f, int n)
      *
      * If the One Line mode (o) is operational then fill compleate 
      * paragraphs to a single line. Indentation is disabled */
-    ofillmode = fillmode;
-    if (isUpper (fillmode))
+    jmode = frameCur->bufferCur->fillmode;
+    if (isUpper(jmode))
     {
         fillState |= FILL_AUTO;         /* Auto paragraph type detection */
-        fillmode = toLower (fillmode);
-        if (fillmode == 'o')
+        jmode = toLower(jmode);
+        if (jmode == 'o')
             fillState = (fillState | FILL_LINE | FILL_MARGIN) & ~FILL_INDENT; 
 
     }
-    else if (fillmode == 'o')
+    else if (jmode == 'o')
         fillState = (fillState | FILL_LINE) & ~FILL_INDENT; 
     
     /* In none mode then we do not touch the paragraph. */
-    if (fillmode == 'n') 
+    if (jmode == 'n') 
     {
         /* If there are no arguments then do nothing, otherwise advance the
          * paragraph. */
@@ -975,13 +975,13 @@ fillPara(int f, int n)
     /* Record if justify mode is enabled. Record in our local context Also
      * knock off indent if disabled. We do not want to be prompting the user. */
     if(meModeTest(frameCur->bufferCur->mode,MDJUST)) /* Justify enabled ?? */
-        fillState |= FILL_JUSTIFY;       /* Yes - Set justification state */
+        fillState |= FILL_JUSTIFY;      /* Yes - Set justification state */
     else
     {
         /* Justification is disabled. If centre, right or both is enabled
          * then reduce to left. */
-        fillmode = 'l';
-        fillState &= ~FILL_INDENT;       /* No - Knock indent off */
+        jmode = 'l';
+        fillState &= ~FILL_INDENT;      /* No - Knock indent off */
     }
     
     /* If fill paragraph is called with no arguments then we must retain the
@@ -1067,9 +1067,9 @@ fillPara(int f, int n)
         /* Quick auto test to determine what mode the current paragraph is.
          * Set up the modes in the fill status mask */
         if (fillState & FILL_AUTO)
-            fillmode = fillAutoDetect (ofillmode);
+            jmode = fillAutoDetect(frameCur->bufferCur->fillmode);
         fillState &= ~FILL_TMASK;
-        switch (fillmode)
+        switch (jmode)
         {
         case 'b':                       /* Both mode */
             fillState |= FILL_BOTH;
@@ -1086,13 +1086,13 @@ fillPara(int f, int n)
             break;
 noIndent:            
         case 'g':                       /* Guffer mode */
-            fillmode = 'n';
+            jmode = 'n';
             /* Drop through */
         case 'n':                       /* None mode */
             fillState |= FILL_NONE;
             break;
         case 'o':                       /* One line justification */
-            fillmode = 'l';             /* Force to left */
+            jmode = 'l';                /* Force to left */
             /* Drop through */
         default:                        /* Left justification */
             fillState |= FILL_LEFT;
@@ -1104,11 +1104,9 @@ noIndent:
          * lookahead() modifies the current doto value. */
         if (((fillState & (FILL_INDENT|FILL_BOTH|FILL_LEFT)) > FILL_INDENT) &&
             ((fillState=lookahead(fillState)) == -1))
-        {
-            fillmode = ofillmode;
             return meABORT ;
-        }
-	/* if lookahead has found a new left indent position, this position
+	
+        /* if lookahead has found a new left indent position, this position
 	 * must be passed to justify so justify ignores the text to the left
 	 * of this indent point */
 	if(fdoto == frameCur->windowCur->dotOffset)
@@ -1168,7 +1166,7 @@ noIndent:
                     newcol = ccol + 1 + wordlen;
                     if (fillState & FILL_DOT)
                         newcol += filleoslen-1 ;
-                    if ((newcol <= fillcol) || (fillState & FILL_LINE))
+                    if ((newcol <= frameCur->bufferCur->fillcol) || (fillState & FILL_LINE))
                     {
                         /* add word to current line */
                         if((fillState & FILL_FIRST) == 0)
@@ -1194,7 +1192,7 @@ noIndent:
                         lineInsertNewline(0);
                         if (fillState & FILL_JUSTIFY)
                         {
-                            ccol = justify (icol,fdoto);
+                            ccol = justify(icol,fdoto,jmode);
                             /* reset the indent offset as following lines will not
                              * have the bullet text to the left of the indent
                              * column */
@@ -1222,7 +1220,7 @@ noIndent:
                     if (fillState & FILL_JUSTIFY)
                     {
                         lineInsertNewline(0);
-                        ccol = justify (icol,fdoto);
+                        ccol = justify(icol,fdoto,jmode);
                         fdoto = -1 ;
                     }
                     else
@@ -1267,7 +1265,6 @@ noIndent:
         meUndoAddReplaceEnd(paralen);
 #endif
     }
-    fillmode = ofillmode;
     
     if(f >= 0)
     {

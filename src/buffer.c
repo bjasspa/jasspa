@@ -915,6 +915,10 @@ bclear(register meBuffer *bp)
     bp->lineCount = 0;
     bp->tabWidth = tabWidth;
     bp->indentWidth = indentWidth;
+#if MEOPT_WORDPRO
+    bp->fillcol = fillcol;
+    bp->fillmode = fillmode;
+#endif
 #if MEOPT_FILEHOOK
     bp->fhook = bp->dhook = bp->bhook = bp->ehook = -1 ;
 #endif
@@ -1505,6 +1509,10 @@ createBuffer(register meUByte *bname)
 #endif
     bp->indentWidth = indentWidth;
     bp->tabWidth = tabWidth;
+#if MEOPT_WORDPRO
+    bp->fillcol = fillcol;
+    bp->fillmode = fillmode;
+#endif
     lp->next = lp;
     lp->prev = lp;
     

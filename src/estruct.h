@@ -735,6 +735,9 @@ typedef struct  meBuffer {
 #if MEOPT_LOCALBIND
     meUShort           bindCount;               /* but for the "mark"           */
 #endif
+#if MEOPT_WORDPRO
+    meUShort           fillcol;                 /* Current fill column          */
+#endif
 #if MEOPT_COLOR
     meScheme           scheme;                  /* Current scheme index         */
 #endif
@@ -753,8 +756,11 @@ typedef struct  meBuffer {
     meUByte            hilight ;                /* hilight number               */
     meUByte            indent ;                 /* indent number                */
 #endif
+#if MEOPT_WORDPRO
+    meUByte            fillmode;                /* Justification mode           */
+#endif
     meUByte            tabWidth;                /* Virtual tab size             */
-    meUByte            indentWidth;                 /* Real tab size                */
+    meUByte            indentWidth;             /* Real tab size                */
 } meBuffer ;
 
 
