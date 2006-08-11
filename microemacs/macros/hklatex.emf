@@ -10,8 +10,7 @@
 define-macro fhook-latex
     @# buffer-init "latex"
     ; Set up the default constants
-    set-variable :fill-mode "l"
-    set-variable :fill-col $fill-col
+    set-variable $buffer-fill-mode "l"
     buffer-init-hooks
 !emacro
 
@@ -720,26 +719,6 @@ define-macro latex-popup
         osd .osd.latex-popup  0 "b"
     !endif
     .osd.latex-popup osd
-!emacro
-
-; Buffer hook. Modify the fill mode to left only. This ensures that we
-; always fill the line correctly irrespective of the mode of the caller.
-; The likes of centre and justified are not warrented in a TeX buffer.
-;
-0 define-macro bhook-latex
-    ; Save the other context. Restore local context
-    set-variable :ofill-mode $fill-mode
-    set-variable $fill-mode  :fill-mode
-    set-variable :ofill-col  $fill-col
-    set-variable $fill-col   :fill-col
-!emacro
-;
-0 define-macro ehook-latex
-    ; Restore existing context
-    set-variable :fill-mode $fill-mode
-    set-variable $fill-mode :ofill-mode
-    set-variable :fill-col $fill-col
-    set-variable $fill-col :ofill-col
 !emacro
 
 ; Find the previous opening latex block.

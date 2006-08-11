@@ -876,11 +876,9 @@
     1 buffer-mode "exact"
     1 buffer-mode "magic"
     1 buffer-mode "undo"
-    set-variable #l1 $fill-mode
-    set-variable $fill-mode "o"
+    set-variable $buffer-fill-mode "o"
     !force jst-to-neutral-gen
     set-variable #l2 $status
-    set-variable $fill-mode #l1
     !if &les @# 0
         ml-write &spr "Error: %s" #l9
         !return 0

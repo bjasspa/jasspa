@@ -1033,7 +1033,7 @@ hilight .hilight.vmhl 0x40 "." ""                 $global-scheme
     -1 buffer-mode "view"
     1 buffer-mode "indent"
     1 buffer-mode "justify"
-    set-variable #l0 $fill-col
+    set-variable #l0 $buffer-fill-col
     beginning-of-buffer
     !force search-forward "^$"
     !force search-forward "^[ \CI]*[^ \CI\CJ>]"
@@ -1124,7 +1124,7 @@ define-macro-file htmltool html-to-ehf
             find-buffer "*vm-html-temp"
             yank
             -1 yank
-            set-variable :fill-col &sub $window-width 2
+            set-variable $buffer-fill-col &sub $window-width 2
             beginning-of-buffer
             set-variable #g0 0
             !force html-to-ehf

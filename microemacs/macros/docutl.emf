@@ -20,10 +20,10 @@ osd .osd.doc-stat 11 ""
 osd .osd.doc-stat 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void 
 
 define-macro doc-mode-state
-    osd .osd.doc-stat 4  "" &spr " Filling to column : %d " $fill-col 
-    osd .osd.doc-stat 5  "" &spr " Justification Mode: %s " $fill-mode
+    osd .osd.doc-stat 4  "" &spr " Filling to column : %d " $buffer-fill-col 
+    osd .osd.doc-stat 5  "" &spr " Justification Mode: %s " $buffer-fill-mode
     set-variable #l0 "Unknown mode, default to left:NAuto-detect All (L/R/C):OAuto-detect One for word-processor:BAuto-detect Both (R/C):LAuto-detect Left:RAuto-detect Right:CAuto-detect Center:nNone:bBoth justify (L/R):lLeft:rRight:cCenter:oOne for word-processor:"
-    set-variable #l0 &rig #l0 &add 1 &sin &cat ":" $fill-mode #l0
+    set-variable #l0 &rig #l0 &add 1 &sin &cat ":" $buffer-fill-mode #l0
     set-variable #l0 &lef #l0 &sub &sin ":" #l0 1
     osd .osd.doc-stat 6  "" &spr "     %s " #l0
     osd .osd.doc-stat 8  "" &spr " Ignore characters : %s " $fill-ignore
@@ -33,67 +33,42 @@ define-macro doc-mode-state
 !emacro
 
 0 define-macro doc-set-justify
-    set-variable $fill-mode &mid "BBCLnR" @# 1
+    set-variable $buffer-fill-mode &mid "BBCLnR" @# 1
     doc-mode-state
 !emacro
 
 define-macro fill-paragraph-center
-    set-variable #l1 $fill-mode
-    set-variable $fill-mode "c"
-    @# fill-paragraph
-    set-variable $fill-mode #l1
+    set-variable #l1 $buffer-fill-mode
+    set-variable $buffer-fill-mode "c"
+    !force !force @# fill-paragraph
+    set-variable $buffer-fill-mode #l1
 !emacro
 
 define-macro fill-paragraph-left
-    set-variable #l1 $fill-mode
-    set-variable $fill-mode "l"
-    @# fill-paragraph @mna
-    set-variable $fill-mode #l1
+    set-variable #l1 $buffer-fill-mode
+    set-variable $buffer-fill-mode "l"
+    !force !force @# fill-paragraph @mna
+    set-variable $buffer-fill-mode #l1
 !emacro
 
 define-macro fill-paragraph-right
-    set-variable #l1 $fill-mode
-    set-variable $fill-mode "r"
-    @# fill-paragraph @mna
-    set-variable $fill-mode #l1
+    set-variable #l1 $buffer-fill-mode
+    set-variable $buffer-fill-mode "r"
+    !force !force @# fill-paragraph @mna
+    set-variable $buffer-fill-mode #l1
 !emacro
 
 define-macro fill-paragraph-both
-    set-variable #l1 $fill-mode
-    set-variable $fill-mode "b"
-    @# fill-paragraph @mna
-    set-variable $fill-mode #l1
+    set-variable #l1 $buffer-fill-mode
+    set-variable $buffer-fill-mode "b"
+    !force !force @# fill-paragraph @mna
+    set-variable $buffer-fill-mode #l1
 !emacro
 
 define-macro fill-paragraph-gutter
-    set-variable #l1 $fill-mode
-    set-variable $fill-mode "g"
-    @# fill-paragraph @mna
-    set-variable $fill-mode #l1
-!emacro
-
-; Swap to the buffer context, used in bhooks.
-define-macro doc-buffer-context-init
-    ; Set up the default constants
-    set-variable :fill-mode $fill-mode
-    set-variable :fill-col $fill-col
-!emacro
-
-; Swap to the buffer context, used in bhooks.
-define-macro doc-buffer-context
-    ; Save other context; restore local context
-    set-variable :ofill-mode $fill-mode
-    set-variable $fill-mode  :fill-mode
-    set-variable :ofill-col  $fill-col
-    set-variable $fill-col   :fill-col
-!emacro
-
-; Swap to the global context, used in ehooks.
-define-macro doc-global-context
-    ; Restore existing context
-    set-variable :fill-mode $fill-mode
-    set-variable $fill-mode :ofill-mode
-    set-variable :fill-col $fill-col
-    set-variable $fill-col :ofill-col
+    set-variable #l1 $buffer-fill-mode
+    set-variable $buffer-fill-mode "g"
+    !force !force @# fill-paragraph @mna
+    set-variable $buffer-fill-mode #l1
 !emacro
 

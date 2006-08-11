@@ -46,7 +46,7 @@
 ;         >
 ;         > Author:       My Self
 ;         > Created:      11/11/97
-;         > Modified:     <050610.2243>
+;         > Modified:     <060811.0938>
 ;         > Location:     /xx/yy/zz.doc
 ; *
 ;         All lines commencing with '*' are assumed to be bullet lists. Bullet
@@ -218,8 +218,6 @@ define-macro doc-fhook-body
     set-variable #l1 @1
     ; if arg is 0 this is a new file so add template
     @# buffer-init #l1 
-    ; Set up the default constants
-    doc-buffer-context-init
     ; Over-ride any special document modes
     set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
     !force set-variable #l2 @2
@@ -235,7 +233,7 @@ define-macro doc-fhook-body
             ; Search for fill-column: <var>;
             !force -1 search-buffer "em" "fill-column[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;]"
             !if $status
-                set-variable :fill-col @s1
+                set-variable $buffer-fill-col @s1
                 beginning-of-line
             !endif
             ; Search for fill-mode: <string>
@@ -243,17 +241,17 @@ define-macro doc-fhook-body
             !if $status
                 set-variable #l0 @s1
                 !if &iseq #l0 "left"
-                    set-variable :fill-mode "L"
+                    set-variable $buffer-fill-mode "L"
                 !elif &iseq #l0 "none"
-                    set-variable :fill-mode "n"
+                    set-variable $buffer-fill-mode "n"
                 !elif &iseq #l0 "right"
-                    set-variable :fill-mode "R"
+                    set-variable $buffer-fill-mode "R"
                 !elif &iseq #l0 "full"
-                    set-variable :fill-mode "B"
+                    set-variable $buffer-fill-mode "B"
                 !elif &iseq #l0 "both"
-                    set-variable :fill-mode "B"
+                    set-variable $buffer-fill-mode "B"
                 !elif &iseq #l0 "center"
-                    set-variable :fill-mode "C"
+                    set-variable $buffer-fill-mode "C"
                 !endif
                 beginning-of-line
             !endif

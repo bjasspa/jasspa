@@ -106,14 +106,14 @@ define-macro sort-lines-ignore-case
 !emacro
 
 define-macro paragraph-to-line
-    set-variable #l1 $fill-mode
-    set-variable $fill-mode "O"
-    !force &sub 0 @# fill-paragraph
+    set-variable #l1 $buffer-fill-mode
+    set-variable $buffer-fill-mode "O"
+    !force !force &sub 0 @# fill-paragraph
     !if &not $status
-        set-variable $fill-mode #l1
+        set-variable $buffer-fill-mode #l1
         !abort
     !endif
-    set-variable $fill-mode #l1
+    set-variable $buffer-fill-mode #l1
 !emacro
 ;
 ; create the delete-indentation command usually bound to "esc ^"

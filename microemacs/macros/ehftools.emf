@@ -88,7 +88,7 @@ define-macro ehf-process-buffer
     set-mark
     !force search-forward "<HR>"
     -1 kill-region
-    set-variable :fill-col 78
+    set-variable $buffer-fill-col 78
     set-variable #g0 1
     html-to-ehf
     beginning-of-buffer

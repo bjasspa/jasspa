@@ -293,7 +293,7 @@ define-macro comment-to-end-of-line
     !if &seq &set #l2 &trl &lget #l9 2 ""
         set-variable #l2 &trb &lget #l9 5
     !endif
-    &div &sub &sub $fill-col $window-acol &len #l2 &len #l1 insert-string #l1
+    &div &sub &sub $buffer-fill-col $window-acol &len #l2 &len #l1 insert-string #l1
     insert-string #l2
 !emacro
 
@@ -307,6 +307,7 @@ define-macro comment-start
     1 buffer-mode "edit" @mna
     set-position "\x83"
     set-variable #l1 $window-acol
+    set-variable #l2 $buffer-fill-col
     find-buffer "*comment*"
     1 buffer-mode "indent"
     1 buffer-mode "wrap"
@@ -317,13 +318,12 @@ define-macro comment-start
     !endif
     set-variable :comment #l9
     set-variable :column #l1
-    set-variable :fill-col $fill-col
-    set-variable $fill-col &sub $fill-col &sub #l1 &len &lget #l9 4
+    set-variable $buffer-fill-col &sub #l2 &sub #l1 &len &lget #l9 4
     !if &sin "b" &lget :comment 6
-        set-variable $fill-col &sub $fill-col &len &lget #l9 5
+        set-variable $buffer-fill-col &sub $buffer-fill-col &len &lget #l9 5
     !endif
-    !if &les $fill-col 20
-        set-variable $fill-col 20
+    !if &les $buffer-fill-col 20
+        set-variable $buffer-fill-col 20
     !endif
     buffer-bind-create "b" "C-c C-c" "" comment-end
 !emacro
@@ -346,13 +346,13 @@ define-macro comment-end
         insert-string &lget :comment 1
         !if &sin "b" &lget :comment 6
             set-variable #l1 &cond &sin "H" &lget :comment 6 #l8 " "
-            set-variable #l2 &add $fill-col &sub &len #l0 &len &lget :comment 1
+            set-variable #l2 &add $buffer-fill-col &sub &len #l0 &len &lget :comment 1
             set-variable #l2 &add #l2 &sub &len #l9 &len &trl #l9
             &div #l2 &len #l1 insert-string #l1
             insert-string &trb #l9
         !elif &sin "H" &lget :comment 6
             !if &not &sin #l8 " "
-                set-variable #l2 &add $fill-col &sub &len #l0 &len &lget :comment 1
+                set-variable #l2 &add $buffer-fill-col &sub &len #l0 &len &lget :comment 1
                 &div #l2 &len #l8 insert-string #l8
             !endif
         !endif
@@ -362,7 +362,7 @@ define-macro comment-end
         set-variable #l1 &or &sin #l8 " " &not &seq &mid @wl $window-col &len #l8 #l8
         !if &sin "b" &lget :comment 6
             end-of-line
-            &sub $fill-col $window-acol insert-space
+            &sub $buffer-fill-col $window-acol insert-space
             !if &not #l1
                 &sub &len #l0 &len &lget :comment 1 insert-space
             !endif
@@ -384,7 +384,7 @@ define-macro comment-end
     !while &not &seq @wc ""
         !if &xse @wl #l1
             end-of-line
-            set-variable #l2 &add &sub $fill-col $window-acol &sub &len #l0 &len &trr #l0
+            set-variable #l2 &add &sub $buffer-fill-col $window-acol &sub &len #l0 &len &trr #l0
             !if &sin "b" &lget :comment 6
                 set-variable #l2 &add #l2 &sub &len #l9 &len &trl #l9
                 &div #l2 &len #l8 insert-string #l8
@@ -397,7 +397,7 @@ define-macro comment-end
         !else
             !if &sin "b" &lget :comment 6
                 end-of-line
-                &sub $fill-col $window-acol insert-space
+                &sub $buffer-fill-col $window-acol insert-space
                 insert-string &trr #l9
                 beginning-of-line
             !endif
@@ -419,7 +419,7 @@ define-macro comment-end
             !if &seq &set #l3 &trl &lget :comment 2 ""
                 set-variable #l3 #l9
             !endif
-            set-variable #l2 &add $fill-col &sub &len #l0 &len &trr #l0
+            set-variable #l2 &add $buffer-fill-col &sub &len #l0 &len &trr #l0
             !if &sin "b" &lget :comment 6
                 set-variable #l2 &add #l2 &sub &len #l9 &len &trl #l9
             !else
@@ -444,7 +444,6 @@ define-macro comment-end
     end-of-buffer
     set-variable #l1 :column
     copy-region
-    set-variable $fill-col :fill-col
     0 delete-buffer $buffer-bname
     goto-position "\x83"
     yank
@@ -520,6 +519,7 @@ define-macro comment-end
 !emacro
 
 0 define-macro comment-restyle-i
+    set-variable #l1 $buffer-fill-col
     set-variable #l9 #p9
     set-variable #l8 &lget #l9 1
     set-variable #l7 &trl &lget #l9 2
@@ -538,8 +538,7 @@ define-macro comment-end
     !endif
     1 buffer-mode "magic"
     set-variable :column #l0
-    set-variable :fill-col $fill-col
-    set-variable $fill-col &sub $fill-col &add #l0 &len &lget #l9 4
+    set-variable $buffer-fill-col &sub #l1 &add #l0 &len &lget #l9 4
     set-variable #l2 &lget #l9 4
     set-variable #l1 &trb #l2
     set-variable #l2 &rig #l2 &len &trr #l2
@@ -601,7 +600,7 @@ define-macro comment-end
     !else
         ; Adjust the fill length if there is no footer and we have an end
         ; comment marker. 
-        set-variable $fill-col &sub $fill-col &add 1 &trl #l7
+        set-variable $buffer-fill-col &sub $buffer-fill-col &add 1 &trl #l7
         end-of-buffer
         backward-line
         !force -1 search-forward #l0
@@ -630,7 +629,7 @@ define-macro comment-end
         !jump -4
     !endif
     !if #l1
-        set-variable $fill-col &sub $fill-col &len &lget #l9 5
+        set-variable $buffer-fill-col &sub $buffer-fill-col &len &lget #l9 5
         set-variable #l3 &cat #l3 "b"
         !if &sin "H" #l3
             ; if we have a Header and a right hand end then alway
@@ -639,8 +638,8 @@ define-macro comment-end
         !endif
     !endif
     set-variable :comment &lset #l9 6 #l3
-    !if &les $fill-col 20
-        set-variable $fill-col 20
+    !if &les $buffer-fill-col 20
+        set-variable $buffer-fill-col 20
     !endif
     beginning-of-buffer
     !force 30000 ifill-paragraph

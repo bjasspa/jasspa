@@ -12,29 +12,28 @@
 define-macro fhook-jst
     set-variable #l1 $result
     @# buffer-init "jst"
-    doc-buffer-context-init
     ; Over-ride any special document modes
     ; Search for additional modes in a:
     ;     -!- jst; fill-column: <digit> ; fill-mode: <mode> -!-
     ;
     !if &not &seq #l1 ""
        !if &xseq #l1 ".*fill-column:[ \t]*\\([0-9]+\\)[ \t]*;.*"
-            set-variable :fill-col @s1
+            set-variable $buffer-fill-col @s1
         !endif
         !if &xseq #l1 ".*fill-mode:[ \t]*\\([a-zA-Z]+\\)[ \t]*;.*"
             set-variable #l0 @s1
             !if &iseq #l0 "left"
-                set-variable :fill-mode "L"
+                set-variable $buffer-fill-mode "L"
             !elif &iseq #l0 "none"
-                set-variable :fill-mode "n"
+                set-variable $buffer-fill-mode "n"
             !elif &iseq #l0 "right"
-                set-variable :fill-mode "R"
+                set-variable $buffer-fill-mode "R"
             !elif &iseq #l0 "full"
-                set-variable :fill-mode "B"
+                set-variable $buffer-fill-mode "B"
             !elif &iseq #l0 "both"
-                set-variable :fill-mode "B"
+                set-variable $buffer-fill-mode "B"
             !elif &iseq #l0 "center"
-                set-variable :fill-mode "C"
+                set-variable $buffer-fill-mode "C"
             !endif
             beginning-of-line
         !endif
@@ -310,16 +309,6 @@ set-variable .fhook-jst.item-list-r4 "Appx \ecB\\1\ecA"
     ; Allow TCL Code inserts ...
     jst-add-file-support "tcl"
 !endif
-
-; Set up for jst mode.
-0 define-macro bhook-jst
-    doc-buffer-context
-!emacro
-
-0 define-macro ehook-jst
-    doc-global-context
-!emacro
-
 
 ; must replace the normal fill-paragraph with one which will skip inserts 
 0 define-macro jst-fill-paragraphi
