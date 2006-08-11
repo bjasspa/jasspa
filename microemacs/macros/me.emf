@@ -21,7 +21,7 @@
 ; Authors:     Steven Phillips & Jon Green
 ;
 ; Is this macro release compatible with the binary?
-!if &les $version "20060606"
+!if &les $version "20060810"
     5000 ml-write "[Warning: The MicroEmacs executable is not compatible with this macro release]"
 !endif
 ; If <$user-name>.erf registry file isn't found then this is a new user
@@ -369,7 +369,7 @@ osd -1 &cond &set .osd.menu &reg "/history/main-menu" "1" "1" "0"
     !force exec-file session
     set-variable #l1 &bor &mul 16 &ban @# 1 &con &exi %session-name &con &seq %session-name "" 42 34 62
     !force #l1 read-session
-    !if &band #l1 6
+    !if &band #l1 12
         !if &set #l0 &reg &spr "/history/%s/frame-width" %platform "0"
             change-frame-width #l0
         !endif
