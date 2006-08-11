@@ -368,6 +368,7 @@ define-macro read-session
         !while &not &seq &set #l2 $buffer-names ""
             !if &and &nbmod #l2 "edit" &not &seq &lef #l2 1 "*" 
                 set-variable #l3 &add #l3 1
+            !elif &seq #l2 "*server*" 
             !elif &nbmod #l2 "pipe"
                 set-variable #l4 &add #l4 1
             !endif
