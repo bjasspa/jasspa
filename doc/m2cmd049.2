@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd049.2,v 2.8 2005-03-20 23:43:29 jon Exp $
+.Id $Id: m2cmd049.2,v 2.9 2006-08-12 18:59:36 jon Exp $
 .Im MicroEmacs command
 .so me.tni
 .TH exit-emacs 2
@@ -41,6 +41,9 @@ when bit \fC1\fR is set.
 Discard  changed  buffers  (except the history and registry) and create a auto
 save file(s) with the changes from unsaved buffers. This mode does not operate
 when bit \fC1\fR is set.
+.IP "\fC0x20\fR"
+Forces the program exit status to be 1 (non-zero), which is interpreted by any
+parent task as an error status.
 .PP
 .B exit-emacs 
 may be used to reproduce the behavior of 
@@ -67,6 +70,11 @@ Modes \fC8\fR and \fC16\fR may be used where the user wishes to discard edited
 buffers on exiting and does not want to confirm the exit. Dictionaries  should
 be configured to auto-save in 
 .Ht user-setup 3 .
+.PP
+An emergency  exit command which forces the editor to quit may be  implemented
+as  \fC0x28  exit-emacs\fR  i.e.  Force  quit  and exit  with  failed  status.
+Internally  this is what \*(mS uses to  perform an  emergency  quit  operation
+caused by signal fault etc.
 .SH "SEE ALSO"
 .na
 .Ht quick-exit 2 ,
