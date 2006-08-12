@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Jul 11 13:30:15 1998
 .\"
-.Id $Id: m2nar008.2,v 1.6 2005-01-22 15:32:30 jon Exp $
+.Id $Id: m2nar008.2,v 1.7 2006-08-12 19:08:47 jon Exp $
 .Im MicroEmacs macrodevelop
 .so me.tni
 .TH localeSupport 2
@@ -74,9 +74,9 @@ characters  directly as the symbol may not be defined. When a character is not
 defined then there will typically be a gap or space in the text at the unknown
 character,  in some cases there may be no space at all which will make it very
 hard to use. The
-.Ht symbol 3
-command  (menu->symbol)  is a good way of looking at which  characters  can be
-used with the current character set.
+.Ht insert-symbol 3
+command  (\fBEdit->Insert  Symbol\fR)  is a  good  way  of  looking  at  which
+characters can be used with the current character set.
 .PP
 For a character to be rendered (when in main text) or poked (drawn by
 .Ht screen-poke 2
