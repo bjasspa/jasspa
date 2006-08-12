@@ -19,8 +19,8 @@ define-macro fhook-phps
 
 ; buffer-init variables
 set-variable .fhook-phps.name "PHP Script"
-set-variable .fhook-phps.setup &reg "/history/fhook/phps" "bdfghinopx"
-set-variable .fhook-phps.setup-mask "abdefghikmnoptux"
+set-variable .fhook-phps.setup &reg "/history/fhook/phps" "bdfghinopxl"
+set-variable .fhook-phps.setup-mask "abdefghikmnoptuxl#"
 set-variable .fhook-phps.comment "|//||/|// | //|r|"
 set-variable .fhook-phps.indent-width 2
 
@@ -33,6 +33,55 @@ set-variable .fhook-phps.collapse-mnext "-1"
 ; setup item-list
 set-variable .fhook-phps.item-list-s1 "^[ \t]*function[ \t]+\\(\\w[1-9A-Za-z_']*\\)"
 set-variable .fhook-phps.item-list-r1 "Func \ecB\\1\ecA"
+
+; Set up menu items for C++ mode.
+set-variable .fhook-phps.setup-flags   "|l|"
+set-variable .fhook-phps.setup-labels  "|Doxygen highlighting|"
+
+; Comments
+set-variable .fhook-phps.comment  "|/*| */|*| * | * |f|"
+; "|//||/|// | //|r|"
+; Doxygen comment - //!< ... member detailed text ...
+;                   //!< ... member detailed text ...
+set-variable .fhook-phps.comment-1 "|//!<|||//!< |||"
+; Doxygen comment - //! ... text ...
+;                   //! ... text ...
+set-variable .fhook-phps.comment-2 "|//!|||//! |||"
+; Doxygen comment - ///< ... text ...
+;                   ///< ... text ...
+set-variable .fhook-phps.comment-3 "|///<||/|///< | ///||"
+; Doxygen comment - /// ... text ...
+;                   /// ... text ...
+set-variable .fhook-phps.comment-4 "|///||/|/// | ///||"
+; Doxygen comment - /**< ... member detailed text ...
+;                    *   ... member detailed text ... */
+set-variable .fhook-phps.comment-5 "|/**<| */|*| *   | * |f|"
+; Doxygen comment - /*!< ... member detailed text ...
+;                    *   ... member detailed text ... */
+set-variable .fhook-phps.comment-6 "|/*!<| */|*| *   | * |f|"
+; Doxygen comment - /** ... detailed text ...
+;                    *  ... detailed text ... */
+set-variable .fhook-phps.comment-7 "|/**| */|*| * | * |f|"
+; Fancy C - /*
+;           ** Comment
+;           */
+set-variable .fhook-phps.comment-8 "|/*|*/|*|** | * |f|"
+; Fancy C - /*
+;           ** Comment
+;            */
+set-variable .fhook-phps.comment-9 "|/*| */|*|** | * |f|"
+; Fancy C - /*\
+;            * Comment
+;           \*/
+set-variable .fhook-phps.comment-10 "|/*\\|\\*/|*| * | * |f|"
+; Standard comment - We repeat here incase the default comment style is
+; over-ridden.
+; Standard C - /*
+;               * ... comment ...
+;               */
+set-variable .fhook-phps.comment-11 "|/*| */|*| * | * |f|"
+; Standard C++ comment.
+set-variable .fhook-phps.comment-12 "|//||/|// | //||"
 
 !if &not &exist .hilight.phps
     set-variable .hilight.phps  &pinc .hilight.next 1
@@ -54,6 +103,7 @@ set-variable .fhook-phps.item-list-r1 "Func \ecB\\1\ecA"
     hilight .hilight.phps 4 "'" "'" "\\"           .scheme.string
     hilight .hilight.phps 0x80 "\"" .hilight.phpsS .scheme.string
     hilight .hilight.phps 0    "\\W\\{/[^/]*\\}$"  $global-scheme 
+    hilight .hilight.phps 20 "/\\*\\s*[tT][oO][dD][oO]" "*/" "" .scheme.error
     hilight .hilight.phps 20   "/\\*" "*/" ""      .scheme.comment
     hilight .hilight.phps 0x1004 "^//" "\\}\\?>" "" .scheme.comment
     hilight .hilight.phps 0x1004 ";\\{//" "\\}\\?>" "" .scheme.comment
@@ -61,12 +111,14 @@ set-variable .fhook-phps.item-list-r1 "Func \ecB\\1\ecA"
     hilight .hilight.phps 0x1004 "^#" "\\}\\?>" "" .scheme.comment
     hilight .hilight.phps 0x1004 ";\\{#" "\\}\\?>" "" .scheme.comment
     hilight .hilight.phps 0x1004 "\\s\\{#" "\\}\\?>" "" .scheme.comment
-    ; Includes.
+    hilight .hilight.phps 18 "//\\s*[tT][oO][dD][oO]"  .scheme.error
+  ; Includes.
     hilight .hilight.phps 2    "^require"          .scheme.prepro
     hilight .hilight.phps 2    "^require_once"     .scheme.prepro
     hilight .hilight.phps 2    "^include_once"     .scheme.prepro
     hilight .hilight.phps 2    "^include_once"     .scheme.prepro
     hilight .hilight.phps 2    "^package"          .scheme.prepro
+    hilight .hilight.phps 1    "define"            .scheme.prepro
     ; Function names
     !if &band .hilight.flags 0x04
         hilight .hilight.phps 0 "^\\s*\\{sub\\s+\\w[1-9A-Za-z_']*" .scheme.function
@@ -160,6 +212,8 @@ set-variable .fhook-phps.item-list-r1 "Func \ecB\\1\ecA"
     hilight .hilight.phps 1    "new"               .scheme.keyword
     hilight .hilight.phps 1    "old_function"      .scheme.keyword
     hilight .hilight.phps 1    "print"             .scheme.keyword
+    hilight .hilight.phps 1    "printf"            .scheme.keyword
+    hilight .hilight.phps 1    "print_r"           .scheme.keyword
     hilight .hilight.phps 1    "require"           .scheme.keyword
     hilight .hilight.phps 1    "require_once"      .scheme.keyword
     hilight .hilight.phps 1    "return"            .scheme.keyword
@@ -171,6 +225,7 @@ set-variable .fhook-phps.item-list-r1 "Func \ecB\\1\ecA"
     hilight .hilight.phps 1    "while"             .scheme.keyword
     
     ;Core Constants
+    hilight .hilight.phps 1 "NULL"                 .scheme.constant
     hilight .hilight.phps 1 "PHP_VERSION"          .scheme.constant
     hilight .hilight.phps 1 "PHP_OS"               .scheme.constant
     hilight .hilight.phps 1 "DEFAULT_INCLUDE_PATH" .scheme.constant
@@ -413,7 +468,9 @@ set-variable .fhook-phps.item-list-r1 "Func \ecB\\1\ecA"
     hilight .hilight.phpsS 4   "\\${" "}" ""       .scheme.variable
     hilight .hilight.phpsS 4   "\\$(" ")" ""       .scheme.variable
     hilight .hilight.phpsS 0x80 "\"" .hilight.phps .scheme.string
-    ; the next tag fixes hilighting problems caused by strings spanning multiple lines by resetting the hilight on the next blank line during the look-back.
+    ; the next tag fixes hilighting problems caused by strings spanning
+    ; multiple lines by resetting the hilight on the next blank line during
+    ; the look-back. 
     hilight .hilight.phpsS 0xa80 "^\\s*\\{$" .hilight.phps $global-scheme
     ; Shell variable hilighting
     0 hilight .hilight.phpsV 0                     .scheme.variable
@@ -423,6 +480,53 @@ set-variable .fhook-phps.item-list-r1 "Func \ecB\\1\ecA"
     hilight .hilight.phpsV 4   "\"" "\"" ""        .scheme.string
     hilight .hilight.phpsV 4   "\\${" "}" ""       .scheme.variable
     hilight .hilight.phpsV 0x80 "}" .hilight.phps  .scheme.variable
+    
+    ; Doxygen highlighting extensions. Highlights keywords in Doxygen
+    !if &sin "l" .fhook-phps.setup
+        ; Create a new doxygen hilighting scheme
+        !if &not &exi .hilight.phpsdoxygen
+            set-variable .hilight.phpsdoxygen  &pinc .hilight.next 1
+            set-variable .hilight.phpsdoxygenc &pinc .hilight.next 1
+        !endif
+        ;
+        ; Cater for the /** .. */ type of comment.
+        ;
+        ; Add a hook into the normal C++ hilighing. We jump into phpsdoxygen when
+        ; we see an opening "/**" or "/*!".
+        hilight .hilight.phps 0x80 "/\\*\\*" .hilight.phpsdoxygenc  .scheme.comment
+        hilight .hilight.phps 0x80 "/\\*!"   .hilight.phpsdoxygenc  .scheme.comment
+        ; Doxygen hilighting space.
+        0 hilight .hilight.phpsdoxygenc  2 50                      .scheme.comment
+        ; "\}" or "@}"
+        hilight .hilight.phpsdoxygenc    1 "[\\\\@]}"              .scheme.keyword
+        ; "\{" or "@{"
+        hilight .hilight.phpsdoxygenc    1 "[\\\\@]{"              .scheme.keyword
+        ; "\a anyWord" or "@a anyWord"
+        hilight .hilight.phpsdoxygenc    1 "[\\\\@]a[ \t]+\\w+"    .scheme.keyword
+        ; "\anyWord" or "@anyWord" - Use branch token and close when not a word!
+        hilight .hilight.phpsdoxygenc    4 "[\\\\@]" "\\}\\W" ""   .scheme.keyword
+        ; We must return to C when we see the close of comment "*/"
+        hilight .hilight.phpsdoxygenc 0x80 "\\*/" .hilight.phps     .scheme.comment
+        ;
+        ; Cater for the /// type of comment
+        ;
+        ; Add a hook into the normal C++ hilighing. We jump into phpsdoxygen when
+        ; we see an opening "///" or "//!".
+        hilight .hilight.phps 0x80 "///" .hilight.phpsdoxygen  .scheme.comment
+        hilight .hilight.phps 0x80 "//!" .hilight.phpsdoxygen  .scheme.comment
+        ; Doxygen hilighting space.
+        0 hilight .hilight.phpsdoxygen   2 50                      .scheme.comment
+        ; "\}" or "@}"
+        hilight .hilight.phpsdoxygen    1 "[\\\\@]}"              .scheme.keyword
+        ; "\{" or "@{"
+        hilight .hilight.phpsdoxygen    1 "[\\\\@]{"              .scheme.keyword
+        ; "\a anyWord" or "@a anyWord"
+        hilight .hilight.phpsdoxygen    1 "[\\\\@]a[ \t]+\\w+"    .scheme.keyword
+        ; "\anyWord" or "@anyWord" - Use branch token and close when not a word!
+        hilight .hilight.phpsdoxygen    4 "[\\\\@]" "\\}\\W" ""   .scheme.keyword
+        ; We must return to C when we see the close of comment "*/"
+        hilight .hilight.phpsdoxygen 0x80 "\n" .hilight.phps       .scheme.comment
+    !endif
     
     ; let html based files use the phps hilight for any php scripts
     set-variable .hilight.phpscript .hilight.phps
