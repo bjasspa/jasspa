@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd150.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd150.2,v 2.6 2006-08-12 18:34:18 jon Exp $
 .Im MicroEmacs command|file|buffer
 .so me.tni
 .TH save-some-buffers 2
@@ -22,8 +22,9 @@ cycles through all visible buffers (buffers without mode
 .Ht hide 2m
 set) and attempts to save all modified  ones, writing the contents back to the
 file from where it was read. For each buffer that has been  modified  the user
-is  prompted  to save the buffer, a value of \fBy\fR  initiates a save for the
-buffer, \fBn\fR skips the buffer.
+is prompted to save the buffer, a value of '\fBy\fR'  initiates a save for the
+buffer,  '\fBn\fR'  skips the  buffer,  '\fBa\fR'  saves all  buffers  without
+further prompting.
 .PP
 The  argument  \fIn\fR  can  be  used  to  change  the  default  behavior  of
 save-some-buffers described above, \fIn\fR is a bit based flag where:-
