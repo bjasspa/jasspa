@@ -50,7 +50,7 @@
 #include <termcap.h>
 #endif
 
-#if (defined _SUNOS5)
+#if (defined _SUNOS5) && (defined _XTERM)
 #include <X11/Sunkeysym.h>
 #endif
 
