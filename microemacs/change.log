@@ -4,8 +4,101 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <060728.1227>
+>  Last Modified : <060812.1858>
 >
+
+    [060812] Additions to the PHP script - missing tags etc.
+
+    [060812] Corrected sun keysym  inclusion - inclusion  limited to X-Windows
+             build only
+
+    [060811] Fixed session resize issue and incremented the version.
+
+    [060811] Added $buffer-fill-* variables to the buffer-setup dialog
+
+    [060811] Stopped  read-session  warning about the *server*  buffer being a
+             process.
+
+    [060811] Updated to use the new $buffer-fill-*  variables - simplifies the
+             doc hooks as ehooks and bhooks are no longer required.
+
+    [060811] Incremented the version. MicroEmacs 06 - Date 2006/08/10 - sunos
+
+    [060811] Introduced new $buffer-fill-col & $buffer-fill-mode  variables to
+             allow every  buffer to have its own setting,  initialized  to the
+             global variable value when the buffer is created.
+
+    [060810] Added 'a' for All option to the save-some-buffers prompt
+
+    [060810] Added  save ->  prompt  -> delete  of all  buffers  when  loading
+             another  session. If bit 1 in arg is not set (i.e. 0 read-session
+             "name") then this is not done and the new session is  effectively
+             merged into the current.
+
+    [060810] Added setting of main buffer modes to the buffer-setup osd.
+
+    [060807] Updated emulation modes to handle the new main menu.
+
+    [060807] Fixed major mode drop down list to not scroll horizontally
+
+    [060807] A few tweaks to help with the other editor emulation.
+
+    [060807] Fixed major-mode-setup so Cancel cancels all changes (was 50-50)
+
+    [060807] Removed old buffer-setup file and fixed the makefile
+
+    [060807] Removed 'correction' of main osd - not needed and wrong.
+
+    [060807] Tweaks  to osd to  remove a few  annoyances:  up on main menu now
+             goes to last item of current sub menu, fixed  re-frame  and focus
+             issue on an opened  child and made C-g always  just close a child
+             even if not in focus.
+
+    [060803] Added  new -2 and -3  values  for  2nd  arg to  &lins  to  insert
+             alphabetically and case insensitive alpha.
+
+    [060803] Added setting of the major mode to the new buffer-setup
+
+    [060803] Changed osd dialogs to use 'Cancel' or 'Close' rather than 'Exit'
+
+    [060803] Closed notes if open when  applying  changes as this corrupts the
+             notes frame.
+
+    [060803] Made the buffer sub-menu be case insensitively ordered in windows
+             and have first letter hotkeys.
+
+    [060803] Changed  frame-id  comparison to use seq as should handle "ERROR"
+             better.
+
+    [060803] Fixed notes to handle a reread-file type operation.
+
+    [060803] Changed osd dialogs to use 'Cancel' or 'Close' rather than 'Exit'
+
+    [060802] Added  saving the session to save-all  and  associated  a file in
+             $user-path with the File->New command.
+
+    [060801] Set .gz  extracted  buffer name and file name so its  location is
+             kept.
+
+    [060728] Fixed clear-case to handle multi-line  comments with SHELL set to
+             csh.
+
+    [060728] Changed  "symbol"  to   "insert-symbol"   and  "indent-setup"  to
+             "buffer-setup"  as  this  is  what  it will  become.  Fixed a few
+             hot-key issues with new main menu.
+
+    [060728] Improved help page and looked for context-menu binding to support
+             esc +.
+
+    [060728] Moved the location of making CVS and clear-case  always available
+             into their setup dialog and added a C-x C-q replacement option.
+
+    [060728] Changed  backspace in a directory to move to the sub-directory in
+             the parent listing.
+
+    [060728] Fixed notes startup so it returns the user to the same place.
+
+    [060728] Documentation, replaced -ve with negative and +ve with positive.
 
     [060726] gdiff.  Added  termcap  friendly  key  bindings  to move  between
              difference regions.
@@ -18,15 +111,15 @@
     [060726] Fixed setting of scheme when session file does not exist (problem
              hit when old user uses session for first time)
 
-    [060725] Changed goto commands to not stop the show-region hilight
+    [060725] Changed goto commands to not stop the show-region highlight
 
-    [060725] Major  re-arrengement  of the main menu,  replaced the Insert and
-             Execute  sub-menus  with  a View  and  Advanced,  rebalanced  and
+    [060725] Major  rearrangement  of the main menu,  replaced  the Insert and
+             Execute  sub-menus  with a View  and  Advanced,  re-balanced  and
              relocated  many items, most notably the setup dialogs out of Help
              into Advanced.
 
-    [060725] Renamed  the  existing  toolbar  macro to  toolbar-open  (mirrors
-             existing  toolbar-close)  and introduced a new toolbar macro that
+    [060725] Renamed the  existing  tool-bar  macro to  toolbar-open  (mirrors
+             existing  toolbar-close) and introduced a new tool-bar macro that
              toggles state, i.e. closes if opened. This command is more useful
              in key-bindings and menus etc.
 
@@ -40,7 +133,7 @@
     [060725] Used  set/goto-position  to  store  current  dot  and  added  <no
              favorites> entry if menu is empty.
 
-    [060725] Added hotkeys to the file attrib dialog
+    [060725] Added hot-keys to the file attrib dialog
 
     [060725] Changed  simply  fence  matching of quotes and double  quotes, if
              match is not  found by the end or start of the line it's  assumed
@@ -101,7 +194,7 @@
              (esf) files.
 
     [060615] $user-name.erf  only  contains  setup  info and not often  edited
-             changed user setup to minimise the likelihood of losing edits (at
+             changed user setup to minimize the likelihood of losing edits (at
              last).
 
     [060615] Broken session-setup out into its own macro file and made quite a
@@ -160,7 +253,7 @@
              files  are  already  loaded  by the user  these  buffers  are not
              effected. Added the ability to set the tab width.
 
-    [060525] Fixed crash caused by watch  resfreshing the buffer while user is
+    [060525] Fixed crash caused by watch  refreshing  the buffer while user is
              using isearch - stopped watch from refreshing the buffer.
 
     [060525] Added a new bit 0x10 to find- read- and  view-file to disable the
@@ -171,20 +264,20 @@
 
     [060523] Sessions. First serious rev of session-load and -save.
 
-    [060523] Added  arg to  toolbar  to allow the  toolbar  to be  initialized
+    [060523] Added arg to  tool-bar  to allow the  tool-bar to be  initialized
              without  re-reading  the  registry  -  required  by  new  session
              support.
 
     [060523] Changed  left  click on mode line to change to the  window if the
              mouse is not moved.
 
-    [060523] Fixed C++ '::<function>() ;' indentation bug introducted with c++
+    [060523] Fixed C++  '::<function>() ;' indentation bug introduced with c++
              initialize ': <base-init> ()' indentation support.
 
     [060523] Encrypted  files. Added  file/host to the password prompt so on a
              -c the user should know which password is required.
 
-    [060523] Fixed unix compiler warnings
+    [060523] Fixed UNIX compiler warnings
 
     [060516] me.emf. Fixed missing def of file-type-setup & shell-tool-setup.
 
@@ -213,10 +306,10 @@
     [060504] Major  addition  to  notes:  a)  Added  forw/back  note. b) added
              notes-instant and notes-context c) implemented notes-session-save
              (not done window  layout yet) but not  implemented  the  matching
-             load yet. d) fixed a few annoying up-date and behaviour problems.
+             load yet. d) fixed a few annoying up-date and behavior problems.
 
     [060504] ClearCase.  Fixed  windows  \\r\\n issue with diff -  constructed
-             predesesor could have the wrong format breaking the diff.
+             predecessor could have the wrong format breaking the diff.
 
     [060504] Changed  reyank  numeric arg so if a -ve arg is given reyank will
              fail if at the end of the kill chain  rather than loop - required
@@ -227,9 +320,9 @@
              crash ME if only the end part of a  narrow-to  is killed - buffer
              line  number  all go  wrong. To fix the  issues  I've  created  a
              standard  function  to handle  the  expansion  of narrows  over a
-             region and made the rule that for a norrow  without a markup line
+             region and made the rule that for a narrow  without a markup line
              to be  included  in the  region at least the \\n of the  previous
-             line and 1 char of the  container  l ine must be  included,  this
+             line and 1 char of the  container  line  must be  included,  this
              means that narrows at the top and bottom cannot be included.
 
     [060504] ClearCase. Fixed cc-merge comment bug.
@@ -254,7 +347,7 @@
              right edge of the window.
 
     [060425] Fixed  bug with  setting  $window-line,  if value is < 1 then the
-             goto-line function prompts the user, this is incorrect  behaviour
+             goto-line  function prompts the user, this is incorrect  behavior
              for a set variable  command and the cause of a mouse driver spin.
              Fixed mouse left button spin caused by missing the pick event and
              a bug in  set-variable  for  $window-line.  Added new  horizontal
@@ -295,7 +388,7 @@
              buffer via its file name - used to fix annoying find-zfile buffer
              history change.
 
-    [060330] Fixed cvs & CC context menu placement issues. Fixed cc-add to use
+    [060330] Fixed CVS & CC context menu placement issues. Fixed cc-add to use
              -mkpath for directories
 
     [060330] Change fhook-dir to always detect if its a source-controlled  dir
@@ -419,7 +512,7 @@
              so the trunc  scheme can use the type and the  hilight  look back
              can use the close (i.e. unlimited).
 
-    [060209] Fixed clearcase update list on checkin option.
+    [060209] Fixed clear-case update list on checkin option.
 
     [060208] Fixed   crash   caused  by   mlGetStringFromUser   being   called
              recursively  -  only  possible  since  the  introduction  of  ftp
@@ -450,9 +543,9 @@
              nearer the end (after the font  resize as this could  change to a
              smaller font allowing more lines etc).
 
-    [060127] Fixed  quite  a  few  issues  with  the  cvs  and   clearcase  UI
+    [060127] Fixed  quite  a  few  issues  with  the  CVS  and  clear-case  UI
              interfaces.  Brought  cvs-state  into  line with CC,  implemented
-             cc-delete and rationalised the hotkeys and context menus.
+             cc-delete and rationalised the hot-keys and context menus.
 
     [060127] Added new alias-path-setup OSD gui.
 
@@ -494,8 +587,9 @@
     [051219] ClearCase.  Disable check out of parent dir for cc-add as its not
              implemented
 
-    [051215] JST. Changed tag hilighting to handle split line tags  correctly.
-             Implemented support for f & b color export to html using style.
+    [051215] JST.  Changed  tag   highlighting   to  handle  split  line  tags
+             correctly.  Implemented  support for f and b color export to HTML
+             using style.
 
     [051215] First commit of new v4 JST format hook and export macros.
 
@@ -513,7 +607,7 @@
 
     [051123] Added support for alias-paths.
 
-    [051122] Fixed  hilight  problems  with "^ *$" & "^\\\\s*$"  close bracket
+    [051122] Fixed  highlight  problems with "^ *$" & "^\\\\s*$" close bracket
              tags,   they   should    match   any   line    containing    only
              spaces/white-spaces but they did not work reliably.
 
@@ -536,19 +630,19 @@
              macros,  may not work  when  executing  a buffer  as the line may
              start with a white space.
 
-    [051110] Stopped osd checkbox  macros from  triggering  the debugger  when
+    [051110] Stopped osd check-box  macros from  triggering  the debugger when
              $debug is set to 1.
 
     [051110] Added some more key translations based on bug report by Francesco
-             Abbate
+             Abbate.
 
     [051104] 2nd and much  improved  version of cc-setup.  Changed to using -1
              insert-string to allow multi-line  comments. Fixed horrid problem
              with  cleartool's  handling of checking  out a file when its been
              hijacked, no command-line option to make it use the hijacked file
              me has to use  ipipe-write a send 'yes' at the prompt, but as the
-             prompt is not given me must be pre-empt  and send them first, one
-             for each file - clearcase is pants and cleartool sucks.
+             prompt is not given me must be preempt  and send them  first, one
+             for each file - clear-case is pants and cleartool sucks.
 
     [051104] Changed  cmd-line  construction to use -1 insert-string to insert
              \\n's into the line - not really very nice.
@@ -560,7 +654,7 @@
 
     [051104] Multi-line shell fix. The new 0x100 flag to shell-command has one
              drawback, you cannot run commands that include newline characters
-             as the cmd-line  must be on the first line. But cvs and clearcase
+             as the cmd-line must be on the first line. But CVS and clear-case
              commit  comments are often  multi-line so this is not acceptable.
              To fix  the  problem  I have  added  a -ve  arg to  insert-string
              comment which then performs a literal  insertion, i.e. every char
@@ -587,7 +681,7 @@
 
     [051019] Visual basic highlighting - added And Or and Xor operators.
 
-    [051013] Unix shell  window,  corrected  hilighting  of  backslash  escape
+    [051013] Unix shell window,  corrected  highlighting  of backslash  escape
              character outside of a string enclosure.
 
     [051011] ClearCase  extensions. Added button to cc-checkin to get checkout
@@ -600,13 +694,13 @@
     [051011] Fixed windows  rename to check the to name is case  insensitively
              different.
 
-    [051011] Implemented  file timestamp  preservation in the file-op copy and
+    [051011] Implemented file time-stamp  preservation in the file-op copy and
              move.
 
     [051011] Improved the window-popup on windows, more likely to work but can
              still fail.
 
-    [051011] Fixed unix drag-n-drop, broken by -l l:c addition.
+    [051011] Fixed UNIX drag-n-drop, broken by -l l:c addition.
 
     [051007] Integrated Ric Yeates command line "-l <line>:<col>" submission -
              thanks for the submission.
@@ -624,11 +718,11 @@
              directories,  which  requires  a double  cleartool  call  (horrid
              command-line) Added support for config-spec  viewing and editing.
              Added  directory  refresh option for  checkin/out  add etc. Added
-             many  improvements to cc-state buffer support,  hilighting,  file
+             many improvements to cc-state buffer support,  highlighting, file
              listing  style  sorting and selection  (i.e.  following are bound
              1,2,3,+,-,u,a,*)
 
-    [050930] file-tool,  changed  the  buffer  list  toolbar  tool to keep the
+    [050930] file-tool,  changed  the buffer  list  tool-bar  tool to keep the
              current line to the current buffer when using find-buffer etc.
 
     [050930] Latest Mirkwood update from Bruno.
@@ -661,10 +755,10 @@
     [050920] Latest Mirkwood highlight scheme - added underlining for spelling
              errors
 
-    [050920] OAD, added a comment tab to the scheme  editor and  up-graded the
+    [050920] OSD, added a comment tab to the scheme  editor and  up-graded the
              scheme selectors to use combo-boxes.
 
-    [050920] Fixed compile error on macos caused by bad macro definition.
+    [050920] Fixed compile error on macros caused by bad macro definition.
 
     [050919] Fixed 2 bugs: meRegHead's  force could be left set to 1 which has
              the side effect of C-g not hiding the active  region. Due to last
@@ -679,10 +773,10 @@
     [050915] Added Up, Down, Hide  window  and  default  open  options  to the
              file-tool  setup  gui. Added  support  for a default  open to the
              directory  listing,  pressing  return now checks for a  file-tool
-             default  open  (explorerish),  'o' for open always loads the file
+             default  open  (Explorerish),  'o' for open always loads the file
              into me.
 
-    [050915] Added  support for dbx on sunos.  Changed the ipipe input mode to
+    [050915] Added  support for dbx on SunOS.  Changed the ipipe input mode to
              be toggled using f3 rather than set via f2 f3 or f4.
 
     [050915] zfile,  fixed  filename  ->  absolute  file name when given as an
@@ -723,7 +817,7 @@
              Bound 't' to open the file  tool  menu  directly  so tools can be
              easily executed without use of the mouse.
 
-    [050720] Source code reorganisation.  Standardized the # preprocess forms,
+    [050720] Source code reorganization.  Standardized the # preprocess forms,
              removed  2  uses  of  #elif  and   cplusplus   and   changed  odd
              'defined(_BSD)'  style  bracketing which the c-hash-eval does not
              handle.
@@ -738,11 +832,11 @@
              is not supported. Moved macro regex &xseq &xrep based  directives
              and most @ variables to extended functionality.
 
-    [050719] Organiser  address  search broken due to recent  changes to macro
+    [050719] Organizer  address  search broken due to recent  changes to macro
              argument  getting. Fixed by changing the numeric  argument  which
              was ambiguously defined.
 
-    [050718] Source  code  reorganisation.  Made the file hook  variables  and
+    [050718] Source  code  reorganization.  Made the file hook  variables  and
              HideBuffer  function statics. Changed ne to use fixed char groups
              for isUpper etc rather than the large  look-up  tables as it does
              not have set-char-mask to configure them anyway.
@@ -750,11 +844,11 @@
     [050718] C template. Fixed and greatly  simplified the #if handling in the
              hash eval code. Added support for #undef.
 
-    [050715] Source code  organisation.  Removed  unused code when  there's no
+    [050715] Source code  organization.  Removed  unused code when  there's no
              ipipe  support.  Hashed  out  location  functions  which are only
              required by socket or ipipe support.
 
-    [050714] Combined cc-log and cc-annotate into a single  cc-annotate cammon
+    [050714] Combined cc-log and cc-annotate into a single  cc-annotate common
              with gui. Added cc-vtree and cc-explorer.
 
     [050714] Fixed  user-setup  setting of number of backups and Ignore  files
@@ -783,7 +877,7 @@
     [050711] Corrected Latex template load error in hklatex.emf (detected with
              $debug=1)
 
-    [050710] Fixed old $debug interface, found a long forgotton mode 3 (now 4)
+    [050710] Fixed old $debug interface, found a long forgotten mode 3 (now 4)
              which simply prints the current line without waiting, this broken
              the new mode 3.
 
@@ -794,10 +888,10 @@
              Works okay.
 
     [050709] Vastly improved the macro debugging, the $debug value of 1 is now
-             2, 2 -> 3, a  value  of 1 now  tells  the  user of any  unhandled
+             2, 2 -> 3, a value  of 1 now  tells  the  user of any  un-handled
              failures.
 
-    [050709] Fixed the  Windows  window  resizing  behaviour  to be a lot more
+    [050709] Fixed  the  Windows  window  resizing  behavior  to be a lot more
              usable. The window size now  increases  in  character  size steps
              rather  than  bouncing  around  and the  window is refresh as its
              changed. The Horizontal width limit of the window has effectively
@@ -816,7 +910,7 @@
     [050709] Fixed the previous-line macro and the kill-word key bindings.
 
     [050709] Changed the menu items which open a sub dialog to having '...' in
-             their name as per the gui standard, issue raised by Tom Hundt.
+             their name as per the GUI standard, issue raised by Tom Hundt.
 
     [050708] Changed  sub-menu display chars, auto open menus are now ' >' and
              manual are ' +', issue raised by Tom Hundt.
@@ -829,7 +923,7 @@
 
     [050708] Changed  list-commands  and  command-apropros  to not list hidden
              macros  by  default.  They can be listed if bit 1 of the  numeric
-             argument is clear (aka list-buffers)
+             argument is clear (aka. list-buffers)
 
     [050625] Updated mode line letter  mnemonics which were out of date, issue
              raised by Tom Hundt.
@@ -837,7 +931,7 @@
     [050625] Stop me crashing when  describe-variable  is given something like
              "&or", now restricted to variables of type #, $, %, :, . only.
 
-    [050618] Added  support for -ve offests to &lef &mid &rig  functions to go
+    [050618] Added  support for -ve offsets to &lef &mid &rig  functions to go
              from the end of the string.
 
     [050618] Created a 'no wait' option to  shell-command  so processes can be
@@ -850,14 +944,14 @@
 
     [050616] Revision 3 of ClearCase support.
 
-    [050614] Second rev of clearcase  support.  restructured  the execution of
+    [050614] Second rev of clear-case  support.  restructured the execution of
              cleartool  so ipipes  are used (even  though  the user may not be
              able to edit) giving  feedback on progress.  Implemented  a basic
              diff  which  can only  diff one file at a time and only  with its
              predecessor but at least it supports a context output of sorts!
 
     [050614] Fixed command-wait when no arg is given to return when a callback
-             sets the .wait  variable.  Command now returns  imediately if the
+             sets the .wait variable.  Command now returns  immediately if the
              .wait variable is not defined. Fixed windows sleep function which
              was managing to break out before it should.
 
@@ -874,7 +968,7 @@
     [050610] CVS added support for a cvsco.etf checkin template.
 
     [050610] First  revision  of  ClearCase   support,  very   incomplete  and
-             primative but the hooks required in the rest of the system are in
+             primitive but the hooks required in the rest of the system are in
              place.
 
     [050609] Changed the directory  listing so '.' is removed and .. is always
@@ -884,8 +978,8 @@
     [050609] First  implementation of directory  deletion, copying and moving,
              including  support for ftp directories  etc. Areas of concern are
              still copied file's permissions and to a lesser degree ownership.
-             Also the  copies  behaviour  with  symbolic  links,  this must be
-             tested further.
+             Also the copies behavior with symbolic links, this must be tested
+             further.
 
     [050609] Fixed file permissions and ftp minor issues a couple of major ftp
              bugs and $file-names working for ftp directories.
@@ -895,8 +989,8 @@
              $result.
 
     [050609] Changed  the kill word  commands  so have the same word  boundary
-             behaviour as  forward-word  and Emacs (was killing word only then
-             whitespaces  only  etc).  Corrected  word  movement  and  killing
+             behaviors as  forward-word  and Emacs (was killing word only then
+             white  spaces  only etc).  Corrected  word  movement  and killing
              command's EOB and BOB error handling.
 
     [050608] Added new rdiff (recursive diff) command
@@ -909,7 +1003,7 @@
     [050601] Corrected ne.emf, broke Window mode in disabling console mode for
              ne -R option change.
 
-    [050601] Corrected   crash  on  hilight   with   alpha-numerics   of  form
+    [050601] Corrected  crash  on  highlight  with   alpha-numerics   of  form
              [[:digit:]] when spelt incorrectly.
 
 8th Release - May 2005
@@ -1000,14 +1094,14 @@
 
     [050505] Base version numbers reset for next release.
 
-    [050429] Added  support  for  keybinding  to  item-list  column  ordering,
+    [050429] Added  support for  key-binding  to  item-list  column  ordering,
              function  is  item-list-order  and  is  bound  to 1, 2  and  3 by
              default.  Thanks to Bryan  Schofield  for his  submission in this
              area.
 
     [050429] Spelling - protect '.'s in the word with \\.
 
-    [050428] Corrected  TCL  hilighting  w.r.t.  comment  at  end  of  line  -
+    [050428] Corrected  TCL  highlighting  w.r.t.  comment  at  end of  line -
              submitted by Bryan Schofield.
 
     [050427] Major  reworking of main commands in a directory  listing buffer.
@@ -1068,13 +1162,13 @@
     [050408] Moved the  generate  tags into the sub folder and added a compile
              option to c and cpp - submitted by Bryan Schofield.
 
-    [050405] Added  support  for  DOS  code  page  866  (Cyrillic  Russion)  -
+    [050405] Added  support  for  DOS  code  page  866  (Cyrillic  Russian)  -
              submitted by Nicholas Kudriavtsev
 
     [050331] Added support for the setting of the history in macros via @h#.
 
     [050325] registry.c - removed compiler warning  indicating porting problem
-             hilighted  under  Darwin. Post  increment  of variable on left of
+             highlighted  under Darwin. Post  increment of variable on left of
              assignment and same variable appeared on the right, split out the
              increment to reduce ambiguity of the statement.
 
@@ -1090,8 +1184,8 @@
              buffers '0x8 discard modified buffers' and '0x10 discard modified
              buffers and create recovery file for changes'.
 
-    [050320] Corrected  XML syntax for strings "..." to fix indent and hilight
-             anomalies.
+    [050320] Corrected  XML  syntax  for  strings  "..."  to  fix  indent  and
+             highlight anomalies.
 
     [050319] Added -R  command  line  option  to  reverse  the  built in video
              schemes - specifically for ne(1) also works with me(1).
@@ -1118,14 +1212,14 @@
 
     [050313] Latex  template -  Corrected  the  latex-fill-paragraph.  Set the
              fill-mode  to 'l'  rather  than 'L'  because  its a pain  when it
-             selects centre rather than left and messes things up.
+             selects center rather than left and messes things up.
 
     [050311] Directory  list - changed  column  sorting so  Modified is sorted
              most recent first.
 
     [050311] Fixed perldb pipe operation.
 
-    [050310] OSD  simplified the main context menu and moved paste a cvs items
+    [050310] OSD  simplified the main context menu and moved paste a CVS items
              in the directory context menu
 
     [050310] Fixed diff's file name input, was not completing correctly
@@ -1138,7 +1232,7 @@
              "foo[^a]" is a mult-line as [^a] matches \\n, if "foob" exists at
              the start of the line isearch-backward refuses to move on.
 
-    [050309] Catman pages added for ne(1) and me(1)  complaints with gentoo as
+    [050309] Catman pages added for ne(1) and me(1)  complaints with Gentoo as
              missing. Added to the package builds.
 
     [050308] Fixed a nasty  bug with ftp  connect  dialog  when the host has a
@@ -1170,7 +1264,7 @@
     [050225] dos2unix, unix2dos and unix2win - Removed use of &spr in favor of
              &cat so dos2unix etc work in ne.
 
-    [050225] Tracing a problem  with  hilighting  a token of the form  "AB*$",
+    [050225] Tracing a problem with  highlighting  a token of the form "AB*$",
              works if there is a B but  fails if there  are no 'B's, i.e. only
              matches  "AB+$". Found that removing the end of line special case
              code fixes the  problem. I believe  the rest of the code has been
@@ -1181,13 +1275,13 @@
 
     [050225] Regular  expressions - extended  replacement string syntax. Added
              support  for "\c#" "\l#" and "\u#" to change  the case of groups,
-             where "\c#" is capitalise,  "\l#" is lower "\u#" is upper and "#"
+             where "\c#" is capitalize,  "\l#" is lower "\u#" is upper and "#"
              is the group number (0-9, &)
 
     [050225] Regular  expressions - changed syntax of "\s?" and "\S?" in favor
              of perl's  simpler  "\s" and "\S" for a  whitespace  char  class.
              Added new character  classes "\d" = digits, "\D" != digits "\h" =
-             hexdigits  "\H" != hexdigits  "\l" = lowercase  "\L" != lowercase
+             hex-digits  "\H" != hex-digits "\l" = lowercase "\L" != lowercase
              "\u" = uppercase  and "\U" != uppercase.  These changes were made
              to both the main regex  search  engine and the  hilight(2)  token
              matching  engine. Added support for char classes  within the main
@@ -1222,12 +1316,12 @@
 
     [050224] Added standard binding for mark-function
 
-    [050224] Fixed the ME token hilighting in the C hook
+    [050224] Fixed the ME token highlighting in the C hook
 
     [050224] Removed  recently  added  %no_backup  variable to disable  backup
              create as new -B option is a much better way of doing it.
 
-    [050224] edef.h - Removed definition of non-existant variable
+    [050224] edef.h - Removed definition of nonexistent variable
 
     [050224] Fixed failure when trying to load "http://www.jasspa.com",  there
              is an implicit trailing '/' which MicroEmacs now adds.
@@ -1261,15 +1355,15 @@
     [050222] If 0 given  to watch  call  watch-time,  this  preserves  the old
              interface.
 
-    [050222] Added   backup  file   disabling   for   "dos2unix"   macros  via
-             command line defineable variable.
+    [050222] Added backup file  disabling  for  "dos2unix"  macros via command
+             line definable variable.
 
     [050221] Changed the new Windows process tree killing to use LoadLibrary()
              to detect whether the OS supports this feature (and NT does not).
              Also moved the URL support over to LoadLibrary() so we can remove
              the -u builds.
 
-    [050220] Added UNIX Shell and Makefile hilighting to notes(2).
+    [050220] Added UNIX Shell and Makefile highlighting to notes(2).
 
     [050219] Fixed GNU GCC  warnings  in  Makefiles  for  #pragma in X11 files
              under Sun Solaris and uninitialized variables.
@@ -1295,7 +1389,7 @@
     [050218] Updated watch  interface and made public.  Created new watch-time
              command and prompt user for watch type when no argument is given.
 
-    [050218] Removed  the use of bit  0x1000 in ada string  hilight as this is
+    [050218] Removed the use of bit 0x1000 in ada string  highlight as this is
              unlikely to be wanted (probably copied from Pascal).
 
     [050218] Changed the registry  parser to abort on error rather than trying
@@ -1304,8 +1398,8 @@
 
     [050218] Fixed  highlighting minor issues. Hilight scheme now returns back
              to EOL  scheme  after a  bracket.  A  branch  tag on an EOL  line
-             removes  the EOL flag so it  hilights  correctly.  Branch tag now
-             supports the 0x1000  single line  hilight.  Lookback now supports
+             removes the EOL flag so it highlights  correctly.  Branch tag now
+             supports the 0x1000 single line highlight. Look back now supports
              0x800 on a branch tag.
 
     [050217] HTML  highlighting.  Fixed some really grizzly scripted HTML page
@@ -1376,7 +1470,7 @@
     [050210] Improved  movement  between  items using the cursor in the search
              dialog.
 
-    [050210] Fixed cvs dialog default settings
+    [050210] Fixed CVS dialog default settings
 
     [050210] Corrected search path expansion, incorrectly handling a PATH_CHAR
              at the start of the string.
@@ -1404,7 +1498,7 @@
 
     [050205] Password generation macros added to contrib directory.
 
-    [050205] Added  JavaDoc  highlighting  to Java  template.  Enablement  via
+    [050205] Added  JavaDoc   highlighting   to  Java  template.   Enable  via
              buffer-setup. Removed the existing "my" extensions from contrib.
 
     [050205] Added  Doxygen,  <stdint.h>  and  error   highlighting  to  C/C++
@@ -1489,9 +1583,9 @@
 
     [050114] Fixed narrow(2) type numeric argument not processed correctly.
 
-    [050113] Added toolbar tool mouse select region command.
+    [050113] Added tool-bar tool mouse select region command.
 
-    [050113] Added bindings for the cvs and ftp console tools.
+    [050113] Added bindings for the CVS and ftp console tools.
 
     [050113] Fixed organizer(3) duplicate index bug.
 
@@ -1617,7 +1711,7 @@
              release makefiles.
 
     [041126] Added  'k'  keyboard  setup  to  set-char-mask  which  is used to
-             translates foreign keys to a latin char.
+             translates foreign keys to a Latin char.
 
     [041126] Changed  the  internal  LEADER  byte  to  0x1c as 0xff is a valid
              Russian char and it badly breaks $vars and macros.
@@ -1651,7 +1745,7 @@
     [041027] Spruced  up old  "apache.conf"  highlighting  rules  and added to
              release.
 
-    [041022] Fixed very obscure cvs load-up bug.
+    [041022] Fixed very obscure CVS load-up bug.
 
     [041122] Updated  schemes to set 'Show cursor in osd' suitably and to make
              sure the cursor is not red as this conflicts with the match fence
@@ -1664,7 +1758,7 @@
 
     [041119] Many   improvements  to  OSD  dialog  user  interface   following
              suggestions  for news group.  Updated  most of the osd dialogs to
-             use the new [*] checkbox  chars. Fixed  tabbing  orders and moved
+             use the new [*] check-box  chars. Fixed tabbing  orders and moved
              some  items  over to  combo-boxes.  Added  osd-cursor  visibility
              support to  scheme-edit.  Made the displaying of the cursor in an
              osd dialog a $system bit set by the hilight  scheme and fixed the
@@ -1689,9 +1783,9 @@
     [041104] Added  "search-buffer"  command which replaces the macro commands
              "regex-forward" and "regex-backward". Simplifies macro processing
              of  searching  by  providing  a search that  explicitly  sets the
-             "exact" and "magic" modes. The default is to repect buffers exact
-             and  magic  mode and  flags  must have E or M to ensure  they are
-             disabled.
+             "exact"  and  "magic"  modes. The  default is to respect  buffers
+             exact and magic  mode and flags  must have E or M to ensure  they
+             are disabled.
 
     [041104] Changed any use of  "kill-line"  to "1 kill-line"  as this should
              maintain  its  required  behavior. A "kill-line"  with no numeric
@@ -1838,7 +1932,7 @@
              GUI  state  appropriately.  Added  server to the  cvs-state  line
              mangling.
 
-    [040909] cvs GUI updated with new features. Added repository set up to the
+    [040909] CVS GUI updated with new features. Added repository set up to the
              UI. Reduced wait time on long commands by using ipipe. Allowed -z
              option to be used with %cvs-com.
 
@@ -1891,7 +1985,7 @@ Minor Patch - July 2004
              reserved  fields  to sort.  BACKSPACE  now  moves up a  directory
              level.
 
-    [040322] Changed the  interface  to cvs, ftp and  file-browser  command so
+    [040322] Changed the  interface  to CVS, ftp and  file-browser  command so
              that if a numeric  argument of 0 is given then the directory tree
              window is not opened, just the *files* buffer.
 
@@ -1943,10 +2037,10 @@ Minor Patch - July 2004
 
     [040224] Add new 'narrow out unhilighted lines' feature.
 
-    [040223] Add new buffer tab list  toolbar tool for rapid access to buffers
-             via a top or bottom toolbar.
+    [040223] Add new buffer tab list tool-bar tool for rapid access to buffers
+             via a top or bottom tool-bar.
 
-    [040223] Add <> buttons to toolbar mode lines to scroll left and right.
+    [040223] Add <> buttons to tool-bar mode lines to scroll left and right.
 
     [040223] Fixed. Calender day is off by one when going  backwards to before
              2004.
@@ -1988,14 +2082,14 @@ Minor Patch - July 2004
              cmd/command as there use 4DOS '>>&'  extension.  Changed to using
              2>&1 which works on cmd & 4nt but breaks 4Dos and command.
 
-    [040216] Fixed   bottom   Toolbar   window   grows  when  CVS  is  opened,
+    [040216] Fixed   bottom   tool-bar   window  grows  when  CVS  is  opened,
              change-window-depth does not respect bit 2 of $window-flags.
 
     [040214] Added .spec template for RedHat RPM package file specification.
 
     [040214] Added .psf template for HP-UX depot product file specification.
 
-    [040214] Recognize  -* makefile -*- and -* sh -*-
+    [040214] Recognize -* makefile -*- and -* sh -*-
 
     [040213] Fixed reframe cvs-console better so the exit status can be easily
              seen from a small window.
@@ -2168,7 +2262,7 @@ Minor Patch - July 2004
     [040119] Added  "*compile*"  hilighting  and ENTER  selects error file and
              line - prompted by Salman Khilji.
 
-    [040119] Fixed the "c-eval-defines" region hilighting problem.
+    [040119] Fixed the "c-eval-defines" region highlighting problem.
 
     [040119] Updated the Lau HTML processing tags - thanks to Jeremy Cowgar.
 
@@ -2183,7 +2277,7 @@ Minor Patch - July 2004
 
     [040113] "create-frame" canvas size fix on creating internal frame
 
-    [040112] Hilighting fix for toolbar Dir Files list with symbolic links
+    [040112] Highlighting fix for toolbar Dir Files list with symbolic links
 
     [040109] RC2 - Release Candidate 2 - MicroEmacs '04
 
@@ -2215,14 +2309,14 @@ Minor Patch - July 2004
 
     [031120] Added new highlight schemes "Lemon Jelly" and "Brownie".
 
-    [031120] CVS. Fixed several issues with the why the cvs dir list processed
+    [031120] CVS. Fixed several issues with the why the CVS dir list processed
              the missing and added files.
 
     [031120] HTML Template. Improved indentation.
 
     [031120] Toolbar. Added "trunc-sheme" reset to force a redraw if required.
 
-    [031120] Fixed the games to cope with the toolbar by closing it.
+    [031120] Fixed the games to cope with the tool-bar by closing it.
 
     [031120] buffer.c.  Changed  the 'n' arg to list buffer so user can select
              hidden or verbose etc. Added check after exec of "ehook" to catch
@@ -2274,7 +2368,7 @@ Minor Patch - July 2004
              variable  and got toolbar and buffer tool menu to call the update
              command (toolbar only on a "C-l").
 
-    [031026] CVS. Fixed Unix checkout path and implemented cvs remove.
+    [031026] CVS. Fixed Unix checkout path and implemented CVS remove.
 
     [031026] Page-file. Fixed backward isearch blow out.
 
@@ -2286,7 +2380,7 @@ Minor Patch - July 2004
     [031026] Abbreviations.  Improved  the  look-back  abbrev to expand to one
              before if exec'd again.
 
-    [030917] HTML Template.  Fixed a hilighting  and indent  problem caused by
+    [030917] HTML Template. Fixed a highlighting  and indent problem caused by
              embedded script.
 
     [030917] OSD.  Changed  OSD  hot-key  '&'  to  new  style  '\H'.   Changed
@@ -2318,7 +2412,7 @@ Minor Patch - July 2004
              the key pad working.
 
     [030710] User  setup.  Updated  osd  calls  due to the  change in 'd' flag
-             behaviour  and  changed the items with drop down menus to use the
+             behavior  and  changed  the items with drop down menus to use the
              new combo-box.
 
     [030710] ODS. Updated osd calls due to the change in 'd' flag behavior.
@@ -2367,7 +2461,7 @@ Minor Patch - July 2004
 
     [030608] Tools. Removed superfluous endif.
 
-    [030608] Toolbar.  Only  update the toolbar if its the top level  command,
+    [030608] Tool-bar.  Only update the tool-bar if its the top level command,
              i.e. the screen-update is not required due to spell-buffer (say).
 
     [030608] MS-Shift  region. Check for  kill-rectangle  and treat like we do
@@ -2379,7 +2473,7 @@ Minor Patch - July 2004
 
     [030608] Changed  the  addLine  function  so it  always  flags the line as
              changed,  this avoids some bizarre  issues when macros  delete an
-             insert  lines  of text  (best  shown by the  buffer-info  toolbar
+             insert  lines of text  (best  shown by the  buffer-info  tool-bar
              tool).
 
     [030608] Added new macro oriented  buffer-info numeric argument. Fixed bug
@@ -2441,10 +2535,10 @@ Minor Patch - July 2004
 
     [030514] Fixed "\xb" bad regex bug.
 
-    [030513] Search. Added region line hilighting support.
+    [030513] Search. Added region line highlighting support.
 
-    [030513] Changed auto-spell  hilighting scheme to a new spell-error scheme
-             to avoid printing issues.
+    [030513] Changed  auto-spell  highlighting  scheme  to a  new  spell-error
+             scheme to avoid printing issues.
 
     [030513] Removed old  hkfold.emf  fold  implementation.  Moved fold.emf to
              collapse.emf  and added a real folding editor support macros to a
@@ -2510,7 +2604,7 @@ Minor Patch - July 2004
              variable in size so UE has a smaller memory usage and ME has line
              flags available.
 
-    [030512] Improvedthe AMark setting and deleting.
+    [030512] Improved the AMark setting and deleting.
 
     [030512] Added a Protected  Line flag and vastly  improved the  narrowing.
              Renamed most function in line.c to make them more readable.
@@ -2558,8 +2652,8 @@ Minor Patch - July 2004
 
     [021013] Added "@mna" to all find-files incase there are problems.
 
-    [021013] Broke the toolbar tools out of the abbrev eaf file into there own
-             tool eaf file.
+    [021013] Broke the  tool-bar  tools out of the  abbrev eaf file into there
+             own tool eaf file.
 
     [021013] Added  item-list  and tag  generation  support to VB, fixed a few
              hilight issues.
@@ -2589,10 +2683,10 @@ Minor Patch - July 2004
              usability  (particularly  for the  combo  box).  Added  auto side
              placement of sub-menus remove the 'e' 'w' and 'n' flags.
 
-    [020912] Added  crypting  of registry  files and  Microsoft  friendly  key
+    [020912] Added  encrypting  of registry  files and Microsoft  friendly key
              bindings.
 
-    [020912] Fixed   several   html  ->  vb   indent   and   hilight   issues,
+    [020912] Fixed   several   HTML  ->  VB   indent   and   hilight   issues,
              re-implemented the mode change to be toolbar aware.
 
     [020912] Changed the  "msshift"  key list to a macro list which checks the
@@ -2600,7 +2694,7 @@ Minor Patch - July 2004
 
     [020912] Added "$window-id".
 
-    [020912] Added  crypting   support  to  registry  files  -  crypt  key  is
+    [020912] Added  encrypting  support  to  registry  files  -  crypt  key is
              auto-generated.
 
     [020912] Fixed an odd win98  shell-command  start-up  dir bug and  handled
@@ -2616,14 +2710,14 @@ Minor Patch - July 2004
 
     [020723] New revamped Html support with toolbar support.
 
-    [020723] Added right and bottom  toolbars, and a paged tool concept, fixed
-             quite a few problems  found with the toolbar.  Added a new Buffer
+    [020723] Added right and bottom tool-bars, and a paged tool concept, fixed
+             quite a few problems found with the tool-bar.  Added a new Buffer
              Tools  tool  which  loads  the  hk???.eaf  file so that the abrev
              ???.eaf file can be left as solely an abbrev file.
 
     [020723] Changed the  interface  to  regexStrcmp  to give better  control.
              Added   support  for  the  "@s#"   variables   after  a  "&xseq",
-             reimplemented  the  buffer  context  initialization  to  not  use
+             re-implemented  the  buffer  context  initialization  to not  use
              iscanner so it no longer need to swap  buffers  also  changed the
              location  of the fhook exec to  earlier,  where it was the window
              count was  incorrect  for the old  current  buffer and this could
@@ -2649,11 +2743,11 @@ Minor Patch - July 2004
     [020629] HTML Added table creation and external preview commands.
 
     [020629] Fixed  system   clipboard  being  trashed  problem  by  disabling
-             interaction with it during toolbar updates.
+             interaction with it during tool-bar updates.
 
     [020629] Changed the List Functions to List Items in buffer setup.
 
-    [020629] Added new kill list tool to the toolbar.
+    [020629] Added new kill list tool to the tool-bar.
 
     [020629] Added drag and drop  support to directory  view. Can now use this
              to load and copy/move files.
@@ -2665,15 +2759,15 @@ Minor Patch - July 2004
 
     [020629] Fixed nasty pick -> drop local buffer override problem.
 
-    [020605] Added  support  for the toolbar and the initial  frame size being
+    [020605] Added  support for the tool-bar and the initial  frame size being
              set in the history.
 
-    [020605] Pascal. Added "(* .. *)" and "//" comment hilighting.
+    [020605] Pascal. Added "(* .. *)" and "//" comment highlighting.
 
     [020605] Macros - broke the setup default and standard tools into separate
              files. Improved the update flags for better control.
 
-    [020605] New  osd-find-buffer  popup menu using the user-setup file types,
+    [020605] New osd-find-buffer  pop-up menu using the user-setup file types,
              based on Dr. Detlef Groth's.
 
     [020605] Fixed minor bug in file handling found by BC compiler.
@@ -2722,13 +2816,13 @@ Minor Patch - July 2004
     [020430] Windows - fixed an new  compile  problem  and a frame loop bug in
              the font setup (frameCur == NULL for first call).
 
-    [020428] Name changes  (screen -> frame) due to frame support, new toolbar
+    [020428] Name changes (screen -> frame) due to frame support, new tool-bar
              support,  new  abbrev-list  and  expand-look-back,  new filter on
              normal browser,  auto-spell  ignore, perldb  sub-func fix, tables
              added to jst, fixes to bullet list in "ifill-paragraph".
 
     [020428] Changed the ipipe wrap line length to be the  'term-size',  using
-             the frame size causes problems, particularly with the toolbar.
+             the frame size causes problems, particularly with the tool-bar.
 
     [020427] Major  edit!  Added  frame  support,  standardized  many  of  the
              structure and function names, introduced  $window-flags  (not the
@@ -3033,7 +3127,7 @@ Experimental Release - January 2002
 
     [000322] Alpha build revision contains version information for 2000/03/22
 
-    [000322] Internal re-organisation of platform option selection.
+    [000322] Internal reorganization of platform option selection.
 
     [000322] Minor fixes X-Windows color selection.
 
@@ -3088,22 +3182,23 @@ Experimental Release - January 2002
              > right-mouse -> Hilight Line -> color/remove
 
              selection; the macro  determines  the mouse  selected  region and
-             makes  an  appropriate  decision  as to how the  line  hilighting
+             makes an  appropriate  decision  as to how the line  highlighting
              scheme is to be applied. The  following  rules apply to the mouse
              selection:-
 
-             * Point in line  selected  (i.e. mark == point)  Hilight the line
+             * Point in line selected (i.e. mark == point)  Highlight the line
                only.
 
              * Region  in the line  selected.  Both  point and mark are on the
-               same line. Extract the selected text and hilight all lines that
-               match the search  pattern. The color  "remove" is also  pattern
-               matched to selectively remove lines.
+               same line. Extract the selected  text and  highlight  all lines
+               that  match the  search  pattern.  The color  "remove"  is also
+               pattern matched to selectively remove lines.
 
              * Region  selected  mark & point on different  lines Block up the
-               region with appropriate hilight.
+               region with appropriate highlight.
 
-             Notethat line hilighting may be safely used in a folded buffer.
+             Note  that  line  highlighting  may be  safely  used in a  folded
+             buffer.
 
     [000126] Addition of special rendered space character. You may toggle this
              from the keyboard using a macro in your user.emf as follows:-
@@ -3120,8 +3215,8 @@ Experimental Release - January 2002
 
     [000114] Fixed font selection bug in 000112 beta.
 
-    [000112] Revised color hilighting schemes, reduced the number of colors in
-             a number of schemes.  Introduction  of the Sherwood  Forest color
+    [000112] Revised color highlighting  schemes, reduced the number of colors
+             in a number of schemes. Introduction of the Sherwood Forest color
              scheme (green theme obviously !!).
 
     [000112] Small  revision  to the  user  interface  with  respect  to  font
@@ -3175,7 +3270,7 @@ Experimental Release - January 2002
              > Esc C-w kill-rectangle
              > Esc C-y yank-rectangle
 
-    [000112] Enhanced  info file  hilighting  (Thanks to Dr. Detlef  Groth for
+    [000112] Enhanced info file  highlighting  (Thanks to Dr. Detlef Groth for
              this).
 
     [000112] New copy-file  command,  typically used by the macro language for
@@ -3202,7 +3297,7 @@ Experimental Release - January 2002
              etc. It was felt that this  compromise  was better than having to
              quote the more obscure search characters.
 
-    [991101] Changed  the  hilighting  and  indenting  syntax  to be GNU regex
+    [991101] Changed the  highlighting  and  indenting  syntax to be GNU regex
              compliant.
 
     [991101] Modified  compare-windows  to  ignore  white  space  by  default,
@@ -3212,14 +3307,14 @@ Experimental Release - January 2002
     [991101] Enhanced the tags support to handle  multiple  tags and recursive
              directory tree searching.
 
-    [991101] Implemented  osd-help,  a gui  front  end  to the  on-line  help.
+    [991101] Implemented  osd-help,  a GUI  front  end  to the  on-line  help.
              Required  changes to the help system which gives macros access to
              the on-line help buffer, needed for the index and search.
 
-    [991101] Over-hauled the hilighting scheme files and editor to support the
-             disabling of buffer hilighting.
+    [991101] Over-hauled the  highlighting  scheme files and editor to support
+             the disabling of buffer highlighting.
 
-    [991101] Many bugs fixed on all platforms, in particular  unix cutting and
+    [991101] Many bugs fixed on all platforms, in particular  UNIX cutting and
              pasting (crashes exceed) and focus problems and NT exit delay.
 
     [991101] Added tab and newline character printing in buffers.
@@ -3267,7 +3362,7 @@ Experimental Release - January 2002
              orientation which was reversed.
 
     [991101] New - Color  scheme  variables  which  allow  the hkXXX  files to
-             determine the level of hilighting to apply to their templates.
+             determine the level of highlighting to apply to their templates.
 
     [991101] Line  length fix; more  graceful  behavior  (i.e. does not crash)
              when the line length exceeds 64K.
@@ -3330,7 +3425,7 @@ Experimental Release - January 2002
     [990101] Enhanced the regexp support in hilight  tokens, vastly  improving
              it capability and usability. Similarly for indent tokens.
 
-    [990101] Reorganized   the   hilighting   files.   Introduction   of   the
+    [990101] Reorganized   the   highlighting   files.   Introduction  of  the
              scheme-editor and Hilight Search OSD's.
 
     [990101] Implemented box character  override support ($system bit 0x10000)
@@ -3389,7 +3484,8 @@ Minor Patch - October 1998
 
     [971231] Added menu bar.
 
-    [971231] Cursor position correction for hilights with invisible character.
+    [971231] Cursor   position   correction  for  highlights   with  invisible
+             character.
 
     [971231] Indentation scheme support.
 
