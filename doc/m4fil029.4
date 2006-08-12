@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil029.4,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m4fil029.4,v 2.6 2006-08-12 18:45:44 jon Exp $
 .Im MicroEmacs macro;function;list
 .so me.tni
 .TH &ldel 4
@@ -71,14 +71,24 @@ Returns the value of item \fIindex\fR in \fIlist\fR.  If
 an empty string is returned.
 .IP "\fB&linsert\fR \fIlist\fR \fIindex\fR \fIvalue\fR"
 Creates  a new  list  from  inserting  \fIvalue\fR  into  \fIlist\fR  at point
-\fIindex\fR,  thereby  pushing  item  \fIindex\fR  to  \fIindex\fR+1  etc.  If
-\fIindex\fR is 0 the  \fIvalue\fR is inserted at the beginning of the list, if
-\fIindex\fR  is less than 0 or greater that the number of items in  \fIlist\fR
-then \fIvalue\fR is inserted at the end of the list.
+\fIindex\fR,  thereby  pushing  item  \fIindex\fR  to  \fIindex\fR+1  etc.
+.IP
+If  \fIindex\fR  is \fC0\fR,  \fIvalue\fR  is inserted at the beginning of the
+list.
+.IP
+If  \fIindex\fR  is \fC-2\fR,  \fIvalue\fR  is inserted  alphabetically  (case
+sensitively) into the list.
+.IP 
+If  \fIindex\fR  is \fC-3\fR,  \fIvalue\fR  is inserted  alphabetically  (case
+insensitively) into the list.
+.IP
+Otherwise, if  \fIindex\fR  is \fC-1\fR or greater that the number of items in
+\fIlist\fR then \fIvalue\fR is inserted at the end of the list.
 .IP "\fB&lset\fR \fIlist\fR \fIindex\fR \fIvalue\fR"
 Creates a new list from setting  \fIindex\fR of \fIlist\fR to  \fIvalue\fR. If
 \fIindex\fR is out of  \fIlist\fR's  range (0 < index <= # items in list) then
-\fB&lset\fR behaves like \fB&linsert\fR.
+\fB&lset\fR  behaves like \fB&linsert\fR and inserts  alphabetically or at the
+end of the list.
 .SH EXAMPLE
 The following example moves item 4 in a list to position 2:
 .Me $emf-scheme
