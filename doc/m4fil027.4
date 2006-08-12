@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil027.4,v 2.7 2005-06-09 22:06:24 bill Exp $
+.Id $Id: m4fil027.4,v 2.8 2006-08-12 19:08:46 jon Exp $
 .Im MicroEmacs macro;function;miscellaneous
 .so me.tni
 .TH &stat 4
@@ -22,8 +22,8 @@ returns  the  specified  \fI<stat>\fR  on the  given  \fI<filename>\fR.  Valid
 \fI<stat>\fR values are:-
 .IP \fBa\fR
 Returns the absolute file name, corrects  relative  paths and symbolic  links,
-i.e. on unix if the  filename is a symbolic  link it returns the file name the
-link points to (recursive), otherwise returns the file name.
+i.e. on  \s-1UNIX\s0  if the  filename is a symbolic  link it returns the file
+name the link points to (recursive), otherwise returns the file name.
 .IP \fBd\fR
 Returns the file's  modification time stamp as an integer, larger values indicate a later time.
 .IP \fBi\fR
