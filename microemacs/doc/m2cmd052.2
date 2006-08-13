@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd052.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd052.2,v 2.6 2006-08-13 12:53:10 jon Exp $
 .Im MicroEmacs command|paragraph
 .ds C0 "(\fB\*eo\fR)\ \&
 .so me.tni
@@ -22,7 +22,7 @@ fill-paragraph \- Format a paragraph
 this takes all the text in the current  paragraph  (as defined by  surrounding
 blank lines, or a leading indent) and attempts to fill it from the left margin
 to the current fill column as defined by
-.Ht $fill-col 5 .
+.Ht $buffer-fill-col 5 .
 When an argument \fIn\fR is supplied \fIn\fR paragraphs are filled. If \fIn\fR
 is positive  then \*(mE  performs  indented  filling (i.e.  indentation  for a
 bullet mark etc). If \fIn\fR is negative then indented filling is disabled. If
@@ -32,7 +32,7 @@ be filled,  whilst in the middle of the  paragraph  and the word  position  is
 maintained.
 .PP
 If \fBjustify mode\fR is enabled the variable
-.Ht $fill-mode 5
+.Ht $buffer-fill-mode 5
 determines  how  the  paragraph  is  filled  (i.e.  \fIleft\fR,   \fIright\fR,
 \fIboth\fR or \fIcenter\fR). The variable
 .Ht $fill-eos-len 5
@@ -94,6 +94,8 @@ margin
 .CE 0
 .SH "SEE ALSO"
 .na
+.Ht $buffer-fill-col 5 ,
+.Ht $buffer-fill-mode 5 ,
 .Ht $fill-bullet 5 ,
 .Ht $fill-bullet-len 5 ,
 .Ht $fill-col 5 ,

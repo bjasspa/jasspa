@@ -1,26 +1,39 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var028.5,v 2.5 2002-01-11 21:58:43 jon Exp $
+.Id $Id: m5var028.5,v 2.6 2006-08-13 12:53:04 jon Exp $
 .Im MicroEmacs variable|paragraph
 .so me.tni
 .TH $fill-mode 5
-.XI $fill-mode - "Paragraph mode; justification method"
+.XI $fill-mode - "Global paragraph mode; justification method"
+.XI $buffer-fill-mode - "Buffer paragraph mode; justification method"
 .SH NAME
-$fill-mode \- Paragraph mode; justification method
+.na
+.Me "|$fill-mode"
+$fill-mode \- Global paragraph mode; justification method
+.Me "|$buffer-fill-mode"
+$buffer-fill-mode \- Buffer paragraph mode; justification method
 .Me $a
+.ad
 .SH SYNOPSIS
-\fB$fill-mode\fR \fIjustification\fR; Default is \fCN\fR
+\fB$fill-mode\fR \fIjustification\fR
+.br
+\fB$buffer-fill-mode\fR \fIjustification\fR
 .sp
 .I justification 
 \fCb\fR | \fCc\fR | \fCl\fR | \fCn\fR | \fCo\fR | \fCr\fR |
-\fCB\fR | \fCC\fR | \fCL\fR | \fCN\fR | \fCR\fR
+\fCB\fR | \fCC\fR | \fCL\fR | \fCN\fR | \fCR\fR the default is \fCN\fR
 .SH DESCRIPTION
+The  \fBfill-col\fR  variables specify the text  justification  modes for text
+filling of 
+.Ht fill-paragraph 2 .
+.PP
 .B $fill-mode
-defines the justification mode i.e. \fIleft\fR/\fIright\fR/\fIboth\fR/...  The
-default value is none automatic (\fBN\fR). The modes available are:-
+defines      the     global      default      justification      mode     i.e.
+\fIleft\fR/\fIright\fR/\fIboth\fR/...   The   default   value  is   \fInone\fR
+\fIautomatic\fR (\fBN\fR). The modes available are:-
 .IP "\fBb\fR Both"
 Enables left and right margin justification.
 .IP "\fBc\fR Center"
@@ -48,37 +61,53 @@ Automatically determines the mode, defaults to \fIboth\fR and not \fInone\fR.
 .IP "\fBR\fR Right (automatic)"
 Automatically determines the mode, defaulting to right justification.
 .LP
-The lines are automatically justified only when the justification mode
+.B $buffer-fill-mode
+specifies the fill mode value to use in a buffer, a value of 
+.B $fill-mode 
+is used as a default when the buffer is created. Modification of the 
+.B $buffer-fill-mode 
+causes  the buffer  fill mode to be  modified,  this does not affect any other
+buffer.  The value is set by the  \fBfhook-xxx\fR  macro when  initializing  a
+buffer using the 
+.Hl "Language Templates" languageTemplates 2 . 
+.B $buffer-fill-mode 
+may also be modified from 
+.Ht buffer-setup 3 . 
+.PP
+The buffer lines are automatically justified only when the justification mode
 .Ht justify 2m
 is enabled.  Justification  is performed  between the left and right  margins,
 defined as 0 and
-.Ht $fill-col 5
+.Ht $buffer-fill-col 5
 respectively.
 .SS "Automatic Filling"
-Automatic filling is performed when the mode  \fB$fill-mode\fR is specified in
-upper case. The format of the line (and adjacent lines) is interrogated and an
-\fIinformed\fR  guess  is  made as to the  expected  formating  which  is then
-adopted. The criteria for automatic formatting is defined as follows:-
+Automatic  filling  is  performed  when  the mode  \fB$buffer-fill-mode\fR  is
+specified  in upper  case.  The  format  of the line (and  adjacent  lines) is
+interrogated and an \fIinformed\fR  guess is made as to the expected formating
+which is then  adopted. The criteria for  automatic  formatting  is defined as
+follows:-
 .IP \fIcenter\fR
-If the left and right margins contain  approximately  the same amount of white
-space +/-1 character then the paragraph is centered.
+If the left and right  margins  contain  the same  amount of white  space +/-1
+character then the paragraph is centered.
 .IP \fIright\fR
 If the text commences past half of the
-.Ht $fill-col 5
+.Ht $buffer-fill-col 5
 (i.e.  first  half of the line  comprises  white  space)  \s-1AND\s0  the line
-extends to, or past, the  \fC$fill-col\fR  then the paragraph is assumed to be
-right justified.
+extends to, or past, the \fC$buffer-fill-col\fR  then the paragraph is assumed
+to be right justified.
 .IP \fInone\fR
 If the text commences in column 0 and occupies less than half of the line then
 the  paragraph  is  assumed to be not  justified.  (i.e. left  justified,  but
 consecutive lines of the paragraph are not filled)
 .IP "\fIdefault\fR"
 If none of the above  criteria  are met then the  default  mode is adopted, as
-determined by the lower-case value of the \fB$fill-mode\fR value.
+determined by the lower-case value of the \fB$buffer-fill-mode\fR value.
 .SH "SEE ALSO"
 .na
+.Ht $buffer-fill-col 5 ,
 .Ht $fill-col 5 ,
 .Ht buffer-mode 2 ,
+.Ht buffer-setup 3 , 
 .Ht fill-paragraph 2 ,
 .Ht justify 2m .
 .ad

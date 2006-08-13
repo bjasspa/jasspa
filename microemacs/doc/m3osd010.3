@@ -1,33 +1,39 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Steven Phillips
 .\"  Created       : Sat Aug 22 09:00:06 1998
 .\"
-.Id $Id: m3osd010.3,v 2.8 2005-01-16 19:40:40 jon Exp $
+.Id $Id: m3osd010.3,v 2.9 2006-08-13 12:53:07 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
-.TH buffer-setup 3
-.XI buffer-setup - "Configures the current buffer settings"
+.TH major-mode-setup 3
+.XI major-mode-setup - "Configures the current buffer settings"
 .SH NAME
-buffer-setup \- Configures the current buffer settings
+major-mode-setup \- Configures the current buffer settings
 .Me $a
 .SH SYNOPSIS
 .na
-.B buffer-setup
+.B major-mode-setup
 .ad
 .SH DESCRIPTION
-\fBbuffer-setup\fR provides a dialog interface to configuring the setup of the
-current buffer's file type within \*(mS.  \fBuser-setup\fR may be invoked from
-the main \fIhelp\fR menu or directly from the command line using
+The \fBMajor Mode\fR defines the operational  mode of the buffer,  controlling
+highlighting and additional  commands that are available. The \fIMajor Mode\fR
+is  determined  by the  file  type  content  and is  determined  from the file
+extension or \fIMagic String\fR in the first few lines of the file.
+.PP
+\fBmajor-mode-setup\fR provides a dialog interface to configuring the setup of
+the current  buffer's  file type within \*(mS.  \fBmajor-mode-setup\fR  may be
+invoked from the main \fITools\fR menu or directly from the command line using
 .Ht execute-named-command 2 .
 .PP
-The changes made to a configuration  in  \fBbuffer-setup\fR  are maintained in
-future \*(mS  sessions by storing them within the user's setup  registry file,
-"\fI<logname>\fR\fC.erf\fR".  Note that not all file types may be supported by
-\fBbuffer-setup\fR, if not the help menu item will not be available.
+The changes made to a configuration in  \fBmajor-mode-setup\fR  are maintained
+in future  \*(mS  sessions by storing  them within the user's  setup  registry
+file,  "\fI<logname>\fR\fC.erf\fR".  Note  that  not  all  file  types  may be
+supported  by  \fBmajor-mode-setup\fR,  if not the help  menu item will not be
+available.
 .PP
 The  contents of the dialog  change,  depending  on the  features  the current
 buffer's file type  supports.  These  features are  implemented  and installed
@@ -42,11 +48,11 @@ buffer.  No  changes   made  will  effect  the  current   buffer   unless  the
 save may inherrit some of the changes.
 .IP "\fCCurrent\fR"
 Makes  the  current   buffer   reflect  the  changes  made,   dismissing   the
-\fBbuffer-setup\fR   dialog.  This  also   performs  the  above   '\fBSave\fR'
+\fBmajor-mode-setup\fR   dialog.  This  also   performs  the  above   '\fBSave\fR'
 operation. Some changes such as dialog creation changes, will only take effect
 when \*(mS is restarted.
 .IP "\fCExit\fR"
-Quits buffer-setup, if changes where not \fBSave\fRd or made  \fBCurrent\fR they
+Quits major-mode-setup, if changes where not \fBSave\fRd or made  \fBCurrent\fR they
 will be lost.
 .PP
 Following is a list of configurable features which may be available:
@@ -69,7 +75,7 @@ Enables or disables the displaying of matching fences for this file type. Note
 that the way in which the matching fence is display is determined by the
 \fBFence Display\fR option on the Platform page of
 .Ht user-setup 3 ;
-the \fBbuffer-setup\fR option is ignored if this option is set to
+the \fBmajor-mode-setup\fR option is ignored if this option is set to
 "\fCNever Display\fR".
 .IP "Setup Hilighting"
 Creates and enables the token
@@ -151,15 +157,15 @@ Enables/disables the
 .Ht wrap 2m
 mode.
 .SH NOTES
-\fBbuffer-setup\fR is a macro using
+\fBmajor-mode-setup\fR is a macro using
 .Ht osd 2 ,
-defined in  \fCbuffstp.emf\fR.  This macro configures the user settings of the
+defined in  \fCmajormod.emf\fR.  This macro configures the user settings of the
 \fChkXXX.emf\fR files via
 .Ht buffer-init 3 .
 .SH "SEE ALSO"
 .na
 .Ht buffer-init 3 ,
-.Ht buffer-help 3 ,
+.Ht major-mode-help 3 ,
 .Ht user-setup 3 .
 .Hl "File Hooks" fileHooks 2 .
 .ad

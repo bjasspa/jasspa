@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2mod006.2,v 2.6 2004-01-05 00:19:23 jon Exp $
+.Id $Id: m2mod006.2,v 2.7 2006-08-13 12:53:09 jon Exp $
 .Im MicroEmacs modes
 .so me.tni
 .TH justify 2m
@@ -24,10 +24,10 @@ end of the line, if there  are no  non-white  characters  on the line then the
 line is always  left empty. If the  justification  method is  \fIcenter\fR  or
 \fIright\fR  then all white  spaces are removed at the  beginning of the line.
 If the line is longer than the
-.Ht $fill-col 5
+.Ht $buffer-fill-col 5
 or the  method  is  \fIleft\fR  then  nothing  more is done,  else the line is
 appropriately justified. The method used is set by the variable
-.Ht $fill-mode 5 .
+.Ht $buffer-fill-mode 5 .
 Justify is usually used in conjunction with
 .Ht wrap 2m
 and
@@ -39,6 +39,8 @@ and
 .Ht global-mode 2 ,
 .Ht wrap 2m
 .Ht indent 2m ,
+.Ht $buffer-fill-col 5 ,
+.Ht $buffer-fill-mode 5 ,
 .Ht $fill-col 5 ,
 .Ht $fill-mode 5 .
 .ad

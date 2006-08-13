@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2mod017.2,v 2.7 2004-01-05 00:19:23 jon Exp $
+.Id $Id: m2mod017.2,v 2.8 2006-08-13 12:53:09 jon Exp $
 .Im MicroEmacs modes
 .so me.tni
 .TH wrap 2m
@@ -17,7 +17,7 @@ wrap \- Line wrap entered text
 .SH DESCRIPTION
 .B wrap
 mode causes automatic text wrapping when text passes then fill column (see
-.Ht $fill-col 5 ),
+.Ht $buffer-fill-col 5 ),
 allowing text to be entered non-stop on a standard screen without bothering to
 use the \fCRETURN\fR key.
 .PP
@@ -35,6 +35,8 @@ to the width of the \*(mS window.
 .SH "SEE ALSO"
 .na
 .Hl "Operating Modes" Modes - ,
+.Ht $buffer-fill-col 5 ,
+.Ht $fill-col 5 ,
 .Ht buffer-mode 2 ,
 .Ht global-mode 2 ,
 .Ht ipipe-shell-command 2

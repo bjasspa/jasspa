@@ -1,31 +1,61 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var021.5,v 2.5 2002-01-11 21:58:43 jon Exp $
+.Id $Id: m5var021.5,v 2.6 2006-08-13 12:53:06 jon Exp $
 .Im MicroEmacs variable|paragraph
 .so me.tni
 .TH $fill-col 5
-.XI $fill-col - "Paragraph Mode; right fill column"
+.XI $fill-col - "Global paragraph mode; right fill column"
+.XI $buffer-fill-col - "Buffer paragraph mode; right fill column"
 .SH NAME
-$fill-col \- Paragraph Mode; right fill column
+.na
+.Me "|$fill-col"
+$fill-col \- Global paragraph mode; right fill column
+.Me "|$buffer-fill-col"
+$buffer-fill-col \- Buffer paragraph mode; right fill column
 .Me $a
+.ad
 .SH SYNOPSIS
-\fB$fill-col\fR \fIcolumnNumber\fR; Default is \fC78\fR
+\fB$fill-col\fR \fIcolumnNumber\fR
+.br
+\fB$buffer-fill-col\fR \fIcolumnNumber\fR
 .sp
--1 <= \fIcolumnNumber\fR <= 32767
+\-1 <= \fIcolumnNumber\fR <= 32767 the default is \fC78\fR.
 .SH DESCRIPTION
+The \fBfill-col\fR variables specify the position of the right text margin, or
+fill column, when used with
+.Ht fill-paragraph 2 .
+.PP
 .B $fill-col
-defines the current fill column number. \fIcolumnNumber\fR defaults to 78 when
-undefined. This value is used in conjunction with 
+defines  the global  default  fill  column  number, all new  buffers  that are
+subsequently   created   assume  a  fill  column  value  of   \fB$fill-col\fR.
+\fIcolumnNumber\fR  defaults  to 78  when  undefined.  This  value  is used in
+conjunction with
 .Ht justify 2m
 and
-.Ht wrap 2m 
+.Ht wrap 2m
 modes.
+.PP
+.B $buffer-fill-col
+specifies the fill column value to use in a buffer, a value of
+.B $fill-col
+is used as a default when the buffer is created. Modification of the
+.B $buffer-fill-col
+causes the buffer fill column  position to be  modified,  this does not affect
+any other buffer. The value is typically set by the \fBfhook-xxx\fR macro when
+initializing a buffer using the
+.Hl "Language Templates" languageTemplates 2 .
+.B $buffer-fill-col
+may also be modified from
+.Ht buffer-setup 3 .
 .SH "SEE ALSO"
 .na
+.Ht $buffer-fill-mode 5 ,
+.Ht $fill-mode 5 ,
 .Ht buffer-mode 2 ,
+.Ht buffer-setup 3 ,
 .Ht fill-paragraph 2 ,
 .Ht justify 2m ,
 .Ht wrap 2m .

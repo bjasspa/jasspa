@@ -1,38 +1,51 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Sun Feb 6 18:14:27 2005
 .\"
-.Id $Id: m3osd014.3,v 2.1 2005-02-06 18:51:53 jon Exp $
+.Id $Id: m3osd014.3,v 2.2 2006-08-13 12:53:07 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
-.TH indent-setup 3
-.XI indent-setup - "Locally modify buffer indentation"
+.TH buffer-setup 3
+.XI buffer-setup - "Configure the current buffer settings"
 .SH NAME
-indent-setup \- Locally modify buffer indentation
+buffer-setup \- Configure the current buffer settings
 .Me $a
 .SH SYNOPSIS
 .na
-.B indent-setup
+.B buffer-setup
 .ad
 .SH DESCRIPTION
-\fBindent-setup\fR  provides a dialog  interface  for  configuring  the buffer
-indentation. \fBindent-setup\fR may be invoked from the main \fIFormat\fR menu
-or directly from the command line using
+\fBbuffer-setup\fR  provides a dialog  interface  for  configuring  the buffer
+major mode,  indentation and buffer modes.  \fBbuffer-setup\fR  may be invoked
+from the main \fITools\fR menu or directly from the command line using
 .Ht execute-named-command 2 .
 .PP
-The  \fBindent-setup\fR  dialogue  may be  used  to  quickly  reconfigure  the
-indentation  attributes of a given buffer. The  indentation  settings are only
-temporary  and  expire  once the  buffer  has been  closed or  re-loaded.
+The  \fBbuffer-setup\fR   dialog  may  be  used  to  quickly  reconfigure  the
+attributes of a given buffer. The settings are only  temporary and expire once
+the buffer has been closed or re-loaded.
 .Ht buffer-setup 3
 should be used to associate  user  specific  settings  with  different  buffer
 types.
 .PP
 The following controls are available:-
-.IP "\fCTab Width\fR"
+.IP "\fBMajor Mode\fR" 
+Associates  a file type with the content of the file and is used to modify the
+buffer  highlighting  and content  assisted  controls if the file type has not
+been  recognized  correctly.  Changing  the major mode will cause the new file
+type  template  to be loaded and may cause the buffer key  bindings to change.
+The default major mode settings are set with 
+.Ht major-mode-setup 3 .
+.IP "\fBIndent Width\fR"
+Defines  the  indent  width  to use when the  \s-1TAB\s0  key is  pressed,  or
+following a nested construct in a auto-indent buffer. This entry modifies the
+.Ht $buffer-indent-width 5
+setting. The default indentation width is defined by the variable
+.Ht $indent-width 5 .
+.IP "\fBTab Width\fR"
 The width of a rendered \s-1TAB\s0  character in spaces,  modification of this
 value  immediately  changes the layout.  This  modifies  the buffer  width tab
 variable
@@ -45,18 +58,22 @@ styling of the buffer to be editor independent then the command
 .Ht tabs-to-spaces 3
 may be used to change all of the tab  characters  to spaces once the tab width
 has been correctly set.
-.IP "\fCIndent Width\fR"
-Defines  the  indent  width  to use when the  \s-1TAB\s0  key is  pressed,  or
-following a nested construct in a auto-indent buffer. This entry modifies the
-.Ht $buffer-indent-width 5
-setting. The default indentation width is defined by the variable
-.Ht $indent-width 5 .
-.IP "\fCUse Tab Characters\fR"
-The user preference for performing indentation with a \s-1TAB\s0 character or
-\s-1SPACE\s0 character. This modifies the buffer
-.Ht tab 2m
-mode setting.
-.IP "\fCUse Auto Indentation\fR"
+.IP "\fBFill Column\fR"
+A text layout variable, defines the maximum length of the line before wrapping
+occurs when a text  paragraph is filled. This  modifies the buffer fill column
+variable 
+.Ht $buffer-fill-col 5
+the  default  is 78 (defined by
+.Ht $fill-col 5 ).
+.IP "\fBFill Mode\fR"
+A text  layout  variable,  defines  how  paragraphs  should  be filled  across
+multiple lines. This modifies the buffer fill mode variable 
+.Ht $buffer-fill-mode 5
+the default is \fBB\fR which causes automatic  detection of paragraph  layout,
+defaulting to full  justification  against the left and right margins (defined
+by
+.Ht $fill-mode 5 ).
+.IP "\fBUse Auto Indentation\fR"
 Toggles  automatic  indentation on an off, this setting is only present if the
 buffer type supports a
 .Ht indent 2 
@@ -65,22 +82,42 @@ scheme. Typically used for files such as
 and
 .Hl yacc y 9
 which use a special syntax combination with C.
-.IP "\fCUse Hilighting\fR"
+.IP "\fBUse Hilighting\fR"
 Toggles hilighting on and off, this setting is only present if the buffer type
 supports a
 .Ht hilight 2
 scheme.
+.IP "\fBBuffer Modes\fR"
+The modes of the buffer, refer to 
+.Hl "Operating Modes" Modes -  
+for more information. 
+.IP
+A notable mode switch here is 
+.Ht tab 2m
+which  changes the behavior of the \fCTAB\fR  key, when set tabs are simulated
+with the insertion of spaces, when disabled literal tab characters are used.
+.SH "HISTORY"
+Prior  to  the  2006  release   \fBbuffer-setup\fR   was   previously   called
+\fBindent-setup\fR  and dealt  with the  indentation  settings  only. The 2006
+release introduced the concept of \fBMajor Mode\fR.
 .SH "SEE ALSO"
 .na
 .Ht buffer-setup 3 ,
 .Ht execute-named-command 2 ,
 .Ht hilight 2 ,
 .Ht indent 2 ,
+.Ht major-mode-setup 3 ,
 .Ht osd 2 ,
 .Ht tabs-to-spaces 3
+.Ht $buffer-fill-col 5 ,
+.Ht $buffer-fill-mode 5 ,
 .Ht $buffer-indent-width 5 ,
 .Ht $buffer-tab-width 5 ,
+.Ht $fill-col 5 ,
+.Ht $fill-mode 5 ,
 .Ht $indent-width 5 ,
 .Ht $tab-width 5 .
+.sp
+.Hl "Operating Modes" Modes - .
 .ad
 .FH

@@ -1,6 +1,6 @@
 .\"*-*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1999-2005 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1999-2006 JASSPA (www.jasspa.com)
 .\"
 .\" Permission is granted to copy, distribute and/or modify this document
 .\" under the terms of the GNU Free Documentation License, Version 1.1
@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.40 2005-10-08 10:40:06 jon Exp $
+.Id $Id: me.nrs,v 2.41 2006-08-13 12:53:04 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -3088,7 +3088,7 @@ interface.
 [041210]  Created  new osd  file  "\fCosdmisc.emf\fR"  for  miscellaneous  OSD
 macros, this removes the OSD  dependency  when the  MicroEmacs  is executed in
 special start up modes with startup files. Moved search and new
-.Ht indent-setup 3
+.Hr indent-setup 3
 commands  out  of  "\fCsearch.emf\fR"   and  "\fCformat.emf\fR"   into  a  new
 "\fCosdmisc.emf\fR"  as  they  cause  problems  with  utils  that  do not  run
 "\fCme.emf\fR" (e.g. "\fCehftools.emf\fR")
@@ -3283,7 +3283,7 @@ file selection.  Keyboard file section enabled within the  "\fC*grep*\fR"  and
 to date with latest keywords and added to release.
 .BU
 [041026] Fixed
-.Ht indent-setup 3
+.Hr indent-setup 3
 osd dialog.
 .BU
 [041024] Macro/source  compatibility  macro and source versions updated to
