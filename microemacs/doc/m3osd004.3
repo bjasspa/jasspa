@@ -1,38 +1,39 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1999-2004 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1999-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Tue Feb 2 21:10:34 1999
 .\"
-.Id $Id: m3osd004.3,v 2.6 2004-01-17 22:27:28 jon Exp $
+.Id $Id: m3osd004.3,v 2.7 2006-08-13 14:18:03 jon Exp $
 .Im MicroEmacs command|search|hilight|osd
 .ds C0 "(\fB\*e$\fR)\ \&
 .so me.tni
-.TH line-scheme-search 3
-.XI line-scheme-search 3 "Search and annotate the current buffer"
+.TH osd-search 3
+.XI osd-search 3 "Search and annotate the current buffer"
 .SH NAME
-line-scheme-search \- Search and annotate the current buffer
+osd-search \- Search and annotate the current buffer
 .Me $a
 .SH SYNOPSIS
 .na
-\fBline-scheme-search\fR
+\fBosd-search\fR
 .ad
 .SH DESCRIPTION
-.B line-scheme-search
-provides a method of searching for text patterns within the current buffer and
-annotating any matches  through  colored line  hilighting. A selection of line
-colors are provided to allow  different  search  patterns to be assigned their
-own color.
+.B osd-search
+is a hidden  macro  which  provides a method of  searching  for text  patterns
+within the current  buffer and  annotating  any matches  through  colored line
+hilighting. A selection of line colors are provided to allow different  search
+patterns to be assigned their own color.
 .PP
-.B line-scheme-search
+.B osd-search
 is generally  used for annotating log files and alike, where  indevidual  lines
 are of  interest  in addition to the context  about that line. The  hilighting
 draws  attention to the line, by providing a visual cue, allowing the contents
 of the file to be breifly scanned.
 .PP
-On invocation of \fBline-scheme-search\fR a
+On invocation of \fBosd-search\fR  from the menu \fBSearch\fR -> \fBHilight\fR
+\fBSearch\fR a
 .Ht osd 2 
 dialog  is  presented  to the  user,  search  patterns  and  their  associated
 hilighting  assignment are selected through this interface. The dialog entries
@@ -74,8 +75,8 @@ Hilights the previous line that matches the search pattern.
 .IP "\fBExit\fR"
 Exits the hilighting search dialog.
 .SH "NOTES"
-.B line-scheme-search
-is a macro implemented in \fChiline.emf\fR.
+.B osd-search
+is a macro implemented in \fCosdmisc.emf\fR.
 .SH "SEE ALSO"
 .na
 .Ht delete-hilight-lines 3 ,

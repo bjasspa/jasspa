@@ -6,27 +6,27 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Fri Jan 9 00:04:42 2004
 .\"
-.Id $Id: m2nar012.2,v 2.2 2006-08-13 12:53:07 jon Exp $
-.Im MicroEmacs 
+.Id $Id: m2nar012.2,v 2.3 2006-08-13 14:18:05 jon Exp $
+.Im MicroEmacs
 .so me.tni
 .TH macroOverview 4
-.XI macroOverview - "MicroEmacs Macro Language at a Glance" 
+.XI macroOverview - "MicroEmacs Macro Language at a Glance"
 .SH "MACRO LANGUAGE OVERVIEW"
 \*(mS  macro  language is a run-time  interpreted  language  and uses a prefix
 notation  form, that is operators  appear  before their  arguments,  sometimes
 known as Polish notation, i.e. '\fC+ 3 4\fR' rather than the more conventional
-infix notation '\fC3 + 4\fR'). 
+infix notation '\fC3 + 4\fR').
 .PP
 Every line is self  contained, you cannot make a single  command span multiple
-line (by using something like a '\\' character as in C or tcl). 
+line (by using something like a '\\' character as in C or tcl).
 .PP
 Comments  start  with semi-colon '\fC;\fR',  anything  to the  right  of an
 unquoted semi-colon is ignored.
 .Me $emf-scheme
-.CS   
+.CS
 ; I'm a comment and exist to the end of line.
-set-variable #l1 1     ; I'm a comment to the end of line.
-.CE 
+set-variable #l1 1     ; I am a comment to the end of line.
+.CE
 .Me $ehf-scheme
 There are three types of line
 .BS
@@ -66,11 +66,24 @@ characters are:
 .IP
 If its not one of the  above  then it must be the  first  letter  of a command
 name.
+.SS "Escape Character"
+.B "Backslash"
+\&'\fC\\\fR'
+.B "is escape character in macro scripts, so every normal"
+.B "occurrence needs to be doubled."
+.PP
+The \*(mS macro  language uses a backslash  '\fC\\\fR'  character as an escape
+character. In order to use a backslash  character in macro  arguments then all
+backslash  characters should be themselves escaped with another backslash i.e.
+\&'\fC\\\fR' becomes '\fC\\\\\fR' or '\fC\\\\\fR' becomes '\fC\\\\\\\\\fR'. If
+the  escaping is omitted  then it is likely that the command  will  receive an
+incorrect character sequence that will be misinterpreted and cause the command
+to fail or perform an incorrect action.
 .SS Comments
 Comments  may appear  anywhere  on a line and  everything  to the right of the
 semi-colon to the end of the line is ignored:
 .Me $emf-scheme
-.CS   
+.CS
 ; this is a comment
 set-variable #l0 1    ; this part of the line is a comment.
 .CE 0
@@ -78,12 +91,12 @@ set-variable #l0 1    ; this part of the line is a comment.
 .SS "System or environment variables"
 \*(mS system  variables  start with  '\fC$\fR' and are used to configure  most
 aspects of the editor (such as tab widths, window  drawing  characters  etc.).
-There are a fixed list of system variables, see 
+There are a fixed list of system variables, see
 .Hl "\*(mS \- Macro Language Glossary" MacroGlossary - .
 .PP
-If  a  given  variable  name  is  not  a  recognised   system  variable  (e.g.
-\fC$PATH\fR) then \*(mS treats it as an environment variable, using 
-.Ht set-variable 2 
+If  a  given  variable  name  is  not  a  recognized   system  variable  (e.g.
+\fC$PATH\fR) then \*(mS treats it as an environment variable, using
+.Ht set-variable 2
 to change an  environment  variable.  This is useful when used in  conjunction
 with one of \*(mS's shell commands. If the environment variable does not exist
 its value is returned as the string "\fCERROR\fR".
@@ -98,10 +111,10 @@ macros use the same  variable  then things go wrong which is  principally  why
 they are no longer  used.  Macros  have  become a very large part of  JASSPA's
 MicroEmacs  and therefore  they must be reliable by the nature of their global
 scope they are considered unreliable.
-.PP    
+.PP
 A few  commands  still use them but this is more for  historical  reasons, for
-example grep's 
-.Ht %grep-com 5 
+example grep's
+.Ht %grep-com 5
 variable to set the default grep command  would be better  implemented  as the
 command variable \fC.grep.com\fR, see below.
 .SS "Buffer Variables"
@@ -109,7 +122,7 @@ Buffer  variables  are set in the context of a buffer, each buffer has its
 own independent  list of buffer variables so this type of variable is used
 by macros which need to store buffer context  information. As an example, a
 file hook may allow each buffer to have its own private
-.Ht $fill-ignore 5 
+.Ht $fill-ignore 5
 value (the variable is global). It may stores each buffer's own fill ignore in
 the variable  \fC:fill-ignore\fR.  This is private to the buffer.  Referencing
 the   variable    \fC:fill-ignore\fR    retrieves    the   current    buffer's
@@ -117,7 +130,7 @@ the   variable    \fC:fill-ignore\fR    retrieves    the   current    buffer's
 "\fCERROR\fR".   Referencing    \fC:*scratch*:fill-ignore\fR   retrieves   the
 "\fC*scratch*\fR" buffer's \fC:fill-ignore\fR value.
 .PP
-The operator 
+The operator
 .Ht &exist 4
 may be used to determine if the buffer variable has been created and set.
 .SS "Command Variables"
@@ -130,10 +143,10 @@ It is important to understand that these variables are stored with the command
 and the command  must exist  before the variable is used. As an example of the
 command variable scope, consider the following macro definitions.
 .Me $emf-scheme
-.CS   
+.CS
 define-macro Test1
     ml-write &spr "Test1 .foo is [%s]" .foo
-!emacro 
+!emacro
 set-variable .Test1.foo "hello world"
 define-macro Test2
     ml-write &spr "Test1 .foo is [%s]" .Test1.foo
@@ -148,10 +161,10 @@ memory overhead.
 .SS "Register Variables"
 Most variables are used to store temporary information, once a macro completes
 the variable is no longer required.
-.Hl "Register variables" "MacroGlossary" - 
+.Hl "Register variables" "MacroGlossary" -
 are used for this purpose, their scope is only the current  macro's  execution
-as such they are the most efficient variables to use. 
-.PP    
+as such they are the most efficient variables to use.
+.PP
 A new set of registers is created every time that a macro is executed,  called
 \fC#l0\fR  through  to  \fC#l9\fR.  Where  macros  are nested  then the parent
 registers are effectively  stacked and may be access through \fC#p0\fR through
@@ -161,7 +174,7 @@ parents  register. A single set of registers always exists which is the global
 registers  \fC#g0\fR  through  to  \fC#g9\fR,  for a first  level  macro  then
 this forms its parent register variable.
 .SS "Macro variables"
-.Hl "Macro variables" "MacroGlossary" - 
+.Hl "Macro variables" "MacroGlossary" -
 commence  with a at-sign  \fC@\fR and are only  available  in the context of a
 macro and are used to  retrieve  the  numeric  argument,  parameters  etc. The
 variables include:-
@@ -180,7 +193,7 @@ variables include:-
 .sp
 \fB@p\fR \- The name of the calling (or parent) macro.
 .SS "Directives"
-The  
+The
 .Hl "Macro Directives" MacroGlossary -
 are denoted by a \fB!\fR prefix and provide control over the command sequence.
 Directives are used to define macros and affect the macro execution  sequence.
@@ -197,55 +210,55 @@ define-macro if-test
         !abort
     !else
         ml-write "you will not see this"
-        !abort 
+        !abort
     !endif
 !emacro
 .CE
 .Me $ehf-scheme
 The common directives are:-
 .IP \fB!abort\fR
-.Hl !abort !abort 4 
+.Hl !abort !abort 4
 terminates a macro and exits with a \fIfalse\fR status.
 .IP \fB!return\fR
-.Hl !return !return 4 
+.Hl !return !return 4
 terminates a macro and exits with a \fItrue\fR status.
 .IP "\fB!while\fR/\fB!continue\fR/\fB!done\fR"
 .Hl !while !while 4
-defines a conditional loop that is tested before entry to the loop, the 
+defines a conditional loop that is tested before entry to the loop, the
 .Hl !continue !continue 4
 statement within the loop allows the loop to be broken. \fB!while\fR loops may
-not be nested, but may be contained within a 
-.Hl "!repeat/!until" !repeat 4 
+not be nested, but may be contained within a
+.Hl "!repeat/!until" !repeat 4
 construct.
 .IP "\fB!repeat/!until\fR"
 .Hl !repeat !repeat 4
 defines a conditional loop that is tested on exit from the loop. \fB!repeat\fR
-loops may not be nested, but may be contained within a 
+loops may not be nested, but may be contained within a
 .Hl "!while/!done" !while 4
 construct.
 .IP "\fBdefine-macro/!emacro\fR"
 .Hl define-macro define-macro 2
-defines a new macro which is terminated with a 
+defines a new macro which is terminated with a
 .Hl !emacro !emacro 4 .
 .IP "!if/!elif/!else/!endif"
-.Hl !if !if 4 
+.Hl !if !if 4
 defines a conditional  statement,  where there is more than one condition then
 the
 .Hl !elif !elif 4
 directive may continue the conditional test.
 .IP "\fB!goto/!tgoto\fR"
-.Hl !goto !goto 4 
-and 
-.Hl !tgoto !tgoto 4 
+.Hl !goto !goto 4
+and
+.Hl !tgoto !tgoto 4
 provide an absolute  unconditional and conditional jump to a \fB*label\fR in a
 file,  respectively. A \fB!goto\fR  label is defined as line commencing with a
 \fC*\fR followed by a name i.e. \fB*label\fR.
 .IP "\fB!force\fR \fIcommand\fR"
-.Hl !force !force 4 
+.Hl !force !force 4
 ignores the return status of a \fIcommand\fR  while executing a macro, thereby
 ignoring any exceptions which would otherwise halt macro execution.
 .SS "Functions"
-All 
+All
 .Hl functions Functions -
 are  denoted by a \fB&\fR  prefix,  they are perhaps  miss named and should be
 called operators as they operate on variables and literal strings to produce a
@@ -259,23 +272,23 @@ Numeric - interprets arguments as numbers i.e. add two numbers
 String - interprets arguments as strings i.e. to concatenate two strings together
 .Ht &cat 4 .
 .BU
-Logical - boolean operators i.e. greater than 
+Logical - boolean operators i.e. greater than
 .Ht &great 4 .
-.BU 
-Key - key bindings i.e. key binding of command 
+.BU
+Key - key bindings i.e. key binding of command
 .Ht kbind 4 .
 .BU
-Bitwise - bit-wise numerical operators i.e. bitwise AND 
+Bitwise - bit-wise numerical operators i.e. bitwise AND
 .Ht &band 4 .
-.BU 
-File - file interaction i.e. find a file 
+.BU
+File - file interaction i.e. find a file
 .Ht &find 4 .
-.BU 
-Lists - string item lists i.e. find item in list 
+.BU
+Lists - string item lists i.e. find item in list
 .Ht &lfind 4 .
 .BU
 Miscellaneous - miscellaneous  functions to which query and return information
-to the caller i.e. registry query 
+to the caller i.e. registry query
 .Ht &reg 4 .
 .BE
 The functions use a postfix notation as the \fIfunction\fR  appears before the
@@ -289,12 +302,12 @@ set-variable #l1 1
 !endif
 
 ml-write &cat "#l0 + #l1 = " &add #l0 #l1
-.CE 
+.CE
 .Me $ehf-scheme
 The interpretation of strings and numbers is discussed in the next section.
 .SS "Strings and Numbers"
 All variables are treated as strings  within \*(mS so the integer value of 102
-is the string \fC"102"\fR. Where functions require an integer argument (i.e. 
+is the string \fC"102"\fR. Where functions require an integer argument (i.e.
 .Hl &add &add 4 )
 the strings are  converted to integers,  operated on and  converted  back to a
 string result. Floating point notation is not understood.

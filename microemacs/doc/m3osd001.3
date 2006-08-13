@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Feb 1 20:28:17 1999
 .\"
-.Id $Id: m3osd001.3,v 2.6 2005-02-19 13:44:03 jon Exp $
+.Id $Id: m3osd001.3,v 2.7 2006-08-13 14:18:03 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH organizer 3
@@ -60,7 +60,7 @@ Saves the entry back to file.
 .IP "\fBMonth To Buffer\fR"
 Dumps a view of the  month to the  currently  active  buffer,  any  notes  are
 also dumped to the buffer.
-.IP \fBExit\fR
+.IP \fBClose\fR
 Exits the \fBorganizer\fR.
 .SS "Week"
 Shows the calendar week in the current  buffer, the days of the week are shown
@@ -87,7 +87,7 @@ Saves the entry back to file.
 .IP "\fBWeek To Buffer\fR"
 Dumps a view of the week to the  currently  active  buffer, any notes are also
 dumped to the buffer.
-.IP \fBExit\fR
+.IP \fBClose\fR
 Exits the \fBorganizer\fR.
 .LP
 \fBNote:\fR  The start day in the week view may be configured to commence on a
@@ -115,7 +115,7 @@ Saves the entry back to file.
 .IP "\fBDay To Buffer\fR"
 Dumps a view of the day to the currently  active buffer, any notes are printed
 in the buffer.
-.IP \fBExit\fR
+.IP \fBClose\fR
 Exits the \fBorganizer\fR.
 .SS Lists
 The lists pane provides support for multiple list generation and manipulation.
@@ -143,7 +143,7 @@ Deletes the currently selected item.
 Saves the entry back to file.
 .IP "\fBList To Buffer\fR"
 Dumps a view of the list to the currently  active buffer.
-.IP \fBExit\fR
+.IP \fBClose\fR
 Exits the \fBorganizer\fR.
 .SS Address
 The address pane  provides  entry to the address book,  enabling  personal and
@@ -200,7 +200,7 @@ Typically used to construct a similar entry for a different individual.
 Deletes the currently selected entry.
 .IP "\fBAddr to Buffer\fR"
 Dumps the currently selected address to the current buffer.
-.IP \fBExit\fR
+.IP \fBClose\fR
 Exits the organizer.
 .IP \fBFind\fR
 \fBfind\fR  provides  access  to a search  engine,  enabling  addresses  to be
@@ -224,7 +224,7 @@ Finds the next record that  matches the search  criteria,  from the  currently
 displayed record.
 .IP \fBReverse\fR
 Searches in reverse order.
-.IP \fBExit\fR
+.IP \fBClose\fR
 Exits the search
 .RE
 .IP \fBSort\fR
@@ -239,7 +239,7 @@ by a pull down menu. The fields to be used for sorting are  selected  from the
 list.
 .IP "\fBSort\fR"
 Performs the sort, based on the settings of the \fISort Keys\fR.
-.IP "\fBExit\fR"
+.IP "\fBClose\fR"
 Exits the sort dialog.
 .RE
 .SS Setup

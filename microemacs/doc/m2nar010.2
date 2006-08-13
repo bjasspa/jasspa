@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Fri Jan 9 00:04:42 2004
 .\"
-.Id $Id: m2nar010.2,v 2.6 2005-02-19 10:54:42 jon Exp $
+.Id $Id: m2nar010.2,v 2.7 2006-08-13 14:18:05 jon Exp $
 .Im MicroEmacs 
 .so me.tni
 .TH macroWriting 4
@@ -38,7 +38,11 @@ checker are difficult to get working and requires a greater  understanding  of
 .PP
 A good starting point is to try to write a macro to do something that you find
 yourself doing all the time, for example reread-file, write-region etc. 
-.IP \fBTIP:\fR
+.IP "\fBEscape Sequences\fR"
+The backslash character '\fC\\\fR' is an escape sequence in \*(mS macro files,
+therefore any backslash character that appears in a macro command must be also
+escaped.  i.e. '\\' will  become  '\\\\'  when  placed in a macro  file.
+.IP "\fBEditor Control\fR"
 Remember  when you write a macro you are placing the editor in control of your
 macro,  when  testing a new macro then start a new \*(mS  session or make sure
 that if  things  go wrong  you will not  loose any work. If you loose  control
