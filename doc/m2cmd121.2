@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd121.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd121.2,v 2.6 2006-08-13 14:44:31 jon Exp $
 .Im MicroEmacs command|region
 .ds C0 "(\fB\*e\*(sP\fR)\ \&
 .so me.tni
@@ -37,6 +37,12 @@ cursor  position  in that it is just  behind  the  cursor.  The  point is also
 significant  in that it defines  one end of the region. The mark, on the other
 hand, is invisible,  and is used to demarcate  the other end of the region and
 is set through \fBset-mark\fR.
+.PP
+The current buffer mark line and column position may be obtained from within a
+macro using the variables
+.Ht $window-mark-line 5 
+and 
+.Ht $window-mark-col 5 . 
 .SH "SEE ALSO"
 .na
 .Ht copy-region 2 ,
@@ -44,6 +50,8 @@ is set through \fBset-mark\fR.
 .Ht kill-region 2 .
 .Ht reyank 2 ,
 .Ht yank 2 ,
+.Ht $window-mark-col 5 , 
+.Ht $window-mark-line 5 .
 .ad
 .rm C0
 .FH
