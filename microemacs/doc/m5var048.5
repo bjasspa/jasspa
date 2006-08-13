@@ -1,17 +1,19 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var048.5,v 2.7 2004-01-17 22:27:29 jon Exp $
+.Id $Id: m5var048.5,v 2.8 2006-08-13 14:44:31 jon Exp $
 .Im MicroEmacs variable|window
 .so me.tni
 .TH $window-col 5
 .XI $window-col - "Window cursor column (no expansion)"
 .XI $window-acol - "Window cursor actual column"
-.XI $window-line - "Window cursor line"
 .XI $window-aline - "Window cursor actual line"
 .XI $window-eline - "Window end line"
+.XI $window-line - "Window cursor line"
+.XI $window-mark-col - "Window mark column"
+.XI $window-mark-line - "Window mark line"
 .XI $window-wcol - "Window cursor column (historic)"
 .XI $window-wline - "Window cursor line (historic)"
 .SH NAME
@@ -29,32 +31,32 @@ $window-aline \- Window cursor actual line (ignore narrows)
 .br
 .Me "|$window-aline"
 $window-eline \- Window end line
+.br 
+.Me "|$window-mark-col"
+$window-mark-col \- Window mark column
+.br
+.Me "|$window-mark-line"
+$window-mark-line \- Window mark line
 .Me $a
 .SH SYNOPSIS
-\fB$window-col\fR \fIinteger\fR
+\fB$window-col\fR \fIinteger\fR [0 <= \fIinteger\fR <= 65535]
+.br 
+\fB$window-line\fR \fIinteger\fR [1 <= \fIinteger\fR <= n]
 .br
-0 <= \fIinteger\fR <= 65535
-.sp 
-\fB$window-line\fR \fIinteger\fR
+\fB$window-acol\fR \fIinteger\fR [0 <= \fIinteger\fR <= n]
 .br
-1 <= \fIinteger\fR <= n
-.sp 
-\fB$window-acol\fR \fIinteger\fR
+\fB$window-aline\fR \fIinteger\fR [1 <= \fIinteger\fR <= n]
+.br 
+\fB$window-eline\fR \fIinteger\fR [1 <= \fIinteger\fR <= n]
 .br
-0 <= \fIinteger\fR <= n
-.sp 
-\fB$window-aline\fR \fIinteger\fR
-.br
-1 <= \fIinteger\fR <= n
-.sp
-\fB$window-eline\fR \fIinteger\fR
-.br
-1 <= \fIinteger\fR <= n
+\fB$window-mark-col\fR \fIinteger\fR [0 <= \fIinteger\fR <= 65535]
+.br 
+\fB$window-mark-line\fR \fIinteger\fR [1 <= \fIinteger\fR <= n]
 .SH DESCRIPTION
 .B $window-col
 is defined as the  current  position of the cursor in the current  line in the
 current  window.  Column  zero  is the  left  hand  edge.  This  differs  from
-\fB$window-acol\fR  in that \s-1tab\s0 and special characters only count for 1
+\fB$window-acol\fR  in that \s-1TAB\s0 and special characters only count for 1
 character. \fB$window-col\fR is valid in the range 0 - \fIn\fR.
 .PP
 .B  $window-acol
@@ -81,11 +83,29 @@ for more information on narrowing.
 the last line of the buffer  showing in the window. This is a useful value for
 mouse  operations  when the position of the mouse may be tested to ensure that
 the mouse position is within the valid text region of the buffer.
+.PP
+.B $window-mark-line
+is the current buffer line number of the mark position of 
+.Ht set-mark 2 
+in the current window. Line numbering  starts from 1.  \fB$window-mark-line\fR
+is valid in the range 1 - \fIn\fR.
+.PP
+.B $window-mark-col
+is the current buffer column of the mark position of 
+.Ht set-mark 2 
+in the current  window.  Note that this is the actual  column  position in the
+line which may be different from the window column  position as \s-1TAB\s0 and
+special characters only count as a single character. 
 .SH NOTES
 Variable  \fB$window-wcol\fR  was renamed to  \fB$window-acol\fR in June 2000.
 Variable   \fB$window-wline\fR   was   also   removed   and  a  new   variable
 \fB$window-y-scroll\fR  introduced at this time. The following  macro code can
 be used to calculate the value of the original \fB$window-wline\fR variable:
+.PP
+.B $window-mark-line
+and 
+.B $window-mark-col
+first appeared in the 2006 release of \*(mS.
 .Me $emf-scheme
 .CS
 &sub &sub $window-line $window-y-scroll 1
