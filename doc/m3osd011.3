@@ -1,29 +1,32 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Steven Phillips
 .\"  Created       : Sat Aug 22 09:00:06 1998
 .\"
-.Id $Id: m3osd011.3,v 2.4 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m3osd011.3,v 2.5 2006-08-13 12:53:07 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
-.TH buffer-help 3
-.XI buffer-help - "Displays help page for current buffer"
+.TH major-mode-help 3
+.XI major-mode-help - "Displays help page for current buffer"
 .SH NAME
-buffer-help \- Displays help page for current buffer
+major-mode-help \- Displays help page for current buffer
 .Me $a
 .SH SYNOPSIS
 .na
-.B buffer-help
+.B major-mode-help
 .ad
 .SH DESCRIPTION
-\fBbuffer-help\fR  opens a dialog  giving  the user a brief help page on tools
-available for the current buffer. The help page changes  depending on the type
-of the current buffer.
+\fBmajor-mode-help\fR  opens a dialog  giving  the user a brief  help  page on
+tools available for the current buffer. The help page changes depending on the
+type of the current buffer.
+.SH HISTORY
+\fBmajor-mode-help\fR  was  introduced in the 2006 release,  prior to this the
+command was known as \fBbuffer-help\fR.
 .SH "SEE ALSO"
 .na
-.Ht buffer-setup 3 .
+.Ht major-mode-setup 3 .
 .ad
 .FH

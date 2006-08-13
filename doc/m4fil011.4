@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil011.4,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m4fil011.4,v 2.6 2006-08-13 12:53:06 jon Exp $
 .Im MicroEmacs macro;directive|miscellaneousOperators
 .so me.tni
 .TH !while 4
@@ -46,7 +46,7 @@ statement may be used to construct loops.
 For example, the following macro segment fills to the fill column with spaces.
 .Me $emf-scheme
 .CS
-!while &less $curcol $fill-col
+!while &less $curcol $buffer-fill-col
     insert-string " "
     !if &equal %example "1"     ; Silly to show continue
         !continue               ; Goto !while

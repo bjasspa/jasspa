@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1999-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1999-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ003.9,v 2.5 2002-01-11 21:58:43 jon Exp $
+.Id $Id: m9typ003.9,v 2.6 2006-08-13 12:53:04 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH txt 9
@@ -49,11 +49,11 @@ in an automatic text mode are defined as follows:-
 .IP "Text on column 0"
 Text appearing in the first column is always assumed to be left  justified, and
 non-wrapping, provided that the text does not extend to the
-.Hl "fill column" fill-col 5 .
+.Hl "buffer fill column" $buffer-fill-col 5 .
 This is typically used for headers and addresses.
 .IP "Text on right edge"
 Text ending at the right edge (the
-.Ht fill-col 5 ),
+.Ht $buffer-fill-col 5 ),
 which  commences  from more that 50% of the page  width is assumed to be right
 justified, non-wrapping. Typically used for addresses.
 .IP "Text centered"
@@ -62,7 +62,10 @@ non-wrapping.
 .IP "Indented"
 All other text, not covered by the cases above is assumed to be available  for
 filling.  In this  case the text is  filled by the  paragraph  and  left/right
-justification is applied.
+justification is applied, the fill default may be changed with 
+.Ht $buffer-fill-mode 5 
+and changed with 
+.Ht buffer-setup 3 .
 .RE
 .IP "\fBShort Cuts\fR"
 The short cut keys used within the buffer are:-
@@ -193,7 +196,11 @@ Unfortunately  there is nothing that can be done to alleviate this problem, but
 it occurs infrequently.
 .SH "SEE ALSO"
 .na
-.Ht fill-col 5 ,
+.Ht $buffer-fill-col 5 ,
+.Ht $buffer-fill-mode 5 ,
+.Ht $fill-col 5 ,
+.Ht $fill-mode 5 ,
+.Ht buffer-setup 3 ,
 .Ht fill-paragraph 2 ,
 .Ht spell-buffer 3 .
 .sp 1

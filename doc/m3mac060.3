@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac060.3,v 1.5 2004-03-11 00:04:56 jon Exp $
+.Id $Id: m3mac060.3,v 1.6 2006-08-13 12:53:07 jon Exp $
 .Im MicroEmacs scuts
 .so me.tni
 .TH comment-line 3
@@ -66,10 +66,11 @@ of line is used \fBuncomment-line\fR  removes the first comment on the current
 and next \fIn-1\fR lines.
 .PP
 \fBcomment-to-end-of-line\fR inserts \fIcomment-pad\fRs (see NOTES) up-to the
-.Ht $fill-col 5
+.Ht $buffer-fill-col 5
 and  then   terminates   the  comment  with  the   \fIcomment-end\fR   string.
 \fBcomment-restyle\fR  reformats  the text within the  comment,  filling  text
-lines to the \fB$fill-col\fR and regenerating any boxing and divide lines.
+lines to the  \fB$buffer-fill-col\fR  and  regenerating  any boxing and divide
+lines.
 .PP
 \fBcomment-start\fR  opens a new "\fB*comment*\fR"  buffer which is configured
 for writing a text comment, the user can then type in the comment with all the
@@ -84,7 +85,7 @@ Consider the structure of a box comment to be as follows:
 <comment-box-left> COMMENT TEXT ... COMMENT TEXT      <comment-box-right>
 <comment-box-left> COMMENT TEXT ... COMMENT TEXT      <comment-box-right>
 <comment-box-left><comment-pad><comment-pad><comment-pad><comment-end>
-.CE    
+.CE
 The comment  commands are configured by the single file hook command  variable
 \fB.fhook-\fR\fI<type>\fR\fB.comment\fR  where  \fI<type>\fR  is the file type
 label. The structure of the variable is a
@@ -110,8 +111,8 @@ Fill header line with \fI<comment-pad>\fR strings.
 Enable Justify mode in *comment* buffer.
 .IP \fCr\fR
 A restyle  key binding is added to the buffer  "\fC\*eo\fR"  and  "\fC\*eq\fR"
-buffer key bindings are added and bound to 
-.Ht comment-restyle 3 . 
+buffer key bindings are added and bound to
+.Ht comment-restyle 3 .
 .SH EXAMPLE
 The following \fBcomment\fR is the standard \fBC\fR setting:
 .Me $emf-scheme
@@ -124,7 +125,7 @@ This can be used to create comments of the form:
 /* comment-line comments out the current and next n-1 lines (default
  * when n is omitted is to comment out just the current line). The
  * cursor is then moved to the start of the next line.
- * 
+ *
  * uncomment-line behaves differently depending on whether the file
  * type terminates a comment with an end token or simply by the end
  * of the line.

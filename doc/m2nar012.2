@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Fri Jan 9 00:04:42 2004
 .\"
-.Id $Id: m2nar012.2,v 2.1 2005-02-13 00:50:40 jon Exp $
+.Id $Id: m2nar012.2,v 2.2 2006-08-13 12:53:07 jon Exp $
 .Im MicroEmacs 
 .so me.tni
 .TH macroOverview 4
@@ -107,14 +107,15 @@ command variable \fC.grep.com\fR, see below.
 .SS "Buffer Variables"
 Buffer  variables  are set in the context of a buffer, each buffer has its
 own independent  list of buffer variables so this type of variable is used
-by macros which need to store buffer context  information. As an example, the
-text file hook  allows  each buffer to have its own  
-.Ht $fill-col 5 ,
-it stores each buffer's own fill column in the variable  \fC:fill-col\fR. This
-is  private to the  buffer.  Referencing  the  variable  \fC:fill-col\fR  will
-retrieve  the current  buffer's  \fC:fill-col\fR  variable,  if it not set its
-value is  returned  as  "\fCERROR\fR".  Referencing  \fC:*scratch*:fill-col\fR
-retrieves the "\fC*scratch*\fR" buffer's \fC:fill-col\fR value.
+by macros which need to store buffer context  information. As an example, a
+file hook may allow each buffer to have its own private
+.Ht $fill-ignore 5 
+value (the variable is global). It may stores each buffer's own fill ignore in
+the variable  \fC:fill-ignore\fR.  This is private to the buffer.  Referencing
+the   variable    \fC:fill-ignore\fR    retrieves    the   current    buffer's
+\fC:fill-ignore\fR   variable,  if  it  not  set  its  value  is  returned  as
+"\fCERROR\fR".   Referencing    \fC:*scratch*:fill-ignore\fR   retrieves   the
+"\fC*scratch*\fR" buffer's \fC:fill-ignore\fR value.
 .PP
 The operator 
 .Ht &exist 4

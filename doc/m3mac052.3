@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 2000-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 2000-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Tue Jan 25 23:22:52 2000
 .\"
-.Id $Id: m3mac052.3,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m3mac052.3,v 2.6 2006-08-13 12:53:07 jon Exp $
 .Im MicroEmacs command
 .so me.tni
 .TH check-line-length 3
@@ -21,7 +21,7 @@ check-line-length \- Check the length of text lines are valid
 .SH DESCRIPTION
 \fBcheck-line-length\fR  checks  that the  length of each line of the  current
 buffer, starting with the current line, is less than or equal to
-.Ht fill-col 5 .
+.Ht $buffer-fill-col 5 .
 The  command  aborts if a line too long is found,  leaving  the  cursor on the
 offending line. If no invalid lines are found the command succeeds leaving the
 cursor at the end of the buffer.
@@ -29,6 +29,6 @@ cursor at the end of the buffer.
 \fBcheck-line-length\fR is a macro implemented in \fCmisc.emf\fR.
 .SH "SEE ALSO"
 .na
-.Ht $fill-col 5 .
+.Ht $buffer-fill-col 5 .
 .ad
 .FH
