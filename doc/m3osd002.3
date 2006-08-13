@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Tue Feb 2 21:10:34 1999
 .\"
-.Id $Id: m3osd002.3,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m3osd002.3,v 2.6 2006-08-13 14:18:03 jon Exp $
 .Im MicroEmacs command|spell|osd
 .ds C0 "(\fB\*e$\fR)\ \&
 .so me.tni
@@ -131,7 +131,7 @@ search  criteria, see full description below.
 The \fBundo Last\fR button restores the user to the previous  spelling so that
 it may be re-entered, any  replacement  text that was made is restored to it's
 original spelling.
-.IP \fBExit\fR
+.IP \fBClose\fR
 Exits the speller and returns the user to the buffer.
 .PP
 .B spell-word
@@ -190,7 +190,7 @@ intervention.
 .IP
 Entering  an  exiting  \fIauto-correct\fR  word into the dialog and  selecting
 \fBDelete\fR removes an existing auto-correct entry.
-.IP \fBExit\fR
+.IP \fBClose\fR
 Exits the \fBEdit\fR dialog.
 .PP
 \fBfind-word\fR  opens the word finder  dialog. This allows the user to search
@@ -210,8 +210,8 @@ The words that match are returned in the scrolling dialog, and may be selected
 with the mouse (or cursor keys). The \fBInsert\fR  button inserts the selected
 word into the current buffer or into the \fBWord\fR entry if executed from the
 \fBspell-buffer\fR  dialog.  Note that the list  presented  is  limited to 200
-words, selecting \fBnext\fR gets the next 200 words, and so on. The \fBExit\fR
-button exits the dialog.
+words,  selecting  \fBnext\fR  gets  the  next  200  words,  and  so  on.  The
+\fBClose\fR button exits the dialog.
 .SH NOTES
 The words added to the speller during a MicroEmacs  session are saved when the
 editor  is  closed.  The  user is  prompted  to save  the  dictionary,  if the
