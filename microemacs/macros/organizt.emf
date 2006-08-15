@@ -216,11 +216,11 @@ osd .osd.orgt 400 "Cfxpth" &cat .osd.checkbox-chars "\} S\Htart" 2 org-setup-afl
 osd .osd.orgt 410 "hf" "  "
 osd .osd.orgt 420 "Cfxpt"  &cat .osd.checkbox-chars "\} \HAny Part" 4 org-setup-aflag-check
 osd .osd.orgt 430 "hf" "              "
-osd .osd.orgt 440 "Cfxpt"  &cat .osd.checkbox-chars "\} \HCase insensitive" 0x10 org-setup-aflag-check
+osd .osd.orgt 440 "Cfxpt"  &cat .osd.checkbox-chars "\} Matc\Hh Case" 0x10 org-setup-aflag-check
 osd .osd.orgt 450 "hf" "              "
 osd .osd.orgt 460 "Cfxpt"  &cat .osd.checkbox-chars "\} \HMagic mode" 0x20 org-setup-aflag-check
 osd .osd.orgt 600 "" 
 osd .osd.orgt 605 "" 
 osd .osd.orgt 610 "BtxhcfH" .scheme.osd-ebtt " \HSave " f organizer-save
-osd .osd.orgt 620 "BtcfH"   .scheme.osd-ebtt " E\Hxit " 1 void
+osd .osd.orgt 620 "BtcfH"   .scheme.osd-ebtt " \HCancel " 1 void
 

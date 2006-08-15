@@ -178,5 +178,5 @@ osd .osd.orgm 600 ""
 osd .osd.orgm 605 "" 
 osd .osd.orgm 610 "BtxhcfH" .scheme.osd-ebtt " \HSave "    f organizer-save
 osd .osd.orgm 620 "BtxhcfH" .scheme.osd-ebtt " Month to \HBuffer "  f org-month-buffer
-osd .osd.orgm 630 "BtcfH"   .scheme.osd-ebtt " E\Hxit "    1 void
+osd .osd.orgm 630 "BtcfH"   .scheme.osd-ebtt " \HClose "   1 void
 
