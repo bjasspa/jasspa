@@ -138,9 +138,9 @@ set-variable .buffer-setup-fmode.name "|Unknown|Auto/Both|Auto/Center|Auto/Left|
 0 define-macro buffer-setup-exec
     !if &gre &abs @# 128
         !if &gre @# 0
-            !return &bmod &trb $result
+            !return &bmod &slo &trb $result
         !endif
-        0 buffer-mode &trb $result
+        0 buffer-mode &slo &trb $result
     !elif &equ @# 5
         !return $buffer-hilight
     !elif &equ @# 4
@@ -199,7 +199,7 @@ osd .osd.buffstp 290 ""
 osd .osd.buffstp 300 "f"  "  Buffer Modes:"
 osd .osd.buffstp 301 "fh"  "  "
 set-variable #l0 0
-!while &not &seq "" &set #l1 &lget "\bautosv\bbackup\bcrlf\bcrypt\bctrlz\bedit\bexact\bindent\bjustify\bmagic\bover\btab\btime\bundo\bview\bwrap\b" &inc #l0 1
+!while &not &seq "" &set #l1 &lget "\bAutoSv\bBackup\bCrLf\bCrypt\bCtrlZ\bEdit\bExact\bIndent\bJustify\bMagic\bOver\bTab\bTime\bUndo\bView\bWrap\b" &inc #l0 1
     osd .osd.buffstp &add 300 &mul #l0 3 "Cptfhx" &spr "%s\} %s%n" .osd.checkbox-chars #l1 &sub 9 &len #l1 " " &add 128 #l0 buffer-setup-exec
     !if &not &mod #l0 4
         osd .osd.buffstp &add 301 &mul #l0 3 "f"  "  "

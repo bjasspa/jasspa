@@ -117,7 +117,12 @@
     !endif
 !emacro
 0 define-macro major-mode-setup-fmark
-    set-variable #l1 &lget .major-mode-setup.nedit &abs @#
+    !if &len &set #l1 &lget .major-mode-setup.nedit &abs @#
+    !elif &exi &set #l1 &spr ".%s.%s" $buffer-fhook &lget .major-mode-setup.ledit &abs @#
+        set-variable #l1 &ind #l1
+    !else
+        set-variable #l1 ""
+    !endif
     !if &les @# 0
         set-variable #l2 @ml2 "" #l1
         set-variable .major-mode-setup.nedit &lset .major-mode-setup.nedit &abs @# #l2
@@ -125,6 +130,26 @@
         set-variable $result #l1
     !endif
 !emacro
+0 define-macro major-mode-setup-fmode
+    !if &les @# 0
+        -1 osd .osd.tmp
+        osd .osd.tmp 0 "bs" 16 0 0 0
+        set-variable #l0 1
+        !while &not &seq "" &set #l1 &lget .mode &pinc #l0 1
+            osd .osd.tmp #l0 "i" &spr "\H%s %s" #l1 &lget .name #l0 f &spr "set-variable .major-mode-setup.nedit &lset .major-mode-setup.nedit 6 \"%s\"" #l1
+        !done
+    !else
+        !if &len &set #l1 &lget .major-mode-setup.nedit 6
+        !elif &exi &set #l1 &spr ".%s.%s" $buffer-fhook &lget .major-mode-setup.ledit 6
+            set-variable #l1 &ind #l1
+        !else
+            set-variable #l1 " "
+        !endif
+        set-variable $result &spr "%s %s" #l1 &lget .name &add 1 &lfind .mode #l1
+    !endif
+!emacro
+set-variable .major-mode-setup-fmode.mode "| |B|C|L|N|O|R|b|c|l|n|o|r|"
+set-variable .major-mode-setup-fmode.name "|Unknown|Default|Auto/Both|Auto/Center|Auto/Left|Auto/None|Auto/One|Auto/Right|Both (L/R)|Center|Left|None|One for WP|Right|"
 0 define-macro major-mode-setup-save
     !if &set #l0 &not &seq .major-mode-setup.nsetup .major-mode-setup.osetup
         set-registry &cat "/history/fhook/" &rig $buffer-fhook 6 .major-mode-setup.nsetup
@@ -149,11 +174,10 @@
         save-registry "/history" ""
     !endif
     !if &band @# 4
-        !force execute-file &cat "hk" &rig $buffer-fhook 6
+        set-variable #l1 &rig $buffer-fhook 6
+        !force execute-file &cat "hk" #l1
         !if $status
-            set-variable $buffer-hilight 0
-            set-variable $buffer-indent 0
-            execute-named-command $buffer-fhook
+            buffer-major-mode #l1
         !else
             osd-dialog "Major Mode Setup" "Failed to re-initialize buffer hook!" "  \HOK  "
         !endif
@@ -182,7 +206,7 @@ define-macro major-mode-setup
         set-variable #l9 &cat &sup &mid $buffer-fhook 6 1 &rig $buffer-fhook 7
     !endif
     -1 osd .osd.mjrmdstp
-    osd .osd.mjrmdstp 0 "batcDIHs" 9 3 48 10 -1 -1 960 970 .scheme.osd-title &cat #l9 " Major Mode Setup"
+    osd .osd.mjrmdstp 0 "batcDIHs" 9 3 58 10 -1 -1 960 970 .scheme.osd-title &cat #l9 " Major Mode Setup"
     osd .osd.mjrmdstp 5 ""
     !if &not &seq &set #l1 &ind &spr ".%s.setup-flags" $buffer-fhook "ERROR"
         set-variable #l2 &ind &spr ".%s.setup-labels" $buffer-fhook
@@ -199,7 +223,7 @@ define-macro major-mode-setup
     !repeat
         set-variable #l4 &lget .blank #l0
         !if &not &seq "" &set #l5 &lget .prefix #l0
-            set-variable #l2 &cat "      " #l5
+            set-variable #l2 &cat "  " #l5
             osd .osd.mjrmdstp &add 200 &mul #l0 10 "fh" #l2
         !endif
         !if &sin &lget .flags #l0 .mask
@@ -208,8 +232,13 @@ define-macro major-mode-setup
             !if &not &band #l4 6
                 osd .osd.mjrmdstp &add 202 &mul #l0 10 "fh" "  "
             !elif #l3
-                osd .osd.mjrmdstp &add 202 &mul #l0 10 "fh" &spr "%n" &sub 8 #l3 " "
-                set-variable #l3 0
+                osd .osd.mjrmdstp &add 202 &mul #l0 10 "fh" &spr "%n" &sub 8 &abs #l3 " "
+                !if &les #l3 0
+                    set-variable #l3 0
+                !else
+                    set-variable #l3 &neg &sub &len #l7 &cond &sin "\H" #l7 1 0
+                    set-variable #l6 &cat #l6 "h"
+                !endif
             !else
                 !if &seq "" #l5
                     osd .osd.mjrmdstp &add 200 &mul #l0 10 "fh" &spr "%n" &len #l2 " "
@@ -233,17 +262,23 @@ define-macro major-mode-setup
             !endif
         !endif
     !until &seq &lget .flags &inc #l0 1 ""
-    osd .osd.mjrmdstp 900 "Sfh" "   Tab Width:       " 901
-    osd .osd.mjrmdstp 901 "EtRxHf" .scheme.osd-entry "##########" 3 major-mode-setup-fmark
-    osd .osd.mjrmdstp 902 "Sfh" "   Indent Width:    " 903
-    osd .osd.mjrmdstp 903 "EtRxHf" .scheme.osd-entry "##########" 4 major-mode-setup-fmark
-    osd .osd.mjrmdstp 904 ""
+    osd .osd.mjrmdstp 900 "Sfh" "  Indent Width: " 905
+    osd .osd.mjrmdstp 905 "EtRxHfh" .scheme.osd-entry "########" 4 major-mode-setup-fmark
+    osd .osd.mjrmdstp 907 "Sfh" "    Tab Width: " 910
+    osd .osd.mjrmdstp 910 "EtRxHf" .scheme.osd-entry "########" 3 major-mode-setup-fmark
+    osd .osd.mjrmdstp 912 ""
+    osd .osd.mjrmdstp 913 "Sfh" "  \HFill Column:  " 915
+    osd .osd.mjrmdstp 915 "EtRxHfh" .scheme.osd-entry "########" 5 major-mode-setup-fmark
+    osd .osd.mjrmdstp 917 "Sfh" "    Fi\Hll Mode: " 920
+    osd .osd.mjrmdstp 920 "OtxmsfhHR" .scheme.osd-entry "##############" .osd.tmp major-mode-setup-fmode
+    osd .osd.mjrmdstp 921 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 920
+    osd .osd.mjrmdstp 922 ""
     !if &not &seq &lget &ind &spr ".%s.comment" $buffer-fhook 1 ""
-        osd .osd.mjrmdstp 909 "Sfh" "   Fold Open\H/Close: " 910
-        osd .osd.mjrmdstp 910 "EtRxHfh" .scheme.osd-entry "##########" 1 major-mode-setup-fmark
-        osd .osd.mjrmdstp 915 "hf" "   "
-        osd .osd.mjrmdstp 920 "EtRxHf"  .scheme.osd-entry "##########" 2 major-mode-setup-fmark
-        osd .osd.mjrmdstp 930 ""
+        osd .osd.mjrmdstp 923 "Sfh" "  Fold Open:    " 910
+        osd .osd.mjrmdstp 925 "EtRxHfh" .scheme.osd-entry "##########" 1 major-mode-setup-fmark
+        osd .osd.mjrmdstp 927 "Shf" "  Close:     " 920
+        osd .osd.mjrmdstp 930 "EtRxHf"  .scheme.osd-entry "##########" 2 major-mode-setup-fmark
+        osd .osd.mjrmdstp 935 ""
     !endif        
     osd .osd.mjrmdstp 940 ""
     osd .osd.mjrmdstp 950 "BtrfHhx" .scheme.osd-ebtt " \HSave " &bor 2 &band @# 1 major-mode-setup-save
@@ -256,7 +291,7 @@ define-macro major-mode-setup
     set-variable .nedit .oedit
     .osd.mjrmdstp osd
 !emacro
-set-variable .major-mode-setup.ledit  "|fomark|fcmark|tab-width|indent-width|"
+set-variable .major-mode-setup.ledit  "|fomark|fcmark|tab-width|indent-width|fill-col|fill-mode|"
 set-variable .major-mode-setup.flags  "|p|o|n|g|h|d|s|f|b|e|m|a|k|i|j|t|x|u|w|"
 set-variable .major-mode-setup.blank  "|0|0|9|0|0|0|0|9|9|2|5|2|4|4|4|4|4|4|13|"
 set-variable .major-mode-setup.labels "|Create Help \HPage|C\Hreate Tools Menu|Insert \HNew Template|Fence Display|Setup \HHilighting|Setup Auto In\Hdent|Setup Auto Spe\Hll|Setup \HFolding|Add A\Hbbreviations|\HExact|\HMagic|Aut\Ho|Bac\Hkup|\HIndent|\HJustify|\HTab|Time|\HUndo|\HWrap|"
@@ -550,6 +585,8 @@ define-macro major-mode-help
     set-variable $buffer-dhook ""
     set-variable $buffer-ehook ""
     set-variable $buffer-fhook ""
+    set-variable $buffer-fill-col $fill-col
+    set-variable $buffer-fill-mode $fill-mode
     set-variable $buffer-tab-width $tab-width
     set-variable $buffer-indent-width $indent-width
     set-variable $buffer-hilight 0
