@@ -146,25 +146,39 @@ define-macro-file collapse collapse-current collapse-all beginning-of-function e
 
 0 define-macro buffer-init
     set-variable #l9 $result
-    set-variable $buffer-fhook &cat "fhook-" @1
+    set-variable $buffer-fhook &cat "fhook-" &set #l8 @1
     buffer-command-setup
     set-variable #l0 &ind &spr ".%s.setup" $buffer-fhook
     !if &not @#
         !if &sin "n" #l0
             !force set-variable #l1 @2
-            set-variable #l1 &cond $status #l1 @1
+            set-variable #l1 &cond $status #l1 #l8
             etfinsrt #l1
         !endif
     !endif
-    !if &set #l1 &reg &spr "/history/fhook/%s-tab-width" @1 "0"
+    !if &set #l1 &reg &spr "/history/fhook/%s-tab-width" #l8 "0"
         set-variable $buffer-tab-width #l1
     !elif &set #l1 &ind &spr ".%s.tab-width" $buffer-fhook
         set-variable $buffer-tab-width #l1
     !endif
-    !if &set #l1 &reg &spr "/history/fhook/%s-indent-width" @1 "0"
+    !if &set #l1 &reg &spr "/history/fhook/%s-indent-width" #l8 "0"
         set-variable $buffer-indent-width #l1
     !elif &set #l1 &ind &spr ".%s.indent-width" $buffer-fhook
         set-variable $buffer-indent-width #l1
+    !endif
+    !if &set #l1 &reg &spr "/history/fhook/%s-fill-col" #l8 "0"
+        set-variable $buffer-fill-col #l1
+    !elif &set #l1 &ind &spr ".%s.fill-col" $buffer-fhook
+        set-variable $buffer-fill-col #l1
+    !endif
+    !if &len &set #l1 &reg &spr "/history/fhook/%s-fill-mode" #l8 ""
+        !if &len &trr #l1
+            set-variable $buffer-fill-mode &trr #l1
+        !endif
+    !elif &exi &set #l1 &spr ".%s.fill-mode" $buffer-fhook
+        !if &len &set #l1 &trr &ind #l1
+            set-variable $buffer-fill-mode &trr #l1
+        !endif
     !endif
     buffer-init-modes
     set-variable #l7 0

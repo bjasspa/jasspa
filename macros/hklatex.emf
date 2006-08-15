@@ -9,8 +9,6 @@
 ;
 define-macro fhook-latex
     @# buffer-init "latex"
-    ; Set up the default constants
-    set-variable $buffer-fill-mode "l"
     buffer-init-hooks
 !emacro
 
@@ -20,6 +18,7 @@ set-variable .fhook-latex.setup &reg "/history/fhook/latex" "bfghinopsx"
 set-variable .fhook-latex.setup-mask "abefghijkmnopstuwx"
 set-variable .fhook-latex.tags "textags"
 set-variable .fhook-latex.comment "|%||%|% | %||"
+set-variable .fhook-latex.fill-mode "l"
 
 ; Define the buffer command extensions.
 set-variable .fhook-latex.command-0  "|bo||latex-para|esc o||"
