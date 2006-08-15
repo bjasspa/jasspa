@@ -432,9 +432,9 @@ osd .osd.crosswd 0  "batcDIH" 3 6 36 36 .scheme.osd-title "Cross-Word Cracker"
 osd .osd.crosswd 10  ""
 osd .osd.crosswd 20  "Shf" " \HNumber of words " 30
 osd .osd.crosswd 30  "EtxfHh" .scheme.osd-entry "     " 1 crosswd-set-noword
-osd .osd.crosswd 34  "BtrfHh" .scheme.osd-ebtt " \HCompute " f crosswd-compute
+osd .osd.crosswd 34  "BtrfHh" .scheme.osd-ebtt " C\Hompute " f crosswd-compute
 osd .osd.crosswd 35  "hf" "  "
-osd .osd.crosswd 36  "BtrfHh" .scheme.osd-ebtt " E\Hxit " f void
+osd .osd.crosswd 36  "BtrfHh" .scheme.osd-ebtt " \HClose " f void
 osd .osd.crosswd 37  "f" " "
 osd .osd.crosswd 40  ""
 osd .osd.crosswd 50  "IbHt" .scheme.osd-sbar 50 30 .osd.crosswdc
