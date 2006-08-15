@@ -297,7 +297,7 @@ osd .osd.orga-o 600 ""
 osd .osd.orga-o 610 "hf" "  "
 ;osd .osd.orga-o 620 "BhcfH" .scheme.osd-ebtt " &Delete "  0 org-addr-crt-index
 osd .osd.orga-o 630 "BhcfHt" .scheme.osd-ebtt " S\Hort  "   1 org-addr-crt-index
-osd .osd.orga-o 650 "BhcfHt" .scheme.osd-ebtt " E\Hxit  "   1 void
+osd .osd.orga-o 650 "BhcfHt" .scheme.osd-ebtt " \HCancel "   1 void
 osd .osd.orga-o 660 "f" " "
 
 0 define-macro org-addr-sort
@@ -371,9 +371,9 @@ osd .osd.orga-o 660 "f" " "
         !if .org.addr-ffld
             !if &not &seq &set #l4 &reg &spr "/org/addr/%d/%s" .org.addr #l2 "" ""
                 !if &band .org.aflag 0x10
-                    set-variable #l4 &xis #l4 #l0
-                !else
                     set-variable #l4 &xse #l4 #l0
+                !else
+                    set-variable #l4 &xis #l4 #l0
                 !endif
                 !if #l4
                     osd .osd.orga-f 70 "" &cat "    Found in Record " .org.addr
@@ -386,9 +386,9 @@ osd .osd.orga-o 660 "f" " "
             !while &not &seq &set #l4 &lget .org.addr-reg &inc #l2 1 ""
                 !if &not &seq &set #l4 &reg &spr "/org/addr/%d/%s" .org.addr #l4 "" ""
                     !if &band .org.aflag 0x10
-                        set-variable #l4 &xis #l4 #l0
-                    !else
                         set-variable #l4 &xse #l4 #l0
+                    !else
+                        set-variable #l4 &xis #l4 #l0
                     !endif
                     !if #l4
                         osd .osd.orga-f 70 "" &cat "    Found in Record " .org.addr
@@ -437,7 +437,7 @@ osd .osd.orga-f 120 "hf" "  "
 osd .osd.orga-f 130 "Cfxp"  &cat .osd.checkbox-chars "\} \HAny Part" 4 org-addr-find-check
 osd .osd.orga-f 140  ""
 osd .osd.orga-f 150  "hf" "    "
-osd .osd.orga-f 160  "Cftxp" &cat .osd.checkbox-chars "\} \HCase insensitive" 0x10 org-addr-find-check
+osd .osd.orga-f 160  "Cftxp" &cat .osd.checkbox-chars "\} Matc\Hh Case"   0x10 org-addr-find-check
 osd .osd.orga-f 170  "hf" "    "
 osd .osd.orga-f 180 "Cftxp"  &cat .osd.checkbox-chars "\} \HMagic mode" 0x20 org-addr-find-check
 osd .osd.orga-f 600 ""
@@ -445,7 +445,7 @@ osd .osd.orga-f 610 "hf" "  "
 osd .osd.orga-f 620 "BthcfxH" .scheme.osd-ebtt " \HFirst "          3 org-addr-find-exec
 osd .osd.orga-f 630 "BthcfxH" .scheme.osd-ebtt " \HNext  "          1 org-addr-find-exec
 osd .osd.orga-f 640 "BthcfxH" .scheme.osd-ebtt " \HReverse "       -1 org-addr-find-exec
-osd .osd.orga-f 650 "BthcfH"  .scheme.osd-ebtt " E\Hxit  "          1 void
+osd .osd.orga-f 650 "BthcfH"  .scheme.osd-ebtt " \HClose "          1 void
 osd .osd.orga-f 660 "f" " "
 
 0 define-macro org-addr-find
@@ -602,7 +602,7 @@ osd .osd.orga-h  90 "Shf" " \HTel      " 100
 !else
     osd .osd.orga-h 100 "EtxfH" .scheme.osd-entry "#########################" 10 org-addr-set-entry
 !endif
-osd .osd.orga-h 110 "Shf" " Fax      " 120
+osd .osd.orga-h 110 "Shf" " Fa\Hx      " 120
 !if &band .org.aflag 0x100
     osd .osd.orga-h 120 "EtxfHh" .scheme.osd-entry "#########################" 11 org-addr-set-entry
     osd .osd.orga-h 122 "hf" "  Chld "
@@ -633,7 +633,7 @@ osd .osd.orga-h 210 "EtxfH" .scheme.osd-entry "#################################
 -1 osd .osd.orga-w
 osd .osd.orga-w   0 "s" 62 15 -1 -1 
 ;osd .osd.orga-w  10 ""
-osd .osd.orga-w  20 "Shf" " \HCompany  " 30
+osd .osd.orga-w  20 "Shf" " Compan\Hy  " 30
 osd .osd.orga-w  30 "EtxfHz" .scheme.osd-entry 40 1 "" 16 org-addr-set-entry
 osd .osd.orga-w  59 "" 
 osd .osd.orga-w  60 "Shf" " \HAddress  " 70
@@ -641,7 +641,7 @@ osd .osd.orga-w  70 "EtNxfHz" .scheme.osd-entry 40 5 "" 17 org-addr-set-entry
 osd .osd.orga-w  80 "" 
 osd .osd.orga-w  90 "Shf" " \HTel      " 100
 osd .osd.orga-w 100 "EtxfH" .scheme.osd-entry "#########################" 18 org-addr-set-entry
-osd .osd.orga-w 110 "Shf" " Fax      " 120
+osd .osd.orga-w 110 "Shf" " Fa\Hx      " 120
 osd .osd.orga-w 120 "EtxfH" .scheme.osd-entry "#########################" 19 org-addr-set-entry
 osd .osd.orga-w 130 "Shf" " Mobile   " 140
 osd .osd.orga-w 140 "EtxfH" .scheme.osd-entry "#########################" 20 org-addr-set-entry
@@ -693,7 +693,7 @@ osd .osd.orga 150 ""
 osd .osd.orga 160 "Itc" .osd.orga-n
 osd .osd.orga 170 "" 
 osd .osd.orga 180 "" 
-osd .osd.orga 190 "Sf" "  \HNotes" 160
+osd .osd.orga 190 "Sf" "  \HNotes" 200
 osd .osd.orga 200 "EtNcxHfz" .scheme.osd-entry 60 5 "" 6 org-addr-set-entry
 osd .osd.orga 210 "" 
 osd .osd.orga 220 "" 
@@ -702,5 +702,5 @@ osd .osd.orga 610 "BtxhcfH"  .scheme.osd-ebtt " \HSave " f organizer-save
 osd .osd.orga 613 "BtxhcfHR" .scheme.osd-ebtt " D\Hup " f org-addr-dup
 osd .osd.orga 615 "BtxhcfHR" .scheme.osd-ebtt " \HDelete "  f org-addr-del
 osd .osd.orga 620 "BtxhcfH"  .scheme.osd-ebtt " Addr to \HBuffer "  f org-addr-buffer
-osd .osd.orga 630 "BtcfH"    .scheme.osd-ebtt " E\Hxit "    1 void
+osd .osd.orga 630 "BtcfH"    .scheme.osd-ebtt " \HClose "    1 void
 

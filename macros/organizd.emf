@@ -159,5 +159,5 @@ osd .osd.orgd 600 ""
 osd .osd.orgd 605 "" 
 osd .osd.orgd 610 "BtxhcfH" .scheme.osd-ebtt " \HSave "    f organizer-save
 osd .osd.orgd 620 "BtxhcfH" .scheme.osd-ebtt " Day to \HBuffer "  f org-day-buffer
-osd .osd.orgd 630 "BtcfH"   .scheme.osd-ebtt " E\Hxit "    1 void
+osd .osd.orgd 630 "BtcfH"   .scheme.osd-ebtt " \HClose "   1 void
 

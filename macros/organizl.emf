@@ -205,4 +205,4 @@ osd .osd.orgl 310 "Ibtc" 60 25 .osd.orgl-c
 osd .osd.orgl 600 "" 
 osd .osd.orgl 610 "BtxhcfH" .scheme.osd-ebtt " \HSave "    f organizer-save
 osd .osd.orgl 620 "BtxhcfH" .scheme.osd-ebtt " List to \HBuffer "  f org-list-buffer
-osd .osd.orgl 630 "BtcfH"   .scheme.osd-ebtt " E\Hxit "    1 void
+osd .osd.orgl 630 "BtcfH"   .scheme.osd-ebtt " \HClose "    1 void

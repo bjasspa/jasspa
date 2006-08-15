@@ -219,5 +219,5 @@ osd .osd.orgw 110 "Itc" .osd.orgw-c
 osd .osd.orgw 600 "" 
 osd .osd.orgw 610 "BtxhcfH" .scheme.osd-ebtt " \HSave "    f organizer-save
 osd .osd.orgw 620 "BtxhcfH" .scheme.osd-ebtt " Week to \HBuffer "  f org-week-buffer
-osd .osd.orgw 630 "BtcfH"   .scheme.osd-ebtt " E\Hxit "    1 void
+osd .osd.orgw 630 "BtcfH"   .scheme.osd-ebtt " \HClose "    1 void
 

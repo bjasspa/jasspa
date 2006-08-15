@@ -268,9 +268,9 @@ osd .osd.org-aimp  5  "hf" " "
 osd .osd.org-aimp 10  "ItbHf" .scheme.osd-sbar 54 20 .osd.org-aimpc
 osd .osd.org-aimp 20  ""
 osd .osd.org-aimp 30  "fh" "  Import Field     "
-osd .osd.org-aimp 33  "Sfh" "Map To Field          " 70
-osd .osd.org-aimp 36  "Sfh"  "Append  " 90
-osd .osd.org-aimp 37  "Sf"  "Prepend" 90
+osd .osd.org-aimp 33  "Sfh" "\HMap To Field          " 70
+osd .osd.org-aimp 36  "Sfh"  "\HAppend  " 90
+osd .osd.org-aimp 37  "Sf"  "\HPrepend" 90
 osd .osd.org-aimp 40  "fh" "  "
 osd .osd.org-aimp 50  "Hfh" .scheme.osd-entry "               "
 osd .osd.org-aimp 60  "fh" "  "
@@ -282,7 +282,7 @@ osd .osd.org-aimp 110 "EtxHf" .scheme.osd-entry "#######" 2 org-aimp-set-entry
 osd .osd.org-aimp 600 ""
 osd .osd.org-aimp 630 "BhcfxH" .scheme.osd-ebtt " \HStore Settings "   f org-aimp-store
 osd .osd.org-aimp 640 "BhcfH"  .scheme.osd-ebtt " \HImport  " f org-aimp-import
-osd .osd.org-aimp 650 "BhcfH"  .scheme.osd-ebtt " E\Hxit  "   f void
+osd .osd.org-aimp 650 "BhcfH"  .scheme.osd-ebtt " \HCancel  "   f void
 
 0 define-macro org-address-import
     set-variable .org.aimp-header   &reg "/org/set/aimp-header" "1"

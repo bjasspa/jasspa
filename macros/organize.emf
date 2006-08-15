@@ -327,7 +327,7 @@ osd-bind-key .osd.org org-key-bind "C-down"
     set-variable .org.months &reg "/org/set/months" .org.months
     set-variable .org.days &reg "/org/set/days" .org.days
     set-variable .org.set &spr "%1d%1d" &reg "/org/set/1dofw" "0" &reg "/org/set/1wofy" "7"
-    set-variable .org.aflag &reg "/org/set/aflag" "0x34"
+    set-variable .org.aflag &reg "/org/set/aflag" "0x24"
     set-variable .org.naddr &reg "/org/addr/naddr" "1"
     set-variable .org.addr ""
 !emacro
