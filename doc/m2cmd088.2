@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd088.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd088.2,v 2.6 2006-08-19 13:23:22 jon Exp $
 .Im MicroEmacs command|buffer
 .ds C0 "(\fB\*e\*cn\fR)\ \&
 .so me.tni
@@ -32,14 +32,20 @@ File Name               Buffer Name
 /etc/file.c             file.c
 /tmp/file.c             file.c<1>
 .CE
-By default, or an  argument is given with bit 1 set,  \fBchange-buffer-name\fR
-will fail if a buffer with the given name already  exists. This  behavior can
-be changed by giving an argument  with the first bit cleared, e.g. 0, in which
-case if a buffer with that name already exists then a counter as appended.  
+The numeric argument \fIn\fR is a bit-mask and is interpreted as follows:
+.IP \fC0x01\fR
+By   default,   or   an    argument   is    specified    with   bit   1   set,
+\fBchange-buffer-name\fR fails if a buffer with the given name already exists.
+This  behavior  can be changed by  specifying  an argument  with the first bit
+cleared, e.g. 0, in which case if a buffer with that name already  exists then
+a counter as appended.
+.IP \fC0x02\fR
+Forces the buffer to adopt the given name \fIbuffer-name\fR, changing the name
+of any existing buffer if required.
 .SH "SEE ALSO"
 .na
 .Ht $buffer-fname 5 ,
-.Ht change-file-name 2 .
+.Ht change-file-name 2 ,
 .Ht delete-buffer 2 .
 .ad
 .rm C0
