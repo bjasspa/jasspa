@@ -1,11 +1,11 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1988-2005 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1988-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\" Created By: Jon Green
 .\"
-.Id $Id: m1cmd000.1,v 2.16 2006-03-16 22:01:33 bill Exp $
+.Id $Id: m1cmd000.1,v 2.17 2006-08-19 13:17:15 jon Exp $
 .Im MicroEmacs function
 .so me.tni
 .TH me 1
@@ -24,8 +24,7 @@ me - \*(mE text editor
 [\|\fB\-a\fR\|]
 [\|\fB\-b\fR\ \|\fIfile\fR\|]
 [\|\fB\-B\fR\|]
-[\|\fB\-c\fR\|]
-[\|\fB\-d\fR\|]
+[\|\fB\-c\fR\|[\|\fIsessionName\fR\|]]
 [\|\fB\-h\fR\|]
 [\|\fB\-i\fR\|]
 [\|\fB\-k\fR[\|\fIkey\fR\|]\ \|\fIfile\fR\|]
@@ -71,11 +70,11 @@ easy case controlling, and automatic word counts.
 For complex and repetitive  editing tasks editing macros can be written. These
 macros  allow  the user a great  degree  of  flexibility  in  determining  how
 \fB\*(mE\fR  behaves.  Also, any and all the  commands can be used by any
-key stroke by changing, or rebinding, what commands various keys invoke.
+key stroke by changing, or re-binding, what commands various keys invoke.
 .PP
 Special  features  are also  available to perform a diverse set of  operations
-such as file  encryption,  automatic  backup file  generation,  entabbing  and
-detabbing  lines,  executing  operating  system commands and filtering of text
+such as file  encryption,  automatic  backup file  generation,  en-tabbing and
+de-tabbing  lines, executing  operating  system commands and filtering of text
 through other programs.
 .PP
 The command line options to
@@ -131,13 +130,17 @@ mode.
 \fBNote:\fR  that \*(nS  disables  backup  mode by default  and \*(mS  enables
 backup  mode by  default.  The  behavior  of \fB-B\fR is  therefore  different
 between the two editors. 
-.IP \fB\-c\fR
-Continuation  mode. Load  \fB\*(mE\fR  last edit session,  restoring  the
-buffers to their  previous  loaded state and position.  Note that history mode
-must be  enabled.  The  \fB\-c\fR  option  is  generally  used with  windowing
-interfaces (X-Windows/Microsoft Windows) as the shortcut icon invocation.
-.IP \fB\-d\fR
-Enable debug mode (for macro files).
+.IP \fB\-c\fR[\fIsessionName\fR]
+Continuation  mode. Load \fB\*(mE\fR last edit session,  restoring the buffers
+to their  previous  loaded state and position.  Note that history mode must be
+enabled. The  \fB\-c\fR  option is generally  used with  windowing  interfaces
+(X-Windows/Microsoft Windows) as the shortcut icon invocation.
+.IP
+If the optional session name  \fIsessionName\fR  is specified then the session
+file  \fIsessionName\fR\|\fB.esf\fR  is loaded  restoring the previous editing
+session, when omitted then the default session file \fIusername\fR\|\fB.esf\fR
+is loaded, see 
+.Ht esf 8 .
 .IP \fB\-h\fR
 Show the help page (does not start the editor).
 .IP \fB\-i\fR
@@ -232,7 +235,7 @@ Print the name and version of \*(mS. i.e.
 .IP
 \fCorac% me -V\fR
 .br
-\fCMicroEmacs 05 - Date 2005/02/24 - sunos\fR
+\fCMicroEmacs 06 - Date 2006/08/10 - sunos\fR
 .IP \fB\-x\fR
 \s-1UNIX\s0  environments. Disable the capture of signals. \fB\*(mE\fR by
 default  captures  an handles  all illicit  signal  interrupts.  The option is
@@ -405,6 +408,10 @@ editor window is brought into focus following the drop.
 Xdnd drag and drop support is provided in the X-Windows  version of \*(mS. The
 editor  window is not  raised or  brought  into  focus  following  the drop as
 expected in the \s-1UNIX\s0 environment. 
+.SH "HISTORY"
+The 2006 release  removed the \fC-d\fR  command line option for debugging (not
+used) and added  session  support by  extending  the  \fC-c\fR  option with an
+optional \fIsessionName\fR argument.
 .SH "SEE ALSO"
 .na
 .Ht $MEINSTALLPATH 5 ,
@@ -413,6 +420,7 @@ expected in the \s-1UNIX\s0 environment.
 .Ht $MEUSERPATH 5 ,
 .Ht emf 8 ,
 .Ht erf 8 ,
+.Ht esf 8 ,
 .Ht $home 5 ,
 .Hr emacs 1 " [GNU],"
 .Hr more 1 ,
