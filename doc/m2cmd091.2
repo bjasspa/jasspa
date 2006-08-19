@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd091.2,v 2.7 2006-07-28 16:35:02 jon Exp $
+.Id $Id: m2cmd091.2,v 2.8 2006-08-19 16:00:00 jon Exp $
 .Im MicroEmacs command|buffer
 .ds C0 "(\fB\*(cXx\fR)\ \&
 .ds C1 "(\fB\*(cXb\fR)\ \&
@@ -50,6 +50,24 @@ window whose
 .Ht $window-flags 5
 are set to lock the buffer to the  window. If a value of less than -1 is given
 then the buffer is hidden from all windows.
+.PP
+The numeric argument of
+.B find-buffer
+is treated as a bit mask as follows:
+.IP "\fC0x01\fR"
+Bit set then the  buffer is  created  if it does not exist. Bit clear then the
+command fails if the buffer does not exist.
+.IP "\fC0x02\fR"
+Locate the buffer   whose   buffer   file  name   matches  the   argument
+\fIbuffer-name\fR.
+.IP "\fC0x04\fR"
+Bit set then an inactive  buffer (i.e. a buffer whose  contents  have not been
+loaded) shall remain  inactive and the buffer  contents  shall not be restored
+from  file.  This bit  setting  is used to allow the  buffer  variables  to be
+interrogated  without  causing  the file to load.  Setting of this bit must be
+used with care.
+.IP "\fC0x08\fR"
+Bit set causes the buffer to be hidden.
 .PP
 If the current buffer has an \fI$buffer-ehook\fR command set then this command
 is  executed  before  the new buffer is  switched  in. If the new buffer has a
