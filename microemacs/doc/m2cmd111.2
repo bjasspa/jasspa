@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd111.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd111.2,v 2.6 2006-08-19 12:13:32 jon Exp $
 .Im MicroEmacs command|insert
 .ds C0 "(\fB\*ey\fR)\ \&
 .so me.tni
@@ -24,6 +24,12 @@ Immediately after yanking text out into the current buffer using
 the user may \fBreyank\fR which deletes the region just yanked and replaces it
 with \fIn\fR  insertions of the next region on the kill stack. Another call to
 reyank deletes that region and replaces it with the next in the stack etc.
+.PP
+The  default  behavior of  \fBreyank\fR  is to wrap around the kill chain in a
+loop (i.e.  returns to the start of the list when the end of the kill chain is
+reached). If a negative argument \fIn\fR is specified then \fBreyank\fR  fails
+when the end of the kill  chain is reached  rather  than  looping  back to the
+start of the list.
 .PP
 The last 15 kills are stored.
 .SH "SEE ALSO"
