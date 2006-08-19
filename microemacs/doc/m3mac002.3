@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac002.3,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m3mac002.3,v 2.6 2006-08-19 16:07:09 jon Exp $
 .Im MicroEmacs command|file|buffer
 .so me.tni
 .TH save-all 3
@@ -17,10 +17,11 @@ save-all \- Save all modified files (with query)
 .B save-all
 .ad
 .SH DESCRIPTION
-\fBsave-all\fR  cycles  through all buffers,  dictionaries  and registry files
-writing back any changes made. For each buffer,  dictionary  or registry  file
-which has been  modified the user is prompted  before the changes are saved, a
-value of \fBy\fR initiates the save, \fBn\fR skips the save.
+\fBsave-all\fR  cycles through all buffers,  dictionaries,  registry files and
+current  session  writing back any changes made. For each buffer,  dictionary,
+session or registry  file which has been modified the user is prompted  before
+the changes are saved, a value of \fBy\fR  initiates  the save, \fBn\fR  skips
+the save.
 .PP
 The  argument  \fIn\fR  can  be  used  to  change  the  default  behavior  of
 save-all described above, \fIn\fR is a bit based flag where:-
@@ -30,13 +31,15 @@ not supplied then all modified files will automatically be written.
 .SH NOTES
 \fBsave-all\fR is a macro defined in \fCme.emf\fR, using commands
 .Ht save-some-buffers 2 ,
-.Ht save-dictionary 2
+.Ht save-dictionary 2 ,
+.Ht save-session 3 ,
 and
 .Ht save-registry 2 .
 .SH "SEE ALSO"
 .na
-.Ht save-some-buffers 2 ,
 .Ht save-dictionary 2 ,
-.Ht save-registry 2 .
+.Ht save-registry 2 ,
+.Ht save-session 3 ,
+.Ht save-some-buffers 2 .
 .ad
 .FH
