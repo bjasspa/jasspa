@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m8fil004.8,v 2.6 2004-02-01 23:36:27 jon Exp $
+.Id $Id: m8fil004.8,v 2.7 2006-08-19 15:35:32 jon Exp $
 .Im MicroEmacs files
 .so me.tni
 .TH erf 8
@@ -63,7 +63,7 @@ The  history  file  \fIusername.erf\fR  is a good  example  of the  use of the
 registry.  This file retains  historical  session  information  in The history
 registry file is  automatically  written at the end of a editing  session when
 the editor is closed down (or may be saved explicitly using
-.Ht save-history 2 ).
+.Ht save-session 3 ).
 .PP
 Every user should have their own personal history file in their personal \*(mS
 directory. The history file is located from the \*(mE search path defined by
@@ -81,8 +81,8 @@ registry item when editing the registry text file.
 To edit  the  history  registry  file  within  MicroEmacs  then the  following
 sequence of steps should be followed:-
 .BS
-Save the current history
-.Ht save-history 2 .
+Save the current session
+.Ht save-session 3 .
 .BU
 Load the history registry file \fIusername\fR.erf.
 .BU
@@ -91,9 +91,9 @@ Edit the file.
 Save edits back to the file.
 .BU
 Re-install the history
-.Ht read-history 2 .
-This  flushes the current  session  history and restores it from the file. The
-new edits should now be in the registry.
+.Ht read-session 3 .
+This flushes the current  session and restores it from the file. The new edits
+should now be in the registry.
 .BU
 Examine the loaded registry using
 .Ht list-registry 2 .
@@ -101,10 +101,9 @@ Examine the loaded registry using
 .SH "SEE ALSO"
 .na
 .Ht list-registry 2 ,
-.Ht read-history 2 ,
 .Ht read-registry 2 ,
-.Ht save-history 2 ,
-.Ht save-history 2 ,
+.Ht read-session 3 ,
+.Ht save-session 3 ,
 .Ht $user-name 5 ,
 .Ht $user-path 5 .
 .ad
