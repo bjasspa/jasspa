@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jul 16 23:13:14 1998
 .\"
-.Id $Id: m2cmd008.2,v 2.6 2005-01-23 15:28:55 jon Exp $
+.Id $Id: m2cmd008.2,v 2.7 2006-08-19 15:35:35 jon Exp $
 .Im MicroEmacs command|registry
 .so me.tni
 .TH save-registry 2
@@ -37,7 +37,7 @@ Enables  prompting  before saving, only used when saving all registries.
 .IP \fB0x02\fR
 Save all  changed  registries  except the history  node which  should be saved
 using the command
-.Ht save-history 2 .
+.Ht save-session 3 .
 .SH NOTES
 This command is called to save all registry changes whenever \*(mS is exited.
 .SH "SEE ALSO"
@@ -47,7 +47,7 @@ This command is called to save all registry changes whenever \*(mS is exited.
 .Ht list-registry 2 ,
 .Ht mark-registry 2 ,
 .Ht read-registry 2 ,
-.Ht save-history 2 ,
+.Ht save-session 3 ,
 .Ht set-registry 2 ,
 .Ht &reg 4 ,
 .Ht erf 8 .

@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20060114.1151>
+# Last Modified: <20060819.1631>
 #
 ##############################################################################
 
@@ -85,8 +85,9 @@ CMD2_090=	$(DOCDIR)m2cmd090.2 $(DOCDIR)m2cmd091.2 $(DOCDIR)m2cmd092.2\
 		$(DOCDIR)m2cmd099.2
 CMD2_100=	$(DOCDIR)m2cmd100.2 $(DOCDIR)m2cmd101.2 $(DOCDIR)m2cmd102.2\
 		$(DOCDIR)m2cmd103.2 $(DOCDIR)m2cmd104.2 $(DOCDIR)m2cmd105.2\
-		$(DOCDIR)m2cmd106.2 $(DOCDIR)m2cmd107.2 $(DOCDIR)m2cmd108.2\
+		$(DOCDIR)m2cmd106.2 $(DOCDIR)m2cmd108.2\
 		$(DOCDIR)m2cmd109.2
+# TODO: $(DOCDIR)m2cmd107.2 - This is spare
 CMD2_110=	$(DOCDIR)m2cmd110.2 $(DOCDIR)m2cmd111.2 $(DOCDIR)m2cmd112.2\
 		$(DOCDIR)m2cmd113.2 $(DOCDIR)m2cmd114.2 $(DOCDIR)m2cmd115.2\
 		$(DOCDIR)m2cmd116.2 $(DOCDIR)m2cmd117.2 $(DOCDIR)m2cmd118.2\
@@ -100,9 +101,10 @@ CMD2_130=	$(DOCDIR)m2cmd130.2 $(DOCDIR)m2cmd131.2 $(DOCDIR)m2cmd132.2\
 		$(DOCDIR)m2cmd136.2 $(DOCDIR)m2cmd137.2 $(DOCDIR)m2cmd138.2\
 		$(DOCDIR)m2cmd139.2
 CMD2_140=	$(DOCDIR)m2cmd140.2 $(DOCDIR)m2cmd141.2 $(DOCDIR)m2cmd142.2\
-		$(DOCDIR)m2cmd143.2 $(DOCDIR)m2cmd144.2 $(DOCDIR)m2cmd145.2\
+		$(DOCDIR)m2cmd143.2 			$(DOCDIR)m2cmd145.2\
 		$(DOCDIR)m2cmd146.2 $(DOCDIR)m2cmd147.2 $(DOCDIR)m2cmd148.2\
 		$(DOCDIR)m2cmd149.2
+# TODO: $(DOCDIR)m2cmd144.2 - This is spare
 CMD2_150=	$(DOCDIR)m2cmd150.2 $(DOCDIR)m2cmd151.2 $(DOCDIR)m2cmd152.2\
 		$(DOCDIR)m2cmd153.2 $(DOCDIR)m2cmd154.2 $(DOCDIR)m2cmd155.2\
 		$(DOCDIR)m2cmd156.2 $(DOCDIR)m2cmd157.2 $(DOCDIR)m2cmd158.2\
@@ -168,6 +170,7 @@ MAC3_070=	$(DOCDIR)m3mac070.3 $(DOCDIR)m3mac071.3 $(DOCDIR)m3mac072.3\
 		$(DOCDIR)m3mac073.3 $(DOCDIR)m3mac074.3 $(DOCDIR)m3mac075.3\
 		$(DOCDIR)m3mac076.3 $(DOCDIR)m3mac077.3 $(DOCDIR)m3mac078.3\
 		$(DOCDIR)m3mac079.3
+MAC3_080=	$(DOCDIR)m3mac080.3 $(DOCDIR)m3mac081.3 
 #
 OSD3_000=	$(DOCDIR)m3osd000.3 $(DOCDIR)m3osd001.3 $(DOCDIR)m3osd002.3\
 		$(DOCDIR)m3osd003.3 $(DOCDIR)m3osd004.3 $(DOCDIR)m3osd005.3\
@@ -243,7 +246,7 @@ VAR5_090=	$(DOCDIR)m5var090.5 $(DOCDIR)m5var091.5
 #
 FIL8_000=	$(DOCDIR)m8fil000.8 $(DOCDIR)m8fil001.8 $(DOCDIR)m8fil002.8\
 		$(DOCDIR)m8fil003.8 $(DOCDIR)m8fil004.8 $(DOCDIR)m8fil005.8\
-		$(DOCDIR)m8fil006.8 $(DOCDIR)m8fil007.8
+		$(DOCDIR)m8fil006.8 $(DOCDIR)m8fil007.8 $(DOCDIR)m8fil008.8
 #
 TYP9_000=	$(DOCDIR)m9typ000.9 $(DOCDIR)m9typ001.9 $(DOCDIR)m9typ002.9\
 		$(DOCDIR)m9typ003.9 $(DOCDIR)m9typ004.9 $(DOCDIR)m9typ005.9\
@@ -275,6 +278,7 @@ TEMPSMS	=	cmd2_000.sm	cmd2_010.sm	cmd2_020.sm	cmd2_030.sm \
 		mod2_000.sm	mod2_010.sm	mod2_020.sm	mod2_030.sm \
 		mac3_000.sm	mac3_010.sm	mac3_020.sm	mac3_030.sm \
 		mac3_040.sm	mac3_050.sm	mac3_060.sm	mac3_070.sm \
+		mac3_080.sm \
 		osd3_000.sm	osd3_010.sm \
 		fcl3_000.sm	fcl3_010.sm \
 		fil4_000.sm	fil4_010.sm	fil4_020.sm	fil4_030.sm \
@@ -408,6 +412,8 @@ mac3_060.sm:	$(MAC3_060)
 	$(SUPERMAN) -o $@ $(MAC3_060)
 mac3_070.sm:	$(MAC3_070)
 	$(SUPERMAN) -o $@ $(MAC3_070)
+mac3_080.sm:	$(MAC3_080)
+	$(SUPERMAN) -o $@ $(MAC3_080)
 # OSD
 osd3_000.sm:	$(OSD3_000)
 	$(SUPERMAN) -o $@ $(OSD3_000)

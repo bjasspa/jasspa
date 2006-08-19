@@ -1,0 +1,43 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m3mac080.3,v 2.1 2006-08-19 15:35:35 jon Exp $
+.Im MicroEmacs command|scuts
+.so me.tni
+.TH save-session 3
+.XI save-session - "Write session information to session file"
+.SH NAME
+save-session \- Write session information to session file
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B save-session
+"\fIsession-file\fR"
+.ad
+.SH DESCRIPTION
+.B save-session
+writes out \*(mE's current  session information  into the given session file.
+.PP
+The command
+.Ht read-session 3
+can set a default  session  file in which  case the  session is  automatically
+written  out to this  file if an  argument  of zero is given;  the user is not
+prompted for a file. \*(mE  automatically  tries to write the default  session
+whenever it is exited.
+.SH NOTES
+The session information is saved in a ascii format file (see
+.Ht esf 8 ).
+Reference should be made to the notes included in
+.Ht esf 8
+as to how the  session file may be  edited  and  effected  in the same  \*(mE
+session.
+.SH "SEE ALSO"
+.na
+.Ht esf 8 ,
+.Ht @h0 4 ,
+.Ht read-session 3 .
+.ad
+.FH

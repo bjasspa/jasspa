@@ -1,0 +1,31 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m8fil008.8,v 2.1 2006-08-19 15:35:35 jon Exp $
+.Im MicroEmacs files
+.so me.tni
+.TH esf 8
+.XI esf - "MicroEmacs session file"
+.SH NAME
+esf \- MicroEmacs session file
+.SH DESCRIPTION
+\*(mE session files are ASCII  text  files that retain all the buffer  context
+for a previous editing session. 
+.PP
+Every user has their own personal session file in their personal \*(mS
+directory. The session file is located from the \*(mE search path defined by
+.Ht $user-path 5 ,
+and is named by the variable
+.Ht $user-name 5 .
+.SH "SEE ALSO"
+.na
+.Ht list-registry 2 ,
+.Ht read-registry 2 ,
+.Ht read-session 3 ,
+.Ht save-session 3 ,
+.Ht $user-name 5 ,
+.Ht $user-path 5 .
+.ad
+.FH

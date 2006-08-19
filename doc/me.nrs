@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.41 2006-08-13 12:53:04 jon Exp $
+.Id $Id: me.nrs,v 2.42 2006-08-19 15:35:32 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -402,7 +402,7 @@ The  registry  is a mechanism  which  allows the binding of  information  to a
 hierarchical  tree node,  using a file  system  metaphor  to access  the data.
 \fBMicroEmacs\fR  uses a  reserved  root node  \fChistory\fR  to save  session
 information (see
-.Ht save-history 2 ).
+.Ht save-session 3 ).
 .SS Commands
 .Ss
 search MicroEmacs 2 registry
