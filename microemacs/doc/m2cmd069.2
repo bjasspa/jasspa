@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd069.2,v 2.8 2006-07-28 16:35:03 jon Exp $
+.Id $Id: m2cmd069.2,v 2.9 2006-08-19 15:02:10 jon Exp $
 .Im MicroEmacs command|hilight|macrodevelop
 .so me.tni
 .TH hilight 2
@@ -532,10 +532,12 @@ The  inverse  character  that  matched  the #th group  token, i.e.  \s-1NOT\s0
 Matches  0 or 1, 1 or  more  and  0 or  more  of  the  previous  character  or
 character range respectively.
 .TP 
-\fC\\w \\W \\l \\L \\u \\U \\d \\D \\x \\X \\s \\S\fR
+\fC\\a \\A \\w \\W \\l \\L \\m \\u \\U \\d \\D \\h \\H \\x \\s \\S \\e \\g \\n \\r\fR
 .\"
-Marches   the   special   word   characters    (\fCw\fR)ord,    (\fCl\fR)ower,
-(\fCu\fR)pper,   (\fCd\fR)igit,   (\fCx\fR)digit,    white(\fCs\fR)pace.   The
+Marches  (\fCa\fR)lphabetic  lower, the special word characters  (\fCw\fR)ord,
+(\fCl\fR)ower,     (\fCm\fR)alhpanumeric,     (\fCu\fR)pper,    (\fCd\fR)igit,
+(\fCh\fR)exdigit  (\fCx\fRxx)  literal  hexdecimal digit,  white(\fCs\fR)pace,
+(\fCe\fRescape,   (\fCn\fR)ewline,   (\fCg\fR}bell,   (\fCr\fR)formfeed.   The
 uppercase letters are the inverse. (see 
 .Hl "Regular Expressions" RegularExpressions 2 ).
 .PP
