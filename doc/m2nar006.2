@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jun 17 22:26:42 1999
 .\"
-.Id $Id: m2nar006.2,v 2.7 2005-03-06 08:47:12 jon Exp $
+.Id $Id: m2nar006.2,v 2.8 2006-08-19 15:01:09 jon Exp $
 .Im MicroEmacs search
 .so me.tni
 .TH "RegularExpressions" 2
@@ -263,20 +263,6 @@ the end of the buffer.
 .\"
 matches the empty string, but only at point.
 .TP
-\fC\\b\fR
-.\"
-matches the empty  string, but only at the  beginning  or end of a word. Thus,
-\'\fC\\bfoo\\b\fR'  matches any  occurrence of '\fCfoo\fR' as a separate word.
-\'\fC\\bballs?\\b\fR'  matches  '\fCball\fR'  or  '\fCballs\fR'  as a separate
-word.
-.IP
-\'\fC\\b\fR'  matches at the beginning or end of the buffer regardless of what
-text appears next to it.
-.IP
-\fC\\B\fR
-.\"
-matches the empty string, but *not* at the beginning or end of a word.
-.TP
 \fC\\<\fR
 .\"
 matches the empty  string, but only at the  beginning of a word.  \'\fC\\<\fR'
@@ -289,6 +275,26 @@ matches the empty string, but only at the end of a word.  '\fC\\>\fR'  matches
 at the end of the  buffer  only if the  contents  end with a  word-constituent
 character.
 .TP
+\fC\\a\fR
+.\"
+matches any alpha characters.
+.TP
+\fC\\A\fR
+.\"
+matches any non-alpha characters.
+.TP
+\fC\\b\fR
+.\"
+matches the empty  string, but only at the  beginning  or end of a word. Thus,
+\'\fC\\bfoo\\b\fR'  matches any  occurrence of '\fCfoo\fR' as a separate word.
+\'\fC\\bballs?\\b\fR'  matches  '\fCball\fR'  or  '\fCballs\fR'  as a separate
+word. \'\fC\\b\fR'  matches at the beginning or end of the buffer regardless of what
+text appears next to it.
+.TP
+\fC\\B\fR
+.\"
+matches the empty string, but *not* at the beginning or end of a word.
+.TP
 \fC\\d\fR
 .\"
 matches any digit character.
@@ -297,22 +303,13 @@ matches any digit character.
 .\"
 matches any non-digit character.
 .TP
-\fC\\x\fR
+\fC\\h\fR
 .\"
 matches any hexadecimal digit character.
 .TP
-\fC\\X\fR
+\fC\\H\fR
 .\"
 matches any non-hexadecimal character.
-.TP
-\fC\\w\fR
-.\"
-matches any  word-constituent  character.  The syntax table  determines  which
-characters these are.
-.TP
-\fC\\W\fR
-.\"
-matches any character that is not a word-constituent.
 .TP
 \fC\\l\fR
 .\"
@@ -323,6 +320,22 @@ which characters these are.
 .\"
 matches any character that is not a lowercase word-constituent.
 .TP
+\fC\\m\fR
+.\"
+matches any alphanumeric characters
+.TP
+\fC\\M\fR
+.\"
+matches any non alphanumeric characters.
+.TP
+\fC\\s\fR
+.\"
+matches any white-space character, including new-line.
+.TP
+\fC\\S\fR
+.\"
+matches any character that is not white-space.
+.TP
 \fC\\u\fR
 .\"
 matches any uppercase word-constituent  character. The syntax table determines
@@ -332,13 +345,14 @@ which characters these are.
 .\"
 matches any character that is not a uppercase word-constituent.
 .TP
-\fC\\s\fR
+\fC\\w\fR
 .\"
-matches any white-space character, including new-line.
+matches any  word-constituent  character.  The syntax table  determines  which
+characters these are.
 .TP
-\fC\\S\fR
+\fC\\W\fR
 .\"
-matches any character that is not white-space.
+matches any character that is not a word-constituent.
 .TP
 \fC\\{N,M\\}\fR
 .\"
