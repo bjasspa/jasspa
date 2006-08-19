@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd140.2,v 2.6 2005-03-20 23:43:29 jon Exp $
+.Id $Id: m2cmd140.2,v 2.7 2006-08-19 13:13:48 jon Exp $
 .Im MicroEmacs command|file
 .ds C0 "(\fB\*(cX\*cv\fR)\ \&
 .so me.tni
@@ -50,6 +50,11 @@ If this bit is set the file will be loaded with
 .Ht rbin 2m
 mode enabled. See help on \fBrbin\fR  mode for more  information  on efficient
 editing of binary data files.
+.IP \fB0x10\fR
+If this bit is set then the file hook  evaluation  is not  performed  when the
+file is loaded (i.e. the 
+.Hl "buffer's file hook"  fileHooks  2 
+is not executed).
 .SH "SEE ALSO"
 .na
 .Ht buffer-mode 2 ,

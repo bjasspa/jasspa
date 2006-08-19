@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd056.2,v 2.9 2004-01-18 15:35:00 jon Exp $
+.Id $Id: m2cmd056.2,v 2.10 2006-08-19 13:14:46 jon Exp $
 .Im MicroEmacs command|file
 .ds C0 "(\fB\*(cX\*cf\fR)\ \&
 .so me.tni
@@ -47,6 +47,11 @@ If this bit is set the file will be loaded with
 .Ht rbin 2m
 mode enabled. See help on \fBrbin\fR  mode for more  information  on efficient
 editing of binary data files.
+.IP \fB0x10\fR
+If this bit is set then the file hook  evaluation  is not  performed  when the
+file is loaded (i.e. the 
+.Hl "buffer's file hook"  fileHooks  2 
+is not executed).
 .PP
 Text files are  usually thought  of as named  collections of  text residing on
 disk (or some other storage medium).  In \*(mE the disk based versions of
