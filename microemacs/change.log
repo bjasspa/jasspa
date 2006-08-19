@@ -4,8 +4,19 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <060812.1858>
+>  Last Modified : <060819.1303>
 >
+
+    [060816] Added    settings    for   fill-col   and    fill-mode   to   the
+             major-mode-setup.
+
+    [060816] Added support for a .fhook-???.fill-*  variable and changed latex
+             over to using this variable  rather than burning the fill-mode in
+             as 'l'
+    
+    [060816] Crossword - Changed Exit button to Close.
+    
+    [060816] Changed organizer Exit buttons to Close or Cancel.
 
     [060812] Additions to the PHP script - missing tags etc.
 
