@@ -1,31 +1,75 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1999-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1999-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Jul 5 21:40:07 1999
 .\"
-.Id $Id: m3fcl001.3,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m3fcl001.3,v 2.6 2006-08-19 13:44:26 jon Exp $
 .Im MicroEmacs filter
 .so me.tni
 .TH gdiff 3f
-.XI gdiff - "Command line graphical file difference" 
+.XI gdiff - "Command line graphical file difference"
 .SH NAME
-gdiff \- Command line graphical file difference 
+gdiff \- Command line graphical file difference
 .Me $a
 .SH SYNOPSIS
 .na
 \fBme\fR "@gdiff" "\fIversion1\fR" "\fIversion2\fR"
 .ad
 .SH DESCRIPTION
-\*(mS may be executed from the command line to invoke the 
+\*(mS may be executed from the command line to invoke the
 .I "Graphical Difference"
 .Ht gdiff 3
 macro, showing the difference(s) between two files.
 .PP
 The editor is invoked in \fBgdiff\fR mode and shows the difference between the
-two files on the command line.
+two files on the command  line. The two files are  presented  side by side and
+the lines are matched  together, the windows are effectively  locked together,
+scrolling one window causes the other window to scroll.
+.PP
+The changes are shown as color coded regions of  highlighted  text. Each block
+(or line) has to be  accepted  or  rejected  by the user, when all blocks have
+been accepted then the buffer may be written out merging the changes from both
+files depending on the  accept/reject  status. Blocks which have been accepted
+are typically shown in green, the rejected lines are shown in red.
+.SS "Key Mapping"
+The keyboard mapping in \fBgdiff\fR mode is defined as follows:
+.IP "\fBesc-h\fR"
+Help information.
+.IP "\fBC-up\fR/\fBp\fR"
+Advance to the previous difference.
+.IP "\fBC-down\fR/\fBn\fR"
+Advance to the next difference.
+.IP "\fBesc-up\fR/P"
+Advance to the previous unassigned difference.
+.IP "\fBesc-down\fR/N"
+Advance to the next unassigned difference.
+.IP "\fBg\fR"
+Globally select all of the differences from the current window as assigned.
+.IP "\fBG\fR"
+Globally un-select all of the assigned differences.
+.IP "\fBr\fR/\fBspace\fR/\fBreturn\fR/\fBleft-mouse\fR"
+Selects the current difference, only operates within a highlighted  difference
+region.
+.IP "\fBR\fR"
+Un-selects  the  current   difference,  only  operates  within  a  highlighted
+difference region.
+.IP "\fBl\fR"
+Selects the current line in a highlighted region for assignment.
+.IP "\fBL\fR"
+Unselects the current line in a highlighted region for assignment.
+.IP "\fBsave-buffer\fR"
+Saves the current buffer, all of the assignment changes are merged and written
+out to the existing buffer.
+.IP "\fBwrite-buffer\fR"
+Saves the current  buffer after merging all of the and assignment  changes and
+prompts the user for the name of a new buffer.
+.IP "\fBleft\fR/\fBright\fR"
+Scrolls the buffer left or right.
+.IP "\fBkill-buffer\fR/\fBC-x C-c\fR"
+Quits \fBgdiff\fR, the user is prompted to save changes.
 .SH NOTES
 The macro is defined in file \fCgdiff.emf\fR.
 .SH "SEE ALSO"
@@ -34,4 +78,3 @@ The macro is defined in file \fCgdiff.emf\fR.
 .Ht start-up 3 .
 .ad
 .FH
-
