@@ -6,7 +6,7 @@
 .\"  Created By    : Steven Phillips
 .\"  Created       : Fri Aug 7 07:32:59 1998
 .\"
-.Id $Id: m3mac027.3,v 2.6 2004-01-11 01:11:18 jon Exp $
+.Id $Id: m3mac027.3,v 2.7 2006-08-19 16:33:56 jon Exp $
 .Im MicroEmacs command|file|essential
 .ds C0 "(\fB\*(fA\fR)\ \&
 .so me.tni
@@ -35,7 +35,7 @@ directory  with  information on each file.  \fBfile-browser\fR  displays these
 buffers side by side, splitting the current window horizontally if required.
 .PP
 Once open the user can browse  through the system using the following  keys in
-the \fC*directory*\fR buffer:
+the \fC*directory*\fR buffer, use \fBesc-h\fR for help within the buffer:
 .IP \fCspace\fR
 Selects the  directory  on the current  line and  up-dates  the  \fC*files*\fR
 buffer  with  the  information  on this  directory.  This  can also be done by
@@ -53,7 +53,7 @@ done by clicking  the right mouse button on the '\fC+\fR' or '\fC-\fR'  symbol
 just before the directory name.
 .IP \fCtab\fR
 Move to the \fC*files*\fR buffer.
-.IP \fCdelete\fR
+.IP \fCf10\fR
 Closes file-browser.
 .PP
 The following  keys can be used in the \fC*files*\fR buffer:
@@ -80,12 +80,67 @@ contain the following special tokens:
 .RE
 As the  \fBshell-command\fR  is executed in the directory  \fC%f\fR is safe to
 use in a command such as "\fCdel %f\fR".
-.IP "\fCD\fR or \fCd\fR"
-Deletes all the tags in the buffer.
+.IP "\fCD\fR or \fCd\fR or \fCdelete\fR"
+Delete selected files or current file/directory.
 .IP \fCtab\fR
 Move to the \fC*directory*\fR buffer.
-.IP \fCdelete\fR
-Closes file-browser.
+.IP "\fCbackspace\fR"
+Move to the parent directory.
+.IP "\fCl\fR"
+Refresh the listing from the file system.
+.IP "\fCf\fR"
+Toggle the filter, enables/disables the display of back-up, object files etc.
+.IP "\fCS\fR"
+Initiates  a search for files, at the  command  prompt  then enter the leading
+characters  to search for use  \fBC-s\fR  and \fBC-r\fR to search  forwards or
+backwards  respectively. The \fCs\fR version of this command is an incremental
+search and is easier to use.
+.IP "\fCs\fR"
+Launch  an  incremental  search  by  name,  at the  prompt  enter  the  search
+characters,  use  \fBC-s\fR  and  \fBC-r\fR  to search  forwards or  backwards
+respectively.
+.IP "\fC1\fR"
+Sort list by selected state.
+.IP "\fC2\fR"
+Sort list by attribute.
+.IP "\fC3\fR"
+Sort list by size.
+.IP "\fC4\fR"
+Sort list by modified time.
+.IP "\fC5\fR"
+Sort list by name.
+.IP "\fC6\fR"
+Sort list by extension.
+.IP "\fCspace\fR or \fC+\fR"
+Select file.
+.IP "\fC-\fR"
+Unselect file.
+.IP "\fC*\fR"
+Invert selection.
+.IP "\fCa\fR"
+Select all.
+.IP "\fCu\fR"
+Unselect all.
+.IP "\fCe\fR"
+Edit file, opens the file in the editor for modification.
+.IP "\fCi\fR"
+Edit  selected  file,  opens  all  of the  selected  file  in the  editor  for
+modification.
+.IP "\fCv\fR"
+View file, opens file for viewing only (write protected).
+.IP "\fCr\fR"
+Rename file or directory, command line prompt for the new name.
+.IP "\fCc\fR"
+Copy file(s)  and/or  directory(s),  command line prompt for directory to copy
+file(s).
+.IP "\fCm\fR"
+Move file(s)  and/or  directory(s),  command line prompt for directory to move
+file(s).
+.IP "\fCn\fR"
+Create a new  directory  (or folder),  command line prompt for the name of the
+new directory to create.
+.IP "\fCt\fR"
+Invokes the file tools menu to process the file.
 .PP
 \fBfile-browser-swap-buffers\fR   swaps  between  the   \fC*directory*\fR  and
 \fC*file*\fR  windows,  making the other the current  window,  this is usually
@@ -93,7 +148,11 @@ locally bound to the \fCtab\fR key.
 .PP 
 \fBfile-browser-close\fR  hides both the  \fC*directory*\fR  and  \fC*file*\fR
 windows,  closing  the  file-browser,  this is  usually  locally  bound to the
-\fCdelete\fR key.
+\fCf10\fR  key. Note that this  command is hidden and will not complete on the
+command line, but may be bound or input explicitly.
+.SH "HISTORY"
+The command  line  mapping was revised in the 2006  release for a more logical
+key to file operation mapping.
 .SH "SEE ALSO"
 .na
 .Ht directory-tree 2 ,
