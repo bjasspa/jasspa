@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac081.3,v 2.1 2006-08-19 15:35:35 jon Exp $
+.Id $Id: m3mac081.3,v 2.2 2006-08-20 11:06:23 jon Exp $
 .Im MicroEmacs command|scuts
 .so me.tni
 .TH read-session 3
@@ -41,6 +41,11 @@ Buffer and file list with line numbers.
 \*(mE's  environment  may be retained  almost intact by the use of the default
 session and using the \fB-c\fR (continue)  command-line  option to re-load all
 files that were being edited in a previous session.
+.PP
+On  loading  a new  session  then  the user is  prompted  to save the  current
+session.  If the  numeric  argument  is zero (bit 0 is 0) then the user is not
+prompted and the  \fIsession-file\fR is effectively loaded and merged into the
+current session.
 .SH NOTES
 When running  multiple \*(mE sessions on the same  work-station  (or different
 workstations  sharing the same home  directory), the default  history is saved
