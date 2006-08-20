@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20060819.1631>
+# Last Modified: <20060820.1813>
 #
 ##############################################################################
 
@@ -101,7 +101,7 @@ CMD2_130=	$(DOCDIR)m2cmd130.2 $(DOCDIR)m2cmd131.2 $(DOCDIR)m2cmd132.2\
 		$(DOCDIR)m2cmd136.2 $(DOCDIR)m2cmd137.2 $(DOCDIR)m2cmd138.2\
 		$(DOCDIR)m2cmd139.2
 CMD2_140=	$(DOCDIR)m2cmd140.2 $(DOCDIR)m2cmd141.2 $(DOCDIR)m2cmd142.2\
-		$(DOCDIR)m2cmd143.2 			$(DOCDIR)m2cmd145.2\
+		$(DOCDIR)m2cmd143.2			$(DOCDIR)m2cmd145.2\
 		$(DOCDIR)m2cmd146.2 $(DOCDIR)m2cmd147.2 $(DOCDIR)m2cmd148.2\
 		$(DOCDIR)m2cmd149.2
 # TODO: $(DOCDIR)m2cmd144.2 - This is spare
@@ -126,7 +126,7 @@ MOD2_000=	$(DOCDIR)m2mod000.2 $(DOCDIR)m2mod001.2 \
 		$(DOCDIR)m2mod006.2 \
 		$(DOCDIR)m2mod009.2
 # TODO: deleted c-mode(2m) - $(DOCDIR)m2mod002.2
-# TODO: deleted letter(2m) - $(DOCDIR)m2mod007.2 
+# TODO: deleted letter(2m) - $(DOCDIR)m2mod007.2
 # TODO: deleted line(2m) - $(DOCDIR)m2mod008.2
 MOD2_010=	$(DOCDIR)m2mod010.2 $(DOCDIR)m2mod011.2 $(DOCDIR)m2mod012.2\
 		$(DOCDIR)m2mod013.2 $(DOCDIR)m2mod014.2 $(DOCDIR)m2mod015.2\
@@ -170,7 +170,7 @@ MAC3_070=	$(DOCDIR)m3mac070.3 $(DOCDIR)m3mac071.3 $(DOCDIR)m3mac072.3\
 		$(DOCDIR)m3mac073.3 $(DOCDIR)m3mac074.3 $(DOCDIR)m3mac075.3\
 		$(DOCDIR)m3mac076.3 $(DOCDIR)m3mac077.3 $(DOCDIR)m3mac078.3\
 		$(DOCDIR)m3mac079.3
-MAC3_080=	$(DOCDIR)m3mac080.3 $(DOCDIR)m3mac081.3 
+MAC3_080=	$(DOCDIR)m3mac080.3 $(DOCDIR)m3mac081.3 $(DOCDIR)m3mac082.3
 #
 OSD3_000=	$(DOCDIR)m3osd000.3 $(DOCDIR)m3osd001.3 $(DOCDIR)m3osd002.3\
 		$(DOCDIR)m3osd003.3 $(DOCDIR)m3osd004.3 $(DOCDIR)m3osd005.3\
@@ -211,8 +211,8 @@ VAR5_010=	$(DOCDIR)m5var010.5 $(DOCDIR)m5var011.5 $(DOCDIR)m5var012.5\
 # TODO: deleted $c-brace(5) - $(DOCDIR)m5var013.5
 # TODO: deleted $c-case(5), $c-switch - $(DOCDIR)m5var014.5
 # TODO: deleted $c-contcomm - $(DOCDIR)m5var015.5
-# TODO: deleted $c-margin - $(DOCDIR)m5var016.5 
-# TODO: deleted $c-statement(5) - $(DOCDIR)m5var017.5 
+# TODO: deleted $c-margin - $(DOCDIR)m5var016.5
+# TODO: deleted $c-statement(5) - $(DOCDIR)m5var017.5
 # TODO: deleted $c-continue(5), $c-contmax - $(DOCDIR)m5var018.5
 VAR5_020=	$(DOCDIR)m5var020.5 $(DOCDIR)m5var021.5 $(DOCDIR)m5var022.5\
 		$(DOCDIR)m5var023.5 $(DOCDIR)m5var024.5 $(DOCDIR)m5var025.5\
@@ -293,7 +293,7 @@ TEMPSMS	=	cmd2_000.sm	cmd2_010.sm	cmd2_020.sm	cmd2_030.sm \
 all:	$(HTSS) $(HLPS) $(SMS) $(EHFS) $(TXTS) $(CATMAN1)
 #
 # Release
-# 
+#
 RELWWWDOCDIR=	$(WWWRELDIR)/doc
 RELRTFS=	$(RTFS:%=$(RTFRELDIR)/%)
 RELZIPS=	$(MEHTMZIP:%=$(WWWRELDIR)/%)
@@ -302,10 +302,10 @@ RELTXTS=	$(TXTS:%=$(RELWWWDOCDIR)/%) $(TXTS:%=$(MERELDIR)/%) \
 		$(TXTS:%=$(SRCRELDIR)/%)
 RELEHF=		$(JASMACDIR)/me.ehf
 RELCAT1=	$(CATMAN1:%=$(WWWRELDIR)/%)
-RELEASE=	$(RELRTFS) 	$(RELZIPS) 	$(RELTARS) 	$(RELTXTS) \
+RELEASE=	$(RELRTFS)	$(RELZIPS)	$(RELTARS)	$(RELTXTS) \
 		$(RELEHF)	$(RELCAT1)
 
-release: 	$(RELEASE)
+release:	$(RELEASE)
 
 # Windows RTF
 $(RELRTFS):	$(RTFS)
@@ -330,7 +330,7 @@ $(RELEHF):	me.ehf
 # Catman pages
 $(RELCAT1):	$(CATMAN1)
 		$(MKDIR) $(@D)
-		$(INSTALL_FIL) $(@F) $(@D)		
+		$(INSTALL_FIL) $(@F) $(@D)
 #
 clean::
 	$(RM) *.sm
@@ -572,7 +572,7 @@ me.hts: me.sm me.0 me.lbn me.tni forward.lbn logo.png
 		   me.sm me.0
 	$(HTS) -a $@ -E $(MANLOG) -s me/logo -b logo.png
 clean::
-	$(RM) me.hts	
+	$(RM) me.hts
 # Build Windows Help File.
 me.hlp: $(HC31) me.hpj
 	$(HC31) me.hpj
@@ -590,7 +590,7 @@ me.rtf: me.sm me.0 me.lbn me.tni forward.lbn me.hpj logo.bmp
 		   -tGlossary:Glossary		\
 		    me.sm me.0
 clean::
-	$(RM) me.rtf	
+	$(RM) me.rtf
 # Build MicroEmacs EHF file.
 me.ehf: meehf.hts
 	$(RMDIR) ehf
