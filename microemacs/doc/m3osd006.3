@@ -6,7 +6,7 @@
 .\"  Created By    : Steven Phillips
 .\"  Created       : Sat Aug 22 09:00:06 1998
 .\"
-.Id $Id: m3osd006.3,v 2.11 2006-08-13 14:18:03 jon Exp $
+.Id $Id: m3osd006.3,v 2.12 2006-08-20 16:37:26 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH "MainMenu" 3
@@ -112,6 +112,9 @@ menu, e.g. to open the edit menu use:
     0x020000 osd
 .CE
 Following is a brief description of the main menu items:
+.\"*************************************************************************
+.\" FILE
+.\"*************************************************************************
 .SS "File Menu"
 .IP "\fCNew\fR"
 Changes the current buffer to a new buffer.
@@ -146,48 +149,67 @@ in the dialog (note that characters '\fC\\\fR' and '\fC&\fR' must be protected
 with a '\fC\\\fR'  and the  '\fC&\fR'  can be used to set the Hot key) and the
 second line is the file name. A line with a single '\fC-\fR' character creates
 a separater line in the dialog.
-.IP "\fCFind Tag\fR"
-Only  visible when a \fCtags\fR  file is found in the current  directory,  the
-command  jumps to the  current tag or if not on a tag or the tag is not found,
-opens a dialog enabling the user to select a tag. See command
-.Ht find-tag 2
-for more information.
-.IP "\fCFind File\fR"
-Executes command
-.Ht file-browser 3 .
-.IP "\fCFTP\fR"
-Executes command
-.Ht ftp 3 .
+.\".IP "\fCFind Tag\fR"
+.\"Only  visible when a \fCtags\fR  file is found in the current  directory,  the
+.\"command  jumps to the  current tag or if not on a tag or the tag is not found,
+.\"opens a dialog enabling the user to select a tag. See command
+.\".Ht find-tag 2
+.\"for more information.
 .IP "\fCClose\fR"
-Executes a dialog form of the command
+Closes the current buffer, executes a dialog form of the command
 .Ht delete-buffer 2 .
+.\" -----------------
 .IP "\fCAttributes\fR"
-Opens a dialog  enabling the user to set the current buffers file  attributes.
+Opens a dialog  enabling the user to set the current buffers file  attributes,
+i.e. read and write permissions.
 See command
 .Ht file-attrib 3
 for more information.
 .IP "\fCSave\fR"
-Executes a dialog form of the command
+Saves the current buffer, executes a dialog form of the command
 .Ht save-buffer 2 .
 .IP "\fCSave As\fR"
-Executes a dialog form of the command
+Saves the contents of the current buffer as a new file, executes a dialog form
+of the command
 .Ht write-buffer 2 .
 .IP "\fCSave All\fR"
-Executes a dialog form of the command
+Saves all changes buffers and session  history,  executes a dialog form of the
+command
 .Ht save-all 3 .
-.IP "\fCPrinter Setup\fR"
+.IP "\fCReread File\fR"
+Reloads the  contents of the current  buffer from the file system,  discarding
+any changes, executes
+.Ht reread-file 3 .
+.\" -----------------
+.IP "\fCPrint Setup\fR"
 Opens a dialog which enables the user to configure the printer  driver, output
 location and page layout (executes command
 .Ht print-setup 3 ).
 .IP "\fCPrint\fR"
-Executes command
+Prints the contents of the current buffer to the printer, executes command
 .Ht print-buffer 2 .
-.IP "\fCBuffer\fR"
-Opens a sub-menu  listing all created  buffers,  selecting one will change the
-current buffer to the selected one.
+.\" -----------------
+.IP "\fCFile Browser\fR"
+Launches the file browser which enables the file system to be manipulated  and
+traversed, executes command
+.Ht file-browser 3 .
+.IP "\fCFTP Browser\fR"
+Launches the FTP browser, an FTP client, executes command
+.Ht ftp 3 .
+.\" -----------------
+.IP "\fCLoad Session\fR"
+Loads a new session into  MicroEmacs, the current  session is saved and closed
+and the new session is loaded. The user is prompted  from the command  line to
+provide the name of the new session to load. See
+.Ht read-session 3 .
+.\" -----------------
 .IP "\fCExit\fR"
-Executes command
+Exits the editor,  prompting  the user to save any unsaved  buffers,  executes
+command
 .Ht save-buffers-exit-emacs 2 .
+.\"*************************************************************************
+.\" EDIT
+.\"*************************************************************************
 .SS "Edit Menu"
 .IP "\fCUndo\fR"
 Undoes the last edit in the current buffer (executes command
@@ -202,247 +224,438 @@ Undo all  edits in the  current  buffer  until  the last  save or no more undo
 history is available. Executes the command
 .Ht undo 2
 with a 0 numerical argument.
+.\" -----------------
 .IP "\fCSet Mark\fR"
-Executes command
+Sets the position of start of a selected region, executes command
 .Ht set-mark 2 .
-.IP "\fCCut\fR"
-Executes command
-.Ht kill-region 2 .
-.IP "\fCCopy\fR"
-Executes command
+.IP "\fCCopy Region\fR"
+Copies a marked up region, executes command
 .Ht copy-region 2 .
+.IP "\fCKill Region\fR"
+Deletes a marked up region  and  places the  deleted  text in the kill  buffer
+which may be retrieved using \fBPaste\fR, executes command
+.Ht kill-region 2 .
+.IP "\fCDelete Region\fR"
+Deletes a marked up region but the  deleted  text is not saved in the the kill
+buffer and cannot be retrieved using \fBPaste\fR.
 .IP "\fCPaste\fR"
-Executes command
+Inserts  text  from  the  clipboard  into the  buffer  at the  current  cursor
+position, executes command
 .Ht yank 2 .
-.IP "\fCNarrow Out\fR"
+.IP "\fCCut Rectangle\fR"
+Deletes a selected  rectangular region from the buffer, the vertical extents
+of the cut are  determined by the column  position of the start and end of the
+selected region, executes command
+.Ht kill-rectangle 3 .
+.IP "\fCCopy Rectangle\fR"
+Copies a selected  rectangular region from the buffer, the vertical extents of
+the copy are  determined  by the column  position  of the start and end of the
+selected region, executes command
+.Ht copy-rectangle 3 .
+.IP "\fCPaste Rectangle\fR"
+Inserts a rectangle region into the buffer at the current cursor position (and
+for the subsequent lines at the given column position), executes the command 
+.Ht yank-rectangle 3 .
+.\" -----------------
+.IP "\fCInsert Symbol\fR"
+Dialog  presented  to select a character  symbol for  insertion,  executes the
+command
+.Ht insert-symbol 3 .
+.IP "\fCInsert Date/Time\fR"
+Inserts  the  current  date  and time at the  cursor  position,  a sub-menu
+is used to determine the format of the insertion string.
+.IP "\fCInsert File Name\fR"
+Inserts  the name of the file at the current  cursor  position,  executes  the
+command
+.Ht insert-file-name 2 .
+.IP "\fCInsert File\fR"
+Inserts  the  contents of a file into the buffer at the cursor  position,  the
+user is prompted for the name of the file to insert. Executes the command
+.Ht insert-file 2 .
+.IP "\fCDraw Lines\fR"
+Moves into line  drawing  mode, the cursor  keys are used to control  the line
+drawing,  use  \fBesc-h\fR  for help, \fBreturn\fR to exit draw mode and  \fBC-g\fR to quit draw mode  without
+making changes. Executes the command
+.Ht draw 3 .
+.\" -----------------
+.IP "\fCToggle Insert Mode\fR"
+Modifies character entry behavior, moves between overwrite and insertion mode,
+changes the buffer mode 
+.Ht over 2m .
+.IP "\fCToggle View Mode\fR"
+Toggles the buffer  between view mode and edit mode, in view mode the contents
+of the buffer may not be altered. Change the buffer mode
+.Ht view 2m .
+.\"*************************************************************************
+.\" SEARCH
+.\"*************************************************************************
+.SS "Search Menu"
+.IP "\fCIncremental Search\fR"
+Initiates an  incremental  search, the user is prompted to enter the string to
+search for, execute the command
+.Ht isearch-forward 2 .
+.IP "\fCHilight Search\fR"
+Opens a dialog which allows lines of the buffer to be searched and highlighted
+by changing the line color. Setting a line highlight is a temporary change, it
+does not effect any files and is lost when the buffer is deleted, see 
+.Ht osd-search 3 .
+.\" -----------------
+.IP "\fCFind\fR"
+Opens a dialogue for searching the buffer for a given string, see 
+.Ht osd-search 3 .
+.IP "\fCFind Next\fR"
+Finds the next string in the buffer using the last search string, uses
+.Ht hunt-forward 2 .
+.IP "\fCFind Prev\fR"
+Finds the previous string in the buffer using the last search string, uses
+.Ht hunt-backward 2 .
+.IP "\fCReplace\fR"
+Opens a dialogue for searching and replacing the buffer for a given string, see 
+.Ht osd-search 3 .
+.\" -----------------
+.IP "\fCFind in Files\fR"
+Initiates a string  search of the file system, in the directory of the current
+buffer using
+.Ht grep 3 .
+.IP "\fCReplace in Files\fR" 
+Initiates a string  search and replace of the file system, in the directory of
+the current buffer using
+.Ht query-replace-all-string 3 .
+.\" -----------------
+.IP "\fCSet Bookmark\fR"
+Places a bookmark in the buffer which  provides a quick method of returning to
+the buffer  position, the user is prompted for a single  character to identify
+the position the buffer. Executes command 
+.Ht set-alpha-mark 2 .
+.IP "\fCGoto Bookmark\fR"
+Moves the cursor to a book mark position defined with 
+.BR "Set Bookmark" ,
+the user is prompted for a single character that identifies the bookmark.
 Executes command
+.Ht goto-alpha-mark 2 .
+.IP "\fCGoto Fence\fR"
+When the  cursor is on a fence  character  (i.e.  \fC{\fR,  \fC}\fR,  \fC(\fR,
+\fC)\fR,  \fC[\fR,  \fC]\fR, ...) then the other matching fence is located and
+the buffer position is changed to the other fence character.
+Executes command
+.Ht goto-matching-fence 2 .
+.IP "\fCGoto Line\fR"
+Moves cursor to the specified line number or relative line position,  executes
+a dialog form of the command
+.Ht goto-line  2 .
+.IP "\fCGoto Tag\fR"
+Only  active  when a  \fCtags\fR  file is found in the  current  directory,  a
+dialog  is  presented  with the tags, on  selection  of a tag then the file is
+opened and the cursor position is moved to the definition of the tag.
+See command
+.Ht find-tag 2
+for more information.
+.\"*************************************************************************
+.\" VIEW
+.\"*************************************************************************
+.SS "View Menu"
+.IP "\fCNarrow Out\fR"
+Hides the selected region of the buffer, executes command
 .Ht narrow-buffer 2
 with a numeric argument of \fC4\fR.
 .IP "\fCNarrow To\fR"
-Executes command
+Hides all of the buffer with the exception of the selected region,
+executes command
 .Ht narrow-buffer 2
 with a numeric argument of \fC3\fR.
 .IP "\fCRemove Single Narrow\fR"
-Executes command
+Removes a single narrowed region of the buffer under the cursor. Executes command
 .Ht narrow-buffer 2
 with a numeric argument of \fC2\fR.
 .IP "\fCRemove All Narrows\fR"
-Executes command
+Removes all of the narrowed regions in the buffer, executes command
 .Ht narrow-buffer 2
 with a numeric argument of \fC1\fR.
-.SS "Search Menu"
-.IP "\fCSearch\fR"
-Executes a dialog form of the command
-.Ht isearch-forward 2 .
-.IP "\fCReplace\fR"
-Executes a dialog form of the command
-.Ht query-replace-string 2 .
-.IP "\fCHilight Search\fR"
-Opens  another  dialog  which  can be  used to add and  remove  hilighting  of
-individual  lines in the current buffer. Note that setting a line hilight is a
-temporary  change, it will not  effect any files etc and will be lost when the
-buffer is deleted, see 
-.Ht osd-search 3 .
-.IP "\fCGoto Line\fR"
-Executes a dialog form of the command
-.Ht goto-line  2 .
-.IP "\fCGoto Fence\fR"
-Executes command
-.Ht goto-matching-fence 2 .
-.IP "\fCSet Bookmark\fR"
-Executes command
-.Ht set-alpha-mark 2 .
-.IP "\fCGoto Bookmark\fR"
-Executes command
-.Ht goto-alpha-mark 2 .
-.SS "Insert Menu"
-.IP "\fCInsert Symbol\fR"
-Executes command
-.Ht insert-symbol 3 .
-.IP "\fCDate & Time\fR"
-Opens a  dialog  with  the  current  date and time in a  selection  of  common
-formats; selecting one of these will insert the string into the current buffer
-at the  current  position.  Note that the format  text  strings  depend on the
-current  language  (Default and American  languages use the order MM-DD-YY etc
-whereas the rest use DD-MM-YY). The names used for the day and month names can
-be defined using the Setup page of
-.Ht Organizer 3 .
-.IP "\fCFile\fR"
-Executes command
-.Ht insert-file 2 .
-.IP "\fCFile Name\fR"
-Executes command
-.Ht insert-file-name 2 .
-.IP "\fCMacro...\fR"
-Executes command
-.Ht insert-macro 2 .
+.\" -----------------
+.IP "\fCBuffer Info\fR"
+Provides  information  on the buffer current cursor  position on the mode line
+including line number, character under the cursor etc. See
+.Ht buffer-info 2 .
+.IP "\fC Word Count\fR"
+Counts the number of words in the selected region (between point and mark),
+executes 
+.Ht count-words 2 .
+.IP "\fCOccurrences\fR"
+Finds all  occurrences  of a given  string in the buffer. The user is prompted
+for the  string  to find. A second  window  opens and all  occurrences  of the
+string in the buffer are  presented,  selecting  an item from this list, using
+the mouse, moves the cursor to the specified occurrence. See
+.Ht occur 3 .
+.\" -----------------
+.IP "\fCBuffer\fR"
+Lists the current buffers in the editor,  selecting one changes the
+current buffer to the selection.
+.\" -----------------
+.IP "\fCMain Menu\fR"
+Hides or shows the Main Menu. If the main menu has been  hidden then  \fBF1\fR
+brings up the menu, the main menu may be re-activated then if necessary.
+.IP "\fCScroll Bars\fR"
+Hides or shows scroll bars within the buffer.
+.IP "\fCTool Bar\fR"
+Hides or shows the tool bar window, see
+.Ht toolbar 3 .
+.IP "\fCWhite Characters\fR"
+Hides or shows the white space characters in the buffer.
+.\"*************************************************************************
+.\" FORMAT
+.\"*************************************************************************
 .SS "Format Menu"
 .IP "\fCRestyle Buffer\fR"
-Executes command
+Re-styles the layout of the buffer based on the major-mode  setting.  Executes
+the command
 .Ht restyle-buffer 3 .
 .IP "\fCRestyle Region\fR"
-Executes command
+Re-styles  the  layout  of a  selected  region  of  the  buffer  based  on the
+major-mode setting. Executes the command
 .Ht restyle-region 3 .
-.IP "\fCClean Buffer\fR"
-Executes command
-.Ht clean 3 .
-.IP "\fCChange Buffer Char Set\fR"
-Executes command
-.Ht charset-change 3 .
+.IP "\fCIncrease Indent\fR"
+Increases  the  indentation  of a line or region by a single  single  Tab stop
+position. Executes the command 
+.Ht indent-increase 3 .
+.IP "\fCDecrease Indent\fR"
+Decreases  the  indentation  of a line or region by a single  single  Tab stop
+position. Executes the command 
+.Ht indent-decrease 3 .
+.\" -----------------
 .IP "\fCIQ Fill Paragraph\fR"
-Executes command
+Reformat a paragraph  using the current fill mode, handling  embedded  bullets
+with no line separation. Executes the command
 .Ht ifill-paragraph 3 .
 .IP "\fCFill Paragraph\fR"
-Executes command
-.Ht fill-paragraph 2 .
+Reformat a paragraph  using the current fill mode using the standard paragraph
+fill mode. Executes the command
+.Ht fill-paragraph 3 .
 .IP "\fCFill All Paragraphs\fR"
-Executes command
+Reformats all  paragraphs in the buffer using the standard  paragraph  filling
+mode. Executes command
 .Ht fill-paragraph 2
 with a very large  positive  numerical  argument.  Note that this only effects
 paragraphs from the current position onwards.
-.IP "\fCParagraph to Line\fR"
-Executes command
-.Ht paragraph-to-line 3 .
-.IP "\fCAll Paragraphs to Line\fR"
-Executes command
-.Ht paragraph-to-line 3
-with a very large  positive  numerical  argument.  Note that this only effects
-paragraphs from the current position onwards.
-.IP "\fCSort Lines\fR"
-Executes command
-.Ht sort-lines 2 .
-.IP "\fCIgnore Case Sort Lines\fR"
-Executes command
-.Ht sort-lines-ignore-case 3 .
+.IP "\fCAll Paragraphs to Lines\fR"
+Converts  all  paragraphs  to a single line, one line per original  paragraph.
+Paragraphs are typically converted to a single line before copying into a Word
+Processor (i.e. Word,  StarOffice  etc.). The Word Processor  performs its own
+text wrapping  therefore it is important that \*(mS  paragraphs with new lines
+in them are not copied.
+.\" -----------------
+.IP "\fCChange Character Set ...\fR"
+Converts  the  ASCII  text from one  character  set to  another,  this  allows
+diacritical marks to be maintained.
+.IP "\fCTabs to Spaces\fR"
+Converts \fCTAB\fR  characters to spaces whilst retaining the correct tab stop
+positions  within the file. Note that if the tab stops  appear to be incorrect
+then the tab width should be temporarily changed using 
+.Ht buffer-setup 3 
+before converting to spaces.
+.IP "\fCClean Buffer\fR"
+Cleans up the buffer by removing white space from the ends of all lines,
+see 
+.Ht clean 3 .
+.\" -----------------
 .IP "\fCCapitalize Word\fR"
-Executes command
+Capitalizes the characters from the cursor  position, or next word, to the end
+of the word using
 .Ht capitalize-word 2 .
 .IP "\fCLower Case Word\fR"
-Executes command
+Changes characters to lowercase from the cursor position, or next word, to the
+end of the word using
 .Ht lower-case-word 2 .
-.IP "\fCLower Case Region\fR"
-Executes command
-.Ht lower-case-region 2 .
 .IP "\fCUpper Case Word\fR"
-Executes command
+Changes characters to uppercase from the cursor position, or next word, to the
+end of the word using
 .Ht upper-case-word 2 .
+.IP "\fCLower Case Region\fR"
+Lowercase all characters in the current region using 
+.Ht lower-case-region 2 .
 .IP "\fCUpper Case Region\fR"
-Executes command
+Uppercase all characters in the current region using 
 .Ht upper-case-region 2 .
-.SS "Execute Menu"
-.IP "\fCExecute Command\fR"
-Executes command
-.Ht execute-named-command 2 .
-.IP "\fCExecute Buffer\fR"
-Executes command
-.Ht execute-buffer 2 .
-.IP "\fCExecute File\fR"
-Executes command
-.Ht execute-file 2 .
-.IP "\fCStart Kbd Macro\fR"
-Executes command
-.Ht start-kbd-macro 2 .
-.IP "\fCQuery Kbd Macro\fR"
-Executes command
-.Ht kbd-macro-query 2 .
-.IP "\fCEnd Kbd Macro\fR"
-Executes command
-.Ht end-kbd-macro 2 .
-.IP "\fCExecute Kbd Macro\fR"
-Executes command
-.Ht execute-kbd-macro 2 .
-.IP "\fCName Kbd Macro\fR"
-Executes command
-.Ht name-kbd-macro 2 .
-.IP "\fCIpipe command\fR"
-Executes command
-.Ht ipipe-shell-command 2 .
-.IP "\fCShell\fR"
-Executes command
-.Ht shell 2 .
+.\"*************************************************************************
+.\" TOOLS
+.\"*************************************************************************
 .SS "Tools Menu"
 .IP "\fCCurrent Buffer Tools\fR"
 For some file formats \*(mS provides a file format  specific set of tools, see
 the
 .Hl "file type" FileTypes -
 help page for more specific information.
-.IP "\fCCount Words\fR"
-Executes command
-.Ht count-words 2 .
+.\" -----------------
 .IP "\fCSpell Word\fR"
-Executes command
+Spell checks a word entered on the command line, 
+executes the command
 .Ht spell-word 3 .
 .IP "\fCSpell Buffer\fR"
-Executes command
+Spell checks the buffer from the current cursor position onwards,
+executes command
 .Ht spell-buffer 3 .
 .IP "\fCWord Complete\fR"
-Takes the  incomplete  word to the left of the cursor and attempts to complete
-the word by using the users current language dictionary. Executes command
+Takes the incomplete  word to the left of the cursor and attempts to complete
+the word by using the users current  language  dictionary, use \fCTAB\fR for a
+list of possible completions. Executes the command
 .Ht expand-word 3 .
+.\" -----------------
 .IP "\fCCompare Windows\fR"
-Executes command
+Compares the contents of two buffers, the  comparison  starts from the current
+cursor  position  in each  buffer  and the cursor  position  should be aligned
+before starting the comparison, executes the command
 .Ht compare-windows 2 .
-.IP "\fCCompile\fR"
-Executes command
-.Ht compile 3 .
-.IP "\fCGrep\fR"
-Executes command
-.Ht grep 3 .
-.IP "\fCGraphical Diff\fR"
-Executes command
-.Ht gdiff 3 .
-.IP "\fCDiff\fR"
-Executes command
-.Ht diff 3 .
 .IP "\fCDiff Changes\fR"
-Executes command
+Compares  the current  buffer with the last backup  version of the buffer, the
+buffer has to be saved before the  comparison  may be performed,  executes the
+command
 .Ht diff-changes 3 .
+.IP "\fCDiff\fR"
+Runs a 
+.Ht diff 3
+command  to  difference  two  files,  the user is  prompted  each of the files
+before  running the command. The results of the  difference are presented in a
+new buffer window.
+.IP "\fCGraphical Diff\fR"
+Runs a graphics  difference  between  two files where the files are  presented
+side by side. The user is prompted for the two files to compare. See also 
+.Ht gdiff 3 
+which uses a command line prompt for the files rather than a dialog.
+.IP "\fCCompile\fR"
+Starts a compilation or build process, 
+executes the command
+.Ht compile 3 .
+.\" -----------------
+.IP "\fCSort Lines\fR"
+Performs  an  alphabetical  case  sensitive  sort of the  lines in a  selected
+region, the lines are re-ordered in ascending  alphabetic  order. Executes the
+command
+.Ht sort-lines 2 .
+.IP "\fCSort Lines (Ignore Case)\fR"
+Performs  an  alphabetical  case  insensitive  sort of the lines in a selected
+region, the lines are re-ordered in ascending  alphabetic  order. Executes the
+command
+.Ht sort-lines 2 .
+.IP "\fCUnique Lines\fR"
+Removes  duplicated  adjacent  lines in a region. The region  should be sorted
+before 
+.Ht uniq 3 .
+.\" -----------------
+.IP "\fCUser Setup\fR"
+Runs a dialog interface to configure \*(mS, executes the command
+.Ht user-setup 3 .
+.IP "\fCBuffer Setup\fR"
+Runs a dialog  interface to change the session  configuration of a buffer i.e.
+assignment of the major-mode etc. This command changes the current buffer only
+and does not affect other buffers. Executes the command
+.Ht buffer-setup 3 .
+.IP "\fCMajor Mode Setup\fR"
+Runs a dialog interface which allows the major mode to be changed. 
+Executes the command
+.Ht major-mode-setup 3 .
+.IP "\fCScheme Editor\fR"
+Runs a dialog  which  allows  the  current  highlighting  scheme to be edited,
+modification of the scheme affects all buffers. Executes the command
+.Ht scheme-editor 3 .
+.\"*************************************************************************
+.\" ADVANCED
+.\"*************************************************************************
+.SS "Advanced Menu"
+.IP "\fCRecord Macro\fR"
+Starts recording the key strokes to create a keyboard macro, see 
+.Ht start-kbd-macro 2 .
+.IP "\fCExecute Macro\fR"
+Executes a previously recorded keyboard macro, see
+.Ht execute-kbd-macro 2 .
+.IP "\fCName Macro\fR"
+Allows a keyboard macro to be named, see
+.Ht name-kbd-macro 2 .
+.\" -----------------
+.IP "\fCExecute Command\fR"
+Executes a named \*(mS  command,  the user is prompted to enter the command to
+be executed, see 
+.Ht execute-named-command 2 .
+.IP "\fCExecute File\fR"
+Executes a \*(mS macro file,  typically  used to load and install  Macros into
+the editor, see 
+.Ht execute-file 2 .
+.\" -----------------
+.IP "\fCCalculate\fR"
+Invokes a simple command line calculator, see
+.Ht calc 3 .
+.IP "\fCNotes\fR"
+Invokes the 
+.Ht notes 3 
+tool which may be used to organize and store  miscellaneous  information (i.e.
+short notes). 
 .IP "\fCOrganizer\fR"
-Executes command
-.Ht organizer 3 .
-.IP "\fCMail\fR"
-Executes command
-.Ht mail 3 .
+Invokes the 
+.Ht organizer 3 
+tool which provides a calendar and address book. 
+.IP "\fCSend Mail\fR"
+Create and send a electronic  mail message, this  requires  that the mail tool
+has been configured, see
+.Ht mail-send 3 .
 .IP "\fCView Mail\fR"
-Executes command
+Start the mail reading tool 
 .Ht vm 3 .
-.IP "\fCMore...\fR"
-Opens a sub-menu with a collection of other useful miscellaneous tools.
+.\" -----------------
+.IP "\fCIpipe command\fR"
+Start a incremental  shell command, the command runs in the background and the
+results are collected in a new buffer window, using 
+.Ht ipipe-shell-command 2 .
+.IP "\fCShell\fR"
+Creates a new shell command window outside of the editor using
+.Ht shell 2 .
+.\"*************************************************************************
+.\" WINDOW
+.\"*************************************************************************
 .SS "Window Menu"
 .IP "\fCSplit Window V\fR"
-Executes command
+Splits the current buffer window into two vertically  (stacked),  executes the
+command
 .Ht split-window-vertically 2 .
 .IP "\fCGrow Window V\fR"
-Executes command
-.Ht change-window-depth 2
+Increases the height of the current buffer window by a single line, executes the
+command
+.Ht change-window-depth 2 
 with an argument of 1.
 .IP "\fCShrink Window V\fR"
-Executes command
+Reduces the height of the current  buffer  window by a single  line,  executes
+command
 .Ht change-window-depth 2
 with an argument of -1.
 .IP "\fCSplit Window H\fR"
-Executes command
+Splits  the  current  buffer  window  into two  horizontally  (side by  side),
+executes command
 .Ht split-window-horizontally 2 .
 .IP "\fCGrow Window H\fR"
-Executes command
+Increases the width of the current buffer window by a single character, executes the
+command
 .Ht change-window-width 2
 with an argument of 1.
 .IP "\fCShrink Window H\fR"
-Executes command
+Reduces  the  width  of the  current  buffer  window  by a  single  character,
+executes the command
 .Ht change-window-width 2
 with an argument of -1.
+.\" -----------------
 .IP "\fCOne Window\fR"
-Executes command
+Makes the current  buffer the only window on the screen, the other buffers are
+removed from the screen, 
+executes the command
 .Ht delete-other-windows 2 .
 .IP "\fCDelete Window\fR"
-Executes command
+Removes  the  current  buffer  window  from  the  screen,  other  windows  are
+re-organized to occupy the space created by deleting the window, executes the command
 .Ht delete-window 2 .
+.\" -----------------
 .IP "\fCPrevious Window\fR"
-Executes command
+Moves focus to the previous window using 
 .Ht previous-window 2 .
 .IP "\fCNext Window\fR"
-Executes command
+Moves focus to the next window using 
 .Ht next-window 2 .
+.\" -----------------
 .IP "\fCCreate New Frame\fR"
 Create  an new  external  frame,  only  available  on  version  which  support
 multiple-window frames. Executes command
@@ -452,55 +665,72 @@ Closes  the  current   frame,  only   available  on  version   which   support
 multiple-window  frames. The command  will fail if this is the only frame, use
 File -> Exit to exit \*(mS, executes command
 .Ht delete-frame 2 .
+.IP "\fCNext Frame\fR"
+Shows the next internal frame, see
+.Ht next-frame 2 .
+.\"*************************************************************************
+.\" HELP
+.\"*************************************************************************
 .SS "Help Menu"
-.IP "\fCCurr Buffer Help\fR"
-For some file formats \*(mS  provides a file format  specific help page giving
-details of key-bindings and tools specific to the current buffers file type.
+.IP "\fCMajor Mode Help\fR"
+Display  the help  information  associated  with the current  buffer. For some
+major  mode (file  format)  \*(mS  provides  a major mode  specific  help page
+providing  details of  key-bindings  and tools specific to the current buffers
+file type.
 .IP "\fCGeneral Help\fR"
-Executes command
-.Ht osd-help 3 .
-.IP "\fCHelp on Command\fR"
-Executes command
-.Ht help-command 2 .
-.IP "\fCHelp on Variable\fR"
-Executes command
-.Ht help-variable 2 .
-.IP "\fCDescribe Bindings\fR"
-Executes command
+Starts the 
+.Ht osd-help 3 
+dialog which allows the help pages to the searched. 
+.\" -----------------
+.IP "\fCList Bindings\fR"
+Lists the key bindings  associated  with the current  buffer, the bindings are
+displayed in a separate window and include the buffer and global key bindings. 
+Executes the command
 .Ht describe-bindings 2 .
-.IP "\fCDescribe key\fR"
-Executes command
-.Ht describe-key 2 .
-.IP "\fCDescribe Variable\fR"
-Executes command
-.Ht describe-variable 2 .
-.IP "\fCDescribe Word\fR"
-Executes command
-.Ht describe-word 3 .
 .IP "\fCList Buffers\fR"
-Executes command
+Lists the buffers  currently  active  within \*(mS, the list is presented in a
+new  buffer  window  and shows the  buffer  name, size,  associated  files and
+current mode. Executes the command
 .Ht list-buffers 2 .
 .IP "\fCList Commands\fR"
-Executes command
+Lists all of the available  commands and key bindings in a new buffer  window,
+executes the command
 .Ht list-commands 2 .
 .IP "\fCList Registry\fR"
-Executes command
+Presents  the registry  hierarchy in a separate  buffer  window,  executes the
+command
 .Ht list-registry 2 .
 .IP "\fCList Variables\fR"
-Executes command
+Presents a list of all of the global  variables and their assigned values in a
+new window, executes the command
 .Ht list-variables 2 .
 .IP "\fCCommand Apropos\fR"
-Executes command
+Produces a list of commands that contain a given string as part of their name,
+the user is prompted to enter the string to search for. Executes the command
 .Ht command-apropos 2 .
-.IP "\fCBuffer Setup\fR"
-Executes command
-.Ht buffer-setup 3 .
-.IP "\fCUser Setup\fR"
-Executes command
-.Ht user-setup 3 .
-.IP "\fCScheme Editor\fR"
-Executes command
-.Ht scheme-editor 3 .
+.\" -----------------
+.IP "\fCDescribe key\fR"
+Determines  the command that is bound to a specific  key, user is prompted for
+the key  sequence,  the command  bound to that key is displayed.  executes the
+command
+.Ht describe-key 2 .
+.IP "\fCDescribe Variable\fR"
+Determine  the value of a \*(mS  variable,  user is prompted  for the variable
+name. Executes the command
+.Ht describe-variable 2 .
+.IP "\fCDescribe Word\fR"
+A  dictionary  function  that looks up the meaning of a word  specified on the
+command line, executes the command
+.Ht describe-word 3 .
+.IP "\fCHelp on Command\fR"
+Provides  help on a specific  \*(mS  command,  user  prompted for the command name.
+Executes the command
+.Ht help-command 2 .
+.IP "\fCHelp on Variable\fR"
+Provides  help on a specific  \*(mS  variable,  user prompted for the variable
+name. Executes the command
+.Ht help-variable 2 .
+.\" -----------------
 .IP "\fCGames\fR"
 Opens a sub-menu listing all available games, see
 .Hl "Games" Games -
@@ -510,7 +740,8 @@ Opens on-line
 .Hl "Contact" Contact -
 information.
 .IP "\fCAbout MicroEmacs\fR"
-Executes command
+Version and status information on the editor, 
+executes the command
 .Ht about 2 .
 .SH NOTES
 The main menu is defined using
