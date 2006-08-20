@@ -1,0 +1,110 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1999-2006 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.\"  Object Name   : m3mac083.3
+.\"  Created By    : Jon Green
+.\"
+.Id $Id: m3mac083.3,v 2.1 2006-08-20 20:36:40 jon Exp $
+.Im MicroEmacs shell|comparison
+.so me.tni
+.TH xdiff 3
+.XI xdiff - "External graphical file difference" command|shell
+.XI %xdiff-com 5 "xdiff command line" variable
+.SH NAME
+xdiff \- External graphical file difference
+.br
+%xdiff-com \- Extenal graphical differnce xdiff(1) command line
+.Me $a
+.SH SYNOPSIS
+.na
+.Me "|xdiff"
+.B xdiff
+"\fIleftVersion\fR"
+"\fIrightVersion\fR"
+.sp
+.Me "|%xdiff-com"
+\fC%xdiff-com\fR "\fIstring\fR"
+.sp
+X-Windows "\fCxdiff -wb %lf %rf\fR" when using \fBxdiff\fR from
+.I http://reality.sgiweb.org/rudy/xdiff/
+.sp
+MS-Windows "\fCbc2.exe %lf %rf /title1=%lt /title2=%rt\fR"
+when using \fBBeyond Compare\fR.
+.ad
+.SH DESCRIPTION
+.B xdiff
+is a macro wrapper that invokes an external graphical file difference utility,
+named after the original  X-Windows utility of the same name. The utility will
+usually  display  two files side by side and color code the  differences,  the
+differences  may then be selected to merge the changes  into a new output file
+which may (or may not) overwrite one of the original input files.
+.PP
+.B xdiff
+executes the difference utility
+.Hr xdiff 1
+command (or equivalent) with the command line set by the
+.B %xdiff-com
+variable    and   the    user    supplied    files    \fIleftVersion\fR    and
+\fIrightVersion\fR. The command line variables are referenced from the 
+.B %xdiff-com
+as follows:
+.IP \fB%lf\fR
+The absolute file name of the left-hand file, \fIleftVersion\fR.
+.IP \fB%rf\fR
+The absolute file name of the right-hand file, \fIrightVersion\fR.
+.IP \fB%ln\fR
+The base name of the left-hand file, \fIleftVersion\fR.
+.IP \fB%rn\fR
+The base name of the left-hand file, \fIleftVersion\fR.
+.LP
+The 
+.B %xdiff-com
+variable  should  include  the  appropriate  command to invoke the  difference
+utility and use \fB%\fR place  holders for the  arguments.  \*(mS will fill in
+the \fB%\fR arguments with their correct values on invocation. 
+.BP "UNIX"
+\s-1UNIX\s0 environments may use 
+.Hr xdiff 1
+which is available from 
+.BR http://reality.sgiweb.org/rudy/xdiff/ .
+The variable command line may be defined as:
+.LP
+.RS
+.Me $emf-scheme
+.CS 0
+set-variable %xdiff-com "xdiff -wb %lf %rf"
+.CE
+.Me $ehf-scheme
+.RE
+The \fB-wb\fR options will ignore while space and trailing blanks.
+.ne 5
+.BP "Microsoft Windows"
+Microsoft  Windows  environments may use something like \fBBeyond  Compare\fR.
+The variable command line may be defined as:
+.LP
+.RS
+.Me $emf-scheme
+.CS 0
+set-variable %xdiff-com "bc2.exe %lf %rf /title1=%lt /title2=%rt"
+.CE 
+.Me $ehf-scheme
+.RE
+In this case the \fB%lt\fR  values have been used for the title names for each
+of the windows in the utility.
+.SH NOTES
+\fBxdiff\fR is a macro defined in \fCtools.emf\fR,  inspired by the \s-1UNIX\s0
+utility of the same name
+.Hr xdiff 1
+.SH "SEE ALSO"
+.na
+.Ht compare-windows 2 ,
+.Ht compile 3 ,
+.Hr diff 1 ,
+.Ht gdiff 3 ,
+.Ht gdiff 3f ,
+.Ht grep 3 ,
+.Ht %grep-com 5 .
+.ad
+.FH
