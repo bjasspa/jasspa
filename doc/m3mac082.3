@@ -1,0 +1,47 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m3mac082.3,v 2.1 2006-08-20 17:17:09 jon Exp $
+.Im MicroEmacs command|indent
+.so me.tni
+.TH indent-increase 3
+.XI indent-increase - "Increase the line indentation"
+.XI indent-decrease - "Decrease the line indentation"
+.SH NAME
+indent-increase \- Increase the line indentation
+.br
+indent-decrease \- Decrease the line indentation
+.Me $a
+.SH SYNOPSIS
+.na
+.Me "|indent-increase"
+.I 
+.B indent-increase
+.Me "|indent-decrease"
+.I n
+.B indent-decrease
+.ad
+.SH DESCRIPTION
+.B indent-increase
+increases  the  indentation  of a line  or  selection  region  by the  numeric
+argument \fIn\fR tab stops defined by 
+.Ht $buffer-indent-width 5 .
+If the argument is negative then the  indentation  is reduced by the specified
+number of tab stops. The default when omitted is a single indentation level.
+.PP
+.B indent-decrease
+operates in the same way as 
+.B indent-increase
+except the indentation is decreased.
+.SH NOTES
+.B indent-increase
+and 
+.B indent-decrease
+are defined in \fCformat.emf\fR.
+.SH "SEE ALSO"
+.na
+.Ht $buffer-indent-width 5 .
+.ad
+.FH

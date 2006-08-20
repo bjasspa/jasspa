@@ -6,7 +6,7 @@
 .\"  Created By    : Steven Phillips
 .\"  Created       : Sat Aug 22 09:00:06 1998
 .\"
-.Id $Id: m3osd006.3,v 2.12 2006-08-20 16:37:26 jon Exp $
+.Id $Id: m3osd006.3,v 2.13 2006-08-20 17:17:08 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH "MainMenu" 3
@@ -246,7 +246,7 @@ position, executes command
 Deletes a selected  rectangular region from the buffer, the vertical extents
 of the cut are  determined by the column  position of the start and end of the
 selected region, executes command
-.Ht kill-rectangle 3 .
+.Ht kill-rectangle 2 .
 .IP "\fCCopy Rectangle\fR"
 Copies a selected  rectangular region from the buffer, the vertical extents of
 the copy are  determined  by the column  position  of the start and end of the
@@ -255,7 +255,7 @@ selected region, executes command
 .IP "\fCPaste Rectangle\fR"
 Inserts a rectangle region into the buffer at the current cursor position (and
 for the subsequent lines at the given column position), executes the command 
-.Ht yank-rectangle 3 .
+.Ht yank-rectangle 2 .
 .\" -----------------
 .IP "\fCInsert Symbol\fR"
 Dialog  presented  to select a character  symbol for  insertion,  executes the
@@ -429,7 +429,7 @@ with no line separation. Executes the command
 .IP "\fCFill Paragraph\fR"
 Reformat a paragraph  using the current fill mode using the standard paragraph
 fill mode. Executes the command
-.Ht fill-paragraph 3 .
+.Ht fill-paragraph 2 .
 .IP "\fCFill All Paragraphs\fR"
 Reformats all  paragraphs in the buffer using the standard  paragraph  filling
 mode. Executes command
@@ -594,7 +594,7 @@ tool which provides a calendar and address book.
 .IP "\fCSend Mail\fR"
 Create and send a electronic  mail message, this  requires  that the mail tool
 has been configured, see
-.Ht mail-send 3 .
+.Ht mail 3 .
 .IP "\fCView Mail\fR"
 Start the mail reading tool 
 .Ht vm 3 .
