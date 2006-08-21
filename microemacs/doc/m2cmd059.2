@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd059.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd059.2,v 2.6 2006-08-21 20:40:45 jon Exp $
 .Im MicroEmacs command|region
 .ds C0 "(\fB\*(cXa\fR)\ \&
 .so me.tni
@@ -16,6 +16,9 @@ goto-alpha-mark \- Move the cursor to a alpha marked location
 .na
 .B goto-alpha-mark
 "\fI?\fR" \*(C0
+.br
+.I 0
+.B goto-alpha-mark
 .ad
 .SH DESCRIPTION
 .B goto-alpha-mark
@@ -26,6 +29,13 @@ mark must already be defined using
 .Ht set-alpha-mark 2 .
 This  functionality is useful for rapidly returning back to locations in large
 files.
+.PP
+.B goto-alpha-mark
+with a numeric  argument  of zero (0) returns a string  containing  all of the
+alpha  marks  that  exist in the  current  buffer.  The alpha  mark  string is
+returned in 
+.Ht $result 5 ,
+this is an empty  string if there are no alpha marks in the buffer.  
 .SH "SEE ALSO"
 .na
 .Ht set-alpha-mark 2 .
