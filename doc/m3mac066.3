@@ -3,16 +3,20 @@
 .\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac066.3,v 2.3 2004-01-22 00:56:47 jon Exp $
+.Id $Id: m3mac066.3,v 2.4 2006-08-21 20:22:11 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH toolbar 3
-.XI toolbar - "Open the tool bar"
+.XI toolbar - "Toggle tool bar visibility"
+.XI toolbar-open - "Open the tool bar"
 .XI toolbar-close - "Close the tool bar" 
 .XI toolbar-refresh - "Update the tool bar" command|macrodevelop
 .SH NAME
 .Me "|toolbar"
-toolbar \- Open the tool bar.
+toolbar \- Toggle tool bar visibility.
+.br
+.Me "|toolbar-open"
+toolbar-open \- Open the tool bar.
 .br
 .Me "|toolbar-close"
 toolbar-close \- Close the tool bar
@@ -22,7 +26,10 @@ toolbar-refresh \- Update the tool bar
 .Me $a
 .SH SYNOPSIS
 .na
+.I n
 .B toolbar
+.br
+.B toolbar-open
 .br
 .B toolbar-close
 .br
@@ -45,6 +52,10 @@ toolbar is started.  User  defined  toolbars may be added by  redefinging  the
 toolbar variables at runtime.
 .PP
 .B toolbar
+toggles  the  visibility  of the  toolbar,  i.e. if the  toolbar is open it is
+closed and vica versa. If the numeric  argument \fIn\fR is specified then zero
+closes the toolbar and non-zero opens the toolbar.
+.B toolbar-open
 initializes  and starts the toolbar if it is not already  running. The toolbar
 is loaded and  instantiated  in the system. The  toolbar  may be  subsequently
 closed using 
