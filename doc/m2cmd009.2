@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1988-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1988-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd009.2,v 2.5 2002-01-11 21:58:41 jon Exp $
+.Id $Id: m2cmd009.2,v 2.6 2006-08-21 20:03:21 jon Exp $
 .Im MicroEmacs command|bind;command|help
 .ds C0 "(\fB\*(cHa\fR)\ \&
 .so me.tni
@@ -14,13 +14,16 @@ command-apropos \- List commands involving a concept
 .Me $a
 .SH SYNOPSIS
 .na
+.I n
 .B command-apropos
 "\fIstring\fR" (\fB\*(cHa\fR)
 .ad
 .SH DESCRIPTION
 .B command-apropos
-compiles a list of all commands with  \fIstring\fR in their name, also giving
-their current key bindings.
+compiles a list of all commands with  \fIstring\fR  in their name, also giving
+their current key bindings.  Only commands that are not hidden are  displayed,
+if a numeric  argument  of 0 is  supplied  then all  commands  are  displayed,
+irrespective of their visibility.
 .SH EXAMPLE
 To find all of the  commands  with  "\fCcommand\fR"  in their  name space then
 issue the command  "\fC\*(cHa command\fR"  which  generates a list of commands

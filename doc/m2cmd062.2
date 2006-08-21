@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd062.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd062.2,v 2.6 2006-08-21 20:03:21 jon Exp $
 .Im MicroEmacs command|cursor
 .ds C0 "(\fB\*(cHc\fR)\ \&
 .so me.tni
@@ -14,6 +14,7 @@ list-commands \- List available commands
 .Me $a
 .SH SYNOPSIS
 .na
+.I n
 \fBlist-commands\fR \*(C0
 .ad
 .SH DESCRIPTION
@@ -26,6 +27,10 @@ defined  by  \*(mE  and  presents  a list  of  those  commands  in the  buffer
 .LP
 Where  multiple  keys  are  bound  to  the  same  command,  then  each  of the
 \fIkeyCode\fR's is shown.
+.PP
+.B list-commands 
+only displays  visible  commands, if a numeric  argument \fIn\fR of 0 is given
+then all commands are displayed, irrespective of their hidden status.
 .PP
 .B list-commands
 is similar to
@@ -62,6 +67,7 @@ buffer-unbind-key
 .CE 0
 .SH "SEE ALSO"
 .na
+.Ht command-apropos 2 ,
 .Ht describe-bindings 2 ,
 .Ht list-variables 2 .
 .ad
