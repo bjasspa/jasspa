@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd158.2,v 2.9 2006-08-20 11:06:24 jon Exp $
+.Id $Id: m2cmd158.2,v 2.10 2006-08-21 19:52:07 jon Exp $
 .Im MicroEmacs command|file|macrodevelop
 .so me.tni
 .TH file-op 2
@@ -18,7 +18,9 @@ file-op \- File system operations command
 [ ( [ "\fIfrom-file\fR" "\fIto-file\fR" ] ) |
 .br
 .RS
-( ["\fIdelete-file\fR"] ) | ( ["\fIdir-name\fR"] ) ]
+( ["\fIdelete-file\fR"] ) | ( ["\fIdir-name\fR"] ) |
+.br
+( [ "\fIchmod-file\fR" "\fImode\fR" ] ) ]
 .RE
 .ad
 .SH DESCRIPTION
@@ -43,7 +45,15 @@ specified   \fIfrom-file\fR   is  copied  to  \fIto-file\fR.
 When this bit is set the  command  functionality  is  changed  to making a new
 directory,  the specified  \fIdir-name\fR  is the name of the new directory. A
 file or directory of the given name must not already exist.
-.PP
+.IP \fB0x200\fR
+When this bit is set the  command  functionality  is changed to a change  mode
+type of operation.  \fIchmod-file\fR is the name of the file (or directory) to
+change and  \fImode\fR is the integer mode to apply. Note that the  \fImode\fR
+value is operating  system specific. The file attributes may be retrieved with
+the 
+.Ht &stat 4 
+command.
+.LP
 Only one operation can be performed per  invocation. The following bits in the
 given  argument  \fIn\fR  can  be  used  to  effect  the  behaviour  of  these
 operations:
@@ -104,6 +114,7 @@ Failure due to source and destination files are URLs.
 .Ht ftp 3 ,
 .Ht find-file 2 ,
 .Ht write-buffer 2 ,
+.Ht &stat 4 ,
 .Ht $result 5 ,
 .Ht $temp-name 5 .
 .ad

@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac078.3,v 2.3 2006-08-13 14:18:04 jon Exp $
+.Id $Id: m3mac078.3,v 2.4 2006-08-21 19:52:06 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH notes 3
@@ -11,6 +11,8 @@
 .XI notes-file - "Open a notes database file"
 .XI notes-close - "Close the notes window"
 .XI notes-import-skwyrul - "Import a Skwyrul index file (skwyrul_l.htm)"
+.XI notes-context - "Create/Access buffer context note"
+.XI notes-instant - "Create quick note"
 .XI enf 8 "Notes database file" files
 .SH NAME
 notes \- Tagged hierarchical database of notes.
@@ -22,6 +24,10 @@ notes \- Tagged hierarchical database of notes.
 .B notes-file
 .br
 .B notes-close
+.br
+.B notes-context
+.br
+.B notes-instant
 .ad
 .SH DESCRIPTION
 .B notes
@@ -70,32 +76,50 @@ the text body pane.
 .PP
 Notes  are add and  removed  from the notes  tree  pane. A mouse  right  click
 presents a menu of options that operate on the current node as follows:-
-.IP "\fBTidy Tree\fR - \fCt\fR/\fCRETURN\fR"
+.IP "\fBTidy Tree\fR - \fCt\fR/\fCreturn\fR"
 At the current node then close the note hierarchy. \fCt\fR will close the node
 a  \s-1RETURN\s0  at the node will open or close it,  depending on the current
 state.
 .IP "\fBRename Note\fR \- \fCn\fR"
-Edit the name of the note, a dialog is  presented  and a free form labelof the
+Edit the name of the note, a dialog is presented  and a free form label of the
 note may be edited.
-.IP "\fBDelete Note\fR \- \fCDEL\fR"
+.IP "\fBDelete Note\fR \- \fCdelete\fR"
 Delete  the note from the tree.  This  deletes  the label and the note. if the
 note has any children then all children are deleted.
 .IP "\fBCut Note\fR \- \fCx\fR"
-Delete a note,  including  any child  notes  from the tree,  allowing  the cur
+Delete a note,  including  any child  notes  from the tree,  allowing the cut
 information to be pasted back to a different location in the tree. (See 
 \fBPaste\fR \fBNote\fR).
+.IP "\fBPaste Note\fR \- \fCv\fR"
+Inserts a cut note (or note tree) back into the list at the current position.
 .IP "\fBMove Note Up\fR \- \fCu\fR"
 Move a note up the tree hierarchy, at the same level.
 .IP "\fBMove Note Down\fR \- \fCd\fR"
 Move a note down the tree hierarchy, at the same level.
-.IP "\fBInsert New Note\fR \- \fCINSERT\fR"
+.IP "\fBInsert New Note\fR \- \fCinsert\fR"
 Insert a new note as a child of the current node. The user is prompted for the
 name of the note, the name may be  entered  and the cursor is left in the body
 pane for text entry.
+.\"---------
+.IP "\fBForward Note\fR - \fCn\fR" 
+Moves  to the  next  note.  Within  the  note  window  then  \fB\*cpage-down\fR
+similarly advances to the next note.
+.IP "\fBBackward Note\fR - \fCp\fR" 
+Moves  to the  previous note.  Within  the  note  window  then  \fB\*cpage-up\fR
+similarly advances to the previous note.
 .IP "\fBSearch Forward\fR \- \fCs\fR"
 Search in a forwards direction from the current note.
 .IP "\fBSearch Backward\fR \- \fCr\fR"
 Search in a backwards direction from the current note.
+.\"---------
+.IP "\fBOpen Notes File\fR"
+Opens a new notes file, the user is  explicitly  prompted  for the name of the
+notes file to open.
+.IP "\fBSave Notes File\fR"
+Saves the notes file to the file system.
+.IP "\fBHide Notes\fR"
+Hides the notes window and restores the exiting  buffer  windows  prior to the
+\fBnotes\fR invocation.
 .LP
 To quit  \fBnotes\fR  then delete the buffer using \fB\*cx  \*ck\fR or run the
 command 
@@ -126,6 +150,28 @@ execute the buffer
 .Ht execute-buffer 2
 (\fC\*ex   execute-buffer\fR).   The  command  may  be  explicitly  run  using
 \fC\*ex\fR \fCnotes-import-skwyrul\fR.
+.PP
+.B notes-instant
+creates a new note under the  \fIInstant  Notes\fR  folder, it is  designed to
+enable the user to jot something down quickly and in a safe place. The note is
+automatically  named and is the  fastest  method of adding a note. This may be
+invoked  outside of the notes window, on  invocation  then a new notes node is
+created and the content of the note added.
+.PP
+.B notes-context
+is similar to 
+.B notes-instant
+but a bit more  advanced  and allows a note to be created  that is  associated
+with a buffer.  When  working on a file (source  code,  document  etc.). It is
+sometimes  useful to be able to  associate  some  information  with that file,
+typically this is done with something like a \fCTODO:\fR comment, however this
+is not always appropriate. 
+.B notes-context
+attempts to address this, it works from the current buffers  filename path and
+attempts to locate an existing note for it, if no note is found then a new one
+is created.  When  locating a note it looks down the path. The  command may be
+invoked  outside of the notes window, on  invocation  then a new notes node is
+created and the content of the note added.
 .SS "Text Hilighting"
 Blocks  of  text  within  the  notes  body  may be  highlighted.  The  special
 constructs  of  \fC>format>\fR  ...  \fC>end>\fR  located  on the left  margin

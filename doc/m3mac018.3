@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac018.3,v 2.6 2002-10-16 22:28:04 jon Exp $
+.Id $Id: m3mac018.3,v 2.7 2006-08-21 19:52:07 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH etfinsrt 3
@@ -29,6 +29,8 @@ to locate and insert the required  "\fItemplate\fR.etf"  file. If  successful,
 .IP \fC$ASCII_TIME$\fR
 To the current time. Inserts the output of
 .Ht ascii-time 3 .
+The default format of the time string may be changed with 
+.Ht .ascii-time.format 5 .
 .IP \fC$BUFFER_NAME$\fR
 To the buffer name. The name is  capitalized,  '.'s are replaced  with '_' and
 any  trailing  "\fI<##>\fR"  digits  (used to make the buffer name unique) are
@@ -71,6 +73,7 @@ mode is always used to perform the the  search/replace  so the replace strings
 should be appropriate for \fBmagic\fR.
 .SH "SEE ALSO"
 .na
+.Ht .ascii-time.format 5 ,
 .Ht $buffer-fhook 5 ,
 .Ht &find 4 ,
 .Ht ascii-time 3 .
