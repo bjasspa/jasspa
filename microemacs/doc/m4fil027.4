@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil027.4,v 2.8 2006-08-12 19:08:46 jon Exp $
+.Id $Id: m4fil027.4,v 2.9 2006-08-21 19:52:06 jon Exp $
 .Im MicroEmacs macro;function;miscellaneous
 .so me.tni
 .TH &stat 4
@@ -62,10 +62,9 @@ is '\fCL\fR' in which case it will be one of the following:
     R   File is a regular file.
     X   File does not exist.
 .CE 0
-.IP
-Note this field has not yet been implemented.
 .IP 4
-File permissions or attributes, this field has not yet been implemented.
+File permissions or attributes which are returned as an integer value specific
+to the Operating System.
 .IP "5 and 6"
 File size given as an upper and lower 32 bit integers for large file  support,
 these  values  will  be  the  empty  string  if the  file  size  could  not be

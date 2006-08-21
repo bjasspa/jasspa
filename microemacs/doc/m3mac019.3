@@ -3,11 +3,12 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac019.3,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m3mac019.3,v 2.6 2006-08-21 19:52:07 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH ascii-time 3
 .XI ascii-time - "Return the current time as a string"
+.XI .ascii-time.format 5 "Set the format of the date string"
 .SH NAME
 ascii-time \- Return the current time as a string
 .Me $a
@@ -17,23 +18,46 @@ ascii-time \- Return the current time as a string
 .ad
 .SH DESCRIPTION
 \fBascii-time\fR  returns the current time as a formatted  string in \fC#p9\fR
-which is equivalent to \fC#l9\fR for the calling macro. The format of the time
-string is:
+which is  equivalent  to  \fC#l9\fR  for the calling  macro. The format of the
+resultant string is determined by the variable
+.B .ascii-time.format
+which is defined using the following escape characters:
 .RS
-.IP
-"\fIWWW MMM DD hh:mm:ss yyyy\fR"
-.RE
-.PP
-Where:
+.sp
 .nf
-\fCWWW \fR - Week day, \fCSun\fR - \fCSat\fR
-\fCMMM \fR - Month, \fCJan\fR - \fCDec\fR
-\fCDD  \fR - Day, \fC1\fR - \fC31\fR
-\fChh  \fR - Hour, \fC00\fR - \fC23\fR
-\fCmm  \fR - Minute, \fC00\fR - \fC59\fR
-\fCss  \fR - Second, \fC00\fR - \fC59\fR
-\fCyyyy\fR - Year, \fC1998\fR...
+.na
+\fC%%\ \fR - \fC%\fR char
+\fC%Y\ \fR - 4 digit year
+\fC%y\ \fR - 2 digit year
+\fC%B\ \fR - Full month word
+\fC%b\ \fR - 3 letter month
+\fC%m\ \fR - 2 digit month
+\fC%#m\fR - 1 digit month
+\fC%d\ \fR - 2 digit day
+\fC%#d\fR - 1 digit day
+\fC%A\ \fR - Fill Week day word
+\fC%a\ \fR - 3 letter week day
+\fC%H\ \fR - 2 digit 24 hour
+\fC%M\ \fR - 2 digit minute
+\fC%S\ \fR - 2 digit second
+.ad
 .fi
+.RE
+.sp
+The default value of 
+.B .ascii-time.format
+when not defined is:
+.IP
+"\fC%a %b %d %H:%M:%S %Y\fR"
+.LP
+To change the default date layout then 
+.B .ascii-time.format 
+should be defined in \fIuser\fR\|\fB.emf\fR. i.e.
+.Me $emf-scheme
+.CS
+set-variable .ascii-time.format "%H:%M:%S %Y-%m-%d"
+.CE 0
+.Me $ehf-scheme
 .SH EXAMPLE
 The  following  is  taken  from  etfinsrt.emf,  it  uses  \fBascii-time\fR  in
 replacing "\fC$ASCII_TIME$\fR" with the current.
@@ -57,7 +81,7 @@ replacing "\fC$ASCII_TIME$\fR" with the current.
 .SH "SEE ALSO"
 .na
 .Ht $buffer-fhook 5 ,
-.Ht &find 4 ,
-.Ht ascii-time 3 .
+.Ht etfinsrt 3 ,
+.Ht &find 4 .
 .ad
 .FH

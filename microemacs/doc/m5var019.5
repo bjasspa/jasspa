@@ -3,22 +3,25 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var019.5,v 2.5 2002-01-11 21:58:43 jon Exp $
+.Id $Id: m5var019.5,v 2.6 2006-08-21 19:52:06 jon Exp $
 .Im MicroEmacs variable|buffer|modeline;variable|hilight
 .so me.tni
 .TH $show-modes 5
 .XI $show-modes - "Select buffer modes to display"
 .SH NAME
-$mode-line \- Select buffer modes to display
+$show-modes \- Select buffer modes to display
 .Me $a
 .SH SYNOPSIS
 \fB$show-modes\fR "\fIbit-string\fR"; Default is "\fC\fR"
 .SH DESCRIPTION
 .B $show-modes
-defines which buffer modes are displayed on the mode-line.
+defines which buffer modes are displayed on the  mode-line. The index into the
+string matches 
+.Ht $mode-chars 5 .
 .SH "SEE ALSO"
 .na
 .Ht $user-setup 3 ,
+.Ht $mode-chars 5 ,
 .Ht $mode-line 5 .
 .ad
 .FH

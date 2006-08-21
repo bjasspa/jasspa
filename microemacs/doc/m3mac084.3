@@ -1,0 +1,39 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1999-2006 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.\"  Created By    : Jon Green
+.\"  Created       : Mon Feb 1 20:28:17 1999
+.\"
+.Id $Id: m3mac084.3,v 2.1 2006-08-21 19:52:08 jon Exp $
+.Im MicroEmacs command|hilight
+.so me.tni
+.TH change-scheme 3
+.XI change-scheme - "Change the current highlight scheme"
+.SH NAME
+change-scheme \- Change the current highlight scheme
+.Me $a
+.SH SYNOPSIS
+.na
+\fBchange-scheme\fR \fI"schemeName"\fR
+.ad
+.SH DESCRIPTION
+.B change-scheme
+changes  the  current  highlight  scheme  used by the editor to the new scheme
+\fIschemeName\fR  which is the \s-1ASCII\s0  name of the scheme. The change is
+immediate  and the change in scheme is retained in the session.  Note that the
+\fBtab\fR key provides a completion list from the command line prompt.
+.SH NOTES
+.B change-scheme
+is used by 
+.Ht read-session 3 
+to restore the session scheme.
+.SH "SEE ALSO"
+.na
+.Ht add-color-scheme 2 ,
+.Ht print-scheme 2 ,
+.Ht read-session 3 ,
+.Ht user-setup 3 .
+.ad
+.FH

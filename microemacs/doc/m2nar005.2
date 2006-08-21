@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1999-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1999-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Jan 2 00:31:47 1999
 .\"
-.Id $Id: m2nar005.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2nar005.2,v 2.6 2006-08-21 19:52:07 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .TH "Client-Server" 2
@@ -62,8 +62,10 @@ me -m "C:<client>:ml-write \\"Hello world\\"
 .CE 0
 .RE
 .IP
-The  \fIclient-server\fR  interface is typically used to load a file, this may
-be performed as follows:-
+A new line  character may be included in the string using  \fC\\\\n\fR, if the
+message is not terminated with a new line then on is automatically  added. The
+\fIclient-server\fR  interface  is typically  used to load a file, this may be
+performed as follows:-
 .RS
 .CS
 me -m "C:<client>:find-file \\"/path/foo.bar\\""

@@ -1,0 +1,43 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.\"  Created By    : Jon Green
+.\"  Created       : Sun Feb 6 18:14:27 2005
+.\"
+.Id $Id: m3osd015.3,v 2.1 2006-08-21 19:52:08 jon Exp $
+.Im MicroEmacs command|osd
+.so me.tni
+.TH file-type-setup 3
+.XI file-type-setup - "Define file type set"
+.SH NAME
+file-type-setup \- Define file type set
+.Me $a
+.SH SYNOPSIS
+.na
+.B file-type-setup
+.ad
+.SH DESCRIPTION
+.B file-type-setup
+provides  a  dialog  interface  for  declaring  a set  of  common  files  type
+categories and their  associated file extensions. The file categories are used
+to determine the common file types in the File main menu
+.BR "Quick Open" .
+.PP
+.B file-type-setup
+may be  invoked  directly  from  the  command  line or more  usually  from the
+miscellaneous configuration item
+.B "File Types"
+in
+.Ht user-setup 3 .
+.PP
+On  invocation  a generic name for the file class is assigned to a set of file
+names or extensions as a comma separated list i.e. \fC*.a,*.b,*.c\fR.
+.SH "SEE ALSO"
+.na
+.Ht buffer-setup 3 ,
+.Ht user-setup 3 ,
+.Hl "Top Main Menu" MainMenu 3 .
+.ad
+.FH

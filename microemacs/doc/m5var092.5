@@ -1,0 +1,31 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 2004-2005 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m5var092.5,v 2.1 2006-08-21 19:52:07 jon Exp $
+.Im MicroEmacs variable|buffer|modeline
+.so me.tni
+.TH $mode-chars 5
+.XI $mode-chars - "Mode characters"
+.SH NAME
+.na
+$mode-chars \- Mode characters
+.ad
+.SH SYNOPSIS
+\fB$mode-chars\fR
+.SH DESCRIPTION
+.B $mode-chars
+is a read-only  variable that returns a string that contains all of the buffer
+mode characters. The variable is typically used in the macros to determine the
+integer value of a buffer mode, the string is defined as follows:
+.CS
+AaBbcYzdDeEfHIJkMnNOPQrSTtU12345678VW
+.CE 
+The index into the string matches 
+.Ht $show-modes 5 .
+.SH "SEE ALSO"
+.na
+.Ht $show-modes 5 .
+.ad
+.FH
