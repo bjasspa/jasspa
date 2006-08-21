@@ -317,8 +317,8 @@ osd 2 50  ""  "\HSet Mark            esc space"  f set-mark
 osd 2 60  ""  "\HCopy Region         esc w"      f copy-region
 osd 2 70  ""  "\HKill Region         C-w"        f kill-region
 osd 2 80  ""  "\HDelete Region"                 -1 kill-region
-osd 2 90  ""  "\HPaste               C-y"        f yank
-osd 2 100 ""  "Cut R\Hectangle       esc C-w"    f kill-rectangle
+osd 2 90  ""  "\HPaste Region        C-y"        f yank
+osd 2 100 ""  "Kill R\Hectangle      esc C-w"    f kill-rectangle
 osd 2 110 ""  "C\Hopy Rectangle"                 f copy-rectangle
 osd 2 120 ""  "Paste Rectan\Hgle     esc C-y"    f yank-rectangle
 osd 2 130 "-"
