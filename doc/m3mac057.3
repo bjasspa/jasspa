@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1999-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1999-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Jul 5 18:16:21 1999
 .\"
-.Id $Id: m3mac057.3,v 2.9 2004-12-08 23:40:17 bill Exp $
+.Id $Id: m3mac057.3,v 2.10 2006-08-22 10:32:50 jon Exp $
 .Im MicroEmacs shell|command
 .so me.tni
 .TH cvs 3
@@ -239,10 +239,20 @@ The  \fBcvs-update\fR  command updates all files in the current directory, the
 output  being  reported to a new  \fI*cvs-update*\fR  window. Note that unlike
 most cvs sub  commands  this  command  executes  over all files in the current
 buffer's file directory.
-.SS SETUP
+.SS Setup
 .B cvs-setup
-provides a dialog  interface  to  configure  the \*(mS CVS  interface,  on the
-dialog the following items are available:
+provides  a  dialog   interface   to   configure   the  \*(mS  CVS   interface
+if required. On a typical  system  installation  then it is sufficient to have
+\fB$CVSROOT\fR  defined in the environment and the CVS tools will operate from
+this environment variable without any further configuration of \*(mS. If \*(mS
+CVS  configuration  is  provided  then  this will  over-ride  the  environment
+variable. 
+.PP
+.B cvs-setup
+may also be accessed from 
+.Ht user-setup 3 
+from  the  \fBMiscellaneous\fR  configuration.  The the  dialog  provides  the
+following configuration controls:
 .PP
 \fBCVS Command Setup\fR
 .RS
@@ -261,9 +271,10 @@ Sets the compression level to use with all CVS commands.
 When enabled the \fC-q\fR CVS command-line  option is used to suppress some of
 the more verbose print-out. 
 .RE
-.PP
-\fBCVS File Browser\fR
-.RS
+.SS "CVS File Browser"
+The \fBCVS File Browser\fR is an extension to the 
+.Ht file-browser 3 
+and shows the state of CVS files in a directory listing.
 .IP "\fCQuick browser mode\fR"
 When  enabled the CVS file  browser does not launch a cvs command to determine
 the current state of all files in the  directory,  instead it extracts as much
@@ -271,7 +282,6 @@ information  as it can from the local file system,  inserting  '\fCQ\fR's  for
 information  it cannot  determine.  This is useful when the  connection to the
 server is slow. The full CVS  information  can be  obtained by  executing  the
 command \fBcvs-full-reread\fR, typically bound to \fCC-f5\fR.
-.RE
 .IP "\fBTool Defaults\fR"
 The  following  define the default  settings  for options  used in various CVS
 commands:   
@@ -293,6 +303,7 @@ are also removed by the filter. Use
 in the buffer to enable/disable the filter.
 .SH "SEE ALSO"
 .na
+.Ht ClearCase 3 ,
 .Ht file-browser 3 .
 .ad
 .FH

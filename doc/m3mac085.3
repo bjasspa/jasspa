@@ -1,0 +1,165 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1999-2006 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.\"  Created By    : Jon Green
+.\"  Created       : Mon Jul 5 18:16:21 1999
+.\"
+.Id $Id: m3mac085.3,v 2.1 2006-08-22 10:32:51 jon Exp $
+.Im MicroEmacs shell|command
+.so me.tni
+.TH ClearCase 3
+.XI ClearCase - "\*(mS ClearCase interface"
+.XI cc-setup - "\*(mS ClearCase interface setup"
+.XI cc-add - "\*(mS ClearCase interface - add file"
+.XI cc-checkout - "\*(mS ClearCase interface - checkout files"
+.XI cc-checkin - "\*(mS ClearCase interface - checkin files"
+.XI cc-delete - "\*(mS ClearCase interface - delete files"
+.XI cc-diff - "\*(mS ClearCase interface - diff changes"
+.XI cc-state - "\*(mS ClearCase interface - list state of directory files"
+.XI cc-update - "\*(mS ClearCase interface - update directory files"
+.SH NAME
+.Me "|ClearCase"
+ClearCase \- \*(mS ClearCase interface
+.br
+.Me "|cc-add"
+cc-add \- \*(mS ClearCase interface - add file
+.br
+.Me "|cc-checkout"
+cc-checkout \- \*(mS ClearCase interface - checkout files and directories
+.br
+.Me "|cc-checkin"
+cc-checkin \- \*(mS ClearCase interface - checkin changes
+.br
+.Me "|cc-delete"
+cc-delete \- \*(mS ClearCase interface - delete file
+.br
+.Me "|cc-diff"
+cc-diff \- \*(mS ClearCase interface - diff changes
+.br
+.Me "|cc-state"
+cc-state \- \*(mS ClearCase interface - list state of directory files
+.br
+.Me "|cc-update"
+cc-update \- \*(mS ClearCase interface - update directory files
+.Me $a
+.SH SYNOPSIS
+.na
+.B ClearCase
+.br
+.B cc-setup
+.sp 1
+.B cc-add
+.br
+.B cc-checkout
+.br
+.B cc-checkin
+.br
+.B cc-delete
+.br
+.B cc-diff
+.br
+.B cc-state
+.br
+.B cc-update
+.ad
+.SH DESCRIPTION
+The  ClearCase  and  sub-commands  provide  \*(mS  with  an  interface  to 
+.B "IBM Rational Software"
+.Hr ClearCase 1 .
+\fBClearCase\fR is a version control system; using it, you can record the history of
+your source file  modifications.  ClearCase is licensed from IBM Rational
+and is  widely used in a commercial environment,  see  the  documentation
+provided with ClearCase for more information on its features and use.
+.PP
+The \fBClearCase\fR directory should be defined to \*(mS using 
+.Ht cc-setup 3 
+which enables extensions in the 
+.Ht file-browser 3
+with an additional  "\fC*cc-console*\fR"  window. The "\fC*files*\fR"  window
+includes  additional  columns  showing the ClearCase state,  revision and repository
+date. The  functionality  of the  file-browser is the same as a non-ClearCase folder
+with the exception that  additional ClearCase item controls are located in the mouse
+context  menu (opened by clicking the right mouse button in the  \fC*files*\fR
+buffer).  This  menu  item  opens  another  sub-menu  providing  access to the
+items below. When selecting  commands than a pop-up check-box may be displayed
+which allows options to be selected for the command.
+.IP "\fBCurrent State\fR"
+Checks the state of  selected  file(s) or  directory  against the  repository.
+Differences detected are shown in the \fC*cc-state*\fR  window. This provides
+a  quick   method  of   determining   the   working   directory   state.
+.IP
+The \fC*cc-state*\fR buffer supports some of the same features as a directory
+listing, the files can be loaded (using \fCreturn\fR or left click on the file
+name),  selected  (using space or left mouse button on the left hand edge) and
+ClearCase commands  executed from the window operate either on the selected files or
+the listed files if no files are selected. 
+.IP "\fBUpdate Elements\fR"
+Updates the currently  selected files, files are selected by clicking the left
+button to the left of the required file name.  Multiple  files may be selected
+by 'dragging' a hilight region over the required  files. 
+.IP "\fBClear CC console\fR"
+Clears the \fI*cc-console*\fR buffer.
+.PP
+The  following  sections  describe  some of the  ClearCase  commands  that are
+available, a full list of commands may be found using 
+.Ht command-apropos 2 
+searching  for  \fBcc\fR  which  provides a full list of all of the  ClearCase
+related commands. 
+.PP
+The  \fBcc-add\fR  command adds the current  buffer file to the  repository.
+.PP
+The  \fBcc-checkout\fR  command  checks  out a  file  or  directory  from  the
+repository  into the current  directory,  the read-only  status of the file is
+changed to  read-write,  the user is prompted for a comment which will be used
+on a subsequent check-in operation. The user specifies the file on the message
+line.
+.PP
+The  \fBcc-checkin\fR  command  commits  any  changes  made  to the  currently
+buffer's file  (including  additions) to the  repository. The user is prompted
+for a commit log message, the file state will change to read-only.
+.PP
+The  \fBcc-diff\fR  command opens a  \fI*cc-diff*\fR  window  displaying the
+differences between the current buffer's local file and repository version. If
+the current buffer is a directory list it will list all the differences  found
+in all files within the directory.
+.PP
+The  \fBcc-delete\fR  command  removes  the  current  buffer's  file from the
+repository.
+.PP
+The \fBcc-state\fR  command opens a \fI*cc-state*\fR  window listing the state
+of any file in the current directory which is not up-to-date. Note that unlike
+most  ClearCase  sub  commands  this  command  executes  over all files in the
+current buffer's file directory.
+.PP
+The  \fBcc-update\fR  command updates all files in the current directory, the
+output  being  reported to a new  \fI*cc-update*\fR  window. Note that unlike
+most ClearCase sub  commands  this  command  executes  over all files in the current
+buffer's file directory.
+.SS Setup
+.B cc-setup
+provides  a  dialog   interface   to   configure   the  \*(mS  ClearCase   interface
+if required. The VOB view location in the file system should be added for each
+view that is to be access by \*(mS. 
+.PP
+A \fBTools\fR tab exists to configure each of the 
+.Hr cleartool 1 
+options, these may be configured to suite the users preferences.
+.PP
+.B cc-setup
+may also be accessed from 
+.Ht user-setup 3 
+from  the  \fBMiscellaneous\fR  configuration.  
+.SS "ClearCase File Browser"
+The \fBClearCase File Browser\fR is an extension to the 
+.Ht file-browser 3 
+and shows the state of ClearCase files in a directory listing.
+.SH NOTES
+\fBClearCase\fR and sub-commands are macros defined in file \fCclearcs.emf\fR.
+.SH "SEE ALSO"
+.na
+.Ht cvs 3 ,
+.Ht file-browser 3 .
+.ad
+.FH
