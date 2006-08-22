@@ -7,9 +7,9 @@ DIRECTORIES="company doc icons macros spelling src bin"
 SEARCH_PATH="/opt/jasspa/company:/opt/jasspa/macros:/opt/jasspa/spelling"
 BASEDIR=.
 TOPDIR=../..
-VER_YEAR="05"
-VER_MONTH="05"
-VER_DAY="05"
+VER_YEAR="06"
+VER_MONTH="08"
+ VER_DAY="22"
 VERSION="20${VER_YEAR}${VER_MONTH}${VER_DAY}"
 # Processor type
 PROCESSOR=`uname -p`
