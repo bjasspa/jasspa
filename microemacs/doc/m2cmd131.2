@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd131.2,v 2.8 2006-08-21 19:52:07 jon Exp $
+.Id $Id: m2cmd131.2,v 2.9 2006-08-22 09:20:42 jon Exp $
 .Im MicroEmacs command|shell
 .so me.tni
 .TH shell-command 2
@@ -59,11 +59,16 @@ this feature can be used to overcome the default 1024  character  command-line
 limit. When a multiple-line  command-line is required, a negative argument can
 be given to
 .Ht insert-string 2 .
+.IP \fB0x200\fR
+No wait  option,  when set the the  command  is run  without  waiting  for any
+completion  status. This allows  processes to be run and then forgotten  about
+e.g. a Word processor, Adobe Acrobat reader etc. 
 .SH "SEE ALSO"
 .na
 .Ht $result 5 ,
 .Ht ipipe-shell-command 2 ,
 .Ht pipe-shell-command 2 ,
+.Ht shell 2 ,
 .Ht suspend-emacs 2 .
 .ad
 .FH

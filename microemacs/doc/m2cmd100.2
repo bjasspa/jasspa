@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd100.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd100.2,v 2.6 2006-08-22 09:20:42 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH popup-window 2
@@ -24,12 +24,28 @@ then it will be split else the current window will changed to one of the other
 existing  visible  windows. If the given buffer name  "\fIname\fR" is not null
 ("") then the buffer is created, if it does not exist, and swapped in.
 .PP
-If an argument  \fIn\fR of zero is given then the command only succeeds if the
-given buffer is already being displayed in an existing  window, this window is
-made  current. If an  non-zero  argument is given to the command and the given
-buffer is not visible  then a window  displaying a system  buffer is chosen in
-preference.  A  system  buffer  is one  who's  name  starts  with a  '\fC*\fR'
-character, e.g. "\fC*help*\fR". window used to display
+The numeric argument \fIn\fR alters the behavior of the command as follows:
+.IP \fC0\fR
+When  \fIn\fR is zero is given then the  command  only  succeeds  if the given
+buffer is already being  displayed in an existing  window, this window is made
+current. 
+.IP \fC1\fR
+When \fIn\fR is 1 and the given buffer is not visible then a window displaying
+a system  buffer is chosen in  preference.  A system  buffer is one who's name
+starts with a '\fC*\fR' character, e.g. "\fC*help*\fR". window used to display
+.IP \fC2\fR
+When \fIn\fR is 2 the frame  containing  the buffer is made current, this will
+interact  with the  window  manager  and bring  \*(mS to the top of the window
+stack and bring it into focus. The \fIname\fR argument is not required.
+.IP \fC3\fR
+When \fIn\fR is 3 then the frame  position on the Desktop Window is allowed to
+be  re-positioned,  this is  typically  called  after a font  change or screen
+re-size  operation  and ensures  that the \*(mS  window is  positioned  on the
+screen. The \fIname\fR argument is not required.
+.IP \fC4\fR
+When \fIn\fR is 4 then both the frame  position  and frame size on the Desktop
+Window is adjusted, this is the same as \fC3\fR except the frame size may also
+be adjusted to fit on the desktop. The \fIname\fR argument is not required.
 .SH "SEE ALSO"
 .na
 .Ht find-buffer 2 .
