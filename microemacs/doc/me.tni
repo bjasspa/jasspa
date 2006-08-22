@@ -1,13 +1,13 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1988-2005 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1988-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\" Global abbreviations for MicroEmacs
 .\"
-.ds mE "MicroEmacs '05
+.ds mE "MicroEmacs '06
 .ds mS "MicroEmacs
-.ds nE "NanoEmacs '05
+.ds nE "NanoEmacs '06
 .ds nS "NanoEmacs
 .ds cX "C-x\ \&
 .ds cH "C-h\ \&
