@@ -21,7 +21,7 @@
 ; This help project requires hc 3.1
 [OPTIONS]
 errorlog = me.err
-title = MicroEmacs '05 Documentation
+title = MicroEmacs '06 Documentation
 contents = me
 compress = medium
 warning = 3
@@ -32,7 +32,7 @@ me.rtf
 [BITMAPS]
 logo.bmp
 [WINDOWS]
-main = "MicroEmacs '05  Documentation",,,, (192,192,192 )
+main = "MicroEmacs '06  Documentation",,,, (192,192,192 )
 
 [CONFIG]
 BrowseButtons()

@@ -12,18 +12,18 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.42 2006-08-19 15:35:32 jon Exp $
+.Id $Id: me.nrs,v 2.43 2006-08-22 11:16:47 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
-.TH me - - - "MicroEmacs '05"
+.TH me - - - "MicroEmacs '06"
 .XI me - -
 .XI home - -
 .XI MicroEmacs - -
 .\" Next section (until .Ss) is for the osd-help contents page
 .Me "!   Contents"
 .Me "| home"
-.Me "MicroEmacs '05"
+.Me "MicroEmacs '06"
 .Me "|"
 .Me " "
 .Me "| osd-help(3)"
@@ -98,7 +98,7 @@
 .Me "    Registry"
 .Me "| Command Line Filters"
 .Me "    Command Line Filters"
-.Me "| MicroEmacs '05 - Games"
+.Me "| MicroEmacs '06 - Games"
 .Me "    Games"
 .Me "|"
 .Me " "
@@ -130,7 +130,7 @@
 .Me "    Compatibility"
 .Me "| Interfacing(2)"
 .Me "    Interfacing to external components"
-.Me "| MicroEmacs '05 - Supported File Types"
+.Me "| MicroEmacs '06 - Supported File Types"
 .Me "    Supported File Types"
 .Me "| Client-Server(2)"
 .Me "    Client-Server Interface"
@@ -1971,7 +1971,7 @@ The version of \*(mS. Use \fCesc-x  about\fR to retrieve the  information, the
 format of the date is \fCyyyy/mm/dd\fR, followed by the host system type. e.g.
 .RS
 .IP
-.C "MicroEmacs 05 - Date 2005/01/10 - sunos"
+.C "MicroEmacs 06 - Date 2006/01/10 - sunos"
 .RE
 .IP "\fBDescription\fR"
 A description of the problem. Try to include as much  information as possible.
@@ -2058,6 +2058,672 @@ common editor across all working platforms has been achieved!
 .\"
 .B "9th Release - In progress"
 .BS
+[060816] Added settings for fill-col and fill-mode to the
+.Ht major-mode-setup 3 .
+.BU
+[060816]  Added support for a  "\fC.fhook-???.fill-*\fR"  variable and changed
+latex over to using this variable rather than burning the fill-mode in as 'l'
+.BU
+[060816] Crossword - Changed Exit button to Close.
+.BU
+[060816] Changed organizer Exit buttons to Close or Cancel.
+.BU
+[060812] Additions to the PHP script - missing tags etc.
+.BU
+[060812] Corrected sun keysym inclusion - inclusion limited to X-Windows build
+only
+.BU
+[060811] Fixed session resize issue and incremented the version.
+.BU
+[060811] Added $buffer-fill-* variables to the buffer-setup dialog
+.BU
+[060811]  Stopped  read-session  warning  about the  *server*  buffer  being a
+process.
+.BU
+[060811] Updated to use the new $buffer-fill-*  variables - simplifies the doc
+hooks as ehooks and bhooks are no longer required.
+.BU
+[060811] Incremented the version. MicroEmacs 06 - Date 2006/08/10 - sunos
+.BU
+[060811] Introduced new  $buffer-fill-col and  $buffer-fill-mode  variables to
+allow every buffer to have its own setting, initialized to the global variable
+value when the buffer is created.
+.BU
+[060810] Added 'a' for All option to the save-some-buffers prompt
+.BU
+[060810]  Added save -> prompt -> delete of all buffers  when loading  another
+session. If bit 1 in arg is not set (i.e. 0 read-session  "name") then this is
+not done and the new session is effectively merged into the current.
+.BU
+[060810] Added setting of main buffer modes to the buffer-setup osd.
+.BU
+[060807] Updated emulation modes to handle the new main menu.
+.BU
+[060807] Fixed major mode drop down list to not scroll horizontally
+.BU
+[060807] A few tweaks to help with the other editor emulation.
+.BU
+[060807] Fixed major-mode-setup so Cancel cancels all changes (was 50-50)
+.BU
+[060807] Removed old buffer-setup file and fixed the makefile
+.BU
+[060807] Removed 'correction' of main osd - not needed and wrong.
+.BU
+[060807] Tweaks to osd to remove a few annoyances: up on main menu now goes to
+last item of current  sub menu, fixed  re-frame  and focus  issue on an opened
+child and made C-g always just close a child even if not in focus.
+.BU
+[060803]  Added  new  -2  and -3  values  for  2nd  arg  to  &lins  to  insert
+alphabetically and case insensitive alpha.
+.BU
+[060803] Added setting of the major mode to the new buffer-setup
+.BU
+[060803] Changed osd dialogs to use 'Cancel' or 'Close' rather than 'Exit'
+.BU
+[060803] Closed notes if open when applying changes as this corrupts the notes
+frame.
+.BU
+[060803] Made the buffer sub-menu be case insensitively ordered in windows and
+have first letter hotkeys.
+.BU
+[060803]  Changed  frame-id  comparison  to use seq as should  handle  "ERROR"
+better.
+.BU
+[060803] Fixed notes to handle a reread-file type operation.
+.BU
+[060803] Changed osd dialogs to use 'Cancel' or 'Close' rather than 'Exit'
+.BU
+[060802]  Added  saving  the  session to  save-all  and  associated  a file in
+$user-path with the File->New command.
+.BU
+[060801] Set .gz extracted buffer name and file name so its location is kept.
+.BU
+[060728] Fixed clear-case to handle multi-line comments with SHELL set to csh.
+.BU
+[060728]   Changed  "symbol"  to   "insert-symbol"   and   "indent-setup"   to
+"buffer-setup" as this is what it will become. Fixed a few hot-key issues with
+new main menu.
+.BU
+[060728]  Improved  help page and looked for  context-menu  binding to support
+esc\ +.
+.BU
+[060728] Moved the location of making CVS and clear-case always available into
+their setup dialog and added a C-x C-q replacement option.
+.BU
+[060728] Changed  backspace in a directory to move to the sub-directory in the
+parent listing.
+.BU
+[060728] Fixed notes startup so it returns the user to the same place.
+.BU
+[060728] Documentation, replaced -ve with negative and +ve with positive.
+.BU
+[060726] gdiff. Added termcap friendly key bindings to move between difference
+regions.
+.BU
+[060726] Added new  indent-increase  and indent-decrease  macros. Added indent
+increase and decrease to format, changed notes binding to f8, move shell tools
+from tools to advanced and setup commands into tools.
+.BU
+[060726] Fixed setting of scheme when session file does not exist (problem hit
+when old user uses session for first time)
+.BU
+[060725] Changed goto commands to not stop the show-region highlight
+.BU
+[060725] Major rearrangement of the main menu, replaced the Insert and Execute
+sub-menus with a View and Advanced, re-balanced and relocated many items, most
+notably the setup dialogs out of Help into Advanced.
+.BU
+[060725] Renamed the existing tool-bar macro to toolbar-open (mirrors existing
+toolbar-close)  and  introduced a new tool-bar  macro that toggles state, i.e.
+closes if opened. This command is more useful in key-bindings and menus etc.
+.BU
+[060725]  Improved  error  handling of osd based find tag, also adding support
+for tags file being in a parent directory.
+.BU
+[060725] Removed command-line  validation and relax file selection requirement
+so user can  create a tool  that does not  require a file name (e.g. open . in
+explorer)
+.BU
+[060725] Used  set/goto-position to store current dot and added <no favorites>
+entry if menu is empty.
+.BU
+[060725] Added hot-keys to the file attrib dialog
+.BU
+[060725]  Changed  simply fence matching of quotes and double quotes, if match
+is not found by the end or start of the line it's  assumed  to be a single and
+ignored.
+.BU
+[060725] Changed &mid so the 3rd argument (length) can be -ve to mean from the
+right (as per the &rig etc) - not sure why this was not done first time round.
+.BU
+[060624]   Changed   session   support  to  handle  both  window  and  console
+environments. Changed startup to only initialize one scheme.
+.BU
+[060623] Added file-type-setup to the list of misc setups.
+.BU
+[060622] Changed buffer-setup to major-mode-setup, also changed buffer-help to
+major-mode-help  etc and fixed comments. Left buffer-setup in buffstp as there
+will be a buffer-setup  which really does setup up the current  buffer. Change
+me.emf date to 20060606
+.BU
+[060620] Stopped session trying to change the frame for a console run.
+.BU
+[060619]  Sessions.  Stopped  restore  buffer's  whose file does not exist and
+changed  the order of frame size  setting so on UNIX the depth of windows  are
+maintained correctly
+.BU
+[060619]  Notes. Fixed current buffer  position reset problem caused by buffer
+being shown on hidden notes frame
+.BU
+[060619]  Changed all ME setup macros to reload the /history  registry  before
+change the  registry and writing it out as soon as the changes are accepted to
+reduce the  likelihood  of  settings  (like new alias  paths)  being lost. One
+except  is when the  setup is run from  within  user-setup  in which  case the
+registry is only read and written by user-setup, this could have some unwanted
+side effects. Added session-setup to the user-setup misc page.
+.BU
+[060619]  Change to allow  macros  access to inactive  buffers  broke file and
+ipipe  hooks which get  executed  but the buffer is  officially  made active -
+fixed by maintaining the BIFNACT internal flag and ensuring the algorithm used
+for inactive buffers is only used wh ere appropriate. Found buffer context was
+not set  correctly for session  buffers whose name was set to 'name<1>' as the
+BIFNAME flag is not set, fixed by removing  this flag and using code to assess
+if the <1> should be removed based on the filename.
+.BU
+[060619] Fixed read-registry's replace mode which was doing a merge as the old
+node was not removed.
+.BU
+[060619] Fixed a bad prompt and added a couple of brackets to protect  compare
+order.
+.BU
+[060616] Changed the start-up  process to not use the history  commands (which
+have been removed) but simply use the read-registry commands.
+.BU
+[060615] Moved the storage of all history type info into the new session (esf)
+files.
+.BU
+[060615]  $user-name.erf only contains setup info and not often edited changed
+user setup to minimize the likelihood of losing edits (at last).
+.BU
+[060615] Broken session-setup out into its own macro file and made quite a few
+fixes to the new session support.
+.BU
+[060615] Removed the save- and  read-history  commands the me.emf start-up now
+simply use the read-registry command
+.BU
+[060615]  Changed  find-buffer  to allow  limited  access to inactive  buffers
+(allows base getting and setting of variables)
+.BU
+[060615] Changed the exit-emacs  numeric argument (again) so it can be used by
+meDie (0x28 exit-emacs ~= emergency exit)
+.BU
+[060615]  Created new  $window-mark-line  &  $window-mark-col  to aid inactive
+buffer support (not sure why these were not already there as they are usefully
+in macros)
+.BU
+[060615]  Enabled  availability of  save-some-buffers  by default  (quick-exit
+relies on this!)
+.BU
+[060615]  Changed  the -c  command-line  option  to  simply  set the  variable
+%session-name (relies on session macros)
+.BU
+[060615]  Changed  clipboard  support to not mess with it during  start-up and
+shut-down
+.BU
+[060615] Created new change-scheme command.
+.BU
+[060615]  ClearCase.  Fixed  *cc-state*  buffer  not  being in view  mode when
+command completes.
+.BU
+[060615] Corrected types of exchange-point-and-mark.
+.BU
+[060608]  Improved OSD search dialog by making the buttons  always enabled and
+reporting an error if search string is empty.
+.BU
+[060608] Made the existing  hidden scheme macro a visible command which can be
+used to change the current color scheme. Set  .scheme.current to the file name
+of the  current  scheme  Saved the  current  scheme in a session so a user can
+create a session with its own different scheme.
+.BU
+[060526] Sessions. Changed to use new shut-down pseudo key.
+.BU
+[060526] Changed  shut-down  process to call the ehooks for the current buffer
+of all frames and changed the shut-down macro to a pseudo key-binding.
+.BU
+[060525] Added a new buffer-major-mode  command to change the current buffer's
+hook,  giving  it an arg of -1 or  major  mode  of ""  removes  the  hook.  No
+completion list yet. Fixed tab-width setting so all 3 windows get the same new
+value.
+.BU
+[060525] Changed gdiff to insert the 2 files into temp buffers so if the files
+are  already  loaded by the user these  buffers  are not  effected.  Added the
+ability to set the tab width.
+.BU
+[060525] Fixed crash caused by watch refreshing the buffer while user is using
+isearch - stopped watch from refreshing the buffer.
+.BU
+[060525]  Added a new bit 0x10 to find-  read- and  view-file  to disable  the
+context fhook evaluation.
+.BU
+[060525] UNIX fix. Call  screenUpdate  directly  after a window resize - fixes
+gdiff update problem.
+.BU
+[060523] Sessions. First serious rev of session-load and -save.
+.BU
+[060523] Added arg to tool-bar to allow the tool-bar to be initialized without
+re-reading the registry - required by new session support.
+.BU
+[060523]  Changed left click on mode line to change to the window if the mouse
+is not moved.
+.BU
+[060523] Fixed C++  '::<function>()  ;' indentation  bug  introduced  with c++
+initialize ': <base-init> ()' indentation support.
+.BU
+[060523]  Encrypted  files. Added  file/host to the password prompt so on a -c
+the user should know which password is required.
+.BU
+[060523] Fixed UNIX compiler warnings
+.BU
+[060516] me.emf. Fixed missing def of file-type-setup & shell-tool-setup.
+.BU
+[060515]  Added  new bit 0x2 to arg for  change-buffer-name  which  force  the
+buffer to have the given  name,  changing  the name of an  existing  buffer if
+required.
+.BU
+[060512]  ClearCase. Fixed cc-setup view deletion, pressing No does not remove
+it. Removed the  temporary  file  created by cc-diff if me's diff of gdiff are
+used, file is still left if xdiff is used.
+.BU
+[060512] Added a new $mode-chars  variable which returns the letter ids of all
+modes as a string, this variable cannot currently be set.
+.BU
+[060512]    Changed    the    numeric    arguments    for    quick-exit    and
+save-buffers-exit-emacs to make them simple to use.
+.BU
+[060510]  Improved  the ftp  logging so errors get put into the  console  with
+error numbers rather than just  mlwrite'd.  Removed the KEEPALIVE as ME closes
+the sockets with 10mins anyway. Fix the ftp kb/s calc.
+.BU
+[060510]  Dirlist.  Fixed  context menu so the FTP additions are added for any
+ftp:// listing.
+.BU
+[060504]  Major  addition  to  notes:  a)  Added   forw/back  note.  b)  added
+notes-instant  and notes-context c) implemented  notes-session-save  (not done
+window layout yet) but not  implemented  the matching load yet. d) fixed a few
+annoying up-date and behavior problems.
+.BU
+[060504]  ClearCase.  Fixed windows  \\\\r\\\\n  issue with diff - constructed
+predecessor could have the wrong format breaking the diff.
+.BU
+[060504]  Changed reyank numeric arg so if a -ve arg is given reyank will fail
+if  at  the  end  of  the  kill  chain   rather  than  loop  -  required   for
+notes-session-save
+.BU
+[060504] Found differences between copy and kill-region's handling of narrows,
+particularly  if there's no markup line Found I could crash ME if only the end
+part of a  narrow-to  is killed - buffer  line number all go wrong. To fix the
+issues I've  created a standard  function to handle the  expansion  of narrows
+over a region and made the rule that for a narrow  without a markup line to be
+included in the region at least the \\\\n of the  previous  line and 1 char of
+the  container  line must be included,  this means that narrows at the top and
+bottom cannot be included.
+.BU
+[060504] ClearCase. Fixed cc-merge comment bug.
+.BU
+[060504]  Added support for a  .ascii-time.format  variable  which defines the
+format for the output using '%' tags as per strftime  function  (supports most
+tags) - output is  unchanged  if  variable  is not set. Fixes  request by Dick
+Pierce.  Changed the OSD insert time  function to use the same tokens and made
+the first format in the list be the output of ascii-time.
+.BU
+[060503] Provided macro interface to get a list of alpha marks for the current
+buffer.
+.BU
+[060427] Fixed  context-menu  element activation issue caused by selected file
+count being wrong.
+.BU
+[060427] Fixed notes and gdiff window resize issues by locking the size.
+.BU
+[060426]  Improved  (but not quite  fully  fixed and I don't  think I can) the
+mouse word selection when the word is half hidden at the left or right edge of
+the window.
+.BU
+[060425]  Fixed  bug  with  setting  $window-line,  if  value  is < 1 then the
+goto-line  function  prompts the user, this is  incorrect  behavior  for a set
+variable command and the cause of a mouse driver spin. Fixed mouse left button
+spin  caused  by  missing  the  pick  event  and  a bug  in  set-variable  for
+$window-line.  Added  new  horizontal  scroll  feature  when user  clicks on a
+$window-char truncated line char.
+.BU
+[060421] JSP. Fixed java <%...%> within JavaScript start token
+.BU
+[060421] Fixed C++ comment hilighting
+.BU
+[060413]  Added  an  abort-command  safty  trap  to  reset  the  $buffer-input
+variable.
+.BU
+[060413]  JSP. Fixed most JSP  hilight  and indent  issues  caused by java and
+javascript confusions.
+.BU
+[060412]  Bug fix. Put  checks  in to  ensure  the  hilight/indent  to be used
+according  to a look-back  scheme has been  defined - fixes crash when viewing
+JSP files.
+.BU
+[060403]  DIRECTORY  LISTING. Fixed  'not-exist'  fix in last commit - ftp dir
+lists can be only a couple of lines Made  file/dir  copy  automatically  try 3
+times before  prompting the user (large ftp copies will fail at points). Fixed
+browse mode close problem when browse deletes the buffer.
+.BU
+[060402]  Used an ehook and a  callback  to auto  detect a change in the notes
+frame buffer/window layout, if there is a change the callback closes the notes
+frame. This approach resolves many issues.
+.BU
+[060331] Fixed XML magic hook.
+.BU
+[060331] Fix  annoying  find-zfile  last buffer  history  change.  Changed the
+buffer & file name of a loaded zfile file to something more useful.
+.BU
+[060331]  Created a '2  find-buffer  <file-name>'  arg which finds an existing
+buffer  via its file name - used to fix  annoying  find-zfile  buffer  history
+change.
+.BU
+[060330]  Fixed CVS & CC context menu  placement  issues.  Fixed cc-add to use
+-mkpath for directories
+.BU
+[060330] Change fhook-dir to always detect if its a source-controlled  dir and
+call  the SC hook,  the SC hook  can  then  add its own  bindings  etc.  Fixed
+fhook-dir so loading of ".../not-exist/" does not error.
+.BU
+[060330] Made the esc = & esc + menu bindings global.
+.BU
+[060329] Changed unix start-up mode to favor X over termcap if DISPLAY is set,
+even if term is a vt100.
+.BU
+[060329] Fixed mode-line udate bug when all edits are undone - reported by Tom
+Hundt.
+.BU
+[060322]  Fixed the  position of the context menu when opened by mouse or menu
+key. Fixed  auto-spell  not being  available when context menu is opened using
+the menu key.
+.BU
+[060322]  Improved  gdiff-next  command to error at the end of the file so the
+use knows they have  reached the end. Bound 'menu' to open the contex menu and
+bound 'esc up' & 'esc down' to move between unassigned sections.
+.BU
+[060322]  Bound  f10  to  close  the  notes  frame  and  bound  C-x k to a new
+notes-delete command
+.BU
+[060317]  ClearCase.  Added  new  cc-merge  command  (which  uses  cleartool's
+findmerge  command!).  Added new cc-describe  command (which uses  cleartool's
+describe command), fixed the CC context menu.
+.BU
+[060317]  Directory listing. Increased 2Gb directory file size limit to 4Gb by
+making size variables meUInt. 
+.BU
+[060317] Fixed '\\\\' quoting in command-wait example.
+.BU
+[060316]  Up-dated docs for command-wait,  added some meaty examples and added
+cross references to them.
+.BU
+[060316] indent fix
+.BU
+[060316]  Changed  describe-word  osd dialog so that it has a 'Look Up' button
+which is the default.  Also  improved  the insert  description  process so C-w
+kills the description inserted.
+.BU
+[060316]  Improved the behaviour of the enter key in the help osd so it does a
+search or nothing.
+.BU
+[060315]  Fixed a win32  console  crash  caused  by the new  frame  reposition
+function. Stopped the messing about of the windows console when ME is in piped
+mode.
+.BU
+[060309]  Fixed  regex \\\\a -> \\\\g for bell and added  support  for \\\\a &
+\\\\m to [...] character classes.
+.BU
+[060309] Updated *shell-command docs.
+.BU
+[060309] Documented &lef, &mid & &rig -ve 2nd arg usage.
+.BU
+[060309] Documented insert-string's -ve arg.
+.BU
+[060309] Up-dated goto-matching-fence docs
+.BU
+[060309] Fixed docs for when no arg is given to forward-kill-word.
+.BU
+[060309]  Updated  jst  template to new  version.  Fixed a couple of bugs with
+tables  (empty  cells and bad  indent)  Implemented  a table  cell '!' flag to
+indicate a start of a row (helps  debugging) Fixed bug when title variable not
+set.
+.BU
+[060309] ClearCase. Minor improvement to setup layout
+.BU
+[060222]  Exit  handling  fixed, saving of modified  buffers,  history,  spell
+dictionaries etc. "**Emergency Exit**" messages removed from exit handling.
+.BU
+[060214]  Corrected  user setup mouse  defaults - missing  wheel mouse default
+bindings.
+.BU
+[060214] Improved the php look-back scheme to identify php script quicker.
+.BU
+[060213]  Fixed  crash  caused by the new hilight  look back scheme  using the
+indent look back function which used the indent scheme rather than the hilight
+scheme
+.BU
+[060210] Improved php hilighting by making use of the new look-back-scheme and
+look-back-only-token features.
+.BU
+[060210] Improved the time printout
+.BU
+[060210] Benchmark tests. Improved the disptest.
+.BU
+[060210] ClearCase. Fixed cc-add when adding just a directory.
+.BU
+[060210] Added basic mouse support to browser and honours exit bindings
+.BU
+[060210]  Added  look-back-scheme  support  to  hilighting  (uses same code as
+indents quick-lookback  scheme). Added new 'only use during look-back' hilight
+token  (combined  0x800 &  0x200)  which  can  solve  make  multi-line  string
+hilighting issues.
+.BU
+[060210] Fixed compiler warning with -m changes
+.BU
+[060210] Removed unused variable in new reposition function
+.BU
+[060210] Fixed unused variable on NDEBUG build
+.BU
+[060209]  Made changes to the -m server  message  option to make it usable. a)
+Process the message using the macro 'token' function so \\\\n is translated to
+a new-line char. b) If the message is not terminated  with a \\\\n then one is
+added. c) The popup-window message it only given when -o option is used
+.BU
+[060209] Added support for a server 'M' message command.
+.BU
+[060209] Changed the hilight and indent  meHilight  structure  mis-uses access
+the data via  #define  (added to  estruct.h)  so the code is clean and easy to
+read and the miss uses can be easily found and changed. Changed the storage of
+the main indent and hilight  scheme flags to use the ignore field (only 5 bits
+currently used) so the trunc scheme can use the type and the hilight look back
+can use the close (i.e. unlimited).
+.BU
+[060209] Fixed clear-case update list on checkin option.
+.BU
+[060208] Fixed crash caused by mlGetStringFromUser  being called recursively -
+only possible since the  introduction  of ftp completion  which can prompt for
+the user password while inputting a file name.
+.BU
+[060207] Added an implementation of  meFrameRepositionWindow  for XTerm, not a
+very good one as there is not a clear standard between WMs.
+.BU
+[060207] Fixed obscure crash caused by horizonal scroll mode 2 and long lines.
+.BU
+[060202] Build script. Fixed MS-Window's typo.
+.BU
+[060201] ClearCase + CVS. Fixed hiding of *??-console*  buffer and closing the
+window with loading a file from a dir list.
+.BU
+[060127] Broke the user-setup  'Tools' 'File Types' and 'EMail' pages out into
+separate independent setup dialogs. Added new Miscellaneous page to user-setup
+with links to these and other setup dialogs (such as alias-path and file-tool)
+Changed the buttons to the more standard Okay, Apply Cancel. Slightly  changed
+some of the Mail & VM  registry  settings  to make each  platform  independent
+(except filtering).
+.BU
+[060127] ClearCase. Added new cc-delete and  alias-path-setup  commands. Added
+f4 to diff binding.  Moved the window  resizing  call to nearer the end (after
+the font resize as this could  change to a smaller  font  allowing  more lines
+etc).
+.BU
+[060127]  Fixed quite a few issues with the CVS and  clear-case UI interfaces.
+Brought  cvs-state into line with CC, implemented  cc-delete and  rationalised
+the hot-keys and context menus.
+.BU
+[060127] Added new alias-path-setup OSD gui.
+.BU
+[060127] Added new 3 and 4 arg to  popup-window  to manipulate  the main frame
+window, implemented meFrameRepositionWindow function on windows.
+.BU
+[060127] Fixed find-reg index in error message.
+.BU
+[060127]  Moved  macro  parser's  \\\\a to \\\\g (bell) and added  support for
+\\\\a - alpha and \\\\m - alpha-num to hilight and regex.
+.BU
+[060125] Changed the default debug for 'deb' abbrev to 2.
+.BU
+[060125]  Improved  the  hilighting  of html &???; chars - issue raised by Tom
+Hundt
+.BU
+[060124]  Fixed crash caused by moving right (cursor key) into a sub-menu with
+no active items - bug found by Tom Hundt.
+.BU
+[060122] gdiff. Fixed the bugs  introduced  with the 3rd 'current line' window
+was introduced.
+.BU
+[060122] Changed call from  saveExitEmacs to exitEmacs to avoid compile errors
+for NE.
+.BU
+[060122]  Fixed the meDie  function to not exit  straight  after the emergency
+exit  message, now  autosaves  as it should.  Change the handling of the CLOSE
+message on windows so it prompts  okay/cancel  if buffers need saving and then
+exits. Fixed really  annoying  modifier  state  mismatch  problem on windows -
+reproduce by pressing control  right-click on title bar to get the system menu
+and then  release the control, ME misses the C-drop  event so thinks its still
+pressed.
+.BU
+[051220] JST extensions.
+.BU
+[051219] JST. Added implementation of TOC to html export.
+.BU
+[051219]  ClearCase.  Disable  check out of parent  dir for  cc-add as its not
+implemented
+.BU
+[051215] JST. Changed tag  highlighting  to handle split line tags  correctly.
+Implemented support for f and b color export to HTML using style.
+.BU
+[051215] First commit of new v4 JST format hook and export macros.
+.BU
+[051215]  Fixed the return value of  transpose-lines  command which was always
+returning false causing cc-add to fail.
+.BU
+[051212] SQL Template.  Missing hilight  statement  causes execution to fail -
+Thanks to Th.
+.BU
+[051212] Fixes to old JST before it gets trashed
+.BU
+[051125] Fixed regex bug where "[\\\\s]" incorrectly matches an 's'
+.BU
+[051125] ClearCase. Added support for not loaded to cc-state
+.BU
+[051123] Added support for alias-paths.
+.BU
+[051122] Fixed highlight  problems with "^ *$" & "^\\\\\\\\s*$"  close bracket
+tags, they should match any line containing only  spaces/white-spaces but they
+did not work reliably.
+.BU
+[051122] ClearCase. Fixed the cc-diff, external diff settings had got muddled.
+.BU
+[051122] Directory listing. Changed the size ordering to list largest first on
+initial sort.
+.BU
+[051118] ClearCase.  Implemented the auto get checkout comment and removed the
+temp command-line buffer.
+.BU
+[051118]  Directory  listing window. Added binding of 'f' to toggle the filter
+and changed the 's' and 'S' bindings round (s is far more useful)
+.BU
+[051118] Improved the horizontal scrolling of gdiff and browse
+.BU
+[051110]  Make  debugger  stop at  executed  !elif & !else  will  work for all
+macros,  may not work  when  executing  a buffer as the line may start  with a
+white space.
+.BU
+[051110] Stopped osd check-box macros from triggering the debugger when $debug
+is set to 1.
+.BU
+[051110]  Added some more key  translations  based on bug report by  Francesco
+Abbate.
+.BU
+[051104]  2nd and much  improved  version  of  cc-setup.  Changed  to using -1
+insert-string  to  allow  multi-line   comments.  Fixed  horrid  problem  with
+cleartool's  handling  of  checking  out a file  when  its been  hijacked,  no
+command-line option to make it use the hijacked file me has to use ipipe-write
+a send 'yes' at the  prompt, but as the prompt is not given me must be preempt
+and send them  first, one for each file -  clear-case  is pants and  cleartool
+sucks.
+.BU
+[051104]  Changed  cmd-line  construction  to use -1  insert-string  to insert
+\\\\n's into the line - not really very nice.
+.BU
+[051104] Fixed  meGetChar to be like  GetString in that if running a macro the
+value has not been  given it goes  directly  to the user  rather  than  simply
+failing, this improves macro reliability and eases debugging of macros.
+.BU
+[051104]  Multi-line  shell fix. The new 0x100 flag to  shell-command  has one
+drawback,  you cannot run  commands  that include  newline  characters  as the
+cmd-line must be on the first line. But CVS and clear-case commit comments are
+often  multi-line so this is not acceptable. To fix the problem I have added a
+-ve arg to insert-string comment which then performs a literal insertion, i.e.
+every  char  including  a \\\\n  char is  inserted  are text.  This  fixes the
+immediate  problem but  inserting a \\\\n char in a line can break other thing
+in a very major way (like undo) so it must be used with extreme care.
+.BU
+[051103]  ClearCase.  First rev of a CC tool defaults setup in cc-setup. Moved
+CC over to using  0x100 bit in  shell-command  to remove  command-line  length
+limit.
+.BU
+[051102] Moved multiple-file  file-tool executions over to using the new 0x100
+shell-command flag (first line of buffer) to remove  command-line length limit
+in almost all cases (cmd has a 4kb limit)
+.BU
+[051102]  Introduced  a new  0x100  bit for  shell  commands  which  means the
+\'cmd-line' given is a buffer names whose first line holds the  command-line to
+run.
+.BU
+[051028]  ClearCase. Fixed cc-diff abort when a file has no differences. Added
+a 'delete line' function to cc-state bound to C-k.
+.BU
+[051019] Visual basic highlighting - added And Or and Xor operators.
+.BU
+[051013]  Unix  shell  window,  corrected  highlighting  of  backslash  escape
+character outside of a string enclosure.
+.BU
+[051011]  ClearCase  extensions.  Added button to  cc-checkin  to get checkout
+comment.  In  cc-state - fixed  file  selection  on last  empty line and mouse
+selection and added support for mouse drag selection.
+.BU
+[051011] Changed dirlist copy/move to preserve the original files time stamp.
+.BU
+[051011]  Fixed  windows  rename  to check  the to name is case  insensitively
+different.
+.BU
+[051011]  Implemented  file  time-stamp  preservation  in the file-op copy and
+move.
+.BU
+[051011]  Improved the  window-popup  on windows,  more likely to work but can
+still fail.
+.BU
+[051011] Fixed UNIX drag-n-drop, broken by -l l:c addition.
+.BU
 [051007] Integrated Ric Yeates command line \fB-l <line>:<col>\fR submission -
 thanks for the submission.
 .BU
@@ -5181,9 +5847,13 @@ On-line tutorial to help beginners get up and running.
 .BU
 Native printer support for the generation of postscript.
 .BU
-GNU Emacs compatibility macro file.
+Inclusion of
+.Hr zlib 1
+to allow compressed file reading.
 .BE 0
 .SS "Release History"
+.IP "\fBAugust 2006\fR"
+9th Major Release \- MicroEmacs '06.
 .IP "\fBMay 2005\fR"
 8th Major Release \- MicroEmacs '05.
 .IP "\fBJanuary 2004\fR"
