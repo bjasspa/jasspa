@@ -2,9 +2,9 @@
 #
 # MicroEmacs date
 #
-MEYY=05
-MEMM=05
-MEDD=05
+MEYY=06
+MEMM=08
+MEDD=22
 MEVERS=20$(MEYY)$(MEMM)$(MEDD)
 #
 # Documentation tools
