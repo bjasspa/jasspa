@@ -72,9 +72,9 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		\
 	organize.emf	organizi.emf	organizl.emf	organizm.emf	\
 	organizt.emf	organizw.emf	osd.emf		osdcua.emf	\
 	osdhelp.emf	osdmisc.emf	osdnedit.emf	osf1.emf	\
-	pagefile.emf	patience.emf	perltags.emf	print.emf	\
-	printall.emf	printd.emf	printepc.emf	printers.emf	\
-	printf.emf	printstp.emf	\
+	pagefile.emf	password.emf	patience.emf	perltags.emf	\
+	print.emf	printall.emf	printd.emf	printepc.emf	\
+	printers.emf	printf.emf	printstp.emf	\
 	rect.emf	\
 	scheme.emf	schemeb.emf	schemebc.emf	\
 	schemebh.emf	schemed.emf	schemej.emf	schemel.emf	\

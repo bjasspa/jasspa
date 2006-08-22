@@ -62,6 +62,7 @@ define-macro-file games cross-word Metris Patience Triangle Mahjongg Match-It
 define-macro-file spell spell-word spell-buffer spell-edit-word find-word
 define-macro-file narrow narrow-search-forward narrow-search-backward
 define-macro-file notes notes notes-file notes-instant notes-context
+define-macro-file password password-to-phonic insert-password
 define-macro-file itemlist item-list item-list-close occur
 define-macro-file mail mail mail-check stop-mail-check
 define-macro-file fileopen osd-file-open osd-get-file
