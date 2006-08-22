@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd071.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd071.2,v 2.6 2006-08-22 09:20:43 jon Exp $
 .Im MicroEmacs command|shell
 .ds C0 "(\fB\*(cXc\fR)\ \&
 .so me.tni
@@ -17,7 +17,7 @@ shell \- Create a new command processor or shell
 \fBshell\fR \*(C0
 .ad
 .SH DESCRIPTION
-.B shell-command
+.B shell
 creates a new  command  processor  or shell.  Upon  exiting  the shell,  \*(mE
 redraws  its  screen and  continues  editing.  The  exceptions  to this are as
 follows:
@@ -33,6 +33,7 @@ replacement shell e.g. \fC4DOS\fR.
 .na
 .Ht ipipe-shell-command 2 ,
 .Ht pipe-shell-command 2 ,
+.Ht shell-command 2 ,
 .Ht suspend-emacs 2 .
 .ad
 .rm C0
