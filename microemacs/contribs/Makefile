@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20050205.2341>
+# Last Modified: <20060822.1220>
 #
 ##############################################################################
 
@@ -15,7 +15,7 @@ include $(TOPDIR)/etc/makeinc
 #
 # Basic macros to release
 #
-EMFS=	user.emf myipipe.emf password.emf
+EMFS=	user.emf myipipe.emf 
 #
 # Windows registry files.
 #
