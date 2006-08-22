@@ -1,0 +1,40 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.\"  Created By    : Jon Green
+.\"  Created       : Sun Feb 6 18:14:27 2005
+.\"
+.Id $Id: m3osd016.3,v 1.1 2006-08-22 10:44:41 jon Exp $
+.Im MicroEmacs command|osd
+.so me.tni
+.TH alias-path-setup 3
+.XI alias-path-setup - "Define alternative path alias"
+.SH NAME
+alias-path-setup \- Define alternative path alias
+.Me $a
+.SH SYNOPSIS
+.na
+.B alias-path-setup
+.ad
+.SH DESCRIPTION
+.B alias-path-setup
+provides a dialog interface for declaring  alternative alias paths. Alias path
+is a short name,  conventionally then \fC~\fR is the home directory. The alias
+path setup allows other  directory paths to be bound to a name i.e. "\fBme\fR"
+may be associated with "\fB/home/jon/merep/me/\fR". Given the alias definition
+then \fB~me\fR expands to \fB/home/jon/merep/me/\fR.
+.PP
+.B alias-path-setup
+is accessible from the
+.Ht user-setup 3 
+\fBMiscellaneous\fR tab.
+.PP
+Multiple  aliases may be defined and they are  automatically  accessible  from
+the mode line when a file or directory name is entered.
+.SH "SEE ALSO"
+.na
+.Ht user-setup 3 .
+.ad
+.FH
