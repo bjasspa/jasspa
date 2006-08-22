@@ -1,0 +1,61 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1999-2006 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.\"  Created By    : Jon Green
+.\"  Created       : Mon Jul 5 18:16:21 1999
+.\"
+.Id $Id: m3mac086.3,v 2.1 2006-08-22 11:45:31 jon Exp $
+.Im MicroEmacs command|scuts
+.so me.tni
+.TH insert-password 3
+.XI insert-password - "Create and insert a new password string"
+.XI password-to-phonic - "Convert a password to phonic string"
+.SH NAME
+.Me "|insert-password"
+insert-password \- Create and insert a new password string
+.br
+.Me "|password-to-phonic"
+password-to-phonic \- Convert a password to phonic string
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B insert-password
+.br
+.B password-to-phonic
+"\fIpassword\fR"
+.ad
+.SH DESCRIPTION
+The password commands are typically used by a system administrator to generate
+new random passwords or to phonically unambiguously describe a password.
+.PP
+.B insert-password
+generates a new random password string and inserts the generated password with
+phonic  description into the current buffer. The generated  password minimally
+includes  include  at  least  one each of  lowercase,  uppercase  and  numeric
+characters.  The default  length of the password is 8 characters,  the numeric
+argument  \fIn\fR changes the length of the generated  password and must be at
+least 3 characters long. Running 
+.B " 4 insert-password"
+to generate a 4 character password generates:
+.CS
+y5Ck (yankee - Five - CHARLIE - kilo)
+.CE
+.B password-to-phonic
+converts a string of characters to the phonic alphabet, the command requires a
+single  argument  \fIpassword\fR  which is  converted to a phonic  string. The
+command  \fBpassword-to-phonic\fR  "\fIy5Ck\fR" inserts the phonic string into
+the buffer:
+.CS
+yankee - Five - CHARLIE - kilo
+.CE 0
+.SH NOTES
+The password commands are macros defined in \fCpassword.emf\fR.
+.SH "SEE ALSO"
+.na
+.Ht $random 5 ,
+.Ht insert-string 2 .
+.ad
+.FH
