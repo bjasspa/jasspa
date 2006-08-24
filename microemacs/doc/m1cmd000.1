@@ -5,7 +5,7 @@
 .\"
 .\" Created By: Jon Green
 .\"
-.Id $Id: m1cmd000.1,v 2.17 2006-08-19 13:17:15 jon Exp $
+.Id $Id: m1cmd000.1,v 2.18 2006-08-24 20:07:39 jon Exp $
 .Im MicroEmacs function
 .so me.tni
 .TH me 1
@@ -138,9 +138,16 @@ enabled. The  \fB\-c\fR  option is generally  used with  windowing  interfaces
 .IP
 If the optional session name  \fIsessionName\fR  is specified then the session
 file  \fIsessionName\fR\|\fB.esf\fR  is loaded  restoring the previous editing
-session, when omitted then the default session file \fIusername\fR\|\fB.esf\fR
-is loaded, see 
-.Ht esf 8 .
+session  including the window size,  position and window  layout. On a session
+restore  then no  additional  files to load  should be included on the command
+line as this will not enable the original window  configuration to be restored
+as the window configuration will change.
+.IP
+If  the   \fIsessionName\fR   is  omitted   then  the  default   session  file
+\fIusername\fR\|\fB.esf\fR is loaded (see 
+.Ht esf 8 )
+restoring the previously loaded buffers however the window layout and position
+is not restored. 
 .IP \fB\-h\fR
 Show the help page (does not start the editor).
 .IP \fB\-i\fR
