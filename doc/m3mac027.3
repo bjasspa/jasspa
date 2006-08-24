@@ -6,7 +6,7 @@
 .\"  Created By    : Steven Phillips
 .\"  Created       : Fri Aug 7 07:32:59 1998
 .\"
-.Id $Id: m3mac027.3,v 2.7 2006-08-19 16:33:56 jon Exp $
+.Id $Id: m3mac027.3,v 2.8 2006-08-24 19:21:39 jon Exp $
 .Im MicroEmacs command|file|essential
 .ds C0 "(\fB\*(fA\fR)\ \&
 .so me.tni
@@ -39,7 +39,7 @@ the \fC*directory*\fR buffer, use \fBesc-h\fR for help within the buffer:
 .IP \fCspace\fR
 Selects the  directory  on the current  line and  up-dates  the  \fC*files*\fR
 buffer  with  the  information  on this  directory.  This  can also be done by
-clicking the left mouse button on the directory name. 
+clicking the left mouse button on the directory name.
 .IP \fCreturn\fR
 Selects the directory on the current line, if open (sub-directories displayed)
 then closes it or if closed it is opened. The \fC*files*\fR buffer is up-dated
@@ -63,6 +63,11 @@ updating both the \fC*directory*\fR and \fC*files*\fR  buffers. If the line is
 a file then it is opened using
 .Ht find-file 2 .
 This can also be done by clicking the left mouse button on the file name.
+.IP
+Where a \fBfile-tool\fR open action has been defined using
+.Ht file-tool-setup 3
+then the selected tool or utility is run to process the file. This may be used
+to launch viewers for PDF, image files etc.
 .IP \fCspace\fR
 Toggles  the tag state of the file on the current  line, see \fCx\fR  command.
 This can also be done by clicking  the left mouse button  anywhere  before the
@@ -140,12 +145,13 @@ file(s).
 Create a new  directory  (or folder),  command line prompt for the name of the
 new directory to create.
 .IP "\fCt\fR"
-Invokes the file tools menu to process the file.
+Invokes the file tools menu to process the file, see
+.Ht file-tool-setup 3 .
 .PP
 \fBfile-browser-swap-buffers\fR   swaps  between  the   \fC*directory*\fR  and
 \fC*file*\fR  windows,  making the other the current  window,  this is usually
 locally bound to the \fCtab\fR key.
-.PP 
+.PP
 \fBfile-browser-close\fR  hides both the  \fC*directory*\fR  and  \fC*file*\fR
 windows,  closing  the  file-browser,  this is  usually  locally  bound to the
 \fCf10\fR  key. Note that this  command is hidden and will not complete on the
@@ -156,9 +162,10 @@ key to file operation mapping.
 .SH "SEE ALSO"
 .na
 .Ht directory-tree 2 ,
+.Ht file-tool-setup 3 ,
 .Ht find-file 2 ,
+.Ht find-zfile 3 ,
 .Ht shell-command 2 .
 .ad
 .rm C0
 .FH
-

@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20060822.1223>
+# Last Modified: <20060824.1918>
 #
 ##############################################################################
 
@@ -172,7 +172,7 @@ MAC3_070=	$(DOCDIR)m3mac070.3 $(DOCDIR)m3mac071.3 $(DOCDIR)m3mac072.3\
 		$(DOCDIR)m3mac079.3
 MAC3_080=	$(DOCDIR)m3mac080.3 $(DOCDIR)m3mac081.3 $(DOCDIR)m3mac082.3\
 		$(DOCDIR)m3mac083.3 $(DOCDIR)m3mac084.3 $(DOCDIR)m3mac085.3\
-		$(DOCDIR)m3mac086.3
+		$(DOCDIR)m3mac086.3 $(DOCDIR)m3mac087.3
 #
 OSD3_000=	$(DOCDIR)m3osd000.3 $(DOCDIR)m3osd001.3 $(DOCDIR)m3osd002.3\
 		$(DOCDIR)m3osd003.3 $(DOCDIR)m3osd004.3 $(DOCDIR)m3osd005.3\
@@ -180,7 +180,7 @@ OSD3_000=	$(DOCDIR)m3osd000.3 $(DOCDIR)m3osd001.3 $(DOCDIR)m3osd002.3\
 		$(DOCDIR)m3osd009.3
 OSD3_010=	$(DOCDIR)m3osd010.3 $(DOCDIR)m3osd011.3 $(DOCDIR)m3osd012.3\
 		$(DOCDIR)m3osd013.3 $(DOCDIR)m3osd014.3 $(DOCDIR)m3osd015.3\
-		$(DOCDIR)m3osd016.3
+		$(DOCDIR)m3osd016.3 $(DOCDIR)m3osd017.3
 #
 FCL3_000=	$(DOCDIR)m3fcl001.3 $(DOCDIR)m3fcl002.3 $(DOCDIR)m3fcl003.3\
 		$(DOCDIR)m3fcl004.3 $(DOCDIR)m3fcl005.3 $(DOCDIR)m3fcl006.3\

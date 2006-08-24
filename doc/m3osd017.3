@@ -1,0 +1,339 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.\"  Created By    : Jon Green
+.\"  Created       : Sun Feb 6 18:14:27 2005
+.\"
+.Id $Id: m3osd017.3,v 2.1 2006-08-24 19:21:44 jon Exp $
+.Im MicroEmacs command|osd;command|file
+.so me.tni
+.TH file-tool-setup 3
+.XI file-tool-setup - "Define file browser tools"
+.SH NAME
+file-tool-setup \- Define file-browser tools
+.Me $a
+.SH SYNOPSIS
+.na
+.B file-tool-setup
+.ad
+.SH DESCRIPTION
+.B file-tool-setup
+provides a dialog  interface  for  declaring  a set of actions to act on files
+shown in the
+.Ht file-browser 3
+directory listing. Actions may be defined to interact with \fCZIP\fR files for
+both creation and  extraction,  opening of \fCPDF\fR files with Adobe Acrobat,
+opening of Microsoft Word \fCDOC\fR  files with Word or StarOffice  etc. These
+options are shown in the \fBfile-browser\fR pop-up menu under \fBTools\fR.
+.PP
+The file tools may be configured from
+.Ht user-setup 3
+in the \fBMiscellaneous\fR tab or invoked directly from the command line using
+\fBfile-tool-setup\fR,  when  invoked  then  the File  Tool  Setup  dialog  is
+displayed. The dialog allows  commands to be be matched  against  certain file
+types that are determined  using a regular  expression, if a filename  matches
+the pattern then a command line or \*(mS command may be invoked to process the
+file(s).  The command  line  includes  \fIvariables\fR  which are filled in by
+\*(mS.  The  information  is  stored  in the  registry  \fIuser.erf\fR  and is
+retained across sessions.
+.PP
+The \fBfile-tool-setup\fR presents a list of ten tool bindings, some or all of
+which may be  populated  with tool  settings.  The  dialog  has the  following
+fields:
+.BP Name
+Declares the name of the tool as it appears in the \fBTools\fR section of the
+.Ht file-browser 3
+pop-up menu. A single menu  short-cut  key may be defined by prefixing the hot
+key with a \fC\\H\fR.
+.BP "File Mask"
+A regular  expression  that is used to search for files of a given  type, this
+follows the standard \*(mS
+.Hl "Regular Expression" RegularExpressions 2
+syntax. As an  example  'all  files' is defined as  "\fC.*\fR",  PDF files are
+defined as \fC.*\\.pdf\fR,  image files might be defined as a set of different
+extensions \fC.*\\.\\(png\\|jpg\\|jpeg\\|bmp\\|gif\\)\fR, etc.
+.BP Command
+Defines  the  command  line or \*(mS  command  that is executed to process the
+action. The command line  comprises  escape  characters  using the  percentage
+(\fC%\fR) character, these fields are filled in automatically by \*(mS and are
+defined as follows:
+.RS
+.TP
+\fB%f\fR - Filename
+.\"
+A  replacement  for the  filename,  typically  passed in quotes to the command
+being executed as an argument. The filename is defined as a relative  pathname
+from the current  directory  location. If multiple  files are  selected in the
+\fBfile-browser\fR  then the command line is executed multiple times, once for
+each file, unless the \fB%*\fR  construct is used in conjunction with \fB%f\fR
+when multiple files may be specified with a single command invocation.
+.TP
+\fB%b\fR - Base Filename
+.\"
+The basename of the file, i.e. no pathname and no file extension.
+.TP
+\fBe\fR - File Extension
+.\"
+The file extension of the filename.
+.TP
+\fB%p\fR, \fB%P\fR - File pathname
+.\"
+The pathname of the file without the filename.  \fB%p\fR is the file path with
+\'/' forward slash directory  separators.  \fB%P\fR is the same as \fB%p\fR but
+with '\\' backslashes directory separators on Microsoft Windows and DOS.
+.TP
+\fB%i[\fR\|\fIh\fR\|\fB|\fR\|\fIprompt\fR\|\fB|\fR\|\fIdefault\fR\|\fB]\fR .. \fB%n\fR - User Input
+.\"
+Specifies  that the user is to be  prompted  for input from the command  line.
+Square brackets follow the \fB%i\fR which defines the command line prompt. The
+\fB%i[..]\fR  is  replaced  with the user input and may be  replicated  in the
+command line using \fB%n\fR where \fBn\fR is a digit \fC1..9\fR where \fB%1\fR
+reproduces the first \fB%i\fR, \fB%2\fR reproduces the second, ... etc.
+.IP
+\fIh\fR  specifies  the type of data to be entered  including  the history and
+semantics allowed. \fIh\fR may have the following values:
+.sp
+.nf
+.na
+\fC0\fR For a general string input using the general history.
+\fC1\fR For an absolute file name, with completion and history.
+\fC2\fR For a MicroEmacs '05 buffer name, with completion and history.
+\fC3\fR For a MicroEmacs '05 command name, with completion and history.
+\fC4\fR For a file name, with completion and history.
+\fC5\fR For a search string, with history.
+\fC6\fR For a MicroEmacs '05 mode name, with completion and history.
+\fC7\fR For a MicroEmacs '05 variable name, with completion and history.
+\fC8\fR For a general string using no history.
+\fC9\fR For a user supplied completion list (\fCcom-list\fR).
+\fCa\fR For a user supplied completion list (\fCbuffer-name\fR).
+.ad
+.fi
+.IP
+\fIprompt\fR is the prompt string presented on the command line.
+.IP
+\fIdefault\fR is the default value that should be used. The \fB%\fR characters
+may be used and will be  replaced  with  information  from the  filename  e.g.
+\fB%b\fR would be replaced with the base file name.
+.IP
+As an example of the user input, consider the following  command line which is
+used to unzip a \fB.zip\fR file:
+.IP
+\fCunzip "%f" -d %i[4|Unzip sub-dir|%b]\fR
+.IP
+Given  an  input  file  of  \fC/home/user/foo.zip\fR  then  the  command  line
+\fCunzip\fR  \fC"/home/user/foo.zip"\fR \fC-d\fR \fCfoo\fR is generated, given
+that the user accepted the defualt  command line prompt of "\fCfoo\fR" for the
+prompt "\fCUnzip\fR \fCsub-dir\fR"
+.IP
+Where the user input is  required in multiple  parts of the command  line then
+the \fB%1\fR syntax may be used. The following example may be used to create a
+\fB.zip\fR archive from one or more selections in the file list.
+.IP
+\fCrm -f "%i[4|Zip file name|%b].zip"; zip -r %1.zip%*[ "%f"]\fR
+.IP
+In this  instance  the user is prompted  for the \fCZip file name\fR and it is
+used twice in the command  line, the default name is the base file name of the
+first  file.  Consider  two  files  have  been  selected   \fCfoo.txt\fR   and
+\fCbar.txt\fR where \fCfoo.txt\fR is first. The generated command line is:
+.IP
+\fCrm -f "foo.zip"; zip -r foo.zip "foo.txt" "bar.txt"\fR
+.IP
+Note how the \fIbasename\fR has been used as the default for the zip file name
+to create  and this has been used in two places in the  command  line, once to
+delete the old archive if it already exists and once to form the new archive.
+.TP
+\fB%*[\fR\|\fIargument\fR\|\fB]\fR - Multiple file command line
+.\"
+Utilities  that accept  multiple  arguments  on the command line use a special
+construct  \fB%*\fR. By default a single  command line  invocation is made for
+each file, the \fB%*\fR  construct  makes a single command line invocation for
+multiple files.
+.IP
+The square bracket construct contains the expansion for each file specified in
+the  \fBfile-browser\fR,  this will typically include the \fB%f\fR  construct.
+For each argument then the brackets are expanded and concatenated  together to
+form a command line, as such the bracket construct usually starts with a space
+character as this separates the files.
+.IP
+As an  example  then zip file  construction  will take  multiple  files on the
+command line to add to the archive:
+.IP
+\fCrm -f "%i[4|Zip file name|%b].zip"; zip -r %1.zip%*[ "%f"]\fR
+.TP
+\fB*\fR\fI\*(mS Command\fR - Internal command
+.\"
+Where the command  commences with a star character  (\fC*\fR) then the command
+is treated as a \*(mS command and is executed within the editor. As an example
+consider handling a zip file using the
+.Ht find-zfile 3
+command:
+.IP
+\fC*find-zfile "%f"\fR
+.IP
+For each file then \fBfind-zfile\fR is invoked to read the zip archive.
+.RE
+.BP "Default Open"
+A flag that  defines  whether  this is an auto open  action. When set then the
+command  is   automatically   launched   if  the  file  is   selected  in  the
+\fBfile-browser\fR. When clear then the tool has to be explicitly invoked.
+.BP "Hide Window"
+Defines the behavior of the window  associated  with the command, for external
+viewers  then the window  should be hidden.  For  internal  commands  then the
+window should be visible to show the results.
+.BP "Up/Down"
+Changes the item order in the list/menu by moving it up or down.
+.BP "Add"
+Adds a new tool line to the list.
+.BP "Modify"
+Modifies the existing tool setting.
+.BP "Delete"
+Deletes the tool from the list.
+.BP "Close"
+Closes the tool menu.
+.SH EXAMPLE
+Example tool definitions:
+.\"
+.IP "Word processor"
+Name: StarOffice/OpenOffice/Microsoft Word
+.br
+File Mask: \fC.*\\.\\(doc\\|ppt\\|xls\\|odt\\|rtf\\)\fR
+.br
+Command: \fCsoffice "%f"\fR
+.br
+Hide Window: yes
+.br
+Default Open: no
+.\"
+.IP "Image Viewer"
+Name: XnView/Gimp/Photoshop/PaintShop
+.br
+File Mask: \fC.*\\.\\(png\\|jpg\\|jpeg\\|bmp\\|gif\\)\fR
+.br
+Command: \fCxnview "%f"\fR
+.br
+Hide Window: yes
+.br
+Default Open: yes
+.\"
+.IP "Postscript Viewer"
+Name: Gnome Ghostview/Ghostview
+.br
+File Mask: \fC.*\\.ps\fR
+.br
+Command: \fCggv "%f"\fR
+.br
+Hide Window: yes
+.br
+Default Open: yes
+.\"
+.IP "Acrobat Viewer"
+Name: Adobe Acrobat
+.br
+File Mask: \fC.*\\.pdf\fR
+.br
+Command: \fCacroread "%f"\fR
+.br
+Hide Window: yes
+.br
+Default Open: yes
+.\"
+.IP "Unzip a zip Archive in current directory"
+Name: Unzip in .
+.br
+File Mask: \fC.*\\.zip\fR
+.br
+Command: \fCunzip "%f"\fR
+.br
+Hide Window: no
+.br
+Default Open: no
+.\"
+.IP "Unzip a zip Archive in a sub-directory"
+Name: Unzip in sub-dir
+.br
+File Mask: \fC.*\\.zip\fR
+.br
+Command: \fCunzip "%f" -d %i[4|Unzip sub-dir|%b]\fR
+.br
+Hide Window: no
+.br
+Default Open: no
+.\"
+.IP "Create a zip archive"
+Name: Create Zip
+.br
+File Mask: \fC.*\fR
+.br
+Command: \fCrm -f "%i[4|Zip file name|%b].zip"; zip -r %1.zip%*[ "%f"]\fR
+.br
+Hide Window: no
+.br
+Default Open: no
+.\"
+.IP "Add to a zip archive"
+Name: Add to Zip
+.br
+File Mask: \fC.*\fR
+.br
+Command: \fCzip -r %i[4|Zip file name|%b]%*[ "%f"]\fR
+.br
+Hide Window: no
+.br
+Default Open: no
+.\"
+.IP "View archive file"
+Name: View Archive
+.br
+File Mask: \fC.*\\.\\(zip\\|tgz\\|tar\\.gz\\|tar\\|gz\\|bz2\\)\fR
+.br
+Command: \fC*find-zfile "%f"\fR
+.br
+Hide Window: no
+.br
+Default Open: yes
+.\"
+.IP "Convert DOS to UNIX"
+Name: Dos2Unix
+.br
+File Mask: \fC.*\fR
+.br
+Command: \fCme @dos2unix %*[ "%f"]\fR
+.br
+Hide Window: no
+.br
+Default Open: no
+.\"
+.IP "Microsoft Windows - default action"
+Name: Windows Default
+.br
+File Mask: \fC.*\fR
+.br
+Command: \fCcmd /c "%f"\fR
+.br
+Hide Window: yes
+.br
+Default Open: no
+.br
+Notes: This action runs the default action for the file type.
+.\"
+.IP "Microsoft Windows - Explorer"
+Name: Explorer
+.br
+File Mask: \fC.*\fR
+.br
+Command: \fCexplorer .%*[]\fR
+.br
+Hide Window: yes
+.br
+Default Open: no
+.SH "SEE ALSO"
+.na
+.Ht file-browser 3 ,
+.Ht find-zfile 3 ,
+.Ht user-setup 3 .
+.br
+.Hl "Regular Expressions" RegularExpressions 2
+.ad
+.FH
