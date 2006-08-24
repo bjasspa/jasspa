@@ -1,12 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1999-2005 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1999-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\"  Created By    : Jon Green
 .\"  Created       : Thu May 27 15:30:14 1999
 .\"
-.Id $Id: faq.2,v 2.13 2005-01-16 19:49:06 jon Exp $
+.Id $Id: faq.2,v 2.14 2006-08-24 19:21:39 jon Exp $
 .Im MicroEmacs faq
 .so me.tni
 .TH "FAQs" 0f
@@ -1274,6 +1274,31 @@ The user variable
 may be used to enable 
 .Ht find-tag 2 
 to locate a recursivelly generated \fBtags\fR file from a parent directory.
+.PP
+.Hl "[FAQ Index]" faq - .
+.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+.rm Qu
+.rm Qn
+.ds Qu "ne; how can I enable line wrapping in NE ??
+.ds Qn 43
+.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
+.XI faq\*(Qn 0f "\*(Qu"
+.ne 10
+.SH "QUESTION (\*(Qn)"
+\*(Qu
+.SH ANSWER
+The line wrapping feature is controlled by the wrap buffer-mode in ME but this
+feature is omitted in NE. To get the size of NE down many  features have to be
+disabled including the wrap mode and fill-paragraph.
+.PP
+To enable  then you have to build your own version of NE with this  enabled by
+changing  the 2nd  MEOPT_WORDPRO  settings  in  "emain.h" to 1.  Alternatively
+rename your ne.emf to me.emf and use 'me' instead of ne.
+.PP
+Once it is built and you want to edit a text file then you need to enable WRAP
+and INDENT mode in the buffer for it to behave  correctly.  WRAP does the wrap
+to the next line and INDENT maintains the left indentation.  fill-paragraph is
+present. 
 .PP
 .Hl "[FAQ Index]" faq - .
 .FH

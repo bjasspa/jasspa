@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.43 2006-08-22 11:16:47 jon Exp $
+.Id $Id: me.nrs,v 2.44 2006-08-24 19:21:38 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -153,7 +153,7 @@ as part of the on-line \fB\*(mS\fR manual pages.
 .PP
 .Hl Acknowledgments Acknowledgments - ,
 .Hl Copyright Copyright - ,
-.Hl Origins Origins -
+.Hl History History -
 and
 .Hl "Contact Information" Contact - .
 .br
@@ -2017,8 +2017,8 @@ Mail as:-
 If you wish to port \*(mS to another  platform  and are  willing to  undertake
 responsibility  for  maintenance  of that platform then we would like to here
 from you. Send us some details.
-.NH Origins - "\*(mS \- Origins"
-.SH "ORIGINS"
+.NH History - "\*(mS \- History"
+.SH "HISTORY"
 This version of  MicroEmacs is based on an early  \fIMicroEmacs\fR  release of
 3.8 in 1988, the origins of which are unknown,  except to say it was delivered
 on a unmarked 5 1/2" floppy disk.
@@ -2057,7 +2057,85 @@ common editor across all working platforms has been achieved!
 .SS "Development History"
 .\"
 .B "9th Release - In progress"
+User perspective summary of changes
 .BS
+.Ht MainMenu 3
+- A more consistent main menu and user dialog interaction.
+.BU
+.Ht file-browser 3
+- New key bindings to create, delete, copy files and directories. 
+.Ht file-tool-setup 3
+allows  open  actions  to be  associated  with file types  allowing  automatic
+launching of external tools.
+.BU        
+Introduction  of major modes for management of different file types.
+.Ht buffer-major-mode 3
+assigns  a  new  operating  mode  to  a  buffer  affecting  the  highlighting,
+indentation, key binding etc.
+.Ht major-mode-setup 3
+configures the behavior of the major mode. 
+.BU            
+Introduction  of sessions which store the context of editor  including  window
+layout  and  loaded   files.   Multiple   sessions  may  be  used,   "\fBme\fR
+\fB-c\fR\fI<sessionName>\fR" restores a specific session. 
+.Ht save-session 3
+and
+.Ht read-session 3
+handle the restore/saving of sessions. The existing history commands have been
+removed.
+.BU
+.Ht ClearCase 3
+support for IBM Rational ClearCase.
+.BU
+.Ht cvs 3
+improved support within the 
+.Ht file-browser 3 .
+.BU
+.Ht notes 3
+utility  extended,  new  features  allow  quick  notes  to be  generated  with
+\fBnotes-instant\fR,   notes   associated  with  a  file  may  be  added  with
+\fBnotes-context\fR.
+.BU
+.Ht rdiff 3
+recursive difference and 
+.Ht xdiff 3
+for access to an external graphical difference tool.
+.Ht forward-kill-word 2
+inconsistencies removed.
+.BU        
+Highlighting  improved,  especially  for  long  script  files  (html  /  php /
+javascript) where the highlighting used to be lost.
+.BU        
+.Hr jst 8
+- Structured text documents (needs some doc).
+.BU
+.Ht insert-password 3
+password generation utility for system  administrators who tire of thinking of
+new passwords.
+.BU
+Fill columns are now defined on a per buffer basis
+.Ht $buffer-fill-col 5 .
+.BU
+.Ht indent-increase 3
+and
+.Ht indent-decrease 3
+commands introduced to change the indentation of a region. 
+.BU          
+The default date format may be specified by the user with
+.Ht .ascii-time.format 5 .
+.BU          
+Quick  directory  aliases such as  "\fB~proj\fR" or "\fB~work\fR"  etc. may be
+defined to a longer pathname using 
+.Ht alias-path-setup 3 .
+.BU           
+Bug fixes and enhancements to existing commands and functions.
+.BE
+.B "Development history"
+.BS
+[060822] Added password commands 
+.Ht password-to-phonic 3
+and
+.Ht insert-password 3 .
 [060816] Added settings for fill-col and fill-mode to the
 .Ht major-mode-setup 3 .
 .BU

@@ -1,0 +1,47 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1999-2006 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.\"  Created By    : Jon Green
+.\"  Created       : Mon Jul 5 18:16:21 1999
+.\"
+.Id $Id: m3mac087.3,v 2.1 2006-08-24 19:21:44 jon Exp $
+.Im MicroEmacs command|modes;command|buffer
+.so me.tni
+.TH buffer-major-mode 3
+.XI buffer-major-mode - "Change the operating mode of a buffer"
+.SH NAME
+buffer-major-mode \- Change the operating mode of a buffer
+.SH SYNOPSIS
+.na
+.B buffer-major-mode
+"\fImodename\fR"
+.ad
+.SH DESCRIPTION
+.B buffer-major-mode
+changes the major mode of a buffer  affecting the  highlighting,  indentation,
+key bindings and mode specific commands to the specified  \fImodename\fR. This
+allows the buffer to be configured correctly for the type of file. 
+.PP
+On invocation then the user is prompted for the  \fImodename\fR,  TAB performs
+completion.
+.PP
+Running 
+.B buffer-major-mode 
+causes the
+.Hl "File Hook" fileHooks 2
+to be executed for the buffer for the new \fImodename\fR.
+.SH NOTES
+.Ht buffer-setup 3 
+may be used to make  local  changes to the major mode for the  current  buffer
+only. 
+.Ht major-mode-setup 3
+may be used to change the major mode settings across all buffers.
+.SH "SEE ALSO"
+.na
+.Ht buffer-setup 3 ,
+.Ht major-mode-setup 3 ,
+.Hl "File Hooks" fileHooks 2
+.ad
+.FH
