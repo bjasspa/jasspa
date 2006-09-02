@@ -4,11 +4,11 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <060824.2015>
+>  Last Modified : <060828.2058>
 >
 
     [060822] 2006 RC1 release.
-    
+
     User perspective summary of changes
 
     * MainMenu(3) - A more consistent main menu and user dialog interaction.
@@ -16,51 +16,66 @@
     * file-browser(3)  - New key  bindings to create,  delete,  copy files and
       directories.  file-tool-setup(3)  allows open  actions to be  associated
       with file types allowing automatic launching of external tools.
-        
+
     * Introduction  of major modes for  management  of  different  file types.
-      buffer-mode-setup(3)  assigns a new operating mode to a buffer affecting
+      buffer-major-mode(3)  assigns a new operating mode to a buffer affecting
       the  highlighting,  indentation,  key binding  etc.  major-mode-setup(3)
-      configures the behavior of the major mode. 
-            
+      configures the behavior of the major mode.
+
     * Introduction  of  sessions  which store the context of editor  including
       window  layout  and loaded  files.  Multiple  sessions  may be used, "me
       -c<sessionName>"   restores  a  specific  session.  save-session(3)  and
       read-session(3)  handle the  restore/saving  of sessions.  The  existing
       history commands have been removed.
-          
+
     * ClearCase(3) support for IBM Rational ClearCase.
-            
+
     * cvs(3) improved support within the file-browser(3).
-        
+
     * notes(3)  utility  extended,  new  features  allow  quick  notes  to  be
       generated with notes-instant,  notes associated with a file may be added
       with notes-context.
-          
+
     * rdiff(3)  recursive  difference  and  xdiff(3) for access to an external
       graphical difference tool.
-        
-    * kill-word(2) inconsistencies removed.
-        
+
+    * forward-kill-word(2) inconsistencies removed.
+
     * Highlighting  improved,  especially  for long script files (html / php /
       javascript) where the highlighting used to be lost.
-        
+
     * jst(8) - Structured text documents (needs some doc).
-        
+
     * insert-password(3) password generation utility for system administrators
       who tire of thinking of new passwords.
 
     * Fill columns are now defined on a per buffer basis $buffer-fill-col(5).
 
     * indent-increase(3) and indent-decrease(3)  commands introduced to change
-      the indentation of a region. 
-          
+      the indentation of a region.
+
     * The   default   date   format  may  be   specified   by  the  user  with
       .ascii-time.format(5).
-          
-    * Quick  directory  aliases such as "~proj" or "~work" etc. may be defined
+
+    * Quick  directory  aliases such as "~proj" or "~work" etc. may be defined
       to a longer pathname using alias-path-setup(3).
-           
+      
+    * Support for Adobe/Macromedia ColdFusion.
+
     * Bug fixes and enhancements to existing commands and functions.
+
+    [060829] Fixed HTML  template  html-insert-tag  to add the  closing "/" on
+             insertion of a "<singleTag/>". Fixed  html-insert-attrib  to deal
+             with attribute insertion into a HTML tag ending in "/>".
+
+    [060828] SQL Template. Corrected SQL string hilighting.
+
+    [060827] New  language  template  for  Adobe/MacroMedia  ColdFusion  (file
+             extensions .cfm, .cfml .cfc).
+    
+    [060827] Extended indentation with the 'u' and 'v' indentation types.
+
+    [060822] 2006 RC1 Release.
 
     [060822] Added     password     commands      "password-to-phonic"     and
              "insert-password".
@@ -71,9 +86,9 @@
     [060816] Added support for a .fhook-???.fill-*  variable and changed latex
              over to using this variable  rather than burning the fill-mode in
              as 'l'
-    
+
     [060816] Crossword - Changed Exit button to Close.
-    
+
     [060816] Changed organizer Exit buttons to Close or Cancel.
 
     [060812] Additions to the PHP script - missing tags etc.
