@@ -334,6 +334,11 @@ set-variable #l2 &ind &spr ".hilight.%stag" #l0
             !return
         !endif
         set-variable :chook "phps"
+    !elif &equ $result .indent.cfmscript
+        !if &seq :chook "cfms"
+            !return
+        !endif
+        set-variable :chook "cfms"
     !elif &equ $result .indent.luascript
         !if &seq :chook "lua"
             !return

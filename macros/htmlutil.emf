@@ -442,7 +442,12 @@ define-macro html-insert-tag
     !else
         goto-position "\x81"
     !endif
-    insert-string &spr "<%s>" #l0
+    ; Use the single tag syntax if only 1 tag
+    set-variable #l9 "/"
+    !if &band @# 1
+        set-variable #l9 ""        
+    !endif
+    insert-string &spr "<%s%s>" #l0 #l9
     !if &band @# 1
         set-variable #l5 $window-line
         set-variable #l6 $window-col
@@ -504,8 +509,14 @@ define-macro html-insert-attrib
             forward-char
         !endif
     !else
+        ; Find the ">"
         backward-char
         !if &not &seq @wc ">"
+            forward-char
+        !endif
+        ; See if this is a single tag i.e. "/>" 
+        backward-char
+        !if &not &seq @wc "/"
             forward-char
         !endif
     !endif

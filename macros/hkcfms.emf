@@ -1,0 +1,676 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2006 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created      Fri Oct 24 2003
+; Synopsis:    Coldfusion CFM Script Hook File
+; Authors:     Jon Green
+; Note:
+;   The main hkcfm hook handles the html side of the file,
+;   this handles the script side.
+
+define-macro fhook-cfms
+    set-variable $buffer-mask "luh1"
+    @# buffer-init "cfms"
+    buffer-init-hooks
+!emacro
+
+; buffer-init variables
+set-variable .fhook-cfms.name "CFM Script"
+set-variable .fhook-cfms.setup &reg "/history/fhook/cfms" "bdfghinopxl"
+set-variable .fhook-cfms.setup-mask "abdefghikmnoptuxl#"
+set-variable .fhook-cfms.indent-width 2
+
+; Setup collapse
+set-variable .fhook-cfms.collapse-open  "^Function[ \t]"
+set-variable .fhook-cfms.collapse-close "^}"
+set-variable .fhook-cfms.collapse-mclose "1"
+set-variable .fhook-cfms.collapse-mnext "-1"
+; setup item-list
+set-variable .fhook-cfms.item-list-s1 "^[ \t]*Function[ \t]+\\(\\w[1-9A-Za-z_']*\\)"
+set-variable .fhook-cfms.item-list-r1 "Func \ecB\\1\ecA"
+
+; Define a macro to declare the ColdFusion script language tokens as the
+; highlighting is included in different hilighting schemes depending on the
+; context of the current syntax position.
+;
+; @param hilight-scheme
+;
+0 define-macro cfm-set-hilight
+    set-variable #l1 @1
+    ; Strings
+    hilight #l1 4 "'" "'" "\\"                  .scheme.string
+    hilight #l1 4 "\"" "\"" "\\"                .scheme.string
+    ; General variables.
+    hilight #l1 4 "#" "#" "\\"                  .scheme.variable
+    ; Client variables
+    hilight #l1 1 "client\.\\w+"                .scheme.variable
+    ; Server variables
+    hilight #l1 1 "server\.coldfusuion\.\\w+"   .scheme.variable
+    hilight #l1 1 "server\.os\.\\w+"            .scheme.variable
+    ; Application variables
+    hilight #l1 1 "application.\\w+"            .scheme.variable
+    ; Session variables
+    hilight #l1 1 "session.\\w+"                .scheme.variable
+    ; Exception, Query and Error variables
+    hilight #l1 1 "cfcatch.\\w+"                .scheme.variable
+    hilight #l1 1 "cfquery.\\w+"                .scheme.variable
+    hilight #l1 1 "error.\\w+"                  .scheme.variable
+    ; Keywords
+    hilight #l1 1 "abs"                         .scheme.keyword
+    hilight #l1 1 "acos"                        .scheme.keyword
+    hilight #l1 1 "arrayappend"                 .scheme.keyword
+    hilight #l1 1 "arrayavg"                    .scheme.keyword
+    hilight #l1 1 "arrayclear"                  .scheme.keyword
+    hilight #l1 1 "arraydeleteat"               .scheme.keyword
+    hilight #l1 1 "arrayinsertat"               .scheme.keyword
+    hilight #l1 1 "arrayisempty"                .scheme.keyword
+    hilight #l1 1 "arraylen"                    .scheme.keyword
+    hilight #l1 1 "arraymax"                    .scheme.keyword
+    hilight #l1 1 "arraymin"                    .scheme.keyword
+    hilight #l1 1 "arraynew"                    .scheme.keyword
+    hilight #l1 1 "arrayprepend"                .scheme.keyword
+    hilight #l1 1 "arrayresize"                 .scheme.keyword
+    hilight #l1 1 "arrayset"                    .scheme.keyword
+    hilight #l1 1 "arraysort"                   .scheme.keyword
+    hilight #l1 1 "arraysum"                    .scheme.keyword
+    hilight #l1 1 "arrayswap"                   .scheme.keyword
+    hilight #l1 1 "arraytolist"                 .scheme.keyword
+    hilight #l1 1 "asc"                         .scheme.keyword
+    hilight #l1 1 "asin"                        .scheme.keyword
+    hilight #l1 1 "atn"                         .scheme.keyword
+    hilight #l1 1 "bitand"                      .scheme.keyword
+    hilight #l1 1 "bitmaskclear"                .scheme.keyword
+    hilight #l1 1 "bitmaskread"                 .scheme.keyword
+    hilight #l1 1 "bitmaskset"                  .scheme.keyword
+    hilight #l1 1 "bitnot"                      .scheme.keyword
+    hilight #l1 1 "bitor"                       .scheme.keyword
+    hilight #l1 1 "bitshln"                     .scheme.keyword
+    hilight #l1 1 "bitshrn"                     .scheme.keyword
+    hilight #l1 1 "bitxor"                      .scheme.keyword
+    hilight #l1 1 "boolean"                     .scheme.keyword
+    hilight #l1 1 "ceiling"                     .scheme.keyword
+    hilight #l1 1 "chr"                         .scheme.keyword
+    hilight #l1 1 "cjustify"                    .scheme.keyword
+    hilight #l1 1 "compare"                     .scheme.keyword
+    hilight #l1 1 "comparenocase"               .scheme.keyword
+    hilight #l1 1 "cos"                         .scheme.keyword
+    hilight #l1 1 "createdate"                  .scheme.keyword
+    hilight #l1 1 "createdatetime"              .scheme.keyword
+    hilight #l1 1 "createodbcdate"              .scheme.keyword
+    hilight #l1 1 "createodbcdatetime"          .scheme.keyword
+    hilight #l1 1 "createodbctime"              .scheme.keyword
+    hilight #l1 1 "createtime"                  .scheme.keyword
+    hilight #l1 1 "createtimespan"              .scheme.keyword
+    hilight #l1 1 "createuuid"                  .scheme.keyword
+    hilight #l1 1 "dateadd"                     .scheme.keyword
+    hilight #l1 1 "datecompare"                 .scheme.keyword
+    hilight #l1 1 "dateconvert"                 .scheme.keyword
+    hilight #l1 1 "datediff"                    .scheme.keyword
+    hilight #l1 1 "dateformat"                  .scheme.keyword
+    hilight #l1 1 "datepart"                    .scheme.keyword
+    hilight #l1 1 "day"                         .scheme.keyword
+    hilight #l1 1 "dayofweek"                   .scheme.keyword
+    hilight #l1 1 "dayofweekasstring"           .scheme.keyword
+    hilight #l1 1 "dayofyear"                   .scheme.keyword
+    hilight #l1 1 "daysinmonth"                 .scheme.keyword
+    hilight #l1 1 "daysinyear"                  .scheme.keyword
+    hilight #l1 1 "de"                          .scheme.keyword
+    hilight #l1 1 "decimalformat"               .scheme.keyword
+    hilight #l1 1 "decrementvalue"              .scheme.keyword
+    hilight #l1 1 "decrypt"                     .scheme.keyword
+    hilight #l1 1 "deleteclientvariable"        .scheme.keyword
+    hilight #l1 1 "directoryexists"             .scheme.keyword
+    hilight #l1 1 "dollarformat"                .scheme.keyword
+    hilight #l1 1 "encrypt"                     .scheme.keyword
+    hilight #l1 1 "evaluate"                    .scheme.keyword
+    hilight #l1 1 "exp"                         .scheme.keyword
+    hilight #l1 1 "expandpath"                  .scheme.keyword
+    hilight #l1 1 "fileexists"                  .scheme.keyword
+    hilight #l1 1 "find"                        .scheme.keyword
+    hilight #l1 1 "findnocase"                  .scheme.keyword
+    hilight #l1 1 "findoneof"                   .scheme.keyword
+    hilight #l1 1 "firstdayofmonth"             .scheme.keyword
+    hilight #l1 1 "fix"                         .scheme.keyword
+    hilight #l1 1 "formatbasen"                 .scheme.keyword
+    hilight #l1 1 "getbasetemplatepath"         .scheme.keyword
+    hilight #l1 1 "getclientvariableslist"      .scheme.keyword
+    hilight #l1 1 "getcurrenttemplatepath"      .scheme.keyword
+    hilight #l1 1 "getcurrenttemplatepath"      .scheme.keyword
+    hilight #l1 1 "getdirectoryfrompath"        .scheme.keyword
+    hilight #l1 1 "getdirectoryfrompath"        .scheme.keyword
+    hilight #l1 1 "getfilefrompath"             .scheme.keyword
+    hilight #l1 1 "getlocale"                   .scheme.keyword
+    hilight #l1 1 "getprofilestring"            .scheme.keyword
+    hilight #l1 1 "gettempdirectory"            .scheme.keyword
+    hilight #l1 1 "gettempfile"                 .scheme.keyword
+    hilight #l1 1 "gettemplatepath"             .scheme.keyword
+    hilight #l1 1 "gettickcount"                .scheme.keyword
+    hilight #l1 1 "gettimezoneinfo"             .scheme.keyword
+    hilight #l1 1 "gettoken"                    .scheme.keyword
+    hilight #l1 1 "hour"                        .scheme.keyword
+    hilight #l1 1 "htmlcodeformat"              .scheme.keyword
+    hilight #l1 1 "htmleditformat"              .scheme.keyword
+    hilight #l1 1 "iif"                         .scheme.keyword
+    hilight #l1 1 "incrementvalue"              .scheme.keyword
+    hilight #l1 1 "inputbasen"                  .scheme.keyword
+    hilight #l1 1 "insert"                      .scheme.keyword
+    hilight #l1 1 "int"                         .scheme.keyword
+    hilight #l1 1 "isboolean"                   .scheme.keyword
+    hilight #l1 1 "isdate"                      .scheme.keyword
+    hilight #l1 1 "isdebugmode"                 .scheme.keyword
+    hilight #l1 1 "isdefined"                   .scheme.keyword
+    hilight #l1 1 "isleapyear"                  .scheme.keyword
+    hilight #l1 1 "isnumeric"                   .scheme.keyword
+    hilight #l1 1 "isnumericdate"               .scheme.keyword
+    hilight #l1 1 "isquery"                     .scheme.keyword
+    hilight #l1 1 "issimplevalue"               .scheme.keyword
+    hilight #l1 1 "isstruct"                    .scheme.keyword
+    hilight #l1 1 "lcase"                       .scheme.keyword
+    hilight #l1 1 "left"                        .scheme.keyword
+    hilight #l1 1 "len"                         .scheme.keyword
+    hilight #l1 1 "listappend"                  .scheme.keyword
+    hilight #l1 1 "listchangedelims"            .scheme.keyword
+    hilight #l1 1 "listcontains"                .scheme.keyword
+    hilight #l1 1 "listcontainsnocase"          .scheme.keyword
+    hilight #l1 1 "listdeleteat"                .scheme.keyword
+    hilight #l1 1 "listfind"                    .scheme.keyword
+    hilight #l1 1 "listfindnocase"              .scheme.keyword
+    hilight #l1 1 "listfirst"                   .scheme.keyword
+    hilight #l1 1 "listgetat"                   .scheme.keyword
+    hilight #l1 1 "listinsertat"                .scheme.keyword
+    hilight #l1 1 "listlast"                    .scheme.keyword
+    hilight #l1 1 "listlen"                     .scheme.keyword
+    hilight #l1 1 "listprepend"                 .scheme.keyword
+    hilight #l1 1 "listqualify"                 .scheme.keyword
+    hilight #l1 1 "listrest"                    .scheme.keyword
+    hilight #l1 1 "listsetat"                   .scheme.keyword
+    hilight #l1 1 "listsort"                    .scheme.keyword
+    hilight #l1 1 "listtoarray"                 .scheme.keyword
+    hilight #l1 1 "listvaluecount"              .scheme.keyword
+    hilight #l1 1 "listvaluecountnocase"        .scheme.keyword
+    hilight #l1 1 "ljustify"                    .scheme.keyword
+    hilight #l1 1 "log"                         .scheme.keyword
+    hilight #l1 1 "log10"                       .scheme.keyword
+    hilight #l1 1 "lscurrencyformat"            .scheme.keyword
+    hilight #l1 1 "lsdateformat"                .scheme.keyword
+    hilight #l1 1 "lseurocurrencyformat"        .scheme.keyword
+    hilight #l1 1 "lsiscurrency"                .scheme.keyword
+    hilight #l1 1 "lsisdate"                    .scheme.keyword
+    hilight #l1 1 "lsisnumeric"                 .scheme.keyword
+    hilight #l1 1 "lsnumberformat"              .scheme.keyword
+    hilight #l1 1 "lsparsecurrency"             .scheme.keyword
+    hilight #l1 1 "lsparsedatetime"             .scheme.keyword
+    hilight #l1 1 "lsparseeurocurrency"         .scheme.keyword
+    hilight #l1 1 "lsparsenumber"               .scheme.keyword
+    hilight #l1 1 "lstimeformat"                .scheme.keyword
+    hilight #l1 1 "ltrim"                       .scheme.keyword
+    hilight #l1 1 "max"                         .scheme.keyword
+    hilight #l1 1 "mid"                         .scheme.keyword
+    hilight #l1 1 "min"                         .scheme.keyword
+    hilight #l1 1 "minute"                      .scheme.keyword
+    hilight #l1 1 "month"                       .scheme.keyword
+    hilight #l1 1 "monthasstring"               .scheme.keyword
+    hilight #l1 1 "now"                         .scheme.keyword
+    hilight #l1 1 "numberformat"                .scheme.keyword
+    hilight #l1 1 "paragraphformat"             .scheme.keyword
+    hilight #l1 1 "parsedatetime"               .scheme.keyword
+    hilight #l1 1 "pi"                          .scheme.keyword
+    hilight #l1 1 "preservesinglequotes"        .scheme.keyword
+    hilight #l1 1 "quarter"                     .scheme.keyword
+    hilight #l1 1 "queryaddcolumn"              .scheme.keyword
+    hilight #l1 1 "queryaddrow"                 .scheme.keyword
+    hilight #l1 1 "querynew"                    .scheme.keyword
+    hilight #l1 1 "querysetcell"                .scheme.keyword
+    hilight #l1 1 "quotedvaluelist"             .scheme.keyword
+    hilight #l1 1 "rand"                        .scheme.keyword
+    hilight #l1 1 "randomize"                   .scheme.keyword
+    hilight #l1 1 "randrange"                   .scheme.keyword
+    hilight #l1 1 "refind"                      .scheme.keyword
+    hilight #l1 1 "refindnocase"                .scheme.keyword
+    hilight #l1 1 "removechars"                 .scheme.keyword
+    hilight #l1 1 "repeatstring"                .scheme.keyword
+    hilight #l1 1 "replace"                     .scheme.keyword
+    hilight #l1 1 "replacelist"                 .scheme.keyword
+    hilight #l1 1 "replacenocase"               .scheme.keyword
+    hilight #l1 1 "rereplace"                   .scheme.keyword
+    hilight #l1 1 "rereplacenocase"             .scheme.keyword
+    hilight #l1 1 "reverse"                     .scheme.keyword
+    hilight #l1 1 "right"                       .scheme.keyword
+    hilight #l1 1 "rjustify"                    .scheme.keyword
+    hilight #l1 1 "round"                       .scheme.keyword
+    hilight #l1 1 "rtrim"                       .scheme.keyword
+    hilight #l1 1 "second"                      .scheme.keyword
+    hilight #l1 1 "setlocale"                   .scheme.keyword
+    hilight #l1 1 "setprofilestring"            .scheme.keyword
+    hilight #l1 1 "sgn"                         .scheme.keyword
+    hilight #l1 1 "sin"                         .scheme.keyword
+    hilight #l1 1 "spanexcluding"               .scheme.keyword
+    hilight #l1 1 "spanincluding"               .scheme.keyword
+    hilight #l1 1 "sqr"                         .scheme.keyword
+    hilight #l1 1 "stripcr"                     .scheme.keyword
+    hilight #l1 1 "structclear"                 .scheme.keyword
+    hilight #l1 1 "structcopy"                  .scheme.keyword
+    hilight #l1 1 "structcount"                 .scheme.keyword
+    hilight #l1 1 "structdelete"                .scheme.keyword
+    hilight #l1 1 "structfind"                  .scheme.keyword
+    hilight #l1 1 "structinsert"                .scheme.keyword
+    hilight #l1 1 "structisempty"               .scheme.keyword
+    hilight #l1 1 "structkeyarray"              .scheme.keyword
+    hilight #l1 1 "structkeyexists"             .scheme.keyword
+    hilight #l1 1 "structkeylist"               .scheme.keyword
+    hilight #l1 1 "structnew"                   .scheme.keyword
+    hilight #l1 1 "structupdate"                .scheme.keyword
+    hilight #l1 1 "tan"                         .scheme.keyword
+    hilight #l1 1 "timeformat"                  .scheme.keyword
+    hilight #l1 1 "trim"                        .scheme.keyword
+    hilight #l1 1 "ucase"                       .scheme.keyword
+    hilight #l1 1 "urlencodedformat"            .scheme.keyword
+    hilight #l1 1 "val"                         .scheme.keyword
+    hilight #l1 1 "valuelist"                   .scheme.keyword
+    hilight #l1 1 "week"                        .scheme.keyword
+    hilight #l1 1 "writeoutput"                 .scheme.keyword
+    hilight #l1 1 "year"                        .scheme.keyword
+    hilight #l1 1 "yesnoformat"                 .scheme.keyword
+    ; Operators
+    hilight #l1 1 "and"                         .scheme.operator
+    hilight #l1 1 "contains"                    .scheme.operator
+    hilight #l1 1 "does\s+not\s+contain"        .scheme.operator
+    hilight #l1 1 "eq"                          .scheme.operator
+    hilight #l1 1 "equal"                       .scheme.operator
+    hilight #l1 1 "eqv"                         .scheme.operator
+    hilight #l1 1 "greater\s+than"              .scheme.operator
+    hilight #l1 1 "greater\s+than\s+or\s+equal" .scheme.operator
+    hilight #l1 1 "gt"                          .scheme.operator
+    hilight #l1 1 "gte"                         .scheme.operator
+    hilight #l1 1 "imp"                         .scheme.operator
+    hilight #l1 1 "is"                          .scheme.operator
+    hilight #l1 1 "is\s+not"                    .scheme.operator
+    hilight #l1 1 "less\s+than"                 .scheme.operator
+    hilight #l1 1 "less\s+than\s+or\s+equal"    .scheme.operator
+    hilight #l1 1 "lt"                          .scheme.operator
+    hilight #l1 1 "lte"                         .scheme.operator
+    hilight #l1 1 "mod"                         .scheme.operator
+    hilight #l1 1 "neq"                         .scheme.operator
+    hilight #l1 1 "not"                         .scheme.operator
+    hilight #l1 1 "not\s+equal"                 .scheme.operator
+    hilight #l1 1 "or"                          .scheme.operator
+    hilight #l1 1 "xor"                         .scheme.operator
+    ; Pre-pro
+    hilight #l1 1 "true"                        .scheme.prepro
+    hilight #l1 1 "false"                       .scheme.prepro
+!emacro
+
+!if &not &exist .hilight.cfms
+    set-variable .hilight.cfms  &pinc .hilight.next 1
+!endif
+
+!if &and &sin "h" .fhook-cfms.setup &band .hilight.flags 0x02
+    !if &not &exist .hilight.cfmsS
+        set-variable .hilight.cfmsS &pinc .hilight.next 1
+    !endif
+    ; cfm file highlighting
+    0 hilight .hilight.cfms 3 50                   $global-scheme
+    ; Strings and things
+    hilight .hilight.cfms 0x804 "'" "'" "\\"       .scheme.string
+    hilight .hilight.cfms 0x804 "\"" "\"" "\\"     .scheme.string
+    ; hilight .hilight.cfms 0x80 "\"" .hilight.cfmsS .scheme.string
+    hilight .hilight.cfms 0  "\\W\\{/[^/]*\\}$"    $global-scheme
+    hilight .hilight.cfms 20 "<!---" "--->" ""     .scheme.comment
+    hilight .hilight.cfms 18 "//"                   .scheme.comment
+    hilight .hilight.cfms 18 "//\\s*[tT][oO][dD][oO]"  .scheme.error
+
+    hilight .hilight.cfms 20 "<!---\\s*[tT][oO][dD][oO]" "--->" "" .scheme.error
+    ; hilight .hilight.cfms 0xa80 "^\\s*\\{$" .hilight.cfms $global-scheme
+
+    ; Include the base hilighting
+    cfm-set-hilight .hilight.cfms
+
+    hilight .hilight.cfms 0x804 "`" "`" "\\"       .scheme.prepro
+    hilight .hilight.cfms 1    "<[^ \t\n>]*>"      .scheme.prepro
+    ; Keywords
+    hilight .hilight.cfms 1 "if"                   .scheme.keyword
+    hilight .hilight.cfms 1 "else"                 .scheme.keyword
+    hilight .hilight.cfms 1 "elseif"               .scheme.keyword
+    hilight .hilight.cfms 1 "while"                .scheme.keyword
+    hilight .hilight.cfms 1 "for"                  .scheme.keyword
+    ; Functions
+    hilight .hilight.cfms 1 "function"             .scheme.function
+    hilight .hilight.cfms 1 "return"               .scheme.keyword
+
+    !if &band .hilight.flags 0x08
+        ; hilight constants, e.g. numbers
+        hilight .hilight.cfms 1 "[[:digit:]]+"       .scheme.constant
+        hilight .hilight.cfms 1 "-[[:digit:]]+"      .scheme.constant
+        hilight .hilight.cfms 1 "0[xX][[:xdigit:]]+" .scheme.constant
+    !endif
+
+    ; String hilighting
+    0 hilight .hilight.cfmsS 0                     .scheme.string
+    hilight .hilight.cfmsS 0    "\\\\."            .scheme.string
+    hilight .hilight.cfmsS 0x80 "\"" .hilight.cfms .scheme.string
+    hilight .hilight.cfmsS 0xa80 "^\\s*\\{$" .hilight.cfmsS $global-scheme
+    ; the next tag fixes hilighting problems caused by strings spanning
+    ; multiple lines by resetting the hilight on the next blank line during
+    ; the look-back.
+
+    ; let html based files use the cfms hilight for any cfm scripts
+    set-variable .hilight.cfmscript .hilight.cfms
+!endif
+!if &sin "d" .fhook-cfms.setup
+    0 indent  .hilight.cfms 0 100
+    indent .hilight.cfms n "{"  t
+    indent .hilight.cfms o "}" -t
+    ; must ignore \', \` & \"
+    indent .hilight.cfms o "\\\\'" 0
+    indent .hilight.cfms o "\\\\`" 0
+    indent .hilight.cfms o "\\\\\"" 0
+    indent .hilight.cfms e "<!---" "--->" ""
+    indent .hilight.cfms i "//"
+    indent .hilight.cfms e "'" "'" "\\"
+    indent .hilight.cfms e "`" "`" "\\"
+    indent .hilight.cfms e "\"" "\"" "\\"
+    indent .hilight.cfms b "\\[" "\\]"
+    indent .hilight.cfms b "(" ")"
+    ; let html based files use the cfms indent for any cfm scripts
+    set-variable .indent.cfmscript .hilight.cfms
+!endif
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;                                                                           ;
+; Coldfusion SQL                                                            ;
+;                                                                           ;
+; Coldfusion has comprises a separare scripting section language for SQL    ;
+; queries. We treat this as a different scripting language creating a       ;
+; separate hilighting scheme and indentation scheme for the SQL. This not   ;
+; pleasent because coldfusion statements are allowed within the SQL block,  ;
+; in addition the comparison operators '>' abd '<' are allowed so the       ;
+; indentation scheme that we typically use for HTML also has to change.     ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+!if &and &sin "h" .fhook-cfms.setup &band .hilight.flags 0x02
+    !if &not &exist .hilight.cfmsql
+        set-variable .hilight.cfmsql &pinc .hilight.next 1
+    !endif
+    !if &not &exist .hilight.cfmsqltags
+        set-variable .hilight.cfmsqltags &pinc .hilight.next 1
+    !endif
+    !if &not &exist .hilight.cfmsqlfind
+        set-variable .hilight.cfmsqlfind &pinc .hilight.next 1
+    !endif
+
+    ; <CFxx enclosure hilighting> - variable assignment
+
+    0 hilight .hilight.cfmsqltags 3 100                        $global-scheme
+    cfm-set-hilight .hilight.cfmsqltags
+    hilight .hilight.cfmsqltags 4 "#" "#" ""                  .scheme.variable
+    hilight .hilight.cfmsqltags 1 "\\w+\\s*\\}="              .scheme.operator
+    hilight .hilight.cfmsqltags 0x80 ">" .hilight.cfmsql      $global-scheme
+
+    ; cfmsql file highlighting
+    0 hilight .hilight.cfmsql 3 75                   $global-scheme
+    hilight .hilight.cfmsql 4 "<!---" "--->" ""      .scheme.comment
+    hilight .hilight.cfmsql 4 "#" "#" ""             .scheme.variable
+    ; Jump to the new <cf...> tags scheme
+    hilight .hilight.cfmsql 0x80 "<cf\\w+" .hilight.cfmsqltags .scheme.keyword
+    hilight .hilight.cfmsql 0x80 "</cf\\w+" .hilight.cfmsqltags .scheme.keyword
+    ; Operators
+    hilight .hilight.cfmsql 1 "and"                  .scheme.operator
+    hilight .hilight.cfmsql 1 "like"                 .scheme.operator
+    hilight .hilight.cfmsql 1 "between"              .scheme.operator
+    hilight .hilight.cfmsql 1 "or"                   .scheme.operator
+    hilight .hilight.cfmsql 1 "not"                  .scheme.operator
+    ; Constants
+    hilight .hilight.cfmsql 1 "null"                 .scheme.prepro
+    hilight .hilight.cfmsql 1 "true"                 .scheme.prepro
+    hilight .hilight.cfmsql 1 "false"                .scheme.prepro
+    ; Types
+    hilight .hilight.cfmsql 1 "int"                  .scheme.type
+    hilight .hilight.cfmsql 1 "integer"              .scheme.type
+    hilight .hilight.cfmsql 1 "float"                .scheme.type
+    hilight .hilight.cfmsql 1 "var"                  .scheme.type
+    ; Kewords
+    hilight .hilight.cfmsql 1 "absolute"             .scheme.keyword
+    hilight .hilight.cfmsql 1 "action"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "add"                  .scheme.keyword
+    hilight .hilight.cfmsql 1 "all"                  .scheme.keyword
+    hilight .hilight.cfmsql 1 "allocate"             .scheme.keyword
+    hilight .hilight.cfmsql 1 "alter"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "any"                  .scheme.keyword
+    hilight .hilight.cfmsql 1 "are"                  .scheme.keyword
+    hilight .hilight.cfmsql 1 "as"                   .scheme.keyword
+    hilight .hilight.cfmsql 1 "asc"                  .scheme.keyword
+    hilight .hilight.cfmsql 1 "assertion"            .scheme.keyword
+    hilight .hilight.cfmsql 1 "at"                   .scheme.keyword
+    hilight .hilight.cfmsql 1 "authorization"        .scheme.keyword
+    hilight .hilight.cfmsql 1 "avg"                  .scheme.keyword
+    hilight .hilight.cfmsql 1 "begin"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "bit"                  .scheme.keyword
+    hilight .hilight.cfmsql 1 "bit_length"           .scheme.keyword
+    hilight .hilight.cfmsql 1 "both"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "by"                   .scheme.keyword
+    hilight .hilight.cfmsql 1 "cascade"              .scheme.keyword
+    hilight .hilight.cfmsql 1 "cascaded"             .scheme.keyword
+    hilight .hilight.cfmsql 1 "case"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "cast"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "catalog"              .scheme.keyword
+    hilight .hilight.cfmsql 1 "char"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "char_length"          .scheme.keyword
+    hilight .hilight.cfmsql 1 "character"            .scheme.keyword
+    hilight .hilight.cfmsql 1 "character_length"     .scheme.keyword
+    hilight .hilight.cfmsql 1 "check"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "close"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "coalesce"             .scheme.keyword
+    hilight .hilight.cfmsql 1 "collate"              .scheme.keyword
+    hilight .hilight.cfmsql 1 "collation"            .scheme.keyword
+    hilight .hilight.cfmsql 1 "column"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "commit"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "connect"              .scheme.keyword
+    hilight .hilight.cfmsql 1 "connection"           .scheme.keyword
+    hilight .hilight.cfmsql 1 "constraint"           .scheme.keyword
+    hilight .hilight.cfmsql 1 "constraints"          .scheme.keyword
+    hilight .hilight.cfmsql 1 "continue"             .scheme.keyword
+    hilight .hilight.cfmsql 1 "convert"              .scheme.keyword
+    hilight .hilight.cfmsql 1 "corresponding"        .scheme.keyword
+    hilight .hilight.cfmsql 1 "count"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "create"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "cross"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "current"              .scheme.keyword
+    hilight .hilight.cfmsql 1 "current_date"         .scheme.keyword
+    hilight .hilight.cfmsql 1 "current_time"         .scheme.keyword
+    hilight .hilight.cfmsql 1 "current_timestamp"    .scheme.keyword
+    hilight .hilight.cfmsql 1 "current_user"         .scheme.keyword
+    hilight .hilight.cfmsql 1 "cursor"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "date"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "day"                  .scheme.keyword
+    hilight .hilight.cfmsql 1 "deallocate"           .scheme.keyword
+    hilight .hilight.cfmsql 1 "dec"                  .scheme.keyword
+    hilight .hilight.cfmsql 1 "decimal"              .scheme.keyword
+    hilight .hilight.cfmsql 1 "declare"              .scheme.keyword
+    hilight .hilight.cfmsql 1 "default"              .scheme.keyword
+    hilight .hilight.cfmsql 1 "deferrable"           .scheme.keyword
+    hilight .hilight.cfmsql 1 "deferred"             .scheme.keyword
+    hilight .hilight.cfmsql 1 "delete"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "desc"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "describe"             .scheme.keyword
+    hilight .hilight.cfmsql 1 "descriptor"           .scheme.keyword
+    hilight .hilight.cfmsql 1 "diagnostics"          .scheme.keyword
+    hilight .hilight.cfmsql 1 "disconnect"           .scheme.keyword
+    hilight .hilight.cfmsql 1 "distinct"             .scheme.keyword
+    hilight .hilight.cfmsql 1 "domain"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "double"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "drop"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "else"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "end"                  .scheme.keyword
+    hilight .hilight.cfmsql 1 "end-exec"             .scheme.keyword
+    hilight .hilight.cfmsql 1 "escape"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "except"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "exception"            .scheme.keyword
+    hilight .hilight.cfmsql 1 "exec"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "execute"              .scheme.keyword
+    hilight .hilight.cfmsql 1 "exists"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "external"             .scheme.keyword
+    hilight .hilight.cfmsql 1 "extract"              .scheme.keyword
+    hilight .hilight.cfmsql 1 "fetch"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "first"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "for"                  .scheme.keyword
+    hilight .hilight.cfmsql 1 "foreign"              .scheme.keyword
+    hilight .hilight.cfmsql 1 "found"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "from"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "full"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "get"                  .scheme.keyword
+    hilight .hilight.cfmsql 1 "global"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "go"                   .scheme.keyword
+    hilight .hilight.cfmsql 1 "goto"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "grant"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "group"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "having"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "hour"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "identity"             .scheme.keyword
+    hilight .hilight.cfmsql 1 "immediate"            .scheme.keyword
+    hilight .hilight.cfmsql 1 "in"                   .scheme.keyword
+    hilight .hilight.cfmsql 1 "indicator"            .scheme.keyword
+    hilight .hilight.cfmsql 1 "initially"            .scheme.keyword
+    hilight .hilight.cfmsql 1 "inner"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "input"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "insensitive"          .scheme.keyword
+    hilight .hilight.cfmsql 1 "insert"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "intersect"            .scheme.keyword
+    hilight .hilight.cfmsql 1 "interval"             .scheme.keyword
+    hilight .hilight.cfmsql 1 "into"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "is"                   .scheme.keyword
+    hilight .hilight.cfmsql 1 "isolation"            .scheme.keyword
+    hilight .hilight.cfmsql 1 "join"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "key"                  .scheme.keyword
+    hilight .hilight.cfmsql 1 "language"             .scheme.keyword
+    hilight .hilight.cfmsql 1 "last"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "leading"              .scheme.keyword
+    hilight .hilight.cfmsql 1 "left"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "length"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "level"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "local"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "lower"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "match"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "max"                  .scheme.keyword
+    hilight .hilight.cfmsql 1 "min"                  .scheme.keyword
+    hilight .hilight.cfmsql 1 "minute"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "module"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "month"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "names"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "national"             .scheme.keyword
+    hilight .hilight.cfmsql 1 "natural"              .scheme.keyword
+    hilight .hilight.cfmsql 1 "nchar"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "next"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "no"                   .scheme.keyword
+    hilight .hilight.cfmsql 1 "nullif"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "numeric"              .scheme.keyword
+    hilight .hilight.cfmsql 1 "octet_length"         .scheme.keyword
+    hilight .hilight.cfmsql 1 "of"                   .scheme.keyword
+    hilight .hilight.cfmsql 1 "on"                   .scheme.keyword
+    hilight .hilight.cfmsql 1 "only"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "open"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "option"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "order"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "outer"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "output"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "overlaps"             .scheme.keyword
+    hilight .hilight.cfmsql 1 "pad"                  .scheme.keyword
+    hilight .hilight.cfmsql 1 "partial"              .scheme.keyword
+    hilight .hilight.cfmsql 1 "position"             .scheme.keyword
+    hilight .hilight.cfmsql 1 "precision"            .scheme.keyword
+    hilight .hilight.cfmsql 1 "prepare"              .scheme.keyword
+    hilight .hilight.cfmsql 1 "preserve"             .scheme.keyword
+    hilight .hilight.cfmsql 1 "primary"              .scheme.keyword
+    hilight .hilight.cfmsql 1 "prior"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "privileges"           .scheme.keyword
+    hilight .hilight.cfmsql 1 "procedure"            .scheme.keyword
+    hilight .hilight.cfmsql 1 "public"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "read"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "real"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "references"           .scheme.keyword
+    hilight .hilight.cfmsql 1 "relative"             .scheme.keyword
+    hilight .hilight.cfmsql 1 "restrict"             .scheme.keyword
+    hilight .hilight.cfmsql 1 "revoke"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "right"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "rollback"             .scheme.keyword
+    hilight .hilight.cfmsql 1 "rows"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "schema"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "scroll"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "second"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "section"              .scheme.keyword
+    hilight .hilight.cfmsql 1 "select"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "session"              .scheme.keyword
+    hilight .hilight.cfmsql 1 "session_user"         .scheme.keyword
+    hilight .hilight.cfmsql 1 "set"                  .scheme.keyword
+    hilight .hilight.cfmsql 1 "size"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "smallint"             .scheme.keyword
+    hilight .hilight.cfmsql 1 "some"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "space"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "sql"                  .scheme.keyword
+    hilight .hilight.cfmsql 1 "sqlcode"              .scheme.keyword
+    hilight .hilight.cfmsql 1 "sqlerror"             .scheme.keyword
+    hilight .hilight.cfmsql 1 "sqlstate"             .scheme.keyword
+    hilight .hilight.cfmsql 1 "substr"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "substring"            .scheme.keyword
+    hilight .hilight.cfmsql 1 "sum"                  .scheme.keyword
+    hilight .hilight.cfmsql 1 "system_user"          .scheme.keyword
+    hilight .hilight.cfmsql 1 "table"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "temporary"            .scheme.keyword
+    hilight .hilight.cfmsql 1 "then"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "time"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "timestamp"            .scheme.keyword
+    hilight .hilight.cfmsql 1 "timezone_hour"        .scheme.keyword
+    hilight .hilight.cfmsql 1 "timezone_minute"      .scheme.keyword
+    hilight .hilight.cfmsql 1 "to"                   .scheme.keyword
+    hilight .hilight.cfmsql 1 "trailing"             .scheme.keyword
+    hilight .hilight.cfmsql 1 "transaction"          .scheme.keyword
+    hilight .hilight.cfmsql 1 "translate"            .scheme.keyword
+    hilight .hilight.cfmsql 1 "translation"          .scheme.keyword
+    hilight .hilight.cfmsql 1 "trim"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "union"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "unique"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "unknown"              .scheme.keyword
+    hilight .hilight.cfmsql 1 "update"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "upper"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "usage"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "user"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "using"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "value"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "values"               .scheme.keyword
+    hilight .hilight.cfmsql 1 "varchar"              .scheme.keyword
+    hilight .hilight.cfmsql 1 "varying"              .scheme.keyword
+    hilight .hilight.cfmsql 1 "view"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "when"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "whenever"             .scheme.keyword
+    hilight .hilight.cfmsql 1 "where"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "with"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "work"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "write"                .scheme.keyword
+    hilight .hilight.cfmsql 1 "year"                 .scheme.keyword
+    hilight .hilight.cfmsql 1 "zone"                 .scheme.keyword
+
+    !if &band .hilight.flags 0x08
+        ; hilight constants, e.g. numbers
+        hilight .hilight.cfmsql 1 "[[:digit:]]+"       .scheme.constant
+        hilight .hilight.cfmsql 1 "-[[:digit:]]+"      .scheme.constant
+        hilight .hilight.cfmsql 1 "0[xX][[:xdigit:]]+" .scheme.constant
+    !endif
+
+    0 indent .hilight.cfmsql 1 100
+    indent .hilight.cfmsql b "(" ")"
+    ; Indentation rules for ColdFusion tags embedded in the SQL. Note that
+    ; the cfif/else indentation is slighly different from the main coldFusion
+    ; definition. This is required because we are not using the closing ">"
+    ; as a indent token and everything must be handled at the start of the
+    ; tag. The reason we cannot do this is that ">" and "<" are valid tokens
+    ; in their own right within the SQL space.
+    indent .hilight.cfmsql e "<!---" "--->" ""
+    indent .hilight.cfmsql n "<cfif" 1t
+    indent .hilight.cfmsql u "<cfelseif" -1t 1t
+    indent .hilight.cfmsql u "<cfelse" -1t 1t
+    indent .hilight.cfmsql o "</cfif>" -1t
+    indent .hilight.cfmsql w "</cfquery>" -1t 0
+
+!endif
+buffer-init-fhook "cfms"

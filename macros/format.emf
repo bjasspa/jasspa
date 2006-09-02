@@ -366,6 +366,16 @@ define-macro restyle-buffer
     goto-alpha-mark "\x81"
 !emacro
 
+; Increase or decrease the indent by the buffer indent.
+; 
+; Note. In order to allow the command to be symmetrical (i.e. we can increase
+; and then decrease an indent without loosing a region) then we have to
+; adjust the mark and point positions when they are not at column zero
+; otherwise there is a danger that we loose the end line from the indentation
+; when the position is on white space before a character loosing a line from
+; the region. To maintain the region then if the end point is not a column 0
+; then we adjust the point or mark position at the end of the region such
+; that it is at the end of the line. 
 define-macro indent-increase
     !if &not @?
         set-variable @# $buffer-indent-width
@@ -377,14 +387,46 @@ define-macro indent-increase
         !endif
         set-alpha-mark "\x81"
         set-variable #l2 $window-line
+        set-variable #l4 $window-col
         -2 show-region
         set-alpha-mark "\x82"
         set-variable #l1 $window-line
+        set-variable #l3 $window-col
         !if &les #l2 #l1
-            set-variable #l2 #l1
-            set-variable #l1 $window-line
+            ; Bottom to top selection, point is at top and mark is at bottom,
+            ; turn it around and make sure that the mark is at the end of the
+            ; line, if it is not then move it because we do no want to
+            ; decrease the indent and for the mark to be at column 0 as the
+            ; region looses a line (unless the region is empty). 
+            set-variable #l1 #l2
+            set-variable #l2 $window-line
+            set-variable #l3 #l4
+            set-variable #l4 $window-col
+            !if &gre #l4 0
+                ; Only adjust if our position is greater than 0. 
+                end-of-line
+                !if &les #l4 $window-col
+                    set-alpha-mark "\x82"
+                    -3 show-region
+                !endif
+            !endif
+        !else
+            ; Top to bottom selection. If point is in the middle of the line
+            ; then place it at the end, we want to make sure that we do not
+            ; loose dot to column 0. We only make an adjustment if we are not
+            ; at column 0. 
+            2 show-region
+            !if &gre #l4 0
+                end-of-line
+                3 show-region
+                set-alpha-mark "\x81"
+                set-variable #l4 $window-col
+            !endif
         !endif
-        set-variable #l2 &sub #l2 1
+        ; Decrement the region if we are at column 0.
+        !if &equ #l4 0
+            set-variable #l2 &sub #l2 1
+        !endif
     !else
         set-alpha-mark "\x81"
         set-variable #l1 &set #l2 $window-line

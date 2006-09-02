@@ -30,8 +30,8 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		\
 	hkada.emf	hkapache.emf	hkasmx86.emf	hkasn1.emf	\
 	hkasp.emf	hkau3.emf	hkawk.emf	\
 	hkbibtex.emf	hkbinary.emf	hkblist.emf	hkbnf.emf	\
-	hkc.emf		hkcobol.emf	hkcpp.emf	hkcss.emf	\
-	hkcygwin.emf	\
+	hkc.emf		hkcfm.emf	hkcfms.emf	hkcobol.emf	\
+	hkcpp.emf	hkcss.emf	hkcygwin.emf	\
 	hkdiff.emf	hkdirlst.emf	hkdirtre.emf	hkdoc.emf	\
 	hkdos.emf	hkdot.emf	\
 	hkehf.emf	hkemf.emf	hkerf.emf	hkeuphor.emf	\
@@ -94,7 +94,7 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		\
 # ETFS:sh =ls *.etf
 ETFS=	asmx86.etf	asn1.etf	au3.etf		\
 	bibtex.etf	\
-	c.etf		cobol.etf	cpp.etf		\
+	c.etf		cfm.etf		cobol.etf	cpp.etf		\
 	doc.etf		\
 	emf.etf		euphor.etf	\
 	f.etf		f90.etf		\
@@ -114,7 +114,7 @@ ETFS=	asmx86.etf	asn1.etf	au3.etf		\
 	yacc.etf
 #EAFS:sh=ls *.eaf
 EAFS=	ada.eaf		asp.eaf		au3.eaf		\
-	c.eaf		cpp.eaf		\
+	c.eaf		cfm.eaf		cpp.eaf		\
 	emf.eaf		euphor.eaf	\
 	hkasp.eaf	hkc.eaf		hkcpp.eaf	hkemf.eaf	\
 	hkhtml.eaf	hkjsp.eaf	hkjst.eaf	hknroff.eaf	\
