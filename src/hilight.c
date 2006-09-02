@@ -2341,6 +2341,7 @@ hiline_exit:
 #define INDFILETYPE      (0x4000)
 #define INDFTNEXTONWARD  (INDINDONWARD|INDGOTIND)
 #define INDFTCURONWARD   (INDINDCURLINE|INDINDONWARD|INDGOTIND)
+#define INDBOTH          (0x8000)
 
 /* Define the integer indent field. The format is:-
  * 
@@ -2357,6 +2358,36 @@ hiline_exit:
 #define INDNUMOFFSETMASK  0x3f          /* Integer offset mask */
 #define INDNUMOFFSETSHIFT 2             /* The implied decimal point position */
 #define INDNUMMASK        0xff          /* Number mask */
+
+/* INDBOTH - defines both the current line and next indent lindent in a single
+ * word the format of the indent packs two indent offsets into a single word
+ * and takes a special format defined as follows. The indent field is smaller
+ * that the standard indent field using just 7 bits to squeeze the offset into
+ * the field.
+ * 
+ * >  15     14   13 12 11 10.9 8     7      6    5 4 3 2.1 0
+ * > +--+------+----+--+--+--+-+-+-----+------+----+-+-+-+-+-+
+ * > | 1|indent|sign|  |  |  | | |SPARE|indent|sign| | | | | |
+ * > +--+------+----+--+--+--+-+-+-----+------+----+-+-+-+-+-+
+ * >     Current Line Indent            Next Line Indent
+ * 
+ * With an implied decimal point if it is an 'indent' size based definition.
+ */
+
+#define INDNUM7INDSIZE     0x40          /* indentWidth based indent == 1 */
+#define INDNUM7NEG         0x20          /* -ve offset */
+#define INDNUM7OFFSETMASK  0x1f          /* Integer offset mask */
+#define INDNUM7OFFSETSHIFT 2             /* The implied decimal point position */
+#define INDNUM7MASK        0x7f          /* Number mask */
+
+/* Conversion utilities to interchange the 8-bit and 7-bit indent offest
+ * formats between each other. */
+#define ind8ToInd7(xx) ((((xx) & ~INDNUMOFFSETMASK) >> 1) | ((xx) & INDNUM7OFFSETMASK))
+#define ind7ToInd8(xx) ((((xx) & (INDNUM7INDSIZE|INDNUM7NEG)) << 1) | ((xx) & INDNUM7OFFSETMASK))
+
+/* Method to determine if a 8-bit indent offset will overflow when converted
+ * to a 7-bit offset. Returns non-zero if an overflow will occur. */
+#define ind8ToInd7Overflow(xx) ((xx) & (INDNUMOFFSETMASK & (~INDNUM7OFFSETMASK)))
 
 static meInt
 indentLookBack(meLine *lp, meUByte lindent, meUShort offset)
@@ -2568,14 +2599,15 @@ meGetIndent(meUByte *prompt)
 int
 indent(int f, int n)
 {
-#define noINDTYPES 11
+#define noINDTYPES 13
     static meUByte  ctypesChar[meHICMODE_SIZE+2]="sbecxwamu" ;
-    static meUByte  typesChar[(noINDTYPES*2)+1]="bcefinostwxBCEFINOSTWX" ;
+    static meUByte  typesChar[(noINDTYPES*2)+1]="bcefinostuvwxBCEFINOSTUVWX" ;
     static meUShort typesFlag[noINDTYPES]= { 
         INDBRACKETOPEN, INDCONTINUE, INDEXCLUSION, INDFIXED, INDIGNORE, INDNEXTONWARD, 
-        INDCURONWARD, INDSINGLE, INDFILETYPE, INDFTCURONWARD, INDFTNEXTONWARD } ;
+        INDCURONWARD, INDSINGLE, INDFILETYPE, INDBOTH, INDBOTH, INDFTCURONWARD, INDFTNEXTONWARD } ;
     static meUShort typesType[noINDTYPES]= {
-        0x00, 0x00, HLBRACKET, HLENDLINE|HLSTTLINE, HLENDLINE, 0x00, 0x00, 0x00, 0x00, HLBRANCH, HLBRANCH } ;
+        0x00, 0x00, HLBRACKET, HLENDLINE|HLSTTLINE, HLENDLINE, 0x00, 0x00, 0x00, 0x00, 0x00,
+        HLBRANCH, HLBRANCH, HLBRANCH } ;
     meHilight *root, *node ;
     int itype ;
     meUShort htype ;
@@ -2736,6 +2768,19 @@ indent(int f, int n)
             return meFALSE ;
         node->scheme = (node->scheme & ~INDNUMMASK) | (n & INDNUMMASK)  ;
     }
+    if(typesFlag[itype] & INDBOTH)
+    {
+        int m;
+        if((n = meGetIndent((meUByte *)"Current Indent")) < 0)
+            return meFALSE ;
+        if((m = meGetIndent((meUByte *)"Next Indent")) < 0)
+            return meFALSE ;
+        /* Check for overflow. */
+        if(ind8ToInd7Overflow(n) || ind8ToInd7Overflow(m))            
+            return meFALSE ;
+        node->scheme = node->scheme & ~((INDNUM7MASK << 8) | INDNUM7MASK);
+        node->scheme |= (ind8ToInd7(n) << 8) | ind8ToInd7(m);
+    }
     if((typesFlag[itype] & INDFILETYPE) || (typesType[itype] & HLBRANCH))
     {
         if(meGetString((meUByte *)"Ind No",0,0,buf,meBUF_SIZE_MAX) <= 0)
@@ -2826,9 +2871,14 @@ indentLine(int *inComment)
     {
         int jj, brace=0, contFlag=0, aind, lind, nind ;
         
-        if((fnoz & INDINDCURLINE) &&
+        if((fnoz & INDBOTH) || (fnoz & INDINDCURLINE) &&
            ((fnoz == blkp[0].scheme) || (cind >= blkp[0].column)))
-            aind = meIndentGetIndent((meUByte) fnoz, frameCur->bufferCur->indentWidth);
+        {
+            if (fnoz & INDBOTH)
+                aind = meIndentGetIndent((meUByte) ind7ToInd8(fnoz>>8), frameCur->bufferCur->indentWidth);
+            else
+                aind = meIndentGetIndent((meUByte) fnoz, frameCur->bufferCur->indentWidth);
+        }
         else
             aind = 0 ;
         jj = (int) meHilightGetLookBackLines(indents[indent]) ;
@@ -2890,6 +2940,19 @@ indentLine(int *inComment)
                     contFlag |= 0x03 ;
                     if(!(contFlag & 0x04))
                         ind += meIndentGetIndent((meUByte) blkp[ii].scheme, frameCur->bufferCur->indentWidth);
+                }
+                else if ((fnoz & INDBOTH) == INDBOTH)
+                {
+                    meUShort scheme = blkp[ii].scheme;
+                    
+                    /* Process next line */
+                    ind += meIndentGetIndent((meUByte) ind7ToInd8(scheme), frameCur->bufferCur->indentWidth);
+                    /* Process current line */
+                    if ((ii != 0) && ((ii != 1) || ((ss-disLineBuff) < blkp[0].column)))
+                    {
+                        scheme >>= 8;
+                        ind += meIndentGetIndent((meUByte) ind7ToInd8(scheme), frameCur->bufferCur->indentWidth);
+                    }
                 }
                 /*                printf("Colour change %d is to 0x%x at column %d, ind %d\n",ii,blkp[ii].scheme,blkp[ii].column,ind) ;*/
             }
