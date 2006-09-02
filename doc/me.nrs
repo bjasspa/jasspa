@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.44 2006-08-24 19:21:38 jon Exp $
+.Id $Id: me.nrs,v 2.45 2006-09-02 16:32:25 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -2127,11 +2127,27 @@ The default date format may be specified by the user with
 Quick  directory  aliases such as  "\fB~proj\fR" or "\fB~work\fR"  etc. may be
 defined to a longer pathname using 
 .Ht alias-path-setup 3 .
+.BU
+Language template added for Adobe Macromedia ColdFusion.
 .BU           
 Bug fixes and enhancements to existing commands and functions.
 .BE
 .B "Development history"
 .BS
+[060829]  Fixed  HTML  template   \fBhtml-insert-tag\fR  to  add  the  closing
+"\fC/\fR"     on     insertion     of    a     "\fC<singleTag/>\fR".     Fixed
+\fBhtml-insert-attrib\fR  to deal  with  attribute  insertion  into a HTML tag
+ending in "\fC/>\fR".
+.BU
+[060828] SQL Template. Corrected SQL string hilighting.
+.BU
+[060827]  New  language   template  for   Adobe/MacroMedia   ColdFusion  (file
+extensions .cfm, .cfml .cfc).
+.BU    
+[060827] Extended indentation with the 'u' and 'v' indentation types.
+.BU
+[060822] 2006 Release Candidate 1 (RC1)
+.BU
 [060822] Added password commands 
 .Ht password-to-phonic 3
 and

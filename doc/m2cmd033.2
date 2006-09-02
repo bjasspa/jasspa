@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Jul 25 00:00:27 1998
 .\"
-.Id $Id: m2cmd033.2,v 2.13 2006-07-28 16:35:04 jon Exp $
+.Id $Id: m2cmd033.2,v 2.14 2006-09-02 16:32:25 jon Exp $
 .Im MicroEmacs command|indent|scuts
 .so me.tni
 .TH indent 2
@@ -34,6 +34,7 @@ indent \- Manage the auto-indentation methods
 "\|\fIind-no\fR\|"
 "\fBt\fR"
 "\|\fItoken\fR\|"
+[ "\|\fItoken\fR\|" ]
 "\|\fIindent-scheme\fR\|"
 .br
 .B indent
@@ -521,6 +522,7 @@ parameter may be defined in \fC<user>.emf\fR.
 [ "\|\fIclose\fR\|"
 [ "\|\fIignore\fR\|" ]]
 [ "\|\fIindent\fR\|" ]
+[ "\|\fIindent2\fR\|" ]
 [ "\|\fIindent-scheme\fR\|" ]
 .ad
 .PP
@@ -624,6 +626,27 @@ spaces producing:
 !endif
 \....
 .CE 0
+.RE
+.TP
+\fBUniversal-indent\fR (\|\fItype\fR = '\fCu\fR' or '\fCU\fR')
+.\"
+Independent  control of the current line and next line indent.  Increment  the
+current line indentation by \fIindent\fR and the following line indentation by
+\fIindent2\fR.  Where  \fIindent\fR  represents indent with the \fCo\fR option
+and \fIindent2\fR  represents  indent with the \fCn\fR option. This command is
+useful  where the  indentation  of both the  current  and next line need to be
+controlled independently given a single token. 
+.RS
+.Me $emf-scheme
+.CS
+indent .hilight.emf u "<cfelse" -t 3/2t
+.CE
+.Me $ehf-scheme
+This  has  been  used  in the  \fIColdFusion\fR  indentation  to  control  the
+\fC<cfelse>\fR  condition which requires  control of both the current line and
+next  line  with   different   values   from  the  same  token.  Note  that  a
+\fBIndent-single\fR  could be implemented  with this command using an argument
+of \fC-t t\fR.
 .RE
 .TP
 \fBIndent-single\fR (\fI\|type\|\fR = '\fCs\fR' or '\fCS\fR')
@@ -823,7 +846,7 @@ indent .hilight.xml o "/>"    -2
 .Me $ehf-scheme
 .RE
 .TP
-\fBChange\fR (\fI\|type\|\fR = '\fCx\fR' or '\fCX\fR' or '\fCw\fR' or '\fCW\fR')
+\fBChange\fR (\fI\|type\|\fR = [\fCx\fR|\fCX\fR|\fCw\fR|\fCW\fR|\fCv\fR|\fCV\fR])
 .\"
 Change the indentation scheme from the current scheme to the new
 .IR indent-scheme .
@@ -836,7 +859,8 @@ variable.
 .I indent
 specifies  the indent  value, when the  \fItype\fR is \fCw\fR then the current
 line onwards is indented (similar to \fCo\fR), a \fItype\fR of \fCx\fR indents
-the next line onwards (similar to \fCn\fR).
+the next line onwards (similar to \fCn\fR), a \fItype\fR of \fCv\fR indents
+both the current line and next time onwards (similar to \fCu\fR).
 .IP
 Refer the the \fItype\fR\|=\fCt\fR for an example of indentation switching.
 .SH EXAMPLE
@@ -889,6 +913,8 @@ was removed in December 2004, as were the variables
 and
 .Hr $c-statement 5 .
 All replaced by the C Indent initialisation method.
+.PP
+The Universal indent (\fCu\fR) was introduced in the 2006 release.
 .SH "SEE ALSO"
 .na
 .Hl "File Language Templates" languageTemplates 2 ,
