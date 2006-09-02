@@ -289,6 +289,7 @@ add-file-hook ".mod"                                          fhook-mod2
 add-file-hook ".dot"                                          fhook-dot
 add-file-hook ".rb"                                           fhook-ruby
 add-file-hook ".r"                                            fhook-r
+add-file-hook ".cfm .cfml .cfc"                               fhook-cfm
 ; Add magic hooks
  1 add-file-hook "^#![ \t]*/.*sh"                fhook-shell  ; UNIX shell files
  1 add-file-hook "^#![ \t]*/.*perl"              fhook-perl   ; UNIX perl script

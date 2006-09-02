@@ -31,7 +31,8 @@ set-variable .fhook-sql.comment-2 "|rem|||rem |||"
     hilight .hilight.sql 20 "/\\*" "*/" ""     .scheme.comment
     hilight .hilight.sql 2 "--"                .scheme.comment
     hilight .hilight.sql 0x22 "rem"            .scheme.comment
-    hilight .hilight.sql 4 "'" "'" ""          .scheme.string
+    hilight .hilight.sql 4 "'" "'" "\\"        .scheme.string
+    hilight .hilight.sql 4 "\"" "\"" "\\"      .scheme.string
     
     hilight .hilight.sql 1 "absolute"          .scheme.keyword
     hilight .hilight.sql 1 "action"            .scheme.keyword
@@ -39,7 +40,7 @@ set-variable .fhook-sql.comment-2 "|rem|||rem |||"
     hilight .hilight.sql 1 "add"               .scheme.keyword
     hilight .hilight.sql 1 "after"             .scheme.keyword
     hilight .hilight.sql 1 "alias"             .scheme.keyword
-    hilight .hilight.sql 1 "all"               .scheme.keyword
+    hilight .hilight.sql 1 "all"               .scheme.operator
     hilight .hilight.sql 1 "allocate"          .scheme.keyword
     hilight .hilight.sql 1 "alter"             .scheme.keyword
     hilight .hilight.sql 1 "and"               .scheme.operator
@@ -172,13 +173,13 @@ set-variable .fhook-sql.comment-2 "|rem|||rem |||"
     hilight .hilight.sql 1 "instead"           .scheme.keyword
     hilight .hilight.sql 1 "int"               .scheme.variable
     hilight .hilight.sql 1 "integer"           .scheme.variable
-    hilight .hilight.sql 1 "intersect"         .scheme.keyword
+    hilight .hilight.sql 1 "intersect"         .scheme.operator
     hilight .hilight.sql 1 "interval"          .scheme.keyword
     hilight .hilight.sql 1 "into"              .scheme.keyword
     hilight .hilight.sql 1 "if"                .scheme.keyword
     hilight .hilight.sql 1 "is"                .scheme.keyword
     hilight .hilight.sql 1 "isolation"         .scheme.keyword
-    hilight .hilight.sql 1 "join"              .scheme.keyword
+    hilight .hilight.sql 1 "join"              .scheme.operator
     hilight .hilight.sql 1 "key"               .scheme.keyword
     hilight .hilight.sql 1 "language"          .scheme.keyword
     hilight .hilight.sql 1 "last"              .scheme.keyword
@@ -194,6 +195,7 @@ set-variable .fhook-sql.comment-2 "|rem|||rem |||"
     hilight .hilight.sql 1 "match"             .scheme.keyword
     hilight .hilight.sql 1 "max"               .scheme.keyword
     hilight .hilight.sql 1 "min"               .scheme.keyword
+    hilight .hilight.sql 1 "minus"             .scheme.operator
     hilight .hilight.sql 1 "minute"            .scheme.keyword
     hilight .hilight.sql 1 "modif"             .scheme.keyword
     hilight .hilight.sql 1 "module"            .scheme.keyword
@@ -320,7 +322,7 @@ set-variable .fhook-sql.comment-2 "|rem|||rem |||"
     hilight .hilight.sql 1 "true"              .scheme.operator
     hilight .hilight.sql 1 "type"              .scheme.keyword
     hilight .hilight.sql 1 "under"             .scheme.keyword
-    hilight .hilight.sql 1 "union"             .scheme.keyword
+    hilight .hilight.sql 1 "union"             .scheme.operator
     hilight .hilight.sql 1 "unique"            .scheme.keyword
     hilight .hilight.sql 1 "unknown"           .scheme.keyword
     hilight .hilight.sql 1 "update"            .scheme.operator
