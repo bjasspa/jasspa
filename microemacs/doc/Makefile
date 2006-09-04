@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20060828.2304>
+# Last Modified: <20060904.0131>
 #
 ##############################################################################
 
@@ -268,7 +268,7 @@ TYP9_030=	$(DOCDIR)m9typ030.9 $(DOCDIR)m9typ031.9 $(DOCDIR)m9typ032.9\
 		$(DOCDIR)m9typ036.9 $(DOCDIR)m9typ037.9 $(DOCDIR)m9typ038.9\
 		$(DOCDIR)m9typ039.9
 TYP9_040=	$(DOCDIR)m9typ040.9 $(DOCDIR)m9typ041.9 $(DOCDIR)m9typ042.9\
-		$(DOCDIR)m9typ043.9 $(DOCDIR)m9typ044.9 $(DOCDIR)m9typ045.9
+		$(DOCDIR)m9typ043.9 $(DOCDIR)m9typ044.9 $(DOCDIR)m9typ045.9\
 		$(DOCDIR)m9typ046.9
 #
 TNIS	=	me.tni
