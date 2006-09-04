@@ -5,7 +5,7 @@
 .\"
 .\" Created By: Jon Green
 .\"
-.Id $Id: m1cmd000.1,v 2.18 2006-08-24 20:07:39 jon Exp $
+.Id $Id: m1cmd000.1,v 2.19 2006-09-04 16:25:11 jon Exp $
 .Im MicroEmacs function
 .so me.tni
 .TH me 1
@@ -131,23 +131,29 @@ mode.
 backup  mode by  default.  The  behavior  of \fB-B\fR is  therefore  different
 between the two editors. 
 .IP \fB\-c\fR[\fIsessionName\fR]
-Continuation  mode. Load \fB\*(mE\fR last edit session,  restoring the buffers
-to their  previous  loaded state and position.  Note that history mode must be
-enabled. The  \fB\-c\fR  option is generally  used with  windowing  interfaces
+Continuation  mode. Load the  \fB\*(mE\fR  last edit  session,  restoring  the
+buffers to their  previous  loaded  state when  history  mode is enabled.  The
+\fB\-c\fR    option   is   generally    used   with    windowing    interfaces
 (X-Windows/Microsoft Windows) as the shortcut icon invocation.
 .IP
 If the optional session name  \fIsessionName\fR  is specified then the session
 file  \fIsessionName\fR\|\fB.esf\fR  is loaded  restoring the previous editing
-session  including the window size,  position and window  layout. On a session
-restore  then no  additional  files to load  should be included on the command
-line as this will not enable the original window  configuration to be restored
-as the window configuration will change.
+session including the buffer window size, position and layout, the buffer mark
+and cursor  location,  main window size. When the  \fIsessionName\fR  includes
+space  characters  then the  command  line  option  should be  bracketed  e.g.
+\fC"-cFoo  Bar"\fR.  On a session  restore  then no  additional  files to load
+should be  included on the command  line as this will not enable the  original
+window  configuration to be restored as the window  configuration will change.
+See 
+.Ht read-session 3 
+for further information.
 .IP
 If  the   \fIsessionName\fR   is  omitted   then  the  default   session  file
 \fIusername\fR\|\fB.esf\fR is loaded (see 
 .Ht esf 8 )
 restoring the previously loaded buffers however the window layout and position
-is not restored. 
+is not restored. The default \fIsessionName\fR is the login name
+.Ht $MENAME 5 . 
 .IP \fB\-h\fR
 Show the help page (does not start the editor).
 .IP \fB\-i\fR
@@ -415,12 +421,42 @@ editor window is brought into focus following the drop.
 Xdnd drag and drop support is provided in the X-Windows  version of \*(mS. The
 editor  window is not  raised or  brought  into  focus  following  the drop as
 expected in the \s-1UNIX\s0 environment. 
+.SH "SESSIONS"
+Reading a session is generally performed when a \*(mS session is started using
+the  "\fB-c\fR"  command line option rather than from the mode line or main
+menu, see
+.Ht read-session 3 .
+Invoking
+.IP
+\fBme -c\fR\|\fI<mySessionName>\fR
+.LP
+where \fI<mySessionName>\fR is the name of the session (the
+.Ht $MENAME 5
+or system  login name) will  restore all of of the  buffers,  windows  layout,
+point and mark  positions, main window size etc. at the point of the last shut
+down. e.g. given a system login name of \fIjasspa\fR then
+.IP
+\fBme -c\fR\|\fIjasspa\fR
+.LP
+restores  the  session  to the state  when  \fIjasspa\fR  last  exited  \*(mS.
+When the session name is specified then no other files should be specified, so
+the command line
+.IP
+\fBme -c\fR\|\fIjasspa\fR \fCmorefiles.txt\fR
+.LP
+restores the buffers but does not restore the window  layout  because this has
+been destroyed by the introduction of the new file "\fCmorefiles.txt\fR". This
+type of command  with  another  file behaves as the old "\fCme -c\fR"  command
+prior   to  the   2006   release   that   did   not   support   sessions.   If
+\fI<mySessionName>\fR  is not specified  then the buffers are restored but the
+window layout is not restored.
 .SH "HISTORY"
 The 2006 release  removed the \fC-d\fR  command line option for debugging (not
 used) and added  session  support by  extending  the  \fC-c\fR  option with an
 optional \fIsessionName\fR argument.
 .SH "SEE ALSO"
 .na
+.Ht read-session 3 ,
 .Ht $MEINSTALLPATH 5 ,
 .Ht $MENAME 5 ,
 .Ht $MEPATH 5 ,
