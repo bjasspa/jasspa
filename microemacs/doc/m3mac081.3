@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac081.3,v 2.2 2006-08-20 11:06:23 jon Exp $
+.Id $Id: m3mac081.3,v 2.3 2006-09-04 16:25:52 jon Exp $
 .Im MicroEmacs command|scuts
 .so me.tni
 .TH read-session 3
@@ -58,11 +58,55 @@ Reference should be made to the notes included in
 .Ht erf 8
 as to how the  history  file may be  edited  and  effected  in the same  \*(mE
 session.
+.PP
+The user may now have multiple sessions, this is useful when one is working on
+different  projects, the sessions are created using
+.Ht save-session 3
+using a new session name.  Starting the editor with a different  session means
+that the hilighting  scheme may be different  between different  sessions i.e.
+"\fIBlue\fR \fIHue\fR" and "\fISherwoord\fR \fIForest\fR". Note that the color
+scheme should be changed with
+.Ht change-scheme 3
+and not with
+.Ht user-setup 3
+if different  sessions are to use different  color schemes.
+.SS "Command Line"
+Reading a session is generally performed when a \*(mS session is started using
+the  "\fB-c\fR"  command  line option  rather than from the emacs mode line or
+main menu, see
+.Ht me 1 .
+Invoking
+.IP
+\fBme -c\fR\|\fI<mySessionName>\fR
+.LP
+where \fI<mySessionName>\fR is the name of the session (the
+.Ht $MENAME 5
+or system  login name) will  restore all of of the  buffers,  windows  layout,
+point and mark  positions, main window size etc. at the point of the last shut
+down. e.g. given a system login name of \fIjasspa\fR then
+.IP
+\fBme -c\fR\|\fIjasspa\fR
+.LP
+restores  the  session  to the state  when  \fIjasspa\fR  last  exited  \*(mS.
+When the session name is specified then no other files should be specified, so
+the command line
+.IP
+\fBme -c\fR\|\fIjasspa\fR \fCmorefiles.txt\fR
+.LP
+restores the buffers but does not restore the window  layout  because this has
+been destroyed by the introduction of the new file "\fCmorefiles.txt\fR". This
+type of command  with  another  file behaves as the old "\fCme -c\fR"  command
+prior   to  the   2006   release   that   did   not   support   sessions.   If
+\fI<mySessionName>\fR  is not specified  then the buffers are restored but the
+window layout is not restored.
 .SH "SEE ALSO"
 .na
+.Ht change-scheme 3 ,
 .Ht erf 8 ,
 .Ht esf 8 ,
 .Ht @h0 4 ,
+.Ht me 1 ,
+.Ht $MENAME 5 ,
 .Ht save-session 3 .
 .ad
 .FH
