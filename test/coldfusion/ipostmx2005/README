@@ -1,0 +1,41 @@
+Thank you for your interest in iPostMX - ColdFusion Community.  This document will provide you with a brief introduction to iPostMX and installation procedures.
+
+What is iPostMX?
+
+iPostMX is a bulletin board system, a forum, written in ColdFusion. The target audience for this application is mainly developers, although, you can use it with just a minimal amount of knowledge with SQL, XHTML, JavaScript and ColdFusion. So, there's no need to be an advanced developer. This version of iPostMX is the original, however it was never released. Instead another version of iPostMX was released that used Template files and ColdFusion. That version is no longer supported or developed at Cole Barksdale Applications. This pure ColdFusion version is still not the only version of iPostMX available either. There is a version written using XSL that can be found at http://devel.bluecadaver.com . Explanation of that version is far beyond the scope of this document.
+
+Supported Platforms.
+
+This application has been tested on the following platforms:
+
+	Macromedia CFMX 6, 6.1 & 7
+	Windows XP Profressional, 2003 Server
+	Linux Fedora Core 1, 2 & 3
+	MySQL 4.x
+
+
+Installing iPostMX 2005
+
+I. The Directory
+
+This section describes where iPostMX should go in relation to your web root/server path. Unfortunately, in order to get to this readme file, you'll have to unzip the iPostMX download file. But, if you have unzipped this file into your web root, there's no need to read this section. For those of you who unzipped this file elsewhere, you will need to move the entire directory structure (/ipostmx/) to your web root. For example, if you unzipped this file in My Documents (for Windows users) and your web root is located at C:\inetpub\www then you'll need to copy the ipostmx directory to C:\inetpub\www.
+
+If you're in a hosting environment, just upload the entire ipostmx directory into your web directory.
+
+II. The SQL File
+
+In the previous release of iPostMX, users had to manually build the database by using the "ipostmx.sql" file. To make things a little easier, we've included a one-button installer that can be used regardless of hosting environments. The following conditions must be met before you can use iPostMX:
+
+	1. You must first create a database called "ipostmx" (Only MySQL 4.0 and lower is supported at this time)
+	2. A DNS entry must be made pointing to the ipostmx database and it too must be called "ipostmx"
+	3. You must point your browser at http://<yourdomain>/ipostmx2005/installdb.cfm **this is extremely important**
+
+For those of you who want to work directly with the SQL file, it has been left in the installation.
+
+III. Post installation
+
+After successfully installing iPostMX, be sure to change the administrator password. It is currently set to "admin", so you will most definitely need to change it.
+
+IV. Troubleshooting
+
+If there are any problems during download, installation or post installation, feel free to send an email to support@ipostmx.com for possible solutions and bug reporting.
