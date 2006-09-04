@@ -50,14 +50,14 @@ set-variable .fhook-cfm.item-list-r5 "Func \ecB\\1\ecA"
     cfm-set-hilight .hilight.cfmtags
     hilight .hilight.cfmtags 1 "\\w+\\s*\\}="                .scheme.operator
     hilight .hilight.cfmtags 4 "#" "#" ""                    .scheme.variable
-    hilight .hilight.cfmtags   0x80 ">" .hilight.cfm         $global-scheme
+    hilight .hilight.cfmtags   0x80 "/?>" .hilight.cfm       .scheme.keyword
     
     ; <CFSET enclosure hilighting> - variable assignment
     0 hilight .hilight.cfmsetags 3 50                        $global-scheme
     cfm-set-hilight .hilight.cfmsetags
     hilight .hilight.cfmsetags 4 "#" "#" ""                  .scheme.variable
     hilight .hilight.cfmsetags 1 "\\w+\\s*\\}="              .scheme.variable
-    hilight .hilight.cfmsetags 0x80 ">" .hilight.cfm         $global-scheme
+    hilight .hilight.cfmsetags 0x80 "/?>" .hilight.cfm       .scheme.keyword
 !endif
 
 !if &and &sin "h" .fhook-cfm.setup &band .hilight.flags 0x02

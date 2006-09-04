@@ -406,7 +406,7 @@ set-variable .fhook-cfms.item-list-r1 "Func \ecB\\1\ecA"
     cfm-set-hilight .hilight.cfmsqltags
     hilight .hilight.cfmsqltags 4 "#" "#" ""                  .scheme.variable
     hilight .hilight.cfmsqltags 1 "\\w+\\s*\\}="              .scheme.operator
-    hilight .hilight.cfmsqltags 0x80 ">" .hilight.cfmsql      $global-scheme
+    hilight .hilight.cfmsqltags 0x80 "/?>" .hilight.cfmsql    .scheme.keyword
 
     ; cfmsql file highlighting
     0 hilight .hilight.cfmsql 3 75                   $global-scheme
