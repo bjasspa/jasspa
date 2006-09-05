@@ -129,15 +129,15 @@ set-variable .fhook-dirlst.setup &reg "/history/fhook/dirlst" "ghmop"
 set-variable .fhook-dirlst.setup-mask    "aceghlopq"
 set-variable .fhook-dirlst.setup-flags   "|q|l|"
 set-variable .fhook-dirlst.setup-labels  "|Use OFM Standard key bindings|Enable filter by default|"
-set-variable .fhook-dirlst.command-flag  "|thbio|thbio|thbio|thbio|bio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|h|thbio|thbio|thbio|thbio|thbio|thbio|thbio|thbio|bio|thbio|thbio|h|t|"
-set-variable .fhook-dirlst.command-name  "|file-browser-swap-buffers|file-browser-close|dirlist-up-dir|dirlst-refresh|dirlst-refresh|file-browser-set-filter|dirlst-search|dirlst-search||dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list||dirlst-tag-toggle|dirlst-tag-mask|dirlst-tag-mask|dirlst-tag-invert|dirlst-tag-set|dirlst-tag-set||dirlst-find-file||dirlst-find-file|dirlst-tag-open|dirlst-find-file|dirlst-file-rename|dirlst-tag-file-copy|dirlst-tag-file-copy|dirlst-new-folder|dirlst-tag-file-delete|dirlst-tag-file-delete|file-tool-menu|dirlst-tag-execute||file-tool-setup|"
-set-variable .fhook-dirlst.command-nbind "||||||-1||0||5|6|4|3|2|1|||1|-1||1|-1||5||1||0||1|0||||||||"
+set-variable .fhook-dirlst.command-flag  "|thbio|thbio|thbio|thbio|bio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|h|thbio|thbio|thbio|thbio|thbio|thbio|thbio|thbio|thbio|bio|thbio|thbio|h|t|"
+set-variable .fhook-dirlst.command-name  "|file-browser-swap-buffers|file-browser-close|dirlist-up-dir|dirlst-refresh|dirlst-refresh|file-browser-set-filter|dirlst-search|dirlst-search||dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list||dirlst-tag-toggle|dirlst-tag-mask|dirlst-tag-mask|dirlst-tag-invert|dirlst-tag-set|dirlst-tag-set||dirlst-find-file||dirlst-find-file|dirlst-find-file|dirlst-tag-open|dirlst-find-file|dirlst-file-rename|dirlst-tag-file-copy|dirlst-tag-file-copy|dirlst-new-folder|dirlst-tag-file-delete|dirlst-tag-file-delete|file-tool-menu|dirlst-tag-execute||file-tool-setup|"
+set-variable .fhook-dirlst.command-nbind "||||||-1||0||5|6|4|3|2|1|||1|-1||1|-1||5||1|9||0||1|0||||||||"
 !if &sin "q" .fhook-dirlst.setup
-set-variable .fhook-dirlst.command-kbind "|tab|f10|backspace|C-f9|C-f9|C-f12|S-f2|S-f3||C-f3|C-f4|C-f5|C-f6|C-f7|C-f8||space|+|-|*|C-+|C--||return||f4|S-f4|f3|S-f6|f5|f6|f7|f8|delete|f2|S-f5|||"
+set-variable .fhook-dirlst.command-kbind "|tab|f10|backspace|C-f9|C-f9|C-f12|S-f2|S-f3||C-f3|C-f4|C-f5|C-f6|C-f7|C-f8||space|+|-|*|C-+|C--||return||f4|A-f4|S-f4|f3|S-f6|f5|f6|f7|f8|delete|f2|S-f5|||"
 !else
-set-variable .fhook-dirlst.command-kbind "|tab|f10|backspace|l|f5|f|S|s||5|6|4|3|2|1||space|+|-|*|a|u||return||e|i|v|r|c|m|n|d|delete|t|x|||"
+set-variable .fhook-dirlst.command-kbind "|tab|f10|backspace|l|f5|f|S|s||5|6|4|3|2|1||space|+|-|*|a|u||return||e|b|i|v|r|c|m|n|d|delete|t|x|||"
 !endif
-set-variable .fhook-dirlst.command-desc  "|Swap Browser \HWindows|Close File Browser|Goto Parent Directory|Refresh \HList||Toggle \HFilter|Search for File|\HSearch by Name||Sort by Name|Sort by Extension|Sort by Modified|Sort by Size|Sort by Attribute|Sort by Selected||\HToggle Cur File Select|Select Files \H+|Unselect Files \H-|Invert Selection \H*|Select \HAll|\HUnselect All||Open File|            (Default file tool or Edit file)|\HEdit File|Ed\Hit Selected Files|\HView File|\HRename File|\HCopy Files|\HMove Files|\HNew Folder|\HDelete Files||File Tools|E\Hxecute Command on Files|            (%p for path, %f for file & %% for %)|File Tools Setup|"
+set-variable .fhook-dirlst.command-desc  "|Swap Browser \HWindows|Close File Browser|Goto Parent Directory|Refresh \HList||Toggle \HFilter|Search for File|\HSearch by Name||Sort by Name|Sort by Extension|Sort by Modified|Sort by Size|Sort by Attribute|Sort by Selected||\HToggle Cur File Select|Select Files \H+|Unselect Files \H-|Invert Selection \H*|Select \HAll|\HUnselect All||Open File|            (Default file tool or Edit file)|\HEdit File|\HBinary Edit File|Ed\Hit Selected Files|\HView File|\HRename File|\HCopy Files|\HMove Files|\HNew Folder|\HDelete Files||File Tools|E\Hxecute Command on Files|            (%p for path, %f for file & %% for %)|File Tools Setup|"
 
 set-variable .fhook-dirlst.modefunc-lbl "|Not-Filtered|Filtered|"
 set-variable .fhook-dirlst.modefunc-cmd "|file-browser-set-filter|file-browser-set-filter|"
@@ -524,6 +524,7 @@ define-macro file-browser-swap-buffers
 !emacro
 
 0 define-macro dirlst-find-file
+    set-variable #l3 &cond &band @# 8 3 1
     !if &band @# 2
         set-variable #l0 @1
     !else
@@ -536,7 +537,7 @@ define-macro file-browser-swap-buffers
             !force toolbar-make-tool-visible "*ftp-console*"
         !endif
         set-position "\x84"
-        find-file #l0 @mna
+        #l3 find-file #l0 @mna
         set-variable #l0 $buffer-fname
         !if &not &seq &rig #l0 &rsin "/" #l0 ""
             goto-position "\x84"
@@ -614,7 +615,7 @@ define-macro file-browser-swap-buffers
                 next-window
             !endif
         !endif
-        find-file #l0 @mna
+        #l3 find-file #l0 @mna
         set-variable #l3 $buffer-bname
         !if &band #l1 4
             set-position "\x81"
