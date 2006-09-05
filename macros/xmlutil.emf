@@ -612,8 +612,12 @@ define-macro xml-insert-attrib
             forward-char
         !endif
     !else
+        ; Find the ">", handle "/>"
         backward-char
-        !if &not &seq @wc ">"
+        !if &seq @wc ">"
+            backward-char
+        !endif
+        !if &not &seq @wc "/"
             forward-char
         !endif
     !endif
