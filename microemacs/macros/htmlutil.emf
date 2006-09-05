@@ -509,13 +509,11 @@ define-macro html-insert-attrib
             forward-char
         !endif
     !else
-        ; Find the ">"
+        ; Find the ">", handle "/>" although this is strictly xml
         backward-char
-        !if &not &seq @wc ">"
-            forward-char
+        !if &seq @wc ">"
+            backward-char
         !endif
-        ; See if this is a single tag i.e. "/>" 
-        backward-char
         !if &not &seq @wc "/"
             forward-char
         !endif

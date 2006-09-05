@@ -298,6 +298,7 @@ set-variable #l2 &ind &spr ".hilight.%stag" #l0
     hilight #l2 1  "wrap"                   .scheme.operator
     hilight #l2 1  "z-index"                .scheme.operator
     hilight #l2 0  "\\w+"                   .scheme.error
+    hilight #l2 0x80 "/>" #l1               .scheme.keyword
     hilight #l2 0x80 ">" #l1                .scheme.keyword
 
     !if &exist .hilight.javascript
