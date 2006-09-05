@@ -30,12 +30,30 @@ define-macro ftp
 !if &not &exi .osd.ftp
     set-variable .osd.ftp &pinc .osd.next 1
     set-variable .ftp.name ""
-    set-variable %ftp-flags &reg "/url/ftp-flags" "csp"
 !endif
 
 define-macro ftp-connect
     ftp-data-entry-setup
-    .osd.ftp osd
+    set-variable .do 0
+    !force .osd.ftp osd
+    !if .do
+        set-variable #l0 &reg &spr "/url/ftp/%s/path" .ftp.name ""
+        !if &not &seq &lef #l0 1 "/"
+            set-variable #l0 &cat "/~/" #l0
+        !endif
+        find-file &spr "ftp://%s%s" .ftp.name #l0 @mna
+        !if &not &seq $buffer-bname "*ftp-files*"
+            set-variable #l1 $buffer-bname
+            !force 0 find-buffer "*ftp-files*"
+            !if $status
+                ftp-rename-buffer
+            !endif
+            find-buffer #l1
+            !force change-buffer-name "*ftp-files*"
+        !endif
+        buffer-bind-create "bio" "f10" "" file-browser-close
+        buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
+    !endif
 !emacro
 
 0 define-macro ftp-rename-buffer
@@ -163,14 +181,12 @@ define-macro ftp-connect
 
 0 define-macro ftp-regfile-entry
     !if &les @# 0
-        set-variable #l2 &reg "/history/url-file" ""
-        set-variable #l0 @ml2 "" #l2
-        !if &seq #l0 #l2
+        set-variable #l0 @ml2 "" .ftp.url-file
+        !if &seq #l0 .ftp.url-file
             !return
         !endif
-        !if &seq #l0 ""
+        !if &seq &set .ftp.url-file #l0 ""
             ; user has removed the file name
-            delete-registry "/history/url-file"
             set-registry "/url" ""
             mark-registry "/url" "F"
             !return
@@ -191,7 +207,7 @@ define-macro ftp-connect
             !endif
         !endif
         set-variable #l3 &stat "r" #l1
-        ; we now have #l0 = new base, #l1 new file name, #l2 old file name, #l3 new file exist?
+        ; we now have #l0 = new base, #l1 new file name, #l3 new file exist?
         !if #l3
             ; has the current url file been changed
             set-variable $result ""
@@ -229,11 +245,10 @@ define-macro ftp-connect
         !if &seq &find #l0 ".erf" #l1
             set-variable #l1 #l0
         !endif
-        set-registry "/history/url-file" #l1
         ; force an osd update
         -2 osd
     !else
-        set-variable $result &reg "/history/url-file" ""
+        set-variable $result .ftp.url-file
     !endif
 !emacro
 
@@ -456,33 +471,31 @@ define-macro ftp-connect
     !endif
 !emacro
 
+0 define-macro ftp-make-default
+    !force read-registry "/history" $user-name "cbr"
+    !if &seq .ftp.url-file ""
+        delete-registry "/history/url-file"
+    !else
+        set-registry "/history/url-file" .ftp.url-file
+    !endif
+    save-registry "/history" ""
+!emacro
+
 0 define-macro ftp-do-connect
-    !if &seq .ftp.name ""
+    !if &not &seq .ftp.name ""
+        set-variable .ftp-connect.do 1
         !abort
     !endif
-    set-variable #l0 &reg &spr "/url/ftp/%s/path" .ftp.name ""
-    !if &not &seq &lef #l0 1 "/"
-        set-variable #l0 &cat "/~/" #l0
-    !endif
-    find-file &spr "ftp://%s%s" .ftp.name #l0 @mna
-    !if &not &seq $buffer-bname "*ftp-files*"
-        set-variable #l1 $buffer-bname
-        !force 0 find-buffer "*ftp-files*"
-        !if $status
-            ftp-rename-buffer
-        !endif
-        find-buffer #l1
-        !force change-buffer-name "*ftp-files*"
-    !endif
-    buffer-bind-create "bio" "f10" "" file-browser-close
-    buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
+    osd-dialog "FTP Error" "  Cannot connect - No site details!  "  "  \HOK  "
 !emacro
 
 -1 osd .osd.ftp
 osd .osd.ftp 0   "batcDIHs" 3 6 40 0 -1 -1 620 630 .scheme.osd-title "FTP Connection"
 osd .osd.ftp 10  ""
-osd .osd.ftp 20  "Sf" "  \HRegistry File" 30
-osd .osd.ftp 25  "hf" "  "
+osd .osd.ftp 20  "Shf" "  \HRegistry File" 30
+osd .osd.ftp 23  "BxrhfH" .scheme.osd-ebtt " \HMake Default " f ftp-make-default
+osd .osd.ftp 25  "f" "  "
+osd .osd.ftp 27  "hf" "  "
 osd .osd.ftp 30  "EtxHf" .scheme.osd-entry "##################################" f ftp-regfile-entry
 osd .osd.ftp 35  ""
 osd .osd.ftp 38  "fh" "      "
@@ -500,19 +513,20 @@ osd .osd.ftp 120 "hf" "    "
 osd .osd.ftp 145 "hf" "  "
 osd .osd.ftp 600 ""
 osd .osd.ftp 610 ""
-osd .osd.ftp 620 "BthrfH" .scheme.osd-ebtt " C\Honnect " f ftp-do-connect
+osd .osd.ftp 620 "BxthrfH" .scheme.osd-ebtt " C\Honnect " f ftp-do-connect
 osd .osd.ftp 625 "hf" "   "
 osd .osd.ftp 630 "BthrfH" .scheme.osd-ebtt " \HCancel "   f void
 osd .osd.ftp 640 "f" "  "
 
-!if &seq &reg "/url" "" ""
-    !if &not &seq &set #l0 &reg "/history/url-file" "" ""
-        !force read-registry "/url" #l0 "y" 
+!if &not &exi .ftp.url-file
+    !if &not &seq &set .ftp.url-file &reg "/history/url-file" "" ""
+        !force read-registry "/url" .ftp.url-file "y" 
         !if &not $status
             ; set ftp erf file is missing
-            set-registry "/url" &stat "a" &spr "%s%s.erf" $user-path #l0
+            set-registry "/url" &stat "a" &spr "%s%s.erf" $user-path .ftp.url-file
             mark-registry "/url" "fybu"
         !endif
     !endif
+    set-variable %ftp-flags &reg "/url/ftp-flags" "csp"
 !endif
 ftp-site-name-set ""
