@@ -280,6 +280,18 @@ set-variable .undo.count 0
     osd-dialog "Record Macro" #l0 "  \HOK  "
     start-kbd-macro
 !emacro
+define-macro display-main-menu
+    osd -1 &set .osd.menu &bxor .osd.menu 1
+    !if &exi .help
+    !elif &not &set .help .osd.menu
+        !if &seq "esc =" &set #l0 &kbin 655360 osd
+        !elif &seq &cbin "esc =" "osd"
+            set-variable #l0 &cat #l0 "\" or \"esc ="
+        !endif
+        set-variable #l0 &spr "  Use \"%s\" to access the main menu  \n  or execute display-main-menu" #l0
+        osd-dialog "Display Main Menu" #l0 "  \HOK  "
+    !endif
+!emacro
 ;
 ; MENU #1 - FILE sub-menu
 ;
@@ -365,10 +377,10 @@ osd 4 80  ""  "\HOccurrences           S-f6"     f occur
 osd 4 90  "-"
 osd 4 100 "M" "\HBuffer                C-x b" 20 osd-1-buffer
 osd 4 150 "-"
-osd 4 160 "i" "\HMain Menu"                      f "osd -1 &set .osd.menu &bxor .osd.menu 1"
+osd 4 160 "i" "\HMain Menu"                      f display-main-menu
 osd 4 170 "i" "\HScroll Bars"                    f "&set $scroll-bar &bxor $scroll-bar 0x100"
 osd 4 180 ""  "\HToolbar               S-f11"    f toolbar
-osd 4 190 ""  "\HWhite Characters      f11"      f display-white-chars
+osd 4 190 ""  "\HWhitespaces           f11"      f display-whitespaces
 !if &reg "/history/find-buffer" "0"
     !if &not &exi .osd.find-buffer
         set-variable .osd.find-buffer &pinc .osd.next 1

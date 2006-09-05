@@ -64,7 +64,7 @@ define-macro compare-windows-exact
 !emacro
 
 ; toggles the displaying of white characters
-define-macro display-white-chars
+define-macro display-whitespaces
     set-variable $system &bxor $system 0x80000
     screen-update
 !emacro
