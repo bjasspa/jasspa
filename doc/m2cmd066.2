@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jul 16 23:13:14 1998
 .\"
-.Id $Id: m2cmd066.2,v 2.14 2005-09-19 19:27:19 bill Exp $
+.Id $Id: m2cmd066.2,v 2.15 2006-09-05 22:29:58 bill Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH osd 2
@@ -594,7 +594,7 @@ dialog.
 \fI-4\fR \fBosd\fR
 .ad
 .PP
-An invocation of \fBosd\fR with no arguments
+An invocation of \fBosd\fR with an argument of \-4
 returns  control back to the \fBosd\fR from a  \fIcontrol-command\fR. Refer to
 the \fBC\fR flag in the  create/reset  dialog  property for information and an
 example.
@@ -603,7 +603,7 @@ example.
 \fI-2\fR \fBosd\fR
 .ad
 .PP
-Calling  osd  with  an  argument  of \-1  forces  the  complete  redrawing  of
+Calling  osd  with  an  argument  of \-2  forces  the  complete  redrawing  of
 current dialog and any sub-dialogs.  This is very useful when the execution of
 one item may effect the appearance of another.
 .SS "Redraw All Active Dialogs"
@@ -611,7 +611,7 @@ one item may effect the appearance of another.
 \fI-3\fR \fBosd\fR
 .ad
 .PP
-Calling  osd with an  argument  of \-2 forces the  complete  redrawing  of all
+Calling  osd with an  argument  of \-3 forces the  complete  redrawing  of all
 currently active osd dialogs. This is better than calling
 .Ht screen-update 2
 when only the osd dialogs need updating as it suffers less from flickering. 
