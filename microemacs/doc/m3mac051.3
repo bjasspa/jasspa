@@ -6,20 +6,21 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Tue Jan 25 23:22:52 2000
 .\"
-.Id $Id: m3mac051.3,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m3mac051.3,v 2.6 2006-09-06 22:24:42 bill Exp $
 .Im MicroEmacs command
 .so me.tni
-.TH display-white-chars 3
+.TH display-whitespaces 3
+.XI display-whitespaces - "Toggle the displaying of white characters"
 .XI display-white-chars - "Toggle the displaying of white characters"
 .SH NAME
-display-white-chars \- Toggle the displaying of white characters
+display-whitespaces \- Toggle the displaying of white characters
 .Me $a
 .SH SYNOPSIS
 .na
-.B display-white-chars
+.B display-whitespaces
 .ad
 .SH DESCRIPTION
-.B display-white-chars
+.B display-whitespaces
 toggles the  displaying  of white  characters  in the main display. By default
 white  characters,  space tab and new-lines, are  represented  with  invisible
 characters  such as one or more '\fC \fR's for spaces and tabs and text moving
@@ -30,7 +31,7 @@ When this function is first  called it toggle  enables the displaying of these
 characters, other  characters  are drawn in their  place to make them visible.
 A subsequent call will disable the displaying of them.
 .SH NOTES
-\fBdisplay-white-chars\fR is a macro implemented in \fCmisc.emf\fR and uses bit
+\fBdisplay-whitespaces\fR is a macro implemented in \fCmisc.emf\fR and uses bit
 \fC0x80000\fR of the
 .Ht $system 5
 variable.
@@ -43,6 +44,9 @@ This  feature  may be more  confusing  on some  terminals  due to the  lack of
 characters  available for displaying the white characters. The characters used
 when displaying white characters are defined in the variable
 .Ht $window-chars 5 .
+.PP
+The macro  \fBdisplay-white-chars\fR  was renamed to \fBdisplay-whitespaces\fR
+in September 2006. 
 .SH "SEE ALSO"
 .na
 .Ht $system 5 ,
