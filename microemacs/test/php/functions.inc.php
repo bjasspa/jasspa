@@ -102,7 +102,7 @@ function update_todo($due_date, $priority, $status, $percentage_completed,
 
 	generateMail($id, "todo_change", $HTTP_SESSION_VARS['usr']->userid);
 	return ($querystatus);
-}
+} 
 
 /**
  * add a todo-entry
