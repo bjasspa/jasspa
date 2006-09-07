@@ -446,8 +446,6 @@ define-macro read-session
                 read-session-me-quit
                 !force 0 delete-buffer "*session_tmp*"
                 goto-position "\x88"
-                set-variable #l2 &cat ".session.scheme" &cond &band $system 0x01 "c" "w"
-                &exi &ind #l2 change-scheme &ind #l2
                 !if &band @# 16
                 !elif &exi .notes
                     notes-file .notes
@@ -468,6 +466,8 @@ define-macro read-session
                     !endif
                     forward-line
                 !done
+                set-variable #l2 &cat ".session.scheme" &cond &band $system 0x01 "c" "w"
+                &exi &ind #l2 change-scheme &ind #l2
             !elif &seq #l1 "hist"
                 !while &len &set #l3 &lget @wl 1
                     2 search-buffer "eM" "\b"
