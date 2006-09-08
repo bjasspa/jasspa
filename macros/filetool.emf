@@ -8,7 +8,7 @@
 ; Authors:     Steven Phillips
 ;
 0 define-macro file-tool-run
-    set-variable #l0 &rep &rep &rep &rep @1 "%%" "\bA" "%[" "\bB" "%|" "\bC" "%]" "\bD"
+    set-variable #l0 &rep &rep &rep &rep &rep @1 "%%" "\bA" "%\"" "\bE" "%[" "\bB" "%|" "\bC" "%]" "\bD"
     set-variable #l1 &rep &rep &rep &rep .find-file.file-dir "%" "\bA" "[" "\bB" "|" "\bC" "]" "\bD"
     set-variable #l0 &rep #l0 "%p" #l1
     !if &band $system 0x100
@@ -44,6 +44,18 @@
     !if @?
         set-variable #l0 &rep &rep &rep #l0 "%f" &cat #l1 #l2 "%b" #l1 "%e" #l2
         set-variable #l0 &rep &rep &rep &rep #l0 "\bA" "%" "\bB" "[" "\bC" "|" "\bD" "]"
+        !while &set #l4 &sin "\bE" #l0
+            !if &not &set #l5 &sin "\bE" &rig #l0 &add #l4 1
+                ml-write "[Error: Missing '%\"' in command line]"
+                !abort
+            !elif &not &xse &set #l3 &mid #l0 &add #l4 1 &sub #l5 1 ".*\\s.*"
+            !elif &band $system 0x100
+                set-variable #l3 &spr "\"%s\"" #l3
+            !else
+                set-variable #l3 &spr "\"%s\"" &rep &rep #l3 "\\" "\\\\" "\"" "\\\""
+            !endif
+            set-variable #l0 &spr "%s%s%s" &lef #l0 &sub #l4 1 #l3 &rig #l0 &add &add #l4 #l5 2
+        !done
         ml-write &spr "[Launching: %s]" #l0
         !if &seq &lef #l0 1 "*"
             !force execute-line &rig #l0 1
@@ -56,7 +68,7 @@
     !else
         set-variable #l4 &rig #l0 &add #l7 2
         !if &not &set #l5 &sin "]" #l4
-            ml-write "[Error: Missing ']' in %i input]"
+            ml-write "[Error: Missing ']' in %*[ multi-file command line]"
             !abort
         !endif
         set-variable #l4 &lef #l4 &sub #l5 1
@@ -91,6 +103,31 @@
         !force replace-string "\bC" "|"
         beginning-of-buffer
         !force replace-string "\bD" "]"
+        beginning-of-buffer
+        !repeat
+            !force search-buffer "me" "\bE"
+            !if $status
+                backward-delete-char
+                backward-delete-char
+                set-mark
+                !force search-buffer "me" "\bE"
+                !if &not $status
+                    ml-write "[Error: Missing '%\"' in command line]"
+                    !abort
+                !endif
+                backward-delete-char
+                backward-delete-char
+                kill-region
+                !if &not &xse &set #l3 @y ".*\\s.*"
+                !elif &band $system 0x100
+                    set-variable #l3 &spr "\"%s\"" #l3
+                !else
+                    set-variable #l3 &spr "\"%s\"" &rep &rep #l3 "\\" "\\\\" "\"" "\\\""
+                !endif
+                -1 insert-string #l3
+                -1 yank
+            !endif
+        !until &not $status
         ml-write &spr "[Launching: %s]" &lef @wl 500
         find-buffer #l6
         !if &seq &lef #l0 1 "*"
