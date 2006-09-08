@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sun Feb 6 18:14:27 2005
 .\"
-.Id $Id: m3osd017.3,v 2.1 2006-08-24 19:21:44 jon Exp $
+.Id $Id: m3osd017.3,v 2.2 2006-09-08 20:57:13 bill Exp $
 .Im MicroEmacs command|osd;command|file
 .so me.tni
 .TH file-tool-setup 3
@@ -39,9 +39,9 @@ file(s).  The command  line  includes  \fIvariables\fR  which are filled in by
 \*(mS.  The  information  is  stored  in the  registry  \fIuser.erf\fR  and is
 retained across sessions.
 .PP
-The \fBfile-tool-setup\fR presents a list of ten tool bindings, some or all of
-which may be  populated  with tool  settings.  The  dialog  has the  following
-fields:
+The  \fBfile-tool-setup\fR  presents a list of tools, there is no limit to the
+number of tools which can be defined or to the number of tools that may map to
+a specific file type. The dialog has the following fields:
 .BP Name
 Declares the name of the tool as it appears in the \fBTools\fR section of the
 .Ht file-browser 3
@@ -74,7 +74,7 @@ when multiple files may be specified with a single command invocation.
 .\"
 The basename of the file, i.e. no pathname and no file extension.
 .TP
-\fBe\fR - File Extension
+\fB%e\fR - File Extension
 .\"
 The file extension of the filename.
 .TP
@@ -162,7 +162,24 @@ command line to add to the archive:
 .IP
 \fCrm -f "%i[4|Zip file name|%b].zip"; zip -r %1.zip%*[ "%f"]\fR
 .TP
-\fB*\fR\fI\*(mS Command\fR - Internal command
+\fB%"\fR\|\fI...\fR\|\fB%"\fR - Quote text
+.\"
+Using quote tags ensures the quoted part of the  command-line  is treated as a
+single argument. For example, if the tool:
+.IP
+\fCunzip %f\fR
+.IP
+is used for the file "Test Files.zip" the command-line becomes
+'\fCunzip Test Files.zip\fR'  which will not work correctly,  conversely using
+\fC"%f"\fR will not work for files with quotes (e.g.  '2"bolt.def').  However,
+if
+.IP
+\fCunzip %"%f%"\fR
+.IP
+is used  \*(mS  works  out the  best way to quote  the file  name for it to be
+properly processed.
+.TP
+\fB*\fR\fI\*(mS-Command\fR - Internal command
 .\"
 Where the command  commences with a star character  (\fC*\fR) then the command
 is treated as a \*(mS command and is executed within the editor. As an example
@@ -175,13 +192,14 @@ command:
 For each file then \fBfind-zfile\fR is invoked to read the zip archive.
 .RE
 .BP "Default Open"
-A flag that  defines  whether  this is an auto open  action. When set then the
-command  is   automatically   launched   if  the  file  is   selected  in  the
-\fBfile-browser\fR. When clear then the tool has to be explicitly invoked.
+A flag that defines whether this is the default open action. When set then the
+command   is   automatically   launched   if  the  file  is   opened   in  the
+\fBfile-browser\fR  (usually  by left  clicking  on the file name or  pressing
+"\fCreturn\fR") . When clear then the tool has to be explicitly invoked.
 .BP "Hide Window"
-Defines the behavior of the window  associated  with the command, for external
-viewers  then the window  should be hidden.  For  internal  commands  then the
-window should be visible to show the results.
+Defines the visibility of the window associated with the command, for example,
+if the  command-line  uses a \fCcmd\fR shell to launch another process the cmd
+window should be hidden. This has no effect on internal \*(mS commands.
 .BP "Up/Down"
 Changes the item order in the list/menu by moving it up or down.
 .BP "Add"
@@ -200,7 +218,7 @@ Name: StarOffice/OpenOffice/Microsoft Word
 .br
 File Mask: \fC.*\\.\\(doc\\|ppt\\|xls\\|odt\\|rtf\\)\fR
 .br
-Command: \fCsoffice "%f"\fR
+Command: \fCsoffice %"%f%"\fR
 .br
 Hide Window: yes
 .br
@@ -211,7 +229,7 @@ Name: XnView/Gimp/Photoshop/PaintShop
 .br
 File Mask: \fC.*\\.\\(png\\|jpg\\|jpeg\\|bmp\\|gif\\)\fR
 .br
-Command: \fCxnview "%f"\fR
+Command: \fCxnview %"%f%"\fR
 .br
 Hide Window: yes
 .br
@@ -222,7 +240,7 @@ Name: Gnome Ghostview/Ghostview
 .br
 File Mask: \fC.*\\.ps\fR
 .br
-Command: \fCggv "%f"\fR
+Command: \fCggv %"%f%"\fR
 .br
 Hide Window: yes
 .br
@@ -233,7 +251,7 @@ Name: Adobe Acrobat
 .br
 File Mask: \fC.*\\.pdf\fR
 .br
-Command: \fCacroread "%f"\fR
+Command: \fCacroread %"%f%"\fR
 .br
 Hide Window: yes
 .br
@@ -244,7 +262,7 @@ Name: Unzip in .
 .br
 File Mask: \fC.*\\.zip\fR
 .br
-Command: \fCunzip "%f"\fR
+Command: \fCunzip %"%f%"\fR
 .br
 Hide Window: no
 .br
@@ -255,7 +273,7 @@ Name: Unzip in sub-dir
 .br
 File Mask: \fC.*\\.zip\fR
 .br
-Command: \fCunzip "%f" -d %i[4|Unzip sub-dir|%b]\fR
+Command: \fCunzip %"%f%" -d %"%i[4|Unzip sub-dir|%b]%"\fR
 .br
 Hide Window: no
 .br
@@ -266,7 +284,7 @@ Name: Create Zip
 .br
 File Mask: \fC.*\fR
 .br
-Command: \fCrm -f "%i[4|Zip file name|%b].zip"; zip -r %1.zip%*[ "%f"]\fR
+Command: \fCrm -f %"%i[4|Zip file name|%b].zip%"; zip -r %"%1.zip%"%*[ %"%f%"]\fR
 .br
 Hide Window: no
 .br
@@ -277,7 +295,7 @@ Name: Add to Zip
 .br
 File Mask: \fC.*\fR
 .br
-Command: \fCzip -r %i[4|Zip file name|%b]%*[ "%f"]\fR
+Command: \fCzip -r %"%i[4|Zip file name|%b]%"%*[ %"%f%"]\fR
 .br
 Hide Window: no
 .br
@@ -288,7 +306,7 @@ Name: View Archive
 .br
 File Mask: \fC.*\\.\\(zip\\|tgz\\|tar\\.gz\\|tar\\|gz\\|bz2\\)\fR
 .br
-Command: \fC*find-zfile "%f"\fR
+Command: \fC*find-zfile %"%f%"\fR
 .br
 Hide Window: no
 .br
@@ -299,7 +317,7 @@ Name: Dos2Unix
 .br
 File Mask: \fC.*\fR
 .br
-Command: \fCme @dos2unix %*[ "%f"]\fR
+Command: \fCme @dos2unix %*[ %"%f%"]\fR
 .br
 Hide Window: no
 .br
@@ -310,7 +328,7 @@ Name: Windows Default
 .br
 File Mask: \fC.*\fR
 .br
-Command: \fCcmd /c "%f"\fR
+Command: \fCcmd /c %"%f%"\fR
 .br
 Hide Window: yes
 .br
