@@ -23,6 +23,10 @@ set-variable .session.update 1
 set-variable .session.amark 0
 set-variable .session.kill 1
 
+; for each buffer there are 3 lines
+; 1: <file-name>
+; 2: |<buffer-name>|<not-used>|<not-used>|<not-used>|<dot-line>|<dot-col>|<mark-line>|<mark-col>|<on-mode-list>|
+; 3: |<amark1-let>|<amark1-line>|<amark1-col>|<amark2-let>....|<amarkN-col>||
 0 define-macro update-session-buff
     !if &nbmod &set #l1 @1 "hide"
         !return
@@ -33,17 +37,18 @@ set-variable .session.kill 1
     !endif
     4 find-buffer #l1
     !if &seq &set #l2 $buffer-fname ""
+        find-buffer "*session_tmp*"
     !elif &bmod "nact"
-        set-variable #l3 &spr "\n\b%s\b0\b\b\b%d\b%d\b%d\b%d\b" $buffer-bname $window-line $window-col $window-mark-line $window-mark-col
+        set-variable #l3 &spr "\n\b%s\b\b\b\b%d\b%d\b%d\b%d\b" $buffer-bname $window-line $window-col $window-mark-line $window-mark-col
         set-variable #l5 0
         set-variable $mode-names ".*"
-        !if &not &seq &set #l4 $mode-names ""
+        !while &not &seq &set #l4 $mode-names ""
+            ; The view mode will only be set if its force (see below) so maintain it
             !if &bmod #l4
                 set-variable #l3 &cat #l3 &mid $mode-chars #l5 1
             !endif
             set-variable #l5 &add #l5 1
-            !jump -5
-        !endif
+        !done
         find-buffer "*session_tmp*"
         insert-string #l2
         insert-string &cat #l3 "\b\n\b\b\n"
@@ -58,13 +63,18 @@ set-variable .session.kill 1
         !endif
         set-variable #l5 0
         set-variable $mode-names ".*"
-        !if &not &seq &set #l4 $mode-names ""
-            !if &bmod #l4
+        !while &not &seq &set #l4 $mode-names ""
+            ; must check if the view mode was forced of just because the file is readonly - not foolproof but nearly
+            !if &not &bmod #l4
+            !elif &not &seq #l4 "view"
+                set-variable #l3 &cat #l3 &mid $mode-chars #l5 1
+            !elif &band 0x100 $system
+                !tjump &not &band 1 $buffer-fmod 2
+            !elif &band 148 $buffer-fmod 1 0
                 set-variable #l3 &cat #l3 &mid $mode-chars #l5 1
             !endif
             set-variable #l5 &add #l5 1
-            !jump -5
-        !endif
+        !done
         set-variable #l4 "\b"
         !if .session.amark
             0 goto-alpha-mark
