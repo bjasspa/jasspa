@@ -723,29 +723,20 @@ define-macro notes-tree-isearch-backward
 !emacro
 
 define-macro note-setup
-    set-variable #l0 &spr "\b%s\b%d\b%d\b" &rig $buffer-fhook 6 $buffer-indent-width $buffer-tab-width
+    popup-window .notes.current
     buffer-setup
-    set-variable #l1 &spr "\b%s\b%d\b%d\b" &rig $buffer-fhook 6 $buffer-indent-width $buffer-tab-width
-    !if &not &seq #l0 #l1
-        set-position "\x81"
-        beginning-of-buffer
-        !force narrow-buffer
-        backward-line
-        !if &not &seq &lef &set #l2 @wl 11 "\b\benf-info\b"
-            end-of-line
-            insert-newline
-            set-variable #l2 "\b\benf-info\b\b\b\b"
-        !endif
-        set-variable #l2 &lset &lset #l2 4 $buffer-indent-width 5 $buffer-tab-width
-        !if &len &lget #l2 3
-            set-variable #l2 &lset #l2 3 &lget #l1 1
-        !elif &not &seq &lget #l1 1 :notes-dmm
-            set-variable #l2 &lset #l2 3 &lget #l1 1
-        !endif
-        set-variable @wl #l2
-        goto-position "\x81"
-        notes-create-display
+    set-position "\x81"
+    beginning-of-buffer
+    !force narrow-buffer
+    backward-line
+    !if &not &seq &lef &set #l2 @wl 11 "\b\benf-info\b"
+        end-of-line
+        insert-newline
+        set-variable #l2 "\b\benf-info\b\b\b\b"
     !endif
+    set-variable @wl &lset &lset &lset #l2 3 &rig $buffer-fhook 6 4 $buffer-indent-width 5 $buffer-tab-width
+    goto-position "\x81"
+    notes-create-display
 !emacro
 
 0 define-macro notes-create-display
@@ -852,6 +843,7 @@ define-macro note-setup
     !if &lget #l7 5
         set-variable $buffer-tab-width &lget #l7 5
     !endif
+    1 buffer-mode "hide"
     set-variable $buffer-mode-line &rep $mode-line "%b" &spr "*%s: %s*" #l1 &reg #l4 "" 
     set-variable $buffer-ehook notes-ehook
     buffer-bind-key notes-close "f10"
@@ -939,7 +931,6 @@ define-macro notes-file
         ml-write "[Error: variable :notes-cur not set]"
         !abort
     !endif
-    1 buffer-mode "hide"
     set-variable .notes.current $buffer-bname
     goto-position "\x82"
     notes-create-display
