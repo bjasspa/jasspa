@@ -115,6 +115,7 @@
             !force 30 forward-char
             copy-region
             set-variable #l1 &rep &trb @y "\n" " "
+            -1 yank
             find-buffer "*kill-list*"
             set-variable $window-line #l0
         !else
