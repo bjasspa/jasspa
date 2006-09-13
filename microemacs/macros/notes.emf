@@ -835,6 +835,7 @@ define-macro note-setup
         -1 buffer-mode "undo"
         1 buffer-mode "undo"
     !endif
+    set-variable #l5 &spr "|%d|%d|" &bmod "crypt" &bmod "edit"
     set-variable #l6 &cond &len &lget #l7 3 &lget #l7 3 :notes-dmm
     buffer-major-mode #l6
     !if &lget #l7 4
@@ -844,6 +845,8 @@ define-macro note-setup
         set-variable $buffer-tab-width &lget #l7 5
     !endif
     1 buffer-mode "hide"
+    &cond &lget #l5 1 1 -1 buffer-mode "crypt"
+    &cond &lget #l5 2 1 -1 buffer-mode "edit"
     set-variable $buffer-mode-line &rep $mode-line "%b" &spr "*%s: %s*" #l1 &reg #l4 "" 
     set-variable $buffer-ehook notes-ehook
     buffer-bind-key notes-close "f10"
@@ -938,23 +941,23 @@ define-macro notes-file
 
 -1 osd .osd.notes-tmn
 osd .osd.notes-tmn 0   b
-osd .osd.notes-tmn  40 ""  "Tidy Tree        t"      f notes-tree-tidy
-osd .osd.notes-tmn  50 ""  "Rename Note      n"      f notes-tree-rename
-osd .osd.notes-tmn  60 ""  "Delete Note      delete" f notes-tree-delete
-osd .osd.notes-tmn  70 ""  "Cut Note         x"      f notes-tree-cut
-osd .osd.notes-tmn  80 ""  "Paste Note       v"      f notes-tree-paste
-osd .osd.notes-tmn  90 ""  "Move Note Up     u"     -1 notes-tree-move
-osd .osd.notes-tmn 100 ""  "Move Note Down   d"      1 notes-tree-move
-osd .osd.notes-tmn 110 ""  "Insert New Note  insert" f notes-tree-insert
+osd .osd.notes-tmn  40 ""  "Tidy Tree        \Ht"      f notes-tree-tidy
+osd .osd.notes-tmn  50 ""  "Rename Note      \He"      f notes-tree-rename
+osd .osd.notes-tmn  60 ""  "Delete Note      de\Hlete" f notes-tree-delete
+osd .osd.notes-tmn  70 ""  "Cut Note         \Hx"      f notes-tree-cut
+osd .osd.notes-tmn  80 ""  "Paste Note       \Hv"      f notes-tree-paste
+osd .osd.notes-tmn  90 ""  "Move Note Up     \Hu"     -1 notes-tree-move
+osd .osd.notes-tmn 100 ""  "Move Note Down   \Hd"      1 notes-tree-move
+osd .osd.notes-tmn 110 ""  "Insert New Note  \Hinsert" f notes-tree-insert
 osd .osd.notes-tmn 120 "-"
-osd .osd.notes-tmn 130 ""  "forward note     n"      f notes-tree-forward-note
-osd .osd.notes-tmn 135 ""  "backward note    p"      f notes-tree-backward-note
-osd .osd.notes-tmn 140 ""  "Search forward   s"      f notes-tree-isearch-forward
-osd .osd.notes-tmn 145 ""  "Search backward  r"      f notes-tree-isearch-backward
+osd .osd.notes-tmn 130 ""  "forward note     \Hn"      f notes-tree-forward-note
+osd .osd.notes-tmn 135 ""  "backward note    \Hp"      f notes-tree-backward-note
+osd .osd.notes-tmn 140 ""  "Search forward   \Hs"      f notes-tree-isearch-forward
+osd .osd.notes-tmn 145 ""  "Search backward  \Hr"      f notes-tree-isearch-backward
 osd .osd.notes-tmn 150 "-"
-osd .osd.notes-tmn 160 ""  "\HOpen Notes File"       f notes-file
-osd .osd.notes-tmn 170 ""  "\HSave Notes File"       f notes-tree-save
-osd .osd.notes-tmn 180 ""  "\HHide Notes"            f notes-close
+osd .osd.notes-tmn 160 ""  "\HOpen Notes File"         f notes-file
+osd .osd.notes-tmn 170 ""  "S\Have Notes File"         f notes-tree-save
+osd .osd.notes-tmn 180 ""  "\HHide Notes"              f notes-close
 
 0 define-macro notes-tree-context-menu
     set-variable $window-line &ind &spr ":%s:notes-cur" .notes.current
