@@ -219,6 +219,9 @@ set-variable %user-misc-cmd  "|session-setup|alias-path-setup|file-type-setup|fi
         ; make sure spelling is setup otherwise auto-spell will fail
         spell-rules-init
     !endif
+    !if &exi .user-setup.scheme
+        change-scheme .user-setup.scheme
+    !endif
     set-variable .user-setup.loop @#
 !emacro
 
@@ -848,6 +851,11 @@ osd .osd.user 645 "f" "   "
 
 define-macro user-setup
     !repeat
+        !force unset-variable .user-setup.scheme
+        !if &not &exi .change-scheme.current
+        !elif &not &seq .change-scheme.current &reg &spr "/history/%s/scheme" %platform "schemed"
+            set-variable .user-setup.scheme .change-scheme.current
+        !endif
         !if &not &seq &find $user-name ".erf" "ERROR"
             !force read-registry "/history" $user-name "cbr"
         !endif
