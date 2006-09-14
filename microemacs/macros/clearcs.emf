@@ -1340,12 +1340,8 @@ define-macro cc-checkin
 
 define-macro cc-add
     5 cc-osd
-    !if &lget .cc-init.values5 2
-        ml-write "[ClearCase Error: Checking out parent directory not yet implemented]"
-        !abort
-    !endif
     25 cc-get-file-list 0 0
-    set-variable #l2 &cat .cc-init.com " mkelem "
+    set-variable #l2 &spr "%s mkelem%s " .cc-init.com &con &lget .cc-init.values5 2 " -mkpath" ""
     !if &seq .cc-init.comment ""
         set-variable #l2 &cat #l2 "-nc"
     !else
@@ -1361,7 +1357,6 @@ define-macro cc-add
         transpose-lines
         beginning-of-buffer
         -1 insert-string #l2
-        insert-string " -mkpath"
         goto-position "\x82"
         set-variable #l4 &con #l5 0 3        
         5 cc-cleartool #l4 $buffer-fname
@@ -2226,7 +2221,7 @@ define-macro cc-setup
         osd @# 50  "" "U\Hncheckout elements"  f cc-uncheckout
         osd @# 60  "" "\HDiff elements"        f cc-diff
         osd @# 70  "" "Check\Hin elements"     f cc-checkin
-        osd @# 90  "" "\HDescribe elements"    f cc-describe
+        osd @# 90  "" "Descri\Hbe elements"    f cc-describe
         osd @# 100 "" "Anno\Htate elements"    f cc-annotate
         osd @# 110 "" "\HAdd elements"         f cc-add
         osd @# 120 "" "Mov\He element"         f cc-move
