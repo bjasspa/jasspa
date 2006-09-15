@@ -87,71 +87,85 @@ define-macro-file osdhelp osd-help
         set-variable #l0 &add #l0 1
     !until 0
 !emacro
-;
-; Handle the Buffer menu. Construct a new list of buffer from the
-; buffer list. This is menu 20
-;
-0 define-macro osd-1-buffer
-    set-variable #l0 1               ; First menu number
-    -1 osd @#
-    osd @# 0 &cond &band $system 0x100 "bAif" "bAf"
-    set-variable $buffer-names ".*"
-    !while &not &seq &set #l3 $buffer-names ""
-        !if &not &nbmod #l3 "hide"
-            osd @# &inc #l0 1 "" #l3 0 "osd-1-buffer-select"
-        !endif
-    !done
-!emacro
-;
-; Helper macro for the above. Caller when the menu is selected.
-;
+
 0 define-macro osd-1-buffer-select
-    ; Select the buffer. The name of the buffer is in $result
     0 find-buffer $result
 !emacro
-;
-; Handle the File menu. Construct a new list of files from the
-; buffer list. This is menu 20 also as they are regenerated
-;
-0 define-macro osd-1-file
-    set-variable #l2 &cat &reg "/history/file-type" "\b" "All files\b"
-    !if &not &set #l1 &lfi #l2 $result
-        !abort
+0 define-macro osd-1-buffer
+    set-variable #l1 ".*"
+    !if &sub @# 15
+    !elif &set #l2 &lfi &reg "/history/file-type" "\b" $result
+        set-variable #l1 &lget &reg "/history/file-mask" "\b" #l2
+        filemask-to-regex #l1
+        set-variable #l1 &cat &rep #l1 "," "\\(<\\d+>\\)?\\|" "\\(<\\d+>\\)?"
     !endif
-    set-variable #l2 &lget &cat &reg "/history/file-mask" "\b" "*\b" #l1
-    set-variable #l4 1
+    -1 osd 17
+    osd 17 0 &cond &band $system 0x100 "Aif" "Af"
+    set-variable #l4 0
     set-variable #l5 0
-    -1 osd @#
-    osd @# 0 "bA"
-*loopp
-    !if &seq #l2 ""
-        !if #l4
-            osd @# 1 ""  "None found"
+    set-variable $buffer-names #l1
+    !while &set #l6 &len &set #l3 $buffer-names
+        !if &not &nbmod #l3 "hide"
+            osd 17 1 "" #l3 0 osd-1-buffer-select
+            set-variable #l4 &add #l4 1
+            !if &gre #l6 #l5
+                set-variable #l5 #l6
+            !endif
         !endif
-        !return
-    !endif
-    !if &not &set #l0 &sin "," #l2
-        set-variable #l1 #l2
-        set-variable #l2 ""
-    !else
-        set-variable #l1 &lef #l2 &sub #l0 1
-        set-variable #l2 &rig #l2 #l0
-    !endif
-    filemask-to-regex #l1
-    set-variable $file-names #l1
-    !while &not &seq &set #l3 $file-names ""
-        osd @# 1 ""  #l3 0 "osd-1-file-select"
-        set-variable #l4 "0"
     !done
-    !goto loopp
+    !if &gre #l4 &sub $frame-depth 2
+        -1 osd @#
+        osd @# 0 "sI" -1 0 &add &inc #l5 1 2 0 10
+        osd @# 10 "IbHt" .scheme.osd-sbar #l5 &sub $frame-depth 2 17
+        osd 17 0 &cond &band $system 0x100 "Aifs" "Afs" #l5 &sub $frame-depth 2 -1 -1
+    !else
+        !if &not #l4
+            osd 17 1 "" "<none found>"
+        !endif
+        -1 osd @#
+        osd @# 0 "sIb" 0 0 0 0 10
+        osd @# 10 "IHt" .scheme.osd-sbar 17
+    !endif
 !emacro
-;
-; Helper macro for the above. Caller when the menu is selected.
-;
+
 0 define-macro osd-1-file-select
-    ; Select the buffer. The name of the buffer is in $result
     0 find-file $result
 !emacro
+0 define-macro osd-1-file
+    set-variable #l1 ".*[^~/]"
+    !if &sub @# 12
+    !elif &set #l2 &lfi &reg "/history/file-type" "\b" $result
+        set-variable #l1 &lget &reg "/history/file-mask" "\b" #l2
+        filemask-to-regex #l1
+        set-variable #l1 &rep #l1 "," "\\|"
+    !endif
+    -1 osd 17
+    osd 17 0 &cond &band $system 0x100 "Aif" "Af"
+    set-variable #l4 0
+    set-variable #l5 0
+    set-variable $file-names #l1
+    !while &set #l6 &len &set #l3 $file-names
+        osd 17 1 ""  #l3 0 osd-1-file-select
+        set-variable #l4 &add #l4 1
+        !if &gre #l6 #l5
+            set-variable #l5 #l6
+        !endif
+    !done
+    !if &gre #l4 &sub $frame-depth 2
+        -1 osd @#
+        osd @# 0 "sI" -1 0 &add &inc #l5 1 2 0 10
+        osd @# 10 "IbHt" .scheme.osd-sbar #l5 &sub $frame-depth 2 17
+        osd 17 0 &cond &band $system 0x100 "Aifs" "Afs" #l5 &sub $frame-depth 2 -1 -1
+    !else
+        !if &not #l4
+            osd 17 1 "" "<none found>"
+        !endif
+        -1 osd @#
+        osd @# 0 "sIb" 0 0 0 0 10
+        osd @# 10 "IHt" .scheme.osd-sbar 17
+    !endif
+!emacro
+
 0 define-macro osd-save
     !if &seq &lef $buffer-bname 1 "*"
         osd-save-as
@@ -298,7 +312,7 @@ define-macro display-main-menu
 osd 1 0   "bo" 1 0
 osd 1 10  ""  "\HNew"                       f osd-new-buffer
 osd 1 20  ""  "\HOpen...         C-x C-f"   f osd-file-open
-osd 1 30  "M" "\HQuick Open"               19
+osd 1 30  "M" "\HQuick Open"               11
 osd 1 40  "M" "\HFavorites"                30 osd-favorites
 osd 1 50  ""  "\HClose           C-x k"     f osd-close
 osd 1 60  "-"
@@ -375,18 +389,14 @@ osd 4 60  ""  "Buffer \HInfo           C-x ="    f buffer-info
 osd 4 70  ""  "Word \HCount            esc C-c"  f count-words
 osd 4 80  ""  "\HOccurrences           S-f6"     f occur
 osd 4 90  "-"
-osd 4 100 "M" "\HBuffer                C-x b" 20 osd-1-buffer
+osd 4 100 "M" "\HBuffer                C-x b"   16 osd-1-buffer
 osd 4 150 "-"
 osd 4 160 "i" "\HMain Menu"                      f display-main-menu
 osd 4 170 "i" "\HScroll Bars"                    f "&set $scroll-bar &bxor $scroll-bar 0x100"
 osd 4 180 ""  "\HToolbar               S-f11"    f toolbar
 osd 4 190 ""  "\HWhitespaces           f11"      f display-whitespaces
 !if &reg "/history/find-buffer" "0"
-    !if &not &exi .osd.find-buffer
-        set-variable .osd.find-buffer &pinc .osd.next 1
-        0 define-macro-file findbuff osd-find-buffer
-    !endif
-    osd 4 110 "M" "Bu\Hffer (by type)" .osd.find-buffer osd-find-buffer
+    osd 4 110 "M" "Bu\Hffer (by type)"          14
 !endif
 ;
 ; MENU #5 - FORMAT sub-menu
@@ -506,15 +516,26 @@ osd 9 170 "M" "\HGames"                          21
 osd 9 180 "i" "\HProduct Support"                 f "help-item \"Contact\""
 osd 9 190 ""  "\HAbout MicroEmacs"                f about
 ;
-; MENU #19 - Quick-open
+; MENU #11 (12 & 17) - File type Quick-open file
+; MENU #14 (15 & 17) - Buffer (by type)
 ; if the file-type is found in the registry then add entry to menu 1
 set-variable #l0 &cat &reg "/history/file-type" "\b" "All files\b"
--1 osd 19
-osd 19 0 "b"
+-1 osd 11
+osd 11 0 "b"
+-1 osd 14
+osd 14 0 "b"
 set-variable #l1 0
 !while &not &seq &set #l2 &lget #l0 &inc #l1 1 ""
-    osd 19 #l1 "Md" #l2 20 "osd-1-file"
+    osd 11 #l1 "Md" #l2 12 osd-1-file
+    osd 14 #l1 "Md" #l2 15 osd-1-buffer
 !done
+0 define-macro osd-find-buffer
+    !if &band @# 1
+        set-variable $mouse-x &add $cursor-x 1
+        set-variable $mouse-y &sub $cursor-y 1
+    !endif
+    14 osd
+!emacro
 ;
 ; MENU #21 - GAMES sub-menu
 ;

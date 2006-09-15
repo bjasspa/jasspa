@@ -418,7 +418,6 @@
 
 0 define-macro-file mouserec mouse-pick-rectangle mouse-drop-rectangle mouse-yank-rectangle
 0 define-macro-file mouseosd mouse-osd mouse-osd-multi
-0 define-macro-file findbuff osd-find-buffer
 
 0 define-macro mouse-keepcl
     set-variable @cc @cl
