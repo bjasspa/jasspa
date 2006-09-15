@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd163.2,v 1.2 2004-02-13 10:44:32 jon Exp $
+.Id $Id: m2cmd163.2,v 1.3 2006-09-15 19:15:20 bill Exp $
 .Im MicroEmacs command|window|macrodevelop
 .ds C0 "(\fB\*(cX5\ o\fR)\ \&
 .so me.tni
@@ -23,11 +23,15 @@ next-frame \- Change the focus to the next frame
 \fIn\fR  can be used to  select  the type of frame to  change  to, it is a bit
 based flag defined as follows:
 .IP \fB0x01\fR
-Allow the selection of an external frame.
-.IP \fB0x02\fR
 Allow the selection of an internal frame.
+.IP \fB0x02\fR
+Allow the selection of an external frame.
+.PP
 The default  operation  when \fIn\fR is omitted is to allow the  selection  of
-either type of frame (equivalent to an argument of \fC3\fR).
+either type of frame, but an external frame is selected in preference. This is
+not the same as giving the command an argument of \fC3\fR where all frames are
+circled in creation  order (i.e. no priority  given to an internal or external
+frame).
 .SH "SEE ALSO"
 .na
 .Ht create-frame 2 ,
