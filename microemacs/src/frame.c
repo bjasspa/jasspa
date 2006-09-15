@@ -587,13 +587,8 @@ meFrameMakeCur(meFrame *frame, int quiet)
 {
     if(frame != frameCur)
     {
-        if(frameCur->mlLine->length > 0)
-        {
-            /* erase the ml line of old current frame */
-            frameCur->mlLine->text[0] = '\0' ;
-            frameCur->mlLine->length = 0 ;
-            frameCur->mlLine->flag |= meLINE_CHANGED ;
-        }
+        meFrame *frameOld=frameCur ;
+        
         /* if frame is not the current frame in this window then make it */
         if(frame->flags & meFRAME_HIDDEN)
         {
@@ -606,19 +601,50 @@ meFrameMakeCur(meFrame *frame, int quiet)
                       (ff->flags & meFRAME_NOT_FOCUS) ;
             ff->flags |= meFRAME_HIDDEN ;
         }            
-        if(frame->mainId != frameCur->mainId)
-        {
-            /* A quiet operation will not change the terminal to perform the
-             * swap */
-            if (!quiet)
-                meFrameTermMakeCur(frame) ;
-        }
-#if MEOPT_MWFRAME
-        else
-            frameFocus = frame ;
-#endif
         frameCur = frame ;
         sgarbf = meTRUE ;                      /* Garbage the screen */
+        if(frameOld->mlStatus & (MLSTATUS_RESTORE|MLSTATUS_KEEP))
+        {
+            meUByte mlStatus ;
+            char *mlStr ;
+            
+            /* move the current mlstatus over to the new frame, this should
+             * usually be zero but in some cases (e.g. notes) the swapping of
+             * frames can occur during a ml prompt. There are potantial side
+             * effects to doing this (e.g. what if its an OSD dialog and the
+             * position is outside the the new frame), so this should be avoid if
+             * at all possible */
+            if(frameOld->mlStatus & MLSTATUS_RESTORE)
+            {
+                frame->mlColumn = frameOld->mlColumnStore ;
+                mlStatus = (frameOld->mlStatus & ~MLSTATUS_RESTORE) | MLSTATUS_KEEP ;
+                mlStr = frameOld->mlLineStore ;
+            }
+            else if(frameOld->mlStatus & MLSTATUS_KEEP)
+            {
+                frame->mlColumn = frameOld->mlColumn ;
+                mlStatus = frameOld->mlStatus ;
+                mlStr = frameOld->mlLine->text ;
+            }
+            frame->mlStatus = 0 ;
+            mlwrite(((mlStatus & MLSTATUS_POSML) ? MWSPEC|MWUSEMLCOL|MWCURSOR:MWSPEC),mlStr) ;
+            frame->mlStatus = mlStatus ;
+        }
+        frameOld->mlStatus = 0 ;
+        if(frameOld->mlLine->length > 0)
+        {
+            /* erase the ml line of old current frame */
+            frameOld->mlLine->text[0] = '\0' ;
+            frameOld->mlLine->length = 0 ;
+            frameOld->mlLine->flag |= meLINE_CHANGED ;
+        }
+#if MEOPT_MWFRAME
+        if(frame->mainId == frameOld->mainId)
+            frameFocus = frame ;
+        else if(!quiet)
+            /* A quiet operation will not change the terminal to perform the swap */
+            meFrameTermMakeCur(frame) ;
+#endif
     }
 }
 
