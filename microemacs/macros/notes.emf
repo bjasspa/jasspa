@@ -860,9 +860,9 @@ define-macro note-setup
 define-macro notes-close
     !if &equ $frame-id .notes.frame-id
         set-variable #l0 $frame-id
-        2 next-frame
+        1 next-frame
         !if &equ #l0 $frame-id
-            1 next-frame
+            2 next-frame
         !endif
     !endif
 !emacro
