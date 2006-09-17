@@ -606,7 +606,7 @@ meFrameMakeCur(meFrame *frame, int quiet)
         if(frameOld->mlStatus & (MLSTATUS_RESTORE|MLSTATUS_KEEP))
         {
             meUByte mlStatus ;
-            char *mlStr ;
+            meUByte *mlStr ;
             
             /* move the current mlstatus over to the new frame, this should
              * usually be zero but in some cases (e.g. notes) the swapping of
