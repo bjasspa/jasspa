@@ -2871,8 +2871,8 @@ indentLine(int *inComment)
     {
         int jj, brace=0, contFlag=0, aind, lind, nind ;
         
-        if((fnoz & INDBOTH) || (fnoz & INDINDCURLINE) &&
-           ((fnoz == blkp[0].scheme) || (cind >= blkp[0].column)))
+        if((fnoz & INDBOTH) || ((fnoz & INDINDCURLINE) &&
+                                ((fnoz == blkp[0].scheme) || (cind >= blkp[0].column))))
         {
             if (fnoz & INDBOTH)
                 aind = meIndentGetIndent((meUByte) ind7ToInd8(fnoz>>8), frameCur->bufferCur->indentWidth);
