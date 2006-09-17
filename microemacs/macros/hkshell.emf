@@ -78,6 +78,8 @@ set-variable .fhook-shell.comment "|#||#|# | #|r|"
     hilight .hilight.shell 1     "cd"              .scheme.keyword
     hilight .hilight.shell 1     "cp"              .scheme.keyword
     hilight .hilight.shell 1     "chmod"           .scheme.keyword
+    hilight .hilight.shell 1     "chgrp"           .scheme.keyword
+    hilight .hilight.shell 1     "chown"           .scheme.keyword
     hilight .hilight.shell 1     "ci"              .scheme.keyword
     hilight .hilight.shell 1     "co"              .scheme.keyword
     hilight .hilight.shell 1     "echo"            .scheme.keyword
@@ -95,6 +97,7 @@ set-variable .fhook-shell.comment "|#||#|# | #|r|"
     hilight .hilight.shell 1     "rmdir"           .scheme.keyword
     hilight .hilight.shell 1     "stop"            .scheme.keyword
     hilight .hilight.shell 1     "suspend"         .scheme.keyword
+    hilight .hilight.shell 1     "touch"           .scheme.keyword
     hilight .hilight.shell 1     "test"            .scheme.keyword
     hilight .hilight.shell 1     "time"            .scheme.keyword
     hilight .hilight.shell 1     "umask"           .scheme.keyword
