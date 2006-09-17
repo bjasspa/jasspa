@@ -24,7 +24,7 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		\
 	dos.emf		dos2unix.emf	draw.emf	\
 	ehftools.emf	emftags.emf	etfinsrt.emf	\
 	fattrib.emf	favorite.emf	fileopen.emf	filetool.emf	\
-	filetype.emf	find.emf	findbuff.emf	fold.emf	\
+	filetype.emf	find.emf	fold.emf	\
 	format.emf	freebsd.emf	ftp.emf		\
 	games.emf	gdiff.emf	gentags.emf	\
 	hkada.emf	hkapache.emf	hkasmx86.emf	hkasn1.emf	\
