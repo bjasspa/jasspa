@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=JASSPA's MicroEmacs
+Comment=Emacs Text Editor
+Exec= %F
+Icon=/opt/jasspa/icons/48x48/me.png
+Exec=/opt/jasspa/bin/me -c
+Terminal=false
+Type=Application
+Categories=Application;Accessories;
