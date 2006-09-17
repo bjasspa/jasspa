@@ -3589,6 +3589,7 @@ meFrameSetWindowSize(meFrame *frame)
     {
         sizeHints.height = mecm.fdepth*(frame->depth+1) ;
         sizeHints.width  = mecm.fwidth*frame->width ;
+        /*printf("meFrameSetWindowSize::" __FILE__ ":%d: XResizeWindow\n", __LINE__);*/
         XResizeWindow(mecm.xdisplay,meFrameGetXWindow(frame),sizeHints.width,sizeHints.height) ;
     }
 }
@@ -3604,44 +3605,75 @@ meFrameRepositionWindow(meFrame *frame, int resize)
     {
         int xx, yy, wbs, tbs ;
         unsigned int ww, hh ;
+        XWindowAttributes xwa;
+        int status;
         
+        /* Getting the real window border and title-bar size is a little
+         * tricky - guess for now. Also there is a little confusion and
+         * disagreement on what an XMoveWindow to x,y should do, move the WM
+         * frame to x,y or the window to x,y (frame to x-fx,y-fy). Judging by
+         * the ICCCM the window should be moved to x,y (i.e. same as if there
+         * is no WM) so this assumes this behaviour.
+         * 
+         * Use the XGetWindowAttributes to retrive the window offset position,
+         * this gives us the information that we need for the z and y offset
+         * relative to the parent.
+         */
+        status = XGetWindowAttributes (mecm.xdisplay,
+                                       meFrameGetXWindow(frame),
+                                       &xwa);
+        /* if (status == 0)*/
+        /* { */
+        /* printf ("Status = %d\n", status);*/
+        /* printf ("meWindowSize[%s (%d,%d or %d,%d)]\n", s, x, y, x/mecm.fwidth, y/mecm.fdepth);*/
+        /* printf ("  Location of window %d, %d. Char width %d %d\n", xwa.x, xwa.y, mecm.fwidth, mecm.fdepth);*/
+        /* printf ("  Width and height of window %d, %d [%d,%d]\n", xwa.width, xwa.height, xwa.width/mecm.fwidth, xwa.height/mecm.fdepth);*/
+        /* printf ("  Border width of window %d\n", xwa.border_width);*/
+        /* }*/
+        /* printf ("Sizehints x,y = %d,%d\n", sizeHints.x, sizeHints.y);*/
+        /* printf ("Sizehints width,height = %d,%d\n", sizeHints.width, sizeHints.height);*/
+        
+        /* Get the border information */
+        wbs = xwa.x;
+        tbs = xwa.y;
+        
+        /* Get the size information */
+        /* TODO: The sizeHints is horribly overloaded and needs to be moved into meFrame */
         xx = sizeHints.x ;
         yy = sizeHints.y ;
         ww = sizeHints.width ;
         hh = sizeHints.height ;
-        /* Getting the real window border and title-bar size is a little tricky - guess for now.
-         * Also there is a little confusion and disagreement on what an XMoveWindow to x,y should do,
-         * move the WM frame to x,y or the window to x,y (frame to x-fx,y-fy). Judging by the ICCCM
-         * the window should be moved to x,y (i.e. same as if there is no WM) so this assumes this behaviour */
-        wbs = 4 ;
-        tbs = 20 ;
         
-        if((xx + ww + wbs) > sizeHints.max_width)
-            xx = sizeHints.max_width - ww - wbs ;
-        if(xx < wbs)
-            xx = wbs ;
+        if((xx + ww) > sizeHints.max_width)
+            xx = sizeHints.max_width - ww;
+        if(xx < 0)
+            xx = 0 ;
         
-        if((yy + hh + wbs) > sizeHints.max_height)
-            yy = sizeHints.max_height - hh - wbs ;
-        if(yy < (tbs + wbs))
-            yy = tbs + wbs ;
+        if((yy + hh) > sizeHints.max_height)
+            yy = sizeHints.max_height - hh;
+        if(yy < 0)
+            yy = 0 ;
         
-        if(resize && (((xx + ww + wbs) > sizeHints.max_width) || 
-                      ((yy + hh + wbs) > sizeHints.max_height)))
+        if(resize && (((xx + ww + wbs + wbs) > sizeHints.max_width) || 
+                      ((yy + hh + tbs + wbs) > sizeHints.max_height)))
         {
             sizeHints.x = xx ;
             sizeHints.y = yy ;
-            if((xx + ww + wbs) > sizeHints.max_width)
-                ww = sizeHints.max_width - xx - wbs ;
-            if((yy + hh + wbs) > sizeHints.max_height)
-                hh = sizeHints.max_height - yy - wbs ;
-            XMoveResizeWindow(mecm.xdisplay,meFrameGetXWindow(frame),sizeHints.x,sizeHints.y,ww,hh) ;
+            if((xx + ww + wbs + wbs) > sizeHints.max_width)
+                ww = sizeHints.max_width - xx - wbs - wbs;
+            if((yy + hh + tbs + wbs) > sizeHints.max_height)
+                hh = sizeHints.max_height - yy - wbs - tbs;
+            /* printf("meFrameRepositionWindow::" __FILE__ ":%d: XMoveResizeWindow\n", __LINE__);*/
+            XMoveResizeWindow(mecm.xdisplay,meFrameGetXWindow(frame),
+                              sizeHints.x,sizeHints.y,ww,hh) ;
         }
         else if((xx != sizeHints.x) || (yy != sizeHints.y))
         {
             sizeHints.x = xx ;
             sizeHints.y = yy ;
-            XMoveWindow(mecm.xdisplay,meFrameGetXWindow(frame),sizeHints.x,sizeHints.y) ;
+            /* printf("meFrameRepositionWindow::" __FILE__ ":%d: XMoveWindow\n", __LINE__);*/
+            XMoveWindow(mecm.xdisplay,meFrameGetXWindow(frame),
+                        sizeHints.x-wbs,sizeHints.y-tbs) ;
         }
     }
 #endif /* _ME_WINDOW */
@@ -4613,7 +4645,7 @@ xdndClientMessage (XEvent *xevent, meFrame *frame)
             w = xevent->xany.window;
 
             /* Save the position information relative to the window. */
-            dnd.drop_x = (xevent->xclient.data.l[2] >> 16) & 0xffff;
+            dnd.drop_x = (xevent->xclient.data.l[2] >> 16) & 0xfff;
             dnd.drop_y = (xevent->xclient.data.l[2]) & 0xffff;
             dnd.dragger_display = d;
             DEBUGOUT(("%s:%d: positioning (%d,%d)\n",
