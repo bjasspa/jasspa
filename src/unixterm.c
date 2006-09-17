@@ -2966,11 +2966,6 @@ XTERMcreateWindow(meUShort width, meUShort depth)
 
     /* Make the window DND aware */
     xdndAware (frameData->xwindow);
-
-    /* Map the  window  a.s.a.p.  cos  officially  we can't draw to the window
-     * until we get an Expose event. As this is not checked for by mapping now
-     * there is less chance of this being a problem. */
-    XMapWindow(mecm.xdisplay,frameData->xwindow) ;
     
     /* Set the iconic name of the program and icon itself */
     XSetIconName(mecm.xdisplay,frameData->xwindow,meIconName);
@@ -2992,6 +2987,18 @@ XTERMcreateWindow(meUShort width, meUShort depth)
                  (ExposureMask|StructureNotifyMask|KeyPressMask|ButtonPressMask|
                   ButtonReleaseMask|PointerMotionMask|FocusChangeMask|
                   PropertyChangeMask|LeaveWindowMask|EnterWindowMask)) ;
+    
+    /* Map the window a.s.a.p. cos officially we can't draw to the window
+     * until we get an Expose event. As this is not checked for by mapping now
+     * there is less chance of this being a problem.
+     * 
+     * Jon 2006-09-17. The Window cannot be Mapped until the Input is selected
+     * otherwise we do not receive any (Un)MapNotify events in Linux. If the
+     * above comment is true then we can easily check the Mapping status
+     * before processing any paint/expose events.
+     */
+    XMapWindow(mecm.xdisplay,frameData->xwindow) ;
+    
     return frameData ;
 }
 
