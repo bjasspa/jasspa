@@ -1416,6 +1416,39 @@ meXEventHandler(void)
     /* printf("Got event %d\n",event.type) ; */
     switch(event.type)
     {
+    case MapNotify:
+        /* The window has been mapped, simply save the mapped state of the
+         * window. */
+        if((frame = meXEventGetFrame(&event)) != NULL)
+            meFrameSetXMapState(frame,meXMAP_MAP);
+        break;
+        
+    case UnmapNotify:
+        /* The window has been un-mapped. */
+        if((frame = meXEventGetFrame(&event)) != NULL)
+        {
+            int state = meFrameGetXMapState(frame);
+            
+            /* Only handle the Font mapping state, when flagged with a font
+             * change then the size hints of the unmapped window should be
+             * changed and the window immediately re-mapped. */
+            if (state == meXMAP_FONT)
+            {
+                /* Change the size hints of the window and re-map the window,
+                 * note that we do not check the error return because there
+                 * is not actually anything that we can do if the hints
+                 * cannot be set. */
+                XSetWMNormalHints(mecm.xdisplay,meFrameGetXWindow(frame),&sizeHints) ;
+                /* Now that the hints have been changed then the window may
+                 * be re-mapped to display it again. */
+                XMapWindow(mecm.xdisplay,meFrameGetXWindow(frame)) ;
+            }
+            /* Ensure that the frame state is unmapped, we do not want to
+             * apply any further font changes. */
+            meFrameSetXMapState(frame,meXMAP_UNMAP) ;
+        }
+        break;
+    
     case ConfigureNotify:
         /* window has been resized, change width and height to send to
          * draw_text and draw_graphics */
@@ -3017,6 +3050,7 @@ XTERMcreateWindow(meUShort width, meUShort depth)
     sizeHints.y = TTdefaultPosY ;
     sizeHints.width  = width*mecm.fwidth ;
     sizeHints.height = depth*mecm.fdepth ;
+    frameData->xmap = meXMAP_UNMAP;
     frameData->xwindow = XCreateSimpleWindow(mecm.xdisplay,RootWindow(mecm.xdisplay,xscreen),
                                              sizeHints.x,sizeHints.y,sizeHints.width,sizeHints.height,0,
                                              WhitePixel(mecm.xdisplay,xscreen),BlackPixel(mecm.xdisplay,xscreen)) ;
@@ -3414,10 +3448,24 @@ changeFont(int f, int n)
     meFrameGetXGCValues(loopFrame).font = mecm.fontId ;
     XChangeGC(mecm.xdisplay,meFrameGetXGC(loopFrame),GCFont,&meFrameGetXGCValues(loopFrame)) ;
 
+    /* In order for us to change the hints for a font change then the
+     * X-Window has to be un-mapped. Therefore on a font change unmap the
+     * window, the hints size is then changed when we receive the MapNotify
+     * event and the X-Window may be re-mapped. Unmap the window ready to
+     * change the size hints for the font. Note that the hint values are the
+     * same irrespective of the number of windows. */
+    if (meFrameGetXMapState(loopFrame) == meXMAP_MAP)
+    {
+        /* Tell the Unmap event that this is a font change mapping and then
+         * unmap the window. */
+        meFrameSetXMapState(loopFrame, meXMAP_FONT);
+        XUnmapWindow (mecm.xdisplay, meFrameGetXWindow(loopFrame));
+    }
+    
     meFrameLoopEnd() ;
 
     sgarbf = meTRUE;
-
+    
     return meTRUE ;
 }
 

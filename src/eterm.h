@@ -240,6 +240,7 @@ typedef struct
     meUByte   bcol;                     /* Background color */
     meUByte   font;                     /* Font style */
     Font      fontId;                   /* Font X id */
+    int       xmap;                     /* Frame is mapped */
 } meFrameData ;
 
 #define meFrameGetXWindow(ff)     (((meFrameData *) ff->termData)->xwindow)
@@ -253,6 +254,12 @@ typedef struct
 #define meFrameSetXGCBCol(ff,v)   (((meFrameData *) ff->termData)->bcol = (v))
 #define meFrameSetXGCFont(ff,v)   (((meFrameData *) ff->termData)->font = (v))
 #define meFrameSetXGCFontId(ff,v) (((meFrameData *) ff->termData)->fontId = (v))
+/* Mapped window state */
+#define meXMAP_FONT      -1             /* Unmapped and requires font change */
+#define meXMAP_UNMAP      0             /* Unmapped, no font change required */
+#define meXMAP_MAP        1             /* Window is mapped */
+#define meFrameSetXMapState(ff,v)   (((meFrameData *) ff->termData)->xmap = (v))
+#define meFrameGetXMapState(ff)     (((meFrameData *) ff->termData)->xmap)
 
 typedef struct
 {
