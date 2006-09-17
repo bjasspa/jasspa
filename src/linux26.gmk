@@ -53,7 +53,7 @@ LDDEBUG       =
 LDOPTIMISE    =
 LDFLAGS       =
 LIBS          =
-WINDOW_LIBS   = -L/usr/X11R6/lib -lX11
+WINDOW_LIBS   = -L/usr/X11R6/lib -Xpm -lX11
 #
 # figure out if termcap is avaiable or if ncurses should be tried to
 # accomplish this try to compile test.c and see if it can link termcap. For

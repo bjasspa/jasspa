@@ -54,7 +54,7 @@ LDOPTIMISE    =
 LDFLAGS       =	
 LIBS          = -lxnet
 CONSOLE_LIBS  = -ltermcap
-WINDOW_LIBS   = -L/usr/openwin/lib -lX11
+WINDOW_LIBS   = -L/usr/openwin/lib -lXpm -lX11
 #
 # Rules
 .SUFFIXES: .c .oc .ow .ob .on .ov .oe .odc .odw .odb .odn .odv .ode
