@@ -308,6 +308,16 @@ set-variable .fhook-jst.item-list-r4 "Appx \ecB\\1\ecA"
     jst-add-file-support "perl"
     ; Allow TCL Code inserts ...
     jst-add-file-support "tcl"
+    ; Allow Shell script inserts ...
+    jst-add-file-support "shell"
+    ; Allow Java inserts 
+    jst-add-file-support "java"
+    ; Allow Windows INI file inserts 
+    jst-add-file-support "ini"
+    ; Allow PHP inserts 
+    jst-add-file-support "php"
+    ; Allow make inserts
+    jst-add-file-support "make"
 !endif
 
 ; must replace the normal fill-paragraph with one which will skip inserts 
