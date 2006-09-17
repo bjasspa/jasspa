@@ -1,0 +1,62 @@
+#
+# JASSPA MicroEmacs Private File Extensions
+# 
+text/x-jasspa-erf
+	ext: erf
+text/x-jasspa-emf
+	ext: emf
+text/x-jasspa-ehf
+	ext: ehf
+text/x-jasspa-eaf
+	ext: eaf
+text/x-jasspa-edf
+	ext: edf     
+text/x-jasspa-etf
+	ext: etf     
+#
+# JASSPA MicroEmacs Backup files
+# This matches all files that end in ~ or #
+#         
+text/x-jasspa-backup
+	regex: .*~$
+text/x-jasspa-recovery
+	regex: .*#$
+#
+# JASSPA Extension -- Comment out to remove
+# Makes files - extend for standard Makefile Extensions.
+#
+text/x-makefile
+	ext: mak gmk mk
+        regex: GNUmakefile [Mm]akefile
+#
+# JASSPA Extension -- Comment out to remove
+# Log files - omitted from Gnome as a type, assume text.
+#
+text/x-log
+	ext: log
+
+#
+# JASSPA Extension -- Comment out to remove and edit "jasspa-microemacs.keys"
+# Use the .def file in the 'C' context for macro expansion files.
+#
+text/x-c-def
+	ext: def
+#
+# JASSPA Extension -- Comment out to remove and edit "jasspa-microemacs.keys"
+# Use the .y for yacc/bison source files.
+#
+text/x-yacc
+	ext: y
+#
+# JASSPA Extension -- Comment out to remove and edit "jasspa-microemacs.keys"
+# Use the .l for lex/flex source files.
+#
+text/x-lex
+	ext: l
+
+#
+# JASSPA Extension -- Comment out to remove and edit "jasspa-microemacs.keys"
+# Use the .txt for Text files.
+#
+text/x-txt
+	ext: txt TXT text

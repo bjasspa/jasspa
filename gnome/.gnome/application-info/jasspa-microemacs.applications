@@ -1,0 +1,9 @@
+------jasspa-microemacs.applications-------
+jasspa-microemacs
+	command=/opt/jasspa/bin/me -c
+	name=JASSPA's MicroEmacs
+	can_open_multiple_files=true
+	expects_uris=false
+	requires_terminal=false
+	mime_types=text/*,text/x-jasspa-emf,text/html,text/plain
+-------------------------------------------

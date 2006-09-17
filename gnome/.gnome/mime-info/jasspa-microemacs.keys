@@ -1,0 +1,295 @@
+#
+# MicroEmacs Specific definitions
+#
+text/x-jasspa-emf
+	default_application_id=jasspa-microemacs
+        category=Misc/Jasspa
+        description=JASSPA MicroEmacs Macro File
+        icon_filename=/opt/jasspa/icons/48x48/me_emf.png
+	default_component_iid=
+        default_action_type=application
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+        short_list_application_user_additions=jasspa-microemacs
+        use_category_default=no
+text/x-jasspa-erf
+	default_application_id=jasspa-microemacs
+        category=Misc/Jasspa
+        description=JASSPA MicroEmacs Registry File
+        icon_filename=/opt/jasspa/icons/48x48/me_erf.png
+	default_component_iid=
+        default_action_type=application
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+        short_list_application_user_additions=jasspa-microemacs
+        use_category_default=no
+text/x-jasspa-ehf
+	default_application_id=jasspa-microemacs
+        category=Misc/Jasspa
+        description=JASSPA MicroEmacs Help File
+	default_component_iid=
+        icon_filename=/opt/jasspa/icons/48x48/me_ehf.png
+        default_action_type=application
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+        short_list_application_user_additions=jasspa-microemacs
+        use_category_default=no
+text/x-jasspa-eaf
+	default_application_id=jasspa-microemacs
+        category=Misc/Jasspa
+        description=JASSPA MicroEmacs Abbreviation File
+        icon_filename=/opt/jasspa/icons/48x48/me_eaf.png
+	default_component_iid=
+        default_action_type=application
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+        short_list_application_user_additions=jasspa-microemacs
+        use_category_default=no
+text/x-jasspa-edf
+	default_application_id=jasspa-microemacs
+        category=Misc/Jasspa
+        description=JASSPA MicroEmacs Dictionary File
+        icon_filename=/opt/jasspa/icons/48x48/me_edf.png
+	default_component_iid=
+        default_action_type=application
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+        short_list_application_user_additions=jasspa-microemacs
+        use_category_default=no
+text/x-jasspa-etf
+	default_application_id=jasspa-microemacs
+        category=Misc/Jasspa
+        description=JASSPA MicroEmacs Template File
+        icon_filename=/opt/jasspa/icons/48x48/me_etf.png
+	default_component_iid=
+        default_action_type=application
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+        short_list_application_user_additions=jasspa-microemacs
+        use_category_default=no
+#
+# Backup files
+#
+text/x-jasspa-backup
+	default_application_id=jasspa-microemacs
+        category=Misc/Jasspa
+        description=JASSPA MicroEmacs Backup File
+	default_component_iid=
+        icon_filename=/opt/jasspa/icons/48x48/me_twiddle.png
+        default_action_type=application
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+        short_list_application_user_additions=jasspa-microemacs
+        use_category_default=no
+text/x-jasspa-recovery
+	default_application_id=jasspa-microemacs
+        category=Misc/Jasspa
+        description=JASSPA MicroEmacs Recovery File
+	default_component_iid=
+        icon_filename=/opt/jasspa/icons/48x48/me_hash.png
+        default_action_type=application
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+        short_list_application_user_additions=jasspa-microemacs
+        use_category_default=no
+#
+# Over-rides of Standard Text Entries supplied with GNOME
+#
+text/
+	default_application_id=jasspa-microemacs
+	default_action_type=component
+        short_list_application_user_additions=jasspa-microemacs
+
+# For anything that is plain text we add JASSPA as the default editor
+# and use a default icon.
+text/plain
+	default_application_id=jasspa-microemacs
+        icon_filename=/opt/jasspa/icons/48x48/me.png
+	default_action_type=application
+        short_list_application_user_additions=jasspa-microemacs
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+        short_list_application_user_additions=jasspa-microemacs
+
+text/x-readme
+	default_application_id=jasspa-microemacs
+        icon_filename=/opt/jasspa/icons/48x48/me_txt.png
+        default_action_type=application
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+        short_list_application_user_additions=jasspa-microemacs
+
+text/x-troff-man
+	default_application_id=jasspa-microemacs
+	icon_filename=/opt/jasspa/icons/48x48/me_man.png
+	default_action_type=application
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+	short_list_application_user_additions=jasspa-microemacs
+
+text/sgml
+	default_application_id=jasspa-microemacs
+	icon_filename=/opt/jasspa/icons/48x48/me_sgml.png
+	default_action_type=application
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+	short_list_application_user_additions=jasspa-microemacs
+
+text/x-dsl
+	default_application_id=jasspa-microemacs
+	icon_filename=/opt/jasspa/icons/48x48/me_dsl.png
+	default_action_type=application
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+	short_list_application_user_additions=jasspa-microemacs
+
+text/x-tex
+	default_application_id=jasspa-microemacs
+	icon_filename=/opt/jasspa/icons/48x48/me_tex.png
+	default_component_iid=
+	default_action_type=application
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+	short_list_application_user_additions=jasspa-microemacs
+	description=TeX document
+	category=Documents/Text Markup
+	use_category_default=no
+
+text/x-troff
+	default_application_id=jasspa-microemacs
+	icon_filename=/opt/jasspa/icons/48x48/me_roff.png
+	default_action_type=application
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+	short_list_application_user_additions=jasspa-microemacs
+
+text/x-troff-man
+	default_application_id=jasspa-microemacs
+	icon_filename=/opt/jasspa/icons/48x48/me_man.png
+	default_action_type=application
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+	short_list_application_user_additions=jasspa-microemacs
+
+text/x-troff-me
+	default_application_id=jasspa-microemacs
+	icon_filename=/opt/jasspa/icons/48x48/me_me.png
+	default_action_type=application
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+	short_list_application_user_additions=jasspa-microemacs
+
+text/x-troff-mm
+	default_application_id=jasspa-microemacs
+	icon_filename=/opt/jasspa/icons/48x48/me_mm.png
+	default_action_type=application
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+	short_list_application_user_additions=jasspa-microemacs
+
+text/x-troff-ms
+	default_application_id=jasspa-microemacs
+	icon_filename=/opt/jasspa/icons/48x48/me_ms.png
+	default_action_type=application
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+	short_list_application_user_additions=jasspa-microemacs
+
+#
+# JASSPA Extension -- Comment out to remove and edit "jasspa-microemacs.mime"
+# Use the .log extension as a generic log file output.
+#
+text/x-log
+	default_application_id=jasspa-microemacs
+        category=Misc/Jasspa
+        description=Logging file
+	default_component_iid=
+        icon_filename=/opt/jasspa/icons/48x48/me_log.png
+        default_action_type=application
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+        short_list_application_user_additions=jasspa-microemacs
+        use_category_default=no
+#
+# JASSPA Over-ride - Comment out to remove.
+# Programming Language over-rides.
+#
+text/x-c
+	default_application_id=jasspa-microemacs
+        default_action_type=application
+	icon_filename=/opt/jasspa/icons/48x48/me_c.png
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+        short_list_application_user_additions=jasspa-microemacs
+
+text/x-c-header
+	default_application_id=jasspa-microemacs
+        default_action_type=application
+	icon_filename=/opt/jasspa/icons/48x48/me_h.png
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+        short_list_application_user_additions=jasspa-microemacs
+
+text/x-c++
+	default_application_id=jasspa-microemacs
+        default_action_type=application
+	icon_filename=/opt/jasspa/icons/48x48/me_cpp.png
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+        short_list_application_user_additions=jasspa-microemacs
+
+text/x-makefile
+	default_application_id=jasspa-microemacs
+        default_action_type=application
+	icon_filename=/opt/jasspa/icons/48x48/me_make.png
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+        short_list_application_user_additions=jasspa-microemacs
+
+text/x-fortran
+	default_application_id=jasspa-microemacs
+        default_action_type=application
+	icon_filename=/opt/jasspa/icons/48x48/me_f.png
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+        short_list_application_user_additions=jasspa-microemacs
+
+text/x-python
+	default_application_id=jasspa-microemacs
+	icon_filename=/opt/jasspa/icons/48x48/me_py.png
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+        short_list_application_user_additions=jasspa-microemacs
+
+text/x-tcl
+	default_application_id=jasspa-microemacs
+	icon_filename=/opt/jasspa/icons/48x48/me_tcl.png
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+        short_list_application_user_additions=jasspa-microemacs
+#
+# JASSPA Extension -- Comment out to remove and edit "jasspa-microemacs.mime"
+# Use the .def file in the 'C' context for macro expansion files.
+#
+text/x-c-def
+	default_application_id=jasspa-microemacs
+	category=Software Development/Source Code
+	description=C definition source code
+        default_action_type=application
+	icon_filename=/opt/jasspa/icons/48x48/me_def.png
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+        short_list_application_user_additions=jasspa-microemacs
+	use_category_default=no
+#
+# JASSPA Extension -- Comment out to remove and edit "jasspa-microemacs.mime"
+# Use the .y file for yacc/bison
+#
+text/x-yacc
+	default_application_id=jasspa-microemacs
+	category=Software Development/Source Code
+	description=YACC source code
+        default_action_type=application
+	icon_filename=/opt/jasspa/icons/48x48/me_y.png
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+        short_list_application_user_additions=jasspa-microemacs
+	use_category_default=no
+
+#
+# JASSPA Extension -- Comment out to remove and edit "jasspa-microemacs.mime"
+# Use the .l file for lex/flex
+#
+text/x-lex
+	default_application_id=jasspa-microemacs
+	category=Software Development/Source Code
+	description=LEX source code
+        default_action_type=application
+	icon_filename=/opt/jasspa/icons/48x48/me_l.png
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+        short_list_application_user_additions=jasspa-microemacs
+	use_category_default=no
+
+#
+# JASSPA Extension -- Comment out to remove and edit "jasspa-microemacs.mime"
+# Use the .txt file for plain text - this over-rides GNOME !.
+#
+text/x-txt
+	default_application_id=jasspa-microemacs
+        default_action_type=application
+        description=Plain Text File
+        icon_filename=/opt/jasspa/icons/48x48/me_txt.png
+	short_list_application_user_removals=gvim,vi,nedit,gedit,xfte,pico
+	short_list_application_user_additions=jasspa-microemacs
+	use_category_default=no

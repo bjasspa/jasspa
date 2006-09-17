@@ -1,0 +1,47 @@
+> -!- document; fill-column:65; fill-mode:both; -!-
+>
+>  Copyright 2003 JASSPA.
+>
+>  Created By    : Jon Green
+>  Created       : Wed Jan 29 23:18:36 2003
+>  Last Modified : <030129.2340>
+>
+
+The  "jasspa_gnome"  bundle configures the Nautilus graphic shell
+for the GNOME desktop for JASSPA  MicroEmacs,  providing  default
+bindings and icons for JASSPA MicroEmacs. The GNOME configuration
+has been set up under Sun  Solaris  9,  running  GNONE  Version-2
+Beta-3. The configuration files should be similar for Linux.
+
+In  addition to this bundle then you will also  require the icons
+bundle  for  UNIX   "meicons-extra.tar.zip".   These   should  be
+installed into "/opt/jasspa/".
+
+The tar bundle  should be  unpacked in the users home  directory,
+this will  install  the files  into the  ".gnome"  directory.  To
+install:-
+
+> cd ~
+> unzip jasspa_gnome.tar.zip
+> tar xvf jasspa_gnome.tar
+
+This installs the following files:-
+
+> ./.gnome/mime-info/jasspa-microemacs.mime
+> ./.gnome/mime-info/jasspa-microemacs.keys
+> ./.gnome/apps/Accessories/jasspa-microemacs.desktop
+> ./.gnome/application-info/jasspa-microemacs.applications
+
+If you wish to change the bindings or icon  association then edit
+file  "./gnome/mime-info/jasspa-microemacs.mime".  If your  icons
+are     installed     in    a     different     location     than
+"/opt/jasspa/icons/..." (i.e. user local directory) then edit the
+"jasspa-microemacs"  files  and  change  the icon  references  to
+reflect the new file location. Refer to the following document on
+customising the GNOME desktop:
+
+> http://soldc.sun.com/articles/integrating_gnome.html
+
+The configuration may be subsequently removed by deleteing all of
+"jasspa-microemacs"  files from the ".gnome" directory, as listed
+above.
