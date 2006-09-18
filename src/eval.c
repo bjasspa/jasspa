@@ -1814,8 +1814,8 @@ getval(meUByte *tkn)   /* find the value of a token */
             }
             else if(tkn[2] == 'c')
             {
-                meUByte *ss, buff[meBUF_SIZE_MAX] ;
-                meUByte prompt[meBUF_SIZE_MAX] ;
+                meUByte *ss, *helpStr, buff[meBUF_SIZE_MAX] ;
+                meUByte prompt[meBUF_SIZE_MAX], helpBuff[meBUF_SIZE_MAX] ;
                 int ret ;
                 
                 if((ret=tkn[3]) != '\0')
@@ -1834,10 +1834,19 @@ getval(meUByte *tkn)   /* find the value of a token */
                 }
                 else
                     ss = NULL ;
+                if(ret & 0x04)
+                {
+                    /* Get and evaluate the next argument - this is the help string */
+                    if(meGetString(NULL,0,0,helpBuff,meBUF_SIZE_MAX) <= 0)
+                        return abortm ;
+                    helpStr = helpBuff ;
+                }
+                else
+                    helpStr = NULL ;
                 ret = (ret & 0x02) ? mlCR_QUOTE_CHAR:0 ;
                 
                 clexec = meFALSE ;
-                ret = mlCharReply(prompt,ret,ss,NULL) ;
+                ret = mlCharReply(prompt,ret,ss,helpStr) ;
                 clexec = meTRUE ;
                 if(ret < 0)
                     return abortm ;
