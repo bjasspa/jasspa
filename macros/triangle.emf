@@ -422,7 +422,7 @@
         !done
     !endif
     ; Okay, messy two king problem ask the user which one
-    !force set-variable #g4 @mc1 "Which king [cdhs] ? " "cdhs"
+    !force set-variable #g4 @mc5 "Which king (cdhs) ? " "cdhs" "(C)lubs, (D)iamonds, (H)earts, (S)pades, (C-g)Abort ? "
     !if &not $status
         !return
     !endif

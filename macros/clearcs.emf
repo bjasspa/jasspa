@@ -257,7 +257,7 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
     !else
         !if &sin "S" #l9
             !if &and &bmod "edit" &not &seq &lef $buffer-bname 1 "*"
-                set-variable #l0 @mc1 "Save buffer first [y/n]? " "nNyY"
+                set-variable #l0 @mc5 "Save buffer first (?yn) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
                 !if &iseq #l0 "y"
                     save-buffer @mna
                 !endif
@@ -842,7 +842,7 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
     !elif &seq @cck "idle-pick"
         !abort
     !elif &lfin "|abort-command|delete-buffer|ipipe-kill|" @cc
-        !force !force set-variable #l0 @mc1 "Abort cleartool command [y/n]? " "nNyY"
+        !force !force set-variable #l0 @mc5 "Abort cleartool command (?yn) ? " "nNyY" "(Y)es, (N)o ? "
         !if &and &iseq #l0 "y" .cc-cleartool.wait
             !force ipipe-kill
         !endif

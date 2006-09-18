@@ -93,10 +93,8 @@ define-macro page-file-save-buffer
         !abort
     !endif
     !if &bmod "edit"
-        set-variable #l0 @mc1 "(S)ave changes, (D)iscard or (A)bort [s/d/a]? " "sSdDaA"
-        !if &iseq #l0 "a"
-            !abort
-        !elif &iseq #l0 "s"
+        set-variable #l0 @mc5 "About to change page, save changes (?yn) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
+        !if &iseq #l0 "y"
             page-file-save-buffer
         !endif
     !endif
@@ -131,10 +129,8 @@ define-macro page-file-save-buffer
         !abort
     !endif
     !if &bmod "edit"
-        set-variable #l0 @mc1 "(S)ave changes, (D)iscard or (A)bort [s/d/a]? " "sSdDaA"
-        !if &iseq #l0 "a"
-            !abort
-        !elif &iseq #l0 "s"
+        set-variable #l0 @mc5 "About to change page, save changes (?yn) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
+        !if &iseq #l0 "y"
             page-file-save-buffer
         !endif
     !endif
@@ -157,10 +153,8 @@ define-macro page-file-beginning-of-buffer
         beginning-of-buffer
     !endif
     !if &bmod "edit"
-        set-variable #l0 @mc1 "(S)ave changes, (D)iscard or (A)bort [s/d/a]? " "sSdDaA"
-        !if &iseq #l0 "a"
-            !abort
-        !elif &iseq #l0 "s"
+        set-variable #l0 @mc5 "About to change page, save changes (?yn) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
+        !if &iseq #l0 "y"
             page-file-save-buffer
         !endif
     !endif
@@ -185,10 +179,8 @@ define-macro page-file-end-of-buffer
         end-of-buffer
     !endif
     !if &bmod "edit"
-        set-variable #l0 @mc1 "(S)ave changes, (D)iscard or (A)bort [s/d/a]? " "sSdDaA"
-        !if &iseq #l0 "a"
-            !abort
-        !elif &iseq #l0 "s"
+        set-variable #l0 @mc5 "About to change page, save changes (?yn) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
+        !if &iseq #l0 "y"
             page-file-save-buffer
         !endif
         -1 buffer-mode "edit"
@@ -214,10 +206,8 @@ define-macro page-file-goto-byte
         !abort
     !endif
     !if &bmod "edit"
-        set-variable #l0 @mc1 "(S)ave changes, (D)iscard or (A)bort [s/d/a]? " "sSdDaA"
-        !if &iseq #l0 "a"
-            !abort
-        !elif &iseq #l0 "s"
+        set-variable #l0 @mc5 "About to change page, save changes (?yn) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
+        !if &iseq #l0 "y"
             page-file-save-buffer
         !endif
         -1 buffer-mode "edit"
@@ -463,7 +453,7 @@ define-macro page-file-search-backward
         !elif &equ $window-line 1
             set-variable #l0 3
             !if &lget :page-0 1
-                set-variable #l2 @mc1 "Continue search onto the previous page [y/n]? " "yYnN"
+                set-variable #l2 @mc5 "Continue search onto the previous page (?yn) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
                 !if &iseq #l2 "n"
                     beginning-of-buffer
                     !goto beg-of-buff
@@ -482,7 +472,7 @@ define-macro page-file-search-backward
         !elif &equ $window-line $window-eline
             set-variable #l0 2
             !if &les &lget :page-1 2 :page-fsize
-                set-variable #l2 @mc1 "Continue search onto the next page [y/n]? " "yYnN"
+                set-variable #l2 @mc5 "Continue search onto the next page (?yn) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
                 !if &iseq #l2 "n"
                     end-of-buffer
                     !goto end-of-buff
@@ -533,7 +523,7 @@ define-macro page-file
         find-buffer #l2
         !if &seq $buffer-fname #l0
             screen-update
-            set-variable #l3 @mc1 "File already paged create a new page buffer [y/n]? " "nNyY"
+            set-variable #l3 @mc5 "File already paged, create a new page buffer (?yn) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
             !if &not &iseq #l3 "y" 
                 !return
             !endif

@@ -153,7 +153,7 @@
     !elif &equ .find-file.file-count 1
         1 file-tool-run #l0 #l9
     !else
-        set-variable #l1 @mc1 &spr "Launch %d separate processes [y/n]? " .find-file.file-count "yYnN"
+        set-variable #l1 @mc5 &spr "Launch %d separate processes (?yn) ? " .find-file.file-count "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
         !if &not &iseq #l1 "y"
             !abort
         !endif

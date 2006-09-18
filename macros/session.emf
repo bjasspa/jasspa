@@ -111,6 +111,7 @@ set-variable .session.kill 1
     !endif
     !force 0 delete-buffer "*session_tmp*"
     find-buffer "*session_tmp*"
+    -1 buffer-mode "time"
     set-variable #l9 &cat "\b\benfs\b\b" $time
     insert-string &cat #l9 "\b\bvars\b\b\n"
     insert-string &spr "\b.session.update\b%s\n" .session.update
@@ -388,8 +389,8 @@ define-macro read-session
             !if #l4
                 set-variable #l5 &spr "%s%s%d active process%s" #l5 &con &len #l5 " and " "" #l4 &con &equ #l4 1 "" "es"
             !endif
-            set-variable #l5 @mc1 &spr "%s exist%s, continue anyway [y/n]?" #l5 &con &equ &add #l3 #l4 1 "s" "" "yYnN"
-            !if &seq &slo #l5 "n"
+            set-variable #l5 @mc5 &spr "%s exist%s, continue anyway (?yn) ?" #l5 &con &equ &add #l3 #l4 1 "s" "" "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
+            !if &iseq #l5 "n"
                 !abort
             !endif
         !endif

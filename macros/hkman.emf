@@ -99,7 +99,8 @@ set-variable .fhook-man.item-list-r1 "Sec \\1"
 
 define-macro aman
     !if &bmod "edit"
-        !if &iseq @mc1 "Save buffer first (y/n) :" "nNyY" "y"
+        set-variable #l0 @mc5 "Save buffer first (?yn) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+        !if &iseq #l0 "y"
             save-buffer
         !endif
     !endif

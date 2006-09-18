@@ -105,7 +105,8 @@ define-macro replace-all-pairs
     set-variable #l4 $buffer-bname
     !if &band @# 1
         save-some-buffers @mna
-        !if &iseq @mc1 "Warning - this will save all buffers! continue [y/n]? " "nNyY" "n"
+        set-variable #l1 @mc5 "Warning: This will save all buffers, continue (?yn) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+        !if &iseq #l1 "n"
             !abort
         !endif
     !endif
