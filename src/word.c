@@ -814,7 +814,7 @@ lookahead(meInt fillState)
                     status = 'n' ;
                 else
                 {
-                    if((status = mlCharReply((meUByte *)"Indent to <<<<<<<<<< ? ",mlCR_QUIT_ON_USER|mlCR_LOWER_CASE,(meUByte *)"ynav",NULL)) == -2)
+                    if((status = mlCharReply((meUByte *)"Indent to <<<<<<<<<< (?ynao) ? ",mlCR_QUIT_ON_USER|mlCR_LOWER_CASE,(meUByte *)"ynao",NULL)) == -2)
                     {
                         meUByte scheme=(frameCur->bufferCur->scheme/meSCHEME_STYLES) ;
             
@@ -822,8 +822,8 @@ lookahead(meInt fillState)
                          * can see the information in the correct location */
                         update (meTRUE);
                         pokeScreen(0x10,frameCur->mainRow,frameCur->mainColumn,&scheme,(meUByte *)"<<<<<<<<<<") ;
-                        status = mlCharReply((meUByte *)"Indent to <<<<<<<<<< ? ",mlCR_LOWER_CASE,(meUByte *)"ynav",
-                                             (meUByte *)"(Y)es (N)o (A)ll Ne(v)er (^G)Abort ? ") ;
+                        status = mlCharReply((meUByte *)"Indent to <<<<<<<<<< (?ynao) ? ",mlCR_LOWER_CASE,(meUByte *)"ynao",
+                                             (meUByte *)"(Y)es, (N)o, Yes to (a)ll, N(o) to all, (C-g)Abort ? ") ;
                         mlerase(0);
                     }
                     if (status == -1)

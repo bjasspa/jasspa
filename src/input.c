@@ -45,7 +45,7 @@ mlCharReply(meUByte *prompt, int mask, meUByte *validList, meUByte *helpStr)
 {
     int   inpType=0, cc ;
     meUByte buff[meTOKENBUF_SIZE_MAX] ;
-    meUByte *pp=prompt ;
+    meUByte *pp=prompt, *lp=NULL ;
     
     for(;;)
     {
@@ -69,6 +69,7 @@ mlCharReply(meUByte *prompt, int mask, meUByte *validList, meUByte *helpStr)
                     /* switch off the status cause we are replacing it */
                     frameCur->mlStatus = 0 ;
                     mlwrite(((mask & mlCR_CURSOR_IN_MAIN) ? 0:MWCURSOR)|MWSPEC,pp) ;
+                    lp = pp ;
                     pp = prompt ;
                     /* switch on the status so we save it */
                     frameCur->mlStatus = (mask & mlCR_CURSOR_IN_MAIN) ? MLSTATUS_KEEP:(MLSTATUS_KEEP|MLSTATUS_POSML) ;
@@ -130,7 +131,7 @@ mlCharReply(meUByte *prompt, int mask, meUByte *validList, meUByte *helpStr)
                 cc = toLower(cc) ;
             
             if((cc == '?') && (helpStr != NULL))
-                pp = helpStr ;
+                pp = (lp == helpStr) ? prompt:helpStr ;
             else if((cc != '\0') &&
                     (!(mask & mlCR_ALPHANUM_CHAR) || isAlphaNum(cc)) &&
                     ((validList == NULL) || (((cc & 0xff00) == 0) && 
@@ -159,9 +160,9 @@ mlyesno(meUByte *prompt)
     
     /* build and prompt the user */
     meStrcpy(buf,prompt) ;
-    meStrcat(buf," [y/n]? ") ;
+    meStrcat(buf," (?yn) ? ") ;
 
-    ret = mlCharReply(buf,mlCR_LOWER_CASE,(meUByte *)"yn",NULL) ;
+    ret = mlCharReply(buf,mlCR_LOWER_CASE,(meUByte *)"yn",(meUByte *)"(Y)es, (N)o, (C-g)Abort ? ") ;
     
     if(ret < 0)
         return ctrlg(meFALSE,1) ;
