@@ -205,7 +205,8 @@ hilight .hilight.zfile 0x44 "\eE" "" "\\}\e" "" "" .scheme.file
     ; create the output file name and check if it exists
     set-variable #l3 &cat #l0 #l2
     !if &seq &set #l5 &stat "t" #l3 "R"
-        !if &iseq @mc1 &spr "Over-write file %s (y/n) ? " #l3 "yYnN" "n"
+        set-variable #l8  @mc5 &spr "Over-write file %s (?yn) ? " #l3 "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
+        !if &iseq #l8 "n"
             !return
         !endif
     !elif &not &seq #l5 "X"
@@ -255,7 +256,8 @@ hilight .hilight.zfile 0x44 "\eE" "" "\\}\e" "" "" .scheme.file
     set-variable #l2 &lef #l2 &sub &len #l2 &add 1 &len #l8
     set-variable #l3 &cat #l0 #l2
     !if &seq &set #l5 &stat "t" #l3 "R"
-        !if &iseq @mc1 &spr "Over-write file %s (y/n) ? " #l3 "yYnN" "n"
+        set-variable #l6 @mc5 &spr "Over-write file %s (?yn) ? " #l3 "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
+        !if &iseq #l6 "n"
             !return
         !endif
     !elif &not &seq #l5 "X"

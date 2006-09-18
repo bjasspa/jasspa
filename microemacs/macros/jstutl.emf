@@ -839,7 +839,8 @@
         !abort
     !elif &band @# 1
         !if &seq &stat "t" #l1 "R"
-            !if &iseq @mc1 &spr "Over-write file %s (y/n) ? " #l1 "yYnN" "n"
+            set-variable #l0 @mc5 &spr "Over-write file %s (?yn) ? " #l1 "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
+            !if &iseq #l0 "n"
                 !abort
             !endif
         !endif

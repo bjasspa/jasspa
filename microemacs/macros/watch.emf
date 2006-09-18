@@ -106,7 +106,7 @@ define-macro watch
     !elif &exi :watch
         set-variable @# -1
     !else
-        set-variable @# @mc1 "Watch method: (1)Reread (2)Reread-append (3)Append [1/2/3] ? " "123"
+        set-variable @# @mc1 "Watch method: (1)Reread (2)Reread-append (3)Append (123) ? " "123"
     !endif
     !if &not @#
         watch-time

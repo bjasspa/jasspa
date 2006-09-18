@@ -184,13 +184,13 @@ define-macro spell-conv-aff-accent-chars
 !emacro
 
 define-macro spell-conv-aff-buffer
-    set-variable #l0 @mc1 "Current Char Set should be set to ISO-8895 - continue [y/n]? " "yYnN"
+    set-variable #l0 @mc5 "Current Char Set should be set to ISO-8895 - continue (?yn) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
     !if &seq &slo #l0 "n"
         !abort
     !endif
     1 buffer-mode "magic"
     1 buffer-mode "exact"
-    set-variable #l0 @mc1 "Fix aff accent letters (`a, \"o etc) to Latin1 chars [y/n]? " "yYnN"
+    set-variable #l0 @mc5 "Fix aff accent letters (`a, \"o etc) to Latin1 chars (?yn) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
     !if &seq &slo #l0 "y"
         spell-conv-aff-accent-chars
     !endif
@@ -199,7 +199,7 @@ define-macro spell-conv-aff-buffer
 !emacro
 
 define-macro spell-conv-aff-deutsch
-    set-variable #l0 @mc1 "Current Char Set should be set to ISO-8895 - continue [y/n]? " "yYnN"
+    set-variable #l0 @mc5 "Current Char Set should be set to ISO-8895 - continue (?yn) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
     !if &seq &slo #l0 "n"
         !abort
     !endif
@@ -222,12 +222,12 @@ define-macro spell-conv-aff-deutsch
 !emacro
 
 define-macro spell-conv-aff-russian
-    set-variable #l0 @mc1 "Current Char Set should be set to ISO-8895 - continue [y/n]? " "yYnN"
+    set-variable #l0 @mc5 "Current Char Set should be set to ISO-8895 - continue (?yn) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
     !if &seq &slo #l0 "n"
         !abort
     !endif
     ; Generate Yo or Ye?
-    set-variable #l0 @mc1 "Generate Ye or Yo version [e/o]? " "eEoO"
+    set-variable #l0 @mc5 "Generate Ye or Yo version (?eo) ? " "eEoO" "Y(e), Y(o), (C-g)Abort ? "
     set-variable #l1 &cond &seq &slo #l0 "o" "ye" "ey"
     1 buffer-mode "magic"
     1 buffer-mode "exact"

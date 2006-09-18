@@ -203,7 +203,8 @@ define-macro draw
         2 screen-update
         !force set-variable #l0 @cg
         !if &seq #l0 "abort-command"
-            !if &iseq @mc1 "Really quit [y/n]? " "nNyY" "y"
+            set-variable #l0 @mc5 "Really quit (?yn) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+            !if &iseq #l0 "y"
                 find-buffer :dw-buf
                 0 delete-buffer "*draw*"
                 -1 buffer-mode "view"
