@@ -2778,7 +2778,7 @@ indent(int f, int n)
         /* Check for overflow. */
         if(ind8ToInd7Overflow(n) || ind8ToInd7Overflow(m))            
             return meFALSE ;
-        node->scheme = node->scheme & ~((INDNUM7MASK << 8) | INDNUM7MASK);
+        node->scheme = node->scheme & ((meScheme) ~((INDNUM7MASK << 8) | INDNUM7MASK)) ;
         node->scheme |= (ind8ToInd7(n) << 8) | ind8ToInd7(m);
     }
     if((typesFlag[itype] & INDFILETYPE) || (typesType[itype] & HLBRANCH))
