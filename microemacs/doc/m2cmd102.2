@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd102.2,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m2cmd102.2,v 2.6 2006-09-18 21:19:40 bill Exp $
 .Im MicroEmacs command|search
 .ds C0 "(\fB\*e\*cr\fR)\ \&
 .so me.tni
@@ -23,22 +23,22 @@ operates like the
 command.  replacing  one string with  another.  However, it allows you to step
 through each string and ask you if you wish to make the  replacement. The user
 is prompted for a replacement response as follows:-
-.IP \fBY\fR
-Make the replacement and continue on to the next string.
-.IP \fBN\fR
-Do not make the replacement, and continue.
-.IP \fB!\fR
-Replace the rest of the strings without asking.
-.IP \fB^G\fR
-Stop the command.
-.IP \fB.\fR
-Go back to place the command started
-.IP \fBu\fR
-Undo last replacement.
-.IP \fBl\fR
-Last replacement, do next and stop.
 .IP \fB?\fR
 Help - get a list of options.
+.IP "\fBy\fR or \fBspace\fR"
+Make the replacement and continue on to the next string.
+.IP \fBn\fR
+Do not make the replacement, and continue.
+.IP "\fBa\fR or \fB!\fR"
+Replace the rest of the strings without asking.
+.IP \fBe\fR
+Edit the replacement string.
+.IP \fBl\fR
+Last replacement, do next and stop.
+.IP \fBu\fR
+Undo last replacement.
+.IP \fB^G\fR
+Stop the command.
 .SH "SEE ALSO"
 Refer to
 .Ht search-forward 2
