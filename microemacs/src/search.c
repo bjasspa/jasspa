@@ -712,7 +712,7 @@ replaces(int kind, int ff, int nn)
 #define	SL_EXIT		0	/* Exit replaces */
 #define	SL_GETSEARCH	1	/* Get the search string */
 #define	SL_GETREPLACE	2	/* Get the replace string */
-#define	SL_INCREPLACE	3	/* Incremental replace */
+#define	SL_EDITREPLACE	3	/* Edit replace with string */
 #define	SL_FIRSTREPLACE	4	/* First replacement condition */
 #define	SL_NEXTREPLACE	5	/* Next replacement condition */
 #define	SL_QUERYINPUT	6	/* Get the query input from the user */
@@ -792,7 +792,7 @@ replaces(int kind, int ff, int nn)
             break;
             
         case SL_GETREPLACE :	/* Ask for replacement string */
-        case SL_INCREPLACE :	/* Ask for incremental replacement */
+        case SL_EDITREPLACE :	/* Edit replacement string */
             
             meStrcpy(tpat,"Replace [") ;
             i = expandexp(-1,srchPat, meBUF_SIZE_MAX-17, 9, tpat, -1, NULL, 0) ;
@@ -811,7 +811,7 @@ replaces(int kind, int ff, int nn)
                 tpat[i+6] = ' ' ;
                 tpat[i+7] = '[' ;
                 i = expandexp(-1,rpat, meBUF_SIZE_MAX-i-13, i+8, tpat, -1, NULL, 0) ;
-                meStrcpy(tpat+i,"] ? ") ;
+                meStrcpy(tpat+i,"] (?ynaelu) ? ") ;
             }            
             state_mc = (state_mc == SL_GETREPLACE) ?
                 SL_FIRSTREPLACE : SL_NEXTREPLACE;
@@ -907,8 +907,8 @@ replaces(int kind, int ff, int nn)
                 }
 #endif
                 meStrcpy(srchPatStore,srchPat) ;
-                cc = mlCharReply(tpat,mlCR_LOWER_CASE|mlCR_UPDATE_ON_USER|mlCR_CURSOR_IN_MAIN,(meUByte *)"y nil!u.",
-                                 (meUByte *)"(Y)es (N)o (I)nc (L)ast (!)Do rest (U)ndo (^G)Abort (.)Abort back ? ");
+                cc = mlCharReply(tpat,mlCR_LOWER_CASE|mlCR_UPDATE_ON_USER|mlCR_CURSOR_IN_MAIN,(meUByte *)"y na!elu",
+                                 (meUByte *)"(Y)es, (N)o, Yes to (a)ll, (E)dit replace, (L)ast, (U)ndo, (C-g)Abort ? ");
                 meStrcpy(srchPat,srchPatStore) ;
 #if MEOPT_MAGIC
                 if((srchLastMagic = srchLastMagicStore) != 0)
@@ -933,8 +933,8 @@ replaces(int kind, int ff, int nn)
 		state_mc = SL_NEXTREPLACE;
 		break;
                 
-            case 'i':			/* Incremental change */
-		state_mc = SL_INCREPLACE;
+            case 'e':			/* Edit replace with string */
+		state_mc = SL_EDITREPLACE;
 		break;
 							
             case 'l':			/* last one */
@@ -942,13 +942,13 @@ replaces(int kind, int ff, int nn)
 		state_mc = SL_SUBSTITUTE;
 		break;
                 
-            case '!':			/* yes/stop asking */
+            case 'a':			/* yes/stop asking */
+            case '!':
 		kind = meFALSE;
 		state_mc = SL_SUBSTITUTE;
 		break;
 
             case 'u':	/* undo last and re-prompt */
-                
                 if (lastline == NULL)
                 {   /* Restore old position. */
                     TTbell();		/* There is nothing to undo. */
@@ -984,13 +984,6 @@ replaces(int kind, int ff, int nn)
                  * correctly */
                 --nummatch;	/* decrement # of matches */
                 state_mc = SL_NEXTREPLACE ;
-		break;
-		
-            case '.':	/* abort! and return */
-                /* restore old position */
-                windowGotoLine(meTRUE,origlno+1) ;
-                frameCur->windowCur->dotOffset  = origoff ;
-                state_mc = SL_EXIT;		/* Exit state machine */
 		break;
             }	/* end of switch */
             break;
