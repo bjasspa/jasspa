@@ -11,6 +11,8 @@ METYPE=
 MEDEBUG=
 MAKEFILE=
 MAKECDEFS=
+X11_MAKEINC=/usr/include
+X11_MAKELIB=
 
 while [ ".$1" != "." ]
 do
@@ -82,11 +84,21 @@ if [ ".$MAKEFILE" = "." ] ; then
         else
             MAKEBAS=aix4
         fi
+    elif [ `echo $PLATFORM | sed -e "s/^CYGWIN.*/CYGWIN/"` = "CYGWIN" ] ; then
+        MAKEBAS=cygwin
+        X11_MAKEINC=/usr/X11R6/include
+        X11_MAKELIB=/usr/X11R6/lib
     elif [ $PLATFORM = "Darwin" ] ; then
         MAKEBAS=darwin
+        X11_MAKEINC=/usr/X11R6/include
+        X11_MAKELIB=/usr/X11R6/lib
     elif [ $PLATFORM = "FreeBSD" ] ; then
         MAKEBAS=freebsd
+        X11_MAKEINC=/usr/X11R6/include
+        X11_MAKELIB=/usr/X11R6/lib
     elif [ $PLATFORM = "HP-UX" ] ; then
+        X11_MAKEINC=/usr/include/X11R6
+        X11_MAKELIB=/usr/lib/X11R6
         VERSION=`uname -r | cut -f 2 -d .`
         if [ $VERSION = 11 ] ; then
             MAKEBAS=hpux11
@@ -94,6 +106,8 @@ if [ ".$MAKEFILE" = "." ] ; then
             MAKEBAS=hpux10
         else
             MAKEBAS=hpux9
+            X11_MAKEINC=/usr/include/X11R5
+            X11_MAKELIB=/usr/lib/X11R5
         fi
     elif [ `echo $PLATFORM | sed -e "s/^IRIX.*/IRIX/"` = "IRIX" ] ; then
         VERSION=`uname -r | cut -f 1 -d .`
@@ -114,10 +128,15 @@ if [ ".$MAKEFILE" = "." ] ; then
                 MAKEBAS="linux2"
             fi                
         fi
+        X11_MAKELIB=/usr/X11R6/lib
     elif [ $PLATFORM = "OpenBSD" ] ; then
-         MAKEBAS=openbsd
+        MAKEBAS=openbsd
+        X11_MAKEINC=/usr/X11R6/include
+        X11_MAKELIB=/usr/X11R6/lib
     elif [ $PLATFORM = "OSF1" ] ; then
-         MAKEBAS=osf1
+        MAKEBAS=osf1
+        X11_MAKEINC=/usr/X11R6/include
+        X11_MAKELIB=/usr/X11R6/lib
     elif [ $PLATFORM = "SunOS" ] ; then
         # Test for x86 version of Solaris
         VERSION=`uname -p`
@@ -127,18 +146,8 @@ if [ ".$MAKEFILE" = "." ] ; then
             # Must be Sparc Solaris
             MAKEBAS=sunos5
         fi
-    elif [ `echo $PLATFORM | sed -e "s/^CYGWIN.*/CYGWIN/"` = "CYGWIN" ] ; then
-        MAKEBAS=cygwin
-        # Check for an X11 install.
-        if [ "$OPTIONS" = "" ] ; then
-            if [ ! -f /usr/X11R6/lib/libX11-6.dll.a ] ; then
-                echo "No X-11 support found, forcing terminal only."
-                METYPE=c
-            else
-                echo "Found version of X11 installed"                
-            fi
-            sleep 5
-        fi
+        X11_MAKEINC=/usr/openwin/include
+        X11_MAKELIB=/usr/openwin/lib
     elif [ `echo $PLATFORM | sed -e "s/^MINGW.*/MINGW/"` = "MINGW" ] ; then
         MAKEBAS=mingw
     else
@@ -175,11 +184,55 @@ if [ ".$MAKEFILE" = "." ] ; then
     fi
 fi
 
-if [ ".$MAKECDEFS" != "." ] ; then
-    MAKECDEFS="MAKECDEFS=$MAKECDEFS"
-fi
 if [ ".$OPTIONS" = "." ] ; then
     OPTIONS="$MAINTYPE$MEDEBUG$METYPE"
+    if [ ".$MAKECDEFS" != "." ] ; then
+        MAKECDEFS="MAKECDEFS=$MAKECDEFS"
+    fi
+    # Check for an X11 install.
+    if [ "$METYPE" = "c" ] ; then
+        X11_INCLUDE=
+    elif [ ".$X11_INCLUDE" = "." ] ; then
+        if [ -r $X11_MAKEINC/X11/Intrinsic.h ] ; then
+            X11_INCLUDE=$X11_MAKEINC
+        elif [ -r /usr/include/X11/Intrinsic.h ] ; then
+            X11_INCLUDE=/usr/include
+        else
+            echo "No X-11 support found, forcing terminal only."
+            X11_INCLUDE=
+            METYPE=c
+        fi
+    fi
+    if [ ! ".$X11_INCLUDE" = "." ] ; then
+        MAKEWINDEFS=
+        MAKEWINLIBS=
+        if [ ! "$X11_INCLUDE" = "/usr/include" ] ; then
+            if [ ! "$X11_INCLUDE" = "$X11_MAKEINC" ] ; then
+                MAKEWINDEFS="-I$X11_INCLUDE"
+            fi
+        fi
+        if [ ! ".$X11_LIBRARY" = "." ] ; then
+            if [ ! "$X11_LIBRARY" = "$X11_MAKELIB" ] ; then
+                MAKEWINLIBS="-L$X11_LIBRARY"
+            fi
+        fi
+        if [ ".$XPM_INCLUDE" = "." ] ; then
+            XPM_INCLUDE="$X11_INCLUDE"
+        fi
+        if [ -r $XPM_INCLUDE/X11/xpm.h ] ; then
+            MAKEWINDEFS="-D_XPM $MAKEWINDEFS"
+            if [ ! "$XPM_INCLUDE" = "$X11_INCLUDE" ] ; then
+                MAKEWINDEFS="$MAKEWINDEFS -I$XPM_INCLUDE"
+            fi
+            if [ ! ".$XPM_LIBRARY" = "." ] ; then
+                if [ ! "$XPM_LIBRARY" = "$X11_MAKELIB" ] ; then
+                    MAKEWINLIBS="$MAKEWINLIBS -L$XPM_LIBRARY"
+                fi
+            fi
+            MAKEWINLIBS="$MAKEWINLIBS -lXpm"
+        fi
+        export MAKEWINDEFS MAKEWINLIBS
+    fi
 fi
 if [ -r $MAKEFILE ] ; then
     if [ ".$LOGFILE" != "." ] ; then
