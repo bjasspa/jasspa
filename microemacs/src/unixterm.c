@@ -4830,6 +4830,8 @@ xdndSelectionNotify (XEvent *xevent, meFrame *frame)
 
 #ifdef _XPM
 /* Use a colour icon */
+#include <X11/xpm.h>        /* Xpm support for colored icon          */
+
 static void
 meSetIconState (Display *display, Window window)
 {
@@ -4976,7 +4978,7 @@ meSetIconState (Display *display, Window window)
 #else
 /* Use a monochrome icon */
 static void
-meSetIconState (Display *display, Window window);
+meSetIconState (Display *display, Window window)
 {
 #define iconWidth  48
 #define iconHeight 48
