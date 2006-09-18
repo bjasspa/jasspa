@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Fri Jan 9 00:04:42 2004
 .\"
-.Id $Id: m2nar011.2,v 2.2 2005-02-19 10:54:42 jon Exp $
+.Id $Id: m2nar011.2,v 2.3 2006-09-18 21:04:41 bill Exp $
 .Im MicroEmacs 
 .so me.tni
 .TH macroDebugging 4
@@ -98,7 +98,7 @@ buffers is  undefined  and leaves the  windows in the state when the macro was
 aborted.
 .IP \fC^L\fR
 Redraws  the  current  screen.
-.IP \fC!\fR
+.IP \fCc\fR
 Continues macro execution the value of $debug is set to 0. Execution continues
 without user interaction up until the next \fB$debug\fR change.
 .IP \fCs\fR 
@@ -107,7 +107,7 @@ with continue in the new sub-macro.
 .IP \fCv\fR
 Display the value of a variable. The user is prompted for a variable  value to
 show, once entered, the value of the variable is displayed.
-.IP \fIany\fR
+.IP \fI<any>\fR
 Any  other key will step onto the next  instruction,  unlike  \fIstep\fR  then
 any macros that are invoked are not debugged.
 .LP
