@@ -864,7 +864,7 @@ static int
 dobuf(meLine *hlp)
 {
 #if MEOPT_DEBUGM
-    static meUByte __dobufStr1[]="(^G)Abort, (^L)redraw, (V)ariable, (!)Continue, (S)tep, <any>=next ?" ;
+    static meUByte __dobufStr1[]="(C)ontinue, (S)tep, (V)ariable, <any>=next, (^G)Abort, (^L)redraw ? " ;
     meByte debug=0;
 #endif
     meUByte *tline;               /* Temp line */
@@ -907,7 +907,7 @@ dobuf(meLine *hlp)
                 lno++ ;
             while ((tlp=meLineGetNext(tlp)) != lp)
                 ;
-            sprintf((char *)outline,"%s:%d:%d [%s] ?",meRegCurr->commandName,lno,execlevel,tline) ;
+            sprintf((char *)outline,"%s:%d:%d [%s] ? ",meRegCurr->commandName,lno,execlevel,tline) ;
 loop_round2:
             mlwrite(MWSPEC,outline);        /* Write out the debug line */
             /* Cannot do update as if this calls a macro then
@@ -921,7 +921,8 @@ loop_round2:
             {
 loop_round:
                 /* and get the keystroke */
-                cc = meGetKeyFromUser(meFALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE) ;
+                if(((cc = meGetKeyFromUser(meFALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE)) & 0xff00) == 0)
+                    cc = toLower(cc) ;
                 switch(cc)
                 {
                 case '?':
@@ -952,7 +953,7 @@ loop_round:
                         goto dobuf_exit ;
                     }
                     debug = dd ;
-                case '!':
+                case 'c':
                     dd &= ~0x02 ;
                 case 's':
                     break;
