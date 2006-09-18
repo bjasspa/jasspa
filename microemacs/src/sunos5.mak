@@ -48,14 +48,14 @@ CDEBUG        =	-g
 COPTIMISE     =	-xO3 -DNDEBUG=1
 CDEFS         = -D_SUNOS5 -I.
 CONSOLE_DEFS  = -D_ME_CONSOLE
-WINDOW_DEFS   = -D_ME_WINDOW -I/usr/openwin/include
+WINDOW_DEFS   = $(MAKEWINDEFS) -D_ME_WINDOW -I/usr/openwin/include
 NANOEMACS_DEFS= -D_NANOEMACS
 LDDEBUG       =
 LDOPTIMISE    =
 LDFLAGS       = 
 LIBS          = -lnsl -lsocket -lintl
 CONSOLE_LIBS  = -ltermcap
-WINDOW_LIBS   = -L/usr/openwin/lib -lXpm -lX11
+WINDOW_LIBS   = $(MAKEWINLIBS) -L/usr/openwin/lib -lX11
 #
 # Rules
 .SUFFIXES: .c .oc .ow .ob .on .ov .oe .odc .odw .odb .odn .odv .ode

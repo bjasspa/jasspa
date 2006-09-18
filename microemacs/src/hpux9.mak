@@ -47,14 +47,14 @@ CDEBUG        =	+z -g -Aa -Ae -z
 COPTIMISE     =	+z -O -Aa -Ae -DNDEBUG=1 -z
 CDEFS         = -D_HPUX9 -I.
 CONSOLE_DEFS  = -D_ME_CONSOLE
-WINDOW_DEFS   = -D_ME_WINDOW -I/usr/include/X11R5
+WINDOW_DEFS   = $(MAKEWINDEFS) -D_ME_WINDOW -I/usr/include/X11R5
 NANOEMACS_DEFS= -D_NANOEMACS
 LDDEBUG       =
 LDOPTIMISE    =
 LDFLAGS       =
 LIBS          = -ldld -lV3
 CONSOLE_LIBS  = -ltermcap
-WINDOW_LIBS   = -L/usr/lib/X11R5 -lX11
+WINDOW_LIBS   = $(MAKEWINLIBS) -L/usr/lib/X11R5 -lX11
 #
 # Rules
 .SUFFIXES: .c .oc .ow .ob .on .ov .oe .odc .odw .odb .odn .odv .ode

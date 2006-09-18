@@ -47,14 +47,14 @@ CDEBUG        =	-Wall -g
 COPTIMISE     =	-Wall -O3 -DNDEBUG=1 -Wno-uninitialized
 CDEFS         = -D_OSF1 -I.
 CONSOLE_DEFS  = -D_ME_CONSOLE
-WINDOW_DEFS   = -D_ME_WINDOW -I/usr/X11R6/include
+WINDOW_DEFS   = $(MAKEWINDEFS) -D_ME_WINDOW -I/usr/X11R6/include
 NANOEMACS_DEFS= -D_NANOEMACS
 LDDEBUG       =
 LDOPTIMISE    =
 LDFLAGS       =
 LIBS          =
 CONSOLE_LIBS  = -ltermcap
-WINDOW_LIBS   = -L/usr/X11R6/lib -lX11
+WINDOW_LIBS   = $(MAKEWINLIBS) -L/usr/X11R6/lib -lX11
 #
 # Rules
 .SUFFIXES: .c .oc .ow .ob .on .ov .oe .odc .odw .odb .odn .odv .ode
