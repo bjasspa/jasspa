@@ -48,14 +48,14 @@ CDEBUG        =	-g
 COPTIMISE     =	-O2 -DNDEBUG=1
 CDEFS         = -D_AIX -D_AIX5 -qMAXMEM=8192 -I.
 CONSOLE_DEFS  = -D_ME_CONSOLE
-WINDOW_DEFS   = -D_ME_WINDOW
+WINDOW_DEFS   = $(MAKEWINDEFS) -D_ME_WINDOW
 NANOEMACS_DEFS= -D_NANOEMACS
 LDDEBUG       =
 LDOPTIMISE    =
 LDFLAGS       =
 LIBS          =
 CONSOLE_LIBS  = -lcurses
-WINDOW_LIBS   = -lX11
+WINDOW_LIBS   = $(MAKEWINLIBS) -lX11
 #
 # Rules
 .SUFFIXES: .c .oc .ow .ob .on .ov .oe .odc .odw .odb .odn .odv .ode

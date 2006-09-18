@@ -148,7 +148,6 @@
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
 #define _DRAGNDROP     1                /* Drag and drop supported.      */
 #define _meDEF_SYS_ERRLIST              /* errno.h not def sys_errlist   */
-#define _XPM           1                /* Colour pixmap icon            */
 
 /* Search path for CSW Sun build. */
 #ifdef _CSW
@@ -247,7 +246,6 @@
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
 #define _DRAGNDROP     1                /* Drag and drop supported.      */
 #define _DEFAULT_SEARCH_PATH "/usr/share/jasspa:/usr/local/jasspa"
-#define _XPM           1                /* Colour pixmap icon            */
 #endif
 
 /**************************************************************************
@@ -371,9 +369,6 @@
 #include <X11/StringDefs.h>     /* Standard Name-String definitions      */
 #include <X11/keysym.h>         /* Keyboard symbols                      */
 #include <X11/Xutil.h>
-#ifdef _XPM
-#include <X11/xpm.h>            /* Xpm support for colored icon          */
-#endif
 #endif /* _XTERM */
 
 #ifndef _ME_CONSOLE             /* window only mode?                     */
