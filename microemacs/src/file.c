@@ -1783,6 +1783,8 @@ readFile(int f, int n)
 
     if(inputFileName((meUByte *)"Read file", fname,0) <= 0)
         return meABORT ;
+    if(n & 0x20)
+	frameCur->bufferCur->intFlag |= BIFBLOW ;
     n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN|BFND_NOHOOK)) | BFND_MKNAM ;
     if((s=zotbuf(frameCur->bufferCur,clexec)) > 0)
         s = findSwapFileList(fname,n,0,0) ;
@@ -2314,9 +2316,9 @@ saveSomeBuffers(int f, int n)
             if(n & 1)
             {
                 if(bp->fileName != NULL)
-                    sprintf((char *)prompt, "Save file %s (?ynao) ? ", bp->fileName) ;
+                    sprintf((char *)prompt, "Save file %s (?/y/n/a/o) ? ", bp->fileName) ;
                 else
-                    sprintf((char *)prompt, "Save buffer %s (?ynao) ? ", bp->name) ;
+                    sprintf((char *)prompt, "Save buffer %s (?/y/n/a/o) ? ", bp->name) ;
                 if((status = mlCharReply(prompt,mlCR_LOWER_CASE,(meUByte *)"ynao",(meUByte *)"(Y)es, (N)o, Yes to (a)ll, N(o) to all, (C-g)Abort ? ")) < 0)
                     return ctrlg(meFALSE,1) ;
                 else if(status == 'o')

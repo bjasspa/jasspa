@@ -811,7 +811,7 @@ replaces(int kind, int ff, int nn)
                 tpat[i+6] = ' ' ;
                 tpat[i+7] = '[' ;
                 i = expandexp(-1,rpat, meBUF_SIZE_MAX-i-13, i+8, tpat, -1, NULL, 0) ;
-                meStrcpy(tpat+i,"] (?ynaelu) ? ") ;
+                meStrcpy(tpat+i,"] ? ") ;
             }            
             state_mc = (state_mc == SL_GETREPLACE) ?
                 SL_FIRSTREPLACE : SL_NEXTREPLACE;
