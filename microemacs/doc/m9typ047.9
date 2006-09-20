@@ -1,0 +1,54 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 2006 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.\"  Created By    : Jon Green
+.\"  Created       : Wed Sep 20 20:48:00 2006
+.\"
+.Id $Id: m9typ047.9,v 2.1 2006-09-20 20:28:11 jon Exp $
+.Im MicroEmacs filetype
+.so me.tni
+.TH jst 9
+.XI jst - "JASSPA Structred Text" 
+.SH SYNOPSIS
+jst \- JASSPA Structured Text
+.SH FILES
+.na
+.B hkjst.emf
+\- Jasspa structured text file hook definition.
+.ad
+.SH DESCRIPTION
+JASSPA Structured Text (\fBjst\fR) is an ASCII text format which includes some
+reserved  text  constructs  that  allow  quite  complex  word  processor  type
+documents to be constructed  with the minimal amount of additional  annotation
+and which  remains  readable in its raw ASCII form. The  motivation  for doing
+this is to  quickly  construct  documents  and  notes for  publication  whilst
+editing within \*(mS.
+.PP
+The main requirements of JST are:
+.BS
+Easy to remember.
+.BU
+Easily readable and can be highlighted well in \*(mS.
+.BU
+Well defined, i.e. not ambiguous so formating errors can be generated.
+.BU
+Extendable.
+.BU
+May be automatically reformatted.
+.BU 
+Handle things like figure references and internal anchor and references.
+.BU
+Html and LaTeX output, possibly rtf and text.
+.BE
+The syntax definition used by JST is defined in the next section.
+.SH SYNTAX
+The syntax of JST reserves basic character sequences which may be interpreted
+.SH TEMPLATE
+The template supports highlighting and indention.
+.SH "SEE ALSO"
+.na
+.Hl "Supported File Types" FileTypes -
+.ad
+.FH
