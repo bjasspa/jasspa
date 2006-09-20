@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil015.4,v 2.7 2004-01-17 22:31:46 jon Exp $
+.Id $Id: m4fil015.4,v 2.8 2006-09-20 19:32:01 bill Exp $
 .Im MicroEmacs macro;variable
 .so me.tni
 .TH "MessageLineVariables" 4
@@ -25,7 +25,7 @@
 \fB@ml\fR[\fIf\fR][\fIh\fR] "\fIprompt\fR" ["\fIdefault\fR"] ["\fIinitial\fR"]
 ["\fIcom-list\fR"] ["\fIbuffer-name\fR"]
 .br
-\fB@mc\fR[\fIf\fR] \fIprompt\fR [\fIvalid-list\fR]
+\fB@mc\fR[\fIf\fR] \fIprompt\fR [\fIvalid-list\fR] [\fIhelp-string\fR]
 .br
 \fB@mx\fR "\fIcommand-line\fR"
 .br
@@ -108,6 +108,8 @@ The \fIvalid-list\fR specifies all valid letters.
 .IP \fC0x02\fR
 Quote the typed character, this allows keys such as '\fCC-g\fR' which is bound
 to the abort command to be entered.
+.IP \fC0x04\fR
+A \fIhelp-string\fR is given which will be displayed if the user presses '\fC?\fR'. 
 .PP
 The  default  value  for  \fBf\fR  is 0. When  \fB@mc\fR  is used, the user is
 prompted, with the given prompt, for a single character. If a \fIvalid-list\fR
@@ -115,15 +117,27 @@ is  specified  then  only a  specified  valid  character  or an  error  can be
 returned. For example, a yes/no prompt can be implemented by the following
 .Me $emf-scheme
 .CS
-!if &iseq @mc1 "Are you bored [y/n]? " "yYnN" "y"
+!if &iseq @mc1 "Are you bored (yn) ? " "yYnN" "y"
     save-buffers-exit-emacs
 !endif
 .CE
 .Me $ehf-scheme
 By using the
 .Ht &isequal 4
-operator a return of "Y" or "y" will match with "y".
-.PP
+operator  a return of "Y" or "y" will match with "y".  However,  there are two
+problems with this, firstly if the user aborts by pressing '\fCC-g\fR' a macro
+error will be  generated  because  the  \fB&iseq\fR  operator  failed to get 2
+arguments. The second  problem is that the meaning of "\fC(yn)\fR"  may not be
+obvious to all users so a help string  should be supplied. To address  these 2
+issues the following should be used in preference:
+.Me $emf-scheme
+.CS
+set-variable #l0 @mc5 "Are you bored (?yn) ? " "yYnN" "(Y)es, (N)no, (C-g)Abort ? "
+!if &iseq #l0 "y"
+    save-buffers-exit-emacs
+!endif
+.CE
+.Me $ehf-scheme
 When  the   \fB@mx\fR   variable   is  used  \*(mS sets the system variable
 .Ht $result 5
 to the input  prompt, it will then  execute the given  \fCcommand-line\fR.  If
@@ -163,7 +177,8 @@ define-macro diff-changes
         !abort
     !endif
     !if &bmod "edit"
-        !if &iseq @mc1 "Save buffer first [y/n]? " "nNyY" "y"
+        set-variable #l0 @mc5 "Save buffer first (?yn) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+        !if &iseq #l0 "y"
             save-buffer
         !endif
     !endif
@@ -177,7 +192,7 @@ as the user may expect when the buffer has not been edited:
 .CS
         .
         .
-    !if &and &bmod "edit" &iseq @mc1 "Save buffer first [y/n]? " "nNyY" "y"
+    !if &and &bmod "edit" &iseq @mc1 "Save buffer first (?yn) ? " "nNyY" "y"
         save-buffer
         .
         .
