@@ -199,7 +199,7 @@
     -1 recenter
     2 screen-update
     set-variable .newuser.exit 1
-    set-variable #l0 @mc5 "Continue (?yn) ? " "ynYN" "(Y)es, (N)o, (C-g)Abort ? "
+    set-variable #l0 @mc5 "Continue (?/y/n) ? " "ynYN" "(Y)es, (N)o, (C-g)Abort ? "
     !if &not &iseq #l0 "y"
         set-variable .newuser.exit 3
         !return
@@ -283,7 +283,7 @@
     insert-string &cat &cat "  Search Path: " #l0 "\n\nIs this correct? "
     -1 recenter
     2 screen-update
-    set-variable #l0 @mc5 "Is this correct (?yn) ? " "ynYN" "(Y)es, (N)o, (C-g)Abort ? "
+    set-variable #l0 @mc5 "Is this correct (?/y/n) ? " "ynYN" "(Y)es, (N)o, (C-g)Abort ? "
     !if &not &iseq #l0 "y"
         insert-string "[n]\n\n"
         insert-string "See the following help pages:\n"
@@ -323,7 +323,7 @@
         insert-string "Do you want to set up a company file ? "
         -1 recenter
         2 screen-update
-        set-variable #l0 @mc5 "Set up company file (?yn) ? " "ynYN" "(Y)es, (N)o, (C-g)Abort ? "
+        set-variable #l0 @mc5 "Set up company file (?/y/n) ? " "ynYN" "(Y)es, (N)o, (C-g)Abort ? "
         insert-string &spr "[%s]\n" &slow #l0
         !if &iseq #l0 "y"
             insert-string "Enter existing or new name for the company file (8 chars): "

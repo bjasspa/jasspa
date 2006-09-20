@@ -1117,7 +1117,7 @@ define-macro dirlst-search
             !if &band .state 2
                 !return
             !else
-                set-variable #l4 @mc5 &spr "File \"%s\" is read-only, delete (?ynao) ? " #l3 "aAnNoOyY"  "(Y)es, (N)o, Yes to (A)ll, N(o) to All, (C-g)Abort ? "
+                set-variable #l4 @mc5 &spr "File \"%s\" is read-only, delete (?/y/n/a/o) ? " #l3 "aAnNoOyY"  "(Y)es, (N)o, Yes to (A)ll, N(o) to All, (C-g)Abort ? "
                 !if &iseq #l4 "o"
                     set-variable .state &bor .state 2
                 !elif &not &iseq #l4 "n"
@@ -1138,7 +1138,7 @@ define-macro dirlst-search
                     set-variable &cat ".find-file.dir" &inc .find-file.dir-count 1 #l3
                 !elif &seq #l4 "X"
                 !elif &not &band .state 1
-                    set-variable #l4 @mc5 &spr "Failed to delete \"%s\", retry (?yno) ? " #l3 "nNoOyY" "(Y)es, (N)o, N(o) to All, (C-g)Abort ? "
+                    set-variable #l4 @mc5 &spr "Failed to delete \"%s\", retry (?/y/n/o) ? " #l3 "nNoOyY" "(Y)es, (N)o, N(o) to All, (C-g)Abort ? "
                     !if &iseq #l4 "y"
                         !goto retry
                     !elif &iseq #l4 "o"
@@ -1207,7 +1207,7 @@ define-macro dirlst-search
         ml-write "[Delete Files Error: No files selected]"
         !abort
     !elif &equ .find-file.file-count 1
-        set-variable #l3 &spr "Are you sure you want to delete \"%s\" (?yn) ? " .find-file.file1
+        set-variable #l3 &spr "Are you sure you want to delete \"%s\" (?/y/n) ? " .find-file.file1
     !else
         set-variable #l3 "Are you sure you want to delete"
         !if &set #l4 &sub .find-file.file-count .find-file.file-dcount
@@ -1219,7 +1219,7 @@ define-macro dirlst-search
         !if .find-file.file-dcount
             set-variable #l3 &spr "%s %d director%s" #l3 .find-file.file-dcount &cond &equ .find-file.file-dcount 1 "y" "ies"
         !endif
-        set-variable #l3 &cat #l3 " (yn) ? "
+        set-variable #l3 &cat #l3 " (?/y/n) ? "
     !endif
     !force !force set-variable #l4 @mc5 #l3 "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
     set-variable #l3 $status
@@ -1252,7 +1252,7 @@ define-macro dirlst-search
         !if &and &not $status &equ $result 6
             ; write file check failure, dest already exists
             !if &not &band .state 4
-                set-variable #l4 @mc5 &spr "File \"%s\" already exists, overwrite (?ynao) ? " #l2 "aAnNoOyY" "(Y)es, (N)o, Yes to (A)ll, N(o) to All, (C-g)Abort ? "
+                set-variable #l4 @mc5 &spr "File \"%s\" already exists, overwrite (?/y/n/a/o) ? " #l2 "aAnNoOyY" "(Y)es, (N)o, Yes to (A)ll, N(o) to All, (C-g)Abort ? "
                 !if &iseq #l4 "o"
                     set-variable .state &bor .state 4
                 !elif &not &iseq #l4 "n"
@@ -1275,7 +1275,7 @@ define-macro dirlst-search
                     set-variable #l6 &sub #l6 1
                     !goto retry
                 !elif &not &band .state 1
-                    set-variable #l4 @mc5 &spr "Cannot read \"%s\", retry (?yno) ? " #l1 "nNoOyY" "(Y)es, (N)o, N(o) to All, (C-g)Abort ? "
+                    set-variable #l4 @mc5 &spr "Cannot read \"%s\", retry (?/y/n/o) ? " #l1 "nNoOyY" "(Y)es, (N)o, N(o) to All, (C-g)Abort ? "
                     !if &iseq #l4 "y"
                         !goto retry
                     !elif &iseq #l4 "o"
@@ -1285,7 +1285,7 @@ define-macro dirlst-search
             !elif &equ $result 3
                 ; failed to open dest for writing
                 !if &not &band .state 2
-                    set-variable #l4 @mc5 &spr "Cannot write to \"%s\", retry (?yno) ? " #l2 "nNoOyY" "(Y)es, (N)o, N(o) to All, (C-g)Abort ? "
+                    set-variable #l4 @mc5 &spr "Cannot write to \"%s\", retry (?/y/n/o) ? " #l2 "nNoOyY" "(Y)es, (N)o, N(o) to All, (C-g)Abort ? "
                     !if &iseq #l4 "y"
                         !goto retry
                     !elif &iseq #l4 "o"
@@ -1378,7 +1378,7 @@ define-macro dirlst-search
                     !endif
                 !done
             !elif &not &band .dirlst-tag-list-copy-file.state 2
-                !force !force set-variable #l4 @mc5 &spr "Cannot create \"%s\", retry (?yno) ? " #l6 "nNoOyY" "(Y)es, (N)o, N(o) to All, (C-g)Abort ? "
+                !force !force set-variable #l4 @mc5 &spr "Cannot create \"%s\", retry (?/y/n/o) ? " #l6 "nNoOyY" "(Y)es, (N)o, N(o) to All, (C-g)Abort ? "
                 !if &not $status
 *dir-tidy
                     ; copy failed - for moves still remove all directories we have already emptied
@@ -1472,7 +1472,7 @@ define-macro dirlst-search
         ml-write "[Rename File Error: No name change (case insensitive)]"
         !return
     !elif &seq &set #l3 &lget &stat "i" &cat $buffer-fname #l0 2 "R"
-        set-variable #l4 @mc5 &spr "File \"%s\" already exists, replace (?yn) ? " #l0 "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+        set-variable #l4 @mc5 &spr "File \"%s\" already exists, replace (?/y/n) ? " #l0 "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
         !if &iseq #l4 "n"
             !abort
         !endif
@@ -1517,9 +1517,9 @@ define-macro dirlst-search
     set-variable #l0 $buffer-bname
     !force 6 dirlst-get-filename "Refresh"
     !if @#
-        read-file $buffer-fname "y" @mna
+        33 read-file $buffer-fname
     !else
-        find-file $buffer-fname "y" @mna
+        find-file $buffer-fname "y"
         !if &not &seq #l0 $buffer-bname
             !force 0 delete-buffer #l0
         !endif

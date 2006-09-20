@@ -474,7 +474,7 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*%\\|^[ \t]*$\\|^[ \t]*\
 
 define-macro latex-compile
     !if &bmod "edit"
-        set-variable #l0 @mc5 "Save buffer first (?yn) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+        set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
         !if &iseq #l0 "y"
             save-buffer
         !endif
@@ -1500,7 +1500,7 @@ define-macro tex-close-latex-block
     !endif
     ; See if the user wants to go to the error.
     !if &not &seq #l1 ""
-        set-variable #l1 @mc5 &cat #l1 " Goto error (?yn) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
+        set-variable #l1 @mc5 &cat #l1 " Goto error (?/y/n) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
         !if &iseq #l1 "n"
             goto-position "\x81"
         !endif

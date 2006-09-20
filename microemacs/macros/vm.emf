@@ -1234,7 +1234,7 @@ define-macro-file htmltool html-to-ehf
         set-variable #l5 &stat "t" #l3
     !endif
     !if &seq #l5 "R"
-        set-variable #l6 @mc5 &spr "Over-write file %s (?yn) ? " #l3 "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
+        set-variable #l6 @mc5 &spr "Over-write file %s (?/y/n) ? " #l3 "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
         !if &iseq #l6 "n"
             !return
         !endif
