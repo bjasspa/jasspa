@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sun Feb 6 18:14:27 2005
 .\"
-.Id $Id: m3osd017.3,v 2.2 2006-09-08 20:57:13 bill Exp $
+.Id $Id: m3osd017.3,v 2.3 2006-09-20 20:28:10 jon Exp $
 .Im MicroEmacs command|osd;command|file
 .so me.tni
 .TH file-tool-setup 3
@@ -99,12 +99,12 @@ semantics allowed. \fIh\fR may have the following values:
 .na
 \fC0\fR For a general string input using the general history.
 \fC1\fR For an absolute file name, with completion and history.
-\fC2\fR For a MicroEmacs '05 buffer name, with completion and history.
-\fC3\fR For a MicroEmacs '05 command name, with completion and history.
+\fC2\fR For a MicroEmacs buffer name, with completion and history.
+\fC3\fR For a MicroEmacs command name, with completion and history.
 \fC4\fR For a file name, with completion and history.
 \fC5\fR For a search string, with history.
-\fC6\fR For a MicroEmacs '05 mode name, with completion and history.
-\fC7\fR For a MicroEmacs '05 variable name, with completion and history.
+\fC6\fR For a MicroEmacs mode name, with completion and history.
+\fC7\fR For a MicroEmacs variable name, with completion and history.
 \fC8\fR For a general string using no history.
 \fC9\fR For a user supplied completion list (\fCcom-list\fR).
 \fCa\fR For a user supplied completion list (\fCbuffer-name\fR).
@@ -169,8 +169,8 @@ single argument. For example, if the tool:
 .IP
 \fCunzip %f\fR
 .IP
-is used for the file "Test Files.zip" the command-line becomes
-'\fCunzip Test Files.zip\fR'  which will not work correctly,  conversely using
+is used for the file "Test Files.zip" the command-line  becomes  \'\fCunzip\fR
+\fCTest\fR  \fCFiles.zip\fR'  which will not work correctly,  conversely using
 \fC"%f"\fR will not work for files with quotes (e.g.  '2"bolt.def').  However,
 if
 .IP
