@@ -14,7 +14,7 @@ MAKECDEFS=
 X11_MAKEINC=/usr/include
 X11_MAKELIB=
 
-while [ ".$1" != "." ]
+while [ -n "$1" ]
 do
     if [ $1 = "-h" ] ; then
         echo "usage: build [options]"
@@ -73,7 +73,7 @@ do
     shift
 done
 
-if [ ".$MAKEFILE" = "." ] ; then
+if [ -z "$MAKEFILE" ] ; then
     
     PLATFORM=`uname`
     
@@ -169,7 +169,7 @@ if [ ".$MAKEFILE" = "." ] ; then
             fi
         fi                      
     fi
-    if [ ".$MAKEFILE" = "." ] ; then
+    if [ -z "$MAKEFILE" ] ; then
         # failed to find cc, try gcc
         if [ -r $MAKEBAS.gmk ] ; then
             # try to detect gcc, if found use it in preference
@@ -178,21 +178,21 @@ if [ ".$MAKEFILE" = "." ] ; then
             fi
         fi
     fi
-    if [ ".$MAKEFILE" = "." ] ; then
+    if [ -z "$MAKEFILE" ] ; then
         echo "Error: Failed to find a compiler (cc or gcc) fix PATH or use -m option"
         exit 1
     fi
 fi
 
-if [ ".$OPTIONS" = "." ] ; then
+if [ -z "$OPTIONS" ] ; then
     OPTIONS="$MAINTYPE$MEDEBUG$METYPE"
-    if [ ".$MAKECDEFS" != "." ] ; then
+    if [ -n "$MAKECDEFS" ] ; then
         MAKECDEFS="MAKECDEFS=$MAKECDEFS"
     fi
     # Check for an X11 install.
     if [ "$METYPE" = "c" ] ; then
         X11_INCLUDE=
-    elif [ ".$X11_INCLUDE" = "." ] ; then
+    elif [ -z "$X11_INCLUDE" ] ; then
         if [ -r $X11_MAKEINC/X11/Intrinsic.h ] ; then
             X11_INCLUDE=$X11_MAKEINC
         elif [ -r /usr/include/X11/Intrinsic.h ] ; then
@@ -203,20 +203,20 @@ if [ ".$OPTIONS" = "." ] ; then
             METYPE=c
         fi
     fi
-    if [ ! ".$X11_INCLUDE" = "." ] ; then
+    if [ -n "$X11_INCLUDE" ] ; then
         MAKEWINDEFS=
         MAKEWINLIBS=
-        if [ ! "$X11_INCLUDE" = "/usr/include" ] ; then
-            if [ ! "$X11_INCLUDE" = "$X11_MAKEINC" ] ; then
+        if [ "$X11_INCLUDE" != "/usr/include" ] ; then
+            if [ "$X11_INCLUDE" != "$X11_MAKEINC" ] ; then
                 MAKEWINDEFS="-I$X11_INCLUDE"
             fi
         fi
-        if [ ! ".$X11_LIBRARY" = "." ] ; then
-            if [ ! "$X11_LIBRARY" = "$X11_MAKELIB" ] ; then
+        if [ -n "$X11_LIBRARY" ] ; then
+            if [ "$X11_LIBRARY" != "$X11_MAKELIB" ] ; then
                 MAKEWINLIBS="-L$X11_LIBRARY"
             fi
         fi
-        if [ ".$XPM_INCLUDE" = "." ] ; then
+        if [ -z "$XPM_INCLUDE" ] ; then
             XPM_INCLUDE="$X11_INCLUDE"
         fi
         if [ -r $XPM_INCLUDE/X11/xpm.h ] ; then
@@ -224,7 +224,7 @@ if [ ".$OPTIONS" = "." ] ; then
             if [ ! "$XPM_INCLUDE" = "$X11_INCLUDE" ] ; then
                 MAKEWINDEFS="$MAKEWINDEFS -I$XPM_INCLUDE"
             fi
-            if [ ! ".$XPM_LIBRARY" = "." ] ; then
+            if [ -n "$XPM_LIBRARY" ] ; then
                 if [ ! "$XPM_LIBRARY" = "$X11_MAKELIB" ] ; then
                     MAKEWINLIBS="$MAKEWINLIBS -L$XPM_LIBRARY"
                 fi
@@ -235,11 +235,11 @@ if [ ".$OPTIONS" = "." ] ; then
     fi
 fi
 if [ -r $MAKEFILE ] ; then
-    if [ ".$LOGFILE" != "." ] ; then
+    if [ -n "$LOGFILE" ] ; then
         echo "make -f $MAKEFILE $OPTIONS $MAKECDEFS" > $LOGFILE 2>&1
         make -f $MAKEFILE $OPTIONS $MAKECDEFS > $LOGFILE 2>&1
     else
-        if [ ".$LOGFILEA" != "." ] ; then
+        if [ -n "$LOGFILEA" ] ; then
             echo "make -f $MAKEFILE $OPTIONS $MAKECDEFS" >> $LOGFILEA 2>&1
             make -f $MAKEFILE $OPTIONS $MAKECDEFS >> $LOGFILEA 2>&1
         else
