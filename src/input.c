@@ -160,7 +160,7 @@ mlyesno(meUByte *prompt)
     
     /* build and prompt the user */
     meStrcpy(buf,prompt) ;
-    meStrcat(buf," (?yn) ? ") ;
+    meStrcat(buf," (?/y/n) ? ") ;
 
     ret = mlCharReply(buf,mlCR_LOWER_CASE,(meUByte *)"yn",(meUByte *)"(Y)es, (N)o, (C-g)Abort ? ") ;
     
