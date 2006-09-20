@@ -422,11 +422,11 @@
         !done
     !endif
     ; Okay, messy two king problem ask the user which one
-    !force set-variable #g4 @mc5 "Which king (cdhs) ? " "cdhs" "(C)lubs, (D)iamonds, (H)earts, (S)pades, (C-g)Abort ? "
+    !force set-variable #g4 @mc5 "Which king (?/c/d/h/s) ? " "CDHScdhs" "(C)lubs, (D)iamonds, (H)earts, (S)pades, (C-g)Abort ? "
     !if &not $status
         !return
     !endif
-    set-variable #g4 &sin #g4 :tri-label-home
+    set-variable #g4 &sin &slo #g4 :tri-label-home
     set-variable #g2 &ind #g1
     !while  &not &seq #g2 ""
         set-variable :tri-char &lef #g2 1

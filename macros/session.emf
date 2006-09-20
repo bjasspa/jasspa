@@ -389,7 +389,7 @@ define-macro read-session
             !if #l4
                 set-variable #l5 &spr "%s%s%d active process%s" #l5 &con &len #l5 " and " "" #l4 &con &equ #l4 1 "" "es"
             !endif
-            set-variable #l5 @mc5 &spr "%s exist%s, continue anyway (?yn) ?" #l5 &con &equ &add #l3 #l4 1 "s" "" "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
+            set-variable #l5 @mc5 &spr "%s exist%s, continue anyway (?/y/n) ?" #l5 &con &equ &add #l3 #l4 1 "s" "" "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
             !if &iseq #l5 "n"
                 !abort
             !endif

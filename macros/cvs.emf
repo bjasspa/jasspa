@@ -111,7 +111,7 @@ set-variable #l0 0
         !endif
         !if &band @# 2
             !if &bmod "edit"
-                set-variable #l0 @mc5 "Save buffer first (?yn) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+                set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
                 !if &iseq #l0 "y"
                     save-buffer
                 !endif
@@ -1029,7 +1029,7 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
         set-variable #l9 0
         !if &sin "S" &lget .cvs.flags @#
             !if &and &bmod "edit" &not &seq &lef $buffer-bname 1 "*"
-                set-variable #l0 @mc5 "Save buffer first (?yn) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+                set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
                 !if &iseq #l0 "y"
                     save-buffer @mna
                 !endif
