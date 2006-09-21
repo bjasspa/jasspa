@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac053.3,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m3mac053.3,v 2.6 2006-09-21 18:39:02 bill Exp $
 .Im MicroEmacs command|file
 .so me.tni
 .TH reread-file 3
@@ -13,6 +13,7 @@ reread-file \- Reload the current buffer's file
 .Me $a
 .SH SYNOPSIS
 .na
+.I n
 .B reread-file
 .ad
 .SH DESCRIPTION
@@ -23,6 +24,12 @@ program.  If the  buffer  has been  edited  and its name does not start with a
 \&'\fC*\fR'  then the user is  prompted  as to whether  the changes  should be
 discarded.  Also  if the  buffer  has an  active  process  running  in it then
 confirmation is sort from the user before the process is killed.
+.PP
+The  argument  \fIn\fR  can  be  used  to  change  the  default  behavior  of
+reread-file described above, \fIn\fR is a bit based flag where:-
+.IP \fB0x01\fR
+Enables loss of work checks  (default), if this flag is not supplied  then the
+buffer is reread without any user prompts (useful in macros).
 .SH NOTES
 \fBreread-file\fR is a macro implemented in \fCtool.emf\fR.
 .SH "SEE ALSO"
