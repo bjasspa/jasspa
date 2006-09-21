@@ -517,7 +517,7 @@ define-macro read-session
                                 set-variable #l1 0
                                 set-variable $mode-names ".*"
                                 !if &not &seq &set #l2 $mode-names ""
-                                    !if &not &lfind "|dir|edit|pipe|nact|narrow|quiet|" #l2
+                                    !if &not &lfind "|dir|edit|lock|nact|narrow|pipe|quiet|save|" #l2
                                         !force &con &sin &mid $mode-chars #l1 1 #l6 1 -1 buffer-mode #l2
                                     !endif
                                     set-variable #l1 &add #l1 1
@@ -536,7 +536,7 @@ define-macro read-session
                                 set-variable #l1 0
                                 set-variable $mode-names ".*"
                                 !if &not &seq &set #l2 $mode-names ""
-                                    !if &not &lfind "|binary|dir|edit|pipe|rbin|nact|narrow|quiet|" #l2
+                                    !if &not &lfind "|binary|dir|edit|lock|nact|narrow|pipe|quiet|rbin|save|" #l2
                                         !force &con &sin &mid $mode-chars #l1 1 #l6 1 -1 buffer-mode #l2
                                     !endif
                                     set-variable #l1 &add #l1 1
