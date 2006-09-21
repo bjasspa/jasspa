@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd106.2,v 2.6 2006-08-19 13:15:36 jon Exp $
+.Id $Id: m2cmd106.2,v 2.7 2006-09-21 18:41:25 bill Exp $
 .Im MicroEmacs command|file
 .ds C0 "(\fB\*(cX\*cr\fR)\ \&
 .so me.tni
@@ -57,6 +57,9 @@ If this bit is set then the file hook  evaluation  is not  performed  when the
 file is loaded (i.e. the 
 .Hl "buffer's file hook"  fileHooks  2 
 is not executed).
+.IP \fB0x20\fR
+Disables  loss of work  checks,  if this bit is set then the  contents  of the
+buffer is destroyed without any user prompts (useful in macros).
 .SH "SEE ALSO"
 .na
 .Ht reread-file 3 ,
