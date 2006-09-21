@@ -96,8 +96,8 @@ define-macro fhook-dirlst
         1 buffer-mode "magic"
         1 buffer-mode "edit" "y"
         3 forward-line
-        set-variable :fmpf 32
-        insert-string " Attr    Size          Modified Name  <Order by Extension>\n"
+        set-variable :fmpf 35
+        insert-string " Attr    Size             Modified Name  <Order by Extension>\n"
         set-variable #l3 "file-browser-filter"
         set-variable #l1 0
         !while &not &seq "" &set #l2 &lget .fhook-dirlst.sc-detect &inc #l1 1
@@ -137,7 +137,7 @@ set-variable .fhook-dirlst.command-desc  "|Swap Browser \HWindows|Close File Bro
 
 set-variable .fhook-dirlst.modefunc-lbl "|Not-Filtered|Filtered|"
 set-variable .fhook-dirlst.modefunc-cmd "|file-browser-set-filter|file-browser-set-filter|"
-set-variable .fhook-dirlst.col-name "| |Attr|    Size|        Modified|Name|<Order by Extension>|"
+set-variable .fhook-dirlst.col-name "| |Attr|    Size|           Modified|Name|<Order by Extension>|"
 set-variable .fhook-dirlst.col-flag "|20|4|18|17|0|8|"
 set-variable .fhook-dirlst.sort     "|5|0|"
 set-variable .fhook-dirlst.browser-lock 0

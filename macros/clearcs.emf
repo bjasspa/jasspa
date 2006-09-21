@@ -612,7 +612,7 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
         forward-line
         !while &not &seq @wl ""
             set-variable #l7 "-"
-            set-variable #l3 &rig @wl 32
+            set-variable #l3 &rig @wl :fmpf
             !if &set #l4 &sin " -> " #l3
                 set-variable #l3 &lef #l3 &sub #l4 1
             !endif
@@ -710,12 +710,12 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
                 !endif
                 find-buffer #l1
                 end-of-buffer
-                insert-string &spr " %sm--- \eC%s%s%s       -  ----/--/-- --:-- %s" #l2 #l2 #l5 #l3 #l4
+                insert-string &spr " %sm--- \eC%s%s%s       -  ----/--/-- --:--:-- %s" #l2 #l2 #l5 #l3 #l4
             !endif
         !until &not $status
         goto-position "\x83"
         -1 buffer-mode "edit"
-        set-variable :fmpf 85
+        set-variable :fmpf &add :fmpf 53
         !force 0 delete-buffer "*cc-temp*"
         buffer-bind-create "bio" "0" "" cc-dirlst-ver-rule-toggle
         0 ml-write
