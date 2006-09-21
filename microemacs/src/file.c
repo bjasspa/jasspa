@@ -1122,30 +1122,31 @@ readDirectory(meUByte *fname, meBuffer *bp, meLine *blp)
 
 #ifdef _UNIX
         if ((tmp = localtime(&fnode->mtime)) != NULL)
-            len += sprintf((char *)buf+len, "%4d/%02d/%02d %02d:%02d ",
+            len += sprintf((char *)buf+len, "%4d/%02d/%02d %02d:%02d:%02d ",
                            tmp->tm_year+1900, tmp->tm_mon+1, tmp->tm_mday,
-                           tmp->tm_hour, tmp->tm_min);
+                           tmp->tm_hour, tmp->tm_min, tmp->tm_sec);
 
         else
 #endif
 #ifdef _DOS
         if((fnode->mtime & 0x0ffff) != 0x7fff)
-            len += sprintf(buf+len, "%4d/%02d/%02d %02d:%02d ",
+            len += sprintf(buf+len, "%4d/%02d/%02d %02d:%02d:%02d ",
                            (int) ((fnode->mtime >> 25) & 0x007f)+1980,
                            (int) ((fnode->mtime >> 21) & 0x000f),
                            (int) ((fnode->mtime >> 16) & 0x001f),
                            (int) ((fnode->mtime >> 11) & 0x001f),
-                           (int) ((fnode->mtime >>  5) & 0x003f)) ;
+                           (int) ((fnode->mtime >>  5) & 0x003f),
+                           (int) ((fnode->mtime & 0x001f)  << 1)) ;
         else
 #endif
 #ifdef _WIN32
         if(FileTimeToLocalFileTime(&fnode->mtime,&ftmp) &&
            FileTimeToSystemTime(&ftmp,&tmp))
-            len += sprintf(buf+len, "%4d/%02d/%02d %02d:%02d ",
-                           tmp.wYear,tmp.wMonth,tmp.wDay,tmp.wHour,tmp.wMinute) ;
+            len += sprintf(buf+len, "%4d/%02d/%02d %02d:%02d:%02d ",
+                           tmp.wYear,tmp.wMonth,tmp.wDay,tmp.wHour,tmp.wMinute,tmp.wSecond) ;
         else
 #endif
-            len += sprintf((char *)buf+len, "--/--/-- --:-- ") ;
+            len += sprintf((char *)buf+len, "--/--/-- --:--:-- ") ;
 
         len += sprintf ((char *)buf+len, "%s", fnode->fname);
         if(fnode->attrib[0] == 'd')
