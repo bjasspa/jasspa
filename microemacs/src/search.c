@@ -732,8 +732,6 @@ replaces(int kind, int ff, int nn)
     int	         status;	/* success flag on pattern inputs */
     int	         nlflag;	/* last char of search string a <NL>? */
     int	         nlrepl;	/* was a replace done on the last line? */
-    int	         origoff;	/* and offset (for . query option) */
-    meInt        origlno;       /* line no (for . query option) */
     meLine	*lastline = 0;	/* position of last replace and */
     int	         lastoff;       /* offset (for 'u' query option) */
     meInt        lastlno;       /* line no (for 'u' query option) */
@@ -811,7 +809,7 @@ replaces(int kind, int ff, int nn)
                 tpat[i+6] = ' ' ;
                 tpat[i+7] = '[' ;
                 i = expandexp(-1,rpat, meBUF_SIZE_MAX-i-13, i+8, tpat, -1, NULL, 0) ;
-                meStrcpy(tpat+i,"] ? ") ;
+                meStrcpy(tpat+i,((i+30) < frameCur->width) ? "] (?/y/n/a/e/l/u) ? ":"] ? ") ;
             }            
             state_mc = (state_mc == SL_GETREPLACE) ?
                 SL_FIRSTREPLACE : SL_NEXTREPLACE;
@@ -820,11 +818,6 @@ replaces(int kind, int ff, int nn)
             
         case SL_FIRSTREPLACE:		/* Do the first replacement */
             
-            /* Save original '.' position, initialise  the number of matches 
-               and substitutions, and scan through the file.  */
-            
-            origoff = frameCur->windowCur->dotOffset;
-            origlno = frameCur->windowCur->dotLineNo;
             numsub = 0;
             nummatch = 0;
             
