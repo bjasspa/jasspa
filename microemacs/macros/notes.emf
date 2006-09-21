@@ -1108,6 +1108,7 @@ define-macro notes
         notes-close
         !return
     !endif
+    set-variable #l1 $user-name
     ; See if user already has a notes file loaded
     !force 0 notes-get-frame
     !if $status
@@ -1124,10 +1125,14 @@ define-macro notes
                 !return
             !endif
         !endif
+        !force 0 find-buffer .current
+        !if &and $status &len $buffer-fname
+            set-variable #l1 $buffer-fname
+        !endif
         notes-close
     !endif
     ; None loaded, get the users default notes file
-    notes-file $user-name
+    notes-file #l1
 !emacro
  
 !if &not &exi .notes.file-id
