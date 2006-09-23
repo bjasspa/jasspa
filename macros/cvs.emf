@@ -14,6 +14,7 @@
 !if &not &exi .osd.cvsosd
     set-variable .osd.cvsosd &pinc .osd.next 1
     set-variable .osd.cvsstp &pinc .osd.next 1
+    set-variable .osd.cvshlp &pinc .osd.next 1
     define-macro cvs
     !emacro
 !endif
@@ -1354,6 +1355,7 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
             insert-string "\n A  Name"
             end-of-buffer
             backward-line
+            buffer-bind-create "bio" "esc h" .osd.cvshlp osd
             buffer-bind-create "bio" "C-return" "" cvs-state
             buffer-bind-create "bio" "C-j" ""    cvs-state
             buffer-bind-create "bio" "return" "" cvs-state-find-file
@@ -1942,3 +1944,37 @@ define-macro cvs-setup
         exec-file "cvs"
     !endif
 !emacro
+
+osd .osd.cvshlp 0 "batcDH" 9 3 99 .scheme.osd-title "CVS State Help"
+osd .osd.cvshlp 1  ""
+osd .osd.cvshlp 2  ""  "  esc h    - View This Help Page"
+osd .osd.cvshlp 3  ""
+osd .osd.cvshlp 4  ""  "  1        - Sort by Selected"
+osd .osd.cvshlp 5  ""  "  2        - Sort by State"
+osd .osd.cvshlp 6  ""  "  3        - Sort by Name"
+osd .osd.cvshlp 7  ""
+osd .osd.cvshlp 8  ""  "  space    - Toggle Cur File Select"
+osd .osd.cvshlp 9  ""  "  +        - Select Files +"
+osd .osd.cvshlp 10 ""  "  -        - Unselect Files -"
+osd .osd.cvshlp 11 ""  "  *        - Invert Selection *"
+osd .osd.cvshlp 12 ""  "  a        - Select All"
+osd .osd.cvshlp 13 ""  "  u        - Unselect All"
+osd .osd.cvshlp 14 ""
+osd .osd.cvshlp 15 ""  "  return   - Open File"
+osd .osd.cvshlp 16 ""  "  delete   - Delete Files"
+osd .osd.cvshlp 17 ""  "  C-delete - CVS remove files"
+osd .osd.cvshlp 18 ""  "  k        - Open CVS tool menu"
+osd .osd.cvshlp 19 ""  "  C-k      - Remove current line"
+osd .osd.cvshlp 20 ""  "  C-return - Rerun cvs-state"
+osd .osd.cvshlp 21 ""
+osd .osd.cvshlp 22 ""  "  CVS States:"
+osd .osd.cvshlp 23 ""
+osd .osd.cvshlp 24 ""  "  A  Add      - file flagged to be added"
+osd .osd.cvshlp 25 ""  "  C  Conflict - local and repository changed"
+osd .osd.cvshlp 26 ""  "  L  Lost     - local file has been deleted"
+osd .osd.cvshlp 27 ""  "  M  Modified - local file has been changed"
+osd .osd.cvshlp 28 ""  "  P  Patched  - repository version has changed  "
+osd .osd.cvshlp 29 ""  "  R  Removed  - file flagged to be removed"
+osd .osd.cvshlp 30 ""  "  U  Updated  - repository version has changed"
+osd .osd.cvshlp 31 ""
+osd .osd.cvshlp 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void 
