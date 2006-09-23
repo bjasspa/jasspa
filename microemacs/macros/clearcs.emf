@@ -16,6 +16,7 @@
 !if &not &exi .osd.ccosd
     set-variable .osd.ccosd  &pinc .osd.next 1
     set-variable .osd.ccstp  &pinc .osd.next 1
+    set-variable .osd.ccshlp &pinc .osd.next 1
     set-variable .osd.ccgen  &pinc .osd.next 1
     set-variable .osd.ccnb   &pinc .osd.next 1
     set-variable .osd.ccgenv &pinc .osd.next 1
@@ -967,6 +968,7 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
         insert-string "\n A  Name"
         -1 buffer-mode "edit"
         1 buffer-mode "view"
+        buffer-bind-create "bio" "esc h" .osd.ccshlp osd
         buffer-bind-create "bio" "C-return" "" cc-state
         buffer-bind-create "bio" "C-j" ""    cc-state
         buffer-bind-create "bio" "return" "" cc-state-find-file
@@ -2239,3 +2241,39 @@ define-macro cc-setup
         osd @# 130 "" "Delete elements"
     !endif
 !emacro
+
+; cc-state help ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+osd .osd.ccshlp 0 "batcDH" 9 3 99 .scheme.osd-title "ClearCase State Help"
+osd .osd.ccshlp 1  ""
+osd .osd.ccshlp 2  ""  "  esc h    - View This Help Page"
+osd .osd.ccshlp 3  ""
+osd .osd.ccshlp 4  ""  "  1        - Sort by Selected"
+osd .osd.ccshlp 5  ""  "  2        - Sort by State"
+osd .osd.ccshlp 6  ""  "  3        - Sort by Name"
+osd .osd.ccshlp 7  ""
+osd .osd.ccshlp 8  ""  "  space    - Toggle Cur File Select"
+osd .osd.ccshlp 9  ""  "  +        - Select Files +"
+osd .osd.ccshlp 10 ""  "  -        - Unselect Files -"
+osd .osd.ccshlp 11 ""  "  *        - Invert Selection *"
+osd .osd.ccshlp 12 ""  "  a        - Select All"
+osd .osd.ccshlp 13 ""  "  u        - Unselect All"
+osd .osd.ccshlp 14 ""
+osd .osd.ccshlp 15 ""  "  return   - Open File"
+osd .osd.ccshlp 16 ""  "  delete   - Delete Files"
+osd .osd.ccshlp 17 ""  "  C-delete - ClearCase remove files"
+osd .osd.ccshlp 18 ""  "  k        - Open ClearCase tool menu"
+osd .osd.ccshlp 19 ""  "  C-k      - Remove current line"
+osd .osd.ccshlp 20 ""  "  C-return - Rerun cc-state"
+osd .osd.ccshlp 21 ""
+osd .osd.ccshlp 22 ""  "  ClearCase States:"
+osd .osd.ccshlp 23 ""
+osd .osd.ccshlp 24 ""  "  c  Checked out - The file has been checked out"
+osd .osd.ccshlp 25 ""  "  h  Hijacked    - The file has been edited without being checked out"
+osd .osd.ccshlp 26 ""  "  m  Missing     - The file has been loaded but then deleted"
+osd .osd.ccshlp 27 ""  "  M  CO Missing  - The file has been loaded, checked out and then deleted  "
+osd .osd.ccshlp 28 ""  "  n  Not loaded  - The file has not been loaded due to the config spec"
+osd .osd.ccshlp 29 ""  "  p  Private     - The file is a new, unmanaged file"
+osd .osd.ccshlp 30 ""  "  ?  ???         - Strange unsupported state - please report"
+osd .osd.ccshlp 31 ""
+osd .osd.ccshlp 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void 
