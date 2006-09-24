@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Wed Sep 20 20:48:00 2006
 .\"
-.Id $Id: m9typ047.9,v 2.2 2006-09-24 13:11:27 jon Exp $
+.Id $Id: m9typ047.9,v 2.3 2006-09-24 17:16:02 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH jst 9
@@ -25,6 +25,11 @@ documents to be constructed  with the minimal amount of additional  annotation
 and which  remains  readable in its raw ASCII form. The  motivation  for doing
 this is to  quickly  construct  documents  and  notes for  publication  whilst
 editing within \*(mS.
+.PP
+.B JST
+is a richer mark-up than the simpler
+.Ht doc 9 
+file type.
 .PP
 The main requirements of JST are:
 .BS
@@ -312,11 +317,436 @@ The content may include
 \fC!r\fR Right justify text
 \fIalso embedded images, see later.\fR
 .fi
-.ad        
+.ad
+Columns and rows may be joined both  horizontally and vertically by specifying
+the join in the cell definition.  '\fB]>'\fR performs a horizontal cell join of
+two  cells, a single  '\fB>\fR'  should be added for each  additional  cell so
+\'\fB]>>\fR' joins 3 cells horizontally. A vertical join is similarly specified
+with '\fB]v\fR'.
+.ne 14
+.CS
+] 3 3
+            
+]>> Single top row with 3 columns joined content.
+
+]v 2 rows joined in the first column content.
+
+]> 2nd row 2nd and 3rd column joined content.
+
+] 3rd row 2nd column content.
+
+] 3rd row 3rd column content.
+.CE 0
+.SS "Special Characters and Symbols"
+Special characters are introduced with  '\fB[[\fR\|\fIspecial\fR\|\fB]]\fR' and
+are defined as follows:
+.TP
+\fC[[nl]]\fR
+.\"
+Newline.
+.TP
+\fC[[np]]\fR
+.\"
+New page. This is not supported in HTML or text.
+.TP
+\fC[[nf]]\fR        
+.\"
+New file, the  effect is dependent on the output format:
+.RS
+.BP html 
+Starts a new html  file,  typical  use of this is when the first  file
+contains  the TOC with links to the  subsequent  files.
+.BP latex
+Just starts a new page, i.e. same as \fB[[np]]\fR.
+.BP rtf
+Just starts a new page, i.e. same as \fB[[np]]\fR.
+.BP text
+Ignored.
+.RE
+.TP
+\fC[[toc]]\fR  
+.\"
+Inserts an automatically generated table of contents.
+.TP
+\fC[[---]]\fR
+Inserts a horizontal line. This must be the only text on the line.
+.SS "Tags and Hyperlinks"
+Most of the more complex formatting is performed with tags. The general format
+of a tag is defined as:
+.IP
+\fB[\fR\|\fI<tag-id><options> <args>\fR\|\fB]\fR
+.LP
+If a argument contains a space or a '\fB]\fR' then it must be quoted, e.g.:
+.CS
+[c this-is-okay]
+[c "this is okay"]
+[c "this [\\"is\\"] okay"]
+.CE
+A tag may support numerous  options, the order of the options is not important
+but the order of their  arguments  is as  specified in the docs, not the order
+given with the tag therefore
+.B "[idw <image> <depth> <width>]"
+is still
+.BR "[iwd <image> <depth> <width>]" .
+The text that actually appears in any generated  document should not appear in
+a tag as the spelling check should skip the contents of a tag. This means that
+a link should take the HTML form of encasing the text label with start and end
+tags rather than being in the tag itself. One  exception  would be the setting
+of a variable.
+.\"
+.BP "Comment Tag"
+Inserts a comment.
+.RS
+.PP
+\fB[c\fR \fI<0+args>\fR\|\fB]\fR
+.PP
+There may be any number of arguments, the whole tag is ignored. As the comment
+ends with a ']' and ']' char in the comment must be quoted, i.e.:
+.CS
+[c this is a comment with a "]" "char[23]" in it]
+.CE 0
+.RE
+.\"
+.BP "Anchor Tag"
+Internal document reference.
+.RS
+.PP
+\fB[a\fR \fI<name>\fR\|\fB]\fR
+.PP
+An anchor tag can be placed anywhere and referenced by a link .
+.RE
+.\"
+.BP "Foreground and Background Color Tag"
+Modifies the color of the text foreground and background.
+.RS
+.PP
+\fB[f\fR \fI<color>\fR\|\fB]\fR .... \fB[f]\fR
+.PP
+Sets the current foreground color where  \fI<color>\fR is either a direct HTML
+format color definition (e.g. "\fC#ff0000\fR" for \fBred\fR) or a previously defined color name.
+.PP
+\fB[b\fR \fI<color>\fR\|\fB]\fR .... \fB[b]\fR
+.PP
+Sets similarly sets the current background color.
+.PP
+A number of options are supported by the color tag as follows:
+.TP
+\fB[fs\fR \fI<name>\fR \fI<color>\fR\|\fB]\fR
+.\"
+Define color  '\fI<name>\fR'  to be  '\fI<color>\fR',  the \fI<name>\fR may be
+references in the \fBf\fR/\fBb\fR color references.
+.TP
+\fB[fd\fR \fI<color>\fR\|\fB]\fR
+.\"
+Sets the default foreground color to \fI<color>\fR.
+.TP
+\fB[bd\fR \fI<color>\fR\|\fB]\fR
+.\"
+Sets the default background color to \fI<color>\fR.
+.RE
+.\"
+.BP "Link Tag"
+Link to another part of the document or URL.
+.RS
+.PP
+\fB[l\fR \fI<url>\fR\|\fB]\fR .... \fB[l]\fR
+.PP
+Creates a hyperlink with the text with '\fC....\fR'  going to the \fI<url>\fR,
+The format of the url uses the standard  HTML syntax, a link  starting  with a
+hash  '\fC#\fR'  is  assumed  to be local and a warning  will be issued if the
+corresponding  anchor  point  is not  found.  An  error  is  generated  if the
+\fB[l]\fR is missing.
+.PP
+Urls   appearing   in  the   text   like   '\fChttp://www.jasspa.com\fR'   are
+automatically  turned  into  links.  To avoid  this  quote  the  string,  i.e.
+""http://www.jasspa.com""
+.RE
+.\"
+.BP "Image Tag"
+Insert an image in the document.
+.RS
+.PP
+\fB[i\fR \fI<image-name>\fR\|\fB]\fR
+.PP
+Inserts an image \fI<image-name>\fR, for example \fB[i\ me.png]\fR
+.PP
+Additional options allow the depth and width of the image to be specified:
+.PP
+\fB[idw\fR \fI<image-name> <depth> <width>\fR\|\fB]\fR
+.PP
+Where option  \fBd\fR  specifies the depth of image and \fBw\fR  specifies the
+width of the image. e.g. \fC[iw  test.jpg  60]\fR. The size is given in pixels
+and the conversion variable '\fIimage-ppi\fR' is used to convert is a physical
+paper size. The width may also be specified as a percentage, e.g. \fB50%\fR.
+.RE
+.\"
+.BP "Use Tag"
+Insert a file at the current point.
+.RS
+\fB[u\fR \fI<file-name>\fR\|\fB]\fR
+.PP
+Inserts \fI<file-name>\fR into the current location and processes it as if part of the original docuement.
+e.g.  \fC[u\fR  \fCinsert.jst]\fR  inserts  the file  \fIinsert.jst\fR  at the
+current position in the file.
+.RE
+.\"
+.BP "Variable Tag"
+Insert a variable.
+.RS
+.PP
+\fB[v\fR \fI<variable-name>\fR\|\fB]\fR
+.PP
+Inserts the current value of variable  \fI<variable-name>\fR,  variable  names
+may only contain alphanumeric characters and '\fC-\fR'.
+.PP
+The variable supports a set of simple options that allow the variable value to
+be  manipulated  prior to insertion e.g. for handling  numbers etc. The option
+syntax is defined as follows:
+.PP
+\fB[vdinrs\fR     \fI<variable-name>\fR     \fI<value>\fR    \fI<increment>\fR
+\fI<reference-name>\fR\|\fB]\fR
+.BP d
+Define the reference \fI<reference-name>\fR for the current value.
+.BP i
+Pre-increment the variable value by \fI<increment>\fR prior to insertion.
+.BP n
+Do not insert the variable value.
+.BP r
+Insert the \fI<reference-name>\fR value.
+.BP s
+Set the value to \fI<value>\fR first.
+.LP
+As an example, consider the following  sequence to implement figure labels and
+reference them:
+.CS
+[vsn figure 0]
+
+[i figure1.jpg]
+Figure [vid figure 1 figA] - my first figure
+        
+some more text
+        
+[i figure2.jpg]
+Figure [vid figure 1 figB] - my second figure
+
+To see  **figure [vr figure  figA]** //my first  figure// and **figure
+[vr figure figB]** //my second figure//. 
+
+To see  **figure [vr figure  figA]** //my first  figure// and **figure
+[vr figure figB]** //my second figure//. 
+.CE
+An undefined variable has a value of "\fCERROR\fR", it can be defined by using
+either option  '\fBs\fR' or '\fBi\fR' in which case the value is \fC0\fR, i.e.
+the following can be used
+.PP
+.C "= Chapter 1: Will be 1 at the top of the doc"
+.PP
+A set of special variables are automatically defined:
+.BP title
+The document title.
+.BP author
+The author
+.BP image-ppi
+Image  pixels  per inch  resolution  setting,  this is the  resolution  of the
+generated document in inches.
+.RE
+.\"
+.BP "Output Dump Tag"
+Dump output text.
+.RS
+.PP
+\fB[o\fR \fI<out-type> <raw-text>\fR\|\fB]\fR
+.PP
+Dumps   \fI<raw-text>\fR  into  the  output  if  the  target  output  type  is
+\fI<out-type>\fR,   where   \fI<out-type>\fR  can  be  \fBall\fR,  \fBhtml\fR,
+\fBlatex\fR, \fBrtf\fR and \fBtext\fR.
+.RE
+.BP "Dump Tag"
+Dumps the tag for processing.
+.RS
+.PP
+\fB[d\fR \fI<out-type> <text>\fR\|\fB]\fR
+.PP
+This  command is similar to Output  Dump Tag except  this is done first so the
+\fI<text>\fR  is  processed,  this  can be  used  to  define  output  specific
+formatting, e.g. (note that the \\ at the end of the line is used here to show
+that the content should be placed on a single line).
+.CS
+[d html "[vsn large-font-start \\"..html def..\\"] \\
+         [vsn large-font-end \\"..html def..\\"]"]
+[d latex "[vsn large-font-start \\"..latex def..\\"] \\
+          [vsn large-font-end \\"..latex def..\\"]"]
+[d text "[vsn large-font-start \\"\\"][vsn large-font-end \\"\\"]"]
+.CE
+so in the main body of the text:
+.CS
+[v large-font-start] Large Text [v large-font-end]
+.CE
+This is a complex  concept and is beyond most users  requirements,  but making
+this kind of thing  possible  means that users  should be able to do  whatever
+they need to.
+.RE
 .SH TEMPLATE
-The template supports highlighting and indention.
+The  template  supports  highlighting  and  indention  including  commands for
+exporting JST to another format:
+.BP "jst-to-htm"
+Export the JST definition to an HTML file with \fB.htm\fR extension.
+.BP "jst-to-html"
+Export the JST definition to an HTML file with \fB.htm\fR extension.
+.BP "jst-to-rtf" 
+Export the JST  definition  to an RTF file, for this export then the file name
+is  \fB.rtf\fR  but the content is HTML.  
+.Hr Word 1 
+and
+.Hr StarOffice 1
+know how to convert this when imported. 
+.BP "jst-to-latex"
+Convert to a LaTeX file format.
+.SH FILES
+JST is controlled by the macro files  \fChkjst.emf\fR which contains the basic
+template. \fCjstutl.emf\fR includes the utilities used for conversion to other
+formats.
+.SH "INTERNAL FORMAT"
+\fBJST\fR  uses an internal  neutral  format  which is used in the  conversion
+process, this allows  different  back end output format  drivers to be written
+against  the  neutral  format  without  dealing  with the input  syntax.  This
+intermediate  format  is not  visible  to the  user and does not  exist in the
+output. The internal format is defined as follows:
+.TP
+\fB\\bF?\fR....\fB\\bf?\fR
+.\"
+Font          style          change          where          \fB?\fR         is
+\fBB\fR,\fBI\fR,\fBU\fR,\fBM\fR,\fBp\fR,\fBb\fR).
+.TP
+\fB\\bDD\\bDF\fR\|\fI<color>\fR\|\fB\\bDB\fR\|\fI<color>\fR\|\fB\\bdD\fR....\fB\\bDd\fR
+.\"
+Foreground or background color change where  \fI<color>\fR = hexadecimal value
+\fCRRGGBB\fR. Note that  \fB\\bDF\fR\|\fI<c>\fR or \fB\\bDB\fR\|\fI<c>\fR  may
+be be omitted.
+.TP
+\fB\\bIT\fR\|\fI<image-name>\fR\|\fB\\biT\fR
+.\"
+Insert an image without scaling.
+.TP
+\fB\\bIT\fR\|\fI<image-name>\fR\|\fB\\bID\|\fI<depth>\fR\|\fB\\biD\\bIW\fR\|\fI<width>\fR\|\fB\\biW\\biT\fR
+.\"
+Insert an image with scaling.
+.TP
+\fB\\bTA\fR\|\fI<anchor-name>\fR\|\fB\\btA\fR
+.\"
+A local anchor label.
+.TP
+\fB\\bTL\fR\|\fI<link-url>\fR\|\fB\\btL\fR\|\fI<link-text>\fR\|\fB\\bTl\fR
+.\"
+URL Link.
+.TP
+\fB\\bTV\fR\|\fI<variable-name>\fR\|_\|\fI<variable-ref>\fR\|\fB\\btV\fR
+.\"
+A variable name (temporary).
+.TP
+\fB\\bSF\fR
+.\"
+Start new file.
+.TP 
+\fB\\bSL\fR
+.\"
+Start new line.
+.TP
+\fB\\bSP\fR
+.\"
+Start new page.
+.TP
+\fB\\bSN\fR
+.\"
+No-text symbol.
+.TP
+\fB\\bST\fR
+.\"
+Insert the table of content (temporary)
+.TP
+\fB\\bPI\fR
+.\"
+Indent level.
+.TP
+\fB\\bPT\fR
+.\"
+Indent tab level (used only in generated TOC).
+.TP
+\fB\\bPB\fR....\fB\\bpB\fR
+.\"
+Paragraph - justification both.
+.TP
+\fB\\bPC\fR....\fB\\bpC\fR
+.\"
+Paragraph - justification center.
+.TP
+\fB\\bPF\fR....\fB\\bpF\fR
+.\"
+Paragraph - File style block.
+.TP 
+\fB\\bPL\fR....\fB\\bpL\fR
+.\"
+Paragraph - justification left.
+.TP
+\fB\\bPN\fR....\fB\\bpN\fR
+.\"
+Paragraph - justification none.
+.TP
+\fB\\bPR\fR....\fB\\bpR\fR
+.\"
+Paragraph - justification right.
+.TP
+\fB\\bH#\fR....\fB\\bh#\fR
+.\"
+Heading, e.g. \fB\\bH1\fR....\fB\\bh1\fR
+.TP
+\fB\\bBI\fR\fB\\bB?\fR...\fB\\bb?\fR\fB\\bB?\fR...\fB\\bb?\fR\fB\\bbI\fR
+.\"
+Item list start and end tags.
+.TP
+\fB\\bBB\fR....\fB\\bbB\fR
+.\"
+Bullet item.
+.TP
+\fB\\bBN#\fR\fB\\bBn\fR....\fB\\bbN\fR
+.\"
+Item # in numbered item list.
+.TP 
+\fB\\bBU#\fR\fB\\bBu\fR....\fB\\bbU\fR
+.\"
+Item # in uppercase letter item list
+.TP
+\fB\\bBL#\fR\fB\\bBl\fR....\fB\\bbL\fR
+.\"
+Item # in lowercase letter item list.
+.TP
+\fB\\bBR#\fR\fB\\bBr\fR....\fB\\bbR\fR
+.\"
+Item # in uppercase roman numeral item list.
+.TP
+\fB\\bBS#\fR\fB\\bBs\fR....\fB\\bbS\fR
+.\"
+Item # in lowercase roman numeral item list.
+.TP
+\fB\\bCT\fR\|\fI<flags>\fR\|\fB\\bCt\fR\|\fI<widths>\fR\|\fB\\bct\fR....\fB\\bcT\fR
+.\"
+Table - Entire table (contains rows).
+.br
+\|\fI<flags>\fR\| can be any of \fBh\fR, \fBc\fR or \fBr\fR.
+.br
+\|\fI<widths>\fR\| is an ME list 
+.C "|no col|width table|width of col 1|width of col 2|...|"
+.TP
+\fB\\bCR\fR....\fB\\bcR\fR
+.\"
+Table - Row (contains columns)
+.TP
+\fB\\bCC\fR....\fB\\bcC\fR
+.\"
+Table - column (single cell)
 .SH "SEE ALSO"
 .na
+.Ht doc 9 ,
 .Hl "Supported File Types" FileTypes -
 .ad
 .FH
