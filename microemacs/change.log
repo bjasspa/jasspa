@@ -4,10 +4,8 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <060828.2058>
+>  Last Modified : <060924.1843>
 >
-
-    [060822] 2006 RC1 release.
 
     User perspective summary of changes
 
@@ -44,7 +42,7 @@
     * Highlighting  improved,  especially  for long script files (html / php /
       javascript) where the highlighting used to be lost.
 
-    * jst(8) - Structured text documents (needs some doc).
+    * jst(9) - Structured text documents.
 
     * insert-password(3) password generation utility for system administrators
       who tire of thinking of new passwords.
@@ -59,10 +57,141 @@
 
     * Quick  directory  aliases such as "~proj" or "~work" etc. may be defined
       to a longer pathname using alias-path-setup(3).
-      
+
     * Support for Adobe/Macromedia ColdFusion.
 
     * Bug fixes and enhancements to existing commands and functions.
+
+    [060921] Improved the notes display to better preserve the current notes file.
+
+    [060921] Stopped  read-session from trying to restore lock and save buffer
+             modes.
+
+    [060921] Improved the query-replace prompt to list letter options when the
+             width allows.
+
+    [060921] Browser.  Added  seconds  to  the  info  given  for a  file  in a
+             directory  listing. Fixed dir list hooks to handle mod times with
+             seconds.
+
+    [060921] Changed char prompts to have '/' dividers.
+
+    [060921] Added new bit 0x20 to read-file to discard changes to buffer.
+
+    [060919] Build.  Added  $MAKEWINDEFS  and LIBS to the  ME_WINDOW  defines,
+             removed  references  to xpm from the  makefiles  as this is not a
+             standard  package  and  moved  references  out  of  emain.h  into
+             unixterm.c.  Vamped up build shell  script to check for X11 & Xpm
+             availability. Changed horrid dos style empty string tests in UNIX
+             scripts with -z & -n test options
+
+    [060918] Standardized  the form of  character  input  prompts and improved
+             routine so '?' swaps  between  help and prompt.  Added a 'N(o) to
+             all' option to  save-some-buffers  and changed  fill-pharagraph's
+             'Never' to 'N(o) to all'. For query-replace, changed the help for
+             '!' to 'Yes to  (a)ll'  and  added  'a',  changed  'i' to 'e' and
+             removed '.' option.
+
+    [060918] Changed  debugger '!' to 'c', in keeping with other debuggers for
+             'continue'.
+
+    [060918] Added bit 0x04 to @mc flag so macro can supply a help string
+
+    [060917] Corrected the X-Windows  ordering to allow us to receive  (Un)Map
+             events  on  Linux -  X-Server  behavior  is  different  from  Sun
+             Solaris.
+
+    [060917] UNIX. Added XPM colour bitmap  support. Just smartens the ME icon
+             up in Gnome and makes ME look a bit more 21st century without the
+             monochrome icon.
+
+    [060917] Shell template, addition of missing common commands.
+
+    [060917] JST, addition of other text insertions.
+
+    [060917] UNIX. Corrected X-Windows positioning from popup-window.
+
+    [060917] Added  new  48x48  icon for  gnome  with  transparency  boarder -
+             complaints that existing icons were not Gnome friendly!
+
+    [060917] UNIX. Corrected  X-Windows  hints for font size change.  Requires
+             that  the  X-Window  is  unmapped  before  the  size  hint may be
+             modified and the re-mapped.
+
+    [060915] Notes. Fixed next-frame prefered selection order.
+
+    [060915] OSD.  Sanitised  the quick  file open and file type  buffer  open
+             menus  and  changed   them  to  use  a  scrolled   list  if  more
+             files/buffers than lines rather than filling the screen.
+
+    [060915] In notes  find a file that is loaded  but out of date, this leads
+             to an reread  prompt during which the notes  ehook/idle  callback
+             kicks in and changes frame - this breaks the message line of both
+             frames. This is a rather horrid fix to a rather grotty problem!
+
+    [060915] Browser,  fixed  the  sort  order to be case  sensitive  on UNIX,
+             insensitive on Windows
+
+    [060914] User setup.  Stopped  user-setup's  Apply from losing the current
+             session's override colour scheme
+
+    [060914] ClearCase.  Fixed  Describe  context menu hotkey  overload.  Used
+             -mkpath to implement a 'checkout parent' for cc-add.
+
+    [060913] Notes.  Fixed the  loosing  of edit and crypt  mode from the main
+             notes  buffer due to the  setting of the major mode. Fixed  notes
+             tree context menu hot keys.
+
+    [060913] Fixed kill-list tool up-date trashing the real kill ring.
+
+    [060912] Changed session-update to store view mode for a buffer only if it
+             was forced on by the user (i.e. the file is not  readonly).  This
+             stops  files  re-loading  in view  mode if the  permissions  have
+             changed - this was a problem  with  ClearCase  reported  by Enver
+             Haase.
+
+    [060912] Simplified  the new  note-setup and fixed the notes buffer losing
+             the hide mode (which causes problems for session restore).
+
+    [060911] Removed  the notes  'note'  dummy  hook in favour of using a real
+             hook.  Set the  default  hook to be jst but can be set in the -!-
+             enf;  major-mode:  <hook> -!- header. Added new note-setup  which
+             users  buffer-setup  to allow  the user to setup the  buffer  and
+             stores the values for that note.
+
+    [060908] File browser, bound a file-attrib  based 'Change File Attributes'
+             option to 'g'
+
+    [060908] Changed  file-attrib to handle directory  buffers  correctly and,
+             with a numeric  arg of 0, change  the  attibutes  of a given file
+             (i.e. not the current buffer) Implementation  changed to now have
+             a Cancel button.
+
+    [060908] File tool,  implemented  new %"...%" tag to enable proper quoting
+             of arguments.
+
+    [060907] Fixed startup buffer  hilighting issue caused by order of session
+             restore.
+
+    [060905] ColdFusion   template,  added  sting   highlighting  to  the  SQL
+             statements.
+
+    [060905] File browser, added binary edit, bound to 'b'.
+
+    [060905] Added  basic xml "/>" single tag  support to html and fixed xml's
+             insert-attrib to handle this
+
+    [060905] Changed    refences   to   white-char*   to   whitespaces   (i.e.
+             display-white-chars  -> display-whitespace)  Fixed hide main menu
+             to popup an info dialog informing the user how to get it back.
+
+    [060905] Fixed ftp dialog to conform to new <user>.erf  setup  standard by
+             adding a new 'Make Default' dialog, and improved the behaviour of
+             Enter in the dialog.
+
+    [060904] Corrected the ColdFusion closing bracket hgilight.
+
+    [060904] Shortened the document template formating menu text strings.
 
     [060829] Fixed HTML  template  html-insert-tag  to add the  closing "/" on
              insertion of a "<singleTag/>". Fixed  html-insert-attrib  to deal
@@ -72,7 +201,7 @@
 
     [060827] New  language  template  for  Adobe/MacroMedia  ColdFusion  (file
              extensions .cfm, .cfml .cfc).
-    
+
     [060827] Extended indentation with the 'u' and 'v' indentation types.
 
     [060822] 2006 RC1 Release.
