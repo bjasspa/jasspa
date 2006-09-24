@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.45 2006-09-02 16:32:25 jon Exp $
+.Id $Id: me.nrs,v 2.46 2006-09-24 18:17:54 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -2056,28 +2056,31 @@ etc. are not as slick as they  could be,  certainly  under  Microsoft  Windows
 common editor across all working platforms has been achieved!
 .SS "Development History"
 .\"
-.B "9th Release - In progress"
+.B "9th Release - September 2006"
+.br
+Release date specified as 2006/09/09.
+.PP
 User perspective summary of changes
 .BS
 .Ht MainMenu 3
 - A more consistent main menu and user dialog interaction.
 .BU
 .Ht file-browser 3
-- New key bindings to create, delete, copy files and directories. 
+- New key bindings to create, delete, copy files and directories.
 .Ht file-tool-setup 3
 allows  open  actions  to be  associated  with file types  allowing  automatic
 launching of external tools.
-.BU        
+.BU
 Introduction  of major modes for management of different file types.
 .Ht buffer-major-mode 3
 assigns  a  new  operating  mode  to  a  buffer  affecting  the  highlighting,
 indentation, key binding etc.
 .Ht major-mode-setup 3
-configures the behavior of the major mode. 
-.BU            
+configures the behavior of the major mode.
+.BU
 Introduction  of sessions which store the context of editor  including  window
 layout  and  loaded   files.   Multiple   sessions  may  be  used,   "\fBme\fR
-\fB-c\fR\fI<sessionName>\fR" restores a specific session. 
+\fB-c\fR\fI<sessionName>\fR" restores a specific session.
 .Ht save-session 3
 and
 .Ht read-session 3
@@ -2088,7 +2091,7 @@ removed.
 support for IBM Rational ClearCase.
 .BU
 .Ht cvs 3
-improved support within the 
+improved support within the
 .Ht file-browser 3 .
 .BU
 .Ht notes 3
@@ -2097,17 +2100,17 @@ utility  extended,  new  features  allow  quick  notes  to be  generated  with
 \fBnotes-context\fR.
 .BU
 .Ht rdiff 3
-recursive difference and 
+recursive difference and
 .Ht xdiff 3
 for access to an external graphical difference tool.
 .Ht forward-kill-word 2
 inconsistencies removed.
-.BU        
+.BU
 Highlighting  improved,  especially  for  long  script  files  (html  /  php /
 javascript) where the highlighting used to be lost.
-.BU        
-.Hr jst 8
-- Structured text documents (needs some doc).
+.BU
+.Ht jst 9
+- Structured text documents.
 .BU
 .Ht insert-password 3
 password generation utility for system  administrators who tire of thinking of
@@ -2119,21 +2122,158 @@ Fill columns are now defined on a per buffer basis
 .Ht indent-increase 3
 and
 .Ht indent-decrease 3
-commands introduced to change the indentation of a region. 
-.BU          
+commands introduced to change the indentation of a region.
+.BU
 The default date format may be specified by the user with
 .Ht .ascii-time.format 5 .
-.BU          
+.BU
 Quick  directory  aliases such as  "\fB~proj\fR" or "\fB~work\fR"  etc. may be
-defined to a longer pathname using 
+defined to a longer pathname using
 .Ht alias-path-setup 3 .
 .BU
 Language template added for Adobe Macromedia ColdFusion.
-.BU           
+.BU
 Bug fixes and enhancements to existing commands and functions.
 .BE
 .B "Development history"
 .BS
+[060921] Improved the notes display to better preserve the current notes file.
+.BU
+[060921] Stopped
+.Ht read-session 3
+from trying to restore lock and save buffer modes.
+.BU
+[060921] Improved the  \fBquery-replace\fR  prompt to list letter options when
+the width allows.
+.BU
+[060921]  Browser.  Added  seconds to the info given for a file in a directory
+listing. Fixed dir list hooks to handle mod times with seconds.
+.BU
+[060921] Changed char prompts to have '\fC/\fR' dividers.
+.BU
+[060921] Added new bit 0x20 to
+.Ht read-file 2
+to discard changes to buffer.
+.BU
+[060919] Build. Added  $MAKEWINDEFS and LIBS to the ME_WINDOW defines, removed
+references  to xpm from the  makefiles  as this is not a standard  package and
+moved references out of \fIemain.h\fR into  \fIunixterm.c\fR.  Vamped up build
+shell  script to check for X11 & Xpm  availability.  Changed  horrid dos style
+empty string tests in UNIX scripts with \fB-z\fR & \fB-n\fR test options
+.BU
+[060918] Standardized the form of character input prompts and improved routine
+so '\fC?\fR'  swaps  between  help and prompt.  Added a  '\fCN(o)\fR  \fCto\fR
+\fCall\fR' option to
+.Ht save-some-buffers 2
+and changed
+.Ht fill-paragraph 2
+to  '\fCNever\fR' to '\fCN(o) to all\fR'. For  \fBquery-replace-*\fR,  changed
+the help for  '\fC!\fR' to '\fCYes to (a)ll\fR' and added  '\fCa\fR',  changed
+\'\fCi\fR' to '\fCe\fR' and removed '\fC.\fR' option.
+.BU
+[060918]  Changed  debugger  '\fC!\fR'  to  '\fCc\fR',  in keeping  with other
+debuggers for \fIcontinue\fR.
+.BU
+[060918] Added bit 0x04 to
+.Ht @mc 4
+flag so macro can supply a help string
+.BU
+[060917]  Corrected  the  X-Windows  ordering  to allow us to receive  (Un)Map
+events on Linux - X-Server behavior is different from Sun Solaris.
+.BU
+[060917]  UNIX. Added XPM colour bitmap  support. Just smartens the ME icon up
+in Gnome  and makes ME look a bit more 21st  century  without  the  monochrome
+icon.
+.BU
+[060917] Shell template, addition of missing common commands.
+.BU
+[060917] JST, addition of other text insertions.
+.BU
+[060917] UNIX. Corrected X-Windows positioning from popup-window.
+.Bu
+[060917] Added new 48x48 icon for gnome with transparency boarder - complaints
+that existing icons were not Gnome friendly!
+.BU
+[060917] UNIX. Corrected  X-Windows hints for font size change.  Requires that
+the  X-Window  is  unmapped  before  the  size  hint may be  modified  and the
+re-mapped.
+.BU
+[060915] Notes. Fixed
+.Ht next-frame 2
+prefered selection order.
+.BU
+[060915]  OSD.  Sanitised  the quick file open and file type buffer open menus
+and  changed  them to use a  scrolled  list if more  files/buffers  than lines
+rather than filling the screen.
+.BU
+[060915] In notes find a file that is loaded but out of date, this leads to an
+reread prompt during which the notes ehook/idle  callback kicks in and changes
+frame - this breaks the message  line of both frames. This is a rather  horrid
+fix to a rather grotty problem!
+.BU
+[060915]  Browser,  fixed  the  sort  order  to be  case  sensitive  on  UNIX,
+insensitive on Windows
+.BU
+[060914] User setup.  Stopped  user-setup's  apply from losing the current
+session's override colour scheme
+.BU
+[060914]   ClearCase.  Fixed  Describe  context  menu  hotkey  overload.  Used
+\fC-mkpath\fR to implement a '\fIcheckout parent\fR' for \fBcc-add\fR.
+.BU
+[060913]  Notes.  Fixed the loosing of edit and crypt mode from the main notes
+buffer due to the setting of the major mode. Fixed notes tree context menu hot
+keys.
+.BU
+[060913] Fixed kill-list tool up-date trashing the real kill ring.
+.BU
+[060912] Changed session-update to store view mode for a buffer only if it was
+forced  on by the  user  (i.e. the file is not  readonly).  This  stops  files
+re-loading in view mode if the  permissions  have changed - this was a problem
+with ClearCase reported by Enver Haase.
+.BU
+[060912]  Simplified  the new note-setup and fixed the notes buffer losing the
+hide mode (which causes problems for session restore).
+.BU
+[060911]  Removed  the notes 'note' dummy hook in favour of using a real hook.
+Set  the  default  hook  to be jst but can be set in the -!- enf;  major-mode:
+<hook> -!- header. Added new note-setup which users  buffer-setup to allow the
+user to setup the buffer and stores the values for that note.
+.BU
+[060908] File browser, bound a
+.Ht file-attrib  3
+based 'Change File Attributes' option to 'g'
+.BU
+[060908] Changed
+.Ht file-attrib 3
+to handle directory buffers correctly and, with a numeric arg of 0, change the
+attibutes of a given file (i.e. not the current buffer) Implementation changed
+to now have a Cancel button.
+.BU
+[060908] File tool, implemented new \fC%"...%"\fR tag to enable proper quoting
+of arguments.
+.BU
+[060907]  Fixed  startup  buffer  hilighting  issue caused by order of session
+restore.
+.BU
+[060905] ColdFusion template, added sting highlighting to the SQL statements.
+.BU
+[060905] File browser, added binary edit, bound to 'b'.
+.BU
+[060905] Added basic xml "\fC/>\fR" single tag support to html and fixed xml's
+insert-attrib to handle this
+.BU
+[060905]  Changed   refences  to   \fIwhite-char*\fR   to  whitespaces   (i.e.
+display-white-chars is now  display-whitespace)  Fixed hide main menu to popup
+an info dialog informing the user how to get it back.
+.BU
+[060905] Fixed ftp dialog to conform to new \fI<user>.erf\fR setup standard by
+adding a new 'Make Default' dialog, and improved the behaviour of Enter in the
+dialog.
+.BU
+[060904] Corrected the ColdFusion closing bracket hgilight.
+.BU
+[060904] Shortened the document template formating menu text strings.
+.BU
 [060829]  Fixed  HTML  template   \fBhtml-insert-tag\fR  to  add  the  closing
 "\fC/\fR"     on     insertion     of    a     "\fC<singleTag/>\fR".     Fixed
 \fBhtml-insert-attrib\fR  to deal  with  attribute  insertion  into a HTML tag
@@ -2143,12 +2283,12 @@ ending in "\fC/>\fR".
 .BU
 [060827]  New  language   template  for   Adobe/MacroMedia   ColdFusion  (file
 extensions .cfm, .cfml .cfc).
-.BU    
+.BU
 [060827] Extended indentation with the 'u' and 'v' indentation types.
 .BU
 [060822] 2006 Release Candidate 1 (RC1)
 .BU
-[060822] Added password commands 
+[060822] Added password commands
 .Ht password-to-phonic 3
 and
 .Ht insert-password 3 .
@@ -2552,7 +2692,7 @@ findmerge  command!).  Added new cc-describe  command (which uses  cleartool's
 describe command), fixed the CC context menu.
 .BU
 [060317]  Directory listing. Increased 2Gb directory file size limit to 4Gb by
-making size variables meUInt. 
+making size variables meUInt.
 .BU
 [060317] Fixed '\\\\' quoting in command-wait example.
 .BU
@@ -3114,6 +3254,8 @@ for \fBne\ -R\fR option change.
 .BE
 .\"
 .B "8th Release - May 2005"
+.br
+Release date specified as 2005/05/05.
 .BS
 [050508]  JASSPA  MicroEmacs  8th  release - final.  Core and  macro  versions
 20050505.
