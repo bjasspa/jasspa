@@ -7,9 +7,9 @@ DIRECTORIES="company doc icons macros spelling src bin"
 SEARCH_PATH="/opt/jasspa/company:/opt/jasspa/macros:/opt/jasspa/spelling"
 BASEDIR=.
 TOPDIR=../..
-VER_YEAR="05"
-VER_MONTH="05"
-VER_DAY="05"
+VER_YEAR="06"
+VER_MONTH="09"
+VER_DAY="09"
 VERSION="20${VER_YEAR}${VER_MONTH}${VER_DAY}"
 METREE=jasspa-metree-${VERSION}.tar.gz
 MESRC=jasspa-mesrc-${VERSION}.tar.gz
@@ -19,7 +19,7 @@ NEBIN=jasspa-ne-cygwin-i386-${VERSION}.gz
 BASEFILESET="${METREE} ${MEBIN} me.1"
 
 #
-# Pull the files over from the release and source areas.
+## Pull the files over from the release and source areas.
 #
 if [ ! -f ${METREE} ] ; then
     if [ -f ${TOPDIR}/release/www/${METREE} ] ; then
