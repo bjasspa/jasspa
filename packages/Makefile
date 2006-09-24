@@ -25,6 +25,7 @@ clean:
 	$(RM) redhat/*.gz
 	$(RM) redhat/*.rpm
 	$(RM) hpux/*.gz
+	$(RM) hpux/*.1
 	$(RM) cygwin/*.1
 	$(RM) cygwin/*.gz
 	$(RM) cygwin/*.bz2

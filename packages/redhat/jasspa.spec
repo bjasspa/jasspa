@@ -1,7 +1,7 @@
 # JASSPA MicroEmacs - www.jasspa.com
 # jasspa.spec - RedHat package specification for JASSPA MicroEmacs
 #
-# Copyright (C) 2003-2004 JASSPA (www.jasspa.com)
+# Copyright (C) 2003-2006 JASSPA (www.jasspa.com)
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -21,11 +21,11 @@
 #  Module        : Package File.
 #  Created By    : Jon Green
 #  Created       : Sun Aug 17 12:58:23 2003
-#  Last Modified : <040726.1833>
+#  Last Modified : <060924.1417>
 #  Description   : Produces RedHat RPM package for JASSPA MicroEmacs
 
 %define name            jasspa-me
-%define yymmdd_version  050505
+%define yymmdd_version  060909
 %define version 20%{yymmdd_version}
 
 %define release 1
