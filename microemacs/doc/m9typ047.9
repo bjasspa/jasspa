@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Wed Sep 20 20:48:00 2006
 .\"
-.Id $Id: m9typ047.9,v 2.1 2006-09-20 20:28:11 jon Exp $
+.Id $Id: m9typ047.9,v 2.2 2006-09-24 13:11:27 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH jst 9
@@ -43,8 +43,276 @@ Handle things like figure references and internal anchor and references.
 Html and LaTeX output, possibly rtf and text.
 .BE
 The syntax definition used by JST is defined in the next section.
-.SH SYNTAX
-The syntax of JST reserves basic character sequences which may be interpreted
+.PP
+The JST template  extensions  include a number of converters  that will syntax
+check  the text and then  format  and  export  the text to a new  presentation
+format  that may be imported  into a word  processor  or used  directly in the
+generated form.
+.SH "BASIC SYNTAX"
+The  syntax  of  JST  reserves  basic   character   sequences   which  may  be
+unambiguously interpreted into document styling. The basic syntax set allows a
+simple formatted  document to be produced with the minimal amount of work from
+the author.
+.PP
+JST supports more advanced extensions which allow tables and hypertext tags to
+be defined,  these are discussed in the  \fBAdvanced\fR  \fBSyntax\fR  section
+later.
+.SS Quoting
+The backslash character  ('\fC\\\fR') is reserved as a quote character and may
+be used to  delimit  any  character  to  change  the  meaning  to the  literal
+character. This is used to stop any  unambiguous  interpretation  of character
+sequences which are the same as a JST control  sequence.  A literal  backslash
+must itself be delimited with a backslash.
+.CS
+\\\\ produces a single \\
+.CE 0
+.SS "Basic Styling"
+The basic  character  styling is performed with a pair of escape  characters at
+the start and end of a string  sequence.  The style end token does not have to
+appear  on the same line as the start  token and an error is  reported  if the
+sequence is not closed properly.  Composite  styles may be built buy combining
+the different  tokens by inclusion of a new style within  another style block.
+Where  styles are nested then they should be closed in the reverse  order that
+they were opened.
+.TP
+\fC""Raw Text""\fR
+.\"
+A pair of double quotes surrounding a text block is treated as verbatim and is
+not subject to  escaping,  that is the  character  format  characters  are not
+translated.
+.TP
+\fB**Bold Text**\fR
+.\"
+A pair of star characters denote a emboldened text region.
+.TP
+\fI//Italic Text//\fR
+.\"
+A forward slash pair denotes an italic text region.
+.TP
+\fB__Underline Text__\fR
+.\"
+A underscore pair denotes an underlined region.
+.TP
+\fC@@Mono Text@@\fR
+.\"
+A pair of at symbols  denotes a fixed text  region  rendered  in a fixed width
+font.
+.TP
+``Superscript Text``
+.\"
+A pair of grave accents denotes superscript text region.
+.IP ",,Subscript Text,,"
+A pair of commas denotes a subscript text region.
+.LP
+Styles may be nested i.e. 
+.C "//Italic **Bold Italic** Italic Again//"
+To get raw text with a double quote use:
+\fC""raw with a ""\\"\\""" in it""\fR
+.SS "Styling Paragraphs and Blocks"
+Blocks of text may be  demarked by a single  token at the start of the line. A
+exclamation  mark '\fC!\fR' at the start of a paragraph may be followed by one
+or more style letters to enable the style for the  paragraph, for  consistency
+with the in-line tokens then double characters may be used.
+.CS
+!* As an example this baragraph is bold as it started with a '!*'.
+.CE
+produces
+.IP
+.B "As an example this baragraph is bold as it started with a '!*'."
+.LP
+The exclamation  mark may be followed by multiple  different  styles which are
+applied together. e.g.
+.CS
+!"@ This paragraph  started with '!"@' so it is quoted and mono-spaced
+style, i.e. @@, "" or ** is ignored.
+.CE
+You  can  enable  a style  over a block  of text by  using a  '\fC!\fR'  style
+definition  with no further  text to the right. The block is  terminated  by a
+\'\fC!end!\fR'  or '\fC>end>\fR'  tag on its own line. It is recommended  that
+you insert a blank line before and after the '\fC!end!\fR'  definition so that
+it does not affect the filling of the following paragraph.
+.CS
+!end!
+.CE 0
+.PP
+Paragraphs  may be  associated  with a literal  block of text from a different
+programming  language. These are introduced with a '\fC>type>\fR'  tag and end
+with a '\fC>end>\fR' tag. The tag types that are currently supported include:
+.IP
+.nf
+.na
+\fCemf   \fR - JASSPA MicroEmacs Macro file.
+\fCpseudo\fR - Pseudo code block.
+\fCbnf   \fR - BNF block.
+\fCc     \fR - ANSI C code block.
+\fCcpp   \fR - C++ code block.
+\fCperl  \fR - Perl code block.
+\fCtcl   \fR - TCL code block.
+\fCshell \fR - UNIX shell block.
+\fCjava  \fR - Java code block.
+\fCini   \fR - MS-DOS/Windows .ini code block
+\fCphp   \fR - PHP code block.
+\fCmake  \fR - Makefile fragment.
+.ad
+.fi
+.PP
+The   aforementioned   blocks  support  syntax   language   highlighting   and
+indentation.
+.SS "Justification of Paragraphs and Blocks"
+A  paragraph  is a block of text  delimited  by an empty line, by default  all
+paragraphs  are left  justified.  Where the layout of the paragraph is literal
+and should not be  re-formatted  then the  paragraph  should be proceeded by a
+\'\fC>\fR' symbol e.g.
+.CS
+> This paragraph will not be reformatted
+because it starts with a '>', the
+output will respect the position of the new lines.
+.CE
+Paragraphs may be center justified with a leading '\fC>c\fR' e.g.
+.CS
+>c This is centered text
+.CE
+With  centered text then the  indentation  of the '\fC>c\fR'  centers the text
+from the indent position. e.g.
+.CS
+        >c Note the initial indent level is important
+        as the text is
+        centered w.r.t. the remainder.
+.CE
+Text may be right justified with a leading '\fC>r\fR'.
+.SS Indentation
+Indentation is implicitly  defined by the indentation of the first line of the
+paragraph,  each  paragraph  is  effectively   independent   with  respect  to
+determining the indentation level.
+.PP
+The  indentation  level  is  defined  to  be  the  the  column  of  the  first
+non-white-space  character  of the  first  line  divided  by the  \fIIndent\fR
+\fIWidth\fR  (see  indent-setup)  rounded  up.  For  example  this  the  first
+non-white of this  paragraph is the 'F' at column 4, with an indent width of 4
+(the default) this is a an indent level of 1.
+.PP
+A line  starting  with 6 spaces  so it has an indent  level of 2 (6/4 == 1.5
+which is rounded up to 2). Rounding  up allows  item lists to work with  little
+effort, without introducing ambiguity, for example.
+.PP
+The indentation of a code fragment or literal text block are determined by the
+indentation of the initial style tag, for example:
+.ne 6
+.CS
+    >"@
+    >c>
+    int myVariable ;
+    >end> 
+>end> 
+.CE
+The code block is  indented  from the left  paragraph  by the  starting  block
+indent.
+.SS Headings
+Headings may be defined and commence  with a equals  ('\fC=\fR')  character as
+the first  character of the line. The number of equals  determines the heading
+level.
+.ne 4
+.CS
+= Top Level Heading
+== Sub-heading
+=== Sub-sub-heading
+.CE
+The  position of the heading may be  controlled  and may be left,  centered or
+right justified using \fCl\fR, \fCc\fR or \fCr\fR respectively. Left justified
+is the default when not defined.
+.ne 3
+.CS
+=c Centered Top Level Heading
+==r Right justified sub-heading
+.CE 0
+.SS "Item Lists"
+Items  lists are bullet or number  lists of items  which are  introduced  by a
+\fIformatChar\fR\fB.\fR   to  start  the  list,   subsequent  list  items  are
+introduced  with a period  '\fB.\fR'  character  only. Where  \fIformatChar\fR
+identifies the type of list as follows:
+.IP
+.na
+.nf
+\fC*\fR  - bullet list.
+\fC1\fR  - Numeric item list.
+\fCa\fR  - Lowercase alphabetic list.
+\fCA\fR  - Uppercase alphabetic list.
+\fCi\fR  - Roman numeral list.
+\fCI\fR  - Upper case Roman numeral list.
+\fC:.\fR - Text item list.
+.fi
+.ad
+.ne 15 
+.PP
+Indentation and sub-paragraphs are supported within the paragraph. e.g.
+.CS
+ 1. Start or a numbered list.
+
+    Sub-paragraph of numbered list.
+   
+ .  2nd item in numbered list
+
+    *. Contained bullet list.
+    
+     . 2nd item of bullet list.
+    
+ . 3rd item in numbered list.
+.CE
+The text item, or definition, requires some further explanation. This allows a
+definition  item to be defined (e.g. glossary of terms at start of document or
+note points within a document). These are defined at column 0 e.g.
+.ne 4
+.CS
+:. MyDefinition
+
+   Description of the term.
+.CE 0
+.SH "ADVANCED SYNTAX"
+This section  defiens the advanced syntax  extensions of JST  which allow more
+complex documents to be generated. These extensions may be used to author more
+complex documents for export.
+.SS "Tables"
+Quite complex tables may be supported  through JST. A table is introduced with
+the closing  square  brace  '\fB]\fR  character at the start of the line which
+define the ghlobal  properties  and dimensions of the table. Each entry in the
+table is introduced by '\fB]\fR and is followed by the assigned content. 
+.PP
+The initial table definition has the syntax
+.CS
+ !" ]crh <# columns> <# rows>
+.CE
+Where  '\fBc\fR'  and '\fBr\fR' are  optional and center or right  justify the
+table,  '\fBh\fR'  hides the table lines i.e. no border. The dimensions of the
+table then follow.
+.PP
+A simple
+definition of a 3x2 table might be defined as:
+.CS
+] 3 2
+
+] Row 1 col 1 content.
+
+] Row 1 col 2 content.
+
+] Row 1 col 3 content.
+
+] Row 2 col 1 content.
+
+] Row 2 col 2 content.
+
+] Row 2 col 3 content.
+.CE
+The content may include 
+.IP
+.na
+.nf
+\fC*.\fR Use item lists
+\fC. \fR Like this
+\fC!c\fR Center text
+\fC!r\fR Right justify text
+\fIalso embedded images, see later.\fR
+.fi
+.ad        
 .SH TEMPLATE
 The template supports highlighting and indention.
 .SH "SEE ALSO"
