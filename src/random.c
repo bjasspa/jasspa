@@ -403,9 +403,9 @@ bufferInfo(int f, int n)
         return meTRUE ;
     }
     /* summarize and report the info */
-    sprintf((char *)resultStr,"Line %ld/%ld Col %d/%d Char %ld/%ld (%d%%) Win Line %d/%d Col %d/%d char = 0x%02x",
+    sprintf((char *)resultStr,"Line %ld/%ld Col %d/%d Char %ld/%ld (%d%%) Win Line %d/%d ACol %d/%d char %d (0x%02x)",
             predlines+1, numlines+1, savepos, meLineGetLength(frameCur->windowCur->dotLine),predchars, numchars, ratio, 
-            (int) (frameCur->windowCur->dotLineNo-frameCur->windowCur->vertScroll), frameCur->windowCur->textDepth-1,col, ecol, curchar);
+            (int) (frameCur->windowCur->dotLineNo-frameCur->windowCur->vertScroll), frameCur->windowCur->textDepth-1,col, ecol, curchar, curchar);
     return mlwrite(MWSPEC,resultStr) ;
 }
 
