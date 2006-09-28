@@ -631,7 +631,11 @@ ftpLogin(meUByte *user, meUByte *pass)
     
     ii = ftpCommand(0,"USER %s",user) ;
     if(ii == ftpPOS_INTERMED)
+    {
+        if(pass == NULL)
+            pass = (meUByte *) "" ;
         ii = ftpCommand(0,"PASS %s", pass) ;
+    }
     if(ii != ftpPOS_COMPLETE)
     {
         if(ffpasswdReg != NULL)
@@ -735,7 +739,8 @@ ffurlGetInfo(int type, meUByte **host, meUByte **port, meUByte **user, meUByte *
             meStrcat(buff,*host) ;
             meStrcat(buff," password") ;
             if((meGetStringFromUser(buff, MLNOHIST|MLHIDEVAL, 0, buff, meSBUF_SIZE_MAX) <= 0) ||
-               ((ffpasswdReg = regSet(root,(meUByte *)"pass",buff)) == NULL))
+               ((ffpasswdReg = regSet(root,(meUByte *)"pass",buff)) == NULL) ||
+               ((regGetValue(ffpasswdReg) == NULL) && ((ffpasswdReg->value = meStrdup(buff)) == NULL)))
                 return meFALSE ;
             ffpasswdReg->mode |= meREGMODE_INTERNAL ;
             *pass = regGetValue(ffpasswdReg) ;
