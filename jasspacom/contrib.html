@@ -1,3 +1,4 @@
+<!DOCTYPE html public "-//w3c//dtd xhtml 1.0 strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
@@ -9,45 +10,81 @@
     <meta name="GENERATOR" content="MicroEmacs"/>
     <title>MicroEmacs JASSPA Distribution</title>
     <link REL="icon" HREF="images/menuicon.png" TYPE="image/png"/>
+    <link rel="stylesheet" type="text/css" href="./themes/default.css"/>
     <!-- BASE HREF="http://www.jasspa.com" -->
 
     <!--JASSPA - common from this point -->
-    <!-- BACKGROUND="meback.png"  -->
   </head>
-  <body bgcolor="white">
-  <!-- Banner across the top of the page -->
-  <table WIDTH="100%" HEIGHT="95" BORDER="0" CELLSPACING="0" CELLPADDING="0" >
+  <body>
+  
+  <!-- Title -->
+  <div id="title">
+  <table>
     <tr>
-      <td BACKGROUND="images/backgrd.jpg"><center><img SRC="images/header.jpg" alt="jasspa.com"/></center></td>
+      <td><img SRC="images/header.jpg" alt="jasspa.com"/></td>
     </tr>
   </table>
-  <!-- width="100%"  -->
-  <table border="0" cellpadding="3" cellspacing="1" bgcolor="yellow">
-    <tr bgcolor="#0000ff">
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="index.html" style="COLOR: yellow" >Home</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="overview.html" style="COLOR: yellow">Overview</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="whatsnew.html" style="COLOR: yellow">What's New</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="support.html" style="COLOR: yellow">Support</a></b></font></td>
-      <td align="center" width="100"  bgcolor="#0080ff"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="download.html" style="COLOR: yellow">Download</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="about.html" style="COLOR: yellow">About</a></b></font></td>
-    </tr>
-  </table>
+  </div>
 
-  <!-- Section selection -->
-  <p><font size="+3" color="#0000ff"><b>Download</b></font>
-  <br/>
-  <font size="+1"><a href="download.html" style="COLOR: black">overview</a>&nbsp;&nbsp;</font>
-  <font size="+1"><a href="history.html" style="COLOR: black">history</a>&nbsp;&nbsp;</font>
-  <font size="+1"><a href="down0505.html" style="COLOR: black">May 2005</a>&nbsp;&nbsp;</font>
-  <font size="+1"><a href="spelling.html" style="COLOR: black">spelling dictionaries</a>&nbsp;&nbsp;</font>
-  <font size="+1" color="#ff0000">contributions&nbsp;&nbsp;</font>
-  </p>
+  <!-- Menu Bar -->
+  <div id="menubar">
+  <ul class="bar">
+    <li class="folder"><a href="index.html">Home</a></li>
+    <li class="folder"><a href="overview.html">Overview</a>
+    <ul>
+      <li><a href="overview.html">What is it ?</a></li>
+      <li><a href="o_features.html">Features</a></li>
+      <li><a href="o_filetypes.html">Supported&nbsp;file&nbsp;types</a></li>
+      <li><a href="o_platforms.html">Supported&nbsp;platforms</a></li>
+      <li><a href="me.html">On-line&nbsp;help</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="whatsnew.html">What's New</a></li>
+    <li class="folder"><a href="support.html">Support</a>
+    <ul>
+      <li><a href="support.html">Support</a></li>
+      <li><a href="faq.html">Faq</a></li>
+      <li><a href="maillist.html">Mailing&nbsp;lists</a></li>
+      <li><a href="email.html">Email&nbsp;support</a></li>
+      <li><a href="links.html">Links</a></li>
+      <li><a href="howto.html">How&nbsp;to</a></li>
+      <li><a href="me.html">On-line help</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="download.html">Download</a>
+    <ul>
+      <li><a href="download.html">Download</a></li>
+      <li><a href="history.html">History</a></li>
+      <li><a href="down0609.html">Sept 2006</a></li>
+      <li><a href="spelling.html">Spelling&nbsp;dictionaries</a></li>
+      <li><a href="contrib.html">Contributions</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="about.html">About</a></li>
+  </ul>
+  </div>
+
+  <div class="clearfloats"><!-- Clear --></div>
+
+  <!-- Sidebar -->
+  <div id="sidebarcontent">
+  <div id="sidebar">
+  <h2 align="center">Jasspa's MicroEmacs</h2>
+  <p align="center"><img alt="melogo" src="images/logo.png"/></p>
+  <h2>Quick Links</h2>
+  <ul>
+    <li><a href="download.html">Download Overview</a></li>
+    <li><a href="history.html">History</a></li>
+    <li><a href="downlatest.html">May 2005</a></li>
+    <li><a href="spelling.html">Spelling Dictionaries</a></li>
+    <li><a href="contrib.html">Contributions</a></li>
+  </ul>
+  </div>
+
+  <!-- Main -->
+  <div id="main">
+   
+  <h2>Contributions</h2>
 
   <p>The following are contributions made by individuals which may prove useful
   to others. Some of the features outlined below may be incorporated into the
@@ -61,323 +98,257 @@
   <a href="mailto:support@jasspa.com?subject=Contribution">support@jasspa.com</a>.
   </p>
 
-  <center><table border="1">
+  <center>
+  <table class="download">
     <tr>
-      <td align="center" bgcolor="#0000FF">
-        <font color="#FFFF00" class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <strong>Item</strong></font></td>
-      <td align="center" bgcolor="#0000FF">
-        <font color="#FFFF00" class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <strong>Who</strong></font></td>
-      <td bgcolor="#0000FF">
-        <font color="#FFFF00" class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <strong>Description</strong> - details of the download.</font></td>
-      <td align="center" bgcolor="#0000FF">
-        <font color="#FFFF00" class="bodytext" face="Ariel, Helvetica, san-serif" size="2"><strong>File</strong></font></td>
-      <td align="center" bgcolor="#0000FF">
-        <font color="#FFFF00" class="bodytext" face="Ariel, Helvetica, san-serif" size="2"><strong>Date</strong><br/>yyyy/mm/dd</font></td>
-      <td align="center" bgcolor="#0000FF">
-        <font color="#FFFF00" class="bodytext" face="Ariel, Helvetica, san-serif" size="2"><strong>Merged<br/>Release</strong></font></td>
+      <thead>
+      <th>Item</th>
+      <th>Who</th>
+      <th>Description</th>
+      <th>File</th>
+      <th>Date<br/>yyyy/mm/dd</th>
+      <th>Merged<br/>Release</th>
+      </thead>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">30</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Jon Green</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        C Automatic indentation recognition.</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub30.txt">sub30.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2004/03/25</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">-</font></td>
+      <td class="item">30</td>
+      <td class="who">Jon Green</td>
+      <td class="description">C Automatic indentation recognition.</td>
+      <td class="file"><a href="subs/sub30.txt">sub30.txt</a></td>
+      <td class="date">2004/03/25</td>
+      <td class="size">-</td>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">29</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Jon Green</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        Spotless - Clean all useless white space from file.</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub29.txt">sub29.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2004/03/18</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">-</font></td>
+      <td class="item">29</td>
+      <td class="who">Jon Green</td>
+      <td class="description">Spotless - Clean all useless white space from file.</td>
+      <td class="file"><a href="subs/sub29.txt">sub29.txt</a></td>
+      <td class="date">2004/03/18</td>
+      <td class="size">May 2005<br/><i>contrib</i></td>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">28</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Jon Green</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        Java hilighting extensions - JavaDoc comment hilighting, TODO's etc.</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub28.txt">sub28.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2004/03/18</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">May 2005</font></td>
+      <td class="item">28</td>
+      <td class="who">Jon Green</td>
+      <td class="description">Java hilighting extensions - JavaDoc comment hilighting, TODO's etc.</td>
+      <td class="file"><a href="subs/sub28.txt">sub28.txt</a></td>
+      <td class="date">2004/03/18</td>
+      <td class="size">May 2005</td>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">27</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Jon Green</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        C++ hilighting extensions - Doxygen comment hilighting, TODO's etc.</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub27.txt">sub27.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2004/03/18</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">May 2005</font></td>
+      <td class="item">27</td>
+      <td class="who">Jon Green</td>
+      <td class="description">C++ hilighting extensions - Doxygen comment hilighting, TODO's etc.</td>
+      <td class="file"><a href="subs/sub27.txt">sub27.txt</a></td>
+      <td class="date">2004/03/18</td>
+      <td class="size">May 2005</td>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">26</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Jon Green</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        C hilighting extensions - Doxygen comment hilighting, TODO's, stdint.h, etc.</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub26.txt">sub26.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2004/03/18</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">May 2005</font></td>
+      <td class="item">26</td>
+      <td class="who">Jon Green</td>
+      <td class="description">C hilighting extensions - Doxygen comment hilighting, TODO's, stdint.h, etc.</td>
+      <td class="file"><a href="subs/sub26.txt">sub26.txt</a></td>
+      <td class="date">2004/03/18</td>
+      <td class="size">May 2005</td>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">25</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Jon Green</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        comment-adjust - End of line commenting accelerator.</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub25.txt">sub25.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2004/03/18</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">-</font></td>
+      <td class="item">25</td>
+      <td class="who">Jon Green</td>
+      <td class="description">comment-adjust - End of line commenting accelerator.</td>
+      <td class="file"><a href="subs/sub25.txt">sub25.txt</a></td>
+      <td class="date">2004/03/18</td>
+      <td class="size">May 2005<br/><i>contrib</i></td>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">24</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Jon Green</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        insert-date - Macro to insert date at cursor position.</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub24.txt">sub24.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2004/03/18</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">May 2005</font></td>
+      <td class="item">24</td>
+      <td class="who">Jon Green</td>
+      <td class="description">insert-date - Macro to insert date at cursor position.</td>
+      <td class="file"><a href="subs/sub24.txt">sub24.txt</a></td>
+      <td class="date">2004/03/18</td>
+      <td class="size">May 2005</td>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">23</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Jon Green</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        Super-delete - enhanced context sensitive delete.</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub23.txt">sub23.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2004/03/18</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">-</font></td>
+      <td class="item">23</td>
+      <td class="who">Jon Green</td>
+      <td class="description">Super-delete - enhanced context sensitive delete.</td>
+      <td class="file"><a href="subs/sub23.txt">sub23.txt</a></td>
+      <td class="date">2004/03/18</td>
+      <td class="size">May 2005<br/><i>contrib</i></td>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">22</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Dan Perry</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        Utility to align enum's <i>(C Programming Language)</i>.</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub22.txt">sub22.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2002/10/11</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">-</font></td>
+      <td class="item">22</td>
+      <td class="who">Dan Perry</td>
+      <td class="description">Utility to align enum's <i>(C Programming Language)</i>.</td>
+      <td class="file"><a href="subs/sub22.txt">sub22.txt</a></td>
+      <td class="date">2002/10/11</td>
+      <td class="size">-</td>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">21</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Jon Green</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        mailsearch - Utility to search a <i>sendmail</i> log.</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub21.txt">sub21.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2001/09/13</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">-</font></td>
+      <td class="item">21</td>
+      <td class="who">Jon Green</td>
+      <td class="description">mailsearch - Utility to search a <i>sendmail</i> log.</td>
+      <td class="file"><a href="subs/sub21.txt">sub21.txt</a></td>
+      <td class="date">2001/09/13</td>
+      <td class="size">-</td>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">20</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Jon Green</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        previous-buffer command</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub20.txt">sub20.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2001/08/23</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">-</font></td>
+      <td class="item">20</td>
+      <td class="who">Jon Green</td>
+      <td class="description">previous-buffer command</td>
+      <td class="file"><a href="subs/sub20.txt">sub20.txt</a></td>
+      <td class="date">2001/08/23</td>
+      <td class="size">May 2005<br/><i>contrib</i></td>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">19</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Rodolfo Valeiras Reina</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        Spanish keyboard translation codes</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub19.txt">sub19.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2001/08/23</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Jan 2002</font></td>
+      <td class="item">19</td>
+      <td class="who">Rodolfo Valeiras Reina</td>
+      <td class="description">Spanish keyboard translation codes</td>
+      <td class="file"><a href="subs/sub19.txt">sub19.txt</a></td>
+      <td class="date">2001/08/23</td>
+      <td class="size">Jan 2002</td>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">18</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Dr. Detlef Groth</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        Perldoc handling functions</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub18.txt">sub18.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2001/08/16</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">-</font></td>
+      <td class="item">18</td>
+      <td class="who">Dr. Detlef Groth</td>
+      <td class="description">Perldoc handling functions</td>
+      <td class="file"><a href="subs/sub18.txt">sub18.txt</a></td>
+      <td class="date">2001/08/16</td>
+      <td class="size">-</td>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">17</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Jon Green</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        save-region; Save the selected text region to a file</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub17.txt">sub17.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2001/08/13</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">-</font></td>
+      <td class="item">17</td>
+      <td class="who">Jon Green</td>
+      <td class="description">save-region; Save the selected text region to a file</td>
+      <td class="file"><a href="subs/sub17.txt">sub17.txt</a></td>
+      <td class="date">2001/08/13</td>
+      <td class="size">-</td>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">16</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Dr. Detlef Groth</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        Running the man utility from ME using the cygwin tools.</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub16.txt">sub16.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2001/08/13</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Mar 2004</font></td>
+      <td class="item">16</td>
+      <td class="who">Dr. Detlef Groth</td>
+      <td class="description">Running the man utility from ME using the cygwin tools.</td>
+      <td class="file"><a href="subs/sub16.txt">sub16.txt</a></td>
+      <td class="date">2001/08/13</td>
+      <td class="size">Mar 2004</td>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">15</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Jon Green</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        Converting a Netscape mailbox to Microsoft IIS News files.</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub15.txt">sub15.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2000/03/22</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">-</font></td>
+      <td class="item">15</td>
+      <td class="who">Jon Green</td>
+      <td class="description">Converting a Netscape mailbox to Microsoft IIS News files.</td>
+      <td class="file"><a href="subs/sub15.txt">sub15.txt</a></td>
+      <td class="date">2000/03/22</td>
+      <td class="size">-</td>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">14</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Dr Detlef Groth<br/>Steve Phillips</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        Improved buffer popup: ordered by file extension</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub14.txt">sub14.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2001/08/08</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Dec 2002</font></td>
+      <td class="item">14</td>
+      <td class="who">Dr Detlef Groth<br/>Steve Phillips</td>
+      <td class="description">Improved buffer popup: ordered by file extension</td>
+      <td class="file"><a href="subs/sub14.txt">sub14.txt</a></td>
+      <td class="date">2001/08/08</td>
+      <td class="size">Dec 2002</td>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">13</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Dr Detlef Groth</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        GNU Emacs like "occur" macros (or the extended list functions)</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub13.txt">sub13.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2001/08/08</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Dec 2002</font></td>
+      <td class="item">13</td>
+      <td class="who">Dr Detlef Groth</td>
+      <td class="description">GNU Emacs like "occur" macros (or the extended list functions)</td>
+      <td class="file"><a href="subs/sub13.txt">sub13.txt</a></td>
+      <td class="date">2001/08/08</td>
+      <td class="size">Dec 2002</td>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">12</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Dr Detlef Groth</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        In-buffer highlight changing (revisited)</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub12.txt">sub12.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2001/02/16</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">July 2001</font></td>
+      <td class="item">12</td>
+      <td class="who">Dr Detlef Groth</td>
+      <td class="description">In-buffer highlight changing (revisited)</td>
+      <td class="file"><a href="subs/sub12.txt">sub12.txt</a></td>
+      <td class="date">2001/02/16</td>
+      <td class="size">July 2001</td>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">11</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Dr Detlef Groth</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        Invoking Help files from ME (java-version)</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub11.txt">sub11.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2001/02/15</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">-</font></td>
+      <td class="item">11</td>
+      <td class="who">Dr Detlef Groth</td>
+      <td class="description">Invoking Help files from ME (java-version)</td>
+      <td class="file"><a href="subs/sub11.txt">sub11.txt</a></td>
+      <td class="date">2001/02/15</td>
+      <td class="size">-</td>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">10</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Dr Detlef Groth</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        Universal function tree builder</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub10.txt">sub10.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2000/12/22</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">-</font></td>
+      <td class="item">10</td>
+      <td class="who">Dr Detlef Groth</td>
+      <td class="description">Universal function tree builder</td>
+      <td class="file"><a href="subs/sub10.txt">sub10.txt</a></td>
+      <td class="date">2000/12/22</td>
+      <td class="size">-</td>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">9</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Bruno Sabin</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        MicroEmacs Edit for all - Windows register setup file.</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub9.txt">sub9.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2000/06/16</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">-</font></td>
+      <td class="item">9</td>
+      <td class="who">Bruno Sabin</td>
+      <td class="description">MicroEmacs Edit for all - Windows register setup file.</td>
+      <td class="file"><a href="subs/sub9.txt">sub9.txt</a></td>
+      <td class="date">2000/06/16</td>
+      <td class="size">May 2005<br/><i>contrib</i></td>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">8</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Bruno Sabin</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        ME Windows register setup file.</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub8.txt">sub8.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2000/06/16</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">-</font></td>
+      <td class="item">8</td>
+      <td class="who">Bruno Sabin</td>
+      <td class="description">ME Windows register setup file.</td>
+      <td class="file"><a href="subs/sub8.txt">sub8.txt</a></td>
+      <td class="date">2000/06/16</td>
+      <td class="size">May 2005<br/><i>contrib</i></td>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">7</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Dr Detlef Groth</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        Auto-completion macro.</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub7.txt">sub7.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2000/04/26</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Dec 2002</font></td>
+      <td class="item">7</td>
+      <td class="who">Dr Detlef Groth</td>
+      <td class="description">Auto-completion macro.</td>
+      <td class="file"><a href="subs/sub7.txt">sub7.txt</a></td>
+      <td class="date">2000/04/26</td>
+      <td class="size">Dec 2002</td>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">6</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Dr Detlef Groth</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        Cygwin-Bash: Color ls inside ME.</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub6.txt">sub6.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2000/03/22</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Mar 2004</font></td>
+      <td class="item">6</td>
+      <td class="who">Dr Detlef Groth</td>
+      <td class="description">Cygwin-Bash: Color ls inside ME.</td>
+      <td class="file"><a href="subs/sub6.txt">sub6.txt</a></td>
+      <td class="date">2000/03/22</td>
+      <td class="size">Mar 2004</td>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">5</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Jon Green</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        Hypertexting to help from list-commands buffer.</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub5.txt">sub5.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2000/03/15</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">July 2001</font></td>
+      <td class="item">5</td>
+      <td class="who">Jon Green</td>
+      <td class="description">Hypertexting to help from list-commands buffer.</td>
+      <td class="file"><a href="subs/sub5.txt">sub5.txt</a></td>
+      <td class="date">2000/03/15</td>
+      <td class="size">July 2001</td>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">4</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Jon Green</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        Further; in-buffer highlight changing.</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub4.txt">sub4.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2000/03/14</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">July 2001</font></td>
+      <td class="item">4</td>
+      <td class="who">Jon Green</td>
+      <td class="description">Further; in-buffer highlight changing.</td>
+      <td class="file"><a href="subs/sub4.txt">sub4.txt</a></td>
+      <td class="date">2000/03/14</td>
+      <td class="size">July 2001</td>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">3</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Thomas Hundt</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        reread-file.</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub3.txt">sub3.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2001/03/23</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">July 2001</font></td>
+      <td class="item">3</td>
+      <td class="who">Thomas Hundt</td>
+      <td class="description">reread-file.</td>
+      <td class="file"><a href="subs/sub3.txt">sub3.txt</a></td>
+      <td class="date">2001/03/23</td>
+      <td class="size">July 2001</td>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Dr Detlef Groth</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        In-buffer highlight changing.</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub2.txt">sub2.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2000/03/08</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">July 2001</font></td>
+      <td class="item">2</td>
+      <td class="who">Dr Detlef Groth</td>
+      <td class="description">In-buffer highlight changing.</td>
+      <td class="file"><a href="subs/sub2.txt">sub2.txt</a></td>
+      <td class="date">2000/03/08</td>
+      <td class="size">July 2001</td>
     </tr>
     <tr>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">1</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">Dr Detlef Groth</font></td>
-      <td><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        ME as download-monster.</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <a href="subs/sub1.txt">sub1.txt</a></font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">2000/02/16</font></td>
-      <td align="center"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">-</font></td>
+      <td class="item">1</td>
+      <td class="who">Dr Detlef Groth</td>
+      <td class="description">ME as download-monster.</td>
+      <td class="file"><a href="subs/sub1.txt">sub1.txt</a></td>
+      <td class="date">2000/02/16</td>
+      <td class="size">-</td>
     </tr>
   </table>
   </center>
@@ -404,7 +375,13 @@
 
   <p>By downloading any material from this site you agree to these
   conditions.</p>
-  <HR color="#cccccc" noShade="1" SIZE="1"/>
-  <p><font size="-2"><i>Copyright &copy; 2000-2005 Jasspa</i></font></p>
+  
+  </div>
+
+  <div class="clearfloats"><!-- Clear --></div>
+  <div id="footer">
+  <p>Copyright &copy; 2000-2006 Jasspa</p>
+  </div>
+  </div>
   </body>
 </html>

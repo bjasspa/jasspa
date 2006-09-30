@@ -1,3 +1,4 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
@@ -8,245 +9,359 @@
     <meta name="authors" content="JASSPA"/>
     <meta name="GENERATOR" content="MicroEmacs"/>
     <title>MicroEmacs JASSPA Distribution</title>
-    <link REL="icon" HREF="images/menuicon.png" TYPE="image/png"/>
+    <link rel="icon" href="images/menuicon.png" type="image/png"/>
+    <link rel="stylesheet" type="text/css" href="./themes/default.css"/>
     <!-- BASE HREF="http://www.jasspa.com" -->
     
     <!--JASSPA - common from this point -->
-    <!-- BACKGROUND="meback.png"  -->
   </head>
-  <body bgcolor="white">
-  <!-- Banner across the top of the page -->
-  <table WIDTH="100%" HEIGHT="95" BORDER="0" CELLSPACING="0" CELLPADDING="0">
+  <body>
+  <!-- Title -->
+  <div id="title">
+  <table>
     <tr>
-      <td BACKGROUND="images/backgrd.jpg"><center><img SRC="images/header.jpg" alt="jasspa.com"/></center></td>
+      <td><img SRC="images/header.jpg" alt="jasspa.com"/></td>
     </tr>
   </table>
-  <!-- width="100%"  -->
-  <table border="0" cellpadding="3" cellspacing="1" bgcolor="yellow">
-    <tr bgcolor="#0000ff">
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="index.html" style="COLOR: yellow" >Home</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="overview.html" style="COLOR: yellow">Overview</a></b></font></td>
-      <td align="center" width="100" bgcolor="#0080ff"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="whatsnew.html" style="COLOR: yellow">What's New</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="support.html" style="COLOR: yellow">Support</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="download.html" style="COLOR: yellow">Download</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="about.html" style="COLOR: yellow">About</a></b></font></td>
-    </tr>
-  </table>
-  <p><font size="+3" color="#0000ff"><b>What's New</b></font></p>
+  </div>
+  
+  <!-- Menu Bar -->
+  <div id="menubar">
+  <ul class="bar">
+    <li class="folder"><a href="index.html">Home</a></li>
+    <li class="folder"><a href="overview.html">Overview</a>
+    <ul>
+      <li><a href="overview.html">What is it ?</a></li>
+      <li><a href="o_features.html">Features</a></li>
+      <li><a href="o_filetypes.html">Supported&nbsp;file&nbsp;types</a></li>
+      <li><a href="o_platforms.html">Supported&nbsp;platforms</a></li>
+      <li><a href="me.html">On-line&nbsp;help</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="whatsnew.html">What's New</a></li>
+    <li class="folder"><a href="support.html">Support</a>
+    <ul>
+      <li><a href="support.html">Support</a></li>
+      <li><a href="faq.html">Faq</a></li>
+      <li><a href="maillist.html">Mailing&nbsp;lists</a></li>
+      <li><a href="email.html">Email&nbsp;support</a></li>
+      <li><a href="links.html">Links</a></li>
+      <li><a href="howto.html">How&nbsp;to</a></li>
+      <li><a href="me.html">On-line help</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="download.html">Download</a>
+    <ul>
+      <li><a href="download.html">Download</a></li>
+      <li><a href="history.html">History</a></li>
+      <li><a href="down0609.html">Sept 2006</a></li>
+      <li><a href="spelling.html">Spelling&nbsp;dictionaries</a></li>
+      <li><a href="contrib.html">Contributions</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="about.html">About</a></li>
+  </ul>
+  </div>
+  
+  <div class="clearfloats"><!-- Clear --></div>
+  
+  <!-- Sidebar -->
+  <div id="sidebarcontent">
+  <div id="sidebar">
+  <h2 align="center">Jasspa's MicroEmacs</h2>
+  <p align="center"><img alt="melogo" src="images/logo.png"/></p>
+  </div>
+  
+  <!-- Main -->
+  <div id="main">
+  
+  <!-- Section selection -->
+  <h1>Whats New</h1>
+  
+  <p>Summary details of the features that have been introduced into different
+  versions of Jasspa's MicroEmacs.</p>
+  
+  <h2>9th Release - September 2006</h2> 
+  
+  <p>Release date specified as 2006/09/09.</p>
   
   <ul>
-    <p><HR color="#cccccc" noShade="1" SIZE="1"/></p>
     
-    <p> <font class="bodytext" face="Ariel, Helvetica, san-serif" size="2" color="#FF0000">
-    <b>May 2005</b></font></p>
+    <li><b>MainMenu(3)</b> - A more consistent main menu and user dialog
+    interaction.</li>
     
-    <ul>
-      
-      <li>Support for the Russian language</li>
-      <li>X drag and drop support with Xdnd.</li>
-      <li>On screen menus cleaned up.</li>
-      <li>Pipe support in cygwin</li>
-      <li>Improved indentation</li>
-      <li>Revised file browser interaction</li>
-      <li>CVS handling improved</li>
-      <li>New language templates including Ruby, wiki, XML, samba, apache, etc.</li>
-      <li>Existing template improvements for C, C++, TCL, perl, etc.</li>
-      <li>XML, HTML, SGML tag verification.</li>
-      <li>Regular expression handling improved.</li>
-      <li>Notes tool <b>M-x notes</b></li>
-      <li>CUA and GNU Emacs emulation modes.</li>
-      <li>MinGW build support</li>
-      <li>Consideration for NE as a system administration tool.</li>
-      <li>Bug fixes and enhancements.</li>
-    </ul>
-    <p><HR color="#cccccc" noShade="1" SIZE="1"/></p>
+    <li><b>file-browser(3)</b> - New key bindings to create, delete, copy
+    files and directories. <b>file-tool-setup(3)</b> allows open actions to be
+    associated with file types allowing automatic launching of external
+    tools.</li>
     
-    <p> <font class="bodytext" face="Ariel, Helvetica, san-serif" size="2" color="#FF0000">
-    <b>March 2004</b></font></p>
+    <li>Introduction of major modes for management of different file
+    types.</li>
     
-    <ul>
-      
-      <li>Large file support with the new command <b>page-file</b> command.
-      This command allows large files to be edited by partially loading the
-      file into memory which is paged in an out depending on the position in
-      the file.</li>
-      
-      <li>Enhanced Toolbar support. Enable the toolbar with <b>User Setup /
-      Platform / Toolbar</b>. Right click on the toolbar mode line to add
-      tools to the tool bar. Click on the arrows of the mode line to change to
-      displayed tool.</li>
-      
-      <li>Auto spell correction pop-up. Enable Auto Spell with <b>User Setup /
-      Platform</b>. Spelling mistakes are hilighted on text entry, force the
-      whole buffer to be spell checked with <b>auto-spell-buffer</b>. For the
-      spelling pop-up, right click with the mouse on the spelling error and
-      select <b>Auto Spell</b> for a list of spelling suggestions. When an
-      alternative word is selected the spelling error is corrected and the
-      cursor returns to the current position.</li>
-      
-      <li>Enhanced folding or collapsing support. Folding using
-      <b>narrow-buffer</b> supports full copying and deletion 
-      of folds. Many language templates now support collapsing
-      to hide information. Folding is supported from the 
-      <b>Menu / Edit</b>, <b>Narrow To</b> hides the
-      around a selected region, <b>Narrow Out</b> hides the 
-      lines of a selected region. Macros may determine the 
-      hidden state of a line using the new variable <b>$line-flags</b>.</li>
-      
-      <li>New language templates for PHP, LUA, SGML. Existing language
-      templates include enhanced capabilities. Template definition has been
-      improved with the <b>buffer-init</b> macro development commands.</li>
-      
-      <li>Improved support for CVS. Use <b>M-x cvs</b> to launch the CVS view.
-      Use the mouse (right button) to select CVS operations to be performed on
-      the selection, dialogs are used to enter logging messages and select
-      the CVS behaviour.</li>
-      
-      <li>Directory listing enhancements. With the mouse, select <b>Order by
-      Extension</b> to sort the files by extension. Selecting a path component
-      in the <i>Directory listing of:</i> line at the top of the buffer moves
-      to the specified directory.</li>
-      
-      <li>Macro language speed ups. MicroEmacs '04 now runs faster than
-      previous versions.</li>
-      
-      <li>Simpler new user configuration. MicroEmacs '04 will now construct
-      the users private directory for local configuration values, this no
-      longer requires additional configuration.</li>
-      
-      <li>Introduction of the <i>Jasspa Tree</i>. This is a fixed directory
-      structure that may be used to organize the release macro files, spelling
-      dictionaries and site-wide files. This also affects the user private
-      setup.</li>
-      
-      <li>Improved support for Wheel mouse, VNC consoles, shell windows.</li>
-      
-    </ul>
+    <li><b>buffer-major-mode(3)</b> assigns a new operating mode to a buffer
+    affecting the highlighting, indentation, key binding etc.
+    <b>major-mode-setup(3)</b> configures the behavior of the major mode.</li>
     
-    <ul>
-      <li><b>For those that use the toolbar:</b><br/>There are a lot of fixes and
-      replaced/removed some of the tools (ftp-files had to go and the file
-      list tool is no longer linked to the browser - could not get this
-      working correctly and not affect the browser). JASSPA recommend that
-      you remove each toolbar and re-create it, this will ensure that your
-      setup has the correct settings.</li>
-
-      <li><b>For those that have their own file hooks:</b><br/>The
-      <b>buffer-initialize-*</b> functions have been renamed to
-      <b>buffer-init*</b> and another function has been added which should be
-      called at the end of the file. You may have settings for the old
-      function folding feature, this feature has changed from <b>fold</b> to
-      <b>collapse</b> so <tt>set-variable .fhook-???.fold-open</tt> should now
-      be defined as <tt>.fhook-???.collapse-open</tt>. The reason for the
-      change is that MicroEmacs can now be used as a proper folding editor,
-      try loading <tt>fold.emf</tt>. Improvements in the narrowing capability
-      now makes narrowing easy and safe to use, try the main menus <b>Edit
-      -&gt; Narrow commands</b>. See any <tt>fhook</tt> in <tt>hkxxx.emf</tt>
-      for examples of how <b>fhooks</b> should be defined.</li> 
+    <li>Introduction of sessions which store the context of editor including
+    window layout and loaded files. Multiple sessions may be used,
+    &quot;<b>me</b> <b>-c</b><i>&lt;sessionName&gt;</i>&quot; restores a
+    specific session.</li>
     
-      <li><b>For those of you with Personal Favourites:</b><br/>The hot key
-      char has changed from "<tt>&amp;</tt>" to "<tt>\H</tt>". To fix your
-      favorite list go to the main menu <b>File -&gt; Favorites -&gt; Edit</b>
-      and in the buffer change "<tt>&amp;</tt>" (1 character) to "<tt>\H</tt>"
-      (2 chars).</li>
-
-      <li><b>For those with OSD dialogs:</b><br/>The same "<tt>&amp;</tt>" -&gt;
-      "<tt>\H</tt>" change has been made and you may also find lots of
-      "<tt>..</tt>"s at the end on menu items, this is due to a change in the
-      behaviour of the "<tt>d</tt>" flag.</li>
+    <li><b>save-session(3)</b> and <b>read-session(3)</b> handle the
+    restore/saving of sessions. The existing history commands have been
+    removed. </li>
     
-    </ul>
-    <p><HR color="#cccccc" noShade="1" SIZE="1"/></p>
+    <li><b>ClearCase(3)</b> support for IBM Rational ClearCase.</li>
     
-    <p><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2"
-    color="#FF0000"> <b>December 2002</b></font></p>
+    <li><b>cvs(3)</b> improved support within the <b>file-browser(3)</b>.</li>
     
-    <ul>
-      
-      <li>This release introduces the concept of <i>frames</i>, multiple
-      frames (i.e. the display window) may be created from a single
-      instantiation of the program. The release includes various minor fixes
-      and improvements further increasing the stability of the editor.
-      <b>NanoEmacs</b>, the smaller footprint of <b>MicroEmacs</b> is now
-      fully integrated into the source code base.</li>
+    <li><b>notes(3)</b> utility extended, new features allow quick notes to be
+    generated with <b>notes-instant</b>, notes associated with a file may be
+    added with <b>notes-context</b>.</li>
     
-    </ul>
-    <p><HR color="#cccccc" noShade="1" SIZE="1"/></p>
+    <li><b>rdiff(3)</b> recursive difference and <b>xdiff(3)</b> for access to
+    an external graphical difference tool.</li>
     
-    <p><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2"
-    color="#FF0000"> <b>24th January 2002</b></font></p>
+    <li><b>forward-kill-word(2)</b> inconsistencies removed.</li>
     
-    <ul>
-      
-      <li>Jasspa released an experimental distribution with the source for
-      NanoEmacs. This is a cut down version of MicroEmacs with no installation
-      or macro files. This is a small foot print version of the editor
-      providing basic editing support.</li>
+    <li>Highlighting improved, especially for long script files (html / php /
+    javascript) where the highlighting used to be lost.</li>
     
-    </ul>
-    <p><HR color="#cccccc" noShade="1" SIZE="1"/></p>
+    <li><b>jst(9)</b> - Structured text documents.</li>
     
-    <p><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2"
-    color="#FF0000"> <b>5th January 2002</b></font></p>
+    <li><b>insert-password(3)</b> password generation utility for system
+    administrators who tire of thinking of new passwords.</li>
     
-    <ul>
-      
-      <li>Jasspa MicroEmacs is now distributed under the GNU General Public
-      License (GPL). All files now have the GPL licensing terms applied to
-      them.</li>
-      
-      <li>Language and spelling support are separated. It is now possible to
-      support local keyboards and non-Latin character sets without installing
-      the appropriate spelling dictionaries.</li>
-      
-      <li>Experimental Cygwin build now supported for both Termcap and
-      X-Window.</li>
+    <li>Fill columns are now defined on a per buffer basis
+    <b>$buffer-fill-col(5)</b>.</li>
     
-    </ul>
-    <p><HR color="#cccccc" noShade="1" SIZE="1"/></p>
+    <li><b>indent-increase(3)</b> and <b>indent-decrease(3)</b> commands
+    introduced to change the indentation of a region.</li>
     
-    <p><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2"
-    color="#FF0000"> <b>August 2001</b></font></p>
+    <li>The default date format may be specified by the user with
+    <b>.ascii-time.format(5)</b>.</li> 
     
-    <ul>
-      
-      <p>Hot on the tail of our last major release, this release tidies up a
-      few loose ends and resolves a number of more obscure problems. The
-      release includes a number of new macros such as <tt>occur</tt>, <i>list
-      items</i> (<tt>F7/Esc-F7</tt>). The CVS support has been improved
-      slightly to cope with remote servers.</p>
-    
-    </ul>
-    <p><HR color="#cccccc" noShade="1" SIZE="1"/></p>
-    <p><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-    <b><a href="new0107.html" style="COLOR: red" >16th July 2001</a></b></font></p>
-    
-    <ul>
-      <li>Key stroke rebinding - CUA bindings now possible</li>
-      <li>Simplified macro templates</li>
-      <li>New WWW pages</li>
-      <li>CVS support</li>
-    </ul>
-    <p><HR color="#cccccc" noShade="1" SIZE="1"/></p>
-    
-    <p><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-    <b><a href="new0001.html" style="COLOR: red" >January 2000</a></b></font></p>
-    
-    <ul>
-      <li>Multiple font support, <b>bold</b>, <i>italic</i>, <u>underline</u>.</li>
-      <li>LaTeX support.</li>
-      <li>Character set support.</li>
-      <li>ftp/http support</li>
-    </ul>
-    
-    <p><HR color="#cccccc" noShade="1" SIZE="1"/></p>
   </ul>
-  <p><font size="-2"><i>Copyright &copy; 2000-2005 Jasspa</i></font></p>
+
+  <!-- ---------------------------------------------------- --><hr/>
+  
+  <h2>8th Release - 5th May 2005</h2>
+  
+  <ul>
+    <li>Support for the Russian language</li>
+    <li>X drag and drop support with Xdnd.</li>
+    <li>On screen menus cleaned up.</li>
+    <li>Pipe support in cygwin</li>
+    <li>Improved indentation</li>
+    <li>Revised file browser interaction</li>
+    <li>CVS handling improved</li>
+    <li>New language templates including Ruby, wiki, XML, samba, apache, etc.</li>
+    <li>Existing template improvements for C, C++, TCL, perl, etc.</li>
+    <li>XML, HTML, SGML tag verification.</li>
+    <li>Regular expression handling improved.</li>
+    <li>Notes tool <b>M-x notes</b></li>
+    <li>CUA and GNU Emacs emulation modes.</li>
+    <li>MinGW build support</li>
+    <li>Consideration for NE as a system administration tool.</li>
+    <li>Bug fixes and enhancements.</li>
+  </ul>
+  
+  <!-- ---------------------------------------------------- --><hr/>
+  
+  <h2>7th Release - March 2004</h2>
+  
+  <ul>
+    
+    <li>Large file support with the new command <b>page-file</b> command.
+    This command allows large files to be edited by partially loading the
+    file into memory which is paged in an out depending on the position in
+    the file.</li>
+    
+    <li>Enhanced Toolbar support. Enable the toolbar with <b>User Setup /
+    Platform / Toolbar</b>. Right click on the toolbar mode line to add
+    tools to the tool bar. Click on the arrows of the mode line to change to
+    displayed tool.</li>
+    
+    <li>Auto spell correction pop-up. Enable Auto Spell with <b>User Setup /
+    Platform</b>. Spelling mistakes are hilighted on text entry, force the
+    whole buffer to be spell checked with <b>auto-spell-buffer</b>. For the
+    spelling pop-up, right click with the mouse on the spelling error and
+    select <b>Auto Spell</b> for a list of spelling suggestions. When an
+    alternative word is selected the spelling error is corrected and the
+    cursor returns to the current position.</li>
+    
+    <li>Enhanced folding or collapsing support. Folding using
+    <b>narrow-buffer</b> supports full copying and deletion
+    of folds. Many language templates now support collapsing
+    to hide information. Folding is supported from the
+    <b>Menu / Edit</b>, <b>Narrow To</b> hides the
+    around a selected region, <b>Narrow Out</b> hides the
+    lines of a selected region. Macros may determine the
+    hidden state of a line using the new variable <b>$line-flags</b>.</li>
+    
+    <li>New language templates for PHP, LUA, SGML. Existing language
+    templates include enhanced capabilities. Template definition has been
+    improved with the <b>buffer-init</b> macro development commands.</li>
+    
+    <li>Improved support for CVS. Use <b>M-x cvs</b> to launch the CVS view.
+    Use the mouse (right button) to select CVS operations to be performed on
+    the selection, dialogs are used to enter logging messages and select
+    the CVS behaviour.</li>
+    
+    <li>Directory listing enhancements. With the mouse, select <b>Order by
+    Extension</b> to sort the files by extension. Selecting a path component
+    in the <i>Directory listing of:</i> line at the top of the buffer moves
+    to the specified directory.</li>
+    
+    <li>Macro language speed ups. MicroEmacs '04 now runs faster than
+    previous versions.</li>
+    
+    <li>Simpler new user configuration. MicroEmacs '04 will now construct
+    the users private directory for local configuration values, this no
+    longer requires additional configuration.</li>
+    
+    <li>Introduction of the <i>Jasspa Tree</i>. This is a fixed directory
+    structure that may be used to organize the release macro files, spelling
+    dictionaries and site-wide files. This also affects the user private
+    setup.</li>
+    
+    <li>Improved support for Wheel mouse, VNC consoles, shell windows.</li>
+    
+  </ul>
+  
+  <ul>
+    <li><b>For those that use the toolbar:</b><br/>There are a lot of fixes and
+    replaced/removed some of the tools (ftp-files had to go and the file
+    list tool is no longer linked to the browser - could not get this
+    working correctly and not affect the browser). JASSPA recommend that
+    you remove each toolbar and re-create it, this will ensure that your
+    setup has the correct settings.</li>
+    
+    <li><b>For those that have their own file hooks:</b><br/>The
+    <b>buffer-initialize-*</b> functions have been renamed to
+    <b>buffer-init*</b> and another function has been added which should be
+    called at the end of the file. You may have settings for the old
+    function folding feature, this feature has changed from <b>fold</b> to
+    <b>collapse</b> so <tt>set-variable .fhook-???.fold-open</tt> should now
+    be defined as <tt>.fhook-???.collapse-open</tt>. The reason for the
+    change is that MicroEmacs can now be used as a proper folding editor,
+    try loading <tt>fold.emf</tt>. Improvements in the narrowing capability
+    now makes narrowing easy and safe to use, try the main menus <b>Edit
+    -&gt; Narrow commands</b>. See any <tt>fhook</tt> in <tt>hkxxx.emf</tt>
+    for examples of how <b>fhooks</b> should be defined.</li>
+    
+    <li><b>For those of you with Personal Favourites:</b><br/>The hot key
+    char has changed from "<tt>&amp;</tt>" to "<tt>\H</tt>". To fix your
+    favorite list go to the main menu <b>File -&gt; Favorites -&gt; Edit</b>
+    and in the buffer change "<tt>&amp;</tt>" (1 character) to "<tt>\H</tt>"
+    (2 chars).</li>
+    
+    <li><b>For those with OSD dialogs:</b><br/>The same "<tt>&amp;</tt>" -&gt;
+    "<tt>\H</tt>" change has been made and you may also find lots of
+    "<tt>..</tt>"s at the end on menu items, this is due to a change in the
+    behaviour of the "<tt>d</tt>" flag.</li>
+    
+  </ul>
+  
+  <!-- ---------------------------------------------------- --><hr/>
+  
+  <h2>6th Release - December 2002</h2>
+  
+  <ul>
+    
+    <li>This release introduces the concept of <i>frames</i>, multiple
+    frames (i.e. the display window) may be created from a single
+    instantiation of the program. The release includes various minor fixes
+    and improvements further increasing the stability of the editor.
+    <b>NanoEmacs</b>, the smaller footprint of <b>MicroEmacs</b> is now
+    fully integrated into the source code base.</li>
+    
+  </ul>
+  
+  <!-- ---------------------------------------------------- --><hr/>
+  
+  <h2>Patch - 24th January 2002</h2>
+  
+  <ul>
+    
+    <li>Jasspa released an experimental distribution with the source for
+    NanoEmacs. This is a cut down version of MicroEmacs with no installation
+    or macro files. This is a small foot print version of the editor
+    providing basic editing support.</li>
+    
+  </ul>
+  
+  <!-- ---------------------------------------------------- --><hr/>
+  
+  <h2>5th Release - January 2002</h2>
+  
+  <ul>
+    
+    <li>Jasspa MicroEmacs is now distributed under the GNU General Public
+    License (GPL). All files now have the GPL licensing terms applied to
+    them.</li>
+    
+    <li>Language and spelling support are separated. It is now possible to
+    support local keyboards and non-Latin character sets without installing
+    the appropriate spelling dictionaries.</li>
+    
+    <li>Experimental Cygwin build now supported for both Termcap and
+    X-Window.</li>
+    
+  </ul>
+  
+  <!-- ---------------------------------------------------- --><hr/>
+  
+  <h2>4th Release - August 2001</h2>
+  
+  <ul>
+    
+    <p>Hot on the tail of our last major release, this release tidies up a
+    few loose ends and resolves a number of more obscure problems. The
+    release includes a number of new macros such as <tt>occur</tt>, <i>list
+    items</i> (<tt>F7/Esc-F7</tt>). The CVS support has been improved
+    slightly to cope with remote servers.</p>
+    
+  </ul>
+  
+  <!-- ---------------------------------------------------- --><hr/>
+  
+  <h2>3rd Release - 16th July 2001</h2>
+  
+  <ul>
+    <li>Key stroke rebinding - CUA bindings now possible</li>
+    <li>Simplified macro templates</li>
+    <li>New WWW pages</li>
+    <li>CVS support</li>
+  </ul>
+  
+  <!-- ---------------------------------------------------- --><hr/>
+  
+  <h2>2nd Release - November 1999</h2>
+  
+  <p>Patched March 2000</p>
+  
+  <ul>
+    <li>Multiple font support, <b>bold</b>, <i>italic</i>, <u>underline</u>.</li>
+    <li>LaTeX support.</li>
+    <li>Character set support.</li>
+    <li>ftp/http support</li>
+  </ul>
+  
+  <!-- ---------------------------------------------------- --><hr/>
+  
+  <h2>1st Release - September 1998</h2>
+  
+  <ul>
+    <li>Support True-type fonts under windows, font selection dialog.</li>
+    <li>New spell checker</li>
+  </ul>
+  </div>
+
+  <div class="clearfloats"><!-- Clear --></div>
+  <div id="footer">
+  <p>Copyright &copy; 2000-2006 Jasspa</p>
+  </div>
+  </div>
   </body>
 </html>

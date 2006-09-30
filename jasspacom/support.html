@@ -1,3 +1,4 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
@@ -9,47 +10,84 @@
     <meta name="GENERATOR" content="MicroEmacs"/>
     <title>MicroEmacs JASSPA Distribution</title>
     <link REL="icon" HREF="images/menuicon.png" TYPE="image/png"/>
+    <link rel="stylesheet" type="text/css" href="./themes/default.css"/>
     <!-- BASE HREF="http://www.jasspa.com" -->
 
     <!--JASSPA - common from this point -->
-    <!-- BACKGROUND="meback.png"  -->
   </head>
-  <body bgcolor="white">
-  <!-- Banner across the top of the page -->
-  <table WIDTH="100%" HEIGHT="95" BORDER="0" CELLSPACING="0" CELLPADDING="0" >
+  
+  <body>
+  <!-- Title -->
+  <div id="title">
+  <table>
     <tr>
-      <td BACKGROUND="images/backgrd.jpg"><center><img SRC="images/header.jpg" alt="jasspa.com"/></center></td>
+      <td><img SRC="images/header.jpg" alt="jasspa.com"/></td>
     </tr>
   </table>
-  <!-- width="100%"  -->
-  <table border="0" cellpadding="3" cellspacing="1" bgcolor="yellow">
-    <tr bgcolor="#0000ff">
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="index.html" style="COLOR: yellow" >Home</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="overview.html" style="COLOR: yellow">Overview</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="whatsnew.html" style="COLOR: yellow">What's New</a></b></font></td>
-      <td align="center" width="100" bgcolor="#0080ff"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="support.html" style="COLOR: yellow">Support</a></b></font></td>
-      <td align="center" width="100" ><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="download.html" style="COLOR: yellow">Download</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="about.html" style="COLOR: yellow">About</a></b></font></td>
-    </tr>
-  </table>
-  <!-- Section selection -->
-  <p><font size="+3" color="#0000ff"><b>Support</b></font>
-  <br/>
-  <font size="+1" color="#ff0000">overview&nbsp;&nbsp;</font>
-  <font size="+1"><a href="faq.html" style="COLOR: black">faq</a>&nbsp;&nbsp;</font>
-  <font size="+1"><a href="maillist.html" style="COLOR: black">mailing lists</a>&nbsp;&nbsp;</font>
-  <font size="+1"><a href="email.html" style="COLOR: black">email support</a>&nbsp;&nbsp;</font>
-  <font size="+1"><a href="links.html" style="COLOR: black">links</a>&nbsp;&nbsp;</font>
-  <font size="+1"><a href="howto.html" style="COLOR: black">how to</a>&nbsp;&nbsp;</font>
-  <font size="+1"><a href="me.html" style="COLOR: black">on-line help</a>&nbsp;&nbsp;</font>
-  </p>
+  </div>
 
+  <!-- Menu Bar -->
+  <div id="menubar">
+  <ul class="bar">
+    <li class="folder"><a href="index.html">Home</a></li>
+    <li class="folder"><a href="overview.html">Overview</a>
+    <ul>
+      <li><a href="overview.html">What is it ?</a></li>
+      <li><a href="o_features.html">Features</a></li>
+      <li><a href="o_filetypes.html">Supported&nbsp;file&nbsp;types</a></li>
+      <li><a href="o_platforms.html">Supported&nbsp;platforms</a></li>
+      <li><a href="me.html">On-line&nbsp;help</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="whatsnew.html">What's New</a></li>
+    <li class="folder"><a href="support.html">Support</a>
+    <ul>
+      <li><a href="support.html">Support</a></li>
+      <li><a href="faq.html">Faq</a></li>
+      <li><a href="maillist.html">Mailing&nbsp;lists</a></li>
+      <li><a href="email.html">Email&nbsp;support</a></li>
+      <li><a href="links.html">Links</a></li>
+      <li><a href="howto.html">How&nbsp;to</a></li>
+      <li><a href="me.html">On-line help</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="download.html">Download</a>
+    <ul>
+      <li><a href="download.html">Download</a></li>
+      <li><a href="history.html">History</a></li>
+      <li><a href="down0609.html">Sept 2006</a></li>
+      <li><a href="spelling.html">Spelling&nbsp;dictionaries</a></li>
+      <li><a href="contrib.html">Contributions</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="about.html">About</a></li>
+  </ul>
+  </div>
+
+  <div class="clearfloats"><!-- Clear --></div>
+
+  <!-- Sidebar -->
+  <div id="sidebarcontent">
+  <div id="sidebar">
+  <h2 align="center">Jasspa's MicroEmacs</h2>
+  <p align="center"><img alt="melogo" src="images/logo.png"/></p>
+  <h2>Quick Links</h2>
+  <ul>
+    <li><a href="support.html">Overview</a></li>
+    <li><a href="faq.html">Faq</a></li>
+    <li><a href="maillist.html">Mailing Lists</a></li>
+    <li><a href="email.html">Email Support</a></li>
+    <li><a href="links.html">Links</a></li>
+    <li><a href="howto.html">How To</a></li>
+    <li><a href="me.html">On-Line Help</a></li>
+  </ul>
+  </div>
+
+  <!-- Main -->
+  <div id="main">
+
+  <h1>Support</h1>
+  
   <p>Jasspa's MicroEmacs is a continually on going development. Quite simply
   it evolves as people attempt to perform different tasks within the context
   of the editor. new features get added, existing features are refined to
@@ -72,11 +110,9 @@
   confirm that the system is behaving correctly.</p>
 
   <p>To support the software that we ship then there are a number of on-line
-resources that you can check before contacting us directly.</p>
+  resources that you can check before contacting us directly.</p>
 
-  <HR color="#cccccc" noShade="1" SIZE="1"/>
-
-  <p><b>On-line help</b><br/>
+  <h2>On-line help</h2>
   Jasspa's MicroEmacs ships with a comprehensive set of documentation
   which covers most aspects of the use of the editor. The help
   pages are available in a number of formats, as follows:-</p>
@@ -95,26 +131,29 @@ resources that you can check before contacting us directly.</p>
   </ul>
   
   <p>The additional help formats are available from the
-  <a href="download.html" style="COLOR: blue">download page</a>.</p>
+  <a href="download.html">download page</a>.</p>
+  
+  <h2><a href="faq.html">Frequently Asked Questions</a></h2>
+  
+  <p>Frequently asked questions and answers.</p>
+  
+  <h2><a href="maillist.html">Mailing List</a></h2>
+  
+  <p>Jasspa runs a mailing list which users may subscribe to, users may post
+  their questions concerning Jasspa's MicroEmacs. The repository is available
+  for browsing.</p>
+  
+  <h2><a href="email.html">Email Support</a></h2>
+  
+  <p>Jasspa will respond, in confidence, to any E-Mail questions and
+  suggestions.</p>
+  
+  </div>
 
-  <HR color="#cccccc" noShade="1" SIZE="1"/>
-
-  <p><b><a href="faq.html">Frequently Asked Questions</a></b><br/>Frequently
-  asked questions and answers.</p>
-
-  <HR color="#cccccc" noShade="1" SIZE="1"/>
-
-  <p><b><a href="maillist.html">Mailing List</a></b><br/>Jasspa runs a mailing
-  list which users may subscribe to, users may post their questions concerning
-  Jasspa's MicroEmacs. The repository is available for browsing.</p>
-
-  <HR color="#cccccc" noShade="1" SIZE="1"/>
-
-  <p><b><a href="email.html">Email Support</a></b><br/>Jasspa will respond, in
-  confidence, to any E-Mail questions and suggestions.</p>
-
-  <HR color="#cccccc" noShade="1" SIZE="1"/>
-
-  <p><font size="-2"><i>Copyright &copy; 2000-2005 Jasspa</i></font></p>
+  <div class="clearfloats"><!-- Clear --></div>
+  <div id="footer">
+  <p>Copyright &copy; 2000-2006 Jasspa</p>
+  </div>
+  </div>
   </body>
 </html>

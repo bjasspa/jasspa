@@ -1,3 +1,4 @@
+<!DOCTYPE html public "-//w3c//dtd xhtml 1.0 strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
@@ -9,131 +10,162 @@
     <meta name="GENERATOR" content="MicroEmacs"/>
     <title>MicroEmacs JASSPA Distribution</title>
     <link REL="icon" HREF="images/menuicon.png" TYPE="image/png"/>
+    <link rel="stylesheet" type="text/css" href="./themes/default.css"/>
     <!-- BASE HREF="http://www.jasspa.com" -->
-
+    
     <!--JASSPA - common from this point -->
-    <!-- BACKGROUND="meback.png"  -->
   </head>
-  <body bgcolor="white">
-  <!-- Banner across the top of the page -->
-  <table WIDTH="100%" HEIGHT="95" BORDER="0" CELLSPACING="0" CELLPADDING="0" >
+  <body>
+  
+  <!-- Title -->
+  <div id="title">
+  <table>
     <tr>
-      <td BACKGROUND="images/backgrd.jpg"><center><img SRC="images/header.jpg" alt="jasspa.com"/></center></td>
+      <td><img SRC="images/header.jpg" alt="jasspa.com"/></td>
     </tr>
   </table>
-  <!-- width="100%"  -->
-  <table border="0" cellpadding="3" cellspacing="1" bgcolor="yellow">
-    <tr bgcolor="#0000ff">
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="index.html" style="COLOR: yellow" >Home</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="overview.html" style="COLOR: yellow">Overview</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="whatsnew.html" style="COLOR: yellow">What's New</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="support.html" style="COLOR: yellow">Support</a></b></font></td>
-      <td align="center" width="100"  bgcolor="#0080ff"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="download.html" style="COLOR: yellow">Download</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="about.html" style="COLOR: yellow">About</a></b></font></td>
-    </tr>
-  </table>
-
-  <!-- Section selection -->
-  <p><font size="+3" color="#0000ff"><b>Documentation Download</b></font>
-  <br/>
-  <font size="+1"><a href="download.html" style="COLOR: black">overview</a>&nbsp;&nbsp;</font>
-  <font size="+1"><a href="history.html" style="COLOR: black">history</a>&nbsp;&nbsp;</font>
-  <font size="+1" color="#ff0000"><a href="down0505.html"">May 2005</a>&nbsp;&nbsp;</font>
-  <font size="+1"><a href="spelling.html" style="COLOR: black">spelling dictionaries</a>&nbsp;&nbsp;</font>
-  <font size="+1"><a href="contrib.html" style="COLOR: black">contributions</a>&nbsp;&nbsp;</font>
-  </p>
-
-  <p><font size="+1"><b>Last Upload: 10th May 2005</b></font></p>
-
-  <HR color="#cccccc" noShade="1" SIZE="1"/>
-
-  <h2><img src="images/miniicon.gif" width="16" height="16"/>
-  <font color="#0000FF">Documentation Files</font></h2>
+  </div>
+  
+  <!-- Menu Bar -->
+  <div id="menubar">
+  <ul class="bar">
+    <li class="folder"><a href="index.html">Home</a></li>
+    <li class="folder"><a href="overview.html">Overview</a>
+    <ul>
+      <li><a href="overview.html">What is it ?</a></li>
+      <li><a href="o_features.html">Features</a></li>
+      <li><a href="o_filetypes.html">Supported&nbsp;file&nbsp;types</a></li>
+      <li><a href="o_platforms.html">Supported&nbsp;platforms</a></li>
+      <li><a href="me.html">On-line&nbsp;help</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="whatsnew.html">What's New</a></li>
+    <li class="folder"><a href="support.html">Support</a>
+    <ul>
+      <li><a href="support.html">Support</a></li>
+      <li><a href="faq.html">Faq</a></li>
+      <li><a href="maillist.html">Mailing&nbsp;lists</a></li>
+      <li><a href="email.html">Email&nbsp;support</a></li>
+      <li><a href="links.html">Links</a></li>
+      <li><a href="howto.html">How&nbsp;to</a></li>
+      <li><a href="me.html">On-line help</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="download.html">Download</a>
+    <ul>
+      <li><a href="download.html">Download</a></li>
+      <li><a href="history.html">History</a></li>
+      <li><a href="down0609.html">Sept 2006</a></li>
+      <li><a href="spelling.html">Spelling&nbsp;dictionaries</a></li>
+      <li><a href="contrib.html">Contributions</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="about.html">About</a></li>
+  </ul>
+  </div>
+  
+  <div class="clearfloats"><!-- Clear --></div>
+  
+  <!-- Sidebar -->
+  <div id="sidebarcontent">
+  <div id="sidebar">
+  <h2 align="center">Jasspa's MicroEmacs</h2>
+  <p align="center"><img alt="melogo" src="images/logo.png"/></p>
+  <h2>Quick Links</h2>
+  <ul>
+    <li><a href="downlatest.html">Download</a></li>
+    <li><a href="spelling.html">Spelling Dictionaries</a></li>
+  </ul>
+  </div>
+  
+  <!-- Main -->
+  <div id="main">
+  
+  <h1>Documentation Download</h1>
+  
+  <p>Last Upload: 10th May 2005</p>
+  
+  <h2>Documentation Files</h2>
+  
   <p>Alternative formats of the JASSPA MicroEmacs documentation.</p>
-  <center><table border="1" WIDTH="100%">
+  
+  <table class="download">
     <tr>
-      <td bgcolor="#0000FF">
-        <font color="#FFFF00"><strong>Download Image</strong></font></td>
-      <td bgcolor="#0000FF">
-        <font color="#FFFF00">
-        <strong>Files</strong></font></td>
-      <td align="center" bgcolor="#0000FF">
-        <font color="#FFFF00"><strong>Byte<br/>Size</strong></font></td>
-      <td align="center" bgcolor="#0000FF">
-        <font color="#FFFF00"><strong>Last update</strong><br/>yyyy-mm-dd</font></td>
+      <thead>
+      <th>Download Image</th>
+      <th>Files</th>
+      <th>Byte<br/>Size</th>
+      <th>Last update<br/>yyyy-mm-dd</th>
+      </thead>
     </tr>
     <tr>
-      <td><a href="release_20050505/doc/jasspame.pdf">jasspame.pdf</a></td>
-      <td>JASSPA MicroEmacs Quick Start Guide.</td>
-      <td><center>-</center></td>
-      <td><center>2005-05-05</center></td>
+      <td class="file"><a href="release_20050505/doc/jasspame.pdf">jasspame.pdf</a></td>
+      <td class="description">JASSPA MicroEmacs Quick Start Guide.</td>
+      <td class="size">-</td>
+      <td class="date">2005-05-05</td>
     </tr>
     <tr>
-      <td><a href="release_20050505/doc/readme.txt">readme.txt</a></td>
-      <td>JASSPA MicroEmacs installation notes.</td>
-      <td><center>-</center></td>
-      <td><center>2005-05-05</center></td>
+      <td class="file"><a href="release_20050505/doc/readme.txt">readme.txt</a></td>
+      <td class="description">JASSPA MicroEmacs installation notes.</td>
+      <td class="size">-</td>
+      <td class="date">2005-05-05</td>
     </tr>
     <tr>
-      <td><a href="release_20050505/doc/build.txt">build.txt</a></td>
-      <td>Source build instructions.</td>
-      <td><center>-</center></td>
-      <td><center>2005-05-05</center></td>
+      <td class="file"><a href="release_20050505/doc/build.txt">build.txt</a></td>
+      <td class="description">Source build instructions.</td>
+      <td class="size">-</td>
+      <td class="date">2005-05-05</td>
     </tr>
     <tr>
-      <td><a href="release_20050505/jasspa-mehtm-20050505.zip">jasspa-mehtm-20050505.zip</a></td>
-      <td>HTML documentation in 8.3 format files.</td>
-      <td><center>996889</center></td>
-      <td><center>2005-05-05</center></td>
+      <td class="file"><a href="release_20050505/jasspa-mehtm-20050505.zip">jasspa-mehtm-20050505.zip</a></td>
+      <td class="description">HTML documentation in 8.3 format files.</td>
+      <td class="size">996889</td>
+      <td class="date">2005-05-05</td>
     </tr>
     <tr>
-      <td><a href="release_20050505/jasspa-mehtml-20050505.tar.gz">jasspa-mehtml-20050505.tar.gz</a></td>
-      <td>HTML documentation (long name).</td>
-      <td><center>564353</center></td>
-      <td><center>2005-05-05</center></td>
+      <td class="file"><a href="release_20050505/jasspa-mehtml-20050505.tar.gz">jasspa-mehtml-20050505.tar.gz</a></td>
+      <td class="description">HTML documentation (long name).</td>
+      <td class="size">564353</td>
+      <td class="date">2005-05-05</td>
     </tr>
     <tr>
-      <td><a href="release_20050505/jasspa-mewinhlp-ms-win32-20050505.zip">jasspa-mewinhlp-ms-win32-20050505.zip</a></td>
-      <td>Microsoft Windows Help file documentation.</td>
-      <td><center>1158653</center></td>
-      <td><center>2005-05-05</center></td>
+      <td class="file"><a href="release_20050505/jasspa-mewinhlp-ms-win32-20050505.zip">jasspa-mewinhlp-ms-win32-20050505.zip</a></td>
+      <td class="description">Microsoft Windows Help file documentation.</td>
+      <td class="size">1158653</td>
+      <td class="date">2005-05-05</td>
     </tr>
     <tr>
-      <td><a href="release_20050505/me.1.gz">me.1.gz</a></td>
-      <td>MicroEmacs catman manual page.</td>
-      <td><center>-</center></td>
-      <td><center>2005-05-05</center></td>
+      <td class="file"><a href="release_20050505/me.1.gz">me.1.gz</a></td>
+      <td class="description">MicroEmacs catman manual page.</td>
+      <td class="size">-</td>
+      <td class="date">2005-05-05</td>
     </tr>
     <tr>
-      <td><a href="release_20050505/ne.1.gz">ne.1.gz</a></td>
-      <td>NanoEmacs catman manual page.</td>
-      <td><center>-</center></td>
-      <td><center>2005-05-05</center></td>
+      <td class="file"><a href="release_20050505/ne.1.gz">ne.1.gz</a></td>
+      <td class="description">NanoEmacs catman manual page.</td>
+      <td class="size">-</td>
+      <td class="date">2005-05-05</td>
     </tr>
     <tr>
-      <td valign="top">
+      <td class="file">
         <a href="http://www.microemacs.de" target="_blank">PDF, CHM</a>
       </td>
-      <td valign="top">
-        <a href="http://www.microemacs.de" target="_blank">www.microemacs.de</a>
-        offers alternative packaging of the MicroEmacs '04 documentation including
-        Adobe PDF and Microsoft CHM format files in addition to a index HTML format.<br>
-      <i>Old 2002 <a href="release_20050505/me2002.pdf">PDF</a> of documentation.</i></td>
-      <td align="center" valign="top">-</td>
-      <td align="center" valign="top">2002-12-05</td>
+      <td class="description">
+        
+        <a href="http://www.microemacs.de"
+        target="_blank">www.microemacs.de</a> offers alternative packaging of
+        the MicroEmacs '04 documentation including Adobe PDF and Microsoft CHM
+        format files in addition to a index HTML format.<br/> <i>Old 2002 <a
+        href="release_20050505/me2002.pdf">PDF</a> of documentation.</i>
+        
+      </td>
+      <td class="size">-</td>
+      <td class="date">2002-12-05</td>
     </tr>
-  </table></center>
-
-  <HR color="#cccccc" noShade="1" SIZE="1"/>
-
+  </table>
+  
   <h1>NO WARRANTY</h1>
-
+  
   <p>This program is licensed free of charge, there is no warranty for the
   program, to the extent permitted by applicable law. Except when otherwise
   stated in writing the copyright holders and/or other parties provide the
@@ -142,21 +174,26 @@
   fitness for a particular purpose. The entire risk as to the quality and
   performance of the program is with you. Should the program prove defective,
   you assume the cost of all necessary servicing, repair or correction.</p>
-
-  <p>In no event unless required by applicable law or agreed to in writing will
-  any copyright holder, or any other party who may modify and/or redistribute
-  the program as permitted above, be liable to you for damages, including any
-  general, special, incidental or consequential damages arising out of the use
-  or inability to use the program (including but not limited to loss of data or
-  data being rendered inaccurate or losses sustained by you or third parties or
-  a failure of the program to operate with any other programs), even if such
-  holder or other party has been advised of the possibility of such damages.</p>
-
+  
+  <p>In no event unless required by applicable law or agreed to in writing
+  will any copyright holder, or any other party who may modify and/or
+  redistribute the program as permitted above, be liable to you for damages,
+  including any general, special, incidental or consequential damages arising
+  out of the use or inability to use the program (including but not limited to
+  loss of data or data being rendered inaccurate or losses sustained by you or
+  third parties or a failure of the program to operate with any other
+  programs), even if such holder or other party has been advised of the
+  possibility of such damages.</p>
+  
   <p>By downloading any material from this site you agree to these
   conditions.</p>
-
-  <HR color="#cccccc" noShade="1" SIZE="1"/>
-
-  <p><font size="-2"><i>Copyright &copy; 2000-2005 Jasspa</i></font></p>
+  
+  </div>
+  
+  <div class="clearfloats"><!-- Clear --></div>
+  <div id="footer">
+  <p>Copyright &copy; 2000-2006 Jasspa</p>
+  </div>
+  </div>
   </body>
 </html>

@@ -1,3 +1,4 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
@@ -9,53 +10,90 @@
     <meta name="GENERATOR" content="MicroEmacs"/>
     <title>MicroEmacs JASSPA Distribution</title>
     <link REL="icon" HREF="images/menuicon.png" TYPE="image/png"/>
+    <link rel="stylesheet" type="text/css" href="./themes/default.css"/>
     <!-- BASE HREF="http://www.jasspa.com" -->
     
     <!--JASSPA - common from this point -->
-    <!-- BACKGROUND="meback.png"  -->
   </head>
-  <body bgcolor="white">
-  <!-- Banner across the top of the page -->
-  <table WIDTH="100%" HEIGHT="95" BORDER="0" CELLSPACING="0" CELLPADDING="0" >
+  <body>
+  <!-- Title -->
+  <div id="title">
+  <table>
     <tr>
-      <td BACKGROUND="images/backgrd.jpg"><center><img SRC="images/header.jpg" alt="jasspa.com"/></center></td>
+      <td><img SRC="images/header.jpg" alt="jasspa.com"/></td>
     </tr>
   </table>
-  <!-- width="100%"  -->
-  <table border="0" cellpadding="3" cellspacing="1" bgcolor="yellow">
-    <tr bgcolor="#0000ff">
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="index.html" style="COLOR: yellow" >Home</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="overview.html" style="COLOR: yellow">Overview</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="whatsnew.html" style="COLOR: yellow">What's New</a></b></font></td>
-      <td align="center" width="100" bgcolor="#0080ff"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="support.html" style="COLOR: yellow">Support</a></b></font></td>
-      <td align="center" width="100" ><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="download.html" style="COLOR: yellow">Download</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="about.html" style="COLOR: yellow">About</a></b></font></td>
-    </tr>
-  </table>
+  </div>
+  
+  <!-- Menu Bar -->
+  <div id="menubar">
+  <ul class="bar">
+    <li class="folder"><a href="index.html">Home</a></li>
+    <li class="folder"><a href="overview.html">Overview</a>
+    <ul>
+      <li><a href="overview.html">What is it ?</a></li>
+      <li><a href="o_features.html">Features</a></li>
+      <li><a href="o_filetypes.html">Supported&nbsp;file&nbsp;types</a></li>
+      <li><a href="o_platforms.html">Supported&nbsp;platforms</a></li>
+      <li><a href="me.html">On-line&nbsp;help</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="whatsnew.html">What's New</a></li>
+    <li class="folder"><a href="support.html">Support</a>
+    <ul>
+      <li><a href="support.html">Support</a></li>
+      <li><a href="faq.html">Faq</a></li>
+      <li><a href="maillist.html">Mailing&nbsp;lists</a></li>
+      <li><a href="email.html">Email&nbsp;support</a></li>
+      <li><a href="links.html">Links</a></li>
+      <li><a href="howto.html">How&nbsp;to</a></li>
+      <li><a href="me.html">On-line help</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="download.html">Download</a>
+    <ul>
+      <li><a href="download.html">Download</a></li>
+      <li><a href="history.html">History</a></li>
+      <li><a href="down0609.html">Sept 2006</a></li>
+      <li><a href="spelling.html">Spelling&nbsp;dictionaries</a></li>
+      <li><a href="contrib.html">Contributions</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="about.html">About</a></li>
+  </ul>
+  </div>
+  
+  <div class="clearfloats"><!-- Clear --></div>
+  
+  <!-- Sidebar -->
+  <div id="sidebarcontent">
+  <div id="sidebar">
+  <h2 align="center">Jasspa's MicroEmacs</h2>
+  <p align="center"><img alt="melogo" src="images/logo.png"/></p>
+  <h2>Quick Links</h2>
+  <ul>
+    <li><a href="support.html">Overview</a></li>
+    <li><a href="faq.html">Faq</a></li>
+    <li><a href="maillist.html">Mailing Lists</a></li>
+    <li><a href="email.html">Email Support</a></li>
+    <li><a href="links.html">Links</a></li>
+    <li><a href="howto.html">How To</a></li>
+    <li><a href="me.html">On-Line Help</a></li>
+  </ul>
+  </div>
+  
+  <!-- Main -->
+  <div id="main">
+  
   <!-- Section selection -->
-  <a name="top"/>
-  <p><font size="+3" color="#0000ff"><b>Support</b></font><br/>
-  <font size="+1"><a href="support.html" style="COLOR: black">overview</a>&nbsp;&nbsp;</font>
-  <font size="+1"><a href="faq.html" style="COLOR: black">faq</a>&nbsp;&nbsp;</font>
-  <font size="+1" color="#ff0000">mailing lists&nbsp;&nbsp;</font>
-  <font size="+1"><a href="email.html" style="COLOR: black">email support</a>&nbsp;&nbsp;</font>
-  <font size="+1"><a href="links.html" style="COLOR: black">links</a>&nbsp;&nbsp;</font>
-  <font size="+1"><a href="howto.html" style="COLOR: black">how to</a>&nbsp;&nbsp;</font>
-  <font size="+1"><a href="me.html" style="COLOR: black">on-line help</a>&nbsp;&nbsp;</font></p>
+  <h1>Mailing Lists</h1>
   
   <p>An E-Mail reflector is available onto which questions, suggestions and
   code fragments may be posted. This is an un-moderated E-Mail group. The
   mailing list archives may be found at:-</p>
   
-  <p><center><font size="+2"><b><a
-  href="http://groups.yahoo.com/group/jasspa/" style="COLOR:
-  red">http://groups.yahoo.com/group/jasspa/</a></b></font></center></p>
+  <p><a class="mailing" href="http://groups.yahoo.com/group/jasspa/">
+  http://groups.yahoo.com/group/jasspa/</a></p>
   
   <p>These should be referenced before posting any questions, as an answer may
   have already been given. This mailing list is likely to contain the most
@@ -65,16 +103,14 @@
   <p>If you want to join the E-Mail reflector then mail a request, with an
   empty message body to:-</p>
   
-  <p><center><font size="+2"><b><a
-  href="mailto:jasspa-subscribe@yahoogroups.com" style="COLOR:
-  red">jasspa-subscribe@yahoogroups.com</a></b></font></center></p>
+  <p><a class="mailing"
+  href="mailto:jasspa-subscribe@yahoogroups.com">jasspa-subscribe@yahoogroups.com</a></p>
   
   <p>This should add you to the mailing list. If you want to be subsequently
   removed from the mailing list then mail an empty message to:-</p>
   
-  <p><center><font size="+2"><b><a
-  href="mailto:jasspa-unsubscribe@yahoogroups.com" style="COLOR:
-  red">jasspa-unsubscribe@yahoogroups.com</a></b></font></center></p>
+  <p><a class="mailing" href="mailto:jasspa-unsubscribe@yahoogroups.com">
+  jasspa-unsubscribe@yahoogroups.com</a></p>
   
   <p>and you will be removed from the lists. There are facilities on the site
   to allow you to receive digests, rather than multiple posts to the group
@@ -83,9 +119,14 @@
   <p>The mailing list is hosted by <b>YAHOO! Groups</b>. General help
   information on the mailgroup is available at their site:-</p>
   
-  <p><center><font size="+2"><b><a href="http://groups.yahoo.com"
-  style="COLOR: red">http://groups.yahoo.com</a></b></font></center></p>
-  
-  <p><font size="-2"><i>Copyright &copy; 2000-2005 Jasspa</i></font></p>
+  <p><a class="mailing" href="http://groups.yahoo.com">
+  http://groups.yahoo.com</a></p>
+  </div>
+
+  <div class="clearfloats"><!-- Clear --></div>
+  <div id="footer">
+  <p>Copyright &copy; 2000-2006 Jasspa</p>
+  </div>
+  </div>
   </body>
 </html>

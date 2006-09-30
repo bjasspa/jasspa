@@ -1,3 +1,4 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
@@ -8,58 +9,102 @@
     <meta name="authors" content="JASSPA"/>
     <meta name="GENERATOR" content="MicroEmacs"/>
     <title>MicroEmacs JASSPA Distribution</title>
-    <link REL="icon" HREF="images/menuicon.png" TYPE="image/png"/>
+    <link rel="icon" href="images/menuicon.png" type="image/png"/>
+    <link rel="stylesheet" type="text/css" href="./themes/default.css"/>
     <!-- BASE HREF="http://www.jasspa.com" -->
 
     <!--JASSPA - common from this point -->
-    <!-- BACKGROUND="meback.png"  -->
   </head>
-  <body bgcolor="white">
-  <!-- Banner across the top of the page -->
-  <table WIDTH="100%" HEIGHT="95" BORDER="0" CELLSPACING="0" CELLPADDING="0" >
+  <body>
+  <!-- Title -->
+  <div id="title">
+  <table>
     <tr>
-      <td BACKGROUND="images/backgrd.jpg"><center><img SRC="images/header.jpg" alt="jasspa.com"/></center></td>
+      <td><img SRC="images/header.jpg" alt="jasspa.com"/></td>
     </tr>
   </table>
-  <!-- width="100%"  -->
-  <table border="0" cellpadding="3" cellspacing="1" bgcolor="yellow">
-    <tr bgcolor="#0000ff">
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="index.html" style="COLOR: yellow" >Home</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="overview.html" style="COLOR: yellow">Overview</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="whatsnew.html" style="COLOR: yellow">What's New</a></b></font></td>
-      <td align="center" width="100" bgcolor="#0080ff"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="support.html" style="COLOR: yellow">Support</a></b></font></td>
-      <td align="center" width="100" ><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="download.html" style="COLOR: yellow">Download</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="about.html" style="COLOR: yellow">About</a></b></font></td>
-    </tr>
-  </table>
+  </div>
+  
+  <!-- Menu Bar -->
+  <div id="menubar">
+  <ul class="bar">
+    <li class="folder"><a href="index.html">Home</a></li>
+    <li class="folder"><a href="overview.html">Overview</a>
+    <ul>
+      <li><a href="overview.html">What is it ?</a></li>
+      <li><a href="o_features.html">Features</a></li>
+      <li><a href="o_filetypes.html">Supported&nbsp;file&nbsp;types</a></li>
+      <li><a href="o_platforms.html">Supported&nbsp;platforms</a></li>
+      <li><a href="me.html">On-line&nbsp;help</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="whatsnew.html">What's New</a></li>
+    <li class="folder"><a href="support.html">Support</a>
+    <ul>
+      <li><a href="support.html">Support</a></li>
+      <li><a href="faq.html">Faq</a></li>
+      <li><a href="maillist.html">Mailing&nbsp;lists</a></li>
+      <li><a href="email.html">Email&nbsp;support</a></li>
+      <li><a href="links.html">Links</a></li>
+      <li><a href="howto.html">How&nbsp;to</a></li>
+      <li><a href="me.html">On-line help</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="download.html">Download</a>
+    <ul>
+      <li><a href="download.html">Download</a></li>
+      <li><a href="history.html">History</a></li>
+      <li><a href="down0609.html">Sept 2006</a></li>
+      <li><a href="spelling.html">Spelling&nbsp;dictionaries</a></li>
+      <li><a href="contrib.html">Contributions</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="about.html">About</a></li>
+  </ul>
+  </div>
+  
+  <div class="clearfloats"><!-- Clear --></div>
+  
+  <!-- Sidebar -->
+  <div id="sidebarcontent">
+  <div id="sidebar">
+  <h2 align="center">Jasspa's MicroEmacs</h2>
+  <p align="center"><img alt="melogo" src="images/logo.png"/></p>
+  <h2>Quick Links</h2>
+  <ul>
+    <li><a href="support.html">Overview</a></li>
+    <li><a href="faq.html">Faq</a></li>
+    <li><a href="maillist.html">Mailing Lists</a></li>
+    <li><a href="email.html">Email Support</a></li>
+    <li><a href="links.html">Links</a></li>
+    <li><a href="howto.html">How To</a></li>
+    <li><a href="me.html">On-Line Help</a></li>
+  </ul>
+  </div>
+  
+  <!-- Main -->
+  <div id="main">
+  
   <!-- Section selection -->
-  <a name="top"/>
-  <p><font size="+3" color="#0000ff"><b>Support</b></font></p>
-  <font size="+1"><a href="support.html" style="COLOR: black">overview</a>&nbsp;&nbsp;</font>
-  <font size="+1"><a href="faq.html" style="COLOR: black">faq</a>&nbsp;&nbsp;</font>
-  <font size="+1"><a href="maillist.html" style="COLOR: black">mailing lists</a>&nbsp;&nbsp;</font>
-  <font size="+1"><a href="email.html" style="COLOR: black">email support</a>&nbsp;&nbsp;</font>
-  <font size="+1" color="#ff0000">links&nbsp;&nbsp;</font>
-  <font size="+1"><a href="howto.html" style="COLOR: black">how to</a>&nbsp;&nbsp;</font>
-  <font size="+1"><a href="me.html" style="COLOR: black">on-line help</a>&nbsp;&nbsp;</font>
+  <h1>Useful Links</h1>
   <p>The following links may be useful.</p>
 
-  <h3>JASSPA Links</h3>
+  <h2>JASSPA Links</h2>
   <ul>
     <li><a href="http://www.jasspa.com">www.jasspa.com</a> JASSPA Home Site</li>
     <li><a href="http://www.microemacs.de">www.microemacs.de</a> MicroEmacs site in Germany</li>
     <ul>
-      <li>JASSPA's MicroEmacs documentation re-bundled for MicroSoft Windows platforms as a .chm help file.
-      Provides a better search engine for the documentation.</li>
-      <li>JASSPA's MicroEmacs HTML documentation re-bundled with JAVA applets for Windows and UNIX,
-      provides better search capabilities.</li>
-      <li>A number of other macro files and extensions to the current release.</li>
+      
+      <li>JASSPA's MicroEmacs documentation re-bundled for MicroSoft Windows
+      platforms as a .chm help file. Provides a better search engine for the
+      documentation.</li>
+      
+      <li>JASSPA's MicroEmacs HTML documentation re-bundled with JAVA applets
+      for Windows and UNIX, provides better search capabilities.</li>
+      
+      <li>A number of other macro files and extensions to the current
+      release.</li>
+    
     </ul>
     <li><a href="http://www.hardline.org/">http://www.hardline.org/</a></li>
     <ul>
@@ -71,7 +116,7 @@
     <li><a href="http://www.cygwin.com">http://www.cygwin.com</a> Cygwin32 UNIX environment for Windows </li>
   </ul>
 
-  <h3>Unix tools</h3>
+  <h2>Unix tools</h2>
   <ul>
     <p>For DOS users the UNIX tools (diff/grep etc.) may be obtained from:-</p>
     <ul>
@@ -97,13 +142,26 @@
     </ul>
   </ul>
 
-  <h3>Compiler tools</h3>
+  <h2>Compiler tools</h2>
   <ul>
-    A Windows C Compiler is now free for download for private use. The Borland 5.5 C-Compiler may be obtained from
-    <a href="http://www.inprise.com">http://www.inprise.com</a>. All JASSPA releases 2000/03/22
-    and later may be built with this compiler using the makefile <tt>win32b55.mak</tt>. To build then use the command line
-    <tt>"make&nbsp;-f&nbsp;win32b55.mak"</tt>.
+    
+    <li>A Windows C Compiler is now free for download for private use. The
+    Borland 5.5 C-Compiler may be obtained from <a
+    href="http://www.inprise.com">http://www.inprise.com</a>. All JASSPA
+    releases 2000/03/22 and later may be built with this compiler using the
+    makefile <tt>win32b55.mak</tt>. To build then use the command line
+    <tt>"make&nbsp;-f&nbsp;win32b55.mak"</tt>.</li>
+    
+    <li>Sun Microsystems now offer <b>Sun Studio</b> for free. This is the
+    best compiler for Sun Solaris.</li>
+    
   </ul>
-  <p><font size="-2"><i>Copyright &copy; 2000-2005 Jasspa</i></font></p>
+  </div>
+
+  <div class="clearfloats"><!-- Clear --></div>
+  <div id="footer">
+  <p>Copyright &copy; 2000-2006 Jasspa</p>
+  </div>
+  </div>
   </body>
 </html>

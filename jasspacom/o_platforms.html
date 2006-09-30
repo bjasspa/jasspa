@@ -1,3 +1,4 @@
+<!DOCTYPE html public "-//w3c//dtd xhtml 1.0 strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
@@ -9,175 +10,209 @@
     <meta name="GENERATOR" content="MicroEmacs"/>
     <title>MicroEmacs JASSPA Distribution</title>
     <link REL="icon" HREF="images/menuicon.png" TYPE="image/png"/>
+    <link rel="stylesheet" type="text/css" href="./themes/default.css"/>
     <!-- BASE HREF="http://www.jasspa.com" -->
 
     <!--JASSPA - common from this point -->
-    <!-- BACKGROUND="meback.png"  -->
   </head>
-  <body bgcolor="white">
-  <!-- Banner across the top of the page -->
-  <table WIDTH="100%" HEIGHT="95" BORDER="0" CELLSPACING="0" CELLPADDING="0">
+  <body>
+  
+  <!-- Title -->
+  <div id="title">
+  <table>
     <tr>
-      <td BACKGROUND="images/backgrd.jpg"><center><img SRC="images/header.jpg" alt="jasspa.com"/></center></td>
+      <td><img SRC="images/header.jpg" alt="jasspa.com"/></td>
     </tr>
   </table>
-  <!-- width="100%"  -->
-  <table border="0" cellpadding="3" cellspacing="1" bgcolor="yellow">
-    <tr bgcolor="#0000ff">
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="index.html" style="COLOR: yellow" >Home</a></b></font></td>
-      <td align="center" width="100"  bgcolor="#0080ff"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="overview.html" style="COLOR: yellow">Overview</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="whatsnew.html" style="COLOR: yellow">What's New</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="support.html" style="COLOR: yellow">Support</a></b></font></td>
-      <td align="center" width="100" ><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="download.html" style="COLOR: yellow">Download</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="about.html" style="COLOR: yellow">About</a></b></font></td>
-    </tr>
-  </table>
-  <!-- Section selection -->
-  <p><font size="+3" color="#0000ff"><b>Overview</b></font>
-  <br/>
-  <font size="+1"><a href="overview.html" style="COLOR: black">what is it ?</a>&nbsp;&nbsp;</font>
-  <font size="+1"><a href="o_features.html" style="COLOR: black">features</a>&nbsp;&nbsp;</font>
-  <font size="+1"><a href="o_filetypes.html" style="COLOR: black">supported file types</a>&nbsp;&nbsp;</font>
-  <font size="+1" color="#ff0000">supported platforms&nbsp;&nbsp;</font>
-  <font size="+1"><a href="me.html" style="COLOR: black">on-line help</a>&nbsp;&nbsp;</font>
-  </p>
-  <!-- What is it -->
-  <h2>
-  <font color="#0000FF" size="6">
-  <img src="images/miniicon.gif" width="16" height="16"/></font>
-  Supported Platforms</h2>
+  </div>
+
+  <!-- Menu Bar -->
+  <div id="menubar">
+  <ul class="bar">
+    <li class="folder"><a href="index.html">Home</a></li>
+    <li class="folder"><a href="overview.html">Overview</a>
+    <ul>
+      <li><a href="overview.html">What is it ?</a></li>
+      <li><a href="o_features.html">Features</a></li>
+      <li><a href="o_filetypes.html">Supported&nbsp;file&nbsp;types</a></li>
+      <li><a href="o_platforms.html">Supported&nbsp;platforms</a></li>
+      <li><a href="me.html">On-line&nbsp;help</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="whatsnew.html">What's New</a></li>
+    <li class="folder"><a href="support.html">Support</a>
+    <ul>
+      <li><a href="support.html">Support</a></li>
+      <li><a href="faq.html">Faq</a></li>
+      <li><a href="maillist.html">Mailing&nbsp;lists</a></li>
+      <li><a href="email.html">Email&nbsp;support</a></li>
+      <li><a href="links.html">Links</a></li>
+      <li><a href="howto.html">How&nbsp;to</a></li>
+      <li><a href="me.html">On-line help</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="download.html">Download</a>
+    <ul>
+      <li><a href="download.html">Download</a></li>
+      <li><a href="history.html">History</a></li>
+      <li><a href="down0609.html">Sept 2006</a></li>
+      <li><a href="spelling.html">Spelling&nbsp;dictionaries</a></li>
+      <li><a href="contrib.html">Contributions</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="about.html">About</a></li>
+  </ul>
+  </div>
+
+  <div class="clearfloats"><!-- Clear --></div>
+
+  <!-- Sidebar -->
+  <div id="sidebarcontent">
+  <div id="sidebar">
+  <h2 align="center">Jasspa's MicroEmacs</h2>
+  <p align="center"><img alt="melogo" src="images/logo.png"/></p>
+  <h2>Quick Links</h2>
+  <ul>
+    <li><a href="overview.html">"What is it ?</a></li>
+    <li><a href="o_features.html">Features</a></li>
+    <li><a href="o_filetypes.html">Supported file types</a></li>
+    <li><a href="o_platforms.html">Supported platforms</a></li>
+    <li><a href="me.html">On-line help</a></li>
+  </ul>
+  </div>
+
+  <!-- Main -->
+  <div id="main">
+  <h2>Supported Platforms</h2>
 
   <p>The following table identifies the makefiles that are included in the
   source distribution and the currently officially supported platforms</p>
 
-  <center><table border="0" CELLSPACING="1" CELLPADDING="1" bgcolor="#cccccc">
+  <table class="checked">
     <tr>
-      <td align="center" bgcolor="#0000FF"><font color="#FFFF00"><b>Platform</b></font></td>
-      <td align="center" bgcolor="#0000FF"><font color="#FFFF00"><b>Makefile</b></font></td>
-      <td align="center" bgcolor="#0000FF"><font color="#FFFF00"><b>Description</b></font></td>
+    <thead>
+      <th>Platform</th>
+      <th>Makefile</th>
+      <th>Description</th>
+      </thead>
     </tr>
     <tr>
-      <td bgcolor="#F0F0FF">Cygwin</td>
-      <td bgcolor="#F0F0FF" align="center">cygwin.gmk <i>(GNU)</i></td>
-      <td bgcolor="#F0F0FF">Cygwin environment on MS-Windows</td>
+      <td class="label">Cygwin</td>
+      <td class="build">cygwin.gmk <i>(GNU)</i></td>
+      <td class="description">Cygwin environment on MS-Windows</td>
     </tr>
     <tr>
-      <td bgcolor="#F0F0FF">DOS</td>
-      <td bgcolor="#F0F0FF" align="center">dosdj.mak<br/>dosdj2.mak</td>
-      <td bgcolor="#F0F0FF">DJGPP V1.x<br/>DJGPP V2.x</td>
+      <td class="label">DOS</td>
+      <td class="build">dosdj.mak<br/>dosdj2.mak</td>
+      <td class="description">DJGPP V1.x<br/>DJGPP V2.x</td>
     </tr>
     <tr>
-      <td bgcolor="#F0F0FF">HPUX 9.x </td>
-      <td bgcolor="#F0F0FF" align="center">hpux9.mak <i>(native)</i><br/>hpux9.gmk <i>(GNU)</i></td>
-      <td bgcolor="#F0F0FF">Hewlett Packard [UNIX]<br/>(Use this for HPUX 10 - 10.10)</td>
+      <td class="label">HPUX 9.x </td>
+      <td class="build">hpux9.mak <i>(native)</i><br/>hpux9.gmk <i>(GNU)</i></td>
+      <td class="description">Hewlett Packard [UNIX]<br/>(Use this for HPUX 10 - 10.10)</td>
     </tr>
     <tr>
-      <td bgcolor="#F0F0FF">HPUX 10.20+</td>
-      <td bgcolor="#F0F0FF" align="center">hpux10.mak <i>(native)</i><br/>hpux10.gmk <i>(GNU)</i></td>
-      <td bgcolor="#F0F0FF">Hewlett Packard [UNIX]</td>
+      <td class="label">HPUX 10.20+</td>
+      <td class="build">hpux10.mak <i>(native)</i><br/>hpux10.gmk <i>(GNU)</i></td>
+      <td class="description">Hewlett Packard [UNIX]</td>
     </tr>
     <tr>
-      <td bgcolor="#F0F0FF">HPUX 11</td>
-      <td bgcolor="#F0F0FF" align="center">hpux11.mak <i>(native)</i><br/>hpux11.gmk <i>(GNU)</i></td>
-      <td bgcolor="#F0F0FF">Hewlett Packard [UNIX]</td>
+      <td class="label">HPUX 11</td>
+      <td class="build">hpux11.mak <i>(native)</i><br/>hpux11.gmk <i>(GNU)</i></td>
+      <td class="description">Hewlett Packard [UNIX]</td>
     </tr>
     <tr>
-      <td bgcolor="#F0F0FF">IRIX 5.x</td>
-      <td bgcolor="#F0F0FF" align="center">irix5.mak <i>(native)</i><br/>irix5.gmk <i>(GNU)</i></td>
-      <td bgcolor="#F0F0FF">Silicon Graphics IRIS [UNIX]</td>
+      <td class="label">IRIX 5.x</td>
+      <td class="build">irix5.mak <i>(native)</i><br/>irix5.gmk <i>(GNU)</i></td>
+      <td class="description">Silicon Graphics IRIS [UNIX]</td>
     </tr>
     <tr>
-      <td bgcolor="#F0F0FF">IRIX 6.x</td>
-      <td bgcolor="#F0F0FF" align="center">irix6.mak <i>(native)</i><br/>irix6.gmk <i>(GNU)</i></td>
-      <td bgcolor="#F0F0FF">Silicon Graphics IRIS [UNIX]</td>
+      <td class="label">IRIX 6.x</td>
+      <td class="build">irix6.mak <i>(native)</i><br/>irix6.gmk <i>(GNU)</i></td>
+      <td class="description">Silicon Graphics IRIS [UNIX]</td>
     </tr>
     <tr>
-      <td bgcolor="#F0F0FF">Linux</td>
-      <td bgcolor="#F0F0FF" align="center">linux2.gmk <i>(GNU)</i></td>
-      <td bgcolor="#F0F0FF">Linux Version 2.0.x/2.2.x/2.4.x</td>
+      <td class="label">Linux</td>
+      <td class="build">linux2.gmk <i>(GNU)</i></td>
+      <td class="description">Linux Version 2.0.x/2.2.x/2.4.x</td>
     </tr>
     <tr>
-      <td bgcolor="#F0F0FF">NeXTstep</td>
-      <td bgcolor="#F0F0FF" align="center">openstep.gmk <i>(GNU)</i></td>
-      <td bgcolor="#F0F0FF">Openstep 4.2 (BSD/Termcap)</td>
+      <td class="label">NeXTstep</td>
+      <td class="build">openstep.gmk <i>(GNU)</i></td>
+      <td class="description">Openstep 4.2 (BSD/Termcap)</td>
     </tr>
     <tr>
-      <td bgcolor="#F0F0FF">SunOS 5.5 (Solaris)</td>
-      <td bgcolor="#F0F0FF" align="center">sunos55.mak <i>(native)</i><br/>sunos55.gmk <i>(GNU)</i></td>
-      <td bgcolor="#F0F0FF">Sun Microsystems Solaris [UNIX - Sparc platform]</td>
+      <td class="label">SunOS 5.5 (Solaris)</td>
+      <td class="build">sunos55.mak <i>(native)</i><br/>sunos55.gmk <i>(GNU)</i></td>
+      <td class="description">Sun Microsystems Solaris [UNIX - Sparc platform]</td>
     </tr>
     <tr>
-      <td bgcolor="#F0F0FF">SunOS 2.6/7/8/9 (Solaris)</td>
-      <td bgcolor="#F0F0FF" align="center">sunos56.mak <i>(native)</i><br/>sunos56.gmk <i>(GNU)</i></td>
-      <td bgcolor="#F0F0FF">Sun Microsystems Solaris [UNIX - Sparc platform]</td>
+      <td class="label">SunOS 2.6/7/8/9 (Solaris)</td>
+      <td class="build">sunos56.mak <i>(native)</i><br/>sunos56.gmk <i>(GNU)</i></td>
+      <td class="description">Sun Microsystems Solaris [UNIX - Sparc platform]</td>
     </tr>
     <tr>
-      <td bgcolor="#F0F0FF">SunOS  2.6/7/8/9 (Intel Solaris)</td>
-      <td bgcolor="#F0F0FF" align="center">sunosx86.gmk <i>(GNU)</i></td>
-      <td bgcolor="#F0F0FF">Sun Microsystems Solaris [UNIX - Intel platform]</td>
+      <td class="label">SunOS  2.6/7/8/9 (Intel Solaris)</td>
+      <td class="build">sunosx86.gmk <i>(GNU)</i></td>
+      <td class="description">Sun Microsystems Solaris [UNIX - Intel platform]</td>
     </tr>
     <tr>
-      <td bgcolor="#F0F0FF">FreeBSD</td>
-      <td bgcolor="#F0F0FF" align="center">freebsd.gmk <i>(GNU)</i></td>
-      <td bgcolor="#F0F0FF">Free BSD</td>
+      <td class="label">FreeBSD</td>
+      <td class="build">freebsd.gmk <i>(GNU)</i></td>
+      <td class="description">Free BSD</td>
     </tr>
     <tr>
-      <td bgcolor="#F0F0FF">OpenBSD</td>
-      <td bgcolor="#F0F0FF" align="center">openbsd.gmk <i>(GNU)</i></td>
-      <td bgcolor="#F0F0FF">Open BSD</td>
+      <td class="label">OpenBSD</td>
+      <td class="build">openbsd.gmk <i>(GNU)</i></td>
+      <td class="description">Open BSD</td>
     </tr>
     <tr>
-      <td bgcolor="#F0F0FF">IBM AIX 4.3</td>
-      <td bgcolor="#F0F0FF" align="center">aix43.mak <i>(native)</i><br/>aix43.gmk <i>(GNU)</i></td>
-      <td bgcolor="#F0F0FF">IBM AIX 4.3 [UNIX]</td>
+      <td class="label">IBM AIX 4.3</td>
+      <td class="build">aix43.mak <i>(native)</i><br/>aix43.gmk <i>(GNU)</i></td>
+      <td class="description">IBM AIX 4.3 [UNIX]</td>
     </tr>
     <tr>
-      <td bgcolor="#F0F0FF">UnixWare</td>
-      <td bgcolor="#F0F0FF" align="center">Not supplied</td>
-      <td bgcolor="#F0F0FF">Unixware <em>[Build with -D_UNIXWR1]</em></td>
+      <td class="label">UnixWare</td>
+      <td class="build">Not supplied</td>
+      <td class="description">Unixware <em>[Build with -D_UNIXWR1]</em></td>
     </tr>
     <tr>
-      <td bgcolor="#F0F0FF">Windows '95/'98/NT/2K/XP</td>
-      <td bgcolor="#F0F0FF" align="center">win32v2.mak</td>
-      <td bgcolor="#F0F0FF">Microsoft Developer Studio V2.0</td>
+      <td class="label">Windows '95/'98/NT/2K/XP</td>
+      <td class="build">win32v2.mak</td>
+      <td class="description">Microsoft Developer Studio V2.0</td>
     </tr>
     <tr>
-      <td bgcolor="#F0F0FF">Windows '95/'98/NT/2K/XP</td>
-      <td bgcolor="#F0F0FF" align="center">win32v5.mak</td>
-      <td bgcolor="#F0F0FF">Microsoft Developer Studio V5.0</td>
+      <td class="label">Windows '95/'98/NT/2K/XP</td>
+      <td class="build">win32v5.mak</td>
+      <td class="description">Microsoft Developer Studio V5.0</td>
     </tr>
     <tr>
-      <td bgcolor="#F0F0FF">Windows '95/'98/NT/2K/XP</td>
-      <td bgcolor="#F0F0FF" align="center">win32v6.mak</td>
-      <td bgcolor="#F0F0FF">Microsoft Developer Studio V6.0<br/>MS-DEV Studio project also supplied</td>
+      <td class="label">Windows '95/'98/NT/2K/XP</td>
+      <td class="build">win32v6.mak</td>
+      <td class="description">Microsoft Developer Studio V6.0<br/>MS-DEV Studio project also supplied</td>
     </tr>
     <tr>
-      <td bgcolor="#F0F0FF">Windows '95/'98/NT/2K/XP</td>
-      <td bgcolor="#F0F0FF" align="center">win32bc.mak</td>
-      <td bgcolor="#F0F0FF">Borland 'C' 32-bit Windows</td>
+      <td class="label">Windows '95/'98/NT/2K/XP</td>
+      <td class="build">win32bc.mak</td>
+      <td class="description">Borland 'C' 32-bit Windows</td>
     </tr>
     <tr>
-      <td bgcolor="#F0F0FF">Windows '95/'98/NT/2K/XP</td>
-      <td bgcolor="#F0F0FF" align="center">win32b55.mak</td>
-      <td bgcolor="#F0F0FF">Borland 'C' 5.5 32-bit Windows (free download)</td>
+      <td class="label">Windows '95/'98/NT/2K/XP</td>
+      <td class="build">win32b55.mak</td>
+      <td class="description">Borland 'C' 5.5 32-bit Windows (free download)</td>
     </tr>
     <tr>
-      <td bgcolor="#F0F0FF">Windows 3.x (win32s)</td>
-      <td bgcolor="#F0F0FF" align="center">win32sv2.mak</td>
-      <td bgcolor="#F0F0FF">Microsoft Developer Studio V2.0</td>
+      <td class="label">Windows 3.x (win32s)</td>
+      <td class="build">win32sv2.mak</td>
+      <td class="description">Microsoft Developer Studio V2.0</td>
     </tr>
     <tr>
-      <td bgcolor="#F0F0FF">Windows 3.x (win32s)</td>
-      <td bgcolor="#F0F0FF" align="center">win32sv4.mak</td>
-      <td bgcolor="#F0F0FF">Microsoft Developer Studio V4.0</td>
+      <td class="label">Windows 3.x (win32s)</td>
+      <td class="build">win32sv4.mak</td>
+      <td class="description">Microsoft Developer Studio V4.0</td>
     </tr>
-  </table></center>
+  </table>
+  
   <ul>
 
     <li>Items marked as <i><b>(native)</b></i> imply the platforms native
@@ -204,45 +239,48 @@
 
   </ul>
 
-  <p><img src="images/miniicon.gif" width="16" height="16"/>
-  <font color="#0000FF" size="5"><strong>Window Mode Support</strong></font></p>
+  <h2>Window Manager Mode Support</h2>
 
   <p>Window manager support is available on the following platforms:-</p>
-  <p>
-  <ul>
-    <table border="0" CELLSPACING="1" CELLPADDING="1" bgcolor="#cccccc">
-      <tr>
-        <td bgcolor="#0000FF">
-          <font color="#FFFF00"><b><center>Platform</center></b></font>
-        </td>
-        <td bgcolor="#0000FF">
-          <font color="#FFFF00"><b><center>Windowing Support</center></b></font>
-        </td>
-      </tr>
-      <tr>
-        <td bgcolor="#F0F0FF">UNIX</td>
-        <td bgcolor="#F0F0FF">Native X-Windows and Terminal modes</td>
-      </tr>
-      <tr>
-        <td bgcolor="#F0F0FF">Cygwin</td>
-        <td bgcolor="#F0F0FF">Terminal and X-Windows modes</td>
-      </tr>
-      <tr>
-        <td bgcolor="#F0F0FF">DOS</td>
-        <td bgcolor="#F0F0FF">Console mode only</td>
-      </tr>
-      <tr>
-        <td bgcolor="#F0F0FF">Windows '95/'98/NT/2K/XP</td>
-        <td bgcolor="#F0F0FF">Window and Console modes</td>
-      </tr>
-      <tr>
-        <td bgcolor="#F0F0FF">Windows 3.11 (win32s)</td>
-        <td bgcolor="#F0F0FF">Window mode; use DOS for console.</td>
-      </tr>
-    </table>
-  </ul>
-  </p>
-  <HR color="#cccccc" noShade="1" SIZE="1"/>
-  <p><font size="-2"><i>Copyright &copy; 2000-2005 Jasspa</i></font></p>
+  
+  <table class="checked">
+    <tr>
+      <thead>
+      <th>Platform</th>
+      <th>Windowing Support</th>
+      </thead>
+    </tr>
+    <tr>
+      <td class="label">UNIX/Linux</td>
+      <td class="description">Native X-Windows and Terminal modes</td>
+    </tr>
+    <tr>
+      <td class="label">Apple MAC</td>
+      <td class="description">X-Windows and Terminal modes</td>
+    </tr>
+    <tr>
+      <td class="label">Cygwin</td>
+      <td class="description">Terminal and X-Windows modes</td>
+    </tr>
+    <tr>
+      <td class="label">DOS</td>
+      <td class="description">Console mode only</td>
+    </tr>
+    <tr>
+      <td class="label">Windows '95/'98/NT/2K/XP</td>
+      <td class="description">Window and Console modes</td>
+    </tr>
+    <tr>
+      <td class="label">Windows 3.11 (win32s)</td>
+      <td class="description">Window mode; use DOS for console.</td>
+    </tr>
+  </table>
+  </div>
+
+  <div class="clearfloats"><!-- Clear --></div>
+  <div id="footer">
+  <p>Copyright &copy; 2000-2006 Jasspa</p>
+  </div>
+  </div>
   </body>
 </html>
