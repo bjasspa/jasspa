@@ -100,40 +100,12 @@
   <p>
   <ul>
     
-    <li>Users upgrading from previous releases (including RC1) should be aware
-    that the search/replace syntax has changed the syntax of <b>\s?</b> and
-    <b>\S?</b> in favor of Perl's simpler <b>\s</b> and <b>\S</b> for a
-    whitespace char class and should upgrade any user defined macros. Very
-    simply the syntax has changed from <b>\s<i>space</i></b> to <b>\s</b> and
-    <b>\S<i>space</i></b> to <b>\S</b>.
-    
-    The only nasty side effect is hilight's miss-use of <b>\S1-\S9</b> to mean
-    not <b>\1-\9</b> group char, changed to <b>\!1-\!9</b>.</li>
-    
-    <li>New character classes exist for <b>\d</b> = digits, <b>\D</b> !=
-    digits <b>\h</b> = hexdigits <b>\H</b> != hexdigits <b>\l</b> = lowercase
-    <b>\L</b> != lowercase <b>\u</b> = uppercase and <b>\U</b> != uppercase.
-    Added support for character classes within the main regex <b>[...]</b>
-    character class, i.e. now supports regexs like <b>[\l\u_]</b> for any
-    lower, upper or '_' char. This is not supported in the hilight which
-    currently has a more simplistic <b>[...]</b> character class support.</li>
-    
-    <li>Regular expressions - extended the replacement string syntax. Added
-    support for <b>\c#</b>, <b>\l#</b> and <b>\u#</b> to change the case of
-    groups, where <b>\c#</b> is capitalise, <b>\l#</b> is lowercase <b>\u#</b>
-    is uppercase and <b>#</b> is the group number (0-9, &amp;)</li>
-             
     <li>Users upgrading from releases prior to RC1 (2005.02) should delete
     their <i>user.erf</i> file and configure as a new user to ensure that the
     mode flags are correct.</li>
     
-    <li><b>ne</b> is now set to not auto-save or create backups by default.
-    Options <b>-a</b> and <b>-B</b> enable and disable auto-save and backup
-    modes.</li>
-    
-    <li><b>ne</b> now supports a new command line option <b>-R</b> which
-    reverses the video (also supported in a DOS/Windows console) i.e. provides
-    black on white in a black console.</li> </ul> </p>
+  </ul>
+  </p>
   
   <h2>Platform Downloads</h2>
   <p>A selection of quick downloads for the most popular platforms.</p>

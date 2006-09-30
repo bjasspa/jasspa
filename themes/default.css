@@ -1,0 +1,459 @@
+/****************************************************************************
+ *
+ *  			     Copyright 2006 JASSPA
+ *			      All Rights Reserved
+ *
+ *
+ *  System        : JASSPA Web Site
+ *  Module        : Styles for Jasspa Site
+ *
+ *  Object Name   : $RCSfile: default.css,v $
+ *  Revision      : $Revision: 1.1 $
+ *  Date          : $Date: 2006-09-30 16:58:51 $
+ *  Author        : $Author: jon $
+ *  Created By    : Jon Green
+ *  Created       : Sun Sep 24 21:42:18 2006
+ *  Last Modified : <060930.1752>
+ *
+ *  Description	  : The style theme for JASSPA Web site.
+ *
+ *  Notes
+ *
+ *  History
+ *	
+ ****************************************************************************
+ *
+ *  Copyright (c) 2006 JASSPA.
+ * 
+ *  All Rights Reserved.
+ * 
+ * This  document  may  not, in  whole  or in  part, be  copied,  photocopied,
+ * reproduced,  translated,  or  reduced to any  electronic  medium or machine
+ * readable form without prior written consent from JASSPA.
+ *
+ ****************************************************************************/
+
+@media screen {
+  body {
+    font-size:100%;
+    background-color: #F5FDF9;
+    behavior:url("themes/csshover.htc");
+    background-image: url(sidebar.gif);
+    font-family:helvetica,verdana,tahoma,arial;
+  }
+
+  h1 {
+    font-family: times, serif;
+    font-weight: bold;
+    font-size: 2em;
+    color: #00c;
+    margin: 1em 0 .2em 0;
+    padding: 0;
+  }
+  h2 {
+    font-family: times, serif;
+    font-weight: bold;
+    font-size: 1.5em;
+    color: #00c;
+    margin: 1em 0 .2em 0;
+    padding: 0;
+  }
+
+  h3 {
+    font-family: times, serif;
+    font-weight: bold;
+    font-size: 1.2em;
+    color: #00c;
+    margin: .5em 0 .2em 0;
+    padding: 0;
+  }
+
+  p.notice {
+    color: red;
+    font-size: 1.2em;
+  }
+  
+  p.notes {
+    font-size: .8em;
+  }
+  
+  hr {
+    color: #eee;
+    background-color: black;
+    color: black;
+    height: 3px;
+  }
+  
+  /*************************************************************************
+   * Miscellaneous stuff                                                   *
+   *************************************************************************/
+  
+  /* Clear any floating regions */
+  div.clearfloats {clear:both;}
+
+  /* Leave trailer at bottom of page. */
+  div.trailer {
+    clear:both;
+    background-color: transparent;
+    width: 100%;
+    margin-top: 40px;
+  }
+
+  /* Leave trailer at bottom of page. */
+  #footer {
+    height: 20px;
+    color: #fff;
+    background-color: #0000ff;
+    color: yellow;
+    font-size: .9em;
+    width:100%;
+    margin: 0px;
+    padding: 0px;
+  }
+
+  div#footer p {
+    text-align: left;
+    margin-left: 20px;
+  }
+
+  div#footer a {
+    color: #fff;
+    text-decoration: underline;
+  }
+
+  div#footer a:hover {
+    color: yellow;
+    text-decoration: underline;
+  }
+
+  div#popspacer {
+    height: 100px;
+    background-color: transparent;
+  }
+
+  div#10spacer {
+    margin-top: 5px;
+    height: 2px;
+    background-color: transparent;
+  }
+
+  /*************************************************************************
+    * The title                                                             *
+    *************************************************************************/
+
+  div#title * {
+    margin: 0px;
+    padding: 0px;
+  }
+  
+  div#title table {
+    width: 100%;
+    border: none;
+    background-image: url(images/backgrd.jpg);
+/*    background-color: #0000ff;*/
+    border-collapse: collapse;
+  }
+  
+  div#title td {
+    width: 100%;
+    text-align: center;
+    /*    background-image: url(default/title.gif) no-repeat;*/
+    background-image: url(backgrd.jpg);
+    /*border: 1px solid red;*/
+  }
+
+  /*************************************************************************
+    * The menubar                                                          *
+    *************************************************************************/
+
+  div#menubar {
+    width: 100%;
+    float: left;
+    padding: 0;
+    margin: 0;
+    border-top: none; /* 1px solid #069; */
+    border-bottom: 1px solid #0000cc;
+    font-size: 1em;
+    font-weight: bold;
+    background-color: #0000ff;
+    margin-top: 1px;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0;
+  }
+
+  div#menubar ul, div#menubar li {
+    display:block;
+    margin:0;
+    padding:0;
+    border:0;
+  }
+  
+  div#menubar a {
+    display:block;
+  }
+  
+  div#menubar ul.bar {
+    background-color: #0000ff;
+    list-style-type: none;
+    margin: 0 50px 0 10px;
+    padding: 0;
+    border: none;
+    width: 100%;
+  }
+
+  div#menubar ul {
+    width: 10em;
+    border:1px solid #0000cc;
+    list-style:none;
+    /* Note in IE need this to keep pop-up submenu showing */
+    background: #0000ff;
+  }
+
+  div#menubar li {
+    position:relative;
+    z-index:9;
+  }
+
+  div#menubar li.folder {
+    float: left;
+    position: relative;
+    list-style-type: none;
+    background-color: #0000ff;
+    border: none;
+    padding: 0px 6px;
+    z-index:9;
+  }
+
+  div#menubar li.folder ul {
+    position:absolute;
+    left: -1px;
+  }
+  div#menubar  li.folder>ul {
+    left: -1px;
+  } /* others */
+
+  div#menubar a {
+    text-decoration:none;
+    color: yellow;
+    font-weight:bold;
+  }
+
+  /* Force the sub-menu to occupy the whole width of sub-menu */
+  div#menubar li.folder ul li a {
+    width:100%; 
+  }
+
+  div#menubar  li>a {
+    width:auto;
+  } /* others */
+
+  /* regular hovers */
+  div#menubar a:hover {
+    text-decoration:underline;
+  }
+
+  /* hovers with specificity */
+  div#menubar li:hover {
+    /* Background placed on li rather that a tag */
+    background-color: #0000cc;
+    z-index:10;
+  }
+
+  div#menubar  ul ul, li:hover ul ul {
+    display:none;
+  }
+
+  div#menubar  li:hover ul, li:hover li:hover ul {
+    display:block;
+  }
+
+  /*************************************************************************
+   * Sidebar                                                               *
+   *************************************************************************/
+  #sidebar {
+    float: left;
+    width: 150px;
+    /*    border: 1px solid red;*/
+    margin: 0;
+    padding: 5px;
+  }
+
+  div#sidebar ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    /* border: 1px solid red;*/
+  }
+
+  div#sidebar p {
+    line-height: 1.5em;
+    font-size: .9em;
+    margin: .25em 0 .5em .25em;
+  }
+
+  div#sidebar li.bulletred {
+    font-size: 1em;
+    line-height: 1em;
+    font-size: 1.2em;
+    border: none;
+    padding-left: 18px;
+    background-position: 1px top;
+    background: url("icons/i4268h16.gif") no-repeat;
+  }
+
+  div#sidebar li {
+    width: 140px;
+    font-size: .8em;
+    font-stretch: condensed;
+    list-style-type: none;
+    border: 1px solid #008;
+    margin: 3px 3px;
+    padding: 1px;
+    background-color: #0000ff;
+  }
+
+  /* Hover on <li> to fill the whole box. */
+  div#sidebar li:hover {
+    color: yellow;
+    background: #0000c0;
+  }
+
+  div#sidebar a {
+    color: yellow;
+    font-weight: bold;
+    width: 100%;
+    text-decoration: none;
+  }
+
+  div#sidebar a:hover {
+    text-decoration: underline;
+  }
+
+  /*************************************************************************
+   * The main area                                                         *
+   *************************************************************************/
+
+  #main {
+    margin-left: 180px;
+    margin-top: 0;
+    padding-top: 0;
+  }
+  
+  /* Check list tables */
+  table.checked {
+    border-collapse: collapse;
+    border: 1px solid #000;
+    padding: 3px;
+    font-size: .8em;
+    /* background: #eee; */
+    background: white;
+  }
+  
+  table.checked td {
+    border-collapse: collapse;
+    border: 1px solid #000;
+    padding: 3px;
+    /* background: #eee; */
+    background: white;
+    text-align: center;
+    align: top;
+  }
+  
+  table.checked td.label {
+    text-align: left;
+  }
+  table.checked td.description {
+    text-align: left;
+  }
+  
+  table.checked td.build {
+    text-align: left;
+    font-family: courier;
+  }
+  
+  table.checked th {
+    border-collapse: collapse;
+    font-weight: bold;
+    border: 1px solid #000;
+    padding: 3px;
+    background: #00c;
+    font-size: 1.2em;
+    color: yellow;
+    text-align: center;
+    align: center;
+  }
+  
+  /* Download Tables */
+  table.download {
+    border-collapse: collapse;
+    border: 1px solid #000;
+    padding: 3px;
+    font-size: .8em;
+    background: #eee;
+  }
+  
+  table.download td {
+    border-collapse: collapse;
+    border: 1px solid #000;
+    padding: 3px;
+    background: white;
+    /* background: #eee;*/
+  }
+  
+  table.download th {
+    border-collapse: collapse;
+    font-weight: bold;
+    border: 1px solid #000;
+    padding: 3px;
+    background: #00c;
+    font-size: 1.2em;
+    color: yellow;
+    text-align: center;
+    align: center;
+  }
+  
+  table.download td.size {  
+    text-align: center;
+  }
+  
+  table.download td.date {  
+    text-align: center;
+  }
+  
+  table.download td.item {  
+    text-align: center;
+  }
+  
+  table.download td.who {  
+    text-align: center;
+  }
+  
+  table.download td.image {  
+    text-align: center;
+    background: white;
+  }
+  
+  p.question {
+    font-size: 1.2em;
+    color: #00e;
+    font-weight: bold;
+  }
+    
+  
+  pre {
+    border: 1px solid #000;
+    background: #fff;
+  }
+    
+    
+  img#main {
+    align: top;
+    border: none;
+  }
+  
+  /* Set the width of the table. */
+  td#main {
+    width: 310px;
+  }
+}

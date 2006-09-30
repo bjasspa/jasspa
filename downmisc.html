@@ -1,3 +1,4 @@
+<!DOCTYPE html public "-//w3c//dtd xhtml 1.0 strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
@@ -9,124 +10,170 @@
     <meta name="GENERATOR" content="MicroEmacs"/>
     <title>MicroEmacs JASSPA Distribution</title>
     <link REL="icon" HREF="images/menuicon.png" TYPE="image/png"/>
+    <link rel="stylesheet" type="text/css" href="./themes/default.css"/>
     <!-- BASE HREF="http://www.jasspa.com" -->
 
     <!--JASSPA - common from this point -->
-    <!-- BACKGROUND="meback.png"  -->
   </head>
-  <body bgcolor="white">
-  <!-- Banner across the top of the page -->
-  <table WIDTH="100%" HEIGHT="95" BORDER="0" CELLSPACING="0" CELLPADDING="0" >
+  <body>
+
+  <!-- Title -->
+  <div id="title">
+  <table>
     <tr>
-      <td BACKGROUND="images/backgrd.jpg"><center><img SRC="images/header.jpg" alt="jasspa.com"/></center></td>
+      <td><img SRC="images/header.jpg" alt="jasspa.com"/></td>
     </tr>
   </table>
-  <!-- width="100%"  -->
-  <table border="0" cellpadding="3" cellspacing="1" bgcolor="yellow">
-    <tr bgcolor="#0000ff">
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="index.html" style="COLOR: yellow" >Home</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="overview.html" style="COLOR: yellow">Overview</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="whatsnew.html" style="COLOR: yellow">What's New</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="support.html" style="COLOR: yellow">Support</a></b></font></td>
-      <td align="center" width="100"  bgcolor="#0080ff"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="download.html" style="COLOR: yellow">Download</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="about.html" style="COLOR: yellow">About</a></b></font></td>
-    </tr>
-  </table>
+  </div>
 
-  <!-- Section selection -->
-  <p><font size="+3" color="#0000ff"><b>Miscellaneous Items Download</b></font>
-  <br/>
-  <font size="+1"><a href="download.html" style="COLOR: black">overview</a>&nbsp;&nbsp;</font>
-  <font size="+1"><a href="history.html" style="COLOR: black">history</a>&nbsp;&nbsp;</font>
-  <font size="+1" color="#ff0000"><a href="down0505.html" style="COLOR: black">May 2005</a>&nbsp;&nbsp;</font>
-  <font size="+1"><a href="spelling.html" style="COLOR: black">spelling dictionaries</a>&nbsp;&nbsp;</font>
-  <font size="+1"><a href="contrib.html" style="COLOR: black">contributions</a>&nbsp;&nbsp;</font>
-  </p>
+  <!-- Menu Bar -->
+  <div id="menubar">
+  <ul class="bar">
+    <li class="folder"><a href="index.html">Home</a></li>
+    <li class="folder"><a href="overview.html">Overview</a>
+    <ul>
+      <li><a href="overview.html">What is it ?</a></li>
+      <li><a href="o_features.html">Features</a></li>
+      <li><a href="o_filetypes.html">Supported&nbsp;file&nbsp;types</a></li>
+      <li><a href="o_platforms.html">Supported&nbsp;platforms</a></li>
+      <li><a href="me.html">On-line&nbsp;help</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="whatsnew.html">What's New</a></li>
+    <li class="folder"><a href="support.html">Support</a>
+    <ul>
+      <li><a href="support.html">Support</a></li>
+      <li><a href="faq.html">Faq</a></li>
+      <li><a href="maillist.html">Mailing&nbsp;lists</a></li>
+      <li><a href="email.html">Email&nbsp;support</a></li>
+      <li><a href="links.html">Links</a></li>
+      <li><a href="howto.html">How&nbsp;to</a></li>
+      <li><a href="me.html">On-line help</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="download.html">Download</a>
+    <ul>
+      <li><a href="download.html">Download</a></li>
+      <li><a href="history.html">History</a></li>
+      <li><a href="down0609.html">Sept 2006</a></li>
+      <li><a href="spelling.html">Spelling&nbsp;dictionaries</a></li>
+      <li><a href="contrib.html">Contributions</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="about.html">About</a></li>
+  </ul>
+  </div>
 
-  <p><font size="+1"><b>Last Upload: 10th May 2005</b></font></p>
+  <div class="clearfloats"><!-- Clear --></div>
 
-  <HR color="#cccccc" noShade="1" SIZE="1"/>
+  <!-- Sidebar -->
+  <div id="sidebarcontent">
+  <div id="sidebar">
+  <h2 align="center">Jasspa's MicroEmacs</h2>
+  <p align="center"><img alt="melogo" src="images/logo.png"/></p>
+  <h2>Quick Links</h2>
+  <ul>
+    <li><a href="downlatest.html">Download</a></li>
+    <li><a href="spelling.html">Spelling Dictionaries</a></li>
+  </ul>
+  </div>
 
-  <!-- Miscellaneous Files -->
+  <!-- Main -->
+  <div id="main">
 
-  <h2><img src="images/miniicon.gif" width="16" height="16"/>
-  <font color="#0000FF">Miscellaneous</font></h2>
+  <h1>Miscellaneous Items Download</h1>
+
+  <p>Last Upload: 10th May 2005</p>
+
+  <h2>Miscellaneous</h2>
+
   <p>A miscellaneous collection of other useful items.</p>
 
-  <p><center><table border="1" WIDTH="100%">
+  <table class="download">
     <tr>
-      <td bgcolor="#0000FF">
-        <font color="#FFFF00">
-        <strong>Miscellaneous<br/>Files</strong></font></td>
-      <td bgcolor="#0000FF">
-        <font color="#FFFF00">
-        <strong>Optional Components</strong><i> - Selection of miscellaneous items.</i></font></td>
-      <td align="center" bgcolor="#0000FF">
-        <font color="#FFFF00">
-        <strong>Byte<br/>Size</strong></font></td>
-      <td align="center" bgcolor="#0000FF">
-        <font color="#FFFF00"><strong>Last update</strong><br/>yyyy-mm-dd</font></td>
+      <thead>
+      <th>Miscellaneous<br/>Files</th>
+      <th>Optional Components<i> - Selection of miscellaneous items.</i></th>
+      <th>Byte<br/>Size</th>
+      <th>Last update<br/>yyyy-mm-dd</th>
+      </thead>
     </tr>
     <tr>
-      <td valign="top">
-        <a href="release_20050505/meicons.tar.gz">meicons.tar.gz</a>
+      <td class="file"><a href="release_20050505/meicons.tar.gz">meicons.tar.gz</a></td>
+      <td class="description">
+
+        X-Windows Pixel Map Images of JASSPA's MicroEmacs and NanoEmacs Icons.
+        Also includes pixmap images for CDE.
+
       </td>
-      <td valign="top">X-Windows Pixel Map Images of JASSPA's MicroEmacs and NanoEmacs Icons.
-        Also includes pixmap images for CDE.</td>
-      <td align="center" valign="top">1831</td>
-      <td align="center" valign="top">2002-12-16</td>
+      <td class="size">1831</td>
+      <td class="date">2002-12-16</td>
     </tr>
     <tr>
-      <td valign="top">
+      <td class="file">
         <a href="release_20050505/meicons.zip">meicons.zip</a>
       </td>
-      <td valign="top">Source (<i>meicons.exe</i>) and icon files for the Microsoft Windows environment.</td>
-      <td align="center" valign="top">54966</td>
-      <td align="center" valign="top">2002-01-06</td>
+      <td class="description">
+
+        Source (<i>meicons.exe</i>) and icon files for the Microsoft Windows
+        environment.
+
+      </td>
+      <td class="size">54966</td>
+      <td class="date">2002-01-06</td>
     </tr>
     <tr>
-      <td valign="top">
+      <td class="file">
         <a href="release_20050505/meicons-bin.zip">meicons-bin.zip</a>
       </td>
-      <td valign="top">meicons.exe icon file for the Microsoft Windows environment.</td>
-      <td align="center" valign="top">23932</td>
-      <td align="center" valign="top">2002-01-06</td>
+      <td class="description">
+
+        <i>meicons.exe</i> icon file for the Microsoft Windows environment.
+
+      </td>
+      <td class="size">23932</td>
+      <td class="date">2002-01-06</td>
     </tr>
     <tr>
-      <td valign="top">
+      <td class="file">
         <a href="release_20050505/meicons_pm.tar.gz">meicons_pm.tar.gz</a>
       </td>
-      <td valign="top">Additional X-Windows Pixel Map Images for use with CDE.</td>
-      <td align="center" valign="top">49324</td>
-      <td align="center" valign="top">2003-08-14</td>
+      <td class="description">
+
+        Additional X-Windows Pixel Map Images for use with CDE.
+
+      </td>
+      <td class="size">49324</td>
+      <td class="date">2003-08-14</td>
     </tr>
     <tr>
-      <td valign="top">
+      <td class="file">
         <a href="release_20050505/meicons-extra.tar.gz">meicons-extra.tar.gz</a><br/>
         <a href="release_20050505/meicons-extra.tar.zip">meicons-extra.tar.zip</a><br/>
       </td>
-      <td valign="top">Additional Icons. full icon set for use with GNOME or KDE.</td>
-      <td align="center" valign="top">43345<br/>45195</td>
-      <td align="center" valign="top">2003-01-29</td>
+      <td class="description">
+
+        Additional Icons. full icon set for use with GNOME or KDE.
+
+      </td>
+      <td class="size">43345<br/>45195</td>
+      <td class="date">2003-01-29</td>
     </tr>
     <tr>
-      <td valign="top">
+      <td class="file">
         <a href="release_20050505/readme.jasspa_gnome">readme.jasspa_gnome</a><br/>
         <a href="release_20050505/jasspa_gnome.tar.zip">jasspa_gnome.tar.zip</a><br/>
       </td>
-      <td valign="top">GNOME configuration files for JASSPA MicroEmacs to reconfigure Nautilus.</td>
-      <td align="center" valign="top">-<br/>2867</td>
-      <td align="center" valign="top">2003-01-29</td>
-    </tr>
-  </table></center></p>
+      <td class="description">
 
-  <HR color="#cccccc" noShade="1" SIZE="1"/>
+        GNOME configuration files for JASSPA MicroEmacs to reconfigure
+        Nautilus.
+
+      </td>
+      <td class="size">-<br/>2867</td>
+      <td class="date">2003-01-29</td>
+    </tr>
+  </table>
 
   <h1>NO WARRANTY</h1>
 
@@ -139,20 +186,26 @@
   performance of the program is with you. Should the program prove defective,
   you assume the cost of all necessary servicing, repair or correction.</p>
 
-  <p>In no event unless required by applicable law or agreed to in writing will
-  any copyright holder, or any other party who may modify and/or redistribute
-  the program as permitted above, be liable to you for damages, including any
-  general, special, incidental or consequential damages arising out of the use
-  or inability to use the program (including but not limited to loss of data or
-  data being rendered inaccurate or losses sustained by you or third parties or
-  a failure of the program to operate with any other programs), even if such
-  holder or other party has been advised of the possibility of such damages.</p>
+  <p>In no event unless required by applicable law or agreed to in writing
+  will any copyright holder, or any other party who may modify and/or
+  redistribute the program as permitted above, be liable to you for damages,
+  including any general, special, incidental or consequential damages arising
+  out of the use or inability to use the program (including but not limited to
+  loss of data or data being rendered inaccurate or losses sustained by you or
+  third parties or a failure of the program to operate with any other
+  programs), even if such holder or other party has been advised of the
+  possibility of such damages.</p>
 
   <p>By downloading any material from this site you agree to these
   conditions.</p>
 
-  <HR color="#cccccc" noShade="1" SIZE="1"/>
+  </div>
 
-  <p><font size="-2"><i>Copyright &copy; 2000-2005 Jasspa</i></font></p>
+  <div class="clearfloats"><!-- Clear --></div>
+  <div id="footer">
+  <p>Copyright &copy; 2000-2006 Jasspa</p>
+  </div>
+  </div>
   </body>
 </html>
+

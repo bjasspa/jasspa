@@ -1,3 +1,4 @@
+<!DOCTYPE html public "-//w3c//dtd xhtml 1.0 strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
@@ -9,57 +10,94 @@
     <meta name="GENERATOR" content="MicroEmacs"/>
     <title>MicroEmacs JASSPA Distribution</title>
     <link REL="icon" HREF="images/menuicon.png" TYPE="image/png"/>
+    <link rel="stylesheet" type="text/css" href="./themes/default.css"/>
     <!-- BASE HREF="http://www.jasspa.com" -->
 
     <!--JASSPA - common from this point -->
-    <!-- BACKGROUND="meback.png"  -->
   </head>
-  <body bgcolor="white">
-  <!-- Banner across the top of the page -->
-  <table WIDTH="100%" HEIGHT="95" BORDER="0" CELLSPACING="0" CELLPADDING="0" >
+  <body>
+  
+  <!-- Title -->
+  <div id="title">
+  <table>
     <tr>
-      <td BACKGROUND="images/backgrd.jpg"><center><img SRC="images/header.jpg" alt="jasspa.com"/></center></td>
+      <td><img SRC="images/header.jpg" alt="jasspa.com"/></td>
     </tr>
   </table>
-  <!-- width="100%"  -->
-  <table border="0" cellpadding="3" cellspacing="1" bgcolor="yellow">
-    <tr bgcolor="#0000ff">
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="index.html" style="COLOR: yellow" >Home</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="overview.html" style="COLOR: yellow">Overview</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="whatsnew.html" style="COLOR: yellow">What's New</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="support.html" style="COLOR: yellow">Support</a></b></font></td>
-      <td align="center" width="100"  bgcolor="#0080ff"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="download.html" style="COLOR: yellow">Download</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="about.html" style="COLOR: yellow">About</a></b></font></td>
-    </tr>
-  </table>
+  </div>
 
-  <!-- Section selection -->
-  <p><font size="+3" color="#0000ff"><b>Download</b></font>
-  <br/>
-  <font size="+1" ><a href="download.html" style="COLOR: black">overview</a>&nbsp;&nbsp;</font>
-  <font size="+1" color="#ff0000">history&nbsp;&nbsp;</font>
-  <font size="+1"><a href="down0505.html" style="COLOR: black">May 2005</a>&nbsp;&nbsp;</font>
-  <font size="+1"><a href="spelling.html" style="COLOR: black">spelling dictionaries</a>&nbsp;&nbsp;</font>
-  <font size="+1"><a href="contrib.html" style="COLOR: black">contributions</a>&nbsp;&nbsp;</font>
-  </p>
-  <p><center><font size="+2"><b><em>JASSPA's</em> MicroEmacs Distribution History</b></font></center></p>
-  <h2><img src="images/miniicon.gif" width="16" height="16"/> <font color="#0000FF">
-  Origins</font></h2>
+  <!-- Menu Bar -->
+  <div id="menubar">
+  <ul class="bar">
+    <li class="folder"><a href="index.html">Home</a></li>
+    <li class="folder"><a href="overview.html">Overview</a>
+    <ul>
+      <li><a href="overview.html">What is it ?</a></li>
+      <li><a href="o_features.html">Features</a></li>
+      <li><a href="o_filetypes.html">Supported&nbsp;file&nbsp;types</a></li>
+      <li><a href="o_platforms.html">Supported&nbsp;platforms</a></li>
+      <li><a href="me.html">On-line&nbsp;help</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="whatsnew.html">What's New</a></li>
+    <li class="folder"><a href="support.html">Support</a>
+    <ul>
+      <li><a href="support.html">Support</a></li>
+      <li><a href="faq.html">Faq</a></li>
+      <li><a href="maillist.html">Mailing&nbsp;lists</a></li>
+      <li><a href="email.html">Email&nbsp;support</a></li>
+      <li><a href="links.html">Links</a></li>
+      <li><a href="howto.html">How&nbsp;to</a></li>
+      <li><a href="me.html">On-line help</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="download.html">Download</a>
+    <ul>
+      <li><a href="download.html">Download</a></li>
+      <li><a href="history.html">History</a></li>
+      <li><a href="down0609.html">Sept 2006</a></li>
+      <li><a href="spelling.html">Spelling&nbsp;dictionaries</a></li>
+      <li><a href="contrib.html">Contributions</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="about.html">About</a></li>
+  </ul>
+  </div>
+
+  <div class="clearfloats"><!-- Clear --></div>
+
+  <!-- Sidebar -->
+  <div id="sidebarcontent">
+  <div id="sidebar">
+  <h2 align="center">Jasspa's MicroEmacs</h2>
+  <p align="center"><img alt="melogo" src="images/logo.png"/></p>
+  <h2>Quick Links</h2>
+  <ul>
+    <li><a href="download.html">Download Overview</a></li>
+    <li><a href="history.html">History</a></li>
+    <li><a href="downlatest.html">May 2005</a></li>
+    <li><a href="spelling.html">Spelling Dictionaries</a></li>
+    <li><a href="contrib.html">Contributions</a></li>
+  </ul>
+  </div>
+
+  <!-- Main -->
+  <div id="main">
+   
+  <h2>History</h2>
+
+  <p><em>JASSPA's</em> MicroEmacs Distribution History</p>
+  
+  <h2>Origins</h2>
 
   <p><b>MicroEmacs</b> was originally written by Dave Conroy in late 1985 or
   early 1986 for private use. Various people asked Dave for a copy of the
   program and it was distributed without concern for copyrights or ownership
   as was the custom of that era. Daniel Lawrence then obtained a copy of the
-  program and turned it into an editor for the masses, it is his work
-  that ultimately made MicroEmacs so popular. Daniel did a tremendous amount
-  of work, both adding features and supporting other platforms resulting in
-  the MicroEmacs v3.8 release on which JASSPA's MicroEmacs is based.</p>
+  program and turned it into an editor for the masses, it is his work that
+  ultimately made MicroEmacs so popular. Daniel did a tremendous amount of
+  work, both adding features and supporting other platforms resulting in the
+  MicroEmacs v3.8 release on which JASSPA's MicroEmacs is based.</p>
 
   <p>The evolution of JASSPA's MicroEmacs starts here ...</p>
 
@@ -102,8 +140,7 @@
   Regardless of the look, the goal of a common editor across all working
   platforms has been achieved!</p>
 
-  <h2><img src="images/miniicon.gif" width="16" height="16"/> <font color="#0000FF">
-  Development History</font></h2>
+  <h2>Development History</h2>
 
   <h3>8th Release - May 2005</h3>
   <ul>
@@ -2859,63 +2896,71 @@
 
   </ul>
 
-  <h2><img src="images/miniicon.gif" width="16" height="16"/> <font color="#0000FF">
-  Work In Progress or Planned</font></h2>
+  <h2>Work In Progress or Planned</h2>
+  
   <p>Development  of  JASSPA's MicroEmacs  is an  on-going  process,  follows  is a list  of work
   items which is currently  being undertaken or planned:-</p>
+  
   <ul>
     <li>Native printer support for the generation of postscript.</li>
     <li>GNU Emacs compatibility macro file. (Key bindings).</li>
   </ul>
-  <h2><img src="images/miniicon.gif" width="16" height="16"/> <font color="#0000FF">
-  Release History</font></h2>
+  
+  <h2>Release History</h2>
   <center><table border="0">
     <tr>
-      <td align="center" bgcolor="#0000FF"><font color="#FFFF00" class="bodytext" face="Ariel, Helvetica, san-serif" size="4">Date</font></td>
-      <td align="center" bgcolor="#0000FF"><font color="#FFFF00" class="bodytext" face="Ariel, Helvetica, san-serif" size="4">Description</font></td>
+      <thead>
+      <th>Date</font></th>
+      <th>Description</th>
     </tr>
     <tr>
-      <td align="center" bgcolor="#0080ff"><font  color="#FFFF00" class="bodytext" face="Ariel, Helvetica, san-serif">March 2004</font></td>
-      <td bgcolor="#0080ff"><font color="#FFFF00" class="bodytext" face="Ariel, Helvetica, san-serif">7th Major Release</font></td>
+      <td class="date">March 2004</td>
+      <td class="description">7th Major Release</td>
     </tr>
     <tr>
-      <td align="center" bgcolor="#0080ff"><font  color="#FFFF00" class="bodytext" face="Ariel, Helvetica, san-serif">December 2002</font></td>
-      <td bgcolor="#0080ff"><font color="#FFFF00" class="bodytext" face="Ariel, Helvetica, san-serif">6th Major Release</font></td>
+      <td class="date">December 2002</td>
+      <td class="description">6th Major Release</td>
     </tr>
     <tr>
-      <td align="center" bgcolor="#0080ff"><font  color="#FFFF00" class="bodytext" face="Ariel, Helvetica, san-serif">January 2002</font></td>
-      <td bgcolor="#0080ff"><font color="#FFFF00" class="bodytext" face="Ariel, Helvetica, san-serif">5th Major Release - First under GPL</font></td>
+      <td class="date">January 2002</td>
+      <td class="description">5th Major Release - First under GPL</td>
     </tr>
     <tr>
-      <td align="center" bgcolor="#0080ff"><font  color="#FFFF00" class="bodytext" face="Ariel, Helvetica, san-serif">August 2001</font></td>
-      <td bgcolor="#0080ff"><font color="#FFFF00" class="bodytext" face="Ariel, Helvetica, san-serif">4th Major Release</font></td>
+      <td class="date">August 2001</td>
+      <td class="description">4th Major Release</td>
     </tr>
     <tr>
-      <td align="center" bgcolor="#0080ff"><font  color="#FFFF00" class="bodytext" face="Ariel, Helvetica, san-serif">July 2001</font></td>
-      <td bgcolor="#0080ff"><font color="#FFFF00" class="bodytext" face="Ariel, Helvetica, san-serif">3rd Major Release</font></td>
+      <td class="date">July 2001</td>
+      <td class="description">3rd Major Release</td>
     </tr>
     <tr>
-      <td align="center" bgcolor="#0080ff"><font color="#FFFF00" class="bodytext" face="Ariel, Helvetica, san-serif">March 2000</font></td>
-      <td bgcolor="#0080ff"><font color="#FFFF00" class="bodytext" face="Ariel, Helvetica, san-serif">2nd Release - Alpha Patch</font></td>
+      <td class="date">March 2000</td>
+      <td class="description">2nd Release - Alpha Patch</td>
     </tr>
     <tr>
-      <td align="center" bgcolor="#0080ff"><font color="#FFFF00" class="bodytext" face="Ariel, Helvetica, san-serif">December 1999</font></td>
-      <td bgcolor="#0080ff"><font color="#FFFF00" class="bodytext" face="Ariel, Helvetica, san-serif">2nd Major Release</font></td>
+      <td class="date">December 1999</td>
+      <td class="description">2nd Major Release</td>
     </tr>
     <tr>
-      <td align="center" bgcolor="#0080ff"><font color="#FFFF00" class="bodytext" face="Ariel, Helvetica, san-serif">May 1999</font></td>
-      <td bgcolor="#0080ff"><font color="#FFFF00" class="bodytext" face="Ariel, Helvetica, san-serif">Beta Release</font></td>
+      <td class="date">May 1999</td>
+      <td class="description">Beta Release</td>
     </tr>
     <tr>
-      <td align="center" bgcolor="#0080ff"><font color="#FFFF00" class="bodytext" face="Ariel, Helvetica, san-serif">September 1998</font></td>
-      <td bgcolor="#0080ff"><font color="#FFFF00" class="bodytext" face="Ariel, Helvetica, san-serif">Minor patch to MicroEmacs '98 to correct a font problem on Windows platforms.</font></td>
+      <td class="date">September 1998</td>
+      <td class="description">Minor patch to MicroEmacs '98 to correct a font problem on Windows platforms.</td>
     </tr>
     <tr>
-      <td align="center" bgcolor="#0080ff"><font color="#FFFF00" class="bodytext" face="Ariel, Helvetica, san-serif">October 1998</font></td>
-      <td bgcolor="#0080ff"><font color="#FFFF00" class="bodytext" face="Ariel, Helvetica, san-serif">1st Major Release</font></td>
+      <td class="date">October 1998</td>
+      <td class="description">1st Major Release</td>
     </tr>
   </table></center>
 
-  <p><font size="-2"><i>Copyright &copy; 2000-2005 Jasspa</i></font></p>
+  </div>
+
+  <div class="clearfloats"><!-- Clear --></div>
+  <div id="footer">
+  <p>Copyright &copy; 2000-2006 Jasspa</p>
+  </div>
+  </div>
   </body>
 </html>

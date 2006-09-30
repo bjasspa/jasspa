@@ -1,3 +1,4 @@
+<!DOCTYPE html public "-//w3c//dtd xhtml 1.0 strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
@@ -9,90 +10,111 @@
     <meta name="GENERATOR" content="MicroEmacs"/>
     <title>MicroEmacs JASSPA Distribution</title>
     <link REL="icon" HREF="images/menuicon.png" TYPE="image/png"/>
+    <link rel="stylesheet" type="text/css" href="./themes/default.css"/>
     <!-- BASE HREF="http://www.jasspa.com" -->
 
     <!--JASSPA - common from this point -->
-    <!-- BACKGROUND="meback.png"  -->
   </head>
-  <body bgcolor="white">
-  <!-- Banner across the top of the page -->
-  <table WIDTH="100%" HEIGHT="95" BORDER="0" CELLSPACING="0" CELLPADDING="0" >
+  <body>
+  
+  <!-- Title -->
+  <div id="title">
+  <table>
     <tr>
-      <td BACKGROUND="images/backgrd.jpg"><center><img SRC="images/header.jpg" alt="jasspa.com"/></center></td>
+      <td><img SRC="images/header.jpg" alt="jasspa.com"/></td>
     </tr>
   </table>
-  <!-- width="100%"  -->
-  <table border="0" cellpadding="3" cellspacing="1" bgcolor="yellow">
-    <tr bgcolor="#0000ff">
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="index.html" style="COLOR: yellow" >Home</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="overview.html" style="COLOR: yellow">Overview</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="whatsnew.html" style="COLOR: yellow">What's New</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="support.html" style="COLOR: yellow">Support</a></b></font></td>
-      <td align="center" width="100"  bgcolor="#0080ff"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="download.html" style="COLOR: yellow">Download</a></b></font></td>
-      <td align="center" width="100"><font class="bodytext" face="Ariel, Helvetica, san-serif" size="2">
-        <b><a href="about.html" style="COLOR: yellow">About</a></b></font></td>
+  </div>
+
+  <!-- Menu Bar -->
+  <div id="menubar">
+  <ul class="bar">
+    <li class="folder"><a href="index.html">Home</a></li>
+    <li class="folder"><a href="overview.html">Overview</a>
+    <ul>
+      <li><a href="overview.html">What is it ?</a></li>
+      <li><a href="o_features.html">Features</a></li>
+      <li><a href="o_filetypes.html">Supported&nbsp;file&nbsp;types</a></li>
+      <li><a href="o_platforms.html">Supported&nbsp;platforms</a></li>
+      <li><a href="me.html">On-line&nbsp;help</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="whatsnew.html">What's New</a></li>
+    <li class="folder"><a href="support.html">Support</a>
+    <ul>
+      <li><a href="support.html">Support</a></li>
+      <li><a href="faq.html">Faq</a></li>
+      <li><a href="maillist.html">Mailing&nbsp;lists</a></li>
+      <li><a href="email.html">Email&nbsp;support</a></li>
+      <li><a href="links.html">Links</a></li>
+      <li><a href="howto.html">How&nbsp;to</a></li>
+      <li><a href="me.html">On-line help</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="download.html">Download</a>
+    <ul>
+      <li><a href="download.html">Download</a></li>
+      <li><a href="history.html">History</a></li>
+      <li><a href="down0609.html">Sept 2006</a></li>
+      <li><a href="spelling.html">Spelling&nbsp;dictionaries</a></li>
+      <li><a href="contrib.html">Contributions</a></li>
+    </ul>
+    </li>
+    <li class="folder"><a href="about.html">About</a></li>
+  </ul>
+  </div>
+
+  <div class="clearfloats"><!-- Clear --></div>
+
+  <!-- Sidebar -->
+  <div id="sidebarcontent">
+  <div id="sidebar">
+  <h2 align="center">Jasspa's MicroEmacs</h2>
+  <p align="center"><img alt="melogo" src="images/logo.png"/></p>
+  <h2>Quick Links</h2>
+  <ul>
+    <li><a href="downlatest.html">Download</a></li>
+    <li><a href="spelling.html">Spelling Dictionaries</a></li>
+  </ul>
+  </div>
+
+  <!-- Main -->
+  <div id="main">
+   
+  <h1>Sun Microsystems Release</h1>
+  
+  <p>Last Upload: 21st April 200</p>
+
+  <h2>Complete Package</h2>
+
+  <table class="download">
+    <tr>
+      <thead>
+      <th>Download Image</th>
+      <th>Pre-built Installation Files</th>
+      <th>Byte<br/>Size</th>
+      <th>Last update<br/>yyyy-mm-dd</th>
+      </thead>
+    </tr>
+    <tr>
+      <td class="file"><a href="release_20050505/jasspa-mepkg-sun-sparc-58-20050505.zip">jasspa-mepkg-sun-sparc-58-20050505.zip</a></td>
+      <td class="description">Sun Solaris (sparc) 8 package (also for 9 and 10).</td>
+      <td class="size">1238464</td>
+      <td class="date">2005-05-05</td>
+    </tr>
+    <tr>
+      <td class="file"><a href="release_20050505/jasspa-mepkg-sun-sparc-59-20050505.zip">jasspa-mepkg-sun-sparc-59-20050505.zip</a></td>
+      <td class="description">Sun Solaris (sparc) 9 package (also for 10).</td>
+      <td class="size">1238393</td>
+      <td class="date">2005-05-05</td>
+    </tr>
+    <tr>
+      <td class="file"><a href="release_20050505/jasspa-mepkg-sun-i386-58-20050505.zip">jasspa-mepkg-sun-i386-58-20050505.zip</a></td>
+      <td class="description">Sun Solaris (i386) 8 package (also for 9 and 10).</td>
+      <td class="size">1221057</td>
+      <td class="date">2005-05-05</td>
     </tr>
   </table>
-
-  <!-- Section selection -->
-  <p><font size="+3" color="#0000ff"><b>Sun Microsystems Solaris Download</b></font>
-  <br/>
-  <font size="+1"><a href="download.html" style="COLOR: black">overview</a>&nbsp;&nbsp;</font>
-  <font size="+1"><a href="history.html" style="COLOR: black">history</a>&nbsp;&nbsp;</font>
-  <font size="+1" color="#ff0000"><a href="down0505.html">May 2005</a>&nbsp;&nbsp;</font>
-  <font size="+1"><a href="spelling.html" style="COLOR: black">spelling dictionaries</a>&nbsp;&nbsp;</font>
-  <font size="+1"><a href="contrib.html" style="COLOR: black">contributions</a>&nbsp;&nbsp;</font>
-  </p>
-
-  <p><font size="+1"><b>Last Upload: 21st April 2005</b></font></p>
-
-  <HR color="#cccccc" noShade="1" SIZE="1"/>
-
-  <h2><img src="images/miniicon.gif" width="16" height="16"/>
-  <font color="#0000FF">Complete Package</font></h2>
-
-  <center><table border="1" WIDTH="100%">
-    <tr>
-      <td bgcolor="#0000FF">
-        <font color="#FFFF00"><strong>Download Image</strong></font></td>
-      <td bgcolor="#0000FF">
-        <font color="#FFFF00">
-        <strong>Pre-built Installation Files</strong></font></td>
-      <td align="center" bgcolor="#0000FF">
-        <font color="#FFFF00"><strong>Byte<br/>Size</strong></font></td>
-      <td align="center" bgcolor="#0000FF">
-        <font color="#FFFF00"><strong>Last update</strong><br/>yyyy-mm-dd</font></td>
-    </tr>
-    <!--tr>
-      <td><a href="release_040301/jasspa-mepkg-sun-sparc-56-20040301.zip">jasspa-mepkg-sun-sparc-56-20040301.zip</a></td>
-      <td><b>Package:</b> Sun Solaris (sparc) 5.6/7 package.<br/><i>(pkgadd -d jasspa-me)</i></td>
-      <td><center>1136955</center></td>
-      <td><center>2004-03-01</center></td>
-    </tr-->
-    <tr>
-      <td><a href="release_20050505/jasspa-mepkg-sun-sparc-58-20050505.zip">jasspa-mepkg-sun-sparc-58-20050505.zip</a></td>
-      <td>Sun Solaris (sparc) 8 package (also for 9 and 10).</td>
-      <td><center>1238464</center></td>
-      <td><center>2005-05-05</center></td>
-    </tr>
-    <tr>
-      <td><a href="release_20050505/jasspa-mepkg-sun-sparc-59-20050505.zip">jasspa-mepkg-sun-sparc-59-20050505.zip</a></td>
-      <td>Sun Solaris (sparc) 9 package (also for 10).</td>
-      <td><center>1238393</center></td>
-      <td><center>2005-05-05</center></td>
-    </tr>
-    <tr>
-      <td><a href="release_20050505/jasspa-mepkg-sun-i386-58-20050505.zip">jasspa-mepkg-sun-i386-58-20050505.zip</a></td>
-      <td>Sun Solaris (i386) 8 package (also for 9 and 10).</td>
-      <td><center>1221057</center></td>
-      <td><center>2005-05-05</center></td>
-    </tr>
-  </table></center>
 
   <h3>Package Installation</h3>
   <p>Unpack, and as <i>root</i> run the command <tt>pkgadd -d jasspa-me</tt></p>
@@ -102,57 +124,53 @@
 
   <!-- NanoEmacs - Package and Binary Downloads -->
 
-  <HR color="#cccccc" noShade="1" SIZE="1"/>
-
-  <h2><img src="images/miniicon.gif" width="16" height="16"/>
-  <font color="#0000FF">NanoEmacs</font></h2>
+  <h2>NanoEmacs</h2>
   <p>Small foot print version of JASSPA MicroEmacs. Runs without macro files.</p>
 
-  <p><center><table border="1" WIDTH="100%">
+  <table class="download">
     <tr>
-      <td bgcolor="#0000FF">
-        <font color="#FFFF00">
-        <strong>NanoEmacs<br/>Executable<br/>Images</strong></font></td>
-      <td bgcolor="#0000FF">
-        <font color="#FFFF00">
-        <strong>Optional</strong><i> - Small foot print MicroEmacs may be run with no
+      <thead>
+      <th>NanoEmacs<br/>Executable<br/>Images</th>
+      <th>Optional<i> - Small foot print MicroEmacs may be run with no
         configuration files. This component may be built from the standard source. Use these
-        binaries to give you Emacs on a box via a floppy with no configuration files.</i></font></td>
-      <td align="center" bgcolor="#0000FF">
-        <font color="#FFFF00">
-        <strong>Byte<br/>Size</strong></font></td>
-      <td align="center" bgcolor="#0000FF">
-        <font color="#FFFF00"><strong>Last update</strong><br/>yyyy-mm-dd</font></td>
+        binaries to give you Emacs on a box via a floppy with no configuration files.</i></th>
+      <th>Byte<br/>Size</th>
+      <th>Last update<br/>yyyy-mm-dd</th>
+      </thead>
     </tr>
     <tr>
-      <td valign="top">
-        <a href="release_20050505/jasspa-ne-sun-sparc-56-20050505.gz">jasspa-ne-sun-sparc-56-20050505.gz</a></td>
+      <td class="file">
+        <a href="release_20050505/jasspa-ne-sun-sparc-56-20050505.gz">jasspa-ne-sun-sparc-56-20050505.gz</a>
+      </td>
       <td valign="top">Sun Solaris 2.6 (SPARC) - NanoEmacs console version.</td>
-      <td align="center" valign="top">120608</td>
-      <td align="center" valign="top">2005-05-05</td>
+      <td class="size">120608</td>
+      <td class="date">2005-05-05</td>
     </tr>
     <tr>
-      <td valign="top">
-        <a href="release_20050505/jasspa-ne-sun-sparc-58-20050505.gz">jasspa-ne-sun-sparc-58-20050505.gz</a></td>
+      <td class="file">
+        <a href="release_20050505/jasspa-ne-sun-sparc-58-20050505.gz">jasspa-ne-sun-sparc-58-20050505.gz</a>
+      </td>
       <td valign="top">Sun Solaris 8 (SPARC) - NanoEmacs console version.</td>
-      <td align="center" valign="top">108962</td>
-      <td align="center" valign="top">2005-05-05</td>
+      <td class="size">108962</td>
+      <td class="date">2005-05-05</td>
     </tr>
     <tr>
-      <td valign="top">
-        <a href="release_20050505/jasspa-ne-sun-sparc-59-20050505.gz">jasspa-ne-sun-sparc-59-20050505.gz</a></td>
+      <td class="file">
+        <a href="release_20050505/jasspa-ne-sun-sparc-59-20050505.gz">jasspa-ne-sun-sparc-59-20050505.gz</a>
+      </td>
       <td valign="top">Sun Solaris 9 (SPARC) - NanoEmacs console version.</td>
-      <td align="center" valign="top">108947</td>
-      <td align="center" valign="top">2005-05-05</td>
+      <td class="size">108947</td>
+      <td class="date">2005-05-05</td>
     </tr>
     <tr>
-      <td valign="top">
-        <a href="release_20050505/jasspa-ne-sun-i386-58-20050505.gz">jasspa-ne-sun-i386-58-20050505.gz</a></td>
+      <td class="file">
+        <a href="release_20050505/jasspa-ne-sun-i386-58-20050505.gz">jasspa-ne-sun-i386-58-20050505.gz</a>
+      </td>
       <td valign="top">Sun Solaris 8 (i386) - NanoEmacs console version.</td>
-      <td align="center" valign="top">101111</td>
-      <td align="center" valign="top">2005-05-05</td>
+      <td class="size">101111</td>
+      <td class="date">2005-05-05</td>
     </tr>
-  </table></center></p>
+  </table>
 
   <h3>Installation</h3>
 
@@ -165,10 +183,7 @@
   </ul>
   </p>
 
-  <HR color="#cccccc" noShade="1" SIZE="1"/>
-
-  <h2><img src="images/miniicon.gif" width="16" height="16"/>
-  <font color="#0000FF">Component Install</font></h2>
+  <h2>Component Install</h2>
 
   <p>Component download for the Solaris platform. To install:</p>
   <ul>
@@ -178,63 +193,80 @@
   </ul>
   <p></p>
 
-  <center><table border="1" WIDTH="100%">
+  <table class="download">
     <tr>
-      <td bgcolor="#0000FF">
-        <font color="#FFFF00">
-        <strong>Miscellaneous<br/>Files</strong></font></td>
-      <td bgcolor="#0000FF">
-        <font color="#FFFF00">
-        <strong>Optional Components</strong><i> - Selection of miscellaneous items.</i></font></td>
-      <td align="center" bgcolor="#0000FF">
-        <font color="#FFFF00">
-        <strong>Byte<br/>Size</strong></font></td>
-      <td align="center" bgcolor="#0000FF">
-        <font color="#FFFF00"><strong>Last update</strong><br/>yyyy-mm-dd</font></td>
+      <thead>
+      <th>Miscellaneous<br/>Files</th>
+      <th>Optional Components<i> - Selection of miscellaneous items.</i></th>
+      <th>Byte<br/>Size</th>
+      <th>Last update<br/>yyyy-mm-dd</th>
+      </thead>
     </tr>
     <tr>
-      <td><a href="release_20050505/doc/jasspame.pdf">jasspame.pdf</a></td>
-      <td>JASSPA MicroEmacs Quick Start Guide.</td>
-      <td><center>-</center></td>
-      <td><center>2005-05-05</center></td>
+      <td class="file"><a href="release_20050505/doc/jasspame.pdf">jasspame.pdf</a></td>
+      <td class="description">JASSPA MicroEmacs Quick Start Guide.</td>
+      <td class="size">-</td>
+      <td class="date">2005-05-05</td>
     </tr>
     <tr>
-      <td><a href="release_20050505/jasspa-me-sun-sparc-56-20050505.gz">jasspa-me-sun-sparc-56-20050505.gz</a></td>
-      <td>Sun Solaris (sparc) 2.6 pre-built executable only.<br/>
-        <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</i></td>
-      <td><center>270101</center></td>
-      <td><center>2005-05-05</center></td>
+      <td class="file"><a href="release_20050505/jasspa-me-sun-sparc-56-20050505.gz">jasspa-me-sun-sparc-56-20050505.gz</a></td>
+      <td class="description">
+        
+        Sun Solaris (sparc) 2.6 pre-built executable only.<br/> <i>Will also
+        require <tt>memacros</tt> or <tt>metree</tt> to run.</i>
+      
+      </td>
+      <td class="size">270101</td>
+      <td class="date">2005-05-05</td>
     </tr>
     <tr>
-      <td><a href="release_20050505/jasspa-me-sun-sparc-58-20050505.gz">jasspa-me-sun-sparc-58-20050505.gz</a></td>
-      <td>Sun Solaris (sparc) 8 pre-built executable only.<br/>
-        <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</i></td>
-      <td><center>257268</center></td>
-      <td><center>2005-05-05</center></td>
+      <td class="file"><a href="release_20050505/jasspa-me-sun-sparc-58-20050505.gz">jasspa-me-sun-sparc-58-20050505.gz</a></td>
+      <td class="description">
+        
+        Sun Solaris (sparc) 8 pre-built executable only.<br/> <i>Will also
+        require <tt>memacros</tt> or <tt>metree</tt> to run.</i>
+      
+      </td>
+      <td class="size">257268</td>
+      <td class="date">2005-05-05</td>
     </tr>
     <tr>
-      <td><a href="release_20050505/jasspa-me-sun-sparc-59-20050505.gz">jasspa-me-sun-sparc-59-20050505.gz</a></td>
-      <td>Sun Solaris (sparc) 9 pre-built executable only.<br/>
-        <i>Will also require <tt>memacros</tt> or <tt>metree</tt> to run.</i></td>
-      <td><center>257080</center></td>
-      <td><center>2005-05-05</center></td>
+      <td class="file"><a href="release_20050505/jasspa-me-sun-sparc-59-20050505.gz">jasspa-me-sun-sparc-59-20050505.gz</a></td>
+      <td class="description">
+        
+        Sun Solaris (sparc) 9 pre-built executable only.<br/> <i>Will also
+        require <tt>memacros</tt> or <tt>metree</tt> to run.</i>
+      
+      </td>
+      <td class="size">257080</td>
+      <td class="date">2005-05-05</td>
     </tr>
     <tr>
-      <td><a href="release_20050505/jasspa-me-sun-i386-58-20050505.gz">jasspa-me-sun-i386-58-20050505.gz</a></td>
-      <td>Sun Solaris (i386) 8 pre-built executable only.<br/>
-        <i>Will also require <tt>metree</tt> to run.</i></td>
-      <td><center>239675</center></td>
-      <td><center>2005-05-05</center></td>
+      <td class="file"><a href="release_20050505/jasspa-me-sun-i386-58-20050505.gz">jasspa-me-sun-i386-58-20050505.gz</a></td>
+      <td class="description">
+        
+        Sun Solaris (i386) 8 pre-built executable only.<br/> <i>Will also
+        require <tt>metree</tt> to run.</i>
+      
+      </td>
+      <td class="size">239675</td>
+      <td class="date">2005-05-05</td>
     </tr>
     <tr>
-      <td><a href="release_20050505/jasspa-metree-20050505.tar.gz">jasspa-metree-20050505.tar.gz</a><br/>
-        <a href="release_20050505/jasspa-metree-20050505.zip">jasspa-metree-20050505.zip</a></td>
-
-      <td>Pre-built macros tree for installation, includes macros and help information.</td>
-      <td><center>966086<br/>1114561</center></td>
-      <td><center>2005-05-05</center></td>
+      <td class="file">
+        <a href="release_20050505/jasspa-metree-20050505.tar.gz">jasspa-metree-20050505.tar.gz</a><br/>
+        <a href="release_20050505/jasspa-metree-20050505.zip">jasspa-metree-20050505.zip</a>
+      </td>
+      <td class="description">
+        
+        Pre-built macros tree for installation, includes macros and help
+        information.
+      
+      </td>
+      <td class="size">966086<br/>1114561</td>
+      <td class="date">2005-05-05</td>
     </tr>
-  </table></center>
+  </table>
 
   <h3>System Wide Component Installation</h3>
 
@@ -309,8 +341,6 @@
   <p>Now execute your favorite editor <b>me</b> and follow the instructions on
   setting up your environment.</p>
 
-  <HR color="#cccccc" noShade="1" SIZE="1"/>
-
   <h1>NO WARRANTY</h1>
 
   <p>This program is licensed free of charge, there is no warranty for the
@@ -334,8 +364,12 @@
   <p>By downloading any material from this site you agree to these
   conditions.</p>
 
-  <HR color="#cccccc" noShade="1" SIZE="1"/>
+  </div>
 
-  <p><font size="-2"><i>Copyright &copy; 2000-2005 Jasspa</i></font></p>
+  <div class="clearfloats"><!-- Clear --></div>
+  <div id="footer">
+  <p>Copyright &copy; 2000-2006 Jasspa</p>
+  </div>
+  </div>
   </body>
 </html>
