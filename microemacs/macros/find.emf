@@ -21,7 +21,7 @@
 ; @param string     The search string.
 ;
 define-macro find
-    !force set-variable #l2 @2
+    !force set-variable #l1 @2
     !if &not $status
         set-variable #l0 @ml01 "find in directory"
         set-variable #l1 @ml00 "find what"
