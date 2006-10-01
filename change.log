@@ -4,7 +4,7 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <060924.1843>
+>  Last Modified : <061001.1435>
 >
 
     User perspective summary of changes
@@ -61,6 +61,16 @@
     * Support for Adobe/Macromedia ColdFusion.
 
     * Bug fixes and enhancements to existing commands and functions.
+
+    [060928] Fixed crash caused by ftp login being given a NULL password.
+
+    [060927] Set macro  version to 2006-09-09 as the release  version. Set the
+             executable to 2006-09-09 as the release version.
+    
+    [060925] Added a 'g' (goto) to save-some-buffers prompt.
+
+    [060925] Cosmetic  changes  to  buffer-info,  2nd Col -> ACol and  printed
+             current character in decimal as well.
 
     [060921] Improved the notes display to better preserve the current notes file.
 
