@@ -1004,10 +1004,11 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             break ;
         case EVFNAMES:
             {
-                meUByte *mm, *ss, cc ;
+                meUByte *mm, *ss, cc, dd ;
                 
                 ss = mm = vvalue ;
-                while(((cc=*ss++) != '\0') && (cc != '[') && (*ss != '\0'))
+                while(((cc=*ss++) != '\0') && (cc != '[') && ((dd=*ss) != '\0') &&
+                      ((cc != '\\') || ((dd != '(') && (dd != '|') && (dd != '<'))))
                 {
 #ifdef _DRV_CHAR
                     if((cc == '/') || ((cc == _DRV_CHAR) && (*ss != '/')))
