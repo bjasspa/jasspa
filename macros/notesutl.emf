@@ -10,6 +10,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro notes-import-skwyrul
+    ; must not be run from within notes
+    !if &equ $frame-id .notes.frame-id
+        notes-close
+    !endif
     set-variable #l0 @ml01 "Skwyrul index file (skwyrul_l.htm)"
     !force 0 delete-buffer "*notes-imp*"
     find-buffer "*notes-imp*"
