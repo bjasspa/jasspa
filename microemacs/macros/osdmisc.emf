@@ -1168,6 +1168,10 @@ define-macro browse
             copy-region
             0x4 browse-wrap-change
             goto-position "\x82"
+        !elif &seq &rig #l0 -9 "mouse-wup"
+            !force !force &div &sub $window-depth 1 &mid "214" &sin &lef #l0 1 "CS" 1 scroll-up
+        !elif &seq &rig #l0 -11 "mouse-wdown"
+            !force !force &div &sub $window-depth 1 &mid "214" &sin &lef #l0 1 "CS" 1 scroll-down
         !elif &seq #l1 "newline"
             !force !force scroll-down
         !elif &seq #l1 "backward-delete-char"
