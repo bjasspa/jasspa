@@ -1166,14 +1166,15 @@ extern void WinShutdown (void);
 
 #ifdef _DOS
 extern int   unlink(const char *file) ;
-extern meInt meFileGetAttributes(meUByte *fn) ;
 #define meFILE_ATTRIB_READONLY  0x01
 #define meFILE_ATTRIB_HIDDEN    0x02
 #define meFILE_ATTRIB_SYSTEM    0x04
 #define meFILE_ATTRIB_VOLLABEL  0x08
 #define meFILE_ATTRIB_DIRECTORY 0x10
 #define meFILE_ATTRIB_ARCHIVE   0x20
-extern void  meFileSetAttributes(meUByte *fn, meUShort attr) ;
+extern meInt meFileGetAttributes(meUByte *fn) ;
+extern void  _meFileSetAttributes(meUByte *fn, meUShort attr) ;
+#define meFileSetAttributes _meFileSetAttributes
 extern int   meChdir(meUByte *path) ;
 /* Doesn't exist if function returns -1 */
 #define meTestExist(fn)     (meFileGetAttributes(fn) < 0)
