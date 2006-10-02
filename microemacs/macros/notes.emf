@@ -888,8 +888,11 @@ define-macro notes-file
         ; if we still find the file then the user has already created the notes file in this session but not saved
         &bor 1 &band @# 4 find-file #l1 @mna
         !if &les $window-eline 2
+            set-variable #l3 $buffer-bname
             set-variable #l2 #l0
+            0x10 goto-position "\x82"
             osd-entry &spr "Create Note File: %s.enf" #l0 "Root Note \HName: " #l2 20
+            find-buffer #l3
             insert-string &spr "-!- enf -!-\n\"000050\" = \"%s\"\n\"id-next\" = \"1\"\n\b\benf\b\bdivider\b\b0\n\n\b\benf\b\bdivider\b\bEND" &rep &rep #l2 "\\" "\\\\" "\"" "\\\""
             ml-write &spr "[Notes file \"%s\" created]" #l1
         !endif
