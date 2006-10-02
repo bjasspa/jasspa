@@ -3115,7 +3115,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
 #ifdef DT_DIR
                 else if(dp->d_type == DT_DIR)
                 {
-                    ff += strlen(ff) ;
+                    ff += meStrlen(ff) ;
                     *ff++ = DIR_CHAR ;
                     *ff   = '\0' ;
                 }
