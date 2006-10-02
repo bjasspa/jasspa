@@ -383,7 +383,7 @@ osd -1 &cond &set .osd.menu &reg "/history/main-menu" "1" "1" "0"
     !force 0 change-scheme
 !endif
 ;
-3 popup-window
+4 popup-window
 ; Setup the Client Server
 !if &band $system 0x20000
     define-macro-file meserver server-input
