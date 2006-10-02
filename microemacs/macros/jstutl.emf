@@ -52,16 +52,8 @@
 
 0 define-macro jst-to-neutral-symbol
     set-variable #p9 "Unknown symbol problem occurred"
-    backward-delete-char
-    backward-delete-char
-    set-mark
-    !force search-buffer "e" "]]"
-    !if &not $status
-        set-variable #p9 "Badly formed [[...]] symbol"
-        !return 0
-    !endif
-    kill-region
-    set-variable #l1 &lef @y -2
+    set-variable #l1 &lef @1 -1
+    &add &len #l1 3 backward-delete-char
     -1 yank
     !if &seq #l1 "toc"
         insert-string "\bST"
@@ -77,15 +69,19 @@
         insert-string "\bSP"
     !elif &seq #l1 "new-file"
         insert-string "\bSF"
+    !elif &xse #l1 "x\\h\\h"
+        insert-string &itoa &cat "0" #l1
+    !elif &xse #l1 "u\\h+"
+        insert-string &spr "\bSu%04x" &cat "0x" &rig #l1 1
     !else
-        set-variable #p9 &spr "Unknown symbol \"[[%s]]\"" #l1
+        set-variable #p9 &spr "Unknown symbol \"&[%s]\"" #l1
         !return 0
     !endif
 !emacro
 
 0 define-macro jst-to-neutral-tag
     set-variable #p9 "Unknown tag problem occurred"
-    backward-char
+    backward-delete-char
     backward-delete-char
     set-variable #l0 0
     !repeat
@@ -235,19 +231,14 @@
     !elif &seq #l1 "l"
         ; link
         !if .link
-            !if &sub #l0 1
-                set-variable #p9 "Probable missing close link - no args should be given"
-                !return 0
-            !endif
-            insert-string "\bTl"
-            set-variable .link 0
+            set-variable #p9 "Previous link &[/l] end tag missing"
+            !return 0
         !elif &les #l0 2
             set-variable #p9 "Link URL missing"
             !return 0
-        !else
-            insert-string &spr "\bTL%s\btL" .a1
-            set-variable .link 1
         !endif
+        insert-string &spr "\bTL%s\btL" .a1
+        set-variable .link 1
     !elif &seq #l1 "o"
         ; output dump 
         !if &sub #l0 3
@@ -322,6 +313,51 @@
         !endif
     !else
         set-variable #p9 &spr "Unknown tag \"%s\"" .a0
+        !return 0
+    !endif
+!emacro
+
+0 define-macro jst-to-neutral-etag
+    set-variable #p9 "Unknown end tag problem occurred"
+    set-variable #l0 &mid @1 1 -1
+    &add &len #l0 4 backward-delete-char
+    -1 yank
+    !if &seq #l0 "b"
+        ; end background color
+        !if &seq "" .bcol
+            set-variable #p9 "Unexpected &[/b] end tag, not in a bg color block"
+            !return 0
+        !endif
+        set-variable .jst-to-neutral-tag.bcol ""
+        !goto set-col
+    !elif &seq #l0 "f"
+        ; foreground color
+        !if &seq "" .fcol
+            set-variable #p9 "Unexpected &[/f] end tag, not in a bg color block"
+            !return 0
+        !endif
+        set-variable .jst-to-neutral-tag.fcol ""
+*set-col
+        insert-string "\bDd"
+        !if &not &and &seq "" .jst-to-neutral-tag.fcol &seq "" .jst-to-neutral-tag.bcol
+            insert-string "\bDD"
+            !if &not &seq "" .jst-to-neutral-tag.fcol
+                insert-string &cat "\bDF" .jst-to-neutral-tag.fcol
+            !endif
+            !if &not &seq "" .jst-to-neutral-tag.bcol
+                insert-string &cat "\bDB" .jst-to-neutral-tag.bcol
+            !endif
+            insert-string "\bdD"
+        !endif
+    !elif &seq #l0 "l"
+        !if &not .jst-to-neutral-tag.link
+            set-variable #p9 "Unexpected &[/l] end tag, not in a link block"
+            !return 0
+        !endif
+        insert-string "\bTl"
+        set-variable .jst-to-neutral-tag.link 0
+    !else
+        set-variable #p9 &spr "Unknown end tag \"&[/%s]\"" #l0
         !return 0
     !endif
 !emacro
@@ -421,8 +457,12 @@
     set-variable #l8 #l0
     !if &gre $window-line 2
         !if &not #l5
-            !if &xseq &rig @wl $window-col "\\.[ \t].*"
+            !if &xseq &rig @wl $window-col "\\([2-9]\\|[1-9]\\d+\\|[b-hj-zB-H-J-Z]\\|\\m\\m+\\)?\\.[ \t].*"
                 set-variable #l8 &add #l8 1
+                !if &set #l7 &len @s1
+                    #l7 forward-delete-char
+                    -1 yank
+                !endif
             !endif
         !endif
         set-variable #l7 .item-count
@@ -726,13 +766,9 @@
     set-variable .jst-to-neutral-tag.bcol ""
     set-variable .jst-insert-neutral-toc.ano 0
     !repeat
-        !force search-buffer "me" "\\\\\\|\\([\"*/_@`,]\\)\\1\\|\\(https?\\|ftp\\|mailto\\|news\\)[-@~_a-zA-Z#%\\.:\\/0-9]+\\|\\[[^]\\s]\\|^[ \t]*\n[ \t]*\\S"
+        !force search-buffer "me" "\\([\"*/_@`,]\\)\\1\\|\\(https?\\|ftp\\|mailto\\|news\\)[-@~_a-zA-Z#%\\.:\\/0-9]+\\|&\\[\\(.[^]\\s]*]\\)?\\|^[ \t]*\n[ \t]*\\S"
         !if $status
-            !if &seq @s0 "\\"
-                ; '\' quote char
-                backward-delete-char
-                forward-char
-            !elif &not &seq @s1 ""
+            !if &not &seq @s1 ""
                 ; double letter font styling
                 backward-delete-char
                 backward-delete-char
@@ -761,12 +797,20 @@
                 yank
                 insert-string "\bTl"
                 -1 yank
-            !elif &seq &lef @s0 1 "["
+            !elif &seq &lef @s0 2 "&["
                 ; Got a tag or special symbol
-                !if &seq @s0 "[["
-                    !force jst-to-neutral-symbol
-                !else
+                !if &seq &set #l0 @s3 ""
                     !force jst-to-neutral-tag
+                !elif &equ &len #l0 2
+                    backward-delete-char
+                    backward-char
+                    backward-delete-char
+                    backward-delete-char
+                    forward-char
+                !elif &seq &lef #l0 1 "/"
+                    !force jst-to-neutral-etag #l0
+                !else
+                    !force jst-to-neutral-symbol #l0
                 !endif
                 !if &not $status
                     set-variable #p9 #l9
@@ -786,7 +830,7 @@
     end-of-buffer
     ; check all is well
     !if .jst-to-neutral-tag.link
-        set-variable #p9 "Missing [l] close link"
+        set-variable #p9 "Missing &[/l] close link"
         !return 0
     !endif
     ; remove the temporary start and end markers
@@ -1156,6 +1200,8 @@
         !endif
     !until &not $status
     ; Special symbols
+    beginning-of-buffer
+    replace-string "\bSu\\(....\\)" "&#x\\1;"
     beginning-of-buffer
     replace-string "\bSH" "<HR>"
     beginning-of-buffer
