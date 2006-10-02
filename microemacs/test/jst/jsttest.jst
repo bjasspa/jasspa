@@ -1,30 +1,16 @@
-=c [vs title "JST Format Test"]
-[vns author "Steven Phillips"]
-[c created  Wed Nov 30 2005]
+=c &[vs title "JST Format Test"]
+&[vns author "Steven Phillips"]
+&[c created  Wed Nov 30 2005]
 
 = Table of Content
 
-    [[toc]]
+    &[toc]
 
-= [a intro][vi chapter 1] Introduction
+= &[a intro]&[vi chapter 1] Introduction
 
 This document aims to test every feature of JST v4, its very dull.
 
-= [a quote][vi chapter 1] Quoting
-
-\> quoting '>' at the start of a paragraph.
-
-\= quoting '=' at the start of a paragraph.
-
-\! quoting '!' at the start of a paragraph.
-
-\. quoting '.' at the start of a paragraph.
-
-The @\@quick@\@  *\*brown*\* fox \[jumped] over "\"the"\" lazy dog quite a few
-times as this _\_sentence_\_ needs to be \"""\more\""\" then one line of text.
-
-
-= [a basic][vi chapter 1] Basic Style Formating
+= &[a basic]&[vi chapter 1] Basic Style Formating
 
 The  ""**quick//""  **brown**  //fox//  __jumped__  @@over the lazy@@  ``dog``
 ,,quite,,  a  **//few//**    **__times__**  **@@as this@@**   **``sentence``**
@@ -33,8 +19,10 @@ __``of``__   __,,text,,__.   **//__The__   @@quick@@   ``brown``   ,,fox,,//**
 //__@@jumped over@@ ``the``  ,,lazy,,__//  **//__@@dog quite@@ ``a few`` times
 ,,as this,,__//** sentence needs to be more then one line of text.
 
+Check  file  names  are  okay   c:\temp\test.jst   &  /tmp/test.jst,  and  unc
+\\jasspa\temp\test.jst and /&[/]jasspa/tmp/test.jst
 
-== [a style] Styling Paragraphs and Blocks
+== &[a style] Styling Paragraphs and Blocks
 
 ! The quick  **brown** fox //jumped//  over the lazy __dog__ quite a few times
 as this sentence needs to be more then one line of text.
@@ -92,7 +80,7 @@ sentence needs to be more then one line of text.
 !end!
 
 
-= [a just][vi chapter 1] Justification of Paragraphs and Blocks
+= &[a just]&[vi chapter 1] Justification of Paragraphs and Blocks
 
 > The  quick  **brown**  fox  //jumped//  over the lazy __dog__
 quite a few times as this sentence needs
@@ -206,7 +194,7 @@ windowGotoBol(int f, int n)
 >end>
 
 
-= [a indent][vi chapter 1] Indentation
+= &[a indent]&[vi chapter 1] Indentation
 
 The  quick  brown  fox  jumped  over  the lazy dog  quite a few  times as this
 sentence needs to be more then one line of text.
@@ -258,7 +246,7 @@ to be more then one line of text.
 The quick brown fox jumped over the lazy dog.
 >end>
 
-= [vi chapter 1] Headings
+= &[vi chapter 1] Headings
 
 = Top Heading
 
@@ -283,7 +271,7 @@ The quick brown fox jumped over the lazy dog.
 ===r Sub-Sub Heading Right
 
 
-= [vi chapter 1] Item Lists
+= &[vi chapter 1] Item Lists
 
 1. The 1 quick  brown fox  jumped  over the lazy dog quite a few times as this
    sentence needs to be more then one line of text.
@@ -291,15 +279,15 @@ The quick brown fox jumped over the lazy dog.
 . The 2 quick  brown fox  jumped  over the lazy dog quite a few times as this
 sentence needs to be more then one line of text.
 
-.       The 3 quick  brown fox  jumped  over the lazy dog quite a few times as this
+3.       The 3 quick  brown fox  jumped  over the lazy dog quite a few times as this
 sentence needs to be more then one line of text.
 
     1.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
-        this sentence needs to be more then one line of text.
+        this. sentence needs to be more then one line of text.
 
         The quick brown fox jumped over the lazy dog.
 
-    .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+    2.  The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
         this sentence needs to be more then one line of text.
 
         1.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
@@ -322,16 +310,16 @@ sentence needs to be more then one line of text.
                 .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
                     this sentence needs to be more then one line of text.
         
-                .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+                3.  The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
                     this sentence needs to be more then one line of text.
         
-            .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+            3.  The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
                 this sentence needs to be more then one line of text.
 
         .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
             this sentence needs to be more then one line of text.
 
-    .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+    3.  The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
         this sentence needs to be more then one line of text.
 
         The quick brown fox jumped over the lazy dog.
@@ -401,7 +389,7 @@ a. The 1 quick  brown fox  jumped  over the lazy dog quite a few times as this
 . The 2 quick  brown fox  jumped  over the lazy dog quite a few times as this
 sentence needs to be more then one line of text.
 
-.       The 3 quick  brown fox  jumped  over the lazy dog quite a few times as this
+c.      The 3 quick  brown fox  jumped  over the lazy dog quite a few times as this
 sentence needs to be more then one line of text.
 
     a.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
@@ -415,7 +403,7 @@ sentence needs to be more then one line of text.
         a.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
             this sentence needs to be more then one line of text.
 
-        .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+        c.  The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
             this sentence needs to be more then one line of text.
 
             The quick brown fox jumped over the lazy dog.
@@ -432,10 +420,10 @@ sentence needs to be more then one line of text.
                 .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
                     this sentence needs to be more then one line of text.
         
-                .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+                c.  The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
                     this sentence needs to be more then one line of text.
         
-            .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+            c.  The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
                 this sentence needs to be more then one line of text.
 
         .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
@@ -456,7 +444,7 @@ A. The 1 quick  brown fox  jumped  over the lazy dog quite a few times as this
 . The 2 quick  brown fox  jumped  over the lazy dog quite a few times as this
 sentence needs to be more then one line of text.
 
-.       The 3 quick  brown fox  jumped  over the lazy dog quite a few times as this
+C.      The 3 quick  brown fox  jumped  over the lazy dog quite a few times as this
 sentence needs to be more then one line of text.
 
     A.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
@@ -470,7 +458,7 @@ sentence needs to be more then one line of text.
         A.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
             this sentence needs to be more then one line of text.
 
-        .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+        C.  The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
             this sentence needs to be more then one line of text.
 
             The quick brown fox jumped over the lazy dog.
@@ -487,10 +475,10 @@ sentence needs to be more then one line of text.
                 .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
                     this sentence needs to be more then one line of text.
         
-                .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+                C.  The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
                     this sentence needs to be more then one line of text.
         
-            .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+            C.  The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
                 this sentence needs to be more then one line of text.
 
         .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
@@ -511,7 +499,7 @@ i. The 1 quick  brown fox  jumped  over the lazy dog quite a few times as this
 . The 2 quick  brown fox  jumped  over the lazy dog quite a few times as this
 sentence needs to be more then one line of text.
 
-.       The 3 quick  brown fox  jumped  over the lazy dog quite a few times as this
+iii.    The 3 quick  brown fox  jumped  over the lazy dog quite a few times as this
 sentence needs to be more then one line of text.
 
     i.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
@@ -525,7 +513,7 @@ sentence needs to be more then one line of text.
         i.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
             this sentence needs to be more then one line of text.
 
-        .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+        iii.  The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
             this sentence needs to be more then one line of text.
 
             The quick brown fox jumped over the lazy dog.
@@ -533,7 +521,7 @@ sentence needs to be more then one line of text.
             i.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
                 this sentence needs to be more then one line of text.
     
-            .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+            iV. The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
                 this sentence needs to be more then one line of text.
     
                 i.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
@@ -542,10 +530,10 @@ sentence needs to be more then one line of text.
                 .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
                     this sentence needs to be more then one line of text.
         
-                .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+                iii. The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
                     this sentence needs to be more then one line of text.
         
-            .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+            iii. The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
                 this sentence needs to be more then one line of text.
 
         .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
@@ -566,7 +554,7 @@ I. The 1 quick  brown fox  jumped  over the lazy dog quite a few times as this
 . The 2 quick  brown fox  jumped  over the lazy dog quite a few times as this
 sentence needs to be more then one line of text.
 
-.       The 3 quick  brown fox  jumped  over the lazy dog quite a few times as this
+III.    The 3 quick  brown fox  jumped  over the lazy dog quite a few times as this
 sentence needs to be more then one line of text.
 
     I.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
@@ -588,7 +576,7 @@ sentence needs to be more then one line of text.
             I.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
                 this sentence needs to be more then one line of text.
     
-            .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
+            IV. The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
                 this sentence needs to be more then one line of text.
     
                 I.  The 1 quick  brown fox  jumped  over the lazy dog quite a few times as
@@ -597,10 +585,10 @@ sentence needs to be more then one line of text.
                 .   The 2 quick  brown fox  jumped  over the lazy dog quite a few times as
                     this sentence needs to be more then one line of text.
         
-                .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+                III. The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
                     this sentence needs to be more then one line of text.
         
-            .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
+            III. The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
                 this sentence needs to be more then one line of text.
 
         .   The 3 quick  brown fox  jumped  over the lazy dog quite a few times as
@@ -711,7 +699,7 @@ sentence needs to be more then one line of text.
       sentence needs to be more then one line of text.
 
 
-= [vi chapter 1] Tables
+= &[vi chapter 1] Tables
 
 ] 3 2
 
@@ -766,7 +754,7 @@ sentence needs to be more then one line of text.
         
         . Like this
         
-        and embed [id logo.png 20] images
+        and embed &[id logo.png 20] images
         
     ] You can also justify text, i.e.:
     
@@ -841,49 +829,61 @@ at the same time.
 
 ] Narrow 70 pixel column
 
-= [vi chapter 1] Special Characters and Symbols
+= &[vi chapter 1] Special Characters and Symbols
 
-:. ""[[nl]]"" - New Line:
+:. ""&[?]"" - Quote a char:
+
+    The &[q]uick  brown fox jumped  over the ?&[[]lazy&[&][ dog.
+
+:. ""&[x??]"" - Quote an ascii char:
+
+    The &[x71]uick  brown fox jumped  over the ?&[x5b]lazy&[x26][ dog.
+
+:. ""&[u??]"" to ""&[u????]"" - Quote a unicode char:
+
+    The &[u71]uick  brown fox jumped  over the ?&[u05b]lazy&[u0026][ dog &[u7530].
+    
+:. ""&[nl]"" & ""&[new-line]"" - New Line:
 
     The 4 quick  brown fox jumped  over the lazy dog quite a few times as this
-    sentence[[nl]]needs[[nl]]to be more[[nl]]then one line of text.
+    sentence&[nl]needs&[nl]to be more&[nl]then one line of text.
 
     The 4 quick  brown fox jumped  over the lazy dog quite a few times as this
-    sentence[[new-line]]needs[[new-line]]to  be more[[new-line]]then  one line
+    sentence&[new-line]needs&[new-line]to  be more&[new-line]then  one line
     of text.
     
-:. ""[[np]]"" - New Page:
+:. ""&[np]"" & ""&[new-page]"" - New Page:
 
-    The end of a Page using ""[[np]]"".
+    The end of a Page using ""&[np]"".
     
-[[np]]
+&[np]
 
-    The start of a new page. Now check the long form ""[[new-page]]"".
+    The start of a new page. Now check the long form ""&[new-page]"".
 
-[[new-page]]
+&[new-page]
 
-:. [a nf1]""[[nf]]"" - New File.
+:. &[a nf1]""&[nf]"" & ""&[new-file]"" - New File.
 
-    Follow this [l #nf2]link[l] to the new file.
+    Follow this &[l #nf2]link&[/l] to the new file.
 
-[[nf]]
+&[nf]
 
-    [a nf2]Follow  this [l  #nf1]link[l]  to return to the previous  page. Now
-    check the long form  ""[[new-file]]"",  follow this [l #nf3]link[l] to the
+    &[a nf2]Follow  this &[l  #nf1]link&[/l]  to return to the previous  page. Now
+    check the long form  ""&[new-file]"",  follow this &[l #nf3]link&[/l] to the
     next file.
 
-[[new-file]]
+&[new-file]
 
-    [a nf3]Follow this [l #nf2]link[l] to return to the previous page.
+    &[a nf3]Follow this &[l #nf2]link&[/l] to return to the previous page.
 
 
-:. ""[[toc]]"" - Table of Content:
+:. ""&[toc]"" - Table of Content:
     
     Following is the table of content:
     
-        [[toc]]
+        &[toc]
 
-    This  version is  embedded  [[toc]] in a line - nasty,  should be inserted
+    This  version is  embedded  &[toc] in a line - nasty,  should be inserted
     after this line.
             
 :. --- - Horizontal line:
@@ -897,30 +897,30 @@ at the same time.
             ---
 
     
-= [vi chapter 1] Tags
+= &[vi chapter 1] Tags
 
 
 == Comment Tag
 
-The quick [c brown fox jumped]  over [c **the  lazy// dog] quite \[c a] few [c
+The quick &[c brown fox jumped]  over &[c **the  lazy// dog] quite ""&[c"" a] few &[c
 times "]\"as]"] this sentence needs to be more then one line of text.
 
 == Anchor Tag
 
-Every main heading has an anchor - see [l #link]link[l].
+Every main heading has an anchor - see &[l #link]link&[/l].
 
 == Foreground and Background Color Tag
 
-The  quick [f  #b08000]brown  fox[f]  jumped [b  #b08000]over  the[b]  lazy [f
-#b08000]dog  quite [f #5050ff]a  few[f] times as this [f  #b08000]sentence  [b
-#5050ff]needs to[f] be more[b] then one line of text.
+The  quick &[f  #b08000]brown  fox&[/f]  jumped &[b  #b08000]over  the&[/b]  lazy &[f
+#b08000]dog  quite &[f #5050ff]a  few&[/f] times as this &[f  #b08000]sentence  &[b
+#5050ff]needs to&[/f] be more&[/b] then one line of text.
 
-The [fs brown #b08000][bs lblue  #5050ff]quick [f brown]brown fox[f] jumped [b
-brown]over  the[b] lazy [f brown]dog  quite [f lblue]a few[f] times as this [f
-brown]sentence [b lblue]needs to[f] be more[b] then one line of text.
+The &[fs brown #b08000]&[bs lblue  #5050ff]quick &[f brown]brown fox&[/f] jumped &[b
+brown]over  the&[/b] lazy &[f brown]dog  quite &[f lblue]a few&[/f] times as this &[f
+brown]sentence &[b lblue]needs to&[/f] be more&[/b] then one line of text.
 
 
-=== [a link]Link Tag
+=== &[a link]Link Tag
 
 Implicit links
 
@@ -933,140 +933,140 @@ Implicit links
 
 Explicit Links
 
-    This  is a link to the  main [l  http://www.jasspa.com]JASSPA[l]  site. [l
-    http://www.jasspa.com/faq.html#q17]This[l] is a link to a timestamp faq.
+    This  is a link to the  main &[l  http://www.jasspa.com]JASSPA&[/l]  site. &[l
+    http://www.jasspa.com/faq.html#q17]This&[/l] is a link to a timestamp faq.
 
     The following a internal links:
     
-    *.  [l #intro]Introduction[l]
+    *.  &[l #intro]Introduction&[/l]
     
-    .   [l #quote]**Quoting**[l]
+    .   &[l #quote]**Quoting**&[/l]
     
-    .   [l #basic]//Basic Style Formating//[l]
+    .   &[l #basic]//Basic Style Formating//&[/l]
     
-    .   **//[l #style]Styling Paragraphs and Blocks[l]//**
+    .   **//&[l #style]Styling Paragraphs and Blocks&[/l]//**
     
-    .   [l #just]Justification of Paragraphs and Blocks[l]
+    .   &[l #just]Justification of Paragraphs and Blocks&[/l]
 
-    .   [l #indent]Indentation[l]
+    .   &[l #indent]Indentation&[/l]
     
 == Image Tag
 
 Left and indented image:
 
-[i logo.png]
+&[i logo.png]
 
-    [i logo.png]
+    &[i logo.png]
 
 Center and right justified:
 
->c [i logo.png]
+>c &[i logo.png]
 
->r [i logo.png]
+>r &[i logo.png]
 
 Center with large indent
 
-                        >c [i logo.png]
+                        >c &[i logo.png]
 
 Images with text:
 
 The  quick  brown  fox  jumped  over  the lazy dog  quite a few  times as this
-sentence needs to be more then one line of text. [i logo.png]
+sentence needs to be more then one line of text. &[i logo.png]
 
-The quick brown fox jumped over the lazy dog quite a few [i logo.png] times as
+The quick brown fox jumped over the lazy dog quite a few &[i logo.png] times as
 this sentence needs to be more then one line of text.
 
-[i logo.png] The quick brown fox jumped over the lazy dog quite a few times as
+&[i logo.png] The quick brown fox jumped over the lazy dog quite a few times as
 this sentence needs to be more then one line of text.
 
-[id logo.png 50] Image depth set to 50.
+&[id logo.png 50] Image depth set to 50.
 
-[iw logo.png 20] Image width set to 20.
+&[iw logo.png 20] Image width set to 20.
 
-[idw logo.png 50 20] Image depth set to 50 and width to 20.
+&[idw logo.png 50 20] Image depth set to 50 and width to 20.
 
-[iw logo.png 50%] Image width set to 50%.
+&[iw logo.png 50%] Image width set to 50%.
 
 Now test the image-ppi variable setting:
 
-    image-ppi set to [vs image-ppi 100]: width 100 [iw logo.png 100]
+    image-ppi set to &[vs image-ppi 100]: width 100 &[iw logo.png 100]
 
-    image-ppi set to [vs image-ppi 200]: width 100 [iw logo.png 100]
+    image-ppi set to &[vs image-ppi 200]: width 100 &[iw logo.png 100]
 
-    image-ppi set to [vs image-ppi 200]: width 10% [iw logo.png 10%]
+    image-ppi set to &[vs image-ppi 200]: width 10% &[iw logo.png 10%]
 
-    image-ppi set to [vs image-ppi 0]: width 100 [iw logo.png 100]
+    image-ppi set to &[vs image-ppi 0]: width 100 &[iw logo.png 100]
 
 == Use Tag
 
-[u insert.jst]
+&[u insert.jst]
 
-The quick brown fox jumped [u insert.jst] over the lazy dog quite a few times as
+The quick brown fox jumped &[u insert.jst] over the lazy dog quite a few times as
 this sentence needs to be more then one line of text.
 
-The quick brown fox **jumped [u insert.jst] over** the lazy dog quite a few times as
+The quick brown fox **jumped &[u insert.jst] over** the lazy dog quite a few times as
 this sentence needs to be more then one line of text.
 
-!* The quick brown fox jumped [u insert.jst] over the lazy dog quite a few times as
+!* The quick brown fox jumped &[u insert.jst] over the lazy dog quite a few times as
 this sentence needs to be more then one line of text.
 
 
 == Variable Tag
 
 All chapter titles start with a number defined using the **chapter** variable,
-this is chapter [v chapter]. An undefined  variable which is defined by an inc
-of 8 has the  value  [vi  not-def2  8] and if  inc'd  by 7 has a value  of [vi
-not-def2 7]. We can silently inc this by 3 [vin not-def2 3] and then insert [v
+this is chapter &[v chapter]. An undefined  variable which is defined by an inc
+of 8 has the  value  &[vi  not-def2  8] and if  inc'd  by 7 has a value  of &[vi
+not-def2 7]. We can silently inc this by 3 &[vin not-def2 3] and then insert &[v
 not-def2].
     
 Following is a fig labelling and reference example
      
-    [vsn figure 0] This line had the figure variable set to 0. 
+    &[vsn figure 0] This line had the figure variable set to 0. 
 
-    Lets create links to both [l  #figA]**figure  [vr figure  figA]**  //First
-    figure//[l] and [l #figB]**figure [vr figure figB]** //Second figure//[l].
+    Lets create links to both &[l  #figA]**figure  &[vr figure  figA]**  //First
+    figure//&[/l] and &[l #figB]**figure &[vr figure figB]** //Second figure//&[/l].
 
     Here is figure A:
      
-    >c [a figA][i logo.png]
-    Figure [vid figure 1 figA] - First figure (figA) 
+    >c &[a figA]&[i logo.png]
+    Figure &[vid figure 1 figA] - First figure (figA) 
         
-    Lets create links to both [l  #figA]**figure  [vr figure  figA]**  //First
-    figure//[l] and [l #figB]**figure [vr figure figB]** //Second figure//[l].
+    Lets create links to both &[l  #figA]**figure  &[vr figure  figA]**  //First
+    figure//&[/l] and &[l #figB]**figure &[vr figure figB]** //Second figure//&[/l].
 
     Here is figure B:
      
-    >c [a figB][i logo.png]
-    Figure [vid figure 1 figB] - Secondt figure (figB) 
+    >c &[a figB]&[i logo.png]
+    Figure &[vid figure 1 figB] - Secondt figure (figB) 
         
-    And again, lets create links to both [l #figA]**figure  [vr figure figA]**
-    //First  figure//[l]  and [l  #figB]**figure  [vr figure figB]**  //Second
-    figure//[l].
+    And again, lets create links to both &[l #figA]**figure  &[vr figure figA]**
+    //First  figure//&[/l]  and &[l  #figB]**figure  &[vr figure figB]**  //Second
+    figure//&[/l].
         
 
 == Output Dump Tag
 
-[o all "You should see this with all output types - //it __is__ **verbatim"]
+&[o all "You should see this with all output types - //it __is__ **verbatim"]
 
-[o html "You should only see this when generating html output"]
+&[o html "You should only see this when generating html output"]
 
-[o latex "You should only see this when generating latex output"]
+&[o latex "You should only see this when generating latex output"]
 
-[o rtf "You should only see this when generating rtf output"]
+&[o rtf "You should only see this when generating rtf output"]
 
-[o text "You should only see this when generating plain text output"]
+&[o text "You should only see this when generating plain text output"]
 
         
 
 == Dump Tag
 
-[d all "You should see this with all output types - //it// __is__ processed"]
+&[d all "You should see this with all output types - //it// __is__ processed"]
 
-[d html "You should only see this when generating **html** output"]
+&[d html "You should only see this when generating **html** output"]
 
-[d latex "You should only see this when generating **latex** output"]
+&[d latex "You should only see this when generating **latex** output"]
 
-[d rtf "You should only see this when generating **rtf** output"]
+&[d rtf "You should only see this when generating **rtf** output"]
 
-[d text "You should only see this when generating **plain text** output"]
+&[d text "You should only see this when generating **plain text** output"]
 

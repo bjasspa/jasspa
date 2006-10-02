@@ -1,5 +1,5 @@
-=c [vs title "JST Format Definition"]
-[vns author "Steven Phillips"]
+=c &[vs title "JST Format Definition"]
+&[vns author "Steven Phillips"]
 
 = Requirements
 
@@ -19,21 +19,9 @@
 
 = Definition
 
-== Quoting
-
-:. \\\\
-
-    A '\\' char
-
-:. \\*
-
-    A '*' char
-
-e.g. *\\*Bold*\\* ~ *\*Bold*\*
-
 == Basic Style Formating
 
-@@\"\"quote - raw or verbatim text\"\"@@ - ""quote - raw or verbatim text""
+@@"&["]quote - raw or verbatim text"&["]@@ - ""quote - raw or verbatim text""
 
 @@""**Bold**""@@ - **Bold**
 
@@ -55,18 +43,30 @@ started, i.e. **//""this raw text is **bold** and //italicised//""//**
 
 To get raw text with a double quote use:
 
-    @@"\"raw with a "\"\\"\\"\"\" in it"\"@@
+    @@"&["]raw with a "&["]&&[[]"]"&["]" in it"&["]@@
     
 Or use a style paragraph, see below.
 
-=== [a stylepab] Styling Paragraphs and Blocks
+== Quoting
+
+:. ""&[""*]
+
+    A '*' char - this form can only be used to quote a single character.
+
+:. "&["]*"&["]
+
+    A '*' char - this form can be used to quote one of more characters.
+
+e.g. *&[*]Bold*&[*] ~ *""*""Bold*""*""
+
+=== &[a stylepab] Styling Paragraphs and Blocks
 
 !* A '!' at the  start  of a  paragraph  can be  followed  by 1 or more  style
 letters to enable the style for the  paragraph, for example this  baragraph is
 bold as it started with a '@@!*@@'.
 
 To be consistent  with basic style  setting, you can use a double style letter
-(i.e. '*\*') if you wish but this is not required and will not be hilighted.
+(i.e. '*&[*]') if you wish but this is not required and will not be hilighted.
 
 !"@ This paragraph  started with '!"@' so it is quoted and mono-spaced  style,
 i.e. @@, "" or ** is ignored.
@@ -82,7 +82,7 @@ is not affect the filling of the following paragraph.
 
 !end!
 
-== [a just] Justification of Paragraphs and Blocks
+== &[a just] Justification of Paragraphs and Blocks
 
 > This paragraph will not be reformatted
 because it starts with a '>', the
@@ -98,7 +98,7 @@ use '@@>r@@'.
         as the text is
         centered w.r.t. the remainder.
 
->* Similar to [l #stylepab]styling[l], any style
+>* Similar to &[l #stylepab]styling&[/l], any style
 attached to an initial '>' is applied to the paragraph,
 so this paragraph is bold.
 
@@ -137,7 +137,7 @@ windowGotoBol(int f, int n)
 >end>
 
 
-== [a indent] Indentation
+== &[a indent] Indentation
 
 Indentation is implicitly  defined by the indentation of the first line of the
 paragraph, each paragraph is effectively  independent  w.r.t.  determining the
@@ -206,7 +206,7 @@ is yet to be defined.
 
 ""=== Sub-Sub Heading""
 
-Headings can be centered or right [l #just]justified[l]:
+Headings can be centered or right &[l #just]justified&[/l]:
 
     ""=c Top Heading""
 
@@ -216,14 +216,16 @@ Headings can be centered or right [l #just]justified[l]:
 1.  This is the start of an item list,  every  subsequent  item must  continue
     with a single '@@.@@' at the same indentation  level as the first item. If
     the next paragraph is indented further (1 or more indentation levels - see
-    [l #indent]Indentation[l]) then the paragraph is part of the current item.
+    &[l #indent]Indentation&[/l]) then the paragraph is part of the current item.
 
     For example this is part of the item 1's description.
 
         This is also part of item 1, but its further indented.
 
-.   This is item 2 in the item list, item  lists can be nested,  i.e. sub item
-    lists are supported, for example:
+.   This is item 2 in the item list, it can be  identified  by '2.', '3.' (you
+    may have removed the original  second item and not  corrected the numbers)
+    or  simply as '.'; it cannot be '1.' as this will  start a new item  list.
+    Item lists can be nested, i.e. sub item lists are supported, for example:
 
     *. This is the start of a bulletted sub item list
 
@@ -305,17 +307,17 @@ hides the table lines.
 
 ] 2 2
 
-]   The JST text within a table field does not have many restrictions
+]!  The JST text within a table field does not have many restrictions
 
     The indentation of the initial ']' is important and must align
     
     ] 2 2
     
-    ] As JST supports
+    ]! As JST supports
     
     ] tables within tables
     
-    ] You can also:
+    ]! You can also:
     
         *. Use item lists
         
@@ -325,10 +327,15 @@ hides the table lines.
         
         !r Right justify text
         
-        and embed [id logo.png 20] images
+        and embed &[id logo.png 20] images
         
     ] You must get the right  number of  elements  before  you set the  indent
     back.
+
+    A '!' next to the table  cell ']' can be used to  indicate  the start of a
+    new row, the '!" is not required but helps  identify the start of a row in
+    the JST file and an export  error will be generated if a ']!' is given for
+    a cell that does not start a row.
     
 ]   Possible enhancements:
 
@@ -360,7 +367,7 @@ hides the table lines.
         This is easy in html,  but if this is  introduced  other  formats  may
         struggle.
 
-]   Defining  tables as a list of elements  does not have the visual impact of
+]!  Defining  tables as a list of elements  does not have the visual impact of
     other  methods  used in  formats  like  text2tags  but it gives the author
     complete  control  of the  layout of text  within  each cell,  allows  the
     embedding  of a table  within a table and the author does not have to mess
@@ -374,15 +381,15 @@ hides the table lines.
 
 == Special Characters and Symbols
 
-:. ""[[nl]]"" or ""[[new-line]]""
+:. ""&[nl]"" or ""&[new-line]""
 
     New Line.
     
-:. ""[[np]]"" or ""[[new-page]]""
+:. ""&[np]"" or ""&[new-page]""
 
     New Page (not supported in html or text).
 
-:. ""[[nf]]"" or ""[[new-file]]""
+:. ""&[nf]"" or ""&[new-file]""
 
     New File, the effect of this is dependent on the target output format:
     
@@ -404,11 +411,11 @@ hides the table lines.
         Ignored.
     
 
-:. ""[[toc]]""
+:. ""&[toc]""
         
     The auto-generated table of contents
             
-:. ---
+:. ""---""
 
     Horizontal line, must be the only text on the line.
   
@@ -419,25 +426,25 @@ Most of the more complex formatting is done via tags.
 
 General format
 
-    \[**<tag-id>**//<options>// //<args>//]
+    ""&[""**<tag-id>**//<options>// //<args>//]
 
-    If a argument contains a space or a ] it must be quoted, e.g.:
+    If a argument contains a space or a ] it must be back-slash quoted, e.g.:
 
         >jst>
-        [c this-is-okay]
-        [c "this is okay"]
-        [c "this [\"is\"] okay"]
+        &[c this-is-okay]
+        &[c "this is okay"]
+        &[c "this [\"is\"] okay"]
 >end>
 
     A tag may support numerous options, the order of the options is not
     important but the order of their arguments is as specified in the
     docs, not the order given with the tag, e.g.:
 
-        >jst> [idw <image> <depth> <width>]
+        >jst> &[idw <image> <depth> <width>]
 
     is still
 
-        >jst> [iwd <image> <depth> <width>]
+        >jst> &[iwd <image> <depth> <width>]
 
 Note that text that actually appears in the document should not appear in
 a tag as the spelling check should skip the contents of a tag. This means
@@ -447,65 +454,65 @@ would be the setting of a variable.
 
 === Comment Tag
 
-\[c <0+args>]
+""&[""c <0+args>]
 
     There can be any number of arguments, the whole tag is ignored. As the
     comment ends with a ']' and ']' char in the comment must be quoted,
     i.e.:
 
-        >jst> [c this is a comment with a "]" "char[23]" in it]
+        >jst> &[c this is a comment with a "]" "char[23]" in it]
 
 === Anchor Tag
 
-\[a <name>]
+""&[""a <name>]
 
     An anchor tag can be placed anywhere and referenced by a link
 
 === Foreground & Background Color Tag
 
-\[f <color>] .... \[f]
+""&[""f <color>] .... ""&[""/f]
 
     Sets the current foreground color where <color> is either a direct html
     format color definition (e.g. "@@#ff0000@@" for red) or a defined color
     name.
     
-\[b <color>] .... \[b]
+""&[""b <color>] .... ""&[""/b]
 
     Sets the current background color.
 
 Options:
 
-    \[fs <name> <color>] - define color '@@<color>@@' to be '@@<color>@@'.
+    ""&[""fs <name> <color>] - define color '@@<color>@@' to be '@@<color>@@'.
 
-    \[fd <color>] - Sets the default foreground color.
+    ""&[""fd <color>] - Sets the default foreground color.
 
-    \[bd <color>] - Sets the default background color.
+    ""&[""bd <color>] - Sets the default background color.
 
 
 === Link Tag
 
-\[l <url>] .... \[l]
+""&[""l <url>] .... ""&[""/l]
 
     Creates a hyperlink  with the text with '....' going to the <url>,  format
     of the url is as per html, a link  starting  with a '#' is  assumed  to be
     local and a warning  will be issued if the  corresponding  anchor point is
-    not found. An error is generated if the \[l] is missing.
+    not found. An error is generated if the ""&[""/l] is missing.
 
-    Note that urls like  'http:/\/www.jasspa.com' are automatically turned into
+    Note that urls like  'http://www.jasspa.com' are automatically turned into
     links. To avoid this quote the string, i.e. ""http://www.jasspa.com""
 
 
 === Image Tag
 
-\[i <image-name>]
+""&[""i <image-name>]
 
-    Inserts image <image-name>, for example \[i me.png]
+    Inserts image <image-name>, for example ""&[""i me.png]
     
-    >c [i logo.png]
+    >c &[i logo.png]
 
 Options:
 
-    \[idw <image-name> <depth> <width>]
+    ""&[""idw <image-name> <depth> <width>]
 
     :.  d
     
@@ -517,7 +524,7 @@ Options:
 
     e.g.
 
-        \[iw test.jpg 60]
+        ""&[""iw test.jpg 60]
 
     The size is given in pixels and the conversion variable 'image-ppi' is
     used to convert is a physical paper size. The width can also be given as a
@@ -526,26 +533,26 @@ Options:
 
 === Use Tag
 
-\[u <file-name>]
+""&[""u <file-name>]
 
     Inserts  <file-name> into the current location and processes it as if part
     of the original docuement.
 
-    For example @@\[u insert.jst]@@ produces:
+    For example @@""&[""u insert.jst]@@ produces:
 
-        [u insert.jst]
+        &[u insert.jst]
      
 
 === Variable Tag
 
-\[v <variable-name>]
+""&[""v <variable-name>]
 
     Inserts the current value of variable  <variable-name>, variable names can
     contain only alpha numeric characters and '-'.
 
 Options
 
-    \[vdinrs <variable-name> <value> <increment> <reference-name>]
+    ""&[""vdinrs <variable-name> <value> <increment> <reference-name>]
 
     :.  d
     
@@ -570,28 +577,25 @@ Options
     e.g. to implement figure labels and reference them do:
 
         >jst>
-        [vsn figure 0]
+        &[vsn figure 0]
 
-        [i figure1.jpg]
-        Figure [vid figure 1 figA] - my first figure
+        &[i figure1.jpg]
+        Figure &[vid figure 1 figA] - my first figure
         
         some more text
         
-        [i figure2.jpg]
-        Figure [vid figure 1 figB] - my second figure
+        &[i figure2.jpg]
+        Figure &[vid figure 1 figB] - my second figure
 
-        To see  **figure [vr figure  figA]** //my first  figure// and **figure
-        [vr figure figB]** //my second figure//. 
-
-        To see  **figure [vr figure  figA]** //my first  figure// and **figure
-        [vr figure figB]** //my second figure//. 
+        To see  **figure &[vr figure  figA]** //my first  figure// and **figure
+        &[vr figure figB]** //my second figure//. 
 >end>
 
     An  undefined  variable has a value of  "@@ERROR@@",  it can be defined by
     using either  option '@@s@@' or '@@i@@' in which case the value is 0, i.e.
     the following can be used
 
-        >@ = Chapter [vi chapter 1]: Will be 1 at the top of the doc
+        >@ = Chapter &[vi chapter 1]: Will be 1 at the top of the doc
 
     Special Variables
 
@@ -610,7 +614,7 @@ Options
 
 === Output Dump Tag
 
-\[o <out-type> <raw-text>]
+""&[""o <out-type> <raw-text>]
 
     Dumps  <raw-text> into the output if the target output type is <out-type>,
     where <out-type> can be:
@@ -627,25 +631,21 @@ Options
 
 === Dump Tag
 
-\[d <out-type> <text>]
+""&[""d <out-type> <text>]
 
     Similar  to Output  Dump Tag  except  this is done  first so the <text> is
     processed, this can be used to define output specific formatting, e.g.
 
         >jst>
-        [d html "[vsn large-font-start \"..html def..\"][vsn large-font-end \"..html def..\"]"]
-        [d latex "[vsn large-font-start \"..latex def..\"][vsn large-font-end \"..latex def..\"]"]
-        [d text "[vsn large-font-start \"\"][vsn large-font-end \"\"]"]
+        &[d html "&[vsn large-font-start \"..html def..\"][vsn large-font-end \"..html def..\"]"]
+        &[d latex "&[vsn large-font-start \"..latex def..\"][vsn large-font-end \"..latex def..\"]"]
+        &[d text "&[vsn large-font-start \"\"][vsn large-font-end \"\"]"]
 >end>
 
     so in the main body of the text:
 
-        >jst> [v large-font-start] Large Text [v large-font-end]
+        >jst> &[v large-font-start] Large Text &[v large-font-end]
 
     This is a complex  concept  and should be beyond most users  requirements,
     but making this kind of thing  possible means that users should be able to
     do whatever they need to.
-
-
-
-= Examples
