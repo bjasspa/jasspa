@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Jul 25 00:00:27 1998
 .\"
-.Id $Id: m2cmd033.2,v 2.14 2006-09-02 16:32:25 jon Exp $
+.Id $Id: m2cmd033.2,v 2.15 2006-10-03 21:59:26 bill Exp $
 .Im MicroEmacs command|indent|scuts
 .so me.tni
 .TH indent 2
@@ -120,38 +120,47 @@ look-back scheme.
 "\|\fIflags\fR\|"
 .br
 .B indent
+"\|\fIind-no\fR\|"
 .C s
 "\|\fIstatement\fR\|"
 .br
 .B indent
+"\|\fIind-no\fR\|"
 .C c
 "\|\fIcontinue\fR\|"
 .br
 .B indent
+"\|\fIind-no\fR\|"
 .C x 
 "\|\fImax\fR\|"
 .br
 .B indent
+"\|\fIind-no\fR\|"
 .C b
 "\|\fIbrace\fR\|"
 .br
 .B indent
+"\|\fIind-no\fR\|"
 .C e
 "\|\fIbraceStatement\fR\|"
 .br
 .B indent
+"\|\fIind-no\fR\|"
 .C w
 "\|\fIswitch\fR\|"
 .br
 .B indent
+"\|\fIind-no\fR\|"
 .C a
 "\|\fIcase\fR\|"
 .br
 .B indent
+"\|\fIind-no\fR\|"
 .C m
 "\|\fImargin\fR\|"
 .br
 .B indent
+"\|\fIind-no\fR\|"
 .C u
 "\|\fIcomcont\fR"
 .ad
@@ -163,7 +172,7 @@ indentation  for  'C'  mode  is  defined  through  the  additional  arguments.
 section. C mode is typically  initialized  with the value 12. The  remaining C
 arguments are defined as follows:
 .TP
-\fBindent\fR \fC"s"\fR \|\fIstatement\fR (=t)
+\fBindent\fR "\|\fIind-no\fR\|" "\|\fCs\fR" "\|\fIstatement\fR" (=t)
 .\"
 The indent of the current  line is derived  from  \fIstatement\fR value plus the
 indent of the last c token  (\fIif\fR,  \fIelse\fR,  \fIwhile\fR  etc.) or the
@@ -190,7 +199,7 @@ or
 C tokens are only used to indent the next line, whereas  '\fC{\fR' are used in
 indenting every line to it's partnering '\fC}\fR'.
 .TP 
-\fBindent\fR \fC"c"\fR \fIcontinue\fR (=3/2t)
+\fBindent\fR "\|\fIind-no\fR\|" "\|\fCc\fR" "\fIcontinue\fR" (=3/2t)
 .\"
 .I continue
 sets the  indent  to be added to a split  line,  i.e. for an  indent  of 20, a
@@ -219,7 +228,7 @@ indented to the depth of the open bracket plus one, e.g.
 .CE 0
 .RE
 .TP
-\fBindent\fR \fC"x"\fR \|\fImax\fR\|
+\fBindent\fR "\|\fIind-no\fR\|" "\|\fCx\fR" "\|\fImax\fR\|"
 .\"
 \fImax\fR  sets an upper  limit of the  indentation  where an open  bracket is
 encountered,  in the case where the leading  indent of the  function  name and
@@ -248,7 +257,7 @@ longVariable = LongFunctionNameWhichMeans(isSoFar,
 Where by the second argument indent has been  artificially  reduced because of
 it's length.
 .TP
-\fBindent\fR \fC"b"\fR \|\fIbrace\fR (=0)
+\fBindent\fR "\|\fIind-no\fR\|" "\|\fCb\fR" "\|\fIbrace\fR" (=0)
 .\"
 Sets the indent of a '\fC{\fR'  and a '\fC}\fR' on a new line from the current
 statement indent. For example, a value of 0 results in the following 
@@ -289,18 +298,18 @@ brace = 0             brace = 4         brace = 2
 .CE 0
 .RE
 .TP
-\fBindent\fR \fC"e"\fR \|\fIbraceStatement\fR (t)
+\fBindent\fR "\|\fIind-no\fR\|" "\|\fCe\fR" "\|\fIbraceStatement\fR" (t)
 .\"
 The  \fIbraceStatement\fR  defines  the  indentation  following  a curly brace
 \'\fC{\fR' which follows a statement.
 .TP 
-\fBindent\fR \fC"w"\fR \|\fIswitch\fR (=0)
+\fBindent\fR "\|\fIind-no\fR\|" "\|\fCw\fR" "\|\fIswitch\fR" (=0)
 .\"
 The  additional  indent to be  applied  after a  \fBswitch\fR  statement,  the
 \fIstatement\fR  indent is applied in addition to the \fIswitch\fR indent. See
 the \fIcase\fR argument.
 .TP
-\fBindent\fR \fC"a"\fR \|\fIcase\fR (=-t)
+\fBindent\fR "\|\fIind-no\fR\|" "\|\fCa\fR" "\|\fIcase\fR" (=-t)
 \fIswitch\fR value sets the offset of a "\fCcase\fR"  entry  statement  from the
 opening brace left margin position. The default value is zero. e.g.
 .ne 9
@@ -380,7 +389,7 @@ default:                default:
 .CE 0
 .RE
 .TP
-\fBindent\fR \fC"m"\fR \|\fImargin\fR (=-1)
+\fBindent\fR "\|\fIind-no\fR\|" "\|\fCm\fR" "\|\fImargin\fR" (=-1)
 .\"
 If  inserting a comment at the end of a C line, it is tedious  typing  \fIx\fR
 number of spaces to the  comment  column (by default tab does not insert a tab
@@ -420,7 +429,7 @@ In summary:
 .CE 0
 .RE
 .TP
-\fBindent\fR \fC"u"\fR \|\fIcomcont\fR "\fC * \fR"
+\fBindent\fR "\|\fIind-no\fR\|" "\|\fCu\fR" "\|\fIcomcont\fR" ("\fC * \fR")
 .\"
 This argument is only  specified if  \fIflags\fR  bit  \fC0x10\fR is set.
 This defines the string which is inserted  when a new line is started while in
