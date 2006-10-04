@@ -3,7 +3,7 @@
  * JASSPA MicroEmacs - www.jasspa.com
  * key.c - Key and name table porcessing.
  *
- * Copyright (C) 1991-2005 JASSPA (www.jasspa.com)
+ * Copyright (C) 1991-2006 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free

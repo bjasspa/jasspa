@@ -4,7 +4,7 @@
  * time.c - File time stamping routines
  *
  * Copyright (C) 1991-2001 Jon Green
- * Copyright (C) 2002-2005 JASSPA (www.jasspa.com)
+ * Copyright (C) 2002-2006 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -42,7 +42,7 @@
 
 #if MEOPT_TIMSTMP
 
-meUByte time_stamp[meTIME_STAMP_SIZE_MAX] = "<%Y%M%D.%h%m>";	/* Time stamp string */
+meUByte time_stamp[meTIME_STAMP_SIZE_MAX] = "<%Y%M%D\\.%h%m>";	/* Time stamp string */
 
 #define TSNUMFIELD 6
 static meUByte TSFIELDS[]="YMDhms" ;
