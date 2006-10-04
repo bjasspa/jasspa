@@ -3,7 +3,7 @@
 # JASSPA MicroEmacs - www.jasspa.com
 # openstep.mak - Make file for Openstep 4.2 on NeXT Motorola 040
 #
-# Copyright (C) 2001-2005 JASSPA (www.jasspa.com)
+# Copyright (C) 2001-2006 JASSPA (www.jasspa.com)
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free

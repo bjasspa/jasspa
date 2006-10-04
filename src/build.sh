@@ -1,7 +1,7 @@
 #!/bin/sh -f
 # JASSPA MicroEmacs - www.jasspa.com
 # build - JASSPA MicroEmacs build shell script for unix platforms
-# Copyright (C) 2001-2005 JASSPA (www.jasspa.com)
+# Copyright (C) 2001-2006 JASSPA (www.jasspa.com)
 # See the file main.c for copying and conditions.
 OPTIONS=
 LOGFILE=

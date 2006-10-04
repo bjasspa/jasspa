@@ -3,7 +3,7 @@
  * JASSPA MicroEmacs - www.jasspa.com
  * fileio.c - File reading and writing routines.
  *
- * Copyright (C) 1988-2005 JASSPA (www.jasspa.com)
+ * Copyright (C) 1988-2006 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -631,11 +631,7 @@ ftpLogin(meUByte *user, meUByte *pass)
     
     ii = ftpCommand(0,"USER %s",user) ;
     if(ii == ftpPOS_INTERMED)
-    {
-        if(pass == NULL)
-            pass = (meUByte *) "" ;
         ii = ftpCommand(0,"PASS %s", pass) ;
-    }
     if(ii != ftpPOS_COMPLETE)
     {
         if(ffpasswdReg != NULL)
