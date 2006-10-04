@@ -430,45 +430,6 @@ define-macro cygpipe-break
     !endif
 !emacro
 
-0 define-macro cygpipe-minoutput
-    set-variable #l2 @cck
-    set-variable #l3 @cc
-    !if &not &bmod "pipe"
-        set-variable $buffer-input ""
-        !if &gre &len @cc 1
-            !goto exec-lbl
-        !endif
-        insert-string @cc
-        !return
-    !elif &les &len @cc 2
-        set-variable #l1 @cc
-    !elif &set #l0 &lfi "|tab|backward-delete-char|newline|" #l3
-        set-variable #l1 &lget "|\t|\b|\CM|" #l0
-    !elif &set #l0 &lfi "|backspace|" #l2
-        set-variable #l1 &lget "|\b|" #l0
-    !elif &seq "quote-char" #l3
-        ml-write "Quote: "
-        set-variable #l1 @cqk
-    !else
-*exec-lbl
-        !if &seq #l3 "ERROR"
-            ml-write &spr "[Key not bound \"%s\"]" #l2
-            !abort
-        !endif
-        execute-line &spr "!nma %s %s" &cond @? @# "" #l3
-        !return
-    !endif
-    !if &exi :prompt
-        cygpipe-write-prompt #l1
-    !else
-        goto-alpha-mark "I"
-        !if &band $system 0x100
-            set-variable #l1 &rep #l1 "\CM" "\CM\CJ"
-        !endif
-        ipipe-write #l1
-    !endif
-!emacro
-
 0 define-macro cygpipe-output
     set-variable #l2 @cck
     set-variable #l3 @cc
@@ -507,28 +468,30 @@ define-macro cygpipe-break
     -1 buffer-mode "usr2"
     -1 buffer-mode "usr3"
     -1 buffer-mode "usr4"
+    !if &not @?
+        set-variable @# &con &seq $buffer-input "" 1 2
+    !endif
     !if &equ @# 1
         set-variable $buffer-input cygpipe-output
         1 buffer-mode "lock"
         1 buffer-mode "usr3"
         goto-alpha-mark "I"
+        ml-write "[Input mode set to semi-immersion - f3 to change]"
     !elif &equ @# 2
         set-variable $buffer-input ""
         1 buffer-mode "lock"
         1 buffer-mode "usr4"
         goto-alpha-mark "I"
+        ml-write "[Input mode set to full-immersion - f3 to change]"
         !repeat
-            2 screen-update
+            screen-update
             set-variable #l0 @cqk
             !if &not &bmo "pipe"
                 !return
             !elif &equ &len #l0 1
                 ipipe-write #l0
-            !elif &seq #l0 "f2"
-                0 cygpipe-mode
-                !return
             !elif &seq #l0 "f3"
-                1 cygpipe-mode
+                0 cygpipe-mode
                 !return
             !endif
         !until 0
@@ -536,6 +499,7 @@ define-macro cygpipe-break
         set-variable $buffer-input ""
         -1 buffer-mode "lock"
         1 buffer-mode "usr2"
+        ml-write "[Input mode set to browse - f3 to change]"
     !endif
 !emacro
 
@@ -551,9 +515,7 @@ define-macro cygpipe-break
         ; process has ended, clear-up
         set-variable $buffer-input ""
         set-variable $buffer-ipipe ""
-        !force buffer-unbind-key &kbin "0" cygpipe-mode
-        !force buffer-unbind-key &kbin "1" cygpipe-mode
-        !force buffer-unbind-key &kbin "2" cygpipe-mode
+        !force buffer-unbind-key &kbin "" cygpipe-mode
     !endif
     !if &not &exi .cygwin.input
         set-variable .cygwin.input 0
@@ -624,24 +586,16 @@ define-macro cygwin
 
 0 define-macro fhook-cygwin
     set-variable $buffer-fhook "fhook-cygwin"
+    set-variable $buffer-ipipe "cygpipe-input"
     ; Bind the keys
-    buffer-bind-create "b" "C-c C-k" ""   cygpipe-kill
-    buffer-bind-create "b" "C-c C-c" "2"  cygpipe-kill
+    buffer-bind-create "bo" "C-c C-k" ""  cygpipe-kill
+    buffer-bind-create "bo" "C-c C-c" "2" cygpipe-kill
     buffer-bind-create "bo" "C-return" "" cygpipe-rerun
     buffer-bind-create "bo" "C-j" ""      cygpipe-rerun
-    !if &seq &lef $buffer-bname 7 "*cygwin"
-        set-variable $buffer-ipipe cygpipe-input
-        buffer-bind-create "b" "f4" "2"   cygpipe-mode
-    !else
-        ml-write "cygpipe-minoutput"
-        set-variable $buffer-input cygpipe-minoutput
-        !return
-    !endif
+    buffer-bind-create "bo" "f3" ""  cygpipe-mode
+    buffer-bind-create "bo" "f5" ""  cygpipe-clear
     -1 buffer-mode "wrap"
     1 buffer-mode "magic"
-    buffer-bind-create "b" "f2" "0" cygpipe-mode
-    buffer-bind-create "b" "f3" "1" cygpipe-mode
-    buffer-bind-create "b" "f5" ""  cygpipe-clear
     set-variable :prompt %cygwin-prompt
     set-variable :noecho 1
     set-variable :mode 0
