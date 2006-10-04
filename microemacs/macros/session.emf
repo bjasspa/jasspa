@@ -112,7 +112,12 @@ set-variable .session.kill 1
     !force 0 delete-buffer "*session_tmp*"
     find-buffer "*session_tmp*"
     -1 buffer-mode "time"
-    set-variable #l9 &cat "\b\benfs\b\b" $time
+    set-variable #l1 $time
+    set-variable #l3 0
+    set-variable #l9 "\b\benfs\b\b"
+    !while &len &set #l2 &mid #l1 &pinc #l3 1 1
+        set-variable #l9 &cat #l9 &itoa &add 65 #l2
+    !done
     insert-string &cat #l9 "\b\bvars\b\b\n"
     insert-string &spr "\b.session.update\b%s\n" .session.update
     insert-string &spr "\b.session.amark\b%s\n" .session.amark
