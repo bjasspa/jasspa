@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Aug 31 21:02:32 1998
 .\"
-.Id $Id: m3mac033.3,v 2.6 2004-02-22 18:37:18 jon Exp $
+.Id $Id: m3mac033.3,v 2.7 2006-10-04 21:26:29 jon Exp $
 .Im MicroEmacs shell
 .so me.tni
 .TH cygwin 3
@@ -28,7 +28,7 @@ cygwin \- Open a Cygwin BASH window
 %cygwin-prompt \- Cygwin shell prompt
 .Me $a
 .SH PLATFORM
-Windows '95/'98/NT - win32 ONLY
+Windows '95/'98/NT/2K/XP - win32 ONLY
 .SH SYNOPSIS
 .na
 \fBcygwin\fR
@@ -60,24 +60,24 @@ available window is used next time the command is run.
 .PP
 Additional  controls  are  available  within the shell  window to control  the
 editors interaction with the window. The operating mode is shown as a digit on
-the buffer mode line, this should  typically  show "3", which  corresponds  to
-\fIF3\fR. The operating modes are mapped to keys as follows:-
-.IP \fBF2\fR
+the buffer mode line (2/3/4) which is defined in the  following  sections. The
+operational mode is changed with the \fBF3\fR function key.
+.IP "\fBMode 2 - Browse Mode\fR"
 Locks the  window  and allows  local  editing to be  performed.  All  commands
-entered into the window are interpreted by the editors. \fBF2\fR mode is
-typically  entered to cut and paste from the window,  search for text  strings
-etc. In mode 2, a \fB2\fR is shown on the mode line.
-.IP \fBF3\fR
+entered  into the window are  interpreted  by the editor. Mode 2 is  typically
+entered to cut and paste from the window, search for text strings etc. In mode
+2, a \fB2\fR is shown on the mode line.
+.IP "\fBMode 3 - Semi-immersion\fR"
 The  normal  operating  mode, text typed into the window is  presented  to the
 shell window. Translation of MicroEmacs commands (i.e.  beginning-of-word) are
 translated  and passed to the shell. For  interactive  use this is the default
 mode. In mode 3, a \fB3\fR is shown on the mode line.
-.IP \fBF4\fR
+.IP "\fBMode 4 - Full Immersion\fR"
 All input is passed to the shell, no MicroEmacs  commands are  interpreted and
 keys are passed  straight to the shell window. This mode is used where none of
 the keys to be entered are to be interpreted by MicroEmacs. Note that you have
-to un-toggle the F4 mode before you can swap buffers as this effectively locks
-the editor into the window.
+to un-toggle mode 4 before you can swap buffers as this effectively  locks the
+editor into the window.
 .IP \fBF5\fR
 Clears  the  buffer  contents.  This  simply  erases  all  of  the  historical
 information in the buffer. The operation of the shell is unaffected.
@@ -165,8 +165,9 @@ the Cygwin  environment  has a  different  name  space. The  completion  still
 requires some more work, but sufficient for smaller tasks.
 .BE 0
 .SH "TESTED CONFIGURATIONS"
-This configuration has only been tested on a Windows 2000 installation, whether
-this works on Windows NT/XP/95/98 is unknown.
+This  configuration  has only  been  tested  on a Windows  2000  installation,
+whether this works on Windows  95/98/NT is unknown  while XP is very likely to
+work.
 .PP
 We have only been running  "make"  operations in the shell and do not know how
 the likes of "more", "man" or anything other terminal interaction works.
@@ -177,8 +178,12 @@ cygwin latest version as of February 2004.
 .SH BUGS
 .IP  "\fBBreak Key\fR"
 A break in a bash shell is \fCC-c\fR, the macros define the key \fCC-c\ C-c\fR
-to perform the break. If the shell  environment  is not  configured  then this
-will cause the shell to close down. Configuring bash resolves this problem.
+to perform the break. 
+.\"If the shell  environment  is not  configured  then this
+.\"will cause the shell to close down. Configuring bash resolves this problem.
+There does not appear to be a way to prevent  this from  happening as trapping
+the interrupt does not appear to be supported in Cygwin Bash i.e.  "\fCtrap\fR
+\fC''\fR \fCINT\fR". 
 .IP "\fBCompletion\fR"
 Completion  processing  needs  to  be  improved.  The  directory  location  is
 retrieved from
