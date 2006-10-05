@@ -67,6 +67,7 @@ set-variable .fhook-java.item-list-r2 "Clss \ecB\\2\ecA"
     hilight .hilight.java 1 "default"      .scheme.keyword
     hilight .hilight.java 1 "do"           .scheme.keyword
     hilight .hilight.java 1 "else"         .scheme.keyword
+    hilight .hilight.java 1 "finally"      .scheme.keyword
     hilight .hilight.java 1 "for"          .scheme.keyword
     hilight .hilight.java 1 "goto"         .scheme.keyword
     hilight .hilight.java 1 "if"           .scheme.keyword
@@ -78,14 +79,16 @@ set-variable .fhook-java.item-list-r2 "Clss \ecB\\2\ecA"
     hilight .hilight.java 1 "while"        .scheme.keyword
     ;
     hilight .hilight.java 1 "asm"          .scheme.type
+    hilight .hilight.java 1 "boolean"      .scheme.type
     hilight .hilight.java 1 "char"         .scheme.type
     hilight .hilight.java 1 "const"        .scheme.type
     hilight .hilight.java 1 "double"       .scheme.type
     hilight .hilight.java 1 "enum"         .scheme.type
     hilight .hilight.java 1 "extends"      .scheme.type
     hilight .hilight.java 1 "extern"       .scheme.type
-    hilight .hilight.java 1 "float"        .scheme.type
     hilight .hilight.java 1 "final"        .scheme.type
+    hilight .hilight.java 1 "float"        .scheme.type
+    hilight .hilight.java 1 "implements"   .scheme.type
     hilight .hilight.java 1 "int"          .scheme.type
     hilight .hilight.java 1 "long"         .scheme.type
     hilight .hilight.java 1 "register"     .scheme.type
@@ -109,17 +112,17 @@ set-variable .fhook-java.item-list-r2 "Clss \ecB\\2\ecA"
     hilight .hilight.java 1 "__STDC__"     .scheme.prepro
     hilight .hilight.java 1 "__TIME__"     .scheme.prepro
     hilight .hilight.java 1 "null"         .scheme.prepro
-
+    ;
     hilight .hilight.java 1 "Character"    .scheme.prepro
     hilight .hilight.java 1 "Color"        .scheme.prepro
     hilight .hilight.java 1 "Integer"      .scheme.prepro
     hilight .hilight.java 1 "Object"       .scheme.prepro
     hilight .hilight.java 1 "String"       .scheme.prepro
-
+    ;
     hilight .hilight.java 1 "delete"       .scheme.keyword
     hilight .hilight.java 1 "new"          .scheme.keyword
     hilight .hilight.java 1 "this"         .scheme.keyword
-
+    ;
     hilight .hilight.java 1 "auto"         .scheme.type
     hilight .hilight.java 1 "class"        .scheme.type
     hilight .hilight.java 1 "friend"       .scheme.type
@@ -129,7 +132,9 @@ set-variable .fhook-java.item-list-r2 "Clss \ecB\\2\ecA"
     hilight .hilight.java 1 "protected"    .scheme.type
     hilight .hilight.java 1 "public"       .scheme.type
     hilight .hilight.java 1 "virtual"      .scheme.type
-
+    ;
+    hilight .hilight.java 1 "true"         .scheme.prepro
+    hilight .hilight.java 1 "false"        .scheme.prepro
     ; Hilight curly braces
     !if &sin "r" .fhook-java.setup
         hilight .hilight.java 1 "{"        .scheme.keyword
