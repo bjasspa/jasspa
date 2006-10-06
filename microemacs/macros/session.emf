@@ -424,7 +424,7 @@ define-macro read-session
     find-buffer "*session_tmp*"
     insert-file #l1
     beginning-of-buffer
-    !if &not &xse @wl "^\\(\b\benfs\b\b[\\d ]+\b\b\\)\\l+\b\b$"
+    !if &not &xse @wl "^\\(\b\benfs\b\b[A-J ]+\b\b\\)\\l+\b\b$"
         !force 0 delete-buffer "*session_tmp*"
         goto-position "\x88"
         ml-write &spr "[File \"%s\" does not appear to be a saved session]" %session-name
