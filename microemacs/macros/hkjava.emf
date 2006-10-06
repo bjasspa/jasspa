@@ -6,6 +6,11 @@
 ; Synopsis:    Java mode hook
 ; Authors:     Jon Green
 ;
+; Contributions and Acknowledgements:
+;
+; October 2006 - Bryan Schofield
+; Major mode hilighting and indentation suggestions.
+;
 define-macro fhook-java
     set-variable $buffer-mask "luh1"
     @# buffer-init "java"
@@ -17,7 +22,7 @@ define-macro fhook-java
 
 ; buffer-init variables
 set-variable .fhook-java.setup &reg "/history/fhook/java" "bdfghnopx"
-set-variable .fhook-java.setup-mask "abdefghikmnoptuxr"
+set-variable .fhook-java.setup-mask "abdefghikmnoptuxlrv"
 set-variable .fhook-java.tags "javatags"
 set-variable .fhook-java.comment "|/*| */|*| * | * |fr|"
 
@@ -31,8 +36,8 @@ set-variable .fhook-java.collapse-close  "^}"
 set-variable .fhook-java.collapse-mclose "1"
 set-variable .fhook-java.collapse-mnext  "-1"
 ; Set up menu items for Java mode.
-set-variable .fhook-java.setup-flags   "|r|"
-set-variable .fhook-java.setup-labels  "|Brace highlighting|"
+set-variable .fhook-java.setup-flags   "|r|v|l|"
+set-variable .fhook-java.setup-labels  "|Brace highlighting|Enable bracket alignment|Alternative indent mode|"
 ; setup item-list
 set-variable .fhook-java.item-list-s1 "^[ \t]*\\([a-zA-Z0-9_ \t]*[ \t]\\)?\\([a-zA-Z0-9_]+\\)[ \t]*([a-zA-Z0-9_,\t]*)[ \t]*{"
 set-variable .fhook-java.item-list-r1 "Func \ecB\\2\ecA"
@@ -56,85 +61,72 @@ set-variable .fhook-java.item-list-r2 "Clss \ecB\\2\ecA"
     ; i.e. /* TODO I need to do this */
     hilight .hilight.java   20 "/\\*\\s+[Tt][Oo][Dd][Oo]" "*/" "" .scheme.error
     hilight .hilight.java   18 "//\\s*[tT][oO][dD][oO]"           .scheme.error
-    ;
-    hilight .hilight.java 0x12 "import"    .scheme.prepro
-    hilight .hilight.java 0x12 "package"   .scheme.prepro
-    ;
-    hilight .hilight.java 1 "break"        .scheme.keyword
-    hilight .hilight.java 1 "case"         .scheme.keyword
-    hilight .hilight.java 1 "catch"        .scheme.keyword
-    hilight .hilight.java 1 "continue"     .scheme.keyword
-    hilight .hilight.java 1 "default"      .scheme.keyword
-    hilight .hilight.java 1 "do"           .scheme.keyword
-    hilight .hilight.java 1 "else"         .scheme.keyword
-    hilight .hilight.java 1 "finally"      .scheme.keyword
-    hilight .hilight.java 1 "for"          .scheme.keyword
-    hilight .hilight.java 1 "goto"         .scheme.keyword
-    hilight .hilight.java 1 "if"           .scheme.keyword
-    hilight .hilight.java 1 "return"       .scheme.keyword
-    hilight .hilight.java 1 "super"        .scheme.keyword
-    hilight .hilight.java 1 "switch"       .scheme.keyword
-    hilight .hilight.java 1 "throw"        .scheme.keyword
-    hilight .hilight.java 1 "try"          .scheme.keyword
-    hilight .hilight.java 1 "while"        .scheme.keyword
-    ;
-    hilight .hilight.java 1 "asm"          .scheme.type
-    hilight .hilight.java 1 "boolean"      .scheme.type
-    hilight .hilight.java 1 "char"         .scheme.type
-    hilight .hilight.java 1 "const"        .scheme.type
-    hilight .hilight.java 1 "double"       .scheme.type
-    hilight .hilight.java 1 "enum"         .scheme.type
-    hilight .hilight.java 1 "extends"      .scheme.type
-    hilight .hilight.java 1 "extern"       .scheme.type
-    hilight .hilight.java 1 "final"        .scheme.type
-    hilight .hilight.java 1 "float"        .scheme.type
-    hilight .hilight.java 1 "implements"   .scheme.type
-    hilight .hilight.java 1 "int"          .scheme.type
-    hilight .hilight.java 1 "long"         .scheme.type
-    hilight .hilight.java 1 "register"     .scheme.type
-    hilight .hilight.java 1 "short"        .scheme.type
-    hilight .hilight.java 1 "signed"       .scheme.type
-    hilight .hilight.java 1 "size_t"       .scheme.type
-    hilight .hilight.java 1 "static"       .scheme.type
-    hilight .hilight.java 1 "struct"       .scheme.type
-    hilight .hilight.java 1 "synchronized" .scheme.type
-    hilight .hilight.java 1 "throws"       .scheme.type
-    hilight .hilight.java 1 "typedef"      .scheme.type
-    hilight .hilight.java 1 "unsigned"     .scheme.type
-    hilight .hilight.java 1 "void"         .scheme.type
-    hilight .hilight.java 1 "volatile"     .scheme.type
-    ; Add some system types
-    hilight .hilight.java 1 "FILE"         .scheme.type
-    ; Pre-processor directives
-    hilight .hilight.java 1 "__DATE__"     .scheme.prepro
-    hilight .hilight.java 1 "__FILE__"     .scheme.prepro
-    hilight .hilight.java 1 "__LINE__"     .scheme.prepro
-    hilight .hilight.java 1 "__STDC__"     .scheme.prepro
-    hilight .hilight.java 1 "__TIME__"     .scheme.prepro
-    hilight .hilight.java 1 "null"         .scheme.prepro
-    ;
-    hilight .hilight.java 1 "Character"    .scheme.prepro
-    hilight .hilight.java 1 "Color"        .scheme.prepro
-    hilight .hilight.java 1 "Integer"      .scheme.prepro
-    hilight .hilight.java 1 "Object"       .scheme.prepro
-    hilight .hilight.java 1 "String"       .scheme.prepro
-    ;
-    hilight .hilight.java 1 "delete"       .scheme.keyword
-    hilight .hilight.java 1 "new"          .scheme.keyword
-    hilight .hilight.java 1 "this"         .scheme.keyword
-    ;
-    hilight .hilight.java 1 "auto"         .scheme.type
-    hilight .hilight.java 1 "class"        .scheme.type
-    hilight .hilight.java 1 "friend"       .scheme.type
-    hilight .hilight.java 1 "inline"       .scheme.type
-    hilight .hilight.java 1 "operator"     .scheme.type
-    hilight .hilight.java 1 "private"      .scheme.type
-    hilight .hilight.java 1 "protected"    .scheme.type
-    hilight .hilight.java 1 "public"       .scheme.type
-    hilight .hilight.java 1 "virtual"      .scheme.type
-    ;
-    hilight .hilight.java 1 "true"         .scheme.prepro
-    hilight .hilight.java 1 "false"        .scheme.prepro
+    ; annotations
+    hilight .hilight.java 4 "@" "\\}\\W" ""       .scheme.prepro
+    ; constants: A_CONSTANT_VARAIBLE
+    hilight .hilight.java 1    "[A-Z_]+"          .scheme.constant
+    ; class names: AJavaClassName
+    hilight .hilight.java 1    "[A-Z]+[a-z]+\\w*" .scheme.type
+    ; Java keywords
+    ; The following conventions are used:
+    ; .scheme.type      primitive types
+    ; .scheme.operator  flow control keywords
+    ; .scheme.prepro    package declaration and imports
+    ; .scheme.error     reserved keywords that have not been implemented
+    ; .scheme.keyword   other java keywords that are not covered above
+    hilight .hilight.java 1    "abstract"     .scheme.keyword
+    hilight .hilight.java 1    "assert"       .scheme.keyword
+    hilight .hilight.java 1    "boolean"      .scheme.type
+    hilight .hilight.java 1    "break"        .scheme.operator
+    hilight .hilight.java 1    "byte"         .scheme.type
+    hilight .hilight.java 1    "case"         .scheme.operator
+    hilight .hilight.java 1    "catch"        .scheme.operator
+    hilight .hilight.java 1    "char"         .scheme.type
+    hilight .hilight.java 1    "class"        .scheme.keyword
+    hilight .hilight.java 1    "const"        .scheme.error  ; reserved but not implemented in java
+    hilight .hilight.java 1    "continue"     .scheme.operator
+    hilight .hilight.java 1    "default"      .scheme.operator
+    hilight .hilight.java 1    "do"           .scheme.operator
+    hilight .hilight.java 1    "double"       .scheme.type
+    hilight .hilight.java 1    "else"         .scheme.operator
+    hilight .hilight.java 1    "enum"         .scheme.keyword
+    hilight .hilight.java 1    "extends"      .scheme.keyword
+    hilight .hilight.java 1    "false"        .scheme.constant
+    hilight .hilight.java 1    "final"        .scheme.keyword
+    hilight .hilight.java 1    "finally"      .scheme.operator
+    hilight .hilight.java 1    "float"        .scheme.type
+    hilight .hilight.java 1    "for"          .scheme.operator
+    hilight .hilight.java 1    "goto"         .scheme.error ; reserved but not implemented
+    hilight .hilight.java 1    "if"           .scheme.operator
+    hilight .hilight.java 1    "implements"   .scheme.keyword
+    hilight .hilight.java 0x12 "import"       .scheme.prepro
+    hilight .hilight.java 1    "instanceof"   .scheme.keyword
+    hilight .hilight.java 1    "int"          .scheme.type
+    hilight .hilight.java 1    "interface"    .scheme.keyword
+    hilight .hilight.java 1    "long"         .scheme.type
+    hilight .hilight.java 1    "native"       .scheme.keyword
+    hilight .hilight.java 1    "new"          .scheme.keyword
+    hilight .hilight.java 1    "null"         .scheme.constant
+    hilight .hilight.java 0x12 "package"      .scheme.prepro
+    hilight .hilight.java 1    "private"      .scheme.keyword
+    hilight .hilight.java 1    "protected"    .scheme.keyword
+    hilight .hilight.java 1    "public"       .scheme.keyword
+    hilight .hilight.java 1    "return"       .scheme.keyword
+    hilight .hilight.java 1    "short"        .scheme.type
+    hilight .hilight.java 1    "static"       .scheme.keyword
+    hilight .hilight.java 1    "strictfp"     .scheme.keyword
+    hilight .hilight.java 1    "super"        .scheme.keyword
+    hilight .hilight.java 1    "switch"       .scheme.operator
+    hilight .hilight.java 1    "synchronized" .scheme.keyword
+    hilight .hilight.java 1    "this"         .scheme.keyword
+    hilight .hilight.java 1    "throw"        .scheme.keyword
+    hilight .hilight.java 1    "throws"       .scheme.keyword
+    hilight .hilight.java 1    "transient"    .scheme.keyword
+    hilight .hilight.java 1    "true"         .scheme.constant
+    hilight .hilight.java 1    "try"          .scheme.operator
+    hilight .hilight.java 1    "void"         .scheme.keyword
+    hilight .hilight.java 1    "volatile"     .scheme.keyword
+    hilight .hilight.java 1    "while "       .scheme.operator
     ; Hilight curly braces
     !if &sin "r" .fhook-java.setup
         hilight .hilight.java 1 "{"        .scheme.keyword
@@ -170,8 +162,13 @@ set-variable .fhook-java.item-list-r2 "Clss \ecB\\2\ecA"
     hilight .hilight.javadoc 0x80 "\\*/" .hilight.java    .scheme.comment
 !endif
 !if &sin "d" .fhook-java.setup
-    ; create a simple indentation rule for javascript - real java files use the built in C indentation
-    ; note: for the jsp lookback to work correctly .hilight.java must equal .indent.java
+    ; Create the additional indentation rules.
+    !if &not &exi .indent.java-comm
+        set-variable .indent.java-comm &pinc .hilight.next 1
+        set-variable .indent.javaT &pinc .hilight.next 1
+    !endif
+    ; create a simple indentation rule for javascript - real java files use
+    ; the built in C indentation note: for the jsp lookback to work correctly
     set-variable .indent.java .hilight.java
     0 indent .indent.java 1 20
     indent .indent.java n "{"  t
@@ -183,8 +180,73 @@ set-variable .fhook-java.item-list-r2 "Clss \ecB\\2\ecA"
     indent .indent.java b "/\\*" "\\*/"
     indent .indent.java i "//"
     ; create main indent scheme as .indent.java + 1, the fhook-java sets the indent correctly
-    0 indent &add .indent.java 1 12
-    indent &add .hilight.java 1 "u" " * "
+    set-variable #l5 &add .indent.java 1
+    !if &sin "l" .fhook-java.setup
+        ; Alternative java indentation scheme to handle more
+        ; situations. We also define a "java comment" indentation scheme,
+        ; this will help with comment content from intefering with the code
+        ; indentation.
+        ;
+        ; Indentation Limitations:
+        ;
+        ; 1. Braceless conditionals are not handled. This is considered bad
+        ;    style by many, so use braces. Change
+        ;      if (true)
+        ;          foo();
+        ;    To
+        ;      if (true) {
+        ;          foo();
+        ;      }
+        ;
+        ; 2. Continued lines are partially handled. Only lines that begin with
+        ;    "." and basic math operators except * which inteferes with comments
+        ;    are understood to be part of the previous line. For example:
+        ;      int x = foo
+        ;          .getThing()
+        ;          .getX()
+        ;          + 4;
+        0 indent .indent.java-comm 1 20
+        0 indent .indent.javaT 1 500
+        0 indent #l5 2 20 .indent.javaT
+        ; standard braces
+        indent #l5 n "{"  t
+        indent #l5 o "}" -t
+        indent #l5 n "(" 3/2t
+        indent #l5 o ")" -3/2t
+        ; line continuation
+        indent #l5 s "^\\s*[\\.\\+-/%][^\\*/]" t
+        ; switch to comment indentation mode
+        indent .indent.javaT t "/\\*"   .indent.java-comm
+        indent #l5  x "/\\*" 1 .indent.java-comm
+        indent .indent.java-comm x "\\*/" -1 0
+        indent .indent.javaT t "\\*/" 0
+        indent #l5 o "\\*/" -1
+        ; ignore line comments
+        indent #l5 i "//"
+        ; ignore anotations that are on a line by themselves
+        indent #l5 i "^\\s*@\\w+$"
+        indent #l5 i "^\\s*@\\w+\\s*(.+)$"
+        ; fix switch/case statements
+        indent #l5 s "^\\s*case\\s[^:]+:" -t
+        indent #l5 s "^\\s*default\\s*:" -t
+        ; fix throws/implements/extends indent
+        indent #l5 s "^\\s*throws\\s" t
+        indent #l5 s "^\\s*implements\\s" t
+        indent #l5 s "^\\s*extends\\s" t
+    !else
+        ; Use the 'C' indentation framework. Use this scheme when if/else
+        ; statements are not braced.
+        0 indent #l5 12
+        indent #l5 "u" " * "
+        ; Disable the bracket alignment 
+        !if &not &sin "v" .fhook-java.setup
+            indent #l5 "x" 10
+        !endif
+        ; Dummy out and reset un-used indents.
+        0 indent .indent.java-comm 0 2
+        0 indent .indent.javaT 0 2
+            
+    !endif
 !endif
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Begin hook - entering the buffer - save the current fill-ignore characters
