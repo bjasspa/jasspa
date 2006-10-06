@@ -1,18 +1,18 @@
 %-*- tex; tabsize:2; -*- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%                          Copyright 2004-2005 JASSPA.
+%                          Copyright 2004-2006 JASSPA.
 %                           All Rights Reserved
 %
 %
 %  System        : MicroEmacs
 %  Module        : user Manual
 %  Object Name   : $RCSfile: jasspame.tex,v $
-%  Revision      : $Revision: 1.9 $
-%  Date          : $Date: 2005-03-15 09:07:45 $
+%  Revision      : $Revision: 1.10 $
+%  Date          : $Date: 2006-10-06 23:42:28 $
 %  Author        : $Author: jon $
 %  Created By    : Jon Green
 %  Created       : Mon Oct 25 21:36:13 2004
-%  Last Modified : <050315.0901>
+%  Last Modified : <061007.0040>
 %
 %  Description
 %
@@ -22,7 +22,7 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% Copyright (c) 2004-2005 JASSPA.
+% Copyright (c) 2004-2006 JASSPA.
 %
 % All Rights Reserved.
 %
@@ -35,8 +35,8 @@
 \documentclass[11pt,a4paper,pdftex]{article}
 % Bring in the CVS information.
 \def\CVS$#1: #2 ${\expandafter\def\csname CVS#1\endcsname{#2}}
-\CVS$Revision: 1.9 $ % or any CVS keyword
-\CVS$Date: 2005-03-15 09:07:45 $
+\CVS$Revision: 1.10 $ % or any CVS keyword
+\CVS$Date: 2006-10-06 23:42:28 $
 
 \usepackage{ifthen}                     % Conditional processing.
 
@@ -124,7 +124,7 @@
     pdfauthor={\docAuthor},
     pdftitle={\docTitle},
     pdfsubject={\docSubject},
-    pdfcreator={SunOS 5.9(sparc) - e-TeX(Web2C 7.5.2)},
+    pdfcreator={SunOS 5.10(sparc) - e-TeX(Web2C 7.5.5)},
     pdfkeywords={Emacs,MicroEmacs,Me,JASSPA},
     linkcolor={\Linkcolor},
     citecolor={\Citecolor},
@@ -171,7 +171,7 @@
 \fancyhf{}          % Delete the current header and footer
 \fancyhead[EL,OR]{\bfseries\docTitle \\ \bfseries\rightmark}
 \fancyhead[LO,RE]{\usebox{\HeaderImage}}
-\fancyfoot[OL,ER]{{\small{Copyright {\textcopyright} 2004-2005 JASSPA.}}\linebreak
+\fancyfoot[OL,ER]{{\small{Copyright {\textcopyright} 2004-2006 JASSPA.}}\linebreak
                    \textit{\small{\docReference~~v\docVersion~~\docDate}}}
 \fancyfoot[EL,OR]{\textsf{\large \textbf{\thepage}}}
 \renewcommand{\headrulewidth}{1.5pt}%
@@ -273,7 +273,7 @@ JASSPA.
 
 \vspace{0.5in}
 
-\textit{Copyright \textcopyright\ 2004-2005 JASSPA.}
+\textit{Copyright \textcopyright\ 2004-2006 JASSPA.}
 
 % \textit{Copyright}
 
@@ -299,6 +299,7 @@ Typeset with the TexLive 2004 \LaTeX\ Documentation System under Sun Solaris
     \hline
     \tableTitle{Date} & \tableTitle{Who} & \tableTitle{Description} & \tableTitle{Revision} \\
     \hline
+    2006/08/29 & Jon & Updated to 2006 release. & 1.9\\ \hline
     2005/03/14 & Jon & Updated with Buffer Setup information.
                        Added section MicroEmacs Basics. & 1.8\\ \hline
     2004/10/25 & Jon & Draft. & 1.00 \\ \hline
@@ -614,9 +615,14 @@ c:> build}
 >sh> ./build}
 
   On most systems then \textbf{build} is performed, alternatively an explicit
-  \textbf{make} operation may be performed. A selection of \textit{make} files
-  exist for different platforms \textbf{.mak} indicates a native platform
-  compiler and \textbf{.gmk} indicates a GNU compiler.
+  \textbf{make} operation may be used. As of 2006 then the build script is the
+  preferred method of compiling on UNIX as the script file performs a number
+  of tests to locate the X-Windows \textbf{xpm} library and configures the
+  makefile appropriately.
+  
+  A selection of \textit{make} files exist for different platforms
+  \textbf{.mak} indicates a native platform compiler and \textbf{.gmk}
+  indicates a GNU compiler.
 
 \CodeInsert{make -f \textit{platform}.mak}
 
@@ -715,6 +721,16 @@ c:> build}
 
     \begin{itemize}
 
+      \item \textbf{Setup File} the name of the user setup file, excluding the
+      extension.
+
+      \item \textbf{Edit} check box determines whether the
+      \textit{user\textbf{.emf}} is presented for editing when the user setup
+      is changed. The default is enabled but is typically disabled.
+
+      \item \textbf{Company File} the name of the company file, excluding the
+      extension.
+
       \item \textbf{Emulation} select the preferred emulation mode of the
       editor. The standard key bindings are adjusted to be more consistent
       with the selected emulation. If the emulation is changed then it is
@@ -733,7 +749,7 @@ c:> build}
       are corrected for the locale.
 
       \item \textbf{Language} the default spelling language. This has no
-      effect if the dictionaries are not loaded.
+      effect if the dictionaries are not loaded. 
 
       \item \textbf{Auto Save Dictionaries} typically enabled, causes the user
       defined spelling dictionary to be automatically saved on exiting the
@@ -745,8 +761,11 @@ c:> build}
       with auto-spell enabled then mouse right click on the mis-spelt word and
       select an auto correction from the list.
 
-      \textbf{M-x auto-spell-buffer} to automatically spell check the
-      whole buffer.
+      \textbf{M-x auto-spell-buffer} to automatically spell check the whole
+      buffer, typically enabled. The buffer is automatically spell checked on
+      entry and erroneous spellings are highlighted, a right mouse click on
+      the spelling error presents a list of alternative correct spelling
+      guesses.
 
       \textbf{M-x spell-buffer} to spell check the buffer via spell dialog.
 
@@ -758,6 +777,24 @@ c:> build}
 
       \item \textbf{Full Name} user name that is inserted into new file
       templates.
+
+      \item \textbf{Organizer File} defines the organizer file base name,
+      defaults to the log name.
+
+      \item \textbf{Auto-Save Time} defines the length of time in seconds
+      between buffer automatic saves, a setting of \texttt{0} or an empty
+      string disables auto-saving. The default setting is 300 seconds or 5
+      minutes. 
+
+      \item \textbf{Keep Undo} when enabled then the undo history is kept
+      after a save allowing the \textbf{undo} command to back-up changes
+      beyond the last save. The default is disabled and the undo history is
+      discarded after the buffer is saved. 
+
+      \item \textbf{Hide Backups} enables MicroEmacs generated backup files to
+      be hidden. On Windows and DOS platforms the \textit{Hidden} file
+      attribute is used to hide the file, on UNIX the backup file name is
+      prepended with a dot '\texttt{.}'. 
 
       \item \textbf{Main Menu} disable if the Main Menu is not required.
 
@@ -826,7 +863,7 @@ c:> build}
 
       \item \textbf{Horizontal Scroll} defines the behavior of horizontal
       scrolling when the cursor is moved to the end of the line. By default
-      only the current line is scrolled.
+      only the current line is scrolled \textit{Default, One line}.
 
       \item \textbf{Vertical Scroll} defines the behavior of vertical
       scrolling when the cursor is moved down at the top/bottom line of the
@@ -851,6 +888,33 @@ c:> build}
 
     \end{itemize}
 
+    \item \textbf{Miscellaneous} -- configuration of extended tools.
+
+    \begin{itemize}
+
+      \item \textbf{Session} configures how the user session is saved.
+      
+      \item \textbf{Alias Path} define file short cuts of the form
+      \textbf{$\sim$/name}, the short name is defined to be an alias of a
+      longer file path. 
+      
+      \item \textbf{File Types} associate file extensions with a file type.
+      
+      \item \textbf{File Tools} configure tools and automatic open actions
+      used by the \textbf{file-browser}.
+      
+      \item \textbf{Shell Tools} configure launching of external shell tools.
+      
+      \item \textbf{E-Mail} configure MicroEmacs mailer.
+      
+      \item \textbf{CVS} configure CVS. Note that CVS should not be configured
+      in MicroEmacs if the CVS environment variables are defined in the
+      working environment. 
+      
+      \item \textbf{ClearCase} configure MicroEmacs to work with IBM Rational
+      ClearCase source control system.
+
+    \end{itemize}
   \end{itemize}
 
 \subsection{Buffer Setup}
