@@ -4,7 +4,7 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <061001.1435>
+>  Last Modified : <061005.2202>
 >
 
     User perspective summary of changes
@@ -62,11 +62,41 @@
 
     * Bug fixes and enhancements to existing commands and functions.
 
+    [061005] java - Added missing  highlighting  tokens reported by Tom Hundt.
+             Added new  indentation  definition  and  highlighting  defined by
+             Bryan Schofield.
+
+    [061005] Fixed the cygwin f3 mode toggling to be the same as ishell.
+
+    [061004] sessions - Avoided any potential timestamp issues by changing the
+             divider to letters.
+
+    [061004] Changed $timestamp default to be regex compliant (i.e. \\\\.)
+
+    [061004] Changed copyrights to 2006
+
+    [061002] jst - Up-dated jst hook and utils to latest standard.
+
+    [061002] Changed  arg  to  popup-window  from 3 to 4 to  resize  as  well,
+             restoring a session on a different  machine  could  easily  break
+             things otherwise.
+
+    [061002] browse mode - Added wheel mouse support.
+
+    [061002] notes - fixed  notes-file bug caused by creating a new notes file
+             while in notes. Close notes before importing skwurel notes.
+
+    [061002] Fixed find bug.
+
+    [061002] Improved  the  $file-names   path/regex  division  detection  and
+             checked  for '\\<'  which  can  always  be used as a  divider  if
+             required.
+
     [060928] Fixed crash caused by ftp login being given a NULL password.
 
     [060927] Set macro  version to 2006-09-09 as the release  version. Set the
              executable to 2006-09-09 as the release version.
-    
+
     [060925] Added a 'g' (goto) to save-some-buffers prompt.
 
     [060925] Cosmetic  changes  to  buffer-info,  2nd Col -> ACol and  printed

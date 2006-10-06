@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.47 2006-10-01 15:14:09 jon Exp $
+.Id $Id: me.nrs,v 2.48 2006-10-06 20:50:45 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -2137,6 +2137,33 @@ Bug fixes and enhancements to existing commands and functions.
 .BE
 .B "Development history"
 .BS
+[061005] java - Added missing highlighting tokens reported by Tom Hundt. Added
+new indentation definition and highlighting defined by Bryan Schofield.
+.BU
+[061005] Fixed the cygwin f3 mode toggling to be the same as ishell.
+.BU
+[061004]  sessions - Avoided any  potential  timestamp  issues by changing the
+divider to letters.
+.BU
+[061004] Changed $timestamp default to be regex compliant (i.e. \\\\.)
+.BU
+[061004] Changed copyrights to 2006
+.BU
+[061002] jst - Up-dated jst hook and utils to latest standard.
+.BU
+[061002] Changed arg to popup-window  from 3 to 4 to resize as well, restoring
+a session on a different machine could easily break things otherwise.
+.BU
+[061002] browse mode - Added wheel mouse support.
+.BU
+[061002] notes - fixed  notes-file  bug  caused by  creating a new notes file
+while in notes. Close notes before importing skwurel notes.
+.BU
+[061002] Fixed find bug.
+.BU
+[061002] Improved the $file-names  path/regex  division  detection and checked
+for '\\\\<' which can always be used as a divider if required.
+.BU
 [060928] Fixed crash caused by ftp login being given a NULL password.
 .BU
 [060927] Set macro version to \fI2006-09-09\fR as the release version. Set the
