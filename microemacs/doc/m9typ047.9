@@ -6,7 +6,9 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Wed Sep 20 20:48:00 2006
 .\"
-.Id $Id: m9typ047.9,v 2.3 2006-09-24 17:16:02 jon Exp $
+.\" Derived from Steve Philips JST Document "jst_4.jst"
+.\"
+.Id $Id: m9typ047.9,v 2.4 2006-10-06 20:50:02 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH jst 9
@@ -63,14 +65,18 @@ JST supports more advanced extensions which allow tables and hypertext tags to
 be defined,  these are discussed in the  \fBAdvanced\fR  \fBSyntax\fR  section
 later.
 .SS Quoting
-The backslash character  ('\fC\\\fR') is reserved as a quote character and may
-be used to  delimit  any  character  to  change  the  meaning  to the  literal
-character. This is used to stop any  unambiguous  interpretation  of character
-sequences which are the same as a JST control  sequence.  A literal  backslash
-must itself be delimited with a backslash.
-.CS
-\\\\ produces a single \\
-.CE 0
+To ensure  that all  characters  may be input as typed then there is no single
+escape character. The character sequence  \fB&[\fR\|\fI<char>\fR\|\fB]\fR  may
+be used to escape a character \fI<char>\fR. Our experience is that escaping is
+not usually necessary.
+.\""The backslash character  ('\fC\\\fR') is reserved as a quote character and may
+.\"be used to  delimit  any  character  to  change  the  meaning  to the  literal
+.\"character. This is used to stop any  unambiguous  interpretation  of character
+.\"sequences which are the same as a JST control  sequence.  A literal  backslash
+.\"must itself be delimited with a backslash.
+.\".CS
+.\"\\\\ produces a single \\
+.\".CE 0
 .SS "Basic Styling"
 The basic  character  styling is performed with a pair of escape  characters at
 the start and end of a string  sequence.  The style end token does not have to
@@ -112,7 +118,7 @@ A pair of commas denotes a subscript text region.
 Styles may be nested i.e. 
 .C "//Italic **Bold Italic** Italic Again//"
 To get raw text with a double quote use:
-\fC""raw with a ""\\"\\""" in it""\fR
+\fC""raw with a &["]" in it""\fR
 .SS "Styling Paragraphs and Blocks"
 Blocks of text may be  demarked by a single  token at the start of the line. A
 exclamation  mark '\fC!\fR' at the start of a paragraph may be followed by one
@@ -162,7 +168,19 @@ with a '\fC>end>\fR' tag. The tag types that are currently supported include:
 .fi
 .PP
 The   aforementioned   blocks  support  syntax   language   highlighting   and
-indentation.
+indentation. As an example:
+.ne 10
+.CS
+    Some example 'C' code:
+    >c>
+    /* This is C code */
+    int main (int argc, char *argv[])
+    {
+        printf ("Hello World\\n");
+        return 0;
+    }   
+    >end>
+.CE 0
 .SS "Justification of Paragraphs and Blocks"
 A  paragraph  is a block of text  delimited  by an empty line, by default  all
 paragraphs  are left  justified.  Where the layout of the paragraph is literal
@@ -233,8 +251,9 @@ is the default when not defined.
 .SS "Item Lists"
 Items  lists are bullet or number  lists of items  which are  introduced  by a
 \fIformatChar\fR\fB.\fR   to  start  the  list,   subsequent  list  items  are
-introduced  with a period  '\fB.\fR'  character  only. Where  \fIformatChar\fR
-identifies the type of list as follows:
+introduced  with a period  '\fB.\fR'  character  only or  optionally  with the
+bullet  character.  Where  \fIformatChar\fR  identifies  the  type  of list as
+follows:
 .IP
 .na
 .nf
@@ -255,7 +274,7 @@ Indentation and sub-paragraphs are supported within the paragraph. e.g.
 
     Sub-paragraph of numbered list.
    
- .  2nd item in numbered list
+ 2. 2nd item in numbered list
 
     *. Contained bullet list.
     
@@ -284,7 +303,7 @@ table is introduced by '\fB]\fR and is followed by the assigned content.
 .PP
 The initial table definition has the syntax
 .CS
- !" ]crh <# columns> <# rows>
+]crh <# columns> <# rows>
 .CE
 Where  '\fBc\fR'  and '\fBr\fR' are  optional and center or right  justify the
 table,  '\fBh\fR'  hides the table lines i.e. no border. The dimensions of the
@@ -338,18 +357,18 @@ with '\fB]v\fR'.
 ] 3rd row 3rd column content.
 .CE 0
 .SS "Special Characters and Symbols"
-Special characters are introduced with  '\fB[[\fR\|\fIspecial\fR\|\fB]]\fR' and
+Special characters are introduced with  '\fB&[\fR\|\fIspecial\fR\|\fB]\fR' and
 are defined as follows:
 .TP
-\fC[[nl]]\fR
+\fC&[nl]\fR or \fC&[new-line]\fR
 .\"
 Newline.
 .TP
-\fC[[np]]\fR
+\fC&[np]\fR or \fC&[new-page]\fR
 .\"
 New page. This is not supported in HTML or text.
 .TP
-\fC[[nf]]\fR        
+\fC&[nf]\fR or \fC&[new-file]\fR
 .\"
 New file, the  effect is dependent on the output format:
 .RS
@@ -364,30 +383,30 @@ Just starts a new page, i.e. same as \fB[[np]]\fR.
 Ignored.
 .RE
 .TP
-\fC[[toc]]\fR  
+\fC&[toc]\fR  
 .\"
 Inserts an automatically generated table of contents.
 .TP
-\fC[[---]]\fR
+\fC---\fR
 Inserts a horizontal line. This must be the only text on the line.
 .SS "Tags and Hyperlinks"
 Most of the more complex formatting is performed with tags. The general format
 of a tag is defined as:
 .IP
-\fB[\fR\|\fI<tag-id><options> <args>\fR\|\fB]\fR
+\fB&[\fR\|\fI<tag-id><options> <args>\fR\|\fB]\fR
 .LP
 If a argument contains a space or a '\fB]\fR' then it must be quoted, e.g.:
 .CS
-[c this-is-okay]
-[c "this is okay"]
-[c "this [\\"is\\"] okay"]
+&[c this-is-okay]
+&[c "this is okay"]
+&[c "this [\\"is\\"] okay"]
 .CE
 A tag may support numerous  options, the order of the options is not important
 but the order of their  arguments  is as  specified in the docs, not the order
 given with the tag therefore
-.B "[idw <image> <depth> <width>]"
+.B "&[idw <image> <depth> <width>]"
 is still
-.BR "[iwd <image> <depth> <width>]" .
+.BR "&[iwd <image> <depth> <width>]" .
 The text that actually appears in any generated  document should not appear in
 a tag as the spelling check should skip the contents of a tag. This means that
 a link should take the HTML form of encasing the text label with start and end
@@ -398,12 +417,12 @@ of a variable.
 Inserts a comment.
 .RS
 .PP
-\fB[c\fR \fI<0+args>\fR\|\fB]\fR
+\fB&[c\fR \fI<0+args>\fR\|\fB]\fR
 .PP
 There may be any number of arguments, the whole tag is ignored. As the comment
 ends with a ']' and ']' char in the comment must be quoted, i.e.:
 .CS
-[c this is a comment with a "]" "char[23]" in it]
+&[c this is a comment with a "]" "char[23]" in it]
 .CE 0
 .RE
 .\"
@@ -411,7 +430,7 @@ ends with a ']' and ']' char in the comment must be quoted, i.e.:
 Internal document reference.
 .RS
 .PP
-\fB[a\fR \fI<name>\fR\|\fB]\fR
+\fB&[a\fR \fI<name>\fR\|\fB]\fR
 .PP
 An anchor tag can be placed anywhere and referenced by a link .
 .RE
@@ -420,27 +439,28 @@ An anchor tag can be placed anywhere and referenced by a link .
 Modifies the color of the text foreground and background.
 .RS
 .PP
-\fB[f\fR \fI<color>\fR\|\fB]\fR .... \fB[f]\fR
+\fB&[f\fR \fI<color>\fR\|\fB]\fR .... \fB&[/f]\fR
 .PP
 Sets the current foreground color where  \fI<color>\fR is either a direct HTML
-format color definition (e.g. "\fC#ff0000\fR" for \fBred\fR) or a previously defined color name.
+format color definition (e.g.  "\fC#ff0000\fR"  for \fBred\fR) or a previously
+defined color name.
 .PP
-\fB[b\fR \fI<color>\fR\|\fB]\fR .... \fB[b]\fR
+\fB&[b\fR \fI<color>\fR\|\fB]\fR .... \fB&[/b]\fR
 .PP
 Sets similarly sets the current background color.
 .PP
 A number of options are supported by the color tag as follows:
 .TP
-\fB[fs\fR \fI<name>\fR \fI<color>\fR\|\fB]\fR
+\fB&[fs\fR \fI<name>\fR \fI<color>\fR\|\fB]\fR
 .\"
 Define color  '\fI<name>\fR'  to be  '\fI<color>\fR',  the \fI<name>\fR may be
 references in the \fBf\fR/\fBb\fR color references.
 .TP
-\fB[fd\fR \fI<color>\fR\|\fB]\fR
+\fB&[fd\fR \fI<color>\fR\|\fB]\fR
 .\"
 Sets the default foreground color to \fI<color>\fR.
 .TP
-\fB[bd\fR \fI<color>\fR\|\fB]\fR
+\fB&[bd\fR \fI<color>\fR\|\fB]\fR
 .\"
 Sets the default background color to \fI<color>\fR.
 .RE
@@ -449,13 +469,13 @@ Sets the default background color to \fI<color>\fR.
 Link to another part of the document or URL.
 .RS
 .PP
-\fB[l\fR \fI<url>\fR\|\fB]\fR .... \fB[l]\fR
+\fB&[l\fR \fI<url>\fR\|\fB]\fR .... \fB&[/l]\fR
 .PP
 Creates a hyperlink with the text with '\fC....\fR'  going to the \fI<url>\fR,
 The format of the url uses the standard  HTML syntax, a link  starting  with a
 hash  '\fC#\fR'  is  assumed  to be local and a warning  will be issued if the
 corresponding  anchor  point  is not  found.  An  error  is  generated  if the
-\fB[l]\fR is missing.
+\fB&[/l]\fR is missing.
 .PP
 Urls   appearing   in  the   text   like   '\fChttp://www.jasspa.com\fR'   are
 automatically  turned  into  links.  To avoid  this  quote  the  string,  i.e.
@@ -466,16 +486,16 @@ automatically  turned  into  links.  To avoid  this  quote  the  string,  i.e.
 Insert an image in the document.
 .RS
 .PP
-\fB[i\fR \fI<image-name>\fR\|\fB]\fR
+\fB&[i\fR \fI<image-name>\fR\|\fB]\fR
 .PP
-Inserts an image \fI<image-name>\fR, for example \fB[i\ me.png]\fR
+Inserts an image \fI<image-name>\fR, for example \fB&[i\ me.png]\fR
 .PP
 Additional options allow the depth and width of the image to be specified:
 .PP
-\fB[idw\fR \fI<image-name> <depth> <width>\fR\|\fB]\fR
+\fB&[idw\fR \fI<image-name> <depth> <width>\fR\|\fB]\fR
 .PP
 Where option  \fBd\fR  specifies the depth of image and \fBw\fR  specifies the
-width of the image. e.g. \fC[iw  test.jpg  60]\fR. The size is given in pixels
+width of the image. e.g. \fC&[iw  test.jpg 60]\fR. The size is given in pixels
 and the conversion variable '\fIimage-ppi\fR' is used to convert is a physical
 paper size. The width may also be specified as a percentage, e.g. \fB50%\fR.
 .RE
@@ -483,18 +503,18 @@ paper size. The width may also be specified as a percentage, e.g. \fB50%\fR.
 .BP "Use Tag"
 Insert a file at the current point.
 .RS
-\fB[u\fR \fI<file-name>\fR\|\fB]\fR
+\fB&[u\fR \fI<file-name>\fR\|\fB]\fR
 .PP
-Inserts \fI<file-name>\fR into the current location and processes it as if part of the original docuement.
-e.g.  \fC[u\fR  \fCinsert.jst]\fR  inserts  the file  \fIinsert.jst\fR  at the
-current position in the file.
+Inserts  \fI<file-name>\fR  into the current  location and  processes it as if
+part of the original docuement. e.g. \fC&[u\fR  \fCinsert.jst]\fR  inserts the
+file \fIinsert.jst\fR at the current position in the file.
 .RE
 .\"
 .BP "Variable Tag"
 Insert a variable.
 .RS
 .PP
-\fB[v\fR \fI<variable-name>\fR\|\fB]\fR
+\fB&[v\fR \fI<variable-name>\fR\|\fB]\fR
 .PP
 Inserts the current value of variable  \fI<variable-name>\fR,  variable  names
 may only contain alphanumeric characters and '\fC-\fR'.
@@ -503,7 +523,7 @@ The variable supports a set of simple options that allow the variable value to
 be  manipulated  prior to insertion e.g. for handling  numbers etc. The option
 syntax is defined as follows:
 .PP
-\fB[vdinrs\fR     \fI<variable-name>\fR     \fI<value>\fR    \fI<increment>\fR
+\fB&[vdinrs\fR     \fI<variable-name>\fR    \fI<value>\fR    \fI<increment>\fR
 \fI<reference-name>\fR\|\fB]\fR
 .BP d
 Define the reference \fI<reference-name>\fR for the current value.
@@ -519,21 +539,21 @@ Set the value to \fI<value>\fR first.
 As an example, consider the following  sequence to implement figure labels and
 reference them:
 .CS
-[vsn figure 0]
+&[vsn figure 0]
 
-[i figure1.jpg]
-Figure [vid figure 1 figA] - my first figure
+&[i figure1.jpg]
+Figure &[vid figure 1 figA] - my first figure
         
 some more text
         
-[i figure2.jpg]
-Figure [vid figure 1 figB] - my second figure
+&[i figure2.jpg]
+Figure &[vid figure 1 figB] - my second figure
 
-To see  **figure [vr figure  figA]** //my first  figure// and **figure
-[vr figure figB]** //my second figure//. 
+To see  **figure &[vr figure  figA]** //my first  figure// and **figure
+&[vr figure figB]** //my second figure//. 
 
-To see  **figure [vr figure  figA]** //my first  figure// and **figure
-[vr figure figB]** //my second figure//. 
+To see  **figure &[vr figure  figA]** //my first  figure// and **figure
+&[vr figure figB]** //my second figure//. 
 .CE
 An undefined variable has a value of "\fCERROR\fR", it can be defined by using
 either option  '\fBs\fR' or '\fBi\fR' in which case the value is \fC0\fR, i.e.
@@ -555,7 +575,7 @@ generated document in inches.
 Dump output text.
 .RS
 .PP
-\fB[o\fR \fI<out-type> <raw-text>\fR\|\fB]\fR
+\fB&[o\fR \fI<out-type> <raw-text>\fR\|\fB]\fR
 .PP
 Dumps   \fI<raw-text>\fR  into  the  output  if  the  target  output  type  is
 \fI<out-type>\fR,   where   \fI<out-type>\fR  can  be  \fBall\fR,  \fBhtml\fR,
@@ -572,15 +592,15 @@ This  command is similar to Output  Dump Tag except  this is done first so the
 formatting, e.g. (note that the \\ at the end of the line is used here to show
 that the content should be placed on a single line).
 .CS
-[d html "[vsn large-font-start \\"..html def..\\"] \\
-         [vsn large-font-end \\"..html def..\\"]"]
-[d latex "[vsn large-font-start \\"..latex def..\\"] \\
-          [vsn large-font-end \\"..latex def..\\"]"]
-[d text "[vsn large-font-start \\"\\"][vsn large-font-end \\"\\"]"]
+&[d html "&[vsn large-font-start \\"..html def..\\"] \\
+          &[vsn large-font-end \\"..html def..\\"]"]
+&[d latex "&[vsn large-font-start \\"..latex def..\\"] \\
+           &[vsn large-font-end \\"..latex def..\\"]"]
+&[d text "&[vsn large-font-start \\"\\"]&[vsn large-font-end \\"\\"]"]
 .CE
 so in the main body of the text:
 .CS
-[v large-font-start] Large Text [v large-font-end]
+&[v large-font-start] Large Text &[v large-font-end]
 .CE
 This is a complex  concept and is beyond most users  requirements,  but making
 this kind of thing  possible  means that users  should be able to do  whatever
