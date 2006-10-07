@@ -7,12 +7,12 @@
 %  System        : MicroEmacs
 %  Module        : user Manual
 %  Object Name   : $RCSfile: jasspame.tex,v $
-%  Revision      : $Revision: 1.10 $
-%  Date          : $Date: 2006-10-06 23:42:28 $
+%  Revision      : $Revision: 1.11 $
+%  Date          : $Date: 2006-10-07 14:42:25 $
 %  Author        : $Author: jon $
 %  Created By    : Jon Green
 %  Created       : Mon Oct 25 21:36:13 2004
-%  Last Modified : <061007.0040>
+%  Last Modified : <061007.1540>
 %
 %  Description
 %
@@ -35,8 +35,8 @@
 \documentclass[11pt,a4paper,pdftex]{article}
 % Bring in the CVS information.
 \def\CVS$#1: #2 ${\expandafter\def\csname CVS#1\endcsname{#2}}
-\CVS$Revision: 1.10 $ % or any CVS keyword
-\CVS$Date: 2006-10-06 23:42:28 $
+\CVS$Revision: 1.11 $ % or any CVS keyword
+\CVS$Date: 2006-10-07 14:42:25 $
 
 \usepackage{ifthen}                     % Conditional processing.
 
@@ -299,10 +299,10 @@ Typeset with the TexLive 2004 \LaTeX\ Documentation System under Sun Solaris
     \hline
     \tableTitle{Date} & \tableTitle{Who} & \tableTitle{Description} & \tableTitle{Revision} \\
     \hline
-    2006/08/29 & Jon & Updated to 2006 release. & 1.9\\ \hline
+    2006/08/29 & Jon & Updated for the 2006 release. & 1.11\\ \hline
     2005/03/14 & Jon & Updated with Buffer Setup information.
                        Added section MicroEmacs Basics. & 1.8\\ \hline
-    2004/10/25 & Jon & Draft. & 1.00 \\ \hline
+    2004/10/25 & Jon & Draft. & 1.0 \\ \hline
     \end{tabular}
   \end{table}
 \end{center}
@@ -694,7 +694,7 @@ c:> build}
   the user to perform this process and is invoked as follows:
 
   \textbf{esc-x user-setup} $\dots$ \textit{OR}\newline
-  \textbf{Help$\rightarrow$User Setup}
+  \textbf{Tools$\rightarrow$User Setup}
 
 \begin{figure}[!hbt]
   \begin{center}
@@ -925,13 +925,18 @@ c:> build}
   \textit{indentation} are modified, per buffer type, using the command:
   
   \textbf{esc-x buffer-setup} $\dots$ \textit{OR}\newline
-  \textbf{Help$\rightarrow$Buffer Setup}
+  \textbf{Tools$\rightarrow$Buffer Setup}
   
   The settings for the buffer, Figure~\ref{fig:buffersetup}, are saved in the
-  user registry file (\textbf{\textit{user}.erf}) and are configured into any
-  subsequent buffer of the given type that is loaded. The buffer setup dialog
-  is tailored to a specific buffer type i.e. the Buffer Setup for the C
-  programming language includes specific C options. 
+  user session file (\textbf{\textit{user}.esf}) and are retained when the
+  buffer is re-loaded. The buffer setup dialog is tailored to a specific
+  buffer type i.e. the Buffer Setup for the LaTeX programming language
+  includes specific LaTeX options. 
+  
+  \textbf{buffer-setup} may be used to change the \textit{major mode} or
+  language template of the buffer (i.e. \textbf{C}, \textbf{C++},
+  \textbf{Java} etc.). The buffer mode may also be assigned quickly from the
+  command line using \textbf{M-x buffer-major-mode}.
   
 \begin{figure}[!hbt]
   \begin{center}
@@ -944,25 +949,80 @@ c:> build}
   The following notable fields exist in the Buffer Setup dialog:
   
   \begin{itemize}
-    \item Search Modes, to control the exact and magic search modes.
-    \item Buffer Modes, the default modes for the buffer type.
-    \item Tab Width, the width of a rendered \texttt{TAB} character, the 
+
+    \item Major Mode, selects the mode that MicroEmacs should adopt for the buffer.
+
+    \item Indent Width, the indentation width for the buffer, the default is 4
+    (controlled by the variable \textit{\$buffer-indent-width}).
+
+    \item Tab Width, the width of a rendered \texttt{TAB} character, the
     default is 8 characters.
-    \item Indent Width, the indentation width for the buffer, the default is 4 
-    (controlled by the variable \textit{\$indent-width}).
+
+    \item Fill Column, the right-hand column where text should be wrapped,
+    used for comments and text modes.
+
+    \item Fill Mode, the mode which should be used to wrap text.
+
+    \item Buffer Modes, the general modes of the buffer.
+
   \end{itemize}
   
-  The configuration may be saved permanently using \textbf{Save} and installed
-  into the current session using \textbf{Current}.
+  \textbf{Note:} the \textit{indentation} and \textit{tab width} are
+  temporarily controlled for the buffer only. This is useful when dealing with
+  code from a different source where the \textit{indentation} and \textit{Tab
+  width} may be aligned to match the original authoring, the command
+  \textbf{M-x tabs-to-spaces} may be used to expand the tabs back to spaces to
+  make the file editor portable. 
+
+\subsection{Major Modes}    
   
-  \textbf{Note:} the \textit{indentation} and \textit{tab width} may be
-  temporarily controlled without changing the saved setting using the command
-  \textbf{M-x indent-setup}. Running the command presents a dialog which
-  locally changes the indentation setting of the current buffer. This is
-  useful when dealing with code from a different source where the
-  \textit{indentation} and \textit{Tab width} may be aligned to match the
-  original authoring, the command \textbf{M-x tabs-to-spaces} may be used to
-  expand the tabs back to spaces to make the file editor portable.
+  The \textbf{buffer-setup} effects local changes on the buffer, persistent
+  changes to the buffer mode which are applied to all buffers of the same type
+  are defined using \textbf{major-mode-setup}. The command presents a dialog
+  that permits the attributes of the file type to be changed - this is known
+  as the \textit{Major Mode}. 
+
+  \textbf{esc-x major-mode-setup} $\dots$ \textit{OR}\newline
+  \textbf{Tools$\rightarrow$Major Mode Setup}
+
+  This is similar to the \textbf{buffer-setup} but applies to all subsequent
+  buffers that are loaded of the given type.
+
+\begin{figure}[!hbt]
+  \begin{center}
+    \includegraphics[keepaspectratio,height=4in]{majormodesetup}
+    \caption{Major Mode Setup Dialog}
+    \label{fig:majormodesetup}
+  \end{center}
+\end{figure}
+  
+  The settings for the Major Mode, Figure~\ref{fig:majormodesetup}, are saved
+  in the user session file (\textbf{\textit{user}.esf}) and are retained
+  through sessions. The major mode setup dialog is tailored to a specific mjor
+  mode type i.e. the Major Mode Setup for the LaTeX programming language
+  includes specific LaTeX options. 
+  
+  The following notable fields exist in the Major Mode Setup dialog:
+  
+  \begin{itemize}
+    
+    \item \textit{Miscellaneous} which are Major mode specific.
+     
+    \item Indent Width, the indentation width for the buffer, the default is 4
+    (controlled by the variable \textit{\$buffer-indent-width}).
+
+    \item Tab Width, the width of a rendered \texttt{TAB} character, the
+    default is 8 characters.
+
+    \item Fill Column, the right-hand column where text should be wrapped,
+    used for comments and text modes.
+
+    \item Fill Mode, the mode which should be used to wrap text.
+    
+  \end{itemize}
+
+  The configuration may be saved permanently using \textbf{Save} and installed
+  into the current session using \textbf{Apply}.
 
 \subsection{MicroEmacs Integration}
 
@@ -1253,7 +1313,7 @@ c:> build}
     {\setlength{\itemsep}{0ex}}
     \item \textbf{C-x~m} toggle buffer mode.
     \item Right mouse click in the buffer or on the mode line.
-    \item \textbf{C-x buffer-setup} to permanently redefine the modes
+    \item \textbf{C-x major-mode-setup} to permanently redefine the modes
     associated with the buffer.
   \end{itemize}
 
@@ -1366,6 +1426,7 @@ c:> build}
   \textbf{Right Mouse} on mode line and select \textbf{Buffer Modes}.\newline
   \textbf{C-x buffer-mode}\newline
   \textbf{C-x buffer-setup}
+  \textbf{C-x major-mode-setup}
 
   For most text buffer types then \textbf{wrap} mode is always enabled, for
   programming languages then it is typically disabled. Within a text type
@@ -1565,6 +1626,10 @@ c:> build}
     Copy the selected region.\\
     \textbf{C-w} & \textit{kill-region} &
     Delete the selected region.\\
+    \textbf{M-x} & \textit{copy-rectangle} &
+    Copies a rectangular section (or vertical columns) at the current
+    position, the left and right limits of the selection define the limits of
+    the rectangle that is copied.\\
   \end{longtable}
 
 \subsubsection{Yank (or paste)}
@@ -1589,6 +1654,8 @@ c:> build}
     Restore a copied or deleted text region.\\
     \textbf{M-w} & \textit{reyank} &
     Restore the previous copied or deleted text region.\\
+    \textbf{M-x} & \textit{yank-rectangle} &
+    Copies a rectangular section at the current position. \\
   \end{longtable}
 
 \subsubsection{Undo}
@@ -1740,7 +1807,7 @@ c:> build}
     \item[?] provide help on the command response.
     \item[y] perform the replacement.
     \item[n] no skip the replacement and find the next.
-    \item[!] perform the rest of the replacements with no query.
+    \item[!] or \textbf{a} perform the rest of the replacements with no query.
     \item[u] undo the last replacement.
     \item[C-g] abort the replacement and leave the cursor at the current
     position.
@@ -1794,7 +1861,7 @@ c:> build}
   The mouse interaction is configured from \textit{User Setup}
 
   \textbf{esc-x user-setup} $\dots$ \textit{OR}\newline
-  \textbf{Help$\rightarrow$User Setup}
+  \textbf{Tools$\rightarrow$User Setup}
 
   using the \textbf{Mouse} tab. The tab defines the behavior of the mouse,
   including the mouse wheel. The default mouse interaction is summarized in
