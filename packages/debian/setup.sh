@@ -5,7 +5,7 @@
 #
 #  Created By    : Jon Green
 #  Created       : Fri Feb 6 22:33:31 2004
-#  Last Modified : <060924.1413>
+#  Last Modified : <061008.1028>
 #  Description   : Creates the RedHat directory structure for building a RPM
 #                  file.
 #
@@ -163,4 +163,4 @@ chmod a+x package/DEBIAN/prerm
 # 
 chown -R root package
 chgrp -R root package
-dpkg -b package jasspa-me_20050505_i386.deb 
+dpkg -b package jasspa-me_${VERSION}_i386.deb 
