@@ -26,11 +26,19 @@ clean:
 	$(RM) redhat/*.rpm
 	$(RM) hpux/*.gz
 	$(RM) hpux/*.1
+	$(RM) debian/*.1
+	$(RM) debian/*.deb
+	$(RM) debian/*.gz
+	$(RM) debian/*.pdf
+	$(RM) debian/*.txt
+	$(RM) debian/*.log
+	$(RM) debian/COPYING
 	$(RM) cygwin/*.1
 	$(RM) cygwin/*.gz
 	$(RM) cygwin/*.bz2
 	$(RM) -r solaris/jasspa
 	$(RM) -r hpux/jasspa
+	$(RM) -r debian/package
 	$(RM) -r cygwin/usr
 #
 # Remove all working files.
@@ -40,4 +48,5 @@ spotless: clean
 	$(RM) redhat/*~
 	$(RM) hpux/*~
 	$(RM) cygwin/*~
+	$(RM) debian/*~
 	$(RM) *~
