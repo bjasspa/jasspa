@@ -107,7 +107,7 @@ rm -f ${PKGNAME}-sun-${PROCESSOR}-${OSVERSION}-${VERSION}.pkg
 rm -f ${PKGNAME}pkg-sun-${PROCESSOR}-${OSVERSION}-${VERSION}.zip
 /usr/bin/pkgmk -d . -b . -r . -f ./prototype ${PKGNAME}
 /usr/bin/pkgtrans -o -s . ${PKGNAME}-sun-${PROCESSOR}-${OSVERSION}-${VERSION}.pkg ${PKGNAME}
-zip -9 ${PKGNAME}pkg-sun-${PROCESSOR}-${OSVERSION}-${VERSION}.zip ${PKGNAME}-sun-${PROCESSOR}-${OSVERSION}-${VERSION}.pkg
+gzip -9 -c ${PKGNAME}-sun-${PROCESSOR}-${OSVERSION}-${VERSION}.pkg > ${PKGNAME}pkg-sun-${PROCESSOR}-${OSVERSION}-${VERSION}.pkg.gz
 #
 # Clean up
 #
