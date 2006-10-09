@@ -208,6 +208,9 @@ set-variable .fhook-java.item-list-r2 "Clss \ecB\\2\ecA"
         0 indent .indent.java-comm 1 20
         0 indent .indent.javaT 1 500
         0 indent #l5 2 20 .indent.javaT
+        ; strings
+        indent #l5 e "\"" "\"" "\\"
+        indent #l5 e "\'" "\'" "\\"
         ; standard braces
         indent #l5 n "{"  t
         indent #l5 o "}" -t
