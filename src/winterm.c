@@ -2453,7 +2453,7 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
         /* Create a BAT file to hold the command */
         mkTempName(dummyInFile,NULL, ".bat");
         
-        if ((fp = fopen (batname, "w")) != NULL)
+        if ((fp = fopen (dummyInFile, "w")) != NULL)
         {
             /* Change drive */
             fprintf (fp, "%c:\n", buff[0]);
@@ -5400,6 +5400,7 @@ meFrameRepositionWindow(meFrame *frame, int resize)
         mRect.top = eCellMetrics.monPosY + ii ;
         mRect.bottom = eCellMetrics.monPosY + eCellMetrics.monDepth - ii ;
         
+#ifndef _WIN32s
         {
             APPBARDATA abd;
             UINT uState ;
@@ -5448,6 +5449,7 @@ meFrameRepositionWindow(meFrame *frame, int resize)
                 }
             }
         }
+#endif
         /* Always reposition so the top left is visible and as much of the window */
         GetWindowRect(meFrameGetWinHandle(frame),&wRect) ;
         
