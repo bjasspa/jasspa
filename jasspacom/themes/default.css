@@ -8,12 +8,12 @@
  *  Module        : Styles for Jasspa Site
  *
  *  Object Name   : $RCSfile: default.css,v $
- *  Revision      : $Revision: 1.1 $
- *  Date          : $Date: 2006-09-30 16:58:51 $
+ *  Revision      : $Revision: 1.2 $
+ *  Date          : $Date: 2006-10-11 22:05:04 $
  *  Author        : $Author: jon $
  *  Created By    : Jon Green
  *  Created       : Sun Sep 24 21:42:18 2006
- *  Last Modified : <060930.1752>
+ *  Last Modified : <061011.2240>
  *
  *  Description	  : The style theme for JASSPA Web site.
  *
@@ -433,6 +433,10 @@
     text-align: center;
     background: white;
   }
+  
+  table.download td.description {  
+    width: 450px;
+  }    
   
   p.question {
     font-size: 1.2em;
