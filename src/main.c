@@ -152,11 +152,15 @@ meInit(meUByte *bname)
     TTaddColor(meCOLOR_FDEFAULT,255,255,255) ;
     TTaddColor(meCOLOR_BDEFAULT,0,0,0) ;
     
+    /* Create the frame - make sure that we do not access the screen during
+     * the re-size */
+    screenUpdateDisabledCount++;
     if((frameCur=meFrameInit(NULL)) == NULL)
         meExit(1) ;
 #if MEOPT_FRAME
     frameList = frameCur ;
 #endif
+    screenUpdateDisabledCount--;
         
     if(((bp = bfind(bname,BFND_CREAT)) == NULL) ||
        (meFrameInitWindow(frameCur,bp) <= 0))
