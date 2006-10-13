@@ -339,7 +339,7 @@ osd 0 60 "Mdfsh" " \HTools  "    6
 osd 0 70 "Mdfsh" " \HAdvanced  " 7
 osd 0 80 "Mdfsh" " \HWindow  "   8
 osd 0 90 "Mdfsr" " \HHelp "      9
-osd -1 &cond &set .osd.menu &reg "/history/main-menu" "1" "1" "0"
+!force osd -1 &set .osd.menu &reg "/history/main-menu" "1" "1"
 ; Load in the mouse handling routines if required
 !if &band $mouse 0x10
     !force exec-file "mouse"
