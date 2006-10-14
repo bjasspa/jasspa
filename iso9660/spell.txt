@@ -4,7 +4,7 @@
 >
 >  Created By    : Jon Green
 >  Created       : Sun Aug 10 12:56:33 2003
->  Last Modified : <030810.1302>
+>  Last Modified : <061014.1854>
 >
 
 Spelling Dictionaries
@@ -46,5 +46,9 @@ is the same for both .zip and .tar.gz files.
     ls_plpl - Polish spell rules and dictionary.
 
     ls_ptpt - Portuguese spell rules and dictionary.
+
+    ls_ruye - Russian (YE) spell rules and dictionary.
+
+    ls_ruyo - Russian (YO) spell rules and dictionary.
 
     ls_eses - Spanish spell rules and dictionary.

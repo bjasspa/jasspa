@@ -4,7 +4,7 @@
 >
 >  Created By    : Jon Green
 >  Created       : Sat Mar 27 17:47:06 2004
->  Last Modified : <050515.1714>
+>  Last Modified : <061014.1727>
 >
 
 MicroEmacs
@@ -22,36 +22,38 @@ MicroEmacs
     meaix4        - IBM AIX 5.x executable.
     meaix5        - IBM AIX 4.x executable.
     mefreebsd52   - OpenBSD 5.2 (i386).
+    meopenbsd34   - OpenBSD 3.4 (i386).
     mehpux10      - HP-UX 10.20 executable.
     mehpux11      - HP-UX 11.00 executable.
     meirix6       - Silicon Graphics IRIX 6.
     melinux24     - LINUX, Kernel 2.4.x.
     melinux26     - LINUX, Kernel 2.6.x.
     mesun86_58    - Sun Solaris 8/9/10 (i386).
+    mesun86_510   - Sun Solaris 8/9/10 (i386).
     mesunos56     - Sun Solaris 2.6/7 (SPARC).
-    mesunos58     - Sun Solaris 8/9/10 (SPARC).
-    mesunos59     - Sun Solaris 9/10 (SPARC).
-    meopenbsd34   - OpenBSD 3.4 (i386).
+    mesunos58     - Sun Solaris 8/9 (SPARC).
+    mesunos510    - Sun Solaris 10 (SPARC).
 
   Apple
 
-    mecdarwin     - Apple Mac Darwin 6.6 (PPC), console only.
+    memacppc10_3     - Apple Mac Darwin 6.6 (PPC), console only.
+    memacppc10_3_x11 - Apple Mac Darwin 6.6 (PPC), console + X11.
 
   Microsoft Windows
 
     me32.exe      - Microsoft '95/'98/NT/2K/XP, window only
-    mecw32.exe    - Microsoft '95/'98/NT/2K/XP, window + console + URL
+    mec32.exe     - Microsoft '95/'98/NT/2K/XP, console only
+    mecw32.exe    - Microsoft '95/'98/NT/2K/XP, window + console
                     (mecw32.exe -n runs console version)
 
     me32s.exe     - Microsoft Win32s, window only.
     methnk16.dll  - Microsoft Win32s, thunking DLL.
 
-    mecygwin.exe  - Cygwin, console only.
-    mexcygwin.exe - Cygwin with X-Windows and console support.
+    mecygwin.exe     - Cygwin, console only.
+    mecygwin_x11.exe - Cygwin with X-Windows and console support.
 
     meicons.exe   - Icon container for Microsoft Windows (win32/win32s).
 
   MS-DOS
 
     medos.exe     - MS-DOS DJGPP v1.x - 8.3 name support.
-    medosdj2.exe  - MS-DOS DJGPP v2.x - long name support.
