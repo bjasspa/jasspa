@@ -3,10 +3,10 @@
 >
 >  Created By    : Jon Green
 >  Created       : Sun Aug 10 16:10:17 2003
->  Last Modified : <050530.2012>
+>  Last Modified : <061014.1735>
 
 THE JASSPA CDROM
-Version 1.4 - 30th May 2005
+Version 1.5 - 10th October 2006
 
 Introduction
 
@@ -24,15 +24,15 @@ CD-ROM
     Any duplication of the CDs may result in a loss of information without the
     appropriate master disk image (jasspa-me-*.iso).
 
-    jasspa-mecd-full-20050505.iso
+    jasspa-mecd-full-20060909.iso
 
         - All material on www.jasspa.com including packages.
 
-    jasspa-mecd-exec-20050505.iso
+    jasspa-mecd-exec-20060909.iso
 
         - Minimal live + source. CD-ROM conforms to ISO9660
 
-    jasspa-mecd-lexe-20050505.iso
+    jasspa-mecd-lexe-20060909.iso
 
         - Exactly  the same  content  as "exec"  expect  the  CD-ROM  does not
           conform fully to ISO9660 and allows  untranslated names. May be used
@@ -96,7 +96,7 @@ SOLARIS Notes
 
     As root mount the disk:
 
-    @   % lofiadm -a `pwd`/jasspa-mecd-full-20050505.iso
+    @   % lofiadm -a `pwd`/jasspa-mecd-full-20060909.iso
         % mount -F hsfs -o ro /dev/lofi/1 /mnt
 
     List the image:
@@ -130,7 +130,7 @@ To Burn the Disks
 
         - Use "cdrecord" to burn the image i.e.
 
-            % cdrecord jasspa-mecd-full-20050505.iso
+            % cdrecord jasspa-mecd-full-20060909.iso
 
           This command line assumes that your "/etc/default/cdrecord" file has
           been setup. An example file is something like:-
@@ -191,6 +191,10 @@ Exec Disk Contents
 
 Revision History
 
+    Verison 1.5 - 14th October 2006
+    
+        9th Release. MicroEmacs '06 (Sept)
+        
     Version 1.4 -  5th May 2005
     
         8th Release. MicroEamcs '05 (May)
@@ -229,8 +233,8 @@ license.txt                           -- License
 readme.txt                            -- Install information
  @
 archive/                              ** Archive of base components for build
-archive/jasspa-metree-20050505.tar.gz -- Jasspa tree files (UNIX \n format files).
-archive/jasspa-mesrc-20050505.tar.gz  -- MicroEmacs source (UNIX \n format files).
+archive/jasspa-metree-20060909.tar.gz -- Jasspa tree files (UNIX \n format files).
+archive/jasspa-mesrc-20060909.tar.gz  -- MicroEmacs source (UNIX \n format files).
  @
 cdlabels/                             ** CD-ROM labels
 cdlabels/*_neto.pdf                   -- Neto labels
@@ -243,28 +247,31 @@ me/readme.txt                         -- Information
 me/macros/*.emf,*.ehf                 -- Macro and on-line help files.
 me/pixmaps/*                          -- Pixmaps and PNGs for X11.
 me/me32.exe                           -- Windows executable (Window) 95/98/NT/2K/XP
-me/mecw32.exe                         -- Windows executable (Console & Window). 95/98/NT/2K/XP
+me/mec32.exe                          -- Windows executable (Console) 95/98/NT/2K/XP
+me/mecw32.exe                         -- Windows executable (Console & Window) 95/98/NT/2K/XP
 me/me32s.exe                          -- Windows executable (Window) win32s
 me/meicons.exe                        -- MicroEmacs Windows Icons
 me/meaix4                             -- IBM AIX 4.x executable
 me/meaix5                             -- IBM AIX 5.x executable
-me/meccygwin.exe                      -- Cygwin executable, console only.
+me/mecygwin.exe                       -- Cygwin executable, console only.
+me/mecygwin_x11.exe                   -- Cygwin executable, console and X11.
 me/medos.exe                          -- MS-DOS DJGPP v1.x (8.3 names)
-me/medosdj2.exe                       -- MS-DOS DJGPP v2.x (long names)
 me/mehpux10                           -- HP-UX 10.20+ executable
 me/mehpux11                           -- HP-UX 11.00+ executable
 me/meirix6                            -- SGI IRIX 6 executable
 me/melinux22                          -- Linux 2.2.x executable
-me/melinux24                          -- Linux 2.4.x (libtermcap) executable 
-me/melinux24c                         -- Linux 2.4.x (libncurses) executable
+me/melinux24                          -- Linux 2.4.x (termcap) executable 
+me/melinux24c                         -- Linux 2.4.x (ncurses) executable
 me/melinux26                          -- Linux 2.6.x executable
-me/memac10_3                          -- Apple Mac OS-X 10.3 console executable
-me/mexmac10_3                         -- Apple Mac OS-X 10.3 console + X-Winoows executable
+me/memacppc10_3                       -- Apple Mac OS-X 10.3 console executable PPC 
+me/memacppc10_3_x11                   -- Apple Mac OS-X 10.3 console and X11 window executable PPC 
+me/mefreebsd52                        -- Free BSD 5.2 executable
 me/meopenbsd34                        -- OpenBSD 3.4 executable
 me/mesunos56                          -- Sun Solaris 2.6/7 (SPARC) executable
 me/mesunos58                          -- Sun Solaris 8/9/10 (SPARC) executable
-me/mesunos59                          -- Sun Solaris 9/10 (SPARC) executable
+me/mesunos510                         -- Sun Solaris 10 (SPARC) executable
 me/mesun86_58                         -- Sun Solaris 8/9/10 (Intel) executable
+me/mesun86_510                        -- Sun Solaris 10 (Intel) executable
  @
 ne/                                   ** NanoEmacs; runs straight from CD-ROM
 ne/readme.txt                         -- Information
@@ -277,20 +284,21 @@ ne/neaix4                             -- IBM AIX 4.x executable
 ne/neaix5                             -- IBM AIX 5.x executable
 ne/necygwin.exe                       -- cygwin executable, console.
 ne/nedos.exe                          -- MS-DOS DJGPP v1.x (8.3 names)
-ne/nedosdj2.exe                       -- MS-DOS DJGPP v2.x (long names)
 ne/nehpux10                           -- HP-UX 10.20+ executable
 ne/nehpux11                           -- HP-UX 11.00+ executable
 ne/neirix6                            -- SGI IRIX 6 executable
 ne/nelinux22                          -- Linux 2.2.x executable
-ne/nelinux24                          -- Linux 2.4.x (libtermcap) executable
-ne/nelinux24c                         -- Linux 2.4.x (libncurses) executable
+ne/nelinux24                          -- Linux 2.4.x (termcap) executable
+ne/nelinux24c                         -- Linux 2.4.x (ncurses) executable
 ne/nelinux26                          -- Linux 2.6.x executable
 ne/nemac10_3                          -- Apple Mac OS-X 10.3 console executable
+me/nefreebsd52                        -- FreeBSD 5.2 executable
 me/meopenbsd34                        -- OpenBSD 3.4 executable
 ne/nesunos56                          -- Sun Solaris 2.6/7 (SPARC) executable
-ne/nesunos58                          -- Sun Solaris 8/9/10 (SPARC) executable
-ne/nesunos59                          -- Sun Solaris 9/10 (SPARC) executable
-ne/nesun86_58                         -- Sun Solaris 8/9/10 (Intel) executable
+ne/nesunos58                          -- Sun Solaris 8/9 (SPARC) executable
+ne/nesunos510                         -- Sun Solaris 10 (SPARC) executable
+ne/nesun86_58                         -- Sun Solaris 8/9 (Intel) executable
+ne/nesun86_510                        -- Sun Solaris 10 (Intel) executable
  @
 subs/                                 ** Submissions and contributions
 subs/*.txt                            -- Text description of submission.
@@ -310,56 +318,58 @@ archive/                              ** Archive of all of the components
 archive/jasspa-mesrc-*                -- MicroEmacs source
 archive/jasspa-metree-*               -- MicroEmacs standard tree (macros + on-line help)
 archive/bin/                          ** Executable archives
-archive/bin/jasspa-me-apple-mac-10.3-20050505.gz
-archive/bin/jasspa-mec-apple-mac-10.3-20050505.gz
-archive/bin/jasspa-me-cygwin-i386-20050505.exe.gz
-archive/bin/jasspa-me-freebsd-i386-5.2-20050505.gz
-archive/bin/jasspa-me-hpux-pa-10.20-20050505.gz
-archive/bin/jasspa-me-hpux-pa-11.00-20050505.gz
-archive/bin/jasspa-me-ibm-aix-4-20050505.gz
-archive/bin/jasspa-me-ibm-aix-5-20050505.gz
-archive/bin/jasspa-me-linux-i386-2.2-20050505.gz
-archive/bin/jasspa-me-linux-i386-2.4-20050505.gz
-archive/bin/jasspa-me-linux-i386-2.4-ncurses-20050505.gz
-archive/bin/jasspa-me-linux-i386-2.6-20050505.gz
-archive/bin/jasspa-me-ms-win32-20050505.zip
-archive/bin/jasspa-me-ms-win32s-20050505.zip
-archive/bin/jasspa-me-msdos-djgpp1-20050505.zip
-archive/bin/jasspa-me-msdos-djgpp2-20050505.zip
-archive/bin/jasspa-me-openbsd-i386-3.4-20050505.gz
-archive/bin/jasspa-me-sgi-irix-6-20050505.gz
-archive/bin/jasspa-me-sun-i386-58-20050505.gz
-archive/bin/jasspa-me-sun-sparc-56-20050505.gz
-archive/bin/jasspa-me-sun-sparc-58-20050505.gz
-archive/bin/jasspa-me-sun-sparc-59-20050505.gz
-archive/bin/jasspa-mec-cygwin-20050505.exe.gz
-archive/bin/jasspa-mecw-ms-win32-20050505.zip
-archive/bin/jasspa-mex-cygwin-i386-20050505.gz
-archive/bin/jasspa-ne-apple-mac-10.3-20050505.gz
-archive/bin/jasspa-ne-cygwin-i386-20050505.gz
-archive/bin/jasspa-ne-freebsd-i386-3.4-20050505.gz
-archive/bin/jasspa-ne-hpux-pa-10.20-20050505.gz
-archive/bin/jasspa-ne-hpux-pa-11.00-20050505.gz
-archive/bin/jasspa-ne-ibm-aix-4-20050505.gz
-archive/bin/jasspa-ne-ibm-aix-5-20050505.gz
-archive/bin/jasspa-ne-linux-i386-2.2-20050505.gz
-archive/bin/jasspa-ne-linux-i386-2.4-20050505.gz
-archive/bin/jasspa-ne-linux-i386-2.4-ncurses-20050505.gz
-archive/bin/jasspa-ne-linux-i386-2.6-20050505.gz
-archive/bin/jasspa-ne-ms-win32-20050505.zip
-archive/bin/jasspa-ne-msdos-djgpp1-20050505.zip
-archive/bin/jasspa-ne-msdos-djgpp2-20050505.zip
-archive/bin/jasspa-ne-openbsd-i386-3.4-20050505.gz
-archive/bin/jasspa-ne-sgi-irix-6-20050505.gz
-archive/bin/jasspa-ne-sun-i386-58-20050505.gz
-archive/bin/jasspa-ne-sun-sparc-56-20050505.gz
-archive/bin/jasspa-ne-sun-sparc-58-20050505.gz
-archive/bin/jasspa-ne-sun-sparc-59-20050505.gz
-archive/bin/jasspa-new-ms-win32-20050505.exe
+archive/bin/jasspa-me-apple-ppc-10.3-20060909.gz
+archive/bin/jasspa-me-cygwin-i386-20061013.gz
+archive/bin/jasspa-me-freebsd-i386-5.2-20060909.gz
+archive/bin/jasspa-me-hpux-pa-10.20-20060909.gz
+archive/bin/jasspa-me-hpux-pa-11.00-20060909.gz
+archive/bin/jasspa-me-ibm-aix-4-20060909.Z
+archive/bin/jasspa-me-ibm-aix-5-20060909.Z
+archive/bin/jasspa-me-linux-curses-i386-2.4-20060909.gz
+archive/bin/jasspa-me-linux-i386-2.2-20060909.gz
+archive/bin/jasspa-me-linux-i386-2.4-20060909.gz
+archive/bin/jasspa-me-linux-i386-2.6-20060909.gz
+archive/bin/jasspa-me-ms-dos-20060909.zip
+archive/bin/jasspa-me-ms-win32-20060909.zip
+archive/bin/jasspa-me-ms-win32s-20060909.zip
+archive/bin/jasspa-me-openbsd-i386-3.4-20060909.gz
+archive/bin/jasspa-me-sgi-irix-6-20060909.Z
+archive/bin/jasspa-me-sun-i386-510-20060909.gz
+archive/bin/jasspa-me-sun-i386-58-20060909.gz
+archive/bin/jasspa-me-sun-sparc-510-20060909.gz
+archive/bin/jasspa-me-sun-sparc-56-20060909.Z
+archive/bin/jasspa-me-sun-sparc-58-20060909.gz
+archive/bin/jasspa-mec-apple-ppc-10.3-20060909.gz
+archive/bin/jasspa-mec-ms-win32-20060909.zip
+archive/bin/jasspa-mecw-ms-win32-20060909.zip
+archive/bin/jasspa-mex-cygwin-i386-20061013.gz
+archive/bin/jasspa-ne-apple-ppc-10.3-20060909.gz
+archive/bin/jasspa-ne-cygwin-i386-20061013.gz
+archive/bin/jasspa-ne-freebsd-i386-5.2-20060909.gz
+archive/bin/jasspa-ne-hpux-pa-10.20-20060909.gz
+archive/bin/jasspa-ne-hpux-pa-11.00-20060909.gz
+archive/bin/jasspa-ne-ibm-aix-4-20060909.Z
+archive/bin/jasspa-ne-ibm-aix-5-20060909.Z
+archive/bin/jasspa-ne-linux-curses-i386-2.4-20060909.gz
+archive/bin/jasspa-ne-linux-i386-2.2-20060909.gz
+archive/bin/jasspa-ne-linux-i386-2.4-20060909.gz
+archive/bin/jasspa-ne-linux-i386-2.6-20060909.gz
+archive/bin/jasspa-ne-ms-dos-20060909.zip
+archive/bin/jasspa-ne-ms-win32-20060909.zip
+archive/bin/jasspa-ne-openbsd-i386-3.4-20060909.gz
+archive/bin/jasspa-ne-sgi-irix-6-20060909.Z
+archive/bin/jasspa-ne-sun-i386-58-20060909.gz
+archive/bin/jasspa-ne-sun-sparc-510-20060909.gz
+archive/bin/jasspa-ne-sun-sparc-56-20060909.Z
+archive/bin/jasspa-ne-sun-sparc-58-20060909.gz
+archive/bin/jasspa-nec-ms-win32s-20060909.zip
+archive/bin/jasspa-new-ms-win32-20060909.zip
+archive/bin/jasspa-new-ms-win32s-20060909.zip
+archive/bin/meicons.exe
 archive/doc                           ** Documentation directory
-archive/doc/jasspa-mehtm-20050505.zip
-archive/doc/jasspa-mehtml-20050505.tar.gz
-archive/doc/jasspa-mewinhlp-20050505.zip
+archive/doc/jasspa-mehtm-20060909.zip
+archive/doc/jasspa-mehtml-20060909.tar.gz
+archive/doc/jasspa-mewinhlp-ms-win32-20060909.zip
 archive/icons                         ** Icons
 archive/icons/jasspa_gnome.tar.zip    -- GNOME configuration files.
 archive/icons/meicons-extra.tar.gz    -- .png icon files (for GNOME)
@@ -369,8 +379,8 @@ archive/icons/meicons.zip             -- Basic MicroEmacs .pm icons
 archive/icons/meicons_pm.tar.gz       -- .pm icon files (for CDE)
 archive/icons/readme.jasspa_gnome     -- Information on setting up GNOME
 archive/macros/                       ** Macro files
-archive/macros/jasspa-memacros-20050505.tar.gz
-archive/macros/jasspa-memacros-20050505.zip
+archive/macros/jasspa-memacros-20060909.tar.gz
+archive/macros/jasspa-memacros-20060909.zip
 archive/spelling/                     ** Spelling dictionaries.
 archive/spelling/ls_dede.tar.gz       -- German spelling dictionary
 archive/spelling/ls_dede.zip          -- German spelling dictionary
@@ -420,63 +430,66 @@ me/                                   ** MicroEmacs + Macros; runs straight from
 me/readme.txt                         -- Information
 me/macros/*.emf,*.ehf                 -- Macro and on-line help files.
 me/pixmaps/*                          -- Pixmaps and PNGs for X11.
-me/me32.exe                           -- Windows executable 95/98/NT/2K/XP
-me/me32s.exe                          -- Windows executable 3.11
-me/mecw32.exe                         -- Windows executable + Window + Console support. 95/98/NT/2K/XP
+me/me32.exe                           -- Windows executable (Window) 95/98/NT/2K/XP
+me/mec32.exe                          -- Windows executable (Console) 95/98/NT/2K/XP
+me/mecw32.exe                         -- Windows executable (Console & Window) 95/98/NT/2K/XP
+me/me32s.exe                          -- Windows executable (Window) win32s
 me/meicons.exe                        -- MicroEmacs Windows Icons
 me/meaix4                             -- IBM AIX 4.x executable
 me/meaix5                             -- IBM AIX 5.x executable
-me/meccygwin.exe                      -- Cygwin executable, console only.
-me/mexcygwin.exe                      -- Cygwin executable, X-window + console.
+me/mecygwin.exe                       -- Cygwin executable, console only.
+me/mecygwin_x11.exe                   -- Cygwin executable, console and X11.
 me/medos.exe                          -- MS-DOS DJGPP v1.x (8.3 names)
-me/medosdj2.exe                       -- MS-DOS DJGPP v2.x (long names)
-me/mefreebsd52                        -- FreeBSD 5.2 executable
 me/mehpux10                           -- HP-UX 10.20+ executable
 me/mehpux11                           -- HP-UX 11.00+ executable
 me/meirix6                            -- SGI IRIX 6 executable
 me/melinux22                          -- Linux 2.2.x executable
-me/melinux24                          -- Linux 2.4.x (libtermcap) executable
-me/melinux24c                         -- Linux 2.4.x (libncurses) executable
+me/melinux24                          -- Linux 2.4.x (termcap) executable 
+me/melinux24c                         -- Linux 2.4.x (ncurses) executable
 me/melinux26                          -- Linux 2.6.x executable
-me/memac10_3                          -- Apple Mac OS-X 10.3 console executable
-me/mexmac10_3                         -- Apple Mac OS-X 10.3 console + X-Winoows executable
+me/memacppc10_3                       -- Apple Mac OS-X 10.3 console executable PPC 
+me/memacppc10_3_x11                   -- Apple Mac OS-X 10.3 console and X11 window executable PPC 
+me/mefreebsd52                        -- Free BSD 5.2 executable
 me/meopenbsd34                        -- OpenBSD 3.4 executable
-me/mesunos56                          -- Sun  Solaris 2.6/7 (SPARC) executable
+me/mesunos56                          -- Sun Solaris 2.6/7 (SPARC) executable
 me/mesunos58                          -- Sun Solaris 8/9/10 (SPARC) executable
-me/mesunos59                          -- Sun Solaris 9/10 (SPARC) executable
+me/mesunos510                         -- Sun Solaris 10 (SPARC) executable
 me/mesun86_58                         -- Sun Solaris 8/9/10 (Intel) executable
+me/mesun86_510                        -- Sun Solaris 10 (Intel) executable
  @
 ne/                                   ** NanoEmacs; runs straight from CD-ROM
 ne/readme.txt                         -- Information
 ne/ne.emf                             -- Microsoft Windows Mini config for languages
-ne/ne32.exe                           -- Windows console executable 95/98/NT/2K/XP
+ne/ne32.exe                           -- Windows 'console' executable 95/98/NT/2K/XP
+ne/ne32s.exe                          -- Windows 'console' executable 3.11
 ne/new32.exe                          -- Windows 'window' executable 95/98/NT/2K/XP
-ne/neaix4                             -- IBM AIX 4.3 executable
+ne/new32s.exe                         -- Windows 'window' executable 3.11
+ne/neaix4                             -- IBM AIX 4.x executable
+ne/neaix5                             -- IBM AIX 5.x executable
 ne/necygwin.exe                       -- cygwin executable, console.
 ne/nedos.exe                          -- MS-DOS DJGPP v1.x (8.3 names)
-ne/nedosdj2.exe                       -- MS-DOS DJGPP v2.x (long names)
-me/mefreebsd52                        -- FreeBSD 5.2 executable
 ne/nehpux10                           -- HP-UX 10.20+ executable
 ne/nehpux11                           -- HP-UX 11.00+ executable
 ne/neirix6                            -- SGI IRIX 6 executable
 ne/nelinux22                          -- Linux 2.2.x executable
-ne/nelinux24                          -- Linux 2.4.x (libtermcap) executable
-ne/nelinux24c                         -- Linux 2.4.x (libncurses) executable
+ne/nelinux24                          -- Linux 2.4.x (termcap) executable
+ne/nelinux24c                         -- Linux 2.4.x (ncurses) executable
 ne/nelinux26                          -- Linux 2.6.x executable
 ne/nemac10_3                          -- Apple Mac OS-X 10.3 console executable
+me/nefreebsd52                        -- FreeBSD 5.2 executable
 me/meopenbsd34                        -- OpenBSD 3.4 executable
 ne/nesunos56                          -- Sun Solaris 2.6/7 (SPARC) executable
-ne/nesunos58                          -- Sun Solaris 8/9/10 (SPARC) executable
-ne/nesunos59                          -- Sun Solaris 9/10 (SPARC) executable
-ne/nesun86_58                         -- Sun Solaris 8/9/10 (Intel) executable
-executable
+ne/nesunos58                          -- Sun Solaris 8/9 (SPARC) executable
+ne/nesunos510                         -- Sun Solaris 10 (SPARC) executable
+ne/nesun86_58                         -- Sun Solaris 8/9 (Intel) executable
+ne/nesun86_510                        -- Sun Solaris 10 (Intel) executable
  @
 packages/                             ** Complete packages
 packages/readme.txt
 packages/cygwin/*.bz2                 -- Cygwin Source and Binary archives
 packages/hpux/*.depot                 -- HP-UX 10.20 and 11.0 (PA-RISC)
 packages/linux/*.rpm/*.deb            -- Linux Source and Binary RPM/DEB
-packages/sunos/*                      -- Sun Solaris SPARC(2.6/8/9/10) and i386(8/9/10)
+packages/sunos/*                      -- Sun Solaris SPARC(2.6/8/10) and i386(8/10)
 packages/windows/*                    -- Windows Install Shield 95/98/NT/2K/XP
  @
 src/                                  ** Source
@@ -528,6 +541,8 @@ NO WARRANTY
     By  downloading  any  material  from  www.jasspa.com  you  agree  to these
     conditions.
 
-Prepared by JASSPA on a SunBlade 2500 (Silver) running Sun Solaris 10.
-Copyright (C) 1998-2005 JASSPA (www.jasspa.com)
-30th May 2005
+Prepared by JASSPA on a SunBlade 2500 (Silver) running Sun Solaris 10 using
+mkisofs and cdrecord.
+
+Copyright (C) 1998-2006 JASSPA (www.jasspa.com)
+14th October 2006

@@ -1,10 +1,10 @@
 > -!- document; fill-colum:65; fill-mode:both; -!-
 >
->  Copyright (C) 2003-2005 JASSPA www.jasspa.com
+>  Copyright (C) 2003-2006 JASSPA www.jasspa.com
 >
 >  Created By    : Jon Green
 >  Created       : Sun Aug 10 13:34:35 2003
->  Last Modified : <050515.0121>
+>  Last Modified : <061014.1729>
 >
 
 Documentation

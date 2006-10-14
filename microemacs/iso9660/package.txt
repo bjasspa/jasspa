@@ -4,18 +4,18 @@
 >
 >  Created By    : Jon Green
 >  Created       : Sun Aug 10 14:00:59 2003
->  Last Modified : <050515.1721>
+>  Last Modified : <061014.1736>
 >
 
 Packages
 
     This directory contains pre-built packages
 
-    sun - Sun solaris 8 and 9.
+    sun - Sun solaris 8/9/10.
 
             To add, as root (installs into "/opt/jasspa"):-
 
-                # pkgadd -d /<path-to>/jasspa-me-sun-xxxx-20050505.pkg
+                # pkgadd -d /<path-to>/jasspa-mepkg-sun-xxxx-20060909.pkg
 
             To subsequently remove, as root:
 
@@ -25,7 +25,7 @@ Packages
 
             To install, as root:-
 
-                # swinstall -s /<path_to>/jasspa-mepkg-hpux-pa-10.20-20050505.depot jasspa-me
+                # swinstall -s /<path_to>/jasspa-mepkg-hpux-pa-10.20-20060909.depot jasspa-me
 
             To subsequently remove:-
 
@@ -39,7 +39,7 @@ Packages
 
             To install, as root
 
-                # rpm -i jasspa-me-20050505-1.i386.rpm
+                # rpm -i jasspa-me-20060909-1.i386.rpm
 
             To remove, as root
 
@@ -50,12 +50,12 @@ Packages
             To install, as Administrator if necessary.
 
                 # cd /
-                # tar jxvf jasspa-20050505.tar.bz2
+                # tar jxvf jasspa-20060909.tar.bz2
 
             To install the source.
 
                 # cd /
-                # tar jxvf jasspa-20050505-src.tar.bz2
+                # tar jxvf jasspa-20060909-src.tar.bz2
 
             To remove, as Administrator if necessary.
 

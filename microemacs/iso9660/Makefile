@@ -1,18 +1,18 @@
 ##############################################################################
 #
-#			Copyright (C) 2003-2005 Jon Green.
+#			Copyright (C) 2003-2006 Jon Green.
 #			      All Rights Reserved
 #
 #
 #  System        : MicroEmacs
 #  Module        : CD-ROM image
 #  Object Name   : $RCSfile: Makefile,v $
-#  Revision      : $Revision: 1.14 $
-#  Date          : $Date: 2005-05-30 19:42:09 $
+#  Revision      : $Revision: 1.15 $
+#  Date          : $Date: 2006-10-14 17:52:42 $
 #  Author        : $Author: jon $
 #  Created By    : Jon Green
 #  Created       : Sun Aug 10 11:57:07 2003
-#  Last Modified : <050530.2017>
+#  Last Modified : <061014.1738>
 #
 #  Description   : Construct the ISO CD-ROM images of MicroEmacs
 #
@@ -38,6 +38,18 @@
 
 TOPDIR=..
 include $(TOPDIR)/etc/makeinc
+# Override
+MEYY=06
+MEMM=09
+MEDD=09
+MEVERS=20$(MEYY)$(MEMM)$(MEDD)
+# Patched versions
+PMEYY=06
+PMEMM=10
+PMEDD=13
+PMEVERS=20$(PMEYY)$(PMEMM)$(PMEDD)
+# 
+ZCAT = zcat
 #
 # Define the image source locations
 #
@@ -258,57 +270,58 @@ $(FDIR) $(EDIR):
 #
 $(FDIR)/ne $(EDIR)/ne:	ne.txt
 	$(MKDIR) $@
-	$(GUNZIP) -c $(RELDIR)/jasspa-ne-linux-i386-2.2-20050505.gz > $@/nelinux22
+	$(GUNZIP) -c $(RELDIR)/jasspa-ne-linux-i386-2.2-$(MEVERS).gz > $@/nelinux22
 	chmod a+rx $@/nelinux22
-	$(GUNZIP) -c $(RELDIR)/jasspa-ne-linux-i386-2.4-20050505.gz > $@/nelinux24
+	$(GUNZIP) -c $(RELDIR)/jasspa-ne-linux-i386-2.4-$(MEVERS).gz > $@/nelinux24
 	chmod a+rx $@/nelinux24
-	$(GUNZIP) -c $(RELDIR)/jasspa-ne-linux-i386-2.4-ncurses-20050505.gz > $@/nelinux24c
+	$(GUNZIP) -c $(RELDIR)/jasspa-ne-linux-curses-i386-2.4-$(MEVERS).gz > $@/nelinux24c
 	chmod a+rx $@/nelinux24c
-	$(GUNZIP) -c $(RELDIR)/jasspa-ne-linux-i386-2.6-20050505.gz > $@/nelinux26
+	$(GUNZIP) -c $(RELDIR)/jasspa-ne-linux-i386-2.6-$(MEVERS).gz > $@/nelinux26
 	chmod a+rx $@/nelinux26
-	$(GUNZIP) -c $(RELDIR)/jasspa-ne-sun-i386-58-20050505.gz > $@/nesun86_58
+	$(GUNZIP) -c $(RELDIR)/jasspa-ne-sun-i386-58-$(MEVERS).gz > $@/nesun86_58
 	chmod a+rx $@/nesun86_58
-	$(GUNZIP) -c $(RELDIR)/jasspa-ne-sun-sparc-56-20050505.gz> $@/nesunos56
+	$(GUNZIP) -c $(RELDIR)/jasspa-ne-sun-i386-510-$(MEVERS).gz > $@/nesun86_510
+	chmod a+rx $@/nesun86_510
+	$(ZCAT) $(RELDIR)/jasspa-ne-sun-sparc-56-$(MEVERS).Z > $@/nesunos56
 	chmod a+rx $@/nesunos56
-	$(GUNZIP) -c $(RELDIR)/jasspa-ne-sun-sparc-58-20050505.gz> $@/nesunos58
+	$(GUNZIP) -c $(RELDIR)/jasspa-ne-sun-sparc-58-$(MEVERS).gz> $@/nesunos58
 	chmod a+rx $@/nesunos58
-	$(GUNZIP) -c $(RELDIR)/jasspa-ne-sun-sparc-59-20050505.gz> $@/nesunos59
-	chmod a+rx $@/nesunos59
-	$(GUNZIP) -c $(RELDIR)/jasspa-ne-sgi-irix-6-20050505.gz > $@/neirix6
+	$(GUNZIP) -c $(RELDIR)/jasspa-ne-sun-sparc-510-$(MEVERS).gz> $@/nesunos510
+	chmod a+rx $@/nesunos510
+	$(ZCAT) $(RELDIR)/jasspa-ne-sgi-irix-6-$(MEVERS).Z > $@/neirix6
 	chmod a+rx $@/neirix6
-	$(GUNZIP) -c $(RELDIR)/jasspa-ne-hpux-pa-10.20-20050505.gz > $@/nehpux10
+	$(GUNZIP) -c $(RELDIR)/jasspa-ne-hpux-pa-10.20-$(MEVERS).gz > $@/nehpux10
 	chmod a+rx $@/nehpux10
-	$(GUNZIP) -c $(RELDIR)/jasspa-ne-hpux-pa-11.00-20050505.gz > $@/nehpux11
+	$(GUNZIP) -c $(RELDIR)/jasspa-ne-hpux-pa-11.00-$(MEVERS).gz > $@/nehpux11
 	chmod a+rx $@/nehpux11
-	$(GUNZIP) -c $(RELDIR)/jasspa-ne-ibm-aix-4-20050505.gz > $@/neaix4
+	$(ZCAT) $(RELDIR)/jasspa-ne-ibm-aix-4-$(MEVERS).Z > $@/neaix4
 	chmod a+rx $@/neaix4
-	$(GUNZIP) -c $(RELDIR)/jasspa-ne-ibm-aix-5-20050505.gz > $@/neaix5
+	$(ZCAT) $(RELDIR)/jasspa-ne-ibm-aix-5-$(MEVERS).Z > $@/neaix5
 	chmod a+rx $@/neaix5
-	$(GUNZIP) -c $(RELDIR)/jasspa-ne-cygwin-i386-20050505.gz > $@/necygwin.exe
-	chmod a+rx $@/necygwin.exe
-	$(GUNZIP) -c $(RELDIR)/jasspa-ne-apple-mac-10.3-20050505.gz > $@/nemac10_3
+	$(GUNZIP) -c $(RELDIR)/jasspa-ne-apple-ppc-10.3-$(MEVERS).gz > $@/nemac10_3
 	chmod a+rx $@/nemac10_3
-	$(GUNZIP) -c $(RELDIR)/jasspa-ne-openbsd-i386-3.4-20050505.gz > $@/neopenbsd34
+	$(GUNZIP) -c $(RELDIR)/jasspa-ne-openbsd-i386-3.4-$(MEVERS).gz > $@/neopenbsd34
 	chmod a+rx $@/neopenbsd34
-	$(GUNZIP) -c $(RELDIR)/jasspa-ne-freebsd-i386-5.2-20050505.gz > $@/nefreebsd52
+	$(GUNZIP) -c $(RELDIR)/jasspa-ne-freebsd-i386-5.2-$(MEVERS).gz > $@/nefreebsd52
 	chmod a+rx $@/nefreebsd52
-	$(UNZIP) $(RELDIR)/jasspa-ne-ms-win32-20050505.zip -d $@
-	$(UNZIP) $(RELDIR)/jasspa-nec-ms-win32s-20050505.zip -d $@
+	$(GUNZIP) -c $(RELDIR)/jasspa-ne-cygwin-i386-$(PMEVERS).gz > $@/necygwin.exe
+	chmod a+rx $@/necygwin.exe
+	$(UNZIP) $(RELDIR)/jasspa-ne-ms-win32-$(MEVERS).zip -d $@
+	$(UNZIP) $(RELDIR)/jasspa-nec-ms-win32s-$(MEVERS).zip -d $@
 	$(MV) $@/nec32s.exe $@/ne32s.exe
-	$(UNZIP) $(RELDIR)/jasspa-ne-msdos-djgpp1-20050505.zip -d $@
+	$(UNZIP) $(RELDIR)/jasspa-ne-ms-dos-$(MEVERS).zip -d $@
 	$(MV) $@/ne.exe $@/nedos.exe
-	$(UNZIP) $(RELDIR)/jasspa-ne-msdos-djgpp2-20050505.zip -d $@
-	$(MV) $@/ne.exe $@/nedosdj2.exe
-	$(UNZIP) $(RELDIR)/jasspa-ne-ms-win32-20050505.zip -d $@
-	$(UNZIP) $(RELDIR)/jasspa-new-ms-win32-20050505.zip  -d $@
-	$(UNZIP) $(RELDIR)/jasspa-nec-ms-win32s-20050505.zip -d $@
+	$(UNZIP) $(RELDIR)/jasspa-ne-ms-win32-$(MEVERS).zip -d $@
+	$(UNZIP) $(RELDIR)/jasspa-new-ms-win32-$(MEVERS).zip -d $@
+	$(UNZIP) $(RELDIR)/jasspa-nec-ms-win32s-$(MEVERS).zip -d $@
 	$(MV) $@/nec32s.exe $@/ne32s.exe
-	$(UNZIP) $(RELDIR)/jasspa-new-ms-win32s-20050505.zip  -d $@
+	$(UNZIP) $(RELDIR)/jasspa-new-ms-win32s-$(MEVERS).zip -d $@
 	$(CP) $(RELDIR)/ne.emf $@
 	$(CP) ne.txt $@/readme.unix
 	$(UNIX2DOS) ne.txt $@/readme.joliet
 	$(UNIX2MAC) ne.txt $@/readme.hfs
-#	$(MV) $@/new32.exe $@/new32.exe
+#	$(UNZIP) $(RELDIR)/jasspa-ne-msdos-djgpp2-$(MEVERS).zip -d $@
+#	$(MV) $@/ne.exe $@/nedosdj2.exe
 
 #
 # Spelling dictionaries.
@@ -334,8 +347,8 @@ $(FDIR)/archive/spelling: spell.txt
 #
 $(FDIR)/doc: doc.txt
 	$(MKDIR) $@
-	$(UNZIP) $(RELDIR)/jasspa-mehtm-20050505.zip -d $@
-	$(UNZIP) $(RELDIR)/jasspa-mewinhlp-ms-win32-20050505.zip -d $@
+	$(UNZIP) $(RELDIR)/jasspa-mehtm-$(MEVERS).zip -d $@
+	$(UNZIP) $(RELDIR)/jasspa-mewinhlp-ms-win32-$(MEVERS).zip -d $@
 	$(CP) $(MISDIR)/docmode.txt $@
 	$(CP) $(RELDIR)/doc/jasspame.pdf $@
 	$(CP) doc.txt $@/readme.unix
@@ -346,165 +359,177 @@ $(FDIR)/doc: doc.txt
 #
 $(FDIR)/packages:
 	$(MKDIR) $@/windows
-	$(UNZIP) $(RELDIR)/jasspa-mepkg-ms-win32-20050505.zip -d $@/windows
+	$(UNZIP) $(RELDIR)/jasspa-mepkg-ms-win32-$(MEVERS).zip -d $@/windows
 	$(MKDIR) $@/sunos
-	$(UNZIP) $(RELDIR)/jasspa-mepkg-sun-sparc-59-20050505.zip -d $@/sunos
-	$(MV) $@/sunos/jasspa-me $@/sunos/jasspa-me-sun-sparc-59-20050505.pkg
-	$(UNZIP) $(RELDIR)/jasspa-mepkg-sun-sparc-58-20050505.zip -d $@/sunos
-	$(MV) $@/sunos/jasspa-me $@/sunos/jasspa-me-sun-sparc-58-20050505.pkg
-	$(UNZIP) $(RELDIR)/jasspa-mepkg-sun-i386-58-20050505.zip -d $@/sunos
-	$(MV) $@/sunos/jasspa-me $@/sunos/jasspa-me-sun-i386-58-20050505.pkg
+	$(GUNZIP) -c $(RELDIR)/jasspa-mepkg-sun-sparc-5.8-$(MEVERS).pkg.gz > $@/sunos/jasspa-mepkg-sun-sparc-5.8-$(MEVERS).pkg
+	$(GUNZIP) -c $(RELDIR)/jasspa-mepkg-sun-sparc-5.10-$(MEVERS).pkg.gz > $@/sunos/jasspa-mepkg-sun-sparc-5.10-$(MEVERS).pkg
+	$(GUNZIP) -c $(RELDIR)/jasspa-mepkg-sun-i386-5.8-$(MEVERS).pkg.gz > $@/sunos/jasspa-mepkg-sun-i386-5.8-$(MEVERS).pkg
+	$(GUNZIP) -c $(RELDIR)/jasspa-mepkg-sun-i386-5.10-$(MEVERS).pkg.gz > $@/sunos/jasspa-mepkg-sun-i386-5.10-$(MEVERS).pkg
 	$(MKDIR) $@/hpux
-	$(GUNZIP) -c $(RELDIR)/jasspa-mepkg-hpux-pa-10.20-20050505.depot.gz > $@/hpux/jasspa-mepkg-hpux-pa-10.20-20050505.depot
-	$(GUNZIP) -c $(RELDIR)/jasspa-mepkg-hpux-pa-11.00-20050505.depot.gz > $@/hpux/jasspa-mepkg-hpux-pa-11.00-20050505.depot
+	$(GUNZIP) -c $(RELDIR)/jasspa-mepkg-hpux-pa-10.20-$(MEVERS).depot.gz > $@/hpux/jasspa-mepkg-hpux-pa-10.20-$(MEVERS).depot
+	$(GUNZIP) -c $(RELDIR)/jasspa-mepkg-hpux-pa-11.00-$(MEVERS).depot.gz > $@/hpux/jasspa-mepkg-hpux-pa-11.00-$(MEVERS).depot
 	$(MKDIR) $@/linux
-	$(CP) $(RELDIR)/jasspa-me-20050505-1.src.rpm $@/linux
-	$(CP) $(RELDIR)/jasspa-me-20050505-1.i386.rpm $@/linux
-	$(CP) $(RELDIR)/jasspa-me_20050505_i386.deb $@/linux
-	$(CP) $(RELDIR)/fedora/jasspa-me-20050505-1.src.rpm $@/linux/jasspa-me-fedora-20050505-1.src.rpm
-	$(CP) $(RELDIR)/fedora/jasspa-me-20050505-1.i386.rpm $@/linux/jasspa-me-fedora-20050505-1.i386.rpm
-	$(MKDIR) $@/cygwin
-	$(CP) $(RELDIR)/jasspa-20050505-src.tar.bz2 $@/cygwin
-	$(CP) $(RELDIR)/jasspa-20050505.tar.bz2 $@/cygwin
-	$(CP) $(RELDIR)/doc/cygwin.txt $@/cygwin
+	$(CP) $(RELDIR)/jasspa-me-$(MEVERS)-1.src.rpm $@/linux/jasspa-me-redhat9-$(MEVERS)-1.src.rpm
+	$(CP) $(RELDIR)/jasspa-me-$(MEVERS)-1.i386.rpm $@/linux/jasspa-me-redhat9-$(MEVERS)-1.i386.rpm
+	$(CP) $(RELDIR)/jasspa-me_$(MEVERS)_i386.deb $@/linux
+	$(CP) $(RELDIR)/centos44/jasspa-me-$(MEVERS)-1.src.rpm $@/linux/jasspa-me-centos44-$(MEVERS)-1.src.rpm
+	$(CP) $(RELDIR)/centos44/jasspa-me-$(MEVERS)-1.i386.rpm $@/linux/jasspa-me-centos44-$(MEVERS)-1.i386.rpm
 	$(CP) package.txt $@/readme.unix
 	$(UNIX2DOS) package.txt $@/readme.joliet
 	$(UNIX2MAC) package.txt $@/readme.hfs
+	$(MKDIR) $@/cygwin
+	$(CP) $(RELDIR)/jasspa-$(PMEVERS)-src.tar.bz2 $@/cygwin
+	$(CP) $(RELDIR)/jasspa-$(PMEVERS).tar.bz2 $@/cygwin
+	$(CP) $(RELDIR)/doc/cygwin.txt $@/cygwin
 #	$(MKDIR) $@/sunos/i386_59
-#	$(UNZIP) $(RELDIR)/jasspa-mepkg-sun-i386-59-20050505.zip -d $@/sunos/i386_59
+#	$(UNZIP) $(RELDIR)/jasspa-mepkg-sun-i386-59-$(MEVERS).zip -d $@/sunos/i386_59
 #	$(MKDIR) $@/sunos/sparc6
-#	$(UNZIP) $(RELDIR)/jasspa-mepkg-sun-sparc-56-20050505.zip -d $@/sunos/sparc6
+#	$(UNZIP) $(RELDIR)/jasspa-mepkg-sun-sparc-56-$(MEVERS).zip -d $@/sunos/sparc6
 
 #
 # Source directory
 #
 $(FDIR)/src:
 	$(MKDIR) $@
-	$(GUNZIP) -c $(RELDIR)/jasspa-mesrc-20050505.tar.gz | ($(CD) $@; tar xf -)
+	$(GUNZIP) -c $(RELDIR)/jasspa-mesrc-$(PMEVERS).tar.gz | ($(CD) $@; tar xf -)
 #
 # Executable direcotory.
 #
 $(FDIR)/me $(EDIR)/me: me.txt
 	- $(RMDIR) $@
 	$(MKDIR) $@
-	$(GUNZIP) -c $(RELDIR)/jasspa-metree-20050505.tar.gz | ($(CD) $@; tar xf -)
+	$(GUNZIP) -c $(RELDIR)/jasspa-metree-$(PMEVERS).tar.gz | ($(CD) $@; tar xf -)
 	$(MV) $@/jasspa/* $@
 	$(RMDIR) $@/jasspa
-	$(GUNZIP) -c $(RELDIR)/jasspa-me-linux-i386-2.2-20050505.gz > $@/melinux22
+	$(GUNZIP) -c $(RELDIR)/jasspa-me-linux-i386-2.2-$(MEVERS).gz > $@/melinux22
 	chmod a+rx $@/melinux22
-	$(GUNZIP) -c $(RELDIR)/jasspa-me-linux-i386-2.4-20050505.gz > $@/melinux24
+	$(GUNZIP) -c $(RELDIR)/jasspa-me-linux-i386-2.4-$(MEVERS).gz > $@/melinux24
 	chmod a+rx $@/melinux24
-	$(GUNZIP) -c $(RELDIR)/jasspa-me-linux-i386-2.4-ncurses-20050505.gz > $@/melinux24c
+	$(GUNZIP) -c $(RELDIR)/jasspa-me-linux-curses-i386-2.4-$(MEVERS).gz > $@/melinux24c
 	chmod a+rx $@/melinux24c
-	$(GUNZIP) -c $(RELDIR)/jasspa-me-linux-i386-2.6-20050505.gz > $@/melinux26
+	$(GUNZIP) -c $(RELDIR)/jasspa-me-linux-i386-2.6-$(MEVERS).gz > $@/melinux26
 	chmod a+rx $@/melinux26
-	$(GUNZIP) -c $(RELDIR)/jasspa-me-sun-sparc-56-20050505.gz > $@/mesunos56
+	$(ZCAT) $(RELDIR)/jasspa-me-sun-sparc-56-$(MEVERS).Z > $@/mesunos56
 	chmod a+rx $@/mesunos56
-	$(GUNZIP) -c $(RELDIR)/jasspa-me-sun-sparc-58-20050505.gz > $@/mesunos58
+	$(GUNZIP) -c $(RELDIR)/jasspa-me-sun-sparc-58-$(MEVERS).gz > $@/mesunos58
 	chmod a+rx $@/mesunos58
-	$(GUNZIP) -c $(RELDIR)/jasspa-me-sun-sparc-59-20050505.gz > $@/mesunos59
-	chmod a+rx $@/mesunos59
-	$(GUNZIP) -c $(RELDIR)/jasspa-me-sun-i386-58-20050505.gz > $@/mesun86_58
+	$(GUNZIP) -c $(RELDIR)/jasspa-me-sun-i386-58-$(MEVERS).gz > $@/mesun86_58
 	chmod a+rx $@/mesun86_58
-	$(GUNZIP) -c $(RELDIR)/jasspa-me-sgi-irix-6-20050505.gz > $@/meirix6
+	$(GUNZIP) -c $(RELDIR)/jasspa-me-sun-sparc-510-$(MEVERS).gz > $@/mesunos510
+	chmod a+rx $@/mesunos510
+	$(GUNZIP) -c $(RELDIR)/jasspa-me-sun-i386-510-$(MEVERS).gz > $@/mesun86_510
+	chmod a+rx $@/mesun86_58
+	$(ZCAT) $(RELDIR)/jasspa-me-sgi-irix-6-$(MEVERS).Z > $@/meirix6
 	chmod a+rx $@/meirix6
-	$(GUNZIP) -c $(RELDIR)/jasspa-me-hpux-pa-10.20-20050505.gz > $@/mehpux10
+	$(GUNZIP) -c $(RELDIR)/jasspa-me-hpux-pa-10.20-$(MEVERS).gz > $@/mehpux10
 	chmod a+rx $@/mehpux10
-	$(GUNZIP) -c $(RELDIR)/jasspa-me-hpux-pa-11.00-20050505.gz > $@/mehpux11
+	$(GUNZIP) -c $(RELDIR)/jasspa-me-hpux-pa-11.00-$(MEVERS).gz > $@/mehpux11
 	chmod a+rx $@/mehpux11
-	$(GUNZIP) -c $(RELDIR)/jasspa-me-ibm-aix-4-20050505.gz > $@/meaix4
+	$(ZCAT) $(RELDIR)/jasspa-me-ibm-aix-4-$(MEVERS).Z > $@/meaix4
 	chmod a+rx $@/meaix4
-	$(GUNZIP) -c $(RELDIR)/jasspa-me-ibm-aix-5-20050505.gz > $@/meaix5
+	$(ZCAT) $(RELDIR)/jasspa-me-ibm-aix-5-$(MEVERS).Z > $@/meaix5
 	chmod a+rx $@/meaix5
-	$(GUNZIP) -c $(RELDIR)/jasspa-me-cygwin-i386-20050505.gz > $@/mecygwin.exe
-	chmod a+rx $@/mecygwin.exe
-	$(GUNZIP) -c $(RELDIR)/jasspa-mex-cygwin-i386-20050505.gz > $@/mexcygwin.exe
-	chmod a+rx $@/mexcygwin.exe
-	$(GUNZIP) -c $(RELDIR)/jasspa-mec-apple-mac-10.3-20050505.gz > $@/memac10_3
-	chmod a+rx $@/memac10_3
-	$(GUNZIP) -c $(RELDIR)/jasspa-me-apple-mac-10.3-20050505.gz > $@/mexmac10_3
-	chmod a+rx $@/mexmac10_3
-	$(GUNZIP) -c $(RELDIR)/jasspa-me-openbsd-i386-3.4-20050505.gz > $@/meopenbsd34
+	$(GUNZIP) -c $(RELDIR)/jasspa-mec-apple-ppc-10.3-$(MEVERS).gz > $@/memacppc10_3
+	chmod a+rx $@/memacppc10_3
+	$(GUNZIP) -c $(RELDIR)/jasspa-me-apple-ppc-10.3-$(MEVERS).gz > $@/memacppc10_3_x11
+	chmod a+rx $@/memacppc10_3_x11
+	$(GUNZIP) -c $(RELDIR)/jasspa-me-openbsd-i386-3.4-$(MEVERS).gz > $@/meopenbsd34
 	chmod a+rx $@/meopenbsd34
-	$(GUNZIP) -c $(RELDIR)/jasspa-me-freebsd-i386-5.2-20050505.gz > $@/mefreebsd52
+	$(GUNZIP) -c $(RELDIR)/jasspa-me-freebsd-i386-5.2-$(MEVERS).gz > $@/mefreebsd52
 	chmod a+rx $@/mefreebsd52
-	$(UNZIP) $(RELDIR)/jasspa-me-ms-win32-20050505.zip -d $@
-	$(UNZIP) $(RELDIR)/jasspa-me-ms-win32s-20050505.zip -d $@
-	$(UNZIP) $(RELDIR)/jasspa-mecw-ms-win32-20050505.zip -d $@
+	$(GUNZIP) -c $(RELDIR)/jasspa-me-cygwin-i386-$(PMEVERS).gz > $@/mecygwin.exe
+	chmod a+rx $@/mecygwin.exe
+	$(GUNZIP) -c $(RELDIR)/jasspa-mex-cygwin-i386-$(PMEVERS).gz > $@/mecygwin_x11.exe
+	chmod a+rx $@/mecygwin_x11.exe
+	$(UNZIP) $(RELDIR)/jasspa-me-ms-win32-$(MEVERS).zip -d $@
+	$(UNZIP) $(RELDIR)/jasspa-mec-ms-win32-$(MEVERS).zip -d $@
+	$(UNZIP) $(RELDIR)/jasspa-me-ms-win32s-$(MEVERS).zip -d $@
+	$(UNZIP) $(RELDIR)/jasspa-mecw-ms-win32-$(MEVERS).zip -d $@
 	$(CP) $(RELDIR)/meicons.exe $@
-	$(UNZIP) $(RELDIR)/jasspa-me-msdos-djgpp1-20050505.zip -d $@
+	$(UNZIP) $(RELDIR)/jasspa-me-ms-dos-$(MEVERS).zip -d $@
 	$(MV) $@/me.exe $@/medos.exe
-	$(UNZIP) $(RELDIR)/jasspa-me-msdos-djgpp2-20050505.zip -d $@
-	$(MV) $@/me.exe $@/medosdj2.exe
 	$(CP) me.txt $@/readme.unix
 	$(UNIX2DOS) me.txt $@/readme.joliet
 	$(UNIX2MAC) me.txt $@/readme.hfs
-#	$(GUNZIP) -c $(RELDIR)/jasspa-me-sun-i386-59-20050505.gz > $@/mesun86_59
+#	$(GUNZIP) -c $(RELDIR)/jasspa-me-sun-i386-59-$(MEVERS).gz > $@/mesun86_59
 #	chmod a+rx $@/mesun86_59
+#	$(GUNZIP) -c $(RELDIR)/jasspa-me-sun-sparc-59-$(MEVERS).gz > $@/mesunos59
+#	chmod a+rx $@/mesunos59
+#	$(UNZIP) $(RELDIR)/jasspa-me-msdos-djgpp2-$(MEVERS).zip -d $@
+#	$(MV) $@/me.exe $@/medosdj2.exe
 
 #
 # Archive directories.
 #
 $(FDIR)/archive:
 	$(MKDIR) $@
-	$(CP) $(RELDIR)/jasspa-mesrc-20050505.tar.gz $@
-	$(CP) $(RELDIR)/jasspa-mesrc-20050505.zip $@
+	$(CP) $(RELDIR)/jasspa-mesrc-$(MEVERS).tar.gz $@
+	$(CP) $(RELDIR)/jasspa-mesrc-$(MEVERS).zip $@
+	$(CP) $(RELDIR)/jasspa-mesrc-$(PMEVERS).tar.gz $@
+	$(CP) $(RELDIR)/jasspa-mesrc-$(PMEVERS).zip $@
 	$(MKDIR) $@/bin
-	$(CP) $(RELDIR)/jasspa-me-freebsd-i386-5.2-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-me-hpux-pa-10.20-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-me-hpux-pa-11.00-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-me-ibm-aix-4-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-me-ibm-aix-5-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-me-linux-i386-2.2-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-me-linux-i386-2.4-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-me-linux-i386-2.4-ncurses-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-me-linux-i386-2.6-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-me-ms-win32-20050505.zip $@/bin
-	$(CP) $(RELDIR)/jasspa-me-ms-win32s-20050505.zip $@/bin
-	$(CP) $(RELDIR)/jasspa-me-msdos-djgpp1-20050505.zip $@/bin
-	$(CP) $(RELDIR)/jasspa-me-msdos-djgpp2-20050505.zip $@/bin
-	$(CP) $(RELDIR)/jasspa-me-openbsd-i386-3.4-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-me-sgi-irix-6-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-me-sun-i386-58-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-me-sun-sparc-56-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-me-sun-sparc-58-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-me-sun-sparc-59-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-mecw-ms-win32-20050505.zip $@/bin
-	$(CP) $(RELDIR)/jasspa-me-cygwin-i386-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-mex-cygwin-i386-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-me-apple-mac-10.3-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-mec-apple-mac-10.3-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-ne-freebsd-i386-5.2-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-ne-hpux-pa-10.20-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-ne-hpux-pa-11.00-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-ne-ibm-aix-4-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-ne-ibm-aix-5-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-ne-linux-i386-2.2-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-ne-linux-i386-2.4-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-ne-linux-i386-2.4-ncurses-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-ne-linux-i386-2.6-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-ne-msdos-djgpp1-20050505.zip $@/bin
-	$(CP) $(RELDIR)/jasspa-ne-msdos-djgpp2-20050505.zip $@/bin
-	$(CP) $(RELDIR)/jasspa-ne-openbsd-i386-3.4-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-ne-sgi-irix-6-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-ne-sun-i386-58-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-ne-sun-sparc-56-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-ne-sun-sparc-58-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-ne-sun-sparc-59-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-new-ms-win32-20050505.zip $@/bin
-	$(CP) $(RELDIR)/jasspa-ne-ms-win32-20050505.zip $@/bin
-	$(CP) $(RELDIR)/jasspa-ne-cygwin-i386-20050505.gz $@/bin
-	$(CP) $(RELDIR)/jasspa-ne-apple-mac-10.3-20050505.gz $@/bin
+	$(CP) $(RELDIR)/jasspa-me-freebsd-i386-5.2-$(MEVERS).gz $@/bin
+	$(CP) $(RELDIR)/jasspa-me-hpux-pa-10.20-$(MEVERS).gz $@/bin
+	$(CP) $(RELDIR)/jasspa-me-hpux-pa-11.00-$(MEVERS).gz $@/bin
+	$(CP) $(RELDIR)/jasspa-me-ibm-aix-4-$(MEVERS).Z $@/bin
+	$(CP) $(RELDIR)/jasspa-me-ibm-aix-5-$(MEVERS).Z $@/bin
+	$(CP) $(RELDIR)/jasspa-me-linux-i386-2.2-$(MEVERS).gz $@/bin
+	$(CP) $(RELDIR)/jasspa-me-linux-i386-2.4-$(MEVERS).gz $@/bin
+	$(CP) $(RELDIR)/jasspa-me-linux-curses-i386-2.4-$(MEVERS).gz $@/bin
+	$(CP) $(RELDIR)/jasspa-me-linux-i386-2.6-$(MEVERS).gz $@/bin
+	$(CP) $(RELDIR)/jasspa-me-ms-win32-$(MEVERS).zip $@/bin
+	$(CP) $(RELDIR)/jasspa-me-ms-win32s-$(MEVERS).zip $@/bin
+	$(CP) $(RELDIR)/jasspa-me-ms-dos-$(MEVERS).zip $@/bin
+	$(CP) $(RELDIR)/jasspa-me-openbsd-i386-3.4-$(MEVERS).gz $@/bin
+	$(CP) $(RELDIR)/jasspa-me-sgi-irix-6-$(MEVERS).Z $@/bin
+	$(CP) $(RELDIR)/jasspa-me-sun-i386-58-$(MEVERS).gz $@/bin
+	$(CP) $(RELDIR)/jasspa-me-sun-i386-510-$(MEVERS).gz $@/bin
+	$(CP) $(RELDIR)/jasspa-me-sun-sparc-56-$(MEVERS).Z $@/bin
+	$(CP) $(RELDIR)/jasspa-me-sun-sparc-58-$(MEVERS).gz $@/bin
+	$(CP) $(RELDIR)/jasspa-me-sun-sparc-510-$(MEVERS).gz $@/bin
+	$(CP) $(RELDIR)/jasspa-mec-ms-win32-$(MEVERS).zip $@/bin
+	$(CP) $(RELDIR)/jasspa-mecw-ms-win32-$(MEVERS).zip $@/bin
+	$(CP) $(RELDIR)/jasspa-me-apple-ppc-10.3-$(MEVERS).gz $@/bin
+	$(CP) $(RELDIR)/jasspa-mec-apple-ppc-10.3-$(MEVERS).gz $@/bin
+	$(CP) $(RELDIR)/jasspa-me-cygwin-i386-$(PMEVERS).gz $@/bin
+	$(CP) $(RELDIR)/jasspa-mex-cygwin-i386-$(PMEVERS).gz $@/bin
+	$(CP) $(RELDIR)/jasspa-ne-freebsd-i386-5.2-$(MEVERS).gz $@/bin
+	$(CP) $(RELDIR)/jasspa-ne-hpux-pa-10.20-$(MEVERS).gz $@/bin
+	$(CP) $(RELDIR)/jasspa-ne-hpux-pa-11.00-$(MEVERS).gz $@/bin
+	$(CP) $(RELDIR)/jasspa-ne-ibm-aix-4-$(MEVERS).Z $@/bin
+	$(CP) $(RELDIR)/jasspa-ne-ibm-aix-5-$(MEVERS).Z $@/bin
+	$(CP) $(RELDIR)/jasspa-ne-linux-i386-2.2-$(MEVERS).gz $@/bin
+	$(CP) $(RELDIR)/jasspa-ne-linux-i386-2.4-$(MEVERS).gz $@/bin
+	$(CP) $(RELDIR)/jasspa-ne-linux-curses-i386-2.4-$(MEVERS).gz $@/bin
+	$(CP) $(RELDIR)/jasspa-ne-linux-i386-2.6-$(MEVERS).gz $@/bin
+	$(CP) $(RELDIR)/jasspa-ne-ms-dos-$(MEVERS).zip $@/bin
+	$(CP) $(RELDIR)/jasspa-ne-openbsd-i386-3.4-$(MEVERS).gz $@/bin
+	$(CP) $(RELDIR)/jasspa-ne-sgi-irix-6-$(MEVERS).Z $@/bin
+	$(CP) $(RELDIR)/jasspa-ne-sun-i386-58-$(MEVERS).gz $@/bin
+	$(CP) $(RELDIR)/jasspa-ne-sun-sparc-56-$(MEVERS).Z $@/bin
+	$(CP) $(RELDIR)/jasspa-ne-sun-sparc-58-$(MEVERS).gz $@/bin
+	$(CP) $(RELDIR)/jasspa-ne-sun-sparc-510-$(MEVERS).gz $@/bin
+	$(CP) $(RELDIR)/jasspa-new-ms-win32-$(MEVERS).zip $@/bin
+	$(CP) $(RELDIR)/jasspa-ne-ms-win32-$(MEVERS).zip $@/bin
+	$(CP) $(RELDIR)/jasspa-new-ms-win32s-$(MEVERS).zip $@/bin
+	$(CP) $(RELDIR)/jasspa-nec-ms-win32s-$(MEVERS).zip $@/bin
+	$(CP) $(RELDIR)/jasspa-ne-apple-ppc-10.3-$(MEVERS).gz $@/bin
+	$(CP) $(RELDIR)/jasspa-ne-linux-curses-i386-2.4-$(MEVERS).gz $@/bin
+	$(CP) $(RELDIR)/jasspa-ne-cygwin-i386-$(PMEVERS).gz $@/bin
 	$(CP) $(RELDIR)/meicons.exe $@/bin
 	$(MKDIR) $@/macros
-	$(CP) $(RELDIR)/jasspa-memacros-20050505.tar.gz $@/macros
-	$(CP) $(RELDIR)/jasspa-memacros-20050505.zip $@/macros
-	$(CP) $(RELDIR)/jasspa-metree-20050505.tar.gz $@
-	$(CP) $(RELDIR)/jasspa-metree-20050505.zip $@
+	$(CP) $(RELDIR)/jasspa-memacros-$(MEVERS).tar.gz $@/macros
+	$(CP) $(RELDIR)/jasspa-memacros-$(MEVERS).zip $@/macros
+	$(CP) $(RELDIR)/jasspa-metree-$(MEVERS).tar.gz $@
+	$(CP) $(RELDIR)/jasspa-metree-$(MEVERS).zip $@
+	$(CP) $(RELDIR)/jasspa-memacros-$(PMEVERS).tar.gz $@/macros
+	$(CP) $(RELDIR)/jasspa-memacros-$(PMEVERS).zip $@/macros
+	$(CP) $(RELDIR)/jasspa-metree-$(PMEVERS).tar.gz $@
+	$(CP) $(RELDIR)/jasspa-metree-$(PMEVERS).zip $@
 	$(MKDIR) $@/doc
-	$(CP) $(RELDIR)/jasspa-mehtml-20050505.tar.gz $@/doc
-	$(CP) $(RELDIR)/jasspa-mehtm-20050505.zip $@/doc
-	$(CP) $(RELDIR)/jasspa-mewinhlp-ms-win32-20050505.zip $@/doc
+	$(CP) $(RELDIR)/jasspa-mehtml-$(MEVERS).tar.gz $@/doc
+	$(CP) $(RELDIR)/jasspa-mehtm-$(MEVERS).zip $@/doc
+	$(CP) $(RELDIR)/jasspa-mewinhlp-ms-win32-$(MEVERS).zip $@/doc
 	$(MKDIR) $@/icons
 	$(CP) $(RELDIR)/meicons.tar.gz $@/icons
 	$(CP) $(RELDIR)/meicons.exe $@/icons
@@ -519,8 +544,8 @@ $(FDIR)/archive:
 #
 $(EDIR)/archive:
 	$(MKDIR) $@
-	$(CP) $(RELDIR)/jasspa-mesrc-20050505.tar.gz $@
-	$(CP) $(RELDIR)/jasspa-metree-20050505.tar.gz $@
+	$(CP) $(RELDIR)/jasspa-mesrc-$(PMEVERS).tar.gz $@
+	$(CP) $(RELDIR)/jasspa-metree-$(PMEVERS).tar.gz $@
 #
 # User submissions.
 #
@@ -564,16 +589,16 @@ $(FDIR)/icons:
 	$(CP) $(RELDIR)/../images/logo.bmp $@
 	$(CP) $(RELDIR)/../images/logo.png $@
 
-jasspa-mecd-full-20050505.iso: $(FDIRS)
+jasspa-mecd-full-$(MEVERS).iso: $(FDIRS)
 	$(CD) $(FDIR); $(MKISOFS) -o ../$@ -V $(FLABEL) $(FULLMKISOFSFLAGS) ./
-jasspa-mecd-exec-20050505.iso: $(EDIRS)
+jasspa-mecd-exec-$(MEVERS).iso: $(EDIRS)
 	$(CD) $(EDIR); $(MKISOFS) -o ../$@ -V $(ELABEL) $(EXECMKISOFSFLAGS) ./
-jasspa-mecd-lexe-20050505.iso: $(EDIRS)
+jasspa-mecd-lexe-$(MEVERS).iso: $(EDIRS)
 	$(CD) $(EDIR); $(MKISOFS) $(ISOEXTRA) -o ../$@ -V $(LLABEL) $(EXECMKISOFSFLAGS) ./
 
-jasspa-mecd-full-20050505.zip:	jasspa-mecd-full-20050505.iso
-	$(ZIP) $@ jasspa-mecd-full-20050505.iso
-jasspa-mecd-exec-20050505.zip: jasspa-mecd-exec-20050505.iso
-	$(ZIP) $@ jasspa-mecd-exec-20050505.iso
-jasspa-mecd-lexe-20050505.zip: jasspa-mecd-lexe-20050505.iso
-	$(ZIP) $@ jasspa-mecd-lexe-20050505.iso
+jasspa-mecd-full-$(MEVERS).zip:	jasspa-mecd-full-$(MEVERS).iso
+	$(ZIP) $@ jasspa-mecd-full-$(MEVERS).iso
+jasspa-mecd-exec-$(MEVERS).zip: jasspa-mecd-exec-$(MEVERS).iso
+	$(ZIP) $@ jasspa-mecd-exec-$(MEVERS).iso
+jasspa-mecd-lexe-$(MEVERS).zip: jasspa-mecd-lexe-$(MEVERS).iso
+	$(ZIP) $@ jasspa-mecd-lexe-$(MEVERS).iso
