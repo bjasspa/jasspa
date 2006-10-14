@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>notes(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 notes(3)</H1>
@@ -17,7 +17,9 @@ notes(3)</H1>
 <H2><B>SYNOPSIS </B></H2>
 <UL><P><B>notes</B> 
 <BR><B>notes-file</B> 
-<BR><B>notes-close</B> </UL>
+<BR><B>notes-close</B> 
+<BR><B>notes-context</B> 
+<BR><B>notes-instant</B> </UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P><B>notes</B> is a note database that allows miscellaneous text information to be organized and retained in a database. Each note is has a label associated with it which may be hierarchically organized into a tree of notes. 
 <P>Information that a programmer would typically put into a notes database may include:- <UL><P>
@@ -40,30 +42,44 @@ notes(3)</H1>
 </PRE></UL>
 <P>The left pane comprises a tree of note titles, the right pane contains the text note body of the selected note title. Free form text may be entered into the text body pane. 
 <P>Notes are add and removed from the notes tree pane. A mouse right click presents a menu of options that operate on the current node as follows:- 
-<P><B>Tidy Tree</B> - <TT>t</TT>/<TT>RETURN</TT> 
+<P><B>Tidy Tree</B> - <TT>t</TT>/<TT>return</TT> 
 <BR><UL>At the current node then close the note hierarchy. <TT>t</TT> will close the node a RETURN at the node will open or close it, depending on the current state. </UL>
 <P><B>Rename Note</B> - <TT>n</TT> 
-<BR><UL>Edit the name of the note, a dialog is presented and a free form labelof the note may be edited. </UL>
-<P><B>Delete Note</B> - <TT>DEL</TT> 
+<BR><UL>Edit the name of the note, a dialog is presented and a free form label of the note may be edited. </UL>
+<P><B>Delete Note</B> - <TT>delete</TT> 
 <BR><UL>Delete the note from the tree. This deletes the label and the note. if the note has any children then all children are deleted. </UL>
 <P><B>Cut Note</B> - <TT>x</TT> 
-<BR><UL>Delete a note, including any child notes from the tree, allowing the cur information to be pasted back to a different location in the tree. (See <B>Paste</B> <B>Note</B>). </UL>
+<BR><UL>Delete a note, including any child notes from the tree, allowing the cut information to be pasted back to a different location in the tree. (See <B>Paste</B> <B>Note</B>). </UL>
+<P><B>Paste Note</B> - <TT>v</TT> 
+<BR><UL>Inserts a cut note (or note tree) back into the list at the current position. </UL>
 <P><B>Move Note Up</B> - <TT>u</TT> 
 <BR><UL>Move a note up the tree hierarchy, at the same level. </UL>
 <P><B>Move Note Down</B> - <TT>d</TT> 
 <BR><UL>Move a note down the tree hierarchy, at the same level. </UL>
-<P><B>Insert New Note</B> - <TT>INSERT</TT> 
+<P><B>Insert New Note</B> - <TT>insert</TT> 
 <BR><UL>Insert a new note as a child of the current node. The user is prompted for the name of the note, the name may be entered and the cursor is left in the body pane for text entry. </UL>
+<P><B>Forward Note</B> - <TT>n</TT> 
+<BR><UL>Moves to the next note. Within the note window then <B>C-page-down</B> similarly advances to the next note. </UL>
+<P><B>Backward Note</B> - <TT>p</TT> 
+<BR><UL>Moves to the previous note. Within the note window then <B>C-page-up</B> similarly advances to the previous note. </UL>
 <P><B>Search Forward</B> - <TT>s</TT> 
 <BR><UL>Search in a forwards direction from the current note. </UL>
 <P><B>Search Backward</B> - <TT>r</TT> 
 <BR><UL>Search in a backwards direction from the current note. </UL>
+<P><B>Open Notes File</B> 
+<BR><UL>Opens a new notes file, the user is explicitly prompted for the name of the notes file to open. </UL>
+<P><B>Save Notes File</B> 
+<BR><UL>Saves the notes file to the file system. </UL>
+<P><B>Hide Notes</B> 
+<BR><UL>Hides the notes window and restores the exiting buffer windows prior to the <B>notes</B> invocation. </UL>
 <P>To quit <B>notes</B> then delete the buffer using <B>C-x C-k</B> or run the command <B>notes-close</B> command. 
 <P>The notes file may be saved like any other buffer using 
 <A HREF="m2cmd113.html">save-buffer(2)</A> (<TT>C-x C-s</TT>). This saves the tree and the notes. Auto-save is automatically enabled. 
 <P><B>notes-close</B> closes the notes frame and returns the user to the existing windows, retaining the same screen layout. The notes file is still resident in the editor and may be restored with a <B>notes</B> command. 
 <P><B>notes-file</B> opens a new notes file, the user is explicitly prompted for the name of the notes file. There are no restrictions on the number of notes files that may be created. <B>notes-import-skwyrul</B> imports a Skwyrul index file (<TT>skwyrul_l.htm</TT>) into MicroEmacs notes format. This command is not available on line as it is likely to be used very infrequently. To load the command then load the file <TT>notesutl.emf</TT> and execute the buffer 
-<A HREF="m2cmd044.html">execute-buffer(2)</A> (<TT>esc x execute-buffer</TT>). The command may be explicitly run using <TT>esc x</TT> <TT>notes-import-skwyrul</TT>. </UL>
+<A HREF="m2cmd044.html">execute-buffer(2)</A> (<TT>esc x execute-buffer</TT>). The command may be explicitly run using <TT>esc x</TT> <TT>notes-import-skwyrul</TT>. 
+<P><B>notes-instant</B> creates a new note under the <I>Instant Notes</I> folder, it is designed to enable the user to jot something down quickly and in a safe place. The note is automatically named and is the fastest method of adding a note. This may be invoked outside of the notes window, on invocation then a new notes node is created and the content of the note added. 
+<P><B>notes-context</B> is similar to <B>notes-instant</B> but a bit more advanced and allows a note to be created that is associated with a buffer. When working on a file (source code, document etc.). It is sometimes useful to be able to associate some information with that file, typically this is done with something like a <TT>TODO:</TT> comment, however this is not always appropriate. <B>notes-context</B> attempts to address this, it works from the current buffers filename path and attempts to locate an existing note for it, if no note is found then a new one is created. When locating a note it looks down the path. The command may be invoked outside of the notes window, on invocation then a new notes node is created and the content of the note added. </UL>
 <H2>Text Hilighting </H2>
 <UL><P>Blocks of text within the notes body may be highlighted. The special constructs of <TT>&gt;format&gt;</TT> ... <TT>&gt;end&gt;</TT> located on the left margin introduce and close a highlighting style. i.e. <UL>
 <PRE>&gt;c&gt; 
@@ -92,9 +108,9 @@ notes(3)</H1>
 <A HREF="amicr006.html">Registry</A> is used to store and display the note tree labels. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
-<A HREF="m3osd004.html">line-scheme-search(3)</A>. </UL>
+<A HREF="m3osd004.html">osd-search(3)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2005/02/20</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/21</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

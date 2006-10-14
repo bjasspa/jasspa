@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>cvs(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 cvs(3)</H1>
@@ -88,8 +88,10 @@ cvs(3)</H1>
 <P>The <B>cvs-status</B> command opens a <I>*cvs-state*</I> window and shows the state of the current buffer in the window including the modification state, repository etc. 
 <P>The <B>cvs-tag</B> command opens a dialog box and allows the user to add, remove or delete a CVS tag. 
 <P>The <B>cvs-update</B> command updates all files in the current directory, the output being reported to a new <I>*cvs-update*</I> window. Note that unlike most cvs sub commands this command executes over all files in the current buffer's file directory. </UL>
-<H2>SETUP </H2>
-<UL><P><B>cvs-setup</B> provides a dialog interface to configure the MicroEmacs CVS interface, on the dialog the following items are available: 
+<H2>Setup </H2>
+<UL><P><B>cvs-setup</B> provides a dialog interface to configure the MicroEmacs CVS interface if required. On a typical system installation then it is sufficient to have <B>$CVSROOT</B> defined in the environment and the CVS tools will operate from this environment variable without any further configuration of MicroEmacs. If MicroEmacs CVS configuration is provided then this will over-ride the environment variable. 
+<P><B>cvs-setup</B> may also be accessed from 
+<A HREF="m3osd000.html">user-setup(3)</A> from the <B>Miscellaneous</B> configuration. The the dialog provides the following configuration controls: 
 <P><B>CVS Command Setup</B> <UL>
 <P><TT>CVSROOT</TT> 
 <BR><UL>If set, overrides the CVS <B>$CVSROOT</B> environment variable. </UL>
@@ -100,10 +102,12 @@ cvs(3)</H1>
 <P><TT>Compression</TT> 
 <BR><UL>Sets the compression level to use with all CVS commands. </UL>
 <P><TT>Quieter CVS output</TT> 
-<BR><UL>When enabled the <TT>-q</TT> CVS command-line option is used to suppress some of the more verbose print-out. </UL>
-</UL><P><B>CVS File Browser</B> <UL>
+<BR><UL>When enabled the <TT>-q</TT> CVS command-line option is used to suppress some of the more verbose print-out. </UL></UL></UL>
+<H2>CVS File Browser </H2>
+<UL><P>The <B>CVS File Browser</B> is an extension to the 
+<A HREF="m3mac027.html">file-browser(3)</A> and shows the state of CVS files in a directory listing. 
 <P><TT>Quick browser mode</TT> 
-<BR><UL>When enabled the CVS file browser does not launch a cvs command to determine the current state of all files in the directory, instead it extracts as much information as it can from the local file system, inserting '<TT>Q</TT>'s for information it cannot determine. This is useful when the connection to the server is slow. The full CVS information can be obtained by executing the command <B>cvs-full-reread</B>, typically bound to <TT>C-f5</TT>. </UL></UL>
+<BR><UL>When enabled the CVS file browser does not launch a cvs command to determine the current state of all files in the directory, instead it extracts as much information as it can from the local file system, inserting '<TT>Q</TT>'s for information it cannot determine. This is useful when the connection to the server is slow. The full CVS information can be obtained by executing the command <B>cvs-full-reread</B>, typically bound to <TT>C-f5</TT>. </UL>
 <P><B>Tool Defaults</B> 
 <BR><UL>The following define the default settings for options used in various CVS commands: </UL>
 <UL><P><TT>Recurse into sub-directories</TT> </UL>
@@ -112,12 +116,13 @@ cvs(3)</H1>
 <H2><B>NOTES </B></H2>
 <UL><P><B>cvs</B> and sub-commands are macros defined in file <TT>cvs.emf</TT>. 
 <P>When filtering is enabled in the file browser the filter used by the CVS interface depends on the file browser mode, if <B>Quick browser mode</B> is enabled the same filter is used, but when disabled all files ignored by <B>cvs(1)</B> are also removed by the filter. Use 
-<A HREF="m3osd010.html">buffer-setup(3)</A> in the buffer to enable/disable the filter. </UL>
+<A HREF="m3osd014.html">buffer-setup(3)</A> in the buffer to enable/disable the filter. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
+<A HREF="m3mac085.html">ClearCase(3)</A>, 
 <A HREF="m3mac027.html">file-browser(3)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2004/12/08</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/22</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

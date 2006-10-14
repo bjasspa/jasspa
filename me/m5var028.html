@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>$fill-mode(5)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 $fill-mode(5)</H1>
@@ -13,12 +13,15 @@ $fill-mode(5)</H1>
 </FONT>
 <HR>
 <H2><B>NAME </B></H2>
-<UL><P>$fill-mode - Paragraph mode; justification method </UL>
+<UL><P>$fill-mode - Global paragraph mode; justification method $buffer-fill-mode - Buffer paragraph mode; justification method </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><B>$fill-mode</B> <I>justification</I>; Default is <TT>N</TT> 
-<P><I>justification</I> <TT>b</TT> | <TT>c</TT> | <TT>l</TT> | <TT>n</TT> | <TT>o</TT> | <TT>r</TT> | <TT>B</TT> | <TT>C</TT> | <TT>L</TT> | <TT>N</TT> | <TT>R</TT> </UL>
+<UL><P><B>$fill-mode</B> <I>justification</I> 
+<BR><B>$buffer-fill-mode</B> <I>justification</I> 
+<P><I>justification</I> <TT>b</TT> | <TT>c</TT> | <TT>l</TT> | <TT>n</TT> | <TT>o</TT> | <TT>r</TT> | <TT>B</TT> | <TT>C</TT> | <TT>L</TT> | <TT>N</TT> | <TT>R</TT> the default is <TT>N</TT> </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P><B>$fill-mode</B> defines the justification mode i.e. <I>left</I>/<I>right</I>/<I>both</I>/... The default value is none automatic (<B>N</B>). The modes available are:- 
+<UL><P>The <B>fill-col</B> variables specify the text justification modes for text filling of 
+<A HREF="m2cmd052.html">fill-paragraph(2)</A>. 
+<P><B>$fill-mode</B> defines the global default justification mode i.e. <I>left</I>/<I>right</I>/<I>both</I>/... The default value is <I>none</I> <I>automatic</I> (<B>N</B>). The modes available are:- 
 <P><B>b</B> Both 
 <BR><UL>Enables left and right margin justification. </UL>
 <P><B>c</B> Center 
@@ -42,28 +45,33 @@ $fill-mode(5)</H1>
 <BR><UL>Automatically determines the mode, defaults to <I>both</I> and not <I>none</I>. </UL>
 <P><B>R</B> Right (automatic) 
 <BR><UL>Automatically determines the mode, defaulting to right justification. </UL>
-<P>The lines are automatically justified only when the justification mode 
+<P><B>$buffer-fill-mode</B> specifies the fill mode value to use in a buffer, a value of <B>$fill-mode</B> is used as a default when the buffer is created. Modification of the <B>$buffer-fill-mode</B> causes the buffer fill mode to be modified, this does not affect any other buffer. The value is set by the <B>fhook-xxx</B> macro when initializing a buffer using the 
+<A HREF="m2nar000.html">Language Templates</A>. <B>$buffer-fill-mode</B> may also be modified from 
+<A HREF="m3osd014.html">buffer-setup(3)</A>. 
+<P>The buffer lines are automatically justified only when the justification mode 
 <A HREF="m2mod006.html">justify(2m)</A> is enabled. Justification is performed between the left and right margins, defined as 0 and 
-<A HREF="m5var021.html">$fill-col(5)</A> respectively. </UL>
+<A HREF="m5var021.html">$buffer-fill-col(5)</A> respectively. </UL>
 <H2>Automatic Filling </H2>
-<UL><P>Automatic filling is performed when the mode <B>$fill-mode</B> is specified in upper case. The format of the line (and adjacent lines) is interrogated and an <I>informed</I> guess is made as to the expected formating which is then adopted. The criteria for automatic formatting is defined as follows:- 
+<UL><P>Automatic filling is performed when the mode <B>$buffer-fill-mode</B> is specified in upper case. The format of the line (and adjacent lines) is interrogated and an <I>informed</I> guess is made as to the expected formating which is then adopted. The criteria for automatic formatting is defined as follows:- 
 <P><I>center</I> 
-<BR><UL>If the left and right margins contain approximately the same amount of white space +/-1 character then the paragraph is centered. </UL>
+<BR><UL>If the left and right margins contain the same amount of white space +/-1 character then the paragraph is centered. </UL>
 <P><I>right</I> 
 <BR><UL>If the text commences past half of the 
-<A HREF="m5var021.html">$fill-col(5)</A> (i.e. first half of the line comprises white space) AND the line extends to, or past, the <TT>$fill-col</TT> then the paragraph is assumed to be right justified. </UL>
+<A HREF="m5var021.html">$buffer-fill-col(5)</A> (i.e. first half of the line comprises white space) AND the line extends to, or past, the <TT>$buffer-fill-col</TT> then the paragraph is assumed to be right justified. </UL>
 <P><I>none</I> 
 <BR><UL>If the text commences in column 0 and occupies less than half of the line then the paragraph is assumed to be not justified. (i.e. left justified, but consecutive lines of the paragraph are not filled) </UL>
 <P><I>default</I> 
-<BR><UL>If none of the above criteria are met then the default mode is adopted, as determined by the lower-case value of the <B>$fill-mode</B> value. </UL></UL>
+<BR><UL>If none of the above criteria are met then the default mode is adopted, as determined by the lower-case value of the <B>$buffer-fill-mode</B> value. </UL></UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
+<A HREF="m5var021.html">$buffer-fill-col(5)</A>, 
 <A HREF="m5var021.html">$fill-col(5)</A>, 
 <A HREF="m2cmd006.html">buffer-mode(2)</A>, 
+<A HREF="m3osd014.html">buffer-setup(3)</A>, 
 <A HREF="m2cmd052.html">fill-paragraph(2)</A>, 
 <A HREF="m2mod006.html">justify(2m)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/13</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

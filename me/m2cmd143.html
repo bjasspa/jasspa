@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>write-buffer(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 write-buffer(2)</H1>
@@ -32,7 +32,7 @@ write-buffer(2)</H1>
 <A HREF="m5var000.html">automatic save</A> copies of the file associated with the <I>buffer</I> are deleted. 
 <P>The argument <I>n</I> may be used to change the default behavior of write-buffer described above, <I>n</I> is a bit based flag where:- 
 <P><B>0x01</B> 
-<BR><UL>Enables validity checks (default). These include a check that the proposed file does not already exist, if so confirmation of writing is requested from the user. Also MicroEmacs '05 checks all other current buffers for one with the proposed file name, if found, again confirmation is requested. Without this flag the command will always succeed wherever possible. </UL>
+<BR><UL>Enables validity checks (default). These include a check that the proposed file does not already exist, if so confirmation of writing is requested from the user. Also MicroEmacs '06 checks all other current buffers for one with the proposed file name, if found, again confirmation is requested. Without this flag the command will always succeed wherever possible. </UL>
 <P><B>0x02</B> 
 <BR><UL>Disables the expansion of any narrows (see 
 <A HREF="m2cmd068.html">narrow-buffer(2)</A>) before saving the buffer. </UL></UL>
@@ -51,7 +51,7 @@ write-buffer(2)</H1>
 <A HREF="m2mod013.html">time(2m)</A>, 
 <A HREF="m3mac076.html">write-region(3)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
 <BR><I>Last Modified: 2005/02/13</I>
-<BR><I>Generated On: 2005/05/14</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

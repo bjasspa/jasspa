@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>MessageLineVariables(4)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 MessageLineVariables(4)</H1>
@@ -18,7 +18,7 @@ MessageLineVariables(4)</H1>
 <UL><P><B>@mn</B> 
 <BR><B>@mna</B> 
 <BR><B>@ml</B>[<I>f</I>][<I>h</I>] &quot;<I>prompt</I>&quot; [&quot;<I>default</I>&quot;] [&quot;<I>initial</I>&quot;] [&quot;<I>com-list</I>&quot;] [&quot;<I>buffer-name</I>&quot;] 
-<BR><B>@mc</B>[<I>f</I>] <I>prompt</I> [<I>valid-list</I>] 
+<BR><B>@mc</B>[<I>f</I>] <I>prompt</I> [<I>valid-list</I>] [<I>help-string</I>] 
 <BR><B>@mx</B> &quot;<I>command-line</I>&quot; 
 <BR><B>@mxa</B> &quot;<I>command-line</I>&quot; </UL>
 <H2><B>DESCRIPTION </B></H2>
@@ -36,12 +36,12 @@ MessageLineVariables(4)</H1>
 <P>The flag <B>h</B> specifies what type of data is to be entered, this specifies the history to be used and the semantics allowed, <B>h</B> can have the following values 
 <UL><P><TT>0</TT>&nbsp;For&nbsp;a&nbsp;general&nbsp;string&nbsp;input&nbsp;using&nbsp;the&nbsp;general&nbsp;history. 
 <BR><TT>1</TT>&nbsp;For&nbsp;an&nbsp;absolute&nbsp;file&nbsp;name,&nbsp;with&nbsp;completion&nbsp;and&nbsp;history. 
-<BR><TT>2</TT>&nbsp;For&nbsp;a&nbsp;MicroEmacs&nbsp;'05&nbsp;buffer&nbsp;name,&nbsp;with&nbsp;completion&nbsp;and&nbsp;history. 
-<BR><TT>3</TT>&nbsp;For&nbsp;a&nbsp;MicroEmacs&nbsp;'05&nbsp;command&nbsp;name,&nbsp;with&nbsp;completion&nbsp;and&nbsp;history. 
+<BR><TT>2</TT>&nbsp;For&nbsp;a&nbsp;MicroEmacs&nbsp;'06&nbsp;buffer&nbsp;name,&nbsp;with&nbsp;completion&nbsp;and&nbsp;history. 
+<BR><TT>3</TT>&nbsp;For&nbsp;a&nbsp;MicroEmacs&nbsp;'06&nbsp;command&nbsp;name,&nbsp;with&nbsp;completion&nbsp;and&nbsp;history. 
 <BR><TT>4</TT>&nbsp;For&nbsp;a&nbsp;file&nbsp;name,&nbsp;with&nbsp;completion&nbsp;and&nbsp;history. 
 <BR><TT>5</TT>&nbsp;For&nbsp;a&nbsp;search&nbsp;string,&nbsp;with&nbsp;history. 
-<BR><TT>6</TT>&nbsp;For&nbsp;a&nbsp;MicroEmacs&nbsp;'05&nbsp;mode&nbsp;name,&nbsp;with&nbsp;completion&nbsp;and&nbsp;history. 
-<BR><TT>7</TT>&nbsp;For&nbsp;a&nbsp;MicroEmacs&nbsp;'05&nbsp;variable&nbsp;name,&nbsp;with&nbsp;completion&nbsp;and&nbsp;history. 
+<BR><TT>6</TT>&nbsp;For&nbsp;a&nbsp;MicroEmacs&nbsp;'06&nbsp;mode&nbsp;name,&nbsp;with&nbsp;completion&nbsp;and&nbsp;history. 
+<BR><TT>7</TT>&nbsp;For&nbsp;a&nbsp;MicroEmacs&nbsp;'06&nbsp;variable&nbsp;name,&nbsp;with&nbsp;completion&nbsp;and&nbsp;history. 
 <BR><TT>8</TT>&nbsp;For&nbsp;a&nbsp;general&nbsp;string&nbsp;using&nbsp;no&nbsp;history. 
 <BR><TT>9</TT>&nbsp;For&nbsp;a&nbsp;user&nbsp;supplied&nbsp;completion&nbsp;list&nbsp;(<TT>com-list</TT>). 
 <BR><TT>a</TT>&nbsp;For&nbsp;a&nbsp;user&nbsp;supplied&nbsp;completion&nbsp;list&nbsp;(<TT>buffer-name</TT>). </UL>
@@ -54,14 +54,21 @@ MessageLineVariables(4)</H1>
 <P><TT>0x01</TT> 
 <BR><UL>The <I>valid-list</I> specifies all valid letters. </UL>
 <P><TT>0x02</TT> 
-<BR><UL>Quote the typed character, this allows keys such as '<TT>C-g</TT>' which is bound to the abort command to be entered. 
+<BR><UL>Quote the typed character, this allows keys such as '<TT>C-g</TT>' which is bound to the abort command to be entered. </UL>
+<P><TT>0x04</TT> 
+<BR><UL>A <I>help-string</I> is given which will be displayed if the user presses '<TT>?</TT>'. 
 </UL><P>The default value for <B>f</B> is 0. When <B>@mc</B> is used, the user is prompted, with the given prompt, for a single character. If a <I>valid-list</I> is specified then only a specified valid character or an error can be returned. For example, a yes/no prompt can be implemented by the following <UL>
-<PRE>!if&nbsp;&amp;iseq&nbsp;@mc1&nbsp;&quot;Are&nbsp;you&nbsp;bored&nbsp;[y/n]?&nbsp;&quot;&nbsp;&quot;yYnN&quot;&nbsp;&quot;y&quot; 
+<PRE>!if&nbsp;&amp;iseq&nbsp;@mc1&nbsp;&quot;Are&nbsp;you&nbsp;bored&nbsp;(yn)&nbsp;?&nbsp;&quot;&nbsp;&quot;yYnN&quot;&nbsp;&quot;y&quot; 
 &nbsp;&nbsp;&nbsp;&nbsp;save-buffers-exit-emacs 
 !endif 
 </PRE></UL>
 <P>By using the 
-<A HREF="m4fil030.html">&amp;isequal(4)</A> operator a return of &quot;Y&quot; or &quot;y&quot; will match with &quot;y&quot;. 
+<A HREF="m4fil030.html">&amp;isequal(4)</A> operator a return of &quot;Y&quot; or &quot;y&quot; will match with &quot;y&quot;. However, there are two problems with this, firstly if the user aborts by pressing '<TT>C-g</TT>' a macro error will be generated because the <B>&amp;iseq</B> operator failed to get 2 arguments. The second problem is that the meaning of &quot;<TT>(yn)</TT>&quot; may not be obvious to all users so a help string should be supplied. To address these 2 issues the following should be used in preference: <UL>
+<PRE>set-variable&nbsp;#l0&nbsp;@mc5&nbsp;&quot;Are&nbsp;you&nbsp;bored&nbsp;(?yn)&nbsp;?&nbsp;&quot;&nbsp;&quot;yYnN&quot;&nbsp;&quot;(Y)es,&nbsp;(N)no,&nbsp;(C-g)Abort&nbsp;?&nbsp;&quot; 
+!if&nbsp;&amp;iseq&nbsp;#l0&nbsp;&quot;y&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;save-buffers-exit-emacs 
+!endif 
+</PRE></UL>
 <P>When the <B>@mx</B> variable is used MicroEmacs sets the system variable 
 <A HREF="m5var041.html">$result(5)</A> to the input prompt, it will then execute the given <TT>command-line</TT>. If this command aborts then so does the calling command, if it succeeds then the input value is taken from the <B>$result</B> variable. Similarly <B>@mxa</B> causes MicroEmacs to get the current and any subsequent arguments in this way. 
 <P>These variables are useful when trying to use existing commands in a different way, such as trying to provide a GUI to an existing command. See the <B>delete-buffer</B> example below. </UL>
@@ -82,7 +89,8 @@ set-variable&nbsp;%language&nbsp;@ml19&nbsp;&quot;Language&quot;&nbsp;%language&
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!abort 
 &nbsp;&nbsp;&nbsp;&nbsp;!endif 
 &nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;bmod&nbsp;&quot;edit&quot; 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;iseq&nbsp;@mc1&nbsp;&quot;Save&nbsp;buffer&nbsp;first&nbsp;[y/n]?&nbsp;&quot;&nbsp;&quot;nNyY&quot;&nbsp;&quot;y&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;@mc5&nbsp;&quot;Save&nbsp;buffer&nbsp;first&nbsp;(?yn)&nbsp;?&nbsp;&quot;&nbsp;&quot;nNyY&quot;&nbsp;&quot;(Y)es,&nbsp;(N)o,&nbsp;(C-g)Abort&nbsp;?&nbsp;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;iseq&nbsp;#l0&nbsp;&quot;y&quot; 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;save-buffer 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!endif 
 &nbsp;&nbsp;&nbsp;&nbsp;!endif 
@@ -92,7 +100,7 @@ set-variable&nbsp;%language&nbsp;@ml19&nbsp;&quot;Language&quot;&nbsp;%language&
 <P>Note that the input is case insensitive. The following version would not work as the user may expect when the buffer has not been edited: <UL>
 <PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;. 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;. 
-&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;and&nbsp;&amp;bmod&nbsp;&quot;edit&quot;&nbsp;&amp;iseq&nbsp;@mc1&nbsp;&quot;Save&nbsp;buffer&nbsp;first&nbsp;[y/n]?&nbsp;&quot;&nbsp;&quot;nNyY&quot;&nbsp;&quot;y&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;and&nbsp;&amp;bmod&nbsp;&quot;edit&quot;&nbsp;&amp;iseq&nbsp;@mc1&nbsp;&quot;Save&nbsp;buffer&nbsp;first&nbsp;(?yn)&nbsp;?&nbsp;&quot;&nbsp;&quot;nNyY&quot;&nbsp;&quot;y&quot; 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;save-buffer 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;. 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;. 
@@ -124,7 +132,7 @@ define-macro&nbsp;osd-delete-buffer
 <UL><P>
 <A HREF="m2cmd029.html">define-macro(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2004/01/17</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/09/20</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

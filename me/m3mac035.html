@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>diff(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 diff(3)</H1>
@@ -15,16 +15,19 @@ diff(3)</H1>
 <H2><B>NAME </B></H2>
 <UL><P>diff - Difference files or directories 
 <BR>diff-changes - Find the differences from a previous edit session 
+<BR>rdiff - Recursively compare files or directories 
 <BR>%diff-com - Diff command line </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><B>diff</B> &quot;<I>oldFile</I>&quot; &quot;<I>newFile</I>&quot; 
+<UL><P><B>diff</B> &quot;<I>old-version</I>&quot; &quot;<I>new-version</I>&quot; 
 <BR><B>diff-changes</B> 
+<BR><B>rdiff</B> &quot;<I>old-version</I>&quot; &quot;<I>new-version</I>&quot; 
 <BR><TT>%diff-com</TT> &quot;<I>string</I>&quot;; Default is &quot;<TT>diff</TT>&quot; </UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P><B>diff</B> executes the <B>diff(1)</B> command with the command line set by the 
-<A HREF="m3mac035.html">%diff-com(5)</A> variable and the user supplied <I>oldFile</I> and <I>newFile</I>. The output of the command is piped into the <B>*diff*</B> buffer and is hilighted to show the changes (GNU diff only). 
+<A HREF="m3mac035.html">%diff-com(5)</A> variable and the user supplied <I>old-version</I> and <I>new-version</I>. The output of the command is piped into the <B>*diff*</B> buffer and is hilighted to show the changes (GNU diff only). 
 <P>Your version of <B>diff(1)</B> will determine whether it is possible to difference directories. 
 <P><B>diff-changes</B> is a simple macro that differences the current buffer and the last backup of the associated file. It is a quick way to determine what has been modified recently. This macro only works if a backup file exists. 
+<P><B>rdiff</B> operates in the same way as <B>diff</B> except it launches the <B>diff(1)</B> command with an extra <I>-r</I> option which enables recursive compare (i.e. compares the contents of sub-directories as well). Your version of <B>diff</B> must support this option for <B>rdiff</B> to operate correctly. 
 <P><B>%diff-com</B> is the command line that is used to execute a <B>diff(1)</B> system command. 
 <P>For GNU diff then the following command line setting is recommended:- <UL>
 <PRE>diff&nbsp;--context&nbsp;--minimal&nbsp;--ignore-space-change&nbsp;\ 
@@ -32,7 +35,7 @@ diff(3)</H1>
 </PRE></UL>
 <P>which should be defined in your personal user configuration. This is the default for Linux. </UL>
 <H2><B>NOTES </B></H2>
-<UL><P><B>diff</B> and <B>dif-changes</B> are macros defined in <TT>tools.emf</TT>. 
+<UL><P><B>diff</B>, <B>diff-changes</B> and <B>rdiff</B> are macros defined in <TT>tools.emf</TT>. 
 <P><B>diff(1)</B> must be executable on the system before diff or diff-changes can function. 
 <P><B>diff(1)</B> is a standard utility on UNIX systems. For Windows 95/NT a version of GNU <B>diff</B> may be found at: 
 <UL><P><I>&lt;ftp.winsite.com/ftp/pub/pc/winnt/misc/gnudiff.zip&gt;</I> </UL>
@@ -43,9 +46,11 @@ diff(3)</H1>
 <A HREF="m3mac000.html">compile(3)</A>, 
 <A HREF="m3mac044.html">gdiff(3)</A>, 
 <A HREF="m3mac001.html">grep(3)</A>, 
-<A HREF="m5var025.html">%grep-com(5)</A>. </UL>
+<A HREF="m5var025.html">%grep-com(5)</A>, 
+<A HREF="m3mac083.html">xdiff(3)</A>, 
+<A HREF="m3mac083.html">%xdiff-com(5)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/20</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

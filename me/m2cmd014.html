@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>buffer-info(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 buffer-info(2)</H1>
@@ -15,21 +15,22 @@ buffer-info(2)</H1>
 <H2><B>NAME </B></H2>
 <UL><P>buffer-info - Status information on current buffer position </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><B>buffer-info</B> (<B>C-x&nbsp;=</B>)&nbsp; </UL>
+<UL><P><I>n</I> <B>buffer-info</B> (<B>C-x&nbsp;=</B>)&nbsp; </UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P><B>buffer-info</B> reports on the current and total lines and characters of the current buffer. It also gives the hexadecimal code of the character currently under the cursor. 
 <P>The output of the command is displayed on the message line e.g. <UL>
-<PRE>Line&nbsp;1845/3955&nbsp;Col&nbsp;0.0&nbsp;Char&nbsp;78267/167172&nbsp;(46%)&nbsp;Win&nbsp;Line&nbsp;99/48&nbsp;Col/0/0&nbsp;char&nbsp;=&nbsp;0xA 
+<PRE>Line&nbsp;1845/3955&nbsp;Col&nbsp;0/0&nbsp;Char&nbsp;78267/167172&nbsp;(46%)&nbsp;Win&nbsp;Line&nbsp;99/48&nbsp;ACol&nbsp;0/0&nbsp;char&nbsp;10&nbsp;(0x0a) 
 </PRE></UL>
 <P>
-<A HREF="m5var041.html">$result(5)</A> is set to the same output string. </UL>
+<A HREF="m5var041.html">$result(5)</A> is set to the same output string unless a numeric value of zero is given to the command in which case the values are given in a 
+<A HREF="m4fil029.html">MicroEmacs list</A> format and not printed to the message line; this information can be useful in macros. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m5var041.html">$result(5)</A>, 
 <A HREF="m5var031.html">$mode-line(5)</A>, 
 <A HREF="m2cmd148.html">about(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/09/25</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

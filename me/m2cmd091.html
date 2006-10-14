@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>next-buffer(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 next-buffer(2)</H1>
@@ -20,17 +20,26 @@ next-buffer(2)</H1>
 <BR><I>n</I> <B>find-buffer</B> &quot;<I>buffer-name</I>&quot; (<B>C-x&nbsp;b</B>)&nbsp; </UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P><B>next-buffer</B> switches to the <I>n</I>th next buffer in the buffer list in the current window, the default <I>n</I> is <TT>1</TT>, if <I>n</I> is negative then the <TT>0-</TT><I>n</I>th previous buffer is selected. If <TT>0</TT> or a number greater than the number of buffers is specified then the command fails. 
-<P><B>find-buffer</B> switches to buffer &quot;<I>buffer-name</I>&quot; in the current window. If the buffer does not exist and a zero argument <I>n</I> is supplied then the command fails. If the buffer does not exist but no argument or a +ve argument <I>n</I> is specified then a new buffer is created, at which point the file-hook is evaluated. 
-<P>If a -ve argument <I>n</I> is given to <B>find-buffer</B> then the buffer will be hidden. Any window displaying &quot;<I>buffer-name</I>&quot; will find another buffer to display. This functionality is often used with the 
+<P><B>find-buffer</B> switches to buffer &quot;<I>buffer-name</I>&quot; in the current window. If the buffer does not exist and a zero argument <I>n</I> is supplied then the command fails. If the buffer does not exist but no argument or a positive argument <I>n</I> is specified then a new buffer is created, at which point the file-hook is evaluated. 
+<P>If a negative argument <I>n</I> is given to <B>find-buffer</B> then the buffer will be hidden. Any window displaying &quot;<I>buffer-name</I>&quot; will find another buffer to display. This functionality is often used with the 
 <A HREF="m2mod022.html">hide(2m)</A> buffer mode. If a value of -1 is given then the buffer will not be hidden in a window whose 
 <A HREF="m5var084.html">$window-flags(5)</A> are set to lock the buffer to the window. If a value of less than -1 is given then the buffer is hidden from all windows. 
-<P>If the current buffer has an <I>$buffer-ehook</I> command set then this command is executed before the new buffer is switched in. If the new buffer has a $<I>buffer-bhook</I> command set then this command is automatically executed after the new buffer is switched in but before control returns to the user. </UL>
+<P>The numeric argument of <B>find-buffer</B> is treated as a bit mask as follows: 
+<P><TT>0x01</TT> 
+<BR><UL>Bit set then the buffer is created if it does not exist. Bit clear then the command fails if the buffer does not exist. </UL>
+<P><TT>0x02</TT> 
+<BR><UL>Locate the buffer whose buffer file name matches the argument <I>buffer-name</I>. </UL>
+<P><TT>0x04</TT> 
+<BR><UL>Bit set then an inactive buffer (i.e. a buffer whose contents have not been loaded) shall remain inactive and the buffer contents shall not be restored from file. This bit setting is used to allow the buffer variables to be interrogated without causing the file to load. Setting of this bit must be used with care. </UL>
+<P><TT>0x08</TT> 
+<BR><UL>Bit set causes the buffer to be hidden. 
+</UL><P>If the current buffer has an <I>$buffer-ehook</I> command set then this command is executed before the new buffer is switched in. If the new buffer has a $<I>buffer-bhook</I> command set then this command is automatically executed after the new buffer is switched in but before control returns to the user. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m2cmd126.html">next-window-find-buffer(2)</A>, 
 <A HREF="m2mod022.html">hide(2m)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2002/10/16</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/19</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

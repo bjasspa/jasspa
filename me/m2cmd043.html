@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>exchange-point-and-mark(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 exchange-point-and-mark(2)</H1>
@@ -18,13 +18,18 @@ exchange-point-and-mark(2)</H1>
 <UL><P><B>exchange-point-and-mark</B> (<B>C-x&nbsp;C-x</B>) </UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P><B>exchange-point-and-mark</B> moves the cursor to the current marked position (see 
-<A HREF="m2cmd121.html">set-mark(2)</A>) in the current window and moves the mark to where the cursor was. This is very useful in finding where a mark was, or in returning to a position previously marked. </UL>
+<A HREF="m2cmd121.html">set-mark(2)</A>) in the current window and moves the mark to where the cursor was. This is very useful in finding where a mark was, or in returning to a position previously marked. 
+<P>The current buffer mark line and column position may be obtained from within a macro using the variables 
+<A HREF="m5var048.html">$window-mark-line(5)</A> and 
+<A HREF="m5var048.html">$window-mark-col(5)</A>. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m2cmd121.html">set-mark(2)</A>, 
-<A HREF="m2cmd022.html">copy-region(2)</A>. </UL>
+<A HREF="m2cmd022.html">copy-region(2)</A>, 
+<A HREF="m5var048.html">$window-mark-col(5)</A>, 
+<A HREF="m5var048.html">$window-mark-line(5)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/13</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

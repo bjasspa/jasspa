@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>RegularExpressions(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 RegularExpressions(2)</H1>
@@ -77,38 +77,46 @@ RegularExpressions(2)</H1>
 <UL><P><B>NOTE:</B> This currently only matches the end of the current line - it does not match the end of the buffer. </UL>
 <P><TT>\=</TT> 
 <BR><UL>matches the empty string, but only at point. </UL>
-<P><TT>\b</TT> 
-<BR><UL>matches the empty string, but only at the beginning or end of a word. Thus, '<TT>\bfoo\b</TT>' matches any occurrence of '<TT>foo</TT>' as a separate word. '<TT>\bballs?\b</TT>' matches '<TT>ball</TT>' or '<TT>balls</TT>' as a separate word. </UL>
-<UL><P>'<TT>\b</TT>' matches at the beginning or end of the buffer regardless of what text appears next to it. </UL>
-<UL><P><TT>\B</TT> matches the empty string, but *not* at the beginning or end of a word. </UL>
 <P><TT>\&lt;</TT> 
 <BR><UL>matches the empty string, but only at the beginning of a word. '<TT>\&lt;</TT>' matches at the beginning of the buffer only if a word-constituent character follows. </UL>
 <P><TT>\&gt;</TT> 
 <BR><UL>matches the empty string, but only at the end of a word. '<TT>\&gt;</TT>' matches at the end of the buffer only if the contents end with a word-constituent character. </UL>
+<P><TT>\a</TT> 
+<BR><UL>matches any alpha characters. </UL>
+<P><TT>\A</TT> 
+<BR><UL>matches any non-alpha characters. </UL>
+<P><TT>\b</TT> 
+<BR><UL>matches the empty string, but only at the beginning or end of a word. Thus, '<TT>\bfoo\b</TT>' matches any occurrence of '<TT>foo</TT>' as a separate word. '<TT>\bballs?\b</TT>' matches '<TT>ball</TT>' or '<TT>balls</TT>' as a separate word. '<TT>\b</TT>' matches at the beginning or end of the buffer regardless of what text appears next to it. </UL>
+<P><TT>\B</TT> 
+<BR><UL>matches the empty string, but *not* at the beginning or end of a word. </UL>
 <P><TT>\d</TT> 
 <BR><UL>matches any digit character. </UL>
 <P><TT>\D</TT> 
 <BR><UL>matches any non-digit character. </UL>
-<P><TT>\x</TT> 
+<P><TT>\h</TT> 
 <BR><UL>matches any hexadecimal digit character. </UL>
-<P><TT>\X</TT> 
+<P><TT>\H</TT> 
 <BR><UL>matches any non-hexadecimal character. </UL>
-<P><TT>\w</TT> 
-<BR><UL>matches any word-constituent character. The syntax table determines which characters these are. </UL>
-<P><TT>\W</TT> 
-<BR><UL>matches any character that is not a word-constituent. </UL>
 <P><TT>\l</TT> 
 <BR><UL>matches any lowercase word-constituent character. The syntax table determines which characters these are. </UL>
 <P><TT>\L</TT> 
 <BR><UL>matches any character that is not a lowercase word-constituent. </UL>
-<P><TT>\u</TT> 
-<BR><UL>matches any uppercase word-constituent character. The syntax table determines which characters these are. </UL>
-<P><TT>\U</TT> 
-<BR><UL>matches any character that is not a uppercase word-constituent. </UL>
+<P><TT>\m</TT> 
+<BR><UL>matches any alphanumeric characters </UL>
+<P><TT>\M</TT> 
+<BR><UL>matches any non alphanumeric characters. </UL>
 <P><TT>\s</TT> 
 <BR><UL>matches any white-space character, including new-line. </UL>
 <P><TT>\S</TT> 
 <BR><UL>matches any character that is not white-space. </UL>
+<P><TT>\u</TT> 
+<BR><UL>matches any uppercase word-constituent character. The syntax table determines which characters these are. </UL>
+<P><TT>\U</TT> 
+<BR><UL>matches any character that is not a uppercase word-constituent. </UL>
+<P><TT>\w</TT> 
+<BR><UL>matches any word-constituent character. The syntax table determines which characters these are. </UL>
+<P><TT>\W</TT> 
+<BR><UL>matches any character that is not a word-constituent. </UL>
 <P><TT>\{N,M\}</TT> 
 <BR><UL>Matches an integer number of the previous item, where <TT>N</TT> and <TT>M</TT> are integer constants interpreted as follows:- 
 <P><TT>\{N\}</TT> 
@@ -170,7 +178,7 @@ RegularExpressions(2)</H1>
 <A HREF="m2mod009.html">magic(2m)</A>, 
 <A HREF="m2cmd109.html">replace-string(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2005/03/06</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/19</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

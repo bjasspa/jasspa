@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>collapse-current(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 collapse-current(3)</H1>
@@ -19,7 +19,7 @@ collapse-current(3)</H1>
 <UL><P><B>collapse-current</B> 
 <BR><B>collapse-all</B> </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P>MicroEmacs '05 provides a generic, albeit coarse, folding mechanism which is applied to some of the well known file modes. The folding mechanism allows parts of the buffer to be scrolled up and hidden, leaving a residue hilighting marker within the buffer indicating a folded region. A folded buffer typically allows a summary of the buffer contents to be viewed within several windows, hiding the detail of the buffer. 
+<UL><P>MicroEmacs '06 provides a generic, albeit coarse, folding mechanism which is applied to some of the well known file modes. The folding mechanism allows parts of the buffer to be scrolled up and hidden, leaving a residue hilighting marker within the buffer indicating a folded region. A folded buffer typically allows a summary of the buffer contents to be viewed within several windows, hiding the detail of the buffer. 
 <P>The folding mechanism uses well defined <I>start</I> and <I>end</I> markers which form part of the syntax of the well known file mode. i.e. in 'C' this is the open and closed braces that appear on the left-hand margin (<TT>{</TT> .. <TT>}</TT>). The intention is that the natural syntax of the text is used to determine the fold positions, requiring no additional text formating or special text tags to be inserted by the user. 
 <P><B>collapse-current</B> opens and closes a folded region within the buffer. If the current cursor position lies between a <I>start</I> and <I>end</I> marker then the region between the start and end is folded out and hidden from view, leaving a highlight marker in the buffer. If the fold already exists then, moving the cursor to the folded line and invoking <B>collapse-current</B> removes the fold marker and reveals the text. 
 <P><B>collapse-all</B> opens and closes all folded regions within the buffer, if the current state is unfolded then all of the <I>start</I>/<I>end</I> markers are located and their regions folded. Conversely, if the buffer is currently folded and <B>collapse-all</B> is invoked, then all folds are removed and the associated text revealed. </UL>
@@ -31,7 +31,7 @@ collapse-current(3)</H1>
 <P><B>.fhook-</B><I>XXX</I><B>-collapse-close</B> 
 <BR><UL>A regular expression search string used to locate the end of the string. For speed the search string should include a regular expression start or end line character whenever possible. i.e. in C the close is defined as &quot;<TT>^}</TT>&quot;. </UL>
 <P><B>.fhook-</B><I>XXX</I><B>-collapse-mopen</B> 
-<BR><UL>An integer value that denotes the number of lines to move in a forward or (-ve) backward direction from the <I>start</I> line located by the search string to the position in the buffer to be folded. If default value when <B>mopen</B> is omitted is 0, starting the fold from the search string line. </UL>
+<BR><UL>An integer value that denotes the number of lines to move in a forward or (negative n) backward direction from the <I>start</I> line located by the search string to the position in the buffer to be folded. If default value when <B>mopen</B> is omitted is 0, starting the fold from the search string line. </UL>
 <P><B>.fhook-</B><I>XXX</I><B>-collapse-mclose</B> 
 <BR><UL>The relative displacement from the close fold line to the fold position, this is a positive or negative displacement depending on where the fold is to be positioned. </UL>
 <P><B>.fhook-</B><I>XXX</I><B>-collapse-mnext</B> 
@@ -131,7 +131,7 @@ set-variable&nbsp;.fhook-tcl.collapse-mnext&nbsp;&quot;-1&quot;
 <A HREF="m3osd000.html">user-setup(3)</A>, 
 <A HREF="m2cmd068.html">narrow-buffer(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2004/01/17</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/07/28</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

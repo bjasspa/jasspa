@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>spell-buffer(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 spell-buffer(3)</H1>
@@ -23,7 +23,7 @@ spell-buffer(3)</H1>
 <BR><B>spell-edit-word</B> [&quot;<I>word</I>&quot;] 
 <BR><B>find-word</B> [&quot;<I>word</I>&quot;] </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P>MicroEmacs '05 provides an integrated spell checker with the following features:- <UL><P>
+<UL><P>MicroEmacs '06 provides an integrated spell checker with the following features:- <UL><P>
 <LI>Different languages. 
 <LI>Dialog control of the speller. 
 <LI>Best guess capability. 
@@ -61,7 +61,7 @@ spell-buffer(3)</H1>
 <BR><UL>The <B>Find</B> button executes <B>find-word</B> giving the current word as a starting seed. This allows the user to search for the word using a simple search criteria, see full description below. </UL>
 <P><B>Undo Last</B> 
 <BR><UL>The <B>undo Last</B> button restores the user to the previous spelling so that it may be re-entered, any replacement text that was made is restored to it's original spelling. </UL>
-<P><B>Exit</B> 
+<P><B>Close</B> 
 <BR><UL>Exits the speller and returns the user to the buffer. 
 </UL><P><B>spell-word</B> checks a single word which is either supplied by the user, or if an argument is given, the word under (or to the left of) the cursor position. If the word is correct, a simple message-line print-out is given, otherwise the main spell <B>osd</B> dialog is opened and the user may check the spelling within the context of the spell dialog as described above. 
 <P>The default key binding of &quot;<TT>esc $</TT>&quot; supplies an argument forcing <B>spell-word</B> to check the current buffer word. <B>spell-word</B> is often used to check the spelling of a word outside of the context of the editor (i.e. when working on paper, or when doing at that prize crossword !!). 
@@ -79,12 +79,12 @@ spell-buffer(3)</H1>
 <P><B>Auto-Correct</B> 
 <BR><UL>Selection of the <B>Auto-Correct</B> button allows a replacement word to be entered in the <B>To</B> text entry. Selecting <B>Add</B> adds the automatic correction to the speller. Thereafter, whenever the erroneous word is encountered the replacement word is always used to replace it, without user intervention. </UL>
 <UL><P>Entering an exiting <I>auto-correct</I> word into the dialog and selecting <B>Delete</B> removes an existing auto-correct entry. </UL>
-<P><B>Exit</B> 
+<P><B>Close</B> 
 <BR><UL>Exits the <B>Edit</B> dialog. 
 </UL><P><B>find-word</B> opens the word finder dialog. This allows the user to search for a word using a simple search criteria. (This is ideal for cheating at crosswords !!). The word to be searched for is entered into the <B>Word</B> <B>Mask</B> and may use wild cards <B>*</B> to represent any number of characters, <B>?</B> to represent an unknown character and <B>[</B>..<B>]</B> for a range of characters. 
 <P>For example, searching for <TT>t?e?e</TT> presents the list <I>theme</I>, <I>there</I> and <I>these</I>. Searching for <TT>t*n</TT> lists all of the words beginning with <TT>t</TT> and ending in <TT>n</TT>. See 
 <A HREF="m5var067.html">$find-words(5)</A> for a full discription of the format used by search engine. 
-<P>The words that match are returned in the scrolling dialog, and may be selected with the mouse (or cursor keys). The <B>Insert</B> button inserts the selected word into the current buffer or into the <B>Word</B> entry if executed from the <B>spell-buffer</B> dialog. Note that the list presented is limited to 200 words, selecting <B>next</B> gets the next 200 words, and so on. The <B>Exit</B> button exits the dialog. </UL>
+<P>The words that match are returned in the scrolling dialog, and may be selected with the mouse (or cursor keys). The <B>Insert</B> button inserts the selected word into the current buffer or into the <B>Word</B> entry if executed from the <B>spell-buffer</B> dialog. Note that the list presented is limited to 200 words, selecting <B>next</B> gets the next 200 words, and so on. The <B>Close</B> button exits the dialog. </UL>
 <H2><B>NOTES </B></H2>
 <UL><P>The words added to the speller during a MicroEmacs session are saved when the editor is closed. The user is prompted to save the dictionary, if the dictionary is not saved then any words added are lost. 
 <P>All <I>ignore</I> words accumulated during a spell session are lost when the editor is closed. In order to retain <I>ignore</I> words, it is suggested that they are added to the personal dictionary rather than be ignored. 
@@ -100,7 +100,7 @@ spell-buffer(3)</H1>
 <A HREF="m3osd009.html">describe-word(3)</A>, 
 <A HREF="m5var067.html">$find-words(5)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/13</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

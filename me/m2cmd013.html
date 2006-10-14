@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>global-bind-key(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 global-bind-key(2)</H1>
@@ -26,7 +26,7 @@ global-bind-key(2)</H1>
 <A HREF="m2cmd084.html">buffer-unbind-key(2)</A> and 
 <A HREF="m2cmd085.html">ml-unbind-key(2)</A>. If an argument of 0 is given to <B>global-unbind-key</B>, only a single key is obtained for the user, if the character is currently bound to the 
 <A HREF="m2cmd028.html">prefix</A> command, the prefix binding and any sub-bindings are removed. <B>global-bind-key</B> calls <B>global-unbind-key</B> first if the key to be bound is already bound to something else. 
-<P>If a -ve argument is given to <B>global-unbind-key</B> then all bindings are removed, <B>caution</B> - removing all bindings interactively will render the current MicroEmacs session unusable. This can only be used within macro development where new bindings are created immediately afterwards. 
+<P>If a negative argument is given to <B>global-unbind-key</B> then all bindings are removed, <B>caution</B> - removing all bindings interactively will render the current MicroEmacs session unusable. This can only be used within macro development where new bindings are created immediately afterwards. 
 <P>The <B>global-bind-key</B> command, currently bound to <TT>esc k</TT>, prompts the user for the named command and the key to which it is to be bound. This help file gives a complete list of all built in commands, and some useful macros, a complete list of all commands and macros can be obtained by using the command completion (type <TT>esc x</TT>&nbsp;<TT>tab</TT>&nbsp;<TT>tab</TT>, see 
 <A HREF="m2cmd085.html">ml-bind-key(2)</A>) or using the command 
 <A HREF="m2cmd038.html">describe-bindings(2)</A>. 
@@ -34,7 +34,7 @@ global-bind-key(2)</H1>
 <A HREF="m2cmd039.html">describe-key(2)</A> to get the binding key string. 
 <P>The non-ASCII standard keys such as the cursor keys have 'standard' key names to make cross platform binding support easy. Some systems such as <I>termcap</I> do not have fixed key-bindings, for these key the users must use the command 
 <A HREF="m2cmd133.html">translate-key(2)</A> to convert the system key binding to the standard key binding. 
-<P>Permanent changes are done indirectly through the <TT>me.emf</TT> file. This is a file that MicroEmacs '05 reads and executes (see 
+<P>Permanent changes are done indirectly through the <TT>me.emf</TT> file. This is a file that MicroEmacs '06 reads and executes (see 
 <A HREF="m2cmd045.html">execute-file(2)</A>) during startup and hence results in the appearance of a permanent change in the key bindings. The syntax of commands in the <TT>me.emf</TT> file is described under the 
 <A HREF="m2cmd045.html">execute-file</A> command. Of principal concern here are the two commands <B>global-bind-key</B> and <B>global-unbind-key</B>. The primary difference between the way parameters are passed to these commands in the <TT>me.emf</TT> file is that the keys are not typed in directly (as in the <I>control-I</I> key when you want <TT>C-i</TT>) but by symbolic names. Every key has a unique name which can be easily obtained with the current binding by using the command 
 <A HREF="m2cmd039.html">describe-key(2)</A>. 
@@ -69,7 +69,7 @@ global-bind-key(2)</H1>
 <A HREF="m2cmd085.html">ml-unbind-key(2)</A>, 
 <A HREF="m2cmd133.html">translate-key(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/07/28</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

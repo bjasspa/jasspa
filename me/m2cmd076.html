@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>insert-string(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 insert-string(2)</H1>
@@ -25,6 +25,11 @@ insert-string(2)</H1>
 <BR><TT>\f</TT>&nbsp;-&nbsp;Form-feed 
 <BR><TT>\\</TT>&nbsp;-&nbsp;Literal&nbsp;backslash&nbsp;character&nbsp;'<TT>\</TT>' 
 <BR><TT>\xXX</TT>&nbsp;-&nbsp;Hexadecimal&nbsp;value&nbsp;of&nbsp;character&nbsp;ASCII&nbsp;value </UL></UL>
+<H2><B>NOTES </B></H2>
+<UL><P>If a negative argument <I>n</I> is given to <B>insert-string</B> the given string is inserted 0-<I>n</I> times into the buffer. The behavior is the same as if a positive argument is given except that if the string contains a new-line character (ascii char 0x0a), rather than splitting the string over multiple lines the character is inserted into a single line of the buffer. 
+<P>This is highly irregular and can break MicroEmacs (for example 
+<A HREF="m2cmd136.html">undo(2)</A> will fail and could lead to a crash); the feature has been added to support bit <TT>0x100</TT> of the 
+<A HREF="m2cmd131.html">shell-command(2)</A> process spawning group of commands. It's use outside of this context is to be avoided. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m2cmd073.html">insert-file(2)</A>, 
@@ -33,7 +38,7 @@ insert-string(2)</H1>
 <A HREF="m2cmd156.html">insert-tab(2)</A>, 
 <A HREF="m2cmd090.html">newline(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/22</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

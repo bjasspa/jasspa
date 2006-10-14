@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>ishell(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 ishell(3)</H1>
@@ -16,7 +16,7 @@ ishell(3)</H1>
 <UL><P>ishell - Open a interactive shell window 
 <BR>$ME_ISHELL - Windows ishell command comspec </UL>
 <H2><B>PLATFORM </B></H2>
-<UL><P>Windows '95/'98/NT - win32 
+<UL><P>Windows '95/'98/NT/2K/XP - win32 
 <BR>Unix - All variants. </UL>
 <H2><B>SYNOPSIS </B></H2>
 <UL><P><B>ishell</B> 
@@ -25,26 +25,24 @@ ishell(3)</H1>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P><B>ishell</B> creates an interactive shell window within the a MicroEmacs buffer window, providing access to the native operating systems command shell. Within the window commands may be entered and executed, the results are shown in the window. 
 <P>On running <B>ishell</B> a new buffer is created called <TT>*shell*</TT> which contains the shell. Executing the command again creates a new shell window called <TT>*shell1*</TT>, and so on. If a <TT>*shell*</TT> window is killed off then the available window is used next time the command is run. 
-<P>Additional controls are available within the shell window to control the editors interaction with the window. The operating mode is shown as a digit on the buffer mode line, this should typically show &quot;3&quot;, which corresponds to <I>F3</I>. The operating modes are mapped to keys as follows:- 
-<P><B>F2</B> 
-<BR><UL>Locks the window and allows local editing to be performed. All commands entered into the window are interpreted by the editors. <B>F2</B> mode is typically entered to cut and paste from the window, search for text strings etc. In mode 2, a <B>2</B> is shown on the mode line. </UL>
-<P><B>F3</B> 
+<P>Additional controls are available within the shell window to control the editors interaction with the window. The operating mode is shown as a digit on the buffer mode line (2/3/4) which is defined in the following sections. The operational mode is changed with the <B>F3</B> function key. 
+<P><B>Mode 2 - Browse Mode</B> 
+<BR><UL>Locks the window and allows local editing to be performed. All commands entered into the window are interpreted by the editor. Mode 2 is typically entered to cut and paste from the window, search for text strings etc. In mode 2, a <B>2</B> is shown on the mode line. </UL>
+<P><B>Mode 3 - Semi-immersion</B> 
 <BR><UL>The normal operating mode, text typed into the window is presented to the shell window. Translation of MicroEmacs commands (i.e. beginning-of-word) are translated and passed to the shell. For interactive use this is the default mode. In mode 3, a <B>3</B> is shown on the mode line. </UL>
-<P><B>F4</B> 
-<BR><UL>All input is passed to the shell, no MicroEmacs commands are interpreted and keys are passed straight to the shell window. This mode is used where none of the keys to be entered are to be interpreted by MicroEmacs. Note that you have to un-toggle the F4 mode before you can swap buffers as this effectively locks the editor into the window. </UL>
-<P><B>F5</B> 
-<BR><UL>Clears the buffer contents. This simply erases all of the historical information in the buffer. The operation of the shell is unaffected. </UL>
-<P>To exit the shell then end the shell session using the normal exit command i.e. &quot;<TT>exit</TT>&quot; or &quot;<TT>C-d</TT>&quot; as normal and then close the buffer. A short cut &quot;<TT>C-c C-k</TT>&quot; is available to kill off the pipe. However, it is not recommended that this method is used as it effectively performs a hard kill of the buffer and attached process </UL>
+<P><B>Mode 4 - Full Immersion</B> 
+<BR><UL>All input is passed to the shell, no MicroEmacs commands are interpreted and keys are passed straight to the shell window. This mode is used where none of the keys to be entered are to be interpreted by MicroEmacs. Note that you have to un-toggle mode 4 before you can swap buffers as this effectively locks the editor into the window. </UL>
+<P>To exit the shell then end the shell session using the normal exit command i.e. &quot;<TT>exit</TT>&quot; or &quot;<TT>C-d</TT>&quot; as normal and then close the buffer. A short cut &quot;<TT>C-c C-k</TT>&quot; is available to kill off the pipe. However, it is not recommended that this method is used as it effectively performs a hard kill of the buffer and attached process. </UL>
 <H2><B>UNIX </B></H2>
 <UL><P>The UNIX environment uses the native <B>pty</B> support of the operating system. The shell that is opened is determined by the conventional <TT>$SHELL</TT> environment variable. 
 <P>The shell window assumes that the user is running some sort of Emacs emulation on the command line (i.e. <TT>VISUAL=emacs</TT> for <B>ksh(1)</B>, <B>zsh(1)</B>, <B>bash(1)</B>, <B>tsch(1)</B>) and passes Emacs controls for command line editing. 
 <P>The shell window understands re-size operations and provides a limited decoding of the <I>termio</I> characters for a VT100 screen. From within the shell window it is possible to run the likes of <B>top(1)</B> correctly. It is even possible to run another MicroEmacs terminal session !! </UL>
 <H2><B>WINDOWS </B></H2>
-<UL><P>The Windows environment provides a very poor command shell facility, this is more of a fundamental problem with the operating system than anything else. Unfortunately NT is no better than Windows '95/'98, stemming from the fact that the Windows is not actually an O/S but a huge window manager, hindered by legacy issues of MS-DOS. 
+<UL><P>The Windows environment provides a very poor command shell facility, this is more of a fundamental problem with the operating system than anything else. Unfortunately NT/2K/XP are no better than Windows '95/'98, stemming from the fact that Microsoft Windows is actually a huge Window Manager (hindered by legacy issues of MS-DOS). 
 <P>For those familiar with the UNIX command shell then it is strongly recommended that the 
 <A HREF="m3mac033.html">cygwin(3)</A> BASH shell is used as an alternative. This is a far more responsive shell window and provides the familiar Emacs editing of the command line. 
-<P>The command shell under Windows is slow and very unresponsive, this would appear to be a problem with the <I>command.com</I> as the same problems are not apparent with the 
-<A HREF="m3mac033.html">cygwin</A> environment. However, the shell window is good for kicking off command line utilities (such as <I>make</I>), or any command line processes that generate output on <I>stdout</I> as all of the output is captured in the buffer window which can be scrolled backwards for post analysis. For this very reason it is more preferable to the standard MS-DOS box. 
+<P>The command shell under Microsoft Windows is slow and very unresponsive, this would appear to be a problem with the <I>command.com</I> as the same problems are not apparent with the 
+<A HREF="m3mac033.html">cygwin</A> environment. However, the shell window is good for kicking off command line utilities (such as <I>make</I>) or any command line processes that generates output on <I>stdout</I> as all of the output is captured in the buffer window which can be scrolled backwards for post analysis. For this very reason it is more preferable to a standard MS-DOS box. 
 <P>It is not possible to run any utilities that use embedded screen control characters as these are not interpreted by the editor. </UL>
 <H2>Changing the Shell </H2>
 <UL><P>The default shell that is executed is defined by the environment variable <B>$COMSPEC</B>. Where the user is using a different command shell (i.e. 4-DOS), then problems may arise if this is an old 16-bit executable. The shell that MicroEmacs executes may be overridden by setting the environment variable <B>$ME_ISHELL</B>. This is typically set in the 
@@ -54,7 +52,7 @@ ME_ISHELL=c:\windows\command.com
 </PRE></UL>
 </UL><H2>Bugs </H2>
 <UL><P><B>WinOldAp</B> 
-<BR><UL><B>Winoldap</B> is created by the Microsoft environment whenever a shell is created. On occasions where processes have terminated badly the user may be prompted to kill these off; this is the normal behaviour of Windows. It is strongly advised that the shell is always exited correctly (i.e. <TT>exit</TT>) before leaving the editor. The Windows operating system for '95/'98 is not particularly resilient to erroneous processes can bring the whole system down. I believe that NT does not suffer from these problems (much). </UL>
+<BR><UL><B>Winoldap</B> is created by the Microsoft environment whenever a shell is created. On occasions where processes have terminated badly the user may be prompted to kill these off; this is the normal behaviour of Windows. It is strongly advised that the shell is always exited correctly (i.e. <TT>exit</TT>) before leaving the editor. The Windows operating system for '95/'98 is not particularly resilient to erroneous processes and can bring the whole system down. NT/2K/XP do not appear to suffer from these problems (so much). </UL>
 <P><B>Locked Input</B> 
 <BR><UL>There are occasions after killing a process the editor appears to lock up. This is typically a case that the old application has not shut down correctly. Kill off the erroneous task (<TT>Alt-Ctrl-Del</TT> - <I>End Task</I>) then bring the editor under control using a few <TT>C-g</TT> 
 <A HREF="m2cmd000.html">abort-command(2)</A> sequences. </UL></UL>
@@ -67,7 +65,7 @@ ME_ISHELL=c:\windows\command.com
 <A HREF="m3mac033.html">cygwin(3)</A>, 
 <A HREF="m8fil006.html">me32.ini(8)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2004/02/22</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/10/04</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

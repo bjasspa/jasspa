@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>pipe-shell-command(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 pipe-shell-command(2)</H1>
@@ -34,7 +34,14 @@ pipe-shell-command(2)</H1>
 <P><B>0x08</B> 
 <BR><UL>Detach the launched process from MicroEmacs (win32 versions only). By default the command is launched as a child process of MicroEmacs with a new console. With this bit set the process is completely detached from MicroEmacs instead. </UL>
 <P><B>0x10</B> 
-<BR><UL>Disable the command name mangling (win32 versions only). By default any '<TT>/</TT>' characters found in the command name (the first argument only) are converted to '<TT>\</TT>' characters to make it Windows compliant. </UL></UL>
+<BR><UL>Disable the command name mangling (win32 versions only). By default any '<TT>/</TT>' characters found in the command name (the first argument only) are converted to '<TT>\</TT>' characters to make it Windows compliant. </UL>
+<P><B>0x20</B> 
+<BR><UL>Displays the new process window (win32 versions only), by default the window is hidden. </UL>
+<P><B>0x40</B> 
+<BR><UL>Raw mode, disable text annotation at the start of the pipe output. </UL>
+<P><B>0x100</B> 
+<BR><UL>When set the command-line to be run is the first line of buffer <I>string</I>, this feature can be used to overcome the default 1024 character command-line limit. When a multiple-line command-line is required, a negative argument can be given to 
+<A HREF="m2cmd076.html">insert-string(2)</A>. </UL></UL>
 <H2><B>NOTES </B></H2>
 <UL><P>On MS-DOS and <I>Win32s</I> the standard shell <B>command.com(1)</B> does not support the piping of <I>stderr</I> to a file. Other shells, such as <B>4Dos.com(1)</B>, do, using the command-line argument &quot;<TT>&gt;&amp;</TT>&quot;. If the environment variable &quot;<TT>ME_PIPE_STDERR</TT>&quot; is defined (the value is not used) then MicroEmacs assumes that the current shell supports piping of stderr. </UL>
 <H2><B>SEE ALSO </B></H2>
@@ -42,7 +49,7 @@ pipe-shell-command(2)</H1>
 <A HREF="m2cmd077.html">ipipe-shell-command(2)</A>, 
 <A HREF="m2cmd131.html">shell-command(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/07/28</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

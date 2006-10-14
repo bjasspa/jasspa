@@ -1,9 +1,9 @@
 <HTML>
-<HEAD><TITLE>indent-setup(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<HEAD><TITLE>buffer-setup(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
-indent-setup(3)</H1>
+buffer-setup(3)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
 <A HREF="amicr031.html">[Commands]</A>
@@ -13,49 +13,71 @@ indent-setup(3)</H1>
 </FONT>
 <HR>
 <H2><B>NAME </B></H2>
-<UL><P>indent-setup - Locally modify buffer indentation </UL>
+<UL><P>buffer-setup - Configure the current buffer settings </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><B>indent-setup</B> </UL>
+<UL><P><B>buffer-setup</B> </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P><B>indent-setup</B> provides a dialog interface for configuring the buffer indentation. <B>indent-setup</B> may be invoked from the main <I>Format</I> menu or directly from the command line using 
+<UL><P><B>buffer-setup</B> provides a dialog interface for configuring the buffer major mode, indentation and buffer modes. <B>buffer-setup</B> may be invoked from the main <I>Tools</I> menu or directly from the command line using 
 <A HREF="m2cmd047.html">execute-named-command(2)</A>. 
-<P>The <B>indent-setup</B> dialogue may be used to quickly reconfigure the indentation attributes of a given buffer. The indentation settings are only temporary and expire once the buffer has been closed or re-loaded. 
-<A HREF="m3osd010.html">buffer-setup(3)</A> should be used to associate user specific settings with different buffer types. 
+<P>The <B>buffer-setup</B> dialog may be used to quickly reconfigure the attributes of a given buffer. The settings are only temporary and expire once the buffer has been closed or re-loaded. 
+<A HREF="m3osd014.html">buffer-setup(3)</A> should be used to associate user specific settings with different buffer types. 
 <P>The following controls are available:- 
-<P><TT>Tab Width</TT> 
+<P><B>Major Mode</B> 
+<BR><UL>Associates a file type with the content of the file and is used to modify the buffer highlighting and content assisted controls if the file type has not been recognized correctly. Changing the major mode will cause the new file type template to be loaded and may cause the buffer key bindings to change. The default major mode settings are set with 
+<A HREF="m3osd010.html">major-mode-setup(3)</A>. </UL>
+<P><B>Indent Width</B> 
+<BR><UL>Defines the indent width to use when the TAB key is pressed, or following a nested construct in a auto-indent buffer. This entry modifies the 
+<A HREF="m5var091.html">$buffer-indent-width(5)</A> setting. The default indentation width is defined by the variable 
+<A HREF="m5var091.html">$indent-width(5)</A>. </UL>
+<P><B>Tab Width</B> 
 <BR><UL>The width of a rendered TAB character in spaces, modification of this value immediately changes the layout. This modifies the buffer width tab variable 
 <A HREF="m5var043.html">$buffer-tab-width(5)</A> the default is 8 (defined by 
 <A HREF="m5var042.html">$tab-width(5)</A>). Where files have been edited with a non-standard tab width then modification of this value (to typically 2 or 4) may correct the problem. To correct the styling of the buffer to be editor independent then the command 
 <A HREF="m3mac008.html">tabs-to-spaces(3)</A> may be used to change all of the tab characters to spaces once the tab width has been correctly set. </UL>
-<P><TT>Indent Width</TT> 
-<BR><UL>Defines the indent width to use when the TAB key is pressed, or following a nested construct in a auto-indent buffer. This entry modifies the 
-<A HREF="m5var091.html">$buffer-indent-width(5)</A> setting. The default indentation width is defined by the variable 
-<A HREF="m5var091.html">$indent-width(5)</A>. </UL>
-<P><TT>Use Tab Characters</TT> 
-<BR><UL>The user preference for performing indentation with a TAB character or SPACE character. This modifies the buffer 
-<A HREF="m2mod012.html">tab(2m)</A> mode setting. </UL>
-<P><TT>Use Auto Indentation</TT> 
+<P><B>Fill Column</B> 
+<BR><UL>A text layout variable, defines the maximum length of the line before wrapping occurs when a text paragraph is filled. This modifies the buffer fill column variable 
+<A HREF="m5var021.html">$buffer-fill-col(5)</A> the default is 78 (defined by 
+<A HREF="m5var021.html">$fill-col(5)</A>). </UL>
+<P><B>Fill Mode</B> 
+<BR><UL>A text layout variable, defines how paragraphs should be filled across multiple lines. This modifies the buffer fill mode variable 
+<A HREF="m5var028.html">$buffer-fill-mode(5)</A> the default is <B>B</B> which causes automatic detection of paragraph layout, defaulting to full justification against the left and right margins (defined by 
+<A HREF="m5var028.html">$fill-mode(5)</A>). </UL>
+<P><B>Use Auto Indentation</B> 
 <BR><UL>Toggles automatic indentation on an off, this setting is only present if the buffer type supports a 
 <A HREF="m2cmd033.html">indent(2)</A> scheme. Typically used for files such as 
 <A HREF="m9typ000.html">lex</A> and 
 <A HREF="m9typ000.html">yacc</A> which use a special syntax combination with C. </UL>
-<P><TT>Use Hilighting</TT> 
+<P><B>Use Hilighting</B> 
 <BR><UL>Toggles hilighting on and off, this setting is only present if the buffer type supports a 
-<A HREF="m2cmd069.html">hilight(2)</A> scheme. </UL></UL>
+<A HREF="m2cmd069.html">hilight(2)</A> scheme. </UL>
+<P><B>Buffer Modes</B> 
+<BR><UL>The modes of the buffer, refer to 
+<A HREF="amicr021.html">Operating Modes</A> for more information. </UL>
+<UL><P>A notable mode switch here is 
+<A HREF="m2mod012.html">tab(2m)</A> which changes the behavior of the <TT>TAB</TT> key, when set tabs are simulated with the insertion of spaces, when disabled literal tab characters are used. </UL></UL>
+<H2><B>HISTORY </B></H2>
+<UL><P>Prior to the 2006 release <B>buffer-setup</B> was previously called <B>indent-setup</B> and dealt with the indentation settings only. The 2006 release introduced the concept of <B>Major Mode</B>. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
-<A HREF="m3osd010.html">buffer-setup(3)</A>, 
+<A HREF="m3osd014.html">buffer-setup(3)</A>, 
 <A HREF="m2cmd047.html">execute-named-command(2)</A>, 
 <A HREF="m2cmd069.html">hilight(2)</A>, 
 <A HREF="m2cmd033.html">indent(2)</A>, 
+<A HREF="m3osd010.html">major-mode-setup(3)</A>, 
 <A HREF="m2cmd066.html">osd(2)</A>, 
 <A HREF="m3mac008.html">tabs-to-spaces(3)</A> 
+<A HREF="m5var021.html">$buffer-fill-col(5)</A>, 
+<A HREF="m5var028.html">$buffer-fill-mode(5)</A>, 
 <A HREF="m5var091.html">$buffer-indent-width(5)</A>, 
 <A HREF="m5var043.html">$buffer-tab-width(5)</A>, 
+<A HREF="m5var021.html">$fill-col(5)</A>, 
+<A HREF="m5var028.html">$fill-mode(5)</A>, 
 <A HREF="m5var091.html">$indent-width(5)</A>, 
-<A HREF="m5var042.html">$tab-width(5)</A>. </UL>
+<A HREF="m5var042.html">$tab-width(5)</A>. 
+<P>
+<A HREF="amicr021.html">Operating Modes</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2005/02/06</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/13</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

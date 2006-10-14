@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>hilight(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 hilight(2)</H1>
@@ -30,7 +30,7 @@ hilight(2)</H1>
 <H2>Hilight Scheme Creation </H2>
 <UL><P><I>0</I> <B>hilight</B> &quot;<I>hil-no</I>&quot; &quot;<I>flags</I>&quot; [ &quot;<I>nol</I>&quot; ] [ &quot;<I>buffer-scheme</I>&quot; [ &quot;<I>trunc-scheme</I>&quot; ] ] 
 <P>With an argument of <TT>0</TT>, <B>hilight</B> initializes or re-initializes the hilight scheme <I>hil-no</I> (1-255). Every buffer has a hilight scheme, the default is 0 which means no hi-lighting and only the 
-<A HREF="m5var024.html">$global-scheme(5)</A> etc. are used. The hilighting scheme must be defined before use and is used to specify how the buffer is to be hilighted. MicroEmacs '05 supports the following hilighting concepts:- <UL><P>
+<A HREF="m5var024.html">$global-scheme(5)</A> etc. are used. The hilighting scheme must be defined before use and is used to specify how the buffer is to be hilighted. MicroEmacs '06 supports the following hilighting concepts:- <UL><P>
 <LI><B>hilight string</B>, a user specified string is hilighted in any color scheme. 
 <LI><B>Tokens</B>, same as a hilight string except that the string must be enclosed in non alpha-numeric characters. 
 <LI><B>Start-of-line hilights</B>, the start of the hilight must be the first non-white character of the line. 
@@ -197,8 +197,8 @@ hilight&nbsp;1&nbsp;20&nbsp;&quot;/\\*&quot;&nbsp;&quot;*/&quot;&nbsp;&quot;&quo
 <BR><UL>The inverse character that matched the #th group token, i.e. NOT <TT>\1</TT>. </UL>
 <P><B>?</B> <B>+</B> <B>*</B> 
 <BR><UL>Matches 0 or 1, 1 or more and 0 or more of the previous character or character range respectively. </UL>
-<P><TT>\w \W \l \L \u \U \d \D \x \X \s \S</TT> 
-<BR><UL>Marches the special word characters (<TT>w</TT>)ord, (<TT>l</TT>)ower, (<TT>u</TT>)pper, (<TT>d</TT>)igit, (<TT>x</TT>)digit, white(<TT>s</TT>)pace. The uppercase letters are the inverse. (see 
+<P><TT>\a \A \w \W \l \L \m \u \U \d \D \h \H \x \s \S \e \g \n \r</TT> 
+<BR><UL>Marches (<TT>a</TT>)lphabetic lower, the special word characters (<TT>w</TT>)ord, (<TT>l</TT>)ower, (<TT>m</TT>)alhpanumeric, (<TT>u</TT>)pper, (<TT>d</TT>)igit, (<TT>h</TT>)exdigit (<TT>x</TT>xx) literal hexdecimal digit, white(<TT>s</TT>)pace, (<TT>e</TT>escape, (<TT>n</TT>)ewline, (<TT>g</TT>}bell, (<TT>r</TT>)formfeed. The uppercase letters are the inverse. (see 
 <A HREF="m2nar006.html">Regular Expressions</A>). 
 </UL><P>Following is a list of hilighting regular expression restrictions: 
 <UL><P>The number of characters to the left of a <B>\{</B> and to the right of a <B>\}</B> token must be fixed, i.e. the '<B>?</B>', '<B>+</B>' and '<B>*</B>' tokens cannot be used before this token. Consider the hilighting of a C function name defined to be a token at the start of a line followed by 0 or more spaces followed by a '('. The following hilight token looks valid but the variable space match is incorrect as it is to the right of the <B>\}</B>: <UL>
@@ -223,7 +223,7 @@ hilight&nbsp;.hilight.c&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&quot;^\\w+\}\\s(&quot;&nb
 <P><B>0x100</B> 
 <BR><UL>&quot;<TT>^????</TT>&quot; </UL></UL>
 <H2>Hilight Scheme Token Deletion </H2>
-<UL><P><I>-1</I> <B>hilight</B> &quot;<I>hil-no</I>&quot; &quot;<I>type</I>&quot; &quot;<I>token</I>&quot; With a -ve argument <B>hilight</B> deletes the given &quot;<I>token</I>&quot; from a hi-light color scheme identified by &quot;<I>hil-no</I>&quot;. The token &quot;<I>type</I>&quot; must also be specified to distinguish between normal and column token types. </UL>
+<UL><P><I>-1</I> <B>hilight</B> &quot;<I>hil-no</I>&quot; &quot;<I>type</I>&quot; &quot;<I>token</I>&quot; With a negative argument <B>hilight</B> deletes the given &quot;<I>token</I>&quot; from a hi-light color scheme identified by &quot;<I>hil-no</I>&quot;. The token &quot;<I>type</I>&quot; must also be specified to distinguish between normal and column token types. </UL>
 <H2><B>EXAMPLE </B></H2>
 <H2>Example 1 </H2>
 <UL><P>Hilighting a MicroEmacs character given in hex form, checking its validity (i.e. &quot;<TT>\x??</TT>&quot; where <TT>?</TT> is a hex digit): <UL>
@@ -280,7 +280,7 @@ hilight&nbsp;.hilight.man&nbsp;64&nbsp;&quot;_\CH\\(.\\)\CH\\1\CH\\1\CH\\1\\}[^\
 <A HREF="m5var047.html">$system(5)</A>, 
 <A HREF="m2cmd101.html">print-buffer(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2005/04/27</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/19</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

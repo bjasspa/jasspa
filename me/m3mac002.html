@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>save-all(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 save-all(3)</H1>
@@ -17,22 +17,24 @@ save-all(3)</H1>
 <H2><B>SYNOPSIS </B></H2>
 <UL><P><I>n</I> <B>save-all</B> </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P><B>save-all</B> cycles through all buffers, dictionaries and registry files writing back any changes made. For each buffer, dictionary or registry file which has been modified the user is prompted before the changes are saved, a value of <B>y</B> initiates the save, <B>n</B> skips the save. 
+<UL><P><B>save-all</B> cycles through all buffers, dictionaries, registry files and current session writing back any changes made. For each buffer, dictionary, session or registry file which has been modified the user is prompted before the changes are saved, a value of <B>y</B> initiates the save, <B>n</B> skips the save. 
 <P>The argument <I>n</I> can be used to change the default behavior of save-all described above, <I>n</I> is a bit based flag where:- 
 <P><B>0x01</B> 
 <BR><UL>Enables the user prompt before the file is saved (default). If this flag is not supplied then all modified files will automatically be written. </UL></UL>
 <H2><B>NOTES </B></H2>
 <UL><P><B>save-all</B> is a macro defined in <TT>me.emf</TT>, using commands 
 <A HREF="m2cmd150.html">save-some-buffers(2)</A>, 
-<A HREF="m2cmd112.html">save-dictionary(2)</A> and 
+<A HREF="m2cmd112.html">save-dictionary(2)</A>, 
+<A HREF="m3mac080.html">save-session(3)</A>, and 
 <A HREF="m2cmd008.html">save-registry(2)</A>. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
-<A HREF="m2cmd150.html">save-some-buffers(2)</A>, 
 <A HREF="m2cmd112.html">save-dictionary(2)</A>, 
-<A HREF="m2cmd008.html">save-registry(2)</A>. </UL>
+<A HREF="m2cmd008.html">save-registry(2)</A>, 
+<A HREF="m3mac080.html">save-session(3)</A>, 
+<A HREF="m2cmd150.html">save-some-buffers(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/19</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

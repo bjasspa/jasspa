@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>&ldel(4)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 &ldel(4)</H1>
@@ -37,9 +37,13 @@
 <P><B>&amp;lget</B> <I>list</I> <I>index</I> 
 <BR><UL>Returns the value of item <I>index</I> in <I>list</I>. If <I>index</I> is out of <I>list</I>'s range (0 &lt; index &lt;= # items in list) then an empty string is returned. </UL>
 <P><B>&amp;linsert</B> <I>list</I> <I>index</I> <I>value</I> 
-<BR><UL>Creates a new list from inserting <I>value</I> into <I>list</I> at point <I>index</I>, thereby pushing item <I>index</I> to <I>index</I>+1 etc. If <I>index</I> is 0 the <I>value</I> is inserted at the beginning of the list, if <I>index</I> is less than 0 or greater that the number of items in <I>list</I> then <I>value</I> is inserted at the end of the list. </UL>
+<BR><UL>Creates a new list from inserting <I>value</I> into <I>list</I> at point <I>index</I>, thereby pushing item <I>index</I> to <I>index</I>+1 etc. </UL>
+<UL><P>If <I>index</I> is <TT>0</TT>, <I>value</I> is inserted at the beginning of the list. </UL>
+<UL><P>If <I>index</I> is <TT>-2</TT>, <I>value</I> is inserted alphabetically (case sensitively) into the list. </UL>
+<UL><P>If <I>index</I> is <TT>-3</TT>, <I>value</I> is inserted alphabetically (case insensitively) into the list. </UL>
+<UL><P>Otherwise, if <I>index</I> is <TT>-1</TT> or greater that the number of items in <I>list</I> then <I>value</I> is inserted at the end of the list. </UL>
 <P><B>&amp;lset</B> <I>list</I> <I>index</I> <I>value</I> 
-<BR><UL>Creates a new list from setting <I>index</I> of <I>list</I> to <I>value</I>. If <I>index</I> is out of <I>list</I>'s range (0 &lt; index &lt;= # items in list) then <B>&amp;lset</B> behaves like <B>&amp;linsert</B>. </UL></UL>
+<BR><UL>Creates a new list from setting <I>index</I> of <I>list</I> to <I>value</I>. If <I>index</I> is out of <I>list</I>'s range (0 &lt; index &lt;= # items in list) then <B>&amp;lset</B> behaves like <B>&amp;linsert</B> and inserts alphabetically or at the end of the list. </UL></UL>
 <H2><B>EXAMPLE </B></H2>
 <UL><P>The following example moves item 4 in a list to position 2: <UL>
 <PRE>set-variable&nbsp;#l0&nbsp;&amp;lget&nbsp;%list&nbsp;4 
@@ -70,7 +74,7 @@ set-variable&nbsp;%list&nbsp;&amp;lins&nbsp;#l1&nbsp;2&nbsp;#l0
 <A HREF="m4fil002.html">&amp;mid(4)</A>, 
 <A HREF="m4fil002.html">&amp;cat(4)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/12</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

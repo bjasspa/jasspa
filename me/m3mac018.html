@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>etfinsrt(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 etfinsrt(3)</H1>
@@ -23,7 +23,8 @@ etfinsrt(3)</H1>
 <A HREF="m4fil024.html">&amp;find(4)</A> to locate and insert the required &quot;<I>template</I>.etf&quot; file. If successful, <B>etfinsrt</B> then replaces the following strings in the template: 
 <P><TT>$ASCII_TIME$</TT> 
 <BR><UL>To the current time. Inserts the output of 
-<A HREF="m3mac019.html">ascii-time(3)</A>. </UL>
+<A HREF="m3mac019.html">ascii-time(3)</A>. The default format of the time string may be changed with 
+<A HREF="m3mac019.html">.ascii-time.format(5)</A>. </UL>
 <P><TT>$BUFFER_NAME$</TT> 
 <BR><UL>To the buffer name. The name is capitalized, '.'s are replaced with '_' and any trailing &quot;<I>&lt;##&gt;</I>&quot; digits (used to make the buffer name unique) are removed. </UL>
 <P><TT>$COMPANY_NAME$</TT> 
@@ -53,11 +54,12 @@ etfinsrt(3)</H1>
 <A HREF="m2mod009.html">magic(2m)</A> mode is always used to perform the the search/replace so the replace strings should be appropriate for <B>magic</B>. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
+<A HREF="m3mac019.html">.ascii-time.format(5)</A>, 
 <A HREF="m5var002.html">$buffer-fhook(5)</A>, 
 <A HREF="m4fil024.html">&amp;find(4)</A>, 
 <A HREF="m3mac019.html">ascii-time(3)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2002/10/16</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/21</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

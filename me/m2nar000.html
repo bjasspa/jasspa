@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>languageTemplates(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 languageTemplates(2)</H1>
@@ -13,21 +13,21 @@ languageTemplates(2)</H1>
 </FONT>
 <HR>
 <H2><B>FILE LANGUAGE TEMPLATES </B></H2>
-<UL><P>MicroEmacs '05 provides a large range of macros and templates to deal with the most commonly occurring types of ASCII file that may be edited. However, there is a requirement for users to extend this capability to include more obscure file types, in addition to bespoke files found internally within organizations, or devised by the user. 
-<P>For each file type, MicroEmacs '05 may be tailored to recognize the file and modify it's hilighting, key binding configuration, osd display and indentation to accommodate the file. In addition, new shorthand macros may be introduced to help deal with the contents of the file. 
-<P>This section outlines the steps to be taken to integrate a new file language template into MicroEmacs '05. 
+<UL><P>MicroEmacs '06 provides a large range of macros and templates to deal with the most commonly occurring types of ASCII file that may be edited. However, there is a requirement for users to extend this capability to include more obscure file types, in addition to bespoke files found internally within organizations, or devised by the user. 
+<P>For each file type, MicroEmacs '06 may be tailored to recognize the file and modify it's hilighting, key binding configuration, osd display and indentation to accommodate the file. In addition, new shorthand macros may be introduced to help deal with the contents of the file. 
+<P>This section outlines the steps to be taken to integrate a new file language template into MicroEmacs '06. 
 <A HREF="m3mac064.html">buffer-init(3)</A> automates many of the operations defined below and it is suggested that this is a preferable method to add a new language template into MicroEmacs. </UL>
 <H2>The scope of the File Type </H2>
 <UL><P>The first step is to decide the scope of the file, this will determine where the file hook should be defined. The options are:- 
 <P><B>A standard file type not supported</B> 
-<BR><UL>If this is a standard file type not supported by MicroEmacs '05 then it should be added to <TT>me.emf</TT>, in addition 
+<BR><UL>If this is a standard file type not supported by MicroEmacs '06 then it should be added to <TT>me.emf</TT>, in addition 
 <A HREF="amicr038.html">contact us</A> and we will add it to the standard release. Any macro files associated with this file type should be available globally and are added to the MicroEmacs <I>macro</I> directory. </UL>
 <P><B>Local To your organization</B> 
-<BR><UL>If it is a file type local to your organization then it should be added to your <I>company</I>.emf file. Any macro files associated with the file type should be added to your local company MicroEmacs '05 directory. </UL>
+<BR><UL>If it is a file type local to your organization then it should be added to your <I>company</I>.emf file. Any macro files associated with the file type should be added to your local company MicroEmacs '06 directory. </UL>
 <P><B>Local to an individual</B> 
-<BR><UL>If this is a file type that is only used by a limited number of individuals then it should be added to the <I>user</I>.emf file. Any files associated with the file type are added to your local user MicroEmacs '05 directory. </UL></UL>
+<BR><UL>If this is a file type that is only used by a limited number of individuals then it should be added to the <I>user</I>.emf file. Any files associated with the file type are added to your local user MicroEmacs '06 directory. </UL></UL>
 <H2>Recognizing the File Type </H2>
-<UL><P>The next step to adding a new file type is to get MicroEmacs '05 to recognize the file as the new type. Recognition is performed by the 
+<UL><P>The next step to adding a new file type is to get MicroEmacs '06 to recognize the file as the new type. Recognition is performed by the 
 <A HREF="m2cmd202.html">File Hooks</A> which perform recognition on the file extension and/or the file content. The name of the file type must be determined, this is typically the name of the file prepended by <TT>hk</TT>. e.g. a file with extension <I>foo</I> uses the file <TT>hkfoo.emf</TT> for it's language specific definitions. 
 <P>Using the 
 <A HREF="m2cmd003.html">add-file-hook(2)</A> invocation the file recognition is bound to the file hook macro whenever the file type is loaded. The file hook is added to the appropriate global, company or user start up file as determined in step 1. The file hooks for file <I>foo</I> might be defined as follows, depending upon the recognition method:- 
@@ -52,10 +52,10 @@ languageTemplates(2)</H1>
 !emacro 
 ml-write&nbsp;&quot;[MicroEmacs&nbsp;foo&nbsp;file&nbsp;hook&nbsp;loaded]&quot; 
 </PRE></UL>
-<P>The file hook may be tested by exiting and re-loading MicroEmacs '05, or simply by executing the file containing the <TT>add-file-hook</TT> function. Once the file bindings are installed a <I>foo</I> file may be loaded and the hook message should be displayed. 
+<P>The file hook may be tested by exiting and re-loading MicroEmacs '06, or simply by executing the file containing the <TT>add-file-hook</TT> function. Once the file bindings are installed a <I>foo</I> file may be loaded and the hook message should be displayed. 
 <P>The best way to create a new file hook is to find an existing file type with similar support to the new file hook you wish to create and re-use the hook code to create the new one. </UL>
 <H2>Modifying an Existing file hook </H2>
-<UL><P>The standard file hooks supplied with MicroEmacs '05 should not be modified, typically a user will want to extend the repertoire of hi-lighting tokens to encompass locally defined programming libraries or syntactical extensions, in addition to extending support macros that are associated with the file type. In this case, an extension to the hook function is required. The hook file <B>my</B><I>XXX</I><B>.emf</B>, allows extensions to be made to the <B>hk</B><I>XXX</I><B>.emf</B>, without editing the original file. This may be considered to be an <I>include</I> file and is executed, if it exists, after the <B>hk</B> file has been executed. i.e. if the hook file <B>hkfoo.emf</B> is already defined and extensions are added to <B>myfoo.emf</B>. 
+<UL><P>The standard file hooks supplied with MicroEmacs '06 should not be modified, typically a user will want to extend the repertoire of hi-lighting tokens to encompass locally defined programming libraries or syntactical extensions, in addition to extending support macros that are associated with the file type. In this case, an extension to the hook function is required. The hook file <B>my</B><I>XXX</I><B>.emf</B>, allows extensions to be made to the <B>hk</B><I>XXX</I><B>.emf</B>, without editing the original file. This may be considered to be an <I>include</I> file and is executed, if it exists, after the <B>hk</B> file has been executed. i.e. if the hook file <B>hkfoo.emf</B> is already defined and extensions are added to <B>myfoo.emf</B>. 
 <P>Note that the <B>my</B><I>XXX</I><B>.emf</B> files do not typically include any <B>fhook-XXX</B> functions, the original <I>fhook</I> functions would be used. However, if a different buffer environment is required from the one created be the hook, such as a different setting of 
 <A HREF="m2mod012.html">tab(2m)</A> mode, the hook function should be copied to <B>my</B><I>XXX</I><B>.emf</B> and altered appropriately. 
 <P>Most extensions and changes to the buffer environment may be performed using <B>my</B><I>XXX</I><B>.emf</B>. If the extension macro file includes a macro definition <B>my-fhook-</B><I>XXX</I>, then <B>my-fhook</B><I>XXX</I> is automatically executed after <B>fhook</B><I>XXX</I> has been run. </UL>
@@ -443,7 +443,7 @@ el&nbsp;&quot;else\r\p\P&quot;
 <BR>
 <A HREF="m2cmd202.html">File Hooks</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
 <BR><I>Last Modified: 2004/01/17</I>
-<BR><I>Generated On: 2005/05/14</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

@@ -1,0 +1,26 @@
+<HTML>
+<HEAD><TITLE>FAQ(43) - ne; how can I enable line wrapping in NE ??</TITLE></HEAD>
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
+FAQ(43) - ne; how can I enable line wrapping in NE ??</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>QUESTION (43) </B></H2>
+<UL><P>ne; how can I enable line wrapping in NE ?? </UL>
+<H2><B>ANSWER </B></H2>
+<UL><P>The line wrapping feature is controlled by the wrap buffer-mode in ME but this feature is omitted in NE. To get the size of NE down many features have to be disabled including the wrap mode and fill-paragraph. 
+<P>To enable then you have to build your own version of NE with this enabled by changing the 2nd MEOPT_WORDPRO settings in &quot;emain.h&quot; to 1. Alternatively rename your ne.emf to me.emf and use 'me' instead of ne. 
+<P>Once it is built and you want to edit a text file then you need to enable WRAP and INDENT mode in the buffer for it to behave correctly. WRAP does the wrap to the next line and INDENT maintains the left indentation. fill-paragraph is present. 
+<P>
+<A HREF="amicr040.html">[FAQ Index]</A>. </UL>
+<HR>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/24</I>
+<BR><I>Generated On: 2006/10/07</I>
+</BODY></HMTL>

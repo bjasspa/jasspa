@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>comment-line(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 comment-line(3)</H1>
@@ -30,7 +30,7 @@ comment-line(3)</H1>
 <UL><P>The action of the <B>comment</B> commands are file type specific (comments in <B>C</B> are <TT>/* ... to ... */</TT> where as MicroEmacs macro file comments are <TT>; ... to the end of line</TT>) so the commands must be configured for each file type (see the NOTES section below). The configuration is automatically performed by almost all the standard file hooks released with MicroEmacs by the file hook so these commands should be fully functional. 
 <P><B>comment-line</B> comments out the current and next <I>n</I>-1 lines (default when <I>n</I> is omitted is to comment out just the current line). The cursor is then moved to the start of the next line. <B>uncomment-line</B> behaves differently depending on whether the file type terminates a comment with an end token or simply by the end of the line. If an end token is used then <B>uncomment-line</B> removes the current and next <I>n</I> comments. If the end of line is used <B>uncomment-line</B> removes the first comment on the current and next <I>n-1</I> lines. 
 <P><B>comment-to-end-of-line</B> inserts <I>comment-pad</I>s (see NOTES) up-to the 
-<A HREF="m5var021.html">$fill-col(5)</A> and then terminates the comment with the <I>comment-end</I> string. <B>comment-restyle</B> reformats the text within the comment, filling text lines to the <B>$fill-col</B> and regenerating any boxing and divide lines. 
+<A HREF="m5var021.html">$buffer-fill-col(5)</A> and then terminates the comment with the <I>comment-end</I> string. <B>comment-restyle</B> reformats the text within the comment, filling text lines to the <B>$buffer-fill-col</B> and regenerating any boxing and divide lines. 
 <P><B>comment-start</B> opens a new &quot;<B>*comment*</B>&quot; buffer which is configured for writing a text comment, the user can then type in the comment with all the benefits of MicroEmacs in a plain text editor. Once the comment is complete use the <B>comment-end</B> command to insert the comment into the source file, this comment is locally bounded to &quot;<B>C-c C-c</B>&quot;. The styling of the comment is controlled by the <I>comment-flag</I> setting (see NOTES). </UL>
 <H2><B>NOTES </B></H2>
 <UL><P>Consider the structure of a box comment to be as follows: <UL>
@@ -90,7 +90,7 @@ comment-line(3)</H1>
 <A HREF="m3mac064.html">buffer-init(3)</A>, 
 <A HREF="m2cmd202.html">File Hooks</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2004/03/11</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/13</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

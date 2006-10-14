@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>gdiff(3f)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 gdiff(3f)</H1>
@@ -19,15 +19,49 @@ gdiff(3f)</H1>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P>MicroEmacs may be executed from the command line to invoke the <I>Graphical Difference</I> 
 <A HREF="m3mac044.html">gdiff(3)</A> macro, showing the difference(s) between two files. 
-<P>The editor is invoked in <B>gdiff</B> mode and shows the difference between the two files on the command line. </UL>
+<P>The editor is invoked in <B>gdiff</B> mode and shows the difference between the two files on the command line. The two files are presented side by side and the lines are matched together, the windows are effectively locked together, scrolling one window causes the other window to scroll. 
+<P>The changes are shown as color coded regions of highlighted text. Each block (or line) has to be accepted or rejected by the user, when all blocks have been accepted then the buffer may be written out merging the changes from both files depending on the accept/reject status. Blocks which have been accepted are typically shown in green, the rejected lines are shown in red. </UL>
+<H2>Key Mapping </H2>
+<UL><P>The keyboard mapping in <B>gdiff</B> mode is defined as follows: 
+<P><B>esc-h</B> 
+<BR><UL>Help information. </UL>
+<P><B>C-up</B>/<B>p</B> 
+<BR><UL>Advance to the previous difference. </UL>
+<P><B>C-down</B>/<B>n</B> 
+<BR><UL>Advance to the next difference. </UL>
+<P><B>esc-up</B>/P 
+<BR><UL>Advance to the previous unassigned difference. </UL>
+<P><B>esc-down</B>/N 
+<BR><UL>Advance to the next unassigned difference. </UL>
+<P><B>g</B> 
+<BR><UL>Globally select all of the differences from the current window as assigned. </UL>
+<P><B>G</B> 
+<BR><UL>Globally un-select all of the assigned differences. </UL>
+<P><B>r</B>/<B>space</B>/<B>return</B>/<B>left-mouse</B> 
+<BR><UL>Selects the current difference, only operates within a highlighted difference region. </UL>
+<P><B>R</B> 
+<BR><UL>Un-selects the current difference, only operates within a highlighted difference region. </UL>
+<P><B>l</B> 
+<BR><UL>Selects the current line in a highlighted region for assignment. </UL>
+<P><B>L</B> 
+<BR><UL>Unselects the current line in a highlighted region for assignment. </UL>
+<P><B>save-buffer</B> 
+<BR><UL>Saves the current buffer, all of the assignment changes are merged and written out to the existing buffer. </UL>
+<P><B>write-buffer</B> 
+<BR><UL>Saves the current buffer after merging all of the and assignment changes and prompts the user for the name of a new buffer. </UL>
+<P><B>left</B>/<B>right</B> 
+<BR><UL>Scrolls the buffer left or right. </UL>
+<P><B>kill-buffer</B>/<B>C-x C-c</B> 
+<BR><UL>Quits <B>gdiff</B>, the user is prompted to save changes. </UL></UL>
 <H2><B>NOTES </B></H2>
 <UL><P>The macro is defined in file <TT>gdiff.emf</TT>. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m3mac044.html">gdiff(3)</A>, 
-<A HREF="m3mac024.html">start-up(3)</A>. </UL>
+<A HREF="m3mac024.html">start-up(3)</A>, 
+<A HREF="m3mac083.html">xdiff(3)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/20</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>goto-matching-fence(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 goto-matching-fence(2)</H1>
@@ -15,11 +15,20 @@ goto-matching-fence(2)</H1>
 <H2><B>NAME </B></H2>
 <UL><P>goto-matching-fence - Move the cursor to specified line </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><B>goto-matching-fence</B> (<B>esc C-f</B>)&nbsp; </UL>
+<UL><P><I>n</I> <B>goto-matching-fence</B> (<B>esc C-f</B>)&nbsp; </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P><B>goto-matching-fence</B> moves the cursor to the opposing fence character of the character currently under the cursor. The set of fence characters include <TT>[]</TT>, <TT>{}</TT> and <TT>()</TT>. i.e. if the character under the cursor is `<TT>{</TT>' then <B>goto-matching-fence</B> moves the cursor to the opening fence `<TT>}</TT>', and visa versa. 
-<P><B>goto-matching-fence</B> can also be used to move the cursor to matching C/C++ <TT>#if</TT>, <TT>#elif</TT>, <TT>#else</TT> and <TT>#endif</TT> constructs, cycling through them in the given order. 
-<P>When the 
+<UL><P><B>goto-matching-fence</B> moves the cursor to the opposing fence character of the character currently under the cursor. The set of fence characters include <TT>[ ... ]</TT>, <TT>{ ... }</TT>, <TT>( ... )</TT> and <TT>&lt; ... &gt;</TT>. i.e. if the character under the cursor is `<TT>{</TT>' then <B>goto-matching-fence</B> moves the cursor to the matching closing `<TT>}</TT>' fence, and visa versa. 
+<P><B>goto-matching-fence</B> can also be used to move to a matching <TT>' ... '</TT> and <TT>&quot; ... &quot;</TT> fence, but, as the start and end fence is the same, bit <TT>0x04</TT> must be used to indicate whether the current fence is the open or close fence, see below. 
+<P><B>goto-matching-fence</B> can also be used to move the cursor between the start and end of a C/C++ <TT>/* ... */</TT> style comment. It can also be used to move to matching C/C++ <TT>#if</TT>, <TT>#elif</TT>, <TT>#else</TT> and <TT>#endif</TT> constructs, cycling through them in the given order. 
+<P>The numeric argument <I>n</I> is used to modify the default behavior of the command, where the bits are defined as follows: 
+<P><B>0x01</B> 
+<BR><UL>When this bit is set (the default) the terminal bell is rung if the matching fence cannot be found. </UL>
+<P><B>0x02</B> 
+<BR><UL>When this bit is set the command moves the cursor to the matching fence, updates the screen and pauses for 
+<A HREF="m5var023.html">$pause-time(5)</A> before moving hte cursor back again. When omitted the cursor is simply moved to the matching fence. </UL>
+<P><B>0x04</B> 
+<BR><UL>When this bit is set the fence the cursor is current at is treated as the close fence so <B>goto-matching-fence</B> moves backwards through the file looking for the matching open fence. When this bit is omitted the fence is assumed to be the open fence, this bit is only used for <TT>'</TT> and <TT>&quot;</TT> type fences. 
+</UL><P>When the 
 <A HREF="m2mod032.html">fence(2m)</A> buffer mode is enabled the matching open fence is automatically displayed when the closing fence is typed. The length of time the matching fence is displayed for can be controlled by the 
 <A HREF="m5var023.html">$pause-time(5)</A> variable. </UL>
 <H2><B>SEE ALSO </B></H2>
@@ -28,7 +37,7 @@ goto-matching-fence(2)</H1>
 <A HREF="m5var023.html">$pause-time(5)</A>, 
 <A HREF="m2cmd060.html">goto-line(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2005/01/01</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/03/09</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

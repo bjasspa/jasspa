@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>user-setup(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 user-setup(3)</H1>
@@ -25,8 +25,8 @@ user-setup(3)</H1>
 <BR><UL>Saves the changes made to the users registry file, i.e. &quot;<I>&lt;Log-Name&gt;</I><TT>.erf</TT>&quot; but does not re-initialize MicroEmacs. Some changes, such as color scheme changes, only take effect when the <B>Current</B> button is used or when MicroEmacs is restarted. </UL>
 <P><TT>Current</TT> 
 <BR><UL>Makes the current user and the changes made Current to this MicroEmacs session, dismissing the <B>user-setup</B> dialog and reinitializing MicroEmacs. This also saves the registry file out! </UL>
-<P><TT>Exit</TT> 
-<BR><UL>Quits user-setup, if changes where not <B>Save</B>d or made <B>Current</B> they will be lost. 
+<P><TT>Cancel</TT> 
+<BR><UL>Quits <B>user-setup</B>, if changes where not <B>Save</B>d or made <B>Current</B> they will be lost. 
 </UL><P>The following pages, which appear in the dialog, are defined as follows:- </UL>
 <H2>Start-up </H2>
 <UL><P><TT>User Name</TT> 
@@ -42,7 +42,7 @@ user-setup(3)</H1>
 <BR><UL>Sets the company setup macro file name which is executed at start-up. A company macro file should contain all company wide standard settings such as <TT>%company-name</TT>, No <TT>.emf</TT> extension is supplied. See 
 <A HREF="m2nar002.html">Setting Up a Company Profile</A> for more information. </UL>
 <P><TT>Emulation</TT> 
-<BR><UL>Sets an emulation mode which changes the behaviour on MicroEmacs to emulate another editor/program; this is done by executing a macro file at start-up. An emulation macro file should contain the macro code required to simulate the environment of the other editor. MicroEmacs '05 is released with four emulation modes, GNU Emacs (see macro file <TT>meemacs.emf</TT>), CUA (Windows style key bindings and interface, see <TT>mecua.emf</TT>), MicroEmacs v3.8 (<TT>meme3_8.emf</TT>) and NEdit v5 which is at best a demonstration of what can be achieved via the emulation support (defined in <TT>menedit.emf</TT>). See 
+<BR><UL>Sets an emulation mode which changes the behaviour on MicroEmacs to emulate another editor/program; this is done by executing a macro file at start-up. An emulation macro file should contain the macro code required to simulate the environment of the other editor. MicroEmacs '06 is released with four emulation modes, GNU Emacs (see macro file <TT>meemacs.emf</TT>), CUA (Windows style key bindings and interface, see <TT>mecua.emf</TT>), MicroEmacs v3.8 (<TT>meme3_8.emf</TT>) and NEdit v5 which is at best a demonstration of what can be achieved via the emulation support (defined in <TT>menedit.emf</TT>). See 
 <A HREF="m2cmd201.html">Compatibility</A> for more information on emulation. </UL>
 <P><TT>Rebind Home Keys</TT> 
 <BR><UL>When enabled the following key bindings are created to ease frustration, particularly for MS users: 
@@ -99,7 +99,7 @@ user-setup(3)</H1>
 <A HREF="m2mod012.html">tab(2m)</A> and 
 <A HREF="m2mod014.html">undo(2m)</A>, any buffers created will inherit the state of these modes. However, as changing these modes directly effects only the global modes, any existing buffers (including ones re-created using the <TT>-c</TT> command-line option, see 
 <A HREF="m1cmd000.html">me(1)</A>) will not be effect by the setting of these modes. For them to take effect, the buffers should be reloaded. These modes can be changed on a per file type basis using the command 
-<A HREF="m3osd010.html">buffer-setup(3)</A>, also some file hooks override these global settings, such as the 
+<A HREF="m3osd014.html">buffer-setup(3)</A>, also some file hooks override these global settings, such as the 
 <A HREF="m9typ005.html">makefile(9)</A> hook which overrides the <B>tab</B> mode. This indirectly executes 
 <A HREF="m2cmd005.html">global-mode(2)</A> to set the required modes. </UL>
 <P><TT>Auto-Save Time</TT> 
@@ -163,14 +163,14 @@ user-setup(3)</H1>
 <BR><UL>Enables the drawing of visible white spaces, i.e. space, tab and new-line characters. This indirectly sets bit <TT>0x80000</TT> of the 
 <A HREF="m5var047.html">$system(5)</A> variable. </UL>
 <P><TT>Enable Toolbar</TT> 
-<BR><UL>Enables the Toolbar - configurable, managed windows giving easy access to many features and tools. When enabled the toolbar is opened and displayed at start-up, when disabled the toolbar is not displayed but it can be opened by simply executing the 
+<BR><UL>Enables the Toolbar - configurable, managed windows giving easy access to many features and tools. When enabled the toolbar is opened and displayed at start-up, when disabled the toolbar is not displayed but it can be opened (or closed) by simply executing the 
 <A HREF="m3mac066.html">toolbar(3)</A> command. </UL>
 <P><TT>Client Server</TT> 
 <BR><UL>The client/server enables the file based external macro command driver to be enabled - see 
 <A HREF="m2nar005.html">Client-Server</A>. This by default is disabled, when enabled it is used by 
 <A HREF="m1cmd000.html">command-line</A> options <B>-m</B> and <B>-o</B>. </UL>
 <P><TT>DOS File Names</TT> 
-<BR><UL>DOS has a restricted 8.3 file naming system (i.e. &quot;<TT>BBBBBBBB.XXX</TT>&quot;), if this option is enabled the MicroEmacs '05 will adhere to this system for auto-save and backup file names whenever possible. See 
+<BR><UL>DOS has a restricted 8.3 file naming system (i.e. &quot;<TT>BBBBBBBB.XXX</TT>&quot;), if this option is enabled the MicroEmacs '06 will adhere to this system for auto-save and backup file names whenever possible. See 
 <A HREF="m5var000.html">$auto-time(5)</A> for more information on the naming convention used. This indirectly sets bit 0x400 of the 
 <A HREF="m5var047.html">$system(5)</A> variable. </UL>
 <P><TT># Backups</TT> 
@@ -187,7 +187,7 @@ user-setup(3)</H1>
 <PRE>{...}&nbsp;&nbsp;&nbsp;(...)&nbsp;&nbsp;&nbsp;[...] 
 </PRE></UL>
 <UL><P>Jumping to the opening fence only occurs when the closing brace is typed, whereas the drawing of matching fences occurs whenever the cursor is on an open fence or one character past the close fence. When this option is set to &quot;<TT>Never Display</TT>&quot; the 
-<A HREF="m3osd010.html">buffer-setup(3)</A> setting is ignored. </UL>
+<A HREF="m3osd014.html">buffer-setup(3)</A> setting is ignored. </UL>
 <P><TT>Scroll Bars</TT> 
 <BR><UL>Selects the scroll bar support required. When Splitter is enabled, the first character of the scroll bar and mode-line is a split character used for splitting the window into two using the mouse. This indirectly sets the 
 <A HREF="m5var055.html">$scroll-bar(5)</A> variable. </UL>
@@ -243,7 +243,7 @@ user-setup(3)</H1>
 <BR><UL>Sets the windows font name and size. This indirectly executes 
 <A HREF="m2cmd027.html">change-font(2)</A> with the given font name. MicroEmacs may only use a Fixed Mono Font, either an OEM font as used by the MS-DOS command line, or the more conventional ANSI fonts. The fonts are selected using the <B>Change</B> <B>Font</B> button which invokes a dialog to allow the available fonts to be selected. True-Type mono fonts such as <TT>Courier New</TT> or <TT>Lucida Console</TT> are typically used. </UL>
 <P><TT>Weight &amp; Size</TT> 
-<BR><UL>Allows the size and weight of the font to be selected, specified as <I>weight</I>, <I>width</I> and <I>height</I>. The <I>weight</I> is typically 4, this corresponds to a regular weighting, 7 is bold. <I>width</I> is the width of the font in pixels, this may be 0 when the height is specified as -ve. <I>height</I> is the height of the font, typically a -ve value (where the <I>width</I> is 0), which produces a proportionally sized font, values of in the range -11 .. -14 generally produce reasonably sized fonts. The <I>hight</I> and <I>width</I> may be specified as +ve values and allow explicit font dimensions to be specified, generally used to achieve a precise font size requirement. </UL>
+<BR><UL>Allows the size and weight of the font to be selected, specified as <I>weight</I>, <I>width</I> and <I>height</I>. The <I>weight</I> is typically 4, this corresponds to a regular weighting, 7 is bold. <I>width</I> is the width of the font in pixels, this may be 0 when the height is specified as negative. <I>height</I> is the height of the font, typically a negative value (where the <I>width</I> is 0), which produces a proportionally sized font, values of in the range -11 .. -14 generally produce reasonably sized fonts. The <I>hight</I> and <I>width</I> may be specified as positive values and allow explicit font dimensions to be specified, generally used to achieve a precise font size requirement. </UL>
 <P><TT>Fonts</TT> 
 <BR><UL>See <TT>Use Fonts</TT> in <B>Platform UNIX Setup</B> above. </UL>
 <P><TT>Display Char Set</TT> 
@@ -335,7 +335,7 @@ user-setup(3)</H1>
 <P><TT>Color Scheme</TT> 
 <BR><UL>See <B>Platform UNIX Setup</B> above. </UL></UL>
 <H2>Mouse </H2>
-<UL><P>The mouse device creates keys in a similar way to regular keyboard keys and, like keyboard keysm they must be bound before they are used. MicroEmacs '05 does not have the mouse functionality hard coded into the editor, it provides a macro interface to the mouse for ultimate flexibility and a set of default functionality which can be bound to the mouse in a variety of ways. 
+<UL><P>The mouse device creates keys in a similar way to regular keyboard keys and, like keyboard keysm they must be bound before they are used. MicroEmacs '06 does not have the mouse functionality hard coded into the editor, it provides a macro interface to the mouse for ultimate flexibility and a set of default functionality which can be bound to the mouse in a variety of ways. 
 <P>All the mouse controlling macros are stored in <TT>mouse.emf</TT> and <TT>mouseosd.emf</TT> although some buffers have local functionality over-rides, such as 
 <A HREF="m3mac027.html">file-browser(3)</A>. The user can expand the range of mouse functionality but how this is achieved is beyond the scope of this documentation. 
 <P>The <B>user-setup</B> dialog allows the user to configure the mouse to use the default functionality, as follows:- 
@@ -482,7 +482,7 @@ user-setup(3)</H1>
 <P>All Buffers - <TT>Save</TT> and <TT>Prompt Before Saving</TT> 
 <BR><UL>If <TT>Save All Buffers</TT> is enabled, all edited buffers will be automatically saved before executing the tool. This is particularly useful when the tool may operate on multiple files (e.g. compilation of a project). If <TT>Prompt</TT> is also enabled the user will be prompted before each file is saved. </UL></UL>
 <H2>E-Mail </H2>
-<UL><P>MicroEmacs '05 provides a simple E-Mail manager, see 
+<UL><P>MicroEmacs '06 provides a simple E-Mail manager, see 
 <A HREF="m3mac028.html">vm(3)</A> for more information and example entries. It must be stressed that <B>vm</B> has only been tested in one environment, caution should be used as system differences may cause problems, such as loss of data, which the author does not except any responsibility for. 
 <P>The <B>E-Mail Setup</B> dialog configures a user to use part or all of the <B>vm</B> E-Mail manager, as follows:- </UL>
 <H2>Platform ALL Mail Setup </H2>
@@ -526,12 +526,13 @@ user-setup(3)</H1>
 <A HREF="m2nar003.html">User Profiles</A>, 
 <A HREF="m2nar002.html">Company Profiles</A>, 
 <A HREF="m2nar001.html">Installation</A>, 
-<A HREF="m3osd010.html">buffer-setup(3)</A>, 
+<A HREF="m3osd014.html">buffer-setup(3)</A>, 
+<A HREF="m3mac084.html">change-scheme(3)</A>, 
 <A HREF="m3osd005.html">scheme-editor(3)</A>, 
 <A HREF="m5var088.html">$user-name(5)</A>, 
 <A HREF="m5var089.html">$user-path(5)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2005/02/10</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/21</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

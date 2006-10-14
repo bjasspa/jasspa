@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>macroWriting(4)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 macroWriting(4)</H1>
@@ -19,7 +19,9 @@ macroWriting(4)</H1>
 <H2>Starting to write Macros </H2>
 <UL><P>For new users to MicroEmacs writing macros can be quite daunting, some of the macros shipped with MicroEmacs are complex and have evolved over many years. Beginners should start with simple macros which has verifiable output and can be performed interactively. This makes the task of writing and testing easier, some of the <I>behind the scene</I> macros like the mouse driver and auto-spell checker are difficult to get working and requires a greater understanding of MicroEmacs and experience in macro debugging. 
 <P>A good starting point is to try to write a macro to do something that you find yourself doing all the time, for example reread-file, write-region etc. 
-<P><B>TIP:</B> 
+<P><B>Escape Sequences</B> 
+<BR><UL>The backslash character '<TT>\</TT>' is an escape sequence in MicroEmacs macro files, therefore any backslash character that appears in a macro command must be also escaped. i.e. '\' will become '\\' when placed in a macro file. </UL>
+<P><B>Editor Control</B> 
 <BR><UL>Remember when you write a macro you are placing the editor in control of your macro, when testing a new macro then start a new MicroEmacs session or make sure that if things go wrong you will not loose any work. If you loose control of the editor then <B>abort</B> (<TT>C-g</TT>) will typically regain control again. </UL></UL>
 <H2>Developing your First Macro </H2>
 <UL><P>In the following example then we walk through the steps to create a macro that saves a region of text to a file (i.e. the text between <B>point</B> and <B>mark</B>). The resultant macro will be called <B>write-region</B>, note that this macro already exists in MicroEmacs. 
@@ -399,7 +401,7 @@ write-buffer&nbsp;#l1
 <BR>
 <A HREF="m2nar012.html">MicroEmacs Macro Language at a Glance</A> </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2005/02/19</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/13</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

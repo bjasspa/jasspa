@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>reyank(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 reyank(2)</H1>
@@ -19,6 +19,7 @@ reyank(2)</H1>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P>Every region killed goes onto a stack, with the most recent at the top. Immediately after yanking text out into the current buffer using 
 <A HREF="m2cmd146.html">yank(2)</A>, the user may <B>reyank</B> which deletes the region just yanked and replaces it with <I>n</I> insertions of the next region on the kill stack. Another call to reyank deletes that region and replaces it with the next in the stack etc. 
+<P>The default behavior of <B>reyank</B> is to wrap around the kill chain in a loop (i.e. returns to the start of the list when the end of the kill chain is reached). If a negative argument <I>n</I> is specified then <B>reyank</B> fails when the end of the kill chain is reached rather than looping back to the start of the list. 
 <P>The last 15 kills are stored. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
@@ -27,7 +28,7 @@ reyank(2)</H1>
 <A HREF="m2cmd121.html">set-mark(2)</A>, 
 <A HREF="m2cmd146.html">yank(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/19</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

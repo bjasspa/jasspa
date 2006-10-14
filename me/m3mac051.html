@@ -1,9 +1,9 @@
 <HTML>
-<HEAD><TITLE>display-white-chars(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<HEAD><TITLE>display-whitespaces(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
-display-white-chars(3)</H1>
+display-whitespaces(3)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
 <A HREF="amicr031.html">[Commands]</A>
@@ -13,26 +13,27 @@ display-white-chars(3)</H1>
 </FONT>
 <HR>
 <H2><B>NAME </B></H2>
-<UL><P>display-white-chars - Toggle the displaying of white characters </UL>
+<UL><P>display-whitespaces - Toggle the displaying of white characters </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><B>display-white-chars</B> </UL>
+<UL><P><B>display-whitespaces</B> </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P><B>display-white-chars</B> toggles the displaying of white characters in the main display. By default white characters, space tab and new-lines, are represented with invisible characters such as one or more '<TT> </TT>'s for spaces and tabs and text moving to the next line for new-lines. The user can make this characters become 'visible' using this function. 
+<UL><P><B>display-whitespaces</B> toggles the displaying of white characters in the main display. By default white characters, space tab and new-lines, are represented with invisible characters such as one or more '<TT> </TT>'s for spaces and tabs and text moving to the next line for new-lines. The user can make this characters become 'visible' using this function. 
 <P>When this function is first called it toggle enables the displaying of these characters, other characters are drawn in their place to make them visible. A subsequent call will disable the displaying of them. </UL>
 <H2><B>NOTES </B></H2>
-<UL><P><B>display-white-chars</B> is a macro implemented in <TT>misc.emf</TT> and uses bit <TT>0x80000</TT> of the 
+<UL><P><B>display-whitespaces</B> is a macro implemented in <TT>misc.emf</TT> and uses bit <TT>0x80000</TT> of the 
 <A HREF="m5var047.html">$system(5)</A> variable. 
 <P>The displaying of white characters can be enabled or disabled at start-up using 
 <A HREF="m3osd000.html">user-setup(3)</A>. 
 <P>This feature may be more confusing on some terminals due to the lack of characters available for displaying the white characters. The characters used when displaying white characters are defined in the variable 
-<A HREF="m5var051.html">$window-chars(5)</A>. </UL>
+<A HREF="m5var051.html">$window-chars(5)</A>. 
+<P>The macro <B>display-white-chars</B> was renamed to <B>display-whitespaces</B> in September 2006. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m5var047.html">$system(5)</A>, 
 <A HREF="m3osd000.html">user-setup(3)</A>, 
 <A HREF="m5var051.html">$window-chars(5)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/09/06</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

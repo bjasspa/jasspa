@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>&cat(4)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 &cat(4)</H1>
@@ -31,13 +31,13 @@
 <P><B>&amp;cat</B> <I>str1</I> <I>str2</I> 
 <BR><UL>Concatenate two string <I>str1</I> with <I>str2</I> to form a new string. i.e. <I>str1str2</I> </UL>
 <P><B>&amp;lef</B> <I>str</I> <I>len</I> 
-<BR><UL>Return <I>len</I> leftmost characters from <I>str</I>. If <I>str</I> length is shorter than <I>len</I> then the string itself is returned. A <I>len</I> of zero returns the empty string. </UL>
+<BR><UL>Return <I>len</I> leftmost characters from <I>str</I>. If <I>str</I> length is shorter than <I>len</I> then the string itself is returned. A <I>len</I> of zero returns the empty string. A negative <I>len</I> returns all but the 0-<I>len</I> rightmost characters from <I>str</I>. </UL>
 <P><B>&amp;rig</B> <I>str</I> <I>index</I> 
 <BR><UL>Returns the rightmost characters of string <I>str</I> from index <I>index</I>. This function causes some confusion, consider <B>&amp;lef</B> and <B>&amp;rig</B> to be the string equivalents of their integer counterparts 
 <A HREF="m4fil001.html">&amp;div</A> and 
-<A HREF="m4fil001.html">&amp;mod</A>; <B>&amp;rig</B> returns the remainder of the equivalent <B>&amp;lef</B> function. Invocation with <I>index</I> set to zero returns <I>str</I>. </UL>
-<P><B>&amp;mid</B> <I>index</I> <I>len</I> 
-<BR><UL>Extracts a sub-string from string <I>str</I>, starting at position <I>index</I> of length <I>len</I>. </UL>
+<A HREF="m4fil001.html">&amp;mod</A>; <B>&amp;rig</B> returns the remainder of the equivalent <B>&amp;lef</B> function. Invocation with <I>index</I> set to zero returns <I>str</I>. A negative <I>index</I> returns the 0-<I>index</I> rightmost characters from <I>str</I>. </UL>
+<P><B>&amp;mid</B> <I>str</I> <I>index</I> <I>len</I> 
+<BR><UL>Extracts a sub-string from string <I>str</I>, starting at position <I>index</I> of length <I>len</I>. A negative <I>index</I> extracts the string starting from 0-<I>index</I> from the end of <I>str</I> with a length of <I>len</I>. </UL>
 <P><B>&amp;len</B> <I>str</I> 
 <BR><UL>Returns the integer length of the string (number of characters). </UL>
 <P><B>&amp;slower</B> <I>str</I> 
@@ -73,10 +73,13 @@ set-variable&nbsp;%foo&nbsp;&amp;rig&nbsp;%foo&nbsp;1
 </PRE></UL>
 <P>To retrieve the rightmost character from the string: <UL>
 <PRE>set-variable&nbsp;%foo&nbsp;&quot;abcdef&quot; 
+;&nbsp;using&nbsp;negative&nbsp;argument 
+set-variable&nbsp;%result&nbsp;&amp;rig&nbsp;%foo&nbsp;-1 
+;&nbsp;using&nbsp;&amp;len 
 set-variable&nbsp;%result&nbsp;&amp;rig&nbsp;%foo&nbsp;&amp;sub&nbsp;&amp;len&nbsp;%foo&nbsp;1 
-</PRE></UL>
-<P>or the same result could be achieved using <B>&amp;mid</B>: <UL>
-<PRE>set-variable&nbsp;%result&nbsp;&amp;mid&nbsp;%foo&nbsp;&amp;sub&nbsp;&amp;len&nbsp;%foo&nbsp;1&nbsp;1 
+;&nbsp;using&nbsp;&amp;mid&nbsp;to&nbsp;do&nbsp;the&nbsp;same&nbsp;thing 
+set-variable&nbsp;%result&nbsp;&amp;mid&nbsp;%foo&nbsp;-1&nbsp;1 
+set-variable&nbsp;%result&nbsp;&amp;mid&nbsp;%foo&nbsp;&amp;sub&nbsp;&amp;len&nbsp;%foo&nbsp;1&nbsp;1 
 </PRE></UL>
 <P>To get an input string from the user which is free of spaces at the start and end: <UL>
 <PRE>set-variable&nbsp;%result&nbsp;&amp;trb&nbsp;@ml&nbsp;&quot;Enter&nbsp;string&quot; 
@@ -91,7 +94,7 @@ set-variable&nbsp;%result&nbsp;&amp;rig&nbsp;%foo&nbsp;&amp;sub&nbsp;&amp;len&nb
 <A HREF="m4fil029.html">&amp;lget(4)</A>, 
 <A HREF="m4fil004.html">&amp;sprintf(4)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/07/28</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

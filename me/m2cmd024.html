@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>create-callback(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 create-callback(2)</H1>
@@ -18,7 +18,7 @@ create-callback(2)</H1>
 <UL><P><I>n</I> <B>create-callback</B> &quot;<I>command</I>&quot; </UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P><B>create-callback</B> creates a timer based callback command. The given <I>command</I> is called back in <I>n</I> milliseconds time. This can be used by the user to monitor system events (such as incoming mail). The command is called only once, but if the command creates a callback of itself a loop is created. 
-<P>If a -ve argument <I>n</I> is given any pending callback for <I>command</I> is cancelled. </UL>
+<P>If a negative argument <I>n</I> is given any pending callback for <I>command</I> is cancelled. </UL>
 <H2><B>EXAMPLE </B></H2>
 <UL><P>The following example creates a callback that is invoked every 10 minutes. <UL>
 <PRE>define-macro&nbsp;Example-callback 
@@ -39,7 +39,7 @@ Example-callback
 <A HREF="m5var000.html">$auto-time(5)</A>, 
 <A HREF="m2cmd029.html">define-macro(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/07/28</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

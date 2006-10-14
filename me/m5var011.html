@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>$debug(5)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 $debug(5)</H1>
@@ -16,17 +16,30 @@ $debug(5)</H1>
 <UL><P>$debug - Macro debugging flag </UL>
 <H2><B>SYNOPSIS </B></H2>
 <UL><P><B>$debug</B> <I>debugLevel</I>; Default is <TT>0</TT> 
-<P>-2 &lt;= <I>debugLevel</I> &lt;= 2 </UL>
+<P>-3 &lt;= <I>debugLevel</I> &lt;= 3 </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P><B>$debug</B> is a flag to trigger macro debugging. A setting of 1 or 2 enables debugging, 0 disables debugging (default). A <B>$debug</B> setting of 2 debugs all macro lines encountered, whereas a setting of 1 debugs only the lines executed, i.e. if a false <B>!if</B> was encountered the lines within the <B>!if</B> would not be printed. Problems arise with <B>!elif</B> and <B>!else</B> and a <I>debugLevel</I> setting of 1 as the <B>!elif</B> and <B>!else</B> lines are never printed. 
-<P>A -ve setting disables debugging and has no immediate effect. However as soon as the bell is rung the value is inverted (-1 to 1, -2 to 2) enabling debugging. This can be invaluable when tracing problems, for example the following macro code will loop infinitely:- <UL>
+<UL><P><B>$debug</B> is used to control macro debugging, it is a bit based flag where: 
+<P><TT>0x01</TT> 
+<BR><UL>Displays an error message when an un-handled exception is encountered, this is useful to locate problems in the macro code i.e. missing arguments etc. This setting may be used in normal running and macro execution is halted when an error is encountered, it is non-intrusive up until the point of failure. Enabling slightly slows execution but is not typically noticeable on modern processors. </UL>
+<P><TT>0x02</TT> 
+<BR><UL>Setting this bit enables the macro debugger. With macro debugging enabled, before a line of macro code is executed the line and its location is first print on the message line with a prompt allowing the user to view variables, abort execution, dive into sub macros etc. The behaviour of the macro debugger can be altered by bits <TT>0x04</TT> and <TT>0x08</TT>. </UL>
+<P><TT>0x04</TT> 
+<BR><UL>When set all macro lines encountered are printed. When this bit is not set only the lines of code that are executed are printed, i.e. if a false <B>!if</B> was encountered the lines within the <B>!if</B> would not be printed. Problems arise with <B>!elif</B> and <B>!else</B> lines and this bit is not set as the <B>!elif</B> and <B>!else</B> lines are never printed. </UL>
+<P><TT>0x08</TT> 
+<BR><UL>When set the debug prompt is disabled so the macro line is printed on the message line and then immediately executed. This allows the user to see the execution flow of the macro code while still executing the code at a reasonable pace. </UL>
+<P><TT>0x10</TT> 
+<BR><UL>Setting this bit has no immediate effect. However as soon as the key bound to 
+<A HREF="m2cmd000.html">abort-command(2)</A> (typically &quot;<TT>C-g</TT>&quot;) is pressed the macro debugger is enabled, i.e. bit <TT>0x02</TT> is set. This can be invaluable when tracing problems, for example the following macro code will loop infinitely:- <UL>
 <PRE>!repeat 
 &nbsp;&nbsp;&nbsp;&nbsp;beginning-of-line 
 &nbsp;&nbsp;&nbsp;&nbsp;backward-char 
 &nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;forward-line 
 !until&nbsp;&amp;not&nbsp;$status 
 </PRE></UL>
-<P>This is a fairly obvious bug, but if buried in a thousand lines of macro code it could be very difficult to spot and to find it during execution would be very tedious if not impossible. But by setting <B>$debug</B> to -1 the macro can be executed as normal and as soon as the macro is stuck the user can simply press &quot;<TT>C-g</TT>&quot; (<B>abort-command</B>) which rings the bell and starts macro debugging at the current execution point. </UL>
+<P>This is a fairly obvious bug, but if buried in a thousand lines of macro code it could be very difficult to spot and to find it during execution would be very tedious if not impossible. But by setting <B>$debug</B> to <TT>0x10</TT> the macro can be executed as normal and as soon as the macro is stuck the user can simply press &quot;<TT>C-g</TT>&quot; to start macro debugging at the current execution point. 
+<P>Note that the &quot;<TT>C-g</TT>&quot; which triggers the macro debugger is discarded so it does not cause the current command to abort. </UL>
+<P><TT>0x20</TT> 
+<BR><UL>Setting this bit is similar to <TT>0x10</TT> except the macro debugger is enabled by the ringing of the bell. When some commands fail they always print an error message and ring the bell as the error needs handling (e.g. missing argument in a <B>!if</B> statement). However if the macro has been called with a <B>!force</B> the execution will not be aborted so tracing this issue could be difficult without this setting. </UL></UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m2cmd045.html">execute-file(2)</A>. 
@@ -39,7 +52,7 @@ $debug(5)</H1>
 <BR>
 <A HREF="m2nar012.html">MicroEmacs Macro Language at a Glance</A> </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2005/02/13</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2005/09/20</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

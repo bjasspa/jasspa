@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>MainMenu(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 MainMenu(3)</H1>
@@ -87,40 +87,41 @@ MainMenu(3)</H1>
 <BR><UL>Opens a sub-menu enabling the user to add new favorite files, edit the existing list of favorite files, or select an existing favorite file in which case the file is opened using command 
 <A HREF="m2cmd056.html">find-file(2)</A>. The favorite file using to store the list is &quot;<B>$MENAME</B><TT>.eff</TT>&quot; and is saved in the first path given in the 
 <A HREF="m5var057.html">$search-path(5)</A>. Each favorite file takes 2 lines in the file, the first is the text displayed in the dialog (note that characters '<TT>\</TT>' and '<TT>&amp;</TT>' must be protected with a '<TT>\</TT>' and the '<TT>&amp;</TT>' can be used to set the Hot key) and the second line is the file name. A line with a single '<TT>-</TT>' character creates a separater line in the dialog. </UL>
-<P><TT>Find Tag</TT> 
-<BR><UL>Only visible when a <TT>tags</TT> file is found in the current directory, the command jumps to the current tag or if not on a tag or the tag is not found, opens a dialog enabling the user to select a tag. See command 
-<A HREF="m2cmd057.html">find-tag(2)</A> for more information. </UL>
-<P><TT>Find File</TT> 
-<BR><UL>Executes command 
-<A HREF="m3mac027.html">file-browser(3)</A>. </UL>
-<P><TT>FTP</TT> 
-<BR><UL>Executes command 
-<A HREF="m3mac050.html">ftp(3)</A>. </UL>
 <P><TT>Close</TT> 
-<BR><UL>Executes a dialog form of the command 
+<BR><UL>Closes the current buffer, executes a dialog form of the command 
 <A HREF="m2cmd031.html">delete-buffer(2)</A>. </UL>
 <P><TT>Attributes</TT> 
-<BR><UL>Opens a dialog enabling the user to set the current buffers file attributes. See command 
+<BR><UL>Opens a dialog enabling the user to set the current buffers file attributes, i.e. read and write permissions. See command 
 <A HREF="m3osd008.html">file-attrib(3)</A> for more information. </UL>
 <P><TT>Save</TT> 
-<BR><UL>Executes a dialog form of the command 
+<BR><UL>Saves the current buffer, executes a dialog form of the command 
 <A HREF="m2cmd113.html">save-buffer(2)</A>. </UL>
 <P><TT>Save As</TT> 
-<BR><UL>Executes a dialog form of the command 
+<BR><UL>Saves the contents of the current buffer as a new file, executes a dialog form of the command 
 <A HREF="m2cmd143.html">write-buffer(2)</A>. </UL>
 <P><TT>Save All</TT> 
-<BR><UL>Executes a dialog form of the command 
+<BR><UL>Saves all changes buffers and session history, executes a dialog form of the command 
 <A HREF="m3mac002.html">save-all(3)</A>. </UL>
-<P><TT>Printer Setup</TT> 
+<P><TT>Reread File</TT> 
+<BR><UL>Reloads the contents of the current buffer from the file system, discarding any changes, executes 
+<A HREF="m3mac053.html">reread-file(3)</A>. </UL>
+<P><TT>Print Setup</TT> 
 <BR><UL>Opens a dialog which enables the user to configure the printer driver, output location and page layout (executes command 
 <A HREF="m3osd012.html">print-setup(3)</A>). </UL>
 <P><TT>Print</TT> 
-<BR><UL>Executes command 
+<BR><UL>Prints the contents of the current buffer to the printer, executes command 
 <A HREF="m2cmd101.html">print-buffer(2)</A>. </UL>
-<P><TT>Buffer</TT> 
-<BR><UL>Opens a sub-menu listing all created buffers, selecting one will change the current buffer to the selected one. </UL>
+<P><TT>File Browser</TT> 
+<BR><UL>Launches the file browser which enables the file system to be manipulated and traversed, executes command 
+<A HREF="m3mac027.html">file-browser(3)</A>. </UL>
+<P><TT>FTP Browser</TT> 
+<BR><UL>Launches the FTP browser, an FTP client, executes command 
+<A HREF="m3mac050.html">ftp(3)</A>. </UL>
+<P><TT>Load Session</TT> 
+<BR><UL>Loads a new session into MicroEmacs, the current session is saved and closed and the new session is loaded. The user is prompted from the command line to provide the name of the new session to load. See 
+<A HREF="m3mac081.html">read-session(3)</A>. </UL>
 <P><TT>Exit</TT> 
-<BR><UL>Executes command 
+<BR><UL>Exits the editor, prompting the user to save any unsaved buffers, executes command 
 <A HREF="m2cmd103.html">save-buffers-exit-emacs(2)</A>. </UL></UL>
 <H2>Edit Menu </H2>
 <UL><P><TT>Undo</TT> 
@@ -133,276 +134,333 @@ MainMenu(3)</H1>
 <BR><UL>Undo all edits in the current buffer until the last save or no more undo history is available. Executes the command 
 <A HREF="m2cmd136.html">undo(2)</A> with a 0 numerical argument. </UL>
 <P><TT>Set Mark</TT> 
-<BR><UL>Executes command 
+<BR><UL>Sets the position of start of a selected region, executes command 
 <A HREF="m2cmd121.html">set-mark(2)</A>. </UL>
-<P><TT>Cut</TT> 
-<BR><UL>Executes command 
-<A HREF="m2cmd081.html">kill-region(2)</A>. </UL>
-<P><TT>Copy</TT> 
-<BR><UL>Executes command 
+<P><TT>Copy Region</TT> 
+<BR><UL>Copies a marked up region, executes command 
 <A HREF="m2cmd022.html">copy-region(2)</A>. </UL>
+<P><TT>Kill Region</TT> 
+<BR><UL>Deletes a marked up region and places the deleted text in the kill buffer which may be retrieved using <B>Paste</B>, executes command 
+<A HREF="m2cmd081.html">kill-region(2)</A>. </UL>
+<P><TT>Delete Region</TT> 
+<BR><UL>Deletes a marked up region but the deleted text is not saved in the the kill buffer and cannot be retrieved using <B>Paste</B>. </UL>
 <P><TT>Paste</TT> 
-<BR><UL>Executes command 
+<BR><UL>Inserts text from the clipboard into the buffer at the current cursor position, executes command 
 <A HREF="m2cmd146.html">yank(2)</A>. </UL>
-<P><TT>Narrow Out</TT> 
-<BR><UL>Executes command 
-<A HREF="m2cmd068.html">narrow-buffer(2)</A> with a numeric argument of <TT>4</TT>. </UL>
-<P><TT>Narrow To</TT> 
-<BR><UL>Executes command 
-<A HREF="m2cmd068.html">narrow-buffer(2)</A> with a numeric argument of <TT>3</TT>. </UL>
-<P><TT>Remove Single Narrow</TT> 
-<BR><UL>Executes command 
-<A HREF="m2cmd068.html">narrow-buffer(2)</A> with a numeric argument of <TT>2</TT>. </UL>
-<P><TT>Remove All Narrows</TT> 
-<BR><UL>Executes command 
-<A HREF="m2cmd068.html">narrow-buffer(2)</A> with a numeric argument of <TT>1</TT>. </UL></UL>
+<P><TT>Cut Rectangle</TT> 
+<BR><UL>Deletes a selected rectangular region from the buffer, the vertical extents of the cut are determined by the column position of the start and end of the selected region, executes command 
+<A HREF="m2cmd159.html">kill-rectangle(2)</A>. </UL>
+<P><TT>Copy Rectangle</TT> 
+<BR><UL>Copies a selected rectangular region from the buffer, the vertical extents of the copy are determined by the column position of the start and end of the selected region, executes command 
+<A HREF="m3mac072.html">copy-rectangle(3)</A>. </UL>
+<P><TT>Paste Rectangle</TT> 
+<BR><UL>Inserts a rectangle region into the buffer at the current cursor position (and for the subsequent lines at the given column position), executes the command 
+<A HREF="m2cmd159.html">yank-rectangle(2)</A>. </UL>
+<P><TT>Insert Symbol</TT> 
+<BR><UL>Dialog presented to select a character symbol for insertion, executes the command 
+<A HREF="m3osd003.html">insert-symbol(3)</A>. </UL>
+<P><TT>Insert Date/Time</TT> 
+<BR><UL>Inserts the current date and time at the cursor position, a sub-menu is used to determine the format of the insertion string. </UL>
+<P><TT>Insert File Name</TT> 
+<BR><UL>Inserts the name of the file at the current cursor position, executes the command 
+<A HREF="m2cmd050.html">insert-file-name(2)</A>. </UL>
+<P><TT>Insert File</TT> 
+<BR><UL>Inserts the contents of a file into the buffer at the cursor position, the user is prompted for the name of the file to insert. Executes the command 
+<A HREF="m2cmd073.html">insert-file(2)</A>. </UL>
+<P><TT>Draw Lines</TT> 
+<BR><UL>Moves into line drawing mode, the cursor keys are used to control the line drawing, use <B>esc-h</B> for help, <B>return</B> to exit draw mode and <B>C-g</B> to quit draw mode without making changes. Executes the command 
+<A HREF="m3mac032.html">draw(3)</A>. </UL>
+<P><TT>Toggle Insert Mode</TT> 
+<BR><UL>Modifies character entry behavior, moves between overwrite and insertion mode, changes the buffer mode 
+<A HREF="m2mod010.html">over(2m)</A>. </UL>
+<P><TT>Toggle View Mode</TT> 
+<BR><UL>Toggles the buffer between view mode and edit mode, in view mode the contents of the buffer may not be altered. Change the buffer mode 
+<A HREF="m2mod016.html">view(2m)</A>. </UL></UL>
 <H2>Search Menu </H2>
-<UL><P><TT>Search</TT> 
-<BR><UL>Executes a dialog form of the command 
+<UL><P><TT>Incremental Search</TT> 
+<BR><UL>Initiates an incremental search, the user is prompted to enter the string to search for, execute the command 
 <A HREF="m2cmd078.html">isearch-forward(2)</A>. </UL>
-<P><TT>Replace</TT> 
-<BR><UL>Executes a dialog form of the command 
-<A HREF="m2cmd102.html">query-replace-string(2)</A>. </UL>
 <P><TT>Hilight Search</TT> 
-<BR><UL>Opens another dialog which can be used to add and remove hilighting of individual lines in the current buffer. Note that setting a line hilight is a temporary change, it will not effect any files etc and will be lost when the buffer is deleted. </UL>
-<P><TT>Goto Line</TT> 
-<BR><UL>Executes a dialog form of the command 
-<A HREF="m2cmd060.html">goto-line(2)</A>. </UL>
-<P><TT>Goto Fence</TT> 
-<BR><UL>Executes command 
-<A HREF="m2cmd061.html">goto-matching-fence(2)</A>. </UL>
+<BR><UL>Opens a dialog which allows lines of the buffer to be searched and highlighted by changing the line color. Setting a line highlight is a temporary change, it does not effect any files and is lost when the buffer is deleted, see 
+<A HREF="m3osd004.html">osd-search(3)</A>. </UL>
+<P><TT>Find</TT> 
+<BR><UL>Opens a dialogue for searching the buffer for a given string, see 
+<A HREF="m3osd004.html">osd-search(3)</A>. </UL>
+<P><TT>Find Next</TT> 
+<BR><UL>Finds the next string in the buffer using the last search string, uses 
+<A HREF="m2cmd070.html">hunt-forward(2)</A>. </UL>
+<P><TT>Find Prev</TT> 
+<BR><UL>Finds the previous string in the buffer using the last search string, uses 
+<A HREF="m2cmd070.html">hunt-backward(2)</A>. </UL>
+<P><TT>Replace</TT> 
+<BR><UL>Opens a dialogue for searching and replacing the buffer for a given string, see 
+<A HREF="m3osd004.html">osd-search(3)</A>. </UL>
+<P><TT>Find in Files</TT> 
+<BR><UL>Initiates a string search of the file system, in the directory of the current buffer using 
+<A HREF="m3mac001.html">grep(3)</A>. </UL>
+<P><TT>Replace in Files</TT> 
+<BR><UL>Initiates a string search and replace of the file system, in the directory of the current buffer using 
+<A HREF="m3mac007.html">query-replace-all-string(3)</A>. </UL>
 <P><TT>Set Bookmark</TT> 
-<BR><UL>Executes command 
+<BR><UL>Places a bookmark in the buffer which provides a quick method of returning to the buffer position, the user is prompted for a single character to identify the position the buffer. Executes command 
 <A HREF="m2cmd118.html">set-alpha-mark(2)</A>. </UL>
 <P><TT>Goto Bookmark</TT> 
-<BR><UL>Executes command 
-<A HREF="m2cmd059.html">goto-alpha-mark(2)</A>. </UL></UL>
-<H2>Insert Menu </H2>
-<UL><P><TT>Symbol</TT> 
-<BR><UL>Executes command 
-<A HREF="m3osd003.html">symbol(3)</A>. </UL>
-<P><TT>Date &amp; Time</TT> 
-<BR><UL>Opens a dialog with the current date and time in a selection of common formats; selecting one of these will insert the string into the current buffer at the current position. Note that the format text strings depend on the current language (Default and American languages use the order MM-DD-YY etc whereas the rest use DD-MM-YY). The names used for the day and month names can be defined using the Setup page of 
-<A HREF="m3osd001.html">Organizer(3)</A>. </UL>
-<P><TT>File</TT> 
-<BR><UL>Executes command 
-<A HREF="m2cmd073.html">insert-file(2)</A>. </UL>
-<P><TT>File Name</TT> 
-<BR><UL>Executes command 
-<A HREF="m2cmd050.html">insert-file-name(2)</A>. </UL>
-<P><TT>Macro...</TT> 
-<BR><UL>Executes command 
-<A HREF="m2cmd074.html">insert-macro(2)</A>. </UL></UL>
+<BR><UL>Moves the cursor to a book mark position defined with <B>Set Bookmark</B>, the user is prompted for a single character that identifies the bookmark. Executes command 
+<A HREF="m2cmd059.html">goto-alpha-mark(2)</A>. </UL>
+<P><TT>Goto Fence</TT> 
+<BR><UL>When the cursor is on a fence character (i.e. <TT>{</TT>, <TT>}</TT>, <TT>(</TT>, <TT>)</TT>, <TT>[</TT>, <TT>]</TT>, ...) then the other matching fence is located and the buffer position is changed to the other fence character. Executes command 
+<A HREF="m2cmd061.html">goto-matching-fence(2)</A>. </UL>
+<P><TT>Goto Line</TT> 
+<BR><UL>Moves cursor to the specified line number or relative line position, executes a dialog form of the command 
+<A HREF="m2cmd060.html">goto-line(2)</A>. </UL>
+<P><TT>Goto Tag</TT> 
+<BR><UL>Only active when a <TT>tags</TT> file is found in the current directory, a dialog is presented with the tags, on selection of a tag then the file is opened and the cursor position is moved to the definition of the tag. See command 
+<A HREF="m2cmd057.html">find-tag(2)</A> for more information. </UL></UL>
+<H2>View Menu </H2>
+<UL><P><TT>Narrow Out</TT> 
+<BR><UL>Hides the selected region of the buffer, executes command 
+<A HREF="m2cmd068.html">narrow-buffer(2)</A> with a numeric argument of <TT>4</TT>. </UL>
+<P><TT>Narrow To</TT> 
+<BR><UL>Hides all of the buffer with the exception of the selected region, executes command 
+<A HREF="m2cmd068.html">narrow-buffer(2)</A> with a numeric argument of <TT>3</TT>. </UL>
+<P><TT>Remove Single Narrow</TT> 
+<BR><UL>Removes a single narrowed region of the buffer under the cursor. Executes command 
+<A HREF="m2cmd068.html">narrow-buffer(2)</A> with a numeric argument of <TT>2</TT>. </UL>
+<P><TT>Remove All Narrows</TT> 
+<BR><UL>Removes all of the narrowed regions in the buffer, executes command 
+<A HREF="m2cmd068.html">narrow-buffer(2)</A> with a numeric argument of <TT>1</TT>. </UL>
+<P><TT>Buffer Info</TT> 
+<BR><UL>Provides information on the buffer current cursor position on the mode line including line number, character under the cursor etc. See 
+<A HREF="m2cmd014.html">buffer-info(2)</A>. </UL>
+<P><TT> Word Count</TT> 
+<BR><UL>Counts the number of words in the selected region (between point and mark), executes 
+<A HREF="m2cmd023.html">count-words(2)</A>. </UL>
+<P><TT>Occurrences</TT> 
+<BR><UL>Finds all occurrences of a given string in the buffer. The user is prompted for the string to find. A second window opens and all occurrences of the string in the buffer are presented, selecting an item from this list, using the mouse, moves the cursor to the specified occurrence. See 
+<A HREF="m3mac058.html">occur(3)</A>. </UL>
+<P><TT>Buffer</TT> 
+<BR><UL>Lists the current buffers in the editor, selecting one changes the current buffer to the selection. </UL>
+<P><TT>Main Menu</TT> 
+<BR><UL>Hides or shows the Main Menu. If the main menu has been hidden then <B>F1</B> brings up the menu, the main menu may be re-activated then if necessary. </UL>
+<P><TT>Scroll Bars</TT> 
+<BR><UL>Hides or shows scroll bars within the buffer. </UL>
+<P><TT>Tool Bar</TT> 
+<BR><UL>Hides or shows the tool bar window, see 
+<A HREF="m3mac066.html">toolbar(3)</A>. </UL>
+<P><TT>White Characters</TT> 
+<BR><UL>Hides or shows the white space characters in the buffer. </UL></UL>
 <H2>Format Menu </H2>
 <UL><P><TT>Restyle Buffer</TT> 
-<BR><UL>Executes command 
+<BR><UL>Re-styles the layout of the buffer based on the major-mode setting. Executes the command 
 <A HREF="m3mac025.html">restyle-buffer(3)</A>. </UL>
 <P><TT>Restyle Region</TT> 
-<BR><UL>Executes command 
+<BR><UL>Re-styles the layout of a selected region of the buffer based on the major-mode setting. Executes the command 
 <A HREF="m3mac025.html">restyle-region(3)</A>. </UL>
-<P><TT>Clean Buffer</TT> 
-<BR><UL>Executes command 
-<A HREF="m3mac005.html">clean(3)</A>. </UL>
-<P><TT>Change Buffer Char Set</TT> 
-<BR><UL>Executes command 
-<A HREF="m3mac041.html">charset-change(3)</A>. </UL>
+<P><TT>Increase Indent</TT> 
+<BR><UL>Increases the indentation of a line or region by a single single Tab stop position. Executes the command 
+<A HREF="m3mac082.html">indent-increase(3)</A>. </UL>
+<P><TT>Decrease Indent</TT> 
+<BR><UL>Decreases the indentation of a line or region by a single single Tab stop position. Executes the command 
+<A HREF="m3mac082.html">indent-decrease(3)</A>. </UL>
 <P><TT>IQ Fill Paragraph</TT> 
-<BR><UL>Executes command 
+<BR><UL>Reformat a paragraph using the current fill mode, handling embedded bullets with no line separation. Executes the command 
 <A HREF="m3mac026.html">ifill-paragraph(3)</A>. </UL>
 <P><TT>Fill Paragraph</TT> 
-<BR><UL>Executes command 
+<BR><UL>Reformat a paragraph using the current fill mode using the standard paragraph fill mode. Executes the command 
 <A HREF="m2cmd052.html">fill-paragraph(2)</A>. </UL>
 <P><TT>Fill All Paragraphs</TT> 
-<BR><UL>Executes command 
+<BR><UL>Reformats all paragraphs in the buffer using the standard paragraph filling mode. Executes command 
 <A HREF="m2cmd052.html">fill-paragraph(2)</A> with a very large positive numerical argument. Note that this only effects paragraphs from the current position onwards. </UL>
-<P><TT>Paragraph to Line</TT> 
-<BR><UL>Executes command 
-<A HREF="m3mac003.html">paragraph-to-line(3)</A>. </UL>
-<P><TT>All Paragraphs to Line</TT> 
-<BR><UL>Executes command 
-<A HREF="m3mac003.html">paragraph-to-line(3)</A> with a very large positive numerical argument. Note that this only effects paragraphs from the current position onwards. </UL>
-<P><TT>Sort Lines</TT> 
-<BR><UL>Executes command 
-<A HREF="m2cmd124.html">sort-lines(2)</A>. </UL>
-<P><TT>Ignore Case Sort Lines</TT> 
-<BR><UL>Executes command 
-<A HREF="m3mac004.html">sort-lines-ignore-case(3)</A>. </UL>
+<P><TT>All Paragraphs to Lines</TT> 
+<BR><UL>Converts all paragraphs to a single line, one line per original paragraph. Paragraphs are typically converted to a single line before copying into a Word Processor (i.e. Word, StarOffice etc.). The Word Processor performs its own text wrapping therefore it is important that MicroEmacs paragraphs with new lines in them are not copied. </UL>
+<P><TT>Change Character Set ...</TT> 
+<BR><UL>Converts the ASCII text from one character set to another, this allows diacritical marks to be maintained. </UL>
+<P><TT>Tabs to Spaces</TT> 
+<BR><UL>Converts <TT>TAB</TT> characters to spaces whilst retaining the correct tab stop positions within the file. Note that if the tab stops appear to be incorrect then the tab width should be temporarily changed using 
+<A HREF="m3osd014.html">buffer-setup(3)</A> before converting to spaces. </UL>
+<P><TT>Clean Buffer</TT> 
+<BR><UL>Cleans up the buffer by removing white space from the ends of all lines, see 
+<A HREF="m3mac005.html">clean(3)</A>. </UL>
 <P><TT>Capitalize Word</TT> 
-<BR><UL>Executes command 
+<BR><UL>Capitalizes the characters from the cursor position, or next word, to the end of the word using 
 <A HREF="m2cmd015.html">capitalize-word(2)</A>. </UL>
 <P><TT>Lower Case Word</TT> 
-<BR><UL>Executes command 
+<BR><UL>Changes characters to lowercase from the cursor position, or next word, to the end of the word using 
 <A HREF="m2cmd015.html">lower-case-word(2)</A>. </UL>
-<P><TT>Lower Case Region</TT> 
-<BR><UL>Executes command 
-<A HREF="m2cmd015.html">lower-case-region(2)</A>. </UL>
 <P><TT>Upper Case Word</TT> 
-<BR><UL>Executes command 
+<BR><UL>Changes characters to uppercase from the cursor position, or next word, to the end of the word using 
 <A HREF="m2cmd015.html">upper-case-word(2)</A>. </UL>
+<P><TT>Lower Case Region</TT> 
+<BR><UL>Lowercase all characters in the current region using 
+<A HREF="m2cmd015.html">lower-case-region(2)</A>. </UL>
 <P><TT>Upper Case Region</TT> 
-<BR><UL>Executes command 
+<BR><UL>Uppercase all characters in the current region using 
 <A HREF="m2cmd015.html">upper-case-region(2)</A>. </UL></UL>
-<H2>Execute Menu </H2>
-<UL><P><TT>Execute Command</TT> 
-<BR><UL>Executes command 
-<A HREF="m2cmd047.html">execute-named-command(2)</A>. </UL>
-<P><TT>Execute Buffer</TT> 
-<BR><UL>Executes command 
-<A HREF="m2cmd044.html">execute-buffer(2)</A>. </UL>
-<P><TT>Execute File</TT> 
-<BR><UL>Executes command 
-<A HREF="m2cmd045.html">execute-file(2)</A>. </UL>
-<P><TT>Start Kbd Macro</TT> 
-<BR><UL>Executes command 
-<A HREF="m2cmd011.html">start-kbd-macro(2)</A>. </UL>
-<P><TT>Query Kbd Macro</TT> 
-<BR><UL>Executes command 
-<A HREF="m2cmd079.html">kbd-macro-query(2)</A>. </UL>
-<P><TT>End Kbd Macro</TT> 
-<BR><UL>Executes command 
-<A HREF="m2cmd011.html">end-kbd-macro(2)</A>. </UL>
-<P><TT>Execute Kbd Macro</TT> 
-<BR><UL>Executes command 
-<A HREF="m2cmd046.html">execute-kbd-macro(2)</A>. </UL>
-<P><TT>Name Kbd Macro</TT> 
-<BR><UL>Executes command 
-<A HREF="m2cmd089.html">name-kbd-macro(2)</A>. </UL>
-<P><TT>Ipipe command</TT> 
-<BR><UL>Executes command 
-<A HREF="m2cmd077.html">ipipe-shell-command(2)</A>. </UL>
-<P><TT>Shell</TT> 
-<BR><UL>Executes command 
-<A HREF="m2cmd071.html">shell(2)</A>. </UL></UL>
 <H2>Tools Menu </H2>
 <UL><P><TT>Current Buffer Tools</TT> 
 <BR><UL>For some file formats MicroEmacs provides a file format specific set of tools, see the 
 <A HREF="amicr030.html">file type</A> help page for more specific information. </UL>
-<P><TT>Count Words</TT> 
-<BR><UL>Executes command 
-<A HREF="m2cmd023.html">count-words(2)</A>. </UL>
 <P><TT>Spell Word</TT> 
-<BR><UL>Executes command 
+<BR><UL>Spell checks a word entered on the command line, executes the command 
 <A HREF="m3osd002.html">spell-word(3)</A>. </UL>
 <P><TT>Spell Buffer</TT> 
-<BR><UL>Executes command 
+<BR><UL>Spell checks the buffer from the current cursor position onwards, executes command 
 <A HREF="m3osd002.html">spell-buffer(3)</A>. </UL>
 <P><TT>Word Complete</TT> 
-<BR><UL>Takes the incomplete word to the left of the cursor and attempts to complete the word by using the users current language dictionary. Executes command 
+<BR><UL>Takes the incomplete word to the left of the cursor and attempts to complete the word by using the users current language dictionary, use <TT>TAB</TT> for a list of possible completions. Executes the command 
 <A HREF="m3mac048.html">expand-word(3)</A>. </UL>
 <P><TT>Compare Windows</TT> 
-<BR><UL>Executes command 
+<BR><UL>Compares the contents of two buffers, the comparison starts from the current cursor position in each buffer and the cursor position should be aligned before starting the comparison, executes the command 
 <A HREF="m2cmd020.html">compare-windows(2)</A>. </UL>
-<P><TT>Compile</TT> 
-<BR><UL>Executes command 
-<A HREF="m3mac000.html">compile(3)</A>. </UL>
-<P><TT>Grep</TT> 
-<BR><UL>Executes command 
-<A HREF="m3mac001.html">grep(3)</A>. </UL>
-<P><TT>Graphical Diff</TT> 
-<BR><UL>Executes command 
-<A HREF="m3mac044.html">gdiff(3)</A>. </UL>
-<P><TT>Diff</TT> 
-<BR><UL>Executes command 
-<A HREF="m3mac035.html">diff(3)</A>. </UL>
 <P><TT>Diff Changes</TT> 
-<BR><UL>Executes command 
+<BR><UL>Compares the current buffer with the last backup version of the buffer, the buffer has to be saved before the comparison may be performed, executes the command 
 <A HREF="m3mac035.html">diff-changes(3)</A>. </UL>
+<P><TT>Diff</TT> 
+<BR><UL>Runs a 
+<A HREF="m3mac035.html">diff(3)</A> command to difference two files, the user is prompted each of the files before running the command. The results of the difference are presented in a new buffer window. </UL>
+<P><TT>Graphical Diff</TT> 
+<BR><UL>Runs a graphics difference between two files where the files are presented side by side. The user is prompted for the two files to compare. See also 
+<A HREF="m3mac044.html">gdiff(3)</A> which uses a command line prompt for the files rather than a dialog. </UL>
+<P><TT>Compile</TT> 
+<BR><UL>Starts a compilation or build process, executes the command 
+<A HREF="m3mac000.html">compile(3)</A>. </UL>
+<P><TT>Sort Lines</TT> 
+<BR><UL>Performs an alphabetical case sensitive sort of the lines in a selected region, the lines are re-ordered in ascending alphabetic order. Executes the command 
+<A HREF="m2cmd124.html">sort-lines(2)</A>. </UL>
+<P><TT>Sort Lines (Ignore Case)</TT> 
+<BR><UL>Performs an alphabetical case insensitive sort of the lines in a selected region, the lines are re-ordered in ascending alphabetic order. Executes the command 
+<A HREF="m2cmd124.html">sort-lines(2)</A>. </UL>
+<P><TT>Unique Lines</TT> 
+<BR><UL>Removes duplicated adjacent lines in a region. The region should be sorted before 
+<A HREF="m3mac049.html">uniq(3)</A>. </UL>
+<P><TT>User Setup</TT> 
+<BR><UL>Runs a dialog interface to configure MicroEmacs, executes the command 
+<A HREF="m3osd000.html">user-setup(3)</A>. </UL>
+<P><TT>Buffer Setup</TT> 
+<BR><UL>Runs a dialog interface to change the session configuration of a buffer i.e. assignment of the major-mode etc. This command changes the current buffer only and does not affect other buffers. Executes the command 
+<A HREF="m3osd014.html">buffer-setup(3)</A>. </UL>
+<P><TT>Major Mode Setup</TT> 
+<BR><UL>Runs a dialog interface which allows the major mode to be changed. Executes the command 
+<A HREF="m3osd010.html">major-mode-setup(3)</A>. </UL>
+<P><TT>Scheme Editor</TT> 
+<BR><UL>Runs a dialog which allows the current highlighting scheme to be edited, modification of the scheme affects all buffers. Executes the command 
+<A HREF="m3osd005.html">scheme-editor(3)</A>. </UL></UL>
+<H2>Advanced Menu </H2>
+<UL><P><TT>Record Macro</TT> 
+<BR><UL>Starts recording the key strokes to create a keyboard macro, see 
+<A HREF="m2cmd011.html">start-kbd-macro(2)</A>. </UL>
+<P><TT>Execute Macro</TT> 
+<BR><UL>Executes a previously recorded keyboard macro, see 
+<A HREF="m2cmd046.html">execute-kbd-macro(2)</A>. </UL>
+<P><TT>Name Macro</TT> 
+<BR><UL>Allows a keyboard macro to be named, see 
+<A HREF="m2cmd089.html">name-kbd-macro(2)</A>. </UL>
+<P><TT>Execute Command</TT> 
+<BR><UL>Executes a named MicroEmacs command, the user is prompted to enter the command to be executed, see 
+<A HREF="m2cmd047.html">execute-named-command(2)</A>. </UL>
+<P><TT>Execute File</TT> 
+<BR><UL>Executes a MicroEmacs macro file, typically used to load and install Macros into the editor, see 
+<A HREF="m2cmd045.html">execute-file(2)</A>. </UL>
+<P><TT>Calculate</TT> 
+<BR><UL>Invokes a simple command line calculator, see 
+<A HREF="m3mac009.html">calc(3)</A>. </UL>
+<P><TT>Notes</TT> 
+<BR><UL>Invokes the 
+<A HREF="m3mac078.html">notes(3)</A> tool which may be used to organize and store miscellaneous information (i.e. short notes). </UL>
 <P><TT>Organizer</TT> 
-<BR><UL>Executes command 
-<A HREF="m3osd001.html">organizer(3)</A>. </UL>
-<P><TT>Mail</TT> 
-<BR><UL>Executes command 
+<BR><UL>Invokes the 
+<A HREF="m3osd001.html">organizer(3)</A> tool which provides a calendar and address book. </UL>
+<P><TT>Send Mail</TT> 
+<BR><UL>Create and send a electronic mail message, this requires that the mail tool has been configured, see 
 <A HREF="m3mac028.html">mail(3)</A>. </UL>
 <P><TT>View Mail</TT> 
-<BR><UL>Executes command 
+<BR><UL>Start the mail reading tool 
 <A HREF="m3mac028.html">vm(3)</A>. </UL>
-<P><TT>More...</TT> 
-<BR><UL>Opens a sub-menu with a collection of other useful miscellaneous tools. </UL></UL>
+<P><TT>Ipipe command</TT> 
+<BR><UL>Start a incremental shell command, the command runs in the background and the results are collected in a new buffer window, using 
+<A HREF="m2cmd077.html">ipipe-shell-command(2)</A>. </UL>
+<P><TT>Shell</TT> 
+<BR><UL>Creates a new shell command window outside of the editor using 
+<A HREF="m2cmd071.html">shell(2)</A>. </UL></UL>
 <H2>Window Menu </H2>
 <UL><P><TT>Split Window V</TT> 
-<BR><UL>Executes command 
+<BR><UL>Splits the current buffer window into two vertically (stacked), executes the command 
 <A HREF="m2cmd128.html">split-window-vertically(2)</A>. </UL>
 <P><TT>Grow Window V</TT> 
-<BR><UL>Executes command 
+<BR><UL>Increases the height of the current buffer window by a single line, executes the command 
 <A HREF="m2cmd063.html">change-window-depth(2)</A> with an argument of 1. </UL>
 <P><TT>Shrink Window V</TT> 
-<BR><UL>Executes command 
+<BR><UL>Reduces the height of the current buffer window by a single line, executes command 
 <A HREF="m2cmd063.html">change-window-depth(2)</A> with an argument of -1. </UL>
 <P><TT>Split Window H</TT> 
-<BR><UL>Executes command 
+<BR><UL>Splits the current buffer window into two horizontally (side by side), executes command 
 <A HREF="m2cmd151.html">split-window-horizontally(2)</A>. </UL>
 <P><TT>Grow Window H</TT> 
-<BR><UL>Executes command 
+<BR><UL>Increases the width of the current buffer window by a single character, executes the command 
 <A HREF="m2cmd152.html">change-window-width(2)</A> with an argument of 1. </UL>
 <P><TT>Shrink Window H</TT> 
-<BR><UL>Executes command 
+<BR><UL>Reduces the width of the current buffer window by a single character, executes the command 
 <A HREF="m2cmd152.html">change-window-width(2)</A> with an argument of -1. </UL>
 <P><TT>One Window</TT> 
-<BR><UL>Executes command 
+<BR><UL>Makes the current buffer the only window on the screen, the other buffers are removed from the screen, executes the command 
 <A HREF="m2cmd036.html">delete-other-windows(2)</A>. </UL>
 <P><TT>Delete Window</TT> 
-<BR><UL>Executes command 
+<BR><UL>Removes the current buffer window from the screen, other windows are re-organized to occupy the space created by deleting the window, executes the command 
 <A HREF="m2cmd036.html">delete-window(2)</A>. </UL>
 <P><TT>Previous Window</TT> 
-<BR><UL>Executes command 
+<BR><UL>Moves focus to the previous window using 
 <A HREF="m2cmd095.html">previous-window(2)</A>. </UL>
 <P><TT>Next Window</TT> 
-<BR><UL>Executes command 
+<BR><UL>Moves focus to the next window using 
 <A HREF="m2cmd095.html">next-window(2)</A>. </UL>
 <P><TT>Create New Frame</TT> 
 <BR><UL>Create an new external frame, only available on version which support multiple-window frames. Executes command 
 <A HREF="m2cmd161.html">create-frame(2)</A>. </UL>
 <P><TT>Close This Frame</TT> 
 <BR><UL>Closes the current frame, only available on version which support multiple-window frames. The command will fail if this is the only frame, use File -&gt; Exit to exit MicroEmacs, executes command 
-<A HREF="m2cmd162.html">delete-frame(2)</A>. </UL></UL>
+<A HREF="m2cmd162.html">delete-frame(2)</A>. </UL>
+<P><TT>Next Frame</TT> 
+<BR><UL>Shows the next internal frame, see 
+<A HREF="m2cmd163.html">next-frame(2)</A>. </UL></UL>
 <H2>Help Menu </H2>
-<UL><P><TT>Curr Buffer Help</TT> 
-<BR><UL>For some file formats MicroEmacs provides a file format specific help page giving details of key-bindings and tools specific to the current buffers file type. </UL>
+<UL><P><TT>Major Mode Help</TT> 
+<BR><UL>Display the help information associated with the current buffer. For some major mode (file format) MicroEmacs provides a major mode specific help page providing details of key-bindings and tools specific to the current buffers file type. </UL>
 <P><TT>General Help</TT> 
-<BR><UL>Executes command 
-<A HREF="m3osd007.html">osd-help(3)</A>. </UL>
-<P><TT>Help on Command</TT> 
-<BR><UL>Executes command 
-<A HREF="m2cmd065.html">help-command(2)</A>. </UL>
-<P><TT>Help on Variable</TT> 
-<BR><UL>Executes command 
-<A HREF="m2cmd065.html">help-variable(2)</A>. </UL>
-<P><TT>Describe Bindings</TT> 
-<BR><UL>Executes command 
+<BR><UL>Starts the 
+<A HREF="m3osd007.html">osd-help(3)</A> dialog which allows the help pages to the searched. </UL>
+<P><TT>List Bindings</TT> 
+<BR><UL>Lists the key bindings associated with the current buffer, the bindings are displayed in a separate window and include the buffer and global key bindings. Executes the command 
 <A HREF="m2cmd038.html">describe-bindings(2)</A>. </UL>
-<P><TT>Describe key</TT> 
-<BR><UL>Executes command 
-<A HREF="m2cmd039.html">describe-key(2)</A>. </UL>
-<P><TT>Describe Variable</TT> 
-<BR><UL>Executes command 
-<A HREF="m2cmd040.html">describe-variable(2)</A>. </UL>
-<P><TT>Describe Word</TT> 
-<BR><UL>Executes command 
-<A HREF="m3osd009.html">describe-word(3)</A>. </UL>
 <P><TT>List Buffers</TT> 
-<BR><UL>Executes command 
+<BR><UL>Lists the buffers currently active within MicroEmacs, the list is presented in a new buffer window and shows the buffer name, size, associated files and current mode. Executes the command 
 <A HREF="m2cmd083.html">list-buffers(2)</A>. </UL>
 <P><TT>List Commands</TT> 
-<BR><UL>Executes command 
+<BR><UL>Lists all of the available commands and key bindings in a new buffer window, executes the command 
 <A HREF="m2cmd062.html">list-commands(2)</A>. </UL>
 <P><TT>List Registry</TT> 
-<BR><UL>Executes command 
+<BR><UL>Presents the registry hierarchy in a separate buffer window, executes the command 
 <A HREF="m2cmd025.html">list-registry(2)</A>. </UL>
 <P><TT>List Variables</TT> 
-<BR><UL>Executes command 
+<BR><UL>Presents a list of all of the global variables and their assigned values in a new window, executes the command 
 <A HREF="m2cmd086.html">list-variables(2)</A>. </UL>
 <P><TT>Command Apropos</TT> 
-<BR><UL>Executes command 
+<BR><UL>Produces a list of commands that contain a given string as part of their name, the user is prompted to enter the string to search for. Executes the command 
 <A HREF="m2cmd009.html">command-apropos(2)</A>. </UL>
-<P><TT>Buffer Setup</TT> 
-<BR><UL>Executes command 
-<A HREF="m3osd010.html">buffer-setup(3)</A>. </UL>
-<P><TT>User Setup</TT> 
-<BR><UL>Executes command 
-<A HREF="m3osd000.html">user-setup(3)</A>. </UL>
-<P><TT>Scheme Editor</TT> 
-<BR><UL>Executes command 
-<A HREF="m3osd005.html">scheme-editor(3)</A>. </UL>
+<P><TT>Describe key</TT> 
+<BR><UL>Determines the command that is bound to a specific key, user is prompted for the key sequence, the command bound to that key is displayed. executes the command 
+<A HREF="m2cmd039.html">describe-key(2)</A>. </UL>
+<P><TT>Describe Variable</TT> 
+<BR><UL>Determine the value of a MicroEmacs variable, user is prompted for the variable name. Executes the command 
+<A HREF="m2cmd040.html">describe-variable(2)</A>. </UL>
+<P><TT>Describe Word</TT> 
+<BR><UL>A dictionary function that looks up the meaning of a word specified on the command line, executes the command 
+<A HREF="m3osd009.html">describe-word(3)</A>. </UL>
+<P><TT>Help on Command</TT> 
+<BR><UL>Provides help on a specific MicroEmacs command, user prompted for the command name. Executes the command 
+<A HREF="m2cmd065.html">help-command(2)</A>. </UL>
+<P><TT>Help on Variable</TT> 
+<BR><UL>Provides help on a specific MicroEmacs variable, user prompted for the variable name. Executes the command 
+<A HREF="m2cmd065.html">help-variable(2)</A>. </UL>
 <P><TT>Games</TT> 
 <BR><UL>Opens a sub-menu listing all available games, see 
 <A HREF="amicr029.html">Games</A> for more information. </UL>
@@ -410,7 +468,7 @@ MainMenu(3)</H1>
 <BR><UL>Opens on-line 
 <A HREF="amicr038.html">Contact</A> information. </UL>
 <P><TT>About MicroEmacs</TT> 
-<BR><UL>Executes command 
+<BR><UL>Version and status information on the editor, executes the command 
 <A HREF="m2cmd148.html">about(2)</A>. </UL></UL>
 <H2><B>NOTES </B></H2>
 <UL><P>The main menu is defined using 
@@ -421,7 +479,7 @@ MainMenu(3)</H1>
 <UL><P>
 <A HREF="m3osd000.html">user-setup(3)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2004/01/16</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/20</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

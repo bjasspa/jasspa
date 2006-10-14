@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>exit-emacs(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 exit-emacs(2)</H1>
@@ -28,7 +28,9 @@ exit-emacs(2)</H1>
 <P><TT>0x08</TT> 
 <BR><UL>Discard changed buffers (except the history and registry) and delete any backup files associated with the edited buffer(s). This mode does not operate when bit <TT>1</TT> is set. </UL>
 <P><TT>0x10</TT> 
-<BR><UL>Discard changed buffers (except the history and registry) and create a auto save file(s) with the changes from unsaved buffers. This mode does not operate when bit <TT>1</TT> is set. 
+<BR><UL>Discard changed buffers (except the history and registry) and create a auto save file(s) with the changes from unsaved buffers. This mode does not operate when bit <TT>1</TT> is set. </UL>
+<P><TT>0x20</TT> 
+<BR><UL>Forces the program exit status to be 1 (non-zero), which is interpreted by any parent task as an error status. 
 </UL><P><B>exit-emacs</B> may be used to reproduce the behavior of 
 <A HREF="m2cmd103.html">save-buffers-exit-emacs(2)</A> and 
 <A HREF="m2cmd103.html">quick-exit(2)</A> as follows: <UL>
@@ -41,14 +43,15 @@ exit-emacs(2)</H1>
 <H2><B>NOTES </B></H2>
 <UL><P>All buffers with a name starting with a '<TT>*</TT>' are assumed to be system buffers (i.e. <B>*scratch*</B>) and are not saved. 
 <P>Modes <TT>8</TT> and <TT>16</TT> may be used where the user wishes to discard edited buffers on exiting and does not want to confirm the exit. Dictionaries should be configured to auto-save in 
-<A HREF="m3osd000.html">user-setup(3)</A>. </UL>
+<A HREF="m3osd000.html">user-setup(3)</A>. 
+<P>An emergency exit command which forces the editor to quit may be implemented as <TT>0x28 exit-emacs</TT> i.e. Force quit and exit with failed status. Internally this is what MicroEmacs uses to perform an emergency quit operation caused by signal fault etc. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m2cmd103.html">quick-exit(2)</A>, 
 <A HREF="m2cmd103.html">save-buffers-exit-emacs(2)</A>, 
 <A HREF="m3mac024.html">shut-down(3)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2005/03/20</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/12</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>
