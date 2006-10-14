@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>ipipe-shell-command(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 ipipe-shell-command(2)</H1>
@@ -41,13 +41,16 @@ ipipe-shell-command(2)</H1>
 <P><B>0x10</B> 
 <BR><UL>Disable the command name mangling (MS Win32 versions only). By default any '<TT>/</TT>' characters found in the command name (the first argument only) are converted to '<TT>\</TT>' characters to make it Windows compliant. </UL>
 <P><B>0x20</B> 
-<BR><UL>Displays the new process window, by default the window is hidden. </UL>
+<BR><UL>Displays the new process window (win32 versions only), by default the window is hidden. </UL>
 <P><B>0x40</B> 
 <BR><UL>Raw ipipe, disable text annotation at the start and end of the pipe output and force 
 <A HREF="m2mod017.html">wrap(2m)</A> mode off. </UL>
 <P><B>0x80</B> 
 <BR><UL>Supply a function <I>buffer-ipipe-command</I> to be invoked when the pipe receives data and terminates. This is equivalent to setting the buffer variable 
-<A HREF="m5var006.html">$buffer-ipipe(5)</A> but allows the pipe to be set when the ipipe is created. Setting the <I>$buffer-ipipe</I> on invocation allows the pipe exit status to be trapped properly. 
+<A HREF="m5var006.html">$buffer-ipipe(5)</A> but allows the pipe to be set when the ipipe is created. Setting the <I>$buffer-ipipe</I> on invocation allows the pipe exit status to be trapped properly. </UL>
+<P><B>0x100</B> 
+<BR><UL>When set the command-line to be run is the first line of buffer <I>string</I>, this feature can be used to overcome the default 1024 character command-line limit. When a multiple-line command-line is required, a negative argument can be given to 
+<A HREF="m2cmd076.html">insert-string(2)</A>. 
 </UL><P>Many other macro commands (see 
 <A HREF="m3mac000.html">compile(3)</A>, 
 <A HREF="m3mac001.html">grep(3)</A>, etc.) use this command. 
@@ -105,7 +108,7 @@ ipipe-shell-command(2)</H1>
 <A HREF="m2mod021.html">lock(2m)</A>, 
 <A HREF="m2mod017.html">wrap(2m)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2005/01/15</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/07/28</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

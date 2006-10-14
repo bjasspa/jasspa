@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>Installation(1)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 Installation(1)</H1>
@@ -13,7 +13,7 @@ Installation(1)</H1>
 </FONT>
 <HR>
 <H2><B>INSTALLATION </B></H2>
-<UL><P>This page describes introductory notes for the installation and setup of MicroEmacs '05. </UL>
+<UL><P>This page describes introductory notes for the installation and setup of MicroEmacs '06. </UL>
 <H2>Quick Install </H2>
 <UL><P>The quickest way to install MicroEmacs for testing without reading the rest of this document is to:- <UL><P>
 <LI>Create a new directory i.e. <TT>jasspa</TT>. 
@@ -47,7 +47,7 @@ Installation(1)</H1>
 <BR><TT>jasspa-mepkg-sun-sparc-58-YYYYMMDD.zip</TT>&nbsp;-&nbsp;Sun&nbsp;2.8(Sparc)&nbsp;package. 
 <BR><TT>jasspa-mepkg-sun-sparc-59-YYYYMMDD.zip</TT>&nbsp;-&nbsp;Sun&nbsp;2.9(Sparc)&nbsp;package. </UL>
 <P><B>Executable Source Code </B>
-<BR><UL>The source code release for MicroEmacs '05 contains makefiles (<TT>*.mak</TT>) for all supported platforms. Microsoft '95/'98/NT/2K/XP makefiles contain options at the top of the makefile to enable/disable console and URL support. 
+<BR><UL>The source code release for MicroEmacs '06 contains makefiles (<TT>*.mak</TT>) for all supported platforms. Microsoft '95/'98/NT/2K/XP makefiles contain options at the top of the makefile to enable/disable console and URL support. 
 <P><TT>jasspa-mesrc-YYYYMMDD.zip</TT>&nbsp;-&nbsp;Source&nbsp;code&nbsp;for&nbsp;all&nbsp;platforms 
 <BR><TT>jasspa-mesrc-YYYYMMDD.tar.gz</TT>&nbsp;-&nbsp;Source&nbsp;code </UL>
 <P><B>Executable Images </B>
@@ -207,7 +207,7 @@ Installation(1)</H1>
 <UL><P>If<B>win32s</B> is a requirement on this platform, typically taken from <B>pw1118.exe</B> which freely available on the Internet. 
 </UL><P><B>Installation:</B> 
 <BR>This version of Windows does not have a <I>install</I> directory as '95/'98 and it is expected that the <TT>MS-DOS</TT> version will coexist. No <I>Install</I> <I>Shield</I> installation is provided. Install in a directory structure similar to <TT>MS-DOS</TT>. Install the helper DLL <B>methnk16.dll</B> in the <TT>C:\WINDOWS\SHELL</TT> directory. Create a 
-<A HREF="m8fil006.html">me32.ini(8)</A> file in the <TT>C:\WINDOWS</TT> directory to identify the location of the MicroEmacs '05 components, this much the same as the '95/'98 file, change the directory paths to suite the install base. 
+<A HREF="m8fil006.html">me32.ini(8)</A> file in the <TT>C:\WINDOWS</TT> directory to identify the location of the MicroEmacs '06 components, this much the same as the '95/'98 file, change the directory paths to suite the install base. 
 <P><B>Support Status:</B> 
 <BR>The <B>win32s</B> release has not been used with vengeance, although no specific problems have been reported with this release. </UL>
 <H2>Windows 95/98/NT/2K/XP </H2>
@@ -246,7 +246,7 @@ Installation(1)</H1>
 [HKEY_CLASSES_ROOT\MicroEmacs_foo\Shell\open\command] 
 &quot;C:\Program&nbsp;File\JASSPA\MicroEmacs\me32.exe&nbsp;-o&nbsp;&quot;%1&quot;&quot; 
 </PRE></UL>
-<P>In the previous example the <I>DefaultIcon</I> entry is the icon assigned to the file. This may be an icon taken from <TT>meicons.exe</TT> (in this case icon number 23), or may be some other icon. The open action in the example uses the <B>-o</B> option of the <I>client-server</I>, which loads the file into the current MicroEmacs '05 session, alternatively the <B>-c</B> option may be used to retain the previous context, or no option if a new session with no other files loaded is started. 
+<P>In the previous example the <I>DefaultIcon</I> entry is the icon assigned to the file. This may be an icon taken from <TT>meicons.exe</TT> (in this case icon number 23), or may be some other icon. The open action in the example uses the <B>-o</B> option of the <I>client-server</I>, which loads the file into the current MicroEmacs '06 session, alternatively the <B>-c</B> option may be used to retain the previous context, or no option if a new session with no other files loaded is started. 
 <P>A generic open for ALL files may be defined using a wild-card, this may be used to place a <I>MicroEmacs</I> edit entry in the right-click pop-up menu, as follows:- <UL>
 <PRE>[HKEY_CLASSES_ROOT\*\shell] 
 [HKEY_CLASSES_ROOT\*\shell\MicroEmacs] 
@@ -289,7 +289,7 @@ Installation(1)</H1>
 <A HREF="m2nar000.html">File Language Templates</A>, 
 <A HREF="m2nar003.html">User Profiles</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
 <BR><I>Last Modified: 2005/01/16</I>
-<BR><I>Generated On: 2005/05/14</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

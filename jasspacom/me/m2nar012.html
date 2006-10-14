@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>macroOverview(4)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 macroOverview(4)</H1>
@@ -17,7 +17,7 @@ macroOverview(4)</H1>
 <P>Every line is self contained, you cannot make a single command span multiple line (by using something like a '\' character as in C or tcl). 
 <P>Comments start with semi-colon '<TT>;</TT>', anything to the right of an unquoted semi-colon is ignored. <UL>
 <PRE>;&nbsp;I'm&nbsp;a&nbsp;comment&nbsp;and&nbsp;exist&nbsp;to&nbsp;the&nbsp;end&nbsp;of&nbsp;line. 
-set-variable&nbsp;#l1&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;I'm&nbsp;a&nbsp;comment&nbsp;to&nbsp;the&nbsp;end&nbsp;of&nbsp;line. 
+set-variable&nbsp;#l1&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;I&nbsp;am&nbsp;a&nbsp;comment&nbsp;to&nbsp;the&nbsp;end&nbsp;of&nbsp;line. 
 </PRE></UL>
 <P>There are three types of line <UL><P>
 <LI>Blank or comment line 
@@ -36,6 +36,9 @@ set-variable&nbsp;#l1&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;I'm&nbsp;a&nbsp
 <BR><TT>0-9</TT> A number, which is read as a string 
 <BR><TT>*</TT> A goto label </UL>
 <UL><P>If its not one of the above then it must be the first letter of a command name. </UL></UL>
+<H2>Escape Character </H2>
+<UL><P><B>Backslash</B> '<TT>\</TT>' <B>is escape character in macro scripts, so every normal</B> <B>occurrence needs to be doubled.</B> 
+<P>The MicroEmacs macro language uses a backslash '<TT>\</TT>' character as an escape character. In order to use a backslash character in macro arguments then all backslash characters should be themselves escaped with another backslash i.e. '<TT>\</TT>' becomes '<TT>\\</TT>' or '<TT>\\</TT>' becomes '<TT>\\\\</TT>'. If the escaping is omitted then it is likely that the command will receive an incorrect character sequence that will be misinterpreted and cause the command to fail or perform an incorrect action. </UL>
 <H2>Comments </H2>
 <UL><P>Comments may appear anywhere on a line and everything to the right of the semi-colon to the end of the line is ignored: <UL>
 <PRE>;&nbsp;this&nbsp;is&nbsp;a&nbsp;comment 
@@ -44,7 +47,7 @@ set-variable&nbsp;#l0&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;this&nbsp;part&nbsp;o
 </UL><H2>System or environment variables </H2>
 <UL><P>MicroEmacs system variables start with '<TT>$</TT>' and are used to configure most aspects of the editor (such as tab widths, window drawing characters etc.). There are a fixed list of system variables, see 
 <A HREF="amicr034.html">MicroEmacs - Macro Language Glossary</A>. 
-<P>If a given variable name is not a recognised system variable (e.g. <TT>$PATH</TT>) then MicroEmacs treats it as an environment variable, using 
+<P>If a given variable name is not a recognized system variable (e.g. <TT>$PATH</TT>) then MicroEmacs treats it as an environment variable, using 
 <A HREF="m2cmd122.html">set-variable(2)</A> to change an environment variable. This is useful when used in conjunction with one of MicroEmacs's shell commands. If the environment variable does not exist its value is returned as the string &quot;<TT>ERROR</TT>&quot;. </UL>
 <H2>User variables </H2>
 <UL><P>User variables commence with a percentage character '<TT>%</TT>' and have a global context within the editor, but unlike the <I>system</I> <I>variables</I> they do not span into the environment space (i.e. private to MicroEmacs). 
@@ -52,8 +55,8 @@ set-variable&nbsp;#l0&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;this&nbsp;part&nbsp;o
 <P>A few commands still use them but this is more for historical reasons, for example grep's 
 <A HREF="m5var025.html">%grep-com(5)</A> variable to set the default grep command would be better implemented as the command variable <TT>.grep.com</TT>, see below. </UL>
 <H2>Buffer Variables </H2>
-<UL><P>Buffer variables are set in the context of a buffer, each buffer has its own independent list of buffer variables so this type of variable is used by macros which need to store buffer context information. As an example, the text file hook allows each buffer to have its own 
-<A HREF="m5var021.html">$fill-col(5)</A>, it stores each buffer's own fill column in the variable <TT>:fill-col</TT>. This is private to the buffer. Referencing the variable <TT>:fill-col</TT> will retrieve the current buffer's <TT>:fill-col</TT> variable, if it not set its value is returned as &quot;<TT>ERROR</TT>&quot;. Referencing <TT>:*scratch*:fill-col</TT> retrieves the &quot;<TT>*scratch*</TT>&quot; buffer's <TT>:fill-col</TT> value. 
+<UL><P>Buffer variables are set in the context of a buffer, each buffer has its own independent list of buffer variables so this type of variable is used by macros which need to store buffer context information. As an example, a file hook may allow each buffer to have its own private 
+<A HREF="m5var054.html">$fill-ignore(5)</A> value (the variable is global). It may stores each buffer's own fill ignore in the variable <TT>:fill-ignore</TT>. This is private to the buffer. Referencing the variable <TT>:fill-ignore</TT> retrieves the current buffer's <TT>:fill-ignore</TT> variable, if it not set its value is returned as &quot;<TT>ERROR</TT>&quot;. Referencing <TT>:*scratch*:fill-ignore</TT> retrieves the &quot;<TT>*scratch*</TT>&quot; buffer's <TT>:fill-ignore</TT> value. 
 <P>The operator 
 <A HREF="m4fil005.html">&amp;exist(4)</A> may be used to determine if the buffer variable has been created and set. </UL>
 <H2>Command Variables </H2>
@@ -181,7 +184,7 @@ ml-write&nbsp;&amp;cat&nbsp;&quot;#l0&nbsp;+&nbsp;#l1&nbsp;=&nbsp;&quot;&nbsp;&a
 <BR>
 <A HREF="m2nar010.html">Writing MicroEmacs Macros</A> </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2005/02/13</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/13</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

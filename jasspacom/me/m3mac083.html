@@ -1,0 +1,59 @@
+<HTML>
+<HEAD><TITLE>xdiff(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
+xdiff(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>xdiff - External graphical file difference 
+<BR>%xdiff-com - Extenal graphical differnce xdiff(1) command line </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>xdiff</B> &quot;<I>leftVersion</I>&quot; &quot;<I>rightVersion</I>&quot; 
+<P><TT>%xdiff-com</TT> &quot;<I>string</I>&quot; 
+<P>X-Windows &quot;<TT>xdiff -wb %lf %rf</TT>&quot; when using <B>xdiff</B> from <I>http://reality.sgiweb.org/rudy/xdiff/</I> 
+<P>MS-Windows &quot;<TT>bc2.exe %lf %rf /title1=%lt /title2=%rt</TT>&quot; when using <B>Beyond Compare</B>. </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>xdiff</B> is a macro wrapper that invokes an external graphical file difference utility, named after the original X-Windows utility of the same name. The utility will usually display two files side by side and color code the differences, the differences may then be selected to merge the changes into a new output file which may (or may not) overwrite one of the original input files. 
+<P><B>xdiff</B> executes the difference utility <B>xdiff(1)</B> command (or equivalent) with the command line set by the <B>%xdiff-com</B> variable and the user supplied files <I>leftVersion</I> and <I>rightVersion</I>. The command line variables are referenced from the <B>%xdiff-com</B> as follows: 
+<P><B>%lf</B> 
+<BR><UL>The absolute file name of the left-hand file, <I>leftVersion</I>. </UL>
+<P><B>%rf</B> 
+<BR><UL>The absolute file name of the right-hand file, <I>rightVersion</I>. </UL>
+<P><B>%ln</B> 
+<BR><UL>The base name of the left-hand file, <I>leftVersion</I>. </UL>
+<P><B>%rn</B> 
+<BR><UL>The base name of the left-hand file, <I>leftVersion</I>. </UL>
+<P>The <B>%xdiff-com</B> variable should include the appropriate command to invoke the difference utility and use <B>%</B> place holders for the arguments. MicroEmacs will fill in the <B>%</B> arguments with their correct values on invocation. 
+<P><B>UNIX </B>
+<BR><UL>UNIX environments may use <B>xdiff(1)</B> which is available from <B>http://reality.sgiweb.org/rudy/xdiff/</B>. The variable command line may be defined as: </UL><UL><UL>
+<PRE>set-variable&nbsp;%xdiff-com&nbsp;&quot;xdiff&nbsp;-wb&nbsp;%lf&nbsp;%rf&quot; 
+</PRE></UL>
+</UL><P>The <B>-wb</B> options will ignore while space and trailing blanks. 
+<P><B>Microsoft Windows </B>
+<BR><UL>Microsoft Windows environments may use something like <B>Beyond Compare</B>. The variable command line may be defined as: </UL><UL><UL>
+<PRE>set-variable&nbsp;%xdiff-com&nbsp;&quot;bc2.exe&nbsp;%lf&nbsp;%rf&nbsp;/title1=%lt&nbsp;/title2=%rt&quot; 
+</PRE></UL>
+</UL><P>In this case the <B>%lt</B> values have been used for the title names for each of the windows in the utility. </UL>
+<H2><B>NOTES </B></H2>
+<UL><P><B>xdiff</B> is a macro defined in <TT>tools.emf</TT>, inspired by the UNIX utility of the same name <B>xdiff(1)</B> </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m2cmd020.html">compare-windows(2)</A>, 
+<A HREF="m3mac000.html">compile(3)</A>, <B>diff(1)</B>, 
+<A HREF="m3mac044.html">gdiff(3)</A>, 
+<A HREF="m3fcl001.html">gdiff(3f)</A>, 
+<A HREF="m3mac001.html">grep(3)</A>, 
+<A HREF="m5var025.html">%grep-com(5)</A>. </UL>
+<HR>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/20</I>
+<BR><I>Generated On: 2006/10/07</I>
+</BODY></HMTL>

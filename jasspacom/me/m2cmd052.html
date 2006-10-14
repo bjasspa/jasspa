@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>fill-paragraph(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 fill-paragraph(2)</H1>
@@ -18,9 +18,9 @@ fill-paragraph(2)</H1>
 <UL><P><I>n</I> <B>fill-paragraph</B> (<B>esc o</B>)&nbsp; </UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P><B>fill-paragraph</B> this takes all the text in the current paragraph (as defined by surrounding blank lines, or a leading indent) and attempts to fill it from the left margin to the current fill column as defined by 
-<A HREF="m5var021.html">$fill-col(5)</A>. When an argument <I>n</I> is supplied <I>n</I> paragraphs are filled. If <I>n</I> is positive then MicroEmacs '05 performs indented filling (i.e. indentation for a bullet mark etc). If <I>n</I> is negative then indented filling is disabled. If no argument <I>n</I> is supplied then the paragraph is filled and the <I>point</I> and <I>mark</I> positions are retained. This allows paragraphs to be filled, whilst in the middle of the paragraph and the word position is maintained. 
+<A HREF="m5var021.html">$buffer-fill-col(5)</A>. When an argument <I>n</I> is supplied <I>n</I> paragraphs are filled. If <I>n</I> is positive then MicroEmacs '06 performs indented filling (i.e. indentation for a bullet mark etc). If <I>n</I> is negative then indented filling is disabled. If no argument <I>n</I> is supplied then the paragraph is filled and the <I>point</I> and <I>mark</I> positions are retained. This allows paragraphs to be filled, whilst in the middle of the paragraph and the word position is maintained. 
 <P>If <B>justify mode</B> is enabled the variable 
-<A HREF="m5var028.html">$fill-mode(5)</A> determines how the paragraph is filled (i.e. <I>left</I>, <I>right</I>, <I>both</I> or <I>center</I>). The variable 
+<A HREF="m5var028.html">$buffer-fill-mode(5)</A> determines how the paragraph is filled (i.e. <I>left</I>, <I>right</I>, <I>both</I> or <I>center</I>). The variable 
 <A HREF="m5var012.html">$fill-eos-len(5)</A> determines the trailing space used after a period (<TT>.</TT>) character (the trailing characters are specified by 
 <A HREF="m5var012.html">$fill-eos(5)</A>), typically defined as 2. 
 <P>A set of characters defined by 
@@ -36,7 +36,7 @@ margin
 
 &nbsp;&nbsp;&nbsp;&nbsp;This&nbsp;is&nbsp;a&nbsp;regular&nbsp;&nbsp;paragraph&nbsp;that&nbsp;is 
 &nbsp;&nbsp;&nbsp;&nbsp;offset&nbsp;&nbsp;from&nbsp;&nbsp;the&nbsp;&nbsp;margin.&nbsp;&nbsp;Note&nbsp;how 
-&nbsp;&nbsp;&nbsp;&nbsp;MicroEmacs&nbsp;'05&nbsp;retains&nbsp;the&nbsp;indent. 
+&nbsp;&nbsp;&nbsp;&nbsp;MicroEmacs&nbsp;'06&nbsp;retains&nbsp;the&nbsp;indent. 
 
 &nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;With&nbsp;&nbsp;the&nbsp;&nbsp;introduction&nbsp;&nbsp;of&nbsp;one&nbsp;of 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;&nbsp;special&nbsp;&nbsp;characters,&nbsp;&nbsp;in&nbsp;this 
@@ -62,6 +62,8 @@ margin
 </PRE></UL>
 </UL><H2><B>SEE ALSO </B></H2>
 <UL><P>
+<A HREF="m5var021.html">$buffer-fill-col(5)</A>, 
+<A HREF="m5var028.html">$buffer-fill-mode(5)</A>, 
 <A HREF="m5var053.html">$fill-bullet(5)</A>, 
 <A HREF="m5var053.html">$fill-bullet-len(5)</A>, 
 <A HREF="m5var021.html">$fill-col(5)</A>, 
@@ -72,7 +74,7 @@ margin
 <A HREF="m3mac026.html">ifill-paragraph(3)</A>, 
 <A HREF="m3mac003.html">paragraph-to-line(3)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/13</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

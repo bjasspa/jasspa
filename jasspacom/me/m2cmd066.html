@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>osd(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 osd(2)</H1>
@@ -15,14 +15,14 @@ osd(2)</H1>
 <H2><B>NAME </B></H2>
 <UL><P>osd - Manage the On-Screen Display </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><B>osd</B> 
-<BR><I>-1</I> <B>osd</B> 
+<UL><P><I>-4</I> <B>osd</B> 
+<BR><I>-3</I> <B>osd</B> 
 <BR><I>-2</I> <B>osd</B> 
-<BR><I>n</I> <B>osd</B> 
-<BR><B>-1</B> <B>osd</B> <I>n</I> 
+<BR><I>-1</I> <B>osd</B> <I>n</I> 
 <BR><B>osd</B> <B>-1</B> <I>flag</I> 
 <BR><B>osd</B> <I>n</I> <B>0</B> <I>flags</I> [&quot;<I>scheme</I>&quot;] [&quot;<I>x-pos</I>&quot; &quot;<I>y-pos</I>&quot;] [&quot;<I>min-width</I>&quot; &quot;<I>min-depth</I>&quot; &quot;<I>max-wid</I>&quot; &quot;<I>max-dep</I>&quot;] [&quot;<I>default-button</I>&quot;] [&quot;<I>initial-item</I>&quot;] [[&quot;<I>title-bar-scheme</I>&quot;] [&quot;<I>Text</I>&quot;]] [&quot;<I>resize-command</I>&quot;] [&quot;<I>control-command</I>&quot;] [&quot;<I>init-command</I>&quot;] 
-<BR><B>osd</B> <I>n</I> <I>i</I> <I>flags</I> [&quot;<I>item-scheme</I>&quot;] [&quot;<I>width</I>&quot;&nbsp;&quot;<I>depth</I>&quot;] [&quot;<I>text</I>&quot;] [&quot;<I>argument</I>&quot;&nbsp;&quot;<I>command</I>&quot;] </UL>
+<BR><B>osd</B> <I>n</I> <I>i</I> <I>flags</I> [&quot;<I>item-scheme</I>&quot;] [&quot;<I>width</I>&quot;&nbsp;&quot;<I>depth</I>&quot;] [&quot;<I>text</I>&quot;] [&quot;<I>argument</I>&quot;&nbsp;&quot;<I>command</I>&quot;] 
+<BR><I>n</I> <B>osd</B> </UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P>The <B>osd</B> command manages the On-Screen Display, menu and dialogs. The command takes various forms as defined by the arguments. Each of the argument configurations is defined as follows:- </UL>
 <H2>Main Menu-Bar Status </H2>
@@ -108,7 +108,7 @@ osd&nbsp;200&nbsp;3&nbsp;&quot;&quot;
 &nbsp;&nbsp;&nbsp;&nbsp;save-buffer 
 &nbsp;&nbsp;&nbsp;&nbsp;osd&nbsp;200&nbsp;2&nbsp;&quot;&quot;&nbsp;&quot;Save&nbsp;Complete&quot; 
 &nbsp;&nbsp;&nbsp;&nbsp;osd&nbsp;200&nbsp;4&nbsp;&quot;BcfH&quot;&nbsp;%osd-ebtt-scheme&nbsp;&quot;&nbsp;&nbsp;\HOkay&nbsp;&nbsp;&quot;&nbsp;f&nbsp;void 
-&nbsp;&nbsp;&nbsp;&nbsp;osd 
+&nbsp;&nbsp;&nbsp;&nbsp;-4&nbsp;osd 
 !emacro 
 
 osd&nbsp;200&nbsp;0&nbsp;&quot;btcHC&quot;&nbsp;%osd-title-scheme&nbsp;&quot;Saving&nbsp;Buffer&quot;&nbsp;test-osd 
@@ -285,18 +285,18 @@ osd&nbsp;200&nbsp;3&nbsp;&nbsp;&quot;BxHcfiR&quot;&nbsp;%osd-ebtt-scheme&nbsp;&n
 <P><B>N</B> 
 <BR><UL>This flag only has an effect on entry item types, it selects 'New-line' style text entry which allows the user to enter multiple line of text using the return key and to end the input using the tab key. </UL>
 <P>Note that for a non-sub-menu item type, if an argument is given with no command then it is assumed that the number given is the item number to be executed, see flag <B>S</B> for an example. </UL></UL>
-<H2>Dialog Exacution </H2>
+<H2>Dialog Execution </H2>
 <UL><P><I>n</I> <B>osd</B> 
 <P>This invocation with a single positive numeric argument executes the <I>n</I>th dialog. </UL>
 <H2>Returning Command Control </H2>
-<UL><P><B>osd</B> 
-<P>An invocation of <B>osd</B> with no arguments returns control back to the <B>osd</B> from a <I>control-command</I>. Refer to the <B>C</B> flag in the create/reset dialog property for information and an example. </UL>
+<UL><P><I>-4</I> <B>osd</B> 
+<P>An invocation of <B>osd</B> with an argument of -4 returns control back to the <B>osd</B> from a <I>control-command</I>. Refer to the <B>C</B> flag in the create/reset dialog property for information and an example. </UL>
 <H2>Current Dialog Redraw </H2>
-<UL><P><I>-1</I> <B>osd</B> 
-<P>Calling osd with an argument of -1 forces the complete redrawing of current dialog and any sub-dialogs. This is very useful when the execution of one item may effect the appearance of another. </UL>
-<H2>Redraw All Active Dialogs </H2>
 <UL><P><I>-2</I> <B>osd</B> 
-<P>Calling osd with an argument of -2 forces the complete redrawing of all currently active osd dialogs. This is better than calling 
+<P>Calling osd with an argument of -2 forces the complete redrawing of current dialog and any sub-dialogs. This is very useful when the execution of one item may effect the appearance of another. </UL>
+<H2>Redraw All Active Dialogs </H2>
+<UL><P><I>-3</I> <B>osd</B> 
+<P>Calling osd with an argument of -3 forces the complete redrawing of all currently active osd dialogs. This is better than calling 
 <A HREF="m2cmd139.html">screen-update(2)</A> when only the osd dialogs need updating as it suffers less from flickering. </UL>
 <H2><B>EXAMPLE </B></H2>
 <UL><P>Refer to <TT>osd.emf</TT>, <TT>userstp.emf</TT>, <TT>search.emf</TT>, <TT>spell.emf</TT> and <TT>organize.emf</TT> for examples of the OSD. </UL>
@@ -309,7 +309,7 @@ osd&nbsp;200&nbsp;3&nbsp;&nbsp;&quot;BxHcfiR&quot;&nbsp;%osd-ebtt-scheme&nbsp;&n
 <A HREF="m5var055.html">$scroll-bar(5)</A>. 
 <A HREF="m5var051.html">$window-chars(5)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2005/02/19</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/09/05</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

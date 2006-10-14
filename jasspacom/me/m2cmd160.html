@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>command-wait(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 command-wait(2)</H1>
@@ -17,10 +17,12 @@ command-wait(2)</H1>
 <H2><B>SYNOPSIS </B></H2>
 <UL><P><I>n</I> <B>command-wait</B> </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P>When a +ve argument <I>n</I> is given <B>command-wait</B> waits for <I>n</I> milliseconds before returning, this wait cannot be interrupted. If a -ve argument is given, <B>command-wait</B> waits for -<I>n</I> milliseconds but the command will return if the user interrupts with any input activity (i.e. presses a key). 
-<P>When no argument is given <B>command-wait</B> loops getting and processing events (user input, screen updates etc) until either the calling commands <B>.wait</B> command variable is undefined or set to false (<TT>0</TT>). This more complex use of the command is used when a main macro must wait and process input until an exit criteria has been met, the input is best processed by setting the 
+<UL><P>When a positive argument <I>n</I> is given <B>command-wait</B> waits for <I>n</I> milliseconds before returning, this wait cannot be interrupted. If a negative argument is given, <B>command-wait</B> waits for -<I>n</I> milliseconds but the command will return if the user interrupts with any input activity (i.e. presses a key). 
+<P>When no argument or an argument of 0 is given <B>command-wait</B> waits until either the calling command's <B>.wait</B> command variable is undefined or it is set to false (<TT>0</TT>). When no argument is given events such as user input, screen updates etc. are still processed, this interface is best used when a main macro must wait and process input until an exit criteria has been met, the user input is best processed by setting the 
 <A HREF="m5var005.html">$buffer-input(5)</A> variable to a second macro. The macro 
-<A HREF="m3mac044.html">gdiff(3)</A> uses this command in this way. </UL>
+<A HREF="m3mac044.html">gdiff(3)</A> uses this command in this way, also see a comprehensive example below. 
+<P>When no argument is given user input and screen update events are ignored, this is typically used when MicroEmacs is used in pipe mode, see option <B>-p</B> of 
+<A HREF="m1cmd000.html">me(1)</A>, see the example below. </UL>
 <H2><B>EXAMPLE </B></H2>
 <UL><P>The following macro code will display a message on the screen for a fixed 5 seconds: <UL>
 <PRE>16&nbsp;screen-poke&nbsp;10&nbsp;10&nbsp;0&nbsp;&quot;Hello&nbsp;World!&quot; 
@@ -30,12 +32,97 @@ command-wait(2)</H1>
 <PRE>16&nbsp;screen-poke&nbsp;10&nbsp;10&nbsp;0&nbsp;&quot;Hello&nbsp;World!&quot; 
 -5000&nbsp;command-wait 
 </PRE></UL>
-</UL><H2><B>SEE ALSO </B></H2>
+<P>The following example shows how command-wait can be used to run a system process making MicroEmacs wait until the process has completed before continuing, yet giving feedback from the process to the user and allowing the user to kill the launched process. The process run is a recursive directory listing which will take a long time and give a lot of feed back, to kill the process with a prompt use delete-buffer (bound to '<TT>C-x k</TT>') or use abort-command (bound to '<B>C-g</B>') to kill immediately: <UL>
+<PRE>0&nbsp;define-macro&nbsp;test-ipipe-macro 
+&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;add&nbsp;extra&nbsp;macro&nbsp;code&nbsp;to&nbsp;process&nbsp;output&nbsp;here 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;@# 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;the&nbsp;process&nbsp;has&nbsp;finished 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;.test.wait&nbsp;0 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+!emacro 
+
+0&nbsp;define-macro&nbsp;test-input-macro 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;seq&nbsp;@cck&nbsp;&quot;redraw&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@#&nbsp;screen-update 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!return 
+&nbsp;&nbsp;&nbsp;&nbsp;!elif&nbsp;&amp;seq&nbsp;@cck&nbsp;&quot;callback&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;execute-named-command&nbsp;@cc 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!return 
+&nbsp;&nbsp;&nbsp;&nbsp;!elif&nbsp;&amp;seq&nbsp;@cck&nbsp;&quot;idle-pick&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!abort 
+&nbsp;&nbsp;&nbsp;&nbsp;!elif&nbsp;&amp;seq&nbsp;@cc&nbsp;&quot;delete-buffer&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;!force&nbsp;set-variable&nbsp;#l0&nbsp;@mc1&nbsp;&quot;Abort&nbsp;test&nbsp;[y/n]?&nbsp;&quot;&nbsp;&quot;nNyY&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;and&nbsp;&amp;iseq&nbsp;#l0&nbsp;&quot;y&quot;&nbsp;.test.wait 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;ipipe-kill 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;!elif&nbsp;&amp;seq&nbsp;@cc&nbsp;&quot;abort-command&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;ipipe-kill 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;.test.wait&nbsp;0 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+!emacro 
+
+define-macro&nbsp;test 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;&amp;con&nbsp;&amp;band&nbsp;$system&nbsp;0x100&nbsp;&quot;dir&nbsp;/s&nbsp;c:\\&quot;&nbsp;&quot;ls&nbsp;-R&nbsp;/&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;.wait&nbsp;1 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;!force&nbsp;!force&nbsp;0x82&nbsp;ipipe-shell-command&nbsp;#l0&nbsp;&quot;*test*&quot;&nbsp;test-ipipe-macro 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l2&nbsp;$status 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;band&nbsp;#l1&nbsp;1 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;0&nbsp;delete-buffer&nbsp;&quot;*cc-cmdline*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;find-buffer&nbsp;&quot;*test*&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$buffer-input&nbsp;test-input-macro 
+&nbsp;&nbsp;&nbsp;&nbsp;!force&nbsp;!force&nbsp;!force&nbsp;command-wait 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$buffer-input&nbsp;&quot;&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;[test&nbsp;complete]&quot; 
+!emacro 
+</PRE></UL>
+<P>The following macro code demonstrates how MicroEmacs can be used as a command-line tool, piping the output of another sub-process as it goes. In this example MicroEmacs executes a system directory listing command and prints the output to stdout using ml-write. <UL>
+<PRE>ml-write&nbsp;&quot;Loading&nbsp;pipetest.emf&quot; 
+
+define-macro&nbsp;pipetest-ipipe 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;@# 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end-of-buffer 
+&nbsp;&nbsp;&nbsp;&nbsp;!else 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;goto-alpha-mark&nbsp;&quot;I&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&amp;spr&nbsp;&quot;In&nbsp;pipetest-ipipe&nbsp;%d&nbsp;%d&nbsp;%d&quot;&nbsp;@#&nbsp;.line&nbsp;$window-line 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;$window-line 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;$window-line&nbsp;.line 
+&nbsp;&nbsp;&nbsp;&nbsp;!while&nbsp;&amp;les&nbsp;$window-line&nbsp;#l0 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;ml-write&nbsp;@wl 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;forward-line 
+&nbsp;&nbsp;&nbsp;&nbsp;!done 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;.line&nbsp;$window-line 
+&nbsp;&nbsp;&nbsp;&nbsp;!if&nbsp;&amp;not&nbsp;@# 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-2&nbsp;ml-write&nbsp;&quot;Process&nbsp;finished&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;.start-up.wait&nbsp;0 
+&nbsp;&nbsp;&nbsp;&nbsp;!endif 
+!emacro 
+
+
+define-macro&nbsp;start-up 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;Got&nbsp;into&nbsp;start-up&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;.wait&nbsp;1 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;.pipetest-ipipe.line&nbsp;1 
+&nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;#l0&nbsp;&amp;con&nbsp;&amp;band&nbsp;$system&nbsp;0x100&nbsp;&quot;dir&quot;&nbsp;&quot;ls&nbsp;-l&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;-2&nbsp;ml-write&nbsp;&amp;cat&nbsp;&quot;About&nbsp;to&nbsp;execute:&nbsp;&quot;&nbsp;#l0 
+&nbsp;&nbsp;&nbsp;&nbsp;0xc0&nbsp;ipipe-shell-command&nbsp;#l0&nbsp;&quot;*test*&quot;&nbsp;pipetest-ipipe 
+&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;command-wait 
+&nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&quot;start-up&nbsp;continues&quot; 
+&nbsp;&nbsp;&nbsp;&nbsp;exit-emacs 
+!emacro 
+
+ml-write&nbsp;&quot;Loading&nbsp;pipetest.emf&nbsp;complete&quot; 
+</PRE></UL>
+<P>To run this example, save the above macro code to <TT>pipetest.emf</TT> and then run: 
+<UL><P><B>me -n -p @pipetest.emf</B> 
+</UL><P>Use the <B>-P</B> option for additional debug lines, printed to stderr. Windows users must use a console capable version of MicroEmacs, i.e. mec32.exe or mecw32.exe. </UL>
+<H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m2cmd145.html">ml-write(2)</A>, 
 <A HREF="m5var005.html">$buffer-input(5)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/07/28</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>MacroArguments(4)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 MacroArguments(4)</H1>
@@ -37,7 +37,7 @@ MacroArguments(4)</H1>
 <P>Arguments may be passed into macro commands in the same way as standard commands are given arguments. The macro being called can access these by the <B>@1</B> to <B>@n</B> variables, where <I>n</I> is a positive integer. Any variables given as arguments are evaluated so if the variable name is required then enclose it in quotes, e.g. <UL>
 <PRE>set-variable&nbsp;%test-var&nbsp;&quot;Hello&nbsp;World&quot; 
 
-efine-macro&nbsp;Test-it 
+define-macro&nbsp;Test-it 
 &nbsp;&nbsp;&nbsp;&nbsp;ml-write&nbsp;&amp;cat&nbsp;&amp;cat&nbsp;&amp;cat&nbsp;&amp;cat&nbsp;@0&nbsp;&quot;&nbsp;&quot;&nbsp;@1&nbsp;&quot;&nbsp;=&nbsp;&quot;&nbsp;&amp;ind&nbsp;@1 
 &nbsp;&nbsp;&nbsp;&nbsp;set-variable&nbsp;&nbsp;@1&nbsp;@2 
 !emacro 
@@ -97,7 +97,7 @@ Test-it&nbsp;&quot;%test-var&quot;&nbsp;&quot;Goodbye&nbsp;World&quot;
 <A HREF="m3mac006.html">replace-all-string(3)</A>, 
 <A HREF="m4fil007.html">!force(4)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2005/04/09</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2005/09/19</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

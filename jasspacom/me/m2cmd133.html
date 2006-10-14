@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>translate-key(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 translate-key(2)</H1>
@@ -18,7 +18,7 @@ translate-key(2)</H1>
 <UL><P><I>n</I> <B>translate-key</B> [ &quot;<I>from</I>&quot; [&quot;<I>to</I>&quot;] ] </UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P><B>translate-key</B> may be used to convert any given input key sequence to another single key. <B>translate-key</B> operates at a very low level, before MicroEmacs attempts to evaluate keyboard bindings, so it may be used to solve a variety of keyboard problems such as special language characters and UNIX termcap key sequence bindings (see below). 
-<P>If a +ve numeric argument <I>n</I> is given it is used to set the time in milliseconds MicroEmacs waits for another key to be pressed before continuing, the default time use when no argument is supplied is 250ms. 
+<P>If a positive numeric argument <I>n</I> is given it is used to set the time in milliseconds MicroEmacs waits for another key to be pressed before continuing, the default time use when no argument is supplied is 250ms. 
 <P>If a numeric argument <I>n</I> of -1 is specified then the &quot;<I>to</I>&quot; argument is not required and the &quot;<I>from</I>&quot; character sequence is removed from the translate key table. 
 <P>If a numeric argument <I>n</I> of 0 is specified then no arguments are required; the current translation table is dumped to buffer &quot;<I>*tcap-keys*</I>&quot;. Following is a sample output:- <UL>
 <PRE>&nbsp;&nbsp;&nbsp;&nbsp;&quot;C-h&quot;&nbsp;.........................&nbsp;&quot;backspace&quot; 
@@ -92,14 +92,14 @@ translate-key&nbsp;&quot;esc&nbsp;[&nbsp;5&nbsp;~&quot;&nbsp;&quot;page-up&quot;
 translate-key&nbsp;&quot;esc&nbsp;[&nbsp;5&nbsp;^&quot;&nbsp;&quot;C-page-up&quot; 
 </PRE></UL>
 </UL><H2><B>EXAMPLE </B></H2>
-<UL><P>Using the +ve numeric argument it is possible to reduce the delay and there by increase usability is some features. For instance, in the Mouse configuration of <B>user-setup</B> there is an option to 'Simulate 3 Buttons' which translates a rapid left and right button press into a middle button press. This is implemented using <B>translate-key</B> as follows: <UL>
+<UL><P>Using the positive numeric argument it is possible to reduce the delay and there by increase usability is some features. For instance, in the Mouse configuration of <B>user-setup</B> there is an option to 'Simulate 3 Buttons' which translates a rapid left and right button press into a middle button press. This is implemented using <B>translate-key</B> as follows: <UL>
 <PRE>10&nbsp;translate-key&nbsp;&quot;mouse-pick-1&nbsp;mouse-pick-3&quot;&nbsp;&quot;mouse-pick-2&quot; 
 10&nbsp;translate-key&nbsp;&quot;mouse-pick-3&nbsp;mouse-pick-1&quot;&nbsp;&quot;mouse-pick-2&quot; 
 10&nbsp;translate-key&nbsp;&quot;mouse-drop-1&nbsp;mouse-drop-3&quot;&nbsp;&quot;mouse-drop-2&quot; 
 10&nbsp;translate-key&nbsp;&quot;mouse-drop-3&nbsp;mouse-drop-1&quot;&nbsp;&quot;mouse-drop-2&quot; 
 </PRE></UL>
 <P>When a <TT>mouse-pick-1</TT> key is generated MicroEmacs must wait to see if a <TT>mouse-pick-3</TT> key is next and therefore translate both to a single <TT>mouse-pick-2</TT> key. This wait time is usually a quarter of a second but this makes the left button unusable for dragging regions etc as the delay is too long. By giving a argument of 10ms the delay is long enough for a simultaneous left and right button press but short enough for the left button to still be usable on its own. 
-<P>The +ve numeric argument can be very useful for delaying MicroEmacs as well, for example, the character string &quot;<TT>'e</TT>&quot; can be converted to e-accute using 
+<P>The positive numeric argument can be very useful for delaying MicroEmacs as well, for example, the character string &quot;<TT>'e</TT>&quot; can be converted to e-accute using 
 <A HREF="m3mac045.html">expand-iso-accents(3)</A>. This could be performed automatically using translate-key as follows: <UL>
 <PRE>1000&nbsp;translate-key&nbsp;&quot;'&nbsp;e&quot;&nbsp;&quot;\xE9&quot; 
 </PRE></UL>
@@ -111,12 +111,12 @@ translate-key&nbsp;&quot;esc&nbsp;[&nbsp;5&nbsp;^&quot;&nbsp;&quot;C-page-up&quo
 <P>One of the easiest ways of obtaining a key sequence is to run <B>sh(1)</B> which does not attempt to interpret these keys so when a key is pressed (followed by <TT>&lt;RETURN&gt;</TT>) the following type of error message is usually generated:- <UL>
 <PRE>sh:&nbsp;^[[2~:&nbsp;&nbsp;not&nbsp;found. 
 </PRE></UL>
-<P>where <TT>^[[2~</TT> is the required key sequence. Another method of obtaining these key sequences is to start MicroEmacs '05, use 
+<P>where <TT>^[[2~</TT> is the required key sequence. Another method of obtaining these key sequences is to start MicroEmacs '06, use 
 <A HREF="m2cmd011.html">start-kbd-macro(2)</A> to start a macro definition, press the required keys and then use 
 <A HREF="m2cmd011.html">end-kbd-macro(2)</A> followed by 
 <A HREF="m2cmd089.html">name-kbd-macro(2)</A> and 
 <A HREF="m2cmd074.html">insert-macro(2)</A> to display the keys pressed. 
-<P>The key sequences generated for these keys are dependent on the machine displaying MicroEmacs '05 as opposed to the machine running it. Often they are the same machine, but when they are not there is no easy method of determining the displaying machine and therefore correctly configuring MicroEmacs '05. 
+<P>The key sequences generated for these keys are dependent on the machine displaying MicroEmacs '06 as opposed to the machine running it. Often they are the same machine, but when they are not there is no easy method of determining the displaying machine and therefore correctly configuring MicroEmacs '06. 
 <P>A better way of obtaining this cross platform consistency is to create an XTerm app-defaults setup file with the correct VT100 key translations, e.g. the setup file could contain the following <UL>
 <PRE>*vt100.translations:&nbsp;#override&nbsp;\ 
 	Shift&lt;Key&gt;Tab:		string(&quot;\033[Z&quot;)&nbsp;\n\ 
@@ -145,7 +145,7 @@ translate-key&nbsp;&quot;esc&nbsp;[&nbsp;5&nbsp;^&quot;&nbsp;&quot;C-page-up&quo
 <A HREF="m2cmd013.html">global-bind-key(2)</A>, 
 <A HREF="m2cmd011.html">start-kbd-macro(2)</A>, <B>xterm(1)</B>, <B>sh(1)</B>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2002/10/16</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/07/28</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

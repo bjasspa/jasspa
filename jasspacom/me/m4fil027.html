@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>&stat(4)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 &stat(4)</H1>
@@ -19,9 +19,42 @@
 <H2><B>DESCRIPTION </B></H2>
 <UL><P><B>&amp;stat</B> returns the specified <I>&lt;stat&gt;</I> on the given <I>&lt;filename&gt;</I>. Valid <I>&lt;stat&gt;</I> values are:- 
 <P><B>a</B> 
-<BR><UL>Returns the absolute file name, corrects relative paths and symbolic links, i.e. on unix if the filename is a symbolic link it returns the file name the link points to (recursive), otherwise returns the file name. </UL>
+<BR><UL>Returns the absolute file name, corrects relative paths and symbolic links, i.e. on UNIX if the filename is a symbolic link it returns the file name the link points to (recursive), otherwise returns the file name. </UL>
 <P><B>d</B> 
 <BR><UL>Returns the file's modification time stamp as an integer, larger values indicate a later time. </UL>
+<P><B>i</B> 
+<BR><UL>Returns information on the file in a 
+<A HREF="m4fil029.html">MicroEmacs list</A> formatted string. The fields within the list are defined as follows: 
+<P>1 
+<BR><UL>File location, which will be one of the following: 
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;F&nbsp;&nbsp;&nbsp;File&nbsp;is&nbsp;an&nbsp;ftp&nbsp;URL&nbsp;file&nbsp;(see&nbsp;note). 
+&nbsp;&nbsp;&nbsp;&nbsp;H&nbsp;&nbsp;&nbsp;File&nbsp;is&nbsp;a&nbsp;http&nbsp;URL&nbsp;link&nbsp;(see&nbsp;note). 
+&nbsp;&nbsp;&nbsp;&nbsp;L&nbsp;&nbsp;&nbsp;File&nbsp;is&nbsp;a&nbsp;local&nbsp;file. 
+</PRE></UL>
+<P>2 
+<BR><UL>File type, which will be one of the following: 
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;D&nbsp;&nbsp;&nbsp;File&nbsp;is&nbsp;a&nbsp;directory. 
+&nbsp;&nbsp;&nbsp;&nbsp;H&nbsp;&nbsp;&nbsp;File&nbsp;is&nbsp;a&nbsp;http&nbsp;URL&nbsp;link&nbsp;(no&nbsp;further&nbsp;information&nbsp;is&nbsp;known). 
+&nbsp;&nbsp;&nbsp;&nbsp;L&nbsp;&nbsp;&nbsp;File&nbsp;is&nbsp;a&nbsp;symbolic&nbsp;link&nbsp;(UNIX). 
+&nbsp;&nbsp;&nbsp;&nbsp;N&nbsp;&nbsp;&nbsp;File&nbsp;is&nbsp;an&nbsp;untouchable&nbsp;system&nbsp;file. 
+&nbsp;&nbsp;&nbsp;&nbsp;R&nbsp;&nbsp;&nbsp;File&nbsp;is&nbsp;a&nbsp;regular&nbsp;file. 
+&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;&nbsp;&nbsp;File&nbsp;does&nbsp;not&nbsp;exist. 
+</PRE></UL>
+<UL><P>Note the information returned here is different to the '<TT>t</TT>' flag below as the type of an ftp file is evaluated, i.e. <TT>D</TT>, <TT>R</TT> or <TT>X</TT> will be returned. </UL>
+<P>3 
+<BR><UL>Symbolic file type, which will be the empty string unless the file type above is '<TT>L</TT>' in which case it will be one of the following: 
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;D&nbsp;&nbsp;&nbsp;File&nbsp;is&nbsp;a&nbsp;directory. 
+&nbsp;&nbsp;&nbsp;&nbsp;L&nbsp;&nbsp;&nbsp;File&nbsp;is&nbsp;a&nbsp;symbolic&nbsp;link&nbsp;(UNIX). 
+&nbsp;&nbsp;&nbsp;&nbsp;N&nbsp;&nbsp;&nbsp;File&nbsp;is&nbsp;an&nbsp;untouchable&nbsp;system&nbsp;file. 
+&nbsp;&nbsp;&nbsp;&nbsp;R&nbsp;&nbsp;&nbsp;File&nbsp;is&nbsp;a&nbsp;regular&nbsp;file. 
+&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;&nbsp;&nbsp;File&nbsp;does&nbsp;not&nbsp;exist. 
+</PRE></UL>
+<P>4 
+<BR><UL>File permissions or attributes which are returned as an integer value specific to the Operating System. </UL>
+<P>5 and 6 
+<BR><UL>File size given as an upper and lower 32 bit integers for large file support, these values will be the empty string if the file size could not be determined. </UL>
+<P>7 
+<BR><UL>File modification time given as &quot;<TT>YYYYMMDDhhmmss</TT>&quot;, this field has not yet been implemented. </UL></UL>
 <P><B>m</B> 
 <BR><UL>Returns the file's modification time stamp as a string, the format of the string is the same as 
 <A HREF="m5var060.html">$time(5)</A>. </UL>
@@ -69,7 +102,7 @@ test-file&nbsp;&quot;foobar&quot;
 <A HREF="amicr026.html">Variable Functions</A>, 
 <A HREF="m2cmd056.html">find-file(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2004/03/23</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/21</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

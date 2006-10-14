@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>macroDebugging(4)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 macroDebugging(4)</H1>
@@ -66,13 +66,13 @@ macroDebugging(4)</H1>
 <BR><UL>Abort the macro. Immediately terminates the macro sequence, the state of the buffers is undefined and leaves the windows in the state when the macro was aborted. </UL>
 <P><TT>^L</TT> 
 <BR><UL>Redraws the current screen. </UL>
-<P><TT>!</TT> 
+<P><TT>c</TT> 
 <BR><UL>Continues macro execution the value of $debug is set to 0. Execution continues without user interaction up until the next <B>$debug</B> change. </UL>
 <P><TT>s</TT> 
 <BR><UL>Single steps through the macro, if another macro is invoked then debugging with continue in the new sub-macro. </UL>
 <P><TT>v</TT> 
 <BR><UL>Display the value of a variable. The user is prompted for a variable value to show, once entered, the value of the variable is displayed. </UL>
-<P><I>any</I> 
+<P><I>&lt;any&gt;</I> 
 <BR><UL>Any other key will step onto the next instruction, unlike <I>step</I> then any macros that are invoked are not debugged. </UL>
 <P>See the 
 <A HREF="m5var011.html">$debug(5)</A> help page for more information. 
@@ -93,7 +93,7 @@ macroDebugging(4)</H1>
 <BR>
 <A HREF="m2nar010.html">Writing MicroEmacs Macros</A> </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2005/02/19</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/09/18</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

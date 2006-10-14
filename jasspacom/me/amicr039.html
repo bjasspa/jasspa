@@ -1,8 +1,8 @@
 <HTML>
-<HEAD><TITLE>MicroEmacs - Origins</TITLE></HEAD>
+<HEAD><TITLE>MicroEmacs - History</TITLE></HEAD>
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
-MicroEmacs - Origins</H1>
+MicroEmacs - History</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
 <A HREF="amicr031.html">[Commands]</A>
@@ -11,14 +11,423 @@ MicroEmacs - Origins</H1>
 <A HREF="amicr035.html">[Glossary]</A>
 </FONT>
 <HR>
-<H2><B>ORIGINS </B></H2>
+<H2><B>HISTORY </B></H2>
 <UL><P>This version of MicroEmacs is based on an early <I>MicroEmacs</I> release of 3.8 in 1988, the origins of which are unknown, except to say it was delivered on a unmarked 5 1/2&quot; floppy disk. 
 <P>The program was originally ported to a Motorola MVME147 UNIX box as an alternative to <B>vi</B>. Reliability of the program proved to be a problem as it constantly crashed. In an attempt to rectify the problems the development of MicroEmacs commenced. 
 <P>Development has continued from 1988 through to today, on the whole oblivious to further developments of the existing <B>MicroEmacs</B> program. This was due to no Internet access. It was not until 1996 the next version of <B>MicroEmacs</B> and <B>mewin</B> (Microsoft Windows (TM) port of the same program) was downloaded from the Internet and compared. By this time MicroEmacs was radically different and we were not about to mesh the two together - that would be a step backwards. 
 <P>Development of MicroEmacs has been biased towards the UNIX platform, as most of the early development was performed in the UNIX domain. The first of the window servers was X-Windows, which in turn has shaped the implementation of the Microsoft Windows port. Latterly, we have seen the resurgence of the IBM-PC platform which is now commonplace. For the return port to the DOS environment, and subsequent development of the Microsoft Windows port, a UNIX like interface was required. Most existing users could not abide the primitive editors found on these machines; Microsoft Windows was an alien and hostile environment when compared with UNIX. Hence, the MicroEmacs interface utilizes UNIX style cut and paste across all platforms. 
 <P>For portability, MicroEmacs utilizes character rendering on all platforms regardless of the window manager. Under X-Windows and Microsoft Windows, the display is still treated as a character based display, the subtle difference is that the display pane is re-sizable. This means that the scroll bars, fonts etc. are not as slick as they could be, certainly under Microsoft Windows MicroEmacs looks positively primitive!! Regardless of the look, the goal of a common editor across all working platforms has been achieved! </UL>
 <H2>Development History </H2>
-<UL><P><B>8th Release - May 2005</B> <UL><P>
+<UL><P><B>9th Release - September 2006</B> 
+<BR>Release date specified as 2006/09/09. 
+<P>User perspective summary of changes <UL><P>
+<LI>
+<A HREF="m3osd006.html">MainMenu(3)</A> - A more consistent main menu and user dialog interaction. 
+<LI>
+<A HREF="m3mac027.html">file-browser(3)</A> - New key bindings to create, delete, copy files and directories. 
+<A HREF="m3osd017.html">file-tool-setup(3)</A> allows open actions to be associated with file types allowing automatic launching of external tools. 
+<LI>Introduction of major modes for management of different file types. 
+<A HREF="m3mac087.html">buffer-major-mode(3)</A> assigns a new operating mode to a buffer affecting the highlighting, indentation, key binding etc. 
+<A HREF="m3osd010.html">major-mode-setup(3)</A> configures the behavior of the major mode. 
+<LI>Introduction of sessions which store the context of editor including window layout and loaded files. Multiple sessions may be used, &quot;<B>me</B> <B>-c</B><I>&lt;sessionName&gt;</I>&quot; restores a specific session. 
+<A HREF="m3mac080.html">save-session(3)</A> and 
+<A HREF="m3mac081.html">read-session(3)</A> handle the restore/saving of sessions. The existing history commands have been removed. 
+<LI>
+<A HREF="m3mac085.html">ClearCase(3)</A> support for IBM Rational ClearCase. 
+<LI>
+<A HREF="m3mac057.html">cvs(3)</A> improved support within the 
+<A HREF="m3mac027.html">file-browser(3)</A>. 
+<LI>
+<A HREF="m3mac078.html">notes(3)</A> utility extended, new features allow quick notes to be generated with <B>notes-instant</B>, notes associated with a file may be added with <B>notes-context</B>. 
+<LI>
+<A HREF="m3mac035.html">rdiff(3)</A> recursive difference and 
+<A HREF="m3mac083.html">xdiff(3)</A> for access to an external graphical difference tool. 
+<A HREF="m2cmd035.html">forward-kill-word(2)</A> inconsistencies removed. 
+<LI>Highlighting improved, especially for long script files (html / php / javascript) where the highlighting used to be lost. 
+<LI>
+<A HREF="m9typ047.html">jst(9)</A> - Structured text documents. 
+<LI>
+<A HREF="m3mac086.html">insert-password(3)</A> password generation utility for system administrators who tire of thinking of new passwords. 
+<LI>Fill columns are now defined on a per buffer basis 
+<A HREF="m5var021.html">$buffer-fill-col(5)</A>. 
+<LI>
+<A HREF="m3mac082.html">indent-increase(3)</A> and 
+<A HREF="m3mac082.html">indent-decrease(3)</A> commands introduced to change the indentation of a region. 
+<LI>The default date format may be specified by the user with 
+<A HREF="m3mac019.html">.ascii-time.format(5)</A>. 
+<LI>Quick directory aliases such as &quot;<B>~proj</B>&quot; or &quot;<B>~work</B>&quot; etc. may be defined to a longer pathname using 
+<A HREF="m3osd016.html">alias-path-setup(3)</A>. 
+<LI>Language template added for Adobe Macromedia ColdFusion. 
+<LI>Bug fixes and enhancements to existing commands and functions. </UL><P><B>Development history</B> <UL><P>
+<LI>[061005] java - Added missing highlighting tokens reported by Tom Hundt. Added new indentation definition and highlighting defined by Bryan Schofield. 
+<LI>[061005] Fixed the cygwin f3 mode toggling to be the same as ishell. 
+<LI>[061004] sessions - Avoided any potential timestamp issues by changing the divider to letters. 
+<LI>[061004] Changed $timestamp default to be regex compliant (i.e. \\.) 
+<LI>[061004] Changed copyrights to 2006 
+<LI>[061002] jst - Up-dated jst hook and utils to latest standard. 
+<LI>[061002] Changed arg to popup-window from 3 to 4 to resize as well, restoring a session on a different machine could easily break things otherwise. 
+<LI>[061002] browse mode - Added wheel mouse support. 
+<LI>[061002] notes - fixed notes-file bug caused by creating a new notes file while in notes. Close notes before importing skwurel notes. 
+<LI>[061002] Fixed find bug. 
+<LI>[061002] Improved the $file-names path/regex division detection and checked for '\\&lt;' which can always be used as a divider if required. 
+<LI>[060928] Fixed crash caused by ftp login being given a NULL password. 
+<LI>[060927] Set macro version to <I>2006-09-09</I> as the release version. Set the executable to <I>2006-09-09</I> as the release version. 
+<LI>[060925] Added a '<TT>g</TT>' (goto) to <B>save-some-buffers</B> prompt. 
+<LI>[060925] Cosmetic changes to <B>buffer-info</B>, 2nd Col to 'ACol' and printed current character in decimal as well. 
+<LI>[060921] Improved the notes display to better preserve the current notes file. 
+<LI>[060921] Stopped 
+<A HREF="m3mac081.html">read-session(3)</A> from trying to restore lock and save buffer modes. 
+<LI>[060921] Improved the <B>query-replace</B> prompt to list letter options when the width allows. 
+<LI>[060921] Browser. Added seconds to the info given for a file in a directory listing. Fixed dir list hooks to handle mod times with seconds. 
+<LI>[060921] Changed char prompts to have '<TT>/</TT>' dividers. 
+<LI>[060921] Added new bit 0x20 to 
+<A HREF="m2cmd106.html">read-file(2)</A> to discard changes to buffer. 
+<LI>[060919] Build. Added $MAKEWINDEFS and LIBS to the ME_WINDOW defines, removed references to xpm from the makefiles as this is not a standard package and moved references out of <I>emain.h</I> into <I>unixterm.c</I>. Vamped up build shell script to check for X11 &amp; Xpm availability. Changed horrid dos style empty string tests in UNIX scripts with <B>-z</B> &amp; <B>-n</B> test options 
+<LI>[060918] Standardized the form of character input prompts and improved routine so '<TT>?</TT>' swaps between help and prompt. Added a '<TT>N(o)</TT> <TT>to</TT> <TT>all</TT>' option to 
+<A HREF="m2cmd150.html">save-some-buffers(2)</A> and changed 
+<A HREF="m2cmd052.html">fill-paragraph(2)</A> to '<TT>Never</TT>' to '<TT>N(o) to all</TT>'. For <B>query-replace-*</B>, changed the help for '<TT>!</TT>' to '<TT>Yes to (a)ll</TT>' and added '<TT>a</TT>', changed '<TT>i</TT>' to '<TT>e</TT>' and removed '<TT>.</TT>' option. 
+<LI>[060918] Changed debugger '<TT>!</TT>' to '<TT>c</TT>', in keeping with other debuggers for <I>continue</I>. 
+<LI>[060918] Added bit 0x04 to 
+<A HREF="m4fil015.html">@mc(4)</A> flag so macro can supply a help string 
+<LI>[060917] Corrected the X-Windows ordering to allow us to receive (Un)Map events on Linux - X-Server behavior is different from Sun Solaris. 
+<LI>[060917] UNIX. Added XPM colour bitmap support. Just smartens the ME icon up in Gnome and makes ME look a bit more 21st century without the monochrome icon. 
+<LI>[060917] Shell template, addition of missing common commands. 
+<LI>[060917] JST, addition of other text insertions. 
+<LI>[060917] UNIX. Corrected X-Windows positioning from popup-window. 
+<LI>[060917] Added new 48x48 icon for gnome with transparency boarder - complaints that existing icons were not Gnome friendly! 
+<LI>[060917] UNIX. Corrected X-Windows hints for font size change. Requires that the X-Window is unmapped before the size hint may be modified and the re-mapped. 
+<LI>[060915] Notes. Fixed 
+<A HREF="m2cmd163.html">next-frame(2)</A> prefered selection order. 
+<LI>[060915] OSD. Sanitised the quick file open and file type buffer open menus and changed them to use a scrolled list if more files/buffers than lines rather than filling the screen. 
+<LI>[060915] In notes find a file that is loaded but out of date, this leads to an reread prompt during which the notes ehook/idle callback kicks in and changes frame - this breaks the message line of both frames. This is a rather horrid fix to a rather grotty problem! 
+<LI>[060915] Browser, fixed the sort order to be case sensitive on UNIX, insensitive on Windows 
+<LI>[060914] User setup. Stopped user-setup's apply from losing the current session's override colour scheme 
+<LI>[060914] ClearCase. Fixed Describe context menu hotkey overload. Used <TT>-mkpath</TT> to implement a '<I>checkout parent</I>' for <B>cc-add</B>. 
+<LI>[060913] Notes. Fixed the loosing of edit and crypt mode from the main notes buffer due to the setting of the major mode. Fixed notes tree context menu hot keys. 
+<LI>[060913] Fixed kill-list tool up-date trashing the real kill ring. 
+<LI>[060912] Changed session-update to store view mode for a buffer only if it was forced on by the user (i.e. the file is not readonly). This stops files re-loading in view mode if the permissions have changed - this was a problem with ClearCase reported by Enver Haase. 
+<LI>[060912] Simplified the new note-setup and fixed the notes buffer losing the hide mode (which causes problems for session restore). 
+<LI>[060911] Removed the notes 'note' dummy hook in favour of using a real hook. Set the default hook to be jst but can be set in the -!- enf; major-mode: &lt;hook&gt; -!- header. Added new note-setup which users buffer-setup to allow the user to setup the buffer and stores the values for that note. 
+<LI>[060908] File browser, bound a 
+<A HREF="m3osd008.html">file-attrib(3)</A> based 'Change File Attributes' option to 'g' 
+<LI>[060908] Changed 
+<A HREF="m3osd008.html">file-attrib(3)</A> to handle directory buffers correctly and, with a numeric arg of 0, change the attibutes of a given file (i.e. not the current buffer) Implementation changed to now have a Cancel button. 
+<LI>[060908] File tool, implemented new <TT>%&quot;...%&quot;</TT> tag to enable proper quoting of arguments. 
+<LI>[060907] Fixed startup buffer hilighting issue caused by order of session restore. 
+<LI>[060905] ColdFusion template, added string highlighting to the SQL statements. 
+<LI>[060905] File browser, added binary edit, bound to 'b'. 
+<LI>[060905] Added basic xml &quot;<TT>/&gt;</TT>&quot; single tag support to html and fixed xml's insert-attrib to handle this 
+<LI>[060905] Changed refences to <I>white-char*</I> to whitespaces (i.e. display-white-chars is now display-whitespace) Fixed hide main menu to popup an info dialog informing the user how to get it back. 
+<LI>[060905] Fixed ftp dialog to conform to new <I>&lt;user&gt;.erf</I> setup standard by adding a new 'Make Default' dialog, and improved the behaviour of Enter in the dialog. 
+<LI>[060904] Corrected the ColdFusion closing bracket hgilight. 
+<LI>[060904] Shortened the document template formating menu text strings. 
+<LI>[060829] Fixed HTML template <B>html-insert-tag</B> to add the closing &quot;<TT>/</TT>&quot; on insertion of a &quot;<TT>&lt;singleTag/&gt;</TT>&quot;. Fixed <B>html-insert-attrib</B> to deal with attribute insertion into a HTML tag ending in &quot;<TT>/&gt;</TT>&quot;. 
+<LI>[060828] SQL Template. Corrected SQL string hilighting. 
+<LI>[060827] New language template for Adobe/MacroMedia ColdFusion (file extensions .cfm, .cfml .cfc). 
+<LI>[060827] Extended indentation with the 'u' and 'v' indentation types. 
+<LI>[060822] 2006 Release Candidate 1 (RC1) 
+<LI>[060822] Added password commands 
+<A HREF="m3mac086.html">password-to-phonic(3)</A> and 
+<A HREF="m3mac086.html">insert-password(3)</A>. [060816] Added settings for fill-col and fill-mode to the 
+<A HREF="m3osd010.html">major-mode-setup(3)</A>. 
+<LI>[060816] Added support for a &quot;<TT>.fhook-???.fill-*</TT>&quot; variable and changed latex over to using this variable rather than burning the fill-mode in as 'l' 
+<LI>[060816] Crossword - Changed Exit button to Close. 
+<LI>[060816] Changed organizer Exit buttons to Close or Cancel. 
+<LI>[060812] Additions to the PHP script - missing tags etc. 
+<LI>[060812] Corrected sun keysym inclusion - inclusion limited to X-Windows build only 
+<LI>[060811] Fixed session resize issue and incremented the version. 
+<LI>[060811] Added $buffer-fill-* variables to the buffer-setup dialog 
+<LI>[060811] Stopped read-session warning about the *server* buffer being a process. 
+<LI>[060811] Updated to use the new $buffer-fill-* variables - simplifies the doc hooks as ehooks and bhooks are no longer required. 
+<LI>[060811] Incremented the version. MicroEmacs 06 - Date 2006/08/10 - sunos 
+<LI>[060811] Introduced new $buffer-fill-col and $buffer-fill-mode variables to allow every buffer to have its own setting, initialized to the global variable value when the buffer is created. 
+<LI>[060810] Added 'a' for All option to the save-some-buffers prompt 
+<LI>[060810] Added save -&gt; prompt -&gt; delete of all buffers when loading another session. If bit 1 in arg is not set (i.e. 0 read-session &quot;name&quot;) then this is not done and the new session is effectively merged into the current. 
+<LI>[060810] Added setting of main buffer modes to the buffer-setup osd. 
+<LI>[060807] Updated emulation modes to handle the new main menu. 
+<LI>[060807] Fixed major mode drop down list to not scroll horizontally 
+<LI>[060807] A few tweaks to help with the other editor emulation. 
+<LI>[060807] Fixed major-mode-setup so Cancel cancels all changes (was 50-50) 
+<LI>[060807] Removed old buffer-setup file and fixed the makefile 
+<LI>[060807] Removed 'correction' of main osd - not needed and wrong. 
+<LI>[060807] Tweaks to osd to remove a few annoyances: up on main menu now goes to last item of current sub menu, fixed re-frame and focus issue on an opened child and made C-g always just close a child even if not in focus. 
+<LI>[060803] Added new -2 and -3 values for 2nd arg to &amp;lins to insert alphabetically and case insensitive alpha. 
+<LI>[060803] Added setting of the major mode to the new buffer-setup 
+<LI>[060803] Changed osd dialogs to use 'Cancel' or 'Close' rather than 'Exit' 
+<LI>[060803] Closed notes if open when applying changes as this corrupts the notes frame. 
+<LI>[060803] Made the buffer sub-menu be case insensitively ordered in windows and have first letter hotkeys. 
+<LI>[060803] Changed frame-id comparison to use seq as should handle &quot;ERROR&quot; better. 
+<LI>[060803] Fixed notes to handle a reread-file type operation. 
+<LI>[060803] Changed osd dialogs to use 'Cancel' or 'Close' rather than 'Exit' 
+<LI>[060802] Added saving the session to save-all and associated a file in $user-path with the File-&gt;New command. 
+<LI>[060801] Set .gz extracted buffer name and file name so its location is kept. 
+<LI>[060728] Fixed clear-case to handle multi-line comments with SHELL set to csh. 
+<LI>[060728] Changed &quot;symbol&quot; to &quot;insert-symbol&quot; and &quot;indent-setup&quot; to &quot;buffer-setup&quot; as this is what it will become. Fixed a few hot-key issues with new main menu. 
+<LI>[060728] Improved help page and looked for context-menu binding to support esc&nbsp;+. 
+<LI>[060728] Moved the location of making CVS and clear-case always available into their setup dialog and added a C-x C-q replacement option. 
+<LI>[060728] Changed backspace in a directory to move to the sub-directory in the parent listing. 
+<LI>[060728] Fixed notes startup so it returns the user to the same place. 
+<LI>[060728] Documentation, replaced -ve with negative and +ve with positive. 
+<LI>[060726] gdiff. Added termcap friendly key bindings to move between difference regions. 
+<LI>[060726] Added new indent-increase and indent-decrease macros. Added indent increase and decrease to format, changed notes binding to f8, move shell tools from tools to advanced and setup commands into tools. 
+<LI>[060726] Fixed setting of scheme when session file does not exist (problem hit when old user uses session for first time) 
+<LI>[060725] Changed goto commands to not stop the show-region highlight 
+<LI>[060725] Major rearrangement of the main menu, replaced the Insert and Execute sub-menus with a View and Advanced, re-balanced and relocated many items, most notably the setup dialogs out of Help into Advanced. 
+<LI>[060725] Renamed the existing tool-bar macro to toolbar-open (mirrors existing toolbar-close) and introduced a new tool-bar macro that toggles state, i.e. closes if opened. This command is more useful in key-bindings and menus etc. 
+<LI>[060725] Improved error handling of osd based find tag, also adding support for tags file being in a parent directory. 
+<LI>[060725] Removed command-line validation and relax file selection requirement so user can create a tool that does not require a file name (e.g. open . in explorer) 
+<LI>[060725] Used set/goto-position to store current dot and added &lt;no favorites&gt; entry if menu is empty. 
+<LI>[060725] Added hot-keys to the file attrib dialog 
+<LI>[060725] Changed simply fence matching of quotes and double quotes, if match is not found by the end or start of the line it's assumed to be a single and ignored. 
+<LI>[060725] Changed &amp;mid so the 3rd argument (length) can be -ve to mean from the right (as per the &amp;rig etc) - not sure why this was not done first time round. 
+<LI>[060624] Changed session support to handle both window and console environments. Changed startup to only initialize one scheme. 
+<LI>[060623] Added file-type-setup to the list of misc setups. 
+<LI>[060622] Changed buffer-setup to major-mode-setup, also changed buffer-help to major-mode-help etc and fixed comments. Left buffer-setup in buffstp as there will be a buffer-setup which really does setup up the current buffer. Change me.emf date to 20060606 
+<LI>[060620] Stopped session trying to change the frame for a console run. 
+<LI>[060619] Sessions. Stopped restore buffer's whose file does not exist and changed the order of frame size setting so on UNIX the depth of windows are maintained correctly 
+<LI>[060619] Notes. Fixed current buffer position reset problem caused by buffer being shown on hidden notes frame 
+<LI>[060619] Changed all ME setup macros to reload the /history registry before change the registry and writing it out as soon as the changes are accepted to reduce the likelihood of settings (like new alias paths) being lost. One except is when the setup is run from within user-setup in which case the registry is only read and written by user-setup, this could have some unwanted side effects. Added session-setup to the user-setup misc page. 
+<LI>[060619] Change to allow macros access to inactive buffers broke file and ipipe hooks which get executed but the buffer is officially made active - fixed by maintaining the BIFNACT internal flag and ensuring the algorithm used for inactive buffers is only used wh ere appropriate. Found buffer context was not set correctly for session buffers whose name was set to 'name&lt;1&gt;' as the BIFNAME flag is not set, fixed by removing this flag and using code to assess if the &lt;1&gt; should be removed based on the filename. 
+<LI>[060619] Fixed read-registry's replace mode which was doing a merge as the old node was not removed. 
+<LI>[060619] Fixed a bad prompt and added a couple of brackets to protect compare order. 
+<LI>[060616] Changed the start-up process to not use the history commands (which have been removed) but simply use the read-registry commands. 
+<LI>[060615] Moved the storage of all history type info into the new session (esf) files. 
+<LI>[060615] $user-name.erf only contains setup info and not often edited changed user setup to minimize the likelihood of losing edits (at last). 
+<LI>[060615] Broken session-setup out into its own macro file and made quite a few fixes to the new session support. 
+<LI>[060615] Removed the save- and read-history commands the me.emf start-up now simply use the read-registry command 
+<LI>[060615] Changed find-buffer to allow limited access to inactive buffers (allows base getting and setting of variables) 
+<LI>[060615] Changed the exit-emacs numeric argument (again) so it can be used by meDie (0x28 exit-emacs ~= emergency exit) 
+<LI>[060615] Created new $window-mark-line &amp; $window-mark-col to aid inactive buffer support (not sure why these were not already there as they are usefully in macros) 
+<LI>[060615] Enabled availability of save-some-buffers by default (quick-exit relies on this!) 
+<LI>[060615] Changed the -c command-line option to simply set the variable %session-name (relies on session macros) 
+<LI>[060615] Changed clipboard support to not mess with it during start-up and shut-down 
+<LI>[060615] Created new change-scheme command. 
+<LI>[060615] ClearCase. Fixed *cc-state* buffer not being in view mode when command completes. 
+<LI>[060615] Corrected types of exchange-point-and-mark. 
+<LI>[060608] Improved OSD search dialog by making the buttons always enabled and reporting an error if search string is empty. 
+<LI>[060608] Made the existing hidden scheme macro a visible command which can be used to change the current color scheme. Set .scheme.current to the file name of the current scheme Saved the current scheme in a session so a user can create a session with its own different scheme. 
+<LI>[060526] Sessions. Changed to use new shut-down pseudo key. 
+<LI>[060526] Changed shut-down process to call the ehooks for the current buffer of all frames and changed the shut-down macro to a pseudo key-binding. 
+<LI>[060525] Added a new buffer-major-mode command to change the current buffer's hook, giving it an arg of -1 or major mode of &quot;&quot; removes the hook. No completion list yet. Fixed tab-width setting so all 3 windows get the same new value. 
+<LI>[060525] Changed gdiff to insert the 2 files into temp buffers so if the files are already loaded by the user these buffers are not effected. Added the ability to set the tab width. 
+<LI>[060525] Fixed crash caused by watch refreshing the buffer while user is using isearch - stopped watch from refreshing the buffer. 
+<LI>[060525] Added a new bit 0x10 to find- read- and view-file to disable the context fhook evaluation. 
+<LI>[060525] UNIX fix. Call screenUpdate directly after a window resize - fixes gdiff update problem. 
+<LI>[060523] Sessions. First serious rev of session-load and -save. 
+<LI>[060523] Added arg to tool-bar to allow the tool-bar to be initialized without re-reading the registry - required by new session support. 
+<LI>[060523] Changed left click on mode line to change to the window if the mouse is not moved. 
+<LI>[060523] Fixed C++ '::&lt;function&gt;() ;' indentation bug introduced with c++ initialize ': &lt;base-init&gt; ()' indentation support. 
+<LI>[060523] Encrypted files. Added file/host to the password prompt so on a -c the user should know which password is required. 
+<LI>[060523] Fixed UNIX compiler warnings 
+<LI>[060516] me.emf. Fixed missing def of file-type-setup &amp; shell-tool-setup. 
+<LI>[060515] Added new bit 0x2 to arg for change-buffer-name which force the buffer to have the given name, changing the name of an existing buffer if required. 
+<LI>[060512] ClearCase. Fixed cc-setup view deletion, pressing No does not remove it. Removed the temporary file created by cc-diff if me's diff of gdiff are used, file is still left if xdiff is used. 
+<LI>[060512] Added a new $mode-chars variable which returns the letter ids of all modes as a string, this variable cannot currently be set. 
+<LI>[060512] Changed the numeric arguments for quick-exit and save-buffers-exit-emacs to make them simple to use. 
+<LI>[060510] Improved the ftp logging so errors get put into the console with error numbers rather than just mlwrite'd. Removed the KEEPALIVE as ME closes the sockets with 10mins anyway. Fix the ftp kb/s calc. 
+<LI>[060510] Dirlist. Fixed context menu so the FTP additions are added for any ftp:// listing. 
+<LI>[060504] Major addition to notes: a) Added forw/back note. b) added notes-instant and notes-context c) implemented notes-session-save (not done window layout yet) but not implemented the matching load yet. d) fixed a few annoying up-date and behavior problems. 
+<LI>[060504] ClearCase. Fixed windows \\r\\n issue with diff - constructed predecessor could have the wrong format breaking the diff. 
+<LI>[060504] Changed reyank numeric arg so if a -ve arg is given reyank will fail if at the end of the kill chain rather than loop - required for notes-session-save 
+<LI>[060504] Found differences between copy and kill-region's handling of narrows, particularly if there's no markup line Found I could crash ME if only the end part of a narrow-to is killed - buffer line number all go wrong. To fix the issues I've created a standard function to handle the expansion of narrows over a region and made the rule that for a narrow without a markup line to be included in the region at least the \\n of the previous line and 1 char of the container line must be included, this means that narrows at the top and bottom cannot be included. 
+<LI>[060504] ClearCase. Fixed cc-merge comment bug. 
+<LI>[060504] Added support for a .ascii-time.format variable which defines the format for the output using '%' tags as per strftime function (supports most tags) - output is unchanged if variable is not set. Fixes request by Dick Pierce. Changed the OSD insert time function to use the same tokens and made the first format in the list be the output of ascii-time. 
+<LI>[060503] Provided macro interface to get a list of alpha marks for the current buffer. 
+<LI>[060427] Fixed context-menu element activation issue caused by selected file count being wrong. 
+<LI>[060427] Fixed notes and gdiff window resize issues by locking the size. 
+<LI>[060426] Improved (but not quite fully fixed and I don't think I can) the mouse word selection when the word is half hidden at the left or right edge of the window. 
+<LI>[060425] Fixed bug with setting $window-line, if value is &lt; 1 then the goto-line function prompts the user, this is incorrect behavior for a set variable command and the cause of a mouse driver spin. Fixed mouse left button spin caused by missing the pick event and a bug in set-variable for $window-line. Added new horizontal scroll feature when user clicks on a $window-char truncated line char. 
+<LI>[060421] JSP. Fixed java &lt;%...%&gt; within JavaScript start token 
+<LI>[060421] Fixed C++ comment hilighting 
+<LI>[060413] Added an abort-command safty trap to reset the $buffer-input variable. 
+<LI>[060413] JSP. Fixed most JSP hilight and indent issues caused by java and javascript confusions. 
+<LI>[060412] Bug fix. Put checks in to ensure the hilight/indent to be used according to a look-back scheme has been defined - fixes crash when viewing JSP files. 
+<LI>[060403] DIRECTORY LISTING. Fixed 'not-exist' fix in last commit - ftp dir lists can be only a couple of lines Made file/dir copy automatically try 3 times before prompting the user (large ftp copies will fail at points). Fixed browse mode close problem when browse deletes the buffer. 
+<LI>[060402] Used an ehook and a callback to auto detect a change in the notes frame buffer/window layout, if there is a change the callback closes the notes frame. This approach resolves many issues. 
+<LI>[060331] Fixed XML magic hook. 
+<LI>[060331] Fix annoying find-zfile last buffer history change. Changed the buffer &amp; file name of a loaded zfile file to something more useful. 
+<LI>[060331] Created a '2 find-buffer &lt;file-name&gt;' arg which finds an existing buffer via its file name - used to fix annoying find-zfile buffer history change. 
+<LI>[060330] Fixed CVS &amp; CC context menu placement issues. Fixed cc-add to use -mkpath for directories 
+<LI>[060330] Change fhook-dir to always detect if its a source-controlled dir and call the SC hook, the SC hook can then add its own bindings etc. Fixed fhook-dir so loading of &quot;.../not-exist/&quot; does not error. 
+<LI>[060330] Made the esc = &amp; esc + menu bindings global. 
+<LI>[060329] Changed unix start-up mode to favor X over termcap if DISPLAY is set, even if term is a vt100. 
+<LI>[060329] Fixed mode-line udate bug when all edits are undone - reported by Tom Hundt. 
+<LI>[060322] Fixed the position of the context menu when opened by mouse or menu key. Fixed auto-spell not being available when context menu is opened using the menu key. 
+<LI>[060322] Improved gdiff-next command to error at the end of the file so the use knows they have reached the end. Bound 'menu' to open the contex menu and bound 'esc up' &amp; 'esc down' to move between unassigned sections. 
+<LI>[060322] Bound f10 to close the notes frame and bound C-x k to a new notes-delete command 
+<LI>[060317] ClearCase. Added new cc-merge command (which uses cleartool's findmerge command!). Added new cc-describe command (which uses cleartool's describe command), fixed the CC context menu. 
+<LI>[060317] Directory listing. Increased 2Gb directory file size limit to 4Gb by making size variables meUInt. 
+<LI>[060317] Fixed '\\' quoting in command-wait example. 
+<LI>[060316] Up-dated docs for command-wait, added some meaty examples and added cross references to them. 
+<LI>[060316] indent fix 
+<LI>[060316] Changed describe-word osd dialog so that it has a 'Look Up' button which is the default. Also improved the insert description process so C-w kills the description inserted. 
+<LI>[060316] Improved the behaviour of the enter key in the help osd so it does a search or nothing. 
+<LI>[060315] Fixed a win32 console crash caused by the new frame reposition function. Stopped the messing about of the windows console when ME is in piped mode. 
+<LI>[060309] Fixed regex \\a -&gt; \\g for bell and added support for \\a &amp; \\m to [...] character classes. 
+<LI>[060309] Updated *shell-command docs. 
+<LI>[060309] Documented &amp;lef, &amp;mid &amp; &amp;rig -ve 2nd arg usage. 
+<LI>[060309] Documented insert-string's -ve arg. 
+<LI>[060309] Up-dated goto-matching-fence docs 
+<LI>[060309] Fixed docs for when no arg is given to forward-kill-word. 
+<LI>[060309] Updated jst template to new version. Fixed a couple of bugs with tables (empty cells and bad indent) Implemented a table cell '!' flag to indicate a start of a row (helps debugging) Fixed bug when title variable not set. 
+<LI>[060309] ClearCase. Minor improvement to setup layout 
+<LI>[060222] Exit handling fixed, saving of modified buffers, history, spell dictionaries etc. &quot;**Emergency Exit**&quot; messages removed from exit handling. 
+<LI>[060214] Corrected user setup mouse defaults - missing wheel mouse default bindings. 
+<LI>[060214] Improved the php look-back scheme to identify php script quicker. 
+<LI>[060213] Fixed crash caused by the new hilight look back scheme using the indent look back function which used the indent scheme rather than the hilight scheme 
+<LI>[060210] Improved php hilighting by making use of the new look-back-scheme and look-back-only-token features. 
+<LI>[060210] Improved the time printout 
+<LI>[060210] Benchmark tests. Improved the disptest. 
+<LI>[060210] ClearCase. Fixed cc-add when adding just a directory. 
+<LI>[060210] Added basic mouse support to browser and honours exit bindings 
+<LI>[060210] Added look-back-scheme support to hilighting (uses same code as indents quick-lookback scheme). Added new 'only use during look-back' hilight token (combined 0x800 &amp; 0x200) which can solve make multi-line string hilighting issues. 
+<LI>[060210] Fixed compiler warning with -m changes 
+<LI>[060210] Removed unused variable in new reposition function 
+<LI>[060210] Fixed unused variable on NDEBUG build 
+<LI>[060209] Made changes to the -m server message option to make it usable. a) Process the message using the macro 'token' function so \\n is translated to a new-line char. b) If the message is not terminated with a \\n then one is added. c) The popup-window message it only given when -o option is used 
+<LI>[060209] Added support for a server 'M' message command. 
+<LI>[060209] Changed the hilight and indent meHilight structure mis-uses access the data via #define (added to estruct.h) so the code is clean and easy to read and the miss uses can be easily found and changed. Changed the storage of the main indent and hilight scheme flags to use the ignore field (only 5 bits currently used) so the trunc scheme can use the type and the hilight look back can use the close (i.e. unlimited). 
+<LI>[060209] Fixed clear-case update list on checkin option. 
+<LI>[060208] Fixed crash caused by mlGetStringFromUser being called recursively - only possible since the introduction of ftp completion which can prompt for the user password while inputting a file name. 
+<LI>[060207] Added an implementation of meFrameRepositionWindow for XTerm, not a very good one as there is not a clear standard between WMs. 
+<LI>[060207] Fixed obscure crash caused by horizonal scroll mode 2 and long lines. 
+<LI>[060202] Build script. Fixed MS-Window's typo. 
+<LI>[060201] ClearCase + CVS. Fixed hiding of *??-console* buffer and closing the window with loading a file from a dir list. 
+<LI>[060127] Broke the user-setup 'Tools' 'File Types' and 'EMail' pages out into separate independent setup dialogs. Added new Miscellaneous page to user-setup with links to these and other setup dialogs (such as alias-path and file-tool) Changed the buttons to the more standard Okay, Apply Cancel. Slightly changed some of the Mail &amp; VM registry settings to make each platform independent (except filtering). 
+<LI>[060127] ClearCase. Added new cc-delete and alias-path-setup commands. Added f4 to diff binding. Moved the window resizing call to nearer the end (after the font resize as this could change to a smaller font allowing more lines etc). 
+<LI>[060127] Fixed quite a few issues with the CVS and clear-case UI interfaces. Brought cvs-state into line with CC, implemented cc-delete and rationalised the hot-keys and context menus. 
+<LI>[060127] Added new alias-path-setup OSD gui. 
+<LI>[060127] Added new 3 and 4 arg to popup-window to manipulate the main frame window, implemented meFrameRepositionWindow function on windows. 
+<LI>[060127] Fixed find-reg index in error message. 
+<LI>[060127] Moved macro parser's \\a to \\g (bell) and added support for \\a - alpha and \\m - alpha-num to hilight and regex. 
+<LI>[060125] Changed the default debug for 'deb' abbrev to 2. 
+<LI>[060125] Improved the hilighting of html &amp;???; chars - issue raised by Tom Hundt 
+<LI>[060124] Fixed crash caused by moving right (cursor key) into a sub-menu with no active items - bug found by Tom Hundt. 
+<LI>[060122] gdiff. Fixed the bugs introduced with the 3rd 'current line' window was introduced. 
+<LI>[060122] Changed call from saveExitEmacs to exitEmacs to avoid compile errors for NE. 
+<LI>[060122] Fixed the meDie function to not exit straight after the emergency exit message, now autosaves as it should. Change the handling of the CLOSE message on windows so it prompts okay/cancel if buffers need saving and then exits. Fixed really annoying modifier state mismatch problem on windows - reproduce by pressing control right-click on title bar to get the system menu and then release the control, ME misses the C-drop event so thinks its still pressed. 
+<LI>[051220] JST extensions. 
+<LI>[051219] JST. Added implementation of TOC to html export. 
+<LI>[051219] ClearCase. Disable check out of parent dir for cc-add as its not implemented 
+<LI>[051215] JST. Changed tag highlighting to handle split line tags correctly. Implemented support for f and b color export to HTML using style. 
+<LI>[051215] First commit of new v4 JST format hook and export macros. 
+<LI>[051215] Fixed the return value of transpose-lines command which was always returning false causing cc-add to fail. 
+<LI>[051212] SQL Template. Missing hilight statement causes execution to fail - Thanks to Th. 
+<LI>[051212] Fixes to old JST before it gets trashed 
+<LI>[051125] Fixed regex bug where &quot;[\\s]&quot; incorrectly matches an 's' 
+<LI>[051125] ClearCase. Added support for not loaded to cc-state 
+<LI>[051123] Added support for alias-paths. 
+<LI>[051122] Fixed highlight problems with &quot;^ *$&quot; &amp; &quot;^\\\\s*$&quot; close bracket tags, they should match any line containing only spaces/white-spaces but they did not work reliably. 
+<LI>[051122] ClearCase. Fixed the cc-diff, external diff settings had got muddled. 
+<LI>[051122] Directory listing. Changed the size ordering to list largest first on initial sort. 
+<LI>[051118] ClearCase. Implemented the auto get checkout comment and removed the temp command-line buffer. 
+<LI>[051118] Directory listing window. Added binding of 'f' to toggle the filter and changed the 's' and 'S' bindings round (s is far more useful) 
+<LI>[051118] Improved the horizontal scrolling of gdiff and browse 
+<LI>[051110] Make debugger stop at executed !elif &amp; !else will work for all macros, may not work when executing a buffer as the line may start with a white space. 
+<LI>[051110] Stopped osd check-box macros from triggering the debugger when $debug is set to 1. 
+<LI>[051110] Added some more key translations based on bug report by Francesco Abbate. 
+<LI>[051104] 2nd and much improved version of cc-setup. Changed to using -1 insert-string to allow multi-line comments. Fixed horrid problem with cleartool's handling of checking out a file when its been hijacked, no command-line option to make it use the hijacked file me has to use ipipe-write a send 'yes' at the prompt, but as the prompt is not given me must be preempt and send them first, one for each file - clear-case is pants and cleartool sucks. 
+<LI>[051104] Changed cmd-line construction to use -1 insert-string to insert \\n's into the line - not really very nice. 
+<LI>[051104] Fixed meGetChar to be like GetString in that if running a macro the value has not been given it goes directly to the user rather than simply failing, this improves macro reliability and eases debugging of macros. 
+<LI>[051104] Multi-line shell fix. The new 0x100 flag to shell-command has one drawback, you cannot run commands that include newline characters as the cmd-line must be on the first line. But CVS and clear-case commit comments are often multi-line so this is not acceptable. To fix the problem I have added a -ve arg to insert-string comment which then performs a literal insertion, i.e. every char including a \\n char is inserted are text. This fixes the immediate problem but inserting a \\n char in a line can break other thing in a very major way (like undo) so it must be used with extreme care. 
+<LI>[051103] ClearCase. First rev of a CC tool defaults setup in cc-setup. Moved CC over to using 0x100 bit in shell-command to remove command-line length limit. 
+<LI>[051102] Moved multiple-file file-tool executions over to using the new 0x100 shell-command flag (first line of buffer) to remove command-line length limit in almost all cases (cmd has a 4kb limit) 
+<LI>[051102] Introduced a new 0x100 bit for shell commands which means the 'cmd-line' given is a buffer names whose first line holds the command-line to run. 
+<LI>[051028] ClearCase. Fixed cc-diff abort when a file has no differences. Added a 'delete line' function to cc-state bound to C-k. 
+<LI>[051019] Visual basic highlighting - added And Or and Xor operators. 
+<LI>[051013] Unix shell window, corrected highlighting of backslash escape character outside of a string enclosure. 
+<LI>[051011] ClearCase extensions. Added button to cc-checkin to get checkout comment. In cc-state - fixed file selection on last empty line and mouse selection and added support for mouse drag selection. 
+<LI>[051011] Changed dirlist copy/move to preserve the original files time stamp. 
+<LI>[051011] Fixed windows rename to check the to name is case insensitively different. 
+<LI>[051011] Implemented file time-stamp preservation in the file-op copy and move. 
+<LI>[051011] Improved the window-popup on windows, more likely to work but can still fail. 
+<LI>[051011] Fixed UNIX drag-n-drop, broken by -l l:c addition. 
+<LI>[051007] Integrated Ric Yeates command line <B>-l &lt;line&gt;:&lt;col&gt;</B> submission - thanks for the submission. 
+<LI>[051007] ClearCase. Removed VOB option from <B>cc-state</B> as it did not work. Made <B>cc-console</B> read only and better integrated including supporting it as a toolbar tool (like cvs-console). 
+<LI>[051007] Fixed bad variable assignment in directory list macros. 
+<LI>[051001] Corrected Sun Solaris x86 makefile to use the Sun Native compiler. 
+<LI>[050930] ClearCase. Fixed <B>cc-state</B> to check the state of selected directories, which requires a double cleartool call (horrid command-line) Added support for config-spec viewing and editing. Added directory refresh option for checkin/out add etc. Added many improvements to cc-state buffer support, hilighting, file listing style sorting and selection (i.e. following are bound <TT>1</TT>,<TT>2</TT>,<TT>3</TT>,<TT>+</TT>,<TT>-</TT>,<TT>u</TT>,<TT>a</TT>,<TT>*</TT>) 
+<LI>[050930] <B>file-tool</B>, changed the buffer list toolbar tool to keep the current line to the current buffer when using <B>find-buffer</B> etc. 
+<LI>[050930] Latest <I>Mirkwood</I> update from Bruno. 
+<LI>[050930] Fixed ftp drag'n'drop copy bug, the source dir needed an file: prefix to remove the <TT>ftp://</TT> of the current buffer. While test I blew away my home directory, nasty way to discover that ftp can return <TT>&quot;..&quot;</TT> not <TT>&quot;../&quot;</TT> and <TT>&quot;..&quot;</TT> is not ignored when deleting! Fixed. 
+<LI>[050929] File listing, stopped copy, move etc commands from accepting <TT>'../'</TT> when its the current line Fixed <TT>'v'</TT> browse file open and close. 
+<LI>[050928] browse, removed the delete buffer flag from browse - wrong way to do this. 
+<LI>[050928] ClearCase, make <B>cc-annotate</B> work if file is checked out (cleartool command-line is awful, why do you have to pay money to use this rubbish?) 
+<LI>[050928] Added wrap feature to <B>browse</B> mode. 
+<LI>[050928] Changed <I>Mirkwood</I> main OSD scheme to make current focus item more visible. 
+<LI>[050920] Changed the $debug variable to be bit based as its old values just could implement the required functionality. 
+<LI>[050920] Latest <I>Mirkwood</I> highlight scheme - added underlining for spelling errors 
+<LI>[050920] OAD, added a comment tab to the scheme editor and up-graded the scheme selectors to use combo-boxes. 
+<LI>[050920] Fixed compile error on macos caused by bad macro definition. 
+<LI>[050919] Fixed 2 bugs: meRegHead's force could be left set to 1 which has the side effect of <TT>C-g</TT> not hiding the active region. Due to last change to <B>command-wait</B> the screen is not up-dated before waiting for a key breaking <B>gdiff</B>. 
+<LI>[050919] Readability update to <I>Mirkwood</I> highlight scheme. 
+<LI>[050919] Changed ClearCase <B>cc-state</B> to handle file names with '<TT>[</TT>'s in them. 
+<LI>[050915] Added Up, Down, Hide window and default open options to the <B>file-tool</B> setup GUI. Added support for a default open to the directory listing, pressing return now checks for a <B>file-tool</B> default open (explorerish), '<TT>o</TT>' for open always loads the file into me. 
+<LI>[050915] Added support for dbx on sunos. Changed the ipipe input mode to be toggled using <TT>f3</TT> rather than set via <TT>f2</TT>, <TT>f3</TT> or <TT>f4</TT>. 
+<LI>[050915] <B>zfile</B>, fixed filename -&gt; absolute file name when given as an macro arg - should be based off current buffer's path. 
+<LI>[050908] Added <B>file-tool</B>. 
+<LI>[050908] ClearCase, fixed <TT>%diff-com</TT> definition problem and <B>cc-uncheckout</B> buffer update problem. Fixed <B>cc-checkout</B> and <B>cc-checkin</B> buffer update problems as well. 
+<LI>[050908] Improved the diff highlight, more readable and correct. 
+<LI>[050908] Added new <I>Mirkwood</I> highlight scheme. 
+<LI>[050806] Added better support for MinGW. Fixed the console color bug and most of the compiler warnings. Added support for the MSYS shell by creating a unix style <TT>mingw.gmk</TT> (uses rm instead of del etc) updating the old <TT>mingw.gmk</TT> and renamed to <TT>mingw32.gmk</TT> and added support to the unix build script. 
+<LI>[050803] Fixed <B>ne</B> crash when an unbound key is pressed, bug introduced with last commits. 
+<LI>[050721] Fixed annoying mouse refocus in osd dialog even though mouse is not moved - another windows nasty. 
+<LI>[050720] File browser, added directory closing binding to '<TT>c</TT>' and '<TT>+</TT>' '<TT>-</TT>' windows compatible bindings. 
+<LI>[050720] Pop-up menus, shifted the context menu down one line when opened by a key. 
+<LI>[050720] Directory listing. Changed the tag file list macro to support moving to the closest selected so the user can see which files they are deleting! Improved the file-tool so <TT>\\H</TT> will see a hot-key, '<TT>\\</TT>' chars and '<TT>&quot;</TT>' must be quoted (i.e. '<TT>\\\\</TT>' &amp; '<TT>\&quot;</TT>') Bound '<TT>t</TT>' to open the file tool menu directly so tools can be easily executed without use of the mouse. 
+<LI>[050720] Source code reorganisation. Standardized the # preprocess forms, removed 2 uses of #elif and cplusplus and changed odd '<TT>defined(_BSD)</TT>' style bracketing which the <B>c-hash-eval</B> does not handle. 
+<LI>[050720] Removed unused functionality from NE. Made the following available as extended functionality: <B>backward-delete-tab</B>, <B>change-buffer-name</B>, <B>change-file-name</B>, <B>define-macro-file</B>, <B>delete-blank-lines</B>, <B>delete-some-buffers</B>, <B>named-buffer-mode</B>, <B>save-some-buffers</B>, <B>save-buffers-exit-emacs</B>, user(<TT>%</TT>), buffer(<TT>:</TT>) and command(<TT>.</TT>) variables, <B>$buffer-input</B>, <B>$kept-versions</B>, <B>$mouse*</B>. <B>$pause-time</B>, <B>$MEBACKUPPATH</B>. Removed <B>-c</B> from ne's help page as this is not supported. Moved macro regex <B>&amp;xseq</B>, <B>&amp;xrep</B> based directives and most <B>@</B> variables to extended functionality. 
+<LI>[050719] Organiser address search broken due to recent changes to macro argument getting. Fixed by changing the numeric argument which was ambiguously defined. 
+<LI>[050718] Source code reorganisation. Made the file hook variables and HideBuffer function statics. Changed ne to use fixed char groups for isUpper etc rather than the large look-up tables as it does not have <B>set-char-mask</B> to configure them anyway. 
+<LI>[050718] C template. Fixed and greatly simplified the #if handling in the hash eval code. Added support for <TT>#undef</TT>. 
+<LI>[050715] Source code organisation. Removed unused code when there's no ipipe support. Hashed out location functions which are only required by socket or ipipe support. 
+<LI>[050714] Combined <B>cc-log</B> and <B>cc-annotate</B> into a single <B>cc-annotate</B> cammon with GUI. Added <B>cc-vtree</B> and <B>cc-explorer</B>. 
+<LI>[050714] Fixed <B>user-setup</B> setting of number of backups and Ignore files settings. 
+<LI>[050714] Fixed <B>file-op</B> copy so the source file's attributes are preserved (i.e. remains read only etc). Implemented the 4th parameter (attribs) in <B>&amp;stat&nbsp;i</B> Implemented a <B>file-op</B> chmod using arg bit <TT>0x200</TT>. 
+<LI>[050712] Corrected NE build under Windows, console build including windows calls. 
+<LI>[050712] Directory listing, fixed delete copy and move prompts, flag <TT>0x08</TT> got changed to <TT>0x04</TT> in <B>file-op</B>. 
+<LI>[050712] Implemented a proper ClearCase context diff by recreating the old file from the diff and then calling a real diff program. 
+<LI>[050712] Changed the diff hilighting to be just one scheme as a CC diff could contain a gdiff style for files and diff style for directories. 
+<LI>[050712] Corrected NE build problem with macro debugging. 
+<LI>[050711] Corrected Latex template load error in <TT>hklatex.emf</TT> (detected with <TT>$debug=1</TT>). 
+<LI>[050710] Fixed old <TT>$debug</TT> interface, found a long forgotton mode 3 (now 4) which simply prints the current line without waiting, this broken the new mode 3. 
+<LI>[050709] Removed the <B>-d</B> command line option - pointless. 
+<LI>[050709] Improved the macro command argument handling to get missing arguments from the user, i.e. having a macro line of: <B>fine-file</B> Works okay. 
+<LI>[050709] Vastly improved the macro debugging, the <B>$debug</B> value of 1 is now 2, 2 -&gt; 3, a value of 1 now tells the user of any unhandled failures. 
+<LI>[050709] Fixed the Windows window resizing behaviour to be a lot more usable. The window size now increases in character size steps rather than bouncing around and the window is refresh as its changed. The Horizontal width limit of the window has effectively been removed (set to 400 chars) the depth is still restricted to the screen size, issue raised by Tom Hundt. 
+<LI>[050709] Added new file tools interface, creating windows explorer type file name based tools (e.g. extracting a zip file). 
+<LI>[050709] Added ClearCase <B>cc-log</B> and <B>cc-annotate</B> (similar to cvs's commands) 
+<LI>[050709] Stopped the default file hook from creating a bogus tool menu and help page. 
+<LI>[050709] Fixed the previous-line macro and the kill-word key bindings. 
+<LI>[050709] Changed the menu items which open a sub dialog to having '<TT>...</TT>' in their name as per the gui standard, issue raised by Tom Hundt. 
+<LI>[050708] Changed sub-menu display chars, auto open menus are now ' <TT>&gt;</TT>' and manual are '<TT>+</TT>', issue raised by Tom Hundt. 
+<LI>[050708] Got thoroughly fed up with the emacs style <B>kill-word</B> - useless. Came up with a compromise, if no numeric arg is given then it works the old way, if an argument is given (i.e. 1, 2 ...) it works in like emacs (which makes sense as you are asking it to kill 1 word etc.) 
+<LI>[050708] Changed <B>list-commands</B> and <B>command-apropros</B> to not list hidden macros by default. They can be listed if bit 1 of the numeric argument is clear (aka <B>list-buffers</B>) 
+<LI>[050625] Updated mode line letter mnemonics which were out of date, issue raised by Tom Hundt. 
+<LI>[050625] Stop me crashing when describe-variable is given something like &quot;<B>&amp;or</B>&quot;, now restricted to variables of type <TT>#</TT>, <TT>$</TT>, <TT>%</TT>, <TT>:</TT>, <TT>.</TT> only. 
+<LI>[050618] Added support for -ve offests to <B>&amp;lef</B>, <B>&amp;mid</B>, <B>&amp;rig</B> functions to go from the end of the string. 
+<LI>[050618] Created a <I>no wait</I> option to <B>shell-command</B> so processes can be launched and forgotten about. Also added support for all the other process launch flags present in pipe and ipipe shell commands. Removed some very dead code. 
+<LI>[050618] Avoided a '<B>&amp;mid -1</B>' in display matching fence (<TT>dmf.emf</TT>) by restructuring the logic a bit. 
+<LI>[050616] Revision 3 of ClearCase support. 
+<LI>[050614] Second rev of clearcase support. restructured the execution of cleartool so ipipes are used (even though the user may not be able to edit) giving feedback on progress. Implemented a basic diff which can only diff one file at a time and only with its predecessor but at least it supports a context output of sorts! 
+<LI>[050614] Fixed <B>command-wait</B> when no arg is given to return when a callback sets the <TT>.wait</TT> variable. Command now returns imediately if the <TT>.wait</TT> variable is not defined. Fixed windows sleep function which was managing to break out before it should. 
+<LI>[050612] latex added macros for bold/italic/mono character formatting. 
+<LI>[050612] nroff region support for character formating. 
+<LI>[050612] <B>.fhook-xxx.command-n</B> syntax added to <B>buffer-init</B> to simplify comamnd definition. 
+<LI>[050610] Removed &quot;<B>C-c C-g</B>&quot; key binding in document macros and replaced with &quot;<B>C-c &lt;</B>&quot; because of <B>C-g</B> issue. 
+<LI>[050610] CVS added support for a <B>cvsco.etf</B> checkin template. 
+<LI>[050610] First revision of ClearCase support, very incomplete and primative but the hooks required in the rest of the system are in place. 
+<LI>[050609] Changed the directory listing so '<TT>.</TT>' is removed and <TT>..</TT> is always the first <I>file</I> and cannot be selected. Fixed some directory display annoying refresh issues. 
+<LI>[050609] First implementation of directory deletion, copying and moving, including support for ftp directories etc. Areas of concern are still copied file's permissions and to a lesser degree ownership. Also the copies behaviour with symbolic links, this must be tested further. 
+<LI>[050609] Fixed file permissions and ftp minor issues a couple of major ftp bugs and <B>$file-names</B> working for ftp directories. 
+<LI>[050609] Added new <B>&amp;stat</B> &quot;<TT>i</TT>&quot; flag and argument bit 4 to <B>file-op</B> to abort on a problem rather than prompt, it also returns an error code in <I>$result</I>. 
+<LI>[050609] Changed the kill word commands so have the same word boundary behaviour as <B>forward-word</B> and Emacs (was killing word only then whitespaces only etc). Corrected word movement and killing command's EOB and BOB error handling. 
+<LI>[050608] Added new <B>rdiff</B> (recursive diff) command 
+<LI>[050608] Updated <B>string-rectangle</B> and <B>space-rectangle</B> to improve its usability. 
+<LI>[050608] Updated <B>describe-word</B> setup comment. 
+<LI>[050601] Corrected <TT>ne.emf</TT>, broke Window mode in disabling console mode for <B>ne&nbsp;-R</B> option change. 
+<LI>[050601] Corrected crash on hilight with alpha-numerics of form <TT>[[:digit:]]</TT> when spelt incorrectly. </UL><P><B>8th Release - May 2005</B> 
+<BR>Release date specified as 2005/05/05. <UL><P>
 <LI>[050508] JASSPA MicroEmacs 8th release - final. Core and macro versions 20050505. 
 <LI>[050514] Fixed ftp copy lock-up (most noticable on windows) caused by the response read at the start of a command also reading (and disgarding) the finishing message so ME hangs at the end of the command waiting for a response. 
 <LI>[050514] Enabled ipipes under cygwin by default. 
@@ -181,9 +590,9 @@ MicroEmacs - Origins</H1>
 <LI>[050208] Changed the C indent definition to be the same format as the existing indent definitions i.e. uses flag &amp; indent value, this makes it more flexible and extendible. Updated macro files. 
 <LI>[050205] Password generation macros added to <TT>contrib</TT> directory. 
 <LI>[050205] Added JavaDoc highlighting to Java template. Enablement via 
-<A HREF="m3osd010.html">buffer-setup(3)</A>. Removed the existing &quot;<TT>my</TT>&quot; extensions from contrib. 
+<A HREF="m3osd014.html">buffer-setup(3)</A>. Removed the existing &quot;<TT>my</TT>&quot; extensions from contrib. 
 <LI>[050205] Added <B>Doxygen(1)</B>, <I>&lt;stdint.h&gt;</I> and error highlighting to C/C++ templates. Enablement via 
-<A HREF="m3osd010.html">buffer-setup(3)</A>. Removed the existing &quot;<TT>my</TT>&quot; extensions from <TT>contrib</TT>. 
+<A HREF="m3osd014.html">buffer-setup(3)</A>. Removed the existing &quot;<TT>my</TT>&quot; extensions from <TT>contrib</TT>. 
 <LI>[050204] osd - Fixed problems with the <I>cursor shows current item</I> feature of osd caused by the cursor position going outside of the window. 
 <LI>[050202] Added an initial item number to the favorite and buffer menus. 
 <LI>[050203] Standardized narrow anchor and line flag movement behaviors with respect to deleting and inserting text. Enforced to effectively exist at character column -1 and been strict about maintaining a protected line. Made undo cope with markup lines that are lost. These changes may be a little to severe - we'll see. 
@@ -269,8 +678,7 @@ MicroEmacs - Origins</H1>
 <LI>[041210] Deleted <B>cmode(2m)</B>. Electric-c is now configured with 
 <A HREF="m2cmd033.html">indent(2)</A>. C and C++ indent styles can be different, can also have a GNU C style etc, can change the indent width as new indent rule supports '<I>t</I>', consistent 
 <A HREF="m5var075.html">$buffer-indent(5)</A> interface. 
-<LI>[041210] Created new osd file &quot;<TT>osdmisc.emf</TT>&quot; for miscellaneous OSD macros, this removes the OSD dependency when the MicroEmacs is executed in special start up modes with startup files. Moved search and new 
-<A HREF="m3osd014.html">indent-setup(3)</A> commands out of &quot;<TT>search.emf</TT>&quot; and &quot;<TT>format.emf</TT>&quot; into a new &quot;<TT>osdmisc.emf</TT>&quot; as they cause problems with utils that do not run &quot;<TT>me.emf</TT>&quot; (e.g. &quot;<TT>ehftools.emf</TT>&quot;) 
+<LI>[041210] Created new osd file &quot;<TT>osdmisc.emf</TT>&quot; for miscellaneous OSD macros, this removes the OSD dependency when the MicroEmacs is executed in special start up modes with startup files. Moved search and new <B>indent-setup(3)</B> commands out of &quot;<TT>search.emf</TT>&quot; and &quot;<TT>format.emf</TT>&quot; into a new &quot;<TT>osdmisc.emf</TT>&quot; as they cause problems with utils that do not run &quot;<TT>me.emf</TT>&quot; (e.g. &quot;<TT>ehftools.emf</TT>&quot;) 
 <LI>[041210] Introduced a GNU emacs emulation mode, emulation file is &quot;<TT>meemacs.emf</TT>&quot;. 
 <LI>[041209] Fixed <B>newuser</B> &quot;<TT>$user-name.emf</TT>&quot; conflict issue with an existing macro (e.g. <TT>zaurus.emf</TT>) by testing for it and prefixing a digit to make the file unique. 
 <LI>[041209] Added <TT>esc C-\</TT> binding to 
@@ -340,8 +748,7 @@ MicroEmacs - Origins</H1>
 <LI>[041029] Fixed 
 <A HREF="m3mac075.html">find(3)</A> &quot;<TT>*find*</TT>&quot; buffer operation so that it operates like &quot;<TT>*grep*</TT>&quot; on file selection. Keyboard file section enabled within the &quot;<TT>*grep*</TT>&quot; and &quot;<TT>*find*</TT>&quot; buffer. 
 <LI>[041026] Spruced up old &quot;<TT>smb.conf</TT>&quot; highlighting rules, brought them up to date with latest keywords and added to release. 
-<LI>[041026] Fixed 
-<A HREF="m3osd014.html">indent-setup(3)</A> osd dialog. 
+<LI>[041026] Fixed <B>indent-setup(3)</B> osd dialog. 
 <LI>[041024] Macro/source compatibility macro and source versions updated to &quot;<TT>20041001</TT>&quot;. 
 <LI>[041024] Fixed the 
 <A HREF="m3mac057.html">cvs-diff(3)</A> options, local with HEAD was not correct. 
@@ -349,7 +756,7 @@ MicroEmacs - Origins</H1>
 <A HREF="m9typ004.html">latex(9)</A> template extended. Buffer bindings for underscore and quote keys. Search tools to determine current context. 
 <LI>[041023] Extended the buffer setup for the 
 <A HREF="m2cmd033.html">indent(2)</A> mechanism. May now specify the default buffer <I>indent-width</I>and <I>tabsize</I> in the 
-<A HREF="m3osd010.html">buffer-setup(3)</A> dialog. 
+<A HREF="m3osd014.html">buffer-setup(3)</A> dialog. 
 <LI>[041022] Revised indentation implementation. The templates now define indent width independent rules. The 
 <A HREF="m2cmd033.html">indent(2)</A> command '<I>indent</I>' parameter may be defined as an absolute indentation or using a '<TT>t</TT>' notation. The syntax is &quot;<TT>[-][[indent][/indent]]t</TT>&quot; which defines a vulgar fraction of '<TT>t</TT>' which is the indent width (or tabsize) as specified by 
 <A HREF="m5var091.html">$buffer-indent-width(5)</A> defined below. 
@@ -856,7 +1263,7 @@ MicroEmacs - Origins</H1>
 <LI>[010630] Minor reorder to X-Windows initialization for cygwin X-Server. 
 <LI>[010507] Added generic commands for the creation, deletion and reformatting of comments now used by most of the file hooks. 
 <LI>[010412] Added new generic buffer setup, menu and help macros, creating the new 
-<A HREF="m3osd010.html">buffer-setup(3)</A> command. Ported all existing file hooks to this new interface greatly reducing the buffer hook size while increasing its functionality and consistency. 
+<A HREF="m3osd014.html">buffer-setup(3)</A> command. Ported all existing file hooks to this new interface greatly reducing the buffer hook size while increasing its functionality and consistency. 
 <LI>[010402] Added support for new 
 <A HREF="m5var082.html">$buffer-backup(5)</A> variable for setting the back-up file location. 
 <LI>[010312] Support for new key bindings allowing CU emulations. Nedit bindings provided as example. Major work to enable the complete re-binding of all keys so the user interface to MicroEmacs can be completely changed, this allows for example a Windows feel to be created. This required many internal ghosts to be exorcized and add new macro functions. 
@@ -1075,9 +1482,11 @@ add-spell-rule&nbsp;&quot;*&quot;&nbsp;&quot;-?\\([0-9]*.\\)?[0-9]+\\(Kg\\|Kb\\|
 <LI>Horizontal scroll bars. 
 <LI>On-line tutorial to help beginners get up and running. 
 <LI>Native printer support for the generation of postscript. 
-<LI>GNU Emacs compatibility macro file. </UL></UL>
+<LI>Inclusion of <B>zlib(1)</B> to allow compressed file reading. </UL></UL>
 <H2>Release History </H2>
-<UL><P><B>May 2005</B> 
+<UL><P><B>August 2006</B> 
+<BR><UL>9th Major Release - MicroEmacs '06. </UL>
+<P><B>May 2005</B> 
 <BR><UL>8th Major Release - MicroEmacs '05. </UL>
 <P><B>January 2004</B> 
 <BR><UL>7th Major Release - MicroEmacs '04. </UL>
@@ -1105,7 +1514,7 @@ add-spell-rule&nbsp;&quot;*&quot;&nbsp;&quot;-?\\([0-9]*.\\)?[0-9]+\\(Kg\\|Kb\\|
 <H2>Documentation </H2>
 <UL><P>The documentation is all written in UNIX <B>nroff(1)</B> and converted to HTML, Microsoft Windows Help File format and MicroEmacs Help file format. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2005/05/14</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/10/06</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

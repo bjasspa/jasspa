@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>save-some-buffers(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 save-some-buffers(2)</H1>
@@ -18,8 +18,12 @@ save-some-buffers(2)</H1>
 <UL><P><I>n</I> <B>save-some-buffers</B> </UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P><B>save-some-buffers</B> cycles through all visible buffers (buffers without mode 
-<A HREF="m2mod022.html">hide(2m)</A> set) and attempts to save all modified ones, writing the contents back to the file from where it was read. For each buffer that has been modified the user is prompted to save the buffer, a value of <B>y</B> initiates a save for the buffer, <B>n</B> skips the buffer. 
-<P>The argument <I>n</I> can be used to change the default behavior of save-some-buffers described above, <I>n</I> is a bit based flag where:- 
+<A HREF="m2mod022.html">hide(2m)</A> set) and attempts to save all modified ones, writing the contents back to the file from where it was read. For each buffer that has been modified the user is prompted to save the buffer, the following responses can be given: 
+<P><B>y</B> 
+<BR><UL>Saves the buffer and moves to the next modified buffer. </UL>
+<P><B>n</B> 
+<BR><UL>Does not save the buffer and moves to the next modified buffer. <B>a</B> Saves all remaining modified buffers including the current one without further prompting. <B>o</B> Skips all remaining buffers including the current one. <B>g</B> Display the buffer and aborts the command. 
+</UL><P>The argument <I>n</I> can be used to change the default behavior of save-some-buffers described above, <I>n</I> is a bit based flag where:- 
 <P><B>0x01</B> 
 <BR><UL>Enables the user prompt before the buffer is saved (default). If this flag is not supplied then all modified visible buffers will be written. </UL></UL>
 <H2><B>SEE ALSO </B></H2>
@@ -29,7 +33,7 @@ save-some-buffers(2)</H1>
 <A HREF="m2cmd143.html">write-buffer(2)</A>, 
 <A HREF="m2mod022.html">hide(2m)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/09/25</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

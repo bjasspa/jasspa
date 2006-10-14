@@ -1,9 +1,9 @@
 <HTML>
-<HEAD><TITLE>line-scheme-search(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<HEAD><TITLE>osd-search(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
-line-scheme-search(3)</H1>
+osd-search(3)</H1>
 <FONT SIZE=2>
 <A HREF="../me.html">[Home]</A>
 <A HREF="amicr031.html">[Commands]</A>
@@ -13,13 +13,13 @@ line-scheme-search(3)</H1>
 </FONT>
 <HR>
 <H2><B>NAME </B></H2>
-<UL><P>line-scheme-search - Search and annotate the current buffer </UL>
+<UL><P>osd-search - Search and annotate the current buffer </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><B>line-scheme-search</B> </UL>
+<UL><P><B>osd-search</B> </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P><B>line-scheme-search</B> provides a method of searching for text patterns within the current buffer and annotating any matches through colored line hilighting. A selection of line colors are provided to allow different search patterns to be assigned their own color. 
-<P><B>line-scheme-search</B> is generally used for annotating log files and alike, where indevidual lines are of interest in addition to the context about that line. The hilighting draws attention to the line, by providing a visual cue, allowing the contents of the file to be breifly scanned. 
-<P>On invocation of <B>line-scheme-search</B> a 
+<UL><P><B>osd-search</B> is a hidden macro which provides a method of searching for text patterns within the current buffer and annotating any matches through colored line hilighting. A selection of line colors are provided to allow different search patterns to be assigned their own color. 
+<P><B>osd-search</B> is generally used for annotating log files and alike, where indevidual lines are of interest in addition to the context about that line. The hilighting draws attention to the line, by providing a visual cue, allowing the contents of the file to be breifly scanned. 
+<P>On invocation of <B>osd-search</B> from the menu <B>Search</B> -&gt; <B>Hilight</B> <B>Search</B> a 
 <A HREF="m2cmd066.html">osd(2)</A> dialog is presented to the user, search patterns and their associated hilighting assignment are selected through this interface. The dialog entries are defined as follows:- 
 <P><B>Search for</B> 
 <BR><UL>The text dialog entry box allows the search pattern to be entered. This may be a regular expression or plain text. </UL>
@@ -48,7 +48,7 @@ line-scheme-search(3)</H1>
 <P><B>Exit</B> 
 <BR><UL>Exits the hilighting search dialog. </UL></UL>
 <H2><B>NOTES </B></H2>
-<UL><P><B>line-scheme-search</B> is a macro implemented in <TT>hiline.emf</TT>. </UL>
+<UL><P><B>osd-search</B> is a macro implemented in <TT>osdmisc.emf</TT>. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m3mac070.html">delete-hilight-lines(3)</A>, 
@@ -56,7 +56,7 @@ line-scheme-search(3)</H1>
 <A HREF="m2cmd066.html">osd(2)</A>, 
 <A HREF="m5var056.html">$line-scheme(5)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2004/01/17</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/13</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>goto-alpha-mark(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 goto-alpha-mark(2)</H1>
@@ -15,15 +15,18 @@ goto-alpha-mark(2)</H1>
 <H2><B>NAME </B></H2>
 <UL><P>goto-alpha-mark - Move the cursor to a alpha marked location </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><B>goto-alpha-mark</B> &quot;<I>?</I>&quot; (<B>C-x&nbsp;a</B>)&nbsp; </UL>
+<UL><P><B>goto-alpha-mark</B> &quot;<I>?</I>&quot; (<B>C-x&nbsp;a</B>)&nbsp; 
+<BR><I>0</I> <B>goto-alpha-mark</B> </UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P><B>goto-alpha-mark</B> prompts user for an alpha character and sets the cursor position to the preset location. Alpha marks are specified on a per buffer basis, thus the current buffer is not changed, merely the current location in the buffer. The alpha mark must already be defined using 
-<A HREF="m2cmd118.html">set-alpha-mark(2)</A>. This functionality is useful for rapidly returning back to locations in large files. </UL>
+<A HREF="m2cmd118.html">set-alpha-mark(2)</A>. This functionality is useful for rapidly returning back to locations in large files. 
+<P><B>goto-alpha-mark</B> with a numeric argument of zero (0) returns a string containing all of the alpha marks that exist in the current buffer. The alpha mark string is returned in 
+<A HREF="m5var041.html">$result(5)</A>, this is an empty string if there are no alpha marks in the buffer. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m2cmd118.html">set-alpha-mark(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/21</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

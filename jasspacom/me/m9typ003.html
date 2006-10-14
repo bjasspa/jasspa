@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>txt(9)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 txt(9)</H1>
@@ -30,14 +30,16 @@ txt(9)</H1>
 <A HREF="m2cmd052.html">fill-paragraph(2)</A> in an automatic text mode are defined as follows:- 
 <P>Text on column 0 
 <BR><UL>Text appearing in the first column is always assumed to be left justified, and non-wrapping, provided that the text does not extend to the 
-<A HREF="m5var021.html">fill column</A>. This is typically used for headers and addresses. </UL>
+<A HREF="m5var021.html">buffer fill column</A>. This is typically used for headers and addresses. </UL>
 <P>Text on right edge 
 <BR><UL>Text ending at the right edge (the 
-<A HREF="m5var021.html">fill-col(5)</A>), which commences from more that 50% of the page width is assumed to be right justified, non-wrapping. Typically used for addresses. </UL>
+<A HREF="m5var021.html">$buffer-fill-col(5)</A>), which commences from more that 50% of the page width is assumed to be right justified, non-wrapping. Typically used for addresses. </UL>
 <P>Text centered 
 <BR><UL>Text which is centered on the page is assumed to be centered, this is non-wrapping. </UL>
 <P>Indented 
-<BR><UL>All other text, not covered by the cases above is assumed to be available for filling. In this case the text is filled by the paragraph and left/right justification is applied. </UL></UL>
+<BR><UL>All other text, not covered by the cases above is assumed to be available for filling. In this case the text is filled by the paragraph and left/right justification is applied, the fill default may be changed with 
+<A HREF="m5var028.html">$buffer-fill-mode(5)</A> and changed with 
+<A HREF="m3osd014.html">buffer-setup(3)</A>. </UL></UL>
 <P><B>Short Cuts</B> 
 <BR><UL>The short cut keys used within the buffer are:- </UL>
 <UL><P><B>C-c C-h</B> - Help information on current mode. 
@@ -89,13 +91,17 @@ txt(9)</H1>
 <P>Unfortunately there is nothing that can be done to alleviate this problem, but it occurs infrequently. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
-<A HREF="m5var021.html">fill-col(5)</A>, 
+<A HREF="m5var021.html">$buffer-fill-col(5)</A>, 
+<A HREF="m5var028.html">$buffer-fill-mode(5)</A>, 
+<A HREF="m5var021.html">$fill-col(5)</A>, 
+<A HREF="m5var028.html">$fill-mode(5)</A>, 
+<A HREF="m3osd014.html">buffer-setup(3)</A>, 
 <A HREF="m2cmd052.html">fill-paragraph(2)</A>, 
 <A HREF="m3osd002.html">spell-buffer(3)</A>. 
 <P>
 <A HREF="amicr030.html">Supported File Types</A> </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/13</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

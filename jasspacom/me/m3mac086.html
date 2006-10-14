@@ -1,0 +1,39 @@
+<HTML>
+<HEAD><TITLE>insert-password(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
+insert-password(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>insert-password - Create and insert a new password string 
+<BR>password-to-phonic - Convert a password to phonic string </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><I>n</I> <B>insert-password</B> 
+<BR><B>password-to-phonic</B> &quot;<I>password</I>&quot; </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>The password commands are typically used by a system administrator to generate new random passwords or to phonically unambiguously describe a password. 
+<P><B>insert-password</B> generates a new random password string and inserts the generated password with phonic description into the current buffer. The generated password minimally includes include at least one each of lowercase, uppercase and numeric characters. The default length of the password is 8 characters, the numeric argument <I>n</I> changes the length of the generated password and must be at least 3 characters long. Running <B> 4 insert-password</B> to generate a 4 character password generates: <UL>
+<PRE>y5Ck&nbsp;(yankee&nbsp;-&nbsp;Five&nbsp;-&nbsp;CHARLIE&nbsp;-&nbsp;kilo) 
+</PRE></UL>
+<P><B>password-to-phonic</B> converts a string of characters to the phonic alphabet, the command requires a single argument <I>password</I> which is converted to a phonic string. The command <B>password-to-phonic</B> &quot;<I>y5Ck</I>&quot; inserts the phonic string into the buffer: <UL>
+<PRE>yankee&nbsp;-&nbsp;Five&nbsp;-&nbsp;CHARLIE&nbsp;-&nbsp;kilo 
+</PRE></UL>
+</UL><H2><B>NOTES </B></H2>
+<UL><P>The password commands are macros defined in <TT>password.emf</TT>. </UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m5var035.html">$random(5)</A>, 
+<A HREF="m2cmd076.html">insert-string(2)</A>. </UL>
+<HR>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/22</I>
+<BR><I>Generated On: 2006/10/07</I>
+</BODY></HMTL>

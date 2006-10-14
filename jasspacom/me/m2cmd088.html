@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>change-buffer-name(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 change-buffer-name(2)</H1>
@@ -23,14 +23,18 @@ change-buffer-name(2)</H1>
 /etc/file.c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;file.c 
 /tmp/file.c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;file.c&lt;1&gt; 
 </PRE></UL>
-<P>By default, or an argument is given with bit 1 set, <B>change-buffer-name</B> will fail if a buffer with the given name already exists. This behavior can be changed by giving an argument with the first bit cleared, e.g. 0, in which case if a buffer with that name already exists then a counter as appended. </UL>
+<P>The numeric argument <I>n</I> is a bit-mask and is interpreted as follows: 
+<P><TT>0x01</TT> 
+<BR><UL>By default, or an argument is specified with bit 1 set, <B>change-buffer-name</B> fails if a buffer with the given name already exists. This behavior can be changed by specifying an argument with the first bit cleared, e.g. 0, in which case if a buffer with that name already exists then a counter as appended. </UL>
+<P><TT>0x02</TT> 
+<BR><UL>Forces the buffer to adopt the given name <I>buffer-name</I>, changing the name of any existing buffer if required. </UL></UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m5var003.html">$buffer-fname(5)</A>, 
-<A HREF="m2cmd017.html">change-file-name(2)</A>. 
+<A HREF="m2cmd017.html">change-file-name(2)</A>, 
 <A HREF="m2cmd031.html">delete-buffer(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/19</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

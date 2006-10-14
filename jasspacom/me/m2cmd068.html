@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>narrow-buffer(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 narrow-buffer(2)</H1>
@@ -69,7 +69,7 @@ ________________________________________________________________
 <P><TT>0x0020</TT> - &quot;<I>out-markup-line</I>&quot; | &quot;<I>to-top-markup-line</I>&quot; &quot;<I>to-bottom-markup-line</I>&quot; 
 <BR><UL>Bit <TT>0x0020</TT> specifies that mark-up text is used, the text mark up is passed into the call. The number of arguments is determined by the type of markup operation (<I>to</I>/<I>out</I>). The arguments are placed on the mark-up lines. </UL>
 <P><TT>0x0040</TT> - &quot;<I>markup-command</I>&quot; 
-<BR><UL>Bit <TT>0x0040</TT> specifies that a mark-up line is used to represent the narrow region. When the narrow region is created then the <I>markup-command</I> macro is executed to annotate the narrowed region. The macro is invoked when the narrow is created and is passed a numeric argument <I>n</I> which identifies the operation of the narrow. The numeric argument to the mark-up macro is defined below, generally a <TT>+ve</TT> argument means that a narrow is being added and <TT>-ve</TT> means that the narrow is being removed. </UL>
+<BR><UL>Bit <TT>0x0040</TT> specifies that a mark-up line is used to represent the narrow region. When the narrow region is created then the <I>markup-command</I> macro is executed to annotate the narrowed region. The macro is invoked when the narrow is created and is passed a numeric argument <I>n</I> which identifies the operation of the narrow. The numeric argument to the mark-up macro is defined below, generally a positive argument means that a narrow is being added and negative means that the narrow is being removed. </UL>
 <UL><P><TT>1</TT> - This is a <I>Narrow Out</I> line. 
 <BR><TT>2</TT> - This is the top of a <I>Narrow To</I>. 
 <BR><TT>3</TT> - This is the bottom of a <I>Narrow To</I>. </UL>
@@ -117,8 +117,8 @@ ________________________________________________________________
 !emacro 
 </PRE></UL>
 <P>The <TT>collapse-markup</TT> macro process the numeric argument 
-<A HREF="m4fil014.html">@#(4)</A> to determine the mark-up type to be applied to the buffer. When the numeric argument is -ve then 
-<A HREF="m4fil010.html">!abort(4)</A> is called to remove the mark-up. When the numeric argument is +ve then a mark-up line annotation is created by taking the first 40 characters of the line and appending &quot;<TT>...</TT>&quot; to indicate that this is a narrow. The original <B>narrow-buffer</B> call included a 
+<A HREF="m4fil014.html">@#(4)</A> to determine the mark-up type to be applied to the buffer. When the numeric argument is negative then 
+<A HREF="m4fil010.html">!abort(4)</A> is called to remove the mark-up. When the numeric argument is positive then a mark-up line annotation is created by taking the first 40 characters of the line and appending &quot;<TT>...</TT>&quot; to indicate that this is a narrow. The original <B>narrow-buffer</B> call included a 
 <A HREF="m2cmd069.html">hilight(2)</A> line scheme so the resultant mark-up line will be hilighted and show the first 40 characters of the defined followed by an ellipsis. </UL>
 <H2><B>NOTES </B></H2>
 <UL><P>Alpha mark set by 
@@ -163,7 +163,7 @@ ________________________________________________________________
 <A HREF="m3mac028.html">vm(3)</A>, 
 <A HREF="m2cmd143.html">write-buffer(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2005/01/15</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/07/28</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

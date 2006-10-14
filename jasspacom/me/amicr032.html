@@ -319,8 +319,6 @@ MicroEmacs - Split Command Glossary</H1>
 <BR>
 <A HREF="m2cmd106.html">read-file(2)</A> (<B>C-x&nbsp;C-r</B>)&nbsp;Find and load file replacing current buffer 
 <BR>
-<A HREF="m2cmd107.html">read-history(2)</A> Read in session history information 
-<BR>
 <A HREF="m2cmd157.html">read-registry(2)</A> Read in a registry definition file 
 <BR>
 <A HREF="m2cmd108.html">recenter(2)</A> (<B>C-l</B>)&nbsp;Recenter the window (refresh the screen) 
@@ -340,8 +338,6 @@ MicroEmacs - Split Command Glossary</H1>
 <A HREF="m2cmd103.html">save-buffers-exit-emacs(2)</A> (<B>esc z</B>)&nbsp;Exit the editor prompt user to write changes 
 <BR>
 <A HREF="m2cmd112.html">save-dictionary(2)</A> Save changed spelling dictionaries 
-<BR>
-<A HREF="m2cmd144.html">save-history(2)</A> Write history information to history file 
 <BR>
 <A HREF="m2cmd008.html">save-registry(2)</A> Write a registry definition file 
 <BR>
@@ -452,6 +448,8 @@ MicroEmacs - Split Command Glossary</H1>
 <BR>
 <A HREF="m3mac011.html">alarm(3)</A> Set an alarm 
 <BR>
+<A HREF="m3osd016.html">alias-path-setup(3)</A> Define alternative path alias 
+<BR>
 <A HREF="m9typ026.html">aman(3)</A> Compile an nroff file into a buffer (UNIX) 
 <BR>
 <A HREF="m3mac019.html">ascii-time(3)</A> Return the current time as a string 
@@ -468,15 +466,17 @@ MicroEmacs - Split Command Glossary</H1>
 <BR>
 <A HREF="m3mac079.html">browse(3)</A> Browse a file or buffer in view mode 
 <BR>
-<A HREF="m3osd011.html">buffer-help(3)</A> Displays help page for current buffer 
-<BR>
 <A HREF="m3mac064.html">buffer-init(3)</A> Initialize a buffer language template 
 <BR>
 <A HREF="m3mac064.html">buffer-init-fhook(3)</A> Initialize the buffer file hooks 
 <BR>
 <A HREF="m3mac064.html">buffer-init-hooks(3)</A> Initialize the buffer language template hooks 
 <BR>
-<A HREF="m3osd010.html">buffer-setup(3)</A> Configures the current buffer settings 
+<A HREF="m3mac087.html">buffer-major-mode(3)</A> Change the operating mode of a buffer 
+<BR>
+<A HREF="m3osd014.html">buffer-setup(3)</A> Configure the current buffer settings 
+<BR>
+<A HREF="m3mac085.html">ClearCase(3)</A> MicroEmacs ClearCase interface 
 <BR>
 <A HREF="m3mac069.html">c-deslashify(3)</A> C language, remove backslash to end of lines of region 
 <BR>
@@ -493,6 +493,24 @@ MicroEmacs - Split Command Glossary</H1>
 <A HREF="m3mac068.html">c-to-cpp-convert(3)</A> Convert a C file to C++ 
 <BR>
 <A HREF="m3mac009.html">calc(3)</A> Integer calculator 
+<BR>
+<A HREF="m3mac085.html">cc-add(3)</A> MicroEmacs ClearCase interface - add file 
+<BR>
+<A HREF="m3mac085.html">cc-checkin(3)</A> MicroEmacs ClearCase interface - checkin files 
+<BR>
+<A HREF="m3mac085.html">cc-checkout(3)</A> MicroEmacs ClearCase interface - checkout files 
+<BR>
+<A HREF="m3mac085.html">cc-delete(3)</A> MicroEmacs ClearCase interface - delete files 
+<BR>
+<A HREF="m3mac085.html">cc-diff(3)</A> MicroEmacs ClearCase interface - diff changes 
+<BR>
+<A HREF="m3mac085.html">cc-setup(3)</A> MicroEmacs ClearCase interface setup 
+<BR>
+<A HREF="m3mac085.html">cc-state(3)</A> MicroEmacs ClearCase interface - list state of directory files 
+<BR>
+<A HREF="m3mac085.html">cc-update(3)</A> MicroEmacs ClearCase interface - update directory files 
+<BR>
+<A HREF="m3mac084.html">change-scheme(3)</A> Change the current highlight scheme 
 <BR>
 <A HREF="m3mac041.html">charset-change(3)</A> Convert buffer between two character sets 
 <BR>
@@ -562,6 +580,8 @@ MicroEmacs - Split Command Glossary</H1>
 <BR>
 <A HREF="m3mac051.html">display-white-chars(3)</A> Toggle the displaying of white characters 
 <BR>
+<A HREF="m3mac051.html">display-whitespaces(3)</A> Toggle the displaying of white characters 
+<BR>
 <A HREF="m3mac032.html">draw(3)</A> Simple line drawing utility 
 <BR>
 <A HREF="m3mac022.html">edit-dictionary(3)</A> Insert a dictionary in a buffer 
@@ -583,6 +603,10 @@ MicroEmacs - Split Command Glossary</H1>
 <A HREF="m3mac027.html">file-browser-close(3)</A> Close the file-browser 
 <BR>
 <A HREF="m3mac027.html">file-browser-swap-buffers(3)</A> Swap between file-browser windows 
+<BR>
+<A HREF="m3osd017.html">file-tool-setup(3)</A> Define file browser tools 
+<BR>
+<A HREF="m3osd015.html">file-type-setup(3)</A> Define file type set 
 <BR>
 <A HREF="m3mac075.html">find(3)</A> Execute find command 
 <BR>
@@ -620,7 +644,9 @@ MicroEmacs - Split Command Glossary</H1>
 <BR>
 <A HREF="m3mac026.html">ifill-paragraph(3)</A> (<B>esc q</B>)&nbsp;Format a paragraph 
 <BR>
-<A HREF="m3osd014.html">indent-setup(3)</A> Locally modify buffer indentation 
+<A HREF="m3mac082.html">indent-decrease(3)</A> Decrease the line indentation 
+<BR>
+<A HREF="m3mac082.html">indent-increase(3)</A> Increase the line indentation 
 <BR>
 <A HREF="m3mac043.html">info(3)</A> Display a GNU Info database 
 <BR>
@@ -628,23 +654,29 @@ MicroEmacs - Split Command Glossary</H1>
 <BR>
 <A HREF="m3mac043.html">info-on(3)</A> Display Info on a given topic 
 <BR>
+<A HREF="m3mac086.html">insert-password(3)</A> Create and insert a new password string 
+<BR>
+<A HREF="m3osd003.html">insert-symbol(3)</A> Insert an ASCII character 
+<BR>
 <A HREF="m3mac034.html">ishell(3)</A> Open a Cygwin BASH window 
 <BR>
 <A HREF="m3osd013.html">line-scheme(3)</A> Apply line annotation in current buffer 
 <BR>
-<A HREF="m3osd004.html">line-scheme-search(3)</A> Search and annotate the current buffer 
-<BR>
-<A HREF="m3mac012.html">Mahjongg(3)</A> MicroEmacs '05 version of the solitaire Mah Jongg game 
+<A HREF="m3mac012.html">Mahjongg(3)</A> MicroEmacs '06 version of the solitaire Mah Jongg game 
 <BR>
 <A HREF="m3osd006.html">MainMenu(3)</A> The top main menu 
 <BR>
-<A HREF="m3mac013.html">Match-It(3)</A> MicroEmacs '05 version of the Match-It game 
+<A HREF="m3mac013.html">Match-It(3)</A> MicroEmacs '06 version of the Match-It game 
 <BR>
-<A HREF="m3mac014.html">Metris(3)</A> MicroEmacs '05 version of the falling blocks game 
+<A HREF="m3mac014.html">Metris(3)</A> MicroEmacs '06 version of the falling blocks game 
 <BR>
 <A HREF="m3mac028.html">mail(3)</A> Compose and send an email 
 <BR>
 <A HREF="m3mac028.html">mail-check(3)</A> Check for new email 
+<BR>
+<A HREF="m3osd011.html">major-mode-help(3)</A> Displays help page for current buffer 
+<BR>
+<A HREF="m3osd010.html">major-mode-setup(3)</A> Configures the current buffer settings 
 <BR>
 <A HREF="m3mac031.html">man(3)</A> UNIX manual page viewer 
 <BR>
@@ -660,9 +692,13 @@ MicroEmacs - Split Command Glossary</H1>
 <BR>
 <A HREF="m3mac078.html">notes-close(3)</A> Close the notes window 
 <BR>
+<A HREF="m3mac078.html">notes-context(3)</A> Create/Access buffer context note 
+<BR>
 <A HREF="m3mac078.html">notes-file(3)</A> Open a notes database file 
 <BR>
 <A HREF="m3mac078.html">notes-import-skwyrul(3)</A> Import a Skwyrul index file (skwyrul_l.htm) 
+<BR>
+<A HREF="m3mac078.html">notes-instant(3)</A> Create quick note 
 <BR>
 <A HREF="m3mac071.html">open-line(3)</A> (<B>C-o</B>)&nbsp;Open new line at cursor position 
 <BR>
@@ -674,9 +710,11 @@ MicroEmacs - Split Command Glossary</H1>
 <BR>
 <A HREF="m3osd007.html">osd-help(3)</A> GUI based on-line help 
 <BR>
+<A HREF="m3osd004.html">osd-search(3)</A> Search and annotate the current buffer 
+<BR>
 <A HREF="m3mac037.html">osd-xdialog(3)</A> OSD Extended dialog box 
 <BR>
-<A HREF="m3mac015.html">Patience(3)</A> MicroEmacs '05 version of Patience (or Solitaire) 
+<A HREF="m3mac015.html">Patience(3)</A> MicroEmacs '06 version of Patience (or Solitaire) 
 <BR>
 <A HREF="m3mac065.html">page-bfile(3)</A> Load a large binary file as binary data 
 <BR>
@@ -710,9 +748,15 @@ MicroEmacs - Split Command Glossary</H1>
 <BR>
 <A HREF="m3mac003.html">paragraph-to-line(3)</A> Convert a paragraph to a single line 
 <BR>
+<A HREF="m3mac086.html">password-to-phonic(3)</A> Convert a password to phonic string 
+<BR>
 <A HREF="m3osd012.html">print-setup(3)</A> Configure MicroEmacs's printer interface 
 <BR>
 <A HREF="m3mac007.html">query-replace-all-string(3)</A> Query replace string in a list of files 
+<BR>
+<A HREF="m3mac035.html">rdiff(3)</A> Recursively compare files or directories 
+<BR>
+<A HREF="m3mac081.html">read-session(3)</A> Read in session information 
 <BR>
 <A HREF="m3mac020.html">replace-all-pairs(3)</A> Replace string pairs in a list of files 
 <BR>
@@ -730,11 +774,15 @@ MicroEmacs - Split Command Glossary</H1>
 <BR>
 <A HREF="m3mac002.html">save-all(3)</A> Save all modified files (with query) 
 <BR>
+<A HREF="m3mac080.html">save-session(3)</A> Write session information to session file 
+<BR>
 <A HREF="m3osd005.html">scheme-editor(3)</A> Color Scheme Editor 
 <BR>
 <A HREF="m3mac024.html">shut-down(3)</A> Editor exit callback command 
 <BR>
 <A HREF="m3mac004.html">sort-lines-ignore-case(3)</A> Alphabetically sort lines ignoring case 
+<BR>
+<A HREF="m3mac063.html">space-rectangle(3)</A> Adds space(s) vertically 
 <BR>
 <A HREF="m3mac023.html">spell-add-word(3)</A> Add a word to the main dictionary 
 <BR>
@@ -750,9 +798,7 @@ MicroEmacs - Split Command Glossary</H1>
 <BR>
 <A HREF="m3mac063.html">string-rectangle(3)</A> Add a string vertically 
 <BR>
-<A HREF="m3osd003.html">symbol(3)</A> Insert an ASCII character 
-<BR>
-<A HREF="m3mac016.html">Triangle(3)</A> MicroEmacs '05 version of Triangle patience game 
+<A HREF="m3mac016.html">Triangle(3)</A> MicroEmacs '06 version of Triangle patience game 
 <BR>
 <A HREF="m3mac008.html">tabs-to-spaces(3)</A> Converts all tabs to spaces 
 <BR>
@@ -760,9 +806,11 @@ MicroEmacs - Split Command Glossary</H1>
 <BR>
 <A HREF="m3mac010.html">time(3)</A> Command time evaluator 
 <BR>
-<A HREF="m3mac066.html">toolbar(3)</A> Open the tool bar 
+<A HREF="m3mac066.html">toolbar(3)</A> Toggle tool bar visibility 
 <BR>
 <A HREF="m3mac066.html">toolbar-close(3)</A> Close the tool bar 
+<BR>
+<A HREF="m3mac066.html">toolbar-open(3)</A> Open the tool bar 
 <BR>
 <A HREF="m3mac066.html">toolbar-refresh(3)</A> Update the tool bar 
 <BR>
@@ -784,11 +832,13 @@ MicroEmacs - Split Command Glossary</H1>
 <BR>
 <A HREF="m3mac076.html">write-region(3)</A> Write contents of region to named (new) file 
 <BR>
+<A HREF="m3mac083.html">xdiff(3)</A> External graphical file difference 
+<BR>
 <A HREF="m3mac072.html">yank-rectangle-overwrite(3)</A> Insert a column of text with overwrite 
 <BR>
 <A HREF="m3mac040.html">zfile-setup(3)</A> Compressed file support setup </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2005/05/14</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/10/06</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

@@ -1,0 +1,410 @@
+<HTML>
+<HEAD><TITLE>jst(9)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
+jst(9)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P>jst - JASSPA Structured Text </UL>
+<H2><B>FILES </B></H2>
+<UL><P><B>hkjst.emf</B> - Jasspa structured text file hook definition. </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P>JASSPA Structured Text (<B>jst</B>) is an ASCII text format which includes some reserved text constructs that allow quite complex word processor type documents to be constructed with the minimal amount of additional annotation and which remains readable in its raw ASCII form. The motivation for doing this is to quickly construct documents and notes for publication whilst editing within MicroEmacs. 
+<P><B>JST</B> is a richer mark-up than the simpler 
+<A HREF="m9typ003.html">doc(9)</A> file type. 
+<P>The main requirements of JST are: <UL><P>
+<LI>Easy to remember. 
+<LI>Easily readable and can be highlighted well in MicroEmacs. 
+<LI>Well defined, i.e. not ambiguous so formating errors can be generated. 
+<LI>Extendable. 
+<LI>May be automatically reformatted. 
+<LI>Handle things like figure references and internal anchor and references. 
+<LI>Html and LaTeX output, possibly rtf and text. </UL><P>The syntax definition used by JST is defined in the next section. 
+<P>The JST template extensions include a number of converters that will syntax check the text and then format and export the text to a new presentation format that may be imported into a word processor or used directly in the generated form. </UL>
+<H2><B>BASIC SYNTAX </B></H2>
+<UL><P>The syntax of JST reserves basic character sequences which may be unambiguously interpreted into document styling. The basic syntax set allows a simple formatted document to be produced with the minimal amount of work from the author. 
+<P>JST supports more advanced extensions which allow tables and hypertext tags to be defined, these are discussed in the <B>Advanced</B> <B>Syntax</B> section later. </UL>
+<H2>Quoting </H2>
+<UL><P>To ensure that all characters may be input as typed then there is no single escape character. The character sequence <B>&amp;[</B><I>&lt;char&gt;</I><B>]</B> may be used to escape a character <I>&lt;char&gt;</I>. Our experience is that escaping is not usually necessary. </UL>
+<H2>Basic Styling </H2>
+<UL><P>The basic character styling is performed with a pair of escape characters at the start and end of a string sequence. The style end token does not have to appear on the same line as the start token and an error is reported if the sequence is not closed properly. Composite styles may be built buy combining the different tokens by inclusion of a new style within another style block. Where styles are nested then they should be closed in the reverse order that they were opened. 
+<P><TT>&quot;&quot;Raw Text&quot;&quot;</TT> 
+<BR><UL>A pair of double quotes surrounding a text block is treated as verbatim and is not subject to escaping, that is the character format characters are not translated. </UL>
+<P><B>**Bold Text**</B> 
+<BR><UL>A pair of star characters denote a emboldened text region. </UL>
+<P><I>//Italic Text//</I> 
+<BR><UL>A forward slash pair denotes an italic text region. </UL>
+<P><B>__Underline Text__</B> 
+<BR><UL>A underscore pair denotes an underlined region. </UL>
+<P><TT>@@Mono Text@@</TT> 
+<BR><UL>A pair of at symbols denotes a fixed text region rendered in a fixed width font. </UL>
+<P>``Superscript Text`` 
+<BR><UL>A pair of grave accents denotes superscript text region. </UL>
+<P>,,Subscript Text,, 
+<BR><UL>A pair of commas denotes a subscript text region. </UL>
+<P>Styles may be nested i.e. <TT>//Italic **Bold Italic** Italic Again//</TT> To get raw text with a double quote use: <TT>&quot;&quot;raw with a &amp;[&quot;]&quot; in it&quot;&quot;</TT> </UL>
+<H2>Styling Paragraphs and Blocks </H2>
+<UL><P>Blocks of text may be demarked by a single token at the start of the line. A exclamation mark '<TT>!</TT>' at the start of a paragraph may be followed by one or more style letters to enable the style for the paragraph, for consistency with the in-line tokens then double characters may be used. <UL>
+<PRE>!*&nbsp;As&nbsp;an&nbsp;example&nbsp;this&nbsp;baragraph&nbsp;is&nbsp;bold&nbsp;as&nbsp;it&nbsp;started&nbsp;with&nbsp;a&nbsp;'!*'. 
+</PRE></UL>
+<P>produces 
+<UL><P><B>As an example this baragraph is bold as it started with a '!*'.</B> </UL>
+<P>The exclamation mark may be followed by multiple different styles which are applied together. e.g. <UL>
+<PRE>!&quot;@&nbsp;This&nbsp;paragraph&nbsp;&nbsp;started&nbsp;with&nbsp;'!&quot;@'&nbsp;so&nbsp;it&nbsp;is&nbsp;quoted&nbsp;and&nbsp;mono-spaced 
+style,&nbsp;i.e.&nbsp;@@,&nbsp;&quot;&quot;&nbsp;or&nbsp;**&nbsp;is&nbsp;ignored. 
+</PRE></UL>
+<P>You can enable a style over a block of text by using a '<TT>!</TT>' style definition with no further text to the right. The block is terminated by a '<TT>!end!</TT>' or '<TT>&gt;end&gt;</TT>' tag on its own line. It is recommended that you insert a blank line before and after the '<TT>!end!</TT>' definition so that it does not affect the filling of the following paragraph. <UL>
+<PRE>!end! 
+</PRE></UL>
+<P>Paragraphs may be associated with a literal block of text from a different programming language. These are introduced with a '<TT>&gt;type&gt;</TT>' tag and end with a '<TT>&gt;end&gt;</TT>' tag. The tag types that are currently supported include: 
+<UL><P><TT>emf&nbsp;&nbsp;&nbsp;</TT>&nbsp;-&nbsp;JASSPA&nbsp;MicroEmacs&nbsp;Macro&nbsp;file. 
+<BR><TT>pseudo</TT>&nbsp;-&nbsp;Pseudo&nbsp;code&nbsp;block. 
+<BR><TT>bnf&nbsp;&nbsp;&nbsp;</TT>&nbsp;-&nbsp;BNF&nbsp;block. 
+<BR><TT>c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TT>&nbsp;-&nbsp;ANSI&nbsp;C&nbsp;code&nbsp;block. 
+<BR><TT>cpp&nbsp;&nbsp;&nbsp;</TT>&nbsp;-&nbsp;C++&nbsp;code&nbsp;block. 
+<BR><TT>perl&nbsp;&nbsp;</TT>&nbsp;-&nbsp;Perl&nbsp;code&nbsp;block. 
+<BR><TT>tcl&nbsp;&nbsp;&nbsp;</TT>&nbsp;-&nbsp;TCL&nbsp;code&nbsp;block. 
+<BR><TT>shell&nbsp;</TT>&nbsp;-&nbsp;UNIX&nbsp;shell&nbsp;block. 
+<BR><TT>java&nbsp;&nbsp;</TT>&nbsp;-&nbsp;Java&nbsp;code&nbsp;block. 
+<BR><TT>ini&nbsp;&nbsp;&nbsp;</TT>&nbsp;-&nbsp;MS-DOS/Windows&nbsp;.ini&nbsp;code&nbsp;block 
+<BR><TT>php&nbsp;&nbsp;&nbsp;</TT>&nbsp;-&nbsp;PHP&nbsp;code&nbsp;block. 
+<BR><TT>make&nbsp;&nbsp;</TT>&nbsp;-&nbsp;Makefile&nbsp;fragment. 
+</UL><P>The aforementioned blocks support syntax language highlighting and indentation. As an example: <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;Some&nbsp;example&nbsp;'C'&nbsp;code: 
+&nbsp;&nbsp;&nbsp;&nbsp;&gt;c&gt; 
+&nbsp;&nbsp;&nbsp;&nbsp;/*&nbsp;This&nbsp;is&nbsp;C&nbsp;code&nbsp;*/ 
+&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;main&nbsp;(int&nbsp;argc,&nbsp;char&nbsp;*argv[]) 
+&nbsp;&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf&nbsp;(&quot;Hello&nbsp;World\n&quot;); 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;0; 
+&nbsp;&nbsp;&nbsp;&nbsp;} 
+&nbsp;&nbsp;&nbsp;&nbsp;&gt;end&gt; 
+</PRE></UL>
+</UL><H2>Justification of Paragraphs and Blocks </H2>
+<UL><P>A paragraph is a block of text delimited by an empty line, by default all paragraphs are left justified. Where the layout of the paragraph is literal and should not be re-formatted then the paragraph should be proceeded by a '<TT>&gt;</TT>' symbol e.g. <UL>
+<PRE>&gt;&nbsp;This&nbsp;paragraph&nbsp;will&nbsp;not&nbsp;be&nbsp;reformatted 
+because&nbsp;it&nbsp;starts&nbsp;with&nbsp;a&nbsp;'&gt;',&nbsp;the 
+output&nbsp;will&nbsp;respect&nbsp;the&nbsp;position&nbsp;of&nbsp;the&nbsp;new&nbsp;lines. 
+</PRE></UL>
+<P>Paragraphs may be center justified with a leading '<TT>&gt;c</TT>' e.g. <UL>
+<PRE>&gt;c&nbsp;This&nbsp;is&nbsp;centered&nbsp;text 
+</PRE></UL>
+<P>With centered text then the indentation of the '<TT>&gt;c</TT>' centers the text from the indent position. e.g. <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&gt;c&nbsp;Note&nbsp;the&nbsp;initial&nbsp;indent&nbsp;level&nbsp;is&nbsp;important 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;as&nbsp;the&nbsp;text&nbsp;is 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;centered&nbsp;w.r.t.&nbsp;the&nbsp;remainder. 
+</PRE></UL>
+<P>Text may be right justified with a leading '<TT>&gt;r</TT>'. </UL>
+<H2>Indentation </H2>
+<UL><P>Indentation is implicitly defined by the indentation of the first line of the paragraph, each paragraph is effectively independent with respect to determining the indentation level. 
+<P>The indentation level is defined to be the the column of the first non-white-space character of the first line divided by the <I>Indent</I> <I>Width</I> (see indent-setup) rounded up. For example this the first non-white of this paragraph is the 'F' at column 4, with an indent width of 4 (the default) this is a an indent level of 1. 
+<P>A line starting with 6 spaces so it has an indent level of 2 (6/4 == 1.5 which is rounded up to 2). Rounding up allows item lists to work with little effort, without introducing ambiguity, for example. 
+<P>The indentation of a code fragment or literal text block are determined by the indentation of the initial style tag, for example: <UL>
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&gt;&quot;@ 
+&nbsp;&nbsp;&nbsp;&nbsp;&gt;c&gt; 
+&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;myVariable&nbsp;; 
+&nbsp;&nbsp;&nbsp;&nbsp;&gt;end&gt; 
+&gt;end&gt; 
+</PRE></UL>
+<P>The code block is indented from the left paragraph by the starting block indent. </UL>
+<H2>Headings </H2>
+<UL><P>Headings may be defined and commence with a equals ('<TT>=</TT>') character as the first character of the line. The number of equals determines the heading level. <UL>
+<PRE>=&nbsp;Top&nbsp;Level&nbsp;Heading 
+==&nbsp;Sub-heading 
+===&nbsp;Sub-sub-heading 
+</PRE></UL>
+<P>The position of the heading may be controlled and may be left, centered or right justified using <TT>l</TT>, <TT>c</TT> or <TT>r</TT> respectively. Left justified is the default when not defined. <UL>
+<PRE>=c&nbsp;Centered&nbsp;Top&nbsp;Level&nbsp;Heading 
+==r&nbsp;Right&nbsp;justified&nbsp;sub-heading 
+</PRE></UL>
+</UL><H2>Item Lists </H2>
+<UL><P>Items lists are bullet or number lists of items which are introduced by a <I>formatChar</I><B>.</B> to start the list, subsequent list items are introduced with a period '<B>.</B>' character only or optionally with the bullet character. Where <I>formatChar</I> identifies the type of list as follows: 
+<UL><P><TT>*</TT>&nbsp;&nbsp;-&nbsp;bullet&nbsp;list. 
+<BR><TT>1</TT>&nbsp;&nbsp;-&nbsp;Numeric&nbsp;item&nbsp;list. 
+<BR><TT>a</TT>&nbsp;&nbsp;-&nbsp;Lowercase&nbsp;alphabetic&nbsp;list. 
+<BR><TT>A</TT>&nbsp;&nbsp;-&nbsp;Uppercase&nbsp;alphabetic&nbsp;list. 
+<BR><TT>i</TT>&nbsp;&nbsp;-&nbsp;Roman&nbsp;numeral&nbsp;list. 
+<BR><TT>I</TT>&nbsp;&nbsp;-&nbsp;Upper&nbsp;case&nbsp;Roman&nbsp;numeral&nbsp;list. 
+<BR><TT>:.</TT>&nbsp;-&nbsp;Text&nbsp;item&nbsp;list. 
+</UL><P>Indentation and sub-paragraphs are supported within the paragraph. e.g. <UL>
+<PRE>&nbsp;1.&nbsp;Start&nbsp;or&nbsp;a&nbsp;numbered&nbsp;list. 
+
+&nbsp;&nbsp;&nbsp;&nbsp;Sub-paragraph&nbsp;of&nbsp;numbered&nbsp;list. 
+
+&nbsp;2.&nbsp;2nd&nbsp;item&nbsp;in&nbsp;numbered&nbsp;list 
+
+&nbsp;&nbsp;&nbsp;&nbsp;*.&nbsp;Contained&nbsp;bullet&nbsp;list. 
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;2nd&nbsp;item&nbsp;of&nbsp;bullet&nbsp;list. 
+
+&nbsp;.&nbsp;3rd&nbsp;item&nbsp;in&nbsp;numbered&nbsp;list. 
+</PRE></UL>
+<P>The text item, or definition, requires some further explanation. This allows a definition item to be defined (e.g. glossary of terms at start of document or note points within a document). These are defined at column 0 e.g. <UL>
+<PRE>:.&nbsp;MyDefinition 
+
+&nbsp;&nbsp;&nbsp;Description&nbsp;of&nbsp;the&nbsp;term. 
+</PRE></UL>
+</UL><H2><B>ADVANCED SYNTAX </B></H2>
+<UL><P>This section defiens the advanced syntax extensions of JST which allow more complex documents to be generated. These extensions may be used to author more complex documents for export. </UL>
+<H2>Tables </H2>
+<UL><P>Quite complex tables may be supported through JST. A table is introduced with the closing square brace '<B>]</B> character at the start of the line which define the ghlobal properties and dimensions of the table. Each entry in the table is introduced by '<B>]</B> and is followed by the assigned content. 
+<P>The initial table definition has the syntax <UL>
+<PRE>]crh&nbsp;&lt;#&nbsp;columns&gt;&nbsp;&lt;#&nbsp;rows&gt; 
+</PRE></UL>
+<P>Where '<B>c</B>' and '<B>r</B>' are optional and center or right justify the table, '<B>h</B>' hides the table lines i.e. no border. The dimensions of the table then follow. 
+<P>A simple definition of a 3x2 table might be defined as: <UL>
+<PRE>]&nbsp;3&nbsp;2 
+
+]&nbsp;Row&nbsp;1&nbsp;col&nbsp;1&nbsp;content. 
+
+]&nbsp;Row&nbsp;1&nbsp;col&nbsp;2&nbsp;content. 
+
+]&nbsp;Row&nbsp;1&nbsp;col&nbsp;3&nbsp;content. 
+
+]&nbsp;Row&nbsp;2&nbsp;col&nbsp;1&nbsp;content. 
+
+]&nbsp;Row&nbsp;2&nbsp;col&nbsp;2&nbsp;content. 
+
+]&nbsp;Row&nbsp;2&nbsp;col&nbsp;3&nbsp;content. 
+</PRE></UL>
+<P>The content may include 
+<UL><P><TT>*.</TT>&nbsp;Use&nbsp;item&nbsp;lists 
+<BR><TT>.&nbsp;</TT>&nbsp;Like&nbsp;this 
+<BR><TT>!c</TT>&nbsp;Center&nbsp;text 
+<BR><TT>!r</TT>&nbsp;Right&nbsp;justify&nbsp;text 
+<BR><I>also&nbsp;embedded&nbsp;images,&nbsp;see&nbsp;later.</I> 
+<BR>Columns and rows may be joined both horizontally and vertically by specifying the join in the cell definition. '<B>]&gt;'</B> performs a horizontal cell join of two cells, a single '<B>&gt;</B>' should be added for each additional cell so '<B>]&gt;&gt;</B>' joins 3 cells horizontally. A vertical join is similarly specified with '<B>]v</B>'. 
+<PRE>]&nbsp;3&nbsp;3 
+
+]&gt;&gt;&nbsp;Single&nbsp;top&nbsp;row&nbsp;with&nbsp;3&nbsp;columns&nbsp;joined&nbsp;content. 
+
+]v&nbsp;2&nbsp;rows&nbsp;joined&nbsp;in&nbsp;the&nbsp;first&nbsp;column&nbsp;content. 
+
+]&gt;&nbsp;2nd&nbsp;row&nbsp;2nd&nbsp;and&nbsp;3rd&nbsp;column&nbsp;joined&nbsp;content. 
+
+]&nbsp;3rd&nbsp;row&nbsp;2nd&nbsp;column&nbsp;content. 
+
+]&nbsp;3rd&nbsp;row&nbsp;3rd&nbsp;column&nbsp;content. 
+</PRE></UL>
+</UL><H2>Special Characters and Symbols </H2>
+<UL><P>Special characters are introduced with '<B>&amp;[</B><I>special</I><B>]</B>' and are defined as follows: 
+<P><TT>&amp;[nl]</TT> or <TT>&amp;[new-line]</TT> 
+<BR><UL>Newline. </UL>
+<P><TT>&amp;[np]</TT> or <TT>&amp;[new-page]</TT> 
+<BR><UL>New page. This is not supported in HTML or text. </UL>
+<P><TT>&amp;[nf]</TT> or <TT>&amp;[new-file]</TT> 
+<BR><UL>New file, the effect is dependent on the output format: 
+<P><B>html </B>
+<BR><UL>Starts a new html file, typical use of this is when the first file contains the TOC with links to the subsequent files. </UL>
+<P><B>latex </B>
+<BR><UL>Just starts a new page, i.e. same as <B>[[np]]</B>. </UL>
+<P><B>rtf </B>
+<BR><UL>Just starts a new page, i.e. same as <B>[[np]]</B>. </UL>
+<P><B>text </B>
+<BR><UL>Ignored. </UL></UL>
+<P><TT>&amp;[toc]</TT> 
+<BR><UL>Inserts an automatically generated table of contents. </UL>
+<P><TT>---</TT> 
+<BR><UL>Inserts a horizontal line. This must be the only text on the line. </UL></UL>
+<H2>Tags and Hyperlinks </H2>
+<UL><P>Most of the more complex formatting is performed with tags. The general format of a tag is defined as: 
+<UL><P><B>&amp;[</B><I>&lt;tag-id&gt;&lt;options&gt; &lt;args&gt;</I><B>]</B> </UL>
+<P>If a argument contains a space or a '<B>]</B>' then it must be quoted, e.g.: <UL>
+<PRE>&amp;[c&nbsp;this-is-okay] 
+&amp;[c&nbsp;&quot;this&nbsp;is&nbsp;okay&quot;] 
+&amp;[c&nbsp;&quot;this&nbsp;[\&quot;is\&quot;]&nbsp;okay&quot;] 
+</PRE></UL>
+<P>A tag may support numerous options, the order of the options is not important but the order of their arguments is as specified in the docs, not the order given with the tag therefore <B>&amp;[idw &lt;image&gt; &lt;depth&gt; &lt;width&gt;]</B> is still <B>&amp;[iwd &lt;image&gt; &lt;depth&gt; &lt;width&gt;]</B>. The text that actually appears in any generated document should not appear in a tag as the spelling check should skip the contents of a tag. This means that a link should take the HTML form of encasing the text label with start and end tags rather than being in the tag itself. One exception would be the setting of a variable. 
+<P><B>Comment Tag </B>
+<BR><UL>Inserts a comment. <UL>
+</UL><P><B>&amp;[c</B> <I>&lt;0+args&gt;</I><B>]</B> 
+<P>There may be any number of arguments, the whole tag is ignored. As the comment ends with a ']' and ']' char in the comment must be quoted, i.e.: <UL>
+<PRE>&amp;[c&nbsp;this&nbsp;is&nbsp;a&nbsp;comment&nbsp;with&nbsp;a&nbsp;&quot;]&quot;&nbsp;&quot;char[23]&quot;&nbsp;in&nbsp;it] 
+</PRE></UL>
+</UL><P><B>Anchor Tag </B>
+<BR><UL>Internal document reference. <UL>
+</UL><P><B>&amp;[a</B> <I>&lt;name&gt;</I><B>]</B> 
+<P>An anchor tag can be placed anywhere and referenced by a link . </UL>
+<P><B>Foreground and Background Color Tag </B>
+<BR><UL>Modifies the color of the text foreground and background. <UL>
+</UL><P><B>&amp;[f</B> <I>&lt;color&gt;</I><B>]</B> .... <B>&amp;[/f]</B> 
+<P>Sets the current foreground color where <I>&lt;color&gt;</I> is either a direct HTML format color definition (e.g. &quot;<TT>#ff0000</TT>&quot; for <B>red</B>) or a previously defined color name. 
+<P><B>&amp;[b</B> <I>&lt;color&gt;</I><B>]</B> .... <B>&amp;[/b]</B> 
+<P>Sets similarly sets the current background color. 
+<P>A number of options are supported by the color tag as follows: 
+<P><B>&amp;[fs</B> <I>&lt;name&gt;</I> <I>&lt;color&gt;</I><B>]</B> 
+<BR><UL>Define color '<I>&lt;name&gt;</I>' to be '<I>&lt;color&gt;</I>', the <I>&lt;name&gt;</I> may be references in the <B>f</B>/<B>b</B> color references. </UL>
+<P><B>&amp;[fd</B> <I>&lt;color&gt;</I><B>]</B> 
+<BR><UL>Sets the default foreground color to <I>&lt;color&gt;</I>. </UL>
+<P><B>&amp;[bd</B> <I>&lt;color&gt;</I><B>]</B> 
+<BR><UL>Sets the default background color to <I>&lt;color&gt;</I>. </UL></UL>
+<P><B>Link Tag </B>
+<BR><UL>Link to another part of the document or URL. <UL>
+</UL><P><B>&amp;[l</B> <I>&lt;url&gt;</I><B>]</B> .... <B>&amp;[/l]</B> 
+<P>Creates a hyperlink with the text with '<TT>....</TT>' going to the <I>&lt;url&gt;</I>, The format of the url uses the standard HTML syntax, a link starting with a hash '<TT>#</TT>' is assumed to be local and a warning will be issued if the corresponding anchor point is not found. An error is generated if the <B>&amp;[/l]</B> is missing. 
+<P>Urls appearing in the text like '<TT>http://www.jasspa.com</TT>' are automatically turned into links. To avoid this quote the string, i.e. &quot;&quot;http://www.jasspa.com&quot;&quot; </UL>
+<P><B>Image Tag </B>
+<BR><UL>Insert an image in the document. <UL>
+</UL><P><B>&amp;[i</B> <I>&lt;image-name&gt;</I><B>]</B> 
+<P>Inserts an image <I>&lt;image-name&gt;</I>, for example <B>&amp;[i&nbsp;me.png]</B> 
+<P>Additional options allow the depth and width of the image to be specified: 
+<P><B>&amp;[idw</B> <I>&lt;image-name&gt; &lt;depth&gt; &lt;width&gt;</I><B>]</B> 
+<P>Where option <B>d</B> specifies the depth of image and <B>w</B> specifies the width of the image. e.g. <TT>&amp;[iw test.jpg 60]</TT>. The size is given in pixels and the conversion variable '<I>image-ppi</I>' is used to convert is a physical paper size. The width may also be specified as a percentage, e.g. <B>50%</B>. </UL>
+<P><B>Use Tag </B>
+<BR><UL>Insert a file at the current point. <UL><B>&amp;[u</B> <I>&lt;file-name&gt;</I><B>]</B> 
+</UL><P>Inserts <I>&lt;file-name&gt;</I> into the current location and processes it as if part of the original docuement. e.g. <TT>&amp;[u</TT> <TT>insert.jst]</TT> inserts the file <I>insert.jst</I> at the current position in the file. </UL>
+<P><B>Variable Tag </B>
+<BR><UL>Insert a variable. <UL>
+</UL><P><B>&amp;[v</B> <I>&lt;variable-name&gt;</I><B>]</B> 
+<P>Inserts the current value of variable <I>&lt;variable-name&gt;</I>, variable names may only contain alphanumeric characters and '<TT>-</TT>'. 
+<P>The variable supports a set of simple options that allow the variable value to be manipulated prior to insertion e.g. for handling numbers etc. The option syntax is defined as follows: 
+<P><B>&amp;[vdinrs</B> <I>&lt;variable-name&gt;</I> <I>&lt;value&gt;</I> <I>&lt;increment&gt;</I> <I>&lt;reference-name&gt;</I><B>]</B> 
+<P><B>d </B>
+<BR><UL>Define the reference <I>&lt;reference-name&gt;</I> for the current value. </UL>
+<P><B>i </B>
+<BR><UL>Pre-increment the variable value by <I>&lt;increment&gt;</I> prior to insertion. </UL>
+<P><B>n </B>
+<BR><UL>Do not insert the variable value. </UL>
+<P><B>r </B>
+<BR><UL>Insert the <I>&lt;reference-name&gt;</I> value. </UL>
+<P><B>s </B>
+<BR><UL>Set the value to <I>&lt;value&gt;</I> first. </UL>
+<P>As an example, consider the following sequence to implement figure labels and reference them: <UL>
+<PRE>&amp;[vsn&nbsp;figure&nbsp;0] 
+
+&amp;[i&nbsp;figure1.jpg] 
+Figure&nbsp;&amp;[vid&nbsp;figure&nbsp;1&nbsp;figA]&nbsp;-&nbsp;my&nbsp;first&nbsp;figure 
+
+some&nbsp;more&nbsp;text 
+
+&amp;[i&nbsp;figure2.jpg] 
+Figure&nbsp;&amp;[vid&nbsp;figure&nbsp;1&nbsp;figB]&nbsp;-&nbsp;my&nbsp;second&nbsp;figure 
+
+To&nbsp;see&nbsp;&nbsp;**figure&nbsp;&amp;[vr&nbsp;figure&nbsp;&nbsp;figA]**&nbsp;//my&nbsp;first&nbsp;&nbsp;figure//&nbsp;and&nbsp;**figure 
+&amp;[vr&nbsp;figure&nbsp;figB]**&nbsp;//my&nbsp;second&nbsp;figure//. 
+
+To&nbsp;see&nbsp;&nbsp;**figure&nbsp;&amp;[vr&nbsp;figure&nbsp;&nbsp;figA]**&nbsp;//my&nbsp;first&nbsp;&nbsp;figure//&nbsp;and&nbsp;**figure 
+&amp;[vr&nbsp;figure&nbsp;figB]**&nbsp;//my&nbsp;second&nbsp;figure//. 
+</PRE></UL>
+<P>An undefined variable has a value of &quot;<TT>ERROR</TT>&quot;, it can be defined by using either option '<B>s</B>' or '<B>i</B>' in which case the value is <TT>0</TT>, i.e. the following can be used 
+<P><TT>= Chapter 1: Will be 1 at the top of the doc</TT> 
+<P>A set of special variables are automatically defined: 
+<P><B>title </B>
+<BR><UL>The document title. </UL>
+<P><B>author </B>
+<BR><UL>The author </UL>
+<P><B>image-ppi </B>
+<BR><UL>Image pixels per inch resolution setting, this is the resolution of the generated document in inches. </UL></UL>
+<P><B>Output Dump Tag </B>
+<BR><UL>Dump output text. <UL>
+</UL><P><B>&amp;[o</B> <I>&lt;out-type&gt; &lt;raw-text&gt;</I><B>]</B> 
+<P>Dumps <I>&lt;raw-text&gt;</I> into the output if the target output type is <I>&lt;out-type&gt;</I>, where <I>&lt;out-type&gt;</I> can be <B>all</B>, <B>html</B>, <B>latex</B>, <B>rtf</B> and <B>text</B>. </UL>
+<P><B>Dump Tag </B>
+<BR><UL>Dumps the tag for processing. <UL>
+</UL><P><B>[d</B> <I>&lt;out-type&gt; &lt;text&gt;</I><B>]</B> 
+<P>This command is similar to Output Dump Tag except this is done first so the <I>&lt;text&gt;</I> is processed, this can be used to define output specific formatting, e.g. (note that the \ at the end of the line is used here to show that the content should be placed on a single line). <UL>
+<PRE>&amp;[d&nbsp;html&nbsp;&quot;&amp;[vsn&nbsp;large-font-start&nbsp;\&quot;..html&nbsp;def..\&quot;]&nbsp;\ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;[vsn&nbsp;large-font-end&nbsp;\&quot;..html&nbsp;def..\&quot;]&quot;] 
+&amp;[d&nbsp;latex&nbsp;&quot;&amp;[vsn&nbsp;large-font-start&nbsp;\&quot;..latex&nbsp;def..\&quot;]&nbsp;\ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;[vsn&nbsp;large-font-end&nbsp;\&quot;..latex&nbsp;def..\&quot;]&quot;] 
+&amp;[d&nbsp;text&nbsp;&quot;&amp;[vsn&nbsp;large-font-start&nbsp;\&quot;\&quot;]&amp;[vsn&nbsp;large-font-end&nbsp;\&quot;\&quot;]&quot;] 
+</PRE></UL>
+<P>so in the main body of the text: <UL>
+<PRE>&amp;[v&nbsp;large-font-start]&nbsp;Large&nbsp;Text&nbsp;&amp;[v&nbsp;large-font-end] 
+</PRE></UL>
+<P>This is a complex concept and is beyond most users requirements, but making this kind of thing possible means that users should be able to do whatever they need to. </UL></UL>
+<H2><B>TEMPLATE </B></H2>
+<UL><P>The template supports highlighting and indention including commands for exporting JST to another format: 
+<P><B>jst-to-htm </B>
+<BR><UL>Export the JST definition to an HTML file with <B>.htm</B> extension. </UL>
+<P><B>jst-to-html </B>
+<BR><UL>Export the JST definition to an HTML file with <B>.htm</B> extension. </UL>
+<P><B>jst-to-rtf </B>
+<BR><UL>Export the JST definition to an RTF file, for this export then the file name is <B>.rtf</B> but the content is HTML. <B>Word(1)</B> and <B>StarOffice(1)</B> know how to convert this when imported. </UL>
+<P><B>jst-to-latex </B>
+<BR><UL>Convert to a LaTeX file format. </UL></UL>
+<H2><B>FILES </B></H2>
+<UL><P>JST is controlled by the macro files <TT>hkjst.emf</TT> which contains the basic template. <TT>jstutl.emf</TT> includes the utilities used for conversion to other formats. </UL>
+<H2><B>INTERNAL FORMAT </B></H2>
+<UL><P><B>JST</B> uses an internal neutral format which is used in the conversion process, this allows different back end output format drivers to be written against the neutral format without dealing with the input syntax. This intermediate format is not visible to the user and does not exist in the output. The internal format is defined as follows: 
+<P><B>\bF?</B>....<B>\bf?</B> 
+<BR><UL>Font style change where <B>?</B> is <B>B</B>,<B>I</B>,<B>U</B>,<B>M</B>,<B>p</B>,<B>b</B>). </UL>
+<P><B>\bDD\bDF</B><I>&lt;color&gt;</I><B>\bDB</B><I>&lt;color&gt;</I><B>\bdD</B>....<B>\bDd</B> 
+<BR><UL>Foreground or background color change where <I>&lt;color&gt;</I> = hexadecimal value <TT>RRGGBB</TT>. Note that <B>\bDF</B><I>&lt;c&gt;</I> or <B>\bDB</B><I>&lt;c&gt;</I> may be be omitted. </UL>
+<P><B>\bIT</B><I>&lt;image-name&gt;</I><B>\biT</B> 
+<BR><UL>Insert an image without scaling. </UL>
+<P><B>\bIT</B><I>&lt;image-name&gt;</I><B>\bID</B><I>&lt;depth&gt;</I><B>\biD\bIW</B><I>&lt;width&gt;</I><B>\biW\biT</B> 
+<BR><UL>Insert an image with scaling. </UL>
+<P><B>\bTA</B><I>&lt;anchor-name&gt;</I><B>\btA</B> 
+<BR><UL>A local anchor label. </UL>
+<P><B>\bTL</B><I>&lt;link-url&gt;</I><B>\btL</B><I>&lt;link-text&gt;</I><B>\bTl</B> 
+<BR><UL>URL Link. </UL>
+<P><B>\bTV</B><I>&lt;variable-name&gt;</I>_<I>&lt;variable-ref&gt;</I><B>\btV</B> 
+<BR><UL>A variable name (temporary). </UL>
+<P><B>\bSF</B> 
+<BR><UL>Start new file. </UL>
+<P><B>\bSL</B> 
+<BR><UL>Start new line. </UL>
+<P><B>\bSP</B> 
+<BR><UL>Start new page. </UL>
+<P><B>\bSN</B> 
+<BR><UL>No-text symbol. </UL>
+<P><B>\bST</B> 
+<BR><UL>Insert the table of content (temporary) </UL>
+<P><B>\bPI</B> 
+<BR><UL>Indent level. </UL>
+<P><B>\bPT</B> 
+<BR><UL>Indent tab level (used only in generated TOC). </UL>
+<P><B>\bPB</B>....<B>\bpB</B> 
+<BR><UL>Paragraph - justification both. </UL>
+<P><B>\bPC</B>....<B>\bpC</B> 
+<BR><UL>Paragraph - justification center. </UL>
+<P><B>\bPF</B>....<B>\bpF</B> 
+<BR><UL>Paragraph - File style block. </UL>
+<P><B>\bPL</B>....<B>\bpL</B> 
+<BR><UL>Paragraph - justification left. </UL>
+<P><B>\bPN</B>....<B>\bpN</B> 
+<BR><UL>Paragraph - justification none. </UL>
+<P><B>\bPR</B>....<B>\bpR</B> 
+<BR><UL>Paragraph - justification right. </UL>
+<P><B>\bH#</B>....<B>\bh#</B> 
+<BR><UL>Heading, e.g. <B>\bH1</B>....<B>\bh1</B> </UL>
+<P><B>\bBI</B><B>\bB?</B>...<B>\bb?</B><B>\bB?</B>...<B>\bb?</B><B>\bbI</B> 
+<BR><UL>Item list start and end tags. </UL>
+<P><B>\bBB</B>....<B>\bbB</B> 
+<BR><UL>Bullet item. </UL>
+<P><B>\bBN#</B><B>\bBn</B>....<B>\bbN</B> 
+<BR><UL>Item # in numbered item list. </UL>
+<P><B>\bBU#</B><B>\bBu</B>....<B>\bbU</B> 
+<BR><UL>Item # in uppercase letter item list </UL>
+<P><B>\bBL#</B><B>\bBl</B>....<B>\bbL</B> 
+<BR><UL>Item # in lowercase letter item list. </UL>
+<P><B>\bBR#</B><B>\bBr</B>....<B>\bbR</B> 
+<BR><UL>Item # in uppercase roman numeral item list. </UL>
+<P><B>\bBS#</B><B>\bBs</B>....<B>\bbS</B> 
+<BR><UL>Item # in lowercase roman numeral item list. </UL>
+<P><B>\bCT</B><I>&lt;flags&gt;</I><B>\bCt</B><I>&lt;widths&gt;</I><B>\bct</B>....<B>\bcT</B> 
+<BR><UL>Table - Entire table (contains rows). 
+<BR><I>&lt;flags&gt;</I> can be any of <B>h</B>, <B>c</B> or <B>r</B>. 
+<BR><I>&lt;widths&gt;</I> is an ME list <TT>|no col|width table|width of col 1|width of col 2|...|</TT> </UL>
+<P><B>\bCR</B>....<B>\bcR</B> 
+<BR><UL>Table - Row (contains columns) </UL>
+<P><B>\bCC</B>....<B>\bcC</B> 
+<BR><UL>Table - column (single cell) </UL></UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m9typ003.html">doc(9)</A>, 
+<A HREF="amicr030.html">Supported File Types</A> </UL>
+<HR>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/10/06</I>
+<BR><I>Generated On: 2006/10/07</I>
+</BODY></HMTL>

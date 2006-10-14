@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>define-macro(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 define-macro(2)</H1>
@@ -22,17 +22,17 @@ define-macro(2)</H1>
 <A HREF="m4fil006.html">!emacro</A> directive. 
 <P>The numeric argument <I>n</I>, specified as zero, defines the macro as private such that it does not appear on a command completion list. A zero argument is generally used on helper macro's that form part of a larger macro. If the argument is omitted, or non-zero, then the macro appears in the command completion list. 
 <P>See 
-<A HREF="m2cmd045.html">execute-file(2)</A> for a complete definition and examples of the MicroEmacs '05 macro language. 
-<P>Once the macro has been defined, it becomes indistinguishable from a standard MicroEmacs '05 command, i.e. 
+<A HREF="m2cmd045.html">execute-file(2)</A> for a complete definition and examples of the MicroEmacs '06 macro language. 
+<P>Once the macro has been defined, it becomes indistinguishable from a standard MicroEmacs '06 command, i.e. 
 <A HREF="m2cmd047.html">execute-named-command(2)</A> (<TT>esc x</TT>) can be used to execute the macro and 
 <A HREF="m2cmd013.html">global-bind-key(2)</A> can be used to globally bind the command to a key combination. 
-<P>There are no restrictions on the number of macros that may be defined, provided that the name space is managed properly. Consideration must be given as to when any additional macros that are created are loaded into MicroEmacs '05. We usually like start-up to be rapid and macros are loaded as and when requested by the user, or by the buffer hooks as new files are loaded (see 
+<P>There are no restrictions on the number of macros that may be defined, provided that the name space is managed properly. Consideration must be given as to when any additional macros that are created are loaded into MicroEmacs '06. We usually like start-up to be rapid and macros are loaded as and when requested by the user, or by the buffer hooks as new files are loaded (see 
 <A HREF="m2cmd003.html">add-file-hook(2)</A> and 
 <A HREF="m2cmd147.html">define-macro-file(2)</A>). 
 <P>User defined macros may be documented with on-line help by including a 
 <A HREF="m2cmd093.html">define-help(2)</A> construct within the macro file. </UL>
 <H2><B>EXAMPLE </B></H2>
-<UL><P>The following are two standard macros provided with MicroEmacs '05. The first is a macro called <B>clean</B>, this strips trailing white space from the ends of lines in a file and removes blank lines from the end of the file. <UL>
+<UL><P>The following are two standard macros provided with MicroEmacs '06. The first is a macro called <B>clean</B>, this strips trailing white space from the ends of lines in a file and removes blank lines from the end of the file. <UL>
 <PRE>define-macro&nbsp;clean 
 &nbsp;&nbsp;&nbsp;&nbsp;; 
 &nbsp;&nbsp;&nbsp;&nbsp;;&nbsp;Prepare&nbsp;to&nbsp;clean&nbsp;up&nbsp;file. 
@@ -141,7 +141,7 @@ define-macro&nbsp;alarm
 <A HREF="m2cmd074.html">insert-macro(2)</A>, 
 <A HREF="m2cmd011.html">start-kbd-macro(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
 <BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2005/05/14</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

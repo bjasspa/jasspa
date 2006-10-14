@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>ascii-time(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 ascii-time(3)</H1>
@@ -17,16 +17,27 @@ ascii-time(3)</H1>
 <H2><B>SYNOPSIS </B></H2>
 <UL><P><B>ascii-time</B> </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P><B>ascii-time</B> returns the current time as a formatted string in <TT>#p9</TT> which is equivalent to <TT>#l9</TT> for the calling macro. The format of the time string is: <UL>
-<UL><P>&quot;<I>WWW MMM DD hh:mm:ss yyyy</I>&quot; </UL>
-</UL><P>Where: <TT>WWW&nbsp;</TT>&nbsp;-&nbsp;Week&nbsp;day,&nbsp;<TT>Sun</TT>&nbsp;-&nbsp;<TT>Sat</TT> 
-<BR><TT>MMM&nbsp;</TT>&nbsp;-&nbsp;Month,&nbsp;<TT>Jan</TT>&nbsp;-&nbsp;<TT>Dec</TT> 
-<BR><TT>DD&nbsp;&nbsp;</TT>&nbsp;-&nbsp;Day,&nbsp;<TT>1</TT>&nbsp;-&nbsp;<TT>31</TT> 
-<BR><TT>hh&nbsp;&nbsp;</TT>&nbsp;-&nbsp;Hour,&nbsp;<TT>00</TT>&nbsp;-&nbsp;<TT>23</TT> 
-<BR><TT>mm&nbsp;&nbsp;</TT>&nbsp;-&nbsp;Minute,&nbsp;<TT>00</TT>&nbsp;-&nbsp;<TT>59</TT> 
-<BR><TT>ss&nbsp;&nbsp;</TT>&nbsp;-&nbsp;Second,&nbsp;<TT>00</TT>&nbsp;-&nbsp;<TT>59</TT> 
-<BR><TT>yyyy</TT>&nbsp;-&nbsp;Year,&nbsp;<TT>1998</TT>... </UL>
-<H2><B>EXAMPLE </B></H2>
+<UL><P><B>ascii-time</B> returns the current time as a formatted string in <TT>#p9</TT> which is equivalent to <TT>#l9</TT> for the calling macro. The format of the resultant string is determined by the variable <B>.ascii-time.format</B> which is defined using the following escape characters: <UL>
+<P><TT>%%&nbsp;</TT>&nbsp;-&nbsp;<TT>%</TT>&nbsp;char 
+<BR><TT>%Y&nbsp;</TT>&nbsp;-&nbsp;4&nbsp;digit&nbsp;year 
+<BR><TT>%y&nbsp;</TT>&nbsp;-&nbsp;2&nbsp;digit&nbsp;year 
+<BR><TT>%B&nbsp;</TT>&nbsp;-&nbsp;Full&nbsp;month&nbsp;word 
+<BR><TT>%b&nbsp;</TT>&nbsp;-&nbsp;3&nbsp;letter&nbsp;month 
+<BR><TT>%m&nbsp;</TT>&nbsp;-&nbsp;2&nbsp;digit&nbsp;month 
+<BR><TT>%#m</TT>&nbsp;-&nbsp;1&nbsp;digit&nbsp;month 
+<BR><TT>%d&nbsp;</TT>&nbsp;-&nbsp;2&nbsp;digit&nbsp;day 
+<BR><TT>%#d</TT>&nbsp;-&nbsp;1&nbsp;digit&nbsp;day 
+<BR><TT>%A&nbsp;</TT>&nbsp;-&nbsp;Fill&nbsp;Week&nbsp;day&nbsp;word 
+<BR><TT>%a&nbsp;</TT>&nbsp;-&nbsp;3&nbsp;letter&nbsp;week&nbsp;day 
+<BR><TT>%H&nbsp;</TT>&nbsp;-&nbsp;2&nbsp;digit&nbsp;24&nbsp;hour 
+<BR><TT>%M&nbsp;</TT>&nbsp;-&nbsp;2&nbsp;digit&nbsp;minute 
+<BR><TT>%S&nbsp;</TT>&nbsp;-&nbsp;2&nbsp;digit&nbsp;second </UL>
+<P>The default value of <B>.ascii-time.format</B> when not defined is: 
+<UL><P>&quot;<TT>%a %b %d %H:%M:%S %Y</TT>&quot; </UL>
+<P>To change the default date layout then <B>.ascii-time.format</B> should be defined in <I>user</I><B>.emf</B>. i.e. <UL>
+<PRE>set-variable&nbsp;.ascii-time.format&nbsp;&quot;%H:%M:%S&nbsp;%Y-%m-%d&quot; 
+</PRE></UL>
+</UL><H2><B>EXAMPLE </B></H2>
 <UL><P>The following is taken from etfinsrt.emf, it uses <B>ascii-time</B> in replacing &quot;<TT>$ASCII_TIME$</TT>&quot; with the current. <UL>
 <PRE>0&nbsp;define-macro&nbsp;etfinsrt 
 &nbsp;&nbsp;&nbsp;&nbsp;. 
@@ -45,10 +56,10 @@ ascii-time(3)</H1>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m5var002.html">$buffer-fhook(5)</A>, 
-<A HREF="m4fil024.html">&amp;find(4)</A>, 
-<A HREF="m3mac019.html">ascii-time(3)</A>. </UL>
+<A HREF="m3mac018.html">etfinsrt(3)</A>, 
+<A HREF="m4fil024.html">&amp;find(4)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/21</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

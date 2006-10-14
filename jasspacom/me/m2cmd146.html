@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>yank(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 yank(2)</H1>
@@ -20,7 +20,7 @@ yank(2)</H1>
 <UL><P>When a non negative argument is supplied to <B>yank</B>, the command copies the contents of the kill buffer <I>n</I> times into the current buffer at the current cursor position. This does not clear the kill buffer, and therefore may be used to make multiple copies of a section of text. On windowing systems which support clip-boards, such as windows and X-terms, MicroEmacs will also cut to and paste from the global clip-board. 
 <P>If <I>yank</I> is IMMEDIATELY followed by a 
 <A HREF="m2cmd111.html">reyank(2)</A> then the <I>yanked</I> text is replaced by text of the next entry in the kill ring. (another <B>reyank</B> replaces the text with the previous reyank text and so on). 
-<P>If an -ve argument is given, <B>yank</B> removes the last 0-<I>n</I> items from the kill ring. 
+<P>If an negative argument is given, <B>yank</B> removes the last 0-<I>n</I> items from the kill ring. 
 <P>Text is inserted into the kill buffer by one of the following commands:- 
 <UL><P>
 <A HREF="m2cmd035.html">backward-kill-word(2)</A>, 
@@ -34,7 +34,7 @@ yank(2)</H1>
 <P>All the above commands (except <B>copy-region</B>) cut text out of the buffer, the last two character delete commands require the presence of a numeric argument to add the deleted text to the kill buffer. If any of these commands are executed immediately after any other (including itself) or the 
 <A HREF="m4fil017.html">@cl(4)</A> variable is set to one of these command, the new kill text is appended to the last kill buffer text. </UL>
 <H2><B>NOTES </B></H2>
-<UL><P>Windowing systems such as X-Windows and Microsoft Windows utilize a global windowing kill buffer allowing data to be moved between windowing applications (<I>cut buffer</I> and <I>clipboard</I>, respectively). Within these environments MicroEmacs '05 automatically interacts with the windowing systems kill buffer, the last MicroEmacs '05 kill buffer entry is immediately available for a <I>paste</I> operation into another application (regardless of how it was inserted into the kill buffer). Conversely, data placed in the windowing kill buffer is available to MicroEmacs '05, via <B>yank</B>, until a new item has been inserted into the kill buffer (the data may still be available via 
+<UL><P>Windowing systems such as X-Windows and Microsoft Windows utilize a global windowing kill buffer allowing data to be moved between windowing applications (<I>cut buffer</I> and <I>clipboard</I>, respectively). Within these environments MicroEmacs '06 automatically interacts with the windowing systems kill buffer, the last MicroEmacs '06 kill buffer entry is immediately available for a <I>paste</I> operation into another application (regardless of how it was inserted into the kill buffer). Conversely, data placed in the windowing kill buffer is available to MicroEmacs '06, via <B>yank</B>, until a new item has been inserted into the kill buffer (the data may still be available via 
 <A HREF="m2cmd111.html">reyank(2)</A>). </UL>
 <H2><B>EXAMPLE </B></H2>
 <UL><P>The following example is a basic macro code implementation of the 
@@ -62,7 +62,7 @@ backward-line
 <A HREF="m4fil020.html">@y(4)</A>, 
 <A HREF="m4fil017.html">@cc(4)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2005/01/19</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/07/28</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

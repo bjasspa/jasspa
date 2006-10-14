@@ -1,0 +1,181 @@
+<HTML>
+<HEAD><TITLE>file-tool-setup(3)</TITLE></HEAD>
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
+<BODY>
+<H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
+file-tool-setup(3)</H1>
+<FONT SIZE=2>
+<A HREF="../me.html">[Home]</A>
+<A HREF="amicr031.html">[Commands]</A>
+<A HREF="amicr033.html">[Variables]</A>
+<A HREF="amicr034.html">[Macro-Dev]</A>
+<A HREF="amicr035.html">[Glossary]</A>
+</FONT>
+<HR>
+<H2><B>NAME </B></H2>
+<UL><P>file-tool-setup - Define file-browser tools </UL>
+<H2><B>SYNOPSIS </B></H2>
+<UL><P><B>file-tool-setup</B> </UL>
+<H2><B>DESCRIPTION </B></H2>
+<UL><P><B>file-tool-setup</B> provides a dialog interface for declaring a set of actions to act on files shown in the 
+<A HREF="m3mac027.html">file-browser(3)</A> directory listing. Actions may be defined to interact with <TT>ZIP</TT> files for both creation and extraction, opening of <TT>PDF</TT> files with Adobe Acrobat, opening of Microsoft Word <TT>DOC</TT> files with Word or StarOffice etc. These options are shown in the <B>file-browser</B> pop-up menu under <B>Tools</B>. 
+<P>The file tools may be configured from 
+<A HREF="m3osd000.html">user-setup(3)</A> in the <B>Miscellaneous</B> tab or invoked directly from the command line using <B>file-tool-setup</B>, when invoked then the File Tool Setup dialog is displayed. The dialog allows commands to be be matched against certain file types that are determined using a regular expression, if a filename matches the pattern then a command line or MicroEmacs command may be invoked to process the file(s). The command line includes <I>variables</I> which are filled in by MicroEmacs. The information is stored in the registry <I>user.erf</I> and is retained across sessions. 
+<P>The <B>file-tool-setup</B> presents a list of tools, there is no limit to the number of tools which can be defined or to the number of tools that may map to a specific file type. The dialog has the following fields: 
+<P><B>Name </B>
+<BR><UL>Declares the name of the tool as it appears in the <B>Tools</B> section of the 
+<A HREF="m3mac027.html">file-browser(3)</A> pop-up menu. A single menu short-cut key may be defined by prefixing the hot key with a <TT>\H</TT>. </UL>
+<P><B>File Mask </B>
+<BR><UL>A regular expression that is used to search for files of a given type, this follows the standard MicroEmacs 
+<A HREF="m2nar006.html">Regular Expression</A> syntax. As an example 'all files' is defined as &quot;<TT>.*</TT>&quot;, PDF files are defined as <TT>.*\.pdf</TT>, image files might be defined as a set of different extensions <TT>.*\.\(png\|jpg\|jpeg\|bmp\|gif\)</TT>, etc. </UL>
+<P><B>Command </B>
+<BR><UL>Defines the command line or MicroEmacs command that is executed to process the action. The command line comprises escape characters using the percentage (<TT>%</TT>) character, these fields are filled in automatically by MicroEmacs and are defined as follows: 
+<P><B>%f</B> - Filename 
+<BR><UL>A replacement for the filename, typically passed in quotes to the command being executed as an argument. The filename is defined as a relative pathname from the current directory location. If multiple files are selected in the <B>file-browser</B> then the command line is executed multiple times, once for each file, unless the <B>%*</B> construct is used in conjunction with <B>%f</B> when multiple files may be specified with a single command invocation. </UL>
+<P><B>%b</B> - Base Filename 
+<BR><UL>The basename of the file, i.e. no pathname and no file extension. </UL>
+<P><B>%e</B> - File Extension 
+<BR><UL>The file extension of the filename. </UL>
+<P><B>%p</B>, <B>%P</B> - File pathname 
+<BR><UL>The pathname of the file without the filename. <B>%p</B> is the file path with '/' forward slash directory separators. <B>%P</B> is the same as <B>%p</B> but with '\' backslashes directory separators on Microsoft Windows and DOS. </UL>
+<P><B>%i[</B><I>h</I><B>|</B><I>prompt</I><B>|</B><I>default</I><B>]</B> .. <B>%n</B> - User Input 
+<BR><UL>Specifies that the user is to be prompted for input from the command line. Square brackets follow the <B>%i</B> which defines the command line prompt. The <B>%i[..]</B> is replaced with the user input and may be replicated in the command line using <B>%n</B> where <B>n</B> is a digit <TT>1..9</TT> where <B>%1</B> reproduces the first <B>%i</B>, <B>%2</B> reproduces the second, ... etc. </UL>
+<UL><P><I>h</I> specifies the type of data to be entered including the history and semantics allowed. <I>h</I> may have the following values: 
+<P><TT>0</TT>&nbsp;For&nbsp;a&nbsp;general&nbsp;string&nbsp;input&nbsp;using&nbsp;the&nbsp;general&nbsp;history. 
+<BR><TT>1</TT>&nbsp;For&nbsp;an&nbsp;absolute&nbsp;file&nbsp;name,&nbsp;with&nbsp;completion&nbsp;and&nbsp;history. 
+<BR><TT>2</TT>&nbsp;For&nbsp;a&nbsp;MicroEmacs&nbsp;buffer&nbsp;name,&nbsp;with&nbsp;completion&nbsp;and&nbsp;history. 
+<BR><TT>3</TT>&nbsp;For&nbsp;a&nbsp;MicroEmacs&nbsp;command&nbsp;name,&nbsp;with&nbsp;completion&nbsp;and&nbsp;history. 
+<BR><TT>4</TT>&nbsp;For&nbsp;a&nbsp;file&nbsp;name,&nbsp;with&nbsp;completion&nbsp;and&nbsp;history. 
+<BR><TT>5</TT>&nbsp;For&nbsp;a&nbsp;search&nbsp;string,&nbsp;with&nbsp;history. 
+<BR><TT>6</TT>&nbsp;For&nbsp;a&nbsp;MicroEmacs&nbsp;mode&nbsp;name,&nbsp;with&nbsp;completion&nbsp;and&nbsp;history. 
+<BR><TT>7</TT>&nbsp;For&nbsp;a&nbsp;MicroEmacs&nbsp;variable&nbsp;name,&nbsp;with&nbsp;completion&nbsp;and&nbsp;history. 
+<BR><TT>8</TT>&nbsp;For&nbsp;a&nbsp;general&nbsp;string&nbsp;using&nbsp;no&nbsp;history. 
+<BR><TT>9</TT>&nbsp;For&nbsp;a&nbsp;user&nbsp;supplied&nbsp;completion&nbsp;list&nbsp;(<TT>com-list</TT>). 
+<BR><TT>a</TT>&nbsp;For&nbsp;a&nbsp;user&nbsp;supplied&nbsp;completion&nbsp;list&nbsp;(<TT>buffer-name</TT>). </UL>
+<UL><P><I>prompt</I> is the prompt string presented on the command line. </UL>
+<UL><P><I>default</I> is the default value that should be used. The <B>%</B> characters may be used and will be replaced with information from the filename e.g. <B>%b</B> would be replaced with the base file name. </UL>
+<UL><P>As an example of the user input, consider the following command line which is used to unzip a <B>.zip</B> file: </UL>
+<UL><P><TT>unzip &quot;%f&quot; -d %i[4|Unzip sub-dir|%b]</TT> </UL>
+<UL><P>Given an input file of <TT>/home/user/foo.zip</TT> then the command line <TT>unzip</TT> <TT>&quot;/home/user/foo.zip&quot;</TT> <TT>-d</TT> <TT>foo</TT> is generated, given that the user accepted the defualt command line prompt of &quot;<TT>foo</TT>&quot; for the prompt &quot;<TT>Unzip</TT> <TT>sub-dir</TT>&quot; </UL>
+<UL><P>Where the user input is required in multiple parts of the command line then the <B>%1</B> syntax may be used. The following example may be used to create a <B>.zip</B> archive from one or more selections in the file list. </UL>
+<UL><P><TT>rm -f &quot;%i[4|Zip file name|%b].zip&quot;; zip -r %1.zip%*[ &quot;%f&quot;]</TT> </UL>
+<UL><P>In this instance the user is prompted for the <TT>Zip file name</TT> and it is used twice in the command line, the default name is the base file name of the first file. Consider two files have been selected <TT>foo.txt</TT> and <TT>bar.txt</TT> where <TT>foo.txt</TT> is first. The generated command line is: </UL>
+<UL><P><TT>rm -f &quot;foo.zip&quot;; zip -r foo.zip &quot;foo.txt&quot; &quot;bar.txt&quot;</TT> </UL>
+<UL><P>Note how the <I>basename</I> has been used as the default for the zip file name to create and this has been used in two places in the command line, once to delete the old archive if it already exists and once to form the new archive. </UL>
+<P><B>%*[</B><I>argument</I><B>]</B> - Multiple file command line 
+<BR><UL>Utilities that accept multiple arguments on the command line use a special construct <B>%*</B>. By default a single command line invocation is made for each file, the <B>%*</B> construct makes a single command line invocation for multiple files. </UL>
+<UL><P>The square bracket construct contains the expansion for each file specified in the <B>file-browser</B>, this will typically include the <B>%f</B> construct. For each argument then the brackets are expanded and concatenated together to form a command line, as such the bracket construct usually starts with a space character as this separates the files. </UL>
+<UL><P>As an example then zip file construction will take multiple files on the command line to add to the archive: </UL>
+<UL><P><TT>rm -f &quot;%i[4|Zip file name|%b].zip&quot;; zip -r %1.zip%*[ &quot;%f&quot;]</TT> </UL>
+<P><B>%&quot;</B><I>...</I><B>%&quot;</B> - Quote text 
+<BR><UL>Using quote tags ensures the quoted part of the command-line is treated as a single argument. For example, if the tool: </UL>
+<UL><P><TT>unzip %f</TT> </UL>
+<UL><P>is used for the file &quot;Test Files.zip&quot; the command-line becomes '<TT>unzip</TT> <TT>Test</TT> <TT>Files.zip</TT>' which will not work correctly, conversely using <TT>&quot;%f&quot;</TT> will not work for files with quotes (e.g. '2&quot;bolt.def'). However, if </UL>
+<UL><P><TT>unzip %&quot;%f%&quot;</TT> </UL>
+<UL><P>is used MicroEmacs works out the best way to quote the file name for it to be properly processed. </UL>
+<P><B>*</B><I>MicroEmacs-Command</I> - Internal command 
+<BR><UL>Where the command commences with a star character (<TT>*</TT>) then the command is treated as a MicroEmacs command and is executed within the editor. As an example consider handling a zip file using the 
+<A HREF="m3mac040.html">find-zfile(3)</A> command: </UL>
+<UL><P><TT>*find-zfile &quot;%f&quot;</TT> </UL>
+<UL><P>For each file then <B>find-zfile</B> is invoked to read the zip archive. </UL></UL>
+<P><B>Default Open </B>
+<BR><UL>A flag that defines whether this is the default open action. When set then the command is automatically launched if the file is opened in the <B>file-browser</B> (usually by left clicking on the file name or pressing &quot;<TT>return</TT>&quot;) . When clear then the tool has to be explicitly invoked. </UL>
+<P><B>Hide Window </B>
+<BR><UL>Defines the visibility of the window associated with the command, for example, if the command-line uses a <TT>cmd</TT> shell to launch another process the cmd window should be hidden. This has no effect on internal MicroEmacs commands. </UL>
+<P><B>Up/Down </B>
+<BR><UL>Changes the item order in the list/menu by moving it up or down. </UL>
+<P><B>Add </B>
+<BR><UL>Adds a new tool line to the list. </UL>
+<P><B>Modify </B>
+<BR><UL>Modifies the existing tool setting. </UL>
+<P><B>Delete </B>
+<BR><UL>Deletes the tool from the list. </UL>
+<P><B>Close </B>
+<BR><UL>Closes the tool menu. </UL></UL>
+<H2><B>EXAMPLE </B></H2>
+<UL><P>Example tool definitions: 
+<P>Word processor 
+<BR><UL>Name: StarOffice/OpenOffice/Microsoft Word 
+<BR>File Mask: <TT>.*\.\(doc\|ppt\|xls\|odt\|rtf\)</TT> 
+<BR>Command: <TT>soffice %&quot;%f%&quot;</TT> 
+<BR>Hide Window: yes 
+<BR>Default Open: no </UL>
+<P>Image Viewer 
+<BR><UL>Name: XnView/Gimp/Photoshop/PaintShop 
+<BR>File Mask: <TT>.*\.\(png\|jpg\|jpeg\|bmp\|gif\)</TT> 
+<BR>Command: <TT>xnview %&quot;%f%&quot;</TT> 
+<BR>Hide Window: yes 
+<BR>Default Open: yes </UL>
+<P>Postscript Viewer 
+<BR><UL>Name: Gnome Ghostview/Ghostview 
+<BR>File Mask: <TT>.*\.ps</TT> 
+<BR>Command: <TT>ggv %&quot;%f%&quot;</TT> 
+<BR>Hide Window: yes 
+<BR>Default Open: yes </UL>
+<P>Acrobat Viewer 
+<BR><UL>Name: Adobe Acrobat 
+<BR>File Mask: <TT>.*\.pdf</TT> 
+<BR>Command: <TT>acroread %&quot;%f%&quot;</TT> 
+<BR>Hide Window: yes 
+<BR>Default Open: yes </UL>
+<P>Unzip a zip Archive in current directory 
+<BR><UL>Name: Unzip in . 
+<BR>File Mask: <TT>.*\.zip</TT> 
+<BR>Command: <TT>unzip %&quot;%f%&quot;</TT> 
+<BR>Hide Window: no 
+<BR>Default Open: no </UL>
+<P>Unzip a zip Archive in a sub-directory 
+<BR><UL>Name: Unzip in sub-dir 
+<BR>File Mask: <TT>.*\.zip</TT> 
+<BR>Command: <TT>unzip %&quot;%f%&quot; -d %&quot;%i[4|Unzip sub-dir|%b]%&quot;</TT> 
+<BR>Hide Window: no 
+<BR>Default Open: no </UL>
+<P>Create a zip archive 
+<BR><UL>Name: Create Zip 
+<BR>File Mask: <TT>.*</TT> 
+<BR>Command: <TT>rm -f %&quot;%i[4|Zip file name|%b].zip%&quot;; zip -r %&quot;%1.zip%&quot;%*[ %&quot;%f%&quot;]</TT> 
+<BR>Hide Window: no 
+<BR>Default Open: no </UL>
+<P>Add to a zip archive 
+<BR><UL>Name: Add to Zip 
+<BR>File Mask: <TT>.*</TT> 
+<BR>Command: <TT>zip -r %&quot;%i[4|Zip file name|%b]%&quot;%*[ %&quot;%f%&quot;]</TT> 
+<BR>Hide Window: no 
+<BR>Default Open: no </UL>
+<P>View archive file 
+<BR><UL>Name: View Archive 
+<BR>File Mask: <TT>.*\.\(zip\|tgz\|tar\.gz\|tar\|gz\|bz2\)</TT> 
+<BR>Command: <TT>*find-zfile %&quot;%f%&quot;</TT> 
+<BR>Hide Window: no 
+<BR>Default Open: yes </UL>
+<P>Convert DOS to UNIX 
+<BR><UL>Name: Dos2Unix 
+<BR>File Mask: <TT>.*</TT> 
+<BR>Command: <TT>me @dos2unix %*[ %&quot;%f%&quot;]</TT> 
+<BR>Hide Window: no 
+<BR>Default Open: no </UL>
+<P>Microsoft Windows - default action 
+<BR><UL>Name: Windows Default 
+<BR>File Mask: <TT>.*</TT> 
+<BR>Command: <TT>cmd /c %&quot;%f%&quot;</TT> 
+<BR>Hide Window: yes 
+<BR>Default Open: no 
+<BR>Notes: This action runs the default action for the file type. </UL>
+<P>Microsoft Windows - Explorer 
+<BR><UL>Name: Explorer 
+<BR>File Mask: <TT>.*</TT> 
+<BR>Command: <TT>explorer .%*[]</TT> 
+<BR>Hide Window: yes 
+<BR>Default Open: no </UL></UL>
+<H2><B>SEE ALSO </B></H2>
+<UL><P>
+<A HREF="m3mac027.html">file-browser(3)</A>, 
+<A HREF="m3mac040.html">find-zfile(3)</A>, 
+<A HREF="m3osd000.html">user-setup(3)</A>. 
+<BR>
+<A HREF="m2nar006.html">Regular Expressions</A> </UL>
+<HR>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/09/20</I>
+<BR><I>Generated On: 2006/10/07</I>
+</BODY></HMTL>

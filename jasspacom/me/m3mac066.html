@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>toolbar(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 toolbar(3)</H1>
@@ -13,18 +13,20 @@ toolbar(3)</H1>
 </FONT>
 <HR>
 <H2><B>NAME </B></H2>
-<UL><P>toolbar - Open the tool bar. 
+<UL><P>toolbar - Toggle tool bar visibility. 
+<BR>toolbar-open - Open the tool bar. 
 <BR>toolbar-close - Close the tool bar 
 <BR>toolbar-refresh - Update the tool bar </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><B>toolbar</B> 
+<UL><P><I>n</I> <B>toolbar</B> 
+<BR><B>toolbar-open</B> 
 <BR><B>toolbar-close</B> 
 <BR><B>toolbar-refresh</B> </UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P>The toolbar is one or more fixed buffers that typically appear at the left-hand edge of the window that contains different tools that assist in editing the buffer. The toolbar is really a container for tools and short cuts which are configured by the user depending on the tool that has been loaded. The tools themselves are buffer context sensitive, the 
 <A HREF="m3mac064.html">buffer-init(3)</A> command automatically re-configures the toolbar for the buffer at run time. 
 <P>The configuration of the toolbar is stored in command variables <TT>.toolvar.*</TT> which are used to control the toolbar. The tools that are available in toolbar are determined from the file <TT>toollist.emf</TT> which is loaded when the toolbar is started. User defined toolbars may be added by redefinging the toolbar variables at runtime. 
-<P><B>toolbar</B> initializes and starts the toolbar if it is not already running. The toolbar is loaded and instantiated in the system. The toolbar may be subsequently closed using <B>toolbar-close</B>. Whilst the toolbar is running then the content of the tollbar may become out of date, the command 
+<P><B>toolbar</B> toggles the visibility of the toolbar, i.e. if the toolbar is open it is closed and vica versa. If the numeric argument <I>n</I> is specified then zero closes the toolbar and non-zero opens the toolbar. <B>toolbar-open</B> initializes and starts the toolbar if it is not already running. The toolbar is loaded and instantiated in the system. The toolbar may be subsequently closed using <B>toolbar-close</B>. Whilst the toolbar is running then the content of the tollbar may become out of date, the command 
 <A HREF="m3mac066.html">toolbar-refresh(3)</A> forces the toolbar to be re-evaluated and the content is updated. </UL>
 <H2><B>CONFIGURATION </B></H2>
 <UL><P>The toolbar is configured with command variables <B>.toolbar.*</B>. The size information of the toolbar is defined with the following variables:- 
@@ -99,7 +101,7 @@ toolbar(3)</H1>
 <A HREF="m2cmd066.html">osd(2)</A>, 
 <A HREF="m2cmd108.html">recenter(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2004/01/22</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/21</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

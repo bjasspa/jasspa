@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>popup-window(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 popup-window(2)</H1>
@@ -18,12 +18,22 @@ popup-window(2)</H1>
 <UL><P><I>n</I> <B>popup-window</B> &quot;<I>name</I>&quot; </UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P><B>popup-window</B> manages the display of a new window on the screen. If only one window exists then it will be split else the current window will changed to one of the other existing visible windows. If the given buffer name &quot;<I>name</I>&quot; is not null (&quot;&quot;) then the buffer is created, if it does not exist, and swapped in. 
-<P>If an argument <I>n</I> of zero is given then the command only succeeds if the given buffer is already being displayed in an existing window, this window is made current. If an non-zero argument is given to the command and the given buffer is not visible then a window displaying a system buffer is chosen in preference. A system buffer is one who's name starts with a '<TT>*</TT>' character, e.g. &quot;<TT>*help*</TT>&quot;. window used to display </UL>
+<P>The numeric argument <I>n</I> alters the behavior of the command as follows: 
+<P><TT>0</TT> 
+<BR><UL>When <I>n</I> is zero is given then the command only succeeds if the given buffer is already being displayed in an existing window, this window is made current. </UL>
+<P><TT>1</TT> 
+<BR><UL>When <I>n</I> is 1 and the given buffer is not visible then a window displaying a system buffer is chosen in preference. A system buffer is one who's name starts with a '<TT>*</TT>' character, e.g. &quot;<TT>*help*</TT>&quot;. window used to display </UL>
+<P><TT>2</TT> 
+<BR><UL>When <I>n</I> is 2 the frame containing the buffer is made current, this will interact with the window manager and bring MicroEmacs to the top of the window stack and bring it into focus. The <I>name</I> argument is not required. </UL>
+<P><TT>3</TT> 
+<BR><UL>When <I>n</I> is 3 then the frame position on the Desktop Window is allowed to be re-positioned, this is typically called after a font change or screen re-size operation and ensures that the MicroEmacs window is positioned on the screen. The <I>name</I> argument is not required. </UL>
+<P><TT>4</TT> 
+<BR><UL>When <I>n</I> is 4 then both the frame position and frame size on the Desktop Window is adjusted, this is the same as <TT>3</TT> except the frame size may also be adjusted to fit on the desktop. The <I>name</I> argument is not required. </UL></UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m2cmd091.html">find-buffer(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/22</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

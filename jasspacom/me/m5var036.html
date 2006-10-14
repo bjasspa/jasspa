@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>$rcs-file(5)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 $rcs-file(5)</H1>
@@ -36,7 +36,7 @@ $rcs-file(5)</H1>
 <A HREF="m2cmd105.html">rcs-file(2)</A> command has one of two effects:- 
 <UL><P>If the file is in view mode then the <B>$rcs-cou-com</B> (RCS <B>C</B>heck <B>O</B>ut <B>U</B>nlock <B>COM</B>mand) is executed (system command line using the &quot;%f&quot; as the file name). If the RCS file does not exist then is simply toggles the view mode, allowing editing. </UL>
 <UL><P>If the file is not in view mode MicroEmacs attempts to check the file back into RCS using either <B>$rcs-ci-com</B> (if the RCS file already exists) or the the <B>$rcs-cif-com</B> (RCS <B>C</B>heck <B>I</B>n <B>F</B>irst <B>COM</B>mand). The &quot;<TT>%f</TT>&quot; is again used for the file name, the &quot;<TT>%m</TT>&quot; can also be used to get a comment from the user at check in time which will be inserted (without quotes) into the <B>$rcs-ci-com</B> command line. For example, one possible <B>$rcs-ci-com</B> setting is &quot;<TT>ci -m\&quot;%m\&quot; %f</TT>&quot; which uses the <B>ci(1)</B> program with the <B>-m</B> option to give a check in message. 
-</UL><P>If <B>rcs-file</B> is given a -ve argument instead of checking in or out the current buffer's file it executes the command specified by <B>$rcs-ue-com</B> to unedit or abort any changes made to the file. After the command has been executed the file is reloaded. </UL>
+</UL><P>If <B>rcs-file</B> is given a negative argument instead of checking in or out the current buffer's file it executes the command specified by <B>$rcs-ue-com</B> to unedit or abort any changes made to the file. After the command has been executed the file is reloaded. </UL>
 <H2><B>NOTES </B></H2>
 <UL><P>The RCS variables are by default undefined and must be explicitly enabled in the start-up files. </UL>
 <H2><B>EXAMPLE </B></H2>
@@ -67,7 +67,7 @@ set-variable&nbsp;$rcs-ci-com&nbsp;&nbsp;&quot;ss.exe&nbsp;checkin&nbsp;%f&nbsp;
 <A HREF="m2cmd056.html">find-file(2)</A>, 
 <A HREF="m2cmd105.html">rcs-file(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/07/28</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>file-browser(3)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 file-browser(3)</H1>
@@ -20,7 +20,7 @@ file-browser(3)</H1>
 <BR><B>file-browser-swap-buffers</B> </UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P><B>file-browser</B> can be used to browse around the file system. When first executed <B>file-browser</B> creates 2 buffers, &quot;<TT>*directory*</TT>&quot; displaying the directory structure and &quot;<TT>*files*</TT>&quot; listing the files in the current directory with information on each file. <B>file-browser</B> displays these buffers side by side, splitting the current window horizontally if required. 
-<P>Once open the user can browse through the system using the following keys in the <TT>*directory*</TT> buffer: 
+<P>Once open the user can browse through the system using the following keys in the <TT>*directory*</TT> buffer, use <B>esc-h</B> for help within the buffer: 
 <P><TT>space</TT> 
 <BR><UL>Selects the directory on the current line and up-dates the <TT>*files*</TT> buffer with the information on this directory. This can also be done by clicking the left mouse button on the directory name. </UL>
 <P><TT>return</TT> 
@@ -29,12 +29,14 @@ file-browser(3)</H1>
 <BR><UL>As with <TT>return</TT> expect sub-directories are recursively opened or closed, note that this could take some time on large file systems. This can also be done by clicking the right mouse button on the '<TT>+</TT>' or '<TT>-</TT>' symbol just before the directory name. </UL>
 <P><TT>tab</TT> 
 <BR><UL>Move to the <TT>*files*</TT> buffer. </UL>
-<P><TT>delete</TT> 
+<P><TT>f10</TT> 
 <BR><UL>Closes file-browser. 
 </UL><P>The following keys can be used in the <TT>*files*</TT> buffer: 
 <P><TT>return</TT> 
 <BR><UL>If the current line is a directory, this because the current directory, updating both the <TT>*directory*</TT> and <TT>*files*</TT> buffers. If the line is a file then it is opened using 
 <A HREF="m2cmd056.html">find-file(2)</A>. This can also be done by clicking the left mouse button on the file name. </UL>
+<UL><P>Where a <B>file-tool</B> open action has been defined using 
+<A HREF="m3osd017.html">file-tool-setup(3)</A> then the selected tool or utility is run to process the file. This may be used to launch viewers for PDF, image files etc. </UL>
 <P><TT>space</TT> 
 <BR><UL>Toggles the tag state of the file on the current line, see <TT>x</TT> command. This can also be done by clicking the left mouse button anywhere before the file name, or for multiple files drag a region with the left mouse button. </UL>
 <P><TT>X</TT> or <TT>x</TT> 
@@ -42,21 +44,72 @@ file-browser(3)</H1>
 <A HREF="m2cmd131.html">shell-command(2)</A> on all tagged files. The user is prompted for the command line which can contain the following special tokens: <UL><TT>%p&nbsp;&nbsp;</TT>Full&nbsp;file&nbsp;name,&nbsp;including&nbsp;path. 
 <BR><TT>%f&nbsp;&nbsp;</TT>The&nbsp;file&nbsp;name&nbsp;without&nbsp;the&nbsp;path. 
 <BR></UL>As the <B>shell-command</B> is executed in the directory <TT>%f</TT> is safe to use in a command such as &quot;<TT>del %f</TT>&quot;. </UL>
-<P><TT>D</TT> or <TT>d</TT> 
-<BR><UL>Deletes all the tags in the buffer. </UL>
+<P><TT>D</TT> or <TT>d</TT> or <TT>delete</TT> 
+<BR><UL>Delete selected files or current file/directory. </UL>
 <P><TT>tab</TT> 
 <BR><UL>Move to the <TT>*directory*</TT> buffer. </UL>
-<P><TT>delete</TT> 
-<BR><UL>Closes file-browser. 
+<P><TT>backspace</TT> 
+<BR><UL>Move to the parent directory. </UL>
+<P><TT>l</TT> 
+<BR><UL>Refresh the listing from the file system. </UL>
+<P><TT>f</TT> 
+<BR><UL>Toggle the filter, enables/disables the display of back-up, object files etc. </UL>
+<P><TT>S</TT> 
+<BR><UL>Initiates a search for files, at the command prompt then enter the leading characters to search for use <B>C-s</B> and <B>C-r</B> to search forwards or backwards respectively. The <TT>s</TT> version of this command is an incremental search and is easier to use. </UL>
+<P><TT>s</TT> 
+<BR><UL>Launch an incremental search by name, at the prompt enter the search characters, use <B>C-s</B> and <B>C-r</B> to search forwards or backwards respectively. </UL>
+<P><TT>1</TT> 
+<BR><UL>Sort list by selected state. </UL>
+<P><TT>2</TT> 
+<BR><UL>Sort list by attribute. </UL>
+<P><TT>3</TT> 
+<BR><UL>Sort list by size. </UL>
+<P><TT>4</TT> 
+<BR><UL>Sort list by modified time. </UL>
+<P><TT>5</TT> 
+<BR><UL>Sort list by name. </UL>
+<P><TT>6</TT> 
+<BR><UL>Sort list by extension. </UL>
+<P><TT>space</TT> or <TT>+</TT> 
+<BR><UL>Select file. </UL>
+<P><TT>-</TT> 
+<BR><UL>Unselect file. </UL>
+<P><TT>*</TT> 
+<BR><UL>Invert selection. </UL>
+<P><TT>a</TT> 
+<BR><UL>Select all. </UL>
+<P><TT>u</TT> 
+<BR><UL>Unselect all. </UL>
+<P><TT>e</TT> 
+<BR><UL>Edit file, opens the file in the editor for modification. </UL>
+<P><TT>i</TT> 
+<BR><UL>Edit selected file, opens all of the selected file in the editor for modification. </UL>
+<P><TT>v</TT> 
+<BR><UL>View file, opens file for viewing only (write protected). </UL>
+<P><TT>r</TT> 
+<BR><UL>Rename file or directory, command line prompt for the new name. </UL>
+<P><TT>c</TT> 
+<BR><UL>Copy file(s) and/or directory(s), command line prompt for directory to copy file(s). </UL>
+<P><TT>m</TT> 
+<BR><UL>Move file(s) and/or directory(s), command line prompt for directory to move file(s). </UL>
+<P><TT>n</TT> 
+<BR><UL>Create a new directory (or folder), command line prompt for the name of the new directory to create. </UL>
+<P><TT>t</TT> 
+<BR><UL>Invokes the file tools menu to process the file, see 
+<A HREF="m3osd017.html">file-tool-setup(3)</A>. 
 </UL><P><B>file-browser-swap-buffers</B> swaps between the <TT>*directory*</TT> and <TT>*file*</TT> windows, making the other the current window, this is usually locally bound to the <TT>tab</TT> key. 
-<P><B>file-browser-close</B> hides both the <TT>*directory*</TT> and <TT>*file*</TT> windows, closing the file-browser, this is usually locally bound to the <TT>delete</TT> key. </UL>
+<P><B>file-browser-close</B> hides both the <TT>*directory*</TT> and <TT>*file*</TT> windows, closing the file-browser, this is usually locally bound to the <TT>f10</TT> key. Note that this command is hidden and will not complete on the command line, but may be bound or input explicitly. </UL>
+<H2><B>HISTORY </B></H2>
+<UL><P>The command line mapping was revised in the 2006 release for a more logical key to file operation mapping. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m2cmd032.html">directory-tree(2)</A>, 
+<A HREF="m3osd017.html">file-tool-setup(3)</A>, 
 <A HREF="m2cmd056.html">find-file(2)</A>, 
+<A HREF="m3mac040.html">find-zfile(3)</A>, 
 <A HREF="m2cmd131.html">shell-command(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2004/01/11</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/24</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>shell-command(2)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 shell-command(2)</H1>
@@ -15,18 +15,39 @@ shell-command(2)</H1>
 <H2><B>NAME </B></H2>
 <UL><P>shell-command - Perform an operating system command </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><B>shell-command</B> &quot;<I>string</I>&quot; </UL>
+<UL><P><I>n</I> <B>shell-command</B> &quot;<I>string</I>&quot; </UL>
 <H2><B>DESCRIPTION </B></H2>
 <UL><P><B>shell-command</B> performs an operating system call with the given <I>string</I> as its argument. The command only fails if the shell-command call returns -1. The 
-<A HREF="m5var041.html">$result(5)</A> variable is set the return value and can be used to test the result. </UL>
+<A HREF="m5var041.html">$result(5)</A> variable is set the return value and can be used to test the result. 
+<P>The argument <I>n</I> can be used to change the default behavior of the shell-command, <I>n</I> is a bit based flag where:- 
+<P><B>0x01</B> 
+<BR><UL>When set shell-command waits for the command to complete, this is the default behavior. When not set the command is launched and forgotten about, the value returned in 
+<A HREF="m5var041.html">$result(5)</A> will not reflect the exit code of the executed process itself. </UL>
+<P><B>0x04</B> 
+<BR><UL>Disable the use of the command-line processor to launch the program (win32 versions only). By default the &quot;<B>command</B>&quot; is launched by executing the command: 
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;%COMSPEC%&nbsp;/c&nbsp;command 
+</PRE></UL>
+<UL><P>Where <TT>%COMSPEC%</TT> is typically command.com. If this bit is set, the &quot;<B>command</B>&quot; is launched directly. </UL>
+<P><B>0x08</B> 
+<BR><UL>Detach the launched process from MicroEmacs (win32 versions only). By default the command is launched as a child process of MicroEmacs with a new console. With this bit set the process is completely detached from MicroEmacs instead. </UL>
+<P><B>0x10</B> 
+<BR><UL>Disable the command name mangling (win32 versions only). By default any '<TT>/</TT>' characters found in the command name (the first argument only) are converted to '<TT>\</TT>' characters to make it Windows compliant. </UL>
+<P><B>0x20</B> 
+<BR><UL>Displays the new process window (win32 versions only), by default the window is hidden. </UL>
+<P><B>0x100</B> 
+<BR><UL>When set the command-line to be run is the first line of buffer <I>string</I>, this feature can be used to overcome the default 1024 character command-line limit. When a multiple-line command-line is required, a negative argument can be given to 
+<A HREF="m2cmd076.html">insert-string(2)</A>. </UL>
+<P><B>0x200</B> 
+<BR><UL>No wait option, when set the the command is run without waiting for any completion status. This allows processes to be run and then forgotten about e.g. a Word processor, Adobe Acrobat reader etc. </UL></UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
 <A HREF="m5var041.html">$result(5)</A>, 
 <A HREF="m2cmd077.html">ipipe-shell-command(2)</A>, 
 <A HREF="m2cmd098.html">pipe-shell-command(2)</A>, 
+<A HREF="m2cmd071.html">shell(2)</A>, 
 <A HREF="m2cmd130.html">suspend-emacs(2)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/22</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

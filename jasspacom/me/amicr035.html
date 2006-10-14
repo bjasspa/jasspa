@@ -90,6 +90,10 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m5var002.html">$buffer-fhook(5)</A> Buffer macro hook command name (buffer creation) 
 <BR>
+<A HREF="m5var021.html">$buffer-fill-col(5)</A> Buffer paragraph mode; right fill column 
+<BR>
+<A HREF="m5var028.html">$buffer-fill-mode(5)</A> Buffer paragraph mode; justification method 
+<BR>
 <A HREF="m5var070.html">$buffer-fmod(5)</A> Buffer file modes (or attributes) 
 <BR>
 <A HREF="m5var003.html">$buffer-fname(5)</A> Name of the current buffer's file name 
@@ -138,7 +142,7 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m5var053.html">$fill-bullet-len(5)</A> Paragraph filling bullet search depth 
 <BR>
-<A HREF="m5var021.html">$fill-col(5)</A> Paragraph Mode; right fill column 
+<A HREF="m5var021.html">$fill-col(5)</A> Global paragraph mode; right fill column 
 <BR>
 <A HREF="m5var012.html">$fill-eos(5)</A> Paragraph filling; end of sentence fill characters 
 <BR>
@@ -146,7 +150,7 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m5var054.html">$fill-ignore(5)</A> Ignore paragraph filling character(s) 
 <BR>
-<A HREF="m5var028.html">$fill-mode(5)</A> Paragraph mode; justification method 
+<A HREF="m5var028.html">$fill-mode(5)</A> Global paragraph mode; justification method 
 <BR>
 <A HREF="m5var067.html">$find-words(5)</A> Filtered word list 
 <BR>
@@ -177,6 +181,8 @@ MicroEmacs - Global Glossary</H1>
 <A HREF="m5var029.html">$line-template(5)</A> Command line regular expression search string 
 <BR>
 <A HREF="m5var030.html">$ml-scheme(5)</A> Message line color scheme 
+<BR>
+<A HREF="m5var092.html">$mode-chars(5)</A> Mode characters 
 <BR>
 <A HREF="m5var031.html">$mode-line(5)</A> Mode line format 
 <BR>
@@ -276,6 +282,10 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m5var048.html">$window-line(5)</A> Window cursor line 
 <BR>
+<A HREF="m5var048.html">$window-mark-col(5)</A> Window mark column 
+<BR>
+<A HREF="m5var048.html">$window-mark-line(5)</A> Window mark line 
+<BR>
 <A HREF="m5var046.html">$window-mode-line(5)</A> Window mode line position 
 <BR>
 <A HREF="m5var046.html">$window-scroll-bar(5)</A> Window scroll bar (or separator) position 
@@ -327,6 +337,8 @@ MicroEmacs - Global Glossary</H1>
 <A HREF="m5var044.html">%tag-option(5)</A> Tag file search option 
 <BR>
 <A HREF="m5var044.html">%tag-template(5)</A> Tag file search string 
+<BR>
+<A HREF="m3mac083.html">%xdiff-com(5)</A> xdiff command line 
 <BR>
 <A HREF="m4fil001.html">&amp;abs(4)</A> Absolute value of a number 
 <BR>
@@ -468,6 +480,8 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m8fil007.html">.Xdefaults(8)</A> UNIX Window Manager defaults file 
 <BR>
+<A HREF="m3mac019.html">.ascii-time.format(5)</A> Set the format of the date string 
+<BR>
 <A HREF="m5var063.html">.calc.result(5)</A> Last calc calculation result 
 <BR>
 <A HREF="m3mac038.html">.which.result(5)</A> Program path 
@@ -570,6 +584,8 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m3mac011.html">alarm(3)</A> Set an alarm 
 <BR>
+<A HREF="m3osd016.html">alias-path-setup(3)</A> Define alternative path alias 
+<BR>
 <A HREF="m9typ026.html">aman(3)</A> Compile an nroff file into a buffer (UNIX) 
 <BR>
 <A HREF="m9typ038.html">apache(9)</A> Apache httpd.conf configuration file 
@@ -646,8 +662,6 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m2cmd084.html">buffer-bind-key(2)</A> Create local key binding for current buffer 
 <BR>
-<A HREF="m3osd011.html">buffer-help(3)</A> Displays help page for current buffer 
-<BR>
 <A HREF="m2cmd014.html">buffer-info(2)</A> (<B>C-x&nbsp;=</B>)&nbsp;Status information on current buffer position 
 <BR>
 <A HREF="m3mac064.html">buffer-init(3)</A> Initialize a buffer language template 
@@ -656,11 +670,15 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m3mac064.html">buffer-init-hooks(3)</A> Initialize the buffer language template hooks 
 <BR>
+<A HREF="m3mac087.html">buffer-major-mode(3)</A> Change the operating mode of a buffer 
+<BR>
 <A HREF="m2cmd006.html">buffer-mode(2)</A> (<B>C-x&nbsp;m</B>)&nbsp;Change a local buffer mode 
 <BR>
-<A HREF="m3osd010.html">buffer-setup(3)</A> Configures the current buffer settings 
+<A HREF="m3osd014.html">buffer-setup(3)</A> Configure the current buffer settings 
 <BR>
 <A HREF="m2cmd084.html">buffer-unbind-key(2)</A> Remove local key binding for current buffer 
+<BR>
+<A HREF="m3mac085.html">ClearCase(3)</A> MicroEmacs ClearCase interface 
 <BR>
 <A HREF="m2nar005.html">Client-Server(2)</A> Client-Server Model 
 <BR>
@@ -698,6 +716,28 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m9typ000.html">cc(9)</A> C++ programming language 
 <BR>
+<A HREF="m3mac085.html">cc-add(3)</A> MicroEmacs ClearCase interface - add file 
+<BR>
+<A HREF="m3mac085.html">cc-checkin(3)</A> MicroEmacs ClearCase interface - checkin files 
+<BR>
+<A HREF="m3mac085.html">cc-checkout(3)</A> MicroEmacs ClearCase interface - checkout files 
+<BR>
+<A HREF="m3mac085.html">cc-delete(3)</A> MicroEmacs ClearCase interface - delete files 
+<BR>
+<A HREF="m3mac085.html">cc-diff(3)</A> MicroEmacs ClearCase interface - diff changes 
+<BR>
+<A HREF="m3mac085.html">cc-setup(3)</A> MicroEmacs ClearCase interface setup 
+<BR>
+<A HREF="m3mac085.html">cc-state(3)</A> MicroEmacs ClearCase interface - list state of directory files 
+<BR>
+<A HREF="m3mac085.html">cc-update(3)</A> MicroEmacs ClearCase interface - update directory files 
+<BR>
+<A HREF="m9typ046.html">cfc(9)</A> ColdFusion Markup Language 
+<BR>
+<A HREF="m9typ046.html">cfm(9)</A> ColdFusion Markup Language 
+<BR>
+<A HREF="m9typ046.html">cfml(9)</A> Adobe Macromedia ColdFusion Markup Language 
+<BR>
 <A HREF="m2cmd088.html">change-buffer-name(2)</A> (<B>esc C-n</B>)&nbsp;Change name of current buffer 
 <BR>
 <A HREF="m2cmd017.html">change-file-name(2)</A> (<B>C-x&nbsp;n</B>)&nbsp;Change the file name of the current buffer 
@@ -707,6 +747,8 @@ MicroEmacs - Global Glossary</H1>
 <A HREF="m2cmd018.html">change-frame-depth(2)</A> Change the number of lines on the current frame 
 <BR>
 <A HREF="m2cmd018.html">change-frame-width(2)</A> Change the number of columns on the current frame 
+<BR>
+<A HREF="m3mac084.html">change-scheme(3)</A> Change the current highlight scheme 
 <BR>
 <A HREF="m2cmd018.html">change-screen-depth(2)</A> Change the number of lines on the screen 
 <BR>
@@ -862,6 +904,8 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m3mac051.html">display-white-chars(3)</A> Toggle the displaying of white characters 
 <BR>
+<A HREF="m3mac051.html">display-whitespaces(3)</A> Toggle the displaying of white characters 
+<BR>
 <A HREF="m9typ003.html">doc(9)</A> ASCII plain text document file 
 <BR>
 <A HREF="m3fcl002.html">dos2unix(3f)</A> Convert DOS format files to UNIX format files 
@@ -878,13 +922,13 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m8fil005.html">ehf(8)</A> MicroEmacs help file 
 <BR>
-<A HREF="m9typ001.html">ehf(9)</A> MicroEmacs '05 help file 
+<A HREF="m9typ001.html">ehf(9)</A> MicroEmacs '06 help file 
 <BR>
 <A HREF="m3fcl005.html">ehftools(3f)</A> Generate a MicroEmacs help file 
 <BR>
 <A HREF="m8fil003.html">emf(8)</A> MicroEmacs macro file 
 <BR>
-<A HREF="m9typ002.html">emf(9)</A> MicroEmacs '05 Macro File 
+<A HREF="m9typ002.html">emf(9)</A> MicroEmacs '06 Macro File 
 <BR>
 <A HREF="m3fcl006.html">emftags(3f)</A> Generate a MicroEmacs macro tags file 
 <BR>
@@ -898,7 +942,9 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m8fil004.html">erf(8)</A> MicroEmacs registry file 
 <BR>
-<A HREF="m9typ021.html">erf(9)</A> MicroEmacs '05 registry file 
+<A HREF="m9typ021.html">erf(9)</A> MicroEmacs '06 registry file 
+<BR>
+<A HREF="m8fil008.html">esf(8)</A> MicroEmacs session file 
 <BR>
 <A HREF="m8fil001.html">etf(8)</A> MicroEmacs template file format 
 <BR>
@@ -951,6 +997,10 @@ MicroEmacs - Global Glossary</H1>
 <A HREF="m3mac027.html">file-browser-swap-buffers(3)</A> Swap between file-browser windows 
 <BR>
 <A HREF="m2cmd158.html">file-op(2)</A> File system operations command 
+<BR>
+<A HREF="m3osd017.html">file-tool-setup(3)</A> Define file browser tools 
+<BR>
+<A HREF="m3osd015.html">file-type-setup(3)</A> Define file type set 
 <BR>
 <A HREF="m2cmd202.html">fileHooks(2)</A> File Hooks 
 <BR>
@@ -1090,7 +1140,9 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m2mod005.html">indent(2m)</A> Automatic indentation 
 <BR>
-<A HREF="m3osd014.html">indent-setup(3)</A> Locally modify buffer indentation 
+<A HREF="m3mac082.html">indent-decrease(3)</A> Decrease the line indentation 
+<BR>
+<A HREF="m3mac082.html">indent-increase(3)</A> Increase the line indentation 
 <BR>
 <A HREF="m3mac043.html">info(3)</A> Display a GNU Info database 
 <BR>
@@ -1110,9 +1162,13 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m2cmd097.html">insert-newline(2)</A> (<B>C-o</B>)&nbsp;Insert new line at cursor position 
 <BR>
+<A HREF="m3mac086.html">insert-password(3)</A> Create and insert a new password string 
+<BR>
 <A HREF="m2cmd075.html">insert-space(2)</A> Insert space(s) into current buffer 
 <BR>
 <A HREF="m2cmd076.html">insert-string(2)</A> Insert character string into current buffer 
+<BR>
+<A HREF="m3osd003.html">insert-symbol(3)</A> Insert an ASCII character 
 <BR>
 <A HREF="m2cmd156.html">insert-tab(2)</A> (<B>C-i</B>)&nbsp;Insert tab(s) into current buffer 
 <BR>
@@ -1142,6 +1198,8 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m3fcl011.html">javatags(3f)</A> Generate a C tags file from Java sources 
 <BR>
+<A HREF="m9typ047.html">jst(9)</A> JASSPA Structred Text 
+<BR>
 <A HREF="m2mod006.html">justify(2m)</A> Justification Mode 
 <BR>
 <A HREF="m2cmd079.html">kbd-macro-query(2)</A> (<B>C-x&nbsp;q</B>)&nbsp;Query termination of keyboard macro 
@@ -1166,8 +1224,6 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m3osd013.html">line-scheme(3)</A> Apply line annotation in current buffer 
 <BR>
-<A HREF="m3osd004.html">line-scheme-search(3)</A> Search and annotate the current buffer 
-<BR>
 <A HREF="m2cmd083.html">list-buffers(2)</A> (<B>C-x&nbsp;C-b</B>)&nbsp;List all buffers and show their status 
 <BR>
 <A HREF="m2cmd062.html">list-commands(2)</A> (<B>C-h&nbsp;c</B>)&nbsp;List available commands 
@@ -1190,17 +1246,17 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m4fil019.html">MacroNumericArguments(4)</A> Numeric arguments to macros 
 <BR>
-<A HREF="m3mac012.html">Mahjongg(3)</A> MicroEmacs '05 version of the solitaire Mah Jongg game 
+<A HREF="m3mac012.html">Mahjongg(3)</A> MicroEmacs '06 version of the solitaire Mah Jongg game 
 <BR>
 <A HREF="m3osd006.html">MainMenu(3)</A> The top main menu 
 <BR>
-<A HREF="m3mac013.html">Match-It(3)</A> MicroEmacs '05 version of the Match-It game 
+<A HREF="m3mac013.html">Match-It(3)</A> MicroEmacs '06 version of the Match-It game 
 <BR>
 <A HREF="m4fil015.html">MessageLineVaraibles(4)</A> Prompt the user for input on message line 
 <BR>
 <A HREF="m9typ035.html">MetaFont(9)</A> MetaFont/MetaPost File 
 <BR>
-<A HREF="m3mac014.html">Metris(3)</A> MicroEmacs '05 version of the falling blocks game 
+<A HREF="m3mac014.html">Metris(3)</A> MicroEmacs '06 version of the falling blocks game 
 <BR>
 <A HREF="m9typ032.html">m4(9)</A> M4 Macro Processor 
 <BR>
@@ -1216,6 +1272,10 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m3mac028.html">mail-check(3)</A> Check for new email 
 <BR>
+<A HREF="m3osd011.html">major-mode-help(3)</A> Displays help page for current buffer 
+<BR>
+<A HREF="m3osd010.html">major-mode-setup(3)</A> Configures the current buffer settings 
+<BR>
 <A HREF="m9typ005.html">makefile(9)</A> Make file 
 <BR>
 <A HREF="m3mac031.html">man(3)</A> UNIX manual page viewer 
@@ -1226,11 +1286,11 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m2cmd154.html">mark-registry(2)</A> Modify the operating mode of a registry node 
 <BR>
-<A HREF="m1cmd000.html">me(1)</A> MicroEmacs '05 text editor 
+<A HREF="m1cmd000.html">me(1)</A> MicroEmacs '06 text editor 
 <BR>
 <A HREF="m8fil006.html">me32.ini(8)</A> Microsoft Window's Initialization (ini) File 
 <BR>
-<A HREF="m1cmd001.html">memsdev(1)</A> Microsoft Developer Studio Add-in for MicroEmacs '05 
+<A HREF="m1cmd001.html">memsdev(1)</A> Microsoft Developer Studio Add-in for MicroEmacs '06 
 <BR>
 <A HREF="m9typ035.html">mf(9)</A> MetaFont File 
 <BR>
@@ -1258,7 +1318,7 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m9typ015.html">nawk(9)</A> New AWK File 
 <BR>
-<A HREF="m1cmd002.html">ne(1)</A> NanoEmacs '05 text editor 
+<A HREF="m1cmd002.html">ne(1)</A> NanoEmacs '06 text editor 
 <BR>
 <A HREF="m2cmd090.html">newline(2)</A> (<B>return</B>)&nbsp;Insert a new line 
 <BR>
@@ -1278,9 +1338,13 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m3mac078.html">notes-close(3)</A> Close the notes window 
 <BR>
+<A HREF="m3mac078.html">notes-context(3)</A> Create/Access buffer context note 
+<BR>
 <A HREF="m3mac078.html">notes-file(3)</A> Open a notes database file 
 <BR>
 <A HREF="m3mac078.html">notes-import-skwyrul(3)</A> Import a Skwyrul index file (skwyrul_l.htm) 
+<BR>
+<A HREF="m3mac078.html">notes-instant(3)</A> Create quick note 
 <BR>
 <A HREF="m9typ026.html">nroff(9)</A> UNIX nroff file 
 <BR>
@@ -1302,6 +1366,8 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m3osd007.html">osd-help(3)</A> GUI based on-line help 
 <BR>
+<A HREF="m3osd004.html">osd-search(3)</A> Search and annotate the current buffer 
+<BR>
 <A HREF="m2cmd004.html">osd-unbind-key(2)</A> Remove key binding from OSD dialog 
 <BR>
 <A HREF="m3mac037.html">osd-xdialog(3)</A> OSD Extended dialog box 
@@ -1310,7 +1376,7 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m2nar009.html">Patching(1)</A> Patch a MicroEmacs Installation 
 <BR>
-<A HREF="m3mac015.html">Patience(3)</A> MicroEmacs '05 version of Patience (or Solitaire) 
+<A HREF="m3mac015.html">Patience(3)</A> MicroEmacs '06 version of Patience (or Solitaire) 
 <BR>
 <A HREF="m9typ010.html">p(9)</A> Pascal File 
 <BR>
@@ -1347,6 +1413,8 @@ MicroEmacs - Global Glossary</H1>
 <A HREF="m3mac003.html">paragraph-to-line(3)</A> Convert a paragraph to a single line 
 <BR>
 <A HREF="m9typ010.html">pas(9)</A> Pascal File 
+<BR>
+<A HREF="m3mac086.html">password-to-phonic(3)</A> Convert a password to phonic string 
 <BR>
 <A HREF="m9typ024.html">perl(9)</A> Practical Extraction and Report Language File 
 <BR>
@@ -1414,11 +1482,13 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m2cmd105.html">rcs-file(2)</A> (<B>C-x&nbsp;C-q</B>)&nbsp;Handle Revision Control System (RCS) files 
 <BR>
+<A HREF="m3mac035.html">rdiff(3)</A> Recursively compare files or directories 
+<BR>
 <A HREF="m2cmd106.html">read-file(2)</A> (<B>C-x&nbsp;C-r</B>)&nbsp;Find and load file replacing current buffer 
 <BR>
-<A HREF="m2cmd107.html">read-history(2)</A> Read in session history information 
-<BR>
 <A HREF="m2cmd157.html">read-registry(2)</A> Read in a registry definition file 
+<BR>
+<A HREF="m3mac081.html">read-session(3)</A> Read in session information 
 <BR>
 <A HREF="m2cmd108.html">recenter(2)</A> (<B>C-l</B>)&nbsp;Recenter the window (refresh the screen) 
 <BR>
@@ -1470,9 +1540,9 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m2cmd112.html">save-dictionary(2)</A> Save changed spelling dictionaries 
 <BR>
-<A HREF="m2cmd144.html">save-history(2)</A> Write history information to history file 
-<BR>
 <A HREF="m2cmd008.html">save-registry(2)</A> Write a registry definition file 
+<BR>
+<A HREF="m3mac080.html">save-session(3)</A> Write session information to session file 
 <BR>
 <A HREF="m2cmd150.html">save-some-buffers(2)</A> Save contents of all changed buffers to file (with query) 
 <BR>
@@ -1550,6 +1620,8 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m3mac004.html">sort-lines-ignore-case(3)</A> Alphabetically sort lines ignoring case 
 <BR>
+<A HREF="m3mac063.html">space-rectangle(3)</A> Adds space(s) vertically 
+<BR>
 <A HREF="m2cmd125.html">spell(2)</A> Spell checker service provider 
 <BR>
 <A HREF="m3mac023.html">spell-add-word(3)</A> Add a word to the main dictionary 
@@ -1578,9 +1650,7 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m2cmd130.html">suspend-emacs(2)</A> Suspend editor and place in background 
 <BR>
-<A HREF="m3osd003.html">symbol(3)</A> Insert an ASCII character 
-<BR>
-<A HREF="m3mac016.html">Triangle(3)</A> MicroEmacs '05 version of Triangle patience game 
+<A HREF="m3mac016.html">Triangle(3)</A> MicroEmacs '06 version of Triangle patience game 
 <BR>
 <A HREF="m2cmd064.html">tab(2)</A> (<B>tab</B>)&nbsp;Handle the tab key 
 <BR>
@@ -1612,9 +1682,11 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m9typ026.html">tni(9)</A> UNIX t/nroff include file 
 <BR>
-<A HREF="m3mac066.html">toolbar(3)</A> Open the tool bar 
+<A HREF="m3mac066.html">toolbar(3)</A> Toggle tool bar visibility 
 <BR>
 <A HREF="m3mac066.html">toolbar-close(3)</A> Close the tool bar 
+<BR>
+<A HREF="m3mac066.html">toolbar-open(3)</A> Open the tool bar 
 <BR>
 <A HREF="m3mac066.html">toolbar-refresh(3)</A> Update the tool bar 
 <BR>
@@ -1698,6 +1770,8 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m9typ029.html">x86(9)</A> Intel .x86 Assembler File 
 <BR>
+<A HREF="m3mac083.html">xdiff(3)</A> External graphical file difference 
+<BR>
 <A HREF="m9typ041.html">xml(9)</A> Extensible Markup Language 
 <BR>
 <A HREF="m9typ041.html">xml-backward-tag(3)</A> Find the previous XML tag 
@@ -1724,7 +1798,7 @@ MicroEmacs - Global Glossary</H1>
 <BR>
 <A HREF="m9typ017.html">zsh(9)</A> Z-Shell file </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2005/05/14</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/10/06</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>

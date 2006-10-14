@@ -1,6 +1,6 @@
 <HTML>
 <HEAD><TITLE>$fill-col(5)</TITLE></HEAD>
-<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Mar 27 2004 - Jon Green (1995-2004) -->
+<!-- nr2html - Version 1.0.1k - [Nroff Parser : 1.3.4a (SunOS)] - Oct  1 2005 - Jon Green (1995-2004) -->
 <BODY>
 <H1><A HREF="../me.html"><IMG SRC="../me/logo/logo.png" BORDER=0 ALIGN=BOTTOM ALT="[me]"></A>
 $fill-col(5)</H1>
@@ -13,22 +13,31 @@ $fill-col(5)</H1>
 </FONT>
 <HR>
 <H2><B>NAME </B></H2>
-<UL><P>$fill-col - Paragraph Mode; right fill column </UL>
+<UL><P>$fill-col - Global paragraph mode; right fill column $buffer-fill-col - Buffer paragraph mode; right fill column </UL>
 <H2><B>SYNOPSIS </B></H2>
-<UL><P><B>$fill-col</B> <I>columnNumber</I>; Default is <TT>78</TT> 
-<P>-1 &lt;= <I>columnNumber</I> &lt;= 32767 </UL>
+<UL><P><B>$fill-col</B> <I>columnNumber</I> 
+<BR><B>$buffer-fill-col</B> <I>columnNumber</I> 
+<P>-1 &lt;= <I>columnNumber</I> &lt;= 32767 the default is <TT>78</TT>. </UL>
 <H2><B>DESCRIPTION </B></H2>
-<UL><P><B>$fill-col</B> defines the current fill column number. <I>columnNumber</I> defaults to 78 when undefined. This value is used in conjunction with 
+<UL><P>The <B>fill-col</B> variables specify the position of the right text margin, or fill column, when used with 
+<A HREF="m2cmd052.html">fill-paragraph(2)</A>. 
+<P><B>$fill-col</B> defines the global default fill column number, all new buffers that are subsequently created assume a fill column value of <B>$fill-col</B>. <I>columnNumber</I> defaults to 78 when undefined. This value is used in conjunction with 
 <A HREF="m2mod006.html">justify(2m)</A> and 
-<A HREF="m2mod017.html">wrap(2m)</A> modes. </UL>
+<A HREF="m2mod017.html">wrap(2m)</A> modes. 
+<P><B>$buffer-fill-col</B> specifies the fill column value to use in a buffer, a value of <B>$fill-col</B> is used as a default when the buffer is created. Modification of the <B>$buffer-fill-col</B> causes the buffer fill column position to be modified, this does not affect any other buffer. The value is typically set by the <B>fhook-xxx</B> macro when initializing a buffer using the 
+<A HREF="m2nar000.html">Language Templates</A>. <B>$buffer-fill-col</B> may also be modified from 
+<A HREF="m3osd014.html">buffer-setup(3)</A>. </UL>
 <H2><B>SEE ALSO </B></H2>
 <UL><P>
+<A HREF="m5var028.html">$buffer-fill-mode(5)</A>, 
+<A HREF="m5var028.html">$fill-mode(5)</A>, 
 <A HREF="m2cmd006.html">buffer-mode(2)</A>, 
+<A HREF="m3osd014.html">buffer-setup(3)</A>, 
 <A HREF="m2cmd052.html">fill-paragraph(2)</A>, 
 <A HREF="m2mod006.html">justify(2m)</A>, 
 <A HREF="m2mod017.html">wrap(2m)</A>. </UL>
 <HR>
-<P><I>(c) Copyright JASSPA 2005</I>
-<BR><I>Last Modified: 2002/01/11</I>
-<BR><I>Generated On: 2005/05/14</I>
+<P><I>Copyright (c) 1998-2006 JASSPA</I>
+<BR><I>Last Modified: 2006/08/13</I>
+<BR><I>Generated On: 2006/10/07</I>
 </BODY></HMTL>
