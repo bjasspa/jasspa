@@ -8,8 +8,8 @@ SEARCH_PATH="/opt/jasspa/company:/opt/jasspa/macros:/opt/jasspa/spelling"
 BASEDIR=.
 TOPDIR=../..
 VER_YEAR="06"
-VER_MONTH="09"
-VER_DAY="09"
+VER_MONTH="10"
+VER_DAY="13"
 VERSION="20${VER_YEAR}${VER_MONTH}${VER_DAY}"
 METREE=jasspa-metree-${VERSION}.tar.gz
 MESRC=jasspa-mesrc-${VERSION}.tar.gz
@@ -72,22 +72,22 @@ fi
 #
 # Build the source bundle.
 #
-mkdir -p usr/src
-gunzip -c ${MESRC} | (cd usr/src; tar xf - )
-mv usr/src/me${VER_YEAR}${VER_MONTH}${VER_DAY} usr/src/jasspa-me-${VERSION}
+mkdir -p ./usr/src
+gunzip -c ${MESRC} | (cd ./usr/src; tar xf - )
+mv ./usr/src/me${VER_YEAR}${VER_MONTH}${VER_DAY} ./usr/src/jasspa-me-${VERSION}
 tar cf - ./usr |  bzip2 -9 -c - > jasspa-${VERSION}-src.tar.bz2
 #
 # Clean-up.
 # 
-if [ -d usr ] ; then
+if [ -d ./usr ] ; then
     rm -rf ./usr
 fi    
 #
 # Build the documentation directory
 # 
-mkdir -p usr/doc/jasspa
-mkdir -p usr/share
-gunzip -c ${METREE} | (cd usr/share; tar xf - )
+mkdir -p ./usr/doc/jasspa
+mkdir -p ./usr/share
+gunzip -c ${METREE} | (cd ./usr/share; tar xf - )
 for NAME in build.txt change.log license.txt readme.txt cygwin.txt faq.txt
 do
     # Copy the file
@@ -95,32 +95,32 @@ do
         echo "Cannot find ${TOPDIR}/release/www/doc/${NAME}"
         exit 1
     fi
-    cp ${TOPDIR}/release/www/doc/${NAME} usr/doc/jasspa/${NAME}
+    cp ${TOPDIR}/release/www/doc/${NAME} ./usr/doc/jasspa/${NAME}
 done
 #
 # Build the cygwin directory    
 #
-mkdir -p usr/doc/Cygwin
+mkdir -p ./usr/doc/Cygwin
 if [ ! -f ${TOPDIR}/release/www/doc/cygwin.txt ] ; then
     echo "Cannot find ${TOPDIR}/release/www/doc/cygwin.txt"
     exit 1
 fi
-cp ${TOPDIR}/release/www/doc/cygwin.txt usr/doc/Cygwin/jasspa-${VERSION}.README
+cp ${TOPDIR}/release/www/doc/cygwin.txt ./usr/doc/Cygwin/jasspa-${VERSION}.README
 #
 # Build the man directory
 #
-mkdir -p usr/share/man/cat1
-cp me.1 usr/share/man/cat1
+mkdir -p ./usr/share/man/cat1
+cp me.1 ./usr/share/man/cat1
 #
 # Build the binary
 # 
-mkdir -p usr/bin
-gunzip -c ${MEBIN} > usr/bin/me.exe
-chmod a+rx usr/bin/me.exe
-chmod a-w usr/bin/me.exe
-gunzip -c ${MEXBIN} > usr/bin/mex.exe
-chmod a+rx usr/bin/mex.exe
-chmod a-w usr/bin/mex.exe
+mkdir -p ./usr/bin
+gunzip -c ${MEBIN} > ./usr/bin/me.exe
+chmod a+rx ./usr/bin/me.exe
+chmod a-w ./usr/bin/me.exe
+gunzip -c ${MEXBIN} > ./usr/bin/mex.exe
+chmod a+rx ./usr/bin/mex.exe
+chmod a-w ./usr/bin/mex.exe
 #
 # Construct the archive
 #
@@ -128,6 +128,6 @@ tar cf - ./usr |  bzip2 -9 -c - > jasspa-${VERSION}.tar.bz2
 #
 # Clean-up.
 # 
-if [ -d usr ] ; then
+if [ -d ./usr ] ; then
     rm -rf ./usr
 fi    
