@@ -231,8 +231,8 @@ setBufferContext(meBuffer *bp)
 #endif
     
     /* Search the buffer for alternative hook information */
-    if ((bp->intFlag & BIFFILE) && !meModeTest(bp->mode,MDBINRY) &&
-        !meModeTest(bp->mode,MDRBIN) && !meModeTest(bp->mode,MDDIR) &&
+    if ((bp->intFlag & BIFFILE) && !meModeTest(bp->mode,MDBINARY) &&
+        !meModeTest(bp->mode,MDRBIN) && ((bp->fileFlag & meBFFLAG_DIR) == 0) &&
         ((ii = fileHookCount) > 0))
     {
 	meUByte *pp, cc ;
@@ -284,7 +284,7 @@ setBufferContext(meBuffer *bp)
 	meUByte *hooknm ;
 	
 	/* Do file hooks */
-	if(meModeTest(bp->mode,MDBINRY))
+	if(meModeTest(bp->mode,MDBINARY))
 	    hooknm = binaryHookName ;
 	else if(meModeTest(bp->mode,MDRBIN))
 	    hooknm = rbinHookName ;
@@ -528,7 +528,7 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
 	{
             update(meTRUE) ;
             dotLineNo = wp->dotLineNo ;
-            if((meModeTest(bp->mode,MDDIR) || (mlyesno((meUByte *)"File changed on disk, reload") > 0)) &&
+            if(((bp->fileFlag & meBFFLAG_DIR) || (mlyesno((meUByte *)"File changed on disk, reload") > 0)) &&
                (bclear(bp) > 0))
             {
                 /* achieve cheekily by calling itself as the bclear make it inactive,
@@ -893,14 +893,12 @@ bclear(register meBuffer *bp)
     meModeCopy(bmode,bp->mode) ;
     meModeCopy(bp->mode,globMode) ;
     meModeSet(bp->mode,MDNACT) ;
-    if(meModeTest(bmode,MDBINRY))
-        meModeSet(bp->mode,MDBINRY) ;
+    if(meModeTest(bmode,MDBINARY))
+        meModeSet(bp->mode,MDBINARY) ;
     else if(meModeTest(bmode,MDRBIN))
         meModeSet(bp->mode,MDRBIN) ;
     if(meModeTest(bmode,MDCRYPT))
         meModeSet(bp->mode,MDCRYPT) ;
-    if(meModeTest(bmode,MDDEL))
-        meModeSet(bp->mode,MDDEL) ;
     bp->intFlag &= ~(BIFLOAD|BIFBLOW|BIFLOCK) ;
     lp = bp->baseLine ;
     meLineLoopFree(lp,0) ;
@@ -1270,17 +1268,13 @@ makelist(meBuffer *blistp, int verb)
 	cp1 = line ;                      /* Start at left edge   */
       
 	/* output status of ACTIVE flag (has the file been read in? */
-	if(meModeTest(bp->mode,MDDEL))         /* "D" to be deleted    */
-	    *cp1++ = 'D';
-	else if(meModeTest(bp->mode,MDNACT))   /* "@" if activated     */
+        if(meModeTest(bp->mode,MDNACT))   /* "@" if activated     */
 	    *cp1++ = ' ';
 	else
 	    *cp1++ = '@';
 	
 	/* output status of changed flag */
-	if(meModeTest(bp->mode,MDSAVE))       /* "S" if to be saved   */
-	    *cp1++ = 'S';
-	else if(meModeTest(bp->mode,MDEDIT))  /* "*" if changed       */
+        if(meModeTest(bp->mode,MDEDIT))       /* "*" if changed       */
 	    *cp1++ = '*';
 	else if(meModeTest(bp->mode,MDVIEW))  /* "%" if in view mode  */
 	    *cp1++ = '%';
@@ -1403,18 +1397,18 @@ makelist(meBuffer *blistp, int verb)
 int
 listBuffers (int f, int n)
 {
-    register meWindow    *wp ;
-    register meBuffer    *bp ;
+    meBuffer *bp ;
     
-    if((wp=meWindowPopup(BbuffersN,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR),NULL)) == NULL)
-	return mlwrite(MWABORT,(meUByte *)"[Failed to create list]") ;
-    bp = wp->buffer ;
+    if((bp=bfind(BbuffersN,BFND_CREAT|BFND_CLEAR)) == NULL)
+	return mlwrite(MWABORT,(meUByte *)"[Failed to create blist]") ;
     makelist(bp,n) ;
     
     bp->dotLine = meLineGetNext(bp->baseLine);
     bp->dotOffset = 0 ;
     bp->dotLineNo = 0 ;
+    
     resetBufferWindows(bp) ;
+    meWindowPopup(bp->name,WPOP_USESTR,NULL) ;
     return meTRUE ;
 }
 
@@ -1483,7 +1477,6 @@ createBuffer(register meUByte *bname)
     bp->dotLine = bp->baseLine = lp;
     bp->autoTime = -1 ;
     bp->stats.stmode  = meUmask ;
-    bp->stats.stsize  = 0 ;
 #ifdef _UNIX
     bp->stats.stuid = meUid ;
     bp->stats.stgid = meGid ;
@@ -1571,7 +1564,7 @@ bfind(register meUByte *bname, int cflag)
                     }
 		    /* set the modes correctly */
 		    if(cflag & BFND_BINARY)
-			meModeSet(bp->mode,MDBINRY) ;
+			meModeSet(bp->mode,MDBINARY) ;
 		    else if(cflag & BFND_RBIN)
 			meModeSet(bp->mode,MDRBIN) ;
 		    if(cflag & BFND_CRYPT)
@@ -1589,7 +1582,7 @@ bfind(register meUByte *bname, int cflag)
     }
     meModeCopy(sglobMode,globMode) ;
     if(cflag & BFND_BINARY)
-	meModeSet(globMode,MDBINRY) ;
+	meModeSet(globMode,MDBINARY) ;
     else if(cflag & BFND_RBIN)
 	meModeSet(globMode,MDRBIN) ;
     if(cflag & BFND_CRYPT)
@@ -1607,8 +1600,8 @@ bfind(register meUByte *bname, int cflag)
 int
 adjustMode(meBuffer *bp, int nn)  /* change the editor mode status */
 {
-    register meUByte *mode ;
-    int   func ;
+    meMode  mode ;
+    int     func ;
     meUByte prompt[50];            /* string to prompt user with */
     meUByte cbuf[meSBUF_SIZE_MAX];            /* buffer to recieve mode name into */
     
@@ -1626,11 +1619,6 @@ adjustMode(meBuffer *bp, int nn)  /* change the editor mode status */
 	func = 0 ;
     else
 	func = 1 ;
-    
-    if (bp == NULL)
-	mode = globMode ;
-    else
-	mode = bp->mode ;
     
     if(nn < 2)
     {
@@ -1652,7 +1640,7 @@ adjustMode(meBuffer *bp, int nn)  /* change the editor mode status */
 	
 	/* prompt the user and get an answer */
 	if(meGetString(prompt, MLLOWER|MLUSER, 0, cbuf, meSBUF_SIZE_MAX) == meABORT)
-	    return(meFALSE);
+	    return meFALSE ;
     
 	/* test it against the modes we know */
 	for (nn=0; nn < MDNUMMODES ; nn++) 
@@ -1704,39 +1692,29 @@ adjustMode(meBuffer *bp, int nn)  /* change the editor mode status */
                 return nn ;
 	}
         if((func == 0) && !clexec)
-            mlwrite(0,(meUByte *)"[%s edit mode is now %s]",
-                    (bp == NULL) ? "Global":"Buffer",
-                    meModeTest(mode,MDEDIT) ? "on":"off");
+            mlwrite(0,(meUByte *)"[Buffer edit mode is now %s]",
+                    meModeTest(bp->mode,MDEDIT) ? "on":"off");
 	return meTRUE ;
-	
-    case MDQUIET:
-	/* quiet mode - only set globaly */
-	if(bp != NULL)
-	    goto invalid_global ;
-	break ;
 	
     case MDLOCK:
 	if((bp == NULL) || !meModeTest(bp->mode,MDPIPE)) 
 	    goto invalid_global ;
 	break ;
-	    
+        
     case MDHIDE:
-    case MDDEL:
-    case MDSAVE:
-	if(bp == NULL)
-	    goto invalid_global ;
-	if((nn == MDSAVE) && !bufferNeedSaving(bp))
-	    return mlwrite(0,(meUByte *)"[No changes made]") ;
-	break ;
-	
-    case MDDIR:
+	if(bp != NULL)
+	    break ;
     case MDNACT:
-    case MDNRRW:
+    case MDNARROW:
     case MDPIPE:
 invalid_global:
 	return mlwrite(MWABORT,(meUByte *)"[Cannot change this mode]");
     }
     /* make the mode change */
+    if (bp == NULL)
+	meModeCopy(mode,globMode) ;
+    else
+	meModeCopy(mode,bp->mode) ;
     if(func == 0)
     {
         meModeToggle(mode,nn) ;
@@ -1753,10 +1731,10 @@ invalid_global:
     if(meModeTest(mode,nn))
     {
 	/* make sure that, if setting RBIN the clear BINARY and vice versa */
-        if(nn == MDBINRY)
+        if(nn == MDBINARY)
 	    meModeClear(mode,MDRBIN) ;
 	else if(nn == MDRBIN)
-	    meModeClear(mode,MDBINRY) ;
+	    meModeClear(mode,MDBINARY) ;
     }
     else if(bp != NULL)
     {
@@ -1765,14 +1743,17 @@ invalid_global:
 	    meUndoRemove(bp) ;
 	else
 #endif
-            if(nn == MDATSV)
+            if(nn == MDAUTOSV)
 	    bp->autoTime = -1 ;
     }
-    /* display new mode line */
-    if(bp != NULL)
-        /* and update all buffer window mode lines */
+    if (bp == NULL)
+        meModeCopy(globMode,mode) ;
+    else
+    {
+	meModeCopy(bp->mode,mode) ;
+        /* update  mode line in all buffer windows */
         meBufferAddModeToWindows(bp,WFMODE) ;
-    
+    }    
     return meTRUE ;
 }
    

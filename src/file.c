@@ -1066,7 +1066,7 @@ getDirectoryInfo(meUByte *fname)
 }
 
 static int
-readDirectory(meUByte *fname, meBuffer *bp, meLine *blp)
+readDirectory(meUByte *fname, meBuffer *bp, meLine *blp, meUInt flags)
 {
     FILENODE *fnode, *fn ;
 #ifdef _UNIX
@@ -1165,10 +1165,13 @@ readDirectory(meUByte *fname, meBuffer *bp, meLine *blp)
         fnode = fnode->next ;
     }
     free(curHead) ;
-    meModeSet(bp->mode,MDDIR) ;
-    meModeSet(bp->mode,MDVIEW) ;
-    meModeClear(bp->mode,MDATSV) ;
-    meModeClear(bp->mode,MDUNDO) ;
+    if((flags & meRWFLAG_PRESRVFMOD) == 0)
+    {
+        bp->fileFlag = meBFFLAG_DIR ;
+        meModeSet(bp->mode,MDVIEW) ;
+        meModeClear(bp->mode,MDAUTOSV) ;
+        meModeClear(bp->mode,MDUNDO) ;
+    }
     return meTRUE ;
 }
 
@@ -1251,7 +1254,7 @@ readin(register meBuffer *bp, meUByte *fname)
             if(ft == meFILETYPE_DIRECTORY)
             {
 #if MEOPT_DIRLIST
-                if(readDirectory(fn,bp,bp->baseLine) <= 0)
+                if(readDirectory(fn,bp,bp->baseLine,0) <= 0)
                     goto error_end ;
                 ss = meTRUE ;
                 goto newfile_end;
@@ -1337,7 +1340,7 @@ readin(register meBuffer *bp, meUByte *fname)
         mlwrite(MWCURSOR|MWCLEXEC,(meUByte *)"[Reading %s%s]",fn,
                 meModeTest(bp->mode,MDVIEW) ? " (readonly)" : "");
     }
-    ss = ffReadFile(fn,0,bp,bp->baseLine,0,0) ;
+    ss = ffReadFile(fn,0,bp,bp->baseLine,0,0,0) ;
 
     /*
     ** Set up the modification time field of the buffer structure.
@@ -1371,16 +1374,14 @@ error_end:
 /* must have the buffer line no. correct */
 int
 meBufferInsertFile(meBuffer *bp, meUByte *fname, meUInt flags,
-                   meInt offset, meInt length)
+                   meUInt uoffset, meUInt loffset, meInt length)
 {
     register meWindow *wp ;
     register meLine   *lp ;
     register int     ss ;
     register long    nline ;
-    meMode md ;
 
     meModeSet(bp->mode,MDEDIT) ;              /* we have changed	*/
-    meModeCopy(md,bp->mode) ;
 
 #if MEOPT_CRYPT
     if(resetkey(bp) <= 0)
@@ -1396,14 +1397,12 @@ meBufferInsertFile(meBuffer *bp, meUByte *fname, meUInt flags,
     {
         /* slight miss-use of this flag to inform this function that a dir
          * listing is to be inserted */
-        ss = readDirectory(fname,bp,lp) ;
+        ss = readDirectory(fname,bp,lp,flags|meRWFLAG_INSERT) ;
     }
     else
 #endif
-        ss = ffReadFile(fname,flags|meRWFLAG_INSERT,bp,lp,offset,length) ;
+        ss = ffReadFile(fname,flags|meRWFLAG_INSERT,bp,lp,uoffset,loffset,length) ;
     nline = bp->lineCount-nline ;
-    /* restore the mode */
-    meModeCopy(bp->mode,md) ;
 
     if(ss != meABORT)
     {
@@ -1451,14 +1450,15 @@ int
 insertFile(int f, int n)
 {
     meUByte fname[meBUF_SIZE_MAX] ;
-    meInt offset, length ;
+    meUInt uoffset, loffset ;
+    meInt length=0 ;
     int s, flags=0 ;
 
     if((s=inputFileName((meUByte *)"Insert file",fname,1)) <= 0)
         return s ;
     /* Allow existing or url files if not doing a partial insert */
     if(((s=getFileStats(fname,meFINDFILESINGLE_GFS_OPT,NULL,NULL)) != meFILETYPE_REGULAR) &&
-       ((n < 0) || ((s != meFILETYPE_HTTP) && (s != meFILETYPE_FTP)
+       ((n & 4) || ((s != meFILETYPE_HTTP) && (s != meFILETYPE_FTP)
 #if MEOPT_DIRLIST
                     && (s != meFILETYPE_DIRECTORY)
 #endif
@@ -1478,26 +1478,27 @@ insertFile(int f, int n)
     /* store current line in buffer */
     frameCur->bufferCur->dotLine = frameCur->windowCur->dotLine ;
     frameCur->bufferCur->dotLineNo = frameCur->windowCur->dotLineNo ;   /* must have the line no. correct */
-
-    if(n < 0)
+    
+    if((n & 2) == 0)
+        flags |= meRWFLAG_PRESRVFMOD ;
+    if(n & 4)
     {
         meUByte arg[meSBUF_SIZE_MAX] ;
 
-        if(meGetString((meUByte *)"Read Offest",0,0,arg,meSBUF_SIZE_MAX) <= 0)
+        if(meGetString((meUByte *)"UOffest",0,0,arg,meSBUF_SIZE_MAX) <= 0)
             return meABORT ;
-        offset = meAtoi(arg) ;
-        if((meGetString((meUByte *)"Read Length",0,0,arg,meSBUF_SIZE_MAX) <= 0) ||
-           ((length = meAtoi(arg)) <= 0))
+        uoffset = meAtoi(arg) ;
+        if(meGetString((meUByte *)"LOffest",0,0,arg,meSBUF_SIZE_MAX) <= 0)
             return meABORT ;
-        n = 1 ;
+        loffset = meAtoi(arg) ;
+        if((meGetString((meUByte *)"Length",0,0,arg,meSBUF_SIZE_MAX) <= 0) ||
+           ((length = meAtoi(arg)) == 0))
+            return meABORT ;
     }
-    else
-        length = 0 ;
-
-    for(; n>0 ; n--)
-        if((s = meBufferInsertFile(frameCur->bufferCur,fname,flags,offset,length)) <= 0)
-            break ;
-
+    
+    if(((s = meBufferInsertFile(frameCur->bufferCur,fname,flags,uoffset,loffset,length)) > 0) && (n & 2))
+        getFileStats(fname,meFINDFILESINGLE_GFS_OPT,&(frameCur->bufferCur->stats),NULL) ;
+        
     /* move the mark down 1 line into the correct place */
     frameCur->windowCur->markLine = meLineGetNext(frameCur->windowCur->markLine);
     frameCur->windowCur->markLineNo++ ;
@@ -1610,9 +1611,9 @@ findFileSingle(meUByte *fname, int bflag, meInt lineno, meUShort colno)
         bp->intFlag |= BIFFILE ;
         if(gft == meFILETYPE_DIRECTORY)
         {
-            /* if its a directory then add dir mode and remove binary */
-            meModeSet(bp->mode,MDDIR) ;
-            meModeClear(bp->mode,MDBINRY) ;
+            /* if its a directory then add dir flag and remove binary */
+            bp->fileFlag = meBFFLAG_DIR ;
+            meModeClear(bp->mode,MDBINARY) ;
             meModeClear(bp->mode,MDRBIN) ;
         }
         bp->dotLineNo = lineno ;
@@ -2117,7 +2118,7 @@ autowriteremove(register meBuffer *bp)
 int
 writeOut(register meBuffer *bp, meUInt flags, meUByte *fn)
 {
-    if(meModeTest(bp->mode,MDBACK))
+    if(meModeTest(bp->mode,MDBACKUP))
         flags |= meRWFLAG_BACKUP ;
 #if MEOPT_TIMSTMP
     set_timestamp(bp);			/* Perform time stamping */
@@ -2144,8 +2145,7 @@ writeOut(register meBuffer *bp, meUInt flags, meUByte *fn)
 #endif
     autowriteremove(bp) ;
     meModeClear(bp->mode,MDEDIT) ;
-    meModeClear(bp->mode,MDSAVE) ;
-
+    
     if(fn != NULL)
     {
 #ifndef _WIN32
@@ -2837,7 +2837,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
             meLine hlp, *lp ; 
             hlp.next = &hlp ;
             hlp.prev = &hlp ;
-            if(ffReadFile(pathName,meRWFLAG_SILENT|meRWFLAG_FTPNLST,NULL,&hlp,0,0) >= 0)
+            if(ffReadFile(pathName,meRWFLAG_SILENT|meRWFLAG_FTPNLST,NULL,&hlp,0,0,0) >= 0)
             {
                 noFiles = 0 ;
                 lp = hlp.next;

@@ -104,7 +104,7 @@ TTdoBell(int n)
         execFuncHidden(ME_SPECIAL|SKEY_bell,index,arg) ;
     else
 #endif
-        if((n == 0) || ((n == 1) && meModeTest(globMode,MDQUIET)))
+        if((n == 0) || ((n == 1) && quietMode))
     {
         meUByte scheme=(globScheme/meSCHEME_STYLES) ;
         pokeScreen(POKE_NOMARK+0x10,frameCur->depth,frameCur->width-6,&scheme,

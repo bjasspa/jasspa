@@ -320,7 +320,7 @@ extern  meUByte *getFileBaseName(meUByte *fname) ;
 extern  void  getFilePath(meUByte *fname, meUByte *path) ;
 extern  int inputFileName(meUByte *prompt, meUByte *fn, int corFlag);
 extern	int meBufferInsertFile(meBuffer *bp, meUByte *fname, meUInt flags,
-                               meInt offest, meInt length);
+                               meUInt hoffest, meUInt loffest, meInt length);
 extern	int insertFile(int f, int n);
 extern  int findFileList(meUByte *seed, int bflag, meInt lineno, meUShort colno) ;
 extern  int findSwapFileList(meUByte *seed, int bflag, meInt lineno, meUShort colno) ;
@@ -380,7 +380,7 @@ extern  void    getDirectoryList(meUByte *pathName, meDirList *dirList) ;
 #define meRWFLAG_CHKBREAK   0x00100
 #define meRWFLAG_IGNRNRRW   0x00200
 #define meRWFLAG_CRYPT      0x00400
-/* following using in ffFileOp to remove files & create a dir etc */
+/* following used in ffFileOp to remove files & create a dir etc */
 #define meRWFLAG_DELETE     0x00800
 #define meRWFLAG_MKDIR      0x01000
 #define meRWFLAG_FTPCLOSE   0x02000
@@ -389,9 +389,10 @@ extern  void    getDirectoryList(meUByte *pathName, meDirList *dirList) ;
 #define meRWFLAG_NODIRLIST  0x10000
 #define meRWFLAG_STAT       0x20000
 #define meRWFLAG_PRESRVTS   0x40000
+#define meRWFLAG_PRESRVFMOD 0x80000
 
 extern int      ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
-                           meInt offset, meInt length) ;
+                           meUInt uoffset, meUInt loffset, meInt length) ;
 #define meBACKUP_CREATE_PATH 0x0001
 extern int      createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag) ;
 

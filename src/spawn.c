@@ -2098,7 +2098,7 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
     }
     /* and read the stuff in */
 #ifdef _UNIX
-    ret = meBufferInsertFile(bp,NULL,meRWFLAG_SILENT,0,0) ;
+    ret = meBufferInsertFile(bp,NULL,meRWFLAG_SILENT|meRWFLAG_PRESRVFMOD,0,0,0) ;
     /* close the pipe and get exit status */
     ws = (meWAIT_STATUS) pclose(ffrp) ;
     if(WIFEXITED(ws))
@@ -2107,7 +2107,7 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
         systemRet = -1 ;
     alarmState &= ~meALARM_PIPE_COMMAND ;
 #else
-    ret = meBufferInsertFile(bp,filnam,meRWFLAG_SILENT,0,0) ;
+    ret = meBufferInsertFile(bp,filnam,meRWFLAG_SILENT|meRWFLAG_PRESRVFMOD,0,0,0) ;
     /* and get rid of the temporary file */
     meUnlink(filnam);
 #endif

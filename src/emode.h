@@ -35,7 +35,7 @@
 #define __EMODE_H
 
 /* Expand the mode definitions from the .def file */
-#define DEFMODE(varnam,strnam,chrnam,masklbl,maskval) varnam,
+#define DEFMODE(modnam,strnam,chrnam) modnam,
 enum
 {
 #include "emode.def"
@@ -45,13 +45,14 @@ enum
 
 #define meMODE_BYTE_SIZE (MDNUMMODES+7)/8
 
-#define meModeCopy(md,ms)     (memcpy((md),(ms),sizeof(meMode)))
-#define meModeTest(mb,flag)   ((mb)[(flag) >> 3] &   (1 << ((flag) & 0x07)))
-#define meModeSet(mb,flag)    ((mb)[(flag) >> 3] |=  (1 << ((flag) & 0x07)))
-#define meModeClear(mb,flag)  ((mb)[(flag) >> 3] &= ~(1 << ((flag) & 0x07)))
-#define meModeToggle(mb,flag) ((mb)[(flag) >> 3] ^=  (1 << ((flag) & 0x07)))
+#define meModeCopy(md,ms)     ((md) = (ms))
+#define meModeMask(mn)        (1 << (mn))
+#define meModeTest(mb,mn)     ((mb) & meModeMask(mn))
+#define meModeSet(mb,mn)      ((mb) |= meModeMask(mn))
+#define meModeClear(mb,mn)    ((mb) &= ~(meModeMask(mn)))
+#define meModeToggle(mb,mn)   ((mb) ^= meModeMask(mn))
 
-typedef meUByte meMode[meMODE_BYTE_SIZE] ;
+typedef meUInt meMode ;
 
 
 extern meMode globMode ;                /* global editor mode		*/
@@ -62,14 +63,14 @@ extern meUByte  modeCode[] ;		/* letters to represent modes	*/
 
 #ifdef	INC_MODE_DEF
 
-#define DEFMODE(varnam,strnam,chrnam,masklbl,maskval) (meUByte *)strnam,
+#define DEFMODE(modnam,strnam,chrnam) (meUByte *)strnam,
 meUByte *modeName[] = {                  /* name of modes                */
 #include "emode.def"
     NULL
 };
 #undef DEFMODE
 
-#define DEFMODE(varnam,strnam,chrnam,masklbl,maskval) chrnam,
+#define DEFMODE(modnam,strnam,chrnam) chrnam,
 meUByte modeCode[] =
 {
 #include "emode.def"
@@ -77,50 +78,44 @@ meUByte modeCode[] =
 };
 #undef DEFMODE
 
-#define DEFMODE(varnam,strnam,chrnam,masklbl,maskval) masklbl=maskval,
-enum
-{
-#include "emode.def"
-} ;
-#undef DEFMODE
-
 meMode globMode = {
-    /* Byte [0] default mask */
+    meModeMask(MDEXACT)  |
 #ifndef _NANOEMACS
-    MDATSV_MASK|MDBACK_MASK|
+    meModeMask(MDAUTOSV) |
+    meModeMask(MDBACKUP) |
 #endif
+    meModeMask(MDCR)     |
 #ifdef _WIN32
-    MDCRLF_MASK|
+    meModeMask(MDLF)     |
 #endif /* _WIN32 */
 #ifdef _DOS
-    MDCRLF_MASK|MDCTRLZ_MASK|
+    meModeMask(MDLF)     |
+    meModeMask(MDCTRLZ)  |
 #endif /* _DOS */
-    MDAUTO_MASK,
-    
-    /* Byte [1] default mask */
-    MDEXACT_MASK|MDFENCE_MASK,
-    
-    /* Byte [2] default mask */
-    MDMAGIC_MASK|MDQUIET_MASK,
-    
-    /* Byte [3] default mask */
-    MDTAB_MASK|MDUNDO_MASK,
-    
-    /* Byte [4] default mask */
-    0
+    meModeMask(MDFENCE)  |
+    meModeMask(MDMAGIC)  |
+    meModeMask(MDTAB)    |
+    meModeMask(MDUNDO)
 } ;
 
 meMode modeLineDraw = { 
-    /* Byte [0] */
-    MDAUTO_MASK|MDATSV_MASK|MDBACK_MASK|MDBINRY_MASK|MDCRYPT_MASK,
-    /* Byte [1] */
-    MDDIR_MASK|MDEXACT_MASK|MDINDEN_MASK|MDJUST_MASK,
-    /* Byte [2] */
-    MDMAGIC_MASK|MDNRRW_MASK|MDOVER_MASK|MDRBIN_MASK,
-    /* Byte [3] */
-    MDTAB_MASK|MDTIME_MASK|MDUNDO_MASK|MDUSR1_MASK|MDUSR2_MASK|MDUSR3_MASK|MDUSR4_MASK|MDUSR5_MASK,
-    /* Byte [4] */
-    MDUSR6_MASK|MDUSR7_MASK|MDUSR8_MASK|MDVIEW_MASK|MDWRAP_MASK
+    meModeMask(MDAUTOSV) |
+    meModeMask(MDBACKUP) |
+    meModeMask(MDBINARY) |
+    meModeMask(MDCRYPT)  |
+    meModeMask(MDEXACT)  |
+    meModeMask(MDINDENT) |
+    meModeMask(MDJUST)   |
+    meModeMask(MDLOCK)   |
+    meModeMask(MDMAGIC)  |
+    meModeMask(MDNARROW) |
+    meModeMask(MDOVER)   |
+    meModeMask(MDRBIN)   |
+    meModeMask(MDTAB)    |
+    meModeMask(MDTIME)   |
+    meModeMask(MDUNDO)   |
+    meModeMask(MDVIEW)   |
+    meModeMask(MDWRAP)
 } ;
 
 #endif /* INC_MODE_DEF */

@@ -441,7 +441,7 @@ wrapWord(int f, int n)
         cnt = indentInsert() ;
     else
 #endif
-    if(meModeTest(frameCur->bufferCur->mode,MDINDEN))
+    if(meModeTest(frameCur->bufferCur->mode,MDINDENT))
         cnt = winsert() ;
     else
     {

@@ -115,7 +115,7 @@ doExpandAbbrev(meUByte *abName, int abLen, meAbbrev *abrev)
         meUByte fname[meBUF_SIZE_MAX] ;
         
         if(!fileLookup(abrev->fname,(meUByte *)".eaf",meFL_CHECKDOT|meFL_USESRCHPATH,fname) ||
-           (ffReadFile(fname,meRWFLAG_SILENT,NULL,hlp,0,0) == meABORT))
+           (ffReadFile(fname,meRWFLAG_SILENT,NULL,hlp,0,0,0) == meABORT))
             return mlwrite(MWABORT,(meUByte *)"[Failed to abbrev file %s]",abrev->fname);
         abrev->loaded = 1 ;
     }

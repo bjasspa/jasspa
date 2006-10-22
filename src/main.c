@@ -675,7 +675,6 @@ exitEmacs(int f, int n)
             extern void regFreeMemory(void) ;
             extern void srchFreeMemory(void) ;
             extern void TTfreeTranslateKey(void) ;
-            extern meUByte *defHistFile ;
             extern meUInt *colTable ;
             mePosition   *pos ;
             meBuffer     *bc, *bn ;
@@ -708,7 +707,6 @@ exitEmacs(int f, int n)
             
             meNullFree(mlBinds) ;
             meFree(hilBlock) ;
-            meNullFree(defHistFile) ;
 #ifdef _XTERM
             meNullFree(colTable) ;
 #endif
@@ -1319,11 +1317,11 @@ mesetup(int argc, char *argv[])
             switch (argv[carg][1])
             {
             case 'a':
-                meModeToggle(globMode,MDATSV) ;
+                meModeToggle(globMode,MDAUTOSV) ;
                 break ;
 
             case 'B':
-                meModeToggle(globMode,MDBACK) ;
+                meModeToggle(globMode,MDBACKUP) ;
                 break ;
 
 #if MEOPT_EXTENDED
@@ -1400,6 +1398,7 @@ missing_arg:
                 alarmState |= meALARM_PIPED_QUIET ;
             case 'P':
                 alarmState |= meALARM_PIPED ;
+                meSystemCfg |= meSYSTEM_PIPEDMODE ;
                 break ;
 #endif
 
@@ -1599,7 +1598,7 @@ missing_arg:
             if(bp->fileName != NULL)
             {
                 nn = 1 ;
-                if(meModeTest(bp->mode,MDBINRY))
+                if(meModeTest(bp->mode,MDBINARY))
                     nn |= BFND_BINARY ;
                 if(meModeTest(bp->mode,MDCRYPT))
                     nn |= BFND_CRYPT ;

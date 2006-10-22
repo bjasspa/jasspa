@@ -796,7 +796,7 @@ dirDrawDir(meUByte *fname, int n)
         }
     }
     meModeSet(bp->mode,MDVIEW) ;
-    meModeClear(bp->mode,MDATSV) ;
+    meModeClear(bp->mode,MDAUTOSV) ;
     meModeClear(bp->mode,MDUNDO) ;
     resetBufferWindows(bp) ;
 }
