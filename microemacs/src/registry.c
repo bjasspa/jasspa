@@ -734,7 +734,7 @@ regRead(meUByte *rname, meUByte *fname, int mode)
             meCrypt(s1,len+meStrlen(s1+len)+1) ;
             flags |= meRWFLAG_CRYPT ;
         }
-        if((ffReadFile(fn,flags,NULL,&hlp,0,0) == meABORT) &&
+        if((ffReadFile(fn,flags,NULL,&hlp,0,0,0) == meABORT) &&
            !(mode & meREGMODE_CREATE))
         {
             mlwrite (MWABORT|MWWAIT,(meUByte *)"[Cannot load registry file %s]", fname);
@@ -1265,7 +1265,7 @@ listRegistry (int f, int n)
     bp->dotOffset = 0 ;
     bp->dotLineNo = 0 ;
     meModeSet(bp->mode,MDVIEW) ;
-    meModeClear(bp->mode,MDATSV) ;
+    meModeClear(bp->mode,MDAUTOSV) ;
     meModeClear(bp->mode,MDUNDO) ;
     resetBufferWindows(bp) ;
     return meTRUE;

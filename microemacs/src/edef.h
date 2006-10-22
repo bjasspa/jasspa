@@ -94,6 +94,7 @@ extern  int        thisIndex ;          /* The cur. user executed comm  */
 extern  meUByte    hexdigits[];
 extern  meUShort   keyTableSize;        /* The current size of the key table */
 extern  meBind     keytab[];            /* key bind to functions table  */
+extern  meUByte    quietMode ;          /* quiet mode (0=bell)          */
 extern  meUByte    scrollFlag ;         /* horiz/vert scrolling method  */
 extern  meUByte    sgarbf;              /* State of screen unknown      */
 extern  meUByte    clexec;              /* command line execution flag  */
@@ -131,6 +132,7 @@ extern  meUInt  meSystemCfg;            /* ME system config variable    */
 #define meSYSTEM_TABINDFST  0x200000    /* Tab key indents first col pos*/
 #define meSYSTEM_NOEMPTYANK 0x400000    /* Don't allow empty yank (ext) */
 #define meSYSTEM_NOCLIPBRD  0x800000    /* Don't use the sys clip-board */
+#define meSYSTEM_PIPEDMODE  0x1000000   /* -p or -P piped mode          */
 
 #ifdef _UNIX
 #if MEOPT_CLIENTSERVER
@@ -591,6 +593,7 @@ meInt     startTime;                    /* me start time used as offset */
 meUByte   thisflag;                     /* Flags, this command          */
 meUByte   lastflag;                     /* Flags, last command          */
 meUByte   alarmState=0;                 /* Unix auto-save alarm time    */
+meUByte   quietMode = 1 ;               /* quiet mode (0=bell)          */
 meUByte   scrollFlag = 1 ;              /* horiz/vert scrolling method  */
 meUByte   sgarbf = meTRUE;              /* meTRUE if screen is garbage    */
 meUByte   clexec = meFALSE;             /* command line execution flag  */

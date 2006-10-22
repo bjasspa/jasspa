@@ -335,7 +335,7 @@ helpBufferFind(void)
         return NULL ;
     meModeClear(hbp->mode,MDUNDO) ;
     meModeClear(hbp->mode,MDCRYPT) ;
-    meModeClear(hbp->mode,MDBINRY) ;
+    meModeClear(hbp->mode,MDBINARY) ;
     meModeClear(hbp->mode,MDRBIN) ;
     meModeClear(hbp->mode,MDNACT) ;
     meModeSet(hbp->mode,MDHIDE) ;
@@ -358,16 +358,16 @@ helpBufferReset(meBuffer *bp)
 static int
 helpBufferLoad(meBuffer *hbp)
 {
-    if(!meModeTest(hbp->mode,MDUSR1))
+    if(!meModeTest(hbp->mode,MDLOCK))
     {
         meUByte fname[meBUF_SIZE_MAX] ;
     
-        meModeSet(hbp->mode,MDUSR1) ;
+        meModeSet(hbp->mode,MDLOCK) ;
         if(!fileLookup(helpFileName,NULL,meFL_CHECKDOT|meFL_USESRCHPATH,fname))
             return mlwrite(MWABORT,(meUByte *)"[Help file \"%s\" is not on-line]",helpFileName);
         /* and read the stuff in */
         meModeClear(hbp->mode,MDVIEW) ;
-        ffReadFile(fname,meRWFLAG_SILENT,hbp,hbp->baseLine,0,0) ;
+        ffReadFile(fname,meRWFLAG_SILENT,hbp,hbp->baseLine,0,0,0) ;
         helpBufferReset(hbp) ;
     }
     return meTRUE ;
@@ -433,7 +433,7 @@ try_again:
     if(lp == elp)
     {
         meMacro *mac ;
-        if(!meModeTest(hbp->mode,MDUSR1))
+        if(!meModeTest(hbp->mode,MDLOCK))
         {
             if(helpBufferLoad(hbp) == meABORT)
                 return meABORT ;

@@ -718,18 +718,19 @@ typedef struct  meBuffer {
     meInt              markLineNo;              /* current mark line number     */
     meInt              lineCount;               /* end line number              */
 #if MEOPT_FILEHOOK
-    int                fhook;                   /* file hook function           */
-    int                bhook;                   /* b buffer hook function       */
-    int                dhook;                   /* d buffer hook function       */
-    int                ehook;                   /* e buffer hook function       */
+    meInt              fhook;                   /* file hook function           */
+    meInt              bhook;                   /* b buffer hook function       */
+    meInt              dhook;                   /* d buffer hook function       */
+    meInt              ehook;                   /* e buffer hook function       */
 #endif
 #if MEOPT_EXTENDED
-    int                inputFunc;               /* input handle function        */
+    meInt              inputFunc;               /* input handle function        */
 #endif
 #if MEOPT_IPIPES
-    int                ipipeFunc;               /* ipipe input handle function  */
+    meInt              ipipeFunc;               /* ipipe input handle function  */
 #endif
-    int                histNo;                  /* Buff switch hist no.         */
+    meInt              histNo;                  /* Buff switch hist no.         */
+    meMode             mode;                    /* editor mode of this buffer   */
     meUShort           dotOffset;               /* Offset of "." in above meLine*/
     meUShort           markOffset;              /* but for the "mark"           */
 #if MEOPT_LOCALBIND
@@ -745,7 +746,7 @@ typedef struct  meBuffer {
     meScheme           lscheme[meLINE_SCHEME_MAX]; /* line scheme index         */
     meUByte            lschemeNext ;            /* Next line scheme index       */
 #endif
-    meMode             mode;                    /* editor mode of this buffer   */
+    meUByte            fileFlag;                /* file type & attrib flags     */
     meUByte            intFlag;                 /* internal buffer flags        */
     meUByte            windowCount;             /* Count of windows on buffer   */
 #if MEOPT_EXTENDED
@@ -762,6 +763,13 @@ typedef struct  meBuffer {
     meUByte            tabWidth;                /* Virtual tab size             */
     meUByte            indentWidth;             /* Real tab size                */
 } meBuffer ;
+
+
+#define meBFFLAG_DIR     0x01
+#define meBFFLAG_FTP     0x02
+#define meBFFLAG_HTTP    0x04
+#define meBFFLAG_BINARY  0x08
+#define meBFFLAG_LTDIFF  0x10
 
 
 #define BIFBLOW    0x01                         /* Buffer is to be blown away (bclear)  */

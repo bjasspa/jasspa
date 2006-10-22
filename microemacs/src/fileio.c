@@ -195,22 +195,29 @@ meUByte *charKeyboardMap=NULL ;
 
 static meInt     ffremain ;
 static meInt     ffread ;
-static meInt     ffoffset ;
-static int       ffbinary=0 ;
+static meInt     ffbinary=0 ;
+static meUInt    ffoffset ;
 static meUByte   ffbuf[meFIOBUFSIZ+1] ;
 static meUByte  *ffcur ;
-static meUByte   ffwerror ;
-static meUByte   ffauto=0 ;
-static meUByte   ffautoRet=0 ;
+static meUShort  ffflags=0 ;
 static meUByte   ffnewFile ;
+static meUByte   ffwerror ;
 #if MEOPT_CRYPT
 static meUByte   ffcrypt=0 ;
 #endif
 
-#define meBINARY_BPL   16   /* bytes per line */
-#define meRBIN_BPL    256   /* bytes per line */
-#define AUTO_CRLF    0x01
-#define AUTO_CTRLZ   0x02
+#define meBINARY_BPL       16   /* bytes per line */
+#define meRBIN_BPL        256   /* bytes per line */
+
+#define meFFFLAG_DIR     meBFFLAG_DIR
+#define meFFFLAG_FTP     meBFFLAG_FTP
+#define meFFFLAG_HTTP    meBFFLAG_HTTP
+#define meFFFLAG_BINARY  meBFFLAG_BINARY
+#define meFFFLAG_LTDIFF  meBFFLAG_LTDIFF
+#define meFFFLAG_NOTSET  0x0100
+#define meFFFLAG_CR      0x0200
+#define meFFFLAG_LF      0x0400
+#define meFFFLAG_CTRLZ   0x0800
 
 #if MEOPT_SOCKET
 
@@ -958,8 +965,9 @@ ffFtpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByt
         /* find out if all's well */
         if(ftpReadReply() == ftpPOS_PRELIMIN)
         {
-            if(dirlist && (ffurlReadBp != NULL))
-                meModeSet(ffurlReadBp->mode,MDDIR) ;
+            ffflags |= meFFFLAG_FTP ;
+            if(dirlist)
+                ffflags |= meFFFLAG_DIR ;
             return meTRUE ;
         }
         if((rwflag & (meRWFLAG_WRITE|meRWFLAG_NODIRLIST)) || (dirlist > 0))
@@ -1055,6 +1063,7 @@ ffHttpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUBy
     {
         if(buff[0] == '\0')
         {
+            ffflags |= meFFFLAG_HTTP ;
             ffread = ffremain ;
             return meTRUE ;
         }
@@ -1224,7 +1233,7 @@ ffUrlFileOpen(meUByte *urlName, meUByte *user, meUByte *pass, meUInt rwflag)
                         ffurlReadBp->fileName = ff ;
                 }
             }
-            else if(meModeTest(ffurlReadBp->mode,MDDIR))
+            else if(ffflags & meFFFLAG_DIR)
             {
                 /* for an ftp dir 2 things must be done:
                  * 1) If the file name does not end in a '/' then add one and correct the buffer name
@@ -1644,19 +1653,27 @@ ffgetBuf(void)
 static int	
 ffgetline(meLine **line)
 {
-    register meUByte *text ;
-    register meUByte *endp ;
-    register int    len=0, newl, ii ;
-    register meLine  *lp ;
+    meLine  *lp ;
+    meUByte *text ;
+    meUByte *endp ;
+    meUByte cc, ecc=0 ;
+    int len=0, newl, ii ;
     
     do {
         if(ffremain <= 0)
         {
             if(ffgetBuf() <= 0)
                 return meABORT ;
-            if(ffremain < 0)
-                break ;
             ffcur = ffbuf ;
+            if(ffremain < 0)
+            {
+                if(ecc)
+                {
+                    ffremain = 0 ;
+                    *ffcur = '\0' ;
+                }
+                break ;
+            }
         }
         if(ffbinary)
         {
@@ -1683,72 +1700,91 @@ ffgetline(meLine **line)
         }
         else
         {
-            register meUByte cc ;
             endp = ffcur ;
             newl = 0 ;
-            while(((cc=*ffcur++) != '\n') && (cc != '\r'))
-                if(cc != '\0')
-                    newl++ ;
-            /* If we ended in '\r' check for a '\n' */
-            if(cc == '\r')
+            if(ecc == 0)
             {
-                if(*ffcur == '\n')
+                while(((ecc=*ffcur++) != '\n') && (ecc != '\r'))
+                    if(ecc == '\0')
+                        ffflags |= meFFFLAG_BINARY ;
+                    else
+                        newl++ ;
+                
+                ffremain -= ((size_t) ffcur) - ((size_t) endp) ;
+                
+                if(newl)
                 {
-#ifdef _CTRLM
-                    if(ffauto)
-                        ffautoRet |= AUTO_CRLF ;
-                    ffcur[-1] = '\n' ;
-#else
-                    if(ffauto)
+                    if(len == 0)
                     {
-                        ffautoRet |= AUTO_CRLF ;
-                        ffcur[-1] = '\n' ;
+                        len = newl ;
+                        if((lp = (meLine *) meLineMalloc(len,0)) == NULL)
+                            return meABORT ;
+                        text = lp->text ;
                     }
                     else
-                        newl++;
-#endif
-                    ffcur++ ;
+                    {
+                        size_t ss ;
+                        ii = len ;
+                        len += newl ;
+                        ss = meLineMallocSize(len) ;
+                        if((lp = (meLine *) meRealloc(lp,ss)) == NULL)
+                            return meABORT ;
+                        text = lp->text + ii ;
+                        lp->unused = ss - len - meLINE_SIZE ;
+                        lp->length = len ;
+                    }
+                    if(ecc == '\r')
+                        ffcur[-1] = '\n' ;
+                    while((cc = *endp++) != '\n')
+                        if(cc != '\0')
+                            *text++ = cc ;
+                    *text = '\0' ;
                 }
-                else
-                    ffcur[-1] = '\n' ;
-            }
-            
-            ffremain -= ((size_t) ffcur) - ((size_t) endp) ;
-            
-            if(len == 0)
-            {
-                len = newl ;
-                if((lp = (meLine *) meLineMalloc(len,0)) == NULL)
+                else if((len == 0) && ((lp = (meLine *) meLineMalloc(0,0)) == NULL))
                     return meABORT ;
-                text = lp->text ;
             }
-            else
+            if(ffremain >= 0)
             {
-                size_t ss ;
-                ii = len ;
-                len += newl ;
-                ss = meLineMallocSize(len) ;
-                if((lp = (meLine *) meRealloc(lp,ss)) == NULL)
-                    return meABORT ;
-                text = lp->text + ii ;
-                lp->unused = ss - len - meLINE_SIZE ;
-                lp->length = len ;
+                if((ffremain == 0) && (ecc == '\r'))
+                    /* the cr is the last char in the buffer, we cannot check if the next char is a '\r' so must get more */
+                    ffremain = -1 ;
             }
-            while((cc = *endp++) != '\n')
-            {
-                if(cc != '\0')
-                    *text++ = cc ;
-            }
-            *text = '\0' ;
-            if(len >= (0xfffe - meFIOBUFSIZ))
+            else if(len >= (0xfffe - meFIOBUFSIZ))
             {
                 /* TOO Big! break out */
                 ffremain = -2 ;
                 break ;
             }
+            else
+                ecc = 0 ;
         }
     } while(ffremain < 0) ;
     
+    if(ffremain >= 0)
+    {
+        /* If we ended in '\r' check for a '\n' */
+        meAssert((ecc == '\n') || (ecc == '\r')) ;
+        if(ecc == '\r')
+        {
+            if(*ffcur == '\n')
+            {
+                if(ffflags & meFFFLAG_NOTSET)
+                    ffflags = (ffflags & ~meFFFLAG_NOTSET) | (meFFFLAG_CR|meFFFLAG_LF) ;
+                else if((ffflags & (meFFFLAG_CR|meFFFLAG_LF)) != (meFFFLAG_CR|meFFFLAG_LF))
+                    ffflags |= meFFFLAG_LTDIFF ;
+                ffremain-- ;
+                ffcur++ ;
+            }
+            else if(ffflags & meFFFLAG_NOTSET)
+                ffflags = (ffflags & ~meFFFLAG_NOTSET) | meFFFLAG_LF ;
+            else if((ffflags & (meFFFLAG_CR|meFFFLAG_LF)) != meFFFLAG_LF)
+                ffflags |= meFFFLAG_LTDIFF ;
+        }
+        else if(ffflags & meFFFLAG_NOTSET)
+            ffflags = (ffflags & ~meFFFLAG_NOTSET) | meFFFLAG_CR ;
+        else if((ffflags & (meFFFLAG_CR|meFFFLAG_LF)) != meFFFLAG_CR)
+            ffflags |= meFFFLAG_LTDIFF ;
+    }
     if(ffbinary)
     {
         if(len == 0)
@@ -1756,7 +1792,7 @@ ffgetline(meLine **line)
         
         if(ffbinary == meBINARY_BPL)
         {
-            meInt cpos ;
+            meUInt cpos ;
             meUByte cc ;
             
             text = lp->text ;
@@ -1781,7 +1817,7 @@ ffgetline(meLine **line)
                 }
                 text[newl+(meBINARY_BPL*3)+14] = cc ;
             }
-            cpos = (ffoffset + ffread - ffremain - 1) & ~((meInt) (meBINARY_BPL-1)) ;
+            cpos = ffoffset + (meUInt) ((ffread - ffremain - 1) & ~((meInt) (meBINARY_BPL-1))) ;
             newl=8 ;
             while(--newl >= 0)
             {
@@ -1821,9 +1857,9 @@ ffgetline(meLine **line)
             ;
         else if(len == 0)
             return meFALSE ;
-        else if(ffauto && (len == 1) && (lp->text[0] == 26))
+        else if((len == 1) && (lp->text[0] == 26))
         {
-            ffautoRet |= AUTO_CTRLZ ;
+            ffflags |= meFFFLAG_CTRLZ ;
             meFree(lp) ;
             return meFALSE ;
         }
@@ -1840,10 +1876,10 @@ ffgetline(meLine **line)
 static int
 ffReadFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
 {
+    ffflags = meFFFLAG_NOTSET ;
     if(bp != NULL)
     {
-        ffauto   = (meModeTest(bp->mode,MDAUTO) != 0) ;
-        if(meModeTest(bp->mode,MDBINRY))
+        if(meModeTest(bp->mode,MDBINARY))
             ffbinary = meBINARY_BPL ;
         else if(meModeTest(bp->mode,MDRBIN))
             ffbinary = meRBIN_BPL ;
@@ -1855,13 +1891,11 @@ ffReadFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
     }
     else
     {
-        ffauto = 1 ;
         ffbinary = 0 ;
 #if MEOPT_CRYPT
         ffcrypt = ((flags & meRWFLAG_CRYPT) != 0) ;
 #endif
     }        
-    ffautoRet= 0 ;
     ffremain = 0 ;
     ffread = 0 ;
     
@@ -1952,7 +1986,7 @@ ffReadFileClose(meUByte *fname, meUInt flags)
 
 int
 ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp, 
-           meInt offset, meInt length)
+           meUInt uoffset, meUInt loffset, meInt length)
 {
     meLine *lp0, *lp1, *lp2 ;
     int   ss, nline ;
@@ -1965,32 +1999,56 @@ ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
         return meABORT ;
     
     ffoffset = 0 ;
-    if(length > 0)
+    if(length != 0)
     {
         /* partial reading only supported by the insert-file command on regular files */
-        if(offset < 0)
+        if(length < 0)
         {
+            meUInt fsu, fsl ;
+#ifdef _UNIX
+            off_t fs ;
+            fseeko(ffrp,0,SEEK_END) ;
+            fs = ftello(ffrp) ;
+            fsu = (meUInt) (fs >> 32) ;
+            fsl = (meUInt) fs ;
+#else
 #ifdef _WIN32
-            GetFileSize(ffrp,&offset) ;
-            offset -= length ;
+            fsl = GetFileSize(ffrp,&fsu) ;
 #else
             fseek(ffrp,0,SEEK_END) ;
-            offset = ftell(ffrp) - length ;
+            fsl = ftell(ffrp) ;
+            fsu = 0 ;
 #endif
-            if(offset < 0)
-                offset = 0 ;
+#endif
+            /* ignore the upper offset if moving from the end of the file -
+             * can't be bothered to do the maths */
+            uoffset = fsu ;
+            if(loffset <= fsl)
+                loffset = fsl - loffset ;
+            else if(fsu == 0)
+                loffset = 0 ;
+            else
+            {
+                uoffset-- ;
+                loffset = 0xffffffff - (loffset - fsl - 1) ;
+            }
+            length = -length ;
         }
-        ffoffset = offset ;
+        ffoffset = loffset ;
         if(ffbinary)
         {
-            offset &= ffbinary-1 ;
-            ffoffset -= offset ;
-            length += offset ;
+            loffset &= ffbinary-1 ;
+            ffoffset -= loffset ;
+            length += loffset ;
         }
+#ifdef _UNIX
+        fseeko(ffrp,(((off_t) uoffset) << 32) | ((off_t) ffoffset),SEEK_SET) ;
+#else
 #ifdef _WIN32
-        SetFilePointer(ffrp,ffoffset,NULL,FILE_BEGIN) ;
+        SetFilePointer(ffrp,ffoffset,&uoffset,FILE_BEGIN) ;
 #else
         fseek(ffrp,ffoffset,SEEK_SET) ;
+#endif
 #endif
     }
     
@@ -2027,20 +2085,44 @@ ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
     if(bp != NULL)
     {
         bp->lineCount += nline ;
-        if(!(flags & meRWFLAG_INSERT) && ffauto && nline)
+        if((flags & meRWFLAG_PRESRVFMOD) == 0)
         {
-            if(ffautoRet & AUTO_CRLF)
-                meModeSet(bp->mode,MDCRLF) ;
-            else
-                meModeClear(bp->mode,MDCRLF) ;
-            if(ffautoRet & AUTO_CTRLZ)
+            bp->fileFlag = ffflags & (meFFFLAG_DIR|meFFFLAG_FTP|meFFFLAG_HTTP|meFFFLAG_BINARY|meFFFLAG_LTDIFF) ;
+            if((ffflags & meFFFLAG_NOTSET) == 0)
+            {
+                if(ffflags & meFFFLAG_CR)
+                    meModeSet(bp->mode,MDCR) ;
+                else
+                    meModeClear(bp->mode,MDCR) ;
+                if(ffflags & meFFFLAG_LF)
+                    meModeSet(bp->mode,MDLF) ;
+                else
+                    meModeClear(bp->mode,MDLF) ;
+                if(ffflags & meFFFLAG_CTRLZ)
+                    meModeSet(bp->mode,MDCTRLZ) ;
+                else
+                    meModeClear(bp->mode,MDCTRLZ) ;
+            }
+            if(ffflags & meFFFLAG_CTRLZ)
+            {
+                /* this must be an empty dos file */
+                meModeSet(bp->mode,MDCR) ;
+                meModeSet(bp->mode,MDLF) ;
                 meModeSet(bp->mode,MDCTRLZ) ;
-            else
-                meModeClear(bp->mode,MDCTRLZ) ;
+            }
         }
     }
     if(length > 0)
-        sprintf((char *)resultStr,"|%d|%d|",(int) ffoffset,(int) (ffoffset+ffread-ffremain)) ;
+    {
+        meUInt el, eu=uoffset ;
+        el = ffoffset + (meUInt) (ffread-ffremain) ;
+        if(el < ffoffset)
+        {
+            eu-- ;
+            el = 0xffffffff - (((meUInt) (ffread-ffremain)) - ffoffset - 1) ;
+        }
+        sprintf((char *)resultStr,"|0x%x|0x%x|0x%x|0x%x|",ffoffset,el,uoffset,eu) ;
+    }
     return ss ;
 }
 
@@ -2345,7 +2427,7 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
     ffremain = 0 ;
     if(bp != NULL)
     {
-        if(meModeTest(bp->mode,MDBINRY))
+        if(meModeTest(bp->mode,MDBINARY))
             ffbinary = meBINARY_BPL ;
         else if(meModeTest(bp->mode,MDRBIN))
             ffbinary = meRBIN_BPL ;
@@ -2354,27 +2436,16 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
 #if MEOPT_CRYPT
         ffcrypt  = (meModeTest(bp->mode,MDCRYPT) != 0) ;
 #endif
-        if(!ffbinary &&
-#ifdef _CTRLZ
-           (!meModeTest(bp->mode,MDAUTO) || meModeTest(bp->mode,MDCTRLZ))
-#else
-           (meModeTest(bp->mode,MDAUTO) && meModeTest(bp->mode,MDCTRLZ))
-#endif
-           )
-            ffauto = 1 ;
-        else
-            ffauto = 0 ;
-    
-        if(!ffbinary &&
-#ifdef _CTRLM
-           (!meModeTest(bp->mode,MDAUTO) || meModeTest(bp->mode,MDCRLF))
-#else
-           (meModeTest(bp->mode,MDAUTO) && meModeTest(bp->mode,MDCRLF))
-#endif
-           )
-            ffautoRet = 1 ;
-        else
-            ffautoRet = 0 ;
+        ffflags = 0 ;
+        if(!ffbinary)
+        {
+            if(meModeTest(bp->mode,MDCR))
+                ffflags |= meFFFLAG_CR ;
+            if(meModeTest(bp->mode,MDLF))
+                ffflags |= meFFFLAG_LF ;
+            if(meModeTest(bp->mode,MDCTRLZ))
+                ffflags |= meFFFLAG_CTRLZ ;
+        }
 #if MEOPT_NARROW
         if((bp->narrow != NULL) && !(flags & meRWFLAG_IGNRNRRW))
             meBufferExpandNarrowAll(bp) ;
@@ -2386,11 +2457,10 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
     }
     else
     {
-        ffauto   = 0 ;
-        ffautoRet= 0 ;
+        ffflags = meFFFLAG_CR ;
         ffbinary = 0 ;
 #if MEOPT_CRYPT
-        ffcrypt  = ((flags & meRWFLAG_CRYPT) != 0) ;
+        ffcrypt = ((flags & meRWFLAG_CRYPT) != 0) ;
 #endif
     }
 #ifdef _UNIX
@@ -2475,9 +2545,8 @@ ffWriteFileWrite(register int len, register meUByte *buff, int eolFlag)
         }
         if(eolFlag)
         {
-            if(ffautoRet && ffputc('\r'))
-                return meABORT ;
-            if(ffputc('\n'))
+            if(((ffflags & meFFFLAG_LF) && ffputc('\r')) ||
+               ((ffflags & meFFFLAG_CR) && ffputc('\n')))
                 return meABORT ;
         }
     }
@@ -2493,7 +2562,7 @@ ffWriteFileClose(meUByte *fname, meUInt flags, meBuffer *bp)
     ret = meABORT ;
     if(!ffwerror)
     {
-        if(ffauto)
+        if(ffflags & meFFFLAG_CTRLZ)
             ffputc(26) ;
         if(ffputBuf() >= 0)
             ret = meTRUE ;

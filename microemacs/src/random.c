@@ -1035,7 +1035,7 @@ meNewline(int f, int n)
         else
 #endif
 #if MEOPT_WORDPRO
-        if(meModeTest(frameCur->bufferCur->mode,MDINDEN))
+        if(meModeTest(frameCur->bufferCur->mode,MDINDENT))
             s = winsert() ;
         else
 #endif

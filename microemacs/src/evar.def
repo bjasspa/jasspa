@@ -151,6 +151,7 @@ DEFVAR ("pause-time",          EVPAUSETIME)     /* Pause time (used in Fence mat
 #endif
 DEFVAR ("platform",            EVMACHINE)       /* the name of the platform */ 
 DEFVAR ("progname",            EVPROGNM)        /* argv[0] */ 
+DEFVAR ("quiet",               EVQUIET)         /* Be quiet */ 
 #if MEOPT_EXTENDED
 DEFVAR ("random",              EVRANDOM)        /* A random number       */
 #endif

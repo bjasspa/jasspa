@@ -129,7 +129,7 @@ meBufferCreateNarrow(meBuffer *bp, meLine *slp, meLine *elp, meInt sln, meInt el
     slp->prev->next = elp ;
     elp->prev = slp->prev ;
     bp->lineCount -= nln ;
-    meModeSet(bp->mode,MDNRRW) ;
+    meModeSet(bp->mode,MDNARROW) ;
 #if MEOPT_UNDO
     meUndoAddNarrow(sln,name,markupCmd,nrrw->slp) ;
 #endif
@@ -306,7 +306,7 @@ meBufferRemoveNarrow(meBuffer *bp, register meNarrow *nrrw, meUByte *firstLine, 
     if(nrrw->prev != NULL)
         nrrw->prev->next = nrrw->next ;
     else if((bp->narrow = nrrw->next) == NULL)
-        meModeClear(bp->mode,MDNRRW) ;
+        meModeClear(bp->mode,MDNARROW) ;
     
     /* delete the narrow anchor */
     meAnchorDelete(bp,nrrw->name) ;

@@ -203,7 +203,7 @@ bufferSetEdit(void)
 #endif
     }
     if((autoTime > 0) && (frameCur->bufferCur->autoTime < 0) &&
-       meModeTest(frameCur->bufferCur->mode,MDATSV) &&
+       meModeTest(frameCur->bufferCur->mode,MDAUTOSV) &&
        (frameCur->bufferCur->name[0] != '*'))
     {
         struct   meTimeval tp ;

@@ -1403,9 +1403,9 @@ printSection (meWindow *wp, long sLineNo, long numLines, meLine *sLine, meLine *
         goto quitEarly;
     }
     /* Set up the buffer modes correctly so that we save the codes correctly */
-    meModeSet (bp->mode,MDAUTO);
-    meModeClear (bp->mode,MDCRLF);
-    meModeClear (bp->mode,MDCTRLZ);
+    meModeSet(bp->mode,MDCR);
+    meModeClear(bp->mode,MDLF);
+    meModeClear(bp->mode,MDCTRLZ);
     
 #if MEOPT_HILIGHT
     /* Clear the 2nd entry just in case the hilighting is not defined.
