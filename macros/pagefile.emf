@@ -21,10 +21,10 @@ define-macro page-file-save-buffer
     set-variable #l0 $buffer-bname
     set-variable #l1 $buffer-fname
     set-variable #l2 $buffer-backup
-    set-variable #l7 &bmod "crlf"
+    set-variable #l7 &add &bmod "cr" &mul &bmod "lf" 2
     0 buffer-info
     set-variable #l8 $result
-    set-variable #l9 &add &add &lget :page-0 1 &lget #l8 5 &cond #l7 &lget #l8 7 0
+    set-variable #l9 &add &add &lget :page-0 1 &lget #l8 5 &cond &equ #l7 3 &lget #l8 7 0
     !if &bmod "backup"
         !force 0 delete-buffer "*Page-tmp2*"
         find-buffer "*Page-tmp2*"
@@ -48,14 +48,15 @@ define-macro page-file-save-buffer
     !force 0 delete-buffer "*Page-tmp2*"
     find-buffer "*Page-tmp2*"
     -1 buffer-mode "ctrlz"
-    &cond #l7 1 -1 buffer-mode "crlf"
+    &cond &band #l7 1 1 -1 buffer-mode "cr"
+    &cond &band #l7 2 1 -1 buffer-mode "lf"
     set-variable #l5 0
     !while &les #l5 &sub #l3 1
         set-variable #l6 &add #l5 .page-file.page-size
         !if &gre #l6 &sub #l3 1
             set-variable #l6 &sub #l3 1
         !endif
-        -1 insert-file #l2 #l5 &sub #l6 #l5
+        4 insert-file #l2 0 #l5 &sub #l6 #l5
         set-variable #l6 &lget $result 2
         0 append-buffer #l1
         set-mark
@@ -72,7 +73,7 @@ define-macro page-file-save-buffer
     find-buffer "*Page-tmp2*"
     !while &les #l5 #l3
         set-variable #l6 &add #l5 .page-file.page-size
-        -1 insert-file #l2 #l5 &sub #l6 #l5
+        4 insert-file #l2 0 #l5 &sub #l6 #l5
         set-variable #l6 &lget $result 2
         0 append-buffer #l1
         set-mark
@@ -108,7 +109,7 @@ define-macro page-file-save-buffer
     !if &les #l0 .page-file.page-size
         set-variable #l0 0
     !endif
-    -1 insert-file $buffer-fname #l0 &sub &lget :page-1 1 #l0
+    4 insert-file $buffer-fname 0 #l0 &sub &lget :page-1 1 #l0
     set-variable :page-0 $result
     set-alpha-mark "\x83"
     !if &and #l0 &not &bmod "binary"
@@ -140,7 +141,7 @@ define-macro page-file-save-buffer
     -1 kill-region
     set-variable :page-0 :page-1
     end-of-buffer
-    -1 insert-file $buffer-fname &lget :page-0 2 .page-file.page-size
+    4 insert-file $buffer-fname 0 &lget :page-0 2 .page-file.page-size
     set-variable :page-1 $result
     exchange-point-and-mark
     set-alpha-mark "\x83"
@@ -163,9 +164,9 @@ define-macro page-file-beginning-of-buffer
     end-of-buffer
     -1 kill-region
     ; insert the first two pages
-    -1 insert-file $buffer-fname "0" .page-file.page-size
+    4 insert-file $buffer-fname 0 0 .page-file.page-size
     set-variable :page-0 $result
-    -1 insert-file $buffer-fname &lget :page-0 2 .page-file.page-size
+    4 insert-file $buffer-fname 0 &lget :page-0 2 .page-file.page-size
     set-variable :page-1 $result
     exchange-point-and-mark
     set-alpha-mark "\x83"
@@ -553,9 +554,10 @@ define-macro page-file
     beginning-of-buffer
     ; make sure we don't have ctrlz mode on, this will corrupt the file if saved.
     -1 buffer-mode "ctrlz"
-    ; try to guess the crlf mode from the size of the buffer compared to the size on disk
+    1 buffer-mode "cr"
+    ; try to guess the lf mode from the size of the buffer compared to the size on disk, mac not supported, can be manually set.
     0 buffer-info
-    &cond &gre &lget :page-0 1 &add &lget #l8 6 &div &lget #l8 8 2 1 -1 buffer-mode "crlf"
+    &cond &gre &lget :page-0 1 &add &lget $result 6 &div &lget $result 8 2 1 -1 buffer-mode "lf"
     buffer-bind-key "page-file-save-buffer" "C-x C-s"
     buffer-bind-key "page-file-beginning-of-buffer" "home"
     buffer-bind-key "page-file-end-of-buffer" "end"
