@@ -114,7 +114,7 @@ set-variable .session.kill 1
     -1 buffer-mode "time"
     set-variable #l1 $time
     set-variable #l3 0
-    set-variable #l9 "\b\benfs\b\b"
+    set-variable #l9 "\b\benfs\b1\b"
     !while &len &set #l2 &mid #l1 &pinc #l3 1 1
         set-variable #l9 &cat #l9 &itoa &add 65 #l2
     !done
@@ -424,13 +424,14 @@ define-macro read-session
     find-buffer "*session_tmp*"
     insert-file #l1
     beginning-of-buffer
-    !if &not &xse @wl "^\\(\b\benfs\b\b[0-9A-J ]+\b\b\\)\\l+\b\b$"
+    !if &not &xse @wl "^\\(\b\benfs\b\\(\\d*\\)\b[0-9A-J ]+\b\b\\)\\l+\b\b$"
         !force 0 delete-buffer "*session_tmp*"
         goto-position "\x88"
         ml-write &spr "[File \"%s\" does not appear to be a saved session]" %session-name
         !abort
     !endif
     set-variable #l9 @s1
+    set-variable #l7 @s2
     !if &not &band @# 12
         !if &seq $frame-id .notes.frame-id
             !force notes-close
@@ -512,8 +513,12 @@ define-macro read-session
                     set-variable #l4 @wl
                     forward-line
                     set-variable #l5 $window-line
-                    set-variable #l6 &lget #l3 9
                     !if &not &seq "X" &stat t #l2
+                        set-variable #l6 &lget #l3 9
+                        !if &les #l7 1
+                            ; Handle modes in ME pre 20061010
+                            set-variable #l6 &cat "c" &rep &xrep #l6 "[dDkQS1-8]" "" "c" "l"
+                        !endif
                         !if &seq &lget #l4 1 ""
                             ; no amarks, create an inactive buffer
                             !force 7 find-buffer #l2 @mna
@@ -522,7 +527,7 @@ define-macro read-session
                                 set-variable #l1 0
                                 set-variable $mode-names ".*"
                                 !if &not &seq &set #l2 $mode-names ""
-                                    !if &not &lfind "|dir|edit|lock|nact|narrow|pipe|quiet|save|" #l2
+                                    !if &not &lfind "|edit|lock|nact|narrow|pipe|" #l2
                                         !force &con &sin &mid $mode-chars #l1 1 #l6 1 -1 buffer-mode #l2
                                     !endif
                                     set-variable #l1 &add #l1 1
@@ -541,7 +546,7 @@ define-macro read-session
                                 set-variable #l1 0
                                 set-variable $mode-names ".*"
                                 !if &not &seq &set #l2 $mode-names ""
-                                    !if &not &lfind "|binary|dir|edit|lock|nact|narrow|pipe|quiet|rbin|save|" #l2
+                                    !if &not &lfind "|binary|edit|lock|nact|narrow|pipe|rbin|" #l2
                                         !force &con &sin &mid $mode-chars #l1 1 #l6 1 -1 buffer-mode #l2
                                     !endif
                                     set-variable #l1 &add #l1 1
@@ -600,7 +605,7 @@ define-macro read-session
                     !endif
                 !endif
                 !if &not &band @# 16
-                    set-variable #l7 0
+                    set-variable #l6 0
                     !if &sub &sub &lget #l2 3 &lget #l2 1 $window-width
                         ml-write "[Frame width not correct - cannot recreate window layout]"
                     !elif &sub &sub &lget #l2 4 &lget #l2 2 $window-depth
@@ -608,9 +613,9 @@ define-macro read-session
                     !else
                         ; correct frame size - restore the window layout
                         !force read-session-win 0 #l3 #l2
-                        set-variable #l7 $status
+                        set-variable #l6 $status
                     !endif
-                    !if &not #l7
+                    !if &not #l6
                         set-variable @# &bor @# 8
                     !endif
                     goto-position "\x88"
