@@ -26,7 +26,8 @@ osd .osd.fattr 0  "batcDHs" 10 3 50 0 -1 -1 610 .scheme.osd-title "File attribut
 osd .osd.fattr 10  ""
 osd .osd.fattr 55  "fh" "      "
 osd .osd.fattr 65  "fh" "  "
-osd .osd.fattr 75  "fh" "  "
+osd .osd.fattr 72  "fh" "  "
+osd .osd.fattr 77  "fh" "  "
 osd .osd.fattr 100 ""
 
 0 define-macro fattr-attr
@@ -66,7 +67,7 @@ osd .osd.fattr 110 ""   "  Attributes:"
     osd .osd.fattr 175 "fh" "      "
     osd .osd.fattr 180 "CfxRpt" &cat .osd.checkbox-chars "\} \HTemporary "  256 fattr-attr
     osd .osd.fattr 185 "fh" "      "
-    osd .osd.fattr 190 "CfxRpt" &cat .osd.checkbox-chars "\} Co\Hmpressed" 2048 fattr-attr
+    osd .osd.fattr 190 "CfxRpt" &cat .osd.checkbox-chars "\} Com\Hpressed" 2048 fattr-attr
 !else
     osd .osd.fattr 120 ""
     osd .osd.fattr 130 "hf" "    User:   "
@@ -97,20 +98,10 @@ osd .osd.fattr 625 "f"  "  "
 define-macro file-attrib
     !if &band @# 1
         set-variable #l0 $buffer-fname
-        !if &bmod "dir"
+        !if &band $buffer-fmod 0x10000
             set-variable #l2 "-1"
-        !elif &bmod "crlf"
-            !if &bmod "ctrlz"
-                set-variable #l2 "3"
-            !else
-                set-variable #l2 "2"
-            !endif
         !else
-            !if &bmod "ctrlz"
-                set-variable #l2 "0"
-            !else
-                set-variable #l2 "1"
-            !endif
+            set-variable #l2 &add &add &bmod "cr" &mul &bmod "lf" 2 &mul &bmod "ctrlz" 4
         !endif
         set-variable .info &spr "|%d|%d|%d|%d|" $buffer-fmod $buffer-fmod #l2 #l2
         osd .osd.fattr 20  "" &cat "  Buffer:  " $buffer-bname
@@ -145,14 +136,16 @@ define-macro file-attrib
         osd .osd.fattr 50  "D"
         osd .osd.fattr 60  "D"
         osd .osd.fattr 70  "D"
+        osd .osd.fattr 75  "D"
         osd .osd.fattr 80  "D"
         osd .osd.fattr 600 "D"
     !else
         osd .osd.fattr 40  ""
         osd .osd.fattr 50  "" "  File Type:"
         osd .osd.fattr 60  "CxfRpht" &cat .osd.checkbox-chars "\} \HUnix"    1 fattr-type
-        osd .osd.fattr 70  "CxfRpht" &cat .osd.checkbox-chars "\} \HWindows" 2 fattr-type
-        osd .osd.fattr 80  "CxfRpt"  &cat .osd.checkbox-chars "\} \HDos"     3 fattr-type
+        osd .osd.fattr 70  "CxfRpht" &cat .osd.checkbox-chars "\} \HMac"     2 fattr-type
+        osd .osd.fattr 75  "CxfRpht" &cat .osd.checkbox-chars "\} \HWindows" 3 fattr-type
+        osd .osd.fattr 80  "CxfRpt"  &cat .osd.checkbox-chars "\} \HDos"     7 fattr-type
         osd .osd.fattr 600 "BHrfhti" .scheme.osd-ebtt " \HSave Changes "  f "set-variable .file-attrib.ok 2"
     !endif
     set-variable .ok 0
@@ -172,15 +165,10 @@ define-macro file-attrib
         !endif
         ; file type
         !if &equ &lget .info 3 &set #l4 &lget .info 4
-        !elif &equ #l4 3
-            1 buffer-mode "crlf"
-            1 buffer-mode "ctrlz"
-        !elif &equ #l4 2
-            1 buffer-mode "crlf"
-            -1 buffer-mode "ctrlz"
         !else
-            -1 buffer-mode "crlf"
-            -1 buffer-mode "ctrlz"
+            &con &band 1 #l4 1 -1 buffer-mode "cr"
+            &con &band 2 #l4 1 -1 buffer-mode "lf"
+            &con &band 4 #l4 1 -1 buffer-mode "ctrlz"
         !endif
         !if &equ .ok 2
             0 save-buffer
