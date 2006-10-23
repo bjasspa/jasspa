@@ -40,7 +40,7 @@
 !emacro
 
 0 define-macro cc-coci
-    !if &bmod "dir"
+    !if &band $buffer-fmod 0x10000
         ml-write "[directories not supported by cc-coci]"
         !abort
     !elif &bmod "view"
@@ -112,17 +112,17 @@ set-variable #l9 .cc-init.count
         set-variable .hilight.cc-con &pinc .hilight.next 1
     !endif
     0 hilight .hilight.cc-state 2 100      $global-scheme
-    hilight .hilight.cc-state 0x102 " A  Name" .scheme.header
+    hilight .hilight.cc-state 0x102 " Attr Name" .scheme.header
     hilight .hilight.cc-state 0x102 "[ *]c " .scheme.prepro
     hilight .hilight.cc-state 0x102 "[ *]h " .scheme.no1
     hilight .hilight.cc-state 0x102 "[ *]m " .scheme.no2
     hilight .hilight.cc-state 0x102 "[ *]M " .scheme.hlred
-    hilight .hilight.cc-state 0x102 "\\*\\*\\*\\*\\*ClearCase [^ ]+ completed successfully" .scheme.no1
-    hilight .hilight.cc-state 0x102 "\\*\\*\\*\\*\\*ClearCase" .scheme.error
+    hilight .hilight.cc-state 0x102 "\\[\\*\\*\\*\\* ClearCase [^ ]+ completed successfully" .scheme.no1
+    hilight .hilight.cc-state 0x102 "\\[\\*\\*\\*\\* ClearCase" .scheme.error
     
     0 hilight .hilight.cc-con 2 100 $global-scheme
-    hilight .hilight.cc-con 0x102 "\\*\\*\\*\\*\\*ClearCase [^ ]+ completed successfully" .scheme.no1
-    hilight .hilight.cc-con 0x102 "\\*\\*\\*\\*\\*ClearCase" .scheme.error
+    hilight .hilight.cc-con 0x102 "\\[\\*\\*\\*\\* ClearCase [^ ]+ completed successfully" .scheme.no1
+    hilight .hilight.cc-con 0x102 "\\[\\*\\*\\*\\* ClearCase" .scheme.error
 !endif
 
 0 define-macro cc-osd-get-comment
@@ -249,7 +249,7 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
         !abort
     !endif
     !force unset-variable .cc-init.refresh
-    !if &bmod "dir"
+    !if &band $buffer-fmod 0x10000
         10 dirlst-tag-list
         goto-position "\x82"
     !elif &seq $buffer-bname "*cc-state*"
@@ -415,7 +415,7 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
                 osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Enable \Hauto merge" #l0 cc-osd-cbc
                 set-variable #l3 &con #l3 #l3 #l2
             !elif &seq #l1 "h"
-                !if &bmod "dir"
+                !if &band $buffer-fmod 0x10000
                     osd .osd.ccosd #l2 "D"
                 !else
                     osd .osd.ccosd &inc #l2 1 "fh" "    "
@@ -778,7 +778,7 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
     -1 buffer-mode "view"
     -1 kill-region
     !if &or &not #l9 .cc-cleartool.exit
-        insert-string &spr "\n*****ClearCase %s %s*****" &lget .cc-init.names :lock #l0
+        insert-string &spr "\n[**** ClearCase %s %s ****]" &lget .cc-init.names :lock #l0
     !endif
     !if &sin "*" &lget .cc-init.flags :lock
         end-of-buffer
@@ -944,7 +944,7 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
             !if &seq .exit "0"
                 end-of-buffer
                 -1 buffer-mode "view"
-                insert-string &spr "\n*****ClearCase %s completed successfully*****" &lget .cc-init.names @#
+                insert-string &spr "\n[**** ClearCase %s completed successfully ****]" &lget .cc-init.names @#
                 beginning-of-line
                 -1 buffer-mode "edit"
                 1 buffer-mode "view"
@@ -965,7 +965,7 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
             set-variable $buffer-hilight .hilight.cc-state
         !endif
         set-variable $window-line 3
-        insert-string "\n A  Name"
+        insert-string "\n Attr Name"
         -1 buffer-mode "edit"
         1 buffer-mode "view"
         buffer-bind-create "bio" "esc h" .osd.ccshlp osd
@@ -1006,15 +1006,15 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
             !goto rmv-line
         !elif &and &set #l3 &sin .cc-init.vsep @wl &set #l2 &sin " Rule: " @wl
             !if &seq &rig @wl &add #l2 6 "CHECKEDOUT"
-                set-variable #l3 " c  "
+                set-variable #l3 " c    "
             !elif &sin "[hijacked]" &rig @wl #l3
-                set-variable #l3 " h  "
+                set-variable #l3 " h    "
             !elif &sin "[loaded but missing]" &rig @wl #l3
-                set-variable #l3 " m  "
+                set-variable #l3 " m    "
             !elif &sin "[not loaded]" &rig @wl #l3
-                set-variable #l3 " n  "
+                set-variable #l3 " n    "
             !elif &sin "[" &rig @wl #l3
-                set-variable #l3 " ?  "
+                set-variable #l3 " ?    "
             !else
                 !goto rmv-line
             !endif
@@ -1035,7 +1035,7 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
             !if &seq &stat t &cat $buffer-fname #l4 "D"
                 set-variable #l4 &cat #l4 "/"
             !endif
-            set-variable @wl &cat " M  " #l4
+            set-variable @wl &cat " M    " #l4
             beginning-of-line
             forward-line
         !elif &not &lget .cc-init.values1 3
@@ -1055,7 +1055,7 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
             !if &seq &stat t &cat $buffer-fname #l3 "D"
                 set-variable #l3 &cat #l3 "/"
             !endif
-            set-variable @wl &cat " p  " #l3
+            set-variable @wl &cat " p    " #l3
             beginning-of-line
             forward-line
         !endif
@@ -1067,13 +1067,7 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
 !emacro
 
 0 define-macro cc-cleartool-complete1
-    end-of-buffer
-    backward-line
-    !if &seq &lef @wl 4 "****"
-        set-variable $line-flags &bor $line-flags 0x20
-        backward-line
-        set-variable $line-flags &bor $line-flags 0x20
-    !endif
+    beginning-of-buffer
     1 buffer-mode "view"
     -1 buffer-mode "edit"
     set-variable #l4 $window-id
@@ -1095,7 +1089,7 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
     set-variable $window-line 5
     set-mark
     end-of-buffer
-    search-buffer "meb" "^[ *].  "
+    search-buffer "meb" "^[ *].    "
     forward-line
     -1 buffer-mode "view"
     !force #l0 sort-lines "y"
@@ -1110,7 +1104,7 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
     set-variable .find-file.file-dcount 0
     beginning-of-buffer
     !repeat
-        !force search-buffer "me" "^\\*[chMmnp]  \\(.+\\)"
+        !force search-buffer "me" "^\\*[chMmnp]    \\(.+\\)"
         !if $status
             set-variable &ind &cat ".find-file.file" &inc .find-file.file-count 1 @s1
             !if &seq &rig @s1 &sub &len @s1 1 "/"
@@ -1123,7 +1117,7 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
 !emacro
 
 0 define-macro cc-state-find-file
-    !if &xseq @wl "[ *][chMmnp]  \\(.+\\)"
+    !if &xseq @wl "[ *][chMmnp]    \\(.+\\)"
         find-file @s1
     !else
         ml-write "[Invalid line]"
@@ -1142,7 +1136,7 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
 !emacro
 
 0 define-macro cc-state-delete-line
-    !if &xseq @wl "[ *][chMmnp]  .+"
+    !if &xseq @wl "[ *][chMmnp]    .+"
         !if &seq &lef @wl 1 "*"
             set-variable :tag-count &sub :tag-count 1
         !endif
@@ -1166,7 +1160,7 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
         -1 buffer-mode "view"
         beginning-of-buffer
         !repeat
-            !force search-buffer "me" "^\\*\\([chMmnp]\\)  ."
+            !force search-buffer "me" "^\\*\\([chMmnp]\\)    ."
             !if $status
                 beginning-of-line
                 !if &seq @s1 "p"
@@ -1287,7 +1281,7 @@ define-macro cc-update
 !emacro
 define-macro cc-checkout
     3 cc-osd
-    !if &and &not &bmod "dir" &lget .cc-init.values3 2
+    !if &and &not &band $buffer-fmod 0x10000 &lget .cc-init.values3 2
         -1 buffer-mode "view"
         !if &band $system 0x100
             set-variable $buffer-fmod &band $buffer-fmod 0xfffffe
@@ -1306,7 +1300,7 @@ define-macro cc-checkout
     7 cc-get-file-list 0 0 #l2
     3 cc-cleartool 3 $buffer-fname
     !if &seq $buffer-fname ""
-    !elif &bmod "dir"
+    !elif &band $buffer-fmod 0x10000
         !if &lget .cc-init.values3 5
             dirlst-refresh
         !endif
@@ -1329,7 +1323,7 @@ define-macro cc-checkin
     7 cc-get-file-list 0 0 #l2
     4 cc-cleartool 3 $buffer-fname
     !if &seq $buffer-fname ""
-    !elif &bmod "dir"
+    !elif &band $buffer-fmod 0x10000
         !if &lget .cc-init.values4 3
             dirlst-refresh
         !endif
@@ -1375,7 +1369,7 @@ define-macro cc-add
         5 cc-cleartool 3 $buffer-fname
     !endif
     !if &seq $buffer-fname ""
-    !elif &and &bmod "dir" &lget .cc-init.values5 3
+    !elif &and &band $buffer-fmod 0x10000 &lget .cc-init.values5 3
         dirlst-refresh
     !endif
 !emacro
@@ -1394,7 +1388,7 @@ define-macro cc-add
     set-variable #l2 $result
     set-variable #l2 &add &lget #l2 6 &div &lget #l2 2 2
     set-variable #l3 &stat "s" #l0
-    &cond &gre #l2 #l3 -1 1 buffer-mode "crlf"
+    &cond &gre #l2 #l3 -1 1 buffer-mode "lf"
     find-buffer #l1
     !if &les $window-eline 7
         !return
@@ -1569,7 +1563,7 @@ define-macro cc-diff
     set-variable $buffer-fname #l9
     !if #l8
         end-of-buffer
-        insert-string "\n*****ClearCase Diff completed successfully*****"
+        insert-string "\n[**** ClearCase Diff completed successfully ****]"
     !endif
     beginning-of-buffer
     insert-string &spr "cd %s\nClearCase diff -pred%s\n" #l9 &rep #l0 "\b" " "
@@ -1585,7 +1579,7 @@ define-macro cc-uncheckout
     7 cc-get-file-list 0 0 #l2
     7 cc-cleartool 3 $buffer-fname
     !if &seq $buffer-fname ""
-    !elif &bmod "dir"
+    !elif &band $buffer-fmod 0x10000
         !if &lget .cc-init.values7 2
             dirlst-refresh
         !endif
@@ -1607,7 +1601,7 @@ define-macro cc-annotate
 
 define-macro cc-delete
     ; only supported from a dir or state listing
-    !if &bmod "dir"
+    !if &band $buffer-fmod 0x10000
     !elif &seq $buffer-bname "*cc-state*"
     !else
         osd-dialog "ClearCase - Delete" "    Deleting a file from ClearCase is only supported from a    \n        directory listing or *cc-state* buffer!" "  \HAbort  "
@@ -1628,7 +1622,7 @@ define-macro cc-delete
     7 cc-get-file-list 0 0 #l2
     9 cc-cleartool 3 $buffer-fname
     !if &seq $buffer-fname ""
-    !elif &bmod "dir"
+    !elif &band $buffer-fmod 0x10000
         !if &lget .cc-init.values9 3
             dirlst-refresh
         !endif
@@ -1754,7 +1748,7 @@ define-macro cc-merge
         13 cc-cleartool 3 $buffer-fname
     !endif
     !if &seq $buffer-fname ""
-    !elif &and &bmod "dir" &lget .cc-init.values13 6
+    !elif &and &band $buffer-fmod 0x10000 &lget .cc-init.values13 6
         dirlst-refresh
     !endif
 !emacro
