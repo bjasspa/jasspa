@@ -62,7 +62,7 @@
                     !endif
                     set-variable #l4 &bmod "edit"
                     !force 1 buffer-mode "edit" "y"
-                    !force !force -1 insert-file $buffer-fname :watch-size &sub #l2 :watch-size
+                    !force !force 4 insert-file $buffer-fname 0 :watch-size &sub #l2 :watch-size
                     !if &and #l6 &sub $window-line #l6
                         set-variable $window-line #l6
                         backward-delete-char
