@@ -51,11 +51,6 @@ define-macro-file collapse collapse-current collapse-all beginning-of-function e
     !elif &sin "X" #l1
         -1 buffer-mode "time"
     !endif
-    !if &sin "a" #l1
-        1 buffer-mode "auto"
-    !elif &sin "A" #l1
-        -1 buffer-mode "auto"
-    !endif
     !if &sin "k" #l1
         1 buffer-mode "backup"
     !elif &sin "K" #l1
