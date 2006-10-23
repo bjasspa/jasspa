@@ -11,9 +11,9 @@ set-variable %met-level   6
 
 0 define-macro bhook-metris
     ; Turn off the cursor, menu, scroll bars and toolbar.
-    -1 show-cursor
+    !force set-variable :scroll-bar $scroll-bar
+    !force -1 show-cursor
     !force osd -1 0
-    set-variable :scroll-bar $scroll-bar
     set-variable $scroll-bar 0
     !if .Metris.toolbar
         ; note - we cannot open/close the toolbar directly as this changes the window layout which must not be done in an bhook
@@ -23,11 +23,11 @@ set-variable %met-level   6
         !endif
     !endif
     ; restore metris
-    !if &not &bmod "usr3"
+    !if &not &band 4 :mmode
         !return
     !endif
     1 met-redraw
-    !if &bmod "usr1"
+    !if &band 1 :mmode
         !return
     !endif
     met-down
@@ -35,8 +35,8 @@ set-variable %met-level   6
 
 0 define-macro ehook-metris
     ; Turn on the cursor & restore menu, scroll bars and toolbar
-    1 show-cursor
-    set-variable $scroll-bar :scroll-bar
+    !force set-variable $scroll-bar :scroll-bar
+    !force 1 show-cursor
     !force osd -1 1
     !if .Metris.toolbar
         ; note - we cannot open/close the toolbar directly as this changes the window layout which must not be done in an ehook
@@ -305,7 +305,7 @@ set-variable %met-level   6
         !return
     !endif
     !if &gre :met-score %met-hiscore
-        -1 buffer-mode "usr3"
+        set-variable :mmode 1
         set-variable #l0 &spr "%d by %s" :met-score $user-name
         find-file %met-file
         beginning-of-buffer
@@ -323,20 +323,19 @@ set-variable %met-level   6
         1 met-redraw
         set-variable %met-hiscore #l0
         65 screen-poke 20 32 .scheme.met-back "NEW HI-SCORE!!"
-        1 buffer-mode "usr3"
     !else
         1 met-redraw
     !endif
     65 screen-poke 20 30 .scheme.met-back "GAME OVER SUCKER!!"
     ; set time to 0 so j,k,l and drop don't work!
-    1 buffer-mode "usr1"
+    set-variable :mmode 5
 !emacro
 
 0 define-macro met-down
     !if &not &seq $buffer-bname "*metris*"
         !return
     !endif
-    !if &bmod "usr1"
+    !if &band 1 :mmode
         !return
     !endif
     set-variable :met-cpd &add :met-cpd 1
@@ -452,7 +451,7 @@ set-variable %met-level   6
 !emacro
 
 0 define-macro met-left
-    !if &bmod "usr1"
+    !if &band 1 :mmode
         !return
     !endif
     set-variable :met-cpw &sub :met-cpw 1
@@ -467,7 +466,7 @@ set-variable %met-level   6
 !emacro
 
 0 define-macro met-right
-    !if &bmod "usr1"
+    !if &band 1 :mmode
         !return
     !endif
     set-variable :met-cpw &add :met-cpw 1
@@ -482,7 +481,7 @@ set-variable %met-level   6
 !emacro
 
 0 define-macro met-rot
-    !if &bmod "usr1"
+    !if &band 1 :mmode
         !return
     !endif
     set-variable :met-tp1 :met-p1
@@ -503,7 +502,7 @@ set-variable %met-level   6
 !emacro
 
 0 define-macro met-drop
-    !if &bmod "usr1"
+    !if &band 1 :mmode
         !return
     !endif
     met-delcur
@@ -522,15 +521,15 @@ set-variable %met-level   6
     !if &not &equ @# 1
         !return
     !endif
-    !if &bmod "usr2"
-        !return
-    !endif
     beginning-of-buffer
     screen-update
     met-print-hiscore
     met-print-score
     met-print-time
     met-print-level
+    !if &band 2 :mmode
+        !return
+    !endif
     set-variable #g0 :met-depth
     !repeat
         set-variable #g0 &sub #g0 1
@@ -544,18 +543,16 @@ set-variable %met-level   6
 !emacro
 
 0 define-macro met-pause
-    !if &bmod "usr1"
-        !if &bmod "usr2"
-            -1 buffer-mode "usr1"
-            -1 buffer-mode "usr2"
+    !if &band 1 :mmode
+        !if &band 2 :mmode
+            set-variable :mmode &band 4 :mmode
             1 met-redraw
             met-down
         !endif
         !return
     !endif
     screen-update
-    1 buffer-mode "usr1"
-    1 buffer-mode "usr2"
+    set-variable :mmode &bor 3 &band 4 :mmode
 !emacro
 
 0 define-macro met-help
@@ -614,8 +611,6 @@ define-macro Metris
         !force osd -1 0                         ; Turn off the menu.
         set-variable :met-menu $status
     !endif
-    -1 buffer-mode "usr1"
-    -1 buffer-mode "usr2"
     beginning-of-buffer
     delete-other-windows
     set-variable $random 0        ; Set it so we get a new seed
@@ -652,5 +647,5 @@ define-macro Metris
     buffer-bind-create "bo" "esc h" "" met-help
     met-select-piece
     met-new-piece
-  1 buffer-mode "usr3"
+    set-variable :mmode 4
 !emacro
