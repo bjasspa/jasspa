@@ -28,7 +28,7 @@ define-macro replace-all-string
     !endif
     &band @# 1 save-some-buffers @mna
     set-variable #l0 &spr "\"%s\" %s" #l3 #l0
-    1 grep #l0
+    1 xgrep #l0
     !while 1
         !force get-next-line @mna
         !if &not $status
@@ -60,7 +60,7 @@ define-macro query-replace-all-string
     !endif
     &band @# 1 save-some-buffers @mna
     set-variable #l0 &spr "\"%s\" %s" #l3 #l0
-    1 grep #l0
+    1 xgrep #l0
     set-variable #l4 0
     !repeat
         !force get-next-line @mna
