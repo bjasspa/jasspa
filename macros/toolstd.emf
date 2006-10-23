@@ -31,16 +31,12 @@
             !else
                 set-variable $buffer-fmod &bxor $buffer-fmod &lget "|1|2|4|32|" #l1
             !endif
-        !else
+        !elif &not &band $buffer-fmod 0x10000
             ; on the file type
-            !if &bmod "crlf"
-                0 buffer-mode "ctrlz"
-                !if &bmod "ctrlz"
-                    ; dont go to the weird ??? mode
-                    -1 buffer-mode "crlf"
-                !endif
-            !endif
-            0 buffer-mode "crlf"
+            set-variable #l1 &lget "|1|2|3|7|1|" &add 1 &lfind "|1|2|3|7|" &add &add &bmod "cr" &mul 2 &bmod "lf" &mul 4 &bmod "ctrlz"
+            &con &band 1 #l1 1 -1 buffer-mode "cr"
+            &con &band 2 #l1 1 -1 buffer-mode "lf"
+            &con &band 4 #l1 1 -1 buffer-mode "ctrlz"
         !endif
         ; 1 buffer-mode "edit"
         buffer-info-create
@@ -50,8 +46,12 @@
 0 define-macro buffer-info-create
     set-position "\x86"
     set-variable #l0 $buffer-fname
-    set-variable #l2 &lget "|Unx|Win|???|Dos|" &add 1 &add &bmod "crlf" &mul 2 &bmod "ctrlz"
-    set-variable #l2 &cat #l2 &cond &bmod "dir" " d" " -"
+    !if &band $buffer-fmod 0x10000
+        set-variable #l2 "Dir d"
+    !else
+        set-variable #l2 &lget "|?0?|Unx|Mac|Win|?4?|?5?|?6?|Dos|" &add 1 &add &add &bmod "cr" &mul 2 &bmod "lf" &mul 4 &bmod "ctrlz"
+        set-variable #l2 &cat #l2 " -"
+    !endif
     !if &band $system 0x80
         ; unix system
         set-variable #l2 &cat #l2 &cond &band $buffer-fmod 256 "r" "-"  
@@ -80,15 +80,15 @@
         ; a ftp file, &stat 'm' & 's' does not work on these files
     !elif &seq &lef #l0 7 "http://"
         ; a http file, &stat 'm' & 's' does not work on these files
-    !elif &or &not &exi :buffer-info &band @# 0x013
+    !elif &or &not &len &lget :buffer-info 2 &band @# 0x013
         set-variable #l1 &stat "m" $buffer-fname
         set-variable #l1 &spr "%d-%02d-%02d" &lef #l1 4 &mid #l1 7 2 &mid #l1 9 2
         set-variable #l3 &stat "s" $buffer-fname
         set-variable #l3 &cond &les #l3 0 "-" #l3
-        set-variable :buffer-info &spr "|%s|%s|" #l1 #l3
+        set-variable :buffer-info &spr "|%s|%s|%s|" &lget :buffer-info 1 #l1 #l3
     !else
-        set-variable #l1 &lget :buffer-info 1
-        set-variable #l3 &lget :buffer-info 2
+        set-variable #l1 &lget :buffer-info 2
+        set-variable #l3 &lget :buffer-info 3
     !endif
     !if &seq $buffer-fhook ""
         set-variable #l4 "<unknown>"
@@ -124,7 +124,8 @@
 !emacro
 
 0 define-macro buffer-list-create-single
-    !if &nbmod #p9 "del"
+    set-variable #l1 &lget &ind &set #l2 &spr ":%s:buffer-info" #p9 1
+    !if &sin "D" #l1
         set-variable #l4 "D"
     !elif &nbmod #p9 "nact"
         set-variable #l4 " "
@@ -133,14 +134,17 @@
     !else
         set-variable #l4 "@"
     !endif
-    !if &nbmod #p9 "save"
-        set-variable #l4 &cat #l4 "S "
-    !elif &nbmod #p9 "edit"
-        set-variable #l4 &cat #l4 "* "
-    !elif &nbmod #p9 "view"
-        set-variable #l4 &cat #l4 "% "
+    !if &nbmod #p9 "edit"
+        set-variable #l4 &cat #l4 &con &sin "S" #l1 "S " "* "
     !else
-        set-variable #l4 &cat #l4 "  "
+        !if &sin "S" #l1
+            set-variable &ind #l2 &lset &ind #l2 1 &rep #l1 "S" ""
+        !endif
+        !if &nbmod #p9 "view"
+            set-variable #l4 &cat #l4 "% "
+        !else
+            set-variable #l4 &cat #l4 "  "
+        !endif
     !endif
     insert-string &cat #l4 #p9
     insert-newline
@@ -151,20 +155,21 @@
         goto-position "\x82"
         set-variable $buffer-names ".*"
         !while &not &seq &set #l0 $buffer-names ""
-            !if &and &not &nbmod #l0 "hide" &nbmod #l0 "save"
+            !if &sin "S" &lget &ind &spr ":%s:buffer-info" #l0 1
                 find-buffer #l0
                 save-buffer @mna
             !endif
         !done
         set-variable $buffer-names ".*"
         !while &not &seq &set #l0 $buffer-names ""
-            !if &and &nbmod #l0 "nact" &nbmod #l0 "del"
+            !if &not &nbmod #l0 "nact"
+            !elif &sin "D" &lget &ind &spr ":%s:buffer-info" #l0 1
                 delete-buffer #l0 @mna
             !endif
         !done
         set-variable $buffer-names ".*"
         !while &not &seq &set #l0 $buffer-names ""
-            !if &and &not &nbmod #l0 "hide" &nbmod #l0 "del"
+            !if &sin "D" &lget &ind &spr ":%s:buffer-info" #l0 1
                 delete-buffer #l0 @mna
             !endif
         !done
@@ -179,10 +184,17 @@
             set-variable .toolbar-redraw.bn "\CH"
         !endif
     !elif &not @#
-        0 named-buffer-mode #l9 "del"
+        set-variable #l1 "D"
         !jump 3
     !elif &equ @# 1
-        0 named-buffer-mode #l9 "save"
+        set-variable #l1 "S"
+        !if &not &exi &set #l2 &spr ":%s:buffer-info" #l9
+            set-variable &ind #l2 &lset "||" 1 #l1
+        !elif &sin #l1 &set #l3 &lget &ind #l2 1
+            set-variable &ind #l2 &lset &ind #l2 1 &rep #l3 #l1 ""
+        !else
+            set-variable &ind #l2 &lset &ind #l2 1 &cat #l3 #l1
+        !endif
         -1 buffer-mode "view"
         beginning-of-line
         set-mark

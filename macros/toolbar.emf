@@ -182,10 +182,24 @@
         set-variable .bc &bor .bc 0x008
         set-variable .bn $buffer-bname
     !endif
-    !if &bxor &bmod "edit" &bmod "usr8"
-        set-variable .bc &bor .bc 0x010
-        &cond &bmod "edit" 1 -1 buffer-mode "usr8"
-    !elif &not .bc
+    !if &bmod "edit"
+        !if &not &exi :buffer-info
+            set-variable :buffer-info &lset "||" 1 "E"
+            set-variable .bc &bor .bc 0x010
+        !elif &not &sin "E" &lget :buffer-info 1
+            set-variable :buffer-info &lset :buffer-info 1 &cat &lget :buffer-info 1 "E" 
+            set-variable .bc &bor .bc 0x010
+        !endif
+    !else
+        !if &not &exi :buffer-info
+            set-variable :buffer-info "||"
+            set-variable .bc &bor .bc 0x010
+        !elif &sin "E" &lget :buffer-info 1
+            set-variable :buffer-info &lset :buffer-info 1 &rep &lget :buffer-info 1 "E" "" 
+            set-variable .bc &bor .bc 0x010
+        !endif
+    !endif
+    !if &not .bc
         ; no change!
         @# screen-update
         !return
