@@ -15,13 +15,14 @@ include $(TOPDIR)/etc/makeinc
 # Basic macros to release
 #
 # EMFS:sh=ls *.emf
-EMFS=	abbrev.emf	abbrlist.emf	aix.emf		\
+EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
+	abbrev.emf	abbrlist.emf	aix.emf		\
 	benchmrk.emf	bookmark.emf	buffinit.emf	\
 	calc.emf	charset.emf	charsutl.emf	clearcs.emf	\
 	cmacros.emf	collapse.emf	comment.emf	crosswd.emf	\
 	ctags.emf	cvs.emf		cygwin.emf	\
 	darwin.emf	dmf.emf		docmacro.emf	docutl.emf	\
-	dos.emf		dos2unix.emf	draw.emf	\
+	dos.emf		draw.emf	\
 	ehftools.emf	emftags.emf	etfinsrt.emf	\
 	fattrib.emf	favorite.emf	fileopen.emf	filetool.emf	\
 	filetype.emf	find.emf	fold.emf	format.emf	\
@@ -86,8 +87,7 @@ EMFS=	abbrev.emf	abbrlist.emf	aix.emf		\
 	tcltags.emf	textags.emf	toolbar.emf	tooldef.emf	\
 	toollist.emf	tools.emf	toolstd.emf	toolstp.emf	\
 	triangle.emf	\
-	unix2dos.emf	unix2win.emf	unixterm.emf	userstp.emf	\
-	utils.emf	\
+	unixterm.emf	userstp.emf	utils.emf	\
 	vbtags.emf	vm.emf		\
 	watch.emf	win32.emf	word.emf	\
 	zaurus.emf	zfile.emf
