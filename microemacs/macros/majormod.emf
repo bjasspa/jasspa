@@ -10,7 +10,7 @@
 ;
 ;     The following flags are used in the .setup & .setup-mask variables:
 ;
-;         a auto mode
+;         a auto mode - removed from 20061010
 ;         b abbreviation
 ;         d auto indent
 ;         e exact mode
@@ -292,11 +292,11 @@ define-macro major-mode-setup
     .osd.mjrmdstp osd
 !emacro
 set-variable .major-mode-setup.ledit  "|fomark|fcmark|tab-width|indent-width|fill-col|fill-mode|"
-set-variable .major-mode-setup.flags  "|p|o|n|g|h|d|s|f|b|e|m|a|k|i|j|t|x|u|w|"
-set-variable .major-mode-setup.blank  "|0|0|9|0|0|0|0|9|9|2|5|2|4|4|4|4|4|4|13|"
-set-variable .major-mode-setup.labels "|Create Help \HPage|C\Hreate Tools Menu|Insert \HNew Template|Fence Display|Setup \HHilighting|Setup Auto In\Hdent|Setup Auto Spe\Hll|Setup \HFolding|Add A\Hbbreviations|\HExact|\HMagic|Aut\Ho|Bac\Hkup|\HIndent|\HJustify|\HTab|Time|\HUndo|\HWrap|"
-set-variable .major-mode-setup.prefix "||||||||||Search Modes: ||Buffer Modes: ||||||||"
-set-variable .major-mode-setup.modes  "||||||||||exact|magic|auto|backup|indent|justify|tab|time|undo|wrap|"
+set-variable .major-mode-setup.flags  "|p|o|n|g|h|d|s|f|b|e|m|k|i|j|t|x|u|w|"
+set-variable .major-mode-setup.blank  "|0|0|9|0|0|0|0|9|9|2|5|2|4|4|4|4|4|13|"
+set-variable .major-mode-setup.labels "|Create Help \HPage|C\Hreate Tools Menu|Insert \HNew Template|Fence Display|Setup \HHilighting|Setup Auto In\Hdent|Setup Auto Spe\Hll|Setup \HFolding|Add A\Hbbreviations|\HExact|\HMagic|Bac\Hkup|\HIndent|\HJustify|\HTab|Time|\HUndo|\HWrap|"
+set-variable .major-mode-setup.prefix "||||||||||Search Modes: ||Buffer Modes: |||||||"
+set-variable .major-mode-setup.modes  "||||||||||exact|magic|backup|indent|justify|tab|time|undo|wrap|"
 
 ; major-mode-help-add-item <command-name> <narg> <desc>
 ; adds the item to the help page (.osd.tmp) using and incrementing
