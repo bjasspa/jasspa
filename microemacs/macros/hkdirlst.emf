@@ -36,9 +36,63 @@ define-macro fhook-dirlst
         !else
             2 insert-newline
         !endif
-        ; sort-lines so dir's come first
         set-mark
-        end-of-buffer
+        !while &not &seq @wc ""
+            !if &xseq @wl "\\([\\l-]+\\) +\\d+ \\(\\S+\\) +\\(\\S+\\) +\\(\\d+\\) \\(\\a\\a\\a\\) +\\(\\d\\d?\\) +\\(\\d\\d\\d\\d\\|\\d\\d:\\d\\d\\) +\\(.*\\)$"
+                !if &gre &len &set #l0 @s4 7
+                    set-variable #l0 &div #l0 1024
+                    set-variable #l1 "K"
+                !else
+                    set-variable #l1 " "
+                !endif
+                !if &gre &len @s2 8
+                    set-variable #l2 &cat &lef @s2 8 "."
+                !else
+                    set-variable #l2 &spr "%s%n" @s2 &sub 9 &len @s2 " "
+                !endif
+                set-variable #l0 &spr "%s %s%s%n %7d%s" @s1 #l2 &lef @s3 8 &sub 8 &len @s3 " " #l0 #l1
+                !if &sin ":" @s7
+                    set-variable #l2 &lef $time 4
+                    set-variable #l3 @s7
+                !else
+                    set-variable #l2 @s7
+                    set-variable #l3 "00:00"
+                !endif
+                !if &not &set #l1 &lfi "|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|" &slo @s5
+                    set-variable @wl &spr "%s %s  %s %2d %s:00 %s" #l0 &rig -2 #l2 @s5 @s6 #l3 @s8
+                !else
+                    set-variable @wl &spr "%s %s/%02d/%02d %s:00 %s" #l0 #l2 #l1 @s6 #l3 @s8
+                !endif
+            !elif &xseq @wl "\\(\\d\\d\\)-\\(\\d\\d\\)-\\(\\d\\d\\) +\\(\\d\\d\\):\\(\\d\\d\\)\\([aApP][mM]\\) +\\(\\d+\\|<DIR>\\) +\\(.*\\)$"
+                !if &seq @s7 "<DIR>"
+                    set-variable #l2 "d---------"
+                    set-variable #l0 0
+                    set-variable #l1 " "
+                !else
+                    set-variable #l2 "----------"
+                    !if &gre &len &set #l0 @s7 7
+                        set-variable #l0 &div #l0 1024
+                        set-variable #l1 "K"
+                    !else
+                        set-variable #l1 " "
+                    !endif
+                !endif
+                !if &gre &set #l3 &cat "20" @s3 2070
+                    set-variable #l3 &cat "19" @s3
+                !endif
+                set-variable #l4 &sub &cat "1" @s4 100
+                !if &ise @s6 "pm"
+                    !if &les #l4 12
+                        set-variable #l4 &add #l4 12
+                    !endif
+                !elif &equ #l4 12
+                    set-variable #l4 0
+                !endif
+                set-variable @wl &spr "%s -        -        %7d%s %s/%s/%s %02d:%s:00 %s" #l2 #l0 #l1 #l3 @s1 @s2 #l4 @s5 @s8
+            !endif
+            forward-line
+        !done
+        ; sort-lines so dir's come first
         sort-lines
         goto-line 4
         !force search-forward "^d"
@@ -76,11 +130,11 @@ define-macro fhook-dirlst
             goto-line 4
             !force search-buffer "em" " \\.\\./$"
             !if &not $status
-                insert-string &spr " d---------%n-            - ../\n" &sub :fmpf 26 " "
+                insert-string &spr " d---------%n-                    - ../\n" &sub :fmpf 34 " "
             !endif
         !endif
         goto-line 4
-        insert-string &spr " Attr%nSize     Modified Name  <Order by Extension>\n" &sub :fmpf 23 " "
+        insert-string &spr " Attr%nSize             Modified Name  <Order by Extension>\n" &sub :fmpf 31 " "
         backward-word
         ; current sort column supported in ftp dir-listings?
         !if &band 1 &lget .fhook-dirlst.col-flag &lget .fhook-dirlst.sort 1
@@ -137,8 +191,8 @@ set-variable .fhook-dirlst.command-desc  "|Swap Browser \HWindows|Close File Bro
 
 set-variable .fhook-dirlst.modefunc-lbl "|Not-Filtered|Filtered|"
 set-variable .fhook-dirlst.modefunc-cmd "|file-browser-set-filter|file-browser-set-filter|"
-set-variable .fhook-dirlst.col-name "| |Attr|    Size|           Modified|Name|<Order by Extension>|"
-set-variable .fhook-dirlst.col-flag "|20|4|18|17|0|8|"
+set-variable .fhook-dirlst.col-name "| |Attr|   Size|           Modified|Name|<Order by Extension>|"
+set-variable .fhook-dirlst.col-flag "|20|4|18|16|0|8|"
 set-variable .fhook-dirlst.sort     "|5|0|"
 set-variable .fhook-dirlst.browser-lock 0
 set-variable .fhook-dirlst.mode &cond &sin "l" .fhook-dirlst.setup "|0|1|" "|0|0|"
@@ -440,7 +494,7 @@ define-macro file-browser-swap-buffers
 ; 0x01 - report errors,  0x02 - directories supported,  0x04 - ../ supported,  0x08 - hilight the line
 0 define-macro dirlst-get-filename
     set-variable .find-file.file-count 0
-    !if &or &les $window-line 5 &les &len @wl :fmpf
+    !if &or &or &les $window-line 5 &les &len @wl :fmpf &not &sin &lef @wl 1 " *" 
         !if &band @# 1
             ml-write "[Error: Invalid line]"
         !endif
@@ -719,16 +773,17 @@ define-macro file-browser-swap-buffers
 !emacro
 0 define-macro dirlst-sort-list-add-ext
     5 goto-line
-    !if &seq &rig @wl :fmpf "../"
-        forward-line
-    !endif
     !while &not &seq @wc ""
-        set-variable #l1 " "
-        !if &xseq @wl  ".*[ .]\\([^. ]*\\)"
-            set-variable #l1 &cat @s1 #l1
+        !if &seq &rig @wl :fmpf "../"
+        !elif &sin @wc " *"
+            set-variable #l1 " "
+            !if &xseq @wl  ".*[ .]\\([^. ]*\\)"
+                set-variable #l1 &cat @s1 #l1
+            !endif
+            set-variable $window-col :fmpf
+            insert-string #l1
+            beginning-of-line
         !endif
-        set-variable $window-col :fmpf
-        insert-string #l1
         forward-line
     !done
 !emacro
@@ -736,10 +791,14 @@ define-macro file-browser-swap-buffers
     5 goto-line
     set-variable #l0 :fmpf
     !while &not &seq @wc ""
-        set-variable $window-col :fmpf
-        set-variable #l1 &sin " " &rig @wl :fmpf
-        #l1 forward-delete-char
-        -1 yank
+        !if &seq &rig @wl :fmpf "../"
+        !elif &sin @wc " *"
+            set-variable $window-col :fmpf
+            set-variable #l1 &sin " " &rig @wl :fmpf
+            #l1 forward-delete-char
+            -1 yank
+            beginning-of-line
+        !endif
         forward-line
     !done
 !emacro
@@ -764,7 +823,7 @@ define-macro file-browser-swap-buffers
     set-variable #l3 &lget .fhook-dirlst.col-name @#
     end-of-buffer
     backward-line
-    !tjump &band $line-flags 0x20 -1
+    !tjump &not &sin @wc " *" -1
     set-variable #l7 &add $window-line 1
     4 goto-line
     set-variable #l4 &sub &sin #l3 @wl 1
@@ -782,7 +841,7 @@ define-macro file-browser-swap-buffers
         forward-line
     !endif
     set-mark
-    !force search-buffer "em" "^[ *][^d]"
+    !force search-buffer "em" "^[ *]-"
     !if &not $status
         set-variable $window-line #l7
     !endif
@@ -840,8 +899,7 @@ define-macro file-browser-swap-buffers
     set-variable #l4 #l0
     set-variable #l5 &cond &band @# 8 $window-eline 0
     !while &not &seq @wc ""
-        !if &band $line-flags 0x20
-        !elif &seq @wc "*"
+        !if &seq @wc "*"
             set-variable #l2 &rig @wl :fmpf
             !if &sin " -> " #l2
                 set-variable #l2 &lef #l2 &sub &sin " -> " #l2 1
@@ -882,7 +940,7 @@ define-macro file-browser-swap-buffers
 0 define-macro dirlst-tag-toggle
     !if &or &les $window-line 5 &les &len @wl :fmpf
         !jump 2
-    !elif &band $line-flags 0x20
+    !elif &not &sin &lef &cat @wl "X" 1 " *"
         !jump 2
     !elif &seq &rig @wl :fmpf "../"
         !if &seq @p ""
@@ -921,13 +979,13 @@ define-macro file-browser-swap-buffers
 0 define-macro dirlst-tag-set
     set-variable #l0 $window-line
     set-variable #l1 &cond &les @# 0 " " "*"
+    set-variable #l2 &cond &les @# 0 "*" " "
     set-variable $window-line 5
     -1 buffer-mode "view"
     1 buffer-mode "edit" "y"
     !while &not &seq @wc ""
         !if &seq &rig @wl :fmpf "../"
-        !elif &band $line-flags 0x20
-        !elif &not &seq @wc #l1
+        !elif &seq @wc #l2
             insert-string #l1
             forward-delete-char
             set-variable :tag-count &add :tag-count @#
@@ -947,8 +1005,7 @@ define-macro file-browser-swap-buffers
     1 buffer-mode "edit" "y"
     !while &not &seq @wc ""
         !if &seq &rig @wl :fmpf "../"
-        !elif &band $line-flags 0x20
-        !else
+        !elif &sin @wc " *"
             insert-string &cond &seq @wc " " "*" " "
             forward-delete-char
             set-variable :tag-count &add :tag-count &cond &seq @wc " " 1 -1
@@ -970,18 +1027,19 @@ define-macro file-browser-swap-buffers
     set-variable .last #l0
     filemask-to-regex #l0
     set-variable #l0 &spr "^.\\{%d\\}\\(%s\\)\\( -> .*\\)?$" :fmpf &rep #l0 "|" "\\|"
+    set-variable @#  &cond &les @# 0 -1 1
     set-variable #l1 &cond &les @# 0 " " "*"
-    set-variable #l2 &cond &band $system 0x100 "mE" "me"
+    set-variable #l2 &cond &les @# 0 "*" " "
+    set-variable #l3 &cond &band $system 0x100 "mE" "me"
     set-variable #l9 $window-line
     set-variable $window-line 5
     -1 buffer-mode "view"
     1 buffer-mode "edit" "y"
     !repeat
-        !force search-buffer #l2 #l0
+        !force search-buffer #l3 #l0
         !if &not $status
-        !elif &band $line-flags 0x20
         !elif &seq &rig @wl :fmpf "../"
-        !elif &not &seq &lef @w1 1 #l1
+        !elif &seq &lef @wl 1 #l2
             beginning-of-line
             set-variable @wc #l1
             set-variable :tag-count &add :tag-count @#
@@ -1608,11 +1666,11 @@ osd .osd.dirlst 160 ""  "File Tools Setup"      f file-tool-setup
     !endif
     osd .osd.dirlst  56 "D"
     !if &equ :tag-count 2
-        osd .osd.dirlst  55 ""  "Compare Files"   2 dirlst-cmp-files
+        osd .osd.dirlst  55 ""  "C\Hompare Files"   2 dirlst-cmp-files
     !elif &or &equ :tag-count 1 &and &not :tag-count #l0
-        osd .osd.dirlst  55 ""  "Select for Compare" 0 dirlst-cmp-files
+        osd .osd.dirlst  55 ""  "Select for C\Hompare" 0 dirlst-cmp-files
         !if &exi .dirlst-cmp-files.f1
-            osd .osd.dirlst  56 "" &cat "Compare with " &rig .dirlst-cmp-files.f1 &rsin "/" &lef .dirlst-cmp-files.f1 -1 1 dirlst-cmp-files
+            osd .osd.dirlst  56 "" &cat "Compare \HWith " &rig .dirlst-cmp-files.f1 &rsin "/" &lef .dirlst-cmp-files.f1 -1 1 dirlst-cmp-files
         !endif
     !else
         osd .osd.dirlst  55 "D"
@@ -1674,7 +1732,7 @@ osd .osd.dirlst 160 ""  "File Tools Setup"      f file-tool-setup
     !endif
     ; what type of buffer is the destination buffer?
     goto-position "\x83"
-    !if &bmod "dir"
+    !if &band $buffer-fmod 0x10000
         ; a directory listing - copy or move the files
         set-variable #l1 $buffer-fname
     !elif &seq #l0 "*directory*"
@@ -1830,8 +1888,7 @@ osd .osd.dirlst 160 ""  "File Tools Setup"      f file-tool-setup
         !endif
     !elif &and &not :fmpt &equ :fmpl $window-line
         !if &seq @wc "\n"
-        !elif &band $line-flags 0x20
-        !else
+        !elif &sin &lef &cat @wl "X" 1 " *"
             5 dirlst-find-file
         !endif
     !endif
