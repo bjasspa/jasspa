@@ -48,8 +48,13 @@
 !endif
 
 ; Local macro to allow the next line to be selected when the <return> key is
-; pressed on an error line. 
+; pressed on an line or the mouse. 
 0 define-macro return-get-next-line
+    !force backward-line
+    get-next-line
+!emacro
+0 define-macro mouse-get-next-line
+    set-cursor-to-mouse
     !force backward-line
     get-next-line
 !emacro
@@ -388,22 +393,19 @@
 !emacro 
 
 0 define-macro ipipe-mode
-    -1 buffer-mode "usr2"
-    -1 buffer-mode "usr3"
-    -1 buffer-mode "usr4"
     !if &not @?
-        set-variable @# &con &seq $buffer-input "" 1 2
+        set-variable :imode &mod &add :imode 1 3
+    !else
+        set-variable :imode @#
     !endif
-    !if &equ @# 1
+    !if &equ :imode 1
         set-variable $buffer-input ipipe-output
         1 buffer-mode "lock"
-        1 buffer-mode "usr3"
         goto-alpha-mark "I"
         ml-write "[Input mode set to semi-immersion - f3 to change]"
-    !elif &equ @# 2
+    !elif &equ :imode 2
         set-variable $buffer-input ""
         1 buffer-mode "lock"
-        1 buffer-mode "usr4"
         goto-alpha-mark "I"
         ml-write "[Input mode set to full-immersion - f3 to change]"
         !repeat
@@ -421,7 +423,6 @@
     !else
         set-variable $buffer-input ""
         -1 buffer-mode "lock"
-        1 buffer-mode "usr2"
         ml-write "[Input mode set to browse - f3 to change]"
     !endif
 !emacro
@@ -433,7 +434,7 @@
         set-variable $buffer-ipipe ""
         !force buffer-unbind-key &kbin "" ipipe-mode
     !endif
-    !if &bmo "usr4"
+    !if &equ :imode 2
         2 screen-update
     !endif
 !emacro
