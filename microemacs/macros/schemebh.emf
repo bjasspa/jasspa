@@ -82,9 +82,9 @@ add-color-scheme .scheme.bold-italic-under .col1 .col22 .col1 .col21 .col1 .col2
 add-color-scheme .scheme.spell-error .col2 .col22 .col2 .col21 .col2 .col23 .col2 .col23 0 8 0 8 0 8 0 8
 ; Directory Listings
 add-color-scheme .scheme.file .col5 .col22 .col5 .col21 .col5 .col23 .col5 .col23 0 8 0 8 0 8 0 8
-add-color-scheme .scheme.select .col18 .col22 .col18 .col21 .col5 .col23 .col5 .col23 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.select .col3 .col22 .col3 .col21 .col3 .col23 .col3 .col23 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.dir .col17 .col22 .col17 .col21 .col17 .col23 .col17 .col23 0 8 0 8 0 8 0 8
-add-color-scheme .scheme.dir-select .col17 .col22 .col17 .col21 .col17 .col23 .col17 .col23 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.dir-select .col3 .col22 .col3 .col21 .col3 .col23 .col3 .col23 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.dir-slink .col9 .col22 .col9 .col21 .col9 .col23 .col9 .col23 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.dir-tree .col24 .col22 .col24 .col21 .col24 .col23 .col24 .col23 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.dir-open .col0 .col8 .col0 .col8 .col0 .col8 .col0 .col8 0 8 0 8 0 8 0 8
