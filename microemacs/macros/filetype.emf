@@ -9,17 +9,33 @@
 ; Usage:
 ;     me "@filetype" <files>
 ;
-1 global-mode "auto"
 define-macro start-up
     delete-other-windows
     !while &not &seq $buffer-bname "*scratch*"
-        set-variable #l1 &rig $buffer-fname &sub &len $buffer-fname 59 
+        set-variable #l1 &rig $buffer-fname -59 
         ml-write &spr "Processing [%s]" #l1
         ; what type of file is it
-        set-variable #l0 &add &cond &bmod "crlf" 2 0 &cond &bmod "ctrlz" 2 1
-        find-buffer "*scratch*"
-        insert-string &spr "%s%n%s\n" #l1 &sub 60 &len #l1 " " &lget "|Unix|Strange|Windows|Dos|" #l0 
-        -1 find-buffer "*scratch*"
+        !if &band $buffer-fmod 0x10000
+            set-variable #l0 "Directory"
+        !elif &band $buffer-fmod 0x80000
+            set-variable #l0 "Binary"
+        !else
+            set-variable #l0 &add 1 &add &add &bmod "cr" &mul &bmod "lf" 2 &mul &bmod "ctrlz" 4
+            set-variable #l0 &lget "|Strange0|Unix|Mac|Windows|Strange4|Strange5|Strange6|Dos|" #l0
+            !if &band $buffer-fmod 0x100000
+                set-variable #l0 &cat #l0 " (bad)"
+            !endif
+        !endif
+        !if &band $system 0x1000000
+            -1 ml-write &spr "%s%n%s" #l1 &sub 60 &len #l1 " " #l0
+        !else
+            find-buffer "*scratch*"
+            insert-string &spr "%s%n%s\n" #l1 &sub 60 &len #l1 " " #l0
+            -1 find-buffer "*scratch*"
+        !endif
         delete-buffer $buffer-bname
     !done
+    !if &band $system 0x1000000
+        0 quick-exit
+    !endif
 !emacro
