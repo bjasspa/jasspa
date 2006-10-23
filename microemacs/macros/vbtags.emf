@@ -105,7 +105,7 @@ define-macro vbtags-process-buffers
         !if &iseq #l1 "tags"
             !return
         !elif &lfind %tag-ignore #l1
-        !elif &bmod "dir"
+        !elif &band $buffer-fmod 0x10000
             set-variable #l2 $buffer-fname
             set-variable #l3 0
             !while &not &seq &set #l4 &lget %tag-filemask &inc #l3 1 ""
