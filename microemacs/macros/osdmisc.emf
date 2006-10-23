@@ -199,14 +199,17 @@ osd .osd.buffstp 290 ""
 osd .osd.buffstp 300 "f"  "  Buffer Modes:"
 osd .osd.buffstp 301 "fh"  "  "
 set-variable #l0 0
-!while &not &seq "" &set #l1 &lget "\bAutoSv\bBackup\bCrLf\bCrypt\bCtrlZ\bEdit\bExact\bIndent\bJustify\bMagic\bOver\bTab\bTime\bUndo\bView\bWrap\b" &inc #l0 1
+!while &not &seq "" &set #l1 &lget "\bAutoSv\bBackup\bCr\bCrypt\bCtrlZ\bEdit\bExact\bIndent\bJustify\bLf\bMagic\bOver\bTab\bTime\bUndo\bView\bWrap\b" &inc #l0 1
     osd .osd.buffstp &add 300 &mul #l0 3 "Cptfhx" &spr "%s\} %s%n" .osd.checkbox-chars #l1 &sub 9 &len #l1 " " &add 128 #l0 buffer-setup-exec
     !if &not &mod #l0 4
         osd .osd.buffstp &add 301 &mul #l0 3 "f"  "  "
         osd .osd.buffstp &add 302 &mul #l0 3 "fh"  "  "
     !endif
 !done
-osd .osd.buffstp 500 ""
+!if &mod &sub #l0 1 4
+    osd .osd.buffstp 500 "f"  "  "
+!endif
+osd .osd.buffstp 501 ""
 osd .osd.buffstp 510 "BtcfHh" .scheme.osd-ebtt " \HOkay "  f void
 define-macro buffer-setup
     buffer-setup-ms
