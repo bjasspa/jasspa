@@ -46,14 +46,12 @@
 ; Add A-f4 as an exit binding
 global-bind-key save-buffers-exit-emacs "A-f4"
 ;
-; Setup the get-next-line stuff including grep and compiling
+; Setup the get-next-line stuff for grep and compiling
 ;
 set-variable $line-template "[0-9]+"
 set-variable $file-template "[a-zA-Z]?:?[-0-9a-zA-Z\\\\/_.~]+"
-set-variable %grep-com "grep -n"
-0 add-next-line "*grep*"
+set-variable %xgrep-com "grep -n"
 add-next-line "*grep*" "%f: %l:"
-add-next-line "*grep*" "%f:%l:"
 ; These definitions are for the Microsoft MSCV 2.0+ compiler
 set-variable %compile-com "nmake "
 0 add-next-line "*compile*"

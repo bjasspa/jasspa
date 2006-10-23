@@ -32,10 +32,9 @@ reset-def
 ; setup the next-error stuff including grep and compiling
 set-variable $line-template "[0-9]+"
 set-variable $file-template "[a-zA-Z:]*[0-9a-zA-Z\\\\/_.]+"
-set-variable %grep-com "grep /n"
-0 add-next-line "*grep*"
+set-variable %xgrep-com "grep /n"
+; These definitions are for dos grep & djgpp gcc compiler
 add-next-line "*grep*" "%f: %l:"
-; These definitions are for djgpp gcc compiler
 0 add-next-line "*compile*"
 add-next-line "*compile*" "%f(%l): Error"
 add-next-line "*compile*" "%f(%l): Warn"
