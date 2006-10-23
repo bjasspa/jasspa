@@ -30,9 +30,7 @@ set-variable $line-template "[0-9]+"
 set-variable $file-template "[!-9;-z~]+"
 set-variable %ipipe-term "TERM=vt100-nam"
 ; Grep stuff
-set-variable %grep-com "grep -n"
-0 add-next-line "*grep*"
-add-next-line "*grep*" "%f:%l:"
+set-variable %xgrep-com "grep -n"
 ; RCS stuff
 set-variable $rcs-file     "RCS/%f,v"
 set-variable $rcs-co-com   "co %f"
