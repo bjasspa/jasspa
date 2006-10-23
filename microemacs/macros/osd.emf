@@ -368,6 +368,7 @@ osd 3 50  ""  "Find \HNext            C-x h"     f hunt-forward
 osd 3 60  ""  "Find \HPrev            C-x C-h"   f hunt-backward
 osd 3 70  ""  "\HReplace...           esc C-r"   2 osd-search
 osd 3 80  "-"
+osd 3 85  ""  "Fin\Hd Files"                     f find
 osd 3 90  ""  "Find \Hin Files"                  f grep
 osd 3 100 ""  "R\Heplace in Files"               f query-replace-all-string
 osd 3 110 "-"
