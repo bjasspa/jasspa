@@ -79,8 +79,8 @@ set-variable #l0 0
     hilight .hilight.cvsstt 0x102 "[ *]R" .scheme.no1
     hilight .hilight.cvsstt 0x102 "[ *]U" .scheme.prepro
     hilight .hilight.cvsstt 0x102 " A  Name" .scheme.header
-    hilight .hilight.cvsstt 0x102 "\\*\\*\\*\\*\\*CVS exited with code 0" .scheme.no1
-    hilight .hilight.cvsstt 0x102 "\\*\\*\\*\\*\\*CVS exited"             .scheme.error
+    hilight .hilight.cvsstt 0x102 "\\[\\*\\*\\*\\* CVS exited with code 0" .scheme.no1
+    hilight .hilight.cvsstt 0x102 "\\[\\*\\*\\*\\* CVS exited"             .scheme.error
     set-variable .cvs.schemes &lset .cvs.schemes &lfind .cvs.names "State" .hilight.cvsstt
     
     !if &not &exi .hilight.diff
@@ -89,8 +89,8 @@ set-variable #l0 0
     set-variable .cvs.schemes &lset .cvs.schemes &lfind .cvs.names "Diff" .hilight.diff
     
     0 hilight .hilight.cvscon 2 100 $global-scheme
-    hilight .hilight.cvscon 0x102 "\\*\\*\\*\\*\\*CVS exited with code 0" .scheme.no1
-    hilight .hilight.cvscon 0x102 "\\*\\*\\*\\*\\*CVS exited"             .scheme.error
+    hilight .hilight.cvscon 0x102 "\\[\\*\\*\\*\\* CVS exited with code 0" .scheme.no1
+    hilight .hilight.cvscon 0x102 "\\[\\*\\*\\*\\* CVS exited"             .scheme.error
     
     ; fix the *files* buffer hilighting for cvs additions
     hilight .hilight.dirlst 0x012 "[0-9][0-9]:[0-9][0-9] [0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9] [0-9][0-9]:[0-9][0-9] \\{" .scheme.file
@@ -598,14 +598,6 @@ define-macro cvs-log-list
     beginning-of-buffer
     !force replace-string "^[?ACLMPRU] " " \\0 "
     end-of-buffer
-    !if &not @#
-        backward-line
-        !if &seq &lef @wl 15 "*****CVS exited"
-            set-variable $line-flags &bor $line-flags 0x20
-            backward-line
-            set-variable $line-flags &bor $line-flags 0x20
-        !endif
-    !endif
     !force search-backward "^cvs \\(update\\|server\\): warning: \\(.+\\) was lost"
     !while $status
         set-variable #l1 @s2
@@ -667,7 +659,7 @@ define-macro cvs-log-list
         set-mark
         end-of-line
         -1 kill-region
-        insert-string &spr "\n*****CVS exited with code %s*****" #l2
+        insert-string &spr "\n[**** CVS exited with code %s ****]" #l2
         beginning-of-line
     !endif
     !if &seq $buffer-bname "*cvs-state*"
@@ -1015,7 +1007,7 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
         !abort
     !endif
     !force unset-variable .cvs.refresh
-    !if &bmod "dir"
+    !if &band $buffer-fmod 0x10000
         set-variable #l9 1
         !if &lfind "|11|3|1|7|2|" @#
             ; if update, commit remove or add then refresh or drop tags
@@ -1342,7 +1334,7 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
     !force popup-window #l6
     !if &not &equ #l2 4
         end-of-buffer
-        insert-string &spr "\n*****CVS exited with code %d*****" #l7
+        insert-string &spr "\n[**** CVS exited with code %d ****]" #l7
         cvs-exec-cmd-complete
         -1 recenter
     !endif
