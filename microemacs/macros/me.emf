@@ -21,7 +21,7 @@
 ; Authors:     Steven Phillips & Jon Green
 ;
 ; Is this macro release compatible with the binary?
-!if &les $version "20060909"
+!if &les $version "20061010"
     5000 ml-write "[Warning: The MicroEmacs executable is not compatible with this macro release]"
 !endif
 ; If <$user-name>.erf registry file isn't found then this is a new user
@@ -47,7 +47,7 @@
 define-macro-file clearcs cc-state cc-update cc-checkout cc-checkin cc-add cc-diff cc-uncheckout cc-annotate cc-describe cc-delete cc-move cc-merge cc-vtree cc-explorer cc-add-view cc-setup
 define-macro-file cvs cvs cvs-setup cvs-add cvs-annotate cvs-checkout cvs-commit cvs-diff cvs-gdiff cvs-log cvs-remove cvs-resolve-conflicts cvs-state cvs-status cvs-tag cvs-update
 define-macro-file format clean sort-lines-ignore-case normal-tab tabs-to-spaces paragraph-to-line delete-indentation restyle-region restyle-buffer ifill-paragraph indent-increase indent-decrease
-define-macro-file tools compile grep rgrep which diff rdiff xdiff diff-changes execute-tool uniq find-bfile find-cfile reread-file reread-all
+define-macro-file tools compile which diff rdiff xdiff diff-changes execute-tool uniq find-bfile find-cfile reread-file reread-all
 define-macro-file misc save-all open-line check-line-length time compare-windows-exact display-whitespaces write-region
 define-macro-file osdmisc insert-symbol buffer-setup alarm browse alias-path-setup file-type-setup shell-tool-setup
 define-macro-file abbrev expand-abbrev-handle expand-iso-accents expand-look-back expand-word iso-accents-mode
@@ -73,6 +73,7 @@ define-macro-file zfile find-zfile zfile-setup
 define-macro-file gentags generate-tags-file
 define-macro-file dmf display-matching-fence
 define-macro-file etfinsrt insert-template
+define-macro-file xfind xfind xgrep rgrep
 define-macro-file schemosd scheme-editor
 define-macro-file mouseosd context-menu
 define-macro-file printstp print-setup
@@ -82,11 +83,11 @@ define-macro-file organize organizer
 define-macro-file userstp user-setup
 define-macro-file word describe-word
 define-macro-file vm vm mail-setup
+define-macro-file find find grep
 define-macro-file watch
 define-macro-file gdiff
 define-macro-file calc
 define-macro-file draw
-define-macro-file find
 define-macro-file ftp
 
 ; More useful than execute-file - helps in fixing problems.
@@ -188,11 +189,9 @@ ml-bind-key     tab                      "esc esc"
 !endif
 ;
 ; Setup modes
-&cond &reg "/history/auto"   "1" 1 -1 global-mode "auto"
 &cond &reg "/history/backup" "1" 1 -1 global-mode "backup"
 &cond &reg "/history/exact"  "1" 1 -1 global-mode "exact"
 &cond &reg "/history/magic"  "1" 1 -1 global-mode "magic"
-&cond &reg "/history/quiet"  "1" 1 -1 global-mode "quiet"
 &cond &reg "/history/tab"    "1" 1 -1 global-mode "tab"
 &cond &reg "/history/undo"   "1" 1 -1 global-mode "undo"
 &cond &gre &set #l0 &reg "/history/autosv" "300" "0" 1 -1 global-mode "autosv"
@@ -200,6 +199,7 @@ ml-bind-key     tab                      "esc esc"
     set-variable $auto-time #l0
 !endif
 ; Setup variables
+set-variable $quiet         &reg "/history/quiet" "1"
 set-variable $mode-line     "%s%r%u%k %b %l - %h:%m %Y/%M/%D (%e) - (%f) "
 set-variable $kept-versions &reg &spr "/history/%s/kept-vers" $platform "0"
 set-variable $file-ignore   &reg &spr "/history/%s/file-ignore" $platform ""
@@ -344,10 +344,12 @@ osd 0 90 "Mdfsr" " \HHelp "      9
 !if &band $mouse 0x10
     !force exec-file "mouse"
 !endif
-; setup the toolbar
+; setup the toolbar & grep
 !if &reg &spr "/history/%s/toolbar" %platform "0"
     toolbar-open
 !endif
+0 add-next-line "*grep*"
+add-next-line "*grep*" "%f:%l:"
 ; load in the platform specific stuff if found
 !force exec-file $platform
 ; execute any emulation file, e.g. Emacs etc
