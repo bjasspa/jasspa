@@ -918,20 +918,48 @@ ffFtpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByt
     }
     if(rwflag & meRWFLAG_STAT)
     {
-        evalResult[1] = '\0' ;
+        ss = evalResult ;
         if(ftpCommand(0,"CWD %s",file) == ftpPOS_COMPLETE)
+        {
             /* this is a directory */
-            evalResult[0] = 'D' ;
+            *ss++ = 'D' ;
+            *ss++ = '|' ;
+        }
         else if(ftpCommand(0,"SIZE %s",file) == ftpPOS_COMPLETE)
         {
             /* this is a regular file */
-            evalResult[0] = 'R' ;
-            if(meStrlen(resultStr) > 3) 
-                meStrcpy(evalResult+1,resultStr+4) ;
+            *ss++ = 'R' ;
+            if((ll=meStrlen(resultStr) - 4) > 0)
+            {
+                meStrcpy(ss,resultStr+4) ;
+                ss += ll ;
+            }
+            *ss++ = '|' ;
+            if((ftpCommand(0,"MDTM %s",file) == ftpPOS_COMPLETE) &&
+               ((ll=meStrlen(resultStr) - 4) > 0))
+            {
+                meStrcpy(ss,resultStr+4) ;
+                if(ss[4] == '0')
+                    ss[4] = ' ' ;
+                if(ss[6] == '0')
+                    ss[6] = ' ' ;
+                if(ss[8] == '0')
+                    ss[8] = ' ' ;
+                if(ss[10] == '0')
+                    ss[10] = ' ' ;
+                if(ss[12] == '0')
+                    ss[12] = ' ' ;
+                ss += ll ;
+            }
         }
         else
+        {
             /* does not exist */
-            evalResult[0] = 'X' ;
+            *ss++ = 'X' ;
+            *ss++ = '|' ;
+        }
+        /* get the mod time */
+        *ss = '\0' ;
     }
     if(!(rwflag & (meRWFLAG_WRITE|meRWFLAG_READ)))
         return meTRUE ;
@@ -1102,7 +1130,8 @@ ffUrlFileSetupFlags(meUInt rwflag)
     {
         if(meStrchr(ss,'c') != NULL)
             ffurlFlags |= ffURL_CONSOLE ;
-        if(meStrchr(ss,'s') != NULL)
+        /* must not show the console if inserting a file as the destination buffer will be displayed and unstable */
+        if((meStrchr(ss,'s') != NULL) && !(rwflag & meRWFLAG_INSERT))
             ffurlFlags |= ffURL_SHOW_CONSOLE ;
         if(meStrchr(ss,'p') != NULL)
             ffurlFlags |= ffURL_SHOW_PROGRESS ;
@@ -1241,15 +1270,20 @@ ffUrlFileOpen(meUByte *urlName, meUByte *user, meUByte *pass, meUInt rwflag)
                  */
                 int ll ;
                 meStrcpy(buff,"Directory listing of: ") ;
-                meStrcpy(buff+22,ffurlReadBp->fileName) ;
-                ll = meStrlen(buff) ;
-                if(buff[ll-1] != DIR_CHAR)
+                if(rwflag & meRWFLAG_INSERT)
+                    meStrcpy(buff+22,urlName) ;
+                else
                 {
-                    buff[ll] = DIR_CHAR ;
-                    buff[ll+1] = '\0' ;
-                    /* the original fname is freed in ffReadFile */
-                    ffurlReadBp->fileName = NULL ;
-                    resetBufferNames(ffurlReadBp,buff+22) ;
+                    meStrcpy(buff+22,ffurlReadBp->fileName) ;
+                    ll = meStrlen(buff) ;
+                    if(buff[ll-1] != DIR_CHAR)
+                    {
+                        buff[ll] = DIR_CHAR ;
+                        buff[ll+1] = '\0' ;
+                        /* the original fname is freed in ffReadFile */
+                        ffurlReadBp->fileName = NULL ;
+                        resetBufferNames(ffurlReadBp,buff+22) ;
+                    }
                 }
                 addLineToEob(ffurlReadBp,buff) ;
             }
