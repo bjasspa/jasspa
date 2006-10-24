@@ -46,9 +46,30 @@ set-variable .fhook-find.command-desc  &rig &lset &lset &lset &lset &lset &lset 
 
 0 define-macro find-proc-find
     find-buffer "*find*"
-    set-variable #l0 &spr " %s    " &cond &seq &rig #p2 -1 "/" "d" "f"
+    !if &sin "2" #p9
+        set-variable #l4 &lget #p5 4
+        set-variable #l0 &cat " " &cond &seq &rig #p2 -1 "/" "d" "f"
+        !if &seq $platform "dos"
+            set-variable #l1 "|32|4|2|1|"
+            set-variable #l2 "|a|s|h|r|"
+        !elif &seq $platform "win32"
+            set-variable #l1 "|2048|256|128|32|4|2|1|"
+            set-variable #l2 "|c|t|n|a|s|h|r|"
+        !else
+            set-variable #l0 &cat #l0 &cond &seq &lget #p5 2 "L" "l" "-"
+            set-variable #l1 "|256|128|64|32|16|8|4|2|1|"
+            set-variable #l2 "|r|w|x|r|w|x|r|w|x|"
+        !endif
+        set-variable #l5 0
+        !while &len &lget #l1 &inc #l5 1
+            set-variable #l0 &cat #l0 &cond &band #l4 &lget #l1 #l5 &lget #l2 #l5 "-"
+        !done
+        set-variable #l0 &cat #l0 " "
+    !else
+        set-variable #l0 &spr " %s    " &cond &seq &rig #p2 -1 "/" "d" "f"
+    !endif
     !if &sin "3" #p9
-        !if &gre &len &set #l1 &lget #p5 6 7
+        !if &gre &len &set #l1 &add 0 &lget #p5 6 7
             set-variable #l1 &div #l1 1024
             set-variable #l2 "K"
         !else
@@ -398,12 +419,20 @@ define-macro find
     set-variable $buffer-fname #l8
     insert-string &spr "Directory: %s\nFind: %s\n\n" #l8 &trb #l6
     set-variable #l0 " Attr "
+    !if &not &sin "2" &lget #l9 1
+    !elif &seq $platform "dos"
+        set-variable #l0 &cat #l0 " "
+    !elif &seq $platform "win32"
+        set-variable #l0 &cat #l0 "    "
+    !else
+        set-variable #l0 &cat #l0 "       "
+    !endif
     !if &sin "3" &lget #l9 1
-        set-variable #l0 &cat #l0 "   Size "
+        set-variable #l0 &cat #l0 "   Size  "
         buffer-bind-create "bio" "3" "3" dirlst-sort-list
     !endif
     !if &sin "4" &lget #l9 1
-        set-variable #l0 &cat #l0 "            Modified "
+        set-variable #l0 &cat #l0 "           Modified "
         buffer-bind-create "bio" "4" "4" dirlst-sort-list
     !endif
     set-variable :fmpf &len #l0
