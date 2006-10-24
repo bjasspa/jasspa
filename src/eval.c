@@ -2941,10 +2941,11 @@ get_flag:
                      *     large files
                      *   - The file modification time will be the 7th value (n.y.i.)
                      */ 
-                    meUByte v1, v2, v3='\0', v5=0, *dd ;
+                    meUByte v1, v2, v3='\0', v5=0, *dd, v7[16] ;
                     meUInt v51, v52 ;
                     int v4=-1 ;
                     
+                    v7[0] = '\0' ;
                     if(ftype == meFILETYPE_HTTP)
                         v1 = v2 = 'H' ;
                     else if(ftype == meFILETYPE_FTP)
@@ -2953,11 +2954,19 @@ get_flag:
                         if(ffFileOp(arg2,NULL,meRWFLAG_STAT|meRWFLAG_SILENT,-1) > 0)
                         {
                             v2 = evalResult[0] ;
-                            if(evalResult[1] != '\0')
+                            dd = evalResult + 1 ;
+                            if(*dd != '|')
                             {
                                 v5 = 1 ;
                                 v51 = 0 ;
-                                v52 = meAtoi(evalResult+1) ;
+                                v52 = meAtoi(dd) ;
+                                dd = strchr(dd,'|') ;
+                            }
+                            dd++ ;
+                            if(*dd != '\0')
+                            {
+                                strncpy(v7,dd,15) ;
+                                v7[15] = '\0' ;
                             }
                         }
                         else
@@ -2965,6 +2974,32 @@ get_flag:
                     }
                     else
                     {
+#ifdef _UNIX
+                        struct tm *tmp;            /* Pointer to time frame. */
+                        if ((tmp = localtime(&stats.stmtime)) != NULL)
+                            sprintf((char *)v7, "%4d%2d%2d%2d%2d%2d",
+                                    tmp->tm_year+1900,tmp->tm_mon+1,tmp->tm_mday,
+                                    tmp->tm_hour,tmp->tm_min,tmp->tm_sec);
+#endif
+#ifdef _DOS
+                        if((stats.stmtime & 0x0ffff) != 0x7fff)
+                            sprintf((char *)v7,"%4d%2d%2d%2d%2d%2d",
+                                    (int) ((stats.stmtime >> 25) & 0x007f)+1980,
+                                    (int) ((stats.stmtime >> 21) & 0x000f),
+                                    (int) ((stats.stmtime >> 16) & 0x001f),
+                                    (int) ((stats.stmtime >> 11) & 0x001f),
+                                    (int) ((stats.stmtime >>  5) & 0x003f),
+                                    (int) ((stats.stmtime & 0x001f)  << 1)) ;
+#endif
+#ifdef _WIN32
+                        SYSTEMTIME tmp;
+                        FILETIME ftmp;
+                    
+                        if(FileTimeToLocalFileTime(&stats.stmtime,&ftmp) && FileTimeToSystemTime(&ftmp,&tmp))
+                            sprintf((char *)v7,"%4d%2d%2d%2d%2d%2d",
+                                    tmp.wYear,tmp.wMonth,tmp.wDay,
+                                    tmp.wHour,tmp.wMinute,tmp.wSecond) ;
+#endif
                         v1 = 'L' ;
                         if(evalResult[0] != '\0')
                         {
@@ -2991,43 +3026,18 @@ get_flag:
                     if(v3 != '\0')
                         *dd++ = v3 ;
                     *dd++ = '\b' ;
-                    dd += sprintf((char *)dd,"%d",v4) ;
+                    if(v4 >= 0) 
+                        dd += sprintf((char *)dd,"%d",v4) ;
                     *dd++ = '\b' ;
                     if(v5)
                         dd += sprintf((char *)dd,"0x%x\b0x%x",v51,v52) ;
                     else
                         *dd++ = '\b' ;
                     *dd++ = '\b' ;
-                    if(ftype == meFILETYPE_FTP)
-                        ;
-                    else if(ftype != meFILETYPE_HTTP)
+                    if(v7[0] != '\0')
                     {
-#ifdef _UNIX
-                        struct tm *tmp;            /* Pointer to time frame. */
-                        if ((tmp = localtime(&stats.stmtime)) != NULL)
-                            dd += sprintf((char *)dd, "%4d%2d%2d%2d%2d%2d",
-                                tmp->tm_year+1900,tmp->tm_mon+1,tmp->tm_mday,
-                                tmp->tm_hour,tmp->tm_min,tmp->tm_sec);
-#endif
-#ifdef _DOS
-                        if((stats.stmtime & 0x0ffff) != 0x7fff)
-                            dd += sprintf((char *)dd,"%4d%2d%2d%2d%2d%2d",
-                                          (int) ((stats.stmtime >> 25) & 0x007f)+1980,
-                                          (int) ((stats.stmtime >> 21) & 0x000f),
-                                          (int) ((stats.stmtime >> 16) & 0x001f),
-                                          (int) ((stats.stmtime >> 11) & 0x001f),
-                                          (int) ((stats.stmtime >>  5) & 0x003f),
-                                          (int) ((stats.stmtime & 0x001f)  << 1)) ;
-#endif
-#ifdef _WIN32
-                        SYSTEMTIME tmp;
-                        FILETIME ftmp;
-                    
-                        if(FileTimeToLocalFileTime(&stats.stmtime,&ftmp) && FileTimeToSystemTime(&ftmp,&tmp))
-                            dd += sprintf((char *)dd,"%4d%2d%2d%2d%2d%2d",
-                                          tmp.wYear,tmp.wMonth,tmp.wDay,
-                                          tmp.wHour,tmp.wMinute,tmp.wSecond) ;
-#endif
+                        meStrcpy(dd,v7) ;
+                        dd += meStrlen(dd) ;
                     }
                     *dd++ = '\b' ;
                     *dd = '\0' ;
