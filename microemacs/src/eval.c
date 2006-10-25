@@ -2960,12 +2960,12 @@ get_flag:
                                 v5 = 1 ;
                                 v51 = 0 ;
                                 v52 = meAtoi(dd) ;
-                                dd = strchr(dd,'|') ;
+                                dd = meStrchr(dd,'|') ;
                             }
                             dd++ ;
                             if(*dd != '\0')
                             {
-                                strncpy(v7,dd,15) ;
+                                meStrncpy(v7,dd,15) ;
                                 v7[15] = '\0' ;
                             }
                         }
