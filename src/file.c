@@ -33,6 +33,7 @@
 
 #include "emain.h"
 #include "efunc.h"
+#include "esearch.h"
 #if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
 #include <errno.h>
 #include <limits.h>                     /* Constant limit definitions */
@@ -2834,30 +2835,45 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
 #if MEOPT_SOCKET
         if(pathName[0] == 'f')
         {
-            meLine hlp, *lp ; 
+            meLine hlp, *lp ;
+            meUByte *ss ;
+            int ii ;
             hlp.next = &hlp ;
             hlp.prev = &hlp ;
-            if(ffReadFile(pathName,meRWFLAG_SILENT|meRWFLAG_FTPNLST,NULL,&hlp,0,0,0) >= 0)
+            if(ffReadFile(pathName,meRWFLAG_SILENT,NULL,&hlp,0,0,0) >= 0)
             {
                 noFiles = 0 ;
                 lp = hlp.next;
-                while (lp != &hlp)
+                while(lp != &hlp)
                 {
                     noFiles++ ;         
                     lp = lp->next;
                 }
                 if(noFiles &&
-                   ((fls = meMalloc(sizeof(meUByte *) * noFiles)) != NULL))
+                   ((fls = meMalloc(sizeof(meUByte *) * noFiles)) != NULL) &&
+                   (meRegexComp(&meRegexStrCmp,(meUByte *) "\\([-\\a]+ +\\d+ \\S+\\( +\\S+\\)?\\( +\\d+,\\)? +\\d+\\( +0[xX]\\h+\\)? +\\a\\a\\a +\\d\\d? +\\(\\d\\d\\d\\d\\|\\d\\d:\\d\\d\\)\\|\\d\\d-\\d\\d-\\d\\d +\\d\\d\\:\\d\\d[aApP][mM] +\\(\\d+\\|<DIR>\\)\\) +\\(.*\\)",0) == meREGEX_OKAY))
                 {
                     noFiles = 0 ;
                     lp = hlp.next;
                     while (lp != &hlp)
                     {
-                        if((fls[noFiles++] = meStrdup(lp->text)) == NULL)
-                            break ;
+                        if(meRegexMatch(&meRegexStrCmp,lp->text,meLineGetLength(lp),0,meLineGetLength(lp),meRSTRCMP_WHOLE))
+                        {
+                            ii = meRegexStrCmp.group[7].end - meRegexStrCmp.group[7].start ;
+                            if((fls[noFiles] = meMalloc(ii+2)) == NULL)
+                                break ;
+                            meStrncpy(fls[noFiles],lp->text+meRegexStrCmp.group[7].start,ii) ;
+                            if(lp->text[0] == 'd')
+                                fls[noFiles][ii++] = '/' ;
+                            else if((lp->text[0] == 'l') && ((ss = meStrstr(fls[noFiles]," -> ")) != NULL))
+                                ii = ((size_t) ss) - ((size_t) fls[noFiles]) ;
+                            else if(isDigit(lp->text[0]) && (lp->text[meRegexStrCmp.group[6].start+1] == 'D'))
+                                fls[noFiles][ii++] = '/' ;
+                            fls[noFiles++][ii] = '\0' ;
+                        }
                         lp = lp->next;
                     }
-                    if(lp == &hlp)
+                    if((lp == &hlp) && noFiles)
                     {
                         dirList->size = noFiles ;
                         dirList->list = fls ;
@@ -2867,6 +2883,8 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
                         sortStrings(noFiles,fls,0,(meIFuncSS) strcmp) ;
 #endif
                     }
+                    else
+                        meFree(fls) ;
                 }
                 meLineLoopFree(&hlp,0) ;
             }
