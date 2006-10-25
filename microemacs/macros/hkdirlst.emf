@@ -38,8 +38,8 @@ define-macro fhook-dirlst
         !endif
         set-mark
         !while &not &seq @wc ""
-            !if &xseq @wl "\\([\\l-]+\\) +\\d+ \\(\\S+\\) +\\(\\S+\\) +\\(\\d+\\) \\(\\a\\a\\a\\) +\\(\\d\\d?\\) +\\(\\d\\d\\d\\d\\|\\d\\d:\\d\\d\\) +\\(.*\\)$"
-                !if &gre &len &set #l0 @s4 7
+            !if &xseq @wl "\\([-\\a]+\\) +\\d+ \\(\\S+\\)\\( +\\S*[^\\s,]\\)?\\( +\\d+,\\)? +\\(\\d+\\|\\d+ +0[xX]\\h+\\) +\\(\\a\\a\\a\\) +\\(\\d\\d?\\) +\\(\\d\\d\\d\\d\\|\\d\\d:\\d\\d\\) +\\(.*\\)$"
+                !if &gre &len &set #l0 &add 0 @s5 7
                     set-variable #l0 &div #l0 1024
                     set-variable #l1 "K"
                 !else
@@ -50,18 +50,18 @@ define-macro fhook-dirlst
                 !else
                     set-variable #l2 &spr "%s%n" @s2 &sub 9 &len @s2 " "
                 !endif
-                set-variable #l0 &spr "%s %s%s%n %7d%s" @s1 #l2 &lef @s3 8 &sub 8 &len @s3 " " #l0 #l1
-                !if &sin ":" @s7
+                set-variable #l0 &spr "%s %s%s%n %7d%s" @s1 #l2 &lef &trl @s3 8 &sub 8 &len &trl @s3 " " #l0 #l1
+                !if &sin ":" @s8
                     set-variable #l2 &lef $time 4
-                    set-variable #l3 @s7
+                    set-variable #l3 @s8
                 !else
-                    set-variable #l2 @s7
+                    set-variable #l2 @s8
                     set-variable #l3 "00:00"
                 !endif
-                !if &not &set #l1 &lfi "|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|" &slo @s5
-                    set-variable @wl &spr "%s %s  %s %2d %s:00 %s" #l0 &rig -2 #l2 @s5 @s6 #l3 @s8
+                !if &not &set #l1 &lfi "|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|" &slo @s6
+                    set-variable @wl &spr "%s %s  %s %2d %s:00 %s" #l0 &rig -2 #l2 @s6 @s7 #l3 @s9
                 !else
-                    set-variable @wl &spr "%s %s/%02d/%02d %s:00 %s" #l0 #l2 #l1 @s6 #l3 @s8
+                    set-variable @wl &spr "%s %s/%02d/%02d %s:00 %s" #l0 #l2 #l1 @s7 #l3 @s9
                 !endif
             !elif &xseq @wl "\\(\\d\\d\\)-\\(\\d\\d\\)-\\(\\d\\d\\) +\\(\\d\\d\\):\\(\\d\\d\\)\\([aApP][mM]\\) +\\(\\d+\\|<DIR>\\) +\\(.*\\)$"
                 !if &seq @s7 "<DIR>"
