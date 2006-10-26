@@ -137,7 +137,7 @@ dirDestructNode(DIRNODE *dnode)
                 dn->lnext = dnode->lnext ;
             }
         }
-        meFree (dnode->lname);
+        meFree(dnode->lname);
     }
     if(dnode->lhead != NULL)
     {
@@ -158,7 +158,7 @@ dirDestructNode(DIRNODE *dnode)
  * Delete a all of a nodes children
  */
 static void
-dirDeleteTree (DIRNODE *root)
+dirDeleteTree(DIRNODE *root)
 {
     DIRNODE *dnode;                     /* Working node pointer */
     DIRNODE *dt;                        /* Temporary node */
@@ -166,7 +166,7 @@ dirDeleteTree (DIRNODE *root)
     /* Recursively iterate over the children and delete */
     for (dnode = root->child; dnode != NULL; /* NULL */)
     {
-        if(dnode->child != NULL)
+        if((dnode->child != NULL) && (dnode->lname == NULL))
             dirDeleteTree (dnode);
         dt = dnode;                     /* Remember node to delete */
         dnode = dnode->next ;           /* Point to next node */
@@ -847,4 +847,15 @@ directoryTree(int f, int n)
     dirDrawDir(buf,n) ;
     return meTRUE ;
 }
+
+#ifdef _ME_FREE_ALL_MEMORY
+void dirFreeMemory(void)
+{
+    if(dirlist != NULL)
+    {
+        dirDeleteTree(dirlist) ;
+        dirDestructNode(dirlist) ;
+    }
+}
+#endif
 #endif
