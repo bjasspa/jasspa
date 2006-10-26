@@ -42,7 +42,7 @@
 #endif
 #endif
 
-#ifndef _ME_WIN32_FULL_DEBUG
+#ifndef _ME_USE_STD_MALLOC
 void *
 meMalloc(size_t s)
 {
