@@ -670,6 +670,7 @@ exitEmacs(int f, int n)
             /* free of everything we can */
             extern void freeToken(meHilight * root) ;
             extern void meFrameFree(meFrame *frame) ;
+            extern void dirFreeMemory(void) ;
             extern void printFreeMemory(void) ;
             extern void osdFreeMemory(void) ;
             extern void regFreeMemory(void) ;
@@ -699,6 +700,7 @@ exitEmacs(int f, int n)
 
             dictionaryDelete(1,6) ;
             spellRuleAdd(1,0) ;
+            dirFreeMemory() ;
             printFreeMemory() ;
             osdFreeMemory() ;
             regFreeMemory() ;
