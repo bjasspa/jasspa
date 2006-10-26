@@ -726,7 +726,7 @@ extern  int     WinPrint(meUByte *name, meLine *phead);
 #endif /* PRINT */
 
 /* random.c externals */
-#ifdef _ME_WIN32_FULL_DEBUG
+#ifdef _ME_USE_STD_MALLOC
 #define meMalloc  malloc
 #define meRealloc realloc
 #define meStrdup  strdup

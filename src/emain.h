@@ -43,12 +43,14 @@
 #ifndef __EMAIN_H__
 #define __EMAIN_H__
 
-/* the following 2 defines are used for debugging and memory leak checking,
+/* the following 3 defines are used for debugging and memory leak checking,
  * _ME_WIN32_FULL_DEBUG - Enables Windows debugging
  * _ME_FREE_ALL_MEMORY  - Frees all memory before exiting
+ * _ME_USE_STD_MALLOC   - Use standard C malloc commands directly
  */
 /*#define _ME_WIN32_FULL_DEBUG*/
 /*#define _ME_FREE_ALL_MEMORY*/
+/*#define _ME_USE_STD_MALLOC*/
 
 /* These next define is platform specific, but as all supported 
  * platforms use these and all future ones should I've put them here
