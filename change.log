@@ -4,7 +4,7 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <061105.1231>
+>  Last Modified : <061105.1240>
 >
 
   [061105] JASSPA MicroEmacs 20060909 patch - build 2.
@@ -13,6 +13,8 @@
 
   [061105] Correct  Java  highlighting  of package and import  declarations  -
            Thanks to Bryan Schofield.
+
+  [061105] SQL template updated, removed bad token - Thanks to Rick Owen.
 
   [061105] Fixed word wrap horizontal scroll when using a window that is a few
            characters  wider than the fill column.  Caused next line to scroll
