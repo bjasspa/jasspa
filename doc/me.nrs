@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.48 2006-10-06 20:50:45 jon Exp $
+.Id $Id: me.nrs,v 2.48.2.1 2006-11-05 12:36:24 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -2055,6 +2055,36 @@ etc. are not as slick as they  could be,  certainly  under  Microsoft  Windows
 \*(mS  looks  positively  primitive!!  Regardless  of the  look, the goal of a
 common editor across all working platforms has been achieved!
 .SS "Development History"
+.\"
+.B "9th Release / Patch 1 / Build 2 - November 2006"
+.br
+Release date specified as 2006/09/09.
+.BS
+[061105] JASSPA MicroEmacs 20060909 patch - build 2.
+.BU
+[061105] Linux i386_x64 port corrections - Thanks to Vincenzo.
+.BU
+[061105] Correct Java highlighting of package and import declarations - Thanks
+to Bryan Schofield.
+.BU
+[061105] Fixed word wrap  horizontal  scroll when using a window that is a few
+characters  wider than the fill  column.  Caused next line to scroll  which is
+very annoying - this is a very old bug!
+.BU
+[061105]  Fixed the Win32s  Windows  build which was using a later day Windows
+construct.
+.BU
+[061105] Fixed NanoEmacs Window version under MS-Windows, crashing on start up
+due to accessing  curFrame which had not been initialized before a screen draw
+took place from the Window  message  queue.  Inhibit  screen access during the
+construction of the frame.
+.BU
+[061105] Documentation translate-key examples added - Thanks to Thomas Hurdt.
+.BU
+[061105] Macros bailing out when the main menu is disabled on start-up. osd -1
+0 returns FALSE which causes the macro execution to terminate. Thanks to Bryan
+Schofield for identifying this problem.
+.BE  
 .\"
 .B "9th Release - September 2006"
 .br
