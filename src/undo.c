@@ -504,7 +504,7 @@ meUndo(int f, int n)
         }
         for(;;)
         {
-            int count, cont ;
+            meInt count, cont ;
             if((cun == NULL) || ((n <= 0) && !meModeTest(frameCur->bufferCur->mode,MDEDIT)))
                 break ;
             if(bufferSetEdit() <= 0)               /* Check we can change the buffer */

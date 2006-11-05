@@ -999,7 +999,7 @@ hilight(int f, int n)
     type = (meUShort) meAtoi(buf) ;
     if(type & HLCOLUMN)
     {
-        int fmCol, toCol ;
+        meInt fmCol, toCol ;
         
         if((meGetString((meUByte *)"From",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
            ((fmCol = (meUByte) meAtoi(buf)) < 0) ||

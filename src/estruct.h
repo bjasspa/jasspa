@@ -884,9 +884,9 @@ typedef struct meKill {
 #define meHilightGetLookBackScheme(root)  ((root)->tknSttOff)
 #define meHilightGetColumnHilight(root)   ((meHilight *) ((root)->rclose))
 #define meHilightSetColumnHilight(root,v) ((root)->rclose = (meUByte *) (v))
-#define meHilightGetFromColumn(root)      ((int) ((node)->close))
+#define meHilightGetFromColumn(root)      ((meInt) ((node)->close))
 #define meHilightSetFromColumn(root,v)    ((node)->close = (meUByte *) (v))
-#define meHilightGetToColumn(root)        ((int) ((node)->rtoken))
+#define meHilightGetToColumn(root)        ((meInt) ((node)->rtoken))
 #define meHilightSetToColumn(root,v)      ((node)->rtoken = (meUByte *) (v))
 
 /* hilight token flags */

@@ -804,7 +804,7 @@ regDecodeMode (int *modep, meUByte *modeStr)
         {
             if((ss=meStrchr(meRegModeList,toLower(cc))) == NULL)
                 return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Illegal Registry mode [%c]",cc) ;
-            jj = (1<< (((int) ss)-((int) meRegModeList))) ;
+            jj = (1 << ((int)(ss - meRegModeList))) ;
             if(isUpper(cc))
                 mode &= ~jj ;
             else

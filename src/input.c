@@ -931,7 +931,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
                 if(ipos > ilen)
                     ipos = ilen ;
                 if(((s2 = meStrchr(s1,meCHAR_NL)) != NULL) &&
-                    ((int) (s2 - buf) < ipos))
+                    (((int)(s2 - buf)) < ipos))
                     ipos = (int) (s2 - buf) ;
             }
         }
