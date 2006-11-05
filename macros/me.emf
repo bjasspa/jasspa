@@ -30,7 +30,7 @@
     0 define-macro-file newuser
     define-macro start-up
         !if &seq $buffer-bname "*scratch*"
-            ; Startup for a new user. 
+            ; Startup for a new user.
             newuser
         !endif
     !emacro
@@ -130,8 +130,8 @@ set-variable #l0 &reg &spr "/history/%s/fence" %platform "1"
 !endif
 ; key bindings
 0x1 global-bind-key spell-word           "esc $"
-global-bind-key frame-handle             "C-x 5" 
-global-bind-key find-zfile               "C-x 7" 
+global-bind-key frame-handle             "C-x 5"
+global-bind-key find-zfile               "C-x 7"
 4 global-bind-key prefix                 "C-c"
 global-bind-key set-position             "C-c C-a"
 global-bind-key goto-position            "C-c a"
@@ -239,11 +239,11 @@ add-file-hook "smb.conf"                                      fhook-samba
 add-file-hook "httpd.conf"                                    fhook-apache
 add-file-hook ".sh .ksh .csh .login .cshrc .profile .tcshrc"  fhook-shell
 add-file-hook ".ini .hpj .reg .rgy"                           fhook-ini
-add-file-hook ".htm .html .htp .hts"                          fhook-html  
-add-file-hook ".lhtm .lhtml"                                  fhook-lhtml  
+add-file-hook ".htm .html .htp .hts"                          fhook-html
+add-file-hook ".lhtm .lhtml"                                  fhook-lhtml
 add-file-hook ".css"                                          fhook-css
 add-file-hook ".bas .cls"                                     fhook-vb
-add-file-hook ".asp"                                          fhook-asp  
+add-file-hook ".asp"                                          fhook-asp
 add-file-hook ".java .jav"                                    fhook-java
 add-file-hook ".jsp"                                          fhook-jsp
 add-file-hook ".js"                                           fhook-js
@@ -282,7 +282,7 @@ add-file-hook ".ex .exw .exu .e .ew .eu"                      fhook-euphor
 add-file-hook ".pls"                                          fhook-pls
 add-file-hook ".lua"                                          fhook-lua
 add-file-hook ".psf"                                          fhook-psf
-add-file-hook ".spec"                                         fhook-spec 
+add-file-hook ".spec"                                         fhook-spec
 add-file-hook ".sl"                                           fhook-slang
 add-file-hook ".au3"                                          fhook-au3
 add-file-hook ".mod"                                          fhook-mod2
@@ -339,7 +339,7 @@ osd 0 60 "Mdfsh" " \HTools  "    6
 osd 0 70 "Mdfsh" " \HAdvanced  " 7
 osd 0 80 "Mdfsh" " \HWindow  "   8
 osd 0 90 "Mdfsr" " \HHelp "      9
-osd -1 &cond &set .osd.menu &reg "/history/main-menu" "1" "1" "0"
+!force osd -1 &set .osd.menu &reg "/history/main-menu" "1" "1"
 ; Load in the mouse handling routines if required
 !if &band $mouse 0x10
     !force exec-file "mouse"
@@ -357,7 +357,7 @@ osd -1 &cond &set .osd.menu &reg "/history/main-menu" "1" "1" "0"
 !endif
 ; load ftp/http registry file
 !if &not &seq &set #l0 &reg "/history/url-file" "" ""
-    !force read-registry "/url" #l0 "y" 
+    !force read-registry "/url" #l0 "y"
 !endif
 ; execute company setup
 !if &not &seq &set #l0 &reg "/history/company" "" ""
