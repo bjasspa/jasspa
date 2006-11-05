@@ -244,7 +244,7 @@ gft_directory:
         else if(S_ISLNK(statbuf.st_mode))
         {
             meUByte lbuf[meBUF_SIZE_MAX], buf[meBUF_SIZE_MAX], *ss ;
-            int ii, jj ;
+            size_t ii, jj ;
 
             ii = meStrlen(file) ;
             meStrncpy(lbuf,file,ii) ;
@@ -266,7 +266,7 @@ gft_directory:
                 else
                 {
                     ss++ ;
-                    ii = ((int) ss) - ((int) lbuf) ;
+                    ii = (size_t)(ss - lbuf) ;
                     meStrcpy(ss,buf) ;
                     ii += jj ;
                 }

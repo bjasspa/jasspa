@@ -927,12 +927,12 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
                 ipos = ilen ;
             else
             {
-                ipos = (int) s1 - (int) buf + osdCol ;
+                ipos = ((int) (s1 - buf)) + osdCol ;
                 if(ipos > ilen)
                     ipos = ilen ;
                 if(((s2 = meStrchr(s1,meCHAR_NL)) != NULL) &&
-                    (((int) s2 - (int) buf) < ipos))
-                    ipos = (int) s2 - (int) buf ;
+                    ((int) (s2 - buf) < ipos))
+                    ipos = (int) (s2 - buf) ;
             }
         }
         else

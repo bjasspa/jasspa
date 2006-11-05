@@ -216,7 +216,6 @@ remove_hilight:
     }
 }
 
-
 #if MEOPT_EXTENDED
 int
 showCursor(int f, int n)
@@ -262,7 +261,7 @@ showRegion(int f, int n)
         selhilight.dotOffset = frameCur->windowCur->dotOffset;   /* Current mark offset */
         selhilight.dotLineNo = frameCur->windowCur->dotLineNo;    /* Current mark line number */
         break ;
-    
+
     case -2:
         frameCur->windowCur->updateFlags |= WFMOVEL ;
         if((windowGotoLine(meTRUE,selhilight.markLineNo+1) > 0) &&
@@ -272,7 +271,7 @@ showRegion(int f, int n)
             return meTRUE ;
         }
         return meFALSE ;
-        
+
     case -1:
         selhilight.flags &= ~SELHIL_ACTIVE ;
         break ;
@@ -306,7 +305,7 @@ showRegion(int f, int n)
         if(f || (selhilight.uFlags & SELHILU_KEEP))
             selhilight.flags |= SELHIL_KEEP ;
         break ;
-   
+
     case 2:
         frameCur->windowCur->updateFlags |= WFMOVEL ;
         if((windowGotoLine(meTRUE,selhilight.dotLineNo+1) > 0) &&
@@ -316,7 +315,7 @@ showRegion(int f, int n)
             return meTRUE ;
         }
         return meFALSE ;
-        
+
     case 3:
         if(((selhilight.flags & (SELHIL_FIXED|SELHIL_ACTIVE)) == 0) ||
            (selhilight.bp != frameCur->bufferCur))
@@ -331,13 +330,13 @@ showRegion(int f, int n)
         selhilight.dotOffset = frameCur->windowCur->dotOffset;      /* Current mark offset */
         selhilight.dotLineNo = frameCur->windowCur->dotLineNo;      /* Current mark line number */
         break ;
-   
+
     case 4:
         selhilight.flags = SELHIL_ACTIVE|SELHIL_CHANGED ;
         selhilight.dotOffset = frameCur->windowCur->dotOffset;      /* Current mark offset */
         selhilight.dotLineNo = frameCur->windowCur->dotLineNo;      /* Current mark line number */
         break ;
-   
+
    default:
         return meABORT ;
     }
@@ -402,7 +401,6 @@ void
 updCursor(register meWindow *wp)
 {
     register meUInt ii, jj ;
-    int leftMargin;                     /* Base left margin position (scrolled) */
 
     if(wp->updateFlags & (WFREDRAW|WFRESIZE))
         /* reset the dotCharOffset to force a recalc when needed */
@@ -424,6 +422,7 @@ updCursor(register meWindow *wp)
     else
     {
         register meUByte *off ;
+        int leftMargin;                 /* Base left margin position (scrolled) */
 
         windCurLineOffsetEval(wp) ;
         jj = 0 ;
@@ -438,26 +437,41 @@ updCursor(register meWindow *wp)
         else
             leftMargin = wp->horzScroll;
 
+        /* Cursor behind the current scroll position */
         if(((int) jj) <= leftMargin)
         {
-            /* Cursor behind the current scroll position */
             ii = wp->textWidth - (((leftMargin - jj) % (wp->textWidth - (wp->marginWidth << 1))) + wp->marginWidth);
             if (ii > jj)                   /* Make sure we have enough info to show */
                 ii = jj;                   /* No - shoe the start of the line */
             jj -= ii;                      /* Correct the screen offset position */
         }
+        /* Cursor ahead of the scroll position and off screen */
         else if (((int) jj) >= leftMargin + (wp->textWidth-1))
         {
-            /* Cursor ahead of the scroll position and off screen */
             /* Move onto the next screen */
             ii = ((jj - leftMargin - wp->textWidth) % (wp->textWidth - (wp->marginWidth << 1))) + wp->marginWidth;
             jj -= ii;                      /* Screen offset */
         }
+        /* Cursor ahead of scroll position and on screen */
         else
         {
-            /* Cursor ahead of scroll position and on screen */
-            ii = jj - leftMargin ;
-            jj = leftMargin ;
+            /* Check to see if a separate line scroll is in effect and can be
+             * knocked off because the text is on screen. */
+            if ((wp->horzScroll != wp->horzScrollRest) &&
+                ((scrollFlag & 0x0f) != 3) &&
+                ((jj - wp->horzScrollRest) < wp->textWidth))
+            {
+                /* The current scrolls are not aligned and can be. Fix by
+                 * reseting the left margin with the scroll reset. */
+                ii = jj - wp->horzScrollRest;
+                jj = wp->horzScrollRest;
+            }
+            else
+            {
+                /* Cursor ahead of scroll position and on screen */
+                ii = jj - leftMargin ;
+                jj = leftMargin ;
+            }
         }
     }
 
@@ -831,9 +845,9 @@ hideLineJump:
     /* Get the frame store colour and text pointers */
     fssp = &frameCur->store[row].scheme[scol] ;
     fstp = &frameCur->store[row].text[scol] ;
-    
+
 #ifdef _UNIX
-    
+
 #ifdef _ME_CONSOLE
 #ifdef _ME_WINDOW
     if(meSystemCfg & meSYSTEM_CONSOLE)
@@ -1151,7 +1165,7 @@ hideLineJump:
             offset = vp1->endp - len;
         vp1->endp = len;
         len += offset;
-        
+
         if (offset != 0)
         {
             /* Line terminates before right margin. */
@@ -1194,7 +1208,7 @@ updateWindow(meWindow *wp)
     register meLine *lp ;                 /* Line to update */
     register int   row, nrows ;           /* physical screen line to update */
     register meUByte force ;
-    
+
     force = (meUByte) (wp->updateFlags & (WFREDRAW|WFRESIZE)) ;
     /* Determine the video line position and determine the video block that
      * is being used. */
@@ -1637,7 +1651,6 @@ reframe(meWindow *wp)
     }
 }
 
-
 #if MEOPT_SCROLL
 /*
  * updateSrollBar
@@ -1725,7 +1738,7 @@ updateScrollBar (meWindow *wp)
             TTaddArea (row, col, endrow-row, len);
 #endif /* _ME_WINDOW */
 #endif /* _WIN32 */
-        
+
         for (; row < endrow; row++)
         {
             /* Update the frame store with the character and scheme
@@ -1741,7 +1754,7 @@ updateScrollBar (meWindow *wp)
             /****************************************************************
              * MS-Windows                                                   *
              ****************************************************************/
-            
+
 #ifdef _ME_CONSOLE
 #ifdef _ME_WINDOW
             if (meSystemCfg & meSYSTEM_CONSOLE)
@@ -1882,7 +1895,6 @@ updateScrollBar (meWindow *wp)
 }
 #endif /* MEOPT_SCROLL */
 
-
 /*
  * pokeUpdate()
  * Update all of the areas of the screen that have been modified.
@@ -2008,7 +2020,7 @@ screenUpdate(int f, int n)
 #endif
     meWindow *wp ;
     int force ;
-    
+
 #if DEBUGGING
     if(drawno++ == 'Z')
         drawno = 'A' ;
@@ -2042,9 +2054,9 @@ screenUpdate(int f, int n)
         updCursor(frameCur->windowCur) ;
         return meTRUE ;
     }
-    
+
     force = (n == 1) ;
-    
+
 #if MEOPT_MWFRAME
     fc = frameCur ;
     for(frameCur=frameList ; frameCur!=NULL ; frameCur=frameCur->next)
@@ -2091,7 +2103,7 @@ screenUpdate(int f, int n)
         if (frameCur->pokeFlag)                      /* Screen been poked ??           */
             pokeUpdate();                   /* Yes - determine screen changes */
     }
-    
+
     /* Does the title bar need updating? */
 #ifdef _WINDOW
     if(force || (frameCur->bufferCur->name != frameCur->titleBufferName))
@@ -2189,7 +2201,7 @@ screenUpdate(int f, int n)
 #else
     wp = frameCur->windowList ;
 #endif
-    
+
     /* Now rest all the window line meLINE_CHANGED flags */
     do
     {
@@ -2213,13 +2225,13 @@ screenUpdate(int f, int n)
             flp = meLineGetNext(flp) ;
         }
     } while((wp = wp->next) != NULL) ;
-    
+
 #if MEOPT_MWFRAME
     }
 #else
     /* else required to keep the auto-indent right */
 #endif
-    
+
     return(meTRUE);
 }
 
@@ -2230,7 +2242,7 @@ update(int flag)    /* force=meTRUE update past type ahead? */
     register int index;
     meUInt arg ;
 #endif
-    
+
     if((alarmState & meALARM_PIPED) ||
        (!(flag & 0x01) && ((kbdmode == mePLAY) || clexec || TTahead())))
         return meTRUE ;
@@ -2271,7 +2283,7 @@ update(int flag)    /* force=meTRUE update past type ahead? */
  *                    then a fore & back color is given per poke char.
  */
 /* poking can draw onto of the cursor and erase it, this is often an unwanted
- * side effect (particularly with the matching fence drawing). 
+ * side effect (particularly with the matching fence drawing).
  * Win32 Window and UNIX termcap do not suffer from this */
 #ifdef _DOS
 #define _ME_POKE_REDRAW_CURSOR
@@ -2300,7 +2312,7 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
 #ifdef _ME_POKE_REDRAW_CURSOR
     int drawCursor ;
 #endif
-    
+
     /* Normalise to the screen rows */
     if((row < 0) || (row > frameCur->depth))     /* Off the screen in Y ?? */
         return ;                        /* Yes - quit */
@@ -2354,12 +2366,12 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
     memcpy(frameCur->store[row].text+col,str,len) ;      /* Write text in */
     fssp = frameCur->store[row].scheme + col ;           /* Get the scheme pointer */
     off  = (flags >> 4) & 0x07 ;
-    
+
 #ifdef _ME_POKE_REDRAW_CURSOR
     /* Must redraw the cursor if we have zapped it */
     drawCursor = ((cursorState >= 0) && blinkState &&
                   _ME_POKE_REDRAW_CURSOR
-                  (row == frameCur->cursorRow) && 
+                  (row == frameCur->cursorRow) &&
                   (col <= frameCur->cursorColumn) && ((col+len) > frameCur->cursorColumn)) ;
 #endif /* _ME_POKE_REDRAW_CURSOR */
 
@@ -2400,7 +2412,7 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
                 TCAPschemeSet(schm) ;
                 cc = *str++ ;
                 TCAPputc(cc) ;
-                
+
             }
             TCAPschemeReset() ;
 #endif /* _TCAP */
@@ -2417,7 +2429,7 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
              ****************************************************************/
             col = colToClient(col) ;
             row = rowToClient(row) ;
-            
+
             if (meSystemCfg & meSYSTEM_FONTFIX)
             {
                 meUByte cc ;
@@ -2467,7 +2479,7 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
 #endif /* _ME_WINDOW */
 
 #endif /* _UNIX */
-        
+
 #ifdef _DOS
         /********************************************************************
          * MS-DOS                                                           *
@@ -2487,7 +2499,7 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
             }
         }
 #endif /* _DOS */
-        
+
 #ifdef _WIN32
         /********************************************************************
          * MS-WINDOWS                                                       *
@@ -2528,7 +2540,7 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
         schm += off ;
 
 #ifdef _UNIX
-    
+
 #ifdef _ME_CONSOLE
 #ifdef _ME_WINDOW
         if(meSystemCfg & meSYSTEM_CONSOLE)
@@ -2540,7 +2552,7 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
              ****************************************************************/
             TCAPmove(row, col);	/* Go to correct place. */
             TCAPschemeSet(schm) ;
-            
+
             while(len--)
             {
                 cc = *str++ ;
@@ -2606,7 +2618,7 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
         }
 #endif /* _ME_WINDOW */
 #endif /* _UNIX */
-        
+
 #ifdef _DOS
         /********************************************************************
          * MS-DOS                                                           *
@@ -2621,7 +2633,7 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
             }
         }
 #endif /* _DOS */
-        
+
 #ifdef _WIN32
         /********************************************************************
          * MS-WINDOWS                                                       *
@@ -2642,14 +2654,14 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
                 *fssp++ = schm ;
         }
 #endif /* _WIN32 */
-    
+
     }
-    
+
 #ifdef _ME_POKE_REDRAW_CURSOR
     if(drawCursor)
         TTshowCur() ;
 #endif
-    
+
     if((flags & POKE_NOFLUSH) == 0)
         TTflush() ;                         /* Force update of screen */
 }
@@ -2746,11 +2758,11 @@ mlwrite(int flags, meUByte *fmt, int arg)
     meUByte  mlw[meBUF_SIZE_MAX];		/* what we want to be there	*/
     meUByte *mlwant;		/* what we want to be there	*/
     meUByte *s1 ;
-    
+
     /* If this is a termination request then exit immediately as the output
      * terminal window may have been destroyed so there is no canvas onto
      * which the message may be written. */
-    if (alarmState & meALARM_DIE) 
+    if (alarmState & meALARM_DIE)
         goto mlwrite_exit ;
     /* If the system is not initialised then the output window does not
      * exist, attempt to write on the console. */
@@ -2766,10 +2778,10 @@ mlwrite(int flags, meUByte *fmt, int arg)
     if(clexec && (flags & MWCLEXEC))
     {
         meRegister *rr ;
-        
+
         if(!(flags & MWABORT))
             goto mlwrite_exit ;
-        
+
         rr = meRegCurr ;
         do {
             if(rr->force)
@@ -2901,7 +2913,7 @@ mlwrite(int flags, meUByte *fmt, int arg)
             fp = GetStdHandle(STD_ERROR_HANDLE) ;
         WriteFile(fp,mlwant,offset,&written,NULL) ;
         WriteFile(fp,"\n",1,&written,NULL) ;
-#else        
+#else
         fprintf((flags & MWSTDOUTWRT) ? stdout:stderr,"%s\n",mlwant) ;
 #endif
         goto mlwrite_exit ;
@@ -2979,7 +2991,6 @@ mlwrite_exit:
     return meABORT ;
 }
 
-
 /* mlerase relegated to here due to its use of mlwrite */
 /*
  * Erase the message line. This is a special routine because the message line
@@ -3003,7 +3014,6 @@ mlerase(int flag)
         frameCur->mlStatus &= ~MLSTATUS_CLEAR ;
     }
 }
-
 
 #if MEOPT_COLOR
 /*
@@ -3043,7 +3053,6 @@ addColor(int f, int n)
         TTsetBgcol() ;
     return n ;
 }
-
 
 /*
  * addColorScheme
@@ -3152,7 +3161,6 @@ addColorScheme(int f, int n)
     return meTRUE;
 }
 #endif
-
 
 /************************** VIRTUAL meVideoLine INTERFACES **************************
  *

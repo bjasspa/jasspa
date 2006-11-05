@@ -369,7 +369,7 @@ setCharMask(int f, int n)
     ss = buf1 ;
     while((c1 = *ss++) != '\0')
         if((dd = (meUByte *) strchr((char *) charMaskFlags,c1)) != NULL)
-            flags |= 1 << (((int) dd)- ((int) charMaskFlags)) ;
+            flags |= 1 << ((int)(dd - charMaskFlags)) ;
     mask2 = (flags & 0x00ff) ;
     mask1 = (flags & 0x0f00) >> 4 ;
     

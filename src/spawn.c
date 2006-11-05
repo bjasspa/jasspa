@@ -1248,6 +1248,33 @@ cant_handle_this:
     if(bp->ipipeFunc >= 0)
         /* If the process has ended the argument will be 0, else 1 */
         execBufferFunc(bp,bp->ipipeFunc,(meEBF_ARG_GIVEN|meEBF_USE_B_DOT|meEBF_HIDDEN),(ii >= 0)) ;
+    else if ((ii < 0) && (bp->intFlag & BIFLOCK))
+    {
+        meWindow *wp ;
+        
+        /* The pipe has ended and is not under manual control, a BIFLOCK
+         * exists which indidates that one or more windows is tied to the
+         * buffer cursor position. For each window that is locked with the
+         * buffer then re-center the window so that the last line is at the
+         * bottom of the window. Work out which windows are locked to the
+         * current buffer position and re-center them. */
+        meFrameLoopBegin() ;
+        wp = loopFrame->windowList;
+        while(wp != NULL)
+        {
+            /* If the window position matches the buffer then re-center */
+            if((wp->buffer == bp) &&
+               (wp->dotLine == bp->dotLine) &&
+               (wp->dotOffset == bp->dotOffset))
+            {
+                /* Force a bottom window recenter */
+                wp->windowRecenter = -1 ;
+                wp->updateFlags |= WFFORCE ;
+            }
+            wp = wp->next;
+        }
+        meFrameLoopEnd() ;
+    }
     update(meFALSE) ;
 }
 
@@ -2027,7 +2054,7 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
     if((ss=meStrchr(comStr,'|')) == NULL)
         ss = comStr + ll ;
     else
-        ll = (int) ss - (int) comStr ;
+        ll = (int)(ss - comStr) ;
     
     meStrncpy(cl,comStr,ll) ;
     cl[ll] = '\0' ;
