@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.48.2.1 2006-11-05 12:36:24 jon Exp $
+.Id $Id: me.nrs,v 2.48.2.2 2006-11-05 12:46:56 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -2066,6 +2066,8 @@ Release date specified as 2006/09/09.
 .BU
 [061105] Correct Java highlighting of package and import declarations - Thanks
 to Bryan Schofield.
+.BU
+[061105] SQL template updated, removed bad token - Thanks to Rick Owen.
 .BU
 [061105] Fixed word wrap  horizontal  scroll when using a window that is a few
 characters  wider than the fill  column.  Caused next line to scroll  which is
