@@ -99,7 +99,7 @@ set-variable .fhook-java.item-list-r2 "Clss \ecB\\2\ecA"
     hilight .hilight.java 1    "goto"         .scheme.error ; reserved but not implemented
     hilight .hilight.java 1    "if"           .scheme.operator
     hilight .hilight.java 1    "implements"   .scheme.keyword
-    hilight .hilight.java 0x12 "import"       .scheme.prepro
+    hilight .hilight.java 0x12 "^\\s*import"  .scheme.prepro
     hilight .hilight.java 1    "instanceof"   .scheme.keyword
     hilight .hilight.java 1    "int"          .scheme.type
     hilight .hilight.java 1    "interface"    .scheme.keyword
@@ -107,7 +107,7 @@ set-variable .fhook-java.item-list-r2 "Clss \ecB\\2\ecA"
     hilight .hilight.java 1    "native"       .scheme.keyword
     hilight .hilight.java 1    "new"          .scheme.keyword
     hilight .hilight.java 1    "null"         .scheme.constant
-    hilight .hilight.java 0x12 "package"      .scheme.prepro
+    hilight .hilight.java 0x12 "^\\s*package" .scheme.prepro
     hilight .hilight.java 1    "private"      .scheme.keyword
     hilight .hilight.java 1    "protected"    .scheme.keyword
     hilight .hilight.java 1    "public"       .scheme.keyword
