@@ -6,41 +6,47 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Jul 5 21:40:07 1999
 .\"
-.Id $Id: m3fcl002.3,v 2.7 2005-03-06 08:46:34 jon Exp $
+.Id $Id: m3fcl002.3,v 2.8 2006-11-07 21:55:43 bill Exp $
 .Im MicroEmacs filter
 .so me.tni
-.TH dos2unix 3f
+.TH 2unix 3f
+.XI 2dos - "Convert text files to DOS format files." 
+.XI 2mac - "Convert text files to Macintosh format files"
+.XI 2unix - "Convert text files to UNIX format files"
+.XI 2win - "Convert text files to Windows format files." 
 .XI dos2unix - "Convert DOS format files to UNIX format files"
 .XI unix2dos - "Convert UNIX format files to DOS format files." 
 .XI unix2win - "Convert UNIX format files to Windows format files." 
 .SH NAME
-dos2unix \-  Convert DOS format files to UNIX format files
+2unix \-  Convert text files to UNIX format files
 .Me $a
 .SH SYNOPSIS
 .na
-\fBme\fR "@dos2unix" \fI<files>\fR
+\fBme\fR "@2dos" \fI<files>\fR
 .br
-\fBme\fR "@unix2dos" \fI<files>\fR
+\fBme\fR "@2mac" \fI<files>\fR
 .br
-\fBme\fR "@unix2win" \fI<files>\fR
+\fBme\fR "@2unix" \fI<files>\fR
+.br
+\fBme\fR "@2win" \fI<files>\fR
 .ad
 .SH DESCRIPTION
-The start-up file \fCdos2unix.emf\fR may be invoked from the command line as a
-filter to  convert  all files in  \s-1MS-DOS\s0  or  Windows  format  into the
-correct \s-1UNIX\s0 format.
+The start-up file \fC2unix.emf\fR may be invoked from the command line as a
+filter to  convert  all text files,  which may be in  \s-1MS-DOS\s0,  Windows,
+Macintosh  format  into \s-1UNIX\s0 text format.
 .PP
 Each file  specified on the command line is  interrogated  and the line ending
 modified to \s-1UNIX\s0.
 .PP
-\fCunix2dos\fR  and  \fCunix2win\fR  similarly  operate to provide the inverse
-conversion  from  \s-1UNIX\s0 to the Microsoft  \s-1MS-DOS\s0  or Windows file
-formats. 
+\fC2dos\fR,   \fC2win\fR   and   \fC2mac\fR   similarly   operate  to  provide
+conversion from any of these formats to \s-1MS-DOS\s0, Macintosh or Windows file
+formats.
 .SH EXAMPLE
-When using  \s-1ME\s0 as a command line filter then it is advisable to control
+When using  \s-1ME\s0 as a command line filter it is advisable to control
 the backup  command line  options.  Typically  the backups and  auto-save  are
 disabled so that no backup files are generated i.e.
 .CS
-me -a -B "@unix2dos" files...
+me -a -B "@2dos" files...
 .CE
 Performs a  conversion  from  \s-1UNIX\s0  to  \s-1MS-DOS\s0  and disables the
 generation of auto-save files and backups.
@@ -48,17 +54,24 @@ generation of auto-save files and backups.
 \s-1NE\s0  may be used to run the filters, by default  \s-1NE\s0  runs without
 backup and auto-save mode enabled and the flags should \s-1NOT\s0 be used.
 .CS
-ne "@unix2dos" files...
+ne "@2dos" files...
 .CE 0
 .SH NOTES
 \fCMS-DOS\fR  files are  defined to use a line ending of  \fC\\r\\n\fR,  the
 file is terminated with \fCctrl-z\fR.
+.PP
+Macintosh  files are  defined to use a line ending of  \fC\\r\fR,  there is no
+special end of file character.
 .PP
 Microsoft  Windows  files are  defined to use a line  ending of  \fC\\r\\n\fR,
 there is no special end of file character.
 .PP
 \s-1UNIX\s0  files are defined to use a line ending of \fC\\n\fR,  there is no
 special end of file character.
+.PP
+The  unix2dos.emf,  dos2unix.emf  and  unix2win.emf  were renamed to 2dos.emf,
+2unix.emf  and 2win.emf  when 2mac.emf was added in October 2006 as the 'from'
+format is not important and number of combinations became unmanageable. 
 .SH "SEE ALSO"
 .na
 .Ht me 1 ,

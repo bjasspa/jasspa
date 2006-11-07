@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sun Feb 6 18:14:27 2005
 .\"
-.Id $Id: m3osd017.3,v 2.3 2006-09-20 20:28:10 jon Exp $
+.Id $Id: m3osd017.3,v 2.4 2006-11-07 21:55:45 bill Exp $
 .Im MicroEmacs command|osd;command|file
 .so me.tni
 .TH file-tool-setup 3
@@ -312,12 +312,12 @@ Hide Window: no
 .br
 Default Open: yes
 .\"
-.IP "Convert DOS to UNIX"
-Name: Dos2Unix
+.IP "Convert files to UNIX"
+Name: 2Unix
 .br
 File Mask: \fC.*\fR
 .br
-Command: \fCme @dos2unix %*[ %"%f%"]\fR
+Command: \fCme @2unix %*[ %"%f%"]\fR
 .br
 Hide Window: no
 .br

@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd077.2,v 2.10 2006-07-28 16:35:03 jon Exp $
+.Id $Id: m2cmd077.2,v 2.11 2006-11-07 21:55:42 bill Exp $
 .Im MicroEmacs command|shell
 .ds C0 "(\fB\*e backslash\fR)\ \&
 .so me.tni
@@ -151,23 +151,20 @@ and
 effect the output behavior of an \fBipipe-shell-command\fR.
 .SH EXAMPLE
 The following example is the
-.Ht grep 3
+.Ht xgrep 3
 command  macro which  utilizes the  \fBipipe-shell-command\fR, diverting the
 output to a buffer called \fB*grep*\fR.
 .Me $emf-scheme
 .CS
-define-macro grep
-    !if &seq %grep-com "ERROR"
-        set-variable %grep-com "grep "
-    !endif
+define-macro xgrep
     !force set-variable #l0 @1
     !if &not $status
-        set-variable #l0 @ml00 %grep-com
+        set-variable #l0 @ml00 %xgrep-com
     !endif
     !if @?
-        1 pipe-shell-command &cat %grep-com #l0 "*grep*" @mna
+        1 pipe-shell-command &cat %xgrep-com #l0 "*grep*" @mna
     !else
-        1 ipipe-shell-command &cat %grep-com #l0 "*grep*" @mna
+        1 ipipe-shell-command &cat %xgrep-com #l0 "*grep*" @mna
     !endif
 !emacro
 .CE
