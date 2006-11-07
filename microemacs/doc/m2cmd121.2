@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd121.2,v 2.6 2006-08-13 14:44:31 jon Exp $
+.Id $Id: m2cmd121.2,v 2.7 2006-11-07 20:09:17 bill Exp $
 .Im MicroEmacs command|region
 .ds C0 "(\fB\*e\*(sP\fR)\ \&
 .so me.tni
@@ -29,14 +29,14 @@ to the end of the text to be deleted, and then deletes it by using the
 a time, and \*(mE will try to remember a mark set in an off screen buffer when
 it is called back on screen.
 .PP
-A region is a block of text to be acted upon by some  \*(mE  commands. It
-is demarcated by the  \fBPOINT\fR  on one end and the \fBMARK\fR at the other.
-The point is the primary  location  identifier  where most of the action takes
-place and is always  between two  characters.  The point is  indicated  by the
-cursor  position  in that it is just  behind  the  cursor.  The  point is also
-significant  in that it defines  one end of the region. The mark, on the other
-hand, is invisible,  and is used to demarcate  the other end of the region and
-is set through \fBset-mark\fR.
+A region is a block of text to be acted  upon by some  \*(mS  commands.  It is
+demarcated by the  \fBPOINT\fR on one end and the \fBMARK\fR at the other. The
+point is the primary location  identifier where most of the action takes place
+and is always  between two  characters.  The point is  indicated by the cursor
+position in that it is just left of the cursor. The point is also  significant
+in that it  defines  one end of the  region.  The mark, on the other  hand, is
+invisible,  and is used to  demarcate  the other end of the  region and is set
+through \fBset-mark\fR.
 .PP
 The current buffer mark line and column position may be obtained from within a
 macro using the variables
