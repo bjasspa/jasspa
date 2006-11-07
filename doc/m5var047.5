@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var047.5,v 2.8 2005-01-16 19:40:40 jon Exp $
+.Id $Id: m5var047.5,v 2.9 2006-11-07 21:56:24 bill Exp $
 .Im MicroEmacs variable|hilight|macrodevelop
 .so me.tni
 .TH $system 5
@@ -210,6 +210,13 @@ which can crash if given an empty cut buffer).
 When  this  bit is set  all use of the  external  clipboard  (Windows  & XTerm
 platforms) is disabled,  this means that \*(mS will not attempt to retrieve or
 set the content of the system clipboard.
+.IP \fB0x1000000\fR
+When this bit is set the  \fC-p\fR or \fC-P\fR  option was used on the command
+line (see 
+.Ht me 1 ).
+This bit can be used by macros to determine how to function, see
+.Ht filetype 3f 
+for an example of its use.
 .SH EXAMPLE
 The follow  example  works out the  current  buffer's  backup  file name using
 \fB$system\fR to determine the naming system being used by \*(mS:-
