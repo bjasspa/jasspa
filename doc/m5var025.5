@@ -3,27 +3,27 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var025.5,v 2.6 2004-03-17 20:58:13 jon Exp $
+.Id $Id: m5var025.5,v 2.7 2006-11-07 21:55:45 bill Exp $
 .Im MicroEmacs variable|shell
 .so me.tni
-.TH %grep-com 5
-.XI %grep-com - "Grep command line"
+.TH %xgrep-com 5
+.XI %xgrep-com - "Grep command line"
 .SH NAME
-%grep-com \- Grep command line
+%xgrep-com \- Grep command line
 .Me $a
 .SH SYNOPSIS
-.B %grep-com
+.B %xgrep-com
 "\fIstring\fR"; Default is "\fCgrep \fR"
 .SH DESCRIPTION
 Sets the command line used  to execute a
 .Hr grep 1
 system command.  The output of the 
-.Ht grep 3 
+.Ht xgrep 3 
 execution should include  both file  and line  number information  so that the
 command 
 .Ht get-next-line 2 
 can  be used properly.  This is not  defined by default
-and the \fBgrep\fR command will not execute until it is defined.
+and the \fBxgrep\fR command will not execute until it is defined.
 .PP
 .Hr grep 1
 is typically  used with the \fB-n\fR  option which  produced line
@@ -31,10 +31,10 @@ numbering information which drives the
 .Ht get-next-line 2 
 command.
 .SH EXAMPLE
-The following example shows how the \fBgrep\fR strings are defined. 
+The following example shows how the \fBxgrep\fR strings are defined. 
 .Me $emf-scheme
 .CS
-set-variable %grep-com "grep -n "
+set-variable %xgrep-com "grep -n "
 0 add-next-line "*grep*"
 add-next-line "*grep*" "%f:%l:"
 .CE
@@ -57,7 +57,7 @@ subsequent lines. In this case additional  \fIadd-next-line\fR patterns may be
 defined to cater for the \fBgrep\fR output as follows:
 .Me $emf-scheme
 .CS
-set-variable %grep-com "grep /n "
+set-variable %xgrep-com "grep /n "
 0 add-next-line "*grep*"
 add-next-line "*grep*" "File: %f:"
 add-next-line "*grep*" "%l:"
@@ -88,6 +88,7 @@ commercial version of \fBgrep\fR is also available from MKS.
 .Ht add-next-line 2 ,
 .Hr grep 1 ,
 .Ht grep 3 ,
+.Ht xgrep 3 ,
 .Ht rgrep 3 ,
 .Ht add-next-line 2 .
 .ad

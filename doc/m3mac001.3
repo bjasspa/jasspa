@@ -3,32 +3,33 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac001.3,v 2.6 2004-03-17 20:58:13 jon Exp $
+.Id $Id: m3mac001.3,v 2.7 2006-11-07 21:55:43 bill Exp $
 .Im MicroEmacs command|shell
 .so me.tni
 .TH grep 3
 .XI grep - "Execute grep command"
+.XI xgrep - "Execute grep command"
 .XI rgrep - "Execute recursive grep command"
 .SH NAME
-grep \- Execute grep command
+xgrep \- Execute grep command
 .br
 rgrep \- Execute recursive grep command
 .Me $a
 .SH SYNOPSIS
 .na
 .Me "|grep"
-.B grep
+.B xgrep
 "\fIexpression files...\fR"
 .Me "|rgrep"
 .B rgrep
 "\fIexpression\fR" "\fIbase-path\fR" "\fIfile-mask\fR"
 .ad
 .SH DESCRIPTION
-.B grep
+.B xgrep
 executes the
 .Hr grep 1
 command with the  command line set by the
-.Ht %grep-com 5
+.Ht %xgrep-com 5
 variable and the user supplied  \fIexpression\fR and file list \fIfiles...\fR.
 The output of the command is piped into the \fB*grep*\fR buffer ready for the
 .Ht get-next-line 2
@@ -44,14 +45,14 @@ this is useful when used in macros as it ensures that  \fBgrep\fR has finished
 before the command returns.
 .PP
 .B rgrep
-is simpler to \fBgrep\fR in that it uses
+is similar to \fBgrep\fR in that it uses
 .Hr grep 1
 to search for all occurrences of \fIexpression\fR, but \fBrgrep\fR also uses
 .Hr find 1
 to search for  \fIexpression\fR  in all files matching the  \fIfile-mask\fR in
 all directories from \fIbase-path\fR down.
 .SH NOTES
-\fBgrep\fR is a macro defined in \fCtools.emf\fR.
+\fBxgrep\fR is a macro defined in \fCxfind.emf\fR.
 .PP
 .Hr grep 1 
 must be executable on the system before grep or rgrep can function,
@@ -60,10 +61,10 @@ must also be available for rgrep to work.
 The 
 .Hr find 1 
 command is defined by variable
-.Ht %find-com 5 ,
+.Ht %xfind-com 5 ,
 the default when not defined is \fCfind\fR.
 .SH EXAMPLE
-The \fBgrep\fR command is generally set up in the startup files as follows:-
+The \fBxgrep\fR command is generally set up in the startup files as follows:-
 .Me $emf-scheme
 .CS
 ;
@@ -74,19 +75,19 @@ set-variable $file-template "[a-zA-Z:]*[0-9a-zA-Z\\_.]+"
 ;
 ; Definitions for GNU grep utility.
 ;
-set-variable %grep-com "grep -n "
+set-variable %xgrep-com "grep -n "
 0 add-next-line "*grep*"
 add-next-line "*grep*" "%f:%l:"
 .CE 0
 .Me $ehf-scheme
 .SH "SEE ALSO"
 .na
-.Ht %find-com 5 , 
-.Ht %grep-com 5 ,
+.Ht %xfind-com 5 , 
+.Ht %xgrep-com 5 ,
 .Ht add-next-line 2 ,
 .Ht compile 3 .
 .Hr find 1 ,
-.Ht find 3 ,
+.Ht xfind 3 ,
 .Ht get-next-line 2 ,
 .Hr grep 1 .
 .ad

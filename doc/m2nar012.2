@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Fri Jan 9 00:04:42 2004
 .\"
-.Id $Id: m2nar012.2,v 2.3 2006-08-13 14:18:05 jon Exp $
+.Id $Id: m2nar012.2,v 2.4 2006-11-07 21:55:43 bill Exp $
 .Im MicroEmacs
 .so me.tni
 .TH macroOverview 4
@@ -113,10 +113,10 @@ MicroEmacs  and therefore  they must be reliable by the nature of their global
 scope they are considered unreliable.
 .PP
 A few  commands  still use them but this is more for  historical  reasons, for
-example grep's
-.Ht %grep-com 5
+example xgrep's
+.Ht %xgrep-com 5
 variable to set the default grep command  would be better  implemented  as the
-command variable \fC.grep.com\fR, see below.
+command variable \fC.xgrep.com\fR, see below.
 .SS "Buffer Variables"
 Buffer  variables  are set in the context of a buffer, each buffer has its
 own independent  list of buffer variables so this type of variable is used
