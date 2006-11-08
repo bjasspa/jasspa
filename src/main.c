@@ -136,11 +136,11 @@ static void
 meInit(meUByte *bname)
 {
     meBuffer *bp;
-    
+
     if (TTstart() == meFALSE)             /* Started ?? */
         meExit(1) ;
-    
-    /* add 2 to hilBlockS to allow for a double trunc-scheme change 
+
+    /* add 2 to hilBlockS to allow for a double trunc-scheme change
      * Note: ME is not yet 'initialised' so any meMalloc failure will
      * lead to exit in mlwrite so we don't need to check */
     styleTable = meMalloc(2*meSCHEME_STYLES*sizeof(meStyle)) ;
@@ -151,7 +151,7 @@ meInit(meUByte *bname)
     /* Set the fore and back colours */
     TTaddColor(meCOLOR_FDEFAULT,255,255,255) ;
     TTaddColor(meCOLOR_BDEFAULT,0,0,0) ;
-    
+
     /* Create the frame - make sure that we do not access the screen during
      * the re-size */
     screenUpdateDisabledCount++;
@@ -161,10 +161,10 @@ meInit(meUByte *bname)
     frameList = frameCur ;
 #endif
     screenUpdateDisabledCount--;
-        
+
     if(((bp = bfind(bname,BFND_CREAT)) == NULL) ||
        (meFrameInitWindow(frameCur,bp) <= 0))
-        meExit(1);    
+        meExit(1);
     alarmState |= meALARM_INITIALIZED ;
 }
 
@@ -245,7 +245,7 @@ execute(register int c, register int f, register int n)
         /* If any of the modifiers have changed since the last key we executed
          * then execute any commands bound to the M-pick or M-drop pseudo keys,
          * e.g. the S-pick key will be generated between the following 2 keys:
-         *      right S-right. 
+         *      right S-right.
          * These keys only get 'pressed' if a command is bound to them. The
          * commands are executed in a hidden way, so they are not recorded in
          * kbd macros or in the $recent-keys. This could led to a macro failing
@@ -254,7 +254,7 @@ execute(register int c, register int f, register int n)
         static meUShort lastcc=0 ;
         meUInt arg ;
         meUShort mask, kk, ccx=lastcc ^ c ;
-        
+
         lastcc = c ;
         for(mask=ME_SHIFT ; mask != ME_SPECIAL ; mask<<=1)
         {
@@ -270,7 +270,7 @@ execute(register int c, register int f, register int n)
         }
     }
 #endif
-    
+
 #if MEOPT_UNDO
     if(kbdmode != mePLAY)
         undoContFlag++ ;
@@ -291,7 +291,7 @@ execute(register int c, register int f, register int n)
      * so many hoops I've changed the input support so that macros can fail
      * in such a way as to indicate that they have not handled this input,
      * this allows them to pick and choose.
-     * The method chosen is to check the command variable status if the macro 
+     * The method chosen is to check the command variable status if the macro
      * aborted, if .status is set to "0" then its not handled the input
      */
 #if MEOPT_EXTENDED
@@ -354,12 +354,12 @@ execute(register int c, register int f, register int n)
 
     if(meModeTest(frameCur->bufferCur->mode,MDWRAP) &&
        ((c == ' ') || (meStrchr(filleos,c) != NULL)) &&
-       (frameCur->bufferCur->fillcol > 0) && (n >= 0) && 
+       (frameCur->bufferCur->fillcol > 0) && (n >= 0) &&
        (getccol() > frameCur->bufferCur->fillcol) &&
        !meModeTest(frameCur->bufferCur->mode,MDVIEW))
         wrapWord(meFALSE, 1);
 #endif
-    
+
     /* insert the required number of chars */
     if(insertChar(c,n) <= 0)
         return (cmdstatus = meFALSE) ;
@@ -420,7 +420,6 @@ execute(register int c, register int f, register int n)
     lastflag = thisflag;
     return (cmdstatus = meTRUE) ;
 }
-
 
 /*
 ** Me info
@@ -522,7 +521,7 @@ exitEmacs(int f, int n)
 {
     int s, ec=0 ;
     char buff[128] ;
-        
+
 #if MEOPT_EXTENDED
     /* Set the exit code */
     if(n & 0x04)
@@ -535,7 +534,7 @@ exitEmacs(int f, int n)
 #endif
         if(n & 0x20)
             ec = 1 ;
-    
+
     /* (Un)conditionally save buffers, dictionary and registry files */
     if((n & 0x02) &&
        ((saveSomeBuffers(f,(n & 0x01)) <= 0)
@@ -547,7 +546,7 @@ exitEmacs(int f, int n)
 #endif
        ))
         return meFALSE ;
-    
+
     s = 1 ;
     if(n & 0x01)
     {
@@ -686,7 +685,7 @@ exitEmacs(int f, int n)
             meKillNode   *next, *kill ;
             meAbbrev     *abrev ;
             int           ii, jj ;
-                        
+
             /* remove all but a simple *scratch* */
             bc = bheadp ;
             while(bc != NULL)
@@ -706,7 +705,7 @@ exitEmacs(int f, int n)
             regFreeMemory() ;
             srchFreeMemory() ;
             TTfreeTranslateKey() ;
-            
+
             meNullFree(mlBinds) ;
             meFree(hilBlock) ;
 #ifdef _XTERM
@@ -790,9 +789,9 @@ exitEmacs(int f, int n)
                 meNullFree(modeLineStr) ;
             meNullFree(flNextFileTemp) ;
             meNullFree(flNextLineTemp) ;
-            
-            meNullFree(meUserName) ; 
-            meNullFree(meUserPath) ;  
+
+            meNullFree(meUserName) ;
+            meNullFree(meUserPath) ;
 
             meNullFree(rcsFile) ;
             meNullFree(rcsCiStr) ;
@@ -874,7 +873,7 @@ exitEmacs(int f, int n)
                 meFree(abrev) ;
             }
             meFree(styleTable) ;
-            
+
             fc = frameList ;
             while(fc != NULL)
             {
@@ -891,7 +890,7 @@ exitEmacs(int f, int n)
 #ifdef _ME_WIN32_FULL_DEBUG
         {
             _CrtMemState ss ;
-            
+
             _CrtMemCheckpoint( &ss );
             _CrtMemDumpStatistics(&ss) ;
             _CrtCheckMemory() ;
@@ -904,7 +903,6 @@ exitEmacs(int f, int n)
 
     return s ;
 }
-
 
 #if MEOPT_EXTENDED
 /*
@@ -1038,7 +1036,7 @@ sigchild(SIGNAL_PROTOTYPE)
     /* clear up any zoombie children if we are not running a piped command */
     if((alarmState & meALARM_PIPE_COMMAND) == 0)
         meWaitpid(-1,&status,WNOHANG) ;
-    
+
     /* Reload the signal handler. Note that the child is a special case where
      * the signal is reset at the end of the handler as opposed to the head of
      * the handler. For the POSIX or BSD signals this is not required. */
@@ -1057,7 +1055,7 @@ meDie(void)
      * being torn down. Our main purpose is to preserve the session
      * information and history. */
     alarmState = meALARM_DIE ;
-    
+
     return exitEmacs(1,0x28) ;
 }
 #endif
@@ -1088,7 +1086,6 @@ autoSaveHandler(void)
     else
         timerClearExpired(AUTOS_TIMER_ID) ;
 }
-
 
 #ifdef _UNIX
 static void
@@ -1130,7 +1127,7 @@ doOneKey(void)
      */
     if (kbdmode == meSTOP)
         kbdmode = meIDLE;             /* In an idle state  */
-    
+
     c = meGetKeyFromUser(meFALSE, 1, meGETKEY_COMMAND);     /* Get a key */
 
     if (frameCur->mlStatus & MLSTATUS_CLEAR)
@@ -1208,7 +1205,6 @@ doOneKey(void)
     commandDepth-- ;
 }
 
-
 void
 mesetup(int argc, char *argv[])
 {
@@ -1227,7 +1223,7 @@ mesetup(int argc, char *argv[])
     int     userClientServer=0 ;
 #endif
     startTime = time(NULL) ;
-    
+
     /* asserts to check that the defines are consistent */
 #if MEOPT_NARROW
     /* more info is required to undo a narrow than can be held in the main
@@ -1241,7 +1237,7 @@ mesetup(int argc, char *argv[])
     /* Get the usr id and group id for mode-line and file permissions */
     meXUmask = umask(0);
     umask(meXUmask);
-    meXUmask = (meXUmask & (S_IROTH|S_IWOTH|S_IXOTH|S_IRGRP|S_IWGRP|S_IXGRP|S_IRUSR|S_IWUSR|S_IXUSR)) ^ 
+    meXUmask = (meXUmask & (S_IROTH|S_IWOTH|S_IXOTH|S_IRGRP|S_IWGRP|S_IXGRP|S_IRUSR|S_IWUSR|S_IXUSR)) ^
               (S_IROTH|S_IWOTH|S_IXOTH|S_IRGRP|S_IWGRP|S_IXGRP|S_IRUSR|S_IWUSR|S_IXUSR) ; /* 00666 */
     meUmask = meXUmask & (S_IROTH|S_IWOTH|S_IRGRP|S_IWGRP|S_IRUSR|S_IWUSR) ;
     meUid = getuid();
@@ -1255,7 +1251,7 @@ mesetup(int argc, char *argv[])
     }
     else
         meGidSize = 0 ;
-    
+
     /* Set the required alarms first so we always have them */
     /* setup alarm process for timers */
 #ifdef _POSIX_SIGNALS
@@ -1329,7 +1325,7 @@ mesetup(int argc, char *argv[])
 #if MEOPT_EXTENDED
             case 0:      /* -  get input from stdin */
                 noFiles = 1 ;
-#endif                
+#endif
             case 'b':    /* -b bin flag */
             case 'k':    /* -k crypt flag */
             case 'y':    /* -y rbin flag */
@@ -1342,7 +1338,7 @@ mesetup(int argc, char *argv[])
             case 'c':
                 SetUsrLclCmdVar((meUByte *) "session-name",(meUByte *) (argv[carg] + 2),&usrVarList) ;
                 break ;
-#endif                
+#endif
             case 'h':
                 mePrintMessage(meHelpPage) ;
                 meExit(0) ;
@@ -1426,7 +1422,7 @@ missing_arg:
                     cursorColor = (meColor) meStyleGetFColor(defaultScheme[meSCHEME_NORMAL]);
                 }
                 break;
-            
+
             case 's':    /* -s for initial search string */
                 argv[rarg++] = argv[carg] ;
                 if(argv[carg][2] == '\0')
@@ -1453,11 +1449,11 @@ missing_arg:
                 }
 
              case 'V':
-                sprintf((char *)evalResult,"%s %s - Date %s%s - %s\n", 
+                sprintf((char *)evalResult,"%s %s - Date %s%s - %s\n",
                         ME_FULLNAME, meVERSION, meCENTURY, meDATE, meSYSTEM_NAME) ;
                 mePrintMessage(evalResult) ;
                 meExit(0) ;
-                
+
             case 'v':
                 {
                     char *ss, *tt, cc ;
@@ -1475,7 +1471,7 @@ missing_arg:
                         mePrintMessage(evalResult) ;
                         meExit(1) ;
                     }
-                    
+
                     if(((cc=getMacroTypeS(ss)) != TKREG) && (cc != TKVAR) &&
                        (cc != TKCVR) && (cc != TKENV))
                     {
@@ -1620,7 +1616,7 @@ missing_arg:
             /* send a 'make-current' command to server */
             TTsendClientServer((meUByte *) "C:ME:2 popup-window\n") ;
 #ifdef _WIN32
-        /* send a WM_USR message to the main window to wake ME up */ 
+        /* send a WM_USR message to the main window to wake ME up */
         SendMessage(baseHwnd,WM_USER,1,0) ;
 #endif
         meExit(0) ;
@@ -1677,7 +1673,7 @@ missing_arg:
     /* allow interaction with the clipboard now that me has initialized */
     clipState &= ~CLIP_DISABLED ;
 #endif
-    
+
     {
         meUByte  *searchStr=NULL, *cryptStr=NULL ;
         int       binflag=0 ;         /* load next file as a binary file*/
@@ -1686,7 +1682,7 @@ missing_arg:
         char     *ss ;
         int       stdinflag=0 ;
         int       obufHistNo ;
-        
+
         obufHistNo = bufHistNo ;
         noFiles = 0 ;
         /* scan through the command line and get the files to edit */
@@ -1920,7 +1916,7 @@ commandWait(int f, int n)
     meUByte clexecSv ;
     int execlevelSv ;
     meUByte *ss ;
-    
+
     if(f && n)
     {
         f = clexec ;
@@ -1936,7 +1932,7 @@ commandWait(int f, int n)
        ((f=decode_fncname(meRegCurr->commandName,1)) < 0) ||
        ((varList = &(cmdTable[f]->varList)) == NULL))
         return meTRUE ;
-        
+
     if(n == 0)
     {
         TTsleep(-1,0,varList) ;
@@ -1963,7 +1959,7 @@ commandWait(int f, int n)
                     selhilight.flags &= ~SELHIL_ACTIVE ;
                 TTbreakFlag = 0 ;
             }
-        } while((varList != NULL) && 
+        } while((varList != NULL) &&
                 ((ss=getUsrLclCmdVar((meUByte *)"wait",varList)) != errorm) && meAtoi(ss)) ;
         clexec = clexecSv ;
         execlevel = execlevelSv ;
@@ -1997,7 +1993,7 @@ main(int argc, char *argv[])
         if (dadHead != NULL)
         {
             struct s_DragAndDrop *dadp; /* Drag and drop pointer */
-#if MEOPT_FRAME            
+#if MEOPT_FRAME
             meFrame *startFrame;        /* Starting frame */
             startFrame = frameCur;
 #endif
@@ -2009,7 +2005,7 @@ main(int argc, char *argv[])
             /* Iterate down the list and get the files. */
             while ((dadp = dadHead) != NULL)
             {
-#if MEOPT_FRAME            
+#if MEOPT_FRAME
                 /* Change to the correct frame */
                 meFrameMakeCur(dadp->frame, 1);
 #endif
@@ -2039,8 +2035,8 @@ main(int argc, char *argv[])
                 dadHead = dadp->next;
                 meFree (dadp);
             }
-            
-#if MEOPT_FRAME            
+
+#if MEOPT_FRAME
             /* Restore the starting frame */
             meFrameMakeCur (startFrame, 1);
 #endif

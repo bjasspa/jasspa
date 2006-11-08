@@ -4,10 +4,38 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <061005.2202>
+>  Last Modified : <061105.1240>
 >
 
-    User perspective summary of changes
+  [061105] JASSPA MicroEmacs 20060909 patch - build 2.
+
+  [061105] Linux i386_x64 port corrections - Thanks to Vincenzo.
+
+  [061105] Correct  Java  highlighting  of package and import  declarations  -
+           Thanks to Bryan Schofield.
+
+  [061105] SQL template updated, removed bad token - Thanks to Rick Owen.
+
+  [061105] Fixed word wrap horizontal scroll when using a window that is a few
+           characters  wider than the fill column.  Caused next line to scroll
+           which is very annoying - this is a very old bug!
+
+  [061105] Fixed the Win32s  Windows build which was using a later day Windows
+           construct.
+
+  [061105] Fixed NanoEmacs Window version under MS-Windows,  crashing on start
+           up due to accessing  curFrame which had not been initialized before
+           a screen  draw took place from the Window  message  queue.  Inhibit
+           screen access during the construction of the frame.
+
+  [061105] Documentation  translate-key  examples  added -  Thanks  to  Thomas
+           Hurdt.
+
+  [061105] Macros  bailing out when the main menu is disabled on start-up. osd
+           -1 0 returns  FALSE which causes the macro  execution to terminate.
+           Thanks to Bryan Schofield for identifying this problem.
+  
+    User perspective summary of changes 20060909
 
     * MainMenu(3) - A more consistent main menu and user dialog interaction.
 

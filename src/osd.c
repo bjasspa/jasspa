@@ -1671,7 +1671,7 @@ osdRenderEntry(meUByte *txtp, meUByte *ss, int flags, int cpos,
     s1 = meStrchr(ss,meCHAR_NL) ;
     s2 = ss ;
     start = 0 ;
-    while((s1 != NULL) && ((len=((int) s1 - (int) s2)) < cpos))
+    while((s1 != NULL) && ((len=(int)(s1 - s2)) < cpos))
     {
         start++ ;
         s2 = s1+1 ;
@@ -1700,7 +1700,7 @@ osdRenderEntry(meUByte *txtp, meUByte *ss, int flags, int cpos,
     while(--row >= 0)
     {
         s2 = meStrchr(s1,meCHAR_NL) ;
-        len = ((int) s2 - (int) s1) ;
+        len = (int)(s2 - s1) ;
         osdRenderEntryLine(txtp,s1,len,0,ww) ;
         txtp += totWidth ;
         s1 = s2 + 1 ;
@@ -1709,7 +1709,7 @@ osdRenderEntry(meUByte *txtp, meUByte *ss, int flags, int cpos,
     if(s2 == NULL)
         len = -1 ;
     else
-        len = ((int) s2 - (int) s1) ;
+        len = (int)(s2 - s1) ;
     col = osdRenderEntryLine(txtp,s1,len,cpos,ww) ;
     while(--dd >= 0)
     {
@@ -1723,7 +1723,7 @@ osdRenderEntry(meUByte *txtp, meUByte *ss, int flags, int cpos,
             if(s2 == NULL)
                 len = -1 ;
             else
-                len = ((int) s2 - (int) s1) ;
+                len = (int)(s2 - s1) ;
         }
         osdRenderEntryLine(txtp,s1,len,0,ww) ;
     }

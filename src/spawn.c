@@ -1370,6 +1370,13 @@ ipipeSetSize(meWindow *wp, meBuffer *bp)
 /* allocatePty; Allocate a pty. We use the old BSD method of searching for a
  * pty, once we have aquired one then we look for the tty. Return the name of
  * the tty to the caller so that it may be opened. */
+
+#ifdef  _LINUX26
+extern char *ptsname(int) ;
+extern int unlockpt(int) ;
+extern int grantpt(int) ;
+#endif /* _LINUX26 */
+
 static int
 allocatePty(meUByte *ptyName)
 {
@@ -1974,7 +1981,7 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
 #ifdef _UNIX
     meWAIT_STATUS ws;
     meUByte *cl, *ss ;
-    int ll ;
+    size_t ll ;
 #else
     meUByte filnam[meBUF_SIZE_MAX] ;
 
@@ -2053,7 +2060,7 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
     if((ss=meStrchr(comStr,'|')) == NULL)
         ss = comStr + ll ;
     else
-        ll = (int) ss - (int) comStr ;
+        ll = (size_t)(ss - comStr) ;
     
     meStrncpy(cl,comStr,ll) ;
     cl[ll] = '\0' ;

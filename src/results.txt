@@ -4,7 +4,7 @@
 >
 >  Created By    : Jon Green
 >  Created       : Sat Aug 9 23:47:20 2003
->  Last Modified : <061010.0005>
+>  Last Modified : <061107.2357>
 >
 
 The  following are benchmark  figures for  MicroEmacs  running on
@@ -142,3 +142,15 @@ Running % me "@benchmrk" results.txt
     Test8:     11       13
     Test9:     11       13
 
+1.8 Fedora Core 5 Athlon64 3200 (at 2Ghz) gcc 4.1.1 - 2006-11-06
+
+    @      Get(sec) Set(sec)
+    Test1:      9        9
+    Test2:     15       16
+    Test3:     15       17
+    Test4:     15       16
+    Test5:     16       17
+    Test6:     15       16
+    Test7:     17       18
+    Test8:     10       11
+    Test9:     10       12
