@@ -246,6 +246,7 @@ gft_directory:
         {
             meUByte lbuf[meBUF_SIZE_MAX], buf[meBUF_SIZE_MAX], *ss ;
             size_t ii, jj ;
+            int maxi=10 ;
 
             ii = meStrlen(file) ;
             meStrncpy(lbuf,file,ii) ;
@@ -271,7 +272,7 @@ gft_directory:
                     meStrcpy(ss,buf) ;
                     ii += jj ;
                 }
-            } while(((jj=lstat((char *)lbuf, &statbuf)) == 0) && S_ISLNK(statbuf.st_mode)) ;
+            } while(((jj=lstat((char *)lbuf, &statbuf)) == 0) && (--maxi > 0) && S_ISLNK(statbuf.st_mode)) ;
             
             if(lname != NULL)
             {
