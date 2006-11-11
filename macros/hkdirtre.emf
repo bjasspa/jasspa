@@ -172,8 +172,7 @@ set-variable .fhook-dirtre.command-desc  "|Swap Browser \HWindows|Close File \HB
 !emacro
 
 0 define-macro dirtre-mouse-drop-3
-    0xe6 dirtre-mouse-drop-1
+    0xa6 dirtre-mouse-drop-1
 !emacro
 
 buffer-init-fhook "dirtre"
-
