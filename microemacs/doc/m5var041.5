@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var041.5,v 2.7 2005-06-09 22:26:16 bill Exp $
+.Id $Id: m5var041.5,v 2.8 2006-12-03 11:10:56 bill Exp $
 .Im MicroEmacs variable|shell|macrodevelop
 .so me.tni
 .TH $result 5
@@ -39,6 +39,13 @@ parent and index from the user.
 .TP
 .Ht mark-registry 2
 \fB$result\fR is used to return the full name of the given registry node.
+.TP
+.Ht replace-string 2
+.Ht query-replace-string 2
+.IP
+\fB$result\fR is used to return the number of substitutions, the final replace
+mode ('a' for all, 'l' for last or 'q' for query) and the replace  with string
+in a list.
 .TP
 .Ht osd 2 
 .IP
@@ -98,6 +105,7 @@ input.
 .Ht file-op 2 ,
 .Ht find-registry 2 ,
 .Ht mark-registry 2 ,
+.Ht query-replace-string 2 ,
 .Ht osd 2 ,
 .Ht shell-command 2 ,
 .Ht show-region 2 ,
