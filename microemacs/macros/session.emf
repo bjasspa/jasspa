@@ -118,26 +118,31 @@ set-variable .session.kill 1
     !while &len &set #l2 &mid #l1 &pinc #l3 1 1
         set-variable #l9 &cat #l9 &itoa &add 65 #l2
     !done
-    insert-string &cat #l9 "\b\bvars\b\b\n"
-    insert-string &spr "\b.session.update\b%s\n" .session.update
-    insert-string &spr "\b.session.amark\b%s\n" .session.amark
-    insert-string &spr "\b.session.kill\b%s\n" .session.kill
-    !if &band $system 0x01
-        set-variable #l1 ".session.schemec"
-    !else
-        set-variable #l1 ".session.schemew"
-        set-variable .session.framew $frame-width
-        set-variable .session.framed $frame-depth
-    !endif
-    !force unset-variable &ind #l1
+    !force unset-variable .session.scheme
     !if &not &exi .change-scheme.current
     !elif &not &seq .change-scheme.current &reg &spr "/history/%s/scheme" %platform "schemed"
-        set-variable &ind #l1 .change-scheme.current
+        set-variable .session.scheme .change-scheme.current
     !endif
-    set-variable #l1 0
-    !while &not &seq "" &set #l2 &lget .var &inc #l1 1
-        !if &exi &ind #l2
-            insert-string &spr "\b%s\b%s\n" #l2 &ind #l2
+    insert-string &cat #l9 "\b\bvars\b\b\n"
+    insert-string &spr "\bplatform\b%s\n" $platform
+    insert-string &spr "\bsystem\b%s\n" $system
+    insert-string &spr "\bupdate\b%s\n" .session.update
+    insert-string &spr "\bamark\b%s\n" .session.amark
+    insert-string &spr "\bkill\b%s\n" .session.kill
+    !if &band $system 0x01
+        set-variable #l1 "c-"
+        set-variable #l2 "w-"
+    !else
+        set-variable #l1 "w-"
+        set-variable #l2 "c-"
+    !endif
+    set-variable #l5 0
+    !while &not &seq "" &set #l3 &lget .pn &inc #l5 1
+        !if &exi &set #l4 &lget .pv #l5
+            insert-string &spr "\b%s%s\b%s\n" #l1 #l3 &ind #l4
+        !endif
+        !if &exi &set #l4 &spr ".session.%s%s" #l2 #l3
+            insert-string &spr "\b%s%s\b%s\n" #l2 #l3 &ind #l4
         !endif
     !done
     insert-string &cat #l9 "\b\bhist\b\b\n"
@@ -180,7 +185,6 @@ set-variable .session.kill 1
     !endif
     !if &exi .toolbar.open
         insert-string &cat #l9 "\b\btoolbar\b\b\n"
-        insert-string &spr "\bopen\b%s\n" .toolbar.open
         !if .toolbar.open
             ; get the current state of the toolbar
             set-variable #l1 0
@@ -247,7 +251,8 @@ set-variable .session.kill 1
     !endif
     ml-write "[Session saved]"
 !emacro
-set-variable .update-session.var "|$platform|$system|$scroll|$scroll-bar|.session.schemec|.session.schemew|.session.framew|.session.framed|"
+set-variable .update-session.pv "|.session.scheme|$scroll|$scroll-bar|$frame-width|$frame-depth|.toolbar.open|"
+set-variable .update-session.pn "|scheme|scroll|sbar|framew|framed|tbopen|"
 set-variable .update-session.tv "|size|tool-name|tool-buff|tool-file|tool-size|tool-flag|tool-cmd|"
 
 define-macro save-session
@@ -416,10 +421,11 @@ define-macro read-session
     set-variable .session.update 1
     set-variable .session.amark 0
     set-variable .session.kill 1
-    !force unset-variable .session.schemec
-    !force unset-variable .session.schemew
-    !force unset-variable .session.framew
-    !force unset-variable .session.framed
+    set-variable #l5 0
+    !while &not &seq "" &set #l3 &lget .update-session.pn &inc #l5 1
+        !force unset-variable &cat ".session.c-" #l3
+        !force unset-variable &cat ".session.w-" #l3
+    !done
     !force 0 delete-buffer "*session_tmp*"
     find-buffer "*session_tmp*"
     insert-file #l1
@@ -477,13 +483,17 @@ define-macro read-session
                 set-variable #l8 1
             !elif &seq #l1 "vars"
                 !while &xse @wl "^\b\\([^\b]+\\)\b\\(.*\\)"
-                    !if &lfin "|$platform|$system|" @s1
-                    !else
+                    !if &seq &lef &set #l2 @s1 9 ".session."
                         set-variable &ind @s1 @s2
+                    !elif &seq &lef #l2 1 "$"
+                        set-variable &cat ".session." &rig #l2 1 @s2
+                    !else
+                        set-variable &cat ".session." #l2 @s2
                     !endif
                     forward-line
                 !done
-                set-variable #l2 &cat ".session.scheme" &cond &band $system 0x01 "c" "w"
+                set-variable .svp &cond &band $system 0x01 ".session.c-" ".session.w-"
+                set-variable #l2 &cat .svp "scheme"
                 &exi &ind #l2 change-scheme &ind #l2
             !elif &seq #l1 "hist"
                 !while &len &set #l3 &lget @wl 1
@@ -581,6 +591,9 @@ define-macro read-session
                     set-variable &ind &cat ".toolbar." @s1 @s2
                     forward-line
                 !done
+                !if &exi &set #l2 &cat .svp "tbopen"
+                    set-variable .toolbar.open &ind #l2
+                !endif
                 !if .toolbar.open
                     goto-position "\x88"
                     !force !force 0 toolbar-open
@@ -595,18 +608,27 @@ define-macro read-session
                     set-variable &cat ".v" &pinc #l3 1 @wl
                     forward-line
                 !done
-                ; resize the frame
+                ; resize the frame and set scroll and scroll-bar
+                !if &exi &set #l4 &cat .svp "scroll"
+                    set-variable $scroll &ind #l4
+                !endif
+                !if &exi &set #l4 &cat .svp "sbar"
+                    set-variable $scroll-bar &ind #l4
+                !endif
                 !if &not &band $system 1
-                    !if &exi .session.framed
-                        !force change-frame-depth .session.framed
+                    !if &exi &set #l4 &cat .svp "framed"
+                        !force change-frame-depth &ind #l4
                     !endif
-                    !if &exi .session.framew
-                        !force change-frame-width .session.framew
+                    !if &exi &set #l4 &cat .svp "framew"
+                        !force change-frame-width &ind #l4
                     !endif
                 !endif
                 !if &not &band @# 16
+                    ; Only load win layout if session console mode and size are the same
                     set-variable #l6 0
-                    !if &sub &sub &lget #l2 3 &lget #l2 1 $window-width
+                    !if &band 0x01 &bxor .session.system $system
+                        ml-write "[Session type incompatible - cannot recreate window layout]"
+                    !elif &sub &sub &lget #l2 3 &lget #l2 1 $window-width
                         ml-write "[Frame width not correct - cannot recreate window layout]"
                     !elif &sub &sub &lget #l2 4 &lget #l2 2 $window-depth
                         ml-write "[Frame depth not correct - cannot recreate window layout]"
