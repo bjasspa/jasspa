@@ -8,8 +8,6 @@
 ; Authors:     Steven Phillips
 ; Notes:       Many have come from removing OSD from search.emf 
 ;
-define-macro osd-search
-!emacro
 !if &not &exi .osd.symbol
     0 define-macro-file majormod major-mode
     set-variable .osd.symbol  &pinc .osd.next 1
@@ -45,6 +43,8 @@ define-macro osd-search
     set-variable .osd.file-typec &pinc .osd.next 1
     ; shell-tool-setup
     set-variable .osd.shell-tool &pinc .osd.next 1
+    ; find-setup
+    set-variable .osd.find-stp &pinc .osd.next 1
 !endif
 ;
 ; symbol
@@ -415,6 +415,8 @@ osd .osd.ftag 60  "" " "
 ;
 ; Osd search menu
 ;
+define-macro osd-search
+!emacro
 0 define-macro osd-search-set-state
     !if &sub @# -1
         !force show-region
@@ -1589,5 +1591,53 @@ define-macro shell-tool-setup
         exec-file "osd"
     !elif &band @# 1
         !force read-registry "/history" $user-name "cbr"
+    !endif
+!emacro
+
+; find-setup ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+0 define-macro find-setup-entry
+    set-variable #l2 &cat "/history/" &lget "|find-com|grep-com|rsif-com|" &abs @#
+    !if &les @# 0
+        set-variable #l0 &reg #l2 ""
+        set-variable #l0 @ml2 "" #l0
+        set-registry #l2 #l0
+    !else
+        set-variable $result &reg #l2 ""
+    !endif
+!emacro
+
+-1 osd .osd.find-stp
+osd .osd.find-stp 0 "batcDHs" 5 4 62 4 -1 -1 2020 .scheme.osd-title "Find Setup"
+set-variable #l2 10
+osd .osd.find-stp &inc #l2 1 "" ""
+osd .osd.find-stp &inc #l2 1 "" "  Set default options for the following commands:"
+osd .osd.find-stp &inc #l2 1 "" ""
+osd .osd.find-stp &inc #l2 1 "Sfh" "    \Hfind:  " &add #l2 1
+osd .osd.find-stp &inc #l2 1 "EtxHfz" .scheme.osd-entry 38 1 "" 1 find-setup-entry
+osd .osd.find-stp &inc #l2 1 "" ""
+osd .osd.find-stp &inc #l2 1 "Sfh" "    \Hgrep:  " &add #l2 2
+osd .osd.find-stp &inc #l2 1 "EtxHfz" .scheme.osd-entry 38 1 "" 2 find-setup-entry
+osd .osd.find-stp &inc #l2 1 "" ""
+osd .osd.find-stp &inc #l2 1 "Sf" "    \Hreplace-string-in-files:" &add #l2 3
+osd .osd.find-stp &inc #l2 1 "fh" "           "
+osd .osd.find-stp &inc #l2 1 "EtxHfz" .scheme.osd-entry 38 1 "" 3 find-setup-entry
+osd .osd.find-stp 2000 ""
+osd .osd.find-stp 2010 ""
+osd .osd.find-stp 2020 "BtcfHh" .scheme.osd-ebtt " \HClose " f void
+
+define-macro find-setup
+    !if &band @# 1
+        ; reread the setup if not run from user-setup
+        !force read-registry "/history" $user-name "cbr"
+    !endif
+    !force !force .osd.find-stp osd
+    !if &band @# 1
+        !if $status
+            save-registry "/history" ""
+        !else
+            !force read-registry "/history" $user-name "cbr"
+        !endif
+        exec-file "cvs"
     !endif
 !emacro
