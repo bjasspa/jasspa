@@ -90,7 +90,6 @@ set-variable .fhook-find.command-desc  &rig &lset &lset &lset &lset &lset &lset 
 
 0 define-macro find-proc-grep
     set-variable #l0 $buffer-bname
-    set-variable #p6 0
     !if &band $buffer-fmod 0x80000
         !repeat
             !force search-buffer #p7 #p4
@@ -127,7 +126,7 @@ set-variable .fhook-find.command-desc  &rig &lset &lset &lset &lset &lset &lset 
     set-variable #l4 &lget #p9 2
     set-variable #l9 &lget #p9 1
     set-variable #l7 &con &sin "i" #l9 "mE" "me"
-    set-variable @#  &bor &or &sin "w" #l9 &sin "b" #l9 &mul 2 &xse #l9 ".*[sStT234].*"
+    set-variable @#  &bor &xse #l9 ".*[bw@].*" &mul 2 &xse #l9 ".*[sStT234].*"
     set-variable #p7 &lset #p7 4 &add 1 &lget #p7 4
     ml-write &spr "Searching %d %n" &lget #p7 1 &mod &lget #p7 4 40 "."
     set-variable #l0 0
@@ -143,6 +142,9 @@ set-variable .fhook-find.command-desc  &rig &lset &lset &lset &lset &lset &lset 
                 !cont
             !elif &not &sin "x" #l9
             !elif &xse #l2 .fhook-dirlst.filter-mask
+                !cont
+            !elif &seq &rig #l2 -1 "#"
+                ; automatically ignore any auto-save files when using the -x option
                 !cont
             !endif
             !if &band @# 2
@@ -181,13 +183,20 @@ set-variable .fhook-find.command-desc  &rig &lset &lset &lset &lset &lset &lset 
                         !cont
                     !endif
                 !endif
-                set-variable #p7 &lset &lset #p7 &add #l6 2 &add 1 &lget #p7 &add #l6 2 1 &add 1 &lget #p7 1
-                find-proc-find
+                set-variable #p7 &lset #p7 &add #l6 2 &add 1 &lget #p7 &add #l6 2
+                !if &sin "!" #l9
+                    set-variable #l6 0
+                    execute-line &cat &lget #p9 7 " &cat #l8 #l2"
+                !else
+                    find-proc-find
+                    set-variable #l6 1
+                !endif
             !else
                 set-variable #p7 &lset #p7 &add #l6 2 &add 1 &lget #p7 &add #l6 2
+                set-variable #l6 0
                 find-proc-grep
-                set-variable #p7 &lset #p7 1 &add #l6 &lget #p7 1
             !endif
+            set-variable #p7 &lset #p7 1 &add #l6 &lget #p7 1
         !done
     !until &equ #l0 .mask-count
     !if &sin "r" #l9
@@ -214,11 +223,11 @@ set-variable .fhook-find.command-desc  &rig &lset &lset &lset &lset &lset &lset 
         set-variable #p0 &trl &rig #p0 #l1
         set-variable #l2 &lget #p9 1
         !while &len &set #l3 &lef #l0 1
-            !if &sin #l3 "xgprdfmibl234-"
+            !if &sin #l3 "xgprdfmibl234@-"
                 set-variable #l2 &cat #l2 #l3
             !elif &sin #l3 "XGPRDFMIBL"
                 set-variable #l2 &rep #l2 &slo #l3 ""
-            !elif &set #l4 &sin #l3 "wsStT"
+            !elif &set #l4 &sin #l3 "wsStT!"
                 !if &seq #p0 ""
                     ml-write &spr "[Failed to get parameter for -%s option]" #l3
                     !abort
@@ -317,24 +326,22 @@ set-variable .fhook-find.command-desc  &rig &lset &lset &lset &lset &lset &lset 
     set-variable .find-proc.mask-count #l3
 !emacro
 
-define-macro grep
-    set-variable #l1 &con &band @# 1 &reg "/history/grep-com" "" ""
-    !force set-variable #l6 @1
-    !if &not $status
-        set-variable #l6 @ml00 &cat "Grep " #l1
-    !endif
-    set-variable #l0 &set #l6 &spr "%s %s" #l1 #l6
-    set-variable #l9 "\bfl\b\b\b\b\b\b"
+; @1 = 'initial find options' @2 = 'comm-line', [@3 = from-dir] returns #p7 = init counters, #p8 = from-dir #p9 = find options 
+0 define-macro find-options
+    set-variable #l9 @1
+    set-variable #l0 @2
     !while &seq "-" &lef &set #l0 &trl #l0 1
         find-proc-option 
         !tjump &sin "-" &lget #l9 1 2
     !done
-    !if &seq "" &trl #l0
-        ml-write "[No search string given]"
-        !abort
+    !if &not @#
+        !if &seq "" &trl #l0
+            ml-write "[No search string given]"
+            !abort
+        !endif
+        set-variable #l0 &cat "-w " #l0
+        find-proc-option
     !endif
-    set-variable #l0 &cat "-w " #l0
-    find-proc-option
     find-proc-file-mask
     !if &not &sin "m" &lget #l9 1
         set-variable #l1 &lget #l9 2
@@ -342,23 +349,34 @@ define-macro grep
         set-variable #l9 &lset #l9 2 #l1
     !endif
     !if &sin "p" &lget #l9 1
-        !force set-variable #l8 @1
+        !force set-variable #p8 @3
         !if $status
-            set-variable #l8 &stat "a" #l8
+            set-variable #p8 &stat "a" #p8
         !else
-            set-variable #l8 @ml01 "From directory"
+            set-variable #p8 @ml01 "From directory"
         !endif
     !else
-        set-variable #l8 &stat "a" &lef $buffer-fname &rsin "/" $buffer-fname
+        set-variable #p8 &stat "a" &lef $buffer-fname &rsin "/" $buffer-fname
     !endif
+    set-variable .find-file.file-count 1
+    set-variable .find-file.file1 ""
+    set-variable #p7 "|0|0|0|0|"
+    set-variable #p9 #l9
+!emacro
+
+define-macro grep
+    set-variable #l1 &con &band @# 0x10 "" &reg "/history/grep-com" ""
+    !force set-variable #l6 @1
+    !if &not $status
+        set-variable #l6 @ml00 &cat "Grep " #l1
+    !endif
+    set-variable #l6 &spr "%s %s" #l1 #l6
+    0 find-options "\bf\b\b\b\b\b\b\b" #l6 @2
     popup-window "*grep*"
     !force 0 delete-buffer "*grep*"
     find-buffer "*grep*"
     set-variable $buffer-fname #l8
     insert-string &spr "Directory:  %s\nGrep: %s\n\n" #l8 #l6
-    set-variable .find-file.file-count 1
-    set-variable .find-file.file1 ""
-    set-variable #l7 "|0|0|0|0|"
     set-variable #l3 0
     !while &les &pinc #l3 1 .find-file.file-count
         !force !force !force #l3 find-proc
@@ -386,33 +404,13 @@ define-macro grep
 !emacro
 
 define-macro find
-    set-variable #l1 &con &band @# 1 &reg "/history/find-com" "" ""
+    set-variable #l1 &con &band @# 0x10 "" &reg "/history/find-com" ""
     !force set-variable #l6 @1
     !if &not $status
         set-variable #l6 @ml00 &cat "Find " #l1
     !endif
-    set-variable #l0 &set #l6 &spr "%s %s" #l1 #l6
-    set-variable #l9 &spr "\b|rfdl\b\b\b\b\b\b"
-    !while &seq "-" &lef &set #l0 &trl #l0 1
-        find-proc-option 
-        !tjump &sin "-" &lget #l9 1 2
-    !done
-    find-proc-file-mask
-    !if &not &sin "m" &lget #l9 1
-        set-variable #l1 &lget #l9 2
-        str-to-regex #l1
-        set-variable #l9 &lset #l9 2 #l1
-    !endif
-    !if &sin "p" &lget #l9 1
-        !force set-variable #l8 @1
-        !if $status
-            set-variable #l8 &stat "a" #l8
-        !else
-            set-variable #l8 @ml01 "From directory"
-        !endif
-    !else
-        set-variable #l8 &stat "a" &lef $buffer-fname &rsin "/" $buffer-fname
-    !endif
+    set-variable #l6 &spr "%s %s" #l1 #l6
+    find-options "\b|rdf\b\b\b\b\b\b\b" #l6 @2
     popup-window "*find*"
     !force 0 delete-buffer "*find*"
     find-buffer "*find*"
@@ -438,9 +436,6 @@ define-macro find
     set-variable :fmpf &len #l0
     set-variable $line-scheme .scheme.header
     insert-string &cat #l0 "Name  <Order by Extension>\n"
-    set-variable .find-file.file-count 1
-    set-variable .find-file.file1 ""
-    set-variable #l7 "|0|0|0|0|"
     set-variable #l3 0
     !while &les &pinc #l3 1 .find-file.file-count
         !force !force !force #l3 find-proc
@@ -494,4 +489,98 @@ define-macro find
     !else
         ml-write "[Invalid line]"
     !endif
+!emacro
+
+
+0 define-macro rsif-callback
+    set-variable #l0 @1
+    ;1000 ml-write &spr "[Replace \"%s\" with \"%s\" buff \"%s\" in \"%s\"]" .f .t $buffer-bname #l0
+    set-position "\x82"
+    beginning-of-buffer
+    !if &set #l3 &seq $buffer-bname "*find-tmp*"
+        !force set-variable $buffer-bname #l0
+    !endif
+    set-variable #l4 &bmod "magic"
+    set-variable #l5 &bmod "exact"
+    &con &sin "i" #p9 -1 1 buffer-mode "exact"
+    1 buffer-mode "magic"
+    !if &band .n 0x20
+        !force !force !force query-replace-string .f .t
+    !else
+        !force !force !force replace-string .f .t
+    !endif
+    set-variable #l1 $status
+    set-variable #l2 $result
+    !force goto-position "\x82"
+    !if &not #l1
+    !elif &lget #l2 1
+        !if #l3
+            ; must write out the temp buffer
+            0 write-buffer #l0
+        !endif
+        set-variable #p6 &lget #l2 1
+        set-variable .t &lget #l2 3
+        !if &seq &lget #l2 2 "l"
+            set-variable .l #p6
+            set-variable #l1 0
+        !elif &not &band .n 0x20
+        !elif &seq &lget #l2 2 "a"
+            set-variable .n &bxor .n 0x20
+        !endif
+    !endif
+    !if #l3
+        ; must delete the temp buffer as we changed its name
+        !force 0 delete-buffer $buffer-bname
+    !else
+        &con #l4 1 -1 buffer-mode "magic"
+        &con #l5 1 -1 buffer-mode "exact"
+    !endif
+    !return #l1
+!emacro
+
+define-macro replace-string-in-files
+    set-variable #l4 &con &band @# 0x10 "" &reg "/history/rsif-com" ""
+    !force set-variable #l0 @3
+    !if &not $status
+        set-variable #l1 @ml05 &con &band 0x20 @# "Query replace" "Replace"
+        set-variable #l2 @ml05 &spr "Replace [%s] with" #l1
+        set-variable #l0 @ml00 &cat "In Files " #l4
+    !else
+        set-variable #l1 @1
+        set-variable #l2 @2
+    !endif
+    set-variable #l6  &spr "%s %s" #l4 #l0
+    set-variable .rsif-callback.n @#
+    set-variable .rsif-callback.f #l1    
+    set-variable .rsif-callback.t #l2
+    set-variable .rsif-callback.l 0
+    find-options "\b|@!fb\b\b\b\b\b\brsif-callback\b" #l6 @4
+    !if &sin "d" &lget #l9 1
+        ml-write "[Option -d not support - cannot replace strings in directories]"
+        !abort
+    !elif &not &sin "l" &lget #l9 1
+        &band @# 1 save-some-buffers @mna
+    !endif
+    set-position "\x83"
+    set-variable #l3 0
+    !while &les &pinc #l3 1 .find-file.file-count
+        !force !force !force #l3 find-proc
+        !tjump &not $status 2
+    !done
+    !force 0 delete-buffer "*find-tmp*"
+    !force goto-position "\x83"
+    set-variable #l6 &add .rsif-callback.l &lget #l7 1
+    set-variable #l0 &spr "[**** %d substitution%s in %d file%s" #l6 &cond &equ #l6 1 "" "s" &lget #l7 2 &cond &equ &lget #l7 2 1 "" "s"
+    !if &set #l3 &gre #l3 .find-file.file-count
+    !elif &set #l3 .rsif-callback.l
+        set-variable #l0 &cat #l0 " - STOPPED"
+    !else
+        set-variable #l0 &cat #l0 " - ABORTED"
+    !endif
+    ml-write &cat #l0 " ***]"
+    !return #l3
+!emacro
+
+define-macro query-replace-string-in-files
+    &bor @# 0x20 replace-string-in-files @1 @2 @3 @4
 !emacro
