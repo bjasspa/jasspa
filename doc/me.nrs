@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.49 2006-11-08 00:16:47 jon Exp $
+.Id $Id: me.nrs,v 2.50 2006-12-05 23:55:11 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -4454,7 +4454,7 @@ command to macro set.
 [040317] Corrected
 .Ht rgrep 3
 to use the
-.Ht %find-com 5
+.Ht %xfind-com 5
 to specify the
 .Hr find 1
 command.
