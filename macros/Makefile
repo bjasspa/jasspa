@@ -77,11 +77,11 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	print.emf	printall.emf	printd.emf	printepc.emf	\
 	printers.emf	printf.emf	printstp.emf	\
 	rect.emf	\
-	scheme.emf	schemeb.emf	schemebc.emf	\
-	schemebh.emf	schemed.emf	schemej.emf	schemel.emf	\
-	schemelj.emf	schememd.emf	schememw.emf	schemepd.emf	\
-	schemepl.emf	schemes.emf	schemesf.emf	schemetb.emf	\
-	schemetw.emf	schemevi.emf	schemosd.emf	\
+	scheme.emf	schemeb.emf	schemebc.emf	schemech.emf	\
+	schemebh.emf	schemed.emf	schemej.emf	\
+	schemel.emf	schemelj.emf	schememd.emf	schememw.emf	\
+	schemepd.emf	schemepl.emf	schemes.emf	schemesf.emf	\
+	schemetb.emf	schemetw.emf	schemevi.emf	schemosd.emf	\
 	search.emf	session.emf	sessnstp.emf	spell.emf	\
 	spellaut.emf	spellutl.emf	ssaver.emf	sunos.emf	\
 	tcltags.emf	textags.emf	toolbar.emf	tooldef.emf	\
@@ -90,6 +90,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	unixterm.emf	userstp.emf	utils.emf	\
 	vbtags.emf	vm.emf		\
 	watch.emf	win32.emf	word.emf	\
+	xfind.emf	\
 	zaurus.emf	zfile.emf
 # ETFS:sh =ls *.etf
 ETFS=	asmx86.etf	asn1.etf	au3.etf		\
