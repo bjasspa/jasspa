@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd133.2,v 2.8 2006-11-08 00:15:46 jon Exp $
+.Id $Id: m2cmd133.2,v 2.9 2006-12-05 23:55:11 jon Exp $
 .Im MicroEmacs command|bind
 .so me.tni
 .TH translate-key 2
@@ -211,7 +211,7 @@ The following are a set of known translations courtesy of \fB-Th\fR.
 .CS
 ; fix Backspace using Putty
 -1 translate-key "C-h"   ; remove translation to "backspace"
-translate-key "\x7F"  "backspace"  ; Backspace key
+translate-key "\\x7F"  "backspace"  ; Backspace key
 
 ; fix del, home keys termcap/Putty/Solaris ME20040403
 translate-key "C-[ [ 3 ~" "delete"  ; ^[[3~ ('cat' output)
