@@ -298,14 +298,14 @@ get_another_key:
     case CK_GOBOF:
 #endif
     case CK_YANK:     /* C-y - yank the contents of the kill buffer */
-        mlfirst = c ;
+        meGetKeyFirst = c ;
         if ((status = meGetString(isHeadStr, MLSEARCH|MLISEARCH, 0, srchPat, meBUF_SIZE_MAX)) <= 0)
         {
             restoreUseMlBinds() ;
             return status ;
         }
         isHeadStr[9] = ':' ;
-        if(mlfirst < 0)
+        if(meGetKeyFirst < 0)
         {
             status = scanmore(srchPat,flags,0,histLen,histPos) ;  /* do 1 search     */
             mlisDisp(srchPat,status) ;
@@ -313,8 +313,8 @@ get_another_key:
             restoreUseMlBinds() ;
             return (status == meTRUE) ;
         }
-        c = mlfirst ;
-        mlfirst = -1 ;
+        c = meGetKeyFirst ;
+        meGetKeyFirst = -1 ;
         break ;
 
     case CK_FISRCH:

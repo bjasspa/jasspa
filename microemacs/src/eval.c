@@ -1730,7 +1730,7 @@ getval(meUByte *tkn)   /* find the value of a token */
                 if(flag & 0x04)
                     /* set the first key to 'tab' to expand the input according 
                      * to the completion list */
-                    mlfirst = ME_SPECIAL|SKEY_tab ;
+                    meGetKeyFirst = ME_SPECIAL|SKEY_tab ;
                 if(flag & 0x08)
                     option |= MLNOHIST|MLHIDEVAL ;
                 

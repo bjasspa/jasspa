@@ -3359,7 +3359,7 @@ osdDisplayPush(int id, int flags)
                     {
                         /* if this is an entry force entry by loading a space key event */
                         if(osdCurChild->context[ii].menu->flags & MF_ENTRY)
-                            mlfirst = ' ' ;
+                            meGetKeyFirst = ' ' ;
                         break ;
                     }
                     osdCurChild = osdCurChild->context[ii].child->display ;
@@ -4771,16 +4771,7 @@ menuInteraction (int *retState)
         nit = 0 ;
         state = 0 ;
         
-        /* Get a key or mouse event, if mlfirst is not < 0 then we already
-         * have one to process (i.e. tab out of an entry, otherwise wait for
-         * an event from the user */
-        if(mlfirst >= 0)
-        {
-            cc = mlfirst ;
-            mlfirst = -1;
-        }
-        else
-            cc = meGetKeyFromUser(meFALSE,0,meGETKEY_SILENT);
+        cc = meGetKeyFromUser(meFALSE,0,meGETKEY_SILENT);
         
         /* handle and osd bindings first */
         if(osdCurMd->dialog->nobinds)

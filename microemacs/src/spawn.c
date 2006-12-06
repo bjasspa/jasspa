@@ -74,14 +74,6 @@
 #include	<process.h>
 #endif
 
-/*---	Local macro definitions */
-
-/*---	Local type definitions */
-
-/*---	Local variable definitions */
-
-int	mlfirst = -1;		/* first command used by mlreplt() */
-
 
 /*
  * Create a temporary name for any command spawn files. On windows & dos
