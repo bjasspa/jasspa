@@ -297,8 +297,8 @@ getprefixchar(int f, int n, int ctlc, int flag)
     return c ;
 }
 
-/*    GETCMD:    Get a command from the keyboard. Process all applicable
-        prefix keys
+/* meGetKeyFromUser
+ *   Get a command from the keyboard. Process all applicable prefix keys
  */
 meUShort
 meGetKeyFromUser(int f, int n, int flag)
@@ -306,6 +306,16 @@ meGetKeyFromUser(int f, int n, int flag)
     meUShort cc ;        /* fetched keystroke */
     int ii ;
     
+    /* Get a key or mouse event, if meGetKeyFirst is not < 0 then we already
+     * have one to process (i.e. tab out of an OSD entry, pre-loaded a TAB
+     * to auto complete on @ml etc). Next check if we are playing a keyboard
+     * macro, otherwise wait for an event from the user */
+    if(meGetKeyFirst >= 0)
+    {
+        cc = (meUShort) meGetKeyFirst ;
+        meGetKeyFirst = -1;
+        return cc ;
+    }
     if(kbdmode == mePLAY)
     {
         if(TTbreakTest(0))
@@ -972,16 +982,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
         contstr = NULL ;
         mlInputFlags >>= 4 ;
 
-        /* mlfirst  may be set by meShell. If both are unset, get a 
-         * character from the user. */
-        if(mlfirst >= 0)
-        {
-            cc = mlfirst ;
-            mlfirst = -1;
-        }
-        else
-            cc = meGetKeyFromUser(meFALSE,0,meGETKEY_SILENT) ;
-        
+        cc = meGetKeyFromUser(meFALSE,0,meGETKEY_SILENT) ;
         idx = decode_key((meUShort) cc,&arg) ;
         if(arg)
         {
@@ -1062,7 +1063,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
 #if MEOPT_OSD
             if(frameCur->mlStatus & MLSTATUS_POSOSD)
             {
-                mlfirst = cc ;
+                meGetKeyFirst = cc ;
                 cont_flag = 3 ;
             }
             else
@@ -1074,7 +1075,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
 #if MEOPT_OSD
             if(frameCur->mlStatus & MLSTATUS_POSOSD)
             {
-                mlfirst = cc ;
+                meGetKeyFirst = cc ;
                 cont_flag = 3 ;
                 break;
             }
@@ -1287,7 +1288,7 @@ input_expand:
 #if MEOPT_OSD
             if(frameCur->mlStatus & MLSTATUS_POSOSD)
             {
-                mlfirst = cc ;
+                meGetKeyFirst = cc ;
                 cont_flag = 3 ;
                 break ;
             }
@@ -1346,7 +1347,7 @@ input_expand:
 #if MEOPT_OSD
             if(frameCur->mlStatus & MLSTATUS_POSOSD)
             {
-                mlfirst = cc ;
+                meGetKeyFirst = cc ;
                 cont_flag = 3 ;
                 break ;
             }
@@ -1438,7 +1439,7 @@ input_expand:
             }
 #if MEOPT_OSD
             if(frameCur->mlStatus & MLSTATUS_POSOSD)
-                mlfirst = cc ;
+                meGetKeyFirst = cc ;
 #endif
             cont_flag = 3 ;
             break;
@@ -1701,7 +1702,7 @@ ml_yank:
         case CK_FORSRCH:
             if(option & MLISEARCH)
             {
-                mlfirst = cc ;
+                meGetKeyFirst = cc ;
                 cont_flag = 1 ;
             }
             else
@@ -1722,7 +1723,7 @@ ml_yank:
                 {
                     if(osdDisplayMouseLocate(1) > 0)
                     {
-                        mlfirst = cc ;
+                        meGetKeyFirst = cc ;
                         cont_flag = 3 ;
                     }
                 }

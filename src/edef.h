@@ -211,6 +211,7 @@ extern int       noIpipes ;             /* count of all the cur pipes   */
 
 extern  meUByte   alarmState;           /* Auto-save alarm time         */
 extern  meInt     startTime;            /* me start time. used as offset*/
+extern  meInt     meGetKeyFirst;        /* initial command, set by respawn() */
 extern  meLine   *lpStore;              /* line off which to store macro*/
 extern  meBuffer *lpStoreBp ;           /* help is stored in a buffer   */
 extern  meUShort  thiskey;              /* the current key              */
@@ -386,7 +387,6 @@ extern meUByte    isWordMask ;
 
 /* the following are global variables but not defined in this file */
 extern int        screenUpdateDisabledCount ;
-extern int        mlfirst;              /* initial command, set by respawn() */
 extern meUByte    meCopyright[] ;
 
 /* fileio file pointer */
@@ -578,24 +578,25 @@ meUByte   windowChars[WCLEN+1] =        /* Set of window characters     */
     ' ',                                /* OSD button close char e.g. ']'   */
     '<',                                /* OSD default button close char e.g. '<'   */
     /* Display characters */
-    '>',                                /* tab \t display character */
-    '\\',                               /* new-line \n display character */
-    '.',                                /* space ' ' display character */
-    '$',                                /* text off screen to the left */
+    '>',                                /* tab \t display character     */
+    '\\',                               /* new-line \n display character*/
+    '.',                                /* space ' ' display character  */
+    '$',                                /* text off screen to the left  */
     '$',                                /* text off screen to the right */
-    '\\',                               /* split line char (ipipe) */
+    '\\',                               /* split line char (ipipe)      */
     0
 } ;
-meUByte   displayTab=' ';               /* tab \t display character */
-meUByte   displayNewLine=' ';           /* new-line \n display character */
-meUByte   displaySpace=' ';             /* space ' ' display character */
+meUByte   displayTab=' ';               /* tab \t display character     */
+meUByte   displayNewLine=' ';           /* new-line \n display character*/
+meUByte   displaySpace=' ';             /* space ' ' display character  */
 meInt     startTime;                    /* me start time used as offset */
+meInt	  meGetKeyFirst=-1;             /* Push input key               */
 meUByte   thisflag;                     /* Flags, this command          */
 meUByte   lastflag;                     /* Flags, last command          */
 meUByte   alarmState=0;                 /* Unix auto-save alarm time    */
 meUByte   quietMode = 1 ;               /* quiet mode (0=bell)          */
 meUByte   scrollFlag = 1 ;              /* horiz/vert scrolling method  */
-meUByte   sgarbf = meTRUE;              /* meTRUE if screen is garbage    */
+meUByte   sgarbf = meTRUE;              /* meTRUE if screen is garbage  */
 meUByte   clexec = meFALSE;             /* command line execution flag  */
 meUByte   mcStore = meFALSE;            /* storing text to macro flag   */
 #if MEOPT_DEBUGM
