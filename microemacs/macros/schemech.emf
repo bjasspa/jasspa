@@ -52,7 +52,7 @@ add-color-scheme $osd-scheme .col0 .col4 .col12 .col4 .col6 .col27 .col8 .col27 
 add-color-scheme .scheme.osd-entry .col10 .col1 .col23 .col2 .col10 .col3 .col23 .col3 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.osd-ebtt .col5 .col2 .col8 .col2 .col0 .col7 .col8 .col7 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.osd-dbtt .col4 .col5 .col4 .col5 .col4 .col0 .col4 .col0 0 8 0 8 0 8 0 8
-add-color-scheme .scheme.osd-title .col5 .col17 .col5 .col17 .col0 .col17 .col0 .col17 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.osd-title .col5 .col18 .col5 .col18 .col0 .col18 .col0 .col18 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.osd-child .col10 .col1 .col10 .col2 .col10 .col3 .col10 .col3 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.osd-sbar .col5 .col4 .col5 .col4 .col0 .col4 .col0 .col4 0 8 0 8 0 8 0 8
 ; Programming Langs
