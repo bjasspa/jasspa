@@ -18,9 +18,6 @@
     define-macro cvs
     !emacro
 !endif
-0 define-macro cvs-init
-!emacro
-
 !if &not &lfind .fhook-dirlst.sc-name "CVS"
     set-variable #l0 &lef .fhook-dirlst.col-name 1
     set-variable .fhook-dirlst.col-name &spr "%sRevis'n%sTag / Date      %s" .fhook-dirlst.col-name #l0 #l0
@@ -32,6 +29,19 @@
     set-variable .fhook-dirlst.modefunc-lbl &lins .fhook-dirlst.modefunc-lbl -1 "CVS-Quick"
     set-variable .fhook-dirlst.modefunc-cmd &lins .fhook-dirlst.modefunc-cmd -1 "cvs-full-reread"
 !endif
+0 define-macro cvs-init
+!emacro
+0 define-macro fhook-cvs-state
+!emacro
+set-variable .fhook-cvs-state.name "CVS State"
+set-variable .fhook-cvs-state.setup &reg "/history/fhook/cvs-state" "ghmop"
+set-variable .fhook-cvs-state.setup-mask    "aceghlopq"
+set-variable .fhook-cvs-state.command-flag  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-flag  1 "" 2 "" 3 "t" 4 "thbio" 5 "thbio" 6 "bio" 2
+set-variable .fhook-cvs-state.command-name  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-name  1 "" 2 "" 3 "osd" 4 "cvs-context-menu" 5 "cvs-state" 6 "cvs-state" 2
+set-variable .fhook-cvs-state.command-nbind &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-nbind 1 "" 2 "" 3 .osd.cvshlp 4 "" 5 "" 6 "" 2
+set-variable .fhook-cvs-state.command-kbind &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-kbind 1 "" 2 "" 3 "" 4 "k" 5 "C-return" 6 "C-j" 2
+set-variable .fhook-cvs-state.command-desc  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-desc  1 "" 2 "" 3 "Help on CVS States" 4 "Open CVS menu" 5 "Rerun cvs-state" 6 "" 2
+set-variable .fhook-cvs-state.refresh "cvs-state-refresh"
 
 set-variable .cvs.names   "|Add|Checkout|Commit|Diff|Graphical Diff|Log|Remove|State|Status|Tag|Update|Annotate|Resolve Conflicts|"
 set-variable .cvs.cmds    "|add|checkout|commit|diff|gdiff|log|remove|-nq update|status|tag|update|annotate|res-conf|"
@@ -67,21 +77,21 @@ set-variable #l0 0
 
 !if &not &exist .hilight.cvscon
     set-variable .hilight.cvscon &pinc .hilight.next 1
-    set-variable .hilight.cvsstt &pinc .hilight.next 1
+    set-variable .hilight.cvs-state &pinc .hilight.next 1
 !endif
 !if &band .hilight.flags 0x02
-    0 hilight .hilight.cvsstt 2 100      $global-scheme
-    hilight .hilight.cvsstt 0x102 "[ *]A" .scheme.no2
-    hilight .hilight.cvsstt 0x102 "[ *]C" .scheme.hlred
-    hilight .hilight.cvsstt 0x102 "[ *]L" .scheme.no1
-    hilight .hilight.cvsstt 0x102 "[ *]M" .scheme.no2
-    hilight .hilight.cvsstt 0x102 "[ *]P" .scheme.prepro
-    hilight .hilight.cvsstt 0x102 "[ *]R" .scheme.no1
-    hilight .hilight.cvsstt 0x102 "[ *]U" .scheme.prepro
-    hilight .hilight.cvsstt 0x102 " A  Name" .scheme.header
-    hilight .hilight.cvsstt 0x102 "\\[\\*\\*\\*\\* CVS exited with code 0" .scheme.no1
-    hilight .hilight.cvsstt 0x102 "\\[\\*\\*\\*\\* CVS exited"             .scheme.error
-    set-variable .cvs.schemes &lset .cvs.schemes &lfind .cvs.names "State" .hilight.cvsstt
+    0 hilight .hilight.cvs-state 2 100      $global-scheme
+    hilight .hilight.cvs-state 0x102 "[ *]A" .scheme.no2
+    hilight .hilight.cvs-state 0x102 "[ *]C" .scheme.hlred
+    hilight .hilight.cvs-state 0x102 "[ *]L" .scheme.no1
+    hilight .hilight.cvs-state 0x102 "[ *]M" .scheme.no2
+    hilight .hilight.cvs-state 0x102 "[ *]P" .scheme.prepro
+    hilight .hilight.cvs-state 0x102 "[ *]R" .scheme.no1
+    hilight .hilight.cvs-state 0x102 "[ *]U" .scheme.prepro
+    hilight .hilight.cvs-state 0x102 " Attr Name" .scheme.header
+    hilight .hilight.cvs-state 0x102 "\\[\\*\\*\\*\\* CVS exited with code 0" .scheme.no1
+    hilight .hilight.cvs-state 0x102 "\\[\\*\\*\\*\\* CVS exited"             .scheme.error
+    set-variable .cvs.schemes &lset .cvs.schemes &lfind .cvs.names "State" .hilight.cvs-state
     
     !if &not &exi .hilight.diff
         !force execute-file "hkdiff"
@@ -430,94 +440,34 @@ define-macro cvs-log-list
     0x10 goto-position "\x82"
 !emacro
     
-0 define-macro cvs-state-tag-list
-    set-variable #l0 $window-line
-    set-variable .find-file.file-count 0
-    set-variable .find-file.file-dcount 0
-    set-variable $window-line 5
-    !repeat
-        !force search-buffer "me" "^\\*[?ACLMPRU]  \\(.+\\)"
-        !if $status
-            set-variable &ind &cat ".find-file.file" &inc .find-file.file-count 1 @s1
-            !if &seq &rig @s1 &sub &len @s1 1 "/"
-                set-variable .find-file.file-dcount &add .find-file.file-dcount 1
-            !endif
-        !endif
-    !until &not $status
-    set-variable .find-file.file-dir $buffer-fname
-    set-variable $window-line #l0
-!emacro
-
-0 define-macro cvs-state-sort
-    set-variable #l0 &lget "|-1|1|4|" @#
-    !if &equ #l0 .cvs-state.sort
-        set-variable #l0 &sub -1 #l0
-    !endif
-    set-variable .cvs-state.sort #l0
-    set-alpha-mark "\x81"
-    set-variable $window-line 5
-    set-mark
-    end-of-buffer
-    search-buffer "meb" "^[ *][?ACLMPRU]  "
-    forward-line
-    -1 buffer-mode "view"
-    !force #l0 sort-lines "y"
-    -1 buffer-mode "edit"
-     1 buffer-mode "view"
-    goto-alpha-mark "\x81"
-!emacro
-0 define-macro cvs-state-delete
-    cvs-state-tag-list
+0 define-macro cvs-state-refresh
     !if .find-file.file-count
-        0 dirlst-tag-file-delete
         set-alpha-mark "\x81"
         -1 buffer-mode "view"
-        beginning-of-buffer
-        !repeat
-            !force search-buffer "me" "^\\*\\([?ACLMPRU]\\)  ."
-            !if $status
-                beginning-of-line
-                !if &seq @s1 "?"
-                    set-mark
-                    forward-line
-                    -1 kill-region
-                !else
-                    set-variable @wc " "
+        set-variable $window-line 5
+        !while &not &seq @wc ""
+            !if &seq @wc "*"
+                set-variable @wc " "
+                set-variable :tag-count &sub :tag-count 1
+                !if &seq "X" &stat "t" &cat .find-file.file-dir &rig @wl :fmpf
                     forward-char
-                    set-variable @wc "L"
+                    !if &seq @wc "?"
+                        backward-char
+                        set-mark
+                        forward-line
+                        -1 kill-region
+                        backward-line
+                    !else
+                        set-variable @wc "L"
+                        backward-char
+                    !endif
                 !endif
             !endif
-        !until &not $status
+            forward-line
+        !done
         -1 buffer-mode "edit"
          1 buffer-mode "view"
         goto-alpha-mark "\x81"
-    !endif
-!emacro
-0 define-macro cvs-state-delete-line
-    !if &les $window-line 5
-        !jump 2
-    !elif &not &xseq @wl "[ *][?ACLMPRU]  .+"
-        ml-write "[Invalid line]"
-        !abort
-    !else
-        -1 buffer-mode "view"
-        beginning-of-line
-        set-mark
-        forward-line
-        -1 kill-region
-        -1 buffer-mode "edit"
-        1 buffer-mode "view"
-    !endif
-!emacro
-
-0 define-macro cvs-state-find-file
-    !if &les $window-line 5
-        !jump 2
-    !elif &not &xseq @wl "[ *][?ACLMPRU]  \\(.+\\)"
-        ml-write "[Invalid line]"
-        !abort
-    !else
-        find-file @s1
     !endif
 !emacro
 0 define-macro cvs-context-menu
@@ -596,7 +546,7 @@ define-macro cvs-log-list
         !endif
     !until &not $status
     beginning-of-buffer
-    !force replace-string "^[?ACLMPRU] " " \\0 "
+    !force replace-string "^[?ACLMPRU] " " \\0   "
     end-of-buffer
     !force search-backward "^cvs \\(update\\|server\\): warning: \\(.+\\) was lost"
     !while $status
@@ -604,7 +554,7 @@ define-macro cvs-log-list
         set-variable #l2 $window-line
         str-to-regex #l1
         end-of-buffer
-        !force search-backward &spr "^ U  %s$" #l1
+        !force search-backward &spr "^ U    %s$" #l1
         !if $status
             forward-char
             set-variable @wc "L"
@@ -1017,7 +967,8 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
         goto-position "\x82"
     !elif &seq $buffer-bname "*cvs-state*"
         set-variable #l9 2
-        cvs-state-tag-list
+        10 dirlst-tag-list
+        goto-position "\x82"
     !else
         set-variable #l9 0
         !if &sin "S" &lget .cvs.flags @#
@@ -1344,33 +1295,19 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
         set-variable $buffer-hilight &lget .cvs.schemes @#
         !if &seq #l6 "*cvs-state*"
             set-variable $window-line 3
-            insert-string "\n A  Name"
-            end-of-buffer
-            backward-line
-            buffer-bind-create "bio" "esc h" .osd.cvshlp osd
-            buffer-bind-create "bio" "C-return" "" cvs-state
-            buffer-bind-create "bio" "C-j" ""    cvs-state
-            buffer-bind-create "bio" "return" "" cvs-state-find-file
-            buffer-bind-create "bio" "delete" "" cvs-state-delete
-            buffer-bind-create "bio" "C-delete" "" cvs-remove
-            buffer-bind-create "bio" "C-k"    "" cvs-state-delete-line
-            buffer-bind-create "bio" "1"     "1" cvs-state-sort
-            buffer-bind-create "bio" "2"     "2" cvs-state-sort
-            buffer-bind-create "bio" "3"     "3" cvs-state-sort
-            buffer-bind-create "bio" "k"      "" cvs-context-menu
-            buffer-bind-create "bio" "space"  "" dirlst-tag-toggle
-            buffer-bind-create "bio" "+"     "1" dirlst-tag-mask
-            buffer-bind-create "bio" "-"    "-1" dirlst-tag-mask
-            buffer-bind-create "bio" "*"      "" dirlst-tag-invert
-            buffer-bind-create "bio" "a"     "1" dirlst-tag-set
-            buffer-bind-create "bio" "u"    "-1" dirlst-tag-set
-            set-variable .cvs-state.sort "99"
+            insert-string "\n Attr Name  <Order by Extension>"
+            @# buffer-init "cvs-state"
+            set-variable :sc &lfind .fhook-dirlst.sc-detect "cvs-dirlst-detect"
+            set-variable :fmpf 6
+            set-variable :tag-count 0
             set-variable :mouse-pick-1 dirlst-mouse-pick-1
             set-variable :mouse-drop-1 dirlst-mouse-drop-1
-            set-variable :mouse-pick-3 ""
-            set-variable :mouse-drop-3 "0 cvs-context-menu"
-            set-variable :tag-count 0
-            set-variable :fmpf 4
+            set-variable :mouse-pick-3 dirlst-mouse-pick-3
+            set-variable :mouse-drop-3 dirlst-mouse-drop-3
+            set-variable :dirlst-mode .fhook-dirlst.mode
+            buffer-init-hooks
+            end-of-buffer
+            backward-line
         !endif
     !endif
     !force goto-position "\x82"
@@ -1791,7 +1728,7 @@ define-macro cvs-resolve-conflicts
         !force 0 delete-buffer "*cvs-temp2*"
         goto-position "\x83"
         -1 buffer-mode "edit"
-        set-variable :fmpf &add  :fmpf 27
+        set-variable :fmpf &add :fmpf 27
         0 ml-write
     !else
         0 file-browser-filter
@@ -1939,27 +1876,6 @@ define-macro cvs-setup
 
 osd .osd.cvshlp 0 "batcDH" 9 3 99 .scheme.osd-title "CVS State Help"
 osd .osd.cvshlp 1  ""
-osd .osd.cvshlp 2  ""  "  esc h    - View This Help Page"
-osd .osd.cvshlp 3  ""
-osd .osd.cvshlp 4  ""  "  1        - Sort by Selected"
-osd .osd.cvshlp 5  ""  "  2        - Sort by State"
-osd .osd.cvshlp 6  ""  "  3        - Sort by Name"
-osd .osd.cvshlp 7  ""
-osd .osd.cvshlp 8  ""  "  space    - Toggle Cur File Select"
-osd .osd.cvshlp 9  ""  "  +        - Select Files +"
-osd .osd.cvshlp 10 ""  "  -        - Unselect Files -"
-osd .osd.cvshlp 11 ""  "  *        - Invert Selection *"
-osd .osd.cvshlp 12 ""  "  a        - Select All"
-osd .osd.cvshlp 13 ""  "  u        - Unselect All"
-osd .osd.cvshlp 14 ""
-osd .osd.cvshlp 15 ""  "  return   - Open File"
-osd .osd.cvshlp 16 ""  "  delete   - Delete Files"
-osd .osd.cvshlp 17 ""  "  C-delete - CVS remove files"
-osd .osd.cvshlp 18 ""  "  k        - Open CVS tool menu"
-osd .osd.cvshlp 19 ""  "  C-k      - Remove current line"
-osd .osd.cvshlp 20 ""  "  C-return - Rerun cvs-state"
-osd .osd.cvshlp 21 ""
-osd .osd.cvshlp 22 ""  "  CVS States:"
 osd .osd.cvshlp 23 ""
 osd .osd.cvshlp 24 ""  "  A  Add      - file flagged to be added"
 osd .osd.cvshlp 25 ""  "  C  Conflict - local and repository changed"
@@ -1968,5 +1884,6 @@ osd .osd.cvshlp 27 ""  "  M  Modified - local file has been changed"
 osd .osd.cvshlp 28 ""  "  P  Patched  - repository version has changed  "
 osd .osd.cvshlp 29 ""  "  R  Removed  - file flagged to be removed"
 osd .osd.cvshlp 30 ""  "  U  Updated  - repository version has changed"
-osd .osd.cvshlp 31 ""
+osd .osd.cvshlp 91 ""
+osd .osd.cvshlp 92 ""
 osd .osd.cvshlp 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void 

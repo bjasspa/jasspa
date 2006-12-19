@@ -22,6 +22,7 @@ set-variable .fhook-find.command-name  &rig &lset &lset &lset &lset &lset &lset 
 set-variable .fhook-find.command-nbind &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-nbind 1 "" 2 "" 3 "" 4 "" 5 "" 6 "" 6
 set-variable .fhook-find.command-kbind &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-kbind 1 "" 2 "" 3 "" 4 "" 5 "" 6 "" 6
 set-variable .fhook-find.command-desc  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-desc  1 "" 2 "" 3 "" 4 "" 5 "" 6 "" 6
+set-variable .fhook-find.refresh "find-refresh"
 
 !if &and &sin "h" .fhook-find.setup &band .hilight.flags 0x02
     !if &not &exist .hilight.find
@@ -42,6 +43,30 @@ set-variable .fhook-find.command-desc  &rig &lset &lset &lset &lset &lset &lset 
     set-cursor-to-mouse
     !force backward-line
     get-next-line
+!emacro
+0 define-macro find-refresh
+    !if .find-file.file-count
+        set-alpha-mark "\x81"
+        -1 buffer-mode "view"
+        set-variable $window-line 5
+        !while &not &seq @wc ""
+            !if &seq @wc "*"
+                !if &seq "X" &stat "t" &cat .find-file.file-dir &rig @wl :fmpf
+                    set-mark
+                    forward-line
+                    -1 kill-region
+                    backward-line
+                !else
+                    set-variable @wc " "
+                !endif
+                set-variable :tag-count &sub :tag-count 1
+            !endif
+            forward-line
+        !done
+        -1 buffer-mode "edit"
+         1 buffer-mode "view"
+        goto-alpha-mark "\x81"
+    !endif
 !emacro
 
 0 define-macro find-proc-find

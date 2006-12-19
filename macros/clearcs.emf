@@ -38,6 +38,17 @@
 !endif
 0 define-macro cc-init
 !emacro
+0 define-macro fhook-cc-state
+!emacro
+set-variable .fhook-cc-state.name "ClearCase State"
+set-variable .fhook-cc-state.setup &reg "/history/fhook/cc-state" "ghmop"
+set-variable .fhook-cc-state.setup-mask    "aceghlopq"
+set-variable .fhook-cc-state.command-flag  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-flag  1 "" 2 "" 3 "t" 4 "thbio" 5 "thbio" 6 "bio" 2
+set-variable .fhook-cc-state.command-name  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-name  1 "" 2 "" 3 "osd" 4 "cc-context-menu" 5 "cc-state" 6 "cc-state" 2
+set-variable .fhook-cc-state.command-nbind &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-nbind 1 "" 2 "" 3 .osd.ccshlp 4 "" 5 "" 6 "" 2
+set-variable .fhook-cc-state.command-kbind &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-kbind 1 "" 2 "" 3 "" 4 "k" 5 "C-return" 6 "C-j" 2
+set-variable .fhook-cc-state.command-desc  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-desc  1 "" 2 "" 3 "Help on ClearCase States" 4 "Open ClearCase menu" 5 "Rerun cc-state" 6 "" 2
+set-variable .fhook-cc-state.refresh "cc-state-refresh"
 
 0 define-macro cc-coci
     !if &band $buffer-fmod 0x10000
@@ -253,7 +264,7 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
         10 dirlst-tag-list
         goto-position "\x82"
     !elif &seq $buffer-bname "*cc-state*"
-        cc-state-tag-list
+        10 dirlst-tag-list
         goto-position "\x82"
     !else
         !if &sin "S" #l9
@@ -292,7 +303,7 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
             set-variable #l2 &mul #l0 100
             osd .osd.ccosd &inc #l2 1 ""
             !if &seq #l1 "C"
-                osd .osd.ccosd &inc #l2 1 "Sfh" "    \HComment:    " &add #l2 3
+                osd .osd.ccosd &inc #l2 1 "Sfh" "    Co\Hmment:    " &add #l2 3
                 !if &set #l4 &seq "c" &mid #l9 #l0 1
                     !if .find-file.file-count
                         osd .osd.ccosd &inc #l2 1 "BRtfHx" .scheme.osd-ebtt " \HGet Comment " #l2 cc-osd-get-comment
@@ -725,6 +736,7 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
     !endif
     buffer-bind-create "bio" "C-delete" "" cc-delete
     buffer-bind-create "bio" "S-f5" "" cc-state
+    buffer-bind-create "b"   "esc f5" "" cc-diff
     buffer-bind-create "bio" "k" "" cc-context-menu
 !emacro
 
@@ -965,33 +977,21 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
             set-variable $buffer-hilight .hilight.cc-state
         !endif
         set-variable $window-line 3
-        insert-string "\n Attr Name"
+        insert-string "\n Attr Name  <Order by Extension>"
         -1 buffer-mode "edit"
         1 buffer-mode "view"
-        buffer-bind-create "bio" "esc h" .osd.ccshlp osd
-        buffer-bind-create "bio" "C-return" "" cc-state
-        buffer-bind-create "bio" "C-j" ""    cc-state
-        buffer-bind-create "bio" "return" "" cc-state-find-file
-        buffer-bind-create "bio" "delete" "" cc-state-delete
-        buffer-bind-create "bio" "C-delete" "" cc-delete
-        buffer-bind-create "bio" "C-k"    "" cc-state-delete-line
-        buffer-bind-create "bio" "1"     "1" cc-state-sort
-        buffer-bind-create "bio" "2"     "2" cc-state-sort
-        buffer-bind-create "bio" "3"     "3" cc-state-sort
-        buffer-bind-create "bio" "k"      "" cc-context-menu
-        buffer-bind-create "bio" "space"  "" dirlst-tag-toggle
-        buffer-bind-create "bio" "+"     "1" dirlst-tag-mask
-        buffer-bind-create "bio" "-"    "-1" dirlst-tag-mask
-        buffer-bind-create "bio" "*"      "" dirlst-tag-invert
-        buffer-bind-create "bio" "a"     "1" dirlst-tag-set
-        buffer-bind-create "bio" "u"    "-1" dirlst-tag-set
+        @# buffer-init "cc-state"
+        set-variable :sc &lfind .fhook-dirlst.sc-detect "cc-dirlst-detect"
+        set-variable :fmpf 6
+        set-variable :tag-count 0
         set-variable :mouse-pick-1 dirlst-mouse-pick-1
         set-variable :mouse-drop-1 dirlst-mouse-drop-1
-        set-variable :mouse-pick-3 ""
-        set-variable :mouse-drop-3 "0 cc-context-menu"
-        set-variable :tag-count 0
+        set-variable :mouse-pick-3 dirlst-mouse-pick-3
+        set-variable :mouse-drop-3 dirlst-mouse-drop-3
+        set-variable :dirlst-mode .fhook-dirlst.mode
+        set-variable $window-line 5
+        buffer-init-hooks
         set-variable :ccs-last 5
-        set-variable :fmpf 4
     !endif
     goto-alpha-mark "I"
     !if &equ $window-line :ccs-last
@@ -1079,51 +1079,6 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
     !until &equ $window-id #l4
 !emacro
 
-0 define-macro cc-state-sort
-    set-variable #l0 &lget "|-1|1|4|" @#
-    !if &equ #l0 .cc-state.sort
-        set-variable #l0 &sub -1 #l0
-    !endif
-    set-variable .cc-state.sort #l0
-    set-alpha-mark "\x81"
-    set-variable $window-line 5
-    set-mark
-    end-of-buffer
-    search-buffer "meb" "^[ *].    "
-    forward-line
-    -1 buffer-mode "view"
-    !force #l0 sort-lines "y"
-    -1 buffer-mode "edit"
-     1 buffer-mode "view"
-    goto-alpha-mark "\x81"
-!emacro
-
-0 define-macro cc-state-tag-list
-    set-variable #l0 $window-line
-    set-variable .find-file.file-count 0
-    set-variable .find-file.file-dcount 0
-    beginning-of-buffer
-    !repeat
-        !force search-buffer "me" "^\\*[chMmnp]    \\(.+\\)"
-        !if $status
-            set-variable &ind &cat ".find-file.file" &inc .find-file.file-count 1 @s1
-            !if &seq &rig @s1 &sub &len @s1 1 "/"
-                set-variable .find-file.file-dcount &add .find-file.file-dcount 1
-            !endif
-        !endif
-    !until &not $status
-    set-variable .find-file.file-dir $buffer-fname
-    set-variable $window-line #l0
-!emacro
-
-0 define-macro cc-state-find-file
-    !if &xseq @wl "[ *][chMmnp]    \\(.+\\)"
-        find-file @s1
-    !else
-        ml-write "[Invalid line]"
-        !abort
-    !endif
-!emacro
 0 define-macro cc-context-menu
     !if @#
         set-variable $mouse-x $cursor-x
@@ -1135,46 +1090,31 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
     !force !force .osd.tmp osd
 !emacro
 
-0 define-macro cc-state-delete-line
-    !if &xseq @wl "[ *][chMmnp]    .+"
-        !if &seq &lef @wl 1 "*"
-            set-variable :tag-count &sub :tag-count 1
-        !endif
-        -1 buffer-mode "view"
-        beginning-of-line
-        set-mark
-        forward-line
-        -1 kill-region
-        -1 buffer-mode "edit"
-        1 buffer-mode "view"
-    !else
-        ml-write "[Invalid line]"
-    !endif
-!emacro
-
-0 define-macro cc-state-delete
-    cc-state-tag-list
+0 define-macro cc-state-refresh
     !if .find-file.file-count
-        0 dirlst-tag-file-delete
         set-alpha-mark "\x81"
         -1 buffer-mode "view"
-        beginning-of-buffer
-        !repeat
-            !force search-buffer "me" "^\\*\\([chMmnp]\\)    ."
-            !if $status
-                beginning-of-line
-                !if &seq @s1 "p"
-                    set-mark
-                    forward-line
-                    -1 kill-region
-                !else
-                    set-variable @wc " "
-                    forward-char
-                    set-variable @wc "m"
-                !endif
+        set-variable $window-line 5
+        !while &not &seq @wc ""
+            !if &seq @wc "*"
+                set-variable @wc " "
                 set-variable :tag-count &sub :tag-count 1
+                !if &seq "X" &stat "t" &cat .find-file.file-dir &rig @wl :fmpf
+                    forward-char
+                    !if &seq @wc "p"
+                        backward-char
+                        set-mark
+                        forward-line
+                        -1 kill-region
+                        backward-line
+                    !else
+                        set-variable @wc "m"
+                        backward-char
+                    !endif
+                !endif
             !endif
-        !until &not $status
+            forward-line
+        !done
         -1 buffer-mode "edit"
         1 buffer-mode "view"
         goto-alpha-mark "\x81"
@@ -1207,7 +1147,6 @@ define-macro cc-state
     !endif
     goto-position "\x82"
     1 cc-cleartool 1 #l1
-    set-variable .cc-state.sort "99"
 !emacro
 
 ; ClearCase Update ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2197,15 +2136,6 @@ define-macro cc-setup
     osd @# 520 "" "\HConfig Spec"      f cc-config-spec
     osd @# 530 "" "Clear CC console"   f cc-clear-console
     osd @# 540 "" "ClearCase Setup"    f cc-setup
-    !if &seq $buffer-bname "*cc-state*"
-        cc-state-tag-list
-        goto-position "\x82"
-        osd @# 700 "-"
-        osd @# 710 "" "Delete line    C-\Hk"   f cc-state-delete-line
-        !if :tag-count
-            osd @# 720 "" "Delete files"       f cc-state-delete
-        !endif
-    !endif
     !if &equ :tag-count 1
         osd @# 80 "" "\HVersion Tree"  f cc-vtree
     !else
@@ -2240,27 +2170,6 @@ define-macro cc-setup
 
 osd .osd.ccshlp 0 "batcDH" 9 3 99 .scheme.osd-title "ClearCase State Help"
 osd .osd.ccshlp 1  ""
-osd .osd.ccshlp 2  ""  "  esc h    - View This Help Page"
-osd .osd.ccshlp 3  ""
-osd .osd.ccshlp 4  ""  "  1        - Sort by Selected"
-osd .osd.ccshlp 5  ""  "  2        - Sort by State"
-osd .osd.ccshlp 6  ""  "  3        - Sort by Name"
-osd .osd.ccshlp 7  ""
-osd .osd.ccshlp 8  ""  "  space    - Toggle Cur File Select"
-osd .osd.ccshlp 9  ""  "  +        - Select Files +"
-osd .osd.ccshlp 10 ""  "  -        - Unselect Files -"
-osd .osd.ccshlp 11 ""  "  *        - Invert Selection *"
-osd .osd.ccshlp 12 ""  "  a        - Select All"
-osd .osd.ccshlp 13 ""  "  u        - Unselect All"
-osd .osd.ccshlp 14 ""
-osd .osd.ccshlp 15 ""  "  return   - Open File"
-osd .osd.ccshlp 16 ""  "  delete   - Delete Files"
-osd .osd.ccshlp 17 ""  "  C-delete - ClearCase remove files"
-osd .osd.ccshlp 18 ""  "  k        - Open ClearCase tool menu"
-osd .osd.ccshlp 19 ""  "  C-k      - Remove current line"
-osd .osd.ccshlp 20 ""  "  C-return - Rerun cc-state"
-osd .osd.ccshlp 21 ""
-osd .osd.ccshlp 22 ""  "  ClearCase States:"
 osd .osd.ccshlp 23 ""
 osd .osd.ccshlp 24 ""  "  c  Checked out - The file has been checked out"
 osd .osd.ccshlp 25 ""  "  h  Hijacked    - The file has been edited without being checked out"
@@ -2269,5 +2178,6 @@ osd .osd.ccshlp 27 ""  "  M  CO Missing  - The file has been loaded, checked out
 osd .osd.ccshlp 28 ""  "  n  Not loaded  - The file has not been loaded due to the config spec"
 osd .osd.ccshlp 29 ""  "  p  Private     - The file is a new, unmanaged file"
 osd .osd.ccshlp 30 ""  "  ?  ???         - Strange unsupported state - please report"
-osd .osd.ccshlp 31 ""
+osd .osd.ccshlp 91 ""
+osd .osd.ccshlp 92 ""
 osd .osd.ccshlp 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void 
