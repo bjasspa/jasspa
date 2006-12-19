@@ -20,10 +20,11 @@
         set-variable #l1 &lef #l1 -1
     !endif
     !if &gre &set #l4 &rsin "." #l1 1
-        set-variable #l2 &rig #l1 &sub #l4 1
-        set-variable #l1 &lef #l1 &sub #l4 1
+        set-variable #l2 &lef #l1 &sub #l4 1
+        set-variable #l3 &rig #l1 &sub #l4 1
     !else
-        set-variable #l2 ""
+        set-variable #l2 #l1
+        set-variable #l3 ""
     !endif
     set-variable #l9 0
     !while &set #l7 &sin "%i[" #l0
@@ -33,7 +34,7 @@
             !abort
         !endif
         set-variable #l4 &spr "\r%s\r" &rep &lef #l4 &sub #l5 1 "|" "\r"
-        set-variable #l6 &rep &rep &rep #l4 "%f" &cat #l1 #l2 "%b" #l1 "%e" #l2
+        set-variable #l6 &rep &rep &rep #l4 "%f" #l1 "%b" #l2 "%e" #l3
         set-variable #l6 &rep &rep &rep &rep #l6 "\bA" "%" "\bB" "[" "\bC" "|" "\bD" "]"
         set-variable #l5 &spr "set-variable #l6 @ml%s%s \"%s\" \"%s\"" &con &seq &lget #l6 3 "" 0 1 &lget #l6 1 &lget #l6 2 &lget #l6 3
         execute-line #l5
@@ -41,8 +42,12 @@
         set-variable #l0 &spr "%s%s%s" &lef #l0 &sub #l7 1 #l6 &rig #l0 &add &add #l7 &len #l4 1
         set-variable #l0 &rep #l0 &cat "%" &inc #l9 1 #l6
     !done
+    set-position "\x8a"
+    !force 0 delete-buffer "*file-tool-temp*"
+    find-buffer "*file-tool-temp*"
+    set-variable $buffer-fname .find-file.file-dir
     !if @?
-        set-variable #l0 &rep &rep &rep #l0 "%f" &cat #l1 #l2 "%b" #l1 "%e" #l2
+        set-variable #l0 &rep &rep &rep #l0 "%f" #l1 "%b" #l2 "%e" #l3
         set-variable #l0 &rep &rep &rep &rep #l0 "\bA" "%" "\bB" "[" "\bC" "|" "\bD" "]"
         !while &set #l4 &sin "\bE" #l0
             !if &not &set #l5 &sin "\bE" &rig #l0 &add #l4 1
@@ -58,9 +63,9 @@
         !done
         ml-write &spr "[Launching: %s]" #l0
         !if &seq &lef #l0 1 "*"
-            !force execute-line &rig #l0 1
+            !force !force execute-line &rig #l0 1
         !else
-            !force @2 shell-command #l0
+            !force !force @2 shell-command #l0
         !endif
     !elif &not &set #l7 &sin "%*[" #l0
         ml-write "[Error: Missing '%*[' in command line]"
@@ -73,9 +78,6 @@
         !endif
         set-variable #l4 &lef #l4 &sub #l5 1
         set-variable #l8 &rig #l0 &add &add #l7 #l5 2
-        set-variable #l6 $buffer-bname
-        !force 0 delete-buffer "*file-tool-temp*"
-        find-buffer "*file-tool-temp*"
         -1 insert-string &lef #l0 &sub #l7 1
         set-variable #l9 0
         !while &les &pinc #l9 1 .find-file.file-count
@@ -129,14 +131,16 @@
             !endif
         !until &not $status
         ml-write &spr "[Launching: %s]" &lef @wl 500
-        find-buffer #l6
         !if &seq &lef #l0 1 "*"
-            !force execute-buffer "*file-tool-temp*"
+            !force !force execute-buffer "*file-tool-temp*"
         !else
-            !force &bor @2 0x100 shell-command "*file-tool-temp*"
+            !force !force &bor @2 0x100 shell-command "*file-tool-temp*"
         !endif
-        !force 0 delete-buffer "*file-tool-temp*"
     !endif
+    !if &seq $buffer-bname "*file-tool-temp*"
+        !force goto-position "\x8a"
+    !endif
+    !force 0 delete-buffer "*file-tool-temp*"
 !emacro
 
 0 define-macro file-tool-exec
