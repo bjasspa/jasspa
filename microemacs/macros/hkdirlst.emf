@@ -183,11 +183,11 @@ set-variable .fhook-dirlst.setup &reg "/history/fhook/dirlst" "ghmop"
 set-variable .fhook-dirlst.setup-mask    "aceghlopq"
 set-variable .fhook-dirlst.setup-flags   "|l|"
 set-variable .fhook-dirlst.setup-labels  "|Enable filter by default|"
-set-variable .fhook-dirlst.command-flag  "|thbio|thbio|thbio|thbio|bio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|h|thbio|thbio|thbio|thbio|thbio|thbio|thbio|thbio|thbio|thbio|bio|thbio|thbio|h|t|"
-set-variable .fhook-dirlst.command-name  "|file-browser-swap-buffers|file-browser-close|dirlist-up-dir|dirlst-refresh|dirlst-refresh|file-browser-set-filter|dirlst-search|dirlst-search||dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list||dirlst-tag-toggle|dirlst-tag-mask|dirlst-tag-mask|dirlst-tag-invert|dirlst-tag-set|dirlst-tag-set||dirlst-find-file||dirlst-find-file|dirlst-find-file|dirlst-tag-open|dirlst-find-file|dirlst-file-rename|dirlst-file-fattr|dirlst-tag-file-copy|dirlst-tag-file-copy|dirlst-new-folder|dirlst-tag-file-delete|dirlst-tag-file-delete|file-tool-menu|dirlst-tag-execute||file-tool-setup|"
-set-variable .fhook-dirlst.command-nbind "||||||-1||0||5|6|4|3|2|1|||1|-1||1|-1||5||1|9||0|||1|0||||||||"
-set-variable .fhook-dirlst.command-kbind "|tab|f10|backspace|l|f5|f|S|s||5|6|4|3|2|1||space|+|-|*|a|u||return||e|b|i|v|r|g|c|m|n|d|delete|t|x|||"
-set-variable .fhook-dirlst.command-desc  "|Swap Browser \HWindows|Close File Browser|Goto Parent Director\Hy|Refresh \HList||Toggle \HFilter|Search for File|\HSearch by Name||Sort by Name|Sort by Extension|Sort by Modified|Sort by Size|Sort by Attribute|Sort by Selected||T\Hoggle Cur File Select|Select Files \H+|Unselect Files \H-|Invert Selection \H*|Select \HAll|\HUnselect All||O\Hpen File|            (Default file tool or Edit file)|\HEdit File|\HBinary Edit File|Ed\Hit Selected Files|\HView File|\HRename File|Chan\Hge File Attributes|\HCopy Files|\HMove Files|\HNew Folder|\HDelete Files||File \HTools|E\Hxecute Command on Files|            (%p for path, %f for file & %% for %)|File Tools Setup|"
+set-variable .fhook-dirlst.command-flag  "|thbio|thbio|thbio|thbio|bio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|h|thbio|thbio|thbio|thbio|thbio|thbio|thbio|thbio|thbio|thbio|bio|thbio|thbio|thbio|h|t|"
+set-variable .fhook-dirlst.command-name  "|file-browser-swap-buffers|file-browser-close|dirlist-up-dir|dirlst-refresh|dirlst-refresh|file-browser-set-filter|dirlst-search|dirlst-search||dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list||dirlst-tag-toggle|dirlst-tag-mask|dirlst-tag-mask|dirlst-tag-invert|dirlst-tag-set|dirlst-tag-set||dirlst-find-file||dirlst-find-file|dirlst-find-file|dirlst-tag-open|dirlst-find-file|dirlst-file-rename|dirlst-file-fattr|dirlst-tag-file-copy|dirlst-tag-file-copy|dirlst-new-folder|dirlst-tag-file-delete|dirlst-tag-file-delete|dirlst-delete-line|file-tool-menu|dirlst-tag-execute||file-tool-setup|"
+set-variable .fhook-dirlst.command-nbind "||||||-1||0||5|6|4|3|2|1|||1|-1||1|-1||5||1|9||0|||1|0|||||||||"
+set-variable .fhook-dirlst.command-kbind "|tab|f10|backspace|l|f5|f|S|s||5|6|4|3|2|1||space|+|-|*|a|u||return||e|b|i|v|r|g|c|m|n|d|delete|C-k|t|x|||"
+set-variable .fhook-dirlst.command-desc  "|Swap Browser \HWindows|Close File Browser|Goto Parent Director\Hy|Refresh \HList||Toggle \HFilter|Search for File|\HSearch by Name||Sort by Name|Sort by Extension|Sort by Modified|Sort by Size|Sort by Attribute|Sort by Selected||T\Hoggle Cur File Select|Select Files \H+|Unselect Files \H-|Invert Selection \H*|Select \HAll|\HUnselect All||O\Hpen File|            (Default file tool or Edit file)|\HEdit File|\HBinary Edit File|Ed\Hit Selected Files|\HView File|\HRename File|Chan\Hge File Attributes|\HCopy Files|\HMove Files|\HNew Folder|\HDelete Files||Delete Current Line|File \HTools|E\Hxecute Command on Files|            (%p for path, %f for file & %% for %)|File Tools Setup|"
 
 set-variable .fhook-dirlst.modefunc-lbl "|Not-Filtered|Filtered|"
 set-variable .fhook-dirlst.modefunc-cmd "|file-browser-set-filter|file-browser-set-filter|"
@@ -980,16 +980,14 @@ define-macro file-browser-swap-buffers
     set-variable #l0 $window-line
     set-variable #l1 &cond &les @# 0 " " "*"
     set-variable #l2 &cond &les @# 0 "*" " "
-    set-variable $window-line 5
     -1 buffer-mode "view"
     1 buffer-mode "edit" "y"
+    set-variable $window-line 5
     !while &not &seq @wc ""
         !if &seq &rig @wl :fmpf "../"
         !elif &seq @wc #l2
-            insert-string #l1
-            forward-delete-char
+            set-variable @wc #l1
             set-variable :tag-count &add :tag-count @#
-            beginning-of-line
         !endif
         forward-line
     !done
@@ -1203,6 +1201,8 @@ define-macro dirlst-search
                         set-variable .state &bor .state 1
                     !endif
                 !endif
+            !elif &equ $result 2
+                ; file does not exist
             !else
                 ml-write &spr "[Delete file error: unexpected failure code %d]" $result
                 !abort
@@ -1288,6 +1288,8 @@ define-macro dirlst-search
         !abort
     !endif
     !force !force dirlst-tag-list-delete
+    !force search-buffer "me" "^ "
+    beginning-of-line
     !if &not @#
     !elif &band .find-file.flags 1
         dirlst-refresh
@@ -1296,6 +1298,24 @@ define-macro dirlst-search
     !endif
 !emacro
 
+0 define-macro dirlst-delete-line
+    !if &or &or &les $window-line 5 &les &len @wl :fmpf &not &sin &lef @wl 1 " *" 
+        !if &band @# 1
+            ml-write "[Error: Invalid line]"
+        !endif
+        !abort
+    !elif &seq &lef @wl 1 "*"
+        set-variable :tag-count &sub :tag-count 1
+    !endif
+    -1 buffer-mode "view"
+    beginning-of-line
+    set-mark
+    forward-line
+    -1 kill-region
+    -1 buffer-mode "edit"
+    1 buffer-mode "view"
+!emacro
+    
 0 define-macro dirlst-tag-list-copy-file
     set-variable #l0 @1
     set-variable #l1 @2
@@ -1540,8 +1560,7 @@ define-macro dirlst-search
     !endif
     0x48 file-op &cat $buffer-fname #l1 &cat $buffer-fname #l0 @mna
     !if &band .find-file.flags 1
-        dirlst-refresh
-        dirlst-goto-filename &cat #l0 #l9
+        dirlst-refresh &cat #l0 #l9
     !else
         -1 dirlst-tag-set
     !endif
@@ -1552,8 +1571,7 @@ define-macro dirlst-search
     set-variable #l0 .find-file.file1
     0 file-attrib &cat $buffer-fname #l0
     !if &band .find-file.flags 1
-        dirlst-refresh
-        dirlst-goto-filename #l0
+        dirlst-refresh #l0
     !endif
 !emacro
 
@@ -1567,13 +1585,26 @@ define-macro dirlst-search
     !endif
     0x100 file-op #l0
     !if &band .find-file.flags 1
-        dirlst-refresh
-        dirlst-goto-filename &cat #l0 "/"
+        dirlst-refresh &cat #l0 "/"
     !endif
 !emacro
 0 define-macro dirlst-refresh
+    !if &not &band $buffer-fmod 0x10000
+        !if &exi &set #l1 &spr ".%s.refresh" $buffer-fhook
+            !force !force execute-line &ind #l1
+        !elif .find-file.file-count
+            -1 dirlst-tag-set
+        !endif
+        !return
+    !endif
     set-variable #l0 $buffer-bname
-    !force 6 dirlst-get-filename "Refresh"
+    !force set-variable #l1 @1
+    !if &not &set #l2 $status
+        !force 6 dirlst-get-filename "Refresh"
+        !if &set #l2 .find-file.file-count
+            set-variable #l1 .find-file.file1
+        !endif
+    !endif
     !if @#
         33 read-file $buffer-fname
     !else
@@ -1587,8 +1618,8 @@ define-macro dirlst-search
         buffer-bind-create "bio" "f10" "" file-browser-close
         buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
     !endif
-    !if .find-file.file-count
-        !force dirlst-goto-filename .find-file.file1
+    !if #l2
+        !force dirlst-goto-filename #l1
     !endif
     !if &equ $window-line 1
         set-variable $window-line 5
@@ -1641,10 +1672,12 @@ osd .osd.dirlst 160 ""  "File Tools Setup"      f file-tool-setup
         osd .osd.dirlst   5 ""  "\HEdit File"     f dirlst-find-file
         osd .osd.dirlst  15 ""  "\HView File"     0 dirlst-find-file
         osd .osd.dirlst  20 ""  "\HRename"        f dirlst-file-rename
+        osd .osd.dirlst  60 ""  "Delete Current Line" f dirlst-delete-line
     !else
         osd .osd.dirlst   5 ""  "Edit File"
         osd .osd.dirlst  15 ""  "View File"
         osd .osd.dirlst  20 ""  "Rename File"
+        osd .osd.dirlst  60 ""  "Delete Current Line"
     !endif
     !if &or #l0 :tag-count
         osd .osd.dirlst  30 ""  "\HCopy Files"    1 dirlst-tag-file-copy
