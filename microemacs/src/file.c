@@ -1962,13 +1962,21 @@ fileOp(int f, int n)
             rr = 0 ;
         else if(isHttpLink(sfname))
             rr = mlwrite(MWABORT,(meUByte *)"[Cannot delete %s]",sfname);
-        else if((n & meFILEOP_CHECK) && !isFtpLink(sfname) && meTestWrite(sfname))
+        else if((n & meFILEOP_CHECK) && !isFtpLink(sfname))
         {
-            sprintf((char *)lfname, "%s is read only, delete",sfname) ;
-            if((n & meFILEOP_NOPROMPT) || (mlyesno(lfname) <= 0))
+            if(meTestExist(sfname))
             {
-                ctrlg(meFALSE,1);
-                rr = -8 ;
+                mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[%s: No such file]",sfname);
+                rr = -2 ;
+            }
+            else if(meTestWrite(sfname))
+            {
+                sprintf((char *)lfname, "%s is read only, delete",sfname) ;
+                if((n & meFILEOP_NOPROMPT) || (mlyesno(lfname) <= 0))
+                {
+                    ctrlg(meFALSE,1);
+                    rr = -8 ;
+                }
             }
         }
         dFlags = meRWFLAG_DELETE ;
