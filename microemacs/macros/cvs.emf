@@ -957,16 +957,14 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
         !abort
     !endif
     !force unset-variable .cvs.refresh
-    !if &band $buffer-fmod 0x10000
+    !if &exi :fmpf
         set-variable #l9 1
-        !if &lfind "|11|3|1|7|2|" @#
-            ; if update, commit remove or add then refresh or drop tags
-            set-variable .cvs.refresh $buffer-bname
+        !if &band $buffer-fmod 0x10000
+            !if &lfind "|11|3|1|7|2|" @#
+                ; if update, commit remove or add then refresh or drop tags
+                set-variable .cvs.refresh $buffer-bname
+            !endif
         !endif
-        10 dirlst-tag-list
-        goto-position "\x82"
-    !elif &seq $buffer-bname "*cvs-state*"
-        set-variable #l9 2
         10 dirlst-tag-list
         goto-position "\x82"
     !else
@@ -1000,13 +998,8 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
             !abort
         !else
             ; check that all the selected files have been 'lost' (deleted locally) first
-            !if &equ #l9 2
-                set-variable $window-line 3
-                !force search-buffer "em" "^\\*[^L*\n]"
-            !else
-                set-variable $window-line 5
-                !force search-buffer "em" "^\\*.[^L\n]"
-            !endif
+            set-variable $window-line 5
+            !force search-buffer "em" "^\\*.[^L\n]"
             !if $status
                 beginning-of-line
                 osd-dialog "CVS - Remove" "     All files to be removed must be deleted first!  " "  \HAbort  "
