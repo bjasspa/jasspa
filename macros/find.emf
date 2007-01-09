@@ -524,34 +524,67 @@ define-macro find
     beginning-of-buffer
     !if &set #l3 &seq $buffer-bname "*find-tmp*"
         !force set-variable $buffer-bname #l0
+        !if &band 0x100 $system
+            set-variable #l6 &band 1 $buffer-fmod
+        !else
+            set-variable #l6 &not &band 148 $buffer-fmod
+        !endif
+    !else
+        set-variable #l6 &bmod "view"
     !endif
+    set-variable #l1 1
     set-variable #l4 &bmod "magic"
     set-variable #l5 &bmod "exact"
     &con &sin "i" #p9 -1 1 buffer-mode "exact"
     1 buffer-mode "magic"
-    !if &band .n 0x20
-        !force !force !force query-replace-string .f .t
+    !force !force !force search-forward .f
+    !if &not &set #l2 $status
+    !elif &not #l6
+    !elif &band .n 2
+        set-variable #l2 0
+    !elif &band .n 4
     !else
-        !force !force !force replace-string .f .t
+        !force !force !force set-variable #l6 @mc5 &spr "File \"%s\" is read-only, modify (?/y/n/a/o) ? " #l0 "aAnNoOyY"  "(Y)es, (N)o, Yes to (A)ll, N(o) to All, (C-g)Abort ? "
+        !if &not &set #l1 $status
+        !elif &iseq #l6 "o"
+            set-variable .n &bor .n 2
+            set-variable #l2 0
+        !elif &iseq #l6 "n"
+            set-variable #l2 0
+        !elif &iseq #l6 "a"
+            set-variable .n &bor .n 4
+        !endif
     !endif
-    set-variable #l1 $status
-    set-variable #l2 $result
-    !force goto-position "\x82"
-    !if &not #l1
-    !elif &lget #l2 1
-        !if #l3
-            ; must write out the temp buffer
-            0 write-buffer #l0
+    !if #l2
+        -1 buffer-mode "view"
+        1 buffer-mode "edit" @mna
+        beginning-of-buffer
+        !if &band .n 0x20
+            !force !force !force query-replace-string .f .t
+        !else
+            !force !force !force replace-string .f .t
         !endif
-        set-variable #p6 &lget #l2 1
-        set-variable .t &lget #l2 3
-        !if &seq &lget #l2 2 "l"
-            set-variable .l #p6
-            set-variable #l1 0
-        !elif &not &band .n 0x20
-        !elif &seq &lget #l2 2 "a"
-            set-variable .n &bxor .n 0x20
+        set-variable #l1 $status
+        set-variable #l2 $result
+        !force goto-position "\x82"
+        !if &not #l1
+        !elif &lget #l2 1
+            !if #l3
+                ; must write out the temp buffer
+                0 write-buffer #l0
+            !endif
+            set-variable #p6 &lget #l2 1
+            set-variable .t &lget #l2 3
+            !if &seq &lget #l2 2 "l"
+                set-variable .l #p6
+                set-variable #l1 0
+            !elif &not &band .n 0x20
+            !elif &seq &lget #l2 2 "a"
+                set-variable .n &bxor .n 0x20
+            !endif
         !endif
+    !else
+        !force goto-position "\x82"
     !endif
     !if #l3
         ; must delete the temp buffer as we changed its name
