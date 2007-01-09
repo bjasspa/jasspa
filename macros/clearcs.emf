@@ -260,10 +260,7 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
         !abort
     !endif
     !force unset-variable .cc-init.refresh
-    !if &band $buffer-fmod 0x10000
-        10 dirlst-tag-list
-        goto-position "\x82"
-    !elif &seq $buffer-bname "*cc-state*"
+    !if &exi :fmpf
         10 dirlst-tag-list
         goto-position "\x82"
     !else
