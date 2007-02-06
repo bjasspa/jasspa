@@ -38,7 +38,7 @@ define-macro fhook-dirlst
         !endif
         set-mark
         !while &not &seq @wc ""
-            !if &xseq @wl "\\([-\\a]+\\) +\\d+ \\(\\S+\\)\\( +\\S*[^\\s,]\\)?\\( +\\d+,\\)? +\\(\\d+\\|\\d+ +0[xX]\\h+\\) +\\(\\a\\a\\a\\) +\\(\\d\\d?\\) +\\(\\d\\d\\d\\d\\|\\d\\d:\\d\\d\\) +\\(.*\\)$"
+            !if &xseq @wl "\\([-\\a]+\\) +\\d+ \\(\\S+\\)\\( +\\S*[^\\s,]\\)?\\( +\\d+,\\)? +\\(\\d+\\|\\d+ +0[xX]\\h+\\) +\\(\\a\\a\\a\\) +\\(\\d\\d?\\) +\\(\\d\\d\\d\\d\\|\\d\\d?:\\d\\d\\) +\\(.*\\)$"
                 !if &gre &len &set #l0 &add 0 @s5 7
                     set-variable #l0 &div #l0 1024
                     set-variable #l1 "K"
@@ -58,11 +58,12 @@ define-macro fhook-dirlst
                     set-variable #l2 @s8
                     set-variable #l3 "00:00"
                 !endif
-                !if &not &set #l1 &lfi "|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|" &slo @s6
-                    set-variable @wl &spr "%s %s  %s %2d %s:00 %s" #l0 &rig -2 #l2 @s6 @s7 #l3 @s9
+                !if &set #l1 &lfi "|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|" &slo @s6
+                    set-variable #l2 &spr "%s/%02d/%02d" #l2 #l1 @s7
                 !else
-                    set-variable @wl &spr "%s %s/%02d/%02d %s:00 %s" #l0 #l2 #l1 @s7 #l3 @s9
+                    set-variable #l2 &spr "%s  %s %2d" &rig -2 #l2 @s6 @s7
                 !endif
+                set-variable @wl &spr "%s %s %n%s:00 %s" #l0 #l2 &sub 5 &len #l3 "0" #l3 @s9
             !elif &xseq @wl "\\(\\d\\d\\)-\\(\\d\\d\\)-\\(\\d\\d\\) +\\(\\d\\d\\):\\(\\d\\d\\)\\([aApP][mM]\\) +\\(\\d+\\|<DIR>\\) +\\(.*\\)$"
                 !if &seq @s7 "<DIR>"
                     set-variable #l2 "d---------"
@@ -1417,12 +1418,36 @@ define-macro dirlst-search
     !endif
     set-variable .dirlst-tag-list-copy-file.mode &cond &band @# 1 0x8d 0x4d
     set-variable .dirlst-tag-list-copy-file.state 0
+    set-variable #l2 .find-file.file-count
+    !if &not #p9
+        !repeat
+            !if &sin "/" &lef &ind &cat ".find-file.file" &pdec #l2 1 -1
+                set-variable #l2 -1
+            !endif
+        !until &les #l2 1
+        !if &les #l2 0
+            set-variable #l2 @mc5 "Recreate directories (?/y/n/o) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+            set-variable .dirlst-tag-list-copy-file.state &con &iseq #l2 "y" 0x30 0x50
+        !endif
+    !endif
     set-variable .find-file.dir-count 0
     set-variable #l2 0
     !repeat
         ml-write &spr "%s %n" #l9 &mod &inc #l2 1 40 "."
         set-variable #l4 &ind &cat ".find-file.file" #l2
-        !if &not #p9
+        !if #p9
+        !elif &not &sin "/" &lef #l4 -1
+            set-variable #l5 &cat #l0 #l4
+        !elif &band .dirlst-tag-list-copy-file.state 0x40
+            set-variable #l5 &cat #l0 &rig #l4 &rsin "/" &lef #l4 -1
+        !else
+            set-variable #l5 #l0
+            set-variable #l7 &lef #l4 -1
+            !while &set #l6 &sin "/" #l7
+                set-variable #l5 &cat #l0 &lef #l7 #l6
+                !force 0x100 file-op &lef #l5 -1
+                set-variable #l7 &rig #l7 #l6
+            !done
             set-variable #l5 &cat #l0 #l4
         !endif
         dirlst-tag-list-copy-file #l1 #l4 #l5
@@ -1443,7 +1468,7 @@ define-macro dirlst-search
                 set-variable #l6 &cat #l0 #l7
             !endif
 *dir_retry
-            !force 0x100 file-op &lef #l6 &sub &len #l6 1
+            !force 0x100 file-op &lef #l6 -1
             !if &seq &lget &stat "i" #l6 2 "D"
                 set-variable $file-names &cat &cat #l1 #l7 ".*"
                 !while &not &seq &set #l3 $file-names ""
