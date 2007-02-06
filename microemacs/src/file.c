@@ -2860,7 +2860,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
                 }
                 if(noFiles &&
                    ((fls = meMalloc(sizeof(meUByte *) * noFiles)) != NULL) &&
-                   (meRegexComp(&meRegexStrCmp,(meUByte *) "\\([-\\a]+ +\\d+ \\S+\\( +\\S+\\)?\\( +\\d+,\\)? +\\d+\\( +0[xX]\\h+\\)? +\\a\\a\\a +\\d\\d? +\\(\\d\\d\\d\\d\\|\\d\\d:\\d\\d\\)\\|\\d\\d-\\d\\d-\\d\\d +\\d\\d\\:\\d\\d[aApP][mM] +\\(\\d+\\|<DIR>\\)\\) +\\(.*\\)",0) == meREGEX_OKAY))
+                   (meRegexComp(&meRegexStrCmp,(meUByte *) "\\([-\\a]+ +\\d+ \\S+\\( +\\S+\\)?\\( +\\d+,\\)? +\\d+\\( +0[xX]\\h+\\)? +\\a\\a\\a +\\d\\d? +\\(\\d\\d\\d\\d\\|\\d\\d?:\\d\\d\\)\\|\\d\\d-\\d\\d-\\d\\d +\\d\\d?\\:\\d\\d[aApP][mM] +\\(\\d+\\|<DIR>\\)\\) +\\(.*\\)",0) == meREGEX_OKAY))
                 {
                     noFiles = 0 ;
                     lp = hlp.next;
