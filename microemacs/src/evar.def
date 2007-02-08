@@ -86,6 +86,7 @@ DEFVAR ("delay-time",          EVDELAYTIME)     /* mouse-time delay time (msec) 
 #if MEOPT_EXTENDED
 DEFVAR ("file-ignore",         EVFILEIGNORE)    /* file extension ignore list*/
 DEFVAR ("file-names",          EVFNAMES)        /* file names access variable*/
+DEFVAR ("file-size-prompt",    EVFSPROMPT)      /* size at which to start prompting */
 #endif
 #if MEOPT_FILENEXT
 DEFVAR ("file-template",       EVFILETEMP)      /* file next file template   */
@@ -116,8 +117,8 @@ DEFVAR ("home",                EVHOMEDIR)       /* Home directory */
 DEFVAR ("idle-time",           EVIDLETIME)      /* idle-time time period (msec)*/
 #endif
 DEFVAR ("indent-width",        EVINDWIDTH)      /* Indent Width - space substitution */
-DEFVAR ("kept-versions",       EVKEPTVERS)      /* Number of backup files */
 #if MEOPT_EXTENDED
+DEFVAR ("kept-versions",       EVKEPTVERS)      /* Number of backup files */
 DEFVAR ("line-flags",          EVLINEFLAGS)     /* current line flags */
 #endif
 #if MEOPT_HILIGHT
