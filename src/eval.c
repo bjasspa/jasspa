@@ -459,7 +459,10 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             mouse_Y = (meShort) meAtoi(vvalue) ;
             break;
         case EVPAUSETIME:
-            pauseTime = (meShort) meAtoi (vvalue);
+            pauseTime = (meShort) meAtoi(vvalue);
+            break;
+        case EVFSPROMPT:
+            fileSizePrompt = (meUInt) meAtoi(vvalue);
             break;
         case EVKEPTVERS:
             if(!(meSystemCfg & meSYSTEM_DOSFNAMES) && 
@@ -1141,6 +1144,7 @@ gtenv(meUByte *vname)   /* vname   name of environment variable to retrieve */
 #endif
 #if MEOPT_EXTENDED
     case EVPAUSETIME:   return meItoa(pauseTime);
+    case EVFSPROMPT:    return meItoa(fileSizePrompt);
     case EVKEPTVERS:    return meItoa(keptVersions);
     case EVMOUSE:       return meItoa(meMouseCfg);
     case EVMOUSEPOS:    return meItoa(mouse_pos);
@@ -3013,8 +3017,8 @@ get_flag:
                         {
                             v4 = meFileGetAttributes(arg2) ;
                             v5 = 1 ;
-                            v51 = 0 ;
-                            v52 = stats.stsize ;
+                            v51 = stats.stsizeHigh ;
+                            v52 = stats.stsizeLow ;
                         }
                     }
                     dd = evalResult ;
@@ -3112,10 +3116,12 @@ get_flag:
                 
             case 's':
                 /* File size - return -1 if not a regular file */
-                if(ftype == meFILETYPE_REGULAR)
-                    ftype = stats.stsize ;
-                else
+                if(ftype != meFILETYPE_REGULAR)
                     ftype = -1 ;
+                else if((stats.stsizeHigh > 0) || (stats.stsizeLow & 0x80000000))
+                    ftype = 0x7fffffff ;
+                else
+                    ftype = stats.stsizeLow ;
                 break ;
             case 't':
                 /* File type - use look up table, see first comment */

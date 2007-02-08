@@ -88,7 +88,8 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
     if(stats != NULL)
     {
         meFiletimeInit(stats->stmtime) ;
-        stats->stsize = 0 ;
+        stats->stsizeHigh = 0 ;
+        stats->stsizeLow = 0 ;
 #ifdef _UNIX
         stats->stuid  = meUid ;
         stats->stgid  = meGid ;
@@ -142,7 +143,7 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
             if(!findfirst(file, &fblk, FA_RDONLY|FA_HIDDEN|FA_SYSTEM|FA_DIREC))
             {
                 stats->stmtime = (((meUInt) fblk.ff_ftime) & 0x0ffff) | (((meUInt) fblk.ff_fdate) << 16) ;
-                stats->stsize = fblk.ff_fsize ;
+                stats->stsizeLow = fblk.ff_fsize ;
             }
         }
         if(ii & meFILE_ATTRIB_DIRECTORY)
@@ -189,8 +190,8 @@ gft_directory:
                 return meFILETYPE_NOTEXIST ;
             }
             status = fd.dwFileAttributes ;
-            /* Dangerously ingoring the nFileSizeHigh for now */
-            stats->stsize = fd.nFileSizeLow ;
+            stats->stsizeHigh = fd.nFileSizeHigh ;
+            stats->stsizeLow = fd.nFileSizeLow ;
             stats->stmtime.dwHighDateTime = fd.ftLastWriteTime.dwHighDateTime ;
             stats->stmtime.dwLowDateTime = fd.ftLastWriteTime.dwLowDateTime ;
             FindClose(fh) ;
@@ -305,7 +306,7 @@ gft_directory:
             stats->stgid  = statbuf.st_gid ;
             stats->stdev  = statbuf.st_dev ;
             stats->stino  = statbuf.st_ino ;
-            stats->stsize = statbuf.st_size ;
+            stats->stsizeLow = statbuf.st_size ;
             if(statbuf.st_mtime > stmtime)
                 stats->stmtime= statbuf.st_mtime ;
             else
@@ -821,7 +822,8 @@ typedef struct FILENODE {
     meUByte  *fname;                        /* Name of the file */
     meUByte  *lname;                        /* Linkname */
     meUByte   attrib[FILENODE_ATTRIBLEN] ;
-    meUInt    size ;
+    meUInt    sizeHigh ;
+    meUInt    sizeLow ;
 #ifdef _UNIX
     time_t  mtime ;
 #endif
@@ -965,7 +967,8 @@ getDirectoryInfo(meUByte *fname)
             curFile->attrib[1] = (statTestRead(sbuf))  ? 'r' : '-' ;
             curFile->attrib[2] = (statTestWrite(sbuf)) ? 'w' : '-' ;
             curFile->attrib[3] = (statTestExec(sbuf))  ? 'x' : '-' ;
-            curFile->size = (meUInt) sbuf.st_size ;
+            curFile->sizeHigh = 0 ;
+            curFile->sizeLow = (meUInt) sbuf.st_size ;
             curFile->mtime = sbuf.st_mtime ;
         }
         closedir(dirp) ;
@@ -994,7 +997,8 @@ getDirectoryInfo(meUByte *fname)
         makestrlow(ff) ;
         curFile->fname = ff ;
         curFile->lname = NULL ;
-        curFile->size  = (meUInt) fblk.ff_fsize ;
+        curFile->sizeHigh = 0 ;
+        curFile->sizeLow  = (meUInt) fblk.ff_fsize ;
         curFile->mtime = (((meUInt) fblk.ff_ftime) & 0x0ffff) | (((meUInt) fblk.ff_fdate) << 16) ;
         /* construct attribute string */
         if(fblk.ff_attrib & FA_DIREC)
@@ -1034,17 +1038,17 @@ getDirectoryInfo(meUByte *fname)
                 return NULL ;
             curFile->fname = ff ;
             curFile->lname = NULL ;
-            curFile->size  = (((meUInt) fd.nFileSizeHigh) << 16) + ((meUInt) fd.nFileSizeLow) ;
             curFile->mtime.dwLowDateTime  = fd.ftLastWriteTime.dwLowDateTime ;
             curFile->mtime.dwHighDateTime = fd.ftLastWriteTime.dwHighDateTime ;
             /* construct attribute string */
             meStrncpy(curFile->attrib,"-rwx",4) ;
             if(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
             {
+                curFile->attrib[0] = 'd' ;
                 /* On network drives the size is sometimes invalid. Clear
                  * it just to make sure that this is not the case */
-                curFile->attrib[0] = 'd' ;
-                curFile->size = 0;
+                curFile->sizeHigh = 0;
+                curFile->sizeLow = 0;
             }
             else
             {
@@ -1052,6 +1056,8 @@ getDirectoryInfo(meUByte *fname)
                     curFile->attrib[2] =  '-' ;
                 if(!meTestExecutable(ff))
                     curFile->attrib[3] = '-' ;
+                curFile->sizeHigh = (meUInt) fd.nFileSizeHigh ;
+                curFile->sizeLow = (meUInt) fd.nFileSizeLow ;
             }
         } while (FindNextFile(fh, &fd));
         FindClose(fh);
@@ -1079,7 +1085,7 @@ readDirectory(meUByte *fname, meBuffer *bp, meLine *blp, meUInt flags)
     FILETIME ftmp ;
 #endif
     meUByte buf[meBUF_SIZE_MAX];                  /* Working line buffer */
-    meUInt totSize=0 ;
+    meUInt totSizeHigh=0, totSizeLow=0, ui ;
     int len, dirs=0, files=0 ;
 
     if((fnode=getDirectoryInfo(fname)) == NULL)
@@ -1093,7 +1099,11 @@ readDirectory(meUByte *fname, meBuffer *bp, meLine *blp, meUInt flags)
     fn = fnode ;
     while(fn != NULL)
     {
-        totSize += fn->size ;
+        totSizeHigh += fn->sizeHigh ;
+        ui = totSizeLow + fn->sizeLow ;
+        if((ui >> 16) < ((totSizeLow >> 16) + (fn->sizeLow >> 16)))
+            totSizeHigh++ ;
+        totSizeLow = ui ;
         if(fn->attrib[0] == 'd')
             dirs++ ;
         else
@@ -1103,10 +1113,15 @@ readDirectory(meUByte *fname, meBuffer *bp, meLine *blp, meUInt flags)
     buf[0] = ' ' ;
     buf[1] = ' ' ;
     len = 2 ;
-    if (totSize > 9999999)
-        len += sprintf((char *)buf+len, "%7ldK ",totSize/1024) ;
+    if (totSizeHigh > 0)
+    {
+        ui = (totSizeHigh << 12) | (totSizeLow >> 20) ;
+        len += sprintf((char *)buf+len, "%7ldM ",ui) ;
+    }
+    else if (totSizeLow > 9999999)
+        len += sprintf((char *)buf+len, "%7ldK ",totSizeLow >> 10) ;
     else
-        len += sprintf((char *)buf+len, "%7ld  ",totSize) ;
+        len += sprintf((char *)buf+len, "%7ld  ",totSizeLow) ;
     sprintf((char *)buf+len,"used in %d files and %d dirs\n",files,dirs) ;
     bp->lineCount += addLine(blp,buf) ;
     while(fnode != NULL)
@@ -1117,10 +1132,15 @@ readDirectory(meUByte *fname, meBuffer *bp, meLine *blp, meUInt flags)
         len += FILENODE_ATTRIBLEN ;
         buf[len++] = ' ' ;
         /* Add the file statistics */
-        if (fnode->size > 9999999)
-            len += sprintf((char *)buf+len, "%7ldK ", fnode->size/1024);
+        if(fnode->sizeHigh > 0)
+        {
+            ui = (fnode->sizeHigh << 12) | (fnode->sizeLow >> 20) ;
+            len += sprintf((char *)buf+len, "%7ldM ",ui) ;
+        }
+        else if (fnode->sizeLow > 9999999)
+            len += sprintf((char *)buf+len, "%7ldK ", fnode->sizeLow >> 10);
         else
-            len += sprintf((char *)buf+len, "%7ld  ", fnode->size);
+            len += sprintf((char *)buf+len, "%7ld  ", fnode->sizeLow);
 
 #ifdef _UNIX
         if ((tmp = localtime(&fnode->mtime)) != NULL)
@@ -1217,6 +1237,7 @@ readin(register meBuffer *bp, meUByte *fname)
     if(fn != NULL)
     {
         meStat stats ;
+        meUInt ui ;
         int ft ;
         if((ft=getFileStats(fn,1,&(bp->stats),lfn)) == meFILETYPE_HTTP)
             meModeSet(bp->mode,MDVIEW) ;
@@ -1319,6 +1340,17 @@ readin(register meBuffer *bp, meUByte *fname)
                 bp->intFlag &= ~BIFFILE ;
                 goto newfile_end;
             }
+#if MEOPT_EXTENDED
+            if((fileSizePrompt > 0) && ((ui=(bp->stats.stsizeHigh << 12) | (bp->stats.stsizeLow >> 20)) > fileSizePrompt))
+            {
+                meUByte prompt[200] ;
+                meUByte *tt ;
+                tt = getFileBaseName(fn) ;
+                sprintf((char *)prompt,"File %s is %dMb, continue",tt,ui) ;
+                if(mlyesno(prompt) <= 0)
+                    goto error_end ;
+            }
+#endif            
 #ifdef _WIN32
             if(!meStatTestSystem(bp->stats))
             {
@@ -1452,6 +1484,7 @@ int
 insertFile(int f, int n)
 {
     meUByte fname[meBUF_SIZE_MAX] ;
+    meStat stats ;
     meUInt uoffset, loffset ;
     meInt length=0 ;
     int s, flags=0 ;
@@ -1459,13 +1492,24 @@ insertFile(int f, int n)
     if((s=inputFileName((meUByte *)"Insert file",fname,1)) <= 0)
         return s ;
     /* Allow existing or url files if not doing a partial insert */
-    if(((s=getFileStats(fname,meFINDFILESINGLE_GFS_OPT,NULL,NULL)) != meFILETYPE_REGULAR) &&
+    if(((s=getFileStats(fname,meFINDFILESINGLE_GFS_OPT,&stats,NULL)) != meFILETYPE_REGULAR) &&
        ((n & 4) || ((s != meFILETYPE_HTTP) && (s != meFILETYPE_FTP)
 #if MEOPT_DIRLIST
                     && (s != meFILETYPE_DIRECTORY)
 #endif
                     )))
         return meABORT ;
+#if MEOPT_EXTENDED
+    if((fileSizePrompt > 0) && ((n & 4) == 0) && ((uoffset=(stats.stsizeHigh << 12) | (stats.stsizeLow >> 20)) > fileSizePrompt))
+    {
+        meUByte prompt[200] ;
+        meUByte *tt ;
+        tt = getFileBaseName(fname) ;
+        sprintf((char *)prompt,"File %s is %dMb, continue",tt,uoffset) ;
+        if(mlyesno(prompt) <= 0)
+            return meABORT ;
+    }
+#endif            
 #if MEOPT_DIRLIST
     if(s == meFILETYPE_DIRECTORY)
         flags |= meRWFLAG_MKDIR ;
@@ -1591,7 +1635,8 @@ findFileSingle(meUByte *fname, int bflag, meInt lineno, meUShort colno)
                ((stats.stdev != (dev_t)(-1)) &&
                 (bp->stats.stdev == stats.stdev) &&
                 (bp->stats.stino == stats.stino) &&
-                (bp->stats.stsize == stats.stsize)))
+                (bp->stats.stsizeHigh == stats.stsizeHigh) &&
+                (bp->stats.stsizeLow == stats.stsizeLow)))
 #else
                !fnamecmp(bp->fileName,fname))
 #endif
@@ -1915,7 +1960,8 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
                     ((stats.stdev != (dev_t)(-1)) &&
                      (bp->stats.stdev == stats.stdev) &&
                      (bp->stats.stino == stats.stino) &&
-                     (bp->stats.stsize == stats.stsize))))
+                     (bp->stats.stsizeHigh == stats.stsizeHigh) &&
+                     (bp->stats.stsizeLow == stats.stsizeLow))))
 #else
                    !fnamecmp(bp->fileName,fn))
 #endif

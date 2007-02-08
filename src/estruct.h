@@ -504,14 +504,13 @@ typedef meInt meFiletime ;
 /* meStat Contains the file node information */
 typedef struct {
     meFiletime         stmtime;                 /* modification time of file    */
+    meUInt             stsizeHigh ;             /* File's Size (higher 4bytes)  */
+    meUInt             stsizeLow ;              /* File's Size (lower 4bytes)   */
 #ifdef _UNIX
-    off_t              stsize ;                 /* File's Size                  */
     uid_t              stuid ;                  /* File's User id               */
     gid_t              stgid ;                  /* File's Group id              */
     dev_t              stdev ;                  /* Files device ID no.          */
     ino_t              stino ;                  /* Files Inode number           */
-#else
-    meInt              stsize ;                 /* File's Size                  */
 #endif
     meUShort           stmode ;                 /* file mode flags              */
 } meStat ;

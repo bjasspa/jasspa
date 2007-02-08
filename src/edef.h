@@ -53,6 +53,7 @@ extern  meUByte  **ModeLineStr ;        /* modeline line format         */
 extern  meUByte    orgModeLineStr[] ;   /* original modeline line format*/
 extern  meUByte   *modeLineStr ;        /* current modeline format      */
 extern  meUByte    modeLineFlags ;      /* current modeline flags       */
+extern  meUInt     fileSizePrompt;      /* size at which to start prompt*/
 extern  meInt      keptVersions;        /* No. of kept backup versions  */
 #if MEOPT_EXTENDED
 extern  meInt      nextFrameId;         /* frame-id of the next create  */
@@ -473,6 +474,7 @@ meUByte   fillignore[16]=">_@";         /* Fill Ignore character class  */
 meUByte   fillmode='B';                 /* Justification mode           */
 #endif
 #if MEOPT_EXTENDED
+meUInt    fileSizePrompt=1024;          /* size at which to start prompt*/
 meInt     keptVersions=0 ;              /* No. of kept backup versions  */
 meInt     nextFrameId=0 ;               /* frame-id of the next create  */
 meInt     nextWindowId=0 ;              /* window-id of the next create */
