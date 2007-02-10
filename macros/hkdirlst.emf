@@ -181,7 +181,7 @@ define-macro fhook-dirlst
 ; buffer-init variables
 set-variable .fhook-dirlst.name "Directory List"
 set-variable .fhook-dirlst.setup &reg "/history/fhook/dirlst" "ghmop"
-set-variable .fhook-dirlst.setup-mask    "aceghlopq"
+set-variable .fhook-dirlst.setup-mask    "eghlop"
 set-variable .fhook-dirlst.setup-flags   "|l|"
 set-variable .fhook-dirlst.setup-labels  "|Enable filter by default|"
 set-variable .fhook-dirlst.command-flag  "|thbio|thbio|thbio|thbio|bio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|h|thbio|thbio|thbio|thbio|thbio|thbio|thbio|thbio|thbio|thbio|bio|thbio|thbio|thbio|h|t|"
