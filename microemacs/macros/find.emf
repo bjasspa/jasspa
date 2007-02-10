@@ -13,26 +13,41 @@
 
 define-macro fhook-find
 !emacro
-
 set-variable .fhook-find.name "Find List"
 set-variable .fhook-find.setup &reg "/history/fhook/find" "ghmop"
-set-variable .fhook-find.setup-mask    "aceghlopq"
-set-variable .fhook-find.command-flag  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-flag  1 "" 2 "" 3 "" 4 "" 5 "" 6 "" 6
-set-variable .fhook-find.command-name  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-name  1 "" 2 "" 3 "" 4 "" 5 "" 6 "" 6
-set-variable .fhook-find.command-nbind &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-nbind 1 "" 2 "" 3 "" 4 "" 5 "" 6 "" 6
-set-variable .fhook-find.command-kbind &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-kbind 1 "" 2 "" 3 "" 4 "" 5 "" 6 "" 6
-set-variable .fhook-find.command-desc  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-desc  1 "" 2 "" 3 "" 4 "" 5 "" 6 "" 6
+set-variable .fhook-find.setup-mask    "eghkop"
+set-variable .fhook-find.command-flag  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-flag  1 "" 2 "" 3 "" 4 "" 5 "thbo" 6 "bo" 4
+set-variable .fhook-find.command-name  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-name  1 "" 2 "" 3 "" 4 "" 5 "find-rerun" 6 "find-rerun" 4
+set-variable .fhook-find.command-nbind &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-nbind 1 "" 2 "" 3 "" 4 "" 5 "" 6 "" 4
+set-variable .fhook-find.command-kbind &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-kbind 1 "" 2 "" 3 "" 4 "" 5 "C-return" 6 "C-j" 4
+set-variable .fhook-find.command-desc  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-desc  1 "" 2 "" 3 "" 4 "" 5 "Rerun \HFind" 6 "" 4
 set-variable .fhook-find.refresh "find-refresh"
+
+define-macro fhook-grep
+!emacro
+set-variable .fhook-grep.setup &reg "/history/fhook/find" "ghop"
+set-variable .fhook-grep.setup-mask "eghkop"
+set-variable .fhook-grep.command-flag  "|thbo|thbo|bo|"
+set-variable .fhook-grep.command-name  "|return-get-next-line|grep-rerun|grep-rerun|"
+set-variable .fhook-grep.command-nbind "||||"
+set-variable .fhook-grep.command-kbind "|return|C-return|C-j|"
+set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
 
 !if &and &sin "h" .fhook-find.setup &band .hilight.flags 0x02
     !if &not &exist .hilight.find
         set-variable .hilight.find &pinc .hilight.next 1
+        set-variable .hilight.grep &pinc .hilight.next 1
     !endif
     0 hilight .hilight.find 0        $global-scheme
     hilight .hilight.find 0x102 "Directory: \\{" .scheme.link
-    hilight .hilight.find 0x112 " d" .scheme.dir
-    hilight .hilight.find 0x112 "*d" .scheme.dir-select
-    hilight .hilight.find 0x112 "*f" .scheme.select
+    hilight .hilight.find 0x102 " d" .scheme.dir
+    hilight .hilight.find 0x102 "*d" .scheme.dir-select
+    hilight .hilight.find 0x102 "*f" .scheme.select
+    0 hilight .hilight.grep 0        $global-scheme
+    hilight .hilight.grep 0x102 "Directory: \\{" .scheme.link
+    hilight .hilight.grep 0x100 "\\a:/[^:]+:\\d+:" .scheme.no1
+    hilight .hilight.grep 0x100 "[^:]+:\\d+:" .scheme.no1
+    hilight .hilight.grep 0x102 "[^:]+: Binary" .scheme.no2
 !endif
 
 0 define-macro return-get-next-line
@@ -395,7 +410,7 @@ define-macro grep
     !if &not $status
         set-variable #l6 @ml00 &cat "Grep " #l1
     !endif
-    set-variable #l6 &spr "%s %s" #l1 #l6
+    set-variable #l6 &trl &spr "%s %s" #l1 #l6
     0 find-options "\bf\b\b\b\b\b\b\b" #l6 @2
     popup-window "*grep*"
     !force 0 delete-buffer "*grep*"
@@ -422,10 +437,21 @@ define-macro grep
     !endif
     insert-string &set #l0 &cat #l0 " ***]"
     set-variable $window-line 3
+    1 buffer-init "grep"
     set-variable :mouse-word-select "mouse-get-next-line"
-    buffer-bind-key return-get-next-line "return"
+    buffer-init-hooks
     ml-write #l0
     !return #l3
+!emacro
+define-macro grep-rerun
+    beginning-of-buffer
+    forward-line
+    !if &not &seq &lef @wl 6 "Grep: "
+        ml-write "[Error: expected \"Grep: \" here]"
+        !abort
+    !endif
+    set-variable #l1 &rig @wl 6
+    0x11 grep #l1
 !emacro
 
 define-macro find
@@ -485,7 +511,7 @@ define-macro find
     insert-string &set #l0 &cat #l0 " ***]"
     -1 buffer-mode "edit"
     1 buffer-mode "view"
-    @# buffer-init "find"
+    1 buffer-init "find"
     set-variable :tag-count 0
     set-variable :mouse-pick-1 dirlst-mouse-pick-1
     set-variable :mouse-drop-1 dirlst-mouse-drop-1
@@ -497,7 +523,16 @@ define-macro find
     ml-write #l0
     !return #l3
 !emacro
-
+define-macro find-rerun
+    beginning-of-buffer
+    forward-line
+    !if &not &seq &lef @wl 6 "Find: "
+        ml-write "[Error: expected \"Find: \" here]"
+        !abort
+    !endif
+    set-variable #l1 &rig @wl 6
+    0x11 find #l1
+!emacro
 0 define-macro find-delete-line
     !if &les $window-line 5
     !if &xseq @wl "[ *].+"
