@@ -246,7 +246,9 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
         !while &len &set #l2 $file-names
             !if &seq #l2 "../"
             !elif &seq #l2 "./"
-            !else
+            !elif &not &sin "x" #l9
+                !jump 2
+            !elif &not &xse #l2 .fhook-dirlst.filter-mask
                 set-variable &ind &cat ".find-file.file" &inc #l3 1 &cat #l1 #l2
             !endif
         !done
