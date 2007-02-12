@@ -2044,7 +2044,7 @@ ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
             fseeko(ffrp,0,SEEK_END) ;
             fs = ftello(ffrp) ;
             fsu = (meUInt) (fs >> 32) ;
-            fsl = (meUInt) fs ;
+            fsl = (meUInt) (fs & 0xffffffff);
 #else
 #ifdef _WIN32
             fsl = GetFileSize(ffrp,&fsu) ;
