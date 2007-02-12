@@ -46,14 +46,14 @@ STRIP         =	strip
 INSTALL       =	install
 CDEBUG        =	-g
 COPTIMISE     =	-xO3 -DNDEBUG=1
-CDEFS         = -D_SUNOS5 -I.
+CDEFS         = -D_SUNOS5 -I. -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 
 CONSOLE_DEFS  = -D_ME_CONSOLE
 WINDOW_DEFS   = $(MAKEWINDEFS) -D_ME_WINDOW -I/usr/openwin/include
 NANOEMACS_DEFS= -D_NANOEMACS
 LDDEBUG       =
 LDOPTIMISE    =
-LDFLAGS       = 
-LIBS          = -lnsl -lsocket -lintl
+LDFLAGS       = $(getconf LFS64_LDFLAGS)
+LIBS          = -lnsl -lsocket -lintl $(getconf LFS64_LIBS)
 CONSOLE_LIBS  = -ltermcap
 WINDOW_LIBS   = $(MAKEWINLIBS) -L/usr/openwin/lib -lX11
 #

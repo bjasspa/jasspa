@@ -45,7 +45,7 @@ STRIP         =	strip
 INSTALL       =	install
 CDEBUG        =	+z -g -Aa -Ae -z +DA1.1 +DS2.0
 COPTIMISE     =	+z +Onolimit -O -Aa -Ae -DNDEBUG=1 -z +DA1.1 +DS2.0
-CDEFS         = -D_HPUX11 -I.
+CDEFS         = -D_HPUX11 -I. -D_HPUX_SOURCE -D_FILE_OFFSET_BITS=64
 CONSOLE_DEFS  = -D_ME_CONSOLE
 WINDOW_DEFS   = $(MAKEWINDEFS) -D_ME_WINDOW -I/usr/include/X11R6
 NANOEMACS_DEFS= -D_NANOEMACS
