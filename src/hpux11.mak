@@ -45,7 +45,7 @@ STRIP         =	strip
 INSTALL       =	install
 CDEBUG        =	+z -g -Aa -Ae -z +DA1.1 +DS2.0
 COPTIMISE     =	+z +Onolimit -O -Aa -Ae -DNDEBUG=1 -z +DA1.1 +DS2.0
-CDEFS         = -D_HPUX11 -I. -D_HPUX_SOURCE -D_FILE_OFFSET_BITS=64
+CDEFS         = -D_HPUX11 -I. -D_HPUX_SOURCE -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 CONSOLE_DEFS  = -D_ME_CONSOLE
 WINDOW_DEFS   = $(MAKEWINDEFS) -D_ME_WINDOW -I/usr/include/X11R6
 NANOEMACS_DEFS= -D_NANOEMACS
@@ -62,38 +62,38 @@ WINDOW_LIBS   = $(MAKEWINLIBS) -L/usr/lib/X11R6 -lX11
 .c.oc:
 	$(CC) $(COPTIMISE) $(CDEFS) $(MICROEMACS_DEFS) $(CONSOLE_DEFS) $(MAKECDEFS) -o $@ -c $<
 
-.c.ow:	
+.c.ow:
 	$(CC) $(COPTIMISE) $(CDEFS) $(MICROEMACS_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o $@ -c $<
 
-.c.ob:	
+.c.ob:
 	$(CC) $(COPTIMISE) $(CDEFS) $(MICROEMACS_DEFS) $(CONSOLE_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o $@ -c $<
 
 .c.on:
 	$(CC) $(COPTIMISE) $(CDEFS) $(NANOEMACS_DEFS) $(CONSOLE_DEFS) $(MAKECDEFS) -o $@ -c $<
 
-.c.ov:	
+.c.ov:
 	$(CC) $(COPTIMISE) $(CDEFS) $(NANOEMACS_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o $@ -c $<
 
-.c.oe:	
+.c.oe:
 	$(CC) $(COPTIMISE) $(CDEFS) $(NANOEMACS_DEFS) $(CONSOLE_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o $@ -c $<
 
 # Debug Builds
 .c.odc:
 	$(CC) $(CDEBUG) $(CDEFS) $(MICROEMACS_DEFS) $(CONSOLE_DEFS) $(MAKECDEFS) -o $@ -c $<
 
-.c.odw:	
+.c.odw:
 	$(CC) $(CDEBUG) $(CDEFS) $(MICROEMACS_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o $@ -c $<
 
-.c.odb:	
+.c.odb:
 	$(CC) $(CDEBUG) $(CDEFS) $(MICROEMACS_DEFS) $(CONSOLE_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o $@ -c $<
 
 .c.odn:
 	$(CC) $(CDEBUG) $(CDEFS) $(NANOEMACS_DEFS) $(CONSOLE_DEFS) $(MAKECDEFS) -o $@ -c $<
 
-.c.odv:	
+.c.odv:
 	$(CC) $(CDEBUG) $(CDEFS) $(NANOEMACS_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o $@ -c $<
 
-.c.ode:	
+.c.ode:
 	$(CC) $(CDEBUG) $(CDEFS) $(NANOEMACS_DEFS) $(CONSOLE_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o $@ -c $<
 #
 # Source files
@@ -106,7 +106,7 @@ STDSRC	= abbrev.c basic.c bind.c buffer.c crypt.c dirlist.c display.c \
 	  print.c random.c regex.c region.c registry.c search.c spawn.c \
 	  spell.c tag.c termio.c time.c undo.c window.c word.c
 
-PLTHDR  = 
+PLTHDR  =
 PLTSRC  = unixterm.c
 
 HEADERS = $(STDHDR) $(PLTHDR)

@@ -2039,12 +2039,12 @@ ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
         if(length < 0)
         {
             meUInt fsu, fsl ;
-#ifdef _UNIX
+#ifdef _LARGEFILE_SOURCE
             off_t fs ;
             fseeko(ffrp,0,SEEK_END) ;
             fs = ftello(ffrp) ;
             fsu = (meUInt) (fs >> 32) ;
-            fsl = (meUInt) (fs & 0xffffffff);
+            fsl = (meUInt) fs ;
 #else
 #ifdef _WIN32
             fsl = GetFileSize(ffrp,&fsu) ;
@@ -2075,7 +2075,7 @@ ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
             ffoffset -= loffset ;
             length += loffset ;
         }
-#ifdef _UNIX
+#ifdef _LARGEFILE_SOURCE
         fseeko(ffrp,(((off_t) uoffset) << 32) | ((off_t) ffoffset),SEEK_SET) ;
 #else
 #ifdef _WIN32

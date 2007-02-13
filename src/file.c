@@ -306,7 +306,12 @@ gft_directory:
             stats->stgid  = statbuf.st_gid ;
             stats->stdev  = statbuf.st_dev ;
             stats->stino  = statbuf.st_ino ;
+#ifdef _LARGEFILE_SOURCE
+            stats->stsizeHigh = (meUInt) (statbuf.st_size >> 32) ;
+            stats->stsizeLow = (meUInt) statbuf.st_size ;
+#else
             stats->stsizeLow = statbuf.st_size ;
+#endif
             if(statbuf.st_mtime > stmtime)
                 stats->stmtime= statbuf.st_mtime ;
             else
@@ -967,8 +972,13 @@ getDirectoryInfo(meUByte *fname)
             curFile->attrib[1] = (statTestRead(sbuf))  ? 'r' : '-' ;
             curFile->attrib[2] = (statTestWrite(sbuf)) ? 'w' : '-' ;
             curFile->attrib[3] = (statTestExec(sbuf))  ? 'x' : '-' ;
+#ifdef _LARGEFILE_SOURCE
+            curFile->sizeHigh = (meUInt) (sbuf.st_size >> 32) ;
+            curFile->sizeLow = (meUInt) sbuf.st_size ;
+#else
             curFile->sizeHigh = 0 ;
             curFile->sizeLow = (meUInt) sbuf.st_size ;
+#endif
             curFile->mtime = sbuf.st_mtime ;
         }
         closedir(dirp) ;
