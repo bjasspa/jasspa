@@ -43,11 +43,13 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
     hilight .hilight.find 0x102 " d" .scheme.dir
     hilight .hilight.find 0x102 "*d" .scheme.dir-select
     hilight .hilight.find 0x102 "*f" .scheme.select
+    hilight .hilight.find 0x102 "\\[\\*\\*\\*\\* Error" .scheme.error
     0 hilight .hilight.grep 0        $global-scheme
     hilight .hilight.grep 0x102 "Directory: \\{" .scheme.link
     hilight .hilight.grep 0x100 "\\a:/[^:]+:\\d+:" .scheme.no1
     hilight .hilight.grep 0x100 "[^:]+:\\d+:" .scheme.no1
     hilight .hilight.grep 0x102 "[^:]+: Binary" .scheme.no2
+    hilight .hilight.grep 0x102 "[^:]+: Error" .scheme.error
 !endif
 
 0 define-macro return-get-next-line
@@ -208,7 +210,17 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
                 !else
                     !force 0 delete-buffer "*find-tmp*"
                     find-buffer "*find-tmp*"
-                    2 insert-file &cat #l8 #l2
+                    !force 2 insert-file &cat #l8 #l2
+                    !if &not $status
+                        !if &not &sin "|" #l9
+                            find-buffer "*grep*"
+                            insert-string &spr "%s%s%s: Error - failed to load file\n" #l1 &ind &cat ".find-proc.base" #l0 #l2
+                        !elif &not &sin "!" #l9
+                            find-buffer "*find*"
+                            insert-string &spr "[**** Error: failed to load file %s%s%s ****]\n" #l1 &ind &cat ".find-proc.base" #l0 #l2
+                        !endif
+                        !cont
+                    !endif
                 !endif
                 !if &not &sin "b" #l9
                 !elif &band $buffer-fmod 0x80000
@@ -437,7 +449,7 @@ define-macro grep
         set-variable $line-scheme .scheme.error
         set-variable #l0 &cat #l0 " - ABORTED"
     !endif
-    insert-string &set #l0 &cat #l0 " ***]"
+    insert-string &set #l0 &cat #l0 " ****]"
     set-variable $window-line 3
     1 buffer-init "grep"
     set-variable :mouse-word-select "mouse-get-next-line"
@@ -510,7 +522,7 @@ define-macro find
         set-variable $line-scheme .scheme.error
         set-variable #l0 &cat #l0 " - ABORTED"
     !endif
-    insert-string &set #l0 &cat #l0 " ***]"
+    insert-string &set #l0 &cat #l0 " ****]"
     -1 buffer-mode "edit"
     1 buffer-mode "view"
     1 buffer-init "find"
