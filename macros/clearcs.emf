@@ -76,7 +76,7 @@ str-to-regex .cc-init.vsepr
 set-variable .cc-init.fver ""
 
 set-variable .cc-init.names  "|State|Update|Checkout|Checkin|Add|Diff|Uncheckout|Annotate|Delete|Move|ConfigSpec|VTree|Merge|Describe|"
-set-variable .cc-init.flags  "|ZRFwS|VZOQS*|ChUJrS*!|CcrS*!|CDrS*!|WXxwS!|KrS*!|HLMw!|CDrS*!|CNDrS*!|*^|Ss^|CvaGRrS*!|lwS!|"
+set-variable .cc-init.flags  "|ZRFwS|VZOQS*|ChUJrS*!|CcrS*!|CDrS*!|WXxwS!|KrS*!|HLMw!|CrS*!|CNrS*!|*^|Ss^|CvaGRrS*!|lwS!|"
 set-variable .cc-init.defs1  "|1|1|1|0|"
 set-variable .cc-init.defs2  "|0|1|0|1|"
 set-variable .cc-init.defs3  "||0|0|1|1|"
