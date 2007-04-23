@@ -135,6 +135,11 @@
                     ; adding as sub-page
                     set-variable #l3 &bor #l3 0xa00
                     set-variable .toolbar.tool-flag &lset .toolbar.tool-flag #l1 &bor &lget .toolbar.tool-flag #l1 0x600
+                !elif &band &lget .toolbar.tool-flag #l1 0x200
+                    ; adding a new windowed tool after a paged tool, move to the last tool of this page
+                    !while &equ &band &lget .toolbar.tool-flag &add #l1 1 0xa00 0xa00
+                        set-variable #l1 &add #l1 1
+                    !done
                 !endif
                 set-variable .toolbar.tool-name &lins .toolbar.tool-name &add #l1 1 &lget .toolbar.tool-names #l0
                 set-variable .toolbar.tool-buff &lins .toolbar.tool-buff &add #l1 1 &lget .toolbar.tool-buffs #l0
