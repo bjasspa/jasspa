@@ -326,6 +326,9 @@ define-macro toolbar-open
     !if &seq "" &lget .toolbar.tool-flag 1
         ml-write "[Error: No registered tools]"
         !abort
+    !elif &equ $frame-id .notes.frame-id
+        ml-write "[Error: toolbar not supported in notes]"
+        !abort
     !endif
     3 delete-other-windows
     set-variable $window-flags 0
@@ -358,11 +361,11 @@ define-macro toolbar-open
                     5 next-window
                     !if &band #l2 1
                         &cond &band #l2 2 2 1 split-window-horizontally
-                        change-window-width &lget .toolbar.size #l2
+                        !force change-window-width &lget .toolbar.size #l2
                         set-variable #l7 &lset #l7 #l2 $window-depth
                     !else
                         &cond &band #l2 4 2 1 split-window-vertically
-                        change-window-depth  &lget .toolbar.size #l2
+                        !force change-window-depth  &lget .toolbar.size #l2
                         set-variable #l7 &lset #l7 #l2 $window-width
                     !endif
                 !else
@@ -372,13 +375,13 @@ define-macro toolbar-open
                         set-variable #l4 $window-flags
                         set-variable $window-flags 0
                         split-window-vertically
-                        change-window-depth &div &mul &lget #l7 #l2 &lget #l8 #l2 &lget #l9 #l2
+                        !force change-window-depth &div &mul &lget #l7 #l2 &lget #l8 #l2 &lget #l9 #l2
                         set-variable $window-flags #l4
                     !else
                         set-variable #l4 $window-flags
                         set-variable $window-flags 0
                         split-window-horizontally
-                        change-window-width &div &mul &lget #l7 #l2 &lget #l8 #l2 &lget #l9 #l2
+                        !force change-window-width &div &mul &lget #l7 #l2 &lget #l8 #l2 &lget #l9 #l2
                         set-variable $window-flags #l4
                     !endif
                     next-window
