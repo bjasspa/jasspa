@@ -787,7 +787,10 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
     -1 buffer-mode "view"
     -1 kill-region
     !if &or &not #l9 .cc-cleartool.exit
-        insert-string &spr "\n[**** ClearCase %s %s ****]" &lget .cc-init.names :lock #l0
+        ; move back a char to force any anchors set to this point to move forward.
+        backward-char
+        insert-string &spr "%s\n[**** ClearCase %s %s ****]" @wc &lget .cc-init.names :lock #l0
+        forward-delete-char
     !endif
     !if &sin "*" &lget .cc-init.flags :lock
         end-of-buffer
@@ -820,8 +823,6 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
     !if &exi &cat "cc-cleartool-complete" :lock
         !force execute-named-command &cat "cc-cleartool-complete" :lock
     !endif
-    !if &not #l9
-        
 !emacro
 
 0 define-macro cc-cleartool-ipipe
