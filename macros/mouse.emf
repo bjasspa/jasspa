@@ -603,7 +603,7 @@
         void
     !elif &equ #l0 2
         ; ml-write "Mouse on Mode line "
-        ; first check if this is a toolbar window, if so call the
+        ; first check if this is a toolbar or notes window, if so call the
         ; mode-line handler, this may abort if it handled everything
         ; otherwise make sure we don't split! Then do resize
         ; Check for mouse on position 0 of the mode line. If it is
@@ -612,6 +612,8 @@
         ; is enabled.
         !if &band $window-flags 0x1000
             toolbar-mode-line
+        !elif &equ $frame-id .notes.frame-id
+            notes-mode-line
         !elif &and &band $scroll-bar 0x80 &equ .mouse-event.x &sub $window-scroll-bar $window-width 
             !force 1 split-window-horizontally
             !if $status

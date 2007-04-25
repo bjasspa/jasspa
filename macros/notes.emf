@@ -678,6 +678,42 @@ define-macro notes-tree-isearch-backward
     !endif
 !emacro
 
+0 define-macro notes-mode-line
+    !if &seq $buffer-bname .notes.current
+        !return
+    !elif &seq &set #l0 @fs $mouse-y $mouse-x &mid $window-chars 27 1
+        set-variable #l1 -1
+        !goto page-tool
+    !elif &seq #l0 &mid $window-chars 31 1
+        set-variable #l1 1
+    !else
+        !return
+    !endif
+    set-variable #l0 $buffer-bname
+    find-buffer .notes.current
+    !if &not &xse :notes-root "/enf/\\(\\d+\\)/"
+        find-buffer #l0
+        !return
+    !endif
+    set-variable #l2 @s1
+    !repeat
+        !if &les &set #l2 &add @s1 #l1 1
+            set-variable #l2 .notes.file-id
+        !elif &gre #l2 .notes.file-id
+            set-variable #l2 1
+        !endif
+        !if &seq &set #l3 &reg &cat "/enf/" #l2 "" ""
+            ml-write &spr "[Error: Bad reg value for node \"/end/%d\"]" #l2 
+            !abort
+        !endif
+        !force 0 find-buffer #l3
+        !if $status
+            !force !force notes-file $buffer-fname
+            !return
+        !endif
+    !until 0
+!emacro
+
 0 define-macro notes-close-test
     !if .ok
     !elif &seq $buffer-bname "*complete*"
@@ -930,6 +966,7 @@ define-macro notes-file
         3 narrow-buffer
         set-variable :notes-root &spr "/enf/%d/" &inc .notes.file-id 1
         4 read-registry :notes-root ""
+        set-registry :notes-root $buffer-bname
         narrow-buffer
         set-variable :notes-cur &reg &cat :notes-root "node-cur" "1"
         set-variable :notes-dmm #l3
