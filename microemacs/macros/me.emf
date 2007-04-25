@@ -343,10 +343,6 @@ osd 0 90 "Mdfsr" " \HHelp "      9
 !if &band $mouse 0x10
     !force exec-file "mouse"
 !endif
-; setup the toolbar & grep
-!if &reg &spr "/history/%s/toolbar" %platform "0"
-    toolbar-open
-!endif
 0 add-next-line "*grep*"
 add-next-line "*grep*" "%f:%l:"
 ; load in the platform specific stuff if found
@@ -382,6 +378,11 @@ add-next-line "*grep*" "%f:%l:"
     !endif
 !else
     !force 0 change-scheme
+!endif
+; setup the toolbar if not already done by the session
+!if .toolbar.open
+!elif &reg &spr "/history/%s/toolbar" %platform "0"
+    toolbar-open
 !endif
 ;
 4 popup-window
