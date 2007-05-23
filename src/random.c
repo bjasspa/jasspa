@@ -30,9 +30,6 @@
 #include "emain.h"
 #include "efunc.h"
 #include "eskeys.h"
-#ifdef _STDARG
-#include <stdarg.h>		/* Variable Arguments */
-#endif
 
 #if (defined _UNIX) || (defined _DOS)
 #include <sys/types.h>
