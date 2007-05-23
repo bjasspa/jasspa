@@ -1138,11 +1138,16 @@ input_expand:
                     meStrcpy(buf+compOff,(strList[lstPos])) ;
                     ilen += meStrlen(buf+ilen) ;
                     if((option & MLFILE) && (buf[ilen-1] == DIR_CHAR))
+                    {
                         /* if we're entering a file name and we've just
                          * completed to the a directory name then the next
                          * 'TAB' completion should be for inside the new directory,
                          * so effectively we have changed the input point */
                         changed = 1 ;
+                        if((ilen >= 4) && (buf[ilen-4] == DIR_CHAR) && 
+                           (buf[ilen-3] == '.') && (buf[ilen-2] == '.'))
+                            goto input_expand ;
+                    }
                 }
                 else
                 {

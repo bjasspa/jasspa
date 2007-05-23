@@ -637,8 +637,8 @@ regTestSave(meRegNode *sroot, int flags)
     {
         meUByte prompt[meBUF_SIZE_MAX] ;
         int ret ;
-        meStrcpy(prompt,"Save registry ") ;
-        meStrcat(prompt,(sroot->value != NULL) ? sroot->value:sroot->name) ;
+        meStrcpy(prompt,(sroot->value != NULL) ? sroot->value:sroot->name) ;
+        meStrcat(prompt,": Save registry") ;
         if((ret = mlyesno(prompt)) == meABORT)
         {
             ctrlg(meFALSE,1) ;

@@ -720,8 +720,8 @@ meDictionarySave(meDictionary *dict, int n)
     {
         meUByte prompt[meBUF_SIZE_MAX] ;
         int  ret ;
-        meStrcpy(prompt,"Save dictionary ") ;
-        meStrcat(prompt,dict->fname) ;
+        meStrcpy(prompt,dict->fname) ;
+        meStrcat(prompt,": Save dictionary") ;
         if((ret = mlyesno(prompt)) < 0)
         {
             ctrlg(meFALSE,1) ;
