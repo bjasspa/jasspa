@@ -87,7 +87,7 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
 !emacro
 
 0 define-macro find-proc-find
-    find-buffer "*find*"
+    33 find-buffer "*find*"
     !if &sin "2" #p9
         set-variable #l4 &lget #p5 4
         set-variable #l0 &cat " " &cond &seq &rig #p2 -1 "/" "d" "f"
@@ -140,7 +140,7 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
             !endif
         !until &not $status
         !if #p6
-            find-buffer "*grep*"
+            33 find-buffer "*grep*"
             insert-string &spr "%s%s%s: Binary file has %d match%s\n" #p1 &ind &cat ".find-proc.base" #p0 #p2 #p6 &con &equ #p6 1 "" "es" 
             find-buffer #l0
         !endif
@@ -152,7 +152,7 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
                 -2 show-region
                 set-variable #l5 $window-line
                 set-variable #l6 @wl
-                find-buffer "*grep*"
+                33 find-buffer "*grep*"
                 insert-string &spr "%s%s%s:%d:%s\n" #p1 &ind &cat ".find-proc.base" #p0 #p2 #l5 #l6 
                 find-buffer #l0
                 set-variable $window-line &add 1 #l1
@@ -205,11 +205,11 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
             ml-write &spr "Searching %d %n" &lget #p7 1 &mod &lget #p7 4 40 "."
             !if &band @# 1
                 !if &sin "l" #l9
-                    !force 2 find-buffer &cat #l8 #l2
+                    !force 34 find-buffer &cat #l8 #l2
                     !tjump &not $status 2
                 !else
                     !force 0 delete-buffer "*find-tmp*"
-                    find-buffer "*find-tmp*"
+                    33 find-buffer "*find-tmp*"
                     !force 2 insert-file &cat #l8 #l2
                     !if &not $status
                         !if &not &sin "|" #l9
@@ -226,6 +226,7 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
                 !elif &band $buffer-fmod 0x80000
                     !cont
                 !endif
+                set-alpha-mark "\x81"
                 beginning-of-buffer
             !endif
             !if &sin "|" #l9
@@ -234,6 +235,7 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
                     !if &not $status
                         !cont
                     !endif
+                    beginning-of-buffer
                 !endif
                 set-variable #p7 &lset #p7 &add #l6 2 &add 1 &lget #p7 &add #l6 2
                 !if &sin "!" #l9
@@ -247,6 +249,9 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
                 set-variable #p7 &lset #p7 &add #l6 2 &add 1 &lget #p7 &add #l6 2
                 set-variable #l6 0
                 find-proc-grep
+            !endif
+            !if &band @# 1
+                !force goto-alpha-mark "\x81"
             !endif
             set-variable #p7 &lset #p7 1 &add #l6 &lget #p7 1
         !done
@@ -437,7 +442,7 @@ define-macro grep
         !tjump &not $status 2
     !done
     !force 0 delete-buffer "*find-tmp*"
-    find-buffer "*grep*"
+    33 find-buffer "*grep*"
     insert-newline
     set-variable #l0 &spr "[**** found %d match%s in %d file%s" &lget #l7 1 &cond &equ &lget #l7 1 1 "" "es" &lget #l7 2 &cond &equ &lget #l7 2 1 "" "s"
     !if &lget #l7 3
@@ -507,7 +512,7 @@ define-macro find
         !tjump &not $status 2
     !done
     !force 0 delete-buffer "*find-tmp*"
-    find-buffer "*find*"
+    33 find-buffer "*find*"
     insert-newline
     set-variable #l0 "[**** found"
     !if &sin "f" &lget #l9 1
