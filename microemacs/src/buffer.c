@@ -608,14 +608,15 @@ HideBuffer(meBuffer *bp, int forceAll)
 int
 findBuffer(int f, int n)
 {
-    register meBuffer *bp;
-    register int    s;
-    meUByte           bufn[meBUF_SIZE_MAX];
+    meBuffer *bp, *cbp;
+    meUByte bufn[meBUF_SIZE_MAX];
+    meInt chistNo ;
+    int s;
 
     if((s = getBufferName((meUByte *)"Find buffer",0,2,bufn)) <= 0)
 	return s ;
     if(n < 0)
-        n = 8 ;
+        n = (n < -1) ? 24:8 ;
 #if MEOPT_EXTENDED
     if(n & 2)
     {
@@ -653,10 +654,15 @@ findBuffer(int f, int n)
             return meFALSE ;
     }
     if(n & 8)
-        return HideBuffer(bp,(n < -1) ? 1:0) ;
+        return HideBuffer(bp,(n & 16) ? 1:0) ;
     if((n & 4) && meModeTest(bp->mode,MDNACT))
-       bp->intFlag |= BIFNACT ;
-    return swbuffer(frameCur->windowCur, bp) ;
+        bp->intFlag |= BIFNACT ;
+    if(n & 32)
+        chistNo = (cbp = frameCur->bufferCur)->histNo ;
+    s = swbuffer(frameCur->windowCur, bp) ;
+    if(n & 32)
+        cbp->histNo = chistNo ;
+    return s ;
 }
 
 #if MEOPT_EXTENDED
@@ -669,9 +675,9 @@ findBuffer(int f, int n)
 int     
 nextWndFindBuf(int f, int n)
 {
-    register meBuffer *bp;
-    register int    s;
-    meUByte           bufn[meBUF_SIZE_MAX];
+    meBuffer *bp;
+    meUByte bufn[meBUF_SIZE_MAX];
+    int s;
     
     if((s = getBufferName((meUByte *)"Use buffer", 0, 2, bufn)) <= 0)
 	return(s);
@@ -687,7 +693,7 @@ nextWndFindBuf(int f, int n)
 int     
 nextBuffer(int f, int n)   /* switch to the next buffer in the buffer list */
 {
-    register meBuffer *bp, *pbp;
+    meBuffer *bp, *pbp;
     
     bp = frameCur->bufferCur ;
     if(n < 0)
@@ -741,7 +747,7 @@ meBuffer *
 replacebuffer(meBuffer *oldbuf)
 {
     meBuffer *bp, *best=NULL, *next=NULL ;
-    int     histNo=-1, nextNo=-1, wc ;
+    int histNo=-1, nextNo=-1, wc ;
     
     for(bp=bheadp ; bp != NULL;bp = bp->next)
     {
