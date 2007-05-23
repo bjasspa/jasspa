@@ -765,14 +765,25 @@ int
 inputFileName(meUByte *prompt, meUByte *fn, int corFlag)
 {
     meUByte tmp[meBUF_SIZE_MAX], *buf ;
-    int  s ;
+    int s, ll ;
 
     buf = (corFlag) ? tmp:fn ;
 
     getFilePath(frameCur->bufferCur->fileName,buf) ;
     s = meGetString(prompt,(MLFILECASE|MLNORESET|MLMACNORT), 0, buf, meBUF_SIZE_MAX) ;
-    if(corFlag && (s > 0))
-        fileNameCorrect(tmp,fn,NULL) ;
+    if(s > 0)
+    {
+        if(((ll = strlen(buf)) > 0) && (buf[ll-1] == '.') &&
+           ((ll == 1) || (buf[ll-2] == '/') || (buf[ll-2] == '\\') ||
+            ((buf[ll-2] == '.') &&
+             ((ll == 2) || (buf[ll-3] == '/') || (buf[ll-3] == '\\')))))
+        {
+            buf[ll] = '/' ;
+            buf[ll+1] = '\0' ;
+        }
+        if(corFlag) 
+            fileNameCorrect(tmp,fn,NULL) ;
+    }
     return s ;
 }
 
@@ -2383,9 +2394,9 @@ saveSomeBuffers(int f, int n)
             if(n & 1)
             {
                 if(bp->fileName != NULL)
-                    sprintf((char *)prompt, "Save file %s (?/y/n/a/o/g) ? ", bp->fileName) ;
+                    sprintf((char *)prompt, "%s: Save file (?/y/n/a/o/g) ? ", bp->fileName) ;
                 else
-                    sprintf((char *)prompt, "Save buffer %s (?/y/n/a/o/g) ? ", bp->name) ;
+                    sprintf((char *)prompt, "%s: Save buffer (?/y/n/a/o/g) ? ", bp->name) ;
                 if((status = mlCharReply(prompt,mlCR_LOWER_CASE,(meUByte *)"ynaog",(meUByte *)"(Y)es, (N)o, Yes to (a)ll, N(o) to all, (G)oto, (C-g)Abort ? ")) < 0)
                     return ctrlg(meFALSE,1) ;
                 else if(status == 'g')
