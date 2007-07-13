@@ -1794,31 +1794,6 @@ ffgetline(meLine **line)
         }
     } while(ffremain < 0) ;
     
-    if(ffremain >= 0)
-    {
-        /* If we ended in '\r' check for a '\n' */
-        meAssert((ecc == '\n') || (ecc == '\r')) ;
-        if(ecc == '\r')
-        {
-            if(*ffcur == '\n')
-            {
-                if(ffflags & meFFFLAG_NOTSET)
-                    ffflags = (ffflags & ~meFFFLAG_NOTSET) | (meFFFLAG_CR|meFFFLAG_LF) ;
-                else if((ffflags & (meFFFLAG_CR|meFFFLAG_LF)) != (meFFFLAG_CR|meFFFLAG_LF))
-                    ffflags |= meFFFLAG_LTDIFF ;
-                ffremain-- ;
-                ffcur++ ;
-            }
-            else if(ffflags & meFFFLAG_NOTSET)
-                ffflags = (ffflags & ~meFFFLAG_NOTSET) | meFFFLAG_LF ;
-            else if((ffflags & (meFFFLAG_CR|meFFFLAG_LF)) != meFFFLAG_LF)
-                ffflags |= meFFFLAG_LTDIFF ;
-        }
-        else if(ffflags & meFFFLAG_NOTSET)
-            ffflags = (ffflags & ~meFFFLAG_NOTSET) | meFFFLAG_CR ;
-        else if((ffflags & (meFFFLAG_CR|meFFFLAG_LF)) != meFFFLAG_CR)
-            ffflags |= meFFFLAG_LTDIFF ;
-    }
     if(ffbinary)
     {
         if(len == 0)
@@ -1901,6 +1876,31 @@ ffgetline(meLine **line)
         /* mlwrite(MWCURSOR|MWPAUSE,"Warning - Incomplete last line");*/
             
         lp->flag = meLINE_NOEOL ;				/* line has no \n */
+    }
+    else
+    {
+        /* If we ended in '\r' check for a '\n' */
+        meAssert((ecc == '\n') || (ecc == '\r')) ;
+        if(ecc == '\r')
+        {
+            if(*ffcur == '\n')
+            {
+                if(ffflags & meFFFLAG_NOTSET)
+                    ffflags = (ffflags & ~meFFFLAG_NOTSET) | (meFFFLAG_CR|meFFFLAG_LF) ;
+                else if((ffflags & (meFFFLAG_CR|meFFFLAG_LF)) != (meFFFLAG_CR|meFFFLAG_LF))
+                    ffflags |= meFFFLAG_LTDIFF ;
+                ffremain-- ;
+                ffcur++ ;
+            }
+            else if(ffflags & meFFFLAG_NOTSET)
+                ffflags = (ffflags & ~meFFFLAG_NOTSET) | meFFFLAG_LF ;
+            else if((ffflags & (meFFFLAG_CR|meFFFLAG_LF)) != meFFFLAG_LF)
+                ffflags |= meFFFLAG_LTDIFF ;
+        }
+        else if(ffflags & meFFFLAG_NOTSET)
+            ffflags = (ffflags & ~meFFFLAG_NOTSET) | meFFFLAG_CR ;
+        else if((ffflags & (meFFFLAG_CR|meFFFLAG_LF)) != meFFFLAG_CR)
+            ffflags |= meFFFLAG_LTDIFF ;
     }
     *line = lp ;
 
