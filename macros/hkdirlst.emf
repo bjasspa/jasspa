@@ -2058,7 +2058,7 @@ osd .osd.dirlst 160 ""  "File Tools Setup"      f file-tool-setup
     -1 kill-region
     ; remove the file stats and symbolic link info
     !while &not &seq @wc ""
-        32 forward-delete-char
+        35 forward-delete-char
         -1 yank
         !if &set #l0 &sin " -> " @wl
             set-variable @wl &lef @wl &sub #l0 1
