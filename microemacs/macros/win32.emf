@@ -55,8 +55,7 @@ add-next-line "*grep*" "%f: %l:"
 ; These definitions are for the Microsoft MSCV 2.0+ compiler
 set-variable %compile-com "nmake "
 0 add-next-line "*compile*"
-add-next-line "*compile*" "%f(%l) : error"
-add-next-line "*compile*" "%f(%l) : warning"
+add-next-line "*compile*" "%f(%l) : \\(fatal error\\|error\\|warning\\)"
 add-next-line "*compile*" "%f:%l:"
 ; Load additional hooks required for win32.
 define-macro-file hkipipe ishell perldb
