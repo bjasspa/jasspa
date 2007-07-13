@@ -125,7 +125,7 @@ set-variable .fhook-perl.item-list-r1 "Sub  \ecB\\1\ecA"
     hilight .hilight.perl 0    "\\$!"              .scheme.variable
     hilight .hilight.perl 0    "\\$\\*"            .scheme.variable
     ; hash parser for better visibility of the keys
-    hilight .hilight.perl 1 "'[a-zA-Z0-9_]+' +=>"  .scheme.header
+    hilight .hilight.perl 1 "'[-a-zA-Z0-9_]+' +=>" .scheme.header
     ; Separators
     hilight .hilight.perl 1    "&"                 .scheme.operator
     hilight .hilight.perl 0    "->"                .scheme.operator
