@@ -354,8 +354,8 @@ osd 2 160 ""  "Insert File \HName    C-x C-y"    f insert-file-name
 osd 2 170 ""  "Insert \HFile...      C-x C-i"    f insert-file
 osd 2 180 ""  "Draw \HLines"                     f draw
 osd 2 190 "-"
-osd 2 200 ""  "Toggle \HInsert mode  insert"   149 buffer-mode
-osd 2 210 ""  "Toggle \HView mode"             165 buffer-mode
+osd 2 200 ""  "Toggle \HInsert mode  insert"   147 buffer-mode
+osd 2 210 ""  "Toggle \HView mode"             153 buffer-mode
 ;
 ; MENU #3 - SEARCH sub-menu
 ;
