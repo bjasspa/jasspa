@@ -926,6 +926,10 @@ bclear(register meBuffer *bp)
 #if MEOPT_FILEHOOK
     bp->fhook = bp->dhook = bp->bhook = bp->ehook = -1 ;
 #endif
+#if MEOPT_HILIGHT
+    bp->hilight = 0 ;
+    bp->indent = 0 ;
+#endif
 #if MEOPT_UNDO
     meUndoRemove(bp) ;
 #endif
