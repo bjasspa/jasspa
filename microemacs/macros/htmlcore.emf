@@ -11,7 +11,7 @@ set-variable #l0 @1
 set-variable #l9 &cat ".fhook-" #l0
 
 ; buffer-init variables
-set-variable &ind &cat #l9 ".comment"  "|<!|>|-| - | - ||"
+set-variable &ind &cat #l9 ".comment"  "|<!--|-->|-|  -- | --||"
 set-variable &ind &cat #l9 ".command-flag"  &cat &ind &cat #l9 ".command-flag"  "thb|thb|b|b|thb|th|th|th|th|h|th|h|"
 set-variable &ind &cat #l9 ".command-name"  &cat &ind &cat #l9 ".command-name"  "html-forward-tag|html-backward-tag|html-forward-tag|html-backward-tag|html-goto-matching-tag|html-find-tag|html-collapse-tag||html-view-netscape||html-view-iexplorer||"
 set-variable &ind &cat #l9 ".command-nbind" &cat &ind &cat #l9 ".command-nbind" "|||||||||||||"
