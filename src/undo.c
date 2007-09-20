@@ -595,7 +595,7 @@ meUndo(int f, int n)
                     cont = 1 ;
                     count = -1 - count ;
                 }
-                frameCur->windowCur->dotOffset = count ;
+                frameCur->windowCur->dotOffset = (meUShort) count ;
             }
             else
             {
