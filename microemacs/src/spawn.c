@@ -1823,7 +1823,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
     {
         meMode sglobMode ;
         meModeCopy(sglobMode,globMode) ;
-        if (flags & LAUNCH_RAW)
+        if (flags & (LAUNCH_RAW|LAUNCH_NO_WRAP))
             meModeClear(globMode,MDWRAP) ;
         else
             meModeSet(globMode,MDWRAP) ;

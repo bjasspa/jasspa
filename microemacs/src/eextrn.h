@@ -891,23 +891,24 @@ extern void mkTempCommName(meUByte *filename, meUByte *basename) ;
 #define COMMAND_FILE         "stdout.~~~"
 #define DUMMY_STDIN_FILE     "stdin.~~~" 
 
-#define LAUNCH_BUFFERNM      0x0001      /* Use *command* buffer      */
-#define LAUNCH_WAIT          0x0001      /* shell-com wait -> LAUNCH_NOWAIT */
-#define LAUNCH_SILENT        0x0002      /* Hide the output buffer    */
-#define LAUNCH_NOCOMSPEC     0x0004      /* Do not use the comspec    */
-#define LAUNCH_DETACHED      0x0008      /* Detached process launch   */
-#define LAUNCH_LEAVENAMES    0x0010      /* Leave the names untouched */
-#define LAUNCH_SHOWWINDOW    0x0020      /* Dont hide the new cmd wdw */
-#define LAUNCH_RAW           0x0040      /* Raw pipe output           */
-#define LAUNCH_BUFIPIPE      0x0080      /* Ipipe function provided   */
-#define LAUNCH_BUFCMDLINE    0x0100      /* cmd to run is 1st line of buf */
-#define LAUNCH_USER_FLAGS    0x00FE      /* User flags bitmask        */
-#define LAUNCH_SHELL         0x0100
-#define LAUNCH_SYSTEM        0x0200
-#define LAUNCH_FILTER        0x0400
-#define LAUNCH_PIPE          0x0800
-#define LAUNCH_IPIPE         0x1000
-#define LAUNCH_NOWAIT        0x2000
+#define LAUNCH_BUFFERNM      0x00001      /* Use *command* buffer      */
+#define LAUNCH_WAIT          0x00001      /* shell-com wait -> LAUNCH_NOWAIT */
+#define LAUNCH_SILENT        0x00002      /* Hide the output buffer    */
+#define LAUNCH_NOCOMSPEC     0x00004      /* Do not use the comspec    */
+#define LAUNCH_DETACHED      0x00008      /* Detached process launch   */
+#define LAUNCH_LEAVENAMES    0x00010      /* Leave the names untouched */
+#define LAUNCH_SHOWWINDOW    0x00020      /* Dont hide the new cmd wdw */
+#define LAUNCH_RAW           0x00040      /* Raw pipe output           */
+#define LAUNCH_BUFIPIPE      0x00080      /* Ipipe function provided   */
+#define LAUNCH_BUFCMDLINE    0x00100      /* cmd to run is 1st line of buf */
+#define LAUNCH_NO_WRAP       0x00200      /* Run without wrap mode     */
+#define LAUNCH_USER_FLAGS    0x002FE      /* User flags bitmask        */
+#define LAUNCH_SHELL         0x01000
+#define LAUNCH_SYSTEM        0x02000
+#define LAUNCH_FILTER        0x04000
+#define LAUNCH_PIPE          0x08000
+#define LAUNCH_IPIPE         0x10000
+#define LAUNCH_NOWAIT        0x20000
 extern	int	meShell(int f, int n);
 extern	int	doShellCommand(meUByte *cmdstr, int flags) ;
 extern	int	meShellCommand(int f, int n);
