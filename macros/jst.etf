@@ -1,5 +1,6 @@
 &[c -!- jst -!-]
 &[c Copyright: $YEAR$ $COMPANY_NAME$]
 &[c Created:   $ASCII_TIME$]
-&[vns title "$FILE_BASENAME$"]     
 &[vns author "$USER_NAME$"]
+
+= &[vs title "$FILE_BASENAME$"]     
