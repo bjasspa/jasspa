@@ -185,7 +185,6 @@ if [ -z "$MAKEFILE" ] ; then
 fi
 
 if [ -z "$OPTIONS" ] ; then
-    OPTIONS="$MAINTYPE$MEDEBUG$METYPE"
     if [ -n "$MAKECDEFS" ] ; then
         MAKECDEFS="MAKECDEFS=$MAKECDEFS"
     fi
@@ -203,6 +202,7 @@ if [ -z "$OPTIONS" ] ; then
             METYPE=c
         fi
     fi
+    OPTIONS="$MAINTYPE$MEDEBUG$METYPE"
     if [ -n "$X11_INCLUDE" ] ; then
         MAKEWINDEFS=
         MAKEWINLIBS=
