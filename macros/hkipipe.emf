@@ -48,7 +48,7 @@
 !endif
 
 ; Local macro to allow the next line to be selected when the <return> key is
-; pressed on an line or the mouse. 
+; pressed on a line or the mouse. 
 0 define-macro return-get-next-line
     !force backward-line
     get-next-line
@@ -444,7 +444,7 @@
     !if &seq &lef @wl 3 "cd "
         forward-line
     !endif
-    0 ipipe-shell-command @wl $buffer-bname @mna
+    &con &bmod "wrap" 0 0x200 ipipe-shell-command @wl $buffer-bname @mna
     popup-window $buffer-bname
     !if &not &seq $buffer-fhook "fhook-ipipe"
         ; gdb & dbx + others dont auto setup the hook, they do it manually
@@ -493,7 +493,9 @@ define-macro fhook-ipipe
             set-variable :mouse-word-select "mouse-get-next-line"
             ; Bind <return> to select the buffer - same as mouse.
             buffer-bind-key return-get-next-line "return"
-            !if &band .hilight.flags 0x02
+            ; the processor is hammered if hilighting very long compiler lines 
+            !if &not &bmod "wrap"
+            !elif &band .hilight.flags 0x02
                 set-variable $buffer-hilight .hilight.compile
             !endif
         !elif &seq $buffer-bname "*grep*"
