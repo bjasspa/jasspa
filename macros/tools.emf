@@ -31,8 +31,8 @@ define-macro compile
         !endif
         set-variable %compile-com @ml20 "compile" %compile-com
     !endif
-    @# save-some-buffers @mna
-    0 ipipe-shell-command %compile-com "*compile*" @mna
+    &band @# 1 save-some-buffers @mna
+    &con &band @# 2 0x200 0 ipipe-shell-command %compile-com "*compile*" @mna
 !emacro
 define-macro which
     !force set-variable #l0 @1
