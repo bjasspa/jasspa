@@ -399,6 +399,15 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             meRegCurr->f = meAtoi(vvalue) ;
         else if(*nn == '#')
             meRegCurr->n = meAtoi(vvalue) ;
+        else if(*nn == 'y')
+        {
+            int len = strlen(vvalue) ;
+            killSave() ;
+            if((nn = killAddNode(len)) == NULL)
+                return meABORT ;
+            memcpy(nn,vvalue,len) ;
+            nn[len] = '\0' ;
+        }
         else if(*nn == 'h')
         {
             int option ;
@@ -1571,17 +1580,20 @@ getval(meUByte *tkn)   /* find the value of a token */
         else if(tkn[1] == 'y')
         {
             /* Don't use the X or windows clipboard in this case */
-            register meUByte *ss, *dd, cc ;
-            register int   ii=meBUF_SIZE_MAX-1 ;
-            meKillNode          *killp;
+            meUByte *ss, *dd, cc ;
+            meKillNode *killp;
+            int ii ;
             
+            if(alarmState & meALARM_VARIABLE)
+                return tkn ;
 #ifdef _CLIPBRD
             TTgetClipboard() ;
 #endif
             if(klhead == (meKill*) NULL)
                 return abortm ;
             dd = evalResult ;
-            killp = klhead->kill;
+            killp = klhead->kill ;
+            ii = meBUF_SIZE_MAX-1 ;
             while(ii && (killp != NULL))
             {
                 ss = killp->data ;
