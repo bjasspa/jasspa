@@ -12,8 +12,8 @@
 ;      to a list giving the following:
 ;           "|<Comment start>|<Comment end>|<comment pad>|<mid-box-left>|<mid-box-right>|<comment-flags>|"
 ;      e.g. the following are C and emf comments
-;           set-variable .fhook-c.comment "|/*|*/|*| * | * |f|"
-;           set-variable .fhook-emf.comment "|;||;|; | ;||"
+;           set-variable .fhook-c.comment "|/*| */|*| * | * |fr|"
+;           set-variable .fhook-emf.comment "|;||;|; | ;|r|"
 ;      The following flags are used:
 ;           b   Box format required, i.e. create right edge as well
 ;           f   Footer line required
