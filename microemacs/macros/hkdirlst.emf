@@ -607,26 +607,46 @@ define-macro file-browser-swap-buffers
         buffer-bind-create "bio" "f10" "" file-browser-close
         buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
     !elif &seq &rig #l0 -1 "/"
-        read-file #l0 @mna
+        set-variable #l5 0
+        !if &not &seq "*files*" &set #l3 $buffer-bname
+            ; if not the file-brower *files* list see if this buffer is displayed in another window and if so dont use read-file
+            set-variable #l4 $window-id
+            3 next-window
+            !while &not &equ $window-id #l4
+                !if &seq $buffer-bname #l3
+                    set-variable #l5 1
+                !endif
+                3 next-window
+            !done
+        !endif
+        !if #l5
+            find-file #l0 @mna
+        !else
+            read-file #l0 @mna
+        !endif
         !if &not &seq .fhook-dirlst.mode :dirlst-mode
             ; old buffer with the wrong processing - refresh
             !force 0 delete-buffer $buffer-bname
             find-file #l0 @mna
+        !else
+            dirlst-sort-list
         !endif
-        !force change-buffer-name "*files*"
-        !if $status
-            buffer-bind-create "bio" "f10" "" file-browser-close
-            buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
-            !if .toolbar.open
-                !force toolbar-make-tool-visible "*directory*"
-            !endif
-            !force 0 popup-window "*directory*"
+        !if &seq #l3 "*files*"
+            !force change-buffer-name "*files*"
             !if $status
-                !force 0x6f directory-tree #l0
-                !if &band $window-flags 0x1000
-                    1 buffer-mode "hide"
+                buffer-bind-create "bio" "f10" "" file-browser-close
+                buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
+                !if .toolbar.open
+                    !force toolbar-make-tool-visible "*directory*"
                 !endif
-                popup-window "*files*"
+                !force 0 popup-window "*directory*"
+                !if $status
+                    !force 0x6f directory-tree #l0
+                    !if &band $window-flags 0x1000
+                        1 buffer-mode "hide"
+                    !endif
+                    popup-window "*files*"
+                !endif
             !endif
         !endif
     !else
@@ -667,6 +687,8 @@ define-macro file-browser-swap-buffers
             !endif
         !endif
         #l3 find-file #l0 @mna
+        ; add this file name to the file history
+        set-variable @h3 $buffer-fname
         set-variable #l3 $buffer-bname
         !if &band #l1 4
             set-position "\x81"
