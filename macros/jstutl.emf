@@ -516,7 +516,11 @@
             !if &les #l0 &lget .tbl-ind #l7
                 !jump 2
             !elif &and &equ #l0 &lget .tbl-ind #l7 &gre #l5 -1
-                set-variable #p9 &spr "Table cells missing, another %d required" &add 1 &sub &mul &lget .tbl-row #l7 &lget .tbl-col #l7 &lget .tbl-cell #l7
+                !if &les &lget .tbl-row #l7 0
+                    set-variable #p9 "Last row of table tag (']?') missing"
+                !else
+                    set-variable #p9 &spr "Table cells missing, another %d required" &add 1 &sub &mul &lget .tbl-row #l7 &lget .tbl-col #l7 &lget .tbl-cell #l7
+                !endif
                 !return 0
             !endif
         !endif
@@ -537,6 +541,8 @@
             !if &les &lget #l1 2 1
                 set-variable #p9 "Invalid table column size"
                 !return 0
+            !elif &seq &lget #l1 3 "?"
+                set-variable #l1 &lset #l1 3 -1                
             !elif &les &lget #l1 3 1
                 set-variable #p9 "Invalid table row size"
                 !return 0
@@ -593,10 +599,12 @@
             insert-string "\bCC"
             forward-delete-char
             !while &not &sin @wc " \n\t"
-                !if &seq @wc "!"
+                !if &sin @wc "!?"
                     !if &not &equ 1 &mod &lget .tbl-cell #l7 &lget .tbl-col #l7
-                        set-variable #p9 &spr "Table cell(s) missing according to row start '!' flag"
+                        set-variable #p9 &spr "Table cell(s) missing according to row start '%s' flag" @wc
                         !return 0
+                    !elif &seq @wc "?"
+                        set-variable .tbl-row &lset .tbl-row #l7 &add 1 &div &lget .tbl-cell #l7 &lget .tbl-col #l7
                     !endif
                 !elif &seq @wc ">"
                     set-variable #p9 "Multiple column spanning not yet implemented"
