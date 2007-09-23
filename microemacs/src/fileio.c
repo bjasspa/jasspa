@@ -2672,13 +2672,16 @@ ffWriteFile(meUByte *fname, meUInt flags, meBuffer *bp)
 int
 ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
 {
+    int rr=meTRUE, r1 ;
 #if MEOPT_SOCKET
-    meUByte *ftpAddr ;
     int notFtpWrite ;
 #endif        
-    int rr=meTRUE, r1 ;
+    
     if(dfname != NULL)
     {
+#if MEOPT_SOCKET
+        meUByte *sfn ;
+#endif        
         int sft, dft ;
         if(((sft=isFtpLink(sfname)) == 0) && isHttpLink(sfname))
            sft = 2 ;
@@ -2687,8 +2690,8 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
 #if MEOPT_SOCKET
         if(sft && dft &&
            ((sft != 1) || (dft != 1) || ((dFlags & meRWFLAG_DELETE) == 0) ||
-            ((ftpAddr=meStrchr(sfname+6,'/')) == NULL) ||
-            meStrncmp(sfname,dfname,(((size_t) ftpAddr)- ((size_t) sfname)) + 1)))
+            ((sfn=meStrchr(sfname+6,'/')) == NULL) ||
+            meStrncmp(sfname,dfname,(((size_t) sfn)- ((size_t) sfname)) + 1)))
         {
             mlwrite(MWABORT,(meUByte *)"[Cannot read and write to URL at the same time]") ;
             return -9 ;
@@ -2696,11 +2699,15 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
 #endif
         if(dFlags & meRWFLAG_DELETE)
         {
-            /* simply move the file if the source is to be deleted and they are
-             * regular files, the WriteOpen will handle backups etc */
+            /* simply move the file if the source is to be deleted and they are regular files,
+             * the WriteOpen will handle backups etc (ignore delete failures when dfname is an
+             * ftp location as the failure is likely caused by the file not existing */
             if((rr=ffWriteFileOpen(dfname,(dFlags & (meRWFLAG_DELETE|meRWFLAG_BACKUP|meRWFLAG_SILENT)),NULL)) <= 0)
-                return rr ;
-            
+            {
+                if((rr != -5) || !dft) 
+                    return rr ;
+                rr = meTRUE ;
+            }
             if(!sft && !dft && !meRename(sfname,dfname))
             {
                 dFlags &= ~meRWFLAG_DELETE ;
@@ -2709,14 +2716,42 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
 #if MEOPT_SOCKET
             else if(sft && dft)
             {
+                meUByte *dfn, sfbuff[meBUF_SIZE_MAX], dfbuff[meBUF_SIZE_MAX] ;
+                int ll ;
+                
                 /* special case, moving a file on an ftp site (e.g. rename a file) */
                 if(ffReadFileOpen(sfname,(dFlags & meRWFLAG_SILENT),NULL) <= 0)
                     return meABORT ;
                 
-                ftpAddr++ ;
-                dfname += (((size_t) ftpAddr)- ((size_t) sfname)) ;
-                if((ftpCommand(0,"RNFR %s",ftpAddr) != ftpPOS_INTERMED) ||
-                   (ftpCommand(0,"RNTO %s",dfname) != ftpPOS_COMPLETE))
+                dfn = dfname + (((size_t) sfn)- ((size_t) sfname)) ;
+                if((sfn[1] == '~') && (sfn[2] == '/'))
+                {
+                    if(ffsockHome != NULL)
+                    {
+                        meStrcpy(sfbuff,ffsockHome) ;
+                        if(((ll = meStrlen(sfbuff)) > 0) && (sfbuff[ll-1] == '/'))
+                            ll-- ;
+                    }
+                    else
+                        ll = 0 ;
+                    meStrcpy(sfbuff+ll,sfn+2) ;
+                    sfn = sfbuff ;
+                }
+                if((dfn[1] == '~') && (dfn[2] == '/'))
+                {
+                    if(ffsockHome != NULL)
+                    {
+                        meStrcpy(dfbuff,ffsockHome) ;
+                        if(((ll = meStrlen(dfbuff)) > 0) && (dfbuff[ll-1] == '/'))
+                            ll-- ;
+                    }
+                    else
+                        ll = 0 ;
+                    meStrcpy(dfbuff+ll,dfn+2) ;
+                    dfn = dfbuff ;
+                }
+                if((ftpCommand(0,"RNFR %s",sfn) != ftpPOS_INTERMED) ||
+                   (ftpCommand(0,"RNTO %s",dfn) != ftpPOS_COMPLETE))
                     rr = mlwrite(MWABORT,(meUByte *)"[Failed to rename ftp file]") ;
 #ifdef _UNIX
                 meSigRelease() ;
