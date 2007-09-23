@@ -58,18 +58,18 @@ set-variable .fhook-jst.command-kbind "|esc q|esc o|C-c C-h|C-c C-s|C-c o|||||||
 set-variable .fhook-jst.command-desc  "|||\HShow Current Settings|Spell Check Buffer|Fill Paragraph for WP Export|E\Hxport to HTM|Export to HTML|Export to LaTeX|Export to RTF||To format current paragraph:||Justify Both Margins|Justify Center|Justify Left|Justify Gutter (on left margin)|Justify Right|Format Paragraph in Current Mode|Intelligently Format Paragraph||To change justification mode:||Change to auto justification [DEFAULT]|Change to both justification|Change to center justification|Change to left justification|Change to none justification|"
 
 ; setup item-list
-set-variable .fhook-jst.item-list-s1 "^[ \t]*\\([0-9]+\\)\\.0[ \t]+\\(\\S.*\\)"
-set-variable .fhook-jst.item-list-r1 "Sct  \ecB\\1 \\2\ecA"
-set-variable .fhook-jst.item-list-s2 "^[ \t]*\\([0-9]+\\.[1-9][0-9]*\\)[ \t]+\\(\\S.*\\)"
-set-variable .fhook-jst.item-list-r2 "SSct \ecB\\1 \\2\ecA"
-set-variable .fhook-jst.item-list-s3 "^[ \t]*\\([0-9]+\\.[0-9]+\\.[0-9.]+\\)[ \t]+\\(\\S.*\\)"
-set-variable .fhook-jst.item-list-r3 "SSSc \ecB\\1 \\2\ecA"
-set-variable .fhook-jst.item-list-s4 "^[ \t]*Appendix \\([[:alpha:]].*\\)"
-set-variable .fhook-jst.item-list-r4 "Appx \ecB\\1\ecA"
+set-variable .fhook-jst.item-list-s1 "^=c?[ \t]+\\(.*\\)"
+set-variable .fhook-jst.item-list-r1 "H1  \ecB\\1\ecA"
+set-variable .fhook-jst.item-list-s2 "^==c?[ \t]+\\(.*\\)"
+set-variable .fhook-jst.item-list-r2 "H2  \ecB\\1\ecA"
+set-variable .fhook-jst.item-list-s3 "^===c?[ \t]+\\(.*\\)"
+set-variable .fhook-jst.item-list-r3 "H3  \ecB\\1\ecA"
+set-variable .fhook-jst.item-list-s4 "^====c?[ \t]+\\(.*\\)"
+set-variable .fhook-jst.item-list-r4 "H4  \ecB\\1\ecA"
 
 !if &sin "f" .fhook-jst.setup
-    set-variable .fhook-jst.collapse-open  "^=\\(c? .+ \\|=c? .+ =\\|==c? .+ ==\\)=$"
-    set-variable .fhook-jst.collapse-close "^=\\(c? .+ \\|=c? .+ =\\|==c? .+ ==\\)=$\\|\\'"
+    set-variable .fhook-jst.collapse-open  "^=+c?[ \t]"
+    set-variable .fhook-jst.collapse-close "^=+c?[ \t]\\|\\'"
     set-variable .fhook-jst.collapse-mnext "-1"
 !endif
 
@@ -166,6 +166,8 @@ set-variable .fhook-jst.item-list-r4 "Appx \ecB\\1\ecA"
     hilight .hilight.jst 0x22 "==c ."                           .scheme.header
     hilight .hilight.jst 0x22 "=== ."                           .scheme.header
     hilight .hilight.jst 0x22 "===c ."                          .scheme.header
+    hilight .hilight.jst 0x22 "==== ."                          .scheme.header
+    hilight .hilight.jst 0x22 "====c ."                         .scheme.header
     ; Symbols
     hilight .hilight.jst 0x00  "&\\[.]"                         .scheme.prepro
     hilight .hilight.jst 0x00  "&\\[x\\h\\h]"                   .scheme.prepro
