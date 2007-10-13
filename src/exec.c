@@ -1303,8 +1303,10 @@ void
 execFuncHidden(int keyCode, int index, meUInt arg)
 {
     meUByte tf, lf, cs;
-    int tc, ti, lc, li, ii, sv ;
-    int f, n ;
+    int f, n, tc, ti, lc, li, sv ;
+#if MEOPT_EXTENDED
+    int ii ;
+#endif
     
     cs = cmdstatus ;
     lc = lastCommand ;

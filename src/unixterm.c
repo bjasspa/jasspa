@@ -3499,7 +3499,6 @@ meFrameRepositionWindow(meFrame *frame, int resize)
         int xx, yy, wbs, tbs ;
         unsigned int ww, hh ;
         XWindowAttributes xwa;
-        int status;
         
         /* Getting the real window border and title-bar size is a little
          * tricky - guess for now. Also there is a little confusion and
@@ -3512,9 +3511,10 @@ meFrameRepositionWindow(meFrame *frame, int resize)
          * this gives us the information that we need for the z and y offset
          * relative to the parent.
          */
-        status = XGetWindowAttributes (mecm.xdisplay,
-                                       meFrameGetXWindow(frame),
-                                       &xwa);
+        /* int status = */
+        XGetWindowAttributes(mecm.xdisplay,
+                             meFrameGetXWindow(frame),
+                             &xwa);
         /* if (status == 0)*/
         /* { */
         /* printf ("Status = %d\n", status);*/
