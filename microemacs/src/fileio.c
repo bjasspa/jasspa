@@ -2383,6 +2383,9 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
                     ii = (RemoveDirectory(fname) == 0) ;
 #else
                     ii = rmdir((char *) fname) ;
+                    if(ii && (errno == ENOTDIR))
+                        /* this happens when its a symbolic link */
+                        ii = meUnlink(fname) ;
 #endif
                 }
                 else
