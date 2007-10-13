@@ -659,6 +659,9 @@ define-macro osd-search
         set-variable #l2 &sub $window-col #l1
         !if &and &equ #l0 $window-line #l2
             set-variable #p9 &mid @wl &cond &gre #l2 0 #l1 $window-col &abs #l2
+            !if &bmod "magic"
+                str-to-regex #p9
+            !endif
             !if &not @#
                 goto-position "\x81"
             !elif &gre $window-col #l1
