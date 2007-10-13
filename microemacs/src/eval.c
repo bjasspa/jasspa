@@ -401,7 +401,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             meRegCurr->n = meAtoi(vvalue) ;
         else if(*nn == 'y')
         {
-            int len = strlen(vvalue) ;
+            int len = meStrlen(vvalue) ;
             killSave() ;
             if((nn = killAddNode(len)) == NULL)
                 return meABORT ;

@@ -238,8 +238,10 @@ execute(register int c, register int f, register int n)
 {
     register int index;
     meUInt arg ;
+#if MEOPT_EXTENDED
     int ii ;
-
+#endif
+    
 #if MEOPT_CALLBACK
     {
         /* If any of the modifiers have changed since the last key we executed

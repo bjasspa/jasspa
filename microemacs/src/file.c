@@ -773,7 +773,7 @@ inputFileName(meUByte *prompt, meUByte *fn, int corFlag)
     s = meGetString(prompt,(MLFILECASE|MLNORESET|MLMACNORT), 0, buf, meBUF_SIZE_MAX) ;
     if(s > 0)
     {
-        if(((ll = strlen(buf)) > 0) && (buf[ll-1] == '.') &&
+        if(((ll = meStrlen(buf)) > 0) && (buf[ll-1] == '.') &&
            ((ll == 1) || (buf[ll-2] == '/') || (buf[ll-2] == '\\') ||
             ((buf[ll-2] == '.') &&
              ((ll == 2) || (buf[ll-3] == '/') || (buf[ll-3] == '\\')))))
@@ -1257,8 +1257,10 @@ readin(register meBuffer *bp, meUByte *fname)
     }
     if(fn != NULL)
     {
-        meStat stats ;
+#if MEOPT_EXTENDED
         meUInt ui ;
+#endif
+        meStat stats ;
         int ft ;
         if((ft=getFileStats(fn,1,&(bp->stats),lfn)) == meFILETYPE_HTTP)
             meModeSet(bp->mode,MDVIEW) ;
