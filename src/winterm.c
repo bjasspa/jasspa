@@ -2171,7 +2171,7 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
 #ifdef _WIN32s
     static int pipeStderr = 0;                   /* Remember the stderr state */
 #else
-    HANDLE inHdl, outHdl, dumHdl ;
+    HANDLE inHdlTmp, inHdl, outHdlTmp, outHdl, dumHdl ;
 #endif
 
     /* Get the comspec */
@@ -2322,21 +2322,53 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
             else if(flags & LAUNCH_IPIPE)
             {
                 /* Its an IPIPE so create the pipes */
-                if(CreatePipe(&meSuInfo.hStdInput,&inHdl,&sbuts,0) == 0)
+                if(CreatePipe(&meSuInfo.hStdInput,&inHdlTmp,&sbuts,0) == 0)
                 {
                     meFree(cmdLine) ;
                     return meFALSE ;
                 }
-                if(CreatePipe(&outHdl,&meSuInfo.hStdOutput,&sbuts,0) == 0)
+                if(CreatePipe(&outHdlTmp,&meSuInfo.hStdOutput,&sbuts,0) == 0)
                 {
                     CloseHandle(meSuInfo.hStdInput) ;
+                    CloseHandle(inHdlTmp) ;
                     meFree(cmdLine) ;
                     return meFALSE ;
                 }
+                // Create new output read handle and the input write handles. Set
+                // the Properties to FALSE. Otherwise, the child inherits the
+                // properties and, as a result, non-closeable handles to the pipes
+                // are created.
+                if(!DuplicateHandle(GetCurrentProcess(),inHdlTmp,
+                                    GetCurrentProcess(),&inHdl,
+                                    0,meFALSE,DUPLICATE_SAME_ACCESS))
+                {
+                    CloseHandle(meSuInfo.hStdInput) ;
+                    CloseHandle(inHdl) ;
+                    CloseHandle(outHdlTmp) ;
+                    CloseHandle(meSuInfo.hStdOutput) ;
+                    meFree(cmdLine) ;
+                    return meFALSE ;
+                }
+                CloseHandle(inHdlTmp) ;
+    
+                if(!DuplicateHandle(GetCurrentProcess(),outHdlTmp,
+                                     GetCurrentProcess(),&outHdl,
+                                     0,meFALSE,DUPLICATE_SAME_ACCESS))
+                {
+                    CloseHandle(meSuInfo.hStdInput) ;
+                    CloseHandle(inHdlTmp) ;
+                    CloseHandle(outHdlTmp) ;
+                    CloseHandle(meSuInfo.hStdOutput) ;
+                    meFree(cmdLine) ;
+                    return meFALSE ;
+                }
+                CloseHandle(outHdlTmp) ;
+                
                 /* Duplicate stdout => stderr, don't really care if this fails */
-                DuplicateHandle (GetCurrentProcess(),meSuInfo.hStdOutput,
-                                 GetCurrentProcess(),&meSuInfo.hStdError,0,meTRUE,
-                                 DUPLICATE_SAME_ACCESS) ;
+                DuplicateHandle(GetCurrentProcess(),meSuInfo.hStdOutput,
+                                GetCurrentProcess(),&meSuInfo.hStdError,
+                                0,meTRUE,DUPLICATE_SAME_ACCESS) ;
+                
             }
 #endif
             else
@@ -2386,7 +2418,7 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
                     CloseHandle (dumHdl);
 
                 /* Re-open the file for reading */
-                if ((dumHdl = CreateFile(dummyInFile,GENERIC_READ,FILE_SHARE_READ,NULL,
+                if ((dumHdl = CreateFile(dummyInFile,GENERIC_READ,FILE_SHARE_READ,&sbuts,
                                          OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL)) == INVALID_HANDLE_VALUE)
                 {
                     DeleteFile(dummyInFile) ;
