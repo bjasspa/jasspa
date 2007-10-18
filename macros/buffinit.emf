@@ -92,9 +92,9 @@ define-macro-file collapse collapse-current collapse-all beginning-of-function e
     set-variable #l3 @3
     set-variable #l4 @4
     !if &seq #l3 ""
-        buffer-bind-key #l4 #l2
+        !force buffer-bind-key #l4 #l2
     !else
-        #l3 buffer-bind-key #l4 #l2
+        !force #l3 buffer-bind-key #l4 #l2
     !endif
 !emacro
 
