@@ -11,6 +11,7 @@
     0 exec-file "hkdirlst"
 !endif
 
+!if &not &band $system 0x1000000
 define-macro fhook-find
 !emacro
 set-variable .fhook-find.name "Find List"
@@ -40,9 +41,11 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
     !endif
     0 hilight .hilight.find 0        $global-scheme
     hilight .hilight.find 0x102 "Directory: \\{" .scheme.link
+    hilight .hilight.find 0x102 " Attr " .scheme.header
     hilight .hilight.find 0x102 " d" .scheme.dir
     hilight .hilight.find 0x102 "*d" .scheme.dir-select
     hilight .hilight.find 0x102 "*f" .scheme.select
+    hilight .hilight.find 0x102 "\\[\\*\\*\\*\\* found" .scheme.no1
     hilight .hilight.find 0x102 "\\[\\*\\*\\*\\* Error" .scheme.error
     0 hilight .hilight.grep 0        $global-scheme
     hilight .hilight.grep 0x102 "Directory: \\{" .scheme.link
@@ -85,8 +88,10 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
         goto-alpha-mark "\x81"
     !endif
 !emacro
+!endif
 
 0 define-macro find-proc-find
+    set-variable #l3 $buffer-bname
     33 find-buffer "*find*"
     !if &sin "2" #p9
         set-variable #l4 &lget #p5 4
@@ -128,6 +133,7 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
         !endif
     !endif
     insert-string &spr "%s%s%s%s\n" #l0 #p1 &ind &cat ".find-proc.base" #p0 #p2
+    find-buffer #l3
 !emacro
 
 0 define-macro find-proc-grep
@@ -162,7 +168,8 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
     !endif
 !emacro
 
-; #p7 = '|<match>|<files>|<dirs>|<activity>|' list, #p8 = start path, #p9 = find options, @1 = sub path 
+; #p7 = '|<matches>|<files>|<dirs>|<activity>|<output-buffer-name>|' list
+; #p8 = start path, #p9 = find options, @1 = sub path 
 0 define-macro find-proc
     set-variable #l1 &ind &cat ".find-file.file" @#
     set-variable #l4 &lget #p9 2
@@ -202,7 +209,11 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
                 !endif
             !endif
             set-variable #p7 &lset #p7 4 &add 1 &lget #p7 4
-            ml-write &spr "Searching %d %n" &lget #p7 1 &mod &lget #p7 4 40 "."
+            !if &band $system 0x1000000
+                ml-write &spr "Searching %d %s%s" &lget #p7 1 #l8 #l2
+            !else
+                ml-write &spr "Searching %d %n" &lget #p7 1 &mod &lget #p7 4 40 "."
+            !endif
             !if &band @# 1
                 !if &sin "l" #l9
                     !force 34 find-buffer &cat #l8 #l2
@@ -253,7 +264,25 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
             !if &band @# 1
                 !force goto-alpha-mark "\x81"
             !endif
-            set-variable #p7 &lset #p7 1 &add #l6 &lget #p7 1
+            !if #l6
+                !if &len &lget #p7 5
+                    33 find-buffer &lget #p7 5
+                    !if &band $system 0x1000000
+                        beginning-of-buffer
+                        !if &not &seq @wc ""
+                            -1 ml-write @wl
+                            forward-line
+                            !jump -3
+                        !endif
+                        set-mark
+                        beginning-of-buffer
+                        -1 kill-region
+                    !else
+                        screen-update
+                    !endif
+                !endif
+                set-variable #p7 &lset #p7 1 &add #l6 &lget #p7 1
+            !endif
         !done
     !until &equ #l0 .mask-count
     !if &sin "r" #l9
@@ -331,6 +360,10 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
                 !endif
                 set-variable #p9 &lset #p9 &add #l4 1 #l5
                 set-variable #l2 &cat #l2 #l3
+            !elif &seq #l3 "&"
+                !if &not &band $system 0x1000000
+                    set-variable #l2 &cat #l2 "&"
+                !endif
             !else
                 ml-write &spr "[Unknown -%s option]" #l3
                 !abort
@@ -419,23 +452,57 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
     !endif
     set-variable .find-file.file-count 1
     set-variable .find-file.file1 ""
-    set-variable #p7 "|0|0|0|0|"
+    set-variable #p7 "|0|0|0|0||"
     set-variable #p9 #l9
+!emacro
+
+0 define-macro find-proc-spawn
+    !if &exi .me-cmd
+    !elif &seq $platform "win32"
+        set-variable .me-cmd "mecw32 -n -p @cfind"
+    !else
+        set-variable .me-cmd "me -n -p @cfind"
+    !endif
+    !if &not &seq $cfind_arg1 &set #l1 @3
+        set-variable $cfind_arg1 #l1
+    !endif
+    !if &not &seq $cfind_arg2 &set #l1 @4
+        set-variable $cfind_arg2 #l1
+    !endif
+    0x40 ipipe-shell-command &spr "%s -v.about.argn=%d -v.about.arg0=%s" .me-cmd @# @2 @1
 !emacro
 
 define-macro grep
     set-variable #l1 &con &band @# 0x10 "" &reg "/history/grep-com" ""
-    !force set-variable #l6 @1
+    !force set-variable #l5 @1
     !if &not $status
-        set-variable #l6 @ml00 &cat "Grep " #l1
+        set-variable #l5 @ml00 &cat "Grep " #l1
     !endif
-    set-variable #l6 &trl &spr "%s %s" #l1 #l6
+    set-variable #l6 &trl &spr "%s %s" #l1 #l5
     0 find-options "\bf\b\b\b\b\b\b\b" #l6 @2
+    !if &sin "&" &lget #l9 1
+        @# find-proc-spawn "*grep*" "grep" #l5 #l8
+        popup-window "*grep*"
+        1 buffer-init "grep"
+        set-variable :mouse-word-select "mouse-get-next-line"
+        buffer-init-hooks
+        !return
+    !endif
+    set-variable #l7 &lset #l7 5 "*grep*"
     popup-window "*grep*"
     !force 0 delete-buffer "*grep*"
     find-buffer "*grep*"
     set-variable $buffer-fname #l8
     insert-string &spr "Directory:  %s\nGrep: %s\n\n" #l8 #l6
+    !if &band $system 0x1000000
+        beginning-of-buffer
+        set-mark
+        !while &not &seq @wc ""
+            -1 ml-write @wl
+            forward-line
+        !done
+        -1 kill-region
+    !endif
     set-variable #l3 0
     !while &les &pinc #l3 1 .find-file.file-count
         !force !force !force #l3 find-proc
@@ -455,11 +522,19 @@ define-macro grep
         set-variable #l0 &cat #l0 " - ABORTED"
     !endif
     insert-string &set #l0 &cat #l0 " ****]"
-    set-variable $window-line 3
-    1 buffer-init "grep"
-    set-variable :mouse-word-select "mouse-get-next-line"
-    buffer-init-hooks
-    ml-write #l0
+    !if &band $system 0x1000000
+        beginning-of-buffer
+        !while &not &seq @wc ""
+            -1 ml-write @wl
+            forward-line
+        !done
+    !else
+        set-variable $window-line 3
+        1 buffer-init "grep"
+        set-variable :mouse-word-select "mouse-get-next-line"
+        buffer-init-hooks
+        ml-write #l0
+    !endif
     !return #l3
 !emacro
 define-macro grep-rerun
@@ -475,17 +550,31 @@ define-macro grep-rerun
 
 define-macro find
     set-variable #l1 &con &band @# 0x10 "" &reg "/history/find-com" ""
-    !force set-variable #l6 @1
+    !force set-variable #l5 @1
     !if &not $status
-        set-variable #l6 @ml00 &cat "Find " #l1
+        set-variable #l5 @ml00 &cat "Find " #l1
     !endif
-    set-variable #l6 &spr "%s %s" #l1 #l6
+    set-variable #l6 &spr "%s %s" #l1 #l5
     find-options "\b|rdf\b\b\b\b\b\b\b" #l6 @2
-    popup-window "*find*"
-    !force 0 delete-buffer "*find*"
-    find-buffer "*find*"
-    set-variable $buffer-fname #l8
-    insert-string &spr "Directory: %s\nFind: %s\n\n" #l8 &trb #l6
+    !if &sin "&" &lget #l9 1
+        @# find-proc-spawn "*find*" "find" #l5 #l8
+        popup-window "*find*"
+        1 buffer-init "find"
+        set-variable :tag-count 0
+        set-variable :mouse-pick-1 dirlst-mouse-pick-1
+        set-variable :mouse-drop-1 dirlst-mouse-drop-1
+        set-variable :mouse-pick-3 dirlst-mouse-pick-3
+        set-variable :mouse-drop-3 dirlst-mouse-drop-3
+        set-variable :dirlst-mode .fhook-dirlst.mode
+        buffer-init-hooks
+    !else
+        set-variable #l7 &lset #l7 5 "*find*"
+        popup-window "*find*"
+        !force 0 delete-buffer "*find*"
+        find-buffer "*find*"
+        set-variable $buffer-fname #l8
+        insert-string &spr "Directory: %s\nFind: %s\n\n" #l8 &trb #l6
+    !endif
     set-variable #l0 " Attr "
     !if &not &sin "2" &lget #l9 1
     !elif &seq $platform "dos"
@@ -504,8 +593,19 @@ define-macro find
         buffer-bind-create "bio" "4" "4" dirlst-sort-list
     !endif
     set-variable :fmpf &len #l0
-    set-variable $line-scheme .scheme.header
+    !if &sin "&" &lget #l9 1
+        !return
+    !endif
     insert-string &cat #l0 "Name  <Order by Extension>\n"
+    !if &band $system 0x1000000
+        beginning-of-buffer
+        set-mark
+        !while &not &seq @wc ""
+            -1 ml-write @wl
+            forward-line
+        !done
+        -1 kill-region
+    !endif
     set-variable #l3 0
     !while &les &pinc #l3 1 .find-file.file-count
         !force !force !force #l3 find-proc
@@ -521,25 +621,31 @@ define-macro find
     !if &sin "d" &lget #l9 1
         set-variable #l0 &spr "%s %d director%s" #l0 &lget #l7 3 &cond &equ &lget #l7 3 1 "y" "ies"
     !endif
-    !if &set #l3 &gre #l3 .find-file.file-count
-        set-variable $line-scheme .scheme.no1
-    !else
+    !if &not &set #l3 &gre #l3 .find-file.file-count
         set-variable $line-scheme .scheme.error
         set-variable #l0 &cat #l0 " - ABORTED"
     !endif
     insert-string &set #l0 &cat #l0 " ****]"
-    -1 buffer-mode "edit"
-    1 buffer-mode "view"
-    1 buffer-init "find"
-    set-variable :tag-count 0
-    set-variable :mouse-pick-1 dirlst-mouse-pick-1
-    set-variable :mouse-drop-1 dirlst-mouse-drop-1
-    set-variable :mouse-pick-3 dirlst-mouse-pick-3
-    set-variable :mouse-drop-3 dirlst-mouse-drop-3
-    set-variable :dirlst-mode .fhook-dirlst.mode
-    set-variable $window-line 5
-    buffer-init-hooks
-    ml-write #l0
+    !if &band $system 0x1000000
+        beginning-of-buffer
+        !while &not &seq @wc ""
+            -1 ml-write @wl
+            forward-line
+        !done
+    !else
+        -1 buffer-mode "edit"
+        1 buffer-mode "view"
+        1 buffer-init "find"
+        set-variable :tag-count 0
+        set-variable :mouse-pick-1 dirlst-mouse-pick-1
+        set-variable :mouse-drop-1 dirlst-mouse-drop-1
+        set-variable :mouse-pick-3 dirlst-mouse-pick-3
+        set-variable :mouse-drop-3 dirlst-mouse-drop-3
+        set-variable :dirlst-mode .fhook-dirlst.mode
+        set-variable $window-line 5
+        buffer-init-hooks
+        ml-write #l0
+    !endif
     !return #l3
 !emacro
 define-macro find-rerun
