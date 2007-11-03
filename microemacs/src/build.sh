@@ -21,6 +21,8 @@ do
         echo ""
         echo "Where options can be:-"
         echo "   -C   : Build clean."
+        echo "   -D <define>[=<value>]"
+        echo "        : Build with given define, (e.g. -D _USETPARM)."
         echo "   -d   : For debug build (output is med)."
         echo "   -h   : For this help page."
         echo "   -l <logfile>"
@@ -44,6 +46,13 @@ do
         exit 1
     elif [ $1 = "-C" ] ; then
         OPTIONS=clean
+    elif [ $1 = "-D" ] ; then
+        shift
+        if [ -n "$MAKECDEFS" ] ; then
+            MAKECDEFS="$MAKECDEFS -D$1"
+        else
+            MAKECDEFS="-D$1"
+        fi
     elif [ $1 = "-d" ] ; then
         MEDEBUG=d
     elif [ $1 = "-l" ] ; then
@@ -59,7 +68,11 @@ do
         MAINTYPE=ne
     elif [ $1 = "-p" ] ; then
         shift
-        MAKECDEFS="-D_SEARCH_PATH=\\"'"'"$1\\"'"'
+        if [ -n "$MAKECDEFS" ] ; then
+            MAKECDEFS="$MAKECDEFS -D_SEARCH_PATH=\\"'"'"$1\\"'"'
+        else
+            MAKECDEFS="-D_SEARCH_PATH=\\"'"'"$1\\"'"'
+        fi
     elif [ $1 = "-S" ] ; then
         OPTIONS=spotless
     elif [ $1 = "-t" ] ; then
@@ -185,9 +198,6 @@ if [ -z "$MAKEFILE" ] ; then
 fi
 
 if [ -z "$OPTIONS" ] ; then
-    if [ -n "$MAKECDEFS" ] ; then
-        MAKECDEFS="MAKECDEFS=$MAKECDEFS"
-    fi
     # Check for an X11 install.
     if [ "$METYPE" = "c" ] ; then
         X11_INCLUDE=
@@ -234,17 +244,18 @@ if [ -z "$OPTIONS" ] ; then
         export MAKEWINDEFS MAKEWINLIBS
     fi
 fi
+MAKECDEFS="MAKECDEFS=$MAKECDEFS"
 if [ -r $MAKEFILE ] ; then
     if [ -n "$LOGFILE" ] ; then
-        echo "make -f $MAKEFILE $OPTIONS $MAKECDEFS" > $LOGFILE 2>&1
-        make -f $MAKEFILE $OPTIONS $MAKECDEFS > $LOGFILE 2>&1
+        echo "make -f $MAKEFILE $OPTIONS \"$MAKECDEFS\"" > $LOGFILE 2>&1
+        make -f $MAKEFILE $OPTIONS "$MAKECDEFS" > $LOGFILE 2>&1
     else
         if [ -n "$LOGFILEA" ] ; then
-            echo "make -f $MAKEFILE $OPTIONS $MAKECDEFS" >> $LOGFILEA 2>&1
-            make -f $MAKEFILE $OPTIONS $MAKECDEFS >> $LOGFILEA 2>&1
+            echo "make -f $MAKEFILE $OPTIONS \"$MAKECDEFS\"" >> $LOGFILEA 2>&1
+            make -f $MAKEFILE $OPTIONS "$MAKECDEFS" >> $LOGFILEA 2>&1
         else
-            echo "make -f $MAKEFILE $OPTIONS $MAKECDEFS"
-            make -f $MAKEFILE $OPTIONS $MAKECDEFS
+            echo "make -f $MAKEFILE $OPTIONS \"$MAKECDEFS\""
+            make -f $MAKEFILE $OPTIONS "$MAKECDEFS"
         fi
     fi
 else
