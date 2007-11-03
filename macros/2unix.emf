@@ -49,7 +49,7 @@ define-macro start-up
             -1 buffer-mode "lf"
             -1 buffer-mode "ctrlz"
             1 buffer-mode "edit"
-            save-buffer
+            0 save-buffer
         !endif
         delete-buffer $buffer-bname
     !done
