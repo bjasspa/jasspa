@@ -89,7 +89,7 @@ set-variable .cc-init.defs9  "||0|1|"
 set-variable .cc-init.defs10 "|||0|1|"
 set-variable .cc-init.defs11 "|"
 set-variable .cc-init.defs12 "|"
-set-variable .cc-init.defs13 "|||1|1|1|"
+set-variable .cc-init.defs13 "|||1|1|1|1|"
 set-variable .cc-init.defs14 "|0|0|"
 set-variable .cc-init.count  14
 set-variable #l9 .cc-init.count
@@ -1011,6 +1011,8 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
                 set-variable #l3 " m    "
             !elif &sin "[not loaded]" &rig @wl #l3
                 set-variable #l3 " n    "
+            !elif &sin "[-mkbranch " &rig @wl #l2
+                !goto rmv-line
             !elif &sin "[" &rig @wl #l3
                 set-variable #l3 " ?    "
             !else
@@ -1681,8 +1683,12 @@ define-macro cc-merge
         13 cc-cleartool 3 $buffer-fname
     !endif
     !if &seq $buffer-fname ""
-    !elif &and &band $buffer-fmod 0x10000 &lget .cc-init.values13 6
-        dirlst-refresh
+    !elif &band $buffer-fmod 0x10000
+        !if &lget .cc-init.values13 6
+            dirlst-refresh
+        !endif
+    !elif &not &seq &lef $buffer-bname 1 "*"
+        reread-file
     !endif
 !emacro
 
