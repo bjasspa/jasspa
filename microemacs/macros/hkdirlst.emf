@@ -1352,17 +1352,18 @@ define-macro dirlst-search
         !force !force .mode file-op &cat #l0 #l1 #l2 @mna
         !if &and &not $status &equ $result 6
             ; write file check failure, dest already exists
-            !if &not &band .state 4
-                set-variable #l4 @mc5 &spr "File \"%s\" already exists, overwrite (?/y/n/a/o) ? " #l2 "aAnNoOyY" "(Y)es, (N)o, Yes to (A)ll, N(o) to All, (C-g)Abort ? "
-                !if &iseq #l4 "o"
-                    set-variable .state &bor .state 4
-                !elif &not &iseq #l4 "n"
-                    set-variable #l5 &band .mode 0x0fff6
-                    !if &iseq #l4 "a"
-                        set-variable .mode #l5
-                    !endif
-                    !force !force #l5 file-op &cat #l0 #l1 #l2 @mna
+            !if &band .state 4
+                !return
+            !endif
+            set-variable #l4 @mc5 &spr "File \"%s\" already exists, overwrite (?/y/n/a/o) ? " #l2 "aAnNoOyY" "(Y)es, (N)o, Yes to (A)ll, N(o) to All, (C-g)Abort ? "
+            !if &iseq #l4 "o"
+                set-variable .state &bor .state 4
+            !elif &not &iseq #l4 "n"
+                set-variable #l5 &band .mode 0x0fff6
+                !if &iseq #l4 "a"
+                    set-variable .mode #l5
                 !endif
+                !force !force #l5 file-op &cat #l0 #l1 #l2 @mna
             !endif
         !endif
         !if &not $status

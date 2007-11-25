@@ -176,13 +176,13 @@ set-variable .fhook-c.item-list-r6 "Clss \ecB\\1\ecA"
     hilight .hilight.c    1 "NULL"         .scheme.prepro
     !if &band .hilight.flags 0x08
         ; hilight constants, e.g. numbers
-        hilight .hilight.c 1 "\\d+"        .scheme.constant
-        hilight .hilight.c 1 "-\\d+"       .scheme.constant
-        hilight .hilight.c 1 "0[xX]\\h+"   .scheme.constant
-        hilight .hilight.c 1 "d+\\.d+"     .scheme.constant
-        hilight .hilight.c 1 "-d+\\.d+"    .scheme.constant
-        hilight .hilight.c 1 "d+\\.d+f"    .scheme.constant
-        hilight .hilight.c 1 "-d+\\.d+f"   .scheme.constant
+        hilight .hilight.c 1 "\\d+"           .scheme.constant
+        hilight .hilight.c 1 "-\\d+"          .scheme.constant
+        hilight .hilight.c 1 "0[xX]\\h+"      .scheme.constant
+        hilight .hilight.c 1 "\\d+\\.\\d+"    .scheme.constant
+        hilight .hilight.c 1 "-\\d+\\.\\d+"   .scheme.constant
+        hilight .hilight.c 1 "\\d+\\.\\d+f"   .scheme.constant
+        hilight .hilight.c 1 "-\\d+\\.\\d+f"  .scheme.constant
     !endif
 
     ; JASSPA MicroEmacs specific tokens for source editing. This is a special
@@ -416,8 +416,8 @@ set-variable .fhook-c.item-list-r6 "Clss \ecB\\1\ecA"
     ; round bracket and curly brace.
     !if &sin "r" .fhook-c.setup
         ; In keyword colour
-        hilight .hilight.c 1 "{"                             .scheme.keyword
-        hilight .hilight.c 1 "}"                             .scheme.keyword
+        hilight .hilight.c 1 "{"                   .scheme.keyword
+        hilight .hilight.c 1 "}"                   .scheme.keyword
     !endif
 
     ; Pick up bogus 'C' constructs extension
@@ -425,7 +425,7 @@ set-variable .fhook-c.item-list-r6 "Clss \ecB\\1\ecA"
         ; Detect a for loop with no body - put semi-colon on next line, i.e.
         ; for (i = 1; i < 10; i++);
         ; { ... }
-        hilight .hilight.c  2 "\\s\\{for[ \t]*([^()]*)[ \t]*;" .scheme.hlred
+        hilight .hilight.c 2 "\\s\\{for[ \t]*([^()]*)[ \t]*;" .scheme.hlred
         ; Detect a for loop with no body - put semi-colon on next line, i.e.
         ; while (i == 1);
         ; { ... }
@@ -433,12 +433,17 @@ set-variable .fhook-c.item-list-r6 "Clss \ecB\\1\ecA"
         ; Detect a bad 'if' statement that is terminated with ';' e.g.
         ; if (i < x);
         ; { ... }
-        hilight .hilight.c  2 "\\s\\{if[ \t]*([^()]*)[ \t]*;"  .scheme.hlred
+        hilight .hilight.c 2 "\\s\\{if[ \t]*([^()]*)[ \t]*;"  .scheme.hlred
+        ; Pick up a bad assignment in a conditional statement. e.g.
+        ; if (a = SOME_CONST)
+        ; while (a = SOME_CONST)
+        hilight .hilight.c 2 "\\s\\{if[ \t]*([ \t]*\\w+[ \t]*=[ \t]*\\w+[ \t]*)" .scheme.hlred
+        hilight .hilight.c 2 "\\s\\{while[ \t]*([ \t]*\\w+[ \t]*=[ \t]*\\w+[ \t]*)" .scheme.hlred
         ; Detect a spurious '\' at the end of the line that is
         ; not a string or #define. i.e.
         ; char *d = "This is a " \
         ;           "Duff string continuation";
-        hilight .hilight.c  2 "\\\\$"                   .scheme.hlred
+        hilight .hilight.c 2 "\\\\$"               .scheme.hlred
     !endif
 
 !endif
