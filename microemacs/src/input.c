@@ -1111,7 +1111,11 @@ input_expand:
 #endif
                 compOff = meStrlen(fname) ;
                 getDirectoryList(fname,&curDirList) ;
-                noStrs = curDirList.size ;
+                if(noStrs != curDirList.size)
+                {
+                    changed = 1 ;
+                    noStrs = curDirList.size ;
+                }
                 strList = curDirList.list ;
             }
             if(strList == NULL)
