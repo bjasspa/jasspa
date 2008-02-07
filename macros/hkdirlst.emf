@@ -184,11 +184,11 @@ set-variable .fhook-dirlst.setup &reg "/history/fhook/dirlst" "ghmop"
 set-variable .fhook-dirlst.setup-mask    "eghlop"
 set-variable .fhook-dirlst.setup-flags   "|l|"
 set-variable .fhook-dirlst.setup-labels  "|Enable filter by default|"
-set-variable .fhook-dirlst.command-flag  "|thbio|thbio|thbio|thbio|bio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|h|thbio|thbio|thbio|thbio|bio|thbio|thbio|thbio|thbio|thbio|thbio|bio|thbio|thbio|thbio|h|t|"
-set-variable .fhook-dirlst.command-name  "|file-browser-swap-buffers|file-browser-close|dirlist-up-dir|dirlst-refresh|dirlst-refresh|file-browser-set-filter|dirlst-search|dirlst-search||dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list||dirlst-tag-toggle|dirlst-tag-mask|dirlst-tag-mask|dirlst-tag-invert|dirlst-tag-set|dirlst-tag-set||dirlst-find-file||dirlst-find-file|dirlst-find-file|dirlst-tag-open|dirlst-find-file|dirlst-find-file|dirlst-file-rename|dirlst-file-fattr|dirlst-tag-file-copy|dirlst-tag-file-copy|dirlst-new-folder|dirlst-tag-file-delete|dirlst-tag-file-delete|dirlst-delete-line|file-tool-menu|dirlst-tag-execute||file-tool-setup|"
-set-variable .fhook-dirlst.command-nbind "||||||-1||0||5|6|4|3|2|1|||1|-1||1|-1||5||1|9||0|0|||1|0|||||||||"
-set-variable .fhook-dirlst.command-kbind "|tab|f10|backspace|l|f5|f|S|s||5|6|4|3|2|1||space|+|-|*|a|u||return||e|b|i|v|f3|r|g|c|m|n|d|delete|C-k|t|x|||"
-set-variable .fhook-dirlst.command-desc  "|Swap Browser \HWindows|Close File Browser|Goto Parent Director\Hy|Refresh \HList||Toggle \HFilter|Search for File|\HSearch by Name||Sort by Name|Sort by Extension|Sort by Modified|Sort by Size|Sort by Attribute|Sort by Selected||T\Hoggle Cur File Select|Select Files \H+|Unselect Files \H-|Invert Selection \H*|Select \HAll|\HUnselect All||O\Hpen File|            (Default file tool or Edit file)|\HEdit File|\HBinary Edit File|Ed\Hit Selected Files|\HView File||\HRename File|Chan\Hge File Attributes|\HCopy Files|\HMove Files|\HNew Folder|\HDelete Files||Delete Current Line|File \HTools|E\Hxecute Command on Files|            (%p for path, %f for file & %% for %)|File Tools Setup|"
+set-variable .fhook-dirlst.command-flag  "|thbio|thbio|thbio|thbio|bio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|h|thbio|thbio|thbio|thbio|bio|thbio|thbio|thbio|thbio|thbio|thbio|thbio|bio|thbio|thbio|thbio|h|t|"
+set-variable .fhook-dirlst.command-name  "|file-browser-swap-buffers|file-browser-close|dirlist-up-dir|dirlst-refresh|dirlst-refresh|file-browser-set-filter|dirlst-search|dirlst-search||dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list||dirlst-tag-toggle|dirlst-tag-mask|dirlst-tag-mask|dirlst-tag-invert|dirlst-tag-set|dirlst-tag-set||dirlst-find-file||dirlst-find-file|dirlst-find-file|dirlst-tag-open|dirlst-find-file|dirlst-find-file|dirlst-file-rename|dirlst-file-fattr|dirlst-tag-file-touch|dirlst-tag-file-copy|dirlst-tag-file-copy|dirlst-new-folder|dirlst-tag-file-delete|dirlst-tag-file-delete|dirlst-delete-line|file-tool-menu|dirlst-tag-execute||file-tool-setup|"
+set-variable .fhook-dirlst.command-nbind "||||||-1||0||5|6|4|3|2|1|||1|-1||1|-1||5||1|9||0|0||||1|0|||||||||"
+set-variable .fhook-dirlst.command-kbind "|tab|f10|backspace|l|f5|f|S|s||5|6|4|3|2|1||space|+|-|*|a|u||return||e|b|i|v|f3|r|g|o|c|m|n|d|delete|C-k|t|x|||"
+set-variable .fhook-dirlst.command-desc  "|Swap Browser \HWindows|Close File Browser|Goto Parent Director\Hy|Refresh \HList||Toggle \HFilter|Search for File|\HSearch by Name||Sort by Name|Sort by Extension|Sort by Modified|Sort by Size|Sort by Attribute|Sort by Selected||Toggle Cur File Select|Select Files \H+|Unselect Files \H-|Invert Selection \H*|Select \HAll|\HUnselect All||O\Hpen File|            (Default file tool or Edit file)|\HEdit File|\HBinary Edit File|Ed\Hit Selected Files|\HView File||\HRename File|Chan\Hge File Attributes|T\Houch Files|\HCopy Files|\HMove Files|\HNew Folder|\HDelete Files||Delete Current Line|File \HTools|E\Hxecute Command on Files|            (%p for path, %f for file & %% for %)|File Tools Setup|"
 
 set-variable .fhook-dirlst.modefunc-lbl "|Not-Filtered|Filtered|"
 set-variable .fhook-dirlst.modefunc-cmd "|file-browser-set-filter|file-browser-set-filter|"
@@ -1182,6 +1182,61 @@ define-macro dirlst-search
             beginning-of-line
         !endif
     !until 0
+!emacro
+
+0 define-macro dirlst-tag-file-touch
+    !if &not @#
+    !elif :tag-count
+        11 dirlst-tag-list "Touch Files"
+    !else
+        11 dirlst-get-filename "Touch Files"
+    !endif
+    !if &les .find-file.file-count 1
+        ml-write "[Touch Files Error: No files selected]"
+        !abort
+    !elif &seq &lef .find-file.file-dir 6 "ftp://"
+        ml-write "[Touch Files Error: FTP not supported]"
+        !abort
+    !elif &equ .find-file.file-count 1
+        set-variable #l3 &spr "Are you sure you want to touch \"%s\" (?/y/n) ? " .find-file.file1
+    !else
+        set-variable #l3 "Are you sure you want to touch"
+        !if &set #l4 &sub .find-file.file-count .find-file.file-dcount
+            set-variable #l3 &spr "%s %d file%s" #l3 #l4 &cond &equ #l4 1 "" "s"
+            !if .find-file.file-dcount
+                set-variable #l3 &cat #l3 " and"
+            !endif
+        !endif
+        !if .find-file.file-dcount
+            set-variable #l3 &spr "%s %d director%s" #l3 .find-file.file-dcount &cond &equ .find-file.file-dcount 1 "y" "ies"
+        !endif
+        set-variable #l3 &cat #l3 " (?/y/n) ? "
+    !endif
+    !force !force set-variable #l4 @mc5 #l3 "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+    set-variable #l3 $status
+    !force -1 show-region
+    !if &not #l3
+        !abort
+    !elif &iseq #l4 "n"
+        !abort
+    !endif
+    set-variable #l1 .find-file.file-dir
+    !if &not &seq &lef #l1 5 "file:"
+        set-variable #l1 &cat "file:" #l1
+    !endif
+    set-variable #l0 0
+    !while &les &pinc #l0 1 .find-file.file-count
+        set-variable #l3 &ind &cat ".find-file.file" #l0
+        0x400 file-op &cat #l1 #l3 ""
+    !done
+    !force search-buffer "me" "^ "
+    beginning-of-line
+    !if &not @#
+    !elif &band .find-file.flags 1
+        dirlst-refresh
+    !else
+        -1 dirlst-tag-set
+    !endif
 !emacro
 
 0 define-macro dirlst-tag-list-delete-file
