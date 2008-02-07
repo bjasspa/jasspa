@@ -72,6 +72,26 @@
 
 #endif  /* _DOS */
 
+#ifdef _UNIX
+#include <utime.h>
+
+#define statTestRead(st)                                                   \
+((((st).st_uid == meUid) && ((st).st_mode & S_IRUSR)) ||                   \
+ ((st).st_mode & S_IROTH) ||                                               \
+ (((st).st_mode & S_IRGRP) &&                                              \
+  (((st).st_gid == meGid) || (meGidSize && meGidInGidList((st).st_gid)))))
+#define statTestWrite(st)                                                  \
+((((st).st_uid == meUid) && ((st).st_mode & S_IWUSR)) ||                   \
+ ((st).st_mode & S_IWOTH) ||                                               \
+ (((st).st_mode & S_IWGRP) &&                                              \
+  (((st).st_gid == meGid) || (meGidSize && meGidInGidList((st).st_gid)))))
+#define statTestExec(st)                                                   \
+((((st).st_uid == meUid) && ((st).st_mode & S_IXUSR)) ||                   \
+ ((st).st_mode & S_IXOTH) ||                                               \
+ (((st).st_mode & S_IXGRP) &&                                              \
+  (((st).st_gid == meGid) || (meGidSize && meGidInGidList((st).st_gid)))))
+#endif
+
 /* Min length of root */
 #ifdef _DRV_CHAR
 #define _ROOT_DIR_LEN  3                /* 'c:\' */
@@ -895,24 +915,6 @@ addFileNode(FILENODE *cfh, FILENODE *cf)
     pf->next = cf ;
     return cfh ;
 }
-
-#ifdef _UNIX
-#define statTestRead(st)                                                   \
-((((st).st_uid == meUid) && ((st).st_mode & S_IRUSR)) ||                   \
- ((st).st_mode & S_IROTH) ||                                               \
- (((st).st_mode & S_IRGRP) &&                                              \
-  (((st).st_gid == meGid) || (meGidSize && meGidInGidList((st).st_gid)))))
-#define statTestWrite(st)                                                  \
-((((st).st_uid == meUid) && ((st).st_mode & S_IWUSR)) ||                   \
- ((st).st_mode & S_IWOTH) ||                                               \
- (((st).st_mode & S_IWGRP) &&                                              \
-  (((st).st_gid == meGid) || (meGidSize && meGidInGidList((st).st_gid)))))
-#define statTestExec(st)                                                   \
-((((st).st_uid == meUid) && ((st).st_mode & S_IXUSR)) ||                   \
- ((st).st_mode & S_IXOTH) ||                                               \
- (((st).st_mode & S_IXGRP) &&                                              \
-  (((st).st_gid == meGid) || (meGidSize && meGidInGidList((st).st_gid)))))
-#endif
 
 static FILENODE *
 getDirectoryInfo(meUByte *fname)
@@ -2015,6 +2017,7 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
 #define meFILEOP_COPY      0x080
 #define meFILEOP_MKDIR     0x100
 #define meFILEOP_CHMOD     0x200
+#define meFILEOP_TOUCH     0x400
 #define meFILEOP_WC_MASK   0x005
 
 int
@@ -2023,7 +2026,7 @@ fileOp(int f, int n)
     meUByte sfname[meBUF_SIZE_MAX], dfname[meBUF_SIZE_MAX], lfname[meBUF_SIZE_MAX], *fn=NULL ;
     int rr=meTRUE, dFlags=0, fileMask=-1 ;
 
-    if((n & (meFILEOP_FTPCLOSE|meFILEOP_DELETE|meFILEOP_MOVE|meFILEOP_COPY|meFILEOP_MKDIR|meFILEOP_CHMOD)) == 0)
+    if((n & (meFILEOP_FTPCLOSE|meFILEOP_DELETE|meFILEOP_MOVE|meFILEOP_COPY|meFILEOP_MKDIR|meFILEOP_CHMOD|meFILEOP_TOUCH)) == 0)
         rr = mlwrite(MWABORT,(meUByte *)"[No operation set]") ;
     else if(n & meFILEOP_DELETE)
     {
@@ -2095,10 +2098,10 @@ fileOp(int f, int n)
         else
             dFlags = meRWFLAG_MKDIR ;
     }
-    else if(n & meFILEOP_CHMOD)
+    else if(n & (meFILEOP_CHMOD|meFILEOP_TOUCH))
     {
         int s ;
-        if((inputFileName((meUByte *)"Chmod", sfname,1) <= 0) ||
+        if((inputFileName((meUByte *) ((n & meFILEOP_CHMOD) ? "Chmod":"Touch"), sfname,1) <= 0) ||
            (meGetString((meUByte *)"To",0,0,dfname,meBUF_SIZE_MAX) <= 0))
             rr = 0 ;
         /* check that nothing of that name currently exists */
@@ -2108,9 +2111,47 @@ fileOp(int f, int n)
             mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[%s not a file or directory]",sfname);
             rr = -6 ;
         }
-        else
+        else if(n & meFILEOP_CHMOD)
         {
             meFileSetAttributes(sfname,meAtoi(dfname)) ;
+            return meTRUE ;
+        }
+        else
+        {
+#ifdef _UNIX
+            struct utimbuf fileTimes ;
+            
+            fileTimes.actime = fileTimes.modtime = time(NULL) + meAtoi(dfname) ;
+            utime((char *) sfname,&fileTimes) ;
+#endif
+#ifdef _WIN32
+            HANDLE fp ;
+            FILETIME ft ;
+            SYSTEMTIME st ;
+            if((fp=CreateFile(sfname,GENERIC_READ|GENERIC_WRITE,FILE_SHARE_READ|FILE_SHARE_WRITE,NULL,OPEN_EXISTING,
+                               FILE_ATTRIBUTE_NORMAL,NULL)) == INVALID_HANDLE_VALUE)
+            {
+                mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[%s: Cannot access file]",sfname);
+                rr = -6 ;
+            }
+            else
+            {
+                GetSystemTime(&st) ;
+                SystemTimeToFileTime(&st,&ft) ;
+                rr = meAtoi(dfname) ;
+                if(rr != 0)
+                {
+                    ULARGE_INTEGER uli ;
+                    uli.LowPart = ft.dwLowDateTime ;
+                    uli.HighPart = ft.dwHighDateTime ;
+                    uli.QuadPart += ((ULONGLONG) rr) * 10000000 ;
+                    ft.dwLowDateTime = uli.LowPart ;
+                    ft.dwHighDateTime = uli.HighPart ;
+                }
+                f = SetFileTime(fp,NULL,NULL,&ft) ;
+                CloseHandle(fp) ;
+            }
+#endif
             return meTRUE ;
         }
     }
