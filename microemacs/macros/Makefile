@@ -18,9 +18,9 @@ include $(TOPDIR)/etc/makeinc
 EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	abbrev.emf	abbrlist.emf	aix.emf		\
 	benchmrk.emf	bookmark.emf	buffinit.emf	\
-	calc.emf	charset.emf	charsutl.emf	clearcs.emf	\
-	cmacros.emf	collapse.emf	comment.emf	crosswd.emf	\
-	ctags.emf	cvs.emf		cygwin.emf	\
+	calc.emf	cfind.emf	charset.emf	charsutl.emf	\
+	clearcs.emf	cmacros.emf	collapse.emf	comment.emf	\
+	crosswd.emf	ctags.emf	cvs.emf		cygwin.emf	\
 	darwin.emf	dmf.emf		docmacro.emf	docutl.emf	\
 	dos.emf		draw.emf	\
 	ehftools.emf	emftags.emf	etfinsrt.emf	\
