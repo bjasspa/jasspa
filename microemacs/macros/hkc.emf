@@ -305,6 +305,57 @@ set-variable .fhook-c.item-list-r6 "Clss \ecB\\1\ecA"
         hilight .hilight.cdoxygencpp    4 "[\\\\@]" "\\}\\W" "" .scheme.keyword
         ; We must return to C when we see the close of comment "*/"
         hilight .hilight.cdoxygencpp 0x80 "\n" .hilight.c      .scheme.comment
+        ;
+        ; Special hilighting for a 'C' parameter - branch from the doxygen
+        ; space into scheme for the parameter. Note that @param is defined
+        ; after the generic '@' definitions.
+        ; 
+        ; Special for @param, @see, @retval   
+        hilight .hilight.cdoxygen 0x80 "[\\\\@]file"   .hilight.pdoxygen .scheme.keyword
+        hilight .hilight.cdoxygen 0x80 "[\\\\@]struct" .hilight.pdoxygen .scheme.keyword
+        hilight .hilight.cdoxygen 0x80 "[\\\\@]param"  .hilight.pdoxygen .scheme.keyword
+        hilight .hilight.cdoxygen 0x80 "[\\\\@]see"    .hilight.pdoxygen .scheme.keyword
+        hilight .hilight.cdoxygen 0x80 "[\\\\@]enum"   .hilight.pdoxygen .scheme.keyword
+        hilight .hilight.cdoxygen 0x80 "[\\\\@]retval" .hilight.pdoxygen .scheme.keyword
+        hilight .hilight.cdoxygen 0x80 "[\\\\@]a"      .hilight.pdoxygen .scheme.keyword
+        ; Doxygen parameter hilighting space.
+        0 hilight .hilight.pdoxygen 2 50 .scheme.error
+        ; Hilight the next word and finish.
+        hilight .hilight.pdoxygen 0x80 "\\s+[-+a-zA-Z0-9.()!_\\.]+" .hilight.cdoxygen .scheme.prepro
+        ; Hilight the optional parameter definitions.
+        hilight .hilight.pdoxygen 0 "\\s*\\[\\s*in\\s*\\]" .scheme.variable
+        hilight .hilight.pdoxygen 0 "\\s*\\[\\s*out\\s*\\]" .scheme.variable
+        hilight .hilight.pdoxygen 0 "\\s*\\[\\s*in\\s*,\\s*out\\s*\\]" .scheme.variable
+        hilight .hilight.pdoxygen 0 "\\s*\\[\\s*out\\s*,\\s*in\\s*\\]" .scheme.variable
+        ; We must return to C when we see the close of comment "*/"
+        hilight .hilight.pdoxygen 0x80 "\\*/" .hilight.c .scheme.error
+        ;
+        ; Extensions to Doxygen hilighting.
+        ;
+        ; Special hilighting for a 'C++' parameter - branch from the doxygen
+        ; space into scheme for the parameter. Note that @param is defined
+        ; after
+        ; the generic '@' definitions.
+        ; 
+        ; Special for @param, @see, @retval   
+        hilight .hilight.cdoxygencpp 0x80 "[\\\\@]a"      .hilight.pdoxygencpp .scheme.keyword
+        hilight .hilight.cdoxygencpp 0x80 "[\\\\@]file"   .hilight.pdoxygencpp .scheme.keyword
+        hilight .hilight.cdoxygencpp 0x80 "[\\\\@]struct" .hilight.pdoxygencpp .scheme.keyword
+        hilight .hilight.cdoxygencpp 0x80 "[\\\\@]param"  .hilight.pdoxygencpp .scheme.keyword
+        hilight .hilight.cdoxygencpp 0x80 "[\\\\@]see"    .hilight.pdoxygencpp .scheme.keyword
+        hilight .hilight.cdoxygencpp 0x80 "[\\\\@]enum"   .hilight.pdoxygencpp .scheme.keyword
+        hilight .hilight.cdoxygencpp 0x80 "[\\\\@]retval" .hilight.pdoxygencpp .scheme.keyword
+        ; Doxygen parameter hilighting space.
+        0 hilight .hilight.pdoxygencpp 2 50 .scheme.error
+        ; Hilight the next word and finish.
+        hilight .hilight.pdoxygencpp 0x80 "\\S+[a-zA-Z0-9.()!_\\.]+" .hilight.cdoxygencpp .scheme.prepro
+        ; Hilight the optional parameter definitions.
+        hilight .hilight.pdoxygencpp 0 "\\s*\\[\\s*in\\s*\\]" .scheme.variable
+        hilight .hilight.pdoxygencpp 0 "\\s*\\[\\s*out\\s*\\]" .scheme.variable
+        hilight .hilight.pdoxygencpp 0 "\\s*\\[\\s*in\\s*,\\s*out\\s*\\]" .scheme.variable
+        hilight .hilight.pdoxygencpp 0 "\\s*\\[\\s*out\\s*,\\s*in\\s*\\]" .scheme.variable
+        ; We must return to C when we see the close of comment "*/"
+        hilight .hilight.pdoxygencpp 0x80 "$" .hilight.c .scheme.error
     !endif
 
     ; Extend the hilighting for the IEEE Std 1003.1 <stdint.h>
