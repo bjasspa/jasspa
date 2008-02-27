@@ -91,20 +91,11 @@ setupHistory(int option, meUByte **numPtr, meUByte ***list)
 void
 addHistory(int option, meUByte *str)
 {
-    meUByte   *numPtr, numHist, fbuff[meBUF_SIZE_MAX] ;
+    meUByte   *numPtr, numHist ;
     meUByte  **history, *buf ;
     meInt      ii ;
 
     numHist = setupHistory(option, &numPtr, &history) ;
-    if((option & MLFILE) && ((meStrchr(str,DIR_CHAR) != NULL) 
-#ifdef _CONVDIR_CHAR
-                             || (meStrchr(str,_CONVDIR_CHAR) != NULL)
-#endif
-                             ))
-    {
-        fileNameCorrect(str,fbuff,NULL) ;
-        str = fbuff ;
-    }
     
     for(ii=0 ; ii<numHist ; ii++)
         if(!meStrcmp(str,history[ii]))
