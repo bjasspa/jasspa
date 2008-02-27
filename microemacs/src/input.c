@@ -1810,7 +1810,20 @@ input_addexpand:
         }
         /* Store the history if it is not disabled. */
         if((option & (MLNOHIST|MLNOSTORE)) == 0)
-            addHistory(option,buf) ;
+        {
+            if((option & MLFILE) && ((meStrchr(buf,DIR_CHAR) != NULL) 
+#ifdef _CONVDIR_CHAR
+                                     || (meStrchr(buf,_CONVDIR_CHAR) != NULL)
+#endif
+                                     ))
+            {
+                fileNameCorrect(buf,storeBuf,NULL) ;
+                defaultStr = storeBuf ;
+            }
+            else
+                defaultStr = buf ;
+            addHistory(option,defaultStr) ;
+        }
     }
     
     
