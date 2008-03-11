@@ -999,7 +999,11 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
         !else
             ; check that all the selected files have been 'lost' (deleted locally) first
             set-variable $window-line 5
-            !force search-buffer "em" "^\\*[-d]?[^L\n]"
+            !if &seq $buffer-bname "*cvs-state*"
+                !force search-buffer "em" "^\\*[^L\n]"
+            !else
+                !force search-buffer "em" "^\\*[-d][^L\n]"
+            !endif
             !if $status
                 beginning-of-line
                 osd-dialog "CVS - Remove" "     All files to be removed must be deleted first!  " "  \HAbort  "
