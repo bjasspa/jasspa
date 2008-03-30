@@ -137,6 +137,7 @@ set-variable .fhook-java.item-list-r2 "Clss \ecB\\2\ecA"
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     !if &not &exi .hilight.javadoc
         set-variable .hilight.javadoc &pinc .hilight.next 1
+        set-variable .hilight.pjavadoc &pinc .hilight.next 1
     !endif
     ; Add a hook into the normal Java hilighing. We jump into
     ; javadoc when we see an opening "/**" .
@@ -160,6 +161,22 @@ set-variable .fhook-java.item-list-r2 "Clss \ecB\\2\ecA"
     hilight .hilight.javadoc    4 "@" "\\}\\W" ""         .scheme.keyword
     ; We must return to Java when we see the close of comment "*/"
     hilight .hilight.javadoc 0x80 "\\*/" .hilight.java    .scheme.comment
+    ;
+    ; Special hilighting for a JavaDoc parameter - branch from the JavaDoc
+    ; space into scheme for the parameter. Note that @param is defined after
+    ; the generic '@' definitions.
+    ; 
+    ; Special for @param, @throws, @exception and @see 
+    hilight .hilight.javadoc 0x80 "@param"     .hilight.pjavadoc .scheme.keyword
+    hilight .hilight.javadoc 0x80 "@throws"    .hilight.pjavadoc .scheme.keyword
+    hilight .hilight.javadoc 0x80 "@exception" .hilight.pjavadoc .scheme.keyword
+    hilight .hilight.javadoc 0x80 "@see"       .hilight.pjavadoc .scheme.keyword
+    ; JavaDoc parameter hilighting space.
+    0 hilight .hilight.pjavadoc 2 50 .scheme.error
+    ; Hilight the next word and finish.
+    hilight .hilight.pjavadoc 0x80 "[#a-zA-Z][\\.#a-zA-Z0-9()]*" .hilight.javadoc .scheme.prepro
+    ; We must return to Java when we see the close of comment "*/"
+    hilight .hilight.pjavadoc 0x80 "\\*/" .hilight.java .scheme.error
 !endif
 !if &sin "d" .fhook-java.setup
     ; Create the additional indentation rules.
