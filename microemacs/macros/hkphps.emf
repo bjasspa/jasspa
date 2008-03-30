@@ -485,8 +485,12 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
     !if &sin "l" .fhook-phps.setup
         ; Create a new doxygen hilighting scheme
         !if &not &exi .hilight.phpsdoxygen
+            ; Doxygen comments.
             set-variable .hilight.phpsdoxygen  &pinc .hilight.next 1
             set-variable .hilight.phpsdoxygenc &pinc .hilight.next 1
+            ; Doxygen comment parameters.
+            set-variable .hilight.phpsdoxygenp  &pinc .hilight.next 1
+            set-variable .hilight.phpsdoxygencp &pinc .hilight.next 1
         !endif
         ;
         ; Cater for the /** .. */ type of comment.
@@ -508,6 +512,30 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
         ; We must return to C when we see the close of comment "*/"
         hilight .hilight.phpsdoxygenc 0x80 "\\*/" .hilight.phps     .scheme.comment
         ;
+        ; Special hilighting for a 'C' parameter - branch from the doxygen
+        ; space into scheme for the parameter. Note that @param is defined
+        ; after the generic '@' definitions.
+        ; 
+        ; Special for @param, @see, @retval   
+        hilight .hilight.phpsdoxygenc 0x80 "[\\\\@]file"   .hilight.phpsdoxygencp .scheme.keyword
+        hilight .hilight.phpsdoxygenc 0x80 "[\\\\@]struct" .hilight.phpsdoxygencp .scheme.keyword
+        hilight .hilight.phpsdoxygenc 0x80 "[\\\\@]param"  .hilight.phpsdoxygencp .scheme.keyword
+        hilight .hilight.phpsdoxygenc 0x80 "[\\\\@]see"    .hilight.phpsdoxygencp .scheme.keyword
+        hilight .hilight.phpsdoxygenc 0x80 "[\\\\@]enum"   .hilight.phpsdoxygencp .scheme.keyword
+        hilight .hilight.phpsdoxygenc 0x80 "[\\\\@]retval" .hilight.phpsdoxygencp .scheme.keyword
+        hilight .hilight.phpsdoxygenc 0x80 "[\\\\@]a"      .hilight.phpsdoxygencp .scheme.keyword
+        ; Doxygen parameter hilighting space.
+        0 hilight .hilight.phpsdoxygencp 2 50 .scheme.error
+        ; Hilight the next word and finish.
+        hilight .hilight.phpsdoxygencp 0x80 "\\s+[a-zA-Z0-9.()!_\\.]+" .hilight.phpsdoxygenc .scheme.prepro
+        ; Hilight the optional parameter definitions.
+        hilight .hilight.phpsdoxygencp 0 "\\s*\\[\\s*in\\s*\\]" .scheme.variable
+        hilight .hilight.phpsdoxygencp 0 "\\s*\\[\\s*out\\s*\\]" .scheme.variable
+        hilight .hilight.phpsdoxygencp 0 "\\s*\\[\\s*in\\s*,\\s*out\\s*\\]" .scheme.variable
+        hilight .hilight.phpsdoxygencp 0 "\\s*\\[\\s*out\\s*,\\s*in\\s*\\]" .scheme.variable
+        ; We must return to C when we see the close of comment "*/"
+        hilight .hilight.phpsdoxygencp 0x80 "\\*/" .hilight.phps .scheme.error
+        ;
         ; Cater for the /// type of comment
         ;
         ; Add a hook into the normal C++ hilighing. We jump into phpsdoxygen when
@@ -526,6 +554,31 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
         hilight .hilight.phpsdoxygen    4 "[\\\\@]" "\\}\\W" ""   .scheme.keyword
         ; We must return to C when we see the close of comment "*/"
         hilight .hilight.phpsdoxygen 0x80 "\n" .hilight.phps       .scheme.comment
+        ;
+        ; Special hilighting for a 'C++' parameter - branch from the doxygen
+        ; space into scheme for the parameter. Note that @param is defined
+        ; after
+        ; the generic '@' definitions.
+        ; 
+        ; Special for @param, @see, @retval   
+        hilight .hilight.phpsdoxygen 0x80 "[\\\\@]a"      .hilight.phpsdoxygenp .scheme.keyword
+        hilight .hilight.phpsdoxygen 0x80 "[\\\\@]file"   .hilight.phpsdoxygenp .scheme.keyword
+        hilight .hilight.phpsdoxygen 0x80 "[\\\\@]struct" .hilight.phpsdoxygenp .scheme.keyword
+        hilight .hilight.phpsdoxygen 0x80 "[\\\\@]param"  .hilight.phpsdoxygenp .scheme.keyword
+        hilight .hilight.phpsdoxygen 0x80 "[\\\\@]see"    .hilight.phpsdoxygenp .scheme.keyword
+        hilight .hilight.phpsdoxygen 0x80 "[\\\\@]enum"   .hilight.phpsdoxygenp .scheme.keyword
+        hilight .hilight.phpsdoxygen 0x80 "[\\\\@]retval" .hilight.phpsdoxygenp .scheme.keyword
+        ; Doxygen parameter hilighting space.
+        0 hilight .hilight.phpsdoxygenp 2 50 .scheme.error
+        ; Hilight the next word and finish.
+        hilight .hilight.phpsdoxygenp 0x80 "\\S+[a-zA-Z0-9.()!_\\.]+" .hilight.phpsdoxygen .scheme.prepro
+        ; Hilight the optional parameter definitions.
+        hilight .hilight.phpsdoxygenp 0 "\\s*\\[\\s*in\\s*\\]" .scheme.variable
+        hilight .hilight.phpsdoxygenp 0 "\\s*\\[\\s*out\\s*\\]" .scheme.variable
+        hilight .hilight.phpsdoxygenp 0 "\\s*\\[\\s*in\\s*,\\s*out\\s*\\]" .scheme.variable
+        hilight .hilight.phpsdoxygenp 0 "\\s*\\[\\s*out\\s*,\\s*in\\s*\\]" .scheme.variable
+        ; We must return to C when we see the close of comment "*/"
+        hilight .hilight.phpsdoxygenp 0x80 "$" .hilight.c .scheme.error
     !endif
     
     ; let html based files use the phps hilight for any php scripts
@@ -548,6 +601,7 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
     indent .hilight.phps i "//"
     indent .hilight.phps i "#"
     indent .hilight.phps s "case[ \t]+\\w+[ \t]*:" -t
+    indent .hilight.phps s "case[ \t]+[^:]*:" -t
     indent .hilight.phps s "default[ \t]*:" -t
     ; let html based files use the phps indent for any php scripts
     set-variable .indent.phpscript .hilight.phps
