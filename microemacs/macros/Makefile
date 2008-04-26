@@ -78,7 +78,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	printers.emf	printf.emf	printstp.emf	\
 	rect.emf	\
 	scheme.emf	schemeb.emf	schemebc.emf	schemech.emf	\
-	schemebh.emf	schemed.emf	schemej.emf	\
+	schemebh.emf	schemed.emf	schemej.emf	schemelm.emf	\
 	schemel.emf	schemelj.emf	schememd.emf	schememw.emf	\
 	schemepd.emf	schemepl.emf	schemes.emf	schemesf.emf	\
 	schemetb.emf	schemetw.emf	schemevi.emf	schemosd.emf	\
