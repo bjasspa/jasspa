@@ -30,11 +30,9 @@
                 !force 0 find-buffer #l4
             !endif
             !force execute-line #l3
-            !if &not &seq $buffer-bname #l4
-                set-variable #l4 $buffer-bname
-                popup-window #l1
-                set-variable &ind &spr ":%s-buffer" #l2 #l4
-            !endif
+            set-variable #l4 $buffer-bname
+            popup-window #l1
+            set-variable &ind &spr ":%s-buffer" #l2 #l4
         !elif &seq @wc "M"
             set-variable #l2 &lget &rig @wl 1 1
             set-variable #l3 &rig @wl &add 3 &len #l2
