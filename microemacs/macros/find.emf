@@ -50,9 +50,9 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
     hilight .hilight.find 0x102 "\\[\\*\\*\\*\\* Error" .scheme.error
     0 hilight .hilight.grep 0        $global-scheme
     hilight .hilight.grep 0x102 "Directory: \\{" .scheme.link
-    hilight .hilight.grep 0x100 "\\a:/[^:]+:\\d+:" .scheme.no1
-    hilight .hilight.grep 0x100 "[^:]+:\\d+:" .scheme.no1
-    hilight .hilight.grep 0x102 "[^:]+: Binary" .scheme.no2
+    hilight .hilight.grep 0x100 "\\a:/[^:]+:\\d+:" .scheme.no2
+    hilight .hilight.grep 0x100 "[^:]+:\\d+:" .scheme.no2
+    hilight .hilight.grep 0x102 "[^:]+: Binary" .scheme.prepro
     hilight .hilight.grep 0x102 "[^:]+: Error" .scheme.error
 !endif
 
