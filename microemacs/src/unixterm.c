@@ -3512,9 +3512,9 @@ meFrameRepositionWindow(meFrame *frame, int resize)
          * relative to the parent.
          */
         /* int status = */
-        XGetWindowAttributes(mecm.xdisplay,
-                             meFrameGetXWindow(frame),
-                             &xwa);
+              XGetWindowAttributes (mecm.xdisplay,
+                                       meFrameGetXWindow(frame),
+                                       &xwa);
         /* if (status == 0)*/
         /* { */
         /* printf ("Status = %d\n", status);*/
@@ -3586,8 +3586,11 @@ meFrameSetWindowTitle(meFrame *frame, meUByte *str)
     {
         char buf[meBUF_SIZE_MAX], *ss ;
 
-        meStrcpy(buf,meName);
-        if (str != NULL)
+        if(frameTitle != NULL)
+            meStrcpy(buf,frameTitle) ;
+        else
+            meStrcpy(buf,meName);
+        if(str != NULL)
         {
             meStrcat(buf,": ") ;
             meStrcat(buf,str) ;

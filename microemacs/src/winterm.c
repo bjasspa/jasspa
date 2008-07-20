@@ -6590,15 +6590,22 @@ void
 meFrameSetWindowTitle(meFrame *frame, meUByte *str)
 {
     static meUByte buf [meBUF_SIZE_MAX];           /* This must be static */
-
-    if (str != NULL)
-        meStrcpy (buf, str);
+    meUByte *ss=buf ;
+    
+    if(str != NULL)
+    {
+        meStrcpy(ss,str) ;
+        ss += meStrlen(ss) ;
+    }
+    meStrcpy(ss," - ") ;
+    ss += 3 ;
+    if(frameTitle != NULL)
+        meStrcpy(ss,frameTitle) ;
     else
-        buf [0] = '\0';
 #ifdef _TITLE_VER_MINOR
-    meStrcat (buf, " - " ME_FULLNAME " '" meVERSION "." meVERSION_MINOR);
+        meStrcpy(ss,ME_FULLNAME " '" meVERSION "." meVERSION_MINOR) ;
 #else
-    meStrcat (buf, " - " ME_FULLNAME " '" meVERSION) ;
+        meStrcpy(ss,ME_FULLNAME " '" meVERSION) ;
 #endif
 
 #ifdef _ME_CONSOLE

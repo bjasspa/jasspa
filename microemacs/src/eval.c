@@ -604,6 +604,13 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
         case EVFRMID:
             frameCur->id = meAtoi(vvalue) ;
             break;
+        case EVFRMTITLE:
+            if(frameTitle != NULL)
+                meFree(frameTitle) ;
+            frameTitle = meStrdup(vvalue) ;
+            /* force a redraw */
+            sgarbf = meTRUE ;
+            break;
 #endif
         case EVFRMWDTH:
             return frameChangeWidth(meTRUE,meAtoi(vvalue)-frameCur->width);
