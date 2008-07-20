@@ -867,7 +867,7 @@ bclear(register meBuffer *bp)
         meStrcat(prompt,": Discard changes") ;
 	s = mlyesno(prompt) ;
 	if(s <= 0)
-	    return(s);
+	    return s ;
         autowriteremove(bp) ;
     }
     
@@ -1045,7 +1045,7 @@ zotbuf(register meBuffer *bp, int silent) /* kill the buffer pointed to by bp */
     register int     s ;
     
     /* Blow text away. last chance for user to abort so do first */
-    if ((s=bclear(bp)) <= 0)
+    if((s=bclear(bp)) <= 0)
 	return (s);
     /* if this is the scratch and the only buffer then don't delete */
     
@@ -1075,7 +1075,7 @@ zotbuf(register meBuffer *bp, int silent) /* kill the buffer pointed to by bp */
 	mlwrite(0,(meUByte *)"[buffer %s killed]", bp->name);
     meNullFree(bp->name) ;
     meFree(bp);                             /* Release buffer block */
-    return (meTRUE);
+    return meTRUE ;
 }
 
 /*
@@ -1121,19 +1121,50 @@ deleteSomeBuffers(int f, int n)
     while(bp != NULL)
     {
 	nbp = bp->next ;
+	if(meModeTest(bp->mode,MDNACT))
+        {
+            if((n & 0x06) == 0)
+            {
+                if((s = mlCharReply("Delete buffers not yet active (?/y/n/a) ? ",mlCR_LOWER_CASE,(meUByte *)"yna",(meUByte *)"(Y)es, (N)o, Yes to (a)ll, (C-g)Abort ? ")) < 0)
+                    return ctrlg(meFALSE,1) ;
+                if(s == 'n')
+                    break ;
+                n |= (s == 'a') ? 2:4 ;
+            }
+            bp->intFlag |= BIFBLOW ;
+            zotbuf(bp,clexec) ;
+        }
+	bp = nbp ;
+    }
+    bp = bheadp ;
+    while(bp != NULL)
+    {
+	nbp = bp->next ;
 	if(!meModeTest(bp->mode,MDHIDE))
 	{
-	    if(!(n & 0x01) ||
-	       ((sprintf((char *)prompt,"Delete buffer [%s] ",bp->name)),
-		((s=mlyesno(prompt)) > 0)))
+	    if(n & 0x02)
+                s = meTRUE ;
+            else
+            {
+                sprintf((char *)prompt,"Delete buffer [%s]  (?/y/n/a) ? ",bp->name) ;
+                if((s = mlCharReply(prompt,mlCR_LOWER_CASE,(meUByte *)"yna",(meUByte *)"(Y)es, (N)o, Yes to (a)ll, (C-g)Abort ? ")) < 0)
+                    return ctrlg(meFALSE,1) ;
+                if(s == 'n')
+                    s = meFALSE ;
+                else
+                {
+                    if(s == 'a')
+                        n |= 2 ;
+                    s = meTRUE ;
+                }
+            }
+            if(s)
 	    {
-                if(!(n & 0x01))
+                if((n & 0x01) == 0)
                     bp->intFlag |= BIFBLOW ;
-		if(zotbuf(bp,clexec) <= 0)
+		if(zotbuf(bp,clexec) < 0)
 		    return meABORT ;
 	    }
-	    else if(s < 0)
-		return meABORT ;
 	}
 	bp = nbp ;
     }
