@@ -106,6 +106,7 @@ DEFVAR ("find-words",          EVFINDWORDS)     /* Find words matching mask, sim
 DEFVAR ("frame-depth",         EVFRMDPTH)       /* frame depth */
 #if MEOPT_EXTENDED
 DEFVAR ("frame-id",            EVFRMID)         /* frame unique id */
+DEFVAR ("frame-title",         EVFRMTITLE)      /* frame title string */
 #endif
 DEFVAR ("frame-width",         EVFRMWDTH)       /* frame width */
 DEFVAR ("global-fmod",         EVGLOBFMOD)      /* file mod or attributes */

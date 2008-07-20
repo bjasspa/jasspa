@@ -304,8 +304,9 @@ extern meUByte    BmainN[];
 extern meUByte    BhelpN[];
 
 #if MEOPT_EXTENDED
-extern meVarList  usrVarList;           /* user variables list          */
+extern meVarList  usrVarList ;          /* user variables list          */
 extern meUByte   *fileIgnore ;
+extern meUByte   *frameTitle ;          /* String used in frame title   */
 #endif
 
 extern meUByte   *meUserName ;
@@ -370,11 +371,11 @@ extern int      disLineSize ;           /* interal display buffer size  */
 extern meUByte    resultStr[meBUF_SIZE_MAX] ;   /* $result variable             */
 extern meUByte    evalResult[meTOKENBUF_SIZE_MAX] ;/* Result string from functions */
 extern int        curgoal;              /* Goal for C-P, C-N            */
-extern meBuffer    *bheadp;               /* Head of list of buffers      */
+extern meBuffer  *bheadp;               /* Head of list of buffers      */
 #if MEOPT_ABBREV
 extern meAbbrev  *aheadp;               /* Head of list of abrev files  */
 #endif
-extern struct meKill *klhead;            /* Head of klist                */
+extern struct meKill *klhead;           /* Head of klist                */
 
 /* the character lookup tables */
 extern meUByte    charMaskTbl1[] ;
@@ -744,6 +745,7 @@ meUByte   BserverN[] = "*server*" ;
 #if MEOPT_EXTENDED
 meVarList usrVarList={NULL,0} ;         /* user variables list             */
 meUByte  *fileIgnore=NULL ;
+meUByte  *frameTitle=NULL ;             /* String used in frame title   */
 #endif
 
 meUByte  *meUserName=NULL ;
