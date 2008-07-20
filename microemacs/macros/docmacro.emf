@@ -46,7 +46,7 @@
 ;         >
 ;         > Author:       My Self
 ;         > Created:      11/11/97
-;         > Modified:     <080330.2157>
+;         > Modified:     <080718.1239>
 ;         > Location:     /xx/yy/zz.doc
 ; *
 ;         All lines commencing with '*' are assumed to be bullet lists. Bullet
@@ -95,7 +95,10 @@ set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
     ; are none below then there is no adverse effect.
     0 hilight  .hilight.doc 2 100                               $global-scheme
     hilight .hilight.doc 0x20 "*\\}[ \t]+\\w"                   .scheme.no1
-    hilight .hilight.doc 0x21 "\\w+)"                           .scheme.no1
+    hilight .hilight.doc 0x21 "\\m)"                            .scheme.no1
+    hilight .hilight.doc 0x21 "\\m\\m)"                         .scheme.no1
+    hilight .hilight.doc 0x21 "\\d+)"                           .scheme.no1
+    hilight .hilight.doc 0x21 "\\d+\\a)"                        .scheme.no1
     hilight .hilight.doc 1 "\\*[A-Za-z_]+\\*"                   .scheme.bold
     hilight .hilight.doc 1 "<[A-Za-z_]+>"                       .scheme.italic
     hilight .hilight.doc 1 "_[A-Za-z0-9]+_"                     .scheme.under
