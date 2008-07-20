@@ -418,6 +418,7 @@ define-macro read-session
     ml-write &spr "[Loading session \"%s\"...]" #l0
     set-position "\x88"
     set-variable %session-name #l0
+    set-variable $frame-title &cat "MicroEmacs: " %session-name
     set-variable .session.update 1
     set-variable .session.amark 0
     set-variable .session.kill 1
