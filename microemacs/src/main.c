@@ -76,6 +76,7 @@ static char meHelpPage[]=
 "  -b      : Load next file as a binary file\n"
 #if MEOPT_EXTENDED
 "  -c[name]: Continue session (default session is $user-name)\n"
+"  -f      : Don't process following arguments, set .about.arg# vars.\n"
 #endif
 "  -h      : For this help page\n"
 #ifdef _DOS
@@ -1340,6 +1341,19 @@ mesetup(int argc, char *argv[])
             case 'c':
                 SetUsrLclCmdVar((meUByte *) "session-name",(meUByte *) (argv[carg] + 2),&usrVarList) ;
                 break ;
+            case 'f':
+                {
+                    meUByte vname[16] ;
+                    int nn=0 ;
+                    while(++carg < argc)
+                    {
+                        sprintf(vname,"arg%d",nn++) ;
+                        SetUsrLclCmdVar(vname,(meUByte *) argv[carg],&(__cmdArray[CK_ABOUT].varList)) ;
+                    }
+                    sprintf(vname,"%d",nn) ;
+                    SetUsrLclCmdVar((meUByte *) "argc",vname,&(__cmdArray[CK_ABOUT].varList)) ;
+                }
+                break ;
 #endif
             case 'h':
                 mePrintMessage(meHelpPage) ;
@@ -1401,7 +1415,6 @@ missing_arg:
                 meSystemCfg |= meSYSTEM_PIPEDMODE ;
                 break ;
 #endif
-
             case 'r':
                 meModeToggle(globMode,MDVIEW) ;
                 break ;
