@@ -20,11 +20,13 @@
 
 0 define-macro generate-tags-file-entry
     !if &gre @# 0
-        set-variable $result &cond &equ @# 1 .generate-tags-file.flags .generate-tags-file.path
+        set-variable $result &cond &equ @# 1 .generate-tags-file.flags &cond &equ @# 2 .generate-tags-file.path .generate-tags-file.tfile
     !elif &equ @# -1
         set-variable .generate-tags-file.flags @ml20 "" .generate-tags-file.flags
-    !else
+    !elif &equ @# -2
         set-variable .generate-tags-file.path @ml21 "" .generate-tags-file.path
+    !else
+        set-variable .generate-tags-file.tfile @ml24 "" .generate-tags-file.tfile
     !endif
 !emacro
 
@@ -41,11 +43,11 @@
     set-position "\x81"
     find-buffer "*generate-tags-file tmp*"
     set-variable $buffer-fname .generate-tags-file.path
-    !if &band $system 0x080
-        !force exec-me &spr "\"@%s\" \"-v%%tag-option=%s\"" .generate-tags-file.type .generate-tags-file.flags
-    !else
-        !force exec-me &spr "\"@%s\" \"-v%%%%tag-option=%s\"" .generate-tags-file.type .generate-tags-file.flags
+    set-variable #l1 &spr "\"@%s\" -f \"-o%s\"" .generate-tags-file.type .generate-tags-file.flags
+    !if &not &seq .generate-tags-file.tfile "tags"
+        set-variable #l1 &spr "%s \"-t%s\"" #l1 .generate-tags-file.tfile
     !endif
+    !force exec-me #l1 
     !force delete-buffer "*generate-tags-file tmp*"
     goto-position "\x81"
 !emacro
@@ -53,11 +55,15 @@
 -1 osd .osd.gtf
 osd .osd.gtf 0   "batcDIHs" 10 3 46 0 -1 -1 250 40 .scheme.osd-title "Generate Tags File"
 osd .osd.gtf 10  ""
-osd .osd.gtf 20  "Sf"   "  S\Htarting Path:" 40
+osd .osd.gtf 20  "Sf"   "  \HBase Path:" 40
 osd .osd.gtf 30  "hf"   "  "
 osd .osd.gtf 40  "ExfH" .scheme.osd-entry "########################################" 2 generate-tags-file-entry
-osd .osd.gtf 50  ""
-osd .osd.gtf 60  "Shf"  "  Tags \HFlags: " 70
+osd .osd.gtf 42  ""
+osd .osd.gtf 45  "Sf"   "  \HTag File:" 50
+osd .osd.gtf 47  "hf"   "  "
+osd .osd.gtf 50  "ExfH" .scheme.osd-entry "########################################" 3 generate-tags-file-entry
+osd .osd.gtf 55  ""
+osd .osd.gtf 60  "Shf"  "  \HOptions:  " 70
 osd .osd.gtf 70  "ExfH" .scheme.osd-entry "###############" 1 generate-tags-file-entry
 osd .osd.gtf 80  "hf"   "    ("
 osd .osd.gtf 90  "Rhfx" "\HAppend"       1 generate-tags-file-flags
@@ -79,8 +85,8 @@ osd .osd.gtf 240 ""
 osd .osd.gtf 250 "BhcfHi" .scheme.osd-ebtt " \HGenerate Tags "    f generate-tags-file-exec
 osd .osd.gtf 260 "BcfH"   .scheme.osd-ebtt " \HCancel "    1 void
 
-; generate-tags-file "<tagtype>" "[start-path]"
-; runs ME @<tagtype> -v%tags-option=...
+; generate-tags-file [tagtype] [start-path]
+; runs ME @<tagtype> -f -o<tags-options>...
 define-macro generate-tags-file
     !if &exi &ind &spr ".%s.tags" $buffer-fhook
         set-variable .type &ind &spr ".%s.tags" $buffer-fhook
@@ -95,6 +101,7 @@ define-macro generate-tags-file
         0 ipipe-shell-command &rig .type 1 "*generate-tags*"
         !return
     !endif
+    set-variable .tfile "tags"
     set-variable .path &lef $buffer-fname &rsin "/" $buffer-fname
     !force set-variable #l2 @2
     !if $status
@@ -107,5 +114,5 @@ define-macro generate-tags-file
         .osd.gtf osd
     !endif
 !emacro
-set-variable .generate-tags-file.flags %tag-option
+set-variable .generate-tags-file.flags &rep %tag-option "c" ""
 
