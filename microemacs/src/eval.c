@@ -595,7 +595,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             timeOffset = meAtoi(vvalue) ;
             break;
         case EVRANDOM:
-            srand(time(NULL)) ;
+            srand((unsigned int) time(NULL)) ;
             break ;
 #endif
         case EVFRMDPTH:
@@ -903,7 +903,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             frameCur->bufferCur->inputFunc = decode_fncname(vvalue,1) ;
             break ;
         case EVLINEFLAGS:
-            frameCur->windowCur->dotLine->flag = (meAtoi(vvalue) & meLINE_SET_MASK) |
+            frameCur->windowCur->dotLine->flag = ((meLineFlag) (meAtoi(vvalue) & meLINE_SET_MASK)) |
                       (frameCur->windowCur->dotLine->flag & ~meLINE_SET_MASK) ;
             break ;
 #endif

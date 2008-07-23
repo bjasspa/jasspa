@@ -491,10 +491,10 @@ gettimeofday (struct meTimeval *tp, struct meTimezone *tz)
     UNREFERENCED_PARAMETER (tz);
 
     /* Get the second resolution time */
-    tp->tv_sec = time (NULL);
+    tp->tv_sec = time(NULL) ;
 
     /* Get the microsecond time */
-    GetLocalTime (&stime);
+    GetLocalTime(&stime) ;
     tp->tv_usec = (long)(stime.wMilliseconds * 1000);
 }
 
@@ -6070,10 +6070,10 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
             {
 #if MEOPT_MOUSE
                 /* Re-position the mouse */
-                mouse_X = clientToCol (dadp->mousePos.x);
-                mouse_Y = clientToRow (dadp->mousePos.y);
-                mouse_dX = ((dadp->mousePos.x - colToClient(mouse_X)) << 8) / eCellMetrics.cell.sizeX;
-                mouse_dY = ((dadp->mousePos.y - rowToClient(mouse_Y)) << 8) / eCellMetrics.cell.sizeY;
+                mouse_X = (meShort) clientToCol(dadp->mousePos.x);
+                mouse_Y = (meShort) clientToRow(dadp->mousePos.y);
+                mouse_dX = (meShort) (((dadp->mousePos.x - colToClient(mouse_X)) << 8) / eCellMetrics.cell.sizeX) ;
+                mouse_dY = (meShort) (((dadp->mousePos.y - rowToClient(mouse_Y)) << 8) / eCellMetrics.cell.sizeY) ;
                 if (mouse_X > frameCur->width)
                     mouse_X = frameCur->width;
                 if (mouse_Y > frameCur->depth)
