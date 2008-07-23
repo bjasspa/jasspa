@@ -14,17 +14,31 @@
 ;     texfile.
 ;
 ; Usage:
-;      me "@textags"
-;      me "@textags" <files> <dirs>
-;      me "@textags" "-v%tag-option=rm"
-;      me "@textags" "-v%tag-option=r" <files> <dirs>
+;      me "@textags" [<files> <dirs>] [-f -o<options> -t<tag_file> -m<file_mask> -i<ignore_files>]
 ;
 ; Options:
 ;      r - recurse, a - append, m - multiple links to a tag
 ;
-set-variable %tag-option   &cond &exi %tag-option   %tag-option   ""
-set-variable %tag-filemask &cond &exi %tag-filemask %tag-filemask ":*.tex:*.bib:"
-set-variable %tag-ignore   &cond &exi %tag-ignore   %tag-ignore   ":SCCS/:CVS/:"
+set-variable %tag-option   ""
+set-variable %tag-file     "tags"
+set-variable %tag-filemask ":*.tex:*.bib:"
+set-variable %tag-ignore   ":SCCS/:CVS/:"
+
+set-variable #l0 0
+!while &exi &cat ".about.arg" #l0
+    set-variable #l2 &ind &cat ".about.arg" &pinc #l0 1
+    set-variable #l1 &lef #l2 2
+    set-variable #l2 &rig #l2 2
+    !if &seq #l1 "-o"
+        set-variable %tag-option #l2
+    !elif &seq #l1 "-t"
+        set-variable %tag-file #l2
+    !elif &seq #l1 "-m"
+        set-variable %tag-filemask #l2
+    !elif &seq #l1 "-i"
+        set-variable %tag-ignore #l2
+    !endif
+!done
 
 define-macro textags-add-file
     set-variable $buffer-mask "luh12"
@@ -73,7 +87,7 @@ define-macro textags-process-buffers
         !else
             set-variable #l1 #l0
         !endif
-        !if &iseq #l1 "tags"
+        !if &iseq #l1 %tag-bname
             !return
         !elif &lfind %tag-ignore #l1
         !elif &band $buffer-fmod 0x10000
@@ -103,7 +117,9 @@ define-macro textags
     delete-other-windows
     split-window-vertically
     find-buffer "*scratch*"
-    find-file "tags"
+    set-variable #l0 &stat "a" "."
+    find-file %tag-file
+    set-variable %tag-bname $buffer-bname 
     -1 buffer-mode "view"
     !force 0 delete-buffer "*scratch*"
     set-variable #g1 &rsin "/" $buffer-fname
@@ -122,8 +138,8 @@ define-macro textags
     1 buffer-mode "magic"
     1 buffer-mode "exact"
     next-window
-    !if &iseq $buffer-bname "tags"
-        !force find-file "."
+    !if &iseq $buffer-bname %tag-bname
+        !force find-file #l0
     !endif
     textags-process-buffers
     textags-parse-tags
