@@ -1307,7 +1307,7 @@ printAddLine (meBuffer *bp, meLine *lp)
         if (len >= wid)
         {
             /* Pad the end of the line with spaces. */
-            len = printer.param[mePI_PAGEX].l-kk ;
+            len = ((meUShort) printer.param[mePI_PAGEX].l) - kk ;
             memset(nlp->text+ll,' ',len);
             nlp->text[ll+len] = '\0';
             break ;

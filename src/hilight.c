@@ -1753,7 +1753,7 @@ hilightLine(meVideoLine *vp1, meUByte mode)
         {
             if(meHilightGetFromColumn(node) == hd.srcPos)
             {
-                if((len = meHilightGetToColumn(node)) > srcWid)
+                if((len = (meUShort) meHilightGetToColumn(node)) > srcWid)
                     len = srcWid ;
                 len -= hd.srcPos ;
                 goto column_token ;
@@ -2125,7 +2125,7 @@ hilightCurLineOffsetEval(meWindow *wp)
         {
             if(meHilightGetFromColumn(node) == srcPos)
             {
-                if((len = meHilightGetToColumn(node)) > srcWid)
+                if((len = (meUShort) meHilightGetToColumn(node)) > srcWid)
                     len = srcWid ;
                 len -= srcPos ;
                 goto column_token ;
