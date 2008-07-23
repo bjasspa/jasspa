@@ -2941,6 +2941,9 @@ callBackHandler(void)
         timerSet(CALLB_TIMER_ID,next,next-tim) ;
     else
         timerClearExpired(CALLB_TIMER_ID) ;
+/*    if(tim & 0x40000000)*/
+    if(tim & 0x200000)
+        adjustStartTime(tp.tv_sec-startTime) ;
 }
 #endif
 
