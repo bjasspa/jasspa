@@ -33,6 +33,7 @@
  */
 #include "emain.h"
 #include "eskeys.h"
+#include "efunc.h"
 #ifndef _WIN32
 #include <time.h>
 #include <sys/time.h>
@@ -283,7 +284,7 @@ timerCheck(long tim)
  *          if (tim == 0) Absolute time is unknown but value
  *              is needed in meTimerTime.
  *          if (tim < 0)  Absolute time is unknown and value
-                is not needed.
+ *              is not needed.
  * offset - offset from the current time to alarm.
  */
 void
@@ -504,6 +505,56 @@ handleTimerExpired(void)
     if(isTimerExpired(SOCKET_TIMER_ID)) /* socket connection time-out */
         ffFileOp(NULL,NULL,meRWFLAG_FTPCLOSE|meRWFLAG_SILENT,-1) ;
 #endif
+}
+
+void
+adjustStartTime(meInt tim)
+{
+    meBuffer *bp ;
+    meMacro *mac ;
+    meInt ii, mstim=tim*1000 ;
+#if (defined _CONST_TIMER) || (defined _SINGLE_TIMER)
+    TIMERBLOCK *tbp ;
+    tbp = timers ;
+    
+    while(tbp != NULL)
+    {
+        if(mstim >= tbp->abstime)
+            tbp->abstime = 0 ;
+        else
+            tbp->abstime -= mstim ;
+        tbp = tbp->next ;
+    }
+#endif
+    bp  = bheadp;
+    while(bp != NULL)
+    {
+        if(bp->autoTime >= 0)
+        {
+            if(mstim >= bp->autoTime)
+                bp->autoTime = 0 ;
+            else
+                bp->autoTime -= mstim ;
+        }
+        bp = bp->next ;
+    }
+    for(ii=CK_MAX ; ii<cmdTableSize ; ii++)
+    {
+        mac = getMacro(ii) ;
+        if(mac->callback >= 0)
+        {
+            if(mstim >= mac->callback)
+                mac->callback = 0 ;
+            else
+                mac->callback -= mstim ;
+        }
+    }
+    ii = NUM_TIMERS-1 ;
+    do
+        if(isTimerSet(ii))
+            meTimerTime[ii] -= mstim ;
+    while(--ii >= 0) ;
+    startTime += tim ;
 }
 
 /* translate-key support code */
