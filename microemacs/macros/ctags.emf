@@ -239,8 +239,11 @@ set-char-mask "1" ":~"
         !elif &sin @s0 ",;="
 *add-variable
             !if &sin "v" %tag-option
-                search-backward "\\w\\|[]}]"
-                !if &seq @s0 "]"
+                backward-char
+                search-backward "[]};\\w]"
+                !if &seq @s0 ";"
+                    forward-char
+                !elif &seq @s0 "]"
                     goto-matching-fence
                     !jump -3
                 !elif &not &seq @s0 "}"
