@@ -1350,10 +1350,10 @@ mesetup(int argc, char *argv[])
                     int nn=0 ;
                     while(++carg < argc)
                     {
-                        sprintf(vname,"arg%d",nn++) ;
+                        sprintf((char *) vname,"arg%d",nn++) ;
                         SetUsrLclCmdVar(vname,(meUByte *) argv[carg],&(__cmdArray[CK_ABOUT].varList)) ;
                     }
-                    sprintf(vname,"%d",nn) ;
+                    sprintf((char *) vname,"%d",nn) ;
                     SetUsrLclCmdVar((meUByte *) "argc",vname,&(__cmdArray[CK_ABOUT].varList)) ;
                 }
                 break ;

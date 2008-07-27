@@ -1125,7 +1125,7 @@ deleteSomeBuffers(int f, int n)
         {
             if((n & 0x06) == 0)
             {
-                if((s = mlCharReply("Delete buffers not yet active (?/y/n/a) ? ",mlCR_LOWER_CASE,(meUByte *)"yna",(meUByte *)"(Y)es, (N)o, Yes to (a)ll, (C-g)Abort ? ")) < 0)
+                if((s = mlCharReply((meUByte *)"Delete buffers not yet active (?/y/n/a) ? ",mlCR_LOWER_CASE,(meUByte *)"yna",(meUByte *)"(Y)es, (N)o, Yes to (a)ll, (C-g)Abort ? ")) < 0)
                     return ctrlg(meFALSE,1) ;
                 if(s == 'n')
                     break ;
