@@ -4791,16 +4791,28 @@ TTstart (void)
         hOutput = GetStdHandle(STD_OUTPUT_HANDLE);
 
         /* get a ptr to the output screen buffer */
-        GetConsoleScreenBufferInfo(hOutput, &Console);
+        if(GetConsoleScreenBufferInfo(hOutput,&Console))
+        {
+            OldConsoleSize.X = Console.dwSize.X ;
+            OldConsoleSize.Y = Console.dwSize.Y ;
 
-        OldConsoleSize.X = Console.dwSize.X ;
-        OldConsoleSize.Y = Console.dwSize.Y ;
-
-        /* let MicroEMACS know our starting screen size */
-        /* this should be the window size, not the buffer size
-         * as this needs the scroll-bar to use */
-        TTwidthDefault = Console.srWindow.Right-Console.srWindow.Left+1;
-        TTdepthDefault = Console.srWindow.Bottom-Console.srWindow.Top+1;
+            /* let MicroEMACS know our starting screen size */
+            /* this should be the window size, not the buffer size
+             * as this needs the scroll-bar to use */
+            TTwidthDefault = Console.srWindow.Right-Console.srWindow.Left+1;
+            TTdepthDefault = Console.srWindow.Bottom-Console.srWindow.Top+1;
+        }
+#if MEOPT_EXTENDED
+        else if(alarmState & meALARM_PIPED)
+        {
+            /* can't get the console so can't get the size but as running in -p piped mode set to a default 80x50 */
+            TTwidthDefault = OldConsoleSize.X = 80 ;
+            TTdepthDefault = OldConsoleSize.Y = 50 ;
+        }
+#endif
+        else
+            return meFALSE ;
+                
         if(TTwidthDefault < 8)
             TTwidthDefault = 8 ;
         if(TTdepthDefault < 4)
@@ -4871,8 +4883,8 @@ TTstart (void)
                                  ttInstance,
                                  NULL);
 
-        if (!baseHwnd)
-            return (meFALSE);
+        if(!baseHwnd)
+            return meFALSE ;
         TTchangeFont(NULL, -1, 0, 0, 0);
     }
 #endif /* _ME_WINDOW */
@@ -4885,7 +4897,7 @@ TTstart (void)
 
     /* To be continued in meFrameTermInit after the display memory
      * has been initialised */
-    return (meTRUE);
+    return meTRUE ;
 }
 
 /*
@@ -5870,8 +5882,8 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
                     _CRTDBG_LEAK_CHECK_DF|_CRTDBG_DELAY_FREE_MEM_DF);
 #endif
 
-    /* if(logfp == NULL)*/
-    /*     logfp = fopen("log","w+") ;*/
+/*     if(logfp == NULL)*/
+/*         logfp = fopen("log","w+") ;*/
 
 #ifdef _ME_WINDOW
     /* Initialise the window data and register window class */
@@ -6599,9 +6611,11 @@ meFrameSetWindowTitle(meFrame *frame, meUByte *str)
     }
     meStrcpy(ss," - ") ;
     ss += 3 ;
+#if MEOPT_EXTENDED
     if(frameTitle != NULL)
         meStrcpy(ss,frameTitle) ;
     else
+#endif
 #ifdef _TITLE_VER_MINOR
         meStrcpy(ss,ME_FULLNAME " '" meVERSION "." meVERSION_MINOR) ;
 #else
