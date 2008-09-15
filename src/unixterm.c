@@ -3586,9 +3586,11 @@ meFrameSetWindowTitle(meFrame *frame, meUByte *str)
     {
         char buf[meBUF_SIZE_MAX], *ss ;
 
+#if MEOPT_EXTENDED
         if(frameTitle != NULL)
             meStrcpy(buf,frameTitle) ;
         else
+#endif
             meStrcpy(buf,meName);
         if(str != NULL)
         {
