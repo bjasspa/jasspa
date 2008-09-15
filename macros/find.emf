@@ -458,29 +458,23 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
 !emacro
 
 0 define-macro find-proc-spawn
-    !if &exi .me-cmd
-    !elif &seq $platform "win32"
-        set-variable .me-cmd "mecw32 -n -p @cfind"
+    !if &seq $platform "win32"
+        set-variable #l0 "mecw32"
     !else
-        set-variable .me-cmd "me -n -p @cfind"
+        set-variable #l0 "me"
     !endif
-    !if &not &seq $cfind_arg1 &set #l1 @3
-        set-variable $cfind_arg1 #l1
-    !endif
-    !if &not &seq $cfind_arg2 &set #l1 @4
-        set-variable $cfind_arg2 #l1
-    !endif
-    !force set-variable #l1 @5
-    !if &not $status
-    !elif &not &seq $cfind_arg3 #l1
-        set-variable $cfind_arg3 #l1
-    !endif
-    !force set-variable #l1 @6
-    !if &not $status
-    !elif &not &seq $cfind_arg4 #l1
-        set-variable $cfind_arg4 #l1
-    !endif
-    0x40 ipipe-shell-command &spr "%s -v.about.argn=%d -v.about.arg0=%s" .me-cmd @# @2 @1
+    set-variable #l0 &spr "%s -n -p @cfind -v.about.argn=%d -f %s"  #l0 @# @2
+    set-variable #l1 3
+    !repeat
+        !force set-variable #l2 &ind &cat "@" &pinc #l1 1
+        !if $status
+            !if &seq $platform "win32"
+                set-variable #l2 &rep #l2 "%" "%%"
+            !endif
+            set-variable #l0 &spr "%s \"%s\"" #l0 &xrep #l2 "[\\\\\"]" "\\\\\\0"
+        !endif
+    !until &not $status
+    0x40 ipipe-shell-command #l0 @1
 !emacro
 
 define-macro grep

@@ -9,17 +9,17 @@
 ;
 ; Notes:
 ;
-;    The following env vars must be set:
+;    The following vars must be set (.arg0...argn via option -f):
 ;        .about.argn   - Numeric argument to give the command
 ;        .about.arg0   - Must be set to find, grep or replace-string-in-files           
-;        $cfind_arg1   - first argument for the command
-;        $cfind_arg2   - second argument for the command (if required)
-;        $cfind_arg3   - second argument for the command (if required etc)
+;        .about.arg1   - first argument for the command
+;        .about.arg2   - second argument for the command (if required)
+;        .about.arg3   - second argument for the command (if required etc)
 ;
 !if &not &exi .about.arg0
     -1 ml-write "Error: Find command not set"
     0 exit-emacs
-!elif &seq $cfind_arg1 "ERROR"
+!elif &seq .about.arg1 "ERROR"
     -1 ml-write &spr "Error: Arguments for the %s command not given" .about.arg0
     0 exit-emacs
 !elif &seq &find $user-name ".erf" "ERROR"
@@ -56,11 +56,12 @@ set-variable .osd.next &cond &exi .osd.next .osd.next &add .osd.tmp 1
 
 define-macro start-up
     set-variable $buffer-fname &stat a "."
+    ml-write &spr "Exec: [%s] [%s] [%s] [%s] [%s] [%s]" .about.arg0 .about.arg1 .about.arg2 .about.arg3 .about.arg4 .about.arg5
     ml-write &cat "Find from dir: " $buffer-fname
     !if &exi .about.argn
-        .about.argn execute-named-command .about.arg0 $cfind_arg1 $cfind_arg2 $cfind_arg3 $cfind_arg4 $cfind_arg5
+        .about.argn execute-named-command .about.arg0 .about.arg1 .about.arg2 .about.arg3 .about.arg4 .about.arg5
     !else
-        execute-named-command .about.arg0 $cfind_arg1 $cfind_arg2 $cfind_arg3 $cfind_arg4 $cfind_arg5
+        execute-named-command .about.arg0 .about.arg1 .about.arg2 .about.arg3 .about.arg4 .about.arg5
     !endif
     0 exit-emacs
 !emacro
