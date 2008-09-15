@@ -569,6 +569,8 @@ typedef struct meMacro {
     meLine            *hlp ;                    /* Head line of macro           */
 #if MEOPT_EXTENDED
     meUByte           *fname ;                  /* file name for file-macros    */
+#endif
+#if MEOPT_CALLBACK
     meInt              callback ;               /* callback time for macro      */
 #endif
 } meMacro ;
