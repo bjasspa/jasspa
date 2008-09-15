@@ -236,7 +236,7 @@ findTagSearchNext(meUByte *key, meUByte *file, meUByte *patt)
     return meTRUE ;
 }
 
-static	int
+static int
 findTagExec(int nn, meUByte tag[])
 {
     meUByte file[meBUF_SIZE_MAX];	/* File name */
@@ -322,10 +322,12 @@ findTagExec(int nn, meUByte tag[])
             *dd = '\0' ;
     }
     
-    if(iscanner(mpatt,0,flags,NULL) <= 0)
-        return mlwrite(MWABORT,(meUByte *)"[Can't find %s]",fpatt) ;
+    if(iscanner(mpatt,0,flags,NULL) > 0)
+        return meTRUE ;
     
-    return meTRUE ;
+    windowGotoBob(meTRUE,0) ;
+    iscanner(tag,0,ISCANNER_PTBEG|ISCANNER_EXACT,NULL) ;
+    return mlwrite(MWABORT,(meUByte *)"[Can't find %s]",fpatt) ;
 }
 
 /*ARGSUSED*/
