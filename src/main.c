@@ -1088,8 +1088,7 @@ autoSaveHandler(void)
         timerSet(AUTOS_TIMER_ID,next,next-tim) ;
     else
         timerClearExpired(AUTOS_TIMER_ID) ;
-/*    if(tim & 0x40000000)*/
-    if(tim & 0x200000)
+    if(tim & 0x40000000)
         adjustStartTime(tp.tv_sec-startTime) ;
 }
 
@@ -1229,7 +1228,7 @@ mesetup(int argc, char *argv[])
     int     userClientServer=0 ;
 #endif
     startTime = time(NULL) ;
-
+    
     /* asserts to check that the defines are consistent */
 #if MEOPT_NARROW
     /* more info is required to undo a narrow than can be held in the main
@@ -1826,9 +1825,9 @@ handle_stdin:
         {
             swbuffer(frameCur->windowCur,bp) ;
 	    mainbp->histNo = -1 ;
-            if((noFiles > 1) && ((bp = replacebuffer(NULL)) != mainbp))
+            if((noFiles > 1) && ((bp = replacebuffer(NULL)) != mainbp) &&
+               (windowSplitDepth(meTRUE,2) > 0))
             {
-                windowSplitDepth(meTRUE,2) ;
                 swbuffer(frameCur->windowCur,replacebuffer(NULL)) ;
                 windowGotoPrevious(meFALSE,1) ;
             }
