@@ -538,6 +538,7 @@ adjustStartTime(meInt tim)
         }
         bp = bp->next ;
     }
+#if MEOPT_CALLBACK
     for(ii=CK_MAX ; ii<cmdTableSize ; ii++)
     {
         mac = getMacro(ii) ;
@@ -549,6 +550,7 @@ adjustStartTime(meInt tim)
                 mac->callback -= mstim ;
         }
     }
+#endif
     ii = NUM_TIMERS-1 ;
     do
         if(isTimerSet(ii))
