@@ -1842,7 +1842,8 @@ meWindowPopup(meUByte *name, int flags, meBuffer **bufferReplaced)
             /* maintain the current windows flags */
             flags = frameCur->windowCur->flags ;
             wp = frameCur->windowCur->next ;
-            windowSplitDepth(meFALSE, 0) ;
+            if(windowSplitDepth(meFALSE, 0) <= 0)
+                return NULL ;
             frameCur->windowCur->flags = flags ;
             if(frameCur->windowCur->next == wp)
             {
