@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20061004.1606>
+# Last Modified: <20080915.2251>
 #
 ##############################################################################
 
@@ -66,7 +66,7 @@ MAKSRC	=	build.bat	\
 		win32sv2.mak	win32v2.mak	\
 		win32sv4.mak	\
 		win32v5.mak	\
-		win32v6.mak	\
+		win32v6.mak	win32v8.mak	\
 		zaurus.gmk
 
 WIN32S=		win32s/win16.mak		win32s/w32sut32.lib		\
