@@ -180,17 +180,17 @@ scanmore(meUByte *patrn, int flags, int histNo, meShort *histLen, SCANNERPOS *hi
 
 #define mlisDisp(pat,status)                                                 \
 do {                                                                         \
-    mlDisp(isHeadStr,pat,statusStr[(status & 0x3)],-1) ;                   \
-    frameCur->mlStatus=MLSTATUS_KEEP ;                                                 \
+    mlDisp(isHeadStr,pat,statusStr[(status & 0x3)],-1) ;                     \
+    frameCur->mlStatus=MLSTATUS_KEEP ;                                       \
     if(status & 0x10)                                                        \
     {                                                                        \
         TTbell() ; /* Feep if search fails       */                          \
-        if(kbmd == mePLAY)                                                     \
+        if(kbmd == mePLAY)                                                   \
         {                                                                    \
-            frameCur->mlStatus = MLSTATUS_CLEAR ;                                      \
+            frameCur->mlStatus = MLSTATUS_CLEAR ;                            \
             restoreUseMlBinds() ;                                            \
             mlerase(MWCLEXEC) ;                                              \
-            return meFALSE ;                                                   \
+            return meFALSE ;                                                 \
         }                                                                    \
         status &= 0x0f ;                                                     \
     }                                                                        \
@@ -449,10 +449,11 @@ find_next:
                     if(meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
                         break ;
                 }
-                srchPat[cpos] = 0;                      /* null terminate the buffer */
+                srchPat[cpos] = 0;              /* null terminate the buffer */
                 memcpy(histPos+histNo+1,histPos+histNo,sizeof(SCANNERPOS)) ;
                 histNo++ ;
-                histLen[histNo]  = cpos ;               /* Save the current srchPat len */
+                histStt[histNo] = meTRUE ;
+                histLen[histNo] = cpos ;        /* Save the current srchPat len */
                 histPos[histNo].endline = frameCur->windowCur->dotLine ;
                 histPos[histNo].endoffset = frameCur->windowCur->dotOffset ;
                 histPos[histNo].endline_no = frameCur->windowCur->dotLineNo ;
