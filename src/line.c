@@ -1512,44 +1512,54 @@ yank(int f, int n)
 int
 reyank(int f, int n)
 {
-    register int  ret, len=0;		/* return value of things	*/
-    meRegion        region;		/* dot to mark region		*/
-
-    if(lastflag == meCFYANK)
-        /* Last command was yank. Set reyankLastYank to the most recent
-         * delete, so we reyank the second most recent */
+    meRegion region ;
+    int ret, len ;
+    
+    if(f && (n >= 0))
+    {
         reyankLastYank = klhead;
-    else if(lastflag != meCFRYANK)
-        /* Last command was not a reyank or yank, set reyankLastYank to
-         * NULL so we bitch */
-        reyankLastYank = NULL ;
+        while((--n >= 0) && ((reyankLastYank = reyankLastYank->next) != NULL))
+            ;
+        if(reyankLastYank == NULL)
+            return mlwrite(MWABORT,(meUByte *)"[not enough in the kill-ring]");
+    }
+    else
+    {
+        if(lastflag == meCFYANK)
+            /* Last command was yank. Set reyankLastYank to the most recent
+             * delete, so we reyank the second most recent */
+            reyankLastYank = klhead;
+        else if(lastflag != meCFRYANK)
+            /* Last command was not a reyank or yank, set reyankLastYank to
+             * NULL so we bitch */
+            reyankLastYank = NULL ;
     
-    if(reyankLastYank == NULL)
-        /*
-         * Last command was not a yank or reyank (or someone was
-         * messing with @cc and got it wrong). Complain and return
-         * immediately, this is because the first thing we do is to
-         * delete the current region without saving it. If we've just
-         * done a yank, or reyank, the mark and cursor will surround
-         * the last yank so this will be ok, but otherwise the user
-         * would loose text with no hope of recovering it.
-         */
-        return mlwrite(MWABORT,(meUByte *)"[reyank must IMMEDIATELY follow a yank or reyank]");
+        if(reyankLastYank == NULL)
+            /*
+             * Last command was not a yank or reyank (or someone was
+             * messing with @cc and got it wrong). Complain and return
+             * immediately, this is because the first thing we do is to
+             * delete the current region without saving it. If we've just
+             * done a yank, or reyank, the mark and cursor will surround
+             * the last yank so this will be ok, but otherwise the user
+             * would loose text with no hope of recovering it.
+             */
+            return mlwrite(MWABORT,(meUByte *)"[reyank must IMMEDIATELY follow a yank or reyank]");
     
-    if(((reyankLastYank = reyankLastYank->next) == NULL) && (n < 0))
-        /* Fail if got to the end and n is -ve */
-        return meFALSE ;
+        if(((reyankLastYank = reyankLastYank->next) == NULL) && (n < 0))
+            /* Fail if got to the end and n is -ve */
+            return meFALSE ;
         
-    /* Get the current region */
-    if((ret = getregion(&region)) <= 0)
-        return ret ;
-    
-    /* Delete the current region. */
-    frameCur->windowCur->dotLine  = region.line;
-    frameCur->windowCur->dotOffset = region.offset;
-    frameCur->windowCur->dotLineNo = region.lineNo;
-    ldelete(region.size,6);
-
+        /* Get the current region */
+        if((ret = getregion(&region)) <= 0)
+            return ret ;
+        
+        /* Delete the current region. */
+        frameCur->windowCur->dotLine  = region.line;
+        frameCur->windowCur->dotOffset = region.offset;
+        frameCur->windowCur->dotLineNo = region.lineNo;
+        ldelete(region.size,6);
+    }
     /* Set the mark here so that we can delete the region in the next
      * reyank command. */
     windowSetMark(meFALSE, meFALSE);
@@ -1559,7 +1569,7 @@ reyank(int f, int n)
      * appear as if the linked list of kill buffers is actually
      * implemented as the GNU style "kill ring".
      */
-    if(reyankLastYank == (meKill*) NULL)
+    if(reyankLastYank == NULL)
     {
         mlwrite(MWABORT,(meUByte *)"[start of kill-ring]");
         reyankLastYank = klhead;
@@ -1567,6 +1577,7 @@ reyank(int f, int n)
     
     if(n < 0)
         n = 0 - n ;
+    len = 0 ;
     while(n--)
     {
         if((ret = yankfrom(reyankLastYank)) < 0)
