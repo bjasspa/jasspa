@@ -322,3 +322,24 @@ define-macro reread-all
     !done
     !force goto-position "\x82"
 !emacro
+
+define-macro save-kbd-macro
+    !force set-variable #l1 @1
+    !if &not $status
+        set-variable #l1 @ml "Save macro as command name"
+    !endif
+    name-kbd-macro #l1
+    !if &seq &set #l2 &find $user-name ".emf" "ERROR"
+        set-variable #l2 &spr "%s%s.emf" $user-path $user-name
+    !endif
+    set-variable #l3 $buffer-bname
+    !force find-file #l2
+    !if &not $status
+        ml-write &spr "[Failed to load user macro file %s.emf]" $user-name
+        !abort
+    !endif
+    end-of-buffer
+    insert-macro #l1
+    -1 find-buffer $buffer-bname
+    find-buffer #l3
+!emacro
