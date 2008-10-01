@@ -185,6 +185,7 @@
         set-variable .mouse-event.x $mouse-x
     !endif
     set-variable .mouse-event.drop-cmd "1 goto-position \"\x82\""
+    !force unset-variable .mouse-auto-pick-event.dclick
 !emacro
 
 0 define-macro mouse-type1-hpan
@@ -596,6 +597,10 @@
     !endif
 !emacro
 
+0 define-macro mouse-auto-pick-dclick
+    !force unset-variable .mouse-auto-pick-event.dclick
+!emacro
+
 0 define-macro mouse-auto-pick-event
     set-variable #l0 &band .mouse-event.mode 15
     !if &equ #l0 1
@@ -623,7 +628,14 @@
                 set-variable .mouse-event.mode &bor 3 &band $mouse-pos 0x30
             !endif
         !else
+            !if &exi .dclick
+                unset-variable .dclick
+                set-variable .mouse-event.drop-cmd "delete-other-windows"
+                !return
+            !endif
             set-variable .mouse-event.drop-cmd "void"
+            set-variable .dclick "1"
+            300 create-callback mouse-auto-pick-dclick
         !endif
         ; Either case; always perform a window re-szie operation.
         ; The modified mode determines if this is vertical or
