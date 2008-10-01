@@ -111,6 +111,9 @@ define-macro page-file-save-buffer
     !endif
     4 insert-file $buffer-fname 0 #l0 &sub &lget :page-1 1 #l0
     set-variable :page-0 $result
+    !if &gre :line-offset -1
+        set-variable :line-offset &sub :line-offset &sub $window-aline 2
+    !endif
     set-alpha-mark "\x83"
     !if &and #l0 &not &bmod "binary"
         ; ditch the first line as it could be incomplete
@@ -138,6 +141,9 @@ define-macro page-file-save-buffer
     beginning-of-buffer
     set-mark
     goto-alpha-mark "\x83"
+    !if &gre :line-offset -1
+        set-variable :line-offset &add :line-offset &sub $window-aline 1
+    !endif
     -1 kill-region
     set-variable :page-0 :page-1
     end-of-buffer
@@ -168,6 +174,7 @@ define-macro page-file-beginning-of-buffer
     set-variable :page-0 $result
     4 insert-file $buffer-fname 0 &lget :page-0 2 .page-file.page-size
     set-variable :page-1 $result
+    set-variable :line-offset 0
     exchange-point-and-mark
     set-alpha-mark "\x83"
     beginning-of-buffer
@@ -189,6 +196,7 @@ define-macro page-file-end-of-buffer
     beginning-of-buffer
     set-alpha-mark "\x83"
     set-variable :page-0 &spr "|%d|%d|" :page-fsize :page-fsize
+    set-variable :line-offset -1
     page-file-page-up
     page-file-page-up
     end-of-buffer
@@ -216,6 +224,7 @@ define-macro page-file-goto-byte
     beginning-of-buffer
     set-alpha-mark "\x83"
     set-variable :page-0 &spr "|%d|%d|" #l1 #l1
+    set-variable :line-offset -1
     page-file-page-up
     beginning-of-buffer
     set-alpha-mark "\x83"
@@ -407,11 +416,49 @@ define-macro page-file-search-backward
     !endif
 !emacro
 
+define-macro page-file-search-buffer
+    ; assumed a macro is calling this command
+    !force search-buffer &set #l1 @1 &set #l2 @2 @mna
+    !if $status
+    !elif &sin "b" #l1
+        !while &and &not $status &lget :page-0 1
+            0x13f set-position "\x81"
+            !force page-file-page-up
+            !if &not $status
+                goto-position "\x81"
+                !abort
+            !endif
+            goto-position "\x81"
+            !force search-buffer #l1 #l2 @mna
+        !done
+        !if &not $status
+            beginning-of-buffer
+            !abort
+        !endif
+    !else
+        ; if at the end of the buffer check we should be at the end
+        !while &and &not $status &les &lget :page-1 2 :page-fsize
+            0x13f set-position "\x81"
+            !force page-file-page-down
+            !if &not $status
+                goto-position "\x81"
+                !abort
+            !endif
+            goto-position "\x81"
+            !force search-buffer #l1 #l2 @mna
+        !done
+        !if &not $status
+            end-of-buffer
+            !abort
+        !endif
+    !endif
+!emacro
+
 0 define-macro page-file-isearch
     set-variable #l0 @#
     !repeat
-        !if &band #l0 2
-            !if &band #l0 1
+        !if &band #l0 4
+            !if &band #l0 2
                 !force search-backward #l1
                 !if &not $status
                     beginning-of-buffer
@@ -439,7 +486,7 @@ define-macro page-file-search-backward
                     execute-line &spr "0 isearch-forward %s @mna" &xrep #l1 "\\(.\\)" " \"\\1\""
                 !endif
             !endif
-        !elif &band #l0 1
+        !elif &band #l0 2
             0 isearch-backward @mna
         !else
             0 isearch-forward @mna
@@ -452,12 +499,16 @@ define-macro page-file-search-backward
         !if $window-col
             !return
         !elif &equ $window-line 1
-            set-variable #l0 3
+            set-variable #l0 &bor #l0 6
             !if &lget :page-0 1
-                set-variable #l2 @mc5 "Continue search onto the previous page (?/y/n) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
-                !if &iseq #l2 "n"
-                    beginning-of-buffer
-                    !goto beg-of-buff
+                !if &band #l0 1
+                    set-variable #l2 @mc5 "Continue search onto the previous page (?/y/n/a) ? " "yYnNaA" "(Y)es, (N)o, Yes to (A)ll, (C-g)Abort ? "
+                    !if &iseq #l2 "n"
+                        beginning-of-buffer
+                        !goto beg-of-buff
+                    !elif &iseq #l2 "a"
+                        set-variable #l0 &bxo #l0 1
+                    !endif
                 !endif
 *next-page-back
                 !force page-file-page-up
@@ -471,12 +522,16 @@ define-macro page-file-search-backward
                 !goto beg-of-buff
             !endif
         !elif &equ $window-line $window-eline
-            set-variable #l0 2
+            set-variable #l0 &bor 4 &band #l0 1
             !if &les &lget :page-1 2 :page-fsize
-                set-variable #l2 @mc5 "Continue search onto the next page (?/y/n) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
-                !if &iseq #l2 "n"
-                    end-of-buffer
-                    !goto end-of-buff
+                !if &band #l0 1
+                    set-variable #l2 @mc5 "Continue search onto the next page (?/y/n/a) ? " "yYnNaA" "(Y)es, (N)o, Yes to (A)ll, (C-g)Abort ? "
+                    !if &iseq #l2 "n"
+                        end-of-buffer
+                        !goto end-of-buff
+                    !elif &iseq #l2 "a"
+                        set-variable #l0 &bxor #l0 1
+                    !endif
                 !endif
 *next-page-forw
                 !force page-file-page-down
@@ -496,10 +551,17 @@ define-macro page-file-search-backward
 !emacro
 
 define-macro page-file-isearch-forward
-    0 page-file-isearch
+    @# page-file-isearch
 !emacro
 define-macro page-file-isearch-backward
-    1 page-file-isearch
+    &bor @# 2 page-file-isearch
+!emacro
+define-macro page-file-print-line-number
+    !if &les :line-offset 0
+        ml-write "[Current file line number is unknown]"
+        !abort
+    !endif
+    ml-write &spr "[Current file line number is %d]" &add :line-offset $window-aline
 !emacro
 
 define-macro page-file
@@ -517,36 +579,44 @@ define-macro page-file
         ml-write "[File < page-size * 4 - whats the point]"
         !abort
     !endif
-    ; check to see if this file is already paged
-    set-variable #l1 &rig #l0 &rsin "/" #l0
-    set-variable $buffer-names &spr "\*Page %s.*" #l1
-    !while &not &seq &set #l2 $buffer-names ""
-        find-buffer #l2
-        !if &seq $buffer-fname #l0
-            screen-update
-            set-variable #l3 @mc5 "File already paged, create a new page buffer (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
-            !if &not &iseq #l3 "y" 
-                !return
+    !if @#
+        ; check to see if this file is already paged
+        set-variable #l1 &rig #l0 &rsin "/" #l0
+        set-variable $buffer-names &spr "\*Page %s.*" #l1
+        !while &not &seq &set #l2 $buffer-names ""
+            find-buffer #l2
+            !if &seq $buffer-fname #l0
+                screen-update
+                set-variable #l3 @mc5 "File already paged, create a new page buffer (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+                !if &not &iseq #l3 "y" 
+                    !return
+                !endif
+                set-variable $buffer-names ""
             !endif
-            set-variable $buffer-names ""
+        !done
+        ; create the page buffer
+        !if &band @# 2
+            find-buffer "*Page-tmp-bin*"
+            1 buffer-mode "binary"
+            !if &not &exi "fhook-binary"
+                !force execute-file "hkbinary"
+            !endif
+            !force fhook-binary
+        !elif &band @# 16
+            find-buffer "*Page-tmp*"
+        !else
+            find-buffer &spr "*Page-tmp %s" #l1
         !endif
-    !done
-    ; create the page buffer
-    !if &band @# 2
-        find-buffer "*Page-tmp-bin*"
-        1 buffer-mode "binary"
-        !if &not &exi "fhook-binary"
-            !force execute-file "hkbinary"
-        !endif
-        !force fhook-binary
+        set-variable #l2 0
+        !force change-buffer-name &spr "\*Page %s" #l1
+        !while &not $status
+            !force change-buffer-name &spr "\*Page %s<%d>" #l1 &inc #l2 1
+        !done
     !else
-        find-buffer &spr "*Page-tmp %s" #l1
+        set-variable #l2 @2
+        !force 0 delete-buffer #l2
+        find-buffer #l2
     !endif
-    set-variable #l2 0
-    !force change-buffer-name &spr "\*Page %s" #l1
-    !while &not $status
-        !force change-buffer-name &spr "\*Page %s<%d>" #l1 &inc #l2 1
-    !done
     set-variable $buffer-fname #l0
     set-variable :page-fsize #l4
     %page-file-backup buffer-mode "backup"
@@ -579,4 +649,4 @@ define-macro page-bfile
     3 page-file
 !emacro
 
-set-variable .page-file.page-size 102400
+set-variable .page-file.page-size 1048576
