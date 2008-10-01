@@ -27,7 +27,7 @@ define-macro start-up
                 set-variable #l2 &cat #l2 "EOL"
             !endif
             end-of-buffer
-            backward-line
+            !force backward-line
             !if &band $line-flags 0x10
                 !if &len #l2
                     set-variable #l2 &cat #l2 ", "
