@@ -164,24 +164,16 @@ set-variable .session.kill 1
     !done
     find-buffer "*session_tmp*"
     !if .session.kill
-        insert-string &cat #l9 "\b\bkill\b\b\n"
-        set-variable #l1 -1
-        !force yank
+        set-variable #l1 15
         !repeat
-            !tjump &inc #l1 1 1
-            !force -1 reyank
-        !until &not $status
-        insert-newline
-        !while &pdec #l1 1
-            insert-string &cat #l9 "\b\bkill\b\b\n"
-            set-variable #l2 #l1
-            yank
-            !if &pdec #l2 1
-                !force reyank
-                !jump -2
+            !force set-variable #l2 &ind &cat "@y" #l1
+            !if &gre &len #l2 1020
+            !elif &len #l2
+                insert-string &cat #l9 "\b\bkill\b\b\n"
+                insert-string #l2
+                insert-newline
             !endif
-            insert-newline
-        !done
+        !until &not &pdec #l1 1
     !endif
     !if &exi .toolbar.open
         insert-string &cat #l9 "\b\btoolbar\b\b\n"
