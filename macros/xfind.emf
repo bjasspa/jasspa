@@ -32,7 +32,7 @@ define-macro xgrep
     !if @?
         0 pipe-shell-command &spr "%s %s %s" %xgrep-com #l0 %tool-null-file "*grep*" @mna
     !else
-        0 ipipe-shell-command &spr "%s %s %s" %xgrep-com #l0 %tool-null-file "*grep*" @mna
+        0x200 ipipe-shell-command &spr "%s %s %s" %xgrep-com #l0 %tool-null-file "*grep*" @mna
     !endif
 !emacro
 define-macro rgrep
