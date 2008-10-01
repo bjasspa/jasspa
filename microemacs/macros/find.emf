@@ -141,7 +141,11 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
     set-variable #l0 $buffer-bname
     !if &band $buffer-fmod 0x80000
         !repeat
-            !force search-buffer #p7 #p4
+            !if &exi :page-0
+                !force page-file-search-buffer #p7 #p4
+            !else
+                !force search-buffer #p7 #p4
+            !endif
             !if $status
                 set-variable #p6 &add #p6 1
             !endif
@@ -153,12 +157,19 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
         !endif
     !else
         !repeat
-            !force search-buffer #p7 #p4
+            !if &exi :page-0
+                !force page-file-search-buffer #p7 #p4
+            !else
+                !force search-buffer #p7 #p4
+            !endif
             !if $status
                 set-variable #l1 $window-line
                 -2 show-region
                 set-variable #l5 $window-line
                 set-variable #l6 @wl
+                !if &exi :page-0
+                    set-variable #l5 &add #l5 :line-offset
+                !endif
                 33 find-buffer "*grep*"
                 insert-string &spr "%s%s%s:%d:%s\n" #p1 &ind &cat ".find-proc.base" #p0 #p2 #l5 #l6 
                 find-buffer #l0
@@ -220,9 +231,20 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
                     !force 34 find-buffer &cat #l8 #l2
                     !tjump &not $status 2
                 !else
-                    !force 0 delete-buffer "*find-tmp*"
-                    33 find-buffer "*find-tmp*"
-                    !force 2 insert-file &cat #l8 #l2
+                    !if &not &band @# 2
+                        set-variable #l5 &stat i &cat #l8 #l2
+                    !endif
+                    ; check the file size, if larger then 100Mb dont bother unless - 
+                    !if &not &or &lget #l5 5 &gre &lget #l5 6 0x6400000
+                        !force 0 delete-buffer "*find-tmp*"
+                        33 find-buffer "*find-tmp*"
+                        !force 2 insert-file &cat #l8 #l2
+                    !elif &sin "u" #l9
+                        !force 0 page-file &cat #l8 #l2 "*find-tmp*"
+                        -1 buffer-mode "undo"
+                    !else
+                        !cont
+                    !endif
                     !if &not $status
                         !if &not &sin "|" #l9
                             find-buffer "*grep*"
@@ -243,11 +265,19 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
             !endif
             !if &sin "|" #l9
                 !if &sin "w" #l9
-                    !force search-buffer #l7 #l4
-                    !if &not $status
-                        !cont
+                    !if &exi :page-0
+                        !force page-file-search-buffer #l7 #l4
+                        !if &not $status
+                            !cont
+                        !endif
+                        page-file-beginning-of-buffer
+                    !else
+                        !force search-buffer #l7 #l4
+                        !if &not $status
+                            !cont
+                        !endif
+                        beginning-of-buffer
                     !endif
-                    beginning-of-buffer
                 !endif
                 set-variable #p7 &lset #p7 &add #l6 2 &add 1 &lget #p7 &add #l6 2
                 !if &sin "!" #l9
@@ -312,9 +342,9 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
         set-variable #p0 &trl &rig #p0 #l1
         set-variable #l2 &lget #p9 1
         !while &len &set #l3 &lef #l0 1
-            !if &sin #l3 "xgprdfmibl234@-"
+            !if &sin #l3 "uxgprdfmibl234@-"
                 set-variable #l2 &cat #l2 #l3
-            !elif &sin #l3 "XGPRDFMIBL"
+            !elif &sin #l3 "UXGPRDFMIBL"
                 set-variable #l2 &rep #l2 &slo #l3 ""
             !elif &set #l4 &sin #l3 "wsStT!"
                 !if &seq #p0 ""
@@ -710,7 +740,12 @@ define-macro find-rerun
     !elif &band .n 4
     !else
         !force !force !force set-variable #l6 @mc5 &spr "File \"%s\" is read-only, modify (?/y/n/a/o) ? " #l0 "aAnNoOyY"  "(Y)es, (N)o, Yes to (A)ll, N(o) to All, (C-g)Abort ? "
-        !if &not &set #l1 $status
+        !if &not $status
+            !if #l3
+                ; must delete the temp buffer as we changed its name
+                !force 0 delete-buffer $buffer-bname
+            !endif
+            !abort
         !elif &iseq #l6 "o"
             set-variable .n &bor .n 2
             set-variable #l2 -1
