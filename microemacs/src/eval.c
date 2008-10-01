@@ -1586,20 +1586,33 @@ getval(meUByte *tkn)   /* find the value of a token */
         }
         else if(tkn[1] == 'y')
         {
-            /* Don't use the X or windows clipboard in this case */
             meUByte *ss, *dd, cc ;
             meKillNode *killp;
+            meKill *kl ;
             int ii ;
             
             if(alarmState & meALARM_VARIABLE)
                 return tkn ;
+            
+            if(isDigit(tkn[2]))
+            {
+                /* Don't use the X or windows clipboard in this case */
+                ii = meAtoi(tkn+2) ;
+                kl = klhead ;
+                while((kl != NULL) && (--ii >= 0))
+                    kl = kl->next ;
+            }
+            else
+            {
 #ifdef _CLIPBRD
-            TTgetClipboard() ;
+                TTgetClipboard() ;
 #endif
-            if(klhead == (meKill*) NULL)
+                kl = klhead ;
+            }
+            if(kl == (meKill*) NULL)
                 return abortm ;
             dd = evalResult ;
-            killp = klhead->kill ;
+            killp = kl->kill ;
             ii = meBUF_SIZE_MAX-1 ;
             while(ii && (killp != NULL))
             {
@@ -3186,6 +3199,19 @@ get_flag:
                 return abortm ;
             }                
             return meItoa(ftype) ;
+        }
+    case UFBSTAT:
+        {
+            int ret ;
+            switch(arg1[0])
+            {
+            case 'o':
+                ret = bufferOutOfDate(frameCur->bufferCur) ;
+                break ;
+            default:
+                return abortm ;
+            }                
+            return meItoa(ret) ;
         }
 #endif
     }

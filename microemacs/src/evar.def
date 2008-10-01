@@ -233,6 +233,7 @@ DEFFUN (UFBAND,     "ban", FUN_DYNAMIC)     /* Binary and test */
 DEFFUN (UFBMODE,    "bmo", FUN_MONAMIC)     /* Test for a given buffer mode */
 DEFFUN (UFBNOT,     "bno", FUN_MONAMIC)     /* Binary not test */
 DEFFUN (UFBOR,      "bor", FUN_DYNAMIC)     /* Binary or test */
+DEFFUN (UFBSTAT,    "bst", FUN_MONAMIC)     /* Buffer stats */
 DEFFUN (UFBXOR,     "bxo", FUN_DYNAMIC)     /* Binary xor test */
 DEFFUN (UFCAT,      "cat", FUN_DYNAMIC)     /* concatinate string */
 #if MEOPT_EXTENDED
