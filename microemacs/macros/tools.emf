@@ -136,7 +136,7 @@ define-macro execute-tool
     !endif
     !if &seq $buffer-fname ""
         !if &or &or &or &or &sin "%ff" #l1 &sin "%fp" #l1 &sin "%fn" #l1 &sin "%fb" #l1 &sin "%fe" #l1
-            ml-write "[Cannot run command it this buffer - no file name]"
+            ml-write "[Cannot run command with this buffer - no file name]"
             !abort
         !endif
         set-variable #l4 $buffer-bname
@@ -197,7 +197,11 @@ define-macro execute-tool
         set-variable #l3 &bor #l3 2
     !endif
     !if &band #l0 0x40
-        #l3 ipipe-shell-command #l1 #l2
+        !if &band #l0 0x10
+            #l3 ipipe-shell-command #l1 #l2
+        !else
+            0 shell-command #l1
+        !endif
     !elif &band #l0 0x10
         #l3 pipe-shell-command #l1 #l2
     !else
@@ -290,6 +294,11 @@ define-macro reread-all
             find-buffer #l2
             !if &band $buffer-fmod 0x10000
             !elif &len $buffer-fname
+                !if &band @# 0x01
+                    !if &not &bstat o
+                        !cont
+                    !endif
+                !endif
                 !if &bmod "edit"
                     !if &les #l1 0
                         set-variable #l3 "n"

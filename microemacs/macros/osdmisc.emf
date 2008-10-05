@@ -1521,7 +1521,7 @@ define-macro file-type-setup
     set-variable #l2 &spr "/history/%s/tool/%d/flag" $platform .shell-tool-setup.cur
     set-variable #l0 &reg #l2 0x1a
     !if &les @# 0
-        !if &band &set #l1 &abs @# 0x90
+        !if &band &set #l1 &abs @# 0x80
             !if &band #l0 0x40
                 !return
             !endif
@@ -1529,7 +1529,6 @@ define-macro file-type-setup
         set-variable #l0 &bxor #l0 #l1
         !if &band #l0 0x40
             set-variable #l0 &band #l0 0xff7f
-            set-variable #l0 &bor #l0 0x10
         !endif
         set-registry #l2 #l0
         !if &band #l1 0x50
