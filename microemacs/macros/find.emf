@@ -227,10 +227,30 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
                 ml-write &spr "Searching %d %n" &lget #p7 1 &mod &lget #p7 4 40 "."
             !endif
             !if &band @# 1
-                !if &sin "l" #l9
+                !if &set #l3 &sin "l" #l9
                     !force 34 find-buffer &cat #l8 #l2
-                    !tjump &not $status 2
-                !else
+                    !if &not &set #l3 $status
+                    !elif &set #l3 &not &bstat o
+                    !elif &set #l3 &sin "o" #l9
+                    !elif &sin "a" #l9
+                        set-variable #l3 -1
+                    !else
+                        set-variable #l3 @mc5 &spr "Buffer \"%s\" is out of date, reread (?/y/n/a/o/d) ? " $buffer-bname "aAdDnNoOyY"  "(Y)es, (N)o, Yes to (A)ll, N(o) to All, (D)on't use buffer, (C-g)Abort ? "
+                        !if &iseq #l3 "o"
+                            set-variable #p9 &lset #p9 1 &set #l9 &cat #l9 "o"
+                            set-variable #l3 1
+                        !elif &iseq #l3 "a"
+                            set-variable #p9 &lset #p9 1 &set #l9 &cat #l9 "a"
+                            set-variable #l3 -1
+                        !else
+                            set-variable #l3 &lget "|0|-1|1|" &isin #l3 "dyn"
+                        !endif
+                    !endif
+                    !if &les #l3 0
+                        !force reread-file
+                    !endif
+                !endif
+                !if &not #l3
                     !if &not &band @# 2
                         set-variable #l5 &stat i &cat #l8 #l2
                     !endif
