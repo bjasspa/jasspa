@@ -2758,8 +2758,8 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
                 }
                 else
 #endif
+                    if(homedir != NULL)
                 {
-                    meAssert(homedir != NULL) ;
                     meStrcpy(p1,homedir) ;
                     p1 += meStrlen(p1) - 1 ;
                     if((p[0] != '\0') && (p[0] != DIR_CHAR))
@@ -2770,6 +2770,8 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
                         *p1++ = DIR_CHAR ;
                     }
                 }
+                else
+                    p-- ;
                 meStrcpy(p1,p) ;
             }
         }
