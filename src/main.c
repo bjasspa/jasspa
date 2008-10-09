@@ -1227,7 +1227,7 @@ mesetup(int argc, char *argv[])
     meUByte  *clientMessage=NULL ;
     int     userClientServer=0 ;
 #endif
-    startTime = time(NULL) ;
+    startTime = (meInt) time(NULL) ;
     
     /* asserts to check that the defines are consistent */
 #if MEOPT_NARROW

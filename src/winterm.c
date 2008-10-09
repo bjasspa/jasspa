@@ -491,7 +491,7 @@ gettimeofday (struct meTimeval *tp, struct meTimezone *tz)
     UNREFERENCED_PARAMETER (tz);
 
     /* Get the second resolution time */
-    tp->tv_sec = time(NULL) ;
+    tp->tv_sec = (int) time(NULL) ;
 
     /* Get the microsecond time */
     GetLocalTime(&stime) ;
