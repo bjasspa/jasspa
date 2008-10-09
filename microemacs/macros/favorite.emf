@@ -56,7 +56,12 @@
             !endif
             forward-line
         !done
-        find-file @wl
+        set-variable #l1 @wl
+        -1 find-buffer $buffer-bname
+        !force file-tool-exec-default #l1
+        !if &not $status
+            find-file #l1
+        !endif
     !endif
 !emacro
 
