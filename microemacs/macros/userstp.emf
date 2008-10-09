@@ -226,8 +226,6 @@ set-variable %user-misc-cmd  "|alias-path-setup|cc-setup|cvs-setup|mail-setup|fi
 !emacro
 
 ; Miscellaneous Setup ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-define-macro-file filetool file-tool-setup
-
 0 define-macro user-setup-misc
     !force !force 0 execute-named-command &lget %user-misc-cmd @#
 !emacro
