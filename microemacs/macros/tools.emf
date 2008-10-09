@@ -10,16 +10,64 @@
 ; Notes:       There may be a bit too much color in the diff!
 ;
 ; One off set up of tools variables.
-    !if &not &exi %diff-com
-        ; Assume GNU diff utility - probably the best under all platforms !!.
-        ;set-variable %diff-com "diff -c -w"
-        ; Standard diff utility
-        set-variable %diff-com "diff"
-    !endif
+!if &not &exi %diff-com
+    ; Assume GNU diff utility - probably the best under all platforms !!.
+    ;set-variable %diff-com "diff -c -w"
+    ; Standard diff utility
+    set-variable %diff-com "diff"
 !endif
 
 add-file-hook "*compile* *grep*" fhook-ipipe
+-1 add-next-line "*compile*" "^->"
 
+0 define-macro compile-ipipe
+    !if &not &exi :compile-last
+        set-variable :compile-last 4
+    !endif
+    goto-alpha-mark "I"
+    !if &equ $window-line :compile-last
+        !return
+    !endif
+    set-variable #l0 $window-line
+    goto-line &sub :compile-last 1
+    !repeat
+        !force 0 get-next-line
+        !if &not $status
+            goto-line #l0
+        !elif &les $window-line #l0
+            !if &isin "error" @wl
+                set-variable $line-scheme .scheme.error
+            !elif &isin "warn"  @wl
+                set-variable $line-scheme .scheme.comment
+            !else
+                set-variable $line-scheme .scheme.error
+            !endif
+            !if &not &bmod "wrap"
+                !force set-variable $window-acol &sub $window-width 1
+                !if $status
+                    ; pretend to wrap the error lines otherwise the message will be off screen
+                    set-variable #l1 $line-scheme
+                    set-variable #l2 $window-line
+                    set-mark
+                    end-of-line
+                    copy-region
+                    insert-string "\n->"
+                    0 reyank
+                    -1 yank
+                    set-variable $line-scheme #l1
+                    !force set-variable $window-acol &sub $window-width 1
+                    !if $status
+                        insert-string "\\\n->"
+                        !jump -4
+                    !endif
+                    set-variable #l0 &add #l0 &sub $window-line #l2
+                !endif
+            !endif
+        !endif
+    !until &not &les $window-line #l0
+    goto-alpha-mark  "I"
+    set-variable :compile-last $window-line
+!emacro
 define-macro compile
     !force set-variable %compile-tmp @1
     !if $status
@@ -32,7 +80,7 @@ define-macro compile
         set-variable %compile-com @ml20 "compile" %compile-com
     !endif
     &band @# 1 save-some-buffers @mna
-    &con &band @# 2 0x200 0 ipipe-shell-command %compile-com "*compile*" @mna
+    &con &band @# 2 0x80 0x280 ipipe-shell-command %compile-com "*compile*" compile-ipipe @mna
 !emacro
 define-macro which
     !force set-variable #l0 @1
