@@ -15,36 +15,6 @@
     hilight .hilight.gdb 2 "Source file is more recent" .scheme.error
     hilight .hilight.gdb 2 "(dbx)"        .scheme.keyword
     hilight .hilight.gdb 2 "  DB<[0-9]*>" .scheme.keyword
-    
-    ; Compile hilighting - I'm not sure if I like this here - Jon. Would be
-    ; better if the hilight.compile was pre-defined and then the macro schemes
-    ; for each target platform defined the hilighting for the compiler. Using
-    ; this method will then be able to deal with any error line format in an
-    ; extensible way. 
-    !if &not &exi .hilight.compile
-        set-variable .hilight.compile  &pinc .hilight.next 1
-    !endif
-    0 hilight .hilight.compile 0                                   $global-scheme
-    ; gcc compiler errors and warnings.
-    hilight .hilight.compile 0x02  "^[^:]+:[0-9]+: "               .scheme.error 
-    hilight .hilight.compile 0x02  "^[^:]+:[0-9]+: warning:"       .scheme.comment 
-    ; dos
-    hilight .hilight.compile 0x02  "^[^(]+([0-9]+): error"         .scheme.error  
-    hilight .hilight.compile 0x02  "^[^(]+([0-9]+): warn"          .scheme.comment
-    ; hpux
-    hilight .hilight.compile 0x02 "^cc: \"[^\"]+\", line [0-9]+"   .scheme.error  
-    hilight .hilight.compile 0x02 "^cpp: \"[^\"]+\", line [0-9]+"  .scheme.error
-    ; irix
-    hilight .hilight.compile 0x02 "^\"[^\"]+\", line [0-9]+:"      .scheme.error  
-    hilight .hilight.compile 0x02 "^\"[^\"]+\", line [0-9]+: warn" .scheme.comment  
-    hilight .hilight.compile 0x02 "^cfe: Error:"                   .scheme.error
-    hilight .hilight.compile 0x02 "^cfe: Warning [0-9]*:"          .scheme.comment
-    ; win32
-    hilight .hilight.compile 0x02  "^[^(]+([0-9]+) : error"        .scheme.error  
-    hilight .hilight.compile 0x02  "^[^:]+: error LNK"             .scheme.error  
-    hilight .hilight.compile 0x02  "^[^(]+([0-9]+) : warn"         .scheme.comment
-    ; aix
-    hilight .hilight.compile 0x02  "^\"[^\"]+\", line [0-9]+"      .scheme.error  
 !endif
 
 ; Local macro to allow the next line to be selected when the <return> key is
@@ -493,11 +463,6 @@ define-macro fhook-ipipe
             set-variable :mouse-word-select "mouse-get-next-line"
             ; Bind <return> to select the buffer - same as mouse.
             buffer-bind-key return-get-next-line "return"
-            ; the processor is hammered if hilighting very long compiler lines 
-            !if &not &bmod "wrap"
-            !elif &band .hilight.flags 0x02
-                set-variable $buffer-hilight .hilight.compile
-            !endif
         !elif &seq $buffer-bname "*grep*"
             set-variable :mouse-word-select "mouse-get-next-line"
             ; Bind <return> to select the buffer - same as mouse.
