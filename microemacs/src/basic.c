@@ -369,7 +369,7 @@ windowGotoAbsLine(meInt line)
     meLine *lp ;
     int rr ;
     
-    if (line == 0)		/* if a bogus argument...then leave */
+    if(line == 0)		/* if a bogus argument...then leave */
         return meFALSE ;
 #if MEOPT_NARROW
     if(frameCur->bufferCur->narrow != NULL)

@@ -239,7 +239,7 @@ getNextLine(int f,int n)
                 else if(findSwapFileList(nextFile,(BFND_CREAT|BFND_MKNAM),0,0) <= 0)
                     return meFALSE ;
                 if(curLine <= 0)
-                    return mlwrite(MWABORT,(meUByte *)"[No Line number]") ;
+                    return mlwrite(MWABORT,(meUByte *)"[No line number]") ;
                 /* if for some strange reason the file wasn't found, but the directory
                  * was and its read only, the findSwapFileList will succeed (new buffer)
                  * BUT the file name will be null! catch this and just use the buffer name */ 
