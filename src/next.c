@@ -137,7 +137,9 @@ getNextLine(int f,int n)
                 no = ii ;
                 break ;
             }
-            if((bp == NULL) || (bp->windowCount < tbp->windowCount))
+            if((n & 0x01) && 
+               ((bp == NULL) || (bp->windowCount < tbp->windowCount) ||
+                ((bp->windowCount == tbp->windowCount) && (bp->histNo > tbp->histNo))))
             {
                 bp = tbp ;
                 no = ii ;
@@ -145,9 +147,9 @@ getNextLine(int f,int n)
         }
     }
     if(bp == NULL)
-        return mlwrite(MWABORT,(meUByte *)"[No next buffer found]") ;
+        return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No next buffer found]") ;
     if((noNextLines = nextLineCnt[no]) == 0)
-        return mlwrite(MWABORT,(meUByte *)"[No lines for next buffer %s]",bp->name) ;
+        return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No lines for next buffer %s]",bp->name) ;
     nextLines = nextLineStr[no] ;
     
     meWindowPopup(bp->name,WPOP_MKCURR,NULL) ;
@@ -213,6 +215,11 @@ getNextLine(int f,int n)
                     return mlwrite(MWABORT,(meUByte *)"[No File name]") ;
                 else
                     ii = meStrlen(nextFile) ;
+                SetUsrLclCmdVar((meUByte *)"next-line",meItoa(curLine),&(bp->varList)) ;
+                
+                if((n & 0x01) == 0)
+                    return meTRUE ;
+                    
                 if(meWindowPopup(NULL,WPOP_MKCURR,NULL) == NULL)
                     return meFALSE ;
                 if((nextFile[0] == '*') && (nextFile[ii-1] == '*'))
@@ -231,7 +238,7 @@ getNextLine(int f,int n)
                 }
                 else if(findSwapFileList(nextFile,(BFND_CREAT|BFND_MKNAM),0,0) <= 0)
                     return meFALSE ;
-                if(curLine < 0)
+                if(curLine <= 0)
                     return mlwrite(MWABORT,(meUByte *)"[No Line number]") ;
                 /* if for some strange reason the file wasn't found, but the directory
                  * was and its read only, the findSwapFileList will succeed (new buffer)
