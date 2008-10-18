@@ -1738,7 +1738,7 @@ int
 findFileList(meUByte *fname, int bflag, meInt lineno, meUShort colno)
 {
     register int nofiles=0, ii ;
-    meUByte fileName[meBUF_SIZE_MAX], *baseName ;
+    meUByte fileName[meBUF_SIZE_MAX], *baseName, cc ;
 
     bufHistNo++ ;
     fileNameCorrect(fname,fileName,&baseName) ;
@@ -1751,6 +1751,7 @@ findFileList(meUByte *fname, int bflag, meInt lineno, meUShort colno)
         meUByte mask[meBUF_SIZE_MAX] ;
 
         fileMaskToRegex(mask,baseName) ;
+        cc = *baseName ;
         *baseName = '\0' ;
         getDirectoryList(fileName,&curDirList) ;
         for(ii=0 ; ii<curDirList.size ; ii++)
@@ -1766,8 +1767,9 @@ findFileList(meUByte *fname, int bflag, meInt lineno, meUShort colno)
                 nofiles += findFileSingle(fileName,bflag,lineno,colno) ;
             }
         }
+        *baseName = cc ;
     }
-    else
+    if(nofiles == 0)
         nofiles += findFileSingle(fileName,bflag,lineno,colno) ;
     return nofiles ;
 }
