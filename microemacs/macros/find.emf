@@ -45,7 +45,7 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
     hilight .hilight.find 0x102 " d" .scheme.dir
     hilight .hilight.find 0x102 "*d" .scheme.dir-select
     hilight .hilight.find 0x102 "*f" .scheme.select
-    hilight .hilight.find 0x102 "[^[* ][^:]+: read-only" .scheme.no2
+    hilight .hilight.find 0x102 "[^[* ][^:]+: Error" .scheme.no2
     hilight .hilight.find 0x102 "\\[\\*\\*\\*\\* " .scheme.no1
     hilight .hilight.find 0x102 "\\[\\*\\*\\*\\* Error" .scheme.error
     0 hilight .hilight.grep 0        $global-scheme
@@ -259,19 +259,29 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
                         !force 0 delete-buffer "*find-tmp*"
                         33 find-buffer "*find-tmp*"
                         !force 2 insert-file &cat #l8 #l2
+                        set-variable #l3 &not $status
+                    !elif &sin "!" #l9
+                        set-variable #l3 4
                     !elif &sin "u" #l9
                         !force 0 page-file &cat #l8 #l2 "*find-tmp*"
-                        -1 buffer-mode "undo"
+                        !if $status
+                            -1 buffer-mode "undo"
+                        !else
+                            set-variable #l3 2
+                        !endif
                     !else
-                        !cont
+                        set-variable #l3 3
                     !endif
-                    !if &not $status
+                    !if #l3
+                        set-variable #l3 &lget "|failed to load file|page-file failed to load file|file to large (use -u)|file to large|" #l3
                         !if &not &sin "|" #l9
                             find-buffer "*grep*"
-                            insert-string &spr "%s%s%s: Error - failed to load file\n" #l1 &ind &cat ".find-proc.base" #l0 #l2
-                        !elif &not &sin "!" #l9
+                            insert-string &spr "%s%s%s: Error - %s\n" #l1 &ind &cat ".find-proc.base" #l0 #l2 #l3
+                        !elif &sin "!" #l9
+                            execute-line &spr "-1 %s %s%s \"%s\"" &lget #p9 7 #l8 #l2 #l3 
+                        !else
                             find-buffer "*find*"
-                            insert-string &spr "[**** Error: failed to load file %s%s%s ****]\n" #l1 &ind &cat ".find-proc.base" #l0 #l2
+                            insert-string &spr "[**** Error: %s %s%s%s ****]\n" #l3 #l1 &ind &cat ".find-proc.base" #l0 #l2
                         !endif
                         !cont
                     !endif
@@ -733,9 +743,16 @@ define-macro find-rerun
 
 
 0 define-macro rsif-callback
-    set-variable #l0 @1
-    ;1000 ml-write &spr "[Replace \"%s\" with \"%s\" buff \"%s\" in \"%s\"]" .f .t $buffer-bname #l0
     set-position "\x82"
+    set-variable #l0 @1
+    ;2000 ml-write &spr "[Replace %d \"%s\" with \"%s\" buff \"%s\" in \"%s\"]" @# .f .t $buffer-bname #l0
+    !if &les @# 0
+        ; reporting an error
+        33 find-buffer "*replace*"
+        insert-string &spr "%s%s%s: Error - %s\n" #p1 &ind &cat ".find-proc.base" #p0 #p2 @2
+        !force goto-position "\x82"
+        !return
+    !endif
     beginning-of-buffer
     !if &set #l3 &seq $buffer-bname "*find-tmp*"
         !force set-variable $buffer-bname #l0
@@ -779,7 +796,7 @@ define-macro find-rerun
         !force goto-position "\x82"
         set-variable #l6 $buffer-bname
         33 find-buffer "*replace*"
-        insert-string &spr "%s%s%s: read-only\n" #p1 &ind &cat ".find-proc.base" #p0 #p2
+        insert-string &spr "%s%s%s: Error - read-only\n" #p1 &ind &cat ".find-proc.base" #p0 #p2
         find-buffer #l6
     !elif #l2
         -1 buffer-mode "view"
