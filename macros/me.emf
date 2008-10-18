@@ -353,7 +353,8 @@ add-next-line "*grep*" "%f:%l:"
     !force execute-file &cat "me" #l0
 !endif
 ; load ftp/http registry file
-!if &not &seq &set #l0 &reg "/history/url-file" "" ""
+!if &seq &set #l0 &reg "/history/url-file" "" ""
+!elif &not &seq &find #l0 ".erf" "ERROR"
     !force read-registry "/url" #l0 "y"
 !endif
 ; execute company setup
