@@ -1361,9 +1361,9 @@ execFuncHidden(int keyCode, int index, meUInt arg)
 int
 execBufferFunc(meBuffer *bp, int index, int flags, int n)
 {
-    int movePos = ((flags & meEBF_USE_B_DOT) && (bp == frameCur->bufferCur)) ; 
+    meSelection sh ;
     meUByte tf, lf, cs;
-    int tc, ti, ret ;
+    int cg, tc, ti, ret ;
     
     cs = cmdstatus ;
     tc = thisCommand ;
@@ -1371,13 +1371,18 @@ execBufferFunc(meBuffer *bp, int index, int flags, int n)
     tf = thisflag ;
     lf = lastflag ;
     thisIndex = index ;
-    if(movePos)
+    if(flags & meEBF_USE_B_DOT)
     {
-        /* drop an anchor and return back to it after */
-        meAnchorSet(frameCur->bufferCur,meANCHOR_EXEC_BUFFER,frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset,1) ;
-        frameCur->windowCur->dotLine = frameCur->bufferCur->dotLine ;
-        frameCur->windowCur->dotOffset = frameCur->bufferCur->dotOffset ;
-        frameCur->windowCur->dotLineNo = frameCur->bufferCur->dotLineNo ;
+        cg = curgoal ;    
+        memcpy(&sh,&selhilight,sizeof(meSelection)) ;
+        if(bp == frameCur->bufferCur)
+        {
+            /* drop an anchor and return back to it after */
+            meAnchorSet(frameCur->bufferCur,meANCHOR_EXEC_BUFFER,frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset,1) ;
+            frameCur->windowCur->dotLine = frameCur->bufferCur->dotLine ;
+            frameCur->windowCur->dotOffset = frameCur->bufferCur->dotOffset ;
+            frameCur->windowCur->dotLineNo = frameCur->bufferCur->dotLineNo ;
+        }
     }
     if(bp != frameCur->bufferCur)
     {
@@ -1415,17 +1420,31 @@ execBufferFunc(meBuffer *bp, int index, int flags, int n)
     }
     else
         ret = execFunc(index,(flags & meEBF_ARG_GIVEN),n) ;
-    if(movePos)
+    if(flags & meEBF_USE_B_DOT)
     {
-        /* return back to the anchor */
-        if(meAnchorGet(frameCur->bufferCur,meANCHOR_EXEC_BUFFER) > 0)
+        if(bp == frameCur->bufferCur)
         {
-            frameCur->windowCur->dotLine = frameCur->bufferCur->dotLine ;
-            frameCur->windowCur->dotOffset = frameCur->bufferCur->dotOffset ;
-            frameCur->windowCur->dotLineNo = frameCur->bufferCur->dotLineNo ;
-            frameCur->windowCur->updateFlags |= WFMOVEL ;
+            /* return back to the anchor */
+            if(meAnchorGet(frameCur->bufferCur,meANCHOR_EXEC_BUFFER) > 0)
+            {
+                frameCur->windowCur->dotLine = frameCur->bufferCur->dotLine ;
+                frameCur->windowCur->dotOffset = frameCur->bufferCur->dotOffset ;
+                frameCur->windowCur->dotLineNo = frameCur->bufferCur->dotLineNo ;
+                frameCur->windowCur->updateFlags |= WFMOVEL ;
+            }
+            meAnchorDelete(frameCur->bufferCur,meANCHOR_EXEC_BUFFER) ;
         }
-        meAnchorDelete(frameCur->bufferCur,meANCHOR_EXEC_BUFFER) ;
+        selhilight.bp = NULL ;
+        selhilight.flags = 0 ;
+        if(sh.flags != 0)
+        {
+            meBuffer *bp = bheadp ;
+            while((bp != NULL) && (bp != sh.bp))
+                bp = bp->next;
+            if((bp != NULL) && (sh.dotLineNo < bp->lineCount) && (sh.markLineNo < bp->lineCount))
+                memcpy(&selhilight,&sh,sizeof(meSelection)) ;
+        }
+        curgoal = cg ;    
     }
     thisflag = tf;
     lastflag = lf;

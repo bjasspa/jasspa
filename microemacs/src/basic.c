@@ -176,12 +176,12 @@ windowForwardLine(int f, int n)
     register meLine *dlp;
     register long  dln;
     
-    if (n < 0)
-        return (windowBackwardLine(f, -n));
+    if(n < 0)
+        return windowBackwardLine(f,-n) ;
 
     /* if the last command was not a line move,
        reset the goal column */
-    if ((lastflag&meCFCPCN) == 0)
+    if((lastflag & meCFCPCN) == 0)
         curgoal = getcwcol();
     
     /* and move the point up */
