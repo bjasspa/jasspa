@@ -29,11 +29,11 @@ add-file-hook "*compile* *grep*" fhook-ipipe
         !return
     !endif
     set-variable #l0 $window-line
-    goto-line &sub :compile-last 1
+    set-variable $window-line :compile-last 1
     !repeat
         !force 0 get-next-line
         !if &not $status
-            goto-line #l0
+            set-variable $window-line #l0
         !elif &les $window-line #l0
             !if &isin "error" @wl
                 set-variable $line-scheme .scheme.error
@@ -65,8 +65,7 @@ add-file-hook "*compile* *grep*" fhook-ipipe
             !endif
         !endif
     !until &not &les $window-line #l0
-    goto-alpha-mark  "I"
-    set-variable :compile-last $window-line
+    set-variable :compile-last #l0
 !emacro
 define-macro compile
     !force set-variable %compile-tmp @1
