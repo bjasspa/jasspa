@@ -462,8 +462,9 @@ osd 7 100 ""  "\HOrganizer..."                    f organizer
 osd 7 110 ""  "\HSend Mail"                       f mail
 osd 7 120 ""  "\HView Mail"                       f vm
 osd 7 130 "-"
-osd 7 140 ""  "\HIpipe Command...    esc \\"      f ipipe-shell-command
-osd 7 150 ""  "S\Hhell               C-x c"       f shell
+osd 7 140 "M" "File \HTools"               .osd.tmp file-tool-menu
+osd 7 150 ""  "\HIpipe Command...    esc \\"      f ipipe-shell-command
+osd 7 160 ""  "S\Hhell               C-x c"       f shell
 ; Setup the users tools
 set-variable #l0 0
 !repeat
