@@ -6,16 +6,47 @@
 ; Created:     Fri Jun 17 2005
 ; Synopsis:    File browser file tools
 ; Authors:     Steven Phillips
+; Notes:       See osdmics.emf for the setup GUI
 ;
+; usage: n file-tool-run "<command-line>" "<file-name>" "[output-buffer-name]"
+; where n is a bit based flag defined as follows:
+;     0x0001 : Save current buffer
+;     0x0002 : Prompt before saving current buffer
+;     0x0004 : Save all buffers
+;     0x0008 : Prompt before saving all buffers
+;     0x0010 : Default tool for file
+;     0x0020 : Command is a macro
+;     0x0040 : Run command concurrently
+;     0x0080 : Capture command output
+;     0x0100 : Hide the output buffer
+;     0x0200 : Show new command console window
+;     0x0400 : Reread buffer after execution
+;     0x1000 : use a .find-file var for the <file-name>, the <file-name> arg is the file number (i.e. 1,2,...)
+;     0x2000 : use all files in .find-file vars (i.e. %*[..%] multi-file command), the <file-name> arg is not used
+;     0x4000 : Capture output to buffer <output-buffer-name>
 0 define-macro file-tool-run
-    set-variable #l0 &rep &rep &rep &rep &rep @1 "%%" "\bA" "%\"" "\bE" "%[" "\bB" "%|" "\bC" "%]" "\bD"
-    set-variable #l1 &rep &rep &rep &rep .find-file.file-dir "%" "\bA" "[" "\bB" "|" "\bC" "]" "\bD"
-    set-variable #l0 &rep #l0 "%p" #l1
-    !if &band $system 0x100
-        set-variable #l1 &rep #l1 "/" "\\"
+    !if &band @# 0x1000 
+        set-variable .p .find-file.file-dir
+        set-variable #l1 &rep &ind &cat ".find-file.file" @2 "%" "\bA"
+    !elif &band @# 0x2000
+        set-variable .p .find-file.file-dir
+        set-variable #l1 &rep .find-file.file1 "%" "\bA"
+    !else
+        set-variable #l2 @2
+        !if &seq "" &set #l1 &rig #l2 &rsin "/" #l2
+            ; cope with a directory name
+            set-variable #l1 &rig #l2 &rsin "/" &lef #l2 -1
+        !endif
+        set-variable .p &lef #l2 &neg &len #l1
+        set-variable #l1 &rep #l1 "%" "\bA"
     !endif
-    set-variable #l0 &rep #l0 "%P" #l1
-    set-variable #l1 &rep &ind &cat ".find-file.file" @# "%" "\bA"
+    set-variable #l0 &rep &rep &rep &rep &rep @1 "%%" "\bA" "%\"" "\bE" "%[" "\bB" "%|" "\bC" "%]" "\bD"
+    set-variable #l2 &rep &rep &rep &rep .p "%" "\bA" "[" "\bB" "|" "\bC" "]" "\bD"
+    set-variable #l0 &rep #l0 "%p" #l2
+    !if &band $system 0x100
+        set-variable #l2 &rep #l2 "/" "\\"
+    !endif
+    set-variable #l0 &rep #l0 "%P" #l2
     !if &seq &rig #l1 -1 "/"
         set-variable #l1 &lef #l1 -1
     !endif
@@ -45,27 +76,47 @@
     set-position "\x8a"
     !force 0 delete-buffer "*file-tool-temp*"
     find-buffer "*file-tool-temp*"
-    set-variable $buffer-fname .find-file.file-dir
-    !if @?
+    set-variable $buffer-fname .p
+    !if &not &band @# 0x2000
+        !if &sin "%*[" #l0
+            !if &not &sin "]" #l0
+                ml-write "[Error: Missing ']' in %*[ multi-file command line]"
+                !abort
+            !endif
+            set-variable #l0 &rep &rep #l0 "%*[" "" "]" ""
+        !endif
         set-variable #l0 &rep &rep &rep #l0 "%f" #l1 "%b" #l2 "%e" #l3
         set-variable #l0 &rep &rep &rep &rep #l0 "\bA" "%" "\bB" "[" "\bC" "|" "\bD" "]"
         !while &set #l4 &sin "\bE" #l0
             !if &not &set #l5 &sin "\bE" &rig #l0 &add #l4 1
                 ml-write "[Error: Missing '%\"' in command line]"
                 !abort
-            !elif &not &xse &set #l3 &mid #l0 &add #l4 1 &sub #l5 1 ".*\\s.*"
+            !elif &not &xse &set #l7 &mid #l0 &add #l4 1 &sub #l5 1 ".*\\s.*"
             !elif &band $system 0x100
-                set-variable #l3 &spr "\"%s\"" #l3
+                set-variable #l7 &spr "\"%s\"" #l7
             !else
-                set-variable #l3 &spr "\"%s\"" &rep &rep #l3 "\\" "\\\\" "\"" "\\\""
+                set-variable #l7 &spr "\"%s\"" &rep &rep #l7 "\\" "\\\\" "\"" "\\\""
             !endif
-            set-variable #l0 &spr "%s%s%s" &lef #l0 &sub #l4 1 #l3 &rig #l0 &add &add #l4 #l5 2
+            set-variable #l0 &spr "%s%s%s" &lef #l0 &sub #l4 1 #l7 &rig #l0 &add &add #l4 #l5 2
         !done
         ml-write &spr "[Launching: %s]" #l0
-        !if &seq &lef #l0 1 "*"
-            !force !force execute-line &rig #l0 1
+        !if &band @# 0x20
+            !force !force execute-line #l0
+        !elif &band @# 0x80
+            ; capture output
+            set-variable #l4 &cond &band @# 0x200 0x25 5
+            !tjump &not &band @# 0x4000 3
+            set-variable #l4 &bxor #l4 1 
+            set-variable #l7 &rep &rep &rep @3 "%f" #l1 "%b" #l2 "%e" #l3
+            !tjump &not &band @# 0x100 2
+            set-variable #l4 &bor #l4 2 
+            !if &band @# 0x40
+                !force !force #l4 ipipe-shell-command #l0 #l7
+            !else
+                !force !force #l4 pipe-shell-command #l0 #l7
+            !endif
         !else
-            !force !force @2 shell-command #l0
+            !force !force &bor &cond &band @# 0x40 0 1 &cond &band @# 0x200 0x24 4 shell-command #l0
         !endif
     !elif &not &set #l7 &sin "%*[" #l0
         ml-write "[Error: Missing '%*[' in command line]"
@@ -131,40 +182,87 @@
             !endif
         !until &not $status
         ml-write &spr "[Launching: %s]" &lef @wl 500
-        !if &seq &lef #l0 1 "*"
+        !if &band @# 0x20
             !force !force execute-buffer "*file-tool-temp*"
+        !elif &band @# 0x80
+            ; capture output
+            set-variable #l4 &cond &band @# 0x200 0x125 0x105
+            !tjump &not &band @# 0x4000 3
+            set-variable #l4 &bxor #l4 1 
+            set-variable #l7 @3
+            !tjump &not &band @# 0x100 2
+            set-variable #l4 &bor #l4 2 
+            !if &band @# 0x40
+                !force !force #l4 ipipe-shell-command "*file-tool-temp*" #l7
+            !else
+                !force !force #l4 pipe-shell-command "*file-tool-temp*" #l7
+            !endif
         !else
-            !force !force &bor @2 0x100 shell-command "*file-tool-temp*"
+            !force !force &bor &cond &band @# 0x40 0 1 &cond &band @# 0x200 0x124 0x104 shell-command "*file-tool-temp*"
         !endif
     !endif
+    set-variable #l1 $status
     !if &seq $buffer-bname "*file-tool-temp*"
         !force goto-position "\x8a"
     !endif
     !force 0 delete-buffer "*file-tool-temp*"
+    !return #l1
 !emacro
 
 0 define-macro file-tool-exec
+    !if &set #l1 &les @# 0
+        set-variable @# &abs @#
+    !elif .find-file.file-count
+    !elif &or &or &sin "%f" #l0 &sin "%b" #l0 &sin "%e" #l0
+        ml-write "[Error: No files selected]"
+        !abort
+    !endif
+    set-variable #l8 $buffer-bname
     set-variable #l0 &reg &spr "/history/%s/file-tool/%d/cmd" $platform @# ""
-    set-variable #l9 &cond &reg &spr "/history/%s/file-tool/%d/hide" $platform @# "0" 0x04 0x24
-    !if &not .find-file.file-count
-        !if &or &or &sin "%f" #l0 &sin "%b" #l0 &sin "%e" #l0
-            ml-write "[Error: No files selected]"
-            !abort
+    set-variable #l9 &reg &spr "/history/%s/file-tool/%d/flag" $platform @# "0x240"
+    !if &and &bmod "edit" &band #l9 0x01
+        !if &band #l9 0x02
+            set-variable #l2 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+            !if &iseq #l2 "y"
+                save-buffer @mna
+            !endif
+        !else
+            save-buffer @mna
         !endif
     !endif
-    !if &sin "%*[" #l0
-        file-tool-run #l0 #l9
+    !if &band #l9 0x04
+        &cond &band #l9 0x08 1 0 save-some-buffers @mna
+    !endif
+    !if &len &set #l3 &reg &spr "/history/%s/file-tool/%d/bname" $platform @# ""
+        set-variable #l9 &bor #l9 0x4000
+    !endif
+    !if #l1
+        !force set-variable #l2 @1
+        !if $status
+        !elif &len $buffer-fname
+            set-variable #l2 $buffer-fname
+        !else
+            set-variable #l2 $buffer-bname
+        !endif
+        #l9 file-tool-run #l0 #l2 #l3
+    !elif &sin "%*[" #l0
+        &bor 0x2000 #l9 file-tool-run #l0 "" #l3
     !elif &equ .find-file.file-count 1
-        1 file-tool-run #l0 #l9
+        &bor 0x1000 #l9 file-tool-run #l0 1 #l3
     !else
-        set-variable #l1 @mc5 &spr "Launch %d separate processes (?/y/n) ? " .find-file.file-count "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
-        !if &not &iseq #l1 "y"
+        set-variable #l2 @mc5 &spr "Launch %d separate processes (?/y/n) ? " .find-file.file-count "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
+        !if &not &iseq #l2 "y"
             !abort
         !endif
-        set-variable #l1 0
-        !while &les &pinc #l1 1 .find-file.file-count
-            #l1 file-tool-run #l0 #l9
+        set-variable #l2 0
+        !while &les &pinc #l2 1 .find-file.file-count
+            &bor 0x1000 #l9 file-tool-run #l0 #l2 #l3
         !done
+    !endif
+    ;reread the buffer
+    !if &band #l9 0x400
+        popup-window #l8
+        reread-file
     !endif
 !emacro
 
@@ -173,216 +271,13 @@
     !if &not &seq &set #l1 &rig #l0 &rsin "/" #l0 ""
         set-variable #l2 0
         !while &not &seq &reg &set #l3 &spr "/history/%s/file-tool/%d" $platform &inc #l2 1 "" ""
-            !if &reg &cat #l3 "/default" "0"
-                set-variable #l4 &reg &cat #l3 "/mask" ""
-                !if &xis #l1 #l4
-                    set-variable .find-file.file-count 1
-                    set-variable .find-file.file-dir &lef #l0 &rsin "/" #l0
-                    set-variable .find-file.file1 #l1
-                    !force #l2 file-tool-exec
-                    !return
-                !endif
+            !if &not &band 0x10 &reg &cat #l3 "/flag" "0x240"
+            !elif &xis #l1 &reg &cat #l3 "/mask" ""
+                !force &neg #l2 file-tool-exec #l0
+                !return
             !endif
         !done
     !endif
     !abort
 !emacro
 
-0 define-macro file-tool-menu
-    !if &not @?
-        set-variable @# .osd.tmp
-        set-variable $mouse-x $cursor-x
-        set-variable $mouse-y &add $cursor-y 1
-    !endif
-    !if :tag-count
-        !force 10 dirlst-tag-list "File Tools"
-    !else
-        !force 2 dirlst-get-filename "File Tools"
-    !endif
-    -1 osd @#
-    osd @# 0 "b"
-    !if .find-file.file-count
-        set-variable #l0 0
-        set-variable #l4 0
-        !while &not &seq &set #l2 &reg &set #l1 &spr "/history/%s/file-tool/%d" $platform &inc #l0 1 "" ""
-            set-variable #l1 &reg &cat #l1 "/mask" ""
-            set-variable #l3 .find-file.file-count
-            !if &xis &ind &cat ".find-file.file" &pdec #l3 1 #l1
-                !tjump #l3 -1
-                execute-line &spr "set-variable #l2 \"%s\"" #l2 
-                osd @# &inc #l4 1 "" #l2 #l0 file-tool-exec
-            !endif
-        !done
-        !if &not #l4
-            osd @# 10 "" "<no tool matched>"
-        !endif
-    !else
-        osd @# 10 "" "<no files selected>"
-    !endif
-    !if &not @?
-        .osd.tmp osd
-    !endif
-!emacro
-
-; file-tool setup gui ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-!if &not &exi .osd.file-tool
-    set-variable .osd.file-tool &pinc .osd.next 1
-    set-variable .osd.file-toolc &pinc .osd.next 1
-!endif
-
-0 define-macro file-tool-set-flds
-    osd .osd.file-tool 200 "BfhH" .scheme.osd-dbtt "  Up  "
-    osd .osd.file-tool 220 "BfhH" .scheme.osd-dbtt " Down "
-    !if &set .file-tool-setup.cur @#
-        osd .osd.file-tool 40 "fh" &spr "  %2d  " @#
-        set-variable .file-tool-setup.name &reg &set #l1 &spr "/history/%s/file-tool/%d" $platform @# ""
-        set-variable .file-tool-setup.mask &reg &cat #l1 "/mask" "" 
-        set-variable .file-tool-setup.cmd  &reg &cat #l1 "/cmd" "" 
-        set-variable .file-tool-setup.default &reg &cat #l1 "/default" "0" 
-        set-variable .file-tool-setup.hide &reg &cat #l1 "/hide" "0" 
-        osd .osd.file-tool 620 "BfhxHt" .scheme.osd-ebtt " \HModify " 2 file-tool-setup-com
-        osd .osd.file-tool 630 "BfhxHt" .scheme.osd-ebtt " \HDelete " 3 file-tool-setup-com
-        !if &gre @# 1
-            osd .osd.file-tool 200 "BfhxHt" .scheme.osd-ebtt "  \HUp  "  4 file-tool-setup-com
-        !endif
-        !if &les @# .file-tool-setup.count
-            osd .osd.file-tool 220 "BfhxHt" .scheme.osd-ebtt " Do\Hwn "  5 file-tool-setup-com
-        !endif
-    !else
-        osd .osd.file-tool 40 "fh" "   ?  "
-        set-variable .file-tool-setup.name ""
-        set-variable .file-tool-setup.mask ".*\\..*"
-        set-variable .file-tool-setup.cmd  ""
-        osd .osd.file-tool 620 "BfhH" .scheme.osd-dbtt " Modify "
-        osd .osd.file-tool 630 "BfhH" .scheme.osd-dbtt " Delete "
-    !endif
-!emacro
-
-0 define-macro file-tool-set-fld
-    set-variable #l0 &cat ".file-tool-setup." &lget "|name|mask|cmd|" &abs @#
-    !if &les @# 0
-        set-variable #l1 &ind #l0
-        set-variable #l1 @ml2 "" #l1
-        set-variable &ind #l0 #l1
-    !else
-        set-variable $result &ind #l0
-    !endif
-!emacro
-
-0 define-macro file-tool-set-chk
-    set-variable #l0 &cat ".file-tool-setup." &lget "|default|hide|" &abs @#
-    set-variable #l1 &ind #l0
-    !if &les @# 0
-        set-variable #l1 &bxor #l1 1
-        set-variable &ind #l0 #l1
-    !elif &not #l1
-        !abort
-    !endif
-!emacro
-
-0 define-macro file-tool-create
-    -1 osd .osd.file-toolc
-    osd .osd.file-toolc 0 "sS" .scheme.osd-child 56 10 -1 -1 file-tool-create
-    set-variable #l0 0
-    !while &not &seq &set #l2 &reg &set #l1 &spr "/history/%s/file-tool/%d" $platform &inc #l0 1 "" ""
-        set-variable #l1 &reg &cat #l1 "/mask" ""
-        osd .osd.file-toolc #l0 "x" &spr "%2d%s %s%n  %s%n" #l0 &cond &equ #l0 .file-tool-setup.cur "*" " " #l2 &sub 20 &len #l2 " " #l1 &sub 30 &len #l1 " " #l0 file-tool-set-flds
-    !done
-    !if &not &set .file-tool-setup.count &dec #l0 1
-        osd .osd.file-toolc 1 ""
-    !endif
-!emacro
-
-0 define-macro file-tool-setup-com
-    !if &equ @# 3
-        set-variable #l1 &spr "/history/%s/file-tool/" $platform
-        set-variable #l0 .file-tool-setup.cur
-        delete-registry &cat #l1 #l0
-        !while &les &pinc #l0 1 .file-tool-setup.count
-            2 set-registry &cat #l1 #l0 &sub #l0 1
-        !done
-        !if &equ &set #l0 .file-tool-setup.cur &pdec .file-tool-setup.count 1
-            set-variable #l0 &sub #l0 1
-        !endif
-        #l0 file-tool-set-flds
-    !elif &gre @# 3
-        ; 4 = up, 5 = down
-        set-variable #l0 &add .file-tool-setup.cur &cond &equ @# 4 -1 1
-        !force 2 set-registry &spr "/history/%s/file-tool/%d" $platform #l0 "temp"
-        !force 2 set-registry &spr "/history/%s/file-tool/%d" $platform .file-tool-setup.cur #l0
-        !force 2 set-registry &spr "/history/%s/file-tool/temp" $platform .file-tool-setup.cur
-        #l0 file-tool-set-flds
-    !else
-        !if &seq .file-tool-setup.name ""
-            ml-write "[Name field is empty]" 
-            !return
-        !elif &seq .file-tool-setup.mask ""
-            ml-write "[Mask field is empty]" 
-            !return
-        !elif &seq .file-tool-setup.cmd ""
-            ml-write "[Command field is empty]" 
-            !return
-        !endif
-        !if &equ @# 1
-            set-variable .file-tool-setup.cur &inc .file-tool-setup.count 1
-        !endif
-        set-registry &set #l1 &spr "/history/%s/file-tool/%d" $platform .file-tool-setup.cur .file-tool-setup.name
-        set-registry &cat #l1 "/mask" .file-tool-setup.mask
-        set-registry &cat #l1 "/cmd" .file-tool-setup.cmd
-        set-registry &cat #l1 "/default" .file-tool-setup.default
-        set-registry &cat #l1 "/hide" .file-tool-setup.hide
-        !if &equ @# 1
-            .file-tool-setup.cur file-tool-set-flds
-        !endif
-    !endif
-    file-tool-create
-!emacro
-
--1 osd .osd.file-tool
-osd .osd.file-tool 0 "batcHIs" 7 4 62 0 -1 -1 640 .scheme.osd-title "File Tools Setup"
-osd .osd.file-tool 10 ""
-osd .osd.file-tool 15 "fh" " "
-osd .osd.file-tool 20 "IbHtfh" .scheme.osd-sbar 56 10 .osd.file-toolc
-osd .osd.file-tool 22 "" " "
-osd .osd.file-tool 25 ""
-osd .osd.file-tool 30 "fh" "   #  "
-osd .osd.file-tool 31 "Sfh" "\HName:                 " 70
-osd .osd.file-tool 32 "Sf" "\HFile Mask:" 90
-osd .osd.file-tool 70 "ExHtfh" .scheme.osd-entry "####################" 1 file-tool-set-fld
-osd .osd.file-tool 80 "fh" "  "
-osd .osd.file-tool 90 "ExHtf" .scheme.osd-entry "##############################" 2 file-tool-set-fld
-osd .osd.file-tool 100 ""
-osd .osd.file-tool 110 "S" "   C\Hommand:  Use %p, %P, %f, %b, %e, %i, %1, %*" 130
-osd .osd.file-tool 120 "fh" "   "
-osd .osd.file-tool 130 "ExHtf" .scheme.osd-entry "#######################################################" 3 file-tool-set-fld
-osd .osd.file-tool 140 ""
-osd .osd.file-tool 150 "hf" "   "
-osd .osd.file-tool 160 "Ctpfthx" &cat .osd.checkbox-chars "\} D\Hefault Open" 1 file-tool-set-chk
-osd .osd.file-tool 170 "hf" "  "
-osd .osd.file-tool 180 "Ctpfthx" &cat .osd.checkbox-chars "\} \HHide Window" 2 file-tool-set-chk
-osd .osd.file-tool 190 "hf" "   "
-osd .osd.file-tool 210 "hf" "   "
-osd .osd.file-tool 230 "f" "  "
-osd .osd.file-tool 600 ""
-osd .osd.file-tool 605 "fh" "   "
-osd .osd.file-tool 610 "BHxtfh" .scheme.osd-ebtt "  \HAdd  "  1 file-tool-setup-com
-osd .osd.file-tool 615 "fh" "   "
-osd .osd.file-tool 625 "fh" "   "
-osd .osd.file-tool 635 "fh" "           "
-osd .osd.file-tool 640 "BHtf"   .scheme.osd-ebtt " \HClose "   f void
-file-tool-create
-0 file-tool-set-flds
-    
-define-macro file-tool-setup
-    !if &band @# 1
-        ; reread the setup if not run from user-setup
-        !force read-registry "/history" $user-name "cbr"
-    !endif
-    !force !force .osd.file-tool osd
-    !if &not &band @# 1
-    !elif $status
-        save-registry "/history" ""
-    !else
-        !force read-registry "/history" $user-name "cbr"
-    !endif
-!emacro
