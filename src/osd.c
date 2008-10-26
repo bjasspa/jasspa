@@ -4511,15 +4511,19 @@ osdDisplayKeyMove(int dir)
     posCur[0] = posCur[1] = 0 ;
     do
     {
+        mdTop = md ;
         posCur[0] += md->x ;
         posCur[1] += md->y ;
-        if(md->curContext >= 0)
-        {
-            posCur[0] += md->context[md->curContext].x ;
-            posCur[1] += md->context[md->curContext].y ;
-        }
-        mdTop = md ;
-    } while((md != osdCurMd) && (((md = md->prev)->context[md->curContext].menu->flags & MF_SCRLBOX) == 0)) ;
+        if(md->curContext < 0)
+            break ;
+        
+        posCur[0] += md->context[md->curContext].x ;
+        posCur[1] += md->context[md->curContext].y ;
+        
+        if(md == osdCurMd)
+            break ;
+        md = md->prev ;
+    } while((md->context[md->curContext].menu->flags & MF_SCRLBOX) == 0) ;
     
     if(dir == osdMOVE_TOP)
         /* make the posCur a fictitious very top point and move DOWN to the
@@ -4529,14 +4533,14 @@ osdDisplayKeyMove(int dir)
         posCur[1] = 65536 ;
     else if(dir == osdMOVE_PAGE_UP)
     {
-        if(md != NULL)
-            /* in a scrolled child, set posCur to be the first visible line */
-            posCur[1] = md->y ;
+        /* in a scrolled child, set posCur to be the first visible line */
+        if((mdTop != md) && (md->context[md->curContext].menu->flags & MF_SCRLBOX))
+            posCur[1] = 0 ;
     }
     else if(dir == osdMOVE_PAGE_DOWN)
     {
-        if(md != NULL)
-            posCur[1] = md->depth - 3 ;
+        if((mdTop != md) && (md->context[md->curContext].menu->flags & MF_SCRLBOX))
+            posCur[1] = md->context[md->curContext].menu->height - 1 ;
     }
     
     posBest[1] = -1 ;
@@ -4546,7 +4550,7 @@ osdDisplayKeyMove(int dir)
        
     if((ret < 0) ||
        ((dir & (osdMOVE_LEFT|osdMOVE_RIGHT)) && (posBest[1] > 0)) ||
-       ((dir & osdMOVE_UP) && (posBest[1] > 16384)))
+       ((dir == osdMOVE_UP) && (posBest[1] > 16384)))
     {
         /* no obvious item to go to, handle moving in and out of children */
         /* if moving forward and current item is a sub-menu go into it */
@@ -4927,6 +4931,13 @@ menuInteraction (int *retState)
                 state = meOSD_EXECUTE_MENU|meOSD_OPEN_MENU|meOSD_FOCUS_MENU|meOSD_ENTER_MENU;
             }
             break;
+        
+        case ME_SPECIAL|SKEY_mouse_wup:
+            nit = osdDisplayKeyMove(osdMOVE_PAGE_UP) ;
+            break ;
+        case ME_SPECIAL|SKEY_mouse_wdown:
+            nit = osdDisplayKeyMove(osdMOVE_PAGE_DOWN) ;
+            break ;
         
         default:
 #else
