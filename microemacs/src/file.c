@@ -1911,7 +1911,7 @@ writeCheck(meUByte *pathname, int flags, meStat *statp)
 #ifdef _UNIX
     /* READ ONLY directory test
        See if we can write to the directory. */
-    getFilePath (pathname, dirbuf);
+    getFilePath(pathname,dirbuf) ;
     if (meTestWrite (dirbuf))
         return mlwrite (MWABORT,(meUByte *)"Read Only Directory: %s", dirbuf);
 #endif
@@ -1968,7 +1968,7 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
             }
         }
         /* Quick check on the file write condition */
-        if(writeCheck(fn, flags, &stats) <= 0)
+        if(writeCheck(fn,flags,&stats) <= 0)
             return NULL ;
         
         if(flags & meWRITECHECK_CHECK)
@@ -2305,6 +2305,8 @@ writeOut(register meBuffer *bp, meUInt flags, meUByte *fn)
     return meTRUE ;
 }
 
+static meUByte fileHasBinary[]="File had binary characters which will be lost, write" ;
+static meUByte fileHasInLnEn[]="File had inconsistent line endings which will be corrected, write" ;
 /*
  * This function performs the details of file writing. Uses the file
  * management routines in the "fileio.c" package. The number of lines written
@@ -2329,16 +2331,22 @@ writeout(register meBuffer *bp, int flags, meUByte *fname)
          * in the current buffer then dont bother to look for it.
          */
         getFileStats(fname,0,&stats,lname) ;
-        if((flags & 1) && meFiletimeIsModified(stats.stmtime,bp->stats.stmtime))
+        if(flags & 1)
         {
-            meUByte prompt[meBUF_SIZE_MAX];
-            sprintf((char *)prompt, "%s modified, write", fname);
-            if(mlyesno(prompt) <= 0)
-                return ctrlg(meFALSE,1);
+            if(meFiletimeIsModified(stats.stmtime,bp->stats.stmtime))
+            {
+                meUByte prompt[meBUF_SIZE_MAX] ;
+                sprintf((char *) prompt,"%s modified, write",fname) ;
+                if(mlyesno(prompt) <= 0)
+                    return ctrlg(meFALSE,1) ;
+            }
+            if((bp->fileFlag & (meBFFLAG_BINARY|meBFFLAG_LTDIFF)) &&
+               (mlyesno((bp->fileFlag & meBFFLAG_BINARY) ? fileHasBinary:fileHasInLnEn) <= 0))
+                return ctrlg(meFALSE,1) ;
         }
         fn = (lname[0] == '\0') ? fname:lname ;
         /* Quick check on the file write condition */
-        if (writeCheck (fn, flags, &stats) <= 0)
+        if(writeCheck(fn,flags,&stats) <= 0)
             return meABORT;
     }
 
@@ -2384,6 +2392,9 @@ writeBuffer(int f, int n)
     else
         fn = NULL ;
 
+    if((n & 0x01) && (frameCur->bufferCur->fileFlag & (meBFFLAG_BINARY|meBFFLAG_LTDIFF)) &&
+       (mlyesno((frameCur->bufferCur->fileFlag & meBFFLAG_BINARY) ? fileHasBinary:fileHasInLnEn) <= 0))
+        return ctrlg(meFALSE,1);
     if((fn=writeFileChecks(fname,fn,lname,(n & 0x01)|meWRITECHECK_BUFFER)) == NULL)
         return meABORT ;
     
