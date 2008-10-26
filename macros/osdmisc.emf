@@ -1610,8 +1610,11 @@ define-macro file-tool-menu
     osd .osd.file-toolc 0 "sS" .scheme.osd-child 62 10 -1 -1 file-tool-create
     set-variable #l0 0
     !while &not &seq &set #l2 &reg &set #l1 &spr "/history/%s/file-tool/%d" $platform &inc #l0 1 "" ""
+        set-variable #l4 &cond &band 0x10 &reg &cat #l1 "/flag" 0 "D" " "
+        set-variable #l2 &lef &rep #l2 "\\H" "\H" 24
+        set-variable #l3 &rep #l2 "\H" ""
         set-variable #l1 &reg &cat #l1 "/mask" ""
-        osd .osd.file-toolc #l0 "x" &spr "%2d%s %s%n  %s%n" #l0 &cond &equ #l0 .file-tool-setup.cur "*" " " #l2 &sub 24 &len #l2 " " #l1 &sub 32 &len #l1 " " #l0 file-tool-set-flds
+        osd .osd.file-toolc #l0 "x" &spr "%2d%s%s%n%s %s%n" #l0 &cond &equ #l0 .file-tool-setup.cur "**" "  " #l2 &sub 24 &len #l3 " " #l4 #l1 &sub 32 &len #l1 " " #l0 file-tool-set-flds
     !done
     !if &not &set .file-tool-setup.count &dec #l0 1
         osd .osd.file-toolc 1 ""
