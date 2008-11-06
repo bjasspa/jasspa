@@ -1765,7 +1765,6 @@ osd .osd.dirlst 110 ""  "\HNew Folder"          f dirlst-new-folder
 osd .osd.dirlst 120 ""  "Refresh \HList"        f dirlst-refresh
 osd .osd.dirlst 130 ""  "\HAuto-Refresh: on "   f dirlst-auto-refresh
 osd .osd.dirlst 90  "M" "File \HSelection"      .osd.dirlsts
-osd .osd.dirlst 160 ""  "File Tools Setup"      f file-tool-setup
 
 0 define-macro dirlst-context-menu
     set-variable #l0 &not &or &les $window-line 5 &les &len @wl :fmpf
@@ -1784,7 +1783,7 @@ osd .osd.dirlst 160 ""  "File Tools Setup"      f file-tool-setup
         osd .osd.dirlst  30 ""  "\HCopy Files"    1 dirlst-tag-file-copy
         osd .osd.dirlst  40 ""  "\HMove Files"    0 dirlst-tag-file-copy
         osd .osd.dirlst  50 ""  "\HDelete Files"  f dirlst-tag-file-delete
-        osd .osd.dirlst  18 "M" "\HTools"  .osd.tmp file-tool-menu
+        osd .osd.dirlst  18 "M" "File \HTools" .osd.tmp file-tool-menu
     !else
         osd .osd.dirlst  30 ""  "Copy Files"
         osd .osd.dirlst  40 ""  "Move Files"
