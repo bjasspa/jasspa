@@ -1530,9 +1530,11 @@ define-macro file-tool-menu
             !endif
         !done
         !if &not #l4
-            osd @# 10 "" "<no tool matched>"
+            osd @# &inc #l4 1 "" "<no tool matched>"
         !endif
     !endif
+    osd @# &inc #l4 1 "-"
+    osd @# &inc #l4 1 "" "File Tools Setup" f file-tool-setup
     !if &not @?
         .osd.tmp osd
     !endif
