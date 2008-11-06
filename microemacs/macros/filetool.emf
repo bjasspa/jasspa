@@ -272,7 +272,8 @@
         set-variable #l2 0
         !while &not &seq &reg &set #l3 &spr "/history/%s/file-tool/%d" $platform &inc #l2 1 "" ""
             !if &not &band 0x10 &reg &cat #l3 "/flag" "0x240"
-            !elif &xis #l1 &reg &cat #l3 "/mask" ""
+            !elif &seq &set #l4 &reg &cat #l3 "/mask" "" ""
+            !elif &xis &con &seq &lef #l4 1 "^" #l0 #l1 #l4
                 !force &neg #l2 file-tool-exec #l0
                 !return
             !endif
