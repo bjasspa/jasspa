@@ -413,8 +413,54 @@
         -1 yank
         set-cursor-to-mouse
         !force help-item #l0
+    !endif
+!emacro
+
+0 define-macro mouse-pick-find-link
+    !if &sin @wc " \t\n\"'[({<"
+        ml-write "[not in link]"
+    !else
+        set-variable #l1 "[ \t\n]"
+        !force search-buffer "mb" "[ \t\n\"'([{<]"
+        !if $status
+            !if &set #l2 &sin @wc "\"'([{<"
+                set-variable #l1 &mid " \"')]}>" #l2 1
+            !endif
+            forward-char
+            set-variable #l0 $window-col
+        !else
+            set-variable #l0 0
+        !endif
+        !force search-buffer "m" #l1
+        backward-char
+        set-variable .mouse-drop-find-link.p &spr "|%d|%d|%d|" $window-line #l0 $window-col
+        -3 show-region
+        set-variable $window-col #l0
+        3 show-region
+        set-cursor-to-mouse
         show-region
     !endif
+!emacro
+
+0 define-macro mouse-drop-find-link
+    !if &sub $window-line &lget .p 1
+    !elif &les $window-col &lget .p 2
+    !elif &gre $window-col &lget .p 3
+    !else
+        set-variable $window-col &lget .p 2
+        set-mark
+        set-variable $window-col &lget .p 3
+        copy-region
+        set-variable #l1 @y
+        -1 yank
+        set-cursor-to-mouse
+        !force file-tool-exec-default #l1
+        !if &not $status
+            !force find-file #l1
+        !endif
+        !return
+    !endif
+    ml-write "[mouse location changed - not loading link]"
 !emacro
 
 0 define-macro-file mouserec mouse-pick-rectangle mouse-drop-rectangle mouse-yank-rectangle
