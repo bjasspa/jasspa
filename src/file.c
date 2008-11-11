@@ -2746,6 +2746,15 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
                 meUByte *pe ;
                 int ll ;
             
+                if((nameType == PATHNAME_PARTIAL) && (meStrchr(p,DIR_CHAR) == NULL))
+                {
+                    /* special case when user is entering a file name and uses complete with 'xxxx/~yy' */
+                    *p1++ = '~' ;
+                    meStrcpy(p1,p) ;
+                    if(baseName != NULL)
+                        *baseName = p1 ;
+                    return ;
+                }
                 if((p[0] != '\0') && (p[0] != DIR_CHAR) && ((reg = regFind(NULL,(meUByte *)"history/alias-path")) != NULL) &&
                    ((reg = regGetChild(reg)) != NULL))
                 {
@@ -2941,8 +2950,8 @@ fileNameCorrect(meUByte *oldName, meUByte *newName, meUByte **baseName)
 void
 getDirectoryList(meUByte *pathName, meDirList *dirList)
 {
-    meUByte **fls ;
-    int    noFiles ;
+    meUByte **fls, upb[meBUF_SIZE_MAX] ;
+    int len, noFiles ;
 #ifdef _UNIX
     struct stat statbuf;
     meFiletime stmtime ;
@@ -2951,7 +2960,6 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
     meFiletime stmtime ;
     WIN32_FIND_DATA fd;
     HANDLE *handle;
-    int len ;
 #endif
     
     if(isUrlLink(pathName))
@@ -3027,39 +3035,62 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
 #endif
         return ;
     }
-    
-#ifdef _UNIX
-    if(!stat((char *)pathName,&statbuf))
-        stmtime = statbuf.st_mtime ;
-    else
+#if MEOPT_REGISTRY
+    if((pathName[0] == '~') && (pathName[1] == '\0') && (homedir != NULL))
+    {
+        meUByte *ss ;
+        
+        if((dirList->path != NULL) && !meStrcmp(dirList->path,"~"))
+           return ;
+        meStrcpy(upb,homedir) ;
+        len = meStrlen(upb) ;
+        upb[len-1] = '\0' ;
+        if((ss = meStrrchr(upb,DIR_CHAR)) != NULL)
+        {
+            ss[1] = '\0' ;
+            len = meStrlen(upb) ;
+        }
+        else
+            upb[len-1] = DIR_CHAR ;
+        pathName = upb ;
         meFiletimeInit(stmtime) ;
+    }
+    else
+#endif
+    {
+#ifdef _UNIX
+        if(!stat((char *)pathName,&statbuf))
+            stmtime = statbuf.st_mtime ;
+        else
+            meFiletimeInit(stmtime) ;
 #endif
 #ifdef _WIN32
-    meFiletimeInit(stmtime) ;
-    len = strlen(pathName) ;
-    if((len > 0) && (pathName[len-1] == DIR_CHAR))
-    {
-        pathName[len-1] = '\0';
-        if((handle = FindFirstFile(pathName,&fd)) != INVALID_HANDLE_VALUE)
+        meFiletimeInit(stmtime) ;
+        len = strlen(pathName) ;
+        if((len > 0) && (pathName[len-1] == DIR_CHAR))
         {
-            stmtime.dwHighDateTime = fd.ftLastWriteTime.dwHighDateTime ;
-            stmtime.dwLowDateTime = fd.ftLastWriteTime.dwLowDateTime ;
-            FindClose(handle) ;
+            pathName[len-1] = '\0';
+            if((handle = FindFirstFile(pathName,&fd)) != INVALID_HANDLE_VALUE)
+            {
+                stmtime.dwHighDateTime = fd.ftLastWriteTime.dwHighDateTime ;
+                stmtime.dwLowDateTime = fd.ftLastWriteTime.dwLowDateTime ;
+                FindClose(handle) ;
+            }
+            pathName[len-1] = DIR_CHAR ;
         }
-        pathName[len-1] = DIR_CHAR ;
-    }
 #endif
     
-    if((dirList->path != NULL) &&
-       !meStrcmp(dirList->path,pathName) &&
+        if((dirList->path != NULL) &&
+           !meStrcmp(dirList->path,pathName) &&
 #if (defined _UNIX) || (defined _WIN32)
-       !meFiletimeIsModified(stmtime,dirList->stmtime)
+           !meFiletimeIsModified(stmtime,dirList->stmtime)
 #else
-       !dirList->stmtime
+           !dirList->stmtime
 #endif
-       )
-        return ;
-
+           )
+            return ;
+    }
+    
     /* free off the old */
     meNullFree(dirList->path) ;
     freeFileList(dirList->size,dirList->list) ;
@@ -3290,6 +3321,42 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
         dirList->stmtime = stmtime ;
     }
 #endif  /* _UNIX */
+
+#if MEOPT_REGISTRY
+    if(pathName == upb)
+    {
+        meRegNode *reg ;
+        meUByte *ff ;
+            
+        /* add the alias/abbrev paths to the list */
+        if(((reg = regFind(NULL,(meUByte *)"history/alias-path")) != NULL) &&
+           ((reg = regGetChild(reg)) != NULL))
+        {
+            do
+            {
+                if(((noFiles & 0x0f) == 0) &&
+                   ((fls = meRealloc(fls,sizeof(meUByte *) * (noFiles+16))) == NULL))
+                {
+                    noFiles = 0 ;
+                    break ;
+                }
+                len = meStrlen(reg->name) ;
+                if((ff = meMalloc(len+2)) == NULL)
+                {
+                    fls = NULL ;
+                    noFiles = 0 ;
+                    break ;
+                }
+                fls[noFiles++] = ff ;
+                meStrcpy(ff,reg->name) ;
+                ff[len] = DIR_CHAR ;
+                ff[len+1] = '\0' ;
+            } while((reg = regGetNext(reg)) != NULL) ;
+        }
+        pathName = "~" ;
+    }
+#endif
+
     dirList->path = meStrdup(pathName) ;
     dirList->size = noFiles ;
     dirList->list = fls ;
