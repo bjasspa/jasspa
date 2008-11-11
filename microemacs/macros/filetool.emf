@@ -14,13 +14,15 @@
 ;     0x0002 : Prompt before saving current buffer
 ;     0x0004 : Save all buffers
 ;     0x0008 : Prompt before saving all buffers
-;     0x0010 : Default tool for file
+;     0x0010 : Tool to use to open the file
 ;     0x0020 : Command is a macro
 ;     0x0040 : Run command concurrently
 ;     0x0080 : Capture command output
 ;     0x0100 : Hide the output buffer
 ;     0x0200 : Show new command console window
 ;     0x0400 : Reread buffer after execution
+;     0x0800 : Tool to use to view the file
+;     0x1000 : (Disabled tool reg flag only)
 ;     0x1000 : use a .find-file var for the <file-name>, the <file-name> arg is the file number (i.e. 1,2,...)
 ;     0x2000 : use all files in .find-file vars (i.e. %*[..%] multi-file command), the <file-name> arg is not used
 ;     0x4000 : Capture output to buffer <output-buffer-name>
@@ -269,15 +271,29 @@
 0 define-macro file-tool-exec-default
     set-variable #l0 @1
     !if &not &seq &set #l1 &rig #l0 &rsin "/" #l0 ""
+        set-variable #l5 &con &band 2 @# 0x800 0x10
+        set-variable #l6 0
         set-variable #l2 0
         !while &not &seq &reg &set #l3 &spr "/history/%s/file-tool/%d" $platform &inc #l2 1 "" ""
-            !if &not &band 0x10 &reg &cat #l3 "/flag" "0x240"
+            !if &band 0x1000 &set #l4 &reg &cat #l3 "/flag" "0x240"
+            !elif &not &band #l5 #l4
             !elif &seq &set #l4 &reg &cat #l3 "/mask" "" ""
             !elif &xis &con &seq &lef #l4 1 "^" #l0 #l1 #l4
-                !force &neg #l2 file-tool-exec #l0
-                !return
+                !if &not &band 1 @#
+                    !force &neg #l2 file-tool-exec #l0
+                    !return
+                !elif #l6
+                    !force &neg #l5 file-tool-menu #l0
+                    !return
+                !else
+                    set-variable #l6 #l2
+                !endif
             !endif
         !done
+        !if #l6
+            !force &neg #l6 file-tool-exec #l0
+            !return
+        !endif
     !endif
     !abort
 !emacro
