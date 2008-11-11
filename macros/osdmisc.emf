@@ -1489,13 +1489,21 @@ define-macro file-type-setup
 ; file-tool menu gui ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro file-tool-menu
-    !if &not @?
+    !if &les &set #l7 @# 2
         set-variable @# .osd.tmp
         set-variable $mouse-x $cursor-x
         set-variable $mouse-y &add $cursor-y 1
     !endif
     -1 osd @#
     osd @# 0 "b"
+    !if &les #l7 1
+        set-variable @? 0
+        set-variable #l7 &neg #l7
+        set-variable #l6 @1
+        set-variable #l5 0
+        !goto got_file
+    !endif
+    set-variable #l7 0
     !if &seq $buffer-fname ""
         osd @# 10 "" "<no file name>"
     !else
@@ -1513,20 +1521,24 @@ define-macro file-tool-menu
         !else
             set-variable #l6 $buffer-fname
         !endif
+*got_file
         set-variable #l0 0
         set-variable #l4 0
         !while &not &seq &set #l2 &reg &set #l1 &spr "/history/%s/file-tool/%d" $platform &inc #l0 1 "" ""
-            set-variable #l1 &reg &cat #l1 "/mask" ""
-            !if #l5
-                set-variable #l3 .find-file.file-count
-                !if &xis &ind &cat ".find-file.file" &pdec #l3 1 #l1
-                    !tjump #l3 -1
+            !if &band 0x1000 &set #l3 &reg &cat #l1 "/flag" "0x240"
+            !elif &or &not #l7 &band #l7 #l3  
+                set-variable #l1 &reg &cat #l1 "/mask" ""
+                !if #l5
+                    set-variable #l3 .find-file.file-count
+                    !if &xis &ind &cat ".find-file.file" &pdec #l3 1 #l1
+                        !tjump #l3 -1
+                        execute-line &spr "set-variable #l2 \"%s\"" #l2 
+                        osd @# &inc #l4 1 "" #l2 #l0 file-tool-exec
+                    !endif
+                !elif &xis #l6 #l1
                     execute-line &spr "set-variable #l2 \"%s\"" #l2 
-                    osd @# &inc #l4 1 "" #l2 #l0 file-tool-exec
+                    osd @# &inc #l4 1 "" #l2 &neg #l0 file-tool-exec
                 !endif
-            !elif &xis #l6 #l1
-                execute-line &spr "set-variable #l2 \"%s\"" #l2 
-                osd @# &inc #l4 1 "" #l2 &neg #l0 file-tool-exec
             !endif
         !done
         !if &not #l4
@@ -1557,17 +1569,17 @@ define-macro file-tool-menu
         set-variable .file-tool-setup.flag 0x240
         set-variable .file-tool-setup.bname ""
     !endif
-    osd .osd.file-tool 30  "fhH" .scheme.osd-dbtt &set #l8 &cat &mid $window-chars 6 1 &mid $window-chars 6 1
-    osd .osd.file-tool 100 "fhH" .scheme.osd-dbtt &set #l9 &cat &mid $window-chars 10 1 &mid $window-chars 10 1
+    osd .osd.file-tool 30 "fhH" .scheme.osd-dbtt &set #l8 &cat &mid $window-chars 6 1 &mid $window-chars 6 1
+    osd .osd.file-tool 95 "fhH" .scheme.osd-dbtt &set #l9 &cat &mid $window-chars 10 1 &mid $window-chars 10 1
     !if .file-tool-setup.cur
         osd .osd.file-tool 40 "fh" &spr "  %2d  " .file-tool-setup.cur
         osd .osd.file-tool 620 "BfhxHt" .scheme.osd-ebtt " \HModify " 2 file-tool-setup-com
         osd .osd.file-tool 630 "BfhxHt" .scheme.osd-ebtt " \HDelete " 3 file-tool-setup-com
         !if &gre @# 1
-            osd .osd.file-tool  30 "fhxt" #l8 4 file-tool-setup-com
+            osd .osd.file-tool 30 "fhxt" #l8 4 file-tool-setup-com
         !endif
         !if &les @# .file-tool-setup.count
-            osd .osd.file-tool 100 "fhxt" #l9 5 file-tool-setup-com
+            osd .osd.file-tool 95 "fhxt" #l9 5 file-tool-setup-com
         !endif
     !else
         osd .osd.file-tool 40 "fh" "   ?  "
@@ -1578,7 +1590,7 @@ define-macro file-tool-menu
     osd .osd.file-tool 151 "D"
     osd .osd.file-tool 170 "f" ""
     !if &band .file-tool-setup.flag 0x80
-        osd .osd.file-tool 150 "fh" "  Buffer Name:    "
+        osd .osd.file-tool 150 "fh" "  Buffer Name:     "
         osd .osd.file-tool 151 "Ctpftx" &cat .osd.checkbox-chars "\} \HHide Buffer" 0x0100 file-tool-set-flag
         osd .osd.file-tool 170 "ExHtf" .scheme.osd-entry "###################" 4 file-tool-set-fld
     !elif &and &seq $platform "win32" &not &band .file-tool-setup.flag 0x20
@@ -1612,10 +1624,11 @@ define-macro file-tool-menu
     osd .osd.file-toolc 0 "sS" .scheme.osd-child 62 10 -1 -1 file-tool-create
     set-variable #l0 0
     !while &not &seq &set #l2 &reg &set #l1 &spr "/history/%s/file-tool/%d" $platform &inc #l0 1 "" ""
-        set-variable #l4 &cond &band 0x10 &reg &cat #l1 "/flag" 0 "D" " "
+        set-variable #l4 &lget "| |O|V|B|" &lfin "|0|16|2048|2064|" &band 0x0810 &set #l5 &reg &cat #l1 "/flag" 0
+        set-variable #l5 &con &band #l5 0x1000 "DD" &spr "%2d" #l0
         set-variable #l2 &lef &rep #l2 "\\H" "" 24
         set-variable #l1 &reg &cat #l1 "/mask" ""
-        osd .osd.file-toolc #l0 "x" &spr "%2d%s%s%n%s %s%n" #l0 &cond &equ #l0 .file-tool-setup.cur "**" "  " #l2 &sub 24 &len #l2 " " #l4 #l1 &sub 32 &len #l1 " " #l0 file-tool-set-flds
+        osd .osd.file-toolc #l0 "x" &spr "%s%s%s%n%s %s%n" #l5 &cond &equ #l0 .file-tool-setup.cur "**" "  " #l2 &sub 24 &len #l2 " " #l4 #l1 &sub 32 &len #l1 " " #l0 file-tool-set-flds
     !done
     !if &not &set .file-tool-setup.count &dec #l0 1
         osd .osd.file-toolc 1 ""
@@ -1738,14 +1751,19 @@ osd .osd.file-tool 20 "IbHtfh" .scheme.osd-sbar 62 10 .osd.file-toolc
 osd .osd.file-tool 22 "" " "
 osd .osd.file-tool 29 "fh" "  "
 osd .osd.file-tool 31 "Sfh" "  \HName:                     " 70
-osd .osd.file-tool 32 "Sfh" "\HFile Mask:      " 90
-osd .osd.file-tool 35 "Ctpftx" &cat .osd.checkbox-chars "\} D\Hefault Open" 0x010 file-tool-set-flag
+osd .osd.file-tool 32 "Sf" "\HFile Mask:" 90
 osd .osd.file-tool 70 "ExHtfh" .scheme.osd-entry "########################" 1 file-tool-set-fld
 osd .osd.file-tool 80 "fh" "  "
 osd .osd.file-tool 90 "ExHtf" .scheme.osd-entry "################################" 2 file-tool-set-fld
-osd .osd.file-tool 99 "fh" "  "
+osd .osd.file-tool 92 "fh" "  "
+osd .osd.file-tool 98 "fh" "       "
+osd .osd.file-tool 100 "Ctpfhtx" &cat .osd.checkbox-chars "\} D\Hisabled" 0x01000 file-tool-set-flag
+osd .osd.file-tool 102 "fh" "         "
+osd .osd.file-tool 104 "Ctpfhtx" &cat .osd.checkbox-chars "\} O\Hpen File" 0x010 file-tool-set-flag
+osd .osd.file-tool 106 "fh" "    "
+osd .osd.file-tool 108 "Ctpftx" &cat .osd.checkbox-chars "\} \HView File" 0x0800 file-tool-set-flag
 osd .osd.file-tool 110 "S" "  C\Hommand:  use %%, %p, %P, %f, %b, %e, %i, %1, %*, %\"" 130
-osd .osd.file-tool 120 "fh" "      "
+osd .osd.file-tool 120 "fh" "  "
 osd .osd.file-tool 130 "ExHtf" .scheme.osd-entry "##########################################################" 3 file-tool-set-fld
 osd .osd.file-tool 140 "Sfh" "  \HRun Tool:                   " 160
 osd .osd.file-tool 150 "f" ""
