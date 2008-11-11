@@ -29,7 +29,7 @@ add-file-hook "*compile* *grep*" fhook-ipipe
         !return
     !endif
     set-variable #l0 $window-line
-    set-variable $window-line :compile-last 1
+    set-variable $window-line &sub :compile-last 1
     !repeat
         !force 0 get-next-line
         !if &not $status
