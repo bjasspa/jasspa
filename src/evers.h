@@ -42,9 +42,9 @@
  * PROBLEMS OCCUR. THESE VALUES ARE NOT INTENDED TO REPRESENT 
  * THE BUILD DATE OF THE SOFTWARE AND MUST NOT BE MODIFIED AS SUCH */
 #define meCENTURY       "20"          /* Current century. Y2 complient :-) */
-#define meYEAR          "06"          /* Current year */
+#define meYEAR          "08"          /* Current year */
 #define meMONTH         "11"          /* Current month */
-#define meDAY           "11"          /* Day of the month */
+#define meDAY           "10"          /* Day of the month */
 
 /* Version information - Date of build */
 #define	meDATE          meYEAR "/" meMONTH "/" meDAY 
