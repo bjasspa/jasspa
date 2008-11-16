@@ -1992,7 +1992,7 @@ special_bound:
     case SelectionNotify:
         if((frame = meXEventGetFrame(&event)) != NULL)
         {
-            meUInt nitems, left;
+            unsigned long nitems, left;
             meUByte *buff, *dd ;
             Atom type ;
             int  fmt ;
@@ -2058,7 +2058,7 @@ special_bound:
            (meClipSize > 0) && (event.xproperty.state == PropertyNewValue) &&
            (event.xproperty.atom == meAtoms[meATOM_COPY_TEXT]))
         {
-            meUInt nitems, left;
+            unsigned long nitems, left;
             meUByte *buff ;
             Atom type ;
             int  fmt, ret ;

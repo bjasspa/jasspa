@@ -1139,12 +1139,12 @@ readDirectory(meUByte *fname, meBuffer *bp, meLine *blp, meUInt flags)
     if (totSizeHigh > 0)
     {
         ui = (totSizeHigh << 12) | (totSizeLow >> 20) ;
-        len += sprintf((char *)buf+len, "%7ldM ",ui) ;
+        len += sprintf((char *)buf+len, "%7dM ",ui) ;
     }
     else if (totSizeLow > 9999999)
-        len += sprintf((char *)buf+len, "%7ldK ",totSizeLow >> 10) ;
+        len += sprintf((char *)buf+len, "%7dK ",totSizeLow >> 10) ;
     else
-        len += sprintf((char *)buf+len, "%7ld  ",totSizeLow) ;
+        len += sprintf((char *)buf+len, "%7d  ",totSizeLow) ;
     sprintf((char *)buf+len,"used in %d files and %d dirs\n",files,dirs) ;
     bp->lineCount += addLine(blp,buf) ;
     while(fnode != NULL)
@@ -1158,12 +1158,12 @@ readDirectory(meUByte *fname, meBuffer *bp, meLine *blp, meUInt flags)
         if(fnode->sizeHigh > 0)
         {
             ui = (fnode->sizeHigh << 12) | (fnode->sizeLow >> 20) ;
-            len += sprintf((char *)buf+len, "%7ldM ",ui) ;
+            len += sprintf((char *)buf+len, "%7dM ",ui) ;
         }
         else if (fnode->sizeLow > 9999999)
-            len += sprintf((char *)buf+len, "%7ldK ", fnode->sizeLow >> 10);
+            len += sprintf((char *)buf+len, "%7dK ", fnode->sizeLow >> 10);
         else
-            len += sprintf((char *)buf+len, "%7ld  ", fnode->sizeLow);
+            len += sprintf((char *)buf+len, "%7d  ", fnode->sizeLow);
 
 #ifdef _UNIX
         if ((tmp = localtime(&fnode->mtime)) != NULL)
@@ -2950,8 +2950,11 @@ fileNameCorrect(meUByte *oldName, meUByte *newName, meUByte **baseName)
 void
 getDirectoryList(meUByte *pathName, meDirList *dirList)
 {
-    meUByte **fls, upb[meBUF_SIZE_MAX] ;
-    int len, noFiles ;
+#if MEOPT_REGISTRY
+    meUByte upb[meBUF_SIZE_MAX] ;
+#endif
+    meUByte **fls ;
+    int noFiles ;
 #ifdef _UNIX
     struct stat statbuf;
     meFiletime stmtime ;
@@ -3039,6 +3042,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
     if((pathName[0] == '~') && (pathName[1] == '\0') && (homedir != NULL))
     {
         meUByte *ss ;
+        int len ;
         
         if((dirList->path != NULL) && !meStrcmp(dirList->path,"~"))
            return ;
@@ -3065,9 +3069,10 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
             meFiletimeInit(stmtime) ;
 #endif
 #ifdef _WIN32
+        int len ;
+        
         meFiletimeInit(stmtime) ;
-        len = strlen(pathName) ;
-        if((len > 0) && (pathName[len-1] == DIR_CHAR))
+        if(((len = strlen(pathName)) > 0) && (pathName[len-1] == DIR_CHAR))
         {
             pathName[len-1] = '\0';
             if((handle = FindFirstFile(pathName,&fd)) != INVALID_HANDLE_VALUE)
@@ -3212,7 +3217,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
 
         /* append the *.* - Note that this function assumes the pathName has a '/' and
          * its an array with 3 extra char larger than the string size */
-        ee = pathName + len ;
+        ee = pathName + strlen(pathName) ;
         ee[0] = '*' ;
         es[1] = ee[1] ;
         ee[1] = '.' ;
@@ -3327,7 +3332,8 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
     {
         meRegNode *reg ;
         meUByte *ff ;
-            
+        int len ;
+        
         /* add the alias/abbrev paths to the list */
         if(((reg = regFind(NULL,(meUByte *)"history/alias-path")) != NULL) &&
            ((reg = regGetChild(reg)) != NULL))
@@ -3353,7 +3359,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
                 ff[len+1] = '\0' ;
             } while((reg = regGetNext(reg)) != NULL) ;
         }
-        pathName = "~" ;
+        pathName = (meUByte *) "~" ;
     }
 #endif
 
