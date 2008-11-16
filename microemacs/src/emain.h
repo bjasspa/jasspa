@@ -571,8 +571,8 @@ typedef   signed char  meByte ;
 typedef unsigned char  meUByte ;
 typedef   signed short meShort ;
 typedef unsigned short meUShort ;
-typedef   signed long  meInt ;
-typedef unsigned long  meUInt ;
+typedef   signed int   meInt ;
+typedef unsigned int   meUInt ;
 
 /* Fix any default search path */
 #ifndef _DEFAULT_SEARCH_PATH

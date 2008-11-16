@@ -500,7 +500,7 @@ meAbout(int f, int n)
     addLineToEob(bp,buf) ;
 
     getBufferInfo(&numlines,&predlines,&numchars,&predchars) ;
-    sprintf((char *)buf,"  Lines     : Total %6ld, Current %6ld\n  Characters: Total %6ld, Current %6ld",
+    sprintf((char *)buf,"  Lines     : Total %6d, Current %6d\n  Characters: Total %6d, Current %6d",
             numlines,predlines,numchars,predchars) ;
     addLineToEob(bp,buf) ;
 

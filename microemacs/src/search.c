@@ -1151,7 +1151,7 @@ replaces(int kind, int ff, int nn)
     cc = 0xff ;
     while((meStrchr(rpat,cc) != NULL) && --cc)
         ;
-    sprintf((char *)resultStr,"%c%ld%c%c%c%s%c",cc,numsub,cc,((!kind) ? 'a':((onemore) ? 'l':'q')),cc,rpat,cc) ;
+    sprintf((char *)resultStr,"%c%d%c%c%c%s%c",cc,numsub,cc,((!kind) ? 'a':((onemore) ? 'l':'q')),cc,rpat,cc) ;
 
     return mlwrite(((nn < 0) || (numsub == nn)) ? MWCLEXEC:(MWABORT|MWCLEXEC),(meUByte *)"%d substitutions", numsub);
 }	/* End of 'replaces' */

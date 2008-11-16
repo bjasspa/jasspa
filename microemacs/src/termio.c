@@ -223,7 +223,7 @@ TIMERBLOCK *timers = NULL ;                 /* Head of timer list             */
  */
 
 void
-timerCheck(long tim)
+timerCheck(meInt tim)
 {
     TIMERBLOCK *tbp;                    /* Current timer block */
     TIMERBLOCK *ntbp;                   /* Next timer block */
@@ -511,8 +511,10 @@ void
 adjustStartTime(meInt tim)
 {
     meBuffer *bp ;
-    meMacro *mac ;
     meInt ii, mstim=tim*1000 ;
+#if MEOPT_CALLBACK
+    meMacro *mac ;
+#endif
 #if (defined _CONST_TIMER) || (defined _SINGLE_TIMER)
     TIMERBLOCK *tbp ;
     tbp = timers ;
