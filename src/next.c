@@ -139,7 +139,7 @@ getNextLine(int f,int n)
             }
             if((n & 0x01) && 
                ((bp == NULL) || (bp->windowCount < tbp->windowCount) ||
-                ((bp->windowCount == tbp->windowCount) && (bp->histNo > tbp->histNo))))
+                ((bp->windowCount == tbp->windowCount) && (bp->histNo < tbp->histNo))))
             {
                 bp = tbp ;
                 no = ii ;
