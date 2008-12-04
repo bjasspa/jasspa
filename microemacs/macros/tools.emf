@@ -76,8 +76,8 @@ define-macro compile
             set-variable %compile-com "make "
         !endif
         set-variable %compile-com @ml20 "compile" %compile-com
-        set-variable .lastp &lef $buffer-fname &rsin "/" $buffer-fname
         &band @# 1 save-some-buffers @mna
+        set-variable .lastp &lef $buffer-fname &rsin "/" $buffer-fname
     !elif &not &exi .lastp
         ml-write "[Cannot recompile - compile has not been executed]" 
         !abort
