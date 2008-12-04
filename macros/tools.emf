@@ -68,18 +68,28 @@ add-file-hook "*compile* *grep*" fhook-ipipe
     set-variable :compile-last #l0
 !emacro
 define-macro compile
-    !force set-variable %compile-tmp @1
+    !force set-variable #l1 @1
     !if $status
-        set-variable %compile-com %compile-tmp
-        unset-variable %compile-tmp
-    !else
+        set-variable %compile-com #l1
+    !elif &not &band @# 4
         !if &seq %compile-com "ERROR"
             set-variable %compile-com "make "
         !endif
         set-variable %compile-com @ml20 "compile" %compile-com
+        set-variable .lastp &lef $buffer-fname &rsin "/" $buffer-fname
+        &band @# 1 save-some-buffers @mna
+    !elif &not &exi .lastp
+        ml-write "[Cannot recompile - compile has not been executed]" 
+        !abort
+    !else
+        &band @# 1 save-some-buffers @mna
+        popup-window "*compile*"
+        set-variable $buffer-fname .lastp
     !endif
-    &band @# 1 save-some-buffers @mna
     &con &band @# 2 0x80 0x280 ipipe-shell-command %compile-com "*compile*" compile-ipipe @mna
+!emacro
+define-macro recompile
+    &bor @# 4 compile
 !emacro
 define-macro which
     !force set-variable #l0 @1
