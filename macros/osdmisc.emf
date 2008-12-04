@@ -1507,7 +1507,7 @@ define-macro file-tool-menu
     !if &seq $buffer-fname ""
         osd @# 10 "" "<no file name>"
     !else
-        !if &set #l5 &band $buffer-fmod 0x10000
+        !if &set #l5 &exi :tag-count
             !if :tag-count
                 !force 10 dirlst-tag-list "File Tools"
             !else
