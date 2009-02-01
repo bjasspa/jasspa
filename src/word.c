@@ -836,7 +836,7 @@ lookahead(meInt fillState)
                         fillState |= FILL_INDALL ;
                         status = 'y' ;
                     }
-                    else if(status == 'v')
+                    else if(status == 'o')
                     {
                         fillState |= FILL_INDNVR ;
                         status = 'n' ;
