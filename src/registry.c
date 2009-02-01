@@ -1056,7 +1056,7 @@ setRegistry (int f, int n)
         return meABORT;
     if(n & 0x02)
     {
-        if((rnp = regFind(&root,buf1)) == NULL)
+        if(((rnp = regFind(&root,buf1)) == NULL) || (rnp == &root))
             return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Cannot find node %s]",buf1);
         
         /* setting the name of the node, not the value */
@@ -1070,15 +1070,19 @@ setRegistry (int f, int n)
         if(name != NULL)
         {
             *name++ = '\0' ;
-            pnp = regFind(&root,buf2) ;
+            if((pnp = regFind(&root,buf2)) == NULL)
+                return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Cannot find node %s]",buf2) ;
+            nnp = pnp ;
+            do {
+                if(nnp == rnp)
+                    return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Cannot move node to itself or one of its children]") ;
+            } while((nnp=nnp->parent) != NULL) ;
         }
         else
         {
             name = buf2 ;
             pnp = rnp->parent ;
         }
-        if(pnp == NULL)
-            return mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Cannot find node %s]",buf2) ;
         if((pnp != rnp->parent) || meStrcmp(name,rnp->name))
         {
             if((name[0] == '\0') || (regFind(pnp,name) != NULL))
