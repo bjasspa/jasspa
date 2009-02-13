@@ -348,7 +348,6 @@ extern	int	saveBuffer(int f, int n);
 extern	int     saveSomeBuffers(int f, int n) ;
 extern	int	writeBuffer(int f, int n);
 extern  int     writeOut(register meBuffer *bp, meUInt flags, meUByte *fn) ;
-extern	int	writeout(meBuffer *bp, int flags, meUByte *fn);
 extern	void	resetBufferNames(meBuffer *bp, meUByte *fname);
 extern	int	changeFileName(int f, int n);
 #ifdef _CONVDIR_CHAR

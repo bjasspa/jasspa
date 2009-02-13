@@ -2313,13 +2313,14 @@ static meUByte fileHasInLnEn[]="File had inconsistent line endings which will be
  * is displayed. Sadly, it looks inside a meLine; provide a macro for this. Most
  * of the grief is error checking of some sort.
  */
-int
-writeout(register meBuffer *bp, int flags, meUByte *fname)
+static int
+writeout(register meBuffer *bp, int flags)
 {
     meUByte lname[meBUF_SIZE_MAX], *fn ;
+    
     if(!meStrcmp(bp->name,"*stdin*"))
         fn = NULL ;
-    else if((bp->name[0] == '*') || (fname == NULL))
+    else if((bp->name[0] == '*') || (bp->fileName == NULL))
         return mlwrite(MWABORT,(meUByte *)"[No file name set for buffer %s]",bp->name);
     else
     {
@@ -2330,21 +2331,24 @@ writeout(register meBuffer *bp, int flags, meUByte *fname)
          * structure which may not necessarily be the current buffer. If it is not
          * in the current buffer then dont bother to look for it.
          */
-        getFileStats(fname,0,&stats,lname) ;
+        getFileStats(bp->fileName,0,&stats,lname) ;
         if(flags & 1)
         {
             if(meFiletimeIsModified(stats.stmtime,bp->stats.stmtime))
             {
                 meUByte prompt[meBUF_SIZE_MAX] ;
-                sprintf((char *) prompt,"%s modified, write",fname) ;
+                sprintf((char *) prompt,"%s modified, write",bp->fileName) ;
                 if(mlyesno(prompt) <= 0)
                     return ctrlg(meFALSE,1) ;
             }
-            if((bp->fileFlag & (meBFFLAG_BINARY|meBFFLAG_LTDIFF)) &&
-               (mlyesno((bp->fileFlag & meBFFLAG_BINARY) ? fileHasBinary:fileHasInLnEn) <= 0))
-                return ctrlg(meFALSE,1) ;
+            if(bp->fileFlag & (meBFFLAG_BINARY|meBFFLAG_LTDIFF))
+            {
+                if(mlyesno((bp->fileFlag & meBFFLAG_BINARY) ? fileHasBinary:fileHasInLnEn) <= 0)
+                    return ctrlg(meFALSE,1) ;
+                bp->fileFlag &= ~(meBFFLAG_BINARY|meBFFLAG_LTDIFF) ;
+            }                
         }
-        fn = (lname[0] == '\0') ? fname:lname ;
+        fn = (lname[0] == '\0') ? bp->fileName:lname ;
         /* Quick check on the file write condition */
         if(writeCheck(fn,flags,&stats) <= 0)
             return meABORT;
@@ -2429,7 +2433,7 @@ saveBuffer(int f, int n)
        !meModeTest(frameCur->bufferCur->mode,MDEDIT))         /* Have we edited buffer ? */
         /* Return, no changes.  */
         return mlwrite(0,(meUByte *)"[No changes made]") ;
-    if((s=writeout(frameCur->bufferCur,n,frameCur->bufferCur->fileName)) > 0)
+    if((s=writeout(frameCur->bufferCur,n)) > 0)
         frameAddModeToWindows(WFMODE) ;  /* and update ALL mode lines */
     return (s);
 }
@@ -2472,8 +2476,7 @@ saveSomeBuffers(int f, int n)
                     status = meTRUE ;
                 }
             }
-            if((status > 0) &&
-               (writeout(bp, 0, bp->fileName) <= 0))
+            if((status > 0) && (writeout(bp,0) <= 0))
                 return meABORT ;
         }
         bp = bp->next;            /* on to the next buffer */
