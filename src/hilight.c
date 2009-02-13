@@ -2859,28 +2859,30 @@ indentLine(int *inComment)
     while(*ss == ' ')
         ss++ ;
     cind = ss - disLineBuff ;
-    if(blkp[0].scheme != 0x00)
-        fnoz = blkp[0].scheme ;
-    else if(noColChng > 1)
-        fnoz = blkp[1].scheme ;
+    if((noColChng > 1) && (blkp[0].scheme != 0x00))
+        ii = 1 ;
     else
-        fnoz = 0 ;
+        ii = 0 ;
+    fnoz = blkp[ii].scheme ;
     if((fnoz & 0xff00) == INDFIXED)
         ind = meIndentGetIndent((meUByte) fnoz, frameCur->bufferCur->indentWidth);
     else
     {
         int jj, brace=0, contFlag=0, aind, lind, nind ;
         
-        if((fnoz & INDBOTH) || ((fnoz & INDINDCURLINE) &&
-                                ((fnoz == blkp[0].scheme) || (cind >= blkp[0].column))))
+        aind = 0 ;
+        for(;;)
         {
             if (fnoz & INDBOTH)
-                aind = meIndentGetIndent((meUByte) ind7ToInd8(fnoz>>8), frameCur->bufferCur->indentWidth);
-            else
-                aind = meIndentGetIndent((meUByte) fnoz, frameCur->bufferCur->indentWidth);
+                aind += meIndentGetIndent((meUByte) ind7ToInd8(fnoz>>8), frameCur->bufferCur->indentWidth);
+            else if((fnoz & INDINDCURLINE) && ((fnoz == blkp[0].scheme) || (cind >= blkp[0].column)))
+                aind += meIndentGetIndent((meUByte) fnoz, frameCur->bufferCur->indentWidth);
+            else if(fnoz != 0)
+                break ;
+            if(++ii >= noColChng)
+                break ;
+            fnoz = blkp[ii].scheme ;
         }
-        else
-            aind = 0 ;
         jj = (int) meHilightGetLookBackLines(indents[indent]) ;
         for(ind=0 ; (--jj >=0) ; )
         {
