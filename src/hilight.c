@@ -2859,7 +2859,7 @@ indentLine(int *inComment)
     while(*ss == ' ')
         ss++ ;
     cind = ss - disLineBuff ;
-    if((noColChng > 1) && (blkp[0].scheme != 0x00))
+    if((noColChng > 1) && (blkp[0].scheme == 0x00))
         ii = 1 ;
     else
         ii = 0 ;
