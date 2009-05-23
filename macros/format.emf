@@ -195,18 +195,15 @@ define-macro delete-indentation
             forward-line
         !endif
     !done
-    !if &seq .mode ""
+    !if &len .mode
+        @# fill-paragraph .mode
+    !else
         set-variable #l0 $recent-keys
         @# fill-paragraph @mna
-        set-variable #l1 $recent-keys
-        !if &not &seq #l0 #l1
-            set-variable #l2 &trr &lef #l1 &sin " " #l1
-            !if &lfin "|a|A|v|V|" #l2
-                set-variable .mode #l2 
-            !endif
+        !if &seq #l0 &set #l1 $recent-keys
+        !elif &lfin "|a |o |" &slo &lef #l1 2
+            set-variable .mode &lef #l1 1
         !endif
-    !else
-        @# fill-paragraph .mode
     !endif
 !emacro
 
