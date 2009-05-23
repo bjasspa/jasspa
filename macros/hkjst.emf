@@ -329,6 +329,7 @@ set-variable .fhook-jst.item-list-r4 "H4  \ecB\\1\ecA"
 0 define-macro jst-fill-paragraphi
     set-variable #l1 &cond &les @# 0 -1 1
     set-variable #l2 &abs @#
+    set-variable #l3 ""
     !repeat
         !if &seq &trr @wl ""
             forward-line
@@ -350,8 +351,15 @@ set-variable .fhook-jst.item-list-r4 "H4  \ecB\\1\ecA"
                 insert-newline
                 backward-line
             !endif
+        !elif &len #l3
+            #l1 fill-paragraph #l3 @mna
         !else
+            set-variable #l4 &lef $recent-keys 100
             #l1 fill-paragraph @mna
+            !if &seq #l4 &lef $recent-keys 100
+            !elif &lfin "|a |o |" &slo &lef $recent-keys 2
+                set-variable #l3 &lef $recent-keys 1
+            !endif
         !endif
         !if &not &dec #l2 1
             !return
