@@ -1143,7 +1143,7 @@ doOneKey(void)
 
     /* do ME_PREFIX1-# processing if needed */
     basec = c & ~ME_PREFIX1 ;        /* strip meta char off if there */
-    if((c & ME_PREFIX1) && ((basec >= '0' && basec <= '9') || basec == '-'))
+    if((c & ME_PREFIX1) && (((basec >= '0') && (basec <= '9')) || (basec == '`') || (basec == '-')))
     {
         f = meTRUE;
         if(basec == '-')
@@ -1151,13 +1151,25 @@ doOneKey(void)
             mflag = -1 ;
             n = 0;
         }
+        else if(basec == '`')
+        {
+            mflag = 1 ;
+            n = 99999999 ;
+        }
         else
         {
             mflag = 1 ;
             n = basec - '0' ;
         }
-        while(((c=meGetKeyFromUser(meTRUE,(n * mflag),meGETKEY_COMMAND)) >= '0') && (c <= '9'))
-            n = n * 10 + (c - '0');
+        while((c=meGetKeyFromUser(meTRUE,(n * mflag),meGETKEY_COMMAND)) >= '0')
+        {
+            if(c <= '9')
+                n = n * 10 + (c - '0');
+            else if(c == '`')
+                n = 99999999 ;
+            else
+                break ;
+        }
         n *= mflag;    /* figure in the sign */
     }
 
