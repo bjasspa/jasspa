@@ -1362,17 +1362,17 @@ define-macro-file htmltool html-to-ehf
 
 define-macro vm
     !if &seq &set %vm-mail-dir &reg &spr "/history/%s/mail-dir" $platform "" ""
-        ml-write "[Mail directory not setup! Use Help/User setup]"
+        ml-write "[Mail directory not setup! Execute mail-setup to configure]"
         !bell
         !abort
     !endif
     !if &seq &set %vm-mail-src &reg &spr "/history/%s/mail-src" $platform "" ""
-        ml-write "[Incoming mail file not setup! Use Help/User setup]"
+        ml-write "[Incoming mail file not setup! Execute mail-setup to configure]"
         !bell
         !abort
     !endif
     !if &seq &set %vm-mail-box &reg &spr "/history/%s/mail-box" $platform "" ""
-        ml-write "[Main mail box not setup! Use Help/User setup]"
+        ml-write "[Main mail box not setup! Execute mail-setup to configure]"
         !bell
         !abort
     !endif
