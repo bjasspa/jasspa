@@ -24,7 +24,7 @@ set-variable .fhook-mail.command-flag  "|thb|th|thb|thb|h|h|h|h|h|h|"
 set-variable .fhook-mail.command-name  "|mail-send||mail-data-insert|mail-data-insert|||||||"
 set-variable .fhook-mail.command-nbind "|||1|2|||||||"
 set-variable .fhook-mail.command-kbind "|C-c C-c||C-c C-i|C-c C-z|||||||"
-set-variable .fhook-mail.command-desc  "|\HSend mail||Insert given file, method 1|Insert given file, method 2||Abbreviation file is set to mail.eaf, mail also uses|the organizer(3) address book||See Help/User Setup/Mail to setup the command-lines|Windows mail can use postie or blat|"
+set-variable .fhook-mail.command-desc  "|\HSend mail||Insert given file, method 1|Insert given file, method 2||Abbreviation file is set to mail.eaf, mail also uses|the organizer(3) address book||Execute mail-setup to setup the command-lines|Windows mail can use postie or blat|"
 
 !if &and &sin "h" .fhook-mail.setup &band .hilight.flags 0x02
     !if &not &exist .hilight.mail
@@ -50,7 +50,7 @@ set-variable .fhook-mail.command-desc  "|\HSend mail||Insert given file, method 
 ; Mail checker
 define-macro mail-check
     !if &seq &set %vm-mail-src &reg &spr "/history/%s/mail-src" $platform "" ""
-        ml-write "[Incoming mail file not setup! Use Help/User setup]"
+        ml-write "[Incoming mail file not setup! Execute mail-setup to configure]"
         !abort
     !endif
     ; reset the callback if its automatic
@@ -60,7 +60,7 @@ define-macro mail-check
     ; if the user queues outgoing mail
     !if &reg &spr "/history/%s/mail-queue" $platform "0"
         !if &seq &set %vm-mail-dir &reg &spr "/history/%s/mail-dir" $platform "" ""
-            ml-write "[Mail directory not setup! Use Help/User setup]"
+            ml-write "[Mail directory not setup! Execute mail-setup to configure]"
             !abort
         !endif
         ; if theres some to go - send it
@@ -345,7 +345,7 @@ define-macro mail
         !return
     !endif
     !if &seq &set %vm-mail-dir &reg &spr "/history/%s/mail-dir" $platform "" ""
-        ml-write "[Mail directory not setup! Use Help/User setup]"
+        ml-write "[Mail directory not setup! Execute mail-setup to configure]"
         !abort
     !endif
     find-buffer "Mail"
@@ -419,7 +419,7 @@ define-macro mail
 
 0 define-macro mail-send-msg
     !if &seq &set #l0 &reg &spr "/history/%s/mail-send" $platform "" ""
-    ml-write "[Send mail command not set up! Use Help/User setup]"
+    ml-write "[Send mail command not set up! Execute mail-setup to configure]"
     !abort
     !endif
     beginning-of-buffer
