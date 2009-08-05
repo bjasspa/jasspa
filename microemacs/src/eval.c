@@ -2478,7 +2478,13 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
                             break ;
                         if((cc == '\\') && (*rr != '\0'))
                         {
+                            int changeCase=0 ;
                             cc = *rr++ ;
+                            if(((cc == 'l') || (cc == 'u') || (cc == 'c')) && (*rr != '\0'))
+                            {
+                                changeCase = (cc == 'l') ? -1:cc ;
+                                cc = *rr++ ;
+                            }
                             if((cc == '&') || ((cc >= '0') && (cc <= '9') && ((((int) cc) - '0') <= meRegexStrCmp.groupNo)))
                             {
                                 cc = (cc == '&') ? 0:(cc-'0') ;
@@ -2491,8 +2497,26 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
                                         break ;
                                     if(cc)
                                         soff += meRegexStrCmp.group[0].start ;
-                                    meStrncpy(evalResult+dlen,arg1+soff,mlen) ;
-                                    dlen += mlen ;
+                                    if(changeCase)
+                                    {
+                                        while(--mlen >= 0)
+                                        {
+                                            cc = arg1[soff++] ;
+                                            if(changeCase > 0)
+                                            {
+                                                evalResult[dlen++] = toUpper(cc) ;
+                                                if(changeCase == 'c')
+                                                    changeCase = -1 ;
+                                            }
+                                            else
+                                                evalResult[dlen++] = toLower(cc) ;
+                                        } 
+                                    }
+                                    else
+                                    {
+                                        meStrncpy(evalResult+dlen,arg1+soff,mlen) ;
+                                        dlen += mlen ;
+                                    }
                                 }
                             }
                             else
