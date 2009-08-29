@@ -3,7 +3,7 @@
  * JASSPA MicroEmacs - www.jasspa.com
  * macro.c - Macro Handling routines.
  *
- * Copyright (C) 1995-2006 JASSPA (www.jasspa.com)
+ * Copyright (C) 1995-2009 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free

@@ -3,7 +3,7 @@
  * JASSPA MicroEmacs - www.jasspa.com
  * eskeys.h - Extended key definitions.
  *
- * Copyright (C) 1997-2006 JASSPA (www.jasspa.com)
+ * Copyright (C) 1997-2009 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
