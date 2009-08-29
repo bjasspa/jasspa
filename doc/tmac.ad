@@ -1,11 +1,11 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1988-2005 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1988-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
 .\" Created By: Jon Green
 .\"
-.\" $Id: tmac.ad,v 1.2 2006-01-14 13:16:43 jon Exp $
+.\" $Id: tmac.ad,v 1.3 2009-08-29 17:14:34 jon Exp $
 .\"
 .\" Identification
 .de Id
