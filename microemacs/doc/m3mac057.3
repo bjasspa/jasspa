@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Jul 5 18:16:21 1999
 .\"
-.Id $Id: m3mac057.3,v 2.11 2009-08-29 17:13:59 jon Exp $
+.Id $Id: m3mac057.3,v 2.12 2009-08-29 18:13:22 jon Exp $
 .Im MicroEmacs shell|command
 .so me.tni
 .TH cvs 3
@@ -70,6 +70,7 @@ cvs-update \- \*(mS CVS interface - update directory files
 .Me $a
 .SH SYNOPSIS
 .na
+.I n
 .B cvs
 .br
 .B cvs-setup
@@ -110,7 +111,12 @@ The \*(mS \fBcvs\fR command opens up a modified
 .Ht file-browser 3
 with an additional  "\fC*cvs-console*\fR"  window. The "\fC*files*\fR"  window
 includes  additional  columns  showing the CVS state,  revision and repository
-date. The  functionality  of the  file-browser is the same as a non-CVS folder
+date. The browser by default opens with 3 windows  including a  representation
+of the file tree. When \fBcvs\fR is provided with a numeric  argument  \fIn\fR
+of zero (0) then a single window displaying the directory is used only (i.e. 
+.BR "0 cvs") 
+.PP
+The  functionality  of the  file-browser is the same as a non-CVS folder
 with the exception that  additional CVS item controls are located in the mouse
 context  menu (opened by clicking the right mouse button in the  \fC*files*\fR
 buffer).  This  menu  item  opens  another  sub-menu  providing  access to the

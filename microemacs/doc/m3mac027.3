@@ -6,7 +6,7 @@
 .\"  Created By    : Steven Phillips
 .\"  Created       : Fri Aug 7 07:32:59 1998
 .\"
-.Id $Id: m3mac027.3,v 2.9 2009-08-29 17:13:42 jon Exp $
+.Id $Id: m3mac027.3,v 2.10 2009-08-29 18:13:22 jon Exp $
 .Im MicroEmacs command|file|essential
 .ds C0 "(\fB\*(fA\fR)\ \&
 .so me.tni
@@ -21,7 +21,7 @@ file-browser-swap-buffers \- Swap between file-browser windows
 .Me $a
 .SH SYNOPSIS
 .na
-\fBfile-browser\fR \*(C0
+\fIn\fR \fBfile-browser\fR \*(C0
 .br
 \fBfile-browser-close\fR
 .br
@@ -32,7 +32,9 @@ file-browser-swap-buffers \- Swap between file-browser windows
 executed \fBfile-browser\fR creates 2 buffers, "\fC*directory*\fR"  displaying
 the directory  structure and "\fC*files*\fR"  listing the files in the current
 directory  with  information on each file.  \fBfile-browser\fR  displays these
-buffers side by side, splitting the current window horizontally if required.
+buffers side by side, splitting the current window  horizontally  if required.
+\fBfile-browser\fR  uses a single  window only when  invoked  with a numerical
+argument \fIn\fR of zero (0). 
 .PP
 Once open the user can browse  through the system using the following  keys in
 the \fC*directory*\fR buffer, use \fBesc-h\fR for help within the buffer:
