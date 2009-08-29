@@ -1,0 +1,41 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m4fil037.4,v 2.1 2009-08-29 17:16:55 jon Exp $
+.Im MicroEmacs macro;function;miscellaneous
+.so me.tni
+.TH &bstat 4
+.XI &bstat - "Retrieve current buffer statistic"
+.SH NAME
+&bstat \- Retrieve current buffer statistic
+.SH SYNOPSIS
+.na
+.B &bstat
+.I <stat>
+.ad
+.SH DESCRIPTION
+.B &bstat
+returns  the  specified  \fI<stat>\fR  on the  current buffer.  Valid
+\fI<stat>\fR values are:-
+.IP \fBo\fR
+Returns  a  non-zero  value if the  buffer  is out of date  (i.e. the original
+file has changed and is newer than the buffer.
+.SH EXAMPLE
+The  following  example  uses  \fB&bstat\fR  to determine if the buffer is out
+of date and write a simple message:
+.Me $emf-scheme
+.CS
+!if &bstat o
+  ml-write "Buffer out of date"
+!endif    
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Hl "Variable Functions" Functions - ,
+.Ht find-file 2 ,
+.Ht &stat 4 .
+.ad
+.FH

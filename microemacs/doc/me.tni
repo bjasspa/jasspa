@@ -5,9 +5,9 @@
 .\"
 .\" Global abbreviations for MicroEmacs
 .\"
-.ds mE "MicroEmacs '09
+.ds mE "MicroEmacs 2009
 .ds mS "MicroEmacs
-.ds nE "NanoEmacs '09
+.ds nE "NanoEmacs 2009
 .ds nS "NanoEmacs
 .ds cX "C-x\ \&
 .ds cH "C-h\ \&
