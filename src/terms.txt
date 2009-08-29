@@ -1,10 +1,10 @@
 > -!- document; fill-mode:both; fill-column:70; -!-
 >
->  Copyright 2001-2005 JASSPA.
+>  Copyright 2001-2009 JASSPA (www.jasspa.com)
 >
 >  Created By    : Jon Green
 >  Created       : Sat Dec 22 09:09:48 2001
->  Last Modified : <050509.2300>
+>  Last Modified : <090829.1802>
 >
 
 This  document  describes  how the GPL  licence  has been  applied  to
@@ -187,7 +187,7 @@ history and application.
      *
      * Originally written by Dave G. Conroy for MicroEmacs
      * Copyright (C) Daniel M. Lawrence 1987-1988
-     * Copyright (C) JASSPA 1988-2002
+     * Copyright (C) JASSPA 1988-2009 (www.jasspa.com)
      *
      * This program is free software; you can redistribute it and/or modify it
      * under the terms of the GNU General Public License as published by the Free
@@ -229,7 +229,7 @@ history and application.
 >emf>
     ; -!- emf -!-
     ; This is part of the JASSPA MicroEmacs macro files
-    ; Copyright (C) JASSPA 1999-2002
+    ; Copyright (C) JASSPA 1999-2009
     ; See the file me.emf for copying and conditions.
     ;
     ; Created By: Steven Philips
@@ -251,7 +251,7 @@ history and application.
     ;
     ;  History
     ;
-    ;  Copyright (C) 1999 JASSPA.
+    ;  Copyright (C) 1999-2009 JASSPA (www.jasspa.com).
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 >doc>
 
@@ -263,7 +263,7 @@ history and application.
     ; JASSPA MicroEmacs - www.jasspa.com
     ; me.emf - Startup file for JASSPA MicroEmacs Distribution
     ;
-    ; Copyright (C) 1988-2005 JASSPA (www.jasspa.com)
+    ; Copyright (C) 1988-2009 JASSPA (www.jasspa.com)
     ;
     ; This program is free software; you can redistribute it and/or modify it
     ; under the terms of the GNU General Public License as published by the Free
@@ -291,7 +291,7 @@ history and application.
     as follows:-
 
  @  .\"*-*- nroff -*-
-    .\" Copyright (C) 1999-2002 JASSPA.
+    .\" Copyright (C) 1999-2009 JASSPA.
     .\"
     .\" Permission is granted to copy, distribute and/or modify this document
     .\" under the terms of the GNU Free Documentation License, Version 1.1
@@ -308,7 +308,7 @@ history and application.
 
  @  .\"*-*- nroff -*-*************************************************************
     .\"
-    .\"			Copyright 1999 JASSPA.
+    .\"			Copyright 1999-2009 JASSPA (www.jasspa.com)
     .\"			      All Rights Reserved
     .\"
     .\"
@@ -327,7 +327,7 @@ history and application.
     .\"
     .\"***************************************************************************
     .\"
-    .\"  Copyright (C) 1999 JASSPA.
+    .\"  Copyright (C) 1999-2009 JASSPA (www.jasspa.com).
     .\"
     .\"  All Rights Reserved.
     .\"

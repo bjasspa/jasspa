@@ -1,10 +1,10 @@
 > -!- document; fill-column:65; fill-mode:both; -!-
 >
->  Copyright 2003 Jon Green.
+>  Copyright (c) 2003-2009 Jon Green.
 >
 >  Created By    : Jon Green
 >  Created       : Sat Aug 9 23:47:20 2003
->  Last Modified : <061107.2357>
+>  Last Modified : <090829.1804>
 >
 
 The  following are benchmark  figures for  MicroEmacs  running on
