@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.51 2009-08-29 17:14:33 jon Exp $
+.Id $Id: me.nrs,v 2.52 2009-08-29 18:37:31 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -2060,6 +2060,35 @@ common editor across all working platforms has been achieved!
 .br
 Release date specified as 2009/09/09.
 .BS
+[090805] Added support for \\i#, \\u# & \\c# in &xre macro function
+.BU  
+[090530] Fixed TCL abbreviation file expansion reported by Ferenc Deak.
+.BU
+[090523] Fix fill-paragraph  so standard 'o' and 'a' are supported. 
+.BU  
+[090523] Fix jst paragraph fill so 'o' and 'a' are supported
+.BU  
+[090523] Bound "esc-`" to enter a very large arg n (99999999)
+.BU  
+[090213]  Improved  indent  rules  so two  'current-line  and  onward'  tokens
+together are both  considered on the current line, i.e.  '</tr></table>'  is a
+double indent. 
+.BU
+[090201] Fixed the 'No to all' 'o' option to fill paragraph  prompt, was still
+'v' for Never. 
+.BU
+[090201]  Avoided  crash  caused  by  moving  reg node to itself or one of its
+children.
+.BU  
+[090121]  Better support for encrypted  notes files, checks the first line and
+if not '-!- enf...' it assumes its encrypted and will prompt for a password.
+.BU
+[081204] Fixed get-next-line buffer selection (logic inverted).
+.BU  
+[081204] Fixed file-tool-menu so it will work in a *find* buffer.
+.BU
+[081116] Upped the macro minimum version to 2008-11-10
+.BU
 [081111] Added 'Disable' to  file-tool-setup,  changed 'Default Open' to 'Open
 File' and added 'View File' 
 .BU
