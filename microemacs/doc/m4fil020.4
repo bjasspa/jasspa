@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil020.4,v 2.5 2002-01-11 21:58:42 jon Exp $
+.Id $Id: m4fil020.4,v 2.6 2009-08-29 17:14:14 jon Exp $
 .Im MicroEmacs macro;variable
 .so me.tni
 .TH "@y" 4
@@ -16,6 +16,12 @@
 The \fIYank Buffer Variable\fR \fB@y\fR  retrieves the current 
 .Ht yank 2
 string from the kill buffer and returns it to the caller.
+.PP
+The \fB@y\fR variable may be set to change the kill ring buffer.
+.PP
+The \fIYank Buffer  Variable\fR  may be specified with a numeric  qualifier to
+access one of the historical yank buffers  \fB@y0\fR to \fB@y15\fR to directly
+extract text from the kill-ring.
 .SH EXAMPLE
 The current  contents of the yank buffer can be obtained using \fB@y\fR, so to
 set  variable \fC#l1\fR to the  current or last word if the cursor is not in a
