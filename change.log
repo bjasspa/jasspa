@@ -4,13 +4,13 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <090829.1933>
+>  Last Modified : <090829.1946>
 >
 
 
   User perspective summary of 10th Release changes 20090909
   
-  * "find" and "grep" no use built-in  operations and do not require  external
+  * "find" and "grep" now use built-in  operations and do not require external
     executables (applicable to Windows systems).
     
   * Saved session information does not degrade start-up when a large number of
