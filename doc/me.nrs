@@ -1,6 +1,6 @@
 .\"*-*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1999-2006 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1999-2009 JASSPA (www.jasspa.com)
 .\"
 .\" Permission is granted to copy, distribute and/or modify this document
 .\" under the terms of the GNU Free Documentation License, Version 1.1
@@ -12,18 +12,18 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.50 2006-12-05 23:55:11 jon Exp $
+.Id $Id: me.nrs,v 2.51 2009-08-29 17:14:33 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
-.TH me - - - "MicroEmacs '06"
+.TH me - - - "MicroEmacs 2009"
 .XI me - -
 .XI home - -
 .XI MicroEmacs - -
 .\" Next section (until .Ss) is for the osd-help contents page
 .Me "!   Contents"
 .Me "| home"
-.Me "MicroEmacs '06"
+.Me "MicroEmacs 2009"
 .Me "|"
 .Me " "
 .Me "| osd-help(3)"
@@ -98,7 +98,7 @@
 .Me "    Registry"
 .Me "| Command Line Filters"
 .Me "    Command Line Filters"
-.Me "| MicroEmacs '06 - Games"
+.Me "| MicroEmacs 2009 - Games"
 .Me "    Games"
 .Me "|"
 .Me " "
@@ -130,7 +130,7 @@
 .Me "    Compatibility"
 .Me "| Interfacing(2)"
 .Me "    Interfacing to external components"
-.Me "| MicroEmacs '06 - Supported File Types"
+.Me "| MicroEmacs 2009 - Supported File Types"
 .Me "    Supported File Types"
 .Me "| Client-Server(2)"
 .Me "    Client-Server Interface"
@@ -2055,6 +2055,319 @@ etc. are not as slick as they  could be,  certainly  under  Microsoft  Windows
 \*(mS  looks  positively  primitive!!  Regardless  of the  look, the goal of a
 common editor across all working platforms has been achieved!
 .SS "Development History"
+.\"
+.B "10th Release - September 2009"
+.br
+Release date specified as 2009/09/09.
+.BS
+[081111] Added 'Disable' to  file-tool-setup,  changed 'Default Open' to 'Open
+File' and added 'View File' 
+.BU
+[081111] Changed the default behaviour of open and view to open a menu if more
+than one Open/View tool matches. 
+.BU
+[081111] Added alias paths to a '~' auto-completion list.
+.BU
+[081111] Fixed compile buffer processor often missing error lines.
+.BU
+[081106]  Changed  file tool mask so if it starts  with  '^...' the whole file
+name is  matched  not  just the base  name  (required  for  'http://...'  type
+matching).
+.BU
+[081106] Remove file tool setup from the context menu as it is now in the file
+tool menu itself.
+.BU
+[081106] Document  highlighting;  improved the hilighting of http & https urls
+and added file: hilighting.
+.BU
+[081106] Added a new 'Find Link' mouse command (use  user-setup to bind) which
+will open the file/url  clicked on by the mouse  (typically  bind to Ctrl Left
+mouse)
+.BU
+[081106] Added 'File Tool Setup' to the file tool context menu.
+.BU
+[081026]  Added  confirmation  prompt if about to save a file which had binary
+chars or inconsistent line endings.
+.BU
+[081024] Fixed forward def's for file-tool macros.
+.BU
+[081024] Added 'File Tools' item to Advanced menu.
+.BU
+[081024] Enhanced file-tool to have the features found in shell-tools  (namely
+ability to capture output and save buffers with(out) prompt)
+.BU
+[081024] Improved the get-next-line  file name template to be more strict with
+matching drive letters at the start. 
+.BU
+[081019] Improved behaviour when ftp reg file is missing.
+.BU
+[081019]    Ensured   large   files   are   handled    properly   (fails   for
+.Ht replace-string-in-files 3 ) 
+and improved error reporting.
+.BU
+[081018]  Fixed  
+.Ht find-file 2
+so it can load files and  directories  with square brackets (i.e. a[b]) 
+.BU
+[081010] Removed compile highlighting as this is now done differently.
+.BU
+[081010]  Changed  favorite file opening to check for a default open file-tool
+and use that instead.
+.BU
+[081010]  Clearcase;  changed  ipipe  launch of  cleartool  to make use of new
+no-wrap bit 0x200. 
+.BU
+[081005] Implemented a more macro orientated  interface to get-next-line (when
+n == 0), which only looks in the current  buffer, if a 'next line' is found it
+simply changes the cursor  location, sets next-file & next-line  variables and
+does not pop-open the file. Got  get-next-line  to set :next-line as well as a
+next-file variable. 
+.BU
+[081005]  find and grep; used new  '&bstat o' to check that any loaded  buffer
+used (-l) is up-to-date and if not prompt the user. 
+.BU
+[081005] find and grep; introduced -a option to  automatically  reread all ood
+buffers (Yes to All) and -o option to never reread the ood buffers (NO to all)
+.BU
+[081005]  Changed  shell-tool  interface so a tool can run concurrent  without
+going to a buffer (uses relatively recent improvements to shell-command) 
+.BU
+[081005] Changed reread-all command so default action only rereads out-of-date
+buffers (uses new &bstat) if 0 arg is given then it rereads all as before. 
+.BU
+[081005] Protected ME from potential crash when homedir is NULL.
+.BU
+[081002] File types, fixed abort caused by empty files.
+.BU
+[081002] page-file; implemented a new -u/-U option to limit the size of a file
+to be grep'd to 100Mb unless -u is given (unlimited, includes -w for find)
+.BU
+[081002] When a large file is encountered find & grep now use page-file.
+.BU
+[081002] Fixed pressing C-g at read-only prompt of  replace-string-in-files to
+abort the command.
+.BU
+[081002]  page-file;  Implemented an absolute line counter which works as long
+as the user started from the top (v useful for grep) 
+.BU
+[081002]  page-file;  Implemented a macro  orientated  page-file-search-buffer
+macro.
+.BU
+[081002]  page-file;  Added support for  specifying the buffer name to be used
+by page-file (0 numeric arg) 
+.BU
+[081002]  isearch macros now have an 'Yes to All' option when asked whether to
+change page.
+.BU
+[081002] Increased the default page size to 1Mb
+.BU
+[081002]  Restricted  the session kill history to only buffers  which are 1020
+chars long or less.
+.BU
+[081002] Added @y0 ... @y15 support to directly extract the kill-ring buffers.
+.BU
+[081002] Added a new &bstat command variable which is similar to &stat but for
+the current buffer, currently only has 'o' for 'out-of-date' test. 
+.BU
+[081002] Made double click on a window  mode-line  delete other  windows (i.e.
+maximise the window) 
+.BU
+[0801002] Fixed opening toolbar when notes was active in the session.
+.BU
+[081002] tools; added new save-kbd-macro command which makes it easy to save a
+keyboard macro for future use.
+.BU
+[081002]   xfind;  use  new  0x200  ipipe  flag  to  not  wrap  lines,  avoids
+get-next-line failures on long file names. 
+.BU
+[080929]  Changed the 0 & +ve args for reyank, now acts as a yank  yanking out
+the nth item in the kill ring (i.e. 0 reyank == yank (except no external clip check)) 
+.BU
+[080929]  Fixed bug in  isearch - C-w was not  storing  status so a  following
+backspace could lose the Okay status. 
+.BU
+[080916] find/grep -& (background) option working with new -f ME option.
+.BU
+[080916] Added Windows MSVC 8 makefile
+.BU
+[080916]  Fixed  pipe  failure  problem  caused by  GetConsoleScreenBufferInfo
+failing (no  console)  this is a fatal  problem  whe not in piping  mode - not
+checking for failure and handling led to use of uninitialized variables.  
+.BU
+[080724] Fixed spin in ctags caused by a double '; ;'
+.BU
+[080724] Added new 'Tag File' option to the generate-tags dialog
+.BU
+[080724] Added command line -f option to set .about.arg# variables
+.BU
+[080720] Added the session name to the main window title
+.BU
+[080720] New schemes contributed by BS.
+.BU
+[080720] Implemented $frame-title to partially set the main window title text.
+.BU
+[080720]  Improved  delete-some-buffers  so bit  0x01  only  disables  the 'is
+modified'  test, 0x02  disables  the main prompt,  added new 'delete  inactive
+buffers' prompt with bit 0x04 to disable. 
+.BU
+[080509] Improved the hilighting of grep output.
+.BU
+[080426] Fixed PS scheme (now called Lumina). Update of Charcoal scheme.
+.BU
+[080330] Enhanced the javadoc highlighting.
+.BU
+[080330] PHP; Corrected string case and enhanced the doxygen commenting.
+.BU
+[080311] Fixed cvs-remove when used in a dir listing (only worked in a cvs-state buffer)
+.BU
+[080222] Extended 'C' Doxygen highlighting.
+.BU
+[080207] Added new 'touch' feature to file-op (bit 0x400)
+.BU
+[071125] Fixed file name input crash caused by using  completion in a dir with
+files being removed. 
+.BU
+[071125] C, directory  list and latex; Fixed 'o' (no to all)  response to copy
+which did not work.
+.BU
+[071125] Fixed clearcase -mkbranch files being given '?' status. 
+.br
+Fixed cc-merge refresh bug.
+.BU
+[071103]  Build; added -D option to specify a define, e.g. -D _USETPARM to use
+the systems tparm function rather than ME's 
+.BU
+[070311]  2dos, 2mac,  2unix,  2win; use arg 0 as these are not able to prompt
+from the user if the file is read-only - just do it. 
+.BU
+[071103] cc-delete; removed bogus 'checking out parent' error message.
+.BU
+[071021]  find;  added -&  support  to  replace-sting-in-files  and  added new
+*replace*  output  buffer  for the  command  so hte user can see what has been
+done.
+.BU
+[071018] Template buffer binding; avoid abort if binding can't be made
+.BU
+[071013] OSD; fixed line hilight when selection string has regex chars
+.BU
+[071013] Fixed deletion of symbolic links when they point to directories.
+.BU
+[070923]  Correct a file name when  adding it to the  history if it has a path
+character (i.e. not just a base name). 
+.BU
+[070923] Fixed ftp file rename (i.e. 'r' command in ftp dir listing)
+.BU
+[070923]  Only  rename  dir-list  buffer to *files* if the  current  buffer is
+called  *files* (i.e.  browser is being  used).  Handle a dirlist  (not called
+*files*) being displayed in multiple  windows. Added file being loaded to file
+history.
+.BU
+[070923] jst; Added  support for tables being  terminated by a ]? on the start
+of the last row, this makes tables far easier to use. 
+.BU
+[270923] jst; Added support for item-list and collapse. Added 4th level titles.
+.BU
+[070920] Persist  wrap mode in ipipe-rerun and disable compile  hilighting when
+wrap is not used as very long compile lines kill performance (ME takes a lot of CPU)  
+.BU
+[070920] Reset hilight and indent buffer variables on a bclear,  otherwise the
+hilighting persists in *compile* buffer across multiple compiles etc 
+.BU
+[070920]  Added a bit 0x02 to the  compile  command  to run the ipipe  command
+without wrap (required if '<filename>:<line>: Error' lines are longer than the
+window width)  
+.BU
+[070920] Fixed html comment definition (should be <!--  -->)
+.BU
+[070920] jst; improved title.
+.BU
+[070920] Added new 0x0200 bit to ipip-shell-command to disable wrap, similar
+to raw but still  adds the  header and exit info. Need this for  compile  when
+file names are longer than the width of the window (breaks goto-next). 
+.BU
+[070920] Fixed  build.sh to build mec when X11 is not available - issue raised
+by TH. 
+.BU
+[070920] Added capability to 'set-variable @y ...' to set the current kill buffer.
+.BU
+[070713] Fixed dir-list toolbar tool to handle dirlist with seconds.
+.BU
+[070713] Perl template; added '-' to list of allowed hash characters.
+.BU
+[070713] Build; handle VS8 fatal error compile messages.
+.BU
+[070713] Fixed main edit menu's buffer-mode numeric args.
+.BU
+[070524]  Added a new 0x20  flag to  find-buffer  to stop the  history  of the
+outgoing  buffer from being  incremented  - used by new find and grep to avoid
+trashing the buffer history. 
+.BU
+[070524] Fixed the handling of  find-buffer's  -ve arg, introducing a new 0x10
+bit flag to control the forced hiding. 
+.BU
+[070524]  Fixed  file name input so  trailing  '/.' & '/..' have a further '/'
+added, this fixes several file loading problems.
+.BU 
+[070524] Changed file saving prompts to be like  delete-buffer, they now given
+the file name first and then the 'save file' prompt so the user can always see
+the action they are being prompted for.
+.BU
+[070524] dded an f3 buffer binding to be the same as v
+.BU
+[070524] Improved  filetype.emf to report if the last line is missing its line
+termination.
+.BU
+[070507] Documentation correction from Bryan for "notes".
+.BU
+[070426]  Implemented  cycling  through  loaded  note  files  using  the  tree
+mode-line arrows (like paged tools in toolbar)
+.BU
+[070426] Avoid opening the toolbar twice which can cause tool window sizing issues.
+.BU
+[070425] Fixed cc-state end process cursor  positioning  prompt, now moves the
+cursor to after the [***....] exit line so the user knows its finished.
+.BU
+[070424] Fixed a few start-up session restore and notes interaction issues.
+.BU
+[070424] Fixed startup performance issues caused by testing the existence of every file
+.BU
+[070424] Clearcase removed the 'Checkout parent' option for move and delete.
+.BU
+[070424] Tool setup fixed issue with adding a new window tool after a paged tool.
+.BU
+[070322] Handle file loading errors in find.
+.BU
+[070322] Fixed the spelling error scheme.
+.BU
+[070212] Fixed large file support on UNIX/Linux.
+.BU
+[070211] find and grep -x option also skip ignorable directories.
+.BU
+[061206] Fixed issue with the scheme editor.
+.BU
+[061206] Fixed the OSD entry character handling.
+.BU
+[061205]   Changed   creferences   to   replace-all-string   commands  to  new
+(query-)replace-string-in-files commands. 
+.BU
+[061205] Implemented new (query-)replace-string-in-files commands based on new find.
+Changed default for grep to not use -l (use find-setup to do this). 
+Changed -x option so it always ignores auto-save files.
+.BU 
+[061205] Fixed console/window  session variable muddle, two run-mode variables
+are now kept separate.
+.BU
+[061205] Added new find-setup comand
+.BU
+[061205] Added latest Charcoal scheme (thanks to Bruno)
+.BU
+[061203] Up-date of Mirkwood scheme (thanks to Bruno)
+.BU
+[061119] Corrected minor warning on regular expression evaluation.
+.BU
+[061110]  Fixed spin on a cyclic  symbolic link and added loop limit of 10 for
+chasing a symbolic link.
+.BE
 .\"
 .B "9th Release / Patch 1 / Build 2 - November 2006"
 .br
@@ -6157,6 +6470,8 @@ Inclusion of
 to allow compressed file reading.
 .BE 0
 .SS "Release History"
+.IP "\fBSeptember 2009\fR"
+10th Major Release \- MicroEmacs 2009.
 .IP "\fBAugust 2006\fR"
 9th Major Release \- MicroEmacs '06.
 .IP "\fBMay 2005\fR"

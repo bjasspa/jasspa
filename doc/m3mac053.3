@@ -1,20 +1,26 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac053.3,v 2.6 2006-09-21 18:39:02 bill Exp $
+.Id $Id: m3mac053.3,v 2.7 2009-08-29 17:13:59 jon Exp $
 .Im MicroEmacs command|file
 .so me.tni
 .TH reread-file 3
 .XI reread-file - "Reload the current buffer's file"
+.XI reread-all - "Reload all files"
 .SH NAME
 reread-file \- Reload the current buffer's file
 .Me $a
 .SH SYNOPSIS
 .na
+.Me "|reread-file"
 .I n
 .B reread-file
+.br
+.Me "|reread-all"
+.I n
+.B reread-all
 .ad
 .SH DESCRIPTION
 .B reread-file
@@ -30,6 +36,11 @@ reread-file described above, \fIn\fR is a bit based flag where:-
 .IP \fB0x01\fR
 Enables loss of work checks  (default), if this flag is not supplied  then the
 buffer is reread without any user prompts (useful in macros).
+.PP
+.B reread-all
+reloads all out-of-date  buffers. If the argument \fIn\fR is specified as zero
+(0) then all  buffers are  re-read.  The default  with no numeric  argument is
+reload out-of-date buffers only.
 .SH NOTES
 \fBreread-file\fR is a macro implemented in \fCtool.emf\fR.
 .SH "SEE ALSO"

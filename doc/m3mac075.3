@@ -1,13 +1,12 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2002 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac075.3,v 2.2 2006-11-07 21:55:44 bill Exp $
+.Id $Id: m3mac075.3,v 2.3 2009-08-29 17:13:59 jon Exp $
 .Im MicroEmacs command|shell
 .so me.tni
-.TH find 3
-.XI find - "Execute find command"
+.TH xfind 3
 .XI xfind - "Execute find command"
 .XI %xfind-com 5 "Find command line"
 .SH NAME
@@ -17,7 +16,7 @@ xfind \- Execute find command
 .Me $a
 .SH SYNOPSIS
 .na
-.Me "|find"
+.Me "|xfind"
 .I n
 .B xfind
 "\fIbase-path\fR" "\fIfile-search\fR"
@@ -68,9 +67,11 @@ set-variable %xfind-com "c:/usr/local/wbin/find.exe"
 .na
 .Ht %xgrep-com 5 ,
 .Hr find 1 ,
-.Ht xfind 3 ,
+.Ht find 3 ,
+.Ht grep 3 ,
 .Ht get-next-line 2 ,
 .Hr grep 1 ,
+.Ht xfind 3 ,
 .Ht xgrep 3 ,
 .Ht rgrep 3 .
 .ad

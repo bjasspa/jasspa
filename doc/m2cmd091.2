@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2006 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd091.2,v 2.8 2006-08-19 16:00:00 jon Exp $
+.Id $Id: m2cmd091.2,v 2.9 2009-08-29 17:13:25 jon Exp $
 .Im MicroEmacs command|buffer
 .ds C0 "(\fB\*(cXx\fR)\ \&
 .ds C1 "(\fB\*(cXb\fR)\ \&
@@ -68,6 +68,10 @@ interrogated  without  causing  the file to load.  Setting of this bit must be
 used with care.
 .IP "\fC0x08\fR"
 Bit set causes the buffer to be hidden.
+.IP  "\fC0x10\fR"
+Forces the buffer to be hidden from all windows.
+.IP "\fC0x20\fR"
+Stop the  history  of the outgoing buffer from being incremented.
 .PP
 If the current buffer has an \fI$buffer-ehook\fR command set then this command
 is  executed  before  the new buffer is  switched  in. If the new buffer has a

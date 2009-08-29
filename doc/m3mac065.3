@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2004 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac065.3,v 2.2 2004-01-17 22:27:28 jon Exp $
+.Id $Id: m3mac065.3,v 2.3 2009-08-29 17:13:59 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .ds C0 "(\fB\*cs\fR)\ \&
 .ds C1 "(\fB\*cr\fR)\ \&
@@ -27,6 +27,7 @@
 .XI page-file-scroll-up - "\*(C7Scroll paged buffer up" command|window
 .XI page-file-forward-line - "\*(C4Move forwards one line in paged buffer" command|cursor
 .XI page-file-backward-line - "\*(C5Move backwards one line in paged buffer" command|cursor
+.XI page-file-search-buffer - "Search the page file buffer" command|search
 .XI page-file-search-forward - "\*(C2Page search for a string in the forward direction" command|search
 .XI page-file-search-backward - "\*(C3Page search for a string in the backward direction" command|search
 .XI page-file-isearch-forward - "\*(C0Page search forward incrementally (interactive)" command|search
@@ -65,6 +66,9 @@ page-file-forward-line \- Move forwards one line in paged buffer.
 .Me "|page-file-backward-line"
 page-file-backward-line \- Move backwards one line in paged buffer.
 .br
+.Me "|page-file-search-buffer"
+page-file-search-buffer \- Search the buffer for the pattern.
+.br 
 .Me "|page-file-search-forward"
 page-file-search-forward \- Search for a string in the forward direction. 
 .br
@@ -115,6 +119,10 @@ page-file-isearch-backward \- Search backwards incrementally (interactive)
 .B page-file-backward-line
 \*(C5 
 .sp
+.B page-file-search-buffer 
+.I option
+.I pattern
+.br
 .B page-file-search-forward
 \*(C2
 .br
@@ -215,6 +223,10 @@ moves the cursor up \fIn\fR  lines, if the line is not on the  current  screen
 then  display the previous  page and move to the line. The user is prompted to
 save changes if a file paging operation is performed.
 .SS "Searching"
+.B page-file-searching-buffer
+is designed to be called from a macro and searches for a string in the buffer.
+The \fIoption\fR specifies the search direction.
+.PP
 .B page-file-search-forward
 and 
 .B page-file-search-backward

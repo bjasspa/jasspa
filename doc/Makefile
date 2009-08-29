@@ -1,12 +1,12 @@
 ##############################################################################
 # This is part of the JASSPA MicroEmacs.
-# Copyright (C) 1997-2006 JASSPA (www.jasspa.com)
+# Copyright (C) 1997-2009 JASSPA (www.jasspa.com)
 # See the file COPYING for copying and conditions.
 #
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20060920.2123>
+# Last Modified: <20090829.1703>
 #
 ##############################################################################
 
@@ -172,7 +172,9 @@ MAC3_070=	$(DOCDIR)m3mac070.3 $(DOCDIR)m3mac071.3 $(DOCDIR)m3mac072.3\
 		$(DOCDIR)m3mac079.3
 MAC3_080=	$(DOCDIR)m3mac080.3 $(DOCDIR)m3mac081.3 $(DOCDIR)m3mac082.3\
 		$(DOCDIR)m3mac083.3 $(DOCDIR)m3mac084.3 $(DOCDIR)m3mac085.3\
-		$(DOCDIR)m3mac086.3 $(DOCDIR)m3mac087.3
+		$(DOCDIR)m3mac086.3 $(DOCDIR)m3mac087.3 $(DOCDIR)m3mac088.3\
+		$(DOCDIR)m3mac089.3
+MAC3_090=	$(DOCDIR)m3mac090.3
 #
 OSD3_000=	$(DOCDIR)m3osd000.3 $(DOCDIR)m3osd001.3 $(DOCDIR)m3osd002.3\
 		$(DOCDIR)m3osd003.3 $(DOCDIR)m3osd004.3 $(DOCDIR)m3osd005.3\
@@ -203,7 +205,7 @@ FIL4_020=	$(DOCDIR)m4fil020.4 $(DOCDIR)m4fil021.4 $(DOCDIR)m4fil022.4\
 		$(DOCDIR)m4fil029.4
 FIL4_030=	$(DOCDIR)m4fil030.4 $(DOCDIR)m4fil031.4 $(DOCDIR)m4fil032.4\
 		$(DOCDIR)m4fil033.4 $(DOCDIR)m4fil034.4 $(DOCDIR)m4fil035.4\
-		$(DOCDIR)m4fil036.4
+		$(DOCDIR)m4fil036.4 $(DOCDIR)m4fil037.4
 #
 VAR5_000=	$(DOCDIR)m5var000.5 $(DOCDIR)m5var001.5 $(DOCDIR)m5var002.5\
 		$(DOCDIR)m5var003.5 $(DOCDIR)m5var004.5 $(DOCDIR)m5var005.5\
@@ -282,7 +284,7 @@ TEMPSMS	=	cmd2_000.sm	cmd2_010.sm	cmd2_020.sm	cmd2_030.sm \
 		mod2_000.sm	mod2_010.sm	mod2_020.sm	mod2_030.sm \
 		mac3_000.sm	mac3_010.sm	mac3_020.sm	mac3_030.sm \
 		mac3_040.sm	mac3_050.sm	mac3_060.sm	mac3_070.sm \
-		mac3_080.sm \
+		mac3_080.sm	mac3_090.sm \
 		osd3_000.sm	osd3_010.sm \
 		fcl3_000.sm	fcl3_010.sm \
 		fil4_000.sm	fil4_010.sm	fil4_020.sm	fil4_030.sm \
@@ -418,6 +420,8 @@ mac3_070.sm:	$(MAC3_070)
 	$(SUPERMAN) -o $@ $(MAC3_070)
 mac3_080.sm:	$(MAC3_080)
 	$(SUPERMAN) -o $@ $(MAC3_080)
+mac3_090.sm:	$(MAC3_090)
+	$(SUPERMAN) -o $@ $(MAC3_090)
 # OSD
 osd3_000.sm:	$(OSD3_000)
 	$(SUPERMAN) -o $@ $(OSD3_000)

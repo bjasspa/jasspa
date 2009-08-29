@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
 .\" This is part of the JASSPA MicroEmacs documentation files.
-.\" Copyright (c) 1998-2005 JASSPA (www.jasspa.com)
+.\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd077.2,v 2.11 2006-11-07 21:55:42 bill Exp $
+.Id $Id: m2cmd077.2,v 2.12 2009-08-29 17:13:11 jon Exp $
 .Im MicroEmacs command|shell
 .ds C0 "(\fB\*e backslash\fR)\ \&
 .so me.tni
@@ -99,6 +99,8 @@ this feature can be used to overcome the default 1024  character  command-line
 limit. When a multiple-line  command-line is required, a negative argument can
 be given to
 .Ht insert-string 2 .
+.IP \fB0x200\fR
+When set prevents the lines from wrapping.
 .PP
 Many other macro commands (see
 .Ht compile 3 ,
