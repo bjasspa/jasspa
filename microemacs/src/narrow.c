@@ -4,7 +4,7 @@
  * narrow.c - Narrow out regions of a buffer.
  *
  * Copyright (C) 1999-2001 Steven Phillips
- * Copyright (C) 2002-2006 JASSPA (www.jasspa.com)
+ * Copyright (C) 2002-2009 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free

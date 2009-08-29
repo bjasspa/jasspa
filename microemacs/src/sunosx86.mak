@@ -3,7 +3,7 @@
 # JASSPA MicroEmacs - www.jasspa.com
 # sunosx86.mak - Make file for Sunos on x86
 #
-# Copyright (C) 2001-2006 JASSPA (www.jasspa.com)
+# Copyright (C) 2001-2009 JASSPA (www.jasspa.com)
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
