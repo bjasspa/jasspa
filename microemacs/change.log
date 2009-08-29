@@ -4,16 +4,51 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <090829.1742>
+>  Last Modified : <090829.1933>
 >
 
 
   User perspective summary of 10th Release changes 20090909
   
-  * "find" and "grep" 
-
+  * "find" and "grep" no use built-in  operations and do not require  external
+    executables (applicable to Windows systems).
+    
+  * Saved session information does not degrade start-up when a large number of
+    files is present in the system.
+  
+  * Lots of minor issues resolved and stability further improved.
 
   [090829] Release date specified as 2009/09/09.
+
+  [090805] Added support for \\i#, \\u# & \\c# in &xre macro function
+  
+  [090530] Fixed TCL abbreviation file expansion reported by Ferenc Deak.
+
+  [090523] Fix fill-paragraph  so standard 'o' and 'a' are supported. 
+  
+  [090523] Fix jst paragraph fill so 'o' and 'a' are supported
+  
+  [090523] Bound "esc-`" to enter a very large arg n (99999999)
+  
+  [090213] Improved  indent  rules so two  'current-line  and  onward'  tokens
+           together   are  both   considered   on  the   current   line,  i.e.
+           '</tr></table>' is a double indent. 
+
+  [090201] Fixed  the 'No to all' 'o'  option to fill  paragraph  prompt,  was
+           still 'v' for Never. 
+
+  [090201] Avoided  crash  caused  by moving  reg node to itself or one of its
+           children.
+  
+  [090121] Better support for encrypted notes files, checks the first line and
+           if not '-!- enf...' it assumes its  encrypted and will prompt for a
+           password.
+
+  [081204] Fixed get-next-line buffer selection (logic inverted).
+  
+  [081204] Fixed file-tool-menu so it will work in a *find* buffer.
+
+  [081116] Upped the macro minimum version to 2008-11-10
 
   [081111] Added 'Disable' to file-tool-setup, changed 'Default Open' to 'Open
            File' and added 'View File' 
