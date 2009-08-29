@@ -1,12 +1,12 @@
 ##############################################################################
 # This is part of the JASSPA MicroEmacs.
-# Copyright (C) 2004 JASSPA (www.jasspa.com)
+# Copyright (C) 2004-2009 JASSPA (www.jasspa.com)
 # See the file COPYING for copying and conditions.
 #
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20041126.2223>
+# Last Modified: <20090829.1807>
 #
 ##############################################################################
 

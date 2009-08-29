@@ -1,6 +1,6 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 1998-2006 JASSPA (www.jasspa.com)
+; Copyright (C) 1998-2009 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     Wed Sep 30 1998
@@ -37,7 +37,7 @@
 ;         set-variable %cygwin-prompt "^[a-z]*@[^>]*>"
 ;
 ;  Notes:
-;      Jon 2005-0514
+;      Jon 2005-05-14
 ;      
 ;      This file is now used by mecygwin to provide a BASH shell in the 
 ;      the UNIX build environment. The notes above reply to run a bash 

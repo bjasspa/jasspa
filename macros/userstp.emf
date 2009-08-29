@@ -1,6 +1,6 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 1998-2006 JASSPA (www.jasspa.com)
+; Copyright (C) 1998-2009 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     Thu May 14 1998
@@ -172,7 +172,7 @@ set-variable %user-misc-cmd  "|alias-path-setup|cc-setup|cvs-setup|mail-setup|fi
                 !if &not $status
                     insert-string "; -!- emf -!-\n"
                     insert-string "; This is part of the JASSPA MicroEmacs macro files\n"
-                    insert-string "; Copyright (C) 1999-2006 JASSPA (www.jasspa.com)\n"
+                    insert-string "; Copyright (C) 1999-2009 JASSPA (www.jasspa.com)\n"
                     insert-string "; See the file me.emf for copying and conditions.\n"
                     insert-string ";\n"
                     insert-string "; Add your company macros and definitions to this file.\n"
@@ -200,7 +200,7 @@ set-variable %user-misc-cmd  "|alias-path-setup|cc-setup|cvs-setup|mail-setup|fi
             !if &not $status
                 insert-string "; -!- emf -!-\n"
                 insert-string "; This is part of the JASSPA MicroEmacs macro files\n"
-                insert-string "; Copyright (C) 1999-2006 JASSPA (www.jasspa.com)\n"
+                insert-string "; Copyright (C) 1999-2009 JASSPA (www.jasspa.com)\n"
                 insert-string "; See the file me.emf for copying and conditions.\n"
                 insert-string ";\n"
                 insert-string "; Add your private macros and definitions to this file.\n"

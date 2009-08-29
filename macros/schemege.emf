@@ -1,5 +1,5 @@
 ; Generated color scheme file for JASSPA MicroEmacs
-; Copyright (C) 1999-2005 JASSPA (www.jasspa.com)
+; Copyright (C) 1999-2009 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ; Description: General Electric Black
 set-variable $system &bor $system 0x020

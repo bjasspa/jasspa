@@ -5,13 +5,13 @@
 #
 #  Created By    : Jon Green
 #  Created       : Fri Feb 6 22:33:31 2004
-#  Last Modified : <060924.1419>
+#  Last Modified : <090829.1806>
 #  Description   : Creates the RedHat directory structure for building a RPM
 #                  file.
 #
 ##############################################################################
 TOPDIR=../..
-VER_YEAR="06"
+VER_YEAR="09"
 VER_MONTH="09"
 VER_DAY="09"
 VERSION="20${VER_YEAR}${VER_MONTH}${VER_DAY}"
