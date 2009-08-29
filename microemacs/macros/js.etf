@@ -1,5 +1,5 @@
 /* -*- javascript -*- 
-     Copyright $YEAR$ $COMPANY_NAME$.
+     Copyright $YEAR$ $COMPANY_NAME$
      All Rights Reserved
      System        : $BUFFER_NAME$ : 
      Object Name   : $RCS_FILE$
@@ -8,7 +8,7 @@
      Created By    : $USER_NAME$, $COMPANY_NAME$
      Created       : $ASCII_TIME$
 
-     Last Modified : <030310.0724>
+     Last Modified : <090829.1748>
      ID            : $Id$
      Source        : $Source$
      Description	

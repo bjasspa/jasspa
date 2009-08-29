@@ -1,9 +1,5 @@
 c -*- f -*- ****************************************************************
 c 
-c 			Copyright $YEAR$ $COMPANY_NAME$.
-c 			      All Rights Reserved
-c 
-c 
 c   System        :
 c   Module        :
 c   Object Name   : $RCSfile$
@@ -12,7 +8,7 @@ c   Date          : $Date$
 c   Author        : $Author$
 c   Created By    : $USER_NAME$
 c   Created       : $ASCII_TIME$
-c   Last Modified : <041022.1605>
+c   Last Modified : <090829.1747>
 c 
 c   Description
 c 

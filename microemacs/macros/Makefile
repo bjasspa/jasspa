@@ -1,6 +1,6 @@
 ##############################################################################
 # This is part of the JASSPA MicroEmacs.
-# Copyright (C) 2005 JASSPA (www.jasspa.com)
+# Copyright (C) 2005-2009 JASSPA (www.jasspa.com)
 # See the file COPYING for copying and conditions.
 #
 # Created:       Thu Feb 5 21:36:24 2004
