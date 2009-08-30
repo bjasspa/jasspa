@@ -1006,22 +1006,22 @@
 
 0 define-macro jst-to-html-wf
     end-of-buffer
-    insert-string "</BODY>\n</HTML>"
+    insert-string "</body>\n</html>"
     beginning-of-buffer
     !if &seq @1 "rtf"
-        insert-string "<HTML xmlns:w=\"urn:schemas-microsoft-com:office:word\">\n<HEAD>\n<!--[if gte mso 9]><xml><w:WordDocument><w:View>Normal</w:View></w:WordDocument></xml><![endif]-->\n"
+        insert-string "<html xmlns:w=\"urn:schemas-microsoft-com:office:word\">\n<head>\n<!--[if gte mso 9]><xml><w:WordDocument><w:View>Normal</w:View></w:WordDocument></xml><![endif]-->\n"
     !else
-        insert-string "<HTML>\n<HEAD>\n"
+        insert-string "<html>\n<head>\n"
     !endif
     !if &exi :JVtitle
-        insert-string &spr "<TITLE>%s</TITLE>\n" :JVtitle
+        insert-string &spr "<title>%s</title>\n" :JVtitle
     !else
-        insert-string &spr "<TITLE>%s</TITLE>\n" &rig $buffer-fname &rsin "/" $buffer-fname
+        insert-string &spr "<title>%s</title>\n" &rig $buffer-fname &rsin "/" $buffer-fname
     !endif
     !if &exi :JVauthor
-        insert-string &spr "<META NAME=\"Author\" CONTENT=\"%s\">\n" :JVauthor
+        insert-string &spr "<meta name=\"Author\" content=\"%s\">\n" :JVauthor
     !endif
-    insert-string "<META NAME=\"Generator\" CONTENT=\"MicroEmacs JST\">\n</HEAD>\n<BODY>\n"
+    insert-string "<meta name=\"Generator\" content=\"MicroEmacs JST\">\n</head>\n<body>\n"
     !if &not @?
         0 write-buffer $buffer-fname @mna
     !elif @#
@@ -1074,11 +1074,11 @@
             &len @s0 forward-char
             -1 kill-region
             !if &sin "c" #l3
-                insert-string "<CENTER>"
+                insert-string "<center>"
             !elif &sin "r" #l3
-                insert-string "<DIV ALIGN=\"RIGHT\">"
+                insert-string "<div align=\"right\">"
             !endif
-            insert-string "<TABLE"
+            insert-string "<table"
             !if &sin "w" #l3
                 !if &seq &lget #l4 2 "-"
                     insert-string " width=100%"
@@ -1101,11 +1101,11 @@
                 set-variable #l5 0
                 !while &les &pinc #l5 1 &lget #l4 1
                     !if &seq "-" &set #l7 &lget #l4 &add #l5 2
-                        insert-string &spr "<COL>" #l7
+                        insert-string &spr "<col>" #l7
                     !elif #l6
-                        insert-string &spr "<COL width=%d%%>" &div &mul 100 #l7 #l6
+                        insert-string &spr "<col width=%d%%>" &div &mul 100 #l7 #l6
                     !else
-                        insert-string &spr "<COL width=%s>" #l7
+                        insert-string &spr "<col width=%s>" #l7
                     !endif
                 !done
             !endif
@@ -1114,11 +1114,11 @@
             backward-delete-char
             backward-delete-char
             backward-delete-char
-            insert-string "</TABLE>"
+            insert-string "</table>"
             !if &sin "c" #l3
-                insert-string "</CENTER>"
+                insert-string "</center>"
             !elif &sin "r" #l3
-                insert-string "</DIV>"
+                insert-string "</div>"
             !endif
             set-variable #l3 $window-line
             set-variable $window-line &add #l2 1
@@ -1127,34 +1127,34 @@
         !endif
     !until &not $status
     beginning-of-buffer
-    replace-string "\bCR" "<TR>"
+    replace-string "\bCR" "<tr>"
     beginning-of-buffer
-    replace-string "\bcR\n?" "</TR>"
+    replace-string "\bcR\n?" "</tr>"
     beginning-of-buffer
-    replace-string "\bCC\n?" "<TD valign=top>"
+    replace-string "\bCC\n?" "<td valign=\"top\">"
     beginning-of-buffer
-    replace-string "\bcC\n?" "</TD>"
+    replace-string "\bcC\n?" "</td>"
     ; fonts and color
     beginning-of-buffer
-    replace-string "\bFB" "<B>"
+    replace-string "\bFB" "<b>"
     beginning-of-buffer
-    replace-string "\bfB" "</B>"
+    replace-string "\bfB" "</b>"
     beginning-of-buffer
-    replace-string "\bFI" "<I>"
+    replace-string "\bFI" "<i>"
     beginning-of-buffer
-    replace-string "\bfI" "</I>"
+    replace-string "\bfI" "</i>"
     beginning-of-buffer
-    replace-string "\bFU" "<U>"
+    replace-string "\bFU" "<u>"
     beginning-of-buffer
-    replace-string "\bfU" "</U>"
+    replace-string "\bfU" "</u>"
     beginning-of-buffer
-    replace-string "\bFp" "<SUP>"
+    replace-string "\bFp" "<sup>"
     beginning-of-buffer
-    replace-string "\bfp" "</SUP>"
+    replace-string "\bfp" "</sup>"
     beginning-of-buffer
-    replace-string "\bFb" "<SUB>"
+    replace-string "\bFb" "<sub>"
     beginning-of-buffer
-    replace-string "\bfb" "</SUB>"
+    replace-string "\bfb" "</sub>"
     beginning-of-buffer
     set-variable #l2 ""
     set-variable #l3 ""
@@ -1198,10 +1198,10 @@
             !endif
             !if &not &seq #l2 #l6
                 !if &not &seq "" #l2
-                    insert-string "</SPAN>"
+                    insert-string "</span>"
                 !endif
                 !if &not &seq "" #l6
-                    insert-string &spr "<SPAN style=\"%s\">" #l6
+                    insert-string &spr "<span style=\"%s\">" #l6
                 !endif
                 set-variable #l2 #l6
             !endif
@@ -1211,13 +1211,13 @@
     beginning-of-buffer
     replace-string "\bSu\\(....\\)" "&#x\\1;"
     beginning-of-buffer
-    replace-string "\bSH" "<HR>"
+    replace-string "\bSH" "<hr>"
     beginning-of-buffer
-    replace-string "\bSL" "<BR>"
+    replace-string "\bSL" "<br/>"
     set-variable #l8 1
     !if &seq #l9 "rtf"
         beginning-of-buffer
-        replace-string "\\(\bPL\\)?\bS[PF]\\(\bpL\\)?" "<BR clear=all style='mso-special-character:line-break; page-break-before:always'>"
+        replace-string "\\(\bPL\\)?\bS[PF]\\(\bpL\\)?" "<br clear=all style='mso-special-character:line-break; page-break-before:always'/>"
     !else
         beginning-of-buffer
         replace-string "\\(\bPL\\)?\bSP\\(\bpL\\)?" ""
@@ -1267,7 +1267,7 @@
     !endif
     ; images
     beginning-of-buffer
-    replace-string "\bIT" "<IMG SRC=\""
+    replace-string "\bIT" "<img src=\""
     beginning-of-buffer
     replace-string "\biT" "\">"
     beginning-of-buffer
@@ -1276,68 +1276,68 @@
     replace-string "\bIW\\([^\b]*\\)\biW" "\" width=\"\\1"
     ; items
     beginning-of-buffer
-    replace-string "\bBI\bBB" "<UL>\bBB"
+    replace-string "\bBI\bBB" "<ul>\bBB"
     beginning-of-buffer
-    replace-string "\bbB\bbI" "\bbB</UL>"
+    replace-string "\bbB\bbI" "\bbB</ul>"
     beginning-of-buffer
-    replace-string "\bBB" "<LI>"
+    replace-string "\bBB" "<li>"
     beginning-of-buffer
-    replace-string "\bbB" "</LI>"
+    replace-string "\bbB" "</li>"
     beginning-of-buffer
-    replace-string "\bBI\bBN" "<OL>\bBN"
+    replace-string "\bBI\bBN" "<ol>\bBN"
     beginning-of-buffer
-    replace-string "\bbN\bbI" "\bbN</OL>"
+    replace-string "\bbN\bbI" "\bbN</ol>"
     beginning-of-buffer
-    replace-string "\bBN[^\b]*\bBn" "<LI>"
+    replace-string "\bBN[^\b]*\bBn" "<li>"
     beginning-of-buffer
-    replace-string "\bbN" "</LI>"
+    replace-string "\bbN" "</li>"
     beginning-of-buffer
-    replace-string "\bBI\bBU" "<OL TYPE=\"A\">\bBU"
+    replace-string "\bBI\bBU" "<ol type=\"A\">\bBU"
     beginning-of-buffer
-    replace-string "\bbU\bbI" "\bbU</OL>"
+    replace-string "\bbU\bbI" "\bbU</ol>"
     beginning-of-buffer
-    replace-string "\bBU[^\b]*\bBu" "<LI>"
+    replace-string "\bBU[^\b]*\bBu" "<li>"
     beginning-of-buffer
-    replace-string "\bbU" "</LI>"
+    replace-string "\bbU" "</li>"
     beginning-of-buffer
-    replace-string "\bBI\bBL" "<OL TYPE=\"a\">\bBL"
+    replace-string "\bBI\bBL" "<ol type=\"a\">\bBL"
     beginning-of-buffer
-    replace-string "\bbL\bbI" "\bbL</OL>"
+    replace-string "\bbL\bbI" "\bbL</ol>"
     beginning-of-buffer
-    replace-string "\bBL[^\b]*\bBl" "<LI>"
+    replace-string "\bBL[^\b]*\bBl" "<li>"
     beginning-of-buffer
-    replace-string "\bbL" "</LI>"
+    replace-string "\bbL" "</li>"
     beginning-of-buffer
-    replace-string "\bBI\bBR" "<OL TYPE=\"I\">\bBR"
+    replace-string "\bBI\bBR" "<ol type=\"I\">\bBR"
     beginning-of-buffer
-    replace-string "\bbR\bbI" "\bbR</OL>"
+    replace-string "\bbR\bbI" "\bbR</ol>"
     beginning-of-buffer
-    replace-string "\bBR[^\b]*\bBr" "<LI>"
+    replace-string "\bBR[^\b]*\bBr" "<li>"
     beginning-of-buffer
-    replace-string "\bbR" "</LI>"
+    replace-string "\bbR" "</li>"
     beginning-of-buffer
-    replace-string "\bBI\bBS" "<OL TYPE=\"i\">\bBS"
+    replace-string "\bBI\bBS" "<ol type=\"i\">\bBS"
     beginning-of-buffer
-    replace-string "\bbS\bbI" "\bbS</OL>"
+    replace-string "\bbS\bbI" "\bbS</ol>"
     beginning-of-buffer
-    replace-string "\bBS[^\b]*\bBs" "<LI>"
+    replace-string "\bBS[^\b]*\bBs" "<li>"
     beginning-of-buffer
-    replace-string "\bbS" "</LI>"
+    replace-string "\bbS" "</li>"
     beginning-of-buffer
     replace-string "\bBI\bBD" ""
     beginning-of-buffer
-    replace-string "\bBd" "<BR><UL>"
+    replace-string "\bBd" "<br/><ul>"
     beginning-of-buffer
-    replace-string "\bbD\bbI" "</UL>"
+    replace-string "\bbD\bbI" "</ul>"
     ; paragraphs and justification
     beginning-of-buffer
-    replace-string "\bPF" "<PRE>"
+    replace-string "\bPF" "<pre>"
     beginning-of-buffer
-    replace-string "\bpF" "</PRE>"
+    replace-string "\bpF" "</pre>"
     beginning-of-buffer
-    replace-string "\bPL" "<P>"
+    replace-string "\bPL" "<p>"
     beginning-of-buffer
-    replace-string "\bpL" "</P>"
+    replace-string "\bpL" "</p>"
     beginning-of-buffer
     !repeat
         !force search-buffer "me" "\bP[CNR]"
@@ -1347,34 +1347,34 @@
             3 backward-char
             -1 kill-region
             !if &seq "\bPN" #l2
-                insert-string "<P>"
+                insert-string "<p>"
             !elif &seq "\bPC" #l2
-                insert-string "<P ALIGN=\"center\">"
+                insert-string "<p align=\"center\">"
             !else
-                insert-string "<P ALIGN=\"right\">"
+                insert-string "<p align=\"right\">"
             !endif
             set-variable #l3 $window-line
-            1 replace-string &cat &slo &lef #l2 2 &rig #l2 2  "</P>"
+            1 replace-string &cat &slo &lef #l2 2 &rig #l2 2  "</p>"
             set-variable #l4 $window-line
             set-variable $window-line #l3
-            &sub #l3 #l4 replace-string "$" "<BR>"
+            &sub #l3 #l4 replace-string "$" "<br/>"
         !endif
     !until &not $status
     beginning-of-buffer
-    replace-string "\bH\\(\\d\\)" "<H\\1>"
+    replace-string "\bH\\(\\d\\)" "<h\\1>"
     beginning-of-buffer
-    replace-string "\bh\\(\\d\\)" "</H\\1>"
+    replace-string "\bh\\(\\d\\)" "</h\\1>"
     ; anchors & links
     beginning-of-buffer
-    replace-string "\bTA" "<A NAME=\""
+    replace-string "\bTA" "<a name=\""
     beginning-of-buffer
     replace-string "\btA" "\">"
     beginning-of-buffer
-    replace-string "\bTL\\(file:\\)?" "<A HREF=\""
+    replace-string "\bTL\\(file:\\)?" "<a href=\""
     beginning-of-buffer
     replace-string "\btL" "\">"
     beginning-of-buffer
-    replace-string "\bTl" "</A>"
+    replace-string "\bTl" "</a>"
     beginning-of-buffer
     replace-string "\bPT" "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
     beginning-of-buffer
@@ -1388,15 +1388,15 @@
             -1 kill-region
             set-variable #l3 &div #l3 3
             !if &gre #l3 #l2
-                &sub #l3 #l2 insert-string "<DIR>"
+                &sub #l3 #l2 insert-string "<dir>"
             !elif &les #l3 #l2
-                &sub #l2 #l3 insert-string "</DIR>"
+                &sub #l2 #l3 insert-string "</dir>"
             !endif
             set-variable #l2 #l3
         !endif
     !until &not $status
     end-of-buffer
-    #l2 insert-string "</DIR>"
+    #l2 insert-string "</dir>"
     !force 1 narrow-buffer
     !if &gre #l8 1
         beginning-of-buffer
