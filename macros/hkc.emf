@@ -17,18 +17,6 @@ define-macro fhook-c
     set-variable #l0 &con &isin ".h" $buffer-bname "h" "c"
     set-variable $buffer-mask "luh1"
     @# buffer-init "c" #l0
-    ; Search for a tab width specifier in the file.
-    beginning-of-buffer
-    !force -20 search-buffer "em" &spr "-[*!]-[ \t]*[cC][ \t]*;" 
-    !if $status
-        ; Search for fill-column: <var>;
-        !force -1 search-buffer "em" "tab-width[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;]"
-        !if $status
-            set-variable $buffer-tab-width @s1
-            set-variable $buffer-indent-width @s1
-            beginning-of-line
-        !endif
-    !endif
     buffer-init-hooks
 !emacro
 
