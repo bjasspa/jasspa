@@ -237,11 +237,13 @@ define-macro-file collapse collapse-current collapse-all beginning-of-function e
         !endif
     !endif
     !if &not &seq #l9 ""
+        !if &set #l1 &xseq #l9 ".*tab-width[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;].*"
+            set-variable $buffer-tab-width @s1
+        !endif
         !if &xseq #l9 ".*indent-width[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;].*"
             set-variable $buffer-indent-width @s1
-        !endif
-        !if &xseq #l9 ".*tab-width[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;].*"
-            set-variable $buffer-tab-width @s1
+        !elif #l1
+            set-variable $buffer-indent-width $buffer-tab-width
         !endif
     !endif
 !emacro
