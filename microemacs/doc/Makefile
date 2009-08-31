@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20090829.1703>
+# Last Modified: <20090831.1115>
 #
 ##############################################################################
 
@@ -36,7 +36,7 @@ MISCTXT=	cygwin.txt	infolist.txt
 #
 TXTS	=	$(READTXT) $(FAQTXT) $(BUILDTXT) $(PATCHTXT) $(MISCTXT)
 #
-RTFS	=	me.rtf me.hpj logo.bmp
+RTFS	=	me.rtf me.hpj logo.bmp me.hhp
 #
 MEHTMZIP=	jasspa-mehtm-20$(MEYY)$(MEMM)$(MEDD).zip
 MEHTMLTGZ=	jasspa-mehtml-20$(MEYY)$(MEMM)$(MEDD).tar.gz
@@ -495,9 +495,29 @@ $(MEHTMZIP): me.hts
 	cd htm; $(ZIP) -r mehtm me.htm me
 	$(CP) htm/mehtm.zip $@
 	$(RMDIR) htm
+# Microsoft project file.
+me.hhp:	me.hts
+	$(RMDIR) htm
+	$(MKDIR) htm
+	$(MKDIR) htm/me
+	cd htm; $(HTS2HTML) -l .htm ../me.hts
+	echo "[OPTIONS]" > me.hhp
+	echo "Compatibility=1.1 or later" >> me.hhp
+	echo "Compiled file=me.chm" >> me.hhp
+	echo "Default topic=me.htm" >> me.hhp
+	echo "Display compile progress=Yes" >> me.hhp
+	echo "Language=0x409 English (United States)" >> me.hhp
+	echo "Title=JASSPA MicroEmacs Help" >> me.hhp
+	echo "" >> me.hhp
+	echo "[FILES]" >> me.hhp
+	(cd htm; find . -type f -print |  sed -e "s/^\\.\\///g" -e "s/\\//\\\\/g" >> ../me.hhp)
+	echo "" >> me.hhp
+	echo "[INFOTYPES]" >> me.hhp
+	$(RMDIR) htm
 clean::
 	$(RMDIR) htm
 	$(RM) $(MEHTMZIP)
+	$(RM) me.hhp	
 # Tar 8.4 HTML (.html) archive
 $(MEHTMLTGZ): me.hts
 	$(RMDIR) html
