@@ -188,8 +188,7 @@ define-macro major-mode-setup
         ; reread the setup if not run from user-setup
         !force read-registry "/history" $user-name "cbr"
     !endif
-    set-variable .mask &ind &spr ".%s.setup-mask" $buffer-fhook
-    !if &seq .mask "ERROR"
+    !if &seq &set .mask &cat "bn" &ind &spr ".%s.setup-mask" $buffer-fhook "bnERROR"
         !bell
         ml-write "[major-mode-setup not supported by current buffer's major mode]"
         !abort
