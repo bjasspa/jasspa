@@ -1,0 +1,59 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2009 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Synopsis:    Inno Setup Script file hook
+; Authors:     Jon Green
+;
+define-macro fhook-iss
+    set-variable $buffer-mask "luh1"
+    @# buffer-init "iss"
+    buffer-init-hooks
+!emacro
+set-variable .fhook-iss.name "Inno Setup Script"
+set-variable .fhook-iss.setup &reg "/history/fhook/iss" "fghiopx"
+set-variable .fhook-iss.setup-mask "aefghikmoptux"
+set-variable .fhook-iss.comment "|;||;|; | ;|r|"
+
+; setup iss file collapse
+set-variable .fhook-iss.collapse-open  "^\\["
+set-variable .fhook-iss.collapse-close "^\\[\\|\\'"
+set-variable .fhook-iss.collapse-mnext "-1"
+
+!if &not &exist .hilight.iss
+    set-variable .hilight.iss &pinc .hilight.next 1
+!endif
+
+!if &and &sin "h" .fhook-iss.setup &band .hilight.flags 0x02
+    0 hilight .hilight.iss 3 20            $global-scheme
+    hilight .hilight.iss 0x21 ";.*"        .scheme.comment
+    hilight .hilight.iss 20 "\\[" "]" ""   .scheme.function
+    hilight .hilight.iss 4 "\"" "\"" ""    .scheme.string
+    ; Setup - Compiler related.
+    hilight .hilight.iss 0x20 "\\m+\\s*\\}="      .scheme.keyword
+    ; File related of the form "^Name:" or "; Name:"
+    hilight .hilight.iss 0x20 "\\m+\\s*\\}:"      .scheme.keyword
+    hilight .hilight.iss 0x00 ";\\{\\s*\\m+\\s*\\}:" .scheme.keyword
+    ; Variables
+    hilight .hilight.iss 0x01 "{\\m+}"            .scheme.variable 
+    ; Registry values
+    hilight .hilight.iss 0x01 "HKCR"              .scheme.prepro 
+    hilight .hilight.iss 0x01 "HKCU"              .scheme.prepro 
+    hilight .hilight.iss 0x01 "HKLM"              .scheme.prepro 
+    hilight .hilight.iss 0x01 "HKU"               .scheme.prepro 
+    hilight .hilight.iss 0x01 "HKCC"              .scheme.prepro 
+    ; Setup - Obsolete. These directives are obsolete and should not be used
+    ; in any new scripts. 
+    hilight .hilight.iss 0x20 "AlwaysCreateUninstallIcon\\s*\\}="  .scheme.error
+    hilight .hilight.iss 0x20 "DisableAppendDir\\s*\\}="           .scheme.error
+    hilight .hilight.iss 0x20 "DontMergeDuplicateFiles\\s*\\}="    .scheme.error
+    hilight .hilight.iss 0x20 "MessagesFile\\s*\\}="               .scheme.error
+    hilight .hilight.iss 0x20 "UninstallIconFile\\s*\\}="          .scheme.error
+    hilight .hilight.iss 0x20 "UninstallIconName\\s*\\}="          .scheme.error
+    hilight .hilight.iss 0x20 "UninstallStyle\\s*\\}="             .scheme.error
+    hilight .hilight.iss 0x20 "WizardSmallImageBackColor\\s*\\}="  .scheme.error
+    hilight .hilight.iss 0x20 "WizardStyle\\s*\\}="                .scheme.error
+!endif    
+
+buffer-init-fhook "iss"
