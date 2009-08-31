@@ -39,6 +39,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	hkf90.emf	hkfvwm.emf	\
 	hkhtml.emf	\
 	hkidl.emf	hkimake.emf	hkinfo.emf	hkini.emf	\
+	hkiss.emf	\
 	hkipipe.emf	\
 	hkjava.emf	hkjs.emf	hkjsp.emf	hkjst.emf	\
 	hklatex.emf	hklhtml.emf	hklisp.emf	hklists.emf	\
