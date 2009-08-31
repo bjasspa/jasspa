@@ -88,6 +88,8 @@ set-variable #l2 &ind &spr ".hilight.%stag" #l0
     indent #l1 o "</table>" -t
     indent #l1 n "<tr" 3/2t
     indent #l1 o "</tr>" -t
+    indent #l1 n "<div" 3/2t
+    indent #l1 o "</div>" -t
     indent #l1 n "<td" 3/2t
     indent #l1 o "</td>" -t
     indent #l1 n "<span" 3/2t
