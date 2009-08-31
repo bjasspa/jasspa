@@ -795,7 +795,11 @@ define-macro note-setup
     !endif
     set-variable #l3 &cat "*" .notes.current
     find-buffer #l3
+    set-variable #l6 &bmod "exact"
+    set-variable #l7 &bmod "magic"
     2 list-registry &cat #l0 "000050" #l3
+    &cond #l6 1 -1 buffer-mode "exact"
+    &cond #l7 1 -1 buffer-mode "magic"
     !if @#
         set-variable $window-line #l2
     !else
