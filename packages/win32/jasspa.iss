@@ -23,17 +23,21 @@ ChangesAssociations=yes
 [Languages]
 Name: "en"; MessagesFile: "jasspa.isl"
 
+; Custom message
 [Messages]
-SelectComponentsLabel2=Select the components you want to install; clear the components you do not want to install. File type bindings are made in this section, only perform a file type association if you are sure that you will only edit the file type with MicroEmacs as it ensures that the registry is cleared for its own use on a given file type. Click Next when you are ready to continue.
+SelectComponentsLabel2=Select the components you want to install; clear the components you do not want to install. Click Next when you are ready to continue.
 
 [Types]
-Name: "full"; Description: "Install everything";
+Name: "typical"; Description: "Typical installation";
+Name: "full"; Description: "Full installation";
 Name: "compact"; Description: "Minimal omitting spelling dictionaries";
 Name: "custom"; Description: "Select the additional componets required"; Flags: iscustom
 
 [Components]
-Name: "base"; Description: "Base installation"; Types: full compact custom; Flags: fixed
-Name: "enus"; Description: "American spelling dictionary"; Types: full
+Name: "base"; Description: "Base installation"; Types: typical full compact custom; Flags: fixed
+Name: "help"; Description: "Embedded help information (Strongly recommended)"; Types: typical full
+Name: "helpx"; Description: "Getting started guide and other help"; Types: typical full
+Name: "enus"; Description: "American spelling dictionary"; Types: typical full
 Name: "engb"; Description: "British spelling dictionary"; Types: full
 Name: "fifi"; Description: "Finnish spelling dictionary"; Types: full
 Name: "frfr"; Description: "French spelling dictionary"; Types: full
@@ -46,20 +50,17 @@ Name: "ruyo"; Description: "Russian YO spelling dictionary"; Types: full
 Name: "eses"; Description: "Spannish spelling dictionary"; Types: full
 Name: "pixel"; Description: "MicroEmacs pixel files"; Types: full
 Name: "contrib"; Description: "Useful contributed script files"; Types: full
-Name: "help"; Description: "Embedded help information (Strongly recommended)"; Types: full compact
-Name: "helpx"; Description: "Getting started guide and other Help"; Types: full
 Name: "utils"; Description: "Executables for find, grep, fgrep, egrep and diff"; Types: full; Flags: dontinheritcheck
 
 [Tasks]
-Name: "extmedit"; Description: "Add a MicroEmacs Edit option to right-mouse content menu (Recommended)"
-Name: "ext"; Description: "Associate file extensions too MicroEmacs"
+Name: "extmedit"; Description: "Add a MicroEmacs Edit option to right-mouse context menu (Recommended)"
+Name: "ext"; Description: "Associate file extensions to MicroEmacs"
 Name: "ext/me"; Description: "Make MicroEmacs the default editor for its own files (.eaf/.eff/.emf/.erf/.esf/.etf)"
 Name: "ext/bup"; Description: "Make MicroEmacs the default editor for JASSPA backup files (.~/.#/.~0~)"
 Name: "ext/jst"; Description: "Make MicroEmacs the default editor for JASSPA Structred text files (.jst)"
 Name: "ext/c"; Description: "Make MicroEmacs the default editor for C/C++ files (.c/.cpp/.def/.h)"; Flags: unchecked
 Name: "ext/y"; Description: "Make MicroEmacs the default editor for Lex/Yacc files (.l/.y)"; Flags: unchecked
 Name: "ext/txt"; Description: "Make MicroEmacs the default editor for text files (.txt/.text)"; Flags: unchecked
-Name: "ext/log"; Description: "Make MicroEmacs the default editor for logging files (.log)"; Flags: unchecked
 Name: "ext/tex"; Description: "Make MicroEmacs the default editor for LaTeX files (.tex/.bib)"; Flags: unchecked
 Name: "ext/man"; Description: "Make MicroEmacs the default editor for UNIX manual page files (.man)"; Flags: unchecked
 Name: "ext/roff"; Description: "Make MicroEmacs the default editor for UNIX troff files (.0/.1/../.9)"; Flags: unchecked
@@ -68,6 +69,14 @@ Name: "ext/mak"; Description: "Make MicroEmacs the default editor for Makefiles 
 Name: "ext/asm"; Description: "Make MicroEmacs the default editor for Assembler files (.asm/.s)"; Flags: unchecked
 Name: "ext/pas"; Description: "Make MicroEmacs the default editor for Pascal files (.pas/.p)"; Flags: unchecked
 Name: "ext/f77"; Description: "Make MicroEmacs the default editor for Fortran files (.f77/.f)"; Flags: unchecked
+Name: "ext/tcl"; Description: "Make MicroEmacs the default editor for TCL files (.tcl)"; Flags: unchecked
+Name: "ext/sh"; Description: "Make MicroEmacs the default editor for shell files (.bash/.csh/.ksh/.sh/.zsh)"; Flags: unchecked
+Name: "ext/awk"; Description: "Make MicroEmacs the default editor for awk files (.awk/.gawk/.nawk)"; Flags: unchecked
+Name: "ext/php"; Description: "Make MicroEmacs the default editor for PHP files (.php)"; Flags: unchecked
+Name: "ext/asp"; Description: "Make MicroEmacs the default editor for ASP files (.asp)"; Flags: unchecked
+Name: "ext/log"; Description: "Make MicroEmacs the default editor for logging files (.log)"; Flags: unchecked
+Name: "ext/err"; Description: "Make MicroEmacs the default editor for error files (.err)"; Flags: unchecked
+Name: "ext/out"; Description: "Make MicroEmacs the default editor for output files (.out)"; Flags: unchecked
 
 [Dirs]
 Name: "{app}\company"; Flags: uninsalwaysuninstall
@@ -483,7 +492,7 @@ Source: "JASSPA\MicroEmacs\spelling\lsdmptpt.edf"; DestDir: "{app}\spelling"; Co
 Source: "JASSPA\MicroEmacs\spelling\lsdmruye.edf"; DestDir: "{app}\spelling"; Components: ruye
 Source: "JASSPA\MicroEmacs\spelling\lsdmruyo.edf"; DestDir: "{app}\spelling"; Components: ruyo
 Source: "JASSPA\MicroEmacs\spelling\lsdxdede.edf"; DestDir: "{app}\spelling"; Components: dede
-Source: "JASSPA\MicroEmacs\spelling\lsdxengb.edf"; DestDir: "{app}\spelling"; Components: dede
+Source: "JASSPA\MicroEmacs\spelling\lsdxengb.edf"; DestDir: "{app}\spelling"; Components: engb
 Source: "JASSPA\MicroEmacs\spelling\lsdxenus.edf"; DestDir: "{app}\spelling"; Components: enus
 Source: "JASSPA\MicroEmacs\spelling\lsrdede.emf"; DestDir: "{app}\spelling"; Components: dede
 Source: "JASSPA\MicroEmacs\spelling\lsrengb.emf"; DestDir: "{app}\spelling"; Components: engb
@@ -500,8 +509,8 @@ Source: "JASSPA\MicroEmacs\spelling\lsrruyo.emf"; DestDir: "{app}\spelling"; Com
 [Icons]
 Name: "{group}\MicroEmacs"; Filename: "{app}\me32.exe"
 Name: "{group}\Getting Started"; Filename: "{app}\jasspame.pdf"; Components: helpx
-Name: "{group}\Help"; Filename: "{app}\me.hlp"; Components: helpx; OnlyBelowVersion: 6.0,6.0
-Name: "{group}\Help"; Filename: "{app}\me.chm"; Components: helpx; MinVersion: 6.0,6.0
+Name: "{group}\Help"; Filename: "{app}\me.hlp"; Components: helpx; OnlyBelowVersion: 5.1,5.1
+Name: "{group}\Help"; Filename: "{app}\me.chm"; Components: helpx; MinVersion: 5.1,5.1
 Name: "{group}\Uninstall"; Filename: "{uninstallexe}"
 
 [Registry]
@@ -514,14 +523,14 @@ Name: "{group}\Uninstall"; Filename: "{uninstallexe}"
 ; "def.ico"       // 004 DEF file
 ; "emc.ico"       // 005 EMC file
 ; "empty.ico"     // 006 Blank Triangular frame
-; "e_grey.ico"    // 007 'e' Grey 
-; "e_magent.ico"  // 008 'e' Magenta 
-; "e_blue.ico"    // 009 'e' Blue 
-; "e_black.ico"   // 010 'e' Black 
-; "e_cyan.ico"    // 011 'e' Cyan 
-; "e_green.ico"   // 012 'e' Green 
-; "e_red.ico"     // 013 'e' Red 
-; "e_yellow.ico"  // 014 'e' Yellow 
+; "e_grey.ico"    // 007 'e' Grey
+; "e_magent.ico"  // 008 'e' Magenta
+; "e_blue.ico"    // 009 'e' Blue
+; "e_black.ico"   // 010 'e' Black
+; "e_cyan.ico"    // 011 'e' Cyan
+; "e_green.ico"   // 012 'e' Green
+; "e_red.ico"     // 013 'e' Red
+; "e_yellow.ico"  // 014 'e' Yellow
 ; "ehf.ico"       // 015 EHF (Emacs Help file)
 ; "make.ico"      // 016 Makefile file
 ; "doc.ico"       // 017 doc file
@@ -539,19 +548,19 @@ Name: "{group}\Uninstall"; Filename: "{uninstallexe}"
 ; "nroffso.ico"   // 029 Nroff extension .so
 ; "nrofftni.ico"  // 030 Nroff extension .tni
 ; "nroffnrs.ico"  // 031 Nroff extension .nrs
-; "man.ico"       // 032 man UNIX manual file 
-; "erblue.ico"    // 033 'e' Rev Blue 
-; "erblue2.ico"   // 034 'e' Rev Dark Blue 
-; "erbrown.ico"   // 035 'e' Rev Brown 
-; "ercyan.ico"    // 036 'e' Rev Cyan 
-; "ergreen.ico"   // 037 'e' Rev Green 
-; "ergreen2.ico"  // 038 'e' Rev Dark Green 
-; "eraqua.ico"    // 039 'e' Rev Aqua Green 
-; "erblack.ico"   // 040 'e' Rev Black 
-; "ergrey.ico"    // 041 'e' Rev Frame colour 
-; "ermagent.ico"  // 042 'e' Rev Magenta 
-; "erred.ico"     // 043 'e' Rev Red 
-; "eryellow.ico"  // 044 'e' Rev Yellow 
+; "man.ico"       // 032 man UNIX manual file
+; "erblue.ico"    // 033 'e' Rev Blue
+; "erblue2.ico"   // 034 'e' Rev Dark Blue
+; "erbrown.ico"   // 035 'e' Rev Brown
+; "ercyan.ico"    // 036 'e' Rev Cyan
+; "ergreen.ico"   // 037 'e' Rev Green
+; "ergreen2.ico"  // 038 'e' Rev Dark Green
+; "eraqua.ico"    // 039 'e' Rev Aqua Green
+; "erblack.ico"   // 040 'e' Rev Black
+; "ergrey.ico"    // 041 'e' Rev Frame colour
+; "ermagent.ico"  // 042 'e' Rev Magenta
+; "erred.ico"     // 043 'e' Rev Red
+; "eryellow.ico"  // 044 'e' Rev Yellow
 ; "abr.ico"       // 045 ABR abreviation file
 ; "dic.ico"       // 046 DIC dictionary file
 ; "hash.ico"      // 047 Hash (backup) file
@@ -559,24 +568,24 @@ Name: "{group}\Uninstall"; Filename: "{uninstallexe}"
 ; "y.ico"         // 049 'y' (yacc) file
 ; "l.ico"         // 050 'l' (lex) file
 ; "p.ico"         // 051 'p' (pascal ??) file
-; "etf.ico"       // 052 ETF template file 
-; "eaf.ico"       // 053 EAF abbreviation file 
-; "edf.ico"       // 054 EDF dictionary file 
-; "esf.ico"       // 055 ESF session file 
-; "emf.ico"       // 056 EMF macro file 
-; "awk.ico"       // 057 AWK file 
-; "i.ico"         // 058 i file 
-; "rc.ico"        // 059 Microsoft RC file 
-; "rul.ico"       // 060 Install Shield Rule file 
-; "log.ico"       // 061 Logging file 
-; "err.ico"       // 062 Error file 
-; "lbn.ico"       // 063 Nroff Hypertext library file 
-; "lib.ico"       // 064 Library file 
-; "htm.ico"       // 065 HTML file 
-; "htp.ico"       // 066 Hypertext pre-processed file 
-; "hts.ico"       // 067 Hypertext super file 
-; "sm.ico"        // 068 Superman file 
-; "pso.ico"       // 069 Post script ordering file 
+; "etf.ico"       // 052 ETF template file
+; "eaf.ico"       // 053 EAF abbreviation file
+; "edf.ico"       // 054 EDF dictionary file
+; "esf.ico"       // 055 ESF session file
+; "emf.ico"       // 056 EMF macro file
+; "awk.ico"       // 057 AWK file
+; "i.ico"         // 058 i file
+; "rc.ico"        // 059 Microsoft RC file
+; "rul.ico"       // 060 Install Shield Rule file
+; "log.ico"       // 061 Logging file
+; "err.ico"       // 062 Error file
+; "lbn.ico"       // 063 Nroff Hypertext library file
+; "lib.ico"       // 064 Library file
+; "htm.ico"       // 065 HTML file
+; "htp.ico"       // 066 Hypertext pre-processed file
+; "hts.ico"       // 067 Hypertext super file
+; "sm.ico"        // 068 Superman file
+; "pso.ico"       // 069 Post script ordering file
 ; "asm.ico"       // 070 Assembler File.
 ; "erf.ico"       // 071 erf file.
 ; "jst.ico"       // 072 jst file.
@@ -804,7 +813,7 @@ Root: HKCR; Subkey: ".log"; Tasks: ext/log;  ValueType: string; ValueName: ; Val
 Root: HKCR; Subkey: ".log~"; Tasks: ext/log;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
 ;
 Root: HKCR; Subkey: "jasspa.logfile"; Tasks: ext/log;  ValueType: string; ValueName: ; ValueData: "Text File"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa.logfile\DefaultIcon"; Tasks: ext/log;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,18"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.logfile\DefaultIcon"; Tasks: ext/log;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,61"; Flags: deletekey uninsdeletevalue
 Root: HKCR; Subkey: "jasspa.logfile\shell"; Tasks: ext/log;  ValueType: string; ValueName: ; ValueData: ""; Flags: deletekey uninsdeletevalue
 Root: HKCR; Subkey: "jasspa.logfile\shell\open"; Tasks: ext/log;  ValueType: string; ValueName: ; ValueData: ""; Flags: deletekey uninsdeletevalue
 Root: HKCR; Subkey: "jasspa.logfile\shell\open\command"; Tasks: ext/log;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: deletekey uninsdeletevalue
@@ -928,7 +937,6 @@ Root: HKCR; Subkey: ".mak"; Tasks: ext/mak;  ValueType: string; ValueName: ; Val
 Root: HKCR; Subkey: ".mak~"; Tasks: ext/mak;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
 Root: HKCR; Subkey: ".make"; Tasks: ext/mak;  ValueType: string; ValueName: ; ValueData: "jasspa.makefile"; Flags: uninsdeletevalue
 Root: HKCR; Subkey: ".make~"; Tasks: ext/mak;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "Makefile"; Tasks: ext/mak;  ValueType: string; ValueName: ; ValueData: "jasspa.makefile"; Flags: uninsdeletevalue
 ;
 Root: HKCR; Subkey: "jasspa.makfile"; Tasks: ext/mak;  ValueType: string; ValueName: ; ValueData: "UNIX Manpage File"; Flags: uninsdeletevalue
 Root: HKCR; Subkey: "jasspa.makfile\DefaultIcon"; Tasks: ext/mak;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,16"; Flags: uninsdeletevalue
@@ -1028,3 +1036,90 @@ Root: HKCR; Subkey: "jasspa.f77file\DefaultIcon"; Tasks: ext/f77;  ValueType: st
 Root: HKCR; Subkey: "jasspa.f77file\shell"; Tasks: ext/f77;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
 Root: HKCR; Subkey: "jasspa.f77file\shell\open"; Tasks: ext/f77;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
 Root: HKCR; Subkey: "jasspa.f77file\shell\open\command"; Tasks: ext/f77;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+; TCL Files
+;
+Root: HKCR; Subkey: ".tcl"; Tasks: ext/tcl;  ValueType: string; ValueName: ; ValueData: "jasspa.tclfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".tcl~"; Tasks: ext/tcl;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.tclfile"; Tasks: ext/tcl;  ValueType: string; ValueName: ; ValueData: "TCL Source File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.tclfile\DefaultIcon"; Tasks: ext/tcl;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,7"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.tclfile\shell"; Tasks: ext/tcl;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.tclfile\shell\open"; Tasks: ext/tcl;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.tclfile\shell\open\command"; Tasks: ext/tcl;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+; Shell Files
+;
+Root: HKCR; Subkey: ".bash"; Tasks: ext/sh;  ValueType: string; ValueName: ; ValueData: "jasspa.shfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".bash~"; Tasks: ext/sh;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".csh"; Tasks: ext/sh;  ValueType: string; ValueName: ; ValueData: "jasspa.shfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".csh~"; Tasks: ext/sh;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".ksh"; Tasks: ext/sh;  ValueType: string; ValueName: ; ValueData: "jasspa.shfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".ksh~"; Tasks: ext/sh;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".sh"; Tasks: ext/sh;  ValueType: string; ValueName: ; ValueData: "jasspa.shfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".sh~"; Tasks: ext/sh;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".zsh"; Tasks: ext/sh;  ValueType: string; ValueName: ; ValueData: "jasspa.shfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".zsh~"; Tasks: ext/sh;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.shfile"; Tasks: ext/sh;  ValueType: string; ValueName: ; ValueData: "Shell Script File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.shfile\DefaultIcon"; Tasks: ext/sh;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,11"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.shfile\shell"; Tasks: ext/sh;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.shfile\shell\open"; Tasks: ext/sh;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.shfile\shell\open\command"; Tasks: ext/sh;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+; Awk Files
+;
+Root: HKCR; Subkey: ".awk"; Tasks: ext/awk;  ValueType: string; ValueName: ; ValueData: "jasspa.awkfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".awk~"; Tasks: ext/awk;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".nawk"; Tasks: ext/awk;  ValueType: string; ValueName: ; ValueData: "jasspa.awkfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".nawk~"; Tasks: ext/awk;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".gawk"; Tasks: ext/awk;  ValueType: string; ValueName: ; ValueData: "jasspa.awkfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".gawk~"; Tasks: ext/awk;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.awkfile"; Tasks: ext/awk;  ValueType: string; ValueName: ; ValueData: "Shell Script File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.awkfile\DefaultIcon"; Tasks: ext/awk;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,57"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.awkfile\shell"; Tasks: ext/awk;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.awkfile\shell\open"; Tasks: ext/awk;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.awkfile\shell\open\command"; Tasks: ext/awk;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+; PHP Files
+;
+Root: HKCR; Subkey: ".php"; Tasks: ext/php;  ValueType: string; ValueName: ; ValueData: "jasspa.phpfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".php~"; Tasks: ext/php;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.phpfile"; Tasks: ext/php;  ValueType: string; ValueName: ; ValueData: "PHP File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.phpfile\DefaultIcon"; Tasks: ext/php;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,9"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.phpfile\shell"; Tasks: ext/php;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.phpfile\shell\open"; Tasks: ext/php;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.phpfile\shell\open\command"; Tasks: ext/php;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+; ASP Files
+;
+Root: HKCR; Subkey: ".asp"; Tasks: ext/asp;  ValueType: string; ValueName: ; ValueData: "jasspa.aspfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".asp~"; Tasks: ext/asp;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.aspfile"; Tasks: ext/asp;  ValueType: string; ValueName: ; ValueData: "ASP File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.aspfile\DefaultIcon"; Tasks: ext/asp;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,12"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.aspfile\shell"; Tasks: ext/asp;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.aspfile\shell\open"; Tasks: ext/asp;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.aspfile\shell\open\command"; Tasks: ext/asp;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+; Error files
+;
+Root: HKCR; Subkey: ".err"; Tasks: ext/err;  ValueType: string; ValueName: ; ValueData: "jasspa.errfile"; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.errfile"; Tasks: ext/err;  ValueType: string; ValueName: ; ValueData: "Error File"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.errfile\DefaultIcon"; Tasks: ext/err;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,62"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.errfile\shell"; Tasks: ext/err;  ValueType: string; ValueName: ; ValueData: ""; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.errfile\shell\open"; Tasks: ext/err;  ValueType: string; ValueName: ; ValueData: ""; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.errfile\shell\open\command"; Tasks: ext/err;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: deletekey uninsdeletevalue
+;
+; Out files
+;
+Root: HKCR; Subkey: ".out"; Tasks: ext/out;  ValueType: string; ValueName: ; ValueData: "jasspa.outfile"; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.outfile"; Tasks: ext/out;  ValueType: string; ValueName: ; ValueData: "Output File"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.outfile\DefaultIcon"; Tasks: ext/out;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,61"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.outfile\shell"; Tasks: ext/out;  ValueType: string; ValueName: ; ValueData: ""; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.outfile\shell\open"; Tasks: ext/out;  ValueType: string; ValueName: ; ValueData: ""; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.outfile\shell\open\command"; Tasks: ext/out;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: deletekey uninsdeletevalue
