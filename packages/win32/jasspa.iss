@@ -1,8 +1,8 @@
-; Setup script for Jasspa MicroEmacs using Inno Setup
+; Setup script for JASSPA MicroEmacs using Inno Setup
 
 [Setup]
 AppName=JASSPA MicroEmacs
-AppVerName=Jasspa MicroEmacs 2009
+AppVerName=JASSPA MicroEmacs 2009
 AppVersion=2009.09.09
 ;
 DefaultDirName={pf}\JASSPA\MicroEmacs
@@ -11,7 +11,7 @@ AppCopyright=Copyright © 1988-2009 JASSPA
 MinVersion=4,4
 Uninstallable=yes
 OutputDir=.\output
-BackColor=clLime
+ShowTasksTreeLines=yes
 SolidCompression=yes
 Compression=lzma/max
 LicenseFile=JASSPA\MicroEmacs\COPYING
@@ -48,24 +48,26 @@ Name: "pixel"; Description: "MicroEmacs pixel files"; Types: full
 Name: "contrib"; Description: "Useful contributed script files"; Types: full
 Name: "help"; Description: "Embedded help information (Strongly recommended)"; Types: full compact
 Name: "helpx"; Description: "Getting started guide and other Help"; Types: full
-Name: "source"; Description: "Source files bundle"; Flags: dontinheritcheck
-Name: "find"; Description: "Executables for find, grep, fgrep, egrep and diff"; Flags: dontinheritcheck
-Name: "extmedit"; Description: "Add a MicroEmacs Edit option to right-mouse content menu (Recommended)"; Flags: dontinheritcheck
-Name: "extc"; Description: "Make MicroEmacs the default editor for C/C++ files (.c/.cpp/.def/.h)"; Flags: dontinheritcheck
-Name: "exty"; Description: "Make MicroEmacs the default editor for Lex/Yacc files (.l/.y)"; Flags: dontinheritcheck
-Name: "extme"; Description: "Make MicroEmacs the default editor for its own files (.eaf/.eff/.emf/.erf/.esf/.etf)"; Flags: dontinheritcheck
-Name: "exttxt"; Description: "Make MicroEmacs the default editor for text files (.txt/.text)"; Flags: dontinheritcheck
-Name: "extlog"; Description: "Make MicroEmacs the default editor for logging files (.log)"; Flags: dontinheritcheck
-Name: "exttex"; Description: "Make MicroEmacs the default editor for LaTeX files (.tex/.bib)"; Flags: dontinheritcheck
-Name: "extman"; Description: "Make MicroEmacs the default editor for UNIX manual page files (.man)"; Flags: dontinheritcheck
-Name: "extroff"; Description: "Make MicroEmacs the default editor for UNIX troff files (.0/.1/../.9)"; Flags: dontinheritcheck
-Name: "extjdoc"; Description: "Make MicroEmacs the default for JASSPA documentation files (.tni/.sm/.nrs)"; Flags: dontinheritcheck
-Name: "extmak"; Description: "Make MicroEmacs the default editor for Makefiles (.mak/.make)"; Flags: dontinheritcheck
-Name: "extasm"; Description: "Make MicroEmacs the default editor for Assembler files (.asm/.s)"; Flags: dontinheritcheck
-Name: "extpas"; Description: "Make MicroEmacs the default editor for Pascal files (.pas/.p)"; Flags: dontinheritcheck
-Name: "extf77"; Description: "Make MicroEmacs the default editor for Fortran files (.f77/.f)"; Flags: dontinheritcheck
-Name: "extjst"; Description: "Make MicroEmacs the default editor for JASSPA Structred text files (.jst)"; Flags: dontinheritcheck
-Name: "extbup"; Description: "Make MicroEmacs the default editor for JASSPA backup files (.~/.#/.~0~)"; Flags: dontinheritcheck
+Name: "utils"; Description: "Executables for find, grep, fgrep, egrep and diff"; Types: full; Flags: dontinheritcheck
+
+[Tasks]
+Name: "extmedit"; Description: "Add a MicroEmacs Edit option to right-mouse content menu (Recommended)"
+Name: "ext"; Description: "Associate file extensions too MicroEmacs"
+Name: "ext/me"; Description: "Make MicroEmacs the default editor for its own files (.eaf/.eff/.emf/.erf/.esf/.etf)"
+Name: "ext/bup"; Description: "Make MicroEmacs the default editor for JASSPA backup files (.~/.#/.~0~)"
+Name: "ext/jst"; Description: "Make MicroEmacs the default editor for JASSPA Structred text files (.jst)"
+Name: "ext/c"; Description: "Make MicroEmacs the default editor for C/C++ files (.c/.cpp/.def/.h)"; Flags: unchecked
+Name: "ext/y"; Description: "Make MicroEmacs the default editor for Lex/Yacc files (.l/.y)"; Flags: unchecked
+Name: "ext/txt"; Description: "Make MicroEmacs the default editor for text files (.txt/.text)"; Flags: unchecked
+Name: "ext/log"; Description: "Make MicroEmacs the default editor for logging files (.log)"; Flags: unchecked
+Name: "ext/tex"; Description: "Make MicroEmacs the default editor for LaTeX files (.tex/.bib)"; Flags: unchecked
+Name: "ext/man"; Description: "Make MicroEmacs the default editor for UNIX manual page files (.man)"; Flags: unchecked
+Name: "ext/roff"; Description: "Make MicroEmacs the default editor for UNIX troff files (.0/.1/../.9)"; Flags: unchecked
+Name: "ext/jdoc"; Description: "Make MicroEmacs the default for JASSPA documentation files (.tni/.sm/.nrs)"; Flags: unchecked
+Name: "ext/mak"; Description: "Make MicroEmacs the default editor for Makefiles (.mak/.make)"; Flags: unchecked
+Name: "ext/asm"; Description: "Make MicroEmacs the default editor for Assembler files (.asm/.s)"; Flags: unchecked
+Name: "ext/pas"; Description: "Make MicroEmacs the default editor for Pascal files (.pas/.p)"; Flags: unchecked
+Name: "ext/f77"; Description: "Make MicroEmacs the default editor for Fortran files (.f77/.f)"; Flags: unchecked
 
 [Dirs]
 Name: "{app}\company"; Flags: uninsalwaysuninstall
@@ -117,15 +119,11 @@ Source: "JASSPA\MicroEmacs\pixmaps\ne_s.png";  DestDir: "{app}\pixmaps"; Compone
 ;
 ; Executables
 ;
-Source: "JASSPA\MicroEmacs\find.exe";  DestDir: "{app}"; Components: find
-Source: "JASSPA\MicroEmacs\grep.exe";  DestDir: "{app}"; Components: find
-Source: "JASSPA\MicroEmacs\diff.exe";  DestDir: "{app}"; Components: find
-Source: "JASSPA\MicroEmacs\fgrep.exe";  DestDir: "{app}"; Components: find
-Source: "JASSPA\MicroEmacs\egrep.exe";  DestDir: "{app}"; Components: find
-;
-; Source
-;
-Source: "JASSPA\MicroEmacs\jasspa-mesrc-20090909.zip"; DestDir: "{app}"; Components: source
+Source: "JASSPA\MicroEmacs\find.exe";  DestDir: "{app}"; Components: utils
+Source: "JASSPA\MicroEmacs\grep.exe";  DestDir: "{app}"; Components: utils
+Source: "JASSPA\MicroEmacs\diff.exe";  DestDir: "{app}"; Components: utils
+Source: "JASSPA\MicroEmacs\fgrep.exe";  DestDir: "{app}"; Components: utils
+Source: "JASSPA\MicroEmacs\egrep.exe";  DestDir: "{app}"; Components: utils
 ;
 ; Base macros
 ;
@@ -466,8 +464,7 @@ Source: "JASSPA\MicroEmacs\macros\zfile.emf";  DestDir: "{app}\macros"
 ; Help information
 ;
 Source: "JASSPA\MicroEmacs\macros\me.ehf";  DestDir: "{app}\macros"; Components: help
-Source: "JASSPA\MicroEmacs\me.hlp";  DestDir: "{app}"; Components: helpx; OnlyBelowVersion: 6.0,6.0
-Source: "JASSPA\MicroEmacs\me.chm";  DestDir: "{app}"; Components: helpx; MinVersion: 6.0,6.0
+Source: "JASSPA\MicroEmacs\me.chm";  DestDir: "{app}"; Components: helpx
 Source: "JASSPA\MicroEmacs\jasspame.pdf";  DestDir: "{app}"; Components: helpx
 ;
 ; Spelling dictionary
@@ -586,400 +583,448 @@ Name: "{group}\Uninstall"; Filename: "{uninstallexe}"
 ;
 ; Allow the "MicroEmacs Edit" on the mouse right context menu
 ;
-Root: HKCR; Subkey: "*\shell"; Components: extmedit; Flags: uninsdeletekeyifempty
-Root: HKCR; Subkey: "*\shell\MicroEmacs Edit"; Components: extmedit; Flags: uninsdeletekey
-Root: HKCR; Subkey: "*\shell\MicroEmacs Edit\command"; Components: extmedit; ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "*\shell"; Tasks: extmedit; Flags: uninsdeletekeyifempty
+Root: HKCR; Subkey: "*\shell\MicroEmacs Edit"; Tasks: extmedit; Flags: uninsdeletekey
+Root: HKCR; Subkey: "*\shell\MicroEmacs Edit\command"; Tasks: extmedit; ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
 ;
 ; MicroEmacs backup files.
 ;
-Root: HKCR; Subkey: ".~"; Components: extbup;  ValueType: string; ValueName: ; ValueData: "jasspa_backupfile"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: ".~0~"; Components: extbup;  ValueType: string; ValueName: ; ValueData: "jasspa_backupfile"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: ".~1~"; Components: extbup;  ValueType: string; ValueName: ; ValueData: "jasspa_backupfile"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: ".~2~"; Components: extbup;  ValueType: string; ValueName: ; ValueData: "jasspa_backupfile"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: ".~3~"; Components: extbup;  ValueType: string; ValueName: ; ValueData: "jasspa_backupfile"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: ".~4~"; Components: extbup;  ValueType: string; ValueName: ; ValueData: "jasspa_backupfile"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: ".~5~"; Components: extbup;  ValueType: string; ValueName: ; ValueData: "jasspa_backupfile"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: ".~6~"; Components: extbup;  ValueType: string; ValueName: ; ValueData: "jasspa_backupfile"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: ".~7~"; Components: extbup;  ValueType: string; ValueName: ; ValueData: "jasspa_backupfile"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: ".~8~"; Components: extbup;  ValueType: string; ValueName: ; ValueData: "jasspa_backupfile"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: ".~9~"; Components: extbup;  ValueType: string; ValueName: ; ValueData: "jasspa_backupfile"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: ".~"; Tasks: ext/bup;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: ".~0~"; Tasks: ext/bup;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: ".~1~"; Tasks: ext/bup;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: ".~2~"; Tasks: ext/bup;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: ".~3~"; Tasks: ext/bup;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: ".~4~"; Tasks: ext/bup;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: ".~5~"; Tasks: ext/bup;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: ".~6~"; Tasks: ext/bup;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: ".~7~"; Tasks: ext/bup;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: ".~8~"; Tasks: ext/bup;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: ".~9~"; Tasks: ext/bup;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: deletekey uninsdeletevalue
 ;
-Root: HKCR; Subkey: "jasspa_backupfile"; ValueType: string; ValueName: ; ValueData: "JASSPA Backup File"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_backupfile\DefaultIcon"; ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,48"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_backupfile\shell"; ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_backupfile\shell\open"; ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_backupfile\shell\open\command"; ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.backupfile"; ValueType: string; ValueName: ; ValueData: "JASSPA Backup File"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.backupfile\DefaultIcon"; ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,48"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.backupfile\shell"; ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.backupfile\shell\open"; ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.backupfile\shell\open\command"; ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
 ;
-Root: HKCR; Subkey: "jasspa_autosavefile"; Components: extbup;  ValueType: string; ValueName: ; ValueData: "JASSPA Autosave File"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_autosavefile\DefaultIcon"; Components: extbup;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,47"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_autosavefile\shell"; ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_autosavefile\shell\open"; ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_autosavefile\shell\open\command"; ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-; Bind C and C++ files.
-;
-Root: HKCR; Subkey: ".h"; Components: extc;  ValueType: string; ValueName: ; ValueData: "hfile"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: ".h~"; Components: extc;  ValueType: string; ValueName: ; ValueData: "jasspa_backupfile"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: ".hpp"; Components: extc;  ValueType: string; ValueName: ; ValueData: "hppfile"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: ".hxx"; Components: extc;  ValueType: string; ValueName: ; ValueData: "hxxfile"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: ".c"; Components: extc;  ValueType: string; ValueName: ; ValueData: "cfile"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: ".c~"; Components: extc;  ValueType: string; ValueName: ; ValueData: "jasspa_backupfile"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: ".cpp"; Components: extc;  ValueType: string; ValueName: ; ValueData: "cppfile"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: ".cc"; Components: extc;  ValueType: string; ValueName: ; ValueData: "cppfile"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: ".cxx"; Components: extc;  ValueType: string; ValueName: ; ValueData: "cxxfile"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: ".def"; Components: extc;  ValueType: string; ValueName: ; ValueData: "deffile"; Flags: deletekey uninsdeletevalue
-;
-Root: HKCR; Subkey: "cppfile"; Components: extc;  ValueType: string; ValueName: ; ValueData: "C++ Source File"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "cppfile\DefaultIcon"; Components: extc;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,2"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "cppfile\shell"; Components: extc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "cppfile\shell\open"; Components: extc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "cppfile\shell\open\command"; Components: extc;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "cxxfile"; Components: extc;  ValueType: string; ValueName: ; ValueData: "C++ Source File"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "cxxfile\DefaultIcon"; Components: extc;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,2"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "cxxfile\shell"; Components: extc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "cxxfile\shell\open"; Components: extc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "cxxfile\shell\open\command"; Components: extc;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "cfile"; Components: extc;  ValueType: string; ValueName: ; ValueData: "C Source File"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "cfile\DefaultIcon"; Components: extc;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,1"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "cfile\shell"; Components: extc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "cfile\shell\open"; Components: extc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "cfile\shell\open\command"; Components: extc;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "hfile"; Components: extc;  ValueType: string; ValueName: ; ValueData: "C/C++ Header File"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "hfile\DefaultIcon"; Components: extc;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,3"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "hfile\shell"; Components: extc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "hfile\shell\open"; Components: extc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "hfile\shell\open\command"; Components: extc;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "hppfile"; Components: extc;  ValueType: string; ValueName: ; ValueData: "C++ Header File"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "hppfile\DefaultIcon"; Components: extc;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,3"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "hppfile\shell"; Components: extc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "hppfile\shell\open"; Components: extc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "hppfile\shell\open\command"; Components: extc;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "hxxfile"; Components: extc;  ValueType: string; ValueName: ; ValueData: "C++ Header File"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "hxxfile\DefaultIcon"; Components: extc;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,3"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "hxxfile\shell"; Components: extc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "hxxfile\shell\open"; Components: extc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "hxxfile\shell\open\command"; Components: extc;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "deffile"; Components: extc;  ValueType: string; ValueName: ; ValueData: "C/C++ Definition File"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "deffile\DefaultIcon"; Components: extc;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,4"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "deffile\shell"; Components: extc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "deffile\shell\open"; Components: extc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "deffile\shell\open\command"; Components: extc;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-; Bind Lex and Yacc
-;
-Root: HKCR; Subkey: ".y"; Components: exty;  ValueType: string; ValueName: ; ValueData: "yfile"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".l"; Components: exty;  ValueType: string; ValueName: ; ValueData: "lfile"; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "yfile"; Components: exty;  ValueType: string; ValueName: ; ValueData: "YACC File"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "yfile\DefaultIcon"; Components: exty;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,49"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "yfile\shell"; Components: exty;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "yfile\shell\open"; Components: exty;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "yfile\shell\open\command"; Components: exty;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "lfile"; Components: exty;  ValueType: string; ValueName: ; ValueData: "LEX File"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "lfile\DefaultIcon"; Components: exty;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,50"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "lfile\shell"; Components: exty;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "lfile\shell\open"; Components: exty;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "lfile\shell\open\command"; Components: exty;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.autosavefile"; Tasks: ext/bup;  ValueType: string; ValueName: ; ValueData: "JASSPA Autosave File"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.autosavefile\DefaultIcon"; Tasks: ext/bup;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,47"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.autosavefile\shell"; ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.autosavefile\shell\open"; ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.autosavefile\shell\open\command"; ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
 ;
 ; MicroEmacs files
 ;
-Root: HKCR; Subkey: ".eaf"; Components: extme;  ValueType: string; ValueName: ; ValueData: "jasspa_eaf"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".edf"; Components: extme;  ValueType: string; ValueName: ; ValueData: "jasspa_edf"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".ehf"; Components: extme;  ValueType: string; ValueName: ; ValueData: "jasspa_ehf"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".eff"; Components: extme;  ValueType: string; ValueName: ; ValueData: "jasspa_eff"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".emf"; Components: extme;  ValueType: string; ValueName: ; ValueData: "jasspa_emf"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".enf"; Components: extme;  ValueType: string; ValueName: ; ValueData: "jasspa_enf"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".erf"; Components: extme;  ValueType: string; ValueName: ; ValueData: "jasspa_erf"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".esf"; Components: extme;  ValueType: string; ValueName: ; ValueData: "jasspa_esf"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".etf"; Components: extme;  ValueType: string; ValueName: ; ValueData: "jasspa_etf"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".eaf"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "jasspa.eaf"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".eaf~"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".edf"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "jasspa.edf"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".edf~"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".ehf"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "jasspa.ehf"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".ehf~"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".eff"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "jasspa.eff"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".eff~"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".emf"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "jasspa.emf"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".emf~"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".enf"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "jasspa.enf"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".enf~"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".erf"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "jasspa.erf"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".erf~"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".esf"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "jasspa.esf"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".esf~"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".etf"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "jasspa.etf"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".etf~"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
 ;
-Root: HKCR; Subkey: "jasspa_eaf"; Components: extme;  ValueType: string; ValueName: ; ValueData: "JASSPA MicroEmacs Abbreviation File"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_eaf\DefaultIcon"; Components: extme;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,53"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_eaf\shell"; Components: extme;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_eaf\shell\open"; Components: extme;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_eaf\shell\open\command"; Components: extme;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.eaf"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "JASSPA MicroEmacs Abbreviation File"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.eaf\DefaultIcon"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,53"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.eaf\shell"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.eaf\shell\open"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.eaf\shell\open\command"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
 ;
-Root: HKCR; Subkey: "jasspa_edf"; Components: extme;  ValueType: string; ValueName: ; ValueData: "JASSPA MicroEmacs Dictionary File"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_edf\DefaultIcon"; Components: extme;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,54"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_edf\shell"; Components: extme;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_edf\shell\open"; Components: extme;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_edf\shell\open\command"; Components: extme;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.edf"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "JASSPA MicroEmacs Dictionary File"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.edf\DefaultIcon"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,54"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.edf\shell"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.edf\shell\open"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.edf\shell\open\command"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
 ;
-Root: HKCR; Subkey: "jasspa_ehf"; Components: extme;  ValueType: string; ValueName: ; ValueData: "JASSPA MicroEmacs Help File"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_ehf\DefaultIcon"; Components: extme;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,15"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_ehf\shell"; Components: extme;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_ehf\shell\open"; Components: extme;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_ehf\shell\open\command"; Components: extme;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.ehf"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "JASSPA MicroEmacs Help File"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.ehf\DefaultIcon"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,15"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.ehf\shell"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.ehf\shell\open"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.ehf\shell\open\command"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
 ;
-Root: HKCR; Subkey: "jasspa_eff"; Components: extme;  ValueType: string; ValueName: ; ValueData: "JASSPA MicroEmacs Favourites File"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_eff\DefaultIcon"; Components: extme;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,15"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_eff\shell"; Components: extme;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_eff\shell\open"; Components: extme;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_eff\shell\open\command"; Components: extme;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.eff"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "JASSPA MicroEmacs Favourites File"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.eff\DefaultIcon"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,15"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.eff\shell"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.eff\shell\open"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.eff\shell\open\command"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
 ;
-Root: HKCR; Subkey: "jasspa_emf"; Components: extme;  ValueType: string; ValueName: ; ValueData: "JASSPA MicroEmacs Macro File"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_emf\DefaultIcon"; Components: extme;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,56"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_emf\shell"; Components: extme;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_emf\shell\open"; Components: extme;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_emf\shell\open\command"; Components: extme;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.emf"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "JASSPA MicroEmacs Macro File"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.emf\DefaultIcon"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,56"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.emf\shell"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.emf\shell\open"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.emf\shell\open\command"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
 ;
-Root: HKCR; Subkey: "jasspa_enf"; Components: extme;  ValueType: string; ValueName: ; ValueData: "JASSPA MicroEmacs Notes File"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_enf\DefaultIcon"; Components: extme;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,0"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_enf\shell"; Components: extme;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_enf\shell\open"; Components: extme;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_enf\shell\open\command"; Components: extme;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.enf"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "JASSPA MicroEmacs Notes File"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.enf\DefaultIcon"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,0"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.enf\shell"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.enf\shell\open"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.enf\shell\open\command"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
 ;
-Root: HKCR; Subkey: "jasspa_erf"; Components: extme;  ValueType: string; ValueName: ; ValueData: "JASSPA MicroEmacs Registry File"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_erf\DefaultIcon"; Components: extme;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,71"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_erf\shell"; Components: extme;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_erf\shell\open"; Components: extme;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_erf\shell\open\command"; Components: extme;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.erf"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "JASSPA MicroEmacs Registry File"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.erf\DefaultIcon"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,71"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.erf\shell"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.erf\shell\open"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.erf\shell\open\command"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
 ;
-Root: HKCR; Subkey: "jasspa_esf"; Components: extme;  ValueType: string; ValueName: ; ValueData: "JASSPA MicroEmacs Session File"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_esf\DefaultIcon"; Components: extme;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,55"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_esf\shell"; Components: extme;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_esf\shell\open"; Components: extme;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_esf\shell\open\command"; Components: extme;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.esf"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "JASSPA MicroEmacs Session File"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.esf\DefaultIcon"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,55"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.esf\shell"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.esf\shell\open"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.esf\shell\open\command"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
 ;
-Root: HKCR; Subkey: "jasspa_etf"; Components: extme;  ValueType: string; ValueName: ; ValueData: "JASSPA MicroEmacs Template File"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_etf\DefaultIcon"; Components: extme;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,52"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_etf\shell"; Components: extme;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_etf\shell\open"; Components: extme;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_etf\shell\open\command"; Components: extme;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-; Text files
-;
-Root: HKCR; Subkey: ".txt"; Components: exttxt;  ValueType: string; ValueName: ; ValueData: "txtfile"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".text"; Components: exttxt;  ValueType: string; ValueName: ; ValueData: "jasspa_textfile"; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "txtfile"; Components: exttxt;  ValueType: string; ValueName: ; ValueData: "Text File"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "txtfile\DefaultIcon"; Components: exttxt;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,18"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "txtfile\shell"; Components: exttxt;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "txtfile\shell\open"; Components: exttxt;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "txtfile\shell\open\command"; Components: exttxt;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "jasspa_textfile"; Components: exttxt;  ValueType: string; ValueName: ; ValueData: "Text File"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_textfile\DefaultIcon"; Components: exttxt;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,18"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_textfile\shell"; Components: exttxt;  ValueType: string; ValueName: ; ValueData: ""; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_textfile\shell\open"; Components: exttxt;  ValueType: string; ValueName: ; ValueData: ""; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_textfile\shell\open\command"; Components: exttxt;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: deletekey uninsdeletevalue
-;
-; Log files
-;
-Root: HKCR; Subkey: ".log"; Components: extlog;  ValueType: string; ValueName: ; ValueData: "jasspa_logfile"; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "jasspa_logfile"; Components: extlog;  ValueType: string; ValueName: ; ValueData: "Text File"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_logfile\DefaultIcon"; Components: extlog;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,18"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_logfile\shell"; Components: extlog;  ValueType: string; ValueName: ; ValueData: ""; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_logfile\shell\open"; Components: extlog;  ValueType: string; ValueName: ; ValueData: ""; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_logfile\shell\open\command"; Components: extlog;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: deletekey uninsdeletevalue
-;
-; LaTeX files
-;
-Root: HKCR; Subkey: ".tex"; Components: exttex;  ValueType: string; ValueName: ; ValueData: "jasspa_texfile"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".bib"; Components: exttex;  ValueType: string; ValueName: ; ValueData: "jasspa_bibfile"; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "jasspa_texfile"; Components: exttex;  ValueType: string; ValueName: ; ValueData: "LaTeX File"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_texfile\DefaultIcon"; Components: exttex;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,18"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_texfile\shell"; Components: exttex;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_texfile\shell\open"; Components: exttex;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_texfile\shell\open\command"; Components: exttex;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "jasspa_bibfile"; Components: exttex;  ValueType: string; ValueName: ; ValueData: "LaTeX Bibliography File"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_bibfile\DefaultIcon"; Components: exttex;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,18"; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_bibfile\shell"; Components: exttex;  ValueType: string; ValueName: ; ValueData: ""; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_bibfile\shell\open"; Components: exttex;  ValueType: string; ValueName: ; ValueData: ""; Flags: deletekey uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_bibfile\shell\open\command"; Components: exttex;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: deletekey uninsdeletevalue
-;
-; Manual Page files
-;
-Root: HKCR; Subkey: ".tex"; Components: extman;  ValueType: string; ValueName: ; ValueData: "jasspa_manfile"; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "jasspa_manfile"; Components: extman;  ValueType: string; ValueName: ; ValueData: "UNIX Manpage File"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_manfile\DefaultIcon"; Components: extman;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,32"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_manfile\shell"; Components: extman;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_manfile\shell\open"; Components: extman;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_manfile\shell\open\command"; Components: extman;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-; Nroff files
-;
-Root: HKCR; Subkey: ".0"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "jasspa_nroff0file"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".1"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "jasspa_nroff1file"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".2"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "jasspa_nroff2file"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".3"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "jasspa_nroff3file"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".4"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "jasspa_nroff4file"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".5"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "jasspa_nroff5file"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".6"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "jasspa_nroff6file"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".7"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "jasspa_nroff7file"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".8"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "jasspa_nroff8file"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".9"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "jasspa_nroff9file"; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "jasspa_nroff0file"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "Troff File"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff0file\DefaultIcon"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,19"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff0file\shell"; Components: extroff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff0file\shell\open"; Components: extroff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff0file\shell\open\command"; Components: extroff;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "jasspa_nroff1file"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "Troff File"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff1file\DefaultIcon"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,20"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff1file\shell"; Components: extroff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff1file\shell\open"; Components: extroff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff1file\shell\open\command"; Components: extroff;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "jasspa_nroff2file"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "Troff File"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff2file\DefaultIcon"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,21"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff2file\shell"; Components: extroff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff2file\shell\open"; Components: extroff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff2file\shell\open\command"; Components: extroff;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "jasspa_nroff3file"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "Troff File"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff3file\DefaultIcon"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,22"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff3file\shell"; Components: extroff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff3file\shell\open"; Components: extroff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff3file\shell\open\command"; Components: extroff;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "jasspa_nroff4file"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "Troff File"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff4file\DefaultIcon"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,23"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff4file\shell"; Components: extroff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff4file\shell\open"; Components: extroff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff4file\shell\open\command"; Components: extroff;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "jasspa_nroff5file"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "Troff File"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff5file\DefaultIcon"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,24"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff5file\shell"; Components: extroff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff5file\shell\open"; Components: extroff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff5file\shell\open\command"; Components: extroff;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "jasspa_nroff6file"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "Troff File"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff6file\DefaultIcon"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,24"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff6file\shell"; Components: extroff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff6file\shell\open"; Components: extroff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff6file\shell\open\command"; Components: extroff;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "jasspa_nroff7file"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "Troff File"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff7file\DefaultIcon"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,26"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff7file\shell"; Components: extroff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff7file\shell\open"; Components: extroff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff7file\shell\open\command"; Components: extroff;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "jasspa_nroff8file"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "Troff File"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff8file\DefaultIcon"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,27"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff8file\shell"; Components: extroff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff8file\shell\open"; Components: extroff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff8file\shell\open\command"; Components: extroff;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "jasspa_nroff9file"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "Troff File"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff9file\DefaultIcon"; Components: extroff;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,28"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff9file\shell"; Components: extroff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff9file\shell\open"; Components: extroff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nroff9file\shell\open\command"; Components: extroff;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-; Makefiles
-;
-Root: HKCR; Subkey: ".mak"; Components: extmak;  ValueType: string; ValueName: ; ValueData: "jasspa_makefile"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".make"; Components: extmak;  ValueType: string; ValueName: ; ValueData: "jasspa_makefile"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "Makefile"; Components: extmak;  ValueType: string; ValueName: ; ValueData: "jasspa_makefile"; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "jasspa_makfile"; Components: extmak;  ValueType: string; ValueName: ; ValueData: "UNIX Manpage File"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_makfile\DefaultIcon"; Components: extmak;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,16"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_makfile\shell"; Components: extmak;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_makfile\shell\open"; Components: extmak;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_makfile\shell\open\command"; Components: extmak;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-; JASSPA Documentation system
-;
-Root: HKCR; Subkey: ".tni"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: "jasspa_tnifile"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".sm"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: "jasspa_smfile"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".nrs"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: "jasspa_nrsfile"; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "jasspa_tnifile"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: "JASSPA Nroff Include File"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_tnifile\DefaultIcon"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,30"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_tnifile\shell"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_tnifile\shell\open"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_tnifile\shell\open\command"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "jasspa_nrsfile"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: "JASSPA Nroff Superfile"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nrsfile\DefaultIcon"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,31"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nrsfile\shell"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nrsfile\shell\open"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nrsfile\shell\open\command"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "jasspa_smfile"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: "JASSPA Nroff Super Manual File"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_smfile\DefaultIcon"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,68"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_smfile\shell"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_smfile\shell\open"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_smfile\shell\open\command"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-; JASSPA Documentation system
-;
-Root: HKCR; Subkey: ".tni"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: "jasspa_tnifile"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".sm"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: "jasspa_smfile"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".nrs"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: "jasspa_nrsfile"; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "jasspa_tnifile"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: "JASSPA Nroff Include File"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_tnifile\DefaultIcon"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,30"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_tnifile\shell"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_tnifile\shell\open"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_tnifile\shell\open\command"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "jasspa_nrsfile"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: "JASSPA Nroff Superfile"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nrsfile\DefaultIcon"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,31"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nrsfile\shell"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nrsfile\shell\open"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_nrsfile\shell\open\command"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "jasspa_smfile"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: "JASSPA Nroff Super Manual File"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_smfile\DefaultIcon"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,68"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_smfile\shell"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_smfile\shell\open"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_smfile\shell\open\command"; Components: extjdoc;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-; Assembler files
-;
-Root: HKCR; Subkey: ".asm"; Components: extasm;  ValueType: string; ValueName: ; ValueData: "jasspa_asmfile"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".s"; Components: extasm;  ValueType: string; ValueName: ; ValueData: "jasspa_asmfile"; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "jasspa_asmfile"; Components: extasm;  ValueType: string; ValueName: ; ValueData: "Assembler Source File"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_asmfile\DefaultIcon"; Components: extasm;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,70"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_asmfile\shell"; Components: extasm;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_asmfile\shell\open"; Components: extasm;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_asmfile\shell\open\command"; Components: extasm;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-; Pascal Files
-;
-Root: HKCR; Subkey: ".pas"; Components: extpas;  ValueType: string; ValueName: ; ValueData: "jasspa_pasfile"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".p"; Components: extpas;  ValueType: string; ValueName: ; ValueData: "jasspa_pasfile"; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "jasspa_pasfile"; Components: extpas;  ValueType: string; ValueName: ; ValueData: "Pascal Source File"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_pasfile\DefaultIcon"; Components: extpas;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,51"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_pasfile\shell"; Components: extpas;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_pasfile\shell\open"; Components: extpas;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_pasfile\shell\open\command"; Components: extpas;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
-;
-; Fortran Files
-;
-Root: HKCR; Subkey: ".f77"; Components: extf77;  ValueType: string; ValueName: ; ValueData: "jasspa_f77file"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".f"; Components: extf77;  ValueType: string; ValueName: ; ValueData: "jasspa_f77file"; Flags: uninsdeletevalue
-;
-Root: HKCR; Subkey: "jasspa_f77file"; Components: extf77;  ValueType: string; ValueName: ; ValueData: "Pascal Source File"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_f77file\DefaultIcon"; Components: extf77;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,0"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_f77file\shell"; Components: extf77;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_f77file\shell\open"; Components: extf77;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_f77file\shell\open\command"; Components: extf77;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.etf"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "JASSPA MicroEmacs Template File"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.etf\DefaultIcon"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,52"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.etf\shell"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.etf\shell\open"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.etf\shell\open\command"; Tasks: ext/me;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
 ;
 ; JASSPA Structured Test Files
 ;
-Root: HKCR; Subkey: ".jst"; Components: extjst;  ValueType: string; ValueName: ; ValueData: "jasspa_jstfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".jst"; Tasks: ext/jst;  ValueType: string; ValueName: ; ValueData: "jasspa.jstfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".jst~"; Tasks: ext/jst;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
 ;
-Root: HKCR; Subkey: "jasspa_f77file"; Components: extjst;  ValueType: string; ValueName: ; ValueData: "JASSPA Structured Text File"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_f77file\DefaultIcon"; Components: extjst;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,72"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_f77file\shell"; Components: extjst;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_f77file\shell\open"; Components: extjst;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jasspa_f77file\shell\open\command"; Components: extjst;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.jstfile"; Tasks: ext/jst;  ValueType: string; ValueName: ; ValueData: "JASSPA Structured Text File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.jstfile\DefaultIcon"; Tasks: ext/jst;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,72"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.jstfile\shell"; Tasks: ext/jst;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.jstfile\shell\open"; Tasks: ext/jst;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.jstfile\shell\open\command"; Tasks: ext/jst;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+; Bind C and C++ files.
+;
+Root: HKCR; Subkey: ".h"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "jasspa.hfile"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: ".h~"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: ".hpp"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "jasspa.hppfile"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: ".hpp~"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: ".hxx"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "jasspa.hxxfile"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: ".hxx~"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: ".c"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "jasspa.cfile"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: ".c~"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: ".cpp"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "jasspa.cppfile"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: ".cpp~"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: ".cc"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "jasspa.cppfile"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: ".cc~"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: ".cxx"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "jasspa.cxxfile"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: ".cxx~"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: ".def"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "jasspa.deffile"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: ".def~"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: deletekey uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.cppfile"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "C++ Source File"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.cppfile\DefaultIcon"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,2"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.cppfile\shell"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.cppfile\shell\open"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.cppfile\shell\open\command"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.cxxfile"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "C++ Source File"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.cxxfile\DefaultIcon"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,2"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.cxxfile\shell"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.cxxfile\shell\open"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.cxxfile\shell\open\command"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.cfile"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "C Source File"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.cfile\DefaultIcon"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,1"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.cfile\shell"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.cfile\shell\open"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.cfile\shell\open\command"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.hfile"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "C/C++ Header File"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.hfile\DefaultIcon"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,3"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.hfile\shell"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.hfile\shell\open"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.hfile\shell\open\command"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.hppfile"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "C++ Header File"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.hppfile\DefaultIcon"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,3"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.hppfile\shell"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.hppfile\shell\open"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.hppfile\shell\open\command"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.hxxfile"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "C++ Header File"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.hxxfile\DefaultIcon"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,3"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.hxxfile\shell"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.hxxfile\shell\open"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.hxxfile\shell\open\command"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.deffile"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "C/C++ Definition File"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.deffile\DefaultIcon"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,4"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.deffile\shell"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.deffile\shell\open"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.deffile\shell\open\command"; Tasks: ext/c;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+; Bind Lex and Yacc
+;
+Root: HKCR; Subkey: ".y"; Tasks: ext/y;  ValueType: string; ValueName: ; ValueData: "jasspa.yfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".y~"; Tasks: ext/y;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".l"; Tasks: ext/y;  ValueType: string; ValueName: ; ValueData: "jasspa.lfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".l~"; Tasks: ext/y;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.yfile"; Tasks: ext/y;  ValueType: string; ValueName: ; ValueData: "YACC File"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.yfile\DefaultIcon"; Tasks: ext/y;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,49"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.yfile\shell"; Tasks: ext/y;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.yfile\shell\open"; Tasks: ext/y;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.yfile\shell\open\command"; Tasks: ext/y;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.lfile"; Tasks: ext/y;  ValueType: string; ValueName: ; ValueData: "LEX File"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.lfile\DefaultIcon"; Tasks: ext/y;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,50"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.lfile\shell"; Tasks: ext/y;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.lfile\shell\open"; Tasks: ext/y;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.lfile\shell\open\command"; Tasks: ext/y;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+; Text files
+;
+Root: HKCR; Subkey: ".txt"; Tasks: ext/txt;  ValueType: string; ValueName: ; ValueData: "jasspa.txtfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".txt~"; Tasks: ext/txt;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".text"; Tasks: ext/txt;  ValueType: string; ValueName: ; ValueData: "jasspa.textfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".text~"; Tasks: ext/txt;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.txtfile"; Tasks: ext/txt;  ValueType: string; ValueName: ; ValueData: "Text File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.txtfile\DefaultIcon"; Tasks: ext/txt;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,18"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.txtfile\shell"; Tasks: ext/txt;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.txtfile\shell\open"; Tasks: ext/txt;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.txtfile\shell\open\command"; Tasks: ext/txt;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.textfile"; Tasks: ext/txt;  ValueType: string; ValueName: ; ValueData: "Text File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.textfile\DefaultIcon"; Tasks: ext/txt;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,18"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.textfile\shell"; Tasks: ext/txt;  ValueType: string; ValueName: ; ValueData: ""; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.textfile\shell\open"; Tasks: ext/txt;  ValueType: string; ValueName: ; ValueData: ""; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.textfile\shell\open\command"; Tasks: ext/txt;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: deletekey uninsdeletevalue
+;
+; Log files
+;
+Root: HKCR; Subkey: ".log"; Tasks: ext/log;  ValueType: string; ValueName: ; ValueData: "jasspa.logfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".log~"; Tasks: ext/log;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.logfile"; Tasks: ext/log;  ValueType: string; ValueName: ; ValueData: "Text File"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.logfile\DefaultIcon"; Tasks: ext/log;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,18"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.logfile\shell"; Tasks: ext/log;  ValueType: string; ValueName: ; ValueData: ""; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.logfile\shell\open"; Tasks: ext/log;  ValueType: string; ValueName: ; ValueData: ""; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.logfile\shell\open\command"; Tasks: ext/log;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: deletekey uninsdeletevalue
+;
+; LaTeX files
+;
+Root: HKCR; Subkey: ".tex"; Tasks: ext/tex;  ValueType: string; ValueName: ; ValueData: "jasspa.texfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".tex~"; Tasks: ext/tex;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".bib"; Tasks: ext/tex;  ValueType: string; ValueName: ; ValueData: "jasspa.bibfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".bib~"; Tasks: ext/tex;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.texfile"; Tasks: ext/tex;  ValueType: string; ValueName: ; ValueData: "LaTeX File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.texfile\DefaultIcon"; Tasks: ext/tex;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,18"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.texfile\shell"; Tasks: ext/tex;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.texfile\shell\open"; Tasks: ext/tex;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.texfile\shell\open\command"; Tasks: ext/tex;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.bibfile"; Tasks: ext/tex;  ValueType: string; ValueName: ; ValueData: "LaTeX Bibliography File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.bibfile\DefaultIcon"; Tasks: ext/tex;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,18"; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.bibfile\shell"; Tasks: ext/tex;  ValueType: string; ValueName: ; ValueData: ""; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.bibfile\shell\open"; Tasks: ext/tex;  ValueType: string; ValueName: ; ValueData: ""; Flags: deletekey uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.bibfile\shell\open\command"; Tasks: ext/tex;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: deletekey uninsdeletevalue
+;
+; Manual Page files
+;
+Root: HKCR; Subkey: ".man"; Tasks: ext/man;  ValueType: string; ValueName: ; ValueData: "jasspa.manfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".man~"; Tasks: ext/man;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.manfile"; Tasks: ext/man;  ValueType: string; ValueName: ; ValueData: "UNIX Manpage File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.manfile\DefaultIcon"; Tasks: ext/man;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,32"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.manfile\shell"; Tasks: ext/man;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.manfile\shell\open"; Tasks: ext/man;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.manfile\shell\open\command"; Tasks: ext/man;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+; Nroff files
+;
+Root: HKCR; Subkey: ".0"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "jasspa.nroff0file"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".0~"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".1"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "jasspa.nroff1file"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".1~"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".2"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "jasspa.nroff2file"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".2~"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".3"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "jasspa.nroff3file"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".3~"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".4"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "jasspa.nroff4file"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".4~"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".5"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "jasspa.nroff5file"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".5~"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".6"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "jasspa.nroff6file"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".6~"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".7"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "jasspa.nroff7file"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".7~"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".8"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "jasspa.nroff8file"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".8~"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".9"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "jasspa.nroff9file"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".9~"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.nroff0file"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "Troff File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff0file\DefaultIcon"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,19"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff0file\shell"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff0file\shell\open"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff0file\shell\open\command"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.nroff1file"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "Troff File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff1file\DefaultIcon"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,20"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff1file\shell"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff1file\shell\open"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff1file\shell\open\command"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.nroff2file"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "Troff File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff2file\DefaultIcon"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,21"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff2file\shell"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff2file\shell\open"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff2file\shell\open\command"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.nroff3file"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "Troff File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff3file\DefaultIcon"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,22"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff3file\shell"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff3file\shell\open"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff3file\shell\open\command"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.nroff4file"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "Troff File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff4file\DefaultIcon"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,23"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff4file\shell"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff4file\shell\open"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff4file\shell\open\command"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.nroff5file"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "Troff File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff5file\DefaultIcon"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,24"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff5file\shell"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff5file\shell\open"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff5file\shell\open\command"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.nroff6file"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "Troff File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff6file\DefaultIcon"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,24"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff6file\shell"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff6file\shell\open"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff6file\shell\open\command"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.nroff7file"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "Troff File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff7file\DefaultIcon"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,26"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff7file\shell"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff7file\shell\open"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff7file\shell\open\command"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.nroff8file"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "Troff File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff8file\DefaultIcon"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,27"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff8file\shell"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff8file\shell\open"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff8file\shell\open\command"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.nroff9file"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "Troff File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff9file\DefaultIcon"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,28"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff9file\shell"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff9file\shell\open"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nroff9file\shell\open\command"; Tasks: ext/roff;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+; Makefiles
+;
+Root: HKCR; Subkey: ".mak"; Tasks: ext/mak;  ValueType: string; ValueName: ; ValueData: "jasspa.makefile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".mak~"; Tasks: ext/mak;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".make"; Tasks: ext/mak;  ValueType: string; ValueName: ; ValueData: "jasspa.makefile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".make~"; Tasks: ext/mak;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "Makefile"; Tasks: ext/mak;  ValueType: string; ValueName: ; ValueData: "jasspa.makefile"; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.makfile"; Tasks: ext/mak;  ValueType: string; ValueName: ; ValueData: "UNIX Manpage File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.makfile\DefaultIcon"; Tasks: ext/mak;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,16"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.makfile\shell"; Tasks: ext/mak;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.makfile\shell\open"; Tasks: ext/mak;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.makfile\shell\open\command"; Tasks: ext/mak;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+; JASSPA Documentation system
+;
+Root: HKCR; Subkey: ".tni"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: "jasspa.tnifile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".tni~"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".sm"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: "jasspa.smfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".sm~"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".nrs"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: "jasspa.nrsfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".nrs~"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.tnifile"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: "JASSPA Nroff Include File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.tnifile\DefaultIcon"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,30"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.tnifile\shell"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.tnifile\shell\open"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.tnifile\shell\open\command"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.nrsfile"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: "JASSPA Nroff Superfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nrsfile\DefaultIcon"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,31"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nrsfile\shell"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nrsfile\shell\open"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nrsfile\shell\open\command"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.smfile"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: "JASSPA Nroff Super Manual File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.smfile\DefaultIcon"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,68"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.smfile\shell"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.smfile\shell\open"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.smfile\shell\open\command"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+; JASSPA Documentation system
+;
+Root: HKCR; Subkey: ".tni"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: "jasspa.tnifile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".tni~"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".sm"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: "jasspa.smfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".sm~"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".nrs"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: "jasspa.nrsfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".nrs~"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.tnifile"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: "JASSPA Nroff Include File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.tnifile\DefaultIcon"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,30"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.tnifile\shell"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.tnifile\shell\open"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.tnifile\shell\open\command"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.nrsfile"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: "JASSPA Nroff Superfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nrsfile\DefaultIcon"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,31"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nrsfile\shell"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nrsfile\shell\open"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.nrsfile\shell\open\command"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.smfile"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: "JASSPA Nroff Super Manual File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.smfile\DefaultIcon"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,68"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.smfile\shell"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.smfile\shell\open"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.smfile\shell\open\command"; Tasks: ext/jdoc;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+; Assembler files
+;
+Root: HKCR; Subkey: ".asm"; Tasks: ext/asm;  ValueType: string; ValueName: ; ValueData: "jasspa.asmfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".asm~"; Tasks: ext/asm;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".s"; Tasks: ext/asm;  ValueType: string; ValueName: ; ValueData: "jasspa.asmfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".s~"; Tasks: ext/asm;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.asmfile"; Tasks: ext/asm;  ValueType: string; ValueName: ; ValueData: "Assembler Source File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.asmfile\DefaultIcon"; Tasks: ext/asm;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,70"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.asmfile\shell"; Tasks: ext/asm;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.asmfile\shell\open"; Tasks: ext/asm;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.asmfile\shell\open\command"; Tasks: ext/asm;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+; Pascal Files
+;
+Root: HKCR; Subkey: ".pas"; Tasks: ext/pas;  ValueType: string; ValueName: ; ValueData: "jasspa.pasfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".pas~"; Tasks: ext/pas;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".p"; Tasks: ext/pas;  ValueType: string; ValueName: ; ValueData: "jasspa.pasfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".p~"; Tasks: ext/pas;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.pasfile"; Tasks: ext/pas;  ValueType: string; ValueName: ; ValueData: "Pascal Source File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.pasfile\DefaultIcon"; Tasks: ext/pas;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,51"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.pasfile\shell"; Tasks: ext/pas;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.pasfile\shell\open"; Tasks: ext/pas;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.pasfile\shell\open\command"; Tasks: ext/pas;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
+;
+; Fortran Files
+;
+Root: HKCR; Subkey: ".f77"; Tasks: ext/f77;  ValueType: string; ValueName: ; ValueData: "jasspa.f77file"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".f77~"; Tasks: ext/f77;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".f"; Tasks: ext/f77;  ValueType: string; ValueName: ; ValueData: "jasspa.f77file"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".f~"; Tasks: ext/f77;  ValueType: string; ValueName: ; ValueData: "jasspa.backupfile"; Flags: uninsdeletevalue
+;
+Root: HKCR; Subkey: "jasspa.f77file"; Tasks: ext/f77;  ValueType: string; ValueName: ; ValueData: "Pascal Source File"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.f77file\DefaultIcon"; Tasks: ext/f77;  ValueType: string; ValueName: ; ValueData: "{app}\meicons.exe,0"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.f77file\shell"; Tasks: ext/f77;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.f77file\shell\open"; Tasks: ext/f77;  ValueType: string; ValueName: ; ValueData: ""; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jasspa.f77file\shell\open\command"; Tasks: ext/f77;  ValueType: string; ValueName: ; ValueData: """{app}\me32.exe"" -c -o ""%1"""; Flags: uninsdeletevalue
