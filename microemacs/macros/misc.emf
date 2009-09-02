@@ -28,6 +28,48 @@ define-macro open-line
     @# backward-char
 !emacro
 
+define-macro encase
+    0 show-region
+    set-variable #l0 &equ &band $result 5 5
+    !if &not &exi .s
+        set-variable .s @ml00 "Starting text"
+    !endif
+    !if &not &exi .e
+        set-variable .e @ml00 "Ending text"
+        !if &not #l0
+            !return
+        !endif
+    !endif
+    ; is a region is hilighted
+    !if &not #l0
+        set-variable .s @ml10 "Starting text" .s
+        set-variable .e @ml10 "Ending text" .e
+        !return
+    !endif
+    !if &not &band $result 2
+        3 show-region
+    !endif
+    ; Find start/end of region.
+    -2 show-region
+    set-variable #l0 $window-line
+    set-variable #l1 $window-col
+    set-position "\x82"
+    2 show-region
+    set-position "\x83"
+    set-variable #l2 $window-line
+    ; Determine start of region.
+    !if &or &gre #l0 #l2 &gre $window-col $window-col
+        set-variable #l3 1
+    !else
+        set-variable #l3 0
+    !endif
+    ; italic the region.
+    goto-position &cond #l3 "\x83" "\x82"
+    insert-string .s
+    goto-position &cond #l3 "\x82" "\x83"
+    insert-string .e
+!emacro
+
 define-macro check-line-length
     !repeat
         end-of-line
@@ -37,6 +79,27 @@ define-macro check-line-length
         !endif
         !force forward-line
     !until &not $status
+!emacro
+
+define-macro number-items
+    set-variable #l1 @ml "Number offset"
+    set-variable #l2 @ml "Chars per Number"
+    set-variable #l3 @ml "Number of lines"
+    set-variable #l4 &spr "%%%dd" #l2
+    !while &gre &pdec #l3 1 0
+        set-variable #l5 $window-col
+        insert-string &spr #l4 &pinc #l1 1
+        set-variable #l5 &sub $window-col #l5
+        set-variable #l6 #l5
+        !if &pdec #l5 1
+            !if &not &seq @wc "\n"
+                forward-delete-char
+                !jump -3
+            !endif
+        !endif
+        #l6 backward-char
+        forward-line
+    !done
 !emacro
 
 define-macro time
