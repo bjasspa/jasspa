@@ -509,8 +509,7 @@ Source: "JASSPA\MicroEmacs\spelling\lsrruyo.emf"; DestDir: "{app}\spelling"; Com
 [Icons]
 Name: "{group}\MicroEmacs"; Filename: "{app}\me32.exe"
 Name: "{group}\Getting Started"; Filename: "{app}\jasspame.pdf"; Components: helpx
-Name: "{group}\Help"; Filename: "{app}\me.hlp"; Components: helpx; OnlyBelowVersion: 5.1,5.1
-Name: "{group}\Help"; Filename: "{app}\me.chm"; Components: helpx; MinVersion: 5.1,5.1
+Name: "{group}\Help"; Filename: "{app}\me.chm"; Components: helpx
 Name: "{group}\Uninstall"; Filename: "{uninstallexe}"
 
 [Registry]
