@@ -1648,8 +1648,11 @@ define-macro dirlst-search
         ml-write "[Rename File Error: No name change]"
         !return
     !elif &and &band $system 0x100 &iseq #l1 #l0
-        ml-write "[Rename File Error: No name change (case insensitive)]"
-        !return
+        set-variable #l3 0
+        !while &not &seq &lget &stat "i" &set #l4 &spr "%s%s.#%d" $buffer-fname #l1 &inc #l3 1 2 "X"
+        !done
+        0x48 file-op &cat $buffer-fname #l1 &cat $buffer-fname #l4 @mna
+        set-variable #l1 #l4
     !elif &seq &set #l3 &lget &stat "i" &cat $buffer-fname #l0 2 "R"
         set-variable #l4 @mc5 &spr "File \"%s\" already exists, replace (?/y/n) ? " #l0 "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
         !if &iseq #l4 "n"
