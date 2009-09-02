@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd158.2,v 2.11 2009-08-29 17:13:25 jon Exp $
+.Id $Id: m2cmd158.2,v 2.12 2009-09-02 22:51:30 jon Exp $
 .Im MicroEmacs command|file|macrodevelop
 .so me.tni
 .TH file-op 2
@@ -71,6 +71,8 @@ for backup file-name generation.
 When validity  checks are enabled (see bit 0x01 above) and this bit is set, if
 a problem is found the command aborts rather than prompting the user. Also see
 the error return codes in the notes section below.
+.IP \fB0x80\fR
+When this bit is set then the files time stamp is preserved.
 .SH NOTES
 \fBhttp\fR  files are not  supported  except as the source file when  copying.
 \fBftp\fR files are fully supported with the restriction  that the from and to
