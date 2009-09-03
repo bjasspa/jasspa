@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.52 2009-08-29 18:37:31 jon Exp $
+.Id $Id: me.nrs,v 2.53 2009-09-03 22:10:29 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -2060,6 +2060,30 @@ common editor across all working platforms has been achieved!
 .br
 Release date specified as 2009/09/09.
 .BS
+[090903] 
+.Ht file-browser 3
+improved  on  Microsoft  Windows to perform a case change i.e.  "test.txt"  to
+"Test.txt".
+.BU
+[090903] Added
+.Ht encase 3 
+to encase a region with a starting and ending string.
+.BU
+[090903] Added
+.Ht number-items 3 
+to perform renumbering on a vertical aligned list of numeric digits.
+.BU
+[090901] Added template for Inno Setup Script files with extension .iss
+.BU
+[090831]   Changed   buffer   major  setup  so  all  major  modes  may  enable
+abbreviations and templates. The user may create the appropriate file if there
+is no standard file supplied and it will be enacted.
+.BU
+[090831] HTML template; indent <div> constructs.
+.BU
+[090831] notes; maintain the exact and magic mode settings during a notes tree
+update. 
+.BU
 [090805] Added support for \\i#, \\u# & \\c# in &xre macro function
 .BU  
 [090530] Fixed TCL abbreviation file expansion reported by Ferenc Deak.

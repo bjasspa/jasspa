@@ -1,0 +1,48 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 2009 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m3mac091.3,v 2.1 2009-09-03 22:10:29 jon Exp $
+.Im MicroEmacs scuts
+.so me.tni
+.TH encase 3
+.XI encase - "Encase a text region with start/end string"
+.SH NAME
+encase \- Encase a text region with start/end string
+.Me $a
+.SH SYNOPSIS
+.na
+.Me "|encase"
+.B encase
+"\|\fIstart-string\fR\|"
+"\|\fIend-string\fR\|"
+.ad
+.SH DESCRIPTION
+.B encase
+provides  a  short  cut to  encapsulate  a  selected  region  of  text  with a
+\fIstart-string\fR  and  \fIend-string\fR  pattern.  The  command is modal and
+operates in two different operating modes as follows.
+.PP
+First run
+.B encase
+without a current region section (i.e. no selected  highlighted  text) and the
+user is prompted for the  \fIstart-string\fR and \fIend-string\fR. The user is
+also   prompted   if  the   command   has  not   been  run   before   and  the
+\fIstart-string\fR  and  \fIend-string\fR  are  undefined.
+.PP
+With the  strings  defined  then  select a region  with the mouse or  keyboard
+(\fB\*espace\fR  and \fBmove\fR or  \fB\*smove\fR) to define the start and end
+point of the region. With a selected region then execute the
+.B encase
+command using \fB\*ex\fR  \fBencase\fR. This is most effective when bound to a
+simple key, see
+.Ht global-bind-key 2 .
+.SH NOTES
+.B encase 
+is a macro defined in \fCmisc.emf\fR.
+.SH "SEE ALSO"
+.na
+.Ht global-bind-key 2 .
+.ad
+.FH
