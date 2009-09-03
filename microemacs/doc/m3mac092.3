@@ -1,0 +1,59 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 2009 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m3mac092.3,v 2.1 2009-09-03 22:10:29 jon Exp $
+.Im MicroEmacs scuts
+.so me.tni
+.TH number-items 3
+.XI number-items - "Renumber a vertical list of items"
+.SH NAME
+number-items \- Renumber a vertical list of items
+.Me $a
+.SH SYNOPSIS
+.na
+.Me "|number-items"
+.B number-items
+\fIstart-number\fR
+\fIchar-width\fR
+\fInum-lines\fR
+.ad
+.SH DESCRIPTION
+.B number-items
+provides  a short cut  method of  re-numbering  a list of  vertically  aligned
+numbered items. The command assumes a fixed width number per line. The command
+operates  from the  current  cursor  position  in a  downward  direction.  The
+parameters are defined as follows:
+.IP \fIstart-number\fR
+The value of the first item to renumber.
+.IP \fIchar-width\fR
+The width of the number  space i.e. 1-10 is a width of 2, 89-101 is a width of
+3.
+.IP \fInum-lines\fR
+The number of lines to re-number, including the current line.
+.SH EXAMPLE
+The following code fragment shows how a list is renumbered.
+.CS
+MY_COMMAND (myCMD_UP,   # 9, "Move Up")
+MY_COMMAND (myCMD_DOWN,  10, "Move down")
+MY_COMMAND (myCMD_LEFT,  15, "Move down")
+MY_COMMAND (myCMD_RIGHT, 10, "Move down")
+.CE
+To to use the  command  to  renumber  the list from 100 to 103 then the cursor
+is placed at the left hand side where the number  should start. In the example
+this  is  \fC#\fR,  then  issue  the  command  \fB\*ex\fR   \fBnumber-items\fR
+\fB100\fR \fB3\fR \fB4\fR. This renumbers the list resulting in the following:
+.CS
+MY_COMMAND (myCMD_UP,   100, "Move Up")
+MY_COMMAND (myCMD_DOWN, 101, "Move down")
+MY_COMMAND (myCMD_LEFT, 102, "Move down")
+MY_COMMAND (myCMD_RIGHT,103, "Move down")
+.CE 0
+.SH NOTES
+.B number-items
+is a macro defined in \fCmisc.emf\fR.
+.SH "SEE ALSO"
+.na
+.ad
+.FH
