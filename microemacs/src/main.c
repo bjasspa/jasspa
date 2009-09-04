@@ -1647,6 +1647,10 @@ missing_arg:
 #ifdef _WIN32
         /* send a WM_USR message to the main window to wake ME up */
         SendMessage(baseHwnd,WM_USER,1,0) ;
+        /* if only a -o (not -m) then pause before exiting to give the server me a chance to
+         * load the files, the file could be a temp which will be removed once this me exits */
+        if(userClientServer == 2)
+            Sleep(250) ;
 #endif
         meExit(0) ;
     }
