@@ -47,11 +47,10 @@ if [ ! -f ${MEBIN} ] ; then
     # Build me
     gunzip -c ${MESRC} | tar xf -
     if [ ${PROCESSOR} = sparc ] ; then
-        (cd me${VER_YEAR}${VER_MONTH}${VER_DAY}/src; make -f sunos5.mak CC="cc -xarch=v8" MAKECDEFS="-D_CSW=1" me ne)
+        (cd me${VER_YEAR}${VER_MONTH}${VER_DAY}/src; sh build -m suncsw.mak)
     else
-        (cd me${VER_YEAR}${VER_MONTH}${VER_DAY}/src; make -f sunos5.mak CC="cc -xarch=386" MAKECDEFS="-D_CSW=1" me ne)
+        (cd me${VER_YEAR}${VER_MONTH}${VER_DAY}/src; sh build -m suncsw86.mak)
     fi
-    gzip -9 -c me${VER_YEAR}${VER_MONTH}${VER_DAY}/src/ne > ${NEBIN}
     gzip -9 -c me${VER_YEAR}${VER_MONTH}${VER_DAY}/src/me > ${MEBIN}
     rm -rf me${VER_YEAR}${VER_MONTH}${VER_DAY}
 fi
@@ -60,7 +59,7 @@ fi
 #
 for FILE in ${DOCFILESET} ; do
     if [ ! -f ${FILE} ] ; then
-        wget ${JASSPACOM}/release_${VERSION}/doc/${FILE}
+        wget ${JASSPACOM}/release_${VERSION}/${FILE}
     fi
 done
 #
@@ -74,67 +73,77 @@ for FILE in ${BASEFILESET} ${DOCFILESET} ; do
     fi
 done
 #
-# Unpack the executable.
-#
-mkdir -p ${BASEDIR}/csw/bin
-gunzip -v -c ${MEBIN} > ${BASEDIR}/csw/bin/me
-chmod a+rx ${BASEDIR}/csw/bin/me
-mkdir -p ${BASEDIR}/csw/share/man/man1
-cp me.1 ${BASEDIR}/csw/share/man/man1
-chmod a-wx ${BASEDIR}/csw/share/man/man1/me.1
-mkdir -p ${BASEDIR}/csw/share/doc/jasspa
-for FILE in ${DOCFILESET} ; do
-    cp ${FILE} ${BASEDIR}/csw/share/doc/jasspa
-done
-
-#
-# Unpack the tree
-#
-mkdir -p ${BASEDIR}/csw/share
-gunzip -c ${METREE} | (cd csw/share; tar xf - )
-#
-# Build the proto file
-#
-rm -f prototype
-rm -f pkginfo
-rm -f depend
-echo "i pkginfo" > prototype
-echo "i depend"  >> prototype
-pkgproto csw=/opt/csw | sed -e "s/jon users/root bin/g" >> prototype
-# Dependancies
-echo "P SUNWcslr" > depend
-echo "P SUNWcsl"  >> depend
-echo "P SUNWxwplt" >> depend
-#
-# Build the package info file
-#
-echo 'PKG="'${CSWNAME}'"' > pkginfo
-echo 'NAME="jasspame - JASSPA MicroEmacs"' >> pkginfo
-echo 'ARCH="'${PROCESSOR}'"' >> pkginfo
-echo 'VERSION="'${VERSTRING}'"'  >> pkginfo
-echo 'SUNW_PKGVERS="1.0"' >> pkginfo
-echo 'CATEGORY="application"' >> pkginfo
-echo 'VENDOR="www.jasspa.com packaged for CSW by Jon Green"' >> pkginfo
-echo 'HOTLINE=http://www.opencsw.org/bugtrack/' >> pkginfo
-echo 'EMAIL="support@jasspa.com"' >> pkginfo
-echo 'PSTAMP="Jon Green"'  >> pkginfo
-#echo 'BASEDIR="/"' >> pkginfo
-#
-# Build the package.
-#
-rm -rf ./${CSWNAME}
-rm -f ${CSWFILE}.pkg
-/usr/bin/pkgmk -d . -f ./prototype ${CSWNAME}
-/usr/bin/pkgtrans -o -s . ${CSWFILE}.pkg ${CSWNAME}
-#
-# Clean up
-#
-rm -f prototype
-rm -f pkginfo
-rm -f depend
-rm -rf ./jasspa
-rm -rf ./${PKGNAME}
-rm -rf ${BASEDIR}/csw
+# Build the package
+# 
+if [ ! -f ${CSWFILE}.pkg.gz ] ; then 
+    #
+    # Unpack the executable.
+    #
+    mkdir -p ${BASEDIR}/csw/bin
+    gunzip -v -c ${MEBIN} > ${BASEDIR}/csw/bin/me
+    chmod a+rx ${BASEDIR}/csw/bin/me
+    mkdir -p ${BASEDIR}/csw/share/man/man1
+    cp me.1 ${BASEDIR}/csw/share/man/man1
+    chmod a-wx ${BASEDIR}/csw/share/man/man1/me.1
+    mkdir -p ${BASEDIR}/csw/share/doc/jasspa
+    for FILE in ${DOCFILESET} ; do
+        cp ${FILE} ${BASEDIR}/csw/share/doc/jasspa
+    done
+    #
+    # Unpack the tree
+    #
+    mkdir -p ${BASEDIR}/csw/share
+    gunzip -c ${METREE} | (cd csw/share; tar xf - )
+    #
+    # Remove the windows specifics
+    #
+    rm -f ${BASEDIR}/csw/share/jasspa/contrib/ME_4_all.reg
+    rm -f ${BASEDIR}/csw/share/jasspa/contrib/mesetup.reg
+    #
+    # Build the proto file
+    #
+    rm -f prototype
+    rm -f pkginfo
+    rm -f depend
+    echo "i pkginfo" > prototype
+    echo "i depend"  >> prototype
+    pkgproto csw=/opt/csw | sed -e "s/jon users/root bin/g" >> prototype
+    # Dependancies
+    echo "P SUNWcslr" > depend
+    echo "P SUNWcsl"  >> depend
+    echo "P SUNWxwplt" >> depend
+    #
+    # Build the package info file
+    #
+    echo 'PKG="'${CSWNAME}'"' > pkginfo
+    echo 'NAME="jasspame - JASSPA MicroEmacs"' >> pkginfo
+    echo 'ARCH="'${PROCESSOR}'"' >> pkginfo
+    echo 'VERSION="'${VERSTRING}'"'  >> pkginfo
+    echo 'SUNW_PKGVERS="1.0"' >> pkginfo
+    echo 'CATEGORY="application"' >> pkginfo
+    echo 'VENDOR="www.jasspa.com packaged for CSW by Jon Green"' >> pkginfo
+    echo 'HOTLINE=http://www.opencsw.org/bugtrack/' >> pkginfo
+    echo 'EMAIL="jon@opencsw.com"' >> pkginfo
+    echo 'PSTAMP="Jon Green"'  >> pkginfo
+    #echo 'BASEDIR="/"' >> pkginfo
+    #
+    # Build the package.
+    #
+    rm -rf ./${CSWNAME}
+    rm -f ${CSWFILE}.pkg
+    /usr/bin/pkgmk -d . -f ./prototype ${CSWNAME}
+    /usr/bin/pkgtrans -o -s . ${CSWFILE}.pkg ${CSWNAME}
+    gzip -9 ${CSWFILE}.pkg
+    #
+    # Clean up
+    #
+    rm -f prototype
+    rm -f pkginfo
+    rm -f depend
+    rm -rf ./jasspa
+    rm -rf ./${CSWNAME}
+    rm -rf ${BASEDIR}/csw
+fi        
 #rm -f ${PKGNAME}-sun-${PROCESSOR}-${OSVERSION}-${VERSION}.pkg
 #
 # Build the spelling packages.
@@ -142,8 +151,8 @@ rm -rf ${BASEDIR}/csw
 SPELLFILESET="dede enus engb eses fifi frfr itit plpl ptpt ruye ruyo"
 for FILE in ${SPELLFILESET} ; do
     # Name of the package
-    CSWSPELLFILE=${PKGNAME}${FILE}-${VERSTRING}-${OSNAME}${OSVERSION}-${PROCESSOR}-CSW
-    if [ ! -f ${CSWSPELLFILE}.pkg  ] ; then 
+    CSWSPELLFILE=${PKGNAME}${FILE}-${VERSTRING}-${OSNAME}${OSVERSION}-all-CSW
+    if [ ! -f ${CSWSPELLFILE}.pkg.gz  ] ; then 
         # Get the name of the file.
         SPELLFILE="ls_${FILE}.tar.gz"
         if [ ${FILE} = "enus" ] ; then
@@ -197,13 +206,13 @@ for FILE in ${SPELLFILESET} ; do
         #
         echo 'PKG="'${CSWNAME}${FILE}'"' > pkginfo
         echo 'NAME="jasspame'${FILE}' - JASSPA MicroEmacs '${SPELLNAME}' Spelling Dictionary ('${FILE}')"' >> pkginfo
-        echo 'ARCH="'${PROCESSOR}'"' >> pkginfo
+        echo 'ARCH="all"' >> pkginfo
         echo 'VERSION="'${VERSTRING}'"'  >> pkginfo
         echo 'SUNW_PKGVERS="1.0"' >> pkginfo
         echo 'CATEGORY="application"' >> pkginfo
         echo 'VENDOR="www.jasspa.com packaged for CSW by Jon Green"' >> pkginfo
         echo 'HOTLINE=http://www.opencsw.org/bugtrack/' >> pkginfo
-        echo 'EMAIL="support@jasspa.com"' >> pkginfo
+        echo 'EMAIL="jon@opencsw.com"' >> pkginfo
         echo 'PSTAMP="Jon Green"'  >> pkginfo
         #echo 'BASEDIR="/"' >> pkginfo
         #
@@ -213,6 +222,7 @@ for FILE in ${SPELLFILESET} ; do
         rm -f ${CSWSPELLFILE}.pkg
         /usr/bin/pkgmk -d . -f ./prototype ${CSWNAME}${FILE}
         /usr/bin/pkgtrans -o -s . ${CSWSPELLFILE}.pkg ${CSWNAME}${FILE}
+        gzip -9 ${CSWSPELLFILE}.pkg
         rm -rf ./${CSWNAME}${FILE}
         rm -rf ${BASEDIR}/csw    
 fi        
