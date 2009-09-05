@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20090829.1753>
+# Last Modified: <20090905.1241>
 #
 ##############################################################################
 
@@ -61,6 +61,7 @@ MAKSRC	=	build.bat	\
 		openstep.mak	\
 		osf1.gmk	\
 		sunos5.gmk	sunos5.mak	\
+		suncsw.mak	suncsw86.mak	\
 		sunosx86.gmk	sunosx86.mak	\
 		win32b55.mak	win32bc.mak	\
 		win32sv2.mak	win32v2.mak	\
