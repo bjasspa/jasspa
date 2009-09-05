@@ -4,7 +4,7 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <090903.0007>
+>  Last Modified : <090905.1225>
 >
 
   User perspective summary of 10th Release changes 20090909
@@ -17,6 +17,10 @@
 
   * Lots of minor issues resolved and stability further improved.
 
+  [090905] Added a pause of 0.25 sec  before  exiting  when using -o option on
+           windows, if file is a temporary one the launching application could
+           have deleted the file before the me server loads it.
+  
   [090903] file-browser 3 improved on Microsoft Windows platforms to perform a
            case change i.e. "test.txt" to "Test.txt".
 
