@@ -46,6 +46,13 @@ fi
 if [ ! -f ${MEBIN} ] ; then
     # Build me
     gunzip -c ${MESRC} | tar xf -
+    # If this is 5.8 then use the CSW Xpm package
+    #    if [ ${OSVERSION} = "5.8" ] ; then
+    #        XPM_INCLUDE="/opt/csw/include"
+    #        XPM_LIBRARY="/opt/csw/lib"
+    #        export XPM_INCLUDE
+    #        export XPM_LIBRARY
+    #    fi
     if [ ${PROCESSOR} = sparc ] ; then
         (cd me${VER_YEAR}${VER_MONTH}${VER_DAY}/src; sh build -m suncsw.mak)
     else
@@ -107,11 +114,23 @@ if [ ! -f ${CSWFILE}.pkg.gz ] ; then
     rm -f depend
     echo "i pkginfo" > prototype
     echo "i depend"  >> prototype
-    pkgproto csw=/opt/csw | sed -e "s/jon users/root bin/g" >> prototype
+    pkgproto csw=/opt/csw | sed -e "s/jon users/root bin/g" | sed -e "s/jon csw/root bin/g" >> prototype
     # Dependancies
-    echo "P SUNWcslr" > depend
-    echo "P SUNWcsl"  >> depend
+    echo "P SUNWcsl"  > depend
     echo "P SUNWxwplt" >> depend
+    #    if [ ${OSVERSION} = "5.8" ] ; then
+    #        echo "P CSWxpm" >> depend
+    #        if [ ${PROCESSOR} = "sparc" ] ; then        
+    #            echo "P CSWggettextrt" >> depend
+    #        fi            
+    #    fi
+    #    if [ ${OSVERSION} = "5.9" ] ; then 
+    #        echo "P SUNWxwplx" >> depend
+    #        echo "P SUNWcslx" >> depend
+    #    fi        
+    #    if [ ${OSVERSION} = "5.10" ] ; then 
+    #        echo "P SUNWcslr" >> depend
+    #    fi        
     #
     # Build the package info file
     #
@@ -151,7 +170,7 @@ fi
 SPELLFILESET="dede enus engb eses fifi frfr itit plpl ptpt ruye ruyo"
 for FILE in ${SPELLFILESET} ; do
     # Name of the package
-    CSWSPELLFILE=${PKGNAME}${FILE}-${VERSTRING}-${OSNAME}${OSVERSION}-all-CSW
+    CSWSPELLFILE=${PKGNAME}${FILE}-${VERSTRING}-${OSNAME}5.8-all-CSW
     if [ ! -f ${CSWSPELLFILE}.pkg.gz  ] ; then 
         # Get the name of the file.
         SPELLFILE="ls_${FILE}.tar.gz"
@@ -198,7 +217,7 @@ for FILE in ${SPELLFILESET} ; do
         rm -f depend
         echo "i pkginfo" > prototype
         echo "i depend"  >> prototype
-        pkgproto csw=/opt/csw | sed -e "s/jon users/root bin/g" >> prototype
+        pkgproto csw=/opt/csw | sed -e "s/jon users/root bin/g" | sed -e "s/jon csw/root bin/g" >> prototype
         # Dependancies
         echo  "P CSWjasspame" > depend
         #
