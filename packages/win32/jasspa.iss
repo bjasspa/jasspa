@@ -10,7 +10,8 @@ DefaultGroupName=JASSPA MicroEmacs
 AppCopyright=Copyright © 1988-2009 JASSPA
 MinVersion=4,4
 Uninstallable=yes
-OutputDir=.\output
+OutputDir=.
+OutputBaseFilename=setup-jasspame-20090909
 ShowTasksTreeLines=yes
 SolidCompression=yes
 Compression=lzma/max
@@ -37,6 +38,7 @@ Name: "custom"; Description: "Select the additional componets required"; Flags: 
 Name: "base"; Description: "Base installation"; Types: typical full compact custom; Flags: fixed
 Name: "help"; Description: "Embedded help information (Strongly recommended)"; Types: typical full
 Name: "helpx"; Description: "Getting started guide and other help"; Types: typical full
+Name: "console"; Description: "Add the console only executable (mec32.exe)"; Types: typical full; Flags: dontinheritcheck
 Name: "enus"; Description: "American spelling dictionary"; Types: typical full
 Name: "engb"; Description: "British spelling dictionary"; Types: full
 Name: "fifi"; Description: "Finnish spelling dictionary"; Types: full
@@ -51,6 +53,7 @@ Name: "eses"; Description: "Spannish spelling dictionary"; Types: full
 Name: "pixel"; Description: "MicroEmacs pixel files"; Types: full
 Name: "contrib"; Description: "Useful contributed script files"; Types: full
 Name: "utils"; Description: "Executables for find, grep, fgrep, egrep and diff"; Types: full; Flags: dontinheritcheck
+Name: "conwin"; Description: "Add the window+console executable (mecw32.exe)"; Types: full; Flags: dontinheritcheck
 
 [Tasks]
 Name: "extmedit"; Description: "Add a MicroEmacs Edit option to right-mouse context menu (Recommended)"
@@ -101,6 +104,11 @@ Source: "JASSPA\MicroEmacs\patch.txt";  DestDir: "{app}"
 Source: "JASSPA\MicroEmacs\readme.txt";  DestDir: "{app}"; Flags: isreadme
 Source: "JASSPA\MicroEmacs\company\README.txt";  DestDir: "{app}\company\"
 ;
+; Console and Console+Win
+;
+Source: "JASSPA\MicroEmacs\mec32.exe";  DestDir: "{app}"; Components: console
+Source: "JASSPA\MicroEmacs\mecw32.exe";  DestDir: "{app}"; Components: conwin
+;
 ; Contributions
 ;
 Source: "JASSPA\MicroEmacs\contrib\ME_4_all.reg";  DestDir: "{app}\contrib\"; Components: contrib
@@ -133,6 +141,7 @@ Source: "JASSPA\MicroEmacs\grep.exe";  DestDir: "{app}"; Components: utils
 Source: "JASSPA\MicroEmacs\diff.exe";  DestDir: "{app}"; Components: utils
 Source: "JASSPA\MicroEmacs\fgrep.exe";  DestDir: "{app}"; Components: utils
 Source: "JASSPA\MicroEmacs\egrep.exe";  DestDir: "{app}"; Components: utils
+Source: "JASSPA\MicroEmacs\unixutil.txt";  DestDir: "{app}"; Components: utils
 ;
 ; Base macros
 ;
