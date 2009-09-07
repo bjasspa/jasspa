@@ -19,39 +19,58 @@ user.emf
     WINDOWS:    c:/Documents and Settings/<user name>/Application Data/jasspa/
                 <user.emf>
 
-password.emf
+bol_eol.emf
 
-    Utilities to handle passwords.
+    A pair of macros to modify  the  behaviour  of the  beginning-of-line  and
+    end-of-line  which  considers the first/last  non-white  characters of the
+    line and/or the actual line start/end. The macro functions may be added to
+    the <user.emf> and then bound to the appropriate key.
 
-    n insert-password
+    n smart-bol
 
-        Generates  a new  password  of 'n'  characters  in  length.  If 'n' is
-        omitted then a 8 character  password is generated. The minimum  length
-        of a password is 3. All generated  passwords are guaranteed to have at
-        least one each of lowercase,  uppercase  and numeric  characters.  The
-        random number generator is always seeded before use.
+        Handles the cursor at the  beginning  of the line, moves the cursor to
+        the first white space  character  of line. If the cursor is  currently
+        positioned  within the leading white space then the cursor is moved to
+        the beginning of the line i.e. column 0.
 
-        The generated password is inserted into the current buffer, the output
-        is as follows:-
+        If the argument is 0 then  smart-bol  moves  between  column 0 and the
+        first  non-white  space  character  at the  beginning of the line when
+        involved repetitively.
 
-        > M-x insert-password
-        > jvV37sJ9 (juliet - victor - VICTOR - Three - Seven - sierra - JULIET
-                    - Nine)
+    n smart-eol
 
-        > 4 M-x insert-password
-        > Lf6O (LIMA - foxtrot - Six - OSCAR)
+        Handles  the  cursor at the end of the line,  moves the  cursor to the
+        first white space  character  at the end of the line. If the cursor is
+        currently  positioned within the trailing white space of the line then
+        the cursor is moved to the actual end of the line.
 
-    password-to-phonic
+        If the  argument  is 0 then  smart-bol  moves  between the first white
+        space  character  at the end of the  line and the  actual  end of line
+        when invoked repetetively,
 
-        Converts a password string to a phonic alphabet string, typically used
-        to communicate a password to another user  unambiguously.  The user is
-        prompted  for the  string to  translate  and the  resultant  string is
-        inserted into the current buffer.
+    Notes:
+        smart-bol and smart-eol are typically  added to the <user>.emf and may
+        be bound as follows:
 
-        The alphabetic phonic conversion of
+        global-bind-key smart-bol "home"
+        global-bind-key smart-eol "end"
 
-            "1EhJ"
+        Optionally the control characters may be bound:
 
-        is
+        global-bind-key smart-bol "C-a"
+        global-bind-key smart-eol "C-e"
 
-            One - ECHO - hotel - JULIET
+        The macro is probably better bound with the 0 argument which moves the
+        cursor  between the actual line  start/end and character  start/end as
+        follows:
+
+        0 global-bind-key smart-bol "home"
+        0 global-bind-key smart-eol "end"
+        0 global-bind-key smart-bol "C-a"
+        0 global-bind-key smart-eol "C-e"
+
+mypipe.emf
+
+        An extension to the pipe  (compile,  grep and icommand)  functionality
+        which disables text wrapping in certain buffers. This ensures that the
+        line does not wrap and split.
