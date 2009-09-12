@@ -116,6 +116,9 @@ Source: "JASSPA\MicroEmacs\contrib\mesetup.reg";  DestDir: "{app}\contrib\"; Com
 Source: "JASSPA\MicroEmacs\contrib\myipipe.emf";  DestDir: "{app}\contrib\"; Components: contrib
 Source: "JASSPA\MicroEmacs\contrib\readme.txt";  DestDir: "{app}\contrib\"; Components: contrib
 Source: "JASSPA\MicroEmacs\contrib\user.emf";  DestDir: "{app}\contrib\"; Components: contrib
+Source: "JASSPA\MicroEmacs\contrib\bol_eol.emf";  DestDir: "{app}\contrib\"; Components: contrib
+Source: "JASSPA\MicroEmacs\contrib\hkgroovy.emf";  DestDir: "{app}\contrib\"; Components: contrib
+Source: "JASSPA\MicroEmacs\contrib\cygkeys.emf";  DestDir: "{app}\contrib\"; Components: contrib
 ;
 ; Pixel maps are extras
 ;
