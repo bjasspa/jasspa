@@ -74,3 +74,31 @@ mypipe.emf
         An extension to the pipe  (compile,  grep and icommand)  functionality
         which disables text wrapping in certain buffers. This ensures that the
         line does not wrap and split.
+
+sunkeys.emf
+
+        Sun Solaris key translations in Terminal Mode. 
+                
+        May be added to your  <user.emf> as follows where $TERM is the name of
+        the terminal.
+        
+        !if &and &band $system 0x001 &seq $TERM "dtterm"
+            translate-key ....
+            ...
+        !endif            
+
+cygkeys.emf
+
+        Keyboard translations for cygwinc. 
+        
+        May be added to your <user.emf> as follows:
+    
+        !if &and &band $system 0x001 &seq $platform "cygwin"
+            translate-key ....
+            ...
+        !endif            
+            
+hkgroovy.emf
+
+        Groovy Language Template
+        http://groovy.codehaus.org
