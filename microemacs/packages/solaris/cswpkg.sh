@@ -53,10 +53,12 @@ if [ ! -f ${MEBIN} ] ; then
     #        export XPM_INCLUDE
     #        export XPM_LIBRARY
     #    fi
+    cp suncsw.mak me${VER_YEAR}${VER_MONTH}${VER_DAY}/src
+    cp suncsw86.mak me${VER_YEAR}${VER_MONTH}${VER_DAY}/src
     if [ ${PROCESSOR} = sparc ] ; then
-        (cd me${VER_YEAR}${VER_MONTH}${VER_DAY}/src; sh build -m suncsw.mak)
+        (cd me${VER_YEAR}${VER_MONTH}${VER_DAY}/src; make -f suncsw.mak)
     else
-        (cd me${VER_YEAR}${VER_MONTH}${VER_DAY}/src; sh build -m suncsw86.mak)
+        (cd me${VER_YEAR}${VER_MONTH}${VER_DAY}/src; make -f suncsw86.mak)
     fi
     gzip -9 -c me${VER_YEAR}${VER_MONTH}${VER_DAY}/src/me > ${MEBIN}
     rm -rf me${VER_YEAR}${VER_MONTH}${VER_DAY}
@@ -116,21 +118,7 @@ if [ ! -f ${CSWFILE}.pkg.gz ] ; then
     echo "i depend"  >> prototype
     pkgproto csw=/opt/csw | sed -e "s/jon users/root bin/g" | sed -e "s/jon csw/root bin/g" >> prototype
     # Dependancies
-    echo "P SUNWcsl"  > depend
-    echo "P SUNWxwplt" >> depend
-    #    if [ ${OSVERSION} = "5.8" ] ; then
-    #        echo "P CSWxpm" >> depend
-    #        if [ ${PROCESSOR} = "sparc" ] ; then        
-    #            echo "P CSWggettextrt" >> depend
-    #        fi            
-    #    fi
-    #    if [ ${OSVERSION} = "5.9" ] ; then 
-    #        echo "P SUNWxwplx" >> depend
-    #        echo "P SUNWcslx" >> depend
-    #    fi        
-    #    if [ ${OSVERSION} = "5.10" ] ; then 
-    #        echo "P SUNWcslr" >> depend
-    #    fi        
+    echo "P CSWxpm"  > depend
     #
     # Build the package info file
     #
