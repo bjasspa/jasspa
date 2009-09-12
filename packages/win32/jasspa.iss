@@ -38,7 +38,9 @@ Name: "custom"; Description: "Select the additional componets required"; Flags: 
 Name: "base"; Description: "Base installation"; Types: typical full compact custom; Flags: fixed
 Name: "help"; Description: "Embedded help information (Strongly recommended)"; Types: typical full
 Name: "helpx"; Description: "Getting started guide and other help"; Types: typical full
-Name: "console"; Description: "Add the console only executable (mec32.exe)"; Types: typical full; Flags: dontinheritcheck
+Name: "conwin"; Description: "Add the window+console executable (mecw32.exe)"; Types: typical full; Flags: dontinheritcheck
+Name: "console"; Description: "Add the console only executable (mec32.exe)"; Types: full; Flags: dontinheritcheck
+Name: "contrib"; Description: "Useful contributed script files"; Types: full
 Name: "enus"; Description: "American spelling dictionary"; Types: typical full
 Name: "engb"; Description: "British spelling dictionary"; Types: full
 Name: "fifi"; Description: "Finnish spelling dictionary"; Types: full
@@ -51,9 +53,7 @@ Name: "ruye"; Description: "Russian YE spelling dictionary"; Types: full
 Name: "ruyo"; Description: "Russian YO spelling dictionary"; Types: full
 Name: "eses"; Description: "Spannish spelling dictionary"; Types: full
 Name: "pixel"; Description: "MicroEmacs pixel files"; Types: full
-Name: "contrib"; Description: "Useful contributed script files"; Types: full
 Name: "utils"; Description: "Executables for find, grep, fgrep, egrep and diff"; Types: full; Flags: dontinheritcheck
-Name: "conwin"; Description: "Add the window+console executable (mecw32.exe)"; Types: full; Flags: dontinheritcheck
 
 [Tasks]
 Name: "extmedit"; Description: "Add a MicroEmacs Edit option to right-mouse context menu (Recommended)"
