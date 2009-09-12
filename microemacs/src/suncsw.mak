@@ -1,7 +1,7 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# sunos5.mak - Make file for Sunos 5.8 ONLY
+# sunocsw.mak - Make file for Sunos 5.8 ONLY
 #
 # Copyright (C) 2001-2009 JASSPA (www.jasspa.com)
 #
