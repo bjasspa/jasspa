@@ -1,7 +1,7 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# sunos5.mak - Make file for Sunos 5
+# sunos5.mak - Make file for Sunos 5.8 ONLY
 #
 # Copyright (C) 2001-2009 JASSPA (www.jasspa.com)
 #
@@ -36,6 +36,10 @@
 INSTDIR	      = /usr/local/bin
 INSTPROGFLAGS = -s -o -u root -g root -m 0775 -n $(INSTDIR)
 #
+# Always use Xpm from CSW
+MAKEWINDEFS   = -I /opt/csw/include  -D_XPM
+MAKEWINLIBS   = -R /opt/csw/lib/ -L /opt/csw/lib/ -lXpm  
+#
 # Local Definitions
 CP            = cp
 MV            = mv
@@ -48,14 +52,15 @@ CDEBUG        =	-g
 COPTIMISE     =	-xO3 -DNDEBUG=1
 CDEFS         = -D_SUNOS5 -D_CSW -I. -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 
 CONSOLE_DEFS  = -D_ME_CONSOLE
-WINDOW_DEFS   = $(MAKEWINDEFS) -D_ME_WINDOW -I/usr/openwin/include
+WINDOW_DEFS   = -D_ME_WINDOW -I/usr/openwin/include $(MAKEWINDEFS) 
 NANOEMACS_DEFS= -D_NANOEMACS
 LDDEBUG       =
 LDOPTIMISE    =
 LDFLAGS       = $(getconf LFS64_LDFLAGS)
 LIBS          = -lnsl -lsocket -lintl $(getconf LFS64_LIBS)
 CONSOLE_LIBS  = -ltermcap
-WINDOW_LIBS   = $(MAKEWINLIBS) -L/usr/openwin/lib -lX11
+WINDOW_LIBS   = -L/usr/openwin/lib -lX11
+XPM_LIBS      = $(MAKEWINLIBS)
 #
 # Rules
 .SUFFIXES: .c .oc .ow .ob .on .ov .oe .odc .odw .odb .odn .odv .ode
@@ -164,12 +169,12 @@ mec:	$(OBJ_C)
 
 mew:	$(OBJ_W)
 	$(RM) $@
-	$(LD) $(LDFLAGS) $(LDOPTIMISE) -o $@ $(OBJ_W) $(WINDOW_LIBS) $(LIBS)
+	$(LD) $(LDFLAGS) $(LDOPTIMISE) -o $@ $(OBJ_W) $(WINDOW_LIBS) $(LIBS) $(XPM_LIBS)
 	$(STRIP) $@
 
 mecw:	$(OBJ_B)
 	$(RM) $@
-	$(LD) $(LDFLAGS) $(LDOPTIMISE) -o $@ $(OBJ_B) $(CONSOLE_LIBS) $(WINDOW_LIBS) $(LIBS)
+	$(LD) $(LDFLAGS) $(LDOPTIMISE) -o $@ $(OBJ_B) $(CONSOLE_LIBS) $(WINDOW_LIBS) $(LIBS) $(XPM_LIBS)
 	$(STRIP) $@
 
 me:	mecw
@@ -182,12 +187,12 @@ nec:	$(OBJ_N)
 
 new:	$(OBJ_V)
 	$(RM) $@
-	$(LD) $(LDFLAGS) $(LDOPTIMISE) -o $@ $(OBJ_V) $(WINDOW_LIBS) $(LIBS)
+	$(LD) $(LDFLAGS) $(LDOPTIMISE) -o $@ $(OBJ_V) $(WINDOW_LIBS) $(LIBS) $(XPM_LIBS)
 	$(STRIP) $@
 
 necw:	$(OBJ_E)
 	$(RM) $@
-	$(LD) $(LDFLAGS) $(LDOPTIMISE) -o $@ $(OBJ_E) $(CONSOLE_LIBS) $(WINDOW_LIBS) $(LIBS)
+	$(LD) $(LDFLAGS) $(LDOPTIMISE) -o $@ $(OBJ_E) $(CONSOLE_LIBS) $(WINDOW_LIBS) $(LIBS) $(XPM_LIBS)
 	$(STRIP) $@
 
 ne:	nec
@@ -200,11 +205,11 @@ medc:	$(OBJ_DC)
 
 medw:	$(OBJ_DW)
 	$(RM) $@
-	$(LD) $(LDFLAGS) $(LDDEBUG) -o $@ $(OBJ_DW) $(WINDOW_LIBS) $(LIBS)
+	$(LD) $(LDFLAGS) $(LDDEBUG) -o $@ $(OBJ_DW) $(WINDOW_LIBS) $(LIBS) $(XPM_LIBS)
 
 medcw:	$(OBJ_DB)
 	$(RM) $@
-	$(LD) $(LDFLAGS) $(LDDEBUG) -o $@ $(OBJ_DB) $(CONSOLE_LIBS) $(WINDOW_LIBS) $(LIBS)
+	$(LD) $(LDFLAGS) $(LDDEBUG) -o $@ $(OBJ_DB) $(CONSOLE_LIBS) $(WINDOW_LIBS) $(LIBS) $(XPM_LIBS)
 
 med:	medcw
 	$(CP) medcw $@
@@ -215,11 +220,11 @@ nedc:	$(OBJ_DN)
 
 nedw:	$(OBJ_DV)
 	$(RM) $@
-	$(LD) $(LDFLAGS) $(LDDEBUG) -o $@ $(OBJ_DV) $(WINDOW_LIBS) $(LIBS)
+	$(LD) $(LDFLAGS) $(LDDEBUG) -o $@ $(OBJ_DV) $(WINDOW_LIBS) $(LIBS) $(XPM_LIBS)
 
 nedcw:	$(OBJ_DE)
 	$(RM) $@
-	$(LD) $(LDFLAGS) $(LDDEBUG) -o $@ $(OBJ_DE) $(CONSOLE_LIBS) $(WINDOW_LIBS) $(LIBS)
+	$(LD) $(LDFLAGS) $(LDDEBUG) -o $@ $(OBJ_DE) $(CONSOLE_LIBS) $(WINDOW_LIBS) $(LIBS) $(XPM_LIBS)
 
 ned:	nedc
 	$(CP) nedc $@
