@@ -58,7 +58,7 @@ WINDOW_LIBS   = $(MAKEWINLIBS) -L/usr/X11R6/lib -lX11
 # figure out if termcap is avaiable or if ncurses should be tried
 # to accomplish this try to compile test.c and see if it can link
 # termcap
-test = $(shell echo "main() { printf(\"HW\n\"); }" > _t.c ; $(LD) $(LDFLAGS) -o /dev/null -ltermcap _t.c 2>&1 ; rm _t.c)
+test = $(shell echo "\#include <stdio.h>" > _t.c ; echo "main() { printf(\"HW\n\"); }" >> _t.c ; $(LD) $(LDFLAGS) -o /dev/null -lncurses _t.c 2>&1 ; rm -f _t.c)
 ifneq "$(strip $(test))" ""
 CONSOLE_LIBS  = -lncurses
 else
