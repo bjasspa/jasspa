@@ -4,10 +4,12 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <090905.1225>
+>  Last Modified : <090917.2038>
 >
 
   User perspective summary of 10th Release changes 20090909
+
+  [090917] Fixed Linux makefiles for GCC 4.3 for the detection of ncurses.
 
   * "find" and "grep" now use built-in  operations and do not require external
     executables (applicable to Windows systems).
