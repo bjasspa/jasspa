@@ -1425,6 +1425,7 @@ define-macro cc-diff
     0 cc-get-file-list 0 0
     !force 0 delete-buffer "*cc-diff-res*"
     find-buffer "*cc-cmdline*"
+    set-variable #l0 @wl
     set-variable #l8 1
     set-variable #l1 .cc-get-file-list.fcount
     !while &pdec #l1 1
