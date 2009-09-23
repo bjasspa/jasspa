@@ -3,7 +3,7 @@
 .\" Copyright (c) 1988-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd003.2,v 2.6 2009-08-29 17:13:08 jon Exp $
+.Id $Id: m2cmd003.2,v 2.7 2009-09-23 19:29:32 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH add-file-hook 2
@@ -111,18 +111,32 @@ Considering the  \fCfhook-XXX\fR  prefix, the initial '\fBf\fR' character must
 be present as this is changed to a \'\fBb\fR'  and an '\fBe\fR'  when  looking
 for the enter (begin)  buffer and exit buffer  hooks. These hooks are executed
 whenever the user swaps to or from a buffer (including creating and deleting).
-So for the given example, if the tab size of 8 is required in a document (but 4
-elsewhere)   then  this   operation   this  is   performed   by  defining  the
-\fCbhook-XXX\fR and \fCehook-XXX\fR macros, e.g.:-
+So for the given example, if the fill ignore characters are to be changed then
+this  operation  this  is  performed  by  defining  the   \fCbhook-XXX\fR  and
+\fCehook-XXX\fR macros, e.g.:-
 .Me $emf-scheme
 .CS
-define-macro bhook-doc
-    set-variable $tabsize 8
+; Begin hook - entering the buffer - save the current fill-ignore characters
+define-macro bhook-java
+    !if &exi .fhook-java.fill-ignore
+        set-variable .fhook-java.ofill-ignore $fill-ignore
+        set-variable $fill-ignore .fhook-java.fill-ignore
+    !endif
 !emacro
 
-define-macro ehook-doc
-    set-variable $tabsize 4
+; End hook - leaving the buffer - restore the fill-ignore characters
+define-macro ehook-java
+    !if &exi .fhook-java.fill-ignore
+        set-variable $fill-ignore .fhook-java.ofill-ignore
+    !endif
 !emacro
+
+; Fix up the $fill-mode so that we wrap java doc parameters. Do this by
+; removing the "@" from the $fill-ignore variable.
+!if &sin "@" $fill-ignore
+    set-variable .fhook-java.fill-ignore $fill-ignore
+    set-variable .fhook-java.fill-ignore &rep .fhook-java.fill-ignore "@" ""
+!endif
 .CE
 .Me $ehf-scheme
 File  hooks  are  often  used  to  setup  the  desired
