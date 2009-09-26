@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.53 2009-09-03 22:10:29 jon Exp $
+.Id $Id: me.nrs,v 2.54 2009-09-26 15:40:07 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -2055,6 +2055,17 @@ etc. are not as slick as they  could be,  certainly  under  Microsoft  Windows
 \*(mS  looks  positively  primitive!!  Regardless  of the  look, the goal of a
 common editor across all working platforms has been achieved!
 .SS "Development History"
+.\"
+.B "Patch Release - September 2009"
+.br
+Release date specified as 2009/09/26.
+.BS
+[090926] Fixed Linux X-Window size issue. 
+.BU
+[090923] Fixed bad characters in Clearcase output window 
+.BU
+[090917] Fixed Linux makefiles for GCC 4.3 for the detection of ncurses.
+.BE
 .\"
 .B "10th Release - September 2009"
 .br
