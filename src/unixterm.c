@@ -1357,6 +1357,21 @@ meXEventHandler(void)
             /* Get the width and heigth back and setup the frame->depthMax etc */
             int ww, hh, sizeSet ;
 
+            /* Make sure that there are no other pending ConfigureNotify
+             * events, if there are then find the last one */
+            {
+                XEvent nextEvent;
+                
+                while (XCheckTypedWindowEvent(mecm.xdisplay, 
+                                              meFrameGetXWindow(frame), 
+                                              ConfigureNotify,
+                                              &nextEvent) != 0)
+                {
+                    /* Overwrite the current envent with the new one. */
+                    memcpy (&event, &nextEvent, sizeof (XEvent));
+                }
+            }
+            
             sizeHints.x = event.xconfigure.x ;
             sizeHints.y = event.xconfigure.y ;
             sizeHints.height = event.xconfigure.height ;
@@ -3499,6 +3514,7 @@ meFrameRepositionWindow(meFrame *frame, int resize)
         int xx, yy, wbs, tbs ;
         unsigned int ww, hh ;
         XWindowAttributes xwa;
+        Status status;
         
         /* Getting the real window border and title-bar size is a little
          * tricky - guess for now. Also there is a little confusion and
@@ -3510,9 +3526,14 @@ meFrameRepositionWindow(meFrame *frame, int resize)
          * Use the XGetWindowAttributes to retrive the window offset position,
          * this gives us the information that we need for the z and y offset
          * relative to the parent.
+         * 
+         * Jon - 2009-09-26. This section of code used to break Linux because the 
+         * the sizes were being made up and the wxa attributes returned are 
+         * actually the inner window which meant that a spurious size is returned.
+         * We cannot find out the X-Window boarder and top bar so simply
+         * use the values that are supplied.
          */
-        /* int status = */
-              XGetWindowAttributes (mecm.xdisplay,
+        status = XGetWindowAttributes (mecm.xdisplay,
                                        meFrameGetXWindow(frame),
                                        &xwa);
         /* if (status == 0)*/
@@ -3527,8 +3548,18 @@ meFrameRepositionWindow(meFrame *frame, int resize)
         /* printf ("Sizehints width,height = %d,%d\n", sizeHints.width, sizeHints.height);*/
         
         /* Get the border information */
-        wbs = xwa.x;
-        tbs = xwa.y;
+        if (status == 0)
+        {
+            /* Assign the current border width. */
+            wbs = xwa.border_width; /* Border width */
+            tbs = xwa.border_width; /* Title bar - we don't know! */
+        }
+        else
+        {
+            /* Assume some sensible defaults in the absence of anything else */
+            wbs = 3;
+            tbs = 3;
+        }
         
         /* Get the size information */
         /* TODO: The sizeHints is horribly overloaded and needs to be moved into meFrame */
