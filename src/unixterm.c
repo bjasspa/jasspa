@@ -1359,6 +1359,8 @@ meXEventHandler(void)
 
             /* Make sure that there are no other pending ConfigureNotify
              * events, if there are then find the last one */
+#if 0
+            /* Although advised causes a pasued startup */
             {
                 XEvent nextEvent;
                 
@@ -1371,7 +1373,7 @@ meXEventHandler(void)
                     memcpy (&event, &nextEvent, sizeof (XEvent));
                 }
             }
-            
+#endif            
             sizeHints.x = event.xconfigure.x ;
             sizeHints.y = event.xconfigure.y ;
             sizeHints.height = event.xconfigure.height ;
