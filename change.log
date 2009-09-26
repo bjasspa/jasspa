@@ -4,12 +4,18 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <090917.2038>
+>  Last Modified : <090926.1620>
 >
 
-  User perspective summary of 10th Release changes 20090909
+  [090926] Patch release of fixes.
 
+  [090926] Fixed Linux X-Window size issue. 
+
+  [090923] Fixed bad characters in Clearcase output window 
+  
   [090917] Fixed Linux makefiles for GCC 4.3 for the detection of ncurses.
+
+  User perspective summary of 10th Release changes 20090909
 
   * "find" and "grep" now use built-in  operations and do not require external
     executables (applicable to Windows systems).
