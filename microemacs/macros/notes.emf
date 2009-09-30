@@ -828,6 +828,7 @@ define-macro note-setup
     buffer-bind-key notes-close "f10"
     buffer-bind-key notes-swap-window "tab"
     buffer-bind-key notes-swap-window "C-tab"
+    buffer-bind-key notes-swap-window "esc tab"
     buffer-bind-key notes-tree-set-cur "space"
     buffer-bind-key notes-tree-enter "return"
     buffer-bind-key notes-tree-insert "insert"
@@ -891,6 +892,7 @@ define-macro note-setup
     set-variable $buffer-ehook notes-ehook
     buffer-bind-key notes-close "f10"
     buffer-bind-key notes-swap-window "C-tab"
+    buffer-bind-key notes-swap-window "esc tab"
     buffer-bind-key notes-backward-note "C-page-up"
     buffer-bind-key notes-forward-note "C-page-down"
     previous-window
