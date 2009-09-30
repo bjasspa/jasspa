@@ -921,6 +921,7 @@ define-macro notes-file
             ml-write &spr "[Error: failed to load file \"%s\"]" #l1
             !abort
         !endif
+        !force narrow-buffer
         beginning-of-buffer
         !if &not &seq &lef @wl 7 "-!- enf"
             !if &bmod "edit"
