@@ -818,10 +818,12 @@ resetkey(meBuffer *bp) /* reset the encryption key if needed */
            (setBufferCryptKey(bp,NULL) <= 0))
             return meFALSE ;
 
-        /* and set up the key to be used! */
-        meCrypt(NULL, 0);
-        meCrypt(bp->cryptKey, meStrlen(bp->cryptKey));
-
+        /* check crypt is still enabled (user may have removed the key) and set up the key to be used! */
+        if(meModeTest(bp->mode,MDCRYPT))
+        {
+            meCrypt(NULL, 0);
+            meCrypt(bp->cryptKey, meStrlen(bp->cryptKey));
+        }
     }
     return meTRUE ;
 }
