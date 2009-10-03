@@ -1029,7 +1029,7 @@ define-macro notes-file
 -1 osd .osd.notes-tmn
 osd .osd.notes-tmn 0   b
 osd .osd.notes-tmn  40 ""  "Tidy Tree        \Ht"      f notes-tree-tidy
-osd .osd.notes-tmn  50 ""  "Rename Note      \He"      f notes-tree-rename
+osd .osd.notes-tmn  50 ""  "Rename Note      \Hr"      f notes-tree-rename
 osd .osd.notes-tmn  60 ""  "Delete Note      de\Hlete" f notes-tree-delete
 osd .osd.notes-tmn  70 ""  "Cut Note         \Hx"      f notes-tree-cut
 osd .osd.notes-tmn  80 ""  "Paste Note       \Hv"      f notes-tree-paste
@@ -1039,8 +1039,8 @@ osd .osd.notes-tmn 110 ""  "Insert New Note  \Hinsert" f notes-tree-insert
 osd .osd.notes-tmn 120 "-"
 osd .osd.notes-tmn 130 ""  "forward note     \Hn"      f notes-tree-forward-note
 osd .osd.notes-tmn 135 ""  "backward note    \Hp"      f notes-tree-backward-note
-osd .osd.notes-tmn 140 ""  "Search forward   \Hs"      f notes-tree-isearch-forward
-osd .osd.notes-tmn 145 ""  "Search backward  \Hr"      f notes-tree-isearch-backward
+osd .osd.notes-tmn 140 ""  "Search forward   esc \Hs"  f notes-tree-isearch-forward
+osd .osd.notes-tmn 145 ""  "Search \Hbackward  esc C-s" f notes-tree-isearch-backward
 osd .osd.notes-tmn 150 "-"
 osd .osd.notes-tmn 160 ""  "\HOpen Notes File"         f notes-file
 osd .osd.notes-tmn 170 ""  "S\Have Notes File"         f notes-tree-save
