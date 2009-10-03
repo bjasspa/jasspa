@@ -588,16 +588,25 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
 0 define-macro notes-tree-isearch
     set-variable #l0 @#
     set-variable #l8 $window-id
-    set-variable #l9 &sub $window-eline 1
-    next-window
-    !if &not &seq $buffer-bname .notes.current
-        ml-write "[Error: Window layout not correct]"
+    !if &seq $buffer-bname .notes.current
+        next-window
+        set-variable #l9 &sub $window-eline 1
+        next-window
+        !if &not &equ #l8 $window-id
+            ml-write "[Error: Window layout not correct]"
+        !endif
+    !else
+        set-variable #l9 &sub $window-eline 1
+        next-window
+        !if &not &seq $buffer-bname .notes.current
+            ml-write "[Error: Window layout not correct]"
+        !endif
+        next-window
+        !if &not &equ #l8 $window-id
+            ml-write "[Error: Window layout not correct]"
+        !endif
+        next-window
     !endif
-    next-window
-    !if &not &equ #l8 $window-id
-        ml-write "[Error: Window layout not correct]"
-    !endif
-    next-window
     !repeat
         !if &band #l0 2
             !if &band #l0 1
@@ -655,9 +664,25 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
 !emacs
 
 define-macro notes-tree-isearch-forward
+    !if &not &seq @cc "notes-tree-isearch-forward"
+    !elif &seq @cl "notes-tree-isearch-forward"
+        end-of-buffer
+        !return
+    !elif &seq @cl "notes-tree-isearch-backward"
+        beginning-of-buffer
+        !return
+    !endif
     0 notes-tree-isearch
 !emacro
 define-macro notes-tree-isearch-backward
+    !if &not &seq @cc "notes-tree-isearch-backward"
+    !elif &seq @cl "notes-tree-isearch-forward"
+        end-of-buffer
+        !return
+    !elif &seq @cl "notes-tree-isearch-backward"
+        beginning-of-buffer
+        !return
+    !endif
     1 notes-tree-isearch
 !emacro
 
@@ -826,20 +851,17 @@ define-macro note-setup
     set-variable :mouse-drop-3 notes-tree-context-menu
     set-variable $buffer-ehook notes-ehook
     buffer-bind-key notes-close "f10"
-    buffer-bind-key notes-swap-window "tab"
-    buffer-bind-key notes-swap-window "C-tab"
-    buffer-bind-key notes-swap-window "esc tab"
     buffer-bind-key notes-tree-set-cur "space"
     buffer-bind-key notes-tree-enter "return"
     buffer-bind-key notes-tree-insert "insert"
     buffer-bind-key notes-tree-delete "delete"
     buffer-bind-key notes-tree-save "C-x C-s"
-    buffer-bind-key notes-tree-isearch-forward "s"
-    buffer-bind-key notes-tree-isearch-backward "r"
+    buffer-bind-key notes-tree-isearch-forward "esc s"
+    buffer-bind-key notes-tree-isearch-backward "esc C-s"
     buffer-bind-key notes-tree-tidy "t"
     buffer-bind-key notes-tree-cut "x"
     buffer-bind-key notes-tree-paste "v"
-    buffer-bind-key notes-tree-rename "e"
+    buffer-bind-key notes-tree-rename "r"
     buffer-bind-key notes-tree-backward-note "p"
     buffer-bind-key notes-tree-forward-note "n"
     buffer-bind-key notes-tree-backward-note "C-page-up"
@@ -891,10 +913,10 @@ define-macro note-setup
     set-variable $buffer-mode-line &rep $mode-line "%b" &spr "*%s: %s*" #l1 &reg #l4 "" 
     set-variable $buffer-ehook notes-ehook
     buffer-bind-key notes-close "f10"
-    buffer-bind-key notes-swap-window "C-tab"
-    buffer-bind-key notes-swap-window "esc tab"
     buffer-bind-key notes-backward-note "C-page-up"
     buffer-bind-key notes-forward-note "C-page-down"
+    buffer-bind-key notes-tree-isearch-forward "esc s"
+    buffer-bind-key notes-tree-isearch-backward "esc C-s"
     previous-window
     set-variable .notes-close-test.ok 1
 !emacro
