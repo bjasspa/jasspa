@@ -3,29 +3,33 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2mod024.2,v 2.7 2009-08-29 17:13:40 jon Exp $
+.Id $Id: m2mod024.2,v 2.8 2009-10-03 16:35:40 jon Exp $
 .Im MicroEmacs modes
 .so me.tni
-.TH crlf 2m
-.XI crlf - "File's line feed style"
+.TH lf 2m
+.XI lf - "File's line feed style"
 .SH NAME
-crlf \- File's line feed style
+lf \- File's line feed style
 .SH SYNOPSIS
-.B "crlf Mode"
+.B "lf Mode"
 .sp
-\fBc\fR \- mode line letter.
+\fBl\fR \- mode line letter.
 .SH DESCRIPTION
-When enabled  \fBcrlf\fR  indicates  that a line feed should be written out in
-the \s-1MS-DOS\s0 style of '\fB\\r\\n\fR'. When clear then a \s-1UNIX\s0 style
-of  '\fB\\n\fR' should be used.
+When  enabled  \fBlf\fR  indicates  that a line  feed  should be  written  out
+including  the \fB\\n\fR  character.  When set then a \fB\\n\fR is included on
+each line  ending.  When  clear then  \fB\\n\fR  is not  included  in the line
+ending.
 .SH NOTES
 This mode only effects the style in which the buffer is written if
 .Ht auto 2m
-mode is enabled.
+mode is enabled.  \fBlf\fR mode is used in conjunction with 
+.Ht cr 2m 
+to control the carriage return.
 .SH "SEE ALSO"
 .na
 .Hl "Operating Modes" Modes - ,
 .Ht auto 2m ,
+.Ht cr 2m ,
 .Ht ctrlz 2m ,
 .Ht save-buffer 2 ,
 .Ht find-file 2 ,

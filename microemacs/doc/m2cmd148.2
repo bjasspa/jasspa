@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd148.2,v 2.7 2009-08-29 17:13:25 jon Exp $
+.Id $Id: m2cmd148.2,v 2.8 2009-10-03 16:35:40 jon Exp $
 .Im MicroEmacs command|help
 .so me.tni
 .TH about 2
@@ -30,28 +30,24 @@ Current buffer status information; buffer modes and buffer size information.
 .SH EXAMPLE
 The following is an example output from \fBabout\fR.
 .CS
-MicroEmacs 05 - Date 2005/01/01 - sunos
+MicroEmacs 09 - Date 2009/09/09 - sunos
 
 Global Status:
-  # buffers : 42
-  Modes on  : auto autosv backup exact magic quiet tab undo usr3
-  Modes off : binary crlf crypt ctrlz del dir edit fence hide
-              indent justify lock nact narrow over pipe rbin
-              save time usr1 usr2 usr4 usr5 usr6 usr7 usr8
-              view wrap
+  # buffers : 15
+  Modes on  : autosv backup cr magic tab undo
+  Modes off : binary crypt ctrlz edit exact fence hide indent justify lf lock
+              nact narrow over pipe rbin time view wrap
 
 Current Buffer Status:
-  Buffer    : todo.log
-  File name : /home/jon/merep/me/todo.log
-  Lines     : Total    685, Current    353
-  Characters: Total  23282, Current  12582
-  Modes on  : auto autosv backup exact indent justify magic
-              quiet tab time undo usr3 wrap
-  Modes off : binary crlf crypt ctrlz del dir edit fence hide
-              lock nact narrow over pipe rbin save usr1 usr2 usr4
-              usr5 usr6 usr7 usr8 view
+  Buffer    : *grep*
+  File name : /home/jon/merep/me/src/
+  Lines     : Total    100, Current     26
+  Characters: Total   7255, Current   1996
+  Modes on  : autosv backup cr edit magic tab undo
+  Modes off : binary crypt ctrlz exact fence hide indent justify lf lock nact
+              narrow over pipe rbin time view wrap
 
-Copyright (C) 1988-2005 JASSPA (www.jasspa.com)
+Copyright (C) 1988-2009 JASSPA (www.jasspa.com)
 .CE 0
 .SH "SEE ALSO"
 .na

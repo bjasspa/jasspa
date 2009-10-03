@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd113.2,v 2.7 2009-08-29 17:13:25 jon Exp $
+.Id $Id: m2cmd113.2,v 2.8 2009-10-03 16:35:40 jon Exp $
 .Im MicroEmacs command|file|essential
 .ds C0 "(\fB\*(cX\*cs\fR)\ \&
 .so me.tni
@@ -43,7 +43,8 @@ saved and restored when saving is complete
 If
 .Ht auto 2m
 mode is enabled the the file is written out in the style indicated by modes
-.Ht crlf 2m
+.Ht cr 2m ,
+.Ht lf 2m
 and
 .Ht ctrlz 2m .
 Otherwise the file is written out in the style on the current platform.
@@ -90,8 +91,9 @@ command.
 .Ht undo 2m ,
 .Ht narrow 2m ,
 .Ht auto 2m ,
-.Ht crlf 2m ,
+.Ht cr 2m ,
 .Ht ctrlz 2m ,
+.Ht lf 2m ,
 .Ht write-buffer 2 ,
 .Ht append-buffer 2 .
 .ad

@@ -1,0 +1,36 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 2004-2009 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m5var093.5,v 2.1 2009-10-03 16:35:40 jon Exp $
+.Im MicroEmacs variable
+.so me.tni
+.TH $quiet 5
+.XI $quiet - "Quiet mode control variable"
+.SH NAME
+.na
+$quiet \- Quiet mode control variable
+.ad
+.SH SYNOPSIS
+\fB$quiet\fR
+.SH DESCRIPTION
+.B $quiet
+is variable that controls the audible and visual  warnings.  When the variable
+is set to 0 then  quiet  mode is  disabled,  when set to 1 then  quiet mode is
+enabled.
+.PP
+When quiet mode is enabled,  visual  warnings are given instead of the default
+audible  warning. This mode can only be globally  changed, an error will occur
+if an attempt is made to change the mode for a buffer. 
+.PP
+The default state is on, so users of MicroEmacs can relax in the knowledge
+that they will not annoy other people when things go wrong. 
+.PP
+When  disabled  the system  bell is rung when  required,  otherwise  the usual
+visual warning is the "[BELL]" string, printed on the bottom right hand side. 
+.SH "SEE ALSO"
+.na
+.Ht !bell 4 .
+.ad
+.FH

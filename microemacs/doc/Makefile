@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20090903.2306>
+# Last Modified: <20091003.1731>
 #
 ##############################################################################
 
@@ -247,7 +247,8 @@ VAR5_080=	$(DOCDIR)m5var080.5 $(DOCDIR)m5var081.5 $(DOCDIR)m5var082.5\
 		$(DOCDIR)m5var083.5 $(DOCDIR)m5var084.5 $(DOCDIR)m5var085.5\
 		$(DOCDIR)m5var086.5 $(DOCDIR)m5var087.5 $(DOCDIR)m5var088.5\
 		$(DOCDIR)m5var089.5
-VAR5_090=	$(DOCDIR)m5var090.5 $(DOCDIR)m5var091.5 $(DOCDIR)m5var092.5
+VAR5_090=	$(DOCDIR)m5var090.5 $(DOCDIR)m5var091.5 $(DOCDIR)m5var092.5 \
+		$(DOCDIR)m5var093.5
 #
 FIL8_000=	$(DOCDIR)m8fil000.8 $(DOCDIR)m8fil001.8 $(DOCDIR)m8fil002.8\
 		$(DOCDIR)m8fil003.8 $(DOCDIR)m8fil004.8 $(DOCDIR)m8fil005.8\
@@ -517,7 +518,7 @@ me.hhp:	me.hts
 clean::
 	$(RMDIR) htm
 	$(RM) $(MEHTMZIP)
-	$(RM) me.hhp	
+	$(RM) me.hhp
 # Tar 8.4 HTML (.html) archive
 $(MEHTMLTGZ): me.hts
 	$(RMDIR) html

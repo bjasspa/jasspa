@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil013.4,v 2.10 2009-08-29 17:14:14 jon Exp $
+.Id $Id: m4fil013.4,v 2.11 2009-10-03 16:35:40 jon Exp $
 .Im MicroEmacs macro;directive|miscellaneousOperators
 .so me.tni
 .TH !bell 4
@@ -19,8 +19,8 @@
 .SH DESCRIPTION
 \fB!bell\fR  provides  a warning  (audible  or  visual) to alert the user of a
 problem. \fB!bell\fR honors the
-.Ht quiet 2m
-mode, as such if  \fBquiet\fR  mode is  disabled an audible  warning is given,
+.Ht quiet 5
+setting, as such if  \fBquiet\fR  mode is  disabled an audible  warning is given,
 otherwise  a  visual  warning  is  given  to the  user  (usually  the  message
 "\fI[BELL]\fR" in the bottom left hand corner of the message line).
 .PP
@@ -53,11 +53,9 @@ define-macro mail-check
         set-variable $mode-line &cat &cat &lef $mode-line 2 #l0 #l1
         screen-update
         !if &seq #l0 "M"
-            ; use no argument to the global-mode so it toggles it back to its original state
-            !bell
-            global-mode "quiet"
-            !bell
-            global-mode "quiet"
+            ; use an argument to !bell so it toggles it back to its original state
+            !bell 0
+            !bell 2
         !endif
     !endif
     0 ml-write
@@ -68,6 +66,6 @@ define-macro mail-check
 .na
 .Ht !abort 4 ,
 .Ht abort-command 2 ,
-.Ht quiet 2m .
+.Ht !bell 4 .
 .ad
 .FH
