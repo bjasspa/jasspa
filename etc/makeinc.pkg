@@ -3,8 +3,8 @@
 # MicroEmacs date
 #
 MEYY=09
-MEMM=09
-MEDD=26
+MEMM=10
+MEDD=03
 MEVERS=20$(MEYY)$(MEMM)$(MEDD)
 #
 # Documentation tools
