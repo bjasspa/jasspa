@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.54 2009-09-26 15:40:07 jon Exp $
+.Id $Id: me.nrs,v 2.55 2009-10-03 18:24:29 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -2055,6 +2055,28 @@ etc. are not as slick as they  could be,  certainly  under  Microsoft  Windows
 \*(mS  looks  positively  primitive!!  Regardless  of the  look, the goal of a
 common editor across all working platforms has been achieved!
 .SS "Development History"
+.\"
+.B "Patch Release - October 2009"
+.br
+Release date specified as 2009/10/03.
+.BS
+[091003]  Fixed  documentation  for  crlf(2m)  which is replaced by cr(2m) and
+lf(2m).
+.BU
+[091003] Fixed documentation for quiet(2m) which has been removed and replaced
+with quiet(5).
+.BU  
+[091003]  Bound cross note  searching  to 'esc s' and esc C-s' and removed the
+'s' & 'r' tree  buffer  binding.  Implemented  execution  of cross note search
+within cross note search to jump to the next note. Changed note rename binding
+to 'r'
+.BU
+[090930]  Fixed crash caused by encrypt key being set to '' (i.e. disabled) on
+a reload, resetkey did not check this so crashed trying to use NULL.
+.BU
+[090930]  notes; fixed prompt of encryption key when the notes file is already
+loaded.
+.BE
 .\"
 .B "Patch Release - September 2009"
 .br

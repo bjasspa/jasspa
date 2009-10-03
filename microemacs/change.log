@@ -4,8 +4,28 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <090926.1638>
+>  Last Modified : <091003.1747>
 >
+
+  [091003] Patch release of fixes; release date specified as 2009/10/03.
+
+  [091003] Fixed  documentation  for crlf(2m)  which is replaced by cr(2m) and
+           lf(2m).
+
+  [091003] Fixed  documentation  for  quiet(2m)  which  has been  removed  and
+           replaced with quiet(5).
+  
+  [091003] Bound cross note  searching to 'esc s' and esc C-s' and removed the
+           's' & 'r' tree buffer binding. Implemented  execution of cross note
+           search  within cross note search to jump to the next note.  Changed
+           note rename binding to 'r'
+
+  [090930] Fixed crash  caused by encrypt key being set to '' (i.e.  disabled)
+           on a reload,  resetkey did not check this so crashed  trying to use
+           NULL.
+
+  [090930] notes;  fixed  prompt  of  encryption  key when the  notes  file is
+           already loaded.
 
   [090926] Patch release of fixes; release date specified as 2009/09/26.
 
