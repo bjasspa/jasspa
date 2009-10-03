@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac078.3,v 2.6 2009-08-29 17:13:59 jon Exp $
+.Id $Id: m3mac078.3,v 2.7 2009-10-03 17:41:56 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH notes 3
@@ -80,7 +80,7 @@ presents a menu of options that operate on the current node as follows:-
 At the current node then close the note hierarchy. \fCt\fR will close the node
 a  \s-1RETURN\s0  at the node will open or close it,  depending on the current
 state.
-.IP "\fBRename Note\fR \- \fCe\fR"
+.IP "\fBRename Note\fR \- \fCr\fR"
 Edit the name of the note, a dialog is presented  and a free form label of the
 note may be edited.
 .IP "\fBDelete Note\fR \- \fCdelete\fR"
@@ -107,9 +107,9 @@ similarly advances to the next note.
 .IP "\fBBackward Note\fR - \fCp\fR" 
 Moves  to the  previous note.  Within  the  note  window  then  \fB\*cpage-up\fR
 similarly advances to the previous note.
-.IP "\fBSearch Forward\fR \- \fCs\fR"
+.IP "\fBSearch Forward\fR \- \fesc\ s\fR"
 Search in a forwards direction from the current note.
-.IP "\fBSearch Backward\fR \- \fCr\fR"
+.IP "\fBSearch Backward\fR \- \fCesc\ C-s\fR"
 Search in a backwards direction from the current note.
 .\"---------
 .IP "\fBOpen Notes File\fR"
