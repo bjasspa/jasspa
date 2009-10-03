@@ -3,29 +3,37 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2mod011.2,v 2.7 2009-08-29 17:13:40 jon Exp $
+.Id $Id: m2mod011.2,v 2.8 2009-10-03 16:35:40 jon Exp $
 .Im MicroEmacs modes
 .so me.tni
-.TH quiet 2m
-.XI quiet - "Quiet mode"
+.TH cr 2m
+.XI cr - "File's carriage return (CR) style"
 .SH NAME
-quiet \- Quiet mode
+cr \- File's carriage return (CR) style
 .SH SYNOPSIS
-.B "quiet Mode"
+.B "crlf Mode"
+.sp
+\fBc\fR \- mode line letter.
 .SH DESCRIPTION
-When  \fBquiet\fR  mode is enabled,  visual  warnings are given instead of the
-default audible warning. This mode can only be globally changed, an error will
-occur if an attempt is made to change the mode for a buffer.
-.PP
-The  default  state is on, so users of \*(mE can relax in the  knowledge  that
-they won't annoy other people when things go wrong.
-.PP
-When  disabled  the system  bell is rung when  required,  otherwise  the usual
-visual warning is the "\fI[BELL]\fR" string, printed on the bottom right hand
-side.
+When  enabled  \fBcr\fR  indicates  that a carriage  return  should be written
+out at the end of the line. Typically enabled independently for different line
+ending styles used in \s-1DOS\s0  and  \s-1UNIX\s0.  When 1 then  \fB\\r\fR is
+included in the line ending; when 0 then \fB\\r\fR is not included in the line
+ending.
+.SH NOTES
+This mode only effects the style in which the buffer is written if
+.Ht auto 2m
+mode is enabled. \fBcr\fR mode is used in conjunction with 
+.Ht lf 2m 
+to control the line feed.
 .SH "SEE ALSO"
 .na
 .Hl "Operating Modes" Modes - ,
-.Ht global-mode 2 .
+.Ht auto 2m ,
+.Ht lf 2m ,
+.Ht ctrlz 2m ,
+.Ht save-buffer 2 ,
+.Ht find-file 2 ,
+.Ht $buffer-fmod 5 .
 .ad
 .FH

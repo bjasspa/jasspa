@@ -6,7 +6,7 @@
 .\"  Created By    : Steven Phillips
 .\"  Created       : Sat Aug 22 09:00:06 1998
 .\"
-.Id $Id: m3osd000.3,v 2.22 2009-08-29 17:13:59 jon Exp $
+.Id $Id: m3osd000.3,v 2.23 2009-10-03 16:35:40 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH user-setup 3
@@ -166,10 +166,8 @@ notes and addresses are stored using
 the file "\fI<Organizer>\fR\fC.eof\fR" is used.
 .IP "\fCGlobal Modes\fR"
 Sets the initial state of the global
-.Ht quiet 2m
-mode. This indirectly executes
-.Ht global-mode 2
-to set the required modes.
+.Ht quiet 5
+global variable.
 .IP "\fCSearch Modes\fR"
 Sets the initial state of the global search modes
 .Ht exact 2m
@@ -232,7 +230,7 @@ changes  from  being a  simple  complete  list of  buffers  to being a list of
 \fBFile Types\fR (as defined by the \fBFile Types\fR section below). Selecting
 one of these file types opens a further  sub-menu  listing all buffers of this
 type; this  option is useful  when the  current  session  of \*(mS has a large
-number of buffers. 
+number of buffers.
 .IP "\fCAlt Action - Esc Prfx\fR"
 If enabled the Alt key acts as a
 .Hl "prefix 1" prefix 2

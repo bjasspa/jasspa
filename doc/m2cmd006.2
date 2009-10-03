@@ -3,7 +3,7 @@
 .\" Copyright (c) 1988-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd006.2,v 2.8 2009-08-29 17:13:08 jon Exp $
+.Id $Id: m2cmd006.2,v 2.9 2009-10-03 16:35:40 jon Exp $
 .Im MicroEmacs command|modes
 .ds C0 "(\fB\*(cXm\fR)\ \&
 .so me.tni
@@ -63,43 +63,31 @@ The argument \fIn\fR when given, has the following meaning:
 Delete    Add    toggle    Mode
 
   -1       1         0     Use "mode"
-  -2       2       130     auto
-  -3       3       131     autosv
-  -4       4       132     backup
-  -5       5       133     binary
-  -6       6       134     crlf
-  -7       7       135     crypt
-  -8       8       136     ctrlz
-  -9       9       137     del
-  -10      10      138     dir
-  -11      11      139     edit
-  -12      12      140     exact
-  -13      13      141     fence
-  -14      14      142     hide
-  -15      15      143     indent
-  -16      16      144     justify
-  -17      17      145     lock
-  -18      18      146     magic
-  -19      19      147     nact
-  -20      20      148     narrow
-  -21      21      149     over
-  -22      22      150     pipe
-  -23      23      151     quiet
-  -24      24      152     rbin
-  -25      25      153     save
-  -26      26      154     tab
-  -27      27      155     time
-  -28      28      156     undo
-  -29      29      157     usr1
-  -30      30      158     usr2
-  -31      31      159     usr3
-  -32      32      160     usr4
-  -33      33      161     usr5
-  -34      34      162     usr6
-  -35      35      163     usr7
-  -36      36      164     usr8
-  -37      37      165     view
-  -38      38      166     wrap
+  -2       2       130     autosv
+  -3       3       131     backup
+  -4       4       132     binary
+  -5       5       133     cr
+  -6       6       134     crypt
+  -7       7       135     ctrlz
+  -8       8       136     edit
+  -9       9       137     exact
+  -10      10      138     fence
+  -11      11      139     hide
+  -12      12      140     indent
+  -13      13      141     justify
+  -14      14      142     lf
+  -15      15      143     lock
+  -16      16      144     magic
+  -17      17      145     nact
+  -18      18      146     narrow
+  -19      19      147     over
+  -20      20      148     pipe
+  -21      21      149     rbin
+  -22      22      150     tab
+  -24      24      152     time
+  -25      25      153     undo
+  -26      26      154     view
+  -27      27      155     wrap
 .CE
 Note that when omitted the default  argument is 0, i.e. prompt for and toggle a
 mode.

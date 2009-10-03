@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2mod000.2,v 2.7 2009-08-29 17:13:26 jon Exp $
+.Id $Id: m2mod000.2,v 2.8 2009-10-03 16:35:40 jon Exp $
 .Im MicroEmacs modes
 .so me.tni
 .TH auto 2m
@@ -26,20 +26,23 @@ with  every  new  line and a  \fBctrl-Z\fR  as a file  terminator,  conversely
 without corrupting the line style of the native platform.
 .PP
 At load time, if \fBauto\fR detects CR/LF style line feeds then it enables the
-buffer mode
-.Ht crlf 2m ,
-and if a CTRL-Z is found at the end of the file then mode
+buffer modes
+.Ht cr 2m 
+and 
+.Ht lf 2m ;
+if a CTRL-Z is found at the end of the file then mode
 .Ht ctrlz 2m
 is enabled. Otherwise these modes are cleared.
 .PP
 At write time, if \fBauto\fR mode is enabled then the file is written out is a
-style determined by modes \fBcrlf\fR and \fBctrlz\fR. For example, if crlf was
-enabled and ctrlz  disabled  then the file would be written out with new lines
-as '\fB\\r\\n\fR' and with no ending ctrl-z.
+style determined by modes \fBcr\fR,  \fBlf\fR and \fBctrlz\fR. For example, if
+\fBcr\fR  and \fBlf\fR  were enabled and  \fBctrlz\fR  disabled  then the file
+would be  written  out with new  lines as  '\fB\\r\\n\fR'  and with no  ending
+ctrl-z. 
 .PP
 If auto is not  enabled  then  the  file is  written  out in the  style of the
-current  platform,  regardless of the current settings on modes \fBcrlf\fR and
-\fBctrlz\fR.
+current  platform,  regardless  of the  current  settings  on modes  \fBcr\fR,
+\fBlf\fR and \fBctrlz\fR.
 .SH SUMMARY
 The operation on the modes may be summarized as follows:-
 .SS "UNIX Systems"
@@ -75,7 +78,8 @@ trailing ctrl-z.
 .Hl "Operating Modes" Modes - ,
 .Ht global-mode 2 ,
 .Ht buffer-mode 2 ,
-.Ht crlf 2m ,
+.Ht cr 2m ,
+.Ht lf 2m ,
 .Ht ctrlz 2m ,
 .Ht $buffer-fmod 5 .
 .ad

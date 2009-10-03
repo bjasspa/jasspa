@@ -3,7 +3,7 @@
 .\" Copyright (c) 1988-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd005.2,v 2.6 2009-08-29 17:13:08 jon Exp $
+.Id $Id: m2cmd005.2,v 2.7 2009-10-03 16:35:40 jon Exp $
 .Im MicroEmacs command|modes
 .ds C0 "(\fB\*em\fR)\ \&
 .so me.tni
@@ -97,12 +97,14 @@ and
 .Ht backup 2m ,
 .Ht exact 2m ,
 .Ht magic 2m ,
-.Ht quiet 2m ,
+.Ht quiet 5 ,
 .Ht tab 2m
 and
 .Ht undo 2m
 modes are present on all platforms by default. On Windows and DOS platforms
-.Ht crlf 2m
+.Ht cr 2m
+and
+.Ht lf 2m
 is also present and on DOS
 .Ht ctrlz 2m
 is also present.

@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3osd008.3,v 2.6 2009-08-29 17:14:00 jon Exp $
+.Id $Id: m3osd008.3,v 2.7 2009-10-03 16:35:40 jon Exp $
 .Im MicroEmacs command|file
 .so me.tni
 .TH file-attrib 3
@@ -29,7 +29,8 @@ formats. UNIX has a single new line character  ('\fC\\n\fR')  where as Windows
 and Dos have a double  new line  character  ('\fC\\r\\n\fR').  Also a Dos text
 file is terminated  with a \fCC-z\fR (0x1A)  character  which the other two do
 not. These attribute are set in \*(mS by using buffer modes
-.Ht crlf 2m
+.Ht cr 2m ,
+.Ht lf 2m
 and
 .Ht ctrlz 2m .
 .PP
@@ -55,7 +56,8 @@ etc. Note that the directory attribute is displayed but cannot be altered.
 .na
 .Ht find-file 2 ,
 .Ht write-buffer 2 ,
-.Ht crlf 2m ,
+.Ht cr 2m ,
+.Ht lf 2m ,
 .Ht ctrlz 2m ,
 .Ht $buffer-fmod 5 .
 .ad
