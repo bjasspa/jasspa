@@ -1,0 +1,4 @@
+# -*- Makefile -*-
+# Make rules for SunOS(sparc)
+# 
+INSTALL=	ginstall
