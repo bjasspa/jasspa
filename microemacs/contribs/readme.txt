@@ -102,3 +102,10 @@ hkgroovy.emf
 
         Groovy Language Template
         http://groovy.codehaus.org
+
+jasspa-microemacs.desktop
+
+        Gnome Desktop entry. Copied to the  /usr/share/applications  directory
+        to appear in the Gnome desktop menu. If JASSPA MicroEmacs is installed
+        into a  different  location  then  this  file  should  be  edited with
+        the appropriate values for its new location.
