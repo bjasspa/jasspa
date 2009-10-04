@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20090912.1053>
+# Last Modified: <20091004.1052>
 #
 ##############################################################################
 
@@ -17,7 +17,8 @@ include $(TOPDIR)/etc/makeinc
 #
 EMFS=	user.emf myipipe.emf bol_eol.emf \
 	sunkeys.emf cygkeys.emf \
-	hkgroovy.emf
+	hkgroovy.emf \
+	jasspa-microemacs.desktop
 #
 # Windows registry files.
 #
