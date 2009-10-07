@@ -385,7 +385,7 @@ meUndoAddNarrow(meInt sln, meInt name,
        ((nn = (meUndoNarrow *) meUndoCreateNode(sizeof(meUndoNarrow)+ll)) != NULL))
     {
         nn->type |= meUNDO_SPECIAL|meUNDO_NARROW|meUNDO_NARROW_ADD ;
-        nn->dotp = sln ;
+        nn->udata.dotp = sln ;
         nn->count = 0 ;
         nn->name = name ;
         nn->markupCmd = markupCmd ;
@@ -405,7 +405,7 @@ meUndoAddUnnarrow(meInt sln, meInt eln, meInt name, meScheme scheme,
        ((nn = (meUndoNarrow*) meUndoCreateNode(sizeof(meUndoNarrow)+ll)) != NULL))
     {
         nn->type |= meUNDO_SPECIAL|meUNDO_NARROW ;
-        nn->dotp = sln ;
+        nn->udata.dotp = sln ;
         nn->count = eln ;
         nn->name = name ;
         nn->scheme = scheme ;
@@ -558,7 +558,7 @@ meUndo(int f, int n)
                     meUndoNarrow *nun = (meUndoNarrow *) cun ;
                     meInt name ;
                     name = nun->name ;
-                    windowGotoLine(meTRUE,nun->dotp+1) ;
+                    windowGotoLine(meTRUE,nun->udata.dotp+1) ;
                     if(nun->type & meUNDO_NARROW_ADD)
                     {
                         meNarrow *nrrw ;
@@ -577,7 +577,7 @@ meUndo(int f, int n)
                         slp = frameCur->windowCur->dotLine ;
                         windowGotoLine(meTRUE,ccount+1) ;
                         meBufferCreateNarrow(frameCur->bufferCur,slp,frameCur->windowCur->dotLine,
-                                             nun->dotp,ccount,name,nun->scheme,
+                                             nun->udata.dotp,ccount,name,nun->scheme,
                                              (nun->markupFlag) ? nun->str:NULL,nun->markupCmd,1) ;
                     }
                 }

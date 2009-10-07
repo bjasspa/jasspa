@@ -1202,7 +1202,10 @@ typedef struct meUndoNode {
  * main.c */
 typedef struct meUndoNarrow {
     struct meUndoNode *next ;
-    meInt              dotp ;
+    union {
+        meInt          dotp ;
+        void          *dummy ;          /* Maintain structure alignment with ptr union */
+    } udata ;
     meInt              count ;
     meScheme           scheme ;
     meUByte            type ;
