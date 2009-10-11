@@ -4,7 +4,7 @@
 #
 MEYY=09
 MEMM=10
-MEDD=03
+MEDD=10
 MEVERS=20$(MEYY)$(MEMM)$(MEDD)
 #
 # Documentation tools
