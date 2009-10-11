@@ -260,7 +260,7 @@ sortLines(int f, int n)
     {
         list[ii] = l ;
 #if MEOPT_UNDO
-        l->prev = (meLine *) ii ;
+        l->prev = (meLine *) mePtrFromInt(ii) ;
 #endif
     }
     meAssert(l == eL) ;
@@ -297,7 +297,7 @@ sortLines(int f, int n)
     {
 #if MEOPT_UNDO
         if(undoInfo != NULL)
-            *undoInfo++ = (meInt) list[ii]->prev ;
+            *undoInfo++ = (meInt)(list[ii]->prev) ;
 #endif
         l->next = list[ii] ;
         list[ii]->prev = l ;
