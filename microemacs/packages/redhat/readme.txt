@@ -4,7 +4,7 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 22:33:31 2004
->  Last Modified : <060924.1417>
+>  Last Modified : <091011.1641>
 >
 
 Building the RedHat RPM
@@ -48,6 +48,14 @@ Copy the information into the directory
     > jasspa.spec                   -> $(HOME)/rpmbuild/SPECS/
     > jasspa-mesrc-20060909.tar.gz  -> $(HOME)/rpmbuild/SOURCES
     > jasspa-metree-20060909.tar.gz -> $(HOME)/rpmbuild/SOURCES/
+
+List contents of RPM
+--------------------
+
+  To list the contents of a RPM.
+  
+   > rpm -qpl jasspa-me-20060909-1.i386.rpm
+
 
 Build the RPM
 -------------
