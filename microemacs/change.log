@@ -4,8 +4,15 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <091003.1747>
+>  Last Modified : <091011.1109>
 >
+
+  [091010] Patch release of fixes; release date specified as 2009/10/10.
+
+  [091010] Fix for &rep and &irep truncating the resultant string prematurely.
+
+  [091010] Fixes for 64-bit system  compilation.  Issues with spelling pointer
+           arithmetic and undo structure alignment.
 
   [091003] Patch release of fixes; release date specified as 2009/10/03.
 
@@ -14,7 +21,7 @@
 
   [091003] Fixed  documentation  for  quiet(2m)  which  has been  removed  and
            replaced with quiet(5).
-  
+
   [091003] Bound cross note  searching to 'esc s' and esc C-s' and removed the
            's' & 'r' tree buffer binding. Implemented  execution of cross note
            search  within cross note search to jump to the next note.  Changed
@@ -29,10 +36,10 @@
 
   [090926] Patch release of fixes; release date specified as 2009/09/26.
 
-  [090926] Fixed Linux X-Window size issue. 
+  [090926] Fixed Linux X-Window size issue.
 
-  [090923] Fixed bad characters in Clearcase output window 
-  
+  [090923] Fixed bad characters in Clearcase output window
+
   [090917] Fixed Linux makefiles for GCC 4.3 for the detection of ncurses.
 
   User perspective summary of 10th Release changes 20090909
@@ -48,7 +55,7 @@
   [090905] Added a pause of 0.25 sec  before  exiting  when using -o option on
            windows, if file is a temporary one the launching application could
            have deleted the file before the me server loads it.
-  
+
   [090903] file-browser 3 improved on Microsoft Windows platforms to perform a
            case change i.e. "test.txt" to "Test.txt".
 
