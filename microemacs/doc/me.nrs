@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.56 2009-10-11 10:10:21 jon Exp $
+.Id $Id: me.nrs,v 2.57 2009-10-11 10:15:05 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -2079,7 +2079,7 @@ lf(2m).
 with quiet(5).
 .BU
 [091003]  Bound cross note  searching  to 'esc s' and esc C-s' and removed the
-'s' & 'r' tree  buffer  binding.  Implemented  execution  of cross note search
+\&'s' & 'r' tree buffer  binding.  Implemented  execution of cross note search
 within cross note search to jump to the next note. Changed note rename binding
 to 'r'
 .BU
@@ -2144,7 +2144,7 @@ together are both  considered on the current line, i.e.  '</tr></table>'  is a
 double indent.
 .BU
 [090201] Fixed the 'No to all' 'o' option to fill paragraph  prompt, was still
-'v' for Never.
+\&'v' for Never.
 .BU
 [090201]  Avoided  crash  caused  by  moving  reg node to itself or one of its
 children.
