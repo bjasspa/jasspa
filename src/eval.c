@@ -2426,11 +2426,13 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             else
                 cmpIFunc = meStrnicmp ;
             
-            do
+            for(;;)
             {
                 ii = cmpIFunc(arg2,ss,mlen) ;
                 if(!ii)
                 {
+                    if((dlen+rlen) >= meBUF_SIZE_MAX)
+                        break ;
                     meStrcpy(evalResult+dlen,arg3) ;
                     dlen += rlen ;
                     ss += mlen ;
@@ -2439,6 +2441,8 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
                     break ;
                 if(ii || (mlen == 0))
                 {
+                    if(dlen >= meBUF_SIZE_MAX-2)
+                        break ;
                     ss++ ;
                     if(cc == meCHAR_LEADER)
                     {
@@ -2447,7 +2451,7 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
                     }
                     evalResult[dlen++] = cc ;
                 }
-            } while(dlen+rlen < meBUF_SIZE_MAX) ;
+            }
             evalResult[dlen] = '\0' ;
             return evalResult ;
         }
