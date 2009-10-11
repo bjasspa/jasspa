@@ -425,28 +425,30 @@ killRectangle(int f, int n)
             {
                 if(coff == eoff)
                     break ;
-                ll = off[jj] ;
-                cc = meLineGetChar(frameCur->windowCur->dotLine,jj) ;
-                if((coff+ll) > eoff)
+                if((ll = off[jj]) != 0)
                 {
-                    /* as we can convert tabs to spaces, delete and convert */
+                    cc = meLineGetChar(frameCur->windowCur->dotLine,jj) ;
+                    if((coff+ll) > eoff)
+                    {
+                        /* as we can convert tabs to spaces, delete and convert */
+                        if(cc == meCHAR_TAB)
+                        {
+                            lspc += coff + ll - eoff ;
+                            jj++ ;
+                        }
+                        break ;
+                    }
+                    coff += ll ;
                     if(cc == meCHAR_TAB)
                     {
-                        lspc += coff + ll - eoff ;
-                        jj++ ;
+                        /* convert tabs to spaces for better column support */
+                        do
+                            *kstr++ = ' ' ;
+                        while(--ll > 0) ;
                     }
-                    break ;
+                    else
+                        *kstr++ = cc ;
                 }
-                coff += ll ;
-                if(cc == meCHAR_TAB)
-                {
-                    /* convert tabs to spaces for better column support */
-                    do
-                        *kstr++ = ' ' ;
-                    while(--ll > 0) ;
-                }
-                else
-                    *kstr++ = cc ;
                 jj++ ;
             }
             if(coff < eoff)
