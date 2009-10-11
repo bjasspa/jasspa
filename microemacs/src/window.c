@@ -1977,7 +1977,7 @@ meFrameResizeWindowsCreateArea(meFrame *frame, meWindow *hwp, meWindow *twp, meF
     meFrameArea *area ;
     
     area = (*areaNext)++ ;
-/*    fprintf(tmpfp,"area %x - window %x -> %x\n",area,hwp,twp) ;*/
+/*    fprintf(tmpfp,"area %p - window %p -> %p\n",area,hwp,twp) ;*/
 /*    fflush(tmpfp) ;*/
     area->next = NULL ;
     area->childHead = NULL ;
@@ -2092,7 +2092,7 @@ meFrameResizeWindowsPrintArea(meFrameArea *area, int indent)
 {
     while(area != NULL)
     {
-        fprintf(tmpfp,"%*carea : 0x%02x %d %d %x\n",indent,' ',area->flags,area->width,area->depth,area->window) ;
+        fprintf(tmpfp,"%*carea : 0x%02x %d %d %p\n",indent,' ',area->flags,area->width,area->depth,area->window) ;
         fflush(tmpfp) ;
         if(area->childHead != NULL)
             meFrameResizeWindowsPrintArea(area->childHead,indent+4) ;
@@ -2145,7 +2145,7 @@ meFrameResizeWindowsSetArea(meFrame *frame, meFrameArea *area, int scol, int sro
 {
     if(area->window != NULL)
     {
-/*        fprintf(tmpfp,"area : 0x%02x %d %d %x\n",area->flags,width,depth,area->window) ;*/
+/*        fprintf(tmpfp,"area : 0x%02x %d %d %p\n",area->flags,width,depth,area->window) ;*/
 /*        fflush(tmpfp) ;*/
         if(flags & meFRAMERESIZEWIN_WIDTH)
         {
