@@ -104,6 +104,10 @@ typedef int (*meIFuncII)(int,int);
 typedef int (*meIFuncSS)(const meUByte *, const meUByte *);
 typedef int (*meIFuncSSI)(const meUByte *, const meUByte *, size_t);
 
+/* Handling of special pointer types */
+#define mePtrOffset(p,x)  ((meUByte *)(p) + x)
+#define mePtrFromInt(n)   ((meUByte *)(n))
+
 /* meStyle contains color and font information coded into an meInt the
  * following #defines and macros are used to manipulate them.
  */
