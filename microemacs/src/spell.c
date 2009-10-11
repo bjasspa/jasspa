@@ -97,7 +97,7 @@ typedef struct {
     meUByte data[meWORD_SIZE_MAX+meWORD_SIZE_MAX] ;
 } meDictAddWord ;
 
-#define meDICTWORD_SIZE  ((int)((meDictWord *)0)->data)
+#define meDICTWORD_SIZE  ((int)(&((meDictWord *)0)->data))
 
 typedef struct meDictionary {
     meUByte   flags ;
@@ -185,7 +185,7 @@ meDictionaryLookupWord(meDictionary *dict, meUByte *word, int len)
     
     while(off != 0)
     {
-        ent = (meDictWord *) (off + (meUInt) dict->table) ;
+        ent = (meDictWord *) mePtrOffset(dict->table,off) ;
         ll = meWordGetWordLen(ent) ;
         if(ll >= len)
         {
@@ -257,7 +257,7 @@ meDictionaryAddWord(meDictionary *dict, meDictWord *wrd)
         if((dict->table = (meDictAddr *) meRealloc(dict->table,dict->dSize)) == NULL)
             return meFALSE ;
     }
-    nent = (meDictWord *) (dict->dUsed + (meUInt) dict->table) ;
+    nent = (meDictWord *) mePtrOffset(dict->table,dict->dUsed) ;
     nent->wordLen = wrd->wordLen ;
     nent->flagLen = wrd->flagLen ;
     meWordSetFlagLen(nent,flen) ;
@@ -269,7 +269,7 @@ meDictionaryAddWord(meDictionary *dict, meDictWord *wrd)
     off  = meEntryGetAddr(dict->table[n]) ;
     while(off != 0)
     {
-        ent = (meDictWord *) (off + (meUInt) dict->table) ;
+        ent = (meDictWord *) mePtrOffset(dict->table,off) ;
         if(meWordGetWordLen(ent) >= wlen)
         {
             if((meWordGetWordLen(ent) > wlen) ||
@@ -322,7 +322,7 @@ meDictionaryRehash(meDictionary *dict)
         off = meEntryGetAddr(tbl[ii]) ;
         while(off != 0)
         {
-            ent = (meDictWord *) (off + (meUInt) tbl) ;
+            ent = (meDictWord *) mePtrOffset(tbl,off) ;
             /* Check this word has not been erased, if not then add */
             if(meWordGetWord(ent)[0] != '\0')
                 meDictionaryAddWord(dict,ent) ;
@@ -543,7 +543,7 @@ dictionaryAdd(int f, int n)
                 meDictWord    *ent ;
                 meUByte  buff[meBUF_SIZE_MAX] ;
                 
-                ent = (meDictWord *) (off + (meUInt) tbl) ;
+                ent = (meDictWord *) mePtrOffset(tbl,off) ;
                 off = meWordGetAddr(ent) ;
                 if(meWordGetWord(ent)[0] != '\0')
                 {
@@ -1666,7 +1666,7 @@ wordGuessGetList(meUByte *word, int olen, meWORDBUF *words)
             off = meEntryGetAddr(dict->table[ii]) ;
             while(off != 0)
             {
-                ent = (meDictWord *) (off + (meUInt) dict->table) ;
+                ent = (meDictWord *) mePtrOffset(dict->table,off) ;
                 /* Check this word has not been erased or is an error word,
                  * if not then do guess */
                 if(!meWordGetErrorFlag(ent) && ((ww=meWordGetWord(ent))[0] != '\0'))
@@ -2200,7 +2200,7 @@ findWordsNext(void)
             off = meEntryGetAddr(sfwCurDict->table[sfwCurIndx]) ;
             while(off != 0)
             {
-                sfwCurWord = (meDictWord *) (off + (meUInt) sfwCurDict->table) ;
+                sfwCurWord = (meDictWord *) mePtrOffset(sfwCurDict->table,off) ;
                 if(!meWordGetErrorFlag(sfwCurWord) && 
                    ((ww=meWordGetWord(sfwCurWord))[0] != '\0'))
                 {
