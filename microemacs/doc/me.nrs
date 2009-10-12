@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.57 2009-10-11 10:15:05 jon Exp $
+.Id $Id: me.nrs,v 2.58 2009-10-12 07:43:54 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -2056,11 +2056,17 @@ etc. are not as slick as they  could be,  certainly  under  Microsoft  Windows
 common editor across all working platforms has been achieved!
 .SS "Development History"
 .\"
-.B "Patch Release - 10th October 2009"
+.B "Patch Release - 11th October 2009"
 .br
-Release date specified as 2009/10/10.
+Release date specified as 2009/10/11.
 .BS
-[091010] Patch release of fixes; release date specified as 2009/10/10.
+[091011] Patch release of fixes; release date specified as 2009/10/11.
+.BU
+[091011] Fixed  kill-rectangle  scribble  caused by hilight hidden  characters
+overrunning the kill buffer.
+.BU
+[091011] Fixed debug build error caused by narrow udata change.  Changed debug
+fprintf of pointers to use %p to support 64-bit version.
 .BU
 [091010] Fix for &rep and &irep truncating the resultant string prematurely.
 .BU
