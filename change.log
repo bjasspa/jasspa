@@ -4,10 +4,16 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <091011.1109>
+>  Last Modified : <091012.0844>
 >
 
-  [091010] Patch release of fixes; release date specified as 2009/10/10.
+  [091011] Patch release of fixes; release date specified as 2009/10/11.
+
+  [091011] Fixed  debug build error  caused by narrow  udata  change.  Changed
+           debug fprintf of pointers to use %p to support 64-bit version.
+
+  [091011] Fixed  kill-rectangle  scribble caused by hilight hidden characters
+           overrunning the kill buffer.
 
   [091010] Fix for &rep and &irep truncating the resultant string prematurely.
 
