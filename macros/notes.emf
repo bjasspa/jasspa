@@ -853,6 +853,7 @@ define-macro note-setup
     buffer-bind-key notes-close "f10"
     buffer-bind-key notes-tree-set-cur "space"
     buffer-bind-key notes-tree-enter "return"
+    buffer-bind-key notes-tree-insert "i"
     buffer-bind-key notes-tree-insert "insert"
     buffer-bind-key notes-tree-delete "delete"
     buffer-bind-key notes-tree-save "C-x C-s"
@@ -1035,7 +1036,7 @@ osd .osd.notes-tmn  70 ""  "Cut Note         \Hx"      f notes-tree-cut
 osd .osd.notes-tmn  80 ""  "Paste Note       \Hv"      f notes-tree-paste
 osd .osd.notes-tmn  90 ""  "Move Note Up     \Hu"     -1 notes-tree-move
 osd .osd.notes-tmn 100 ""  "Move Note Down   \Hd"      1 notes-tree-move
-osd .osd.notes-tmn 110 ""  "Insert New Note  \Hinsert" f notes-tree-insert
+osd .osd.notes-tmn 110 ""  "Insert New Note  \Hi"      f notes-tree-insert
 osd .osd.notes-tmn 120 "-"
 osd .osd.notes-tmn 130 ""  "forward note     \Hn"      f notes-tree-forward-note
 osd .osd.notes-tmn 135 ""  "backward note    \Hp"      f notes-tree-backward-note
