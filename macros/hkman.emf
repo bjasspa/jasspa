@@ -91,6 +91,10 @@ set-variable .fhook-man.item-list-r1 "Sec \\1"
     hilight .hilight.man 64 "_\CH\xe2\x80\x94" "-"            .scheme.italic
     hilight .hilight.man 64 "\xe2\x80\x94\CH\xe2\x80\x94" "-" .scheme.bold
     hilight .hilight.man 64 "\xe2\x80\x94" "-"                $global-scheme
+    ; Hypen / line continuation
+    hilight .hilight.man 64 "_\CH\xe2\x80\x90" "-"            .scheme.italic
+    hilight .hilight.man 64 "\xe2\x80\x90\CH\xe2\x80\x90" "-" .scheme.bold
+    hilight .hilight.man 64 "\xe2\x80\x90" "-"                $global-scheme
     ; Vertical bar or pipe
     hilight .hilight.man 64 "_\CH\xe2\x94\x82" "|"            .scheme.italic
     hilight .hilight.man 64 "\xe2\x94\x82\CH\xe2\x94\x82" "|" .scheme.bold
