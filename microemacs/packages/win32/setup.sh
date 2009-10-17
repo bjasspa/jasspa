@@ -5,18 +5,23 @@ VER_MONTH="09"
 VER_DAY="09"
 VERSION="20${VER_YEAR}${VER_MONTH}${VER_DAY}"
 #
+LVER_YEAR="09"
+LVER_MONTH="10"
+LVER_DAY="11"
+LATEST="20${LVER_YEAR}${LVER_MONTH}${LVER_DAY}"
+#
 DOCFILESET="COPYING build.txt change.log patch.txt cygwin.txt faq.txt license.txt readme.txt infolist.txt"
-EXEFILESET="jasspa-me-ms-win32-20090909.zip jasspa-mec-ms-win32-20090909.zip jasspa-mecw-ms-win32-20090909.zip jasspa-meicons-ms-win32-20090909.zip"
-CHMFILESET="jasspa-mehlp-ms-win32-20090909.zip jasspa-mechm-ms-win32-20090909.zip"
+EXEFILESET="jasspa-me-ms-win32-${LATEST}.zip jasspa-mec-ms-win32-${LATEST}.zip jasspa-mecw-ms-win32-${LATEST}.zip jasspa-meicons-ms-win32-${VERSION}.zip"
+CHMFILESET="jasspa-mehlp-ms-win32-${LATEST}.zip jasspa-mechm-ms-win32-${LATEST}.zip"
 #
 JASSPACOM="www.jasspa.com"
 #
 # Get the HTML files
 # 
-if [ ! -f jasspa-mehtm-${VERSION}.zip ] ; then
-    wget www.jasspa.com/release_${VERSION}/jasspa-mehtm-${VERSION}.zip
+if [ ! -f jasspa-mehtm-${LATEST}.zip ] ; then
+    wget www.jasspa.com/release_${VERSION}/jasspa-mehtm-${LATEST}.zip
     # Unpackage
-    unzip -o jasspa-mehtm-${VERSION}.zip
+    unzip -o jasspa-mehtm-${LATEST}.zip
 fi    
 echo "Run me on me/amicr035.htm"
 echo "Within me then execute *me-help-generate-index*"
@@ -24,8 +29,8 @@ echo "Save the dile as me.hhk"
 # 
 # Get the tree file
 # 
-if [ ! -f jasspa-metree-${VERSION}.zip ] ; then
-    wget www.jasspa.com/release_${VERSION}/jasspa-metree-${VERSION}.zip
+if [ ! -f jasspa-metree-${LATEST}.zip ] ; then
+    wget www.jasspa.com/release_${VERSION}/jasspa-metree-${LATEST}.zip
 fi    
 # Unpack
 rm -rf ./jasspa
@@ -34,7 +39,7 @@ rm -rf ./JASSPA
 # Create the new directories
 # 
 mkdir -p JASSPA
-(cd JASSPA; unzip -o ../jasspa-metree-${VERSION}.zip)
+(cd JASSPA; unzip -o ../jasspa-metree-${LATEST}.zip)
 mv JASSPA/jasspa JASSPA/MicroEmacs
 #
 # Get the document files
@@ -72,10 +77,10 @@ done
 #
 # Extra executables
 #
-if [ ! -f jasspa-meunixutils-ms-win32-20090909.zip ] ; then
-    wget ${JASSPACOM}/release_${VERSION}/jasspa-meunixutils-ms-win32-20090909.zip
+if [ ! -f jasspa-meunixutils-ms-win32-${VERSION}.zip ] ; then
+    wget ${JASSPACOM}/release_${VERSION}/jasspa-meunixutils-ms-win32-${VERSION}.zip
 fi        
-(cd JASSPA/MicroEmacs; unzip -o ../../jasspa-meunixutils-ms-win32-20090909.zip)
+(cd JASSPA/MicroEmacs; unzip -o ../../jasspa-meunixutils-ms-win32-${VERSION}.zip)
 #
 # Get the spelling dictionaries.
 # 
