@@ -3,7 +3,7 @@
 [Setup]
 AppName=JASSPA MicroEmacs
 AppVerName=JASSPA MicroEmacs 2009
-AppVersion=2009.09.09
+AppVersion=2009.10.11
 ;
 DefaultDirName={pf}\JASSPA\MicroEmacs
 DefaultGroupName=JASSPA MicroEmacs
@@ -11,7 +11,7 @@ AppCopyright=Copyright © 1988-2009 JASSPA
 MinVersion=4,4
 Uninstallable=yes
 OutputDir=.
-OutputBaseFilename=setup-jasspame-20090909
+OutputBaseFilename=setup-jasspame-20091011
 ShowTasksTreeLines=yes
 SolidCompression=yes
 Compression=lzma/max

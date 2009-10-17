@@ -2364,7 +2364,7 @@
 			<param name="Local" value="me/m2mod018.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="crlf(2m)">
+			<param name="Name" value="cr(2m)">
 			<param name="Local" value="me/m2mod024.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
@@ -2408,6 +2408,10 @@
 			<param name="Local" value="me/m2mod006.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="lf(2m)">
+			<param name="Local" value="me/m2mod011.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="lock(2m)">
 			<param name="Local" value="me/m2mod021.htm">
 			</OBJECT>
@@ -2430,10 +2434,6 @@
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="pipe(2m)">
 			<param name="Local" value="me/m2mod020.htm">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="quiet(2m)">
-			<param name="Local" value="me/m2mod011.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="rbin(2m)">
@@ -7704,6 +7704,10 @@
 			<param name="Local" value="me/m5var035.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="$quiet(5)">
+			<param name="Local" value="me/m5var093.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="$rcs-ci-com(5)">
 			<param name="Local" value="me/m5var036.htm">
 			</OBJECT>
@@ -8894,6 +8898,10 @@
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="$progname(5)">
 			<param name="Local" value="me/m5var066.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="$quiet(5)">
+			<param name="Local" value="me/m5var093.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="$random(5)">
@@ -10112,16 +10120,16 @@
 			<param name="Local" value="me/m9typ000.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="cr(2m)">
+			<param name="Local" value="me/m2mod024.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="create-callback(2)">
 			<param name="Local" value="me/m2cmd024.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="create-frame(2)">
 			<param name="Local" value="me/m2cmd161.htm">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="crlf(2m)">
-			<param name="Local" value="me/m2mod024.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="crypt(2m)">
@@ -10952,6 +10960,10 @@
 			<param name="Local" value="me/m9typ004.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="lf(2m)">
+			<param name="Local" value="me/m2mod024.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="line-scheme(3)">
 			<param name="Local" value="me/m3osd013.htm">
 			</OBJECT>
@@ -11446,10 +11458,6 @@
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="quick-exit(2)">
 			<param name="Local" value="me/m2cmd103.htm">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="quiet(2m)">
-			<param name="Local" value="me/m2mod011.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="quote-char(2)">
