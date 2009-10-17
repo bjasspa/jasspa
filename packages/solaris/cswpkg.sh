@@ -8,10 +8,49 @@ DIRECTORIES="company doc icons macros spelling src bin"
 SEARCH_PATH="/opt/csw/share/jasspa/company:/opt/csw/share/jasspa/macros:/opt/csw/share/jasspa/spelling"
 BASEDIR=.
 TOPDIR=../..
-VER_YEAR="09"
-VER_MONTH="09"
-VER_DAY="09"
-VERSION="20${VER_YEAR}${VER_MONTH}${VER_DAY}"
+#
+# Base version
+#
+BVER_YEAR="09"
+BVER_MONTH="09"
+BVER_DAY="09"
+BVERSION="20${BVER_YEAR}${BVER_MONTH}${BVER_DAY}"
+#
+# Macro version
+#
+MVER_YEAR="09"
+MVER_MONTH="10"
+MVER_DAY="17"
+MVERSION="20${MVER_YEAR}${MVER_MONTH}${MVER_DAY}"
+#
+# Source version
+# 
+SVER_YEAR="09"
+SVER_MONTH="10"
+SVER_DAY="11"
+SVERSION="20${SVER_YEAR}${SVER_MONTH}${SVER_DAY}"
+#
+# Compute the final version
+# 
+if [ ${MVERSION} -gt  ${BVERSION} ] ; then 
+    if [ ${SVERSION} -gt  ${MVERSION} ] ; then     
+        VERSION=${SVERSION}
+        VER_YEAR=${SVER_YEAR}
+        VER_MONTH=${SVER_MONTH}
+        VER_DAY=${SVER_DAY}
+    else
+        VERSION=${MVERSION}                            
+        VER_YEAR=${MVER_YEAR}
+        VER_MONTH=${MVER_MONTH}
+        VER_DAY=${MVER_DAY}
+    fi        
+else
+    VERSION=${BVERSION}
+    VER_YEAR=${BVER_YEAR}
+    VER_MONTH=${BVER_MONTH}
+    VER_DAY=${BVER_DAY}
+fi            
+#
 # Processor type
 PROCESSOR=`uname -p`
 OSVERSION=`uname -r`
@@ -22,65 +61,55 @@ PKGNAME=jasspame
 CSWNAME=CSW${PKGNAME}
 CSWFILE="${PKGNAME}-${VERSTRING}-${OSNAME}${OSVERSION}-${PROCESSOR}-CSW"
 #
-MESRC=jasspa-mesrc-${VERSION}.tar.gz
-METREE=jasspa-metree-${VERSION}.tar.gz
-MEBIN=jasspa-me-sun-${PROCESSOR}-${OSVERSION}-${VERSION}.gz
-NEBIN=jasspa-ne-sun-${PROCESSOR}-${OSVERSION}-${VERSION}.gz
-BASEFILESET="${METREE} ${MEBIN} me.1"
+MESRC=jasspa-mesrc-${SVERSION}.tar.gz
+METREE=jasspa-metree-${MVERSION}.tar.gz
+MEBIN=jasspa-me-sun-${PROCESSOR}-${OSVERSION}-${SVERSION}.gz
+NEBIN=jasspa-ne-sun-${PROCESSOR}-${OSVERSION}-${SVERSION}.gz
+BASEFILESET="${METREE} ${MESRC} me.1 jasspa-microemacs.desktop"
 DOCFILESET="COPYING change.log faq.txt license.txt readme.txt jasspame.pdf"
 #
 JASSPACOM="www.jasspa.com"
 #
 # Pull the files over from the release and source areas.
 #
-if [ ! -f ${METREE} ] ; then
-     wget ${JASSPACOM}/release_${VERSION}/${METREE}
-fi
-if [ ! -f ${MESRC} ] ; then
-     wget ${JASSPACOM}/release_${VERSION}/${MESRC}
-fi
-if [ ! -f me.1 ] ; then
-     wget ${JASSPACOM}/release_${VERSION}/me.1
-fi
-#
-if [ ! -f ${MEBIN} ] ; then
-    # Build me
-    gunzip -c ${MESRC} | tar xf -
-    # If this is 5.8 then use the CSW Xpm package
-    #    if [ ${OSVERSION} = "5.8" ] ; then
-    #        XPM_INCLUDE="/opt/csw/include"
-    #        XPM_LIBRARY="/opt/csw/lib"
-    #        export XPM_INCLUDE
-    #        export XPM_LIBRARY
-    #    fi
-    cp suncsw.mak me${VER_YEAR}${VER_MONTH}${VER_DAY}/src
-    cp suncsw86.mak me${VER_YEAR}${VER_MONTH}${VER_DAY}/src
-    if [ ${PROCESSOR} = sparc ] ; then
-        (cd me${VER_YEAR}${VER_MONTH}${VER_DAY}/src; make -f suncsw.mak)
-    else
-        (cd me${VER_YEAR}${VER_MONTH}${VER_DAY}/src; make -f suncsw86.mak)
+for FILE in ${BASEFILESET} ; do 
+    if [ ! -f ${FILE} ] ; then
+         wget ${JASSPACOM}/release_${BVERSION}/${FILE}
     fi
-    gzip -9 -c me${VER_YEAR}${VER_MONTH}${VER_DAY}/src/me > ${MEBIN}
-    rm -rf me${VER_YEAR}${VER_MONTH}${VER_DAY}
-fi
+    if [ ! -f ${FILE} ] ; then
+         wget ${JASSPACOM}/development/${FILE}
+    fi
+    if [ ! -f ${FILE} ] ; then
+        echo "Cannot find file ${FILE}"
+        exit 1
+    fi
+done    
 #
 # Get the document files
 #
 for FILE in ${DOCFILESET} ; do
     if [ ! -f ${FILE} ] ; then
-        wget ${JASSPACOM}/release_${VERSION}/${FILE}
+        wget ${JASSPACOM}/release_${BVERSION}/${FILE}
     fi
-done
-#
-# Test for the starting files.
-#
-for FILE in ${BASEFILESET} ${DOCFILESET} ; do
-    echo checking for ${FILE}
     if [ ! -f ${FILE} ] ; then
         echo "Cannot find file ${FILE}"
         exit 1
     fi
 done
+#
+if [ ! -f ${MEBIN} ] ; then
+    # Build me
+    gunzip -c ${MESRC} | tar xf -
+    cp suncsw.mak me${SVER_YEAR}${SVER_MONTH}${SVER_DAY}/src
+    cp suncsw86.mak me${SVER_YEAR}${SVER_MONTH}${SVER_DAY}/src
+    if [ ${PROCESSOR} = sparc ] ; then
+        (cd me${SVER_YEAR}${SVER_MONTH}${SVER_DAY}/src; make -f suncsw.mak)
+    else
+        (cd me${SVER_YEAR}${SVER_MONTH}${SVER_DAY}/src; make -f suncsw86.mak)
+    fi
+    gzip -9 -c me${SVER_YEAR}${SVER_MONTH}${SVER_DAY}/src/me > ${MEBIN}
+    rm -rf me${SVER_YEAR}${SVER_MONTH}${SVER_DAY}
+fi
 #
 # Build the package
 # 
@@ -109,6 +138,12 @@ if [ ! -f ${CSWFILE}.pkg.gz ] ; then
     rm -f ${BASEDIR}/csw/share/jasspa/contrib/ME_4_all.reg
     rm -f ${BASEDIR}/csw/share/jasspa/contrib/mesetup.reg
     #
+    # Build the desktop file
+    # 
+    mkdir -p ${BASEDIR}/csw/share/applications
+    cat jasspa-microemacs.desktop | sed -e "s#/usr/share#/opt/csw/share#g" | sed -e "s#=me#=/opt/csw/bin/me#g"  | sed -e  "s/Development;TextEditor;/Application;Development;/g" > ${BASEDIR}/csw/share/applications/jasspa-microemacs.desktop
+    chmod -R go-w ${BASEDIR}/csw/share/applications
+    #
     # Build the proto file
     #
     rm -f prototype
@@ -118,7 +153,7 @@ if [ ! -f ${CSWFILE}.pkg.gz ] ; then
     echo "i depend"  >> prototype
     pkgproto csw=/opt/csw | sed -e "s/jon users/root bin/g" | sed -e "s/jon csw/root bin/g" >> prototype
     # Dependancies
-    echo "P CSWxpm"  > depend
+    echo "P CSWlibxpm"  > depend
     #
     # Build the package info file
     #
@@ -128,7 +163,7 @@ if [ ! -f ${CSWFILE}.pkg.gz ] ; then
     echo 'VERSION="'${VERSTRING}'"'  >> pkginfo
     echo 'SUNW_PKGVERS="1.0"' >> pkginfo
     echo 'CATEGORY="application"' >> pkginfo
-    echo 'VENDOR="www.jasspa.com packaged for CSW by Jon Green"' >> pkginfo
+    echo 'VENDOR="http://www.jasspa.com packaged for CSW by Jon Green"' >> pkginfo
     echo 'HOTLINE=http://www.opencsw.org/bugtrack/' >> pkginfo
     echo 'EMAIL="jon@opencsw.com"' >> pkginfo
     echo 'PSTAMP="Jon Green"'  >> pkginfo
@@ -217,7 +252,7 @@ for FILE in ${SPELLFILESET} ; do
         echo 'VERSION="'${VERSTRING}'"'  >> pkginfo
         echo 'SUNW_PKGVERS="1.0"' >> pkginfo
         echo 'CATEGORY="application"' >> pkginfo
-        echo 'VENDOR="www.jasspa.com packaged for CSW by Jon Green"' >> pkginfo
+        echo 'VENDOR="http://www.jasspa.com packaged for CSW by Jon Green"' >> pkginfo
         echo 'HOTLINE=http://www.opencsw.org/bugtrack/' >> pkginfo
         echo 'EMAIL="jon@opencsw.com"' >> pkginfo
         echo 'PSTAMP="Jon Green"'  >> pkginfo
