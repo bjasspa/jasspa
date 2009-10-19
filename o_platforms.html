@@ -55,7 +55,7 @@
     <ul>
       <li><a href="download.html">Download</a></li>
       <li><a href="history.html">History</a></li>
-      <li><a href="downlatest.html">Sept 2006</a></li>
+      <li><a href="downlatest.html">Oct 2009</a></li>
       <li><a href="spelling.html">Spelling&nbsp;dictionaries</a></li>
       <li><a href="contrib.html">Contributions</a></li>
     </ul>
@@ -102,9 +102,19 @@
       <td class="description">Cygwin environment on MS-Windows</td>
     </tr>
     <tr>
+      <td class="label">Darwin</td>
+      <td class="build">darwin.gmk</td>
+      <td class="description">Darwin (Mac OS X) using gcc</td>
+    </tr>
+    <tr>
       <td class="label">DOS</td>
       <td class="build">dosdj.mak<br/>dosdj2.mak</td>
       <td class="description">DJGPP V1.x<br/>DJGPP V2.x</td>
+    </tr>
+    <tr>
+      <td class="label">FreeBSD</td>
+      <td class="build">freebsd.gmk <i>(GNU)</i></td>
+      <td class="description">Free BSD</td>
     </tr>
     <tr>
       <td class="label">HPUX 9.x </td>
@@ -122,6 +132,16 @@
       <td class="description">Hewlett Packard [UNIX]</td>
     </tr>
     <tr>
+      <td class="label">IBM AIX 4.x</td>
+      <td class="build">aix4.mak <i>(native)</i><br/>aix4.gmk <i>(GNU)</i></td>
+      <td class="description">IBM AIX 4.x [UNIX]</td>
+    </tr>
+    <tr>
+      <td class="label">IBM AIX 5.x</td>
+      <td class="build">aix5.mak <i>(native)</i><br/>aix5.gmk <i>(GNU)</i></td>
+      <td class="description">IBM AIX 5.x [UNIX]</td>
+    </tr>
+    <tr>
       <td class="label">IRIX 5.x</td>
       <td class="build">irix5.mak <i>(native)</i><br/>irix5.gmk <i>(GNU)</i></td>
       <td class="description">Silicon Graphics IRIS [UNIX]</td>
@@ -137,29 +157,19 @@
       <td class="description">Linux Version 2.0.x/2.2.x/2.4.x</td>
     </tr>
     <tr>
+      <td class="label">Linux</td>
+      <td class="build">linux26.gmk <i>(GNU)</i></td>
+      <td class="description">Linux Version 2.6.x 32-bit and 64-bit</td>
+    </tr>
+    <tr>
       <td class="label">NeXTstep</td>
       <td class="build">openstep.gmk <i>(GNU)</i></td>
       <td class="description">Openstep 4.2 (BSD/Termcap)</td>
     </tr>
     <tr>
-      <td class="label">SunOS 5.5 (Solaris)</td>
-      <td class="build">sunos55.mak <i>(native)</i><br/>sunos55.gmk <i>(GNU)</i></td>
-      <td class="description">Sun Microsystems Solaris [UNIX - Sparc platform]</td>
-    </tr>
-    <tr>
-      <td class="label">SunOS 2.6/7/8/9 (Solaris)</td>
-      <td class="build">sunos56.mak <i>(native)</i><br/>sunos56.gmk <i>(GNU)</i></td>
-      <td class="description">Sun Microsystems Solaris [UNIX - Sparc platform]</td>
-    </tr>
-    <tr>
-      <td class="label">SunOS  2.6/7/8/9 (Intel Solaris)</td>
-      <td class="build">sunosx86.gmk <i>(GNU)</i></td>
-      <td class="description">Sun Microsystems Solaris [UNIX - Intel platform]</td>
-    </tr>
-    <tr>
-      <td class="label">FreeBSD</td>
-      <td class="build">freebsd.gmk <i>(GNU)</i></td>
-      <td class="description">Free BSD</td>
+      <td class="label">OSF1</td>
+      <td class="build">osf1.gmk</td>
+      <td class="description">OSF1 using gcc</td>
     </tr>
     <tr>
       <td class="label">OpenBSD</td>
@@ -167,9 +177,24 @@
       <td class="description">Open BSD</td>
     </tr>
     <tr>
-      <td class="label">IBM AIX 4.3</td>
-      <td class="build">aix43.mak <i>(native)</i><br/>aix43.gmk <i>(GNU)</i></td>
-      <td class="description">IBM AIX 4.3 [UNIX]</td>
+      <td class="label">Openstep</td>
+      <td class="build">openstep.mak</td>
+      <td class="description">Openstep 4.2 on NeXT Motorola 040</td>
+    </tr>
+    <tr>
+      <td class="label">SunOS 5.5 (Solaris)</td>
+      <td class="build">sunos55.mak <i>(native)</i><br/>sunos55.gmk <i>(GNU)</i></td>
+      <td class="description">Sun Microsystems Solaris [UNIX - Sparc platform]</td>
+    </tr>
+    <tr>
+      <td class="label">SunOS 2.6/7/8/9/10 (Solaris)</td>
+      <td class="build">sunos56.mak <i>(native)</i><br/>sunos56.gmk <i>(GNU)</i></td>
+      <td class="description">Sun Microsystems Solaris [UNIX - Sparc platform]</td>
+    </tr>
+    <tr>
+      <td class="label">SunOS  2.6/7/8/9/10 (Intel Solaris)</td>
+      <td class="build">sunosx86.gmk <i>(GNU)</i></td>
+      <td class="description">Sun Microsystems Solaris [UNIX - Intel platform]</td>
     </tr>
     <tr>
       <td class="label">UnixWare</td>
@@ -210,6 +235,16 @@
       <td class="label">Windows 3.x (win32s)</td>
       <td class="build">win32sv4.mak</td>
       <td class="description">Microsoft Developer Studio V4.0</td>
+    </tr>
+    <tr>
+      <td class="label">Windows '95/'98/NT/2K/XP</td>
+      <td class="build">mingw.gmk<br/>mingw32.gmk</td>
+      <td class="description">MinGW - Minimalist GNU for Windows</td>
+    </tr>
+    <tr>
+      <td class="label">Zaurus</td>
+      <td class="build">zaurus.gmk</td>
+      <td class="description">Zaurus running Linux v2.x using gcc</td>
     </tr>
   </table>
   
