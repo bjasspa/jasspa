@@ -63,6 +63,12 @@ set-variable .fhook-yacc.comment-12 "|//||/|// | //||"
 set-variable .fhook-yacc.setup-flags   "|l|q|r|v|"
 set-variable .fhook-yacc.setup-labels  "|Doxygen highlighting|<stdint.h> hilighting|Brace highlighting|Bad C highlighting|"
 
+; Setup the item lists
+set-variable .fhook-yacc.item-list-s1 "^\\(\\w+\\)\\s*:"
+set-variable .fhook-yacc.item-list-r1 "Rule \ecB\\1\ecA"
+set-variable .fhook-yacc.item-list-s2 "^\\(static[ \t]+\\|extern[ \t]+\\)?\\(const[ \t]+\\)?\\(union[ \t]+\\)?\\(struct[ \t]+\\)?\\(\\w+[\\* \\t]+\\)?\\(\\w+\\)[ \t]*("
+set-variable .fhook-yacc.item-list-r2 "Func \ecB\\6\ecA"
+
 !if &and &sin "h" .fhook-yacc.setup &band .hilight.flags 0x02 
     ; Hi-light LEX/YACC Mode
     !if &not &exi .hilight.yacc
