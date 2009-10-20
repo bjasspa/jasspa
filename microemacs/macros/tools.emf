@@ -120,7 +120,7 @@ define-macro diff
         set-variable #l1 &rep #l1 "/" "\\"
         set-variable #l1 &xrep #l1 "\\\\$" ""
     !endif
-    4 ipipe-shell-command &spr "%s%s \"%s\" \"%s\"" %diff-com &cond &band @# 2 " -r" "" #l0 #l1 "*diff*"
+    0x204 ipipe-shell-command &spr "%s%s \"%s\" \"%s\"" %diff-com &cond &band @# 2 " -r" "" #l0 #l1 "*diff*"
     !force popup-window  "*diff*"
 !emacro
 define-macro diff-changes
