@@ -298,6 +298,7 @@ add-file-hook ".iss"                                          fhook-iss
  1 add-file-hook "^#![ \t]*/.*awk"               fhook-awk    ; awk scripts
  1 add-file-hook "^#![ \t]*/.*python"            fhook-python ; Python file
  1 add-file-hook "^#![ \t]*/.*ruby"              fhook-ruby   ; Ruby shell script
+ 1 add-file-hook "^#![ \t]*/.*make"              fhook-make   ; Make script
  4 add-file-hook "^[ \t]*exec[ \t]*\\(wish\\|tclsh\\)" fhook-tcl ; TCL shell script
  1 add-file-hook "^#VRML"                        fhook-vrml   ; VRML or wrl files
  1 add-file-hook "^#Inventor"                    fhook-vrml   ; Use the VRML hook for iv files
@@ -329,6 +330,8 @@ add-file-hook ".iss"                                          fhook-iss
 -1 add-file-hook "-!-[ \t]*asmx86.*-!-"          fhook-asmx86 ; -!- asmx86 -!-
 -1 add-file-hook "-!-[ \t]*text.*-!-"            fhook-txt    ; -!- text -!-
 -1 add-file-hook "-!-[ \t]*msvb.*-!-"            fhook-vb     ; -!- msvb -!-
+-1 add-file-hook "^diff "                        fhook-diff   ; diff -Naur file.c ...
+
 ; Initialize the top menu line
 osd 0 0  "asM" 0 0 -1 0 0 0 osd-main
 osd 0 10 "Mdfsh" " \HFile  "     1
