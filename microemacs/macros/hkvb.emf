@@ -87,6 +87,7 @@ set-variable .fhook-vb.collapse-mnext "-1"
     hilight .hilight.vb 1 "Set"          .scheme.keyword
     hilight .hilight.vb 1 "For"          .scheme.keyword
     hilight .hilight.vb 1 "To"           .scheme.keyword
+    hilight .hilight.vb 1 "Step"         .scheme.keyword
     hilight .hilight.vb 1 "Next"         .scheme.keyword
     hilight .hilight.vb 1 "Property"     .scheme.keyword
     hilight .hilight.vb 1 "Error"        .scheme.keyword
