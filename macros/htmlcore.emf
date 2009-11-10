@@ -55,6 +55,9 @@ set-variable #l2 &ind &spr ".hilight.%stag" #l0
         indent #l2 t "<script\\s+language=\"?javascript[^>]*>" .indent.javascript
         indent #l1 x "^<script\\s+language=\"?javascript[^>]*>" 0 .indent.javascript
         indent #l1 x ".<script\\s+language=\"?javascript[^>]*>" t .indent.javascript
+        indent #l2 t "<script\\s+type=\"?text/javascript[^>]*>" .indent.javascript
+        indent #l1 x "^<script\\s+type=\"?text/javascript[^>]*>" 0 .indent.javascript
+        indent #l1 x ".<script\\s+type=\"?text/javascript[^>]*>" t .indent.javascript
         indent .indent.javascript w "</script>" -t 0
     !endif
     !if &exist .indent.vbscript
@@ -305,12 +308,14 @@ set-variable #l2 &ind &spr ".hilight.%stag" #l0
 
     !if &exist .hilight.javascript
         hilight #l1 0x80 "<script>" .hilight.javascript .scheme.prepro
-        hilight #l1 0x80 "<script\\s+language=\"?javascript[^>]*>" .hilight.javascript .scheme.prepro
+        hilight #l1 0x80 "<script\\s+language=\"?javascript[^>]*>"  .hilight.javascript .scheme.prepro
+        hilight #l1 0x80 "<script\\s+type=\"?text/javascript[^>]*>" .hilight.javascript .scheme.prepro
         hilight .hilight.javascript 0x80 "</SCRIPT>" 0   .scheme.prepro
         hilight .hilight.javascript 0x80 "</script>" 0   .scheme.prepro
     !endif
     !if &exist .hilight.vbscript
-        hilight #l1  0x80 "<script\\s+language=\"?vbscript[^>]*>" .hilight.vbscript .scheme.prepro
+        hilight #l1 0x80 "<script\\s+language=\"?vbscript[^>]*>" .hilight.vbscript .scheme.prepro
+        hilight #l1 0x80 "<script\\s+type=\"?text/vbscript[^>]*>" .hilight.vbscript .scheme.prepro
         hilight .hilight.vbscript 0x80 "</script>" 0     .scheme.prepro
     !endif
 !endif
