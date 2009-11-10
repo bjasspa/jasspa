@@ -908,25 +908,32 @@ set-variable .gdiff.bncom  "*gdiff com*"
 
 !if .start-up
     define-macro start-up
-        delete-other-windows
-        set-variable #l0 $buffer-fname
+        ; Delete all of the windows. We use 2 to force this as there may be a toolbar present. 
+        !force 2 delete-other-windows
+        set-variable #l0 &set #l1 ""
         set-variable #l2 $buffer-bname
-        next-buffer
-        !if &seq $buffer-bname "*scratch*"
-            next-buffer
+        !repeat
+          !if &seq "*" &lef $buffer-bname 1 
+          !elif &seq $buffer-fname ""
+          !elif &seq #l0 ""
+            ; first file
+            set-variable #l0 $buffer-fname
+          !elif &seq #l1 ""
+            ; second file
             set-variable #l1 $buffer-fname
-            set-variable #l3 $buffer-bname
+          !else
+            ; more than 2 files given - error
+            5000 ml-write "[Usage error: me \"@gdiff\" <old> <new>]"
+            0 quick-exit
+          !endif 
+          next-buffer
+        !until &seq $buffer-bname #l2
+        !if &seq #l1 ""
+          5000 ml-write "[Usage error: me \"@gdiff\" <old> <new>]"
         !else
-            set-variable #l1 $buffer-fname
-            set-variable #l3 $buffer-bname
-            next-buffer
+          gdiff #l0 #l1
         !endif
-        next-buffer
-        !if &or &not &seq $buffer-bname #l2 &seq #l2 #l3
-            ml-write "[Usage error: me \"@gdiff\" <old> <new>]"
-        !else
-            gdiff #l0 #l1
-        !endif
+        0 quick-exit
     !emacro
 !endif
 
